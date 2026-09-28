@@ -11,6 +11,7 @@ import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
 import { cameraFor, HEIGHT, isIndoor, MAP, TILE, VIEW_H, VIEW_W, WIDTH, sameTile } from '../engine/world'
 import type { Facing, GameContent, Season, Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
+import { avatarKey, withLookDefaults, type FullAvatar } from '../engine/avatar'
 import {
   ANIMAL,
   ANIMAL_PALETTE,
@@ -416,12 +417,12 @@ function person(
   blink: boolean,
   pose: Pose,
   season: Season,
-  extra: { inky?: boolean; growth?: number; look?: Look } = {},
+  extra: { inky?: boolean; growth?: number; look?: Look; avatar?: FullAvatar } = {},
 ) {
   const rows = spriteRows(who, facing, { frame, blink, pose, season, ...extra })
-  const pal = who === 'writer' ? writerPalette(season) : PALETTE
+  const pal = who === 'writer' ? writerPalette(season, extra.avatar) : PALETTE
   return paint(
-    `${who}/${facing}/${frame}/${blink}/${pose}/${who === 'writer' ? season : ''}/${extra.inky ?? ''}/${extra.growth ?? ''}/${extra.look ?? ''}`,
+    `${who}/${facing}/${frame}/${blink}/${pose}/${who === 'writer' ? season : ''}/${extra.inky ?? ''}/${extra.growth ?? ''}/${extra.look ?? ''}/${extra.avatar ? avatarKey(extra.avatar) : ''}`,
     rows,
     pal,
   )
@@ -806,7 +807,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       items.push({
         y: p.y,
         paint: () => {
-          const spr = person('writer', facing, frame, blink, pose, season, { inky: done > 0, look: game.avatar?.look })
+          const spr = person('writer', facing, frame, blink, pose, season, { inky: done > 0, look: game.avatar?.look, avatar: game.avatar ? withLookDefaults(game.avatar) : undefined })
           drawSprite(g, spr, p.x, p.y, lift)
           const top = Math.round(p.y * TILE) + TILE - spr.height - 2
           const cx = Math.round(p.x * TILE) + 8

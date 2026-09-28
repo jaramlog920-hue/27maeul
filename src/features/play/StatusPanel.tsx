@@ -24,7 +24,7 @@ export function StatusPanel() {
     <section className="status-panel" aria-label={T.ui.statusTitle}>
       <div className="status-row">
         <span className="status-chapter">
-          {chapter === null ? T.ui.allDone : `${fill(T.ui.chapterLabel, { chapter })} · ${fill(T.ui.dexCount, { got, all: inChapter.length })}`}
+          {!book ? T.ui.noBook : chapter === null ? T.ui.allDone : `${fill(T.ui.chapterLabel, { chapter })} · ${fill(T.ui.dexCount, { got, all: inChapter.length })}`}
         </span>
         {level > 0 && <span className="status-village">{fill(T.ui.villageLevel, { n: level })}</span>}
         <span className="status-offers">{offers > 0 ? fill(T.ui.statusOffers, { n: offers }) : T.ui.statusNoOffers}</span>

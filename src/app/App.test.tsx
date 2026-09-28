@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { App } from './App'
+import { useGame } from '../store/game-store'
 
 describe('App 시작 화면', () => {
   beforeEach(() => localStorage.clear())
@@ -19,8 +20,11 @@ describe('App 시작 화면', () => {
     fireEvent.click(screen.getByRole('button', { name: '시작하기' }))
     expect(screen.getByRole('heading', { name: '어떤 사람으로 살까요?' })).toBeInTheDocument()
     fireEvent.change(screen.getByLabelText('이름'), { target: { value: '하늘' } })
-    fireEvent.click(screen.getByRole('button', { name: '시작하기' }))
+    fireEvent.click(screen.getByRole('button', { name: '머리 다음' }))
+    fireEvent.click(screen.getByRole('button', { name: '머리 다음' }))
+    fireEvent.click(screen.getByRole('button', { name: '이대로 시작' }))
     expect(screen.queryByRole('heading', { name: '어떤 사람으로 살까요?' })).toBeNull()
+    expect(useGame.getState().game.avatar).toMatchObject({ look: 'f', name: '하늘', hair: 3 })
   })
 
   it('저장이 있으면 이어하기가 보인다', () => {

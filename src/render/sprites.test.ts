@@ -1,4 +1,5 @@
-import { ANIMAL, ANIMAL_PALETTE, BABY, ICON_PALETTE, ICONS, PALETTE, SHEEP, SMALL_PALETTE, SPRITE_H, SPRITE_W, mirror, spriteRows, type Who } from './sprites'
+import { ANIMAL, ANIMAL_PALETTE, BABY, ICON_PALETTE, ICONS, PALETTE, SHEEP, SMALL_PALETTE, SPRITE_H, SPRITE_W, mirror, spriteRows, writerPalette, type Who } from './sprites'
+import { ACCS, BOTTOMS, HAIRS, SKINS, withLookDefaults } from '../engine/avatar'
 import { breathOffset, isBlinking, walkFrame, dozeNod, lookSide } from './anim'
 import { ITEM_TEXT } from '../content/text'
 import type { Facing } from '../engine/types'
@@ -50,6 +51,21 @@ describe('사람 도트', () => {
     const f = spriteRows('writer', 'down', { frame: 0, blink: false, look: 'f' })
     expect(f).not.toEqual(m)
     expect(f[5][0]).toBe('h')
+  })
+  it('주인공이 고른 머리·아래옷·장신구마다 도트가 다르고, 모든 칸에 색이 있다', () => {
+    const base = withLookDefaults({ look: 'm', name: '바다' })
+    const pal = writerPalette('spring', base)
+    for (const key of ['hair', 'bottom', 'acc'] as const) {
+      const n = { hair: HAIRS.length, bottom: BOTTOMS.length, acc: ACCS.length }[key]
+      const seen = new Set<string>()
+      for (let i = 0; i < n; i++) {
+        const a = { ...base, [key]: i }
+        for (const facing of ['down', 'up', 'right'] as const) valid(spriteRows('writer', facing, { frame: 0, blink: false, avatar: a }), writerPalette('spring', a))
+        seen.add(spriteRows('writer', 'down', { frame: 0, blink: false, avatar: a }).join('|'))
+      }
+      expect(seen.size).toBe(n)
+    }
+    expect(pal.s).toBe(SKINS[base.skin])
   })
 })
 

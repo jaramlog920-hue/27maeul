@@ -1,6 +1,6 @@
 // 코드로 그린 도트. 외모 주장이 아니라 게임 표현이다 (exclusion-list §1-2).
 import type { Facing, Season } from '../engine/types'
-import type { Look } from '../engine/avatar'
+import { hsvToHex, shadeOf, SKINS, TOPS, type FullAvatar, type Look } from '../engine/avatar'
 
 export type { Look }
 
@@ -121,6 +121,83 @@ export interface SpriteOpts {
   growth?: number
   /** 주인공 모습 */
   look?: Look
+  /** 주인공이 고른 머리·옷·장신구 (있으면 look보다 먼저) */
+  avatar?: FullAvatar
+}
+
+function longHair(rows: string[]) {
+  for (let y = 3; y <= 8; y++) for (const x of [0, 9]) if (rows[y]?.[x] === '.') setPixel(rows, x, y, 'h')
+}
+
+/**
+ * 주인공이 고른 모습을 입힌다 (오른쪽을 보는 모습 기준, 왼쪽은 나중에 통째로 뒤집힌다).
+ * 새 글자: o 눈, l 윗옷 무늬, d/D 아래옷과 그늘, x 머리띠·머릿수건, f 꽃, y 금붙이
+ */
+function dressAvatar(rows: string[], facing: Facing, a: FullAvatar, blink: boolean) {
+  const front = facing === 'down'
+  const back = facing === 'up'
+  // 눈
+  if (!blink && !back) for (const x of front ? [3, 6] : [6]) if (rows[4][x] === 'k') setPixel(rows, x, 4, 'o')
+  // 머리 모양
+  switch (a.hair) {
+    case 1: // 긴 머리
+      longHair(rows)
+      if (back) for (let x = 2; x <= 7; x++) setPixel(rows, x, 7, 'h')
+      break
+    case 2: // 올린 머리: 정수리에 틀어 올린 머리
+      for (const x of [4, 5]) setPixel(rows, x, 0, 'h')
+      break
+    case 3: // 묶은 머리: 뒤로 늘어진 꽁지
+      if (front) for (let y = 3; y <= 6; y++) setPixel(rows, 9, y, 'h')
+      else if (back) for (let y = 7; y <= 9; y++) for (const x of [4, 5]) setPixel(rows, x, y, 'h')
+      else for (let y = 3; y <= 6; y++) setPixel(rows, 0, y, 'h')
+      break
+    case 4: // 곱슬머리: 부푼 머리
+      for (const [x, y] of [[1, 1], [8, 1], [0, 2], [9, 2], [0, 3], [9, 3]] as const) setPixel(rows, x, y, 'h')
+      break
+    case 5: // 앞머리
+      if (front) for (let x = 3; x <= 6; x++) setPixel(rows, x, 3, 'h')
+      else if (!back) for (const x of [5, 6]) setPixel(rows, x, 3, 'h')
+      break
+  }
+  // 윗옷 무늬
+  const pattern = TOPS[a.top]?.[4] ?? 'plain'
+  if (pattern === 'stripe') for (const y of [8, 10]) for (let x = 0; x < 10; x++) if (rows[y][x] === 'r') setPixel(rows, x, y, 'l')
+  if (pattern === 'apron' && !back) for (let y = 10; y <= 12; y++) for (let x = 3; x <= 6; x++) setPixel(rows, x, y, 'l')
+  if (pattern === 'vest') for (let y = 7; y <= 10; y++) for (const x of [1, 2, 7, 8]) if (rows[y][x] === 'r') setPixel(rows, x, y, 'l')
+  // 아래옷
+  const LONG = '.kDddddDk.'
+  const PANTS = '.kddkkddk.'
+  const LEGS = '..ks..sk..'
+  const [r11, r12] = [
+    [LONG, LONG],
+    [LONG, LEGS],
+    [PANTS, PANTS],
+    [PANTS, LEGS],
+  ][a.bottom] ?? [LONG, LONG]
+  const apron = pattern === 'apron' && !back
+  rows[11] = apron && a.bottom < 2 ? r11.slice(0, 3) + rows[11].slice(3, 7) + r11.slice(7) : r11
+  rows[12] = apron && a.bottom === 0 ? r12.slice(0, 3) + rows[12].slice(3, 7) + r12.slice(7) : r12
+  // 장신구
+  switch (a.acc) {
+    case 1: // 머리띠
+      for (let x = 2; x <= 7; x++) if (rows[2][x] === 'h') setPixel(rows, x, 2, 'x')
+      break
+    case 2: // 꽃 핀
+      setPixel(rows, back ? 6 : front ? 2 : 3, 1, 'f')
+      break
+    case 3: // 목걸이
+      if (!back) for (const x of front ? [4, 5] : [5, 6]) setPixel(rows, x, 7, 'y')
+      break
+    case 4: // 귀걸이
+      if (front) for (const x of [0, 9]) setPixel(rows, x, 5, 'y')
+      else if (!back) setPixel(rows, 2, 5, 'y')
+      break
+    case 5: // 머릿수건: 머리 위쪽을 천으로 덮는다
+      for (let y = 0; y <= 2; y++) for (let x = 0; x < 10; x++) if (rows[y][x] === 'h') setPixel(rows, x, y, 'x')
+      for (let x = 3; x <= 6; x++) setPixel(rows, x, 0, 'x')
+      break
+  }
 }
 
 function dressNeighbor(who: Who, rows: string[]): string[] {
@@ -208,8 +285,9 @@ export function spriteRows(who: Who, facing: Facing, opts: SpriteOpts): string[]
     setPixel(rows, 9, 7, 'k')
   }
   if (who === 'writer') {
+    if (opts.avatar) dressAvatar(rows, facing, opts.avatar, opts.blink)
     // 여자 모습: 어깨까지 내려오는 머리 (얼굴 양옆의 빈 칸)
-    if (opts.look === 'f') for (let y = 3; y <= 8; y++) for (const x of [0, 9]) if (rows[y]?.[x] === '.') setPixel(rows, x, y, 'h')
+    else if (opts.look === 'f') longHair(rows)
     // 귀에 꽂은 펜: 앞모습은 오른쪽 귀, 옆모습은 뒤통수 쪽 (왼쪽은 아래에서 통째로 뒤집힌다)
     if (facing !== 'up') setPixel(rows, facing === 'down' ? 8 : 2, 2, 'P')
     if (opts.inky && facing === 'down' && rows[9][1] === 's') setPixel(rows, 1, 9, 'K')
@@ -224,9 +302,27 @@ export function spriteRows(who: Who, facing: Facing, opts: SpriteOpts): string[]
 }
 
 /** 기록자의 계절 옷 색 */
-export function writerPalette(season: Season): Record<string, string> {
-  const [r, R] = SEASON_ROBE[season]
-  return { ...PALETTE, r, R }
+export function writerPalette(season: Season, avatar?: FullAvatar): Record<string, string> {
+  if (!avatar) {
+    const [r, R] = SEASON_ROBE[season]
+    return { ...PALETTE, r, R }
+  }
+  const [, r, R, l] = TOPS[avatar.top] ?? TOPS[0]
+  return {
+    ...PALETTE,
+    s: SKINS[avatar.skin] ?? SKINS[1],
+    h: hsvToHex(avatar.hairColor),
+    o: hsvToHex(avatar.eyeColor),
+    r,
+    R,
+    l,
+    b: l,
+    d: hsvToHex(avatar.bottomColor),
+    D: hsvToHex(shadeOf(avatar.bottomColor)),
+    x: '#b4533f',
+    f: '#e8a0b0',
+    y: '#e6c35a',
+  }
 }
 
 // ── 동물과 작은 것들 (자기 팔레트) ──
