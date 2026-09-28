@@ -625,3 +625,5 @@ button:focus-visible {
 .spine.grade-2 { border-left-color: #d9b44a; }
 .spine-grade { font-size: 0.9em; opacity: 0.8; }
 .library-locked { list-style: none; padding: 0; opacity: 0.6; }
+.reread-tag { font-size: 0.8em; background: #d9b44a; color: #3b2a20; padding: 0 4px; margin-right: 4px; }
+.guide-flow { padding-left: 1.2em; display: grid; gap: 4px; }

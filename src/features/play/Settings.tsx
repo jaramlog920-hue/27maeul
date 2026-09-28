@@ -86,7 +86,7 @@ export function Settings() {
             </button>
           ))}
         </div>
-        <p className="hint">크게 할수록 기록자 주변이 크게 보이고, 한 화면에 보이는 마을은 좁아져요.</p>
+        <p className="hint">크게 할수록 필사가 주변이 크게 보이고, 한 화면에 보이는 마을은 좁아져요.</p>
       </section>
       <section className="settings-section">
         <div className="settings-row">

@@ -281,6 +281,17 @@ describe('마을 서고', () => {
   })
 })
 
+describe('벤치', () => {
+  it('벤치 읽기: 다시 읽을 구절이 맨 위에 따로 나온다', () => {
+    const base = chooseBook(newGame(CONTENT), 'mk', CONTENT)
+    useGame.setState({ game: { ...base, collected: ['mk-001-001', 'mk-001-009'], rereads: ['mk-001-009'] }, modal: { kind: 'readPick' } })
+    render(<ModalLayer />)
+    const items = screen.getAllByRole('listitem').map((li) => li.textContent ?? '')
+    expect(items[0]).toContain('다시 읽을 구절')
+    expect(items[0]).toContain('비둘기 같이')
+  })
+})
+
 describe('하루', () => {
   it('침대 → 되새김 → 잠 → 일지', async () => {
     reset({ collected: ['lk-015-008'], todayHeard: ['lk-015-008'] })

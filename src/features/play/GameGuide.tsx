@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { T } from '../../content/text'
 import { useGame } from '../../store/game-store'
 
 export function GameGuide() {
@@ -16,6 +17,12 @@ export function GameGuide() {
         if (event.key === 'Tab') { event.preventDefault(); button.current?.focus() }
       }}>
       <h2>도움말</h2>
+      <h3>이야기 엮기</h3>
+      <ol className="guide-flow">
+        {T.ui.guide.map((line, i) => (
+          <li key={i}>{line}</li>
+        ))}
+      </ol>
       <h3>움직이기</h3>
       <p>화면을 누르면 그곳으로 걸어가요. 키보드는 WASD나 방향키로 걷고, <b>스페이스</b>를 누르면 바라보는 쪽의 이웃·물건을 누른 것처럼 상호작용해요. 터치 화면에서는 오른쪽 아래 조이스틱으로도 걸을 수 있어요.</p>
       <h3>집 안</h3>
