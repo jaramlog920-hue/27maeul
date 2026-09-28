@@ -1,5 +1,417 @@
 [
   {
+    "id": "mk-001-001",
+    "book": "mk",
+    "ref": "막 1:1-6",
+    "chapter": 1,
+    "title": "복음의 시작",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mt",
+        "ref": "마 3:1-6"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 3:1-6"
+      },
+      {
+        "kind": "similar",
+        "book": "jn",
+        "ref": "요 1:19-23"
+      }
+    ]
+  },
+  {
+    "id": "mk-001-007",
+    "book": "mk",
+    "ref": "막 1:7-8",
+    "chapter": 1,
+    "title": "신들메",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mt",
+        "ref": "마 3:11-12"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 3:15-20"
+      },
+      {
+        "kind": "similar",
+        "book": "jn",
+        "ref": "요 1:24-28"
+      }
+    ]
+  },
+  {
+    "id": "mk-001-009",
+    "book": "mk",
+    "ref": "막 1:9-11",
+    "chapter": 1,
+    "title": "비둘기 같이",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mt",
+        "ref": "마 3:13-17"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 3:21-22"
+      },
+      {
+        "kind": "similar",
+        "book": "jn",
+        "ref": "요 1:29-34"
+      }
+    ]
+  },
+  {
+    "id": "mk-001-012",
+    "book": "mk",
+    "ref": "막 1:12-13",
+    "chapter": 1,
+    "title": "광야에서 사십 일",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mt",
+        "ref": "마 4:1-11"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 4:1-13"
+      }
+    ]
+  },
+  {
+    "id": "mk-001-014",
+    "book": "mk",
+    "ref": "막 1:14-15",
+    "chapter": 1,
+    "title": "때가 찼고",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mt",
+        "ref": "마 4:12-17"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 4:14-15"
+      }
+    ]
+  },
+  {
+    "id": "mk-001-016",
+    "book": "mk",
+    "ref": "막 1:16-20",
+    "chapter": 1,
+    "title": "사람을 낚는 어부",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mt",
+        "ref": "마 4:18-22"
+      },
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 5:1-11"
+      }
+    ]
+  },
+  {
+    "id": "mk-001-021",
+    "book": "mk",
+    "ref": "막 1:21-28",
+    "chapter": 1,
+    "title": "더러운 귀신",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 4:31-37"
+      }
+    ]
+  },
+  {
+    "id": "mk-001-029",
+    "book": "mk",
+    "ref": "막 1:29-31",
+    "chapter": 1,
+    "title": "시몬의 장모",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mt",
+        "ref": "마 8:14-15"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 4:38-39"
+      }
+    ]
+  },
+  {
+    "id": "mk-001-032",
+    "book": "mk",
+    "ref": "막 1:32-34",
+    "chapter": 1,
+    "title": "해 질 때에",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mt",
+        "ref": "마 8:16-17"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 4:40-41"
+      }
+    ]
+  },
+  {
+    "id": "mk-001-035",
+    "book": "mk",
+    "ref": "막 1:35-39",
+    "chapter": 1,
+    "title": "한적한 곳",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 4:42-44"
+      }
+    ]
+  },
+  {
+    "id": "mk-001-040",
+    "book": "mk",
+    "ref": "막 1:40-45",
+    "chapter": 1,
+    "title": "문둥병자",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mt",
+        "ref": "마 8:1-4"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 5:12-16"
+      }
+    ]
+  },
+  {
+    "id": "mk-002-001",
+    "book": "mk",
+    "ref": "막 2:1-12",
+    "chapter": 2,
+    "title": "중풍병자",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mt",
+        "ref": "마 9:1-8"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 5:17-26"
+      }
+    ]
+  },
+  {
+    "id": "mk-002-013",
+    "book": "mk",
+    "ref": "막 2:13-17",
+    "chapter": 2,
+    "title": "레위",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mt",
+        "ref": "마 9:9-13"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 5:27-32"
+      }
+    ]
+  },
+  {
+    "id": "mk-002-018",
+    "book": "mk",
+    "ref": "막 2:18-22",
+    "chapter": 2,
+    "title": "새 포도주",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mt",
+        "ref": "마 9:14-17"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 5:33-39"
+      }
+    ]
+  },
+  {
+    "id": "mk-002-023",
+    "book": "mk",
+    "ref": "막 2:23-28",
+    "chapter": 2,
+    "title": "밀밭",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mt",
+        "ref": "마 12:1-8"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 6:1-5"
+      }
+    ]
+  },
+  {
+    "id": "mk-003-001",
+    "book": "mk",
+    "ref": "막 3:1-6",
+    "chapter": 3,
+    "title": "손 마른 사람",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mt",
+        "ref": "마 12:9-14"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 6:6-11"
+      }
+    ]
+  },
+  {
+    "id": "mk-003-007",
+    "book": "mk",
+    "ref": "막 3:7-12",
+    "chapter": 3,
+    "title": "작은 배",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 6:17-19"
+      },
+      {
+        "kind": "similar",
+        "book": "mt",
+        "ref": "마 12:15-21"
+      }
+    ]
+  },
+  {
+    "id": "mk-003-013",
+    "book": "mk",
+    "ref": "막 3:13-19",
+    "chapter": 3,
+    "title": "열 둘을 세우셨으니",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 6:12-16"
+      },
+      {
+        "kind": "similar",
+        "book": "mt",
+        "ref": "마 10:1-4"
+      }
+    ]
+  },
+  {
+    "id": "mk-003-020",
+    "book": "mk",
+    "ref": "막 3:20-21",
+    "chapter": 3,
+    "title": "식사할 겨를",
+    "stamps": []
+  },
+  {
+    "id": "mk-003-022",
+    "book": "mk",
+    "ref": "막 3:22-27",
+    "chapter": 3,
+    "title": "바알세불",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mt",
+        "ref": "마 12:22-30"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 11:14-23"
+      }
+    ]
+  },
+  {
+    "id": "mk-003-028",
+    "book": "mk",
+    "ref": "막 3:28-30",
+    "chapter": 3,
+    "title": "성령을 훼방하는 자",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mt",
+        "ref": "마 12:31-32"
+      },
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 12:4-12"
+      }
+    ]
+  },
+  {
+    "id": "mk-003-031",
+    "book": "mk",
+    "ref": "막 3:31-35",
+    "chapter": 3,
+    "title": "모친과 동생들",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mt",
+        "ref": "마 12:46-50"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 8:19-21"
+      }
+    ]
+  },
+  {
     "id": "lk-001-001",
     "book": "lk",
     "ref": "눅 1:1-4",
@@ -1253,6 +1665,11 @@
         "kind": "similar",
         "book": "mt",
         "ref": "마 12:32"
+      },
+      {
+        "kind": "similar",
+        "book": "mk",
+        "ref": "막 3:28-29"
       }
     ]
   },
