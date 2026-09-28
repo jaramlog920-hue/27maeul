@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { CONTENT } from '../../content/catalog'
+import { CONTENT, piecesOf } from '../../content/catalog'
 import { isWet, weatherOf } from '../../engine/calendar'
 import { phaseOf, seasonOf } from '../../engine/clock'
 import { playerTile } from '../../engine/game'
@@ -85,6 +85,13 @@ export function GameCanvas({ zoom = 1 }: { zoom?: number }) {
               simT += 0.05
             }
             r.draw(useGame.getState().game, simT, 0)
+          },
+          finishBook(book: 'mt' | 'mk' | 'lk' | 'jn') {
+            useGame.setState((st) => {
+              const ids = piecesOf(book).map((p) => p.id)
+              const chapters = [...new Set(piecesOf(book).map((p) => p.chapter))]
+              return { game: { ...st.game, collected: [...new Set([...st.game.collected, ...ids])], progress: { ...st.game.progress, [book]: { completed: chapters, arrangement: {} } } } }
+            })
           },
         },
       })
