@@ -17,8 +17,8 @@ export default defineConfig({
         start_url: '/',
         display: 'standalone',
         orientation: 'portrait',
-        background_color: '#2b2118',
-        theme_color: '#2b2118',
+        background_color: '#edf0df',
+        theme_color: '#edf0df',
         icons: [
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },

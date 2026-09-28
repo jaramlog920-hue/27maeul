@@ -1,36 +1,37 @@
-// 도트 아이콘(두루마리와 펜)을 PNG로 굽는다. 외부 도구 없이 zlib로 PNG를 만든다.
+// 도트 아이콘(초록 지붕 서고)을 PNG로 굽는다. 외부 도구 없이 zlib로 PNG를 만든다.
 // 사용: node scripts/make-icons.mjs → public/icon-192.png, icon-512.png, apple-touch-icon.png, favicon.png
 import { writeFile, mkdir } from 'node:fs/promises'
 import { deflateSync } from 'node:zlib'
 
+const hex = (h, a = 255) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16), a]
 const P = {
-  '.': [43, 33, 24, 255], // 바탕
-  k: [59, 42, 32, 255],
-  w: [244, 231, 200, 255],
-  W: [217, 196, 150, 255],
-  n: [164, 112, 63, 255],
-  N: [122, 82, 48, 255],
-  i: [43, 34, 56, 255],
-  y: [232, 217, 168, 255],
-  l: [245, 197, 66, 255],
+  '.': hex('#edf0df'), // 바탕 (첫 화면 하늘)
+  g: hex('#7b9a60'), // 초록 지붕
+  G: hex('#99b67b'),
+  D: hex('#5f7a48'),
+  c: hex('#f8e6c0'), // 벽
+  y: hex('#f1bf6b'), // 불 켜진 창
+  k: hex('#8e6a4d'),
+  w: hex('#987654'), // 문
+  p: hex('#bfcfa4'), // 풀밭
 }
-// 16×16: 펼친 두루마리 위에 글줄, 오른쪽 위에 갈대 펜
+// 16×16: 첫 화면의 서고 — 초록 지붕, 노란 창 둘, 나무 문, 풀밭
 const ART = [
   '................',
-  '............y...',
-  '...........yk...',
-  '..........yk....',
-  '.NnnnnnnnnkN....',
-  '.NwwwwwwwwwwN...',
-  '..wiiiiwiiiw....',
-  '..wwwwwwwwww....',
-  '..wiiiwiiiiw....',
-  '..wwwwwwwwww....',
-  '..wiiiiiwiiw....',
-  '..wwwwwwwwww....',
-  '..WWWWWWWWWW....',
-  '.NnnnnnnnnnnN...',
-  '..NNNNNNNNNN....',
+  '................',
+  '.....gggggg.....',
+  '....gGGGGGGg....',
+  '...gggggggggg...',
+  '..gggggggggggg..',
+  '..DDDDDDDDDDDD..',
+  '...cccccccccc...',
+  '...cyyccccyyc...',
+  '...cyyckkcyyc...',
+  '...ccccwwcccc...',
+  '...ccccwwcccc...',
+  '...ccccwwcccc...',
+  '..pppppppppppp..',
+  '................',
   '................',
 ]
 
