@@ -53,6 +53,7 @@ import {
 } from './stories'
 import { BED_STAND, HEARTH_STAND, isIndoor, key, PLACES, placeAt, sameTile, START, tileAt } from './world'
 import type { Book, Facing, GameContent, ItemId, NeighborDef, PlaceId, Rng, Target, Tile } from './types'
+import type { Avatar } from './avatar'
 
 export interface JournalEntry {
   day: number
@@ -119,6 +120,8 @@ export interface GameState {
   /** 오늘 편지 의뢰를 끝낸 날 */
   letterDay: number | null
   lettersDone: number
+  /** 플레이어가 고른 주인공 */
+  avatar: Avatar | null
 }
 
 export interface Today {
@@ -215,7 +218,7 @@ function neighborsOfDay(day: number, content: GameContent, level = 0): string[] 
     .map((n) => n.id)
 }
 
-export function newGame(content: GameContent): GameState {
+export function newGame(content: GameContent, avatar?: Avatar): GameState {
   const clock = newClock()
   // heartPoints: hearts에 점수(0~100)가 들어 있다는 표식 (예전 저장과 구분)
   const flags: Record<string, number> = { heartPoints: 1 }
@@ -259,6 +262,7 @@ export function newGame(content: GameContent): GameState {
     coins: 0,
     letterDay: null,
     lettersDone: 0,
+    avatar: avatar ?? null,
   }
 }
 

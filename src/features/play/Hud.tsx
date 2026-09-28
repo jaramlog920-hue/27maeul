@@ -12,6 +12,7 @@ export function Hud() {
   const shelf = useGame((s) => totalChapters(s.game))
   const coins = useGame((s) => s.game.coins)
   const job = useGame((s) => jobLevel(s.game.lettersDone, Object.keys(s.game.shelved).length))
+  const name = useGame((s) => s.game.avatar?.name ?? '')
   const { open } = useGame.getState()
   const weather = (T.ui.weather as Record<string, string>)[weatherOf(day)]
   return (
@@ -27,6 +28,7 @@ export function Hud() {
       </div>
       <div className="hud-row hud-toolbar">
         <span className="hud-shelf">
+          {name && <>{name} · </>}
           {T.jobs[job]} · {fill(T.ui.coins, { n: coins })} · {fill(T.ui.shelf, { n: shelf })}
         </span>
         <div className="hud-buttons">

@@ -23,6 +23,7 @@ import {
   spriteRows,
   writerPalette,
   PALETTE,
+  type Look,
   type Pose,
   type SpriteRows,
   type Who,
@@ -408,10 +409,22 @@ function drawSprite(g: Ctx, c: HTMLCanvasElement, wx: number, wy: number, dy = 0
   g.drawImage(c, px, py)
 }
 
-function person(who: Who, facing: Facing, frame: 0 | 1, blink: boolean, pose: Pose, season: Season, extra: { inky?: boolean; growth?: number } = {}) {
+function person(
+  who: Who,
+  facing: Facing,
+  frame: 0 | 1,
+  blink: boolean,
+  pose: Pose,
+  season: Season,
+  extra: { inky?: boolean; growth?: number; look?: Look } = {},
+) {
   const rows = spriteRows(who, facing, { frame, blink, pose, season, ...extra })
   const pal = who === 'writer' ? writerPalette(season) : PALETTE
-  return paint(`${who}/${facing}/${frame}/${blink}/${pose}/${who === 'writer' ? season : ''}/${extra.inky ?? ''}/${extra.growth ?? ''}`, rows, pal)
+  return paint(
+    `${who}/${facing}/${frame}/${blink}/${pose}/${who === 'writer' ? season : ''}/${extra.inky ?? ''}/${extra.growth ?? ''}/${extra.look ?? ''}`,
+    rows,
+    pal,
+  )
 }
 
 function animal(kind: 'cat' | 'dog', form: 'adult' | 'baby' | 'curl', facing: Facing) {
@@ -793,7 +806,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       items.push({
         y: p.y,
         paint: () => {
-          const spr = person('writer', facing, frame, blink, pose, season, { inky: done > 0 })
+          const spr = person('writer', facing, frame, blink, pose, season, { inky: done > 0, look: game.avatar?.look })
           drawSprite(g, spr, p.x, p.y, lift)
           const top = Math.round(p.y * TILE) + TILE - spr.height - 2
           const cx = Math.round(p.x * TILE) + 8

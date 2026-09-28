@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { App } from './App'
 
 describe('App 시작 화면', () => {
@@ -12,6 +12,15 @@ describe('App 시작 화면', () => {
     expect(screen.getByText(/이 마을과 이웃은 게임을 위해 만든 것입니다/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '시작하기' })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: '이어하기' })).toBeNull()
+  })
+
+  it('시작하기 → 주인공 고르기(모습·이름) → 게임 화면', () => {
+    render(<App />)
+    fireEvent.click(screen.getByRole('button', { name: '시작하기' }))
+    expect(screen.getByRole('heading', { name: '어떤 사람으로 살까요?' })).toBeInTheDocument()
+    fireEvent.change(screen.getByLabelText('이름'), { target: { value: '하늘' } })
+    fireEvent.click(screen.getByRole('button', { name: '시작하기' }))
+    expect(screen.queryByRole('heading', { name: '어떤 사람으로 살까요?' })).toBeNull()
   })
 
   it('저장이 있으면 이어하기가 보인다', () => {

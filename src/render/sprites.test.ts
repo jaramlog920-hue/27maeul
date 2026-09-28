@@ -45,6 +45,12 @@ describe('사람 도트', () => {
     const seen = new Set(PEOPLE.map((w) => spriteRows(w, 'down', { frame: 0, blink: false }).join('|')))
     expect(seen.size).toBe(PEOPLE.length)
   })
+  it('주인공 모습: 여자는 긴 머리가 보인다', () => {
+    const m = spriteRows('writer', 'down', { frame: 0, blink: false, look: 'm' })
+    const f = spriteRows('writer', 'down', { frame: 0, blink: false, look: 'f' })
+    expect(f).not.toEqual(m)
+    expect(f[5][0]).toBe('h')
+  })
 })
 
 describe('동물·작은 것·아이콘', () => {

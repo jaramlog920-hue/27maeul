@@ -1,5 +1,8 @@
 // 코드로 그린 도트. 외모 주장이 아니라 게임 표현이다 (exclusion-list §1-2).
 import type { Facing, Season } from '../engine/types'
+import type { Look } from '../engine/avatar'
+
+export type { Look }
 
 export const SPRITE_W = 10
 export const SPRITE_H = 14
@@ -116,6 +119,8 @@ export interface SpriteOpts {
   inky?: boolean
   /** 아이: 자란 정도 0~3 */
   growth?: number
+  /** 주인공 모습 */
+  look?: Look
 }
 
 function dressNeighbor(who: Who, rows: string[]): string[] {
@@ -203,6 +208,8 @@ export function spriteRows(who: Who, facing: Facing, opts: SpriteOpts): string[]
     setPixel(rows, 9, 7, 'k')
   }
   if (who === 'writer') {
+    // 여자 모습: 어깨까지 내려오는 머리 (얼굴 양옆의 빈 칸)
+    if (opts.look === 'f') for (let y = 3; y <= 8; y++) for (const x of [0, 9]) if (rows[y]?.[x] === '.') setPixel(rows, x, y, 'h')
     // 귀에 꽂은 펜: 앞모습은 오른쪽 귀, 옆모습은 뒤통수 쪽 (왼쪽은 아래에서 통째로 뒤집힌다)
     if (facing !== 'up') setPixel(rows, facing === 'down' ? 8 : 2, 2, 'P')
     if (opts.inky && facing === 'down' && rows[9][1] === 's') setPixel(rows, 1, 9, 'K')
