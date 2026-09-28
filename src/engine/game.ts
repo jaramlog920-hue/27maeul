@@ -36,6 +36,7 @@ import { GAIN, heartsOf, MAX_POINTS } from './hearts'
 import { bookDone, emptyProgress, totalChapters, type Progress } from './books'
 import { currentChapter, offersForDay } from './offers'
 import { checkArrangement, type ArrangeResult } from './scroll'
+import { readOff, type Grade } from './library'
 import {
   BABY_DAY,
   LESSON_FROM,
@@ -83,6 +84,10 @@ export interface GameState {
   progress: Progress
   /** 오늘 조각을 건넨 이웃 — 책을 바꿔도 같은 날 또 건네지 않는다 */
   listened: string[]
+  /** 서고에 꽂힌 책과 책등 등급 */
+  shelved: Partial<Record<Book, Grade>>
+  /** 서고 퀴즈에서 틀린 구절의 조각 — 자기 전·벤치 읽기에서 먼저 나온다 */
+  rereads: string[]
   journal: JournalEntry[]
   inv: Inventory
   needs: Needs
@@ -223,6 +228,8 @@ export function newGame(content: GameContent): GameState {
     activeBook: null,
     progress,
     listened: [],
+    shelved: {},
+    rereads: [],
     journal: [],
     inv: { water: 1, bread: 2 },
     needs: FRESH,
@@ -765,7 +772,7 @@ export function readScripture(s: GameState, pieceId: string): { state: GameState
   if (!s.collected.includes(pieceId)) return null
   // 앉아서 쉰 만큼 먼저 풀고, 그다음 읽는 20분이 흐른다
   const needs = { ...s.needs, fatigue: Math.max(0, s.needs.fatigue - READ_REST) }
-  return { state: passTime({ ...s, needs }, READ_MINUTES), rested: s.needs.fatigue > 0 }
+  return { state: readOff(passTime({ ...s, needs }, READ_MINUTES), pieceId), rested: s.needs.fatigue > 0 }
 }
 
 export function stargaze(s: GameState): GameState {
@@ -841,8 +848,9 @@ export function submitChapter(s: GameState, book: Book, chapter: number, content
 
 // ── 잠과 새 날 ──
 
-/** 잠들기 전 되새김으로 읽을 조각 (오늘 들은 것 중 하나) */
+/** 잠들기 전에 읽을 조각: 다시 읽을 구절이 먼저, 없으면 오늘 들은 것 중 하나 */
 export function reviewPick(s: GameState, rng: Rng): string | null {
+  if (s.rereads.length) return s.rereads[0]
   if (s.todayHeard.length === 0) return null
   return s.todayHeard[Math.min(s.todayHeard.length - 1, Math.floor(rng() * s.todayHeard.length))]
 }

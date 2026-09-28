@@ -1,4 +1,4 @@
-import { PIECES, versesOf, pieceById, NEIGHBORS, BOOKS_WITH_CONTENT, pieceOfVerse, piecesOf, quizSourceFor } from './catalog'
+import { PIECES, versesOf, pieceById, NEIGHBORS, BOOKS_WITH_CONTENT, pieceOfVerse, pieceOfQuestion, piecesOf, quizSourceFor } from './catalog'
 import { ALBUM_IDS, fill, ITEM_TEXT, itemList, NEIGHBOR_LINES, SCENES, T } from './text'
 import { MILESTONE_GIFTS } from '../engine/stories'
 import { TRADES } from '../engine/game'
@@ -70,5 +70,9 @@ describe('책별 콘텐츠', () => {
     expect(quizSourceFor(['mk']).countVerse(t)).toBe(1)
     expect(quizSourceFor(['lk']).countVerse(t)).toBe(0)
     expect(quizSourceFor(['mk', 'lk']).countVerse(t)).toBe(1)
+  })
+  it('문제가 가리키는 조각', () => {
+    expect(pieceOfQuestion({ kind: 'book', ref: '막 1:10', options: ['mk', 'lk'], answer: 'mk' })).toBe('mk-001-009')
+    expect(pieceOfQuestion({ kind: 'order', options: ['lk-001-005', 'lk-001-026'], answer: 'lk-001-005' })).toBe('lk-001-005')
   })
 })

@@ -296,4 +296,5 @@ export const ICONS: Record<string, SpriteRows> = {
   bowl: ['........', '........', '..yyyy..', 'NyYyyYyN', 'NnnnnnnN', '.NnnnnN.', '..NNNN..', '........'],
   honey: ['...NN...', '..kyyk..', '.kyllyk.', '.kyyyyk.', '.klyyyk.', '.kyyyyk.', '..kkkk..', '........'],
   bird: ['........', '..nn....', '.nkn....', 'Nnnnnnn.', '.nnnnnNN', '..nnnn..', '...N.N..', '..NN.NN.'],
+  goldLeaf: ['........', '.yyyyyy.', '.yYyyyy.', '.yyyyYy.', '.yyyyyy.', '.yYyyyy.', '.yyyyyy.', '........'],
 }

@@ -619,3 +619,9 @@ button:focus-visible {
 .dialog.schedule button { font-size: 14px; line-height: 1.5; min-height: 40px; padding: 6px 12px; }
 .settings-options.zoom-options { grid-template-columns: repeat(5, 1fr); }
 .dialog.settings .zoom-options button { font-size: 13px; padding: 6px 0; }
+.library-shelf { list-style: none; padding: 0; display: grid; gap: 6px; }
+.spine { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 8px; padding: 6px 10px; border-left: 8px solid #8a6a4a; background: #f4ead8; }
+.spine.grade-1 { border-left-color: #c0c4c8; }
+.spine.grade-2 { border-left-color: #d9b44a; }
+.spine-grade { font-size: 0.9em; opacity: 0.8; }
+.library-locked { list-style: none; padding: 0; opacity: 0.6; }

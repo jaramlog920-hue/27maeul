@@ -141,7 +141,8 @@ export const HILL_SPOTS: Record<string, Tile> = {
   child: { x: 15, y: 3 },
   grandpa: { x: 16, y: 2 },
   smith: { x: 12, y: 2 },
-  shepherd: { x: 15, y: 1 },
+  // (15, 1)은 마을 서고 문 자리
+  shepherd: { x: 14, y: 1 },
   presser: { x: 17, y: 2 },
   weaver: { x: 13, y: 4 },
   beekeeper: { x: 16, y: 4 },

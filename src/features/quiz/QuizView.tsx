@@ -1,9 +1,10 @@
 // 기록하기 전 다섯 문제. 틀려도 벌은 없다 — 다시 고르면 된다.
 // 문제에 나오는 성경 문장은 늘 출처(개역한글)와 함께 양피지 상자 안에 있다 (exclusion-list §0).
 import { useState } from 'react'
-import { pieceById } from '../../content/catalog'
+import { pieceById, versesOf } from '../../content/catalog'
 import { fill, T } from '../../content/text'
 import type { GospelId, Question } from '../../engine/quiz'
+import type { Book } from '../../engine/types'
 import { useGame, type Modal } from '../../store/game-store'
 import { Passage } from '../passage/Passage'
 
@@ -56,13 +57,13 @@ function Puzzle({ q, onAnswer, solved }: { q: Extract<Question, { kind: 'puzzle'
   )
 }
 
-function Detective({ q, onAnswer, solved }: { q: Extract<Question, { kind: 'detective' }>; onAnswer: (g: string[]) => void; solved: boolean }) {
+function Detective({ q, onAnswer, solved, pool }: { q: Extract<Question, { kind: 'detective' }>; onAnswer: (g: string[]) => void; solved: boolean; pool: boolean }) {
   const [chosen, setChosen] = useState<GospelId[]>([])
   const p = pieceById(q.pieceId)
   const toggle = (g: GospelId) => setChosen(chosen.includes(g) ? chosen.filter((x) => x !== g) : [...chosen, g])
   return (
     <>
-      <p className="quiz-prompt">{fill(T.quiz.detective, { title: p.title, ref: p.ref })}</p>
+      <p className="quiz-prompt">{fill(pool ? T.quiz.detectivePool : T.quiz.detective, { title: p.title, ref: p.ref })}</p>
       <div className="detective-grid">
         {q.options.map((g) => (
           <button key={g} className={(solved ? q.answer.includes(g) : chosen.includes(g)) ? 'on' : ''} aria-pressed={chosen.includes(g)} disabled={solved} onClick={() => toggle(g)}>
@@ -94,15 +95,36 @@ function Choices({ options, label, answer, wrong, solved, onAnswer }: { options:
   )
 }
 
+/** "어느 책?" — 본문은 그대로 보이고, 참조는 맞힌 뒤에 보인다 (exclusion-list §4-5) */
+function BookQuestion({ q, wrong, solved, onAnswer }: { q: Extract<Question, { kind: 'book' }>; wrong: string[]; solved: boolean; onAnswer: (o: string) => void }) {
+  const text = versesOf(q.ref)[0].text
+  return (
+    <>
+      <p className="quiz-prompt">{T.quiz.book}</p>
+      <section className="passage" aria-label={solved ? `성경 본문 ${q.ref}` : '성경 본문'}>
+        <header className="passage-ref">
+          <span>{solved ? q.ref : T.quiz.bookHidden}</span>
+          <span className="passage-src">{T.ui.bibleSource}</span>
+        </header>
+        <div className="passage-body">
+          <p>{text}</p>
+        </div>
+      </section>
+      <Choices options={q.options} label={(o) => GOSPEL_NAME[o as Book]} answer={q.answer} wrong={wrong} solved={solved} onAnswer={onAnswer} />
+    </>
+  )
+}
+
 export function QuizView({ modal }: { modal: Extract<Modal, { kind: 'quiz' }> }) {
   const { answerQuiz, nextQuiz, closeModal } = useGame.getState()
   const q = modal.questions[modal.index]
   const last = modal.index === modal.questions.length - 1
   const title = (id: string) => pieceById(id).title
+  const lib = modal.mode.kind === 'library'
   return (
     <div className="dialog scroll-dialog quiz" role="dialog" aria-label={T.quiz.title}>
       <h2>
-        {T.quiz.title} <span className="desk-chapter">· {fill(T.quiz.progress, { n: modal.index + 1, all: modal.questions.length })}</span>
+        {lib ? T.quiz.shelveTitle : T.quiz.title} <span className="desk-chapter">· {fill(T.quiz.progress, { n: modal.index + 1, all: modal.questions.length })}</span>
       </h2>
       <p className="quiz-kind">{T.quiz.kinds[q.kind]}</p>
       {/* 문제마다 선택 상태를 새로 (key) */}
@@ -117,7 +139,8 @@ export function QuizView({ modal }: { modal: Extract<Modal, { kind: 'quiz' }> })
             <Choices options={q.options} label={(o) => o} answer={q.answer} wrong={modal.wrong} solved={modal.solved} onAnswer={answerQuiz} />
           </>
         )}
-        {q.kind === 'detective' && <Detective q={q} solved={modal.solved} onAnswer={answerQuiz} />}
+        {q.kind === 'detective' && <Detective q={q} solved={modal.solved} onAnswer={answerQuiz} pool={lib} />}
+        {q.kind === 'book' && <BookQuestion q={q} wrong={modal.wrong} solved={modal.solved} onAnswer={answerQuiz} />}
         {q.kind === 'verse' && (
           <>
             <p className="quiz-prompt">{T.quiz.verse}</p>
@@ -127,7 +150,7 @@ export function QuizView({ modal }: { modal: Extract<Modal, { kind: 'quiz' }> })
         )}
         {q.kind === 'order' && (
           <>
-            <p className="quiz-prompt">{T.quiz.order}</p>
+            <p className="quiz-prompt">{lib ? T.quiz.orderBook : T.quiz.order}</p>
             <Choices options={q.options} label={title} answer={q.answer} wrong={modal.wrong} solved={modal.solved} onAnswer={answerQuiz} />
           </>
         )}
@@ -139,10 +162,10 @@ export function QuizView({ modal }: { modal: Extract<Modal, { kind: 'quiz' }> })
         </p>
       )}
       <div className="actions">
-        {!modal.solved && <button onClick={closeModal}>{T.quiz.later}</button>}
+        {!modal.solved && !(modal.mode.kind === 'library' && modal.mode.retry) && <button onClick={closeModal}>{T.quiz.later}</button>}
         {modal.solved && (
           <button className="primary" onClick={nextQuiz}>
-            {last ? T.quiz.record : T.ui.next}
+            {last ? (lib ? T.quiz.shelveRecord : T.quiz.record) : T.ui.next}
           </button>
         )}
       </div>

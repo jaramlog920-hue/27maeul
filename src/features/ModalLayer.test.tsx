@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { CONTENT, piecesOf } from '../content/catalog'
 import { emptyProgress } from '../engine/books'
 import { chooseBook, newGame, type GameState } from '../engine/game'
+import { mulberry32 } from '../engine/offers'
 import { PLACES } from '../engine/world'
 import { useGame } from '../store/game-store'
 import { ModalLayer } from './ModalLayer'
@@ -252,6 +253,31 @@ describe('기록 퀴즈 화면', () => {
     await user.click(screen.getByRole('button', { name: '나중에 하기' }))
     expect(useGame.getState().modal).toBeNull()
     expect(useGame.getState().game.inv).toEqual({ papyrus: 1, ink: 1 })
+  })
+})
+
+describe('마을 서고', () => {
+  it('서고: 다 엮은 마가복음을 꽂으면 퀴즈가 열리고, 마치면 책등이 붙는다', async () => {
+    const user = userEvent.setup()
+    const base = chooseBook(newGame(CONTENT), 'mk', CONTENT)
+    useGame.setState({
+      game: { ...base, collected: piecesOf('mk').map((p) => p.id), progress: { ...base.progress, mk: { completed: [1, 2, 3], arrangement: {} } } },
+      modal: { kind: 'library' },
+      rng: mulberry32(5),
+    })
+    render(<ModalLayer />)
+    await user.click(screen.getByRole('button', { name: '꽂기' }))
+    expect(screen.getByRole('dialog', { name: '기록하기 전에' }).textContent).toContain('서고에 꽂기 전에')
+    // 모든 문제를 정답으로 푼다
+    for (let i = 0; i < 5; i++) {
+      const m = useGame.getState().modal
+      if (m?.kind !== 'quiz') throw new Error('quiz expected')
+      const q = m.questions[m.index]
+      useGame.getState().answerQuiz(q.answer as string | string[])
+      useGame.getState().nextQuiz()
+    }
+    expect(useGame.getState().game.shelved.mk).toBe(2)
+    expect(useGame.getState().modal?.kind).toBe('library')
   })
 })
 

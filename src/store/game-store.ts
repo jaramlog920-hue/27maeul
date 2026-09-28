@@ -1,7 +1,8 @@
 // 엔진 상태 ↔ 화면 연결. 창(모달)이 열려 있으면 시간과 걸음이 멈춘다.
 import { create } from 'zustand'
-import { CONTENT, pieceById, piecesOf, quizSourceFor } from '../content/catalog'
-import { buildQuiz, isCorrect, type Question } from '../engine/quiz'
+import { CONTENT, pieceById, pieceOfQuestion, piecesOf, quizSourceFor } from '../content/catalog'
+import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
+import { canShelve, payRetry, poolFor, readOff, shelve } from '../engine/library'
 import { ALBUM_IDS, fill, itemList, NEIGHBOR_LINES, SCENES, T } from '../content/text'
 import { grapesRipe, isWet, weatherOf } from '../engine/calendar'
 import { cleanName, type Animal } from '../engine/companion'
@@ -66,7 +67,7 @@ export type Pending =
   | { kind: 'help'; neighborId: string }
   | { kind: 'teach' }
 
-export type QuizMode = { kind: 'chapter'; book: Book; chapter: number }
+export type QuizMode = { kind: 'chapter'; book: Book; chapter: number } | { kind: 'library'; book: Book; retry: boolean }
 
 export type Modal =
   | { kind: 'settings' }
@@ -90,6 +91,7 @@ export type Modal =
   | { kind: 'shelf' }
   | { kind: 'companion'; animal: Animal }
   | { kind: 'ending' }
+  | { kind: 'library' }
 
 interface Store {
   game: GameState
@@ -142,6 +144,9 @@ interface Store {
   submitDesk: (book: Book, chapter: number) => void
   answerQuiz: (given: string | string[]) => void
   nextQuiz: () => void
+  // 서고
+  startShelve: (book: Book) => void
+  startRetry: (book: Book) => void
   sleep: () => void
   saveMyLine: (pieceId: string, text: string) => void
   // 동물·방
@@ -274,8 +279,11 @@ export const useGame = create<Store>((set, get) => {
     }
     if (target.kind !== 'place') return { game, modal: null }
     switch (target.id) {
-      case 'bed':
-        return { game, modal: { kind: 'review', pieceId: reviewPick(game, rng) } }
+      case 'bed': {
+        const pieceId = reviewPick(game, rng)
+        const g = pieceId ? persist(readOff(game, pieceId)) : game
+        return { game: g, modal: { kind: 'review', pieceId } }
+      }
       case 'desk': {
         const lit = lightLamp(game)
         // 등잔 기름을 쓴 것은 바로 저장한다 (다시 불러와 기름을 되찾지 못하게)
@@ -289,6 +297,8 @@ export const useGame = create<Store>((set, get) => {
         return { game, modal: { kind: 'menu', place: target.id } }
       case 'shelf':
         return { game, modal: { kind: 'shelf' } }
+      case 'library':
+        return { game, modal: { kind: 'library' } }
       case 'house': {
         const who = inviterAtDoor(game, target.tile)
         const dined = who ? dine(game, who) : null
@@ -565,7 +575,8 @@ export const useGame = create<Store>((set, get) => {
         const key = Array.isArray(given) ? given.join(' ') : given
         // 한 문제에서 처음 틀렸을 때만 센다 (책등 등급은 처음에 맞힌 수로)
         const first = m.wrong.length === 0
-        set({ modal: { ...m, wrong: [...m.wrong, key], misses: m.misses + (first ? 1 : 0) } })
+        const pid = first ? pieceOfQuestion(q) : null
+        set({ modal: { ...m, wrong: [...m.wrong, key], misses: m.misses + (first ? 1 : 0), missed: pid && !m.missed.includes(pid) ? [...m.missed, pid] : m.missed } })
       }
     },
     nextQuiz: () => {
@@ -575,9 +586,35 @@ export const useGame = create<Store>((set, get) => {
         set({ modal: { ...m, index: m.index + 1, wrong: [], solved: false } })
         return
       }
+      if (m.mode.kind === 'library') {
+        const correct = m.questions.length - m.misses
+        const next = shelve(get().game, m.mode.book, correct, m.missed)
+        sfx('done')
+        const grades = T.library.grades as string[]
+        get().say(fill(T.library.shelvedToast, { book: (T.quiz.gospels as Record<string, string>)[m.mode.book], grade: grades[next.shelved[m.mode.book]!] }) + (m.missed.length ? ' ' + T.library.rereadNote : ''), 4000)
+        set({ game: persist(next), modal: { kind: 'library' } })
+        return
+      }
       const { state, result } = submitChapter(get().game, m.mode.book, m.mode.chapter, CONTENT)
       if (result.kind === 'done') sfx('done')
       set({ game: persist(state), modal: { kind: 'desk', result, dark: false } })
+    },
+    startShelve: (book) => {
+      const game = get().game
+      if (canShelve(game, book, CONTENT)) return
+      const pool = poolFor(game.shelved, book)
+      sfx('scroll')
+      const questions = buildLibraryQuiz({ current: book, pool, piecesOf, rng: get().rng, src: quizSourceFor(pool) })
+      set({ modal: { kind: 'quiz', mode: { kind: 'library', book, retry: false }, questions, index: 0, wrong: [], solved: false, misses: 0, missed: [] } })
+    },
+    startRetry: (book) => {
+      const paid = payRetry(get().game, book)
+      if (!paid) return
+      // 재도전은 서고에 있는 모든 책에서 낸다 (설계 §3.5)
+      const pool = poolFor(paid.shelved, book)
+      sfx('scroll')
+      const questions = buildLibraryQuiz({ current: book, pool, piecesOf, rng: get().rng, src: quizSourceFor(pool) })
+      set({ game: persist(paid), modal: { kind: 'quiz', mode: { kind: 'library', book, retry: true }, questions, index: 0, wrong: [], solved: false, misses: 0, missed: [] } })
     },
     sleep: () => {
       sfx('sleep')

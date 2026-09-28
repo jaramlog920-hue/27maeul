@@ -22,6 +22,7 @@ export type PlaceId =
   | 'press'
   | 'anvil'
   | 'field'
+  | 'library'
 export type Target =
   | { kind: 'place'; id: PlaceId; tile: Tile }
   | { kind: 'neighbor'; id: string; tries: number }
@@ -73,6 +74,7 @@ export type ItemId =
   | 'candle'
   | 'bowl'
   | 'bird'
+  | 'goldLeaf'
   | 'honey'
 
 export type Minigame = 'mash' | 'timing' | 'pick'

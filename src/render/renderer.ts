@@ -145,6 +145,14 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r(season === 'autumn' ? '#d0a24a' : C.leaf3, 4, 2, 4, 3)
       break
     }
+    case 'L':
+      // 마을 서고 문: 돌 벽, 나무 문, 금빛 현판
+      r(C.stoneDark, 1, 1, 14, 15)
+      r(C.stone, 2, 2, 12, 13)
+      r(C.woodDark, 5, 7, 6, 9)
+      r(C.wood, 6, 8, 4, 8)
+      r('#d9b44a', 3, 3, 10, 2)
+      break
     case 'w':
       r(C.shadow, 2, 13, 13, 3)
       r(C.stoneDark, 2, 4, 12, 11)

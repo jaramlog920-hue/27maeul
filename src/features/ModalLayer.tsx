@@ -4,6 +4,7 @@ import { AdoptForm } from './companion/AdoptForm'
 import { Desk } from './desk/Desk'
 import { Ending } from './ending/Ending'
 import { Journal } from './journal/Journal'
+import { Library } from './library/Library'
 import { CareMenu } from './menus/CareMenu'
 import { PlaceMenu } from './menus/PlaceMenu'
 import { ReadPick } from './menus/ReadPick'
@@ -67,6 +68,8 @@ function Body() {
       return <AdoptForm animal={modal.animal} />
     case 'ending':
       return <Ending />
+    case 'library':
+      return <Library />
   }
 }
 

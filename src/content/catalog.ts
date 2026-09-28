@@ -6,7 +6,7 @@ import piecesRaw from './pieces.json'
 import neighborsRaw from './neighbors.json'
 import { expandRef, countsFrom } from './ref'
 import { BOOKS, type Book, type GameContent, type NeighborDef, type Piece } from '../engine/types'
-import type { QuizSource } from '../engine/quiz'
+import type { Question, QuizSource } from '../engine/quiz'
 
 const bible = raw as Record<string, string[][]>
 const byAbbr = Object.fromEntries(books.map((b) => [b.abbr, b.id]))
@@ -87,4 +87,11 @@ for (const p of ALL_PIECES) for (const v of versesOf(p.ref)) verseToPiece.set(`$
 /** '막 1:10' → 그 절을 담은 조각 (조각은 겹치지 않으므로 하나) */
 export function pieceOfVerse(ref: string): Piece | undefined {
   return verseToPiece.get(ref.trim())
+}
+
+/** 틀린 문제를 "다시 읽을 구절"로 돌리기 위해: 문제가 가리키는 조각 */
+export function pieceOfQuestion(q: Question): string | null {
+  if (q.kind === 'detective') return q.pieceId
+  if (q.kind === 'order' || q.kind === 'verse') return q.answer
+  return pieceOfVerse(q.ref)?.id ?? null
 }
