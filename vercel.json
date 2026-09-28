@@ -3,5 +3,5 @@
   "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "rewrites": [{ "source": "/((?!assets/|icon-|favicon|apple-touch-icon|manifest|sw.js|workbox|registerSW).*)", "destination": "/index.html" }]
+  "rewrites": [{ "source": "/((?!_vercel/|assets/|icon-|favicon|apple-touch-icon|manifest|sw.js|workbox|registerSW).*)", "destination": "/index.html" }]
 }
