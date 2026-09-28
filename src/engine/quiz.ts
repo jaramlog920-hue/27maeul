@@ -15,6 +15,7 @@ export type Question =
   | { kind: 'detective'; pieceId: string; options: GospelId[]; answer: GospelId[] }
   | { kind: 'verse'; ref: string; options: string[]; answer: string }
   | { kind: 'order'; options: string[]; answer: string }
+  | { kind: 'book'; ref: string; options: Book[]; answer: Book }
 
 export interface VerseText {
   ref: string
@@ -127,6 +128,8 @@ function order(chapterPieces: readonly Piece[], rng: Rng): Extract<Question, { k
   return { kind: 'order', options: two.map((p) => p.id), answer: [...two].sort((a, b) => (a.id < b.id ? -1 : 1))[0].id }
 }
 
+const keyOf = (q: Question) => (q.kind === 'detective' ? q.pieceId : 'ref' in q ? q.ref : '')
+
 export function buildQuiz(pieces: readonly Piece[], chapter: number, rng: Rng, src: QuizSource): Question[] {
   const inChapter = pieces.filter((p) => p.chapter === chapter)
   // 보기가 모자라면 앞뒤 장의 조각을 섞는다
@@ -143,7 +146,7 @@ export function buildQuiz(pieces: readonly Piece[], chapter: number, rng: Rng, s
     for (const p of shuffle(inChapter, rng)) {
       const q = make(p)
       if (!q) continue
-      const key = q.kind === 'detective' ? q.pieceId : 'ref' in q ? q.ref : ''
+      const key = keyOf(q)
       if (used.has(key)) continue
       used.add(key)
       out.push(q)
@@ -154,6 +157,72 @@ export function buildQuiz(pieces: readonly Piece[], chapter: number, rng: Rng, s
   for (let i = 0; out.length < QUIZ_SIZE && i < 10; i++) {
     const q = order(inChapter, rng)
     if (q && !out.some((o) => o.kind === 'order' && o.answer === q.answer && o.options.join() === q.options.join())) out.push(q)
+  }
+  return shuffle(out, rng).slice(0, QUIZ_SIZE)
+}
+
+// ── 서고 퀴즈 (설계 §3.5) ──
+// 출제 범위 = 서고에 꽂힌 책 + 지금 꽂는 책. 모든 문장은 출제 범위 안에서 글자 그대로 한 곳에만 있어야 한다 (exclusion-list §4-1).
+
+function firstOf<T>(items: readonly T[], make: (x: T) => Question | null): Question | null {
+  for (const x of items) {
+    const q = make(x)
+    if (q) return q
+  }
+  return null
+}
+
+/** "이 구절은 어느 복음서에 있나요?" — 책 이름으로 묻는다, 누가 썼는지는 묻지 않는다 (exclusion-list §4-2) */
+function bookQuestion(from: Book, pool: readonly Book[], piecesOf: (b: Book) => readonly Piece[], src: QuizSource, rng: Rng): Question | null {
+  const options = GOSPELS.filter((g) => pool.includes(g))
+  return firstOf(shuffle(piecesOf(from), rng), (p) => {
+    const v = pickOne(
+      src.versesOf(p.ref).filter((x) => norm(x.text).length >= MIN_VERSE_CHARS && src.countVerse(x.text) === 1),
+      rng,
+    )
+    return v ? { kind: 'book', ref: v.ref, options, answer: from } : null
+  })
+}
+
+/** 탐정: 보기와 답을 출제 범위의 책으로 좁힌다 */
+function poolDetective(p: Piece, pool: readonly Book[]): Question | null {
+  const a = detectiveAnswer(p)
+  if (!a) return null
+  return { kind: 'detective', pieceId: p.id, options: GOSPELS.filter((g) => pool.includes(g)), answer: a.filter((g) => pool.includes(g)) }
+}
+
+export function buildLibraryQuiz(args: {
+  current: Book
+  pool: readonly Book[]
+  piecesOf: (b: Book) => readonly Piece[]
+  rng: Rng
+  src: QuizSource
+}): Question[] {
+  const { current, pool, piecesOf, rng, src } = args
+  const mine = piecesOf(current)
+  const others = pool.filter((b) => b !== current)
+  const makers: (() => Question | null)[] = []
+  if (others.length > 0) {
+    makers.push(() => bookQuestion(current, pool, piecesOf, src, rng))
+    makers.push(() => bookQuestion(pickOne(others, rng)!, pool, piecesOf, src, rng))
+    makers.push(() => firstOf(shuffle(mine, rng), (p) => poolDetective(p, pool)))
+  }
+  makers.push(() => firstOf(shuffle(mine, rng), (p) => puzzle(p, src, rng)))
+  makers.push(() => firstOf(shuffle(mine, rng), (p) => blank(p, mine.filter((x) => x.chapter === p.chapter), src, rng)))
+  makers.push(() => firstOf(shuffle(mine, rng), (p) => whichStory(p, mine.filter((o) => Math.abs(o.chapter - p.chapter) <= 1), src, rng)))
+  const out: Question[] = []
+  const used = new Set<string>()
+  for (const make of makers) {
+    if (out.length >= QUIZ_SIZE) break
+    const q = make()
+    if (!q || used.has(keyOf(q))) continue
+    used.add(keyOf(q))
+    out.push(q)
+  }
+  // 모자란 만큼 순서 문제로 채운다 (책 전체에서 — 조각 id 순서 = 본문 순서)
+  for (let i = 0; out.length < QUIZ_SIZE && i < 20; i++) {
+    const q = order(mine, rng)
+    if (q && !out.some((o) => o.kind === 'order' && o.options.join() === q.options.join())) out.push(q)
   }
   return shuffle(out, rng).slice(0, QUIZ_SIZE)
 }
