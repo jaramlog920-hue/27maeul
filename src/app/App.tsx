@@ -29,6 +29,7 @@ export function App() {
   return (
     <Intro
       hasSave={saved !== null}
+      avatar={saved?.avatar}
       onContinue={() => {
         unlockAudio()
         if (saved) useGame.getState().load(saved)
