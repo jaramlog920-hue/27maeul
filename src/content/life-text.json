@@ -5,7 +5,7 @@
     "lookLabel": "모습",
     "looks": { "f": "여자", "m": "남자" },
     "nameLabel": "이름",
-    "rows": { "skin": "피부", "hair": "머리", "top": "윗옷", "bottom": "아래옷", "acc": "장신구" },
+    "rows": { "skin": "피부", "hairFront": "앞머리", "hairBack": "뒷머리", "top": "윗옷", "bottom": "아래옷", "acc": "장신구" },
     "colors": { "eyeColor": "눈 색", "hairColor": "머리 색", "bottomColor": "아래옷 색" },
     "sliders": ["색조", "채도", "밝기"],
     "turnLeft": "왼쪽으로 돌리기",

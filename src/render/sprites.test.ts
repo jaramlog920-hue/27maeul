@@ -1,5 +1,5 @@
 import { ANIMAL, ANIMAL_PALETTE, BABY, ICON_PALETTE, ICONS, PALETTE, SHEEP, SMALL_PALETTE, SPRITE_H, SPRITE_W, mirror, spriteRows, writerPalette, type Who } from './sprites'
-import { ACCS, BOTTOMS, HAIRS, SKINS, withLookDefaults } from '../engine/avatar'
+import { ACCS, BOTTOMS, HAIR_BACKS, HAIR_FRONTS, SKINS, withLookDefaults } from '../engine/avatar'
 import { breathOffset, isBlinking, walkFrame, dozeNod, lookSide } from './anim'
 import { ITEM_TEXT } from '../content/text'
 import type { Facing } from '../engine/types'
@@ -54,8 +54,8 @@ describe('사람 도트', () => {
   it('주인공이 고른 머리·아래옷·장신구마다 도트가 다르고, 모든 칸에 색이 있다', () => {
     const base = withLookDefaults({ look: 'm', name: '바다' })
     const pal = writerPalette('spring', base)
-    for (const key of ['hair', 'bottom', 'acc'] as const) {
-      const n = { hair: HAIRS.length, bottom: BOTTOMS.length, acc: ACCS.length }[key]
+    for (const key of ['hairFront', 'hairBack', 'bottom', 'acc'] as const) {
+      const n = { hairFront: HAIR_FRONTS.length, hairBack: HAIR_BACKS.length, bottom: BOTTOMS.length, acc: ACCS.length }[key]
       const seen = new Set<string>()
       for (let i = 0; i < n; i++) {
         const a = { ...base, [key]: i }
@@ -65,6 +65,12 @@ describe('사람 도트', () => {
       expect(seen.size).toBe(n)
     }
     expect(pal.s).toBe(SKINS[base.skin])
+  })
+  it('긴 머리는 머리 옆에서 어깨까지 끊기지 않는다 (양갈래처럼 보이지 않게)', () => {
+    const a = { ...withLookDefaults({ look: 'f', name: '하늘' }), hairFront: 0, hairBack: 1 }
+    const rows = spriteRows('writer', 'down', { frame: 0, blink: false, avatar: a })
+    for (let y = 2; y <= 8; y++) expect(rows[y][0], `y=${y}`).toBe('h')
+    for (let y = 3; y <= 7; y++) expect(rows[y][1], `y=${y}`).toBe('h')
   })
 })
 

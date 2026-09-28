@@ -11,7 +11,8 @@ export interface Avatar {
   name: string
   /** 아래 항목은 옛 저장에 없을 수 있다 — 쓸 때는 withLookDefaults로 채운다 */
   skin?: number
-  hair?: number
+  hairFront?: number
+  hairBack?: number
   top?: number
   bottom?: number
   acc?: number
@@ -22,7 +23,9 @@ export interface Avatar {
 export type FullAvatar = Required<Avatar>
 
 export const SKINS = ['#f6d7c3', '#eab996', '#e0a57e', '#c98b62', '#b07550', '#8d5a3b', '#6e4430', '#553425'] as const
-export const HAIRS = ['짧은 머리', '긴 머리', '올린 머리', '묶은 머리', '곱슬머리', '앞머리', '양갈래', '땋은 머리', '짧게 깎은 머리', '단발'] as const
+// 앞머리 × 뒷머리를 따로 골라 몇 가지만으로도 여러 모양이 나온다
+export const HAIR_FRONTS = ['넘긴 머리', '일자 앞머리', '옆 가르마', '짧게 깎음', '부스스'] as const
+export const HAIR_BACKS = ['짧은 머리', '긴 머리', '단발', '올린 머리', '묶은 머리', '양갈래', '땋은 머리'] as const
 /** 윗옷: [이름, 바탕, 그늘, 무늬/띠, 무늬 모양] */
 export const TOPS: readonly (readonly [string, string, string, string, 'plain' | 'stripe' | 'apron' | 'vest'])[] = [
   ['흙빛 겉옷', '#8a6a4a', '#6d5238', '#c9a15a', 'plain'],
@@ -60,7 +63,8 @@ export function nameProblem(raw: string): NameProblem {
 export function withLookDefaults(a: Avatar): FullAvatar {
   return {
     skin: 1,
-    hair: a.look === 'f' ? 1 : 0,
+    hairFront: 0,
+    hairBack: a.look === 'f' ? 1 : 0,
     top: 0,
     bottom: a.look === 'f' ? 0 : 2,
     acc: 0,
@@ -87,7 +91,8 @@ export function randomAvatar(look: Look, name: string, rand: () => number = Math
     look,
     name,
     skin: pick(SKINS.length),
-    hair: pick(HAIRS.length),
+    hairFront: pick(HAIR_FRONTS.length),
+    hairBack: pick(HAIR_BACKS.length),
     top: pick(TOPS.length),
     bottom: pick(BOTTOMS.length),
     acc: pick(ACCS.length),
@@ -114,5 +119,5 @@ export function shadeOf([h, s, v]: Hsv): Hsv {
 
 /** 스프라이트 캐시에 쓰는 짧은 열쇠 */
 export function avatarKey(a: FullAvatar): string {
-  return [a.skin, a.hair, a.top, a.bottom, a.acc, ...a.eyeColor, ...a.hairColor, ...a.bottomColor].join(',')
+  return [a.skin, a.hairFront, a.hairBack, a.top, a.bottom, a.acc, ...a.eyeColor, ...a.hairColor, ...a.bottomColor].join(',')
 }

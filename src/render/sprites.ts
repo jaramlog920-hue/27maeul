@@ -138,45 +138,64 @@ function dressAvatar(rows: string[], facing: Facing, a: FullAvatar, blink: boole
   const back = facing === 'up'
   // 눈
   if (!blink && !back) for (const x of front ? [3, 6] : [6]) if (rows[4][x] === 'k') setPixel(rows, x, 4, 'o')
-  // 머리 모양
-  switch (a.hair) {
-    case 1: // 긴 머리
-      longHair(rows)
-      if (back) for (let x = 2; x <= 7; x++) setPixel(rows, x, 7, 'h')
+  // 뒷머리 → 앞머리 순서로 그린다 (앞머리가 얼굴 쪽을 덮는다)
+  const sides = front || back ? [[0, 1], [9, 8]] : [[0, 1]] // [바깥 칸, 머리 윤곽 칸]
+  const paint = (x: number, y0: number, y1: number, ch = 'h') => {
+    for (let y = y0; y <= y1; y++) setPixel(rows, x, y, ch)
+  }
+  switch (a.hairBack) {
+    case 1: // 긴 머리: 머리 옆에서 어깨까지 끊기지 않게 (목 옆 빈칸까지 채운다)
+      for (const [out, edge] of sides) {
+        paint(out, 2, 8)
+        paint(edge, 3, 7)
+      }
+      if (back) for (let x = 2; x <= 7; x++) paint(x, 6, 8)
       break
-    case 2: // 올린 머리: 정수리에 틀어 올린 머리
-      for (const x of [4, 5]) setPixel(rows, x, 0, 'h')
+    case 2: // 단발: 턱선까지
+      for (const [out, edge] of sides) {
+        paint(out, 2, 5)
+        paint(edge, 3, 6)
+      }
+      if (back) for (let x = 2; x <= 7; x++) setPixel(rows, x, 6, 'h')
       break
-    case 3: // 묶은 머리: 뒤로 늘어진 꽁지
-      if (front) for (let y = 3; y <= 6; y++) setPixel(rows, 9, y, 'h')
-      else if (back) for (let y = 7; y <= 9; y++) for (const x of [4, 5]) setPixel(rows, x, y, 'h')
-      else for (let y = 3; y <= 6; y++) setPixel(rows, 0, y, 'h')
+    case 3: // 올린 머리: 정수리에 틀어 올린 머리
+      for (const x of [3, 4, 5, 6]) setPixel(rows, x, 0, 'h')
       break
-    case 4: // 곱슬머리: 부푼 머리
-      for (const [x, y] of [[1, 1], [8, 1], [0, 2], [9, 2], [0, 3], [9, 3]] as const) setPixel(rows, x, y, 'h')
+    case 4: // 묶은 머리: 뒤로 늘어진 꽁지
+      if (front) paint(9, 3, 6)
+      else if (back) for (const x of [4, 5]) paint(x, 6, 9)
+      else {
+        paint(0, 3, 7)
+        setPixel(rows, 1, 3, 'x')
+      }
       break
-    case 5: // 앞머리
+    case 5: // 양갈래: 끈으로 묶은 두 갈래 (끈이 있어 긴 머리와 다르다)
+      for (const [out] of sides) {
+        setPixel(rows, out, 3, 'x')
+        paint(out, 4, 7)
+      }
+      break
+    case 6: // 땋은 머리: 어깨 앞(앞모습)·등(뒷모습)으로 내린 한 가닥
+      if (front) for (let y = 3; y <= 9; y++) setPixel(rows, y < 7 ? 9 : 8, y, 'h')
+      else if (back) for (let y = 6; y <= 11; y++) setPixel(rows, y % 2 ? 4 : 5, y, 'h')
+      else paint(1, 5, 9)
+      break
+  }
+  switch (a.hairFront) {
+    case 1: // 일자 앞머리
       if (front) for (let x = 3; x <= 6; x++) setPixel(rows, x, 3, 'h')
       else if (!back) for (const x of [5, 6]) setPixel(rows, x, 3, 'h')
       break
-    case 6: // 양갈래: 양옆에 붉은 끈으로 묶어 늘어뜨린 머리
-      for (const x of front || back ? [0, 9] : [0]) {
-        setPixel(rows, x, 3, 'x')
-        for (let y = 4; y <= 6; y++) setPixel(rows, x, y, 'h')
-      }
+    case 2: // 옆 가르마: 한쪽으로 쓸어 넘긴 앞머리
+      if (front) for (const x of [3, 4]) setPixel(rows, x, 3, 'h')
+      else if (!back) setPixel(rows, 5, 3, 'h')
       break
-    case 7: // 땋은 머리: 어깨 앞(앞모습)·등(뒷모습)으로 내린 한 가닥
-      if (front) for (let y = 3; y <= 9; y++) setPixel(rows, y < 7 ? 9 : 8, y, 'h')
-      else if (back) for (let y = 7; y <= 11; y++) setPixel(rows, y % 2 ? 4 : 5, y, 'h')
-      else for (let y = 5; y <= 9; y++) setPixel(rows, 1, y, 'h')
-      break
-    case 8: // 짧게 깎은 머리: 귀 옆 머리를 걷어 낸다
+    case 3: // 짧게 깎음: 귀 옆 머리를 걷어 낸다
       if (front) for (const x of [2, 7]) setPixel(rows, x, 3, 's')
       else if (!back) for (const x of [3, 4]) setPixel(rows, x, 3, 's')
       break
-    case 9: // 단발: 턱선까지 오는 머리
-      for (let y = 2; y <= 5; y++) for (const x of front || back ? [0, 9] : [0]) setPixel(rows, x, y, 'h')
-      if (back) for (let x = 2; x <= 7; x++) setPixel(rows, x, 6, 'h')
+    case 4: // 부스스: 부푼 윗머리
+      for (const [x, y] of front || back ? [[1, 1], [8, 1], [0, 2], [9, 2]] : [[1, 1], [0, 2], [8, 1]]) setPixel(rows, x, y, 'h')
       break
   }
   // 윗옷 무늬

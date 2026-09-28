@@ -1,5 +1,5 @@
 import { CONTENT } from '../content/catalog'
-import { ACCS, BOTTOMS, HAIRS, SKINS, TOPS, cleanAvatarName, cycle, hsvToHex, nameProblem, randomAvatar, withLookDefaults } from './avatar'
+import { ACCS, BOTTOMS, HAIR_BACKS, HAIR_FRONTS, SKINS, TOPS, cleanAvatarName, cycle, hsvToHex, nameProblem, randomAvatar, withLookDefaults } from './avatar'
 import { newGame } from './game'
 
 describe('주인공', () => {
@@ -25,9 +25,9 @@ describe('주인공', () => {
   })
   it('옛 저장 {look, name}도 모든 항목이 채워진다', () => {
     const f = withLookDefaults({ look: 'f', name: '하늘' })
-    expect(f.hair).toBe(1)
-    expect(withLookDefaults({ look: 'm', name: '바다' }).hair).toBe(0)
-    expect(withLookDefaults({ look: 'f', name: '하늘', hair: 4 }).hair).toBe(4)
+    expect(f.hairBack).toBe(1)
+    expect(withLookDefaults({ look: 'm', name: '바다' }).hairBack).toBe(0)
+    expect(withLookDefaults({ look: 'f', name: '하늘', hairBack: 4 }).hairBack).toBe(4)
   })
   it('무작위 모습은 모든 목록 안에 있다', () => {
     let seed = 1
@@ -35,7 +35,8 @@ describe('주인공', () => {
     for (let i = 0; i < 50; i++) {
       const a = randomAvatar('m', '바다', rand)
       expect(a.skin).toBeLessThan(SKINS.length)
-      expect(a.hair).toBeLessThan(HAIRS.length)
+      expect(a.hairFront).toBeLessThan(HAIR_FRONTS.length)
+      expect(a.hairBack).toBeLessThan(HAIR_BACKS.length)
       expect(a.top).toBeLessThan(TOPS.length)
       expect(a.bottom).toBeLessThan(BOTTOMS.length)
       expect(a.acc).toBeLessThan(ACCS.length)

@@ -4,7 +4,8 @@ import { T } from '../../content/text'
 import {
   ACCS,
   BOTTOMS,
-  HAIRS,
+  HAIR_BACKS,
+  HAIR_FRONTS,
   SKINS,
   TOPS,
   cleanAvatarName,
@@ -43,12 +44,13 @@ function Preview({ avatar, facing }: { avatar: FullAvatar; facing: Facing }) {
   return <canvas ref={ref} className="creator-sprite" width={SPRITE_W * SCALE} height={SPRITE_H * SCALE} aria-hidden="true" />
 }
 
-type RowKey = 'skin' | 'hair' | 'top' | 'bottom' | 'acc'
+type RowKey = 'skin' | 'hairFront' | 'hairBack' | 'top' | 'bottom' | 'acc'
 type ColorKey = 'eyeColor' | 'hairColor' | 'bottomColor'
 
 const ROWS: { key: RowKey; names: readonly string[] }[] = [
   { key: 'skin', names: SKINS.map((_, i) => `${i + 1}`) },
-  { key: 'hair', names: HAIRS },
+  { key: 'hairFront', names: HAIR_FRONTS },
+  { key: 'hairBack', names: HAIR_BACKS },
   { key: 'top', names: TOPS.map((t) => t[0]) },
   { key: 'bottom', names: BOTTOMS },
   { key: 'acc', names: ACCS },
