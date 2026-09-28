@@ -178,7 +178,7 @@ function roofTile(g: Ctx, x: number, y: number, st: HouseStyle, rect: { x0: numb
   }
 }
 
-/** 앞벽 한 칸: 위 줄은 처마 그림자와 창, 아래 줄은 꽃 상자·문 */
+/** 앞벽 한 칸: 위 줄은 처마 그림자뿐, 아래 줄에 꽃 상자 달린 창과 문 */
 function houseWallTile(g: Ctx, x: number, y: number, ch: string, id: string, h: { x0: number; x1: number; y1: number; doorX: number }) {
   const st = HOUSE_STYLES[id] ?? PLAIN_STYLE
   const px = x * TILE
@@ -200,7 +200,7 @@ function houseWallTile(g: Ctx, x: number, y: number, ch: string, id: string, h: 
   if (x === h.x1) r(st.base, 15, 0, 1, 16)
 
   const door = x === h.doorX
-  // 창은 문을 가운데 두고 양옆 같은 거리에 (위아래 줄 같은 칸)
+  // 창은 아래 줄에만, 문을 가운데 두고 양옆 같은 거리에
   const k = h.doorX - 2 >= h.x0 && h.doorX + 2 <= h.x1 ? 2 : 1
   const winCol = Math.abs(x - h.doorX) === k
   const glass = '#cfe3ec'
@@ -229,13 +229,7 @@ function houseWallTile(g: Ctx, x: number, y: number, ch: string, id: string, h: 
   if (id === 'library') {
     // 서고: 문 위에 동그란 창, 양옆에 큰 아치 창 (두 줄에 걸쳐)
     const archCols = [h.doorX - 3, h.doorX - 2, h.doorX + 2, h.doorX + 3]
-    if (upper && door) {
-      r('#a89878', 3, 2, 10, 10)
-      r('#e7d8b8', 4, 3, 8, 8)
-      r(glass, 5, 4, 6, 6)
-      r('#a89878', 7, 4, 2, 6)
-      r('#a89878', 5, 6, 6, 2)
-    } else if (archCols.includes(x)) {
+    if (archCols.includes(x)) {
       const left = x === h.doorX - 3 || x === h.doorX + 2
       const wx = left ? 8 : 0
       if (upper) {
@@ -251,11 +245,7 @@ function houseWallTile(g: Ctx, x: number, y: number, ch: string, id: string, h: 
         r('#dccbb0', left ? 6 : 0, 9, 10, 2)
       }
     }
-  } else if (upper && winCol) window(4)
-  else if (upper && door) {
-    // 문 위의 작은 둥근 창
-    r(st.shutter, 6, 5, 4, 4)
-    r(glass, 7, 6, 2, 2)
+    // 위 줄(2층 높이)에는 아무것도 달지 않는다 — 창은 아래 줄에만
   } else if (!upper && winCol) {
     window(1)
     r('#8a6a52', 3, 9, 10, 3) // 꽃 상자
