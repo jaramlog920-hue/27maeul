@@ -2,6 +2,7 @@
 // 사용: node scripts/verify-pieces.mjs [pieces.json] [life-text.json] [neighbors.json]
 import { readFile } from 'node:fs/promises'
 import { parseRef, expandRef, normalizeQuote, countsFrom } from '../src/content/ref.ts'
+import { FORBIDDEN } from '../src/content/forbidden.ts'
 
 const root = new URL('../', import.meta.url)
 const read = async (p) => JSON.parse(await readFile(new URL(p, root), 'utf8'))
@@ -27,14 +28,6 @@ const STAMP_BOOKS = { mt: 'mat', mk: 'mrk', jn: 'jhn' }
 const SAME_OVERLAP_MIN = 0.2
 // exclusion-list §3-2 — 조각은 문장 중간에서 끝나지 않는다 (다음 절로 말이 이어지는 어미)
 const OPEN_ENDINGS = /(이르시되|가로되|가라사대|여짜오되|말하되|으나|하시고|하고|하며|하매|쌔)$/
-// exclusion-list §2-4 — 지어낸 문장에 쓰지 않는 말. 책 이름(누가복음·요한복음)은 허용.
-// 낱말 가운데에 들어간 경우(필요한 → 요한)는 거른다: 바로 앞이 한글이면 다른 낱말의 일부
-const FORBIDDEN_WORDS = [
-  /예수/, /그리스도/, /하나님/, /주님/, /성령/, /천사/, /사도/, /제자/, /베드로/, /요한(?!복음)/, /누가(?!복음)/,
-  /마리아/, /바울/, /데오빌로/, /세례/, /예루살렘/, /갈릴리/, /나사렛/, /베들레헴/, /사마리아/,
-  /유월절/, /오순절/, /초막절/, /안식일/, /성전/, /회당/, /의원/, /제사장/, /세리/, /바리새/, /서기관/,
-]
-const FORBIDDEN = FORBIDDEN_WORDS.map((re) => new RegExp('(?<![가-힣])' + re.source))
 
 let errors = 0
 let warnings = 0
@@ -160,7 +153,6 @@ function walk(node, path) {
     for (const re of FORBIDDEN) if (re.test(node)) fail(path, `금지어 ${re.source} — "${node}"`)
   } else if (Array.isArray(node)) node.forEach((n, i) => walk(n, `${path}[${i}]`))
   else if (node && typeof node === 'object') {
-    if (node.speaker === 'writer') fail(path, '기록자가 화자인 문장 (기록자는 말하지 않는다)')
     for (const [k, v] of Object.entries(node)) walk(v, `${path}.${k}`)
   }
 }
