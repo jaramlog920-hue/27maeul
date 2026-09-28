@@ -41,6 +41,7 @@ import {
   playerTile,
   receiveVisit,
   enterDoor,
+  shelvedCount,
   inviterAtDoor,
   dine,
   hasFood,
@@ -52,7 +53,7 @@ import {
   type SubmitResult,
   type Trade,
 } from '../engine/game'
-import { isHome, sameTile } from '../engine/world'
+import { isHome, lockedTiles, lockedZones, sameTile, zoneAt } from '../engine/world'
 import { removal } from '../engine/room'
 import { heartsOf } from '../engine/hearts'
 import { add, RECIPES, type Inventory, type RecipeId } from '../engine/items'
@@ -414,6 +415,11 @@ export const useGame = create<Store>((set, get) => {
         }
         return
       }
+      const zone = zoneAt(tile)
+      if (zone && lockedTiles(shelvedCount(game)).has(`${tile.x},${tile.y}`)) {
+        get().say(fill(T.ui.zoneLocked, { n: zone.books }))
+        return
+      }
       const selfTap = sameTile(tile, playerTile(game)) && game.player.path.length === 0
       const next = tapTile(game, tile)
       if (selfTap) {
@@ -608,6 +614,9 @@ export const useGame = create<Store>((set, get) => {
         sfx('done')
         const grades = T.library.grades as string[]
         get().say(fill(T.library.shelvedToast, { book: (T.quiz.gospels as Record<string, string>)[m.mode.book], grade: grades[next.shelved[m.mode.book]!] }) + (m.missed.length ? ' ' + T.library.rereadNote : ''), 4000)
+        // 새로 열린 구역
+        const opened = lockedZones(shelvedCount(get().game)).filter((z) => shelvedCount(next) >= z.books)
+        if (opened.length) setTimeout(() => get().say(fill(T.ui.zoneOpened, { name: (T.ui.zones as Record<string, string>)[opened[0].id] }), 4000), 4200)
         set({ game: persist(next), modal: { kind: 'library' } })
         return
       }

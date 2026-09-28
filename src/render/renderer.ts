@@ -3,12 +3,12 @@ import { barleyRipe, festivalOf, FESTIVAL_FROM, FESTIVAL_TO, grapesRipe, isWet, 
 import { darkness, phaseOf, seasonOf } from '../engine/clock'
 import { isGrown, STRAY_SPOTS, EAVES } from '../engine/companion'
 import { totalChapters } from '../engine/books'
-import { straysToday, type GameState } from '../engine/game'
+import { shelvedCount, straysToday, type GameState } from '../engine/game'
 import { FURNITURE_DEFS, type Furniture } from '../engine/room'
 import { drawDecor, lanternLights, sheepCount } from './decor'
 import { FIRE, isNear, npcTile } from '../engine/neighbors'
 import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
-import { cameraFor, HEIGHT, HOME_DOOR, HOME_RECT, houseAt, isHome, isIndoor, MAP, ROOM_H, ROOM_W, ROOMS, roomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
+import { cameraFor, HEIGHT, HOME_DOOR, HOME_RECT, houseAt, lockedZones, tileAt, isHome, isIndoor, MAP, ROOM_H, ROOM_W, ROOMS, roomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
 import type { Facing, GameContent, Season, Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { avatarKey, withLookDefaults, type FullAvatar } from '../engine/avatar'
@@ -188,20 +188,22 @@ function houseWallTile(g: Ctx, x: number, y: number, ch: string, id: string, h: 
     g.fillRect(px + dx, py + dy, w, hh)
   }
   const upper = y === h.y1 - 1
-  const col = x - h.x0
   r(st.wall, 0, 0, 16, 16)
   if (upper) r('rgba(90,60,70,0.22)', 0, 0, 16, 3)
   if (!upper) r(st.base, 0, 12, 16, 4)
   if (st.timber) {
+    // 나무 들보: 위 가로대, 집 양끝, 문 양옆 — 문을 가운데 두고 대칭
     r(st.timber, 0, 0, 16, 1)
-    if (col % 2 === 0) r(st.timber, 0, 0, 2, 16)
+    if (x === h.x0 || x === h.doorX + 1) r(st.timber, 0, 0, 2, 16)
+    if (x === h.x1 || x === h.doorX - 1) r(st.timber, 14, 0, 2, 16)
   }
   if (x === h.x0) r(st.base, 0, 0, 1, 16)
   if (x === h.x1) r(st.base, 15, 0, 1, 16)
 
   const door = x === h.doorX
   // 창은 아래 줄에만, 문을 가운데 두고 양옆 같은 거리에
-  const k = h.doorX - 2 >= h.x0 && h.doorX + 2 <= h.x1 ? 2 : 1
+  // 넓은 집(7칸 이상)은 문에서 두 칸, 작은 집은 문 바로 옆 — 모서리에 붙지 않게
+  const k = h.x1 - h.x0 + 1 >= 7 ? 2 : 1
   const winCol = Math.abs(x - h.doorX) === k
   const glass = '#cfe3ec'
   const window = (dy: number) => {
@@ -555,6 +557,30 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r(C.woodDark, 5, 3, 1, 10)
       r(C.woodDark, 11, 3, 1, 10)
       break
+  }
+}
+
+/** 길을 막은 덤불 한 칸 */
+function drawBush(g: Ctx, x: number, y: number, season: Season) {
+  const px = x * TILE
+  const py = y * TILE
+  const dark = season === 'winter' ? '#5f6b58' : '#4f7a3f'
+  const mid = season === 'autumn' ? '#8a8a48' : season === 'winter' ? '#788470' : '#62914c'
+  const light = season === 'winter' ? '#95a08a' : '#7fae5f'
+  g.fillStyle = dark
+  g.fillRect(px, py + 2, TILE, TILE - 2)
+  for (let i = 0; i < 5; i++) {
+    const bx = px + Math.floor(hash(x, y, i + 20) * 11)
+    const by = py + Math.floor(hash(x, y, i + 30) * 9)
+    g.fillStyle = mid
+    g.fillRect(bx, by, 6, 5)
+    g.fillStyle = light
+    g.fillRect(bx + 1, by, 3, 2)
+  }
+  // 가끔 작은 열매
+  if (hash(x, y, 40) < 0.3) {
+    g.fillStyle = '#b98a8a'
+    g.fillRect(px + 4 + Math.floor(hash(x, y, 41) * 8), py + 6 + Math.floor(hash(x, y, 42) * 6), 2, 2)
   }
 }
 
@@ -966,6 +992,10 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
 
       // 마음이 쌓여 마을에 생긴 것들
       drawDecor(g, game, weather, t, phase === 'morning' || phase === 'day')
+      // 아직 열리지 않은 구역: 땅을 덮은 덤불 (물·집은 그대로 보인다)
+      for (const z of lockedZones(shelvedCount(game)))
+        for (let y = z.y0; y <= z.y1; y++)
+          for (let x = z.x0; x <= z.x1; x++) if (!'~=uR#DS'.includes(tileAt(x, y))) drawBush(g, x, y, season)
 
       type Item = { y: number; paint: () => void }
       const items: Item[] = []

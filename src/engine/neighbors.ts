@@ -34,6 +34,8 @@ export interface GoalContext {
   festival: boolean
   /** 이야기 때문에 잠시 다른 곳에 가는 이웃 (null = 집) */
   special?: Record<string, Tile | null>
+  /** 아직 열리지 않은 칸 — 이웃도 들어가지 않는다 */
+  locked?: ReadonlySet<string>
 }
 
 /** 지금 이 이웃이 있어야 할 곳. null이면 집 안(보이지 않음) */
@@ -45,8 +47,10 @@ export function goalFor(def: NeighborDef, ctx: GoalContext): Tile | null {
   let entry = null
   for (const e of def.schedule) if (e.from <= ctx.minute) entry = e
   if (!entry) return null
-  if (ctx.wet) return entry.tile ? (entry.wet ?? null) : null
-  return entry.tile ?? null
+  const goal = ctx.wet ? (entry.tile ? (entry.wet ?? null) : null) : (entry.tile ?? null)
+  if (!goal || !ctx.locked?.has(key(goal))) return goal
+  // 가려던 곳이 아직 덤불로 막혀 있으면, 하루 중 열린 다른 자리에서 지낸다 (없으면 집에)
+  return def.schedule.map((e) => e.tile).find((t): t is Tile => !!t && !ctx.locked!.has(key(t))) ?? null
 }
 
 /** 불러온 직후에는 걸어오지 않고 제자리에 있게 한다 */

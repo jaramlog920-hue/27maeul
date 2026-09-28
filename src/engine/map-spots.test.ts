@@ -4,10 +4,12 @@ import neighbors from '../content/neighbors.json'
 import * as bonds from './bonds'
 import * as companion from './companion'
 import { findPath } from './movement'
-import { FESTIVAL_SPOTS, FIRE } from './neighbors'
+import { FESTIVAL_SPOTS, FIRE, goalFor } from './neighbors'
 import * as stories from './stories'
 import type { Tile } from './types'
-import { isWalkable, MAP } from './world'
+import { isWalkable, lockedTiles, lockedZones, MAP, PLACES, ROOMS, zoneAt } from './world'
+import { CONTENT } from '../content/catalog'
+import { newGame, tapTile } from './game'
 
 const isTile = (v: unknown): v is Tile => !!v && typeof v === 'object' && 'x' in v && 'y' in v
 const where = (t: Tile) => `${t.x},${t.y} '${MAP[t.y]?.[t.x]}'`
@@ -36,5 +38,43 @@ describe('지도 위의 자리', () => {
       }
     expect(spots.length).toBeGreaterThan(30)
     for (const [label, t] of spots) expect(isWalkable(t), `${label} ${where(t)}`).toBe(true)
+  })
+})
+
+describe('서고 권수로 열리는 구역', () => {
+  const vine = PLACES.vine.tiles[0]
+  it('구역마다 맡은 곳을 덮고, 마을의 기본 자리는 덮지 않는다', () => {
+    expect(zoneAt(vine)?.id).toBe('vineyard')
+    expect(zoneAt({ x: 24, y: 33 })?.id).toBe('dock') // 나루
+    expect(zoneAt(ROOMS.find((r) => r.owner === 'beekeeper')!.door)?.id).toBe('hives')
+    expect(zoneAt(PLACES.anvil.tiles[0])?.id).toBe('forge')
+    for (const id of ['bed', 'desk', 'well', 'hill', 'bench', 'library', 'basket', 'field'] as const)
+      for (const t of [...PLACES[id].tiles, ...(PLACES[id].stand ? [PLACES[id].stand!] : [])]) expect(zoneAt(t), id).toBeNull()
+    for (const r of ROOMS.filter((r) => r.owner !== 'beekeeper')) expect(zoneAt(r.door), r.owner).toBeNull()
+  })
+  it('책이 꽂힐수록 하나씩 열린다', () => {
+    expect(lockedZones(0).map((z) => z.id)).toEqual(['vineyard', 'dock', 'hives', 'forge'])
+    expect(lockedZones(1).map((z) => z.id)).toEqual(['dock', 'hives', 'forge'])
+    expect(lockedZones(4)).toEqual([])
+    expect(lockedTiles(0).has(`${vine.x},${vine.y}`)).toBe(true)
+    expect(lockedTiles(1).has(`${vine.x},${vine.y}`)).toBe(false)
+  })
+  it('잠긴 곳으로는 걸어갈 수 없고, 책을 꽂으면 갈 수 있다', () => {
+    const s = newGame(CONTENT)
+    const to = { x: 43, y: 5 } // 포도원 한가운데
+    expect(tapTile(s, to).player.path).toEqual([])
+    const opened = tapTile({ ...s, shelved: { mk: 1 } }, to)
+    expect(opened.player.path.at(-1)).toEqual(to)
+  })
+  it('잠긴 곳에서 일하던 이웃은 열린 다른 자리에서 지내고, 갈 곳이 없으면 집에 있다', () => {
+    const grandpa = CONTENT.neighbors.find((d) => d.id === 'grandpa')!
+    const smith = CONTENT.neighbors.find((d) => d.id === 'smith')!
+    const ctx = { minute: 720, wet: false, market: false, festival: false }
+    expect(zoneAt(goalFor(grandpa, ctx)!)?.id).toBe('vineyard')
+    const shut = goalFor(grandpa, { ...ctx, locked: lockedTiles(0) })!
+    expect(zoneAt(shut)).toBeNull()
+    expect(isWalkable(shut)).toBe(true)
+    expect(goalFor(smith, { ...ctx, locked: lockedTiles(0) })).toBeNull()
+    expect(goalFor(smith, { ...ctx, locked: lockedTiles(4) })).not.toBeNull()
   })
 })

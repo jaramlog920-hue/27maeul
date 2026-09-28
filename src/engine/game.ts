@@ -51,7 +51,7 @@ import {
   momentNow,
   onceKey,
 } from './stories'
-import { BED_STAND, HEARTH_STAND, isIndoor, key, PLACES, placeAt, roomAt, sameTile, START, tileAt, WARPS } from './world'
+import { BED_STAND, HEARTH_STAND, isIndoor, key, lockedTiles, PLACES, placeAt, roomAt, sameTile, START, tileAt, WARPS } from './world'
 import type { Book, Facing, GameContent, ItemId, NeighborDef, PlaceId, Rng, Target, Tile } from './types'
 import type { Avatar } from './avatar'
 
@@ -143,7 +143,12 @@ function defsById(content: GameContent): Record<string, NeighborDef> {
   return Object.fromEntries(content.neighbors.map((n) => [n.id, n]))
 }
 
-type GoalState = Pick<GameState, 'clock' | 'flags' | 'progress' | 'hearts' | 'today'>
+type GoalState = Pick<GameState, 'clock' | 'flags' | 'progress' | 'hearts' | 'today' | 'shelved'>
+
+/** 서고에 꽂은 책 수 — 마을 구역이 이만큼 열린다 */
+export function shelvedCount(s: Pick<GameState, 'shelved'>): number {
+  return Object.keys(s.shelved).length
+}
 
 function goalContext(s: GoalState, content: GameContent) {
   const w = weatherOf(s.clock.day)
@@ -176,6 +181,7 @@ function goalContext(s: GoalState, content: GameContent) {
     market: isMarketDay(s.clock.day),
     festival: festivalOf(s.clock.day) !== null && !isWet(w),
     special,
+    locked: lockedTiles(shelvedCount(s)),
   }
 }
 
@@ -223,7 +229,7 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
   // heartPoints: hearts에 점수(0~100)가 들어 있다는 표식 (예전 저장과 구분)
   const flags: Record<string, number> = { heartPoints: 1 }
   const progress = emptyProgress()
-  const base = { clock, flags, progress, hearts: {}, today: NO_TODAY }
+  const base = { clock, flags, progress, hearts: {}, today: NO_TODAY, shelved: {} }
   return {
     version: 1,
     clock,
@@ -289,7 +295,7 @@ export function outdoors(s: GameState): boolean {
 }
 
 function blockersOf(s: GameState): Set<string> {
-  return new Set([...Object.values(s.npcs).filter((n) => n.visible).map((n) => key(npcTile(n))), ...solidTiles(s.room)])
+  return new Set([...Object.values(s.npcs).filter((n) => n.visible).map((n) => key(npcTile(n))), ...solidTiles(s.room), ...lockedTiles(shelvedCount(s))])
 }
 
 /** 오늘 들판에 있는 떠돌이 새끼들 */
@@ -426,7 +432,7 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
   const defs = defsById(content)
   const gctx = goalContext({ ...s, clock }, content)
   const npcs: Record<string, Npc> = {}
-  const furnitureBlockers = solidTiles(s.room)
+  const furnitureBlockers = new Set([...solidTiles(s.room), ...lockedTiles(shelvedCount(s))])
   for (const [id, n] of Object.entries(s.npcs)) npcs[id] = defs[id] ? stepNpc(n, defs[id], goalFor(defs[id], gctx), dt, furnitureBlockers) : n
 
   // 도착
