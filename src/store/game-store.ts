@@ -53,7 +53,7 @@ import {
   type SubmitResult,
   type Trade,
 } from '../engine/game'
-import { isHome, LOCKED_DOORS, lockedTiles, lockedZones, sameTile, zoneAt } from '../engine/world'
+import { isHome, LOCKED_DOORS, lockedTiles, lockedZones, roomAt, sameTile, zoneAt } from '../engine/world'
 import { removal } from '../engine/room'
 import { heartsOf } from '../engine/hearts'
 import { add, RECIPES, type Inventory, type RecipeId } from '../engine/items'
@@ -240,6 +240,14 @@ function gained(before: Inventory, after: Inventory): Partial<Record<ItemId, num
   return out
 }
 
+/** 집 안에 막 들어왔으면 누구 집인지 알린다 */
+function announceRoom(before: GameState, after: GameState) {
+  const room = roomAt(playerTile(after))
+  if (!room || room === roomAt(playerTile(before))) return
+  const who = CONTENT.neighbors.find((d) => d.id === room.owner)?.role
+  useGame.getState().say(room.owner === 'library' ? T.ui.libraryRoom : fill(T.ui.roomOf, { who: who ?? '' }), 2200)
+}
+
 export const useGame = create<Store>((set, get) => {
   let warnedSaveFail = false
   const persist = (game: GameState) => {
@@ -318,7 +326,9 @@ export const useGame = create<Store>((set, get) => {
         }
         // 초대받은 저녁이 아니면 그냥 들어가 본다
         sfx('step')
-        return { game: persist(enterDoor(game, target.tile)), modal: null }
+        const entered = enterDoor(game, target.tile)
+        announceRoom(game, entered)
+        return { game: persist(entered), modal: null }
       }
       case 'anvil':
         get().say(T.ui.anvilHint)
@@ -458,6 +468,7 @@ export const useGame = create<Store>((set, get) => {
       }
       const r = tick(s.game, dt, s.rng, CONTENT)
       let game = r.state
+      announceRoom(s.game, game)
       let modal: Modal | null = null
       for (const e of r.events) {
         if (e.type === 'arrived') {

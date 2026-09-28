@@ -8,7 +8,7 @@ import { FURNITURE_DEFS, type Furniture } from '../engine/room'
 import { drawDecor, lanternLights, sheepCount } from './decor'
 import { FIRE, isNear, npcTile } from '../engine/neighbors'
 import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
-import { cameraFor, HEIGHT, HOME_DOOR, HOME_RECT, HOUSES, houseAt, lockedZones, tileAt, isHome, isIndoor, MAP, PLACES, ROOMS, roomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
+import { cameraFor, HEIGHT, HOME_DOOR, HOME_RECT, HOUSES, houseAt, lockedZones, tileAt, isHome, isIndoor, MAP, PLACES, ROOMS, roomAt, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
 import type { Facing, GameContent, Season, Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { avatarKey, withLookDefaults, type FullAvatar } from '../engine/avatar'
@@ -123,13 +123,13 @@ function houseWallTile(g: Ctx, x: number, y: number, ch: string, id: string, h: 
   if (upper) r('rgba(90,60,70,0.22)', 0, 0, 16, 3)
   if (!upper) r(st.base, 0, 12, 16, 4)
   if (st.timber) {
-    // 나무 들보: 위 가로대, 집 양끝, 문 양옆 — 문을 가운데 두고 대칭
-    r(st.timber, 0, 0, 16, 1)
+    // 나무 들보: 위 가로대(위 줄에만), 집 양끝, 문 양옆 — 문을 가운데 두고 대칭. 선은 2픽셀 (1픽셀은 걸을 때 일렁인다)
+    if (upper) r(st.timber, 0, 3, 16, 2)
     if (x === h.x0 || x === h.doorX + 1) r(st.timber, 0, 0, 2, 16)
     if (x === h.x1 || x === h.doorX - 1) r(st.timber, 14, 0, 2, 16)
   }
-  if (x === h.x0) r(st.base, 0, 0, 1, 16)
-  if (x === h.x1) r(st.base, 15, 0, 1, 16)
+  if (x === h.x0) r(st.base, 0, 0, 2, 16)
+  if (x === h.x1) r(st.base, 14, 0, 2, 16)
 
   const door = x === h.doorX
   // 창은 아래 줄에만, 문을 가운데 두고 양옆 같은 거리에
@@ -355,13 +355,20 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       for (let i = 0; i < 5; i++) r(['#c89097', '#93afc8', '#c3ae7b', '#a59bbf', '#9dbb94'][(x + i) % 5], 3 + i * 2, 3, 2, 9)
       r(C.wood, 2, 12, 12, 2)
       break
-    case 'e':
-      // 깔개 (밟고 다닌다)
-      r('#d9b8b0', 0, 1, 16, 14)
-      r('#b98a84', 0, 1, 16, 1)
-      r('#b98a84', 0, 14, 16, 1)
-      for (let i = 0; i < 4; i++) r('#efe4d4', 2 + i * 4, 7, 2, 2)
+    case 'e': {
+      // 깔개 (밟고 다닌다): 이어진 깔개 칸끼리는 테두리 없이 한 장으로
+      const rugAt = (dx: number, dy: number) => tileAt(x + dx, y + dy) === 'e'
+      const t = rugAt(0, -1) ? 0 : 2
+      const b = rugAt(0, 1) ? 16 : 14
+      const l = rugAt(-1, 0) ? 0 : 2
+      const rr = rugAt(1, 0) ? 16 : 14
+      r('#b86e52', l, t, rr - l, b - t)
+      r('#c98f6a', l + (l ? 2 : 0), t + (t ? 2 : 0), rr - l - (l ? 2 : 0) - (rr < 16 ? 2 : 0), b - t - (t ? 2 : 0) - (b < 16 ? 2 : 0))
+      // 가운데 크림 무늬 (칸마다 같은 자리에 — 이어 붙이면 줄무늬가 된다)
+      r('#f3dbb0', 7, 4, 2, 2)
+      r('#f3dbb0', 7, 10, 2, 2)
       break
+    }
     case 'E':
       // 문깔개: 밟으면 밖으로
       r(C.wall, 0, 0, 16, 16)
@@ -1170,7 +1177,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       items.sort((a, b) => a.y - b.y).forEach((i) => i.paint())
       // 내 집은 밖에 있을 때 지붕을 덮는다 (사람·동물을 그린 뒤)
       if (!isHome(here)) drawHomeRoof(g)
-      const room = roomAt(here)
+      const room = viewRoomAt(here)
       if (room) {
         const rx = room.x0 * TILE
         const ry = room.y0 * TILE

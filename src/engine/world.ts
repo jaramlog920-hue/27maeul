@@ -299,6 +299,14 @@ export function roomAt(t: Tile): Room | null {
   return ROOMS.find((r) => t.x >= r.x0 && t.x < r.x0 + r.w && t.y >= r.y0 && t.y < r.y0 + r.h) ?? null
 }
 
+/** 화면을 방 하나로 좁혀 보여 주는 곳: 이웃집·서고 방, 그리고 내 집 안 */
+export function viewRoomAt(t: Tile): { x0: number; y0: number; w: number; h: number } | null {
+  const r = roomAt(t)
+  if (r) return r
+  const { x0, y0, x1, y1 } = HOME_RECT
+  return isHome(t) ? { x0, y0, w: x1 - x0 + 1, h: y1 - y0 + 1 } : null
+}
+
 /** 문을 밟으면 옮겨 가는 곳: 바깥 문 → 방 안, 방의 문깔개 → 바깥 문 앞 */
 export const WARPS: ReadonlyMap<string, Tile> = new Map(
   ROOMS.flatMap((r) => [
@@ -359,8 +367,8 @@ export const HOME_DOOR: Tile = { x: 6, y: 7 }
 
 /** 카메라 왼쪽 위 (칸 단위, 소수 가능). 기록자를 가운데 두되 지도 밖은 보이지 않게 */
 export function cameraFor(x: number, y: number, zoom = 1): { x: number; y: number } {
-  // 이웃집 안: 방을 화면 가운데에 둔다 (둘레는 그리는 쪽에서 가린다)
-  const room = roomAt({ x: Math.round(x), y: Math.round(y) })
+  // 집 안(이웃집·서고·내 집): 방을 화면 가운데에 둔다 (둘레는 그리는 쪽에서 가린다)
+  const room = viewRoomAt({ x: Math.round(x), y: Math.round(y) })
   if (room) return { x: room.x0 + room.w / 2 - VIEW_W / zoom / 2, y: room.y0 + room.h / 2 - VIEW_H / zoom / 2 }
   const cx = Math.min(Math.max(x + 0.5 - VIEW_W / zoom / 2, 0), WIDTH - VIEW_W / zoom)
   const cy = Math.min(Math.max(y + 0.5 - VIEW_H / zoom / 2, 0), VILLAGE_H - VIEW_H / zoom)
