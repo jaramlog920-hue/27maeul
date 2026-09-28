@@ -316,7 +316,7 @@
     "title": "작은 배",
     "stamps": [
       {
-        "kind": "same",
+        "kind": "similar",
         "book": "lk",
         "ref": "눅 6:17-19"
       },
@@ -931,7 +931,7 @@
     "title": "평지에 서시니",
     "stamps": [
       {
-        "kind": "same",
+        "kind": "similar",
         "book": "mk",
         "ref": "막 3:7-12"
       },
