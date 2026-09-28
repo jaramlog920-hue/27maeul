@@ -13,6 +13,7 @@ function titleOf(p: Pending): string {
   if (p.kind === 'gather') return (T.places as Record<string, string>)[p.place] ?? ''
   if (p.kind === 'craft') return (T.recipes as Record<string, string>)[p.recipe]?.split(' — ')[0] ?? ''
   if (p.kind === 'teach') return T.ui.talkTeach
+  if (p.kind === 'letter') return T.letters.mini
   const l = NEIGHBOR_LINES[p.neighborId]
   return `${neighborById(p.neighborId)?.role ?? ''} · ${l?.help.label ?? ''}`
 }
@@ -21,6 +22,7 @@ function iconOf(p: Pending): ItemId {
   if (p.kind === 'gather') return PLACE_ICON[p.place] ?? 'water'
   if (p.kind === 'craft') return RECIPE_ICON[p.recipe] ?? 'bread'
   if (p.kind === 'teach') return 'papyrus'
+  if (p.kind === 'letter') return 'papyrus'
   return 'wool'
 }
 

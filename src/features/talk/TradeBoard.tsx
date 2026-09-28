@@ -1,4 +1,4 @@
-import { itemList, T } from '../../content/text'
+import { fill, itemList, T } from '../../content/text'
 import { tradesFor, wouldOverflow } from '../../engine/game'
 import { has, take } from '../../engine/items'
 import { useGame } from '../../store/game-store'
@@ -6,6 +6,7 @@ import { useGame } from '../../store/game-store'
 export function TradeBoard() {
   const inv = useGame((s) => s.game.inv)
   const flags = useGame((s) => s.game.flags)
+  const coins = useGame((s) => s.game.coins)
   const { doTrade, closeModal } = useGame.getState()
   const names = T.trades as Record<string, string>
   return (
@@ -19,8 +20,8 @@ export function TradeBoard() {
           return (
             <li key={t.id}>
               <span className="trade-get">{names[t.id]}</span>
-              <span className="trade-pay">{itemList(t.pay)}</span>
-              <button disabled={owned || full || !has(inv, t.pay)} onClick={() => doTrade(t)}>
+              <span className="trade-pay">{t.coins !== undefined ? fill(T.ui.coins, { n: t.coins }) : itemList(t.pay)}</span>
+              <button disabled={owned || full || !has(inv, t.pay) || (t.coins !== undefined && coins < t.coins)} onClick={() => doTrade(t)}>
                 {owned ? T.ui.tradeOwned : full ? T.ui.bagFullShort : T.ui.talkTrade}
               </button>
             </li>

@@ -56,6 +56,7 @@ import { removal } from '../engine/room'
 import { heartsOf } from '../engine/hearts'
 import { add, RECIPES, type Inventory, type RecipeId } from '../engine/items'
 import { isDone, startMini, stepMini, tapMini, type MiniState } from '../engine/minigame'
+import { finishLetter, letterPay, letterWaiting } from '../engine/requests'
 import { saveGame } from '../engine/save'
 import { moveItem } from '../engine/scroll'
 import type { Book, ItemId, PlaceId, Rng, Target, Tile } from '../engine/types'
@@ -66,6 +67,7 @@ export type Pending =
   | { kind: 'craft'; recipe: RecipeId }
   | { kind: 'help'; neighborId: string }
   | { kind: 'teach' }
+  | { kind: 'letter' }
 
 export type QuizMode = { kind: 'chapter'; book: Book; chapter: number } | { kind: 'library'; book: Book; retry: boolean }
 
@@ -92,6 +94,7 @@ export type Modal =
   | { kind: 'companion'; animal: Animal }
   | { kind: 'ending' }
   | { kind: 'library' }
+  | { kind: 'letter' }
 
 interface Store {
   game: GameState
@@ -126,6 +129,7 @@ interface Store {
   gift: (neighborId: string, item: ItemId) => void
   doTrade: (t: Trade) => void
   startTeach: () => void
+  startLetter: () => void
   // 손일
   startCraft: (recipe: RecipeId) => void
   miniTap: (itemId?: number) => void
@@ -299,6 +303,10 @@ export const useGame = create<Store>((set, get) => {
         return { game, modal: { kind: 'shelf' } }
       case 'library':
         return { game, modal: { kind: 'library' } }
+      case 'basket':
+        if (letterWaiting(game)) return { game, modal: { kind: 'letter' } }
+        get().say(T.letters.none)
+        return { game, modal: null }
       case 'house': {
         const who = inviterAtDoor(game, target.tile)
         const dined = who ? dine(game, who) : null
@@ -325,7 +333,7 @@ export const useGame = create<Store>((set, get) => {
     }
   }
 
-  function finishPending(game: GameState, p: Pending): GameState {
+  function finishPending(game: GameState, p: Pending, state: MiniState): GameState {
     const before = game.inv
     let next = game
     if (p.kind === 'gather') next = finishGather(game, p.place)
@@ -339,7 +347,12 @@ export const useGame = create<Store>((set, get) => {
         get().say(thanks)
       }
     } else if (p.kind === 'teach') next = teach(game)
-    if (p.kind !== 'help') toastGain(before, next.inv)
+    else if (p.kind === 'letter') {
+      const misses = state.kind === 'timing' ? state.misses : 0
+      next = finishLetter(game, misses)
+      if (next !== game) get().say(fill(T.letters.done, { pay: letterPay(misses) }))
+    }
+    if (p.kind !== 'help' && p.kind !== 'letter') toastGain(before, next.inv)
     return persist(next)
   }
 
@@ -482,6 +495,7 @@ export const useGame = create<Store>((set, get) => {
     },
 
     startTeach: () => set({ modal: { kind: 'mini', state: startMini('timing', get().rng), pending: { kind: 'teach' } } }),
+    startLetter: () => set({ modal: { kind: 'mini', state: startMini('timing', get().rng), pending: { kind: 'letter' } } }),
 
     startCraft: (recipe) => {
       if (canCraft(get().game, recipe)) return
@@ -497,7 +511,7 @@ export const useGame = create<Store>((set, get) => {
       const m = get().modal
       if (m?.kind !== 'mini') return
       if (isDone(m.state)) {
-        set({ game: finishPending(get().game, m.pending), modal: null })
+        set({ game: finishPending(get().game, m.pending, m.state), modal: null })
         return
       }
       const state = tapMini(m.state, itemId)

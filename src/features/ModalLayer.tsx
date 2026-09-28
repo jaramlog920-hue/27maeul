@@ -5,6 +5,7 @@ import { Desk } from './desk/Desk'
 import { Ending } from './ending/Ending'
 import { Journal } from './journal/Journal'
 import { Library } from './library/Library'
+import { LetterBox } from './letters/LetterBox'
 import { CareMenu } from './menus/CareMenu'
 import { PlaceMenu } from './menus/PlaceMenu'
 import { ReadPick } from './menus/ReadPick'
@@ -52,6 +53,8 @@ function Body() {
       return <GiftPicker neighborId={modal.neighborId} />
     case 'trade':
       return <TradeBoard />
+    case 'letter':
+      return <LetterBox />
     case 'menu':
       return <PlaceMenu place={modal.place} />
     case 'readPick':

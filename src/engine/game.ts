@@ -114,6 +114,11 @@ export interface GameState {
   todayNotes: string[]
   /** 오늘의 일: 아침에 들르는 이웃, 저녁 초대, 이웃 모임 (새 날마다 정한다) */
   today: Today
+  /** 닢 */
+  coins: number
+  /** 오늘 편지 의뢰를 끝낸 날 */
+  letterDay: number | null
+  lettersDone: number
 }
 
 export interface Today {
@@ -251,6 +256,9 @@ export function newGame(content: GameContent): GameState {
     room: [],
     todayNotes: [],
     today: NO_TODAY,
+    coins: 0,
+    letterDay: null,
+    lettersDone: 0,
   }
 }
 
@@ -562,6 +570,8 @@ export interface Trade {
   get: Partial<Record<ItemId, number>>
   /** 이 변화가 생긴 뒤에만 (상인의 부탁을 들어준 뒤) */
   requires?: string
+  /** 닢으로 사는 물건 */
+  coins?: number
 }
 /** 장날 상인과 바꾸기 (돈 대신 물건) */
 export const TRADES: readonly Trade[] = [
@@ -578,6 +588,7 @@ export const TRADES: readonly Trade[] = [
   { id: 'bowl', pay: { barley: 2 }, get: { bowl: 1 }, requires: 'moreTrades' },
   { id: 'bird', pay: { olive: 1, fig: 1 }, get: { bird: 1 }, requires: 'moreTrades' },
   { id: 'honey', pay: { grapes: 1, bread: 1 }, get: { honey: 1 }, requires: 'moreTrades' },
+  { id: 'goldLeaf', pay: {}, coins: 30, get: { goldLeaf: 1 } },
 ]
 
 export function tradesFor(flags: Record<string, number>): Trade[] {
@@ -588,9 +599,10 @@ export function trade(s: GameState, t: Trade): GameState | null {
   if (!isMarketDay(s.clock.day)) return null
   if (t.requires && !unlocked(s.flags, t.requires)) return null
   if (t.get.goodPen && count(s.inv, 'goodPen') > 0) return null
+  if (t.coins !== undefined && s.coins < t.coins) return null
   const left = take(s.inv, t.pay)
   if (!left || wouldOverflow(left, t.get)) return null
-  return { ...s, inv: add(left, t.get) }
+  return { ...s, inv: add(left, t.get), coins: s.coins - (t.coins ?? 0) }
 }
 
 /** 아이에게 글자 가르치기 (하루 한 번, 저녁에 집으로 올 때) */

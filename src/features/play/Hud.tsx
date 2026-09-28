@@ -2,6 +2,7 @@ import { fill, T } from '../../content/text'
 import { isMarketDay, weatherOf } from '../../engine/calendar'
 import { formatTime, phaseOf, seasonOf } from '../../engine/clock'
 import { totalChapters } from '../../engine/books'
+import { jobLevel } from '../../engine/requests'
 import { useGame } from '../../store/game-store'
 
 export function Hud() {
@@ -9,6 +10,8 @@ export function Hud() {
   // 10분 단위로만 다시 그린다
   const minute = useGame((s) => Math.floor(s.game.clock.minute / 10) * 10)
   const shelf = useGame((s) => totalChapters(s.game))
+  const coins = useGame((s) => s.game.coins)
+  const job = useGame((s) => jobLevel(s.game.lettersDone, Object.keys(s.game.shelved).length))
   const { open } = useGame.getState()
   const weather = (T.ui.weather as Record<string, string>)[weatherOf(day)]
   return (
@@ -23,7 +26,9 @@ export function Hud() {
         </span>
       </div>
       <div className="hud-row hud-toolbar">
-        <span className="hud-shelf">{fill(T.ui.shelf, { n: shelf })}</span>
+        <span className="hud-shelf">
+          {T.jobs[job]} · {fill(T.ui.coins, { n: coins })} · {fill(T.ui.shelf, { n: shelf })}
+        </span>
         <div className="hud-buttons">
           <button className="hud-btn" onClick={() => open({ kind: 'settings' })}>설정</button>
           <button className="hud-btn" onClick={() => open({ kind: 'bag' })}>

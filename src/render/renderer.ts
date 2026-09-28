@@ -252,6 +252,13 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r(x < 16 ? '#e0c878' : '#6b3f7a', 3, 8, 3, 2)
       r(x < 16 ? '#f1e6cf' : '#7aa84f', 9, 8, 3, 2)
       break
+    case 'q':
+      // 문 앞 편지 바구니
+      r(C.shadow, 3, 12, 10, 3)
+      r(C.woodDark, 3, 7, 10, 7)
+      r(C.wood, 4, 8, 8, 5)
+      r('#f6f1e6', 5, 5, 6, 4)
+      break
     case 'x':
       r(C.fence, 0, 5, 16, 2)
       r(C.fence, 0, 10, 16, 2)

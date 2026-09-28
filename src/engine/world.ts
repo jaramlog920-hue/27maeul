@@ -1,7 +1,7 @@
 // 이름 없는 작은 마을 (exclusion-list §2-3). 한 칸 = TILE 픽셀. 지도는 코드로 짓는다 — 폭이 어긋나는 실수를 막기 위해.
 // 범례
 //   막힘: T 나무 · # 벽 · b 침대 · d 책상 · h 화덕 · s 선반 · k 작업대 · w 우물 · B 벤치 · ~ 강 · r 갈대 · v 포도나무 · L 서고 문
-//         o 올리브나무 · P 기름틀 · A 모루 · O 빵 굽는 가마 · m 장터 좌판 · x 울타리
+//         o 올리브나무 · P 기름틀 · A 모루 · O 빵 굽는 가마 · m 장터 좌판 · x 울타리 · q 편지 바구니
 //   걸음: . 풀 · , 흙길 · f 집 안 바닥 · D 문 · = 나루 · y 보리밭 · * 꽃
 import type { PlaceId, Tile } from './types'
 
@@ -38,6 +38,7 @@ function build(): string[] {
   rect(11, 1, 11, 26, ',')
   rect(1, 17, 28, 17, ',')
   rect(6, 8, 6, 8, ',') // 집 문 앞
+  set(7, 8, 'q') // 문 앞 편지 바구니
   rect(5, 10, 5, 10, ',') // 빵집 문 앞
   rect(23, 10, 23, 10, ',') // 아이네 문 앞
   rect(23, 5, 23, 8, ',') // 할아버지 집 → 큰길
@@ -102,7 +103,7 @@ function build(): string[] {
 
 export const MAP: readonly string[] = build()
 
-const BLOCKED = new Set(['T', '#', 'b', 'd', 'h', 's', 'k', 'w', 'B', '~', 'r', 'v', 'o', 'P', 'A', 'O', 'm', 'x', 'L'])
+const BLOCKED = new Set(['T', '#', 'b', 'd', 'h', 's', 'k', 'w', 'B', '~', 'r', 'v', 'o', 'P', 'A', 'O', 'm', 'x', 'L', 'q'])
 
 export function tileAt(x: number, y: number): string {
   return MAP[y]?.[x] ?? 'T'
@@ -161,6 +162,7 @@ export const PLACES: Record<PlaceId, Place> = {
   anvil: { tiles: [{ x: 22, y: 18 }], stand: { x: 22, y: 17 } },
   field: { tiles: tilesOf('y') },
   library: { tiles: [{ x: 15, y: 1 }], stand: { x: 15, y: 2 } },
+  basket: { tiles: [{ x: 7, y: 8 }], stand: { x: 6, y: 8 } },
 }
 
 export function placeAt(t: Tile): PlaceId | null {

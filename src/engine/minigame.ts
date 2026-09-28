@@ -9,6 +9,7 @@ export interface TimingState {
   kind: 'timing'
   t: number
   hits: number
+  misses: number
   /** 맞히는 구간 [시작, 끝] (0~1) */
   zone: [number, number]
   flash: 'hit' | 'miss' | null
@@ -43,7 +44,7 @@ export function startMini(kind: Minigame, rng: Rng): MiniState {
   if (kind === 'mash') return { kind, progress: 0 }
   if (kind === 'timing') {
     const a = 0.25 + rng() * 0.4
-    return { kind, t: 0, hits: 0, zone: [a, a + 0.22], flash: null }
+    return { kind, t: 0, hits: 0, misses: 0, zone: [a, a + 0.22], flash: null }
   }
   return { kind, items: [], got: 0, nextId: 1, spawn: 0 }
 }
@@ -78,7 +79,7 @@ export function tapMini(s: MiniState, itemId?: number): MiniState {
   if (s.kind === 'timing') {
     const c = cursorOf(s.t)
     const hit = c >= s.zone[0] && c <= s.zone[1]
-    return { ...s, hits: s.hits + (hit ? 1 : 0), flash: hit ? 'hit' : 'miss' }
+    return { ...s, hits: s.hits + (hit ? 1 : 0), misses: s.misses + (hit ? 0 : 1), flash: hit ? 'hit' : 'miss' }
   }
   if (!s.items.some((i) => i.id === itemId)) return s
   return { ...s, items: s.items.filter((i) => i.id !== itemId), got: s.got + 1 }

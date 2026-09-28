@@ -34,6 +34,7 @@ describe('world', () => {
     expect(placeAt({ x: 28, y: 14 })).toBe('reeds')
     expect(placeAt({ x: 15, y: 20 })).toBe('field')
     expect(placeAt({ x: 15, y: 1 })).toBe('library')
+    expect(placeAt({ x: 7, y: 8 })).toBe('basket')
     expect(placeAt({ x: 5, y: 5 })).toBeNull()
     expect(isHome({ x: 5, y: 5 })).toBe(true)
     expect(isHome({ x: 5, y: 12 })).toBe(false)

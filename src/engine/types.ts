@@ -23,6 +23,7 @@ export type PlaceId =
   | 'anvil'
   | 'field'
   | 'library'
+  | 'basket'
 export type Target =
   | { kind: 'place'; id: PlaceId; tile: Tile }
   | { kind: 'neighbor'; id: string; tries: number }
