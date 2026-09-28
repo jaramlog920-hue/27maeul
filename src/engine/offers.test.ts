@@ -2,7 +2,7 @@ import { currentChapter, offersForDay, seededShuffle } from './offers'
 import { canonicalOrder, checkArrangement, moveItem } from './scroll'
 import type { Piece } from './types'
 
-const P = (id: string, chapter: number): Piece => ({ id, ref: '', chapter, title: '', stamps: [] })
+const P = (id: string, chapter: number): Piece => ({ id, book: 'lk', ref: '', chapter, title: '', stamps: [] })
 const pieces = [P('lk-015-011', 15), P('lk-015-001', 15), P('lk-015-008', 15), P('lk-016-001', 16)]
 
 describe('offers', () => {

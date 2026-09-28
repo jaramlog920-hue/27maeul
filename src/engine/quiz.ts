@@ -5,9 +5,9 @@
 //   복음서 탐정: 같은 이야기가 기록된 복음서를 모두 — "비슷한 이야기" 도장이 있는 조각은 쓰지 않는다(같은 일인지 본문이 말하지 않으므로)
 //   어느 이야기일까: 한 절이 속한 조각은 하나뿐 (조각은 겹치지 않는다)
 //   먼저 나오는 이야기: 조각 id 순서 = 본문 순서
-import type { Piece, Rng, StampBook } from './types'
+import type { Book, Piece, Rng } from './types'
 
-export type GospelId = 'mt' | 'mk' | 'lk' | 'jn'
+export type GospelId = Book
 
 export type Question =
   | { kind: 'puzzle'; ref: string; words: string[]; answer: string[] }
@@ -47,8 +47,8 @@ function pickOne<T>(items: readonly T[], rng: Rng): T | undefined {
 /** 탐정 문제로 쓸 수 있는 조각: 도장이 없거나 모두 "같은 이야기" */
 export function detectiveAnswer(p: Piece): GospelId[] | null {
   if (p.stamps.some((s) => s.kind === 'similar')) return null
-  const books = new Set<StampBook>(p.stamps.map((s) => s.book))
-  return GOSPELS.filter((g) => g === 'lk' || books.has(g as StampBook))
+  const books = new Set<Book>(p.stamps.map((s) => s.book))
+  return GOSPELS.filter((g) => g === 'lk' || books.has(g))
 }
 
 export interface QuizSource {

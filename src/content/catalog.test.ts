@@ -12,6 +12,9 @@ describe('catalog', () => {
     expect(pieceById('lk-015-011').title).toBe('두 아들')
     expect(() => pieceById('nope')).toThrow()
   })
+  it('모든 조각에 책이 있고 id 앞머리와 같다', () => {
+    for (const p of PIECES) expect(p.id.startsWith(`${p.book}-`), p.id).toBe(true)
+  })
 })
 
 describe('life-text', () => {

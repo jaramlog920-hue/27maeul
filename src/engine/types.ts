@@ -28,14 +28,17 @@ export type Target =
   | { kind: 'companion' }
   | { kind: 'stray'; animal: 'cat' | 'dog' }
   | { kind: 'ground' }
-export type StampBook = 'mt' | 'mk' | 'jn'
+export type Book = 'mt' | 'mk' | 'lk' | 'jn'
+/** 오늘 우리가 보는 신약성경의 순서 */
+export const BOOKS: readonly Book[] = ['mt', 'mk', 'lk', 'jn']
 export interface Stamp {
   kind: 'same' | 'similar'
-  book: StampBook
+  book: Book
   ref: string
 }
 export interface Piece {
   id: string
+  book: Book
   ref: string
   chapter: number
   title: string

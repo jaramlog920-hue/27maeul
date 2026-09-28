@@ -1,0 +1,6 @@
+[
+  { "id": "lk-003-021", "book": "lk", "ref": "눅 3:21-22", "chapter": 3, "title": "비둘기 같이", "stamps": [{ "kind": "same", "book": "mk", "ref": "막 1:9-11" }] },
+  { "id": "lk-004-001", "book": "lk", "ref": "눅 4:1-13", "chapter": 4, "title": "마귀에게 시험을 받으시더라", "stamps": [{ "kind": "same", "book": "mk", "ref": "막 1:12-13" }] },
+  { "id": "mk-001-009", "book": "mk", "ref": "막 1:9-11", "chapter": 1, "title": "비둘기 같이", "stamps": [{ "kind": "similar", "book": "lk", "ref": "눅 3:21-22" }, { "kind": "same", "book": "mk", "ref": "막 1:12-13" }] },
+  { "id": "mk-001-012", "book": "mk", "ref": "막 1:12-13", "chapter": 1, "title": "광야에서 사십 일", "stamps": [] }
+]

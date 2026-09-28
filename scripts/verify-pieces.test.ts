@@ -24,7 +24,7 @@ describe('verify-pieces.mjs', () => {
       '겹치는 낱말 비율',
       '알 수 없는 kind maybe',
       'ref 책이 book(mk)와 다름',
-      '알 수 없는 book lk',
+      '자기 책을 가리키는 도장',
       '누가복음이 아닌 범위 마 16:1',
       'no verse luk 14:',
       'chapter 12가 시작하는 장 13와 다름',
@@ -45,5 +45,16 @@ describe('verify-pieces.mjs', () => {
     expect(r.out).not.toContain('"요한복음도 있어요"')
     expect(r.out).not.toContain('"필요한 것"')
     expect(r.out).toContain('금지어 (?<![가-힣])사도')
+  })
+
+  it('도장은 양쪽에서 서로를 가리켜야 하고, 부분만 넣은 책도 1장부터 빠짐없이', () => {
+    const r = run('scripts/fixtures/bad-symmetry.json')
+    expect(r.code).toBe(1)
+    for (const msg of [
+      'piece lk-003-021 도장 막 1:9-11: mk-001-009의 되돌아오는 도장 종류가 다름',
+      'piece lk-004-001 도장 막 1:12-13: mk-001-012에 되돌아오는 도장이 없음',
+      'piece mk-001-009 도장 막 1:12-13: 자기 책을 가리키는 도장',
+      '막 1장: 조각이 덮지 않은 절 40개',
+    ]) expect(r.out, msg).toContain(msg)
   })
 })
