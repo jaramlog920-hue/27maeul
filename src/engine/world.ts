@@ -98,7 +98,8 @@ export const ROOMS: readonly Room[] = [
     [[6, 1, 'cupboard'], [6, 4, 'chair', 'flip'], [5, 4, 'teapot'], [8, 3, 'lampStand'], [1, 5, 'bigPlant'], [3, 6, 'mat'],
      [8, 2, 'pillows']]),
   // 마을 서고
-  room('library', 30, 49, { x: 24, y: 5 }, [6, 2], libraryThings, [[4, 2, 'lectern'], [8, 2, 'lectern'], [1, 4, 'lampStand'], [11, 4, 'lampStand'], [3, 4, 'scrolls'], [9, 6, 'inkpot']], LIBRARY_W, LIBRARY_H),
+  // 서고는 리모델링 전 모습이 좋다 (사용자, 2026-09-29) — 가구 그림을 더하지 않는다
+  room('library', 30, 49, { x: 24, y: 5 }, [6, 2], libraryThings, [], LIBRARY_W, LIBRARY_H),
 ]
 
 /** 서고 안 잠긴 방 문 (왼쪽 위 → 왼쪽 아래 → 오른쪽 위 → 오른쪽 아래 = life-text의 lockedRooms 순서) */
