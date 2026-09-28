@@ -1,4 +1,4 @@
-import { PIECES, versesOf, pieceById, NEIGHBORS } from './catalog'
+import { PIECES, versesOf, pieceById, NEIGHBORS, BOOKS_WITH_CONTENT, pieceOfVerse, piecesOf, quizSourceFor } from './catalog'
 import { ALBUM_IDS, fill, ITEM_TEXT, itemList, NEIGHBOR_LINES, SCENES, T } from './text'
 import { MILESTONE_GIFTS } from '../engine/stories'
 import { TRADES } from '../engine/game'
@@ -49,5 +49,26 @@ describe('life-text', () => {
     for (const t of TRADES) expect((T.trades as Record<string, string>)[t.id], t.id).toBeTruthy()
     expect(itemList({ water: 1, bread: 2 })).toBe('물 1 · 빵 2')
     expect(fill('{day}일째', { day: 3 })).toBe('3일째')
+  })
+})
+
+describe('책별 콘텐츠', () => {
+  it('조각이 있는 책과 책별 조각', () => {
+    expect(BOOKS_WITH_CONTENT).toEqual(['mk', 'lk'])
+    expect(piecesOf('mk').length).toBe(22)
+    expect(piecesOf('mk').every((p) => p.book === 'mk')).toBe(true)
+    expect(piecesOf('mt')).toEqual([])
+  })
+  it('절 참조에는 책 약칭이 붙고, 절로 조각을 찾는다', () => {
+    expect(quizSourceFor(['mk']).versesOf('막 1:9-11').map((v) => v.ref)).toEqual(['막 1:9', '막 1:10', '막 1:11'])
+    expect(pieceOfVerse('막 1:10')?.id).toBe('mk-001-009')
+    expect(pieceOfVerse('눅 3:22')?.id).toBe('lk-003-021')
+    expect(pieceOfVerse('마 1:1')).toBeUndefined()
+  })
+  it('countVerse는 고른 책들에서만 센다', () => {
+    const t = quizSourceFor(['mk']).versesOf('막 1:18')[0].text
+    expect(quizSourceFor(['mk']).countVerse(t)).toBe(1)
+    expect(quizSourceFor(['lk']).countVerse(t)).toBe(0)
+    expect(quizSourceFor(['mk', 'lk']).countVerse(t)).toBe(1)
   })
 })
