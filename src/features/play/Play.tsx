@@ -1,0 +1,43 @@
+import { useEffect } from 'react'
+import { saveGame } from '../../engine/save'
+import { useGame } from '../../store/game-store'
+import { ModalLayer } from '../ModalLayer'
+import { DecorateBar } from './DecorateBar'
+import { GameCanvas } from './GameCanvas'
+import { Hud, Toast } from './Hud'
+import { StatusPanel } from './StatusPanel'
+import { useKeyboardMovement } from './useKeyboardMovement'
+import { NextEventBar, useEventAlerts } from './EventSchedule'
+import { Joystick } from './Joystick'
+
+export function Play() {
+  useKeyboardMovement()
+  useEventAlerts()
+  const zoom = useGame((s) => s.zoom)
+  // 탭을 닫거나 다른 앱으로 넘어갈 때 저장한다
+  useEffect(() => {
+    const save = () => saveGame(useGame.getState().game)
+    const onHide = () => document.visibilityState === 'hidden' && save()
+    window.addEventListener('pagehide', save)
+    document.addEventListener('visibilitychange', onHide)
+    return () => {
+      window.removeEventListener('pagehide', save)
+      document.removeEventListener('visibilitychange', onHide)
+    }
+  }, [])
+  return (
+    <div className="play">
+      <Hud />
+      <div className="world-frame">
+        <GameCanvas zoom={zoom} />
+        <Joystick />
+        <Toast />
+      </div>
+      <StatusPanel />
+      <DecorateBar />
+      {/* 다음 일정은 맨 아래 한 줄 (시작 30분 전·시작 알림은 지도 위에 뜬다) */}
+      <NextEventBar />
+      <ModalLayer />
+    </div>
+  )
+}

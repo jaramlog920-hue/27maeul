@@ -1,0 +1,2071 @@
+{
+  "ui": {
+    "title": "스물일곱 권의 마을",
+    "subtitle": "책을 엮는 사람의 사계",
+    "notice": "이 마을과 이웃은 게임을 위해 만든 것입니다. 27권이 모인 역사를 그린 것이 아닙니다. 성경 본문은 항상 출처와 함께 따로 보여 드립니다.",
+    "introLead": "누가복음의 첫머리 보기 (눅 1:1-4)",
+    "start": "시작하기",
+    "continue": "이어하기",
+    "restart": "처음부터",
+    "restartConfirm": "지금까지의 날들이 지워집니다. 처음부터 시작할까요?",
+    "close": "닫기",
+    "back": "뒤로",
+    "next": "다음",
+    "listen": "이야기 듣기",
+    "bibleSource": "개역한글",
+    "deskTitle": "두루마리",
+    "deskHint": "들은 이야기를 차례대로 이어 붙이세요.",
+    "deskEmpty": "아직 이 장의 이야기를 모으지 못했습니다. 마을을 돌아보세요.",
+    "deskSubmit": "이어 붙이기",
+    "deskMissing": "이 장의 이야기가 아직 {n}개 모자랍니다.",
+    "deskWrong": "순서를 다시 살펴보세요.",
+    "deskSupplies": "파피루스와 잉크가 하나씩 있어야 이 장을 마무리할 수 있습니다.",
+    "deskTired": "너무 지쳐 펜이 잡히지 않습니다. 쉬었다가 쓰세요.",
+    "deskDark": "등잔 기름이 없어 어둡습니다. 낮에 쓰거나 기름을 구해 오세요.",
+    "deskHave": "파피루스 {papyrus} · 잉크 {ink}",
+    "deskCollected": "이 장에서 모은 이야기 {got} / {all}",
+    "chapterDone": "{chapter}장까지 차례대로 이어 붙였습니다.",
+    "allDone": "스물네 장을 모두 이어 붙였습니다.",
+    "chapterLabel": "{chapter}장",
+    "shelf": "이은 장 {n}/24",
+    "up": "위로",
+    "down": "아래로",
+    "reviewTitle": "잠들기 전에",
+    "reviewLead": "오늘 들은 이야기를 한 번 더 읽어 봅니다.",
+    "reviewNone": "오늘은 들은 이야기가 없습니다.",
+    "sleep": "잠자리에 들기",
+    "stayUp": "조금 더 깨어 있기",
+    "sleepLate": "너무 늦게 자면 다음 날 늦잠을 잡니다.",
+    "journalTitle": "일지",
+    "journalEmpty": "아직 지나간 날이 없습니다.",
+    "lukeOnly": "네 복음서 중 누가복음에만 있는 이야기",
+    "stampSame": "같은 이야기",
+    "stampSimilar": "비슷한 이야기",
+    "similarNote": "(같은 일인지는 본문이 말하지 않습니다)",
+    "stampNote": "도장은 오늘 우리가 보는 신약성경의 네 복음서를 서로 견주어 붙인 표시입니다.",
+    "stampOpen": "▼ 구절 보기",
+    "day": "{day}일째",
+    "bag": "가방",
+    "bagEmpty": "가방이 비어 있습니다.",
+    "mute": "소리 끄기",
+    "unmute": "소리 켜기",
+    "decorate": "방 꾸미기",
+    "decorateHint": "놓을 것을 고른 뒤 집 안 바닥을 누르세요. 작은 물건은 탁자 위에도 올릴 수 있어요. 놓인 것을 누르면 다시 가방으로.",
+    "decorateDone": "다 꾸몄어요",
+    "decorateNone": "놓을 가구가 없습니다. 이웃과 가까워지거나 장날에 구해 보세요.",
+    "careTitle": "돌보기",
+    "careEat": "먹이기",
+    "careBlanket": "담요 덮어 주기",
+    "careRest": "쉬게 하기",
+    "careNothing": "지금은 괜찮아 보입니다.",
+    "talkHelp": "돕기",
+    "talkGift": "선물하기",
+    "talkTrade": "바꾸기",
+    "talkTeach": "글자 가르치기",
+    "helpDone": "오늘은 이미 도왔습니다.",
+    "helpNeeds": "필요한 것: {items}",
+    "helpTired": "너무 지쳐서 도울 수 없습니다.",
+    "giftDone": "오늘은 이미 선물했습니다.",
+    "giftPick": "무엇을 줄까요?",
+    "giftNone": "줄 만한 것이 없습니다.",
+    "tradeTitle": "장날 좌판",
+    "tradeOwned": "이미 있음",
+    "hearts": "마음",
+    "gotLine": "얻은 것: {items}",
+    "notRipe": "아직 익지 않았습니다.",
+    "tooTired": "너무 지쳐서 손이 움직이지 않습니다. 잠을 자거나 쉬어 가세요.",
+    "bagFull": "더 담을 수 없습니다.",
+    "anvilHint": "대장장이에게 말을 걸면 풀무질을 도울 수 있어요.",
+    "hearthTitle": "벽난로",
+    "hearthBake": "빵 굽기 (보리 1 · 물 1 → 빵 2)",
+    "hearthWarm": "불 쬐기",
+    "hearthEat": "먹기",
+    "workbenchTitle": "작업대",
+    "workPapyrus": "파피루스 만들기 (갈대 1 → 파피루스 1)",
+    "workInk": "잉크 만들기 (그을음 1 · 물 1 → 잉크 {n})",
+    "workBlanket": "담요 짜기 (양털 3 → 담요 1)",
+    "pressTitle": "기름틀",
+    "pressMake": "기름 짜기 (올리브 2 → 기름 1)",
+    "hillTitle": "언덕 벤치",
+    "hillSit": "잠시 앉아 쉬기",
+    "shelfTitle": "선반",
+    "dex": "이야기 도감",
+    "dexOnly": "누가복음에만",
+    "dexAll": "모두",
+    "dexUnknown": "아직 듣지 못한 이야기",
+    "dexCount": "{got} / {all}",
+    "gifts": "받은 선물",
+    "giftsEmpty": "아직 받은 선물이 없습니다.",
+    "recipes": "만들 줄 아는 것",
+    "recipesEmpty": "아직 만들어 본 것이 없습니다.",
+    "album": "풍경 앨범",
+    "albumEmpty": "아직 남긴 풍경이 없습니다.",
+    "myLine": "나의 한 줄",
+    "myLineAsk": "이 이야기를 읽고 마음에 남은 것이 있다면 적어 두세요. 적지 않아도 됩니다.",
+    "myLinePlaceholder": "나의 말로 한 줄",
+    "myLineSave": "남기기",
+    "myLineSkip": "넘어가기",
+    "myLinesTitle": "내가 남긴 한 줄",
+    "myLinesEmpty": "아직 남긴 한 줄이 없습니다.",
+    "minigame": {
+      "mash": "빠르게 여러 번 누르세요",
+      "timing": "움직이는 표시가 밝은 칸에 올 때 누르세요 (세 번)",
+      "pick": "나타나는 것을 눌러 담으세요 (다섯 개)",
+      "tap": "누르기",
+      "done": "다 했어요!",
+      "empty": "빈 칸"
+    },
+    "companionAsk": "밥을 주면 이 아이가 식구가 됩니다. 이름을 지어 줄까요?",
+    "companionNamePlaceholder": "이름 (8자까지)",
+    "companionFeed": "밥 주기",
+    "companionLater": "다음에",
+    "cat": "새끼 고양이",
+    "dog": "새끼 강아지",
+    "phase": {
+      "night": "밤",
+      "morning": "아침",
+      "day": "낮",
+      "evening": "저녁"
+    },
+    "season": {
+      "spring": "봄",
+      "summer": "여름",
+      "autumn": "가을",
+      "winter": "겨울"
+    },
+    "weather": {
+      "sunny": "맑음",
+      "rain": "비",
+      "wind": "바람",
+      "fog": "안개",
+      "hot": "더움",
+      "snow": "눈"
+    },
+    "market": "장날",
+    "needs": {
+      "hunger": "배고픔",
+      "fatigue": "피로",
+      "cold": "추위"
+    },
+    "endingTitle": "다 쓴 날",
+    "endingDays": "함께 보낸 날 {days}일",
+    "endingSeasons": "지나간 계절 {n}번",
+    "endingPieces": "모은 이야기 {n}개",
+    "endingNext": "또 다른 이야기",
+    "endingNextNote": "이 기록자가 쓴 또 하나의 글은 이렇게 시작합니다. 다음 업데이트에서 이어집니다.",
+    "endingContinue": "마을로 돌아가기",
+    "pet": "쓰다듬어 주었다.",
+    "statusTitle": "오늘의 상태",
+    "statusOffers": "오늘 이야기를 들려줄 이웃 {n}명",
+    "statusNoOffers": "오늘 들을 이야기는 다 들었어요",
+    "miniQuit": "그만두기",
+    "saveFailed": "저장하지 못했습니다. 브라우저 저장 공간을 확인해 주세요.",
+    "errorTitle": "잠시 문제가 생겼습니다",
+    "errorBody": "화면을 다시 불러오면 이어서 할 수 있습니다. 저장된 날들은 그대로 있습니다.",
+    "errorReload": "다시 불러오기",
+    "bagFullShort": "가득 참",
+    "stampClose": "▲ 접기",
+    "benchTitle": "장터 벤치",
+    "readScripture": "성경구절 읽기",
+    "readPickTitle": "무엇을 읽을까요?",
+    "readHint": "벤치에 앉아 모은 성경구절을 읽으면 20분이 지나고, 읽을 때마다 피로가 30 풀려요.",
+    "readRested": "벤치에 앉아 성경구절을 읽었다. 피로가 조금 풀렸다.",
+    "readAgain": "벤치에 앉아 성경구절을 읽었다.",
+    "talkRequest": "부탁 듣기",
+    "talkFulfill": "부탁한 것 드리기",
+    "requestNeeds": "부탁: {items}",
+    "visitGot": "받은 것: {items}",
+    "inviteNotHere": "오늘 저녁 초대한 집이 아닙니다.",
+    "villageLevel": "마을 {n}단계"
+  },
+  "items": {
+    "water": {
+      "name": "물",
+      "desc": "우물에서 길은 물 한 동이."
+    },
+    "reed": {
+      "name": "갈대",
+      "desc": "강가에서 벤 갈대."
+    },
+    "papyrus": {
+      "name": "파피루스",
+      "desc": "갈대 줄기를 엮어 두드려 만든 종이."
+    },
+    "soot": {
+      "name": "그을음",
+      "desc": "대장간 불에서 얻은 검은 가루."
+    },
+    "ink": {
+      "name": "잉크",
+      "desc": "그을음을 물에 개어 만든 먹물."
+    },
+    "olive": {
+      "name": "올리브",
+      "desc": "올리브나무 열매."
+    },
+    "oil": {
+      "name": "기름",
+      "desc": "등잔을 밝히는 기름."
+    },
+    "barley": {
+      "name": "보리",
+      "desc": "밭에서 거둔 보리."
+    },
+    "bread": {
+      "name": "빵",
+      "desc": "갓 구운 보리빵."
+    },
+    "grapes": {
+      "name": "포도",
+      "desc": "달게 익은 포도송이."
+    },
+    "wool": {
+      "name": "양털",
+      "desc": "부드러운 양털 한 뭉치."
+    },
+    "fig": {
+      "name": "무화과",
+      "desc": "말린 무화과."
+    },
+    "blanket": {
+      "name": "담요",
+      "desc": "양털로 짠 따뜻한 담요."
+    },
+    "pot": {
+      "name": "화분",
+      "desc": "작은 풀이 자라는 화분."
+    },
+    "rug": {
+      "name": "깔개",
+      "desc": "무늬를 넣어 짠 큰 깔개. 바닥 여섯 칸을 덮는다."
+    },
+    "stool": {
+      "name": "작은 의자",
+      "desc": "나무를 깎아 만든 의자."
+    },
+    "basket": {
+      "name": "바구니",
+      "desc": "빵을 담아 두는 바구니."
+    },
+    "vase": {
+      "name": "꽃병",
+      "desc": "들꽃을 꽂은 꽃병."
+    },
+    "cushion": {
+      "name": "양털 방석",
+      "desc": "앉으면 푹신한 방석."
+    },
+    "goodPen": {
+      "name": "좋은 펜",
+      "desc": "잘 깎은 갈대 펜. 잉크를 만들 때 두 병을 얻는다."
+    },
+    "brightLamp": {
+      "name": "밝은 등잔",
+      "desc": "기름 하나로 두 밤을 밝힌다."
+    },
+    "table": {
+      "name": "식탁",
+      "desc": "두 칸짜리 나무 식탁. 위에 작은 물건을 올릴 수 있다."
+    },
+    "nightstand": {
+      "name": "협탁",
+      "desc": "침대 곁에 두는 작은 탁자. 위에 작은 물건 하나를 올린다."
+    },
+    "jar": {
+      "name": "물병",
+      "desc": "시원한 물을 담아 두는 병."
+    },
+    "candle": {
+      "name": "촛대",
+      "desc": "작은 초를 꽂는 촛대."
+    },
+    "bowl": {
+      "name": "그릇",
+      "desc": "곡식을 담아 두는 나무 그릇."
+    },
+    "bird": {
+      "name": "나무 새",
+      "desc": "나무를 깎아 만든 작은 새."
+    },
+    "honey": {
+      "name": "꿀",
+      "desc": "벌 치는 이웃이 뜬 꿀. 먹으면 든든하다."
+    }
+  },
+  "recipes": {
+    "bread": "빵 — 보리 1, 물 1 (벽난로)",
+    "papyrus": "파피루스 — 갈대 1 (작업대)",
+    "ink": "잉크 — 그을음 1, 물 1 (작업대)",
+    "oil": "기름 — 올리브 2 (기름틀)",
+    "blanket": "담요 — 양털 3 (작업대)"
+  },
+  "places": {
+    "well": "물 긷기",
+    "reeds": "갈대 베기",
+    "olive": "올리브 따기",
+    "vine": "포도 따기",
+    "field": "보리 거두기",
+    "fieldGlean": "이삭 줍기"
+  },
+  "trades": {
+    "pen": "좋은 펜",
+    "papyrus": "파피루스 두 장",
+    "soot": "그을음 두 줌",
+    "rug": "깔개",
+    "vase": "꽃병",
+    "barley": "보리 세 줌",
+    "table": "식탁",
+    "nightstand": "협탁",
+    "jar": "물병",
+    "candle": "촛대",
+    "bowl": "그릇",
+    "bird": "나무 새",
+    "honey": "꿀"
+  },
+  "neighbors": {
+    "baker": {
+      "offer": [
+        {
+          "speaker": "baker",
+          "text": "이야기 하나 전해 드릴게요."
+        },
+        {
+          "speaker": "baker",
+          "text": "전해 들은 이야기가 있어요. 들어 보실래요?"
+        }
+      ],
+      "idle": [
+        {
+          "speaker": "baker",
+          "text": "오늘 빵이 잘 부풀었어요."
+        },
+        {
+          "speaker": "baker",
+          "text": "바람이 선선하네요."
+        }
+      ],
+      "warm": [
+        {
+          "speaker": "baker",
+          "text": "늦게까지 쓰지 마세요. 눈 나빠져요."
+        },
+        {
+          "speaker": "baker",
+          "text": "배고프면 언제든 들러요. 빵은 늘 있으니까."
+        }
+      ],
+      "wet": [
+        {
+          "speaker": "baker",
+          "text": "비 오는 날은 반죽이 더디 부풀어요."
+        }
+      ],
+      "help": {
+        "label": "반죽 치대기 돕기",
+        "thanks": "덕분에 금방 끝났어요. 빵 가져가세요."
+      },
+      "giftLiked": "어머, 제가 좋아하는 거예요!",
+      "giftPlain": "고마워요. 잘 쓸게요.",
+      "close": [
+        {
+          "speaker": "baker",
+          "text": "우리 아기가 당신 목소리를 알아들어요."
+        },
+        {
+          "speaker": "baker",
+          "text": "오늘은 당신 몫으로 빵을 하나 더 구웠어요."
+        }
+      ],
+      "visit": [
+        {
+          "speaker": "baker",
+          "text": "아침 빵이 남아서 가져왔어요."
+        }
+      ]
+    },
+    "child": {
+      "offer": [
+        {
+          "speaker": "child",
+          "text": "저도 이야기 하나 알아요! 들어 볼래요?"
+        },
+        {
+          "speaker": "child",
+          "text": "어른들한테 들은 이야기가 있어요."
+        }
+      ],
+      "idle": [
+        {
+          "speaker": "child",
+          "text": "물동이가 무거워요."
+        },
+        {
+          "speaker": "child",
+          "text": "오늘은 뭐 쓰세요?"
+        }
+      ],
+      "warm": [
+        {
+          "speaker": "child",
+          "text": "저녁에 또 갈게요!"
+        },
+        {
+          "speaker": "child",
+          "text": "손에 까만 게 묻었어요. 잉크예요?"
+        }
+      ],
+      "wet": [
+        {
+          "speaker": "child",
+          "text": "비 오니까 밖에서 못 놀아요."
+        }
+      ],
+      "help": {
+        "label": "같이 물 긷기",
+        "thanks": "둘이 하니까 금방이다! 이건 가져가세요."
+      },
+      "lesson": "오늘도 한 글자 가르쳐 주세요!",
+      "giftLiked": "와, 이거 좋아해요!",
+      "giftPlain": "고맙습니다!",
+      "close": [
+        {
+          "speaker": "child",
+          "text": "선생님! 오늘은 어떤 글자 배워요?"
+        },
+        {
+          "speaker": "child",
+          "text": "저 이제 제 이름도 쓸 줄 알아요."
+        }
+      ],
+      "visit": [
+        {
+          "speaker": "child",
+          "text": "문 앞에 무화과 두고 가요! 헤헤."
+        }
+      ]
+    },
+    "grandpa": {
+      "offer": [
+        {
+          "speaker": "grandpa",
+          "text": "내가 들은 이야기를 하나 해 주지."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "앉게. 이야기 하나 전해 주겠네."
+        }
+      ],
+      "idle": [
+        {
+          "speaker": "grandpa",
+          "text": "포도나무는 서두르면 안 되는 법이지."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "오늘은 해가 좋구먼."
+        }
+      ],
+      "warm": [
+        {
+          "speaker": "grandpa",
+          "text": "자네가 오면 반갑네."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "요즘 무릎이 좀 시큰하다네."
+        }
+      ],
+      "wet": [
+        {
+          "speaker": "grandpa",
+          "text": "비가 오니 포도나무가 목을 축이겠군."
+        }
+      ],
+      "help": {
+        "label": "장작 줍기 돕기",
+        "thanks": "고맙네. 무화과 좀 가져가게."
+      },
+      "helpSeason": {
+        "label": "포도 대신 따 드리기",
+        "thanks": "허리 굽히기가 힘들었는데, 고맙네. 몇 송이 가져가게."
+      },
+      "giftLiked": "허허, 내가 좋아하는 걸 어찌 알았나.",
+      "giftPlain": "고맙네.",
+      "close": [
+        {
+          "speaker": "grandpa",
+          "text": "자네는 이제 우리 식구나 다름없네."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "내 젊을 적 이야기 하나 해 줄까. 포도나무 처음 심던 날 말일세."
+        }
+      ],
+      "visit": [
+        {
+          "speaker": "grandpa",
+          "text": "지나가는 길에 들렀네. 포도랑 무화과 좀 두고 가지."
+        }
+      ]
+    },
+    "merchant": {
+      "offer": [
+        {
+          "speaker": "merchant",
+          "text": "길에서 들은 이야기가 있지요. 하나 전해 드릴까요?"
+        }
+      ],
+      "idle": [
+        {
+          "speaker": "merchant",
+          "text": "먼 데서 좋은 물건을 가져왔어요. 한번 보세요."
+        },
+        {
+          "speaker": "merchant",
+          "text": "이 마을은 늘 조용해서 좋아요."
+        }
+      ],
+      "warm": [
+        {
+          "speaker": "merchant",
+          "text": "다음 장날에도 들를게요."
+        }
+      ],
+      "wet": [
+        {
+          "speaker": "merchant",
+          "text": "비가 와도 장은 서야지요."
+        }
+      ],
+      "help": {
+        "label": "짐 정리 돕기",
+        "thanks": "손이 빠르시네요. 이거 한 장 드릴게요."
+      },
+      "giftLiked": "양털이군요! 좋은 값에 팔리겠어요.",
+      "giftPlain": "고맙습니다.",
+      "close": [
+        {
+          "speaker": "merchant",
+          "text": "이 마을에 올 때마다 당신부터 찾게 돼요."
+        },
+        {
+          "speaker": "merchant",
+          "text": "먼 데 가면 당신 이야기를 해요. 부지런한 이웃이 있다고."
+        }
+      ],
+      "visit": [
+        {
+          "speaker": "merchant",
+          "text": "장에 가는 길에 들렀어요. 파피루스 한 장 드릴게요."
+        }
+      ]
+    },
+    "smith": {
+      "offer": [
+        {
+          "speaker": "smith",
+          "text": "망치질하다 들은 이야기가 있소. 들어 보겠소?"
+        }
+      ],
+      "idle": [
+        {
+          "speaker": "smith",
+          "text": "불이 잘 붙었소."
+        },
+        {
+          "speaker": "smith",
+          "text": "쇠는 달궈졌을 때 두드려야 하오."
+        }
+      ],
+      "warm": [
+        {
+          "speaker": "smith",
+          "text": "그을음이 필요하면 언제든 오시오."
+        }
+      ],
+      "wet": [
+        {
+          "speaker": "smith",
+          "text": "비가 와서 오늘은 쉬오."
+        }
+      ],
+      "help": {
+        "label": "풀무질 돕기",
+        "thanks": "바람을 잘 넣었소. 그을음 가져가시오."
+      },
+      "giftLiked": "고맙소. 배가 출출하던 참이오.",
+      "giftPlain": "고맙소.",
+      "close": [
+        {
+          "speaker": "smith",
+          "text": "당신이 오면 불이 더 잘 붙는 것 같소."
+        },
+        {
+          "speaker": "smith",
+          "text": "등잔은 잘 쓰고 있소? 고칠 데 있으면 가져오시오."
+        }
+      ],
+      "visit": [
+        {
+          "speaker": "smith",
+          "text": "그을음 좀 모아 왔소. 잉크 만들 때 쓰시오."
+        }
+      ]
+    },
+    "shepherd": {
+      "offer": [
+        {
+          "speaker": "shepherd",
+          "text": "양 떼를 지키며 들은 이야기가 있어요."
+        }
+      ],
+      "idle": [
+        {
+          "speaker": "shepherd",
+          "text": "양들이 오늘은 순하네요."
+        },
+        {
+          "speaker": "shepherd",
+          "text": "털 깎을 때가 다가와요."
+        }
+      ],
+      "warm": [
+        {
+          "speaker": "shepherd",
+          "text": "양털이 필요하면 말해요. 도와주면 나눌게요."
+        }
+      ],
+      "wet": [
+        {
+          "speaker": "shepherd",
+          "text": "비 맞는 양들은 서로 붙어 있어요."
+        }
+      ],
+      "help": {
+        "label": "양 불러 모으기",
+        "thanks": "다 모였어요! 양털 한 뭉치 가져가요."
+      },
+      "giftLiked": "이거 참 좋아해요. 고마워요.",
+      "giftPlain": "고마워요.",
+      "close": [
+        {
+          "speaker": "shepherd",
+          "text": "오늘은 풀이 좋아서 양들이 배불러요. 같이 좀 쉬었다 가요."
+        },
+        {
+          "speaker": "shepherd",
+          "text": "저녁노을 질 때 양 우리가 제일 예뻐요. 같이 봐요."
+        }
+      ],
+      "visit": [
+        {
+          "speaker": "shepherd",
+          "text": "양털 한 뭉치 가져왔어요."
+        }
+      ]
+    },
+    "presser": {
+      "offer": [
+        {
+          "speaker": "presser",
+          "text": "기름을 짜면서 들은 이야기가 하나 있어요."
+        }
+      ],
+      "idle": [
+        {
+          "speaker": "presser",
+          "text": "올리브 향이 좋죠?"
+        },
+        {
+          "speaker": "presser",
+          "text": "기름틀은 천천히 돌려야 해요."
+        }
+      ],
+      "warm": [
+        {
+          "speaker": "presser",
+          "text": "올리브 두 줌이면 기름 한 병이에요. 틀은 언제든 써요."
+        }
+      ],
+      "wet": [
+        {
+          "speaker": "presser",
+          "text": "비가 와도 틀은 돌아가요."
+        }
+      ],
+      "help": {
+        "label": "기름틀 돌리기",
+        "thanks": "수고했어요. 기름 한 병 가져가요."
+      },
+      "giftLiked": "마침 먹을 게 필요했어요. 고마워요.",
+      "giftPlain": "고마워요.",
+      "close": [
+        {
+          "speaker": "presser",
+          "text": "올해 기름은 당신 덕에 더 맑아요."
+        },
+        {
+          "speaker": "presser",
+          "text": "기름틀 돌리는 소리가 이젠 노래 같아요."
+        }
+      ],
+      "visit": [
+        {
+          "speaker": "presser",
+          "text": "갓 짠 기름이에요. 등잔에 써요."
+        }
+      ]
+    },
+    "weaver": {
+      "offer": [
+        {
+          "speaker": "weaver",
+          "text": "베를 짜며 들은 이야기가 있어요. 들려 드릴까요?"
+        }
+      ],
+      "idle": [
+        {
+          "speaker": "weaver",
+          "text": "북이 오가는 소리가 좋아요."
+        },
+        {
+          "speaker": "weaver",
+          "text": "이 마을은 실 색이 곱게 나와요."
+        }
+      ],
+      "warm": [
+        {
+          "speaker": "weaver",
+          "text": "천이 남으면 방석 하나 지어 드릴게요."
+        }
+      ],
+      "close": [
+        {
+          "speaker": "weaver",
+          "text": "이 마을로 오길 잘했어요. 이웃이 좋아서요."
+        }
+      ],
+      "wet": [
+        {
+          "speaker": "weaver",
+          "text": "비 오는 날은 실이 눅눅해져요."
+        }
+      ],
+      "visit": [
+        {
+          "speaker": "weaver",
+          "text": "지나가다 들렀어요. 양털 조금 두고 갈게요."
+        }
+      ],
+      "help": {
+        "label": "실 감기 돕기",
+        "thanks": "손이 야무지시네요. 양털 한 뭉치 가져가세요."
+      },
+      "giftLiked": "어머, 이거 좋아해요!",
+      "giftPlain": "고마워요."
+    },
+    "beekeeper": {
+      "offer": [
+        {
+          "speaker": "beekeeper",
+          "text": "벌통 곁에서 들은 이야기가 하나 있어요."
+        }
+      ],
+      "idle": [
+        {
+          "speaker": "beekeeper",
+          "text": "벌들이 오늘은 순해요."
+        },
+        {
+          "speaker": "beekeeper",
+          "text": "꽃이 많아지니 꿀도 많아져요."
+        }
+      ],
+      "warm": [
+        {
+          "speaker": "beekeeper",
+          "text": "꿀이 필요하면 말해요. 넉넉히 떠 둘게요."
+        }
+      ],
+      "close": [
+        {
+          "speaker": "beekeeper",
+          "text": "이사 오던 날이 생각나네요. 반겨 줘서 고마웠어요."
+        }
+      ],
+      "wet": [
+        {
+          "speaker": "beekeeper",
+          "text": "비 오면 벌들도 쉬어요."
+        }
+      ],
+      "visit": [
+        {
+          "speaker": "beekeeper",
+          "text": "갓 뜬 꿀이에요. 드셔 보세요."
+        }
+      ],
+      "help": {
+        "label": "벌통 옮기기 돕기",
+        "thanks": "조심조심 잘 옮기셨어요. 꿀 한 병 가져가요."
+      },
+      "giftLiked": "이거 참 좋아해요. 고마워요!",
+      "giftPlain": "고마워요."
+    }
+  },
+  "scenes": {
+    "welcome": {
+      "title": "이름 없는 작은 마을",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "이 사람은 누가복음을 쓴 사람입니다. 이 게임에서는 '기록자'라고 부릅니다."
+        },
+        {
+          "speaker": "narration",
+          "text": "기록자는 이웃에게 이야기를 전해 듣고, 책상에 앉아 차례대로 이어 붙입니다."
+        },
+        {
+          "speaker": "narration",
+          "text": "가고 싶은 곳을 누르면 걸어갑니다. 먼저 이웃에게 말을 걸어 보세요."
+        },
+        {
+          "speaker": "narration",
+          "text": "배가 고프거나 추워 보이면 기록자를 눌러 보세요. 빵을 먹이거나 쉬게 할 수 있습니다."
+        }
+      ]
+    },
+    "strays": {
+      "title": "작은 손님",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "마당에 새끼 고양이와 강아지가 찾아왔다."
+        },
+        {
+          "speaker": "narration",
+          "text": "먼저 밥을 주는 쪽이 식구가 됩니다."
+        }
+      ]
+    },
+    "companionJoined": {
+      "title": "새 식구",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "오늘부터 함께 산다."
+        },
+        {
+          "speaker": "narration",
+          "text": "다른 한 마리는 물 긷는 아이가 데려갔다."
+        }
+      ],
+      "album": "새 식구가 온 날"
+    },
+    "childAsks": {
+      "title": "아이의 부탁",
+      "lines": [
+        {
+          "speaker": "child",
+          "text": "저… 글자를 배우고 싶어요."
+        },
+        {
+          "speaker": "child",
+          "text": "저녁에 찾아가도 돼요?"
+        },
+        {
+          "speaker": "narration",
+          "text": "비가 오지 않는 날 저녁 여섯 시쯤, 아이가 집으로 찾아옵니다."
+        }
+      ]
+    },
+    "firstLetter": {
+      "title": "첫 글자",
+      "lines": [
+        {
+          "speaker": "child",
+          "text": "제 손으로 처음 쓴 글자예요!"
+        }
+      ],
+      "album": "아이가 첫 글자를 쓴 날"
+    },
+    "childLearned": {
+      "title": "혼자서도",
+      "lines": [
+        {
+          "speaker": "child",
+          "text": "이제 혼자서도 조금 읽을 수 있어요. 고맙습니다!"
+        }
+      ],
+      "album": "아이가 글을 읽기 시작한 날"
+    },
+    "babyBorn": {
+      "title": "아기",
+      "lines": [
+        {
+          "speaker": "baker",
+          "text": "우리 집에 아기가 태어났어요!"
+        },
+        {
+          "speaker": "baker",
+          "text": "아직 아주 작아요. 나중에 보러 오세요."
+        }
+      ],
+      "album": "아기가 태어난 날"
+    },
+    "sick": {
+      "title": "앓아누운 날",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "몸이 무거워 늦게까지 누워 있었다."
+        },
+        {
+          "speaker": "baker",
+          "text": "안 보여서 와 봤어요. 수프 끓여 왔으니 천천히 드세요."
+        },
+        {
+          "speaker": "narration",
+          "text": "너무 늦게까지 깨어 있거나 굶으면 앓아눕습니다."
+        }
+      ],
+      "album": "병문안 온 날"
+    },
+    "festival:barley": {
+      "title": "보리 거둔 날 잔치",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "장터에 모닥불이 피었다. 보리를 거둔 날의 잔치다."
+        },
+        {
+          "speaker": "baker",
+          "text": "새 보리로 구운 빵이에요. 하나 드세요!"
+        },
+        {
+          "speaker": "shepherd",
+          "text": "올해는 보리가 잘 됐어요."
+        }
+      ],
+      "album": "보리 거둔 날 잔치"
+    },
+    "festival:grapes": {
+      "title": "포도 수확 잔치",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "장터에 모닥불이 피었다. 포도를 거둔 날의 잔치다."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "올해 포도는 달구먼. 따 준 이들 덕이네."
+        },
+        {
+          "speaker": "child",
+          "text": "포도 먹으니까 손이 끈적끈적해요!"
+        }
+      ],
+      "album": "포도 수확 잔치"
+    },
+    "festival:hearth": {
+      "title": "겨울 화롯가",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "추운 겨울밤, 모두 모닥불 곁에 모였다."
+        },
+        {
+          "speaker": "smith",
+          "text": "불은 내가 지폈소. 가까이 와서 쬐시오."
+        },
+        {
+          "speaker": "presser",
+          "text": "따뜻하니 좋네요."
+        }
+      ],
+      "album": "겨울 화롯가"
+    },
+    "rainbow": {
+      "title": "무지개",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "빗줄기 너머로 무지개가 걸렸다."
+        }
+      ],
+      "album": "무지개 뜬 날"
+    },
+    "firstSnow": {
+      "title": "첫눈",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "첫눈이 온다. 발밑이 사각거린다."
+        }
+      ],
+      "album": "첫눈 오는 날"
+    },
+    "stars": {
+      "title": "별",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "언덕에 앉아 별을 올려다보았다."
+        }
+      ],
+      "album": "별 보는 밤"
+    },
+    "blanket": {
+      "title": "담요",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "담요를 덮어 주었다. 꼭 싸매고 있다."
+        }
+      ],
+      "album": "담요를 덮어 준 날"
+    },
+    "firstChapter": {
+      "title": "첫 장",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "첫 장을 차례대로 이어 선반에 올려 두었다."
+        }
+      ],
+      "album": "첫 장을 이은 날"
+    },
+    "lastChapter": {
+      "title": "마지막 장",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "마지막 장까지 모두 차례대로 이어 붙였다."
+        },
+        {
+          "speaker": "narration",
+          "text": "내일은 마을이 조금 떠들썩할 것 같다."
+        }
+      ]
+    },
+    "ending": {
+      "title": "다 쓴 날",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "아침부터 이웃들이 마당에 모여들었다."
+        },
+        {
+          "speaker": "baker",
+          "text": "다 쓰셨다면서요! 빵 잔뜩 구워 왔어요."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "오래 걸렸구먼. 수고 많았네."
+        },
+        {
+          "speaker": "smith",
+          "text": "등잔이 제 몫을 했나 보오."
+        }
+      ],
+      "album": "다 쓴 날"
+    },
+    "gift:baker:3": {
+      "title": "선물",
+      "lines": [
+        {
+          "speaker": "baker",
+          "text": "빵 담아 두라고 바구니 하나 짰어요."
+        }
+      ]
+    },
+    "gift:baker:6": {
+      "title": "선물",
+      "lines": [
+        {
+          "speaker": "baker",
+          "text": "집에 깔개 하나 깔아요. 발이 따뜻할 거예요."
+        }
+      ]
+    },
+    "gift:child:3": {
+      "title": "선물",
+      "lines": [
+        {
+          "speaker": "child",
+          "text": "들꽃 꺾어 왔어요. 꽃병에 꽂아 두세요!"
+        }
+      ]
+    },
+    "gift:child:6": {
+      "title": "선물",
+      "lines": [
+        {
+          "speaker": "child",
+          "text": "제가 키운 풀이에요. 창가에 두세요."
+        }
+      ]
+    },
+    "gift:grandpa:3": {
+      "title": "선물",
+      "lines": [
+        {
+          "speaker": "grandpa",
+          "text": "말린 무화과네. 출출할 때 들게."
+        }
+      ]
+    },
+    "gift:grandpa:6": {
+      "title": "선물",
+      "lines": [
+        {
+          "speaker": "grandpa",
+          "text": "젊을 때 짠 식탁이라네. 자네 집에 두고 쓰게."
+        }
+      ]
+    },
+    "gift:merchant:3": {
+      "title": "선물",
+      "lines": [
+        {
+          "speaker": "merchant",
+          "text": "글 쓰시는 분께는 이게 제일이지요. 파피루스 두 장이에요."
+        }
+      ]
+    },
+    "gift:smith:3": {
+      "title": "선물",
+      "lines": [
+        {
+          "speaker": "smith",
+          "text": "밤에 쓰는 걸 보았소. 기름을 덜 먹는 등잔이오."
+        }
+      ]
+    },
+    "gift:shepherd:3": {
+      "title": "선물",
+      "lines": [
+        {
+          "speaker": "shepherd",
+          "text": "양털로 방석을 만들었어요. 오래 앉아 있어도 편할 거예요."
+        }
+      ]
+    },
+    "gift:shepherd:6": {
+      "title": "선물",
+      "lines": [
+        {
+          "speaker": "shepherd",
+          "text": "털을 넉넉히 깎았어요. 담요 짜는 데 써요."
+        }
+      ]
+    },
+    "gift:presser:3": {
+      "title": "선물",
+      "lines": [
+        {
+          "speaker": "presser",
+          "text": "갓 짠 기름 두 병이에요. 등잔에 써요."
+        }
+      ]
+    },
+    "ask:baker:1": {
+      "title": "이웃의 부탁",
+      "lines": [
+        {
+          "speaker": "baker",
+          "text": "빵집 앞에 손님이 앉을 자리가 있으면 좋겠어요."
+        },
+        {
+          "speaker": "baker",
+          "text": "보리 세 줌만 구해 주면, 그걸로 빵을 구워 팔아 의자를 들일게요."
+        }
+      ]
+    },
+    "done:baker:1": {
+      "title": "부탁을 들어준 날",
+      "lines": [
+        {
+          "speaker": "baker",
+          "text": "고마워요! 빵집 앞에 의자를 놓았어요."
+        },
+        {
+          "speaker": "baker",
+          "text": "이건 답례예요. 곡식 담기 좋은 그릇이에요."
+        }
+      ],
+      "album": "빵집 앞 의자"
+    },
+    "ask:baker:2": {
+      "title": "이웃의 부탁",
+      "lines": [
+        {
+          "speaker": "baker",
+          "text": "아기가 추워할까 봐 걱정이에요."
+        },
+        {
+          "speaker": "baker",
+          "text": "양털 두 뭉치만 있으면 아기 이불을 지을 수 있어요."
+        }
+      ]
+    },
+    "done:baker:2": {
+      "title": "부탁을 들어준 날",
+      "lines": [
+        {
+          "speaker": "baker",
+          "text": "보세요, 아기가 새 이불을 덮고 잘 자요."
+        },
+        {
+          "speaker": "baker",
+          "text": "방석이랑 촛대, 받아 줘요."
+        }
+      ],
+      "album": "아기 이불"
+    },
+    "ask:child:1": {
+      "title": "이웃의 부탁",
+      "lines": [
+        {
+          "speaker": "child",
+          "text": "연을 날려 보고 싶어요!"
+        },
+        {
+          "speaker": "child",
+          "text": "갈대 두 줄기랑 파피루스 한 장만 있으면 만들 수 있어요."
+        }
+      ]
+    },
+    "done:child:1": {
+      "title": "부탁을 들어준 날",
+      "lines": [
+        {
+          "speaker": "child",
+          "text": "연이 떴어요! 바람 부는 날 언덕에서 날릴게요."
+        },
+        {
+          "speaker": "child",
+          "text": "이건 제가 깎은 나무 새예요."
+        }
+      ],
+      "album": "언덕의 연"
+    },
+    "ask:child:2": {
+      "title": "이웃의 부탁",
+      "lines": [
+        {
+          "speaker": "child",
+          "text": "우리 집 앞에 작은 꽃밭을 만들래요."
+        },
+        {
+          "speaker": "child",
+          "text": "무화과 두 개랑 바꿔 꽃씨를 얻을 수 있대요."
+        }
+      ]
+    },
+    "done:child:2": {
+      "title": "부탁을 들어준 날",
+      "lines": [
+        {
+          "speaker": "child",
+          "text": "꽃이 피었어요! 보러 오세요."
+        },
+        {
+          "speaker": "child",
+          "text": "제일 예쁜 꽃은 꽃병에 꽂아 드릴게요."
+        }
+      ],
+      "album": "아이네 꽃밭"
+    },
+    "ask:grandpa:1": {
+      "title": "이웃의 부탁",
+      "lines": [
+        {
+          "speaker": "grandpa",
+          "text": "포도 시렁이 기울어서 고쳐 세우려 하네."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "혼자 고치다 보면 배가 고프니, 빵 두 개와 물 두 동이만 가져다주겠나."
+        }
+      ]
+    },
+    "done:grandpa:1": {
+      "title": "부탁을 들어준 날",
+      "lines": [
+        {
+          "speaker": "grandpa",
+          "text": "덕분에 시렁을 반듯하게 세웠네."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "이 물병은 자네 쓰게."
+        }
+      ],
+      "album": "포도 시렁"
+    },
+    "ask:grandpa:2": {
+      "title": "이웃의 부탁",
+      "lines": [
+        {
+          "speaker": "grandpa",
+          "text": "집 앞에 쉬어 갈 의자를 하나 놓고 싶네."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "올리브 두 줌과 기름 한 병이면 나무를 다듬을 수 있지."
+        }
+      ]
+    },
+    "done:grandpa:2": {
+      "title": "부탁을 들어준 날",
+      "lines": [
+        {
+          "speaker": "grandpa",
+          "text": "다 됐네. 지나가다 앉아 쉬게."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "남은 나무로 협탁을 하나 짰네. 가져가게."
+        }
+      ],
+      "album": "할아버지 집 앞 의자"
+    },
+    "ask:merchant:1": {
+      "title": "이웃의 부탁",
+      "lines": [
+        {
+          "speaker": "merchant",
+          "text": "먼 길 떠날 때 먹을 게 모자라요."
+        },
+        {
+          "speaker": "merchant",
+          "text": "빵 세 개만 챙겨 주면, 다음 장부터 물건을 더 가져올게요."
+        }
+      ]
+    },
+    "done:merchant:1": {
+      "title": "부탁을 들어준 날",
+      "lines": [
+        {
+          "speaker": "merchant",
+          "text": "든든하네요! 약속대로 좌판에 새 물건을 놓을게요."
+        },
+        {
+          "speaker": "merchant",
+          "text": "이건 파피루스예요. 글 쓰시는 데 쓰세요."
+        }
+      ],
+      "album": "넓어진 좌판"
+    },
+    "ask:merchant:2": {
+      "title": "이웃의 부탁",
+      "lines": [
+        {
+          "speaker": "merchant",
+          "text": "좌판에 햇빛 가리개를 달고 싶어요."
+        },
+        {
+          "speaker": "merchant",
+          "text": "그을음 두 줌과 기름 한 병이면 천에 물을 들일 수 있어요."
+        }
+      ]
+    },
+    "done:merchant:2": {
+      "title": "부탁을 들어준 날",
+      "lines": [
+        {
+          "speaker": "merchant",
+          "text": "보세요, 알록달록한 가리개예요!"
+        },
+        {
+          "speaker": "merchant",
+          "text": "깔개 하나 드릴게요. 먼 데서 가져온 거예요."
+        }
+      ],
+      "album": "좌판 가리개"
+    },
+    "ask:smith:1": {
+      "title": "이웃의 부탁",
+      "lines": [
+        {
+          "speaker": "smith",
+          "text": "풀무가 낡아서 바람이 새오."
+        },
+        {
+          "speaker": "smith",
+          "text": "양털 두 뭉치와 기름 한 병이면 새 가죽을 댈 수 있소."
+        }
+      ]
+    },
+    "done:smith:1": {
+      "title": "부탁을 들어준 날",
+      "lines": [
+        {
+          "speaker": "smith",
+          "text": "새 풀무요! 이제 그을음을 넉넉히 나눠 주겠소."
+        },
+        {
+          "speaker": "smith",
+          "text": "우선 이것부터 가져가시오."
+        }
+      ],
+      "album": "대장간 새 풀무"
+    },
+    "ask:smith:2": {
+      "title": "이웃의 부탁",
+      "lines": [
+        {
+          "speaker": "smith",
+          "text": "밤길이 어두워서 등불 기둥을 세우려 하오."
+        },
+        {
+          "speaker": "smith",
+          "text": "올리브 두 줌과 빵 하나만 가져다주시오. 일하며 먹게."
+        }
+      ]
+    },
+    "done:smith:2": {
+      "title": "부탁을 들어준 날",
+      "lines": [
+        {
+          "speaker": "smith",
+          "text": "길가에 등불을 세웠소. 밤에도 환할 거요."
+        },
+        {
+          "speaker": "smith",
+          "text": "남은 쇠로 촛대를 하나 만들었소."
+        }
+      ],
+      "album": "길가의 등불"
+    },
+    "ask:shepherd:1": {
+      "title": "이웃의 부탁",
+      "lines": [
+        {
+          "speaker": "shepherd",
+          "text": "양이 늘어서 우리가 좁아요."
+        },
+        {
+          "speaker": "shepherd",
+          "text": "갈대 세 줄기만 있으면 울타리를 넓힐 수 있어요."
+        }
+      ]
+    },
+    "done:shepherd:1": {
+      "title": "부탁을 들어준 날",
+      "lines": [
+        {
+          "speaker": "shepherd",
+          "text": "우리가 넓어졌어요. 양들이 좋아하네요."
+        },
+        {
+          "speaker": "shepherd",
+          "text": "양털 좀 가져가요."
+        }
+      ],
+      "album": "넓어진 양 우리"
+    },
+    "ask:shepherd:2": {
+      "title": "이웃의 부탁",
+      "lines": [
+        {
+          "speaker": "shepherd",
+          "text": "곧 양털 깎는 날이에요."
+        },
+        {
+          "speaker": "shepherd",
+          "text": "일 끝나고 나눠 먹을 빵 두 개랑 포도 두 송이만 부탁해요."
+        }
+      ]
+    },
+    "done:shepherd:2": {
+      "title": "부탁을 들어준 날",
+      "lines": [
+        {
+          "speaker": "shepherd",
+          "text": "양털 깎는 날, 다 같이 즐거웠어요!"
+        },
+        {
+          "speaker": "shepherd",
+          "text": "제일 부드러운 털로 방석을 만들었어요."
+        }
+      ],
+      "album": "양털 깎는 날"
+    },
+    "ask:presser:1": {
+      "title": "이웃의 부탁",
+      "lines": [
+        {
+          "speaker": "presser",
+          "text": "기름틀 손잡이가 닳았어요."
+        },
+        {
+          "speaker": "presser",
+          "text": "올리브 네 줌만 짜서 팔면 새 손잡이를 달 수 있어요."
+        }
+      ]
+    },
+    "done:presser:1": {
+      "title": "부탁을 들어준 날",
+      "lines": [
+        {
+          "speaker": "presser",
+          "text": "새 손잡이를 달았어요! 이제 기름이 한 병 더 나와요."
+        },
+        {
+          "speaker": "presser",
+          "text": "기름 두 병 가져가요."
+        }
+      ],
+      "album": "기름틀 새 손잡이"
+    },
+    "ask:presser:2": {
+      "title": "이웃의 부탁",
+      "lines": [
+        {
+          "speaker": "presser",
+          "text": "올리브나무를 몇 그루 더 심고 싶어요."
+        },
+        {
+          "speaker": "presser",
+          "text": "일하는 날 먹을 빵 두 개만 부탁해요."
+        }
+      ]
+    },
+    "done:presser:2": {
+      "title": "부탁을 들어준 날",
+      "lines": [
+        {
+          "speaker": "presser",
+          "text": "나무를 심었어요. 몇 해 뒤엔 열매가 가득할 거예요."
+        },
+        {
+          "speaker": "presser",
+          "text": "물병이랑 기름, 받아요."
+        }
+      ],
+      "album": "새로 심은 올리브나무"
+    },
+    "ask:weaver:1": {
+      "title": "이웃의 부탁",
+      "lines": [
+        {
+          "speaker": "weaver",
+          "text": "베틀 위에 햇빛 가리개를 치고 싶어요."
+        },
+        {
+          "speaker": "weaver",
+          "text": "양털 세 뭉치면 천을 짤 수 있어요."
+        }
+      ]
+    },
+    "done:weaver:1": {
+      "title": "부탁을 들어준 날",
+      "lines": [
+        {
+          "speaker": "weaver",
+          "text": "그늘이 생겼어요! 이제 한낮에도 베를 짤 수 있어요."
+        },
+        {
+          "speaker": "weaver",
+          "text": "제가 짠 깔개예요. 방에 깔아 보세요."
+        }
+      ],
+      "album": "베틀 가리개"
+    },
+    "ask:beekeeper:1": {
+      "title": "이웃의 부탁",
+      "lines": [
+        {
+          "speaker": "beekeeper",
+          "text": "벌통을 몇 개 더 놓고 싶어요."
+        },
+        {
+          "speaker": "beekeeper",
+          "text": "갈대 두 줄기랑 올리브 두 줌이 있으면 벌통을 엮을 수 있어요."
+        }
+      ]
+    },
+    "done:beekeeper:1": {
+      "title": "부탁을 들어준 날",
+      "lines": [
+        {
+          "speaker": "beekeeper",
+          "text": "벌통이 늘었어요. 꽃마다 벌이 붕붕해요."
+        },
+        {
+          "speaker": "beekeeper",
+          "text": "새 벌통에서 뜬 꿀이에요. 드셔 보세요."
+        }
+      ],
+      "album": "늘어난 벌통"
+    },
+    "invite:baker": {
+      "title": "저녁 초대",
+      "lines": [
+        {
+          "speaker": "baker",
+          "text": "오늘 저녁 우리 집에 와요. 따뜻한 수프를 끓일게요."
+        },
+        {
+          "speaker": "baker",
+          "text": "해 질 무렵 빵집 문 앞으로 오세요."
+        },
+        {
+          "speaker": "narration",
+          "text": "오늘 저녁 여섯 시부터 여덟 시 반 사이, 그 집 문을 눌러 보세요."
+        }
+      ]
+    },
+    "dinner:baker": {
+      "title": "저녁 초대",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "수프가 따뜻하다. 아기가 식탁 밑에서 논다."
+        },
+        {
+          "speaker": "baker",
+          "text": "또 오세요. 언제든 자리 있어요."
+        }
+      ],
+      "album": "이웃집 저녁"
+    },
+    "invite:child": {
+      "title": "저녁 초대",
+      "lines": [
+        {
+          "speaker": "child",
+          "text": "오늘 저녁 우리 집에서 같이 밥 먹어요! 엄마가 오래요."
+        },
+        {
+          "speaker": "child",
+          "text": "해 지면 우리 집 문 앞으로 와요!"
+        },
+        {
+          "speaker": "narration",
+          "text": "오늘 저녁 여섯 시부터 여덟 시 반 사이, 그 집 문을 눌러 보세요."
+        }
+      ]
+    },
+    "dinner:child": {
+      "title": "저녁 초대",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "아이가 오늘 배운 글자를 자랑한다."
+        },
+        {
+          "speaker": "child",
+          "text": "다음에 또 와요! 약속!"
+        }
+      ],
+      "album": "이웃집 저녁"
+    },
+    "invite:grandpa": {
+      "title": "저녁 초대",
+      "lines": [
+        {
+          "speaker": "grandpa",
+          "text": "오늘 저녁엔 우리 집에 오게. 포도즙을 내 놓았네."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "해 지면 내 집 문을 두드리게."
+        },
+        {
+          "speaker": "narration",
+          "text": "오늘 저녁 여섯 시부터 여덟 시 반 사이, 그 집 문을 눌러 보세요."
+        }
+      ]
+    },
+    "dinner:grandpa": {
+      "title": "저녁 초대",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "할아버지가 옛날 포도원 이야기를 들려준다."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "늙은이 말동무가 되어 줘서 고맙네."
+        }
+      ],
+      "album": "이웃집 저녁"
+    },
+    "village:1": {
+      "title": "꽃길",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "어느새 큰길가에 꽃이 피기 시작했다."
+        },
+        {
+          "speaker": "narration",
+          "text": "마을이 조금씩 환해진다."
+        }
+      ],
+      "album": "꽃길이 난 날"
+    },
+    "village:2": {
+      "title": "새 이웃",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "마을 남쪽 끝에 베틀을 가진 이웃이 이사 왔다."
+        },
+        {
+          "speaker": "weaver",
+          "text": "반가워요. 베 짜는 일을 해요. 앞으로 잘 부탁해요."
+        }
+      ],
+      "album": "베 짜는 이웃이 온 날"
+    },
+    "village:3": {
+      "title": "강가 쉼터",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "강가에 쉬어 갈 자리가 생겼다."
+        },
+        {
+          "speaker": "narration",
+          "text": "저녁이면 마을 사람들이 물소리를 들으러 온다."
+        }
+      ],
+      "album": "강가 쉼터"
+    },
+    "village:4": {
+      "title": "또 새 이웃",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "올리브나무 곁에 벌통을 놓은 이웃이 이사 왔다."
+        },
+        {
+          "speaker": "beekeeper",
+          "text": "벌을 쳐요. 꽃이 많은 마을이라 좋네요."
+        }
+      ],
+      "album": "벌 치는 이웃이 온 날"
+    },
+    "friends": {
+      "title": "단짝",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "요즘 물 긷는 아이가 양 우리 곁을 자주 맴돈다."
+        },
+        {
+          "speaker": "shepherd",
+          "text": "털 빗기는 솜씨가 저보다 나아요. 오후엔 같이 우리를 돌봐요."
+        },
+        {
+          "speaker": "child",
+          "text": "저 이제 털 빗기 조수예요!"
+        }
+      ],
+      "album": "아이와 양치기"
+    },
+    "notice:babyParty": {
+      "title": "아기 잔치",
+      "lines": [
+        {
+          "speaker": "baker",
+          "text": "오늘 저녁 빵집 앞에서 아기 잔치를 해요. 꼭 와요!"
+        }
+      ]
+    },
+    "notice:picnic": {
+      "title": "소풍",
+      "lines": [
+        {
+          "speaker": "child",
+          "text": "오늘 낮에 언덕에서 소풍해요! 다들 온대요."
+        }
+      ]
+    },
+    "notice:starNight": {
+      "title": "별 보는 밤",
+      "lines": [
+        {
+          "speaker": "grandpa",
+          "text": "오늘 밤은 하늘이 맑겠구먼. 언덕에서 다 같이 별을 보세."
+        }
+      ]
+    },
+    "babyParty": {
+      "title": "아기 잔치",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "빵집 앞에 이웃들이 모였다. 아기가 사람들 사이를 기어 다닌다."
+        },
+        {
+          "speaker": "baker",
+          "text": "와 줘서 고마워요. 아기가 이만큼 컸어요."
+        },
+        {
+          "speaker": "child",
+          "text": "아기가 제 손가락을 꼭 잡았어요!"
+        }
+      ],
+      "album": "아기 잔치"
+    },
+    "picnic": {
+      "title": "언덕 소풍",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "언덕 풀밭에 이웃들이 모였다. 구름 모양을 맞히며 논다."
+        },
+        {
+          "speaker": "child",
+          "text": "저 구름은 물동이 같아요!"
+        },
+        {
+          "speaker": "presser",
+          "text": "저건 기름틀 손잡이 같네요."
+        }
+      ],
+      "album": "언덕 소풍"
+    },
+    "starNight": {
+      "title": "별 보는 밤",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "언덕에 누워 다 같이 밤하늘을 올려다보았다."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "어릴 적에도 여름밤이면 이 언덕에 누워 있곤 했지."
+        },
+        {
+          "speaker": "child",
+          "text": "밤바람이 시원해서 잠이 올 것 같아요."
+        }
+      ],
+      "album": "다 같이 별 본 밤"
+    },
+    "gift:baker:9": {
+      "title": "마음을 나눈 이웃",
+      "lines": [
+        {
+          "speaker": "baker",
+          "text": "늘 고마워요. 우리 집 식탁에 올려 두던 촛대예요. 이젠 당신 거예요."
+        }
+      ],
+      "album": "빵 굽는 이웃과 나눈 날들"
+    },
+    "gift:child:9": {
+      "title": "마음을 나눈 이웃",
+      "lines": [
+        {
+          "speaker": "child",
+          "text": "그때보다 훨씬 잘 깎은 나무 새예요. 제일 아끼는 거라 드려요."
+        }
+      ],
+      "album": "물 긷는 아이와 나눈 날들"
+    },
+    "gift:grandpa:9": {
+      "title": "마음을 나눈 이웃",
+      "lines": [
+        {
+          "speaker": "grandpa",
+          "text": "내가 아끼던 그릇이네. 자네가 쓰면 좋겠네."
+        }
+      ],
+      "album": "포도원 할아버지와 나눈 날들"
+    },
+    "gift:merchant:9": {
+      "title": "마음을 나눈 이웃",
+      "lines": [
+        {
+          "speaker": "merchant",
+          "text": "먼 길에서 구한 제일 좋은 깔개예요. 당신 방에 어울릴 거예요."
+        }
+      ],
+      "album": "떠돌이 상인과 나눈 날들"
+    },
+    "gift:smith:9": {
+      "title": "마음을 나눈 이웃",
+      "lines": [
+        {
+          "speaker": "smith",
+          "text": "당신 방에 둘 협탁을 짰소. 쇠 장식도 달았소."
+        }
+      ],
+      "album": "대장장이와 나눈 날들"
+    },
+    "gift:shepherd:9": {
+      "title": "마음을 나눈 이웃",
+      "lines": [
+        {
+          "speaker": "shepherd",
+          "text": "제일 좋은 털로 방석을 또 만들었어요. 둘이면 손님도 앉겠죠."
+        }
+      ],
+      "album": "양치기와 나눈 날들"
+    },
+    "gift:presser:9": {
+      "title": "마음을 나눈 이웃",
+      "lines": [
+        {
+          "speaker": "presser",
+          "text": "이 물병엔 올해 첫 기름을 담았었어요. 받아 줘요."
+        }
+      ],
+      "album": "기름 짜는 이웃과 나눈 날들"
+    },
+    "gift:weaver:9": {
+      "title": "마음을 나눈 이웃",
+      "lines": [
+        {
+          "speaker": "weaver",
+          "text": "이 바구니는 제가 이 마을에서 처음 짠 거예요."
+        }
+      ],
+      "album": "베 짜는 이웃과 나눈 날들"
+    },
+    "gift:beekeeper:9": {
+      "title": "마음을 나눈 이웃",
+      "lines": [
+        {
+          "speaker": "beekeeper",
+          "text": "제일 예쁜 물병에 꿀 향이 배었어요. 가져가요."
+        }
+      ],
+      "album": "벌 치는 이웃과 나눈 날들"
+    },
+    "gift:weaver:3": {
+      "title": "선물",
+      "lines": [
+        {
+          "speaker": "weaver",
+          "text": "천 조각으로 방석을 지었어요."
+        }
+      ]
+    },
+    "gift:weaver:6": {
+      "title": "선물",
+      "lines": [
+        {
+          "speaker": "weaver",
+          "text": "제가 짠 깔개예요. 바닥에 깔아 보세요."
+        }
+      ]
+    },
+    "gift:beekeeper:3": {
+      "title": "선물",
+      "lines": [
+        {
+          "speaker": "beekeeper",
+          "text": "꿀 두 병이에요. 빵에 발라 먹어요."
+        }
+      ]
+    },
+    "gift:beekeeper:6": {
+      "title": "선물",
+      "lines": [
+        {
+          "speaker": "beekeeper",
+          "text": "밀랍으로 초를 만들었어요."
+        }
+      ]
+    }
+  },
+  "ending": {
+    "childReads": {
+      "speaker": "child",
+      "text": "제가 첫머리를 읽어 볼게요!"
+    },
+    "childListens": {
+      "speaker": "child",
+      "text": "저도 언젠가 이걸 읽을 수 있을까요?"
+    }
+  },
+  "journal": {
+    "day": "{day}일째.",
+    "weather": " {weather}.",
+    "heard": " 이야기를 들었다({refs}).",
+    "quiet": " 조용한 하루였다.",
+    "notes": {
+      "strays": " 마당에 작은 손님들이 왔다.",
+      "companionJoined": " 새 식구가 생겼다.",
+      "childAsks": " 아이가 글자를 배우고 싶다고 했다.",
+      "firstLetter": " 아이가 첫 글자를 썼다.",
+      "childLearned": " 아이가 혼자 읽기 시작했다.",
+      "babyBorn": " 빵집에 아기가 태어났다.",
+      "sick": " 앓아누웠고, 이웃이 수프를 가져왔다.",
+      "festival:barley": " 보리 거둔 날 잔치에 갔다.",
+      "festival:grapes": " 포도 수확 잔치에 갔다.",
+      "festival:hearth": " 모닥불 곁에 모였다.",
+      "rainbow": " 무지개를 보았다.",
+      "firstSnow": " 첫눈이 왔다.",
+      "stars": " 언덕에서 별을 보았다.",
+      "blanket": " 담요를 덮고 잤다.",
+      "firstChapter": " 첫 장을 이어 붙였다.",
+      "lastChapter": " 마지막 장까지 이어 붙였다.",
+      "ending": " 이웃들과 다 쓴 날을 축하했다.",
+      "friends": " 아이와 양치기가 단짝이 되었다.",
+      "babyParty": " 빵집 앞 아기 잔치에 갔다.",
+      "picnic": " 언덕에서 소풍을 했다.",
+      "starNight": " 이웃들과 언덕에서 별을 보았다.",
+      "village:1": " 큰길가에 꽃이 피었다.",
+      "village:2": " 베 짜는 이웃이 이사 왔다.",
+      "village:3": " 강가에 쉼터가 생겼다.",
+      "village:4": " 벌 치는 이웃이 이사 왔다.",
+      "dinner:baker": " 이웃집에서 저녁을 먹었다.",
+      "dinner:child": " 이웃집에서 저녁을 먹었다.",
+      "dinner:grandpa": " 이웃집에서 저녁을 먹었다.",
+      "done:baker:1": " 이웃의 부탁을 들어주었다.",
+      "done:baker:2": " 이웃의 부탁을 들어주었다.",
+      "done:child:1": " 이웃의 부탁을 들어주었다.",
+      "done:child:2": " 이웃의 부탁을 들어주었다.",
+      "done:grandpa:1": " 이웃의 부탁을 들어주었다.",
+      "done:grandpa:2": " 이웃의 부탁을 들어주었다.",
+      "done:merchant:1": " 이웃의 부탁을 들어주었다.",
+      "done:merchant:2": " 이웃의 부탁을 들어주었다.",
+      "done:smith:1": " 이웃의 부탁을 들어주었다.",
+      "done:smith:2": " 이웃의 부탁을 들어주었다.",
+      "done:shepherd:1": " 이웃의 부탁을 들어주었다.",
+      "done:shepherd:2": " 이웃의 부탁을 들어주었다.",
+      "done:presser:1": " 이웃의 부탁을 들어주었다.",
+      "done:presser:2": " 이웃의 부탁을 들어주었다.",
+      "done:weaver:1": " 이웃의 부탁을 들어주었다.",
+      "done:beekeeper:1": " 이웃의 부탁을 들어주었다."
+    }
+  },
+  "quiz": {
+    "title": "기록하기 전에",
+    "progress": "{n} / {all}",
+    "kinds": {
+      "puzzle": "말씀 조각 맞추기",
+      "blank": "빈칸 채우기",
+      "detective": "복음서 탐정",
+      "verse": "어느 이야기일까",
+      "order": "먼저 나오는 이야기"
+    },
+    "puzzle": "낱말을 차례대로 눌러 이 절을 맞춰 보세요.",
+    "blank": "빈칸에 들어갈 낱말을 고르세요.",
+    "detective": "「{title}」({ref}) 이야기가 기록된 복음서를 모두 고르세요.",
+    "detectiveNote": "\"같은 이야기\" 도장을 기준으로 합니다. 같은 일인지 본문이 말하지 않는 \"비슷한 이야기\"는 이 문제에 나오지 않습니다.",
+    "verse": "이 구절은 어느 이야기에 나오나요?",
+    "order": "이 장에서 먼저 나오는 이야기는 어느 쪽인가요?",
+    "check": "확인",
+    "reset": "다시 놓기",
+    "wrong": "다시 골라 보세요.",
+    "right": "맞았어요!",
+    "later": "나중에 하기",
+    "record": "두루마리에 기록하기",
+    "gospels": {
+      "mt": "마태복음",
+      "mk": "마가복음",
+      "lk": "누가복음",
+      "jn": "요한복음"
+    },
+    "puzzleSource": "{ref} (개역한글)의 낱말 조각 — 맞추면 본문 창에 나옵니다"
+  }
+}

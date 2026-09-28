@@ -1,0 +1,151 @@
+// 기록하기 전 다섯 문제. 틀려도 벌은 없다 — 다시 고르면 된다.
+// 문제에 나오는 성경 문장은 늘 출처(개역한글)와 함께 양피지 상자 안에 있다 (exclusion-list §0).
+import { useState } from 'react'
+import { pieceById } from '../../content/catalog'
+import { fill, T } from '../../content/text'
+import type { GospelId, Question } from '../../engine/quiz'
+import { useGame, type Modal } from '../../store/game-store'
+import { Passage } from '../passage/Passage'
+
+const GOSPEL_NAME = T.quiz.gospels as Record<GospelId, string>
+
+/** 성경 문장의 일부(빈칸 등)를 보일 때도 본문 상자와 출처를 쓴다 */
+function VerseBox({ refText, children }: { refText: string; children: React.ReactNode }) {
+  return (
+    <section className="passage" aria-label={`성경 본문 ${refText}`}>
+      <header className="passage-ref">
+        <span>{refText}</span>
+        <span className="passage-src">{T.ui.bibleSource}</span>
+      </header>
+      <div className="passage-body">
+        <p>{children}</p>
+      </div>
+    </section>
+  )
+}
+
+function Puzzle({ q, onAnswer, solved }: { q: Extract<Question, { kind: 'puzzle' }>; onAnswer: (w: string[]) => void; solved: boolean }) {
+  const [picked, setPicked] = useState<number[]>([])
+  const done = picked.length === q.words.length
+  return (
+    <>
+      <p className="quiz-prompt">{T.quiz.puzzle}</p>
+      {/* 본문 창에는 맞춘 뒤의 본문만 — 고르는 중인 낱말은 본문 창 밖 쟁반에 (§0) */}
+      {solved ? (
+        <VerseBox refText={q.ref}>{q.answer.join(' ')}</VerseBox>
+      ) : (
+        <>
+          <p className="stamp-note">{fill(T.quiz.puzzleSource, { ref: q.ref })}</p>
+          <p className="word-tray" aria-live="polite">{picked.map((i) => q.words[i]).join(' ') || '…'}</p>
+          <div className="word-bank">
+            {q.words.map((w, i) => (
+              <button key={i} disabled={picked.includes(i)} onClick={() => setPicked([...picked, i])}>
+                {w}
+              </button>
+            ))}
+          </div>
+          <div className="actions">
+            <button onClick={() => setPicked([])}>{T.quiz.reset}</button>
+            <button className="primary" disabled={!done} onClick={() => onAnswer(picked.map((i) => q.words[i]))}>
+              {T.quiz.check}
+            </button>
+          </div>
+        </>
+      )}
+    </>
+  )
+}
+
+function Detective({ q, onAnswer, solved }: { q: Extract<Question, { kind: 'detective' }>; onAnswer: (g: string[]) => void; solved: boolean }) {
+  const [chosen, setChosen] = useState<GospelId[]>([])
+  const p = pieceById(q.pieceId)
+  const toggle = (g: GospelId) => setChosen(chosen.includes(g) ? chosen.filter((x) => x !== g) : [...chosen, g])
+  return (
+    <>
+      <p className="quiz-prompt">{fill(T.quiz.detective, { title: p.title, ref: p.ref })}</p>
+      <div className="detective-grid">
+        {q.options.map((g) => (
+          <button key={g} className={(solved ? q.answer.includes(g) : chosen.includes(g)) ? 'on' : ''} aria-pressed={chosen.includes(g)} disabled={solved} onClick={() => toggle(g)}>
+            {GOSPEL_NAME[g]}
+          </button>
+        ))}
+      </div>
+      <p className="stamp-note">{T.quiz.detectiveNote}</p>
+      {!solved && (
+        <div className="actions">
+          <button className="primary" disabled={chosen.length === 0} onClick={() => onAnswer(chosen)}>
+            {T.quiz.check}
+          </button>
+        </div>
+      )}
+    </>
+  )
+}
+
+function Choices({ options, label, answer, wrong, solved, onAnswer }: { options: string[]; label: (o: string) => string; answer: string; wrong: string[]; solved: boolean; onAnswer: (o: string) => void }) {
+  return (
+    <div className="actions menu column">
+      {options.map((o) => (
+        <button key={o} className={solved && o === answer ? 'right' : wrong.includes(o) ? 'wrong' : ''} disabled={solved || wrong.includes(o)} onClick={() => onAnswer(o)}>
+          {label(o)}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+export function QuizView({ modal }: { modal: Extract<Modal, { kind: 'quiz' }> }) {
+  const { answerQuiz, nextQuiz, closeModal } = useGame.getState()
+  const q = modal.questions[modal.index]
+  const last = modal.index === modal.questions.length - 1
+  const title = (id: string) => pieceById(id).title
+  return (
+    <div className="dialog scroll-dialog quiz" role="dialog" aria-label={T.quiz.title}>
+      <h2>
+        {T.quiz.title} <span className="desk-chapter">· {fill(T.quiz.progress, { n: modal.index + 1, all: modal.questions.length })}</span>
+      </h2>
+      <p className="quiz-kind">{T.quiz.kinds[q.kind]}</p>
+      {/* 문제마다 선택 상태를 새로 (key) */}
+      <div key={modal.index}>
+        {q.kind === 'puzzle' && <Puzzle q={q} solved={modal.solved} onAnswer={answerQuiz} />}
+        {q.kind === 'blank' && (
+          <>
+            <p className="quiz-prompt">{T.quiz.blank}</p>
+            <VerseBox refText={q.ref}>
+              {q.before} <span className="blank-slot">{modal.solved ? q.answer : '＿＿＿'}</span> {q.after}
+            </VerseBox>
+            <Choices options={q.options} label={(o) => o} answer={q.answer} wrong={modal.wrong} solved={modal.solved} onAnswer={answerQuiz} />
+          </>
+        )}
+        {q.kind === 'detective' && <Detective q={q} solved={modal.solved} onAnswer={answerQuiz} />}
+        {q.kind === 'verse' && (
+          <>
+            <p className="quiz-prompt">{T.quiz.verse}</p>
+            <Passage refText={q.ref} />
+            <Choices options={q.options} label={title} answer={q.answer} wrong={modal.wrong} solved={modal.solved} onAnswer={answerQuiz} />
+          </>
+        )}
+        {q.kind === 'order' && (
+          <>
+            <p className="quiz-prompt">{T.quiz.order}</p>
+            <Choices options={q.options} label={title} answer={q.answer} wrong={modal.wrong} solved={modal.solved} onAnswer={answerQuiz} />
+          </>
+        )}
+      </div>
+      {modal.wrong.length > 0 && !modal.solved && <p className="desk-message wrong" role="status">{T.quiz.wrong}</p>}
+      {modal.solved && (
+        <p className="desk-message done" role="status">
+          {T.quiz.right}
+        </p>
+      )}
+      <div className="actions">
+        {!modal.solved && <button onClick={closeModal}>{T.quiz.later}</button>}
+        {modal.solved && (
+          <button className="primary" onClick={nextQuiz}>
+            {last ? T.quiz.record : T.ui.next}
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}

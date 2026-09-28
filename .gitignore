@@ -1,0 +1,11 @@
+node_modules
+dist
+*.log
+.DS_Store
+.vercel
+*.tsbuildinfo
+.playwright-mcp
+
+.vercel
+raw-art/
+.superpowers/

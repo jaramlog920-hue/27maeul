@@ -1,0 +1,79 @@
+[
+  {
+    "id": "lk-015-001",
+    "ref": "눅 15:1-7",
+    "chapter": 15,
+    "title": "잃은 양",
+    "stamps": []
+  },
+  {
+    "id": "lk-015-001",
+    "ref": "눅 15:5-10",
+    "chapter": 15,
+    "title": "탕자",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mt",
+        "ref": "마 1:1-2"
+      },
+      {
+        "kind": "maybe",
+        "book": "mt",
+        "ref": "마 18:12"
+      },
+      {
+        "kind": "similar",
+        "book": "mk",
+        "ref": "마 18:13"
+      },
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 1:1"
+      }
+    ]
+  },
+  {
+    "id": "lk-016-001",
+    "ref": "마 16:1",
+    "chapter": 16,
+    "title": "x",
+    "stamps": []
+  },
+  {
+    "id": "lk-014-001",
+    "ref": "눅 14:1-99",
+    "chapter": 14,
+    "title": "x",
+    "stamps": []
+  },
+  {
+    "id": "lk-013-001",
+    "ref": "눅 13:1-35",
+    "chapter": 12,
+    "title": "회개",
+    "stamps": []
+  },
+  {
+    "id": "lk-002-001",
+    "ref": "눅 2:1-52",
+    "chapter": 2,
+    "title": "",
+    "stamps": "none"
+  },
+  {
+    "id": "lk-003-001",
+    "ref": "눅 3:1-38",
+    "chapter": 3,
+    "title": "잃은 양",
+    "stamps": []
+  },
+  {
+    "id": "lk-009-037",
+    "ref": "눅 9:37-43",
+    "chapter": 9,
+    "title": "외아들",
+    "stamps": []
+  }
+]

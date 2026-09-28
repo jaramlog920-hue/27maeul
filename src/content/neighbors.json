@@ -1,0 +1,435 @@
+[
+  {
+    "id": "baker",
+    "role": "빵 굽는 이웃",
+    "sprite": "baker",
+    "door": {
+      "x": 5,
+      "y": 11
+    },
+    "schedule": [
+      {
+        "from": 360,
+        "tile": {
+          "x": 6,
+          "y": 10
+        },
+        "wet": {
+          "x": 5,
+          "y": 10
+        }
+      },
+      {
+        "from": 660,
+        "tile": {
+          "x": 15,
+          "y": 14
+        },
+        "wet": {
+          "x": 5,
+          "y": 10
+        }
+      },
+      {
+        "from": 960,
+        "tile": {
+          "x": 6,
+          "y": 10
+        },
+        "wet": {
+          "x": 5,
+          "y": 10
+        }
+      },
+      {
+        "from": 1260
+      }
+    ],
+    "likes": [
+      "grapes",
+      "fig"
+    ],
+    "help": {
+      "minigame": "mash",
+      "needs": {
+        "water": 1
+      },
+      "gives": {
+        "bread": 2
+      }
+    }
+  },
+  {
+    "id": "child",
+    "role": "물 긷는 아이",
+    "sprite": "child",
+    "door": {
+      "x": 23,
+      "y": 11
+    },
+    "schedule": [
+      {
+        "from": 390,
+        "tile": {
+          "x": 15,
+          "y": 7
+        },
+        "wet": {
+          "x": 23,
+          "y": 10
+        }
+      },
+      {
+        "from": 600,
+        "tile": {
+          "x": 19,
+          "y": 10
+        },
+        "wet": {
+          "x": 23,
+          "y": 10
+        }
+      },
+      {
+        "from": 840,
+        "tile": {
+          "x": 17,
+          "y": 15
+        },
+        "wet": {
+          "x": 23,
+          "y": 10
+        }
+      },
+      {
+        "from": 1080,
+        "tile": {
+          "x": 22,
+          "y": 10
+        },
+        "wet": {
+          "x": 23,
+          "y": 10
+        }
+      },
+      {
+        "from": 1230
+      }
+    ],
+    "likes": [
+      "fig",
+      "grapes"
+    ],
+    "help": {
+      "minigame": "mash",
+      "gives": {
+        "water": 1
+      }
+    }
+  },
+  {
+    "id": "grandpa",
+    "role": "포도원 할아버지",
+    "sprite": "grandpa",
+    "door": {
+      "x": 23,
+      "y": 4
+    },
+    "schedule": [
+      {
+        "from": 420,
+        "tile": {
+          "x": 22,
+          "y": 7
+        },
+        "wet": {
+          "x": 23,
+          "y": 5
+        }
+      },
+      {
+        "from": 720,
+        "tile": {
+          "x": 24,
+          "y": 5
+        },
+        "wet": {
+          "x": 23,
+          "y": 5
+        }
+      },
+      {
+        "from": 900,
+        "tile": {
+          "x": 25,
+          "y": 7
+        },
+        "wet": {
+          "x": 23,
+          "y": 5
+        }
+      },
+      {
+        "from": 1170
+      }
+    ],
+    "likes": [
+      "bread"
+    ],
+    "help": {
+      "minigame": "pick",
+      "gives": {
+        "fig": 2
+      }
+    }
+  },
+  {
+    "id": "merchant",
+    "role": "떠돌이 상인",
+    "sprite": "merchant",
+    "door": {
+      "x": 1,
+      "y": 9
+    },
+    "marketOnly": true,
+    "schedule": [
+      {
+        "from": 450,
+        "tile": {
+          "x": 15,
+          "y": 12
+        },
+        "wet": {
+          "x": 15,
+          "y": 12
+        }
+      },
+      {
+        "from": 1080
+      }
+    ],
+    "likes": [
+      "wool"
+    ],
+    "help": {
+      "minigame": "pick",
+      "gives": {
+        "papyrus": 1
+      }
+    }
+  },
+  {
+    "id": "smith",
+    "role": "대장장이",
+    "sprite": "smith",
+    "door": {
+      "x": 28,
+      "y": 17
+    },
+    "schedule": [
+      {
+        "from": 420,
+        "tile": {
+          "x": 23,
+          "y": 18
+        }
+      },
+      {
+        "from": 1140
+      }
+    ],
+    "likes": [
+      "bread"
+    ],
+    "help": {
+      "minigame": "timing",
+      "gives": {
+        "soot": 1
+      }
+    }
+  },
+  {
+    "id": "shepherd",
+    "role": "양치기",
+    "sprite": "shepherd",
+    "door": {
+      "x": 1,
+      "y": 17
+    },
+    "schedule": [
+      {
+        "from": 400,
+        "tile": {
+          "x": 6,
+          "y": 21
+        },
+        "wet": {
+          "x": 6,
+          "y": 21
+        }
+      },
+      {
+        "from": 1080,
+        "tile": {
+          "x": 5,
+          "y": 18
+        },
+        "wet": {
+          "x": 5,
+          "y": 18
+        }
+      },
+      {
+        "from": 1200
+      }
+    ],
+    "likes": [
+      "bread",
+      "grapes"
+    ],
+    "help": {
+      "minigame": "pick",
+      "gives": {
+        "wool": 1
+      }
+    }
+  },
+  {
+    "id": "presser",
+    "role": "기름 짜는 이웃",
+    "sprite": "presser",
+    "door": {
+      "x": 26,
+      "y": 22
+    },
+    "schedule": [
+      {
+        "from": 420,
+        "tile": {
+          "x": 26,
+          "y": 21
+        },
+        "wet": {
+          "x": 26,
+          "y": 21
+        }
+      },
+      {
+        "from": 1140
+      }
+    ],
+    "likes": [
+      "bread"
+    ],
+    "help": {
+      "minigame": "mash",
+      "gives": {
+        "oil": 1
+      }
+    }
+  },
+  {
+    "id": "weaver",
+    "role": "베 짜는 이웃",
+    "sprite": "weaver",
+    "door": {
+      "x": 14,
+      "y": 26
+    },
+    "joinsAt": 2,
+    "schedule": [
+      {
+        "from": 450,
+        "tile": {
+          "x": 15,
+          "y": 25
+        },
+        "wet": {
+          "x": 15,
+          "y": 25
+        }
+      },
+      {
+        "from": 720,
+        "tile": {
+          "x": 16,
+          "y": 14
+        },
+        "wet": {
+          "x": 15,
+          "y": 25
+        }
+      },
+      {
+        "from": 900,
+        "tile": {
+          "x": 15,
+          "y": 25
+        },
+        "wet": {
+          "x": 15,
+          "y": 25
+        }
+      },
+      {
+        "from": 1140
+      }
+    ],
+    "likes": [
+      "fig",
+      "honey"
+    ],
+    "help": {
+      "minigame": "timing",
+      "gives": {
+        "wool": 1
+      }
+    }
+  },
+  {
+    "id": "beekeeper",
+    "role": "벌 치는 이웃",
+    "sprite": "beekeeper",
+    "door": {
+      "x": 22,
+      "y": 26
+    },
+    "joinsAt": 4,
+    "schedule": [
+      {
+        "from": 420,
+        "tile": {
+          "x": 22,
+          "y": 25
+        }
+      },
+      {
+        "from": 780,
+        "tile": {
+          "x": 17,
+          "y": 14
+        }
+      },
+      {
+        "from": 960,
+        "tile": {
+          "x": 22,
+          "y": 25
+        }
+      },
+      {
+        "from": 1140
+      }
+    ],
+    "likes": [
+      "bread",
+      "grapes"
+    ],
+    "help": {
+      "minigame": "pick",
+      "gives": {
+        "honey": 1
+      }
+    }
+  }
+]
