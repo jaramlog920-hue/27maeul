@@ -2151,6 +2151,7 @@
     "retry": "다시 도전",
     "retryCost": "다시 도전에는 금박 1과 등잔 기름 1이 들어요. (가진 것: 금박 {gold} · 기름 {oil})",
     "lockedRooms": ["사도행전 방", "로마서–빌레몬서 방", "히브리서–유다서 방", "요한계시록 방"],
+    "lockedRoomTap": "{room}은 아직 잠겨 있어요.",
     "shelvedToast": "{book}을 서고에 꽂았습니다. 책등: {grade}",
     "rereadNote": "틀린 구절은 '다시 읽을 구절'에 넣어 두었어요."
   }

@@ -8,7 +8,7 @@ import { FURNITURE_DEFS, type Furniture } from '../engine/room'
 import { drawDecor, lanternLights, sheepCount } from './decor'
 import { FIRE, isNear, npcTile } from '../engine/neighbors'
 import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
-import { cameraFor, HEIGHT, HOME_DOOR, HOME_RECT, houseAt, lockedZones, tileAt, isHome, isIndoor, MAP, ROOM_H, ROOM_W, ROOMS, roomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
+import { cameraFor, HEIGHT, HOME_DOOR, HOME_RECT, houseAt, lockedZones, tileAt, isHome, isIndoor, MAP, PLACES, ROOMS, roomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
 import type { Facing, GameContent, Season, Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { avatarKey, withLookDefaults, type FullAvatar } from '../engine/avatar'
@@ -304,7 +304,7 @@ function drawGround(g: Ctx, ch: string, x: number, y: number, season: Season) {
     g.fillStyle = C.path
     g.fillRect(px, py, TILE, TILE)
     speckle(g, px, py, x, y, C.path2, 6)
-  } else if (ch === '~' || ch === '=') {
+  } else if (ch === '~' || ch === '=' || ch === 'u' || (ch === 'r' && y >= 33)) {
     g.fillStyle = C.water
     g.fillRect(px, py, TILE, TILE)
     g.fillStyle = C.water2
@@ -361,6 +361,24 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       if (h) houseWallTile(g, x, y, ch, h.id, h)
       break
     }
+    case 'G':
+      // 복음서 선반 (꽂힌 책은 그릴 때 얹는다)
+      r(C.shadow, 0, 13, 16, 3)
+      r(C.woodDark, 0, 0, 16, 14)
+      r(C.wood, 1, 1, 14, 12)
+      r(C.woodDark, 1, 12, 14, 1)
+      r('#d9b44a', 0, 0, 16, 1)
+      break
+    case 'K':
+      // 잠긴 방 문: 벽에 난 나무문과 자물쇠
+      r(C.wall, 0, 0, 16, 16)
+      r('#a89878', 2, 1, 12, 15)
+      r(C.woodDark, 3, 2, 10, 14)
+      r(C.wood, 4, 3, 8, 13)
+      r(C.woodDark, 8, 3, 1, 13)
+      r('#8a8478', 6, 8, 4, 4)
+      r('#b3ada2', 7, 9, 2, 2)
+      break
     case 'n':
       // 탁자와 식탁보
       r(C.shadow, 1, 12, 15, 3)
@@ -990,6 +1008,28 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         flame(g, FIRE.x * TILE + 8, FIRE.y * TILE + 13, t, true)
       }
 
+      // 서고 안 복음서 선반: 네 칸, 꽂은 책은 책등 색과 등급 띠(맨 책·은박·금박)
+      if (roomAt(here)?.owner === 'library') {
+        const [first] = PLACES.library.tiles
+        const SPINE: Record<string, string> = { mt: '#8a6a6a', mk: '#6a7a8a', lk: '#7a8a6a', jn: '#8a7a5a' }
+        const BAND = ['#c9b89a', '#c7ccd4', '#d9b44a']
+        ;(['mt', 'mk', 'lk', 'jn'] as const).forEach((b, i) => {
+          const sx = first.x * TILE + 4 + i * 11
+          const sy = first.y * TILE + 2
+          const grade = game.shelved[b]
+          if (grade === undefined) {
+            g.fillStyle = 'rgba(40,25,15,0.35)'
+            g.fillRect(sx, sy + 1, 8, 9)
+            return
+          }
+          g.fillStyle = SPINE[b]
+          g.fillRect(sx, sy, 8, 10)
+          g.fillStyle = BAND[grade]
+          g.fillRect(sx, sy + 2, 8, 2)
+          g.fillRect(sx, sy + 7, 8, 1)
+        })
+      }
+
       // 마음이 쌓여 마을에 생긴 것들
       drawDecor(g, game, weather, t, phase === 'morning' || phase === 'day')
       // 아직 열리지 않은 구역: 땅을 덮은 덤불 (물·집은 그대로 보인다)
@@ -1155,8 +1195,8 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       if (room) {
         const rx = room.x0 * TILE
         const ry = room.y0 * TILE
-        const rw = ROOM_W * TILE
-        const rh = ROOM_H * TILE
+        const rw = room.w * TILE
+        const rh = room.h * TILE
         g.fillStyle = '#1c1510'
         g.fillRect(ox - TILE, oy - TILE, W + 2 * TILE, ry - oy + TILE)
         g.fillRect(ox - TILE, ry + rh, W + 2 * TILE, oy + H - ry - rh + TILE)

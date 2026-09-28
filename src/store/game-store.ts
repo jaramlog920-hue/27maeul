@@ -53,7 +53,7 @@ import {
   type SubmitResult,
   type Trade,
 } from '../engine/game'
-import { isHome, lockedTiles, lockedZones, sameTile, zoneAt } from '../engine/world'
+import { isHome, LOCKED_DOORS, lockedTiles, lockedZones, sameTile, zoneAt } from '../engine/world'
 import { removal } from '../engine/room'
 import { heartsOf } from '../engine/hearts'
 import { add, RECIPES, type Inventory, type RecipeId } from '../engine/items'
@@ -413,6 +413,11 @@ export const useGame = create<Store>((set, get) => {
             sfx('place')
           }
         }
+        return
+      }
+      const locked = LOCKED_DOORS.findIndex((d) => sameTile(d, tile))
+      if (locked >= 0) {
+        get().say(fill(T.library.lockedRoomTap, { room: (T.library.lockedRooms as string[])[locked] }))
         return
       }
       const zone = zoneAt(tile)

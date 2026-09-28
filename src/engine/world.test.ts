@@ -1,4 +1,4 @@
-import { MAP, WIDTH, HEIGHT, PLACES, START, isWalkable, placeAt, cameraFor, VIEW_W, VIEW_H, VILLAGE_H, isHome, tileAt, ROOMS, WARPS, roomAt, key, ROOM_W, ROOM_H } from './world'
+import { MAP, WIDTH, HEIGHT, PLACES, START, isWalkable, placeAt, cameraFor, VIEW_W, VIEW_H, VILLAGE_H, isHome, tileAt, ROOMS, WARPS, roomAt, key, ROOM_W, ROOM_H, LOCKED_DOORS } from './world'
 import { findPath, pathToward, stepActor, type Actor } from './movement'
 
 const adjacent = (a: { x: number; y: number }, b: { x: number; y: number }) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y) === 1
@@ -25,7 +25,9 @@ describe('world', () => {
   it('모든 장소는 시작 칸에서 닿을 수 있다', () => {
     for (const [id, p] of Object.entries(PLACES)) {
       const t = p.tiles[0]
-      const path = p.stand ? findPath(START, p.stand) : pathToward(START, t)
+      // 방 안의 장소는 그 방에 들어온 자리에서 걷는다
+      const from = roomAt(t)?.entry ?? START
+      const path = p.stand ? findPath(from, p.stand) : pathToward(from, t)
       expect(path, id).not.toBeNull()
     }
   })
@@ -33,7 +35,7 @@ describe('world', () => {
     expect(placeAt({ x: 3, y: 5 })).toBe('desk')
     expect(placeAt({ x: 6, y: 33 })).toBe('reeds')
     expect(placeAt({ x: 15, y: 27 })).toBe('field')
-    expect(placeAt({ x: 24, y: 5 })).toBe('library')
+    expect(placeAt({ x: 36, y: 50 })).toBe('library')
     expect(placeAt({ x: 7, y: 8 })).toBe('basket')
     expect(placeAt({ x: 5, y: 5 })).toBeNull()
     expect(isHome({ x: 5, y: 5 })).toBe(true)
@@ -50,9 +52,9 @@ describe('world', () => {
 
 describe('이웃집 안', () => {
   it('집마다 방이 있고, 문 ↔ 방 안이 서로 이어진다', () => {
-    expect(ROOMS.length).toBe(5)
+    expect(ROOMS.map((r) => r.owner)).toEqual(['baker', 'child', 'grandpa', 'weaver', 'beekeeper', 'library'])
     for (const r of ROOMS) {
-      expect(tileAt(r.door.x, r.door.y), r.owner).toBe('D')
+      expect(tileAt(r.door.x, r.door.y), r.owner).toBe(r.owner === 'library' ? 'L' : 'D')
       const inside = WARPS.get(key(r.door))!
       expect(roomAt(inside)?.owner).toBe(r.owner)
       expect(isWalkable(inside)).toBe(true)
@@ -70,6 +72,19 @@ describe('이웃집 안', () => {
     const c = cameraFor(r.entry.x, r.entry.y)
     expect(c.x + VIEW_W / 2).toBeCloseTo(r.x0 + ROOM_W / 2)
     expect(c.y + VIEW_H / 2).toBeCloseTo(r.y0 + ROOM_H / 2)
+  })
+  it('서고 안: 복음서 선반 앞에 설 수 있고, 잠긴 방 문 넷은 막혀 있다', () => {
+    const lib = ROOMS.find((r) => r.owner === 'library')!
+    expect(roomAt(PLACES.library.stand!)).toBe(lib)
+    expect(findPath(lib.entry, PLACES.library.stand!)).not.toBeNull()
+    expect(LOCKED_DOORS).toHaveLength(4)
+    for (const d of LOCKED_DOORS) {
+      expect(tileAt(d.x, d.y)).toBe('K')
+      expect(isWalkable(d)).toBe(false)
+    }
+    // 왼쪽 위 → 왼쪽 아래 → 오른쪽 위 → 오른쪽 아래
+    expect(LOCKED_DOORS[0].x).toBeLessThan(LOCKED_DOORS[2].x)
+    expect(LOCKED_DOORS[0].y).toBeLessThan(LOCKED_DOORS[1].y)
   })
 })
 
