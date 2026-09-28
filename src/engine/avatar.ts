@@ -22,7 +22,7 @@ export interface Avatar {
 export type FullAvatar = Required<Avatar>
 
 export const SKINS = ['#f6d7c3', '#eab996', '#e0a57e', '#c98b62', '#b07550', '#8d5a3b', '#6e4430', '#553425'] as const
-export const HAIRS = ['짧은 머리', '긴 머리', '올린 머리', '묶은 머리', '곱슬머리', '앞머리'] as const
+export const HAIRS = ['짧은 머리', '긴 머리', '올린 머리', '묶은 머리', '곱슬머리', '앞머리', '양갈래', '땋은 머리', '짧게 깎은 머리', '단발'] as const
 /** 윗옷: [이름, 바탕, 그늘, 무늬/띠, 무늬 모양] */
 export const TOPS: readonly (readonly [string, string, string, string, 'plain' | 'stripe' | 'apron' | 'vest'])[] = [
   ['흙빛 겉옷', '#8a6a4a', '#6d5238', '#c9a15a', 'plain'],

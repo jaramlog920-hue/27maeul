@@ -37,10 +37,9 @@ describe('사람 도트', () => {
     const shut = spriteRows('writer', 'down', { frame: 0, blink: true })
     expect(shut[4]).not.toBe(open[4])
   })
-  it('왼쪽은 오른쪽의 거울 (귀에 꽂은 펜도 함께)', () => {
+  it('왼쪽은 오른쪽의 거울', () => {
     const right = spriteRows('writer', 'right', { frame: 0, blink: false })
     expect(spriteRows('writer', 'left', { frame: 0, blink: false })).toEqual(mirror(right))
-    expect(right.join('')).toContain('P')
   })
   it('이웃마다 모습이 다르다', () => {
     const seen = new Set(PEOPLE.map((w) => spriteRows(w, 'down', { frame: 0, blink: false }).join('|')))

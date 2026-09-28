@@ -159,6 +159,25 @@ function dressAvatar(rows: string[], facing: Facing, a: FullAvatar, blink: boole
       if (front) for (let x = 3; x <= 6; x++) setPixel(rows, x, 3, 'h')
       else if (!back) for (const x of [5, 6]) setPixel(rows, x, 3, 'h')
       break
+    case 6: // 양갈래: 양옆에 붉은 끈으로 묶어 늘어뜨린 머리
+      for (const x of front || back ? [0, 9] : [0]) {
+        setPixel(rows, x, 3, 'x')
+        for (let y = 4; y <= 6; y++) setPixel(rows, x, y, 'h')
+      }
+      break
+    case 7: // 땋은 머리: 어깨 앞(앞모습)·등(뒷모습)으로 내린 한 가닥
+      if (front) for (let y = 3; y <= 9; y++) setPixel(rows, y < 7 ? 9 : 8, y, 'h')
+      else if (back) for (let y = 7; y <= 11; y++) setPixel(rows, y % 2 ? 4 : 5, y, 'h')
+      else for (let y = 5; y <= 9; y++) setPixel(rows, 1, y, 'h')
+      break
+    case 8: // 짧게 깎은 머리: 귀 옆 머리를 걷어 낸다
+      if (front) for (const x of [2, 7]) setPixel(rows, x, 3, 's')
+      else if (!back) for (const x of [3, 4]) setPixel(rows, x, 3, 's')
+      break
+    case 9: // 단발: 턱선까지 오는 머리
+      for (let y = 2; y <= 5; y++) for (const x of front || back ? [0, 9] : [0]) setPixel(rows, x, y, 'h')
+      if (back) for (let x = 2; x <= 7; x++) setPixel(rows, x, 6, 'h')
+      break
   }
   // 윗옷 무늬
   const pattern = TOPS[a.top]?.[4] ?? 'plain'
@@ -288,8 +307,6 @@ export function spriteRows(who: Who, facing: Facing, opts: SpriteOpts): string[]
     if (opts.avatar) dressAvatar(rows, facing, opts.avatar, opts.blink)
     // 여자 모습: 어깨까지 내려오는 머리 (얼굴 양옆의 빈 칸)
     else if (opts.look === 'f') longHair(rows)
-    // 귀에 꽂은 펜: 앞모습은 오른쪽 귀, 옆모습은 뒤통수 쪽 (왼쪽은 아래에서 통째로 뒤집힌다)
-    if (facing !== 'up') setPixel(rows, facing === 'down' ? 8 : 2, 2, 'P')
     if (opts.inky && facing === 'down' && rows[9][1] === 's') setPixel(rows, 1, 9, 'K')
     if (opts.season === 'winter') for (let x = 2; x <= 7; x++) if (rows[7][x] === 'r') setPixel(rows, x, 7, 'S')
   } else {
