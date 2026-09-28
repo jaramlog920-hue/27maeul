@@ -1,3 +1,4 @@
+import { HEIGHT, WIDTH } from '../../engine/world'
 import { tileFromPoint } from './GameCanvas'
 
 describe('tileFromPoint', () => {
@@ -14,7 +15,7 @@ describe('tileFromPoint', () => {
     expect(tileFromPoint(10 + 20 * zoom * 3.5, 20 + 20 * zoom * 4.5, rect, { x: 10, y: 5 }, zoom)).toEqual({ x: 13, y: 9 })
   })
   it('지도 밖은 안으로 자른다', () => {
-    expect(tileFromPoint(10 + 320, 20 + 400, rect, { x: 16, y: 8 })).toEqual({ x: 31, y: 27 })
+    expect(tileFromPoint(10 + 320, 20 + 400, rect, { x: 40, y: HEIGHT })).toEqual({ x: WIDTH - 1, y: HEIGHT - 1 })
     expect(tileFromPoint(0, 0, rect)).toEqual({ x: 0, y: 0 })
   })
 })

@@ -1,4 +1,4 @@
-import { MAP, WIDTH, HEIGHT, PLACES, START, isWalkable, placeAt, cameraFor, VIEW_W, VIEW_H, isHome, tileAt } from './world'
+import { MAP, WIDTH, HEIGHT, PLACES, START, isWalkable, placeAt, cameraFor, VIEW_W, VIEW_H, VILLAGE_H, isHome, tileAt, ROOMS, WARPS, roomAt, key, ROOM_W, ROOM_H } from './world'
 import { findPath, pathToward, stepActor, type Actor } from './movement'
 
 const adjacent = (a: { x: number; y: number }, b: { x: number; y: number }) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y) === 1
@@ -31,9 +31,9 @@ describe('world', () => {
   })
   it('placeAt·집 안', () => {
     expect(placeAt({ x: 3, y: 5 })).toBe('desk')
-    expect(placeAt({ x: 28, y: 14 })).toBe('reeds')
-    expect(placeAt({ x: 15, y: 20 })).toBe('field')
-    expect(placeAt({ x: 15, y: 1 })).toBe('library')
+    expect(placeAt({ x: 6, y: 33 })).toBe('reeds')
+    expect(placeAt({ x: 15, y: 27 })).toBe('field')
+    expect(placeAt({ x: 24, y: 5 })).toBe('library')
     expect(placeAt({ x: 7, y: 8 })).toBe('basket')
     expect(placeAt({ x: 5, y: 5 })).toBeNull()
     expect(isHome({ x: 5, y: 5 })).toBe(true)
@@ -42,9 +42,34 @@ describe('world', () => {
   })
   it('카메라는 지도 밖을 보여 주지 않는다', () => {
     expect(cameraFor(0, 0)).toEqual({ x: 0, y: 0 })
-    expect(cameraFor(WIDTH - 1, HEIGHT - 1)).toEqual({ x: WIDTH - VIEW_W, y: HEIGHT - VIEW_H })
+    expect(cameraFor(WIDTH - 1, VILLAGE_H - 1)).toEqual({ x: WIDTH - VIEW_W, y: VILLAGE_H - VIEW_H })
     const c = cameraFor(15, 14)
     expect(c.x).toBeCloseTo(15.5 - VIEW_W / 2)
+  })
+})
+
+describe('이웃집 안', () => {
+  it('집마다 방이 있고, 문 ↔ 방 안이 서로 이어진다', () => {
+    expect(ROOMS.length).toBe(5)
+    for (const r of ROOMS) {
+      expect(tileAt(r.door.x, r.door.y), r.owner).toBe('D')
+      const inside = WARPS.get(key(r.door))!
+      expect(roomAt(inside)?.owner).toBe(r.owner)
+      expect(isWalkable(inside)).toBe(true)
+      const out = WARPS.get(key(r.exit))!
+      expect(roomAt(out)).toBeNull()
+      expect(isWalkable(out), r.owner).toBe(true)
+      expect(isWalkable(r.sit), r.owner).toBe(true)
+      // 방 안 어디든 들어온 자리에서 걸어갈 수 있고, 방 밖으로 새지 않는다
+      expect(findPath(inside, r.sit), r.owner).not.toBeNull()
+      expect(findPath(inside, START)).toBeNull()
+    }
+  })
+  it('방 안에서는 카메라가 방을 가운데에 둔다', () => {
+    const r = ROOMS[0]
+    const c = cameraFor(r.entry.x, r.entry.y)
+    expect(c.x + VIEW_W / 2).toBeCloseTo(r.x0 + ROOM_W / 2)
+    expect(c.y + VIEW_H / 2).toBeCloseTo(r.y0 + ROOM_H / 2)
   })
 })
 

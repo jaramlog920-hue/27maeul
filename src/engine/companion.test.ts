@@ -24,15 +24,15 @@ describe('neighbors', () => {
   })
   it('시간표: 새벽엔 집, 아침엔 문 앞, 한낮엔 장터', () => {
     expect(goalFor(baker, { ...base, minute: 300 })).toBeNull()
-    expect(goalFor(baker, { ...base, minute: 400 })).toEqual({ x: 6, y: 10 })
-    expect(goalFor(baker, { ...base, minute: 700 })).toEqual({ x: 15, y: 14 })
+    expect(goalFor(baker, { ...base, minute: 400 })).toEqual({ x: 9, y: 17 })
+    expect(goalFor(baker, { ...base, minute: 700 })).toEqual({ x: 20, y: 18 })
     expect(goalFor(baker, { ...base, minute: 23 * 60 })).toBeNull()
     expect(goalFor(baker, { ...base, minute: 25 * 60 })).toBeNull()
   })
   it('비 오면 처마 밑, 상인은 장날에만', () => {
-    expect(goalFor(baker, { ...base, minute: 700, wet: true })).toEqual({ x: 5, y: 10 })
+    expect(goalFor(baker, { ...base, minute: 700, wet: true })).toEqual({ x: 5, y: 18 })
     expect(goalFor(merchant, { ...base, minute: 700 })).toBeNull()
-    expect(goalFor(merchant, { ...base, minute: 700, market: true })).toEqual({ x: 15, y: 12 })
+    expect(goalFor(merchant, { ...base, minute: 700, market: true })).toEqual({ x: 21, y: 15 })
   })
   it('행사 날 저녁엔 모닥불 둘레, 이야기 자리가 가장 앞선다', () => {
     expect(goalFor(baker, { ...base, minute: 19 * 60, festival: true })).toEqual(FESTIVAL_SPOTS.baker)

@@ -51,7 +51,7 @@ import {
   momentNow,
   onceKey,
 } from './stories'
-import { BED_STAND, HEARTH_STAND, isIndoor, key, PLACES, placeAt, sameTile, START, tileAt } from './world'
+import { BED_STAND, HEARTH_STAND, isIndoor, key, PLACES, placeAt, roomAt, sameTile, START, tileAt, WARPS } from './world'
 import type { Book, Facing, GameContent, ItemId, NeighborDef, PlaceId, Rng, Target, Tile } from './types'
 import type { Avatar } from './avatar'
 
@@ -388,6 +388,16 @@ function targetTile(s: GameState, target: Target): Tile | null {
   return null
 }
 
+function warpTo<T extends GameState['player']>(player: T, to: Tile): T {
+  return { ...player, x: to.x, y: to.y, path: [], facing: roomAt(to) ? 'up' : 'down' }
+}
+
+/** 이웃집 문 앞에서 문을 눌렀을 때 들어간다 (저녁 초대가 없을 때) */
+export function enterDoor(s: GameState, door: Tile): GameState {
+  const to = WARPS.get(key(door))
+  return to && roomAt(to) ? { ...s, player: warpTo(s.player, to), target: null } : s
+}
+
 export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): { state: GameState; events: GameEvent[] } {
   const events: GameEvent[] = []
   const clock = advance(s.clock, dt)
@@ -408,6 +418,9 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
   const now = { x: Math.round(player.x), y: Math.round(player.y) }
   let trails = s.trails
   if (!sameTile(now, here) && tileAt(now.x, now.y) === '.') trails = { ...trails, [key(now)]: (trails[key(now)] ?? 0) + 1 }
+  // 이웃집 문을 밟으면 방 안으로, 방의 문깔개를 밟으면 문 앞으로 옮겨 간다
+  const warp = !sameTile(now, here) ? WARPS.get(key(now)) : undefined
+  if (warp) player = warpTo(player, warp)
 
   // 이웃
   const defs = defsById(content)
@@ -417,7 +430,7 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
   for (const [id, n] of Object.entries(s.npcs)) npcs[id] = defs[id] ? stepNpc(n, defs[id], goalFor(defs[id], gctx), dt, furnitureBlockers) : n
 
   // 도착
-  let target = s.target
+  let target = warp ? null : s.target
   if (target && player.path.length === 0) {
     const tt = targetTile({ ...s, npcs }, target)
     if (target.kind === 'neighbor') {

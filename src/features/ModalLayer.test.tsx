@@ -331,7 +331,7 @@ describe('하루', () => {
     reset(at(9 * 60, 2))
     const user = userEvent.setup()
     render(<ModalLayer />)
-    act(() => useGame.getState().tap({ x: 7, y: 8 }))
+    act(() => useGame.getState().tap({ x: 5, y: 9 }))
     walk()
     await user.type(screen.getByRole('textbox'), '보리')
     await user.click(screen.getByRole('button', { name: '밥 주기' }))

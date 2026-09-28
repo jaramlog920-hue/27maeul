@@ -66,9 +66,9 @@ export const INVITE_FROM = 18 * 60
 export const INVITE_TO = 20 * 60 + 30
 /** 저녁에 초대하는 이웃과 그 집 문 */
 export const INVITE_DOORS: Record<string, Tile> = {
-  baker: { x: 5, y: 11 },
-  child: { x: 23, y: 11 },
-  grandpa: { x: 23, y: 4 },
+  baker: { x: 5, y: 17 },
+  child: { x: 36, y: 17 },
+  grandpa: { x: 35, y: 5 },
 }
 export const VISIT_GIFTS: Record<string, Items> = {
   baker: { bread: 2 },
@@ -128,20 +128,19 @@ export const STARS_TO = 22 * 60
 
 /** 모임 자리 (빵집 앞 아기 잔치 / 언덕 소풍·별 보기) */
 export const BABY_PARTY_SPOTS: Record<string, Tile> = {
-  baker: { x: 6, y: 10 },
-  child: { x: 4, y: 10 },
-  grandpa: { x: 7, y: 10 },
-  smith: { x: 3, y: 9 },
-  presser: { x: 2, y: 9 },
-  weaver: { x: 9, y: 9 },
-  beekeeper: { x: 4, y: 9 },
+  baker: { x: 6, y: 19 },
+  child: { x: 4, y: 19 },
+  grandpa: { x: 7, y: 19 },
+  smith: { x: 3, y: 20 },
+  presser: { x: 2, y: 19 },
+  weaver: { x: 7, y: 20 },
+  beekeeper: { x: 4, y: 21 },
 }
 export const HILL_SPOTS: Record<string, Tile> = {
   baker: { x: 13, y: 3 },
   child: { x: 15, y: 3 },
   grandpa: { x: 16, y: 2 },
-  smith: { x: 12, y: 2 },
-  // (15, 1)은 마을 서고 문 자리
+  smith: { x: 17, y: 4 },
   shepherd: { x: 14, y: 1 },
   presser: { x: 17, y: 2 },
   weaver: { x: 13, y: 4 },

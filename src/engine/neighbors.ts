@@ -15,17 +15,17 @@ export const MAX_HEART = 10
 
 /** 행사 날 저녁, 장터 모닥불 둘레 */
 export const FESTIVAL_SPOTS: Record<string, Tile> = {
-  baker: { x: 14, y: 13 },
-  child: { x: 15, y: 13 },
-  grandpa: { x: 17, y: 13 },
-  smith: { x: 14, y: 15 },
-  shepherd: { x: 17, y: 15 },
-  presser: { x: 16, y: 16 },
-  merchant: { x: 15, y: 16 },
-  weaver: { x: 13, y: 14 },
-  beekeeper: { x: 18, y: 14 },
+  baker: { x: 22, y: 16 },
+  child: { x: 24, y: 15 },
+  grandpa: { x: 26, y: 16 },
+  smith: { x: 22, y: 18 },
+  shepherd: { x: 26, y: 18 },
+  presser: { x: 25, y: 19 },
+  merchant: { x: 23, y: 19 },
+  weaver: { x: 21, y: 17 },
+  beekeeper: { x: 27, y: 17 },
 }
-export const FIRE: Tile = { x: 15, y: 14 }
+export const FIRE: Tile = { x: 24, y: 17 }
 
 export interface GoalContext {
   minute: number

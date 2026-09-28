@@ -40,6 +40,7 @@ import {
   warmByHearth,
   playerTile,
   receiveVisit,
+  enterDoor,
   inviterAtDoor,
   dine,
   hasFood,
@@ -314,8 +315,9 @@ export const useGame = create<Store>((set, get) => {
           sfx('eat')
           return { game: persist(dined), modal: null }
         }
-        if (game.today?.inviter) get().say(T.ui.inviteNotHere)
-        return { game, modal: null }
+        // 초대받은 저녁이 아니면 그냥 들어가 본다
+        sfx('step')
+        return { game: persist(enterDoor(game, target.tile)), modal: null }
       }
       case 'anvil':
         get().say(T.ui.anvilHint)

@@ -80,7 +80,7 @@ export function rainbowVisible(day: number, minute: number): boolean {
 export const ENDING_SPOTS: Record<string, Tile> = {
   baker: { x: 4, y: 8 },
   child: { x: 5, y: 8 },
-  grandpa: { x: 7, y: 8 },
+  grandpa: { x: 7, y: 9 },
   smith: { x: 8, y: 8 },
   shepherd: { x: 3, y: 9 },
   presser: { x: 9, y: 9 },

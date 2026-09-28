@@ -106,10 +106,10 @@ describe('걷기와 도착', () => {
     expect(r.state.player.facing).toBe('left')
   })
   it('갈대처럼 서는 칸이 없는 곳은 옆 칸까지 간다', () => {
-    const s = tapTile(newGame(CONTENT), { x: 28, y: 14 })
+    const s = tapTile(newGame(CONTENT), { x: 6, y: 33 })
     const r = runUntilEvent(s)
     expect(r.events[0].type).toBe('arrived')
-    expect(Math.abs(r.state.player.x - 28) + Math.abs(r.state.player.y - 14)).toBe(1)
+    expect(Math.abs(r.state.player.x - 6) + Math.abs(r.state.player.y - 33)).toBe(1)
   })
   it('이웃에게 걸어가 옆에 서면 도착한다', () => {
     let s = at(newGame(CONTENT), 8 * 60)

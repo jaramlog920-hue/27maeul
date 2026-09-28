@@ -12,7 +12,7 @@ export interface Companion extends Actor {
 }
 
 export const STRAY_DAY = 2
-export const STRAY_SPOTS: Record<Animal, Tile> = { cat: { x: 7, y: 8 }, dog: { x: 9, y: 8 } }
+export const STRAY_SPOTS: Record<Animal, Tile> = { cat: { x: 5, y: 9 }, dog: { x: 9, y: 8 } }
 /** 비 오는 날 웅크리는 처마 밑 (집 문 앞) */
 export const EAVES: Tile = { x: 6, y: 8 }
 export const GROWN_AFTER = 10

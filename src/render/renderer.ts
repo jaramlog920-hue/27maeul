@@ -8,7 +8,7 @@ import { FURNITURE_DEFS, type Furniture } from '../engine/room'
 import { drawDecor, lanternLights, sheepCount } from './decor'
 import { FIRE, isNear, npcTile } from '../engine/neighbors'
 import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
-import { cameraFor, HEIGHT, isIndoor, MAP, TILE, VIEW_H, VIEW_W, WIDTH, sameTile } from '../engine/world'
+import { cameraFor, HEIGHT, HOME_DOOR, HOME_RECT, houseAt, isHome, isIndoor, MAP, ROOM_H, ROOM_W, ROOMS, roomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
 import type { Facing, GameContent, Season, Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { avatarKey, withLookDefaults, type FullAvatar } from '../engine/avatar'
@@ -36,29 +36,29 @@ const C = {
   grass3: '#a3cf72',
   worn: '#b9b46e',
   worn2: '#c9a66b',
-  path: '#d8b27a',
-  path2: '#c49a62',
-  floor: '#c89a66',
-  floor2: '#b3875a',
-  wall: '#9a7456',
-  wallTop: '#c09470',
-  wallDark: '#6e523c',
+  path: '#e2cc9c',
+  path2: '#cbb382',
+  floor: '#c9a887',
+  floor2: '#b39274',
+  wall: '#f1e4c6',
+  wallTop: '#fbf3dd',
+  wallDark: '#8a5d34',
   leaf: '#4f8a3c',
   leaf2: '#3d7030',
   leaf3: '#6aa84f',
   trunk: '#6b4a2e',
-  stone: '#aaa89e',
-  stoneDark: '#7d7b72',
-  water: '#5aa0d8',
-  water2: '#7bb6e3',
-  wood: '#a4703f',
-  woodDark: '#7a5230',
-  blanket: '#d9776a',
-  blanketDark: '#b85e53',
+  stone: '#b3ada2',
+  stoneDark: '#878176',
+  water: '#3f86b4',
+  water2: '#6aaad0',
+  wood: '#a07c5e',
+  woodDark: '#765a45',
+  blanket: '#c29095',
+  blanketDark: '#a2747a',
   pillow: '#f3ead8',
   paper: '#f1e3bf',
   lamp: '#f5c542',
-  door: '#8a5d34',
+  door: '#8a6a52',
   shadow: 'rgba(40,25,10,0.22)',
   fire: '#f28c3a',
   fire2: '#f5d46a',
@@ -69,9 +69,9 @@ const C = {
   vine: '#5f8f3f',
   grapes: '#6b3f7a',
   fence: '#8a6a44',
-  awning: '#c85a4a',
+  awning: '#b98078',
   awning2: '#f0e0c0',
-  flower: ['#f28ca0', '#f5d46a', '#ffffff', '#b48ae0'],
+  flower: ['#e4a3ad', '#e8d18a', '#fbf6ee', '#b9a3d6'],
 }
 
 const SEASON_GRASS: Record<Season, [string, string, string]> = {
@@ -83,11 +83,207 @@ const SEASON_GRASS: Record<Season, [string, string, string]> = {
 
 type Ctx = CanvasRenderingContext2D
 
+/** 집마다 다른 모양 — 지붕 무늬·벽·창·문 (아기자기한 파스텔) */
+interface HouseStyle {
+  /** 지붕 [바탕, 줄·테두리, 빛] */
+  roof: [string, string, string]
+  pattern: 'scallop' | 'stripe' | 'tile' | 'honey'
+  wall: string
+  base: string
+  window: 'square' | 'round' | 'arch'
+  shutter: string
+  door: string
+  timber?: string
+  awning?: [string, string]
+}
+const HOUSE_STYLES: Record<string, HouseStyle> = {
+  home: { roof: ['#c98f96', '#a8737b', '#dfb3b8'], pattern: 'scallop', wall: '#f6ecdf', base: '#dccbb8', window: 'square', shutter: '#a8737b', door: '#9a7258' },
+  library: { roof: ['#7fa89c', '#648a7f', '#a8c7bd'], pattern: 'scallop', wall: '#f3ead8', base: '#d6c6a8', window: 'arch', shutter: '#648a7f', door: '#8a6448' },
+  baker: { roof: ['#cf8e80', '#ad7165', '#e3b1a6'], pattern: 'scallop', wall: '#f3e2cf', base: '#dcc4ac', window: 'square', shutter: '#ad7165', door: '#a8766a', awning: ['#cf8e80', '#f6eee4'] },
+  child: { roof: ['#9dbb94', '#7f9c77', '#c2d8ba'], pattern: 'tile', wall: '#f4ecd9', base: '#dccfb2', window: 'round', shutter: '#7f9c77', door: '#86a3b8' },
+  grandpa: { roof: ['#a59bbf', '#877ea3', '#c7bfdb'], pattern: 'tile', wall: '#f1e6d4', base: '#d4c2a8', window: 'square', shutter: '#8a6a52', door: '#7f5d45', timber: '#8a6a52' },
+  weaver: { roof: ['#93afc8', '#7894ad', '#dfe8f0'], pattern: 'stripe', wall: '#f1e0e0', base: '#dbc4c4', window: 'arch', shutter: '#7894ad', door: '#a8848c' },
+  beekeeper: { roof: ['#d4b56a', '#b39650', '#e8d49c'], pattern: 'honey', wall: '#f4ead0', base: '#dccfae', window: 'round', shutter: '#b39650', door: '#a8844a' },
+}
+const PLAIN_STYLE = HOUSE_STYLES.child
+/** 내 집 앞벽 (한 줄뿐이라 '아래 줄'로 그린다) */
+const HOME_FRONT = { x0: HOME_RECT.x0, x1: HOME_RECT.x1, y1: HOME_RECT.y1, doorX: HOME_DOOR.x }
+
+/** 지붕 한 칸. rect는 지붕 부분 (y1 = 지붕 맨 아래 줄) */
+function roofTile(g: Ctx, x: number, y: number, st: HouseStyle, rect: { x0: number; x1: number; y0: number; y1: number }) {
+  const px = x * TILE
+  const py = y * TILE
+  const [c1, c2, c3] = st.roof
+  const r = (color: string, dx: number, dy: number, w: number, h: number) => {
+    g.fillStyle = color
+    g.fillRect(px + dx, py + dy, w, h)
+  }
+  r(c1, 0, 0, 16, 16)
+  // 무늬는 제 칸 안에만 (옆 칸으로 삐져나가지 않게)
+  g.save()
+  g.beginPath()
+  g.rect(px, py, TILE, TILE)
+  g.clip()
+  if (st.pattern === 'scallop') {
+    // 물고기 비늘처럼 동그란 기와
+    for (let yy = 0; yy < 16; yy += 4) {
+      const off = ((y * 4 + yy) / 4) % 2 ? 2 : 0
+      for (let xx = -4 + off; xx < 16; xx += 4) {
+        r(c2, xx, yy + 2, 1, 1)
+        r(c2, xx + 3, yy + 2, 1, 1)
+        r(c2, xx + 1, yy + 3, 2, 1)
+        r(c3, xx + 1, yy, 1, 1)
+      }
+    }
+  } else if (st.pattern === 'stripe') {
+    // 사탕 줄무늬
+    for (let xx = 0; xx < 16; xx += 8) r(c3, xx + 4, 0, 4, 16)
+    for (let yy = 3; yy < 16; yy += 4) r(c2, 0, yy, 16, 1)
+  } else if (st.pattern === 'honey') {
+    // 벌집 무늬
+    for (let yy = 0; yy < 16; yy += 4) {
+      const off = ((y * 4 + yy) / 4) % 2 ? 3 : 0
+      for (let xx = -6 + off; xx < 16; xx += 6) {
+        r(c2, xx, yy + 1, 1, 2)
+        r(c2, xx + 1, yy, 4, 1)
+        r(c3, xx + 2, yy + 1, 2, 1)
+      }
+    }
+  } else {
+    // 가로 기와
+    for (let yy = 0; yy < 16; yy += 4) {
+      r(c2, 0, yy + 3, 16, 1)
+      const off = ((y * 4 + yy) / 4) % 2 ? 0 : 4
+      for (let xx = off; xx < 16; xx += 8) r(c2, xx, yy, 1, 3)
+      r(c3, off + 2, yy, 2, 1)
+    }
+  }
+  g.restore()
+  if (y === rect.y0) {
+    r(c2, 0, 0, 16, 3) // 용마루
+    r(c3, 0, 0, 16, 1)
+  }
+  if (x === rect.x0) r(c2, 0, 0, 2, 16)
+  if (x === rect.x1) r(c2, 14, 0, 2, 16)
+  if (y === rect.y1) {
+    // 처마 끝
+    r(c2, 0, 13, 16, 3)
+    r(c3, 0, 13, 16, 1)
+  }
+  // 굴뚝 하나
+  if (y === rect.y0 && x === rect.x1 - 1) {
+    r('#b8a494', 4, -5, 8, 10)
+    r('#8f7d70', 4, -5, 8, 2)
+    r('#8f7d70', 4, 0, 8, 1)
+  }
+}
+
+/** 앞벽 한 칸: 위 줄은 처마 그림자와 창, 아래 줄은 꽃 상자·문 */
+function houseWallTile(g: Ctx, x: number, y: number, ch: string, id: string, h: { x0: number; x1: number; y1: number; doorX: number }) {
+  const st = HOUSE_STYLES[id] ?? PLAIN_STYLE
+  const px = x * TILE
+  const py = y * TILE
+  const r = (color: string, dx: number, dy: number, w: number, hh: number) => {
+    g.fillStyle = color
+    g.fillRect(px + dx, py + dy, w, hh)
+  }
+  const upper = y === h.y1 - 1
+  const col = x - h.x0
+  r(st.wall, 0, 0, 16, 16)
+  if (upper) r('rgba(90,60,70,0.22)', 0, 0, 16, 3)
+  if (!upper) r(st.base, 0, 12, 16, 4)
+  if (st.timber) {
+    r(st.timber, 0, 0, 16, 1)
+    if (col % 2 === 0) r(st.timber, 0, 0, 2, 16)
+  }
+  if (x === h.x0) r(st.base, 0, 0, 1, 16)
+  if (x === h.x1) r(st.base, 15, 0, 1, 16)
+
+  const door = x === h.doorX
+  // 창은 문을 가운데 두고 양옆 같은 거리에 (위아래 줄 같은 칸)
+  const k = h.doorX - 2 >= h.x0 && h.doorX + 2 <= h.x1 ? 2 : 1
+  const winCol = Math.abs(x - h.doorX) === k
+  const glass = '#cfe3ec'
+  const window = (dy: number) => {
+    if (st.window === 'round') {
+      r(st.shutter, 4, dy + 1, 8, 6)
+      r(st.shutter, 5, dy, 6, 8)
+      r(glass, 5, dy + 1, 6, 6)
+      r(st.shutter, 7, dy + 1, 2, 6)
+      r(st.shutter, 5, dy + 3, 6, 2)
+    } else if (st.window === 'arch') {
+      r(st.shutter, 4, dy + 1, 8, 8)
+      r(st.shutter, 5, dy, 6, 1)
+      r(glass, 5, dy + 1, 6, 7)
+      r(st.shutter, 7, dy + 1, 2, 7)
+    } else {
+      r(st.shutter, 2, dy, 2, 8) // 덧창
+      r(st.shutter, 12, dy, 2, 8)
+      r('#fbf6ee', 4, dy, 8, 8)
+      r(glass, 5, dy + 1, 6, 6)
+      r('#fbf6ee', 7, dy + 1, 1, 6)
+      r('#fbf6ee', 5, dy + 3, 6, 1)
+    }
+    r('#ffffff', 5, dy + 1, 1, 1)
+  }
+  if (id === 'library') {
+    // 서고: 문 위에 동그란 창, 양옆에 큰 아치 창 (두 줄에 걸쳐)
+    const archCols = [h.doorX - 3, h.doorX - 2, h.doorX + 2, h.doorX + 3]
+    if (upper && door) {
+      r('#a89878', 3, 2, 10, 10)
+      r('#e7d8b8', 4, 3, 8, 8)
+      r(glass, 5, 4, 6, 6)
+      r('#a89878', 7, 4, 2, 6)
+      r('#a89878', 5, 6, 6, 2)
+    } else if (archCols.includes(x)) {
+      const left = x === h.doorX - 3 || x === h.doorX + 2
+      const wx = left ? 8 : 0
+      if (upper) {
+        r('#a89878', left ? 6 : 0, 4, 10, 12)
+        r('#a89878', left ? 7 : 0, 3, left ? 9 : 9, 1)
+        r('#f2d9a0', wx, 6, 8, 10)
+        r('#a89878', left ? 14 : 0, 6, 2, 10)
+      } else {
+        r('#a89878', left ? 6 : 0, 0, 10, 10)
+        r('#f2d9a0', wx, 0, 8, 8)
+        r('#a89878', left ? 14 : 0, 0, 2, 8)
+        r('#a89878', wx, 4, 8, 1)
+        r('#dccbb0', left ? 6 : 0, 9, 10, 2)
+      }
+    }
+  } else if (upper && winCol) window(4)
+  else if (upper && door) {
+    // 문 위의 작은 둥근 창
+    r(st.shutter, 6, 5, 4, 4)
+    r(glass, 7, 6, 2, 2)
+  } else if (!upper && winCol) {
+    window(1)
+    r('#8a6a52', 3, 9, 10, 3) // 꽃 상자
+    for (let i = 0; i < 4; i++) r(['#e4a3ad', '#e8d18a', '#fbf6ee', '#b9a3d6'][(x + i) % 4], 4 + i * 2, 8, 2, 2)
+  }
+  if (door && !upper) {
+    // 나무 문과 작은 창, 놋쇠 손잡이
+    const dc = ch === 'L' ? '#8a6448' : st.door
+    r('#fbf6ee', 2, 1, 12, 15)
+    r(dc, 3, 2, 10, 14)
+    r(dc, 4, 1, 8, 1)
+    r('rgba(0,0,0,0.15)', 8, 2, 1, 14)
+    r(glass, 5, 4, 6, 3)
+    r('#d9b44a', 10, 9, 2, 2)
+  }
+  if (st.awning && !upper && Math.abs(x - h.doorX) <= 1) {
+    // 빵집 문 위 줄무늬 차양
+    for (let i = 0; i < 4; i++) r(i % 2 ? st.awning[1] : st.awning[0], i * 4, 0, 4, 4)
+    for (let i = 0; i < 4; i++) r(st.awning[0], i * 4 + 1, 4, 2, 1)
+  }
+}
+
 /** 칸마다 같은 무늬가 나오도록 좌표로 만든 난수 */
 function hash(x: number, y: number, i: number): number {
   let h = (x * 374761393 + y * 668265263 + i * 2147483647) >>> 0
   h = Math.imul(h ^ (h >>> 13), 1274126177) >>> 0
-  return (h ^ (h >>> 16)) / 4294967296
+  // ^ 는 부호 있는 32비트를 돌려준다 — >>> 0 으로 0 이상으로 만들어야 점이 옆 칸으로 새지 않는다
+  return ((h ^ (h >>> 16)) >>> 0) / 4294967296
 }
 
 function speckle(g: Ctx, px: number, py: number, x: number, y: number, color: string, n: number) {
@@ -99,7 +295,12 @@ function drawGround(g: Ctx, ch: string, x: number, y: number, season: Season) {
   const px = x * TILE
   const py = y * TILE
   const [g1, g2, g3] = SEASON_GRASS[season]
-  if ('fbdhskD'.includes(ch)) {
+  if (ch === '_') {
+    g.fillStyle = '#15100c'
+    g.fillRect(px, py, TILE, TILE)
+    return
+  }
+  if ('fbdhskD'.includes(ch) || (y >= VILLAGE_H && ch !== '#')) {
     g.fillStyle = C.floor
     g.fillRect(px, py, TILE, TILE)
     g.fillStyle = C.floor2
@@ -133,11 +334,27 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
   }
   switch (ch) {
     case '#':
+    case 'S': {
+      const h = houseAt(x, y)
+      if (h) {
+        houseWallTile(g, x, y, ch, h.id, h)
+        break
+      }
+      if (y === HOME_RECT.y1 && x >= HOME_RECT.x0 && x <= HOME_RECT.x1) {
+        houseWallTile(g, x, y, ch, 'home', HOME_FRONT)
+        break
+      }
+      // 내 집 벽: 크림 회벽과 나무 들보
       r(C.wall, 0, 0, 16, 16)
-      r(C.wallTop, 0, 0, 16, 4)
-      r(C.wallDark, 0, 14, 16, 2)
-      r(C.wallDark, ((x * 5) % 12) + 2, 7, 3, 1)
+      r(C.wallTop, 0, 0, 16, 2)
+      r(C.wallDark, 0, 15, 16, 1)
       break
+    }
+    case 'R': {
+      const h = houseAt(x, y)
+      roofTile(g, x, y, HOUSE_STYLES[h?.id ?? ''] ?? PLAIN_STYLE, h ? { x0: h.x0, x1: h.x1, y0: h.y0, y1: h.y1 - 2 } : { x0: x, x1: x, y0: y, y1: y })
+      break
+    }
     case 'T': {
       const leaf = season === 'autumn' ? '#b8893a' : season === 'winter' ? '#6f7f63' : C.leaf
       r(C.shadow, 3, 13, 11, 3)
@@ -147,13 +364,71 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r(season === 'autumn' ? '#d0a24a' : C.leaf3, 4, 2, 4, 3)
       break
     }
-    case 'L':
-      // 마을 서고 문: 돌 벽, 나무 문, 금빛 현판
-      r(C.stoneDark, 1, 1, 14, 15)
-      r(C.stone, 2, 2, 12, 13)
-      r(C.woodDark, 5, 7, 6, 9)
-      r(C.wood, 6, 8, 4, 8)
-      r('#d9b44a', 3, 3, 10, 2)
+    case 'L': {
+      const h = houseAt(x, y)
+      if (h) houseWallTile(g, x, y, ch, h.id, h)
+      break
+    }
+    case 'n':
+      // 탁자와 식탁보
+      r(C.shadow, 1, 12, 15, 3)
+      r(C.woodDark, 2, 10, 2, 5)
+      r(C.woodDark, 12, 10, 2, 5)
+      r(C.wood, 1, 4, 14, 7)
+      r('#efe4d4', 2, 4, 12, 4)
+      for (let i = 0; i < 6; i++) r('#b98a8a', 2 + i * 2, 7, 1, 1)
+      r('#fbf6ee', 6, 2, 4, 3) // 찻잔
+      r('#9dbb94', 7, 3, 2, 1)
+      break
+    case 'g':
+      // 항아리
+      r(C.shadow, 3, 13, 10, 3)
+      r('#c2a48a', 4, 5, 8, 9)
+      r('#a88a70', 3, 7, 10, 5)
+      r('#dcc6b0', 5, 6, 2, 3)
+      r('#7f6450', 5, 3, 6, 2)
+      break
+    case 'p':
+      // 꽃 화분
+      r(C.shadow, 3, 13, 10, 3)
+      r('#b98a7a', 4, 9, 8, 5)
+      r('#9c7062', 4, 9, 8, 1)
+      r('#7f9c77', 7, 4, 2, 5)
+      r('#7f9c77', 4, 5, 3, 2)
+      r('#7f9c77', 9, 5, 3, 2)
+      r('#e4a3ad', 6, 1, 4, 3)
+      r('#e8d18a', 7, 2, 2, 1)
+      break
+    case 'W':
+      // 베틀과 짜다 만 천
+      r(C.woodDark, 1, 1, 2, 14)
+      r(C.woodDark, 13, 1, 2, 14)
+      r(C.wood, 1, 1, 14, 2)
+      for (let i = 0; i < 5; i++) r(['#c98f96', '#93afc8', '#d4b56a', '#a59bbf', '#9dbb94'][(x + i) % 5], 3 + i * 2, 3, 2, 9)
+      r(C.wood, 2, 12, 12, 2)
+      break
+    case 'e':
+      // 깔개 (밟고 다닌다)
+      r('#d9b8b0', 0, 1, 16, 14)
+      r('#b98a84', 0, 1, 16, 1)
+      r('#b98a84', 0, 14, 16, 1)
+      for (let i = 0; i < 4; i++) r('#efe4d4', 2 + i * 4, 7, 2, 2)
+      break
+    case 'E':
+      // 문깔개: 밟으면 밖으로
+      r(C.wall, 0, 0, 16, 16)
+      r(C.woodDark, 2, 0, 12, 16)
+      r(C.wood, 3, 1, 10, 15)
+      r('#e7d8b8', 4, 3, 8, 4)
+      r('#a88a80', 3, 12, 10, 3)
+      break
+    case 'u':
+      // 나루에 매어 둔 고깃배
+      r(C.water2, 0, 12, 16, 2)
+      r(C.woodDark, 1, 5, 14, 7)
+      r(C.wood, 2, 5, 12, 4)
+      r(C.woodDark, 7, 0, 1, 6)
+      r('#f1e6cf', 8, 0, 5, 4)
       break
     case 'w':
       r(C.shadow, 2, 13, 13, 3)
@@ -207,9 +482,13 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r(C.woodDark, 12, 9, 2, 5)
       r(C.wood, 1, 7, 14, 3)
       break
-    case 'D':
-      r(C.door, 0, 0, 16, 3)
+    case 'D': {
+      const h = houseAt(x, y)
+      if (h) houseWallTile(g, x, y, ch, h.id, h)
+      else if (y === HOME_RECT.y1) houseWallTile(g, x, y, ch, 'home', HOME_FRONT)
+      else r(C.door, 0, 0, 16, 3)
       break
+    }
     case 'r':
       for (let i = 0; i < 5; i++) r(i % 2 ? C.reed2 : C.reed, 2 + i * 3, 2 + ((i * 5) % 4), 1, 12)
       r(C.woodDark, 3, 2, 2, 3)
@@ -287,6 +566,13 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r(C.woodDark, 11, 3, 1, 10)
       break
   }
+}
+
+/** 내 집 지붕: 밖에서는 이웃집처럼 지붕이 덮이고, 들어가면 벗겨져 안이 보인다 */
+function drawHomeRoof(g: Ctx) {
+  const { x0, y0, x1, y1 } = HOME_RECT
+  const rect = { x0, x1, y0, y1: y1 - 1 }
+  for (let y = y0; y < y1; y++) for (let x = x0; x <= x1; x++) roofTile(g, x, y, HOUSE_STYLES.home, rect)
 }
 
 const mapCache = new Map<Season, HTMLCanvasElement>()
@@ -641,7 +927,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       // 눈 쌓인 땅
       if (weather === 'snow') {
         g.fillStyle = 'rgba(255,255,255,0.35)'
-        g.fillRect(0, 0, WIDTH * TILE, HEIGHT * TILE)
+        g.fillRect(0, 0, WIDTH * TILE, VILLAGE_H * TILE)
       }
 
       // 익은 포도
@@ -656,7 +942,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         )
       if (barleyRipe(day)) {
         g.fillStyle = 'rgba(255, 230, 140, 0.25)'
-        g.fillRect(13 * TILE, 19 * TILE, 7 * TILE, 6 * TILE)
+        g.fillRect(12 * TILE, 25 * TILE, 8 * TILE, 6 * TILE)
       }
 
       // 선반의 두루마리, 책상의 잉크 자국, 등잔 그을음
@@ -696,11 +982,11 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
 
       // 양 우리의 양 (우리를 넓히면 둘 더)
       ;[
-        [4, 21],
-        [6, 22],
-        [5, 20.5],
-        [4, 22.5],
-        [6.5, 20.5],
+        [4, 27],
+        [6, 28],
+        [5, 26.5],
+        [4, 28.5],
+        [6.5, 26.5],
       ].slice(0, sheepCount(game)).forEach(([sx, sy], i) => {
         const x = sx + Math.sin(t * 0.3 + i * 2) * 0.6
         const y = sy + Math.cos(t * 0.23 + i) * 0.5
@@ -710,7 +996,19 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       // 이웃
       for (const def of content.neighbors) {
         const n = game.npcs[def.id]
-        if (!n?.visible) continue
+        if (!n?.visible) {
+          // 집에 들어간 이웃: 내가 그 집 안에 있으면 방 안 자리에 서 있다 (밤 열 시 이후엔 잔다)
+          const home = ROOMS.find((rm) => rm.owner === def.id)
+          const movedIn = !def.joinsAt || (game.flags.villageLevel ?? 0) >= def.joinsAt
+          if (n && home && movedIn && roomAt(here) === home && minute >= 5 * 60 && minute < 22 * 60) {
+            const growth = def.id === 'child' ? childGrowth(day) : undefined
+            items.push({
+              y: home.sit.y,
+              paint: () => drawSprite(g, person(def.sprite as Who, 'down', 0, isBlinking(t + def.id.length), 'stand', season, { growth }), home.sit.x, home.sit.y, breathOffset(t + def.id.length)),
+            })
+          }
+          continue
+        }
         const moving = n.path.length > 0
         const facing = moving ? n.facing : 'down'
         const offset = def.id.length * 0.37
@@ -831,6 +1129,20 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       for (const b of flies) items.push({ y: b.y + 0.5, paint: () => g.drawImage(paint(`bf/${b.frame}/${b.hue}`, BUTTERFLY[b.frame], { ...SMALL_PALETTE, o: b.hue ? '#8fb8e0' : '#f28c5a', O: b.hue ? '#6a95c4' : '#f5d46a' }), Math.round(b.x * TILE), Math.round(b.y * TILE)) })
 
       items.sort((a, b) => a.y - b.y).forEach((i) => i.paint())
+      // 내 집은 밖에 있을 때 지붕을 덮는다 (사람·동물을 그린 뒤)
+      if (!isHome(here)) drawHomeRoof(g)
+      const room = roomAt(here)
+      if (room) {
+        const rx = room.x0 * TILE
+        const ry = room.y0 * TILE
+        const rw = ROOM_W * TILE
+        const rh = ROOM_H * TILE
+        g.fillStyle = '#1c1510'
+        g.fillRect(ox - TILE, oy - TILE, W + 2 * TILE, ry - oy + TILE)
+        g.fillRect(ox - TILE, ry + rh, W + 2 * TILE, oy + H - ry - rh + TILE)
+        g.fillRect(ox - TILE, ry, rx - ox + TILE, rh)
+        g.fillRect(rx + rw, ry, ox + W - rx - rw + TILE, rh)
+      }
       } finally {
         // 도중에 오류가 나도 좌표 이동이 쌓이지 않게 반드시 되돌린다
         g.restore()
@@ -854,7 +1166,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           glow(g, sx(6 * TILE + 8), sy(3 * TILE + 12), 22, dark * 0.6)
           if (festOn) glow(g, sx(FIRE.x * TILE + 8), sy(FIRE.y * TILE + 8), 48, dark)
           // 집집마다 창에 불빛
-          for (const [x, y] of [[5, 11], [23, 11], [23, 4]]) glow(g, sx(x * TILE + 8), sy(y * TILE + 4), 14, dark * 0.5)
+          for (const [x, y] of [[5, 17], [36, 17], [35, 5], [28, 28], [42, 31], [24, 5]]) glow(g, sx(x * TILE + 8), sy(y * TILE + 4), 14, dark * 0.5)
           // 길가의 등불
           for (const l of lanternLights(game)) glow(g, sx(l.x * TILE + 8), sy(l.y * TILE + 2), 26, dark * 0.8)
         }
