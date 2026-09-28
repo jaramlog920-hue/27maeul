@@ -1,13 +1,14 @@
 import { fill, T } from '../../content/text'
 import { isMarketDay, weatherOf } from '../../engine/calendar'
 import { formatTime, phaseOf, seasonOf } from '../../engine/clock'
+import { totalChapters } from '../../engine/books'
 import { useGame } from '../../store/game-store'
 
 export function Hud() {
   const day = useGame((s) => s.game.clock.day)
   // 10분 단위로만 다시 그린다
   const minute = useGame((s) => Math.floor(s.game.clock.minute / 10) * 10)
-  const shelf = useGame((s) => s.game.completed.length)
+  const shelf = useGame((s) => totalChapters(s.game))
   const { open } = useGame.getState()
   const weather = (T.ui.weather as Record<string, string>)[weatherOf(day)]
   return (

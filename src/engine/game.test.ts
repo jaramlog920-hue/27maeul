@@ -2,6 +2,7 @@ import {
   adoptStray,
   canCraft,
   canHelp,
+  chooseBook,
   coverWithBlanket,
   eatBread,
   finishCraft,
@@ -40,7 +41,7 @@ import { deserialize, loadGame, saveGame, serialize as serializeForTest, SAVE_KE
 import { HOME_DOOR, PLACES, START } from './world'
 import { heartsOf } from './hearts'
 import { STRAY_SPOTS } from './companion'
-import { CONTENT } from '../content/catalog'
+import { CONTENT, piecesOf } from '../content/catalog'
 import type { NeighborDef } from './types'
 
 const zero = () => 0
@@ -84,12 +85,15 @@ describe('새 게임', () => {
     expect(s.scenes).toEqual(['welcome'])
     // 상인은 장날이 아니라 제안이 없다
     expect(s.offers.merchant).toBeUndefined()
-    // 1장 조각 6개 중 머리말(1:1-4)은 기록자 자신의 말이라 이웃이 건네지 않는다 → 5명
-    expect(Object.keys(s.offers).length).toBe(5)
-    for (const id of Object.values(s.offers)) expect(id.startsWith('lk-001-')).toBe(true)
-    expect(Object.values(s.offers)).not.toContain('lk-001-001')
-    expect(s.collected).toEqual(['lk-001-001'])
-    expect(s.arrangement[1]).toEqual(['lk-001-001'])
+    // 책을 고르기 전에는 아무도 조각을 건네지 않는다
+    expect(s.offers).toEqual({})
+    expect(s.collected).toEqual([])
+    // 누가복음을 고르면 1장 조각이 이웃에게 배정된다 (눅 1:1-4도 이웃이 건넨다)
+    const lk = chooseBook(s, 'lk', CONTENT)
+    expect(lk.offers.merchant).toBeUndefined()
+    expect(Object.keys(lk.offers).length).toBe(6)
+    for (const id of Object.values(lk.offers)) expect(id.startsWith('lk-001-')).toBe(true)
+    expect(lk.progress.lk.arrangement).toEqual({})
   })
 })
 
@@ -134,12 +138,12 @@ describe('이웃', () => {
     expect(heartsOf(s.hearts.baker)).toBe(0)
   })
   it('이야기는 한 번만 받는다', () => {
-    const s = newGame(CONTENT)
+    const s = chooseBook(newGame(CONTENT), 'lk', CONTENT)
     // 오늘 이야기를 가진 이웃 하나
     const who = Object.keys(s.offers)[0]
     const first = listen(s, who, CONTENT)
     expect(first.pieceId).toBe(s.offers[who])
-    expect(first.state.arrangement[1]).toEqual(['lk-001-001', s.offers[who]])
+    expect(first.state.progress.lk.arrangement[1]).toEqual([s.offers[who]])
     expect(listen(first.state, who, CONTENT).pieceId).toBeNull()
   })
   it('돕기: 필요한 것을 내고 보상을 받는다, 하루 한 번', () => {
@@ -199,7 +203,7 @@ describe('이웃', () => {
 
 describe('벤치에서 읽기', () => {
   it('모은 이야기만 읽을 수 있고, 읽을 때마다 피로가 30 풀린다', () => {
-    const s: GameState = { ...newGame(CONTENT), needs: { hunger: 0, fatigue: 80, cold: 0 } }
+    const s: GameState = { ...newGame(CONTENT), collected: ['lk-001-001'], needs: { hunger: 0, fatigue: 80, cold: 0 } }
     expect(readScripture(s, 'lk-015-011')).toBeNull()
     const a = readScripture(s, 'lk-001-001')!
     expect(a.rested).toBe(true)
@@ -264,8 +268,8 @@ describe('손일', () => {
 })
 
 describe('책상', () => {
-  const chapter1 = CONTENT.pieces.filter((p) => p.chapter === 1).map((p) => p.id)
-  const ready = (): GameState => ({ ...newGame(CONTENT), collected: chapter1, arrangement: { 1: [...chapter1] } })
+  const chapter1 = piecesOf('lk').filter((p) => p.chapter === 1).map((p) => p.id)
+  const ready = (): GameState => setArrangement({ ...chooseBook(newGame(CONTENT), 'lk', CONTENT), collected: chapter1 }, 'lk', 1, [...chapter1])
   it('낮에는 등잔이 필요 없고, 밤에는 기름이 든다', () => {
     const s = ready()
     expect(lightLamp(s)).toBe(s)
@@ -285,31 +289,18 @@ describe('책상', () => {
   })
   it('장을 다 쓰려면 파피루스와 잉크가 든다', () => {
     const s = ready()
-    expect(submitChapter(s, 1, CONTENT).result.kind).toBe('supplies')
-    const ok = submitChapter({ ...s, inv: { papyrus: 1, ink: 1 } }, 1, CONTENT)
+    expect(submitChapter(s, 'lk', 1, CONTENT).result.kind).toBe('supplies')
+    const ok = submitChapter({ ...s, inv: { papyrus: 1, ink: 1 } }, 'lk', 1, CONTENT)
     expect(ok.result.kind).toBe('done')
-    expect(ok.state.completed).toEqual([1])
+    expect(ok.state.progress.lk.completed).toEqual([1])
     expect(ok.state.inv).toEqual({})
     expect(ok.state.scenes).toContain('firstChapter')
   })
   it('순서가 틀리면 비용을 쓰지 않는다', () => {
-    const s = setArrangement({ ...ready(), inv: { papyrus: 1, ink: 1 } }, 1, [...chapter1].reverse())
-    const r = submitChapter(s, 1, CONTENT)
+    const s = setArrangement({ ...ready(), inv: { papyrus: 1, ink: 1 } }, 'lk', 1, [...chapter1].reverse())
+    const r = submitChapter(s, 'lk', 1, CONTENT)
     expect(r.result.kind).toBe('wrong')
     expect(r.state.inv).toEqual({ papyrus: 1, ink: 1 })
-  })
-  it('24장을 다 쓰면 다음 날 아침 잔치', () => {
-    const all = CONTENT.pieces.map((p) => p.id)
-    const done = Array.from({ length: 23 }, (_, i) => i + 1)
-    const last = CONTENT.pieces.filter((p) => p.chapter === 24).map((p) => p.id)
-    let s: GameState = { ...newGame(CONTENT), collected: all, completed: done, arrangement: { 24: last }, inv: { papyrus: 1, ink: 1 } }
-    s = submitChapter(s, 24, CONTENT).state
-    expect(s.flags.ending).toBe(1)
-    expect(s.scenes).toContain('lastChapter')
-    s = goToSleep(s, CONTENT)
-    expect(s.scenes).toContain('ending')
-    expect(s.flags.ending).toBe(2)
-    expect(goToSleep(s, CONTENT).scenes.filter((x) => x === 'ending')).toHaveLength(1)
   })
 })
 
@@ -335,7 +326,7 @@ describe('다 쓴 날 아침', () => {
 
 describe('잠과 새 날', () => {
   it('일지를 남기고 침대 앞에서 일어나며, 이웃 인사·돕기가 새로워진다', () => {
-    let s = newGame(CONTENT)
+    let s = chooseBook(newGame(CONTENT), 'lk', CONTENT)
     const who = Object.keys(s.offers)[0]
     const got = listen(greetNeighbor(s, who), who, CONTENT)
     s = { ...got.state, helped: [who] }
@@ -345,6 +336,8 @@ describe('잠과 새 날', () => {
     expect(s.journal).toEqual([{ day: 1, heard: [got.pieceId], notes: [] }])
     expect(s.talked).toEqual([])
     expect(s.helped).toEqual([])
+    // 새 날에는 조각을 건넨 이웃 기록도 새로워진다
+    expect(s.listened).toEqual([])
     expect([s.player.x, s.player.y]).toEqual([PLACES.bed.stand!.x, PLACES.bed.stand!.y])
     expect(s.scenes).toContain('strays')
   })
@@ -442,7 +435,7 @@ describe('리뷰 지적 회귀', () => {
   })
   it('M3: 궂은 날 집에서 쉬는 이웃(대장장이)에게는 이야기를 배정하지 않는다', () => {
     // 3일째는 비
-    const s = goToSleep(at(newGame(CONTENT), 22 * 60, 2), CONTENT)
+    const s = goToSleep(at(chooseBook(newGame(CONTENT), 'lk', CONTENT), 22 * 60, 2), CONTENT)
     expect(s.clock.day).toBe(3)
     expect(s.offers.smith).toBeUndefined()
     expect(s.offers.baker).toBeDefined()
@@ -481,33 +474,20 @@ describe('저장', () => {
     expect(back.hearts).toEqual({ baker: 2 })
     expect(Object.keys(back.npcs)).toHaveLength(CONTENT.neighbors.length)
   })
-  it('버전 1 저장은 진행만 옮긴다', () => {
-    const v1 = JSON.stringify({
-      version: 1,
-      clock: { day: 3, minute: 500 },
-      player: { x: 5, y: 4 },
-      collected: ['lk-015-001'],
-      todayHeard: [],
-      completed: [],
-      journal: [{ day: 1, heard: [] }],
-      offers: {},
-      arrangement: { 15: ['lk-015-001'] },
-    })
-    const s = deserialize(v1, CONTENT)!
-    expect(s.version).toBe(2)
-    expect(s.clock).toEqual({ day: 3, minute: 500 })
-    expect(s.collected).toEqual(['lk-001-001', 'lk-015-001'])
-    expect(s.arrangement[15]).toEqual(['lk-015-001'])
-    expect(s.inv).toEqual({ water: 1, bread: 2 })
-  })
   it('N2·N4: 끝낸 장의 새 조각은 모은 것으로, 빠진 조각은 본문 순서 자리에', () => {
     const s = newGame(CONTENT)
-    const old = { ...JSON.parse(serializeForTest(s)), collected: ['lk-001-026', 'lk-001-005'], arrangement: { 1: ['lk-001-026', 'lk-001-005'] }, completed: [2] }
+    const old = {
+      ...JSON.parse(serializeForTest(s)),
+      collected: ['lk-001-026', 'lk-001-005', 'lk-001-001'],
+      progress: { ...s.progress, lk: { arrangement: { 1: ['lk-001-026', 'lk-001-005'] }, completed: [2] } },
+    }
     const back = deserialize(JSON.stringify(old), CONTENT)!
-    // 머리말은 맨 앞에 끼워진다 (끝이 아니라)
-    expect(back.arrangement[1]).toEqual(['lk-001-001', 'lk-001-026', 'lk-001-005'])
+    // 순서에서 빠진 머리말은 맨 앞에 끼워진다 (끝이 아니라)
+    expect(back.progress.lk.arrangement[1]).toEqual(['lk-001-001', 'lk-001-026', 'lk-001-005'])
     // 끝낸 2장의 조각은 모두 모은 것으로
-    for (const p of CONTENT.pieces.filter((x) => x.chapter === 2)) expect(back.collected).toContain(p.id)
+    for (const p of piecesOf('lk').filter((x) => x.chapter === 2)) expect(back.collected).toContain(p.id)
+    // 다른 책의 2장은 건드리지 않는다
+    expect(back.collected.some((id) => id.startsWith('mk-'))).toBe(false)
   })
   it('m3: 이웃의 하트 선물은 가방 한도를 넘어도 모두 받는다', () => {
     const s = greetNeighbor({ ...newGame(CONTENT), hearts: { grandpa: 29 }, inv: { fig: 8 } }, 'grandpa')
@@ -518,33 +498,25 @@ describe('저장', () => {
     const bad = {
       ...JSON.parse(serializeForTest(s)),
       collected: ['lk-001-005', 'lk-999-001', 'lk-002-008'],
-      arrangement: { 1: ['lk-999-001'], 2: [] },
+      progress: { ...s.progress, lk: { arrangement: { 1: ['lk-999-001'], 2: [] }, completed: [] } },
       todayHeard: ['lk-999-001'],
       myLines: { 'lk-999-001': '없는 조각', 'lk-001-005': '있는 조각' },
       journal: [{ day: 1, heard: ['lk-999-001', 'lk-001-005'] }],
       offers: { baker: 'lk-999-001' },
     }
     const back = deserialize(JSON.stringify(bad), CONTENT)!
-    expect(back.collected).toEqual(['lk-001-001', 'lk-001-005', 'lk-002-008'])
-    expect(back.arrangement[1].sort()).toEqual(['lk-001-001', 'lk-001-005'])
-    expect(back.arrangement[2]).toEqual(['lk-002-008'])
+    expect(back.collected).toEqual(['lk-001-005', 'lk-002-008'])
+    expect(back.progress.lk.arrangement[1]).toEqual(['lk-001-005'])
+    expect(back.progress.lk.arrangement[2]).toEqual(['lk-002-008'])
     expect(back.todayHeard).toEqual([])
     expect(back.myLines).toEqual({ 'lk-001-005': '있는 조각' })
     expect(back.journal[0].heard).toEqual(['lk-001-005'])
     expect(back.offers).toEqual({})
   })
-  it('예전 저장의 하트 수(0~10)는 점수(0~100)로 바뀐다', () => {
-    const s = newGame(CONTENT)
-    const old = { ...JSON.parse(serializeForTest(s)), hearts: { baker: 3, smith: 10 }, flags: {} }
-    const back = deserialize(JSON.stringify(old), CONTENT)!
-    expect(back.hearts).toEqual({ baker: 30, smith: 100 })
-    // 다시 저장·불러오기해도 두 번 곱하지 않는다
-    expect(deserialize(serializeForTest(back), CONTENT)!.hearts).toEqual({ baker: 30, smith: 100 })
-  })
   it('깨진 저장은 null, 저장소 예외도 흡수', () => {
     expect(deserialize('{not json', CONTENT)).toBeNull()
     expect(deserialize(JSON.stringify({ version: 9 }), CONTENT)).toBeNull()
-    expect(deserialize(JSON.stringify({ version: 2 }), CONTENT)).toBeNull()
+    expect(deserialize(JSON.stringify({ version: 1 }), CONTENT)).toBeNull()
     const bad = {
       getItem: () => {
         throw new Error('blocked')

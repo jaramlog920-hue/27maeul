@@ -13,7 +13,6 @@ export const LETTERS_TO_READ = 5
 export const LESSON_FROM = 18 * 60
 export const LESSON_TO = 19 * 60 + 30
 export const LESSON_SPOT: Tile = { x: 7, y: 4 }
-export const TOTAL_CHAPTERS = 24
 
 /** 하트가 이만큼 되면 이웃이 선물을 준다 */
 export const MILESTONES = [3, 6, 9] as const

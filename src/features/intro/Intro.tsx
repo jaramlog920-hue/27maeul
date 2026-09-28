@@ -1,6 +1,5 @@
 // 시작 화면: 밝은 하늘 아래 살아 있는 마을 한 장면과 나무 간판 제목
 import { T } from '../../content/text'
-import { Passage } from '../passage/Passage'
 import { TitleScene } from './TitleScene'
 
 export function Intro({ hasSave, onStart, onContinue }: { hasSave: boolean; onStart: () => void; onContinue: () => void }) {
@@ -25,10 +24,6 @@ export function Intro({ hasSave, onStart, onContinue }: { hasSave: boolean; onSt
           {hasSave ? T.ui.restart : T.ui.start}
         </button>
       </div>
-      <details className="title-first">
-        <summary>{T.ui.introLead}</summary>
-        <Passage refText="눅 1:1-4" />
-      </details>
       <p className="title-notice">{T.ui.notice}</p>
     </main>
   )

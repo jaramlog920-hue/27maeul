@@ -33,7 +33,8 @@ import {
 } from './bonds'
 import { goalFor, isNear, npcTile, placeNpc, stepNpc, type Npc } from './neighbors'
 import { GAIN, heartsOf, MAX_POINTS } from './hearts'
-import { currentChapter, offersForDay, OWN_WORDS } from './offers'
+import { bookDone, emptyProgress, totalChapters, type Progress } from './books'
+import { currentChapter, offersForDay } from './offers'
 import { checkArrangement, type ArrangeResult } from './scroll'
 import {
   BABY_DAY,
@@ -48,10 +49,9 @@ import {
   MILESTONES,
   momentNow,
   onceKey,
-  TOTAL_CHAPTERS,
 } from './stories'
 import { BED_STAND, HEARTH_STAND, isIndoor, key, PLACES, placeAt, sameTile, START, tileAt } from './world'
-import type { Facing, GameContent, ItemId, NeighborDef, PlaceId, Rng, Target, Tile } from './types'
+import type { Book, Facing, GameContent, ItemId, NeighborDef, PlaceId, Rng, Target, Tile } from './types'
 
 export interface JournalEntry {
   day: number
@@ -68,7 +68,7 @@ export interface AlbumEntry {
 export type { Furniture }
 
 export interface GameState {
-  version: 2
+  version: 1
   clock: Clock
   player: Actor
   idle: IdleState
@@ -77,9 +77,12 @@ export interface GameState {
   offers: Record<string, string>
   collected: string[]
   todayHeard: string[]
-  /** 장 → 책상 위에 놓인 순서 */
-  arrangement: Record<number, string[]>
-  completed: number[]
+  /** 지금 엮는 책 (처음엔 고르지 않았다) */
+  activeBook: Book | null
+  /** 책별 진행 */
+  progress: Progress
+  /** 오늘 조각을 건넨 이웃 — 책을 바꿔도 같은 날 또 건네지 않는다 */
+  listened: string[]
   journal: JournalEntry[]
   inv: Inventory
   needs: Needs
@@ -127,7 +130,7 @@ function defsById(content: GameContent): Record<string, NeighborDef> {
   return Object.fromEntries(content.neighbors.map((n) => [n.id, n]))
 }
 
-type GoalState = Pick<GameState, 'clock' | 'flags' | 'completed' | 'hearts' | 'today'>
+type GoalState = Pick<GameState, 'clock' | 'flags' | 'progress' | 'hearts' | 'today'>
 
 function goalContext(s: GoalState, content: GameContent) {
   const w = weatherOf(s.clock.day)
@@ -186,8 +189,10 @@ function placeAllNpcs(s: GoalState, content: GameContent): Record<string, Npc> {
   return Object.fromEntries(content.neighbors.map((d) => [d.id, placeNpc(d, goalFor(d, ctx))]))
 }
 
-function todaysOffers(day: number, collected: string[], completed: number[], content: GameContent, npcs: string[]) {
-  return offersForDay({ day, pieces: content.pieces, collected, chapter: currentChapter(content.pieces, completed), neighborIds: npcs })
+function todaysOffers(day: number, collected: string[], s: Pick<GameState, 'activeBook' | 'progress'>, content: GameContent, npcs: string[]) {
+  if (!s.activeBook) return {}
+  const pieces = content.pieces.filter((p) => p.book === s.activeBook)
+  return offersForDay({ day, pieces, collected, chapter: currentChapter(pieces, s.progress[s.activeBook].completed), neighborIds: npcs })
 }
 
 /** 그날 밖에 나오는 이웃 (상인은 장날만, 궂은 날 쉬는 이웃은 빼고) — 이야기는 만날 수 있는 이웃에게만 배정한다 */
@@ -204,19 +209,20 @@ export function newGame(content: GameContent): GameState {
   const clock = newClock()
   // heartPoints: hearts에 점수(0~100)가 들어 있다는 표식 (예전 저장과 구분)
   const flags: Record<string, number> = { heartPoints: 1 }
-  const base = { clock, flags, completed: [] as number[], hearts: {}, today: NO_TODAY }
+  const progress = emptyProgress()
+  const base = { clock, flags, progress, hearts: {}, today: NO_TODAY }
   return {
-    version: 2,
+    version: 1,
     clock,
     player: { x: START.x, y: START.y, path: [], facing: 'down', walkTime: 0 },
     idle: IDLE_RESET,
     target: null,
-    offers: todaysOffers(clock.day, [...OWN_WORDS], [], content, neighborsOfDay(clock.day, content, 0)),
-    // 눅 1:1-4는 기록자 자신의 머리말 — 처음부터 책상 위에 있다
-    collected: [...OWN_WORDS],
+    offers: {},
+    collected: [],
     todayHeard: [],
-    arrangement: { 1: [...OWN_WORDS] },
-    completed: [],
+    activeBook: null,
+    progress,
+    listened: [],
     journal: [],
     inv: { water: 1, bread: 2 },
     needs: FRESH,
@@ -239,6 +245,15 @@ export function newGame(content: GameContent): GameState {
     todayNotes: [],
     today: NO_TODAY,
   }
+}
+
+/** 지금 엮을 책을 고른다. 오늘 아직 조각을 건네지 않은 이웃에게 새 책의 조각을 배정한다 */
+export function chooseBook(s: GameState, book: Book, content: GameContent): GameState {
+  if (!content.pieces.some((p) => p.book === book)) return s
+  const level = s.flags.villageLevel ?? 0
+  const present = neighborsOfDay(s.clock.day, content, level).filter((id) => !s.listened.includes(id))
+  const next = { ...s, activeBook: book }
+  return { ...next, offers: todaysOffers(s.clock.day, s.collected, next, content, present) }
 }
 
 /** 불러온 뒤 이웃을 제자리에 세운다 (걷던 길은 저장하지 않으므로) */
@@ -413,7 +428,7 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
     companion = stepCompanion(companion, companionGoal(now, rainOut), dt)
   }
 
-  const idle = moving ? IDLE_RESET : stepIdle(s.idle, dt, clock.minute, rng, s.completed.length >= 3)
+  const idle = moving ? IDLE_RESET : stepIdle(s.idle, dt, clock.minute, rng, totalChapters(s) >= 3)
   const next: GameState = { ...s, clock, needs, player, target, idle, npcs, companion, trails }
 
   const g = (s.today ?? NO_TODAY).gathering
@@ -483,14 +498,16 @@ export function listen(s: GameState, neighborId: string, content: GameContent): 
   if (!piece) return { state: s, pieceId: null }
   const offers = { ...s.offers }
   delete offers[neighborId]
-  const placed = s.arrangement[piece.chapter] ?? []
+  const bp = s.progress[piece.book]
+  const placed = bp.arrangement[piece.chapter] ?? []
   return {
     state: {
       ...s,
       offers,
       collected: [...s.collected, pieceId],
       todayHeard: [...s.todayHeard, pieceId],
-      arrangement: { ...s.arrangement, [piece.chapter]: [...placed, pieceId] },
+      listened: s.listened.includes(neighborId) ? s.listened : [...s.listened, neighborId],
+      progress: { ...s.progress, [piece.book]: { ...bp, arrangement: { ...bp.arrangement, [piece.chapter]: [...placed, pieceId] } } },
     },
     pieceId,
   }
@@ -791,35 +808,35 @@ export function lightLamp(s: GameState): GameState | null {
   return { ...s, inv: left, lampFuel: extra, lampLitDay: s.clock.day, flags: { ...s.flags, lampNights: (s.flags.lampNights ?? 0) + 1 } }
 }
 
-export function setArrangement(s: GameState, chapter: number, list: string[]): GameState {
-  return { ...s, arrangement: { ...s.arrangement, [chapter]: list } }
+export function setArrangement(s: GameState, book: Book, chapter: number, list: string[]): GameState {
+  const bp = s.progress[book]
+  return { ...s, progress: { ...s.progress, [book]: { ...bp, arrangement: { ...bp.arrangement, [chapter]: list } } } }
 }
 
 export type SubmitResult = ArrangeResult | { kind: 'supplies'; need: Partial<Record<ItemId, number>> } | { kind: 'tired' }
 
 /** 기록할 준비가 되었는가 (순서·재료·몸). 아무것도 쓰지 않는다 — 준비되면 퀴즈를 연다 */
-export function chapterReady(s: GameState, chapter: number, content: GameContent): SubmitResult {
-  const result = checkArrangement(content.pieces, chapter, s.arrangement[chapter] ?? [], s.collected)
-  if (result.kind !== 'done' || s.completed.includes(chapter)) return result
+export function chapterReady(s: GameState, book: Book, chapter: number, content: GameContent): SubmitResult {
+  const pieces = content.pieces.filter((p) => p.book === book)
+  const bp = s.progress[book]
+  const result = checkArrangement(pieces, chapter, bp.arrangement[chapter] ?? [], s.collected)
+  if (result.kind !== 'done' || bp.completed.includes(chapter)) return result
   if (exhausted(s.needs)) return { kind: 'tired' }
   if (!has(s.inv, CHAPTER_COST)) return { kind: 'supplies', need: CHAPTER_COST }
   return result
 }
 
-/** 퀴즈까지 마친 뒤 실제로 기록한다 (재료를 쓰고 장을 완성) */
-export function submitChapter(s: GameState, chapter: number, content: GameContent): { state: GameState; result: SubmitResult } {
-  const result = chapterReady(s, chapter, content)
-  if (result.kind !== 'done' || s.completed.includes(chapter)) return { state: s, result }
+/** 퀴즈까지 마친 뒤 실제로 기록한다 (재료를 쓰고 장을 완성). 한 권의 마지막 장이면 'bookBound' 장면 */
+export function submitChapter(s: GameState, book: Book, chapter: number, content: GameContent): { state: GameState; result: SubmitResult } {
+  const result = chapterReady(s, book, chapter, content)
+  const bp = s.progress[book]
+  if (result.kind !== 'done' || bp.completed.includes(chapter)) return { state: s, result }
   const left = take(s.inv, CHAPTER_COST)!
-  const completed = [...s.completed, chapter]
+  const progress = { ...s.progress, [book]: { ...bp, completed: [...bp.completed, chapter] } }
   const scenes = [...s.scenes]
-  if (completed.length === 1) scenes.push('firstChapter')
-  const flags = { ...s.flags }
-  if (completed.length >= TOTAL_CHAPTERS && !flags.ending) {
-    flags.ending = 1
-    scenes.push('lastChapter')
-  }
-  return { state: passTime({ ...s, inv: left, completed, scenes, flags, needs: work(s.needs, 6) }, 60), result }
+  if (totalChapters(s) === 0) scenes.push('firstChapter')
+  if (bookDone({ progress }, book, content)) scenes.push('bookBound')
+  return { state: passTime({ ...s, inv: left, progress, scenes, needs: work(s.needs, 6) }, 60), result }
 }
 
 // ── 잠과 새 날 ──
@@ -881,7 +898,8 @@ export function goToSleep(s: GameState, content: GameContent): GameState {
     talked: [],
     helped: [],
     gifted: [],
-    offers: todaysOffers(day, s.collected, s.completed, content, present),
+    offers: todaysOffers(day, s.collected, s, content, present),
+    listened: [],
     player: { ...s.player, x: bed.x, y: bed.y, path: [], facing: 'down' },
     target: null,
     // 일어나면 먼저 기지개

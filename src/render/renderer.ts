@@ -2,6 +2,7 @@
 import { barleyRipe, festivalOf, FESTIVAL_FROM, FESTIVAL_TO, grapesRipe, isWet, weatherOf } from '../engine/calendar'
 import { darkness, phaseOf, seasonOf } from '../engine/clock'
 import { isGrown, STRAY_SPOTS, EAVES } from '../engine/companion'
+import { totalChapters } from '../engine/books'
 import { straysToday, type GameState } from '../engine/game'
 import { FURNITURE_DEFS, type Furniture } from '../engine/room'
 import { drawDecor, lanternLights, sheepCount } from './decor'
@@ -630,7 +631,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       }
 
       // 선반의 두루마리, 책상의 잉크 자국, 등잔 그을음
-      const done = game.completed.length
+      const done = totalChapters(game)
       for (let i = 0; i < Math.min(12, done); i++) {
         g.fillStyle = i % 2 ? '#e9d9b0' : '#f3e6c4'
         g.fillRect(9 * TILE + 3 + (i % 4) * 3, 3 * TILE + 1 + Math.floor(i / 4) * 5, 2, 3)

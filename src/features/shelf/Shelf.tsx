@@ -54,7 +54,11 @@ export function Dex() {
   }
   const got = new Set(collected)
   const list = PIECES.filter((p) => !only || p.stamps.length === 0)
-  const chapters = [...new Set(list.map((p) => p.chapter))]
+  // 책마다 장을 따로 (마가 1장과 누가 1장을 한데 섞지 않는다)
+  const sections = [...new Set(list.map((p) => `${p.book}:${p.chapter}`))].map((k) => {
+    const [book, chapter] = k.split(':')
+    return { key: k, book, chapter: Number(chapter) }
+  })
   return (
     <div className="dex">
       <div className="dex-filter">
@@ -67,12 +71,14 @@ export function Dex() {
         <span className="hint">{fill(T.ui.dexCount, { got: list.filter((p) => got.has(p.id)).length, all: list.length })}</span>
       </div>
       <p className="stamp-note">{T.ui.stampNote}</p>
-      {chapters.map((c) => (
-        <section key={c}>
-          <h3>{fill(T.ui.chapterLabel, { chapter: c })}</h3>
+      {sections.map(({ key, book, chapter: c }) => (
+        <section key={key}>
+          <h3>
+            {(T.quiz.gospels as Record<string, string>)[book]} {fill(T.ui.chapterLabel, { chapter: c })}
+          </h3>
           <ul className="dex-list">
             {list
-              .filter((p) => p.chapter === c)
+              .filter((p) => p.book === book && p.chapter === c)
               .map((p) =>
                 got.has(p.id) ? (
                   <li key={p.id}>

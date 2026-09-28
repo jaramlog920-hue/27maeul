@@ -44,11 +44,11 @@ function pickOne<T>(items: readonly T[], rng: Rng): T | undefined {
   return items[Math.min(items.length - 1, Math.floor(rng() * items.length))]
 }
 
-/** 탐정 문제로 쓸 수 있는 조각: 도장이 없거나 모두 "같은 이야기" */
+/** 탐정 문제로 쓸 수 있는 조각: 도장이 없거나 모두 "같은 이야기". 답 = 이 조각의 책 + 같은 이야기 도장의 책 */
 export function detectiveAnswer(p: Piece): GospelId[] | null {
   if (p.stamps.some((s) => s.kind === 'similar')) return null
-  const books = new Set<Book>(p.stamps.map((s) => s.book))
-  return GOSPELS.filter((g) => g === 'lk' || books.has(g))
+  const books = new Set<Book>([p.book, ...p.stamps.map((s) => s.book)])
+  return GOSPELS.filter((g) => books.has(g))
 }
 
 export interface QuizSource {

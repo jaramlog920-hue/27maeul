@@ -19,6 +19,7 @@ import {
 import { findPath } from './movement'
 import {
   activeRequest,
+  chooseBook,
   askRequest,
   dine,
   fulfillRequest,
@@ -137,10 +138,10 @@ describe('C. 마을이 자란다', () => {
     expect(VILLAGE_STEPS).toHaveLength(4)
   })
   it('새 이웃은 이사 온 뒤에만 보이고 이야기를 전한다', () => {
-    const before = goToSleep(newGame(CONTENT), CONTENT)
+    const before = goToSleep(chooseBook(newGame(CONTENT), 'lk', CONTENT), CONTENT)
     expect(before.npcs.weaver.visible).toBe(false)
     expect(before.offers.weaver).toBeUndefined()
-    const after = goToSleep({ ...at(newGame(CONTENT), 22 * 60, 3), hearts: { baker: 100, child: 100, grandpa: 30 } }, CONTENT)
+    const after = goToSleep({ ...at(chooseBook(newGame(CONTENT), 'lk', CONTENT), 22 * 60, 3), hearts: { baker: 100, child: 100, grandpa: 30 } }, CONTENT)
     expect(after.clock.day).toBe(4)
     // 4일째 07:30 이후 베틀 곁
     let s = at(after, 8 * 60)

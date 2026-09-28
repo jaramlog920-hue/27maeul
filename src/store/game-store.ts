@@ -1,6 +1,6 @@
 // 엔진 상태 ↔ 화면 연결. 창(모달)이 열려 있으면 시간과 걸음이 멈춘다.
 import { create } from 'zustand'
-import { CONTENT, pieceById, QUIZ_SOURCE } from '../content/catalog'
+import { CONTENT, pieceById, piecesOf, quizSourceFor } from '../content/catalog'
 import { buildQuiz, isCorrect, type Question } from '../engine/quiz'
 import { ALBUM_IDS, fill, itemList, NEIGHBOR_LINES, SCENES, T } from '../content/text'
 import { grapesRipe, isWet, weatherOf } from '../engine/calendar'
@@ -20,6 +20,7 @@ import {
   lightLamp,
   listen,
   newGame,
+  chooseBook,
   placeFurniture,
   removeFurniture,
   restAt,
@@ -56,7 +57,7 @@ import { add, RECIPES, type Inventory, type RecipeId } from '../engine/items'
 import { isDone, startMini, stepMini, tapMini, type MiniState } from '../engine/minigame'
 import { saveGame } from '../engine/save'
 import { moveItem } from '../engine/scroll'
-import type { ItemId, PlaceId, Rng, Target, Tile } from '../engine/types'
+import type { Book, ItemId, PlaceId, Rng, Target, Tile } from '../engine/types'
 import { sfx, setAudioMuted } from '../audio/sound'
 
 export type Pending =
@@ -64,6 +65,8 @@ export type Pending =
   | { kind: 'craft'; recipe: RecipeId }
   | { kind: 'help'; neighborId: string }
   | { kind: 'teach' }
+
+export type QuizMode = { kind: 'chapter'; book: Book; chapter: number }
 
 export type Modal =
   | { kind: 'settings' }
@@ -81,7 +84,7 @@ export type Modal =
   | { kind: 'trade' }
   | { kind: 'menu'; place: 'hearth' | 'workbench' | 'press' | 'hill' | 'bench' }
   | { kind: 'readPick' }
-  | { kind: 'quiz'; chapter: number; questions: Question[]; index: number; wrong: string[]; solved: boolean }
+  | { kind: 'quiz'; mode: QuizMode; questions: Question[]; index: number; wrong: string[]; solved: boolean; misses: number; missed: string[] }
   | { kind: 'care' }
   | { kind: 'bag' }
   | { kind: 'shelf' }
@@ -134,8 +137,9 @@ interface Store {
   readAt: (pieceId: string) => void
   blanket: () => void
   // 책상·잠
-  moveInDesk: (chapter: number, index: number, delta: number) => void
-  submitDesk: (chapter: number) => void
+  pickBook: (book: Book) => void
+  moveInDesk: (book: Book, chapter: number, index: number, delta: number) => void
+  submitDesk: (book: Book, chapter: number) => void
   answerQuiz: (given: string | string[]) => void
   nextQuiz: () => void
   sleep: () => void
@@ -439,8 +443,8 @@ export const useGame = create<Store>((set, get) => {
       const { state, pieceId } = listen(get().game, neighborId, CONTENT)
       if (!pieceId) return
       sfx('scroll')
-      const onlyLuke = pieceById(pieceId).stamps.length === 0
-      set({ game: persist(state), modal: { kind: 'passage', pieceId, askLine: onlyLuke } })
+      const onlyHere = pieceById(pieceId).stamps.length === 0
+      set({ game: persist(state), modal: { kind: 'passage', pieceId, askLine: onlyHere } })
     },
 
     startHelp: (neighborId) => {
@@ -522,24 +526,32 @@ export const useGame = create<Store>((set, get) => {
       if (next) set({ game: persist(next), modal: null })
     },
 
-    moveInDesk: (chapter, index, delta) => {
+    pickBook: (book) => {
+      sfx('scroll')
+      // 밤에 기름 없이 연 책상은 책을 골라도 여전히 어둡다
+      const m = get().modal
+      set({ game: persist(chooseBook(get().game, book, CONTENT)), modal: { kind: 'desk', result: null, dark: m?.kind === 'desk' ? m.dark : false } })
+    },
+
+    moveInDesk: (book, chapter, index, delta) => {
       const game = get().game
       sfx('pen')
       const m = get().modal
       set({
-        game: persist(setArrangement(game, chapter, moveItem(game.arrangement[chapter] ?? [], index, delta))),
+        game: persist(setArrangement(game, book, chapter, moveItem(game.progress[book].arrangement[chapter] ?? [], index, delta))),
         modal: { kind: 'desk', result: null, dark: m?.kind === 'desk' ? m.dark : false },
       })
     },
-    submitDesk: (chapter) => {
-      const ready = chapterReady(get().game, chapter, CONTENT)
+    submitDesk: (book, chapter) => {
+      const ready = chapterReady(get().game, book, chapter, CONTENT)
       if (ready.kind !== 'done') {
         set({ modal: { kind: 'desk', result: ready, dark: false } })
         return
       }
-      // 순서·재료가 준비되면 기록하기 전에 다섯 문제
+      // 순서·재료가 준비되면 기록하기 전에 다섯 문제 (그 책 안에서)
       sfx('scroll')
-      set({ modal: { kind: 'quiz', chapter, questions: buildQuiz(CONTENT.pieces, chapter, get().rng, QUIZ_SOURCE), index: 0, wrong: [], solved: false } })
+      const questions = buildQuiz(piecesOf(book), chapter, get().rng, quizSourceFor([book]))
+      set({ modal: { kind: 'quiz', mode: { kind: 'chapter', book, chapter }, questions, index: 0, wrong: [], solved: false, misses: 0, missed: [] } })
     },
     answerQuiz: (given) => {
       const m = get().modal
@@ -551,7 +563,9 @@ export const useGame = create<Store>((set, get) => {
       } else {
         sfx('miss')
         const key = Array.isArray(given) ? given.join(' ') : given
-        set({ modal: { ...m, wrong: [...m.wrong, key] } })
+        // 한 문제에서 처음 틀렸을 때만 센다 (책등 등급은 처음에 맞힌 수로)
+        const first = m.wrong.length === 0
+        set({ modal: { ...m, wrong: [...m.wrong, key], misses: m.misses + (first ? 1 : 0) } })
       }
     },
     nextQuiz: () => {
@@ -561,7 +575,7 @@ export const useGame = create<Store>((set, get) => {
         set({ modal: { ...m, index: m.index + 1, wrong: [], solved: false } })
         return
       }
-      const { state, result } = submitChapter(get().game, m.chapter, CONTENT)
+      const { state, result } = submitChapter(get().game, m.mode.book, m.mode.chapter, CONTENT)
       if (result.kind === 'done') sfx('done')
       set({ game: persist(state), modal: { kind: 'desk', result, dark: false } })
     },

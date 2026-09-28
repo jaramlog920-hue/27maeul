@@ -1,6 +1,7 @@
 // 시작 화면의 살아 있는 마을 한 장면 — 실제 게임 렌더러로 그린다 (숨 쉬는 기록자, 따라다니는 고양이, 나비)
 import { useEffect, useRef } from 'react'
 import { CONTENT } from '../../content/catalog'
+import { emptyProgress } from '../../engine/books'
 import { adopt } from '../../engine/companion'
 import { newGame, type GameState } from '../../engine/game'
 import { TILE, VIEW_W } from '../../engine/world'
@@ -19,7 +20,7 @@ function scene(): GameState {
     companion: adopt('cat', '', 1, { x: 7, y: 8 }),
     offers: {},
     scenes: [],
-    completed: [1, 2, 3, 4, 5, 6, 7],
+    progress: { ...emptyProgress(), lk: { completed: [1, 2, 3, 4, 5, 6, 7], arrangement: {} } },
     trails: { '7,8': 20, '8,8': 14 },
   }
 }

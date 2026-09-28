@@ -1,8 +1,10 @@
-// 처음부터 끝까지: 성실한 플레이어가 막히지 않고 24장을 다 쓰고 "다 쓴 날"에 닿는가
-import { CONTENT } from '../content/catalog'
+// 처음부터 끝까지: 성실한 플레이어가 막히지 않고 누가복음 24장을 다 엮는가
+import { CONTENT, piecesOf } from '../content/catalog'
+import { bookDone } from './books'
 import { canonicalOrder } from './scroll'
 import { currentChapter } from './offers'
 import {
+  chooseBook,
   eatBread,
   finishCraft,
   finishGather,
@@ -39,28 +41,31 @@ function oneDay(s: GameState): GameState {
   s = finishCraft(s, 'papyrus')
   s = finishCraft(s, 'ink')
   // 모은 장을 차례대로 잇는다 (낮에 쓰므로 등잔은 필요 없다)
-  const ch = currentChapter(CONTENT.pieces, s.completed)
+  const lk = piecesOf('lk')
+  const ch = currentChapter(lk, s.progress.lk.completed)
   if (ch !== null) {
-    s = setArrangement(s, ch, canonicalOrder(CONTENT.pieces, ch))
-    s = submitChapter({ ...s, clock: { ...s.clock, minute: 12 * 60 } }, ch, CONTENT).state
+    s = setArrangement(s, 'lk', ch, canonicalOrder(lk, ch))
+    s = submitChapter({ ...s, clock: { ...s.clock, minute: 12 * 60 } }, 'lk', ch, CONTENT).state
   }
   if (s.needs.hunger >= 50) s = eatBread(s) ?? s
   return goToSleep({ ...s, clock: { ...s.clock, minute: 21 * 60 } }, CONTENT)
 }
 
 describe('처음부터 끝까지', () => {
-  it('성실하게 살면 두 달 안에 24장을 다 쓰고, 앓아눕지 않는다', () => {
-    let s = newGame(CONTENT)
+  it('성실하게 살면 두 달 안에 누가복음 24장을 다 엮고, 앓아눕지 않는다', () => {
+    let s = chooseBook(newGame(CONTENT), 'lk', CONTENT)
     let sickDays = 0
     let days = 0
-    while (!s.scenes.includes('ending') && days < 60) {
+    let bound = false
+    while (!bookDone(s, 'lk', CONTENT) && days < 60) {
       s = oneDay(s)
       if (s.scenes.includes('sick')) sickDays++
+      if (s.scenes.includes('bookBound')) bound = true
       days++
     }
-    expect(s.completed).toHaveLength(24)
-    expect(s.collected).toHaveLength(CONTENT.pieces.length)
-    expect(s.scenes).toContain('ending')
+    expect(s.progress.lk.completed).toHaveLength(24)
+    expect(s.collected).toHaveLength(piecesOf('lk').length)
+    expect(bound).toBe(true)
     expect(sickDays).toBe(0)
     expect(days).toBeLessThanOrEqual(45)
     // 일지는 하루도 빠짐없이
@@ -68,7 +73,7 @@ describe('처음부터 끝까지', () => {
   })
 
   it('하루에 모을 수 있는 이야기는 이웃 수만큼 — 한 장이 며칠 걸리기도 한다', () => {
-    const biggest = Math.max(...Array.from({ length: 24 }, (_, i) => CONTENT.pieces.filter((p) => p.chapter === i + 1).length))
+    const biggest = Math.max(...Array.from({ length: 24 }, (_, i) => piecesOf('lk').filter((p) => p.chapter === i + 1).length))
     expect(biggest).toBeGreaterThan(6)
     expect(biggest).toBeLessThanOrEqual(14)
   })

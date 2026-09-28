@@ -1,6 +1,6 @@
 // 복음서 도장 — 오늘의 플레이어가 보는 정보 (exclusion-list §4-1). 누르면 그 복음서의 구절이 펼쳐진다.
 import { useState } from 'react'
-import { T } from '../../content/text'
+import { fill, T } from '../../content/text'
 import type { Piece } from '../../engine/types'
 import { Passage } from './Passage'
 
@@ -9,7 +9,7 @@ export function Stamps({ piece }: { piece: Piece }) {
   return (
     <div className="stamps">
       {piece.stamps.length === 0 ? (
-        <p className="stamp only">✦ {T.ui.lukeOnly}</p>
+        <p className="stamp only">✦ {fill(T.ui.onlyHere, { book: (T.quiz.gospels as Record<string, string>)[piece.book] })}</p>
       ) : (
         <ul>
           {piece.stamps.map((s) => (

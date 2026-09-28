@@ -4,12 +4,11 @@ import { App } from './App'
 describe('App 시작 화면', () => {
   beforeEach(() => localStorage.clear())
 
-  it('눅 1:1-4 본문과 게임 안내를 따로 보인다', () => {
+  it('제목과 게임 안내를 보이고, 누가복음 첫머리는 따로 싣지 않는다', () => {
     render(<App />)
     expect(screen.getByRole('heading', { name: '스물일곱 권의 마을' })).toBeInTheDocument()
-    // 첫머리는 접힌 채 들어 있다 (펼치면 보임)
-    expect(screen.getByText('누가복음의 첫머리 보기 (눅 1:1-4)')).toBeInTheDocument()
-    expect(screen.getByLabelText('성경 본문 눅 1:1-4')).toHaveTextContent('데오빌로 각하에게 차례대로 써 보내는 것이 좋은줄 알았노니')
+    // 주인공은 누가복음을 쓴 사람이 아니므로 시작 화면에 눅 1:1-4를 두지 않는다
+    expect(screen.queryByLabelText('성경 본문 눅 1:1-4')).toBeNull()
     expect(screen.getByText(/이 마을과 이웃은 게임을 위해 만든 것입니다/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '시작하기' })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: '이어하기' })).toBeNull()

@@ -14,8 +14,8 @@ const counts = countsFrom(bible)
 
 /** 모든 책의 조각 */
 const ALL_PIECES = piecesRaw as unknown as Piece[]
-/** 작업 6 전까지: 엔진과 화면은 아직 누가 한 권만 안다 → 누가 조각만 넘긴다 (작업 6에서 ALL_PIECES로 바꾼다) */
-export const PIECES = ALL_PIECES.filter((p) => p.book === 'lk')
+/** 엔진과 화면이 쓰는 조각 — 모든 책 (책별로는 piecesOf) */
+export const PIECES = ALL_PIECES
 export const NEIGHBORS = neighborsRaw as unknown as NeighborDef[]
 export const CONTENT: GameContent = { pieces: PIECES, neighbors: NEIGHBORS }
 
@@ -88,6 +88,3 @@ for (const p of ALL_PIECES) for (const v of versesOf(p.ref)) verseToPiece.set(`$
 export function pieceOfVerse(ref: string): Piece | undefined {
   return verseToPiece.get(ref.trim())
 }
-
-/** 작업 6에서 지운다 — 책별 quizSourceFor를 쓴다 */
-export const QUIZ_SOURCE = quizSourceFor(['lk'])

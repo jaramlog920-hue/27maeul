@@ -22,12 +22,6 @@ export function seededShuffle<T>(items: readonly T[], seed: number): T[] {
   return a
 }
 
-/**
- * 기록자 자신의 말 — 이웃에게서 "전해 들은" 이야기가 아니다 (눅 1:1-4, exclusion-list §3-5).
- * 처음부터 책상 위에 놓여 있고, 이웃의 제안에는 나오지 않는다.
- */
-export const OWN_WORDS: readonly string[] = ['lk-001-001']
-
 /** 아직 다 쓰지 않은 장 중 가장 앞 장. 모두 썼으면 null */
 export function currentChapter(pieces: readonly Piece[], completed: readonly number[]): number | null {
   const chapters = [...new Set(pieces.map((p) => p.chapter))].sort((a, b) => a - b)
@@ -44,7 +38,7 @@ export function offersForDay(args: {
 }): Record<string, string> {
   const out: Record<string, string> = {}
   if (args.chapter === null) return out
-  const remaining = args.pieces.filter((p) => p.chapter === args.chapter && !args.collected.includes(p.id) && !OWN_WORDS.includes(p.id))
+  const remaining = args.pieces.filter((p) => p.chapter === args.chapter && !args.collected.includes(p.id))
   const shuffled = seededShuffle(remaining, args.day)
   // 조각이 이웃보다 적은 날에도 이야기가 골고루 돌도록 이웃 순서도 섞는다
   seededShuffle(args.neighborIds, args.day + 7777).forEach((id, i) => {

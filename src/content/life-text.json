@@ -3,7 +3,6 @@
     "title": "스물일곱 권의 마을",
     "subtitle": "책을 엮는 사람의 사계",
     "notice": "이 마을과 이웃은 게임을 위해 만든 것입니다. 27권이 모인 역사를 그린 것이 아닙니다. 성경 본문은 항상 출처와 함께 따로 보여 드립니다.",
-    "introLead": "누가복음의 첫머리 보기 (눅 1:1-4)",
     "start": "시작하기",
     "continue": "이어하기",
     "restart": "처음부터",
@@ -13,8 +12,8 @@
     "next": "다음",
     "listen": "이야기 듣기",
     "bibleSource": "개역한글",
-    "deskTitle": "두루마리",
-    "deskHint": "들은 이야기를 차례대로 이어 붙이세요.",
+    "deskTitle": "책상",
+    "deskHint": "받은 이야기를 차례대로 이어 붙이세요.",
     "deskEmpty": "아직 이 장의 이야기를 모으지 못했습니다. 마을을 돌아보세요.",
     "deskSubmit": "이어 붙이기",
     "deskMissing": "이 장의 이야기가 아직 {n}개 모자랍니다.",
@@ -25,9 +24,15 @@
     "deskHave": "파피루스 {papyrus} · 잉크 {ink}",
     "deskCollected": "이 장에서 모은 이야기 {got} / {all}",
     "chapterDone": "{chapter}장까지 차례대로 이어 붙였습니다.",
-    "allDone": "스물네 장을 모두 이어 붙였습니다.",
+    "allDone": "이 책을 마지막 장까지 엮었습니다. 마을 서고에 꽂을 수 있어요.",
     "chapterLabel": "{chapter}장",
-    "shelf": "이은 장 {n}/24",
+    "shelf": "엮은 장 {n}",
+    "bookPickTitle": "어느 책을 엮을까요?",
+    "bookPickHint": "고른 책의 조각을 이웃들이 전해 줍니다. 언제든 바꿀 수 있고, 책마다 진행이 따로 남아요.",
+    "bookProgress": "{done}/{all}장",
+    "bookNotYet": "시험판에는 아직 없어요",
+    "bookChange": "다른 책 고르기",
+    "chapterNote": "장 구분은 뒷날 붙인 것입니다. 여기서는 차례를 익히기 쉽도록 장 단위로 잇습니다.",
     "up": "위로",
     "down": "아래로",
     "reviewTitle": "잠들기 전에",
@@ -38,7 +43,7 @@
     "sleepLate": "너무 늦게 자면 다음 날 늦잠을 잡니다.",
     "journalTitle": "일지",
     "journalEmpty": "아직 지나간 날이 없습니다.",
-    "lukeOnly": "네 복음서 중 누가복음에만 있는 이야기",
+    "onlyHere": "네 복음서 중 {book}에만 있는 이야기",
     "stampSame": "같은 이야기",
     "stampSimilar": "비슷한 이야기",
     "similarNote": "(같은 일인지는 본문이 말하지 않습니다)",
@@ -90,7 +95,7 @@
     "hillSit": "잠시 앉아 쉬기",
     "shelfTitle": "선반",
     "dex": "이야기 도감",
-    "dexOnly": "누가복음에만",
+    "dexOnly": "한 복음서에만",
     "dexAll": "모두",
     "dexUnknown": "아직 듣지 못한 이야기",
     "dexCount": "{got} / {all}",
@@ -819,11 +824,11 @@
       "lines": [
         {
           "speaker": "narration",
-          "text": "이 사람은 누가복음을 쓴 사람입니다. 이 게임에서는 '기록자'라고 부릅니다."
+          "text": "마을 서고를 맡게 된 견습 필사가입니다. 흩어진 책을 한 장씩 엮어 서고를 채워 봅시다."
         },
         {
           "speaker": "narration",
-          "text": "기록자는 이웃에게 이야기를 전해 듣고, 책상에 앉아 차례대로 이어 붙입니다."
+          "text": "필사가는 이웃에게 이야기를 전해 듣고, 책상에 앉아 차례대로 이어 붙입니다."
         },
         {
           "speaker": "narration",
@@ -831,7 +836,7 @@
         },
         {
           "speaker": "narration",
-          "text": "배가 고프거나 추워 보이면 기록자를 눌러 보세요. 빵을 먹이거나 쉬게 할 수 있습니다."
+          "text": "배가 고프거나 추워 보이면 필사가를 눌러 보세요. 빵을 먹이거나 쉬게 할 수 있습니다."
         }
       ]
     },
@@ -1024,6 +1029,12 @@
         }
       ],
       "album": "담요를 덮어 준 날"
+    },
+    "bookBound": {
+      "title": "한 권을 다 엮었다",
+      "lines": [
+        { "speaker": "narration", "text": "한 권을 마지막 장까지 엮었다. 이제 마을 서고에 꽂을 수 있다." }
+      ]
     },
     "firstChapter": {
       "title": "첫 장",
