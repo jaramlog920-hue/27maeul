@@ -11,7 +11,10 @@ const bible = raw as Record<string, string[][]>
 const byAbbr = Object.fromEntries(books.map((b) => [b.abbr, b.id]))
 const counts = countsFrom(bible)
 
-export const PIECES = piecesRaw as unknown as Piece[]
+/** 모든 책의 조각 */
+const ALL_PIECES = piecesRaw as unknown as Piece[]
+/** 작업 6 전까지: 엔진과 화면은 아직 누가 한 권만 안다 → 누가 조각만 넘긴다 (작업 6에서 ALL_PIECES로 바꾼다) */
+export const PIECES = ALL_PIECES.filter((p) => p.book === 'lk')
 export const NEIGHBORS = neighborsRaw as unknown as NeighborDef[]
 export const CONTENT: GameContent = { pieces: PIECES, neighbors: NEIGHBORS }
 
