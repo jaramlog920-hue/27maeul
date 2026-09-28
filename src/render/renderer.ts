@@ -20,6 +20,7 @@ import {
   BUTTERFLY,
   ICON_PALETTE,
   ICONS,
+  mirror,
   SHEEP,
   SMALL_PALETTE,
   spriteRows,
@@ -326,8 +327,6 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r(C.wood, 1, 4, 14, 7)
       r('#efe4d4', 2, 4, 12, 4)
       for (let i = 0; i < 6; i++) r('#b98a8a', 2 + i * 2, 7, 1, 1)
-      r('#fbf6ee', 6, 2, 4, 3) // 찻잔
-      r('#9dbb94', 7, 3, 2, 1)
       break
     case 'g':
       // 항아리
@@ -613,12 +612,13 @@ function mapFor(season: Season): HTMLCanvasElement {
   // 집 안 가구: 바닥 것 → 큰 것 → 탁자 위 작은 것
   const layerRank = { floor: 0, solid: 1, small: 2 } as const
   for (const rm of ROOMS)
-    for (const [dx, dy, item] of [...rm.decor].sort((p, q) => layerRank[FURNITURE_DEFS[p[2]]?.layer ?? 'small'] - layerRank[FURNITURE_DEFS[q[2]]?.layer ?? 'small'])) {
+    for (const [dx, dy, item, flip] of [...rm.decor].sort((p, q) => layerRank[FURNITURE_DEFS[p[2]]?.layer ?? 'small'] - layerRank[FURNITURE_DEFS[q[2]]?.layer ?? 'small'])) {
       const a = FURNITURE_ART[item]
       if (!a) continue
       const x = rm.x0 + dx
       const y = rm.y0 + dy
-      g.drawImage(paint(`furni/${item}`, a.rows, FURNI_PALETTE), x * TILE, y * TILE + (MAP[y][x] === 'n' ? -6 : 0))
+      const rows = flip ? mirror(a.rows) : a.rows
+      g.drawImage(paint(`furni/${item}/${flip ?? ''}`, rows, FURNI_PALETTE), x * TILE, y * TILE + (MAP[y][x] === 'n' ? -6 : 0))
     }
   mapCache.set(season, c)
   return c

@@ -71,21 +71,22 @@ function mat(): FurnitureArt {
 
 export const FURNITURE_ART: Record<string, FurnitureArt> = {
   // ── 길을 막는 큰 가구 ──
+  // 옆에서 본 의자: 오른쪽을 본다 (등받이가 왼쪽). 왼쪽을 보게 하려면 뒤집어 그린다
   chair: art(1, 1, [
-    '....kkkkkkkk....',
-    '....kwwwwwwk....',
-    '....kwllllwk....',
-    '....kwwwwwwk....',
-    '....kwllllwk....',
-    '....kwwwwwwk....',
-    '...kkkkkkkkkk...',
-    '...kllllllllk...',
-    '...kwwwwwwwwk...',
-    '...kkkkkkkkkk...',
-    '...kW......Wk...',
-    '...kW......Wk...',
-    '...kW......Wk...',
-    '...zkzzzzzzkz...',
+    '....kk..........',
+    '....kwk.........',
+    '....klk.........',
+    '....kwk.........',
+    '....klk.........',
+    '....kwk.........',
+    '....kwkkkkkkkk..',
+    '....kwllllllllk.',
+    '....kwwwwwwwwwk.',
+    '....kkkkkkkkkkk.',
+    '....kWk.....kWk.',
+    '....kWk.....kWk.',
+    '....kWk.....kWk.',
+    '...zzzzzzzzzzzz.',
   ]),
   bookcase: art(1, 1, [
     '..kkkkkkkkkkkk..',

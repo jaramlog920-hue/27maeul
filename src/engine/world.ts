@@ -41,7 +41,7 @@ export interface Room {
   /** 붙박이 [x0에서 떨어진 칸, y0에서 떨어진 칸, 글자] */
   things: [number, number, string][]
   /** 가구 그림 [칸, 칸, 가구] — 바닥 것은 밟고, 큰 것은 막고, 작은 것은 탁자 위에 */
-  decor: [number, number, ItemId][]
+  decor: [number, number, ItemId, 'flip'?][]
 }
 
 function room(
@@ -51,7 +51,7 @@ function room(
   door: Tile,
   sit: [number, number],
   things: [number, number, string][],
-  decor: [number, number, ItemId][] = [],
+  decor: [number, number, ItemId, 'flip'?][] = [],
   w = ROOM_W,
   h = ROOM_H,
 ): Room {
@@ -75,12 +75,12 @@ export const ROOMS: readonly Room[] = [
   // 빵 굽는 이웃: 가마 둘, 찬장, 밀가루 항아리, 과일 접시·주전자 올린 탁자, 둥근 깔개
   room('baker', 2, 41, { x: 5, y: 17 }, [5, 4],
     [[1, 1, 'O'], [2, 1, 'O'], [8, 1, 'g'], [8, 2, 'g'], [3, 3, 'n'], [4, 3, 'n'], [8, 5, 'b']],
-    [[4, 1, 'cupboard'], [7, 1, 'barrel'], [2, 3, 'chair'], [5, 3, 'chair'], [3, 3, 'fruitBowl'], [4, 3, 'teapot'],
+    [[4, 1, 'cupboard'], [7, 1, 'barrel'], [2, 3, 'chair'], [5, 3, 'chair', 'flip'], [3, 3, 'fruitBowl'], [4, 3, 'teapot'],
      [5, 4, 'roundRug'], [1, 5, 'bigPlant'], [7, 5, 'pillows'], [1, 2, 'lampStand']]),
   // 물 긷는 아이네: 침대 둘, 궤짝, 화덕, 물항아리, 둘러앉는 탁자, 돗자리
   room('child', 16, 41, { x: 36, y: 17 }, [3, 4],
     [[1, 1, 'b'], [2, 1, 'b'], [5, 1, 'h'], [8, 1, 'g'], [8, 2, 'g'], [4, 3, 'n'], [5, 3, 'n']],
-    [[3, 1, 'chest'], [3, 3, 'chair'], [6, 3, 'chair'], [4, 3, 'teapot'], [5, 3, 'fruitBowl'],
+    [[3, 1, 'chest'], [3, 3, 'chair'], [6, 3, 'chair', 'flip'], [4, 3, 'teapot'], [5, 3, 'fruitBowl'],
      [2, 5, 'mat'], [1, 5, 'pillows'], [8, 5, 'bigPlant'], [8, 3, 'lampStand']]),
   // 포도원 할아버지: 책장 둘, 포도주 통, 화덕, 평상, 모래시계 올린 탁자
   room('grandpa', 30, 41, { x: 35, y: 5 }, [5, 3],
@@ -90,12 +90,12 @@ export const ROOMS: readonly Room[] = [
   // 베 짜는 이웃: 베틀, 물레, 실 선반, 궤짝, 둥근 깔개, 말린 꽃
   room('weaver', 2, 50, { x: 28, y: 28 }, [4, 3],
     [[1, 1, 'W'], [2, 1, 'W'], [5, 1, 's'], [6, 1, 's'], [8, 1, 'b'], [6, 4, 'n']],
-    [[3, 1, 'wheel'], [8, 3, 'chest'], [8, 2, 'pillows'], [3, 4, 'roundRug'], [7, 4, 'chair'], [6, 4, 'dryFlowers'],
+    [[3, 1, 'wheel'], [8, 3, 'chest'], [8, 2, 'pillows'], [3, 4, 'roundRug'], [7, 4, 'chair', 'flip'], [6, 4, 'dryFlowers'],
      [1, 4, 'lampStand'], [1, 6, 'bigPlant']]),
   // 벌 치는 이웃: 꿀 항아리, 선반, 찬장, 주전자 올린 탁자, 꽃 화분, 문 앞 돗자리
   room('beekeeper', 16, 50, { x: 42, y: 31 }, [4, 3],
     [[1, 1, 's'], [2, 1, 'g'], [3, 1, 'g'], [4, 1, 'g'], [8, 1, 'b'], [5, 4, 'n'], [1, 4, 'p'], [8, 5, 'p']],
-    [[6, 1, 'cupboard'], [6, 4, 'chair'], [5, 4, 'teapot'], [8, 3, 'lampStand'], [1, 5, 'bigPlant'], [3, 6, 'mat'],
+    [[6, 1, 'cupboard'], [6, 4, 'chair', 'flip'], [5, 4, 'teapot'], [8, 3, 'lampStand'], [1, 5, 'bigPlant'], [3, 6, 'mat'],
      [8, 2, 'pillows']]),
   // 마을 서고
   room('library', 30, 49, { x: 24, y: 5 }, [6, 2], libraryThings, [[4, 2, 'lectern'], [8, 2, 'lectern'], [1, 4, 'lampStand'], [11, 4, 'lampStand'], [3, 4, 'scrolls'], [9, 6, 'inkpot']], LIBRARY_W, LIBRARY_H),
