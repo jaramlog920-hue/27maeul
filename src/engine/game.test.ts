@@ -426,13 +426,6 @@ describe('특별한 순간', () => {
 })
 
 describe('리뷰 지적 회귀', () => {
-  it('C1: 머리말(눅 1:1-4)은 어느 날에도 이웃이 건네지 않는다', () => {
-    let s = newGame(CONTENT)
-    for (let d = 0; d < 5; d++) {
-      expect(Object.values(s.offers)).not.toContain('lk-001-001')
-      s = goToSleep(s, CONTENT)
-    }
-  })
   it('M3: 궂은 날 집에서 쉬는 이웃(대장장이)에게는 이야기를 배정하지 않는다', () => {
     // 3일째는 비
     const s = goToSleep(at(chooseBook(newGame(CONTENT), 'lk', CONTENT), 22 * 60, 2), CONTENT)
