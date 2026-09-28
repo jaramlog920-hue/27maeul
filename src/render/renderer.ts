@@ -551,41 +551,32 @@ function mix(a: string, b: string, t: number): string {
 }
 
 /**
- * 모임지붕 하나 (칸 tx0..tx1, ty0..ty1). 위에서 비스듬히 본 모습:
- * 용마루 위쪽 뒷면(밝게), 아래 앞면(바탕색, 옅은 기와 줄), 양옆 삼각면(어둡게), 처마.
+ * 네모난 기와지붕 하나 (칸 tx0..tx1, ty0..ty1): 용마루, 양옆 테두리, 처마, 옅은 기와 띠.
+ * 화면이 정수배가 아닌 크기로 늘어나도 일렁이지 않게 선은 모두 2픽셀 이상.
  */
 function drawRoof(g: Ctx, tx0: number, ty0: number, tx1: number, ty1: number, [c1, c2, c3]: [string, string, string], chimney = true) {
-  const ox = tx0 * TILE - 2
-  const oy = ty0 * TILE - 2
-  const W = (tx1 - tx0 + 1) * TILE + 4
-  const H = (ty1 - ty0 + 1) * TILE + 4
-  const ridge = Math.floor(H * 0.34)
-  const inset = Math.min(Math.floor(H * 0.55), Math.floor(W / 2) - 6)
-  const line = mix(c1, c2, 0.35)
-  const side = mix(c1, c2, 0.55)
-  for (let y = 0; y < H; y++) {
-    // 앞면·뒷면이 이 줄에서 차지하는 폭
-    const k = y < ridge ? Math.round((inset * y) / ridge) : Math.round((inset * (H - y)) / (H - ridge))
-    for (let x = 0; x < W; x++) {
-      let col: string
-      if (x < k || x >= W - k) col = x < k ? side : c2
-      else if (y < ridge) col = c3
-      else col = (y - ridge) % 4 === 3 ? line : c1
-      if (y === ridge && x >= k && x < W - k) col = mix(c3, '#ffffff', 0.35) // 용마루
-      if ((x === k || x === W - k - 1) && x > 0 && x < W - 1) col = c2 // 모서리 선
-      if (y >= H - 2) col = c2 // 처마
-      g.fillStyle = col
-      g.fillRect(ox + x, oy + y, 1, 1)
-    }
+  const ox = tx0 * TILE
+  const oy = ty0 * TILE
+  const W = (tx1 - tx0 + 1) * TILE
+  const H = (ty1 - ty0 + 1) * TILE
+  const r = (color: string, x: number, y: number, w: number, h: number) => {
+    g.fillStyle = color
+    g.fillRect(ox + x, oy + y, w, h)
   }
+  r(c1, 0, 0, W, H)
+  const band = mix(c1, c2, 0.25)
+  for (let y = 8; y < H - 4; y += 8) r(band, 0, y, W, 2) // 기와 띠
+  r(c2, 0, 0, W, 4) // 용마루
+  r(c3, 0, 0, W, 2)
+  r(c2, 0, 0, 2, H) // 양옆 테두리
+  r(c2, W - 2, 0, 2, H)
+  r(c2, 0, H - 4, W, 4) // 처마
+  r(mix(c2, '#000000', 0.15), 0, H - 2, W, 2)
   if (chimney) {
-    const cx = ox + Math.floor(W * 0.72)
-    g.fillStyle = '#c9a079'
-    g.fillRect(cx, oy - 4, 7, ridge + 2)
-    g.fillStyle = '#82684f'
-    g.fillRect(cx - 1, oy - 5, 9, 2)
-    g.fillStyle = mix('#c9a079', '#82684f', 0.4)
-    g.fillRect(cx + 5, oy - 3, 2, ridge + 1)
+    const cx = Math.floor(W * 0.72)
+    r('#c9a079', cx, -6, 8, 12)
+    r('#82684f', cx - 2, -8, 12, 2)
+    r(mix('#c9a079', '#82684f', 0.4), cx + 6, -6, 2, 12)
   }
 }
 
