@@ -8,6 +8,11 @@ import { PALETTE, spriteRows, writerPalette } from '../../render/sprites'
 export const SCENE_W = 160
 export const SCENE_H = 170
 
+/** 개울 위 물결 자국: [처음 x, 줄] — 물살 따라 오른쪽으로 흐른다 */
+const RIPPLES: [number, number][] = [
+  [14, 119], [40, 122], [58, 120], [96, 123], [118, 119], [140, 121], [26, 124], [108, 121], [70, 119], [150, 123],
+]
+
 const K = {
   sky: '#edf0df',
   cloud: '#fefdf8',
@@ -159,7 +164,7 @@ function drawStatic(g: CanvasRenderingContext2D) {
     const e = island(y)!
     px(e[0] + 1, y, K.water, e[1] - e[0] - 2, 1)
   }
-  for (let i = 0; i < 10; i++) px(12 + rand() * 136, 119 + Math.floor(rand() * 6), K.water2, 4, 1)
+
   px(74, 96, K.path, 13, 22)
   px(74, 126, K.path, 13, 26)
   px(73, 96, K.path2, 1, 56)
@@ -256,12 +261,12 @@ export function TitleScene({ avatar }: { avatar?: Avatar | null }) {
           g.fillRect(Math.round(cx + Math.sin(k * 4 + i) * 2), Math.round(cy - k * 14), s, s)
         }
       }
-      // 물 반짝임
-      g.fillStyle = K.water2
-      for (let i = 0; i < 4; i++) {
-        const x = Math.round((20 + i * 37 + t * 6) % 140) + 10
-        if (x > 68 && x < 92) continue
-        g.fillRect(x, 120 + (i % 3) * 2, 3, 1)
+      // 물결 자국이 물살 따라 흐른다 (개울 끝에 닿으면 반대쪽 끝에서 다시)
+      g.fillStyle = 'rgba(254,253,248,0.55)'
+      for (const [x0, y] of RIPPLES) {
+        const x = 10 + ((((x0 - 10 + t * 5) % 140) + 140) % 140)
+        if (x > 66 && x < 91) continue // 다리 아래
+        g.fillRect(Math.round(x), y, 4, 1)
       }
       // 주인공과 이웃 (숨 쉬듯 한 칸)
       const bob = Math.sin(t * 2) > 0.6 ? 1 : 0

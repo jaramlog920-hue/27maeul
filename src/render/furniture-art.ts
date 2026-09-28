@@ -2,7 +2,7 @@
 // 색은 마을 참고 그림의 차분한 톤에 맞춘다 (feedback-village-art-style).
 
 export const FURNI_PALETTE: Record<string, string> = {
-  k: '#6b5040', // 윤곽
+  k: '#9a785a', // 윤곽 — 둘레 나무색 정도로 연하게 (원래 가구처럼 튀지 않게)
   W: '#8e6a4d', // 짙은 나무
   w: '#ad845d', // 나무
   l: '#d0a579', // 밝은 나무
@@ -47,7 +47,7 @@ function roundRug(): FurnitureArt {
       const dx = (x - 15.5) / 15
       const dy = (y - 15.5) / 13
       const d = Math.sqrt(dx * dx + dy * dy)
-      row += d > 1 ? '.' : d > 0.88 ? 'R' : d > 0.72 ? 'r' : d > 0.6 ? 'c' : d > 0.42 ? 'r' : d > 0.3 ? 'o' : 'c'
+      row += d > 1 ? '.' : d > 0.9 ? 'p' : d > 0.8 ? 'c' : d > 0.24 ? 'C' : 'p'
     }
     rows.push(row)
   }
@@ -242,73 +242,65 @@ export const FURNITURE_ART: Record<string, FurnitureArt> = {
   roundRug: roundRug(),
   mat: mat(),
   pillows: art(1, 1, [
-    '....kkkkkk......',
-    '...kooooook.....',
-    '...koppppok.....',
-    '...kooooookkk...',
-    '....kkkkkkbbbk..',
-    '.....kbbbbbBbk..',
-    '.....kbBBBBBbk..',
-    '.....kbbbbbbbk..',
-    '......kkkkkkk...',
-    '......zzzzzzz...',
+    '....kkkkk.......',
+    '...kccccck......',
+    '...kcCCCck......',
+    '...kkkkkkkkk....',
+    '....kpppppppk...',
+    '....kpooooppk...',
+    '....kppppppk....',
+    '.....kkkkkk.....',
+    '.....zzzzzz.....',
   ]),
   // ── 탁자 위에 올리는 작은 것 ──
   // 작은 주전자 (탁자 위에 올려도 탁자보다 작게)
   teapot: art(1, 1, [
     '.......k........',
-    '......kbk.......',
-    '.....kkkkk......',
-    '....kbbbbbk.k...',
-    '...kkbBbbbkkbk..',
-    '....kbbbbbk.k...',
-    '.....kkkkk......',
-    '.....zzzzz......',
+    '......kkk.......',
+    '.....kbbbk.k....',
+    '....kkbbbkkbk...',
+    '.....kbbbk.k....',
+    '......kkk.......',
+    '......zzz.......',
   ]),
   fruitBowl: art(1, 1, [
-    '......o.y.......',
-    '.....yrgoy......',
-    '....kkkkkkk.....',
-    '....kccccck.....',
-    '.....kCCCk......',
-    '.....zzzzz......',
+    '.......oy.......',
+    '......ygro......',
+    '.....kkkkkk.....',
+    '......kCCk......',
+    '......zzzz......',
   ]),
   scrolls: art(1, 1, [
-    '.....kkkkk......',
-    '....kcCcck......',
-    '....kkkkkkk.....',
-    '...kcCccCck.....',
-    '...kkkkkkkk.....',
-    '....zzzzzz......',
+    '......kkkk......',
+    '......kcck......',
+    '.....kkkkkk.....',
+    '.....kcCcck.....',
+    '.....kkkkkk.....',
+    '......zzzz......',
   ]),
   inkpot: art(1, 1, [
-    '..........l.....',
     '.........l......',
-    '......kkkk......',
+    '........l.......',
+    '.......kk.......',
     '......kSSk......',
-    '.....kSSSSk.....',
-    '.....kSkkSk.....',
-    '.....kSSSSk.....',
-    '.....zzzzzz.....',
+    '......kSSk......',
+    '......zzzz......',
   ]),
   dryFlowers: art(1, 1, [
     '......o.y.......',
-    '.....yl.lo......',
     '......lll.......',
     '.......l........',
     '......kkk.......',
-    '.....kCcCk......',
-    '.....kccck......',
+    '......kck.......',
     '......kkk.......',
     '......zzz.......',
   ]),
   hourglass: art(1, 1, [
-    '......kkkkk.....',
-    '.......kYk......',
-    '........k.......',
-    '.......kyk......',
-    '......kkkkk.....',
-    '......zzzzz.....',
+    '......kkkk......',
+    '.......kk.......',
+    '.......yk.......',
+    '......kkkk......',
+    '......zzzz......',
   ]),
 }
 
