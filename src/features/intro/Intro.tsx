@@ -1,9 +1,7 @@
-// 시작 화면: 해질녘 마을 서고 문 앞. 제목은 문 위 돌간판에 새긴다.
+// 시작 화면: 제목, 하늘에 떠 있는 섬 마을 그림, 시작 버튼
 import { T } from '../../content/text'
 import type { Avatar } from '../../engine/avatar'
-import { PLAQUE, SCENE_H, SCENE_W, TitleScene } from './TitleScene'
-
-const pct = (n: number, of: number) => `${(n / of) * 100}%`
+import { TitleScene } from './TitleScene'
 
 export function Intro({
   hasSave,
@@ -17,16 +15,13 @@ export function Intro({
   onContinue: () => void
 }) {
   return (
-    <main className="title title-dusk">
+    <main className="title title-island">
+      <header className="title-head">
+        <h1>{T.ui.title}</h1>
+        <p className="title-sub">{T.ui.subtitle}</p>
+      </header>
       <div className="title-stage">
         <TitleScene avatar={avatar} />
-        <div
-          className="title-plaque"
-          style={{ left: pct(PLAQUE.x, SCENE_W), top: pct(PLAQUE.y, SCENE_H), width: pct(PLAQUE.w, SCENE_W), height: pct(PLAQUE.h, SCENE_H) }}
-        >
-          <h1>{T.ui.title}</h1>
-          <p className="title-sub">{T.ui.subtitle}</p>
-        </div>
       </div>
       <div className="title-menu">
         {hasSave && (

@@ -806,3 +806,52 @@ button.wood.primary {
 .dex-section .dex-list {
   padding: 0 8px 8px;
 }
+
+/* ── 시작 화면: 하늘에 떠 있는 섬 마을 (참고 그림 색감) ── */
+.title.title-island {
+  background: #edf0df;
+  padding: 0 0 28px;
+  padding-top: max(20px, env(safe-area-inset-top));
+}
+.title-head {
+  text-align: center;
+  margin: 8px 16px 0;
+}
+.title-head h1 {
+  margin: 0;
+  /* 도트 글꼴이라 12의 배수에서만 또렷하다 */
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #6b5040;
+  text-shadow: 0 2px 0 #fefdf8;
+  white-space: nowrap;
+}
+.title-island .title-sub {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: #8e7a64;
+}
+.title-island .title-stage {
+  margin-top: 4px;
+}
+.title-island .title-scene {
+  aspect-ratio: 160 / 170;
+}
+.title-island .title-menu {
+  padding: 0 16px;
+  margin-top: 4px;
+}
+.title-island button.wood {
+  background: #f8e6c0;
+  border-color: #8e6a4d;
+  box-shadow: 0 3px 0 #8e6a4d;
+  color: #6b5040;
+}
+.title-island button.wood.primary {
+  background: #c98f6a;
+  color: #fefdf8;
+}
+.title-island .title-notice {
+  color: #8e7a64;
+}
