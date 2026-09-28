@@ -768,3 +768,54 @@ button.wood.primary {
   border-radius: 2px;
   cursor: pointer;
 }
+
+/* ── 선반: 닫기는 위에 붙이고, 도감의 장은 접어 둔다 ── */
+.shelf .shelf-head {
+  position: sticky;
+  top: -14px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: -14px -16px 8px;
+  padding: 10px 16px 8px;
+  background: var(--panel);
+  border-bottom: 2px solid #e2cfa8;
+}
+.shelf .shelf-head h2 {
+  flex: 1;
+  margin: 0;
+}
+.dex-section {
+  border: 2px solid #e2cfa8;
+  border-radius: 4px;
+  margin: 6px 0;
+  background: #fffaf0;
+}
+.dex-section > summary {
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 14px;
+  list-style: none;
+}
+.dex-section > summary::-webkit-details-marker {
+  display: none;
+}
+.dex-section > summary::before {
+  content: '▶';
+  font-size: 10px;
+  margin-right: 6px;
+  color: var(--ink-soft);
+}
+.dex-section[open] > summary::before {
+  content: '▼';
+}
+.dex-section > summary > span:first-child {
+  flex: 1;
+}
+.dex-section .dex-list {
+  padding: 0 8px 8px;
+}

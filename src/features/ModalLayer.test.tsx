@@ -413,15 +413,19 @@ describe('선반', () => {
     render(<ModalLayer />)
     // 마가 22 + 누가 156 = 178 조각 중 2개를 들었다
     expect(screen.getAllByText('아직 듣지 못한 이야기').length).toBe(176)
-    // 책마다 장을 따로 묶는다
-    expect(screen.getByRole('heading', { name: '마가복음 1장' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: '누가복음 1장' })).toBeInTheDocument()
+    // 책마다 장을 따로 묶고, 장은 처음에 접혀 있다
+    expect(screen.getByText('마가복음 1장').closest('details')).not.toHaveAttribute('open')
+    expect(screen.getByText('누가복음 1장')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: /한 복음서에만/ }))
     expect(screen.queryByText('잃은 양')).toBeNull()
+    await user.click(screen.getByText('누가복음 15장'))
+    expect(screen.getByText('누가복음 15장').closest('details')).toHaveAttribute('open')
     await user.click(screen.getByRole('button', { name: /잃은 드라크마/ }))
     expect(screen.getByLabelText('성경 본문 눅 15:8-10')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: '뒤로' }))
     expect(screen.getByRole('dialog', { name: '선반' })).toBeInTheDocument()
+    // 본문을 보고 돌아와도 펼친 장은 펼친 채로
+    expect(screen.getByText('누가복음 15장').closest('details')).toHaveAttribute('open')
   })
 
   it('방 꾸미기: 깔개를 놓고 다시 거둔다', async () => {

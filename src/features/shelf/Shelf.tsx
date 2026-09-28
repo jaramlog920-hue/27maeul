@@ -1,98 +1,144 @@
 // 선반: 모은 것들을 본다 — 이야기 도감·받은 선물·만들 줄 아는 것·풍경 앨범·나의 한 줄·방 꾸미기
-import { useState } from 'react'
-import { PIECES, pieceById } from '../../content/catalog'
-import { fill, ITEM_TEXT, SCENES, T } from '../../content/text'
-import { FURNITURE } from '../../engine/room'
-import { ItemIcon } from '../../shared/ItemIcon'
-import { albumImage, useGame } from '../../store/game-store'
+import { useState } from "react";
+import { PIECES, pieceById } from "../../content/catalog";
+import { fill, ITEM_TEXT, SCENES, T } from "../../content/text";
+import { FURNITURE } from "../../engine/room";
+import { ItemIcon } from "../../shared/ItemIcon";
+import { albumImage, useGame } from "../../store/game-store";
 
-type Tab = 'dex' | 'gifts' | 'recipes' | 'album' | 'lines'
+type Tab = "dex" | "gifts" | "recipes" | "album" | "lines";
 
 export function Shelf() {
-  const [tab, setTab] = useState<Tab>('dex')
-  const closeModal = useGame((s) => s.closeModal)
+  const [tab, setTab] = useState<Tab>("dex");
+  const closeModal = useGame((s) => s.closeModal);
   const tabs: [Tab, string][] = [
-    ['dex', T.ui.dex],
-    ['album', T.ui.album],
-    ['lines', T.ui.myLinesTitle],
-    ['gifts', T.ui.gifts],
-    ['recipes', T.ui.recipes],
-  ]
+    ["dex", T.ui.dex],
+    ["album", T.ui.album],
+    ["lines", T.ui.myLinesTitle],
+    ["gifts", T.ui.gifts],
+    ["recipes", T.ui.recipes],
+  ];
   return (
     <div className="dialog shelf" role="dialog" aria-label={T.ui.shelfTitle}>
-      <h2>{T.ui.shelfTitle}</h2>
+      {/* 목록이 길어져도 닫기는 늘 위에 붙어 있다 */}
+      <div className="shelf-head">
+        <h2>{T.ui.shelfTitle}</h2>
+        <Decorate />
+        <button onClick={closeModal}>{T.ui.close}</button>
+      </div>
       <div className="tabs" role="tablist">
         {tabs.map(([id, label]) => (
-          <button key={id} role="tab" aria-selected={tab === id} className={tab === id ? 'on' : ''} onClick={() => setTab(id)}>
+          <button
+            key={id}
+            role="tab"
+            aria-selected={tab === id}
+            className={tab === id ? "on" : ""}
+            onClick={() => setTab(id)}
+          >
             {label}
           </button>
         ))}
       </div>
-      {tab === 'dex' && <Dex />}
-      {tab === 'gifts' && <Gifts />}
-      {tab === 'recipes' && <Recipes />}
-      {tab === 'album' && <Album />}
-      {tab === 'lines' && <Lines />}
-      <div className="actions">
-        <Decorate />
-        <button onClick={closeModal}>{T.ui.close}</button>
-      </div>
+      {tab === "dex" && <Dex />}
+      {tab === "gifts" && <Gifts />}
+      {tab === "recipes" && <Recipes />}
+      {tab === "album" && <Album />}
+      {tab === "lines" && <Lines />}
     </div>
-  )
+  );
 }
 
-/** 본문을 열었다 '뒤로' 돌아와도 거르기를 기억한다 */
-let rememberOnly = false
+/** 본문을 열었다 '뒤로' 돌아와도 거르기와 펼친 장을 기억한다 */
+let rememberOnly = false;
+const rememberOpen = new Set<string>();
 
 export function Dex() {
-  const collected = useGame((s) => s.game.collected)
-  const open = useGame((s) => s.open)
-  const [only, setOnlyState] = useState(rememberOnly)
+  const collected = useGame((s) => s.game.collected);
+  const open = useGame((s) => s.open);
+  const [only, setOnlyState] = useState(rememberOnly);
   const setOnly = (v: boolean) => {
-    rememberOnly = v
-    setOnlyState(v)
-  }
-  const got = new Set(collected)
-  const list = PIECES.filter((p) => !only || p.stamps.length === 0)
+    rememberOnly = v;
+    setOnlyState(v);
+  };
+  const got = new Set(collected);
+  const list = PIECES.filter((p) => !only || p.stamps.length === 0);
   // 책마다 장을 따로 (마가 1장과 누가 1장을 한데 섞지 않는다)
-  const sections = [...new Set(list.map((p) => `${p.book}:${p.chapter}`))].map((k) => {
-    const [book, chapter] = k.split(':')
-    return { key: k, book, chapter: Number(chapter) }
-  })
+  const sections = [...new Set(list.map((p) => `${p.book}:${p.chapter}`))].map(
+    (k) => {
+      const [book, chapter] = k.split(":");
+      return { key: k, book, chapter: Number(chapter) };
+    },
+  );
   return (
     <div className="dex">
       <div className="dex-filter">
-        <button className={!only ? 'on' : ''} onClick={() => setOnly(false)}>
+        <button className={!only ? "on" : ""} onClick={() => setOnly(false)}>
           {T.ui.dexAll}
         </button>
-        <button className={only ? 'on' : ''} onClick={() => setOnly(true)}>
+        <button className={only ? "on" : ""} onClick={() => setOnly(true)}>
           ✦ {T.ui.dexOnly}
         </button>
-        <span className="hint">{fill(T.ui.dexCount, { got: list.filter((p) => got.has(p.id)).length, all: list.length })}</span>
+        <span className="hint">
+          {fill(T.ui.dexCount, {
+            got: list.filter((p) => got.has(p.id)).length,
+            all: list.length,
+          })}
+        </span>
       </div>
       <p className="stamp-note">{T.ui.stampNote}</p>
-      {sections.map(({ key, book, chapter: c }) => (
-        <section key={key}>
-          <h3>
-            {(T.quiz.gospels as Record<string, string>)[book]} {fill(T.ui.chapterLabel, { chapter: c })}
-          </h3>
-          <ul className="dex-list">
-            {list
-              .filter((p) => p.book === book && p.chapter === c)
-              .map((p) =>
+      {sections.map(({ key, book, chapter: c }) => {
+        const inChapter = list.filter(
+          (p) => p.book === book && p.chapter === c,
+        );
+        return (
+          // 장이 많아지므로 기본은 접어 두고, 제목 줄에 모은 수만 보인다
+          <details
+            key={key}
+            className="dex-section"
+            open={rememberOpen.has(key)}
+            onToggle={(e) =>
+              e.currentTarget.open
+                ? rememberOpen.add(key)
+                : rememberOpen.delete(key)
+            }
+          >
+            <summary>
+              <span>
+                {(T.quiz.gospels as Record<string, string>)[book]}{" "}
+                {fill(T.ui.chapterLabel, { chapter: c })}
+              </span>
+              <span className="hint">
+                {fill(T.ui.dexCount, {
+                  got: inChapter.filter((p) => got.has(p.id)).length,
+                  all: inChapter.length,
+                })}
+              </span>
+            </summary>
+            <ul className="dex-list">
+              {inChapter.map((p) =>
                 got.has(p.id) ? (
                   <li key={p.id}>
-                    <button className={`dex-item ${p.stamps.length === 0 ? 'only' : ''}`} onClick={() => open({ kind: 'passage', pieceId: p.id, askLine: false, back: true })}>
+                    <button
+                      className={`dex-item ${p.stamps.length === 0 ? "only" : ""}`}
+                      onClick={() =>
+                        open({
+                          kind: "passage",
+                          pieceId: p.id,
+                          askLine: false,
+                          back: true,
+                        })
+                      }
+                    >
                       <span className="piece-title">
-                        {p.stamps.length === 0 && '✦ '}
+                        {p.stamps.length === 0 && "✦ "}
                         {p.title}
                       </span>
                       <span className="piece-ref">{p.ref}</span>
                       <span className="dex-stamps">
                         {p.stamps.map((s) => (
                           <span key={s.ref} className={`mini-stamp ${s.kind}`}>
-                            {s.ref.split(' ')[0]}
-                            {s.kind === 'similar' ? '≈' : ''}
+                            {s.ref.split(" ")[0]}
+                            {s.kind === "similar" ? "≈" : ""}
                           </span>
                         ))}
                       </span>
@@ -105,16 +151,17 @@ export function Dex() {
                   </li>
                 ),
               )}
-          </ul>
-        </section>
-      ))}
+            </ul>
+          </details>
+        );
+      })}
     </div>
-  )
+  );
 }
 
 function Gifts() {
-  const gifts = useGame((s) => s.game.giftsGot)
-  if (!gifts.length) return <p>{T.ui.giftsEmpty}</p>
+  const gifts = useGame((s) => s.game.giftsGot);
+  if (!gifts.length) return <p>{T.ui.giftsEmpty}</p>;
   return (
     <ul className="bag-list">
       {gifts.map((id) => (
@@ -125,45 +172,49 @@ function Gifts() {
         </li>
       ))}
     </ul>
-  )
+  );
 }
 
 function Recipes() {
-  const known = useGame((s) => s.game.recipesKnown)
-  if (!known.length) return <p>{T.ui.recipesEmpty}</p>
+  const known = useGame((s) => s.game.recipesKnown);
+  if (!known.length) return <p>{T.ui.recipesEmpty}</p>;
   return (
     <ul className="journal-list">
       {known.map((r) => (
         <li key={r}>{(T.recipes as Record<string, string>)[r]}</li>
       ))}
     </ul>
-  )
+  );
 }
 
 export function Album() {
-  const album = useGame((s) => s.game.album)
-  if (!album.length) return <p>{T.ui.albumEmpty}</p>
+  const album = useGame((s) => s.game.album);
+  if (!album.length) return <p>{T.ui.albumEmpty}</p>;
   return (
     <div className="album-grid">
       {album.map((a) => {
-        const img = albumImage(a.id)
+        const img = albumImage(a.id);
         return (
           <figure key={a.id} className="album-card">
-            {img ? <img src={img} alt={SCENES[a.id]?.album ?? ''} /> : <div className="album-blank" />}
+            {img ? (
+              <img src={img} alt={SCENES[a.id]?.album ?? ""} />
+            ) : (
+              <div className="album-blank" />
+            )}
             <figcaption>
               {SCENES[a.id]?.album} · {fill(T.ui.day, { day: a.day })}
             </figcaption>
           </figure>
-        )
+        );
       })}
     </div>
-  )
+  );
 }
 
 export function Lines() {
-  const lines = useGame((s) => s.game.myLines)
-  const entries = Object.entries(lines)
-  if (!entries.length) return <p>{T.ui.myLinesEmpty}</p>
+  const lines = useGame((s) => s.game.myLines);
+  const entries = Object.entries(lines);
+  if (!entries.length) return <p>{T.ui.myLinesEmpty}</p>;
   return (
     <ul className="my-lines">
       {entries.map(([pid, text]) => (
@@ -175,17 +226,21 @@ export function Lines() {
         </li>
       ))}
     </ul>
-  )
+  );
 }
 
 function Decorate() {
-  const inv = useGame((s) => s.game.inv)
-  const room = useGame((s) => s.game.room)
-  const startDecorate = useGame((s) => s.startDecorate)
-  const has = FURNITURE.some((f) => (inv[f] ?? 0) > 0) || room.length > 0
+  const inv = useGame((s) => s.game.inv);
+  const room = useGame((s) => s.game.room);
+  const startDecorate = useGame((s) => s.startDecorate);
+  const has = FURNITURE.some((f) => (inv[f] ?? 0) > 0) || room.length > 0;
   return (
-    <button disabled={!has} title={has ? '' : T.ui.decorateNone} onClick={() => startDecorate('pick')}>
+    <button
+      disabled={!has}
+      title={has ? "" : T.ui.decorateNone}
+      onClick={() => startDecorate("pick")}
+    >
       {T.ui.decorate}
     </button>
-  )
+  );
 }
