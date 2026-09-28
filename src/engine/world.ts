@@ -1,12 +1,13 @@
 // 이름 없는 작은 마을 (exclusion-list §2-3). 한 칸 = TILE 픽셀. 지도는 코드로 짓는다 — 폭이 어긋나는 실수를 막기 위해.
 // 언덕 위 서고, 가운데 장터 광장, 알록달록한 기와지붕 이웃집, 포도원·올리브 숲, 남쪽 호숫가 나루.
 // 범례
-//   집 안: n 탁자 · g 항아리 · p 화분 · W 베틀 · G 복음서 선반 · K 잠긴 방 문 (막힘) · e 깔개 · E 문깔개(밟으면 밖으로) (걸음) · _ 빈 곳
+//   집 안: n 탁자 · g 항아리 · p 화분 · W 베틀 · G 복음서 선반 · K 잠긴 방 문 · Z 큰 가구 (막힘), z 바닥 가구 (걸음) · e 깔개 · E 문깔개(밟으면 밖으로) (걸음) · _ 빈 곳
 //   막힘: T 나무 · # 벽 · R 지붕 · S 서고 돌벽 · b 침대 · d 책상 · h 화덕 · s 선반 · k 작업대 · w 우물 · B 벤치
 //         ~ 호수 · r 갈대 · v 포도나무 · L 서고 문 · o 올리브나무 · P 기름틀 · A 모루 · O 빵 굽는 가마 · m 장터 좌판
 //         x 울타리 · q 편지 바구니 · u 고깃배
 //   걸음: . 풀 · , 흙길 · f 집 안 바닥 · D 문 · = 나루 · y 보리밭 · * 꽃
-import type { PlaceId, Tile } from './types'
+import { FURNITURE_DEFS } from './furniture-defs'
+import type { ItemId, PlaceId, Tile } from './types'
 
 export const TILE = 16
 export const WIDTH = 48
@@ -37,13 +38,25 @@ export interface Room {
   exit: Tile
   /** 집에 있을 때 주인이 서 있는 곳 */
   sit: Tile
-  /** 가구 [x0에서 떨어진 칸, y0에서 떨어진 칸, 글자] */
+  /** 붙박이 [x0에서 떨어진 칸, y0에서 떨어진 칸, 글자] */
   things: [number, number, string][]
+  /** 가구 그림 [칸, 칸, 가구] — 바닥 것은 밟고, 큰 것은 막고, 작은 것은 탁자 위에 */
+  decor: [number, number, ItemId][]
 }
 
-function room(owner: string, x0: number, y0: number, door: Tile, sit: [number, number], things: [number, number, string][], w = ROOM_W, h = ROOM_H): Room {
+function room(
+  owner: string,
+  x0: number,
+  y0: number,
+  door: Tile,
+  sit: [number, number],
+  things: [number, number, string][],
+  decor: [number, number, ItemId][] = [],
+  w = ROOM_W,
+  h = ROOM_H,
+): Room {
   const exit = { x: x0 + Math.floor((w - 1) / 2), y: y0 + h - 1 }
-  return { owner, x0, y0, w, h, door, entry: { x: exit.x, y: exit.y - 1 }, exit, sit: { x: x0 + sit[0], y: y0 + sit[1] }, things }
+  return { owner, x0, y0, w, h, door, entry: { x: exit.x, y: exit.y - 1 }, exit, sit: { x: x0 + sit[0], y: y0 + sit[1] }, things, decor }
 }
 
 /** 서고 안: 가운데 복음서 선반, 양옆 책장, 좌우 벽의 잠긴 방 문 넷 (13×10) */
@@ -58,40 +71,34 @@ const libraryThings: [number, number, string][] = [
   [6, 3, 'e'], [6, 4, 'e'], [6, 5, 'e'], [6, 6, 'e'], [6, 7, 'e'],
 ]
 
-const rug = (x: number, y: number, w: number, h: number): [number, number, string][] => {
-  const out: [number, number, string][] = []
-  for (let dy = 0; dy < h; dy++) for (let dx = 0; dx < w; dx++) out.push([x + dx, y + dy, 'e'])
-  return out
-}
-
 export const ROOMS: readonly Room[] = [
-  // 빵 굽는 이웃: 가마, 빵 선반, 반죽 탁자, 밀가루 항아리
-  room('baker', 2, 41, { x: 5, y: 17 }, [5, 4], [
-    [1, 1, 'O'], [2, 1, 'O'], [4, 1, 's'], [5, 1, 's'], [8, 1, 'g'], [8, 2, 'g'],
-    [3, 3, 'n'], [4, 3, 'n'], [8, 5, 'b'], [1, 5, 'p'], ...rug(5, 5, 2, 1),
-  ]),
-  // 물 긷는 아이네: 침대 둘, 화덕, 물항아리, 둘러앉는 탁자
-  room('child', 16, 41, { x: 36, y: 17 }, [3, 4], [
-    [1, 1, 'b'], [2, 1, 'b'], [5, 1, 'h'], [8, 1, 'g'], [8, 2, 'g'], [8, 3, 'g'],
-    [4, 3, 'n'], [5, 3, 'n'], [1, 5, 'p'], ...rug(3, 5, 3, 1),
-  ]),
-  // 포도원 할아버지: 포도주 통, 책 선반, 화덕, 흔들 탁자
-  room('grandpa', 30, 41, { x: 35, y: 5 }, [5, 4], [
-    [1, 1, 'b'], [3, 1, 's'], [6, 1, 'h'], [8, 1, 'g'], [8, 2, 'g'],
-    [2, 4, 'n'], [8, 5, 'p'], ...rug(4, 4, 3, 2),
-  ]),
-  // 베 짜는 이웃: 베틀, 실 선반, 알록달록한 깔개
-  room('weaver', 2, 50, { x: 28, y: 28 }, [4, 3], [
-    [1, 1, 'W'], [2, 1, 'W'], [5, 1, 's'], [6, 1, 's'], [8, 1, 'b'],
-    [8, 4, 'g'], [1, 5, 'p'], ...rug(3, 4, 4, 2),
-  ]),
-  // 벌 치는 이웃: 꿀 항아리, 선반, 꽃 화분
-  room('beekeeper', 16, 50, { x: 42, y: 31 }, [4, 3], [
-    [1, 1, 's'], [2, 1, 'g'], [3, 1, 'g'], [4, 1, 'g'], [8, 1, 'b'],
-    [5, 4, 'n'], [1, 4, 'p'], [1, 5, 'p'], [8, 5, 'p'], ...rug(3, 5, 2, 1),
-  ]),
+  // 빵 굽는 이웃: 가마 둘, 찬장, 밀가루 항아리, 과일 접시·주전자 올린 탁자, 둥근 깔개
+  room('baker', 2, 41, { x: 5, y: 17 }, [5, 4],
+    [[1, 1, 'O'], [2, 1, 'O'], [8, 1, 'g'], [8, 2, 'g'], [3, 3, 'n'], [4, 3, 'n'], [8, 5, 'b']],
+    [[4, 1, 'cupboard'], [7, 1, 'barrel'], [2, 3, 'chair'], [5, 3, 'chair'], [3, 3, 'fruitBowl'], [4, 3, 'teapot'],
+     [5, 4, 'roundRug'], [1, 5, 'bigPlant'], [7, 5, 'pillows'], [1, 2, 'lampStand']]),
+  // 물 긷는 아이네: 침대 둘, 궤짝, 화덕, 물항아리, 둘러앉는 탁자, 돗자리
+  room('child', 16, 41, { x: 36, y: 17 }, [3, 4],
+    [[1, 1, 'b'], [2, 1, 'b'], [5, 1, 'h'], [8, 1, 'g'], [8, 2, 'g'], [4, 3, 'n'], [5, 3, 'n']],
+    [[3, 1, 'chest'], [3, 3, 'chair'], [6, 3, 'chair'], [4, 3, 'teapot'], [5, 3, 'fruitBowl'],
+     [2, 5, 'mat'], [1, 5, 'pillows'], [8, 5, 'bigPlant'], [8, 3, 'lampStand']]),
+  // 포도원 할아버지: 책장 둘, 포도주 통, 화덕, 평상, 모래시계 올린 탁자
+  room('grandpa', 30, 41, { x: 35, y: 5 }, [5, 3],
+    [[1, 1, 'b'], [6, 1, 'h'], [2, 4, 'n']],
+    [[3, 1, 'bookcase'], [4, 1, 'bookcase'], [8, 1, 'barrel'], [8, 2, 'barrel'], [2, 4, 'hourglass'], [1, 4, 'chair'],
+     [3, 3, 'roundRug'], [6, 5, 'daybed'], [8, 4, 'lampStand'], [1, 6, 'bigPlant']]),
+  // 베 짜는 이웃: 베틀, 물레, 실 선반, 궤짝, 둥근 깔개, 말린 꽃
+  room('weaver', 2, 50, { x: 28, y: 28 }, [4, 3],
+    [[1, 1, 'W'], [2, 1, 'W'], [5, 1, 's'], [6, 1, 's'], [8, 1, 'b'], [6, 4, 'n']],
+    [[3, 1, 'wheel'], [8, 3, 'chest'], [8, 2, 'pillows'], [3, 4, 'roundRug'], [7, 4, 'chair'], [6, 4, 'dryFlowers'],
+     [1, 4, 'lampStand'], [1, 6, 'bigPlant']]),
+  // 벌 치는 이웃: 꿀 항아리, 선반, 찬장, 주전자 올린 탁자, 꽃 화분, 문 앞 돗자리
+  room('beekeeper', 16, 50, { x: 42, y: 31 }, [4, 3],
+    [[1, 1, 's'], [2, 1, 'g'], [3, 1, 'g'], [4, 1, 'g'], [8, 1, 'b'], [5, 4, 'n'], [1, 4, 'p'], [8, 5, 'p']],
+    [[6, 1, 'cupboard'], [6, 4, 'chair'], [5, 4, 'teapot'], [8, 3, 'lampStand'], [1, 5, 'bigPlant'], [3, 6, 'mat'],
+     [8, 2, 'pillows']]),
   // 마을 서고
-  room('library', 30, 49, { x: 24, y: 5 }, [6, 2], libraryThings, LIBRARY_W, LIBRARY_H),
+  room('library', 30, 49, { x: 24, y: 5 }, [6, 2], libraryThings, [[4, 2, 'lectern'], [8, 2, 'lectern'], [1, 4, 'lampStand'], [11, 4, 'lampStand'], [3, 4, 'scrolls'], [9, 6, 'inkpot']], LIBRARY_W, LIBRARY_H),
 ]
 
 /** 서고 안 잠긴 방 문 (왼쪽 위 → 왼쪽 아래 → 오른쪽 위 → 오른쪽 아래 = life-text의 lockedRooms 순서) */
@@ -228,13 +235,19 @@ function build(): string[] {
     rect(x0 + 1, y0 + 1, x0 + room.w - 2, y0 + room.h - 2, 'f')
     set(room.exit.x, room.exit.y, 'E')
     for (const [dx, dy, ch] of room.things) set(x0 + dx, y0 + dy, ch)
+    // 가구: 바닥에 까는 것은 밟는 칸(z), 큰 것은 막는 칸(Z), 작은 것은 그 자리 그대로(탁자 위)
+    for (const [dx, dy, item] of room.decor) {
+      const d = FURNITURE_DEFS[item]
+      if (!d || d.layer === 'small') continue
+      for (let yy = 0; yy < d.h; yy++) for (let xx = 0; xx < d.w; xx++) set(x0 + dx + xx, y0 + dy + yy, d.layer === 'floor' ? 'z' : 'Z')
+    }
   }
   return g.map((r) => r.join(''))
 }
 
 export const MAP: readonly string[] = build()
 
-const BLOCKED = new Set(['_', 'n', 'g', 'p', 'W', 'G', 'K', 'T', '#', 'R', 'S', 'u', 'b', 'd', 'h', 's', 'k', 'w', 'B', '~', 'r', 'v', 'o', 'P', 'A', 'O', 'm', 'x', 'q'])
+const BLOCKED = new Set(['_', 'Z', 'n', 'g', 'p', 'W', 'G', 'K', 'T', '#', 'R', 'S', 'u', 'b', 'd', 'h', 's', 'k', 'w', 'B', '~', 'r', 'v', 'o', 'P', 'A', 'O', 'm', 'x', 'q'])
 
 export function tileAt(x: number, y: number): string {
   return MAP[y]?.[x] ?? 'T'
@@ -252,7 +265,7 @@ export function isWalkable(t: Tile, blockers: ReadonlySet<string> = new Set()): 
 
 export function isIndoor(t: Tile): boolean {
   const c = tileAt(t.x, t.y)
-  return c === 'f' || c === 'D' || c === 'e' || c === 'E'
+  return c === 'f' || c === 'D' || c === 'e' || c === 'E' || c === 'z'
 }
 
 // ── 서고에 책이 꽂힐수록 열리는 구역 (설계 §2.7) ──

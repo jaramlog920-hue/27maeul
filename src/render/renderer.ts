@@ -5,6 +5,7 @@ import { isGrown, STRAY_SPOTS, EAVES } from '../engine/companion'
 import { totalChapters } from '../engine/books'
 import { shelvedCount, straysToday, type GameState } from '../engine/game'
 import { FURNITURE_DEFS, type Furniture } from '../engine/room'
+import { FURNI_PALETTE, FURNITURE_ART } from './furniture-art'
 import { drawDecor, lanternLights, sheepCount } from './decor'
 import { FIRE, isNear, npcTile } from '../engine/neighbors'
 import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
@@ -609,6 +610,16 @@ function mapFor(season: Season): HTMLCanvasElement {
     }
   // 집마다 지붕 하나
   for (const h of HOUSES) drawRoof(g, h.x0, h.y0, h.x1, h.y1 - 2, (HOUSE_STYLES[h.id] ?? PLAIN_STYLE).roof)
+  // 집 안 가구: 바닥 것 → 큰 것 → 탁자 위 작은 것
+  const layerRank = { floor: 0, solid: 1, small: 2 } as const
+  for (const rm of ROOMS)
+    for (const [dx, dy, item] of [...rm.decor].sort((p, q) => layerRank[FURNITURE_DEFS[p[2]]?.layer ?? 'small'] - layerRank[FURNITURE_DEFS[q[2]]?.layer ?? 'small'])) {
+      const a = FURNITURE_ART[item]
+      if (!a) continue
+      const x = rm.x0 + dx
+      const y = rm.y0 + dy
+      g.drawImage(paint(`furni/${item}`, a.rows, FURNI_PALETTE), x * TILE, y * TILE + (MAP[y][x] === 'n' ? -6 : 0))
+    }
   mapCache.set(season, c)
   return c
 }
@@ -796,6 +807,12 @@ function drawFurniture(g: Ctx, f: Furniture) {
       r(C.wood, 3, 7, 10, 3)
       return
     default: {
+      const a = FURNITURE_ART[f.item]
+      if (a) {
+        // 가구 그림 (탁자 위에 올린 작은 것은 조금 위로)
+        g.drawImage(paint(`furni/${f.item}`, a.rows, FURNI_PALETTE), px, py + (f.on ? -6 : 0))
+        return
+      }
       const ic = iconCanvas(f.item)
       // 탁자 위에 올린 것은 탁자 윗면에, 바닥의 것은 칸 가운데에
       if (ic) g.drawImage(ic, px + 4, py + (f.on ? -2 : 6))

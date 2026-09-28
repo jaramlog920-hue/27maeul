@@ -1,6 +1,7 @@
 // 코드로 그린 도트. 외모 주장이 아니라 게임 표현이다 (exclusion-list §1-2).
 import type { Facing, Season } from '../engine/types'
 import { hsvToHex, shadeOf, SKINS, TOPS, type FullAvatar, type Look } from '../engine/avatar'
+import { FURNI_PALETTE, FURNITURE_ART, ICON_CHAR, iconFromArt } from './furniture-art'
 
 export type { Look }
 
@@ -404,6 +405,8 @@ export const ICON_PALETTE: Record<string, string> = {
   k: '#3b2a20', b: '#83adcc', B: '#547d9f', g: '#7a9c5b', G: '#507538', y: '#ccb981', Y: '#a08b54',
   w: '#f4ecd8', W: '#d9ccb0', p: '#784f8a', P: '#563169', r: '#9f6154', o: '#698544', O: '#3f5a22',
   d: '#2a2230', l: '#f5c542', n: '#94704f', N: '#745336', s: '#e0bba0', f: '#d18ba0', c: '#c7b18c',
+  // 가구 그림에서 줄인 아이콘의 색 (furniture-art ICON_CHAR)
+  ...Object.fromEntries(Object.entries(ICON_CHAR).map(([from, to]) => [to, FURNI_PALETTE[from]])),
 }
 
 export const ICONS: Record<string, SpriteRows> = {
@@ -437,3 +440,6 @@ export const ICONS: Record<string, SpriteRows> = {
   bird: ['........', '..nn....', '.nkn....', 'Nnnnnnn.', '.nnnnnNN', '..nnnn..', '...N.N..', '..NN.NN.'],
   goldLeaf: ['........', '.yyyyyy.', '.yYyyyy.', '.yyyyYy.', '.yyyyyy.', '.yYyyyy.', '.yyyyyy.', '........'],
 }
+
+// 가구 20종은 그림을 줄여 아이콘으로
+for (const [id, a] of Object.entries(FURNITURE_ART)) ICONS[id] = iconFromArt(a)

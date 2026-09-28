@@ -612,6 +612,27 @@ export const TRADES: readonly Trade[] = [
   { id: 'bird', pay: { olive: 1, fig: 1 }, get: { bird: 1 }, requires: 'moreTrades' },
   { id: 'honey', pay: { grapes: 1, bread: 1 }, get: { honey: 1 }, requires: 'moreTrades' },
   { id: 'goldLeaf', pay: {}, coins: 30, get: { goldLeaf: 1 } },
+  // 가구 20종
+  { id: 'chair', pay: { olive: 1, wool: 1 }, get: { chair: 1 } },
+  { id: 'bookcase', pay: { grapes: 2, olive: 2 }, get: { bookcase: 1 } },
+  { id: 'chest', pay: { olive: 2, fig: 1 }, get: { chest: 1 } },
+  { id: 'barrel', pay: { grapes: 3 }, get: { barrel: 1 } },
+  { id: 'wheel', pay: { wool: 3 }, get: { wheel: 1 } },
+  { id: 'lectern', pay: { olive: 2, papyrus: 1 }, get: { lectern: 1 } },
+  { id: 'lampStand', pay: { oil: 2 }, get: { lampStand: 1 } },
+  { id: 'bigPlant', pay: { fig: 2, barley: 1 }, get: { bigPlant: 1 } },
+  { id: 'longBench', pay: { olive: 3, wool: 1 }, get: { longBench: 1 } },
+  { id: 'daybed', pay: { wool: 3, olive: 2 }, get: { daybed: 1 } },
+  { id: 'cupboard', pay: { olive: 3, grapes: 2 }, get: { cupboard: 1 } },
+  { id: 'roundRug', pay: { wool: 3 }, get: { roundRug: 1 } },
+  { id: 'mat', pay: { reed: 3 }, get: { mat: 1 } },
+  { id: 'pillows', pay: { wool: 2 }, get: { pillows: 1 } },
+  { id: 'teapot', pay: { barley: 2 }, get: { teapot: 1 } },
+  { id: 'fruitBowl', pay: { fig: 1, grapes: 1 }, get: { fruitBowl: 1 } },
+  { id: 'scrolls', pay: { papyrus: 2 }, get: { scrolls: 1 } },
+  { id: 'inkpot', pay: { ink: 1 }, get: { inkpot: 1 } },
+  { id: 'dryFlowers', pay: { fig: 1 }, get: { dryFlowers: 1 } },
+  { id: 'hourglass', pay: { olive: 1, oil: 1 }, get: { hourglass: 1 } },
 ]
 
 export function tradesFor(flags: Record<string, number>): Trade[] {

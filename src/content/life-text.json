@@ -3,11 +3,29 @@
     "title": "어떤 사람으로 살까요?",
     "lead": "마을 서고를 맡게 된 견습 필사가입니다. 모습과 이름을 정해 주세요.",
     "lookLabel": "모습",
-    "looks": { "f": "여자", "m": "남자" },
+    "looks": {
+      "f": "여자",
+      "m": "남자"
+    },
     "nameLabel": "이름",
-    "rows": { "skin": "피부", "hairFront": "앞머리", "hairBack": "뒷머리", "top": "윗옷", "bottom": "아래옷", "acc": "장신구" },
-    "colors": { "eyeColor": "눈 색", "hairColor": "머리 색", "bottomColor": "아래옷 색" },
-    "sliders": ["색조", "채도", "밝기"],
+    "rows": {
+      "skin": "피부",
+      "hairFront": "앞머리",
+      "hairBack": "뒷머리",
+      "top": "윗옷",
+      "bottom": "아래옷",
+      "acc": "장신구"
+    },
+    "colors": {
+      "eyeColor": "눈 색",
+      "hairColor": "머리 색",
+      "bottomColor": "아래옷 색"
+    },
+    "sliders": [
+      "색조",
+      "채도",
+      "밝기"
+    ],
     "turnLeft": "왼쪽으로 돌리기",
     "turnRight": "오른쪽으로 돌리기",
     "random": "무작위로",
@@ -49,7 +67,12 @@
     "libraryRoom": "마을 서고",
     "zoneLocked": "덤불이 우거져 지나갈 수 없어요. 서고에 책이 {n}권 꽂히면 길이 열려요.",
     "zoneOpened": "{name} 가는 길이 열렸어요!",
-    "zones": { "vineyard": "포도원", "dock": "호숫가 나루", "hives": "벌통 들", "forge": "대장간" },
+    "zones": {
+      "vineyard": "포도원",
+      "dock": "호숫가 나루",
+      "hives": "벌통 들",
+      "forge": "대장간"
+    },
     "chapterLabel": "{chapter}장",
     "shelf": "엮은 장 {n}",
     "coins": "{n}닢",
@@ -330,7 +353,90 @@
       "name": "꿀",
       "desc": "벌 치는 이웃이 뜬 꿀. 먹으면 든든하다."
     },
-    "goldLeaf": { "name": "금박", "desc": "책등에 입히는 얇은 금. 서고에서 다시 도전할 때 씁니다." }
+    "goldLeaf": {
+      "name": "금박",
+      "desc": "책등에 입히는 얇은 금. 서고에서 다시 도전할 때 씁니다."
+    },
+    "chair": {
+      "name": "의자",
+      "desc": "등받이가 있는 나무 의자."
+    },
+    "bookcase": {
+      "name": "책장",
+      "desc": "두루마리와 책을 세워 두는 장."
+    },
+    "chest": {
+      "name": "궤짝",
+      "desc": "놋쇠 고리가 달린 나무 궤짝."
+    },
+    "barrel": {
+      "name": "나무통",
+      "desc": "쇠테를 두른 튼튼한 통."
+    },
+    "wheel": {
+      "name": "물레",
+      "desc": "양털을 실로 잣는 물레."
+    },
+    "lectern": {
+      "name": "독서대",
+      "desc": "펼친 책을 얹어 두는 대."
+    },
+    "lampStand": {
+      "name": "등잔대",
+      "desc": "키 큰 받침 위의 등잔."
+    },
+    "bigPlant": {
+      "name": "큰 화분",
+      "desc": "잎이 무성한 큰 화분."
+    },
+    "longBench": {
+      "name": "긴 의자",
+      "desc": "둘이 나란히 앉는 긴 의자."
+    },
+    "daybed": {
+      "name": "평상",
+      "desc": "방석을 깐 낮은 평상. 낮잠 자기 좋다."
+    },
+    "cupboard": {
+      "name": "찬장",
+      "desc": "그릇을 올려 두는 찬장."
+    },
+    "roundRug": {
+      "name": "둥근 깔개",
+      "desc": "동그랗게 짠 깔개."
+    },
+    "mat": {
+      "name": "돗자리",
+      "desc": "갈대로 엮은 돗자리."
+    },
+    "pillows": {
+      "name": "베개 더미",
+      "desc": "폭신한 베개를 쌓아 두었다."
+    },
+    "teapot": {
+      "name": "주전자",
+      "desc": "따뜻한 차를 끓이는 주전자."
+    },
+    "fruitBowl": {
+      "name": "과일 접시",
+      "desc": "무화과와 포도를 담은 접시."
+    },
+    "scrolls": {
+      "name": "두루마리 더미",
+      "desc": "다 쓴 파피루스를 말아 쌓았다."
+    },
+    "inkpot": {
+      "name": "잉크병",
+      "desc": "깃펜을 꽂은 잉크병."
+    },
+    "dryFlowers": {
+      "name": "말린 꽃",
+      "desc": "들꽃을 말려 병에 꽂았다."
+    },
+    "hourglass": {
+      "name": "모래시계",
+      "desc": "모래가 사락사락 떨어진다."
+    }
   },
   "recipes": {
     "bread": "빵 — 보리 1, 물 1 (벽난로)",
@@ -362,7 +468,27 @@
     "bowl": "그릇",
     "bird": "나무 새",
     "honey": "꿀",
-    "goldLeaf": "금박"
+    "goldLeaf": "금박",
+    "chair": "의자",
+    "bookcase": "책장",
+    "chest": "궤짝",
+    "barrel": "나무통",
+    "wheel": "물레",
+    "lectern": "독서대",
+    "lampStand": "등잔대",
+    "bigPlant": "큰 화분",
+    "longBench": "긴 의자",
+    "daybed": "평상",
+    "cupboard": "찬장",
+    "roundRug": "둥근 깔개",
+    "mat": "돗자리",
+    "pillows": "베개 더미",
+    "teapot": "주전자",
+    "fruitBowl": "과일 접시",
+    "scrolls": "두루마리 더미",
+    "inkpot": "잉크병",
+    "dryFlowers": "말린 꽃",
+    "hourglass": "모래시계"
   },
   "letters": {
     "title": "편지 바구니",
@@ -379,7 +505,12 @@
     "none": "오늘 온 의뢰는 다 끝냈어요. 내일 아침에 또 와요.",
     "mini": "편지 대필"
   },
-  "jobs": ["견습 필사가", "마을 필사가", "제본 장인", "서고지기"],
+  "jobs": [
+    "견습 필사가",
+    "마을 필사가",
+    "제본 장인",
+    "서고지기"
+  ],
   "neighbors": {
     "baker": {
       "offer": [
@@ -872,8 +1003,25 @@
     }
   },
   "scenes": {
-    "firstShelved": { "title": "첫 책", "album": "첫 책을 서고에 꽂은 날", "lines": [{ "speaker": "narration", "text": "비어 있던 선반에 첫 책이 섰다." }] },
-    "shelved": { "title": "한 권 더", "lines": [{ "speaker": "narration", "text": "서고 선반에 책이 한 권 늘었다." }] },
+    "firstShelved": {
+      "title": "첫 책",
+      "album": "첫 책을 서고에 꽂은 날",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "비어 있던 선반에 첫 책이 섰다."
+        }
+      ]
+    },
+    "shelved": {
+      "title": "한 권 더",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "서고 선반에 책이 한 권 늘었다."
+        }
+      ]
+    },
     "welcome": {
       "title": "이름 없는 작은 마을",
       "lines": [
@@ -1088,7 +1236,10 @@
     "bookBound": {
       "title": "한 권을 다 엮었다",
       "lines": [
-        { "speaker": "narration", "text": "한 권을 마지막 장까지 엮었다. 이제 마을 서고에 꽂을 수 있다." }
+        {
+          "speaker": "narration",
+          "text": "한 권을 마지막 장까지 엮었다. 이제 마을 서고에 꽂을 수 있다."
+        }
       ]
     },
     "firstChapter": {
@@ -2148,11 +2299,20 @@
     "ready": "꽂을 수 있어요",
     "notYet": "아직 엮는 중",
     "later": "시험판에는 아직 없어요",
-    "grades": ["맨 책", "은박", "금박"],
+    "grades": [
+      "맨 책",
+      "은박",
+      "금박"
+    ],
     "shelve": "꽂기",
     "retry": "다시 도전",
     "retryCost": "다시 도전에는 금박 1과 등잔 기름 1이 들어요. (가진 것: 금박 {gold} · 기름 {oil})",
-    "lockedRooms": ["사도행전 방", "로마서–빌레몬서 방", "히브리서–유다서 방", "요한계시록 방"],
+    "lockedRooms": [
+      "사도행전 방",
+      "로마서–빌레몬서 방",
+      "히브리서–유다서 방",
+      "요한계시록 방"
+    ],
     "lockedRoomTap": "{room}은 아직 잠겨 있어요.",
     "shelvedToast": "{book}을 서고에 꽂았습니다. 책등: {grade}",
     "rereadNote": "틀린 구절은 '다시 읽을 구절'에 넣어 두었어요."

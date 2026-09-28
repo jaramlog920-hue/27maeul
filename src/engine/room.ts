@@ -7,29 +7,9 @@ import { BED_STAND, HOME_DOOR, isHome, key, PLACES, sameTile, tileAt } from './w
 import { LESSON_SPOT } from './stories'
 import type { ItemId, Tile } from './types'
 
-export type Layer = 'floor' | 'solid' | 'small'
-export interface FurnitureDef {
-  w: number
-  h: number
-  layer: Layer
-  /** 위에 작은 물건을 올릴 수 있다 */
-  surface?: boolean
-}
+import { FURNITURE_DEFS, type FurnitureDef, type Layer } from './furniture-defs'
 
-export const FURNITURE_DEFS: Partial<Record<ItemId, FurnitureDef>> = {
-  rug: { w: 3, h: 2, layer: 'floor' },
-  cushion: { w: 1, h: 1, layer: 'floor' },
-  table: { w: 2, h: 1, layer: 'solid', surface: true },
-  nightstand: { w: 1, h: 1, layer: 'solid', surface: true },
-  stool: { w: 1, h: 1, layer: 'solid' },
-  pot: { w: 1, h: 1, layer: 'small' },
-  vase: { w: 1, h: 1, layer: 'small' },
-  basket: { w: 1, h: 1, layer: 'small' },
-  jar: { w: 1, h: 1, layer: 'small' },
-  candle: { w: 1, h: 1, layer: 'small' },
-  bowl: { w: 1, h: 1, layer: 'small' },
-  bird: { w: 1, h: 1, layer: 'small' },
-}
+export { FURNITURE_DEFS, type FurnitureDef, type Layer }
 
 export const FURNITURE = Object.keys(FURNITURE_DEFS) as ItemId[]
 
