@@ -6,9 +6,9 @@ import type { Tile, Weather } from '../engine/types'
 
 type Ctx = CanvasRenderingContext2D
 
-const WOOD = '#a4703f'
-const WOOD_DARK = '#7a5230'
-const FLOWERS = ['#f28ca0', '#f5d46a', '#ffffff', '#b48ae0']
+const WOOD = '#94704f'
+const WOOD_DARK = '#745336'
+const FLOWERS = ['#e29caa', '#d8c587', '#ffffff', '#b494d6']
 
 function px(g: Ctx, x: number, y: number, dx: number, dy: number, w: number, h: number, c: string) {
   g.fillStyle = c
@@ -34,15 +34,15 @@ function awning(g: Ctx, t: Tile, w: number, a: string, b: string) {
 
 function hive(g: Ctx, t: Tile) {
   px(g, t.x, t.y, 3, 12, 11, 3, 'rgba(40,25,10,0.22)')
-  px(g, t.x, t.y, 4, 5, 8, 9, '#d9a84a')
-  px(g, t.x, t.y, 4, 7, 8, 1, '#a9782a')
-  px(g, t.x, t.y, 4, 10, 8, 1, '#a9782a')
+  px(g, t.x, t.y, 4, 5, 8, 9, '#bb9e68')
+  px(g, t.x, t.y, 4, 7, 8, 1, '#907243')
+  px(g, t.x, t.y, 4, 10, 8, 1, '#907243')
   px(g, t.x, t.y, 7, 12, 2, 2, '#3b2a20')
 }
 
 function tree(g: Ctx, t: Tile) {
   px(g, t.x, t.y, 3, 13, 11, 3, 'rgba(40,25,10,0.22)')
-  px(g, t.x, t.y, 7, 9, 3, 6, '#6b4a2e')
+  px(g, t.x, t.y, 7, 9, 3, 6, '#694a30')
   px(g, t.x, t.y, 2, 2, 12, 9, '#56733f')
   px(g, t.x, t.y, 3, 3, 9, 6, '#6f8f5a')
 }
@@ -83,8 +83,8 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
     px(g, loom.x, loom.y, 2, 3, 2, 11, WOOD_DARK)
     px(g, loom.x, loom.y, 12, 3, 2, 11, WOOD_DARK)
     px(g, loom.x, loom.y, 2, 3, 12, 2, WOOD)
-    for (let i = 0; i < 5; i++) px(g, loom.x, loom.y, 4 + i * 2, 5, 1, 7, ['#b4533f', '#e0c878', '#5f8fb4', '#7a5a9a', '#f1e6cf'][i])
-    if (unlocked(f, 'loomAwning')) awning(g, { x: 29, y: 29 }, 2, '#7a5a9a', '#f1e6cf')
+    for (let i = 0; i < 5; i++) px(g, loom.x, loom.y, 4 + i * 2, 5, 1, 7, ['#9f6154', '#cfbf89', '#698eaa', '#7a5d97', '#f1e6cf'][i])
+    if (unlocked(f, 'loomAwning')) awning(g, { x: 29, y: 29 }, 2, '#7a5d97', '#f1e6cf')
   }
   // C4 벌통
   if (level >= 4) {
@@ -114,12 +114,12 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
       px(g, x, 9, 2, 2, 2, 12, WOOD)
       px(g, x, 9, 12, 2, 2, 12, WOOD)
       px(g, x, 9, 0, 1, 16, 2, WOOD)
-      px(g, x, 9, 1, 0, 14, 3, '#6f9a4a')
-      px(g, x, 9, 6, 3, 3, 3, '#7a4a8c')
+      px(g, x, 9, 1, 0, 14, 3, '#709252')
+      px(g, x, 9, 6, 3, 3, 3, '#784d89')
     }
   }
   if (unlocked(f, 'grandpaBench')) bench(g, { x: 37, y: 6 })
-  if (unlocked(f, 'stallAwning')) awning(g, { x: 19, y: 14 }, 3, '#5f8fb4', '#f5d46a')
+  if (unlocked(f, 'stallAwning')) awning(g, { x: 19, y: 14 }, 3, '#698eaa', '#d8c587')
   if (unlocked(f, 'pressHandle')) {
     px(g, 38, 25, 7, -3, 2, 5, WOOD_DARK)
     px(g, 38, 25, 3, -4, 10, 2, WOOD)
@@ -130,12 +130,12 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
   }
   if (unlocked(f, 'bigBellows')) {
     // 대장간 지붕
-    for (let i = 0; i < 12; i++) px(g, 33, 24, i * 4 - 8, 1, 4, 4, i % 2 ? '#8e3f30' : '#b4533f')
+    for (let i = 0; i < 12; i++) px(g, 33, 24, i * 4 - 8, 1, 4, 4, i % 2 ? '#81483d' : '#9f6154')
   }
   if (unlocked(f, 'lanterns'))
     for (const l of LANTERNS) {
       px(g, l.x, l.y, 7, 2, 2, 12, WOOD_DARK)
-      px(g, l.x, l.y, 5, 0, 6, 4, daytime ? '#e0c878' : '#f5d46a')
+      px(g, l.x, l.y, 5, 0, 6, 4, daytime ? '#cfbf89' : '#d8c587')
     }
   // 바람 부는 날·맑은 날, 언덕 위에 연
   if (unlocked(f, 'kite') && daytime && (weather === 'wind' || weather === 'sunny')) {
@@ -147,9 +147,9 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
     g.moveTo(15 * TILE + 8, 3 * TILE + 4)
     g.lineTo(kx, ky + 6)
     g.stroke()
-    g.fillStyle = '#d9536a'
+    g.fillStyle = '#be6e7c'
     g.fillRect(kx - 3, ky, 6, 6)
-    g.fillStyle = '#f5d46a'
+    g.fillStyle = '#d8c587'
     g.fillRect(kx - 1, ky + 2, 2, 2)
   }
 }

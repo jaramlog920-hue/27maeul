@@ -31,27 +31,27 @@ import {
 } from './sprites'
 
 const C = {
-  grass: '#8cc063',
-  grass2: '#7aad55',
-  grass3: '#a3cf72',
-  worn: '#b9b46e',
-  worn2: '#c9a66b',
-  path: '#e2cc9c',
-  path2: '#cbb382',
-  floor: '#c9a887',
-  floor2: '#b39274',
+  grass: '#8eb370',
+  grass2: '#7ca260',
+  grass3: '#a2c27f',
+  worn: '#b2ae75',
+  worn2: '#bca378',
+  path: '#ddcaa1',
+  path2: '#c5b188',
+  floor: '#c6a88a',
+  floor2: '#b19276',
   wall: '#f1e4c6',
   wallTop: '#fbf3dd',
-  wallDark: '#8a5d34',
-  leaf: '#4f8a3c',
-  leaf2: '#3d7030',
-  leaf3: '#6aa84f',
-  trunk: '#6b4a2e',
+  wallDark: '#805d3e',
+  leaf: '#538244',
+  leaf2: '#3f6d33',
+  leaf3: '#6f9c5b',
+  trunk: '#694a30',
   stone: '#b3ada2',
   stoneDark: '#878176',
-  water: '#3f86b4',
-  water2: '#6aaad0',
-  wood: '#a07c5e',
+  water: '#54819f',
+  water2: '#7aa6c0',
+  wood: '#9d7c61',
   woodDark: '#765a45',
   blanket: '#c29095',
   blanketDark: '#a2747a',
@@ -61,23 +61,23 @@ const C = {
   door: '#8a6a52',
   shadow: 'rgba(40,25,10,0.22)',
   fire: '#f28c3a',
-  fire2: '#f5d46a',
-  reed: '#7fa35a',
-  reed2: '#5f8440',
+  fire2: '#d8c587',
+  reed: '#7f9d60',
+  reed2: '#5f8044',
   olive: '#6f8f5a',
   olive2: '#56733f',
-  vine: '#5f8f3f',
-  grapes: '#6b3f7a',
-  fence: '#8a6a44',
-  awning: '#b98078',
+  vine: '#618747',
+  grapes: '#6b4079',
+  fence: '#856a49',
+  awning: '#b6827b',
   awning2: '#f0e0c0',
-  flower: ['#e4a3ad', '#e8d18a', '#fbf6ee', '#b9a3d6'],
+  flower: ['#e1a6af', '#dbca97', '#fbf6ee', '#b9a3d6'],
 }
 
 const SEASON_GRASS: Record<Season, [string, string, string]> = {
-  spring: ['#8cc063', '#7aad55', '#a3cf72'],
-  summer: ['#9cc25a', '#86ad4a', '#b5d06e'],
-  autumn: ['#b0a95a', '#998f48', '#c4b96a'],
+  spring: ['#8eb370', '#7ca260', '#a2c27f'],
+  summer: ['#97b16b', '#839e59', '#aec17d'],
+  autumn: ['#a6a064', '#908851', '#b8b076'],
   winter: ['#a7b39a', '#95a088', '#bcc6b0'],
 }
 
@@ -97,13 +97,13 @@ interface HouseStyle {
   awning?: [string, string]
 }
 const HOUSE_STYLES: Record<string, HouseStyle> = {
-  home: { roof: ['#c98f96', '#a8737b', '#dfb3b8'], pattern: 'scallop', wall: '#f6ecdf', base: '#dccbb8', window: 'square', shutter: '#a8737b', door: '#9a7258' },
-  library: { roof: ['#7fa89c', '#648a7f', '#a8c7bd'], pattern: 'scallop', wall: '#f3ead8', base: '#d6c6a8', window: 'arch', shutter: '#648a7f', door: '#8a6448' },
-  baker: { roof: ['#cf8e80', '#ad7165', '#e3b1a6'], pattern: 'scallop', wall: '#f3e2cf', base: '#dcc4ac', window: 'square', shutter: '#ad7165', door: '#a8766a', awning: ['#cf8e80', '#f6eee4'] },
+  home: { roof: ['#c89097', '#a8737b', '#dfb3b8'], pattern: 'scallop', wall: '#f6ecdf', base: '#dccbb8', window: 'square', shutter: '#a8737b', door: '#97735b' },
+  library: { roof: ['#7fa89c', '#648a7f', '#a8c7bd'], pattern: 'scallop', wall: '#f3ead8', base: '#d6c6a8', window: 'arch', shutter: '#648a7f', door: '#87654b' },
+  baker: { roof: ['#c79388', '#a7756b', '#e1b2a8'], pattern: 'scallop', wall: '#f3e2cf', base: '#dcc4ac', window: 'square', shutter: '#a7756b', door: '#a6776c', awning: ['#c79388', '#f6eee4'] },
   child: { roof: ['#9dbb94', '#7f9c77', '#c2d8ba'], pattern: 'tile', wall: '#f4ecd9', base: '#dccfb2', window: 'round', shutter: '#7f9c77', door: '#86a3b8' },
-  grandpa: { roof: ['#a59bbf', '#877ea3', '#c7bfdb'], pattern: 'tile', wall: '#f1e6d4', base: '#d4c2a8', window: 'square', shutter: '#8a6a52', door: '#7f5d45', timber: '#8a6a52' },
+  grandpa: { roof: ['#a59bbf', '#877ea3', '#c7bfdb'], pattern: 'tile', wall: '#f1e6d4', base: '#d4c2a8', window: 'square', shutter: '#8a6a52', door: '#7e5d46', timber: '#8a6a52' },
   weaver: { roof: ['#93afc8', '#7894ad', '#dfe8f0'], pattern: 'stripe', wall: '#f1e0e0', base: '#dbc4c4', window: 'arch', shutter: '#7894ad', door: '#a8848c' },
-  beekeeper: { roof: ['#d4b56a', '#b39650', '#e8d49c'], pattern: 'honey', wall: '#f4ead0', base: '#dccfae', window: 'round', shutter: '#b39650', door: '#a8844a' },
+  beekeeper: { roof: ['#c3ae7b', '#a4905f', '#e1d1a3'], pattern: 'honey', wall: '#f4ead0', base: '#dccfae', window: 'round', shutter: '#a4905f', door: '#9b8157' },
 }
 const PLAIN_STYLE = HOUSE_STYLES.child
 /** 내 집 앞벽 (한 줄뿐이라 '아래 줄'로 그린다) */
@@ -251,17 +251,17 @@ function houseWallTile(g: Ctx, x: number, y: number, ch: string, id: string, h: 
   } else if (!upper && winCol) {
     window(1)
     r('#8a6a52', 3, 9, 10, 3) // 꽃 상자
-    for (let i = 0; i < 4; i++) r(['#e4a3ad', '#e8d18a', '#fbf6ee', '#b9a3d6'][(x + i) % 4], 4 + i * 2, 8, 2, 2)
+    for (let i = 0; i < 4; i++) r(['#e1a6af', '#dbca97', '#fbf6ee', '#b9a3d6'][(x + i) % 4], 4 + i * 2, 8, 2, 2)
   }
   if (door && !upper) {
     // 나무 문과 작은 창, 놋쇠 손잡이
-    const dc = ch === 'L' ? '#8a6448' : st.door
+    const dc = ch === 'L' ? '#87654b' : st.door
     r('#fbf6ee', 2, 1, 12, 15)
     r(dc, 3, 2, 10, 14)
     r(dc, 4, 1, 8, 1)
     r('rgba(0,0,0,0.15)', 8, 2, 1, 14)
     r(glass, 5, 4, 6, 3)
-    r('#d9b44a', 10, 9, 2, 2)
+    r('#bba568', 10, 9, 2, 2)
   }
   if (st.awning && !upper && Math.abs(x - h.doorX) <= 1) {
     // 빵집 문 위 줄무늬 차양
@@ -348,12 +348,12 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       break
     }
     case 'T': {
-      const leaf = season === 'autumn' ? '#b8893a' : season === 'winter' ? '#6f7f63' : C.leaf
+      const leaf = season === 'autumn' ? '#a08352' : season === 'winter' ? '#6f7f63' : C.leaf
       r(C.shadow, 3, 13, 11, 3)
       r(C.trunk, 6, 10, 4, 5)
       r(C.leaf2, 1, 2, 14, 10)
       r(leaf, 2, 1, 12, 9)
-      r(season === 'autumn' ? '#d0a24a' : C.leaf3, 4, 2, 4, 3)
+      r(season === 'autumn' ? '#b59965' : C.leaf3, 4, 2, 4, 3)
       break
     }
     case 'L': {
@@ -383,20 +383,20 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
     case 'p':
       // 꽃 화분
       r(C.shadow, 3, 13, 10, 3)
-      r('#b98a7a', 4, 9, 8, 5)
-      r('#9c7062', 4, 9, 8, 1)
+      r('#b78b7c', 4, 9, 8, 5)
+      r('#9b7063', 4, 9, 8, 1)
       r('#7f9c77', 7, 4, 2, 5)
       r('#7f9c77', 4, 5, 3, 2)
       r('#7f9c77', 9, 5, 3, 2)
-      r('#e4a3ad', 6, 1, 4, 3)
-      r('#e8d18a', 7, 2, 2, 1)
+      r('#e1a6af', 6, 1, 4, 3)
+      r('#dbca97', 7, 2, 2, 1)
       break
     case 'W':
       // 베틀과 짜다 만 천
       r(C.woodDark, 1, 1, 2, 14)
       r(C.woodDark, 13, 1, 2, 14)
       r(C.wood, 1, 1, 14, 2)
-      for (let i = 0; i < 5; i++) r(['#c98f96', '#93afc8', '#d4b56a', '#a59bbf', '#9dbb94'][(x + i) % 5], 3 + i * 2, 3, 2, 9)
+      for (let i = 0; i < 5; i++) r(['#c89097', '#93afc8', '#c3ae7b', '#a59bbf', '#9dbb94'][(x + i) % 5], 3 + i * 2, 3, 2, 9)
       r(C.wood, 2, 12, 12, 2)
       break
     case 'e':
@@ -522,8 +522,8 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r(C.woodDark, 13, 6, 2, 10)
       for (let i = 0; i < 4; i++) r(i % 2 ? C.awning2 : C.awning, i * 4, 1, 4, 5)
       r(C.wood, 1, 10, 14, 3)
-      r(x < 16 ? '#e0c878' : '#6b3f7a', 3, 8, 3, 2)
-      r(x < 16 ? '#f1e6cf' : '#7aa84f', 9, 8, 3, 2)
+      r(x < 16 ? '#cfbf89' : '#6b4079', 3, 8, 3, 2)
+      r(x < 16 ? '#f1e6cf' : '#7a9c5b', 9, 8, 3, 2)
       break
     case 'q':
       // 문 앞 편지 바구니
@@ -539,7 +539,7 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r(C.woodDark, 12, 3, 2, 11)
       break
     case 'y': {
-      const col = season === 'summer' ? ['#e0c060', '#c9a24a'] : season === 'spring' ? ['#8fbf5a', '#76a648'] : season === 'autumn' ? ['#b89a5a', '#9c8048'] : ['#9a8a6a', '#86765a']
+      const col = season === 'summer' ? ['#c7b379', '#b09863'] : season === 'spring' ? ['#8eaf6a', '#769955'] : season === 'autumn' ? ['#ab9567', '#927d52'] : ['#9a8a6a', '#86765a']
       g.fillStyle = col[1]
       g.fillRect(px, py, TILE, TILE)
       for (let i = 0; i < 4; i++) r(col[0], 1 + i * 4, 2, 2, 11)
@@ -564,9 +564,9 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
 function drawBush(g: Ctx, x: number, y: number, season: Season) {
   const px = x * TILE
   const py = y * TILE
-  const dark = season === 'winter' ? '#5f6b58' : '#4f7a3f'
-  const mid = season === 'autumn' ? '#8a8a48' : season === 'winter' ? '#788470' : '#62914c'
-  const light = season === 'winter' ? '#95a08a' : '#7fae5f'
+  const dark = season === 'winter' ? '#5f6b58' : '#4f7940'
+  const mid = season === 'autumn' ? '#87874b' : season === 'winter' ? '#788470' : '#648c51'
+  const light = season === 'winter' ? '#95a08a' : '#81a667'
   g.fillStyle = dark
   g.fillRect(px, py + 2, TILE, TILE - 2)
   for (let i = 0; i < 5; i++) {
@@ -679,25 +679,25 @@ function emote(g: Ctx, id: EmoteId, cx: number, top: number) {
         f(6, 4)
         break
       case 'heart':
-        f(2, 2, 2, 1, '#d9536a')
-        f(6, 2, 2, 1, '#d9536a')
-        f(1, 3, 8, 2, '#d9536a')
-        f(2, 5, 6, 1, '#d9536a')
-        f(4, 6, 2, 1, '#d9536a')
+        f(2, 2, 2, 1, '#be6e7c')
+        f(6, 2, 2, 1, '#be6e7c')
+        f(1, 3, 8, 2, '#be6e7c')
+        f(2, 5, 6, 1, '#be6e7c')
+        f(4, 6, 2, 1, '#be6e7c')
         break
       case 'sweat':
-        f(5, 1, 1, 1, '#5aa0d8')
-        f(4, 2, 3, 3, '#5aa0d8')
-        f(5, 5, 1, 1, '#5aa0d8')
+        f(5, 1, 1, 1, '#729dc0')
+        f(4, 2, 3, 3, '#729dc0')
+        f(5, 5, 1, 1, '#729dc0')
         break
       case 'hungry':
-        f(2, 4, 6, 3, '#a4703f')
-        f(3, 3, 4, 1, '#e0c878')
+        f(2, 4, 6, 3, '#94704f')
+        f(3, 3, 4, 1, '#cfbf89')
         break
       case 'shiver':
-        f(1, 2, 1, 4, '#6fa0d0')
-        f(8, 2, 1, 4, '#6fa0d0')
-        f(4, 3, 2, 2, '#6fa0d0')
+        f(1, 2, 1, 4, '#7da0c2')
+        f(8, 2, 1, 4, '#7da0c2')
+        f(4, 3, 2, 2, '#7da0c2')
         break
     }
   })
@@ -754,11 +754,11 @@ function drawFurniture(g: Ctx, f: Furniture) {
   switch (f.item) {
     case 'rug': {
       // 3×2칸 무늬 깔개
-      r('#8e3f30', 1, 2, 46, 28)
-      r('#b4533f', 3, 4, 42, 24)
-      r('#e0c878', 6, 7, 36, 18)
-      r('#b4533f', 9, 10, 30, 12)
-      for (let i = 0; i < 5; i++) r('#e0c878', 12 + i * 6, 15, 3, 3)
+      r('#81483d', 1, 2, 46, 28)
+      r('#9f6154', 3, 4, 42, 24)
+      r('#cfbf89', 6, 7, 36, 18)
+      r('#9f6154', 9, 10, 30, 12)
+      for (let i = 0; i < 5; i++) r('#cfbf89', 12 + i * 6, 15, 3, 3)
       for (let i = 0; i < 12; i++) {
         r('#f1e6cf', 2 + i * 4, 0, 1, 2)
         r('#f1e6cf', 2 + i * 4, 30, 1, 2)
@@ -776,7 +776,7 @@ function drawFurniture(g: Ctx, f: Furniture) {
       r(C.woodDark, 28, 9, 2, 6)
       r(C.woodDark, 0, 8, 32, 2)
       r(C.wood, 0, 3, 32, 6)
-      r('#c08a55', 1, 4, 30, 1)
+      r('#ae8a67', 1, 4, 30, 1)
       return
     case 'nightstand':
       r(C.shadow, 2, 13, 13, 3)
@@ -820,7 +820,7 @@ function drawWeather(g: Ctx, weather: string, t: number, w: number, h: number) {
     }
   } else if (weather === 'wind') {
     for (let i = 0; i < 10; i++) {
-      g.fillStyle = i % 2 ? '#7aad55' : '#c9a24a'
+      g.fillStyle = i % 2 ? '#7ca260' : '#b09863'
       const x = (hash(i, 5, 3) * w + t * 90) % w
       const y = (hash(i, 6, 5) * h + Math.sin(t * 3 + i) * 10) % h
       g.fillRect(Math.round(x), Math.round(y), 2, 1)
@@ -835,7 +835,7 @@ function drawWeather(g: Ctx, weather: string, t: number, w: number, h: number) {
 }
 
 function drawRainbow(g: Ctx, w: number) {
-  const cols = ['#e86a6a', '#f2a64a', '#f5d46a', '#7ac76a', '#6aa0e0', '#8a6ad0']
+  const cols = ['#d08282', '#cba271', '#d8c587', '#82ba77', '#80a2ca', '#907ac0']
   cols.forEach((c, i) => {
     g.strokeStyle = c
     g.globalAlpha = 0.45
@@ -1146,7 +1146,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       })
 
       // 나비
-      for (const b of flies) items.push({ y: b.y + 0.5, paint: () => g.drawImage(paint(`bf/${b.frame}/${b.hue}`, BUTTERFLY[b.frame], { ...SMALL_PALETTE, o: b.hue ? '#8fb8e0' : '#f28c5a', O: b.hue ? '#6a95c4' : '#f5d46a' }), Math.round(b.x * TILE), Math.round(b.y * TILE)) })
+      for (const b of flies) items.push({ y: b.y + 0.5, paint: () => g.drawImage(paint(`bf/${b.frame}/${b.hue}`, BUTTERFLY[b.frame], { ...SMALL_PALETTE, o: b.hue ? '#98b8d7' : '#d0977c', O: b.hue ? '#7696b8' : '#d8c587' }), Math.round(b.x * TILE), Math.round(b.y * TILE)) })
 
       items.sort((a, b) => a.y - b.y).forEach((i) => i.paint())
       // 내 집은 밖에 있을 때 지붕을 덮는다 (사람·동물을 그린 뒤)
