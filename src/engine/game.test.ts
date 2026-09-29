@@ -39,7 +39,7 @@ import {
 } from './game'
 import { BABY_PARTY_SPOTS, HILL_SPOTS } from './bonds'
 import { REQUESTS as REQUESTS_T } from './bonds'
-import { fulfillRequest as fulfillRequestT, interactTile as interactTileT, walkDirection as walkDirectionT } from './game'
+import { fulfillRequest as fulfillRequestT, interactTile as interactTileT, pressTile as pressTileT, walkDirection as walkDirectionT } from './game'
 import { placeAt as placeAtT } from './world'
 import { deserialize, loadGame, saveGame, serialize as serializeForTest, SAVE_KEY } from './save'
 import { HOME_DOOR, PLACES, START } from './world'
@@ -723,6 +723,17 @@ describe('스페이스 상호작용', () => {
     expect(t && placeAtT(t)).toBe('desk')
     // 걷는 중에는 아무것도 하지 않는다
     expect(interactTileT({ ...at, player: { ...at.player, path: [desk] } })).toBeNull()
+  })
+  it('조이스틱 가운데 누르기: 바라보는 앞 칸, 앞에 누를 것이 없으면 서 있는 칸', () => {
+    const s = newGame(CONTENT)
+    const stand = PLACES.desk.stand!
+    const desk = PLACES.desk.tiles.find((t) => Math.abs(t.x - stand.x) + Math.abs(t.y - stand.y) === 1)!
+    const facing = desk.x < stand.x ? 'left' : desk.x > stand.x ? 'right' : desk.y < stand.y ? 'up' : 'down'
+    const away = ({ left: 'right', right: 'left', up: 'down', down: 'up' } as const)[facing]
+    const at = (f: GameState['player']['facing']) => ({ ...s, player: { ...s.player, x: stand.x, y: stand.y, path: [], facing: f } }) as GameState
+    expect(pressTileT(at(facing))).toEqual(desk)
+    // 스페이스와 달리 옆 칸을 찾아가지 않는다 — 화면에서 앞 칸을 누른 것과 같다
+    expect(pressTileT(at(away))).toEqual(stand)
   })
   it('막힌 쪽으로 걸으려 하면 그쪽을 바라본다', () => {
     const s = newGame(CONTENT)

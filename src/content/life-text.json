@@ -272,6 +272,26 @@
     "actsRoom": "사도행전 방",
     "atticReadHint": "다락 창가에서 읽고 잠들면 평안이 하루 더 갑니다."
   },
+  "controls": {
+    "joystick": "모바일 조이스틱",
+    "on": "켜짐",
+    "off": "꺼짐",
+    "shape": "모양",
+    "shapePad": "네 방향",
+    "shapeRound": "둥근",
+    "side": "자리",
+    "sideRight": "오른쪽",
+    "sideLeft": "왼쪽",
+    "hint": "터치 화면 아래 구석에 나타나요. 방향 단추를 누르고 있는 동안 계속 걷고, 가운데 단추는 바라보는 앞을 눌러요(말 걸기·문 열기).",
+    "padLabel": "이동 단추",
+    "roundLabel": "모바일 이동 조이스틱",
+    "up": "위로",
+    "down": "아래로",
+    "left": "왼쪽으로",
+    "right": "오른쪽으로",
+    "center": "앞을 누르기",
+    "moreBelow": "아래로 더 있어요 ▾"
+  },
   "items": {
     "water": {
       "name": "물",

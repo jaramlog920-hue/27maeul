@@ -315,8 +315,19 @@ button:focus-visible {
   .joystick {
     display: flex;
     position: absolute;
-    right: 18px;
-    bottom: 18px;
+    right: 12px;
+    bottom: 22px;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    z-index: 2;
+  }
+  /* 자리: 왼쪽 아래 */
+  .joystick.joystick-left { right: auto; left: 12px; }
+
+  /* 둥근 조이스틱 */
+  .joystick.round {
     width: 78px;
     height: 78px;
     align-items: center;
@@ -324,10 +335,8 @@ button:focus-visible {
     border: 2px solid rgba(251,243,226,.6);
     border-radius: 50%;
     background: rgba(43,33,24,.36);
-    touch-action: none;
-    z-index: 2;
   }
-  .joystick span {
+  .joystick.round span {
     width: 28px;
     height: 28px;
     border-radius: 50%;
@@ -336,6 +345,44 @@ button:focus-visible {
     pointer-events: none;
     transition: transform 60ms linear;
   }
+
+  /* 네 방향 패드: 44px 단추 다섯 개를 십자로 (모서리는 비워 화면을 덜 가린다) */
+  .joystick.dpad {
+    display: grid;
+    grid-template: repeat(3, 44px) / repeat(3, 44px);
+    grid-template-areas: ". up ." "left center right" ". down .";
+    width: 132px;
+    height: 132px;
+  }
+  .joystick.dpad span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    line-height: 1;
+    color: rgba(251,243,226,.85);
+    background: rgba(43,33,24,.34);
+    border: 2px solid rgba(251,243,226,.5);
+    pointer-events: none;
+    transition: background 60ms linear, transform 60ms linear;
+  }
+  .joystick.dpad [data-zone="up"] { grid-area: up; border-radius: 10px 10px 0 0; border-bottom: 0; }
+  .joystick.dpad [data-zone="down"] { grid-area: down; border-radius: 0 0 10px 10px; border-top: 0; }
+  .joystick.dpad [data-zone="left"] { grid-area: left; border-radius: 10px 0 0 10px; border-right: 0; }
+  .joystick.dpad [data-zone="right"] { grid-area: right; border-radius: 0 10px 10px 0; border-left: 0; }
+  .joystick.dpad [data-zone="center"] {
+    grid-area: center;
+    border-radius: 50%;
+    margin: 4px;
+    font-size: 11px;
+    background: rgba(251,243,226,.42);
+    color: rgba(43,33,24,.7);
+  }
+  .joystick.dpad span.pressed {
+    background: rgba(251,243,226,.62);
+    color: rgba(43,33,24,.85);
+  }
+  .joystick.dpad [data-zone="center"].pressed { background: rgba(251,243,226,.8); transform: scale(.92); }
 }
 .volume-row {
   display: grid;
@@ -569,6 +616,8 @@ button:focus-visible {
   gap: 8px;
 }
 .settings-row h3 { margin: 0; }
+.dialog.settings .settings-row h4 { margin: 8px 0 0; font-size: 14px; font-weight: 400; }
+.settings-options.pair-options { grid-template-columns: 1fr 1fr; width: 176px; margin-top: 8px; }
 .settings-row button { min-width: 72px; }
 .dialog.settings .volume-row { margin: 0; min-height: 40px; }
 .dialog.settings .volume-row output { font-size: 14px; }

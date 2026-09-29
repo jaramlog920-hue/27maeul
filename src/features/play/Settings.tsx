@@ -10,7 +10,10 @@ import {
   type VolumeKind,
 } from '../../audio/sound'
 import { eraseSave } from '../../engine/save'
+import { T } from '../../content/text'
 import { useGame, ZOOMS } from '../../store/game-store'
+
+const C = T.controls
 
 const TRACKS = [['default', 'A'], ['D', 'B'], ['E', 'C'], ['F', 'D']] as const
 
@@ -44,8 +47,10 @@ export function Settings() {
   const close = useGame((s) => s.closeModal)
   const muted = useGame((s) => s.muted)
   const joystick = useGame((s) => s.joystick)
+  const shape = useGame((s) => s.joystickShape)
+  const side = useGame((s) => s.joystickSide)
   const zoom = useGame((s) => s.zoom)
-  const { setMuted, setJoystick, setZoom, open } = useGame.getState()
+  const { setMuted, setJoystick, setJoystickShape, setJoystickSide, setZoom, open } = useGame.getState()
   const [music, setMusic] = useState<MusicChoice>(() => currentMusicChoice())
   const [resetting, setResetting] = useState(false)
   return (
@@ -92,12 +97,46 @@ export function Settings() {
       </section>
       <section className="settings-section">
         <div className="settings-row">
-          <h3>모바일 조이스틱</h3>
+          <h3>{C.joystick}</h3>
           <button className={joystick ? 'on' : ''} aria-pressed={joystick} onClick={() => setJoystick(!joystick)}>
-            {joystick ? '켜짐' : '꺼짐'}
+            {joystick ? C.on : C.off}
           </button>
         </div>
-        <p className="hint">터치 화면 오른쪽 아래에 나타나요. 누르고 있는 동안 계속 걸어요.</p>
+        {joystick && (
+          <>
+            <div className="settings-row">
+              <h4>{C.shape}</h4>
+              <div className="settings-options pair-options" role="group" aria-label={C.shape}>
+                {(
+                  [
+                    ['pad', C.shapePad],
+                    ['round', C.shapeRound],
+                  ] as const
+                ).map(([id, label]) => (
+                  <button key={id} data-shape={id} className={shape === id ? 'on' : ''} aria-pressed={shape === id} onClick={() => setJoystickShape(id)}>
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="settings-row">
+              <h4>{C.side}</h4>
+              <div className="settings-options pair-options" role="group" aria-label={C.side}>
+                {(
+                  [
+                    ['right', C.sideRight],
+                    ['left', C.sideLeft],
+                  ] as const
+                ).map(([id, label]) => (
+                  <button key={id} data-side={id} className={side === id ? 'on' : ''} aria-pressed={side === id} onClick={() => setJoystickSide(id)}>
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+        <p className="hint">{C.hint}</p>
       </section>
       <section className="settings-section">
         <div className="settings-row">

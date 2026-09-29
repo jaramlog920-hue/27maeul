@@ -56,7 +56,7 @@ import {
   momentNow,
   onceKey,
 } from './stories'
-import { ATTIC, BED_STAND, HEARTH_STAND, HOME_DOOR, inAttic, isIndoor, isWalkable, key, LADDER, lockedTiles, PLACES, placeAt, roomAt, sameTile, setActsOpen, setHomeLevel, START, tileAt, WARPS } from './world'
+import { ATTIC, BED_STAND, HEARTH_STAND, HOME_DOOR, inAttic, isIndoor, isWalkable, key, LADDER, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setActsOpen, setHomeLevel, START, tileAt, WARPS } from './world'
 import { GOSPELS, type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
 import type { Avatar } from './avatar'
 
@@ -420,6 +420,18 @@ export function interactTile(s: GameState): Tile | null {
     .filter((t) => !sameTile(t, front))
   for (const t of [front, ...around, here]) if (interactableAt(s, t)) return t
   return null
+}
+
+/**
+ * 조이스틱 가운데 단추: 바라보는 앞 칸에 누를 것(이웃·장소·문·잠긴 문)이 있으면 그 칸,
+ * 없으면 서 있는 칸. 돌려준 칸은 화면에서 그 칸을 누른 것과 똑같이 처리한다(tap).
+ */
+export function pressTile(s: GameState): Tile {
+  syncHome(s)
+  const here = playerTile(s)
+  const f = FRONT[s.player.facing]
+  const front = { x: here.x + f.x, y: here.y + f.y }
+  return interactableAt(s, front) || LOCKED_DOORS.some((d) => sameTile(d, front)) ? front : here
 }
 
 /** 화면의 한 칸을 눌렀을 때: 그곳(또는 그 사람·물건 옆)으로 걸어가기 시작한다 */

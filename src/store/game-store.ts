@@ -36,6 +36,7 @@ import {
   tapTile,
   walkDirection,
   interactTile,
+  pressTile,
   teach,
   tick,
   trade as doTrade,
@@ -134,6 +135,10 @@ interface Store {
   muted: boolean
   /** 터치 화면의 조이스틱 (설정에서 켜고 끈다) */
   joystick: boolean
+  /** 조이스틱 모양: 네 방향 패드(기본) 또는 둥근 조이스틱 */
+  joystickShape: JoystickShape
+  /** 조이스틱 자리: 화면 오른쪽 아래(기본) 또는 왼쪽 아래 */
+  joystickSide: JoystickSide
   /** 화면 확대 (1 = 100% ~ 2 = 200%) */
   zoom: number
   /** 테스트에서 난수를 고정하려고 바꿀 수 있다 */
@@ -147,6 +152,8 @@ interface Store {
   walk: (dx: number, dy: number) => void
   /** 스페이스: 앞에 있는 것을 누른 것처럼 */
   interact: () => boolean
+  /** 조이스틱 가운데 단추: 바라보는 앞 칸(없으면 서 있는 칸)을 누른 것과 같다 */
+  press: () => void
   frame: (dt: number) => void
   say: (text: string, ms?: number) => void
   closeModal: () => void
@@ -200,6 +207,8 @@ interface Store {
   nextScene: () => void
   setMuted: (m: boolean) => void
   setJoystick: (on: boolean) => void
+  setJoystickShape: (shape: JoystickShape) => void
+  setJoystickSide: (side: JoystickSide) => void
   setZoom: (zoom: number) => void
 }
 
@@ -233,6 +242,31 @@ function storeAlbumImage(id: string, data: string | null) {
 }
 const MUTE_KEY = 'twenty-seven/muted'
 const JOYSTICK_KEY = 'twenty-seven/joystick'
+const JOYSTICK_SHAPE_KEY = 'twenty-seven/joystick-shape'
+const JOYSTICK_SIDE_KEY = 'twenty-seven/joystick-side'
+export type JoystickShape = 'pad' | 'round'
+export type JoystickSide = 'right' | 'left'
+export function loadJoystickShape(): JoystickShape {
+  try {
+    return globalThis.localStorage?.getItem(JOYSTICK_SHAPE_KEY) === 'round' ? 'round' : 'pad'
+  } catch {
+    return 'pad'
+  }
+}
+export function loadJoystickSide(): JoystickSide {
+  try {
+    return globalThis.localStorage?.getItem(JOYSTICK_SIDE_KEY) === 'left' ? 'left' : 'right'
+  } catch {
+    return 'right'
+  }
+}
+function remember(key: string, value: string) {
+  try {
+    globalThis.localStorage?.setItem(key, value)
+  } catch {
+    /* 저장 불가 시에도 이번 판에는 적용 */
+  }
+}
 const ZOOM_KEY = 'twenty-seven-zoom'
 export const ZOOMS = [1, 1.25, 1.5, 1.75, 2] as const
 function loadZoom(): number {
@@ -446,6 +480,8 @@ export const useGame = create<Store>((set, get) => {
     decorating: null,
     muted: loadMuted(),
     joystick: loadJoystick(),
+    joystickShape: loadJoystickShape(),
+    joystickSide: loadJoystickSide(),
     zoom: loadZoom(),
     rng: Math.random,
     capture: null,
@@ -473,6 +509,12 @@ export const useGame = create<Store>((set, get) => {
       if (!tile) return false
       get().tap(tile)
       return true
+    },
+
+    press: () => {
+      const { game, modal, decorating } = get()
+      if (modal || decorating) return
+      get().tap(pressTile(game))
     },
 
     tap: (tile) => {
@@ -859,6 +901,14 @@ export const useGame = create<Store>((set, get) => {
         /* 저장 불가 시에도 이번 판에는 적용 */
       }
       set({ joystick: on })
+    },
+    setJoystickShape: (joystickShape) => {
+      remember(JOYSTICK_SHAPE_KEY, joystickShape)
+      set({ joystickShape })
+    },
+    setJoystickSide: (joystickSide) => {
+      remember(JOYSTICK_SIDE_KEY, joystickSide)
+      set({ joystickSide })
     },
   }
 })
