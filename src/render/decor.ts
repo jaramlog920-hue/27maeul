@@ -108,8 +108,8 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
   // A 부탁을 들어준 뒤 생긴 것들
   if (unlocked(f, 'bakeryBench')) bench(g, { x: 3, y: 18 })
   if (unlocked(f, 'childGarden')) {
-    flowers(g, { x: 34, y: 18 }, 1)
-    flowers(g, { x: 35, y: 18 }, 2)
+    flowers(g, { x: 33, y: 18 }, 1)
+    flowers(g, { x: 34, y: 18 }, 2)
     flowers(g, { x: 38, y: 18 }, 3)
   }
   if (unlocked(f, 'grapeTrellis')) {
@@ -129,7 +129,7 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
     px(g, 38, 25, 3, -4, 10, 2, WOOD)
   }
   if (unlocked(f, 'oliveGrove')) {
-    tree(g, { x: 39, y: 27 })
+    tree(g, { x: 37, y: 27 })
     tree(g, { x: 41, y: 26 })
   }
   if (unlocked(f, 'bigBellows')) {
@@ -143,12 +143,13 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
     }
   // 바람 부는 날·맑은 날, 언덕 위에 연
   if (unlocked(f, 'kite') && daytime && (weather === 'wind' || weather === 'sunny')) {
+    // 언덕 벤치 곁(15,12) 풀밭에서 띄운다
     const kx = 15 * TILE + 8 + Math.round(Math.sin(t * 0.8) * 10)
-    const ky = 4 + Math.round(Math.cos(t * 1.1) * 3)
+    const ky = 12 * TILE + 4 - 48 + Math.round(Math.cos(t * 1.1) * 3)
     g.strokeStyle = 'rgba(80,60,40,0.6)'
     g.lineWidth = 1
     g.beginPath()
-    g.moveTo(15 * TILE + 8, 3 * TILE + 4)
+    g.moveTo(15 * TILE + 8, 12 * TILE + 4)
     g.lineTo(kx, ky + 6)
     g.stroke()
     g.fillStyle = '#be6e7c'

@@ -37,7 +37,7 @@ import {
   inGathering,
   type GameState,
 } from './game'
-import { HILL_SPOTS } from './bonds'
+import { BABY_PARTY_SPOTS, HILL_SPOTS } from './bonds'
 import { REQUESTS as REQUESTS_T } from './bonds'
 import { fulfillRequest as fulfillRequestT, interactTile as interactTileT, walkDirection as walkDirectionT } from './game'
 import { placeAt as placeAtT } from './world'
@@ -746,5 +746,32 @@ describe('언덕 모임 자리 (소풍·별 보는 밤)', () => {
   })
   it('모임 자리는 이웃이 모이는 자리를 모두 품는다', () => {
     for (const t of Object.values(HILL_SPOTS)) expect(inGathering('picnic', 12 * 60, t)).toBe(true)
+  })
+  it('아기 잔치 자리는 빵집 앞 모임 자리를 품고, 내 집 앞문 앞(6,8)은 아니다', () => {
+    for (const t of Object.values(BABY_PARTY_SPOTS)) expect(inGathering('babyParty', 18 * 60 + 10, t)).toBe(true)
+    expect(inGathering('babyParty', 18 * 60 + 10, { x: 6, y: 8 })).toBe(false)
+  })
+})
+
+describe('옛 저장에서 갇히지 않기', () => {
+  const load = (x: number, y: number, companion: unknown = null) => {
+    const s = newGame(CONTENT)
+    return deserialize(JSON.stringify({ ...JSON.parse(serializeForTest(s)), player: { ...s.player, x, y }, companion }), CONTENT)!
+  }
+  it('지금은 집 안인 칸에 서 있던 저장은 집 앞으로 옮긴다', () => {
+    for (const [x, y] of [[42, 20], [11, 19], [39, 28]]) {
+      const back = load(x, y)
+      expect({ x: back.player.x, y: back.player.y }).toEqual({ x: 6, y: 8 })
+      expect(back.player.path).toEqual([])
+    }
+  })
+  it('멀쩡한 저장은 자리를 지킨다', () => {
+    const back = load(20, 10)
+    expect({ x: back.player.x, y: back.player.y }).toEqual({ x: 20, y: 10 })
+  })
+  it('갇힌 동반 동물은 기록자 곁으로 옮긴다', () => {
+    const c = { kind: 'cat', name: '나비', since: 1, x: 42, y: 20, path: [], facing: 'down', walkTime: 0 }
+    const back = load(20, 10, c)
+    expect(Math.abs(back.companion!.x - 20) + Math.abs(back.companion!.y - 10)).toBe(1)
   })
 })

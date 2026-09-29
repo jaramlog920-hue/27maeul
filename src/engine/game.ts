@@ -52,7 +52,7 @@ import {
   momentNow,
   onceKey,
 } from './stories'
-import { ATTIC, BED_STAND, HEARTH_STAND, inAttic, isIndoor, key, LADDER, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, START, tileAt, WARPS } from './world'
+import { ATTIC, BED_STAND, HEARTH_STAND, HOME_DOOR, inAttic, isIndoor, isWalkable, key, LADDER, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, START, tileAt, WARPS } from './world'
 import type { Book, Facing, GameContent, ItemId, NeighborDef, PlaceId, Rng, Target, Tile } from './types'
 import type { Avatar } from './avatar'
 
@@ -311,7 +311,16 @@ export function chooseBook(s: GameState, book: Book, content: GameContent): Game
 /** 불러온 뒤 이웃을 제자리에 세운다 (걷던 길은 저장하지 않으므로) */
 export function settle(s: GameState, content: GameContent): GameState {
   syncHome(s)
-  return { ...s, npcs: placeAllNpcs(s, content), target: null, idle: IDLE_RESET, player: { ...s.player, path: [] } }
+  // 지도를 옮기기 전 저장은 지금은 집 안인 칸에 서 있을 수 있다 — 갇히지 않게 집 앞으로 옮긴다
+  const stuck = (t: Tile) => !isWalkable(t) || (!roomAt(t) && !inAttic(t) && findPath(t, START) === null)
+  let player = { ...s.player, path: [] as Tile[] }
+  if (stuck(playerTile(s))) player = { ...player, x: HOME_DOOR.x, y: HOME_DOOR.y + 1, facing: 'down', walkTime: 0 }
+  let companion = s.companion
+  if (companion && stuck({ x: Math.round(companion.x), y: Math.round(companion.y) })) {
+    const near = companionGoal({ x: Math.round(player.x), y: Math.round(player.y) }, false) ?? { x: Math.round(player.x), y: Math.round(player.y) }
+    companion = { ...companion, x: near.x, y: near.y, path: [] }
+  }
+  return { ...s, npcs: placeAllNpcs(s, content), target: null, idle: IDLE_RESET, player, companion }
 }
 
 export function playerTile(s: GameState): Tile {
@@ -788,10 +797,18 @@ export const HILL_AREA = (() => {
   return { x0: Math.min(...xs) - 1, x1: Math.max(...xs) + 1, y0: Math.min(...ys) - 1, y1: Math.max(...ys) + 1 }
 })()
 
+/** 아기 잔치 자리: 모임 자리를 둘러싼 네모 (한 칸 여유) */
+export const BABY_AREA = (() => {
+  const ts = Object.values(BABY_PARTY_SPOTS)
+  const xs = ts.map((t) => t.x)
+  const ys = ts.map((t) => t.y)
+  return { x0: Math.min(...xs) - 1, x1: Math.max(...xs) + 1, y0: Math.min(...ys) - 1, y1: Math.max(...ys) + 1 }
+})()
+
 export function inGathering(g: Gathering, minute: number, p: Tile): boolean {
   const [from, to] = gatheringWindow(g)
   if (minute < from || minute >= to) return false
-  if (g === 'babyParty') return p.x >= 2 && p.x <= 9 && p.y >= 8 && p.y <= 11
+  if (g === 'babyParty') return p.x >= BABY_AREA.x0 && p.x <= BABY_AREA.x1 && p.y >= BABY_AREA.y0 && p.y <= BABY_AREA.y1
   return p.x >= HILL_AREA.x0 && p.x <= HILL_AREA.x1 && p.y >= HILL_AREA.y0 && p.y <= HILL_AREA.y1
 }
 

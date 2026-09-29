@@ -180,7 +180,8 @@ describe('D. 이웃끼리', () => {
   })
   it('모임 시간에 그 자리에 가면 장면이 열린다', () => {
     let s: GameState = { ...at(newGame(CONTENT), 18 * 60 + 10, BABY_PARTY_DAY), today: { visitor: null, visitGot: false, inviter: null, dined: false, gathering: 'babyParty' } }
-    s = { ...s, player: { ...s.player, x: 5, y: 9 } }
+    // 빵집 앞 모임 자리 (내 집 앞이 아니다)
+    s = { ...s, player: { ...s.player, x: 5, y: 20 } }
     const r = tick(s, 0.05, zero, CONTENT)
     expect(r.events).toContainEqual({ type: 'moment', id: 'babyParty' })
     expect(r.state.flags['done:babyParty']).toBe(1)

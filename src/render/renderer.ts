@@ -1085,7 +1085,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         )
       if (barleyRipe(day)) {
         g.fillStyle = 'rgba(255, 230, 140, 0.25)'
-        g.fillRect(12 * TILE, 25 * TILE, 8 * TILE, 6 * TILE)
+        for (const t of PLACES.field.tiles) g.fillRect(t.x * TILE, t.y * TILE, TILE, TILE)
       }
 
       // 넓은 책상: 책상 칸 안에 상판만 넓게 (서는 자리는 덮지 않는다)
@@ -1341,7 +1341,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           if (festOn) glow(g, sx(FIRE.x * TILE + 8), sy(FIRE.y * TILE + 8), 48, dark)
           if (actsGlow) glow(g, sx(LOCKED_DOORS[0].x * TILE + 10), sy(LOCKED_DOORS[0].y * TILE + 9), 26, dark * 0.7)
           // 집집마다 창에 불빛
-          for (const [x, y] of [[5, 17], [36, 17], [35, 5], [28, 28], [42, 31], [24, 5]]) glow(g, sx(x * TILE + 8), sy(y * TILE + 4), 14, dark * 0.5)
+          for (const [x, y] of [[5, 17], [36, 17], [35, 5], [28, 28], [42, 31], [24, 5], [13, 22], [20, 28], [12, 31], [43, 22]]) glow(g, sx(x * TILE + 8), sy(y * TILE + 4), 14, dark * 0.5)
           // 길가의 등불
           for (const l of lanternLights(game)) glow(g, sx(l.x * TILE + 8), sy(l.y * TILE + 2), 26, dark * 0.8)
         }
