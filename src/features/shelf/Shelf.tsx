@@ -1,6 +1,7 @@
 // 선반: 모은 것들을 본다 — 이야기 도감·받은 선물·만들 줄 아는 것·풍경 앨범·나의 한 줄·방 꾸미기
 import { useState } from "react";
-import { BOOKS_WITH_CONTENT, PIECES } from "../../content/catalog";
+import { PIECES } from "../../content/catalog";
+import { pickableBooks } from "../../engine/books";
 import { fill, ITEM_TEXT, SCENES, T } from "../../content/text";
 import { FURNITURE } from "../../engine/room";
 import { ItemIcon } from "../../shared/ItemIcon";
@@ -61,8 +62,29 @@ const BOOK_LABEL: Record<Book | "all", string> = {
   ...(T.quiz.books as Record<Book, string>),
 };
 
+/** "한 복음서에만"(✦)은 네 복음서끼리 견준 표시 — 도장이 없는 사도행전 조각에는 붙이지 않는다 */
+const onlyHere = (p: Piece) => isGospel(p.book) && p.stamps.length === 0;
+
+/**
+ * 도감에 보이는 책과 조각: 책상에서 고를 수 있는 책과 같다 (사도행전은 방이 열리고 조각이 있을 때만).
+ * 방이 열리기 전에는 사도행전 조각도 거르기 버튼도 보이지 않는다
+ */
+export function dexView(
+  pieces: readonly Piece[],
+  flags: Readonly<Record<string, number | undefined>>,
+  book: Book | "all",
+  only: boolean,
+): { books: Book[]; list: Piece[] } {
+  const books = pickableBooks(flags, BOOKS.filter((b) => pieces.some((p) => p.book === b)));
+  const list = pieces.filter(
+    (p) => books.includes(p.book) && (book === "all" || p.book === book) && (!only || onlyHere(p)),
+  );
+  return { books, list };
+}
+
 export function Dex() {
   const collected = useGame((s) => s.game.collected);
+  const flags = useGame((s) => s.game.flags);
   const open = useGame((s) => s.open);
   const [only, setOnlyState] = useState(rememberOnly);
   const setOnly = (v: boolean) => {
@@ -75,11 +97,7 @@ export function Dex() {
     setBookState(b);
   };
   const got = new Set(collected);
-  // "한 복음서에만"(✦)은 네 복음서끼리 견준 표시 — 도장이 없는 사도행전 조각에는 붙이지 않는다
-  const onlyHere = (p: Piece) => isGospel(p.book) && p.stamps.length === 0;
-  const list = PIECES.filter(
-    (p) => (book === "all" || p.book === book) && (!only || onlyHere(p)),
-  );
+  const { books, list } = dexView(PIECES, flags, book, only);
   // 책마다 장을 따로 (마가 1장과 누가 1장을 한데 섞지 않는다)
   const sections = [...new Set(list.map((p) => `${p.book}:${p.chapter}`))].map(
     (k) => {
@@ -90,8 +108,7 @@ export function Dex() {
   return (
     <div className="dex">
       <div className="dex-filter" role="group" aria-label={T.ui.dexBookPick}>
-        {/* 조각이 있는 책만 (사도행전은 조각을 넣은 뒤에 나타난다) */}
-        {(["all", ...BOOKS_WITH_CONTENT] as const).map((b) => (
+        {(["all", ...books] as const).map((b) => (
           <button
             key={b}
             className={book === b ? "on" : ""}

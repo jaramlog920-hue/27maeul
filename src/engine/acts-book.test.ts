@@ -1,11 +1,11 @@
 // 계획 5 작업 1: 다섯 번째 책(사도행전, 'ac') 자리 — 조각·엮기·서고는 BOOKS(다섯 권), 도장·탐정·"어느 복음서"는 GOSPELS(네 권)
 import { BOOKS_WITH_CONTENT, CONTENT, piecesOf, quizSourceFor } from '../content/catalog'
-import { emptyProgress, pickableBooks } from './books'
-import { newGame, shelvedCount } from './game'
+import { actsRoomOpen, emptyProgress, pickableBooks } from './books'
+import { chooseBook, newGame, shelvedCount } from './game'
 import { jobOf } from './job'
-import { gospelRoomFull, poolFor } from './library'
+import { actsDoorGlows, gospelRoomFull, poolFor } from './library'
 import { mulberry32 } from './offers'
-import { buildLibraryQuiz, buildQuiz, detectiveAnswer } from './quiz'
+import { buildLibraryQuiz, buildQuiz, detectiveAnswer, QUIZ_SIZE } from './quiz'
 import { deserialize, sanitize, serialize } from './save'
 import { BOOKS, GOSPELS, isGospel, type Book, type GameContent, type Piece } from './types'
 
@@ -93,6 +93,47 @@ describe('다섯 번째 책 사도행전', () => {
       }
     }
     expect(books).toBeGreaterThan(0)
+  })
+
+  it('사도행전 방 열림 판정은 하나 (actsRoomOpen) — 서고 문 불빛도 같은 판정', () => {
+    for (const [flags, open] of [[{}, false], [{ gospelFeast: 1 }, false], [{ gospelFeast: 2 }, true]] as const) {
+      expect(actsRoomOpen(flags)).toBe(open)
+      expect(actsDoorGlows({ flags })).toBe(open)
+    }
+  })
+
+  it('엔진도 막는다: 방이 열리기 전 chooseBook("ac")은 상태를 그대로 돌려준다', () => {
+    const closed = newGame(withActs)
+    expect(chooseBook(closed, 'ac', withActs)).toBe(closed)
+    const feastDay = { ...closed, flags: { ...closed.flags, gospelFeast: 1 } }
+    expect(chooseBook(feastDay, 'ac', withActs)).toBe(feastDay)
+    const open = chooseBook({ ...closed, flags: { ...closed.flags, gospelFeast: 2 } }, 'ac', withActs)
+    expect(open.activeBook).toBe('ac')
+    // 복음서는 그대로 고를 수 있다
+    expect(chooseBook(closed, 'mk', withActs).activeBook).toBe('mk')
+  })
+
+  it('불러올 때 고른 책이 사도행전인데 방이 닫혀 있으면 고른 책을 비운다', () => {
+    const s = { ...newGame(withActs), activeBook: 'ac' as const }
+    expect(sanitize(s, withActs).activeBook).toBeNull()
+    expect(sanitize({ ...s, flags: { ...s.flags, gospelFeast: 1 } }, withActs).activeBook).toBeNull()
+    expect(sanitize({ ...s, flags: { ...s.flags, gospelFeast: 2 } }, withActs).activeBook).toBe('ac')
+  })
+
+  it('서고 퀴즈는 탐정을 못 내는 범위(mk만·ac만·mk+ac)에서도 다섯 문제를 채운다', () => {
+    const pieces = (b: Book) => (b === 'ac' ? AC : piecesOf(b))
+    const cases: [Book, Book[]][] = [
+      ['mk', ['mk']],
+      ['ac', ['ac']],
+      ['mk', ['mk', 'ac']],
+      ['ac', ['mk', 'ac']],
+    ]
+    for (const [current, pool] of cases)
+      for (let seed = 1; seed <= 20; seed++) {
+        const qs = buildLibraryQuiz({ current, pool, piecesOf: pieces, rng: mulberry32(seed), src: quizSourceFor(pool) })
+        expect(qs, `${current} ${pool} seed ${seed}`).toHaveLength(QUIZ_SIZE)
+        expect(qs.some((q) => q.kind === 'detective')).toBe(false)
+      }
   })
 
   it('서고 출제 범위는 다섯 권 순서, 마을 구역·직업·복음서 방은 복음서만 센다', () => {

@@ -35,7 +35,7 @@ import {
 import { COVER_FROM, jobOf, SELL_FROM } from './job'
 import { FESTIVAL_SPOTS, goalFor, isNear, npcTile, placeNpc, stepNpc, type Npc } from './neighbors'
 import { GAIN, heartsOf, MAX_POINTS } from './hearts'
-import { bookDone, emptyProgress, totalChapters, type Progress } from './books'
+import { actsRoomOpen, bookDone, emptyProgress, totalChapters, type Progress } from './books'
 import { currentChapter, offersForDay } from './offers'
 import { checkArrangement, type ArrangeResult } from './scroll'
 import { growGarden, type Plot } from './garden'
@@ -305,6 +305,8 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
 /** 지금 엮을 책을 고른다. 오늘 아직 조각을 건네지 않은 이웃에게 새 책의 조각을 배정한다 */
 export function chooseBook(s: GameState, book: Book, content: GameContent): GameState {
   if (!content.pieces.some((p) => p.book === book)) return s
+  // 사도행전은 서고의 사도행전 방이 열린 뒤에만 (화면이 막아도 엔진에서 한 번 더)
+  if (book === 'ac' && !actsRoomOpen(s.flags)) return s
   const level = s.flags.villageLevel ?? 0
   const present = neighborsOfDay(s.clock.day, content, level, s.flags).filter((id) => !s.listened.includes(id))
   const next = { ...s, activeBook: book }

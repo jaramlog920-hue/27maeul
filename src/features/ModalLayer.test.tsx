@@ -1,6 +1,8 @@
 import { act, render, renderHook, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { CONTENT, piecesOf } from '../content/catalog'
+import { CONTENT, PIECES, piecesOf } from '../content/catalog'
+import type { Piece } from '../engine/types'
+import { dexView } from './shelf/Shelf'
 import { chaptersOf, emptyProgress } from '../engine/books'
 import { chooseBook, newGame, type GameState } from '../engine/game'
 import { mulberry32 } from '../engine/offers'
@@ -510,13 +512,39 @@ describe('벤치', () => {
 })
 
 describe('선반', () => {
+  it('도감: 사도행전 조각과 거르기 버튼은 사도행전 방이 열린 뒤에만', () => {
+    // 테스트용 사도행전 조각 (콘텐츠는 계획 5 작업 2)
+    const ac: Piece[] = [
+      { id: 'ac-001-001', book: 'ac', ref: '행 1:1-11', chapter: 1, title: '데오빌로여', stamps: [] },
+      { id: 'ac-002-001', book: 'ac', ref: '행 2:1-13', chapter: 2, title: '오순절', stamps: [] },
+    ]
+    const pieces = [...PIECES, ...ac]
+    for (const flags of [{}, { gospelFeast: 1 }]) {
+      const closed = dexView(pieces, flags, 'all', false)
+      expect(closed.books).toEqual(['mt', 'mk', 'lk', 'jn'])
+      expect(closed.list.some((p) => p.book === 'ac')).toBe(false)
+      // 기억해 둔 거르기가 사도행전이어도 방이 닫혀 있으면 비어 있다
+      expect(dexView(pieces, flags, 'ac', false).list).toEqual([])
+    }
+    const open = dexView(pieces, { gospelFeast: 2 }, 'all', false)
+    expect(open.books).toEqual(['mt', 'mk', 'lk', 'jn', 'ac'])
+    expect(open.list.filter((p) => p.book === 'ac')).toEqual(ac)
+    // "한 복음서에만"(✦)에는 사도행전 조각이 들지 않는다
+    expect(dexView(pieces, { gospelFeast: 2 }, 'all', true).list.some((p) => p.book === 'ac')).toBe(false)
+  })
+
   it('도감: 누가에만 거르기와 들은 이야기 열기', async () => {
     reset({ collected: ['lk-015-008', 'lk-015-001'] })
     const user = userEvent.setup()
     useGame.setState({ modal: { kind: 'shelf' } })
     render(<ModalLayer />)
-    // 마태 + 마가 + 누가 + 요한 조각 중 2개를 들었다
-    expect(screen.getAllByText('아직 듣지 못한 이야기').length).toBe(piecesOf('mt').length + piecesOf('mk').length + piecesOf('lk').length + piecesOf('jn').length - 2)
+    // 도감에 보이는 책(방이 열리기 전에는 네 복음서)의 조각 중 2개를 들었다
+    const shown = dexView(PIECES, useGame.getState().game.flags, 'all', false)
+    expect(shown.books).toEqual(['mt', 'mk', 'lk', 'jn'])
+    expect(shown.list.length).toBe(piecesOf('mt').length + piecesOf('mk').length + piecesOf('lk').length + piecesOf('jn').length)
+    expect(screen.getAllByText('아직 듣지 못한 이야기').length).toBe(shown.list.length - 2)
+    // 사도행전 거르기 버튼은 방이 열리기 전에는 없다
+    expect(screen.queryByRole('button', { name: '사도행전' })).toBeNull()
     // 책마다 장을 따로 묶고, 장은 처음에 접혀 있다
     expect(screen.getByText('마가복음 1장').closest('details')).not.toHaveAttribute('open')
     expect(screen.getByText('누가복음 1장')).toBeInTheDocument()

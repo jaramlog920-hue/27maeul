@@ -1,6 +1,6 @@
 // 브라우저 저장. 저장소가 없거나 막혀 있어도 게임은 돌아야 하므로 모든 접근을 try/catch로 감싼다.
 import { IDLE_RESET } from './autonomy'
-import { bookDone, emptyProgress, type Progress } from './books'
+import { actsRoomOpen, bookDone, emptyProgress, type Progress } from './books'
 import { newGame, settle, type GameState } from './game'
 import { refitRoom } from './room'
 import { setHomeLevel } from './world'
@@ -69,7 +69,9 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   if (flags.homeOrder !== undefined && flags.homeOrder !== homeLevel + 1) delete flags.homeOrder
   // 가구 규칙이 바뀐 뒤의 저장: 지금 규칙으로 놓을 수 없는 것은 가방으로 (길이 막히지 않게)
   const { room, inv } = refitRoom(s.room ?? [], s.inv)
-  const activeBook = s.activeBook && content.pieces.some((p) => p.book === s.activeBook) ? s.activeBook : null
+  // 고른 책: 조각이 있어야 하고, 사도행전이면 방이 열려 있어야 한다 (chooseBook과 같은 규칙)
+  const activeBook =
+    s.activeBook && content.pieces.some((p) => p.book === s.activeBook) && (s.activeBook !== 'ac' || actsRoomOpen(flags)) ? s.activeBook : null
   return {
     ...s,
     homeLevel,

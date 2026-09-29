@@ -1,6 +1,6 @@
 // 마을 서고: 다 엮은 책을 꽂고, 서고 퀴즈로 책등 등급을 받는다 (설계 §2.4).
 // 책은 언제나 꽂힌다 — 틀린 만큼 등급이 낮고, 틀린 구절은 다시 읽을 구절로 돌아온다.
-import { bookDone } from './books'
+import { actsRoomOpen, bookDone } from './books'
 import type { GameState } from './game'
 import { has, take } from './items'
 import { BOOKS, GOSPELS, type Book, type GameContent, type ItemId } from './types'
@@ -64,9 +64,9 @@ export function feastToday(s: Pick<GameState, 'flags'>): boolean {
   return s.flags.gospelFeast === 1
 }
 
-/** 잔치 다음 날부터 서고의 첫 잠긴 문(사도행전 방)이 은은하게 빛난다. 문은 잠긴 그대로다 */
+/** 잔치 다음 날부터 서고의 첫 잠긴 문(사도행전 방)이 은은하게 빛난다 — 사도행전 방이 열린 것과 같은 판정 */
 export function actsDoorGlows(s: Pick<GameState, 'flags'>): boolean {
-  return s.flags.gospelFeast === 2
+  return actsRoomOpen(s.flags)
 }
 
 export function readOff(s: GameState, pieceId: string): GameState {

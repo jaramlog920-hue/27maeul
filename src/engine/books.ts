@@ -22,11 +22,18 @@ export function chaptersOf(book: Book, content: GameContent): number[] {
 }
 
 /**
- * 책상에서 고를 수 있는 책: 네 복음서는 언제나, 사도행전은 서고의 사도행전 방이 열린 뒤
- * (복음서 방 잔치 다음 날부터 — flags.gospelFeast 2) 그리고 조각이 있을 때만
+ * 서고의 사도행전 방이 열렸는가: 복음서 방 잔치 다음 날부터 (flags.gospelFeast 2).
+ * 방 열림 판정은 이 하나만 쓴다 — 책 고르기·chooseBook·불러오기·도감·서고 문 불빛이 서로 어긋나지 않게
  */
-export function pickableBooks(flags: Record<string, number | undefined>, withContent: readonly Book[]): Book[] {
-  const acts: Book[] = (flags.gospelFeast ?? 0) >= 2 && withContent.includes('ac') ? ['ac'] : []
+export function actsRoomOpen(flags: Readonly<Record<string, number | undefined>>): boolean {
+  return (flags.gospelFeast ?? 0) >= 2
+}
+
+/**
+ * 책상에서 고를 수 있는 책(= 도감에 보이는 책): 네 복음서는 언제나, 사도행전은 방이 열린 뒤 그리고 조각이 있을 때만
+ */
+export function pickableBooks(flags: Readonly<Record<string, number | undefined>>, withContent: readonly Book[]): Book[] {
+  const acts: Book[] = actsRoomOpen(flags) && withContent.includes('ac') ? ['ac'] : []
   return [...GOSPELS, ...acts]
 }
 
