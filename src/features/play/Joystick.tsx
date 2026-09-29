@@ -73,6 +73,8 @@ export function Joystick() {
 function DirectionPad({ sideClass }: { sideClass: string }) {
   const pad = useRef<HTMLDivElement>(null)
   const dir = useRef<Dir | null>(null)
+  // 패드를 잡은 손가락 하나만 따른다 (다른 손가락을 떼도 걸음이 끊기지 않게)
+  const finger = useRef<number | null>(null)
   const [zone, setZone] = useState<PadZone | null>(null)
   useRepeatWalk(dir)
 
@@ -92,7 +94,9 @@ function DirectionPad({ sideClass }: { sideClass: string }) {
     dir.current = walkDir
     if (changed) useGame.getState().walk(...walkDir)
   }
-  const release = () => {
+  const release = (event: PointerEvent) => {
+    if (finger.current !== null && event.pointerId !== finger.current) return
+    finger.current = null
     dir.current = null
     setZone(null)
   }
@@ -108,21 +112,24 @@ function DirectionPad({ sideClass }: { sideClass: string }) {
       role="group"
       aria-label={T.controls.padLabel}
       onPointerDown={(event) => {
+        if (finger.current !== null) return
+        finger.current = event.pointerId
         capture(event)
         move(event, true)
       }}
       onPointerMove={(event) => {
+        if (event.pointerId !== finger.current) return
         if (zone !== null && (event.buttons || event.pointerType === 'touch')) move(event, false)
       }}
       onPointerUp={release}
       onPointerCancel={release}
       onLostPointerCapture={release}
     >
-      {cell('up', T.controls.up, '▲')}
-      {cell('left', T.controls.left, '◀')}
+      {cell('up', T.controls.up, '▲︎')}
+      {cell('left', T.controls.left, '◀︎')}
       {cell('center', T.controls.center, '●')}
-      {cell('right', T.controls.right, '▶')}
-      {cell('down', T.controls.down, '▼')}
+      {cell('right', T.controls.right, '▶︎')}
+      {cell('down', T.controls.down, '▼︎')}
     </div>
   )
 }

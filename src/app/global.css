@@ -353,6 +353,8 @@ button:focus-visible {
     grid-template-areas: ". up ." "left center right" ". down .";
     width: 132px;
     height: 132px;
+    /* 비운 네 모서리는 누름을 받지 않고 지도로 넘긴다 */
+    clip-path: polygon(33.4% 0, 66.6% 0, 66.6% 33.4%, 100% 33.4%, 100% 66.6%, 66.6% 66.6%, 66.6% 100%, 33.4% 100%, 33.4% 66.6%, 0 66.6%, 0 33.4%, 33.4% 33.4%);
   }
   .joystick.dpad span {
     display: flex;
