@@ -270,7 +270,8 @@
     "homeWaiting": "부탁한 일은 내일 아침이면 끝나요.",
     "atticRoom": "다락 서재",
     "actsRoom": "사도행전 방",
-    "atticReadHint": "다락 창가에서 읽고 잠들면 평안이 하루 더 갑니다."
+    "atticReadHint": "다락 창가에서 읽고 잠들면 평안이 하루 더 갑니다.",
+    "moreBelow": "아래로 더 있어요 ▾"
   },
   "controls": {
     "joystick": "모바일 조이스틱",
@@ -289,8 +290,7 @@
     "down": "아래로",
     "left": "왼쪽으로",
     "right": "오른쪽으로",
-    "center": "앞을 누르기",
-    "moreBelow": "아래로 더 있어요 ▾"
+    "center": "앞을 누르기"
   },
   "items": {
     "water": {

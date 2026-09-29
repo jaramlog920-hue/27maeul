@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import { useGame } from '../store/game-store'
 import { Bag } from './bag/Bag'
 import { AdoptForm } from './companion/AdoptForm'
@@ -24,6 +25,7 @@ import { TradeBoard } from './talk/TradeBoard'
 import { GameGuide } from './play/GameGuide'
 import { Settings } from './play/Settings'
 import { ScheduleDialog } from './play/EventSchedule'
+import { watchScrollHints } from './scroll-hint'
 
 function Body() {
   const modal = useGame((s) => s.modal)
@@ -84,9 +86,11 @@ function Body() {
 
 export function ModalLayer() {
   const modal = useGame((s) => s.modal)
+  // 창이 열려 있는 동안 스크롤되는 창에 "아래로 더 있어요"를 붙인다 (창이 바뀌면 MutationObserver가 다시 살핀다)
+  const hints = useCallback((el: HTMLDivElement | null) => (el ? watchScrollHints(el) : undefined), [])
   if (!modal) return null
   return (
-    <div className="modal-backdrop">
+    <div className="modal-backdrop" ref={hints}>
       <Body />
     </div>
   )

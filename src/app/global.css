@@ -434,6 +434,37 @@ button:focus-visible {
   padding: 14px 16px;
   animation: rise 0.18s ease-out;
 }
+/* ── 스크롤되는 창: 얇은 스크롤 막대는 늘 보이고, 아래에 더 있으면 창 아래에 옅은 그라데이션과 안내 ── */
+.dialog, .passage-body {
+  --hint-bg: var(--panel);
+  scrollbar-width: thin;
+  scrollbar-color: #b59a74 transparent;
+}
+.passage-body { --hint-bg: var(--scripture-bg); }
+.dialog::-webkit-scrollbar, .passage-body::-webkit-scrollbar { width: 6px; }
+.dialog::-webkit-scrollbar-thumb, .passage-body::-webkit-scrollbar-thumb { background: #b59a74; border-radius: 3px; }
+.dialog::-webkit-scrollbar-track, .passage-body::-webkit-scrollbar-track { background: transparent; }
+.more-below::after {
+  content: attr(data-more);
+  position: sticky;
+  /* 창 안쪽 여백을 넘어 창 아래 끝에 붙는다. 자리를 차지하지 않도록 같은 높이만큼 끌어올린다 */
+  bottom: -14px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 40px;
+  margin: -40px -16px 0;
+  padding-bottom: 5px;
+  background: linear-gradient(to bottom, transparent, var(--hint-bg) 70%);
+  color: #8a6c48;
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1;
+  letter-spacing: 0;
+  pointer-events: none;
+}
+.passage-body.more-below::after { bottom: 0; margin: -40px 0 0; }
 @keyframes rise {
   from {
     transform: translateY(12px);
