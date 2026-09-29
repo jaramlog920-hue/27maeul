@@ -431,8 +431,8 @@ describe('선반', () => {
     const user = userEvent.setup()
     useGame.setState({ modal: { kind: 'shelf' } })
     render(<ModalLayer />)
-    // 마가 45 + 누가 156 = 201 조각 중 2개를 들었다
-    expect(screen.getAllByText('아직 듣지 못한 이야기').length).toBe(199)
+    // 마가 + 누가 조각 중 2개를 들었다
+    expect(screen.getAllByText('아직 듣지 못한 이야기').length).toBe(piecesOf('mk').length + piecesOf('lk').length - 2)
     // 책마다 장을 따로 묶고, 장은 처음에 접혀 있다
     expect(screen.getByText('마가복음 1장').closest('details')).not.toHaveAttribute('open')
     expect(screen.getByText('누가복음 1장')).toBeInTheDocument()

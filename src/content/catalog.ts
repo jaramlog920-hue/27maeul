@@ -73,12 +73,31 @@ const bookOfRef = (ref: string): Book => {
   return b
 }
 
+/** 대괄호 [ … ] 구간에 든 절 ('막 16:10'). 막 16:9-20·요 7:53-8:11처럼 여러 절에 걸치면 괄호 글자가 없는 가운데 절도 넣는다 */
+const bracketed = new Set<string>()
+for (const b of BOOKS) {
+  let open = false
+  ;(bible[BOOK_IDS[b]] ?? []).forEach((ch, ci) =>
+    ch.forEach((text, vi) => {
+      if (open || text.includes('[') || text.includes(']')) bracketed.add(`${BOOK_ABBR[b]} ${ci + 1}:${vi + 1}`)
+      for (const c of text) {
+        if (c === '[') open = true
+        else if (c === ']') open = false
+      }
+    }),
+  )
+}
+export const inBrackets = (ref: string) => bracketed.has(ref.trim())
+
 /** 퀴즈가 쓰는 본문: 절마다 참조를 붙이고, 고른 책들 안에서 같은 문장이 몇 번 나오는지 센다 */
 export function quizSourceFor(books: readonly Book[]): QuizSource {
   return {
     versesOf: (ref) => {
       const abbr = BOOK_ABBR[bookOfRef(ref)]
-      return versesOf(ref).map((v) => ({ ref: `${abbr} ${v.chapter}:${v.verse}`, text: v.text }))
+      return versesOf(ref).map((v) => {
+        const r = `${abbr} ${v.chapter}:${v.verse}`
+        return { ref: r, text: v.text, inBrackets: bracketed.has(r) }
+      })
     },
     countVerse: (text) => books.reduce((n, b) => n + (verseCounts.get(b)?.get(quizKey(text)) ?? 0), 0),
   }

@@ -36,10 +36,12 @@ describe('기록 퀴즈', () => {
             expect([...q.words].sort()).toEqual([...q.answer].sort())
             expect(q.words.join(' '), where).not.toBe(q.answer.join(' '))
             expect(src.countVerse(v.text), where).toBe(1)
+            expect(quizzable(v.text, v.inBrackets), where).toBe(true)
             expect(isCorrect(q, q.answer)).toBe(true)
           } else if (q.kind === 'blank') {
             const v = src.versesOf(q.ref)[0]
             expect([q.before, q.answer, q.after].filter(Boolean).join(' ')).toBe(v.text.trim().split(/\s+/).join(' '))
+            expect(quizzable(v.text, v.inBrackets), where).toBe(true)
             expect(new Set(q.options.map(norm)).size, where).toBe(4)
             // 다른 보기로 채운 문장은 그 책 어디에도 없다 → 정답은 하나
             for (const o of q.options.filter((x) => x !== q.answer)) expect(src.countVerse([q.before, o, q.after].filter(Boolean).join(' ')), where).toBe(0)
@@ -51,6 +53,8 @@ describe('기록 퀴즈', () => {
             expect(q.answer).toEqual(detectiveAnswer(p))
           } else if (q.kind === 'verse') {
             expect(new Set(q.options).size).toBe(3)
+            const qv = src.versesOf(q.ref)[0]
+            expect(quizzable(qv.text, qv.inBrackets), where).toBe(true)
             const [c] = q.ref.split(' ')[1].split(':').map(Number)
             const answer = pieceById(q.answer)
             expect(answer.chapter).toBe(c)
@@ -83,6 +87,8 @@ describe('기록 퀴즈', () => {
     expect(quizzable('[예수께서 안식후 첫날 이른 아침에')).toBe(false)
     expect(quizzable('저희가 [그에게 경배하고] 큰 기쁨으로')).toBe(false)
     expect(quizzable('어느 여자가 열 드라크마가 있는데')).toBe(true)
+    // 여러 절에 걸친 괄호 구간의 가운데 절 (막 16:10은 괄호 글자가 없다)
+    expect(quizzable('어느 여자가 열 드라크마가 있는데', true)).toBe(false)
   })
 
   it('정답 판정', () => {

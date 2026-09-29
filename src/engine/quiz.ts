@@ -20,6 +20,8 @@ export type Question =
 export interface VerseText {
   ref: string
   text: string
+  /** 여러 절에 걸친 대괄호 [ … ] 안에 든 절 (막 16:9-20의 가운데 절처럼 괄호 글자가 없어도) */
+  inBrackets?: boolean
 }
 
 export const QUIZ_SIZE = 5
@@ -31,9 +33,9 @@ export const GOSPELS: readonly GospelId[] = ['mt', 'mk', 'lk', 'jn']
 
 const norm = (s: string) => s.replace(/\s+/g, '')
 export const wordsOf = (text: string) => text.trim().split(/\s+/)
-/** 문제로 쓸 수 있는 절인가: 본문이 없는 절((없음))이거나 대괄호가 든 절(원문에 없는 말 보탬)은 안 된다 */
-export function quizzable(text: string): boolean {
-  return text !== '(없음)' && !text.includes('[') && !text.includes(']')
+/** 문제로 쓸 수 있는 절인가: 본문이 없는 절((없음))이거나 대괄호가 든 절·대괄호 구간 안의 절(원문에 없는 말 보탬)은 안 된다 */
+export function quizzable(text: string, inBrackets = false): boolean {
+  return !inBrackets && text !== '(없음)' && !text.includes('[') && !text.includes(']')
 }
 
 function shuffle<T>(items: readonly T[], rng: Rng): T[] {
@@ -66,7 +68,7 @@ export interface QuizSource {
 function puzzle(p: Piece, src: QuizSource, rng: Rng): Question | null {
   const ok = src.versesOf(p.ref).filter((v) => {
     const n = wordsOf(v.text).length
-    return n >= PUZZLE_MIN_WORDS && n <= PUZZLE_MAX_WORDS && quizzable(v.text) && src.countVerse(v.text) === 1
+    return n >= PUZZLE_MIN_WORDS && n <= PUZZLE_MAX_WORDS && quizzable(v.text, v.inBrackets) && src.countVerse(v.text) === 1
   })
   const v = pickOne(ok, rng)
   if (!v) return null
@@ -80,7 +82,7 @@ function puzzle(p: Piece, src: QuizSource, rng: Rng): Question | null {
 
 function blank(p: Piece, chapterPieces: readonly Piece[], src: QuizSource, rng: Rng): Question | null {
   const verses = shuffle(
-    src.versesOf(p.ref).filter((v) => norm(v.text).length >= MIN_VERSE_CHARS && quizzable(v.text) && src.countVerse(v.text) === 1),
+    src.versesOf(p.ref).filter((v) => norm(v.text).length >= MIN_VERSE_CHARS && quizzable(v.text, v.inBrackets) && src.countVerse(v.text) === 1),
     rng,
   )
   // 보기로 쓸 낱말: 같은 장 다른 절의 낱말
@@ -114,7 +116,7 @@ function detective(p: Piece): Question | null {
 
 function whichStory(p: Piece, near: readonly Piece[], src: QuizSource, rng: Rng): Question | null {
   const v = pickOne(
-    src.versesOf(p.ref).filter((x) => norm(x.text).length >= MIN_VERSE_CHARS && quizzable(x.text) && src.countVerse(x.text) === 1),
+    src.versesOf(p.ref).filter((x) => norm(x.text).length >= MIN_VERSE_CHARS && quizzable(x.text, x.inBrackets) && src.countVerse(x.text) === 1),
     rng,
   )
   if (!v) return null
@@ -181,7 +183,7 @@ function bookQuestion(from: Book, pool: readonly Book[], piecesOf: (b: Book) => 
   const options = GOSPELS.filter((g) => pool.includes(g))
   return firstOf(shuffle(piecesOf(from), rng), (p) => {
     const v = pickOne(
-      src.versesOf(p.ref).filter((x) => norm(x.text).length >= MIN_VERSE_CHARS && quizzable(x.text) && src.countVerse(x.text) === 1),
+      src.versesOf(p.ref).filter((x) => norm(x.text).length >= MIN_VERSE_CHARS && quizzable(x.text, x.inBrackets) && src.countVerse(x.text) === 1),
       rng,
     )
     return v ? { kind: 'book', ref: v.ref, options, answer: from } : null

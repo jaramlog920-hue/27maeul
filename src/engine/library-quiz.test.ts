@@ -1,4 +1,4 @@
-import { BOOKS_WITH_CONTENT, pieceById, pieceOfVerse, piecesOf, quizSourceFor } from '../content/catalog'
+import { BOOKS_WITH_CONTENT, inBrackets, pieceById, pieceOfVerse, piecesOf, quizSourceFor } from '../content/catalog'
 import { mulberry32 } from './offers'
 import { buildLibraryQuiz, detectiveAnswer, QUIZ_SIZE, quizzable } from './quiz'
 import { BOOKS, type Book } from './types'
@@ -25,7 +25,7 @@ describe('서고 퀴즈', () => {
             if (q.kind === 'book') {
               const text = src.versesOf(q.ref)[0].text
               expect(q.options, where).toEqual(options)
-              expect(quizzable(text), where).toBe(true)
+              expect(quizzable(text, inBrackets(q.ref)), where).toBe(true)
               expect(src.countVerse(text), where).toBe(1)
               expect(pieceOfVerse(q.ref)?.book, where).toBe(q.answer)
               expect(pool, where).toContain(q.answer)
@@ -36,12 +36,12 @@ describe('서고 퀴즈', () => {
               expect(q.answer, where).toEqual(detectiveAnswer(p)!.filter((g) => pool.includes(g)))
             } else if (q.kind === 'puzzle') {
               const text = src.versesOf(q.ref)[0].text
-              expect(quizzable(text), where).toBe(true)
+              expect(quizzable(text, inBrackets(q.ref)), where).toBe(true)
               expect(src.countVerse(text), where).toBe(1)
               expect(pieceOfVerse(q.ref)?.book, where).toBe(current)
             } else if (q.kind === 'blank') {
               const text = [q.before, q.answer, q.after].filter(Boolean).join(' ')
-              expect(quizzable(text), where).toBe(true)
+              expect(quizzable(text, inBrackets(q.ref)), where).toBe(true)
               expect(src.countVerse(text), where).toBe(1)
               expect(pieceOfVerse(q.ref)?.book, where).toBe(current)
               expect(new Set(q.options.map(norm)).size, where).toBe(4)

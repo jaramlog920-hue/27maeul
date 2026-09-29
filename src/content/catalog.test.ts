@@ -1,4 +1,4 @@
-import { PIECES, versesOf, pieceById, NEIGHBORS, BOOKS_WITH_CONTENT, pieceOfVerse, pieceOfQuestion, piecesOf, quizSourceFor } from './catalog'
+import { PIECES, versesOf, pieceById, NEIGHBORS, BOOKS_WITH_CONTENT, inBrackets, pieceOfVerse, pieceOfQuestion, piecesOf, quizSourceFor } from './catalog'
 import { ALBUM_IDS, fill, ITEM_TEXT, itemList, NEIGHBOR_LINES, SCENES, T } from './text'
 import { MILESTONE_GIFTS } from '../engine/stories'
 import { TRADES } from '../engine/game'
@@ -60,7 +60,7 @@ describe('life-text', () => {
 describe('책별 콘텐츠', () => {
   it('조각이 있는 책과 책별 조각', () => {
     expect(BOOKS_WITH_CONTENT).toEqual(['mk', 'lk'])
-    expect(piecesOf('mk').length).toBe(45)
+    expect(piecesOf('mk').length).toBe(98)
     expect(piecesOf('mk').every((p) => p.book === 'mk')).toBe(true)
     expect(piecesOf('mt')).toEqual([])
   })
@@ -69,6 +69,14 @@ describe('책별 콘텐츠', () => {
     expect(pieceOfVerse('막 1:10')?.id).toBe('mk-001-009')
     expect(pieceOfVerse('눅 3:22')?.id).toBe('lk-003-021')
     expect(pieceOfVerse('마 1:1')).toBeUndefined()
+  })
+  it('대괄호 구간(막 16:9-20)의 절은 괄호 글자가 없는 가운데 절까지 괄호 안으로 친다', () => {
+    const vs = quizSourceFor(['mk']).versesOf('막 16:8-20')
+    expect(vs[0].inBrackets).toBe(false)
+    expect(vs.slice(1).map((v) => v.inBrackets)).toEqual(Array(12).fill(true))
+    expect(inBrackets('막 16:14')).toBe(true)
+    expect(inBrackets('막 15:47')).toBe(false)
+    expect(inBrackets('눅 24:53')).toBe(false)
   })
   it('countVerse는 고른 책들에서만 센다', () => {
     const t = quizSourceFor(['mk']).versesOf('막 1:18')[0].text
