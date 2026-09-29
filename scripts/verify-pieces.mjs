@@ -27,8 +27,8 @@ const BOOK_ABBR = { mt: '마', mk: '막', lk: '눅', jn: '요', ac: '행' }
 // 도장은 네 복음서끼리만 — 사도행전에는 도장이 없다 (계획 5 §7-1)
 const GOSPELS = new Set(['mt', 'mk', 'lk', 'jn'])
 // 설계 §3.3 — 'full': 1장부터 끝 장까지 전부. 'prefix': 1장부터 조각이 있는 마지막 장까지 빠짐없이(시험판에서 앞 몇 장만 넣은 책).
-// 책을 다 넣으면 'full'로 바꾼다. 사도행전(ac)은 조각을 넣는 작업(계획 5 작업 2)에서 'prefix'로 더한다.
-const COVERAGE = { mt: 'full', mk: 'full', lk: 'full', jn: 'full' }
+// 책을 다 넣으면 'full'로 바꾼다. 사도행전(ac)은 1–14장만 넣었으므로(계획 5 작업 2) 'prefix' — 작업 3에서 'full'로.
+const COVERAGE = { mt: 'full', mk: 'full', lk: 'full', jn: 'full', ac: 'prefix' }
 // exclusion-list §4-3 — "같은 이야기"인데 겹치는 낱말이 이보다 적으면 사람이 다시 본다
 const SAME_OVERLAP_MIN = 0.2
 // exclusion-list §3-2 — 조각은 문장 중간에서 끝나지 않는다 (다음 절로 말이 이어지는 어미)

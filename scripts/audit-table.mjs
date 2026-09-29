@@ -19,11 +19,11 @@ const list = (f) => BOOKS.map(([b, n]) => `${n} ${f(of(b))}`).join(' · ')
 doc = doc.replace(
   /(- 네 복음서 합계 \([^)]*\): )조각 \d+개 \([^)]*\)\. 그 책에만 있는 조각: [^.]*\. "같음"만 가진 조각: [^.]*\./,
   (_, lead) =>
-    `${lead}조각 ${pieces.length}개 (${list((ps) => ps.length)}). 그 책에만 있는 조각: ${list((ps) => ps.filter((p) => p.stamps.length === 0).length)}. "같음"만 가진 조각: ${list((ps) => ps.filter((p) => p.stamps.length && p.stamps.every((s) => s.kind === 'same')).length)}.`,
+    `${lead}조각 ${BOOKS.reduce((n, [b]) => n + of(b).length, 0)}개 (${list((ps) => ps.length)}). 그 책에만 있는 조각: ${list((ps) => ps.filter((p) => p.stamps.length === 0).length)}. "같음"만 가진 조각: ${list((ps) => ps.filter((p) => p.stamps.length && p.stamps.every((s) => s.kind === 'same')).length)}.`,
 )
 const rows = pieces.map(
   (p) =>
-    `| ${p.ref} | ${p.title} | ${p.stamps.length ? p.stamps.map((s) => `${s.kind === 'same' ? '같음' : '비슷'} ${s.ref}`).join('<br>') : `**${{ mt: '마태', mk: '마가', lk: '누가', jn: '요한' }[p.book]}에만**`} |`,
+    `| ${p.ref} | ${p.title} | ${p.stamps.length ? p.stamps.map((s) => `${s.kind === 'same' ? '같음' : '비슷'} ${s.ref}`).join('<br>') : p.book === 'ac' ? '— (사도행전은 도장 없음)' : `**${{ mt: '마태', mk: '마가', lk: '누가', jn: '요한' }[p.book]}에만**`} |`,
 )
 const head = '## 7. 전체 표\n\n| 조각 | 제목 | 도장 |\n|---|---|---|\n'
 doc = doc.slice(0, doc.indexOf('## 7. 전체 표')) + head + rows.join('\n') + '\n'

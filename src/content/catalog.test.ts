@@ -60,7 +60,7 @@ describe('life-text', () => {
 
 describe('책별 콘텐츠', () => {
   it('조각이 있는 책과 책별 조각', () => {
-    expect(BOOKS_WITH_CONTENT).toEqual(['mt', 'mk', 'lk', 'jn'])
+    expect(BOOKS_WITH_CONTENT).toEqual(['mt', 'mk', 'lk', 'jn', 'ac'])
     expect(piecesOf('mk').length).toBe(98)
     expect(piecesOf('mk').every((p) => p.book === 'mk')).toBe(true)
     expect(piecesOf('mt').length).toBe(54 + 53 + 50) // 마 1–10장 54 + 11–20장 53 + 21–28장 50 (작업 4·5·6)
@@ -68,10 +68,18 @@ describe('책별 콘텐츠', () => {
     // 요한 장마다 조각 수 — 1–11장(작업 7, 7:53-8:11은 7장에 셈) + 12–21장(작업 8, 15:26-16:4는 15장, 18:39-19:7은 18장에 셈)
     expect(piecesOf('jn').length).toBe(8 + 3 + 5 + 8 + 6 + 9 + 8 + 6 + 5 + 6 + 7 + (8 + 5 + 5 + 4 + 4 + 4 + 6 + 5 + 5 + 5))
     expect(piecesOf('jn').every((p) => p.book === 'jn')).toBe(true)
+    // 사도행전 장마다 조각 수 — 1–14장(계획 5 작업 2, content-audit §6-8). 15–28장은 작업 3
+    expect(piecesOf('ac').length).toBe(3 + 7 + 3 + 4 + 5 + 2 + 8 + 5 + 6 + 6 + 4 + 4 + 6 + 3)
+    expect(piecesOf('ac').every((p) => p.book === 'ac' && p.stamps.length === 0)).toBe(true)
+    expect(Math.max(...piecesOf('ac').map((p) => p.chapter))).toBe(14)
   })
-  it('네 복음서 조각의 합이 pieces.json 전체와 같고, 대표 조각의 제목·범위가 원본(scripts/pieces)과 맞는다', () => {
+  it('조각이 있는 책의 조각 합이 pieces.json 전체와 같고, 대표 조각의 제목·범위가 원본(scripts/pieces)과 맞는다', () => {
     expect(BOOKS_WITH_CONTENT.reduce((n, b) => n + piecesOf(b).length, 0)).toBe(PIECES.length)
-    expect(PIECES).toHaveLength(533)
+    expect(PIECES).toHaveLength(533 + 66) // 네 복음서 533 + 사도행전 1–14장 66
+    expect(pieceById('ac-008-032')).toMatchObject({ book: 'ac', ref: '행 8:32-40', chapter: 8, title: '물 있는 곳' })
+    expect(pieceOfVerse('행 8:37')).toBeUndefined() // (없음) — 번호만 조각 범위에 걸친다
+    expect(pieceOfVerse('행 8:38')?.id).toBe('ac-008-032')
+    expect(pieceOfVerse('행 14:28')?.id).toBe('ac-014-019')
     expect(new Set(PIECES.map((p) => p.id)).size).toBe(PIECES.length)
     expect(pieceById('mt-005-001')).toMatchObject({ book: 'mt', ref: '마 5:1-12', chapter: 5, title: '심령이 가난한 자' })
     expect(pieceById('jn-011-001')).toMatchObject({ book: 'jn', ref: '요 11:1-10', chapter: 11, title: '베다니에 사는 나사로라' })

@@ -9,13 +9,9 @@ import { buildLibraryQuiz, buildQuiz, detectiveAnswer, QUIZ_SIZE } from './quiz'
 import { deserialize, sanitize, serialize } from './save'
 import { BOOKS, GOSPELS, isGospel, type Book, type GameContent, type Piece } from './types'
 
-// 테스트용 사도행전 조각 (콘텐츠는 작업 2에서 넣는다)
-const AC: Piece[] = [
-  { id: 'ac-001-001', book: 'ac', ref: '행 1:1-11', chapter: 1, title: '데오빌로여', stamps: [] },
-  { id: 'ac-001-012', book: 'ac', ref: '행 1:12-26', chapter: 1, title: '맛디아', stamps: [] },
-  { id: 'ac-002-001', book: 'ac', ref: '행 2:1-13', chapter: 2, title: '오순절', stamps: [] },
-]
-const withActs: GameContent = { ...CONTENT, pieces: [...CONTENT.pieces, ...AC] }
+// 사도행전 조각 — 작업 2에서 1–14장을 넣었다 (content-audit §6-8)
+const AC: Piece[] = piecesOf('ac')
+const withActs: GameContent = CONTENT
 
 describe('다섯 번째 책 사도행전', () => {
   it('BOOKS는 오늘 신약 순서의 다섯 권, GOSPELS는 네 복음서', () => {
@@ -26,9 +22,11 @@ describe('다섯 번째 책 사도행전', () => {
     expect(Object.keys(emptyProgress())).toEqual(['mt', 'mk', 'lk', 'jn', 'ac'])
   })
 
-  it('아직 사도행전 조각은 없다 (콘텐츠 없이 자리만)', () => {
-    expect(piecesOf('ac')).toEqual([])
-    expect(BOOKS_WITH_CONTENT).not.toContain('ac')
+  it('사도행전 조각은 1–14장이 있고, 도장이 없다 (작업 2)', () => {
+    expect(AC.length).toBeGreaterThan(0)
+    expect(BOOKS_WITH_CONTENT).toContain('ac')
+    expect(new Set(AC.map((p) => p.chapter))).toEqual(new Set(Array.from({ length: 14 }, (_, i) => i + 1)))
+    expect(AC.every((p) => p.stamps.length === 0)).toBe(true)
   })
 
   it('옛 저장(네 권)을 불러와도 progress.ac가 채워진다', () => {
@@ -44,21 +42,23 @@ describe('다섯 번째 책 사도행전', () => {
       {
         ...s,
         collected: AC.map((p) => p.id),
-        progress: { ...emptyProgress(), ac: { completed: [1, 2], arrangement: {} } },
+        progress: { ...emptyProgress(), ac: { completed: [...new Set(AC.map((p) => p.chapter))], arrangement: {} } },
         shelved: { ac: 1 },
         myLines: { 'book:ac': '길 위의 이야기', 'book:zz': '없는 책' },
       },
       withActs,
     )
-    expect(back.progress.ac.completed).toEqual([1, 2])
+    expect(back.progress.ac.completed).toEqual([...new Set(AC.map((p) => p.chapter))])
     expect(back.shelved).toEqual({ ac: 1 })
     expect(back.myLines).toEqual({ 'book:ac': '길 위의 이야기' })
   })
 
   it('책 고르기: 사도행전은 방이 열리고(잔치 다음 날부터) 조각이 있을 때만', () => {
-    // 지금 콘텐츠: 사도행전 조각이 없으니 방이 열려도 없다
+    // 조각이 없는 책은 방이 열려도 고를 수 없다
+    expect(pickableBooks({ gospelFeast: 2 }, ['mt', 'mk', 'lk', 'jn'])).toEqual(['mt', 'mk', 'lk', 'jn'])
+    // 지금 콘텐츠(사도행전 1–14장 있음): 방이 열린 뒤에만 사도행전
     expect(pickableBooks({}, BOOKS_WITH_CONTENT)).toEqual(['mt', 'mk', 'lk', 'jn'])
-    expect(pickableBooks({ gospelFeast: 2 }, BOOKS_WITH_CONTENT)).toEqual(['mt', 'mk', 'lk', 'jn'])
+    expect(pickableBooks({ gospelFeast: 2 }, BOOKS_WITH_CONTENT)).toEqual(['mt', 'mk', 'lk', 'jn', 'ac'])
     // 조각이 있어도 방이 열리기 전(잔치 전·잔치 날)에는 없다
     expect(pickableBooks({}, BOOKS)).not.toContain('ac')
     expect(pickableBooks({ gospelFeast: 1 }, BOOKS)).not.toContain('ac')

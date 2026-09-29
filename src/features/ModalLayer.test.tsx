@@ -513,12 +513,10 @@ describe('벤치', () => {
 
 describe('선반', () => {
   it('도감: 사도행전 조각과 거르기 버튼은 사도행전 방이 열린 뒤에만', () => {
-    // 테스트용 사도행전 조각 (콘텐츠는 계획 5 작업 2)
-    const ac: Piece[] = [
-      { id: 'ac-001-001', book: 'ac', ref: '행 1:1-11', chapter: 1, title: '데오빌로여', stamps: [] },
-      { id: 'ac-002-001', book: 'ac', ref: '행 2:1-13', chapter: 2, title: '오순절', stamps: [] },
-    ]
-    const pieces = [...PIECES, ...ac]
+    // 사도행전 조각 (계획 5 작업 2에서 1–14장을 넣었다)
+    const ac: Piece[] = piecesOf('ac')
+    expect(ac.length).toBeGreaterThan(0)
+    const pieces = PIECES
     for (const flags of [{}, { gospelFeast: 1 }]) {
       const closed = dexView(pieces, flags, 'all', false)
       expect(closed.books).toEqual(['mt', 'mk', 'lk', 'jn'])

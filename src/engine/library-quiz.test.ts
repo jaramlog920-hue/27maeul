@@ -3,7 +3,7 @@ import { mulberry32 } from './offers'
 import { buildLibraryQuiz, detectiveAnswer, QUIZ_SIZE, quizzable } from './quiz'
 import type { Grade } from './library'
 import { poolFor } from './library'
-import { BOOKS, type Book } from './types'
+import { BOOKS, GOSPELS, type Book } from './types'
 import { lockedTiles, lockedZones, ZONES } from './world'
 
 const norm = (s: string) => s.replace(/\s+/g, '')
@@ -35,7 +35,8 @@ describe('서고 퀴즈', () => {
             } else if (q.kind === 'detective') {
               const p = pieceById(q.pieceId)
               expect(p.book, where).toBe(current)
-              expect(q.options, where).toEqual(options)
+              // 탐정 보기는 출제 범위의 복음서만 (사도행전은 도장이 없어 보기에 없다)
+              expect(q.options, where).toEqual(GOSPELS.filter((b) => pool.includes(b)))
               expect(q.answer, where).toEqual(detectiveAnswer(p)!.filter((g) => pool.includes(g)))
             } else if (q.kind === 'puzzle') {
               const text = src.versesOf(q.ref)[0].text
@@ -91,7 +92,7 @@ describe('서고 퀴즈', () => {
   it('네 권을 차례로 꽂으면 구역이 하나씩 열리고, 4권째에 대장간이 열린다', () => {
     let shelved: Partial<Record<Book, Grade>> = {}
     const seen: string[][] = []
-    BOOKS_WITH_CONTENT.forEach((b, i) => {
+    GOSPELS.forEach((b, i) => {
       shelved = { ...shelved, [b]: 2 }
       const n = Object.keys(shelved).length
       expect(n).toBe(i + 1)
