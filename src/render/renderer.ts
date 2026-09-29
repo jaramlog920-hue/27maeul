@@ -678,6 +678,8 @@ function mapFor(season: Season): HTMLCanvasElement {
   return c
 }
 
+/** 키는 모두 몇 가지 값의 조합이라 늘어나지 않지만(옷차림 바꾸기만 조합이 는다), 혹시 몰라 넘치면 비운다 */
+const SPRITE_CACHE_MAX = 800
 const spriteCache = new Map<string, HTMLCanvasElement>()
 function paint(keyStr: string, rows: SpriteRows, palette: Record<string, string>): HTMLCanvasElement {
   let c = spriteCache.get(keyStr)
@@ -694,6 +696,7 @@ function paint(keyStr: string, rows: SpriteRows, palette: Record<string, string>
       g.fillRect(x, y, 1, 1)
     }),
   )
+  if (spriteCache.size >= SPRITE_CACHE_MAX) spriteCache.clear()
   spriteCache.set(keyStr, c)
   return c
 }

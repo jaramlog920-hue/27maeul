@@ -28,6 +28,14 @@ export default defineConfig({
         // 본문 JSON과 글꼴까지 캐시해 오프라인에서도 논다
         globPatterns: ['**/*.{js,css,html,png,woff2}'],
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
+        // 바깥 글꼴(Noto Serif KR)은 한 번 받으면 오프라인에서도 쓰도록 실행 중에 담아 둔다
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/i,
+            handler: 'StaleWhileRevalidate',
+            options: { cacheName: 'google-fonts', expiration: { maxEntries: 12 } },
+          },
+        ],
       },
     }),
   ],
