@@ -30,7 +30,7 @@ const COVERAGE = { lk: 'full', mk: 'full', mt: 'prefix' }
 // exclusion-list §4-3 — "같은 이야기"인데 겹치는 낱말이 이보다 적으면 사람이 다시 본다
 const SAME_OVERLAP_MIN = 0.2
 // exclusion-list §3-2 — 조각은 문장 중간에서 끝나지 않는다 (다음 절로 말이 이어지는 어미)
-const OPEN_ENDINGS = /(이르시되|가로되|가라사대|여짜오되|말하되|으나|하시고|하고|하며|하매|쌔)$/
+const OPEN_ENDINGS = /(이르시되|가로되|가라사대|여짜오되|말하되|으나|하시고|하고|하며|하매|쌔|거늘)$/
 
 let errors = 0
 let warnings = 0

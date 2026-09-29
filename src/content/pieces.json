@@ -1029,7 +1029,7 @@
   {
     "id": "mt-012-009",
     "book": "mt",
-    "ref": "마 12:9-14",
+    "ref": "마 12:9-21",
     "chapter": 12,
     "title": "손 마른 사람",
     "stamps": [
@@ -1047,16 +1047,7 @@
         "kind": "similar",
         "book": "lk",
         "ref": "눅 14:1-6"
-      }
-    ]
-  },
-  {
-    "id": "mt-012-015",
-    "book": "mt",
-    "ref": "마 12:15-21",
-    "chapter": 12,
-    "title": "나의 택한 종",
-    "stamps": [
+      },
       {
         "kind": "similar",
         "book": "mk",
@@ -2152,7 +2143,7 @@
       {
         "kind": "same",
         "book": "mt",
-        "ref": "마 12:9-14"
+        "ref": "마 12:9-21"
       },
       {
         "kind": "same",
@@ -2176,7 +2167,7 @@
       {
         "kind": "similar",
         "book": "mt",
-        "ref": "마 12:15-21"
+        "ref": "마 12:9-21"
       },
       {
         "kind": "similar",
@@ -4275,7 +4266,7 @@
       {
         "kind": "same",
         "book": "mt",
-        "ref": "마 12:9-14"
+        "ref": "마 12:9-21"
       },
       {
         "kind": "same",

@@ -62,7 +62,7 @@ describe('책별 콘텐츠', () => {
     expect(BOOKS_WITH_CONTENT).toEqual(['mt', 'mk', 'lk'])
     expect(piecesOf('mk').length).toBe(98)
     expect(piecesOf('mk').every((p) => p.book === 'mk')).toBe(true)
-    expect(piecesOf('mt').length).toBe(108) // 마 1–20장 (작업 4·5)
+    expect(piecesOf('mt').length).toBe(107) // 마 1–20장 (작업 4·5)
     expect(piecesOf('mt').every((p) => p.book === 'mt')).toBe(true)
     expect(piecesOf('jn')).toEqual([])
   })
