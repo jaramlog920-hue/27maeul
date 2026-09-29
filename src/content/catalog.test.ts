@@ -19,6 +19,7 @@ describe('catalog', () => {
     const vs = versesOf('눅 17:34-37')
     expect(vs.map((v) => v.verse)).toEqual([34, 35, 37])
     expect(vs.some((v) => v.text === '(없음)')).toBe(false)
+    expect(versesOf('마 23:13-15').map((v) => v.verse)).toEqual([13, 15])
   })
 })
 
@@ -62,7 +63,7 @@ describe('책별 콘텐츠', () => {
     expect(BOOKS_WITH_CONTENT).toEqual(['mt', 'mk', 'lk'])
     expect(piecesOf('mk').length).toBe(98)
     expect(piecesOf('mk').every((p) => p.book === 'mk')).toBe(true)
-    expect(piecesOf('mt').length).toBe(107) // 마 1–20장 (작업 4·5)
+    expect(piecesOf('mt').length).toBe(54 + 53 + 50) // 마 1–10장 54 + 11–20장 53 + 21–28장 50 (작업 4·5·6)
     expect(piecesOf('mt').every((p) => p.book === 'mt')).toBe(true)
     expect(piecesOf('jn')).toEqual([])
   })
@@ -75,7 +76,10 @@ describe('책별 콘텐츠', () => {
     expect(pieceOfVerse('마 11:1')?.id).toBe('mt-010-040') // 장을 넘는 조각 마 10:40-11:1
     expect(pieceOfVerse('마 11:2')?.id).toBe('mt-011-002')
     expect(pieceOfVerse('마 20:34')?.id).toBe('mt-020-029')
-    expect(pieceOfVerse('마 21:1')).toBeUndefined()
+    expect(pieceOfVerse('마 21:1')?.id).toBe('mt-021-001')
+    expect(pieceOfVerse('마 23:13')?.id).toBe('mt-023-013')
+    expect(pieceOfVerse('마 23:14')).toBeUndefined() // (없음) — 번호만 조각 범위에 걸치고, 조각 찾기에도 나오지 않음
+    expect(pieceOfVerse('마 28:20')?.id).toBe('mt-028-016')
     expect(pieceOfVerse('요 1:1')).toBeUndefined()
   })
   it('대괄호 구간(막 16:9-20)의 절은 괄호 글자가 없는 가운데 절까지 괄호 안으로 친다', () => {

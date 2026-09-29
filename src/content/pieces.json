@@ -1606,6 +1606,11 @@
         "kind": "similar",
         "book": "lk",
         "ref": "눅 17:5-6"
+      },
+      {
+        "kind": "similar",
+        "book": "mk",
+        "ref": "막 11:20-26"
       }
     ]
   },
@@ -1840,6 +1845,986 @@
         "kind": "similar",
         "book": "lk",
         "ref": "눅 18:35-43"
+      }
+    ]
+  },
+  {
+    "id": "mt-021-001",
+    "book": "mt",
+    "ref": "마 21:1-11",
+    "chapter": 21,
+    "title": "나귀와 나귀 새끼",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 11:1-11"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 19:28-40"
+      },
+      {
+        "kind": "same",
+        "book": "jn",
+        "ref": "요 12:12-19"
+      }
+    ]
+  },
+  {
+    "id": "mt-021-012",
+    "book": "mt",
+    "ref": "마 21:12-17",
+    "chapter": 21,
+    "title": "기도하는 집",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 11:15-19"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 19:45-48"
+      },
+      {
+        "kind": "similar",
+        "book": "jn",
+        "ref": "요 2:13-22"
+      }
+    ]
+  },
+  {
+    "id": "mt-021-018",
+    "book": "mt",
+    "ref": "마 21:18-22",
+    "chapter": 21,
+    "title": "무화과나무가 곧 마른지라",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 11:12-14"
+      },
+      {
+        "kind": "similar",
+        "book": "mk",
+        "ref": "막 11:20-26"
+      }
+    ]
+  },
+  {
+    "id": "mt-021-023",
+    "book": "mt",
+    "ref": "마 21:23-27",
+    "chapter": 21,
+    "title": "무슨 권세로",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 11:27-33"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 20:1-8"
+      }
+    ]
+  },
+  {
+    "id": "mt-021-028",
+    "book": "mt",
+    "ref": "마 21:28-32",
+    "chapter": 21,
+    "title": "두 아들",
+    "stamps": []
+  },
+  {
+    "id": "mt-021-033",
+    "book": "mt",
+    "ref": "마 21:33-46",
+    "chapter": 21,
+    "title": "건축자들의 버린 돌",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 12:1-12"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 20:9-19"
+      }
+    ]
+  },
+  {
+    "id": "mt-022-001",
+    "book": "mt",
+    "ref": "마 22:1-14",
+    "chapter": 22,
+    "title": "혼인 잔치",
+    "stamps": [
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 14:15-24"
+      }
+    ]
+  },
+  {
+    "id": "mt-022-015",
+    "book": "mt",
+    "ref": "마 22:15-22",
+    "chapter": 22,
+    "title": "가이사에게 세를",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 12:13-17"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 20:20-26"
+      }
+    ]
+  },
+  {
+    "id": "mt-022-023",
+    "book": "mt",
+    "ref": "마 22:23-33",
+    "chapter": 22,
+    "title": "부활 때에",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 12:18-27"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 20:27-40"
+      }
+    ]
+  },
+  {
+    "id": "mt-022-034",
+    "book": "mt",
+    "ref": "마 22:34-40",
+    "chapter": 22,
+    "title": "크고 첫째 되는 계명",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 12:28-34"
+      },
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 10:25-28"
+      }
+    ]
+  },
+  {
+    "id": "mt-022-041",
+    "book": "mt",
+    "ref": "마 22:41-46",
+    "chapter": 22,
+    "title": "내 우편에 앉았으라",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 12:35-37"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 20:41-44"
+      }
+    ]
+  },
+  {
+    "id": "mt-023-001",
+    "book": "mt",
+    "ref": "마 23:1-12",
+    "chapter": 23,
+    "title": "모세의 자리",
+    "stamps": [
+      {
+        "kind": "similar",
+        "book": "mk",
+        "ref": "막 12:38-40"
+      },
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 20:45-47"
+      },
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 11:37-54"
+      }
+    ]
+  },
+  {
+    "id": "mt-023-013",
+    "book": "mt",
+    "ref": "마 23:13-22",
+    "chapter": 23,
+    "title": "소경된 인도자여",
+    "stamps": [
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 11:37-54"
+      }
+    ]
+  },
+  {
+    "id": "mt-023-023",
+    "book": "mt",
+    "ref": "마 23:23-28",
+    "chapter": 23,
+    "title": "회칠한 무덤",
+    "stamps": [
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 11:37-54"
+      }
+    ]
+  },
+  {
+    "id": "mt-023-029",
+    "book": "mt",
+    "ref": "마 23:29-36",
+    "chapter": 23,
+    "title": "의인 아벨의 피",
+    "stamps": [
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 11:37-54"
+      }
+    ]
+  },
+  {
+    "id": "mt-023-037",
+    "book": "mt",
+    "ref": "마 23:37-39",
+    "chapter": 23,
+    "title": "암탉이 그 새끼를",
+    "stamps": [
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 13:34-35"
+      }
+    ]
+  },
+  {
+    "id": "mt-024-001",
+    "book": "mt",
+    "ref": "마 24:1-2",
+    "chapter": 24,
+    "title": "성전 건물들",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 13:1-2"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 21:5-6"
+      }
+    ]
+  },
+  {
+    "id": "mt-024-003",
+    "book": "mt",
+    "ref": "마 24:3-14",
+    "chapter": 24,
+    "title": "재난의 시작",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 13:3-13"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 21:7-19"
+      }
+    ]
+  },
+  {
+    "id": "mt-024-015",
+    "book": "mt",
+    "ref": "마 24:15-22",
+    "chapter": 24,
+    "title": "멸망의 가증한 것",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 13:14-23"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 21:20-24"
+      }
+    ]
+  },
+  {
+    "id": "mt-024-023",
+    "book": "mt",
+    "ref": "마 24:23-28",
+    "chapter": 24,
+    "title": "번개가 동편에서",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 13:14-23"
+      },
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 17:20-37"
+      }
+    ]
+  },
+  {
+    "id": "mt-024-029",
+    "book": "mt",
+    "ref": "마 24:29-31",
+    "chapter": 24,
+    "title": "인자의 징조",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 13:24-27"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 21:25-28"
+      }
+    ]
+  },
+  {
+    "id": "mt-024-032",
+    "book": "mt",
+    "ref": "마 24:32-35",
+    "chapter": 24,
+    "title": "천지는 없어지겠으나",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 13:28-31"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 21:29-33"
+      }
+    ]
+  },
+  {
+    "id": "mt-024-036",
+    "book": "mt",
+    "ref": "마 24:36-44",
+    "chapter": 24,
+    "title": "노아의 때",
+    "stamps": [
+      {
+        "kind": "similar",
+        "book": "mk",
+        "ref": "막 13:32-37"
+      },
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 17:20-37"
+      },
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 12:35-48"
+      },
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 21:34-38"
+      }
+    ]
+  },
+  {
+    "id": "mt-024-045",
+    "book": "mt",
+    "ref": "마 24:45-51",
+    "chapter": 24,
+    "title": "충성되고 지혜 있는 종",
+    "stamps": [
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 12:35-48"
+      }
+    ]
+  },
+  {
+    "id": "mt-025-001",
+    "book": "mt",
+    "ref": "마 25:1-13",
+    "chapter": 25,
+    "title": "열 처녀",
+    "stamps": [
+      {
+        "kind": "similar",
+        "book": "mk",
+        "ref": "막 13:32-37"
+      },
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 12:35-48"
+      },
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 13:22-30"
+      }
+    ]
+  },
+  {
+    "id": "mt-025-014",
+    "book": "mt",
+    "ref": "마 25:14-30",
+    "chapter": 25,
+    "title": "다섯 달란트",
+    "stamps": [
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 19:11-27"
+      },
+      {
+        "kind": "similar",
+        "book": "mk",
+        "ref": "막 13:32-37"
+      },
+      {
+        "kind": "similar",
+        "book": "mk",
+        "ref": "막 4:21-25"
+      }
+    ]
+  },
+  {
+    "id": "mt-025-031",
+    "book": "mt",
+    "ref": "마 25:31-46",
+    "chapter": 25,
+    "title": "양과 염소",
+    "stamps": []
+  },
+  {
+    "id": "mt-026-001",
+    "book": "mt",
+    "ref": "마 26:1-5",
+    "chapter": 26,
+    "title": "이틀을 지나면",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 14:1-2"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 22:1-6"
+      }
+    ]
+  },
+  {
+    "id": "mt-026-006",
+    "book": "mt",
+    "ref": "마 26:6-13",
+    "chapter": 26,
+    "title": "향유 한 옥합",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 14:3-9"
+      },
+      {
+        "kind": "similar",
+        "book": "jn",
+        "ref": "요 12:1-8"
+      },
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 7:36-50"
+      }
+    ]
+  },
+  {
+    "id": "mt-026-014",
+    "book": "mt",
+    "ref": "마 26:14-16",
+    "chapter": 26,
+    "title": "은 삼십",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 14:10-11"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 22:1-6"
+      }
+    ]
+  },
+  {
+    "id": "mt-026-017",
+    "book": "mt",
+    "ref": "마 26:17-19",
+    "chapter": 26,
+    "title": "무교절의 첫날",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 14:12-16"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 22:7-13"
+      }
+    ]
+  },
+  {
+    "id": "mt-026-020",
+    "book": "mt",
+    "ref": "마 26:20-29",
+    "chapter": 26,
+    "title": "언약의 피",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 14:17-25"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 22:14-23"
+      },
+      {
+        "kind": "similar",
+        "book": "jn",
+        "ref": "요 13:21-30"
+      }
+    ]
+  },
+  {
+    "id": "mt-026-030",
+    "book": "mt",
+    "ref": "마 26:30-35",
+    "chapter": 26,
+    "title": "양의 떼가 흩어지리라",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 14:26-31"
+      },
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 22:31-34"
+      },
+      {
+        "kind": "similar",
+        "book": "jn",
+        "ref": "요 13:36-38"
+      }
+    ]
+  },
+  {
+    "id": "mt-026-036",
+    "book": "mt",
+    "ref": "마 26:36-46",
+    "chapter": 26,
+    "title": "겟세마네",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 14:32-42"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 22:39-46"
+      }
+    ]
+  },
+  {
+    "id": "mt-026-047",
+    "book": "mt",
+    "ref": "마 26:47-56",
+    "chapter": 26,
+    "title": "검을 가지는 자는",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 14:43-52"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 22:47-53"
+      },
+      {
+        "kind": "same",
+        "book": "jn",
+        "ref": "요 18:2-11"
+      }
+    ]
+  },
+  {
+    "id": "mt-026-057",
+    "book": "mt",
+    "ref": "마 26:57-58",
+    "chapter": 26,
+    "title": "대제사장의 집 뜰",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 14:53-54"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 22:54-62"
+      },
+      {
+        "kind": "same",
+        "book": "jn",
+        "ref": "요 18:15-18"
+      }
+    ]
+  },
+  {
+    "id": "mt-026-059",
+    "book": "mt",
+    "ref": "마 26:59-68",
+    "chapter": 26,
+    "title": "거짓 증인",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 14:55-65"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 22:63-65"
+      },
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 22:66-71"
+      }
+    ]
+  },
+  {
+    "id": "mt-026-069",
+    "book": "mt",
+    "ref": "마 26:69-75",
+    "chapter": 26,
+    "title": "닭이 곧 울더라",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 14:66-72"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 22:54-62"
+      },
+      {
+        "kind": "same",
+        "book": "jn",
+        "ref": "요 18:15-18, 25-27"
+      }
+    ]
+  },
+  {
+    "id": "mt-027-001",
+    "book": "mt",
+    "ref": "마 27:1-2",
+    "chapter": 27,
+    "title": "총독 빌라도에게",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 15:1-5"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 23:1-5"
+      },
+      {
+        "kind": "same",
+        "book": "jn",
+        "ref": "요 18:28-38"
+      }
+    ]
+  },
+  {
+    "id": "mt-027-003",
+    "book": "mt",
+    "ref": "마 27:3-10",
+    "chapter": 27,
+    "title": "토기장이의 밭",
+    "stamps": []
+  },
+  {
+    "id": "mt-027-011",
+    "book": "mt",
+    "ref": "마 27:11-14",
+    "chapter": 27,
+    "title": "유대인의 왕이냐",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 15:1-5"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 23:1-5"
+      },
+      {
+        "kind": "same",
+        "book": "jn",
+        "ref": "요 18:28-38"
+      }
+    ]
+  },
+  {
+    "id": "mt-027-015",
+    "book": "mt",
+    "ref": "마 27:15-26",
+    "chapter": 27,
+    "title": "손을 씻으며",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 15:6-15"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 23:13-25"
+      },
+      {
+        "kind": "same",
+        "book": "jn",
+        "ref": "요 18:39-19:16"
+      }
+    ]
+  },
+  {
+    "id": "mt-027-027",
+    "book": "mt",
+    "ref": "마 27:27-31",
+    "chapter": 27,
+    "title": "홍포를 입히며",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 15:16-20"
+      },
+      {
+        "kind": "similar",
+        "book": "jn",
+        "ref": "요 19:1-3"
+      }
+    ]
+  },
+  {
+    "id": "mt-027-032",
+    "book": "mt",
+    "ref": "마 27:32-44",
+    "chapter": 27,
+    "title": "십자가에서 내려오라",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 15:21-32"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 23:26"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 23:32-43"
+      },
+      {
+        "kind": "same",
+        "book": "jn",
+        "ref": "요 19:17-27"
+      }
+    ]
+  },
+  {
+    "id": "mt-027-045",
+    "book": "mt",
+    "ref": "마 27:45-56",
+    "chapter": 27,
+    "title": "성소 휘장",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 15:33-41"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 23:44-49"
+      },
+      {
+        "kind": "same",
+        "book": "jn",
+        "ref": "요 19:28-30"
+      }
+    ]
+  },
+  {
+    "id": "mt-027-057",
+    "book": "mt",
+    "ref": "마 27:57-61",
+    "chapter": 27,
+    "title": "아리마대 부자",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 15:42-47"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 23:50-56"
+      },
+      {
+        "kind": "same",
+        "book": "jn",
+        "ref": "요 19:38-42"
+      }
+    ]
+  },
+  {
+    "id": "mt-027-062",
+    "book": "mt",
+    "ref": "마 27:62-66",
+    "chapter": 27,
+    "title": "돌을 인봉하고",
+    "stamps": []
+  },
+  {
+    "id": "mt-028-001",
+    "book": "mt",
+    "ref": "마 28:1-10",
+    "chapter": 28,
+    "title": "안식 후 첫날",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 16:1-8"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 24:1-12"
+      },
+      {
+        "kind": "similar",
+        "book": "mk",
+        "ref": "막 16:9-11"
+      },
+      {
+        "kind": "similar",
+        "book": "jn",
+        "ref": "요 20:1-10"
+      },
+      {
+        "kind": "similar",
+        "book": "jn",
+        "ref": "요 20:11-18"
+      }
+    ]
+  },
+  {
+    "id": "mt-028-011",
+    "book": "mt",
+    "ref": "마 28:11-15",
+    "chapter": 28,
+    "title": "군병들이 돈을 받고",
+    "stamps": []
+  },
+  {
+    "id": "mt-028-016",
+    "book": "mt",
+    "ref": "마 28:16-20",
+    "chapter": 28,
+    "title": "모든 족속으로",
+    "stamps": [
+      {
+        "kind": "similar",
+        "book": "mk",
+        "ref": "막 16:14-18"
       }
     ]
   },
@@ -2339,6 +3324,11 @@
         "kind": "similar",
         "book": "mt",
         "ref": "마 13:12"
+      },
+      {
+        "kind": "similar",
+        "book": "mt",
+        "ref": "마 25:29"
       }
     ]
   },
@@ -3035,6 +4025,11 @@
         "kind": "similar",
         "book": "mt",
         "ref": "마 6:14-15"
+      },
+      {
+        "kind": "similar",
+        "book": "mt",
+        "ref": "마 17:20"
       }
     ]
   },
@@ -3306,6 +4301,11 @@
         "kind": "similar",
         "book": "lk",
         "ref": "눅 12:35-48"
+      },
+      {
+        "kind": "similar",
+        "book": "mt",
+        "ref": "마 25:13-15"
       }
     ]
   },
@@ -5152,6 +6152,11 @@
         "kind": "similar",
         "book": "mk",
         "ref": "막 13:33-37"
+      },
+      {
+        "kind": "similar",
+        "book": "mt",
+        "ref": "마 25:1-13"
       }
     ]
   },
@@ -5253,6 +6258,11 @@
         "kind": "similar",
         "book": "mt",
         "ref": "마 7:21-23"
+      },
+      {
+        "kind": "similar",
+        "book": "mt",
+        "ref": "마 25:10-12"
       }
     ]
   },
@@ -5924,6 +6934,11 @@
         "kind": "similar",
         "book": "mk",
         "ref": "막 13:33-37"
+      },
+      {
+        "kind": "similar",
+        "book": "mt",
+        "ref": "마 24:42-44"
       }
     ]
   },
@@ -6021,7 +7036,7 @@
     "title": "닭 울기 전에",
     "stamps": [
       {
-        "kind": "same",
+        "kind": "similar",
         "book": "mt",
         "ref": "마 26:31-35"
       },
