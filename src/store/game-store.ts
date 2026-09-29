@@ -2,7 +2,7 @@
 import { create } from 'zustand'
 import { CONTENT, pieceById, pieceOfQuestion, piecesOf, quizSourceFor } from '../content/catalog'
 import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
-import { canShelve, payRetry, poolFor, readOff, shelve } from '../engine/library'
+import { canShelve, payRetry, poolFor, shelve } from '../engine/library'
 import { ALBUM_IDS, fill, itemList, itemName, NEIGHBOR_LINES, SCENES, T } from '../content/text'
 import { grapesRipe, isWet, weatherOf } from '../engine/calendar'
 import { cleanName, type Animal } from '../engine/companion'
@@ -306,9 +306,8 @@ export const useGame = create<Store>((set, get) => {
     if (target.kind !== 'place') return { game, modal: null }
     switch (target.id) {
       case 'bed': {
-        const pieceId = reviewPick(game, rng)
-        const g = pieceId ? persist(readOff(game, pieceId)) : game
-        return { game: g, modal: { kind: 'review', pieceId } }
+        // 다시 읽을 목록에서는 여기서 빼지 않는다 — 읽고 자기(sleep)를 눌렀을 때만 뺀다
+        return { game, modal: { kind: 'review', pieceId: reviewPick(game, rng) } }
       }
       case 'desk': {
         const lit = lightLamp(game)
@@ -711,8 +710,8 @@ export const useGame = create<Store>((set, get) => {
     sleep: () => {
       sfx('sleep')
       const m = get().modal
-      const read = m?.kind === 'review' && m.pieceId !== null
-      set({ game: persist(goToSleep(get().game, CONTENT, { read })), modal: null })
+      const pieceId = m?.kind === 'review' ? m.pieceId : null
+      set({ game: persist(goToSleep(get().game, CONTENT, { read: pieceId !== null, pieceId: pieceId ?? undefined })), modal: null })
     },
     saveMyLine: (pieceId, text) => set({ game: persist(setMyLine(get().game, pieceId, text)), modal: null }),
 

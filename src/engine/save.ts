@@ -81,7 +81,9 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     todayHeard: s.todayHeard.filter((id) => known.has(id)),
     // 끝나지 않은 책의 서고 칸은 없앤다 (시험판 저장이 3장만 읽은 책을 꽂았을 수 있다)
     shelved: Object.fromEntries(
-      Object.entries(s.shelved ?? {}).filter(([b]) => (BOOKS as readonly string[]).includes(b) && bookDone({ progress }, b as Book, content)),
+      Object.entries(isObj(s.shelved) ? s.shelved : {}).filter(
+        ([b, g]) => (BOOKS as readonly string[]).includes(b) && (g === 0 || g === 1 || g === 2) && bookDone({ progress }, b as Book, content),
+      ),
     ),
     garden: s.garden ?? {},
     rereads: (s.rereads ?? []).filter((id) => known.has(id)),

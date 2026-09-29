@@ -185,6 +185,10 @@ button:focus-visible {
 .hud-shelf {
   color: #d9c3a0;
 }
+.hud-peace {
+  color: #bfcfa4;
+  font-weight: 700;
+}
 .hud-buttons {
   display: flex;
   gap: 6px;

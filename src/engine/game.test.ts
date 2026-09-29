@@ -373,6 +373,12 @@ describe('평안', () => {
     expect(peaceful(goToSleep(read, CONTENT))).toBe(false)
     expect(peaceful(goToSleep(s0, CONTENT))).toBe(false)
   })
+  it('복습 구절은 읽고 잘 때만 다시 읽을 목록에서 빠진다', () => {
+    const s0 = { ...at(newGame(CONTENT), 22 * 60, 3), rereads: ['r1', 'r2'] }
+    expect(goToSleep(s0, CONTENT, { read: true, pieceId: 'r1' }).rereads).toEqual(['r2'])
+    expect(goToSleep(s0, CONTENT).rereads).toEqual(['r1', 'r2'])
+    expect(goToSleep(s0, CONTENT, { read: true }).rereads).toEqual(['r1', 'r2'])
+  })
   it('다시 읽을 것·오늘 들은 것이 없어도 모아 둔 조각이 있으면 읽을 수 있다', () => {
     const s = { ...newGame(CONTENT), rereads: [], todayHeard: [], collected: ['a', 'b', 'c'] }
     expect(reviewPick(s, zero)).toBe('a')
@@ -546,6 +552,18 @@ describe('저장', () => {
     expect(partial.progress.mk.completed).toEqual([1, 2, 3])
     const done = load(allMk, { mk: 2 })
     expect(done.shelved.mk).toBe(2)
+  })
+  it('서고 칸은 책 키가 mt|mk|lk|jn이고 값이 0|1|2인 것만 남는다', () => {
+    const s = newGame(CONTENT)
+    const all: Record<string, { arrangement: object; completed: number[] }> = {}
+    for (const b of ['mt', 'mk', 'lk', 'jn'] as const)
+      all[b] = { arrangement: {}, completed: [...new Set(piecesOf(b).map((p) => p.chapter))] }
+    const load = (shelved: unknown) =>
+      deserialize(JSON.stringify({ ...JSON.parse(serializeForTest(s)), shelved, progress: all }), CONTENT)!
+    const back = load({ mt: 0, mk: 1, lk: 3, jn: 'x', zz: 1, toString: 1, __proto__: 2 })
+    expect(back.shelved).toEqual({ mt: 0, mk: 1 })
+    expect(load({ lk: -1, jn: 1.5 }).shelved).toEqual({})
+    expect(load('junk').shelved).toEqual({})
   })
   it('깨진 저장은 null, 저장소 예외도 흡수', () => {
     expect(deserialize('{not json', CONTENT)).toBeNull()

@@ -987,7 +987,12 @@ export function drinkWater(s: GameState): GameState | null {
   return passTime({ ...s, inv: left, needs: coolDown(s.needs) }, 5)
 }
 
-export function goToSleep(s: GameState, content: GameContent, opts: { read?: boolean } = {}): GameState {
+/**
+ * opts.read: 자기 전 복습 구절을 읽고 잔다(평안). opts.pieceId: 그때 읽은 구절 — 다시 읽을 목록에서 뺀다.
+ * 창만 닫고(더 깨어 있기) 자면 read/pieceId가 없어 목록이 그대로 남는다.
+ */
+export function goToSleep(s0: GameState, content: GameContent, opts: { read?: boolean; pieceId?: string } = {}): GameState {
+  const s = opts.read && opts.pieceId ? readOff(s0, opts.pieceId) : s0
   const sick = fallsSick(s.needs)
   let clock = sleepClock(s.clock)
   if (sick) clock = { ...clock, minute: 10 * 60 }
