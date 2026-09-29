@@ -8,8 +8,6 @@ export const BABY_CRAWL = 16
 export const BABY_WALK = 26
 export const CHILD_ASKS_AT = 3
 export const LETTERS_TOTAL = 7
-/** 이만큼 배웠으면 잔치에서 한 줄을 읽는다 */
-export const LETTERS_TO_READ = 5
 export const LESSON_FROM = 18 * 60
 export const LESSON_TO = 19 * 60 + 30
 export const LESSON_SPOT: Tile = { x: 7, y: 4 }

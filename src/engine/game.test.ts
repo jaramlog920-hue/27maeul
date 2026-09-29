@@ -47,7 +47,8 @@ import { heartsOf } from './hearts'
 import { STRAY_SPOTS } from './companion'
 import { CONTENT, piecesOf } from '../content/catalog'
 import type { NeighborDef } from './types'
-import { FESTIVAL_FROM, FESTIVAL_TO, isWet, weatherOf } from './calendar'
+import { FESTIVAL_FROM, FESTIVAL_TO, festivalOf, isWet, weatherOf } from './calendar'
+import { scheduledEvents } from './events'
 import { FESTIVAL_SPOTS } from './neighbors'
 import { actsDoorGlows } from './library'
 import { ALBUM_IDS, SCENES } from '../content/text'
@@ -364,6 +365,37 @@ describe('복음서 방 완성 잔치', () => {
     expect(s3.scenes).not.toContain('gospelFeast')
     expect(s3.flags.gospelFeast).toBe(2)
     expect(s3.clock.day).toBe(5)
+  })
+  it('아기 잔치 날과 겹치면 복음서 방 잔치를 하루 미룬다 (저녁 모임이 겹치지 않는다)', () => {
+    // 21일째 밤에 자면 22일째 아침 — 22일째는 아기 잔치 날(비가 오지 않는 날)
+    expect(isWet(weatherOf(22))).toBe(false)
+    const baby = goToSleep({ ...night(FOUR), clock: { day: 21, minute: 22 * 60 } }, CONTENT)
+    expect(baby.clock.day).toBe(22)
+    expect(baby.today.gathering).toBe('babyParty')
+    expect(baby.scenes).not.toContain('gospelFeast')
+    expect(baby.flags.gospelFeast).toBeUndefined()
+    // 다음 밤에 자면 그다음 날 복음서 방 잔치가 열린다
+    const feast = goToSleep(at({ ...baby, scenes: [] }, 22 * 60), CONTENT)
+    expect(feast.clock.day).toBe(23)
+    expect(feast.scenes.filter((x) => x === 'gospelFeast')).toHaveLength(1)
+    expect(feast.flags.gospelFeast).toBe(1)
+  })
+  it('마을 행사(수확·모닥불) 날과 겹치면 복음서 방 잔치를 하루 미룬다', () => {
+    // 19일째 밤에 자면 20일째 아침 — 가을 여섯째 날, 포도 수확 잔치
+    expect(festivalOf(20)).toBe('grapes')
+    const fest = goToSleep({ ...night(FOUR), clock: { day: 19, minute: 22 * 60 } }, CONTENT)
+    expect(fest.clock.day).toBe(20)
+    expect(fest.scenes).not.toContain('gospelFeast')
+    expect(fest.flags.gospelFeast).toBeUndefined()
+    // 그날 저녁은 원래 마을 행사 하나만 — 복음서 방 잔치 알림이 함께 뜨지 않는다
+    const todays = scheduledEvents(fest, CONTENT).filter((e) => e.day === 20)
+    expect(todays.some((e) => e.id.endsWith(':gospelFeast'))).toBe(false)
+    expect(todays.some((e) => e.id.endsWith(':festival'))).toBe(true)
+    // 다음 날 아침 복음서 방 잔치
+    const feast = goToSleep(at({ ...fest, scenes: [] }, 22 * 60), CONTENT)
+    expect(feast.clock.day).toBe(21)
+    expect(feast.scenes.filter((x) => x === 'gospelFeast')).toHaveLength(1)
+    expect(feast.flags.gospelFeast).toBe(1)
   })
   it('세 권일 때는 잔치가 없다', () => {
     const s = goToSleep(night({ mt: 1, mk: 1, lk: 1 }), CONTENT)

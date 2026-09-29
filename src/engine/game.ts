@@ -1085,9 +1085,9 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
   if (visitor) flags[`visitDay:${visitor}`] = day
   let gathering = planGathering(day, level, flags)
   // ── 복음서 방 완성 잔치: 네 권을 다 꽂고 처음 잠든 다음 날 (한 번). 그다음 밤부터는 잔치가 지난 것 ──
-  // 아기 잔치 날(정해진 날)과 겹치면 하루 미룬다 — 두 저녁 모임이 한 저녁에 겹치지 않게
+  // 아기 잔치 날(정해진 날)이나 마을 행사(수확·모닥불) 저녁과 겹치면 하루 미룬다 — 저녁 모임이 한 저녁에 겹치지 않게
   if (flags.gospelFeast === 1) flags.gospelFeast = 2
-  else if (!flags.gospelFeast && gospelRoomFull(s) && gathering !== 'babyParty') {
+  else if (!flags.gospelFeast && gospelRoomFull(s) && gathering !== 'babyParty' && !festivalOf(day)) {
     flags.gospelFeast = 1
     scenes.push('gospelFeast')
     // 잔치 저녁에는 별 보는 밤을 잡지 않는다 (다른 맑은 날에 다시 잡힌다)

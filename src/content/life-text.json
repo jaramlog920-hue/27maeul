@@ -1506,19 +1506,6 @@
       ],
       "album": "첫 장을 이은 날"
     },
-    "lastChapter": {
-      "title": "마지막 장",
-      "lines": [
-        {
-          "speaker": "narration",
-          "text": "마지막 장까지 모두 차례대로 이어 붙였다."
-        },
-        {
-          "speaker": "narration",
-          "text": "내일은 마을이 조금 떠들썩할 것 같다."
-        }
-      ]
-    },
     "gospelFeast": {
       "title": "복음서 방이 다 찼다",
       "lines": [
@@ -2652,7 +2639,6 @@
       "stars": " 언덕에서 별을 보았다.",
       "blanket": " 담요를 덮고 잤다.",
       "firstChapter": " 첫 장을 이어 붙였다.",
-      "lastChapter": " 마지막 장까지 이어 붙였다.",
       "gospelFeast": " 서고의 복음서 방이 다 찼다.",
       "feastFire": " 광장 모닥불 잔치에 갔다.",
       "friends": " 아이와 양치기가 단짝이 되었다.",
