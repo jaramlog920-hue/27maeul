@@ -152,6 +152,17 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
     g.fillStyle = '#d8c587'
     g.fillRect(kx - 1, ky + 2, 2, 2)
   }
+
+  // 텃밭 작물: 자란 만큼 키가 크고, 다 자라면 열매 색
+  for (const [k, p] of Object.entries(game.garden ?? {})) {
+    const [x, y] = k.split(',').map(Number)
+    const ripe = p.grown >= (p.crop === 'herb' ? 3 : 4)
+    const hgt = 3 + Math.min(p.grown, 4) * 2
+    px(g, x, y, 7, 13 - hgt, 2, hgt, '#6d8747')
+    if (p.grown >= 1) px(g, x, y, 5, 13 - hgt + 2, 6, 2, '#7aa84f')
+    if (ripe) px(g, x, y, 6, 13 - hgt - 1, 4, 3, p.crop === 'herb' ? '#b8d27a' : '#c9b477')
+    if (p.wateredDay === game.clock.day) px(g, x, y, 2, 13, 12, 2, '#5f503a')
+  }
 }
 
 /** 밤에 등불 기둥이 빛나는 자리 (화면 좌표로 바꿔 불빛을 그린다) */

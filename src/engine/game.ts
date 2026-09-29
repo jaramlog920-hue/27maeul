@@ -37,6 +37,7 @@ import { GAIN, heartsOf, MAX_POINTS } from './hearts'
 import { bookDone, emptyProgress, totalChapters, type Progress } from './books'
 import { currentChapter, offersForDay } from './offers'
 import { checkArrangement, type ArrangeResult } from './scroll'
+import { growGarden, type Plot } from './garden'
 import { readOff, type Grade } from './library'
 import {
   BABY_DAY,
@@ -123,6 +124,8 @@ export interface GameState {
   lettersDone: number
   /** 플레이어가 고른 주인공 */
   avatar: Avatar | null
+  /** 텃밭 ('x,y' → 작물) */
+  garden: Record<string, Plot>
 }
 
 export interface Today {
@@ -270,6 +273,7 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
     letterDay: null,
     lettersDone: 0,
     avatar: avatar ?? null,
+    garden: {},
   }
 }
 
@@ -590,7 +594,7 @@ export function giveGift(s: GameState, def: NeighborDef, item: ItemId): { state:
   return { state: heartUp({ ...s, inv: left, gifted: [...s.gifted, def.id] }, def.id, liked ? GAIN.giftLiked : GAIN.giftPlain), liked }
 }
 
-export const GIFTABLE: readonly ItemId[] = ['bread', 'grapes', 'fig', 'wool', 'olive', 'oil', 'barley', 'honey']
+export const GIFTABLE: readonly ItemId[] = ['bread', 'grapes', 'fig', 'wool', 'olive', 'oil', 'barley', 'honey', 'herb', 'bean']
 
 export interface Trade {
   id: string
@@ -638,6 +642,8 @@ export const TRADES: readonly Trade[] = [
   { id: 'inkpot', pay: { ink: 1 }, get: { inkpot: 1 } },
   { id: 'dryFlowers', pay: { fig: 1 }, get: { dryFlowers: 1 } },
   { id: 'hourglass', pay: { olive: 1, oil: 1 }, get: { hourglass: 1 } },
+  { id: 'seedHerb', pay: {}, coins: 5, get: { seedHerb: 2 } },
+  { id: 'seedBean', pay: {}, coins: 4, get: { seedBean: 2 } },
 ]
 
 export function tradesFor(flags: Record<string, number>): Trade[] {
@@ -989,6 +995,7 @@ export function goToSleep(s: GameState, content: GameContent, opts: { read?: boo
     gifted: [],
     offers: todaysOffers(day, s.collected, s, content, present),
     listened: [],
+    garden: growGarden(s.garden, s.clock.day),
     player: { ...s.player, x: bed.x, y: bed.y, path: [], facing: 'down' },
     target: null,
     // 일어나면 먼저 기지개

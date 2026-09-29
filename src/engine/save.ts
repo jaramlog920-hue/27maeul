@@ -80,6 +80,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     myLines,
     todayHeard: s.todayHeard.filter((id) => known.has(id)),
     shelved: s.shelved ?? {},
+    garden: s.garden ?? {},
     rereads: (s.rereads ?? []).filter((id) => known.has(id)),
     journal: s.journal.map((e) => ({ ...e, heard: (e.heard ?? []).filter((id) => known.has(id)) })),
   }

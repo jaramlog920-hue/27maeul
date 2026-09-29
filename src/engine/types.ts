@@ -24,6 +24,7 @@ export type PlaceId =
   | 'field'
   | 'library'
   | 'basket'
+  | 'garden'
 export type Target =
   | { kind: 'place'; id: PlaceId; tile: Tile }
   | { kind: 'neighbor'; id: string; tries: number }
@@ -97,6 +98,10 @@ export type ItemId =
   | 'inkpot'
   | 'dryFlowers'
   | 'hourglass'
+  | 'seedHerb'
+  | 'seedBean'
+  | 'herb'
+  | 'bean'
 
 export type Minigame = 'mash' | 'timing' | 'pick'
 

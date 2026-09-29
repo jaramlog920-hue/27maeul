@@ -405,6 +405,7 @@ export const ICON_PALETTE: Record<string, string> = {
   k: '#3b2a20', b: '#83adcc', B: '#547d9f', g: '#7a9c5b', G: '#507538', y: '#ccb981', Y: '#a08b54',
   w: '#f4ecd8', W: '#d9ccb0', p: '#784f8a', P: '#563169', r: '#9f6154', o: '#698544', O: '#3f5a22',
   d: '#2a2230', l: '#f5c542', n: '#94704f', N: '#745336', s: '#e0bba0', f: '#d18ba0', c: '#c7b18c',
+  E: '#6d8747', a: '#f1e6cf',
   // 가구 그림에서 줄인 아이콘의 색 (furniture-art ICON_CHAR)
   ...Object.fromEntries(Object.entries(ICON_CHAR).map(([from, to]) => [to, FURNI_PALETTE[from]])),
 }
@@ -439,6 +440,10 @@ export const ICONS: Record<string, SpriteRows> = {
   honey: ['...NN...', '..kyyk..', '.kyllyk.', '.kyyyyk.', '.klyyyk.', '.kyyyyk.', '..kkkk..', '........'],
   bird: ['........', '..nn....', '.nkn....', 'Nnnnnnn.', '.nnnnnNN', '..nnnn..', '...N.N..', '..NN.NN.'],
   goldLeaf: ['........', '.yyyyyy.', '.yYyyyy.', '.yyyyYy.', '.yyyyyy.', '.yYyyyy.', '.yyyyyy.', '........'],
+  seedHerb: ['........', '..kkkk..', '.kaaaak.', '.kaEaak.', '.kaaEak.', '.kaaaak.', '..kkkk..', '........'],
+  seedBean: ['........', '..kkkk..', '.kaaaak.', '.kayaak.', '.kaayak.', '.kaaaak.', '..kkkk..', '........'],
+  herb: ['...E....', '..EEE...', '.EEEEE..', '..EEE.E.', '...k.EEE', '...k..E.', '...k....', '........'],
+  bean: ['........', '.yy.....', 'yYyy.yy.', '.yyyyYy.', '...yyyy.', '........', '........', '........'],
 }
 
 // 가구 20종은 그림을 줄여 아이콘으로

@@ -242,7 +242,17 @@
     "requestNeeds": "부탁: {items}",
     "visitGot": "받은 것: {items}",
     "inviteNotHere": "오늘 저녁 초대한 집이 아닙니다.",
-    "villageLevel": "마을 {n}단계"
+    "villageLevel": "마을 {n}단계",
+    "gardenTitle": "텃밭",
+    "gardenEmpty": "빈 두둑",
+    "gardenPlantHerb": "향초 심기",
+    "gardenPlantBean": "콩 심기",
+    "gardenWater": "물 주기",
+    "gardenWatered": "오늘은 물을 주었어요.",
+    "gardenGrowing": "{crop} · {n}/{all}일",
+    "gardenHarvest": "거두기",
+    "gardenWinter": "겨울엔 텃밭이 쉬어요.",
+    "gardenNoSeed": "씨앗은 장날 상인에게 닢으로 살 수 있어요."
   },
   "items": {
     "water": {
@@ -440,6 +450,22 @@
     "hourglass": {
       "name": "모래시계",
       "desc": "모래가 사락사락 떨어진다."
+    },
+    "seedHerb": {
+      "name": "향초 씨앗",
+      "desc": "텃밭에 심으면 사흘 만에 향초가 자랍니다."
+    },
+    "seedBean": {
+      "name": "콩 씨앗",
+      "desc": "텃밭에 심으면 나흘 만에 콩을 거둡니다."
+    },
+    "herb": {
+      "name": "향초",
+      "desc": "좋은 향이 나는 풀. 장날에 팔거나 선물합니다."
+    },
+    "bean": {
+      "name": "콩",
+      "desc": "배를 조금 채워 줍니다."
     }
   },
   "recipes": {
@@ -456,7 +482,8 @@
     "vine": "포도 따기",
     "field": "보리 거두기",
     "fieldGlean": "이삭 줍기",
-    "library": "마을 서고"
+    "library": "마을 서고",
+    "garden": "텃밭"
   },
   "trades": {
     "pen": "좋은 펜",
@@ -492,7 +519,9 @@
     "scrolls": "두루마리 더미",
     "inkpot": "잉크병",
     "dryFlowers": "말린 꽃",
-    "hourglass": "모래시계"
+    "hourglass": "모래시계",
+    "seedHerb": "향초 씨앗 2",
+    "seedBean": "콩 씨앗 2"
   },
   "letters": {
     "title": "편지 바구니",

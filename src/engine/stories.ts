@@ -77,15 +77,16 @@ export function rainbowVisible(day: number, minute: number): boolean {
 }
 
 /** 다 쓴 날 아침, 이웃들이 모이는 마당 자리 (기록자의 집 앞) */
+// 텃밭이 생긴 뒤 (1~4, 8~9)는 막힌 칸이라 그 안에 있던 자리를 옆으로 옮겼다 (task-3)
 export const ENDING_SPOTS: Record<string, Tile> = {
-  baker: { x: 4, y: 8 },
+  baker: { x: 9, y: 8 },
   child: { x: 5, y: 8 },
   grandpa: { x: 7, y: 9 },
   smith: { x: 8, y: 8 },
-  shepherd: { x: 3, y: 9 },
+  shepherd: { x: 5, y: 9 },
   presser: { x: 9, y: 9 },
-  merchant: { x: 2, y: 8 },
+  merchant: { x: 6, y: 8 },
   weaver: { x: 8, y: 9 },
-  beekeeper: { x: 4, y: 9 },
+  beekeeper: { x: 6, y: 9 },
 }
 export const ENDING_UNTIL = 12 * 60

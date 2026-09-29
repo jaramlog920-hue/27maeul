@@ -48,6 +48,9 @@ describe('world', () => {
     const c = cameraFor(15, 14)
     expect(c.x).toBeCloseTo(15.5 - VIEW_W / 2)
   })
+  it('텃밭은 집 앞 여덟 칸', () => {
+    expect(PLACES.garden.tiles).toHaveLength(8)
+  })
 })
 
 describe('이웃집 안', () => {

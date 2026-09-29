@@ -498,6 +498,12 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r(C.wood, 4, 8, 8, 5)
       r('#f6f1e6', 5, 5, 6, 4)
       break
+    case 'l':
+      // 텃밭 흙두둑
+      r('#8a6a4a', 1, 3, 14, 12)
+      r('#735538', 1, 6, 14, 1)
+      r('#735538', 1, 10, 14, 1)
+      break
     case 'x':
       r(C.fence, 0, 5, 16, 2)
       r(C.fence, 0, 10, 16, 2)

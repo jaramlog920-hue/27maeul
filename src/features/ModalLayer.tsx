@@ -3,6 +3,7 @@ import { Bag } from './bag/Bag'
 import { AdoptForm } from './companion/AdoptForm'
 import { Desk } from './desk/Desk'
 import { Ending } from './ending/Ending'
+import { GardenMenu } from './garden/GardenMenu'
 import { Journal } from './journal/Journal'
 import { Library } from './library/Library'
 import { LetterBox } from './letters/LetterBox'
@@ -73,6 +74,8 @@ function Body() {
       return <Ending />
     case 'library':
       return <Library />
+    case 'garden':
+      return <GardenMenu at={modal.at} />
   }
 }
 

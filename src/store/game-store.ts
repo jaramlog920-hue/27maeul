@@ -50,6 +50,7 @@ import {
   fulfillRequest,
   chapterReady,
   readScripture,
+  passTime,
   type GameState,
   type SubmitResult,
   type Trade,
@@ -58,6 +59,8 @@ import { isHome, LOCKED_DOORS, lockedTiles, lockedZones, roomAt, sameTile, zoneA
 import { removal } from '../engine/room'
 import { heartsOf } from '../engine/hearts'
 import { add, RECIPES, type Inventory, type RecipeId } from '../engine/items'
+import { work } from '../engine/needs'
+import { plant, water, harvest, type CropId } from '../engine/garden'
 import { isDone, startMini, stepMini, tapMini, type MiniState } from '../engine/minigame'
 import { finishLetter, letterPay, letterWaiting } from '../engine/requests'
 import { saveGame } from '../engine/save'
@@ -98,6 +101,7 @@ export type Modal =
   | { kind: 'ending' }
   | { kind: 'library' }
   | { kind: 'letter' }
+  | { kind: 'garden'; at: Tile }
 
 interface Store {
   game: GameState
@@ -146,6 +150,9 @@ interface Store {
   readAt: (pieceId: string) => void
   blanket: () => void
   drink: () => void
+  plantAt: (at: Tile, crop: CropId) => void
+  waterAt: (at: Tile) => void
+  harvestAt: (at: Tile) => void
   // 책상·잠
   pickBook: (book: Book) => void
   moveInDesk: (book: Book, chapter: number, index: number, delta: number) => void
@@ -335,6 +342,8 @@ export const useGame = create<Store>((set, get) => {
       case 'anvil':
         get().say(T.ui.anvilHint)
         return { game, modal: null }
+      case 'garden':
+        return { game, modal: { kind: 'garden', at: target.tile } }
       default: {
         const info = gatherInfo(game, target.id)
         if (!info) return { game, modal: null }
@@ -582,6 +591,26 @@ export const useGame = create<Store>((set, get) => {
     drink: () => {
       const next = drinkWater(get().game)
       if (next) set({ game: persist(next), modal: null })
+    },
+    plantAt: (at, crop) => {
+      const next = plant(get().game, at, crop)
+      if (!next) return
+      sfx('place')
+      set({ game: persist(passTime({ ...next, needs: work(next.needs, 2) }, 10)), modal: null })
+    },
+    waterAt: (at) => {
+      const next = water(get().game, at)
+      if (!next) return
+      sfx('tap')
+      set({ game: persist(passTime({ ...next, needs: work(next.needs, 2) }, 10)), modal: null })
+    },
+    harvestAt: (at) => {
+      const before = get().game.inv
+      const next = harvest(get().game, at)
+      if (!next) return get().say(T.ui.bagFull)
+      sfx('gift')
+      toastGain(before, next.inv)
+      set({ game: persist(passTime(next, 10)), modal: null })
     },
 
     pickBook: (book) => {

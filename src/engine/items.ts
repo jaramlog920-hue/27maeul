@@ -10,6 +10,7 @@ export const FOODS: readonly [ItemId, number][] = [
   ['bread', 50],
   ['honey', 40],
   ['fig', 20],
+  ['bean', 15],
 ]
 
 export function count(inv: Inventory, id: ItemId): number {
