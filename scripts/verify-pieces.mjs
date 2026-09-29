@@ -45,6 +45,8 @@ const warn = (where, msg) => {
   console.error(`△ ${where}: ${msg}`)
 }
 
+// 본문이 없는 절 — '(없음)'과 앞 절에 합쳐 번역된 '(25절에 포함되어 있음)'(행 15:26). catalog.ts의 noText와 같다.
+const noText = (text) => text === '(없음)' || /^\(\d+절에 포함되어 있음\)$/.test(text)
 function textOf(ref) {
   return expandRef(ref, byAbbr, counts)
     .map((k) => {
@@ -52,6 +54,7 @@ function textOf(ref) {
       if (!t) throw new Error(`no verse ${k.bookId} ${k.chapter}:${k.verse} (${ref})`)
       return t
     })
+    .filter((t) => !noText(t))
     .join(' ')
 }
 function rangesOf(where, ref) {
@@ -198,8 +201,6 @@ for (const p of pieces) {
 // ── 괄호 조각에는 "같은 이야기"(=) 도장이 없다 ──
 // src/content/catalog.ts의 `bracketed`와 같은 규칙(대괄호·둥근 괄호 구간과 그 안의 절, '(없음)' 제외)을 여기서 다시 쓴다
 // (catalog.ts는 vite 번들 전용이라 노드 스크립트에서 가져오지 않는다). 규칙을 바꾸면 둘을 함께 고칠 것.
-// 본문이 없는 절 — '(없음)'과 앞 절에 합쳐 번역된 '(25절에 포함되어 있음)'(행 15:26). catalog.ts의 noText와 같다.
-const noText = (text) => text === '(없음)' || /^\(\d+절에 포함되어 있음\)$/.test(text)
 const bracketedKeys = new Set()
 for (const [bk, bid] of Object.entries(BOOK_IDS)) {
   let square = false
