@@ -24,7 +24,7 @@ describe('neighbors', () => {
   })
   it('시간표: 새벽엔 집, 아침엔 문 앞, 한낮엔 장터', () => {
     expect(goalFor(baker, { ...base, minute: 300 })).toBeNull()
-    expect(goalFor(baker, { ...base, minute: 400 })).toEqual({ x: 9, y: 17 })
+    expect(goalFor(baker, { ...base, minute: 400 })).toEqual({ x: 10, y: 16 })
     expect(goalFor(baker, { ...base, minute: 700 })).toEqual({ x: 20, y: 18 })
     expect(goalFor(baker, { ...base, minute: 23 * 60 })).toBeNull()
     expect(goalFor(baker, { ...base, minute: 25 * 60 })).toBeNull()

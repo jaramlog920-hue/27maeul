@@ -27,6 +27,33 @@ describe('지도 위의 자리', () => {
       }
     }
   })
+  it('이웃이 서는 자리는 한 칸 통로가 아니다 (그 칸을 막아도 마을이 둘로 나뉘지 않는다, 문 앞은 빼고)', () => {
+    const inVillage = (t: Tile) => t.y < 40
+    const reachable = (blocked: string) => {
+      const start = { x: 24, y: 10 }
+      const seen = new Set([`${start.x},${start.y}`])
+      const queue = [start]
+      while (queue.length) {
+        const t = queue.shift()!
+        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+          const n = { x: t.x + dx, y: t.y + dy }
+          const k = `${n.x},${n.y}`
+          if (seen.has(k) || k === blocked || !inVillage(n) || !isWalkable(n)) continue
+          seen.add(k)
+          queue.push(n)
+        }
+      }
+      // 문 칸은 세지 않는다 — 제 집 문 앞에 서는 것은 막힌 길이 아니다
+      return [...seen].filter((k) => { const [x, y] = k.split(',').map(Number); return !'DL'.includes(MAP[y][x]) }).length
+    }
+    const all = reachable('')
+    for (const d of neighbors)
+      for (const e of d.schedule as { from: number; tile?: Tile; wet?: Tile }[])
+        for (const t of [e.tile, e.wet]) {
+          if (!t || !inVillage(t)) continue
+          expect(reachable(`${t.x},${t.y}`), `${d.id} ${e.from} ${where(t)}`).toBe(all - 1)
+        }
+  })
   it('잔치·모임·이야기·동물 자리는 모두 걸을 수 있다', () => {
     const spots: [string, Tile][] = [['모닥불', FIRE]]
     for (const [k, v] of Object.entries(FESTIVAL_SPOTS)) spots.push([`잔치 ${k}`, v])
