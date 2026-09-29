@@ -1,7 +1,7 @@
-import { BOOKS_WITH_CONTENT, CONTENT, pieceById, piecesOf, quizSourceFor } from '../content/catalog'
+import { BOOKS_WITH_CONTENT, CONTENT, pieceById, pieceOfVerse, piecesOf, quizSourceFor } from '../content/catalog'
 import { chaptersOf } from './books'
 import { mulberry32 } from './offers'
-import { buildQuiz, detectiveAnswer, isCorrect, QUIZ_SIZE, quizzable, wordsOf, type Question } from './quiz'
+import { buildQuiz, detectiveAnswer, isCorrect, QUIZ_SIZE, quizzable, quizzablePiece, wordsOf, type Question } from './quiz'
 
 const norm = (s: string) => s.replace(/\s+/g, '')
 
@@ -89,6 +89,23 @@ describe('기록 퀴즈', () => {
     expect(quizzable('어느 여자가 열 드라크마가 있는데')).toBe(true)
     // 여러 절에 걸친 괄호 구간의 가운데 절 (막 16:10은 괄호 글자가 없다)
     expect(quizzable('어느 여자가 열 드라크마가 있는데', true)).toBe(false)
+  })
+
+  it('괄호 조각(막 16:9-20)은 문제·보기·정답 어디에도 나오지 않는다', () => {
+    const src = quizSourceFor(['mk'])
+    const bracket = piecesOf('mk').filter((p) => !quizzablePiece(p, src)).map((p) => p.id)
+    expect(bracket).toEqual(['mk-016-009', 'mk-016-012', 'mk-016-014', 'mk-016-019'])
+    expect(quizzablePiece(pieceById('mk-016-001'), src)).toBe(true)
+    for (let seed = 1; seed <= 200; seed++) {
+      for (const ch of [15, 16]) {
+        const qs = buildQuiz(piecesOf('mk'), ch, mulberry32(seed), src)
+        expect(qs, `ch ${ch} seed ${seed}`).toHaveLength(QUIZ_SIZE)
+        for (const q of qs) {
+          const ids = q.kind === 'detective' ? [q.pieceId] : q.kind === 'order' || q.kind === 'verse' ? [...q.options, q.answer] : [pieceOfVerse(q.ref)!.id]
+          for (const id of ids) expect(bracket, `ch ${ch} seed ${seed} ${q.kind}`).not.toContain(id)
+        }
+      }
+    }
   })
 
   it('정답 판정', () => {

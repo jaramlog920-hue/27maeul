@@ -59,6 +59,19 @@ describe('서고 퀴즈', () => {
     }
   }
 
+  it('괄호 조각(막 16:9-20)은 서고 퀴즈의 문제·보기·정답 어디에도 나오지 않는다', () => {
+    const bracket = ['mk-016-009', 'mk-016-012', 'mk-016-014', 'mk-016-019']
+    for (const pool of [['mk'], ['mk', 'lk']] as Book[][]) {
+      const src = quizSourceFor(pool)
+      for (let seed = 1; seed <= 200; seed++) {
+        for (const q of buildLibraryQuiz({ current: 'mk', pool, piecesOf, rng: mulberry32(seed), src })) {
+          const ids = q.kind === 'detective' ? [q.pieceId] : q.kind === 'order' || q.kind === 'verse' ? [...q.options, q.answer] : [pieceOfVerse(q.ref)!.id]
+          for (const id of ids) expect(bracket, `${pool.join('+')} seed ${seed} ${q.kind}`).not.toContain(id)
+        }
+      }
+    }
+  })
+
   it('서고에 다른 책이 있으면 "어느 책?" 문제가 나온다', () => {
     const pool: Book[] = ['mk', 'lk']
     for (const seed of [1, 2, 3]) {

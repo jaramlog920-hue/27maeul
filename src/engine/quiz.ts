@@ -65,6 +65,11 @@ export interface QuizSource {
   countVerse: (text: string) => number
 }
 
+/** 퀴즈에 (문제·보기·정답 어디로든) 쓸 수 있는 조각: 모든 절이 대괄호 구간 안인 조각(막 16:9-20)은 안 된다 */
+export function quizzablePiece(p: Piece, src: QuizSource): boolean {
+  return src.versesOf(p.ref).some((v) => !v.inBrackets)
+}
+
 function puzzle(p: Piece, src: QuizSource, rng: Rng): Question | null {
   const ok = src.versesOf(p.ref).filter((v) => {
     const n = wordsOf(v.text).length
@@ -136,7 +141,9 @@ function order(chapterPieces: readonly Piece[], rng: Rng): Extract<Question, { k
 
 const keyOf = (q: Question) => (q.kind === 'detective' ? q.pieceId : 'ref' in q ? q.ref : '')
 
-export function buildQuiz(pieces: readonly Piece[], chapter: number, rng: Rng, src: QuizSource): Question[] {
+export function buildQuiz(allPieces: readonly Piece[], chapter: number, rng: Rng, src: QuizSource): Question[] {
+  // 괄호 조각은 문제·보기·정답 어디에도 쓰지 않는다
+  const pieces = allPieces.filter((p) => quizzablePiece(p, src))
   const inChapter = pieces.filter((p) => p.chapter === chapter)
   // 보기가 모자라면 앞뒤 장의 조각을 섞는다
   const near = pieces.filter((p) => Math.abs(p.chapter - chapter) <= 1)
@@ -163,6 +170,19 @@ export function buildQuiz(pieces: readonly Piece[], chapter: number, rng: Rng, s
   for (let i = 0; out.length < QUIZ_SIZE && i < 10; i++) {
     const q = order(inChapter, rng)
     if (q && !out.some((o) => o.kind === 'order' && o.answer === q.answer && o.options.join() === q.options.join())) out.push(q)
+  }
+  // 그래도 모자라면(쓸 수 있는 조각이 하나뿐인 장 — 막 16장은 괄호 조각을 빼면 16:1-8만 남는다) 다른 절로 한 번 더 낸다
+  for (let pass = 0; out.length < QUIZ_SIZE && pass < 10; pass++) {
+    for (const make of order5) {
+      if (out.length >= QUIZ_SIZE) break
+      for (const p of shuffle(inChapter, rng)) {
+        const q = make(p)
+        if (!q || used.has(keyOf(q))) continue
+        used.add(keyOf(q))
+        out.push(q)
+        break
+      }
+    }
   }
   return shuffle(out, rng).slice(0, QUIZ_SIZE)
 }
@@ -204,7 +224,9 @@ export function buildLibraryQuiz(args: {
   rng: Rng
   src: QuizSource
 }): Question[] {
-  const { current, pool, piecesOf, rng, src } = args
+  const { current, pool, rng, src } = args
+  // 괄호 조각은 문제·보기·정답 어디에도 쓰지 않는다
+  const piecesOf = (b: Book) => args.piecesOf(b).filter((p) => quizzablePiece(p, src))
   const mine = piecesOf(current)
   const others = pool.filter((b) => b !== current)
   const makers: (() => Question | null)[] = []
