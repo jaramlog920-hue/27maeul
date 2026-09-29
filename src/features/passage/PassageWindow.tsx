@@ -13,7 +13,7 @@ export function PassageWindow({ pieceId, askLine, back }: { pieceId: string; ask
       <Passage refText={piece.ref} />
       <Stamps piece={piece} />
       <div className="actions">
-        <button onClick={() => (askLine ? open({ kind: 'myLine', pieceId }) : back ? open({ kind: 'shelf' }) : closeModal())}>
+        <button onClick={() => (askLine ? open({ kind: 'myLine', lineKey: pieceId }) : back ? open({ kind: 'shelf' }) : closeModal())}>
           {askLine ? T.ui.next : back ? T.ui.back : T.ui.close}
         </button>
       </div>

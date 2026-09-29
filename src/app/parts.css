@@ -363,6 +363,21 @@ button.big {
   margin-top: 2px;
   font-size: 14px;
 }
+.my-lines .hint {
+  display: block;
+  margin-top: 2px;
+}
+.my-lines li > button {
+  margin-top: 4px;
+  min-height: 32px;
+  padding: 4px 10px;
+  font-size: 12px;
+  box-shadow: none;
+}
+.shelf h3 {
+  font-size: 13px;
+  margin: 8px 0 4px;
+}
 
 .desk-read {
   text-align: left;

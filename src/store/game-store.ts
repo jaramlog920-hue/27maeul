@@ -28,6 +28,7 @@ import {
   reviewPick,
   sceneSeen,
   setArrangement,
+  bookLineKey,
   setMyLine,
   stargaze,
   submitChapter,
@@ -79,13 +80,17 @@ export type Pending =
 
 export type QuizMode = { kind: 'chapter'; book: Book; chapter: number } | { kind: 'library'; book: Book; retry: boolean }
 
+/** 선반의 칸 */
+export type ShelfTab = 'dex' | 'gifts' | 'recipes' | 'album' | 'lines'
+
 export type Modal =
   | { kind: 'settings' }
   | { kind: 'guide' }
   | { kind: 'schedule' }
   | { kind: 'talk'; neighborId: string; line: string }
   | { kind: 'passage'; pieceId: string; askLine: boolean; back?: boolean }
-  | { kind: 'myLine'; pieceId: string }
+  /** lineKey: 조각 id 또는 'book:mk' 같은 책 키. back: 적거나 넘긴 뒤 돌아갈 창 */
+  | { kind: 'myLine'; lineKey: string; back?: 'library' | 'shelf' }
   | { kind: 'desk'; result: SubmitResult | null; dark: boolean }
   | { kind: 'review'; pieceId: string | null }
   | { kind: 'journal' }
@@ -98,11 +103,17 @@ export type Modal =
   | { kind: 'quiz'; mode: QuizMode; questions: Question[]; index: number; wrong: string[]; solved: boolean; misses: number; missed: string[] }
   | { kind: 'care' }
   | { kind: 'bag' }
-  | { kind: 'shelf' }
+  | { kind: 'shelf'; tab?: ShelfTab }
   | { kind: 'companion'; animal: Animal }
   | { kind: 'library' }
   | { kind: 'letter' }
   | { kind: 'garden'; at: Tile }
+
+/** 나의 한 줄 창을 닫은 뒤 돌아갈 곳 */
+function afterMyLine(m: Modal | null): Modal | null {
+  if (m?.kind !== 'myLine' || !m.back) return null
+  return m.back === 'shelf' ? { kind: 'shelf', tab: 'lines' } : { kind: 'library' }
+}
 
 interface Store {
   game: GameState
@@ -165,7 +176,9 @@ interface Store {
   startShelve: (book: Book) => void
   startRetry: (book: Book) => void
   sleep: () => void
-  saveMyLine: (pieceId: string, text: string) => void
+  saveMyLine: (lineKey: string, text: string) => void
+  /** 나의 한 줄을 적지 않고 넘긴다 (나중에 선반에서 적을 수 있다) */
+  skipMyLine: () => void
   // 동물·방
   adopt: (animal: Animal, name: string) => void
   startDecorate: (item: ItemId | 'pick') => void
@@ -682,6 +695,7 @@ export const useGame = create<Store>((set, get) => {
       }
       if (m.mode.kind === 'library') {
         const correct = m.questions.length - m.misses
+        const firstTime = get().game.shelved[m.mode.book] === undefined
         const next = shelve(get().game, m.mode.book, correct, m.missed)
         sfx('done')
         const grades = T.library.grades as string[]
@@ -689,7 +703,8 @@ export const useGame = create<Store>((set, get) => {
         // 새로 열린 구역
         const opened = lockedZones(shelvedCount(get().game)).filter((z) => shelvedCount(next) >= z.books)
         if (opened.length) setTimeout(() => get().say(fill(T.ui.zoneOpened, { name: (T.ui.zones as Record<string, string>)[opened[0].id] }), 4000), 4200)
-        set({ game: persist(next), modal: { kind: 'library' } })
+        // 처음 꽂은 책이면 그 책에 대한 나의 한 줄을 물어본다 (넘겨도 된다)
+        set({ game: persist(next), modal: firstTime ? { kind: 'myLine', lineKey: bookLineKey(m.mode.book), back: 'library' } : { kind: 'library' } })
         return
       }
       const { state, result } = submitChapter(get().game, m.mode.book, m.mode.chapter, CONTENT)
@@ -719,7 +734,8 @@ export const useGame = create<Store>((set, get) => {
       const pieceId = m?.kind === 'review' ? m.pieceId : null
       set({ game: persist(goToSleep(get().game, CONTENT, { read: pieceId !== null, pieceId: pieceId ?? undefined })), modal: null })
     },
-    saveMyLine: (pieceId, text) => set({ game: persist(setMyLine(get().game, pieceId, text)), modal: null }),
+    saveMyLine: (lineKey, text) => set({ game: persist(setMyLine(get().game, lineKey, text)), modal: afterMyLine(get().modal) }),
+    skipMyLine: () => set({ modal: afterMyLine(get().modal) }),
 
     adopt: (animal, name) => {
       const next = adoptStray(get().game, animal, cleanName(name, animal))

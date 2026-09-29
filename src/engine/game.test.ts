@@ -1,5 +1,6 @@
 import {
   adoptStray,
+  bookLineKey,
   canCraft,
   canHelp,
   chooseBook,
@@ -481,6 +482,21 @@ describe('동반 동물·방·나의 한 줄', () => {
     expect(s.myLines['lk-015-008']).toHaveLength(80)
     s = setMyLine(s, 'lk-015-008', '   ')
     expect(s.myLines['lk-015-008']).toBeUndefined()
+  })
+  it('책에 대한 한 줄은 book:책 키로 저장되고, 조각 키와 함께 남는다', () => {
+    expect(bookLineKey('mk')).toBe('book:mk')
+    let s = setMyLine(newGame(CONTENT), 'lk-015-008', '잃은 것을 찾는 이야기')
+    s = setMyLine(s, bookLineKey('mk'), '  빠르게   이어지는 책 ')
+    expect(s.myLines).toEqual({ 'lk-015-008': '잃은 것을 찾는 이야기', 'book:mk': '빠르게 이어지는 책' })
+  })
+  it('불러올 때 책 한 줄과 옛 조각 한 줄은 남고, 없는 책 키는 걸러 낸다', () => {
+    const s = newGame(CONTENT)
+    const old = { ...JSON.parse(serializeForTest(s)), myLines: { 'lk-001-005': '옛 조각', 'book:jn': '요한', 'book:ac': '없는 책' } }
+    const back = deserialize(JSON.stringify(old), CONTENT)!
+    expect(back.myLines).toEqual({ 'lk-001-005': '옛 조각', 'book:jn': '요한' })
+    // myLines가 아예 없던 옛 저장도 열린다
+    const { myLines: _drop, ...older } = JSON.parse(serializeForTest(s))
+    expect(deserialize(JSON.stringify(older), CONTENT)!.myLines).toEqual({})
   })
 })
 

@@ -1079,11 +1079,17 @@ export function sceneSeen(s: GameState, id: string, albumIds: readonly string[])
   }
 }
 
-export function setMyLine(s: GameState, pieceId: string, text: string): GameState {
+/** 나의 한 줄의 책 키 (조각 키는 조각 id 그대로) */
+export function bookLineKey(book: Book): string {
+  return `book:${book}`
+}
+
+/** key: 조각 id 또는 bookLineKey(책). 플레이어의 말이라 금지어 검사 대상이 아니다 */
+export function setMyLine(s: GameState, key: string, text: string): GameState {
   const t = text.replace(/\s+/g, ' ').trim().slice(0, 80)
   const myLines = { ...s.myLines }
-  if (t) myLines[pieceId] = t
-  else delete myLines[pieceId]
+  if (t) myLines[key] = t
+  else delete myLines[key]
   return { ...s, myLines }
 }
 

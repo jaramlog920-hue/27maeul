@@ -58,7 +58,9 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     }
   }
   const offers = Object.fromEntries(Object.entries(s.offers).filter(([, id]) => known.has(id) && !collected.includes(id)))
-  const myLines = Object.fromEntries(Object.entries(s.myLines ?? {}).filter(([id]) => known.has(id)))
+  // 조각 키(옛 저장 그대로)와 책 키('book:mk')만 남긴다
+  const bookKeys = new Set(BOOKS.map((b) => `book:${b}`))
+  const myLines = Object.fromEntries(Object.entries(isObj(s.myLines) ? s.myLines : {}).filter(([id, t]) => (known.has(id) || bookKeys.has(id)) && typeof t === 'string'))
   // 가구 규칙이 바뀐 뒤의 저장: 지금 규칙으로 놓을 수 없는 것은 가방으로 (길이 막히지 않게)
   const room: Furniture[] = []
   let inv = s.inv

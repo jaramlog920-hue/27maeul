@@ -38,7 +38,7 @@ function Body() {
     case 'passage':
       return <PassageWindow pieceId={modal.pieceId} askLine={modal.askLine} back={modal.back} />
     case 'myLine':
-      return <MyLineForm pieceId={modal.pieceId} />
+      return <MyLineForm key={modal.lineKey} lineKey={modal.lineKey} />
     case 'desk':
       return <Desk result={modal.result} dark={modal.dark} />
     case 'review':
@@ -66,7 +66,7 @@ function Body() {
     case 'bag':
       return <Bag />
     case 'shelf':
-      return <Shelf />
+      return <Shelf tab={modal.tab} />
     case 'companion':
       return <AdoptForm animal={modal.animal} />
     case 'library':
