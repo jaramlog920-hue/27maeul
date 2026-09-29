@@ -2815,14 +2815,14 @@
         "ref": "눅 24:1-12"
       },
       {
-        "kind": "same",
-        "book": "jn",
-        "ref": "요 20:1-10"
-      },
-      {
         "kind": "similar",
         "book": "mk",
         "ref": "막 16:9-11"
+      },
+      {
+        "kind": "similar",
+        "book": "jn",
+        "ref": "요 20:1-10"
       },
       {
         "kind": "similar",
@@ -4750,7 +4750,7 @@
         "ref": "눅 24:1-12"
       },
       {
-        "kind": "same",
+        "kind": "similar",
         "book": "jn",
         "ref": "요 20:1-10"
       }
@@ -8728,18 +8728,18 @@
     "stamps": [
       {
         "kind": "same",
+        "book": "lk",
+        "ref": "눅 24:1-12"
+      },
+      {
+        "kind": "similar",
         "book": "mt",
         "ref": "마 28:1-10"
       },
       {
-        "kind": "same",
+        "kind": "similar",
         "book": "mk",
         "ref": "막 16:1-8"
-      },
-      {
-        "kind": "same",
-        "book": "lk",
-        "ref": "눅 24:1-12"
       }
     ]
   },
