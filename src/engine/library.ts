@@ -3,7 +3,7 @@
 import { bookDone } from './books'
 import type { GameState } from './game'
 import { has, take } from './items'
-import { BOOKS, type Book, type GameContent, type ItemId } from './types'
+import { BOOKS, GOSPELS, type Book, type GameContent, type ItemId } from './types'
 
 export type Grade = 0 | 1 | 2
 export const RETRY_COST: Partial<Record<ItemId, number>> = { goldLeaf: 1, oil: 1 }
@@ -56,7 +56,7 @@ export function payRetry(s: GameState, book: Book): GameState | null {
 
 /** 복음서 방의 네 권이 모두 서고에 꽂혔다 */
 export function gospelRoomFull(s: Pick<GameState, 'shelved'>): boolean {
-  return BOOKS.every((b) => s.shelved[b] !== undefined)
+  return GOSPELS.every((b) => s.shelved[b] !== undefined)
 }
 
 /** 오늘이 복음서 방 잔치 날인가 (저녁 광장 모닥불) */

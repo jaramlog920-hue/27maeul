@@ -5,9 +5,11 @@
 //   복음서 탐정: 같은 이야기가 기록된 복음서를 모두 — "비슷한 이야기" 도장이 있는 조각은 쓰지 않는다(같은 일인지 본문이 말하지 않으므로)
 //   어느 이야기일까: 한 절이 속한 조각은 하나뿐 (조각은 겹치지 않는다)
 //   먼저 나오는 이야기: 조각 id 순서 = 본문 순서
-import type { Book, Piece, Rng } from './types'
+//   사도행전(계획 5)에는 도장이 없으므로 탐정 문제를 내지 않고, 탐정 보기에도 넣지 않는다 (GOSPELS만)
+import { BOOKS, GOSPELS, isGospel, type Book, type Gospel, type Piece, type Rng } from './types'
 
-export type GospelId = Book
+export type GospelId = Gospel
+export { GOSPELS }
 
 export type Question =
   | { kind: 'puzzle'; ref: string; words: string[]; answer: string[] }
@@ -29,7 +31,6 @@ export const PUZZLE_MIN_WORDS = 4
 export const PUZZLE_MAX_WORDS = 9
 /** 너무 짧아 어느 이야기인지 가늠할 수 없는 절은 쓰지 않는다 */
 export const MIN_VERSE_CHARS = 14
-export const GOSPELS: readonly GospelId[] = ['mt', 'mk', 'lk', 'jn']
 
 const norm = (s: string) => s.replace(/\s+/g, '')
 export const wordsOf = (text: string) => text.trim().split(/\s+/)
@@ -54,8 +55,9 @@ function pickOne<T>(items: readonly T[], rng: Rng): T | undefined {
   return items[Math.min(items.length - 1, Math.floor(rng() * items.length))]
 }
 
-/** 탐정 문제로 쓸 수 있는 조각: 도장이 없거나 모두 "같은 이야기". 답 = 이 조각의 책 + 같은 이야기 도장의 책 */
+/** 탐정 문제로 쓸 수 있는 조각: 복음서 조각이고, 도장이 없거나 모두 "같은 이야기". 답 = 이 조각의 책 + 같은 이야기 도장의 책 */
 export function detectiveAnswer(p: Piece): GospelId[] | null {
+  if (!isGospel(p.book)) return null
   if (p.stamps.some((s) => s.kind === 'similar')) return null
   const books = new Set<Book>([p.book, ...p.stamps.map((s) => s.book)])
   return GOSPELS.filter((g) => books.has(g))
@@ -203,9 +205,12 @@ function firstOf<T>(items: readonly T[], make: (x: T) => Question | null): Quest
   return null
 }
 
-/** "이 구절은 어느 복음서에 있나요?" — 책 이름으로 묻는다, 누가 썼는지는 묻지 않는다 (exclusion-list §4-2) */
+/**
+ * "이 구절은 어느 책에 있나요?" — 책 이름으로 묻는다, 누가 썼는지는 묻지 않는다 (exclusion-list §4-2).
+ * 보기는 출제 범위의 책 전부(사도행전 포함, 오늘 성경 순서). 보기가 모두 복음서면 화면은 "어느 복음서"로 묻는다
+ */
 function bookQuestion(from: Book, pool: readonly Book[], piecesOf: (b: Book) => readonly Piece[], src: QuizSource, rng: Rng): Question | null {
-  const options = GOSPELS.filter((g) => pool.includes(g))
+  const options = BOOKS.filter((b) => pool.includes(b))
   return firstOf(shuffle(piecesOf(from), rng), (p) => {
     const v = pickOne(
       src.versesOf(p.ref).filter((x) => norm(x.text).length >= MIN_VERSE_CHARS && quizzable(x.text, x.inBrackets) && src.countVerse(x.text) === 1),
@@ -215,11 +220,13 @@ function bookQuestion(from: Book, pool: readonly Book[], piecesOf: (b: Book) => 
   })
 }
 
-/** 탐정: 보기와 답을 출제 범위의 책으로 좁힌다 */
+/** 탐정: 보기와 답을 출제 범위의 복음서로 좁힌다 (보기가 한 권뿐이면 묻지 않는다) */
 function poolDetective(p: Piece, pool: readonly Book[]): Question | null {
   const a = detectiveAnswer(p)
   if (!a) return null
-  return { kind: 'detective', pieceId: p.id, options: GOSPELS.filter((g) => pool.includes(g)), answer: a.filter((g) => pool.includes(g)) }
+  const options = GOSPELS.filter((g) => pool.includes(g))
+  if (options.length < 2) return null
+  return { kind: 'detective', pieceId: p.id, options, answer: a.filter((g) => pool.includes(g)) }
 }
 
 export function buildLibraryQuiz(args: {

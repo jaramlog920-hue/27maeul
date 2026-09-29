@@ -525,9 +525,10 @@ describe('동반 동물·방·나의 한 줄', () => {
   })
   it('불러올 때 책 한 줄과 옛 조각 한 줄은 남고, 없는 책 키는 걸러 낸다', () => {
     const s = newGame(CONTENT)
-    const old = { ...JSON.parse(serializeForTest(s)), myLines: { 'lk-001-005': '옛 조각', 'book:jn': '요한', 'book:ac': '없는 책' } }
+    const old = { ...JSON.parse(serializeForTest(s)), myLines: { 'lk-001-005': '옛 조각', 'book:jn': '요한', 'book:ac': '사도행전', 'book:zz': '없는 책' } }
     const back = deserialize(JSON.stringify(old), CONTENT)!
-    expect(back.myLines).toEqual({ 'lk-001-005': '옛 조각', 'book:jn': '요한' })
+    // 사도행전(ac)도 책이다 (계획 5) — 없는 책 키만 걸러 낸다
+    expect(back.myLines).toEqual({ 'lk-001-005': '옛 조각', 'book:jn': '요한', 'book:ac': '사도행전' })
     // myLines가 아예 없던 옛 저장도 열린다
     const { myLines: _drop, ...older } = JSON.parse(serializeForTest(s))
     expect(deserialize(JSON.stringify(older), CONTENT)!.myLines).toEqual({})

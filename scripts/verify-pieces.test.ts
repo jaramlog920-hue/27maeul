@@ -57,6 +57,18 @@ describe('verify-pieces.mjs', () => {
     ]) expect(r.out, msg).toContain(msg)
   })
 
+  it('사도행전에는 도장이 없다 — 사도행전 조각의 도장도, 사도행전을 가리키는 도장도 오류', () => {
+    const r = run('scripts/fixtures/bad-acts-stamp.json')
+    expect(r.code).toBe(1)
+    for (const msg of [
+      'piece ac-001-001 도장 눅 1:1-4: 사도행전 조각에는 도장이 없음',
+      'piece lk-001-001 도장 행 1:1-11: 사도행전을 가리키는 도장 — 도장은 네 복음서끼리만',
+    ]) expect(r.out, msg).toContain(msg)
+    // 알 수 없는 책으로 취급하지 않는다 (ac는 아는 책)
+    expect(r.out).not.toContain('알 수 없는 책 ac')
+    expect(r.out).not.toContain('알 수 없는 book ac')
+  })
+
   it('도장은 양쪽에서 서로를 가리켜야 하고, 부분만 넣은 책도 1장부터 빠짐없이', () => {
     const r = run('scripts/fixtures/bad-symmetry.json')
     expect(r.code).toBe(1)

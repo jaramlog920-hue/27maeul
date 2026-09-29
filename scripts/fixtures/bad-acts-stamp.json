@@ -1,0 +1,4 @@
+[
+  { "id": "lk-001-001", "book": "lk", "ref": "눅 1:1-4", "chapter": 1, "title": "데오빌로 각하에게", "stamps": [{ "kind": "similar", "book": "ac", "ref": "행 1:1-11" }] },
+  { "id": "ac-001-001", "book": "ac", "ref": "행 1:1-11", "chapter": 1, "title": "데오빌로여", "stamps": [{ "kind": "similar", "book": "lk", "ref": "눅 1:1-4" }] }
+]

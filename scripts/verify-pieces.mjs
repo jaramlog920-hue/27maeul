@@ -21,11 +21,13 @@ const neighbors = await read(neighborsPath)
 const byAbbr = Object.fromEntries(books.map((b) => [b.abbr, b.id]))
 const counts = countsFrom(bible)
 
-const BOOK_IDS = { mt: 'mat', mk: 'mrk', lk: 'luk', jn: 'jhn' }
-const BOOK_NAMES = { mt: '마태복음', mk: '마가복음', lk: '누가복음', jn: '요한복음' }
-const BOOK_ABBR = { mt: '마', mk: '막', lk: '눅', jn: '요' }
+const BOOK_IDS = { mt: 'mat', mk: 'mrk', lk: 'luk', jn: 'jhn', ac: 'act' }
+const BOOK_NAMES = { mt: '마태복음', mk: '마가복음', lk: '누가복음', jn: '요한복음', ac: '사도행전' }
+const BOOK_ABBR = { mt: '마', mk: '막', lk: '눅', jn: '요', ac: '행' }
+// 도장은 네 복음서끼리만 — 사도행전에는 도장이 없다 (계획 5 §7-1)
+const GOSPELS = new Set(['mt', 'mk', 'lk', 'jn'])
 // 설계 §3.3 — 'full': 1장부터 끝 장까지 전부. 'prefix': 1장부터 조각이 있는 마지막 장까지 빠짐없이(시험판에서 앞 몇 장만 넣은 책).
-// 책을 다 넣으면 'full'로 바꾼다.
+// 책을 다 넣으면 'full'로 바꾼다. 사도행전(ac)은 조각을 넣는 작업(계획 5 작업 2)에서 'prefix'로 더한다.
 const COVERAGE = { mt: 'full', mk: 'full', lk: 'full', jn: 'full' }
 // exclusion-list §4-3 — "같은 이야기"인데 겹치는 낱말이 이보다 적으면 사람이 다시 본다
 const SAME_OVERLAP_MIN = 0.2
@@ -123,6 +125,14 @@ for (const p of pieces) {
     const sBookId = BOOK_IDS[s.book]
     if (!sBookId) {
       fail(sw, `알 수 없는 book ${s.book}`)
+      continue
+    }
+    if (!GOSPELS.has(p.book)) {
+      fail(sw, `${BOOK_NAMES[p.book]} 조각에는 도장이 없음 — 도장은 네 복음서끼리만`)
+      continue
+    }
+    if (!GOSPELS.has(s.book)) {
+      fail(sw, `${BOOK_NAMES[s.book]}을 가리키는 도장 — 도장은 네 복음서끼리만`)
       continue
     }
     if (s.book === p.book) {

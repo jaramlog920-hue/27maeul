@@ -4,11 +4,11 @@ import { useState } from 'react'
 import { pieceById, versesOf } from '../../content/catalog'
 import { fill, T } from '../../content/text'
 import type { GospelId, Question } from '../../engine/quiz'
-import type { Book } from '../../engine/types'
+import { isGospel, type Book } from '../../engine/types'
 import { useGame, type Modal } from '../../store/game-store'
 import { Passage } from '../passage/Passage'
 
-const GOSPEL_NAME = T.quiz.gospels as Record<GospelId, string>
+const BOOK_NAME = T.quiz.books as Record<Book, string>
 
 /** 성경 문장의 일부(빈칸 등)를 보일 때도 본문 상자와 출처를 쓴다 */
 function VerseBox({ refText, children }: { refText: string; children: React.ReactNode }) {
@@ -67,7 +67,7 @@ function Detective({ q, onAnswer, solved, pool }: { q: Extract<Question, { kind:
       <div className="detective-grid">
         {q.options.map((g) => (
           <button key={g} className={(solved ? q.answer.includes(g) : chosen.includes(g)) ? 'on' : ''} aria-pressed={chosen.includes(g)} disabled={solved} onClick={() => toggle(g)}>
-            {GOSPEL_NAME[g]}
+            {BOOK_NAME[g]}
           </button>
         ))}
       </div>
@@ -100,7 +100,8 @@ function BookQuestion({ q, wrong, solved, onAnswer }: { q: Extract<Question, { k
   const text = versesOf(q.ref)[0].text
   return (
     <>
-      <p className="quiz-prompt">{T.quiz.book}</p>
+      {/* 보기가 모두 복음서면 "어느 복음서", 사도행전이 섞이면 "어느 책" */}
+      <p className="quiz-prompt">{q.options.every(isGospel) ? T.quiz.book : T.quiz.bookAny}</p>
       <section className="passage" aria-label={solved ? `성경 본문 ${q.ref}` : '성경 본문'}>
         <header className="passage-ref">
           <span>{solved ? q.ref : T.quiz.bookHidden}</span>
@@ -110,7 +111,7 @@ function BookQuestion({ q, wrong, solved, onAnswer }: { q: Extract<Question, { k
           <p>{text}</p>
         </div>
       </section>
-      <Choices options={q.options} label={(o) => GOSPEL_NAME[o as Book]} answer={q.answer} wrong={wrong} solved={solved} onAnswer={onAnswer} />
+      <Choices options={q.options} label={(o) => BOOK_NAME[o as Book]} answer={q.answer} wrong={wrong} solved={solved} onAnswer={onAnswer} />
     </>
   )
 }

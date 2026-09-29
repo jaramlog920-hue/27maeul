@@ -11,7 +11,7 @@ import { FIRE, isNear, npcTile } from '../engine/neighbors'
 import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
 import { actsDoorGlows, feastToday } from '../engine/library'
 import { ATTIC, cameraFor, currentHomeLevel, HEIGHT, HOME_DOOR, HOME_EXPAND_RECT, homeRect, HOUSES, houseAt, LOCKED_DOORS, lockedZones, tileAt, isHome, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
-import type { Facing, GameContent, Season, Tile } from '../engine/types'
+import { GOSPELS, type Facing, type GameContent, type Season, type Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { avatarKey, withLookDefaults, type FullAvatar } from '../engine/avatar'
 import {
@@ -1125,7 +1125,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         const [first] = PLACES.library.tiles
         const SPINE: Record<string, string> = { mt: '#8a6a6a', mk: '#6a7a8a', lk: '#7a8a6a', jn: '#8a7a5a' }
         const BAND = ['#c9b89a', '#c7ccd4', '#d9b44a']
-        ;(['mt', 'mk', 'lk', 'jn'] as const).forEach((b, i) => {
+        GOSPELS.forEach((b, i) => {
           const sx = first.x * TILE + 4 + i * 11
           const sy = first.y * TILE + 2
           const grade = game.shelved[b]

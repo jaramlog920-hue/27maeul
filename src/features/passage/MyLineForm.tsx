@@ -5,7 +5,7 @@ import { pieceById } from '../../content/catalog'
 import { T } from '../../content/text'
 import { useGame } from '../../store/game-store'
 
-const BOOK_NAME = T.quiz.gospels as Record<string, string>
+const BOOK_NAME = T.quiz.books as Record<string, string>
 
 /** 한 줄이 무엇에 대한 것인지: 책 이름, 또는 이야기 제목(출처) */
 export function lineLabel(key: string): string {

@@ -169,6 +169,8 @@ describe('책상', () => {
     expect(screen.getByRole('button', { name: new RegExp(`마태복음 · 0/${chaptersOf('mt', CONTENT).length}장`) })).toBeEnabled()
     expect(screen.getByRole('button', { name: new RegExp(`요한복음 · 0/${chaptersOf('jn', CONTENT).length}장`) })).toBeEnabled()
     expect(chaptersOf('jn', CONTENT)).toHaveLength(21) // 요 1–21장 전부 (작업 7·8)
+    // 사도행전은 서고의 사도행전 방이 열리기 전에는 책 고르기에 없다 (계획 5)
+    expect(screen.queryByRole('button', { name: /사도행전/ })).toBeNull()
     await user.click(screen.getByRole('button', { name: /누가복음 · 0\/24장/ }))
     expect(useGame.getState().game.activeBook).toBe('lk')
     expect(screen.getByRole('dialog', { name: '책상' })).toHaveTextContent('1장')
@@ -267,7 +269,10 @@ describe('마을 서고', () => {
       modal: { kind: 'library' },
       rng: mulberry32(5),
     })
-    render(<ModalLayer />)
+    const { container } = render(<ModalLayer />)
+    // 복음서 방 선반에는 네 복음서만 (사도행전은 자기 방 — 계획 5 작업 5)
+    expect(container.querySelectorAll('.library-shelf .spine')).toHaveLength(4)
+    expect(container.querySelector('.library-shelf')!.textContent).not.toContain('사도행전')
     await user.click(screen.getByRole('button', { name: '꽂기' }))
     expect(screen.getByRole('dialog', { name: '기록하기 전에' }).textContent).toContain('서고에 꽂기 전에')
     // 모든 문제를 정답으로 푼다

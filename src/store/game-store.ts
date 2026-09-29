@@ -721,7 +721,7 @@ export const useGame = create<Store>((set, get) => {
         const next = shelve(get().game, m.mode.book, correct, m.missed)
         sfx('done')
         const grades = T.library.grades as string[]
-        get().say(fill(T.library.shelvedToast, { book: (T.quiz.gospels as Record<string, string>)[m.mode.book], grade: grades[next.shelved[m.mode.book]!] }) + (m.missed.length ? ' ' + T.library.rereadNote : ''), 4000)
+        get().say(fill(T.library.shelvedToast, { book: (T.quiz.books as Record<string, string>)[m.mode.book], grade: grades[next.shelved[m.mode.book]!] }) + (m.missed.length ? ' ' + T.library.rereadNote : ''), 4000)
         // 새로 열린 구역
         const opened = lockedZones(shelvedCount(get().game)).filter((z) => shelvedCount(next) >= z.books)
         if (opened.length) setTimeout(() => get().say(fill(T.ui.zoneOpened, { name: (T.ui.zones as Record<string, string>)[opened[0].id] }), 4000), 4200)

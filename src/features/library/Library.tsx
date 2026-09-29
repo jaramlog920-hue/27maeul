@@ -4,10 +4,10 @@ import { fill, T } from '../../content/text'
 import { bookDone } from '../../engine/books'
 import { has } from '../../engine/items'
 import { RETRY_COST } from '../../engine/library'
-import { BOOKS } from '../../engine/types'
+import { GOSPELS } from '../../engine/types'
 import { useGame } from '../../store/game-store'
 
-const BOOK_NAME = T.quiz.gospels as Record<string, string>
+const BOOK_NAME = T.quiz.books as Record<string, string>
 const GRADES = T.library.grades as string[]
 
 export function Library() {
@@ -22,7 +22,8 @@ export function Library() {
       <p className="hint">{T.library.notice}</p>
       <h3>{T.library.gospelRoom}</h3>
       <ul className="library-shelf">
-        {BOOKS.map((b) => {
+        {/* 복음서 방 선반은 네 복음서만 — 사도행전은 자기 방에 꽂는다 (계획 5 작업 5) */}
+        {GOSPELS.map((b) => {
           const g = shelved[b]
           const hasContent = BOOKS_WITH_CONTENT.includes(b)
           const done = bookDone({ progress }, b, CONTENT)

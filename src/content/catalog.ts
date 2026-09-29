@@ -47,15 +47,15 @@ export function neighborById(id: string): NeighborDef | undefined {
 }
 
 // ── 책별 조각과 퀴즈의 본문 ──
-export const BOOK_ABBR: Record<Book, string> = { mt: '마', mk: '막', lk: '눅', jn: '요' }
-const BOOK_IDS: Record<Book, string> = { mt: 'mat', mk: 'mrk', lk: 'luk', jn: 'jhn' }
-const ABBR_BOOK: Record<string, Book> = { 마: 'mt', 막: 'mk', 눅: 'lk', 요: 'jn' }
+export const BOOK_ABBR: Record<Book, string> = { mt: '마', mk: '막', lk: '눅', jn: '요', ac: '행' }
+const BOOK_IDS: Record<Book, string> = { mt: 'mat', mk: 'mrk', lk: 'luk', jn: 'jhn', ac: 'act' }
+const ABBR_BOOK: Record<string, Book> = { 마: 'mt', 막: 'mk', 눅: 'lk', 요: 'jn', 행: 'ac' }
 
 const byBook = new Map<Book, Piece[]>(BOOKS.map((b) => [b, ALL_PIECES.filter((p) => p.book === b)]))
 export function piecesOf(book: Book): Piece[] {
   return byBook.get(book) ?? []
 }
-/** 조각이 들어 있는 책 (시험판: 마가·누가) */
+/** 조각이 들어 있는 책 (사도행전은 조각을 넣기 전까지 빠진다) */
 export const BOOKS_WITH_CONTENT: readonly Book[] = BOOKS.filter((b) => piecesOf(b).length > 0)
 
 /** 띄어쓰기와 문장부호를 떼고 비교한다 — 띄어쓰기만 다른 같은 문장을 다른 문장으로 세지 않도록 */
@@ -69,7 +69,7 @@ for (const b of BOOKS) {
 
 const bookOfRef = (ref: string): Book => {
   const b = ABBR_BOOK[ref.trim().split(/\s+/)[0]]
-  if (!b) throw new Error(`not a gospel ref: ${ref}`)
+  if (!b) throw new Error(`not a book ref: ${ref}`)
   return b
 }
 

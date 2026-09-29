@@ -3,6 +3,7 @@ import { CONTENT, piecesOf } from '../../content/catalog'
 import { isWet, weatherOf } from '../../engine/calendar'
 import { phaseOf, seasonOf } from '../../engine/clock'
 import { playerTile } from '../../engine/game'
+import type { Book } from '../../engine/types'
 import { HEIGHT, isIndoor, TILE, VIEW_H, VIEW_W, WIDTH } from '../../engine/world'
 import { createRenderer, type Renderer } from '../../render/renderer'
 import { playMusic, setRain, unlockAudio } from '../../audio/sound'
@@ -86,7 +87,7 @@ export function GameCanvas({ zoom = 1 }: { zoom?: number }) {
             }
             r.draw(useGame.getState().game, simT, 0)
           },
-          finishBook(book: 'mt' | 'mk' | 'lk' | 'jn') {
+          finishBook(book: Book) {
             useGame.setState((st) => {
               const ids = piecesOf(book).map((p) => p.id)
               const chapters = [...new Set(piecesOf(book).map((p) => p.chapter))]

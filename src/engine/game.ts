@@ -53,7 +53,7 @@ import {
   onceKey,
 } from './stories'
 import { ATTIC, BED_STAND, HEARTH_STAND, HOME_DOOR, inAttic, isIndoor, isWalkable, key, LADDER, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, START, tileAt, WARPS } from './world'
-import type { Book, Facing, GameContent, ItemId, NeighborDef, PlaceId, Rng, Target, Tile } from './types'
+import { GOSPELS, type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
 import type { Avatar } from './avatar'
 
 export interface JournalEntry {
@@ -155,9 +155,12 @@ function defsById(content: GameContent): Record<string, NeighborDef> {
 
 type GoalState = Pick<GameState, 'clock' | 'flags' | 'progress' | 'hearts' | 'today' | 'shelved'>
 
-/** 서고에 꽂은 책 수 — 마을 구역이 이만큼 열린다 */
+/**
+ * 서고에 꽂은 복음서 수 — 마을 구역(lockedZones)·서고 권수로 이사 오는 이웃·직업 단계가 이것을 센다.
+ * 사도행전(계획 5)은 세지 않는다: 이 흐름들은 복음서 방 네 권을 기준으로 짜였고, 사도행전 방은 그다음 이야기다
+ */
 export function shelvedCount(s: Pick<GameState, 'shelved'>): number {
-  return Object.keys(s.shelved).length
+  return GOSPELS.filter((b) => s.shelved[b] !== undefined).length
 }
 
 /**

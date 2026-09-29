@@ -5,7 +5,7 @@ import { chooseBook, goToSleep, listen, newGame, setArrangement, submitChapter }
 describe('책별 진행', () => {
   it('빈 진행과 장 수 세기', () => {
     const p = emptyProgress()
-    expect(Object.keys(p)).toEqual(['mt', 'mk', 'lk', 'jn'])
+    expect(Object.keys(p)).toEqual(['mt', 'mk', 'lk', 'jn', 'ac'])
     expect(totalChapters({ progress: p })).toBe(0)
     // 마가 전체 16장
     expect(chaptersOf('mk', CONTENT)).toEqual(Array.from({ length: 16 }, (_, i) => i + 1))

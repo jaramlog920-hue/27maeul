@@ -1,6 +1,7 @@
 // 직업 단계: 견습 필사가 → 마을 필사가 → 제본 장인 → 서고지기 (설계 §2.5)
 // game.ts와 requests.ts가 함께 쓰므로 game.ts를 값으로 import하지 않는다.
 import type { GameState } from './game'
+import { GOSPELS } from './types'
 
 export type JobLevel = 0 | 1 | 2 | 3
 
@@ -11,8 +12,9 @@ export function jobLevel(lettersDone: number, shelvedCount: number): JobLevel {
   return 0
 }
 
+/** 서고지기는 복음서 네 권을 꽂았을 때 — 사도행전(계획 5)은 세지 않는다 (game.ts shelvedCount와 같은 셈) */
 export function jobOf(s: Pick<GameState, 'lettersDone' | 'shelved'>): JobLevel {
-  return jobLevel(s.lettersDone, Object.keys(s.shelved).length)
+  return jobLevel(s.lettersDone, GOSPELS.filter((b) => s.shelved[b] !== undefined).length)
 }
 
 /** 편지 대필 기본 수고비 (반듯하면 최대 1.5배) */

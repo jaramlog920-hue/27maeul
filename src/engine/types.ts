@@ -33,12 +33,20 @@ export type Target =
   | { kind: 'companion' }
   | { kind: 'stray'; animal: 'cat' | 'dog' }
   | { kind: 'ground' }
-export type Book = 'mt' | 'mk' | 'lk' | 'jn'
+/** 네 복음서 — 도장·복음서 탐정·"어느 복음서"·복음서 방은 이 네 권만 */
+export type Gospel = 'mt' | 'mk' | 'lk' | 'jn'
+/** 조각을 엮고 서고에 꽂는 책 (계획 5: 사도행전 'ac'을 더했다) */
+export type Book = Gospel | 'ac'
 /** 오늘 우리가 보는 신약성경의 순서 */
-export const BOOKS: readonly Book[] = ['mt', 'mk', 'lk', 'jn']
+export const BOOKS: readonly Book[] = ['mt', 'mk', 'lk', 'jn', 'ac']
+export const GOSPELS: readonly Gospel[] = ['mt', 'mk', 'lk', 'jn']
+export function isGospel(b: Book): b is Gospel {
+  return (GOSPELS as readonly Book[]).includes(b)
+}
+/** 도장은 네 복음서끼리만 (사도행전에는 도장이 없다 — verify가 막는다) */
 export interface Stamp {
   kind: 'same' | 'similar'
-  book: Book
+  book: Gospel
   ref: string
 }
 export interface Piece {

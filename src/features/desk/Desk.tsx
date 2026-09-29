@@ -3,24 +3,25 @@ import { useState } from 'react'
 import { BOOKS_WITH_CONTENT, CONTENT, pieceById, piecesOf } from '../../content/catalog'
 import { Passage } from '../passage/Passage'
 import { fill, T } from '../../content/text'
-import { chaptersOf } from '../../engine/books'
+import { chaptersOf, pickableBooks } from '../../engine/books'
 import type { SubmitResult } from '../../engine/game'
 import { currentChapter } from '../../engine/offers'
-import { BOOKS } from '../../engine/types'
 import { useGame } from '../../store/game-store'
 
-const BOOK_NAME = T.quiz.gospels as Record<string, string>
+const BOOK_NAME = T.quiz.books as Record<string, string>
 
 function BookPick({ onDone }: { onDone?: () => void }) {
   const progress = useGame((s) => s.game.progress)
   const active = useGame((s) => s.game.activeBook)
+  const flags = useGame((s) => s.game.flags)
   const { pickBook, closeModal } = useGame.getState()
   return (
     <div className="dialog desk" role="dialog" aria-label={T.ui.bookPickTitle}>
       <h2>{T.ui.bookPickTitle}</h2>
       <p className="hint">{T.ui.bookPickHint}</p>
       <div className="actions menu column">
-        {BOOKS.map((b) => {
+        {/* 사도행전은 서고의 사도행전 방이 열리고 조각이 있을 때만 보인다 */}
+        {pickableBooks(flags, BOOKS_WITH_CONTENT).map((b) => {
           const ready = BOOKS_WITH_CONTENT.includes(b)
           const all = chaptersOf(b, CONTENT).length
           return (
