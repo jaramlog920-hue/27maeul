@@ -416,6 +416,7 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
     phase: phaseOf(clock.minute),
     warm: sameTile(here, HEARTH_STAND),
     hasBlanket: count(s.inv, 'blanket') > 0,
+    peace: peaceful(s),
   })
 
   // 기록자
@@ -492,6 +493,7 @@ export function passTime(s: GameState, minutes: number): GameState {
     phase: phaseOf(clock.minute),
     warm: false,
     hasBlanket: count(s.inv, 'blanket') > 0,
+    peace: peaceful(s),
   })
   return { ...s, clock, needs }
 }
@@ -911,7 +913,12 @@ export function reviewPick(s: GameState, rng: Rng): string | null {
   return s.todayHeard[Math.min(s.todayHeard.length - 1, Math.floor(rng() * s.todayHeard.length))]
 }
 
-export function goToSleep(s: GameState, content: GameContent): GameState {
+/** 오늘이 평안인 날인가 (어젯밤 자기 전에 구절을 읽었다) */
+export function peaceful(s: Pick<GameState, 'flags' | 'clock'>): boolean {
+  return s.flags.peaceDay === s.clock.day
+}
+
+export function goToSleep(s: GameState, content: GameContent, opts: { read?: boolean } = {}): GameState {
   const sick = fallsSick(s.needs)
   let clock = sleepClock(s.clock)
   if (sick) clock = { ...clock, minute: 10 * 60 }
@@ -925,6 +932,8 @@ export function goToSleep(s: GameState, content: GameContent): GameState {
   let needs = sleepNeeds(s.needs, s.clock.minute)
   if (sick) needs = { hunger: 20, fatigue: 0, cold: 0 }
   const flags = { ...s.flags }
+  if (opts.read) flags.peaceDay = day
+  else delete flags.peaceDay
   if (s.flags.ending === 1) {
     flags.ending = 2
     flags.endingDay = day

@@ -16,6 +16,7 @@ import {
   lightLamp,
   listen,
   newGame,
+  peaceful,
   placeFurniture,
   removeFurniture,
   reviewPick,
@@ -356,6 +357,17 @@ describe('잠과 새 날', () => {
     expect(s.album).toEqual([{ id: 'stars', day: 1 }])
     expect(s.todayNotes).toEqual(['stars'])
     expect(sceneSeen(s, 'stars', ['stars']).album).toHaveLength(1)
+  })
+})
+
+describe('평안', () => {
+  it('자기 전에 읽고 자면 다음 날 하루 평안', () => {
+    const s0 = at(newGame(CONTENT), 22 * 60, 3)
+    const read = goToSleep(s0, CONTENT, { read: true })
+    expect(read.clock.day).toBe(4)
+    expect(peaceful(read)).toBe(true)
+    expect(peaceful(goToSleep(read, CONTENT))).toBe(false)
+    expect(peaceful(goToSleep(s0, CONTENT))).toBe(false)
   })
 })
 

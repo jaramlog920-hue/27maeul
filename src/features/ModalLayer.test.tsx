@@ -279,6 +279,26 @@ describe('마을 서고', () => {
     expect(useGame.getState().game.shelved.mk).toBe(2)
     expect(useGame.getState().modal?.kind).toBe('library')
   })
+  it('서고: 책등 알림이 먼저, 길 열림 알림은 뒤에', async () => {
+    vi.useFakeTimers()
+    const base = chooseBook(newGame(CONTENT), 'mk', CONTENT)
+    useGame.setState({
+      game: { ...base, collected: piecesOf('mk').map((p) => p.id), progress: { ...base.progress, mk: { completed: [1, 2, 3], arrangement: {} } } },
+      modal: null,
+      rng: mulberry32(5),
+    })
+    useGame.getState().startShelve('mk')
+    for (let i = 0; i < 5; i++) {
+      const m = useGame.getState().modal
+      if (m?.kind !== 'quiz') throw new Error('quiz expected')
+      useGame.getState().answerQuiz(m.questions[m.index].answer as string | string[])
+      useGame.getState().nextQuiz()
+    }
+    expect(useGame.getState().toast?.text).toContain('책등')
+    vi.advanceTimersByTime(4300)
+    expect(useGame.getState().toast?.text).toContain('길이 열렸어요')
+    vi.useRealTimers()
+  })
 })
 
 describe('벤치', () => {

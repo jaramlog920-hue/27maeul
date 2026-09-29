@@ -659,7 +659,9 @@ export const useGame = create<Store>((set, get) => {
     },
     sleep: () => {
       sfx('sleep')
-      set({ game: persist(goToSleep(get().game, CONTENT)), modal: null })
+      const m = get().modal
+      const read = m?.kind === 'review' && m.pieceId !== null
+      set({ game: persist(goToSleep(get().game, CONTENT, { read })), modal: null })
     },
     saveMyLine: (pieceId, text) => set({ game: persist(setMyLine(get().game, pieceId, text)), modal: null }),
 

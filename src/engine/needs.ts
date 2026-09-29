@@ -22,12 +22,14 @@ export interface NeedsContext {
   /** 화덕 옆 */
   warm: boolean
   hasBlanket: boolean
+  /** 평안인 날 (자기 전 읽기) */
+  peace?: boolean
 }
 
 /** minutes 동안 흐른 몸의 변화 */
 export function tickNeeds(n: Needs, minutes: number, ctx: NeedsContext): Needs {
   const hunger = n.hunger + minutes / 14
-  const fatigue = n.fatigue + minutes / 12
+  const fatigue = n.fatigue + minutes / (ctx.peace ? 15 : 12)
   let coldRate = 0
   if (ctx.warm) coldRate = -3
   else if (ctx.season === 'winter') coldRate = ctx.indoor ? (ctx.phase === 'night' ? 0.15 : -0.3) : ctx.phase === 'night' ? 0.8 : 0.4

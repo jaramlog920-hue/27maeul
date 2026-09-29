@@ -2,6 +2,7 @@ import { fill, T } from '../../content/text'
 import { isMarketDay, weatherOf } from '../../engine/calendar'
 import { formatTime, phaseOf, seasonOf } from '../../engine/clock'
 import { totalChapters } from '../../engine/books'
+import { peaceful } from '../../engine/game'
 import { jobLevel } from '../../engine/requests'
 import { useGame } from '../../store/game-store'
 
@@ -13,6 +14,7 @@ export function Hud() {
   const coins = useGame((s) => s.game.coins)
   const job = useGame((s) => jobLevel(s.game.lettersDone, Object.keys(s.game.shelved).length))
   const name = useGame((s) => s.game.avatar?.name ?? '')
+  const peace = useGame((s) => peaceful(s.game))
   const { open } = useGame.getState()
   const weather = (T.ui.weather as Record<string, string>)[weatherOf(day)]
   return (
@@ -21,6 +23,7 @@ export function Hud() {
         <span className="hud-day">
           {fill(T.ui.day, { day })} · {T.ui.season[seasonOf(day)]} · {weather}
           {isMarketDay(day) && <b className="hud-market"> · {T.ui.market}</b>}
+          {peace && <b className="hud-peace"> · {T.ui.peace}</b>}
         </span>
         <span className="hud-time">
           {T.ui.phase[phaseOf(minute)]} {formatTime(minute)}

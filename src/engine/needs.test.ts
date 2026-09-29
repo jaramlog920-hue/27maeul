@@ -35,6 +35,12 @@ describe('needs', () => {
     expect(sleepNeeds({ hunger: 50, fatigue: 90, cold: 10 }, 22 * 60).fatigue).toBe(0)
     expect(sleepNeeds({ hunger: 50, fatigue: 90, cold: 10 }, 25 * 60).fatigue).toBe(30)
   })
+  it('평안인 날은 피로가 천천히 쌓인다', () => {
+    const plain = tickNeeds({ ...FRESH }, 60, ctx).fatigue
+    const calm = tickNeeds({ ...FRESH }, 60, { ...ctx, peace: true }).fatigue
+    expect(plain).toBeCloseTo(5)
+    expect(calm).toBeCloseTo(4)
+  })
 })
 
 describe('calendar', () => {
