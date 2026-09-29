@@ -19,11 +19,48 @@ describe('사람 도트', () => {
   it('모든 사람·방향·자세가 10칸 폭이고 팔레트 밖의 색이 없다', () => {
     for (const who of PEOPLE)
       for (const f of FACINGS)
-        for (const frame of [0, 1] as const)
+        for (const frame of [0, 1, 2] as const)
           for (const pose of ['stand', 'handUp', 'wave', 'crouch'] as const) {
             const rows = spriteRows(who, f, { frame, blink: frame === 1, pose, season: 'winter', inky: true, growth: 1 })
             valid(rows, PALETTE, SPRITE_W)
           }
+  })
+  it('앞·뒤 걸음은 다리를 옆으로 벌리지 않고 한 다리씩 앞으로 (다리 칸 가로 폭이 서 있을 때와 같다)', () => {
+    /** 맨 아래 두 줄(서 있을 때 옷자락 끝·발) 아래의 다리 칸이 차지하는 가로 범위 */
+    const span = (rows: readonly string[], from: number) => {
+      const xs = rows.slice(from).flatMap((r) => [...r].flatMap((ch, x) => (ch === '.' ? [] : [x])))
+      return [Math.min(...xs), Math.max(...xs)]
+    }
+    const avatar = withLookDefaults({ look: 'f', name: '바다' })
+    for (const who of PEOPLE)
+      for (const f of ['down', 'up'] as const)
+        for (const extra of who === 'writer' ? [{}, { avatar }, { avatar: { ...avatar, bottom: 3 } }] : [{ growth: 1 }]) {
+          const stand = spriteRows(who, f, { frame: 0, blink: false, ...extra })
+          const feet = stand.length - 1
+          const left = spriteRows(who, f, { frame: 1, blink: false, ...extra })
+          const right = spriteRows(who, f, { frame: 2, blink: false, ...extra })
+          for (const step of [left, right]) {
+            // 몸이 1px 뜨고(한 줄 길어짐) 내딛는 다리가 1px 길다
+            expect(step, `${who}/${f}`).toHaveLength(stand.length + 1)
+            expect(step.slice(0, feet), `${who}/${f}`).toEqual(stand.slice(0, feet))
+            expect(span(step, feet), `${who}/${f}`).toEqual(span(stand, feet))
+            for (const r of step) expect(r).toHaveLength(SPRITE_W)
+          }
+          // 왼다리 → 오른다리: 맨 아랫줄의 발이 한쪽씩
+          const last = (rows: readonly string[]) => rows[rows.length - 1]
+          expect(last(left).slice(5).replace(/\./g, '')).toBe('')
+          expect(last(left).slice(0, 5).replace(/\./g, '')).not.toBe('')
+          expect(last(right).slice(0, 5).replace(/\./g, '')).toBe('')
+          expect(last(right).slice(5).replace(/\./g, '')).not.toBe('')
+        }
+  })
+  it('옆모습 걸음은 지금처럼 앞뒤로 벌린다', () => {
+    const stand = spriteRows('writer', 'right', { frame: 0, blink: false })
+    const a = spriteRows('writer', 'right', { frame: 1, blink: false })
+    const b = spriteRows('writer', 'right', { frame: 2, blink: false })
+    expect(a).toHaveLength(SPRITE_H)
+    expect(a[13]).not.toBe(stand[13])
+    expect(b).toEqual(stand)
   })
   it('어른은 14줄, 아이는 계절마다 한 줄씩 자란다', () => {
     expect(spriteRows('baker', 'down', { frame: 0, blink: false })).toHaveLength(SPRITE_H)
@@ -114,17 +151,18 @@ describe('anim', () => {
     expect(blinks / 4300).toBeLessThan(0.06)
     expect(blinks).toBeGreaterThan(0)
   })
-  it('음수 시간에도 0/1만 돌려준다', () => {
+  it('음수 시간에도 정해진 값만 돌려준다', () => {
     for (const t of [-0.001, -1.7, -3]) {
-      expect([0, 1]).toContain(walkFrame(t))
+      expect([1, 2]).toContain(walkFrame(t))
       expect([0, 1]).toContain(dozeNod(t))
       expect(['left', 'right']).toContain(lookSide(t))
       expect(typeof isBlinking(t)).toBe('boolean')
     }
   })
   it('걸음·끄덕임·두리번', () => {
-    expect(walkFrame(0)).toBe(0)
-    expect(walkFrame(1 / 6 + 0.01)).toBe(1)
+    // 걸음은 왼발(1)·오른발(2) 두 박자 — 서 있는 그림(0)은 걷는 동안 나오지 않는다
+    expect(walkFrame(0)).toBe(1)
+    expect(walkFrame(1 / 6 + 0.01)).toBe(2)
     expect(dozeNod(0)).toBe(0)
     expect(dozeNod(1.5)).toBe(1)
     expect(lookSide(0)).toBe('right')

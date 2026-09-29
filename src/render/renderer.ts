@@ -816,7 +816,7 @@ function drawSprite(g: Ctx, c: HTMLCanvasElement, wx: number, wy: number, dy = 0
 function person(
   who: Who,
   facing: Facing,
-  frame: 0 | 1,
+  frame: 0 | 1 | 2,
   blink: boolean,
   pose: Pose,
   season: Season,

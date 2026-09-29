@@ -10,9 +10,9 @@ export function isBlinking(t: number): boolean {
   return ((t % 4.3) + 4.3) % 4.3 > 4.12
 }
 
-/** 걸음 두 박자 */
-export function walkFrame(walkTime: number): 0 | 1 {
-  return (Math.abs(Math.floor(walkTime * 6)) % 2) as 0 | 1
+/** 걸음 두 박자: 1 = 왼다리를 내딛음, 2 = 오른다리 (0은 서 있는 그림) */
+export function walkFrame(walkTime: number): 1 | 2 {
+  return Math.abs(Math.floor(walkTime * 6)) % 2 ? 2 : 1
 }
 
 /** 졸 때 고개가 천천히 끄덕인다 */

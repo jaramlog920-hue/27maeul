@@ -97,7 +97,20 @@ const SIDE: SpriteRows = [
   '..kk..kk..',
 ]
 
+/** 옆모습 걸음: 앞뒤로 벌린 다리가 모이는 박자 */
 const WALK_FEET = '...kkkk...'
+
+/**
+ * 앞·뒤 걸음: 다리를 옆으로 벌리지 않고 한 다리씩 내딛는다.
+ * 그림이 한 줄 길어져 몸이 1px 뜨고(발 기준으로 그리므로), 내딛는 다리만 1px 길게 땅에 닿는다.
+ * 다리 칸 가로 폭은 서 있을 때와 같다.
+ */
+function stepLegs(rows: string[], frame: 1 | 2): string[] {
+  const feet = rows[rows.length - 1]
+  const half = feet.length / 2
+  const lead = frame === 1 ? feet.slice(0, half) + '.'.repeat(half) : '.'.repeat(half) + feet.slice(half)
+  return [...rows, lead]
+}
 
 export function mirror(rows: SpriteRows): string[] {
   return rows.map((r) => [...r].reverse().join(''))
@@ -131,7 +144,8 @@ export type Who =
 export type Pose = 'stand' | 'handUp' | 'wave' | 'crouch'
 
 export interface SpriteOpts {
-  frame: 0 | 1
+  /** 0 = 서 있음, 1·2 = 걸음 두 박자(왼다리·오른다리) */
+  frame: 0 | 1 | 2
   blink: boolean
   pose?: Pose
   season?: Season
@@ -330,7 +344,8 @@ function shorten(rows: string[], growth: number): string[] {
 export function spriteRows(who: Who, facing: Facing, opts: SpriteOpts): string[] {
   const base = facing === 'up' ? BACK : facing === 'down' ? FRONT : SIDE
   let rows = [...base]
-  if (opts.frame === 1) rows[13] = WALK_FEET
+  const side = facing === 'left' || facing === 'right'
+  if (side && opts.frame === 1) rows[13] = WALK_FEET
   if (opts.blink && facing !== 'up') {
     // 눈 자리를 피부로 덮고 한 줄 아래에 감은 눈을 그린다
     const eyes = facing === 'down' ? [3, 6] : [6]
@@ -367,6 +382,7 @@ export function spriteRows(who: Who, facing: Facing, opts: SpriteOpts): string[]
     rows = dressNeighbor(who, rows)
   }
   if (who === 'child') rows = shorten(rows, opts.growth ?? 0)
+  if (!side && opts.frame) rows = stepLegs(rows, opts.frame)
   if (facing === 'left') rows = mirror(rows)
   if (pose === 'crouch') rows = [...rows.slice(0, 7), ...rows.slice(9)]
   return rows
