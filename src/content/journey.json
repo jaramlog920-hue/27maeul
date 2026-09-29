@@ -1,0 +1,272 @@
+[
+  {
+    "order": 1,
+    "place": "예루살렘",
+    "ref": "행 1:12",
+    "chapter": 1
+  },
+  {
+    "order": 2,
+    "place": "사마리아",
+    "ref": "행 8:5",
+    "chapter": 8
+  },
+  {
+    "order": 3,
+    "place": "다메섹",
+    "ref": "행 9:8",
+    "chapter": 9
+  },
+  {
+    "order": 4,
+    "place": "예루살렘",
+    "ref": "행 9:26",
+    "chapter": 9
+  },
+  {
+    "order": 5,
+    "place": "다소",
+    "ref": "행 9:30",
+    "chapter": 9
+  },
+  {
+    "order": 6,
+    "place": "룻다",
+    "ref": "행 9:32",
+    "chapter": 9
+  },
+  {
+    "order": 7,
+    "place": "가이사랴",
+    "ref": "행 10:24",
+    "chapter": 10
+  },
+  {
+    "order": 8,
+    "place": "예루살렘",
+    "ref": "행 11:2",
+    "chapter": 11
+  },
+  {
+    "order": 9,
+    "place": "다소",
+    "ref": "행 11:25",
+    "chapter": 11
+  },
+  {
+    "order": 10,
+    "place": "안디옥",
+    "ref": "행 11:26",
+    "chapter": 11
+  },
+  {
+    "order": 11,
+    "place": "구브로",
+    "ref": "행 13:4",
+    "chapter": 13
+  },
+  {
+    "order": 12,
+    "place": "살라미",
+    "ref": "행 13:5",
+    "chapter": 13
+  },
+  {
+    "order": 13,
+    "place": "바보",
+    "ref": "행 13:6",
+    "chapter": 13
+  },
+  {
+    "order": 14,
+    "place": "버가",
+    "ref": "행 13:13",
+    "chapter": 13
+  },
+  {
+    "order": 15,
+    "place": "비시디아 안디옥",
+    "ref": "행 13:14",
+    "chapter": 13
+  },
+  {
+    "order": 16,
+    "place": "이고니온",
+    "ref": "행 13:51",
+    "chapter": 13
+  },
+  {
+    "order": 17,
+    "place": "루스드라",
+    "ref": "행 14:6",
+    "chapter": 14
+  },
+  {
+    "order": 18,
+    "place": "더베",
+    "ref": "행 14:20",
+    "chapter": 14
+  },
+  {
+    "order": 19,
+    "place": "안디옥",
+    "ref": "행 14:26",
+    "chapter": 14
+  },
+  {
+    "order": 20,
+    "place": "예루살렘",
+    "ref": "행 15:4",
+    "chapter": 15
+  },
+  {
+    "order": 21,
+    "place": "안디옥",
+    "ref": "행 15:30",
+    "chapter": 15
+  },
+  {
+    "order": 22,
+    "place": "드로아",
+    "ref": "행 16:8",
+    "chapter": 16
+  },
+  {
+    "order": 23,
+    "place": "네압볼리",
+    "ref": "행 16:11",
+    "chapter": 16
+  },
+  {
+    "order": 24,
+    "place": "빌립보",
+    "ref": "행 16:12",
+    "chapter": 16
+  },
+  {
+    "order": 25,
+    "place": "데살로니가",
+    "ref": "행 17:1",
+    "chapter": 17
+  },
+  {
+    "order": 26,
+    "place": "베뢰아",
+    "ref": "행 17:10",
+    "chapter": 17
+  },
+  {
+    "order": 27,
+    "place": "아덴",
+    "ref": "행 17:15",
+    "chapter": 17
+  },
+  {
+    "order": 28,
+    "place": "고린도",
+    "ref": "행 18:1",
+    "chapter": 18
+  },
+  {
+    "order": 29,
+    "place": "에베소",
+    "ref": "행 18:19",
+    "chapter": 18
+  },
+  {
+    "order": 30,
+    "place": "안디옥",
+    "ref": "행 18:22",
+    "chapter": 18
+  },
+  {
+    "order": 31,
+    "place": "에베소",
+    "ref": "행 19:1",
+    "chapter": 19
+  },
+  {
+    "order": 32,
+    "place": "마게도냐",
+    "ref": "행 20:1",
+    "chapter": 20
+  },
+  {
+    "order": 33,
+    "place": "헬라",
+    "ref": "행 20:2",
+    "chapter": 20
+  },
+  {
+    "order": 34,
+    "place": "드로아",
+    "ref": "행 20:6",
+    "chapter": 20
+  },
+  {
+    "order": 35,
+    "place": "밀레도",
+    "ref": "행 20:15",
+    "chapter": 20
+  },
+  {
+    "order": 36,
+    "place": "두로",
+    "ref": "행 21:3",
+    "chapter": 21
+  },
+  {
+    "order": 37,
+    "place": "가이사랴",
+    "ref": "행 21:8",
+    "chapter": 21
+  },
+  {
+    "order": 38,
+    "place": "예루살렘",
+    "ref": "행 21:17",
+    "chapter": 21
+  },
+  {
+    "order": 39,
+    "place": "가이사랴",
+    "ref": "행 23:33",
+    "chapter": 23
+  },
+  {
+    "order": 40,
+    "place": "시돈",
+    "ref": "행 27:3",
+    "chapter": 27
+  },
+  {
+    "order": 41,
+    "place": "무라",
+    "ref": "행 27:5",
+    "chapter": 27
+  },
+  {
+    "order": 42,
+    "place": "미항",
+    "ref": "행 27:8",
+    "chapter": 27
+  },
+  {
+    "order": 43,
+    "place": "멜리데",
+    "ref": "행 28:1",
+    "chapter": 28
+  },
+  {
+    "order": 44,
+    "place": "보디올",
+    "ref": "행 28:13",
+    "chapter": 28
+  },
+  {
+    "order": 45,
+    "place": "로마",
+    "ref": "행 28:16",
+    "chapter": 28
+  }
+]

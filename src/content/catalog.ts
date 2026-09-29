@@ -4,9 +4,11 @@ import raw from './bible-subset.json'
 import books from './books.json'
 import piecesRaw from './pieces.json'
 import neighborsRaw from './neighbors.json'
+import journeyRaw from './journey.json'
 import { expandRef, countsFrom } from './ref'
 import { BOOKS, type Book, type GameContent, type NeighborDef, type Piece } from '../engine/types'
 import type { Question, QuizSource } from '../engine/quiz'
+import type { JourneyCard } from '../engine/journey'
 
 const bible = raw as Record<string, string[][]>
 const byAbbr = Object.fromEntries(books.map((b) => [b.abbr, b.id]))
@@ -18,6 +20,8 @@ const ALL_PIECES = piecesRaw as unknown as Piece[]
 export const PIECES = ALL_PIECES
 export const NEIGHBORS = neighborsRaw as unknown as NeighborDef[]
 export const CONTENT: GameContent = { pieces: PIECES, neighbors: NEIGHBORS }
+/** 사도행전 여정 카드 — 본문 순서 (scripts/journey/ac.txt, verify-journey가 본문과 대조) */
+export const JOURNEY = journeyRaw as JourneyCard[]
 
 export interface Verse {
   chapter: number
