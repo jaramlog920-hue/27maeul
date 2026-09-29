@@ -1293,6 +1293,11 @@
         "kind": "similar",
         "book": "lk",
         "ref": "눅 4:16-30"
+      },
+      {
+        "kind": "similar",
+        "book": "jn",
+        "ref": "요 4:44"
       }
     ]
   },
@@ -3432,6 +3437,11 @@
         "kind": "similar",
         "book": "lk",
         "ref": "눅 4:16-30"
+      },
+      {
+        "kind": "similar",
+        "book": "jn",
+        "ref": "요 4:44"
       }
     ]
   },
@@ -5068,6 +5078,11 @@
         "kind": "similar",
         "book": "mk",
         "ref": "막 6:1-6"
+      },
+      {
+        "kind": "similar",
+        "book": "jn",
+        "ref": "요 4:44"
       }
     ]
   },
@@ -7393,5 +7408,691 @@
         "ref": "막 16:19-20"
       }
     ]
+  },
+  {
+    "id": "jn-001-001",
+    "book": "jn",
+    "ref": "요 1:1-5",
+    "chapter": 1,
+    "title": "태초에 말씀이",
+    "stamps": []
+  },
+  {
+    "id": "jn-001-006",
+    "book": "jn",
+    "ref": "요 1:6-13",
+    "chapter": 1,
+    "title": "하나님의 자녀가",
+    "stamps": []
+  },
+  {
+    "id": "jn-001-014",
+    "book": "jn",
+    "ref": "요 1:14-18",
+    "chapter": 1,
+    "title": "말씀이 육신이 되어",
+    "stamps": []
+  },
+  {
+    "id": "jn-001-019",
+    "book": "jn",
+    "ref": "요 1:19-23",
+    "chapter": 1,
+    "title": "네가 누구냐",
+    "stamps": [
+      {
+        "kind": "similar",
+        "book": "mt",
+        "ref": "마 3:1-6"
+      },
+      {
+        "kind": "similar",
+        "book": "mk",
+        "ref": "막 1:1-6"
+      },
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 3:1-6"
+      }
+    ]
+  },
+  {
+    "id": "jn-001-024",
+    "book": "jn",
+    "ref": "요 1:24-28",
+    "chapter": 1,
+    "title": "요단강 건너편 베다니",
+    "stamps": [
+      {
+        "kind": "similar",
+        "book": "mt",
+        "ref": "마 3:11-12"
+      },
+      {
+        "kind": "similar",
+        "book": "mk",
+        "ref": "막 1:7-8"
+      },
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 3:15-20"
+      }
+    ]
+  },
+  {
+    "id": "jn-001-029",
+    "book": "jn",
+    "ref": "요 1:29-34",
+    "chapter": 1,
+    "title": "하나님의 어린 양이로다",
+    "stamps": [
+      {
+        "kind": "similar",
+        "book": "mt",
+        "ref": "마 3:13-17"
+      },
+      {
+        "kind": "similar",
+        "book": "mk",
+        "ref": "막 1:9-11"
+      },
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 3:21-22"
+      }
+    ]
+  },
+  {
+    "id": "jn-001-035",
+    "book": "jn",
+    "ref": "요 1:35-42",
+    "chapter": 1,
+    "title": "메시야를 만났다",
+    "stamps": []
+  },
+  {
+    "id": "jn-001-043",
+    "book": "jn",
+    "ref": "요 1:43-51",
+    "chapter": 1,
+    "title": "무화과나무 아래",
+    "stamps": []
+  },
+  {
+    "id": "jn-002-001",
+    "book": "jn",
+    "ref": "요 2:1-12",
+    "chapter": 2,
+    "title": "물로 된 포도주",
+    "stamps": []
+  },
+  {
+    "id": "jn-002-013",
+    "book": "jn",
+    "ref": "요 2:13-22",
+    "chapter": 2,
+    "title": "이 성전을 헐라",
+    "stamps": [
+      {
+        "kind": "similar",
+        "book": "mt",
+        "ref": "마 21:12-17"
+      },
+      {
+        "kind": "similar",
+        "book": "mk",
+        "ref": "막 11:15-19"
+      },
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 19:45-48"
+      }
+    ]
+  },
+  {
+    "id": "jn-002-023",
+    "book": "jn",
+    "ref": "요 2:23-25",
+    "chapter": 2,
+    "title": "사람의 속에 있는 것",
+    "stamps": []
+  },
+  {
+    "id": "jn-003-001",
+    "book": "jn",
+    "ref": "요 3:1-8",
+    "chapter": 3,
+    "title": "거듭나지 아니하면",
+    "stamps": []
+  },
+  {
+    "id": "jn-003-009",
+    "book": "jn",
+    "ref": "요 3:9-15",
+    "chapter": 3,
+    "title": "광야에서 뱀을",
+    "stamps": []
+  },
+  {
+    "id": "jn-003-016",
+    "book": "jn",
+    "ref": "요 3:16-21",
+    "chapter": 3,
+    "title": "세상을 이처럼 사랑하사",
+    "stamps": []
+  },
+  {
+    "id": "jn-003-022",
+    "book": "jn",
+    "ref": "요 3:22-30",
+    "chapter": 3,
+    "title": "그는 흥하여야",
+    "stamps": []
+  },
+  {
+    "id": "jn-003-031",
+    "book": "jn",
+    "ref": "요 3:31-36",
+    "chapter": 3,
+    "title": "위로부터 오시는 이",
+    "stamps": []
+  },
+  {
+    "id": "jn-004-001",
+    "book": "jn",
+    "ref": "요 4:1-6",
+    "chapter": 4,
+    "title": "야곱의 우물",
+    "stamps": []
+  },
+  {
+    "id": "jn-004-007",
+    "book": "jn",
+    "ref": "요 4:7-15",
+    "chapter": 4,
+    "title": "솟아나는 샘물",
+    "stamps": []
+  },
+  {
+    "id": "jn-004-016",
+    "book": "jn",
+    "ref": "요 4:16-26",
+    "chapter": 4,
+    "title": "신령과 진정으로",
+    "stamps": []
+  },
+  {
+    "id": "jn-004-027",
+    "book": "jn",
+    "ref": "요 4:27-30",
+    "chapter": 4,
+    "title": "물동이를 버려두고",
+    "stamps": []
+  },
+  {
+    "id": "jn-004-031",
+    "book": "jn",
+    "ref": "요 4:31-38",
+    "chapter": 4,
+    "title": "나의 양식은",
+    "stamps": []
+  },
+  {
+    "id": "jn-004-039",
+    "book": "jn",
+    "ref": "요 4:39-42",
+    "chapter": 4,
+    "title": "세상의 구주",
+    "stamps": []
+  },
+  {
+    "id": "jn-004-043",
+    "book": "jn",
+    "ref": "요 4:43-45",
+    "chapter": 4,
+    "title": "선지자가 고향에서는",
+    "stamps": [
+      {
+        "kind": "similar",
+        "book": "mt",
+        "ref": "마 13:57"
+      },
+      {
+        "kind": "similar",
+        "book": "mk",
+        "ref": "막 6:4"
+      },
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 4:24"
+      }
+    ]
+  },
+  {
+    "id": "jn-004-046",
+    "book": "jn",
+    "ref": "요 4:46-54",
+    "chapter": 4,
+    "title": "네 아들이 살았다",
+    "stamps": [
+      {
+        "kind": "similar",
+        "book": "mt",
+        "ref": "마 8:5-13"
+      },
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 7:1-10"
+      }
+    ]
+  },
+  {
+    "id": "jn-005-001",
+    "book": "jn",
+    "ref": "요 5:1-13",
+    "chapter": 5,
+    "title": "베데스다라 하는 못",
+    "stamps": []
+  },
+  {
+    "id": "jn-005-014",
+    "book": "jn",
+    "ref": "요 5:14-18",
+    "chapter": 5,
+    "title": "이제까지 일하시니",
+    "stamps": []
+  },
+  {
+    "id": "jn-005-019",
+    "book": "jn",
+    "ref": "요 5:19-24",
+    "chapter": 5,
+    "title": "사망에서 생명으로",
+    "stamps": []
+  },
+  {
+    "id": "jn-005-025",
+    "book": "jn",
+    "ref": "요 5:25-30",
+    "chapter": 5,
+    "title": "무덤 속에 있는 자",
+    "stamps": []
+  },
+  {
+    "id": "jn-005-031",
+    "book": "jn",
+    "ref": "요 5:31-38",
+    "chapter": 5,
+    "title": "켜서 비취는 등불",
+    "stamps": []
+  },
+  {
+    "id": "jn-005-039",
+    "book": "jn",
+    "ref": "요 5:39-47",
+    "chapter": 5,
+    "title": "모세를 믿었더면",
+    "stamps": []
+  },
+  {
+    "id": "jn-006-001",
+    "book": "jn",
+    "ref": "요 6:1-15",
+    "chapter": 6,
+    "title": "보리떡 다섯 개",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mt",
+        "ref": "마 14:13-21"
+      },
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 6:30-44"
+      },
+      {
+        "kind": "same",
+        "book": "lk",
+        "ref": "눅 9:10-17"
+      }
+    ]
+  },
+  {
+    "id": "jn-006-016",
+    "book": "jn",
+    "ref": "요 6:16-21",
+    "chapter": 6,
+    "title": "내니 두려워 말라",
+    "stamps": [
+      {
+        "kind": "same",
+        "book": "mt",
+        "ref": "마 14:22-33"
+      },
+      {
+        "kind": "same",
+        "book": "mk",
+        "ref": "막 6:45-52"
+      }
+    ]
+  },
+  {
+    "id": "jn-006-022",
+    "book": "jn",
+    "ref": "요 6:22-27",
+    "chapter": 6,
+    "title": "썩는 양식",
+    "stamps": []
+  },
+  {
+    "id": "jn-006-028",
+    "book": "jn",
+    "ref": "요 6:28-35",
+    "chapter": 6,
+    "title": "생명의 떡이니",
+    "stamps": []
+  },
+  {
+    "id": "jn-006-036",
+    "book": "jn",
+    "ref": "요 6:36-40",
+    "chapter": 6,
+    "title": "내 아버지의 뜻은",
+    "stamps": []
+  },
+  {
+    "id": "jn-006-041",
+    "book": "jn",
+    "ref": "요 6:41-51",
+    "chapter": 6,
+    "title": "서로 수군거리지 말라",
+    "stamps": []
+  },
+  {
+    "id": "jn-006-052",
+    "book": "jn",
+    "ref": "요 6:52-59",
+    "chapter": 6,
+    "title": "내 살은 참된 양식",
+    "stamps": []
+  },
+  {
+    "id": "jn-006-060",
+    "book": "jn",
+    "ref": "요 6:60-65",
+    "chapter": 6,
+    "title": "영이요 생명이라",
+    "stamps": []
+  },
+  {
+    "id": "jn-006-066",
+    "book": "jn",
+    "ref": "요 6:66-71",
+    "chapter": 6,
+    "title": "영생의 말씀이",
+    "stamps": []
+  },
+  {
+    "id": "jn-007-001",
+    "book": "jn",
+    "ref": "요 7:1-9",
+    "chapter": 7,
+    "title": "명절인 초막절",
+    "stamps": []
+  },
+  {
+    "id": "jn-007-010",
+    "book": "jn",
+    "ref": "요 7:10-13",
+    "chapter": 7,
+    "title": "나타내지 않고 비밀히",
+    "stamps": []
+  },
+  {
+    "id": "jn-007-014",
+    "book": "jn",
+    "ref": "요 7:14-24",
+    "chapter": 7,
+    "title": "외모로 판단하지 말고",
+    "stamps": []
+  },
+  {
+    "id": "jn-007-025",
+    "book": "jn",
+    "ref": "요 7:25-30",
+    "chapter": 7,
+    "title": "어디서 왔는지 아노라",
+    "stamps": []
+  },
+  {
+    "id": "jn-007-031",
+    "book": "jn",
+    "ref": "요 7:31-36",
+    "chapter": 7,
+    "title": "하속들을 보내니",
+    "stamps": []
+  },
+  {
+    "id": "jn-007-037",
+    "book": "jn",
+    "ref": "요 7:37-44",
+    "chapter": 7,
+    "title": "생수의 강",
+    "stamps": []
+  },
+  {
+    "id": "jn-007-045",
+    "book": "jn",
+    "ref": "요 7:45-52",
+    "chapter": 7,
+    "title": "갈릴리에서는 선지자가",
+    "stamps": []
+  },
+  {
+    "id": "jn-007-053",
+    "book": "jn",
+    "ref": "요 7:53-8:11",
+    "chapter": 7,
+    "title": "간음 중에 잡힌 여자",
+    "stamps": []
+  },
+  {
+    "id": "jn-008-012",
+    "book": "jn",
+    "ref": "요 8:12-20",
+    "chapter": 8,
+    "title": "나는 세상의 빛이니",
+    "stamps": []
+  },
+  {
+    "id": "jn-008-021",
+    "book": "jn",
+    "ref": "요 8:21-30",
+    "chapter": 8,
+    "title": "인자를 든 후에",
+    "stamps": []
+  },
+  {
+    "id": "jn-008-031",
+    "book": "jn",
+    "ref": "요 8:31-38",
+    "chapter": 8,
+    "title": "진리가 너희를 자유케",
+    "stamps": []
+  },
+  {
+    "id": "jn-008-039",
+    "book": "jn",
+    "ref": "요 8:39-47",
+    "chapter": 8,
+    "title": "거짓의 아비",
+    "stamps": []
+  },
+  {
+    "id": "jn-008-048",
+    "book": "jn",
+    "ref": "요 8:48-51",
+    "chapter": 8,
+    "title": "죽음을 영원히 보지",
+    "stamps": []
+  },
+  {
+    "id": "jn-008-052",
+    "book": "jn",
+    "ref": "요 8:52-59",
+    "chapter": 8,
+    "title": "아브라함이 나기 전부터",
+    "stamps": []
+  },
+  {
+    "id": "jn-009-001",
+    "book": "jn",
+    "ref": "요 9:1-7",
+    "chapter": 9,
+    "title": "날 때부터 소경된 사람",
+    "stamps": []
+  },
+  {
+    "id": "jn-009-008",
+    "book": "jn",
+    "ref": "요 9:8-12",
+    "chapter": 9,
+    "title": "앉아서 구걸하던 자",
+    "stamps": []
+  },
+  {
+    "id": "jn-009-013",
+    "book": "jn",
+    "ref": "요 9:13-23",
+    "chapter": 9,
+    "title": "그 부모를 불러",
+    "stamps": []
+  },
+  {
+    "id": "jn-009-024",
+    "book": "jn",
+    "ref": "요 9:24-34",
+    "chapter": 9,
+    "title": "한 가지 아는 것은",
+    "stamps": []
+  },
+  {
+    "id": "jn-009-035",
+    "book": "jn",
+    "ref": "요 9:35-41",
+    "chapter": 9,
+    "title": "네가 인자를 믿느냐",
+    "stamps": []
+  },
+  {
+    "id": "jn-010-001",
+    "book": "jn",
+    "ref": "요 10:1-6",
+    "chapter": 10,
+    "title": "양의 목자라",
+    "stamps": []
+  },
+  {
+    "id": "jn-010-007",
+    "book": "jn",
+    "ref": "요 10:7-10",
+    "chapter": 10,
+    "title": "나는 양의 문이라",
+    "stamps": []
+  },
+  {
+    "id": "jn-010-011",
+    "book": "jn",
+    "ref": "요 10:11-21",
+    "chapter": 10,
+    "title": "나는 선한 목자라",
+    "stamps": []
+  },
+  {
+    "id": "jn-010-022",
+    "book": "jn",
+    "ref": "요 10:22-29",
+    "chapter": 10,
+    "title": "솔로몬 행각",
+    "stamps": []
+  },
+  {
+    "id": "jn-010-030",
+    "book": "jn",
+    "ref": "요 10:30-39",
+    "chapter": 10,
+    "title": "나와 아버지는 하나이니라",
+    "stamps": []
+  },
+  {
+    "id": "jn-010-040",
+    "book": "jn",
+    "ref": "요 10:40-42",
+    "chapter": 10,
+    "title": "요단강 저편",
+    "stamps": []
+  },
+  {
+    "id": "jn-011-001",
+    "book": "jn",
+    "ref": "요 11:1-10",
+    "chapter": 11,
+    "title": "베다니에 사는 나사로라",
+    "stamps": []
+  },
+  {
+    "id": "jn-011-011",
+    "book": "jn",
+    "ref": "요 11:11-16",
+    "chapter": 11,
+    "title": "디두모라 하는 도마가",
+    "stamps": []
+  },
+  {
+    "id": "jn-011-017",
+    "book": "jn",
+    "ref": "요 11:17-27",
+    "chapter": 11,
+    "title": "나는 부활이요 생명이니",
+    "stamps": []
+  },
+  {
+    "id": "jn-011-028",
+    "book": "jn",
+    "ref": "요 11:28-37",
+    "chapter": 11,
+    "title": "눈물을 흘리시더라",
+    "stamps": []
+  },
+  {
+    "id": "jn-011-038",
+    "book": "jn",
+    "ref": "요 11:38-44",
+    "chapter": 11,
+    "title": "나사로야 나오라",
+    "stamps": []
+  },
+  {
+    "id": "jn-011-045",
+    "book": "jn",
+    "ref": "요 11:45-53",
+    "chapter": 11,
+    "title": "대제사장인 가야바가",
+    "stamps": []
+  },
+  {
+    "id": "jn-011-054",
+    "book": "jn",
+    "ref": "요 11:54-57",
+    "chapter": 11,
+    "title": "에브라임이라는 동네",
+    "stamps": []
   }
 ]

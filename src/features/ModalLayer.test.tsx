@@ -167,7 +167,8 @@ describe('책상', () => {
     walk()
     expect(screen.getByRole('dialog', { name: '어느 책을 엮을까요?' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: new RegExp(`마태복음 · 0/${chaptersOf('mt', CONTENT).length}장`) })).toBeEnabled()
-    expect(screen.getByRole('button', { name: /요한복음 · 시험판에는 아직 없어요/ })).toBeDisabled()
+    expect(screen.getByRole('button', { name: new RegExp(`요한복음 · 0/${chaptersOf('jn', CONTENT).length}장`) })).toBeEnabled()
+    expect(chaptersOf('jn', CONTENT)).toHaveLength(11) // 요 1–11장 (작업 7)
     await user.click(screen.getByRole('button', { name: /누가복음 · 0\/24장/ }))
     expect(useGame.getState().game.activeBook).toBe('lk')
     expect(screen.getByRole('dialog', { name: '책상' })).toHaveTextContent('1장')
@@ -432,8 +433,8 @@ describe('선반', () => {
     const user = userEvent.setup()
     useGame.setState({ modal: { kind: 'shelf' } })
     render(<ModalLayer />)
-    // 마태 + 마가 + 누가 조각 중 2개를 들었다
-    expect(screen.getAllByText('아직 듣지 못한 이야기').length).toBe(piecesOf('mt').length + piecesOf('mk').length + piecesOf('lk').length - 2)
+    // 마태 + 마가 + 누가 + 요한 조각 중 2개를 들었다
+    expect(screen.getAllByText('아직 듣지 못한 이야기').length).toBe(piecesOf('mt').length + piecesOf('mk').length + piecesOf('lk').length + piecesOf('jn').length - 2)
     // 책마다 장을 따로 묶고, 장은 처음에 접혀 있다
     expect(screen.getByText('마가복음 1장').closest('details')).not.toHaveAttribute('open')
     expect(screen.getByText('누가복음 1장')).toBeInTheDocument()

@@ -60,12 +60,13 @@ describe('life-text', () => {
 
 describe('책별 콘텐츠', () => {
   it('조각이 있는 책과 책별 조각', () => {
-    expect(BOOKS_WITH_CONTENT).toEqual(['mt', 'mk', 'lk'])
+    expect(BOOKS_WITH_CONTENT).toEqual(['mt', 'mk', 'lk', 'jn'])
     expect(piecesOf('mk').length).toBe(98)
     expect(piecesOf('mk').every((p) => p.book === 'mk')).toBe(true)
     expect(piecesOf('mt').length).toBe(54 + 53 + 50) // 마 1–10장 54 + 11–20장 53 + 21–28장 50 (작업 4·5·6)
     expect(piecesOf('mt').every((p) => p.book === 'mt')).toBe(true)
-    expect(piecesOf('jn')).toEqual([])
+    expect(piecesOf('jn').length).toBe(8 + 3 + 5 + 8 + 6 + 9 + 8 + 6 + 5 + 6 + 7) // 요 1–11장, 장마다 조각 수 (작업 7) — 7:53-8:11은 7장에 셈
+    expect(piecesOf('jn').every((p) => p.book === 'jn')).toBe(true)
   })
   it('절 참조에는 책 약칭이 붙고, 절로 조각을 찾는다', () => {
     expect(quizSourceFor(['mk']).versesOf('막 1:9-11').map((v) => v.ref)).toEqual(['막 1:9', '막 1:10', '막 1:11'])
@@ -80,7 +81,11 @@ describe('책별 콘텐츠', () => {
     expect(pieceOfVerse('마 23:13')?.id).toBe('mt-023-013')
     expect(pieceOfVerse('마 23:14')).toBeUndefined() // (없음) — 번호만 조각 범위에 걸치고, 조각 찾기에도 나오지 않음
     expect(pieceOfVerse('마 28:20')?.id).toBe('mt-028-016')
-    expect(pieceOfVerse('요 1:1')).toBeUndefined()
+    expect(pieceOfVerse('요 1:1')?.id).toBe('jn-001-001')
+    expect(pieceOfVerse('요 5:4')?.id).toBe('jn-005-001') // 대괄호 절도 조각에 든다
+    expect(pieceOfVerse('요 8:11')?.id).toBe('jn-007-053') // 장을 넘는 조각 요 7:53-8:11
+    expect(pieceOfVerse('요 11:57')?.id).toBe('jn-011-054')
+    expect(pieceOfVerse('요 12:1')).toBeUndefined() // 12–21장은 작업 8
   })
   it('대괄호 구간(막 16:9-20)의 절은 괄호 글자가 없는 가운데 절까지 괄호 안으로 친다', () => {
     const vs = quizSourceFor(['mk']).versesOf('막 16:8-20')
@@ -89,6 +94,14 @@ describe('책별 콘텐츠', () => {
     expect(inBrackets('막 16:14')).toBe(true)
     expect(inBrackets('막 15:47')).toBe(false)
     expect(inBrackets('눅 24:53')).toBe(false)
+  })
+  it('요한의 대괄호 구간(요 5:3-4, 요 7:53-8:11)은 본문 그대로 조각에 두고 퀴즈에서만 뺀다', () => {
+    const five = quizSourceFor(['jn']).versesOf('요 5:1-13')
+    expect(five.filter((v) => v.inBrackets).map((v) => v.ref)).toEqual(['요 5:3', '요 5:4'])
+    const w = quizSourceFor(['jn']).versesOf('요 7:52-8:12')
+    expect(w.map((v) => v.inBrackets)).toEqual([false, ...Array(12).fill(true), false])
+    expect(w[1].text).toContain('[')
+    expect(w[12].text).toContain(']')
   })
   it('countVerse는 고른 책들에서만 센다', () => {
     const t = quizSourceFor(['mk']).versesOf('막 1:18')[0].text
