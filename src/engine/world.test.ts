@@ -34,7 +34,7 @@ describe('world', () => {
   it('placeAt·집 안', () => {
     expect(placeAt({ x: 3, y: 5 })).toBe('desk')
     expect(placeAt({ x: 6, y: 33 })).toBe('reeds')
-    expect(placeAt({ x: 15, y: 27 })).toBe('field')
+    expect(placeAt({ x: 12, y: 26 })).toBe('field')
     expect(placeAt({ x: 36, y: 50 })).toBe('library')
     expect(placeAt({ x: 7, y: 8 })).toBe('basket')
     expect(placeAt({ x: 5, y: 5 })).toBeNull()
@@ -53,11 +53,11 @@ describe('world', () => {
   })
 
   it('새 이웃 집 넷은 문 앞이 걸을 수 있는 길과 이어진다', () => {
-    for (const [id, door] of [['postman', { x: 14, y: 20 }], ['carpenter', { x: 8, y: 22 }], ['innkeeper', { x: 20, y: 28 }], ['fisher', { x: 14, y: 31 }]] as const) {
+    for (const [id, door] of [['postman', { x: 42, y: 22 }], ['carpenter', { x: 13, y: 22 }], ['innkeeper', { x: 20, y: 28 }], ['fisher', { x: 12, y: 31 }]] as const) {
       expect(HOUSES.some((h) => h.id === id), id).toBe(true)
       expect(isWalkable({ x: door.x, y: door.y + 1 }), id).toBe(true)
     }
-    expect(PLACES.field.tiles.length).toBe(18)
+    expect(PLACES.field.tiles.length).toBe(10)
   })
 })
 

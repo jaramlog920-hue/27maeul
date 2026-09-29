@@ -1289,7 +1289,7 @@ export function butterflies(season: Season, wet: boolean, phase: string, t: numb
   const centers: Tile[] = [
     { x: 14, y: 2 },
     { x: 8, y: 9 },
-    { x: 16, y: 21 },
+    { x: 8, y: 21 },
   ]
   return centers.map((c, i) => ({
     x: c.x + Math.cos(t * 0.7 + i * 2) * 1.6,
