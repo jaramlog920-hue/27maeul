@@ -1178,7 +1178,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           else if (pose === 'crouch') emote(g, 'heart', cx, top)
           else if (!moving && game.needs.hunger >= 70 && t % 9 < 1.6) emote(g, 'hungry', cx, top)
           else if (!moving && game.needs.cold >= 60 && t % 6 < 1.4) emote(g, 'shiver', cx, top)
-          else if (!moving && outdoors && weather === 'hot' && minute > 11 * 60 && minute < 16 * 60 && t % 8 < 1.4) emote(g, 'sweat', cx, top)
+          else if (!moving && game.needs.heat >= 60 && t % 8 < 1.4) emote(g, 'sweat', cx, top)
           // 겨울 바깥의 입김
           if (outdoors && season === 'winter' && t % 2.4 < 0.8) {
             g.fillStyle = 'rgba(255,255,255,0.7)'

@@ -44,6 +44,7 @@ import {
   shelvedCount,
   inviterAtDoor,
   dine,
+  drinkWater,
   hasFood,
   askRequest,
   fulfillRequest,
@@ -144,6 +145,7 @@ interface Store {
   requestGive: (npc: string) => void
   readAt: (pieceId: string) => void
   blanket: () => void
+  drink: () => void
   // 책상·잠
   pickBook: (book: Book) => void
   moveInDesk: (book: Book, chapter: number, index: number, delta: number) => void
@@ -439,7 +441,11 @@ export const useGame = create<Store>((set, get) => {
       const next = tapTile(game, tile)
       if (selfTap) {
         const n = game.needs
-        const canCare = (n.hunger >= 30 && hasFood(game.inv)) || (n.cold >= 30 && (game.inv.blanket ?? 0) > 0) || (n.fatigue >= 30 && isHome(tile))
+        const canCare =
+          (n.hunger >= 30 && hasFood(game.inv)) ||
+          (n.cold >= 30 && (game.inv.blanket ?? 0) > 0) ||
+          (n.fatigue >= 30 && isHome(tile)) ||
+          (n.heat >= 30 && (game.inv.water ?? 0) > 0)
         set({ game: next, modal: canCare ? { kind: 'care' } : null })
         return
       }
@@ -571,6 +577,10 @@ export const useGame = create<Store>((set, get) => {
     },
     blanket: () => {
       const next = coverWithBlanket(get().game)
+      if (next) set({ game: persist(next), modal: null })
+    },
+    drink: () => {
+      const next = drinkWater(get().game)
       if (next) set({ game: persist(next), modal: null })
     },
 

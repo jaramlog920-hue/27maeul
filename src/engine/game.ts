@@ -5,7 +5,8 @@ import { DURATION, greet, IDLE_GAP, IDLE_RESET, stepIdle, type IdleState } from 
 import { adopt, companionGoal, STRAY_DAY, STRAY_SPOTS, stepCompanion, type Animal, type Companion } from './companion'
 import { add, addGift, CHAPTER_COST, FOODS, count, craft, has, MAX_STACK, RECIPES, recipeGives, take, type Inventory, type RecipeId } from './items'
 import { facingFor, findPath, pathToward, stepActor, type Actor } from './movement'
-import { exhausted, fallsSick, FRESH, rest, sleepNeeds, starving, tickNeeds, warmUp, work, type Needs } from './needs'
+import { coolDown, exhausted, fallsSick, FRESH, rest, sleepNeeds, starving, tickNeeds, warmUp, work, type Needs } from './needs'
+import { inGoodMood } from './mood'
 import { placement, removal, solidTiles, type Furniture } from './room'
 import {
   BABY_PARTY_SPOTS,
@@ -417,6 +418,7 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
     warm: sameTile(here, HEARTH_STAND),
     hasBlanket: count(s.inv, 'blanket') > 0,
     peace: peaceful(s),
+    hot: weatherOf(clock.day) === 'hot',
   })
 
   // 기록자
@@ -494,6 +496,7 @@ export function passTime(s: GameState, minutes: number): GameState {
     warm: false,
     hasBlanket: count(s.inv, 'blanket') > 0,
     peace: peaceful(s),
+    hot: weatherOf(clock.day) === 'hot',
   })
   return { ...s, clock, needs }
 }
@@ -901,7 +904,7 @@ export function submitChapter(s: GameState, book: Book, chapter: number, content
   const scenes = [...s.scenes]
   if (totalChapters(s) === 0) scenes.push('firstChapter')
   if (bookDone({ progress }, book, content)) scenes.push('bookBound')
-  return { state: passTime({ ...s, inv: left, progress, scenes, needs: work(s.needs, 6) }, 60), result }
+  return { state: passTime({ ...s, inv: left, progress, scenes, needs: work(s.needs, 6) }, inGoodMood(s) ? 45 : 60), result }
 }
 
 // ── 잠과 새 날 ──
@@ -918,6 +921,19 @@ export function peaceful(s: Pick<GameState, 'flags' | 'clock'>): boolean {
   return s.flags.peaceDay === s.clock.day
 }
 
+/** 이 계절에 보이는 몸 칸: 겨울 추위, 여름 더위, 봄·가을 없음 */
+export function seasonalNeed(s: Pick<GameState, 'clock'>): 'cold' | 'heat' | null {
+  const season = seasonOf(s.clock.day)
+  return season === 'winter' ? 'cold' : season === 'summer' ? 'heat' : null
+}
+
+/** 물을 마셔 더위를 식힌다 (물 1) */
+export function drinkWater(s: GameState): GameState | null {
+  const left = take(s.inv, { water: 1 })
+  if (!left) return null
+  return passTime({ ...s, inv: left, needs: coolDown(s.needs) }, 5)
+}
+
 export function goToSleep(s: GameState, content: GameContent, opts: { read?: boolean } = {}): GameState {
   const sick = fallsSick(s.needs)
   let clock = sleepClock(s.clock)
@@ -930,7 +946,7 @@ export function goToSleep(s: GameState, content: GameContent, opts: { read?: boo
   if (day === STRAY_DAY && !s.companion) scenes.push('strays')
   if (s.flags.ending === 1) scenes.push('ending')
   let needs = sleepNeeds(s.needs, s.clock.minute)
-  if (sick) needs = { hunger: 20, fatigue: 0, cold: 0 }
+  if (sick) needs = { hunger: 20, fatigue: 0, cold: 0, heat: 0 }
   const flags = { ...s.flags }
   if (opts.read) flags.peaceDay = day
   else delete flags.peaceDay

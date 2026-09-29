@@ -359,7 +359,7 @@ describe('하루', () => {
   })
 
   it('배고플 때 기록자를 누르면 돌보기', async () => {
-    reset({ needs: { hunger: 80, fatigue: 0, cold: 0 } })
+    reset({ needs: { hunger: 80, fatigue: 0, cold: 0, heat: 0 } })
     const user = userEvent.setup()
     render(<ModalLayer />)
     const p = useGame.getState().game.player
@@ -412,7 +412,7 @@ describe('리뷰 지적 회귀 (화면)', () => {
 describe('벤치', () => {
   it.each(['bench', 'hill'] as const)('%s → 성경구절 고르기 → 본문 창, 피로가 풀린다', async (place) => {
     // 눅 1:1-4는 이제 처음부터 가진 조각이 아니다 — 들은 것으로 둔다
-    reset({ collected: ['lk-001-001'], needs: { hunger: 0, fatigue: 70, cold: 0 } })
+    reset({ collected: ['lk-001-001'], needs: { hunger: 0, fatigue: 70, cold: 0, heat: 0 } })
     const user = userEvent.setup()
     useGame.setState({ modal: { kind: 'menu', place } })
     render(<ModalLayer />)

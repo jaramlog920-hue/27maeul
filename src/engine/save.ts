@@ -72,6 +72,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     ...s,
     room,
     inv,
+    needs: { ...s.needs, heat: s.needs?.heat ?? 0 },
     collected,
     progress,
     activeBook,

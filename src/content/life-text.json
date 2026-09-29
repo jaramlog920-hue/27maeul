@@ -112,6 +112,7 @@
     "careEat": "먹이기",
     "careBlanket": "담요 덮어 주기",
     "careRest": "쉬게 하기",
+    "careDrink": "물 마시기",
     "careNothing": "지금은 괜찮아 보입니다.",
     "talkHelp": "돕기",
     "talkGift": "선물하기",
@@ -200,7 +201,9 @@
     "needs": {
       "hunger": "배고픔",
       "fatigue": "피로",
-      "cold": "추위"
+      "cold": "추위",
+      "heat": "더위",
+      "mood": "기분"
     },
     "endingTitle": "다 쓴 날",
     "endingDays": "함께 보낸 날 {days}일",

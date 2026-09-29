@@ -2,6 +2,7 @@
 // 의뢰 글은 모두 게임이 지어낸 생활 문장이다 — 성경을 베껴 주고 돈을 받지 않는다 (exclusion-list §3-3).
 import { passTime, type GameState } from './game'
 import { earn } from './money'
+import { inGoodMood } from './mood'
 import { work } from './needs'
 
 export const LETTER_PAY = 12
@@ -29,5 +30,5 @@ export function jobLevel(lettersDone: number, shelvedCount: number): JobLevel {
 export function finishLetter(s: GameState, misses: number): GameState {
   if (!letterWaiting(s)) return s
   const paid = earn({ ...s, letterDay: s.clock.day, lettersDone: s.lettersDone + 1, needs: work(s.needs, 5) }, letterPay(misses))
-  return passTime(paid, LETTER_MINUTES)
+  return passTime(paid, inGoodMood(s) ? 30 : LETTER_MINUTES)
 }

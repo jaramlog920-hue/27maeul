@@ -227,6 +227,12 @@ button.big {
 .need-bar.high > div {
   background: var(--warn);
 }
+.need-bar.good > div {
+  background: #7aa84f;
+}
+.need-bar.happy > div {
+  background: #d9b44a;
+}
 .bag-list {
   list-style: none;
   padding: 0;

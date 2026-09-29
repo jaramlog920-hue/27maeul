@@ -115,7 +115,7 @@ describe('B. 먼저 찾아오기와 저녁 초대', () => {
     const days = Array.from({ length: 40 }, (_, i) => i + 3)
     expect(days.some((d) => pickInviter(d, { baker: 70 }, {}) === 'baker')).toBe(true)
     expect(days.every((d) => pickInviter(d, { baker: 60 }, {}) === null)).toBe(true)
-    let s: GameState = { ...at(newGame(CONTENT), 18 * 60 + 30), needs: { hunger: 80, fatigue: 0, cold: 0 }, today: { visitor: null, visitGot: false, inviter: 'grandpa', dined: false, gathering: null } }
+    let s: GameState = { ...at(newGame(CONTENT), 18 * 60 + 30), needs: { hunger: 80, fatigue: 0, cold: 0, heat: 0 }, today: { visitor: null, visitGot: false, inviter: 'grandpa', dined: false, gathering: null } }
     expect(inviterAtDoor(s, INVITE_DOORS.baker)).toBeNull()
     expect(inviterAtDoor(s, INVITE_DOORS.grandpa)).toBe('grandpa')
     s = dine(s, 'grandpa')!

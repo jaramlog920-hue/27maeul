@@ -1,4 +1,4 @@
-import { eat, exhausted, fallsSick, FRESH, sleepNeeds, tickNeeds, warmUp, work } from './needs'
+import { coolDown, eat, exhausted, fallsSick, FRESH, sleepNeeds, tickNeeds, warmUp, work } from './needs'
 import { barleyRipe, festivalOf, grapesRipe, isMarketDay, seasonDay, weatherOf, yearOf } from './calendar'
 
 const ctx = { indoor: true, season: 'spring' as const, phase: 'day' as const, warm: false, hasBlanket: false }
@@ -27,19 +27,35 @@ describe('needs', () => {
     expect(eat({ ...FRESH, hunger: 20 }).hunger).toBe(0)
   })
   it('지치거나 굶은 채 잠들면 앓아눕는다', () => {
-    expect(fallsSick({ hunger: 100, fatigue: 0, cold: 0 })).toBe(true)
-    expect(fallsSick({ hunger: 99, fatigue: 99, cold: 0 })).toBe(false)
+    expect(fallsSick({ hunger: 100, fatigue: 0, cold: 0, heat: 0 })).toBe(true)
+    expect(fallsSick({ hunger: 99, fatigue: 99, cold: 0, heat: 0 })).toBe(false)
     expect(exhausted(work({ ...FRESH, fatigue: 98 }))).toBe(true)
   })
   it('새벽 1시 넘어 자면 피로가 덜 풀린다', () => {
-    expect(sleepNeeds({ hunger: 50, fatigue: 90, cold: 10 }, 22 * 60).fatigue).toBe(0)
-    expect(sleepNeeds({ hunger: 50, fatigue: 90, cold: 10 }, 25 * 60).fatigue).toBe(30)
+    expect(sleepNeeds({ hunger: 50, fatigue: 90, cold: 10, heat: 0 }, 22 * 60).fatigue).toBe(0)
+    expect(sleepNeeds({ hunger: 50, fatigue: 90, cold: 10, heat: 0 }, 25 * 60).fatigue).toBe(30)
   })
   it('평안인 날은 피로가 천천히 쌓인다', () => {
     const plain = tickNeeds({ ...FRESH }, 60, ctx).fatigue
     const calm = tickNeeds({ ...FRESH }, 60, { ...ctx, peace: true }).fatigue
     expect(plain).toBeCloseTo(5)
     expect(calm).toBeCloseTo(4)
+  })
+})
+
+describe('더위', () => {
+  const summerNoon = { indoor: false, season: 'summer' as const, phase: 'day' as const, warm: false, hasBlanket: false }
+  it('여름 한낮 바깥에서 오르고, 뜨거운 날은 두 배', () => {
+    expect(tickNeeds({ ...FRESH }, 60, summerNoon).heat).toBeCloseTo(18)
+    expect(tickNeeds({ ...FRESH }, 60, { ...summerNoon, hot: true }).heat).toBeCloseTo(36)
+  })
+  it('집 안이나 다른 계절에는 식는다', () => {
+    expect(tickNeeds({ ...FRESH, heat: 50 }, 30, { ...summerNoon, indoor: true }).heat).toBeCloseTo(20)
+    expect(tickNeeds({ ...FRESH, heat: 50 }, 60, { ...summerNoon, season: 'spring' }).heat).toBeCloseTo(20)
+  })
+  it('물을 마시면 식고, 자고 나면 0', () => {
+    expect(coolDown({ ...FRESH, heat: 80 }).heat).toBe(0)
+    expect(sleepNeeds({ ...FRESH, heat: 80 }, 22 * 60).heat).toBe(0)
   })
 })
 

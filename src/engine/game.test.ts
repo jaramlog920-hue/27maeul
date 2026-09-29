@@ -204,7 +204,7 @@ describe('이웃', () => {
 
 describe('벤치에서 읽기', () => {
   it('모은 이야기만 읽을 수 있고, 읽을 때마다 피로가 30 풀린다', () => {
-    const s: GameState = { ...newGame(CONTENT), collected: ['lk-001-001'], needs: { hunger: 0, fatigue: 80, cold: 0 } }
+    const s: GameState = { ...newGame(CONTENT), collected: ['lk-001-001'], needs: { hunger: 0, fatigue: 80, cold: 0, heat: 0 } }
     expect(readScripture(s, 'lk-015-011')).toBeNull()
     const a = readScripture(s, 'lk-001-001')!
     expect(a.rested).toBe(true)
@@ -246,7 +246,7 @@ describe('손일', () => {
     expect(finishGather(s, 'well').clock.minute).toBe(s.clock.minute + 10)
   })
   it('지치면 손일을 못 한다', () => {
-    const s = { ...newGame(CONTENT), needs: { hunger: 0, fatigue: 100, cold: 0 } }
+    const s = { ...newGame(CONTENT), needs: { hunger: 0, fatigue: 100, cold: 0, heat: 0 } }
     expect(gatherInfo(s, 'well')).toEqual({ blocked: 'tired' })
     expect(finishGather(s, 'well')).toBe(s)
   })
@@ -256,7 +256,7 @@ describe('손일', () => {
     expect(s.recipesKnown).toEqual(['papyrus'])
   })
   it('빵 먹기·담요·별 보기', () => {
-    const s = { ...newGame(CONTENT), needs: { hunger: 80, fatigue: 10, cold: 70 } }
+    const s = { ...newGame(CONTENT), needs: { hunger: 80, fatigue: 10, cold: 70, heat: 0 } }
     expect(eatBread(s)!.needs.hunger).toBe(30)
     expect(eatBread({ ...s, inv: {} })).toBeNull()
     expect(coverWithBlanket(s)).toBeNull()
@@ -343,7 +343,7 @@ describe('잠과 새 날', () => {
     expect(s.scenes).toContain('strays')
   })
   it('굶거나 지친 채 자면 다음 날 늦게 일어나고 병문안', () => {
-    const s = goToSleep({ ...newGame(CONTENT), needs: { hunger: 100, fatigue: 20, cold: 0 } }, CONTENT)
+    const s = goToSleep({ ...newGame(CONTENT), needs: { hunger: 100, fatigue: 20, cold: 0, heat: 0 } }, CONTENT)
     expect(s.clock.minute).toBe(600)
     expect(s.scenes).toContain('sick')
     expect(s.needs.hunger).toBe(20)

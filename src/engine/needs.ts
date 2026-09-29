@@ -5,9 +5,11 @@ export interface Needs {
   hunger: number
   fatigue: number
   cold: number
+  /** 여름 한낮의 더위 */
+  heat: number
 }
 
-export const FRESH: Needs = { hunger: 10, fatigue: 0, cold: 0 }
+export const FRESH: Needs = { hunger: 10, fatigue: 0, cold: 0, heat: 0 }
 export const HUNGRY = 70
 export const TIRED = 75
 export const CHILLY = 60
@@ -24,6 +26,8 @@ export interface NeedsContext {
   hasBlanket: boolean
   /** 평안인 날 (자기 전 읽기) */
   peace?: boolean
+  /** 오늘 날씨가 뜨겁다 */
+  hot?: boolean
 }
 
 /** minutes 동안 흐른 몸의 변화 */
@@ -36,7 +40,11 @@ export function tickNeeds(n: Needs, minutes: number, ctx: NeedsContext): Needs {
   else if (ctx.phase === 'night' && !ctx.indoor) coldRate = 0.1
   else coldRate = -0.5
   if (coldRate > 0 && ctx.hasBlanket && ctx.indoor) coldRate /= 2
-  return { hunger: clamp(hunger), fatigue: clamp(fatigue), cold: clamp(n.cold + coldRate * minutes) }
+  // 더위: 여름 한낮(낮 단계) 바깥에서만 오른다. 뜨거운 날은 두 배. 그 밖에는 식는다 (집 안이면 더 빨리)
+  let heatRate: number
+  if (ctx.season === 'summer' && ctx.phase === 'day' && !ctx.indoor) heatRate = ctx.hot ? 0.6 : 0.3
+  else heatRate = ctx.indoor ? -1 : -0.5
+  return { hunger: clamp(hunger), fatigue: clamp(fatigue), cold: clamp(n.cold + coldRate * minutes), heat: clamp(n.heat + heatRate * minutes) }
 }
 
 export function eat(n: Needs): Needs {
@@ -51,6 +59,10 @@ export function warmUp(n: Needs): Needs {
   return { ...n, cold: 0 }
 }
 
+export function coolDown(n: Needs): Needs {
+  return { ...n, heat: 0 }
+}
+
 /** 손으로 하는 일 한 번의 피로 */
 export function work(n: Needs, amount = 5): Needs {
   return { ...n, fatigue: clamp(n.fatigue + amount) }
@@ -59,7 +71,7 @@ export function work(n: Needs, amount = 5): Needs {
 /** 잠. 새벽 1시를 넘겨 자면 덜 풀린다 */
 export function sleepNeeds(n: Needs, sleptAtMinute: number): Needs {
   const late = sleptAtMinute >= 25 * 60
-  return { hunger: clamp(n.hunger + 10), fatigue: late ? 30 : 0, cold: 0 }
+  return { hunger: clamp(n.hunger + 10), fatigue: late ? 30 : 0, cold: 0, heat: 0 }
 }
 
 /** 잠들 때 이 상태면 다음 날 앓아눕는다 */
