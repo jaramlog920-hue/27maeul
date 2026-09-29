@@ -126,6 +126,11 @@
     "giftNone": "줄 만한 것이 없습니다.",
     "tradeTitle": "장날 좌판",
     "tradeOwned": "이미 있음",
+    "tradeBuy": "사기",
+    "tradeSell": "팔기",
+    "sellPrice": "{n}닢",
+    "sellJob": "마을 필사가가 되면 팔 수 있어요.",
+    "sellNone": "팔 것이 없어요.",
     "hearts": "마음",
     "gotLine": "얻은 것: {items}",
     "notRipe": "아직 익지 않았습니다.",
@@ -140,6 +145,7 @@
     "workPapyrus": "파피루스 만들기 (갈대 1 → 파피루스 1)",
     "workInk": "잉크 만들기 (그을음 1 · 물 1 → 잉크 {n})",
     "workBlanket": "담요 짜기 (양털 3 → 담요 1)",
+    "workCover": "표지 누르기 (제본 장인부터)",
     "pressTitle": "기름틀",
     "pressMake": "기름 짜기 (올리브 2 → 기름 1)",
     "hillTitle": "언덕 벤치",
@@ -459,6 +465,10 @@
       "name": "콩 씨앗",
       "desc": "텃밭에 심으면 나흘 만에 콩을 거둡니다."
     },
+    "cover": {
+      "name": "제본 표지",
+      "desc": "천을 씌운 단단한 표지. 장날에 좋은 값에 팔립니다."
+    },
     "herb": {
       "name": "향초",
       "desc": "좋은 향이 나는 풀. 장날에 팔거나 선물합니다."
@@ -473,7 +483,8 @@
     "papyrus": "파피루스 — 갈대 1 (작업대)",
     "ink": "잉크 — 그을음 1, 물 1 (작업대)",
     "oil": "기름 — 올리브 2 (기름틀)",
-    "blanket": "담요 — 양털 3 (작업대)"
+    "blanket": "담요 — 양털 3 (작업대)",
+    "cover": "제본 표지 — 파피루스 2, 양털 1 (작업대)"
   },
   "places": {
     "well": "물 긷기",
@@ -521,7 +532,9 @@
     "dryFlowers": "말린 꽃",
     "hourglass": "모래시계",
     "seedHerb": "향초 씨앗 2",
-    "seedBean": "콩 씨앗 2"
+    "seedBean": "콩 씨앗 2",
+    "goodPenCoins": "좋은 펜",
+    "brightLamp": "밝은 등잔"
   },
   "letters": {
     "title": "편지 바구니",

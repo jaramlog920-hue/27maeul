@@ -51,6 +51,7 @@ import {
   chapterReady,
   readScripture,
   passTime,
+  sell,
   type GameState,
   type SubmitResult,
   type Trade,
@@ -135,6 +136,7 @@ interface Store {
   startHelp: (neighborId: string) => void
   gift: (neighborId: string, item: ItemId) => void
   doTrade: (t: Trade) => void
+  sellItem: (item: ItemId) => void
   startTeach: () => void
   startLetter: () => void
   // 손일
@@ -530,6 +532,13 @@ export const useGame = create<Store>((set, get) => {
       if (!next) return
       sfx('gift')
       toastGain(get().game.inv, next.inv)
+      set({ game: persist(next) })
+    },
+
+    sellItem: (item) => {
+      const next = sell(get().game, item)
+      if (!next) return
+      sfx('gift')
       set({ game: persist(next) })
     },
 

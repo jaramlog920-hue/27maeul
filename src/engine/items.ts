@@ -51,7 +51,7 @@ export function take(inv: Inventory, need: Partial<Record<ItemId, number>>): Inv
   return out
 }
 
-export type RecipeId = 'bread' | 'papyrus' | 'ink' | 'oil' | 'blanket'
+export type RecipeId = 'bread' | 'papyrus' | 'ink' | 'oil' | 'blanket' | 'cover'
 
 export interface Recipe {
   id: RecipeId
@@ -68,6 +68,7 @@ export const RECIPES: Record<RecipeId, Recipe> = {
   ink: { id: 'ink', at: 'workbench', needs: { soot: 1, water: 1 }, gives: { ink: 1 }, minutes: 20, minigame: 'mash' },
   oil: { id: 'oil', at: 'press', needs: { olive: 2 }, gives: { oil: 1 }, minutes: 30, minigame: 'mash' },
   blanket: { id: 'blanket', at: 'workbench', needs: { wool: 3 }, gives: { blanket: 1 }, minutes: 60, minigame: 'timing' },
+  cover: { id: 'cover', at: 'workbench', needs: { papyrus: 2, wool: 1 }, gives: { cover: 1 }, minutes: 40, minigame: 'timing' },
 }
 
 /** 좋은 펜이 있으면 잉크 한 번 만들 때 두 병 */

@@ -33,6 +33,9 @@ export function PlaceMenu({ place }: { place: 'hearth' | 'workbench' | 'press' |
             <button disabled={canCraft(game, 'blanket') !== null} onClick={() => startCraft('blanket')}>
               {T.ui.workBlanket}
             </button>
+            <button disabled={canCraft(game, 'cover') !== null} onClick={() => startCraft('cover')}>
+              {T.ui.workCover}
+            </button>
           </>
         )}
         {place === 'press' && (
@@ -49,7 +52,7 @@ export function PlaceMenu({ place }: { place: 'hearth' | 'workbench' | 'press' |
       </div>
       {(place === 'hill' || place === 'bench') && <p className="hint">{T.ui.readHint}</p>}
       {game.needs.fatigue >= 100 && place !== 'hill' && place !== 'bench' && <p className="hint">{T.ui.tooTired}</p>}
-      {(['bread', 'papyrus', 'ink', 'oil', 'blanket'] as const).some((r) => canCraft(game, r) === 'full') && <p className="hint">{T.ui.bagFull}</p>}
+      {(['bread', 'papyrus', 'ink', 'oil', 'blanket', 'cover'] as const).some((r) => canCraft(game, r) === 'full') && <p className="hint">{T.ui.bagFull}</p>}
     </div>
   )
 }

@@ -102,6 +102,7 @@ export type ItemId =
   | 'seedBean'
   | 'herb'
   | 'bean'
+  | 'cover'
 
 export type Minigame = 'mash' | 'timing' | 'pick'
 

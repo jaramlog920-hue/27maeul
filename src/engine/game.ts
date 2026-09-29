@@ -32,6 +32,7 @@ import {
   VISIT_TO,
   type Gathering,
 } from './bonds'
+import { COVER_FROM, jobOf, SELL_FROM } from './job'
 import { goalFor, isNear, npcTile, placeNpc, stepNpc, type Npc } from './neighbors'
 import { GAIN, heartsOf, MAX_POINTS } from './hearts'
 import { bookDone, emptyProgress, totalChapters, type Progress } from './books'
@@ -644,6 +645,8 @@ export const TRADES: readonly Trade[] = [
   { id: 'hourglass', pay: { olive: 1, oil: 1 }, get: { hourglass: 1 } },
   { id: 'seedHerb', pay: {}, coins: 5, get: { seedHerb: 2 } },
   { id: 'seedBean', pay: {}, coins: 4, get: { seedBean: 2 } },
+  { id: 'goodPenCoins', pay: {}, coins: 40, get: { goodPen: 1 } },
+  { id: 'brightLamp', pay: {}, coins: 60, get: { brightLamp: 1 } },
 ]
 
 export function tradesFor(flags: Record<string, number>): Trade[] {
@@ -654,6 +657,7 @@ export function trade(s: GameState, t: Trade): GameState | null {
   if (!isMarketDay(s.clock.day)) return null
   if (t.requires && !unlocked(s.flags, t.requires)) return null
   if (t.get.goodPen && count(s.inv, 'goodPen') > 0) return null
+  if (t.get.brightLamp && count(s.inv, 'brightLamp') > 0) return null
   if (t.coins !== undefined && s.coins < t.coins) return null
   const left = take(s.inv, t.pay)
   if (!left || wouldOverflow(left, t.get)) return null
@@ -790,8 +794,9 @@ export function finishGather(s: GameState, place: PlaceId): GameState {
   return passTime({ ...s, inv: add(s.inv, info.gives), needs: work(s.needs, 4) }, info.minutes)
 }
 
-export type CraftBlock = 'needs' | 'tired' | 'full' | null
+export type CraftBlock = 'needs' | 'tired' | 'full' | 'job' | null
 export function canCraft(s: GameState, id: RecipeId): CraftBlock {
+  if (id === 'cover' && jobOf(s) < COVER_FROM) return 'job'
   if (exhausted(s.needs)) return 'tired'
   if (!has(s.inv, RECIPES[id].needs)) return 'needs'
   if (wouldOverflow(take(s.inv, RECIPES[id].needs)!, recipeGives(RECIPES[id], s.inv, s.flags))) return 'full'
@@ -803,6 +808,22 @@ export function finishCraft(s: GameState, id: RecipeId): GameState {
   const inv = craft(s.inv, RECIPES[id], s.flags)!
   const recipesKnown = s.recipesKnown.includes(id) ? s.recipesKnown : [...s.recipesKnown, id]
   return passTime({ ...s, inv, recipesKnown, needs: work(s.needs, 5) }, RECIPES[id].minutes)
+}
+
+/** 장날에 파는 것: 공방 제품과 텃밭 작물뿐 — 엮은 말씀 책·조각은 팔지 않는다 (exclusion-list §3-3) */
+export const SELL_PRICES: Partial<Record<ItemId, number>> = { ink: 8, papyrus: 6, cover: 25, herb: 6, bean: 3 }
+
+export type SellBlock = 'notMarket' | 'job' | 'none' | null
+export function canSell(s: GameState, item: ItemId): SellBlock {
+  if (SELL_PRICES[item] === undefined || count(s.inv, item) === 0) return 'none'
+  if (!isMarketDay(s.clock.day)) return 'notMarket'
+  if (jobOf(s) < SELL_FROM) return 'job'
+  return null
+}
+
+export function sell(s: GameState, item: ItemId): GameState | null {
+  if (canSell(s, item)) return null
+  return { ...s, inv: take(s.inv, { [item]: 1 })!, coins: s.coins + SELL_PRICES[item]! }
 }
 
 /** 가진 것 중 가장 든든한 것을 먹는다 (빵 → 꿀 → 무화과) */

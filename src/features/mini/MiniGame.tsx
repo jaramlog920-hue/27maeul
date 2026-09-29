@@ -7,7 +7,7 @@ import { ItemIcon } from '../../shared/ItemIcon'
 import { useGame, type Pending } from '../../store/game-store'
 
 const PLACE_ICON: Record<string, ItemId> = { well: 'water', reeds: 'reed', olive: 'olive', vine: 'grapes', field: 'barley' }
-const RECIPE_ICON: Record<string, ItemId> = { bread: 'bread', papyrus: 'papyrus', ink: 'ink', oil: 'oil', blanket: 'blanket' }
+const RECIPE_ICON: Record<string, ItemId> = { bread: 'bread', papyrus: 'papyrus', ink: 'ink', oil: 'oil', blanket: 'blanket', cover: 'cover' }
 
 function titleOf(p: Pending): string {
   if (p.kind === 'gather') return (T.places as Record<string, string>)[p.place] ?? ''

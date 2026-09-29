@@ -3,7 +3,7 @@ import { isMarketDay, weatherOf } from '../../engine/calendar'
 import { formatTime, phaseOf, seasonOf } from '../../engine/clock'
 import { totalChapters } from '../../engine/books'
 import { peaceful } from '../../engine/game'
-import { jobLevel } from '../../engine/requests'
+import { jobOf } from '../../engine/job'
 import { useGame } from '../../store/game-store'
 
 export function Hud() {
@@ -12,7 +12,7 @@ export function Hud() {
   const minute = useGame((s) => Math.floor(s.game.clock.minute / 10) * 10)
   const shelf = useGame((s) => totalChapters(s.game))
   const coins = useGame((s) => s.game.coins)
-  const job = useGame((s) => jobLevel(s.game.lettersDone, Object.keys(s.game.shelved).length))
+  const job = useGame((s) => jobOf(s.game))
   const name = useGame((s) => s.game.avatar?.name ?? '')
   const peace = useGame((s) => peaceful(s.game))
   const { open } = useGame.getState()
