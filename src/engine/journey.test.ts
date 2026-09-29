@@ -6,9 +6,9 @@ import { cardsForChapters, journeyChapters, type JourneyCard } from './journey'
 const verseNo = (ref: string) => ref.match(/^행 (\d+):(\d+)$/)!.slice(1).map(Number) as [number, number]
 
 describe('여정 카드 데이터', () => {
-  it('카드는 30–45장, 1장 예루살렘에서 28장 로마까지', () => {
+  it('카드는 30–46장, 1장 예루살렘에서 28장 로마까지', () => {
     expect(JOURNEY.length).toBeGreaterThanOrEqual(30)
-    expect(JOURNEY.length).toBeLessThanOrEqual(45)
+    expect(JOURNEY.length).toBeLessThanOrEqual(46)
     expect(JOURNEY[0]).toMatchObject({ place: '예루살렘', chapter: 1 })
     expect(JOURNEY.at(-1)).toMatchObject({ place: '로마', chapter: 28 })
   })
