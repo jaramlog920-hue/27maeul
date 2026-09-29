@@ -53,11 +53,19 @@ describe('world', () => {
   })
 
   it('새 이웃 집 넷은 문 앞이 걸을 수 있는 길과 이어진다', () => {
-    for (const [id, door] of [['postman', { x: 42, y: 22 }], ['carpenter', { x: 13, y: 22 }], ['innkeeper', { x: 20, y: 28 }], ['fisher', { x: 12, y: 31 }]] as const) {
+    for (const [id, door] of [['postman', { x: 43, y: 22 }], ['carpenter', { x: 13, y: 22 }], ['innkeeper', { x: 20, y: 28 }], ['fisher', { x: 12, y: 31 }]] as const) {
       expect(HOUSES.some((h) => h.id === id), id).toBe(true)
       expect(isWalkable({ x: door.x, y: door.y + 1 }), id).toBe(true)
     }
     expect(PLACES.field.tiles.length).toBe(10)
+  })
+
+  it('물 긷는 아이네 집과 편지 나르는 이웃 집 사이(40열)로 지나갈 수 있다', () => {
+    // 두 집이 39열에서 대각선으로 맞붙어 막혔던 곳 (사용자, 2026-09-30)
+    for (let y = 13; y <= 22; y++) expect(isWalkable({ x: 40, y }), `40,${y}`).toBe(true)
+    const path = findPath({ x: 37, y: 18 }, { x: 42, y: 14 })
+    expect(path).not.toBeNull()
+    expect(path!.some((t) => t.x === 40)).toBe(true)
   })
 })
 
