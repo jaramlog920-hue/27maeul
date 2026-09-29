@@ -26,7 +26,7 @@ const BOOK_NAMES = { mt: '마태복음', mk: '마가복음', lk: '누가복음',
 const BOOK_ABBR = { mt: '마', mk: '막', lk: '눅', jn: '요' }
 // 설계 §3.3 — 'full': 1장부터 끝 장까지 전부. 'prefix': 1장부터 조각이 있는 마지막 장까지 빠짐없이(시험판에서 앞 몇 장만 넣은 책).
 // 책을 다 넣으면 'full'로 바꾼다.
-const COVERAGE = { lk: 'full', mk: 'full' }
+const COVERAGE = { lk: 'full', mk: 'full', mt: 'prefix' }
 // exclusion-list §4-3 — "같은 이야기"인데 겹치는 낱말이 이보다 적으면 사람이 다시 본다
 const SAME_OVERLAP_MIN = 0.2
 // exclusion-list §3-2 — 조각은 문장 중간에서 끝나지 않는다 (다음 절로 말이 이어지는 어미)

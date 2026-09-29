@@ -59,16 +59,21 @@ describe('life-text', () => {
 
 describe('책별 콘텐츠', () => {
   it('조각이 있는 책과 책별 조각', () => {
-    expect(BOOKS_WITH_CONTENT).toEqual(['mk', 'lk'])
+    expect(BOOKS_WITH_CONTENT).toEqual(['mt', 'mk', 'lk'])
     expect(piecesOf('mk').length).toBe(98)
     expect(piecesOf('mk').every((p) => p.book === 'mk')).toBe(true)
-    expect(piecesOf('mt')).toEqual([])
+    expect(piecesOf('mt').length).toBe(54) // 마 1–10장 (작업 4)
+    expect(piecesOf('mt').every((p) => p.book === 'mt')).toBe(true)
+    expect(piecesOf('jn')).toEqual([])
   })
   it('절 참조에는 책 약칭이 붙고, 절로 조각을 찾는다', () => {
     expect(quizSourceFor(['mk']).versesOf('막 1:9-11').map((v) => v.ref)).toEqual(['막 1:9', '막 1:10', '막 1:11'])
     expect(pieceOfVerse('막 1:10')?.id).toBe('mk-001-009')
     expect(pieceOfVerse('눅 3:22')?.id).toBe('lk-003-021')
-    expect(pieceOfVerse('마 1:1')).toBeUndefined()
+    expect(pieceOfVerse('마 1:1')?.id).toBe('mt-001-001')
+    expect(pieceOfVerse('마 10:42')?.id).toBe('mt-010-040')
+    expect(pieceOfVerse('마 11:1')).toBeUndefined()
+    expect(pieceOfVerse('요 1:1')).toBeUndefined()
   })
   it('대괄호 구간(막 16:9-20)의 절은 괄호 글자가 없는 가운데 절까지 괄호 안으로 친다', () => {
     const vs = quizSourceFor(['mk']).versesOf('막 16:8-20')
