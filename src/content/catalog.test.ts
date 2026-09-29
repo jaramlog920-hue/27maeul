@@ -69,6 +69,13 @@ describe('책별 콘텐츠', () => {
     expect(piecesOf('jn').length).toBe(8 + 3 + 5 + 8 + 6 + 9 + 8 + 6 + 5 + 6 + 7 + (8 + 5 + 5 + 4 + 4 + 4 + 6 + 5 + 5 + 5))
     expect(piecesOf('jn').every((p) => p.book === 'jn')).toBe(true)
   })
+  it('네 복음서 조각의 합이 pieces.json 전체와 같고, 대표 조각의 제목·범위가 원본(scripts/pieces)과 맞는다', () => {
+    expect(BOOKS_WITH_CONTENT.reduce((n, b) => n + piecesOf(b).length, 0)).toBe(PIECES.length)
+    expect(PIECES).toHaveLength(533)
+    expect(new Set(PIECES.map((p) => p.id)).size).toBe(PIECES.length)
+    expect(pieceById('mt-005-001')).toMatchObject({ book: 'mt', ref: '마 5:1-12', chapter: 5, title: '심령이 가난한 자' })
+    expect(pieceById('jn-011-001')).toMatchObject({ book: 'jn', ref: '요 11:1-10', chapter: 11, title: '베다니에 사는 나사로라' })
+  })
   it('절 참조에는 책 약칭이 붙고, 절로 조각을 찾는다', () => {
     expect(quizSourceFor(['mk']).versesOf('막 1:9-11').map((v) => v.ref)).toEqual(['막 1:9', '막 1:10', '막 1:11'])
     expect(pieceOfVerse('막 1:10')?.id).toBe('mk-001-009')

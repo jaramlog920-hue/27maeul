@@ -1,7 +1,10 @@
 import { BOOKS_WITH_CONTENT, inBrackets, pieceById, pieceOfVerse, piecesOf, quizSourceFor } from '../content/catalog'
 import { mulberry32 } from './offers'
 import { buildLibraryQuiz, detectiveAnswer, QUIZ_SIZE, quizzable } from './quiz'
+import type { Grade } from './library'
+import { poolFor } from './library'
 import { BOOKS, type Book } from './types'
+import { lockedTiles, lockedZones, ZONES } from './world'
 
 const norm = (s: string) => s.replace(/\s+/g, '')
 const SEEDS = Array.from({ length: 20 }, (_, i) => i + 1)
@@ -83,6 +86,45 @@ describe('서고 퀴즈', () => {
         }
       }
     }
+  })
+
+  it('네 권을 차례로 꽂으면 구역이 하나씩 열리고, 4권째에 대장간이 열린다', () => {
+    let shelved: Partial<Record<Book, Grade>> = {}
+    const seen: string[][] = []
+    BOOKS_WITH_CONTENT.forEach((b, i) => {
+      shelved = { ...shelved, [b]: 2 }
+      const n = Object.keys(shelved).length
+      expect(n).toBe(i + 1)
+      expect(lockedZones(n).map((z) => z.id)).toEqual(ZONES.filter((z) => z.books > n).map((z) => z.id))
+      seen.push(ZONES.filter((z) => z.books <= n).map((z) => z.id))
+    })
+    expect(seen[2]).not.toContain('forge')
+    expect(seen[3]).toEqual(['vineyard', 'dock', 'hives', 'forge'])
+    const smith = ZONES.find((z) => z.id === 'forge')!
+    expect(lockedTiles(3).has(`${smith.x0},${smith.y0}`)).toBe(true)
+    expect(lockedTiles(4).has(`${smith.x0},${smith.y0}`)).toBe(false)
+    expect(poolFor(shelved, 'jn')).toEqual(['mt', 'mk', 'lk', 'jn'])
+  })
+
+  it('네 권이 서고에 있으면 탐정 문제가 네 복음서 모두에서, 네 방향으로 나온다', () => {
+    const pool: Book[] = ['mt', 'mk', 'lk', 'jn']
+    const src = quizSourceFor(pool)
+    const partners = new Set<string>()
+    for (const current of pool) {
+      let found = 0
+      for (let seed = 1; seed <= 60; seed++) {
+        for (const q of buildLibraryQuiz({ current, pool, piecesOf, rng: mulberry32(seed), src })) {
+          if (q.kind !== 'detective') continue
+          found++
+          expect(q.answer).toContain(current)
+          expect(q.options).toEqual(['mt', 'mk', 'lk', 'jn'])
+          for (const g of q.answer) if (g !== current) partners.add(`${current}>${g}`)
+        }
+      }
+      expect(found, `${current} 탐정 문제`).toBeGreaterThan(0)
+    }
+    // 어느 복음서에서 시작해도 나머지 세 복음서 쪽으로 이어지는 문제가 있다
+    for (const a of pool) for (const b of pool) if (a !== b) expect(partners.has(`${a}>${b}`), `${a}>${b}`).toBe(true)
   })
 
   it('서고에 다른 책이 있으면 "어느 책?" 문제가 나온다', () => {
