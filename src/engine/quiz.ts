@@ -33,9 +33,12 @@ export const GOSPELS: readonly GospelId[] = ['mt', 'mk', 'lk', 'jn']
 
 const norm = (s: string) => s.replace(/\s+/g, '')
 export const wordsOf = (text: string) => text.trim().split(/\s+/)
-/** 문제로 쓸 수 있는 절인가: 본문이 없는 절((없음))이거나 대괄호가 든 절·대괄호 구간 안의 절(원문에 없는 말 보탬)은 안 된다 */
+/**
+ * 문제로 쓸 수 있는 절인가: 본문이 없는 절((없음)), 대괄호가 든 절·대괄호 구간 안의 절(원문에 없는 말 보탬),
+ * 둥근 괄호가 든 절·둥근 괄호 구간 안의 절(마 6:13 송영 같은 사본 차이 표시와, 본문 속 풀이 괄호 — 안전하게 모두 뺀다)은 안 된다
+ */
 export function quizzable(text: string, inBrackets = false): boolean {
-  return !inBrackets && text !== '(없음)' && !text.includes('[') && !text.includes(']')
+  return !inBrackets && text !== '(없음)' && !/[[\]()]/.test(text)
 }
 
 function shuffle<T>(items: readonly T[], rng: Rng): T[] {
@@ -90,8 +93,10 @@ function blank(p: Piece, chapterPieces: readonly Piece[], src: QuizSource, rng: 
     src.versesOf(p.ref).filter((v) => norm(v.text).length >= MIN_VERSE_CHARS && quizzable(v.text, v.inBrackets) && src.countVerse(v.text) === 1),
     rng,
   )
-  // 보기로 쓸 낱말: 같은 장 다른 절의 낱말
-  const pool = [...new Set(chapterPieces.flatMap((cp) => src.versesOf(cp.ref).flatMap((v) => wordsOf(v.text))))].filter((w) => norm(w).length >= 2)
+  // 보기로 쓸 낱말: 같은 장 다른 절의 낱말 (괄호 구절의 낱말은 보기로도 쓰지 않는다)
+  const pool = [
+    ...new Set(chapterPieces.flatMap((cp) => src.versesOf(cp.ref).filter((v) => quizzable(v.text, v.inBrackets)).flatMap((v) => wordsOf(v.text)))),
+  ].filter((w) => norm(w).length >= 2)
   for (const v of verses) {
     const ws = wordsOf(v.text)
     const idxs = shuffle(

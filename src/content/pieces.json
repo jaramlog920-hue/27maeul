@@ -21,7 +21,7 @@
     "title": "임마누엘",
     "stamps": [
       {
-        "kind": "same",
+        "kind": "similar",
         "book": "lk",
         "ref": "눅 2:1-7"
       },
@@ -930,6 +930,11 @@
         "kind": "similar",
         "book": "mk",
         "ref": "막 9:38-41"
+      },
+      {
+        "kind": "similar",
+        "book": "lk",
+        "ref": "눅 10:13-16"
       }
     ]
   },
@@ -2918,7 +2923,7 @@
     "title": "맏아들을 낳아",
     "stamps": [
       {
-        "kind": "same",
+        "kind": "similar",
         "book": "mt",
         "ref": "마 1:18-25"
       }
@@ -3907,6 +3912,11 @@
         "kind": "similar",
         "book": "mt",
         "ref": "마 11:20-24"
+      },
+      {
+        "kind": "similar",
+        "book": "mt",
+        "ref": "마 10:40-42"
       }
     ]
   },

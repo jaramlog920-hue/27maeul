@@ -73,16 +73,25 @@ const bookOfRef = (ref: string): Book => {
   return b
 }
 
-/** 대괄호 [ … ] 구간에 든 절 ('막 16:10'). 막 16:9-20·요 7:53-8:11처럼 여러 절에 걸치면 괄호 글자가 없는 가운데 절도 넣는다 */
+/**
+ * 괄호 구간에 든 절 ('막 16:10') — 퀴즈에 쓰지 않는다.
+ * 대괄호 [ … ]: 막 16:9-20·요 7:53-8:11처럼 여러 절에 걸치면 괄호 글자가 없는 가운데 절도 넣는다.
+ * 둥근 괄호 ( … ): 마 6:13 송영(사본 차이 표시)과 본문 속 풀이 괄호(막 7:3-4 등). 구별하지 않고 모두 넣는다 — 퀴즈에서 빼는 쪽이 늘 안전하다.
+ * 본문이 없는 절 '(없음)'은 괄호로 치지 않는다(versesOf에서 이미 감춤).
+ */
 const bracketed = new Set<string>()
 for (const b of BOOKS) {
-  let open = false
+  let square = false
+  let round = false
   ;(bible[BOOK_IDS[b]] ?? []).forEach((ch, ci) =>
     ch.forEach((text, vi) => {
-      if (open || text.includes('[') || text.includes(']')) bracketed.add(`${BOOK_ABBR[b]} ${ci + 1}:${vi + 1}`)
+      if (text === '(없음)') return
+      if (square || round || /[[\]()]/.test(text)) bracketed.add(`${BOOK_ABBR[b]} ${ci + 1}:${vi + 1}`)
       for (const c of text) {
-        if (c === '[') open = true
-        else if (c === ']') open = false
+        if (c === '[') square = true
+        else if (c === ']') square = false
+        else if (c === '(') round = true
+        else if (c === ')') round = false
       }
     }),
   )

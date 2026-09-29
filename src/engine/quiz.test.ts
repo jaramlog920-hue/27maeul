@@ -1,4 +1,4 @@
-import { BOOKS_WITH_CONTENT, CONTENT, pieceById, pieceOfVerse, piecesOf, quizSourceFor } from '../content/catalog'
+import { BOOKS_WITH_CONTENT, CONTENT, inBrackets, pieceById, pieceOfVerse, piecesOf, quizSourceFor } from '../content/catalog'
 import { chaptersOf } from './books'
 import { mulberry32 } from './offers'
 import { buildQuiz, detectiveAnswer, isCorrect, QUIZ_SIZE, quizzable, quizzablePiece, wordsOf, type Question } from './quiz'
@@ -89,6 +89,38 @@ describe('기록 퀴즈', () => {
     expect(quizzable('어느 여자가 열 드라크마가 있는데')).toBe(true)
     // 여러 절에 걸친 괄호 구간의 가운데 절 (막 16:10은 괄호 글자가 없다)
     expect(quizzable('어느 여자가 열 드라크마가 있는데', true)).toBe(false)
+    // 둥근 괄호: 마 6:13 송영 같은 절도 쓰지 않는다
+    expect(quizzable('다만 악에서 구하옵소서 (나라와 권세와 영광이 아버지께 영원히 있사옵나이다 아멘)')).toBe(false)
+  })
+
+  it('둥근 괄호 구간: 마 6:13(송영)과 여러 절에 걸친 막 7:3-4는 괄호 안, (없음)과 이웃 절은 밖', () => {
+    expect(inBrackets('마 6:13')).toBe(true)
+    expect(inBrackets('마 6:12')).toBe(false)
+    expect(inBrackets('마 6:14')).toBe(false)
+    expect(inBrackets('막 7:3')).toBe(true)
+    expect(inBrackets('막 7:4')).toBe(true)
+    expect(inBrackets('막 7:5')).toBe(false)
+    expect(inBrackets('눅 17:36')).toBe(false) // (없음) — 괄호로 치지 않음, 구간을 열지도 않음
+    expect(inBrackets('눅 17:37')).toBe(false)
+  })
+
+  it('마 6:13은 문제·정답·보기 어디에도 나오지 않는다', () => {
+    const src = quizSourceFor(['mt'])
+    const doxology = src.versesOf('마 6:13')[0]
+    const onlyThere = wordsOf(doxology.text).filter((w) => /[()]/.test(w)) // "(나라와", "아멘)"
+    expect(onlyThere.length).toBeGreaterThan(0)
+    for (let seed = 1; seed <= 200; seed++) {
+      for (const ch of [5, 6, 7]) {
+        const qs = buildQuiz(piecesOf('mt'), ch, mulberry32(seed), src)
+        expect(qs, `ch ${ch} seed ${seed}`).toHaveLength(QUIZ_SIZE)
+        for (const q of qs) {
+          const where = `ch ${ch} seed ${seed} ${q.kind}`
+          if ('ref' in q) expect(q.ref, where).not.toBe('마 6:13')
+          if (q.kind === 'blank') for (const o of q.options) expect(/[()]/.test(o), `${where} ${o}`).toBe(false)
+          if (q.kind === 'puzzle') for (const w of q.words) expect(/[()]/.test(w), where).toBe(false)
+        }
+      }
+    }
   })
 
   it('괄호 조각(막 16:9-20)은 문제·보기·정답 어디에도 나오지 않는다', () => {

@@ -72,6 +72,19 @@ describe('서고 퀴즈', () => {
     }
   })
 
+  it('마 6:13(둥근 괄호 송영)은 서고 퀴즈의 문제·보기·정답에 나오지 않는다', () => {
+    for (const pool of [['mt'], ['mt', 'mk', 'lk']] as Book[][]) {
+      const src = quizSourceFor(pool)
+      for (let seed = 1; seed <= 200; seed++) {
+        for (const q of buildLibraryQuiz({ current: 'mt', pool, piecesOf, rng: mulberry32(seed), src })) {
+          const where = `${pool.join('+')} seed ${seed} ${q.kind}`
+          if ('ref' in q) expect(q.ref, where).not.toBe('마 6:13')
+          if (q.kind === 'blank') for (const o of q.options) expect(/[()]/.test(o), `${where} ${o}`).toBe(false)
+        }
+      }
+    }
+  })
+
   it('서고에 다른 책이 있으면 "어느 책?" 문제가 나온다', () => {
     const pool: Book[] = ['mk', 'lk']
     for (const seed of [1, 2, 3]) {
