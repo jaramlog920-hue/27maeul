@@ -61,6 +61,41 @@ export const LANTERNS: readonly Tile[] = [
   { x: 23, y: 31 },
 ]
 
+/** 여정을 다 이은 다음 날부터 나루(24열 =) 왼쪽 물 위에 머무는 큰 배의 왼쪽 위 칸 (세 칸 폭) */
+export const SHIP_AT: Tile = { x: 21, y: 34 }
+
+/**
+ * 큰 배: 차분한 나뭇빛 선체와 잿빛 파랑 띠, 크림 돛 하나, 둥근 창 셋(가운데 둔 대칭), 나루에 맨 밧줄.
+ * 선은 모두 2픽셀 이상 (화면이 늘어나도 일렁이지 않게), 물결에 1픽셀씩 천천히 오르내린다
+ */
+function ship(g: Ctx, t: number) {
+  const bob = Math.round(Math.sin(t * 1.2))
+  const s = (dx: number, dy: number, w: number, h: number, c: string) => px(g, SHIP_AT.x, SHIP_AT.y, dx, dy + bob, w, h, c)
+  // 물 그림자와 물결
+  px(g, SHIP_AT.x, SHIP_AT.y, 4, 28, 40, 2, 'rgba(60, 90, 100, 0.2)')
+  px(g, SHIP_AT.x, SHIP_AT.y, 0, 28, 4, 2, '#bddbcc')
+  px(g, SHIP_AT.x, SHIP_AT.y, 44, 28, 4, 2, '#bddbcc')
+  // 돛대와 활대, 돛 (돛대는 돛 위로만 보인다)
+  s(23, -14, 2, 32, '#82684f')
+  s(25, -14, 6, 2, '#a3b4c3')
+  s(11, -10, 26, 2, '#82684f')
+  s(12, -8, 24, 20, '#f1e6cf')
+  s(12, 10, 24, 2, '#d6c194')
+  s(12, 1, 24, 2, '#a3b4c3')
+  s(12, -8, 2, 20, '#e3d3b0')
+  // 난간·선체·띠
+  s(4, 14, 40, 2, '#ad845d')
+  s(0, 12, 4, 6, '#8e6a4d')
+  s(44, 12, 4, 6, '#8e6a4d')
+  s(2, 16, 44, 4, '#ad845d')
+  s(2, 16, 44, 2, '#8497a8')
+  s(4, 20, 40, 4, '#8e6a4d')
+  s(7, 24, 34, 3, '#7a5d46')
+  for (const dx of [12, 23, 34]) s(dx, 20, 2, 2, '#efe2c6')
+  // 나루 말뚝에 맨 밧줄
+  s(46, 14, 4, 2, '#c9b89a')
+}
+
 /** 마을에 생긴 것들을 그린다 (월드 좌표, 카메라 이동이 이미 적용된 상태) */
 export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, daytime: boolean) {
   const f = game.flags
@@ -81,6 +116,8 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
     px(g, 30, 34, 2, 5, 12, 5, WOOD) // 작은 배
     px(g, 30, 34, 4, 4, 8, 1, WOOD_DARK)
   }
+  // 사도행전 여정을 다 이은 다음 날부터 나루 곁의 큰 배 (flags.actsShip 2)
+  if ((f.actsShip ?? 0) >= 2) ship(g, t)
   // C2 베 짜는 이웃의 베틀
   if (level >= 2) {
     const loom = { x: 30, y: 29 }

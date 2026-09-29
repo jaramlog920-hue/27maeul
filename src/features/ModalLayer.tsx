@@ -5,6 +5,8 @@ import { Desk } from './desk/Desk'
 import { GardenMenu } from './garden/GardenMenu'
 import { Journal } from './journal/Journal'
 import { Library } from './library/Library'
+import { ActsShelf } from './library/ActsShelf'
+import { JourneyBoard } from './journey/JourneyBoard'
 import { LetterBox } from './letters/LetterBox'
 import { CareMenu } from './menus/CareMenu'
 import { PlaceMenu } from './menus/PlaceMenu'
@@ -71,6 +73,10 @@ function Body() {
       return <AdoptForm animal={modal.animal} />
     case 'library':
       return <Library />
+    case 'actsShelf':
+      return <ActsShelf />
+    case 'journey':
+      return <JourneyBoard />
     case 'garden':
       return <GardenMenu at={modal.at} />
   }

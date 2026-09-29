@@ -1,7 +1,7 @@
 // 마을 서고 안: 복음서 방 선반(책등 등급)과 잠긴 방들 (설계 §2.1.1)
 import { BOOKS_WITH_CONTENT, CONTENT } from '../../content/catalog'
 import { fill, T } from '../../content/text'
-import { bookDone } from '../../engine/books'
+import { actsRoomOpen, bookDone } from '../../engine/books'
 import { has } from '../../engine/items'
 import { RETRY_COST } from '../../engine/library'
 import { GOSPELS } from '../../engine/types'
@@ -14,6 +14,7 @@ export function Library() {
   const shelved = useGame((s) => s.game.shelved)
   const progress = useGame((s) => s.game.progress)
   const inv = useGame((s) => s.game.inv)
+  const open = useGame((s) => actsRoomOpen(s.game.flags))
   const { startShelve, startRetry, closeModal } = useGame.getState()
   const canPay = has(inv, RETRY_COST)
   return (
@@ -48,9 +49,10 @@ export function Library() {
       </ul>
       <p className="hint">{fill(T.library.retryCost, { gold: inv.goldLeaf ?? 0, oil: inv.oil ?? 0 })}</p>
       <ul className="library-locked">
-        {(T.library.lockedRooms as string[]).map((r) => (
-          <li key={r}>🔒 {r}</li>
-        ))}
+        {(T.library.lockedRooms as string[]).map((r, i) =>
+          // 잔치 다음 날부터 사도행전 방(첫 문)은 열려 있다
+          i === 0 && open ? <li key={r}>{fill(T.library.roomOpen, { room: r })}</li> : <li key={r}>🔒 {r}</li>,
+        )}
       </ul>
       <div className="actions">
         <button onClick={closeModal}>{T.ui.close}</button>

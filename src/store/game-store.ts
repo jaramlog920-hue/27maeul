@@ -2,6 +2,7 @@
 import { create } from 'zustand'
 import { CONTENT, pieceById, pieceOfQuestion, piecesOf, quizSourceFor } from '../content/catalog'
 import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
+import { actsRoomOpen } from '../engine/books'
 import { actsDoorGlows, canShelve, payRetry, poolFor, shelve } from '../engine/library'
 import { ALBUM_IDS, fill, itemList, itemName, NEIGHBOR_LINES, SCENES, T } from '../content/text'
 import { grapesRipe, isWet, weatherOf } from '../engine/calendar'
@@ -56,6 +57,7 @@ import {
   SELL_PRICES,
   orderHome,
   syncHome,
+  moveJourneyCard,
   type GameState,
   type SubmitResult,
   type Trade,
@@ -92,7 +94,7 @@ export type Modal =
   | { kind: 'talk'; neighborId: string; line: string }
   | { kind: 'passage'; pieceId: string; askLine: boolean; back?: boolean }
   /** lineKey: 조각 id 또는 'book:mk' 같은 책 키. back: 적거나 넘긴 뒤 돌아갈 창 */
-  | { kind: 'myLine'; lineKey: string; back?: 'library' | 'shelf' }
+  | { kind: 'myLine'; lineKey: string; back?: 'library' | 'shelf' | 'actsShelf' }
   | { kind: 'desk'; result: SubmitResult | null; dark: boolean }
   /** attic: 다락 창가에서 연 자기 전 읽기 */
   | { kind: 'review'; pieceId: string | null; attic?: boolean }
@@ -109,13 +111,16 @@ export type Modal =
   | { kind: 'shelf'; tab?: ShelfTab }
   | { kind: 'companion'; animal: Animal }
   | { kind: 'library' }
+  /** 사도행전 방: 사도행전 선반, 벽의 여정 판 */
+  | { kind: 'actsShelf' }
+  | { kind: 'journey' }
   | { kind: 'letter' }
   | { kind: 'garden'; at: Tile }
 
 /** 나의 한 줄 창을 닫은 뒤 돌아갈 곳 */
 function afterMyLine(m: Modal | null): Modal | null {
   if (m?.kind !== 'myLine' || !m.back) return null
-  return m.back === 'shelf' ? { kind: 'shelf', tab: 'lines' } : { kind: 'library' }
+  return m.back === 'shelf' ? { kind: 'shelf', tab: 'lines' } : m.back === 'actsShelf' ? { kind: 'actsShelf' } : { kind: 'library' }
 }
 
 interface Store {
@@ -178,6 +183,8 @@ interface Store {
   answerQuiz: (given: string | string[]) => void
   nextQuiz: () => void
   // 서고
+  /** 여정 판의 카드를 위(-1)·아래(+1)로 */
+  moveJourney: (index: number, delta: number) => void
   startShelve: (book: Book) => void
   startRetry: (book: Book) => void
   sleep: () => void
@@ -278,7 +285,8 @@ function announceRoom(before: GameState, after: GameState) {
   const room = roomAt(playerTile(after))
   if (!room || room === roomAt(playerTile(before))) return
   const who = CONTENT.neighbors.find((d) => d.id === room.owner)?.role
-  useGame.getState().say(room.owner === 'library' ? T.ui.libraryRoom : fill(T.ui.roomOf, { who: who ?? '' }), 2200)
+  const name = room.owner === 'library' ? T.ui.libraryRoom : room.owner === 'acts' ? T.ui.actsRoom : fill(T.ui.roomOf, { who: who ?? '' })
+  useGame.getState().say(name, 2200)
 }
 
 export const useGame = create<Store>((set, get) => {
@@ -348,6 +356,15 @@ export const useGame = create<Store>((set, get) => {
         return { game, modal: { kind: 'shelf' } }
       case 'library':
         return { game, modal: { kind: 'library' } }
+      case 'actsShelf':
+        return { game, modal: { kind: 'actsShelf' } }
+      case 'journeyBoard':
+        return { game, modal: { kind: 'journey' } }
+      case 'actsTable':
+        // 읽는 탁자: 벤치처럼 모은 이야기를 골라 읽는다
+        if (game.collected.length > 0) return { game, modal: { kind: 'readPick' } }
+        get().say(T.acts.tableEmpty)
+        return { game, modal: null }
       case 'basket':
         if (letterWaiting(game)) return { game, modal: { kind: 'letter' } }
         get().say(T.letters.none)
@@ -467,7 +484,8 @@ export const useGame = create<Store>((set, get) => {
         return
       }
       const locked = LOCKED_DOORS.findIndex((d) => sameTile(d, tile))
-      if (locked >= 0) {
+      // 사도행전 방이 열리면 첫 문은 걸어 들어가는 문이다 (아래 tapTile로)
+      if (locked >= 0 && !(locked === 0 && actsRoomOpen(game.flags))) {
         // 잔치 다음 날부터 첫 잠긴 문(사도행전 방)은 문틈으로 불빛이 샌다 — 문은 아직 잠겨 있다
         const line = locked === 0 && actsDoorGlows(game) ? T.library.lockedRoomGlow : T.library.lockedRoomTap
         get().say(fill(line, { room: (T.library.lockedRooms as string[])[locked] }))
@@ -726,12 +744,27 @@ export const useGame = create<Store>((set, get) => {
         const opened = lockedZones(shelvedCount(get().game)).filter((z) => shelvedCount(next) >= z.books)
         if (opened.length) setTimeout(() => get().say(fill(T.ui.zoneOpened, { name: (T.ui.zones as Record<string, string>)[opened[0].id] }), 4000), 4200)
         // 처음 꽂은 책이면 그 책에 대한 나의 한 줄을 물어본다 (넘겨도 된다)
-        set({ game: persist(next), modal: firstTime ? { kind: 'myLine', lineKey: bookLineKey(m.mode.book), back: 'library' } : { kind: 'library' } })
+        // 사도행전은 사도행전 방 선반으로 돌아간다
+        const back = m.mode.book === 'ac' ? 'actsShelf' : 'library'
+        set({ game: persist(next), modal: firstTime ? { kind: 'myLine', lineKey: bookLineKey(m.mode.book), back } : { kind: back } })
         return
       }
       const { state, result } = submitChapter(get().game, m.mode.book, m.mode.chapter, CONTENT)
       if (result.kind === 'done') sfx('done')
+      const newCards = state.journey.length - get().game.journey.length
+      if (newCards > 0) get().say(fill(T.acts.cardsGot, { n: newCards }), 3200)
       set({ game: persist(state), modal: { kind: 'desk', result, dark: false } })
+    },
+    moveJourney: (index, delta) => {
+      const game = get().game
+      const next = moveJourneyCard(game, index, delta, CONTENT)
+      if (next === game) return
+      sfx('pen')
+      if (next.flags.actsShip && !game.flags.actsShip) {
+        sfx('done')
+        get().say(T.acts.boardDoneToast, 3200)
+      }
+      set({ game: persist(next) })
     },
     startShelve: (book) => {
       const game = get().game

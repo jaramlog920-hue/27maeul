@@ -1,4 +1,4 @@
-import { MAP, WIDTH, HEIGHT, PLACES, HOUSES, START, isWalkable, placeAt, cameraFor, VIEW_W, VIEW_H, VILLAGE_H, isHome, tileAt, ROOMS, WARPS, roomAt, key, ROOM_W, ROOM_H, LOCKED_DOORS, ATTIC, inAttic } from './world'
+import { MAP, WIDTH, HEIGHT, PLACES, HOUSES, START, isWalkable, placeAt, cameraFor, VIEW_W, VIEW_H, VILLAGE_H, isHome, tileAt, ROOMS, WARPS, roomAt, key, ROOM_W, ROOM_H, LOCKED_DOORS, ATTIC, inAttic, ACTS_DOOR, ACTS_ROOM, setActsOpen } from './world'
 import { findPath, pathToward, stepActor, type Actor } from './movement'
 
 const adjacent = (a: { x: number; y: number }, b: { x: number; y: number }) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y) === 1
@@ -71,8 +71,9 @@ describe('world', () => {
 
 describe('이웃집 안', () => {
   it('집마다 방이 있고, 문 ↔ 방 안이 서로 이어진다', () => {
-    expect(ROOMS.map((r) => r.owner)).toEqual(['baker', 'child', 'grandpa', 'weaver', 'beekeeper', 'library'])
-    for (const r of ROOMS) {
+    expect(ROOMS.map((r) => r.owner)).toEqual(['baker', 'child', 'grandpa', 'weaver', 'beekeeper', 'library', 'acts'])
+    // 사도행전 방은 서고 안 잠긴 문에서 드나든다 (아래 '사도행전 방'에서 따로)
+    for (const r of ROOMS.filter((r) => r.owner !== 'acts')) {
       expect(tileAt(r.door.x, r.door.y), r.owner).toBe(r.owner === 'library' ? 'L' : 'D')
       const inside = WARPS.get(key(r.door))!
       expect(roomAt(inside)?.owner).toBe(r.owner)
@@ -104,6 +105,51 @@ describe('이웃집 안', () => {
     // 왼쪽 위 → 왼쪽 아래 → 오른쪽 위 → 오른쪽 아래
     expect(LOCKED_DOORS[0].x).toBeLessThan(LOCKED_DOORS[2].x)
     expect(LOCKED_DOORS[0].y).toBeLessThan(LOCKED_DOORS[1].y)
+  })
+})
+
+describe('사도행전 방 (계획 5 작업 5)', () => {
+  afterEach(() => setActsOpen(false))
+  const lib = () => ROOMS.find((r) => r.owner === 'library')!
+
+  it('문은 서고 왼쪽 위 잠긴 문 — 닫혀 있으면 막히고, 열리면 걸어 들어가는 문(J)', () => {
+    expect(ACTS_DOOR).toEqual(LOCKED_DOORS[0])
+    expect(ACTS_ROOM.door).toEqual(ACTS_DOOR)
+    expect(tileAt(ACTS_DOOR.x, ACTS_DOOR.y)).toBe('K')
+    expect(findPath(lib().entry, ACTS_DOOR)).toBeNull()
+    setActsOpen(true)
+    expect(tileAt(ACTS_DOOR.x, ACTS_DOOR.y)).toBe('J')
+    expect(isWalkable(ACTS_DOOR)).toBe(true)
+    expect(findPath(lib().entry, ACTS_DOOR)).not.toBeNull()
+    // 다른 잠긴 문 셋은 그대로
+    for (const d of LOCKED_DOORS.slice(1)) expect(isWalkable(d)).toBe(false)
+  })
+
+  it('문을 밟으면 방 안으로, 문깔개를 밟으면 서고 안 문 옆으로', () => {
+    const inside = WARPS.get(key(ACTS_DOOR))!
+    expect(roomAt(inside)).toBe(ACTS_ROOM)
+    expect(isWalkable(inside)).toBe(true)
+    const out = WARPS.get(key(ACTS_ROOM.exit))!
+    expect(roomAt(out)).toBe(lib())
+    expect(out).toEqual({ x: ACTS_DOOR.x + 1, y: ACTS_DOOR.y })
+    expect(isWalkable(out)).toBe(true)
+    // 방은 마을과 이어지지 않는다
+    expect(findPath(inside, START)).toBeNull()
+  })
+
+  it('방 안: 선반·여정 판·읽는 탁자에 다가갈 수 있고, 다른 방과 겹치지 않는다', () => {
+    const inside = WARPS.get(key(ACTS_DOOR))!
+    for (const id of ['actsShelf', 'journeyBoard', 'actsTable'] as const) {
+      const p = PLACES[id]
+      expect(roomAt(p.tiles[0]), id).toBe(ACTS_ROOM)
+      expect(findPath(inside, p.stand!), id).not.toBeNull()
+      for (const t of p.tiles) expect(placeAt(t), id).toBe(id)
+    }
+    for (const r of [...ROOMS, ATTIC].filter((r) => r !== ACTS_ROOM)) {
+      const apart = r.x0 + r.w <= ACTS_ROOM.x0 || ACTS_ROOM.x0 + ACTS_ROOM.w <= r.x0 || r.y0 + r.h <= ACTS_ROOM.y0 || ACTS_ROOM.y0 + ACTS_ROOM.h <= r.y0
+      expect(apart, r.owner).toBe(true)
+    }
+    expect(ACTS_ROOM.y0 + ACTS_ROOM.h).toBeLessThan(HEIGHT)
   })
 })
 

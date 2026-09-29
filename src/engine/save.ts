@@ -2,6 +2,7 @@
 import { IDLE_RESET } from './autonomy'
 import { actsRoomOpen, bookDone, emptyProgress, type Progress } from './books'
 import { newGame, settle, type GameState } from './game'
+import { cardsForChapters, placeNewCards } from './journey'
 import { refitRoom } from './room'
 import { setHomeLevel } from './world'
 import { BOOKS, type Book, type GameContent } from './types'
@@ -72,10 +73,14 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   // 고른 책: 조각이 있어야 하고, 사도행전이면 방이 열려 있어야 한다 (chooseBook과 같은 규칙)
   const activeBook =
     s.activeBook && content.pieces.some((p) => p.book === s.activeBook) && (s.activeBook !== 'ac' || actsRoomOpen(flags)) ? s.activeBook : null
+  // 여정 판: 옛 저장(판이 없던 때)은 빈 판에서, 엮은 사도행전 장의 카드만 남기고 빠진 카드는 채운다
+  const board = Array.isArray(s.journey) ? s.journey.filter((n) => Number.isInteger(n)) : []
+  const journey = placeNewCards(board, cardsForChapters(content.journey ?? [], progress.ac.completed))
   return {
     ...s,
     homeLevel,
     flags,
+    journey,
     room,
     inv,
     needs: { ...s.needs, heat: s.needs?.heat ?? 0 },

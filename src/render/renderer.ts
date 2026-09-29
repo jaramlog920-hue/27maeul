@@ -10,7 +10,7 @@ import { drawDecor, lanternLights, sheepCount } from './decor'
 import { FIRE, isNear, npcTile } from '../engine/neighbors'
 import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
 import { actsDoorGlows, feastToday } from '../engine/library'
-import { ATTIC, cameraFor, currentHomeLevel, HEIGHT, HOME_DOOR, HOME_EXPAND_RECT, homeRect, HOUSES, houseAt, LOCKED_DOORS, lockedZones, tileAt, isHome, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
+import { ACTS_ROOM, actsDoorOpen, ATTIC, cameraFor, currentHomeLevel, HEIGHT, HOME_DOOR, HOME_EXPAND_RECT, homeRect, HOUSES, houseAt, LOCKED_DOORS, lockedZones, tileAt, isHome, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
 import { GOSPELS, type Facing, type GameContent, type Season, type Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { avatarKey, withLookDefaults, type FullAvatar } from '../engine/avatar'
@@ -328,6 +328,35 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r(C.wood, 1, 1, 14, 12)
       r(C.woodDark, 1, 12, 14, 1)
       r('#d9b44a', 0, 0, 16, 1)
+      break
+    case 'Q':
+      // 사도행전 선반: 복음서 선반과 같은 나무, 위 테는 잿빛 파랑 (꽂은 책은 그릴 때 얹는다)
+      r(C.shadow, 0, 13, 16, 3)
+      r(C.woodDark, 0, 0, 16, 14)
+      r(C.wood, 1, 1, 14, 12)
+      r(C.woodDark, 1, 11, 14, 2)
+      r('#8497a8', 0, 0, 16, 2)
+      break
+    case 'M': {
+      // 벽에 건 여정 판 (세 칸에 걸친 한 장): 나무 테두리와 옅은 양피지 바탕. 카드와 실은 그릴 때 얹는다
+      const L = tileAt(x - 1, y) !== 'M'
+      const R = tileAt(x + 1, y) !== 'M'
+      r(C.wall, 0, 0, 16, 16)
+      r(C.wallTop, 0, 0, 16, 2)
+      const x0 = L ? 2 : 0
+      const x1 = R ? 14 : 16
+      r(C.woodDark, x0, 2, x1 - x0, 13)
+      r('#efe2c6', x0 + (L ? 2 : 0), 4, x1 - x0 - (L ? 2 : 0) - (R ? 2 : 0), 9)
+      break
+    }
+    case 'J':
+      // 열린 사도행전 방 문: 문설주, 안쪽 방의 따뜻한 빛, 오른쪽으로 열어 둔 문짝
+      r(C.wall, 0, 0, 16, 16)
+      r('#ae9068', 2, 1, 12, 15)
+      r('#f3d9a0', 4, 3, 8, 13)
+      r('#f8e6c0', 4, 12, 8, 4)
+      r(C.woodDark, 10, 3, 4, 13)
+      r(C.wood, 11, 4, 2, 12)
       break
     case 'K':
       // 잠긴 방 문: 벽에 난 나무문과 자물쇠
@@ -648,7 +677,7 @@ function drawHomeRoof(g: Ctx) {
 /** 계절과 집 단계마다 한 장 (집을 넓히면 그 칸들의 그림이 바뀐다) */
 const mapCache = new Map<string, HTMLCanvasElement>()
 function mapFor(season: Season): HTMLCanvasElement {
-  const cacheKey = `${season}/${currentHomeLevel()}`
+  const cacheKey = `${season}/${currentHomeLevel()}/${actsDoorOpen() ? 'acts' : ''}`
   let c = mapCache.get(cacheKey)
   if (c) return c
   c = document.createElement('canvas')
@@ -1140,8 +1169,38 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           g.fillRect(sx, sy + 2, 8, 2)
           g.fillRect(sx, sy + 7, 8, 1)
         })
-        // 잔치 다음 날부터: 사도행전 방 문틈으로 새는 따뜻한 불빛 (문은 잠긴 그대로)
+        // 잔치 다음 날부터: 사도행전 방 문으로 새는 따뜻한 불빛
         if (actsGlow) drawDoorGlow(g, LOCKED_DOORS[0], t)
+      }
+      // 사도행전 방: 선반의 사도행전 책등, 벽 여정 판의 실과 카드 (모은 만큼, 다 이으면 실이 금빛)
+      if (roomAt(here) === ACTS_ROOM) {
+        const mid = PLACES.actsShelf.tiles[1]
+        const grade = game.shelved.ac
+        if (grade === undefined) {
+          g.fillStyle = 'rgba(40,25,15,0.35)'
+          g.fillRect(mid.x * TILE + 4, mid.y * TILE + 3, 8, 9)
+        } else {
+          g.fillStyle = '#7a6a8a'
+          g.fillRect(mid.x * TILE + 4, mid.y * TILE + 2, 8, 10)
+          g.fillStyle = ['#c9b89a', '#c7ccd4', '#d9b44a'][grade]
+          g.fillRect(mid.x * TILE + 4, mid.y * TILE + 4, 8, 2)
+          g.fillRect(mid.x * TILE + 4, mid.y * TILE + 9, 8, 2)
+        }
+        const [b0] = PLACES.journeyBoard.tiles
+        const bx = b0.x * TILE + 4
+        const by = b0.y * TILE
+        const all = content.journey?.length ?? 0
+        const shown = all ? Math.ceil((game.journey.length / all) * 7) : 0
+        if (shown > 0) {
+          g.fillStyle = (game.flags.actsShip ?? 0) > 0 ? '#d9b44a' : '#c9968a'
+          g.fillRect(bx, by + 6, 40, 2)
+        }
+        for (let i = 0; i < shown; i++) {
+          g.fillStyle = '#fbf3e0'
+          g.fillRect(bx + i * 6, by + 8, 4, 4)
+          g.fillStyle = '#8497a8'
+          g.fillRect(bx + i * 6 + 1, by + 6, 2, 2)
+        }
       }
 
       // 마음이 쌓여 마을에 생긴 것들

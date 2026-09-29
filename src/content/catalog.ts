@@ -19,9 +19,9 @@ const ALL_PIECES = piecesRaw as unknown as Piece[]
 /** 엔진과 화면이 쓰는 조각 — 모든 책 (책별로는 piecesOf) */
 export const PIECES = ALL_PIECES
 export const NEIGHBORS = neighborsRaw as unknown as NeighborDef[]
-export const CONTENT: GameContent = { pieces: PIECES, neighbors: NEIGHBORS }
 /** 사도행전 여정 카드 — 본문 순서 (scripts/journey/ac.txt, verify-journey가 본문과 대조) */
 export const JOURNEY = journeyRaw as JourneyCard[]
+export const CONTENT: GameContent = { pieces: PIECES, neighbors: NEIGHBORS, journey: JOURNEY }
 
 export interface Verse {
   chapter: number

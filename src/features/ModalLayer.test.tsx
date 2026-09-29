@@ -1,12 +1,12 @@
 import { act, render, renderHook, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { CONTENT, PIECES, piecesOf } from '../content/catalog'
+import { CONTENT, JOURNEY, PIECES, piecesOf, versesOf } from '../content/catalog'
 import type { Piece } from '../engine/types'
 import { dexView } from './shelf/Shelf'
 import { chaptersOf, emptyProgress } from '../engine/books'
-import { chooseBook, newGame, type GameState } from '../engine/game'
+import { chooseBook, newGame, playerTile, type GameState } from '../engine/game'
 import { mulberry32 } from '../engine/offers'
-import { LOCKED_DOORS, PLACES } from '../engine/world'
+import { ACTS_ROOM, key, LOCKED_DOORS, PLACES, roomAt, ROOMS, WARPS } from '../engine/world'
 import { useGame } from '../store/game-store'
 import { saveGame } from '../engine/save'
 import { ModalLayer } from './ModalLayer'
@@ -620,18 +620,66 @@ describe('복음서 방 잔치와 사도행전 방 예고', () => {
     act(() => useGame.getState().frame(1))
     expect(useGame.getState().game.clock.minute).toBeGreaterThan(before)
   })
-  it('잔치 다음 날부터 사도행전 방 문을 누르면 불빛 한 줄 — 문은 잠긴 그대로', () => {
+  it('잔치 날에는 사도행전 방이 잠겨 있고, 다음 날부터 문을 밟고 들어간다 (계획 5 작업 5)', () => {
     reset({ flags: { heartPoints: 1, gospelFeast: 1 } })
     act(() => useGame.getState().tap(LOCKED_DOORS[0]))
     expect(useGame.getState().toast?.text).toBe('사도행전 방은 아직 잠겨 있어요.')
-    reset({ flags: { heartPoints: 1, gospelFeast: 2 } })
-    const before = useGame.getState().game.player
+    // 잔치 다음 날: 서고 안에서 문을 누르면 잠겼다는 말 없이 걸어 들어간다
+    const lib = ROOMS.find((r) => r.owner === 'library')!
+    const inLib = WARPS.get(key(lib.door))!
+    reset({ flags: { heartPoints: 1, gospelFeast: 2 }, player: { ...newGame(CONTENT).player, x: inLib.x, y: inLib.y, path: [] } })
     act(() => useGame.getState().tap(LOCKED_DOORS[0]))
-    expect(useGame.getState().toast?.text).toBe('사도행전 방 문틈으로 불빛이 새어 나와요.')
-    expect(useGame.getState().game.player).toEqual(before)
+    expect(useGame.getState().toast).toBeNull()
+    act(() => {
+      for (let i = 0; i < 400 && roomAt(playerTile(useGame.getState().game)) !== ACTS_ROOM; i++) useGame.getState().frame(0.05)
+    })
+    expect(roomAt(playerTile(useGame.getState().game))).toBe(ACTS_ROOM)
+    expect(useGame.getState().toast?.text).toBe('사도행전 방')
     // 다른 잠긴 방은 그대로
     act(() => useGame.getState().tap(LOCKED_DOORS[1]))
     expect(useGame.getState().toast?.text).toContain('아직 잠겨 있어요')
+  })
+})
+
+describe('사도행전 방의 여정 판 (계획 5 작업 5)', () => {
+  const allCh = Array.from({ length: 28 }, (_, i) => i + 1)
+  it('카드를 누르면 그 곳이 나오는 구절(개역한글)을 보여 주고, ▲▼로 본문 순서를 맞추면 완성', async () => {
+    // 1장만 엮은 판: 예루살렘 카드 한 장
+    reset({ flags: { heartPoints: 1, gospelFeast: 2 }, progress: { ...emptyProgress(), ac: { completed: [1], arrangement: {} } }, journey: [1] })
+    const user = userEvent.setup()
+    useGame.setState({ modal: { kind: 'journey' } })
+    render(<ModalLayer />)
+    expect(screen.getByRole('dialog', { name: '여정 판' })).toHaveTextContent(`카드 1 / ${JOURNEY.length}장`)
+    await user.click(screen.getByRole('button', { name: '예루살렘 카드 구절 보기' }))
+    const passage = screen.getByLabelText(`성경 본문 ${JOURNEY[0].ref}`)
+    expect(passage).toHaveTextContent(versesOf(JOURNEY[0].ref)[0].text)
+    await user.click(screen.getByRole('button', { name: '판으로 돌아가기' }))
+    // 모든 장을 엮고 마지막 두 장만 바뀐 판 → ▲ 한 번으로 완성
+    const orders = JOURNEY.map((c) => c.order)
+    const swapped = [...orders.slice(0, -2), orders.at(-1)!, orders.at(-2)!]
+    act(() => useGame.setState((st) => ({ game: { ...st.game, progress: { ...st.game.progress, ac: { completed: allCh, arrangement: {} } }, journey: swapped } })))
+    await user.click(screen.getByRole('button', { name: '차례 확인' }))
+    expect(screen.getByRole('status')).toHaveTextContent('차례가 어긋난 카드가 있어요.')
+    // 맨 끝에 놓인 카드(끝에서 둘째 카드)를 한 칸 위로
+    const last = JOURNEY.at(-2)!.place
+    await user.click(screen.getAllByRole('button', { name: `${last} 위로` }).at(-1)!)
+    expect(useGame.getState().game.journey).toEqual(orders)
+    expect(useGame.getState().game.flags.actsShip).toBe(1)
+    expect(screen.getByRole('status')).toHaveTextContent('여정을 끝까지 이었어요.')
+    // 다 이은 판은 더 옮기지 않는다
+    expect(screen.queryByRole('button', { name: `${last} 위로` })).toBeNull()
+  })
+
+  it('다음 날 아침 나루에 배 장면 — 닫으면 앨범에 한 장', async () => {
+    reset({ scenes: ['actsShip'], flags: { heartPoints: 1, gospelFeast: 2, actsShip: 2 } })
+    const user = userEvent.setup()
+    render(<ModalLayer />)
+    walk()
+    const dialog = screen.getByRole('dialog', { name: '나루에 배가 들어왔다' })
+    expect(screen.queryByLabelText(/성경 본문/)).toBeNull()
+    expect(dialog).toHaveTextContent('나루')
+    await user.click(screen.getByRole('button', { name: '닫기' }))
+    expect(useGame.getState().game.album.filter((a) => a.id === 'actsShip')).toHaveLength(1)
   })
 })
 

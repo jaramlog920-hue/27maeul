@@ -11,9 +11,9 @@ import type { ItemId, PlaceId, Tile } from './types'
 
 export const TILE = 16
 export const WIDTH = 48
-/** 마을 부분의 높이. 그 아래(40~58줄)는 이웃집 안 방들이 있는 보이지 않는 곳 */
+/** 마을 부분의 높이. 그 아래(40~68줄)는 이웃집 안 방들이 있는 보이지 않는 곳 (60줄부터 사도행전 방) */
 export const VILLAGE_H = 40
-export const HEIGHT = 60
+export const HEIGHT = 70
 /** 화면에 보이는 칸 수 */
 export const VIEW_W = 16
 export const VIEW_H = 20
@@ -39,6 +39,18 @@ export function setHomeLevel(level: number): void {
 }
 export function currentHomeLevel(): number {
   return homeLevel
+}
+
+/**
+ * 서고의 사도행전 방이 열렸는가 (books.actsRoomOpen — 게임 상태와 맞추는 것은 game.ts의 syncHome).
+ * 열리면 서고 왼쪽 위 잠긴 문(K)이 걸을 수 있는 열린 문(J)이 된다
+ */
+let actsOpen = false
+export function setActsOpen(open: boolean): void {
+  actsOpen = open
+}
+export function actsDoorOpen(): boolean {
+  return actsOpen
 }
 
 /** 단계별로 덧씌우는 칸 ('x,y' → 글자) */
@@ -76,6 +88,8 @@ export interface Room {
   things: [number, number, string][]
   /** 가구 그림 [칸, 칸, 가구] — 바닥 것은 밟고, 큰 것은 막고, 작은 것은 탁자 위에 */
   decor: [number, number, ItemId, 'flip'?][]
+  /** 문깔개를 밟으면 나가는 곳 (없으면 문 바로 아래 칸) */
+  out?: Tile
 }
 
 function room(
@@ -103,6 +117,27 @@ const libraryThings: [number, number, string][] = [
   [3, 4, 'n'], [9, 4, 'n'], [3, 6, 'n'], [9, 6, 'n'],
   [1, 8, 'p'], [11, 8, 'p'],
   [6, 3, 'e'], [6, 4, 'e'], [6, 5, 'e'], [6, 6, 'e'], [6, 7, 'e'],
+]
+const LIBRARY_X0 = 30
+const LIBRARY_Y0 = 49
+/** 서고 왼쪽 위 잠긴 문 = 사도행전 방 문 (LOCKED_DOORS[0]) */
+export const ACTS_DOOR: Tile = { x: LIBRARY_X0 + 0, y: LIBRARY_Y0 + 3 }
+
+/**
+ * 사도행전 방 (계획 5 작업 5, 11×8, 지도 아래 60줄부터 보이지 않는 곳). 서고 왼쪽 위 문을 밟으면 들어오고,
+ * 문깔개를 밟으면 서고 안 그 문 오른쪽 칸으로 나간다.
+ * 벽 가운데에 여정 판(M), 왼쪽에 사도행전 선반(Q), 오른쪽에 책장, 가운데 읽는 탁자 — 문을 가운데 둔 대칭
+ */
+export const ACTS_W = 11
+export const ACTS_H = 8
+const ACTS_X0 = 2
+const ACTS_Y0 = 60
+const actsThings: [number, number, string][] = [
+  [4, 0, 'M'], [5, 0, 'M'], [6, 0, 'M'],
+  [1, 1, 'Q'], [2, 1, 'Q'], [3, 1, 'Q'], [7, 1, 's'], [8, 1, 's'], [9, 1, 's'],
+  [5, 4, 'n'],
+  [5, 5, 'e'], [5, 6, 'e'],
+  [1, 6, 'p'], [9, 6, 'p'],
 ]
 
 export const ROOMS: readonly Room[] = [
@@ -133,8 +168,12 @@ export const ROOMS: readonly Room[] = [
      [8, 2, 'pillows']]),
   // 마을 서고
   // 서고는 리모델링 전 모습이 좋다 (사용자, 2026-09-29) — 가구 그림을 더하지 않는다
-  room('library', 30, 49, { x: 24, y: 5 }, [6, 2], libraryThings, [], LIBRARY_W, LIBRARY_H),
+  room('library', LIBRARY_X0, LIBRARY_Y0, { x: 24, y: 5 }, [6, 2], libraryThings, [], LIBRARY_W, LIBRARY_H),
+  // 사도행전 방: 문은 서고 안 잠긴 문, 나가면 그 문 오른쪽 서고 바닥
+  { ...room('acts', ACTS_X0, ACTS_Y0, ACTS_DOOR, [5, 3], actsThings, [], ACTS_W, ACTS_H), out: { x: ACTS_DOOR.x + 1, y: ACTS_DOOR.y } },
 ]
+/** 사도행전 방 */
+export const ACTS_ROOM: Room = ROOMS.find((r) => r.owner === 'acts')!
 
 /**
  * 다락 서재 (8×6, 지도 아래 보이지 않는 곳 — 할아버지 집 방 오른쪽). 사다리로 올라오고 문깔개로 내려간다.
@@ -315,13 +354,15 @@ export const MAP: readonly string[] = build()
 
 // 'l'(텃밭)은 'y'(보리밭)처럼 걸을 수 있다 — 두둑 가운데 안쪽 칸은 사방이 막히면 다가갈 수 없어서 (task-3 적응)
 // 'H'(사다리)는 누르는 곳이라 길찾기가 지나가지 않는다 — 지나가다 다락으로 올라가 버리지 않게. 'I'는 다락 창
-const BLOCKED = new Set(['H', 'I', '_', 'Z', 'n', 'g', 'p', 'W', 'G', 'K', 'T', '#', 'R', 'S', 'u', 'b', 'd', 'h', 's', 'k', 'w', 'B', '~', 'r', 'v', 'o', 'P', 'A', 'O', 'm', 'x', 'q'])
+// 'Q' 사도행전 선반, 'M' 벽의 여정 판. 'J'(열린 사도행전 방 문)는 걷는 칸
+const BLOCKED = new Set(['H', 'I', '_', 'Z', 'n', 'g', 'p', 'W', 'G', 'K', 'Q', 'M', 'T', '#', 'R', 'S', 'u', 'b', 'd', 'h', 's', 'k', 'w', 'B', '~', 'r', 'v', 'o', 'P', 'A', 'O', 'm', 'x', 'q'])
 
 export function tileAt(x: number, y: number): string {
   if (homeLevel > 0) {
     const o = HOME_OVERLAY[homeLevel].get(`${x},${y}`)
     if (o) return o
   }
+  if (actsOpen && x === ACTS_DOOR.x && y === ACTS_DOOR.y) return 'J'
   return MAP[y]?.[x] ?? 'T'
 }
 
@@ -337,7 +378,7 @@ export function isWalkable(t: Tile, blockers: ReadonlySet<string> = new Set()): 
 
 export function isIndoor(t: Tile): boolean {
   const c = tileAt(t.x, t.y)
-  return c === 'f' || c === 'D' || c === 'e' || c === 'E' || c === 'z'
+  return c === 'f' || c === 'D' || c === 'e' || c === 'E' || c === 'z' || c === 'J'
 }
 
 // ── 서고에 책이 꽂힐수록 열리는 구역 (설계 §2.7) ──
@@ -401,7 +442,7 @@ export function inAttic(t: Tile): boolean {
 export const WARPS: ReadonlyMap<string, Tile> = new Map(
   ROOMS.flatMap((r) => [
     [key(r.door), r.entry] as const,
-    [key(r.exit), { x: r.door.x, y: r.door.y + 1 }] as const,
+    [key(r.exit), r.out ?? { x: r.door.x, y: r.door.y + 1 }] as const,
   ]),
 ).set(key(ATTIC.exit), { x: LADDER.x, y: LADDER.y + 1 }) // 다락 문깔개 → 사다리 앞
 
@@ -450,6 +491,10 @@ export const PLACES: Record<PlaceId, Place> = {
   // 다락 서재 (2단계): 선반 옆 사다리, 다락 창가
   ladder: { tiles: [LADDER], stand: { x: LADDER.x, y: LADDER.y + 1 } },
   atticWindow: { tiles: [ATTIC_WINDOW, { x: ATTIC_WINDOW.x + 1, y: ATTIC_WINDOW.y }], stand: { x: ATTIC_WINDOW.x, y: ATTIC_WINDOW.y + 1 } },
+  // 사도행전 방: 선반(서고 복음서 선반처럼), 벽의 여정 판, 읽는 탁자
+  actsShelf: { tiles: [1, 2, 3].map((dx) => ({ x: ACTS_X0 + dx, y: ACTS_Y0 + 1 })), stand: { x: ACTS_X0 + 2, y: ACTS_Y0 + 2 } },
+  journeyBoard: { tiles: [4, 5, 6].map((dx) => ({ x: ACTS_X0 + dx, y: ACTS_Y0 })), stand: { x: ACTS_X0 + 5, y: ACTS_Y0 + 1 } },
+  actsTable: { tiles: [{ x: ACTS_X0 + 5, y: ACTS_Y0 + 4 }], stand: { x: ACTS_X0 + 5, y: ACTS_Y0 + 5 } },
 }
 
 /** 이 장소가 지금 있는가 (다락 서재는 2단계부터) */

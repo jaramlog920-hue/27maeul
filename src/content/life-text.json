@@ -269,6 +269,7 @@
     "homeOrdered": "내일 아침까지 지어 둘게요.",
     "homeWaiting": "부탁한 일은 내일 아침이면 끝나요.",
     "atticRoom": "다락 서재",
+    "actsRoom": "사도행전 방",
     "atticReadHint": "다락 창가에서 읽고 잠들면 평안이 하루 더 갑니다."
   },
   "items": {
@@ -2616,6 +2617,32 @@
         }
       ],
       "album": "다락 서재가 생긴 날"
+    },
+    "actsShip": {
+      "title": "나루에 배가 들어왔다",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "아침 일찍, 호숫가 나루 곁에 큰 배 한 척이 들어와 닻을 내렸다."
+        },
+        {
+          "speaker": "fisher",
+          "text": "이렇게 큰 배는 이 나루에서 처음 봐요. 밧줄 매는 걸 거들고 왔어요."
+        },
+        {
+          "speaker": "child",
+          "text": "돛이 우리 집 지붕보다 높아요! 이따가 같이 보러 가요."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "서고 방의 판을 끝까지 이었다더군. 먼 길을 차근차근 따라가느라 애썼네."
+        },
+        {
+          "speaker": "narration",
+          "text": "배는 한동안 나루 곁에 머문다고 한다."
+        }
+      ],
+      "album": "나루에 배가 들어온 날"
     }
   },
   "journal": {
@@ -2672,7 +2699,8 @@
       "done:weaver:1": " 이웃의 부탁을 들어주었다.",
       "done:beekeeper:1": " 이웃의 부탁을 들어주었다.",
       "home:1": " 집에 방이 하나 더 생겼다.",
-      "home:2": " 다락 서재가 생겼다."
+      "home:2": " 다락 서재가 생겼다.",
+      "actsShip": " 나루에 큰 배가 들어왔다."
     }
   },
   "quiz": {
@@ -2735,9 +2763,28 @@
       "히브리서–유다서 방",
       "요한계시록 방"
     ],
+    "roomOpen": "{room} · 열려 있어요",
     "lockedRoomTap": "{room}은 아직 잠겨 있어요.",
     "lockedRoomGlow": "{room} 문틈으로 불빛이 새어 나와요.",
     "shelvedToast": "{book}을 서고에 꽂았습니다. 책등: {grade}",
     "rereadNote": "틀린 구절은 '다시 읽을 구절'에 넣어 두었어요."
+  },
+  "acts": {
+    "shelfTitle": "사도행전 선반",
+    "shelfNotice": "다 엮은 사도행전은 이 방 선반에 꽂습니다.",
+    "boardTitle": "여정 판",
+    "boardHint": "사도행전을 엮으며 얻은 곳 이름 카드를 본문에 나오는 순서대로 이어 보세요. 카드를 누르면 그 곳이 나오는 구절이 보여요.",
+    "boardCount": "카드 {got} / {all}장",
+    "boardEmpty": "아직 카드가 없어요. 사도행전 장을 엮으면 그 장에 나오는 곳 카드가 여기 모여요.",
+    "boardCheck": "차례 확인",
+    "boardInOrder": "지금 놓인 카드는 본문 순서대로예요. 사도행전을 더 엮으면 카드가 늘어요.",
+    "boardWrong": "차례가 어긋난 카드가 있어요.",
+    "boardDone": "여정을 끝까지 이었어요. 내일 아침 호숫가 나루에 가 보세요.",
+    "boardDoneToast": "여정 판을 다 이었어요.",
+    "cardVerse": "{place} 카드",
+    "cardRead": "{place} 카드 구절 보기",
+    "cardsGot": "여정 판에 놓을 곳 카드 {n}장이 생겼어요.",
+    "verseBack": "판으로 돌아가기",
+    "tableEmpty": "아직 모은 이야기가 없어요."
   }
 }

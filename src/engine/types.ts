@@ -1,3 +1,5 @@
+import type { JourneyCard } from './journey'
+
 export interface Tile {
   x: number
   y: number
@@ -27,6 +29,10 @@ export type PlaceId =
   | 'garden'
   | 'ladder'
   | 'atticWindow'
+  // 사도행전 방 (계획 5 작업 5): 사도행전 선반, 벽의 여정 판, 읽는 탁자
+  | 'actsShelf'
+  | 'journeyBoard'
+  | 'actsTable'
 export type Target =
   | { kind: 'place'; id: PlaceId; tile: Tile }
   | { kind: 'neighbor'; id: string; tries: number }
@@ -148,6 +154,8 @@ export interface NeighborDef {
 export interface GameContent {
   pieces: Piece[]
   neighbors: NeighborDef[]
+  /** 사도행전 여정 카드 (본문 순서). 없으면 여정 판이 비어 있다 */
+  journey?: JourneyCard[]
 }
 /** 0 이상 1 미만의 난수를 돌려준다. 테스트에서는 고정값을 주입한다 */
 export type Rng = () => number

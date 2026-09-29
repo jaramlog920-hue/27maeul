@@ -37,7 +37,8 @@ import { FESTIVAL_SPOTS, goalFor, isNear, npcTile, placeNpc, stepNpc, type Npc }
 import { GAIN, heartsOf, MAX_POINTS } from './hearts'
 import { actsRoomOpen, bookDone, emptyProgress, totalChapters, type Progress } from './books'
 import { currentChapter, offersForDay } from './offers'
-import { checkArrangement, type ArrangeResult } from './scroll'
+import { checkArrangement, moveItem, type ArrangeResult } from './scroll'
+import { cardsForChapters, journeyComplete, placeNewCards } from './journey'
 import { growGarden, type Plot } from './garden'
 import { feastToday, gospelRoomFull, readOff, type Grade } from './library'
 import {
@@ -52,7 +53,7 @@ import {
   momentNow,
   onceKey,
 } from './stories'
-import { ATTIC, BED_STAND, HEARTH_STAND, HOME_DOOR, inAttic, isIndoor, isWalkable, key, LADDER, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, START, tileAt, WARPS } from './world'
+import { ATTIC, BED_STAND, HEARTH_STAND, HOME_DOOR, inAttic, isIndoor, isWalkable, key, LADDER, lockedTiles, PLACES, placeAt, roomAt, sameTile, setActsOpen, setHomeLevel, START, tileAt, WARPS } from './world'
 import { GOSPELS, type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
 import type { Avatar } from './avatar'
 
@@ -127,11 +128,17 @@ export interface GameState {
   garden: Record<string, Plot>
   /** 집 단계: 0 작업실, 1 방 하나 더, 2 다락 서재 (목수에게 부탁한 단계는 flags.homeOrder, 다음 날 아침 지어진다) */
   homeLevel: 0 | 1 | 2
+  /**
+   * 사도행전 방의 여정 판: 놓인 카드 번호(journey.json의 order)의 차례. 얻은 카드는 장을 엮을 때 판에 들어온다.
+   * 여정을 다 이으면 flags.actsShip 1 → 다음 날 아침 2 (나루에 배가 들어온다, 장면 actsShip)
+   */
+  journey: number[]
 }
 
-/** 지도(world.tileAt)가 이 게임의 집 단계를 보게 한다. 지도를 읽는 엔진 입구마다 부른다 */
-export function syncHome(s: Pick<GameState, 'homeLevel'>): void {
+/** 지도(world.tileAt)가 이 게임의 집 단계·사도행전 방 문을 보게 한다. 지도를 읽는 엔진 입구마다 부른다 */
+export function syncHome(s: Pick<GameState, 'homeLevel'> & Partial<Pick<GameState, 'flags'>>): void {
   setHomeLevel(s.homeLevel ?? 0)
+  setActsOpen(actsRoomOpen(s.flags ?? {}))
 }
 
 export interface Today {
@@ -256,8 +263,9 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
   const flags: Record<string, number> = { heartPoints: 1 }
   const progress = emptyProgress()
   const base = { clock, flags, progress, hearts: {}, today: NO_TODAY, shelved: {} }
-  // 새 게임은 넓히기 전 집 — 지도(모듈 전역 집 단계)도 0으로
+  // 새 게임은 넓히기 전 집 — 지도(모듈 전역 집 단계)도 0으로, 사도행전 방은 닫힌 채
   setHomeLevel(0)
+  setActsOpen(false)
   return {
     version: 1,
     clock,
@@ -299,6 +307,7 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
     avatar: avatar ?? null,
     garden: {},
     homeLevel: 0,
+    journey: [],
   }
 }
 
@@ -1011,7 +1020,29 @@ export function submitChapter(s: GameState, book: Book, chapter: number, content
   const scenes = [...s.scenes]
   if (totalChapters(s) === 0) scenes.push('firstChapter')
   if (bookDone({ progress }, book, content)) scenes.push('bookBound')
-  return { state: passTime({ ...s, inv: left, progress, scenes, needs: work(s.needs, 6) }, bindMinutes(s)), result }
+  const bound = passTime({ ...s, inv: left, progress, scenes, needs: work(s.needs, 6) }, bindMinutes(s))
+  // 사도행전 장을 엮으면 그 장에 나오는 곳 카드가 여정 판에 들어온다
+  return { state: book === 'ac' ? syncJourney(bound, content) : bound, result }
+}
+
+// ── 사도행전 방의 여정 판 (계획 5 작업 5) ──
+
+/** 여정을 다 이었으면 표식(actsShip 1)을 세운다 — 다음 날 아침 나루에 배가 들어온다. 한 번만 */
+function markJourney(s: GameState, content: GameContent): GameState {
+  if (s.flags.actsShip || !journeyComplete(s.journey, content.journey ?? [])) return s
+  return { ...s, flags: { ...s.flags, actsShip: 1 } }
+}
+
+/** 엮은 사도행전 장으로 얻은 카드를 판에 맞춘다 (얻은 카드만, 새 카드는 판 끝 가까이에) */
+export function syncJourney(s: GameState, content: GameContent): GameState {
+  const earned = cardsForChapters(content.journey ?? [], s.progress.ac?.completed ?? [])
+  return markJourney({ ...s, journey: placeNewCards(s.journey ?? [], earned) }, content)
+}
+
+/** 여정 판의 카드 하나를 위(-1)·아래(+1)로 옮긴다. 다 이은 판은 그대로 둔다 */
+export function moveJourneyCard(s: GameState, index: number, delta: number, content: GameContent): GameState {
+  if (s.flags.actsShip) return s
+  return markJourney({ ...s, journey: moveItem(s.journey, index, delta) }, content)
 }
 
 /** 한 장을 엮는 데 드는 분: 기분이 좋으면 45, 아니면 60. 넓은 책상이면 20% 덜 */
@@ -1114,6 +1145,11 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
     scenes.push('gospelFeast')
     // 잔치 저녁에는 별 보는 밤을 잡지 않는다 (다른 맑은 날에 다시 잡힌다)
     if (gathering === 'starNight') gathering = null
+  }
+  // ── 여정을 다 이은 다음 날 아침: 호숫가 나루에 큰 배가 들어온다 (한 번) ──
+  if (flags.actsShip === 1) {
+    flags.actsShip = 2
+    scenes.push('actsShip')
   }
   if (gathering) scenes.push(`notice:${gathering}`)
   // 저녁 모임(아기 잔치·별 보는 밤·복음서 방 잔치)이 있는 날은 저녁 초대를 하지 않는다
