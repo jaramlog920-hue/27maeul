@@ -65,7 +65,8 @@ describe('책별 콘텐츠', () => {
     expect(piecesOf('mk').every((p) => p.book === 'mk')).toBe(true)
     expect(piecesOf('mt').length).toBe(54 + 53 + 50) // 마 1–10장 54 + 11–20장 53 + 21–28장 50 (작업 4·5·6)
     expect(piecesOf('mt').every((p) => p.book === 'mt')).toBe(true)
-    expect(piecesOf('jn').length).toBe(8 + 3 + 5 + 8 + 6 + 9 + 8 + 6 + 5 + 6 + 7) // 요 1–11장, 장마다 조각 수 (작업 7) — 7:53-8:11은 7장에 셈
+    // 요한 장마다 조각 수 — 1–11장(작업 7, 7:53-8:11은 7장에 셈) + 12–21장(작업 8, 15:26-16:4는 15장, 18:39-19:7은 18장에 셈)
+    expect(piecesOf('jn').length).toBe(8 + 3 + 5 + 8 + 6 + 9 + 8 + 6 + 5 + 6 + 7 + (8 + 5 + 5 + 4 + 4 + 4 + 6 + 5 + 5 + 5))
     expect(piecesOf('jn').every((p) => p.book === 'jn')).toBe(true)
   })
   it('절 참조에는 책 약칭이 붙고, 절로 조각을 찾는다', () => {
@@ -85,7 +86,10 @@ describe('책별 콘텐츠', () => {
     expect(pieceOfVerse('요 5:4')?.id).toBe('jn-005-001') // 대괄호 절도 조각에 든다
     expect(pieceOfVerse('요 8:11')?.id).toBe('jn-007-053') // 장을 넘는 조각 요 7:53-8:11
     expect(pieceOfVerse('요 11:57')?.id).toBe('jn-011-054')
-    expect(pieceOfVerse('요 12:1')).toBeUndefined() // 12–21장은 작업 8
+    expect(pieceOfVerse('요 12:1')?.id).toBe('jn-012-001')
+    expect(pieceOfVerse('요 16:2')?.id).toBe('jn-015-026') // 장을 넘는 조각 요 15:26-16:4
+    expect(pieceOfVerse('요 19:3')?.id).toBe('jn-018-039') // 장을 넘는 조각 요 18:39-19:7
+    expect(pieceOfVerse('요 21:25')?.id).toBe('jn-021-024')
   })
   it('대괄호 구간(막 16:9-20)의 절은 괄호 글자가 없는 가운데 절까지 괄호 안으로 친다', () => {
     const vs = quizSourceFor(['mk']).versesOf('막 16:8-20')
@@ -102,6 +106,10 @@ describe('책별 콘텐츠', () => {
     expect(w.map((v) => v.inBrackets)).toEqual([false, ...Array(12).fill(true), false])
     expect(w[1].text).toContain('[')
     expect(w[12].text).toContain(']')
+    // 요 20:9는 둥근 괄호로 싸인 절 — 조각(요 20:1-10) 본문에는 그대로, 퀴즈에서는 빠진다
+    expect(inBrackets('요 20:9')).toBe(true)
+    expect(inBrackets('요 20:8')).toBe(false)
+    expect(inBrackets('요 20:10')).toBe(false)
   })
   it('countVerse는 고른 책들에서만 센다', () => {
     const t = quizSourceFor(['mk']).versesOf('막 1:18')[0].text

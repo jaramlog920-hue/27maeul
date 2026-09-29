@@ -168,7 +168,7 @@ describe('책상', () => {
     expect(screen.getByRole('dialog', { name: '어느 책을 엮을까요?' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: new RegExp(`마태복음 · 0/${chaptersOf('mt', CONTENT).length}장`) })).toBeEnabled()
     expect(screen.getByRole('button', { name: new RegExp(`요한복음 · 0/${chaptersOf('jn', CONTENT).length}장`) })).toBeEnabled()
-    expect(chaptersOf('jn', CONTENT)).toHaveLength(11) // 요 1–11장 (작업 7)
+    expect(chaptersOf('jn', CONTENT)).toHaveLength(21) // 요 1–21장 전부 (작업 7·8)
     await user.click(screen.getByRole('button', { name: /누가복음 · 0\/24장/ }))
     expect(useGame.getState().game.activeBook).toBe('lk')
     expect(screen.getByRole('dialog', { name: '책상' })).toHaveTextContent('1장')
