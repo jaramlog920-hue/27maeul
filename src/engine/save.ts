@@ -85,7 +85,13 @@ export function sanitize(s: GameState, content: GameContent): GameState {
         ([b, g]) => (BOOKS as readonly string[]).includes(b) && (g === 0 || g === 1 || g === 2) && bookDone({ progress }, b as Book, content),
       ),
     ),
-    garden: s.garden ?? {},
+    // 텃밭은 집 앞(1~4, 8~9)에서 집 오른쪽 위(14~17, 3~4)로 옮겼다 — 옛 저장의 작물도 같은 자리 순서로 옮긴다
+    garden: Object.fromEntries(
+      Object.entries(s.garden ?? {}).map(([k, v]) => {
+        const [x, y] = k.split(',').map(Number)
+        return [x >= 1 && x <= 4 && (y === 8 || y === 9) ? `${x + 13},${y - 5}` : k, v]
+      }),
+    ),
     rereads: (s.rereads ?? []).filter((id) => known.has(id)),
     journal: s.journal.map((e) => ({ ...e, heard: (e.heard ?? []).filter((id) => known.has(id)) })),
   }

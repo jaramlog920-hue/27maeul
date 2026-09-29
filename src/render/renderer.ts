@@ -1287,7 +1287,7 @@ interface Fly {
 export function butterflies(season: Season, wet: boolean, phase: string, t: number): Fly[] {
   if (wet || (season !== 'spring' && season !== 'summer') || (phase !== 'morning' && phase !== 'day')) return []
   const centers: Tile[] = [
-    { x: 14, y: 2 },
+    { x: 15, y: 2 },
     { x: 8, y: 9 },
     { x: 8, y: 21 },
   ]

@@ -16,7 +16,7 @@ export const CROPS: Record<CropId, { seed: ItemId; days: number; gives: Partial<
   bean: { seed: 'seedBean', days: 4, gives: { bean: 3 } },
 }
 
-export const GARDEN_TILES: readonly Tile[] = [1, 2, 3, 4].flatMap((x) => [8, 9].map((y) => ({ x, y }))).sort((a, b) => a.y - b.y || a.x - b.x)
+export const GARDEN_TILES: readonly Tile[] = [14, 15, 16, 17].flatMap((x) => [3, 4].map((y) => ({ x, y }))).sort((a, b) => a.y - b.y || a.x - b.x)
 
 const keyOf = (t: Tile) => `${t.x},${t.y}`
 const isPlot = (t: Tile) => GARDEN_TILES.some((g) => g.x === t.x && g.y === t.y)

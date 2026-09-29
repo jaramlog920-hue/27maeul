@@ -145,18 +145,18 @@ export const BABY_PARTY_SPOTS: Record<string, Tile> = {
   carpenter: { x: 2, y: 20 },
 }
 export const HILL_SPOTS: Record<string, Tile> = {
-  baker: { x: 13, y: 3 },
-  child: { x: 15, y: 3 },
-  grandpa: { x: 16, y: 2 },
-  smith: { x: 17, y: 4 },
-  shepherd: { x: 14, y: 1 },
-  presser: { x: 17, y: 2 },
-  weaver: { x: 13, y: 4 },
-  beekeeper: { x: 16, y: 4 },
-  postman: { x: 15, y: 4 },
-  innkeeper: { x: 14, y: 3 },
-  fisher: { x: 15, y: 2 },
-  carpenter: { x: 12, y: 3 },
+  baker: { x: 13, y: 14 },
+  child: { x: 15, y: 14 },
+  grandpa: { x: 16, y: 13 },
+  smith: { x: 17, y: 15 },
+  shepherd: { x: 14, y: 12 },
+  presser: { x: 17, y: 14 },
+  weaver: { x: 13, y: 15 },
+  beekeeper: { x: 16, y: 15 },
+  postman: { x: 15, y: 15 },
+  innkeeper: { x: 12, y: 14 },
+  fisher: { x: 15, y: 12 },
+  carpenter: { x: 12, y: 13 },
 }
 
 export type Gathering = 'babyParty' | 'picnic' | 'starNight'

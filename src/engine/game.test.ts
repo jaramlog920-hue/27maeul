@@ -548,6 +548,13 @@ describe('저장', () => {
     expect(back.hearts).toEqual({ baker: 2 })
     expect(Object.keys(back.npcs)).toHaveLength(CONTENT.neighbors.length)
   })
+  it('옛 저장의 텃밭 작물은 새 텃밭(14~17, 3~4) 같은 자리로 옮긴다', () => {
+    const s = newGame(CONTENT)
+    const plot = { crop: 'herb', grown: 1, wateredDay: null }
+    const old = { ...JSON.parse(serializeForTest(s)), garden: { '1,8': plot, '4,9': plot } }
+    const back = deserialize(JSON.stringify(old), CONTENT)!
+    expect(Object.keys(back.garden).sort()).toEqual(['14,3', '17,4'])
+  })
   it('N2·N4: 끝낸 장의 새 조각은 모은 것으로, 빠진 조각은 본문 순서 자리에', () => {
     const s = newGame(CONTENT)
     const old = {
