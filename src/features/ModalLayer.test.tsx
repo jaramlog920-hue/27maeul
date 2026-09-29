@@ -514,7 +514,7 @@ describe('벤치', () => {
 
 describe('선반', () => {
   it('도감: 사도행전 조각과 거르기 버튼은 사도행전 방이 열린 뒤에만', () => {
-    // 사도행전 조각 (계획 5 작업 2에서 1–14장을 넣었다)
+    // 사도행전 조각 (계획 5 작업 2·3에서 1–28장을 넣었다)
     const ac: Piece[] = piecesOf('ac')
     expect(ac.length).toBeGreaterThan(0)
     const pieces = PIECES

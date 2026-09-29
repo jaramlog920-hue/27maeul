@@ -25,6 +25,9 @@ export interface Verse {
   text: string
 }
 
+/** 절 번호만 있고 제 본문이 없는 절: '(없음)', 앞 절에 합쳐 번역된 '(25절에 포함되어 있음)'(행 15:26) */
+export const noText = (text: string) => text === '(없음)' || /^\(\d+절에 포함되어 있음\)$/.test(text)
+
 export function versesOf(ref: string): Verse[] {
   return expandRef(ref, byAbbr, counts)
     .map((k) => {
@@ -32,7 +35,7 @@ export function versesOf(ref: string): Verse[] {
       if (text === undefined) throw new Error(`no verse ${ref} ${k.chapter}:${k.verse}`)
       return { chapter: k.chapter, verse: k.verse, text }
     })
-    .filter((v) => v.text !== '(없음)') // 절 번호만 있고 본문이 없는 절 — 어디에도 보이지 않는다
+    .filter((v) => !noText(v.text)) // 본문이 없는 절 — 어디에도 보이지 않는다
 }
 
 const pieceMap = new Map(PIECES.map((p) => [p.id, p]))
@@ -85,7 +88,7 @@ for (const b of BOOKS) {
   let round = false
   ;(bible[BOOK_IDS[b]] ?? []).forEach((ch, ci) =>
     ch.forEach((text, vi) => {
-      if (text === '(없음)') return
+      if (noText(text)) return
       if (square || round || /[[\]()]/.test(text)) bracketed.add(`${BOOK_ABBR[b]} ${ci + 1}:${vi + 1}`)
       for (const c of text) {
         if (c === '[') square = true

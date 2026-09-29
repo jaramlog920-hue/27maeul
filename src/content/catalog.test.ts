@@ -21,6 +21,11 @@ describe('catalog', () => {
     expect(vs.some((v) => v.text === '(없음)')).toBe(false)
     expect(versesOf('마 23:13-15').map((v) => v.verse)).toEqual([13, 15])
   })
+  it('앞 절에 합쳐 번역된 절(행 15:26 "(25절에 포함되어 있음)")도 본문이 없으므로 보이지 않는다', () => {
+    expect(versesOf('행 15:25-27').map((v) => v.verse)).toEqual([25, 27])
+    expect(pieceOfVerse('행 15:26')).toBeUndefined()
+    expect(pieceOfVerse('행 15:25')?.id).toBe('ac-015-022')
+  })
 })
 
 describe('life-text', () => {
@@ -68,18 +73,26 @@ describe('책별 콘텐츠', () => {
     // 요한 장마다 조각 수 — 1–11장(작업 7, 7:53-8:11은 7장에 셈) + 12–21장(작업 8, 15:26-16:4는 15장, 18:39-19:7은 18장에 셈)
     expect(piecesOf('jn').length).toBe(8 + 3 + 5 + 8 + 6 + 9 + 8 + 6 + 5 + 6 + 7 + (8 + 5 + 5 + 4 + 4 + 4 + 6 + 5 + 5 + 5))
     expect(piecesOf('jn').every((p) => p.book === 'jn')).toBe(true)
-    // 사도행전 장마다 조각 수 — 1–14장(계획 5 작업 2, content-audit §6-8). 15–28장은 작업 3
-    expect(piecesOf('ac').length).toBe(3 + 7 + 3 + 4 + 5 + 2 + 8 + 5 + 6 + 6 + 4 + 4 + 6 + 3)
+    // 사도행전 장마다 조각 수 — 1–14장(계획 5 작업 2) + 15–28장(작업 3, 21:37-22:1은 21장에 셈), content-audit §6-8
+    expect(piecesOf('ac').length).toBe(3 + 7 + 3 + 4 + 5 + 2 + 8 + 5 + 6 + 6 + 4 + 4 + 6 + 3 + (6 + 6 + 5 + 5 + 5 + 6 + 7 + 4 + 5 + 4 + 4 + 4 + 7 + 5))
     expect(piecesOf('ac').every((p) => p.book === 'ac' && p.stamps.length === 0)).toBe(true)
-    expect(Math.max(...piecesOf('ac').map((p) => p.chapter))).toBe(14)
+    expect(Math.max(...piecesOf('ac').map((p) => p.chapter))).toBe(28)
   })
   it('조각이 있는 책의 조각 합이 pieces.json 전체와 같고, 대표 조각의 제목·범위가 원본(scripts/pieces)과 맞는다', () => {
     expect(BOOKS_WITH_CONTENT.reduce((n, b) => n + piecesOf(b).length, 0)).toBe(PIECES.length)
-    expect(PIECES).toHaveLength(533 + 66) // 네 복음서 533 + 사도행전 1–14장 66
+    expect(PIECES).toHaveLength(533 + 66 + 73) // 네 복음서 533 + 사도행전 1–14장 66 + 15–28장 73
     expect(pieceById('ac-008-032')).toMatchObject({ book: 'ac', ref: '행 8:32-40', chapter: 8, title: '물 있는 곳' })
     expect(pieceOfVerse('행 8:37')).toBeUndefined() // (없음) — 번호만 조각 범위에 걸친다
     expect(pieceOfVerse('행 8:38')?.id).toBe('ac-008-032')
     expect(pieceOfVerse('행 14:28')?.id).toBe('ac-014-019')
+    expect(pieceOfVerse('행 15:1')?.id).toBe('ac-015-001')
+    expect(pieceOfVerse('행 15:34')).toBeUndefined() // (없음)
+    expect(pieceOfVerse('행 15:35')?.id).toBe('ac-015-030')
+    expect(pieceOfVerse('행 22:1')?.id).toBe('ac-021-037') // 장을 넘는 조각 행 21:37-22:1
+    expect(pieceOfVerse('행 24:7')?.id).toBe('ac-024-001') // 24:7은 개역한글에 본문이 있다
+    expect(pieceOfVerse('행 28:29')).toBeUndefined() // (없음)
+    expect(pieceOfVerse('행 28:31')?.id).toBe('ac-028-023')
+    expect(pieceById('ac-028-023')).toMatchObject({ book: 'ac', ref: '행 28:23-31', chapter: 28, title: '선지자 이사야' })
     expect(new Set(PIECES.map((p) => p.id)).size).toBe(PIECES.length)
     expect(pieceById('mt-005-001')).toMatchObject({ book: 'mt', ref: '마 5:1-12', chapter: 5, title: '심령이 가난한 자' })
     expect(pieceById('jn-011-001')).toMatchObject({ book: 'jn', ref: '요 11:1-10', chapter: 11, title: '베다니에 사는 나사로라' })

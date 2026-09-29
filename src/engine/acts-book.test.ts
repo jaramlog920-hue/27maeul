@@ -9,7 +9,7 @@ import { buildLibraryQuiz, buildQuiz, detectiveAnswer, QUIZ_SIZE } from './quiz'
 import { deserialize, sanitize, serialize } from './save'
 import { BOOKS, GOSPELS, isGospel, type Book, type GameContent, type Piece } from './types'
 
-// 사도행전 조각 — 작업 2에서 1–14장을 넣었다 (content-audit §6-8)
+// 사도행전 조각 — 작업 2에서 1–14장, 작업 3에서 15–28장을 넣었다 (content-audit §6-8)
 const AC: Piece[] = piecesOf('ac')
 const withActs: GameContent = CONTENT
 
@@ -22,10 +22,10 @@ describe('다섯 번째 책 사도행전', () => {
     expect(Object.keys(emptyProgress())).toEqual(['mt', 'mk', 'lk', 'jn', 'ac'])
   })
 
-  it('사도행전 조각은 1–14장이 있고, 도장이 없다 (작업 2)', () => {
+  it('사도행전 조각은 1–28장 전부가 있고, 도장이 없다 (작업 2·3)', () => {
     expect(AC.length).toBeGreaterThan(0)
     expect(BOOKS_WITH_CONTENT).toContain('ac')
-    expect(new Set(AC.map((p) => p.chapter))).toEqual(new Set(Array.from({ length: 14 }, (_, i) => i + 1)))
+    expect(new Set(AC.map((p) => p.chapter))).toEqual(new Set(Array.from({ length: 28 }, (_, i) => i + 1)))
     expect(AC.every((p) => p.stamps.length === 0)).toBe(true)
   })
 
@@ -56,7 +56,7 @@ describe('다섯 번째 책 사도행전', () => {
   it('책 고르기: 사도행전은 방이 열리고(잔치 다음 날부터) 조각이 있을 때만', () => {
     // 조각이 없는 책은 방이 열려도 고를 수 없다
     expect(pickableBooks({ gospelFeast: 2 }, ['mt', 'mk', 'lk', 'jn'])).toEqual(['mt', 'mk', 'lk', 'jn'])
-    // 지금 콘텐츠(사도행전 1–14장 있음): 방이 열린 뒤에만 사도행전
+    // 지금 콘텐츠(사도행전 1–28장 있음): 방이 열린 뒤에만 사도행전
     expect(pickableBooks({}, BOOKS_WITH_CONTENT)).toEqual(['mt', 'mk', 'lk', 'jn'])
     expect(pickableBooks({ gospelFeast: 2 }, BOOKS_WITH_CONTENT)).toEqual(['mt', 'mk', 'lk', 'jn', 'ac'])
     // 조각이 있어도 방이 열리기 전(잔치 전·잔치 날)에는 없다

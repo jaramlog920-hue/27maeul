@@ -27,8 +27,8 @@ const BOOK_ABBR = { mt: '마', mk: '막', lk: '눅', jn: '요', ac: '행' }
 // 도장은 네 복음서끼리만 — 사도행전에는 도장이 없다 (계획 5 §7-1)
 const GOSPELS = new Set(['mt', 'mk', 'lk', 'jn'])
 // 설계 §3.3 — 'full': 1장부터 끝 장까지 전부. 'prefix': 1장부터 조각이 있는 마지막 장까지 빠짐없이(시험판에서 앞 몇 장만 넣은 책).
-// 책을 다 넣으면 'full'로 바꾼다. 사도행전(ac)은 1–14장만 넣었으므로(계획 5 작업 2) 'prefix' — 작업 3에서 'full'로.
-const COVERAGE = { mt: 'full', mk: 'full', lk: 'full', jn: 'full', ac: 'prefix' }
+// 책을 다 넣으면 'full'로 바꾼다. 사도행전(ac)은 계획 5 작업 3에서 1–28장을 다 넣어 'full'.
+const COVERAGE = { mt: 'full', mk: 'full', lk: 'full', jn: 'full', ac: 'full' }
 // exclusion-list §4-3 — "같은 이야기"인데 겹치는 낱말이 이보다 적으면 사람이 다시 본다
 const SAME_OVERLAP_MIN = 0.2
 // exclusion-list §3-2 — 조각은 문장 중간에서 끝나지 않는다 (다음 절로 말이 이어지는 어미)
@@ -198,13 +198,15 @@ for (const p of pieces) {
 // ── 괄호 조각에는 "같은 이야기"(=) 도장이 없다 ──
 // src/content/catalog.ts의 `bracketed`와 같은 규칙(대괄호·둥근 괄호 구간과 그 안의 절, '(없음)' 제외)을 여기서 다시 쓴다
 // (catalog.ts는 vite 번들 전용이라 노드 스크립트에서 가져오지 않는다). 규칙을 바꾸면 둘을 함께 고칠 것.
+// 본문이 없는 절 — '(없음)'과 앞 절에 합쳐 번역된 '(25절에 포함되어 있음)'(행 15:26). catalog.ts의 noText와 같다.
+const noText = (text) => text === '(없음)' || /^\(\d+절에 포함되어 있음\)$/.test(text)
 const bracketedKeys = new Set()
 for (const [bk, bid] of Object.entries(BOOK_IDS)) {
   let square = false
   let round = false
   ;(bible[bid] ?? []).forEach((ch, ci) =>
     ch.forEach((text, vi) => {
-      if (text === '(없음)') return
+      if (noText(text)) return
       if (square || round || /[[\]()]/.test(text)) bracketedKeys.add(verseKeyString({ bookId: bid, chapter: ci + 1, verse: vi + 1 }))
       for (const c of text) {
         if (c === '[') square = true
@@ -217,7 +219,7 @@ for (const [bk, bid] of Object.entries(BOOK_IDS)) {
 }
 // 조각의 절이 모두 괄호 안이면 퀴즈에 쓸 수 없는 조각이다 (quizzablePiece와 같은 뜻)
 const bracketOnly = (ref) => {
-  const ks = [...keysOf(ref)].filter((k) => bible[k.split(':')[0]]?.[Number(k.split(':')[1]) - 1]?.[Number(k.split(':')[2]) - 1] !== '(없음)')
+  const ks = [...keysOf(ref)].filter((k) => !noText(bible[k.split(':')[0]]?.[Number(k.split(':')[1]) - 1]?.[Number(k.split(':')[2]) - 1] ?? ''))
   return ks.length > 0 && ks.every((k) => bracketedKeys.has(k))
 }
 for (const p of pieces) {
