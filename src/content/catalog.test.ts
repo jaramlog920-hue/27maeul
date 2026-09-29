@@ -60,7 +60,7 @@ describe('life-text', () => {
 describe('책별 콘텐츠', () => {
   it('조각이 있는 책과 책별 조각', () => {
     expect(BOOKS_WITH_CONTENT).toEqual(['mk', 'lk'])
-    expect(piecesOf('mk').length).toBe(22)
+    expect(piecesOf('mk').length).toBe(45)
     expect(piecesOf('mk').every((p) => p.book === 'mk')).toBe(true)
     expect(piecesOf('mt')).toEqual([])
   })

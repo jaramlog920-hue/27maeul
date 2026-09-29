@@ -1,11 +1,12 @@
 import { CONTENT, piecesOf } from '../content/catalog'
+import { chaptersOf } from './books'
 import { chooseBook, newGame, readScripture, type GameState } from './game'
 import { canRetry, canShelve, gradeOf, payRetry, poolFor, readOff, RETRY_COST, shelve } from './library'
 
 function withMarkDone(): GameState {
   const s = chooseBook(newGame(CONTENT), 'mk', CONTENT)
   const ids = piecesOf('mk').map((p) => p.id)
-  return { ...s, collected: ids, progress: { ...s.progress, mk: { completed: [1, 2, 3], arrangement: {} } } }
+  return { ...s, collected: ids, progress: { ...s.progress, mk: { completed: chaptersOf('mk', CONTENT), arrangement: {} } } }
 }
 
 describe('마을 서고', () => {

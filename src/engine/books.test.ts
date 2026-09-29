@@ -7,7 +7,7 @@ describe('책별 진행', () => {
     const p = emptyProgress()
     expect(Object.keys(p)).toEqual(['mt', 'mk', 'lk', 'jn'])
     expect(totalChapters({ progress: p })).toBe(0)
-    expect(chaptersOf('mk', CONTENT)).toEqual([1, 2, 3])
+    expect(chaptersOf('mk', CONTENT)).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
     expect(chaptersOf('lk', CONTENT)).toHaveLength(24)
     expect(bookDone({ progress: p }, 'mk', CONTENT)).toBe(false)
     // 조각이 없는 책은 끝낼 수 없다
@@ -53,7 +53,7 @@ describe('책별 진행', () => {
 
   it('장을 마치면 그 책의 진행에만 쌓이고, 마지막 장이면 한 권 완성 장면', () => {
     let s = chooseBook(newGame(CONTENT), 'mk', CONTENT)
-    for (const ch of [1, 2, 3]) {
+    for (const ch of chaptersOf('mk', CONTENT)) {
       const ids = piecesOf('mk').filter((p) => p.chapter === ch).map((p) => p.id)
       s = { ...s, collected: [...s.collected, ...ids], inv: { ...s.inv, papyrus: 1, ink: 1 }, needs: { ...s.needs, fatigue: 0 } }
       s = setArrangement(s, 'mk', ch, ids)
@@ -61,9 +61,9 @@ describe('책별 진행', () => {
       expect(r.result.kind).toBe('done')
       s = r.state
     }
-    expect(s.progress.mk.completed).toEqual([1, 2, 3])
+    expect(s.progress.mk.completed).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
     expect(s.progress.lk.completed).toEqual([])
-    expect(totalChapters(s)).toBe(3)
+    expect(totalChapters(s)).toBe(8)
     expect(bookDone(s, 'mk', CONTENT)).toBe(true)
     expect(s.scenes).toContain('firstChapter')
     expect(s.scenes).toContain('bookBound')
