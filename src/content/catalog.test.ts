@@ -15,6 +15,11 @@ describe('catalog', () => {
   it('모든 조각에 책이 있고 id 앞머리와 같다', () => {
     for (const p of PIECES) expect(p.id.startsWith(`${p.book}-`), p.id).toBe(true)
   })
+  it('(없음) 절은 본문에 보이지 않는다', () => {
+    const vs = versesOf('눅 17:34-37')
+    expect(vs.map((v) => v.verse)).toEqual([34, 35, 37])
+    expect(vs.some((v) => v.text === '(없음)')).toBe(false)
+  })
 })
 
 describe('life-text', () => {

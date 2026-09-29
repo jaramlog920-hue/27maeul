@@ -26,11 +26,13 @@ export interface Verse {
 }
 
 export function versesOf(ref: string): Verse[] {
-  return expandRef(ref, byAbbr, counts).map((k) => {
-    const text = bible[k.bookId]?.[k.chapter - 1]?.[k.verse - 1]
-    if (text === undefined) throw new Error(`no verse ${ref} ${k.chapter}:${k.verse}`)
-    return { chapter: k.chapter, verse: k.verse, text }
-  })
+  return expandRef(ref, byAbbr, counts)
+    .map((k) => {
+      const text = bible[k.bookId]?.[k.chapter - 1]?.[k.verse - 1]
+      if (text === undefined) throw new Error(`no verse ${ref} ${k.chapter}:${k.verse}`)
+      return { chapter: k.chapter, verse: k.verse, text }
+    })
+    .filter((v) => v.text !== '(없음)') // 절 번호만 있고 본문이 없는 절 — 어디에도 보이지 않는다
 }
 
 const pieceMap = new Map(PIECES.map((p) => [p.id, p]))

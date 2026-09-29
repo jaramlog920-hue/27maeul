@@ -1,7 +1,7 @@
 import { BOOKS_WITH_CONTENT, CONTENT, pieceById, piecesOf, quizSourceFor } from '../content/catalog'
 import { chaptersOf } from './books'
 import { mulberry32 } from './offers'
-import { buildQuiz, detectiveAnswer, isCorrect, QUIZ_SIZE, wordsOf, type Question } from './quiz'
+import { buildQuiz, detectiveAnswer, isCorrect, QUIZ_SIZE, quizzable, wordsOf, type Question } from './quiz'
 
 const norm = (s: string) => s.replace(/\s+/g, '')
 
@@ -76,6 +76,13 @@ describe('기록 퀴즈', () => {
     expect(detectiveAnswer(pieceById('mk-001-009'))).toBeNull()
     // 막 2:1-12는 =마 9:1-8; =눅 5:17-26
     expect(detectiveAnswer(pieceById('mk-002-001'))).toEqual(['mt', 'mk', 'lk'])
+  })
+
+  it('괄호 절은 문제로 쓰지 않는다', () => {
+    expect(quizzable('(없음)')).toBe(false)
+    expect(quizzable('[예수께서 안식후 첫날 이른 아침에')).toBe(false)
+    expect(quizzable('저희가 [그에게 경배하고] 큰 기쁨으로')).toBe(false)
+    expect(quizzable('어느 여자가 열 드라크마가 있는데')).toBe(true)
   })
 
   it('정답 판정', () => {
