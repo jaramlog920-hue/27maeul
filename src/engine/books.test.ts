@@ -11,7 +11,7 @@ describe('책별 진행', () => {
     expect(chaptersOf('mk', CONTENT)).toEqual(Array.from({ length: 16 }, (_, i) => i + 1))
     expect(chaptersOf('lk', CONTENT)).toHaveLength(24)
     expect(bookDone({ progress: p }, 'mk', CONTENT)).toBe(false)
-    // 조각이 없는 책은 끝낼 수 없다
+    // 네 권 모두 조각이 있다 — 아무 장도 끝내지 않았으면 어느 책도 끝난 것이 아니다
     expect(bookDone({ progress: p }, 'mt', CONTENT)).toBe(false)
   })
 

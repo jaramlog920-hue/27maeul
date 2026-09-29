@@ -185,6 +185,42 @@ for (const p of pieces) {
   }
 }
 
+// ── 괄호 조각에는 "같은 이야기"(=) 도장이 없다 ──
+// src/content/catalog.ts의 `bracketed`와 같은 규칙(대괄호·둥근 괄호 구간과 그 안의 절, '(없음)' 제외)을 여기서 다시 쓴다
+// (catalog.ts는 vite 번들 전용이라 노드 스크립트에서 가져오지 않는다). 규칙을 바꾸면 둘을 함께 고칠 것.
+const bracketedKeys = new Set()
+for (const [bk, bid] of Object.entries(BOOK_IDS)) {
+  let square = false
+  let round = false
+  ;(bible[bid] ?? []).forEach((ch, ci) =>
+    ch.forEach((text, vi) => {
+      if (text === '(없음)') return
+      if (square || round || /[[\]()]/.test(text)) bracketedKeys.add(verseKeyString({ bookId: bid, chapter: ci + 1, verse: vi + 1 }))
+      for (const c of text) {
+        if (c === '[') square = true
+        else if (c === ']') square = false
+        else if (c === '(') round = true
+        else if (c === ')') round = false
+      }
+    }),
+  )
+}
+// 조각의 절이 모두 괄호 안이면 퀴즈에 쓸 수 없는 조각이다 (quizzablePiece와 같은 뜻)
+const bracketOnly = (ref) => {
+  const ks = [...keysOf(ref)].filter((k) => bible[k.split(':')[0]]?.[Number(k.split(':')[1]) - 1]?.[Number(k.split(':')[2]) - 1] !== '(없음)')
+  return ks.length > 0 && ks.every((k) => bracketedKeys.has(k))
+}
+for (const p of pieces) {
+  if (!Array.isArray(p.stamps) || !BOOK_IDS[p.book]) continue
+  const mineOnly = bracketOnly(p.ref)
+  for (const s of p.stamps) {
+    if (s.kind !== 'same') continue
+    if (mineOnly) fail(`piece ${p.id} 도장 ${s.ref}`, `괄호 안 조각 ${p.id}에 "같은 이야기" 도장 — 괄호 조각은 "비슷"만 (사본에 따라 있고 없는 대목)`)
+    const targets = new Set([...keysOf(s.ref)].map((k) => pieceAt.get(k)).filter(Boolean))
+    for (const t of targets) if (bracketOnly(t.ref)) fail(`piece ${p.id} 도장 ${s.ref}`, `괄호 안 조각 ${t.id}을 가리키는 "같은 이야기" 도장 — "비슷"만 가능`)
+  }
+}
+
 // ── 본문 떼어 낸 것이 원본과 같은가 ──
 try {
   const subset = await read('src/content/bible-subset.json')

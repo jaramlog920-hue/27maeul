@@ -48,6 +48,15 @@ describe('verify-pieces.mjs', () => {
     expect(r.out).toContain('금지어 (?<![가-힣])사도')
   })
 
+  it('괄호 안 조각(막 16:9-20)에는 "같은 이야기" 도장이 없고, 그쪽을 가리키지도 않는다', () => {
+    const r = run('scripts/fixtures/bad-bracket-same.json')
+    expect(r.code).toBe(1)
+    for (const msg of [
+      'piece mk-016-009 도장 눅 24:10-11: 괄호 안 조각 mk-016-009에 "같은 이야기" 도장',
+      'piece lk-024-010 도장 막 16:9-11: 괄호 안 조각 mk-016-009을 가리키는 "같은 이야기" 도장',
+    ]) expect(r.out, msg).toContain(msg)
+  })
+
   it('도장은 양쪽에서 서로를 가리켜야 하고, 부분만 넣은 책도 1장부터 빠짐없이', () => {
     const r = run('scripts/fixtures/bad-symmetry.json')
     expect(r.code).toBe(1)

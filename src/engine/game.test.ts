@@ -533,6 +533,20 @@ describe('저장', () => {
     expect(back.journal[0].heard).toEqual(['lk-001-005'])
     expect(back.offers).toEqual({})
   })
+  it('끝나지 않은 책의 서고 칸은 불러올 때 없어지고, 끝낸 책의 등급은 남는다', () => {
+    const s = newGame(CONTENT)
+    const allMk = [...new Set(piecesOf('mk').map((p) => p.chapter))]
+    const load = (mkChapters: number[], shelved: object) =>
+      deserialize(
+        JSON.stringify({ ...JSON.parse(serializeForTest(s)), shelved, progress: { ...s.progress, mk: { arrangement: {}, completed: mkChapters } } }),
+        CONTENT,
+      )!
+    const partial = load([1, 2, 3], { mk: 2 })
+    expect(partial.shelved.mk).toBeUndefined()
+    expect(partial.progress.mk.completed).toEqual([1, 2, 3])
+    const done = load(allMk, { mk: 2 })
+    expect(done.shelved.mk).toBe(2)
+  })
   it('깨진 저장은 null, 저장소 예외도 흡수', () => {
     expect(deserialize('{not json', CONTENT)).toBeNull()
     expect(deserialize(JSON.stringify({ version: 9 }), CONTENT)).toBeNull()

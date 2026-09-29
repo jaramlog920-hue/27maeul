@@ -1,0 +1,4 @@
+[
+  { "id": "lk-024-010", "book": "lk", "ref": "눅 24:10-11", "chapter": 24, "title": "막달라 마리아", "stamps": [{ "kind": "same", "book": "mk", "ref": "막 16:9-11" }] },
+  { "id": "mk-016-009", "book": "mk", "ref": "막 16:9-11", "chapter": 16, "title": "막달라 마리아", "stamps": [{ "kind": "same", "book": "lk", "ref": "눅 24:10-11" }] }
+]

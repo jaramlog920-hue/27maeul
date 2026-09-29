@@ -1,7 +1,7 @@
 import { BOOKS_WITH_CONTENT, CONTENT, inBrackets, pieceById, pieceOfVerse, piecesOf, quizSourceFor } from '../content/catalog'
 import { chaptersOf } from './books'
 import { mulberry32 } from './offers'
-import { buildQuiz, detectiveAnswer, isCorrect, QUIZ_SIZE, quizzable, quizzablePiece, wordsOf, type Question } from './quiz'
+import { buildLibraryQuiz, buildQuiz, detectiveAnswer, isCorrect, QUIZ_SIZE, quizzable, quizzablePiece, wordsOf, type Question } from './quiz'
 
 const norm = (s: string) => s.replace(/\s+/g, '')
 
@@ -140,6 +140,21 @@ describe('기록 퀴즈', () => {
           for (const id of ids) expect(bracket, `ch ${ch} seed ${seed} ${q.kind}`).not.toContain(id)
         }
       }
+    }
+  })
+
+  it('괄호 조각(요 7:53-8:11)은 7장 퀴즈와 요한 서고 퀴즈의 문제·보기·정답 어디에도 나오지 않는다', () => {
+    const src = quizSourceFor(['jn'])
+    expect(quizzablePiece(pieceById('jn-007-053'), src)).toBe(false)
+    const check = (qs: Question[], where: string) => {
+      for (const q of qs) {
+        const ids = q.kind === 'detective' ? [q.pieceId] : q.kind === 'order' || q.kind === 'verse' ? [...q.options, q.answer] : [pieceOfVerse(q.ref)!.id]
+        expect(ids, `${where} ${q.kind}`).not.toContain('jn-007-053')
+      }
+    }
+    for (let seed = 1; seed <= 200; seed++) {
+      check(buildQuiz(piecesOf('jn'), 7, mulberry32(seed), src), `ch 7 seed ${seed}`)
+      check(buildLibraryQuiz({ current: 'jn', pool: ['jn'], piecesOf, rng: mulberry32(seed), src }), `library seed ${seed}`)
     }
   })
 

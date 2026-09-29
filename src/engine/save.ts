@@ -1,10 +1,10 @@
 // 브라우저 저장. 저장소가 없거나 막혀 있어도 게임은 돌아야 하므로 모든 접근을 try/catch로 감싼다.
 import { IDLE_RESET } from './autonomy'
-import { emptyProgress, type Progress } from './books'
+import { bookDone, emptyProgress, type Progress } from './books'
 import { newGame, settle, type GameState } from './game'
 import { placement, type Furniture } from './room'
 import { addGift } from './items'
-import { BOOKS, type GameContent } from './types'
+import { BOOKS, type Book, type GameContent } from './types'
 
 export const SAVE_KEY = 'twenty-seven/save'
 export const SAVE_VERSION = 1
@@ -79,7 +79,10 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     offers,
     myLines,
     todayHeard: s.todayHeard.filter((id) => known.has(id)),
-    shelved: s.shelved ?? {},
+    // 끝나지 않은 책의 서고 칸은 없앤다 (시험판 저장이 3장만 읽은 책을 꽂았을 수 있다)
+    shelved: Object.fromEntries(
+      Object.entries(s.shelved ?? {}).filter(([b]) => (BOOKS as readonly string[]).includes(b) && bookDone({ progress }, b as Book, content)),
+    ),
     garden: s.garden ?? {},
     rereads: (s.rereads ?? []).filter((id) => known.has(id)),
     journal: s.journal.map((e) => ({ ...e, heard: (e.heard ?? []).filter((id) => known.has(id)) })),
