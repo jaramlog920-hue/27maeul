@@ -70,6 +70,8 @@ import { work } from '../engine/needs'
 import { plant, water, harvest, type CropId } from '../engine/garden'
 import { isDone, startMini, stepMini, tapMini, type MiniState } from '../engine/minigame'
 import { finishLetter, letterPay, letterWaiting } from '../engine/requests'
+import { POSTMAN } from '../engine/post'
+import { modeOf } from '../engine/shelf-rooms'
 import { saveGame } from '../engine/save'
 import { moveItem } from '../engine/scroll'
 import type { Book, ItemId, PlaceId, Rng, Target, Tile } from '../engine/types'
@@ -256,9 +258,23 @@ function loadMuted(): boolean {
   }
 }
 
+/**
+ * 편지 나르는 이웃이 오늘 가져온 편지를 건넬 때의 말 (생활 말 — 편지 내용·보낸 사람을 말하지 않는다).
+ * 가져온 편지가 없으면 null (평소 대화 그대로)
+ */
+export function postLine(game: GameState, neighborId: string): string | null {
+  if (neighborId !== POSTMAN || !game.post?.length) return null
+  const ps = game.post.map(pieceById).sort((a, b) => a.chapter - b.chapter)
+  const book = (T.quiz.books as Record<string, string>)[ps[0].book]
+  if (ps.length === 1) return fill(T.post.bringOne, { book, chapter: ps[0].chapter })
+  return fill(T.post.bring, { n: ps.length, book, from: ps[0].chapter, to: ps[ps.length - 1].chapter })
+}
+
 function lineFor(game: GameState, neighborId: string, rng: Rng): string {
   const l = NEIGHBOR_LINES[neighborId]
   if (!l) return ''
+  const post = postLine(game, neighborId)
+  if (post) return post
   if (game.offers[neighborId]) return pick(l.offer, rng).text
   if (neighborId === 'child' && l.lesson && isHome(playerTile(game))) return l.lesson
   if (isWet(weatherOf(game.clock.day)) && rng() < 0.6) return pick(l.wet, rng).text
@@ -557,9 +573,15 @@ export const useGame = create<Store>((set, get) => {
     closeModal: () => set({ modal: null }),
 
     listenTo: (neighborId) => {
-      const { state, pieceId } = listen(get().game, neighborId, CONTENT)
+      const { state, pieceId, pieceIds } = listen(get().game, neighborId, CONTENT)
       if (!pieceId) return
       sfx('scroll')
+      // 편지는 한꺼번에 받는다 — 본문은 책상에서 장째로 본다
+      if (modeOf(pieceById(pieceId).book) === 'letters') {
+        set({ game: persist(state), modal: null })
+        get().say(fill(T.post.received, { n: pieceIds.length }))
+        return
+      }
       const onlyHere = pieceById(pieceId).stamps.length === 0
       set({ game: persist(state), modal: { kind: 'passage', pieceId, askLine: onlyHere } })
     },

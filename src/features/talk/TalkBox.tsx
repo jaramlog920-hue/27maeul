@@ -7,7 +7,7 @@ import { requestFor, reqState } from '../../engine/bonds'
 import { has } from '../../engine/items'
 import { MAX_HEART } from '../../engine/neighbors'
 import { heartsOf } from '../../engine/hearts'
-import { useGame, type Modal } from '../../store/game-store'
+import { postLine, useGame, type Modal } from '../../store/game-store'
 
 export function Hearts({ n }: { n: number }) {
   return (
@@ -49,6 +49,11 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
         {game.offers[def.id] && (
           <button className="primary" onClick={() => listenTo(def.id)}>
             {T.ui.listen}
+          </button>
+        )}
+        {postLine(game, def.id) && (
+          <button className="primary" onClick={() => listenTo(def.id)}>
+            {T.post.receive}
           </button>
         )}
         {teachable && (
