@@ -1,9 +1,11 @@
 import { CONTENT } from '../content/catalog'
-import { newGame, tick, type GameState } from './game'
+import { goToSleep, neighborsPresent, newGame, settle, tick, type GameState } from './game'
+import type { Grade } from './library'
 import { findPath } from './movement'
 import { npcTile, placeNpc } from './neighbors'
 import { placement, solidTiles } from './room'
 import { LESSON_FROM, LESSON_SPOT } from './stories'
+import type { Book } from './types'
 import { key } from './world'
 
 const child = CONTENT.neighbors.find((n) => n.id === 'child')!
@@ -62,4 +64,23 @@ it('움직인 이웃을 다시 따라가는 기록자도 가구를 피한다', (
   const next = tick(s, 0, () => 0, CONTENT).state
   expect(next.player.path.length).toBeGreaterThan(0)
   expect(next.player.path.some((t) => solidTiles(s.room).has(key(t)))).toBe(false)
+})
+
+describe('서고 권수로 이사 오는 이웃', () => {
+  const nextMorning = (shelved: Partial<Record<Book, Grade>>): GameState => settle(goToSleep({ ...newGame(CONTENT), shelved }, CONTENT), CONTENT)
+  it('편지 나르는 이웃은 처음부터, 주막 주인은 1권, 어부는 2권, 목수는 3권부터 마을에 보인다', () => {
+    const none = nextMorning({})
+    expect(Object.keys(none.npcs)).toContain('postman')
+    expect(neighborsPresent(none, CONTENT)).not.toContain('innkeeper')
+    expect(neighborsPresent(nextMorning({ mk: 1 }), CONTENT)).toContain('innkeeper')
+    expect(neighborsPresent(nextMorning({ mk: 1 }), CONTENT)).not.toContain('fisher')
+    expect(neighborsPresent(nextMorning({ mk: 1, lk: 0 }), CONTENT)).toContain('fisher')
+    expect(neighborsPresent(nextMorning({ mk: 1, lk: 0 }), CONTENT)).not.toContain('carpenter')
+  })
+  it('이사 온 날 아침에 소개 장면', () => {
+    const s = { ...newGame(CONTENT), shelved: { mk: 1 as const } }
+    expect(goToSleep(s, CONTENT).scenes).toContain('movedIn:innkeeper')
+    const again = goToSleep(goToSleep(s, CONTENT), CONTENT)
+    expect(again.scenes.filter((x) => x === 'movedIn:innkeeper')).toHaveLength(1)
+  })
 })

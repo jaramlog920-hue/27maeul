@@ -28,6 +28,11 @@ export const PALETTE: Record<string, string> = {
   z: '#698eaa', Z: '#51728f', // 아이
   V: '#7a5d97', X: '#5f4579', F: '#e2a6b3', // 베 짜는 이웃
   E: '#6d8747', M: '#566e33', Y: '#c9b477', // 벌 치는 이웃
+  // 새 이웃 넷 — o·l·d·D는 주인공 옷 글자(writerPalette)라 비어 있는 글자를 쓴다
+  t: '#5b7fa3', T: '#46668a', // 편지 나르는 이웃
+  A: '#a3563f', B: '#84432f', // 주막 주인
+  J: '#4f8a8b', w: '#3d6e6f', // 어부
+  v: '#b08850', m: '#8d6a3a', // 목수
 }
 
 /** 계절 옷 (겉옷, 그늘) */
@@ -108,7 +113,21 @@ function setPixel(rows: string[], x: number, y: number, ch: string) {
   rows[y] = r.slice(0, x) + ch + r.slice(x + 1)
 }
 
-export type Who = 'writer' | 'baker' | 'child' | 'grandpa' | 'merchant' | 'smith' | 'shepherd' | 'presser' | 'weaver' | 'beekeeper'
+export type Who =
+  | 'writer'
+  | 'baker'
+  | 'child'
+  | 'grandpa'
+  | 'merchant'
+  | 'smith'
+  | 'shepherd'
+  | 'presser'
+  | 'weaver'
+  | 'beekeeper'
+  | 'postman'
+  | 'innkeeper'
+  | 'fisher'
+  | 'carpenter'
 export type Pose = 'stand' | 'handUp' | 'wave' | 'crouch'
 
 export interface SpriteOpts {
@@ -281,6 +300,21 @@ function dressNeighbor(who: Who, rows: string[]): string[] {
       for (let x = 2; x <= 7; x++) setPixel(out, x, 0, 'Y')
       return out
     }
+    case 'postman': {
+      // 푸른 겉옷, 어깨에 멘 편지 가방 끈
+      const out = recolor(rows, { r: 't', R: 'T', b: 'a' })
+      for (let y = 7; y <= 10; y++) setPixel(out, 2 + (y - 7), y, 'L')
+      return out
+    }
+    case 'innkeeper':
+      // 붉은 겉옷, 흰 앞치마
+      return recolor(rows, { r: 'A', R: 'B', b: 'a' })
+    case 'fisher':
+      // 청록 겉옷, 밀짚 머릿수건
+      return recolor(rows, { h: 'e', r: 'J', R: 'w', b: 'e' })
+    case 'carpenter':
+      // 나무색 작업복, 가죽 띠
+      return recolor(rows, { h: 'L', r: 'v', R: 'm', b: 'L' })
     default:
       return rows
   }

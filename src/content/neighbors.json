@@ -431,5 +431,235 @@
         "honey": 1
       }
     }
+  },
+  {
+    "id": "postman",
+    "role": "편지 나르는 이웃",
+    "sprite": "postman",
+    "door": {
+      "x": 14,
+      "y": 20
+    },
+    "schedule": [
+      {
+        "from": 390,
+        "tile": {
+          "x": 14,
+          "y": 21
+        },
+        "wet": {
+          "x": 14,
+          "y": 21
+        }
+      },
+      {
+        "from": 450,
+        "tile": {
+          "x": 8,
+          "y": 9
+        }
+      },
+      {
+        "from": 600,
+        "tile": {
+          "x": 23,
+          "y": 19
+        },
+        "wet": {
+          "x": 14,
+          "y": 21
+        }
+      },
+      {
+        "from": 900,
+        "tile": {
+          "x": 16,
+          "y": 9
+        }
+      },
+      {
+        "from": 1080
+      }
+    ],
+    "likes": [
+      "bread",
+      "honey"
+    ],
+    "help": {
+      "minigame": "pick",
+      "gives": {
+        "papyrus": 1
+      }
+    }
+  },
+  {
+    "id": "innkeeper",
+    "role": "주막 주인",
+    "sprite": "innkeeper",
+    "door": {
+      "x": 20,
+      "y": 28
+    },
+    "joinsAtBooks": 1,
+    "schedule": [
+      {
+        "from": 420,
+        "tile": {
+          "x": 21,
+          "y": 29
+        },
+        "wet": {
+          "x": 21,
+          "y": 29
+        }
+      },
+      {
+        "from": 660,
+        "tile": {
+          "x": 26,
+          "y": 19
+        },
+        "wet": {
+          "x": 21,
+          "y": 29
+        }
+      },
+      {
+        "from": 840,
+        "tile": {
+          "x": 21,
+          "y": 29
+        },
+        "wet": {
+          "x": 21,
+          "y": 29
+        }
+      },
+      {
+        "from": 1260
+      }
+    ],
+    "likes": [
+      "herb",
+      "grapes"
+    ],
+    "help": {
+      "minigame": "pick",
+      "gives": {
+        "bread": 2
+      }
+    }
+  },
+  {
+    "id": "fisher",
+    "role": "어부",
+    "sprite": "fisher",
+    "door": {
+      "x": 14,
+      "y": 31
+    },
+    "joinsAtBooks": 2,
+    "schedule": [
+      {
+        "from": 330,
+        "tile": {
+          "x": 24,
+          "y": 34
+        }
+      },
+      {
+        "from": 600,
+        "tile": {
+          "x": 15,
+          "y": 32
+        },
+        "wet": {
+          "x": 15,
+          "y": 32
+        }
+      },
+      {
+        "from": 840,
+        "tile": {
+          "x": 22,
+          "y": 18
+        },
+        "wet": {
+          "x": 15,
+          "y": 32
+        }
+      },
+      {
+        "from": 1020
+      }
+    ],
+    "likes": [
+      "bread",
+      "herb"
+    ],
+    "help": {
+      "minigame": "timing",
+      "gives": {
+        "reed": 2
+      }
+    }
+  },
+  {
+    "id": "carpenter",
+    "role": "제본 골목의 목수",
+    "sprite": "carpenter",
+    "door": {
+      "x": 8,
+      "y": 22
+    },
+    "joinsAtBooks": 3,
+    "schedule": [
+      {
+        "from": 420,
+        "tile": {
+          "x": 9,
+          "y": 23
+        },
+        "wet": {
+          "x": 9,
+          "y": 23
+        }
+      },
+      {
+        "from": 720,
+        "tile": {
+          "x": 11,
+          "y": 11
+        },
+        "wet": {
+          "x": 9,
+          "y": 23
+        }
+      },
+      {
+        "from": 960,
+        "tile": {
+          "x": 9,
+          "y": 23
+        },
+        "wet": {
+          "x": 9,
+          "y": 23
+        }
+      },
+      {
+        "from": 1140
+      }
+    ],
+    "likes": [
+      "oil",
+      "grapes"
+    ],
+    "help": {
+      "minigame": "mash",
+      "gives": {
+        "olive": 2
+      }
+    }
   }
 ]

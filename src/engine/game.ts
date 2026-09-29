@@ -155,13 +155,16 @@ export function shelvedCount(s: Pick<GameState, 'shelved'>): number {
   return Object.keys(s.shelved).length
 }
 
+/** 아직 이사 오지 않은 이웃 — 마을 단계(joinsAt)나 서고 권수(joinsAtBooks)가 모자라다 */
+const notYet = (d: NeighborDef, level: number, books: number) => (d.joinsAt !== undefined && level < d.joinsAt) || (d.joinsAtBooks !== undefined && books < d.joinsAtBooks)
+
 function goalContext(s: GoalState, content: GameContent) {
   const w = weatherOf(s.clock.day)
   const m = s.clock.minute
   const special: Record<string, Tile | null> = {}
   // 아직 이사 오지 않은 이웃은 보이지 않는다 — 소개 장면이 나오는 새 날 아침부터 (잠들 때 정한 단계)
   const level = s.flags.villageLevel ?? 0
-  for (const d of content.neighbors) if (d.joinsAt && level < d.joinsAt) special[d.id] = null
+  for (const d of content.neighbors) if (notYet(d, level, shelvedCount(s))) special[d.id] = null
   const joined = (id: string) => !(id in special)
   // 단짝이 된 아이는 오후에 양 우리 곁에서 논다
   if (s.flags['done:friends'] && m >= FRIENDS_FROM && m < FRIENDS_TO && !isWet(w)) special.child = FRIENDS_SPOT
@@ -220,13 +223,18 @@ function todaysOffers(day: number, collected: string[], s: Pick<GameState, 'acti
 }
 
 /** 그날 밖에 나오는 이웃 (상인은 장날만, 궂은 날 쉬는 이웃은 빼고) — 이야기는 만날 수 있는 이웃에게만 배정한다 */
-function neighborsOfDay(day: number, content: GameContent, level = 0): string[] {
+function neighborsOfDay(day: number, content: GameContent, level = 0, books = 0): string[] {
   const wet = isWet(weatherOf(day))
   return content.neighbors
     .filter((n) => !n.marketOnly || isMarketDay(day))
-    .filter((n) => !n.joinsAt || level >= n.joinsAt)
+    .filter((n) => !notYet(n, level, books))
     .filter((n) => !wet || n.schedule.some((e) => e.tile && e.wet))
     .map((n) => n.id)
+}
+
+/** 오늘 마을에 나와 조각을 건넬 수 있는 이웃 */
+export function neighborsPresent(s: GameState, content: GameContent): string[] {
+  return neighborsOfDay(s.clock.day, content, s.flags.villageLevel ?? 0, shelvedCount(s))
 }
 
 export function newGame(content: GameContent, avatar?: Avatar): GameState {
@@ -282,7 +290,7 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
 export function chooseBook(s: GameState, book: Book, content: GameContent): GameState {
   if (!content.pieces.some((p) => p.book === book)) return s
   const level = s.flags.villageLevel ?? 0
-  const present = neighborsOfDay(s.clock.day, content, level).filter((id) => !s.listened.includes(id))
+  const present = neighborsOfDay(s.clock.day, content, level, shelvedCount(s)).filter((id) => !s.listened.includes(id))
   const next = { ...s, activeBook: book }
   return { ...next, offers: todaysOffers(s.clock.day, s.collected, next, content, present) }
 }
@@ -990,7 +998,13 @@ export function goToSleep(s: GameState, content: GameContent, opts: { read?: boo
     flags['done:friends'] = 1
     scenes.push('friends')
   }
-  const present = neighborsOfDay(day, content, level)
+  // 서고 권수로 이사 오는 이웃: 처음 보이는 날 아침에 소개
+  for (const d of content.neighbors)
+    if (d.joinsAtBooks !== undefined && shelvedCount(s) >= d.joinsAtBooks && !flags[`movedIn:${d.id}`]) {
+      flags[`movedIn:${d.id}`] = 1
+      scenes.push(`movedIn:${d.id}`)
+    }
+  const present = neighborsOfDay(day, content, level, shelvedCount(s))
   const visitor = s.flags.ending === 1 || clock.minute >= VISIT_TO ? null : pickVisitor(day, s.hearts, flags, present)
   if (visitor) flags[`visitDay:${visitor}`] = day
   const gathering = s.flags.ending === 1 ? null : planGathering(day, level, flags)

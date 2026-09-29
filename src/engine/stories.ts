@@ -88,5 +88,10 @@ export const ENDING_SPOTS: Record<string, Tile> = {
   merchant: { x: 6, y: 8 },
   weaver: { x: 8, y: 9 },
   beekeeper: { x: 6, y: 9 },
+  // 새 이웃 넷은 마당 앞 큰길에 (task-5)
+  postman: { x: 7, y: 10 },
+  innkeeper: { x: 5, y: 10 },
+  fisher: { x: 9, y: 10 },
+  carpenter: { x: 3, y: 10 },
 }
 export const ENDING_UNTIL = 12 * 60

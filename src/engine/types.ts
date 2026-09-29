@@ -124,6 +124,8 @@ export interface NeighborDef {
   marketOnly?: boolean
   /** 마을이 이 단계까지 자라면 이사 온다 */
   joinsAt?: number
+  /** 서고에 꽂힌 책이 이만큼이면 이사 온다 */
+  joinsAtBooks?: number
   likes: ItemId[]
   help: {
     minigame: Minigame

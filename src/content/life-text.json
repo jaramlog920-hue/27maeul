@@ -1046,6 +1046,198 @@
       },
       "giftLiked": "이거 참 좋아해요. 고마워요!",
       "giftPlain": "고마워요."
+    },
+    "postman": {
+      "offer": [
+        {
+          "speaker": "postman",
+          "text": "편지 나르다 들은 이야기가 있어요. 들려 드릴까요?"
+        }
+      ],
+      "idle": [
+        {
+          "speaker": "postman",
+          "text": "오늘도 바구니에 편지 넣어 두었어요."
+        },
+        {
+          "speaker": "postman",
+          "text": "이 길은 눈 감고도 다녀요."
+        }
+      ],
+      "warm": [
+        {
+          "speaker": "postman",
+          "text": "필사가님 글씨는 받는 사람들이 다 좋아해요."
+        }
+      ],
+      "close": [
+        {
+          "speaker": "postman",
+          "text": "편지 받는 얼굴 보는 게 제일 좋아요. 필사가님 덕분이에요."
+        }
+      ],
+      "wet": [
+        {
+          "speaker": "postman",
+          "text": "비 오는 날엔 편지를 품에 안고 뛰어요."
+        }
+      ],
+      "visit": [
+        {
+          "speaker": "postman",
+          "text": "지나가다 들렀어요. 빵 하나 두고 갈게요."
+        }
+      ],
+      "help": {
+        "label": "편지 나누기 돕기",
+        "thanks": "덕분에 일찍 끝났어요. 종이 한 장 가져가세요."
+      },
+      "giftLiked": "와, 제가 좋아하는 거예요!",
+      "giftPlain": "고마워요, 잘 먹을게요."
+    },
+    "innkeeper": {
+      "offer": [
+        {
+          "speaker": "innkeeper",
+          "text": "손님들한테 전해 들은 이야기가 있어요. 한번 들어 보실래요?"
+        }
+      ],
+      "idle": [
+        {
+          "speaker": "innkeeper",
+          "text": "오늘 국은 콩을 넣고 끓였어요."
+        },
+        {
+          "speaker": "innkeeper",
+          "text": "장날엔 발 디딜 틈이 없어요."
+        }
+      ],
+      "warm": [
+        {
+          "speaker": "innkeeper",
+          "text": "지친 얼굴이네요. 앉아서 물 한 잔 하고 가요."
+        }
+      ],
+      "close": [
+        {
+          "speaker": "innkeeper",
+          "text": "필사가님 자리는 늘 창가로 비워 둬요."
+        }
+      ],
+      "wet": [
+        {
+          "speaker": "innkeeper",
+          "text": "비 오면 손님이 더 들어요. 다들 쉬어 가거든요."
+        }
+      ],
+      "visit": [
+        {
+          "speaker": "innkeeper",
+          "text": "국 끓이고 남은 빵이에요. 식기 전에 드세요."
+        }
+      ],
+      "help": {
+        "label": "상 차리기 돕기",
+        "thanks": "손이 빠르시네요! 빵 두 개 가져가요."
+      },
+      "giftLiked": "어머, 이거 좋아해요! 국에 넣어야겠어요.",
+      "giftPlain": "고마워요."
+    },
+    "fisher": {
+      "offer": [
+        {
+          "speaker": "fisher",
+          "text": "그물 손질하며 들은 이야기가 있어요. 들려 드릴게요."
+        }
+      ],
+      "idle": [
+        {
+          "speaker": "fisher",
+          "text": "아침 물빛이 제일 고와요."
+        },
+        {
+          "speaker": "fisher",
+          "text": "그물은 날마다 기워야 해요."
+        }
+      ],
+      "warm": [
+        {
+          "speaker": "fisher",
+          "text": "오늘은 물이 잔잔해서 좋네요."
+        }
+      ],
+      "close": [
+        {
+          "speaker": "fisher",
+          "text": "필사가님이랑 얘기하면 바람이 잦아드는 것 같아요."
+        }
+      ],
+      "wet": [
+        {
+          "speaker": "fisher",
+          "text": "비 오는 날엔 배를 묶어 두고 그물을 기워요."
+        }
+      ],
+      "visit": [
+        {
+          "speaker": "fisher",
+          "text": "갈대 한 단 베어 왔어요. 종이 만드실 때 쓰세요."
+        }
+      ],
+      "help": {
+        "label": "그물 기우기 돕기",
+        "thanks": "매듭이 단단하네요. 갈대 좀 가져가세요."
+      },
+      "giftLiked": "이거 좋아해요. 배 위에서 먹어야겠어요.",
+      "giftPlain": "고마워요."
+    },
+    "carpenter": {
+      "offer": [
+        {
+          "speaker": "carpenter",
+          "text": "대패질하다 들은 이야기가 있어요. 들어 보실래요?"
+        }
+      ],
+      "idle": [
+        {
+          "speaker": "carpenter",
+          "text": "나무 냄새가 좋지요?"
+        },
+        {
+          "speaker": "carpenter",
+          "text": "표지 판자는 결을 잘 봐야 해요."
+        }
+      ],
+      "warm": [
+        {
+          "speaker": "carpenter",
+          "text": "선반이 모자라면 말해요. 하나 짜 드릴게요."
+        }
+      ],
+      "close": [
+        {
+          "speaker": "carpenter",
+          "text": "필사가님 책이 꽂힐 선반이라 생각하면 더 정성이 들어가요."
+        }
+      ],
+      "wet": [
+        {
+          "speaker": "carpenter",
+          "text": "비 오는 날엔 나무가 뒤틀려서 쉬어요."
+        }
+      ],
+      "visit": [
+        {
+          "speaker": "carpenter",
+          "text": "자투리 나무로 작은 새를 깎았어요."
+        }
+      ],
+      "help": {
+        "label": "나무 나르기 돕기",
+        "thanks": "든든하네요. 올리브 좀 가져가요."
+      },
+      "giftLiked": "오, 이거 좋지요!",
+      "giftPlain": "고마워요."
     }
   },
   "scenes": {
@@ -2013,6 +2205,33 @@
       ],
       "album": "벌 치는 이웃이 온 날"
     },
+    "movedIn:innkeeper": {
+      "title": "새 이웃",
+      "lines": [
+        {
+          "speaker": "innkeeper",
+          "text": "장터 아래에 주막을 열었어요. 지나가다 쉬어 가요."
+        }
+      ]
+    },
+    "movedIn:fisher": {
+      "title": "새 이웃",
+      "lines": [
+        {
+          "speaker": "fisher",
+          "text": "나루가 열려서 호숫가에 자리를 잡았어요. 잘 부탁해요."
+        }
+      ]
+    },
+    "movedIn:carpenter": {
+      "title": "새 이웃",
+      "lines": [
+        {
+          "speaker": "carpenter",
+          "text": "큰길가에 공방을 냈어요. 책 표지 판자는 제게 맡겨요."
+        }
+      ]
+    },
     "friends": {
       "title": "단짝",
       "lines": [
@@ -2280,6 +2499,9 @@
       "village:2": " 베 짜는 이웃이 이사 왔다.",
       "village:3": " 강가에 쉼터가 생겼다.",
       "village:4": " 벌 치는 이웃이 이사 왔다.",
+      "movedIn:innkeeper": " 주막 주인이 이사 왔다.",
+      "movedIn:fisher": " 어부가 이사 왔다.",
+      "movedIn:carpenter": " 제본 골목의 목수가 이사 왔다.",
       "dinner:baker": " 이웃집에서 저녁을 먹었다.",
       "dinner:child": " 이웃집에서 저녁을 먹었다.",
       "dinner:grandpa": " 이웃집에서 저녁을 먹었다.",

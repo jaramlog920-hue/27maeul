@@ -80,6 +80,10 @@ export const VISIT_GIFTS: Record<string, Items> = {
   presser: { oil: 1 },
   weaver: { wool: 1 },
   beekeeper: { honey: 1 },
+  postman: { bread: 1 },
+  innkeeper: { bread: 2 },
+  fisher: { reed: 2 },
+  carpenter: { bird: 1 },
 }
 
 /** 오늘 아침 집 앞에 들르는 이웃 (마음 5 이상, 나흘에 한 번까지) */
@@ -128,12 +132,12 @@ export const STARS_TO = 22 * 60
 
 /** 모임 자리 (빵집 앞 아기 잔치 / 언덕 소풍·별 보기) */
 export const BABY_PARTY_SPOTS: Record<string, Tile> = {
-  baker: { x: 6, y: 19 },
+  baker: { x: 5, y: 19 },
   child: { x: 4, y: 19 },
-  grandpa: { x: 7, y: 19 },
+  grandpa: { x: 7, y: 18 },
   smith: { x: 3, y: 20 },
   presser: { x: 2, y: 19 },
-  weaver: { x: 7, y: 20 },
+  weaver: { x: 5, y: 20 },
   beekeeper: { x: 4, y: 21 },
 }
 export const HILL_SPOTS: Record<string, Tile> = {

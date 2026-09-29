@@ -1,4 +1,4 @@
-import { MAP, WIDTH, HEIGHT, PLACES, START, isWalkable, placeAt, cameraFor, VIEW_W, VIEW_H, VILLAGE_H, isHome, tileAt, ROOMS, WARPS, roomAt, key, ROOM_W, ROOM_H, LOCKED_DOORS } from './world'
+import { MAP, WIDTH, HEIGHT, PLACES, HOUSES, START, isWalkable, placeAt, cameraFor, VIEW_W, VIEW_H, VILLAGE_H, isHome, tileAt, ROOMS, WARPS, roomAt, key, ROOM_W, ROOM_H, LOCKED_DOORS } from './world'
 import { findPath, pathToward, stepActor, type Actor } from './movement'
 
 const adjacent = (a: { x: number; y: number }, b: { x: number; y: number }) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y) === 1
@@ -50,6 +50,14 @@ describe('world', () => {
   })
   it('텃밭은 집 앞 여덟 칸', () => {
     expect(PLACES.garden.tiles).toHaveLength(8)
+  })
+
+  it('새 이웃 집 넷은 문 앞이 걸을 수 있는 길과 이어진다', () => {
+    for (const [id, door] of [['postman', { x: 14, y: 20 }], ['carpenter', { x: 8, y: 22 }], ['innkeeper', { x: 20, y: 28 }], ['fisher', { x: 14, y: 31 }]] as const) {
+      expect(HOUSES.some((h) => h.id === id), id).toBe(true)
+      expect(isWalkable({ x: door.x, y: door.y + 1 }), id).toBe(true)
+    }
+    expect(PLACES.field.tiles.length).toBe(18)
   })
 })
 

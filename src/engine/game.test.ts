@@ -310,8 +310,12 @@ describe('다 쓴 날 아침', () => {
     let s: GameState = { ...newGame(CONTENT), flags: { ending: 1 } }
     s = goToSleep(s, CONTENT)
     expect(s.flags.endingDay).toBe(2)
-    // 아직 이사 오지 않은 이웃(베 짜는·벌 치는)은 빼고
-    for (const n of Object.values(s.npcs).filter((x) => !CONTENT.neighbors.find((d) => d.id === x.id)?.joinsAt)) {
+    // 아직 이사 오지 않은 이웃(베 짜는·벌 치는, 서고 권수로 오는 이웃)은 빼고
+    const later = (id: string) => {
+      const d = CONTENT.neighbors.find((x) => x.id === id)
+      return !!d?.joinsAt || d?.joinsAtBooks !== undefined
+    }
+    for (const n of Object.values(s.npcs).filter((x) => !later(x.id))) {
       expect(n.visible, n.id).toBe(true)
       expect(n.y, n.id).toBeGreaterThanOrEqual(8)
       expect(n.x, n.id).toBeLessThanOrEqual(9)

@@ -106,6 +106,11 @@ const HOUSE_STYLES: Record<string, HouseStyle> = {
   grandpa: { roof: ['#a0785c', '#7a5d46', '#bf9474'], pattern: 'tile', wall: '#f3dbb0', base: '#dbc79a', window: 'square', shutter: '#ae9068', door: '#82684f', timber: '#ae9068' },
   weaver: { roof: ['#c48a66', '#9a6a4d', '#dca482'], pattern: 'tile', wall: '#f8e6c0', base: '#e5d3aa', window: 'arch', shutter: '#ae9068', door: '#987654' },
   beekeeper: { roof: ['#b99a5c', '#8e7447', '#d4b87a'], pattern: 'tile', wall: '#f3dbb0', base: '#dbc79a', window: 'round', shutter: '#ae9068', door: '#987654' },
+  // 새 이웃 넷 (계획 2): 이웃과 겹치지 않는 차분한 빛 — 잿빛 파랑, 흙빛 장미, 물빛 초록, 나뭇빛
+  postman: { roof: ['#8497a8', '#66788a', '#a3b4c3'], pattern: 'tile', wall: '#f3e3c4', base: '#ddd0ad', window: 'square', shutter: '#8e9aa6', door: '#7c6a58' },
+  innkeeper: { roof: ['#b0786a', '#8a5a4f', '#c9968a'], pattern: 'tile', wall: '#f5dfbe', base: '#e0c9a0', window: 'arch', shutter: '#ae9068', door: '#82684f', awning: ['#a9b88f', '#fefdf8'] },
+  fisher: { roof: ['#7f9f98', '#5f7d77', '#9dbab3'], pattern: 'tile', wall: '#efe2c6', base: '#d9ccab', window: 'round', shutter: '#8a9c8e', door: '#7c6a58' },
+  carpenter: { roof: ['#a58a66', '#7e694c', '#c1a680'], pattern: 'tile', wall: '#f3dbb0', base: '#dbc79a', window: 'square', shutter: '#ae9068', door: '#82684f', timber: '#98795a' },
 }
 const PLAIN_STYLE = HOUSE_STYLES.child
 /** 내 집 앞벽 (한 줄뿐이라 '아래 줄'로 그린다) */
