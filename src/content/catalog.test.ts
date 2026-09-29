@@ -62,7 +62,7 @@ describe('책별 콘텐츠', () => {
     expect(BOOKS_WITH_CONTENT).toEqual(['mt', 'mk', 'lk'])
     expect(piecesOf('mk').length).toBe(98)
     expect(piecesOf('mk').every((p) => p.book === 'mk')).toBe(true)
-    expect(piecesOf('mt').length).toBe(54) // 마 1–10장 (작업 4)
+    expect(piecesOf('mt').length).toBe(108) // 마 1–20장 (작업 4·5)
     expect(piecesOf('mt').every((p) => p.book === 'mt')).toBe(true)
     expect(piecesOf('jn')).toEqual([])
   })
@@ -72,7 +72,10 @@ describe('책별 콘텐츠', () => {
     expect(pieceOfVerse('눅 3:22')?.id).toBe('lk-003-021')
     expect(pieceOfVerse('마 1:1')?.id).toBe('mt-001-001')
     expect(pieceOfVerse('마 10:42')?.id).toBe('mt-010-040')
-    expect(pieceOfVerse('마 11:1')).toBeUndefined()
+    expect(pieceOfVerse('마 11:1')?.id).toBe('mt-010-040') // 장을 넘는 조각 마 10:40-11:1
+    expect(pieceOfVerse('마 11:2')?.id).toBe('mt-011-002')
+    expect(pieceOfVerse('마 20:34')?.id).toBe('mt-020-029')
+    expect(pieceOfVerse('마 21:1')).toBeUndefined()
     expect(pieceOfVerse('요 1:1')).toBeUndefined()
   })
   it('대괄호 구간(막 16:9-20)의 절은 괄호 글자가 없는 가운데 절까지 괄호 안으로 친다', () => {
