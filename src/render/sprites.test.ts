@@ -1,4 +1,4 @@
-import { ANIMAL, ANIMAL_PALETTE, BABY, ICON_PALETTE, ICONS, PALETTE, SHEEP, SMALL_PALETTE, SPRITE_H, SPRITE_W, mirror, spriteRows, writerPalette, type Who } from './sprites'
+import { ANIMAL, ANIMAL_PALETTE, animalRows, BABY, ICON_PALETTE, ICONS, PALETTE, SHEEP, SMALL_PALETTE, SPRITE_H, SPRITE_W, mirror, spriteRows, writerPalette, type Who } from './sprites'
 import { ACCS, BOTTOMS, HAIR_BACKS, HAIR_FRONTS, SKINS, withLookDefaults } from '../engine/avatar'
 import { breathOffset, isBlinking, walkFrame, dozeNod, lookSide } from './anim'
 import { ITEM_TEXT } from '../content/text'
@@ -77,6 +77,17 @@ describe('사람 도트', () => {
 describe('동물·작은 것·아이콘', () => {
   it('고양이·강아지의 모든 모습', () => {
     for (const k of ['cat', 'dog'] as const) for (const form of ['adult', 'baby', 'curl'] as const) valid(ANIMAL[k][form], ANIMAL_PALETTE[k])
+  })
+  it('걷는 쪽으로 머리(눈 e)가 간다 — 오른쪽으로 걸으면 눈이 오른쪽 끝에', () => {
+    for (const k of ['cat', 'dog'] as const)
+      for (const form of ['adult', 'baby'] as const) {
+        const eyeCol = (rows: readonly string[]) => rows.find((r) => r.includes('e'))!.indexOf('e')
+        const left = animalRows(k, form, 'left')
+        const right = animalRows(k, form, 'right')
+        const w = left[0].length
+        expect(eyeCol(left), `${k} ${form} 왼쪽`).toBeLessThan(w / 2)
+        expect(eyeCol(right), `${k} ${form} 오른쪽`).toBeGreaterThanOrEqual(w / 2)
+      }
   })
   it('양·아기', () => {
     valid(SHEEP, SMALL_PALETTE)

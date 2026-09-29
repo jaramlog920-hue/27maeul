@@ -403,7 +403,7 @@ export const ANIMAL_PALETTE: Record<'cat' | 'dog', Record<string, string>> = {
   dog: { a: '#9e7a57', A: '#7e5b3c', e: '#2a2020', n: '#3a2a20', w: '#f1e3c8' },
 }
 
-/** 오른쪽을 본다 */
+/** 왼쪽을 본다 (눈 e·코 n이 왼쪽 끝, 꼬리가 오른쪽). 오른쪽을 보게 하려면 animalRows로 뒤집는다 */
 export const ANIMAL: Record<'cat' | 'dog', { adult: SpriteRows; baby: SpriteRows; curl: SpriteRows }> = {
   cat: {
     adult: ['a.a.....', 'aaa....a', 'eaan...a', '.aaaaaa.', '.aawaaa.', '.a.a.a.a'],
@@ -415,6 +415,12 @@ export const ANIMAL: Record<'cat' | 'dog', { adult: SpriteRows; baby: SpriteRows
     baby: ['A.....', 'eaA..a', '.aaaa.', '.a..a.'],
     curl: ['..aaa..', '.aaaaAa', 'aaaaaaa', '.aaaaa.'],
   },
+}
+
+/** 동물 그림: 걷는 쪽으로 머리가 가게. 그림은 왼쪽을 보므로 오른쪽일 때 뒤집는다 */
+export function animalRows(kind: 'cat' | 'dog', form: 'adult' | 'baby' | 'curl', side: 'left' | 'right'): SpriteRows {
+  const rows = ANIMAL[kind][form]
+  return side === 'right' ? mirror(rows) : rows
 }
 
 export const SMALL_PALETTE: Record<string, string> = {

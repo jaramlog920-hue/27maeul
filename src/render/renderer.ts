@@ -14,7 +14,7 @@ import type { Facing, GameContent, Season, Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { avatarKey, withLookDefaults, type FullAvatar } from '../engine/avatar'
 import {
-  ANIMAL,
+  animalRows,
   ANIMAL_PALETTE,
   BABY,
   BUTTERFLY,
@@ -757,9 +757,8 @@ function person(
 }
 
 function animal(kind: 'cat' | 'dog', form: 'adult' | 'baby' | 'curl', facing: Facing) {
-  let rows: SpriteRows = ANIMAL[kind][form]
-  if (facing === 'left') rows = rows.map((r) => [...r].reverse().join(''))
-  return paint(`animal/${kind}/${form}/${facing === 'left' ? 'l' : 'r'}`, rows, ANIMAL_PALETTE[kind])
+  const side = facing === 'left' ? 'left' : 'right'
+  return paint(`animal/${kind}/${form}/${side === 'left' ? 'l' : 'r'}`, animalRows(kind, form, side), ANIMAL_PALETTE[kind])
 }
 
 // ── 방의 가구 ──
@@ -1098,7 +1097,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         // 아이가 데려간 동물은 아이 곁에
         if (def.id === 'child' && game.flags.childPet) {
           const kind = game.flags.childPet === 1 ? 'cat' : 'dog'
-          items.push({ y: n.y + 0.1, paint: () => drawSprite(g, animal(kind, day - (game.companion?.since ?? day) >= 10 ? 'adult' : 'baby', 'right'), n.x + 0.7, n.y + 0.1) })
+          items.push({ y: n.y + 0.1, paint: () => drawSprite(g, animal(kind, day - (game.companion?.since ?? day) >= 10 ? 'adult' : 'baby', 'left'), n.x + 0.7, n.y + 0.1) })
         }
         // 빵집 아기
         if (def.id === 'baker' && !moving && !wet) {
