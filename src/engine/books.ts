@@ -1,4 +1,5 @@
 // 책별 진행: 어느 장까지 이었는지, 책상 위에 어떤 순서로 놓였는지. 순수 계산만.
+import { SHELF_ROOMS, type ShelfRoomId } from './shelf-rooms'
 import { BOOKS, GOSPELS, type Book, type GameContent } from './types'
 
 export interface BookProgress {
@@ -30,11 +31,30 @@ export function actsRoomOpen(flags: Readonly<Record<string, number | undefined>>
 }
 
 /**
- * 책상에서 고를 수 있는 책(= 도감에 보이는 책): 네 복음서는 언제나, 사도행전은 방이 열린 뒤 그리고 조각이 있을 때만
+ * 서고의 방이 열렸는가 (방 표 shelf-rooms): 복음서 방은 늘, 사도행전 방은 잔치 다음 날(actsRoomOpen),
+ * 그 뒤 방은 앞 방이 다 찬 날 밤에 세운 표식 flags['room:<id>'] (goToSleep) — 다음 날 아침부터 열려 있다.
+ * 책 고르기·chooseBook·불러오기·도감·서고 문이 모두 이 판정 하나를 쓴다
+ */
+export function roomOpen(id: ShelfRoomId, flags: Readonly<Record<string, number | undefined>>): boolean {
+  if (id === 'gospels') return true
+  if (id === 'acts') return actsRoomOpen(flags)
+  return (flags[`room:${id}`] ?? 0) >= 1
+}
+
+/** 그 책의 방이 열렸는가 */
+export function bookRoomOpen(book: Book, flags: Readonly<Record<string, number | undefined>>): boolean {
+  const room = SHELF_ROOMS.find((r) => r.books.includes(book))
+  return !!room && roomOpen(room.id, flags)
+}
+
+/**
+ * 책상에서 고를 수 있는 책(= 도감에 보이는 책): 열린 방의 책 중 콘텐츠가 있는 것, 방 순서대로.
+ * 네 복음서는 (예전과 같이) 언제나 보인다
  */
 export function pickableBooks(flags: Readonly<Record<string, number | undefined>>, withContent: readonly Book[]): Book[] {
-  const acts: Book[] = actsRoomOpen(flags) && withContent.includes('ac') ? ['ac'] : []
-  return [...GOSPELS, ...acts]
+  return SHELF_ROOMS.filter((r) => roomOpen(r.id, flags)).flatMap((r) =>
+    r.id === 'gospels' ? [...GOSPELS] : r.books.filter((b) => withContent.includes(b)),
+  )
 }
 
 export function bookDone(s: { progress: Progress }, book: Book, content: GameContent): boolean {

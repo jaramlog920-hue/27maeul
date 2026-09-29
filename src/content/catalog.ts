@@ -1,12 +1,13 @@
 // 콘텐츠 데이터의 단일 입구. 성경 문장은 versesOf로만 꺼낸다 (exclusion-list §0).
-// 앱은 쓰는 다섯 권만 싣는다 (scripts/build-bible-subset.mjs, verify가 원본과 같은지 확인)
+// 앱은 서고 방 표(shelf-rooms)의 책만 싣는다 (scripts/build-bible-subset.mjs, verify가 원본과 같은지 확인)
 import raw from './bible-subset.json'
 import books from './books.json'
 import piecesRaw from './pieces.json'
 import neighborsRaw from './neighbors.json'
 import journeyRaw from './journey.json'
 import { expandRef, countsFrom } from './ref'
-import { BOOKS, type Book, type GameContent, type NeighborDef, type Piece } from '../engine/types'
+import { BOOKS, LETTERS, type Book, type GameContent, type NeighborDef, type Piece } from '../engine/types'
+import { bibleIdOf } from '../engine/shelf-rooms'
 import type { Question, QuizSource } from '../engine/quiz'
 import type { JourneyCard } from '../engine/journey'
 
@@ -14,8 +15,34 @@ const bible = raw as Record<string, string[][]>
 const byAbbr = Object.fromEntries(books.map((b) => [b.abbr, b.id]))
 const counts = countsFrom(bible)
 
-/** 모든 책의 조각 */
-const ALL_PIECES = piecesRaw as unknown as Piece[]
+// ── 책 id ↔ 본문 책 id·약어 (books.json에서 읽는다) ──
+const bookInfo = (b: Book) => {
+  const info = books.find((x) => x.id === bibleIdOf(b))
+  if (!info) throw new Error(`books.json에 없는 책 ${b}`)
+  return info
+}
+export const BOOK_ABBR = Object.fromEntries(BOOKS.map((b) => [b, bookInfo(b).abbr])) as Record<Book, string>
+const BOOK_IDS = Object.fromEntries(BOOKS.map((b) => [b, bibleIdOf(b)])) as Record<Book, string>
+const ABBR_BOOK: Record<string, Book> = Object.fromEntries(BOOKS.map((b) => [BOOK_ABBR[b], b]))
+
+/**
+ * 편지의 "장 조각" (계획 7): 편지는 조각으로 자르지 않는다 — 장 하나에 조각 하나를 본문에서 기계적으로 만든다.
+ * 끝 절 번호는 본문 배열 길이 ('(없음)' 절이 있어도 번호는 걸친다 — 보이는 것은 versesOf가 거른다).
+ * 제목은 책 이름 + 장 번호뿐 (해석 라벨도 본문 문장도 아니다). pieces.json·verify-pieces의 덮기 규칙에는 넣지 않는다
+ */
+export const LETTER_PIECES: readonly Piece[] = LETTERS.flatMap((b) =>
+  (bible[BOOK_IDS[b]] ?? []).map((verses, i) => ({
+    id: `${b}-${String(i + 1).padStart(3, '0')}`,
+    book: b,
+    ref: `${BOOK_ABBR[b]} ${i + 1}:1-${verses.length}`,
+    chapter: i + 1,
+    title: `${bookInfo(b).name} ${i + 1}장`,
+    stamps: [],
+  })),
+)
+
+/** 모든 책의 조각: pieces.json(복음서·사도행전) + 편지 장 조각 */
+const ALL_PIECES: Piece[] = [...(piecesRaw as unknown as Piece[]), ...LETTER_PIECES]
 /** 엔진과 화면이 쓰는 조각 — 모든 책 (책별로는 piecesOf) */
 export const PIECES = ALL_PIECES
 export const NEIGHBORS = neighborsRaw as unknown as NeighborDef[]
@@ -54,10 +81,6 @@ export function neighborById(id: string): NeighborDef | undefined {
 }
 
 // ── 책별 조각과 퀴즈의 본문 ──
-export const BOOK_ABBR: Record<Book, string> = { mt: '마', mk: '막', lk: '눅', jn: '요', ac: '행' }
-const BOOK_IDS: Record<Book, string> = { mt: 'mat', mk: 'mrk', lk: 'luk', jn: 'jhn', ac: 'act' }
-const ABBR_BOOK: Record<string, Book> = { 마: 'mt', 막: 'mk', 눅: 'lk', 요: 'jn', 행: 'ac' }
-
 const byBook = new Map<Book, Piece[]>(BOOKS.map((b) => [b, ALL_PIECES.filter((p) => p.book === b)]))
 export function piecesOf(book: Book): Piece[] {
   return byBook.get(book) ?? []

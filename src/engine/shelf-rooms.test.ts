@@ -1,0 +1,198 @@
+// 계획 7 작업 1: 열세 권(로마서–빌레몬서)의 자리와 서고 방 표 — 편지는 장째로(편지 한 통 = 한 장)
+import bible from '../content/nt-krv.json'
+import subset from '../content/bible-subset.json'
+import { BOOKS_WITH_CONTENT, CONTENT, LETTER_PIECES, noText, PIECES, piecesOf, versesOf } from '../content/catalog'
+import { T } from '../content/text'
+import { emptyProgress, pickableBooks, roomOpen } from './books'
+import { chooseBook, goToSleep, newGame, shelvedCount, type GameState } from './game'
+import { deserialize, sanitize, serialize } from './save'
+import { modeOf, roomOf, SHELF_ROOMS, SUBSET_BOOKS } from './shelf-rooms'
+import { BOOKS, GOSPELS, isLetter, LETTERS, type Book } from './types'
+
+const FULL = bible as Record<string, string[][]>
+const LETTER_IDS = ['rom', '1co', '2co', 'gal', 'eph', 'php', 'col', '1th', '2th', '1ti', '2ti', 'tit', 'phm'] as const
+
+/** 네 복음서와 사도행전을 서고에 꽂은 상태 (잔치는 지났다) */
+function actsShelved(): GameState {
+  const s = newGame(CONTENT)
+  return { ...s, flags: { ...s.flags, gospelFeast: 2 }, shelved: { mt: 2, mk: 1, lk: 1, jn: 0, ac: 1 } }
+}
+
+describe('방 표와 열세 권의 자리', () => {
+  it('BOOKS는 오늘 성경 순서의 열여덟 권 — 방 표의 책을 차례로 늘어놓은 것과 같다', () => {
+    expect(LETTERS).toEqual(LETTER_IDS)
+    expect(BOOKS).toEqual(['mt', 'mk', 'lk', 'jn', 'ac', ...LETTER_IDS])
+    expect(SHELF_ROOMS.flatMap((r) => r.books)).toEqual(BOOKS)
+    expect(SHELF_ROOMS.map((r) => r.id)).toEqual(['gospels', 'acts', 'romPhm', 'hebJud', 'rev'])
+    expect(SHELF_ROOMS.map((r) => r.door)).toEqual([null, 0, 1, 2, 3])
+    expect(Object.keys(emptyProgress())).toEqual(BOOKS)
+    for (const b of LETTERS) {
+      expect(isLetter(b)).toBe(true)
+      expect(roomOf(b).id).toBe('romPhm')
+      expect(modeOf(b)).toBe('letters')
+    }
+    for (const b of [...GOSPELS, 'ac'] as Book[]) {
+      expect(isLetter(b)).toBe(false)
+      expect(modeOf(b)).toBe('pieces')
+    }
+  })
+
+  it('방 이름은 책 범위로 — 문 순서의 잠긴 방 이름과 같다', () => {
+    expect(T.library.lockedRooms).toEqual(['사도행전 방', '로마서–빌레몬서 방', '히브리서–유다서 방', '요한계시록 방'])
+  })
+
+  it('앱 본문(bible-subset)은 방 표의 책 전부 — 원본과 한 글자도 다르지 않다', () => {
+    expect(SUBSET_BOOKS).toEqual(['mat', 'mrk', 'luk', 'jhn', 'act', ...LETTER_IDS])
+    expect(Object.keys(subset)).toEqual(SUBSET_BOOKS)
+    for (const id of SUBSET_BOOKS) expect(JSON.stringify((subset as Record<string, unknown>)[id]), id).toBe(JSON.stringify(FULL[id]))
+  })
+
+  it('서고 퀴즈 책 이름이 열여덟 권 모두 있다', () => {
+    const names = T.quiz.books as Record<string, string>
+    expect(LETTERS.map((b) => names[b])).toEqual([
+      '로마서', '고린도전서', '고린도후서', '갈라디아서', '에베소서', '빌립보서', '골로새서',
+      '데살로니가전서', '데살로니가후서', '디모데전서', '디모데후서', '디도서', '빌레몬서',
+    ])
+  })
+})
+
+describe('편지 "장 조각" — 장 하나에 조각 하나', () => {
+  it('① 열세 권 87장이 조각 87개로 빠짐없이 덮이고, 조각 ref의 끝 절이 원문 장 길이와 같다', () => {
+    expect(LETTER_PIECES).toHaveLength(87)
+    expect(LETTER_IDS.reduce((n, id) => n + FULL[id].length, 0)).toBe(87)
+    for (const b of LETTERS) {
+      const ps = piecesOf(b)
+      const chapters = FULL[b]
+      expect(ps.map((p) => p.chapter), b).toEqual(chapters.map((_, i) => i + 1))
+      ps.forEach((p, i) => {
+        const ch = i + 1
+        const m = p.ref.match(/^(\S+) (\d+):1-(\d+)$/)
+        expect(m, p.ref).not.toBeNull()
+        expect(Number(m![2])).toBe(ch)
+        // 한 절짜리 장은 없다 — 끝 절은 원문 배열 길이(본문 없는 절이 끝에 있어도 번호는 걸친다)
+        expect(Number(m![3]), p.ref).toBe(chapters[ch - 1].length)
+        expect(p.id).toBe(`${b}-${String(ch).padStart(3, '0')}`)
+        expect(p.stamps).toEqual([])
+        expect(p.book).toBe(b)
+        expect(p.title).toBe(`${(T.quiz.books as Record<string, string>)[b]} ${ch}장`)
+      })
+    }
+    expect(LETTER_PIECES[0]).toEqual({ id: 'rom-001', book: 'rom', ref: '롬 1:1-32', chapter: 1, title: '로마서 1장', stamps: [] })
+    // PIECES = pieces.json + 편지 장 조각
+    expect(PIECES.filter((p) => isLetter(p.book))).toEqual(LETTER_PIECES)
+    for (const b of LETTERS) expect(BOOKS_WITH_CONTENT).toContain(b)
+  })
+
+  it('② versesOf로 본 편지 본문에는 본문 없는 절이 없다 — 원문에서 센 두 절(롬 9:2, 16:24)만큼 줄어든다', () => {
+    let raw = 0
+    let shown = 0
+    const hidden: string[] = []
+    for (const p of LETTER_PIECES) {
+      const vs = versesOf(p.ref)
+      const all = FULL[p.book][p.chapter - 1]
+      raw += all.length
+      shown += vs.length
+      for (const v of vs) {
+        expect(noText(v.text), `${p.ref} ${v.verse}`).toBe(false)
+        expect(v.text).not.toBe('(없음)')
+        expect(v.text).not.toMatch(/절에 포함되어 있음/)
+      }
+      all.forEach((t, i) => noText(t) && hidden.push(`${p.book} ${p.chapter}:${i + 1}`))
+    }
+    expect(hidden).toEqual(['rom 9:2', 'rom 16:24'])
+    expect(raw - shown).toBe(2)
+    expect(versesOf('롬 9:1-3').map((v) => v.verse)).toEqual([1, 3])
+    expect(versesOf('롬 16:1-27').map((v) => v.verse)).not.toContain(24)
+  })
+})
+
+describe('로마서–빌레몬서 방 열림', () => {
+  it('③ 사도행전을 꽂고 잔 다음 날 열린다 — 꽂기 전·그날 밤 전에는 닫힘', () => {
+    const before = newGame(CONTENT)
+    const feastDone = { ...before, flags: { ...before.flags, gospelFeast: 2 }, shelved: { mt: 2, mk: 1, lk: 1, jn: 0 } } as GameState
+    expect(roomOpen('romPhm', feastDone.flags)).toBe(false)
+    // 사도행전을 꽂지 않고 자면 닫힌 채
+    const slept = goToSleep(feastDone, CONTENT)
+    expect(roomOpen('romPhm', slept.flags)).toBe(false)
+    expect(slept.scenes).not.toContain('roomOpen:romPhm')
+    // 사도행전을 꽂은 그날(밤 전)은 아직 닫힘
+    const shelvedDay = actsShelved()
+    expect(roomOpen('romPhm', shelvedDay.flags)).toBe(false)
+    // 자고 일어나면 열린다 — 아침 장면
+    const next = goToSleep(shelvedDay, CONTENT)
+    expect(roomOpen('romPhm', next.flags)).toBe(true)
+    expect(next.flags['room:romPhm']).toBe(1)
+    expect(next.scenes).toContain('roomOpen:romPhm')
+    // 다음 밤에는 장면을 또 세우지 않는다
+    const again = goToSleep({ ...next, scenes: [] }, CONTENT)
+    expect(again.scenes).not.toContain('roomOpen:romPhm')
+    expect(roomOpen('romPhm', again.flags)).toBe(true)
+  })
+
+  it('복음서 방은 늘, 사도행전 방은 잔치 다음 날부터 (actsRoomOpen 그대로)', () => {
+    expect(roomOpen('gospels', {})).toBe(true)
+    expect(roomOpen('acts', {})).toBe(false)
+    expect(roomOpen('acts', { gospelFeast: 1 })).toBe(false)
+    expect(roomOpen('acts', { gospelFeast: 2 })).toBe(true)
+  })
+
+  it('콘텐츠가 없는 방(히브리서–유다서·요한계시록)은 앞 방이 다 차도 표식을 세우지 않는다', () => {
+    const s = actsShelved()
+    const all = Object.fromEntries(LETTERS.map((b) => [b, 1]))
+    const next = goToSleep({ ...s, flags: { ...s.flags, 'room:romPhm': 1 }, shelved: { ...s.shelved, ...all } }, CONTENT)
+    expect(next.flags['room:hebJud']).toBeUndefined()
+    expect(roomOpen('hebJud', next.flags)).toBe(false)
+    expect(next.scenes.filter((x) => x.startsWith('roomOpen:'))).toEqual([])
+  })
+})
+
+describe('책 고르기와 불러오기', () => {
+  it('④ 방이 닫혀 있으면 pickableBooks에 편지가 없고 chooseBook("rom")이 그대로', () => {
+    const s = actsShelved()
+    expect(pickableBooks(s.flags, BOOKS_WITH_CONTENT)).toEqual(['mt', 'mk', 'lk', 'jn', 'ac'])
+    expect(chooseBook(s, 'rom', CONTENT)).toBe(s)
+    const open = { ...s, flags: { ...s.flags, 'room:romPhm': 1 } }
+    expect(pickableBooks(open.flags, BOOKS_WITH_CONTENT)).toEqual(BOOKS)
+    // 콘텐츠가 없는 책은 방이 열려도 없다
+    expect(pickableBooks(open.flags, ['mt', 'mk', 'lk', 'jn', 'ac'])).toEqual(['mt', 'mk', 'lk', 'jn', 'ac'])
+    expect(chooseBook(open, 'rom', CONTENT).activeBook).toBe('rom')
+  })
+
+  it('⑤ 네 권짜리·다섯 권짜리 옛 저장을 불러와도 progress.rom이 있다', () => {
+    const o = JSON.parse(serialize(newGame(CONTENT)))
+    const five = Object.fromEntries(['mt', 'mk', 'lk', 'jn', 'ac'].map((b) => [b, o.progress[b]]))
+    const { ac: _drop, ...four } = five
+    for (const progress of [four, five]) {
+      const back = deserialize(JSON.stringify({ ...o, progress }), CONTENT)!
+      expect(back).not.toBeNull()
+      for (const b of LETTERS) expect(back.progress[b], b).toEqual({ completed: [], arrangement: {} })
+    }
+  })
+
+  it('불러올 때 편지 책을 고른 채인데 방이 닫혀 있으면 고른 책을 비운다', () => {
+    const s = { ...actsShelved(), activeBook: 'rom' as const }
+    expect(sanitize(s, CONTENT).activeBook).toBeNull()
+    expect(sanitize({ ...s, flags: { ...s.flags, 'room:romPhm': 1 } }, CONTENT).activeBook).toBe('rom')
+  })
+
+  it('⑥ 편지 책을 고른 날·그다음 날 다른 이웃의 offers가 비어 있다', () => {
+    const s = actsShelved()
+    const open = { ...s, flags: { ...s.flags, 'room:romPhm': 1 } }
+    // 복음서를 고르면 이웃이 조각을 건넨다 (비교)
+    expect(Object.keys(chooseBook(open, 'mk', CONTENT).offers).length).toBeGreaterThan(0)
+    const rom = chooseBook({ ...open, offers: {} }, 'rom', CONTENT)
+    expect(rom.offers).toEqual({})
+    for (let i = 0; i < 5; i++) {
+      const next = goToSleep({ ...rom, clock: { ...rom.clock, day: rom.clock.day + i } }, CONTENT)
+      expect(next.offers, `day ${next.clock.day}`).toEqual({})
+    }
+  })
+
+  it('⑦ 서고에 편지를 꽂아도 shelvedCount가 늘지 않는다', () => {
+    const s = actsShelved()
+    expect(shelvedCount(s)).toBe(4)
+    const all = Object.fromEntries(LETTERS.map((b) => [b, 2]))
+    expect(shelvedCount({ shelved: { ...s.shelved, ...all } })).toBe(4)
+    expect(shelvedCount({ shelved: { rom: 2, phm: 1 } })).toBe(0)
+  })
+})

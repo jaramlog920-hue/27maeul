@@ -35,7 +35,8 @@ import {
 import { COVER_FROM, jobOf, SELL_FROM } from './job'
 import { FESTIVAL_SPOTS, goalFor, isNear, npcTile, placeNpc, stepNpc, type Npc } from './neighbors'
 import { GAIN, heartsOf, MAX_POINTS } from './hearts'
-import { actsRoomOpen, bookDone, emptyProgress, totalChapters, type Progress } from './books'
+import { actsRoomOpen, bookDone, bookRoomOpen, emptyProgress, roomOpen, totalChapters, type Progress } from './books'
+import { modeOf, SHELF_ROOMS } from './shelf-rooms'
 import { currentChapter, offersForDay } from './offers'
 import { checkArrangement, moveItem, type ArrangeResult } from './scroll'
 import { cardsForChapters, journeyComplete, placeNewCards } from './journey'
@@ -238,6 +239,8 @@ function placeAllNpcs(s: GoalState, content: GameContent): Record<string, Npc> {
 
 function todaysOffers(day: number, collected: string[], s: Pick<GameState, 'activeBook' | 'progress'>, content: GameContent, npcs: string[]) {
   if (!s.activeBook) return {}
+  // 편지는 이웃이 조각으로 나눠 건네지 않는다 — 편지 나르는 이웃만 장째로 (계획 7 작업 2)
+  if (modeOf(s.activeBook) === 'letters') return {}
   const pieces = content.pieces.filter((p) => p.book === s.activeBook)
   return offersForDay({ day, pieces, collected, chapter: currentChapter(pieces, s.progress[s.activeBook].completed), neighborIds: npcs })
 }
@@ -314,8 +317,8 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
 /** 지금 엮을 책을 고른다. 오늘 아직 조각을 건네지 않은 이웃에게 새 책의 조각을 배정한다 */
 export function chooseBook(s: GameState, book: Book, content: GameContent): GameState {
   if (!content.pieces.some((p) => p.book === book)) return s
-  // 사도행전은 서고의 사도행전 방이 열린 뒤에만 (화면이 막아도 엔진에서 한 번 더)
-  if (book === 'ac' && !actsRoomOpen(s.flags)) return s
+  // 복음서 방 밖의 책은 그 서고 방이 열린 뒤에만 (화면이 막아도 엔진에서 한 번 더)
+  if (!bookRoomOpen(book, s.flags)) return s
   const level = s.flags.villageLevel ?? 0
   const present = neighborsOfDay(s.clock.day, content, level, s.flags).filter((id) => !s.listened.includes(id))
   const next = { ...s, activeBook: book }
@@ -1150,6 +1153,19 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
   if (flags.actsShip === 1) {
     flags.actsShip = 2
     scenes.push('actsShip')
+  }
+  // ── 서고의 다음 방: 앞 방의 책이 모두 꽂힌 날 밤 → 다음 날 아침 열린다 (사도행전 방 다음부터, 방 표 순서) ──
+  // 콘텐츠가 없는 방(계획 8·9 전의 히브리서–유다서·요한계시록)은 표식을 세우지 않는다 — 책이 들어온 다음 잠에서 열린다
+  for (let i = 2; i < SHELF_ROOMS.length; i++) {
+    const prev = SHELF_ROOMS[i - 1]
+    const room = SHELF_ROOMS[i]
+    if (roomOpen(room.id, flags)) continue
+    const prevFull = prev.books.length > 0 && prev.books.every((b) => s.shelved[b] !== undefined)
+    const hasContent = content.pieces.some((p) => room.books.includes(p.book))
+    if (prevFull && hasContent) {
+      flags[`room:${room.id}`] = 1
+      scenes.push(`roomOpen:${room.id}`)
+    }
   }
   if (gathering) scenes.push(`notice:${gathering}`)
   // 저녁 모임(아기 잔치·별 보는 밤·복음서 방 잔치)이 있는 날은 저녁 초대를 하지 않는다

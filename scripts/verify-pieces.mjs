@@ -3,6 +3,7 @@
 import { readFile } from 'node:fs/promises'
 import { parseRef, expandRef, normalizeQuote, countsFrom, verseKeyString } from '../src/content/ref.ts'
 import { FORBIDDEN } from '../src/content/forbidden.ts'
+import { SUBSET_BOOKS } from '../src/engine/shelf-rooms.ts'
 
 const root = new URL('../', import.meta.url)
 const read = async (p) => JSON.parse(await readFile(new URL(p, root), 'utf8'))
@@ -237,8 +238,10 @@ for (const p of pieces) {
 // ── 본문 떼어 낸 것이 원본과 같은가 ──
 try {
   const subset = await read('src/content/bible-subset.json')
-  for (const b of ['mat', 'mrk', 'luk', 'jhn', 'act'])
+  // 책 목록은 서고 방 표 한곳에서 (build-bible-subset과 같은 SUBSET_BOOKS)
+  for (const b of SUBSET_BOOKS)
     if (JSON.stringify(subset[b]) !== JSON.stringify(bible[b])) fail('bible-subset.json', `${b}가 nt-krv.json과 다름 — node scripts/build-bible-subset.mjs`)
+  for (const b of Object.keys(subset)) if (!SUBSET_BOOKS.includes(b)) fail('bible-subset.json', `방 표에 없는 책 ${b} — node scripts/build-bible-subset.mjs`)
 } catch (e) {
   fail('bible-subset.json', `읽을 수 없음 — node scripts/build-bible-subset.mjs (${e.message})`)
 }

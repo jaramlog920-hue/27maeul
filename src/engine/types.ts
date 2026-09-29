@@ -41,13 +41,22 @@ export type Target =
   | { kind: 'ground' }
 /** 네 복음서 — 도장·복음서 탐정·"어느 복음서"·복음서 방은 이 네 권만 */
 export type Gospel = 'mt' | 'mk' | 'lk' | 'jn'
-/** 조각을 엮고 서고에 꽂는 책 (계획 5: 사도행전 'ac'을 더했다) */
-export type Book = Gospel | 'ac'
-/** 오늘 우리가 보는 신약성경의 순서 */
-export const BOOKS: readonly Book[] = ['mt', 'mk', 'lk', 'jn', 'ac']
+/**
+ * 로마서–빌레몬서 열세 권 (계획 7) — books.json의 id 그대로. 편지는 조각으로 자르지 않는다(편지 한 통 = 한 장).
+ * 방 이름은 책 범위로만 부른다 (분류 이름을 쓰지 않는다, 설계 §7-2)
+ */
+export type Letter = 'rom' | '1co' | '2co' | 'gal' | 'eph' | 'php' | 'col' | '1th' | '2th' | '1ti' | '2ti' | 'tit' | 'phm'
+/** 엮고 서고에 꽂는 책 (계획 5: 사도행전 'ac', 계획 7: 편지 열세 권) */
+export type Book = Gospel | 'ac' | Letter
 export const GOSPELS: readonly Gospel[] = ['mt', 'mk', 'lk', 'jn']
+export const LETTERS: readonly Letter[] = ['rom', '1co', '2co', 'gal', 'eph', 'php', 'col', '1th', '2th', '1ti', '2ti', 'tit', 'phm']
+/** 오늘 우리가 보는 신약성경의 순서 (= shelf-rooms의 방 표 순서 — 테스트가 맞춘다) */
+export const BOOKS: readonly Book[] = [...GOSPELS, 'ac', ...LETTERS]
 export function isGospel(b: Book): b is Gospel {
   return (GOSPELS as readonly Book[]).includes(b)
+}
+export function isLetter(b: Book): b is Letter {
+  return (LETTERS as readonly Book[]).includes(b)
 }
 /** 도장은 네 복음서끼리만 (사도행전에는 도장이 없다 — verify가 막는다) */
 export interface Stamp {

@@ -1,13 +1,14 @@
 import { BOOKS_WITH_CONTENT, CONTENT, inBrackets, pieceById, pieceOfVerse, piecesOf, quizSourceFor } from '../content/catalog'
 import { chaptersOf } from './books'
 import { mulberry32 } from './offers'
+import { modeOf } from './shelf-rooms'
 import { buildLibraryQuiz, buildQuiz, detectiveAnswer, isCorrect, QUIZ_SIZE, quizzable, quizzablePiece, wordsOf, type Question } from './quiz'
 
 const norm = (s: string) => s.replace(/\s+/g, '')
 
-/** 조각이 있는 책마다, 장마다 퀴즈 하나: [이름, 문제, 그 책의 본문, 장] */
+/** 조각으로 엮는 책마다, 장마다 퀴즈 하나: [이름, 문제, 그 책의 본문, 장] — 편지에는 장 기록 퀴즈가 없다 (계획 7) */
 function allQuizzes(seed: number): [string, Question[], ReturnType<typeof quizSourceFor>, number][] {
-  return BOOKS_WITH_CONTENT.flatMap((b) =>
+  return BOOKS_WITH_CONTENT.filter((b) => modeOf(b) === 'pieces').flatMap((b) =>
     chaptersOf(b, CONTENT).map((ch, i) => {
       const src = quizSourceFor([b])
       return [`${b} ${ch}장`, buildQuiz(piecesOf(b), ch, mulberry32(seed + i), src), src, ch] as [string, Question[], typeof src, number]

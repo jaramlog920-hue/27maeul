@@ -14,12 +14,12 @@ const AC: Piece[] = piecesOf('ac')
 const withActs: GameContent = CONTENT
 
 describe('다섯 번째 책 사도행전', () => {
-  it('BOOKS는 오늘 신약 순서의 다섯 권, GOSPELS는 네 복음서', () => {
-    expect(BOOKS).toEqual(['mt', 'mk', 'lk', 'jn', 'ac'])
+  it('BOOKS는 오늘 신약 순서(사도행전은 다섯째), GOSPELS는 네 복음서', () => {
+    expect(BOOKS.slice(0, 5)).toEqual(['mt', 'mk', 'lk', 'jn', 'ac'])
     expect(GOSPELS).toEqual(['mt', 'mk', 'lk', 'jn'])
     expect(isGospel('ac')).toBe(false)
     expect(isGospel('jn')).toBe(true)
-    expect(Object.keys(emptyProgress())).toEqual(['mt', 'mk', 'lk', 'jn', 'ac'])
+    expect(Object.keys(emptyProgress()).slice(0, 5)).toEqual(['mt', 'mk', 'lk', 'jn', 'ac'])
   })
 
   it('사도행전 조각은 1–28장 전부가 있고, 도장이 없다 (작업 2·3)', () => {

@@ -1,6 +1,6 @@
 // 브라우저 저장. 저장소가 없거나 막혀 있어도 게임은 돌아야 하므로 모든 접근을 try/catch로 감싼다.
 import { IDLE_RESET } from './autonomy'
-import { actsRoomOpen, bookDone, emptyProgress, type Progress } from './books'
+import { bookDone, bookRoomOpen, emptyProgress, type Progress } from './books'
 import { newGame, settle, type GameState } from './game'
 import { cardsForChapters, placeNewCards } from './journey'
 import { refitRoom } from './room'
@@ -70,9 +70,11 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   if (flags.homeOrder !== undefined && flags.homeOrder !== homeLevel + 1) delete flags.homeOrder
   // 가구 규칙이 바뀐 뒤의 저장: 지금 규칙으로 놓을 수 없는 것은 가방으로 (길이 막히지 않게)
   const { room, inv } = refitRoom(s.room ?? [], s.inv)
-  // 고른 책: 조각이 있어야 하고, 사도행전이면 방이 열려 있어야 한다 (chooseBook과 같은 규칙)
+  // 고른 책: 조각이 있어야 하고, 그 책의 서고 방이 열려 있어야 한다 (chooseBook과 같은 규칙 — 사도행전·편지)
   const activeBook =
-    s.activeBook && content.pieces.some((p) => p.book === s.activeBook) && (s.activeBook !== 'ac' || actsRoomOpen(flags)) ? s.activeBook : null
+    s.activeBook && (BOOKS as readonly string[]).includes(s.activeBook) && content.pieces.some((p) => p.book === s.activeBook) && bookRoomOpen(s.activeBook, flags)
+      ? s.activeBook
+      : null
   // 여정 판: 옛 저장(판이 없던 때)은 빈 판에서, 엮은 사도행전 장의 카드만 남기고 빠진 카드는 채운다
   const board = Array.isArray(s.journey) ? s.journey.filter((n) => Number.isInteger(n)) : []
   const journey = placeNewCards(board, cardsForChapters(content.journey ?? [], progress.ac.completed))

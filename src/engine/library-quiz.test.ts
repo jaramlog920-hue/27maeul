@@ -3,6 +3,7 @@ import { mulberry32 } from './offers'
 import { buildLibraryQuiz, detectiveAnswer, QUIZ_SIZE, quizzable } from './quiz'
 import type { Grade } from './library'
 import { poolFor } from './library'
+import { modeOf } from './shelf-rooms'
 import { BOOKS, GOSPELS, type Book } from './types'
 import { lockedTiles, lockedZones, ZONES } from './world'
 
@@ -12,9 +13,12 @@ function subsets<T>(xs: readonly T[]): T[][] {
   return xs.reduce<T[][]>((acc, x) => [...acc, ...acc.map((s) => [...s, x])], [[]]).filter((s) => s.length > 0)
 }
 
+// 조각으로 엮는 책(복음서·사도행전)만 — 편지(계획 7)의 서고 퀴즈는 작업 6에서 따로 시험한다
+const PIECE_BOOKS = BOOKS_WITH_CONTENT.filter((b) => modeOf(b) === 'pieces')
+
 describe('서고 퀴즈', () => {
-  // 설계 §3.5: 네 권의 모든 조합(지금은 조각이 있는 책의 모든 조합) × 지금 꽂는 책
-  for (const pool of subsets(BOOKS_WITH_CONTENT)) {
+  // 설계 §3.5: 네 권의 모든 조합(지금은 조각으로 엮는 책의 모든 조합) × 지금 꽂는 책
+  for (const pool of subsets(PIECE_BOOKS)) {
     for (const current of pool) {
       it(`서고 ${pool.join('+')}에 ${current}를 꽂을 때 — 문제는 출제 범위에서, 정답은 하나`, () => {
         const src = quizSourceFor(pool)
