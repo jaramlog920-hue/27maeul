@@ -1,5 +1,5 @@
 // 게임 상태와 규칙의 조합. 순수 함수만 — 화면과 저장은 바깥(store)이 맡는다.
-import { festivalOf, isMarketDay, isWet, weatherOf, barleyRipe, grapesRipe } from './calendar'
+import { festivalOf, FESTIVAL_FROM, FESTIVAL_TO, isMarketDay, isWet, weatherOf, barleyRipe, grapesRipe } from './calendar'
 import { advance, newClock, phaseOf, seasonOf, sleepClock, type Clock } from './clock'
 import { DURATION, greet, IDLE_GAP, IDLE_RESET, stepIdle, type IdleState } from './autonomy'
 import { adopt, companionGoal, STRAY_DAY, STRAY_SPOTS, stepCompanion, type Animal, type Companion } from './companion'
@@ -33,13 +33,13 @@ import {
   type Gathering,
 } from './bonds'
 import { COVER_FROM, jobOf, SELL_FROM } from './job'
-import { goalFor, isNear, npcTile, placeNpc, stepNpc, type Npc } from './neighbors'
+import { FESTIVAL_SPOTS, goalFor, isNear, npcTile, placeNpc, stepNpc, type Npc } from './neighbors'
 import { GAIN, heartsOf, MAX_POINTS } from './hearts'
 import { bookDone, emptyProgress, totalChapters, type Progress } from './books'
 import { currentChapter, offersForDay } from './offers'
 import { checkArrangement, type ArrangeResult } from './scroll'
 import { growGarden, type Plot } from './garden'
-import { readOff, type Grade } from './library'
+import { feastToday, gospelRoomFull, readOff, type Grade } from './library'
 import {
   BABY_DAY,
   LESSON_FROM,
@@ -47,8 +47,6 @@ import {
   LESSON_TO,
   LETTERS_TOTAL,
   CHILD_ASKS_AT,
-  ENDING_SPOTS,
-  ENDING_UNTIL,
   MILESTONE_GIFTS,
   MILESTONES,
   momentNow,
@@ -184,9 +182,9 @@ function goalContext(s: GoalState, content: GameContent) {
     const skip = t.gathering === 'starNight' ? 'shepherd' : ''
     if (m >= from && m < to) for (const [id, spot] of Object.entries(spots)) if (joined(id) && id !== skip) special[id] = spot
   }
-  // 다 쓴 날 아침에는 모두 마당으로 (상인도 이날은 온다)
-  if (s.flags.endingDay === s.clock.day && s.clock.minute < ENDING_UNTIL)
-    for (const [id, spot] of Object.entries(ENDING_SPOTS)) if (joined(id)) special[id] = spot
+  // 복음서 방 잔치 저녁: 이사 온 이웃은 모두(상인도) 광장 모닥불 둘레로 — 비가 와도 연다
+  if (feastToday(s) && m >= FESTIVAL_FROM && m < FESTIVAL_TO)
+    for (const [id, spot] of Object.entries(FESTIVAL_SPOTS)) if (joined(id)) special[id] = spot
   return {
     minute: s.clock.minute,
     wet: isWet(w),
@@ -205,8 +203,9 @@ export function lessonTime(s: Pick<GameState, 'clock' | 'flags'> & { today?: Tod
     (s.flags.childLetters ?? 0) < LETTERS_TOTAL &&
     s.flags.taughtDay !== s.clock.day &&
     !isWet(weatherOf(s.clock.day)) &&
-    // 잔치 날 저녁에는 아이도 모닥불 곁에 있다
+    // 잔치 날 저녁에는 아이도 모닥불 곁에 있다 (복음서 방 잔치 날도)
     !festivalOf(s.clock.day) &&
+    s.flags.gospelFeast !== 1 &&
     // 아기 잔치 날, 아이네가 저녁 초대한 날도 쉰다
     s.today?.gathering !== 'babyParty' &&
     s.today?.inviter !== 'child' &&
@@ -1002,16 +1001,11 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
   if (sick) scenes.push('sick')
   if (day === BABY_DAY) scenes.push('babyBorn')
   if (day === STRAY_DAY && !s.companion) scenes.push('strays')
-  if (s.flags.ending === 1) scenes.push('ending')
   let needs = sleepNeeds(s.needs, s.clock.minute)
   if (sick) needs = { hunger: 20, fatigue: 0, cold: 0, heat: 0 }
   const flags = { ...s.flags }
   if (opts.read) flags.peaceDay = day
   else delete flags.peaceDay
-  if (s.flags.ending === 1) {
-    flags.ending = 2
-    flags.endingDay = day
-  }
   // ── 마음이 쌓인 마을의 새 날 ──
   const level = villageLevel(s.hearts)
   const prev = s.flags.villageLevel ?? 0
@@ -1028,13 +1022,22 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
       scenes.push(`movedIn:${d.id}`)
     }
   const present = neighborsOfDay(day, content, level, flags)
-  const visitor = s.flags.ending === 1 || clock.minute >= VISIT_TO ? null : pickVisitor(day, s.hearts, flags, present)
+  const visitor = clock.minute >= VISIT_TO ? null : pickVisitor(day, s.hearts, flags, present)
   if (visitor) flags[`visitDay:${visitor}`] = day
-  const gathering = s.flags.ending === 1 ? null : planGathering(day, level, flags)
+  let gathering = planGathering(day, level, flags)
+  // ── 복음서 방 완성 잔치: 네 권을 다 꽂고 처음 잠든 다음 날 (한 번). 그다음 밤부터는 잔치가 지난 것 ──
+  // 아기 잔치 날(정해진 날)과 겹치면 하루 미룬다 — 두 저녁 모임이 한 저녁에 겹치지 않게
+  if (flags.gospelFeast === 1) flags.gospelFeast = 2
+  else if (!flags.gospelFeast && gospelRoomFull(s) && gathering !== 'babyParty') {
+    flags.gospelFeast = 1
+    scenes.push('gospelFeast')
+    // 잔치 저녁에는 별 보는 밤을 잡지 않는다 (다른 맑은 날에 다시 잡힌다)
+    if (gathering === 'starNight') gathering = null
+  }
   if (gathering) scenes.push(`notice:${gathering}`)
-  // 저녁 모임(아기 잔치·별 보는 밤)이 있는 날은 저녁 초대를 하지 않는다
-  const eveningBusy = gathering === 'babyParty' || gathering === 'starNight'
-  const inviter = s.flags.ending === 1 || eveningBusy ? null : pickInviter(day, s.hearts, flags)
+  // 저녁 모임(아기 잔치·별 보는 밤·복음서 방 잔치)이 있는 날은 저녁 초대를 하지 않는다
+  const eveningBusy = gathering === 'babyParty' || gathering === 'starNight' || flags.gospelFeast === 1
+  const inviter = eveningBusy ? null : pickInviter(day, s.hearts, flags)
   if (inviter) {
     flags[`inviteDay:${inviter}`] = day
     scenes.push(`invite:${inviter}`)

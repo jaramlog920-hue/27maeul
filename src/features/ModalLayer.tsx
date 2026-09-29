@@ -2,7 +2,6 @@ import { useGame } from '../store/game-store'
 import { Bag } from './bag/Bag'
 import { AdoptForm } from './companion/AdoptForm'
 import { Desk } from './desk/Desk'
-import { Ending } from './ending/Ending'
 import { GardenMenu } from './garden/GardenMenu'
 import { Journal } from './journal/Journal'
 import { Library } from './library/Library'
@@ -70,8 +69,6 @@ function Body() {
       return <Shelf />
     case 'companion':
       return <AdoptForm animal={modal.animal} />
-    case 'ending':
-      return <Ending />
     case 'library':
       return <Library />
     case 'garden':

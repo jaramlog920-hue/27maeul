@@ -44,6 +44,10 @@ import { heartsOf } from './hearts'
 import { STRAY_SPOTS } from './companion'
 import { CONTENT, piecesOf } from '../content/catalog'
 import type { NeighborDef } from './types'
+import { FESTIVAL_FROM, FESTIVAL_TO, isWet, weatherOf } from './calendar'
+import { FESTIVAL_SPOTS } from './neighbors'
+import { actsDoorGlows } from './library'
+import { ALBUM_IDS, SCENES } from '../content/text'
 
 const zero = () => 0
 
@@ -305,25 +309,68 @@ describe('책상', () => {
   })
 })
 
-describe('다 쓴 날 아침', () => {
-  it('이웃들이 마당에 모여 있다 (상인도)', () => {
-    let s: GameState = { ...newGame(CONTENT), flags: { ending: 1 } }
-    s = goToSleep(s, CONTENT)
-    expect(s.flags.endingDay).toBe(2)
-    // 아직 이사 오지 않은 이웃(베 짜는·벌 치는, 서고 권수로 오는 이웃)은 빼고
-    const later = (id: string) => {
-      const d = CONTENT.neighbors.find((x) => x.id === id)
-      return !!d?.joinsAt || d?.joinsAtBooks !== undefined
-    }
-    for (const n of Object.values(s.npcs).filter((x) => !later(x.id))) {
-      expect(n.visible, n.id).toBe(true)
-      expect(n.y, n.id).toBeGreaterThanOrEqual(8)
-      expect(n.x, n.id).toBeLessThanOrEqual(9)
-    }
-    // 낮 열두 시가 지나면 제자리로
-    const noon = tick({ ...s, clock: { day: 2, minute: 12 * 60 + 1 } }, 0.05, zero, CONTENT).state
-    expect(noon.npcs.merchant.goal).toBeNull()
+describe('복음서 방 완성 잔치', () => {
+  const FOUR = { mt: 2, mk: 1, lk: 2, jn: 0 } as const
+  // 2일째 밤에 자면 3일째 아침 — 3일째는 비
+  const night = (shelved: GameState['shelved']): GameState => ({ ...at(newGame(CONTENT), 22 * 60, 2), shelved })
+  const eve = (s: GameState, minute: number) => tick(at(s, minute), 0.05, zero, CONTENT)
+
+  it('네 권을 꽂고 처음 잠든 다음 날: 아침 장면, 비가 와도 저녁 광장 모닥불 잔치, 앨범 한 장', () => {
+    const s = goToSleep(night(FOUR), CONTENT)
+    expect(s.clock.day).toBe(3)
+    expect(isWet(weatherOf(3))).toBe(true)
+    expect(s.scenes.filter((x) => x === 'gospelFeast')).toHaveLength(1)
+    expect(s.flags.gospelFeast).toBe(1)
+    // 잔치 날에는 저녁 초대·저녁 모임을 잡지 않는다
+    expect(s.today.inviter).toBeNull()
+    // 저녁: 이사 온 이웃은 모두(상인도, 비가 와도) 모닥불 둘레로
+    const e = eve(s, FESTIVAL_FROM + 1).state
+    const joined = CONTENT.neighbors.filter((d) => d.joinsAt === undefined)
+    expect(joined.length).toBeGreaterThanOrEqual(9)
+    for (const d of joined) expect(e.npcs[d.id].goal, d.id).toEqual(FESTIVAL_SPOTS[d.id])
+    // 마을 단계가 모자란 이웃은 아직 오지 않는다
+    for (const d of CONTENT.neighbors.filter((x) => x.joinsAt !== undefined)) expect(e.npcs[d.id].goal, d.id).toBeNull()
+    // 잔치가 끝나면 제자리로
+    expect(eve(s, FESTIVAL_TO + 1).state.npcs.merchant.goal).toBeNull()
+    // 앨범에는 한 장
+    let seen = sceneSeen(s, 'gospelFeast', ALBUM_IDS)
+    seen = sceneSeen({ ...seen, scenes: ['gospelFeast'] }, 'gospelFeast', ALBUM_IDS)
+    expect(seen.album.filter((a) => a.id === 'gospelFeast')).toHaveLength(1)
   })
+  it('잔치 저녁 광장에 가면 모닥불 장면 (한 번)', () => {
+    let s = goToSleep(night(FOUR), CONTENT)
+    s = { ...s, scenes: [], player: { ...s.player, x: 24, y: 19, path: [] } }
+    expect(eve(s, FESTIVAL_FROM + 5).events).toEqual([])
+    const r = eve(s, FESTIVAL_FROM + 31)
+    expect(r.events).toContainEqual({ type: 'moment', id: 'feastFire' })
+    expect(eve({ ...r.state, scenes: [] }, FESTIVAL_FROM + 40).events).toEqual([])
+    // 모닥불 장면은 앨범 칸을 따로 만들지 않고, 잔치 칸의 사진이 된다
+    expect(ALBUM_IDS).not.toContain('feastFire')
+    expect(SCENES.feastFire.photoFor).toBe('gospelFeast')
+  })
+  it('두 번째 밤에는 다시 나오지 않고, 잔치 다음 날부터 사도행전 방 문이 빛난다', () => {
+    const s = goToSleep(night(FOUR), CONTENT)
+    expect(actsDoorGlows(s)).toBe(false)
+    const s2 = goToSleep(at({ ...s, scenes: [] }, 22 * 60), CONTENT)
+    expect(s2.scenes).not.toContain('gospelFeast')
+    expect(s2.flags.gospelFeast).toBe(2)
+    expect(actsDoorGlows(s2)).toBe(true)
+    // 잔치 날이 지나면 모닥불 자리로 모이지 않는다 (결말 없이 하루가 이어진다)
+    expect(eve(s2, FESTIVAL_FROM + 1).state.npcs.baker.goal).not.toEqual(FESTIVAL_SPOTS.baker)
+    const s3 = goToSleep(at({ ...s2, scenes: [] }, 22 * 60), CONTENT)
+    expect(s3.scenes).not.toContain('gospelFeast')
+    expect(s3.flags.gospelFeast).toBe(2)
+    expect(s3.clock.day).toBe(5)
+  })
+  it('세 권일 때는 잔치가 없다', () => {
+    const s = goToSleep(night({ mt: 1, mk: 1, lk: 1 }), CONTENT)
+    expect(s.scenes).not.toContain('gospelFeast')
+    expect(s.flags.gospelFeast).toBeUndefined()
+    expect(actsDoorGlows(s)).toBe(false)
+  })
+})
+
+describe('새 날 아침', () => {
   it('일어나면 기지개를 켠다', () => {
     expect(goToSleep(newGame(CONTENT), CONTENT).idle.action?.kind).toBe('stretch')
   })
@@ -450,7 +497,8 @@ describe('특별한 순간', () => {
   })
   it('행사 날 저녁 장터에 가면 잔치', () => {
     let s = at(newGame(CONTENT), 18 * 60 + 5, 12)
-    s = { ...s, player: { ...s.player, x: 14, y: 14 } }
+    // 모닥불이 피는 광장 (장터 광장 19~29, 13~20)
+    s = { ...s, player: { ...s.player, x: 24, y: 19 } }
     // 이웃이 모이기 전에는 아직
     expect(tick(s, 0.05, zero, CONTENT).events).toEqual([])
     s = at(s, 18 * 60 + 31, 12)

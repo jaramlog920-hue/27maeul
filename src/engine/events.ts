@@ -33,11 +33,13 @@ export function scheduledEvents(s: Pick<GameState, 'clock' | 'today' | 'flags'>,
       const end = first && schedule.find(e => e.from > first.from && !e.tile)
       if (first && end) add('market', '장날 · 떠돌이 상인', '장터', first.from, end.from, false, d)
     }
-    if (d > day && d === BABY_PARTY_DAY && !isWet(weatherOf(d)) && s.flags.ending !== 1) {
+    if (d > day && d === BABY_PARTY_DAY && !isWet(weatherOf(d))) {
       const [from, to] = gatheringWindow('babyParty')
       add('gathering', gatherings.babyParty, '빵집 앞', from, to, false, d)
     }
   }
+  // 복음서 방 잔치 (비가 와도 연다)
+  if (s.flags.gospelFeast === 1) add('gospelFeast', '복음서 방 잔치', '장터 모닥불 · 특별 장면은 18:30부터', FESTIVAL_FROM, FESTIVAL_TO)
   const today = s.today
   const role = (id: string) => content.neighbors.find(n => n.id === id)?.role ?? '이웃'
   if (today?.visitor) add('visit', `${role(today.visitor)} 방문`, '내 집 앞', VISIT_FROM, VISIT_TO, today.visitGot)

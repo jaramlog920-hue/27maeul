@@ -85,7 +85,6 @@ describe('새 이웃 넷의 행사 자리', () => {
     ['잔치', FESTIVAL_SPOTS],
     ['아기 잔치', bonds.BABY_PARTY_SPOTS],
     ['언덕', bonds.HILL_SPOTS],
-    ['마당', stories.ENDING_SPOTS],
   ]
   it('넷 모두 각 행사에 자리가 있고, 같은 행사 안에서 겹치지 않는다', () => {
     for (const [name, spots] of sets) {

@@ -50,6 +50,25 @@ export function payRetry(s: GameState, book: Book): GameState | null {
   return { ...s, inv: take(s.inv, RETRY_COST)! }
 }
 
+// ── 복음서 방 완성 잔치 (계획 4 작업 3) ──
+// flags.gospelFeast: 없음 = 아직, 1 = 잔치 날 (네 권을 다 꽂고 처음 잠든 다음 날), 2 = 잔치가 지났다.
+// 잔치 뒤에도 게임은 끝나지 않는다 — 하루가 그대로 이어진다.
+
+/** 복음서 방의 네 권이 모두 서고에 꽂혔다 */
+export function gospelRoomFull(s: Pick<GameState, 'shelved'>): boolean {
+  return BOOKS.every((b) => s.shelved[b] !== undefined)
+}
+
+/** 오늘이 복음서 방 잔치 날인가 (저녁 광장 모닥불) */
+export function feastToday(s: Pick<GameState, 'flags'>): boolean {
+  return s.flags.gospelFeast === 1
+}
+
+/** 잔치 다음 날부터 서고의 첫 잠긴 문(사도행전 방)이 은은하게 빛난다. 문은 잠긴 그대로다 */
+export function actsDoorGlows(s: Pick<GameState, 'flags'>): boolean {
+  return s.flags.gospelFeast === 2
+}
+
 export function readOff(s: GameState, pieceId: string): GameState {
   return s.rereads.includes(pieceId) ? { ...s, rereads: s.rereads.filter((id) => id !== pieceId) } : s
 }

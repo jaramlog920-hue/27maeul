@@ -2,7 +2,7 @@
 import { create } from 'zustand'
 import { CONTENT, pieceById, pieceOfQuestion, piecesOf, quizSourceFor } from '../content/catalog'
 import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
-import { canShelve, payRetry, poolFor, shelve } from '../engine/library'
+import { actsDoorGlows, canShelve, payRetry, poolFor, shelve } from '../engine/library'
 import { ALBUM_IDS, fill, itemList, itemName, NEIGHBOR_LINES, SCENES, T } from '../content/text'
 import { grapesRipe, isWet, weatherOf } from '../engine/calendar'
 import { cleanName, type Animal } from '../engine/companion'
@@ -100,7 +100,6 @@ export type Modal =
   | { kind: 'bag' }
   | { kind: 'shelf' }
   | { kind: 'companion'; animal: Animal }
-  | { kind: 'ending' }
   | { kind: 'library' }
   | { kind: 'letter' }
   | { kind: 'garden'; at: Tile }
@@ -440,7 +439,9 @@ export const useGame = create<Store>((set, get) => {
       }
       const locked = LOCKED_DOORS.findIndex((d) => sameTile(d, tile))
       if (locked >= 0) {
-        get().say(fill(T.library.lockedRoomTap, { room: (T.library.lockedRooms as string[])[locked] }))
+        // 잔치 다음 날부터 첫 잠긴 문(사도행전 방)은 문틈으로 불빛이 샌다 — 문은 아직 잠겨 있다
+        const line = locked === 0 && actsDoorGlows(game) ? T.library.lockedRoomGlow : T.library.lockedRoomTap
+        get().say(fill(line, { room: (T.library.lockedRooms as string[])[locked] }))
         return
       }
       const zone = zoneAt(tile)
@@ -494,10 +495,15 @@ export const useGame = create<Store>((set, get) => {
           modal = a.modal ?? modal
         }
       }
-      if (!modal && game.scenes.length) modal = game.scenes[0] === 'ending' ? { kind: 'ending' } : { kind: 'scene', id: game.scenes[0] }
+      if (!modal && game.scenes.length) modal = { kind: 'scene', id: game.scenes[0] }
       set({ game, modal, clockMs })
       expireToast()
-      if (modal?.kind === 'scene' && SCENES[modal.id]?.album) storeAlbumImage(modal.id, get().capture?.() ?? null)
+      if (modal?.kind === 'scene') {
+        // 앨범 사진: 앨범 장면이면 그 칸에, photoFor가 있으면 그 장면의 칸에 (잔치 아침 → 저녁 모닥불 그림으로 바꾼다)
+        const sc = SCENES[modal.id]
+        const photo = sc?.photoFor ?? (sc?.album ? modal.id : null)
+        if (photo) storeAlbumImage(photo, get().capture?.() ?? null)
+      }
     },
 
     open: (m) => set({ modal: m }),
@@ -725,7 +731,7 @@ export const useGame = create<Store>((set, get) => {
 
     nextScene: () => {
       const m = get().modal
-      const id = m?.kind === 'scene' ? m.id : m?.kind === 'ending' ? 'ending' : null
+      const id = m?.kind === 'scene' ? m.id : null
       if (!id) return
       const game = persist(sceneSeen(get().game, id, ALBUM_IDS))
       set({ game, modal: null })

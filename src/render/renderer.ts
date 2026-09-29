@@ -9,7 +9,8 @@ import { FURNI_PALETTE, FURNITURE_ART } from './furniture-art'
 import { drawDecor, lanternLights, sheepCount } from './decor'
 import { FIRE, isNear, npcTile } from '../engine/neighbors'
 import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
-import { cameraFor, HEIGHT, HOME_DOOR, HOME_RECT, HOUSES, houseAt, lockedZones, tileAt, isHome, isIndoor, MAP, PLACES, ROOMS, roomAt, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
+import { actsDoorGlows, feastToday } from '../engine/library'
+import { cameraFor, HEIGHT, HOME_DOOR, HOME_RECT, HOUSES, houseAt, LOCKED_DOORS, lockedZones, tileAt, isHome, isIndoor, MAP, PLACES, ROOMS, roomAt, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
 import type { Facing, GameContent, Season, Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { avatarKey, withLookDefaults, type FullAvatar } from '../engine/avatar'
@@ -886,6 +887,28 @@ function glow(g: Ctx, x: number, y: number, radius: number, alpha: number, color
   g.fillRect(x - radius, y - radius, radius * 2, radius * 2)
 }
 
+/**
+ * 잠긴 문틈으로 새는 불빛: 문 둘레의 은은한 빛, 가운데 문틈과 문지방의 2픽셀 빛줄기, 방바닥에 번지는 빛.
+ * 천천히 숨 쉬듯 밝아졌다 옅어진다 (차분한 파스텔 — 창과 같은 따뜻한 노랑)
+ */
+function drawDoorGlow(g: Ctx, door: Tile, t: number) {
+  const px = door.x * TILE
+  const py = door.y * TILE
+  const breathe = 0.5 + 0.5 * Math.sin(t * 1.3)
+  // 문 둘레의 은은한 빛, 오른쪽 방바닥에 계단처럼 옅어지며 번지는 빛 (픽셀 그림답게 네모로)
+  glow(g, px + 9, py + 9, 24, 0.3 + 0.1 * breathe, '246, 213, 142')
+  g.fillStyle = `rgba(248, 222, 160, ${0.28 + 0.1 * breathe})`
+  g.fillRect(px + 16, py + 4, 6, 12)
+  g.fillStyle = `rgba(248, 222, 160, ${0.16 + 0.06 * breathe})`
+  g.fillRect(px + 22, py + 6, 6, 8)
+  // 문틈 (자물쇠 위·아래)과 문지방: 2픽셀 빛줄기
+  g.fillStyle = `rgba(248, 226, 170, ${0.75 + 0.2 * breathe})`
+  g.fillRect(px + 7, py + 3, 2, 5)
+  g.fillRect(px + 7, py + 12, 2, 3)
+  g.fillStyle = `rgba(241, 191, 107, ${0.55 + 0.2 * breathe})`
+  g.fillRect(px + 3, py + 14, 10, 2)
+}
+
 function flame(g: Ctx, px: number, py: number, t: number, big = false) {
   const f = Math.floor(t * 8) % 3
   const s = big ? 2 : 1
@@ -940,6 +963,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
 
       const outdoors = !isIndoor(here)
       let festOn = false
+      const actsGlow = actsDoorGlows(game) && roomAt(here)?.owner === 'library'
       g.save()
       try {
       g.fillStyle = '#2b2118'
@@ -1014,7 +1038,8 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       flame(g, 6 * TILE + 8, 3 * TILE + 14, t)
       // 행사 모닥불
       const fest = festivalOf(day)
-      festOn = !!fest && !wet && minute >= FESTIVAL_FROM && minute < FESTIVAL_TO
+      // 복음서 방 잔치 저녁에는 비가 와도 모닥불을 피운다
+      festOn = ((!!fest && !wet) || feastToday(game)) && minute >= FESTIVAL_FROM && minute < FESTIVAL_TO
       if (festOn) {
         g.fillStyle = C.woodDark
         g.fillRect(FIRE.x * TILE + 3, FIRE.y * TILE + 12, 10, 3)
@@ -1041,6 +1066,8 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           g.fillRect(sx, sy + 2, 8, 2)
           g.fillRect(sx, sy + 7, 8, 1)
         })
+        // 잔치 다음 날부터: 사도행전 방 문틈으로 새는 따뜻한 불빛 (문은 잠긴 그대로)
+        if (actsGlow) drawDoorGlow(g, LOCKED_DOORS[0], t)
       }
 
       // 마음이 쌓여 마을에 생긴 것들
@@ -1238,6 +1265,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           if (game.lampLitDay === day) glow(g, sx(3 * TILE + 13), sy(5 * TILE + 4), 34, dark * 0.9)
           glow(g, sx(6 * TILE + 8), sy(3 * TILE + 12), 22, dark * 0.6)
           if (festOn) glow(g, sx(FIRE.x * TILE + 8), sy(FIRE.y * TILE + 8), 48, dark)
+          if (actsGlow) glow(g, sx(LOCKED_DOORS[0].x * TILE + 10), sy(LOCKED_DOORS[0].y * TILE + 9), 26, dark * 0.7)
           // 집집마다 창에 불빛
           for (const [x, y] of [[5, 17], [36, 17], [35, 5], [28, 28], [42, 31], [24, 5]]) glow(g, sx(x * TILE + 8), sy(y * TILE + 4), 14, dark * 0.5)
           // 길가의 등불

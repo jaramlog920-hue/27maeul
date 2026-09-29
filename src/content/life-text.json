@@ -213,13 +213,6 @@
       "heat": "더위",
       "mood": "기분"
     },
-    "endingTitle": "다 쓴 날",
-    "endingDays": "함께 보낸 날 {days}일",
-    "endingSeasons": "지나간 계절 {n}번",
-    "endingPieces": "모은 이야기 {n}개",
-    "endingNext": "또 다른 이야기",
-    "endingNextNote": "필사가가 옮겨 쓸 또 하나의 글은 이렇게 시작합니다. 다음 업데이트에서 이어집니다.",
-    "endingContinue": "마을로 돌아가기",
     "pet": "쓰다듬어 주었다.",
     "statusTitle": "오늘의 상태",
     "statusOffers": "오늘 이야기를 들려줄 이웃 {n}명",
@@ -1505,27 +1498,53 @@
         }
       ]
     },
-    "ending": {
-      "title": "다 쓴 날",
+    "gospelFeast": {
+      "title": "복음서 방이 다 찼다",
       "lines": [
         {
           "speaker": "narration",
-          "text": "아침부터 이웃들이 마당에 모여들었다."
+          "text": "서고의 복음서 방에 네 권이 나란히 꽂혔다는 소식이 아침부터 마을에 돌았다."
         },
         {
           "speaker": "baker",
-          "text": "다 쓰셨다면서요! 빵 잔뜩 구워 왔어요."
+          "text": "오늘 저녁엔 광장에 모닥불을 피운대요. 빵을 넉넉히 구워 갈게요!"
         },
         {
           "speaker": "grandpa",
-          "text": "오래 걸렸구먼. 수고 많았네."
+          "text": "네 권을 다 엮느라 애썼네. 저녁에 광장에서 보세."
         },
         {
-          "speaker": "smith",
-          "text": "등잔이 제 몫을 했나 보오."
+          "speaker": "carpenter",
+          "text": "선반 칸이 다 찼더군요. 튼튼하게 짜 두길 잘했어요."
+        },
+        {
+          "speaker": "narration",
+          "text": "잔치는 저녁 여섯 시, 장터 광장 모닥불 곁에서 열린다. 비가 와도 연다고 한다."
         }
       ],
-      "album": "다 쓴 날"
+      "album": "복음서 방이 다 찬 날"
+    },
+    "feastFire": {
+      "title": "광장 모닥불 잔치",
+      "photoFor": "gospelFeast",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "광장에 모닥불이 피었다. 마을 사람들이 하나둘 불 곁에 모여 앉는다."
+        },
+        {
+          "speaker": "innkeeper",
+          "text": "주막에서 국을 한 솥 끓여 왔어요. 다들 한 그릇씩 드세요."
+        },
+        {
+          "speaker": "child",
+          "text": "서고에 가 봤어요. 책 네 권이 나란히 있었어요!"
+        },
+        {
+          "speaker": "postman",
+          "text": "오늘은 편지 가방을 집에 두고 왔어요. 저도 잔치 손님이에요."
+        }
+      ]
     },
     "gift:baker:3": {
       "title": "선물",
@@ -2563,16 +2582,6 @@
       "album": "목수와 나눈 날들"
     }
   },
-  "ending": {
-    "childReads": {
-      "speaker": "child",
-      "text": "제가 첫머리를 읽어 볼게요!"
-    },
-    "childListens": {
-      "speaker": "child",
-      "text": "저도 언젠가 이걸 읽을 수 있을까요?"
-    }
-  },
   "journal": {
     "day": "{day}일째.",
     "weather": " {weather}.",
@@ -2595,7 +2604,8 @@
       "blanket": " 담요를 덮고 잤다.",
       "firstChapter": " 첫 장을 이어 붙였다.",
       "lastChapter": " 마지막 장까지 이어 붙였다.",
-      "ending": " 이웃들과 다 쓴 날을 축하했다.",
+      "gospelFeast": " 서고의 복음서 방이 다 찼다.",
+      "feastFire": " 광장 모닥불 잔치에 갔다.",
       "friends": " 아이와 양치기가 단짝이 되었다.",
       "babyParty": " 빵집 앞 아기 잔치에 갔다.",
       "picnic": " 언덕에서 소풍을 했다.",
@@ -2687,6 +2697,7 @@
       "요한계시록 방"
     ],
     "lockedRoomTap": "{room}은 아직 잠겨 있어요.",
+    "lockedRoomGlow": "{room} 문틈으로 불빛이 새어 나와요.",
     "shelvedToast": "{book}을 서고에 꽂았습니다. 책등: {grade}",
     "rereadNote": "틀린 구절은 '다시 읽을 구절'에 넣어 두었어요."
   }

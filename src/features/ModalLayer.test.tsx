@@ -4,7 +4,7 @@ import { CONTENT, piecesOf } from '../content/catalog'
 import { chaptersOf, emptyProgress } from '../engine/books'
 import { chooseBook, newGame, type GameState } from '../engine/game'
 import { mulberry32 } from '../engine/offers'
-import { PLACES } from '../engine/world'
+import { LOCKED_DOORS, PLACES } from '../engine/world'
 import { useGame } from '../store/game-store'
 import { ModalLayer } from './ModalLayer'
 import { NextEventBar, useEventAlerts } from './play/EventSchedule'
@@ -465,21 +465,35 @@ describe('선반', () => {
   })
 })
 
-describe('다 쓴 날', () => {
-  it('잔치 → 첫머리 → 함께한 날 → 앨범 → 한 줄 → 또 다른 이야기(행 1:1)', async () => {
-    reset({ scenes: ['ending'], flags: { ending: 2, childLetters: 5 } })
+describe('복음서 방 잔치와 사도행전 방 예고', () => {
+  it('잔치 아침 장면: 성경 본문 없이 이웃 몇 마디, 닫으면 앨범에 한 장 남고 하루가 이어진다', async () => {
+    reset({ scenes: ['gospelFeast'], flags: { heartPoints: 1, gospelFeast: 1 }, shelved: { mt: 0, mk: 0, lk: 0, jn: 0 } })
     const user = userEvent.setup()
     render(<ModalLayer />)
     walk()
-    expect(screen.getByRole('dialog', { name: '다 쓴 날' })).toHaveTextContent('이웃들이 마당에 모여들었다')
-    await user.click(screen.getByRole('button', { name: '다음' }))
-    expect(screen.getByText('제가 첫머리를 읽어 볼게요!')).toBeInTheDocument()
-    expect(screen.getByLabelText('성경 본문 눅 1:1-4')).toBeInTheDocument()
-    for (let i = 0; i < 4; i++) await user.click(screen.getByRole('button', { name: '다음' }))
-    expect(screen.getByLabelText('성경 본문 행 1:1')).toHaveTextContent('데오빌로여 내가 먼저 쓴 글에는')
-    await user.click(screen.getByRole('button', { name: '마을로 돌아가기' }))
+    const dialog = screen.getByRole('dialog', { name: '복음서 방이 다 찼다' })
+    expect(dialog).toHaveTextContent('광장')
+    expect(screen.queryByLabelText(/성경 본문/)).toBeNull()
+    await user.click(screen.getByRole('button', { name: '닫기' }))
     expect(useGame.getState().modal).toBeNull()
-    expect(useGame.getState().game.album.map((a) => a.id)).toContain('ending')
+    expect(useGame.getState().game.album.filter((a) => a.id === 'gospelFeast')).toHaveLength(1)
+    // 결말 창 없이 시계가 계속 흐른다
+    const before = useGame.getState().game.clock.minute
+    act(() => useGame.getState().frame(1))
+    expect(useGame.getState().game.clock.minute).toBeGreaterThan(before)
+  })
+  it('잔치 다음 날부터 사도행전 방 문을 누르면 불빛 한 줄 — 문은 잠긴 그대로', () => {
+    reset({ flags: { heartPoints: 1, gospelFeast: 1 } })
+    act(() => useGame.getState().tap(LOCKED_DOORS[0]))
+    expect(useGame.getState().toast?.text).toBe('사도행전 방은 아직 잠겨 있어요.')
+    reset({ flags: { heartPoints: 1, gospelFeast: 2 } })
+    const before = useGame.getState().game.player
+    act(() => useGame.getState().tap(LOCKED_DOORS[0]))
+    expect(useGame.getState().toast?.text).toBe('사도행전 방 문틈으로 불빛이 새어 나와요.')
+    expect(useGame.getState().game.player).toEqual(before)
+    // 다른 잠긴 방은 그대로
+    act(() => useGame.getState().tap(LOCKED_DOORS[1]))
+    expect(useGame.getState().toast?.text).toContain('아직 잠겨 있어요')
   })
 })
 

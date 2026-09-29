@@ -27,6 +27,8 @@ export interface Scene {
   title: string
   lines: Line[]
   album?: string
+  /** 이 장면을 볼 때의 화면을 다른 장면의 앨범 사진으로 남긴다 (앨범 칸은 그 장면 하나) */
+  photoFor?: string
 }
 
 export const T = lifeText

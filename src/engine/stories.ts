@@ -48,10 +48,13 @@ export function childGrowth(day: number): number {
 /** 해마다 한 번만 보는 장면의 표식 */
 export const onceKey = (id: string, day: number) => `seen:${id}:${yearOf(day)}`
 
-/** 장터 안인가 (행사가 열리는 곳) */
+/** 장터 광장 안인가 (모닥불 행사가 열리는 곳 — world.ts의 광장 19~29, 13~20) */
 export function inMarket(t: Tile): boolean {
-  return t.x >= 12 && t.x <= 19 && t.y >= 11 && t.y <= 16
+  return t.x >= 19 && t.x <= 29 && t.y >= 13 && t.y <= 20
 }
+
+/** 복음서 방 잔치 저녁, 광장 모닥불에서 보는 장면 (잔치 날 한 번) */
+export const FEAST_FIRE = 'feastFire'
 
 export interface MomentContext {
   day: number
@@ -67,6 +70,9 @@ export function momentNow(ctx: MomentContext): string | null {
   const w = weatherOf(day)
   const fest = festivalOf(day)
   // 이웃들이 모닥불까지 걸어올 틈(30분)을 두고 장면을 연다
+  // 복음서 방 잔치는 비가 와도 연다 (잔치 날은 flags.gospelFeast === 1)
+  if (flags.gospelFeast === 1 && minute >= FESTIVAL_FROM + 30 && minute < FESTIVAL_TO && inMarket(ctx.player) && !flags[onceKey(FEAST_FIRE, day)])
+    return FEAST_FIRE
   if (fest && !isWet(w) && minute >= FESTIVAL_FROM + 30 && minute < FESTIVAL_TO && inMarket(ctx.player) && !flags[onceKey(`festival:${fest}`, day)])
     return `festival:${fest}`
   if (ctx.outdoors && seasonOf(day) === 'autumn' && w === 'rain' && minute >= 16 * 60 && minute < 17.5 * 60 && !flags[onceKey('rainbow', day)])
@@ -79,23 +85,3 @@ export function momentNow(ctx: MomentContext): string | null {
 export function rainbowVisible(day: number, minute: number): boolean {
   return seasonOf(day) === 'autumn' && weatherOf(day) === 'rain' && minute >= 16 * 60 && minute < 17.5 * 60
 }
-
-/** 다 쓴 날 아침, 이웃들이 모이는 마당 자리 (기록자의 집 앞) */
-// 텃밭이 생긴 뒤 (1~4, 8~9)는 막힌 칸이라 그 안에 있던 자리를 옆으로 옮겼다 (task-3)
-export const ENDING_SPOTS: Record<string, Tile> = {
-  baker: { x: 9, y: 8 },
-  child: { x: 5, y: 8 },
-  grandpa: { x: 7, y: 9 },
-  smith: { x: 8, y: 8 },
-  shepherd: { x: 5, y: 9 },
-  presser: { x: 9, y: 9 },
-  merchant: { x: 6, y: 8 },
-  weaver: { x: 8, y: 9 },
-  beekeeper: { x: 6, y: 9 },
-  // 새 이웃 넷은 마당 앞 큰길에 (task-5)
-  postman: { x: 7, y: 10 },
-  innkeeper: { x: 5, y: 10 },
-  fisher: { x: 9, y: 10 },
-  carpenter: { x: 3, y: 10 },
-}
-export const ENDING_UNTIL = 12 * 60
