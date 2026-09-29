@@ -131,6 +131,8 @@
     "sellPrice": "{n}닢",
     "sellJob": "마을 필사가가 되면 팔 수 있어요.",
     "sellNone": "팔 것이 없어요.",
+    "sellCap": "오늘은 상인이 더 사지 않아요. 다음 장날에 또 와요.",
+    "soldLine": "{item}을(를) {n}닢에 팔았어요.",
     "hearts": "마음",
     "gotLine": "얻은 것: {items}",
     "notRipe": "아직 익지 않았습니다.",

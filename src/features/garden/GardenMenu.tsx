@@ -1,6 +1,7 @@
 // 텃밭 한 칸: 비었으면 심기, 자라는 중이면 물 주기, 다 자랐으면 거두기
 import { fill, itemName, T } from '../../content/text'
 import { canPlant, CROPS, isRipe } from '../../engine/garden'
+import { seasonOf } from '../../engine/clock'
 import type { Tile } from '../../engine/types'
 import { useGame } from '../../store/game-store'
 
@@ -36,7 +37,13 @@ export function GardenMenu({ at }: { at: Tile }) {
         <>
           <p>{fill(T.ui.gardenGrowing, { crop: itemName(p.crop), n: p.grown, all: CROPS[p.crop].days })}</p>
           <div className="actions menu column">
-            {p.wateredDay === game.clock.day ? <p className="hint">{T.ui.gardenWatered}</p> : <button onClick={() => waterAt(at)}>{T.ui.gardenWater}</button>}
+            {seasonOf(game.clock.day) === 'winter' ? (
+              <p className="hint">{T.ui.gardenWinter}</p>
+            ) : p.wateredDay === game.clock.day ? (
+              <p className="hint">{T.ui.gardenWatered}</p>
+            ) : (
+              <button onClick={() => waterAt(at)}>{T.ui.gardenWater}</button>
+            )}
           </div>
         </>
       )}

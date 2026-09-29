@@ -1,6 +1,7 @@
 // 마음이 쌓여 마을에 생긴 것들 (6번 A·C). 모두 그림일 뿐 길을 막지 않는다.
 import { unlocked } from '../engine/bonds'
 import type { GameState } from '../engine/game'
+import { GARDEN_TILES, isRipe } from '../engine/garden'
 import { TILE } from '../engine/world'
 import type { Tile, Weather } from '../engine/types'
 
@@ -47,8 +48,10 @@ function tree(g: Ctx, t: Tile) {
   px(g, t.x, t.y, 3, 3, 9, 6, '#6f8f5a')
 }
 
+const onGardenPlot = (t: Tile) => GARDEN_TILES.some((p) => p.x === t.x && p.y === t.y)
+
 export const LANTERNS: readonly Tile[] = [
-  { x: 4, y: 9 },
+  { x: 5, y: 9 },
   { x: 10, y: 9 },
   { x: 23, y: 11 },
   { x: 18, y: 13 },
@@ -67,7 +70,8 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
   // C1 꽃길: 큰길 가장자리
   if (level >= 1)
     [2, 4, 8, 13, 17, 21, 27, 32, 38].forEach((x, i) => {
-      flowers(g, { x, y: 9 }, i)
+      const top = { x, y: 9 }
+      if (!onGardenPlot(top)) flowers(g, top, i)
       flowers(g, { x, y: 11 }, i + 3)
     })
   // C3 호숫가 쉼터
@@ -156,7 +160,7 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
   // 텃밭 작물: 자란 만큼 키가 크고, 다 자라면 열매 색
   for (const [k, p] of Object.entries(game.garden ?? {})) {
     const [x, y] = k.split(',').map(Number)
-    const ripe = p.grown >= (p.crop === 'herb' ? 3 : 4)
+    const ripe = isRipe(p)
     const hgt = 3 + Math.min(p.grown, 4) * 2
     px(g, x, y, 7, 13 - hgt, 2, hgt, '#6d8747')
     if (p.grown >= 1) px(g, x, y, 5, 13 - hgt + 2, 6, 2, '#7aa84f')

@@ -373,6 +373,17 @@ describe('평안', () => {
     expect(peaceful(goToSleep(read, CONTENT))).toBe(false)
     expect(peaceful(goToSleep(s0, CONTENT))).toBe(false)
   })
+  it('다시 읽을 것·오늘 들은 것이 없어도 모아 둔 조각이 있으면 읽을 수 있다', () => {
+    const s = { ...newGame(CONTENT), rereads: [], todayHeard: [], collected: ['a', 'b', 'c'] }
+    expect(reviewPick(s, zero)).toBe('a')
+    expect(reviewPick(s, () => 0.999)).toBe('c')
+    expect(reviewPick({ ...s, collected: [] }, zero)).toBeNull()
+  })
+  it('다시 읽을 것이 오늘 들은 것보다, 오늘 들은 것이 모아 둔 조각보다 먼저다', () => {
+    const s = { ...newGame(CONTENT), rereads: ['r1'], todayHeard: ['h1'], collected: ['c1'] }
+    expect(reviewPick(s, zero)).toBe('r1')
+    expect(reviewPick({ ...s, rereads: [] }, zero)).toBe('h1')
+  })
 })
 
 describe('동반 동물·방·나의 한 줄', () => {

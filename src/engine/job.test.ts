@@ -1,5 +1,6 @@
+import type { GameState } from './game'
 import { CONTENT } from '../content/catalog'
-import { canCraft, canSell, newGame, sell, TRADES, trade } from './game'
+import { canCraft, canSell, newGame, sell, SELL_CAP, SELL_PRICES, TRADES, trade } from './game'
 import { COVER_FROM, jobLevel, jobOf, LETTER_BASE, SELL_FROM } from './job'
 import { letterPay } from './requests'
 
@@ -30,6 +31,19 @@ describe('직업 단계 보상', () => {
     expect(sold.inv.ink).toBe(1)
     expect(canSell(village, 'goldLeaf')).toBe('none')
     expect(canSell({ ...village, clock: { ...village.clock, day: village.clock.day + 1 } }, 'ink')).toBe('notMarket')
+  })
+  it('상인은 장날 하루 10개까지만 사고, 향초는 4닢', () => {
+    expect(SELL_PRICES.herb).toBe(4)
+    const s = marketDay({ ...newGame(CONTENT), inv: { ink: SELL_CAP + 1 } })
+    let village: GameState = { ...s, lettersDone: 10, shelved: { mk: 1 } }
+    for (let i = 0; i < SELL_CAP; i++) village = sell(village, 'ink')!
+    expect(village.inv.ink).toBe(1)
+    expect(village.coins).toBe(SELL_CAP * 8)
+    expect(canSell(village, 'ink')).toBe('cap')
+    expect(sell(village, 'ink')).toBeNull()
+    // 다음 장날엔 다시 살 수 있다
+    const nextMarket = marketDay({ ...village, clock: { ...village.clock, day: village.clock.day + 1 } })
+    expect(canSell(nextMarket, 'ink')).toBeNull()
   })
   it('표지는 제본 장인부터', () => {
     const s = { ...newGame(CONTENT), inv: { papyrus: 2, wool: 1 } }

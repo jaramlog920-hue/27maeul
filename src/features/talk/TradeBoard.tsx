@@ -46,23 +46,28 @@ export function TradeBoard() {
       )}
       {tab === 'sell' && (
         <>
-          <ul className="trade-list">
-            {(Object.keys(SELL_PRICES) as ItemId[]).map((id) => {
-              const block = canSell(game, id)
-              return (
-                <li key={id}>
-                  <span className="trade-get">
-                    {itemName(id)} ({game.inv[id] ?? 0})
-                  </span>
-                  <span className="trade-pay">{fill(T.ui.sellPrice, { n: SELL_PRICES[id]! })}</span>
-                  <button disabled={block !== null} onClick={() => sellItem(id)}>
-                    {T.ui.tradeSell}
-                  </button>
-                </li>
-              )
-            })}
-          </ul>
+          {(Object.keys(SELL_PRICES) as ItemId[]).every((id) => (game.inv[id] ?? 0) === 0) ? (
+            <p className="hint">{T.ui.sellNone}</p>
+          ) : (
+            <ul className="trade-list">
+              {(Object.keys(SELL_PRICES) as ItemId[]).map((id) => {
+                const block = canSell(game, id)
+                return (
+                  <li key={id}>
+                    <span className="trade-get">
+                      {itemName(id)} ({game.inv[id] ?? 0})
+                    </span>
+                    <span className="trade-pay">{fill(T.ui.sellPrice, { n: SELL_PRICES[id]! })}</span>
+                    <button disabled={block !== null} onClick={() => sellItem(id)}>
+                      {T.ui.tradeSell}
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+          )}
           {jobOf(game) < SELL_FROM && <p className="hint">{T.ui.sellJob}</p>}
+          {(Object.keys(SELL_PRICES) as ItemId[]).some((id) => canSell(game, id) === 'cap') && <p className="hint">{T.ui.sellCap}</p>}
         </>
       )}
       <div className="actions">

@@ -39,4 +39,9 @@ describe('텃밭', () => {
     expect(h.inv.herb).toBe(2)
     expect(h.garden[k]).toBeUndefined()
   })
+  it('겨울엔 심어 둔 것에 물을 줄 수 없다', () => {
+    let s = plant(withSeeds(), spot, 'herb')!
+    s = { ...s, clock: { ...s.clock, day: 22 } } // SEASON_DAYS=7 기준 겨울의 첫 날
+    expect(water(s, spot)).toBeNull()
+  })
 })

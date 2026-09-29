@@ -155,8 +155,12 @@ export function shelvedCount(s: Pick<GameState, 'shelved'>): number {
   return Object.keys(s.shelved).length
 }
 
-/** 아직 이사 오지 않은 이웃 — 마을 단계(joinsAt)나 서고 권수(joinsAtBooks)가 모자라다 */
-const notYet = (d: NeighborDef, level: number, books: number) => (d.joinsAt !== undefined && level < d.joinsAt) || (d.joinsAtBooks !== undefined && books < d.joinsAtBooks)
+/**
+ * 아직 이사 오지 않은 이웃 — 마을 단계(joinsAt)가 모자라거나, 서고 권수(joinsAtBooks)로 오는 이웃이면
+ * 소개 장면이 나온 아침(잠들 때 세운 movedIn 표식)이 아직 오지 않았다
+ */
+const notYet = (d: NeighborDef, level: number, flags: Record<string, number>) =>
+  (d.joinsAt !== undefined && level < d.joinsAt) || (d.joinsAtBooks !== undefined && !flags[`movedIn:${d.id}`])
 
 function goalContext(s: GoalState, content: GameContent) {
   const w = weatherOf(s.clock.day)
@@ -164,7 +168,7 @@ function goalContext(s: GoalState, content: GameContent) {
   const special: Record<string, Tile | null> = {}
   // 아직 이사 오지 않은 이웃은 보이지 않는다 — 소개 장면이 나오는 새 날 아침부터 (잠들 때 정한 단계)
   const level = s.flags.villageLevel ?? 0
-  for (const d of content.neighbors) if (notYet(d, level, shelvedCount(s))) special[d.id] = null
+  for (const d of content.neighbors) if (notYet(d, level, s.flags)) special[d.id] = null
   const joined = (id: string) => !(id in special)
   // 단짝이 된 아이는 오후에 양 우리 곁에서 논다
   if (s.flags['done:friends'] && m >= FRIENDS_FROM && m < FRIENDS_TO && !isWet(w)) special.child = FRIENDS_SPOT
@@ -223,18 +227,18 @@ function todaysOffers(day: number, collected: string[], s: Pick<GameState, 'acti
 }
 
 /** 그날 밖에 나오는 이웃 (상인은 장날만, 궂은 날 쉬는 이웃은 빼고) — 이야기는 만날 수 있는 이웃에게만 배정한다 */
-function neighborsOfDay(day: number, content: GameContent, level = 0, books = 0): string[] {
+function neighborsOfDay(day: number, content: GameContent, level = 0, flags: Record<string, number> = {}): string[] {
   const wet = isWet(weatherOf(day))
   return content.neighbors
     .filter((n) => !n.marketOnly || isMarketDay(day))
-    .filter((n) => !notYet(n, level, books))
+    .filter((n) => !notYet(n, level, flags))
     .filter((n) => !wet || n.schedule.some((e) => e.tile && e.wet))
     .map((n) => n.id)
 }
 
 /** 오늘 마을에 나와 조각을 건넬 수 있는 이웃 */
 export function neighborsPresent(s: GameState, content: GameContent): string[] {
-  return neighborsOfDay(s.clock.day, content, s.flags.villageLevel ?? 0, shelvedCount(s))
+  return neighborsOfDay(s.clock.day, content, s.flags.villageLevel ?? 0, s.flags)
 }
 
 export function newGame(content: GameContent, avatar?: Avatar): GameState {
@@ -290,7 +294,7 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
 export function chooseBook(s: GameState, book: Book, content: GameContent): GameState {
   if (!content.pieces.some((p) => p.book === book)) return s
   const level = s.flags.villageLevel ?? 0
-  const present = neighborsOfDay(s.clock.day, content, level, shelvedCount(s)).filter((id) => !s.listened.includes(id))
+  const present = neighborsOfDay(s.clock.day, content, level, s.flags).filter((id) => !s.listened.includes(id))
   const next = { ...s, activeBook: book }
   return { ...next, offers: todaysOffers(s.clock.day, s.collected, next, content, present) }
 }
@@ -819,19 +823,32 @@ export function finishCraft(s: GameState, id: RecipeId): GameState {
 }
 
 /** 장날에 파는 것: 공방 제품과 텃밭 작물뿐 — 엮은 말씀 책·조각은 팔지 않는다 (exclusion-list §3-3) */
-export const SELL_PRICES: Partial<Record<ItemId, number>> = { ink: 8, papyrus: 6, cover: 25, herb: 6, bean: 3 }
+export const SELL_PRICES: Partial<Record<ItemId, number>> = { ink: 8, papyrus: 6, cover: 25, herb: 4, bean: 3 }
 
-export type SellBlock = 'notMarket' | 'job' | 'none' | null
+/** 장날 하루에 상인이 사는 물건 최대 개수 */
+export const SELL_CAP = 10
+
+function soldToday(s: Pick<GameState, 'clock' | 'flags'>): number {
+  return s.flags.soldDay === s.clock.day ? (s.flags.soldCount ?? 0) : 0
+}
+
+export type SellBlock = 'notMarket' | 'job' | 'none' | 'cap' | null
 export function canSell(s: GameState, item: ItemId): SellBlock {
   if (SELL_PRICES[item] === undefined || count(s.inv, item) === 0) return 'none'
   if (!isMarketDay(s.clock.day)) return 'notMarket'
   if (jobOf(s) < SELL_FROM) return 'job'
+  if (soldToday(s) >= SELL_CAP) return 'cap'
   return null
 }
 
 export function sell(s: GameState, item: ItemId): GameState | null {
   if (canSell(s, item)) return null
-  return { ...s, inv: take(s.inv, { [item]: 1 })!, coins: s.coins + SELL_PRICES[item]! }
+  return {
+    ...s,
+    inv: take(s.inv, { [item]: 1 })!,
+    coins: s.coins + SELL_PRICES[item]!,
+    flags: { ...s.flags, soldDay: s.clock.day, soldCount: soldToday(s) + 1 },
+  }
 }
 
 /** 가진 것 중 가장 든든한 것을 먹는다 (빵 → 꿀 → 무화과) */
@@ -944,11 +961,12 @@ export function submitChapter(s: GameState, book: Book, chapter: number, content
 
 // ── 잠과 새 날 ──
 
-/** 잠들기 전에 읽을 조각: 다시 읽을 구절이 먼저, 없으면 오늘 들은 것 중 하나 */
+/** 잠들기 전에 읽을 조각: 다시 읽을 구절이 먼저, 그다음 오늘 들은 것, 그래도 없으면 모아 둔 것 중 하나 */
 export function reviewPick(s: GameState, rng: Rng): string | null {
   if (s.rereads.length) return s.rereads[0]
-  if (s.todayHeard.length === 0) return null
-  return s.todayHeard[Math.min(s.todayHeard.length - 1, Math.floor(rng() * s.todayHeard.length))]
+  if (s.todayHeard.length) return s.todayHeard[Math.min(s.todayHeard.length - 1, Math.floor(rng() * s.todayHeard.length))]
+  if (s.collected.length === 0) return null
+  return s.collected[Math.min(s.collected.length - 1, Math.floor(rng() * s.collected.length))]
 }
 
 /** 오늘이 평안인 날인가 (어젯밤 자기 전에 구절을 읽었다) */
@@ -1004,7 +1022,7 @@ export function goToSleep(s: GameState, content: GameContent, opts: { read?: boo
       flags[`movedIn:${d.id}`] = 1
       scenes.push(`movedIn:${d.id}`)
     }
-  const present = neighborsOfDay(day, content, level, shelvedCount(s))
+  const present = neighborsOfDay(day, content, level, flags)
   const visitor = s.flags.ending === 1 || clock.minute >= VISIT_TO ? null : pickVisitor(day, s.hearts, flags, present)
   if (visitor) flags[`visitDay:${visitor}`] = day
   const gathering = s.flags.ending === 1 ? null : planGathering(day, level, flags)

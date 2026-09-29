@@ -37,7 +37,7 @@ export function plant(s: GameState, at: Tile, crop: CropId): GameState | null {
 
 export function water(s: GameState, at: Tile): GameState | null {
   const p = s.garden[keyOf(at)]
-  if (!p || p.wateredDay === s.clock.day || isRipe(p)) return null
+  if (!p || p.wateredDay === s.clock.day || isRipe(p) || seasonOf(s.clock.day) === 'winter') return null
   return { ...s, garden: { ...s.garden, [keyOf(at)]: { ...p, wateredDay: s.clock.day } } }
 }
 

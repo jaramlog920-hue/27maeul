@@ -3,7 +3,7 @@ import { create } from 'zustand'
 import { CONTENT, pieceById, pieceOfQuestion, piecesOf, quizSourceFor } from '../content/catalog'
 import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
 import { canShelve, payRetry, poolFor, readOff, shelve } from '../engine/library'
-import { ALBUM_IDS, fill, itemList, NEIGHBOR_LINES, SCENES, T } from '../content/text'
+import { ALBUM_IDS, fill, itemList, itemName, NEIGHBOR_LINES, SCENES, T } from '../content/text'
 import { grapesRipe, isWet, weatherOf } from '../engine/calendar'
 import { cleanName, type Animal } from '../engine/companion'
 import {
@@ -52,6 +52,7 @@ import {
   readScripture,
   passTime,
   sell,
+  SELL_PRICES,
   type GameState,
   type SubmitResult,
   type Trade,
@@ -536,10 +537,12 @@ export const useGame = create<Store>((set, get) => {
     },
 
     sellItem: (item) => {
+      const price = SELL_PRICES[item]
       const next = sell(get().game, item)
       if (!next) return
       sfx('gift')
       set({ game: persist(next) })
+      get().say(fill(T.ui.soldLine, { item: itemName(item), n: price! }))
     },
 
     startTeach: () => set({ modal: { kind: 'mini', state: startMini('timing', get().rng), pending: { kind: 'teach' } } }),
