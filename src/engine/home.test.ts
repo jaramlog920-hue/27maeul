@@ -82,6 +82,20 @@ describe('집 넓히기 자리', () => {
   })
 })
 
+describe('잠들 때 집 단계 맞추기', () => {
+  it('모듈 전역이 0이어도 상태의 집 단계(1)로 지도를 맞춘 채 자고, 이웃도 그 지도로 놓는다', () => {
+    const s = { ...newGame(CONTENT), homeLevel: 1 as const }
+    setHomeLevel(0)
+    expect(isWalkable({ x: 11, y: 4 })).toBe(true)
+    expect(tileAt(13, 4)).not.toBe('#')
+    const after = sleep(s)
+    expect(after.homeLevel).toBe(1)
+    expect(tileAt(13, 4)).toBe('#')
+    expect(isHome({ x: 11, y: 4 })).toBe(true)
+    for (const n of Object.values(after.npcs)) expect(n.x === 13 && n.y === 4).toBe(false)
+  })
+})
+
 describe('집 넓히기 1단계: 방 하나 더', () => {
   it('처음엔 넓힐 땅이 풀밭, 새 방은 집이 아니다', () => {
     expect(isWalkable({ x: 11, y: 4 })).toBe(true)

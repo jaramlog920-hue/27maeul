@@ -1032,6 +1032,7 @@ export function drinkWater(s: GameState): GameState | null {
  * 창만 닫고(더 깨어 있기) 자면 read/pieceId가 없어 목록이 그대로 남는다.
  */
 export function goToSleep(s0: GameState, content: GameContent, opts: { read?: boolean; pieceId?: string; attic?: boolean } = {}): GameState {
+  syncHome(s0)
   const s = opts.read && opts.pieceId ? readOff(s0, opts.pieceId) : s0
   const sick = fallsSick(s.needs)
   let clock = sleepClock(s.clock)

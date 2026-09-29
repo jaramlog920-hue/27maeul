@@ -806,7 +806,11 @@ function animal(kind: 'cat' | 'dog', form: 'adult' | 'baby' | 'curl', facing: Fa
 
 // ── 방의 가구 ──
 
-/** 넓은 책상 (두 칸 폭). 작은 책상 그림을 바닥으로 덮고 그린다. 등잔 자리는 작은 책상과 같게(그을음·불빛이 맞도록) */
+/**
+ * 넓은 책상. 오른쪽 칸은 서는 자리(걸어 다니는 칸)라 칸을 넘어 그리지 않는다:
+ * 책상 칸 안에서 상판만 넓게, 오른쪽으로 3px 넘게 내민다(서는 자리 대부분은 비워 둔다).
+ * 등잔 자리는 작은 책상과 같게(그을음·불빛이 맞도록). 바닥 가구(깔개)는 이 위에 그려진다.
+ */
 function drawWideDesk(g: Ctx, at: Tile, season: Season) {
   drawGround(g, 'f', at.x, at.y, season)
   const px = at.x * TILE
@@ -815,17 +819,17 @@ function drawWideDesk(g: Ctx, at: Tile, season: Season) {
     g.fillStyle = color
     g.fillRect(px + dx, py + dy, w, h)
   }
-  r(C.shadow, 1, 12, 30, 3)
-  r(C.woodDark, 2, 11, 2, 4)
-  r(C.woodDark, 28, 11, 2, 4)
-  r(C.wood, 1, 4, 30, 8)
-  r(C.woodDark, 1, 10, 30, 2)
+  r(C.shadow, 0, 12, 19, 3)
+  r(C.woodDark, 1, 11, 2, 4)
+  r(C.woodDark, 14, 11, 2, 4)
+  r(C.wood, 0, 4, 19, 8)
+  r(C.woodDark, 0, 10, 19, 2)
   // 펼친 종이와 말린 두루마리
-  r(C.paper, 3, 5, 8, 5)
-  r('#d6c194', 4, 6, 6, 2)
-  r(C.paper, 16, 6, 9, 3)
-  r('#e5d3aa', 15, 5, 2, 5)
-  r('#e5d3aa', 24, 5, 2, 5)
+  r(C.paper, 2, 5, 7, 5)
+  r('#d6c194', 3, 6, 5, 2)
+  r(C.paper, 11, 6, 6, 3)
+  r('#e5d3aa', 10, 5, 2, 5)
+  r('#e5d3aa', 16, 5, 2, 5)
   r(C.lamp, 12, 3, 2, 3)
 }
 
@@ -1081,7 +1085,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         g.fillRect(12 * TILE, 25 * TILE, 8 * TILE, 6 * TILE)
       }
 
-      // 넓은 책상: 책상 자리와 오른쪽 칸(서는 자리 — 늘 비어 있다)에 걸친 두 칸 책상
+      // 넓은 책상: 책상 칸 안에 상판만 넓게 (서는 자리는 덮지 않는다)
       if ((game.inv.wideDesk ?? 0) > 0) drawWideDesk(g, PLACES.desk.tiles[0], season)
       // 선반의 두루마리, 책상의 잉크 자국, 등잔 그을음
       const done = totalChapters(game)
