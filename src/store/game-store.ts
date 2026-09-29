@@ -419,6 +419,7 @@ export const useGame = create<Store>((set, get) => {
     clockMs: 0,
 
     load: (game) => {
+      // 집 단계는 world의 모듈 전역(tileAt이 본다) — 불러온 게임의 단계로 맞춘다
       syncHome(game)
       set({ game, modal: null, decorating: null })
     },
@@ -754,6 +755,7 @@ export const useGame = create<Store>((set, get) => {
       const m = get().modal
       const pieceId = m?.kind === 'review' ? m.pieceId : null
       const attic = m?.kind === 'review' && !!m.attic
+      // 집 단계가 바뀌는 곳은 잠뿐: goToSleep이 새 단계로 지도(모듈 전역)를 맞춘다
       set({ game: persist(goToSleep(get().game, CONTENT, { read: pieceId !== null, pieceId: pieceId ?? undefined, attic })), modal: null })
     },
     saveMyLine: (lineKey, text) => set({ game: persist(setMyLine(get().game, lineKey, text)), modal: afterMyLine(get().modal) }),

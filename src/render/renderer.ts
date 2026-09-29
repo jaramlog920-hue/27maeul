@@ -207,11 +207,15 @@ function houseWallTile(g: Ctx, x: number, y: number, ch: string, id: string, h: 
     r(mix(dc, '#000000', 0.18), 9, 3, 1, 13)
     r('#f1bf6b', 10, 9, 2, 2)
   }
-  if (id === 'home' && !upper && x === HOME_EXPAND_RECT.x0 && h.x1 === HOME_EXPAND_RECT.x1) {
-    // 넓힌 방의 앞벽: 이어 붙인 자리의 기둥과 창 없는 꽃 상자 (창은 문을 가운데 둔 대칭 그대로)
-    r(st.base, 0, 0, 2, 16)
-    r('#ad845d', 4, 8, 10, 3)
-    for (let i = 0; i < 5; i++) r(['#99b67b', '#f1b999', '#99b67b', '#fefdf8', '#99b67b'][i], 4 + i * 2, 6, 2, 2)
+  if (id === 'home' && h.x1 === HOME_EXPAND_RECT.x1) {
+    // 넓힌 방(11~13열)은 따로 붙인 채: 이어 붙인 자리에 기둥, 그 앞벽 가운데(12열)에 창 하나.
+    // 본채 창(4·8열)은 문을 가운데 둔 대칭 그대로, 붙인 채 창은 붙인 채 가운데
+    if (x === HOME_EXPAND_RECT.x0) r(st.base, 0, 0, 2, 16)
+    if (!upper && x === HOME_EXPAND_RECT.x0 + 1) {
+      window(1)
+      r('#ad845d', 3, 10, 10, 2) // 꽃 상자
+      for (let i = 0; i < 4; i++) r(['#f1b999', '#fefdf8', '#e8a88a', '#99b67b'][(x + i) % 4], 4 + i * 2, 9, 2, 1)
+    }
   }
   if (st.awning && !upper && Math.abs(x - h.doorX) <= 1) {
     // 빵집 문 위 줄무늬 차양

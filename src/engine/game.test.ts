@@ -34,8 +34,10 @@ import {
   trade,
   TRADES,
   readScripture,
+  inGathering,
   type GameState,
 } from './game'
+import { HILL_SPOTS } from './bonds'
 import { REQUESTS as REQUESTS_T } from './bonds'
 import { fulfillRequest as fulfillRequestT, interactTile as interactTileT, walkDirection as walkDirectionT } from './game'
 import { placeAt as placeAtT } from './world'
@@ -693,5 +695,24 @@ describe('스페이스 상호작용', () => {
     const s = newGame(CONTENT)
     const next = walkDirectionT({ ...s, player: { ...s.player, x: 1, y: 1, path: [], facing: 'down' } }, 0, -1)
     expect(next.player.facing).toBe('up')
+  })
+})
+
+describe('언덕 모임 자리 (소풍·별 보는 밤)', () => {
+  const on = (g: 'picnic' | 'starNight', minute: number, x: number, y: number) => {
+    const s0 = newGame(CONTENT)
+    const s: GameState = { ...s0, scenes: [], npcs: {}, clock: { day: 4, minute }, today: { ...s0.today, gathering: g }, player: { ...s0.player, x, y, path: [] } }
+    return tick(s, 0.05, zero, CONTENT).state.flags[`done:${g}`] === 1
+  }
+  it('새 언덕 벤치 곁에 서면 모임 장면이 나오고, 옛 자리(15,3)에서는 나오지 않는다', () => {
+    expect(inGathering('picnic', 12 * 60, PLACES.hill.stand!)).toBe(true)
+    expect(inGathering('picnic', 12 * 60, { x: 15, y: 3 })).toBe(false)
+    expect(on('picnic', 12 * 60, 14, 14)).toBe(true)
+    expect(on('picnic', 12 * 60, 15, 3)).toBe(false)
+    expect(on('starNight', 20 * 60 + 30, 15, 14)).toBe(true)
+    expect(on('starNight', 20 * 60 + 30, 15, 3)).toBe(false)
+  })
+  it('모임 자리는 이웃이 모이는 자리를 모두 품는다', () => {
+    for (const t of Object.values(HILL_SPOTS)) expect(inGathering('picnic', 12 * 60, t)).toBe(true)
   })
 })

@@ -253,6 +253,7 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
   const flags: Record<string, number> = { heartPoints: 1 }
   const progress = emptyProgress()
   const base = { clock, flags, progress, hearts: {}, today: NO_TODAY, shelved: {} }
+  // 새 게임은 넓히기 전 집 — 지도(모듈 전역 집 단계)도 0으로
   setHomeLevel(0)
   return {
     version: 1,
@@ -779,11 +780,19 @@ export function inviterAtDoor(s: GameState, t: Tile): string | null {
   return null
 }
 
-function inGathering(g: Gathering, minute: number, p: Tile): boolean {
+/** 언덕 모임(소풍·별 보는 밤) 자리: 언덕 벤치와 이웃이 모이는 자리를 둘러싼 네모 (한 칸 여유) — 벤치를 옮기면 함께 옮겨진다 */
+export const HILL_AREA = (() => {
+  const ts = [...Object.values(HILL_SPOTS), ...PLACES.hill.tiles, ...(PLACES.hill.stand ? [PLACES.hill.stand] : [])]
+  const xs = ts.map((t) => t.x)
+  const ys = ts.map((t) => t.y)
+  return { x0: Math.min(...xs) - 1, x1: Math.max(...xs) + 1, y0: Math.min(...ys) - 1, y1: Math.max(...ys) + 1 }
+})()
+
+export function inGathering(g: Gathering, minute: number, p: Tile): boolean {
   const [from, to] = gatheringWindow(g)
   if (minute < from || minute >= to) return false
   if (g === 'babyParty') return p.x >= 2 && p.x <= 9 && p.y >= 8 && p.y <= 11
-  return p.x >= 11 && p.x <= 18 && p.y >= 0 && p.y <= 4
+  return p.x >= HILL_AREA.x0 && p.x <= HILL_AREA.x1 && p.y >= HILL_AREA.y0 && p.y <= HILL_AREA.y1
 }
 
 // ── 곳곳에서 하는 일 ──
