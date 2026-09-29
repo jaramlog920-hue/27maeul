@@ -24,6 +24,10 @@ export const FESTIVAL_SPOTS: Record<string, Tile> = {
   merchant: { x: 23, y: 19 },
   weaver: { x: 21, y: 17 },
   beekeeper: { x: 27, y: 17 },
+  postman: { x: 20, y: 15 },
+  innkeeper: { x: 23, y: 14 },
+  fisher: { x: 28, y: 15 },
+  carpenter: { x: 20, y: 19 },
 }
 export const FIRE: Tile = { x: 24, y: 17 }
 

@@ -78,3 +78,28 @@ describe('서고 권수로 열리는 구역', () => {
     expect(goalFor(smith, { ...ctx, locked: lockedTiles(4) })).not.toBeNull()
   })
 })
+
+describe('새 이웃 넷의 행사 자리', () => {
+  const NEW = ['postman', 'innkeeper', 'fisher', 'carpenter']
+  const sets: [string, Record<string, Tile>][] = [
+    ['잔치', FESTIVAL_SPOTS],
+    ['아기 잔치', bonds.BABY_PARTY_SPOTS],
+    ['언덕', bonds.HILL_SPOTS],
+    ['마당', stories.ENDING_SPOTS],
+  ]
+  it('넷 모두 각 행사에 자리가 있고, 같은 행사 안에서 겹치지 않는다', () => {
+    for (const [name, spots] of sets) {
+      for (const id of NEW) expect(spots[id], `${name} ${id}`).toBeDefined()
+      const keys = Object.values(spots).map((t) => `${t.x},${t.y}`)
+      expect(new Set(keys).size, `${name} 겹침`).toBe(keys.length)
+    }
+  })
+  it('잔치 자리는 광장 안, 선물은 마음 3·9 단계에 있다', () => {
+    for (const id of NEW) {
+      const t = FESTIVAL_SPOTS[id]
+      expect(t.x >= 19 && t.x <= 29 && t.y >= 13 && t.y <= 20, id).toBe(true)
+      expect(stories.MILESTONE_GIFTS[id]?.[3], id).toBeDefined()
+      expect(stories.MILESTONE_GIFTS[id]?.[9], id).toBeDefined()
+    }
+  })
+})

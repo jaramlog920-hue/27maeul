@@ -2458,6 +2458,109 @@
           "text": "밀랍으로 초를 만들었어요."
         }
       ]
+    },
+    "gift:postman:3": {
+      "title": "선물",
+      "lines": [
+        {
+          "speaker": "postman",
+          "text": "편지 싸는 종이가 남았어요. 글씨 쓰실 때 쓰세요."
+        }
+      ]
+    },
+    "gift:postman:9": {
+      "title": "마음을 나눈 이웃",
+      "lines": [
+        {
+          "speaker": "postman",
+          "text": "편지를 담아 다니던 바구니예요. 새로 하나 엮었으니 이건 드릴게요."
+        }
+      ],
+      "album": "편지 나르는 이웃과 나눈 날들"
+    },
+    "gift:innkeeper:3": {
+      "title": "선물",
+      "lines": [
+        {
+          "speaker": "innkeeper",
+          "text": "오늘 아침에 구운 빵이에요. 따뜻할 때 드세요."
+        }
+      ]
+    },
+    "gift:innkeeper:6": {
+      "title": "선물",
+      "lines": [
+        {
+          "speaker": "innkeeper",
+          "text": "국 끓이던 작은 냄비예요. 방에서도 쓸 데가 있을 거예요."
+        }
+      ]
+    },
+    "gift:innkeeper:9": {
+      "title": "마음을 나눈 이웃",
+      "lines": [
+        {
+          "speaker": "innkeeper",
+          "text": "차 끓일 때 쓰는 주전자예요. 우리 집에서 제일 아끼는 거예요."
+        }
+      ],
+      "album": "주막 주인과 나눈 날들"
+    },
+    "gift:fisher:3": {
+      "title": "선물",
+      "lines": [
+        {
+          "speaker": "fisher",
+          "text": "갈대를 넉넉히 베어 왔어요. 종이 만드는 데 보태세요."
+        }
+      ]
+    },
+    "gift:fisher:6": {
+      "title": "선물",
+      "lines": [
+        {
+          "speaker": "fisher",
+          "text": "고기 담던 바구니인데 깨끗이 씻었어요. 열매 담기 좋아요."
+        }
+      ]
+    },
+    "gift:fisher:9": {
+      "title": "마음을 나눈 이웃",
+      "lines": [
+        {
+          "speaker": "fisher",
+          "text": "물가에서 쓰던 그릇이에요. 오래 써서 손에 익었어요."
+        }
+      ],
+      "album": "어부와 나눈 날들"
+    },
+    "gift:carpenter:3": {
+      "title": "선물",
+      "lines": [
+        {
+          "speaker": "carpenter",
+          "text": "자투리로 걸상 하나 만들었어요. 앉아 보세요."
+        }
+      ]
+    },
+    "gift:carpenter:6": {
+      "title": "선물",
+      "lines": [
+        {
+          "speaker": "carpenter",
+          "text": "등받이 있는 의자예요. 글씨 쓰다 허리 펴세요."
+        }
+      ]
+    },
+    "gift:carpenter:9": {
+      "title": "마음을 나눈 이웃",
+      "lines": [
+        {
+          "speaker": "carpenter",
+          "text": "책 꽂을 책장을 짰어요. 권수가 늘었으니 자리가 필요하죠."
+        }
+      ],
+      "album": "목수와 나눈 날들"
     }
   },
   "ending": {

@@ -139,6 +139,10 @@ export const BABY_PARTY_SPOTS: Record<string, Tile> = {
   presser: { x: 2, y: 19 },
   weaver: { x: 5, y: 20 },
   beekeeper: { x: 4, y: 21 },
+  postman: { x: 6, y: 18 },
+  innkeeper: { x: 3, y: 21 },
+  fisher: { x: 5, y: 21 },
+  carpenter: { x: 2, y: 20 },
 }
 export const HILL_SPOTS: Record<string, Tile> = {
   baker: { x: 13, y: 3 },
@@ -149,6 +153,10 @@ export const HILL_SPOTS: Record<string, Tile> = {
   presser: { x: 17, y: 2 },
   weaver: { x: 13, y: 4 },
   beekeeper: { x: 16, y: 4 },
+  postman: { x: 15, y: 4 },
+  innkeeper: { x: 14, y: 3 },
+  fisher: { x: 15, y: 2 },
+  carpenter: { x: 12, y: 3 },
 }
 
 export type Gathering = 'babyParty' | 'picnic' | 'starNight'
