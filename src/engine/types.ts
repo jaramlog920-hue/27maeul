@@ -25,6 +25,8 @@ export type PlaceId =
   | 'library'
   | 'basket'
   | 'garden'
+  | 'ladder'
+  | 'atticWindow'
 export type Target =
   | { kind: 'place'; id: PlaceId; tile: Tile }
   | { kind: 'neighbor'; id: string; tries: number }
@@ -70,6 +72,7 @@ export type ItemId =
   | 'cushion'
   | 'goodPen'
   | 'brightLamp'
+  | 'wideDesk'
   | 'table'
   | 'nightstand'
   | 'jar'

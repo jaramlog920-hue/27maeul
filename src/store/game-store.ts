@@ -54,11 +54,13 @@ import {
   passTime,
   sell,
   SELL_PRICES,
+  orderHome,
+  syncHome,
   type GameState,
   type SubmitResult,
   type Trade,
 } from '../engine/game'
-import { isHome, LOCKED_DOORS, lockedTiles, lockedZones, roomAt, sameTile, zoneAt } from '../engine/world'
+import { inAttic, isHome, LOCKED_DOORS, lockedTiles, lockedZones, roomAt, sameTile, zoneAt } from '../engine/world'
 import { removal } from '../engine/room'
 import { heartsOf } from '../engine/hearts'
 import { add, RECIPES, type Inventory, type RecipeId } from '../engine/items'
@@ -92,7 +94,8 @@ export type Modal =
   /** lineKey: 조각 id 또는 'book:mk' 같은 책 키. back: 적거나 넘긴 뒤 돌아갈 창 */
   | { kind: 'myLine'; lineKey: string; back?: 'library' | 'shelf' }
   | { kind: 'desk'; result: SubmitResult | null; dark: boolean }
-  | { kind: 'review'; pieceId: string | null }
+  /** attic: 다락 창가에서 연 자기 전 읽기 */
+  | { kind: 'review'; pieceId: string | null; attic?: boolean }
   | { kind: 'journal' }
   | { kind: 'scene'; id: string }
   | { kind: 'mini'; state: MiniState; pending: Pending }
@@ -160,6 +163,8 @@ interface Store {
   sitHill: () => void
   requestAsk: (npc: string) => void
   requestGive: (npc: string) => void
+  /** 목수에게 집 넓히기 부탁 */
+  askHome: (npc: string) => void
   readAt: (pieceId: string) => void
   blanket: () => void
   drink: () => void
@@ -264,8 +269,12 @@ function gained(before: Inventory, after: Inventory): Partial<Record<ItemId, num
   return out
 }
 
-/** 집 안에 막 들어왔으면 누구 집인지 알린다 */
+/** 집 안에 막 들어왔으면 누구 집인지 알린다 (다락에 오르면 다락 서재) */
 function announceRoom(before: GameState, after: GameState) {
+  if (inAttic(playerTile(after)) && !inAttic(playerTile(before))) {
+    useGame.getState().say(T.ui.atticRoom, 2200)
+    return
+  }
   const room = roomAt(playerTile(after))
   if (!room || room === roomAt(playerTile(before))) return
   const who = CONTENT.neighbors.find((d) => d.id === room.owner)?.role
@@ -321,6 +330,9 @@ export const useGame = create<Store>((set, get) => {
         // 다시 읽을 목록에서는 여기서 빼지 않는다 — 읽고 자기(sleep)를 눌렀을 때만 뺀다
         return { game, modal: { kind: 'review', pieceId: reviewPick(game, rng) } }
       }
+      case 'atticWindow':
+        // 다락 창가에서도 자기 전 읽기를 하고 잘 수 있다 (평안이 하루 더)
+        return { game, modal: { kind: 'review', pieceId: reviewPick(game, rng), attic: true } }
       case 'desk': {
         const lit = lightLamp(game)
         // 등잔 기름을 쓴 것은 바로 저장한다 (다시 불러와 기름을 되찾지 못하게)
@@ -406,7 +418,10 @@ export const useGame = create<Store>((set, get) => {
     capture: null,
     clockMs: 0,
 
-    load: (game) => set({ game, modal: null, decorating: null }),
+    load: (game) => {
+      syncHome(game)
+      set({ game, modal: null, decorating: null })
+    },
 
     say: (text, ms = 2600) => set({ toast: { text, until: get().clockMs + ms } }),
 
@@ -607,6 +622,12 @@ export const useGame = create<Store>((set, get) => {
       toastGainFrom(get().game.inv, next.inv)
       set({ game: persist(next), modal: null })
     },
+    askHome: (npc) => {
+      const next = orderHome(get().game)
+      if (!next) return
+      sfx('gift')
+      set({ game: persist(next), modal: { kind: 'talk', neighborId: npc, line: T.ui.homeOrdered } })
+    },
     readAt: (pieceId) => {
       const r = readScripture(get().game, pieceId)
       if (!r) return
@@ -732,7 +753,8 @@ export const useGame = create<Store>((set, get) => {
       sfx('sleep')
       const m = get().modal
       const pieceId = m?.kind === 'review' ? m.pieceId : null
-      set({ game: persist(goToSleep(get().game, CONTENT, { read: pieceId !== null, pieceId: pieceId ?? undefined })), modal: null })
+      const attic = m?.kind === 'review' && !!m.attic
+      set({ game: persist(goToSleep(get().game, CONTENT, { read: pieceId !== null, pieceId: pieceId ?? undefined, attic })), modal: null })
     },
     saveMyLine: (lineKey, text) => set({ game: persist(setMyLine(get().game, lineKey, text)), modal: afterMyLine(get().modal) }),
     skipMyLine: () => set({ modal: afterMyLine(get().modal) }),

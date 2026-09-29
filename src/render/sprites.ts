@@ -472,6 +472,7 @@ export const ICONS: Record<string, SpriteRows> = {
   cushion: ['........', '........', '.wwwwww.', 'wwWwwWww', 'wwwwwwww', '.WWWWWW.', '........', '........'],
   goodPen: ['......y.', '.....yY.', '....yY..', '...yY...', '..yY....', '.kY.....', 'kk......', '........'],
   brightLamp: ['...l....', '..lyl...', '...y....', '.NnnnN..', 'NnnnnnnN', '.NNNNNN.', '........', '........'],
+  wideDesk: ['........', '.www.aa.', '.wWw.aa.', 'NNNNNNNN', 'nnnnnnnn', 'NNNNNNNN', 'N.N..N.N', 'N......N'],
   table: ['........', 'NNNNNNNN', 'nnnnnnnn', 'NNNNNNNN', '.N....N.', '.N....N.', '.N....N.', '........'],
   nightstand: ['........', '.NNNNNN.', '.nnnnnn.', '.NNNNNN.', '.nnkknn.', '.nnnnnn.', '.NNNNNN.', '.N....N.'],
   jar: ['...kk...', '..kbbk..', '..kBBk..', '.kbbbbk.', '.kbBbbk.', '.kbbbbk.', '..kkkk..', '........'],

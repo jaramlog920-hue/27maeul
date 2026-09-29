@@ -3,11 +3,11 @@ import { festivalOf, FESTIVAL_FROM, FESTIVAL_TO, isMarketDay, isWet, weatherOf, 
 import { advance, newClock, phaseOf, seasonOf, sleepClock, type Clock } from './clock'
 import { DURATION, greet, IDLE_GAP, IDLE_RESET, stepIdle, type IdleState } from './autonomy'
 import { adopt, companionGoal, STRAY_DAY, STRAY_SPOTS, stepCompanion, type Animal, type Companion } from './companion'
-import { add, addGift, CHAPTER_COST, FOODS, count, craft, has, MAX_STACK, RECIPES, recipeGives, take, type Inventory, type RecipeId } from './items'
+import { add, addGift, CHAPTER_COST, FOODS, count, craft, has, MAX_STACK, RECIPES, recipeGives, take, TOOLS, type Inventory, type RecipeId } from './items'
 import { facingFor, findPath, pathToward, stepActor, type Actor } from './movement'
 import { coolDown, exhausted, fallsSick, FRESH, rest, sleepNeeds, starving, tickNeeds, warmUp, work, type Needs } from './needs'
 import { inGoodMood } from './mood'
-import { placement, removal, solidTiles, type Furniture } from './room'
+import { placement, refitRoom, removal, solidTiles, type Furniture } from './room'
 import {
   BABY_PARTY_SPOTS,
   FRIENDS_FROM,
@@ -52,7 +52,7 @@ import {
   momentNow,
   onceKey,
 } from './stories'
-import { BED_STAND, HEARTH_STAND, isIndoor, key, lockedTiles, PLACES, placeAt, roomAt, sameTile, START, tileAt, WARPS } from './world'
+import { ATTIC, BED_STAND, HEARTH_STAND, inAttic, isIndoor, key, LADDER, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, START, tileAt, WARPS } from './world'
 import type { Book, Facing, GameContent, ItemId, NeighborDef, PlaceId, Rng, Target, Tile } from './types'
 import type { Avatar } from './avatar'
 
@@ -125,6 +125,13 @@ export interface GameState {
   avatar: Avatar | null
   /** 텃밭 ('x,y' → 작물) */
   garden: Record<string, Plot>
+  /** 집 단계: 0 작업실, 1 방 하나 더, 2 다락 서재 (목수에게 부탁한 단계는 flags.homeOrder, 다음 날 아침 지어진다) */
+  homeLevel: 0 | 1 | 2
+}
+
+/** 지도(world.tileAt)가 이 게임의 집 단계를 보게 한다. 지도를 읽는 엔진 입구마다 부른다 */
+export function syncHome(s: Pick<GameState, 'homeLevel'>): void {
+  setHomeLevel(s.homeLevel ?? 0)
 }
 
 export interface Today {
@@ -246,6 +253,7 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
   const flags: Record<string, number> = { heartPoints: 1 }
   const progress = emptyProgress()
   const base = { clock, flags, progress, hearts: {}, today: NO_TODAY, shelved: {} }
+  setHomeLevel(0)
   return {
     version: 1,
     clock,
@@ -286,6 +294,7 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
     lettersDone: 0,
     avatar: avatar ?? null,
     garden: {},
+    homeLevel: 0,
   }
 }
 
@@ -300,6 +309,7 @@ export function chooseBook(s: GameState, book: Book, content: GameContent): Game
 
 /** 불러온 뒤 이웃을 제자리에 세운다 (걷던 길은 저장하지 않으므로) */
 export function settle(s: GameState, content: GameContent): GameState {
+  syncHome(s)
   return { ...s, npcs: placeAllNpcs(s, content), target: null, idle: IDLE_RESET, player: { ...s.player, path: [] } }
 }
 
@@ -326,8 +336,11 @@ export function straysToday(s: GameState): Animal[] {
 /** 키보드 이동은 바로 옆의 빈 칸으로만 걷는다. */
 export function walkDirection(s: GameState, dx: number, dy: number): GameState {
   if (s.player.path.length || Math.abs(dx) + Math.abs(dy) !== 1) return s
+  syncHome(s)
   const from = playerTile(s)
   const to = { x: from.x + dx, y: from.y + dy }
+  // 사다리 쪽으로 걸으면 다락으로 올라간다
+  if (sameTile(to, LADDER) && placeAt(LADDER) === 'ladder') return { ...s, player: warpTo(s.player, ATTIC.entry), target: null, idle: IDLE_RESET }
   const path = findPath(from, to, blockersOf(s))
   if (!path || path.length !== 1) {
     // 막혀서 못 가도 그쪽을 바라본다 — 스페이스로 앞에 있는 이웃·물건과 상호작용하려면 필요하다
@@ -355,6 +368,7 @@ function interactableAt(s: GameState, t: Tile): boolean {
  */
 export function interactTile(s: GameState): Tile | null {
   if (s.player.path.length) return null
+  syncHome(s)
   const here = playerTile(s)
   const f = FRONT[s.player.facing]
   const front = { x: here.x + f.x, y: here.y + f.y }
@@ -367,6 +381,7 @@ export function interactTile(s: GameState): Tile | null {
 
 /** 화면의 한 칸을 눌렀을 때: 그곳(또는 그 사람·물건 옆)으로 걸어가기 시작한다 */
 export function tapTile(s: GameState, tile: Tile): GameState {
+  syncHome(s)
   const from = playerTile(s)
   if (sameTile(tile, from) && s.player.path.length === 0) {
     return { ...s, player: { ...s.player, facing: 'down' }, idle: greet(), target: null }
@@ -412,7 +427,7 @@ function targetTile(s: GameState, target: Target): Tile | null {
 }
 
 function warpTo<T extends GameState['player']>(player: T, to: Tile): T {
-  return { ...player, x: to.x, y: to.y, path: [], facing: roomAt(to) ? 'up' : 'down' }
+  return { ...player, x: to.x, y: to.y, path: [], facing: roomAt(to) || inAttic(to) ? 'up' : 'down' }
 }
 
 /** 이웃집 문 앞에서 문을 눌렀을 때 들어간다 (저녁 초대가 없을 때) */
@@ -423,6 +438,7 @@ export function enterDoor(s: GameState, door: Tile): GameState {
 
 export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): { state: GameState; events: GameEvent[] } {
   const events: GameEvent[] = []
+  syncHome(s)
   const clock = advance(s.clock, dt)
   const minutes = clock.minute - s.clock.minute
   const here = playerTile(s)
@@ -471,11 +487,15 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
           target = { ...target, tries: target.tries + 1 }
         } else target = null
       } else target = null
+    } else if (target.kind === 'place' && target.id === 'ladder') {
+      // 사다리 앞에 닿으면 다락으로 올라간다
+      player = warpTo(player, ATTIC.entry)
+      target = null
     } else {
       events.push({ type: 'arrived', target })
       target = null
     }
-    if (tt && player.path.length === 0) player = { ...player, facing: facingFor(tt.x - now.x, tt.y - now.y, player.facing) }
+    if (tt && player.path.length === 0 && !inAttic(player)) player = { ...player, facing: facingFor(tt.x - now.x, tt.y - now.y, player.facing) }
   }
 
   // 동반 동물
@@ -658,7 +678,13 @@ export const TRADES: readonly Trade[] = [
   { id: 'seedBean', pay: {}, coins: 4, get: { seedBean: 2 } },
   { id: 'goodPenCoins', pay: {}, coins: 40, get: { goodPen: 1 } },
   { id: 'brightLamp', pay: {}, coins: 60, get: { brightLamp: 1 } },
+  { id: 'wideDesk', pay: {}, coins: 80, get: { wideDesk: 1 } },
 ]
+
+/** 이미 가진 도구를 또 사게 되는 거래인가 (도구는 하나씩) */
+export function ownsTradeTool(inv: Inventory, t: Trade): boolean {
+  return TOOLS.some((id) => t.get[id] !== undefined && count(inv, id) > 0)
+}
 
 export function tradesFor(flags: Record<string, number>): Trade[] {
   return TRADES.filter((t) => !t.requires || unlocked(flags, t.requires))
@@ -667,8 +693,7 @@ export function tradesFor(flags: Record<string, number>): Trade[] {
 export function trade(s: GameState, t: Trade): GameState | null {
   if (!isMarketDay(s.clock.day)) return null
   if (t.requires && !unlocked(s.flags, t.requires)) return null
-  if (t.get.goodPen && count(s.inv, 'goodPen') > 0) return null
-  if (t.get.brightLamp && count(s.inv, 'brightLamp') > 0) return null
+  if (ownsTradeTool(s.inv, t)) return null
   if (t.coins !== undefined && s.coins < t.coins) return null
   const left = take(s.inv, t.pay)
   if (!left || wouldOverflow(left, t.get)) return null
@@ -955,7 +980,13 @@ export function submitChapter(s: GameState, book: Book, chapter: number, content
   const scenes = [...s.scenes]
   if (totalChapters(s) === 0) scenes.push('firstChapter')
   if (bookDone({ progress }, book, content)) scenes.push('bookBound')
-  return { state: passTime({ ...s, inv: left, progress, scenes, needs: work(s.needs, 6) }, inGoodMood(s) ? 45 : 60), result }
+  return { state: passTime({ ...s, inv: left, progress, scenes, needs: work(s.needs, 6) }, bindMinutes(s)), result }
+}
+
+/** 한 장을 엮는 데 드는 분: 기분이 좋으면 45, 아니면 60. 넓은 책상이면 20% 덜 */
+export function bindMinutes(s: Pick<GameState, 'needs' | 'clock' | 'room' | 'inv'>): number {
+  const base = inGoodMood(s) ? 45 : 60
+  return count(s.inv, 'wideDesk') > 0 ? Math.round(base * 0.8) : base
 }
 
 // ── 잠과 새 날 ──
@@ -968,9 +999,9 @@ export function reviewPick(s: GameState, rng: Rng): string | null {
   return s.collected[Math.min(s.collected.length - 1, Math.floor(rng() * s.collected.length))]
 }
 
-/** 오늘이 평안인 날인가 (어젯밤 자기 전에 구절을 읽었다) */
+/** 오늘이 평안인 날인가 (어젯밤 자기 전에 구절을 읽었다 — 다락 창가에서 읽었으면 그다음 날까지) */
 export function peaceful(s: Pick<GameState, 'flags' | 'clock'>): boolean {
-  return s.flags.peaceDay === s.clock.day
+  return s.flags.peaceDay === s.clock.day || s.flags.peaceDay2 === s.clock.day
 }
 
 /** 이 계절에 보이는 몸 칸: 겨울 추위, 여름 더위, 봄·가을 없음 */
@@ -988,9 +1019,10 @@ export function drinkWater(s: GameState): GameState | null {
 
 /**
  * opts.read: 자기 전 복습 구절을 읽고 잔다(평안). opts.pieceId: 그때 읽은 구절 — 다시 읽을 목록에서 뺀다.
+ * opts.attic: 다락 창가에서 읽었다 (다락 서재가 있으면 평안이 하루 더 간다).
  * 창만 닫고(더 깨어 있기) 자면 read/pieceId가 없어 목록이 그대로 남는다.
  */
-export function goToSleep(s0: GameState, content: GameContent, opts: { read?: boolean; pieceId?: string } = {}): GameState {
+export function goToSleep(s0: GameState, content: GameContent, opts: { read?: boolean; pieceId?: string; attic?: boolean } = {}): GameState {
   const s = opts.read && opts.pieceId ? readOff(s0, opts.pieceId) : s0
   const sick = fallsSick(s.needs)
   let clock = sleepClock(s.clock)
@@ -1006,6 +1038,23 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
   const flags = { ...s.flags }
   if (opts.read) flags.peaceDay = day
   else delete flags.peaceDay
+  // 다락 창가의 평안: 다음 날과 그다음 날. 지난 것은 지운다
+  if (opts.read && opts.attic && s.homeLevel >= 2) flags.peaceDay2 = day + 1
+  else if (!(flags.peaceDay2 !== undefined && flags.peaceDay2 >= day)) delete flags.peaceDay2
+  // ── 집 넓히기: 부탁해 둔 단계가 아침에 지어진다. 새 모양에 맞지 않는 가구는 가방으로 ──
+  let homeLevel = s.homeLevel ?? 0
+  let room = s.room
+  let inv = s.inv
+  const order = flags.homeOrder
+  if (order === homeLevel + 1 && (order === 1 || order === 2)) {
+    homeLevel = order
+    delete flags.homeOrder
+    scenes.push(`home:${order}`)
+    setHomeLevel(homeLevel)
+    const refit = refitRoom(room, inv)
+    room = refit.room
+    inv = refit.inv
+  }
   // ── 마음이 쌓인 마을의 새 날 ──
   const level = villageLevel(s.hearts)
   const prev = s.flags.villageLevel ?? 0
@@ -1063,6 +1112,9 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
     idle: { seconds: 0, action: { kind: 'stretch', left: DURATION.stretch }, cooldown: IDLE_GAP },
     scenes,
     flags,
+    homeLevel,
+    room,
+    inv,
   }
   return { ...next, npcs: placeAllNpcs(next, content) }
 }
@@ -1096,6 +1148,7 @@ export function setMyLine(s: GameState, key: string, text: string): GameState {
 // ── 방 꾸미기 (규칙은 room.ts) ──
 
 export function placeFurniture(s: GameState, item: ItemId, t: Tile): GameState | null {
+  syncHome(s)
   const f = placement(s.room, item, t)
   if (!f) return null
   const left = take(s.inv, { [item]: 1 })
@@ -1111,4 +1164,39 @@ export function removeFurniture(s: GameState, t: Tile): GameState {
   for (const f of gone) back[f.item] = (back[f.item] ?? 0) + 1
   if (wouldOverflow(s.inv, back)) return s
   return { ...s, room: s.room.filter((f) => !gone.includes(f)), inv: add(s.inv, back) }
+}
+
+// ── 집 넓히기 (목수에게 부탁 — 설계 §7-1: 방 하나 더 → 다락 서재) ──
+
+export interface HomeStage {
+  level: 1 | 2
+  coins: number
+  needs: Partial<Record<ItemId, number>>
+}
+export const HOME_STAGES: readonly HomeStage[] = [
+  { level: 1, coins: 120, needs: { olive: 5 } },
+  { level: 2, coins: 200, needs: { papyrus: 5 } },
+]
+
+/** 다음에 부탁할 단계 (다 지었으면 null) */
+export function nextHomeStage(s: Pick<GameState, 'homeLevel'>): HomeStage | null {
+  return HOME_STAGES.find((st) => st.level === (s.homeLevel ?? 0) + 1) ?? null
+}
+
+export type HomeOrderBlock = 'done' | 'notMoved' | 'ordered' | 'coins' | 'needs' | null
+export function canOrderHome(s: GameState): HomeOrderBlock {
+  const st = nextHomeStage(s)
+  if (!st) return 'done'
+  if (!s.flags['movedIn:carpenter']) return 'notMoved'
+  if (s.flags.homeOrder) return 'ordered'
+  if (s.coins < st.coins) return 'coins'
+  if (!has(s.inv, st.needs)) return 'needs'
+  return null
+}
+
+/** 목수에게 다음 단계를 부탁한다 (닢과 재료를 내고, 다음 날 아침 지어진다) */
+export function orderHome(s: GameState): GameState | null {
+  const st = nextHomeStage(s)
+  if (!st || canOrderHome(s)) return null
+  return { ...s, coins: s.coins - st.coins, inv: take(s.inv, st.needs)!, flags: { ...s.flags, homeOrder: st.level } }
 }

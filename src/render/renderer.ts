@@ -10,7 +10,7 @@ import { drawDecor, lanternLights, sheepCount } from './decor'
 import { FIRE, isNear, npcTile } from '../engine/neighbors'
 import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
 import { actsDoorGlows, feastToday } from '../engine/library'
-import { cameraFor, HEIGHT, HOME_DOOR, HOME_RECT, HOUSES, houseAt, LOCKED_DOORS, lockedZones, tileAt, isHome, isIndoor, MAP, PLACES, ROOMS, roomAt, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
+import { ATTIC, cameraFor, currentHomeLevel, HEIGHT, HOME_DOOR, HOME_EXPAND_RECT, homeRect, HOUSES, houseAt, LOCKED_DOORS, lockedZones, tileAt, isHome, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
 import type { Facing, GameContent, Season, Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { avatarKey, withLookDefaults, type FullAvatar } from '../engine/avatar'
@@ -114,8 +114,11 @@ const HOUSE_STYLES: Record<string, HouseStyle> = {
   carpenter: { roof: ['#a58a66', '#7e694c', '#c1a680'], pattern: 'tile', wall: '#f3dbb0', base: '#dbc79a', window: 'square', shutter: '#ae9068', door: '#82684f', timber: '#98795a' },
 }
 const PLAIN_STYLE = HOUSE_STYLES.child
-/** 내 집 앞벽 (한 줄뿐이라 '아래 줄'로 그린다) */
-const HOME_FRONT = { x0: HOME_RECT.x0, x1: HOME_RECT.x1, y1: HOME_RECT.y1, doorX: HOME_DOOR.x }
+/** 내 집 앞벽 (한 줄뿐이라 '아래 줄'로 그린다). 집을 넓히면 오른쪽 끝이 늘어난다 — 창은 그대로 문을 가운데 둔 대칭 */
+function homeFront() {
+  const h = homeRect()
+  return { x0: h.x0, x1: h.x1, y1: h.y1, doorX: HOME_DOOR.x }
+}
 
 /** 앞벽 한 칸: 위 줄은 처마 그림자뿐, 아래 줄에 꽃 상자 달린 창과 문 */
 function houseWallTile(g: Ctx, x: number, y: number, ch: string, id: string, h: { x0: number; x1: number; y1: number; doorX: number }) {
@@ -204,6 +207,12 @@ function houseWallTile(g: Ctx, x: number, y: number, ch: string, id: string, h: 
     r(mix(dc, '#000000', 0.18), 9, 3, 1, 13)
     r('#f1bf6b', 10, 9, 2, 2)
   }
+  if (id === 'home' && !upper && x === HOME_EXPAND_RECT.x0 && h.x1 === HOME_EXPAND_RECT.x1) {
+    // 넓힌 방의 앞벽: 이어 붙인 자리의 기둥과 창 없는 꽃 상자 (창은 문을 가운데 둔 대칭 그대로)
+    r(st.base, 0, 0, 2, 16)
+    r('#ad845d', 4, 8, 10, 3)
+    for (let i = 0; i < 5; i++) r(['#99b67b', '#f1b999', '#99b67b', '#fefdf8', '#99b67b'][i], 4 + i * 2, 6, 2, 2)
+  }
   if (st.awning && !upper && Math.abs(x - h.doorX) <= 1) {
     // 빵집 문 위 줄무늬 차양
     for (let i = 0; i < 4; i++) r(i % 2 ? st.awning[1] : st.awning[0], i * 4, 0, 4, 4)
@@ -233,7 +242,7 @@ function drawGround(g: Ctx, ch: string, x: number, y: number, season: Season) {
     g.fillRect(px, py, TILE, TILE)
     return
   }
-  if ('fbdhskD'.includes(ch) || (y >= VILLAGE_H && ch !== '#')) {
+  if ('fbdhskDH'.includes(ch) || (y >= VILLAGE_H && ch !== '#')) {
     g.fillStyle = C.floor
     g.fillRect(px, py, TILE, TILE)
     g.fillStyle = C.floor2
@@ -273,8 +282,9 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
         houseWallTile(g, x, y, ch, h.id, h)
         break
       }
-      if (y === HOME_RECT.y1 && x >= HOME_RECT.x0 && x <= HOME_RECT.x1) {
-        houseWallTile(g, x, y, ch, 'home', HOME_FRONT)
+      const hr = homeRect()
+      if (y === hr.y1 && x >= hr.x0 && x <= hr.x1) {
+        houseWallTile(g, x, y, ch, 'home', homeFront())
         break
       }
       // 내 집 벽: 크림 회벽과 나무 들보
@@ -446,8 +456,34 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
     case 'D': {
       const h = houseAt(x, y)
       if (h) houseWallTile(g, x, y, ch, h.id, h)
-      else if (y === HOME_RECT.y1) houseWallTile(g, x, y, ch, 'home', HOME_FRONT)
-      else r(C.door, 0, 0, 16, 3)
+      else if (y === homeRect().y1) houseWallTile(g, x, y, ch, 'home', homeFront())
+      else if (sameTile({ x, y }, SIDE_DOOR)) {
+        // 작업실과 새 방 사이 벽에 낸 문: 트인 바닥, 위아래 벽에 닿는 나무 문설주
+        r(C.woodDark, 0, 0, 16, 3)
+        r(C.woodDark, 0, 13, 16, 3)
+      } else r(C.door, 0, 0, 16, 3)
+      break
+    }
+    case 'H':
+      // 다락으로 오르는 사다리: 벽에 기댄 두 기둥과 가로대, 위로 난 어두운 구멍
+      r('#7a6352', 2, 0, 12, 3)
+      r(C.shadow, 3, 13, 11, 3)
+      r(C.woodDark, 3, 0, 2, 15)
+      r(C.woodDark, 11, 0, 2, 15)
+      for (const ry of [3, 7, 11]) r(C.wood, 5, ry, 6, 2)
+      break
+    case 'I': {
+      // 다락 창 (두 칸에 걸친 창 하나 — 가운데 창살): 벽, 나무 창틀, 하늘빛 유리
+      const left = tileAt(x + 1, y) === 'I'
+      r(C.wall, 0, 0, 16, 16)
+      r(C.wallTop, 0, 0, 16, 2)
+      r('#ae9068', left ? 4 : 0, 3, 12, 11)
+      r('#cfe3e8', left ? 6 : 0, 5, 10, 7)
+      r('#e6f0f0', left ? 6 : 2, 5, 4, 3)
+      r('#ae9068', left ? 14 : 0, 5, 2, 7)
+      r('#ae9068', left ? 6 : 0, 8, 10, 2)
+      if (!left) r('#ae9068', 10, 3, 2, 11)
+      r('#d6c194', left ? 3 : 0, 13, 13, 2)
       break
     }
     case 'r':
@@ -601,13 +637,15 @@ function drawRoof(g: Ctx, tx0: number, ty0: number, tx1: number, ty1: number, [c
 
 /** 내 집 지붕: 밖에서는 이웃집처럼 지붕이 덮이고, 들어가면 벗겨져 안이 보인다 */
 function drawHomeRoof(g: Ctx) {
-  const { x0, y0, x1, y1 } = HOME_RECT
+  const { x0, y0, x1, y1 } = homeRect()
   drawRoof(g, x0, y0, x1, y1 - 1, HOUSE_STYLES.home.roof)
 }
 
-const mapCache = new Map<Season, HTMLCanvasElement>()
+/** 계절과 집 단계마다 한 장 (집을 넓히면 그 칸들의 그림이 바뀐다) */
+const mapCache = new Map<string, HTMLCanvasElement>()
 function mapFor(season: Season): HTMLCanvasElement {
-  let c = mapCache.get(season)
+  const cacheKey = `${season}/${currentHomeLevel()}`
+  let c = mapCache.get(cacheKey)
   if (c) return c
   c = document.createElement('canvas')
   c.width = WIDTH * TILE
@@ -615,7 +653,7 @@ function mapFor(season: Season): HTMLCanvasElement {
   const g = c.getContext('2d')!
   for (let y = 0; y < HEIGHT; y++)
     for (let x = 0; x < WIDTH; x++) {
-      const ch = MAP[y][x]
+      const ch = tileAt(x, y)
       drawGround(g, ch, x, y, season)
       drawObject(g, ch, x, y, season)
     }
@@ -623,7 +661,7 @@ function mapFor(season: Season): HTMLCanvasElement {
   for (const h of HOUSES) drawRoof(g, h.x0, h.y0, h.x1, h.y1 - 2, (HOUSE_STYLES[h.id] ?? PLAIN_STYLE).roof)
   // 집 안 가구: 바닥 것 → 큰 것 → 탁자 위 작은 것
   const layerRank = { floor: 0, solid: 1, small: 2 } as const
-  for (const rm of ROOMS)
+  for (const rm of [...ROOMS, ATTIC])
     for (const [dx, dy, item, flip] of [...rm.decor].sort((p, q) => layerRank[FURNITURE_DEFS[p[2]]?.layer ?? 'small'] - layerRank[FURNITURE_DEFS[q[2]]?.layer ?? 'small'])) {
       const a = FURNITURE_ART[item]
       if (!a) continue
@@ -632,7 +670,7 @@ function mapFor(season: Season): HTMLCanvasElement {
       const rows = flip ? mirror(a.rows) : a.rows
       g.drawImage(paint(`furni/${item}/${flip ?? ''}`, rows, FURNI_PALETTE), x * TILE, y * TILE + (MAP[y][x] === 'n' ? -6 : 0))
     }
-  mapCache.set(season, c)
+  mapCache.set(cacheKey, c)
   return c
 }
 
@@ -763,6 +801,29 @@ function animal(kind: 'cat' | 'dog', form: 'adult' | 'baby' | 'curl', facing: Fa
 }
 
 // ── 방의 가구 ──
+
+/** 넓은 책상 (두 칸 폭). 작은 책상 그림을 바닥으로 덮고 그린다. 등잔 자리는 작은 책상과 같게(그을음·불빛이 맞도록) */
+function drawWideDesk(g: Ctx, at: Tile, season: Season) {
+  drawGround(g, 'f', at.x, at.y, season)
+  const px = at.x * TILE
+  const py = at.y * TILE
+  const r = (color: string, dx: number, dy: number, w: number, h: number) => {
+    g.fillStyle = color
+    g.fillRect(px + dx, py + dy, w, h)
+  }
+  r(C.shadow, 1, 12, 30, 3)
+  r(C.woodDark, 2, 11, 2, 4)
+  r(C.woodDark, 28, 11, 2, 4)
+  r(C.wood, 1, 4, 30, 8)
+  r(C.woodDark, 1, 10, 30, 2)
+  // 펼친 종이와 말린 두루마리
+  r(C.paper, 3, 5, 8, 5)
+  r('#d6c194', 4, 6, 6, 2)
+  r(C.paper, 16, 6, 9, 3)
+  r('#e5d3aa', 15, 5, 2, 5)
+  r('#e5d3aa', 24, 5, 2, 5)
+  r(C.lamp, 12, 3, 2, 3)
+}
 
 function furnitureOrder(f: Furniture): number {
   const layer = FURNITURE_DEFS[f.item]?.layer
@@ -1016,6 +1077,8 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         g.fillRect(12 * TILE, 25 * TILE, 8 * TILE, 6 * TILE)
       }
 
+      // 넓은 책상: 책상 자리와 오른쪽 칸(서는 자리 — 늘 비어 있다)에 걸친 두 칸 책상
+      if ((game.inv.wideDesk ?? 0) > 0) drawWideDesk(g, PLACES.desk.tiles[0], season)
       // 선반의 두루마리, 책상의 잉크 자국, 등잔 그을음
       const done = totalChapters(game)
       for (let i = 0; i < Math.min(12, done); i++) {

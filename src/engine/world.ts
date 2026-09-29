@@ -18,10 +18,44 @@ export const HEIGHT = 60
 export const VIEW_W = 16
 export const VIEW_H = 20
 
-/** 주인공의 집 (밖에서는 지붕이 덮이고, 들어가면 안이 보인다) */
+/** 주인공의 집 — 넓히기 전 (밖에서는 지붕이 덮이고, 들어가면 안이 보인다). 지금 크기는 homeRect() */
 export const HOME_RECT = { x0: 2, y0: 2, x1: 10, y1: 7 }
-/** 집을 넓힐 빈 땅 (집 안은 나중에 따로 화면으로 들어가고, 밖에서는 지붕만 이만큼 커진다). 여기엔 아무것도 두지 않는다 */
+/** 집을 넓힐 빈 땅 (1단계 "방 하나 더"에서 집이 된다). 지도에는 아무것도 두지 않는다 */
 export const HOME_EXPAND_RECT = { x0: 11, y0: 2, x1: 12, y1: 7 }
+/** 1단계에서 생기는 새 방의 바닥 (계획 6에서 짝의 방이 된다) */
+export const SIDE_ROOM = { x0: 11, y0: 3, x1: 11, y1: 6 }
+/** 작업실과 새 방 사이 벽에 낸 문 (선반 앞 칸 옆) */
+export const SIDE_DOOR: Tile = { x: 10, y: 4 }
+/** 2단계 "다락 서재": 작업실 선반 옆의 사다리 */
+export const LADDER: Tile = { x: 8, y: 3 }
+
+/**
+ * 집 단계 (0 작업실, 1 방 하나 더, 2 다락 서재). 지도 문자열은 고정이므로 넓힌 칸은 tileAt이 덧씌워 돌려준다.
+ * 게임 상태(homeLevel)와 맞추는 것은 엔진 입구(game.ts의 syncHome)가 한다.
+ */
+let homeLevel = 0
+export function setHomeLevel(level: number): void {
+  homeLevel = level === 1 || level === 2 ? level : 0
+}
+export function currentHomeLevel(): number {
+  return homeLevel
+}
+
+/** 단계별로 덧씌우는 칸 ('x,y' → 글자) */
+const HOME_OVERLAY: readonly ReadonlyMap<string, string>[] = (() => {
+  const one = new Map<string, string>()
+  const { x0, y0, x1, y1 } = HOME_EXPAND_RECT
+  for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) one.set(`${x},${y}`, x === x1 || y === y0 || y === y1 ? '#' : 'f')
+  one.set(`${SIDE_DOOR.x},${SIDE_DOOR.y}`, 'D')
+  const two = new Map(one)
+  two.set(`${LADDER.x},${LADDER.y}`, 'H')
+  return [new Map(), one, two]
+})()
+
+/** 지금 집의 크기 (벽 포함) */
+export function homeRect(level = homeLevel): { x0: number; y0: number; x1: number; y1: number } {
+  return level >= 1 ? { ...HOME_RECT, x1: HOME_EXPAND_RECT.x1 } : HOME_RECT
+}
 
 /** 집 안 방 (이웃집은 벽 포함 10×8, 서고는 13×10). 바깥 문을 밟으면 entry로, 안의 문깔개(exit)를 밟으면 문 앞으로 */
 export const ROOM_W = 10
@@ -101,6 +135,24 @@ export const ROOMS: readonly Room[] = [
   // 서고는 리모델링 전 모습이 좋다 (사용자, 2026-09-29) — 가구 그림을 더하지 않는다
   room('library', 30, 49, { x: 24, y: 5 }, [6, 2], libraryThings, [], LIBRARY_W, LIBRARY_H),
 ]
+
+/**
+ * 다락 서재 (8×6, 지도 아래 보이지 않는 곳 — 할아버지 집 방 오른쪽). 사다리로 올라오고 문깔개로 내려간다.
+ * 위 벽 가운데에 창(I), 책장·독서대는 붙박이. door는 사다리 (밟는 문이 아니라 누르는 곳)
+ */
+export const ATTIC: Room = room(
+  'attic',
+  40,
+  41,
+  LADDER,
+  [3, 2],
+  [[3, 0, 'I'], [4, 0, 'I']],
+  [[1, 1, 'bookcase'], [2, 1, 'bookcase'], [5, 1, 'lectern']],
+  8,
+  6,
+)
+/** 다락 창 (자기 전 읽기를 하는 곳) */
+export const ATTIC_WINDOW: Tile = { x: ATTIC.x0 + 3, y: ATTIC.y0 }
 
 /** 서고 안 잠긴 방 문 (왼쪽 위 → 왼쪽 아래 → 오른쪽 위 → 오른쪽 아래 = life-text의 lockedRooms 순서) */
 export const LOCKED_DOORS: readonly Tile[] = (() => {
@@ -242,8 +294,8 @@ function build(): string[] {
   ])
     set(x, y, 'T')
 
-  // ── 이웃집 안 ──
-  for (const room of ROOMS) {
+  // ── 이웃집 안, 그리고 내 집 다락 (다락은 사다리로만 오르므로 늘 지어 둔다) ──
+  for (const room of [...ROOMS, ATTIC]) {
     const { x0, y0 } = room
     rect(x0, y0, x0 + room.w - 1, y0 + room.h - 1, '#')
     rect(x0 + 1, y0 + 1, x0 + room.w - 2, y0 + room.h - 2, 'f')
@@ -262,9 +314,14 @@ function build(): string[] {
 export const MAP: readonly string[] = build()
 
 // 'l'(텃밭)은 'y'(보리밭)처럼 걸을 수 있다 — 두둑 가운데 안쪽 칸은 사방이 막히면 다가갈 수 없어서 (task-3 적응)
-const BLOCKED = new Set(['_', 'Z', 'n', 'g', 'p', 'W', 'G', 'K', 'T', '#', 'R', 'S', 'u', 'b', 'd', 'h', 's', 'k', 'w', 'B', '~', 'r', 'v', 'o', 'P', 'A', 'O', 'm', 'x', 'q'])
+// 'H'(사다리)는 누르는 곳이라 길찾기가 지나가지 않는다 — 지나가다 다락으로 올라가 버리지 않게. 'I'는 다락 창
+const BLOCKED = new Set(['H', 'I', '_', 'Z', 'n', 'g', 'p', 'W', 'G', 'K', 'T', '#', 'R', 'S', 'u', 'b', 'd', 'h', 's', 'k', 'w', 'B', '~', 'r', 'v', 'o', 'P', 'A', 'O', 'm', 'x', 'q'])
 
 export function tileAt(x: number, y: number): string {
+  if (homeLevel > 0) {
+    const o = HOME_OVERLAY[homeLevel].get(`${x},${y}`)
+    if (o) return o
+  }
   return MAP[y]?.[x] ?? 'T'
 }
 
@@ -329,10 +386,15 @@ export function roomAt(t: Tile): Room | null {
 
 /** 화면을 방 하나로 좁혀 보여 주는 곳: 이웃집·서고 방, 그리고 내 집 안 */
 export function viewRoomAt(t: Tile): { x0: number; y0: number; w: number; h: number } | null {
-  const r = roomAt(t)
+  const r = roomAt(t) ?? (inAttic(t) ? ATTIC : null)
   if (r) return r
-  const { x0, y0, x1, y1 } = HOME_RECT
+  const { x0, y0, x1, y1 } = homeRect()
   return isHome(t) ? { x0, y0, w: x1 - x0 + 1, h: y1 - y0 + 1 } : null
+}
+
+/** 다락 안 (벽 포함) */
+export function inAttic(t: Tile): boolean {
+  return t.x >= ATTIC.x0 && t.x < ATTIC.x0 + ATTIC.w && t.y >= ATTIC.y0 && t.y < ATTIC.y0 + ATTIC.h
 }
 
 /** 문을 밟으면 옮겨 가는 곳: 바깥 문 → 방 안, 방의 문깔개 → 바깥 문 앞 */
@@ -341,11 +403,12 @@ export const WARPS: ReadonlyMap<string, Tile> = new Map(
     [key(r.door), r.entry] as const,
     [key(r.exit), { x: r.door.x, y: r.door.y + 1 }] as const,
   ]),
-)
+).set(key(ATTIC.exit), { x: LADDER.x, y: LADDER.y + 1 }) // 다락 문깔개 → 사다리 앞
 
 /** 기록자의 집 안인가 */
 export function isHome(t: Tile): boolean {
-  return t.x >= 3 && t.x <= 9 && t.y >= 3 && t.y <= 7 && isIndoor(t)
+  const { x0, x1, y0, y1 } = homeRect()
+  return ((t.x > x0 && t.x < x1 && t.y > y0 && t.y <= y1) || (homeLevel >= 2 && inAttic(t))) && isIndoor(t)
 }
 
 /** 상호작용하는 곳. stand가 없으면 눌린 칸 옆으로 간다 */
@@ -384,10 +447,18 @@ export const PLACES: Record<PlaceId, Place> = {
   library: { tiles: [{ x: 35, y: 50 }, { x: 36, y: 50 }, { x: 37, y: 50 }], stand: { x: 36, y: 51 } },
   basket: { tiles: [{ x: 7, y: 8 }], stand: { x: 6, y: 8 } },
   garden: { tiles: tilesOf('l') },
+  // 다락 서재 (2단계): 선반 옆 사다리, 다락 창가
+  ladder: { tiles: [LADDER], stand: { x: LADDER.x, y: LADDER.y + 1 } },
+  atticWindow: { tiles: [ATTIC_WINDOW, { x: ATTIC_WINDOW.x + 1, y: ATTIC_WINDOW.y }], stand: { x: ATTIC_WINDOW.x, y: ATTIC_WINDOW.y + 1 } },
+}
+
+/** 이 장소가 지금 있는가 (다락 서재는 2단계부터) */
+export function placeActive(id: PlaceId): boolean {
+  return (id !== 'ladder' && id !== 'atticWindow') || homeLevel >= 2
 }
 
 export function placeAt(t: Tile): PlaceId | null {
-  for (const [id, p] of Object.entries(PLACES) as [PlaceId, Place][]) if (p.tiles.some((pt) => sameTile(pt, t))) return id
+  for (const [id, p] of Object.entries(PLACES) as [PlaceId, Place][]) if (placeActive(id) && p.tiles.some((pt) => sameTile(pt, t))) return id
   return null
 }
 

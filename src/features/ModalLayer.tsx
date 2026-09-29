@@ -42,7 +42,7 @@ function Body() {
     case 'desk':
       return <Desk result={modal.result} dark={modal.dark} />
     case 'review':
-      return <Review pieceId={modal.pieceId} />
+      return <Review pieceId={modal.pieceId} attic={modal.attic} />
     case 'journal':
       return <Journal />
     case 'scene':

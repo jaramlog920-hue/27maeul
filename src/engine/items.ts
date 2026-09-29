@@ -4,7 +4,7 @@ import type { ItemId } from './types'
 export type Inventory = Partial<Record<ItemId, number>>
 export const MAX_STACK = 9
 
-export const TOOLS: readonly ItemId[] = ['goodPen', 'brightLamp']
+export const TOOLS: readonly ItemId[] = ['goodPen', 'brightLamp', 'wideDesk']
 /** 먹을 수 있는 것과 배고픔을 덜어 주는 정도 (좋은 것부터) */
 export const FOODS: readonly [ItemId, number][] = [
   ['bread', 50],

@@ -5,7 +5,7 @@ import { LATE } from '../../engine/clock'
 import { useGame } from '../../store/game-store'
 import { Passage } from '../passage/Passage'
 
-export function Review({ pieceId }: { pieceId: string | null }) {
+export function Review({ pieceId, attic }: { pieceId: string | null; attic?: boolean }) {
   const minute = useGame((s) => s.game.clock.minute)
   const { sleep, closeModal } = useGame.getState()
   const piece = pieceId ? pieceById(pieceId) : null
@@ -21,6 +21,7 @@ export function Review({ pieceId }: { pieceId: string | null }) {
       ) : (
         <p>{T.ui.reviewNone}</p>
       )}
+      {attic && piece && <p className="hint">{T.ui.atticReadHint}</p>}
       {minute >= LATE && <p className="hint">{T.ui.sleepLate}</p>}
       <div className="actions">
         <button onClick={closeModal}>{T.ui.stayUp}</button>

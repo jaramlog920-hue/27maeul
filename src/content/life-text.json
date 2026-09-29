@@ -262,7 +262,14 @@
     "gardenGrowing": "{crop} · {n}/{all}일",
     "gardenHarvest": "거두기",
     "gardenWinter": "겨울엔 텃밭이 쉬어요.",
-    "gardenNoSeed": "씨앗은 장날 상인에게 닢으로 살 수 있어요."
+    "gardenNoSeed": "씨앗은 장날 상인에게 닢으로 살 수 있어요.",
+    "homeStage1": "방 하나 더 부탁하기",
+    "homeStage2": "다락 서재 부탁하기",
+    "homeCost": "드는 것: {coins}닢 · {items}",
+    "homeOrdered": "내일 아침까지 지어 둘게요.",
+    "homeWaiting": "부탁한 일은 내일 아침이면 끝나요.",
+    "atticRoom": "다락 서재",
+    "atticReadHint": "다락 창가에서 읽고 잠들면 평안이 하루 더 갑니다."
   },
   "items": {
     "water": {
@@ -348,6 +355,10 @@
     "brightLamp": {
       "name": "밝은 등잔",
       "desc": "기름 하나로 두 밤을 밝힌다."
+    },
+    "wideDesk": {
+      "name": "넓은 책상",
+      "desc": "두루마리를 넉넉히 펼쳐 놓는 책상. 한 장을 엮는 시간이 줄어든다."
     },
     "table": {
       "name": "식탁",
@@ -538,7 +549,8 @@
     "seedHerb": "향초 씨앗 2",
     "seedBean": "콩 씨앗 2",
     "goodPenCoins": "좋은 펜",
-    "brightLamp": "밝은 등잔"
+    "brightLamp": "밝은 등잔",
+    "wideDesk": "넓은 책상"
   },
   "letters": {
     "title": "편지 바구니",
@@ -2589,6 +2601,34 @@
         }
       ],
       "album": "목수와 나눈 날들"
+    },
+    "home:1": {
+      "title": "방 하나 더",
+      "lines": [
+        {
+          "speaker": "carpenter",
+          "text": "작업실 벽에 문을 내고 옆에 방을 하나 붙였어요."
+        },
+        {
+          "speaker": "carpenter",
+          "text": "좁아도 아늑해요. 마음대로 꾸며 보세요."
+        }
+      ],
+      "album": "방 하나 더 생긴 날"
+    },
+    "home:2": {
+      "title": "다락 서재",
+      "lines": [
+        {
+          "speaker": "carpenter",
+          "text": "선반 옆에 사다리를 놓았어요. 지붕 밑에 작은 서재가 있어요."
+        },
+        {
+          "speaker": "narration",
+          "text": "다락 창으로 마을 지붕들이 내려다보인다."
+        }
+      ],
+      "album": "다락 서재가 생긴 날"
     }
   },
   "journal": {
@@ -2644,7 +2684,9 @@
       "done:presser:1": " 이웃의 부탁을 들어주었다.",
       "done:presser:2": " 이웃의 부탁을 들어주었다.",
       "done:weaver:1": " 이웃의 부탁을 들어주었다.",
-      "done:beekeeper:1": " 이웃의 부탁을 들어주었다."
+      "done:beekeeper:1": " 이웃의 부탁을 들어주었다.",
+      "home:1": " 집에 방이 하나 더 생겼다.",
+      "home:2": " 다락 서재가 생겼다."
     }
   },
   "quiz": {

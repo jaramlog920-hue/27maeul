@@ -1,4 +1,4 @@
-import { MAP, WIDTH, HEIGHT, PLACES, HOUSES, START, isWalkable, placeAt, cameraFor, VIEW_W, VIEW_H, VILLAGE_H, isHome, tileAt, ROOMS, WARPS, roomAt, key, ROOM_W, ROOM_H, LOCKED_DOORS } from './world'
+import { MAP, WIDTH, HEIGHT, PLACES, HOUSES, START, isWalkable, placeAt, cameraFor, VIEW_W, VIEW_H, VILLAGE_H, isHome, tileAt, ROOMS, WARPS, roomAt, key, ROOM_W, ROOM_H, LOCKED_DOORS, ATTIC, inAttic } from './world'
 import { findPath, pathToward, stepActor, type Actor } from './movement'
 
 const adjacent = (a: { x: number; y: number }, b: { x: number; y: number }) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y) === 1
@@ -25,8 +25,8 @@ describe('world', () => {
   it('모든 장소는 시작 칸에서 닿을 수 있다', () => {
     for (const [id, p] of Object.entries(PLACES)) {
       const t = p.tiles[0]
-      // 방 안의 장소는 그 방에 들어온 자리에서 걷는다
-      const from = roomAt(t)?.entry ?? START
+      // 방 안의 장소는 그 방에 들어온 자리에서 걷는다 (다락 창은 다락 문깔개 앞에서)
+      const from = roomAt(t)?.entry ?? (inAttic(t) ? ATTIC.entry : START)
       const path = p.stand ? findPath(from, p.stand) : pathToward(from, t)
       expect(path, id).not.toBeNull()
     }

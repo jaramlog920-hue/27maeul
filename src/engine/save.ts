@@ -2,8 +2,8 @@
 import { IDLE_RESET } from './autonomy'
 import { bookDone, emptyProgress, type Progress } from './books'
 import { newGame, settle, type GameState } from './game'
-import { placement, type Furniture } from './room'
-import { addGift } from './items'
+import { refitRoom } from './room'
+import { setHomeLevel } from './world'
 import { BOOKS, type Book, type GameContent } from './types'
 
 export const SAVE_KEY = 'twenty-seven/save'
@@ -61,17 +61,18 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   // 조각 키(옛 저장 그대로)와 책 키('book:mk')만 남긴다
   const bookKeys = new Set(BOOKS.map((b) => `book:${b}`))
   const myLines = Object.fromEntries(Object.entries(isObj(s.myLines) ? s.myLines : {}).filter(([id, t]) => (known.has(id) || bookKeys.has(id)) && typeof t === 'string'))
+  // 집 단계 (옛 저장은 0 — 넓히기 전). 부탁해 둔 단계는 바로 다음 단계일 때만 남긴다
+  const homeLevel = s.homeLevel === 1 || s.homeLevel === 2 ? s.homeLevel : 0
+  setHomeLevel(homeLevel)
+  const flags = { ...s.flags }
+  if (flags.homeOrder !== undefined && flags.homeOrder !== homeLevel + 1) delete flags.homeOrder
   // 가구 규칙이 바뀐 뒤의 저장: 지금 규칙으로 놓을 수 없는 것은 가방으로 (길이 막히지 않게)
-  const room: Furniture[] = []
-  let inv = s.inv
-  for (const f of s.room ?? []) {
-    const ok = placement(room, f.item, f)
-    if (ok && ok.x === f.x && ok.y === f.y && !!ok.on === !!f.on) room.push(ok)
-    else inv = addGift(inv, { [f.item]: 1 })
-  }
+  const { room, inv } = refitRoom(s.room ?? [], s.inv)
   const activeBook = s.activeBook && content.pieces.some((p) => p.book === s.activeBook) ? s.activeBook : null
   return {
     ...s,
+    homeLevel,
+    flags,
     room,
     inv,
     needs: { ...s.needs, heat: s.needs?.heat ?? 0 },

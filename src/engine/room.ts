@@ -3,9 +3,10 @@
 //   solid  길을 막는 것(식탁·협탁·의자) — 놓은 뒤에도 집 안 모든 자리에 갈 수 있어야 한다
 //   small  작은 물건 — 탁자 위(한 칸에 하나) 또는 빈 바닥
 import { findPath } from './movement'
-import { BED_STAND, HOME_DOOR, isHome, key, PLACES, sameTile, tileAt } from './world'
+import { ATTIC, BED_STAND, currentHomeLevel, HOME_DOOR, inAttic, isHome, key, PLACES, placeActive, sameTile, SIDE_DOOR, tileAt, type Place } from './world'
 import { LESSON_SPOT } from './stories'
-import type { ItemId, Tile } from './types'
+import { addGift, type Inventory } from './items'
+import type { ItemId, PlaceId, Tile } from './types'
 
 import { FURNITURE_DEFS, type FurnitureDef, type Layer } from './furniture-defs'
 
@@ -30,9 +31,17 @@ export function footprint(f: Pick<Furniture, 'item' | 'x' | 'y'>): Tile[] {
 
 const layerOf = (f: Furniture): Layer => FURNITURE_DEFS[f.item]?.layer ?? 'small'
 
-/** 집 안에서 늘 비워 둬야 하는 칸: 물건 앞 서는 자리, 문, 아이가 글자를 배우러 오는 자리 */
+/**
+ * 집 안에서 늘 비워 둬야 하는 칸: 물건 앞 서는 자리, 문, 아이가 글자를 배우러 오는 자리.
+ * 넓힌 집: 새 방으로 드는 문과 그 안쪽 칸, 다락 문깔개 앞 (사다리·다락 창 앞은 PLACES의 서는 자리)
+ */
 function keepClear(): Tile[] {
-  return [...Object.values(PLACES).flatMap((p) => (p.stand ? [p.stand] : [])), HOME_DOOR, LESSON_SPOT]
+  const stands = (Object.entries(PLACES) as [PlaceId, Place][]).flatMap(([id, p]) => (p.stand && placeActive(id) ? [p.stand] : []))
+  const out = [...stands, HOME_DOOR, LESSON_SPOT]
+  const level = currentHomeLevel()
+  if (level >= 1) out.push(SIDE_DOOR, { x: SIDE_DOOR.x + 1, y: SIDE_DOOR.y })
+  if (level >= 2) out.push(ATTIC.entry)
+  return out
 }
 
 /** 길을 막는 가구가 차지한 칸 */
@@ -73,9 +82,9 @@ export function placement(room: readonly Furniture[], item: ItemId, t: Tile): Fu
   if (tiles.some((p) => clear.some((c) => sameTile(c, p)))) return null
   if (tiles.some((p) => room.some((o) => layerOf(o) !== 'floor' && !o.on && footprint(o).some((q) => sameTile(p, q))))) return null
   const blockers = solidTiles([...room, f])
-  // 놓은 뒤에도 문에서 집 안 모든 자리에 갈 수 있어야 한다
-  const reach = keepClear().filter((c) => !sameTile(c, HOME_DOOR) && isHome(c))
-  for (const c of reach) if (findPath(HOME_DOOR, c, blockers) === null) return null
+  // 놓은 뒤에도 문에서 집 안 모든 자리에 갈 수 있어야 한다 (다락은 다락 문깔개 앞에서)
+  const reach = keepClear().filter((c) => !sameTile(c, HOME_DOOR) && !sameTile(c, ATTIC.entry) && isHome(c))
+  for (const c of reach) if (findPath(inAttic(c) ? ATTIC.entry : HOME_DOOR, c, blockers) === null) return null
   if (findPath(HOME_DOOR, BED_STAND, blockers) === null) return null
   return f
 }
@@ -89,4 +98,16 @@ export function removal(room: readonly Furniture[], t: Tile): Furniture[] {
   if (!FURNITURE_DEFS[under.item]?.surface) return [under]
   const tiles = footprint(under)
   return [under, ...room.filter((f) => f.on && tiles.some((p) => sameTile(p, f)))]
+}
+
+/** 지금 집 모양에 맞지 않는 가구는 가방으로 돌려보낸다 (집을 넓혔을 때·옛 저장) */
+export function refitRoom(room: readonly Furniture[], inv: Inventory): { room: Furniture[]; inv: Inventory } {
+  const kept: Furniture[] = []
+  let bag = inv
+  for (const f of room) {
+    const ok = placement(kept, f.item, f)
+    if (ok && ok.x === f.x && ok.y === f.y && !!ok.on === !!f.on) kept.push(ok)
+    else bag = addGift(bag, { [f.item]: 1 })
+  }
+  return { room: kept, inv: bag }
 }

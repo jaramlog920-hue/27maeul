@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { fill, itemList, itemName, T } from '../../content/text'
-import { canSell, SELL_PRICES, tradesFor, wouldOverflow } from '../../engine/game'
+import { canSell, ownsTradeTool, SELL_PRICES, tradesFor, wouldOverflow } from '../../engine/game'
 import { jobOf, SELL_FROM } from '../../engine/job'
 import { has, take } from '../../engine/items'
 import type { ItemId } from '../../engine/types'
@@ -28,16 +28,15 @@ export function TradeBoard() {
       {tab === 'buy' && (
         <ul className="trade-list">
           {tradesFor(flags).map((t) => {
-            const owned = t.get.goodPen !== undefined && (inv.goodPen ?? 0) > 0
-            const ownedLamp = t.get.brightLamp !== undefined && (inv.brightLamp ?? 0) > 0
+            const owned = ownsTradeTool(inv, t)
             const paid = take(inv, t.pay)
             const full = !!paid && wouldOverflow(paid, t.get)
             return (
               <li key={t.id}>
                 <span className="trade-get">{names[t.id]}</span>
                 <span className="trade-pay">{t.coins !== undefined ? fill(T.ui.coins, { n: t.coins }) : itemList(t.pay)}</span>
-                <button disabled={owned || ownedLamp || full || !has(inv, t.pay) || (t.coins !== undefined && coins < t.coins)} onClick={() => doTrade(t)}>
-                  {owned || ownedLamp ? T.ui.tradeOwned : full ? T.ui.bagFullShort : T.ui.talkTrade}
+                <button disabled={owned || full || !has(inv, t.pay) || (t.coins !== undefined && coins < t.coins)} onClick={() => doTrade(t)}>
+                  {owned ? T.ui.tradeOwned : full ? T.ui.bagFullShort : T.ui.talkTrade}
                 </button>
               </li>
             )
