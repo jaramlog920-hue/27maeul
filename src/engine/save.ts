@@ -85,7 +85,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
         ([b, g]) => (BOOKS as readonly string[]).includes(b) && (g === 0 || g === 1 || g === 2) && bookDone({ progress }, b as Book, content),
       ),
     ),
-    // 텃밭은 집 앞(1~4, 8~9)에서 집 오른쪽 위(14~17, 3~4)로 옮겼다 — 옛 저장의 작물도 같은 자리 순서로 옮긴다
+    // 텃밭은 집 앞(1~4, 8~9)에서 집 오른쪽 위(14~17, 3~5)로 옮겼다 — 옛 저장의 작물도 같은 자리 순서로 옮긴다
     garden: Object.fromEntries(
       Object.entries(s.garden ?? {}).map(([k, v]) => {
         const [x, y] = k.split(',').map(Number)

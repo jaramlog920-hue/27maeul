@@ -10,8 +10,8 @@ const withSeeds = (): GameState => {
 }
 
 describe('텃밭', () => {
-  it('여덟 칸', () => {
-    expect(GARDEN_TILES).toHaveLength(8)
+  it('열두 칸', () => {
+    expect(GARDEN_TILES).toHaveLength(12)
   })
   it('씨앗이 있어야 심고, 한 칸에 하나, 겨울엔 못 심는다', () => {
     const s = withSeeds()

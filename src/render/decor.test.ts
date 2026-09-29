@@ -4,7 +4,7 @@ import { GARDEN_TILES } from '../engine/garden'
 import { TILE } from '../engine/world'
 import { drawDecor, LANTERNS } from './decor'
 
-// 텃밭(14~17, 3~4) 위에 꽃·등불 기둥이 겹쳐 그려지지 않는지 확인한다
+// 텃밭(14~17, 3~5) 위에 꽃·등불 기둥이 겹쳐 그려지지 않는지 확인한다
 class FakeCtx {
   calls: { x: number; y: number }[] = []
   fillStyle = ''
