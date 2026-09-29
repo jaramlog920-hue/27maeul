@@ -39,6 +39,7 @@ import { actsRoomOpen, bookDone, bookRoomOpen, emptyProgress, roomOpen, totalCha
 import { modeOf, SHELF_ROOMS } from './shelf-rooms'
 import { currentChapter, offersForDay } from './offers'
 import { POSTMAN, postForDay } from './post'
+import { blanksFor } from './copy'
 import { checkArrangement, moveItem, type ArrangeResult } from './scroll'
 import { cardsForChapters, journeyComplete, placeNewCards } from './journey'
 import { growGarden, type Plot } from './garden'
@@ -1073,6 +1074,51 @@ export function submitChapter(s: GameState, book: Book, chapter: number, content
   const bound = passTime({ ...s, inv: left, progress, scenes, needs: work(s.needs, 6) }, bindMinutes(s))
   // 사도행전 장을 엮으면 그 장에 나오는 곳 카드가 여정 판에 들어온다
   return { state: book === 'ac' ? syncJourney(bound, content) : bound, result }
+}
+
+// ── 편지 옮겨 적기 (계획 7 작업 3) ──
+
+export type LetterReady =
+  | { kind: 'ready' }
+  | { kind: 'recorded' }
+  | { kind: 'notReceived' }
+  | { kind: 'order' }
+  | { kind: 'tired' }
+  | { kind: 'supplies'; need: Partial<Record<ItemId, number>> }
+
+/**
+ * 편지 한 장을 옮겨 적을 준비가 되었는가 (책상 화면용 — 아무것도 쓰지 않는다):
+ * 이미 적은 장, 받지 않은 장(편지 나르는 이웃), 앞 장부터 차례대로, 몸(피로), 재료(조각 장과 같은 CHAPTER_COST)
+ */
+export function letterReady(s: GameState, book: Book, chapter: number, content: GameContent): LetterReady | null {
+  if (modeOf(book) !== 'letters') return null
+  const pieces = content.pieces.filter((p) => p.book === book)
+  const piece = pieces.find((p) => p.chapter === chapter)
+  if (!piece) return null
+  const bp = s.progress[book]
+  if (bp.completed.includes(chapter)) return { kind: 'recorded' }
+  if (!s.collected.includes(piece.id)) return { kind: 'notReceived' }
+  if (currentChapter(pieces, bp.completed) !== chapter) return { kind: 'order' }
+  if (exhausted(s.needs)) return { kind: 'tired' }
+  if (!has(s.inv, CHAPTER_COST)) return { kind: 'supplies', need: CHAPTER_COST }
+  return { kind: 'ready' }
+}
+
+/**
+ * 빈칸을 채워 편지 한 장을 옮겨 적는다: 준비가 되었고(letterReady) picks가 blanksFor의 답과 모두 같을 때만.
+ * 재료·피로·걸리는 시간은 조각 장과 같다. 장 기록 퀴즈는 없다 (옮겨 적기가 그 장을 익히는 일).
+ * 첫 장이면 'firstChapter', 한 권의 마지막 장이면 'bookBound' 장면. 아니면 그대로 돌려준다
+ */
+export function recordLetter(s: GameState, book: Book, chapter: number, picks: readonly string[], content: GameContent): GameState {
+  if (letterReady(s, book, chapter, content)?.kind !== 'ready' || !content.copy) return s
+  const blanks = blanksFor(book, chapter, content.copy(book))
+  if (!blanks.length || picks.length !== blanks.length || blanks.some((b, i) => picks[i] !== b.answer)) return s
+  const bp = s.progress[book]
+  const progress = { ...s.progress, [book]: { ...bp, completed: [...bp.completed, chapter] } }
+  const scenes = [...s.scenes]
+  if (totalChapters(s) === 0) scenes.push('firstChapter')
+  if (bookDone({ progress }, book, content)) scenes.push('bookBound')
+  return passTime({ ...s, inv: take(s.inv, CHAPTER_COST)!, progress, scenes, needs: work(s.needs, 6) }, bindMinutes(s))
 }
 
 // ── 사도행전 방의 여정 판 (계획 5 작업 5) ──

@@ -1,4 +1,5 @@
 import type { JourneyCard } from './journey'
+import type { CopySource } from './copy'
 
 export interface Tile {
   x: number
@@ -165,6 +166,8 @@ export interface GameContent {
   neighbors: NeighborDef[]
   /** 사도행전 여정 카드 (본문 순서). 없으면 여정 판이 비어 있다 */
   journey?: JourneyCard[]
+  /** 편지 옮겨 적기의 본문 (책마다, 계획 7). 없으면 편지를 기록할 수 없다 */
+  copy?: (book: Book) => CopySource
 }
 /** 0 이상 1 미만의 난수를 돌려준다. 테스트에서는 고정값을 주입한다 */
 export type Rng = () => number

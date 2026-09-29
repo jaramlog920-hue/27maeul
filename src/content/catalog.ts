@@ -10,6 +10,7 @@ import { BOOKS, LETTERS, type Book, type GameContent, type NeighborDef, type Pie
 import { bibleIdOf } from '../engine/shelf-rooms'
 import type { Question, QuizSource } from '../engine/quiz'
 import type { JourneyCard } from '../engine/journey'
+import type { CopySource } from '../engine/copy'
 
 const bible = raw as Record<string, string[][]>
 const byAbbr = Object.fromEntries(books.map((b) => [b.abbr, b.id]))
@@ -48,7 +49,7 @@ export const PIECES = ALL_PIECES
 export const NEIGHBORS = neighborsRaw as unknown as NeighborDef[]
 /** 사도행전 여정 카드 — 본문 순서 (scripts/journey/ac.txt, verify-journey가 본문과 대조) */
 export const JOURNEY = journeyRaw as JourneyCard[]
-export const CONTENT: GameContent = { pieces: PIECES, neighbors: NEIGHBORS, journey: JOURNEY }
+export const CONTENT: GameContent = { pieces: PIECES, neighbors: NEIGHBORS, journey: JOURNEY, copy: (b) => copySourceFor(b) }
 
 export interface Verse {
   chapter: number
@@ -140,6 +141,17 @@ export function quizSourceFor(books: readonly Book[]): QuizSource {
     },
     countVerse: (text) => books.reduce((n, b) => n + (verseCounts.get(b)?.get(quizKey(text)) ?? 0), 0),
   }
+}
+
+/** 편지 옮겨 적기가 읽는 본문 (계획 7 작업 3): 그 책 안에서만 — 장 참조·절·같은 문장 세기. 책마다 하나 (빈칸 기억이 이것에 붙는다) */
+const copySources = new Map<Book, CopySource>()
+export function copySourceFor(book: Book): CopySource {
+  let src = copySources.get(book)
+  if (!src) {
+    src = { ...quizSourceFor([book]), chapters: piecesOf(book).map((p) => ({ chapter: p.chapter, ref: p.ref })) }
+    copySources.set(book, src)
+  }
+  return src
 }
 
 const verseToPiece = new Map<string, Piece>()
