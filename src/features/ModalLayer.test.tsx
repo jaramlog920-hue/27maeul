@@ -8,6 +8,7 @@ import { chooseBook, newGame, type GameState } from '../engine/game'
 import { mulberry32 } from '../engine/offers'
 import { LOCKED_DOORS, PLACES } from '../engine/world'
 import { useGame } from '../store/game-store'
+import { saveGame } from '../engine/save'
 import { ModalLayer } from './ModalLayer'
 import { NextEventBar, useEventAlerts } from './play/EventSchedule'
 import { journalLine } from './journal/Journal'
@@ -686,5 +687,28 @@ describe('화면 크기 (설정)', () => {
     expect(useGame.getState().zoom).toBe(1.5)
     expect(localStorage.getItem('twenty-seven-zoom')).toBe('1.5')
     expect(screen.getByRole('button', { name: '150%' })).toHaveAttribute('aria-pressed', 'true')
+  })
+})
+
+describe('기록 초기화 (설정)', () => {
+  it('한 번 더 묻고, 취소하면 그대로 두고, 확인하면 저장과 일지 그림만 지운다', async () => {
+    localStorage.clear()
+    localStorage.setItem('twenty-seven/save', '{"version":1}')
+    localStorage.setItem('twenty-seven/album/x', 'data')
+    localStorage.setItem('twenty-seven-zoom', '1.5')
+    const user = userEvent.setup()
+    useGame.setState({ modal: { kind: 'settings' } })
+    render(<ModalLayer />)
+    await user.click(screen.getByRole('button', { name: '처음부터' }))
+    await user.click(screen.getByRole('button', { name: '취소' }))
+    expect(localStorage.getItem('twenty-seven/save')).not.toBeNull()
+    await user.click(screen.getByRole('button', { name: '처음부터' }))
+    await user.click(screen.getByRole('button', { name: '모두 지우기' }))
+    expect(localStorage.getItem('twenty-seven/save')).toBeNull()
+    expect(localStorage.getItem('twenty-seven/album/x')).toBeNull()
+    expect(localStorage.getItem('twenty-seven-zoom')).toBe('1.5')
+    // 새로고침 직전 창 닫힘 저장이 와도 옛 기록이 되살아나지 않는다
+    saveGame(useGame.getState().game)
+    expect(localStorage.getItem('twenty-seven/save')).toBeNull()
   })
 })

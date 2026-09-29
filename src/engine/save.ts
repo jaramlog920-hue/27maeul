@@ -133,7 +133,11 @@ export function deserialize(raw: string | null, content: GameContent): GameState
   }
 }
 
+/** 초기화한 뒤 새로고침되는 사이에 창 닫힘 저장이 옛 기록을 되살리지 않게 막는다 */
+let erased = false
+
 export function saveGame(s: GameState, store: Storage | null | undefined = storage()): boolean {
+  if (erased) return true
   try {
     if (!store) return false
     store.setItem(SAVE_KEY, serialize(s))
@@ -148,5 +152,21 @@ export function loadGame(content: GameContent, store: Storage | null | undefined
     return deserialize(store?.getItem(SAVE_KEY) ?? null, content)
   } catch {
     return null
+  }
+}
+
+/** 기록 초기화: 저장된 날들과 일지 그림을 지운다 (소리·화면 크기 같은 설정은 남긴다) */
+export function eraseSave(store: Storage | null | undefined = storage()): void {
+  erased = true
+  try {
+    if (!store) return
+    const keys: string[] = []
+    for (let i = 0; i < store.length; i++) {
+      const k = store.key(i)
+      if (k === SAVE_KEY || k?.startsWith('twenty-seven/album/')) keys.push(k)
+    }
+    for (const k of keys) store.removeItem(k)
+  } catch {
+    /* 저장소를 못 쓰는 환경 */
   }
 }
