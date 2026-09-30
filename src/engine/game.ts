@@ -810,11 +810,45 @@ export function eventWaiting(s: GameState, npc: string): PersonEvent | null {
   return e && near(npcTile(n), e.at, 1) ? e : null
 }
 
+/** 그 자리에서 벌어지는 목격 장면 — 곁을 지나가기만 해서는 열리지 않고, 말을 걸면 열린다 */
+export function sightingWaiting(s: GameState, npc: string) {
+  const n = s.npcs[npc]
+  const w = n?.visible ? sightingNow(s, npc) : undefined
+  return w && near(npcTile(n), w.at, 1) ? w : null
+}
+
+/** 그 자리에서 흘리는 혼잣말 (하루 한 번) — 말을 걸면 첫마디로 듣는다 */
+export function mutterWaiting(s: GameState, npc: string): string | null {
+  const n = s.npcs[npc]
+  if (!n?.visible) return null
+  const life = s.life ?? NO_LIFE
+  if (life.mutterDay === s.clock.day && life.muttered.includes(npc)) return null
+  const r = routineOf(s, npc)
+  if (!r?.mutter?.length || !near(npcTile(n), r.at, 0)) return null
+  return r.mutter[Math.floor((((s.clock.day * 7 + npc.length) % 97) / 97) * r.mutter.length)]
+}
+
+/** 혼잣말을 들은 것으로 적는다 */
+export function hearMutter(s: GameState, npc: string, text: string): GameState {
+  let life = s.life ?? NO_LIFE
+  if (life.mutterDay !== s.clock.day) life = { ...life, mutterDay: s.clock.day, muttered: [] }
+  return { ...s, life: { ...life, muttered: [...life.muttered, npc], heard: { npc, text } } }
+}
+
+/** 말을 걸면 열릴 이야기(이벤트·목격)가 있는지 — 머리 위 말풍선과 대화하기 단추 표시용 */
+export function storyWaiting(s: GameState, npc: string): boolean {
+  return !!eventWaiting(s, npc) || !!sightingWaiting(s, npc)
+}
+
 /** 말을 걸었을 때 기다리던 이야기가 열린다 (계획 6b 이벤트 — 가까이 가기만 해서는 열리지 않는다) */
 export function openEvent(s: GameState, npc: string): GameState | null {
   const e = eventWaiting(s, npc)
-  if (!e) return null
   const life = s.life ?? NO_LIFE
+  if (!e) {
+    const w = sightingWaiting(s, npc)
+    if (!w) return null
+    return { ...s, life: remember({ ...life, seen: [...life.seen, w.id] }, npc, w.memory, s), scenes: [...s.scenes, `saw:${w.id}`] }
+  }
   let next: GameState = { ...s, life: { ...life, seen: [...life.seen, e.id] }, scenes: [...s.scenes, `ev:${e.id}`] }
   if (e.gain) next = heartUp(next, npc, e.gain)
   if (e.cool) next = { ...next, life: { ...next.life, cool: { ...next.life.cool, [npc]: s.clock.day + e.cool } } }
@@ -939,7 +973,6 @@ function personSpot(s: GoalState, npc: string): Tile | null {
 }
 
 const near = (a: Tile, b: Tile, d: number) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y) <= d
-const sameArea = (a: Tile, b: Tile) => roomAt(a) === roomAt(b) && isHome(a) === isHome(b)
 
 function remember(life: Life, npc: string, tag: string, s: Pick<GameState, 'clock'>): Life {
   if (hasMemory(life, npc, tag)) return life
@@ -948,30 +981,13 @@ function remember(life: Life, npc: string, tag: string, s: Pick<GameState, 'cloc
 }
 
 /**
- * 가까이 있는 사람들의 삶: 이벤트(그 사람이 그 자리에 와 있고 플레이어가 곁에 오면), 목격(모르는 사이에 보게 되는 장면),
- * 혼잣말(가까이 지나가면 하루 한 번), 약속(그 시각 그 자리에 오면 지킨 것)
+ * 가까이 있는 사람들의 삶: 약속(그 시각 그 자리에 오면 지킨 것).
+ * 이벤트·목격 장면·혼잣말은 곁을 지나가기만 해서는 열리지 않는다 — 대화하기 단추로 (openEvent·mutterWaiting)
  */
 function liveNearby(s: GameState, now: Tile, events: GameEvent[]): GameState {
   let life = s.life ?? NO_LIFE
   let next = s
   if (life.mutterDay !== s.clock.day) life = { ...life, mutterDay: s.clock.day, muttered: [] }
-  for (const [id, n] of Object.entries(s.npcs)) {
-    if (!n.visible) continue
-    const at = npcTile(n)
-    if (!sameArea(at, now)) continue
-    const w = sightingNow({ ...s, life }, id)
-    if (w && near(at, w.at, 1) && near(now, w.at, 4)) {
-      life = remember({ ...life, seen: [...life.seen, w.id] }, id, w.memory, s)
-      events.push({ type: 'moment', id: `saw:${w.id}` })
-      return { ...next, life, scenes: [...next.scenes, `saw:${w.id}`] }
-    }
-    const r = routineOf({ ...s, life }, id)
-    // 무언가 하러 가는 길(target)에는 혼잣말을 흘려듣는다 — 도착 알림이 먼저
-    if (r?.mutter?.length && !s.target && near(at, r.at, 0) && near(now, at, 2) && !life.muttered.includes(id)) {
-      const text = r.mutter[Math.floor((((s.clock.day * 7 + id.length) % 97) / 97) * r.mutter.length)]
-      life = { ...life, muttered: [...life.muttered, id], heard: { npc: id, text } }
-    }
-  }
   // 약속: 그날 그 시각 그 자리에 오면 지킨 것
   const kept = life.promises.find((p) => p.day === s.clock.day && s.clock.minute >= p.from && s.clock.minute < p.to && near(now, p.at, 2))
   if (kept) {

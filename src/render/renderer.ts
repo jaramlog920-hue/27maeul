@@ -4,7 +4,7 @@ import { darkness, phaseOf, seasonOf } from '../engine/clock'
 import { isGrown, STRAY_SPOTS, EAVES } from '../engine/companion'
 import { totalChapters } from '../engine/books'
 import { shelfRoom } from '../engine/shelf-rooms'
-import { childAtSchool, eventWaiting, routineOf, SCHOOL_SEAT, shelvedCount, straysToday, weddingToday, type GameState } from '../engine/game'
+import { childAtSchool, storyWaiting, routineOf, SCHOOL_SEAT, shelvedCount, straysToday, weddingToday, type GameState } from '../engine/game'
 import type { Activity } from '../engine/people'
 import { fixtureTier, goldTrim, RARE_ITEMS } from '../engine/fixtures'
 import { chaptersOf } from '../engine/books'
@@ -1595,7 +1595,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
             const spr = neighborPerson(def, facing, moving ? walkFrame(n.walkTime) : 0, isBlinking(t + offset), season, growth)
             drawSprite(g, spr, n.x, n.y, moving ? 0 : breathOffset(t + offset))
             // 이야기를 건넬 이웃, 기다리던 이야기(이벤트)를 품은 이웃은 머리 위에 말풍선 — 말을 걸면 열린다
-            if (game.offers[def.id] || eventWaiting(game, def.id)) emote(g, 'talk', n.x * TILE + 8, n.y * TILE + TILE - spr.height - 2 - Math.round(Math.sin(t * 3)))
+            if (game.offers[def.id] || storyWaiting(game, def.id)) emote(g, 'talk', n.x * TILE + 8, n.y * TILE + TILE - spr.height - 2 - Math.round(Math.sin(t * 3)))
             else if (!moving) {
               // 일과 자리에서 하는 일 (계획 6b)
               const r = routineOf(game, def.id)

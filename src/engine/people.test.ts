@@ -1,7 +1,7 @@
 // 계획 6b: 살아 움직이는 사람들 — 일과·목격·마을 사건·기억·말·사이 단계·조건 이벤트
 import { CONTENT, PEOPLE } from '../content/catalog'
 import { isWet, weatherOf } from './calendar'
-import { chooseInEvent, eventNow, goToSleep, greetNeighbor, newGame, personLine, routineOf, stageWith, tick, type GameState, eventWaiting, openEvent } from './game'
+import { chooseInEvent, eventNow, goToSleep, greetNeighbor, newGame, personLine, routineOf, stageWith, tick, type GameState, eventWaiting, openEvent, mutterWaiting, hearMutter, storyWaiting } from './game'
 import {
   depthOf,
   hasMemory,
@@ -123,13 +123,15 @@ describe('게임 안에서 (game.ts)', () => {
     expect(routineOf(s, 'tilly')?.doing).toBe('hammer')
   })
 
-  it('가까이 지나가면 혼잣말이 하루 한 번 들린다', () => {
+  it('혼잣말은 곁을 지나가기만 해서는 뜨지 않고, 말을 걸면 첫마디로 하루 한 번 듣는다', () => {
     const base = at(newGame(CONTENT), 2, 600)
     const s = { ...base, npcs: { ...base.npcs, tilly: { ...base.npcs.tilly, x: 32, y: 26, visible: true, path: [] } }, player: { ...base.player, x: 32, y: 27, path: [] } }
     const r = tick(s, 0.02, zero, CONTENT)
-    expect(r.state.life.heard).toEqual({ npc: 'tilly', text: '쇠는 달궜을 때.' })
-    const again = tick(r.state, 0.02, zero, CONTENT).state
-    expect(again.life.heard).toBe(r.state.life.heard)
+    expect(r.state.life.heard).toBeUndefined()
+    expect(mutterWaiting(r.state, 'tilly')).toBe('쇠는 달궜을 때.')
+    const heard = hearMutter(r.state, 'tilly', '쇠는 달궜을 때.')
+    expect(heard.life.heard).toEqual({ npc: 'tilly', text: '쇠는 달궜을 때.' })
+    expect(mutterWaiting(heard, 'tilly')).toBeNull()
   })
 
   it('이벤트: 사이·자리·때가 맞으면 말을 걸 때 열린다 (곁에 가기만 해서는 열리지 않는다) — 고른 말은 기억·색·약속으로 남는다 (정답 없음)', () => {
@@ -177,12 +179,15 @@ describe('게임 안에서 (game.ts)', () => {
     expect(stageWith(greetNeighbor({ ...opened, talked: [] }, 'tilly'), 'tilly')).toBe(3)
   })
 
-  it('목격: 그 사람은 보든 안 보든 그 시각 그 자리에 가고, 곁에 있으면 엿보게 된다 — 기억이 남는다', () => {
+  it('목격: 그 사람은 보든 안 보든 그 시각 그 자리에 가고, 말을 걸면 엿보게 된다 — 기억이 남는다', () => {
     const base = at(newGame(CONTENT), 2, 1330)
     const s = { ...base, npcs: { ...base.npcs, tilly: { ...base.npcs.tilly, x: 34, y: 27, visible: true, path: [] } }, player: { ...base.player, x: 33, y: 29, path: [] } }
     const r = tick(s, 0.02, zero, CONTENT).state
-    expect(r.scenes).toContain('saw:bird')
-    expect(hasMemory(r.life, 'tilly', 'saw:bird')).toBe(true)
+    expect(r.scenes).not.toContain('saw:bird') // 곁을 지나가기만 해서는 뜨지 않는다
+    expect(storyWaiting(r, 'tilly')).toBe(true)
+    const opened = openEvent(r, 'tilly')!
+    expect(opened.scenes).toContain('saw:bird')
+    expect(hasMemory(opened.life, 'tilly', 'saw:bird')).toBe(true)
   })
 
   it('비 오는 날 말을 걸면 그날이 기억에 남고, 싫어하는 선물은 웃음거리로 남는다', () => {

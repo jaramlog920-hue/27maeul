@@ -71,6 +71,8 @@ import {
   nameChild,
   recordProgress,
   openEvent,
+  mutterWaiting,
+  hearMutter,
   setCompanionStay,
   setChildMode,
   sendToSchool,
@@ -616,6 +618,9 @@ export const useGame = create<Store>((set, get) => {
         const l = NEIGHBOR_LINES[target.id]
         return { game: persist(g), modal: { kind: 'talk', neighborId: target.id, line: l?.visit.length ? pick(l.visit, rng).text : lineFor(g, target.id, rng) } }
       }
+      // 그 자리에서 흘리던 혼잣말 (계획 6b): 말을 걸면 첫마디로 듣는다 (곁을 지나가기만 해서는 뜨지 않는다)
+      const mut = mutterWaiting(g, target.id)
+      if (mut) return { game: persist(hearMutter(g, target.id, mut)), modal: { kind: 'talk', neighborId: target.id, line: mut } }
       // 살아 움직이는 사람들 (계획 6b): 지금 상황·사이·기억에 맞는 말 (되풀이하지 않는다)
       const pl = g.offers[target.id] || postLine(g, target.id) ? null : personLine(g, target.id, rng())
       if (pl) return { game: persist(pl.state), modal: { kind: 'talk', neighborId: target.id, line: pl.text } }
@@ -898,9 +903,6 @@ export const useGame = create<Store>((set, get) => {
       if (!modal && game.scenes.length) modal = { kind: 'scene', id: game.scenes[0] }
       // 아이가 태어난 장면을 본 뒤 이름을 정한다
       if (!modal && game.flags.childNaming && game.child) modal = { kind: 'childName' }
-      // 가까이 지나가며 들은 혼잣말 (계획 6b): 다른 알림이 떠 있으면 덮지 않는다
-      const heard = game.life?.heard
-      if (heard && heard !== s.game.life?.heard && !get().toast) get().say(fill(T.people.mutter, { who: neighborById(heard.npc)?.role ?? '', text: heard.text }), 3400)
       set({ game, modal, clockMs })
       expireToast()
       if (modal?.kind === 'scene') snapAlbum(modal.id, get().capture)
