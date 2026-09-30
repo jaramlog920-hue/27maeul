@@ -588,7 +588,7 @@ describe('언덕 별 보기 (계획 9 작업 2)', () => {
     revChosen(clearDay, 10 * 60)
     useGame.setState({ modal: { kind: 'talk', neighborId: 'postman', line: '안녕하세요.' } })
     render(<ModalLayer />)
-    expect(screen.getByText('그 방 책은 언덕 편지함에 넣어 뒀어요. 맑은 밤에 꺼내 가세요.')).toBeInTheDocument()
+    expect(screen.getByText('그 방 책은 해 질 녘에 언덕 편지함에 넣어 둬요. 맑은 밤에 꺼내 가세요.')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: '편지 받기' })).not.toBeInTheDocument()
   })
 })

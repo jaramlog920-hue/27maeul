@@ -164,7 +164,7 @@ describe('④ 방 열림 — 히브리서–유다서 여덟 권이 다 꽂힌 �
     expect(scene.lines.map((l) => l.speaker)).toEqual(['narration', 'narration', 'postman'])
     expect(scene.lines[0].text).toBe('늘 잠겨 있던 서고 오른쪽 아래 문이 열렸다는 소식이 들려왔다.')
     expect(scene.lines[1].text).toBe('안에는 책 한 권을 꽂을 선반과 책장, 창 둘 사이 벽에 건 카드 판, 가운데 읽는 탁자가 있다.')
-    expect(scene.lines[2].text).toBe('그 방 책은 해 질 녘에 언덕 벤치 곁 편지함에 넣어 둘게요. 맑은 밤에 별 보러 올라가서 꺼내 가세요. 비 오거나 흐린 날엔 젖을까 봐 넣지 않아요.')
+    expect(scene.lines[2].text).toBe('그 방 책은 해 질 녘에 언덕 벤치 곁 편지함에 넣어 둘게요. 맑은 밤에 별 보러 올라가서 꺼내 가세요. 비나 눈이 오거나 안개 낀 날엔 젖을까 봐 넣지 않아요.')
     expect(scene.album).toBe('서고 오른쪽 아래 방이 열린 날')
     expect(JOURNAL_NOTES['roomOpen:rev']).toBe(' 서고 오른쪽 아래 방이 열렸다.')
   })
