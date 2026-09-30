@@ -39,19 +39,22 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
   // 목수에게 집 넓히기 부탁 (이사 온 뒤, 다음 단계가 남아 있으면)
   const homeStage = def.id === 'carpenter' ? nextHomeStage(game) : null
   const homeBlock = homeStage ? canOrderHome(game) : 'done'
+  const post = postLine(game, def.id)
   return (
     <div className="dialog talk" role="dialog" aria-label={def.role}>
       <p className="talk-role">
         {def.role} <Hearts n={heartsOf(game.hearts[def.id])} />
       </p>
       <p className="talk-line">{modal.line}</p>
+      {/* 아침 방문 말 등 다른 말이 먼저 나와도 편지 알림은 가려지지 않는다 */}
+      {post && post !== modal.line && <p className="talk-line">{post}</p>}
       <div className="actions menu">
         {game.offers[def.id] && (
           <button className="primary" onClick={() => listenTo(def.id)}>
             {T.ui.listen}
           </button>
         )}
-        {postLine(game, def.id) && (
+        {post && (
           <button className="primary" onClick={() => listenTo(def.id)}>
             {T.post.receive}
           </button>

@@ -1078,10 +1078,12 @@ export function setArrangement(s: GameState, book: Book, chapter: number, list: 
   return { ...s, progress: { ...s.progress, [book]: { ...bp, arrangement: { ...bp.arrangement, [chapter]: list } } } }
 }
 
-export type SubmitResult = ArrangeResult | { kind: 'supplies'; need: Partial<Record<ItemId, number>> } | { kind: 'tired' }
+/** letters: 편지 책은 조각 엮기로 기록하지 않는다 (옮겨 적기 recordLetter로만) */
+export type SubmitResult = ArrangeResult | { kind: 'supplies'; need: Partial<Record<ItemId, number>> } | { kind: 'tired' } | { kind: 'letters' }
 
-/** 기록할 준비가 되었는가 (순서·재료·몸). 아무것도 쓰지 않는다 — 준비되면 퀴즈를 연다 */
+/** 기록할 준비가 되었는가 (순서·재료·몸). 아무것도 쓰지 않는다 — 준비되면 퀴즈를 연다. 조각 책만 */
 export function chapterReady(s: GameState, book: Book, chapter: number, content: GameContent): SubmitResult {
+  if (modeOf(book) !== 'pieces') return { kind: 'letters' }
   const pieces = content.pieces.filter((p) => p.book === book)
   const bp = s.progress[book]
   const result = checkArrangement(pieces, chapter, bp.arrangement[chapter] ?? [], s.collected)

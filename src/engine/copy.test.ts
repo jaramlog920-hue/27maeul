@@ -2,7 +2,7 @@
 import bible from '../content/nt-krv.json'
 import { CONTENT, copySourceFor, inBrackets, LETTER_PIECES, noText, piecesOf, quizSourceFor, versesOf } from '../content/catalog'
 import { blanksFor, COPY_BLANKS, fillVerse, isContentWord, wordAt } from './copy'
-import { chooseBook, letterReady, listen, newGame, recordLetter, type GameState } from './game'
+import { chapterReady, chooseBook, letterReady, listen, newGame, recordLetter, setArrangement, submitChapter, type GameState } from './game'
 import { CHAPTER_COST } from './items'
 import { POSTMAN } from './post'
 import { quizzable, MIN_VERSE_CHARS, wordsOf } from './quiz'
@@ -25,9 +25,8 @@ describe('blanksFor — 87장 전부', () => {
     it(`${p.ref}`, () => {
       const src = copySourceFor(p.book)
       const blanks = blanksFor(p.book, p.chapter, src)
-      // 최소 1, 많아야 셋
-      expect(blanks.length).toBeGreaterThanOrEqual(1)
-      expect(blanks.length).toBeLessThanOrEqual(COPY_BLANKS)
+      // 87장 모두 빈칸이 꼭 셋 (예외 없음 — 모자라는 장이 생기면 여기서 걸린다)
+      expect(blanks).toHaveLength(COPY_BLANKS)
       // 빈칸 셋은 서로 다른 절, 서로 다른 낱말
       expect(new Set(blanks.map((b) => b.ref)).size).toBe(blanks.length)
       expect(new Set(blanks.map((b) => norm(b.answer))).size).toBe(blanks.length)
@@ -87,9 +86,9 @@ describe('blanksFor — 87장 전부', () => {
     expect(refs).not.toContain('롬 16:24')
   })
 
-  it('대부분의 장은 빈칸이 셋', () => {
-    const three = LETTER_PIECES.filter((p) => blanksFor(p.book, p.chapter, copySourceFor(p.book)).length === COPY_BLANKS)
-    expect(three.length).toBeGreaterThanOrEqual(80)
+  it('87장 모두 빈칸이 셋 — 모자라는 장 없음', () => {
+    const short = LETTER_PIECES.filter((p) => blanksFor(p.book, p.chapter, copySourceFor(p.book)).length !== COPY_BLANKS).map((p) => p.ref)
+    expect(short).toEqual([])
   })
 
   it('짧은 이음말·문장부호가 붙은 낱말은 내용 낱말이 아니다', () => {
@@ -174,6 +173,18 @@ describe('recordLetter', () => {
   it('조각 책(복음서)은 옮겨 적기로 기록하지 않는다', () => {
     const s = ready('rom')
     expect(recordLetter(s, 'mk', 1, [], CONTENT)).toBe(s)
+  })
+
+  it('편지 책은 조각 엮기 길(chapterReady·submitChapter)로 기록되지 않는다', () => {
+    for (const b of ['rom', 'phm'] as const) {
+      const s = setArrangement(ready(b), b, 1, [`${b}-001`])
+      expect(s.collected).toContain(`${b}-001`)
+      expect(chapterReady(s, b, 1, CONTENT).kind).not.toBe('done')
+      const r = submitChapter(s, b, 1, CONTENT)
+      expect(r.result.kind).not.toBe('done')
+      expect(r.state).toBe(s)
+      expect(r.state.progress[b].completed).toEqual([])
+    }
   })
 
   it('빌레몬서 한 장 기록 → 다 엮음(bookBound)', () => {
