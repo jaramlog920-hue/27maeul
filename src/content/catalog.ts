@@ -5,6 +5,7 @@ import books from './books.json'
 import piecesRaw from './pieces.json'
 import neighborsRaw from './neighbors.json'
 import journeyRaw from './journey.json'
+import churchesRaw from './churches.json'
 import lettersRaw from './letters.json'
 import { expandRef, countsFrom } from './ref'
 import { BOOKS, LETTERS, type Book, type GameContent, type NeighborDef, type Piece } from '../engine/types'
@@ -56,11 +57,16 @@ export const NEIGHBORS = neighborsRaw as unknown as NeighborDef[]
 /** 사도행전 여정 카드 — 본문 순서 (scripts/journey/ac.txt, verify-journey가 본문과 대조) */
 export const JOURNEY = journeyRaw as JourneyCard[]
 /**
+ * 요한계시록 일곱 교회 카드 — 본문 순서 (scripts/journey/rev.txt → churches.json, verify-journey가 그 절에
+ * "{이름} 교회의 사자에게"가 글자 그대로 있는지 대조). 카드에는 곳 이름만 (계획 9 작업 3, exclusion §4-7)
+ */
+export const CHURCHES = churchesRaw as JourneyCard[]
+/**
  * 편지 첫머리의 보낸 이·받는 곳·받는 사람 (scripts/letters/opening.txt → letters.json, verify-letters가 이름이 그 구절 본문에
  * 글자 그대로 있는지 확인). 편지 서고 퀴즈의 첫머리 문제가 읽는다 (계획 7 작업 6)
  */
 export const LETTER_OPENINGS = lettersRaw as unknown as readonly LetterOpening[]
-export const CONTENT: GameContent = { pieces: PIECES, neighbors: NEIGHBORS, journey: JOURNEY, copy: (b) => copySourceFor(b) }
+export const CONTENT: GameContent = { pieces: PIECES, neighbors: NEIGHBORS, journey: JOURNEY, churches: CHURCHES, copy: (b) => copySourceFor(b) }
 
 export interface Verse {
   chapter: number

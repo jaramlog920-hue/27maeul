@@ -113,6 +113,9 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   // 여정 판: 옛 저장(판이 없던 때)은 빈 판에서, 엮은 사도행전 장의 카드만 남기고 빠진 카드는 채운다
   const board = Array.isArray(s.journey) ? s.journey.filter((n) => Number.isInteger(n)) : []
   const journey = placeNewCards(board, cardsForChapters(content.journey ?? [], progress.ac.completed))
+  // 일곱 교회 판도 같게: 옛 저장(계획 7·8, 칸이 없던 때)은 빈 판, 옮겨 적은 요한계시록 장의 카드만 남기고 빠진 카드는 채운다
+  const churchBoard = Array.isArray(s.churches) ? s.churches.filter((n) => Number.isInteger(n)) : []
+  const churches = placeNewCards(churchBoard, cardsForChapters(content.churches ?? [], progress.rev.completed))
   return {
     ...s,
     player: moved.player,
@@ -120,6 +123,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     homeLevel,
     flags,
     journey,
+    churches,
     room,
     inv,
     needs: { ...s.needs, heat: s.needs?.heat ?? 0 },

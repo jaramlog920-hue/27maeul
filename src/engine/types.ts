@@ -181,6 +181,8 @@ export interface GameContent {
   neighbors: NeighborDef[]
   /** 사도행전 여정 카드 (본문 순서). 없으면 여정 판이 비어 있다 */
   journey?: JourneyCard[]
+  /** 요한계시록 일곱 교회 카드 (본문 순서, 계획 9 작업 3). 없으면 일곱 교회 판이 비어 있다 */
+  churches?: JourneyCard[]
   /** 편지 옮겨 적기의 본문 (책마다, 계획 7). 없으면 편지를 기록할 수 없다 */
   copy?: (book: Book) => CopySource
 }

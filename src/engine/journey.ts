@@ -1,7 +1,8 @@
-// 사도행전 여정 카드 (계획 5 작업 4·5). 순수 계산만 — 게임 상태에 얹는 것은 game.ts(syncJourney·moveJourneyCard).
-// 카드는 장 단위로 열린다: 카드 구절이 든 장을 엮으면 그 카드를 얻는다.
+// 카드 판 (계획 5 작업 4·5 사도행전 여정 카드, 계획 9 작업 3 요한계시록 일곱 교회 카드). 순수 계산만 —
+// 카드 배열을 받으므로 판마다 같은 함수를 쓴다. 게임 상태에 얹는 것은 game.ts(syncBoard·moveBoardCard).
+// 카드는 장 단위로 열린다: 카드 구절이 든 장을 엮거나 옮겨 적으면 그 카드를 얻는다.
 
-/** scripts/journey/ac.txt → src/content/journey.json 한 장 */
+/** scripts/journey/ac.txt → journey.json, scripts/journey/rev.txt → churches.json 한 장 */
 export interface JourneyCard {
   /** 본문 순서 (1부터) */
   order: number
@@ -13,7 +14,7 @@ export interface JourneyCard {
   chapter: number
 }
 
-/** 엮은 장(progress.ac.completed)으로 얻은 카드 — 본문 순서대로 */
+/** 엮은·옮겨 적은 장(progress.ac·rev.completed)으로 얻은 카드 — 본문 순서대로 */
 export function cardsForChapters(cards: readonly JourneyCard[], boundChapters: Iterable<number>): JourneyCard[] {
   const bound = new Set(boundChapters)
   return cards.filter((c) => bound.has(c.chapter)).sort((a, b) => a.order - b.order)
@@ -40,7 +41,7 @@ export function boardInOrder(board: readonly number[]): boolean {
   return board.every((o, i) => i === 0 || board[i - 1] < o)
 }
 
-/** 여정 완성: 카드가 모두(journey.json 전체) 판에 있고 본문 순서대로 */
+/** 판 완성: 카드가 모두(journey.json·churches.json 전체) 판에 있고 본문 순서대로 */
 export function journeyComplete(board: readonly number[], cards: readonly JourneyCard[]): boolean {
   if (cards.length === 0 || board.length !== cards.length) return false
   const on = new Set(board)

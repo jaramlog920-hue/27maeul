@@ -11,4 +11,8 @@ describe('금지어', () => {
     for (const t of ['히브리서', '야고보서', '베드로전서', '베드로후서', '요한일서', '요한이서', '요한삼서', '유다서']) expect(forbiddenIn(t), t).toBeNull()
     for (const t of ['베드로', '베드로가', '베드로의 편지', '요한이']) expect(forbiddenIn(t), t).not.toBeNull()
   })
+  it('요한계시록·잔치 문구에 쓰지 않는 말(계획 9)은 걸린다 — 요한계시록 책 이름·다른 숫자는 통과', () => {
+    for (const t of ['정경', '정경이 모였다', '휴거', '천년왕국', '적그리스도', '666', '숫자 666', '짐승의 표']) expect(forbiddenIn(t), t).not.toBeNull()
+    for (const t of ['요한계시록', '1666닢', '6667', '짐승', '표 한 장', '일곱 교회']) expect(forbiddenIn(t), t).toBeNull()
+  })
 })

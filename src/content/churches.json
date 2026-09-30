@@ -1,0 +1,44 @@
+[
+  {
+    "order": 1,
+    "place": "에베소",
+    "ref": "계 2:1",
+    "chapter": 2
+  },
+  {
+    "order": 2,
+    "place": "서머나",
+    "ref": "계 2:8",
+    "chapter": 2
+  },
+  {
+    "order": 3,
+    "place": "버가모",
+    "ref": "계 2:12",
+    "chapter": 2
+  },
+  {
+    "order": 4,
+    "place": "두아디라",
+    "ref": "계 2:18",
+    "chapter": 2
+  },
+  {
+    "order": 5,
+    "place": "사데",
+    "ref": "계 3:1",
+    "chapter": 3
+  },
+  {
+    "order": 6,
+    "place": "빌라델비아",
+    "ref": "계 3:7",
+    "chapter": 3
+  },
+  {
+    "order": 7,
+    "place": "라오디게아",
+    "ref": "계 3:14",
+    "chapter": 3
+  }
+]

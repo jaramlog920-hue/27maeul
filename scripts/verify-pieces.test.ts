@@ -40,6 +40,7 @@ describe('verify-pieces.mjs', () => {
       '금지어 (?<![가-힣])유월절',
       '금지어 (?<![가-힣])데나리온',
       '금지어 (?<![가-힣])회당',
+      '금지어 (?<![가-힣])정경 — "스물일곱 권, 정경이 다 모였어요"',
     ]) expect(r.out, msg).toContain(msg)
     // 책 이름은 허용
     expect(r.out).not.toContain('"누가복음을 쓴 사람"')

@@ -42,7 +42,7 @@ import { currentChapter, offersForDay } from './offers'
 import { POSTMAN, postForDay, starPostFor } from './post'
 import { blanksFor } from './copy'
 import { checkArrangement, moveItem, type ArrangeResult } from './scroll'
-import { cardsForChapters, journeyComplete, placeNewCards } from './journey'
+import { cardsForChapters, journeyComplete, placeNewCards, type JourneyCard } from './journey'
 import { growGarden, type Plot } from './garden'
 import { feastToday, gospelRoomFull, readOff, type Grade } from './library'
 import {
@@ -139,6 +139,11 @@ export interface GameState {
    * 여정을 다 이으면 flags.actsShip 1 → 다음 날 아침 2 (나루에 배가 들어온다, 장면 actsShip)
    */
   journey: number[]
+  /**
+   * 요한계시록 방의 일곱 교회 판 (계획 9 작업 3): 놓인 카드 번호(churches.json의 order)의 차례. 2·3장을 옮겨 적으면 카드가 들어온다.
+   * 다 맞추면 flags.churchesDone 1 (한 번, 장면 없음 — 스물일곱 권 잔치의 조건)
+   */
+  churches: number[]
 }
 
 /** 지도(world.tileAt)가 이 게임의 집 단계·열린 서고 방 문(방 표)을 보게 한다. 지도를 읽는 엔진 입구마다 부른다 */
@@ -330,6 +335,7 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
     garden: {},
     homeLevel: 0,
     journey: [],
+    churches: [],
   }
 }
 
@@ -1180,27 +1186,52 @@ export function recordLetter(s: GameState, book: Book, chapter: number, picks: r
   const scenes = [...s.scenes]
   if (totalChapters(s) === 0) scenes.push('firstChapter')
   if (bookDone({ progress }, book, content)) scenes.push('bookBound')
-  return passTime({ ...s, inv: take(s.inv, CHAPTER_COST)!, progress, scenes, needs: work(s.needs, 6) }, bindMinutes(s))
+  const recorded = passTime({ ...s, inv: take(s.inv, CHAPTER_COST)!, progress, scenes, needs: work(s.needs, 6) }, bindMinutes(s))
+  // 요한계시록 2·3장을 옮겨 적으면 그 장의 교회 카드가 일곱 교회 판에 들어온다
+  return book === 'rev' ? syncBoard(recorded, 'churches', content) : recorded
 }
 
-// ── 사도행전 방의 여정 판 (계획 5 작업 5) ──
+// ── 카드 판: 사도행전 방의 여정 판 (계획 5 작업 5), 요한계시록 방의 일곱 교회 판 (계획 9 작업 3) ──
 
-/** 여정을 다 이었으면 표식(actsShip 1)을 세운다 — 다음 날 아침 나루에 배가 들어온다. 한 번만 */
-function markJourney(s: GameState, content: GameContent): GameState {
-  if (s.flags.actsShip || !journeyComplete(s.journey, content.journey ?? [])) return s
-  return { ...s, flags: { ...s.flags, actsShip: 1 } }
+/** GameState의 판 칸 */
+export type BoardId = 'journey' | 'churches'
+
+/** 판마다: 카드를 주는 책, 카드 목록, 완성 표식 */
+const BOARD_DEFS: Record<BoardId, { book: Book; cards: (content: GameContent) => readonly JourneyCard[]; flag: string }> = {
+  // 여정을 다 이으면 actsShip 1 → 다음 날 아침 2 (나루에 배가 들어온다)
+  journey: { book: 'ac', cards: (c) => c.journey ?? [], flag: 'actsShip' },
+  // 일곱 교회를 다 맞추면 churchesDone 1 (한 번, 장면 없음)
+  churches: { book: 'rev', cards: (c) => c.churches ?? [], flag: 'churchesDone' },
 }
 
-/** 엮은 사도행전 장으로 얻은 카드를 판에 맞춘다 (얻은 카드만, 새 카드는 판 끝 가까이에) */
+/** 판을 다 맞췄으면 완성 표식을 세운다. 한 번만 */
+function markBoard(s: GameState, board: BoardId, content: GameContent): GameState {
+  const def = BOARD_DEFS[board]
+  if (s.flags[def.flag] || !journeyComplete(s[board], def.cards(content))) return s
+  return { ...s, flags: { ...s.flags, [def.flag]: 1 } }
+}
+
+/** 기록한 장으로 얻은 카드를 판에 맞춘다 (얻은 카드만, 새 카드는 판 끝 가까이에) */
+export function syncBoard(s: GameState, board: BoardId, content: GameContent): GameState {
+  const def = BOARD_DEFS[board]
+  const earned = cardsForChapters(def.cards(content), s.progress[def.book]?.completed ?? [])
+  return markBoard({ ...s, [board]: placeNewCards(s[board] ?? [], earned) }, board, content)
+}
+
+/** 판의 카드 하나를 위(-1)·아래(+1)로 옮긴다. 다 맞춘 판은 그대로 둔다 */
+export function moveBoardCard(s: GameState, board: BoardId, index: number, delta: number, content: GameContent): GameState {
+  if (s.flags[BOARD_DEFS[board].flag]) return s
+  return markBoard({ ...s, [board]: moveItem(s[board], index, delta) }, board, content)
+}
+
+/** 엮은 사도행전 장으로 얻은 카드를 여정 판에 맞춘다 */
 export function syncJourney(s: GameState, content: GameContent): GameState {
-  const earned = cardsForChapters(content.journey ?? [], s.progress.ac?.completed ?? [])
-  return markJourney({ ...s, journey: placeNewCards(s.journey ?? [], earned) }, content)
+  return syncBoard(s, 'journey', content)
 }
 
 /** 여정 판의 카드 하나를 위(-1)·아래(+1)로 옮긴다. 다 이은 판은 그대로 둔다 */
 export function moveJourneyCard(s: GameState, index: number, delta: number, content: GameContent): GameState {
-  if (s.flags.actsShip) return s
-  return markJourney({ ...s, journey: moveItem(s.journey, index, delta) }, content)
+  return moveBoardCard(s, 'journey', index, delta, content)
 }
 
 /** 한 장을 엮는 데 드는 분: 기분이 좋으면 45, 아니면 60. 넓은 책상이면 20% 덜 */
