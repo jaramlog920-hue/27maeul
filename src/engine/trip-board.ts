@@ -192,11 +192,8 @@ export function tripLayout(dest: 'harbor' | 'hillTown'): TripLayout {
   rect(7, 1, 8, by0 - 1, 'c')
   // ── 판석 길 한 바퀴 ──
   for (const t of RING_TILES) rect(t.x, t.y, t.x + 1, t.y + 1, '@')
-  // ── 왼쪽: 나무와 꽃화단이 번갈아 (세 줄마다 같은 무늬 — 발판 간격과 맞춘다) ──
-  for (let y = by0; y <= by1; y++) {
-    const k = (y - by0) % 3
-    set(0, y, k === 0 ? 'T' : k === 1 ? '^' : '.')
-  }
+  // ── 왼쪽: 나무 줄 (세 줄마다 한 그루 — 발판 간격과 맞춘다) ──
+  for (let y = by0; y <= by1; y += 3) set(0, y, 'T')
   // ── 오른쪽: 작은 장터 앞 — 좌판, 그 옆 벤치, 나무 (세 줄마다, 등불 없음) ──
   for (let y = by0; y <= by1; y++) {
     const k = (y - by0) % 6
@@ -204,17 +201,13 @@ export function tripLayout(dest: 'harbor' | 'hillTown'): TripLayout {
   }
   // ── 아래: 돌길만 ──
   rect(0, by1 + 1, TRIP_W - 1, TRIP_H - 1, 'c')
-  // ── 가운데 정원 (x 3–12, y 6–27): 돌바닥 띠 → 잔디 → 꽃화단(좌우 대칭) → 분수 광장 ──
+  // ── 가운데 정원 (x 3–12, y 6–27): 돌바닥 띠 → 잔디 → 분수 광장 (좌우 대칭) ──
   const ix0 = bx0 + 2
   const iy0 = by0 + 2
   const ix1 = bx1 - 2
   const iy1 = by1 - 2
   rect(ix0, iy0, ix1, iy1, 'c')
   rect(ix0 + 1, iy0 + 1, ix1 - 1, iy1 - 1, '.')
-  for (const yy of [iy0 + 3, iy1 - 4]) {
-    rect(ix0 + 1, yy, ix0 + 2, yy + 1, '^')
-    rect(ix1 - 2, yy, ix1 - 1, yy + 1, '^')
-  }
   rect(7, iy0 + 1, 8, iy1 - 1, 'c')
   // 분수 광장: 분수(7–8)를 가운데 두고 좌우 두 칸씩 똑같이
   rect(5, cy - 2, 10, cy + 1, 'c')
