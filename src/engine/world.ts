@@ -40,6 +40,8 @@ export const HOUSE_GROW = { x0: HOUSE_RECT.x0 - 2, y0: HOUSE_RECT.y0, x1: HOUSE_
 export const HOME_DOOR: Tile = { x: 5, y: 7 }
 /** 내 집 문 앞 (문깔개로 나오면 서는 곳) */
 export const HOME_FRONT: Tile = { x: HOME_DOOR.x, y: HOME_DOOR.y + 1 }
+/** 내 집 바로 왼쪽 앞마당의 벤치 (2026-09-30 사용자) */
+export const HOME_BENCH: Tile = { x: 2, y: 8 }
 
 /** 집 안 방 — 넓히기 전 (벽 포함 9×6, 지도 아래 보이지 않는 곳). 지금 크기는 homeRect() */
 export const HOME_RECT = { x0: 16, y0: 60, x1: 24, y1: 65 }
@@ -477,6 +479,7 @@ function build(): string[] {
   roofed('home', HOUSE_RECT.x0, HOUSE_RECT.y0, HOUSE_RECT.x1, HOUSE_RECT.y1, HOME_DOOR.x)
   set(HOME_DOOR.x, HOME_DOOR.y + 1, ',')
   set(HOME_DOOR.x + 1, HOME_DOOR.y + 1, 'q') // 문 앞 편지 바구니
+  set(HOME_BENCH.x, HOME_BENCH.y, 'B') // 내 집 앞 벤치 (집을 넓히면 왼쪽 두 칸이 벽이 되므로 그 아래 앞마당에)
   yard(HOUSE_RECT.x1 + 1, HOUSE_RECT.x1 + 1, 8)
   rect(11, 4, 14, 6, 'l') // 텃밭 열두 칸 (집 오른쪽 볕 드는 곳)
   roofed('library', 21, 4, 27, 7, 24, 'S') // 마을 서고
@@ -690,6 +693,7 @@ export const PLACES: Record<PlaceId, Place> = {
   well: { tiles: [{ x: 24, y: 14 }], stand: { x: 24, y: 15 } },
   hill: { tiles: [{ x: 14, y: 11 }], stand: { x: 14, y: 12 } },
   bench: { tiles: [{ x: 29, y: 21 }], stand: { x: 28, y: 21 } },
+  homeBench: { tiles: [HOME_BENCH], stand: { x: HOME_BENCH.x + 1, y: HOME_BENCH.y } },
   // 저녁 초대를 받는 이웃집 문 (빵집·배움터·할아버지 집)
   house: { tiles: [{ x: 5, y: 16 }, { x: 35, y: 16 }, { x: 36, y: 7 }] },
   reeds: { tiles: tilesOf('r') },

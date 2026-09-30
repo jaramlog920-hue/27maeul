@@ -18,6 +18,8 @@ export type PlaceId =
   | 'well'
   | 'hill'
   | 'bench'
+  // 내 집 앞 벤치 (2026-09-30 사용자): 광장 벤치와 같은 메뉴
+  | 'homeBench'
   | 'house'
   | 'reeds'
   | 'vine'

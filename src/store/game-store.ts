@@ -668,6 +668,8 @@ export const useGame = create<Store>((set, get) => {
       case 'workbench':
       case 'press':
       case 'hill':
+      case 'homeBench':
+        return { game, modal: { kind: 'menu', place: 'bench' } }
       case 'bench':
       case 'hallTable':
       case 'teaTable':
