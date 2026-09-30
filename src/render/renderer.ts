@@ -18,7 +18,7 @@ import { actsDoorGlows, feastToday, sideShelfSpines } from '../engine/library'
 import { ACTS_ROOM, ATTIC, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, HEIGHT, HOUSE_RECT, housesNow, houseAt, LOCKED_DOORS, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
 import { GOSPELS, type Book, type Facing, type NeighborDef, type GameContent, type Season, type Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
-import { avatarKey, withLookDefaults, type FullAvatar } from '../engine/avatar'
+import { avatarKey, withLookDefaults, type Avatar, type FullAvatar } from '../engine/avatar'
 import {
   animalRows,
   ANIMAL_PALETTE,
@@ -960,9 +960,10 @@ function emote(g: Ctx, id: EmoteId, cx: number, top: number) {
 }
 
 /** 이웃 그림: 연애 후보(계획 6)는 주인공 모양 고르기와 같은 머리·옷으로, 나머지는 이웃마다 정한 옷으로 */
-function neighborPerson(def: NeighborDef, facing: Facing, frame: 0 | 1 | 2, blink: boolean, season: Season, growth?: number) {
+function neighborPerson(def: NeighborDef, facing: Facing, frame: 0 | 1 | 2, blink: boolean, season: Season, growth?: number, dressed?: Avatar) {
   if (def.avatar && def.look) {
-    const avatar = withLookDefaults({ look: def.look, name: def.role, ...def.avatar })
+    // 옷장에서 바꾼 배우자 모습이 있으면 그것으로
+    const avatar = withLookDefaults({ look: def.look, name: def.role, ...def.avatar, ...(dressed ?? {}) })
     return person('writer', facing, frame, blink, 'stand', season, { look: def.look, avatar })
   }
   return person(def.sprite as Who, facing, frame, blink, 'stand', season, { growth })
@@ -1023,12 +1024,12 @@ function person(
   blink: boolean,
   pose: Pose,
   season: Season,
-  extra: { inky?: boolean; growth?: number; look?: Look; avatar?: FullAvatar } = {},
+  extra: { inky?: boolean; growth?: number; look?: Look; avatar?: FullAvatar; short?: number } = {},
 ) {
   const rows = spriteRows(who, facing, { frame, blink, pose, season, ...extra })
   const pal = who === 'writer' ? writerPalette(season, extra.avatar) : PALETTE
   return paint(
-    `${who}/${facing}/${frame}/${blink}/${pose}/${who === 'writer' ? season : ''}/${extra.inky ?? ''}/${extra.growth ?? ''}/${extra.look ?? ''}/${extra.avatar ? avatarKey(extra.avatar) : ''}`,
+    `${who}/${facing}/${frame}/${blink}/${pose}/${who === 'writer' ? season : ''}/${extra.inky ?? ''}/${extra.growth ?? ''}/${extra.short ?? ''}/${extra.look ?? ''}/${extra.avatar ? avatarKey(extra.avatar) : ''}`,
     rows,
     pal,
   )
@@ -1592,7 +1593,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
             const growth = def.id === 'child' ? childGrowth(day) : undefined
             items.push({
               y: home.sit.y,
-              paint: () => drawSprite(g, neighborPerson(def, 'down', 0, isBlinking(t + def.id.length), season, growth), home.sit.x, home.sit.y, breathOffset(t + def.id.length)),
+              paint: () => drawSprite(g, neighborPerson(def, 'down', 0, isBlinking(t + def.id.length), season, growth, game.looks?.[def.id]), home.sit.x, home.sit.y, breathOffset(t + def.id.length)),
             })
           }
           continue
@@ -1604,7 +1605,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         items.push({
           y: n.y,
           paint: () => {
-            const spr = neighborPerson(def, facing, moving ? walkFrame(n.walkTime) : 0, isBlinking(t + offset), season, growth)
+            const spr = neighborPerson(def, facing, moving ? walkFrame(n.walkTime) : 0, isBlinking(t + offset), season, growth, game.looks?.[def.id])
             drawSprite(g, spr, n.x, n.y, moving ? 0 : breathOffset(t + offset))
             // 이야기를 건넬 이웃, 기다리던 이야기(이벤트)를 품은 이웃은 머리 위에 말풍선 — 말을 걸면 열린다
             if (game.offers[def.id] || storyWaiting(game, def.id)) emote(g, 'talk', n.x * TILE + 8, n.y * TILE + TILE - spr.height - 2 - Math.round(Math.sin(t * 3)))
@@ -1649,10 +1650,14 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         const mode = childMode(kid, day)
         const kidRows = () => recolor(spriteRows('child', 'down', { frame: 0, blink: isBlinking(t + 1.3), growth: 2 }), kid.look === 'boy' ? { z: 'E', Z: 'M' } : { z: 'V', Z: 'X' })
         // 걷는 아이는 아기 걸음 그림, 돕는 아이는 물 긷는 아이 그림에 옷 색만 바꿔서
+        // 옷장에서 모습을 입힌 아이는 그 모습 그대로 (돕는 아이는 키가 작게, 어른은 그대로)
+        const dressed = game.looks?.child ? withLookDefaults({ ...game.looks.child, skin: game.avatar?.skin ?? game.looks.child.skin }) : null
         const drawKid = (x: number, y: number, bob: number) =>
           st === 'toddler'
             ? drawSprite(g, paint('baby/walk', BABY.walk, SMALL_PALETTE), x, y, bob)
-            : drawSprite(g, paint(`kid/${kid.look}/${isBlinking(t + 1.3)}`, kidRows(), PALETTE), x, y, bob)
+            : dressed
+              ? drawSprite(g, person('writer', 'down', 0, isBlinking(t + 1.3), 'stand', season, { avatar: dressed, look: dressed.look, short: st === 'adult' ? undefined : 1 }), x, y, bob)
+              : drawSprite(g, paint(`kid/${kid.look}/${isBlinking(t + 1.3)}`, kidRows(), PALETTE), x, y, bob)
         if (childAtSchool(game)) {
           // 배움터에 맡긴 날: 배움 탁자 곁에 앉아 있다
           const at = SCHOOL_SEAT

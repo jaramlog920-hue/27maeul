@@ -102,7 +102,7 @@ import {
 } from './stories'
 import { ATTIC, BED_STAND, HEARTH_STAND, HOUSES, PET_HOME, HOME_FRONT, inAttic, isHome, isIndoor, isWalkable, key, LADDER, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setMailbox, setOpenDoors, START, tileAt, WARPS } from './world'
 import { GOSPELS, type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
-import type { Avatar } from './avatar'
+import { withLookDefaults, type Avatar, type FullAvatar } from './avatar'
 import { BOARD_GAIN, boardFor, type BoardRequest } from './board'
 import { newlyAchieved, withFound, type Achievement } from './achievements'
 import { adultJob, JOB_GIFTS, kidCoins, kidMailFor, CHILD_AFTER_WEDDING, childMode, childStage, CRADLE_SPOT, helperSpot, helpStat, newChild, type Child, type ChildMode } from './child'
@@ -180,6 +180,8 @@ export interface GameState {
   lettersDone: number
   /** 플레이어가 고른 주인공 */
   avatar: Avatar | null
+  /** 가족 옷장 (2026-09-30 사용자): 배우자(이웃 id)·아이('child')의 머리·옷 — 피부는 바꾸지 않는다 */
+  looks?: Record<string, Avatar>
   /** 텃밭 ('x,y' → 작물) */
   garden: Record<string, Plot>
   /** 집 단계: 0 작업실, 1 방 하나 더, 2 다락 서재 (목수에게 부탁한 단계는 flags.homeOrder, 다음 날 아침 지어진다) */
@@ -2807,4 +2809,29 @@ export function orderHome(s: GameState): GameState | null {
   const st = nextHomeStage(s)
   if (!st || canOrderHome(s)) return null
   return { ...s, coins: s.coins - st.coins, inv: take(s.inv, st.needs)!, flags: { ...s.flags, homeOrder: st.level } }
+}
+
+// ── 가족 옷장: 머리부터 옷·장신구·색까지 (피부만 그대로) ──
+export type WardrobeWho = 'me' | 'spouse' | 'child'
+/** 지금 그 사람의 모습 (옷장을 연 적이 없으면 원래 모습) */
+export function lookOf(s: Pick<GameState, 'avatar' | 'looks' | 'romance' | 'child'>, who: WardrobeWho, content: GameContent): FullAvatar | null {
+  if (who === 'me') return s.avatar ? withLookDefaults(s.avatar) : null
+  if (who === 'spouse') {
+    const id = s.romance?.stage === 'married' ? s.romance.partner : null
+    const def = id ? content.neighbors.find((d) => d.id === id) : null
+    if (!def?.avatar || !def.look) return null
+    return withLookDefaults({ look: def.look, name: def.role, ...def.avatar, ...(s.looks?.[def.id] ?? {}) })
+  }
+  if (!s.child) return null
+  const base = withLookDefaults({ look: s.child.look === 'boy' ? 'm' : 'f', name: s.child.name, skin: s.avatar?.skin })
+  return withLookDefaults({ ...base, ...(s.looks?.child ?? {}) })
+}
+/** 옷장에서 고른 모습을 입힌다 — 피부는 원래 것을 지킨다 */
+export function dressUp(s: GameState, who: WardrobeWho, a: FullAvatar, content: GameContent): GameState {
+  const cur = lookOf(s, who, content)
+  if (!cur) return s
+  const next: FullAvatar = { ...a, skin: cur.skin, look: cur.look, name: cur.name }
+  if (who === 'me') return { ...s, avatar: { ...next, name: s.avatar!.name } }
+  const key = who === 'child' ? 'child' : s.romance!.partner!
+  return { ...s, looks: { ...(s.looks ?? {}), [key]: next } }
 }

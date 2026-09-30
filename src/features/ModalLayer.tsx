@@ -3,6 +3,7 @@ import { isGhostClick } from '../shared/ghost'
 import { useGame } from '../store/game-store'
 import { Bag } from './bag/Bag'
 import { Family } from './family/Family'
+import { Wardrobe } from './family/Wardrobe'
 import { AdoptForm } from './companion/AdoptForm'
 import { Desk } from './desk/Desk'
 import { GardenMenu } from './garden/GardenMenu'
@@ -92,6 +93,8 @@ function Body() {
       return <CareMenu />
     case 'family':
       return <Family />
+    case 'wardrobe':
+      return <Wardrobe who={modal.who} />
     case 'bag':
       return <Bag />
     case 'shelf':

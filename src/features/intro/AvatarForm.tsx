@@ -25,7 +25,7 @@ import { SPRITE_H, SPRITE_W, spriteRows, writerPalette } from '../../render/spri
 const TURN: Facing[] = ['down', 'left', 'up', 'right']
 const SCALE = 8
 
-function Preview({ avatar, facing }: { avatar: FullAvatar; facing: Facing }) {
+export function Preview({ avatar, facing }: { avatar: FullAvatar; facing: Facing }) {
   const ref = useRef<HTMLCanvasElement>(null)
   useEffect(() => {
     const g = ref.current?.getContext('2d')
@@ -55,7 +55,7 @@ const ROWS: { key: RowKey; names: readonly string[] }[] = [
   { key: 'bottom', names: BOTTOMS },
   { key: 'acc', names: ACCS },
 ]
-const SLIDER_MAX = [360, 100, 100]
+export const SLIDER_MAX = [360, 100, 100]
 
 export function AvatarForm({ onDone, onBack }: { onDone: (a: Avatar) => void; onBack: () => void }) {
   const [look, setLook] = useState<Look>('f')

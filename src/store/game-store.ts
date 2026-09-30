@@ -1,5 +1,6 @@
 // 엔진 상태 ↔ 화면 연결. 창(모달)이 열려 있으면 시간과 걸음이 멈춘다.
 import { SERVICES } from '../engine/services'
+import type { FullAvatar } from '../engine/avatar'
 import { create } from 'zustand'
 import { CONTENT, neighborById, copySourceFor, LETTER_OPENINGS, pieceById, pieceOfQuestion, piecesOf, quizSourceFor } from '../content/catalog'
 import { blanksFor } from '../engine/copy'
@@ -72,6 +73,8 @@ import {
   nameChild,
   recordProgress,
   openEvent,
+  dressUp,
+  type WardrobeWho,
   doService,
   nightCopy,
   libraryRead,
@@ -174,6 +177,7 @@ export type Modal =
   | { kind: 'care' }
   | { kind: 'bag' }
   | { kind: 'family' }
+  | { kind: 'wardrobe'; who: WardrobeWho }
   | { kind: 'shelf'; tab?: ShelfTab }
   | { kind: 'companion'; animal: Animal }
   | { kind: 'library' }
@@ -325,6 +329,8 @@ interface Store {
   readAt: (pieceId: string) => void
   /** 성경 이야기를 더 모으는 길: 밤 필사·서고 열람석·옛 두루마리 (모으면 원래 본문 창) */
   nightCopy: () => void
+  /** 가족 옷장: 고른 모습을 입힌다 (피부는 그대로) */
+  dressUp: (who: WardrobeWho, a: FullAvatar) => void
   /** 집마다 직업 → 주고받기 */
   service: (id: string) => void
   libraryRead: () => void
@@ -1216,6 +1222,11 @@ export const useGame = create<Store>((set, get) => {
       const got = [Object.keys(svc.get).length ? itemList(svc.get) : '', svc.getCoins ? `${svc.getCoins}닢` : ''].filter(Boolean).join(' · ')
       set({ game: persist(next) })
       get().say(`${svc.label} · ${got}`)
+    },
+    dressUp: (who, a) => {
+      const next = dressUp(get().game, who, a, CONTENT)
+      set({ game: persist(next), modal: { kind: 'family' } })
+      get().say('새 옷으로 갈아입었어요')
     },
     nightCopy: () => {
       const r = nightCopy(get().game, CONTENT)

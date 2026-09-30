@@ -137,6 +137,8 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     stats: sanitizeStats(s.stats),
     // 연애와 결혼 (계획 6): 옛 저장은 빈 연애
     romance: sanitizeRomance(s.romance),
+    // 가족 옷장: 모습(look이 f·m인 것)만 남긴다 — 옛 저장은 빈 옷장
+    looks: Object.fromEntries(Object.entries((isObj(s.looks) ? s.looks : {}) as Record<string, unknown>).filter(([, v]) => isObj(v) && ((v as { look?: unknown }).look === 'f' || (v as { look?: unknown }).look === 'm'))) as GameState['looks'],
     // 살아 움직이는 사람들 (계획 6b): 옛 저장은 빈 기억
     life: sanitizeLife(s.life),
     // 살림과 서고 (계획 13): 옛 저장은 정성 들인 장 없음, 봉인 없음

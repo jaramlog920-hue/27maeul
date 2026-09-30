@@ -35,6 +35,11 @@ export function Family() {
   return (
     <div className="dialog family" role="dialog" aria-label="가족">
       <h2>가족</h2>
+      <div className="fam-wardrobe">
+        {game.avatar && <button onClick={() => open({ kind: 'wardrobe', who: 'me' })}>내 옷장</button>}
+        {game.romance?.stage === 'married' && partner?.avatar && <button onClick={() => open({ kind: 'wardrobe', who: 'spouse' })}>{partner.role} 옷장</button>}
+        {kid && <button onClick={() => open({ kind: 'wardrobe', who: 'child' })}>{kid.name} 옷장</button>}
+      </div>
       {empty && <p className="hint">아직 함께 사는 가족이 없어요. 이웃과 가까워지고, 떠돌이 동물을 거두면 이곳에 적혀요.</p>}
       {partner && r && (
         <section className="fam-card">

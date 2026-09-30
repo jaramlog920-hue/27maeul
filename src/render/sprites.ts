@@ -158,6 +158,8 @@ export interface SpriteOpts {
   look?: Look
   /** 주인공이 고른 머리·옷·장신구 (있으면 look보다 먼저) */
   avatar?: FullAvatar
+  /** 우리 아이처럼 키가 작게 (0~3, 클수록 크다) */
+  short?: number
 }
 
 /** 머리 모양 (주인공·이웃 같이 쓴다): 곱슬·삐죽·가운데 가르마·짧게 깎음·옆 가르마 (대머리는 쓰지 않는다). ch는 그 사람의 머리 글자 */
@@ -445,7 +447,9 @@ export function spriteRows(who: Who, facing: Facing, opts: SpriteOpts): string[]
   } else {
     rows = dressNeighbor(who, rows, facing)
   }
+  // 물 긷는 아이, 그리고 옷장에서 모습을 입힌 우리 아이(short)는 몸통이 짧다
   if (who === 'child') rows = shorten(rows, opts.growth ?? 0)
+  else if (opts.short !== undefined) rows = shorten(rows, opts.short)
   if (!side && opts.frame) rows = stepLegs(rows, opts.frame)
   if (facing === 'left') rows = mirror(rows)
   if (pose === 'crouch') rows = [...rows.slice(0, 7), ...rows.slice(9)]
