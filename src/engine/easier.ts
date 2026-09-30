@@ -8,7 +8,7 @@ import type { ItemId } from './types'
 
 type Items = Partial<Record<ItemId, number>>
 
-export type EasyId = 'rainJar' | 'reedRack' | 'sootCatcher' | 'inkJar' | 'supplyChest'
+export type EasyId = 'rainJar' | 'reedRack' | 'sootCatcher' | 'inkJar' | 'supplyChest' | 'homeMailbox'
 
 export function owns(flags: Record<string, number>, id: EasyId): boolean {
   return unlocked(flags, id)
@@ -121,3 +121,8 @@ export function walkMul(inv: Inventory): number {
 
 /** 가벼운 신: 튼튼한 신을 산 뒤, 양치기와 마음 5가 되면 인사할 때 준다 (한 번) */
 export const LIGHT_SHOES = { npc: 'shepherd', hearts: 5 } as const
+
+// ── 집 앞 편지함 (계획 11 작업 3) ──
+
+/** 집 앞 편지함: 편지 나르는 이웃과 마음 4가 되면 문 왼쪽에 세워 준다 (한 번, 짧은 장면) */
+export const HOME_MAILBOX = { npc: 'postman', hearts: 4 } as const

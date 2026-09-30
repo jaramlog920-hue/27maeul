@@ -622,7 +622,9 @@
     "received": "편지 {n}통을 받았어요.",
     "starsBring": "벤치 곁 편지함에서 {n}통을 꺼냈어요. {book} {from}–{to}장이에요.",
     "starsBringOne": "벤치 곁 편지함에서 한 통을 꺼냈어요. {book} {chapter}장이에요.",
-    "revHint": "그 방 책은 해 질 녘에 언덕 편지함에 넣어 둬요. 맑은 밤에 꺼내 가세요."
+    "revHint": "그 방 책은 해 질 녘에 언덕 편지함에 넣어 둬요. 맑은 밤에 꺼내 가세요.",
+    "mailboxTook": "집 앞 편지함에서 {n}통을 꺼냈어요.",
+    "mailboxEmpty": "편지함이 비어 있다."
   },
   "copy": {
     "title": "{book} {chapter}장 옮겨 적기",
@@ -2900,6 +2902,23 @@
           "text": "양 따라 종일 걷는 사람들이 신는 거예요. 발에 맞게 끈을 조여 봐요."
         }
       ]
+    },
+    "homeMailbox": {
+      "title": "집 앞 편지함",
+      "lines": [
+        {
+          "speaker": "postman",
+          "text": "날마다 찾아다니게 해서 미안했어요."
+        },
+        {
+          "speaker": "narration",
+          "text": "편지 나르는 이웃이 문 왼쪽에 작은 나무 편지함을 세웠다."
+        },
+        {
+          "speaker": "postman",
+          "text": "이제 편지는 여기 넣어 둘게요. 비 오는 날에도요."
+        }
+      ]
     }
   },
   "journal": {
@@ -2967,7 +2986,8 @@
       "built:sootCatcher": " 화덕에 그을음 받이가 달렸다.",
       "built:reedRack": " 집 옆에 갈대 말리는 틀이 섰다.",
       "reedRack": " 어부가 틀에 갈대를 걸어 두고 갔다.",
-      "lightShoes": " 양치기에게 가벼운 신을 받았다."
+      "lightShoes": " 양치기에게 가벼운 신을 받았다.",
+      "homeMailbox": " 집 앞에 편지함이 섰다."
     }
   },
   "quiz": {
@@ -3114,7 +3134,8 @@
       "reedRack": "갈대 말리는 틀",
       "sootCatcher": "그을음 받이",
       "inkJar": "잉크 항아리",
-      "supplyChest": "재료 궤짝"
+      "supplyChest": "재료 궤짝",
+      "homeMailbox": "집 앞 편지함"
     },
     "order": "{name} 부탁하기",
     "orderCost": "{name}: {coins}닢",

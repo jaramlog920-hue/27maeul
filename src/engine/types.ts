@@ -27,6 +27,8 @@ export type PlaceId =
   | 'field'
   | 'library'
   | 'basket'
+  // 집 앞 편지함 (계획 11 작업 3): 편지 나르는 이웃과 마음 4가 된 뒤부터
+  | 'mailbox'
   | 'garden'
   | 'ladder'
   | 'atticWindow'

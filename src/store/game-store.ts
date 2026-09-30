@@ -34,6 +34,7 @@ import {
   bookLineKey,
   setMyLine,
   stargaze,
+  openMailbox,
   clearSky,
   submitChapter,
   tapTile,
@@ -530,6 +531,17 @@ export const useGame = create<Store>((set, get) => {
         if (letterWaiting(game)) return { game, modal: { kind: 'letter' } }
         get().say(T.letters.none)
         return { game, modal: null }
+      case 'mailbox': {
+        // 집 앞 편지함: 편지 나르는 이웃을 찾아가지 않아도 오늘 편지를 꺼낸다 (본문은 책상에서)
+        const { state, pieceIds } = openMailbox(game, CONTENT)
+        if (!pieceIds.length) {
+          get().say(T.post.mailboxEmpty)
+          return { game, modal: null }
+        }
+        sfx('scroll')
+        get().say(fill(T.post.mailboxTook, { n: pieceIds.length }))
+        return { game: persist(state), modal: null }
+      }
       case 'house': {
         const who = inviterAtDoor(game, target.tile)
         const dined = who ? dine(game, who) : null

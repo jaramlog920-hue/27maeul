@@ -636,6 +636,8 @@ export const PLACES: Record<PlaceId, Place> = {
   // 서고 안 복음서 선반 (문은 걸어 들어가는 문)
   library: { tiles: [{ x: 35, y: 50 }, { x: 36, y: 50 }, { x: 37, y: 50 }], stand: { x: 36, y: 51 } },
   basket: { tiles: [{ x: HOME_FRONT.x + 1, y: HOME_FRONT.y }], stand: HOME_FRONT },
+  // 집 앞 편지함: 문 앞 길 왼쪽 풀밭 (편지 바구니 반대편). 그림일 뿐 길을 막지 않는다
+  mailbox: { tiles: [{ x: HOME_FRONT.x - 1, y: HOME_FRONT.y }], stand: HOME_FRONT },
   garden: { tiles: tilesOf('l') },
   // 다락 서재 (2단계): 선반 옆 사다리, 다락 창가
   ladder: { tiles: [LADDER], stand: { x: LADDER.x, y: LADDER.y + 1 } },
@@ -656,8 +658,15 @@ export const PLACES: Record<PlaceId, Place> = {
   revTable: { tiles: [{ x: REV_X0 + 5, y: REV_Y0 + 4 }], stand: { x: REV_X0 + 5, y: REV_Y0 + 5 } },
 }
 
-/** 이 장소가 지금 있는가 (다락 서재는 2단계부터) */
+let mailboxOn = false
+/** 집 앞 편지함이 섰는가 — 게임 상태(flags)와 맞추는 것은 엔진 입구(game.ts의 syncHome)가 한다 */
+export function setMailbox(on: boolean): void {
+  mailboxOn = on
+}
+
+/** 이 장소가 지금 있는가 (다락 서재는 2단계부터, 집 앞 편지함은 선 뒤부터) */
 export function placeActive(id: PlaceId): boolean {
+  if (id === 'mailbox') return mailboxOn
   return (id !== 'ladder' && id !== 'atticWindow') || homeLevel >= 2
 }
 

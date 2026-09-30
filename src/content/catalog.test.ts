@@ -45,7 +45,7 @@ describe('life-text', () => {
     for (const id of [
       'welcome', 'strays', 'companionJoined', 'childAsks', 'firstLetter', 'childLearned', 'babyBorn', 'sick',
       'festival:barley', 'festival:grapes', 'festival:hearth', 'rainbow', 'firstSnow', 'stars', 'blanket',
-      'firstChapter', 'bookBound','gospelFeast', 'feastFire', 'allFeast', 'allFeastFire',
+      'firstChapter', 'bookBound','gospelFeast', 'feastFire', 'allFeast', 'allFeastFire', 'homeMailbox',
     ])
       expect(SCENES[id], id).toBeDefined()
     expect(ALBUM_IDS).toContain('stars')

@@ -1,9 +1,9 @@
 // 마음이 쌓여 마을에 생긴 것들 (6번 A·C). 모두 그림일 뿐 길을 막지 않는다.
 import { unlocked } from '../engine/bonds'
 import { roomOpen } from '../engine/books'
-import type { GameState } from '../engine/game'
+import { mailboxHasPost, type GameState } from '../engine/game'
 import { GARDEN_TILES, isRipe } from '../engine/garden'
-import { TILE } from '../engine/world'
+import { PLACES, TILE } from '../engine/world'
 import type { Tile, Weather } from '../engine/types'
 
 type Ctx = CanvasRenderingContext2D
@@ -176,6 +176,8 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
   // 요한계시록 방이 열린 뒤부터 언덕 벤치 곁 편지함
   const box = hillMailbox(game)
   if (box) mailbox(g, box, (game.flags.allFeast ?? 0) >= 1)
+  // 집 앞 편지함 (계획 11 작업 3): 편지 나르는 이웃과 마음 4가 된 뒤부터, 오늘 편지가 들어 있으면 투입구에 편지 끝
+  if (unlocked(f, 'homeMailbox')) mailbox(g, PLACES.mailbox.tiles[0], !mailboxHasPost(game))
   // C2 베 짜는 이웃의 베틀
   if (level >= 2) {
     const loom = { x: 30, y: 29 }

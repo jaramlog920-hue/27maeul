@@ -57,10 +57,10 @@ import {
   momentNow,
   onceKey,
 } from './stories'
-import { ATTIC, BED_STAND, HEARTH_STAND, HOME_FRONT, inAttic, isHome, isIndoor, isWalkable, key, LADDER, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setOpenDoors, START, tileAt, WARPS } from './world'
+import { ATTIC, BED_STAND, HEARTH_STAND, HOME_FRONT, inAttic, isHome, isIndoor, isWalkable, key, LADDER, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setMailbox, setOpenDoors, START, tileAt, WARPS } from './world'
 import { GOSPELS, type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
 import type { Avatar } from './avatar'
-import { CARPENTER_WORKS, fromChest, hasStock, INK_JAR_HOLD, LIGHT_SHOES, owns, RACK_HOLD, RACK_PAPYRUS, RAIN_WATER, SOOT_CATCH, stash, stashOverflows, stock, takeStock, walkMul, type CarpenterWork, type EasyId } from './easier'
+import { CARPENTER_WORKS, fromChest, hasStock, HOME_MAILBOX, INK_JAR_HOLD, LIGHT_SHOES, owns, RACK_HOLD, RACK_PAPYRUS, RAIN_WATER, SOOT_CATCH, stash, stashOverflows, stock, takeStock, walkMul, type CarpenterWork, type EasyId } from './easier'
 
 export interface JournalEntry {
   day: number
@@ -153,6 +153,7 @@ export interface GameState {
 export function syncHome(s: Pick<GameState, 'homeLevel'> & Partial<Pick<GameState, 'flags'>>): void {
   setHomeLevel(s.homeLevel ?? 0)
   setOpenDoors(openDoorsFor(s.flags ?? {}))
+  setMailbox(owns(s.flags ?? {}, 'homeMailbox'))
 }
 
 export interface Today {
@@ -262,11 +263,13 @@ function todaysOffers(day: number, collected: string[], s: Pick<GameState, 'acti
  * 오늘 편지 나르는 이웃이 가져올 편지: 지금 책이 편지 책이고, 그 이웃이 오늘 나와 있고(present), 오늘 아직 건네지 않았을 때
  * (listened — 책을 바꿔도 같은 날 또 받지 않는다). 다른 이웃은 편지를 건네지 않는다.
  * 요한계시록(arrives 'stars')은 낮에 건네지 않는다 — 언덕 편지함에서 맑은 밤에 꺼낸다 (stargaze)
+ * 집 앞 편지함이 섰으면 그 이웃이 나오지 않는 날(궂은 날 등)에도 편지함에 넣어 둔다 (계획 11 작업 3)
  */
-function todaysPost(day: number, s: Pick<GameState, 'activeBook' | 'collected' | 'listened'>, content: GameContent, present: string[]): string[] {
+function todaysPost(day: number, s: Pick<GameState, 'activeBook' | 'collected' | 'listened' | 'flags'>, content: GameContent, present: string[]): string[] {
   const book = s.activeBook
   if (!book || modeOf(book) !== 'letters' || arrivesOf(book) !== 'post') return []
-  if (!present.includes(POSTMAN) || s.listened.includes(POSTMAN)) return []
+  if (s.listened.includes(POSTMAN)) return []
+  if (!present.includes(POSTMAN) && !owns(s.flags, 'homeMailbox')) return []
   return postForDay({ day, book, chapters: content.pieces.filter((p) => p.book === book), delivered: s.collected })
 }
 
@@ -295,6 +298,7 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
   // 새 게임은 넓히기 전 집 — 지도(모듈 전역 집 단계)도 0으로, 서고의 방 문은 모두 닫힌 채
   setHomeLevel(0)
   setOpenDoors([])
+  setMailbox(false)
   return {
     version: 1,
     clock,
@@ -653,6 +657,10 @@ function heartUp(s: GameState, id: string, points: number): GameState {
       scenes: [...next.scenes, 'lightShoes'],
     }
   }
+  // 집 앞 편지함 (계획 11 작업 3): 편지 나르는 이웃과 마음 4 — 한 번
+  if (id === HOME_MAILBOX.npc && after >= HOME_MAILBOX.hearts && !owns(next.flags, 'homeMailbox')) {
+    next = { ...next, flags: { ...next.flags, 'unlock:homeMailbox': 1 }, scenes: [...next.scenes, 'homeMailbox'] }
+  }
   if (id === 'child' && after >= CHILD_ASKS_AT && !next.flags.childAsked) {
     next = { ...next, flags: { ...next.flags, childAsked: 1 }, scenes: [...next.scenes, 'childAsks'] }
   }
@@ -705,6 +713,21 @@ function receivePost(s: GameState, content: GameContent): { state: GameState; pi
     pieceId: ids[0],
     pieceIds: ids,
   }
+}
+
+/**
+ * 집 앞 편지함 (계획 11 작업 3): 편지 나르는 이웃을 찾아가지 않아도 오늘 편지를 꺼낸다.
+ * 이웃에게 받는 것과 같은 편지(post)다 — 어느 쪽에서 받든 한 번. 편지함이 없거나 비었으면 pieceIds가 빈다
+ */
+export function openMailbox(s: GameState, content: GameContent): { state: GameState; pieceIds: string[] } {
+  if (!owns(s.flags, 'homeMailbox') || !s.activeBook || modeOf(s.activeBook) !== 'letters') return { state: s, pieceIds: [] }
+  const { state, pieceIds } = receivePost(s, content)
+  return { state, pieceIds }
+}
+
+/** 오늘 집 앞 편지함에 편지가 들어 있는가 (그림·안내용) */
+export function mailboxHasPost(s: Pick<GameState, 'flags' | 'post' | 'collected'>): boolean {
+  return owns(s.flags, 'homeMailbox') && (s.post ?? []).some((id) => !s.collected.includes(id))
 }
 
 /** 받은 장 조각을 collected·todayHeard에 넣는다 (편지 나르는 이웃·언덕 편지함이 함께 쓴다) */
