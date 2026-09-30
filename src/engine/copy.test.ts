@@ -1,15 +1,17 @@
 // 계획 7 작업 3: 빈칸 채워 옮겨 적기 — 장마다 빈칸 셋, 답으로 채우면 원문(개역한글) 그대로
 import bible from '../content/nt-krv.json'
 import { CONTENT, copySourceFor, inBrackets, LETTER_PIECES, noText, piecesOf, quizSourceFor, versesOf } from '../content/catalog'
-import { blanksFor, COPY_BLANKS, fillVerse, isContentWord, wordAt } from './copy'
+import { blanksFor, COPY_BLANKS, fillVerse, isContentWord, optionRank, wordAt } from './copy'
 import { chapterReady, chooseBook, letterReady, listen, newGame, recordLetter, setArrangement, submitChapter, type GameState } from './game'
 import { CHAPTER_COST } from './items'
 import { POSTMAN } from './post'
 import { quizzable, MIN_VERSE_CHARS, wordsOf } from './quiz'
-import { LETTERS, type Book } from './types'
+import { BOOKS, LETTERS, type Book } from './types'
 
 const FULL = bible as Record<string, string[][]>
 const norm = (s: string) => s.replace(/[\s,.!?]+/g, '')
+const wordsIn = (text: string) => text.split(/\s+/).filter(Boolean).map(norm)
+const allSrc = quizSourceFor(BOOKS)
 const refParts = (ref: string) => {
   const m = /^(\S+) (\d+):(\d+)$/.exec(ref)!
   return { abbr: m[1], chapter: Number(m[2]), verse: Number(m[3]) }
@@ -62,9 +64,16 @@ describe('blanksFor — 87장 전부', () => {
         for (const o of b.options) {
           // ⑤ 보기는 모두 같은 책의 낱말
           expect(bookWords.has(o), o).toBe(true)
-          // ④ 다른 보기로 채운 절이 그 책 어디에도 없다
-          if (o !== b.answer) expect(bookSrc.countVerse(fillVerse(v.text, b.index, o)), o).toBe(0)
+          // ④ 다른 보기로 채운 절이 그 책에도, 본문의 다른 어느 책에도 없다
+          if (o !== b.answer) {
+            expect(bookSrc.countVerse(fillVerse(v.text, b.index, o)), o).toBe(0)
+            expect(allSrc.countVerse(fillVerse(v.text, b.index, o)), o).toBe(0)
+          }
         }
+        // ⑦ 답 낱말이 같은 절에 한 번 더 나오지 않는다 (가려도 답이 보이면 안 된다)
+        expect(wordsIn(v.text).filter((w) => w === norm(b.answer)), b.answer).toHaveLength(1)
+        // ⑧ 한 빈칸의 답이 같은 장 다른 빈칸의 보기로 나오지 않는다
+        for (const other of blanks) if (other !== b) expect(other.options.map(norm), b.answer).not.toContain(norm(b.answer))
       }
 
       // 빈칸을 모두 답으로 채운 장 = 원문 장 (본문이 없는 절만 빠진다)
@@ -94,6 +103,51 @@ describe('blanksFor — 87장 전부', () => {
   it('짧은 이음말·문장부호가 붙은 낱말은 내용 낱말이 아니다', () => {
     for (const w of ['그러나', '그러므로', '우리가', '너희가', '이는', '또한', '하나님께,', '(곧', '말씀.', '주']) expect(isContentWord(w), w).toBe(false)
     for (const w of ['하나님의', '복음을', '사도로']) expect(isContentWord(w), w).toBe(true)
+  })
+
+  it('이음 구실을 하는 말은 빈칸이 되지 않는다', () => {
+    const filler = ['안에서', '위하여', '가운데', '말미암아', '인하여', '이것을', '이것이', '하물며', '아무도', '가지는', '하나도', '되나니', '같으니', '같으나']
+    for (const w of filler) expect(isContentWord(w), w).toBe(false)
+    const answers = LETTER_PIECES.flatMap((p) => blanksFor(p.book, p.chapter, copySourceFor(p.book)).map((b) => b.answer))
+    for (const w of filler) expect(answers, w).not.toContain(w)
+  })
+
+  it('보기 순서: 끝 두 글자 같음 → 끝 글자 같음 → 나머지, 무리 안에서 길이 ±1 먼저', () => {
+    const a = '하나님께서'
+    expect(optionRank(a, '그리스도께서')).toBeLessThan(optionRank(a, '예수께서는'))
+    expect(optionRank(a, '성령께서')).toBe(0)
+    expect(optionRank(a, '그리스도께서')).toBe(0)
+    expect(optionRank(a, '주예수그리스도께서')).toBe(1)
+    expect(optionRank(a, '아들이셔서')).toBe(2)
+    expect(optionRank(a, '말미암지')).toBe(4)
+    expect(optionRank(a, '성령께서')).toBeLessThan(optionRank(a, '아들이셔서'))
+    expect(optionRank(a, '아들이셔서')).toBeLessThan(optionRank(a, '말미암지'))
+  })
+
+  it('보기의 끝말이 답을 드러내지 않는다: 대부분의 빈칸에서 틀린 보기 셋 중 둘 이상이 답과 끝 글자가 같다', () => {
+    // 잰 값(2026-09-30): 261빈칸 중 250 (95.8%). 끝 글자가 같은 낱말이 책에 모자란 빈칸만 예외
+    const all = LETTER_PIECES.flatMap((p) => blanksFor(p.book, p.chapter, copySourceFor(p.book)))
+    const good = all.filter((b) => {
+      const last = norm(b.answer).slice(-1)
+      return b.options.filter((o) => o !== b.answer && norm(o).slice(-1) === last).length >= 2
+    })
+    expect(all).toHaveLength(87 * COPY_BLANKS)
+    expect(good.length / all.length).toBeGreaterThanOrEqual(0.9)
+  })
+
+  it('틀린 보기 확인은 다른 책까지 센다 (countAnywhere)', () => {
+    const src = copySourceFor('rom')
+    // 에베소서 절은 로마서 안에서는 0번, 모든 책에서는 1번 이상
+    const t = versesOf('엡 2:8')[0].text
+    expect(src.countVerse(t)).toBe(0)
+    expect(src.countAnywhere(t)).toBeGreaterThanOrEqual(1)
+    expect(src.countAnywhere(t)).toBe(allSrc.countVerse(t))
+  })
+
+  it('같은 절에 두 번 나오는 낱말은 답이 되지 않는다 (딤후 3:2 사랑하며)', () => {
+    expect(wordsIn(versesOf('딤후 3:2')[0].text).filter((w) => w === '사랑하며').length).toBeGreaterThan(1)
+    const b = blanksFor('2ti', 3, copySourceFor('2ti')).find((x) => x.ref === '딤후 3:2')
+    if (b) expect(b.answer).not.toBe('사랑하며')
   })
 })
 

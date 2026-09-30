@@ -13,6 +13,8 @@ export const COPY_WORD_MIN = 3
 
 /** 옮겨 적기가 읽는 본문: 한 책 안 (quizSourceFor([book]) + 장 조각의 참조들) */
 export interface CopySource extends QuizSource {
+  /** 본문에 든 모든 책(그 책만이 아니라)에서 이 문장을 가진 절의 수 — 틀린 보기로 채운 절이 어디에도 없어야 한다 */
+  countAnywhere: (text: string) => number
   /** 그 책의 장 참조 (장 조각의 ref, 장 번호 순서) */
   chapters: readonly { chapter: number; ref: string }[]
 }
@@ -41,6 +43,13 @@ export const COPY_STOPWORDS: readonly string[] = [
   '그들이', '그들은', '그들의', '그들을', '그들에게',
   '아니라', '아니요', '아니니라', '아니하고', '아니하니', '아니하며', '아니하노라', '있느니라', '있으니', '있어', '하노라', '하느니라',
   '어떤', '어찌', '무엇이뇨', '무엇이냐', '모든', '누구든지', '무엇이든지',
+  // 뜻보다 이음 구실을 하는 말 (자리만 보고도 고를 수 있거나, 골라도 본문을 읽은 것이 되지 않는다)
+  '안에서', '위하여', '가운데', '가운데서', '말미암아', '말미암지', '인하여', '인하여서', '이것을', '이것이', '이것으로', '그것을', '그것으로',
+  '하물며', '아무도', '아무것도', '가지는', '하나도', '되나니', '같으니', '같으나', '대하여', '향하여',
+  '되었으니', '되었느니라', '되리라', '하려고', '하려함이라', '함이라', '함이니라', '함이요', '것이라', '것이니', '것이요', '것이니라',
+  '이로써', '이제는', '그러니', '그런고로', '그러한즉', '뿐아니라', '아니면',
+  '아니하나니', '아니하느니라', '아니하였으니', '이같이', '저같이', '그같이', '이렇게', '그렇게', '어떻게', '무엇을', '무엇으로', '누구를', '누구든',
+  '있으며', '있나니', '있도다', '있을지어다', '없느니라', '없나니', '하였으니', '하였으나', '하였느니라',
 ]
 const STOP = new Set(COPY_STOPWORDS)
 
@@ -110,7 +119,8 @@ const memo = new WeakMap<CopySource, Map<string, CopyBlank[]>>()
 
 /**
  * 한 장의 빈칸 (많아야 COPY_BLANKS개): 장의 빈칸 절들을 세 구간으로 나눠 구간마다 한 절, 절마다 내용 낱말 하나.
- * 보기 셋은 같은 책 다른 절의 내용 낱말 (길이가 답과 ±1자인 것 먼저) — 다른 보기로 채운 절이 그 책 어디에도 없어야 한다.
+ * 보기 셋은 같은 책 다른 절의 내용 낱말 (끝말이 답과 같은 것, 길이가 답과 ±1자인 것 먼저 — optionRank) — 다른 보기로 채운 절이 본문 어느 책에도 없어야 한다.
+ * 같은 절에 두 번 나오는 낱말은 답이 되지 않고, 한 장의 빈칸끼리 답·보기가 겹치지 않는다.
  * 보기를 셋 못 채우면 그 낱말 대신 다음 낱말, 그 절이 안 되면 같은 구간의 다음 절
  */
 export function blanksFor(book: Book, chapter: number, src: CopySource): CopyBlank[] {
@@ -159,19 +169,38 @@ function makeBlanks(key: string, chapter: number, src: CopySource): CopyBlank[] 
   return out
 }
 
+/**
+ * 틀린 보기의 순서: 끝말이 답과 같은 것 먼저 (끝 두 글자 같음 → 끝 글자 같음 → 나머지), 같은 무리 안에서는 길이가 답과 ±1자인 것 먼저.
+ * 끝말(조사·어미)이 다르면 문장 자리만 보고도 답이 드러나기 때문
+ */
+export function optionRank(answer: string, w: string): number {
+  const a = norm(answer)
+  const x = norm(w)
+  const ending = x.length >= 2 && a.length >= 2 && x.slice(-2) === a.slice(-2) ? 0 : x.slice(-1) === a.slice(-1) ? 2 : 4
+  return ending + (Math.abs(x.length - a.length) <= 1 ? 0 : 1)
+}
+
 function blankIn(v: VerseText, pool: readonly { w: string; ref: string }[], taken: readonly CopyBlank[], src: CopySource, rng: Rng): CopyBlank | null {
-  const used = new Set(taken.map((b) => norm(b.answer)))
+  // 이 장의 다른 빈칸에 이미 나온 낱말(답·보기)은 답으로도 보기로도 쓰지 않는다
+  const usedAnswers = new Set(taken.map((b) => norm(b.answer)))
+  const usedOptions = new Set(taken.flatMap((b) => b.options.map(norm)))
+  const verseWords = tokens(v.text).filter((t) => !isSpace(t)).map(norm)
   for (const { w: answer, index } of shuffle(contentWords(v), rng)) {
-    if (used.has(norm(answer))) continue
-    // 같은 책 다른 절의 낱말, 답과 띄어쓰기·문장부호만 다른 것은 뺀다
-    const cands = [...new Set(pool.filter((p) => p.ref !== v.ref && norm(p.w) !== norm(answer)).map((p) => p.w))]
-    const shuffled = shuffle(cands, rng)
-    const close = (w: string) => Math.abs(w.length - answer.length) <= 1
-    const ordered = [...shuffled.filter(close), ...shuffled.filter((w) => !close(w))]
+    if (usedAnswers.has(norm(answer)) || usedOptions.has(norm(answer))) continue
+    // 같은 절에 한 번 더 나오는 낱말은 빈칸으로 가려도 답이 보인다
+    if (verseWords.filter((w) => w === norm(answer)).length > 1) continue
+    // 같은 책 다른 절의 낱말, 답과 띄어쓰기·문장부호만 다른 것과 이 장의 다른 빈칸 답은 뺀다
+    const cands = [...new Set(pool.filter((p) => p.ref !== v.ref && norm(p.w) !== norm(answer) && !usedAnswers.has(norm(p.w))).map((p) => p.w))]
+    const ordered = shuffle(cands, rng)
+      .map((w, i) => ({ w, i, r: optionRank(answer, w) }))
+      .sort((x, y) => x.r - y.r || x.i - y.i)
+      .map((x) => x.w)
     const picked: string[] = []
     for (const w of ordered) {
       if (picked.some((p) => norm(p) === norm(w))) continue
-      if (src.countVerse(fillVerse(v.text, index, w)) !== 0) continue
+      // 틀린 보기로 채운 절이 그 책에도, 본문의 다른 어느 책에도 없어야 한다
+      const filled = fillVerse(v.text, index, w)
+      if (src.countVerse(filled) !== 0 || src.countAnywhere(filled) !== 0) continue
       picked.push(w)
       if (picked.length === 3) break
     }

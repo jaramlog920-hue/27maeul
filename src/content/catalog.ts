@@ -143,12 +143,19 @@ export function quizSourceFor(books: readonly Book[]): QuizSource {
   }
 }
 
-/** 편지 옮겨 적기가 읽는 본문 (계획 7 작업 3): 그 책 안에서만 — 장 참조·절·같은 문장 세기. 책마다 하나 (빈칸 기억이 이것에 붙는다) */
+/** 본문에 든 모든 책에서 같은 문장 세기 (옮겨 적기의 틀린 보기 확인용) */
+const allBooks = quizSourceFor(BOOKS)
+
+/** 편지 옮겨 적기가 읽는 본문 (계획 7 작업 3): 그 책 안에서만 — 장 참조·절·같은 문장 세기(+ 모든 책에서 세기). 책마다 하나 (빈칸 기억이 이것에 붙는다) */
 const copySources = new Map<Book, CopySource>()
 export function copySourceFor(book: Book): CopySource {
   let src = copySources.get(book)
   if (!src) {
-    src = { ...quizSourceFor([book]), chapters: piecesOf(book).map((p) => ({ chapter: p.chapter, ref: p.ref })) }
+    src = {
+      ...quizSourceFor([book]),
+      countAnywhere: allBooks.countVerse,
+      chapters: piecesOf(book).map((p) => ({ chapter: p.chapter, ref: p.ref })),
+    }
     copySources.set(book, src)
   }
   return src
