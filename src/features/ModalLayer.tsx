@@ -1,4 +1,5 @@
-import { useCallback } from 'react'
+import { useCallback, type SyntheticEvent } from 'react'
+import { isGhostClick } from '../shared/ghost'
 import { useGame } from '../store/game-store'
 import { Bag } from './bag/Bag'
 import { AdoptForm } from './companion/AdoptForm'
@@ -110,8 +111,15 @@ export function ModalLayer() {
   // 창이 열려 있는 동안 스크롤되는 창에 "아래로 더 있어요"를 붙인다 (창이 바뀌면 MutationObserver가 다시 살핀다)
   const hints = useCallback((el: HTMLDivElement | null) => (el ? watchScrollHints(el) : undefined), [])
   if (!modal) return null
+  // 지도를 누른 손가락을 뗄 때의 클릭이 방금 뜬 창의 단추를 누르지 않게 (shared/ghost.ts)
+  const eatGhost = (e: SyntheticEvent) => {
+    if (isGhostClick()) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
+  }
   return (
-    <div className="modal-backdrop" ref={hints}>
+    <div className="modal-backdrop" ref={hints} onClickCapture={eatGhost}>
       <Body />
     </div>
   )

@@ -7,6 +7,7 @@ import type { Book } from '../../engine/types'
 import { HEIGHT, isIndoor, TILE, VIEW_H, VIEW_W, WIDTH } from '../../engine/world'
 import { createRenderer, type Renderer } from '../../render/renderer'
 import { playMusic, setRain, unlockAudio } from '../../audio/sound'
+import { markMapTap } from '../../shared/ghost'
 import { useGame } from '../../store/game-store'
 
 /** 탭한 화면 좌표 → 마을 칸 (카메라 반영) */
@@ -121,6 +122,7 @@ export function GameCanvas({ zoom = 1 }: { zoom?: number }) {
       onPointerDown={(e) => {
         e.preventDefault()
         unlockAudio()
+        markMapTap()
         // offsetX/Y와 clientWidth/Height는 테두리를 뺀 그림 영역 기준이다
         const c = e.currentTarget
         const box = { left: 0, top: 0, width: c.clientWidth, height: c.clientHeight }

@@ -7,6 +7,7 @@ import { fill, T } from '../../content/text'
 import { nextEvent, eventSummary, scheduledEvents } from '../../engine/events'
 import { seasonalNeed } from '../../engine/game'
 import { moodOf } from '../../engine/mood'
+import { markMapTap } from '../../shared/ghost'
 import { useGame } from '../../store/game-store'
 import { DirectionPad } from './Joystick'
 
@@ -127,6 +128,7 @@ export function ControlDeck() {
               e.preventDefault()
               unlockAudio()
               setMenu(false)
+              markMapTap()
               press()
             }}
             onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && press()}

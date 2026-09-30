@@ -307,8 +307,15 @@ function dressAvatar(rows: string[], facing: Facing, a: FullAvatar, blink: boole
     case 5: // 머릿수건: 머리 위쪽을 천으로 덮는다
       for (let y = 0; y <= 2; y++) for (let x = 0; x < 10; x++) if (rows[y][x] === 'h') setPixel(rows, x, y, 'x')
       for (let x = 3; x <= 6; x++) setPixel(rows, x, 0, 'x')
+      capTop(rows, 'x')
       break
   }
+}
+
+/** 머릿수건·모자를 쓴 사람: 머리 꼭대기 검은 윤곽이 천 위로 비치지 않게, 윗줄 윤곽을 천 색으로 */
+function capTop(rows: string[], ch: string) {
+  for (let x = 0; x < 10; x++) if (rows[0][x] === 'k') setPixel(rows, x, 0, ch)
+  for (const x of [1, 2, 7, 8]) if (rows[1][x] === 'k') setPixel(rows, x, 1, ch)
 }
 
 function dressNeighbor(who: Who, rows: string[], facing: Facing): string[] {
@@ -328,6 +335,7 @@ function dressNeighbor(who: Who, rows: string[], facing: Facing): string[] {
       // 짙은 밤색 머리에 겨자색 모자 (남자 이웃에 분홍 머리는 쓰지 않는다)
       const out = recolor(rows, { h: 'L', r: 'p', R: 'Q', b: 'H' })
       for (let x = 2; x <= 7; x++) setPixel(out, x, 0, 'Q')
+      capTop(out, 'Q')
       return out
     }
     case 'smith': {
@@ -348,14 +356,18 @@ function dressNeighbor(who: Who, rows: string[], facing: Facing): string[] {
     }
     case 'child':
       return recolor(rows, { r: 'z', R: 'Z', b: 'y' })
-    case 'weaver':
-      // 분홍 머릿수건, 보랏빛 옷
-      return recolor(rows, { h: 'F', r: 'V', R: 'X', b: 'F' })
+    case 'weaver': {
+      // 분홍 옆 가르마 머리, 보랏빛 옷
+      const out = recolor(rows, { h: 'F', r: 'V', R: 'X', b: 'F' })
+      hairShape(out, facing, 'sidePart', 'F')
+      return out
+    }
     case 'beekeeper': {
       // 챙 넓은 밀짚모자, 풀빛 옷
       const out = recolor(rows, { r: 'E', R: 'M', b: 'Y' })
       for (let x = 0; x <= 9; x++) setPixel(out, x, 1, 'Y')
       for (let x = 2; x <= 7; x++) setPixel(out, x, 0, 'Y')
+      capTop(out, 'Y')
       return out
     }
     case 'postman': {
@@ -372,6 +384,7 @@ function dressNeighbor(who: Who, rows: string[], facing: Facing): string[] {
       // 청록 겉옷, 밀짚 머릿수건 (옆 가르마)
       const out = recolor(rows, { h: 'e', r: 'J', R: 'w', b: 'e' })
       hairShape(out, facing, 'sidePart', 'e')
+      capTop(out, 'e')
       return out
     }
     case 'carpenter': {

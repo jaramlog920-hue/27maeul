@@ -256,6 +256,8 @@ function drawGround(g: Ctx, ch: string, x: number, y: number, season: Season, at
   const px = x * TILE
   const py = y * TILE
   const [g1, g2, g3] = SEASON_GRASS[season]
+  // 길 한가운데 놓인 벤치·우물은 풀 한 칸을 깔지 않고 길 바닥 그대로 (사용자, 2026-09-30)
+  if ((ch === 'B' || ch === 'w') && [at(x - 1, y), at(x + 1, y), at(x, y - 1), at(x, y + 1)].filter((c) => c === ',').length >= 3) ch = ','
   if (ch === '_') {
     g.fillStyle = '#15100c'
     g.fillRect(px, py, TILE, TILE)
