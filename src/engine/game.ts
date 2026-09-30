@@ -102,6 +102,7 @@ import {
 import { ATTIC, BED_STAND, HEARTH_STAND, HOME_FRONT, inAttic, isHome, isIndoor, isWalkable, key, LADDER, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setMailbox, setOpenDoors, START, tileAt, WARPS } from './world'
 import { GOSPELS, type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
 import type { Avatar } from './avatar'
+import { BIRTHDAY_MUL, isBirthday, NO_NOTEBOOK, noteGift, noteHeard, noteMet, noteSeen, seenLabel, type Notebook } from './notebook'
 import { CARPENTER_WORKS, fromChest, hasStock, HOME_MAILBOX, INK_JAR_HOLD, LIGHT_SHOES, owns, RACK_HOLD, RACK_PAPYRUS, RAIN_WATER, SOOT_CATCH, stash, stashOverflows, stock, takeStock, walkMul, type CarpenterWork, type EasyId } from './easier'
 
 export interface JournalEntry {
@@ -199,6 +200,8 @@ export interface GameState {
   careful: Record<string, number[]>
   /** 봉인용 밀랍으로 봉인한 책 */
   sealed: string[]
+  /** 이웃 수첩: 만난 이웃·알게 된 좋아하는 것과 싫어하는 것·마주친 자리·들은 이야기 */
+  notebook: Notebook
 }
 
 /** 지도(world.tileAt)가 이 게임의 집 단계·열린 서고 방 문(방 표)을 보게 한다. 지도를 읽는 엔진 입구마다 부른다 */
@@ -243,7 +246,7 @@ export function shelvedCount(s: Pick<GameState, 'shelved'>): number {
  * 아직 이사 오지 않은 이웃 — 마을 단계(joinsAt)가 모자라거나, 서고 권수(joinsAtBooks)로 오는 이웃이면
  * 소개 장면이 나온 아침(잠들 때 세운 movedIn 표식)이 아직 오지 않았다
  */
-const notYet = (d: NeighborDef, level: number, flags: Record<string, number>) =>
+export const notYet = (d: NeighborDef, level: number, flags: Record<string, number>) =>
   (d.joinsAt !== undefined && level < d.joinsAt) ||
   (d.joinsAtBooks !== undefined && !flags[`movedIn:${d.id}`]) ||
   (!!d.joinsWithFamily && !!d.family && !flags[`movedIn:${d.family}`])
@@ -441,6 +444,7 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
     life: NO_LIFE,
     careful: {},
     sealed: [],
+    notebook: NO_NOTEBOOK,
   }
 }
 
@@ -995,7 +999,10 @@ function heartUpRaw(s: GameState, id: string, points: number): GameState {
 /** 말을 걸면 그날 처음 한 번 하트가 오른다 */
 export function greetNeighbor(s: GameState, id: string): GameState {
   if (s.talked.includes(id)) return s
-  return train(heartUp(greetMemories({ ...s, talked: [...s.talked, id] }, id), id, GAIN.talk), 'charm', XP.greet)
+  const n = s.npcs[id]
+  let notebook = noteMet(s.notebook ?? NO_NOTEBOOK, id)
+  if (n) notebook = noteSeen(notebook, id, s.clock.minute, seenLabel(npcTile(n), routineOf(s, id)?.doing))
+  return train(heartUp(greetMemories({ ...s, talked: [...s.talked, id], notebook }, id), id, GAIN.talk), 'charm', XP.greet)
 }
 
 /**
@@ -1004,7 +1011,10 @@ export function greetNeighbor(s: GameState, id: string): GameState {
  */
 export function listen(s: GameState, neighborId: string, content: GameContent): { state: GameState; pieceId: string | null; pieceIds: string[] } {
   const none = { state: s, pieceId: null, pieceIds: [] as string[] }
-  if (neighborId === POSTMAN && s.activeBook && modeOf(s.activeBook) === 'letters') return receivePost(s, content)
+  if (neighborId === POSTMAN && s.activeBook && modeOf(s.activeBook) === 'letters') {
+    const r = receivePost(s, content)
+    return r.pieceIds.length ? { ...r, state: { ...r.state, notebook: noteHeard(r.state.notebook ?? NO_NOTEBOOK, POSTMAN, r.pieceIds) } } : r
+  }
   const pieceId = s.offers[neighborId]
   if (!pieceId || s.collected.includes(pieceId)) return none
   const piece = content.pieces.find((p) => p.id === pieceId)
@@ -1021,6 +1031,7 @@ export function listen(s: GameState, neighborId: string, content: GameContent): 
       collected: [...s.collected, pieceId],
       todayHeard: [...s.todayHeard, pieceId],
       listened: s.listened.includes(neighborId) ? s.listened : [...s.listened, neighborId],
+      notebook: noteHeard(s.notebook ?? NO_NOTEBOOK, neighborId, [pieceId]),
       progress: { ...s.progress, [piece.book]: { ...bp, arrangement: { ...bp.arrangement, [piece.chapter]: [...placed, pieceId] } } },
     }, 'wit', XP.listen),
     pieceId,
@@ -1102,10 +1113,20 @@ export function giveGift(s: GameState, def: NeighborDef, item: ItemId): { state:
   if (!left) return null
   const liked = def.likes.includes(item)
   // 싫어하는 것을 건넨 첫날은 기억에 남는다 (나중에 웃음거리가 된다 — 계획 6b)
-  const disliked = !!personOf(def.id)?.dislikes?.includes(item)
+  const disliked = dislikesOf(def).includes(item)
   const base = disliked ? { ...s, life: remember(s.life ?? NO_LIFE, def.id, 'badGift', s) } : s
-  const given = heartUp({ ...base, inv: left, gifted: [...s.gifted, def.id] }, def.id, disliked ? 0 : liked ? GAIN.giftLiked : GAIN.giftPlain)
+  const notebook = noteGift(s.notebook ?? NO_NOTEBOOK, def.id, item, liked, disliked)
+  // 생일에 건넨 선물은 마음이 두 배로 오른다 (싫어하는 것은 생일에도 그대로)
+  const mul = isBirthday(def.id, s.clock.day) ? BIRTHDAY_MUL : 1
+  const given = heartUp({ ...base, inv: left, gifted: [...s.gifted, def.id], notebook }, def.id, disliked ? 0 : (liked ? GAIN.giftLiked : GAIN.giftPlain) * mul)
   return { state: train(given, 'charm', XP.gift), liked }
+}
+
+/** 이웃이 싫어하는 것 (neighbors.json과 people.json을 함께 본다) */
+export function dislikesOf(def: Pick<NeighborDef, 'id' | 'dislikes'>): ItemId[] {
+  const out = [...(def.dislikes ?? [])]
+  for (const x of (personOf(def.id)?.dislikes ?? []) as ItemId[]) if (!out.includes(x)) out.push(x)
+  return out
 }
 
 export const GIFTABLE: readonly ItemId[] = ['bread', 'grapes', 'fig', 'wool', 'olive', 'oil', 'barley', 'honey', 'herb', 'bean']

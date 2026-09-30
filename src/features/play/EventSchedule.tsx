@@ -12,7 +12,8 @@ function useEvents() {
   const minute = useGame((s) => Math.floor(s.game.clock.minute))
   const today = useGame((s) => s.game.today)
   const flags = useGame((s) => s.game.flags)
-  return { day, minute, events: scheduledEvents({ clock: { day, minute }, today, flags }, CONTENT) }
+  const notebook = useGame((s) => s.game.notebook)
+  return { day, minute, events: scheduledEvents({ clock: { day, minute }, today, flags, notebook }, CONTENT) }
 }
 
 /** 상단에 늘 보이는 "다음 일정" 한 줄. 누르면 전체 일정 창 */

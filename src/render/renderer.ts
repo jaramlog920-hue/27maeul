@@ -918,6 +918,11 @@ function neighborPerson(def: NeighborDef, facing: Facing, frame: 0 | 1 | 2, blin
   return person(def.sprite as Who, facing, frame, blink, 'stand', season, { growth })
 }
 
+/** 이웃 수첩에 붙이는 앞모습 한 장 */
+export function neighborPortrait(def: NeighborDef, season: Season) {
+  return neighborPerson(def, 'down', 0, false, season)
+}
+
 function drawSprite(g: Ctx, c: HTMLCanvasElement, wx: number, wy: number, dy = 0) {
   // 발이 칸 아래쪽에 닿도록, 가운데 맞춤
   const px = Math.round(wx * TILE + (TILE - c.width) / 2)

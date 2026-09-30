@@ -4,6 +4,7 @@ import { lessonTime, type GameState } from './game'
 import { formatTime, seasonOf } from './clock'
 import { LESSON_FROM, LESSON_TO } from './stories'
 import type { GameContent } from './types'
+import { isBirthday } from './notebook'
 
 export interface ScheduledEvent {
   id: string
@@ -18,7 +19,7 @@ const festivals = { barley: '보리 거둔 날 잔치', grapes: '포도 수확 �
 const gatherings = { babyParty: '아기 잔치', picnic: '언덕 소풍', starNight: '별 보는 밤' }
 
 /** 미래의 친밀도 이벤트는 추측하지 않고, 확정된 날짜와 오늘 정해진 일정만 안내한다. */
-export function scheduledEvents(s: Pick<GameState, 'clock' | 'today' | 'flags'>, content: GameContent): ScheduledEvent[] {
+export function scheduledEvents(s: Pick<GameState, 'clock' | 'today' | 'flags'> & Partial<Pick<GameState, 'notebook'>>, content: GameContent): ScheduledEvent[] {
   const events: ScheduledEvent[] = []
   const day = s.clock.day
   const add = (id: string, title: string, location: string, from: number, to: number, done = false, onDay = day) => {
@@ -32,6 +33,12 @@ export function scheduledEvents(s: Pick<GameState, 'clock' | 'today' | 'flags'>,
       const first = schedule.find(e => e.tile)
       const end = first && schedule.find(e => e.from > first.from && !e.tile)
       if (first && end) add('market', '장날 · 떠돌이 상인', '장터', first.from, end.from, false, d)
+    }
+    // 만난 이웃의 생일 (선물하면 마음이 두 배로)
+    for (const id of s.notebook?.met ?? []) {
+      if (!isBirthday(id, d)) continue
+      const role = content.neighbors.find((n) => n.id === id)?.role ?? '이웃'
+      add(`birthday:${id}`, `${role} 생일`, '선물하면 마음이 두 배', 6 * 60, 22 * 60, false, d)
     }
     if (d > day && d === BABY_PARTY_DAY && !isWet(weatherOf(d))) {
       const [from, to] = gatheringWindow('babyParty')

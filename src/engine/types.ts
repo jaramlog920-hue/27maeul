@@ -199,6 +199,8 @@ export interface NeighborDef {
   /** 서고에 꽂힌 책이 이만큼이면 이사 온다 */
   joinsAtBooks?: number
   likes: ItemId[]
+  /** 싫어하는 것 (선물하면 마음이 오르지 않는다 — people.json의 dislikes와 합친다) */
+  dislikes?: ItemId[]
   help: {
     minigame: Minigame
     needs?: Partial<Record<ItemId, number>>

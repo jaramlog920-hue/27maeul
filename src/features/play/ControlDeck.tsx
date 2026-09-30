@@ -63,7 +63,8 @@ function DeckNext() {
   const minute = useGame((s) => Math.floor(s.game.clock.minute))
   const today = useGame((s) => s.game.today)
   const flags = useGame((s) => s.game.flags)
-  const events = scheduledEvents({ clock: { day, minute }, today, flags }, CONTENT)
+  const notebook = useGame((s) => s.game.notebook)
+  const events = scheduledEvents({ clock: { day, minute }, today, flags, notebook }, CONTENT)
   const next = nextEvent(events, day, minute)
   const now = !!next && next.day === day && minute >= next.from
   return (

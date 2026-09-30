@@ -1,5 +1,6 @@
 // 브라우저 저장. 저장소가 없거나 막혀 있어도 게임은 돌아야 하므로 모든 접근을 try/catch로 감싼다.
 import { sanitizeLife } from './people'
+import { sanitizeNotebook } from './notebook'
 import { sanitizeRomance } from './romance'
 import { sanitizeStats } from './stats'
 import { IDLE_RESET } from './autonomy'
@@ -140,6 +141,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     // 살림과 서고 (계획 13): 옛 저장은 정성 들인 장 없음, 봉인 없음
     careful: Object.fromEntries(Object.entries(isObj(s.careful) ? s.careful : {}).filter(([, v]) => Array.isArray(v)).map(([k, v]) => [k, (v as unknown[]).filter((n): n is number => Number.isInteger(n))])),
     sealed: isStrArray(s.sealed) ? s.sealed : [],
+    notebook: sanitizeNotebook(s.notebook),
     needs: { ...s.needs, heat: s.needs?.heat ?? 0 },
     collected,
     progress,

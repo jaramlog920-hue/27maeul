@@ -1,0 +1,93 @@
+import { describe, expect, it } from 'vitest'
+import { CONTENT } from '../content/catalog'
+import { festivalOf } from './calendar'
+import { scheduledEvents } from './events'
+import { dislikesOf, giveGift, greetNeighbor, listen, newGame, type GameState } from './game'
+import { deserialize, serialize } from './save'
+import { BIRTHDAYS, isBirthday, knownTastes, nextBirthday, NO_NOTEBOOK, sanitizeNotebook, slotOf } from './notebook'
+import type { NeighborDef } from './types'
+
+const def = (id: string) => CONTENT.neighbors.find((n) => n.id === id) as NeighborDef
+const on = (s: GameState, day: number, minute = 600): GameState => ({ ...s, clock: { ...s.clock, day, minute } })
+
+describe('이웃 수첩', () => {
+  it('이웃마다 생일이 하나씩, 겹치지 않고 잔치 날을 피한다', () => {
+    const days = new Set<string>()
+    for (const n of CONTENT.neighbors) {
+      const b = BIRTHDAYS[n.id]
+      expect(b, n.id).toBeDefined()
+      const key = b.join(':')
+      expect(days.has(key), key).toBe(false)
+      days.add(key)
+      const d = nextBirthday(n.id, 1)!
+      expect(isBirthday(n.id, d)).toBe(true)
+      expect(festivalOf(d)).toBeNull()
+    }
+  })
+
+  it('다음 생일은 오늘이거나 한 해 안', () => {
+    const d = nextBirthday('baker', 1)!
+    expect(d).toBe(3)
+    expect(nextBirthday('baker', 3)).toBe(3)
+    expect(nextBirthday('baker', 4)).toBe(3 + 28)
+  })
+
+  it('모든 이웃은 싫어하는 것이 있고, 좋아하는 것과 겹치지 않는다', () => {
+    for (const n of CONTENT.neighbors) {
+      const dis = dislikesOf(n)
+      expect(dis.length, n.id).toBeGreaterThan(0)
+      expect(dis.filter((x) => n.likes.includes(x)), n.id).toEqual([])
+    }
+  })
+
+  it('말을 걸면 만난 이웃과 마주친 때·자리가 적힌다', () => {
+    const s = greetNeighbor(newGame(CONTENT), 'baker')
+    expect(s.notebook.met).toContain('baker')
+    expect(s.notebook.seen.baker?.[slotOf(s.clock.minute)]).toBeTruthy()
+  })
+
+  it('선물로 좋아하는 것·싫어하는 것을 알게 된다', () => {
+    const s = { ...newGame(CONTENT), inv: { grapes: 1, olive: 1 } }
+    const liked = giveGift(s, def('baker'), 'grapes')!
+    expect(liked.state.notebook.likes.baker).toEqual(['grapes'])
+    const bad = giveGift(s, def('baker'), 'olive')!
+    expect(bad.state.notebook.dislikes.baker).toEqual(['olive'])
+    expect(bad.state.hearts.baker ?? 0).toBe(0)
+  })
+
+  it('생일에 건넨 선물은 마음이 두 배', () => {
+    const s = on({ ...newGame(CONTENT), inv: { grapes: 1 } }, 3)
+    expect(giveGift(s, def('baker'), 'grapes')!.state.hearts.baker).toBe(10)
+  })
+
+  it('사이가 깊어지면 ? 칸이 열린다', () => {
+    const d = def('baker')
+    const dis = dislikesOf(d)
+    expect(knownTastes(NO_NOTEBOOK, d, dis, 0)).toEqual({ likes: [null, null], dislikes: [null] })
+    expect(knownTastes(NO_NOTEBOOK, d, dis, 15).likes).toEqual(['grapes', null])
+    expect(knownTastes(NO_NOTEBOOK, d, dis, 30).dislikes).toEqual(['olive'])
+    expect(knownTastes(NO_NOTEBOOK, d, dis, 55).likes).toEqual(['grapes', 'fig'])
+  })
+
+  it('이야기를 들으면 들은 이야기에 남는다', () => {
+    let s = newGame(CONTENT)
+    const [who, piece] = Object.entries(s.offers)[0] ?? []
+    if (!who) return
+    s = listen(s, who, CONTENT).state
+    expect(s.notebook.heard[who]).toEqual([piece])
+  })
+
+  it('만난 이웃의 생일은 일정에 보인다', () => {
+    const s = greetNeighbor(newGame(CONTENT), 'baker')
+    expect(scheduledEvents(s, CONTENT).some((e) => e.id === '3:birthday:baker')).toBe(true)
+    expect(scheduledEvents(newGame(CONTENT), CONTENT).some((e) => e.id.includes('birthday'))).toBe(false)
+  })
+
+  it('저장했다 불러와도 수첩이 이어지고, 옛 저장은 빈 수첩', () => {
+    const s = greetNeighbor(newGame(CONTENT), 'baker')
+    const back = deserialize(serialize(s), CONTENT)
+    expect(back?.notebook.met).toContain('baker')
+    expect(sanitizeNotebook(undefined)).toEqual(NO_NOTEBOOK)
+    expect(sanitizeNotebook({ met: ['a', 3], likes: { a: ['fig', 1] } }).likes).toEqual({ a: ['fig'] })
+  })
+})
