@@ -84,7 +84,7 @@ it('움직인 이웃을 다시 따라가는 기록자도 가구를 피한다', (
 describe('서고 권수로 이사 오는 이웃', () => {
   const TWO = { mk: 1, mt: 1 } as const
   const nextMorning = (shelved: Partial<Record<Book, Grade>>): GameState => settle(goToSleep({ ...newGame(CONTENT), shelved }, CONTENT), CONTENT)
-  it('편지 나르는 이웃은 처음부터, 약방 주인은 2권, 어부는 3권, 목수는 5권부터 마을에 보인다', () => {
+  it('편지 나르는 이웃은 처음부터, 목수는 1권, 약방 주인은 2권, 어부는 3권부터 마을에 보인다', () => {
     const none = nextMorning({})
     expect(Object.keys(none.npcs)).toContain('postman')
     expect(neighborsPresent(none, CONTENT)).not.toContain('apothecary')
@@ -92,8 +92,8 @@ describe('서고 권수로 이사 오는 이웃', () => {
     expect(neighborsPresent(nextMorning(TWO), CONTENT)).toContain('apothecary')
     expect(neighborsPresent(nextMorning(TWO), CONTENT)).not.toContain('fisher')
     expect(neighborsPresent(nextMorning({ ...TWO, lk: 0 }), CONTENT)).toContain('fisher')
-    expect(neighborsPresent(nextMorning({ ...TWO, lk: 0, jn: 0 }), CONTENT)).not.toContain('carpenter')
-    expect(neighborsPresent(nextMorning({ ...TWO, lk: 0, jn: 0, ac: 1 }), CONTENT)).toContain('carpenter')
+    expect(neighborsPresent(none, CONTENT)).not.toContain('carpenter')
+    expect(neighborsPresent(nextMorning({ mk: 1 }), CONTENT)).toContain('carpenter')
   })
   it('이사 온 날 아침에 소개 장면', () => {
     const s = { ...newGame(CONTENT), shelved: TWO }

@@ -82,19 +82,19 @@ describe('서고 권수로 열리는 구역', () => {
   })
   it('책이 꽂힐수록 하나씩 열린다', () => {
     expect(lockedZones(0).map((z) => z.id)).toEqual(['vineyard', 'dock', 'hives'])
-    expect(lockedZones(1).map((z) => z.id)).toEqual(['dock', 'hives'])
-    expect(lockedZones(4).map((z) => z.id)).toEqual(['hives'])
+    expect(lockedZones(3).map((z) => z.id)).toEqual(['vineyard', 'dock', 'hives'])
+    expect(lockedZones(4).map((z) => z.id)).toEqual(['vineyard', 'hives'])
     expect(lockedZones(5).map((z) => z.id)).toEqual(['hives'])
     expect(lockedZones(6)).toEqual([])
-    expect(lockedTiles(0).has(`${vine.x},${vine.y}`)).toBe(true)
-    expect(lockedTiles(1).has(`${vine.x},${vine.y}`)).toBe(false)
+    expect(lockedTiles(4).has(`${vine.x},${vine.y}`)).toBe(true)
+    expect(lockedTiles(5).has(`${vine.x},${vine.y}`)).toBe(false)
   })
   it('잠긴 곳으로는 걸어갈 수 없고, 책을 꽂으면 갈 수 있다', () => {
     const s0 = newGame(CONTENT)
     const s = { ...s0, player: { ...s0.player, ...HOME_FRONT } }
     const to = { x: 43, y: 5 } // 포도원 한가운데
     expect(tapTile(s, to).player.path).toEqual([])
-    const opened = tapTile({ ...s, shelved: { mk: 1 } }, to)
+    const opened = tapTile({ ...s, shelved: { mt: 1, mk: 1, lk: 1, jn: 1, ac: 1 } }, to)
     expect(opened.player.path.at(-1)).toEqual(to)
   })
   it('잠긴 곳에서 일하던 이웃은 열린 다른 자리에서 지내고, 갈 곳이 없으면 집에 있다', () => {

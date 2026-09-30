@@ -309,7 +309,8 @@ describe('마을 서고', () => {
     vi.useFakeTimers()
     const base = chooseBook(newGame(CONTENT), 'mk', CONTENT)
     useGame.setState({
-      game: { ...base, collected: piecesOf('mk').map((p) => p.id), progress: { ...base.progress, mk: { completed: chaptersOf('mk', CONTENT), arrangement: {} } } },
+      // 세 권을 먼저 꽂아 두면 네 번째(마가복음)에 나루가 열린다 (4권 나루)
+      game: { ...base, shelved: { mt: 1, lk: 1, jn: 1 }, collected: piecesOf('mk').map((p) => p.id), progress: { ...base.progress, mk: { completed: chaptersOf('mk', CONTENT), arrangement: {} } } },
       modal: null,
       rng: mulberry32(5),
     })
