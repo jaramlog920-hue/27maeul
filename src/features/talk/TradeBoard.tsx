@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { fill, itemList, itemName, T } from '../../content/text'
-import { canSell, ownsTradeTool, SELL_PRICES, tradesFor, wouldOverflow } from '../../engine/game'
+import { canSell, overflows, ownsTradeTool, SELL_PRICES, tradesFor } from '../../engine/game'
 import { jobOf, SELL_FROM } from '../../engine/job'
 import { has, take } from '../../engine/items'
 import type { ItemId } from '../../engine/types'
@@ -28,9 +28,10 @@ export function TradeBoard() {
       {tab === 'buy' && (
         <ul className="trade-list">
           {tradesFor(flags).map((t) => {
-            const owned = ownsTradeTool(inv, t)
+            const owned = ownsTradeTool(inv, t, flags)
             const paid = take(inv, t.pay)
-            const full = !!paid && wouldOverflow(paid, t.get)
+            // 재료 궤짝이 있으면 궤짝까지 친다
+            const full = !!paid && overflows({ ...game, inv: paid }, t.get)
             return (
               <li key={t.id}>
                 <span className="trade-get">{names[t.id]}</span>

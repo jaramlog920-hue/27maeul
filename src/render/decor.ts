@@ -121,6 +121,33 @@ function mailbox(g: Ctx, t: Tile, empty = false) {
   if (!empty) px(g, t.x, t.y, 6, 5, 4, 2, '#f1e6cf')
 }
 
+/**
+ * 편해지는 살림 (계획 11 작업 1): 집 앞 빗물 항아리(문 앞 편지 바구니 오른쪽), 집 오른쪽 볕 드는 풀밭의 갈대 말리는 틀.
+ * 집 왼쪽 땅(HOUSE_GROW)은 집 넓히기 자리라 비워 둔다. 그림일 뿐 — 길을 막지 않는다
+ */
+export const RAIN_JAR_AT: Tile = { x: 12, y: 8 }
+export const REED_RACK_AT: Tile = { x: 13, y: 6 }
+
+/** 빗물 항아리: 넓은 입의 테라코타 항아리, 입 안에 물빛 (선은 모두 2픽셀 이상) */
+function rainJar(g: Ctx, t: Tile) {
+  px(g, t.x, t.y, 3, 13, 10, 2, 'rgba(40,25,10,0.22)')
+  px(g, t.x, t.y, 4, 6, 8, 7, '#d0977c')
+  px(g, t.x, t.y, 5, 11, 6, 2, '#b8806a')
+  px(g, t.x, t.y, 5, 7, 2, 3, '#e5b39a')
+  px(g, t.x, t.y, 3, 3, 10, 3, '#b8806a')
+  px(g, t.x, t.y, 5, 3, 6, 2, '#98c5bb')
+}
+
+/** 갈대 말리는 틀: 기둥 둘과 가로대 둘, 윗대에 걸린 갈대 다발 셋 (좌우 대칭) */
+function reedRack(g: Ctx, t: Tile) {
+  px(g, t.x, t.y, 1, 14, 14, 2, 'rgba(40,25,10,0.22)')
+  px(g, t.x, t.y, 2, 2, 2, 13, WOOD_DARK)
+  px(g, t.x, t.y, 12, 2, 2, 13, WOOD_DARK)
+  px(g, t.x, t.y, 1, 2, 14, 2, WOOD)
+  px(g, t.x, t.y, 2, 10, 12, 2, WOOD)
+  for (const [dx, len, c] of [[4, 7, '#c9c08a'], [7, 8, '#a9a56a'], [10, 7, '#c9c08a']] as const) px(g, t.x, t.y, dx, 4, 2, len, c)
+}
+
 /** 마을에 생긴 것들을 그린다 (월드 좌표, 카메라 이동이 이미 적용된 상태) */
 export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, daytime: boolean) {
   const f = game.flags
@@ -143,6 +170,9 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
   }
   // 사도행전 여정을 다 이은 다음 날부터 나루 곁의 큰 배 (flags.actsShip 2)
   if ((f.actsShip ?? 0) >= 2) ship(g, t)
+  // 편해지는 살림: 빗물 항아리(장날에 산 뒤), 갈대 말리는 틀(목수가 세운 뒤)
+  if (unlocked(f, 'rainJar')) rainJar(g, RAIN_JAR_AT)
+  if (unlocked(f, 'reedRack')) reedRack(g, REED_RACK_AT)
   // 요한계시록 방이 열린 뒤부터 언덕 벤치 곁 편지함
   const box = hillMailbox(game)
   if (box) mailbox(g, box, (game.flags.allFeast ?? 0) >= 1)

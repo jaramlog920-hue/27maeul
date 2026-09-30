@@ -302,6 +302,40 @@ export const FURNITURE_ART: Record<string, FurnitureArt> = {
     '......kkkk......',
     '......zzzz......',
   ]),
+  // 편해지는 살림 (계획 11 작업 1)
+  // 잉크 항아리: 나무 뚜껑을 덮은 테라코타 항아리, 두 줄 띠, 왼쪽 위에 두 칸 빛
+  inkJar: art(1, 1, [
+    '.......kk.......',
+    '......kwwk......',
+    '....kkkkkkkk....',
+    '....kllllllk....',
+    '...kkkkkkkkkk...',
+    '..krrrrrrrrrrk..',
+    '..kroorrrrrrrk..',
+    '..kroorrrrrrrk..',
+    '..kRRRRRRRRRRk..',
+    '..kRRRRRRRRRRk..',
+    '..krrrrrrrrrrk..',
+    '...krrrrrrrrk...',
+    '....kkkkkkkk....',
+    '...zzzzzzzzzz...',
+  ]),
+  // 재료 궤짝: 네 귀에 쇠를 댄 나무 궤짝, 뚜껑 틈으로 파피루스 두루마리와 갈대가 보인다 (좌우 대칭)
+  supplyChest: art(1, 1, [
+    '...cc..gg..cc...',
+    '...cC..gG..cC...',
+    '..kkkkkkkkkkkk..',
+    '..kllllllllllk..',
+    '..kWWWWWWWWWWk..',
+    '..kSSwwwwwwSSk..',
+    '..kSSwwyywwSSk..',
+    '..kwwwwyywwwwk..',
+    '..kwwwwwwwwwwk..',
+    '..kSSwwwwwwSSk..',
+    '..kSSwwwwwwSSk..',
+    '..kkkkkkkkkkkk..',
+    '...zzzzzzzzzz...',
+  ]),
 }
 
 /** 가구 그림 글자 → 가방 아이콘 팔레트(ICON_PALETTE)에 더한 글자 */

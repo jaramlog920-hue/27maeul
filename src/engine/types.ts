@@ -149,6 +149,9 @@ export type ItemId =
   | 'herb'
   | 'bean'
   | 'cover'
+  // 편해지는 살림 (계획 11 작업 1): 집 안에 놓는 설치물
+  | 'inkJar'
+  | 'supplyChest'
 
 export type Minigame = 'mash' | 'timing' | 'pick'
 

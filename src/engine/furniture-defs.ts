@@ -44,5 +44,8 @@ export const FURNITURE_DEFS: Partial<Record<ItemId, FurnitureDef>> = {
   inkpot: { w: 1, h: 1, layer: 'small' },
   dryFlowers: { w: 1, h: 1, layer: 'small' },
   hourglass: { w: 1, h: 1, layer: 'small' },
+  // 편해지는 살림 (계획 11 작업 1): 잉크 항아리(장날), 재료 궤짝(목수)
+  inkJar: { w: 1, h: 1, layer: 'solid' },
+  supplyChest: { w: 1, h: 1, layer: 'solid' },
 }
 

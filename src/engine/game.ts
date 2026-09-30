@@ -3,7 +3,7 @@ import { festivalOf, FESTIVAL_FROM, FESTIVAL_TO, isMarketDay, isWet, weatherOf, 
 import { advance, newClock, phaseOf, seasonOf, sleepClock, type Clock } from './clock'
 import { DURATION, greet, IDLE_GAP, IDLE_RESET, stepIdle, type IdleState } from './autonomy'
 import { adopt, companionGoal, STRAY_DAY, STRAY_SPOTS, stepCompanion, type Animal, type Companion } from './companion'
-import { add, addGift, CHAPTER_COST, FOODS, count, craft, has, MAX_STACK, RECIPES, recipeGives, take, TOOLS, type Inventory, type RecipeId } from './items'
+import { add, addGift, CHAPTER_COST, FOODS, count, has, MAX_STACK, RECIPES, recipeGives, take, TOOLS, type Inventory, type RecipeId } from './items'
 import { facingFor, findPath, pathToward, stepActor, type Actor } from './movement'
 import { coolDown, exhausted, fallsSick, FRESH, rest, sleepNeeds, starving, tickNeeds, warmUp, work, type Needs } from './needs'
 import { inGoodMood } from './mood'
@@ -60,6 +60,7 @@ import {
 import { ATTIC, BED_STAND, HEARTH_STAND, HOME_FRONT, inAttic, isHome, isIndoor, isWalkable, key, LADDER, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setOpenDoors, START, tileAt, WARPS } from './world'
 import { GOSPELS, type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
 import type { Avatar } from './avatar'
+import { CARPENTER_WORKS, fromChest, hasStock, INK_JAR_HOLD, owns, RACK_HOLD, RACK_PAPYRUS, RAIN_WATER, SOOT_CATCH, stash, stashOverflows, stock, takeStock, type CarpenterWork, type EasyId } from './easier'
 
 export interface JournalEntry {
   day: number
@@ -144,6 +145,8 @@ export interface GameState {
    * 다 맞추면 flags.churchesDone 1 (한 번, 장면 없음 — 스물일곱 권 잔치의 조건)
    */
   churches: number[]
+  /** 재료 궤짝 (계획 11 작업 1): 가방이 차면 남는 재료가 들어가고, 책상·작업대가 꺼내 쓴다. 궤짝이 없으면 비어 있다 */
+  chest: Inventory
 }
 
 /** 지도(world.tileAt)가 이 게임의 집 단계·열린 서고 방 문(방 표)을 보게 한다. 지도를 읽는 엔진 입구마다 부른다 */
@@ -336,6 +339,7 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
     homeLevel: 0,
     journey: [],
     churches: [],
+    chest: {},
   }
 }
 
@@ -719,14 +723,14 @@ export function canHelp(s: GameState, def: NeighborDef): HelpBlock {
   if (exhausted(s.needs)) return 'tired'
   if (def.help.needs && !has(s.inv, def.help.needs)) return 'needs'
   const paid = def.help.needs ? take(s.inv, def.help.needs)! : s.inv
-  if (wouldOverflow(paid, helpReward(def, s.clock.day, s.flags))) return 'full'
+  if (overflows({ ...s, inv: paid }, helpReward(def, s.clock.day, s.flags))) return 'full'
   return null
 }
 
 export function finishHelp(s: GameState, def: NeighborDef): GameState {
   if (canHelp(s, def)) return s
   const paid = def.help.needs ? take(s.inv, def.help.needs)! : s.inv
-  const next = { ...s, inv: add(paid, helpReward(def, s.clock.day, s.flags)), helped: [...s.helped, def.id], needs: work(s.needs, 8) }
+  const next = { ...putAway({ ...s, inv: paid }, helpReward(def, s.clock.day, s.flags)), helped: [...s.helped, def.id], needs: work(s.needs, 8) }
   return heartUp(passTime(next, 30), def.id, GAIN.help)
 }
 
@@ -749,6 +753,8 @@ export interface Trade {
   requires?: string
   /** 닢으로 사는 물건 */
   coins?: number
+  /** 한 번 사면 계속 쓰는 설치물 (계획 11): flags[`unlock:${grants}`]. 가진 뒤에는 다시 사지 않는다 */
+  grants?: EasyId
 }
 /** 장날 상인과 바꾸기 (돈 대신 물건) */
 export const TRADES: readonly Trade[] = [
@@ -792,10 +798,14 @@ export const TRADES: readonly Trade[] = [
   { id: 'goodPenCoins', pay: {}, coins: 40, get: { goodPen: 1 } },
   { id: 'brightLamp', pay: {}, coins: 60, get: { brightLamp: 1 } },
   { id: 'wideDesk', pay: {}, coins: 80, get: { wideDesk: 1 } },
+  // 편해지는 살림 (계획 11 작업 1): 빗물 항아리는 집 앞에 놓인다, 잉크 항아리는 그을음 받이를 단 뒤에 (집 안 자리를 고른다)
+  { id: 'rainJar', pay: {}, coins: 40, get: {}, grants: 'rainJar' },
+  { id: 'inkJar', pay: {}, coins: 100, get: { inkJar: 1 }, grants: 'inkJar', requires: 'sootCatcher' },
 ]
 
-/** 이미 가진 도구를 또 사게 되는 거래인가 (도구는 하나씩) */
-export function ownsTradeTool(inv: Inventory, t: Trade): boolean {
+/** 이미 가진 도구·설치물을 또 사게 되는 거래인가 (도구는 하나씩) */
+export function ownsTradeTool(inv: Inventory, t: Trade, flags: Record<string, number> = {}): boolean {
+  if (t.grants && owns(flags, t.grants)) return true
   return TOOLS.some((id) => t.get[id] !== undefined && count(inv, id) > 0)
 }
 
@@ -806,11 +816,13 @@ export function tradesFor(flags: Record<string, number>): Trade[] {
 export function trade(s: GameState, t: Trade): GameState | null {
   if (!isMarketDay(s.clock.day)) return null
   if (t.requires && !unlocked(s.flags, t.requires)) return null
-  if (ownsTradeTool(s.inv, t)) return null
+  if (ownsTradeTool(s.inv, t, s.flags)) return null
   if (t.coins !== undefined && s.coins < t.coins) return null
   const left = take(s.inv, t.pay)
-  if (!left || wouldOverflow(left, t.get)) return null
-  return { ...s, inv: add(left, t.get), coins: s.coins - (t.coins ?? 0) }
+  if (!left || overflows({ ...s, inv: left }, t.get)) return null
+  const got = putAway({ ...s, inv: left }, t.get)
+  const flags = t.grants ? { ...s.flags, [`unlock:${t.grants}`]: 1 } : s.flags
+  return { ...got, coins: s.coins - (t.coins ?? 0), flags }
 }
 
 /** 아이에게 글자 가르치기 (하루 한 번, 저녁에 집으로 올 때) */
@@ -944,7 +956,7 @@ export function gatherInfo(s: GameState, place: PlaceId): GatherResult | null {
       return null
   }
   // 가방이 넘치면 헛수고가 되므로 미리 막는다
-  if ('gives' in info && wouldOverflow(s.inv, info.gives)) return { blocked: 'full' }
+  if ('gives' in info && overflows(s, info.gives)) return { blocked: 'full' }
   return info
 }
 
@@ -953,26 +965,85 @@ export function wouldOverflow(inv: Inventory, gives: Partial<Record<ItemId, numb
   return (Object.entries(gives) as [ItemId, number][]).some(([id, n]) => count(inv, id) + n > MAX_STACK)
 }
 
+// ── 가방과 재료 궤짝 (계획 11 작업 1, 규칙은 easier.ts) ──
+
+/** 재료 궤짝이 있으면 그 안의 것 (없으면 null — 가방만 쓴다) */
+export function chestOf(s: Pick<GameState, 'flags' | 'chest'>): Inventory | null {
+  return owns(s.flags, 'supplyChest') ? (s.chest ?? {}) : null
+}
+
+/** 가방 + 궤짝에 있는 수 */
+export function stockOf(s: Pick<GameState, 'inv' | 'flags' | 'chest'>, id: ItemId): number {
+  return stock(s.inv, chestOf(s), id)
+}
+
+/** 책상·작업대·기름틀에서 쓸 것이 가방과 궤짝에 있는가 */
+export function haveStock(s: Pick<GameState, 'inv' | 'flags' | 'chest'>, need: Partial<Record<ItemId, number>>): boolean {
+  return hasStock(s.inv, chestOf(s), need)
+}
+
+/** 가방에서 먼저, 모자라면 궤짝에서 꺼내 쓴다 */
+function useStock(s: GameState, need: Partial<Record<ItemId, number>>): GameState | null {
+  const r = takeStock(s.inv, chestOf(s), need)
+  return r ? { ...s, inv: r.inv, chest: r.chest ?? s.chest } : null
+}
+
+/** 받은 것을 넣는다 — 가방이 차면 궤짝으로 */
+function putAway(s: GameState, gives: Partial<Record<ItemId, number>>): GameState {
+  const r = stash(s.inv, chestOf(s), gives)
+  return { ...s, inv: r.inv, chest: r.chest ?? s.chest }
+}
+
+/** 넣으면 넘쳐서 버려지는가 (궤짝이 있으면 궤짝까지 친다) */
+export function overflows(s: Pick<GameState, 'inv' | 'flags' | 'chest'>, gives: Partial<Record<ItemId, number>>): boolean {
+  return stashOverflows(s.inv, chestOf(s), gives)
+}
+
+/** 집 안에서 궤짝의 것을 가방으로 꺼낸다 (가방에 들어가는 만큼) */
+export function takeFromChest(s: GameState, id: ItemId): GameState | null {
+  const box = chestOf(s)
+  if (!box) return null
+  syncHome(s)
+  if (!isHome(playerTile(s))) return null
+  const r = fromChest(s.inv, box, id)
+  return r ? { ...s, inv: r.inv, chest: r.chest } : null
+}
+
 export function finishGather(s: GameState, place: PlaceId): GameState {
   const info = gatherInfo(s, place)
   if (!info || 'blocked' in info) return s
-  return passTime({ ...s, inv: add(s.inv, info.gives), needs: work(s.needs, 4) }, info.minutes)
+  return passTime({ ...putAway(s, info.gives), needs: work(s.needs, 4) }, info.minutes)
 }
 
 export type CraftBlock = 'needs' | 'tired' | 'full' | 'job' | null
 export function canCraft(s: GameState, id: RecipeId): CraftBlock {
   if (id === 'cover' && jobOf(s) < COVER_FROM) return 'job'
   if (exhausted(s.needs)) return 'tired'
-  if (!has(s.inv, RECIPES[id].needs)) return 'needs'
-  if (wouldOverflow(take(s.inv, RECIPES[id].needs)!, recipeGives(RECIPES[id], s.inv, s.flags))) return 'full'
+  // 재료 궤짝이 있으면 궤짝의 것도 쓴다
+  if (!haveStock(s, RECIPES[id].needs)) return 'needs'
+  if (overflows(useStock(s, RECIPES[id].needs)!, recipeGives(RECIPES[id], s.inv, s.flags))) return 'full'
   return null
 }
 
 export function finishCraft(s: GameState, id: RecipeId): GameState {
   if (canCraft(s, id)) return s
-  const inv = craft(s.inv, RECIPES[id], s.flags)!
+  const r = RECIPES[id]
+  const made = putAway(useStock(s, r.needs)!, recipeGives(r, s.inv, s.flags))
   const recipesKnown = s.recipesKnown.includes(id) ? s.recipesKnown : [...s.recipesKnown, id]
-  return passTime({ ...s, inv, recipesKnown, needs: work(s.needs, 5) }, RECIPES[id].minutes)
+  const done = passTime({ ...made, recipesKnown, needs: work(s.needs, 5) }, r.minutes)
+  // 화덕을 쓰면 그을음 받이에 그을음이 모인다
+  return r.at === 'hearth' ? catchSoot(done) : done
+}
+
+/**
+ * 그을음 받이: 화덕을 쓸 때마다(빵 굽기·불 쬐기) 그을음 1이 가방(차면 궤짝)으로 — 하루 SOOT_CATCH.perDay번까지,
+ * 가방과 궤짝의 그을음이 SOOT_CATCH.hold개면 더 모이지 않는다
+ */
+export function catchSoot(s: GameState): GameState {
+  if (!owns(s.flags, 'sootCatcher')) return s
+  const today = s.flags.sootDay === s.clock.day ? (s.flags.sootCaught ?? 0) : 0
+  if (today >= SOOT_CATCH.perDay || stockOf(s, 'soot') >= SOOT_CATCH.hold) return s
+  return { ...putAway(s, { soot: 1 }), flags: { ...s.flags, sootDay: s.clock.day, sootCaught: today + 1 } }
 }
 
 /** 장날에 파는 것: 공방 제품과 텃밭 작물뿐 — 엮은 말씀 책·조각은 팔지 않는다 (exclusion-list §3-3) */
@@ -1018,7 +1089,7 @@ export function hasFood(inv: Inventory): boolean {
 }
 
 export function warmByHearth(s: GameState): GameState {
-  return passTime({ ...s, needs: warmUp(s.needs) }, 15)
+  return catchSoot(passTime({ ...s, needs: warmUp(s.needs) }, 15))
 }
 
 export function restAt(s: GameState): GameState {
@@ -1103,10 +1174,11 @@ export function needsLamp(s: GameState): boolean {
 export function lightLamp(s: GameState): GameState | null {
   if (!needsLamp(s) || s.lampLitDay === s.clock.day) return s
   if (s.lampFuel > 0) return { ...s, lampFuel: s.lampFuel - 1, lampLitDay: s.clock.day, flags: { ...s.flags, lampNights: (s.flags.lampNights ?? 0) + 1 } }
-  const left = take(s.inv, { oil: 1 })
+  // 책상 곁이라 궤짝의 기름도 쓴다
+  const left = useStock(s, { oil: 1 })
   if (!left) return null
   const extra = count(s.inv, 'brightLamp') > 0 ? 1 : 0
-  return { ...s, inv: left, lampFuel: extra, lampLitDay: s.clock.day, flags: { ...s.flags, lampNights: (s.flags.lampNights ?? 0) + 1 } }
+  return { ...left, lampFuel: extra, lampLitDay: s.clock.day, flags: { ...s.flags, lampNights: (s.flags.lampNights ?? 0) + 1 } }
 }
 
 export function setArrangement(s: GameState, book: Book, chapter: number, list: string[]): GameState {
@@ -1125,7 +1197,7 @@ export function chapterReady(s: GameState, book: Book, chapter: number, content:
   const result = checkArrangement(pieces, chapter, bp.arrangement[chapter] ?? [], s.collected)
   if (result.kind !== 'done' || bp.completed.includes(chapter)) return result
   if (exhausted(s.needs)) return { kind: 'tired' }
-  if (!has(s.inv, CHAPTER_COST)) return { kind: 'supplies', need: CHAPTER_COST }
+  if (!haveStock(s, CHAPTER_COST)) return { kind: 'supplies', need: CHAPTER_COST }
   return result
 }
 
@@ -1134,12 +1206,12 @@ export function submitChapter(s: GameState, book: Book, chapter: number, content
   const result = chapterReady(s, book, chapter, content)
   const bp = s.progress[book]
   if (result.kind !== 'done' || bp.completed.includes(chapter)) return { state: s, result }
-  const left = take(s.inv, CHAPTER_COST)!
+  const paid = useStock(s, CHAPTER_COST)!
   const progress = { ...s.progress, [book]: { ...bp, completed: [...bp.completed, chapter] } }
   const scenes = [...s.scenes]
   if (totalChapters(s) === 0) scenes.push('firstChapter')
   if (bookDone({ progress }, book, content)) scenes.push('bookBound')
-  const bound = passTime({ ...s, inv: left, progress, scenes, needs: work(s.needs, 6) }, bindMinutes(s))
+  const bound = passTime({ ...paid, progress, scenes, needs: work(s.needs, 6) }, bindMinutes(s))
   // 사도행전 장을 엮으면 그 장에 나오는 곳 카드가 여정 판에 들어온다
   return { state: book === 'ac' ? syncJourney(bound, content) : bound, result }
 }
@@ -1168,7 +1240,7 @@ export function letterReady(s: GameState, book: Book, chapter: number, content: 
   if (!s.collected.includes(piece.id)) return { kind: 'notReceived' }
   if (currentChapter(pieces, bp.completed) !== chapter) return { kind: 'order' }
   if (exhausted(s.needs)) return { kind: 'tired' }
-  if (!has(s.inv, CHAPTER_COST)) return { kind: 'supplies', need: CHAPTER_COST }
+  if (!haveStock(s, CHAPTER_COST)) return { kind: 'supplies', need: CHAPTER_COST }
   return { kind: 'ready' }
 }
 
@@ -1186,7 +1258,7 @@ export function recordLetter(s: GameState, book: Book, chapter: number, picks: r
   const scenes = [...s.scenes]
   if (totalChapters(s) === 0) scenes.push('firstChapter')
   if (bookDone({ progress }, book, content)) scenes.push('bookBound')
-  const recorded = passTime({ ...s, inv: take(s.inv, CHAPTER_COST)!, progress, scenes, needs: work(s.needs, 6) }, bindMinutes(s))
+  const recorded = passTime({ ...useStock(s, CHAPTER_COST)!, progress, scenes, needs: work(s.needs, 6) }, bindMinutes(s))
   // 요한계시록 2·3장을 옮겨 적으면 그 장의 교회 카드가 일곱 교회 판에 들어온다
   return book === 'rev' ? syncBoard(recorded, 'churches', content) : recorded
 }
@@ -1395,7 +1467,34 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
     room,
     inv,
   }
-  return { ...next, npcs: placeAllNpcs(next, content) }
+  const morning = morningSupplies(next, s.clock.day)
+  return { ...morning, npcs: placeAllNpcs(morning, content) }
+}
+
+/**
+ * 아침에 저절로 생기는 재료 (계획 11 작업 1). s는 새 날 아침 상태, endedDay는 방금 지난 날.
+ * 빗물 항아리 → 갈대 말리는 틀 → 잉크 항아리 차례 (항아리가 아침 물을 쓸 수 있게). 넣을 곳은 가방, 차면 궤짝.
+ * 틀은 설치한 다음 날 아침에 한 번만 장면(reedRack: 어부가 몰래 갈대를 채워 두고 간다), 그 뒤로는 말없이.
+ * 그다음 목수에게 부탁해 둔 것이 지어진다 (오늘 지어진 틀은 오늘 밤부터 채워진다)
+ */
+function morningSupplies(s: GameState, endedDay: number): GameState {
+  let next = s
+  if (owns(s.flags, 'rainJar')) next = putAway(next, { water: weatherOf(endedDay) === 'rain' ? RAIN_WATER.afterRain : RAIN_WATER.usual })
+  if (owns(s.flags, 'reedRack')) {
+    if (stockOf(next, 'papyrus') < RACK_HOLD) next = putAway(next, { papyrus: RACK_PAPYRUS })
+    if (!next.flags.rackSeen) next = { ...next, scenes: [...next.scenes, 'reedRack'], flags: { ...next.flags, rackSeen: 1 } }
+  }
+  if (owns(s.flags, 'inkJar') && stockOf(next, 'ink') < INK_JAR_HOLD) {
+    const paid = useStock(next, { soot: 1, water: 1 })
+    if (paid) next = putAway(paid, { ink: 1 })
+  }
+  for (const w of CARPENTER_WORKS) {
+    if (!next.flags[`order:${w.id}`]) continue
+    const flags = { ...next.flags, [`unlock:${w.id}`]: 1 }
+    delete flags[`order:${w.id}`]
+    next = { ...next, flags, scenes: [...next.scenes, `built:${w.id}`], inv: w.item ? addGift(next.inv, { [w.item]: 1 }) : next.inv }
+  }
+  return next
 }
 
 /** 장면을 본 뒤: 앨범과 오늘의 일지에 남긴다 */
@@ -1471,6 +1570,26 @@ export function canOrderHome(s: GameState): HomeOrderBlock {
   if (s.coins < st.coins) return 'coins'
   if (!has(s.inv, st.needs)) return 'needs'
   return null
+}
+
+// ── 목수에게 부탁하는 살림 (계획 11 작업 1: 재료 궤짝·그을음 받이·갈대 말리는 틀 — 집 넓히기처럼 다음 날 아침 지어진다) ──
+
+export type WorkBlock = 'notMoved' | 'owned' | 'ordered' | 'coins' | null
+export function canOrderWork(s: GameState, id: CarpenterWork['id']): WorkBlock {
+  const w = CARPENTER_WORKS.find((x) => x.id === id)
+  if (!w) return 'owned'
+  if (!s.flags['movedIn:carpenter']) return 'notMoved'
+  if (owns(s.flags, id)) return 'owned'
+  if (s.flags[`order:${id}`]) return 'ordered'
+  if (s.coins < w.coins) return 'coins'
+  return null
+}
+
+/** 닢을 내고 부탁한다 (다음 날 아침 지어진다) */
+export function orderWork(s: GameState, id: CarpenterWork['id']): GameState | null {
+  const w = CARPENTER_WORKS.find((x) => x.id === id)
+  if (!w || canOrderWork(s, id)) return null
+  return { ...s, coins: s.coins - w.coins, flags: { ...s.flags, [`order:${id}`]: 1 } }
 }
 
 /** 목수에게 다음 단계를 부탁한다 (닢과 재료를 내고, 다음 날 아침 지어진다) */

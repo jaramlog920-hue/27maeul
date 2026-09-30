@@ -918,6 +918,19 @@ function drawWideDesk(g: Ctx, at: Tile, season: Season) {
   r(C.lamp, 12, 3, 2, 3)
 }
 
+/** 그을음 받이: 화덕 칸 위쪽 돌 위에 쇠판과 받침 (선은 모두 2픽셀) */
+function drawSootCatcher(g: Ctx, at: Tile) {
+  const r = (color: string, dx: number, dy: number, w: number, h: number) => {
+    g.fillStyle = color
+    g.fillRect(at.x * TILE + dx, at.y * TILE + dy, w, h)
+  }
+  r('#968b7c', 2, 0, 12, 2)
+  r('#7f7468', 3, 2, 10, 2)
+  r('#6f665c', 4, 4, 8, 2)
+  r('#3b3430', 5, 4, 2, 2)
+  r('#3b3430', 9, 4, 2, 2)
+}
+
 function furnitureOrder(f: Furniture): number {
   const layer = FURNITURE_DEFS[f.item]?.layer
   if (f.on) return 3
@@ -1244,6 +1257,8 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         g.fillStyle = `rgba(30, 25, 20, ${soot})`
         g.fillRect(desk.x * TILE + 12, desk.y * TILE + 3, 2, 2)
       }
+      // 그을음 받이 (계획 11 작업 1): 화덕 위의 얇은 쇠판과 그 아래 받침, 모인 그을음 두 점
+      if ((game.flags['unlock:sootCatcher'] ?? 0) > 0) drawSootCatcher(g, hearth)
       // 방의 가구: 깔개 → 길을 막는 가구 → 위에 올린 작은 물건
       const ordered = [...game.room].sort((a, b) => furnitureOrder(a) - furnitureOrder(b) || a.y - b.y)
       for (const f of ordered) drawFurniture(g, f)

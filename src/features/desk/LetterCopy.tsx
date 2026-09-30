@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { copySourceFor, piecesOf } from '../../content/catalog'
 import { fill, T } from '../../content/text'
 import { blankParts, blanksFor } from '../../engine/copy'
-import type { SubmitResult } from '../../engine/game'
+import { stockOf, type SubmitResult } from '../../engine/game'
 import { currentChapter } from '../../engine/offers'
 import { arrivesOf } from '../../engine/shelf-rooms'
 import type { Book } from '../../engine/types'
@@ -60,7 +60,7 @@ export function LetterCopy({ book, result, dark, onChangeBook }: { book: Book; r
     <div className="dialog desk letter-copy" role="dialog" aria-label={title}>
       <h2>{title}</h2>
       <p className="hint">
-        {fill(T.ui.deskHave, { papyrus: game.inv.papyrus ?? 0, ink: game.inv.ink ?? 0 })}
+        {fill(T.ui.deskHave, { papyrus: stockOf(game, 'papyrus'), ink: stockOf(game, 'ink') })}
         {received && !dark && pad && <> · {fill(T.copy.filled, { got, all: blanks.length })}</>}
       </p>
       {message && (

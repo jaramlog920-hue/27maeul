@@ -2,7 +2,8 @@
 import { neighborById } from '../../content/catalog'
 import { fill, itemList, NEIGHBOR_LINES, T } from '../../content/text'
 import { grapesRipe, isMarketDay } from '../../engine/calendar'
-import { activeRequest, canHelp, canOrderHome, GIFTABLE, lessonTime, nextHomeStage } from '../../engine/game'
+import { activeRequest, canHelp, canOrderHome, canOrderWork, GIFTABLE, lessonTime, nextHomeStage } from '../../engine/game'
+import { CARPENTER_WORKS } from '../../engine/easier'
 import { requestFor, reqState } from '../../engine/bonds'
 import { has } from '../../engine/items'
 import { MAX_HEART } from '../../engine/neighbors'
@@ -35,10 +36,13 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
   const req = requestFor(def.id, game.hearts[def.id], game.flags)
   const askable = req && reqState(game.flags, req.id) === 0
   const active = activeRequest(game, def.id)
-  const { requestAsk, requestGive, askHome } = useGame.getState()
+  const { requestAsk, requestGive, askHome, askWork } = useGame.getState()
   // 목수에게 집 넓히기 부탁 (이사 온 뒤, 다음 단계가 남아 있으면)
   const homeStage = def.id === 'carpenter' ? nextHomeStage(game) : null
   const homeBlock = homeStage ? canOrderHome(game) : 'done'
+  // 목수에게 살림 부탁 (계획 11): 이사 온 뒤, 아직 없는 것만
+  const works = def.id === 'carpenter' ? CARPENTER_WORKS.map((w) => ({ w, block: canOrderWork(game, w.id) })).filter((x) => x.block !== 'notMoved' && x.block !== 'owned') : []
+  const easyName = (id: string) => (T.easy.names as Record<string, string>)[id]
   const post = postLine(game, def.id)
   const starHint = starPostHint(game, def.id)
   return (
@@ -82,6 +86,11 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
             {homeStage.level === 1 ? T.ui.homeStage1 : T.ui.homeStage2}
           </button>
         )}
+        {works.map(({ w, block }) => (
+          <button key={w.id} disabled={block !== null} onClick={() => askWork(def.id, w.id)}>
+            {fill(T.easy.order, { name: easyName(w.id) })}
+          </button>
+        ))}
         {def.marketOnly && isMarketDay(game.clock.day) && <button onClick={() => open({ kind: 'trade' })}>{T.ui.talkTrade}</button>}
         <button disabled={block !== null} onClick={() => startHelp(def.id)} title={block ?? ''}>
           {helpLabel}
@@ -99,6 +108,15 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
       {homeStage && homeBlock === 'ordered' && <p className="hint">{T.ui.homeWaiting}</p>}
       {homeStage && (homeBlock === null || homeBlock === 'coins' || homeBlock === 'needs') && (
         <p className="hint">{fill(T.ui.homeCost, { coins: homeStage.coins, items: itemList(homeStage.needs) })}</p>
+      )}
+      {works.some((x) => x.block === 'ordered') && <p className="hint">{T.easy.waiting}</p>}
+      {works.some((x) => x.block === null || x.block === 'coins') && (
+        <p className="hint">
+          {works
+            .filter((x) => x.block === null || x.block === 'coins')
+            .map((x) => fill(T.easy.orderCost, { name: easyName(x.w.id), coins: x.w.coins }))
+            .join(' · ')}
+        </p>
       )}
       {game.gifted.includes(def.id) && <p className="hint">{T.ui.giftDone}</p>}
     </div>

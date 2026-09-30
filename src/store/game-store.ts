@@ -62,6 +62,8 @@ import {
   sell,
   SELL_PRICES,
   orderHome,
+  orderWork,
+  takeFromChest,
   syncHome,
   moveBoardCard,
   type GameState,
@@ -72,6 +74,7 @@ import { inAttic, isHome, LOCKED_DOORS, lockedTiles, lockedZones, roomAt, sameTi
 import { removal } from '../engine/room'
 import { heartsOf } from '../engine/hearts'
 import { add, RECIPES, type Inventory, type RecipeId } from '../engine/items'
+import type { CarpenterWork } from '../engine/easier'
 import { work } from '../engine/needs'
 import { plant, water, harvest, type CropId } from '../engine/garden'
 import { isDone, startMini, stepMini, tapMini, type MiniState } from '../engine/minigame'
@@ -229,6 +232,10 @@ interface Store {
   requestGive: (npc: string) => void
   /** 목수에게 집 넓히기 부탁 */
   askHome: (npc: string) => void
+  /** 목수에게 살림 부탁 (재료 궤짝·그을음 받이·갈대 말리는 틀, 계획 11) */
+  askWork: (npc: string, id: CarpenterWork['id']) => void
+  /** 집 안에서 재료 궤짝의 것을 가방으로 */
+  takeChest: (id: ItemId) => void
   readAt: (pieceId: string) => void
   blanket: () => void
   drink: () => void
@@ -747,7 +754,11 @@ export const useGame = create<Store>((set, get) => {
       const next = doTrade(get().game, t)
       if (!next) return
       sfx('gift')
-      toastGain(get().game.inv, next.inv)
+      // 설치물은 무엇을 어디에 두었는지 한 줄 (빗물 항아리는 집 앞, 잉크 항아리는 집 안 자리를 고른다)
+      if (t.grants) {
+        const thing = withObject((T.easy.names as Record<string, string>)[t.grants])
+        get().say(fill(Object.keys(t.get).length ? T.easy.boughtInside : T.easy.bought, { thing }))
+      } else toastGain(get().game.inv, next.inv)
       set({ game: persist(next) })
     },
 
@@ -818,6 +829,18 @@ export const useGame = create<Store>((set, get) => {
       sfx('gift')
       toastGainFrom(get().game.inv, next.inv)
       set({ game: persist(next), modal: null })
+    },
+    askWork: (npc, id) => {
+      const next = orderWork(get().game, id)
+      if (!next) return
+      sfx('gift')
+      set({ game: persist(next), modal: { kind: 'talk', neighborId: npc, line: T.easy.ordered } })
+    },
+    takeChest: (id) => {
+      const next = takeFromChest(get().game, id)
+      if (!next) return get().say(T.easy.chestFull)
+      sfx('tap')
+      set({ game: persist(next) })
     },
     askHome: (npc) => {
       const next = orderHome(get().game)

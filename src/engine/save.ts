@@ -126,6 +126,8 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     churches,
     room,
     inv,
+    // 재료 궤짝 (계획 11): 옛 저장(칸이 없던 때)은 빈 궤짝. 수가 아닌 값은 버린다
+    chest: Object.fromEntries(Object.entries(isObj(s.chest) ? s.chest : {}).filter(([, n]) => Number.isInteger(n) && (n as number) > 0)),
     needs: { ...s.needs, heat: s.needs?.heat ?? 0 },
     collected,
     progress,

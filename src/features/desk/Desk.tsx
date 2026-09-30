@@ -6,7 +6,7 @@ import { fill, roomTitle, T } from '../../content/text'
 import { bookDone, chaptersOf, groupByRoom, pickableBooks } from '../../engine/books'
 import { modeOf, roomOf } from '../../engine/shelf-rooms'
 import { LetterCopy } from './LetterCopy'
-import type { SubmitResult } from '../../engine/game'
+import { stockOf, type SubmitResult } from '../../engine/game'
 import { currentChapter } from '../../engine/offers'
 import { useGame } from '../../store/game-store'
 
@@ -79,7 +79,8 @@ export function Desk({ result, dark }: { result: SubmitResult | null; dark: bool
   const [picking, setPicking] = useState(false)
   const book = useGame((s) => s.game.activeBook)
   const progress = useGame((s) => s.game.progress)
-  const inv = useGame((s) => s.game.inv)
+  // 재료 궤짝의 것도 책상에서 쓴다 (계획 11)
+  const game = useGame((s) => s.game)
   const { moveInDesk, submitDesk, closeModal } = useGame.getState()
   if (!book || picking) return <BookPick onDone={book ? () => setPicking(false) : undefined} />
 
@@ -117,7 +118,7 @@ export function Desk({ result, dark }: { result: SubmitResult | null; dark: bool
         {T.ui.deskTitle} <span className="desk-chapter">· {BOOK_NAME[book]}{chapter !== null && <> {fill(T.ui.chapterLabel, { chapter })}</>}</span>
       </h2>
       <p className="hint">
-        {fill(T.ui.deskHave, { papyrus: inv.papyrus ?? 0, ink: inv.ink ?? 0 })}
+        {fill(T.ui.deskHave, { papyrus: stockOf(game, 'papyrus'), ink: stockOf(game, 'ink') })}
         {chapter !== null && <> · {fill(T.ui.deskCollected, { got: list.length, all })}</>}
       </p>
       <p className="hint">{T.ui.chapterNote}</p>
