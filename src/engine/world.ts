@@ -255,7 +255,7 @@ const HALL_ROOM_Y0 = 70
 const TEA_ROOM_X0 = 41
 const TEA_ROOM_Y0 = 60
 /** 마을 사랑방 (7칸×4줄) — 문 앞이 큰길 */
-export const HALL_RECT = { x0: 10, y0: 12, x1: 16, y1: 16 }
+export const HALL_RECT = { x0: 11, y0: 13, x1: 15, y1: 16 }
 export const HALL_DOOR: Tile = { x: 13, y: 16 }
 /** 정원 찻집 (작은 집 5칸×4줄) — 나루 서쪽 호숫가, 문 앞이 호숫가 길 */
 export const TEA_RECT = { x0: 18, y0: 28, x1: 22, y1: 31 }
@@ -452,12 +452,13 @@ function build(): string[] {
   // 보통 집 7×5 · 작은 집 5×4 · 서고 9×5. 문 아래에는 늘 한 칸 서는 곳, 집 사이에는 한 칸 골목이나 풀
 
   // 길: 가로 큰길 두 칸(17–18), 세로 큰길 두 칸(24–25), 골목 한 칸(9줄·25줄·9열·40열), 호숫가 길(32)
+  // 모든 길은 두 줄 — 문 앞 한 칸만 한 줄 (사용자, 2026-09-30)
   rect(1, 17, 46, 18, ',')
   rect(24, 9, 25, 32, ',')
-  rect(2, 9, 40, 9, ',')
-  rect(1, 25, 46, 25, ',')
-  rect(9, 9, 9, 32, ',')
-  rect(40, 9, 40, 25, ',')
+  rect(2, 9, 40, 10, ',')
+  rect(1, 25, 46, 26, ',')
+  rect(9, 9, 10, 32, ',')
+  rect(39, 9, 40, 26, ',')
   // 가운데 광장: 위쪽에 마을 우물, 아래쪽은 잔치 모닥불 자리. 좌판 둘·벤치 둘은 좌우 대칭, 네 귀퉁이에 나무
   rect(18, 12, 31, 23, ',')
   set(24, 14, 'w')
@@ -478,51 +479,51 @@ function build(): string[] {
   set(HOME_DOOR.x + 1, HOME_DOOR.y + 1, 'q') // 문 앞 편지 바구니
   yard(HOUSE_RECT.x1 + 1, HOUSE_RECT.x1 + 1, 8)
   rect(11, 4, 14, 6, 'l') // 텃밭 열두 칸 (집 오른쪽 볕 드는 곳)
-  roofed('library', 20, 3, 28, 7, 24, 'S') // 마을 서고
+  roofed('library', 21, 4, 27, 7, 24, 'S') // 마을 서고
   set(24, 8, ',')
-  yard(20, 28, 8)
-  roofed('grandpa', 33, 3, 39, 7, 36) // 포도원 할아버지
+  yard(21, 27, 8)
+  roofed('grandpa', 34, 4, 38, 7, 36) // 포도원 할아버지
   set(36, 8, ',')
-  yard(33, 39, 8)
+  yard(34, 38, 8)
   for (const y of [2, 4, 6, 8]) for (let x = 41; x <= 46; x++) if (x !== 43) set(x, y, 'v')
 
   // 북쪽 풀밭: 집 칸 양 끝마다 나무 한 그루, 큰길 어귀에 나무 한 쌍, 언덕 벤치
-  for (const x of [2, 8, 33, 39]) set(x, 10, 'T')
-  set(22, 10, 'T')
-  set(27, 10, 'T')
-  set(14, 10, 'B') // 언덕 벤치
-  set(16, 10, 'T')
+  for (const x of [2, 7, 34, 37]) set(x, 11, 'T')
+  set(20, 11, 'T') // 큰길 어귀 나무 한 쌍 (큰길 가운데를 두고 대칭)
+  set(29, 11, 'T')
+  set(14, 11, 'B') // 언덕 벤치
+  set(16, 11, 'T')
 
   // ── 가운데 위 (문이 가로 큰길에 바로 닿는다): 빵집 · 사랑방 · 배움터 · 올리브 숲 ──
-  roofed('baker', 2, 12, 8, 16, 5) // 빵 굽는 이웃
-  set(1, 16, 'O') // 바깥 화덕 (빵집 서쪽 벽 곁, 큰길 어귀)
+  roofed('baker', 3, 13, 7, 16, 5) // 빵 굽는 이웃
+  set(2, 16, 'O') // 바깥 화덕 (빵집 서쪽 벽 곁, 큰길 어귀)
   roofed('hall', HALL_RECT.x0, HALL_RECT.y0, HALL_RECT.x1, HALL_RECT.y1, HALL_DOOR.x) // 마을 사랑방
-  roofed('child', 33, 12, 39, 16, 36) // 배움터 (물 긷는 아이네)
+  roofed('child', 34, 13, 38, 16, 36) // 배움터 (물 긷는 아이네)
   for (const [x, y] of [[42, 11], [44, 11], [46, 11], [41, 13], [43, 13], [45, 13], [42, 15], [44, 15], [46, 15]]) set(x, y, 'o')
 
   // ── 가운데 아래 (앞마당 24줄, 문이 남쪽 골목에): 목수 · 편지 나르는 이웃 · 베 짜는 집 · 대장간 마당 ──
-  roofed('carpenter', 2, 19, 8, 23, 5) // 제본 골목의 목수
+  roofed('carpenter', 3, 20, 7, 23, 5) // 제본 골목의 목수
   set(5, 24, ',')
-  yard(2, 8, 24)
-  roofed('postman', 10, 19, 16, 23, 13) // 편지 나르는 이웃
+  yard(3, 7, 24)
+  roofed('postman', 11, 20, 15, 23, 13) // 편지 나르는 이웃
   set(13, 24, ',')
-  yard(10, 16, 24)
-  roofed('weaver', 33, 19, 39, 23, 36) // 베 짜는 이웃
+  yard(11, 15, 24)
+  roofed('weaver', 34, 20, 38, 23, 36) // 베 짜는 이웃
   set(36, 24, ',')
-  yard(33, 39, 24)
-  rect(41, 19, 46, 23, ',') // 대장간 마당 (흙마당)
+  yard(34, 38, 24)
+  rect(41, 19, 46, 24, ',') // 대장간 마당 (흙마당)
   set(42, 21, 'A') // 모루
   set(45, 21, 'P') // 기름틀
 
   // ── 남쪽 호숫가 줄 (문이 호숫가 길에 바로 닿는다): 양 우리·보리밭·정자 · 찻집 · 나루 · 어부 · 약방 · 벌 치는 집 ──
-  rect(2, 26, 8, 30, 'x')
-  rect(3, 27, 7, 29, '.')
-  set(5, 26, ',') // 우리 문 (남쪽 골목에서)
+  rect(2, 27, 8, 31, 'x')
+  rect(3, 28, 7, 30, '.')
+  set(5, 27, ',') // 우리 문 (남쪽 골목에서)
   rect(11, 27, 15, 29, 'y') // 보리밭
   set(PAVILION_SEAT.x, PAVILION_SEAT.y, 'B') // 호숫가 정자 벤치 (지붕·기둥은 decor 그림)
   roofed('teahouse', TEA_RECT.x0, TEA_RECT.y0, TEA_RECT.x1, TEA_RECT.y1, TEA_DOOR.x) // 정원 찻집
   roofed('fisher', 27, 28, 31, 31, 29) // 어부
-  roofed('apothecary', 33, 27, 39, 31, 36) // 약방
+  roofed('apothecary', 34, 28, 38, 31, 36) // 약방
   roofed('beekeeper', 41, 28, 45, 31, 43) // 벌 치는 이웃 (작은 집, 벌통은 decor 그림)
   // 들 약초 (약방이 사 준다): 마을 가장자리 풀밭
   for (const t of WILD_HERBS) set(t.x, t.y, 'j')
@@ -687,7 +688,7 @@ export const PLACES: Record<PlaceId, Place> = {
   workbench: { tiles: [home(7, 3)], stand: home(6, 3) },
   // 광장 위쪽 마을 우물
   well: { tiles: [{ x: 24, y: 14 }], stand: { x: 24, y: 15 } },
-  hill: { tiles: [{ x: 14, y: 10 }], stand: { x: 14, y: 11 } },
+  hill: { tiles: [{ x: 14, y: 11 }], stand: { x: 14, y: 12 } },
   bench: { tiles: [{ x: 29, y: 21 }], stand: { x: 28, y: 21 } },
   // 저녁 초대를 받는 이웃집 문 (빵집·배움터·할아버지 집)
   house: { tiles: [{ x: 5, y: 16 }, { x: 36, y: 16 }, { x: 36, y: 7 }] },

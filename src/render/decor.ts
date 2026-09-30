@@ -101,7 +101,7 @@ function ship(g: Ctx, t: number) {
  * 언덕 벤치(14,13) 왼쪽 곁 빈 풀 한 칸의 작은 나무 편지함 (계획 9 작업 2).
  * 편지 나르는 이웃이 해 질 녘에 요한계시록 장을 넣어 두고, 맑은 밤 별 보기로 꺼낸다. 그림만 — 길을 막지 않는다
  */
-export const HILL_MAILBOX: Tile = { x: 15, y: 10 }
+export const HILL_MAILBOX: Tile = { x: 15, y: 11 }
 
 /** 편지함이 보이는 자리: 요한계시록 방이 열린 뒤부터 */
 export function hillMailbox(game: Pick<GameState, 'flags'>): Tile | null {
@@ -225,10 +225,10 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
   // C4 벌통
   if (level >= 4) {
     const hives: Tile[] = [
-      { x: 41, y: 26 },
-      { x: 42, y: 26 },
+      { x: 41, y: 27 },
+      { x: 42, y: 27 },
     ]
-    if (unlocked(f, 'moreHives')) hives.push({ x: 44, y: 26 }, { x: 45, y: 26 })
+    if (unlocked(f, 'moreHives')) hives.push({ x: 44, y: 27 }, { x: 45, y: 27 })
     hives.forEach((h) => hive(g, h))
     if (daytime && weather !== 'rain' && weather !== 'snow')
       for (let i = 0; i < hives.length * 2; i++) {
