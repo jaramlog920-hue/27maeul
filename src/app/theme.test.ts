@@ -11,7 +11,7 @@ describe('색 조합', () => {
     expect(document.documentElement.dataset.theme).toBeUndefined()
   })
   it('모르는 값은 올리브로', () => {
-    localStorage.setItem('twenty-seven/theme', 'pink')
+    localStorage.setItem('twenty-seven/theme', 'neon')
     expect(loadTheme()).toBe('olive')
   })
 })
