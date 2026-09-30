@@ -776,7 +776,7 @@
     "stat": "hand",
     "avatar": {
       "skin": 1,
-      "hairFront": 0,
+      "hairFront": 7,
       "hairBack": 0,
       "top": 7,
       "bottom": 2,
@@ -978,15 +978,15 @@
     "stat": "luck",
     "avatar": {
       "skin": 1,
-      "hairFront": 3,
+      "hairFront": 5,
       "hairBack": 0,
       "top": 11,
       "bottom": 2,
       "acc": 0,
       "hairColor": [
-        40,
-        50,
-        70
+        25,
+        55,
+        28
       ]
     }
   },
@@ -1054,7 +1054,7 @@
     "avatar": {
       "skin": 0,
       "hairFront": 1,
-      "hairBack": 0,
+      "hairBack": 4,
       "top": 8,
       "bottom": 2,
       "acc": 0,

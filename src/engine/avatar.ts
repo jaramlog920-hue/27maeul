@@ -24,7 +24,7 @@ export type FullAvatar = Required<Avatar>
 
 export const SKINS = ['#f8dcc0', '#f8d0a8', '#e8b890', '#d0a078', '#b88460', '#98684a', '#785038', '#5c3c2c'] as const
 // 앞머리 × 뒷머리를 따로 골라 몇 가지만으로도 여러 모양이 나온다
-export const HAIR_FRONTS = ['넘긴 머리', '일자 앞머리', '옆 가르마', '짧게 깎음', '부스스'] as const
+export const HAIR_FRONTS = ['넘긴 머리', '일자 앞머리', '옆 가르마', '짧게 깎음', '부스스', '곱슬', '삐죽 머리', '가운데 가르마'] as const
 export const HAIR_BACKS = ['짧은 머리', '긴 머리', '단발', '올린 머리', '묶은 머리', '양갈래', '땋은 머리'] as const
 /** 윗옷: [이름, 바탕, 그늘, 무늬/띠, 무늬 모양] */
 export const TOPS: readonly (readonly [string, string, string, string, 'plain' | 'stripe' | 'apron' | 'vest'])[] = [

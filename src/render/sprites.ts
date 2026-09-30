@@ -24,7 +24,7 @@ export const PALETTE: Record<string, string> = {
   W: '#e8e0d8', g: '#4880b4', G: '#3c6c9c', // 할아버지
   H: '#b05c88', p: '#c8a04c', Q: '#ac883c', // 상인
   j: '#2a2020', n: '#a86048', N: '#845038', L: '#583828', // 대장장이
-  e: '#f0d8b0', u: '#987858', U: '#80644a', O: '#b86848', // 양치기 (O: 적갈색 곱슬머리 — 다른 이웃과 겹치지 않게)
+  e: '#f0d8b0', u: '#987858', U: '#80644a', O: '#4a2c20', // 양치기 (O: 짙은 곱슬머리 — 다른 이웃과 겹치지 않게)
   q: '#58984c', i: '#d4b060', I: '#ac883c', // 기름 짜는 이웃
   z: '#5c94c4', Z: '#4880b4', // 아이
   V: '#b05c88', X: '#944850', F: '#d888b4', // 베 짜는 이웃
@@ -160,6 +160,35 @@ export interface SpriteOpts {
   avatar?: FullAvatar
 }
 
+/** 머리 모양 (주인공·이웃 같이 쓴다): 곱슬·삐죽·가운데 가르마·짧게 깎음·옆 가르마 (대머리는 쓰지 않는다). ch는 그 사람의 머리 글자 */
+export type HairShape = 'curly' | 'spiky' | 'curtain' | 'crop' | 'sidePart'
+function hairShape(rows: string[], facing: Facing, kind: HairShape, ch = 'h') {
+  const front = facing === 'down'
+  const back = facing === 'up'
+  const put = (pts: number[][], c = ch) => pts.forEach(([x, y]) => setPixel(rows, x, y, c))
+  switch (kind) {
+    case 'curly': // 곱슬: 윗머리와 옆머리가 양털처럼 부푼다
+      put(front || back ? [[1, 1], [8, 1], [0, 2], [9, 2], [0, 3], [9, 3]] : [[1, 1], [8, 1], [0, 2], [9, 2], [0, 3]])
+      break
+    case 'spiky': // 삐죽 머리: 정수리가 들쭉날쭉
+      put([[2, 0], [4, 0], [7, 0], [1, 1], [8, 1]])
+      break
+    case 'curtain': // 가운데 가르마: 이마 양쪽으로 갈라 내린 앞머리
+      if (front) put([[2, 3], [3, 3], [6, 3], [7, 3], [2, 4], [7, 4]])
+      else if (!back) put([[5, 3], [6, 3], [7, 3], [7, 4]])
+      break
+    case 'crop': // 짧게 깎음: 귀 옆 머리를 걷어 낸다
+      if (front) put([[1, 3], [8, 3]], 'k')
+      if (front) put([[2, 3], [7, 3]], 's')
+      else if (!back) put([[3, 3], [4, 3]], 's')
+      break
+    case 'sidePart': // 옆 가르마: 한쪽으로 쓸어 넘긴 앞머리
+      if (front) put([[3, 3], [4, 3], [5, 3]])
+      else if (!back) put([[5, 3], [6, 3]])
+      break
+  }
+}
+
 function longHair(rows: string[]) {
   for (let y = 3; y <= 8; y++) for (const x of [0, 9]) if (rows[y]?.[x] === '.') setPixel(rows, x, y, 'h')
 }
@@ -232,6 +261,15 @@ function dressAvatar(rows: string[], facing: Facing, a: FullAvatar, blink: boole
     case 4: // 부스스: 부푼 윗머리
       for (const [x, y] of front || back ? [[1, 1], [8, 1], [0, 2], [9, 2]] : [[1, 1], [0, 2], [8, 1]]) setPixel(rows, x, y, 'h')
       break
+    case 5:
+      hairShape(rows, facing, 'curly')
+      break
+    case 6:
+      hairShape(rows, facing, 'spiky')
+      break
+    case 7:
+      hairShape(rows, facing, 'curtain')
+      break
   }
   // 윗옷 무늬
   const pattern = TOPS[a.top]?.[4] ?? 'plain'
@@ -273,7 +311,7 @@ function dressAvatar(rows: string[], facing: Facing, a: FullAvatar, blink: boole
   }
 }
 
-function dressNeighbor(who: Who, rows: string[]): string[] {
+function dressNeighbor(who: Who, rows: string[], facing: Facing): string[] {
   switch (who) {
     case 'baker': {
       const out = recolor(rows, { h: 'y', r: 'c', R: 'C', b: 'a' })
@@ -287,19 +325,21 @@ function dressNeighbor(who: Who, rows: string[]): string[] {
       return out
     }
     case 'merchant': {
-      const out = recolor(rows, { h: 'H', r: 'p', R: 'Q', b: 'H' })
-      for (let x = 2; x <= 7; x++) setPixel(out, x, 0, 'H')
+      // 짙은 밤색 머리에 겨자색 모자 (남자 이웃에 분홍 머리는 쓰지 않는다)
+      const out = recolor(rows, { h: 'L', r: 'p', R: 'Q', b: 'H' })
+      for (let x = 2; x <= 7; x++) setPixel(out, x, 0, 'Q')
       return out
     }
     case 'smith': {
       const out = recolor(rows, { h: 'j', r: 'n', R: 'N', b: 'L' })
+      hairShape(out, facing, 'spiky', 'j')
       for (let y = 9; y <= 12; y++) for (let x = 3; x <= 6; x++) if (out[y][x] === 'n' || out[y][x] === 'N') setPixel(out, x, y, 'L')
       return out
     }
     case 'shepherd': {
-      // 적갈색 곱슬머리 (윗머리가 양털처럼 부푼다) — 다른 이웃과 겹치지 않는 머리
+      // 짙은 곱슬머리 (윗머리가 양털처럼 부푼다) — 다른 이웃과 겹치지 않는 머리
       const out = recolor(rows, { h: 'O', r: 'u', R: 'U', b: 'e' })
-      for (const [x, y] of [[1, 1], [8, 1]]) if (out[y][x] === '.') setPixel(out, x, y, 'O')
+      hairShape(out, facing, 'curly', 'O')
       return out
     }
     case 'presser': {
@@ -322,18 +362,25 @@ function dressNeighbor(who: Who, rows: string[]): string[] {
     case 'postman': {
       // 푸른 겉옷, 어깨에 멘 편지 가방 끈
       const out = recolor(rows, { r: 't', R: 'T', b: 'a' })
+      hairShape(out, facing, 'curtain')
       for (let y = 7; y <= 10; y++) setPixel(out, 2 + (y - 7), y, 'L')
       return out
     }
     case 'apothecary':
       // 붉은 겉옷, 흰 앞치마
       return recolor(rows, { r: 'A', R: 'B', b: 'a' })
-    case 'fisher':
-      // 청록 겉옷, 밀짚 머릿수건
-      return recolor(rows, { h: 'e', r: 'J', R: 'w', b: 'e' })
-    case 'carpenter':
-      // 나무색 작업복, 가죽 띠
-      return recolor(rows, { h: 'L', r: 'v', R: 'm', b: 'L' })
+    case 'fisher': {
+      // 청록 겉옷, 밀짚 머릿수건 (옆 가르마)
+      const out = recolor(rows, { h: 'e', r: 'J', R: 'w', b: 'e' })
+      hairShape(out, facing, 'sidePart', 'e')
+      return out
+    }
+    case 'carpenter': {
+      // 나무색 작업복, 가죽 띠, 짧게 깎은 머리
+      const out = recolor(rows, { h: 'L', r: 'v', R: 'm', b: 'L' })
+      hairShape(out, facing, 'crop', 'L')
+      return out
+    }
     default:
       return rows
   }
@@ -380,7 +427,7 @@ export function spriteRows(who: Who, facing: Facing, opts: SpriteOpts): string[]
     if (opts.inky && facing === 'down' && rows[10][2] === 's') setPixel(rows, 2, 10, 'K')
     if (opts.season === 'winter') for (let x = 2; x <= 7; x++) if (rows[7][x] === 'r') setPixel(rows, x, 7, 'S')
   } else {
-    rows = dressNeighbor(who, rows)
+    rows = dressNeighbor(who, rows, facing)
   }
   if (who === 'child') rows = shorten(rows, opts.growth ?? 0)
   if (!side && opts.frame) rows = stepLegs(rows, opts.frame)
