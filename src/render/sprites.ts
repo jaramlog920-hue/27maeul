@@ -54,9 +54,9 @@ const FRONT: SpriteRows = [
   '.kssssssk.',
   '..kssssk..',
   '.krrrrrrk.',
-  'krrrrrrrrk',
-  'ksrrbbrrsk',
-  '.krrrrrrk.',
+  '.kRrrrrRk.',
+  '.kRrbbrRk.',
+  '.ksrrrrsk.',
   '.kRrrrrRk.',
   '.kRrrrrRk.',
   '..kk..kk..',
@@ -71,9 +71,9 @@ const BACK: SpriteRows = [
   '.khhhhhhk.',
   '..khhhhk..',
   '.krrrrrrk.',
-  'krrrrrrrrk',
-  'ksrrbbrrsk',
-  '.krrrrrrk.',
+  '.kRrrrrRk.',
+  '.kRrbbrRk.',
+  '.ksrrrrsk.',
   '.kRrrrrRk.',
   '.kRrrrrRk.',
   '..kk..kk..',
@@ -101,15 +101,15 @@ const SIDE: SpriteRows = [
 const WALK_FEET = '...kkkk...'
 
 /**
- * 앞·뒤 걸음: 다리를 옆으로 벌리지 않고 한 다리씩 내딛는다.
- * 그림이 한 줄 길어져 몸이 1px 뜨고(발 기준으로 그리므로), 내딛는 다리만 1px 길게 땅에 닿는다.
- * 다리 칸 가로 폭은 서 있을 때와 같다.
+ * 앞·뒤 걸음: 몸은 그대로 두고 한 발씩 번갈아 든다 (frame 1 = 왼발, 2 = 오른발).
+ * 든 발은 한 줄 짧아진다. 다리를 옆으로 벌리지도, 몸이 뜨지도 않는다.
  */
 function stepLegs(rows: string[], frame: 1 | 2): string[] {
-  const feet = rows[rows.length - 1]
+  const out = [...rows]
+  const feet = out[out.length - 1]
   const half = feet.length / 2
-  const lead = frame === 1 ? feet.slice(0, half) + '.'.repeat(half) : '.'.repeat(half) + feet.slice(half)
-  return [...rows, lead]
+  out[out.length - 1] = frame === 1 ? '.'.repeat(half) + feet.slice(half) : feet.slice(0, half) + '.'.repeat(half)
+  return out
 }
 
 export function mirror(rows: SpriteRows): string[] {
@@ -357,26 +357,22 @@ export function spriteRows(who: Who, facing: Facing, opts: SpriteOpts): string[]
   const pose = opts.pose ?? 'stand'
   if (pose === 'handUp' && facing === 'down') {
     // 두 손을 어깨 위로 (비 맞는 손바닥, 기지개)
-    setPixel(rows, 0, 9, '.')
-    setPixel(rows, 9, 9, '.')
-    setPixel(rows, 1, 9, 'k')
-    setPixel(rows, 8, 9, 'k')
-    setPixel(rows, 0, 6, 's')
-    setPixel(rows, 9, 6, 's')
-    setPixel(rows, 0, 7, 'k')
-    setPixel(rows, 9, 7, 'k')
+    for (const [x, hand] of [[0, 2], [9, 7]]) {
+      setPixel(rows, x, 6, 's')
+      setPixel(rows, x, 7, 'r')
+      setPixel(rows, hand, 10, 'r')
+    }
   }
   if (pose === 'wave' && facing === 'down') {
-    setPixel(rows, 9, 9, '.')
-    setPixel(rows, 8, 9, 'k')
     setPixel(rows, 9, 6, 's')
-    setPixel(rows, 9, 7, 'k')
+    setPixel(rows, 9, 7, 'r')
+    setPixel(rows, 7, 10, 'r')
   }
   if (who === 'writer') {
     if (opts.avatar) dressAvatar(rows, facing, opts.avatar, opts.blink)
     // 여자 모습: 어깨까지 내려오는 머리 (얼굴 양옆의 빈 칸)
     else if (opts.look === 'f') longHair(rows)
-    if (opts.inky && facing === 'down' && rows[9][1] === 's') setPixel(rows, 1, 9, 'K')
+    if (opts.inky && facing === 'down' && rows[10][2] === 's') setPixel(rows, 2, 10, 'K')
     if (opts.season === 'winter') for (let x = 2; x <= 7; x++) if (rows[7][x] === 'r') setPixel(rows, x, 7, 'S')
   } else {
     rows = dressNeighbor(who, rows)
