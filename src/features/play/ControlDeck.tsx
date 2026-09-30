@@ -11,6 +11,8 @@ import { useGame } from '../../store/game-store'
 import { DirectionPad } from './Joystick'
 
 
+const NEED_ICON: Record<string, string> = { hunger: '🍞', fatigue: '💤', cold: '❄️', heat: '☀️', mood: '🙂' }
+
 function DeckNeeds() {
   const game = useGame((s) => s.game)
   const extra = seasonalNeed(game)
@@ -25,12 +27,11 @@ function DeckNeeds() {
       {rows.map(([k, v, good]) => {
         const label = T.ui.needs[k as keyof typeof T.ui.needs]
         const warn = good ? v < 30 : v >= 70
-        const short = (T.controls.needShort as Record<string, string>)[k]
         const help = (T.controls.needHelp as Record<string, string>)[k]
         // 누르면 무엇인지 한 줄로 알려 준다
         return (
           <button key={k} className={`deck-need${warn ? ' warn' : ''}${good ? ' good' : ''}`} onClick={() => useGame.getState().say(fill(help, { n: Math.round(v) }), 3200)}>
-            <i>{short}</i>
+            <i aria-hidden="true">{NEED_ICON[k]}</i>
             <b role="meter" aria-label={label} aria-valuenow={Math.round(v)} aria-valuemin={0} aria-valuemax={100}>
               <em style={{ width: `${v}%` }} />
             </b>
