@@ -50,6 +50,8 @@ export type PlaceId =
   | 'hallTable'
   | 'teaTable'
   | 'pavilion'
+  // 들 약초 (약방이 사 준다)
+  | 'wildHerb'
 export type Target =
   | { kind: 'place'; id: PlaceId; tile: Tile }
   | { kind: 'neighbor'; id: string; tries: number }

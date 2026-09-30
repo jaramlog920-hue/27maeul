@@ -138,7 +138,7 @@ export type Who =
   | 'weaver'
   | 'beekeeper'
   | 'postman'
-  | 'innkeeper'
+  | 'apothecary'
   | 'fisher'
   | 'carpenter'
 export type Pose = 'stand' | 'handUp' | 'wave' | 'crouch'
@@ -320,7 +320,7 @@ function dressNeighbor(who: Who, rows: string[]): string[] {
       for (let y = 7; y <= 10; y++) setPixel(out, 2 + (y - 7), y, 'L')
       return out
     }
-    case 'innkeeper':
+    case 'apothecary':
       // 붉은 겉옷, 흰 앞치마
       return recolor(rows, { r: 'A', R: 'B', b: 'a' })
     case 'fisher':

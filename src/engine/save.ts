@@ -160,7 +160,8 @@ export function sanitize(s: GameState, content: GameContent): GameState {
 export function deserialize(raw: string | null, content: GameContent): GameState | null {
   if (!raw) return null
   try {
-    const o = JSON.parse(raw)
+    // 주막이 약방으로 바뀌었다 (2026-09-30): 옛 저장의 이웃 id(마음·표식·장면·일지)를 함께 옮긴다
+    const o = JSON.parse(raw.replace(/innkeeper/g, 'apothecary'))
     if (!isObj(o) || o.version !== SAVE_VERSION) return null
     const ok =
       typeof o.clock?.day === 'number' &&

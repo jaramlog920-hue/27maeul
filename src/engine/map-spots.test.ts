@@ -110,7 +110,7 @@ describe('서고 권수로 열리는 구역', () => {
 })
 
 describe('새 이웃 넷의 행사 자리', () => {
-  const NEW = ['postman', 'innkeeper', 'fisher', 'carpenter']
+  const NEW = ['postman', 'apothecary', 'fisher', 'carpenter']
   const sets: [string, Record<string, Tile>][] = [
     ['잔치', FESTIVAL_SPOTS],
     ['아기 잔치', bonds.BABY_PARTY_SPOTS],

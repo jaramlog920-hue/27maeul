@@ -82,7 +82,7 @@ export const VISIT_GIFTS: Record<string, Items> = {
   weaver: { wool: 1 },
   beekeeper: { honey: 1 },
   postman: { bread: 1 },
-  innkeeper: { bread: 2 },
+  apothecary: { herb: 1 },
   fisher: { reed: 2 },
   carpenter: { bird: 1 },
 }
@@ -142,7 +142,7 @@ export const BABY_PARTY_SPOTS: Record<string, Tile> = {
   weaver: { x: 5, y: 20 },
   beekeeper: { x: 4, y: 21 },
   postman: { x: 6, y: 18 },
-  innkeeper: { x: 3, y: 21 },
+  apothecary: { x: 3, y: 21 },
   fisher: { x: 5, y: 21 },
   carpenter: { x: 2, y: 20 },
 }
@@ -156,7 +156,7 @@ export const HILL_SPOTS: Record<string, Tile> = {
   weaver: { x: 13, y: 15 },
   beekeeper: { x: 16, y: 15 },
   postman: { x: 15, y: 15 },
-  innkeeper: { x: 12, y: 14 },
+  apothecary: { x: 12, y: 14 },
   fisher: { x: 15, y: 12 },
   carpenter: { x: 12, y: 13 },
 }

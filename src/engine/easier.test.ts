@@ -51,7 +51,7 @@ const own = (s: GameState, ...ids: string[]): GameState => ({
 /** 목수가 이사 오고 닢이 넉넉한 상태 */
 const ready = (): GameState => {
   const s = newGame(CONTENT)
-  return { ...s, coins: 1000, scenes: [], flags: { ...s.flags, 'movedIn:carpenter': 1, 'movedIn:fisher': 1, 'movedIn:innkeeper': 1 } }
+  return { ...s, coins: 1000, scenes: [], flags: { ...s.flags, 'movedIn:carpenter': 1, 'movedIn:fisher': 1, 'movedIn:apothecary': 1 } }
 }
 const sleep = (s: GameState) => goToSleep(at(s, s.clock.day, 21 * 60), CONTENT)
 const byId = (id: string) => TRADES.find((t) => t.id === id)!
@@ -328,7 +328,7 @@ function simulate(withNew: boolean, days: number): { perDay: number[]; bookDays:
     ...s0,
     clock: { day: 3, minute: 6 * 60 },
     scenes: [],
-    flags: { ...s0.flags, gospelFeast: 2, 'room:romPhm': 1, 'movedIn:carpenter': 1, 'movedIn:fisher': 1, 'movedIn:innkeeper': 1 },
+    flags: { ...s0.flags, gospelFeast: 2, 'room:romPhm': 1, 'movedIn:carpenter': 1, 'movedIn:fisher': 1, 'movedIn:apothecary': 1 },
     shelved: { mt: 2, mk: 1, lk: 1, jn: 0, ac: 1 },
     // 예전에도 살 수 있던 것은 모두 산 상태 (좋은 펜·넓은 책상·밝은 등잔)
     inv: { goodPen: 1, wideDesk: 1, brightLamp: 1, bread: 6, water: 2 },

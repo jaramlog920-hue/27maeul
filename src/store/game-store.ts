@@ -38,6 +38,7 @@ import {
   openMailbox,
   train,
   hallFriendsHere,
+  sellHerbs,
   playHall,
   drinkTea,
   watchSunset,
@@ -235,6 +236,7 @@ interface Store {
   eat: () => void
   rest: () => void
   playHall: () => void
+  sellHerbs: () => void
   drinkTea: () => void
   watchSunset: () => void
   sitHill: () => void
@@ -583,7 +585,7 @@ export const useGame = create<Store>((set, get) => {
         const info = gatherInfo(game, target.id)
         if (!info) return { game, modal: null }
         if ('blocked' in info) {
-          get().say(info.blocked === 'notRipe' ? T.ui.notRipe : info.blocked === 'tired' ? T.ui.tooTired : T.ui.bagFull)
+          get().say(info.blocked === 'notRipe' ? T.ui.notRipe : info.blocked === 'tired' ? T.ui.tooTired : info.blocked === 'picked' ? T.herbs.picked : T.ui.bagFull)
           return { game, modal: null }
         }
         const kind = target.id === 'well' ? 'mash' : 'pick'
@@ -847,6 +849,14 @@ export const useGame = create<Store>((set, get) => {
       const names = friends.map((id) => CONTENT.neighbors.find((n) => n.id === id)?.role ?? id).join('·')
       set({ game: persist(next), modal: null })
       get().say(fill(T.places.hallDone, { with: withAnd(names) }), 3200)
+    },
+    // 약방에 약초 팔기 (장날이 아니어도)
+    sellHerbs: () => {
+      const r = sellHerbs(get().game)
+      if (!r) return
+      sfx('gift')
+      set({ game: persist(r.state) })
+      get().say(fill(T.herbs.sold, { n: r.n, coins: r.coins }))
     },
     drinkTea: () => {
       const next = drinkTea(get().game)

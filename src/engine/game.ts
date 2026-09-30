@@ -992,7 +992,38 @@ export function inGathering(g: Gathering, minute: number, p: Tile): boolean {
 
 // ── 곳곳에서 하는 일 ──
 
-export type GatherResult = { gives: Partial<Record<ItemId, number>>; minutes: number } | { blocked: 'notRipe' | 'tired' | 'full' }
+export type GatherResult = { gives: Partial<Record<ItemId, number>>; minutes: number } | { blocked: 'notRipe' | 'tired' | 'full' | 'picked' }
+
+// ── 들 약초와 약방 (주막 자리에 약방 — 2026-09-30) ──
+/** 들 약초는 하루에 이만큼 캔다 (네 군데 한 번씩) */
+export const HERB_PICKS_PER_DAY = 4
+/** 약방이 하루에 사 주는 약초 수 */
+export const HERB_SELL_CAP = 12
+export const APOTHECARY = 'apothecary'
+
+function herbPicksToday(s: Pick<GameState, 'clock' | 'flags'>): number {
+  return s.flags.herbDay === s.clock.day ? (s.flags.herbPicks ?? 0) : 0
+}
+function herbsSoldToday(s: Pick<GameState, 'clock' | 'flags'>): number {
+  return s.flags.herbSoldDay === s.clock.day ? (s.flags.herbSold ?? 0) : 0
+}
+
+/** 약방에 약초를 판다 (장날이 아니어도 — 한 줌에 약초 값, 매력 3단계부터 +1닢). 하루 12줌까지. 판 게 없으면 null */
+export function sellHerbs(s: GameState): { state: GameState; n: number; coins: number } | null {
+  const n = Math.min(count(s.inv, 'herb'), HERB_SELL_CAP - herbsSoldToday(s))
+  if (n <= 0) return null
+  const coins = n * sellPrice(s, 'herb')!
+  return {
+    state: { ...s, inv: take(s.inv, { herb: n })!, coins: s.coins + coins, flags: { ...s.flags, herbSoldDay: s.clock.day, herbSold: herbsSoldToday(s) + n } },
+    n,
+    coins,
+  }
+}
+
+/** 약방이 오늘 더 사 줄 수 있는 약초 수 */
+export function herbsSellLeft(s: Pick<GameState, 'clock' | 'flags'>): number {
+  return HERB_SELL_CAP - herbsSoldToday(s)
+}
 
 /** 우물·갈대·포도·올리브·보리밭에서 얻는 것 */
 export function gatherInfo(s: GameState, place: PlaceId): GatherResult | null {
@@ -1014,6 +1045,10 @@ export function gatherInfo(s: GameState, place: PlaceId): GatherResult | null {
       break
     case 'field':
       info = { gives: { barley: barleyRipe(day) ? 3 : 1 }, minutes: 20 }
+      break
+    case 'wildHerb':
+      // 겨울엔 캘 것이 없고, 하루에 네 번까지 (네 군데 한 번씩)
+      info = seasonOf(day) === 'winter' ? { blocked: 'notRipe' } : herbPicksToday(s) >= HERB_PICKS_PER_DAY ? { blocked: 'picked' } : { gives: { herb: 1 }, minutes: 15 }
       break
     default:
       return null
@@ -1092,13 +1127,14 @@ function withExtra(s: GameState, gives: Partial<Record<ItemId, number>>, id: 'ha
   return overflows(s, more) ? gives : more
 }
 
-const GATHER_SALT: Partial<Record<PlaceId, number>> = { well: 1, reeds: 2, olive: 3, vine: 4, field: 5 }
+const GATHER_SALT: Partial<Record<PlaceId, number>> = { well: 1, reeds: 2, olive: 3, vine: 4, field: 5, wildHerb: 6 }
 
 export function finishGather(s: GameState, place: PlaceId): GameState {
   const info = gatherInfo(s, place)
   if (!info || 'blocked' in info) return s
   const gives = withExtra(s, info.gives, 'strength', GATHER_SALT[place] ?? 0)
-  return train(passTime({ ...putAway(s, gives), needs: toil(s, 4) }, info.minutes), 'strength', XP.gather)
+  const flags = place === 'wildHerb' ? { ...s.flags, herbDay: s.clock.day, herbPicks: herbPicksToday(s) + 1 } : s.flags
+  return train(passTime({ ...putAway({ ...s, flags }, gives), needs: toil(s, 4) }, info.minutes), 'strength', XP.gather)
 }
 
 export type CraftBlock = 'needs' | 'tired' | 'full' | 'job' | null

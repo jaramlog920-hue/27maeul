@@ -1199,52 +1199,52 @@
       "giftLiked": "와, 제가 좋아하는 거예요!",
       "giftPlain": "고마워요, 잘 먹을게요."
     },
-    "innkeeper": {
+    "apothecary": {
       "offer": [
         {
-          "speaker": "innkeeper",
-          "text": "손님들한테 전해 들은 이야기가 있어요. 한번 들어 보실래요?"
+          "speaker": "apothecary",
+          "text": "약초 캐러 다니다 들은 이야기가 있어요. 한번 들어 보실래요?"
         }
       ],
       "idle": [
         {
-          "speaker": "innkeeper",
-          "text": "오늘 국은 콩을 넣고 끓였어요."
+          "speaker": "apothecary",
+          "text": "약초는 해 뜨기 전에 캐야 향이 좋아요."
         },
         {
-          "speaker": "innkeeper",
-          "text": "장날엔 발 디딜 틈이 없어요."
+          "speaker": "apothecary",
+          "text": "풀밭에 약초가 보이면 캐 와요. 제가 사 드릴게요."
         }
       ],
       "warm": [
         {
-          "speaker": "innkeeper",
-          "text": "지친 얼굴이네요. 앉아서 물 한 잔 하고 가요."
+          "speaker": "apothecary",
+          "text": "지친 얼굴이네요. 약차 한 잔 우려 드릴까요?"
         }
       ],
       "close": [
         {
-          "speaker": "innkeeper",
-          "text": "필사가님 자리는 늘 창가로 비워 둬요."
+          "speaker": "apothecary",
+          "text": "필사가님 몫으로 말린 박하를 따로 담아 뒀어요."
         }
       ],
       "wet": [
         {
-          "speaker": "innkeeper",
-          "text": "비 오면 손님이 더 들어요. 다들 쉬어 가거든요."
+          "speaker": "apothecary",
+          "text": "비 온 다음 날엔 약초가 쑥쑥 자라요."
         }
       ],
       "visit": [
         {
-          "speaker": "innkeeper",
-          "text": "국 끓이고 남은 빵이에요. 식기 전에 드세요."
+          "speaker": "apothecary",
+          "text": "약초를 넉넉히 말렸어요. 한 줌 나눠 드릴게요."
         }
       ],
       "help": {
-        "label": "상 차리기 돕기",
-        "thanks": "손이 빠르시네요! 빵 두 개 가져가요."
+        "label": "약초 말리기 돕기",
+        "thanks": "손이 야무지시네요! 씨앗 두 봉 가져가요."
       },
-      "giftLiked": "어머, 이거 좋아해요! 국에 넣어야겠어요.",
+      "giftLiked": "어머, 이거 좋아해요! 약차에 넣어야겠어요.",
       "giftPlain": "고마워요."
     },
     "fisher": {
@@ -1629,8 +1629,8 @@
           "text": "광장에 모닥불이 피었다. 마을 사람들이 하나둘 불 곁에 모여 앉는다."
         },
         {
-          "speaker": "innkeeper",
-          "text": "주막에서 국을 한 솥 끓여 왔어요. 다들 한 그릇씩 드세요."
+          "speaker": "apothecary",
+          "text": "약방에서 약차를 한 솥 우려 왔어요. 다들 한 잔씩 드세요."
         },
         {
           "speaker": "child",
@@ -1685,8 +1685,8 @@
           "text": "서고 방을 하나하나 다 들어가 봤어요. 빈 칸이 하나도 없었어요!"
         },
         {
-          "speaker": "innkeeper",
-          "text": "국은 한 솥 더 있어요. 천천히 드세요."
+          "speaker": "apothecary",
+          "text": "약차는 한 솥 더 있어요. 천천히 드세요."
         },
         {
           "speaker": "narration",
@@ -2374,12 +2374,12 @@
       ],
       "album": "벌 치는 이웃이 온 날"
     },
-    "movedIn:innkeeper": {
+    "movedIn:apothecary": {
       "title": "새 이웃",
       "lines": [
         {
-          "speaker": "innkeeper",
-          "text": "장터 아래에 주막을 열었어요. 지나가다 쉬어 가요."
+          "speaker": "apothecary",
+          "text": "장터 아래에 약방을 열었어요. 풀밭에서 약초를 캐 오면 제가 사 드릴게요."
         }
       ]
     },
@@ -2645,33 +2645,33 @@
       ],
       "album": "편지 나르는 이웃과 나눈 날들"
     },
-    "gift:innkeeper:3": {
+    "gift:apothecary:3": {
       "title": "선물",
       "lines": [
         {
-          "speaker": "innkeeper",
-          "text": "오늘 아침에 구운 빵이에요. 따뜻할 때 드세요."
+          "speaker": "apothecary",
+          "text": "텃밭에 심어 보세요. 잘 자라는 약초 씨앗이에요."
         }
       ]
     },
-    "gift:innkeeper:6": {
+    "gift:apothecary:6": {
       "title": "선물",
       "lines": [
         {
-          "speaker": "innkeeper",
-          "text": "국 끓이던 작은 냄비예요. 방에서도 쓸 데가 있을 거예요."
+          "speaker": "apothecary",
+          "text": "약초 달이던 작은 냄비예요. 방에서도 쓸 데가 있을 거예요."
         }
       ]
     },
-    "gift:innkeeper:9": {
+    "gift:apothecary:9": {
       "title": "마음을 나눈 이웃",
       "lines": [
         {
-          "speaker": "innkeeper",
-          "text": "차 끓일 때 쓰는 주전자예요. 우리 집에서 제일 아끼는 거예요."
+          "speaker": "apothecary",
+          "text": "약차 우릴 때 쓰는 주전자예요. 우리 집에서 제일 아끼는 거예요."
         }
       ],
-      "album": "주막 주인과 나눈 날들"
+      "album": "약방 주인과 나눈 날들"
     },
     "gift:fisher:3": {
       "title": "선물",
@@ -3011,7 +3011,7 @@
       "village:2": " 베 짜는 이웃이 이사 왔다.",
       "village:3": " 강가에 쉼터가 생겼다.",
       "village:4": " 벌 치는 이웃이 이사 왔다.",
-      "movedIn:innkeeper": " 주막 주인이 이사 왔다.",
+      "movedIn:apothecary": " 약방 주인이 이사 왔다.",
       "movedIn:fisher": " 어부가 이사 왔다.",
       "movedIn:carpenter": " 제본 골목의 목수가 이사 왔다.",
       "dinner:baker": " 이웃집에서 저녁을 먹었다.",
@@ -3228,5 +3228,12 @@
     "level": "{n}단계",
     "born": "타고난 값 {n}",
     "up": "{name} {n}단계가 되었어요!"
+  },
+  "herbs": {
+    "picked": "오늘은 더 캘 약초가 없어요. 내일 다시 와요.",
+    "sell": "약초 팔기 (한 줌 {price}닢)",
+    "sold": "약초 {n}줌을 팔아 {coins}닢을 받았다.",
+    "soldOut": "오늘은 약초를 넉넉히 샀어요. 내일 또 가져와요.",
+    "hint": "마을 가장자리 풀밭에서 약초를 캘 수 있어요. 하루에 네 줌까지."
   }
 }

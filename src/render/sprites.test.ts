@@ -5,7 +5,7 @@ import { ITEM_TEXT } from '../content/text'
 import type { Facing } from '../engine/types'
 
 const FACINGS: Facing[] = ['up', 'down', 'left', 'right']
-const PEOPLE: Who[] = ['writer', 'baker', 'child', 'grandpa', 'merchant', 'smith', 'shepherd', 'presser', 'weaver', 'beekeeper', 'postman', 'innkeeper', 'fisher', 'carpenter']
+const PEOPLE: Who[] = ['writer', 'baker', 'child', 'grandpa', 'merchant', 'smith', 'shepherd', 'presser', 'weaver', 'beekeeper', 'postman', 'apothecary', 'fisher', 'carpenter']
 
 function valid(rows: readonly string[], pal: Record<string, string>, w?: number) {
   const width = w ?? rows[0].length

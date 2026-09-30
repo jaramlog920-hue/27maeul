@@ -90,11 +90,11 @@ describe('스물일곱 권 잔치 — 조건과 한 번뿐', () => {
 })
 
 describe('스물일곱 권 잔치 — 저녁 모닥불', () => {
-  it('③ 잔치 날 저녁 이사 온 이웃이 모두 광장 자리로, 비가 와도 (목수·주막 주인도 와 있다)', () => {
+  it('③ 잔치 날 저녁 이사 온 이웃이 모두 광장 자리로, 비가 와도 (목수·약방 주인도 와 있다)', () => {
     const s = goToSleep(night(2, ALL, true), CONTENT)
     expect(isWet(weatherOf(3))).toBe(true)
     expect(s.flags['movedIn:carpenter']).toBe(1)
-    expect(s.flags['movedIn:innkeeper']).toBe(1)
+    expect(s.flags['movedIn:apothecary']).toBe(1)
     const e = eve(s, FESTIVAL_FROM + 1).state
     const joined = CONTENT.neighbors.filter((d) => d.joinsAt === undefined)
     for (const d of joined) expect(e.npcs[d.id].goal, d.id).toEqual(FESTIVAL_SPOTS[d.id])
@@ -181,7 +181,7 @@ describe('스물일곱 권 잔치 — 문구', () => {
     expect(SCENES.allFeast.title).toBe('서고가 다 찼다')
     expect(SCENES.allFeastFire.title).toBe('광장 모닥불 잔치')
     expect(SCENES.allFeast.lines.map((l) => l.speaker)).toEqual(['narration', 'grandpa', 'carpenter', 'postman', 'narration'])
-    expect(SCENES.allFeastFire.lines.map((l) => l.speaker)).toEqual(['narration', 'baker', 'child', 'innkeeper', 'narration'])
+    expect(SCENES.allFeastFire.lines.map((l) => l.speaker)).toEqual(['narration', 'baker', 'child', 'apothecary', 'narration'])
     expect(JOURNAL_NOTES.allFeast).toBe(' 서고에 스물일곱 권이 다 꽂혔다.')
     expect(JOURNAL_NOTES.allFeastFire).toBe(' 스물일곱 권 잔치 모닥불 곁에 앉았다.')
   })

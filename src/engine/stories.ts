@@ -27,7 +27,7 @@ export const MILESTONE_GIFTS: Record<string, Partial<Record<(typeof MILESTONES)[
   weaver: { 3: { cushion: 1 }, 6: { rug: 1 }, 9: { basket: 1 } },
   beekeeper: { 3: { honey: 2 }, 6: { candle: 1 }, 9: { jar: 1 } },
   postman: { 3: { papyrus: 2 }, 9: { basket: 1 } },
-  innkeeper: { 3: { bread: 3 }, 6: { pot: 1 }, 9: { teapot: 1 } },
+  apothecary: { 3: { seedHerb: 3 }, 6: { pot: 1 }, 9: { teapot: 1 } },
   fisher: { 3: { reed: 3 }, 6: { basket: 1 }, 9: { bowl: 1 } },
   carpenter: { 3: { stool: 1 }, 6: { chair: 1 }, 9: { bookcase: 1 } },
 }

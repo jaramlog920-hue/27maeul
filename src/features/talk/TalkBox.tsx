@@ -2,7 +2,7 @@
 import { neighborById } from '../../content/catalog'
 import { fill, itemList, NEIGHBOR_LINES, T } from '../../content/text'
 import { grapesRipe, isMarketDay } from '../../engine/calendar'
-import { activeRequest, canHelp, canOrderHome, canOrderWork, GIFTABLE, lessonTime, nextHomeStage } from '../../engine/game'
+import { activeRequest, APOTHECARY, canHelp, canOrderHome, canOrderWork, GIFTABLE, herbsSellLeft, lessonTime, nextHomeStage, sellPrice } from '../../engine/game'
 import { CARPENTER_WORKS } from '../../engine/easier'
 import { requestFor, reqState } from '../../engine/bonds'
 import { has } from '../../engine/items'
@@ -92,6 +92,12 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
           </button>
         ))}
         {def.marketOnly && isMarketDay(game.clock.day) && <button onClick={() => open({ kind: 'trade' })}>{T.ui.talkTrade}</button>}
+        {/* 약방: 약초를 사 준다 (장날이 아니어도) */}
+        {def.id === APOTHECARY && (
+          <button disabled={(game.inv.herb ?? 0) === 0 || herbsSellLeft(game) <= 0} onClick={useGame.getState().sellHerbs}>
+            {fill(T.herbs.sell, { price: sellPrice(game, 'herb')! })}
+          </button>
+        )}
         <button disabled={block !== null} onClick={() => startHelp(def.id)} title={block ?? ''}>
           {helpLabel}
         </button>
@@ -119,6 +125,8 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
         </p>
       )}
       {game.gifted.includes(def.id) && <p className="hint">{T.ui.giftDone}</p>}
+      {def.id === APOTHECARY && herbsSellLeft(game) <= 0 && <p className="hint">{T.herbs.soldOut}</p>}
+      {def.id === APOTHECARY && (game.inv.herb ?? 0) === 0 && <p className="hint">{T.herbs.hint}</p>}
     </div>
   )
 }

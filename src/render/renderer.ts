@@ -110,7 +110,7 @@ const HOUSE_STYLES: Record<string, HouseStyle> = {
   beekeeper: { roof: ['#b99a5c', '#8e7447', '#d4b87a'], pattern: 'tile', wall: '#f3dbb0', base: '#dbc79a', window: 'round', shutter: '#ae9068', door: '#987654' },
   // 새 이웃 넷 (계획 2): 이웃과 겹치지 않는 차분한 빛 — 잿빛 파랑, 흙빛 장미, 물빛 초록, 나뭇빛
   postman: { roof: ['#8497a8', '#66788a', '#a3b4c3'], pattern: 'tile', wall: '#f3e3c4', base: '#ddd0ad', window: 'square', shutter: '#8e9aa6', door: '#7c6a58' },
-  innkeeper: { roof: ['#b0786a', '#8a5a4f', '#c9968a'], pattern: 'tile', wall: '#f5dfbe', base: '#e0c9a0', window: 'arch', shutter: '#ae9068', door: '#82684f', awning: ['#a9b88f', '#fefdf8'] },
+  apothecary: { roof: ['#b0786a', '#8a5a4f', '#c9968a'], pattern: 'tile', wall: '#f5dfbe', base: '#e0c9a0', window: 'arch', shutter: '#ae9068', door: '#82684f', awning: ['#a9b88f', '#fefdf8'] },
   fisher: { roof: ['#7f9f98', '#5f7d77', '#9dbab3'], pattern: 'tile', wall: '#efe2c6', base: '#d9ccab', window: 'round', shutter: '#8a9c8e', door: '#7c6a58' },
   carpenter: { roof: ['#a58a66', '#7e694c', '#c1a680'], pattern: 'tile', wall: '#f3dbb0', base: '#dbc79a', window: 'square', shutter: '#ae9068', door: '#82684f', timber: '#98795a' },
   // 모이는 곳 (계획 10): 이웃집과 달라 보이게 — 사랑방은 쪽빛 지붕에 나무 기둥·줄무늬 차양, 찻집은 분홍 지붕에 꽃빛 차양
@@ -588,6 +588,18 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r(C.woodDark, 7, 3, 2, 12)
       r(season === 'winter' ? '#7a6a52' : C.vine, 2, 2, 12, 7)
       if (season !== 'winter') r(C.leaf3, 4, 3, 3, 2)
+      break
+    case 'j':
+      // 들 약초: 낮은 풀포기에 잎 셋, 봄·여름·가을엔 작은 흰 꽃 (겨울엔 마른 잎)
+      r('rgba(60,70,40,0.18)', 3, 12, 10, 2)
+      r(season === 'winter' ? '#a39a7a' : '#6f9a5a', 4, 7, 8, 6)
+      r(season === 'winter' ? '#b8ae8c' : '#86b26a', 2, 9, 4, 3)
+      r(season === 'winter' ? '#b8ae8c' : '#86b26a', 10, 9, 4, 3)
+      r(season === 'winter' ? '#b8ae8c' : '#9cc47e', 6, 4, 4, 4)
+      if (season !== 'winter') {
+        r('#fefdf8', 5, 5, 2, 2)
+        r('#fefdf8', 9, 6, 2, 2)
+      }
       break
     case 'o':
       // 올리브나무: 은빛 도는 작은 둥근 나무

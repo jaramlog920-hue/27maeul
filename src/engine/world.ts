@@ -257,9 +257,16 @@ export const HALL_DOOR: Tile = { x: 18, y: 9 }
 /** 정원 찻집 (5칸×4줄) — 문 앞이 큰길 */
 export const TEA_RECT = { x0: 28, y0: 6, x1: 32, y1: 9 }
 export const TEA_DOOR: Tile = { x: 30, y: 9 }
-/** 호숫가 정자 (5칸×2줄 그림, 주막 앞벽과 한 줄 띄움) 가운데 벤치 — 앉는 자리는 그 아래 호숫가 길 */
+/** 호숫가 정자 (5칸×2줄 그림, 약방 앞벽과 한 줄 띄움) 가운데 벤치 — 앉는 자리는 그 아래 호숫가 길 */
 export const PAVILION_RECT = { x0: 15, y0: 30, x1: 19, y1: 31 }
 export const PAVILION_SEAT: Tile = { x: 17, y: 31 }
+/** 들 약초 자리 (지도 'j'): 북쪽 울타리 곁, 빵집 옆 모퉁이, 올리브 숲 위, 양 우리 아래 — 캐서 약방에 판다 */
+export const WILD_HERBS: readonly Tile[] = [
+  { x: 12, y: 1 },
+  { x: 1, y: 22 },
+  { x: 45, y: 11 },
+  { x: 8, y: 31 },
+]
 
 export const ROOMS: readonly Room[] = [
   // 빵 굽는 이웃: 가마 둘, 찬장, 밀가루 항아리, 과일 접시·주전자 올린 탁자, 둥근 깔개
@@ -483,9 +490,9 @@ function build(): string[] {
   // 두 집 다 문이 큰길(23줄)에 바로 닿는다
   roofed('postman', 41, 18, 45, 22, 43) // 편지 나르는 이웃 (아이네 집과 한 칸 띄워 40열로 지나간다)
   roofed('carpenter', 11, 18, 17, 22, 14) // 제본 골목의 목수
-  roofed('innkeeper', 17, 24, 23, 28, 20) // 주막
+  roofed('apothecary', 17, 24, 23, 28, 20) // 약방 (예전 주막 자리)
   rect(20, 29, 20, 31, ',')
-  roofed('fisher', 10, 28, 14, 31, 12) // 어부 (호숫가 길 위, 주막과 두 칸 띄움)
+  roofed('fisher', 10, 28, 14, 31, 12) // 어부 (호숫가 길 위, 약방과 두 칸 띄움)
 
   // ── 모이는 곳과 둘이 가는 곳 (계획 10) — 집을 옮기지 않고 큰길·호숫가 길 바로 위 빈 풀밭에 ──
   // 마을 사랑방: 내 집 오른쪽 텃밭 아래, 문이 큰길에 바로 닿는다 (저녁에 이웃이 모여 논다)
@@ -494,6 +501,8 @@ function build(): string[] {
   roofed('teahouse', TEA_RECT.x0, TEA_RECT.y0, TEA_RECT.x1, TEA_RECT.y1, TEA_DOOR.x)
   // 호숫가 정자: 호숫가 길 위 풀밭, 지붕만 있는 정자 안 벤치 (노을 보기) — 지붕·기둥은 decor 그림
   set(PAVILION_SEAT.x, PAVILION_SEAT.y, 'B')
+  // 들 약초 (약방이 사 준다): 마을 가장자리 풀밭 네 군데
+  for (const t of WILD_HERBS) set(t.x, t.y, 'j')
 
   // ── 호숫가: 모래길, 갈대, 나루와 고깃배 ──
   rect(1, 32, 46, 32, ',')
@@ -532,7 +541,7 @@ export const MAP: readonly string[] = build()
 // 'l'(텃밭)은 'y'(보리밭)처럼 걸을 수 있다 — 두둑 가운데 안쪽 칸은 사방이 막히면 다가갈 수 없어서 (task-3 적응)
 // 'H'(사다리)는 누르는 곳이라 길찾기가 지나가지 않는다 — 지나가다 다락으로 올라가 버리지 않게. 'I'는 다락 창
 // 'Q' 한 권 선반(사도행전·요한계시록), 'M' 벽의 여정 판, 'C' 벽의 일곱 교회 카드 판. 'Y' 편지 선반, 'V' 벽의 편지꽂이, 'N' 방 벽의 창. 'J'(열린 서고 방 문)는 걷는 칸
-const BLOCKED = new Set(['C', 'Y', 'V', 'N', 'H', 'I', '_','Z', 'n', 'g', 'p', 'W', 'G', 'K', 'Q', 'M', 'T', '#', 'R', 'S', 'u', 'b', 'd', 'h', 's', 'k', 'w', 'B', '~', 'r', 'v', 'o', 'P', 'A', 'O', 'm', 'x', 'q'])
+const BLOCKED = new Set(['j', 'C', 'Y', 'V', 'N', 'H', 'I', '_','Z', 'n', 'g', 'p', 'W', 'G', 'K', 'Q', 'M', 'T', '#', 'R', 'S', 'u', 'b', 'd', 'h', 's', 'k', 'w', 'B', '~', 'r', 'v', 'o', 'P', 'A', 'O', 'm', 'x', 'q'])
 
 export function tileAt(x: number, y: number): string {
   if (homeLevel > 0) {
@@ -695,6 +704,8 @@ export const PLACES: Record<PlaceId, Place> = {
   hallTable: { tiles: [4, 5, 6, 7].map((dx) => ({ x: HALL_ROOM_X0 + dx, y: HALL_ROOM_Y0 + 3 })), stand: { x: HALL_ROOM_X0 + 5, y: HALL_ROOM_Y0 + 4 } },
   teaTable: { tiles: [{ x: TEA_ROOM_X0 + 2, y: TEA_ROOM_Y0 + 3 }, { x: TEA_ROOM_X0 + 4, y: TEA_ROOM_Y0 + 3 }], stand: { x: TEA_ROOM_X0 + 2, y: TEA_ROOM_Y0 + 4 } },
   pavilion: { tiles: [PAVILION_SEAT], stand: { x: PAVILION_SEAT.x, y: PAVILION_SEAT.y + 1 } },
+  // 들 약초 (약방)
+  wildHerb: { tiles: [...WILD_HERBS] },
 }
 
 let mailboxOn = false

@@ -493,9 +493,9 @@
     }
   },
   {
-    "id": "innkeeper",
-    "role": "주막 주인",
-    "sprite": "innkeeper",
+    "id": "apothecary",
+    "role": "약방 주인",
+    "sprite": "apothecary",
     "door": {
       "x": 20,
       "y": 28
@@ -540,13 +540,13 @@
       }
     ],
     "likes": [
-      "herb",
-      "grapes"
+      "honey",
+      "herb"
     ],
     "help": {
       "minigame": "pick",
       "gives": {
-        "bread": 2
+        "seedHerb": 2
       }
     }
   },
