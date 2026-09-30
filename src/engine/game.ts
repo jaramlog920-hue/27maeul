@@ -24,6 +24,7 @@ import {
   planGathering,
   reqState,
   requestFor,
+  STARS_FROM,
   unlocked,
   villageLevel,
   VISIT_FROM,
@@ -36,9 +37,9 @@ import { COVER_FROM, jobOf, SELL_FROM } from './job'
 import { FESTIVAL_SPOTS, goalFor, isNear, npcTile, placeNpc, stepNpc, type Npc } from './neighbors'
 import { GAIN, heartsOf, MAX_POINTS } from './hearts'
 import { bookDone, bookRoomOpen, emptyProgress, openDoorsFor, roomOpen, totalChapters, type Progress } from './books'
-import { modeOf, SHELF_ROOMS } from './shelf-rooms'
+import { arrivesOf, modeOf, SHELF_ROOMS } from './shelf-rooms'
 import { currentChapter, offersForDay } from './offers'
-import { POSTMAN, postForDay } from './post'
+import { POSTMAN, postForDay, starPostFor } from './post'
 import { blanksFor } from './copy'
 import { checkArrangement, moveItem, type ArrangeResult } from './scroll'
 import { cardsForChapters, journeyComplete, placeNewCards } from './journey'
@@ -251,11 +252,12 @@ function todaysOffers(day: number, collected: string[], s: Pick<GameState, 'acti
 
 /**
  * 오늘 편지 나르는 이웃이 가져올 편지: 지금 책이 편지 책이고, 그 이웃이 오늘 나와 있고(present), 오늘 아직 건네지 않았을 때
- * (listened — 책을 바꿔도 같은 날 또 받지 않는다). 다른 이웃은 편지를 건네지 않는다
+ * (listened — 책을 바꿔도 같은 날 또 받지 않는다). 다른 이웃은 편지를 건네지 않는다.
+ * 요한계시록(arrives 'stars')은 낮에 건네지 않는다 — 언덕 편지함에서 맑은 밤에 꺼낸다 (stargaze)
  */
 function todaysPost(day: number, s: Pick<GameState, 'activeBook' | 'collected' | 'listened'>, content: GameContent, present: string[]): string[] {
   const book = s.activeBook
-  if (!book || modeOf(book) !== 'letters') return []
+  if (!book || modeOf(book) !== 'letters' || arrivesOf(book) !== 'post') return []
   if (!present.includes(POSTMAN) || s.listened.includes(POSTMAN)) return []
   return postForDay({ day, book, chapters: content.pieces.filter((p) => p.book === book), delivered: s.collected })
 }
@@ -676,6 +678,17 @@ function receivePost(s: GameState, content: GameContent): { state: GameState; pi
   const known = new Map(content.pieces.map((p) => [p.id, p]))
   const ids = (s.post ?? []).filter((id) => known.has(id) && !s.collected.includes(id))
   if (!ids.length) return { state: s, pieceId: null, pieceIds: [] }
+  const got = takeChapters(s, ids, content)
+  return {
+    state: { ...got, post: [], listened: s.listened.includes(POSTMAN) ? s.listened : [...s.listened, POSTMAN] },
+    pieceId: ids[0],
+    pieceIds: ids,
+  }
+}
+
+/** 받은 장 조각을 collected·todayHeard에 넣는다 (편지 나르는 이웃·언덕 편지함이 함께 쓴다) */
+function takeChapters(s: GameState, ids: readonly string[], content: GameContent): GameState {
+  const known = new Map(content.pieces.map((p) => [p.id, p]))
   // 책상 순서(arrangement)도 조각과 같게 채워 둔다 — 불러오기(sanitize)가 모은 조각으로 다시 채우는 것과 어긋나지 않게
   let progress = s.progress
   for (const id of ids) {
@@ -683,18 +696,7 @@ function receivePost(s: GameState, content: GameContent): { state: GameState; pi
     const bp = progress[p.book]
     progress = { ...progress, [p.book]: { ...bp, arrangement: { ...bp.arrangement, [p.chapter]: [...(bp.arrangement[p.chapter] ?? []), id] } } }
   }
-  return {
-    state: {
-      ...s,
-      post: [],
-      collected: [...s.collected, ...ids],
-      todayHeard: [...s.todayHeard, ...ids],
-      listened: s.listened.includes(POSTMAN) ? s.listened : [...s.listened, POSTMAN],
-      progress,
-    },
-    pieceId: ids[0],
-    pieceIds: ids,
-  }
+  return { ...s, collected: [...s.collected, ...ids], todayHeard: [...s.todayHeard, ...ids], progress }
 }
 
 /** 돕기 보상 (계절에 따라 바뀌는 이웃이 있다) */
@@ -1033,13 +1035,41 @@ export function readScripture(s: GameState, pieceId: string): { state: GameState
   return { state: readOff(passTime({ ...s, needs }, READ_MINUTES), pieceId), rested: s.needs.fatigue > 0 }
 }
 
-export function stargaze(s: GameState): GameState {
-  const clear = !isWet(weatherOf(s.clock.day)) && weatherOf(s.clock.day) !== 'fog'
+/** 별이 보이는 때: 저녁 여덟 시(STARS_FROM) 이후 — 시간이 멈추는 02:00까지 — 나 새벽 다섯 시 전 */
+export function starsOut(minute: number): boolean {
+  return minute >= STARS_FROM || minute % 1440 < 5 * 60
+}
+
+/** 별이 보이는 맑은 하늘 (비·눈·안개가 아닌 날) */
+export function clearSky(day: number): boolean {
+  const w = weatherOf(day)
+  return !isWet(w) && w !== 'fog'
+}
+
+/**
+ * 오늘 밤 언덕 편지함에서 꺼낼 장: 지금 책이 별 보는 밤에 오는 책(요한계시록)이고, 그 방이 열렸고,
+ * 맑은 밤 별이 보이는 때이고, 오늘 밤 아직 꺼내지 않았을 때 (flags.starPostDay — 궂은 밤 몫은 쌓이지 않는다)
+ */
+function starPostTonight(s: GameState, content: GameContent): string[] {
+  const book = s.activeBook
+  if (!book || modeOf(book) !== 'letters' || arrivesOf(book) !== 'stars' || !bookRoomOpen(book, s.flags)) return []
+  if (!clearSky(s.clock.day) || !starsOut(s.clock.minute) || s.flags.starPostDay === s.clock.day) return []
+  return starPostFor({ day: s.clock.day, book, chapters: content.pieces.filter((p) => p.book === book), delivered: s.collected })
+}
+
+/**
+ * 별 보기: 앉아 쉬고 20분, 맑은 밤이면 stars 장면(한 번). 요한계시록을 엮는 중이면 벤치 곁 편지함에서 오늘 밤 몫(1–2장)을 꺼낸다.
+ * 자리와 무관한 함수다 — 지금은 언덕 메뉴에만 붙어 있지만 다른 "별 보는 밤" 자리(계획 10 호숫가 정자 등)도 이것을 부르면 된다.
+ */
+export function stargaze(s: GameState, content: GameContent): { state: GameState; pieceIds: string[] } {
   const night = phaseOf(s.clock.minute) === 'night'
-  const next = passTime({ ...s, needs: rest(s.needs) }, 20)
-  if (clear && night && !s.flags[onceKey('stars', s.clock.day)])
-    return { ...next, scenes: [...next.scenes, 'stars'], flags: { ...next.flags, [onceKey('stars', s.clock.day)]: 1 } }
-  return next
+  let next = passTime({ ...s, needs: rest(s.needs) }, 20)
+  if (clearSky(s.clock.day) && night && !s.flags[onceKey('stars', s.clock.day)])
+    next = { ...next, scenes: [...next.scenes, 'stars'], flags: { ...next.flags, [onceKey('stars', s.clock.day)]: 1 } }
+  const ids = starPostTonight(s, content)
+  if (!ids.length) return { state: next, pieceIds: [] }
+  const got = takeChapters(next, ids, content)
+  return { state: { ...got, flags: { ...got.flags, starPostDay: s.clock.day } }, pieceIds: ids }
 }
 
 // ── 동반 동물 ──

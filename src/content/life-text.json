@@ -153,6 +153,9 @@
     "pressMake": "기름 짜기 (올리브 2 → 기름 1)",
     "hillTitle": "언덕 벤치",
     "hillSit": "잠시 앉아 쉬기",
+    "hillStars": "별 보기",
+    "starsNotYet": "별은 저녁 여덟 시가 지나야 보여요.",
+    "starsCloudy": "오늘 밤은 하늘이 흐려 별이 잘 보이지 않아요.",
     "shelfTitle": "선반",
     "dex": "이야기 도감",
     "dexOnly": "한 복음서에만",
@@ -593,7 +596,10 @@
     "bring": "편지 {n}통 가져왔어요. {book} {from}–{to}장이에요.",
     "bringOne": "편지 한 통 가져왔어요. {book} {chapter}장이에요.",
     "receive": "편지 받기",
-    "received": "편지 {n}통을 받았어요."
+    "received": "편지 {n}통을 받았어요.",
+    "starsBring": "벤치 곁 편지함에서 {n}통을 꺼냈어요. {book} {from}–{to}장이에요.",
+    "starsBringOne": "벤치 곁 편지함에서 한 통을 꺼냈어요. {book} {chapter}장이에요.",
+    "revHint": "그 방 책은 언덕 편지함에 넣어 뒀어요. 맑은 밤에 꺼내 가세요."
   },
   "copy": {
     "title": "{book} {chapter}장 옮겨 적기",

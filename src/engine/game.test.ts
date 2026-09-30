@@ -276,8 +276,10 @@ describe('손일', () => {
     const b = coverWithBlanket({ ...s, inv: { blanket: 1 } })!
     expect(b.needs.cold).toBe(0)
     expect(b.scenes).toContain('blanket')
-    expect(stargaze(at(s, 22 * 60, 1)).scenes).toContain('stars')
-    expect(stargaze(at(s, 12 * 60, 1)).scenes).not.toContain('stars')
+    expect(stargaze(at(s, 22 * 60, 1), CONTENT).state.scenes).toContain('stars')
+    expect(stargaze(at(s, 12 * 60, 1), CONTENT).state.scenes).not.toContain('stars')
+    // 요한계시록을 엮지 않으면 편지함에서 꺼낼 것이 없다
+    expect(stargaze(at(s, 22 * 60, 1), CONTENT).pieceIds).toEqual([])
   })
 })
 

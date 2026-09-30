@@ -6,6 +6,8 @@ import { dexView } from './shelf/Shelf'
 import { chaptersOf, emptyProgress } from '../engine/books'
 import { chooseBook, newGame, playerTile, type GameState } from '../engine/game'
 import { mulberry32 } from '../engine/offers'
+import { isWet, weatherOf } from '../engine/calendar'
+import { onceKey } from '../engine/stories'
 import { ACTS_ROOM, HEB_JUD_ROOM, HOME_FRONT, key, LETTERS_ROOM, LOCKED_DOORS, OLD_HOME, PLACES, roomAt, ROOMS, WARPS } from '../engine/world'
 import { SCENES } from '../content/text'
 import { STRAY_SPOTS } from '../engine/companion'
@@ -521,6 +523,73 @@ describe('벤치', () => {
     expect(screen.getByLabelText('성경 본문 눅 1:1-4')).toBeInTheDocument()
     expect(useGame.getState().game.needs.fatigue).toBeLessThan(45)
     expect(useGame.getState().toast?.text).toContain('피로가 조금 풀렸다')
+  })
+})
+
+describe('언덕 별 보기 (계획 9 작업 2)', () => {
+  const clearDay = [...Array(60).keys()].map((d) => d + 1).find((d) => !isWet(weatherOf(d)) && weatherOf(d) !== 'fog')!
+  const wetDay = [...Array(60).keys()].map((d) => d + 1).find((d) => isWet(weatherOf(d)))!
+  /** 요한계시록 방이 열리고 요한계시록을 고른 상태 */
+  function revChosen(day: number, minute: number) {
+    const s = newGame(CONTENT)
+    const open = { ...s, clock: { day, minute }, flags: { ...s.flags, gospelFeast: 2, 'room:romPhm': 1, 'room:hebJud': 1, 'room:rev': 1 } }
+    reset(chooseBook(open, 'rev', CONTENT))
+  }
+
+  it('언덕에만 "별 보기" — 저녁 여덟 시 전에는 흐리게, 안내 한 줄', () => {
+    reset(at(12 * 60))
+    useGame.setState({ modal: { kind: 'menu', place: 'hill' } })
+    const { unmount } = render(<ModalLayer />)
+    expect(screen.getByRole('button', { name: '별 보기' })).toBeDisabled()
+    expect(screen.getByText('별은 저녁 여덟 시가 지나야 보여요.')).toBeInTheDocument()
+    // 별 보기는 성경구절 읽기 위
+    const names = screen.getAllByRole('button').map((b) => b.textContent)
+    expect(names.indexOf('별 보기')).toBeLessThan(names.indexOf('성경구절 읽기'))
+    unmount()
+    useGame.setState({ modal: { kind: 'menu', place: 'bench' }, game: { ...useGame.getState().game, clock: { day: 1, minute: 22 * 60 } } })
+    render(<ModalLayer />)
+    expect(screen.queryByRole('button', { name: '별 보기' })).not.toBeInTheDocument()
+  })
+
+  it('맑은 밤: 별 장면을 먼저 보이고, 닫으면 편지함에서 꺼낸 장 알림', async () => {
+    revChosen(clearDay, 22 * 60)
+    const user = userEvent.setup()
+    useGame.setState({ modal: { kind: 'menu', place: 'hill' } })
+    render(<ModalLayer />)
+    await user.click(screen.getByRole('button', { name: '별 보기' }))
+    expect(useGame.getState().modal).toEqual({ kind: 'scene', id: 'stars' })
+    const got = useGame.getState().game.collected.filter((id) => id.startsWith('rev-'))
+    expect(got[0]).toBe('rev-001')
+    expect(useGame.getState().toast).toBeNull()
+    act(() => useGame.getState().nextScene())
+    expect(useGame.getState().modal).toBeNull()
+    expect(useGame.getState().toast?.text).toBe(
+      got.length === 1 ? '벤치 곁 편지함에서 한 통을 꺼냈어요. 요한계시록 1장이에요.' : '벤치 곁 편지함에서 2통을 꺼냈어요. 요한계시록 1–2장이에요.',
+    )
+  })
+
+  it('장면을 이미 본 밤에는 바로 알림', () => {
+    revChosen(clearDay, 22 * 60)
+    const g = useGame.getState().game
+    useGame.setState({ game: { ...g, flags: { ...g.flags, [onceKey('stars', clearDay)]: 1 } } })
+    act(() => useGame.getState().sitHill())
+    expect(useGame.getState().modal).toBeNull()
+    expect(useGame.getState().toast?.text).toMatch(/^벤치 곁 편지함에서/)
+  })
+
+  it('궂은 밤: 편지는 없고 흐림 알림', () => {
+    revChosen(wetDay, 22 * 60)
+    act(() => useGame.getState().sitHill())
+    expect(useGame.getState().game.collected.some((id) => id.startsWith('rev-'))).toBe(false)
+    expect(useGame.getState().toast?.text).toBe('오늘 밤은 하늘이 흐려 별이 잘 보이지 않아요.')
+  })
+
+  it('낮에 편지 나르는 이웃: 편지 받기 없이 언덕 편지함 안내 한 줄', () => {
+    revChosen(clearDay, 10 * 60)
+    useGame.setState({ modal: { kind: 'talk', neighborId: 'postman', line: '안녕하세요.' } })
+    render(<ModalLayer />)
+    expect(screen.getByText('그 방 책은 언덕 편지함에 넣어 뒀어요. 맑은 밤에 꺼내 가세요.')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '편지 받기' })).not.toBeInTheDocument()
   })
 })
 

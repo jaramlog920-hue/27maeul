@@ -1,5 +1,6 @@
 // 마음이 쌓여 마을에 생긴 것들 (6번 A·C). 모두 그림일 뿐 길을 막지 않는다.
 import { unlocked } from '../engine/bonds'
+import { roomOpen } from '../engine/books'
 import type { GameState } from '../engine/game'
 import { GARDEN_TILES, isRipe } from '../engine/garden'
 import { TILE } from '../engine/world'
@@ -96,6 +97,29 @@ function ship(g: Ctx, t: number) {
   s(46, 14, 4, 2, '#c9b89a')
 }
 
+/**
+ * 언덕 벤치(14,13) 왼쪽 곁 빈 풀 한 칸의 작은 나무 편지함 (계획 9 작업 2).
+ * 편지 나르는 이웃이 해 질 녘에 요한계시록 장을 넣어 두고, 맑은 밤 별 보기로 꺼낸다. 그림만 — 길을 막지 않는다
+ */
+export const HILL_MAILBOX: Tile = { x: 13, y: 13 }
+
+/** 편지함이 보이는 자리: 요한계시록 방이 열린 뒤부터 */
+export function hillMailbox(game: Pick<GameState, 'flags'>): Tile | null {
+  return roomOpen('rev', game.flags) ? HILL_MAILBOX : null
+}
+
+/** 옅은 잿빛 나무 편지함: 기둥·상자·좌우 대칭 지붕 뚜껑·투입구에 비친 크림색 편지 끝 (선은 모두 2픽셀) */
+function mailbox(g: Ctx, t: Tile) {
+  px(g, t.x, t.y, 4, 13, 8, 2, 'rgba(40,25,10,0.22)')
+  px(g, t.x, t.y, 7, 9, 2, 5, '#7f7468')
+  px(g, t.x, t.y, 4, 4, 8, 6, '#b3a898')
+  px(g, t.x, t.y, 4, 8, 8, 2, '#968b7c')
+  px(g, t.x, t.y, 3, 3, 10, 2, '#968b7c')
+  px(g, t.x, t.y, 5, 1, 6, 2, '#968b7c')
+  px(g, t.x, t.y, 5, 6, 6, 2, '#6f665c')
+  px(g, t.x, t.y, 6, 5, 4, 2, '#f1e6cf')
+}
+
 /** 마을에 생긴 것들을 그린다 (월드 좌표, 카메라 이동이 이미 적용된 상태) */
 export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, daytime: boolean) {
   const f = game.flags
@@ -118,6 +142,9 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
   }
   // 사도행전 여정을 다 이은 다음 날부터 나루 곁의 큰 배 (flags.actsShip 2)
   if ((f.actsShip ?? 0) >= 2) ship(g, t)
+  // 요한계시록 방이 열린 뒤부터 언덕 벤치 곁 편지함
+  const box = hillMailbox(game)
+  if (box) mailbox(g, box)
   // C2 베 짜는 이웃의 베틀
   if (level >= 2) {
     const loom = { x: 30, y: 29 }

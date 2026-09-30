@@ -4,7 +4,7 @@ import { CONTENT, copySourceFor, LETTER_OPENINGS, pieceById, pieceOfQuestion, pi
 import { blanksFor } from '../engine/copy'
 import { currentChapter } from '../engine/offers'
 import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
-import { openDoorsFor } from '../engine/books'
+import { bookRoomOpen, openDoorsFor } from '../engine/books'
 import { actsDoorGlows, canShelve, payRetry, poolFor, shelve } from '../engine/library'
 import { ALBUM_IDS, fill, itemList, itemName, NEIGHBOR_LINES, roomTitle, SCENES, T } from '../content/text'
 import { grapesRipe, isWet, weatherOf } from '../engine/calendar'
@@ -34,6 +34,7 @@ import {
   bookLineKey,
   setMyLine,
   stargaze,
+  clearSky,
   submitChapter,
   tapTile,
   walkDirection,
@@ -76,7 +77,7 @@ import { plant, water, harvest, type CropId } from '../engine/garden'
 import { isDone, startMini, stepMini, tapMini, type MiniState } from '../engine/minigame'
 import { finishLetter, letterPay, letterWaiting } from '../engine/requests'
 import { POSTMAN } from '../engine/post'
-import { modeOf, roomOf, shelfRoom, type ShelfRoomId } from '../engine/shelf-rooms'
+import { arrivesOf, modeOf, roomOf, shelfRoom, type ShelfRoomId } from '../engine/shelf-rooms'
 import { saveGame } from '../engine/save'
 import { moveItem } from '../engine/scroll'
 import type { Book, ItemId, PlaceId, Rng, Target, Tile } from '../engine/types'
@@ -169,6 +170,8 @@ interface Store {
   game: GameState
   modal: Modal | null
   toast: { text: string; until: number } | null
+  /** 지금 장면 창을 닫은 뒤 띄울 알림 (별 보는 밤: 장면을 먼저 보이고 편지함 알림) */
+  afterScene: string | null
   /** 방 꾸미기: 놓을 물건, 또는 치우기 */
   decorating: ItemId | 'pick' | null
   muted: boolean
@@ -345,6 +348,24 @@ export function postLine(game: GameState, neighborId: string): string | null {
   const book = (T.quiz.books as Record<string, string>)[ps[0].book]
   if (ps.length === 1) return fill(T.post.bringOne, { book, chapter: ps[0].chapter })
   return fill(T.post.bring, { n: ps.length, book, from: ps[0].chapter, to: ps[ps.length - 1].chapter })
+}
+
+/**
+ * 낮에 편지 나르는 이웃에게 말을 걸면: 지금 책이 별 보는 밤에 오는 책(요한계시록)이고 방이 열렸고 아직 받을 장이 남았으면
+ * 언덕 편지함 안내 한 줄 (이웃은 건네지 않는다 — 밤 언덕에는 이웃이 나오지 않는다, 계획 9 작업 2)
+ */
+export function starPostHint(game: GameState, neighborId: string): string | null {
+  const book = game.activeBook
+  if (neighborId !== POSTMAN || !book || modeOf(book) !== 'letters' || arrivesOf(book) !== 'stars' || !bookRoomOpen(book, game.flags)) return null
+  return piecesOf(book).some((p) => !game.collected.includes(p.id)) ? T.post.revHint : null
+}
+
+/** 언덕 편지함에서 꺼낸 장 알림 */
+function starsLine(pieceIds: readonly string[]): string {
+  const ps = pieceIds.map(pieceById).sort((a, b) => a.chapter - b.chapter)
+  const book = (T.quiz.books as Record<string, string>)[ps[0].book]
+  if (ps.length === 1) return fill(T.post.starsBringOne, { book, chapter: ps[0].chapter })
+  return fill(T.post.starsBring, { n: ps.length, book, from: ps[0].chapter, to: ps[ps.length - 1].chapter })
 }
 
 function lineFor(game: GameState, neighborId: string, rng: Rng): string {
@@ -537,6 +558,7 @@ export const useGame = create<Store>((set, get) => {
     game: newGame(CONTENT),
     modal: null,
     toast: null,
+    afterScene: null,
     decorating: null,
     muted: loadMuted(),
     joystick: loadJoystick(),
@@ -755,7 +777,21 @@ export const useGame = create<Store>((set, get) => {
       }
     },
     rest: () => set({ game: persist(restAt(get().game)), modal: null }),
-    sitHill: () => set({ game: persist(stargaze(get().game)), modal: null }),
+    // 별 보기: 궂은 밤이면 흐림 알림, 편지함에서 꺼냈으면 장면(있으면)을 먼저 보이고 알림
+    sitHill: () => {
+      const before = get().game
+      const { state, pieceIds } = stargaze(before, CONTENT)
+      const game = persist(state)
+      const line = pieceIds.length ? starsLine(pieceIds) : clearSky(before.clock.day) ? null : T.ui.starsCloudy
+      if (pieceIds.length) sfx('scroll')
+      const scene = game.scenes.length > before.scenes.length ? game.scenes[game.scenes.length - 1] : null
+      if (scene && line) {
+        set({ game, modal: { kind: 'scene', id: scene }, afterScene: line })
+        return
+      }
+      set({ game, modal: null })
+      if (line) get().say(line)
+    },
     requestAsk: (npc) => set({ game: persist(askRequest(get().game, npc)), modal: null }),
     requestGive: (npc) => {
       const next = fulfillRequest(get().game, npc)
@@ -967,7 +1003,9 @@ export const useGame = create<Store>((set, get) => {
       const id = m?.kind === 'scene' ? m.id : null
       if (!id) return
       const game = persist(sceneSeen(get().game, id, ALBUM_IDS))
-      set({ game, modal: null })
+      const after = get().afterScene
+      set({ game, modal: null, afterScene: null })
+      if (after) get().say(after)
     },
 
     setMuted: (muted) => {

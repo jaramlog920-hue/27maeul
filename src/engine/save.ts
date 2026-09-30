@@ -4,7 +4,7 @@ import { bookDone, bookRoomOpen, emptyProgress, type Progress } from './books'
 import { newGame, settle, type GameState } from './game'
 import { cardsForChapters, placeNewCards } from './journey'
 import { refitRoom } from './room'
-import { modeOf } from './shelf-rooms'
+import { arrivesOf, modeOf } from './shelf-rooms'
 import { HOME_ENTRY, HOME_ROOM, isWalkable, OLD_HOME, sameTile, setHomeLevel } from './world'
 import { BOOKS, type Book, type GameContent, type Tile } from './types'
 
@@ -106,7 +106,8 @@ export function sanitize(s: GameState, content: GameContent): GameState {
       : null
   // 오늘 가져온 편지: 옛 저장(칸이 없던 때)은 빈 값. 지금 편지 책의 장 조각 중 아직 받지 않은 것만 남긴다
   const post =
-    activeBook && modeOf(activeBook) === 'letters' && isStrArray(s.post)
+    // 요한계시록(arrives 'stars')은 낮 편지로 오지 않는다 — 언덕 편지함에서 꺼낸다 (계획 9 작업 2)
+    activeBook && modeOf(activeBook) === 'letters' && arrivesOf(activeBook) === 'post' && isStrArray(s.post)
       ? [...new Set(s.post)].filter((id) => known.get(id)?.book === activeBook && !collected.includes(id))
       : []
   // 여정 판: 옛 저장(판이 없던 때)은 빈 판에서, 엮은 사도행전 장의 카드만 남기고 빠진 카드는 채운다
