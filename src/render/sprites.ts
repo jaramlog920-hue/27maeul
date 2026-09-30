@@ -332,7 +332,6 @@ function dressNeighbor(who: Who, rows: string[], facing: Facing): string[] {
     }
     case 'smith': {
       const out = recolor(rows, { h: 'j', r: 'n', R: 'N', b: 'L' })
-      hairShape(out, facing, 'spiky', 'j')
       for (let y = 9; y <= 12; y++) for (let x = 3; x <= 6; x++) if (out[y][x] === 'n' || out[y][x] === 'N') setPixel(out, x, y, 'L')
       return out
     }
