@@ -122,6 +122,7 @@ export type ItemId =
   | 'vase'
   | 'cushion'
   | 'goodPen'
+  | 'handyKit'
   | 'brightLamp'
   | 'wideDesk'
   | 'table'
@@ -174,7 +175,8 @@ export type ItemId =
   | 'perfumeOil'
   | 'bronzeOrnament'
 
-export type Minigame = 'mash' | 'timing' | 'pick'
+/** 손일 놀이: 찧기·맞추기·줍기·길게 누르기·번갈아 누르기·순서 기억하기 */
+export type Minigame = 'mash' | 'timing' | 'pick' | 'hold' | 'weave' | 'order'
 
 /** 이웃 하루 시간표의 한 칸. tile이 없으면 집 안(보이지 않음) */
 export interface ScheduleEntry {

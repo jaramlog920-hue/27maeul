@@ -121,7 +121,7 @@
       "grapes"
     ],
     "help": {
-      "minigame": "mash",
+      "minigame": "hold",
       "gives": {
         "water": 1
       }
@@ -212,7 +212,7 @@
       "wool"
     ],
     "help": {
-      "minigame": "pick",
+      "minigame": "order",
       "gives": {
         "papyrus": 1
       }
@@ -242,7 +242,7 @@
       "bread"
     ],
     "help": {
-      "minigame": "timing",
+      "minigame": "hold",
       "gives": {
         "soot": 1
       }
@@ -322,7 +322,7 @@
       "bread"
     ],
     "help": {
-      "minigame": "mash",
+      "minigame": "hold",
       "gives": {
         "oil": 1
       }
@@ -380,7 +380,7 @@
       "honey"
     ],
     "help": {
-      "minigame": "timing",
+      "minigame": "weave",
       "gives": {
         "wool": 1
       }
@@ -486,7 +486,7 @@
       "honey"
     ],
     "help": {
-      "minigame": "pick",
+      "minigame": "order",
       "gives": {
         "papyrus": 1
       }
@@ -544,7 +544,7 @@
       "herb"
     ],
     "help": {
-      "minigame": "pick",
+      "minigame": "order",
       "gives": {
         "seedHerb": 2
       }
@@ -598,7 +598,7 @@
       "herb"
     ],
     "help": {
-      "minigame": "timing",
+      "minigame": "weave",
       "gives": {
         "reed": 2
       }
@@ -656,7 +656,7 @@
       "grapes"
     ],
     "help": {
-      "minigame": "mash",
+      "minigame": "hold",
       "gives": {
         "olive": 2
       }
@@ -777,7 +777,7 @@
       "grapes"
     ],
     "help": {
-      "minigame": "timing",
+      "minigame": "hold",
       "gives": {
         "reed": 2
       }
@@ -852,7 +852,7 @@
       "bread"
     ],
     "help": {
-      "minigame": "timing",
+      "minigame": "weave",
       "gives": {
         "papyrus": 1
       }
@@ -990,7 +990,7 @@
       "herb"
     ],
     "help": {
-      "minigame": "pick",
+      "minigame": "order",
       "gives": {
         "herb": 1
       }
@@ -1139,7 +1139,7 @@
       "grapes"
     ],
     "help": {
-      "minigame": "timing",
+      "minigame": "weave",
       "gives": {
         "wool": 1
       }
@@ -1213,7 +1213,7 @@
       "olive"
     ],
     "help": {
-      "minigame": "mash",
+      "minigame": "weave",
       "gives": {
         "soot": 1
       }

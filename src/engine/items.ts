@@ -1,5 +1,5 @@
 // 가방과 만들기. 모든 수는 0 이상 정수, 한 물건은 최대 stackCap(inv)개 (가죽 가방이 있으면 BIG_STACK).
-import type { ItemId } from './types'
+import type { ItemId, Minigame } from './types'
 
 export type Inventory = Partial<Record<ItemId, number>>
 export const MAX_STACK = 9
@@ -7,7 +7,7 @@ export const MAX_STACK = 9
 export const BIG_STACK = 18
 
 /** 한 번 사면 계속 쓰는 도구 (가방에 하나). 가죽 가방·신 둘은 계획 11 작업 2 */
-export const TOOLS: readonly ItemId[] = ['goodPen', 'brightLamp', 'wideDesk', 'leatherBag', 'sturdyShoes', 'lightShoes']
+export const TOOLS: readonly ItemId[] = ['goodPen', 'handyKit', 'brightLamp', 'wideDesk', 'leatherBag', 'sturdyShoes', 'lightShoes']
 
 /** 이 가방의 한 칸 최대 — 가죽 가방이 있으면 18 */
 export function stackCap(inv: Inventory): number {
@@ -68,16 +68,16 @@ export interface Recipe {
   needs: Partial<Record<ItemId, number>>
   gives: Partial<Record<ItemId, number>>
   minutes: number
-  minigame: 'mash' | 'timing' | 'pick'
+  minigame: Minigame
 }
 
 export const RECIPES: Record<RecipeId, Recipe> = {
   bread: { id: 'bread', at: 'hearth', needs: { barley: 1, water: 1 }, gives: { bread: 2 }, minutes: 30, minigame: 'mash' },
-  papyrus: { id: 'papyrus', at: 'workbench', needs: { reed: 1 }, gives: { papyrus: 1 }, minutes: 30, minigame: 'timing' },
+  papyrus: { id: 'papyrus', at: 'workbench', needs: { reed: 1 }, gives: { papyrus: 1 }, minutes: 30, minigame: 'weave' },
   ink: { id: 'ink', at: 'workbench', needs: { soot: 1, water: 1 }, gives: { ink: 1 }, minutes: 20, minigame: 'mash' },
-  oil: { id: 'oil', at: 'press', needs: { olive: 2 }, gives: { oil: 1 }, minutes: 30, minigame: 'mash' },
+  oil: { id: 'oil', at: 'press', needs: { olive: 2 }, gives: { oil: 1 }, minutes: 30, minigame: 'hold' },
   blanket: { id: 'blanket', at: 'workbench', needs: { wool: 3 }, gives: { blanket: 1 }, minutes: 60, minigame: 'timing' },
-  cover: { id: 'cover', at: 'workbench', needs: { papyrus: 2, wool: 1 }, gives: { cover: 1 }, minutes: 40, minigame: 'timing' },
+  cover: { id: 'cover', at: 'workbench', needs: { papyrus: 2, wool: 1 }, gives: { cover: 1 }, minutes: 40, minigame: 'order' },
 }
 
 /** 잉크 한 번 만들 때: 기본 한 병, 좋은 펜 +1, 잉크 제조대(계획 13) +2 — fixtures.inkYield와 같은 셈 */

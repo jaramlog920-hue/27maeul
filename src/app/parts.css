@@ -1342,3 +1342,58 @@ button.copy-blank.on {
   }
   .deck-tabs button:active { transform: translateY(2px); box-shadow: none; }
 }
+
+/* ── 새 손일 놀이: 길게 누르기·번갈아 누르기·순서 기억하기 ── */
+.hold-gauge {
+  position: relative;
+  width: 44px;
+  height: 120px;
+  margin: 10px auto;
+  border: 2px solid var(--panel-edge);
+  border-radius: 4px;
+  background: #efe3c8;
+  overflow: hidden;
+}
+.hold-gauge.hit { box-shadow: 0 0 0 3px rgba(79, 138, 60, 0.4); }
+.hold-gauge.miss { box-shadow: 0 0 0 3px rgba(184, 94, 83, 0.35); }
+.hold-zone { position: absolute; left: 0; right: 0; background: #f5d46a; }
+.hold-fill { position: absolute; left: 6px; right: 6px; bottom: 0; background: #7a5a3a99; border-top: 3px solid var(--ink); }
+.hold-btn { touch-action: none; user-select: none; -webkit-user-select: none; }
+.hold-btn.holding { transform: translateY(2px); box-shadow: 0 1px 0 var(--panel-edge); }
+.weave-row {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 10px 0;
+  padding-top: 34px;
+}
+.weave-row::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 8px;
+  right: 8px;
+  height: 4px;
+  background: repeating-linear-gradient(90deg, #a07a4d 0 6px, #efe3c8 6px 10px);
+}
+.weave-btn { flex: 1; min-height: 56px; font-size: 15px; touch-action: manipulation; }
+.weave-btn.next { background: #f5d46a; border-color: var(--accent); }
+.weave-row.miss .weave-btn.next { animation: deck-shake .2s; }
+@keyframes deck-shake { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+.weave-shuttle { position: absolute; top: 2px; transform: translateX(-50%); transition: left .12s ease-out; }
+.order-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 10px 0; }
+.order-grid.miss { animation: deck-shake .25s; }
+.order-cell {
+  min-height: 62px;
+  font-size: 22px;
+  touch-action: manipulation;
+  transition: background .08s, transform .08s;
+}
+.order-cell:disabled { opacity: 1; }
+.order-cell.c0 { color: #3c6e8a; }
+.order-cell.c1 { color: #a4462f; }
+.order-cell.c2 { color: #4f8a3c; }
+.order-cell.c3 { color: #8a6433; }
+.order-cell.lit { background: #f5d46a; transform: scale(1.06); box-shadow: 0 0 0 3px #f5d46a88; }
+.mini-skip { display: inline-flex; align-items: center; gap: 4px; }

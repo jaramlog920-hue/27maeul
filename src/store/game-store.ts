@@ -91,11 +91,11 @@ import {
 import { inAttic, isHome, LOCKED_DOORS, lockedTiles, lockedZones, roomAt, sameTile, zoneAt } from '../engine/world'
 import { removal } from '../engine/room'
 import { heartsOf } from '../engine/hearts'
-import { add, RECIPES, type Inventory, type RecipeId } from '../engine/items'
+import { add, count, RECIPES, type Inventory, type RecipeId } from '../engine/items'
 import type { CarpenterWork } from '../engine/easier'
 import { work } from '../engine/needs'
 import { plant, water, harvest, type CropId } from '../engine/garden'
-import { isDone, startMini, stepMini, tapMini, type MiniState } from '../engine/minigame'
+import { finishNow, HOLD_UP, isDone, startMini, stepMini, tapMini, type MiniState } from '../engine/minigame'
 import { finishLetter, letterPay, letterWaiting } from '../engine/requests'
 import { POSTMAN } from '../engine/post'
 import { arrivesOf, modeOf, roomOf, shelfRoom, type ShelfRoomId } from '../engine/shelf-rooms'
@@ -246,6 +246,8 @@ interface Store {
   startCraft: (recipe: RecipeId) => void
   miniTap: (itemId?: number) => void
   quitMini: () => void
+  /** 손에 익은 연장이 있으면 손일 놀이를 바로 끝낸다 */
+  skipMini: () => void
   warm: () => void
   eat: () => void
   rest: () => void
@@ -639,7 +641,7 @@ export const useGame = create<Store>((set, get) => {
           get().say(info.blocked === 'notRipe' ? T.ui.notRipe : info.blocked === 'tired' ? T.ui.tooTired : info.blocked === 'picked' ? T.herbs.picked : T.ui.bagFull)
           return { game, modal: null }
         }
-        const kind = target.id === 'well' ? 'mash' : 'pick'
+        const kind = target.id === 'well' ? 'hold' : 'pick'
         return { game, modal: { kind: 'mini', state: startMini(kind, rng), pending: { kind: 'gather', place: target.id } } }
       }
     }
@@ -863,7 +865,7 @@ export const useGame = create<Store>((set, get) => {
       get().say(fill(T.ui.soldLine, { item: itemName(item), n: price! }))
     },
 
-    startTeach: () => set({ modal: { kind: 'mini', state: startMini('timing', get().rng), pending: { kind: 'teach' } } }),
+    startTeach: () => set({ modal: { kind: 'mini', state: startMini('order', get().rng), pending: { kind: 'teach' } } }),
     startLetter: () => set({ modal: { kind: 'mini', state: startMini('timing', get().rng), pending: { kind: 'letter' } } }),
 
     startCraft: (recipe) => {
@@ -876,15 +878,26 @@ export const useGame = create<Store>((set, get) => {
       if (get().modal?.kind === 'mini') set({ modal: null })
     },
 
+    skipMini: () => {
+      const m = get().modal
+      if (m?.kind !== 'mini' || count(get().game.inv, 'handyKit') === 0) return
+      sfx('hit')
+      set({ game: finishPending(get().game, m.pending, finishNow(m.state)), modal: null })
+    },
+
     miniTap: (itemId) => {
       const m = get().modal
       if (m?.kind !== 'mini') return
       if (isDone(m.state)) {
+        // 길게 누르기의 마지막 뗌은 창을 닫지 않는다 (닫기 단추로)
+        if (m.state.kind === 'hold' && itemId === HOLD_UP) return
         set({ game: finishPending(get().game, m.pending, m.state), modal: null })
         return
       }
       const state = tapMini(m.state, itemId)
-      sfx(state.kind === 'timing' ? (state.flash === 'hit' ? 'hit' : 'miss') : 'tap')
+      if (state === m.state) return
+      const judged = state.kind === 'timing' || state.kind === 'weave' || state.kind === 'order' || (state.kind === 'hold' && itemId === HOLD_UP)
+      sfx(judged && 'flash' in state ? (state.flash === 'hit' ? 'hit' : 'miss') : 'tap')
       set({ modal: { ...m, state } })
     },
 

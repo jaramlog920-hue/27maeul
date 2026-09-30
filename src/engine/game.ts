@@ -1169,6 +1169,8 @@ export const TRADES: readonly Trade[] = [
   // 가방과 신 (계획 11 작업 2): 가죽 가방은 한 칸 18, 튼튼한 신은 걷는 속도 ×1.2 (가벼운 신은 양치기의 선물)
   { id: 'leatherBag', pay: {}, coins: 120, get: { leatherBag: 1 } },
   { id: 'sturdyShoes', pay: {}, coins: 60, get: { sturdyShoes: 1 } },
+  // 손에 익은 연장: 손일 놀이를 건너뛸 수 있다 (사용자 요청 — 놀이가 번거로운 날을 위해)
+  { id: 'handyKit', pay: {}, coins: 180, get: { handyKit: 1 } },
   // 연애와 결혼 (계획 6): 들꽃 다발은 늘, 약속의 끈은 연인이 생긴 뒤에
   { id: 'bouquet', pay: {}, coins: 30, get: { bouquet: 1 } },
   { id: 'promiseCord', pay: {}, coins: 150, get: { promiseCord: 1 }, requires: 'dating' },
