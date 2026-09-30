@@ -108,24 +108,33 @@ export function rollDie(rnd: () => number): number {
   return 1 + Math.min(5, Math.floor(rnd() * 6))
 }
 
-// ── 축제 정원 (여행 판 전용 장소, 2026-09-30 사용자 설계) ──
-// 마을 지도를 옮겨 쓰지 않는다: 세로로 긴 정원(휴대폰 세로 화면에 맞춤) 둘레를 모서리가 둥근 판석 길이 한 바퀴 돈다.
-// 보드 칸은 그 판석 길의 일부(문양을 새긴 큰 돌판). 가운데는 잔디 정원과 꽃밭, 한가운데 분수(항구) 또는 큰 나무(언덕).
-// 바깥 둘레는 생울타리, 같은 간격의 축제 등불, 맨 위 깃발 아치. 아래는 물가(항구) 또는 풀밭(언덕).
-// 범례(이 장소만): @ 판석 길 · c 돌바닥 · & 생울타리 · ^ 꽃밭 · ! 등불 기둥 · F 분수(2×2) · O 큰 나무(2×2) · A 입구 아치 기둥
-//   그 밖에는 마을과 같은 그림: . 풀 · T 나무 · B 벤치 · * 꽃 · ~ 물 · = 잔교 · u 배 · x 울타리 · r 갈대
+// ── 여행 판: 작은 마을 한 바퀴 (2026-09-30 사용자 설계) ──
+// 마을을 먼저 짓고, 그 마을을 한 바퀴 도는 두 칸 폭 판석 길 위에 보드 규칙을 얹는다.
+// 구간마다 풍경이 다르다: 위 — 집 앞 골목(작은 집 둘, 가운데 입구 아치), 왼쪽 — 울타리와 꽃화단 길,
+// 오른쪽 — 작은 장터 앞(좌판·나무), 아래 — 벤치와 나무로 마감한 광장 끝. 가운데는 좌우 대칭 정원과 분수.
+// 범례(이 장소만): @ 판석 길 · c 돌바닥 · ^ 꽃화단 · ! 등불 기둥 · F 분수(2×2) · A 입구 아치 기둥
+//   그 밖에는 마을과 같은 그림: . 풀 · T 나무 · B 벤치 · * 꽃 · m 좌판 · x 울타리 · R/# 집
 
 export const TRIP_W = 16
-export const TRIP_H = 34
+export const TRIP_H = 36
 /**
  * 판석 길은 두 칸 폭. 길 위의 자리는 2×2 칸 덩이의 왼쪽 위 칸으로 센다 (한 칸씩 나아간다).
- * 보드 칸은 이 덩이만 한 큼직한 돌판(2×2 칸), 돌판 사이에는 판석 길 한 칸
+ * 보드 칸은 이 덩이만 한 돌판, 돌판 사이에는 판석 길 한 칸
  */
-const RING = { x0: 1, y0: 4, x1: 13, y1: 28 }
+const RING = { x0: 2, y0: 4, x1: 12, y1: 30 }
 
+export interface TripHouse {
+  id: string
+  x0: number
+  y0: number
+  x1: number
+  y1: number
+  doorX: number
+}
 export interface TripLayout {
   /** 칸 글자 */
   map: string[]
+  houses: TripHouse[]
 }
 
 /** 판석 길의 자리들 (2×2 덩이의 왼쪽 위 칸, 시계 방향, 왼쪽 위에서 시작) */
@@ -159,66 +168,72 @@ export function tripLayout(dest: 'harbor' | 'hillTown'): TripLayout {
   const rect = (x0: number, y0: number, x1: number, y1: number, c: string) => {
     for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) set(x, y, c)
   }
-  // 판석 길 띠 (2×2 덩이를 모두 칠한다): 바깥 x 1–14, y 4–29
-  const x0 = RING.x0
-  const y0 = RING.y0
-  const x1 = RING.x1 + 1
-  const y1 = RING.y1 + 1
-  const cx = (x0 + x1) / 2
-  const cy = Math.floor((y0 + y1) / 2)
-  // 맨 위: 숲 한 줄, 입구 아치(기둥 둘, 깃발은 그림), 아치에서 판석 길로 들어오는 돌바닥
-  rect(0, 0, TRIP_W - 1, 1, 'T')
-  set(Math.floor(cx) - 1, 2, 'A')
-  set(Math.ceil(cx) + 1, 2, 'A')
-  rect(Math.floor(cx), 2, Math.ceil(cx), y0 - 1, 'c')
-  // 바깥 생울타리 (정원을 감싼다), 입구만 트고
-  for (let y = 2; y <= y1 + 1; y++) {
-    set(0, y, '&')
-    set(TRIP_W - 1, y, '&')
+  // 판석 길 띠: 바깥 x 2–13, y 4–31
+  const bx0 = RING.x0
+  const by0 = RING.y0
+  const bx1 = RING.x1 + 1
+  const by1 = RING.y1 + 1
+  const cy = Math.floor((by0 + by1) / 2)
+  // ── 위: 집 앞 골목 — 작은 집 둘, 가운데 입구 아치와 돌바닥 ──
+  const houses: TripHouse[] = [
+    { id: dest === 'harbor' ? 'tripA' : 'tripD', x0: 1, y0: 0, x1: 5, y1: 3, doorX: 3 },
+    { id: dest === 'harbor' ? 'tripB' : 'tripE', x0: 10, y0: 0, x1: 14, y1: 3, doorX: 12 },
+  ]
+  for (const h of houses) {
+    rect(h.x0, h.y0, h.x1, h.y1 - 2, 'R')
+    rect(h.x0, h.y1 - 1, h.x1, h.y1, '#')
+    set(h.doorX, h.y1, 'D')
   }
-  for (let x = 1; x < TRIP_W - 1; x++) if (g[3][x] === '.') set(x, 3, '&')
+  rect(6, 0, 9, 0, 'T')
+  set(6, 2, 'A')
+  set(9, 2, 'A')
+  rect(7, 1, 8, by0 - 1, 'c')
+  // ── 판석 길 한 바퀴 ──
   for (const t of RING_TILES) rect(t.x, t.y, t.x + 1, t.y + 1, '@')
-  // 안쪽 정원 (x 3–12, y 6–27): 돌바닥 띠 → 잔디 → 꽃밭(좌우 대칭) → 한가운데 분수 또는 큰 나무
-  const ix0 = x0 + 2
-  const iy0 = y0 + 2
-  const ix1 = x1 - 2
-  const iy1 = y1 - 2
+  // ── 왼쪽: 울타리와 꽃화단이 번갈아 (네 줄마다 같은 무늬) ──
+  for (let y = by0 + 2; y <= by1 - 2; y++) {
+    const k = (y - by0 - 2) % 4
+    set(0, y, k === 3 ? '!' : 'x')
+    set(1, y, k === 0 || k === 1 ? '^' : '.')
+  }
+  // ── 오른쪽: 작은 장터 앞 — 좌판과 나무가 번갈아 ──
+  for (let y = by0 + 2; y <= by1 - 2; y++) {
+    const k = (y - by0 - 2) % 5
+    set(14, y, k === 0 ? 'm' : k === 2 ? 'T' : k === 4 ? '!' : '.')
+    set(15, y, k === 1 || k === 3 ? 'T' : '.')
+  }
+  // ── 아래: 광장 끝 — 돌바닥, 벤치 둘, 나무, 낮은 울타리로 마감 ──
+  rect(0, by1 + 1, TRIP_W - 1, TRIP_H - 2, 'c')
+  set(4, by1 + 2, 'B')
+  set(11, by1 + 2, 'B')
+  for (const x of [1, 14]) set(x, by1 + 2, 'T')
+  rect(0, TRIP_H - 1, TRIP_W - 1, TRIP_H - 1, 'x')
+  for (const x of [6, 9]) set(x, TRIP_H - 1, 'T')
+  // ── 가운데 정원 (x 4–11, y 6–29): 돌바닥 띠 → 잔디 → 꽃화단(좌우 대칭) → 분수 광장 ──
+  const ix0 = bx0 + 2
+  const iy0 = by0 + 2
+  const ix1 = bx1 - 2
+  const iy1 = by1 - 2
   rect(ix0, iy0, ix1, iy1, 'c')
   rect(ix0 + 1, iy0 + 1, ix1 - 1, iy1 - 1, '.')
   for (const yy of [iy0 + 3, iy1 - 4]) {
-    rect(ix0 + 2, yy, ix0 + 3, yy + 1, '^')
-    rect(ix1 - 3, yy, ix1 - 2, yy + 1, '^')
+    rect(ix0 + 1, yy, ix0 + 2, yy + 1, '^')
+    rect(ix1 - 2, yy, ix1 - 1, yy + 1, '^')
   }
-  // 가운데 세로 산책길, 한가운데 분수(항구) 또는 큰 나무(언덕)
-  rect(Math.floor(cx), iy0 + 1, Math.ceil(cx), iy1 - 1, 'c')
-  rect(Math.floor(cx) - 2, cy - 2, Math.ceil(cx) + 1, cy + 1, 'c')
-  rect(Math.floor(cx), cy - 1, Math.ceil(cx), cy, dest === 'harbor' ? 'F' : 'O')
-  // 등불 기둥: 정원 가장자리에 다섯 줄마다 좌우 대칭
-  for (let y = iy0 + 2; y < iy1; y += 5) {
+  rect(7, iy0 + 1, 8, iy1 - 1, 'c')
+  // 분수 광장: 분수(7–8)를 가운데 두고 좌우 두 칸씩 똑같이
+  rect(5, cy - 2, 10, cy + 1, 'c')
+  rect(7, cy - 1, 8, cy, 'F')
+  for (const x of [5, 10]) {
+    set(x, cy - 2, 'B')
+    set(x, cy + 1, 'B')
+  }
+  for (const [x, y] of [[ix0 + 1, iy0 + 1], [ix1 - 1, iy0 + 1], [ix0 + 1, iy1 - 1], [ix1 - 1, iy1 - 1]]) set(x, y, 'T')
+  for (const y of [iy0 + 7, iy1 - 7]) {
     set(ix0 + 1, y, '!')
     set(ix1 - 1, y, '!')
   }
-  // 벤치 넷 (분수·나무를 바라보게), 나무 넷 (정원 네 귀퉁이)
-  for (const yy of [cy - 3, cy + 2]) {
-    set(ix0 + 2, yy, 'B')
-    set(ix1 - 2, yy, 'B')
-  }
-  for (const [x, y] of [[ix0 + 1, iy0 + 1], [ix1 - 1, iy0 + 1], [ix0 + 1, iy1 - 1], [ix1 - 1, iy1 - 1]]) set(x, y, 'T')
-  // 아래 (y 30–33): 항구는 물가와 잔교, 언덕은 풀밭과 양 울타리
-  if (dest === 'harbor') {
-    rect(0, y1 + 2, TRIP_W - 1, TRIP_H - 1, '~')
-    rect(1, y1 + 2, 4, y1 + 2, 'r')
-    rect(11, y1 + 2, 14, y1 + 2, 'r')
-    rect(Math.floor(cx), y1 + 1, Math.floor(cx), y1 + 1, 'c')
-    rect(Math.floor(cx), y1 + 2, Math.floor(cx), TRIP_H - 1, '=')
-    set(Math.floor(cx) + 1, TRIP_H - 1, 'u')
-  } else {
-    rect(0, TRIP_H - 1, TRIP_W - 1, TRIP_H - 1, 'T')
-    rect(2, y1 + 1, 6, TRIP_H - 2, 'x')
-    rect(3, y1 + 2, 5, TRIP_H - 3, '.')
-    for (const x of [9, 11, 13]) set(x, y1 + 2, 'T')
-  }
-  const layout = { map: g.map((r) => r.join('')) }
+  const layout = { map: g.map((r) => r.join('')), houses }
   layoutCache.set(dest, layout)
   return layout
 }

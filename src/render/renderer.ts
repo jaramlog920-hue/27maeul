@@ -1830,14 +1830,15 @@ const STONE_GLYPH: Record<TripCell, readonly string[]> = {
   event: ['..kkkk..', '.kk..kk.', '.....kk.', '....kk..', '...kk...', '........', '...kk...', '........'],
   chest: ['........', '.kkkkkk.', 'kcccccck', 'kkkkkkkk', 'kccwwcck', 'kcccccck', 'kkkkkkkk', '........'],
 }
+/** 돌판 표식의 색 (파스텔 — 모양이 먼저, 색은 작은 원으로만) */
 const STONE_TINT: Record<TripCell, string> = {
-  start: '#c9a26b',
-  plain: '#d6c3a0',
-  book: '#5c86d4',
-  item: '#58b85f',
-  star: '#e8b93a',
-  event: '#e2574c',
-  chest: '#9a6fd0',
+  start: '#e3c9a0',
+  plain: '#e6dccb',
+  book: '#a9c4ec',
+  item: '#b8dea4',
+  star: '#f5dc92',
+  event: '#f4b6b0',
+  chest: '#d3c0ee',
 }
 
 function tripMapFor(dest: 'harbor' | 'hillTown', season: Season): HTMLCanvasElement {
@@ -1849,8 +1850,8 @@ function tripMapFor(dest: 'harbor' | 'hillTown', season: Season): HTMLCanvasElem
   c.width = TRIP_W * TILE
   c.height = TRIP_H * TILE
   const g = c.getContext('2d')!
-  const at = (x: number, y: number) => layout.map[y]?.[x] ?? '&'
-  const SPECIAL = '@c&^!FOA'
+  const at = (x: number, y: number) => layout.map[y]?.[x] ?? '.'
+  const houseOf = (x: number, y: number) => layout.houses.find((h) => x >= h.x0 && x <= h.x1 && y >= h.y0 && y <= h.y1)
   for (let y = 0; y < TRIP_H; y++)
     for (let x = 0; x < TRIP_W; x++) {
       const ch = at(x, y)
@@ -1860,108 +1861,91 @@ function tripMapFor(dest: 'harbor' | 'hillTown', season: Season): HTMLCanvasElem
         g.fillStyle = color
         g.fillRect(px + dx, py + dy, w, h)
       }
-      // 이 장소만의 바닥: 판석 길과 돌바닥은 흙길이 아니다 (마을과 다른 곳이라는 느낌)
+      // 판석 길: 따뜻한 크림빛 돌, 줄눈은 옅게 (마을 흙길과 다른 이 동네의 길)
       if (ch === '@') {
-        f('#d9d3c4', 0, 0, 16, 16)
-        f('#b9b1a0', 0, (x + y) % 2 ? 7 : 8, 16, 1)
-        f('#b9b1a0', (x * 5 + y * 3) % 2 ? 5 : 10, 0, 1, 8)
-        f('#b9b1a0', (x * 3 + y) % 2 ? 11 : 3, 8, 1, 8)
-        f('#ebe6da', 1, 1, 3, 1)
+        f('#efe4cf', 0, 0, 16, 16)
+        f('#dccdb1', 0, (x + y) % 2 ? 7 : 8, 16, 1)
+        f('#dccdb1', (x * 5 + y * 3) % 2 ? 5 : 10, 0, 1, 8)
+        f('#dccdb1', (x * 3 + y) % 2 ? 11 : 3, 8, 1, 8)
+        f('#f8f0e0', 1, 1, 3, 1)
         continue
       }
-      if (ch === 'c' || ch === 'F' || ch === 'O') {
-        f('#eadcb9', 0, 0, 16, 16)
+      if (ch === 'c' || ch === 'F') {
+        f('#f3e6c8', 0, 0, 16, 16)
         for (const [dx, dy] of [[0, 0], [8, 0], [4, 8], [12, 8], [-4, 8]]) {
-          f('#d3c096', dx, dy + 7, 8, 1)
-          f('#d3c096', dx + 7, dy, 1, 8)
+          f('#e3d1a9', dx, dy + 7, 8, 1)
+          f('#e3d1a9', dx + 7, dy, 1, 8)
         }
         continue
-      } else drawGround(g, SPECIAL.includes(ch) ? '.' : ch, x, y, season, (xx, yy) => {
+      }
+      const h = houseOf(x, y)
+      drawGround(g, h || '^!A'.includes(ch) ? '.' : ch, x, y, season, (xx, yy) => {
         const n = at(xx, yy)
-        return n === '@' || n === 'c' ? ',' : n
+        return n === '@' || n === 'c' || n === 'F' ? ',' : n
       })
+      if (h) {
+        if (ch === '#' || ch === 'D') houseWallTile(g, x, y, ch, h.id, h)
+        continue
+      }
       switch (ch) {
-        case '&':
-          // 생울타리: 짙은 잎 덩이, 위쪽이 밝다
-          f('#2f7a2c', 0, 2, 16, 14)
-          f('#3d8a34', 1, 1, 14, 12)
-          f('#58a943', 2, 1, 5, 4)
-          f('#58a943', 9, 2, 5, 3)
-          f('rgba(20,40,10,0.25)', 0, 14, 16, 2)
-          break
         case '^':
-          // 꽃밭: 흙 두둑 위에 촘촘한 꽃
-          f('#b98452', 1, 2, 14, 13)
-          for (let k = 0; k < 9; k++) {
-            const fx = 2 + ((k * 5 + x * 3) % 12)
-            const fy = 3 + ((k * 7 + y * 5) % 10)
-            f(C.flower[(k + x + y) % C.flower.length], fx, fy, 2, 2)
-            f('#58a943', fx, fy + 2, 1, 1)
+          // 꽃화단: 둥근 풀 덤불 위에 파스텔 꽃
+          f('rgba(90,60,30,0.12)', 2, 13, 12, 2)
+          f('#8cc478', 2, 4, 12, 10)
+          f('#8cc478', 4, 2, 8, 13)
+          f('#a9d994', 4, 3, 7, 4)
+          for (let k = 0; k < 6; k++) {
+            const fx = 3 + ((k * 5 + x * 3) % 9)
+            const fy = 3 + ((k * 7 + y * 5) % 9)
+            f(['#f7b8c8', '#fde08e', '#ffffff', '#cdb8f0'][(k + x + y) % 4], fx, fy, 2, 2)
           }
           break
         case '!':
-          // 축제 등불 기둥: 나무 기둥, 붉은 초롱, 따뜻한 빛
-          f('rgba(60,40,10,0.2)', 5, 14, 6, 2)
-          f('#8d5f38', 7, 4, 2, 11)
-          f('#e2574c', 5, 1, 6, 5)
-          f('#ffd24a', 6, 2, 4, 3)
+          // 등불 기둥: 나무 기둥, 살구빛 초롱
+          f('rgba(90,60,30,0.15)', 5, 14, 6, 2)
+          f('#a07a58', 7, 4, 2, 11)
+          f('#f3a58f', 5, 1, 6, 5)
+          f('#ffe7a8', 6, 2, 4, 3)
           break
         case 'A':
           // 입구 아치 기둥
-          f('#8d5f38', 5, 0, 6, 16)
-          f('#b98452', 6, 0, 2, 16)
-          f('#6a4129', 4, 0, 8, 2)
+          f('#a07a58', 5, 0, 6, 16)
+          f('#c49c74', 6, 0, 2, 16)
+          f('#86634a', 4, 0, 8, 2)
           break
         default:
           if (ch !== '.') drawObject(g, ch, x, y, season)
       }
     }
-  // 분수·큰 나무 (두 칸×두 칸): 바닥을 다 깐 뒤에 왼쪽 위 칸에서 한 번에
+  for (const h of layout.houses) drawRoof(g, h.x0, h.y0, h.x1, h.y1 - 2, (HOUSE_STYLES[h.id] ?? PLAIN_STYLE).roof)
+  // 분수 (두 칸×두 칸): 돌바닥을 다 깐 뒤에 왼쪽 위 칸에서 한 번에
   for (let y = 0; y < TRIP_H; y++)
     for (let x = 0; x < TRIP_W; x++) {
-      const ch = at(x, y)
-      if (ch !== 'F' && ch !== 'O') continue
-      const px = x * TILE
-      const py = y * TILE
-      const f = (color: string, dx: number, dy: number, w: number, h: number) => {
+      if (at(x, y) !== 'F' || at(x - 1, y) === 'F' || at(x, y - 1) === 'F') continue
+      const f = (color: string, dx: number, dy: number, w: number, hh: number) => {
         g.fillStyle = color
-        g.fillRect(px + dx, py + dy, w, h)
+        g.fillRect(x * TILE + dx, y * TILE + dy, w, hh)
       }
-      if (ch === 'F') {
-          // 분수: 두 칸×두 칸을 왼쪽 위 칸에서 한 번에
-          if (at(x - 1, y) !== 'F' && at(x, y - 1) !== 'F') {
-            f('rgba(60,40,10,0.2)', 1, 28, 30, 4)
-            f('#a39b8a', 1, 4, 30, 26)
-            f('#d9d3c4', 2, 3, 28, 26)
-            f(C.water, 5, 6, 22, 19)
-            f(C.water2, 7, 8, 8, 2)
-            f(C.water2, 17, 18, 6, 1)
-            f('#d9d3c4', 13, 10, 6, 9)
-            f(C.water2, 15, 4, 2, 8)
-            f('#ffffff', 15, 3, 2, 2)
-          }
-      } else {
-          // 오래된 큰 나무: 두 칸×두 칸
-          if (at(x - 1, y) !== 'O' && at(x, y - 1) !== 'O') {
-            f('rgba(60,40,10,0.22)', 2, 26, 28, 5)
-            f(C.trunk, 13, 16, 6, 13)
-            f(C.leaf2, 2, 4, 28, 16)
-            f(C.leaf2, 5, 1, 22, 22)
-            f(C.leaf, 4, 2, 24, 14)
-            f(C.leaf3, 8, 3, 9, 5)
-          }
-      }
+      f('rgba(90,60,30,0.15)', 1, 28, 30, 4)
+      f('#cfc4b0', 1, 4, 30, 26)
+      f('#eee6d6', 2, 3, 28, 26)
+      f('#a9dbe8', 5, 6, 22, 19)
+      f('#d6f0f6', 7, 8, 8, 2)
+      f('#d6f0f6', 17, 18, 6, 1)
+      f('#eee6d6', 13, 10, 6, 9)
+      f('#d6f0f6', 15, 4, 2, 8)
+      f('#ffffff', 15, 3, 2, 2)
     }
-  // 입구 아치의 깃발 줄 (두 기둥 사이)
+  // 입구 아치의 깃발 줄 (두 기둥 사이, 파스텔 깃발)
   const arch = layout.map.findIndex((row) => row.includes('A'))
   if (arch >= 0) {
     const xs = [...layout.map[arch]].flatMap((ch, x) => (ch === 'A' ? [x] : []))
     const ax0 = xs[0] * TILE + 8
     const ax1 = xs[xs.length - 1] * TILE + 8
     const ay = arch * TILE + 1
-    g.fillStyle = '#6a4129'
+    g.fillStyle = '#86634a'
     g.fillRect(ax0, ay, ax1 - ax0, 2)
-    const flags = ['#e2574c', '#ffd24a', '#5c86d4', '#58b85f', '#f07ab8']
+    const flags = ['#f4b6b0', '#fde4a6', '#a9c4ec', '#b8dea4', '#d3c0ee']
     for (let fx = ax0 + 2, k = 0; fx < ax1 - 4; fx += 6, k++) {
       g.fillStyle = flags[k % flags.length]
       g.fillRect(fx, ay + 2, 5, 3)
@@ -1969,7 +1953,10 @@ function tripMapFor(dest: 'harbor' | 'hillTown', season: Season): HTMLCanvasElem
       g.fillRect(fx + 2, ay + 7, 1, 1)
     }
   }
-  // 보드 칸: 판석 길의 일부인 큼직한 돌판 (2×2 칸) — 두꺼운 돌 테두리, 칸 색 띠, 크게 새긴 표시
+  // 파스텔 한 겹: 마을 그림의 선명한 색을 따뜻하고 부드럽게 (이 동네만)
+  g.fillStyle = 'rgba(255, 244, 228, 0.22)'
+  g.fillRect(0, 0, c.width, c.height)
+  // 보드 칸: 길에 놓인 표식 돌 — 모서리가 둥근 얇은 판석, 가운데 작은 색 원과 새긴 문양 (버튼처럼 두껍지 않게)
   BOARD.forEach((cell, i) => {
     const t = stoneTile(i)
     const px = t.x * TILE
@@ -1978,17 +1965,19 @@ function tripMapFor(dest: 'harbor' | 'hillTown', season: Season): HTMLCanvasElem
       g.fillStyle = color
       g.fillRect(px + dx, py + dy, w, hh)
     }
-    f('rgba(60,40,10,0.25)', 2, 29, 28, 3)
-    f('#8f877a', 1, 2, 30, 28)
-    f('#8f877a', 2, 1, 28, 30)
-    f(STONE_TINT[cell], 3, 3, 26, 24)
-    f('#f3e7cc', 6, 6, 20, 18)
-    f('#fff8e6', 6, 6, 20, 2)
-    f('rgba(0,0,0,0.12)', 3, 24, 26, 3)
+    // 판석 (모서리를 깎아 둥글게), 아래쪽에만 얇은 그늘
+    f('#e2d6bf', 3, 2, 26, 28)
+    f('#e2d6bf', 2, 3, 28, 26)
+    f('#f7efdf', 4, 3, 24, 25)
+    f('#f7efdf', 3, 4, 26, 23)
+    f('rgba(120,90,50,0.16)', 4, 28, 24, 2)
+    // 작은 색 원 (표식 색은 보조)
+    f(STONE_TINT[cell], 9, 7, 14, 16)
+    f(STONE_TINT[cell], 7, 9, 18, 12)
     STONE_GLYPH[cell].forEach((row, yy) =>
       [...row].forEach((chh, xx) => {
         if (chh === '.') return
-        f(chh === 'k' ? '#4a3226' : chh === 'w' ? '#ffffff' : STONE_TINT[cell], 8 + xx * 2, 7 + yy * 2, 2, 2)
+        f(chh === 'k' ? '#6a5040' : chh === 'w' ? '#ffffff' : '#fffaf0', 8 + xx * 2, 7 + yy * 2, 2, 2)
       }),
     )
   })
@@ -2005,6 +1994,18 @@ export interface TripActor {
 }
 
 /** 여행 판 한 장면: 동네 그림 → 사람(발 아래 순서대로). 카메라는 판 대부분이 보이게, 가장자리에 가까울 때만 조금 움직인다 */
+/** 여행 판의 사람은 두 배 크기로 (큼직한 돌판에 맞게, 도트는 정수 배라 또렷하다) */
+function drawBig(g: Ctx, c: HTMLCanvasElement, wx: number, wy: number, dy = 0) {
+  const k = 2
+  const w = c.width * k
+  const h = c.height * k
+  const px = Math.round(wx * TILE + (TILE - w) / 2)
+  const py = Math.round(wy * TILE + TILE - 1 - h - dy * k)
+  g.fillStyle = 'rgba(90,60,30,0.18)'
+  g.fillRect(px + 3, Math.round(wy * TILE) + 13, w - 6, 3)
+  g.drawImage(c, px, py, w, h)
+}
+
 export function createTripRenderer(g: Ctx) {
   const cam = { x: -1, y: -1 }
   /** 화면에 보이는 칸 수 (폭은 마을과 같은 16칸 — 같은 도트 크기, 높이는 화면 비율대로) */
@@ -2040,7 +2041,7 @@ export function createTripRenderer(g: Ctx) {
       cam.y += (ty - cam.y) * k
       const ox = Math.round((VW > TRIP_W ? -(VW - TRIP_W) / 2 : cam.x) * TILE * s) / s
       const oy = Math.round((VH > TRIP_H ? -(VH - TRIP_H) / 2 : cam.y) * TILE * s) / s
-      g.fillStyle = '#3d8a34'
+      g.fillStyle = '#cfe7b8'
       g.fillRect(0, 0, VW * TILE, VH * TILE)
       g.save()
       g.translate(-ox, -oy)
@@ -2051,7 +2052,7 @@ export function createTripRenderer(g: Ctx) {
         y: me.y,
         paint: () => {
           const spr = person('writer', me.facing, frameOf(me), isBlinking(t), 'stand', season, { look: game.avatar?.look, avatar: game.avatar ? withLookDefaults(game.avatar) : undefined })
-          drawSprite(g, spr, me.x, me.y, me.walking ? 0 : breathOffset(t))
+          drawBig(g, spr, me.x, me.y, me.walking ? 0 : breathOffset(t))
         },
       })
       const child = game.child
@@ -2060,10 +2061,10 @@ export function createTripRenderer(g: Ctx) {
         items.push({
           y: kid.y,
           paint: () => {
-            if (!grown) drawSprite(g, paint('baby/walk', BABY.walk, SMALL_PALETTE), kid.x, kid.y, kid.walking ? Math.floor(t * 8) % 2 : 0)
+            if (!grown) drawBig(g, paint('baby/walk', BABY.walk, SMALL_PALETTE), kid.x, kid.y, kid.walking ? Math.floor(t * 8) % 2 : 0)
             else {
               const rows = recolor(spriteRows('child', kid.facing, { frame: frameOf(kid), blink: isBlinking(t + 1.3), growth: 2 }), child.look === 'boy' ? { z: 'E', Z: 'M' } : { z: 'V', Z: 'X' })
-              drawSprite(g, paint(`kid/${child.look}/${kid.facing}/${frameOf(kid)}/${isBlinking(t + 1.3)}`, rows, PALETTE), kid.x, kid.y, kid.walking ? 0 : breathOffset(t + 1.3))
+              drawBig(g, paint(`kid/${child.look}/${kid.facing}/${frameOf(kid)}/${isBlinking(t + 1.3)}`, rows, PALETTE), kid.x, kid.y, kid.walking ? 0 : breathOffset(t + 1.3))
             }
           },
         })
