@@ -55,6 +55,8 @@ export function inMarket(t: Tile): boolean {
 
 /** 복음서 방 잔치 저녁, 광장 모닥불에서 보는 장면 (잔치 날 한 번) */
 export const FEAST_FIRE = 'feastFire'
+/** 스물일곱 권 잔치 저녁, 광장 모닥불에서 보는 장면 (잔치 날 한 번) */
+export const ALL_FEAST_FIRE = 'allFeastFire'
 
 export interface MomentContext {
   day: number
@@ -73,6 +75,9 @@ export function momentNow(ctx: MomentContext): string | null {
   // 복음서 방 잔치는 비가 와도 연다 (잔치 날은 flags.gospelFeast === 1)
   if (flags.gospelFeast === 1 && minute >= FESTIVAL_FROM + 30 && minute < FESTIVAL_TO && inMarket(ctx.player) && !flags[onceKey(FEAST_FIRE, day)])
     return FEAST_FIRE
+  // 스물일곱 권 잔치도 같은 자리·같은 시각, 비가 와도 연다 (잔치 날은 flags.allFeast === 1)
+  if (flags.allFeast === 1 && minute >= FESTIVAL_FROM + 30 && minute < FESTIVAL_TO && inMarket(ctx.player) && !flags[onceKey(ALL_FEAST_FIRE, day)])
+    return ALL_FEAST_FIRE
   if (fest && !isWet(w) && minute >= FESTIVAL_FROM + 30 && minute < FESTIVAL_TO && inMarket(ctx.player) && !flags[onceKey(`festival:${fest}`, day)])
     return `festival:${fest}`
   if (ctx.outdoors && seasonOf(day) === 'autumn' && w === 'rain' && minute >= 16 * 60 && minute < 17.5 * 60 && !flags[onceKey('rainbow', day)])

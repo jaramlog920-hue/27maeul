@@ -44,7 +44,7 @@ import { blanksFor } from './copy'
 import { checkArrangement, moveItem, type ArrangeResult } from './scroll'
 import { cardsForChapters, journeyComplete, placeNewCards, type JourneyCard } from './journey'
 import { growGarden, type Plot } from './garden'
-import { feastToday, gospelRoomFull, readOff, type Grade } from './library'
+import { allFeastReady, feastToday, gospelRoomFull, readOff, type Grade } from './library'
 import {
   BABY_DAY,
   LESSON_FROM,
@@ -231,9 +231,9 @@ export function lessonTime(s: Pick<GameState, 'clock' | 'flags'> & { today?: Tod
     (s.flags.childLetters ?? 0) < LETTERS_TOTAL &&
     s.flags.taughtDay !== s.clock.day &&
     !isWet(weatherOf(s.clock.day)) &&
-    // 잔치 날 저녁에는 아이도 모닥불 곁에 있다 (복음서 방 잔치 날도)
+    // 잔치 날 저녁에는 아이도 모닥불 곁에 있다 (복음서 방·스물일곱 권 잔치 날도)
     !festivalOf(s.clock.day) &&
-    s.flags.gospelFeast !== 1 &&
+    !feastToday(s) &&
     // 아기 잔치 날, 아이네가 저녁 초대한 날도 쉰다
     s.today?.gathering !== 'babyParty' &&
     s.today?.inviter !== 'child' &&
@@ -1335,6 +1335,13 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
     // 잔치 저녁에는 별 보는 밤을 잡지 않는다 (다른 맑은 날에 다시 잡힌다)
     if (gathering === 'starNight') gathering = null
   }
+  // ── 스물일곱 권 잔치: 요한계시록을 꽂고 일곱 교회 판을 다 놓은 날 밤 → 다음 날 아침 (한 번, 복음서 방 잔치와 같은 짜임) ──
+  if (flags.allFeast === 1) flags.allFeast = 2
+  else if (!flags.allFeast && allFeastReady({ shelved: s.shelved, flags }) && gathering !== 'babyParty' && !festivalOf(day)) {
+    flags.allFeast = 1
+    scenes.push('allFeast')
+    if (gathering === 'starNight') gathering = null
+  }
   // ── 여정을 다 이은 다음 날 아침: 호숫가 나루에 큰 배가 들어온다 (한 번) ──
   if (flags.actsShip === 1) {
     flags.actsShip = 2
@@ -1354,8 +1361,8 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
     }
   }
   if (gathering) scenes.push(`notice:${gathering}`)
-  // 저녁 모임(아기 잔치·별 보는 밤·복음서 방 잔치)이 있는 날은 저녁 초대를 하지 않는다
-  const eveningBusy = gathering === 'babyParty' || gathering === 'starNight' || flags.gospelFeast === 1
+  // 저녁 모임(아기 잔치·별 보는 밤·복음서 방 잔치·스물일곱 권 잔치)이 있는 날은 저녁 초대를 하지 않는다
+  const eveningBusy = gathering === 'babyParty' || gathering === 'starNight' || feastToday({ flags })
   const inviter = eveningBusy ? null : pickInviter(day, s.hearts, flags)
   if (inviter) {
     flags[`inviteDay:${inviter}`] = day

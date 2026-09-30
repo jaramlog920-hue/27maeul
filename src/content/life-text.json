@@ -1605,6 +1605,58 @@
         }
       ]
     },
+    "allFeast": {
+      "title": "서고가 다 찼다",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "서고 다섯 방 선반에 스물일곱 권이 모두 꽂혔다는 소식이 아침부터 마을에 돌았다."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "마지막 방까지 다 채웠구먼. 오늘 저녁엔 광장에 다 같이 모이세."
+        },
+        {
+          "speaker": "carpenter",
+          "text": "선반 칸마다 책이 들어차 있더군요. 짜 둔 보람이 있어요."
+        },
+        {
+          "speaker": "postman",
+          "text": "언덕 편지함은 이제 비워 둘게요. 오늘은 저도 잔치 손님이에요."
+        },
+        {
+          "speaker": "narration",
+          "text": "잔치는 저녁 여섯 시, 장터 광장 모닥불 곁에서 열린다. 비가 와도 연다고 한다."
+        }
+      ],
+      "album": "스물일곱 권이 다 꽂힌 날"
+    },
+    "allFeastFire": {
+      "title": "광장 모닥불 잔치",
+      "photoFor": "allFeast",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "광장에 모닥불이 피었다. 마을 사람들이 하나둘 불 곁에 모여 앉는다."
+        },
+        {
+          "speaker": "baker",
+          "text": "빵을 넉넉히 구워 왔어요. 다들 하나씩 드세요."
+        },
+        {
+          "speaker": "child",
+          "text": "서고 방을 하나하나 다 들어가 봤어요. 빈 칸이 하나도 없었어요!"
+        },
+        {
+          "speaker": "innkeeper",
+          "text": "국은 한 솥 더 있어요. 천천히 드세요."
+        },
+        {
+          "speaker": "narration",
+          "text": "불이 잦아들 무렵, 사람들은 내일 할 일을 이야기하며 하나둘 집으로 돌아갔다."
+        }
+      ]
+    },
     "gift:baker:3": {
       "title": "선물",
       "lines": [
@@ -2772,6 +2824,8 @@
       "firstChapter": " 첫 장을 이어 붙였다.",
       "gospelFeast": " 서고의 복음서 방이 다 찼다.",
       "feastFire": " 광장 모닥불 잔치에 갔다.",
+      "allFeast": " 서고에 스물일곱 권이 다 꽂혔다.",
+      "allFeastFire": " 광장 모닥불 잔치에 갔다.",
       "friends": " 아이와 양치기가 단짝이 되었다.",
       "babyParty": " 빵집 앞 아기 잔치에 갔다.",
       "picnic": " 언덕에서 소풍을 했다.",

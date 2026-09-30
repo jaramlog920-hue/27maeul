@@ -40,6 +40,8 @@ export function scheduledEvents(s: Pick<GameState, 'clock' | 'today' | 'flags'>,
   }
   // 복음서 방 잔치 (비가 와도 연다)
   if (s.flags.gospelFeast === 1) add('gospelFeast', '복음서 방 잔치', '장터 모닥불 · 특별 장면은 18:30부터', FESTIVAL_FROM, FESTIVAL_TO)
+  // 스물일곱 권 잔치 (비가 와도 연다)
+  if (s.flags.allFeast === 1) add('allFeast', '스물일곱 권 잔치', '장터 모닥불 · 특별 장면은 18:30부터', FESTIVAL_FROM, FESTIVAL_TO)
   const today = s.today
   const role = (id: string) => content.neighbors.find(n => n.id === id)?.role ?? '이웃'
   if (today?.visitor) add('visit', `${role(today.visitor)} 방문`, '내 집 앞', VISIT_FROM, VISIT_TO, today.visitGot)

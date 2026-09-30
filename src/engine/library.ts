@@ -59,9 +59,21 @@ export function gospelRoomFull(s: Pick<GameState, 'shelved'>): boolean {
   return GOSPELS.every((b) => s.shelved[b] !== undefined)
 }
 
-/** 오늘이 복음서 방 잔치 날인가 (저녁 광장 모닥불) */
+/** 스물일곱 권이 모두 서고에 꽂혔다 */
+export function allShelved(s: Pick<GameState, 'shelved'>): boolean {
+  return BOOKS.every((b) => s.shelved[b] !== undefined)
+}
+
+// ── 스물일곱 권 잔치 (계획 9 작업 5) ──
+// flags.allFeast: 없음 = 아직, 1 = 잔치 날, 2 = 잔치가 지났다. 결말 화면 없이 하루가 그대로 이어진다.
+/** 스물일곱 권 잔치의 조건: 요한계시록이 꽂혔고 일곱 교회 판을 다 놓았다 (순서 상관없음), 스물일곱 권 모두 꽂힘 */
+export function allFeastReady(s: Pick<GameState, 'shelved' | 'flags'>): boolean {
+  return s.shelved.rev !== undefined && (s.flags.churchesDone ?? 0) > 0 && allShelved(s)
+}
+
+/** 오늘이 잔치 날인가 — 복음서 방 잔치 또는 스물일곱 권 잔치 (저녁 광장 모닥불) */
 export function feastToday(s: Pick<GameState, 'flags'>): boolean {
-  return s.flags.gospelFeast === 1
+  return s.flags.gospelFeast === 1 || s.flags.allFeast === 1
 }
 
 /** 잔치 다음 날부터 서고의 첫 잠긴 문(사도행전 방)이 은은하게 빛난다 — 사도행전 방이 열린 것과 같은 판정 */
