@@ -1,3 +1,4 @@
+import { dayOf } from './calendar'
 import { CONTENT } from '../content/catalog'
 import { newGame } from './game'
 import { alertsBetween, eventStatus, eventSummary, nextEvent, scheduledEvents } from './events'
@@ -6,7 +7,9 @@ it('장날과 잔치의 날짜, 실제 시작·종료 시각을 안내한다', (
   const s = newGame(CONTENT)
   const events = scheduledEvents({ ...s, clock: { day: 7, minute: 360 } }, CONTENT)
   expect(events.find(e => e.id === '7:market')).toMatchObject({ from: 450, to: 1080 })
-  expect(events.find(e => e.id === '12:festival')).toMatchObject({ from: 1080, to: 1260 })
+  const B = dayOf('summer', 25)
+  const later = scheduledEvents({ ...s, clock: { day: B - 3, minute: 360 } }, CONTENT)
+  expect(later.find(e => e.id === `${B}:festival`)).toMatchObject({ from: 1080, to: 1260 })
 })
 
 it('오늘 확정된 방문·초대와 참여 여부를 안내한다', () => {
@@ -28,7 +31,8 @@ it('행사와 겹치는 글자 공부를 잘못 예고하지 않는다', () => {
   const s = newGame(CONTENT)
   const flags = { ...s.flags, childAsked: 1 }
   expect(scheduledEvents({ ...s, flags }, CONTENT).some(e => e.id === '1:lesson')).toBe(true)
-  expect(scheduledEvents({ ...s, flags, clock: { day: 12, minute: 360 } }, CONTENT).some(e => e.id === '12:lesson')).toBe(false)
+  const B = dayOf('summer', 25)
+  expect(scheduledEvents({ ...s, flags, clock: { day: B, minute: 360 } }, CONTENT).some(e => e.id === `${B}:lesson`)).toBe(false)
 })
 
 describe('다음 일정 · 알림', () => {

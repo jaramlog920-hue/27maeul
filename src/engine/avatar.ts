@@ -34,7 +34,7 @@ export const TOPS: readonly (readonly [string, string, string, string, 'plain' |
   ['바다빛 겉옷', '#4880b4', '#3c6c9c', '#e8e0d8', 'plain'],
   ['베 줄무늬', '#f4e0c0', '#ac8c6c', '#80644a', 'stripe'],
   ['하늘 줄무늬', '#98d8e0', '#5c94c4', '#f8e8cc', 'stripe'],
-  ['붉은 줄무늬', '#c07058', '#a86048', '#f8e8cc', 'stripe'],
+  ['붉은 줄무늬', '#c07058', '#a86048', '#c07058', 'stripe'],
   ['앞치마 (흰)', '#987858', '#80644a', '#f8e8cc', 'apron'],
   ['앞치마 (풀빛)', '#ac8c6c', '#987858', '#58984c', 'apron'],
   ['조끼 (갈색)', '#f0d8b0', '#e0c898', '#845038', 'vest'],

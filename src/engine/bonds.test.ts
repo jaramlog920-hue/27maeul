@@ -1,3 +1,4 @@
+import { dayOf } from './calendar'
 import { CONTENT } from '../content/catalog'
 import { SCENES } from '../content/text'
 import {
@@ -111,7 +112,7 @@ describe('B. 먼저 찾아오기와 저녁 초대', () => {
     expect(receiveVisit(v.state, 'baker')).toBeNull()
   })
   it('저녁 초대: 마음 7, 궂은 날·잔치 날엔 없음, 그 집 문에서 저녁을 먹는다', () => {
-    expect(pickInviter(12, { baker: 90 }, {})).toBeNull() // 잔치 날
+    expect(pickInviter(dayOf('summer', 25), { baker: 90 }, {})).toBeNull() // 잔치 날
     const days = Array.from({ length: 40 }, (_, i) => i + 3)
     expect(days.some((d) => pickInviter(d, { baker: 70 }, {}) === 'baker')).toBe(true)
     expect(days.every((d) => pickInviter(d, { baker: 60 }, {}) === null)).toBe(true)

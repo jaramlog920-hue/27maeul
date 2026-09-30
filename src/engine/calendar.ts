@@ -27,9 +27,15 @@ export function weatherOf(day: number): Weather {
 
 export const isWet = (w: Weather) => w === 'rain' || w === 'snow'
 
-/** 계절 안에서 몇째 날인가 (1~7) */
+/** 계절 안에서 몇째 날인가 (1~SEASON_DAYS) */
 export function seasonDay(day: number): number {
   return ((day - 1) % SEASON_DAYS) + 1
+}
+
+const SEASON_ORDER: readonly Season[] = ['spring', 'summer', 'autumn', 'winter']
+/** 그 계절 n째 날이 게임의 며칠째인가 (year째 해, 1부터) */
+export function dayOf(season: Season, n: number, year = 1): number {
+  return (year - 1) * SEASON_DAYS * 4 + SEASON_ORDER.indexOf(season) * SEASON_DAYS + n
 }
 
 /** 몇째 해인가 (1부터) */
@@ -48,22 +54,22 @@ export type Festival = 'barley' | 'grapes' | 'hearth'
 export function festivalOf(day: number): Festival | null {
   const s = seasonOf(day)
   const d = seasonDay(day)
-  if (s === 'summer' && d === 5) return 'barley'
-  if (s === 'autumn' && d === 6) return 'grapes'
-  if (s === 'winter' && d === 4) return 'hearth'
+  if (s === 'summer' && d === 25) return 'barley'
+  if (s === 'autumn' && d === 30) return 'grapes'
+  if (s === 'winter' && d === 20) return 'hearth'
   return null
 }
 
 export const FESTIVAL_FROM = 18 * 60
 export const FESTIVAL_TO = 21 * 60
 
-/** 보리를 거둘 수 있는 때: 여름 셋째 날부터 */
+/** 보리를 거둘 수 있는 때: 여름 열닷새째부터 */
 export function barleyRipe(day: number): boolean {
-  return seasonOf(day) === 'summer' && seasonDay(day) >= 3
+  return seasonOf(day) === 'summer' && seasonDay(day) >= 15
 }
 
 /** 포도를 딸 수 있는 때: 여름 끝 무렵부터 가을 내내 */
 export function grapesRipe(day: number): boolean {
   const s = seasonOf(day)
-  return s === 'autumn' || (s === 'summer' && seasonDay(day) >= 6)
+  return s === 'autumn' || (s === 'summer' && seasonDay(day) >= 32)
 }

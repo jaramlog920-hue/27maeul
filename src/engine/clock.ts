@@ -12,7 +12,8 @@ export const LATE_WAKE = 8 * 60
 /** 이 시각(다음 날 02:00)에서 시간이 멈춘다 — 밤을 무한히 흘리지 않기 위해 */
 export const MINUTE_CAP = 26 * 60
 export const MINUTES_PER_SECOND = 1
-export const SEASON_DAYS = 7
+/** 한 계절은 40일 (1년 160일 — 2026-09-30 사용자) */
+export const SEASON_DAYS = 40
 const SEASONS: readonly Season[] = ['spring', 'summer', 'autumn', 'winter']
 
 export function newClock(): Clock {

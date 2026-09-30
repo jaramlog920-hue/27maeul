@@ -1,5 +1,6 @@
 import { coolDown, eat, exhausted, fallsSick, FRESH, sleepNeeds, tickNeeds, warmUp, work } from './needs'
-import { barleyRipe, festivalOf, grapesRipe, isMarketDay, seasonDay, weatherOf, yearOf } from './calendar'
+import { barleyRipe, dayOf, festivalOf, grapesRipe, isMarketDay, seasonDay, weatherOf, yearOf } from './calendar'
+import { SEASON_DAYS } from './clock'
 
 const ctx = { indoor: true, season: 'spring' as const, phase: 'day' as const, warm: false, hasBlanket: false }
 
@@ -66,22 +67,22 @@ describe('calendar', () => {
     expect(weatherOf(40)).toBe(weatherOf(40))
   })
   it('계절에 맞지 않는 날씨는 없다', () => {
-    for (let d = 1; d <= 112; d++) {
+    for (let d = 1; d <= 320; d++) {
       const w = weatherOf(d)
-      const s = Math.floor((d - 1) / 7) % 4
+      const s = Math.floor((d - 1) / SEASON_DAYS) % 4
       if (s !== 3) expect(w).not.toBe('snow')
       if (s !== 1) expect(w).not.toBe('hot')
     }
   })
   it('잔치 날은 언제나 맑다', () => {
-    for (let d = 1; d <= 112; d++) if (festivalOf(d)) expect(weatherOf(d), String(d)).toBe('sunny')
+    for (let d = 1; d <= 320; d++) if (festivalOf(d)) expect(weatherOf(d), String(d)).toBe('sunny')
   })
   it('가을에 비 오는 날이 있어 무지개를 볼 수 있다', () => {
-    const autumn = [15, 16, 17, 18, 19, 20, 21]
+    const autumn = Array.from({ length: SEASON_DAYS }, (_, i) => dayOf('autumn', i + 1))
     expect(autumn.some((d) => weatherOf(d) === 'rain')).toBe(true)
   })
   it('겨울 둘째 날은 첫눈', () => {
-    expect(weatherOf(23)).toBe('snow')
+    expect(weatherOf(dayOf('winter', 2))).toBe('snow')
   })
   it('비 오는 날이 있다 (봄·가을)', () => {
     const days = Array.from({ length: 56 }, (_, i) => i + 1)
@@ -90,16 +91,16 @@ describe('calendar', () => {
   it('장날·행사·거둘 때', () => {
     expect(isMarketDay(7)).toBe(true)
     expect(isMarketDay(8)).toBe(false)
-    expect(festivalOf(12)).toBe('barley') // 여름 다섯째 날
-    expect(festivalOf(20)).toBe('grapes') // 가을 여섯째 날
-    expect(festivalOf(25)).toBe('hearth') // 겨울 넷째 날
+    expect(festivalOf(dayOf('summer', 25))).toBe('barley')
+    expect(festivalOf(dayOf('autumn', 30))).toBe('grapes')
+    expect(festivalOf(dayOf('winter', 20))).toBe('hearth')
     expect(festivalOf(1)).toBeNull()
-    expect(barleyRipe(10)).toBe(true)
-    expect(barleyRipe(9)).toBe(false)
-    expect(grapesRipe(13)).toBe(true)
+    expect(barleyRipe(dayOf('summer', 15))).toBe(true)
+    expect(barleyRipe(dayOf('summer', 14))).toBe(false)
+    expect(grapesRipe(dayOf('summer', 32))).toBe(true)
     expect(grapesRipe(3)).toBe(false)
-    expect(seasonDay(8)).toBe(1)
-    expect(yearOf(28)).toBe(1)
-    expect(yearOf(29)).toBe(2)
+    expect(seasonDay(SEASON_DAYS + 1)).toBe(1)
+    expect(yearOf(SEASON_DAYS * 4)).toBe(1)
+    expect(yearOf(SEASON_DAYS * 4 + 1)).toBe(2)
   })
 })

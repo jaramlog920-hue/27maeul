@@ -180,17 +180,17 @@ function daysToCollectAll(start: number): { days: number; clearNights: number } 
 
 describe('⑦ 시뮬레이션 — 매일 밤 별을 보면 22장을 다 받는 날 수', () => {
   // 잰 값(2026-09-30): 1일에 열리면 맑은 밤 15번·16일. 1–112일(네 해 계절 한 바퀴씩) 어느 날에 열려도 맑은 밤 12–15번, 15–24일 (평균 약 20일)
-  it('1일에 열리면 맑은 밤 15번·16일째에 22장을 다 받는다', () => {
-    expect(daysToCollectAll(1)).toEqual({ days: 16, clearNights: 15 })
+  it('1일에 열리면 맑은 밤 14번·18일째에 22장을 다 받는다 (한 계절 40일)', () => {
+    expect(daysToCollectAll(1)).toEqual({ days: 18, clearNights: 14 })
   })
 
-  it('방이 열린 날이 1–112일 어느 날이어도 맑은 밤 12–15번, 24일 안에', () => {
+  it('방이 열린 날이 1–112일 어느 날이어도 맑은 밤 12–16번, 30일 안에 (한 계절 40일이라 궂은 날이 몰릴 수 있다)', () => {
     const runs = DAYS.slice(0, 112).map(daysToCollectAll)
     for (const r of runs) {
       expect(r.clearNights).toBeGreaterThanOrEqual(12)
-      expect(r.clearNights).toBeLessThanOrEqual(15)
-      expect(r.days).toBeGreaterThanOrEqual(15)
-      expect(r.days).toBeLessThanOrEqual(24)
+      expect(r.clearNights).toBeLessThanOrEqual(16)
+      expect(r.days).toBeGreaterThanOrEqual(r.clearNights)
+      expect(r.days).toBeLessThanOrEqual(30)
     }
   })
 })

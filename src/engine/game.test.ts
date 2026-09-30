@@ -51,7 +51,7 @@ import { heartsOf } from './hearts'
 import { STRAY_SPOTS } from './companion'
 import { CONTENT, piecesOf } from '../content/catalog'
 import type { NeighborDef } from './types'
-import { FESTIVAL_FROM, FESTIVAL_TO, festivalOf, isWet, weatherOf } from './calendar'
+import { dayOf, FESTIVAL_FROM, FESTIVAL_TO, festivalOf, isWet, weatherOf } from './calendar'
 import { scheduledEvents } from './events'
 import { FESTIVAL_SPOTS } from './neighbors'
 import { actsDoorGlows } from './library'
@@ -173,7 +173,7 @@ describe('이웃', () => {
     expect(canHelp({ ...newGame(CONTENT), inv: {} }, def('baker'))).toBe('needs')
   })
   it('포도 철에는 할아버지를 도우면 포도를 받는다', () => {
-    const s = at(newGame(CONTENT), 600, 16)
+    const s = at(newGame(CONTENT), 600, dayOf('autumn', 2))
     expect(finishHelp(s, def('grandpa')).inv.grapes).toBe(2)
     expect(finishHelp(newGame(CONTENT), def('grandpa')).inv.fig).toBe(2)
   })
@@ -257,7 +257,7 @@ describe('손일', () => {
     expect(finishGather(s, 'well').inv.water).toBe(2)
     expect(finishGather(s, 'reeds').inv.reed).toBe(2)
     expect(finishGather(s, 'field').inv.barley).toBe(1)
-    expect(finishGather(at(s, 600, 10), 'field').inv.barley).toBe(3)
+    expect(finishGather(at(s, 600, dayOf('summer', 16)), 'field').inv.barley).toBe(3)
     expect(gatherInfo(s, 'vine')).toEqual({ blocked: 'notRipe' })
     expect(finishGather(s, 'well').clock.minute).toBe(s.clock.minute + 10)
   })
@@ -391,19 +391,20 @@ describe('복음서 방 완성 잔치', () => {
     expect(feast.flags.gospelFeast).toBe(1)
   })
   it('마을 행사(수확·모닥불) 날과 겹치면 복음서 방 잔치를 하루 미룬다', () => {
-    // 19일째 밤에 자면 20일째 아침 — 가을 여섯째 날, 포도 수확 잔치
-    expect(festivalOf(20)).toBe('grapes')
-    const fest = goToSleep({ ...night(FOUR), clock: { day: 19, minute: 22 * 60 } }, CONTENT)
-    expect(fest.clock.day).toBe(20)
+    // 전날 밤에 자면 가을 서른째 날 아침 — 포도 수확 잔치
+    const G = dayOf('autumn', 30)
+    expect(festivalOf(G)).toBe('grapes')
+    const fest = goToSleep({ ...night(FOUR), clock: { day: G - 1, minute: 22 * 60 } }, CONTENT)
+    expect(fest.clock.day).toBe(G)
     expect(fest.scenes).not.toContain('gospelFeast')
     expect(fest.flags.gospelFeast).toBeUndefined()
     // 그날 저녁은 원래 마을 행사 하나만 — 복음서 방 잔치 알림이 함께 뜨지 않는다
-    const todays = scheduledEvents(fest, CONTENT).filter((e) => e.day === 20)
+    const todays = scheduledEvents(fest, CONTENT).filter((e) => e.day === G)
     expect(todays.some((e) => e.id.endsWith(':gospelFeast'))).toBe(false)
     expect(todays.some((e) => e.id.endsWith(':festival'))).toBe(true)
     // 다음 날 아침 복음서 방 잔치
     const feast = goToSleep(at({ ...fest, scenes: [] }, 22 * 60), CONTENT)
-    expect(feast.clock.day).toBe(21)
+    expect(feast.clock.day).toBe(G + 1)
     expect(feast.scenes.filter((x) => x === 'gospelFeast')).toHaveLength(1)
     expect(feast.flags.gospelFeast).toBe(1)
   })
@@ -550,7 +551,7 @@ describe('동반 동물·방·나의 한 줄', () => {
 
 describe('특별한 순간', () => {
   it('겨울 둘째 날 밖에 나가면 첫눈', () => {
-    let s = at(newGame(CONTENT), 10 * 60, 23)
+    let s = at(newGame(CONTENT), 10 * 60, dayOf('winter', 2))
     s = { ...s, player: { ...s.player, x: 11, y: 9 } }
     const r = tick(s, 0.05, zero, CONTENT)
     expect(r.events).toContainEqual({ type: 'moment', id: 'firstSnow' })
@@ -560,12 +561,12 @@ describe('특별한 순간', () => {
     expect(again.events).toEqual([])
   })
   it('행사 날 저녁 장터에 가면 잔치', () => {
-    let s = at(newGame(CONTENT), 18 * 60 + 5, 12)
+    let s = at(newGame(CONTENT), 18 * 60 + 5, dayOf('summer', 25))
     // 모닥불이 피는 광장 (장터 광장 19~29, 13~20)
     s = { ...s, player: { ...s.player, x: 24, y: 19 } }
     // 이웃이 모이기 전에는 아직
     expect(tick(s, 0.05, zero, CONTENT).events).toEqual([])
-    s = at(s, 18 * 60 + 31, 12)
+    s = at(s, 18 * 60 + 31, dayOf('summer', 25))
     expect(tick(s, 0.05, zero, CONTENT).events).toContainEqual({ type: 'moment', id: 'festival:barley' })
   })
 })
@@ -579,9 +580,9 @@ describe('리뷰 지적 회귀', () => {
     expect(s.offers.baker).toBeDefined()
   })
   it('m2: 잔치 날 저녁에는 글자 수업이 없다', () => {
-    const s: GameState = { ...at(newGame(CONTENT), 18 * 60 + 10, 12), flags: { childAsked: 1 } }
+    const s: GameState = { ...at(newGame(CONTENT), 18 * 60 + 10, dayOf('summer', 25)), flags: { childAsked: 1 } }
     expect(lessonTime(s)).toBe(false)
-    expect(lessonTime({ ...s, clock: { day: 11, minute: 18 * 60 + 10 } })).toBe(true)
+    expect(lessonTime({ ...s, clock: { day: dayOf('summer', 24), minute: 18 * 60 + 10 } })).toBe(true)
   })
   it('m3: 가방이 넘치면 모으기·돕기·만들기·바꾸기·가구 거두기를 막는다', () => {
     const full: GameState = { ...newGame(CONTENT), inv: { reed: 9, water: 9, bread: 9, papyrus: 9, grapes: 9, rug: 9 } }

@@ -27,9 +27,9 @@ describe('이웃 수첩', () => {
 
   it('다음 생일은 오늘이거나 한 해 안', () => {
     const d = nextBirthday('baker', 1)!
-    expect(d).toBe(3)
-    expect(nextBirthday('baker', 3)).toBe(3)
-    expect(nextBirthday('baker', 4)).toBe(3 + 28)
+    expect(d).toBe(10)
+    expect(nextBirthday('baker', 10)).toBe(10)
+    expect(nextBirthday('baker', 11)).toBe(10 + 160)
   })
 
   it('모든 이웃은 싫어하는 것이 있고, 좋아하는 것과 겹치지 않는다', () => {
@@ -56,7 +56,7 @@ describe('이웃 수첩', () => {
   })
 
   it('생일에 건넨 선물은 마음이 두 배', () => {
-    const s = on({ ...newGame(CONTENT), inv: { grapes: 1 } }, 3)
+    const s = on({ ...newGame(CONTENT), inv: { grapes: 1 } }, 10)
     expect(giveGift(s, def('baker'), 'grapes')!.state.hearts.baker).toBe(10)
   })
 
@@ -78,8 +78,8 @@ describe('이웃 수첩', () => {
   })
 
   it('만난 이웃의 생일은 일정에 보인다', () => {
-    const s = greetNeighbor(newGame(CONTENT), 'baker')
-    expect(scheduledEvents(s, CONTENT).some((e) => e.id === '3:birthday:baker')).toBe(true)
+    const s = on(greetNeighbor(newGame(CONTENT), 'baker'), 5)
+    expect(scheduledEvents(s, CONTENT).some((e) => e.id === '10:birthday:baker')).toBe(true)
     expect(scheduledEvents(newGame(CONTENT), CONTENT).some((e) => e.id.includes('birthday'))).toBe(false)
   })
 

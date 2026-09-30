@@ -3,7 +3,7 @@ import bible from '../content/nt-krv.json'
 import { CONTENT } from '../content/catalog'
 import { ALBUM_IDS, JOURNAL_NOTES, SCENES } from '../content/text'
 import { planGathering, villageLevel } from './bonds'
-import { FESTIVAL_FROM, FESTIVAL_TO, festivalOf, isWet, weatherOf } from './calendar'
+import { FESTIVAL_FROM, FESTIVAL_TO, festivalOf, isWet, weatherOf, dayOf } from './calendar'
 import { scheduledEvents } from './events'
 import { goToSleep, lessonTime, newGame, sceneSeen, tick, type GameState } from './game'
 import { allShelved, feastToday } from './library'
@@ -75,16 +75,17 @@ describe('스물일곱 권 잔치 — 조건과 한 번뿐', () => {
     expect(feast.flags.allFeast).toBe(1)
   })
   it('② 마을 행사 날과 겹치면 하루 미룬다 — 그날 일정에 잔치가 같이 뜨지 않는다', () => {
-    expect(festivalOf(20)).toBe('grapes')
-    const fest = goToSleep(night(19, ALL, true), CONTENT)
+    const G = dayOf('autumn', 30)
+    expect(festivalOf(G)).toBe('grapes')
+    const fest = goToSleep(night(G - 1, ALL, true), CONTENT)
     expect(fest.scenes).not.toContain('allFeast')
     expect(fest.flags.allFeast).toBeUndefined()
-    const todays = scheduledEvents(fest, CONTENT).filter((e) => e.day === 20)
+    const todays = scheduledEvents(fest, CONTENT).filter((e) => e.day === G)
     expect(todays.some((e) => e.id.endsWith(':allFeast'))).toBe(false)
     const feast = sleep(fest)
-    expect(feast.clock.day).toBe(21)
+    expect(feast.clock.day).toBe(G + 1)
     expect(feast.flags.allFeast).toBe(1)
-    const ev = scheduledEvents(feast, CONTENT).find((e) => e.id === '21:allFeast')!
+    const ev = scheduledEvents(feast, CONTENT).find((e) => e.id === `${G + 1}:allFeast`)!
     expect(ev).toMatchObject({ title: '스물일곱 권 잔치', location: '장터 모닥불 · 특별 장면은 18:30부터', from: FESTIVAL_FROM, to: FESTIVAL_TO })
   })
 })

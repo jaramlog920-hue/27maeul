@@ -1,4 +1,4 @@
-import { advance, darkness, formatTime, MINUTE_CAP, NIGHT_DARK, newClock, phaseOf, seasonOf, sleepClock } from './clock'
+import { SEASON_DAYS, advance, darkness, formatTime, MINUTE_CAP, NIGHT_DARK, newClock, phaseOf, seasonOf, sleepClock } from './clock'
 import { DOZE_AFTER, IDLE_GAP, pickIdleAction, stepIdle, IDLE_RESET, greet } from './autonomy'
 
 describe('clock', () => {
@@ -21,12 +21,13 @@ describe('clock', () => {
     expect(sleepClock({ day: 2, minute: 23 * 60 })).toEqual({ day: 3, minute: 480 })
     expect(sleepClock({ day: 2, minute: 25 * 60 })).toEqual({ day: 3, minute: 480 })
   })
-  it('계절은 7일마다 바뀌고 돈다', () => {
+  it('계절은 40일마다 바뀌고 돈다', () => {
+    expect(SEASON_DAYS).toBe(40)
     expect(seasonOf(1)).toBe('spring')
-    expect(seasonOf(7)).toBe('spring')
-    expect(seasonOf(8)).toBe('summer')
-    expect(seasonOf(22)).toBe('winter')
-    expect(seasonOf(29)).toBe('spring')
+    expect(seasonOf(40)).toBe('spring')
+    expect(seasonOf(41)).toBe('summer')
+    expect(seasonOf(121)).toBe('winter')
+    expect(seasonOf(161)).toBe('spring')
   })
   it('시각 표기', () => {
     expect(formatTime(6 * 60 + 5)).toBe('06:05')
