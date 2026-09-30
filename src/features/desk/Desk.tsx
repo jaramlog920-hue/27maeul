@@ -6,7 +6,7 @@ import { fill, roomTitle, T } from '../../content/text'
 import { bookDone, chaptersOf, groupByRoom, pickableBooks } from '../../engine/books'
 import { modeOf, roomOf } from '../../engine/shelf-rooms'
 import { LetterCopy } from './LetterCopy'
-import { stockOf, type SubmitResult } from '../../engine/game'
+import { canNightCopy, NIGHT_COPY_OIL, stockOf, type SubmitResult } from '../../engine/game'
 import { currentChapter } from '../../engine/offers'
 import { useGame } from '../../store/game-store'
 
@@ -122,6 +122,7 @@ export function Desk({ result, dark }: { result: SubmitResult | null; dark: bool
         {chapter !== null && <> · {fill(T.ui.deskCollected, { got: list.length, all })}</>}
       </p>
       <p className="hint">{T.ui.chapterNote}</p>
+      <NightCopy />
       {message && (
         <p className={`desk-message ${result?.kind}`} role="status">
           {message}
@@ -162,6 +163,23 @@ export function Desk({ result, dark }: { result: SubmitResult | null; dark: bool
           </button>
         )}
       </div>
+    </div>
+  )
+}
+
+/** 밤 필사: 밤에 등잔 기름 한 병으로 지금 책의 다음 이야기를 옮겨 적는다 (원할 때마다, 기름이 있는 만큼) */
+function NightCopy() {
+  const game = useGame((s) => s.game)
+  const nightCopy = useGame((s) => s.nightCopy)
+  const block = canNightCopy(game, CONTENT)
+  if (block === 'notNight') return null
+  const hint = block === 'noOil' ? '등잔 기름이 있어야 해요.' : block === 'noPiece' ? '지금 책에서 더 옮겨 적을 이야기가 없어요.' : `등잔 기름 ${NIGHT_COPY_OIL}병으로 다음 이야기를 옮겨 적어요.`
+  return (
+    <div className="night-copy">
+      <button disabled={block !== null} onClick={nightCopy}>
+        밤 필사
+      </button>
+      <span className="hint"> {hint}</span>
     </div>
   )
 }

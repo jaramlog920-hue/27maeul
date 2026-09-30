@@ -4,7 +4,8 @@ import { ICONS } from '../../render/sprites'
 import { ItemIcon } from '../../shared/ItemIcon'
 import type { Trade } from '../../engine/game'
 import { fill, itemList, itemName, T } from '../../content/text'
-import { canBuyRare, canSell, overflows, ownsTradeTool, RARE_PRICES, rareStall, SELL_PRICES, sellPrice, tradesFor } from '../../engine/game'
+import { canBuyRare, canBuyScroll, SCROLL_PRICE, canSell, overflows, ownsTradeTool, RARE_PRICES, rareStall, SELL_PRICES, sellPrice, tradesFor } from '../../engine/game'
+import { CONTENT } from '../../content/catalog'
 import { jobOf, SELL_FROM } from '../../engine/job'
 import { has, take } from '../../engine/items'
 import type { ItemId } from '../../engine/types'
@@ -80,6 +81,7 @@ export function TradeBoard() {
         <>
           <p className="hint">장날마다 희귀품 셋이 돌아가며 나와요. 한 가지씩 하나만 살 수 있어요. · 가진 닢 {coins}</p>
           <ul className="trade-list">
+            <ScrollRow />
             {rareStall(game.clock.day).map((id) => {
               const block = canBuyRare(game, id)
               return (
@@ -131,5 +133,23 @@ export function TradeBoard() {
         <button onClick={closeModal}>{T.ui.close}</button>
       </div>
     </div>
+  )
+}
+
+/** 떠돌이 상인의 옛 두루마리: 장날마다 두 개까지, 사면 지금 책의 다음 이야기 */
+function ScrollRow() {
+  const game = useGame((s) => s.game)
+  const buyScroll = useGame((s) => s.buyScroll)
+  const block = canBuyScroll(game, CONTENT)
+  if (block === 'notMarket') return null
+  return (
+    <li className="with-icon">
+      <span className="trade-icon">📜</span>
+      <span className="trade-get">옛 두루마리 (다음 이야기)</span>
+      <span className="trade-pay">{fill(T.ui.coins, { n: SCROLL_PRICE })}</span>
+      <button disabled={block !== null} onClick={buyScroll}>
+        {block === 'done' ? '다 샀어요' : block === 'noPiece' ? '없음' : T.ui.tradeBuy}
+      </button>
+    </li>
   )
 }

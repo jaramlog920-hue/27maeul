@@ -71,6 +71,9 @@ import {
   nameChild,
   recordProgress,
   openEvent,
+  nightCopy,
+  libraryRead,
+  buyScroll,
   nextTripPiece,
   mutterWaiting,
   hearMutter,
@@ -317,6 +320,10 @@ interface Store {
   /** 집 안에서 재료 궤짝의 것을 가방으로 */
   takeChest: (id: ItemId) => void
   readAt: (pieceId: string) => void
+  /** 성경 이야기를 더 모으는 길: 밤 필사·서고 열람석·옛 두루마리 (모으면 원래 본문 창) */
+  nightCopy: () => void
+  libraryRead: () => void
+  buyScroll: () => void
   blanket: () => void
   drink: () => void
   plantAt: (at: Tile, crop: CropId) => void
@@ -399,7 +406,7 @@ function sayChildHelp(g: GameState, say: (text: string, ms?: number) => void) {
   if (g.child && g.flags.kidMailDay === g.clock.day) {
     const n = g.child.name
     const mk = g.flags.kidMailKind
-    if (mk === 0) say(`${n}의 편지: “${KID_LETTERS[(g.clock.day * 7) % KID_LETTERS.length]}”`, 5000)
+    if (mk === 0) say(`${n}의 편지: “${KID_LETTERS[(g.clock.day * 7) % KID_LETTERS.length]}”${g.flags.kidMailPiece === g.clock.day ? ' · 편지에 이야기 한 조각이 들어 있었어요' : ''}`, 5000)
     else if (mk === 1) say(`${n}에게서 선물이 왔어요 · ${itemList(JOB_GIFTS[g.child.job!])}`, 4000)
     else if (mk === 2) say(`${n}에게서 닢 ${kidCoins(g.clock.day)}이 왔어요`, 4000)
     return
@@ -933,10 +940,16 @@ export const useGame = create<Store>((set, get) => {
     gift: (neighborId, item) => {
       const def = CONTENT.neighbors.find((n) => n.id === neighborId)
       if (!def) return
-      const r = giveGift(get().game, def, item)
+      const r = giveGift(get().game, def, item, CONTENT)
       if (!r) return
       sfx('gift')
       const l = NEIGHBOR_LINES[neighborId]
+      // 친구 이상인 이웃은 선물을 받고 이야기를 한 조각 더 들려준다 (원래 본문 창)
+      if (r.pieceId) {
+        get().say(`${def.role}이(가) 고맙다며 이야기를 하나 더 들려줘요`, 3400)
+        set({ game: persist(r.state), modal: { kind: 'passage', pieceId: r.pieceId, askLine: false } })
+        return
+      }
       set({ game: persist(r.state), modal: { kind: 'talk', neighborId, line: r.liked ? l.giftLiked : l.giftPlain } })
     },
 
@@ -1187,6 +1200,27 @@ export const useGame = create<Store>((set, get) => {
       if (!next) return
       sfx('gift')
       set({ game: persist(next), modal: { kind: 'talk', neighborId: npc, line: T.ui.homeOrdered } })
+    },
+    nightCopy: () => {
+      const r = nightCopy(get().game, CONTENT)
+      if (!r) return
+      sfx('scroll')
+      get().say('등잔 아래에서 다음 이야기를 옮겨 적었어요')
+      set({ game: persist(r.state), modal: { kind: 'passage', pieceId: r.pieceId, askLine: false } })
+    },
+    libraryRead: () => {
+      const r = libraryRead(get().game, CONTENT)
+      if (!r) return
+      sfx('scroll')
+      get().say('서고 열람석에서 다음 이야기를 옮겨 적었어요')
+      set({ game: persist(r.state), modal: { kind: 'passage', pieceId: r.pieceId, askLine: false } })
+    },
+    buyScroll: () => {
+      const r = buyScroll(get().game, CONTENT)
+      if (!r) return
+      sfx('scroll')
+      get().say('떠돌이 상인에게서 옛 두루마리를 샀어요')
+      set({ game: persist(r.state), modal: { kind: 'passage', pieceId: r.pieceId, askLine: false } })
     },
     readAt: (pieceId) => {
       const r = readScripture(get().game, pieceId)

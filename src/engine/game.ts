@@ -1239,7 +1239,7 @@ export function finishHelp(s: GameState, def: NeighborDef): GameState {
 }
 
 /** 선물은 하루에 한 이웃에게 한 번. 좋아하는 것이면 마음이 더 오른다 */
-export function giveGift(s: GameState, def: NeighborDef, item: ItemId): { state: GameState; liked: boolean } | null {
+export function giveGift(s: GameState, def: NeighborDef, item: ItemId, content?: GameContent): { state: GameState; liked: boolean; pieceId?: string } | null {
   if (s.gifted.includes(def.id)) return null
   const left = take(s.inv, { [item]: 1 })
   if (!left) return null
@@ -1252,7 +1252,10 @@ export function giveGift(s: GameState, def: NeighborDef, item: ItemId): { state:
   // 생일에 건넨 선물은 마음이 두 배로 오른다 (싫어하는 것은 생일에도 그대로)
   const mul = isBirthday(def.id, s.clock.day) ? BIRTHDAY_MUL : 1
   const given = heartUp({ ...base, inv: left, gifted: [...s.gifted, def.id], notebook }, def.id, disliked ? 0 : (liked ? GAIN.giftLiked : GAIN.giftPlain) * mul)
-  return { state: train(given, 'charm', XP.gift), liked }
+  const trained = train(given, 'charm', XP.gift)
+  // 친구 이상인 이웃은 선물을 받으면 이야기를 한 조각 더 들려준다 (싫어하는 것이면 없음)
+  const story = content && !disliked && (s.hearts[def.id] ?? 0) >= GIFT_STORY_HEARTS ? extraPiece(trained, content) : null
+  return story ? { state: story.state, liked, pieceId: story.pieceId } : { state: trained, liked }
 }
 
 /** 이웃이 싫어하는 것 (neighbors.json과 people.json을 함께 본다) */
@@ -1465,6 +1468,69 @@ export function applyTripRewards(s: GameState, rewards: readonly TripReward[], c
   }
   return next
 }
+
+// ── 성경 이야기를 더 모으는 길 (2026-09-30 사용자): 밤 필사·이웃 선물·서고 열람석·떠돌이 상인의 두루마리·어른이 된 아이의 편지 ──
+
+/** 지금 책의 다음 조각 하나를 모은다 (여행 판과 같은 규칙 — 편지 책은 편지 나르는 이웃이 가져온다) */
+export function extraPiece(s: GameState, content: GameContent): { state: GameState; pieceId: string } | null {
+  const id = nextTripPiece(s, content)
+  if (!id) return null
+  return { state: train(takeChapters(s, [id], content), 'wit', XP.listen), pieceId: id }
+}
+
+/** 밤 필사: 밤에 책상에서 등잔 기름 한 병으로 다음 조각을 옮겨 적는다 (원할 때마다, 기름이 있는 만큼) */
+export const NIGHT_COPY_OIL = 1
+export const NIGHT_COPY_MINUTES = 40
+export type ExtraBlock = 'notNight' | 'noOil' | 'noPiece' | 'coins' | 'done' | 'notMarket' | null
+export function canNightCopy(s: GameState, content: GameContent): ExtraBlock {
+  if (!needsLamp(s)) return 'notNight'
+  if (stockOf(s, 'oil') < NIGHT_COPY_OIL) return 'noOil'
+  if (!nextTripPiece(s, content)) return 'noPiece'
+  return null
+}
+export function nightCopy(s: GameState, content: GameContent): { state: GameState; pieceId: string } | null {
+  if (canNightCopy(s, content)) return null
+  const r = extraPiece(useStock(s, { oil: NIGHT_COPY_OIL })!, content)!
+  return { state: passTime({ ...r.state, needs: work(r.state.needs, 4) }, NIGHT_COPY_MINUTES), pieceId: r.pieceId }
+}
+
+/** 서고 열람석: 닢 셋을 내고 한 조각을 옮겨 적어 온다 (하루 두 번까지) */
+export const LIBRARY_READ_PRICE = 3
+export const LIBRARY_READS_PER_DAY = 2
+export function canLibraryRead(s: GameState, content: GameContent): ExtraBlock {
+  const used = s.flags.libReadDay === s.clock.day ? s.flags.libReads ?? 0 : 0
+  if (used >= LIBRARY_READS_PER_DAY) return 'done'
+  if (s.coins < LIBRARY_READ_PRICE) return 'coins'
+  if (!nextTripPiece(s, content)) return 'noPiece'
+  return null
+}
+export function libraryRead(s: GameState, content: GameContent): { state: GameState; pieceId: string } | null {
+  if (canLibraryRead(s, content)) return null
+  const used = s.flags.libReadDay === s.clock.day ? s.flags.libReads ?? 0 : 0
+  const paid = { ...s, coins: s.coins - LIBRARY_READ_PRICE, flags: { ...s.flags, libReadDay: s.clock.day, libReads: used + 1 } }
+  const r = extraPiece(paid, content)!
+  return { state: passTime(r.state, 30), pieceId: r.pieceId }
+}
+
+/** 떠돌이 상인의 옛 두루마리: 장날에만, 한 장날에 두 개까지 */
+export const SCROLL_PRICE = 12
+export const SCROLLS_PER_MARKET = 2
+export function canBuyScroll(s: GameState, content: GameContent): ExtraBlock {
+  if (!isMarketDay(s.clock.day)) return 'notMarket'
+  const used = s.flags.scrollDay === s.clock.day ? s.flags.scrolls ?? 0 : 0
+  if (used >= SCROLLS_PER_MARKET) return 'done'
+  if (s.coins < SCROLL_PRICE) return 'coins'
+  if (!nextTripPiece(s, content)) return 'noPiece'
+  return null
+}
+export function buyScroll(s: GameState, content: GameContent): { state: GameState; pieceId: string } | null {
+  if (canBuyScroll(s, content)) return null
+  const used = s.flags.scrollDay === s.clock.day ? s.flags.scrolls ?? 0 : 0
+  return extraPiece({ ...s, coins: s.coins - SCROLL_PRICE, flags: { ...s.flags, scrollDay: s.clock.day, scrolls: used + 1 } }, content)
+}
+
+/** 이웃에게 선물: 마음이 친구(10) 이상인 이웃은 선물을 받으면 이야기 한 조각을 더 들려준다 */
+export const GIFT_STORY_HEARTS = 10
 
 /** 여행 판의 성경 칸: 지금 책의 지금 장에서 아직 모으지 않은 다음 조각 (이웃을 찾아가지 않아도) — 편지 책은 편지 나르는 이웃이 가져온다 */
 export function nextTripPiece(s: Pick<GameState, 'activeBook' | 'progress' | 'collected'>, content: GameContent, taken: readonly string[] = []): string | null {
@@ -2499,6 +2565,11 @@ function childMorning(s: GameState, content: GameContent): GameState {
     if (mail) {
       if (mail === 'gift') next = { ...next, inv: addGift(next.inv, JOB_GIFTS[child.job!]) }
       if (mail === 'coins') next = { ...next, coins: next.coins + kidCoins(day) }
+      // 필경사·학자가 된 아이는 편지에 이야기 한 조각을 넣어 보낸다
+      if (mail === 'letter' && (child.job === 'scribe' || child.job === 'scholar')) {
+        const story = extraPiece(next, content)
+        if (story) next = { ...story.state, flags: { ...story.state.flags, kidMailPiece: day } }
+      }
       next = { ...next, todayNotes: [...next.todayNotes, `kidMail:${mail}`], flags: { ...next.flags, kidMailDay: day, kidMailKind: ['letter', 'gift', 'coins'].indexOf(mail) } }
     }
     // 떠난 아이는 날마다 돕지 않는다

@@ -4,6 +4,7 @@ import { fill, T } from '../../content/text'
 import { bookDone, openDoorsFor } from '../../engine/books'
 import { has } from '../../engine/items'
 import { RETRY_COST } from '../../engine/library'
+import { canLibraryRead, LIBRARY_READ_PRICE } from '../../engine/game'
 import { GOSPELS } from '../../engine/types'
 import { SpineMarks } from './SpineMarks'
 import { useGame } from '../../store/game-store'
@@ -57,9 +58,27 @@ export function Library() {
           open.includes(i) ? <li key={r}>{fill(T.library.roomOpen, { room: r })}</li> : <li key={r}>🔒 {r}</li>,
         )}
       </ul>
+      <ReadingSeat />
       <div className="actions">
         <button onClick={closeModal}>{T.ui.close}</button>
       </div>
+    </div>
+  )
+}
+
+/** 서고 열람석: 닢을 내고 지금 책의 다음 이야기를 옮겨 적는다 (하루 두 번) */
+function ReadingSeat() {
+  const game = useGame((s) => s.game)
+  const libraryRead = useGame((s) => s.libraryRead)
+  const block = canLibraryRead(game, CONTENT)
+  const hint = block === 'done' ? '오늘은 열람석을 두 번 다 썼어요.' : block === 'coins' ? '닢이 모자라요.' : block === 'noPiece' ? '지금 책에서 더 옮겨 적을 이야기가 없어요.' : '지금 책의 다음 이야기를 옮겨 적어요 (하루 두 번).'
+  return (
+    <div className="reading-seat">
+      <h3>열람석</h3>
+      <p className="hint">{hint}</p>
+      <button disabled={block !== null} onClick={libraryRead}>
+        옮겨 적기 · {LIBRARY_READ_PRICE}닢
+      </button>
     </div>
   )
 }
