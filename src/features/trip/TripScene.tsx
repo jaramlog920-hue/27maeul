@@ -8,7 +8,7 @@ import { itemName, T } from '../../content/text'
 import { nextTripPiece } from '../../engine/game'
 import { STAT_IDS, type StatId } from '../../engine/stats'
 import { DESTS, type DestId } from '../../engine/travel'
-import { NEW_BOARD, playTurn, rollDie, stoneTile, TRIP_H, TRIP_TURNS, walkPath, type BoardState, type TripReward } from '../../engine/trip-board'
+import { NEW_BOARD, playTurn, rollDie, stoneTile, TRIP_TURNS, walkPath, type BoardState, type TripReward } from '../../engine/trip-board'
 import type { Facing, ItemId } from '../../engine/types'
 import { TILE, VIEW_W } from '../../engine/world'
 import { createTripRenderer, type TripActor } from '../../render/renderer'
@@ -100,7 +100,8 @@ export function TripScene({ dest, withChild }: { dest: DestId; withChild: boolea
         // 폭은 마을과 같은 16칸, 높이는 화면 비율대로 (판 전체 높이까지)
         const cw = canvas.clientWidth || 1
         const ch = canvas.parentElement?.clientHeight || cw
-        const viewH = Math.max(12, Math.min(TRIP_H, Math.floor((ch / cw) * VIEW_W)))
+        // 화면 높이를 꽉 채운다 (올림 — 넘치는 몇 화소는 잘린다, 판보다 크면 판을 가운데에)
+        const viewH = Math.max(12, Math.ceil((ch / cw) * VIEW_W))
         const k = Math.max(1, Math.min(6, Math.ceil((cw * (window.devicePixelRatio || 1)) / (VIEW_W * TILE))))
         if (canvas.width !== VIEW_W * TILE * k || r.view.h !== viewH) {
           r.view.w = VIEW_W
@@ -141,11 +142,13 @@ export function TripScene({ dest, withChild }: { dest: DestId; withChild: boolea
           kd.x += dx * k2
           kd.y += dy * k2
         } else kd.walking = false
-        r.draw(dest, useGame.getState().game, m, withChild ? kd : null, (now - t0) / 1000, dt)
+        // 길의 자리는 2×2 덩이의 왼쪽 위 칸 — 사람은 덩이 한가운데(반 칸 오른쪽·아래)에 선다
+        const mid = (a: TripActor) => ({ ...a, x: a.x + 0.5, y: a.y + 0.5 })
+        r.draw(dest, useGame.getState().game, mid(m), withChild ? mid(kd) : null, (now - t0) / 1000, dt)
         // 말풍선 자리 (화면 비율로)
         const scale = cw / (VIEW_W * TILE)
         const offX = r.cam.x
-        bubbleAt.current = { x: ((m.x + 0.5 - offX) * TILE) * scale, y: ((m.y - r.cam.y) * TILE - 18) * scale }
+        bubbleAt.current = { x: ((m.x + 1 - offX) * TILE) * scale, y: ((m.y + 0.5 - r.cam.y) * TILE - 18) * scale }
         const el = document.querySelector<HTMLElement>('.ts-bubble')
         if (el) {
           el.style.left = `${bubbleAt.current.x}px`

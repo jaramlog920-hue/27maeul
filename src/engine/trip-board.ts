@@ -108,30 +108,27 @@ export function rollDie(rnd: () => number): number {
   return 1 + Math.min(5, Math.floor(rnd() * 6))
 }
 
-// ── 여행 판의 동네 (새 장면): 마을과 같은 16픽셀 칸, 같은 그림 ──
-// 둘레 길(흙길 한 바퀴) 위에 돌판 24개를 1–2칸씩 띄워 놓는다 — 길 위의 이정표처럼.
-// 가운데는 광장(분수 우물·좌판·벤치·나무)으로 비워 두고, 위쪽에 집 셋, 아래는 항구(물·잔교) 또는 언덕 숲
+// ── 축제 정원 (여행 판 전용 장소, 2026-09-30 사용자 설계) ──
+// 마을 지도를 옮겨 쓰지 않는다: 세로로 긴 정원(휴대폰 세로 화면에 맞춤) 둘레를 모서리가 둥근 판석 길이 한 바퀴 돈다.
+// 보드 칸은 그 판석 길의 일부(문양을 새긴 큰 돌판). 가운데는 잔디 정원과 꽃밭, 한가운데 분수(항구) 또는 큰 나무(언덕).
+// 바깥 둘레는 생울타리, 같은 간격의 축제 등불, 맨 위 깃발 아치. 아래는 물가(항구) 또는 풀밭(언덕).
+// 범례(이 장소만): @ 판석 길 · c 돌바닥 · & 생울타리 · ^ 꽃밭 · ! 등불 기둥 · F 분수(2×2) · O 큰 나무(2×2) · A 입구 아치 기둥
+//   그 밖에는 마을과 같은 그림: . 풀 · T 나무 · B 벤치 · * 꽃 · ~ 물 · = 잔교 · u 배 · x 울타리 · r 갈대
 
-export const TRIP_W = 24
-export const TRIP_H = 26
-/** 둘레 길 (왼쪽 위 → 시계 방향) */
-const RING = { x0: 4, y0: 7, x1: 19, y1: 21 }
+export const TRIP_W = 16
+export const TRIP_H = 34
+/**
+ * 판석 길은 두 칸 폭. 길 위의 자리는 2×2 칸 덩이의 왼쪽 위 칸으로 센다 (한 칸씩 나아간다).
+ * 보드 칸은 이 덩이만 한 큼직한 돌판(2×2 칸), 돌판 사이에는 판석 길 한 칸
+ */
+const RING = { x0: 1, y0: 4, x1: 13, y1: 28 }
 
-export interface TripHouse {
-  id: string
-  x0: number
-  y0: number
-  x1: number
-  y1: number
-  doorX: number
-}
 export interface TripLayout {
-  /** 칸 글자 (마을 지도와 같은 범례) */
+  /** 칸 글자 */
   map: string[]
-  houses: TripHouse[]
 }
 
-/** 둘레 길 칸들 (시계 방향, 왼쪽 위 모서리에서 시작) */
+/** 판석 길의 자리들 (2×2 덩이의 왼쪽 위 칸, 시계 방향, 왼쪽 위에서 시작) */
 export const RING_TILES: readonly { x: number; y: number }[] = (() => {
   const out: { x: number; y: number }[] = []
   const { x0, y0, x1, y1 } = RING
@@ -142,16 +139,16 @@ export const RING_TILES: readonly { x: number; y: number }[] = (() => {
   return out
 })()
 
-/** 돌판 i가 놓인 둘레 길의 자리 (고르게 띄워서) */
+/** 돌판 i가 놓인 판석 길의 자리 (고르게 띄워서) */
 export function stoneRingIndex(i: number): number {
   return Math.round((i * RING_TILES.length) / BOARD.length) % RING_TILES.length
 }
+/** 돌판 i의 왼쪽 위 칸 (돌판은 2×2 칸) */
 export function stoneTile(i: number): { x: number; y: number } {
   return RING_TILES[stoneRingIndex(i)]
 }
 
 const layoutCache = new Map<string, TripLayout>()
-/** 여행지의 동네: 항구 마을은 아래가 바다와 잔교, 언덕 너머 마을은 아래가 숲과 양 우리 */
 export function tripLayout(dest: 'harbor' | 'hillTown'): TripLayout {
   const hit = layoutCache.get(dest)
   if (hit) return hit
@@ -162,57 +159,66 @@ export function tripLayout(dest: 'harbor' | 'hillTown'): TripLayout {
   const rect = (x0: number, y0: number, x1: number, y1: number, c: string) => {
     for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) set(x, y, c)
   }
-  // 테두리 숲
-  rect(0, 0, TRIP_W - 1, 0, 'T')
-  rect(0, 0, 0, TRIP_H - 1, 'T')
-  rect(TRIP_W - 1, 0, TRIP_W - 1, TRIP_H - 1, 'T')
-  // 위쪽 집 셋 (보통 집 7×5, 가운데는 작은 집) — 문 아래 앞마당, 앞마당에서 둘레 길로
-  const houses: TripHouse[] = [
-    { id: dest === 'harbor' ? 'tripA' : 'tripD', x0: 2, y0: 1, x1: 8, y1: 5, doorX: 5 },
-    { id: dest === 'harbor' ? 'tripB' : 'tripE', x0: 10, y0: 2, x1: 14, y1: 5, doorX: 12 },
-    { id: dest === 'harbor' ? 'tripC' : 'tripF', x0: 16, y0: 1, x1: 22, y1: 5, doorX: 19 },
-  ]
-  for (const h of houses) {
-    rect(h.x0, h.y0, h.x1, h.y1 - 2, 'R')
-    rect(h.x0, h.y1 - 1, h.x1, h.y1, '#')
-    set(h.doorX, h.y1, 'D')
-    set(h.doorX, h.y1 + 1, ',')
-    for (const x of [h.x0, h.x1]) set(x, h.y1 + 1, '*')
+  // 판석 길 띠 (2×2 덩이를 모두 칠한다): 바깥 x 1–14, y 4–29
+  const x0 = RING.x0
+  const y0 = RING.y0
+  const x1 = RING.x1 + 1
+  const y1 = RING.y1 + 1
+  const cx = (x0 + x1) / 2
+  const cy = Math.floor((y0 + y1) / 2)
+  // 맨 위: 숲 한 줄, 입구 아치(기둥 둘, 깃발은 그림), 아치에서 판석 길로 들어오는 돌바닥
+  rect(0, 0, TRIP_W - 1, 1, 'T')
+  set(Math.floor(cx) - 1, 2, 'A')
+  set(Math.ceil(cx) + 1, 2, 'A')
+  rect(Math.floor(cx), 2, Math.ceil(cx), y0 - 1, 'c')
+  // 바깥 생울타리 (정원을 감싼다), 입구만 트고
+  for (let y = 2; y <= y1 + 1; y++) {
+    set(0, y, '&')
+    set(TRIP_W - 1, y, '&')
   }
-  // 둘레 길 (흙길 한 바퀴)
-  for (const t of RING_TILES) set(t.x, t.y, ',')
-  // 가운데 광장: 분수 우물, 좌판 둘, 벤치 둘, 네 귀퉁이 나무, 꽃
-  rect(RING.x0 + 3, RING.y0 + 3, RING.x1 - 3, RING.y1 - 3, ',')
-  const cx = Math.floor((RING.x0 + RING.x1) / 2)
-  const cy = Math.floor((RING.y0 + RING.y1) / 2)
-  set(cx, cy, 'w')
-  set(RING.x0 + 4, RING.y0 + 4, 'm')
-  set(RING.x1 - 4, RING.y0 + 4, 'm')
-  set(RING.x0 + 4, RING.y1 - 4, 'B')
-  set(RING.x1 - 4, RING.y1 - 4, 'B')
-  for (const [x, y] of [[RING.x0 + 2, RING.y0 + 2], [RING.x1 - 2, RING.y0 + 2], [RING.x0 + 2, RING.y1 - 2], [RING.x1 - 2, RING.y1 - 2]]) set(x, y, 'T')
-  for (const [x, y] of [[RING.x0 + 2, cy], [RING.x1 - 2, cy], [cx, RING.y0 + 2], [cx + 1, RING.y1 - 2]]) set(x, y, '*')
-  // 둘레 길 바깥 옆: 나무를 두 칸마다 (규칙적으로)
-  for (let y = RING.y0 + 1; y < RING.y1; y += 3) {
-    set(RING.x0 - 2, y, 'T')
-    set(RING.x1 + 2, y, 'T')
+  for (let x = 1; x < TRIP_W - 1; x++) if (g[3][x] === '.') set(x, 3, '&')
+  for (const t of RING_TILES) rect(t.x, t.y, t.x + 1, t.y + 1, '@')
+  // 안쪽 정원 (x 3–12, y 6–27): 돌바닥 띠 → 잔디 → 꽃밭(좌우 대칭) → 한가운데 분수 또는 큰 나무
+  const ix0 = x0 + 2
+  const iy0 = y0 + 2
+  const ix1 = x1 - 2
+  const iy1 = y1 - 2
+  rect(ix0, iy0, ix1, iy1, 'c')
+  rect(ix0 + 1, iy0 + 1, ix1 - 1, iy1 - 1, '.')
+  for (const yy of [iy0 + 3, iy1 - 4]) {
+    rect(ix0 + 2, yy, ix0 + 3, yy + 1, '^')
+    rect(ix1 - 3, yy, ix1 - 2, yy + 1, '^')
   }
-  // 아래쪽
+  // 가운데 세로 산책길, 한가운데 분수(항구) 또는 큰 나무(언덕)
+  rect(Math.floor(cx), iy0 + 1, Math.ceil(cx), iy1 - 1, 'c')
+  rect(Math.floor(cx) - 2, cy - 2, Math.ceil(cx) + 1, cy + 1, 'c')
+  rect(Math.floor(cx), cy - 1, Math.ceil(cx), cy, dest === 'harbor' ? 'F' : 'O')
+  // 등불 기둥: 정원 가장자리에 다섯 줄마다 좌우 대칭
+  for (let y = iy0 + 2; y < iy1; y += 5) {
+    set(ix0 + 1, y, '!')
+    set(ix1 - 1, y, '!')
+  }
+  // 벤치 넷 (분수·나무를 바라보게), 나무 넷 (정원 네 귀퉁이)
+  for (const yy of [cy - 3, cy + 2]) {
+    set(ix0 + 2, yy, 'B')
+    set(ix1 - 2, yy, 'B')
+  }
+  for (const [x, y] of [[ix0 + 1, iy0 + 1], [ix1 - 1, iy0 + 1], [ix0 + 1, iy1 - 1], [ix1 - 1, iy1 - 1]]) set(x, y, 'T')
+  // 아래 (y 30–33): 항구는 물가와 잔교, 언덕은 풀밭과 양 울타리
   if (dest === 'harbor') {
-    rect(1, RING.y1 + 2, TRIP_W - 2, TRIP_H - 1, '~')
-    rect(1, RING.y1 + 1, TRIP_W - 2, RING.y1 + 1, ',')
-    rect(cx, RING.y1 + 2, cx, TRIP_H - 2, '=')
-    set(cx + 1, TRIP_H - 2, 'u')
-    for (let x = 2; x <= 6; x++) set(x, RING.y1 + 2, 'r')
-    for (let x = 17; x <= 21; x++) set(x, RING.y1 + 2, 'r')
+    rect(0, y1 + 2, TRIP_W - 1, TRIP_H - 1, '~')
+    rect(1, y1 + 2, 4, y1 + 2, 'r')
+    rect(11, y1 + 2, 14, y1 + 2, 'r')
+    rect(Math.floor(cx), y1 + 1, Math.floor(cx), y1 + 1, 'c')
+    rect(Math.floor(cx), y1 + 2, Math.floor(cx), TRIP_H - 1, '=')
+    set(Math.floor(cx) + 1, TRIP_H - 1, 'u')
   } else {
     rect(0, TRIP_H - 1, TRIP_W - 1, TRIP_H - 1, 'T')
-    rect(2, RING.y1 + 2, 8, TRIP_H - 2, 'x')
-    rect(3, RING.y1 + 3, 7, TRIP_H - 3, '.')
-    rect(11, RING.y1 + 2, 17, TRIP_H - 3, 'y')
-    for (let x = 19; x <= 22; x += 2) set(x, RING.y1 + 3, 'T')
+    rect(2, y1 + 1, 6, TRIP_H - 2, 'x')
+    rect(3, y1 + 2, 5, TRIP_H - 3, '.')
+    for (const x of [9, 11, 13]) set(x, y1 + 2, 'T')
   }
-  const layout = { map: g.map((r) => r.join('')), houses }
+  const layout = { map: g.map((r) => r.join('')) }
   layoutCache.set(dest, layout)
   return layout
 }

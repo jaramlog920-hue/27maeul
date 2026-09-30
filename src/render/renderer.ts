@@ -1849,19 +1849,127 @@ function tripMapFor(dest: 'harbor' | 'hillTown', season: Season): HTMLCanvasElem
   c.width = TRIP_W * TILE
   c.height = TRIP_H * TILE
   const g = c.getContext('2d')!
-  const at = (x: number, y: number) => layout.map[y]?.[x] ?? 'T'
-  const houseOf = (x: number, y: number) => layout.houses.find((h) => x >= h.x0 && x <= h.x1 && y >= h.y0 && y <= h.y1)
+  const at = (x: number, y: number) => layout.map[y]?.[x] ?? '&'
+  const SPECIAL = '@c&^!FOA'
   for (let y = 0; y < TRIP_H; y++)
     for (let x = 0; x < TRIP_W; x++) {
       const ch = at(x, y)
-      const h = houseOf(x, y)
-      drawGround(g, h ? '.' : ch, x, y, season, at)
-      if (h) {
-        if (ch === '#' || ch === 'D') houseWallTile(g, x, y, ch, h.id, h)
-      } else if (ch !== '.' && ch !== ',') drawObject(g, ch, x, y, season)
+      const px = x * TILE
+      const py = y * TILE
+      const f = (color: string, dx: number, dy: number, w: number, h: number) => {
+        g.fillStyle = color
+        g.fillRect(px + dx, py + dy, w, h)
+      }
+      // 이 장소만의 바닥: 판석 길과 돌바닥은 흙길이 아니다 (마을과 다른 곳이라는 느낌)
+      if (ch === '@') {
+        f('#d9d3c4', 0, 0, 16, 16)
+        f('#b9b1a0', 0, (x + y) % 2 ? 7 : 8, 16, 1)
+        f('#b9b1a0', (x * 5 + y * 3) % 2 ? 5 : 10, 0, 1, 8)
+        f('#b9b1a0', (x * 3 + y) % 2 ? 11 : 3, 8, 1, 8)
+        f('#ebe6da', 1, 1, 3, 1)
+        continue
+      }
+      if (ch === 'c' || ch === 'F' || ch === 'O') {
+        f('#eadcb9', 0, 0, 16, 16)
+        for (const [dx, dy] of [[0, 0], [8, 0], [4, 8], [12, 8], [-4, 8]]) {
+          f('#d3c096', dx, dy + 7, 8, 1)
+          f('#d3c096', dx + 7, dy, 1, 8)
+        }
+        continue
+      } else drawGround(g, SPECIAL.includes(ch) ? '.' : ch, x, y, season, (xx, yy) => {
+        const n = at(xx, yy)
+        return n === '@' || n === 'c' ? ',' : n
+      })
+      switch (ch) {
+        case '&':
+          // 생울타리: 짙은 잎 덩이, 위쪽이 밝다
+          f('#2f7a2c', 0, 2, 16, 14)
+          f('#3d8a34', 1, 1, 14, 12)
+          f('#58a943', 2, 1, 5, 4)
+          f('#58a943', 9, 2, 5, 3)
+          f('rgba(20,40,10,0.25)', 0, 14, 16, 2)
+          break
+        case '^':
+          // 꽃밭: 흙 두둑 위에 촘촘한 꽃
+          f('#b98452', 1, 2, 14, 13)
+          for (let k = 0; k < 9; k++) {
+            const fx = 2 + ((k * 5 + x * 3) % 12)
+            const fy = 3 + ((k * 7 + y * 5) % 10)
+            f(C.flower[(k + x + y) % C.flower.length], fx, fy, 2, 2)
+            f('#58a943', fx, fy + 2, 1, 1)
+          }
+          break
+        case '!':
+          // 축제 등불 기둥: 나무 기둥, 붉은 초롱, 따뜻한 빛
+          f('rgba(60,40,10,0.2)', 5, 14, 6, 2)
+          f('#8d5f38', 7, 4, 2, 11)
+          f('#e2574c', 5, 1, 6, 5)
+          f('#ffd24a', 6, 2, 4, 3)
+          break
+        case 'A':
+          // 입구 아치 기둥
+          f('#8d5f38', 5, 0, 6, 16)
+          f('#b98452', 6, 0, 2, 16)
+          f('#6a4129', 4, 0, 8, 2)
+          break
+        default:
+          if (ch !== '.') drawObject(g, ch, x, y, season)
+      }
     }
-  for (const h of layout.houses) drawRoof(g, h.x0, h.y0, h.x1, h.y1 - 2, (HOUSE_STYLES[h.id] ?? PLAIN_STYLE).roof)
-  // 돌판 24개: 그림자, 넓적한 돌, 칸 색 테두리, 새긴 표시
+  // 분수·큰 나무 (두 칸×두 칸): 바닥을 다 깐 뒤에 왼쪽 위 칸에서 한 번에
+  for (let y = 0; y < TRIP_H; y++)
+    for (let x = 0; x < TRIP_W; x++) {
+      const ch = at(x, y)
+      if (ch !== 'F' && ch !== 'O') continue
+      const px = x * TILE
+      const py = y * TILE
+      const f = (color: string, dx: number, dy: number, w: number, h: number) => {
+        g.fillStyle = color
+        g.fillRect(px + dx, py + dy, w, h)
+      }
+      if (ch === 'F') {
+          // 분수: 두 칸×두 칸을 왼쪽 위 칸에서 한 번에
+          if (at(x - 1, y) !== 'F' && at(x, y - 1) !== 'F') {
+            f('rgba(60,40,10,0.2)', 1, 28, 30, 4)
+            f('#a39b8a', 1, 4, 30, 26)
+            f('#d9d3c4', 2, 3, 28, 26)
+            f(C.water, 5, 6, 22, 19)
+            f(C.water2, 7, 8, 8, 2)
+            f(C.water2, 17, 18, 6, 1)
+            f('#d9d3c4', 13, 10, 6, 9)
+            f(C.water2, 15, 4, 2, 8)
+            f('#ffffff', 15, 3, 2, 2)
+          }
+      } else {
+          // 오래된 큰 나무: 두 칸×두 칸
+          if (at(x - 1, y) !== 'O' && at(x, y - 1) !== 'O') {
+            f('rgba(60,40,10,0.22)', 2, 26, 28, 5)
+            f(C.trunk, 13, 16, 6, 13)
+            f(C.leaf2, 2, 4, 28, 16)
+            f(C.leaf2, 5, 1, 22, 22)
+            f(C.leaf, 4, 2, 24, 14)
+            f(C.leaf3, 8, 3, 9, 5)
+          }
+      }
+    }
+  // 입구 아치의 깃발 줄 (두 기둥 사이)
+  const arch = layout.map.findIndex((row) => row.includes('A'))
+  if (arch >= 0) {
+    const xs = [...layout.map[arch]].flatMap((ch, x) => (ch === 'A' ? [x] : []))
+    const ax0 = xs[0] * TILE + 8
+    const ax1 = xs[xs.length - 1] * TILE + 8
+    const ay = arch * TILE + 1
+    g.fillStyle = '#6a4129'
+    g.fillRect(ax0, ay, ax1 - ax0, 2)
+    const flags = ['#e2574c', '#ffd24a', '#5c86d4', '#58b85f', '#f07ab8']
+    for (let fx = ax0 + 2, k = 0; fx < ax1 - 4; fx += 6, k++) {
+      g.fillStyle = flags[k % flags.length]
+      g.fillRect(fx, ay + 2, 5, 3)
+      g.fillRect(fx + 1, ay + 5, 3, 2)
+      g.fillRect(fx + 2, ay + 7, 1, 1)
+    }
+  }
+  // 보드 칸: 판석 길의 일부인 큼직한 돌판 (2×2 칸) — 두꺼운 돌 테두리, 칸 색 띠, 크게 새긴 표시
   BOARD.forEach((cell, i) => {
     const t = stoneTile(i)
     const px = t.x * TILE
@@ -1870,16 +1978,17 @@ function tripMapFor(dest: 'harbor' | 'hillTown', season: Season): HTMLCanvasElem
       g.fillStyle = color
       g.fillRect(px + dx, py + dy, w, hh)
     }
-    f('rgba(60,40,10,0.22)', 1, 13, 14, 3)
-    f('#bda886', 1, 2, 14, 12)
-    f('#bda886', 2, 1, 12, 14)
-    f(STONE_TINT[cell], 2, 2, 12, 11)
-    f('#f3e7cc', 3, 3, 10, 9)
-    f('#fff8e6', 3, 3, 10, 1)
+    f('rgba(60,40,10,0.25)', 2, 29, 28, 3)
+    f('#8f877a', 1, 2, 30, 28)
+    f('#8f877a', 2, 1, 28, 30)
+    f(STONE_TINT[cell], 3, 3, 26, 24)
+    f('#f3e7cc', 6, 6, 20, 18)
+    f('#fff8e6', 6, 6, 20, 2)
+    f('rgba(0,0,0,0.12)', 3, 24, 26, 3)
     STONE_GLYPH[cell].forEach((row, yy) =>
       [...row].forEach((chh, xx) => {
         if (chh === '.') return
-        f(chh === 'k' ? '#4a3226' : chh === 'w' ? '#ffffff' : STONE_TINT[cell], 4 + xx, 3 + yy, 1, 1)
+        f(chh === 'k' ? '#4a3226' : chh === 'w' ? '#ffffff' : STONE_TINT[cell], 8 + xx * 2, 7 + yy * 2, 2, 2)
       }),
     )
   })

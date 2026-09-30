@@ -186,9 +186,11 @@ describe('여행 판 동네 (새 장면)', () => {
       const map = tripLayout(dest).map
       const idx = BOARD.map((_, i) => stoneRingIndex(i))
       expect(new Set(idx).size).toBe(BOARD.length)
-      for (let i = 1; i < idx.length; i++) expect(idx[i] - idx[i - 1]).toBeGreaterThanOrEqual(2)
-      for (let i = 0; i < BOARD.length; i++) expect(map[stoneTile(i).y][stoneTile(i).x]).toBe(',')
-      for (const t of RING_TILES) expect(map[t.y][t.x]).toBe(',')
+      // 2×2 돌판 사이에 판석 길 한 칸 이상
+      for (let i = 1; i < idx.length; i++) expect(idx[i] - idx[i - 1]).toBeGreaterThanOrEqual(3)
+      // 판석 길(두 칸 폭)은 마을 흙길이 아니라 이 장소의 판석
+      for (const t of RING_TILES) for (const [dx, dy] of [[0, 0], [1, 0], [0, 1], [1, 1]]) expect(map[t.y + dy][t.x + dx]).toBe('@')
+      expect(map.join('')).not.toContain(',')
     }
     const path = walkPath(22, 4)
     expect(path.at(-1)).toEqual(stoneTile(0))

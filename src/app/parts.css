@@ -1694,7 +1694,7 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
   justify-content: center;
   overflow: hidden;
 }
-.ts-stage { position: relative; width: 100%; max-width: 720px; height: 100%; display: flex; flex-direction: column; justify-content: center; }
+.ts-stage { position: relative; width: 100%; max-width: 720px; height: 100%; overflow: hidden; }
 .ts-canvas { display: block; width: 100%; image-rendering: pixelated; }
 .ts-hud {
   position: absolute;
