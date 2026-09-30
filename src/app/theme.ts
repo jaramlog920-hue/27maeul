@@ -3,7 +3,7 @@ export type ThemeId = 'olive' | 'sea' | 'vine' | 'pink'
 export const THEMES: readonly ThemeId[] = ['olive', 'sea', 'vine', 'pink']
 const KEY = 'twenty-seven/theme'
 /** 브라우저 위쪽 막대 색 (바탕색과 같게) */
-const BAR: Record<ThemeId, string> = { olive: '#1f2621', sea: '#223a4e', vine: '#241c26', pink: '#d392a2' }
+const BAR: Record<ThemeId, string> = { olive: '#1f2621', sea: '#223a4e', vine: '#241c26', pink: '#8c4f5d' }
 
 export function loadTheme(): ThemeId {
   try {
