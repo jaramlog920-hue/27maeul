@@ -25,12 +25,7 @@ describe('사람 도트', () => {
             valid(rows, PALETTE, SPRITE_W)
           }
   })
-  it('앞·뒤 걸음은 다리를 옆으로 벌리지 않고 한 다리씩 앞으로 (다리 칸 가로 폭이 서 있을 때와 같다)', () => {
-    /** 맨 아래 두 줄(서 있을 때 옷자락 끝·발) 아래의 다리 칸이 차지하는 가로 범위 */
-    const span = (rows: readonly string[], from: number) => {
-      const xs = rows.slice(from).flatMap((r) => [...r].flatMap((ch, x) => (ch === '.' ? [] : [x])))
-      return [Math.min(...xs), Math.max(...xs)]
-    }
+  it('앞·뒤 걸음은 몸이 뜨지 않고 한 발씩 번갈아 든다', () => {
     const avatar = withLookDefaults({ look: 'f', name: '바다' })
     for (const who of PEOPLE)
       for (const f of ['down', 'up'] as const)
@@ -40,18 +35,15 @@ describe('사람 도트', () => {
           const left = spriteRows(who, f, { frame: 1, blink: false, ...extra })
           const right = spriteRows(who, f, { frame: 2, blink: false, ...extra })
           for (const step of [left, right]) {
-            // 몸이 1px 뜨고(한 줄 길어짐) 내딛는 다리가 1px 길다
-            expect(step, `${who}/${f}`).toHaveLength(stand.length + 1)
+            expect(step, `${who}/${f}`).toHaveLength(stand.length)
             expect(step.slice(0, feet), `${who}/${f}`).toEqual(stand.slice(0, feet))
-            expect(span(step, feet), `${who}/${f}`).toEqual(span(stand, feet))
-            for (const r of step) expect(r).toHaveLength(SPRITE_W)
           }
-          // 왼다리 → 오른다리: 맨 아랫줄의 발이 한쪽씩
           const last = (rows: readonly string[]) => rows[rows.length - 1]
-          expect(last(left).slice(5).replace(/\./g, '')).toBe('')
-          expect(last(left).slice(0, 5).replace(/\./g, '')).not.toBe('')
-          expect(last(right).slice(0, 5).replace(/\./g, '')).toBe('')
-          expect(last(right).slice(5).replace(/\./g, '')).not.toBe('')
+          // 왼발을 들면 왼쪽 발끝이 비고, 오른발을 들면 오른쪽이 빈다
+          expect(last(left).slice(0, 5).replace(/\./g, '')).toBe('')
+          expect(last(left).slice(5).replace(/\./g, '')).not.toBe('')
+          expect(last(right).slice(5).replace(/\./g, '')).toBe('')
+          expect(last(right).slice(0, 5).replace(/\./g, '')).not.toBe('')
         }
   })
   it('옆모습 걸음은 지금처럼 앞뒤로 벌린다', () => {
