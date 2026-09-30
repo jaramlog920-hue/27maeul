@@ -32,7 +32,7 @@ export const PALETTE: Record<string, string> = {
   // 새 이웃 넷 — o·l·d·D는 주인공 옷 글자(writerPalette)라 비어 있는 글자를 쓴다
   t: '#4880b4', T: '#3c6c9c', // 편지 나르는 이웃
   A: '#bc6c54', B: '#a45a44', // 주막 주인
-  J: '#5cacb8', w: '#3c808c', // 어부
+  J: '#5cacb8', w: '#3c808c', '7': '#6c6460', // 어부 (7: 잿빛 머리 — 바닷바람에 센 머리)
   v: '#c8a04c', m: '#ac883c', // 목수
 }
 
@@ -381,10 +381,9 @@ function dressNeighbor(who: Who, rows: string[], facing: Facing): string[] {
       // 붉은 겉옷, 흰 앞치마
       return recolor(rows, { r: 'A', R: 'B', b: 'a' })
     case 'fisher': {
-      // 청록 겉옷, 밀짚 머릿수건 (옆 가르마)
-      const out = recolor(rows, { h: 'e', r: 'J', R: 'w', b: 'e' })
-      hairShape(out, facing, 'sidePart', 'e')
-      capTop(out, 'e')
+      // 청록 겉옷, 잿빛 옆 가르마 머리
+      const out = recolor(rows, { h: '7', r: 'J', R: 'w', b: 'e' })
+      hairShape(out, facing, 'sidePart', '7')
       return out
     }
     case 'carpenter': {
