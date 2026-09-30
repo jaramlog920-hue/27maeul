@@ -145,7 +145,7 @@ function ScrollRow() {
   return (
     <li className="with-icon">
       <span className="trade-icon">📜</span>
-      <span className="trade-get">옛 두루마리 (다음 이야기)</span>
+      <span className="trade-get">다른 마을에서 온 옛 사본 (다음 대목)</span>
       <span className="trade-pay">{fill(T.ui.coins, { n: SCROLL_PRICE })}</span>
       <button disabled={block !== null} onClick={buyScroll}>
         {block === 'done' ? '다 샀어요' : block === 'noPiece' ? '없음' : T.ui.tradeBuy}

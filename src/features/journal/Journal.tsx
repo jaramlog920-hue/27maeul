@@ -186,7 +186,7 @@ function NeighborPage({ game, def }: { game: GameState; def: NeighborDef }) {
           ))}
         </ul>
       </dd>
-      <dt>들은 이야기</dt>
+      <dt>보여 준 사본</dt>
       <dd>{heard.length ? heard.map((id) => pieceById(id).ref).join(', ') : <span className="nb-none">아직 없음</span>}</dd>
       {promises.length > 0 && (
         <>

@@ -110,7 +110,7 @@ describe('이웃', () => {
     act(() => useGame.getState().talkTo(who))
     expect(screen.getByRole('dialog', { name: role })).toBeInTheDocument()
     expect(useGame.getState().game.hearts[who]).toBe(2)
-    await user.click(screen.getByRole('button', { name: '이야기 듣기' }))
+    await user.click(screen.getByRole('button', { name: '사본 보여 주세요' }))
     const got = useGame.getState().game.collected.at(-1)!
     expect(got.startsWith('lk-001-')).toBe(true)
     // 1장 조각은 모두 누가에만 → 나의 한 줄을 물어본다
@@ -454,7 +454,7 @@ describe('하루', () => {
     expect(screen.getByRole('dialog', { name: '작은 손님' })).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: '닫기' }))
     act(() => useGame.getState().open({ kind: 'journal' }))
-    expect(screen.getByText(/1일째\. 맑음\. 이야기를 들었다\(눅 15:8-10\)\./)).toBeInTheDocument()
+    expect(screen.getByText(/1일째\. 맑음\. 사본을 보고 베꼈다\(눅 15:8-10\)\./)).toBeInTheDocument()
   })
 
   it('일지 문장', () => {
@@ -659,7 +659,7 @@ describe('선반', () => {
     const shown = dexView(PIECES, useGame.getState().game.flags, 'all', false)
     expect(shown.books).toEqual(['mt', 'mk', 'lk', 'jn'])
     expect(shown.list.length).toBe(piecesOf('mt').length + piecesOf('mk').length + piecesOf('lk').length + piecesOf('jn').length)
-    expect(screen.getAllByText('아직 듣지 못한 이야기').length).toBe(shown.list.length - 2)
+    expect(screen.getAllByText('아직 찾지 못한 대목').length).toBe(shown.list.length - 2)
     // 사도행전 거르기 버튼은 방이 열리기 전에는 없다
     expect(screen.queryByRole('button', { name: '사도행전' })).toBeNull()
     // 책마다 장을 따로 묶고, 장은 처음에 접혀 있다
@@ -691,10 +691,10 @@ describe('선반', () => {
     expect(screen.queryByText('마가복음 1장')).toBeNull()
     expect(screen.queryByText('마태복음 1장')).toBeNull()
     expect(screen.getByText('누가복음 1장').closest('details')).not.toHaveAttribute('open')
-    expect(screen.getAllByText('아직 듣지 못한 이야기')).toHaveLength(piecesOf('lk').length - 1)
+    expect(screen.getAllByText('아직 찾지 못한 대목')).toHaveLength(piecesOf('lk').length - 1)
     // 한 복음서에만 거르기와 함께 쓴다
     await user.click(screen.getByRole('button', { name: /한 복음서에만/ }))
-    expect(screen.getAllByText('아직 듣지 못한 이야기')).toHaveLength(piecesOf('lk').filter((p) => p.stamps.length === 0).length - 1)
+    expect(screen.getAllByText('아직 찾지 못한 대목')).toHaveLength(piecesOf('lk').filter((p) => p.stamps.length === 0).length - 1)
     await user.click(screen.getByText('누가복음 15장'))
     await user.click(screen.getByRole('button', { name: /잃은 드라크마/ }))
     await user.click(screen.getByRole('button', { name: '뒤로' }))

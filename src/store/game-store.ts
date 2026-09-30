@@ -411,13 +411,13 @@ function snapAlbum(sceneId: string, capture: (() => string | null) | null) {
   if (photo) storeAlbumImage(photo, capture?.() ?? null)
 }
 /** 아침에 아이가 해 온 일 (계획 12): 한 줄 알림 */
-const CHILD_HELP_LINE = ['이웃 이야기를 듣고 왔어요', '파피루스나 잉크를 만들어 왔어요', '이웃에게 대신 인사하고 왔어요', '물이나 갈대를 날라 왔어요', '뜻밖의 선물을 들고 왔어요']
+const CHILD_HELP_LINE = ['이웃집 사본을 보고 한 대목 베껴 왔어요', '파피루스나 잉크를 만들어 왔어요', '이웃에게 대신 인사하고 왔어요', '물이나 갈대를 날라 왔어요', '뜻밖의 선물을 들고 왔어요']
 function sayChildHelp(g: GameState, say: (text: string, ms?: number) => void) {
   // 어른이 된 아이의 편지·선물·닢이 먼저
   if (g.child && g.flags.kidMailDay === g.clock.day) {
     const n = g.child.name
     const mk = g.flags.kidMailKind
-    if (mk === 0) say(`${n}의 편지: “${KID_LETTERS[(g.clock.day * 7) % KID_LETTERS.length]}”${g.flags.kidMailPiece === g.clock.day ? ' · 편지에 이야기 한 조각이 들어 있었어요' : ''}`, 5000)
+    if (mk === 0) say(`${n}의 편지: “${KID_LETTERS[(g.clock.day * 7) % KID_LETTERS.length]}”${g.flags.kidMailPiece === g.clock.day ? ' · 편지에 사본 한 장이 들어 있었어요' : ''}`, 5000)
     else if (mk === 1) say(`${n}에게서 선물이 왔어요 · ${itemList(JOB_GIFTS[g.child.job!])}`, 4000)
     else if (mk === 2) say(`${n}에게서 닢 ${kidCoins(g.clock.day)}이 왔어요`, 4000)
     return
@@ -959,7 +959,7 @@ export const useGame = create<Store>((set, get) => {
       const l = NEIGHBOR_LINES[neighborId]
       // 친구 이상인 이웃은 선물을 받고 이야기를 한 조각 더 들려준다 (원래 본문 창)
       if (r.pieceId) {
-        get().say(`${def.role}이(가) 고맙다며 이야기를 하나 더 들려줘요`, 3400)
+        get().say(`${def.role}이(가) 고맙다며 간직한 사본을 한 장 더 보여 줘요`, 3400)
         set({ game: persist(r.state), modal: { kind: 'passage', pieceId: r.pieceId, askLine: false } })
         return
       }
@@ -1033,7 +1033,7 @@ export const useGame = create<Store>((set, get) => {
       const next = takeTrip(get().game, CONTENT, dest, buys, piece ? [...rewards, { kind: 'piece', id: piece }] : rewards)
       if (!next) return
       set({ game: persist(next), modal: piece ? { kind: 'passage', pieceId: piece, askLine: false } : null })
-      get().say(piece ? `${DESTS[dest].name}에서 돌아와 여행길에서 들은 이야기를 펼쳐요` : `${DESTS[dest].name}에서 하룻밤 묵고 집으로 돌아왔어요`, 3400)
+      get().say(piece ? `${DESTS[dest].name} 회당에서 베껴 온 사본을 펼쳐요` : `${DESTS[dest].name}에서 하룻밤 묵고 집으로 돌아왔어요`, 3400)
       sayChildHelp(next, get().say)
     },
 
@@ -1234,21 +1234,21 @@ export const useGame = create<Store>((set, get) => {
       const r = nightCopy(get().game, CONTENT)
       if (!r) return
       sfx('scroll')
-      get().say('등잔 아래에서 다음 이야기를 옮겨 적었어요')
+      get().say('등잔 아래에서 빌려 온 사본을 옮겨 적었어요')
       set({ game: persist(r.state), modal: { kind: 'passage', pieceId: r.pieceId, askLine: false } })
     },
     libraryRead: () => {
       const r = libraryRead(get().game, CONTENT)
       if (!r) return
       sfx('scroll')
-      get().say('서고 열람석에서 다음 이야기를 옮겨 적었어요')
+      get().say('서고 열람석에서 사본을 옮겨 적었어요')
       set({ game: persist(r.state), modal: { kind: 'passage', pieceId: r.pieceId, askLine: false } })
     },
     buyScroll: () => {
       const r = buyScroll(get().game, CONTENT)
       if (!r) return
       sfx('scroll')
-      get().say('떠돌이 상인에게서 옛 두루마리를 샀어요')
+      get().say('떠돌이 상인에게서 다른 마을의 옛 사본을 샀어요')
       set({ game: persist(r.state), modal: { kind: 'passage', pieceId: r.pieceId, askLine: false } })
     },
     readAt: (pieceId) => {

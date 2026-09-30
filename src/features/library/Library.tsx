@@ -71,7 +71,7 @@ function ReadingSeat() {
   const game = useGame((s) => s.game)
   const libraryRead = useGame((s) => s.libraryRead)
   const block = canLibraryRead(game, CONTENT)
-  const hint = block === 'done' ? '오늘은 열람석을 두 번 다 썼어요.' : block === 'coins' ? '닢이 모자라요.' : block === 'noPiece' ? '지금 책에서 더 옮겨 적을 이야기가 없어요.' : '지금 책의 다음 이야기를 옮겨 적어요 (하루 두 번).'
+  const hint = block === 'done' ? '오늘은 열람석을 두 번 다 썼어요.' : block === 'coins' ? '닢이 모자라요.' : block === 'noPiece' ? '지금 책에서 더 옮겨 적을 사본이 없어요.' : '서고에 모아 둔 사본에서 다음 대목을 옮겨 적어요 (하루 두 번).'
   return (
     <div className="reading-seat">
       <h3>열람석</h3>

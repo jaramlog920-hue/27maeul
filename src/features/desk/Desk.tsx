@@ -173,7 +173,7 @@ function NightCopy() {
   const nightCopy = useGame((s) => s.nightCopy)
   const block = canNightCopy(game, CONTENT)
   if (block === 'notNight') return null
-  const hint = block === 'noOil' ? '등잔 기름이 있어야 해요.' : block === 'noPiece' ? '지금 책에서 더 옮겨 적을 이야기가 없어요.' : `등잔 기름 ${NIGHT_COPY_OIL}병으로 다음 이야기를 옮겨 적어요.`
+  const hint = block === 'noOil' ? '등잔 기름이 있어야 해요.' : block === 'noPiece' ? '지금 책에서 더 옮겨 적을 사본이 없어요.' : `등잔 기름 ${NIGHT_COPY_OIL}병으로 빌려 온 사본의 다음 대목을 옮겨 적어요.`
   return (
     <div className="night-copy">
       <button disabled={block !== null} onClick={nightCopy}>
