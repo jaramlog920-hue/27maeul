@@ -1683,3 +1683,87 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
 .tb-end { margin-top: 8px; text-align: center; }
 .trip-child { display: flex; align-items: center; gap: 6px; margin: 6px 0; font-size: 14px; }
 .trip-child input { width: auto; }
+
+/* ── 여행 주사위 판 (새 장면): 화면 전체가 여행지 동네 ── */
+.trip-scene {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+  background: #3d8a34;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+.ts-stage { position: relative; width: 100%; max-width: 720px; height: 100%; display: flex; flex-direction: column; justify-content: center; }
+.ts-canvas { display: block; width: 100%; image-rendering: pixelated; }
+.ts-hud {
+  position: absolute;
+  top: max(10px, env(safe-area-inset-top));
+  left: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px 4px 4px;
+  background: rgba(255, 248, 230, 0.85);
+  border-radius: 14px;
+  box-shadow: 0 2px 0 rgba(60, 40, 10, 0.25);
+}
+.ts-face { width: 30px; height: 24px; image-rendering: pixelated; background: #cfe6f2; border-radius: 50%; }
+.ts-dots { display: grid; grid-template-columns: repeat(10, 7px); gap: 2px; }
+.ts-dots span { width: 7px; height: 7px; border-radius: 50%; background: #6ea4e0; }
+.ts-dots span.used { background: #8d7a62; opacity: 0.45; }
+.ts-die {
+  position: absolute;
+  right: 14px;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  width: 64px;
+  height: 64px;
+  font-size: 40px;
+  line-height: 1;
+  padding: 0;
+  border-radius: 12px;
+  background: #fffaf0;
+  color: #4a3226;
+  border: 3px solid #8d5f38;
+  box-shadow: 0 4px 0 #8d5f38;
+}
+.ts-die:disabled { opacity: 0.7; }
+.ts-bubble {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  padding: 2px 8px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  color: #4a3226;
+  background: #fffaf0;
+  border: 2px solid #8d5f38;
+  border-radius: 10px;
+  pointer-events: none;
+  animation: ts-pop 1.3s ease-out forwards;
+}
+@keyframes ts-pop {
+  0% { opacity: 0; transform: translate(-50%, -80%); }
+  15% { opacity: 1; transform: translate(-50%, -100%); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -115%); }
+}
+.ts-harvest {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: min(100%, 520px);
+  padding: 14px 18px max(18px, env(safe-area-inset-bottom));
+  background: #f8ecd0;
+  color: #4a3226;
+  border: 3px solid #b98452;
+  border-bottom: 0;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -4px 0 rgba(60, 40, 10, 0.2);
+  animation: rise 0.3s ease-out;
+}
+.ts-harvest h2 { margin: 0 0 4px; font-size: 17px; }
+.ts-harvest dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; font-size: 14px; }
+.ts-harvest dt { font-weight: 700; white-space: nowrap; }
+.ts-harvest dd { margin: 0; }

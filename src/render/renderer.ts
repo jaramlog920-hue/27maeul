@@ -14,6 +14,7 @@ import { drawDecor, lanternLights, sheepCount } from './decor'
 import { FIRE, isNear, npcTile } from '../engine/neighbors'
 import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
 import { childMode, childStage, CRADLE_SPOT, helperSpot } from '../engine/child'
+import { BOARD, stoneTile, TRIP_H, TRIP_W, tripLayout, type Cell as TripCell } from '../engine/trip-board'
 import { actsDoorGlows, feastToday, sideShelfSpines } from '../engine/library'
 import { ACTS_ROOM, ATTIC, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, HEIGHT, HOUSE_RECT, housesNow, houseAt, LOCKED_DOORS, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
 import { GOSPELS, type Book, type Facing, type NeighborDef, type GameContent, type Season, type Tile } from '../engine/types'
@@ -120,6 +121,13 @@ const HOUSE_STYLES: Record<string, HouseStyle> = {
   fisher: { roof: ['#2f8fa3', '#216e80', '#4fb0c3'], pattern: 'tile', wall: '#fcedcb', base: '#eed7a8', window: 'round', shutter: '#6f9aa0', door: '#7a5a40' },
   carpenter: { roof: ['#7d5a3e', '#5e412b', '#9a7658'], pattern: 'tile', wall: '#f8e2b8', base: '#e8cf9c', window: 'square', shutter: '#b07a48', door: '#7a5230', timber: '#a0703f' },
   hall: { roof: ['#3e67b8', '#2c4f92', '#5c86d4'], pattern: 'tile', wall: '#fcedcb', base: '#eed7a8', window: 'arch', shutter: '#6f84a8', door: '#7a5a40', timber: '#a0703f', awning: ['#ffd24a', '#fffdf6'] },
+  // 여행지 동네의 집 (항구 마을·언덕 너머 마을)
+  tripA: { roof: ['#3e67b8', '#2c4f92', '#5c86d4'], pattern: 'tile', wall: '#fcedcb', base: '#eed7a8', window: 'square', shutter: '#6f84a8', door: '#7a5a40' },
+  tripB: { roof: ['#c9644a', '#9c4633', '#e08466'], pattern: 'tile', wall: '#fcedcb', base: '#eed7a8', window: 'round', shutter: '#b07a48', door: '#8d5f38', awning: ['#e2574c', '#fffdf6'] },
+  tripC: { roof: ['#2f8fa3', '#216e80', '#4fb0c3'], pattern: 'tile', wall: '#fcedcb', base: '#eed7a8', window: 'arch', shutter: '#6f9aa0', door: '#7a5a40' },
+  tripD: { roof: ['#8b5a3c', '#6a4129', '#a8755a'], pattern: 'tile', wall: '#f8e2b8', base: '#e8cf9c', window: 'square', shutter: '#b07a48', door: '#7a5230', timber: '#b07a48' },
+  tripE: { roof: ['#c9a33c', '#9e7c26', '#e2c05e'], pattern: 'tile', wall: '#f8e2b8', base: '#e8cf9c', window: 'round', shutter: '#b07a48', door: '#8d5f38' },
+  tripF: { roof: ['#3f9d3f', '#2d7a30', '#5cbb55'], pattern: 'tile', wall: '#fcedcb', base: '#eed7a8', window: 'arch', shutter: '#b07a48', door: '#8d5f38' },
   teahouse: { roof: ['#d45fa8', '#aa4486', '#e882c0'], pattern: 'tile', wall: '#fff2e2', base: '#f2dcc4', window: 'round', shutter: '#c48aa8', door: '#8d5f48', awning: ['#f07ab8', '#fffdf6'] },
 }
 const PLAIN_STYLE = HOUSE_STYLES.child
@@ -245,7 +253,7 @@ function speckle(g: Ctx, px: number, py: number, x: number, y: number, color: st
   for (let i = 0; i < n; i++) g.fillRect(px + Math.floor(hash(x, y, i) * 15), py + Math.floor(hash(x, y, i + 50) * 15), 1, 1)
 }
 
-function drawGround(g: Ctx, ch: string, x: number, y: number, season: Season) {
+function drawGround(g: Ctx, ch: string, x: number, y: number, season: Season, at: (x: number, y: number) => string = tileAt) {
   const px = x * TILE
   const py = y * TILE
   const [g1, g2, g3] = SEASON_GRASS[season]
@@ -280,10 +288,10 @@ function drawGround(g: Ctx, ch: string, x: number, y: number, season: Season) {
     if (y < VILLAGE_H) {
       g.fillStyle = g2
       const isPath = (c: string) => c === ',' || c === 'm' || c === 'A' || c === 'P'
-      if (isPath(tileAt(x, y - 1))) g.fillRect(px, py, TILE, 2)
-      if (isPath(tileAt(x, y + 1))) g.fillRect(px, py + TILE - 2, TILE, 2)
-      if (isPath(tileAt(x - 1, y))) g.fillRect(px, py, 2, TILE)
-      if (isPath(tileAt(x + 1, y))) g.fillRect(px + TILE - 2, py, 2, TILE)
+      if (isPath(at(x, y - 1))) g.fillRect(px, py, TILE, 2)
+      if (isPath(at(x, y + 1))) g.fillRect(px, py + TILE - 2, TILE, 2)
+      if (isPath(at(x - 1, y))) g.fillRect(px, py, 2, TILE)
+      if (isPath(at(x + 1, y))) g.fillRect(px + TILE - 2, py, 2, TILE)
     }
   }
 }
@@ -1808,4 +1816,151 @@ export function butterflies(season: Season, wet: boolean, phase: string, t: numb
     frame: (Math.abs(Math.floor(t * 6 + i)) % 2) as 0 | 1,
     hue: (i % 2) as 0 | 1,
   }))
+}
+
+// ── 여행 주사위 판 (새 장면): 마을과 같은 16픽셀 칸·같은 그림으로 여행지 동네를 짓고, 둘레 길 위 돌판에 칸 표시를 새긴다 ──
+
+/** 돌판에 새기는 칸 표시 (8×8, 색보다 모양으로 구분 — k 먹, w 흰 종이, c 칸 색) */
+const STONE_GLYPH: Record<TripCell, readonly string[]> = {
+  start: ['.k......', '.kccc...', '.kcccc..', '.kccc...', '.k......', '.k......', '.k......', 'kkk.....'],
+  plain: ['........', '........', '........', '........', '........', '........', '........', '........'],
+  book: ['........', '.kk..kk.', 'kwwkkwwk', 'kwwkkwwk', 'kwwkkwwk', 'kwwkkwwk', '.kkkkkk.', '........'],
+  item: ['........', '.cc..cc.', 'ccc..ccc', '.cckkcc.', '...kk...', '...kk...', '..kkkk..', '........'],
+  star: ['...kk...', '...kk...', 'kkkkkkkk', '.kkkkkk.', '..kkkk..', '.kk..kk.', 'kk....kk', '........'],
+  event: ['..kkkk..', '.kk..kk.', '.....kk.', '....kk..', '...kk...', '........', '...kk...', '........'],
+  chest: ['........', '.kkkkkk.', 'kcccccck', 'kkkkkkkk', 'kccwwcck', 'kcccccck', 'kkkkkkkk', '........'],
+}
+const STONE_TINT: Record<TripCell, string> = {
+  start: '#c9a26b',
+  plain: '#d6c3a0',
+  book: '#5c86d4',
+  item: '#58b85f',
+  star: '#e8b93a',
+  event: '#e2574c',
+  chest: '#9a6fd0',
+}
+
+function tripMapFor(dest: 'harbor' | 'hillTown', season: Season): HTMLCanvasElement {
+  const key = `trip/${dest}/${season}`
+  let c = mapCache.get(key)
+  if (c) return c
+  const layout = tripLayout(dest)
+  c = document.createElement('canvas')
+  c.width = TRIP_W * TILE
+  c.height = TRIP_H * TILE
+  const g = c.getContext('2d')!
+  const at = (x: number, y: number) => layout.map[y]?.[x] ?? 'T'
+  const houseOf = (x: number, y: number) => layout.houses.find((h) => x >= h.x0 && x <= h.x1 && y >= h.y0 && y <= h.y1)
+  for (let y = 0; y < TRIP_H; y++)
+    for (let x = 0; x < TRIP_W; x++) {
+      const ch = at(x, y)
+      const h = houseOf(x, y)
+      drawGround(g, h ? '.' : ch, x, y, season, at)
+      if (h) {
+        if (ch === '#' || ch === 'D') houseWallTile(g, x, y, ch, h.id, h)
+      } else if (ch !== '.' && ch !== ',') drawObject(g, ch, x, y, season)
+    }
+  for (const h of layout.houses) drawRoof(g, h.x0, h.y0, h.x1, h.y1 - 2, (HOUSE_STYLES[h.id] ?? PLAIN_STYLE).roof)
+  // 돌판 24개: 그림자, 넓적한 돌, 칸 색 테두리, 새긴 표시
+  BOARD.forEach((cell, i) => {
+    const t = stoneTile(i)
+    const px = t.x * TILE
+    const py = t.y * TILE
+    const f = (color: string, dx: number, dy: number, w: number, hh: number) => {
+      g.fillStyle = color
+      g.fillRect(px + dx, py + dy, w, hh)
+    }
+    f('rgba(60,40,10,0.22)', 1, 13, 14, 3)
+    f('#bda886', 1, 2, 14, 12)
+    f('#bda886', 2, 1, 12, 14)
+    f(STONE_TINT[cell], 2, 2, 12, 11)
+    f('#f3e7cc', 3, 3, 10, 9)
+    f('#fff8e6', 3, 3, 10, 1)
+    STONE_GLYPH[cell].forEach((row, yy) =>
+      [...row].forEach((chh, xx) => {
+        if (chh === '.') return
+        f(chh === 'k' ? '#4a3226' : chh === 'w' ? '#ffffff' : STONE_TINT[cell], 4 + xx, 3 + yy, 1, 1)
+      }),
+    )
+  })
+  mapCache.set(key, c)
+  return c
+}
+
+/** 여행 판에 서 있는 사람 (기록자·아이) */
+export interface TripActor {
+  x: number
+  y: number
+  facing: Facing
+  walking: boolean
+}
+
+/** 여행 판 한 장면: 동네 그림 → 사람(발 아래 순서대로). 카메라는 판 대부분이 보이게, 가장자리에 가까울 때만 조금 움직인다 */
+export function createTripRenderer(g: Ctx) {
+  const cam = { x: -1, y: -1 }
+  /** 화면에 보이는 칸 수 (폭은 마을과 같은 16칸 — 같은 도트 크기, 높이는 화면 비율대로) */
+  const view = { scale: 1, w: VIEW_W, h: VIEW_H }
+  return {
+    view,
+    cam,
+    draw(dest: 'harbor' | 'hillTown', game: GameState, me: TripActor, kid: TripActor | null, t: number, dt: number) {
+      const season = seasonOf(game.clock.day)
+      const s = view.scale
+      g.setTransform(s, 0, 0, s, 0, 0)
+      g.imageSmoothingEnabled = false
+      // 카메라: 판 가운데를 기본으로, 기록자가 화면 가장자리 3칸 안쪽에 들어가면 그만큼만 부드럽게
+      const VW = view.w
+      const VH = view.h
+      const maxX = Math.max(0, TRIP_W - VW)
+      const maxY = Math.max(0, TRIP_H - VH)
+      if (cam.x < 0) {
+        cam.x = Math.min(maxX, Math.max(0, me.x + 0.5 - VW / 2))
+        cam.y = Math.min(maxY, Math.max(0, me.y + 0.5 - VH / 2))
+      }
+      const margin = 4
+      let tx = cam.x
+      let ty = cam.y
+      if (me.x < cam.x + margin) tx = me.x - margin
+      if (me.x > cam.x + VW - 1 - margin) tx = me.x - (VW - 1 - margin)
+      if (me.y < cam.y + margin) ty = me.y - margin
+      if (me.y > cam.y + VH - 1 - margin) ty = me.y - (VH - 1 - margin)
+      tx = Math.min(maxX, Math.max(0, tx))
+      ty = Math.min(maxY, Math.max(0, ty))
+      const k = Math.min(1, dt * 2.5)
+      cam.x += (tx - cam.x) * k
+      cam.y += (ty - cam.y) * k
+      const ox = Math.round((VW > TRIP_W ? -(VW - TRIP_W) / 2 : cam.x) * TILE * s) / s
+      const oy = Math.round((VH > TRIP_H ? -(VH - TRIP_H) / 2 : cam.y) * TILE * s) / s
+      g.fillStyle = '#3d8a34'
+      g.fillRect(0, 0, VW * TILE, VH * TILE)
+      g.save()
+      g.translate(-ox, -oy)
+      g.drawImage(tripMapFor(dest, season), 0, 0)
+      const items: { y: number; paint: () => void }[] = []
+      const frameOf = (a: TripActor) => (a.walking ? walkFrame(t * 1.6) : 0)
+      items.push({
+        y: me.y,
+        paint: () => {
+          const spr = person('writer', me.facing, frameOf(me), isBlinking(t), 'stand', season, { look: game.avatar?.look, avatar: game.avatar ? withLookDefaults(game.avatar) : undefined })
+          drawSprite(g, spr, me.x, me.y, me.walking ? 0 : breathOffset(t))
+        },
+      })
+      const child = game.child
+      if (kid && child) {
+        const grown = childStage(child, game.clock.day) !== 'toddler'
+        items.push({
+          y: kid.y,
+          paint: () => {
+            if (!grown) drawSprite(g, paint('baby/walk', BABY.walk, SMALL_PALETTE), kid.x, kid.y, kid.walking ? Math.floor(t * 8) % 2 : 0)
+            else {
+              const rows = recolor(spriteRows('child', kid.facing, { frame: frameOf(kid), blink: isBlinking(t + 1.3), growth: 2 }), child.look === 'boy' ? { z: 'E', Z: 'M' } : { z: 'V', Z: 'X' })
+              drawSprite(g, paint(`kid/${child.look}/${kid.facing}/${frameOf(kid)}/${isBlinking(t + 1.3)}`, rows, PALETTE), kid.x, kid.y, kid.walking ? 0 : breathOffset(t + 1.3))
+            }
+          },
+        })
+      }
+      items.sort((a, b) => a.y - b.y).forEach((it) => it.paint())
+      g.restore()
+    },
+  }
 }

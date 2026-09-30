@@ -69,7 +69,7 @@ function Body() {
     case 'board':
       return <BoardView />
     case 'travel':
-      return <TravelView />
+      return <TravelView dest={modal.dest} rewards={modal.rewards} />
     case 'childName':
       return <ChildName />
     case 'follow':

@@ -150,8 +150,8 @@ export type Modal =
   | { kind: 'trade' }
   /** 사랑방 벽의 의뢰 게시판 (계획 13 작업 5) */
   | { kind: 'board' }
-  /** 나루의 배: 이웃 마을 여행 (계획 13 작업 6) */
-  | { kind: 'travel' }
+  /** 나루의 배: 이웃 마을 여행 (계획 13 작업 6). 주사위 판을 마치고 돌아오면 dest·rewards를 들고 가게로 */
+  | { kind: 'travel'; dest?: DestId; rewards?: TripReward[] }
   /** 아이 이름 정하기 (계획 12) */
   | { kind: 'childName' }
   /** 동물 친구·우리 아이: 데리고 다니기·집에 두기 */
@@ -228,6 +228,10 @@ interface Store {
   toast: { text: string; until: number } | null
   /** 새로 이룬 업적 (알림과 따로, 위쪽 작은 띠) */
   award: { text: string; until: number } | null
+  /** 여행 주사위 판 (새 장면) — 저장하지 않는다. 있는 동안 마을 시간은 멈춘다 */
+  trip: { dest: DestId; withChild: boolean } | null
+  startTripBoard: (dest: DestId, withChild: boolean) => void
+  finishTripBoard: (rewards: TripReward[]) => void
   /** 지금 장면 창을 닫은 뒤 띄울 알림 (별 보는 밤: 장면을 먼저 보이고 편지함 알림) */
   afterScene: string | null
   /** 방 꾸미기: 놓을 물건, 또는 치우기 */
@@ -751,6 +755,13 @@ export const useGame = create<Store>((set, get) => {
     modal: null,
     toast: null,
     award: null,
+    trip: null,
+    startTripBoard: (dest, withChild) => set({ trip: { dest, withChild }, modal: null }),
+    finishTripBoard: (rewards) => {
+      const t = get().trip
+      if (!t) return
+      set({ trip: null, modal: { kind: 'travel', dest: t.dest, rewards } })
+    },
     afterScene: null,
     decorating: null,
     muted: loadMuted(),
@@ -852,6 +863,11 @@ export const useGame = create<Store>((set, get) => {
       const clockMs = s.clockMs + dt * 1000
       // 20초마다 저장 — 창이 열려 있어도, 걷기만 하다 창을 닫아도 시각·위치가 남도록
       if (Math.floor(clockMs / 20000) !== Math.floor(s.clockMs / 20000)) persist(s.game)
+      // 여행 주사위 판 동안 마을은 멈춘다
+      if (s.trip) {
+        set({ clockMs })
+        return
+      }
       if (s.modal) {
         // 손일 중에는 활동만 움직인다
         if (s.modal.kind === 'mini') {

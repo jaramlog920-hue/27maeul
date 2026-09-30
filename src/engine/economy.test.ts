@@ -178,3 +178,20 @@ describe('여행 주사위 보드게임', () => {
     expect(r.coins).toBe(s.coins + 12)
   })
 })
+
+describe('여행 판 동네 (새 장면)', () => {
+  it('돌판 24개는 둘레 길 위에 1–2칸씩 띄워 놓이고, 걸어가는 길은 늘 흙길', async () => {
+    const { BOARD, RING_TILES, stoneRingIndex, stoneTile, tripLayout, walkPath } = await import('./trip-board')
+    for (const dest of ['harbor', 'hillTown'] as const) {
+      const map = tripLayout(dest).map
+      const idx = BOARD.map((_, i) => stoneRingIndex(i))
+      expect(new Set(idx).size).toBe(BOARD.length)
+      for (let i = 1; i < idx.length; i++) expect(idx[i] - idx[i - 1]).toBeGreaterThanOrEqual(2)
+      for (let i = 0; i < BOARD.length; i++) expect(map[stoneTile(i).y][stoneTile(i).x]).toBe(',')
+      for (const t of RING_TILES) expect(map[t.y][t.x]).toBe(',')
+    }
+    const path = walkPath(22, 4)
+    expect(path.at(-1)).toEqual(stoneTile(0))
+    expect(walkPath(0, 3).at(-1)).toEqual(stoneTile(3))
+  })
+})

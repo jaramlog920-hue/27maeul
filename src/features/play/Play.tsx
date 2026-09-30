@@ -11,12 +11,14 @@ import { NextEventBar, useEventAlerts } from './EventSchedule'
 import { Joystick } from './Joystick'
 import { ControlDeck } from './ControlDeck'
 import { TalkButton } from './TalkButton'
+import { TripScene } from '../trip/TripScene'
 
 export function Play() {
   useKeyboardMovement()
   useEventAlerts()
   const zoom = useGame((s) => s.zoom)
   const deck = useGame((s) => s.deck)
+  const trip = useGame((s) => s.trip)
   // 탭을 닫거나 다른 앱으로 넘어갈 때 저장한다
   useEffect(() => {
     const save = () => saveGame(useGame.getState().game)
@@ -44,6 +46,8 @@ export function Play() {
       <NextEventBar />
       {/* 휴대폰에선 아래 조작판이 위 단추·몸 상태·다음 일정을 대신한다 */}
       <ControlDeck />
+      {/* 여행 주사위 판: 화면 전체를 덮는 새 장면 (본문 팝업은 그 위에) */}
+      {trip && <TripScene dest={trip.dest} withChild={trip.withChild} />}
       <ModalLayer />
     </div>
   )

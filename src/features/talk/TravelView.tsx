@@ -7,7 +7,6 @@ import type { ItemId } from '../../engine/types'
 import { useGame } from '../../store/game-store'
 import { childStage } from '../../engine/child'
 import type { TripReward } from '../../engine/trip-board'
-import { TripBoardView } from './TripBoardView'
 import { ItemIcon } from '../../shared/ItemIcon'
 
 const WHY: Record<string, string> = {
@@ -18,15 +17,16 @@ const WHY: Record<string, string> = {
   full: '가방이 가득 찼어요.',
 }
 
-export function TravelView() {
+export function TravelView({ dest: back, rewards: brought }: { dest?: DestId; rewards?: TripReward[] } = {}) {
   const game = useGame((s) => s.game)
   const { goTrip, closeModal } = useGame.getState()
-  const [dest, setDest] = useState<DestId | null>(null)
+  const dest = back ?? null
   const [buys, setBuys] = useState<ItemId[]>([])
   // 아이와 함께 (아기는 집에), 여행 판에서 얻은 것 (판을 마치기 전엔 null)
   const canBring = !!game.child && childStage(game.child, game.clock.day) !== 'baby'
   const [withChild, setWithChild] = useState(canBring)
-  const [rewards, setRewards] = useState<TripReward[] | null>(null)
+  const rewards = brought ?? null
+  const startTripBoard = useGame((s) => s.startTripBoard)
   if (!dest)
     return (
       <div className="dialog travel" role="dialog" aria-label="이웃 마을 여행">
@@ -48,7 +48,7 @@ export function TravelView() {
                   {Object.keys(d.food).length ? `길양식 ${itemList(d.food)} · ` : ''}
                   숙박 {d.lodging}닢
                 </span>
-                <button disabled={block !== null} onClick={() => setDest(id)}>
+                <button disabled={block !== null} onClick={() => startTripBoard(id, withChild && canBring)}>
                   떠나기
                 </button>
               </li>
@@ -67,14 +67,8 @@ export function TravelView() {
       </div>
     )
   const d = DESTS[dest]
-  // 먼저 그 마을 둘레를 도는 주사위 판
-  if (!rewards)
-    return (
-      <div className="dialog travel" role="dialog" aria-label={d.name}>
-        <h2>{d.name}</h2>
-        <TripBoardView dest={d.name} withChild={withChild && canBring} onDone={setRewards} />
-      </div>
-    )
+  // 먼저 그 마을 둘레를 도는 주사위 판 (새 장면으로 넘어간다)
+  if (!rewards) return null
   const first = !game.flags[`trip:${dest}`]
   const story = first ? SCENES[`trip:${dest}`] : null
   const block = canTrip(game, dest, buys)
