@@ -1499,5 +1499,5 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
 .swatch-olive { background: linear-gradient(90deg, #1f2621 0 33%, #f4f1e1 33% 66%, #bf5b3c 66%); }
 .swatch-sea { background: linear-gradient(90deg, #223a4e 0 33%, #6aa7d2 33% 66%, #c99a55 66%); }
 .swatch-vine { background: linear-gradient(90deg, #241c26 0 33%, #f6efe6 33% 66%, #6f8f34 66%); }
-.swatch-pink { background: linear-gradient(90deg, #d3a592 0 33%, #faf5ef 33% 66%, #b24659 66%); }
+.swatch-pink { background: linear-gradient(90deg, #d392a2 0 33%, #faf5ef 33% 66%, #b24661 66%); }
 .settings-options.theme-options { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
