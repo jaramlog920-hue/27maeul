@@ -1488,3 +1488,17 @@ button.need-tap:active:not(:disabled) { transform: none; }
 button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
 .stats-list li { cursor: pointer; }
 .toast { word-break: keep-all; }
+
+/* 세로로 긴 휴대폰(플립 등): 지도는 폭에 맞춰 끝나므로, 남는 높이는 조작판이 채우고 단추를 키운다 */
+@media (pointer: coarse) {
+  .play.has-deck { min-height: 100dvh; }
+  .play.has-deck .deck { flex: 1; display: flex; flex-direction: column; }
+  .play.has-deck .deck-main { flex: 1; }
+}
+@media (pointer: coarse) and (max-aspect-ratio: 27/50) {
+  .deck-pad { grid-template-rows: repeat(3, 54px); grid-template-columns: repeat(3, 54px); width: 162px; height: 162px; }
+  .deck-pad span { font-size: 15px; }
+  .deck-right { min-height: 162px; }
+  .deck .deck-seal { width: 92px; height: 92px; font-size: 17px; }
+  .deck .deck-menu { min-height: 34px; padding: 2px 20px; font-size: 13px; }
+}
