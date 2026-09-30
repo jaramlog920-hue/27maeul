@@ -2963,7 +2963,7 @@
     "roomOpen": "{room} · 열려 있어요",
     "lockedRoomTap": "{room}은 아직 잠겨 있어요.",
     "lockedRoomGlow": "{room} 문틈으로 불빛이 새어 나와요.",
-    "shelvedToast": "{book}을 서고에 꽂았습니다. 책등: {grade}",
+    "shelvedToast": "{bookObj} 서고에 꽂았습니다. 책등: {grade}",
     "rereadNote": "틀린 구절은 '다시 읽을 구절'에 넣어 두었어요."
   },
   "acts": {

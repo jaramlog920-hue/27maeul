@@ -46,6 +46,13 @@ export function fill(template: string, vars: Record<string, string | number>): s
   return template.replace(/\{(\w+)\}/g, (_, k: string) => String(vars[k] ?? ''))
 }
 
+/** 낱말 뒤에 받침에 맞는 목적격 조사를 붙인다 (마가복음을 / 빌레몬서를) */
+export function withObject(word: string): string {
+  const code = word.charCodeAt(word.length - 1) - 0xac00
+  const hasFinal = code >= 0 && code <= 11171 && code % 28 !== 0
+  return word + (hasFinal ? '을' : '를')
+}
+
 export function itemName(id: ItemId): string {
   return ITEM_TEXT[id]?.name ?? id
 }

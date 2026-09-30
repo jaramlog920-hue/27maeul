@@ -6,7 +6,7 @@ import { currentChapter } from '../engine/offers'
 import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
 import { bookRoomOpen, openDoorsFor } from '../engine/books'
 import { actsDoorGlows, canShelve, payRetry, poolFor, shelve } from '../engine/library'
-import { ALBUM_IDS, fill, itemList, itemName, NEIGHBOR_LINES, roomTitle, SCENES, T } from '../content/text'
+import { ALBUM_IDS, fill, itemList, itemName, NEIGHBOR_LINES, roomTitle, SCENES, T, withObject } from '../content/text'
 import { grapesRipe, isWet, weatherOf } from '../engine/calendar'
 import { cleanName, type Animal } from '../engine/companion'
 import {
@@ -955,7 +955,7 @@ export const useGame = create<Store>((set, get) => {
         const next = shelve(get().game, m.mode.book, correct, m.missed)
         sfx('done')
         const grades = T.library.grades as string[]
-        get().say(fill(T.library.shelvedToast, { book: (T.quiz.books as Record<string, string>)[m.mode.book], grade: grades[next.shelved[m.mode.book]!] }) + (m.missed.length ? ' ' + T.library.rereadNote : ''), 4000)
+        get().say(fill(T.library.shelvedToast, { bookObj: withObject((T.quiz.books as Record<string, string>)[m.mode.book]), grade: grades[next.shelved[m.mode.book]!] }) + (m.missed.length ? ' ' + T.library.rereadNote : ''), 4000)
         // 새로 열린 구역
         const opened = lockedZones(shelvedCount(get().game)).filter((z) => shelvedCount(next) >= z.books)
         if (opened.length) setTimeout(() => get().say(fill(T.ui.zoneOpened, { name: (T.ui.zones as Record<string, string>)[opened[0].id] }), 4000), 4200)

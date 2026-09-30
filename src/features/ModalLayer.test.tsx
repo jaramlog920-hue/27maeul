@@ -322,6 +322,30 @@ describe('마을 서고', () => {
     expect(useGame.getState().toast?.text).toContain('길이 열렸어요')
     vi.useRealTimers()
   })
+  it('서고: 꽂은 알림의 조사가 책 이름 받침에 맞는다 (마가복음을 / 빌레몬서를)', () => {
+    const cases = [
+      ['mk', '마가복음을 서고에 꽂았습니다.'],
+      ['phm', '빌레몬서를 서고에 꽂았습니다.'],
+    ] as const
+    for (const [book, text] of cases) {
+      const open = { ...newGame(CONTENT).flags, gospelFeast: 2, 'room:romPhm': 1 }
+      const base = chooseBook({ ...newGame(CONTENT), flags: open }, book, CONTENT)
+      useGame.setState({
+        game: { ...base, scenes: [], collected: piecesOf(book).map((p) => p.id), progress: { ...base.progress, [book]: { completed: chaptersOf(book, CONTENT), arrangement: {} } } },
+        modal: null,
+        toast: null,
+        rng: mulberry32(5),
+      })
+      useGame.getState().startShelve(book)
+      for (let i = 0; i < 5; i++) {
+        const m = useGame.getState().modal
+        if (m?.kind !== 'quiz') throw new Error('quiz expected')
+        useGame.getState().answerQuiz(m.questions[m.index].answer as string | string[])
+        useGame.getState().nextQuiz()
+      }
+      expect(useGame.getState().toast?.text).toMatch(new RegExp(`^${text}`))
+    }
+  })
 })
 
 describe('나의 한 줄 (책)', () => {
