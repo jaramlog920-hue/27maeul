@@ -186,7 +186,7 @@ interface Store {
   /** 방 꾸미기: 놓을 물건, 또는 치우기 */
   decorating: ItemId | 'pick' | null
   muted: boolean
-  /** 터치 화면의 조이스틱 (설정에서 켜고 끈다) */
+  /** 터치 화면의 조이스틱 (설정에서 켜고 끈다, 처음엔 꺼짐) */
   joystick: boolean
   /** 조이스틱 모양: 네 방향 패드(기본) 또는 둥근 조이스틱 */
   joystickShape: JoystickShape
@@ -347,11 +347,12 @@ function loadZoom(): number {
     return 1
   }
 }
-function loadJoystick(): boolean {
+/** 조이스틱은 처음엔 꺼져 있다 — 설정에서 켠 사람만 ('on'으로 저장) */
+export function loadJoystick(): boolean {
   try {
-    return globalThis.localStorage?.getItem(JOYSTICK_KEY) !== 'off'
+    return globalThis.localStorage?.getItem(JOYSTICK_KEY) === 'on'
   } catch {
-    return true
+    return false
   }
 }
 function loadMuted(): boolean {

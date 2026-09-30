@@ -4,7 +4,7 @@ import { CONTENT } from '../../content/catalog'
 import { newGame } from '../../engine/game'
 import type { GameState } from '../../engine/game'
 import { PLACES } from '../../engine/world'
-import { loadJoystickShape, loadJoystickSide, useGame } from '../../store/game-store'
+import { loadJoystick, loadJoystickShape, loadJoystickSide, useGame } from '../../store/game-store'
 import { directionOf, Joystick, padZone, PAD_SIZE } from './Joystick'
 import { Settings } from './Settings'
 
@@ -147,6 +147,15 @@ describe('네 방향 패드', () => {
 })
 
 describe('조이스틱 설정', () => {
+  it('처음엔 꺼져 있고, 켜면 켠 채로 불러온다', () => {
+    localStorage.removeItem('twenty-seven/joystick')
+    expect(loadJoystick()).toBe(false)
+    act(() => useGame.getState().setJoystick(true))
+    expect(localStorage.getItem('twenty-seven/joystick')).toBe('on')
+    expect(loadJoystick()).toBe(true)
+    act(() => useGame.getState().setJoystick(false))
+    expect(loadJoystick()).toBe(false)
+  })
   it('모양·자리를 고르면 저장되고, 저장된 값을 불러온다', () => {
     expect(loadJoystickShape()).toBe('pad')
     expect(loadJoystickSide()).toBe('right')
