@@ -339,7 +339,7 @@ describe('복음서 방 완성 잔치', () => {
     expect(s.today.inviter).toBeNull()
     // 저녁: 이사 온 이웃은 모두(상인도, 비가 와도) 모닥불 둘레로
     const e = eve(s, FESTIVAL_FROM + 1).state
-    // 네 권이면 서고 권수로 오는 이웃 중 목수(6권)와 그 집 루디는 아직
+    // 네 권이면 서고 권수로 오는 이웃 중 목수(5권)와 그 집 루디는 아직
     const byId = new Map(CONTENT.neighbors.map((d) => [d.id, d]))
     const joined = CONTENT.neighbors.filter((d) => d.joinsAt === undefined && (d.joinsAtBooks ?? 0) <= 4 && (!d.joinsWithFamily || !d.family || (byId.get(d.family)?.joinsAtBooks ?? 0) <= 4))
     expect(joined.length).toBeGreaterThanOrEqual(9)

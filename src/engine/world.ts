@@ -602,7 +602,7 @@ export const ZONES: readonly Zone[] = [
   { id: 'vineyard', books: 1, x0: 41, y0: 1, x1: 46, y1: 9 },
   // 나루는 잔교만 — 호숫가 길은 처음부터 끝까지 걸을 수 있다
   { id: 'dock', books: 4, x0: 23, y0: 34, x1: 26, y1: 36 },
-  { id: 'hives', books: 5, x0: 41, y0: 27, x1: 46, y1: 31 },
+  { id: 'hives', books: 6, x0: 41, y0: 27, x1: 46, y1: 31 },
 ]
 // 대장간은 처음부터 열려 있다 — 첫날부터 대장장이를 도와 그을음(→ 잉크)을 얻어야 첫 장을 엮을 수 있다
 
