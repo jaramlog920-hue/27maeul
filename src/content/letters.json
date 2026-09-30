@@ -1,0 +1,230 @@
+[
+  {
+    "book": "rom",
+    "role": "from",
+    "name": "바울",
+    "ref": "롬 1:1"
+  },
+  {
+    "book": "rom",
+    "role": "toPlace",
+    "name": "로마",
+    "ref": "롬 1:7"
+  },
+  {
+    "book": "1co",
+    "role": "from",
+    "name": "바울",
+    "ref": "고전 1:1"
+  },
+  {
+    "book": "1co",
+    "role": "from",
+    "name": "소스데네",
+    "ref": "고전 1:1"
+  },
+  {
+    "book": "1co",
+    "role": "toPlace",
+    "name": "고린도",
+    "ref": "고전 1:2"
+  },
+  {
+    "book": "2co",
+    "role": "from",
+    "name": "바울",
+    "ref": "고후 1:1"
+  },
+  {
+    "book": "2co",
+    "role": "from",
+    "name": "디모데",
+    "ref": "고후 1:1"
+  },
+  {
+    "book": "2co",
+    "role": "toPlace",
+    "name": "고린도",
+    "ref": "고후 1:1"
+  },
+  {
+    "book": "2co",
+    "role": "toPlace",
+    "name": "아가야",
+    "ref": "고후 1:1"
+  },
+  {
+    "book": "gal",
+    "role": "from",
+    "name": "바울",
+    "ref": "갈 1:1"
+  },
+  {
+    "book": "gal",
+    "role": "toPlace",
+    "name": "갈라디아",
+    "ref": "갈 1:2"
+  },
+  {
+    "book": "eph",
+    "role": "from",
+    "name": "바울",
+    "ref": "엡 1:1"
+  },
+  {
+    "book": "eph",
+    "role": "toPlace",
+    "name": "에베소",
+    "ref": "엡 1:1"
+  },
+  {
+    "book": "php",
+    "role": "from",
+    "name": "바울",
+    "ref": "빌 1:1"
+  },
+  {
+    "book": "php",
+    "role": "from",
+    "name": "디모데",
+    "ref": "빌 1:1"
+  },
+  {
+    "book": "php",
+    "role": "toPlace",
+    "name": "빌립보",
+    "ref": "빌 1:1"
+  },
+  {
+    "book": "col",
+    "role": "from",
+    "name": "바울",
+    "ref": "골 1:1"
+  },
+  {
+    "book": "col",
+    "role": "from",
+    "name": "디모데",
+    "ref": "골 1:1"
+  },
+  {
+    "book": "col",
+    "role": "toPlace",
+    "name": "골로새",
+    "ref": "골 1:2"
+  },
+  {
+    "book": "1th",
+    "role": "from",
+    "name": "바울",
+    "ref": "살전 1:1"
+  },
+  {
+    "book": "1th",
+    "role": "from",
+    "name": "실루아노",
+    "ref": "살전 1:1"
+  },
+  {
+    "book": "1th",
+    "role": "from",
+    "name": "디모데",
+    "ref": "살전 1:1"
+  },
+  {
+    "book": "1th",
+    "role": "toPlace",
+    "name": "데살로니가",
+    "ref": "살전 1:1"
+  },
+  {
+    "book": "2th",
+    "role": "from",
+    "name": "바울",
+    "ref": "살후 1:1"
+  },
+  {
+    "book": "2th",
+    "role": "from",
+    "name": "실루아노",
+    "ref": "살후 1:1"
+  },
+  {
+    "book": "2th",
+    "role": "from",
+    "name": "디모데",
+    "ref": "살후 1:1"
+  },
+  {
+    "book": "2th",
+    "role": "toPlace",
+    "name": "데살로니가",
+    "ref": "살후 1:1"
+  },
+  {
+    "book": "1ti",
+    "role": "from",
+    "name": "바울",
+    "ref": "딤전 1:1"
+  },
+  {
+    "book": "1ti",
+    "role": "toPerson",
+    "name": "디모데",
+    "ref": "딤전 1:2"
+  },
+  {
+    "book": "2ti",
+    "role": "from",
+    "name": "바울",
+    "ref": "딤후 1:1"
+  },
+  {
+    "book": "2ti",
+    "role": "toPerson",
+    "name": "디모데",
+    "ref": "딤후 1:2"
+  },
+  {
+    "book": "tit",
+    "role": "from",
+    "name": "바울",
+    "ref": "딛 1:1"
+  },
+  {
+    "book": "tit",
+    "role": "toPerson",
+    "name": "디도",
+    "ref": "딛 1:4"
+  },
+  {
+    "book": "phm",
+    "role": "from",
+    "name": "바울",
+    "ref": "몬 1:1"
+  },
+  {
+    "book": "phm",
+    "role": "from",
+    "name": "디모데",
+    "ref": "몬 1:1"
+  },
+  {
+    "book": "phm",
+    "role": "toPerson",
+    "name": "빌레몬",
+    "ref": "몬 1:1"
+  },
+  {
+    "book": "phm",
+    "role": "toPerson",
+    "name": "압비아",
+    "ref": "몬 1:2"
+  },
+  {
+    "book": "phm",
+    "role": "toPerson",
+    "name": "아킵보",
+    "ref": "몬 1:2"
+  }
+]

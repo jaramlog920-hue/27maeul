@@ -5,16 +5,17 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prebuild": "node scripts/verify-pieces.mjs && node scripts/verify-journey.mjs",
+    "prebuild": "node scripts/verify-pieces.mjs && node scripts/verify-journey.mjs && node scripts/verify-letters.mjs",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "verify": "node scripts/verify-pieces.mjs && node scripts/verify-journey.mjs",
+    "verify": "node scripts/verify-pieces.mjs && node scripts/verify-journey.mjs && node scripts/verify-letters.mjs",
     "ref": "node scripts/dump-ref.mjs",
     "build:bible": "node scripts/build-bible-subset.mjs",
     "build:pieces": "node scripts/build-pieces.mjs && node scripts/audit-table.mjs",
-    "build:journey": "node scripts/build-journey.mjs"
+    "build:journey": "node scripts/build-journey.mjs",
+    "build:letters": "node scripts/build-letters.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
