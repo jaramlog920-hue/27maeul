@@ -294,6 +294,15 @@ function storeAlbumImage(id: string, data: string | null) {
     /* 저장소가 가득 차면 사진 없이 글만 남는다 */
   }
 }
+/**
+ * 장면이 열릴 때 앨범 사진: 앨범 장면이면 그 칸에, photoFor가 있으면 그 장면의 칸에 (잔치 아침 → 저녁 모닥불 그림으로 바꾼다).
+ * 프레임이 여는 장면과 별 보기가 바로 여는 장면이 함께 쓴다
+ */
+function snapAlbum(sceneId: string, capture: (() => string | null) | null) {
+  const sc = SCENES[sceneId]
+  const photo = sc?.photoFor ?? (sc?.album ? sceneId : null)
+  if (photo) storeAlbumImage(photo, capture?.() ?? null)
+}
 const MUTE_KEY = 'twenty-seven/muted'
 const JOYSTICK_KEY = 'twenty-seven/joystick'
 const JOYSTICK_SHAPE_KEY = 'twenty-seven/joystick-shape'
@@ -698,12 +707,7 @@ export const useGame = create<Store>((set, get) => {
       if (!modal && game.scenes.length) modal = { kind: 'scene', id: game.scenes[0] }
       set({ game, modal, clockMs })
       expireToast()
-      if (modal?.kind === 'scene') {
-        // 앨범 사진: 앨범 장면이면 그 칸에, photoFor가 있으면 그 장면의 칸에 (잔치 아침 → 저녁 모닥불 그림으로 바꾼다)
-        const sc = SCENES[modal.id]
-        const photo = sc?.photoFor ?? (sc?.album ? modal.id : null)
-        if (photo) storeAlbumImage(photo, get().capture?.() ?? null)
-      }
+      if (modal?.kind === 'scene') snapAlbum(modal.id, get().capture)
     },
 
     open: (m) => set({ modal: m }),
@@ -800,6 +804,7 @@ export const useGame = create<Store>((set, get) => {
       const scene = game.scenes.length > before.scenes.length ? game.scenes[game.scenes.length - 1] : null
       if (scene && line) {
         set({ game, modal: { kind: 'scene', id: scene }, afterScene: line })
+        snapAlbum(scene, get().capture)
         return
       }
       set({ game, modal: null })

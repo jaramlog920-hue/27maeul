@@ -568,6 +568,15 @@ describe('언덕 별 보기 (계획 9 작업 2)', () => {
     )
   })
 
+  it('맑은 밤 별 장면을 별 보기로 바로 열어도 풍경 앨범 사진을 남긴다', () => {
+    revChosen(clearDay, 22 * 60)
+    useGame.setState({ capture: () => 'data:image/png;base64,stars' })
+    act(() => useGame.getState().sitHill())
+    expect(useGame.getState().modal).toEqual({ kind: 'scene', id: 'stars' })
+    expect(localStorage.getItem('twenty-seven/album/stars')).toBe('data:image/png;base64,stars')
+    useGame.setState({ capture: null })
+  })
+
   it('장면을 이미 본 밤에는 바로 알림', () => {
     revChosen(clearDay, 22 * 60)
     const g = useGame.getState().game
