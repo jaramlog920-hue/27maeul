@@ -245,6 +245,22 @@ const revThings: [number, number, string][] = [
 /** 탁자 아래 둥근 깔개 (두 칸 폭이라 그림만 반 칸 옮겨 문 줄 가운데에) */
 const revDecor: Decor[] = [[4, 5, 'roundRug', 'half']]
 
+// ── 모이는 곳과 둘이 가는 곳 (계획 10) ──
+/** 사랑방·찻집 안 (지도 아래 보이지 않는 곳) */
+const HALL_ROOM_X0 = 2
+const HALL_ROOM_Y0 = 70
+const TEA_ROOM_X0 = 41
+const TEA_ROOM_Y0 = 60
+/** 마을 사랑방 (7칸×4줄) — 문 앞이 큰길 */
+export const HALL_RECT = { x0: 15, y0: 6, x1: 21, y1: 9 }
+export const HALL_DOOR: Tile = { x: 18, y: 9 }
+/** 정원 찻집 (5칸×4줄) — 문 앞이 큰길 */
+export const TEA_RECT = { x0: 28, y0: 6, x1: 32, y1: 9 }
+export const TEA_DOOR: Tile = { x: 30, y: 9 }
+/** 호숫가 정자 (5칸×2줄 그림, 주막 앞벽과 한 줄 띄움) 가운데 벤치 — 앉는 자리는 그 아래 호숫가 길 */
+export const PAVILION_RECT = { x0: 15, y0: 30, x1: 19, y1: 31 }
+export const PAVILION_SEAT: Tile = { x: 17, y: 31 }
+
 export const ROOMS: readonly Room[] = [
   // 빵 굽는 이웃: 가마 둘, 찬장, 밀가루 항아리, 과일 접시·주전자 올린 탁자, 둥근 깔개
   room('baker', 2, 41, { x: 5, y: 17 }, [5, 4],
@@ -282,6 +298,16 @@ export const ROOMS: readonly Room[] = [
   { ...room('hebJud', HEB_JUD_X0, HEB_JUD_Y0, HEB_JUD_DOOR, [5, 3], hebJudThings, hebJudDecor, HEB_JUD_W, HEB_JUD_H), out: { x: HEB_JUD_DOOR.x - 1, y: HEB_JUD_DOOR.y } },
   // 요한계시록 방: 문은 서고 오른쪽 아래 잠긴 문, 나가면 그 문 왼쪽 서고 바닥 (오른쪽 벽)
   { ...room('rev', REV_X0, REV_Y0, REV_DOOR, [5, 3], revThings, revDecor, REV_W, REV_H), out: { x: REV_DOOR.x - 1, y: REV_DOOR.y } },
+  // 마을 사랑방 (계획 10): 긴 탁자 둘레에 방석, 등불, 선반과 항아리, 화분 — 저녁에 이웃이 모여 논다
+  room('hall', HALL_ROOM_X0, HALL_ROOM_Y0, HALL_DOOR, [2, 4],
+    [[3, 0, 'N'], [8, 0, 'N'], [1, 1, 's'], [2, 1, 's'], [9, 1, 'g'], [10, 1, 'g'], [4, 3, 'n'], [5, 3, 'n'], [6, 3, 'n'], [7, 3, 'n'], [1, 6, 'p'], [10, 6, 'p']],
+    [[4, 2, 'pillows'], [7, 2, 'pillows'], [3, 3, 'pillows'], [8, 3, 'pillows'], [5, 3, 'teapot'], [6, 3, 'fruitBowl'], [10, 3, 'lampStand'], [1, 3, 'lampStand'], [2, 5, 'mat']],
+    12, 8),
+  // 정원 찻집 (계획 10): 작은 탁자 둘, 찻주전자와 말린 꽃, 찻잎 항아리 — 차 한 잔 쉬어 가는 곳
+  room('teahouse', TEA_ROOM_X0, TEA_ROOM_Y0, TEA_DOOR, [1, 5],
+    [[3, 0, 'N'], [1, 1, 'g'], [2, 1, 'g'], [5, 1, 's'], [2, 3, 'n'], [4, 3, 'n']],
+    [[2, 3, 'teapot'], [4, 3, 'dryFlowers'], [1, 3, 'chair'], [5, 3, 'chair', 'flip'], [5, 5, 'bigPlant']],
+    7, 7),
 ]
 /** 사도행전 방 */
 export const ACTS_ROOM: Room = ROOMS.find((r) => r.owner === 'acts')!
@@ -358,6 +384,7 @@ export interface House {
   doorX: number
 }
 export const HOUSES: House[] = []
+
 
 /** 지금 마을에 선 집 모두 (내 집은 지금 단계의 크기로) */
 export function housesNow(): House[] {
@@ -459,6 +486,14 @@ function build(): string[] {
   roofed('innkeeper', 17, 24, 23, 28, 20) // 주막
   rect(20, 29, 20, 31, ',')
   roofed('fisher', 10, 28, 14, 31, 12) // 어부 (호숫가 길 위, 주막과 두 칸 띄움)
+
+  // ── 모이는 곳과 둘이 가는 곳 (계획 10) — 집을 옮기지 않고 큰길·호숫가 길 바로 위 빈 풀밭에 ──
+  // 마을 사랑방: 내 집 오른쪽 텃밭 아래, 문이 큰길에 바로 닿는다 (저녁에 이웃이 모여 논다)
+  roofed('hall', HALL_RECT.x0, HALL_RECT.y0, HALL_RECT.x1, HALL_RECT.y1, HALL_DOOR.x)
+  // 정원 찻집: 서고 길과 할아버지 집 사이 작은 집 (차 한 잔 쉬기, 둘이 가는 곳)
+  roofed('teahouse', TEA_RECT.x0, TEA_RECT.y0, TEA_RECT.x1, TEA_RECT.y1, TEA_DOOR.x)
+  // 호숫가 정자: 호숫가 길 위 풀밭, 지붕만 있는 정자 안 벤치 (노을 보기) — 지붕·기둥은 decor 그림
+  set(PAVILION_SEAT.x, PAVILION_SEAT.y, 'B')
 
   // ── 호숫가: 모래길, 갈대, 나루와 고깃배 ──
   rect(1, 32, 46, 32, ',')
@@ -656,6 +691,10 @@ export const PLACES: Record<PlaceId, Place> = {
   revShelf: { tiles: [1, 2, 3].map((dx) => ({ x: REV_X0 + dx, y: REV_Y0 + 1 })), stand: { x: REV_X0 + 2, y: REV_Y0 + 2 } },
   churchBoard: { tiles: [4, 5, 6].map((dx) => ({ x: REV_X0 + dx, y: REV_Y0 })), stand: { x: REV_X0 + 5, y: REV_Y0 + 1 } },
   revTable: { tiles: [{ x: REV_X0 + 5, y: REV_Y0 + 4 }], stand: { x: REV_X0 + 5, y: REV_Y0 + 5 } },
+  // 모이는 곳과 둘이 가는 곳 (계획 10): 사랑방 긴 탁자, 찻집 탁자, 호숫가 정자 벤치
+  hallTable: { tiles: [4, 5, 6, 7].map((dx) => ({ x: HALL_ROOM_X0 + dx, y: HALL_ROOM_Y0 + 3 })), stand: { x: HALL_ROOM_X0 + 5, y: HALL_ROOM_Y0 + 4 } },
+  teaTable: { tiles: [{ x: TEA_ROOM_X0 + 2, y: TEA_ROOM_Y0 + 3 }, { x: TEA_ROOM_X0 + 4, y: TEA_ROOM_Y0 + 3 }], stand: { x: TEA_ROOM_X0 + 2, y: TEA_ROOM_Y0 + 4 } },
+  pavilion: { tiles: [PAVILION_SEAT], stand: { x: PAVILION_SEAT.x, y: PAVILION_SEAT.y + 1 } },
 }
 
 let mailboxOn = false

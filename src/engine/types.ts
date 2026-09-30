@@ -46,6 +46,10 @@ export type PlaceId =
   | 'revShelf'
   | 'churchBoard'
   | 'revTable'
+  // 모이는 곳과 둘이 가는 곳 (계획 10): 사랑방 탁자, 찻집 탁자, 호숫가 정자
+  | 'hallTable'
+  | 'teaTable'
+  | 'pavilion'
 export type Target =
   | { kind: 'place'; id: PlaceId; tile: Tile }
   | { kind: 'neighbor'; id: string; tries: number }

@@ -3,7 +3,7 @@ import { unlocked } from '../engine/bonds'
 import { roomOpen } from '../engine/books'
 import { mailboxHasPost, type GameState } from '../engine/game'
 import { GARDEN_TILES, isRipe } from '../engine/garden'
-import { PLACES, TILE } from '../engine/world'
+import { houseAt, PAVILION_RECT, PLACES, TILE } from '../engine/world'
 import type { Tile, Weather } from '../engine/types'
 
 type Ctx = CanvasRenderingContext2D
@@ -148,6 +148,37 @@ function reedRack(g: Ctx, t: Tile) {
   for (const [dx, len, c] of [[4, 7, '#c9c08a'], [7, 8, '#a9a56a'], [10, 7, '#c9c08a']] as const) px(g, t.x, t.y, dx, 4, 2, len, c)
 }
 
+/**
+ * 호숫가 정자 (계획 10): 가운데 벤치(지도 'B') 위로 기둥 넷과 지붕만 — 벽이 없어 호수가 보인다.
+ * 지붕은 벤치 줄 위, 기둥은 양 끝 칸. 그림일 뿐 길을 막지 않는다 (좌우 대칭, 선은 2픽셀 이상)
+ */
+function pavilion(g: Ctx) {
+  const { x0, y0, x1 } = PAVILION_RECT
+  const w = (x1 - x0 + 1) * 16
+  const left = x0 * TILE
+  const top = y0 * TILE
+  // 그림자
+  g.fillStyle = 'rgba(40,25,10,0.18)'
+  g.fillRect(left + 4, top + 28, w - 8, 3)
+  // 기둥 넷 (앞 둘은 벤치 줄 아래까지)
+  g.fillStyle = WOOD_DARK
+  for (const dx of [3, w - 5]) g.fillRect(left + dx, top + 2, 2, 27)
+  g.fillStyle = WOOD
+  for (const dx of [14, w - 16]) g.fillRect(left + dx, top + 4, 2, 12)
+  // 지붕: 두 겹 판과 물결 처마 (분홍빛 기와)
+  g.fillStyle = '#a06c7a'
+  g.fillRect(left, top - 2, w, 4)
+  g.fillStyle = '#c98a98'
+  g.fillRect(left + 2, top - 6, w - 4, 5)
+  g.fillStyle = '#e0a8b4'
+  g.fillRect(left + 6, top - 9, w - 12, 3)
+  g.fillStyle = '#a06c7a'
+  for (let i = 0; i < w / 8; i++) g.fillRect(left + i * 8 + 2, top + 2, 4, 2)
+  // 기둥 곁 꽃 둘
+  flowers(g, { x: x0, y: y0 + 1 }, 2)
+  flowers(g, { x: x1, y: y0 + 1 }, 5)
+}
+
 /** 마을에 생긴 것들을 그린다 (월드 좌표, 카메라 이동이 이미 적용된 상태) */
 export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, daytime: boolean) {
   const f = game.flags
@@ -158,7 +189,8 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
   if (level >= 1)
     [2, 4, 8, 13, 17, 21, 27, 32, 38].forEach((x, i) => {
       const top = { x, y: 9 }
-      if (!onGardenPlot(top)) flowers(g, top, i)
+      // 텃밭과 큰길 가 건물(사랑방·찻집) 앞벽에는 심지 않는다
+      if (!onGardenPlot(top) && !houseAt(top.x, top.y)) flowers(g, top, i)
       flowers(g, { x, y: 11 }, i + 3)
     })
   // C3 호숫가 쉼터
@@ -173,6 +205,8 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
   // 편해지는 살림: 빗물 항아리(장날에 산 뒤), 갈대 말리는 틀(목수가 세운 뒤)
   if (unlocked(f, 'rainJar')) rainJar(g, RAIN_JAR_AT)
   if (unlocked(f, 'reedRack')) reedRack(g, REED_RACK_AT)
+  // 호숫가 정자 (계획 10)
+  pavilion(g)
   // 요한계시록 방이 열린 뒤부터 언덕 벤치 곁 편지함
   const box = hillMailbox(game)
   if (box) mailbox(g, box, (game.flags.allFeast ?? 0) >= 1)

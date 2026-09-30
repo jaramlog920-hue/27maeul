@@ -113,6 +113,9 @@ const HOUSE_STYLES: Record<string, HouseStyle> = {
   innkeeper: { roof: ['#b0786a', '#8a5a4f', '#c9968a'], pattern: 'tile', wall: '#f5dfbe', base: '#e0c9a0', window: 'arch', shutter: '#ae9068', door: '#82684f', awning: ['#a9b88f', '#fefdf8'] },
   fisher: { roof: ['#7f9f98', '#5f7d77', '#9dbab3'], pattern: 'tile', wall: '#efe2c6', base: '#d9ccab', window: 'round', shutter: '#8a9c8e', door: '#7c6a58' },
   carpenter: { roof: ['#a58a66', '#7e694c', '#c1a680'], pattern: 'tile', wall: '#f3dbb0', base: '#dbc79a', window: 'square', shutter: '#ae9068', door: '#82684f', timber: '#98795a' },
+  // 모이는 곳 (계획 10): 이웃집과 달라 보이게 — 사랑방은 쪽빛 지붕에 나무 기둥·줄무늬 차양, 찻집은 분홍 지붕에 꽃빛 차양
+  hall: { roof: ['#6f8fa8', '#56718a', '#8eaac0'], pattern: 'tile', wall: '#f6e4c4', base: '#e0cfa6', window: 'arch', shutter: '#8e9aa6', door: '#7c6a58', timber: '#98795a', awning: ['#e0b86a', '#fefdf8'] },
+  teahouse: { roof: ['#c98a98', '#a06c7a', '#e0a8b4'], pattern: 'tile', wall: '#fbeede', base: '#e8d6bc', window: 'round', shutter: '#b8948a', door: '#8e6a5a', awning: ['#e6a6b4', '#fefdf8'] },
 }
 const PLAIN_STYLE = HOUSE_STYLES.child
 /** 앞벽 한 칸: 위 줄은 처마 그림자뿐, 아래 줄에 꽃 상자 달린 창과 문 */
