@@ -2,7 +2,9 @@ import { fill, T } from '../../content/text'
 import { isMarketDay, weatherOf } from '../../engine/calendar'
 import { formatTime, phaseOf, seasonOf } from '../../engine/clock'
 import { totalChapters } from '../../engine/books'
-import { peaceful } from '../../engine/game'
+import { piecesOf } from '../../content/catalog'
+import { currentChapter } from '../../engine/offers'
+import { peaceful, type GameState } from '../../engine/game'
 import { jobOf } from '../../engine/job'
 import { useGame } from '../../store/game-store'
 
@@ -15,6 +17,9 @@ export function Hud() {
   const job = useGame((s) => jobOf(s.game))
   const name = useGame((s) => s.game.avatar?.name ?? '')
   const peace = useGame((s) => peaceful(s.game))
+  // 선택자는 글자·참거짓만 돌려준다 (새 객체를 돌려주면 매번 다시 그린다)
+  const chapterText = useGame((s) => chapterNow(s.game).text)
+  const chapterHint = useGame((s) => chapterNow(s.game).hint)
   const { open } = useGame.getState()
   const weather = (T.ui.weather as Record<string, string>)[weatherOf(day)]
   return (
@@ -32,7 +37,10 @@ export function Hud() {
       <div className="hud-row hud-toolbar">
         <span className="hud-shelf">
           {name && <>{name} · </>}
-          {T.jobs[job]} · {fill(T.ui.coins, { n: coins })} · {fill(T.ui.shelf, { n: shelf })}
+          {T.jobs[job]} · {fill(T.ui.coins, { n: coins })}
+          {/* PC는 엮은 장 수, 휴대폰(아래 조작판)은 상태 판 대신 지금 쓰는 장 */}
+          <span className="hud-shelf-count"> · {fill(T.ui.shelf, { n: shelf })}</span>
+          <span className={`hud-chapter${chapterHint ? ' hint' : ''}`}> · {chapterText}</span>
         </span>
         <div className="hud-buttons">
           <button className="hud-btn" onClick={() => open({ kind: 'settings' })}>설정</button>
@@ -46,6 +54,20 @@ export function Hud() {
       </div>
     </header>
   )
+}
+
+const BOOK_NAME = T.quiz.books as Record<string, string>
+
+/** 위 줄에 쓰는 지금 쓰는 장: "마가복음 3장 2/5" · 책이 없으면 "책상에서 책 고르기" */
+function chapterNow(game: GameState): { text: string; hint: boolean } {
+  const book = game.activeBook
+  if (!book) return { text: T.ui.hudPickBook, hint: true }
+  const pieces = piecesOf(book)
+  const ch = currentChapter(pieces, game.progress[book].completed)
+  if (ch === null) return { text: T.ui.hudBookDone, hint: true }
+  const inChapter = pieces.filter((p) => p.chapter === ch)
+  const got = inChapter.filter((p) => game.collected.includes(p.id)).length
+  return { text: `${BOOK_NAME[book]} ${fill(T.ui.chapterLabel, { chapter: ch })} ${got}/${inChapter.length}`, hint: false }
 }
 
 export function Toast() {

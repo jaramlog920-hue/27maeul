@@ -17,14 +17,15 @@ describe('아래 조작판', () => {
     act(() => useGame.getState().setDeck(false))
     expect(loadDeck()).toBe(false)
   })
-  it('나침반·살피기·가방/일지/설정, 몸 상태 눈금이 있다', () => {
+  it('십자 단추·확인·메뉴(가방/일지/설정), 몸 상태 눈금이 있다', () => {
     const { container, getByText } = render(<ControlDeck />)
     expect(container.querySelector('.deck-pad [data-zone="up"]')).not.toBeNull()
     expect(container.querySelectorAll('.deck-need').length).toBeGreaterThanOrEqual(3)
+    act(() => getByText('메뉴').click())
     act(() => getByText('가방').click())
     expect(useGame.getState().modal).toEqual({ kind: 'bag' })
   })
-  it('살피기 단추는 바라보는 앞을 누른다', () => {
+  it('확인 단추는 바라보는 앞을 누른다', () => {
     const press = vi.fn()
     useGame.setState({ press })
     const { container } = render(<ControlDeck />)
