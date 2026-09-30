@@ -1178,6 +1178,10 @@ button.copy-blank.on {
   .play.has-deck .world-frame { padding-bottom: 0; }
   /* 지도와 조작판이 같은 폭: 남는 높이에 맞춘 지도 폭을 조작판도 쓴다 */
   .play.has-deck { --deck-w: min(100%, calc((var(--app-h, 100dvh) - 262px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) * 0.8)); }
+  /* 화면이 넓고 길 때(데스크톱 모드 등): 게임 칸이 480px에 묶여 남는 높이를 조작판이 다 차지하지 않게,
+     칸 폭을 남는 높이에 맞춰 키운다 (2026-09-30 사용자 화면) */
+  .play.has-deck { width: min(calc(100% - 24px), calc((var(--app-h, 100dvh) - 262px) * 0.8)); max-width: none; }
+  .play.has-deck .deck { max-height: 340px; }
   .play.has-deck .world { width: var(--deck-w); margin: 0 auto; border-radius: 4px 4px 0 0; border-bottom-width: 0; }
 
   /* 몸체: 지도 액자와 이어지는 같은 테두리 */
