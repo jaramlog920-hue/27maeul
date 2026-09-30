@@ -5,6 +5,7 @@ import { canTrip } from '../../engine/game'
 import { DEST_IDS, DESTS, tripCost, type DestId } from '../../engine/travel'
 import type { ItemId } from '../../engine/types'
 import { useGame } from '../../store/game-store'
+import { ItemIcon } from '../../shared/ItemIcon'
 
 const WHY: Record<string, string> = {
   late: '여행은 아침에 떠나요. 정오가 지났어요.',
@@ -70,7 +71,10 @@ export function TravelView() {
       <p className="hint">한 가지씩 하나만 살 수 있어요.</p>
       <ul className="trade-list">
         {(Object.entries(d.shop) as [ItemId, number][]).map(([id, price]) => (
-          <li key={id}>
+          <li key={id} className="with-icon">
+            <span className="trade-icon">
+              <ItemIcon id={id} />
+            </span>
             <span className="trade-get">{itemName(id)}</span>
             <span className="trade-pay">{price}닢</span>
             <button className={buys.includes(id) ? 'primary' : ''} aria-pressed={buys.includes(id)} onClick={() => toggle(id)}>

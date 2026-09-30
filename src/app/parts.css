@@ -1588,3 +1588,10 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
   color: var(--accent-ink);
   border-color: var(--accent-lo);
 }
+
+/* ── 좌판·게시판·여행 가게: 줄 왼쪽에 물건 아이콘 ── */
+.trade-list li.with-icon { grid-template-columns: 28px 1fr auto; }
+.trade-list li.with-icon .trade-icon { grid-row: 1 / span 2; grid-column: 1; display: flex; align-items: center; justify-content: center; }
+.trade-list li.with-icon .trade-get,
+.trade-list li.with-icon .trade-pay { grid-column: 2; }
+.trade-list li.with-icon button { grid-column: 3; }

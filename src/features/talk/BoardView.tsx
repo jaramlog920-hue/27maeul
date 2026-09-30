@@ -3,6 +3,7 @@ import { CONTENT, neighborById } from '../../content/catalog'
 import { itemName, T } from '../../content/text'
 import { boardToday, canFulfillBoard } from '../../engine/game'
 import { useGame } from '../../store/game-store'
+import { ItemIcon } from '../../shared/ItemIcon'
 
 export function BoardView() {
   const game = useGame((s) => s.game)
@@ -16,7 +17,10 @@ export function BoardView() {
         {list.map((r) => {
           const block = canFulfillBoard(game, r)
           return (
-            <li key={r.id}>
+            <li key={r.id} className="with-icon">
+              <span className="trade-icon">
+                <ItemIcon id={r.item} />
+              </span>
               <span className="trade-get">
                 <strong>{neighborById(r.npc)?.role ?? '이웃'}</strong> · {itemName(r.item)} {r.n}개
               </span>
