@@ -4,6 +4,8 @@ import { darkness, phaseOf, seasonOf } from '../engine/clock'
 import { isGrown, STRAY_SPOTS, EAVES } from '../engine/companion'
 import { totalChapters } from '../engine/books'
 import { shelfRoom } from '../engine/shelf-rooms'
+import { letterWaiting } from '../engine/requests'
+import { POSTMAN } from '../engine/post'
 import { childAtSchool, closedHouseIds, storyWaiting, routineOf, SCHOOL_SEAT, shelvedCount, straysToday, weddingToday, type GameState } from '../engine/game'
 import type { Activity } from '../engine/people'
 import { fixtureTier, RARE_ITEMS } from '../engine/fixtures'
@@ -870,7 +872,7 @@ function bubble(g: Ctx, cx: number, top: number, draw: (x: number, y: number) =>
   draw(x, y)
 }
 
-type EmoteId = 'z' | 'note' | 'yawn' | 'talk' | 'heart' | 'sweat' | 'hungry' | 'shiver'
+type EmoteId = 'z' | 'note' | 'yawn' | 'talk' | 'heart' | 'sweat' | 'hungry' | 'shiver' | 'letter'
 /** 하고 있는 일 (계획 6b): 일과 자리에 선 사람 머리 위 작은 그림 — 말을 걸기 전에도 무엇을 하는지 보인다 */
 const DOING: Record<Activity, string[]> = {
   hammer: ['..kkkk..', '..kkkk..', '...nn...', '...nn...', '...nn...', '........'],
@@ -954,6 +956,17 @@ function emote(g: Ctx, id: EmoteId, cx: number, top: number) {
         f(1, 2, 1, 4, '#79a9d8')
         f(8, 2, 1, 4, '#79a9d8')
         f(4, 3, 2, 2, '#79a9d8')
+        break
+      case 'letter':
+        // 안 읽은 편지: 흰 봉투에 붉은 봉인
+        f(1, 2, 8, 5, '#fff7e5')
+        f(1, 2, 8, 1)
+        f(1, 6, 8, 1)
+        f(1, 2, 1, 5)
+        f(8, 2, 1, 5)
+        f(2, 3, 2, 1)
+        f(6, 3, 2, 1)
+        f(4, 4, 2, 1, '#c0392b')
         break
     }
   })
@@ -1569,6 +1582,12 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       type Item = { y: number; paint: () => void }
       const items: Item[] = []
 
+      // 안 읽은 편지 (2026-09-30 사용자): 문 앞 편지 바구니 위에 봉투 말풍선
+      if (letterWaiting(game)) {
+        const bk = PLACES.basket.tiles[0]
+        items.push({ y: bk.y + 0.4, paint: () => emote(g, 'letter', bk.x * TILE + 8, bk.y * TILE - 2 - Math.round(Math.sin(t * 3))) })
+      }
+
       // 양 우리의 양 (우리를 넓히면 둘 더)
       ;[
         [4, 28],
@@ -1608,7 +1627,10 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
             const spr = neighborPerson(def, facing, moving ? walkFrame(n.walkTime) : 0, isBlinking(t + offset), season, growth, game.looks?.[def.id])
             drawSprite(g, spr, n.x, n.y, moving ? 0 : breathOffset(t + offset))
             // 이야기를 건넬 이웃, 기다리던 이야기(이벤트)를 품은 이웃은 머리 위에 말풍선 — 말을 걸면 열린다
-            if (game.offers[def.id] || storyWaiting(game, def.id)) emote(g, 'talk', n.x * TILE + 8, n.y * TILE + TILE - spr.height - 2 - Math.round(Math.sin(t * 3)))
+            const bubbleY = n.y * TILE + TILE - spr.height - 2 - Math.round(Math.sin(t * 3))
+            // 편지 나르는 이웃이 오늘 편지를 들고 있으면 봉투 말풍선
+            if (def.id === POSTMAN && (game.post?.length ?? 0) > 0) emote(g, 'letter', n.x * TILE + 8, bubbleY)
+            else if (game.offers[def.id] || storyWaiting(game, def.id)) emote(g, 'talk', n.x * TILE + 8, bubbleY)
             else if (!moving) {
               // 일과 자리에서 하는 일 (계획 6b)
               const r = routineOf(game, def.id)
