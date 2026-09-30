@@ -1,0 +1,109 @@
+// 여행 주사위 보드게임 (2026-09-30 사용자 요청): 이웃 마을에 가면 그 마을 둘레를 도는 주사위 판이 열린다.
+// 스무 번 안에 한 바퀴를 돌면 끝. 칸마다 성경 조각(이웃을 찾아가지 않아도 지금 책의 다음 조각)·재료·능력치·이벤트·상자.
+// 아이를 데려가면 능력치 칸에서 아이도 자란다. 얻은 것은 돌아올 때 한꺼번에 받는다 (여행은 도중에 저장되지 않는다).
+import { RARE_ITEMS } from './fixtures'
+import { STAT_IDS, type StatId } from './stats'
+import type { ItemId } from './types'
+
+export type Cell = 'start' | 'plain' | 'book' | 'item' | 'star' | 'event' | 'chest'
+
+/** 판 둘레 24칸 (7×7 판의 가장자리, 왼쪽 위에서 시계 방향). 성경 칸은 네 군데 */
+export const BOARD: readonly Cell[] = [
+  'start', 'plain', 'book', 'item', 'plain', 'event', 'star',
+  'plain', 'item', 'book', 'plain', 'chest', 'event',
+  'plain', 'star', 'item', 'book', 'plain', 'event',
+  'plain', 'item', 'book', 'star', 'chest',
+]
+export const TRIP_TURNS = 20
+
+export type TripReward =
+  | { kind: 'piece'; id: string }
+  | { kind: 'stat'; who: 'me' | 'child'; stat: StatId; xp: number }
+  | { kind: 'items'; items: Partial<Record<ItemId, number>> }
+  | { kind: 'coins'; n: number }
+
+export interface BoardState {
+  pos: number
+  turn: number
+  done: boolean
+  /** 한 바퀴를 다 돌았는가 (스무 번 안에) */
+  lapped: boolean
+  lastRoll: number | null
+  rewards: TripReward[]
+}
+
+export const NEW_BOARD: BoardState = { pos: 0, turn: 0, done: false, lapped: false, lastRoll: null, rewards: [] }
+
+/** 이벤트 칸의 일 (문구는 life-text.json tripBoard.events) */
+export const TRIP_EVENTS: readonly { id: string; child?: boolean; rewards: TripReward[] }[] = [
+  { id: 'sharedBread', rewards: [{ kind: 'items', items: { bread: 2 } }] },
+  { id: 'lostCoin', rewards: [{ kind: 'coins', n: 8 }] },
+  { id: 'helpCart', rewards: [{ kind: 'stat', who: 'me', stat: 'strength', xp: 10 }, { kind: 'coins', n: 5 }] },
+  { id: 'storyteller', rewards: [{ kind: 'stat', who: 'me', stat: 'wit', xp: 8 }] },
+  { id: 'sing', rewards: [{ kind: 'stat', who: 'me', stat: 'charm', xp: 8 }] },
+  { id: 'shower', rewards: [{ kind: 'stat', who: 'me', stat: 'luck', xp: 4 }] },
+  { id: 'kidFriends', child: true, rewards: [{ kind: 'stat', who: 'child', stat: 'charm', xp: 10 }] },
+  { id: 'kidRace', child: true, rewards: [{ kind: 'stat', who: 'child', stat: 'strength', xp: 10 }] },
+]
+
+const ITEM_CELL: readonly ItemId[] = ['reed', 'olive', 'wool', 'fig', 'honey', 'herb', 'papyrus']
+
+export interface Landing {
+  cell: Cell
+  /** 알림 한 줄의 열쇠 (tripBoard.say.*, 이벤트면 tripBoard.events.*) */
+  say: string
+  rewards: TripReward[]
+}
+
+/**
+ * 주사위 한 번: 굴린 수만큼 가서 칸의 일을 한다. nextPiece는 지금 책의 다음 조각(이미 이번 여행에서 받은 것은 빼고)을 준다.
+ * 판 끝(시작 칸)을 지나면 한 바퀴 — 끝. 스무 번째에도 끝
+ */
+export function playTurn(b: BoardState, roll: number, rnd: () => number, ctx: { withChild: boolean; nextPiece: (taken: string[]) => string | null }): { board: BoardState; landing: Landing } {
+  const to = b.pos + roll
+  const lapped = to >= BOARD.length
+  const pos = lapped ? 0 : to
+  const turn = b.turn + 1
+  const cell = BOARD[pos]
+  let landing: Landing
+  if (lapped) landing = { cell: 'start', say: 'lap', rewards: [{ kind: 'coins', n: 10 }] }
+  else landing = land(cell, rnd, ctx, b.rewards)
+  const board: BoardState = { pos, turn, lastRoll: roll, lapped: b.lapped || lapped, done: lapped || turn >= TRIP_TURNS, rewards: [...b.rewards, ...landing.rewards] }
+  return { board, landing }
+}
+
+function land(cell: Cell, rnd: () => number, ctx: { withChild: boolean; nextPiece: (taken: string[]) => string | null }, got: readonly TripReward[]): Landing {
+  const pick = <T>(list: readonly T[]) => list[Math.min(list.length - 1, Math.floor(rnd() * list.length))]
+  switch (cell) {
+    case 'book': {
+      const taken = got.flatMap((r) => (r.kind === 'piece' ? [r.id] : []))
+      const id = ctx.nextPiece(taken)
+      // 지금 책의 다음 조각이 없으면(책을 고르지 않았거나 이 장을 다 모았으면) 읽은 만큼 지능이 오른다
+      return id ? { cell, say: 'book', rewards: [{ kind: 'piece', id }] } : { cell, say: 'bookNone', rewards: [{ kind: 'stat', who: 'me', stat: 'wit', xp: 6 }] }
+    }
+    case 'item': {
+      const item = pick(ITEM_CELL)
+      return { cell, say: 'item', rewards: [{ kind: 'items', items: { [item]: 1 + Math.floor(rnd() * 2) } }] }
+    }
+    case 'star': {
+      const rewards: TripReward[] = [{ kind: 'stat', who: 'me', stat: pick(STAT_IDS), xp: 8 }]
+      if (ctx.withChild) rewards.push({ kind: 'stat', who: 'child', stat: pick(STAT_IDS), xp: 8 })
+      return { cell, say: 'star', rewards }
+    }
+    case 'event': {
+      const e = pick(TRIP_EVENTS.filter((x) => !x.child || ctx.withChild))
+      return { cell, say: `event:${e.id}`, rewards: e.rewards }
+    }
+    case 'chest':
+      return rnd() < 0.25
+        ? { cell, say: 'chestRare', rewards: [{ kind: 'items', items: { [pick(RARE_ITEMS)]: 1 } }] }
+        : { cell, say: 'chestCoins', rewards: [{ kind: 'coins', n: 10 + Math.floor(rnd() * 16) }] }
+    default:
+      return { cell, say: 'plain', rewards: [] }
+  }
+}
+
+/** 주사위 1–6 */
+export function rollDie(rnd: () => number): number {
+  return 1 + Math.min(5, Math.floor(rnd() * 6))
+}

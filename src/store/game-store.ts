@@ -8,6 +8,7 @@ import type { FixtureLine } from '../engine/fixtures'
 import type { BoardRequest } from '../engine/board'
 import { DESTS, type DestId } from '../engine/travel'
 import type { ChildMode } from '../engine/child'
+import type { TripReward } from '../engine/trip-board'
 import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
 import { bookRoomOpen, openDoorsFor } from '../engine/books'
 import { actsDoorGlows, canShelve, payRetry, poolFor, shelve } from '../engine/library'
@@ -265,7 +266,7 @@ interface Store {
   sellItem: (item: ItemId) => void
   buyRareItem: (item: ItemId) => void
   doBoard: (r: BoardRequest) => void
-  goTrip: (dest: DestId, buys: ItemId[]) => void
+  goTrip: (dest: DestId, buys: ItemId[], rewards?: TripReward[]) => void
   setChildName: (name: string) => void
   /** 곁에 선 이웃에게 말 걸기 ('대화하기' 단추) */
   talkTo: (id: string) => void
@@ -959,8 +960,8 @@ export const useGame = create<Store>((set, get) => {
 
     setChildName: (name) => set({ game: persist(nameChild(get().game, name)), modal: null }),
 
-    goTrip: (dest, buys) => {
-      const next = takeTrip(get().game, CONTENT, dest, buys)
+    goTrip: (dest, buys, rewards = []) => {
+      const next = takeTrip(get().game, CONTENT, dest, buys, rewards)
       if (!next) return
       set({ game: persist(next), modal: null })
       get().say(`${DESTS[dest].name}에서 하룻밤 묵고 집으로 돌아왔어요`, 3400)

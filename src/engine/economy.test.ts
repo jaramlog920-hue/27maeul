@@ -132,3 +132,49 @@ describe('이웃 마을 여행 (계획 13 작업 6)', () => {
     expect(canTrip({ ...s, coins: 5 }, 'harbor')).toBe('coins')
   })
 })
+
+describe('여행 주사위 보드게임', () => {
+  it('스무 번 안에 끝나고, 한 바퀴를 돌면 바로 끝난다', async () => {
+    const { NEW_BOARD, playTurn, TRIP_TURNS, BOARD } = await import('./trip-board')
+    let b = NEW_BOARD
+    const rnd = () => 0.5
+    const ctx = { withChild: false, nextPiece: () => null }
+    for (let i = 0; i < 30 && !b.done; i++) b = playTurn(b, 1, rnd, ctx).board
+    expect(b.done).toBe(true)
+    expect(b.turn).toBe(TRIP_TURNS)
+    expect(b.lapped).toBe(false)
+    let c = NEW_BOARD
+    for (let i = 0; i < 30 && !c.done; i++) c = playTurn(c, 6, rnd, ctx).board
+    expect(c.lapped).toBe(true)
+    expect(c.turn).toBe(Math.ceil(BOARD.length / 6))
+  })
+
+  it('성경 칸은 지금 책의 다음 조각을 준다 (같은 조각을 두 번 주지 않는다)', async () => {
+    const { chooseBook, nextTripPiece } = await import('./game')
+    const s = chooseBook(newGame(CONTENT), 'lk', CONTENT)
+    const a = nextTripPiece(s, CONTENT)!
+    expect(a.startsWith('lk-001-')).toBe(true)
+    expect(nextTripPiece(s, CONTENT, [a])).not.toBe(a)
+    expect(nextTripPiece(newGame(CONTENT), CONTENT)).toBeNull()
+  })
+
+  it('돌아오면 얻은 것을 한꺼번에: 조각·능력치·재료·닢, 아이 능력치', async () => {
+    const { applyTripRewards, chooseBook, nextTripPiece } = await import('./game')
+    const { freshStats } = await import('./stats')
+    let s = chooseBook(newGame(CONTENT), 'lk', CONTENT)
+    s = { ...s, child: { name: '핀', look: 'boy', born: 1, stats: freshStats(), lean: null } }
+    const piece = nextTripPiece(s, CONTENT)!
+    const r = applyTripRewards(s, [
+      { kind: 'piece', id: piece },
+      { kind: 'stat', who: 'me', stat: 'luck', xp: 8 },
+      { kind: 'stat', who: 'child', stat: 'hand', xp: 8 },
+      { kind: 'items', items: { fig: 2 } },
+      { kind: 'coins', n: 12 },
+    ], CONTENT)
+    expect(r.collected).toContain(piece)
+    expect(r.stats.luck.xp).toBeGreaterThan(0)
+    expect(r.child!.stats.hand.xp).toBeGreaterThan(0)
+    expect((r.inv.fig ?? 0) + (r.chest.fig ?? 0)).toBe((s.inv.fig ?? 0) + (s.chest.fig ?? 0) + 2)
+    expect(r.coins).toBe(s.coins + 12)
+  })
+})

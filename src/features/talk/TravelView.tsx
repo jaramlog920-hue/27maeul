@@ -5,6 +5,9 @@ import { canTrip } from '../../engine/game'
 import { DEST_IDS, DESTS, tripCost, type DestId } from '../../engine/travel'
 import type { ItemId } from '../../engine/types'
 import { useGame } from '../../store/game-store'
+import { childStage } from '../../engine/child'
+import type { TripReward } from '../../engine/trip-board'
+import { TripBoardView } from './TripBoardView'
 import { ItemIcon } from '../../shared/ItemIcon'
 
 const WHY: Record<string, string> = {
@@ -20,6 +23,10 @@ export function TravelView() {
   const { goTrip, closeModal } = useGame.getState()
   const [dest, setDest] = useState<DestId | null>(null)
   const [buys, setBuys] = useState<ItemId[]>([])
+  // 아이와 함께 (아기는 집에), 여행 판에서 얻은 것 (판을 마치기 전엔 null)
+  const canBring = !!game.child && childStage(game.child, game.clock.day) !== 'baby'
+  const [withChild, setWithChild] = useState(canBring)
+  const [rewards, setRewards] = useState<TripReward[] | null>(null)
   if (!dest)
     return (
       <div className="dialog travel" role="dialog" aria-label="이웃 마을 여행">
@@ -48,6 +55,11 @@ export function TravelView() {
             )
           })}
         </ul>
+        {canBring && (
+          <label className="trip-child">
+            <input type="checkbox" checked={withChild} onChange={(e) => setWithChild(e.target.checked)} /> {game.child!.name} 데리고 가기
+          </label>
+        )}
         {DEST_IDS.every((id) => canTrip(game, id) !== null) && <p className="hint">{WHY[canTrip(game, DEST_IDS[0]) ?? ''] ?? ''}</p>}
         <div className="actions">
           <button onClick={closeModal}>{T.ui.close}</button>
@@ -55,6 +67,14 @@ export function TravelView() {
       </div>
     )
   const d = DESTS[dest]
+  // 먼저 그 마을 둘레를 도는 주사위 판
+  if (!rewards)
+    return (
+      <div className="dialog travel" role="dialog" aria-label={d.name}>
+        <h2>{d.name}</h2>
+        <TripBoardView dest={d.name} withChild={withChild && canBring} onDone={setRewards} />
+      </div>
+    )
   const first = !game.flags[`trip:${dest}`]
   const story = first ? SCENES[`trip:${dest}`] : null
   const block = canTrip(game, dest, buys)
@@ -88,8 +108,7 @@ export function TravelView() {
       </p>
       {block && <p className="hint">{WHY[block]}</p>}
       <div className="actions">
-        <button onClick={() => setDest(null)}>{T.ui.back}</button>
-        <button className="primary" disabled={block !== null} onClick={() => goTrip(dest, buys)}>
+        <button className="primary" disabled={block !== null} onClick={() => goTrip(dest, buys, rewards)}>
           하룻밤 묵고 돌아가기
         </button>
       </div>

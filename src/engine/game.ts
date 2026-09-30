@@ -106,6 +106,7 @@ import { BOARD_GAIN, boardFor, type BoardRequest } from './board'
 import { newlyAchieved, withFound, type Achievement } from './achievements'
 import { CHILD_AFTER_WEDDING, childMode, childStage, CRADLE_SPOT, helperSpot, helpStat, newChild, type Child, type ChildMode } from './child'
 import { DESTS, TRIP_FRIEND_GAIN, TRIP_LEAVE_BY, tripCost, type DestId } from './travel'
+import type { TripReward } from './trip-board'
 import { BIRTHDAY_MUL, isBirthday, NO_NOTEBOOK, noteGift, noteHeard, noteMet, noteSeen, seenLabel, type Notebook } from './notebook'
 import { CARPENTER_WORKS, fromChest, hasStock, HOME_MAILBOX, INK_JAR_HOLD, LIGHT_SHOES, owns, RACK_HOLD, RACK_PAPYRUS, RAIN_WATER, SOOT_CATCH, stash, stashOverflows, stock, takeStock, walkMul, type CarpenterWork, type EasyId } from './easier'
 
@@ -1369,7 +1370,7 @@ export function canTrip(s: GameState, id: DestId, buys: readonly ItemId[] = []):
  * 여행을 다녀온다 (한꺼번에 — 도중에 저장되지 않는다): 값을 치르고, 산 것을 챙기고, 처음 간 곳이면 이야기가 앨범·일지에 남고
  * 이어진 이웃의 마음이 오른다. 하룻밤 묵고 다음 날 아침 집에서 눈을 뜬다
  */
-export function takeTrip(s: GameState, content: GameContent, id: DestId, buys: readonly ItemId[] = []): GameState | null {
+export function takeTrip(s: GameState, content: GameContent, id: DestId, buys: readonly ItemId[] = [], rewards: readonly TripReward[] = []): GameState | null {
   const d = DESTS[id]
   const items = [...new Set(buys)].filter((b) => d.shop[b] !== undefined)
   if (canTrip(s, id, items)) return null
@@ -1383,7 +1384,32 @@ export function takeTrip(s: GameState, content: GameContent, id: DestId, buys: r
     next = { ...next, album: next.album.some((a) => a.id === note) ? next.album : [...next.album, { id: note, day: s.clock.day }] }
   }
   next = { ...next, todayNotes: next.todayNotes.includes(note) ? next.todayNotes : [...next.todayNotes, note] }
+  next = applyTripRewards(next, rewards, content)
   return goToSleep(next, content)
+}
+
+/** 여행 보드게임에서 얻은 것 (돌아올 때 한꺼번에): 성경 조각, 능력치(나·아이), 재료, 닢 */
+export function applyTripRewards(s: GameState, rewards: readonly TripReward[], content: GameContent): GameState {
+  let next = s
+  const pieces = rewards.flatMap((r) => (r.kind === 'piece' && !s.collected.includes(r.id) ? [r.id] : []))
+  if (pieces.length) next = train(takeChapters(next, [...new Set(pieces)], content), 'wit', XP.listen * pieces.length)
+  for (const r of rewards) {
+    if (r.kind === 'stat' && r.who === 'me') next = train(next, r.stat, r.xp)
+    else if (r.kind === 'stat' && r.who === 'child' && next.child) next = { ...next, child: { ...next.child, stats: addXp(next.child.stats, r.stat, r.xp) } }
+    else if (r.kind === 'items') next = putAway(next, r.items)
+    else if (r.kind === 'coins') next = { ...next, coins: next.coins + r.n }
+  }
+  return next
+}
+
+/** 여행 판의 성경 칸: 지금 책의 지금 장에서 아직 모으지 않은 다음 조각 (이웃을 찾아가지 않아도) — 편지 책은 편지 나르는 이웃이 가져온다 */
+export function nextTripPiece(s: Pick<GameState, 'activeBook' | 'progress' | 'collected'>, content: GameContent, taken: readonly string[] = []): string | null {
+  const b = s.activeBook
+  if (!b || modeOf(b) === 'letters') return null
+  const pieces = content.pieces.filter((p) => p.book === b)
+  const ch = currentChapter(pieces, s.progress[b].completed)
+  if (ch === null) return null
+  return pieces.find((p) => p.chapter === ch && !s.collected.includes(p.id) && !taken.includes(p.id))?.id ?? null
 }
 
 /** 아이에게 글자 가르치기 (하루 한 번, 저녁에 집으로 올 때) */
