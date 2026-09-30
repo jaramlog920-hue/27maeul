@@ -22,24 +22,24 @@ export interface Avatar {
 }
 export type FullAvatar = Required<Avatar>
 
-export const SKINS = ['#f6d7c3', '#eab996', '#e0a57e', '#c98b62', '#b07550', '#8d5a3b', '#6e4430', '#553425'] as const
+export const SKINS = ['#f8dcc0', '#f8d0a8', '#e8b890', '#d0a078', '#b88460', '#98684a', '#785038', '#5c3c2c'] as const
 // 앞머리 × 뒷머리를 따로 골라 몇 가지만으로도 여러 모양이 나온다
 export const HAIR_FRONTS = ['넘긴 머리', '일자 앞머리', '옆 가르마', '짧게 깎음', '부스스'] as const
 export const HAIR_BACKS = ['짧은 머리', '긴 머리', '단발', '올린 머리', '묶은 머리', '양갈래', '땋은 머리'] as const
 /** 윗옷: [이름, 바탕, 그늘, 무늬/띠, 무늬 모양] */
 export const TOPS: readonly (readonly [string, string, string, string, 'plain' | 'stripe' | 'apron' | 'vest'])[] = [
-  ['흙빛 겉옷', '#8a6a4a', '#6d5238', '#c9a15a', 'plain'],
-  ['올리브 겉옷', '#6f7a3f', '#55602f', '#d8c98a', 'plain'],
-  ['포도빛 겉옷', '#7a4a6b', '#5c3651', '#e0c878', 'plain'],
-  ['바다빛 겉옷', '#4f7896', '#3c5d75', '#e8e4dc', 'plain'],
-  ['베 줄무늬', '#d8cfae', '#b3a987', '#8a6a4a', 'stripe'],
-  ['하늘 줄무늬', '#9cc0d8', '#7b9fb8', '#f1e6cf', 'stripe'],
-  ['붉은 줄무늬', '#b4533f', '#8e3f30', '#f1e6cf', 'stripe'],
-  ['앞치마 (흰)', '#8a6a4a', '#6d5238', '#f1e6cf', 'apron'],
-  ['앞치마 (풀빛)', '#bfa27a', '#9c825e', '#6f8f3f', 'apron'],
-  ['조끼 (갈색)', '#e8d9a8', '#c9b98a', '#6e4329', 'vest'],
-  ['조끼 (쪽빛)', '#e8e4dc', '#c8c2b6', '#3f4f7a', 'vest'],
-  ['목동 옷', '#d8cfae', '#b3a987', '#7c6a4f', 'vest'],
+  ['흙빛 겉옷', '#987858', '#80644a', '#c8a04c', 'plain'],
+  ['올리브 겉옷', '#58984c', '#488040', '#e0c898', 'plain'],
+  ['포도빛 겉옷', '#b05c88', '#944850', '#d4b060', 'plain'],
+  ['바다빛 겉옷', '#4880b4', '#3c6c9c', '#e8e0d8', 'plain'],
+  ['베 줄무늬', '#f4e0c0', '#ac8c6c', '#80644a', 'stripe'],
+  ['하늘 줄무늬', '#98d8e0', '#5c94c4', '#f8e8cc', 'stripe'],
+  ['붉은 줄무늬', '#c07058', '#a86048', '#f8e8cc', 'stripe'],
+  ['앞치마 (흰)', '#987858', '#80644a', '#f8e8cc', 'apron'],
+  ['앞치마 (풀빛)', '#ac8c6c', '#987858', '#58984c', 'apron'],
+  ['조끼 (갈색)', '#f0d8b0', '#e0c898', '#845038', 'vest'],
+  ['조끼 (쪽빛)', '#e8e0d8', '#c8c0b8', '#3c6c9c', 'vest'],
+  ['목동 옷', '#f4e0c0', '#ac8c6c', '#80644a', 'vest'],
 ]
 export const BOTTOMS = ['긴 치마', '짧은 치마', '바지', '반바지'] as const
 export const ACCS = ['없음', '머리띠', '꽃 핀', '목걸이', '귀걸이', '머릿수건'] as const
