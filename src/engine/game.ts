@@ -2,6 +2,7 @@
 import { festivalOf, FESTIVAL_FROM, FESTIVAL_TO, isMarketDay, isWet, weatherOf, barleyRipe, grapesRipe } from './calendar'
 import { advance, newClock, phaseOf, seasonOf, sleepClock, type Clock } from './clock'
 import { DURATION, greet, IDLE_GAP, IDLE_RESET, stepIdle, type IdleState } from './autonomy'
+import type { Service } from './services'
 import { adopt, companionGoal, STRAY_DAY, STRAY_SPOTS, stepCompanion, type Animal, type Companion } from './companion'
 import { add, addGift, CHAPTER_COST, FOODS, count, has, RECIPES, recipeGives, stackCap, take, TOOLS, type Inventory, type RecipeId } from './items'
 import { facingFor, findPath, pathToward, stepActor, type Actor } from './movement'
@@ -1467,6 +1468,28 @@ export function applyTripRewards(s: GameState, rewards: readonly TripReward[], c
     else if (r.kind === 'coins') next = { ...next, coins: next.coins + r.n }
   }
   return next
+}
+
+// ── 집마다 직업 → 주고받기 (services.ts): 하루에 한 번씩 ──
+export type ServiceBlock = 'done' | 'season' | 'coins' | 'need' | 'full' | null
+export function canService(s: GameState, svc: Service): ServiceBlock {
+  if (s.flags[`svc:${svc.id}`] === s.clock.day) return 'done'
+  if (svc.when && !svc.when(s.clock.day)) return 'season'
+  if (s.coins < (svc.coins ?? 0)) return 'coins'
+  if (!haveStock(s, svc.pay)) return 'need'
+  if (Object.keys(svc.get).length && overflows(useStock(s, svc.pay)!, svc.get)) return 'full'
+  return null
+}
+export function doService(s: GameState, svc: Service): GameState | null {
+  if (canService(s, svc)) return null
+  const paid = useStock(s, svc.pay)!
+  const next: GameState = {
+    ...paid,
+    inv: add(paid.inv, svc.get),
+    coins: paid.coins - (svc.coins ?? 0) + (svc.getCoins ?? 0),
+    flags: { ...paid.flags, [`svc:${svc.id}`]: s.clock.day },
+  }
+  return passTime(heartUp(next, svc.npc, 1), svc.minutes ?? 5)
 }
 
 // ── 성경 이야기를 더 모으는 길 (2026-09-30 사용자): 밤 필사·이웃 선물·서고 열람석·떠돌이 상인의 두루마리·어른이 된 아이의 편지 ──

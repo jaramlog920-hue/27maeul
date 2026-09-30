@@ -1,4 +1,5 @@
 // 엔진 상태 ↔ 화면 연결. 창(모달)이 열려 있으면 시간과 걸음이 멈춘다.
+import { SERVICES } from '../engine/services'
 import { create } from 'zustand'
 import { CONTENT, neighborById, copySourceFor, LETTER_OPENINGS, pieceById, pieceOfQuestion, piecesOf, quizSourceFor } from '../content/catalog'
 import { blanksFor } from '../engine/copy'
@@ -71,6 +72,7 @@ import {
   nameChild,
   recordProgress,
   openEvent,
+  doService,
   nightCopy,
   libraryRead,
   buyScroll,
@@ -323,6 +325,8 @@ interface Store {
   readAt: (pieceId: string) => void
   /** 성경 이야기를 더 모으는 길: 밤 필사·서고 열람석·옛 두루마리 (모으면 원래 본문 창) */
   nightCopy: () => void
+  /** 집마다 직업 → 주고받기 */
+  service: (id: string) => void
   libraryRead: () => void
   buyScroll: () => void
   blanket: () => void
@@ -1201,6 +1205,17 @@ export const useGame = create<Store>((set, get) => {
       if (!next) return
       sfx('gift')
       set({ game: persist(next), modal: { kind: 'talk', neighborId: npc, line: T.ui.homeOrdered } })
+    },
+    service: (id) => {
+      const svc = SERVICES.find((x) => x.id === id)
+      if (!svc) return
+      const before = get().game
+      const next = doService(before, svc)
+      if (!next) return
+      sfx('gift')
+      const got = [Object.keys(svc.get).length ? itemList(svc.get) : '', svc.getCoins ? `${svc.getCoins}닢` : ''].filter(Boolean).join(' · ')
+      set({ game: persist(next) })
+      get().say(`${svc.label} · ${got}`)
     },
     nightCopy: () => {
       const r = nightCopy(get().game, CONTENT)

@@ -2,8 +2,9 @@
 import { neighborById } from '../../content/catalog'
 import { callName, fill, itemList, NEIGHBOR_LINES, T } from '../../content/text'
 import { grapesRipe, isMarketDay } from '../../engine/calendar'
-import { activeRequest, APOTHECARY, isSuitor, romanceWith, stageWith, type GameState, canHelp, canOrderHome, canOrderWork, fixtureOffers, GIFTABLE, herbsSellLeft, lessonTime, nextHomeStage, sellPrice } from '../../engine/game'
+import { activeRequest, APOTHECARY, canService, isSuitor, romanceWith, stageWith, type GameState, canHelp, canOrderHome, canOrderWork, fixtureOffers, GIFTABLE, herbsSellLeft, lessonTime, nextHomeStage, sellPrice } from '../../engine/game'
 import { CARPENTER_WORKS } from '../../engine/easier'
+import { servicesOf } from '../../engine/services'
 import { requestFor, reqState } from '../../engine/bonds'
 import { has } from '../../engine/items'
 import { MAX_HEART } from '../../engine/neighbors'
@@ -104,6 +105,22 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
             {fill(T.herbs.sell, { price: sellPrice(game, 'herb')! })}
           </button>
         )}
+        {/* 집마다 직업 → 주고받기 (하루에 한 번씩) */}
+        {servicesOf(def.id).map((svc) => {
+          const b = canService(game, svc)
+          const cost = [svc.coins ? `${svc.coins}닢` : '', Object.keys(svc.pay).length ? itemList(svc.pay) : ''].filter(Boolean).join(' + ')
+          const got = [Object.keys(svc.get).length ? itemList(svc.get) : '', svc.getCoins ? `${svc.getCoins}닢` : ''].filter(Boolean).join(' + ')
+          return (
+            <button key={svc.id} disabled={b !== null} onClick={() => useGame.getState().service(svc.id)} title={b === 'season' ? svc.whenNote : b ?? ''}>
+              {svc.label}
+              <small className="svc-cost">
+                {cost ? `${cost} → ` : ''}
+                {got}
+                {b === 'done' ? ' · 오늘 함' : b === 'season' ? ` · ${svc.whenNote}` : b === 'full' ? ' · 가방 가득' : ''}
+              </small>
+            </button>
+          )
+        })}
         <button disabled={block !== null} onClick={() => startHelp(def.id)} title={block ?? ''}>
           {helpLabel}
         </button>
