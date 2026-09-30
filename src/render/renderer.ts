@@ -1204,6 +1204,8 @@ function flame(g: Ctx, px: number, py: number, t: number, big = false) {
 
 export interface Renderer {
   zoom: number
+  /** 캔버스 실제 크기가 한 화면(VIEW_W×TILE)의 몇 배인가 — 도트를 정수 배로 크게 그린 뒤 브라우저가 부드럽게 줄인다 */
+  scale: number
   /** 카메라 왼쪽 위 (칸) */
   camera: { x: number; y: number }
   draw(game: GameState, t: number, dt: number): void
@@ -1215,11 +1217,14 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
   let lastStep = ''
   const renderer: Renderer = {
     zoom: 1,
+    scale: 1,
     camera: { x: 0, y: 0 },
     draw(game, t, dt) {
       const W = VIEW_W * TILE / renderer.zoom
       const H = VIEW_H * TILE / renderer.zoom
-      g.setTransform(renderer.zoom, 0, 0, renderer.zoom, 0, 0)
+      const z = renderer.zoom * renderer.scale
+      g.setTransform(z, 0, 0, z, 0, 0)
+      g.imageSmoothingEnabled = false
       const day = game.clock.day
       const minute = game.clock.minute
       const season = seasonOf(day)
@@ -1240,8 +1245,10 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         cam.x += (target.x - cam.x) * k
         cam.y += (target.y - cam.y) * k
       }
-      const ox = Math.round(cam.x * TILE)
-      const oy = Math.round(cam.y * TILE)
+      // 카메라는 캔버스 실제 화소 단위로 맞춘다 (정수 배로 키웠으므로 도트는 흐려지지 않고, 움직임은 더 매끄럽다)
+      const sc = renderer.scale
+      const ox = Math.round(cam.x * TILE * sc) / sc
+      const oy = Math.round(cam.y * TILE * sc) / sc
 
       const outdoors = !isIndoor(here)
       let festOn = false

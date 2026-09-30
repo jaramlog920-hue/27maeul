@@ -56,6 +56,14 @@ export function GameCanvas({ zoom = 1 }: { zoom?: number }) {
       try {
         useGame.getState().frame(dt)
         // rAF가 주는 시각은 t0보다 앞설 수 있다 — 음수 시간을 막는다
+        // 도트가 고르게 보이도록: 화면에 보이는 크기(기기 화소)보다 크거나 같은 정수 배로 캔버스를 키운다.
+        // 정수 배가 아닌 크기로 늘리면 도트 폭이 들쭉날쭉해지고 움직일 때 울렁거린다
+        const k = Math.max(1, Math.min(6, Math.ceil((canvas.clientWidth * (window.devicePixelRatio || 1)) / (VIEW_W * TILE))))
+        if (canvas.width !== VIEW_W * TILE * k) {
+          canvas.width = VIEW_W * TILE * k
+          canvas.height = VIEW_H * TILE * k
+          r.scale = k
+        }
         const zoomChanged = r.zoom !== zoomRef.current
         r.zoom = zoomRef.current
         r.draw(useGame.getState().game, Math.max(0, (now - t0) / 1000), zoomChanged ? 0 : dt)

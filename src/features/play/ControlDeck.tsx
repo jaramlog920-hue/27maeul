@@ -11,7 +11,23 @@ import { useGame } from '../../store/game-store'
 import { DirectionPad } from './Joystick'
 
 
-const NEED_ICON: Record<string, string> = { hunger: '🍞', fatigue: '💤', cold: '❄️', heat: '☀️', mood: '🙂' }
+/** 몸 상태 도트 아이콘 (8×8): 빵·초승달·해·눈송이·웃는 얼굴 */
+const PIX: Record<string, string> = { k: '#151a16', y: '#d9a55a', Y: '#f0c985', m: '#f3e3a0', c: '#a8d8ea', s: '#f5a742', f: '#f0c75e' }
+const NEED_PIX: Record<string, string[]> = {
+  hunger: ['........', '..kkkk..', '.kyYYyk.', 'kyyyyyyk', 'kyYyyYyk', 'kyyyyyyk', '.kkkkkk.', '........'],
+  fatigue: ['..kkk...', '.kmmk...', 'kmmk....', 'kmk.....', 'kmk.....', 'kmmk..k.', '.kmmkkk.', '..kkk...'],
+  cold: ['...c....', '.c.c.c..', '..ccc...', 'ccccccc.', '..ccc...', '.c.c.c..', '...c....', '........'],
+  heat: ['...s....', '.s.s.s..', '..sss...', 'sssssss.', '..sss...', '.s.s.s..', '...s....', '........'],
+  mood: ['..kkkk..', '.kffffk.', 'kfkffkfk', 'kffffffk', 'kfkffkfk', 'kffkkffk', '.kffffk.', '..kkkk..'],
+}
+function NeedPix({ id }: { id: string }) {
+  const rows = NEED_PIX[id] ?? NEED_PIX.mood
+  return (
+    <svg viewBox="0 0 8 8" shapeRendering="crispEdges" aria-hidden="true">
+      {rows.flatMap((row, y) => [...row].map((ch, x) => (ch === '.' ? null : <rect key={`${x},${y}`} x={x} y={y} width={1} height={1} fill={PIX[ch]} />)))}
+    </svg>
+  )
+}
 
 function DeckNeeds() {
   const game = useGame((s) => s.game)
@@ -31,7 +47,7 @@ function DeckNeeds() {
         // 누르면 무엇인지 한 줄로 알려 준다
         return (
           <button key={k} className={`deck-need${warn ? ' warn' : ''}${good ? ' good' : ''}`} onClick={() => useGame.getState().say(fill(help, { n: Math.round(v) }), 3200)}>
-            <i aria-hidden="true">{NEED_ICON[k]}</i>
+            <NeedPix id={k} />
             <b role="meter" aria-label={label} aria-valuenow={Math.round(v)} aria-valuemin={0} aria-valuemax={100}>
               <em style={{ width: `${v}%` }} />
             </b>

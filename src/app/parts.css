@@ -153,7 +153,7 @@ textarea {
   position: relative;
   height: 26px;
   border: 2px solid var(--panel-edge);
-  background: #efe3c8;
+  background: var(--panel-soft);
   border-radius: 3px;
   margin: 10px 0;
 }
@@ -186,7 +186,7 @@ textarea {
   aspect-ratio: 1;
   min-height: 44px;
   padding: 0;
-  background: #efe3c8;
+  background: var(--panel-soft);
   box-shadow: none;
   border-style: dashed;
 }
@@ -1161,7 +1161,7 @@ button.copy-blank.on {
   border: 1px solid #c77a6a;
 }
 
-/* ── 아래 조작판 (휴대폰): 게임 단추와 같은 양피지·갈색 테두리의 픽셀 모양 ── */
+/* ── 아래 조작판 (휴대폰): 지도 액자 아래 한 장의 몸체 안에 눈금·일정·단추 (도트 모양, 둥근 빛 효과 없이) ── */
 .deck { display: none; }
 @media (pointer: coarse) {
   /* 휴대폰에선 조작판이 위 단추·상태 판·다음 일정을 대신한다 */
@@ -1171,71 +1171,74 @@ button.copy-blank.on {
   .play.has-deck .hud-shelf-count { display: none; }
   .hud-chapter { display: none; }
   .play.has-deck .hud-chapter { display: inline; }
-  .play.has-deck .hud-chapter.hint { color: #f5c542; }
-  /* 한 화면에 지도와 조작판이 다 들어오게: 위 줄을 줄이고, 지도는 남는 높이에 맞춘다 */
+  .play.has-deck .hud-chapter.hint { color: #f0c75e; }
+  .play.has-deck { min-height: 100dvh; }
   .play.has-deck .hud { padding-bottom: 2px; }
   .play.has-deck .hud-row { min-height: 22px; }
-  .play.has-deck .world-frame { padding-bottom: 4px; }
+  .play.has-deck .world-frame { padding-bottom: 0; }
   /* 지도와 조작판이 같은 폭: 남는 높이에 맞춘 지도 폭을 조작판도 쓴다 */
-  .play.has-deck { --deck-w: min(100%, calc((100dvh - 270px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) * 0.8)); }
-  .play.has-deck .world,
-  .play.has-deck .deck-strip,
-  .play.has-deck .deck-main { width: var(--deck-w); margin-left: auto; margin-right: auto; }
+  .play.has-deck { --deck-w: min(100%, calc((100dvh - 262px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) * 0.8)); }
+  .play.has-deck .world { width: var(--deck-w); margin: 0 auto; border-radius: 4px 4px 0 0; border-bottom-width: 0; }
 
+  /* 몸체: 지도 액자와 이어지는 같은 테두리 */
   .deck {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
     position: sticky;
     bottom: 0;
     z-index: 3;
-    padding: 4px 0 max(10px, env(safe-area-inset-bottom));
-    background: var(--bg);
+    width: var(--deck-w);
+    margin: 0 auto;
+    padding: 6px 12px max(12px, env(safe-area-inset-bottom));
+    background: var(--deck-body);
+    border: 3px solid var(--panel-edge);
+    border-top-width: 3px;
+    border-radius: 0 0 10px 10px;
+    box-shadow: inset 0 3px 0 var(--deck-key-lo);
     touch-action: manipulation;
     user-select: none;
     -webkit-user-select: none;
     -webkit-touch-callout: none;
   }
   .deck button { font-family: inherit; }
+  /* 몸체 윗부분: 눈금·이야기·일정 (어두운 바탕 위 밝은 글씨) */
   .deck-strip {
     display: flex;
     align-items: center;
     gap: 6px;
-    min-height: 34px;
-    padding: 3px 6px;
-    margin-bottom: 8px;
-    background: var(--panel);
-    border: 2px solid var(--panel-edge);
-    border-radius: 4px;
-    box-shadow: 0 2px 0 var(--panel-edge);
+    min-height: 30px;
+    padding: 2px 0 6px;
+    margin-bottom: 6px;
+    border-bottom: 2px solid var(--deck-key-lo);
   }
   .deck-needs { display: flex; gap: 2px; flex-shrink: 0; }
   .deck-need {
     display: flex;
-    flex-direction: row;
     align-items: center;
-    gap: 3px;
+    gap: 4px;
     min-height: 28px;
     min-width: 0;
     padding: 1px 4px;
     border: 0;
+    border-radius: 2px;
     box-shadow: none;
     background: none;
-    font-size: 10px;
-    line-height: 1;
   }
-  .deck-need:active:not(:disabled) { transform: none; background: #eadbc1; }
-  .deck-need i { font-style: normal; font-size: 13px; width: 16px; text-align: center; }
+  .deck-need:active:not(:disabled) { transform: none; background: var(--deck-key); }
+  .deck-need svg { display: block; width: 16px; height: 16px; image-rendering: pixelated; }
   .deck-need b {
     display: block;
-    width: 34px;
-    height: 7px;
-    border: 2px solid var(--panel-edge);
-    background: #fff;
+    width: 32px;
+    height: 8px;
+    border: 2px solid var(--deck-key-lo);
+    background: #0f130f;
     overflow: hidden;
   }
-  .deck-need em { display: block; height: 100%; background: #c7a064; }
-  .deck-need.good em { background: #7aa84f; }
-  .deck-need.warn em { background: var(--warn); }
-  .deck-need.warn i { animation: deck-blink 1.2s steps(2) infinite; }
+  .deck-need em { display: block; height: 100%; background: #c9b27a; }
+  .deck-need.good em { background: #7fae52; }
+  .deck-need.warn em { background: #e0674c; }
+  .deck-need.warn svg { animation: deck-blink 1.2s steps(2) infinite; }
   @keyframes deck-blink { 50% { opacity: .35; } }
   .deck-stories {
     flex-shrink: 0;
@@ -1244,8 +1247,9 @@ button.copy-blank.on {
     font-size: 10px;
     background: var(--accent);
     color: var(--accent-ink);
-    border-width: 2px;
-    box-shadow: 0 1px 0 var(--panel-edge);
+    border: 2px solid var(--deck-key-lo);
+    border-radius: 2px;
+    box-shadow: inset 0 -2px 0 #0003;
   }
   .deck-next {
     flex: 1;
@@ -1255,82 +1259,75 @@ button.copy-blank.on {
     border: 0;
     box-shadow: none;
     background: none;
+    color: var(--on-bg);
     font-size: 10px;
     text-align: right;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .deck-next.now { color: #a4462f; font-weight: 700; }
+  .deck-next.now { color: #f0c75e; font-weight: 700; }
   .deck-main {
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 14px;
-    padding: 0;
+    padding: 0 6px;
   }
 
-  /* 십자 방향 단추 (휴대용 게임기 모양, 색은 게임의 갈색): 짙은 갈색 십자에 밝은 세모, 가운데 작은 네모 */
+  /* 십자 방향 단추: 평평한 올리브 회색 칸, 밝은 세모, 가운데 작은 네모 */
   .deck-pad {
     display: grid;
-    grid-template: repeat(3, 44px) / repeat(3, 44px);
+    grid-template-rows: repeat(3, 44px);
+    grid-template-columns: repeat(3, 44px);
     grid-template-areas: ". up ." "left center right" ". down .";
     width: 132px;
     height: 132px;
     flex-shrink: 0;
     touch-action: none;
-    filter: drop-shadow(0 3px 0 #140d08) drop-shadow(0 0 1px #140d08);
+    filter: drop-shadow(0 3px 0 var(--deck-key-lo)) drop-shadow(0 0 0.5px var(--deck-key-lo));
   }
   .deck-pad span {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1;
-    color: #d9c7a3;
-    background: #5e4432;
-    box-shadow: inset 0 2px 0 #765844;
+    color: var(--on-bg);
+    background: var(--deck-key);
+    box-shadow: inset 0 2px 0 var(--deck-key-hi);
     pointer-events: none;
   }
-  .deck-pad [data-zone="up"] { grid-area: up; border-radius: 6px 6px 0 0; }
-  .deck-pad [data-zone="down"] { grid-area: down; border-radius: 0 0 6px 6px; box-shadow: none; }
-  .deck-pad [data-zone="left"] { grid-area: left; border-radius: 6px 0 0 6px; }
-  .deck-pad [data-zone="right"] { grid-area: right; border-radius: 0 6px 6px 0; }
+  .deck-pad [data-zone="up"] { grid-area: up; border-radius: 3px 3px 0 0; }
+  .deck-pad [data-zone="down"] { grid-area: down; border-radius: 0 0 3px 3px; box-shadow: none; }
+  .deck-pad [data-zone="left"] { grid-area: left; border-radius: 3px 0 0 3px; }
+  .deck-pad [data-zone="right"] { grid-area: right; border-radius: 0 3px 3px 0; }
   .deck-pad [data-zone="center"] { grid-area: center; font-size: 0; box-shadow: none; }
-  .deck-pad [data-zone="center"]::after {
-    content: '';
-    width: 14px;
-    height: 14px;
-    background: #3e2c20;
-    border-radius: 2px;
-  }
-  .deck-pad span.pressed { background: #6e523e; color: #f5d46a; }
-  .deck-pad [data-zone="center"].pressed::after { background: #f5d46a; }
+  .deck-pad [data-zone="center"]::after { content: ''; width: 12px; height: 12px; background: var(--deck-body); }
+  .deck-pad span.pressed { background: var(--deck-key-hi); color: #f0c75e; }
+  .deck-pad [data-zone="center"].pressed::after { background: #f0c75e; }
 
+  /* 오른쪽: 확인(크게)과 메뉴(작게)를 가까이 */
   .deck-right {
-    position: relative;
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
-    justify-content: space-between;
+    align-items: center;
     gap: 12px;
-    flex: 1;
-    min-height: 132px;
-    padding-right: 6px;
+    margin-right: 8px;
   }
-  /* 메뉴: 작은 알약 단추, 누르면 위로 펼쳐진다 */
-  .deck-menu-wrap { position: relative; }
+  .deck-menu-wrap { position: relative; order: 2; }
   .deck .deck-menu {
-    min-height: 30px;
-    padding: 2px 16px;
-    font-size: 12px;
-    color: #eadbc1;
-    background: #5e4432;
-    border: 2px solid #140d08;
-    border-radius: 999px;
-    box-shadow: inset 0 2px 0 #765844, 0 2px 0 #140d08;
+    min-height: 28px;
+    padding: 2px 14px;
+    font-size: 11px;
+    color: var(--on-bg);
+    background: var(--deck-key);
+    border: 2px solid var(--deck-key-lo);
+    border-radius: 3px;
+    box-shadow: inset 0 2px 0 var(--deck-key-hi), 0 2px 0 var(--deck-key-lo);
   }
-  .deck .deck-menu.on { background: #6e523e; color: #f5d46a; }
+  .deck .deck-menu.on { color: #f0c75e; }
   .deck-menu-pop {
     position: absolute;
     right: 0;
@@ -1343,26 +1340,33 @@ button.copy-blank.on {
     background: var(--panel);
     border: 2px solid var(--panel-edge);
     border-radius: 4px;
-    box-shadow: 0 3px 0 var(--panel-edge), 0 4px 10px #0006;
+    box-shadow: 0 3px 0 var(--panel-edge), 0 4px 10px #0008;
   }
   .deck-menu-pop button { min-height: 38px; padding: 2px 8px; font-size: 13px; }
-  /* 확인: 둥근 주황 단추 */
+  /* 확인: 계단 모서리의 평평한 테라코타 단추 */
   .deck .deck-seal {
-    width: 76px;
-    height: 76px;
-    margin-right: 10px;
+    order: 1;
+    width: 78px;
+    height: 78px;
     padding: 0;
-    border-radius: 50%;
+    border: 0;
+    border-radius: 0;
     background: var(--accent);
     color: var(--accent-ink);
-    border: 2px solid #140d08;
-    box-shadow: inset 0 3px 0 #e2a466, inset 0 -3px 0 #a5652d, 0 4px 0 #140d08;
+    clip-path: polygon(0 12px, 6px 12px, 6px 6px, 12px 6px, 12px 0, calc(100% - 12px) 0, calc(100% - 12px) 6px, calc(100% - 6px) 6px, calc(100% - 6px) 12px, 100% 12px, 100% calc(100% - 12px), calc(100% - 6px) calc(100% - 12px), calc(100% - 6px) calc(100% - 6px), calc(100% - 12px) calc(100% - 6px), calc(100% - 12px) 100%, 12px 100%, 12px calc(100% - 6px), 6px calc(100% - 6px), 6px calc(100% - 12px), 0 calc(100% - 12px));
+    box-shadow: inset 0 -6px 0 #8e3f28, inset 0 4px 0 #d77a5a;
     font-size: 15px;
     font-weight: 700;
-    text-shadow: 0 1px 0 #7a4a20;
     touch-action: manipulation;
   }
-  .deck .deck-seal:active:not(:disabled) { transform: translateY(3px); box-shadow: inset 0 3px 0 #e2a466, inset 0 -2px 0 #a5652d, 0 1px 0 #140d08; }
+  .deck .deck-seal:active:not(:disabled) { transform: none; box-shadow: inset 0 -2px 0 #8e3f28, inset 0 2px 0 #8e3f28; padding-top: 4px; }
+}
+/* 세로로 긴 휴대폰(플립 등): 남는 높이는 몸체가 채우고, 단추를 키운다 */
+@media (pointer: coarse) and (max-aspect-ratio: 27/50) {
+  .deck-pad { grid-template-rows: repeat(3, 54px); grid-template-columns: repeat(3, 54px); width: 162px; height: 162px; }
+  .deck-pad span { font-size: 15px; }
+  .deck .deck-seal { width: 92px; height: 92px; font-size: 17px; }
+  .deck .deck-menu { min-height: 32px; padding: 2px 18px; font-size: 12px; }
 }
 
 /* ── 새 손일 놀이: 길게 누르기·번갈아 누르기·순서 기억하기 ── */
@@ -1373,7 +1377,7 @@ button.copy-blank.on {
   margin: 10px auto;
   border: 2px solid var(--panel-edge);
   border-radius: 4px;
-  background: #efe3c8;
+  background: var(--panel-soft);
   overflow: hidden;
 }
 .hold-gauge.hit { box-shadow: 0 0 0 3px rgba(79, 138, 60, 0.4); }
@@ -1397,7 +1401,7 @@ button.copy-blank.on {
   left: 8px;
   right: 8px;
   height: 4px;
-  background: repeating-linear-gradient(90deg, #a07a4d 0 6px, #efe3c8 6px 10px);
+  background: repeating-linear-gradient(90deg, var(--panel-line) 0 6px, var(--panel-soft) 6px 10px);
 }
 .weave-btn { flex: 1; min-height: 56px; font-size: 15px; touch-action: manipulation; }
 .weave-btn.next { background: #f5d46a; border-color: var(--accent); }
@@ -1430,10 +1434,10 @@ button.copy-blank.on {
   aspect-ratio: 1;
   min-height: 44px;
   padding: 0;
-  background: #efe3c8;
-  border: 2px solid #c9b590;
+  background: var(--panel-soft);
+  border: 2px solid var(--panel-line);
   border-radius: 3px;
-  box-shadow: inset 0 2px 0 #d9c7a3;
+  box-shadow: inset 0 2px 0 var(--hover);
 }
 .bag-slot.empty { opacity: .6; }
 .bag-slot.on { background: #f5d46a; border-color: var(--panel-edge); }
@@ -1444,7 +1448,7 @@ button.copy-blank.on {
   bottom: 0;
   font-size: 11px;
   color: var(--ink);
-  text-shadow: 1px 0 #fbf3e2, -1px 0 #fbf3e2, 0 1px #fbf3e2, 0 -1px #fbf3e2;
+  text-shadow: 1px 0 var(--panel), -1px 0 var(--panel), 0 1px var(--panel), 0 -1px var(--panel);
 }
 .bag-detail {
   display: flex;
@@ -1454,7 +1458,7 @@ button.copy-blank.on {
   margin: 0 0 8px;
   padding: 6px 10px;
   background: #fff8ea;
-  border: 2px dashed #c9b590;
+  border: 2px dashed var(--panel-line);
   border-radius: 4px;
   font-size: 12px;
 }
@@ -1488,17 +1492,3 @@ button.need-tap:active:not(:disabled) { transform: none; }
 button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
 .stats-list li { cursor: pointer; }
 .toast { word-break: keep-all; }
-
-/* 세로로 긴 휴대폰(플립 등): 지도는 폭에 맞춰 끝나므로, 남는 높이는 조작판이 채우고 단추를 키운다 */
-@media (pointer: coarse) {
-  .play.has-deck { min-height: 100dvh; }
-  .play.has-deck .deck { flex: 1; display: flex; flex-direction: column; }
-  .play.has-deck .deck-main { flex: 1; }
-}
-@media (pointer: coarse) and (max-aspect-ratio: 27/50) {
-  .deck-pad { grid-template-rows: repeat(3, 54px); grid-template-columns: repeat(3, 54px); width: 162px; height: 162px; }
-  .deck-pad span { font-size: 15px; }
-  .deck-right { min-height: 162px; }
-  .deck .deck-seal { width: 92px; height: 92px; font-size: 17px; }
-  .deck .deck-menu { min-height: 34px; padding: 2px 20px; font-size: 13px; }
-}
