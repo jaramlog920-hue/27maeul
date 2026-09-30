@@ -1,6 +1,6 @@
 // 엔진 상태 ↔ 화면 연결. 창(모달)이 열려 있으면 시간과 걸음이 멈춘다.
 import { create } from 'zustand'
-import { CONTENT, copySourceFor, pieceById, pieceOfQuestion, piecesOf, quizSourceFor } from '../content/catalog'
+import { CONTENT, copySourceFor, LETTER_OPENINGS, pieceById, pieceOfQuestion, piecesOf, quizSourceFor } from '../content/catalog'
 import { blanksFor } from '../engine/copy'
 import { currentChapter } from '../engine/offers'
 import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
@@ -905,7 +905,7 @@ export const useGame = create<Store>((set, get) => {
       if (canShelve(game, book, CONTENT)) return
       const pool = poolFor(game.shelved, book)
       sfx('scroll')
-      const questions = buildLibraryQuiz({ current: book, pool, piecesOf, rng: get().rng, src: quizSourceFor(pool) })
+      const questions = buildLibraryQuiz({ current: book, pool, piecesOf, rng: get().rng, src: quizSourceFor(pool), openings: LETTER_OPENINGS })
       set({ modal: { kind: 'quiz', mode: { kind: 'library', book, retry: false }, questions, index: 0, wrong: [], solved: false, misses: 0, missed: [] } })
     },
     startRetry: (book) => {
@@ -914,7 +914,7 @@ export const useGame = create<Store>((set, get) => {
       // 재도전은 서고에 있는 모든 책에서 낸다 (설계 §3.5)
       const pool = poolFor(paid.shelved, book)
       sfx('scroll')
-      const questions = buildLibraryQuiz({ current: book, pool, piecesOf, rng: get().rng, src: quizSourceFor(pool) })
+      const questions = buildLibraryQuiz({ current: book, pool, piecesOf, rng: get().rng, src: quizSourceFor(pool), openings: LETTER_OPENINGS })
       set({ game: persist(paid), modal: { kind: 'quiz', mode: { kind: 'library', book, retry: true }, questions, index: 0, wrong: [], solved: false, misses: 0, missed: [] } })
     },
     sleep: () => {

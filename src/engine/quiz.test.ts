@@ -137,7 +137,7 @@ describe('기록 퀴즈', () => {
         const qs = buildQuiz(piecesOf('mk'), ch, mulberry32(seed), src)
         expect(qs, `ch ${ch} seed ${seed}`).toHaveLength(QUIZ_SIZE)
         for (const q of qs) {
-          const ids = q.kind === 'detective' ? [q.pieceId] : q.kind === 'order' || q.kind === 'verse' ? [...q.options, q.answer] : [pieceOfVerse(q.ref)!.id]
+          const ids = q.kind === 'detective' ? [q.pieceId] : q.kind === 'order' || q.kind === 'verse' ? [...q.options, q.answer] : q.kind === 'verseOrder' ? q.options.map((r) => pieceOfVerse(r)!.id) : [pieceOfVerse(q.ref)!.id]
           for (const id of ids) expect(bracket, `ch ${ch} seed ${seed} ${q.kind}`).not.toContain(id)
         }
       }
@@ -149,7 +149,7 @@ describe('기록 퀴즈', () => {
     expect(quizzablePiece(pieceById('jn-007-053'), src)).toBe(false)
     const check = (qs: Question[], where: string) => {
       for (const q of qs) {
-        const ids = q.kind === 'detective' ? [q.pieceId] : q.kind === 'order' || q.kind === 'verse' ? [...q.options, q.answer] : [pieceOfVerse(q.ref)!.id]
+        const ids = q.kind === 'detective' ? [q.pieceId] : q.kind === 'order' || q.kind === 'verse' ? [...q.options, q.answer] : q.kind === 'verseOrder' ? q.options.map((r) => pieceOfVerse(r)!.id) : [pieceOfVerse(q.ref)!.id]
         expect(ids, `${where} ${q.kind}`).not.toContain('jn-007-053')
       }
     }

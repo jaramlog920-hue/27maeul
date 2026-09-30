@@ -6,10 +6,22 @@
 //   어느 이야기일까: 한 절이 속한 조각은 하나뿐 (조각은 겹치지 않는다)
 //   먼저 나오는 이야기: 조각 id 순서 = 본문 순서
 //   사도행전(계획 5)에는 도장이 없으므로 탐정 문제를 내지 않고, 탐정 보기에도 넣지 않는다 (GOSPELS만)
+//   편지(계획 7 작업 6): 어느 책?·첫머리의 이름·빈칸·먼저 나오는 구절 — 탐정·도장·장 조각의 order·verse 문제는 없다
+import { modeOf, roomOf } from './shelf-rooms'
 import { BOOKS, GOSPELS, isGospel, type Book, type Gospel, type Piece, type Rng } from './types'
 
 export type GospelId = Gospel
 export { GOSPELS }
+
+/** 편지 첫머리 칸 (letters.json): 보낸 이 · 받는 곳 · 받는 사람 */
+export type OpeningRole = 'from' | 'toPlace' | 'toPerson'
+/** letters.json 한 줄. name이 null이면 "적혀 있지 않음" (계획 8 — 이번에는 문제로 쓰지 않는다) */
+export interface LetterOpening {
+  book: Book
+  role: OpeningRole
+  name: string | null
+  ref: string
+}
 
 export type Question =
   | { kind: 'puzzle'; ref: string; words: string[]; answer: string[] }
@@ -18,6 +30,10 @@ export type Question =
   | { kind: 'verse'; ref: string; options: string[]; answer: string }
   | { kind: 'order'; options: string[]; answer: string }
   | { kind: 'book'; ref: string; options: Book[]; answer: Book }
+  /** 편지 첫머리에 그 칸으로 적힌 이름 — ref는 답 이름이 적힌 구절 (맞힌 뒤 보인다) */
+  | { kind: 'opening'; book: Book; role: OpeningRole; ref: string; options: string[]; answer: string }
+  /** 먼저 나오는 구절 — options·answer는 절 참조, 화면은 맞히기 전에는 본문만 보인다 */
+  | { kind: 'verseOrder'; options: string[]; answer: string }
 
 export interface VerseText {
   ref: string
@@ -146,7 +162,8 @@ function order(chapterPieces: readonly Piece[], rng: Rng): Extract<Question, { k
   return { kind: 'order', options: two.map((p) => p.id), answer: [...two].sort((a, b) => (a.id < b.id ? -1 : 1))[0].id }
 }
 
-const keyOf = (q: Question) => (q.kind === 'detective' ? q.pieceId : 'ref' in q ? q.ref : '')
+const keyOf = (q: Question) =>
+  q.kind === 'detective' ? q.pieceId : q.kind === 'opening' ? `opening:${q.role}` : q.kind === 'verseOrder' ? `order:${q.options.join('|')}` : 'ref' in q ? q.ref : ''
 
 export function buildQuiz(allPieces: readonly Piece[], chapter: number, rng: Rng, src: QuizSource): Question[] {
   // 괄호 조각은 문제·보기·정답 어디에도 쓰지 않는다
@@ -205,12 +222,35 @@ function firstOf<T>(items: readonly T[], make: (x: T) => Question | null): Quest
   return null
 }
 
+/** "어느 책?" 보기는 다섯 권까지 (계획 7 작업 6 — 서고가 열여덟 권이 되어도 고르기 쉽게) */
+export const MAX_BOOK_OPTIONS = 5
+
+/**
+ * "어느 책?" 보기: 출제 범위가 다섯 권 이하면 전부 그대로(복음서·사도행전 퀴즈는 달라지지 않는다).
+ * 넘치면 답 + 같은 방의 책을 먼저, 모자라면 다른 방 책 — 오늘 성경 순서로 늘어놓는다
+ */
+function bookOptions(answer: Book, pool: readonly Book[], rng: Rng): Book[] {
+  if (pool.length <= MAX_BOOK_OPTIONS) return BOOKS.filter((b) => pool.includes(b))
+  const room = roomOf(answer).id
+  const rest = pool.filter((b) => b !== answer)
+  const same = shuffle(
+    rest.filter((b) => roomOf(b).id === room),
+    rng,
+  )
+  const other = shuffle(
+    rest.filter((b) => roomOf(b).id !== room),
+    rng,
+  )
+  const chosen = [answer, ...same, ...other].slice(0, MAX_BOOK_OPTIONS)
+  return BOOKS.filter((b) => chosen.includes(b))
+}
+
 /**
  * "이 구절은 어느 책에 있나요?" — 책 이름으로 묻는다, 누가 썼는지는 묻지 않는다 (exclusion-list §4-2).
- * 보기는 출제 범위의 책 전부(사도행전 포함, 오늘 성경 순서). 보기가 모두 복음서면 화면은 "어느 복음서"로 묻는다
+ * 보기는 bookOptions(오늘 성경 순서). 보기가 모두 복음서면 화면은 "어느 복음서"로 묻는다
  */
 function bookQuestion(from: Book, pool: readonly Book[], piecesOf: (b: Book) => readonly Piece[], src: QuizSource, rng: Rng): Question | null {
-  const options = BOOKS.filter((b) => pool.includes(b))
+  const options = bookOptions(from, pool, rng)
   return firstOf(shuffle(piecesOf(from), rng), (p) => {
     const v = pickOne(
       src.versesOf(p.ref).filter((x) => norm(x.text).length >= MIN_VERSE_CHARS && quizzable(x.text, x.inBrackets) && src.countVerse(x.text) === 1),
@@ -229,16 +269,105 @@ function poolDetective(p: Piece, pool: readonly Book[]): Question | null {
   return { kind: 'detective', pieceId: p.id, options, answer: a.filter((g) => pool.includes(g)) }
 }
 
+/** 문제로 쓸 수 있는 절 (본문 없는 절·괄호 구절 제외, 14자 이상, 출제 범위에서 유일) */
+const askable = (src: QuizSource) => (v: VerseText) => norm(v.text).length >= MIN_VERSE_CHARS && quizzable(v.text, v.inBrackets) && src.countVerse(v.text) === 1
+
+/** '롬 1:7' · '히 1:1-4' → 끝 절 번호 (첫머리는 1장 안에 있다 — verify-letters) */
+const openingEnd = (ref: string) => {
+  const m = /^(\S+)\s+1:(\d+)(?:-(\d+))?$/.exec(ref.trim())
+  return m ? { abbr: m[1], last: Number(m[3] ?? m[2]) } : null
+}
+
+/**
+ * 첫머리 문제 (exclusion-list §4-6): "이 편지 첫머리에 보낸 사람으로 적힌 이름은?" — "누가 썼나요?"로 묻지 않는다.
+ * 답은 그 칸에 적힌 이름 하나. 오답 셋은 다른 편지들의 같은 칸 이름 중 이 편지 첫머리(1:1부터 letters.json의 가장 뒤 구절까지)
+ * 본문 어디에도 없는 이름 — 같은 편지에 보낸 이가 여럿이어도 그 누구도 오답이 되지 않는다. 셋을 못 채우는 칸은 묻지 않는다.
+ * 이름이 null("적혀 있지 않음")인 줄은 문제로 쓰지 않는다 (계획 8에서 보기 모양을 정한다)
+ */
+function openingQuestion(current: Book, openings: readonly LetterOpening[], src: QuizSource, rng: Rng): Question | null {
+  const rows = openings.filter((o) => o.book === current)
+  const ends = rows.map((o) => openingEnd(o.ref)).filter((e) => e !== null)
+  if (ends.length === 0) return null
+  const last = Math.max(...ends.map((e) => e.last))
+  const text = norm(
+    src
+      .versesOf(`${ends[0].abbr} 1:1-${last}`)
+      .map((v) => v.text)
+      .join(''),
+  )
+  const roles = shuffle([...new Set(rows.map((o) => o.role))], rng)
+  for (const role of roles) {
+    const answers = rows.filter((o) => o.role === role && o.name !== null && text.includes(norm(o.name)))
+    const wrong = [
+      ...new Set(openings.filter((o) => o.book !== current && o.role === role && o.name !== null).map((o) => o.name!)),
+    ].filter((n) => !text.includes(norm(n)))
+    const a = pickOne(answers, rng)
+    if (!a || wrong.length < 3) continue
+    const options = shuffle([a.name!, ...shuffle(wrong, rng).slice(0, 3)], rng)
+    return { kind: 'opening', book: current, role, ref: a.ref, options, answer: a.name! }
+  }
+  return null
+}
+
+/**
+ * 먼저 나오는 구절 (편지): 지금 책의 서로 다른 두 장에서 한 절씩 — 참조 없이 본문만 보이고, 맞힌 뒤 참조가 보인다.
+ * (장 조각의 order 문제는 보기가 "로마서 3장/5장"이라 답이 드러나므로 편지에는 내지 않는다)
+ */
+function verseOrderQuestion(mine: readonly Piece[], src: QuizSource, rng: Rng): Question | null {
+  const ok = askable(src)
+  const withVerses = shuffle(mine, rng)
+    .map((p) => ({ p, v: pickOne(src.versesOf(p.ref).filter(ok), rng) }))
+    .filter((x): x is { p: Piece; v: VerseText } => x.v !== undefined)
+  const a = withVerses[0]
+  const b = withVerses.find((x) => x.p.chapter !== a?.p.chapter)
+  if (!a || !b) return null
+  const first = a.p.chapter < b.p.chapter ? a : b
+  return { kind: 'verseOrder', options: shuffle([a.v.ref, b.v.ref], rng), answer: first.v.ref }
+}
+
+/** 편지 책을 꽂을 때 (계획 7 작업 6): 어느 책? 둘 · 첫머리 · 빈칸 · 먼저 나오는 구절, 모자라면 빈칸·먼저 나오는 구절을 다른 절로, 그다음 낱말 맞추기 */
+function buildLetterQuiz(current: Book, pool: readonly Book[], piecesOf: (b: Book) => readonly Piece[], openings: readonly LetterOpening[], src: QuizSource, rng: Rng): Question[] {
+  const mine = piecesOf(current)
+  const others = pool.filter((b) => b !== current)
+  const blankQ = () => firstOf(shuffle(mine, rng), (p) => blank(p, [p], src, rng))
+  const orderQ = () => verseOrderQuestion(mine, src, rng)
+  const puzzleQ = () => firstOf(shuffle(mine, rng), (p) => puzzle(p, src, rng))
+  const makers: (() => Question | null)[] = []
+  if (others.length > 0) {
+    makers.push(() => bookQuestion(current, pool, piecesOf, src, rng))
+    makers.push(() => bookQuestion(pickOne(others, rng)!, pool, piecesOf, src, rng))
+  }
+  makers.push(() => openingQuestion(current, openings, src, rng))
+  makers.push(blankQ, orderQ)
+  const out: Question[] = []
+  const used = new Set<string>()
+  const tryAdd = (make: () => Question | null) => {
+    if (out.length >= QUIZ_SIZE) return
+    const q = make()
+    if (!q || used.has(keyOf(q))) return
+    used.add(keyOf(q))
+    out.push(q)
+  }
+  for (const make of makers) tryAdd(make)
+  tryAdd(blankQ)
+  tryAdd(orderQ)
+  for (let pass = 0; out.length < QUIZ_SIZE && pass < 10; pass++) for (const make of [puzzleQ, blankQ, orderQ]) tryAdd(make)
+  return shuffle(out, rng).slice(0, QUIZ_SIZE)
+}
+
 export function buildLibraryQuiz(args: {
   current: Book
   pool: readonly Book[]
   piecesOf: (b: Book) => readonly Piece[]
   rng: Rng
   src: QuizSource
+  /** 편지 첫머리 (letters.json) — 편지 책을 꽂을 때만 쓴다 */
+  openings?: readonly LetterOpening[]
 }): Question[] {
   const { current, pool, rng, src } = args
   // 괄호 조각은 문제·보기·정답 어디에도 쓰지 않는다
   const piecesOf = (b: Book) => args.piecesOf(b).filter((p) => quizzablePiece(p, src))
+  if (modeOf(current) === 'letters') return buildLetterQuiz(current, pool, piecesOf, args.openings ?? [], src, rng)
   const mine = piecesOf(current)
   const others = pool.filter((b) => b !== current)
   const makers: (() => Question | null)[] = []

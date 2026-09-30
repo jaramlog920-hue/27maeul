@@ -5,10 +5,11 @@ import books from './books.json'
 import piecesRaw from './pieces.json'
 import neighborsRaw from './neighbors.json'
 import journeyRaw from './journey.json'
+import lettersRaw from './letters.json'
 import { expandRef, countsFrom } from './ref'
 import { BOOKS, LETTERS, type Book, type GameContent, type NeighborDef, type Piece } from '../engine/types'
 import { bibleIdOf } from '../engine/shelf-rooms'
-import type { Question, QuizSource } from '../engine/quiz'
+import type { LetterOpening, Question, QuizSource } from '../engine/quiz'
 import type { JourneyCard } from '../engine/journey'
 import type { CopySource } from '../engine/copy'
 
@@ -49,7 +50,12 @@ export const PIECES = ALL_PIECES
 export const NEIGHBORS = neighborsRaw as unknown as NeighborDef[]
 /** 사도행전 여정 카드 — 본문 순서 (scripts/journey/ac.txt, verify-journey가 본문과 대조) */
 export const JOURNEY = journeyRaw as JourneyCard[]
-export const CONTENT: GameContent = { pieces: PIECES, neighbors: NEIGHBORS, journey: JOURNEY, copy: (b) => copySourceFor(b) }
+/**
+ * 편지 첫머리의 보낸 이·받는 곳·받는 사람 (scripts/letters/opening.txt → letters.json, verify-letters가 이름이 그 구절 본문에
+ * 글자 그대로 있는지 확인). 편지 서고 퀴즈의 첫머리 문제가 읽는다 (계획 7 작업 6)
+ */
+export const LETTER_OPENINGS = lettersRaw as unknown as readonly LetterOpening[]
+export const CONTENT: GameContent ={ pieces: PIECES, neighbors: NEIGHBORS, journey: JOURNEY, copy: (b) => copySourceFor(b) }
 
 export interface Verse {
   chapter: number
@@ -172,5 +178,7 @@ export function pieceOfVerse(ref: string): Piece | undefined {
 export function pieceOfQuestion(q: Question): string | null {
   if (q.kind === 'detective') return q.pieceId
   if (q.kind === 'order' || q.kind === 'verse') return q.answer
+  // 먼저 나오는 구절: 앞 구절의 장 조각. 첫머리: 그 이름이 적힌 구절의 장 조각(아래 q.ref)
+  if (q.kind === 'verseOrder') return pieceOfVerse(q.answer)?.id ?? null
   return pieceOfVerse(q.ref)?.id ?? null
 }

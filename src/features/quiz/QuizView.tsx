@@ -116,6 +116,47 @@ function BookQuestion({ q, wrong, solved, onAnswer }: { q: Extract<Question, { k
   )
 }
 
+/**
+ * 편지 첫머리 문제 (exclusion-list §4-6): 첫머리에 그 칸으로 "적힌 이름"을 묻는다 — "누가 썼나요?"로 묻지 않는다.
+ * 맞히기 전에는 본문을 보이지 않고(이름이 드러나므로), 맞힌 뒤 그 구절을 보인다
+ */
+function OpeningQuestion({ q, wrong, solved, onAnswer }: { q: Extract<Question, { kind: 'opening' }>; wrong: string[]; solved: boolean; onAnswer: (o: string) => void }) {
+  return (
+    <>
+      <p className="quiz-prompt">{fill(T.quiz.opening[q.role], { book: BOOK_NAME[q.book] })}</p>
+      <Choices options={q.options} label={(o) => o} answer={q.answer} wrong={wrong} solved={solved} onAnswer={onAnswer} />
+      {solved && (
+        <>
+          <p className="stamp-note">{T.quiz.openingAfter}</p>
+          <Passage refText={q.ref} />
+        </>
+      )}
+    </>
+  )
+}
+
+/** 먼저 나오는 구절 (편지): 두 구절의 본문만 보이고, 참조는 맞힌 뒤에 보인다 */
+function VerseOrderQuestion({ q, wrong, solved, onAnswer }: { q: Extract<Question, { kind: 'verseOrder' }>; wrong: string[]; solved: boolean; onAnswer: (o: string) => void }) {
+  const label = (o: string) => fill(T.quiz.verseOrderLabel, { n: q.options.indexOf(o) + 1 })
+  return (
+    <>
+      <p className="quiz-prompt">{T.quiz.verseOrder}</p>
+      {q.options.map((r) => (
+        <section key={r} className="passage" aria-label={solved ? `성경 본문 ${r}` : `성경 본문 ${label(r)}`}>
+          <header className="passage-ref">
+            <span>{solved ? `${label(r)} · ${r}` : label(r)}</span>
+            <span className="passage-src">{T.ui.bibleSource}</span>
+          </header>
+          <div className="passage-body">
+            <p>{versesOf(r)[0].text}</p>
+          </div>
+        </section>
+      ))}
+      <Choices options={q.options} label={label} answer={q.answer} wrong={wrong} solved={solved} onAnswer={onAnswer} />
+    </>
+  )
+}
+
 export function QuizView({ modal }: { modal: Extract<Modal, { kind: 'quiz' }> }) {
   const { answerQuiz, nextQuiz, closeModal } = useGame.getState()
   const q = modal.questions[modal.index]
@@ -142,6 +183,8 @@ export function QuizView({ modal }: { modal: Extract<Modal, { kind: 'quiz' }> })
         )}
         {q.kind === 'detective' && <Detective q={q} solved={modal.solved} onAnswer={answerQuiz} pool={lib} />}
         {q.kind === 'book' && <BookQuestion q={q} wrong={modal.wrong} solved={modal.solved} onAnswer={answerQuiz} />}
+        {q.kind === 'opening' && <OpeningQuestion q={q} wrong={modal.wrong} solved={modal.solved} onAnswer={answerQuiz} />}
+        {q.kind === 'verseOrder' && <VerseOrderQuestion q={q} wrong={modal.wrong} solved={modal.solved} onAnswer={answerQuiz} />}
         {q.kind === 'verse' && (
           <>
             <p className="quiz-prompt">{T.quiz.verse}</p>

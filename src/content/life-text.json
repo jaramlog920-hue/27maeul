@@ -2754,8 +2754,18 @@
       "detective": "복음서 탐정",
       "verse": "어느 이야기일까",
       "order": "먼저 나오는 이야기",
-      "book": "어느 책?"
+      "book": "어느 책?",
+      "opening": "편지 첫머리",
+      "verseOrder": "먼저 나오는 구절"
     },
+    "opening": {
+      "from": "이 편지({book}) 첫머리에 보낸 사람으로 적힌 이름은?",
+      "toPlace": "이 편지({book}) 첫머리에 받는 곳으로 적힌 이름은?",
+      "toPerson": "이 편지({book}) 첫머리에 받는 사람으로 적힌 이름은?"
+    },
+    "openingAfter": "편지 첫머리에 이렇게 적혀 있어요.",
+    "verseOrder": "이 편지에서 먼저 나오는 구절은 어느 쪽인가요?",
+    "verseOrderLabel": "{n}번 구절",
     "puzzle": "낱말을 차례대로 눌러 이 절을 맞춰 보세요.",
     "blank": "빈칸에 들어갈 낱말을 고르세요.",
     "detective": "「{title}」({ref}) 이야기가 기록된 복음서를 모두 고르세요.",

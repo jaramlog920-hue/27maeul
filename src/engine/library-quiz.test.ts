@@ -73,7 +73,7 @@ describe('서고 퀴즈', () => {
       const src = quizSourceFor(pool)
       for (let seed = 1; seed <= 200; seed++) {
         for (const q of buildLibraryQuiz({ current: 'mk', pool, piecesOf, rng: mulberry32(seed), src })) {
-          const ids = q.kind === 'detective' ? [q.pieceId] : q.kind === 'order' || q.kind === 'verse' ? [...q.options, q.answer] : [pieceOfVerse(q.ref)!.id]
+          const ids = q.kind === 'detective' ? [q.pieceId] : q.kind === 'order' || q.kind === 'verse' ? [...q.options, q.answer] : q.kind === 'verseOrder' ? q.options.map((r) => pieceOfVerse(r)!.id) : [pieceOfVerse(q.ref)!.id]
           for (const id of ids) expect(bracket, `${pool.join('+')} seed ${seed} ${q.kind}`).not.toContain(id)
         }
       }
