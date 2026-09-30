@@ -1176,7 +1176,11 @@ button.copy-blank.on {
   .play.has-deck .hud { padding-bottom: 2px; }
   .play.has-deck .hud-row { min-height: 22px; }
   .play.has-deck .world-frame { padding-bottom: 4px; }
-  .play.has-deck .world { width: min(100%, calc((100dvh - 282px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) * 0.8)); margin: 0 auto; }
+  /* 지도와 조작판이 같은 폭: 남는 높이에 맞춘 지도 폭을 조작판도 쓴다 */
+  .play.has-deck { --deck-w: min(100%, calc((100dvh - 270px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) * 0.8)); }
+  .play.has-deck .world,
+  .play.has-deck .deck-strip,
+  .play.has-deck .deck-main { width: var(--deck-w); margin-left: auto; margin-right: auto; }
 
   .deck {
     display: block;
@@ -1263,7 +1267,7 @@ button.copy-blank.on {
     align-items: center;
     justify-content: space-between;
     gap: 14px;
-    padding: 0 4px;
+    padding: 0;
   }
 
   /* 십자 방향 단추 (휴대용 게임기 모양, 색은 게임의 갈색): 짙은 갈색 십자에 밝은 세모, 가운데 작은 네모 */
