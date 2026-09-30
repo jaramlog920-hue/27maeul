@@ -107,6 +107,20 @@ describe('편지 서고 퀴즈', () => {
     }
   }
 
+  it('한 퀴즈에 같은 구절이 두 문제에 나오지 않는다 (13편지 × 범위 × 씨앗)', () => {
+    for (const current of LETTERS) {
+      const pools: Book[][] = [[current], BOOKS.filter((b) => FIVE.includes(b) || b === current), [...BOOKS]]
+      for (const pool of pools) {
+        const src = quizSourceFor(pool)
+        for (let seed = 1; seed <= 12; seed++) {
+          const qs = buildLibraryQuiz({ current, pool, piecesOf, rng: mulberry32(seed), src, openings: LETTER_OPENINGS })
+          const refs = qs.flatMap((q) => (q.kind === 'verseOrder' ? q.options : 'ref' in q ? [q.ref] : []))
+          expect(new Set(refs).size, `${current}/${pool.length}/${seed}`).toBe(refs.length)
+        }
+      }
+    }
+  }, 60000)
+
   /** 편지마다 씨앗 여럿으로 나온 첫머리 문제 전부 (그 책만 · 서고 전부) */
   const openingQs = (() => {
     const out: Extract<Question, { kind: 'opening' }>[] = []

@@ -166,7 +166,7 @@ function order(chapterPieces: readonly Piece[], rng: Rng): Extract<Question, { k
 }
 
 const keyOf = (q: Question) =>
-  q.kind === 'detective' ? q.pieceId : q.kind === 'opening' ? `opening:${q.role}` : q.kind === 'verseOrder' ? `order:${q.options.join('|')}` : 'ref' in q ? q.ref : ''
+  q.kind === 'detective' ? q.pieceId : q.kind === 'opening' ? `opening:${q.role}` : q.kind === 'verseOrder' ? `order:${[...q.options].sort().join('|')}` : 'ref' in q ? q.ref : ''
 
 export function buildQuiz(allPieces: readonly Piece[], chapter: number, rng: Rng, src: QuizSource): Question[] {
   // 괄호 조각은 문제·보기·정답 어디에도 쓰지 않는다
@@ -363,11 +363,17 @@ function buildLetterQuiz(current: Book, pool: readonly Book[], piecesOf: (b: Boo
   makers.push(blankQ, orderQ)
   const out: Question[] = []
   const used = new Set<string>()
+  // 한 퀴즈에 같은 구절이 두 문제에 나오지 않게 (첫머리의 빈칸 이름이 다른 문제에 그대로 보이면 안 된다)
+  const usedRefs = new Set<string>()
+  const refsOf = (q: Question): string[] => (q.kind === 'verseOrder' ? q.options : 'ref' in q ? [q.ref] : [])
   const tryAdd = (make: () => Question | null) => {
     if (out.length >= QUIZ_SIZE) return
     const q = make()
     if (!q || used.has(keyOf(q))) return
+    const refs = refsOf(q)
+    if (refs.some((r) => usedRefs.has(r))) return
     used.add(keyOf(q))
+    for (const r of refs) usedRefs.add(r)
     out.push(q)
   }
   for (const make of makers) tryAdd(make)

@@ -55,7 +55,7 @@ export const JOURNEY = journeyRaw as JourneyCard[]
  * 글자 그대로 있는지 확인). 편지 서고 퀴즈의 첫머리 문제가 읽는다 (계획 7 작업 6)
  */
 export const LETTER_OPENINGS = lettersRaw as unknown as readonly LetterOpening[]
-export const CONTENT: GameContent ={ pieces: PIECES, neighbors: NEIGHBORS, journey: JOURNEY, copy: (b) => copySourceFor(b) }
+export const CONTENT: GameContent = { pieces: PIECES, neighbors: NEIGHBORS, journey: JOURNEY, copy: (b) => copySourceFor(b) }
 
 export interface Verse {
   chapter: number
