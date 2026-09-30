@@ -109,7 +109,7 @@ export function hillMailbox(game: Pick<GameState, 'flags'>): Tile | null {
 }
 
 /** 옅은 잿빛 나무 편지함: 기둥·상자·좌우 대칭 지붕 뚜껑·투입구에 비친 크림색 편지 끝 (선은 모두 2픽셀) */
-function mailbox(g: Ctx, t: Tile) {
+function mailbox(g: Ctx, t: Tile, empty = false) {
   px(g, t.x, t.y, 4, 13, 8, 2, 'rgba(40,25,10,0.22)')
   px(g, t.x, t.y, 7, 9, 2, 5, '#7f7468')
   px(g, t.x, t.y, 4, 4, 8, 6, '#b3a898')
@@ -117,7 +117,8 @@ function mailbox(g: Ctx, t: Tile) {
   px(g, t.x, t.y, 3, 3, 10, 2, '#968b7c')
   px(g, t.x, t.y, 5, 1, 6, 2, '#968b7c')
   px(g, t.x, t.y, 5, 6, 6, 2, '#6f665c')
-  px(g, t.x, t.y, 6, 5, 4, 2, '#f1e6cf')
+  // 스물일곱 권 잔치 뒤에는 편지함을 비워 둔다(편지 나르는 이웃의 말과 맞춤)
+  if (!empty) px(g, t.x, t.y, 6, 5, 4, 2, '#f1e6cf')
 }
 
 /** 마을에 생긴 것들을 그린다 (월드 좌표, 카메라 이동이 이미 적용된 상태) */
@@ -144,7 +145,7 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
   if ((f.actsShip ?? 0) >= 2) ship(g, t)
   // 요한계시록 방이 열린 뒤부터 언덕 벤치 곁 편지함
   const box = hillMailbox(game)
-  if (box) mailbox(g, box)
+  if (box) mailbox(g, box, (game.flags.allFeast ?? 0) >= 1)
   // C2 베 짜는 이웃의 베틀
   if (level >= 2) {
     const loom = { x: 30, y: 29 }

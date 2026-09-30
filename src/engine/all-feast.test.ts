@@ -183,7 +183,7 @@ describe('스물일곱 권 잔치 — 문구', () => {
     expect(SCENES.allFeast.lines.map((l) => l.speaker)).toEqual(['narration', 'grandpa', 'carpenter', 'postman', 'narration'])
     expect(SCENES.allFeastFire.lines.map((l) => l.speaker)).toEqual(['narration', 'baker', 'child', 'innkeeper', 'narration'])
     expect(JOURNAL_NOTES.allFeast).toBe(' 서고에 스물일곱 권이 다 꽂혔다.')
-    expect(JOURNAL_NOTES.allFeastFire).toBe(' 광장 모닥불 잔치에 갔다.')
+    expect(JOURNAL_NOTES.allFeastFire).toBe(' 스물일곱 권 잔치 모닥불 곁에 앉았다.')
   })
   it('말하는 이웃은 잔치 날 모두 마을에 와 있다', () => {
     const s = goToSleep(night(2, ALL, true), CONTENT)
