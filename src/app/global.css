@@ -50,15 +50,15 @@
 
 /* 색 조합 (설정 → 색 조합): 올리브(기본)·바닷가·포도밭·벚꽃. 성경 본문 색은 바꾸지 않는다 */
 :root[data-theme="sea"] {
-  --bg: #1d2b36;
+  --bg: #223a4e;
   --panel: #f3f0e6;
-  --panel-soft: #e3eaee;
-  --panel-line: #a9bccb;
-  --hover: #dbe6ee;
-  --panel-edge: #3d6480;
+  --panel-soft: #e1edf4;
+  --panel-line: #a8c4d8;
+  --hover: #d9e9f3;
+  --panel-edge: #4a82ab;
   --ink: #22303b;
   --ink-soft: #5c6b76;
-  --on-bg: #cfe2ee;
+  --on-bg: #d6eaf7;
   --on-bg-strong: #f3f0e6;
   --accent: #c99a55;
   --accent-ink: #fffaf0;
@@ -67,10 +67,11 @@
   --glow: #e8cf8e;
   --ok: #4f8f6a;
   --warn: #b4473a;
-  --deck-body: #243a4b;
-  --deck-key: #4f7fa3;
-  --deck-key-hi: #6495ba;
-  --deck-key-lo: #11202b;
+  --deck-body: #2b4a63;
+  --deck-key: #6aa7d2;
+  --deck-key-hi: #86bbe0;
+  --deck-key-lo: #162b3b;
+  --deck-glyph: #1b3448;
 }
 :root[data-theme="vine"] {
   --bg: #241c26;
@@ -97,28 +98,28 @@
 }
 :root[data-theme="pink"] {
   /* 마을 그림의 차양(흐린 분홍)·지붕(흙빛 빨강)·벽(크림)에서 뽑은 낮은 채도의 장밋빛 */
-  --bg: #e8d6cf;
+  --bg: #e6ccc1;
   --panel: #faf5ef;
-  --panel-soft: #f1e5dc;
-  --panel-line: #d6b8af;
-  --hover: #f0e1d8;
-  --panel-edge: #9d6269;
+  --panel-soft: #efddce;
+  --panel-line: #d6ac9f;
+  --hover: #efd8ca;
+  --panel-edge: #9d535b;
   --ink: #4a3636;
-  --ink-soft: #8c6a6a;
-  --on-bg: #8c6066;
-  --on-bg-strong: #5e3c3f;
-  --accent: #be7683;
+  --ink-soft: #8d5a5a;
+  --on-bg: #8c5159;
+  --on-bg-strong: #5a3034;
+  --accent: #c26374;
   --accent-ink: #fffaf6;
-  --accent-lo: #995a66;
-  --accent-hi: #d59fa8;
-  --glow: #a64962;
+  --accent-lo: #984b5a;
+  --accent-hi: #d68e9a;
+  --glow: #a43b58;
   --ok: #6f8f55;
   --warn: #b0504a;
   --meter-bg: #fbf2ed;
-  --deck-body: #dec5be;
-  --deck-key: #bd9298;
-  --deck-key-hi: #cca7ab;
-  --deck-key-lo: #8c5a67;
+  --deck-body: #ddb9af;
+  --deck-key: #bf818a;
+  --deck-key-hi: #cd979d;
+  --deck-key-lo: #8b4b5c;
   --deck-glyph: #fffaf6;
 }
 
