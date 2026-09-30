@@ -205,11 +205,14 @@ function Portrait({ def, season, shadow }: { def: NeighborDef; season: Season; s
     if (!c || !g) return
     try {
       const src = neighborPortrait(def, season)
-      c.width = src.width * FACE
-      c.height = src.height * FACE
+      // 틀은 어른 크기(10×14) 그대로 — 키 작은 아이는 늘이지 않고 발을 바닥에 맞춰 그린다
+      const w = Math.max(10, src.width)
+      const h = Math.max(14, src.height)
+      c.width = w * FACE
+      c.height = h * FACE
       g.imageSmoothingEnabled = false
       if (shadow) g.filter = 'brightness(0) opacity(0.35)'
-      g.drawImage(src, 0, 0, c.width, c.height)
+      g.drawImage(src, Math.floor((w - src.width) / 2) * FACE, (h - src.height) * FACE, src.width * FACE, src.height * FACE)
     } catch {
       /* 그림을 그릴 수 없는 곳(시험 환경)에서는 비워 둔다 */
     }
