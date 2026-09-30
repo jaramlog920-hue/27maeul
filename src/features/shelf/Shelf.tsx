@@ -261,8 +261,14 @@ function Recipes() {
   );
 }
 
+/** 앨범 제목: 아이 이름(계획 12)을 넣는다 */
+function albumTitle(id: string, kid: string | undefined): string {
+  return (SCENES[id]?.album ?? "").replaceAll("{child}", kid ?? "아이");
+}
+
 export function Album() {
   const album = useGame((s) => s.game.album);
+  const kid = useGame((s) => s.game.child?.name);
   if (!album.length) return <p>{T.ui.albumEmpty}</p>;
   return (
     <div className="album-grid">
@@ -271,12 +277,12 @@ export function Album() {
         return (
           <figure key={a.id} className="album-card">
             {img ? (
-              <img src={img} alt={SCENES[a.id]?.album ?? ""} />
+              <img src={img} alt={albumTitle(a.id, kid)} />
             ) : (
               <div className="album-blank" />
             )}
             <figcaption>
-              {SCENES[a.id]?.album} · {fill(T.ui.day, { day: a.day })}
+              {albumTitle(a.id, kid)} · {fill(T.ui.day, { day: a.day })}
             </figcaption>
           </figure>
         );

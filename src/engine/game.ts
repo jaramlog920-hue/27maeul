@@ -103,6 +103,7 @@ import { ATTIC, BED_STAND, HEARTH_STAND, HOME_FRONT, inAttic, isHome, isIndoor, 
 import { GOSPELS, type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
 import type { Avatar } from './avatar'
 import { BOARD_GAIN, boardFor, type BoardRequest } from './board'
+import { CHILD_AFTER_WEDDING, childStage, helpStat, newChild, type Child } from './child'
 import { DESTS, TRIP_FRIEND_GAIN, TRIP_LEAVE_BY, tripCost, type DestId } from './travel'
 import { BIRTHDAY_MUL, isBirthday, NO_NOTEBOOK, noteGift, noteHeard, noteMet, noteSeen, seenLabel, type Notebook } from './notebook'
 import { CARPENTER_WORKS, fromChest, hasStock, HOME_MAILBOX, INK_JAR_HOLD, LIGHT_SHOES, owns, RACK_HOLD, RACK_PAPYRUS, RAIN_WATER, SOOT_CATCH, stash, stashOverflows, stock, takeStock, walkMul, type CarpenterWork, type EasyId } from './easier'
@@ -204,6 +205,8 @@ export interface GameState {
   sealed: string[]
   /** 이웃 수첩: 만난 이웃·알게 된 좋아하는 것과 싫어하는 것·마주친 자리·들은 이야기 */
   notebook: Notebook
+  /** 아이 (계획 12): 결혼 뒤 태어난다 */
+  child: Child | null
 }
 
 /** 지도(world.tileAt)가 이 게임의 집 단계·열린 서고 방 문(방 표)을 보게 한다. 지도를 읽는 엔진 입구마다 부른다 */
@@ -447,6 +450,7 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
     careful: {},
     sealed: [],
     notebook: NO_NOTEBOOK,
+    child: null,
   }
 }
 
@@ -2314,8 +2318,71 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
     room,
     inv,
   }
-  const morning = forgetPromises(morningSupplies(next, s.clock.day), day)
+  const morning = childMorning(forgetPromises(morningSupplies(next, s.clock.day), day), content)
   return { ...morning, npcs: placeAllNpcs(morning, content) }
+}
+
+/** 아이가 하루 한 번 해 오는 것 (근력·손재주·운 — 한 개씩, 날마다 번갈아) */
+const CHILD_FINDS: Partial<Record<StatId, [ItemId, ItemId]>> = { strength: ['water', 'reed'], hand: ['papyrus', 'ink'], luck: ['fig', 'honey'] }
+/** 아이가 돕는 일로 오르는 아이 자신의 경험치 */
+export const CHILD_HELP_XP = 10
+
+/**
+ * 아이의 아침 (계획 12): 결혼하고 CHILD_AFTER_WEDDING일이 지난 아침에 태어나고(이름을 정한다),
+ * 걷기 시작하는 날·돕기 시작하는 날엔 장면, 돕는 아이는 하루 한 번 자기 능력치에 맞는 일을 한다
+ */
+function childMorning(s: GameState, content: GameContent): GameState {
+  const day = s.clock.day
+  const r = s.romance ?? NO_ROMANCE
+  let next = s
+  if (!next.child) {
+    if (r.stage !== 'married' || r.marriedDay === null || day < r.marriedDay + CHILD_AFTER_WEDDING) return s
+    const spouse = content.neighbors.find((d) => d.id === r.partner)
+    return {
+      ...next,
+      child: newChild(day, next.stats, spouse?.stat),
+      scenes: [...next.scenes, 'childBorn'],
+      flags: { ...next.flags, childNaming: 1 },
+    }
+  }
+  const child = next.child!
+  const stage = childStage(child, day)
+  if (stage !== 'baby' && !next.flags.childWalked) next = { ...next, scenes: [...next.scenes, 'childWalks'], flags: { ...next.flags, childWalked: 1 } }
+  if (stage !== 'helper') return next
+  if (!next.flags.childHelping) next = { ...next, scenes: [...next.scenes, 'childHelps'], flags: { ...next.flags, childHelping: 1 } }
+  const kind = helpStat(child)
+  const finds = CHILD_FINDS[kind]
+  let helped = true
+  if (finds) {
+    // 운은 이틀에 한 번꼴 뜻밖의 선물
+    if (kind === 'luck' && day % 2) helped = false
+    else next = putAway(next, { [finds[day % 2]]: 1 })
+  } else if (kind === 'charm') {
+    // 대신 인사하러 간다: 오늘 마을에 나온 이웃 한 명 (배우자는 빼고)
+    const level = next.flags.villageLevel ?? 0
+    const who = content.neighbors.filter((d) => !d.marketOnly && d.id !== r.partner && !notYet(d, level, next.flags))
+    if (who.length) next = heartUp(next, who[day % who.length].id, GAIN.talk)
+  } else if (kind === 'wit') {
+    // 이웃 이야기를 사흘에 한 번 먼저 들어 온다 (다른 날엔 일지에 이웃 이야기 한 줄)
+    const [teller] = Object.keys(next.offers)
+    if (teller && day % 3 === 0) next = listen(next, teller, content).state
+  }
+  const notes = helped ? [...next.todayNotes, `childHelp:${kind}`] : next.todayNotes
+  return {
+    ...next,
+    child: { ...child, stats: addXp(child.stats, kind, CHILD_HELP_XP) },
+    todayNotes: notes,
+    flags: { ...next.flags, childHelpDay: day, childHelpKind: helped ? STAT_ORDER.indexOf(kind) : -1 },
+  }
+}
+const STAT_ORDER: readonly StatId[] = ['wit', 'hand', 'charm', 'strength', 'luck']
+
+/** 아이 이름 정하기: '다른 이름'으로 다시 뽑고, 정하면 끝 */
+export function nameChild(s: GameState, name: string): GameState {
+  if (!s.child) return s
+  const flags = { ...s.flags }
+  delete flags.childNaming
+  return { ...s, child: { ...s.child, name }, flags }
 }
 
 /**

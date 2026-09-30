@@ -25,6 +25,7 @@ import { TalkBox } from './talk/TalkBox'
 import { TradeBoard } from './talk/TradeBoard'
 import { BoardView } from './talk/BoardView'
 import { TravelView } from './talk/TravelView'
+import { ChildName } from './child/ChildName'
 import { GameGuide } from './play/GameGuide'
 import { Settings } from './play/Settings'
 import { ScheduleDialog } from './play/EventSchedule'
@@ -66,6 +67,8 @@ function Body() {
       return <BoardView />
     case 'travel':
       return <TravelView />
+    case 'childName':
+      return <ChildName />
     case 'letter':
       return <LetterBox />
     case 'menu':

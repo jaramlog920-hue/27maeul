@@ -66,6 +66,7 @@ import {
   buyRare,
   fulfillBoard,
   takeTrip,
+  nameChild,
   warmByHearth,
   playerTile,
   receiveVisit,
@@ -144,6 +145,8 @@ export type Modal =
   | { kind: 'board' }
   /** 나루의 배: 이웃 마을 여행 (계획 13 작업 6) */
   | { kind: 'travel' }
+  /** 아이 이름 정하기 (계획 12) */
+  | { kind: 'childName' }
   | { kind: 'menu'; place: MenuPlace }
   | { kind: 'readPick' }
   | { kind: 'quiz'; mode: QuizMode; questions: Question[]; index: number; wrong: string[]; solved: boolean; misses: number; missed: string[] }
@@ -252,6 +255,7 @@ interface Store {
   buyRareItem: (item: ItemId) => void
   doBoard: (r: BoardRequest) => void
   goTrip: (dest: DestId, buys: ItemId[]) => void
+  setChildName: (name: string) => void
   startTeach: () => void
   startLetter: () => void
   // 손일
@@ -362,6 +366,14 @@ function snapAlbum(sceneId: string, capture: (() => string | null) | null) {
   const photo = sc?.photoFor ?? (sc?.album ? sceneId : null)
   if (photo) storeAlbumImage(photo, capture?.() ?? null)
 }
+/** 아침에 아이가 해 온 일 (계획 12): 한 줄 알림 */
+const CHILD_HELP_LINE = ['이웃 이야기를 듣고 왔어요', '파피루스나 잉크를 만들어 왔어요', '이웃에게 대신 인사하고 왔어요', '물이나 갈대를 날라 왔어요', '뜻밖의 선물을 들고 왔어요']
+function sayChildHelp(g: GameState, say: (text: string, ms?: number) => void) {
+  const k = g.flags.childHelpKind
+  if (!g.child || g.flags.childHelpDay !== g.clock.day || k === undefined || k < 0) return
+  say(`${g.child.name}: ${CHILD_HELP_LINE[k]}`, 3400)
+}
+
 const MUTE_KEY = 'twenty-seven/muted'
 const JOYSTICK_KEY = 'twenty-seven/joystick'
 const JOYSTICK_SHAPE_KEY = 'twenty-seven/joystick-shape'
@@ -819,6 +831,8 @@ export const useGame = create<Store>((set, get) => {
         }
       }
       if (!modal && game.scenes.length) modal = { kind: 'scene', id: game.scenes[0] }
+      // 아이가 태어난 장면을 본 뒤 이름을 정한다
+      if (!modal && game.flags.childNaming && game.child) modal = { kind: 'childName' }
       // 가까이 지나가며 들은 혼잣말 (계획 6b): 다른 알림이 떠 있으면 덮지 않는다
       const heard = game.life?.heard
       if (heard && heard !== s.game.life?.heard && !get().toast) get().say(fill(T.people.mutter, { who: neighborById(heard.npc)?.role ?? '', text: heard.text }), 3400)
@@ -889,11 +903,14 @@ export const useGame = create<Store>((set, get) => {
       set({ game: persist(next) })
     },
 
+    setChildName: (name) => set({ game: persist(nameChild(get().game, name)), modal: null }),
+
     goTrip: (dest, buys) => {
       const next = takeTrip(get().game, CONTENT, dest, buys)
       if (!next) return
       set({ game: persist(next), modal: null })
       get().say(`${DESTS[dest].name}에서 하룻밤 묵고 집으로 돌아왔어요`, 3400)
+      sayChildHelp(next, get().say)
     },
 
     doBoard: (r) => {
@@ -1258,7 +1275,9 @@ export const useGame = create<Store>((set, get) => {
       const pieceId = m?.kind === 'review' ? m.pieceId : null
       const attic = m?.kind === 'review' && !!m.attic
       // 집 단계가 바뀌는 곳은 잠뿐: goToSleep이 새 단계로 지도(모듈 전역)를 맞춘다
-      set({ game: persist(goToSleep(get().game, CONTENT, { read: pieceId !== null, pieceId: pieceId ?? undefined, attic })), modal: null })
+      const next = goToSleep(get().game, CONTENT, { read: pieceId !== null, pieceId: pieceId ?? undefined, attic })
+      set({ game: persist(next), modal: null })
+      sayChildHelp(next, get().say)
     },
     saveMyLine: (lineKey, text) => set({ game: persist(setMyLine(get().game, lineKey, text)), modal: afterMyLine(get().modal) }),
     skipMyLine: () => set({ modal: afterMyLine(get().modal) }),

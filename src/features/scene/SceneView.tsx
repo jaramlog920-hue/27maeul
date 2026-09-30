@@ -13,6 +13,9 @@ export function SceneView({ id, chosen }: { id: string; chosen?: number }) {
   const nextScene = useGame((s) => s.nextScene)
   const chooseScene = useGame((s) => s.chooseScene)
   const me = useGame((s) => s.game.avatar?.name)
+  const kid = useGame((s) => s.game.child?.name)
+  // 아이 이름 (계획 12): {child}
+  const say = (text: string) => callName(text, me).replaceAll('{child}', kid ?? '아이')
   const scene = SCENES[id]
   // 고르는 말이 있는 장면 (계획 6b): 고르기 전엔 닫지 않는다, 고르면 대답이 이어진다
   const asking = !!scene?.choices?.length && chosen === undefined
@@ -23,15 +26,15 @@ export function SceneView({ id, chosen }: { id: string; chosen?: number }) {
   }, [scene, nextScene])
   if (!scene) return null
   return (
-    <div className="dialog scene" role="dialog" aria-label={callName(scene.title, me)}>
-      <h2>{callName(scene.title, me)}</h2>
+    <div className="dialog scene" role="dialog" aria-label={say(scene.title)}>
+      <h2>{say(scene.title)}</h2>
       <div className="scene-lines">
         {[...scene.lines, ...reply].map((l, i) => {
           const who = speakerName(l.speaker)
           return (
             <p key={i} className={who ? 'scene-line said' : 'scene-line narration'}>
               {who && <span className="talk-role">{who}</span>}
-              {callName(l.text, me)}
+              {say(l.text)}
             </p>
           )
         })}
@@ -41,7 +44,7 @@ export function SceneView({ id, chosen }: { id: string; chosen?: number }) {
         <div className="actions menu column">
           {scene.choices!.map((c, i) => (
             <button key={i} onClick={() => chooseScene(i)}>
-              {callName(c.label, me)}
+              {say(c.label)}
             </button>
           ))}
         </div>

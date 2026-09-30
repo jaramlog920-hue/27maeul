@@ -13,6 +13,7 @@ import { FURNI_PALETTE, FURNITURE_ART } from './furniture-art'
 import { drawDecor, lanternLights, sheepCount } from './decor'
 import { FIRE, isNear, npcTile } from '../engine/neighbors'
 import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
+import { childStage, CRADLE_SPOT, helperSpot } from '../engine/child'
 import { actsDoorGlows, feastToday, sideShelfSpines } from '../engine/library'
 import { ACTS_ROOM, ATTIC, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, HEIGHT, HOME_DOOR, HOUSE_RECT, housesNow, houseAt, LOCKED_DOORS, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
 import { GOSPELS, type Book, type Facing, type NeighborDef, type GameContent, type Season, type Tile } from '../engine/types'
@@ -26,6 +27,7 @@ import {
   ICON_PALETTE,
   ICONS,
   mirror,
+  recolor,
   SHEEP,
   SMALL_PALETTE,
   spriteRows,
@@ -936,6 +938,10 @@ function neighborPerson(def: NeighborDef, facing: Facing, frame: 0 | 1 | 2, blin
   return person(def.sprite as Who, facing, frame, blink, 'stand', season, { growth })
 }
 
+/** 아이 요람 (계획 12): 나무 요람, 크림색 이불 */
+const CRADLE: SpriteRows = ['..........', '.k......k.', '.kccccccK.', '.kwwwwwwk.', '.kWWWWWWk.', '..k....k..', '.kk....kk.']
+const CRADLE_PALETTE: Record<string, string> = { k: '#6d4b33', K: '#6d4b33', w: '#b58e62', W: '#8a6a4a', c: '#f4ead2' }
+
 /** 이웃 수첩에 붙이는 앞모습 한 장 */
 export function neighborPortrait(def: NeighborDef, season: Season) {
   return neighborPerson(def, 'down', 0, false, season)
@@ -1579,6 +1585,32 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       for (const a of straysToday(game)) {
         const s = STRAY_SPOTS[a]
         items.push({ y: s.y, paint: () => drawSprite(g, animal(a, 'baby', Math.sin(t + (a === 'cat' ? 0 : 2)) > 0 ? 'right' : 'left'), s.x, s.y, Math.floor(t * 2) % 2) })
+      }
+
+      // 우리 아이 (계획 12): 아기는 요람, 걷는 아이는 곁을 따라다니고, 돕는 아이는 때마다 마을 곳곳에
+      const kid = game.child
+      if (kid) {
+        const st = childStage(kid, day)
+        if (st === 'baby') {
+          const c = CRADLE_SPOT
+          items.push({
+            y: c.y,
+            paint: () => {
+              drawSprite(g, paint('cradle', CRADLE, CRADLE_PALETTE), c.x, c.y)
+              drawSprite(g, paint('baby/baby', BABY.baby, SMALL_PALETTE), c.x, c.y, 5 + (Math.floor(t * 1.5) % 2))
+            },
+          })
+        } else if (st === 'toddler') {
+          // 기록자 뒤에 한 걸음 떨어져 (보는 쪽의 반대편)
+          const back = { left: [0.7, 0.1], right: [-0.7, 0.1], up: [0, 0.6], down: [-0.6, -0.1] }[p.facing]
+          const kx = p.x + back[0]
+          const ky = p.y + back[1]
+          items.push({ y: ky, paint: () => drawSprite(g, paint('baby/walk', BABY.walk, SMALL_PALETTE), kx, ky, p.path.length ? Math.floor(t * 8) % 2 : 0) })
+        } else {
+          const at = helperSpot(game.clock.minute)
+          const rows = recolor(spriteRows('child', 'down', { frame: 0, blink: isBlinking(t + 1.3), growth: 2 }), kid.look === 'boy' ? { z: 'E', Z: 'M' } : { z: 'V', Z: 'X' })
+          items.push({ y: at.y, paint: () => drawSprite(g, paint(`kid/${kid.look}/${isBlinking(t + 1.3)}`, rows, PALETTE), at.x, at.y, breathOffset(t + 1.3)) })
+        }
       }
 
       // 동반 동물

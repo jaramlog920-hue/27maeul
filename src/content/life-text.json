@@ -1914,6 +1914,30 @@
     }
   },
   "scenes": {
+    "childBorn": {
+      "title": "새 식구",
+      "album": "아이가 태어난 날",
+      "lines": [
+        { "speaker": "narration", "text": "이른 아침, 작은 울음소리가 집 안을 채웠다." },
+        { "speaker": "narration", "text": "넓힌 방 한쪽에 요람을 놓았다. 오늘부터 식구가 하나 늘었다." }
+      ]
+    },
+    "childWalks": {
+      "title": "첫걸음",
+      "album": "{child}, 처음 걸은 날",
+      "lines": [
+        { "speaker": "narration", "text": "요람을 붙잡고 일어선 {child}. 뒤뚱뒤뚱 한 걸음을 뗐다." },
+        { "speaker": "narration", "text": "이제 어디를 가든 작은 발소리가 뒤를 따라온다." }
+      ]
+    },
+    "childHelps": {
+      "title": "혼자 다니는 아이",
+      "album": "{child}, 처음 심부름 간 날",
+      "lines": [
+        { "speaker": "narration", "text": "아침 일찍 문을 나서며 손을 흔드는 {child}. \"다녀올게요!\"" },
+        { "speaker": "narration", "text": "이제 날마다 한 가지씩, 제가 잘하는 일로 살림을 돕는다." }
+      ]
+    },
     "trip:harbor": {
       "title": "바닷가 항구 마을",
       "album": "배를 타고 항구 마을에 다녀온 날",
@@ -4373,6 +4397,14 @@
     "heard": " 이야기를 들었다({refs}).",
     "quiet": " 조용한 하루였다.",
     "notes": {
+      "childBorn": " 아이가 태어났다.",
+      "childWalks": " 아이가 처음 걸었다.",
+      "childHelps": " 아이가 처음 심부름을 했다.",
+      "childHelp:strength": " 아이가 물이나 갈대를 날라 왔다.",
+      "childHelp:hand": " 아이가 파피루스나 잉크를 만들어 왔다.",
+      "childHelp:charm": " 아이가 이웃에게 대신 인사하고 왔다.",
+      "childHelp:wit": " 아이가 이웃 이야기를 듣고 와서 들려주었다.",
+      "childHelp:luck": " 아이가 뜻밖의 선물을 들고 왔다.",
       "trip:harbor": " 배를 타고 바닷가 항구 마을에 다녀왔다.",
       "trip:hillTown": " 걸어서 언덕 너머 마을에 다녀왔다.",
       "strays": " 마당에 작은 손님들이 왔다.",

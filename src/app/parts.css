@@ -1541,3 +1541,6 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
   font-weight: 700;
   color: var(--ink-soft);
 }
+
+/* ── 아이 이름 (계획 12) ── */
+.child-name-pick { text-align: center; font-size: 20px; margin: 12px 0; }
