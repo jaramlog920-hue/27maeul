@@ -251,11 +251,15 @@ function goalContext(s: GoalState, content: GameContent) {
   // 아직 이사 오지 않은 이웃은 보이지 않는다 — 소개 장면이 나오는 새 날 아침부터 (잠들 때 정한 단계)
   const level = s.flags.villageLevel ?? 0
   for (const d of content.neighbors) if (notYet(d, level, s.flags)) special[d.id] = null
-  const joined = (id: string) => !(id in special)
-  // 살아 움직이는 사람들 (계획 6b): 이벤트 자리 > 목격 자리 > 일과 (아래 잔치·모임·사랑방이 덮는다)
+  // 이사 오지 않은 이웃만 따로 기억한다 (아래에서 일과 자리를 넣어도 '이사 옴'은 그대로)
+  const notJoined = new Set(Object.keys(special))
+  const joined = (id: string) => !notJoined.has(id)
+  // 살아 움직이는 사람들 (계획 6b): 이벤트 자리 > 목격 자리 > 일과 (아래 잔치·모임·사랑방이 덮는다).
+  // 아직 열리지 않은 구역(나루·벌통 들…) 안의 자리는 건너뛰고 시간표로 (goalFor가 열린 자리를 고른다)
+  const lockedNow = lockedTiles(shelvedCount(s))
   for (const d of content.neighbors) if (joined(d.id)) {
     const at = personSpot(s, d.id)
-    if (at) special[d.id] = at
+    if (at && !lockedNow.has(key(at))) special[d.id] = at
   }
   // 단짝이 된 아이는 오후에 양 우리 곁에서 논다
   if (s.flags['done:friends'] && m >= FRIENDS_FROM && m < FRIENDS_TO && !isWet(w)) special.child = FRIENDS_SPOT

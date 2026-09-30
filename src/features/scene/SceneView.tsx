@@ -23,8 +23,8 @@ export function SceneView({ id, chosen }: { id: string; chosen?: number }) {
   }, [scene, nextScene])
   if (!scene) return null
   return (
-    <div className="dialog scene" role="dialog" aria-label={scene.title}>
-      <h2>{scene.title}</h2>
+    <div className="dialog scene" role="dialog" aria-label={callName(scene.title, me)}>
+      <h2>{callName(scene.title, me)}</h2>
       <div className="scene-lines">
         {[...scene.lines, ...reply].map((l, i) => {
           const who = speakerName(l.speaker)
