@@ -71,8 +71,7 @@
     "zones": {
       "vineyard": "포도원",
       "dock": "호숫가 나루",
-      "hives": "벌통 들",
-      "forge": "대장간"
+      "hives": "벌통 들"
     },
     "chapterLabel": "{chapter}장",
     "shelf": "엮은 장 {n}",

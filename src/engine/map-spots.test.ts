@@ -74,15 +74,15 @@ describe('서고 권수로 열리는 구역', () => {
     expect(zoneAt(vine)?.id).toBe('vineyard')
     expect(zoneAt({ x: 24, y: 33 })?.id).toBe('dock') // 나루
     expect(zoneAt(ROOMS.find((r) => r.owner === 'beekeeper')!.door)?.id).toBe('hives')
-    expect(zoneAt(PLACES.anvil.tiles[0])?.id).toBe('forge')
+    expect(zoneAt(PLACES.anvil.tiles[0])).toBeNull() // 대장간은 처음부터 열려 있다
     for (const id of ['bed', 'desk', 'well', 'hill', 'bench', 'library', 'basket', 'field'] as const)
       for (const t of [...PLACES[id].tiles, ...(PLACES[id].stand ? [PLACES[id].stand!] : [])]) expect(zoneAt(t), id).toBeNull()
     for (const r of ROOMS.filter((r) => r.owner !== 'beekeeper')) expect(zoneAt(r.door), r.owner).toBeNull()
   })
   it('책이 꽂힐수록 하나씩 열린다', () => {
-    expect(lockedZones(0).map((z) => z.id)).toEqual(['vineyard', 'dock', 'hives', 'forge'])
-    expect(lockedZones(1).map((z) => z.id)).toEqual(['dock', 'hives', 'forge'])
-    expect(lockedZones(4)).toEqual([])
+    expect(lockedZones(0).map((z) => z.id)).toEqual(['vineyard', 'dock', 'hives'])
+    expect(lockedZones(1).map((z) => z.id)).toEqual(['dock', 'hives'])
+    expect(lockedZones(3)).toEqual([])
     expect(lockedTiles(0).has(`${vine.x},${vine.y}`)).toBe(true)
     expect(lockedTiles(1).has(`${vine.x},${vine.y}`)).toBe(false)
   })
@@ -102,8 +102,10 @@ describe('서고 권수로 열리는 구역', () => {
     const shut = goalFor(grandpa, { ...ctx, locked: lockedTiles(0) })!
     expect(zoneAt(shut)).toBeNull()
     expect(isWalkable(shut)).toBe(true)
-    expect(goalFor(smith, { ...ctx, locked: lockedTiles(0) })).toBeNull()
-    expect(goalFor(smith, { ...ctx, locked: lockedTiles(4) })).not.toBeNull()
+    // 대장장이는 첫날부터 대장간에 나와 있다 (그을음 → 잉크가 있어야 첫 장을 엮는다)
+    expect(goalFor(smith, { ...ctx, locked: lockedTiles(0) })).toEqual({ x: 34, y: 26 })
+    const nowhere = { ...smith, schedule: [{ from: 420, tile: vine }, { from: 1140 }] }
+    expect(goalFor(nowhere, { ...ctx, locked: lockedTiles(0) })).toBeNull()
   })
 })
 

@@ -93,7 +93,7 @@ describe('서고 퀴즈', () => {
     }
   })
 
-  it('네 권을 차례로 꽂으면 구역이 하나씩 열리고, 4권째에 대장간이 열린다', () => {
+  it('세 권을 차례로 꽂으면 구역이 하나씩 열리고, 대장간은 처음부터 열려 있다', () => {
     let shelved: Partial<Record<Book, Grade>> = {}
     const seen: string[][] = []
     GOSPELS.forEach((b, i) => {
@@ -103,11 +103,9 @@ describe('서고 퀴즈', () => {
       expect(lockedZones(n).map((z) => z.id)).toEqual(ZONES.filter((z) => z.books > n).map((z) => z.id))
       seen.push(ZONES.filter((z) => z.books <= n).map((z) => z.id))
     })
-    expect(seen[2]).not.toContain('forge')
-    expect(seen[3]).toEqual(['vineyard', 'dock', 'hives', 'forge'])
-    const smith = ZONES.find((z) => z.id === 'forge')!
-    expect(lockedTiles(3).has(`${smith.x0},${smith.y0}`)).toBe(true)
-    expect(lockedTiles(4).has(`${smith.x0},${smith.y0}`)).toBe(false)
+    expect(seen[2]).toEqual(['vineyard', 'dock', 'hives'])
+    expect(seen[3]).toEqual(seen[2])
+    expect(lockedTiles(0).has('33,25')).toBe(false) // 모루
     expect(poolFor(shelved, 'jn')).toEqual(['mt', 'mk', 'lk', 'jn'])
   })
 

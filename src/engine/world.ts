@@ -527,7 +527,7 @@ export function isIndoor(t: Tile): boolean {
 }
 
 // ── 서고에 책이 꽂힐수록 열리는 구역 (설계 §2.7) ──
-export type ZoneId = 'vineyard' | 'dock' | 'hives' | 'forge'
+export type ZoneId = 'vineyard' | 'dock' | 'hives'
 export interface Zone {
   id: ZoneId
   /** 서고에 꽂힌 책이 이만큼이면 열린다 */
@@ -541,8 +541,8 @@ export const ZONES: readonly Zone[] = [
   { id: 'vineyard', books: 1, x0: 39, y0: 1, x1: 46, y1: 9 },
   { id: 'dock', books: 2, x0: 21, y0: 31, x1: 26, y1: 35 },
   { id: 'hives', books: 3, x0: 34, y0: 28, x1: 46, y1: 32 },
-  { id: 'forge', books: 4, x0: 32, y0: 24, x1: 35, y1: 27 },
 ]
+// 대장간은 처음부터 열려 있다 — 첫날부터 대장장이를 도와 그을음(→ 잉크)을 얻어야 첫 장을 엮을 수 있다
 
 export function zoneAt(t: Tile): Zone | null {
   return ZONES.find((z) => t.x >= z.x0 && t.x <= z.x1 && t.y >= z.y0 && t.y <= z.y1) ?? null
