@@ -50,7 +50,9 @@ export function Settings() {
   const shape = useGame((s) => s.joystickShape)
   const side = useGame((s) => s.joystickSide)
   const zoom = useGame((s) => s.zoom)
-  const { setMuted, setJoystick, setJoystickShape, setJoystickSide, setZoom, open } = useGame.getState()
+  const deck = useGame((s) => s.deck)
+  const mode = deck ? 'deck' : joystick ? 'float' : 'none'
+  const { setDeck, setMuted, setJoystick, setJoystickShape, setJoystickSide, setZoom, open } = useGame.getState()
   const [music, setMusic] = useState<MusicChoice>(() => currentMusicChoice())
   const [resetting, setResetting] = useState(false)
   return (
@@ -96,13 +98,33 @@ export function Settings() {
         <p className="hint">크게 할수록 필사가 주변이 크게 보이고, 한 화면에 보이는 마을은 좁아져요.</p>
       </section>
       <section className="settings-section">
-        <div className="settings-row">
-          <h3>{C.joystick}</h3>
-          <button className={joystick ? 'on' : ''} aria-pressed={joystick} onClick={() => setJoystick(!joystick)}>
-            {joystick ? C.on : C.off}
-          </button>
+        <h3>{C.mode}</h3>
+        <div className="settings-options" role="group" aria-label={C.mode}>
+          {(
+            [
+              ['deck', C.modeDeck],
+              ['float', C.modeFloat],
+              ['none', C.modeNone],
+            ] as const
+          ).map(([id, label]) => {
+            const on = mode === id
+            return (
+              <button
+                key={id}
+                data-mode={id}
+                className={on ? 'on' : ''}
+                aria-pressed={on}
+                onClick={() => {
+                  setDeck(id === 'deck')
+                  setJoystick(id === 'float')
+                }}
+              >
+                {label}
+              </button>
+            )
+          })}
         </div>
-        {joystick && (
+        {mode === 'float' && (
           <>
             <div className="settings-row">
               <h4>{C.shape}</h4>
@@ -136,7 +158,7 @@ export function Settings() {
             </div>
           </>
         )}
-        <p className="hint">{C.hint}</p>
+        <p className="hint">{mode === 'deck' ? C.deckHint : C.hint}</p>
       </section>
       <section className="settings-section">
         <div className="settings-row">

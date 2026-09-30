@@ -212,6 +212,8 @@ interface Store {
   joystickShape: JoystickShape
   /** 조이스틱 자리: 화면 오른쪽 아래(기본) 또는 왼쪽 아래 */
   joystickSide: JoystickSide
+  /** 휴대폰 아래 조작판 (나침반 패드·확인 단추·가방/일지/설정) — 처음부터 켜져 있다 */
+  deck: boolean
   /** 화면 확대 (1 = 100% ~ 2 = 200%) */
   zoom: number
   /** 테스트에서 난수를 고정하려고 바꿀 수 있다 */
@@ -305,6 +307,7 @@ interface Store {
   setJoystick: (on: boolean) => void
   setJoystickShape: (shape: JoystickShape) => void
   setJoystickSide: (side: JoystickSide) => void
+  setDeck: (on: boolean) => void
   setZoom: (zoom: number) => void
 }
 
@@ -349,6 +352,7 @@ const MUTE_KEY = 'twenty-seven/muted'
 const JOYSTICK_KEY = 'twenty-seven/joystick'
 const JOYSTICK_SHAPE_KEY = 'twenty-seven/joystick-shape'
 const JOYSTICK_SIDE_KEY = 'twenty-seven/joystick-side'
+const DECK_KEY = 'twenty-seven/deck'
 export type JoystickShape = 'pad' | 'round'
 export type JoystickSide = 'right' | 'left'
 export function loadJoystickShape(): JoystickShape {
@@ -388,6 +392,14 @@ export function loadJoystick(): boolean {
     return globalThis.localStorage?.getItem(JOYSTICK_KEY) === 'on'
   } catch {
     return false
+  }
+}
+/** 아래 조작판은 처음엔 켜져 있다 — 끈 사람만 'off'로 저장 */
+export function loadDeck(): boolean {
+  try {
+    return globalThis.localStorage?.getItem(DECK_KEY) !== 'off'
+  } catch {
+    return true
   }
 }
 function loadMuted(): boolean {
@@ -666,6 +678,7 @@ export const useGame = create<Store>((set, get) => {
     joystick: loadJoystick(),
     joystickShape: loadJoystickShape(),
     joystickSide: loadJoystickSide(),
+    deck: loadDeck(),
     zoom: loadZoom(),
     rng: Math.random,
     capture: null,
@@ -1258,6 +1271,10 @@ export const useGame = create<Store>((set, get) => {
     setJoystickSide: (joystickSide) => {
       remember(JOYSTICK_SIDE_KEY, joystickSide)
       set({ joystickSide })
+    },
+    setDeck: (deck) => {
+      remember(DECK_KEY, deck ? 'on' : 'off')
+      set({ deck })
     },
   }
 })

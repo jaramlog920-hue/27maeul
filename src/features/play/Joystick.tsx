@@ -64,13 +64,15 @@ export function Joystick() {
   const side = useGame((s) => s.joystickSide)
   // 창이 열려 있으면 걷지 못하므로 창을 가리지 않게 숨긴다
   const modalOpen = useGame((s) => s.modal !== null)
-  if (!enabled || modalOpen) return null
+  // 아래 조작판을 쓰면 떠 있는 조이스틱은 필요 없다
+  const deck = useGame((s) => s.deck)
+  if (!enabled || modalOpen || deck) return null
   const sideClass = side === 'left' ? ' joystick-left' : ''
-  return shape === 'round' ? <RoundStick sideClass={sideClass} /> : <DirectionPad sideClass={sideClass} />
+  return shape === 'round' ? <RoundStick sideClass={sideClass} /> : <DirectionPad className={`joystick dpad${sideClass}`} />
 }
 
-/** 네 방향 패드: 위·아래·왼·오른쪽 단추와 가운데 누르기 단추 */
-function DirectionPad({ sideClass }: { sideClass: string }) {
+/** 네 방향 패드: 위·아래·왼·오른쪽 단추와 가운데 누르기 단추 (떠 있는 조이스틱·아래 조작판의 나침반이 같이 쓴다) */
+export function DirectionPad({ className }: { className: string }) {
   const pad = useRef<HTMLDivElement>(null)
   const dir = useRef<Dir | null>(null)
   // 패드를 잡은 손가락 하나만 따른다 (다른 손가락을 떼도 걸음이 끊기지 않게)
@@ -107,7 +109,7 @@ function DirectionPad({ sideClass }: { sideClass: string }) {
   )
   return (
     <div
-      className={`joystick dpad${sideClass}`}
+      className={className}
       ref={pad}
       role="group"
       aria-label={T.controls.padLabel}

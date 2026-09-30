@@ -11,7 +11,7 @@ import { Settings } from './Settings'
 beforeEach(() => {
   vi.useFakeTimers()
   localStorage.clear()
-  useGame.setState({ game: newGame(CONTENT), modal: null, decorating: null, joystick: true, joystickShape: 'pad', joystickSide: 'right' })
+  useGame.setState({ game: newGame(CONTENT), modal: null, decorating: null, joystick: true, joystickShape: 'pad', joystickSide: 'right', deck: false })
 })
 afterEach(() => vi.useRealTimers())
 
@@ -160,6 +160,9 @@ describe('조이스틱 설정', () => {
     expect(loadJoystickShape()).toBe('pad')
     expect(loadJoystickSide()).toBe('right')
     render(<Settings />)
+    act(() => (document.querySelector('[data-mode="float"]') as HTMLButtonElement).click())
+    expect(useGame.getState().deck).toBe(false)
+    expect(useGame.getState().joystick).toBe(true)
     act(() => {
       ;(document.querySelector('[data-shape="round"]') as HTMLButtonElement).click()
       ;(document.querySelector('[data-side="left"]') as HTMLButtonElement).click()
