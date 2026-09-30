@@ -21,6 +21,9 @@ export const FURNI_PALETTE: Record<string, string> = {
   p: '#e8a88a', // 살구
   o: '#f1b999',
   z: 'rgba(90,70,50,0.22)', // 그림자
+  v: '#8e6a9e', // 자주
+  V: '#b08fbe',
+  t: '#c9895a', // 구리
 }
 
 export interface FurnitureArt {
@@ -52,6 +55,22 @@ function roundRug(): FurnitureArt {
     rows.push(row)
   }
   return { w: 2, h: 2, rows }
+}
+
+function purpleRug(): FurnitureArt {
+  const rows: string[] = ['.'.repeat(32), '.'.repeat(32), '.'.repeat(32)]
+  for (let y = 3; y < 14; y++) {
+    let row = ''
+    for (let x = 0; x < 32; x++) {
+      const edge = x === 1 || x === 30 || y === 3 || y === 13
+      const band = x === 3 || x === 28 || y === 5 || y === 11
+      const dot = (x + y) % 6 === 0 && x > 4 && x < 27 && y > 6 && y < 10
+      row += x === 0 || x === 31 ? '.' : edge ? 'c' : band ? 'V' : dot ? 'y' : 'v'
+    }
+    rows.push(row)
+  }
+  rows.push('.'.repeat(32), '.'.repeat(32))
+  return { w: 2, h: 1, rows }
 }
 
 function mat(): FurnitureArt {
@@ -241,6 +260,29 @@ export const FURNITURE_ART: Record<string, FurnitureArt> = {
   // ── 바닥에 까는 것 ──
   roundRug: roundRug(),
   mat: mat(),
+  purpleRug: purpleRug(),
+  // 꾸미기 (계획 13 작업 7): 항구 마을 소라 장식, 언덕 너머 마을 구리 등불
+  shell: art(1, 1, [
+    '.......kk.......',
+    '.....kkppk......',
+    '....kpoopck.....',
+    '...kpoccopk.....',
+    '...kpocCcopk....',
+    '....kpcccpkk....',
+    '.....kkkkkk.....',
+    '.....zzzzzz.....',
+  ]),
+  lantern: art(1, 1, [
+    '.......kk.......',
+    '......k..k......',
+    '.....kttttk.....',
+    '.....ktYYtk.....',
+    '.....ktyYtk.....',
+    '.....ktYYtk.....',
+    '.....kttttk.....',
+    '......kkkk......',
+    '......zzzz......',
+  ]),
   pillows: art(1, 1, [
     '....kkkkk.......',
     '...kccccck......',
@@ -341,7 +383,7 @@ export const FURNITURE_ART: Record<string, FurnitureArt> = {
 /** 가구 그림 글자 → 가방 아이콘 팔레트(ICON_PALETTE)에 더한 글자 */
 export const ICON_CHAR: Record<string, string> = {
   k: 'E', W: 'H', w: 'I', l: 'J', c: 'K', C: 'L', r: 'M', R: 'Q', g: 'T', G: 'U',
-  y: 'V', Y: 'X', b: 'Z', B: 'a', s: 'e', S: 'h', p: 'i', o: 'j',
+  y: 'V', Y: 'X', b: 'Z', B: 'a', s: 'e', S: 'h', p: 'i', o: 'j', v: 'm', V: 'q', t: 'u',
 }
 
 /** 그림을 8×8 아이콘으로 줄인다: 칸마다 가장 많이 쓴 색 (그림자·빈칸 제외) */

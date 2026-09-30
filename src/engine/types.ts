@@ -178,6 +178,10 @@ export type ItemId =
   | 'bronzeOrnament'
   // 판매용 (계획 13 작업 4): 기름과 양털로 만드는 향초
   | 'scentCandle'
+  // 꾸미기 (계획 13 작업 7): 여행지 가게의 장식, 장날의 자주색 깔개
+  | 'shell'
+  | 'lantern'
+  | 'purpleRug'
 
 /** 손일 놀이: 찧기·맞추기·줍기·길게 누르기·번갈아 누르기·순서 기억하기 */
 export type Minigame = 'mash' | 'timing' | 'pick' | 'hold' | 'weave' | 'order'

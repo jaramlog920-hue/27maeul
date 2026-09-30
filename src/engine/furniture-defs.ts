@@ -38,6 +38,10 @@ export const FURNITURE_DEFS: Partial<Record<ItemId, FurnitureDef>> = {
   roundRug: { w: 2, h: 2, layer: 'floor' },
   mat: { w: 2, h: 1, layer: 'floor' },
   pillows: { w: 1, h: 1, layer: 'floor' },
+  // 꾸미기 (계획 13 작업 7)
+  shell: { w: 1, h: 1, layer: 'small' },
+  lantern: { w: 1, h: 1, layer: 'small' },
+  purpleRug: { w: 2, h: 1, layer: 'floor' },
   teapot: { w: 1, h: 1, layer: 'small' },
   fruitBowl: { w: 1, h: 1, layer: 'small' },
   scrolls: { w: 1, h: 1, layer: 'small' },

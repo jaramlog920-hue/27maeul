@@ -1183,6 +1183,8 @@ export const TRADES: readonly Trade[] = [
   { id: 'inkpot', pay: { ink: 1 }, get: { inkpot: 1 } },
   { id: 'dryFlowers', pay: { fig: 1 }, get: { dryFlowers: 1 } },
   { id: 'hourglass', pay: { olive: 1, oil: 1 }, get: { hourglass: 1 } },
+  // 꾸미기 (계획 13 작업 7): 자주색 천으로 짠 귀한 깔개
+  { id: 'purpleRug', pay: { purpleCloth: 1, wool: 2 }, get: { purpleRug: 1 } },
   { id: 'seedHerb', pay: {}, coins: 5, get: { seedHerb: 2 } },
   { id: 'seedBean', pay: {}, coins: 4, get: { seedBean: 2 } },
   { id: 'goodPenCoins', pay: {}, coins: 40, get: { goodPen: 1 } },
