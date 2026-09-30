@@ -63,6 +63,18 @@ describe('성경 이야기를 더 모으기', () => {
     expect(r.state.collected).toContain(r.pieceId)
   })
 
+  it('편지 책과 요한계시록도 밤 필사·열람석으로 다음 장 하나 (편지 나르는 이웃이 오늘 들고 온 장은 빼고)', () => {
+    const open = { ...newGame(CONTENT), flags: { ...newGame(CONTENT).flags, 'room:rev': 1, 'room:romPhm': 1 } }
+    const rev = { ...at(chooseBook(open, 'rev', CONTENT), 3, 21 * 60), inv: { oil: 1 }, coins: 20 }
+    const r = nightCopy(rev, CONTENT)!
+    expect(r.pieceId.startsWith('rev-001')).toBe(true)
+    expect(r.state.collected).toContain(r.pieceId)
+    const rom = at(chooseBook(open, 'rom', CONTENT), 3, 10 * 60)
+    const first = CONTENT.pieces.filter((p) => p.book === 'rom').sort((a, b) => a.chapter - b.chapter)[0].id
+    const lib = libraryRead({ ...rom, coins: 20, post: [first] }, CONTENT)!
+    expect(lib.pieceId).not.toBe(first)
+  })
+
   it('계절 날짜 도우미', () => {
     expect(dayOf('spring', 1)).toBe(1)
     expect(dayOf('winter', 1)).toBe(121)

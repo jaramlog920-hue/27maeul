@@ -1558,10 +1558,16 @@ export function buyScroll(s: GameState, content: GameContent): { state: GameStat
 /** 이웃에게 선물: 마음이 친구(10) 이상인 이웃은 선물을 받으면 이야기 한 조각을 더 들려준다 */
 export const GIFT_STORY_HEARTS = 10
 
-/** 여행 판의 성경 칸: 지금 책의 지금 장에서 아직 모으지 않은 다음 조각 (이웃을 찾아가지 않아도) — 편지 책은 편지 나르는 이웃이 가져온다 */
-export function nextTripPiece(s: Pick<GameState, 'activeBook' | 'progress' | 'collected'>, content: GameContent, taken: readonly string[] = []): string | null {
+/** 지금 책에서 아직 모으지 않은 다음 조각 (밤 필사·열람석·두루마리·선물·여행이 쓴다) — 편지 책·요한계시록은 다음 장 하나 */
+export function nextTripPiece(s: Pick<GameState, 'activeBook' | 'progress' | 'collected'> & Partial<Pick<GameState, 'post' | 'flags'>>, content: GameContent, taken: readonly string[] = []): string | null {
   const b = s.activeBook
-  if (!b || modeOf(b) === 'letters') return null
+  if (!b) return null
+  // 편지 책·요한계시록 (2026-09-30 사용자): 장째로 오는 책은 아직 받지 않은 다음 장 하나 — 오늘 편지 나르는 이웃이 들고 온 장은 빼고
+  if (modeOf(b) === 'letters') {
+    if (s.flags && !bookRoomOpen(b, s.flags)) return null
+    const skip = new Set([...s.collected, ...(s.post ?? []), ...taken])
+    return content.pieces.filter((p) => p.book === b && !skip.has(p.id)).sort((x, y) => x.chapter - y.chapter)[0]?.id ?? null
+  }
   const pieces = content.pieces.filter((p) => p.book === b)
   const ch = currentChapter(pieces, s.progress[b].completed)
   if (ch === null) return null
