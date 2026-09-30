@@ -1783,3 +1783,13 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
 .ts-harvest dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; font-size: 14px; }
 .ts-harvest dt { font-weight: 700; white-space: nowrap; }
 .ts-harvest dd { margin: 0; }
+
+/* 가족 화면 */
+.family .fam-card { border: 2px solid var(--panel-edge); border-radius: 8px; padding: 8px 10px; margin: 8px 0; background: var(--panel-soft); }
+.family .fam-card h3 { margin: 0 0 4px; font-size: 16px; }
+.family .fam-tag { font-size: 12px; font-weight: normal; color: var(--ink-soft); margin-left: 6px; }
+.family .fam-card p { margin: 2px 0 6px; font-size: 13px; }
+.family .fam-stats { list-style: none; padding: 0; margin: 0; display: grid; gap: 3px; }
+.family .fam-stats li { display: grid; grid-template-columns: 52px 1fr 28px; align-items: center; gap: 6px; font-size: 12px; }
+.family .fam-bar { height: 8px; border-radius: 4px; background: var(--panel-edge); overflow: hidden; opacity: 0.9; }
+.family .fam-bar span { display: block; height: 100%; background: var(--accent); }

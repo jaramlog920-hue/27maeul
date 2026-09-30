@@ -171,6 +171,7 @@ export type Modal =
   | { kind: 'quiz'; mode: QuizMode; questions: Question[]; index: number; wrong: string[]; solved: boolean; misses: number; missed: string[] }
   | { kind: 'care' }
   | { kind: 'bag' }
+  | { kind: 'family' }
   | { kind: 'shelf'; tab?: ShelfTab }
   | { kind: 'companion'; animal: Animal }
   | { kind: 'library' }

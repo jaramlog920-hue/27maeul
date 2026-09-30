@@ -67,10 +67,10 @@ describe('본문 창', () => {
     expect(screen.getByText(/네 복음서를 서로 견주어 붙인 표시입니다/)).toBeInTheDocument()
   })
 
-  it('비슷한 이야기 도장에는 단서를 붙인다', () => {
+  it('비슷한 이야기 도장에는 따로 단서 문구를 붙이지 않는다', () => {
     useGame.setState({ modal: { kind: 'passage', pieceId: 'lk-015-001', askLine: false } })
     render(<ModalLayer />)
-    expect(screen.getByText(/비슷한 이야기 · 마 18:12-14/)).toHaveTextContent('같은 일인지는 본문이 말하지 않습니다')
+    expect(screen.getByText(/비슷한 이야기 · 마 18:12-14/)).not.toHaveTextContent('같은 일인지는')
   })
 
   it('도장을 누르면 그 복음서의 구절이 펼쳐지고, 다시 누르면 접힌다', async () => {

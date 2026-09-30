@@ -2,6 +2,7 @@ import { useCallback, type SyntheticEvent } from 'react'
 import { isGhostClick } from '../shared/ghost'
 import { useGame } from '../store/game-store'
 import { Bag } from './bag/Bag'
+import { Family } from './family/Family'
 import { AdoptForm } from './companion/AdoptForm'
 import { Desk } from './desk/Desk'
 import { GardenMenu } from './garden/GardenMenu'
@@ -89,6 +90,8 @@ function Body() {
       return <QuizView modal={modal} />
     case 'care':
       return <CareMenu />
+    case 'family':
+      return <Family />
     case 'bag':
       return <Bag />
     case 'shelf':

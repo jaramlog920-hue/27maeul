@@ -22,7 +22,6 @@ export function Stamps({ piece }: { piece: Piece }) {
                 onClick={() => setOpen(open === s.ref ? null : s.ref)}
               >
                 {s.kind === 'same' ? T.ui.stampSame : T.ui.stampSimilar} · {s.ref}
-                {s.kind === 'similar' && <small> {T.ui.similarNote}</small>}
                 <span className="stamp-toggle">{open === s.ref ? T.ui.stampClose : T.ui.stampOpen}</span>
               </button>
               {open === s.ref && <Passage refText={s.ref} />}

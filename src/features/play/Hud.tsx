@@ -50,6 +50,9 @@ export function Hud() {
           <button className="hud-btn" onClick={() => open({ kind: 'journal' })}>
             {T.ui.journalTitle}
           </button>
+          <button className="hud-btn" onClick={() => open({ kind: 'family' })}>
+            가족
+          </button>
         </div>
       </div>
     </header>

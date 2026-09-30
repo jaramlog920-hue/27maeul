@@ -118,6 +118,7 @@ export function ControlDeck() {
               <div className="deck-menu-pop" role="menu">
                 <button role="menuitem" onClick={() => go({ kind: 'bag' })}>{T.ui.bag}</button>
                 <button role="menuitem" onClick={() => go({ kind: 'journal' })}>{T.ui.journalTitle}</button>
+                <button role="menuitem" onClick={() => go({ kind: 'family' })}>가족</button>
                 <button role="menuitem" onClick={() => go({ kind: 'settings' })}>{D.settings}</button>
               </div>
             )}
