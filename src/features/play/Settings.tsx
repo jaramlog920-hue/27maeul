@@ -11,6 +11,7 @@ import {
 } from '../../audio/sound'
 import { eraseSave } from '../../engine/save'
 import { T } from '../../content/text'
+import { loadTheme, setTheme, THEMES, type ThemeId } from '../../app/theme'
 import { useGame, ZOOMS } from '../../store/game-store'
 
 const C = T.controls
@@ -55,6 +56,7 @@ export function Settings() {
   const { setDeck, setMuted, setJoystick, setJoystickShape, setJoystickSide, setZoom, open } = useGame.getState()
   const [music, setMusic] = useState<MusicChoice>(() => currentMusicChoice())
   const [resetting, setResetting] = useState(false)
+  const [theme, setThemeState] = useState<ThemeId>(() => loadTheme())
   return (
     <div className="dialog settings" role="dialog" aria-label="설정">
       <h2>설정</h2>
@@ -85,6 +87,26 @@ export function Settings() {
         <h3>소리 크기</h3>
         <VolumeSlider kind="music" label="배경음" />
         <VolumeSlider kind="sfx" label="효과음" />
+      </section>
+      <section className="settings-section">
+        <h3>{C.theme}</h3>
+        <div className="settings-options theme-options" role="group" aria-label={C.theme}>
+          {THEMES.map((id) => (
+            <button
+              key={id}
+              data-theme-pick={id}
+              className={theme === id ? 'on' : ''}
+              aria-pressed={theme === id}
+              onClick={() => {
+                setTheme(id)
+                setThemeState(id)
+              }}
+            >
+              <span className={`theme-swatch swatch-${id}`} aria-hidden="true" />
+              {(C.themes as Record<ThemeId, string>)[id]}
+            </button>
+          ))}
+        </div>
       </section>
       <section className="settings-section">
         <h3>화면 크기</h3>

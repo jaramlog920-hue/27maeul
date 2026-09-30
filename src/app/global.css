@@ -22,8 +22,17 @@
   --ink: #2a3128;
   --ink-soft: #66705f;
   --on-bg: #cfd3b8;
+  /* 바탕 위 큰 글씨(위 줄·첫 화면) — 밝은 바탕 색 조합에선 짙게 */
+  --on-bg-strong: #f4f1e1;
+  /* 조작판 눈금 바탕·십자 단추 세모 */
+  --meter-bg: #0f130f;
+  --deck-glyph: #cfd3b8;
   --accent: #bf5b3c;
   --accent-ink: #fff8ef;
+  --accent-lo: #8e3f28;
+  --accent-hi: #d77a5a;
+  /* 어두운 바탕 위 강조 글씨 (책 고르기 안내·눌린 단추) */
+  --glow: #f0c75e;
   --ok: #5a8a3a;
   --warn: #b0402f;
   /* 휴대폰 아래 조작판 몸체와 단추 */
@@ -37,6 +46,80 @@
   --game-font: 'Galmuri11', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
   --scripture-font: 'Noto Serif KR', 'Nanum Myeongjo', 'Batang', 'AppleMyungjo', serif;
   color-scheme: light;
+}
+
+/* 색 조합 (설정 → 색 조합): 올리브(기본)·바닷가·포도밭·벚꽃. 성경 본문 색은 바꾸지 않는다 */
+:root[data-theme="sea"] {
+  --bg: #1d2b36;
+  --panel: #f3f0e6;
+  --panel-soft: #e3eaee;
+  --panel-line: #a9bccb;
+  --hover: #dbe6ee;
+  --panel-edge: #3d6480;
+  --ink: #22303b;
+  --ink-soft: #5c6b76;
+  --on-bg: #cfe2ee;
+  --on-bg-strong: #f3f0e6;
+  --accent: #c99a55;
+  --accent-ink: #fffaf0;
+  --accent-lo: #9a7038;
+  --accent-hi: #e0b981;
+  --glow: #e8cf8e;
+  --ok: #4f8f6a;
+  --warn: #b4473a;
+  --deck-body: #243a4b;
+  --deck-key: #4f7fa3;
+  --deck-key-hi: #6495ba;
+  --deck-key-lo: #11202b;
+}
+:root[data-theme="vine"] {
+  --bg: #241c26;
+  --panel: #f6efe6;
+  --panel-soft: #e9ddd6;
+  --panel-line: #bfa9b0;
+  --hover: #e6d8d6;
+  --panel-edge: #4d3450;
+  --ink: #2e2230;
+  --ink-soft: #6f5c70;
+  --on-bg: #dccfd8;
+  --on-bg-strong: #f6efe6;
+  --accent: #6f8f34;
+  --accent-ink: #fbfff2;
+  --accent-lo: #4d6522;
+  --accent-hi: #93b55a;
+  --glow: #e9c96a;
+  --ok: #6f8f34;
+  --warn: #b0443f;
+  --deck-body: #2f2431;
+  --deck-key: #54405a;
+  --deck-key-hi: #684f6f;
+  --deck-key-lo: #150f17;
+}
+:root[data-theme="pink"] {
+  /* 마을 그림의 차양(흐린 분홍)·지붕(흙빛 빨강)·벽(크림)에서 뽑은 낮은 채도의 장밋빛 */
+  --bg: #e8d6cf;
+  --panel: #faf5ef;
+  --panel-soft: #f1e5dc;
+  --panel-line: #d6b8af;
+  --hover: #f0e1d8;
+  --panel-edge: #9d6269;
+  --ink: #4a3636;
+  --ink-soft: #8c6a6a;
+  --on-bg: #8c6066;
+  --on-bg-strong: #5e3c3f;
+  --accent: #be7683;
+  --accent-ink: #fffaf6;
+  --accent-lo: #995a66;
+  --accent-hi: #d59fa8;
+  --glow: #a64962;
+  --ok: #6f8f55;
+  --warn: #b0504a;
+  --meter-bg: #fbf2ed;
+  --deck-body: #dec5be;
+  --deck-key: #bd9298;
+  --deck-key-hi: #cca7ab;
+  --deck-key-lo: #8c5a67;
+  --deck-glyph: #fffaf6;
 }
 
 * {
@@ -94,7 +177,7 @@ button:focus-visible {
   max-width: 520px;
   margin: 0 auto;
   padding: 32px 16px 40px;
-  color: var(--panel);
+  color: var(--on-bg-strong);
 }
 .intro h1 {
   font-size: 28px;
@@ -179,7 +262,7 @@ button:focus-visible {
 .hud {
   padding: 6px 0 4px;
   padding-top: max(6px, env(safe-area-inset-top));
-  color: var(--panel);
+  color: var(--on-bg-strong);
   font-size: 12px;
 }
 .hud-row {
@@ -273,7 +356,7 @@ button:focus-visible {
   justify-content: center;
   gap: 12px;
   padding: 4px 8px 8px;
-  color: var(--panel);
+  color: var(--on-bg-strong);
   flex-shrink: 0;
 }
 .game-guide p {

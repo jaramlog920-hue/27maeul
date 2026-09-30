@@ -1171,7 +1171,7 @@ button.copy-blank.on {
   .play.has-deck .hud-shelf-count { display: none; }
   .hud-chapter { display: none; }
   .play.has-deck .hud-chapter { display: inline; }
-  .play.has-deck .hud-chapter.hint { color: #f0c75e; }
+  .play.has-deck .hud-chapter.hint { color: var(--glow); }
   .play.has-deck { min-height: 100dvh; }
   .play.has-deck .hud { padding-bottom: 2px; }
   .play.has-deck .hud-row { min-height: 22px; }
@@ -1232,7 +1232,7 @@ button.copy-blank.on {
     width: 32px;
     height: 8px;
     border: 2px solid var(--deck-key-lo);
-    background: #0f130f;
+    background: var(--meter-bg);
     overflow: hidden;
   }
   .deck-need em { display: block; height: 100%; background: #c9b27a; }
@@ -1266,7 +1266,7 @@ button.copy-blank.on {
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .deck-next.now { color: #f0c75e; font-weight: 700; }
+  .deck-next.now { color: var(--glow); font-weight: 700; }
   .deck-main {
     flex: 1;
     display: flex;
@@ -1294,7 +1294,7 @@ button.copy-blank.on {
     justify-content: center;
     font-size: 12px;
     line-height: 1;
-    color: var(--on-bg);
+    color: var(--deck-glyph);
     background: var(--deck-key);
     box-shadow: inset 0 2px 0 var(--deck-key-hi);
     pointer-events: none;
@@ -1305,8 +1305,8 @@ button.copy-blank.on {
   .deck-pad [data-zone="right"] { grid-area: right; border-radius: 0 3px 3px 0; }
   .deck-pad [data-zone="center"] { grid-area: center; font-size: 0; box-shadow: none; }
   .deck-pad [data-zone="center"]::after { content: ''; width: 12px; height: 12px; background: var(--deck-body); }
-  .deck-pad span.pressed { background: var(--deck-key-hi); color: #f0c75e; }
-  .deck-pad [data-zone="center"].pressed::after { background: #f0c75e; }
+  .deck-pad span.pressed { background: var(--deck-key-hi); color: var(--glow); }
+  .deck-pad [data-zone="center"].pressed::after { background: var(--glow); }
 
   /* 오른쪽: 확인(크게)과 메뉴(작게)를 가까이 */
   .deck-right {
@@ -1321,13 +1321,13 @@ button.copy-blank.on {
     min-height: 28px;
     padding: 2px 14px;
     font-size: 11px;
-    color: var(--on-bg);
+    color: var(--deck-glyph);
     background: var(--deck-key);
     border: 2px solid var(--deck-key-lo);
     border-radius: 3px;
     box-shadow: inset 0 2px 0 var(--deck-key-hi), 0 2px 0 var(--deck-key-lo);
   }
-  .deck .deck-menu.on { color: #f0c75e; }
+  .deck .deck-menu.on { color: var(--glow); }
   .deck-menu-pop {
     position: absolute;
     right: 0;
@@ -1354,12 +1354,12 @@ button.copy-blank.on {
     background: var(--accent);
     color: var(--accent-ink);
     clip-path: polygon(0 12px, 6px 12px, 6px 6px, 12px 6px, 12px 0, calc(100% - 12px) 0, calc(100% - 12px) 6px, calc(100% - 6px) 6px, calc(100% - 6px) 12px, 100% 12px, 100% calc(100% - 12px), calc(100% - 6px) calc(100% - 12px), calc(100% - 6px) calc(100% - 6px), calc(100% - 12px) calc(100% - 6px), calc(100% - 12px) 100%, 12px 100%, 12px calc(100% - 6px), 6px calc(100% - 6px), 6px calc(100% - 12px), 0 calc(100% - 12px));
-    box-shadow: inset 0 -6px 0 #8e3f28, inset 0 4px 0 #d77a5a;
+    box-shadow: inset 0 -6px 0 var(--accent-lo), inset 0 4px 0 var(--accent-hi);
     font-size: 15px;
     font-weight: 700;
     touch-action: manipulation;
   }
-  .deck .deck-seal:active:not(:disabled) { transform: none; box-shadow: inset 0 -2px 0 #8e3f28, inset 0 2px 0 #8e3f28; padding-top: 4px; }
+  .deck .deck-seal:active:not(:disabled) { transform: none; box-shadow: inset 0 -2px 0 var(--accent-lo), inset 0 2px 0 var(--accent-lo); padding-top: 4px; }
 }
 /* 세로로 긴 휴대폰(플립 등): 남는 높이는 몸체가 채우고, 단추를 키운다 */
 @media (pointer: coarse) and (max-aspect-ratio: 27/50) {
@@ -1492,3 +1492,12 @@ button.need-tap:active:not(:disabled) { transform: none; }
 button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
 .stats-list li { cursor: pointer; }
 .toast { word-break: keep-all; }
+
+/* 설정: 색 조합 고르기 (바탕·판·강조 세 색 견본) */
+.theme-options button { display: inline-flex; align-items: center; gap: 6px; }
+.theme-swatch { display: inline-block; width: 30px; height: 14px; border: 2px solid #0006; border-radius: 2px; }
+.swatch-olive { background: linear-gradient(90deg, #1f2621 0 33%, #f4f1e1 33% 66%, #bf5b3c 66%); }
+.swatch-sea { background: linear-gradient(90deg, #1d2b36 0 33%, #4f7fa3 33% 66%, #c99a55 66%); }
+.swatch-vine { background: linear-gradient(90deg, #241c26 0 33%, #f6efe6 33% 66%, #6f8f34 66%); }
+.swatch-pink { background: linear-gradient(90deg, #e8d6cf 0 33%, #faf5ef 33% 66%, #be7683 66%); }
+.settings-options.theme-options { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }

@@ -5,6 +5,10 @@ import { App } from './app/App'
 import { ErrorBoundary } from './app/ErrorBoundary'
 import './app/global.css'
 import './app/parts.css'
+import { applyTheme, loadTheme } from './app/theme'
+
+// 고른 색 조합을 그리기 전에 먼저 입힌다
+applyTheme(loadTheme())
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
