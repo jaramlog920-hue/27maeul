@@ -143,11 +143,33 @@ describe('편지 서고 퀴즈', () => {
     expect(seen).toContain('2ti:from')
     expect(seen).toContain('phm:from')
     expect(openingQs.some((q) => q.options.length === 3)).toBe(true)
-    // 데살로니가전서 보낸 이(바울·실루아노·디모데)는 오답이 소스데네 하나뿐이라 내지 않는다
-    expect(seen).not.toContain('1th:from')
-    expect(seen).not.toContain('2th:from')
-    // 빌레몬서 받는 사람(빌레몬·압비아·아킵보)은 다른 편지의 받는 사람 디모데·디도 중 디모데가 첫머리(몬 1:1)에 있어 오답이 디도 하나뿐 — 내지 않는다
-    expect(seen).not.toContain('phm:toPerson')
+    // 데살로니가전서·후서 보낸 이(바울·실루아노·디모데): 열세 권만 있을 때는 오답이 소스데네 하나뿐이라 내지 않았으나,
+    // 계획 8 작업 2부터 야고보·베드로·유다가 오답 후보에 들어와 낸다
+    expect(seen).toContain('1th:from')
+    expect(seen).toContain('2th:from')
+    // 빌레몬서 받는 사람(빌레몬·압비아·아킵보): 디모데는 첫머리(몬 1:1)에 있어 오답이 아니고, 오답 디도·가이오 둘로 낸다
+    expect(seen).toContain('phm:toPerson')
+    // 히브리서–유다서의 이름 줄도 나온다
+    for (const k of ['jas:from', '1pe:from', '1pe:toPlace', '2pe:from', '3jn:toPerson', 'jud:from']) expect(seen).toContain(k)
+  })
+
+  it('히브리서–유다서 첫머리: 이름 줄의 오답은 그 편지 첫머리에 없다 (유다서 보낸 이 오답에 야고보 없음, 벧전·벧후 서로 베드로 없음)', () => {
+    for (const q of openingQs) {
+      const wrong = q.options.filter((o) => o !== q.answer)
+      if (q.book === 'jud' && q.role === 'from') {
+        expect(q.answer).toBe('유다')
+        expect(wrong).not.toContain('야고보')
+      }
+      if ((q.book === '1pe' || q.book === '2pe') && q.role === 'from') {
+        expect(q.answer).toBe('베드로')
+        expect(wrong).not.toContain('베드로')
+      }
+      if (q.book === 'gal' && q.role === 'toPlace') expect(wrong).not.toContain('갈라디아')
+      if (q.book === '1pe' && q.role === 'toPlace') expect(wrong).not.toContain('갈라디아')
+    }
+    // "적혀 있지 않음"(name null) 줄로는 첫머리 빈칸 문제를 만들지 않는다
+    expect(openingQs.some((q) => ['heb', '1jn', '2jn'].includes(q.book))).toBe(false)
+    expect(openingQs.filter((q) => q.book === '3jn').every((q) => q.role === 'toPerson' && q.answer === '가이오')).toBe(true)
   })
 
   it('첫머리 문제: 쓰인 모든 이름 줄에서 빈칸을 답으로 채우면 구절 본문 그대로다', () => {
