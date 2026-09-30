@@ -6,12 +6,15 @@ import { blanksFor } from '../../engine/copy'
 import { groupByRoom, pickableBooks } from '../../engine/books'
 import { newGame, type GameState } from '../../engine/game'
 import { POSTMAN } from '../../engine/post'
+import { shelfRoom } from '../../engine/shelf-rooms'
 import { LETTERS } from '../../engine/types'
 import { useGame } from '../../store/game-store'
 import { ModalLayer } from '../ModalLayer'
 import { dexView } from '../shelf/Shelf'
 
 const OPEN = { gospelFeast: 2, 'room:romPhm': 1 }
+const ROM_PHM = shelfRoom('romPhm').books
+const HEB_JUD = shelfRoom('hebJud').books
 const LETTER_NAMES = ['로마서', '고린도전서', '고린도후서', '갈라디아서', '에베소서', '빌립보서', '골로새서', '데살로니가전서', '데살로니가후서', '디모데전서', '디모데후서', '디도서', '빌레몬서']
 
 function reset(game: Partial<GameState> = {}) {
@@ -26,13 +29,18 @@ describe('groupByRoom', () => {
     const books = pickableBooks(OPEN, CONTENT.pieces.map((p) => p.book))
     const g = groupByRoom(books)
     expect(g.map((x) => x.room.id)).toEqual(['gospels', 'acts', 'romPhm'])
-    expect(g[2].books).toEqual([...LETTERS])
+    expect(g[2].books).toEqual([...ROM_PHM])
     expect(groupByRoom(pickableBooks({}, books)).map((x) => x.room.id)).toEqual(['gospels'])
+    // 히브리서–유다서 방이 열리면 여덟 권이 넷째 묶음으로
+    const all = groupByRoom(pickableBooks({ ...OPEN, 'room:hebJud': 1 }, CONTENT.pieces.map((p) => p.book)))
+    expect(all.map((x) => x.room.id)).toEqual(['gospels', 'acts', 'romPhm', 'hebJud'])
+    expect(all[3].books).toEqual([...HEB_JUD])
   })
 
-  it('도감: 방이 닫히면 편지가 없고, 열리면 열세 권이 보인다', () => {
+  it('도감: 방이 닫히면 편지가 없고, 열리면 그 방의 책이 보인다', () => {
     expect(dexView(PIECES, { gospelFeast: 2 }, 'all', false).books.some((b) => LETTERS.includes(b as never))).toBe(false)
-    expect(dexView(PIECES, OPEN, 'all', false).books.slice(5)).toEqual([...LETTERS])
+    expect(dexView(PIECES, OPEN, 'all', false).books.slice(5)).toEqual([...ROM_PHM])
+    expect(dexView(PIECES, { ...OPEN, 'room:hebJud': 1 }, 'all', false).books.slice(5)).toEqual([...LETTERS])
   })
 })
 

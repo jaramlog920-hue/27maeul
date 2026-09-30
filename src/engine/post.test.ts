@@ -7,10 +7,10 @@ import { deserialize, sanitize, serialize } from './save'
 import { LETTERS } from './types'
 import { postLine, useGame } from '../store/game-store'
 
-/** 네 복음서·사도행전을 꽂고 로마서–빌레몬서 방이 열린 상태 */
+/** 네 복음서·사도행전을 꽂고 로마서–빌레몬서·히브리서–유다서 방이 열린 상태 */
 function roomOpenState(): GameState {
   const s = newGame(CONTENT)
-  return { ...s, flags: { ...s.flags, gospelFeast: 2, 'room:romPhm': 1 }, shelved: { mt: 2, mk: 1, lk: 1, jn: 0, ac: 1 } }
+  return { ...s, flags: { ...s.flags, gospelFeast: 2, 'room:romPhm': 1, 'room:hebJud': 1 }, shelved: { mt: 2, mk: 1, lk: 1, jn: 0, ac: 1 } }
 }
 
 /** 그날로 옮겨 새 날을 맞는다 (goToSleep이 하루를 넘긴다) */
@@ -54,6 +54,29 @@ describe('postForDay — 아직 받지 않은 장을 장 번호 순서대로 하
     const phm = piecesOf('phm')
     expect(phm).toHaveLength(1)
     for (let day = 1; day <= 10; day++) expect(postForDay({ day, book: 'phm', chapters: phm, delivered: [] })).toEqual(['phm-001'])
+  })
+
+  it('⑤ 요한이서·요한삼서·유다서(1장)는 한 통에 통째로', () => {
+    for (const b of ['2jn', '3jn', 'jud'] as const) {
+      const ps = piecesOf(b)
+      expect(ps, b).toHaveLength(1)
+      for (let day = 1; day <= 10; day++) expect(postForDay({ day, book: b, chapters: ps, delivered: [] }), b).toEqual([`${b}-001`])
+      expect(postForDay({ day: 1, book: b, chapters: ps, delivered: [`${b}-001`] })).toEqual([])
+    }
+  })
+
+  it('⑤ 히브리서(13장)는 하루 2–3통, 장 순서대로 끝까지', () => {
+    const heb = piecesOf('heb')
+    expect(heb).toHaveLength(13)
+    const delivered: string[] = []
+    for (let day = 1; day <= 20 && delivered.length < 13; day++) {
+      const got = postForDay({ day, book: 'heb', chapters: heb, delivered })
+      const left = 13 - delivered.length
+      expect(got.length, `day ${day}`).toBe(Math.min(postCountOf(day), left))
+      expect(got).toEqual(heb.slice(delivered.length, delivered.length + got.length).map((p) => p.id))
+      delivered.push(...got)
+    }
+    expect(delivered).toEqual(heb.map((p) => p.id))
   })
 
   it('다른 책의 조각은 섞지 않는다', () => {
@@ -215,7 +238,7 @@ describe('저장과 불러오기', () => {
     expect(bad.post).toEqual([])
   })
 
-  it('열세 권 모두 첫날 편지는 1장부터', () => {
+  it('스물한 권 모두 첫날 편지는 1장부터', () => {
     const s = roomOpenState()
     for (const b of LETTERS) expect(chooseBook(s, b, CONTENT).post[0], b).toBe(`${b}-001`)
   })

@@ -65,8 +65,11 @@ describe('life-text', () => {
 
 describe('책별 콘텐츠', () => {
   it('조각이 있는 책과 책별 조각', () => {
-    // 편지 열세 권(계획 7)은 본문에서 만든 장 조각이 있다
-    expect(BOOKS_WITH_CONTENT).toEqual(['mt', 'mk', 'lk', 'jn', 'ac', 'rom', '1co', '2co', 'gal', 'eph', 'php', 'col', '1th', '2th', '1ti', '2ti', 'tit', 'phm'])
+    // 편지 열세 권(계획 7)과 여덟 권(계획 8)은 본문에서 만든 장 조각이 있다
+    expect(BOOKS_WITH_CONTENT).toEqual([
+      'mt', 'mk', 'lk', 'jn', 'ac', 'rom', '1co', '2co', 'gal', 'eph', 'php', 'col', '1th', '2th', '1ti', '2ti', 'tit', 'phm',
+      'heb', 'jas', '1pe', '2pe', '1jn', '2jn', '3jn', 'jud',
+    ])
     expect(piecesOf('mk').length).toBe(98)
     expect(piecesOf('mk').every((p) => p.book === 'mk')).toBe(true)
     expect(piecesOf('mt').length).toBe(54 + 53 + 50) // 마 1–10장 54 + 11–20장 53 + 21–28장 50 (작업 4·5·6)
@@ -81,7 +84,7 @@ describe('책별 콘텐츠', () => {
   })
   it('조각이 있는 책의 조각 합이 pieces.json 전체와 같고, 대표 조각의 제목·범위가 원본(scripts/pieces)과 맞는다', () => {
     expect(BOOKS_WITH_CONTENT.reduce((n, b) => n + piecesOf(b).length, 0)).toBe(PIECES.length)
-    expect(PIECES).toHaveLength(533 + 66 + 73 + 87) // 네 복음서 533 + 사도행전 1–14장 66 + 15–28장 73 + 편지 87장(장마다 하나)
+    expect(PIECES).toHaveLength(533 + 66 + 73 + 87 + 34) // 네 복음서 533 + 사도행전 1–14장 66 + 15–28장 73 + 편지 87장 + 34장(장마다 하나)
     expect(pieceById('ac-008-032')).toMatchObject({ book: 'ac', ref: '행 8:32-40', chapter: 8, title: '물 있는 곳' })
     expect(pieceOfVerse('행 8:37')).toBeUndefined() // (없음) — 번호만 조각 범위에 걸친다
     expect(pieceOfVerse('행 8:38')?.id).toBe('ac-008-032')
@@ -149,5 +152,10 @@ describe('책별 콘텐츠', () => {
   it('문제가 가리키는 조각', () => {
     expect(pieceOfQuestion({ kind: 'book', ref: '막 1:10', options: ['mk', 'lk'], answer: 'mk' })).toBe('mk-001-009')
     expect(pieceOfQuestion({ kind: 'order', options: ['lk-001-005', 'lk-001-026'], answer: 'lk-001-005' })).toBe('lk-001-005')
+    // 여덟 권의 절도 장 조각으로 (요일은 요한복음이 아니다)
+    expect(pieceOfVerse('요일 3:16')?.id).toBe('1jn-003')
+    expect(pieceOfVerse('요 3:16')?.id).not.toBe('1jn-003')
+    expect(pieceOfVerse('히 11:1')?.id).toBe('heb-011')
+    expect(pieceOfVerse('요삼 1:15')?.id).toBe('3jn-001')
   })
 })

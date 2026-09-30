@@ -85,8 +85,13 @@ rows.forEach((r) => {
   if (!flat.includes(r.name)) fail(w, `이름 "${r.name}"이 본문에 없음 — "${verses[0]}"`)
 })
 
+// 첫머리 줄을 아직 적지 않은 책 (계획 8 작업 1에서 방 표에 넣고, 작업 2에서 원문을 읽고 적는다 — 적으면 이 목록을 지운다).
+// 줄이 하나라도 있으면 목록에 있어도 칸 검사를 한다
+const PENDING_OPENINGS = new Set(['히', '약', '벧전', '벧후', '요일', '요이', '요삼', '유'])
 // 편지마다 칸 채움: 보낸 이 하나 이상, 받는 곳/받는 사람 하나 이상. "적혀 있지 않음" 칸에는 다른 이름 없음
-const checkBooks = fixture ? [...new Set(rows.map((r) => r.abbr))].filter((a) => letterAbbrs.has(a)) : [...letterAbbrs]
+const checkBooks = fixture
+  ? [...new Set(rows.map((r) => r.abbr))].filter((a) => letterAbbrs.has(a))
+  : [...letterAbbrs].filter((a) => !PENDING_OPENINGS.has(a) || rows.some((r) => r.abbr === a))
 for (const abbr of checkBooks) {
   const mine = rows.filter((r) => r.abbr === abbr)
   if (!mine.some((r) => r.roleLabel === '보낸 이')) fail(abbr, '"보낸 이" 줄이 없음')

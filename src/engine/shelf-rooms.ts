@@ -6,7 +6,7 @@ import type { Book } from './types'
 export type ShelfRoomId = 'gospels' | 'acts' | 'romPhm' | 'hebJud' | 'rev'
 export interface ShelfRoom {
   id: ShelfRoomId
-  /** 오늘 성경 순서. hebJud·rev는 계획 8·9에서 채운다 (지금은 빈 배열) */
+  /** 오늘 성경 순서. rev는 계획 9에서 채운다 (지금은 빈 배열) */
   books: readonly Book[]
   /** 조각 엮기 / 편지 장째로 (요한계시록의 방식은 계획 9에서 정한다 — 값을 더할 수 있다) */
   mode: 'pieces' | 'letters'
@@ -24,7 +24,7 @@ export const SHELF_ROOMS: readonly ShelfRoom[] = [
     mode: 'letters',
     door: 1,
   },
-  { id: 'hebJud', books: [], mode: 'letters', door: 2 },
+  { id: 'hebJud', books: ['heb', 'jas', '1pe', '2pe', '1jn', '2jn', '3jn', 'jud'], mode: 'letters', door: 2 },
   { id: 'rev', books: [], mode: 'pieces', door: 3 },
 ]
 

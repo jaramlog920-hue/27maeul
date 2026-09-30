@@ -17,9 +17,10 @@ const refParts = (ref: string) => {
   return { abbr: m[1], chapter: Number(m[2]), verse: Number(m[3]) }
 }
 
-describe('blanksFor — 87장 전부', () => {
-  it('열세 권 87장', () => {
-    expect(LETTER_PIECES).toHaveLength(87)
+describe('blanksFor — 121장 전부', () => {
+  it('열세 권 87장 + 여덟 권 34장', () => {
+    expect(LETTER_PIECES).toHaveLength(87 + 34)
+    expect(LETTER_PIECES.filter((p) => ['heb', 'jas', '1pe', '2pe', '1jn', '2jn', '3jn', 'jud'].includes(p.book))).toHaveLength(34)
     expect(COPY_BLANKS).toBe(3)
   })
 
@@ -27,7 +28,7 @@ describe('blanksFor — 87장 전부', () => {
     it(`${p.ref}`, () => {
       const src = copySourceFor(p.book)
       const blanks = blanksFor(p.book, p.chapter, src)
-      // 87장 모두 빈칸이 꼭 셋 (예외 없음 — 모자라는 장이 생기면 여기서 걸린다)
+      // 121장 모두 빈칸이 꼭 셋 (예외 없음 — 모자라는 장이 생기면 여기서 걸린다)
       expect(blanks).toHaveLength(COPY_BLANKS)
       // 빈칸 셋은 서로 다른 절, 서로 다른 낱말
       expect(new Set(blanks.map((b) => b.ref)).size).toBe(blanks.length)
@@ -95,7 +96,7 @@ describe('blanksFor — 87장 전부', () => {
     expect(refs).not.toContain('롬 16:24')
   })
 
-  it('87장 모두 빈칸이 셋 — 모자라는 장 없음', () => {
+  it('121장 모두 빈칸이 셋 — 모자라는 장 없음', () => {
     const short = LETTER_PIECES.filter((p) => blanksFor(p.book, p.chapter, copySourceFor(p.book)).length !== COPY_BLANKS).map((p) => p.ref)
     expect(short).toEqual([])
   })
@@ -131,7 +132,7 @@ describe('blanksFor — 87장 전부', () => {
       const last = norm(b.answer).slice(-1)
       return b.options.filter((o) => o !== b.answer && norm(o).slice(-1) === last).length >= 2
     })
-    expect(all).toHaveLength(87 * COPY_BLANKS)
+    expect(all).toHaveLength(121 * COPY_BLANKS)
     expect(good.length / all.length).toBeGreaterThanOrEqual(0.9)
   })
 
@@ -153,12 +154,12 @@ describe('blanksFor — 87장 전부', () => {
 
 // ── 기록 ──
 
-/** 로마서–빌레몬서 방이 열리고, 재료가 넉넉한 상태 */
+/** 로마서–빌레몬서·히브리서–유다서 방이 열리고, 재료가 넉넉한 상태 */
 function ready(book: Book): GameState {
   const s = newGame(CONTENT)
   const open = {
     ...s,
-    flags: { ...s.flags, gospelFeast: 2, 'room:romPhm': 1 },
+    flags: { ...s.flags, gospelFeast: 2, 'room:romPhm': 1, 'room:hebJud': 1 },
     shelved: { mt: 2, mk: 1, lk: 1, jn: 0, ac: 1 } as GameState['shelved'],
     inv: { ...s.inv, papyrus: 5, ink: 5 },
   }
@@ -248,7 +249,7 @@ describe('recordLetter', () => {
     expect(r.scenes).toContain('bookBound')
   })
 
-  it('열세 권 모두 첫 장을 기록할 수 있다', () => {
+  it('스물한 권 모두 첫 장을 기록할 수 있다', () => {
     for (const b of LETTERS) {
       const s = ready(b)
       expect(recordLetter(s, b, 1, answers(b, 1), CONTENT).progress[b].completed, b).toEqual([1])

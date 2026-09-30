@@ -5,7 +5,10 @@ import { chooseBook, goToSleep, listen, newGame, setArrangement, submitChapter }
 describe('책별 진행', () => {
   it('빈 진행과 장 수 세기', () => {
     const p = emptyProgress()
-    expect(Object.keys(p)).toEqual(['mt', 'mk', 'lk', 'jn', 'ac', 'rom', '1co', '2co', 'gal', 'eph', 'php', 'col', '1th', '2th', '1ti', '2ti', 'tit', 'phm'])
+    expect(Object.keys(p)).toEqual([
+      'mt', 'mk', 'lk', 'jn', 'ac', 'rom', '1co', '2co', 'gal', 'eph', 'php', 'col', '1th', '2th', '1ti', '2ti', 'tit', 'phm',
+      'heb', 'jas', '1pe', '2pe', '1jn', '2jn', '3jn', 'jud',
+    ])
     expect(totalChapters({ progress: p })).toBe(0)
     // 마가 전체 16장
     expect(chaptersOf('mk', CONTENT)).toEqual(Array.from({ length: 16 }, (_, i) => i + 1))
