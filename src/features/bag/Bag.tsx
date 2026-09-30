@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { fill, ITEM_TEXT, T } from '../../content/text'
 import { chestOf, playerTile } from '../../engine/game'
-import { MAX_LEVEL, progressOf, STAT_IDS, statScore, type StatId, type Stats } from '../../engine/stats'
+import { MAX_LEVEL, STAT_IDS, statScore, type StatId, type Stats } from '../../engine/stats'
 import { isHome } from '../../engine/world'
 import type { ItemId } from '../../engine/types'
 import { ItemIcon } from '../../shared/ItemIcon'
@@ -21,7 +21,9 @@ export function StatsView({ stats }: { stats: Stats }) {
       <ul className="stats-list">
         {STAT_IDS.map((id) => {
           const st = stats[id]
-          const part = progressOf(st)
+          // 칸 색칠은 1~100 수치 그대로 (칸 하나 = 100/MAX_LEVEL)
+          const score = statScore(st)
+          const per = 100 / MAX_LEVEL
           return (
             <li key={id} data-stat={id} className={open === id ? 'on' : ''} onClick={() => setOpen(open === id ? null : id)} aria-expanded={open === id}>
               <span className="stat-name">
@@ -34,7 +36,7 @@ export function StatsView({ stats }: { stats: Stats }) {
               </span>
               <span className="stat-bars" aria-label={fill(T.stats.level, { n: st.level })}>
                 {Array.from({ length: MAX_LEVEL }, (_, i) => {
-                  const fillPct = i < st.level ? 100 : i === st.level ? Math.round(part * 100) : 0
+                  const fillPct = Math.round(Math.max(0, Math.min(1, (score - i * per) / per)) * 100)
                   return (
                     <span key={i} className="stat-bar">
                       <span style={{ width: `${fillPct}%` }} />
@@ -43,7 +45,7 @@ export function StatsView({ stats }: { stats: Stats }) {
                 })}
               </span>
               <span className="stat-level" title={fill(T.stats.level, { n: st.level })}>
-                {statScore(st)}
+                {score}
                 <small>/100</small>
               </span>
               {open === id && <p className="tap-explain">{STAT_DESC[id]}</p>}
