@@ -784,7 +784,7 @@ describe('옛 저장에서 갇히지 않기', () => {
     return deserialize(JSON.stringify({ ...JSON.parse(serializeForTest(s)), player: { ...s.player, x, y }, companion }), CONTENT)!
   }
   it('지금은 집 안인 칸에 서 있던 저장은 집 앞으로 옮긴다', () => {
-    for (const [x, y] of [[3, 13], [11, 20], [36, 28]]) {
+    for (const [x, y] of [[3, 13], [12, 20], [36, 28]]) {
       const back = load(x, y)
       expect({ x: back.player.x, y: back.player.y }).toEqual(HOME_FRONT)
       expect(back.player.path).toEqual([])

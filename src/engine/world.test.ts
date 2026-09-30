@@ -56,7 +56,7 @@ describe('world', () => {
   })
 
   it('새 이웃 집 넷은 문 앞이 걸을 수 있는 길과 이어진다', () => {
-    for (const [id, door] of [['postman', { x: 13, y: 23 }], ['carpenter', { x: 5, y: 23 }], ['apothecary', { x: 36, y: 31 }], ['fisher', { x: 29, y: 31 }]] as const) {
+    for (const [id, door] of [['postman', { x: 14, y: 23 }], ['carpenter', { x: 5, y: 23 }], ['apothecary', { x: 36, y: 31 }], ['fisher', { x: 29, y: 31 }]] as const) {
       expect(HOUSES.some((h) => h.id === id && h.doorX === door.x && h.y1 === door.y), id).toBe(true)
       expect(tileAt(door.x, door.y + 1), id).toBe(',')
     }

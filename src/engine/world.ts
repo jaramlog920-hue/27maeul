@@ -255,8 +255,8 @@ const HALL_ROOM_Y0 = 70
 const TEA_ROOM_X0 = 41
 const TEA_ROOM_Y0 = 60
 /** 마을 사랑방 (7칸×4줄) — 문 앞이 큰길 */
-export const HALL_RECT = { x0: 11, y0: 13, x1: 15, y1: 16 }
-export const HALL_DOOR: Tile = { x: 13, y: 16 }
+export const HALL_RECT = { x0: 12, y0: 13, x1: 16, y1: 16 }
+export const HALL_DOOR: Tile = { x: 14, y: 16 }
 /** 정원 찻집 (작은 집 5칸×4줄) — 나루 서쪽 호숫가, 문 앞이 호숫가 길 */
 export const TEA_RECT = { x0: 18, y0: 28, x1: 22, y1: 31 }
 export const TEA_DOOR: Tile = { x: 20, y: 31 }
@@ -324,7 +324,7 @@ export const ROOMS: readonly Room[] = [
     [[1, 1, 'k'], [2, 1, 'k'], [5, 1, 's'], [6, 1, 's'], [8, 1, 'b'], [4, 4, 'n']],
     [[8, 3, 'barrel'], [7, 1, 'bookcase'], [3, 4, 'chair'], [4, 4, 'hourglass'], [1, 3, 'lampStand'], [6, 5, 'mat'], [1, 6, 'bigPlant']]),
   // 편지 나르는 이웃: 벽의 편지꽂이, 편지 쌓인 탁자, 궤짝, 침대
-  room('postman', 14, 81, { x: 13, y: 23 }, [4, 5],
+  room('postman', 14, 81, { x: 14, y: 23 }, [4, 5],
     [[2, 0, 'N'], [4, 0, 'V'], [5, 0, 'V'], [6, 0, 'V'], [1, 1, 'g'], [8, 1, 'b'], [4, 3, 'n'], [5, 3, 'n']],
     [[4, 3, 'scrolls'], [5, 3, 'inkpot'], [1, 3, 'chest'], [3, 3, 'chair'], [6, 3, 'chair', 'flip'], [2, 5, 'roundRug'], [8, 5, 'bigPlant'], [8, 3, 'lampStand']]),
   // 약방: 약초 선반과 항아리, 말린 꽃과 찻주전자를 올린 탁자, 화분
@@ -505,9 +505,9 @@ function build(): string[] {
   roofed('carpenter', 3, 20, 7, 23, 5) // 제본 골목의 목수
   set(5, 24, ',')
   yard(3, 7, 24)
-  roofed('postman', 11, 20, 15, 23, 13) // 편지 나르는 이웃
-  set(13, 24, ',')
-  yard(11, 15, 24)
+  roofed('postman', 12, 20, 16, 23, 14) // 편지 나르는 이웃
+  set(14, 24, ',')
+  yard(12, 16, 24)
   roofed('weaver', 33, 20, 37, 23, 35) // 베 짜는 이웃
   set(35, 24, ',')
   yard(33, 37, 24)
