@@ -2,6 +2,7 @@
 import { festivalOf, FESTIVAL_FROM, FESTIVAL_TO, isWet, weatherOf, yearOf } from './calendar'
 import { phaseOf, seasonOf } from './clock'
 import type { ItemId, Tile } from './types'
+import { HOME_RECT } from './world'
 
 export const BABY_DAY = 8
 export const BABY_CRAWL = 16
@@ -10,7 +11,8 @@ export const CHILD_ASKS_AT = 3
 export const LETTERS_TOTAL = 7
 export const LESSON_FROM = 18 * 60
 export const LESSON_TO = 19 * 60 + 30
-export const LESSON_SPOT: Tile = { x: 7, y: 4 }
+/** 아이가 글자를 배우러 와 서는 곳 — 집 안 화덕과 선반 사이 (예전 지도 위 집의 같은 자리) */
+export const LESSON_SPOT: Tile = { x: HOME_RECT.x0 + 5, y: HOME_RECT.y0 + 2 }
 
 /** 하트가 이만큼 되면 이웃이 선물을 준다 */
 export const MILESTONES = [3, 6, 9] as const

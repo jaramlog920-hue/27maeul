@@ -42,7 +42,12 @@ import { REQUESTS as REQUESTS_T } from './bonds'
 import { fulfillRequest as fulfillRequestT, interactTile as interactTileT, pressTile as pressTileT, walkDirection as walkDirectionT } from './game'
 import { placeAt as placeAtT } from './world'
 import { deserialize, loadGame, saveGame, serialize as serializeForTest, SAVE_KEY } from './save'
-import { HOME_DOOR, PLACES, START } from './world'
+import { HOME_ENTRY, HOME_FRONT, OLD_HOME, PLACES, START } from './world'
+
+/** 예전 지도 위 집의 칸 → 지금 집 안 방의 같은 칸 */
+const h = (x: number, y: number) => ({ x: x + OLD_HOME.dx, y: y + OLD_HOME.dy })
+/** 집 문 앞(마을)에 선 새 게임 */
+const outside = (s: GameState = newGame(CONTENT)): GameState => ({ ...s, player: { ...s.player, ...HOME_FRONT, path: [] } })
 import { heartsOf } from './hearts'
 import { STRAY_SPOTS } from './companion'
 import { CONTENT, piecesOf } from '../content/catalog'
@@ -115,13 +120,13 @@ describe('걷기와 도착', () => {
     expect(r.state.player.facing).toBe('left')
   })
   it('갈대처럼 서는 칸이 없는 곳은 옆 칸까지 간다', () => {
-    const s = tapTile(newGame(CONTENT), { x: 6, y: 33 })
+    const s = tapTile(outside(), { x: 6, y: 33 })
     const r = runUntilEvent(s)
     expect(r.events[0].type).toBe('arrived')
     expect(Math.abs(r.state.player.x - 6) + Math.abs(r.state.player.y - 33)).toBe(1)
   })
   it('이웃에게 걸어가 옆에 서면 도착한다', () => {
-    let s = at(newGame(CONTENT), 8 * 60)
+    let s = at(outside(), 8 * 60)
     s = { ...s, npcs: Object.fromEntries(Object.entries(s.npcs)) }
     const r0 = tick(s, 0.01, zero, CONTENT).state
     const baker = r0.npcs.baker
@@ -488,26 +493,29 @@ describe('동반 동물·방·나의 한 줄', () => {
   })
   it('깔개는 3×2칸으로 깔리고, 치우면 가방으로', () => {
     const s = { ...newGame(CONTENT), inv: { rug: 1 } }
-    const p = placeFurniture(s, 'rug', { x: 5, y: 4 })!
-    expect(p.room).toEqual([{ item: 'rug', x: 5, y: 4 }])
+    const p = placeFurniture(s, 'rug', h(5, 4))!
+    expect(p.room).toEqual([{ item: 'rug', ...h(5, 4) }])
     expect(p.inv.rug).toBeUndefined()
     expect(placeFurniture(s, 'rug', { x: 12, y: 12 })).toBeNull()
+    // 예전 집 자리(지금은 풀밭)에는 깔 수 없다
+    expect(placeFurniture(s, 'rug', { x: 5, y: 4 })).toBeNull()
     // 깔개 오른쪽 아래 칸을 눌러도 치워진다
-    expect(removeFurniture(p, { x: 7, y: 5 }).inv.rug).toBe(1)
+    expect(removeFurniture(p, h(7, 5)).inv.rug).toBe(1)
   })
   it('식탁 위에 물병을 올리고, 식탁을 치우면 물병도 함께', () => {
     const s = { ...newGame(CONTENT), inv: { table: 1, jar: 1 } }
-    // 문 바로 위(6,6)는 막을 수 없다
-    expect(placeFurniture(s, 'table', { x: 6, y: 6 })).toBeNull()
-    let p = placeFurniture(s, 'table', { x: 7, y: 6 })!
-    p = placeFurniture(p, 'jar', { x: 8, y: 6 })!
-    expect(p.room).toEqual([{ item: 'table', x: 7, y: 6 }, { item: 'jar', x: 8, y: 6, on: true }])
+    // 문깔개 바로 위(들어와 서는 칸)는 막을 수 없다
+    expect(placeFurniture(s, 'table', HOME_ENTRY)).toBeNull()
+    let p = placeFurniture(s, 'table', h(7, 6))!
+    p = placeFurniture(p, 'jar', h(8, 6))!
+    expect(p.room).toEqual([{ item: 'table', ...h(7, 6) }, { item: 'jar', ...h(8, 6), on: true }])
     // 식탁이 길을 막는다
-    expect(tapTile(p, { x: 7, y: 6 }).player.path.some((t) => t.x === 7 && t.y === 6)).toBe(false)
-    const back = removeFurniture(p, { x: 8, y: 6 })
-    expect(back.room).toEqual([{ item: 'table', x: 7, y: 6 }])
+    const t76 = h(7, 6)
+    expect(tapTile(p, t76).player.path.some((t) => t.x === t76.x && t.y === t76.y)).toBe(false)
+    const back = removeFurniture(p, h(8, 6))
+    expect(back.room).toEqual([{ item: 'table', ...h(7, 6) }])
     expect(back.inv.jar).toBe(1)
-    const all = removeFurniture(back, { x: 7, y: 6 })
+    const all = removeFurniture(back, h(7, 6))
     expect(all.room).toEqual([])
     expect(all.inv).toEqual({ table: 1, jar: 1 })
   })
@@ -693,8 +701,8 @@ describe('저장', () => {
 describe('리뷰 3차 수정', () => {
   it('옛 저장의 가구가 지금 규칙으로 길을 막으면 가방으로 돌아간다', () => {
     const s = newGame(CONTENT)
-    // 문 위를 막는 걸상(지금은 막는 가구) + 정상 깔개
-    const old = { ...s, room: [{ item: 'stool', x: HOME_DOOR.x, y: HOME_DOOR.y }, { item: 'rug', x: 4, y: 4 }], inv: { ...s.inv, stool: 0 } }
+    // 들어와 서는 칸을 막는 걸상(지금은 막는 가구) + 정상 깔개
+    const old = { ...s, room: [{ item: 'stool', ...HOME_ENTRY }, { item: 'rug', ...h(4, 4) }], inv: { ...s.inv, stool: 0 } }
     const back = deserialize(serializeForTest(old as typeof s), CONTENT)!
     expect(back.room.map((f) => f.item)).toEqual(['rug'])
     expect(back.inv.stool).toBe(1)
@@ -759,9 +767,10 @@ describe('언덕 모임 자리 (소풍·별 보는 밤)', () => {
   it('모임 자리는 이웃이 모이는 자리를 모두 품는다', () => {
     for (const t of Object.values(HILL_SPOTS)) expect(inGathering('picnic', 12 * 60, t)).toBe(true)
   })
-  it('아기 잔치 자리는 빵집 앞 모임 자리를 품고, 내 집 앞문 앞(6,8)은 아니다', () => {
+  it('아기 잔치 자리는 빵집 앞 모임 자리를 품고, 내 집 문 앞은 아니다', () => {
     for (const t of Object.values(BABY_PARTY_SPOTS)) expect(inGathering('babyParty', 18 * 60 + 10, t)).toBe(true)
     expect(inGathering('babyParty', 18 * 60 + 10, { x: 6, y: 8 })).toBe(false)
+    expect(inGathering('babyParty', 18 * 60 + 10, HOME_FRONT)).toBe(false)
   })
 })
 
@@ -773,7 +782,7 @@ describe('옛 저장에서 갇히지 않기', () => {
   it('지금은 집 안인 칸에 서 있던 저장은 집 앞으로 옮긴다', () => {
     for (const [x, y] of [[42, 20], [11, 19], [39, 28]]) {
       const back = load(x, y)
-      expect({ x: back.player.x, y: back.player.y }).toEqual({ x: 6, y: 8 })
+      expect({ x: back.player.x, y: back.player.y }).toEqual(HOME_FRONT)
       expect(back.player.path).toEqual([])
     }
   })

@@ -7,7 +7,7 @@ import { findPath } from './movement'
 import { FESTIVAL_SPOTS, FIRE, goalFor } from './neighbors'
 import * as stories from './stories'
 import type { Tile } from './types'
-import { isWalkable, lockedTiles, lockedZones, MAP, PLACES, ROOMS, zoneAt } from './world'
+import { HOME_FRONT, isWalkable, lockedTiles, lockedZones, MAP, PLACES, ROOMS, zoneAt } from './world'
 import { CONTENT } from '../content/catalog'
 import { newGame, tapTile } from './game'
 
@@ -87,7 +87,8 @@ describe('서고 권수로 열리는 구역', () => {
     expect(lockedTiles(1).has(`${vine.x},${vine.y}`)).toBe(false)
   })
   it('잠긴 곳으로는 걸어갈 수 없고, 책을 꽂으면 갈 수 있다', () => {
-    const s = newGame(CONTENT)
+    const s0 = newGame(CONTENT)
+    const s = { ...s0, player: { ...s0.player, ...HOME_FRONT } }
     const to = { x: 43, y: 5 } // 포도원 한가운데
     expect(tapTile(s, to).player.path).toEqual([])
     const opened = tapTile({ ...s, shelved: { mk: 1 } }, to)

@@ -1,7 +1,7 @@
 // 이웃의 하루: 시간표대로 걸어가고, 밤·궂은 날에는 집으로 들어가 보이지 않는다.
 import { FESTIVAL_FROM, FESTIVAL_TO } from './calendar'
 import { findPath, stepActor, type Actor } from './movement'
-import { key, sameTile } from './world'
+import { key, sameTile, WARPS } from './world'
 import type { NeighborDef, Tile } from './types'
 
 export interface Npc extends Actor {
@@ -71,21 +71,51 @@ export function stepNpc(npc: Npc, def: NeighborDef, goal: Tile | null, dt: numbe
   if (goal === null) {
     if (!npc.visible) return npc
     if (sameTile(here, def.door) && npc.path.length === 0) return { ...npc, visible: false, goal: null }
+    const across = crossing(npc, here, def.door, blockers)
+    if (across) return walk({ ...across, goal: null }, dt)
     let n = npc
     if (npc.goal !== null || blocked || npc.path.length === 0) n = { ...npc, goal: null, path: pathOrEmpty(here, def.door, npc, blockers) }
     return walk(n, dt)
   }
   // 집에서 나온다
   if (!npc.visible) {
-    return walk({ ...npc, x: def.door.x, y: def.door.y, visible: true, goal, path: findPath(def.door, goal, blockers) ?? [] }, dt)
+    return walk({ ...npc, x: def.door.x, y: def.door.y, visible: true, goal, path: route(def.door, goal, blockers) ?? [] }, dt)
   }
+  // 다른 방으로 건너가려고 문(문깔개)에 닿았다 — 건너편으로 옮겨 가서 이어 걷는다
+  const across = crossing(npc, here, goal, blockers)
+  if (across) return walk(across, dt)
   if (npc.goal === null || !sameTile(npc.goal, goal) || blocked || (npc.path.length === 0 && !sameTile(here, goal)))
     return walk({ ...npc, goal, path: pathOrEmpty(here, goal, npc, blockers) }, dt)
   return walk(npc, dt)
 }
 
+/**
+ * 걸어서 닿지 않는 곳(예: 내 집 안 — 지도 아래 따로 된 방)은 문을 건너서 간다.
+ * 곧장 가는 길이 있으면 그 길, 없으면 건너편에서 목적지에 닿는 문까지의 길 (문에 닿으면 crossing이 옮긴다)
+ */
+export function route(from: Tile, to: Tile, blockers: ReadonlySet<string> = new Set()): Tile[] | null {
+  const direct = findPath(from, to, blockers)
+  if (direct) return direct
+  for (const [k, dest] of WARPS) {
+    const [x, y] = k.split(',').map(Number)
+    const door = { x, y }
+    if (findPath(dest, to, blockers) === null) continue
+    const p = findPath(from, door, blockers)
+    if (p) return p
+  }
+  return null
+}
+
+/** 문(문깔개)에 서서 길이 끝났는데 목적지가 건너편이면 건너편으로 옮기고 이어 갈 길을 준다 */
+function crossing(npc: Npc, here: Tile, to: Tile, blockers: ReadonlySet<string>): Npc | null {
+  if (npc.path.length || sameTile(here, to)) return null
+  const dest = WARPS.get(key(here))
+  if (!dest || findPath(here, to, blockers) !== null) return null
+  return { ...npc, x: dest.x, y: dest.y, path: route(dest, to, blockers) ?? [] }
+}
+
 function pathOrEmpty(from: Tile, to: Tile, npc: Actor, blockers: ReadonlySet<string>): Tile[] {
-  const p = findPath(from, to, blockers)
+  const p = route(from, to, blockers)
   if (!p) return []
   // 칸 사이에 있으면 먼저 가까운 칸으로
   return npc.x !== from.x || npc.y !== from.y ? [from, ...p] : p

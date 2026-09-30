@@ -2,11 +2,11 @@ import { CONTENT } from '../content/catalog'
 import { goToSleep, neighborsPresent, newGame, settle, tick, type GameState } from './game'
 import type { Grade } from './library'
 import { findPath } from './movement'
-import { npcTile, placeNpc } from './neighbors'
+import { npcTile, placeNpc, route } from './neighbors'
 import { placement, solidTiles } from './room'
 import { LESSON_FROM, LESSON_SPOT } from './stories'
 import type { Book } from './types'
-import { key } from './world'
+import { HOME_DOOR, HOME_ENTRY, HOME_FRONT, isHome, key } from './world'
 
 const child = CONTENT.neighbors.find((n) => n.id === 'child')!
 
@@ -18,9 +18,10 @@ function lesson() {
   return s
 }
 
+/** 집 안에서 아이가 걷는 길 (문깔개 위 칸 → 수업 자리) 위에 놓을 수 있는 걸상 */
 function chairOnRoute() {
-  const route = findPath(child.door, LESSON_SPOT)!
-  const chair = route.map((t) => placement([], 'stool', t)).find((f) => f !== null)
+  const inside = findPath(HOME_ENTRY, LESSON_SPOT)!
+  const chair = inside.map((t) => placement([], 'stool', t)).find((f) => f !== null)
   expect(chair).toBeTruthy()
   return chair!
 }
@@ -35,6 +36,17 @@ function walkSafely(s: GameState) {
   return s
 }
 
+it('집 안은 걸어서 닿지 않아 아이는 내 집 문을 건너서 온다', () => {
+  expect(findPath(child.door, LESSON_SPOT)).toBeNull()
+  expect(isHome(LESSON_SPOT)).toBe(true)
+  // 곧장 가는 길이 없으면 내 집 문까지 걷는다
+  expect(route(child.door, LESSON_SPOT)!.at(-1)).toEqual(HOME_DOOR)
+  // 집 안에서 나갈 때는 문깔개까지
+  expect(isHome(route(LESSON_SPOT, child.door)!.at(-1)!)).toBe(true)
+  // 곧장 갈 수 있으면 그 길 그대로
+  expect(route(child.door, HOME_FRONT)).toEqual(findPath(child.door, HOME_FRONT))
+})
+
 it('아이는 가구를 피해 수업 자리에 오고 수업 후 집으로 돌아간다', () => {
   let s = lesson()
   s.room = [chairOnRoute()]
@@ -46,8 +58,11 @@ it('아이는 가구를 피해 수업 자리에 오고 수업 후 집으로 돌�
   expect(s.npcs.child.visible).toBe(false)
 })
 
-it('아이가 출발한 뒤 길에 가구를 놓아도 돌아서 도착한다', () => {
-  let s = tick(lesson(), 0.05, () => 0, CONTENT).state
+it('아이가 집에 들어온 뒤 길에 가구를 놓아도 돌아서 도착한다', () => {
+  let s = lesson()
+  // 문을 건너 막 들어온 아이
+  for (let i = 0; i < 800 && !isHome(npcTile(s.npcs.child)); i++) s = tick(s, 0.05, () => 0, CONTENT).state
+  expect(npcTile(s.npcs.child)).toEqual(HOME_ENTRY)
   const chair = chairOnRoute()
   expect(s.npcs.child.path).toContainEqual({ x: chair.x, y: chair.y })
   s.room = [chair]
@@ -58,7 +73,7 @@ it('아이가 출발한 뒤 길에 가구를 놓아도 돌아서 도착한다', 
 it('움직인 이웃을 다시 따라가는 기록자도 가구를 피한다', () => {
   const s = lesson()
   s.room = [chairOnRoute()]
-  s.player = { ...s.player, ...child.door, path: [] }
+  s.player = { ...s.player, ...HOME_ENTRY, path: [] }
   s.npcs = { child: placeNpc(child, LESSON_SPOT) }
   s.target = { kind: 'neighbor', id: 'child', tries: 0 }
   const next = tick(s, 0, () => 0, CONTENT).state

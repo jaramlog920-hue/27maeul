@@ -52,7 +52,7 @@ const onGardenPlot = (t: Tile) => GARDEN_TILES.some((p) => p.x === t.x && p.y ==
 
 export const LANTERNS: readonly Tile[] = [
   { x: 5, y: 9 },
-  { x: 10, y: 9 },
+  { x: 11, y: 9 },
   { x: 23, y: 11 },
   { x: 18, y: 13 },
   { x: 30, y: 13 },

@@ -10,7 +10,7 @@ import { drawDecor, lanternLights, sheepCount } from './decor'
 import { FIRE, isNear, npcTile } from '../engine/neighbors'
 import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
 import { actsDoorGlows, feastToday } from '../engine/library'
-import { ACTS_ROOM, actsDoorOpen, ATTIC, cameraFor, currentHomeLevel, HEIGHT, HOME_DOOR, HOME_EXPAND_RECT, homeRect, HOUSES, houseAt, LOCKED_DOORS, lockedZones, tileAt, isHome, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
+import { ACTS_ROOM, actsDoorOpen, ATTIC, cameraFor, currentHomeLevel, HEIGHT, HOME_DOOR, HOUSE_RECT, housesNow, houseAt, LOCKED_DOORS, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
 import { GOSPELS, type Facing, type GameContent, type Season, type Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { avatarKey, withLookDefaults, type FullAvatar } from '../engine/avatar'
@@ -114,12 +114,6 @@ const HOUSE_STYLES: Record<string, HouseStyle> = {
   carpenter: { roof: ['#a58a66', '#7e694c', '#c1a680'], pattern: 'tile', wall: '#f3dbb0', base: '#dbc79a', window: 'square', shutter: '#ae9068', door: '#82684f', timber: '#98795a' },
 }
 const PLAIN_STYLE = HOUSE_STYLES.child
-/** 내 집 앞벽 (한 줄뿐이라 '아래 줄'로 그린다). 집을 넓히면 오른쪽 끝이 늘어난다 — 창은 그대로 문을 가운데 둔 대칭 */
-function homeFront() {
-  const h = homeRect()
-  return { x0: h.x0, x1: h.x1, y1: h.y1, doorX: HOME_DOOR.x }
-}
-
 /** 앞벽 한 칸: 위 줄은 처마 그림자뿐, 아래 줄에 꽃 상자 달린 창과 문 */
 function houseWallTile(g: Ctx, x: number, y: number, ch: string, id: string, h: { x0: number; x1: number; y1: number; doorX: number }) {
   const st = HOUSE_STYLES[id] ?? PLAIN_STYLE
@@ -207,15 +201,10 @@ function houseWallTile(g: Ctx, x: number, y: number, ch: string, id: string, h: 
     r(mix(dc, '#000000', 0.18), 9, 3, 1, 13)
     r('#f1bf6b', 10, 9, 2, 2)
   }
-  if (id === 'home' && h.x1 === HOME_EXPAND_RECT.x1) {
-    // 넓힌 방(11~13열)은 따로 붙인 채: 이어 붙인 자리에 기둥, 그 앞벽 가운데(12열)에 창 하나.
-    // 본채 창(4·8열)은 문을 가운데 둔 대칭 그대로, 붙인 채 창은 붙인 채 가운데
-    if (x === HOME_EXPAND_RECT.x0) r(st.base, 0, 0, 2, 16)
-    if (!upper && x === HOME_EXPAND_RECT.x0 + 1) {
-      window(1)
-      r('#ad845d', 3, 10, 10, 2) // 꽃 상자
-      for (let i = 0; i < 4; i++) r(['#f1b999', '#fefdf8', '#e8a88a', '#99b67b'][(x + i) % 4], 4 + i * 2, 9, 2, 1)
-    }
+  if (id === 'home' && h.x0 < HOUSE_RECT.x0) {
+    // 넓힌 집(1단계): 양옆에 한 칸씩 이어 붙인 자리에 기둥 — 문을 가운데 둔 대칭 그대로
+    if (x === HOUSE_RECT.x0 - 1) r(st.base, 14, 0, 2, 16)
+    if (x === HOUSE_RECT.x1 + 1) r(st.base, 0, 0, 2, 16)
   }
   if (st.awning && !upper && Math.abs(x - h.doorX) <= 1) {
     // 빵집 문 위 줄무늬 차양
@@ -286,12 +275,7 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
         houseWallTile(g, x, y, ch, h.id, h)
         break
       }
-      const hr = homeRect()
-      if (y === hr.y1 && x >= hr.x0 && x <= hr.x1) {
-        houseWallTile(g, x, y, ch, 'home', homeFront())
-        break
-      }
-      // 내 집 벽: 크림 회벽과 나무 들보
+      // 집 안 벽: 크림 회벽과 나무 들보
       r(C.wall, 0, 0, 16, 16)
       r(C.wallTop, 0, 0, 16, 2)
       r(C.wallDark, 0, 15, 16, 1)
@@ -489,7 +473,6 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
     case 'D': {
       const h = houseAt(x, y)
       if (h) houseWallTile(g, x, y, ch, h.id, h)
-      else if (y === homeRect().y1) houseWallTile(g, x, y, ch, 'home', homeFront())
       else if (sameTile({ x, y }, SIDE_DOOR)) {
         // 작업실과 새 방 사이 벽에 낸 문: 트인 바닥, 위아래 벽에 닿는 나무 문설주
         r(C.woodDark, 0, 0, 16, 3)
@@ -668,12 +651,6 @@ function drawRoof(g: Ctx, tx0: number, ty0: number, tx1: number, ty1: number, [c
   }
 }
 
-/** 내 집 지붕: 밖에서는 이웃집처럼 지붕이 덮이고, 들어가면 벗겨져 안이 보인다 */
-function drawHomeRoof(g: Ctx) {
-  const { x0, y0, x1, y1 } = homeRect()
-  drawRoof(g, x0, y0, x1, y1 - 1, HOUSE_STYLES.home.roof)
-}
-
 /** 계절과 집 단계마다 한 장 (집을 넓히면 그 칸들의 그림이 바뀐다) */
 const mapCache = new Map<string, HTMLCanvasElement>()
 function mapFor(season: Season): HTMLCanvasElement {
@@ -691,7 +668,7 @@ function mapFor(season: Season): HTMLCanvasElement {
       drawObject(g, ch, x, y, season)
     }
   // 집마다 지붕 하나
-  for (const h of HOUSES) drawRoof(g, h.x0, h.y0, h.x1, h.y1 - 2, (HOUSE_STYLES[h.id] ?? PLAIN_STYLE).roof)
+  for (const h of housesNow()) drawRoof(g, h.x0, h.y0, h.x1, h.y1 - 2, (HOUSE_STYLES[h.id] ?? PLAIN_STYLE).roof)
   // 집 안 가구: 바닥 것 → 큰 것 → 탁자 위 작은 것
   const layerRank = { floor: 0, solid: 1, small: 2 } as const
   for (const rm of [...ROOMS, ATTIC])
@@ -1121,24 +1098,27 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       if ((game.inv.wideDesk ?? 0) > 0) drawWideDesk(g, PLACES.desk.tiles[0], season)
       // 선반의 두루마리, 책상의 잉크 자국, 등잔 그을음
       const done = totalChapters(game)
+      const [shelf] = PLACES.shelf.tiles
+      const [desk] = PLACES.desk.tiles
+      const [hearth] = PLACES.hearth.tiles
       for (let i = 0; i < Math.min(12, done); i++) {
         g.fillStyle = i % 2 ? '#e9d9b0' : '#f3e6c4'
-        g.fillRect(9 * TILE + 3 + (i % 4) * 3, 3 * TILE + 1 + Math.floor(i / 4) * 5, 2, 3)
+        g.fillRect(shelf.x * TILE + 3 + (i % 4) * 3, shelf.y * TILE + 1 + Math.floor(i / 4) * 5, 2, 3)
       }
       for (let i = 0; i < Math.min(8, done); i++) {
         g.fillStyle = 'rgba(30, 20, 40, 0.55)'
-        g.fillRect(3 * TILE + 2 + Math.floor(hash(i, 3, 1) * 11), 5 * TILE + 5 + Math.floor(hash(i, 4, 1) * 6), 1, 1)
+        g.fillRect(desk.x * TILE + 2 + Math.floor(hash(i, 3, 1) * 11), desk.y * TILE + 5 + Math.floor(hash(i, 4, 1) * 6), 1, 1)
       }
       const soot = Math.min(0.7, (game.flags.lampNights ?? 0) * 0.04)
       if (soot > 0) {
         g.fillStyle = `rgba(30, 25, 20, ${soot})`
-        g.fillRect(3 * TILE + 12, 5 * TILE + 3, 2, 2)
+        g.fillRect(desk.x * TILE + 12, desk.y * TILE + 3, 2, 2)
       }
       // 방의 가구: 깔개 → 길을 막는 가구 → 위에 올린 작은 물건
       const ordered = [...game.room].sort((a, b) => furnitureOrder(a) - furnitureOrder(b) || a.y - b.y)
       for (const f of ordered) drawFurniture(g, f)
       // 화덕 불
-      flame(g, 6 * TILE + 8, 3 * TILE + 14, t)
+      flame(g, hearth.x * TILE + 8, hearth.y * TILE + 14, t)
       // 행사 모닥불
       const fest = festivalOf(day)
       // 복음서 방 잔치 저녁에는 비가 와도 모닥불을 피운다
@@ -1362,8 +1342,6 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       for (const b of flies) items.push({ y: b.y + 0.5, paint: () => g.drawImage(paint(`bf/${b.frame}/${b.hue}`, BUTTERFLY[b.frame], { ...SMALL_PALETTE, o: b.hue ? '#98b8d7' : '#d0977c', O: b.hue ? '#7696b8' : '#d8c587' }), Math.round(b.x * TILE), Math.round(b.y * TILE)) })
 
       items.sort((a, b) => a.y - b.y).forEach((i) => i.paint())
-      // 내 집은 밖에 있을 때 지붕을 덮는다 (사람·동물을 그린 뒤)
-      if (!isHome(here)) drawHomeRoof(g)
       const room = viewRoomAt(here)
       if (room) {
         const rx = room.x0 * TILE
@@ -1395,12 +1373,14 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         if (dark > 0.15) {
           const sx = (wx: number) => wx - ox
           const sy = (wy: number) => wy - oy
-          if (game.lampLitDay === day) glow(g, sx(3 * TILE + 13), sy(5 * TILE + 4), 34, dark * 0.9)
-          glow(g, sx(6 * TILE + 8), sy(3 * TILE + 12), 22, dark * 0.6)
+          const [desk] = PLACES.desk.tiles
+          const [hearth] = PLACES.hearth.tiles
+          if (game.lampLitDay === day) glow(g, sx(desk.x * TILE + 13), sy(desk.y * TILE + 4), 34, dark * 0.9)
+          glow(g, sx(hearth.x * TILE + 8), sy(hearth.y * TILE + 12), 22, dark * 0.6)
           if (festOn) glow(g, sx(FIRE.x * TILE + 8), sy(FIRE.y * TILE + 8), 48, dark)
           if (actsGlow) glow(g, sx(LOCKED_DOORS[0].x * TILE + 10), sy(LOCKED_DOORS[0].y * TILE + 9), 26, dark * 0.7)
           // 집집마다 창에 불빛
-          for (const [x, y] of [[5, 17], [36, 17], [35, 5], [28, 28], [42, 31], [24, 5], [13, 22], [20, 28], [12, 31], [43, 22]]) glow(g, sx(x * TILE + 8), sy(y * TILE + 4), 14, dark * 0.5)
+          for (const [x, y] of [[HOME_DOOR.x, HOME_DOOR.y], [5, 17], [36, 17], [35, 5], [28, 28], [42, 31], [24, 5], [13, 22], [20, 28], [12, 31], [43, 22]]) glow(g, sx(x * TILE + 8), sy(y * TILE + 4), 14, dark * 0.5)
           // 길가의 등불
           for (const l of lanternLights(game)) glow(g, sx(l.x * TILE + 8), sy(l.y * TILE + 2), 26, dark * 0.8)
         }

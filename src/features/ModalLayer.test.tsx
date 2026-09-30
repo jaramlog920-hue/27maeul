@@ -6,12 +6,20 @@ import { dexView } from './shelf/Shelf'
 import { chaptersOf, emptyProgress } from '../engine/books'
 import { chooseBook, newGame, playerTile, type GameState } from '../engine/game'
 import { mulberry32 } from '../engine/offers'
-import { ACTS_ROOM, key, LOCKED_DOORS, PLACES, roomAt, ROOMS, WARPS } from '../engine/world'
+import { ACTS_ROOM, HOME_FRONT, key, LOCKED_DOORS, OLD_HOME, PLACES, roomAt, ROOMS, WARPS } from '../engine/world'
+import { STRAY_SPOTS } from '../engine/companion'
 import { useGame } from '../store/game-store'
 import { saveGame } from '../engine/save'
 import { ModalLayer } from './ModalLayer'
 import { NextEventBar, useEventAlerts } from './play/EventSchedule'
 import { journalLine } from './journal/Journal'
+
+/** 예전 지도 위 집의 칸 → 지금 집 안 방의 같은 칸 */
+const h = (x: number, y: number) => ({ x: x + OLD_HOME.dx, y: y + OLD_HOME.dy })
+/** 기록자를 집 문 앞(마을)에 세운다 — 새 게임은 집 안(지도 아래 따로 된 방)에서 시작한다 */
+function goOutside() {
+  useGame.setState((s) => ({ game: { ...s.game, player: { ...s.game.player, ...HOME_FRONT, path: [] } } }))
+}
 
 function reset(game: Partial<GameState> = {}) {
   localStorage.clear()
@@ -82,6 +90,7 @@ describe('본문 창', () => {
 describe('이웃', () => {
   it('걸어가 말 걸기 → 이야기 듣기 → 본문 → 나의 한 줄', async () => {
     reset(at(8 * 60))
+    goOutside()
     act(() => useGame.setState((s) => ({ game: chooseBook(s.game, 'lk', CONTENT) })))
     const user = userEvent.setup()
     render(<ModalLayer />)
@@ -436,9 +445,10 @@ describe('하루', () => {
 
   it('떠돌이 새끼에게 밥을 주고 이름을 짓는다', async () => {
     reset(at(9 * 60, 2))
+    goOutside()
     const user = userEvent.setup()
     render(<ModalLayer />)
-    act(() => useGame.getState().tap({ x: 5, y: 9 }))
+    act(() => useGame.getState().tap(STRAY_SPOTS.cat))
     walk()
     await user.type(screen.getByRole('textbox'), '보리')
     await user.click(screen.getByRole('button', { name: '밥 주기' }))
@@ -480,6 +490,7 @@ describe('리뷰 지적 회귀 (화면)', () => {
   })
   it('N1: 도착하며 띄운 알림이 같은 프레임에 지워지지 않는다', () => {
     reset({ inv: { water: 9, bread: 2 } })
+    goOutside()
     render(<ModalLayer />)
     act(() => useGame.getState().tap(PLACES.well.tiles[0]))
     act(() => {
@@ -595,9 +606,9 @@ describe('선반', () => {
     render(<ModalLayer />)
     await user.click(screen.getByRole('button', { name: '방 꾸미기' }))
     act(() => useGame.getState().startDecorate('rug'))
-    act(() => useGame.getState().tap({ x: 5, y: 5 }))
-    expect(useGame.getState().game.room).toEqual([{ item: 'rug', x: 5, y: 5 }])
-    act(() => useGame.getState().tap({ x: 5, y: 5 }))
+    act(() => useGame.getState().tap(h(5, 5)))
+    expect(useGame.getState().game.room).toEqual([{ item: 'rug', ...h(5, 5) }])
+    act(() => useGame.getState().tap(h(5, 5)))
     expect(useGame.getState().game.room).toEqual([])
     expect(useGame.getState().game.inv.rug).toBe(1)
   })
@@ -685,16 +696,16 @@ describe('사도행전 방의 여정 판 (계획 5 작업 5)', () => {
 
 describe('방 꾸미기 누르기 (QA)', () => {
   it('물건을 들고 협탁을 누르면 그 위에 올린다', () => {
-    reset({ room: [{ item: 'nightstand', x: 3, y: 4 }], inv: { vase: 1 } })
+    reset({ room: [{ item: 'nightstand', ...h(3, 4) }], inv: { vase: 1 } })
     useGame.setState({ decorating: 'vase' })
-    useGame.getState().tap({ x: 3, y: 4 })
+    useGame.getState().tap(h(3, 4))
     const g = useGame.getState().game
-    expect(g.room).toEqual([{ item: 'nightstand', x: 3, y: 4 }, { item: 'vase', x: 3, y: 4, on: true }])
+    expect(g.room).toEqual([{ item: 'nightstand', ...h(3, 4) }, { item: 'vase', ...h(3, 4), on: true }])
   })
   it('치우기에서는 깔개가 차지한 어느 칸을 눌러도 치운다', () => {
-    reset({ room: [{ item: 'rug', x: 3, y: 6 }], inv: {} })
+    reset({ room: [{ item: 'rug', ...h(3, 5) }], inv: {} })
     useGame.setState({ decorating: 'pick' })
-    useGame.getState().tap({ x: 5, y: 7 })
+    useGame.getState().tap(h(5, 6))
     expect(useGame.getState().game.room).toEqual([])
     expect(useGame.getState().game.inv.rug).toBe(1)
   })

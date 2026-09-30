@@ -61,7 +61,8 @@ export const VISIT_HEARTS = 5
 export const INVITE_HEARTS = 7
 export const VISIT_FROM = 7 * 60
 export const VISIT_TO = 9 * 60 + 30
-export const VISIT_SPOT: Tile = { x: 8, y: 8 }
+/** 아침에 들르는 이웃이 서는 곳 — 내 집 문 앞 길 왼쪽 */
+export const VISIT_SPOT: Tile = { x: 9, y: 8 }
 export const INVITE_FROM = 18 * 60
 export const INVITE_TO = 20 * 60 + 30
 /** 저녁에 초대하는 이웃과 그 집 문 */

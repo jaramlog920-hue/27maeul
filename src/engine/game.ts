@@ -56,7 +56,7 @@ import {
   momentNow,
   onceKey,
 } from './stories'
-import { ATTIC, BED_STAND, HEARTH_STAND, HOME_DOOR, inAttic, isIndoor, isWalkable, key, LADDER, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setActsOpen, setHomeLevel, START, tileAt, WARPS } from './world'
+import { ATTIC, BED_STAND, HEARTH_STAND, HOME_FRONT, inAttic, isHome, isIndoor, isWalkable, key, LADDER, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setActsOpen, setHomeLevel, START, tileAt, WARPS } from './world'
 import { GOSPELS, type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
 import type { Avatar } from './avatar'
 
@@ -278,7 +278,8 @@ export function neighborsPresent(s: GameState, content: GameContent): string[] {
 export function newGame(content: GameContent, avatar?: Avatar): GameState {
   const clock = newClock()
   // heartPoints: hearts에 점수(0~100)가 들어 있다는 표식 (예전 저장과 구분)
-  const flags: Record<string, number> = { heartPoints: 1 }
+  // homeRoom: 집 안이 지도 아래 따로 된 방이라는 표식 (그 전 저장은 불러올 때 자리를 옮긴다 — save.ts)
+  const flags: Record<string, number> = { heartPoints: 1, homeRoom: 1 }
   const progress = emptyProgress()
   const base = { clock, flags, progress, hearts: {}, today: NO_TODAY, shelved: {} }
   // 새 게임은 넓히기 전 집 — 지도(모듈 전역 집 단계)도 0으로, 사도행전 방은 닫힌 채
@@ -345,9 +346,10 @@ export function chooseBook(s: GameState, book: Book, content: GameContent): Game
 export function settle(s: GameState, content: GameContent): GameState {
   syncHome(s)
   // 지도를 옮기기 전 저장은 지금은 집 안인 칸에 서 있을 수 있다 — 갇히지 않게 집 앞으로 옮긴다
-  const stuck = (t: Tile) => !isWalkable(t) || (!roomAt(t) && !inAttic(t) && findPath(t, START) === null)
+  // (방·다락·내 집 안은 마을과 이어지지 않으므로 걸을 수 있기만 하면 된다)
+  const stuck = (t: Tile) => !isWalkable(t) || (!roomAt(t) && !inAttic(t) && !isHome(t) && findPath(t, HOME_FRONT) === null)
   let player = { ...s.player, path: [] as Tile[] }
-  if (stuck(playerTile(s))) player = { ...player, x: HOME_DOOR.x, y: HOME_DOOR.y + 1, facing: 'down', walkTime: 0 }
+  if (stuck(playerTile(s))) player = { ...player, x: HOME_FRONT.x, y: HOME_FRONT.y, facing: 'down', walkTime: 0 }
   let companion = s.companion
   if (companion && stuck({ x: Math.round(companion.x), y: Math.round(companion.y) })) {
     const near = companionGoal({ x: Math.round(player.x), y: Math.round(player.y) }, false) ?? { x: Math.round(player.x), y: Math.round(player.y) }
@@ -482,7 +484,7 @@ function targetTile(s: GameState, target: Target): Tile | null {
 }
 
 function warpTo<T extends GameState['player']>(player: T, to: Tile): T {
-  return { ...player, x: to.x, y: to.y, path: [], facing: roomAt(to) || inAttic(to) ? 'up' : 'down' }
+  return { ...player, x: to.x, y: to.y, path: [], facing: roomAt(to) || inAttic(to) || isHome(to) ? 'up' : 'down' }
 }
 
 /** 이웃집 문 앞에서 문을 눌렀을 때 들어간다 (저녁 초대가 없을 때) */
@@ -557,7 +559,11 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
   let companion = s.companion
   if (companion) {
     const rainOut = isWet(weatherOf(clock.day)) && !isIndoor(now)
-    companion = stepCompanion(companion, companionGoal(now, rainOut), dt)
+    // 내 집 문을 드나들면 동물도 함께 (집 안은 지도 아래 따로 된 방이라 걸어서는 못 따라온다)
+    const homeWarp = warp && (isHome(warp) || isHome(now))
+    const near = homeWarp ? companionGoal(warp, false) : null
+    if (near) companion = { ...companion, x: near.x, y: near.y, path: [] }
+    else companion = stepCompanion(companion, companionGoal(now, rainOut), dt)
   }
 
   const idle = moving ? IDLE_RESET : stepIdle(s.idle, dt, clock.minute, rng, totalChapters(s) >= 3)

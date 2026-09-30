@@ -5,8 +5,8 @@ import { newGame, settle, type GameState } from './game'
 import { cardsForChapters, placeNewCards } from './journey'
 import { refitRoom } from './room'
 import { modeOf } from './shelf-rooms'
-import { setHomeLevel } from './world'
-import { BOOKS, type Book, type GameContent } from './types'
+import { HOME_ENTRY, HOME_ROOM, isWalkable, OLD_HOME, sameTile, setHomeLevel } from './world'
+import { BOOKS, type Book, type GameContent, type Tile } from './types'
 
 export const SAVE_KEY = 'twenty-seven/save'
 export const SAVE_VERSION = 1
@@ -22,6 +22,31 @@ function storage(): Storage | undefined {
 export function serialize(s: GameState): string {
   // 걷던 길·자율 동작·이웃 위치는 저장하지 않는다 (doze의 Infinity는 JSON이 못 담는다)
   return JSON.stringify({ ...s, player: { ...s.player, path: [] }, target: null, idle: IDLE_RESET, npcs: {} })
+}
+
+/**
+ * 집 안이 지도 위(2~10열, 넓히면 13열까지, 2~7줄)에 있던 때의 좌표를 지도 아래 새 방(HOME_ROOM)으로 옮긴다.
+ * 예전 집 밖이면 null. 예전 문 칸(지금은 문깔개)은 들어와 서는 칸으로
+ */
+export function fromOldHome(t: Tile, level: number): Tile | null {
+  const x1 = level >= 1 ? OLD_HOME.x1Wide : OLD_HOME.x1
+  if (t.x < OLD_HOME.x0 || t.x > x1 || t.y < OLD_HOME.y0 || t.y > OLD_HOME.y1) return null
+  const to = { x: t.x + OLD_HOME.dx, y: t.y + OLD_HOME.dy }
+  return sameTile(to, HOME_ROOM.exit) ? HOME_ENTRY : to
+}
+
+/** 집 안을 따로 된 방으로 옮기기 전 저장 (flags.homeRoom이 없다): 기록자·동반 동물·방 꾸미기 가구의 자리를 옮긴다 */
+function moveOldHome(s: GameState, level: number): Pick<GameState, 'player' | 'companion' | 'room'> {
+  const at = (x: number, y: number) => fromOldHome({ x: Math.round(x), y: Math.round(y) }, level)
+  const p = at(s.player.x, s.player.y)
+  const player = p ? { ...s.player, x: p.x, y: p.y, path: [], facing: 'down' as const } : s.player
+  const c = s.companion && at(s.companion.x, s.companion.y)
+  const companion = s.companion && c ? { ...s.companion, ...(isWalkable(c) ? c : HOME_ENTRY), path: [] } : s.companion
+  const room = (s.room ?? []).map((f) => {
+    const t = at(f.x, f.y)
+    return t ? { ...f, x: t.x, y: t.y } : f
+  })
+  return { player, companion, room }
 }
 
 const isStrArray = (v: unknown) => Array.isArray(v) && v.every((x) => typeof x === 'string')
@@ -68,9 +93,12 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   // 지도(모듈 전역 집 단계)를 이 저장에 맞춘 뒤 가구를 맞춘다 — newGame이 0으로 되돌려 둔 상태라서
   setHomeLevel(homeLevel)
   const flags = { ...s.flags }
+  // 집 안을 지도 아래 방으로 옮기기 전 저장이면 자리를 옮긴다 (집 단계·텃밭은 그대로)
+  const moved = flags.homeRoom ? { player: s.player, companion: s.companion, room: s.room } : moveOldHome(s, homeLevel)
+  flags.homeRoom = 1
   if (flags.homeOrder !== undefined && flags.homeOrder !== homeLevel + 1) delete flags.homeOrder
   // 가구 규칙이 바뀐 뒤의 저장: 지금 규칙으로 놓을 수 없는 것은 가방으로 (길이 막히지 않게)
-  const { room, inv } = refitRoom(s.room ?? [], s.inv)
+  const { room, inv } = refitRoom(moved.room ?? [], s.inv)
   // 고른 책: 조각이 있어야 하고, 그 책의 서고 방이 열려 있어야 한다 (chooseBook과 같은 규칙 — 사도행전·편지)
   const activeBook =
     s.activeBook && (BOOKS as readonly string[]).includes(s.activeBook) && content.pieces.some((p) => p.book === s.activeBook) && bookRoomOpen(s.activeBook, flags)
@@ -86,6 +114,8 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   const journey = placeNewCards(board, cardsForChapters(content.journey ?? [], progress.ac.completed))
   return {
     ...s,
+    player: moved.player,
+    companion: moved.companion,
     homeLevel,
     flags,
     journey,

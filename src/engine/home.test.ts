@@ -23,13 +23,19 @@ import {
   ATTIC_WINDOW,
   HOME_EXPAND_RECT,
   HOME_DOOR,
+  HOME_ENTRY,
+  HOME_FRONT,
   HOME_RECT,
+  HOUSE_RECT,
+  homeHouse,
   LADDER,
   MAP,
   PLACES,
   SIDE_DOOR,
   SIDE_ROOM,
+  START,
   homeRect,
+  inAttic,
   isHome,
   isWalkable,
   placeAt,
@@ -46,6 +52,7 @@ import { SCENES, T } from '../content/text'
 import { TOOLS } from './items'
 
 const zero = () => 0
+const playerTileOf = (s: GameState) => ({ x: Math.round(s.player.x), y: Math.round(s.player.y) })
 const at = (s: GameState, minute: number, day = s.clock.day): GameState => ({ ...s, clock: { day, minute } })
 /** 목수가 이사 온 뒤, 넉넉한 닢과 재료 */
 const rich = (s: GameState = newGame(CONTENT)): GameState => ({
@@ -60,18 +67,23 @@ const sleep = (s: GameState, opts: { read?: boolean; pieceId?: string; attic?: b
 afterEach(() => setHomeLevel(0))
 
 describe('집 넓히기 자리', () => {
-  it('넓힐 빈 땅(11~13열, 2~7줄)에는 지금 아무것도 없다', () => {
-    expect(HOME_EXPAND_RECT).toEqual({ x0: 11, y0: 2, x1: 13, y1: 7 })
+  it('집 안 방 오른쪽(넓힐 곳)은 지금 비어 있고, 방은 지도 아래 보이지 않는 곳', () => {
+    expect(HOME_EXPAND_RECT).toEqual({ x0: HOME_RECT.x1 + 1, y0: HOME_RECT.y0, x1: HOME_RECT.x1 + 3, y1: HOME_RECT.y1 })
+    expect(HOME_RECT.y0).toBeGreaterThanOrEqual(40)
     for (let y = HOME_EXPAND_RECT.y0; y <= HOME_EXPAND_RECT.y1; y++)
       for (let x = HOME_EXPAND_RECT.x0; x <= HOME_EXPAND_RECT.x1; x++) {
+        expect(MAP[y][x], `${x},${y}`).toBe('_')
+        expect(roomAt({ x, y }), `${x},${y}`).toBeNull()
+      }
+  })
+  it('밖에서 집이 넓어질 두 줄(양옆 한 칸씩)은 지금 풀밭이고, 이웃 시간표의 자리도 없다', () => {
+    for (const x of [HOUSE_RECT.x0 - 1, HOUSE_RECT.x1 + 1])
+      for (let y = HOUSE_RECT.y0; y <= HOUSE_RECT.y1; y++) {
         expect(MAP[y][x], `${x},${y}`).toBe('.')
         expect(placeAt({ x, y }), `${x},${y}`).toBeNull()
+        for (const d of CONTENT.neighbors)
+          for (const e of d.schedule) for (const t of [e.tile, e.wet]) if (t) expect(t.x === x && t.y === y, d.id).toBe(false)
       }
-    // 이웃 시간표의 자리도 그 땅에 없다
-    for (const d of CONTENT.neighbors)
-      for (const e of d.schedule)
-        for (const t of [e.tile, e.wet])
-          if (t) expect(t.x >= HOME_EXPAND_RECT.x0 && t.x <= HOME_EXPAND_RECT.x1 && t.y >= HOME_EXPAND_RECT.y0 && t.y <= HOME_EXPAND_RECT.y1, d.id).toBe(false)
   })
   it('다락은 지도 아래 보이지 않는 곳, 8×6, 다른 방과 겹치지 않는다', () => {
     expect(ATTIC.w).toBe(8)
@@ -86,21 +98,23 @@ describe('잠들 때 집 단계 맞추기', () => {
   it('모듈 전역이 0이어도 상태의 집 단계(1)로 지도를 맞춘 채 자고, 이웃도 그 지도로 놓는다', () => {
     const s = { ...newGame(CONTENT), homeLevel: 1 as const }
     setHomeLevel(0)
-    expect(isWalkable({ x: 11, y: 4 })).toBe(true)
-    expect(tileAt(13, 4)).not.toBe('#')
+    const wing = { x: HOUSE_RECT.x1 + 1, y: HOUSE_RECT.y1 - 1 }
+    expect(isWalkable(wing)).toBe(true)
+    expect(tileAt(SIDE_ROOM.x0, SIDE_ROOM.y0)).toBe('_')
     const after = sleep(s)
     expect(after.homeLevel).toBe(1)
-    expect(tileAt(13, 4)).toBe('#')
-    expect(isHome({ x: 11, y: 4 })).toBe(true)
-    for (const n of Object.values(after.npcs)) expect(n.x === 13 && n.y === 4).toBe(false)
+    expect(tileAt(wing.x, wing.y)).toBe('#')
+    expect(isHome({ x: SIDE_ROOM.x0, y: SIDE_ROOM.y0 + 1 })).toBe(true)
+    for (const n of Object.values(after.npcs)) expect(n.x === wing.x && n.y === wing.y).toBe(false)
   })
 })
 
 describe('집 넓히기 1단계: 방 하나 더', () => {
-  it('처음엔 넓힐 땅이 풀밭, 새 방은 집이 아니다', () => {
-    expect(isWalkable({ x: 11, y: 4 })).toBe(true)
-    expect(isHome({ x: 11, y: 4 })).toBe(false)
+  it('처음엔 새 방 자리가 비어 있고 집이 아니다, 밖의 집은 5칸', () => {
+    expect(isWalkable({ x: SIDE_ROOM.x0, y: SIDE_ROOM.y0 + 1 })).toBe(false)
+    expect(isHome({ x: SIDE_ROOM.x0, y: SIDE_ROOM.y0 + 1 })).toBe(false)
     expect(homeRect()).toEqual(HOME_RECT)
+    expect(homeHouse().x1 - homeHouse().x0 + 1).toBe(5)
   })
   it('목수가 이사 오기 전에는 부탁할 수 없다', () => {
     const s = { ...rich(), flags: { heartPoints: 1 } }
@@ -126,42 +140,44 @@ describe('집 넓히기 1단계: 방 하나 더', () => {
     expect(SCENES['home:1']).toBeDefined()
     // 새 방
     // 새 방은 두 칸 폭 × 네 줄
-    expect(SIDE_ROOM).toEqual({ x0: 11, y0: 3, x1: 12, y1: 6 })
+    expect(SIDE_ROOM).toEqual({ x0: HOME_RECT.x1 + 1, y0: HOME_RECT.y0 + 1, x1: HOME_RECT.x1 + 2, y1: HOME_RECT.y1 - 1 })
     for (let y = SIDE_ROOM.y0; y <= SIDE_ROOM.y1; y++)
       for (let x = SIDE_ROOM.x0; x <= SIDE_ROOM.x1; x++) {
         expect(tileAt(x, y)).toBe('f')
         expect(isHome({ x, y })).toBe(true)
       }
     // 바깥 벽
-    for (let y = 2; y <= 7; y++) expect(tileAt(13, y)).toBe('#')
-    for (const x of [11, 12]) {
-      expect(tileAt(x, 2)).toBe('#')
-      expect(tileAt(x, 7)).toBe('#')
+    for (let y = HOME_RECT.y0; y <= HOME_RECT.y1; y++) expect(tileAt(HOME_EXPAND_RECT.x1, y)).toBe('#')
+    for (const x of [SIDE_ROOM.x0, SIDE_ROOM.x1]) {
+      expect(tileAt(x, HOME_RECT.y0)).toBe('#')
+      expect(tileAt(x, HOME_RECT.y1)).toBe('#')
     }
     // 사이 벽의 문
     expect(isWalkable(SIDE_DOOR)).toBe(true)
     expect(isHome(SIDE_DOOR)).toBe(true)
-    expect(homeRect()).toEqual({ x0: 2, y0: 2, x1: 13, y1: 7 })
+    expect(homeRect()).toEqual({ ...HOME_RECT, x1: HOME_EXPAND_RECT.x1 })
     // 집 안에서 보는 화면도 넓어진다
-    expect(viewRoomAt({ x: 11, y: 4 })).toEqual({ x0: 2, y0: 2, w: 12, h: 6 })
+    expect(viewRoomAt({ x: SIDE_ROOM.x0, y: SIDE_ROOM.y0 + 1 })).toEqual({ x0: HOME_RECT.x0, y0: HOME_RECT.y0, w: 12, h: 6 })
+    // 밖에서는 집이 양옆으로 한 칸씩, 문은 가운데
+    expect(homeHouse()).toMatchObject({ x0: HOUSE_RECT.x0 - 1, x1: HOUSE_RECT.x1 + 1, doorX: HOME_DOOR.x })
   })
-  it('넓힌 뒤 문에서 새 방까지 걸어갈 수 있고, 밖에서는 벽이 길을 막는다', () => {
+  it('넓힌 뒤 들어온 자리에서 새 방까지 걸어갈 수 있고, 밖에서는 넓어진 벽이 길을 막는다', () => {
     const s = sleep(orderHome(rich())!)
-    expect(findPath(HOME_DOOR, { x: 11, y: 6 })).not.toBeNull()
-    expect(findPath(HOME_DOOR, { x: 12, y: 3 })).not.toBeNull()
-    expect(isWalkable({ x: 13, y: 4 })).toBe(false)
+    expect(findPath(HOME_ENTRY, { x: SIDE_ROOM.x0, y: SIDE_ROOM.y1 })).not.toBeNull()
+    expect(findPath(HOME_ENTRY, { x: SIDE_ROOM.x1, y: SIDE_ROOM.y0 })).not.toBeNull()
+    expect(isWalkable({ x: HOUSE_RECT.x1 + 1, y: HOUSE_RECT.y1 - 1 })).toBe(false)
     // 바로 옆 텃밭은 그대로 밟고 들어갈 수 있다
     for (const t of PLACES.garden.tiles) expect(isWalkable(t)).toBe(true)
-    expect(findPath(HOME_DOOR, { x: 14, y: 4 })).not.toBeNull()
+    expect(findPath(HOME_FRONT, { x: 14, y: 4 })).not.toBeNull()
     // 걸어서 들어가 본다
-    const walk = tapTile({ ...s, npcs: {}, player: { ...s.player, x: 6, y: 6, path: [] } }, { x: 11, y: 3 })
-    expect(walk.player.path.at(-1)).toEqual({ x: 11, y: 3 })
+    const walk = tapTile({ ...s, npcs: {}, player: { ...s.player, ...HOME_ENTRY, path: [] } }, { x: SIDE_ROOM.x0, y: SIDE_ROOM.y0 })
+    expect(walk.player.path.at(-1)).toEqual({ x: SIDE_ROOM.x0, y: SIDE_ROOM.y0 })
   })
   it('넓힌 뒤에도 모든 장소에 닿는다 (텃밭·우물·서고)', () => {
     setHomeLevel(2)
     for (const id of ['garden', 'well', 'bench', 'basket'] as const) {
       const p = PLACES[id]
-      const path = p.stand ? findPath(HOME_DOOR, p.stand) : findPath(HOME_DOOR, { x: p.tiles[0].x, y: p.tiles[0].y + 1 })
+      const path = p.stand ? findPath(HOME_FRONT, p.stand) : findPath(HOME_FRONT, { x: p.tiles[0].x, y: p.tiles[0].y + 1 })
       expect(path, id).not.toBeNull()
     }
     // 텃밭 열두 칸은 그대로
@@ -170,14 +186,14 @@ describe('집 넓히기 1단계: 방 하나 더', () => {
   })
   it('새 방 바닥에도 가구를 놓을 수 있고, 새 방으로 가는 길은 막지 않는다', () => {
     const s = sleep(orderHome(rich())!)
-    const withChair = placeFurniture({ ...s, inv: { chair: 1, nightstand: 1 } }, 'chair', { x: 11, y: 6 })
+    const withChair = placeFurniture({ ...s, inv: { chair: 1, nightstand: 1 } }, 'chair', { x: SIDE_ROOM.x0, y: SIDE_ROOM.y1 })
     expect(withChair).not.toBeNull()
     // 문 안쪽 칸을 막으면 새 방에 못 들어간다
-    expect(placement([], 'nightstand', { x: 11, y: 4 })).toBeNull()
+    expect(placement([], 'nightstand', { x: SIDE_DOOR.x + 1, y: SIDE_DOOR.y })).toBeNull()
     expect(placement([], 'nightstand', SIDE_DOOR)).toBeNull()
   })
   it('넓히기 전에는 새 방 자리에 가구를 놓을 수 없다', () => {
-    expect(placement([], 'chair', { x: 11, y: 5 })).toBeNull()
+    expect(placement([], 'chair', { x: SIDE_ROOM.x0, y: SIDE_ROOM.y0 + 2 })).toBeNull()
   })
 })
 
@@ -203,21 +219,21 @@ describe('집 넓히기 2단계: 다락 서재', () => {
     expect(PLACES.ladder.stand).toBeDefined()
     // 사다리는 길찾기가 지나가지 않는다 (지나가다 올라가 버리지 않게)
     expect(isWalkable(LADDER)).toBe(false)
-    let s = tapTile({ ...two, npcs: {}, player: { ...two.player, x: 6, y: 5, path: [] } }, LADDER)
-    for (let i = 0; i < 200 && !(s.player.y >= ATTIC.y0); i++) s = tick(s, 0.05, zero, CONTENT).state
-    expect(s.player.y).toBeGreaterThanOrEqual(ATTIC.y0)
+    let s = tapTile({ ...two, npcs: {}, player: { ...two.player, ...START, path: [] } }, LADDER)
+    for (let i = 0; i < 200 && !inAttic(s.player); i++) s = tick(s, 0.05, zero, CONTENT).state
+    expect(inAttic(s.player)).toBe(true)
     expect(isHome({ x: Math.round(s.player.x), y: Math.round(s.player.y) })).toBe(true)
     expect(viewRoomAt({ x: Math.round(s.player.x), y: Math.round(s.player.y) })).toMatchObject({ x0: ATTIC.x0, y0: ATTIC.y0, w: 8, h: 6 })
     // 문깔개를 밟으면 사다리 앞으로
     s = tapTile({ ...s, player: { ...s.player, path: [] } }, ATTIC.exit)
-    for (let i = 0; i < 200 && s.player.y >= ATTIC.y0; i++) s = tick(s, 0.05, zero, CONTENT).state
+    for (let i = 0; i < 200 && inAttic(s.player); i++) s = tick(s, 0.05, zero, CONTENT).state
     expect({ x: s.player.x, y: s.player.y }).toEqual(PLACES.ladder.stand)
   })
   it('키보드로 사다리 쪽으로 걸으면 올라간다', () => {
     const two = sleep(orderHome(stage1())!)
     const stand = PLACES.ladder.stand!
     const s = walkDirection({ ...two, npcs: {}, player: { ...two.player, x: stand.x, y: stand.y, path: [] } }, LADDER.x - stand.x, LADDER.y - stand.y)
-    expect(s.player.y).toBeGreaterThanOrEqual(ATTIC.y0)
+    expect(inAttic(s.player)).toBe(true)
   })
   it('1단계만으로는 사다리가 없다', () => {
     stage1()
@@ -306,10 +322,94 @@ describe('저장·불러오기', () => {
   })
   it('새 방에 놓은 가구는 불러와도 그대로', () => {
     const one = sleep(orderHome(rich())!)
-    const placed = placeFurniture({ ...one, inv: { chair: 1 } }, 'chair', { x: 11, y: 6 })!
+    const spot = { x: SIDE_ROOM.x0, y: SIDE_ROOM.y1 }
+    const placed = placeFurniture({ ...one, inv: { chair: 1 } }, 'chair', spot)!
     setHomeLevel(0)
     const back = deserialize(serialize(placed), CONTENT)!
-    expect(back.room).toEqual([{ item: 'chair', x: 11, y: 6 }])
+    expect(back.room).toEqual([{ item: 'chair', ...spot }])
+  })
+})
+
+describe('옛 저장: 집 안이 지도 위에 있던 때 (계획 7-1 작업 5)', () => {
+  /** 집 안을 따로 된 방으로 옮기기 전 저장 (homeRoom 표식이 없다) */
+  const oldSave = (s: GameState, player: { x: number; y: number }, extra: Partial<GameState> = {}) => {
+    const { homeRoom: _drop, ...flags } = s.flags
+    return JSON.stringify({ ...JSON.parse(serialize(s)), ...extra, flags, player: { ...s.player, ...player } })
+  }
+  const h = (x: number, y: number) => ({ x: x + 14, y: y + 58 })
+
+  it('새 게임에는 표식이 있고, 예전 집 안 칸은 같은 자리의 새 방 칸으로 옮긴다', () => {
+    expect(newGame(CONTENT).flags.homeRoom).toBe(1)
+    expect(h(5, 4)).toEqual(START)
+    expect(h(3, 3)).toEqual(PLACES.bed.tiles[0])
+    expect(h(6, 3)).toEqual(PLACES.hearth.tiles[0])
+    expect(h(9, 3)).toEqual(PLACES.shelf.tiles[0])
+    expect(h(3, 5)).toEqual(PLACES.desk.tiles[0])
+    expect(h(9, 5)).toEqual(PLACES.workbench.tiles[0])
+    expect(h(8, 3)).toEqual(LADDER)
+    expect(h(10, 4)).toEqual(SIDE_DOOR)
+  })
+  it('집 안에 서 있던 기록자는 새 방의 같은 자리로, 문에 서 있었으면 들어와 서는 칸으로', () => {
+    const s = newGame(CONTENT)
+    const back = deserialize(oldSave(s, { x: 7, y: 5 }), CONTENT)!
+    expect({ x: back.player.x, y: back.player.y }).toEqual(h(7, 5))
+    expect(isHome(playerTileOf(back))).toBe(true)
+    expect(back.flags.homeRoom).toBe(1)
+    const door = deserialize(oldSave(s, { x: 6, y: 7 }), CONTENT)!
+    expect({ x: door.player.x, y: door.player.y }).toEqual(HOME_ENTRY)
+    // 집 밖에 있던 기록자는 그대로
+    const out = deserialize(oldSave(s, { x: 20, y: 10 }), CONTENT)!
+    expect({ x: out.player.x, y: out.player.y }).toEqual({ x: 20, y: 10 })
+  })
+  it('방 꾸미기로 놓은 가구도 같은 자리로 옮긴다 (넓힌 새 방까지), 집 단계·텃밭은 그대로', () => {
+    const s = { ...newGame(CONTENT), homeLevel: 1 as const }
+    const garden = { '15,4': { crop: 'herb' as const, grown: 1, wateredDay: 1 } }
+    const raw = oldSave(s, { x: 12, y: 5 }, {
+      room: [
+        { item: 'rug', x: 4, y: 4 },
+        { item: 'chair', x: 11, y: 6 },
+        { item: 'table', x: 7, y: 6 },
+        { item: 'jar', x: 8, y: 6, on: true },
+      ],
+      garden,
+    } as Partial<GameState>)
+    const back = deserialize(raw, CONTENT)!
+    expect(back.homeLevel).toBe(1)
+    expect(back.room).toEqual([
+      { item: 'rug', ...h(4, 4) },
+      { item: 'chair', ...h(11, 6) },
+      { item: 'table', ...h(7, 6) },
+      { item: 'jar', ...h(8, 6), on: true },
+    ])
+    expect(h(11, 6).x).toBeGreaterThanOrEqual(SIDE_ROOM.x0)
+    expect({ x: back.player.x, y: back.player.y }).toEqual(h(12, 5))
+    expect(back.garden).toEqual(garden)
+  })
+  it('동반 동물도 집 안에 있었으면 함께 옮긴다', () => {
+    const s = newGame(CONTENT)
+    const cat = { kind: 'cat', name: '나비', since: 1, x: 4, y: 4, path: [], facing: 'down', walkTime: 0 }
+    const back = deserialize(oldSave(s, { x: 5, y: 4 }, { companion: cat } as unknown as Partial<GameState>), CONTENT)!
+    expect({ x: back.companion!.x, y: back.companion!.y }).toEqual(h(4, 4))
+  })
+  it('이미 옮긴 저장은 다시 옮기지 않는다 (예전 집 자리 풀밭에 서 있어도)', () => {
+    const s = newGame(CONTENT)
+    const back = deserialize(serialize({ ...s, player: { ...s.player, x: 5, y: 4 } }), CONTENT)!
+    expect({ x: back.player.x, y: back.player.y }).toEqual({ x: 5, y: 4 })
+  })
+})
+
+describe('문을 드나드는 동반 동물', () => {
+  it('내 집 문을 밟으면 동물도 함께 들어오고, 문깔개로 나가면 함께 나간다', () => {
+    const s0 = newGame(CONTENT)
+    const cat = { kind: 'cat' as const, name: '나비', since: 1, x: HOME_FRONT.x - 1, y: HOME_FRONT.y, path: [], facing: 'down' as const, walkTime: 0 }
+    let s: GameState = { ...s0, npcs: {}, companion: cat, player: { ...s0.player, ...HOME_FRONT, path: [HOME_DOOR] } }
+    for (let i = 0; i < 40 && !isHome(playerTileOf(s)); i++) s = tick(s, 0.05, zero, CONTENT).state
+    expect(playerTileOf(s)).toEqual(HOME_ENTRY)
+    expect(isHome({ x: Math.round(s.companion!.x), y: Math.round(s.companion!.y) })).toBe(true)
+    s = { ...s, player: { ...s.player, path: [{ x: HOME_ENTRY.x, y: HOME_ENTRY.y + 1 }] } }
+    for (let i = 0; i < 40 && isHome(playerTileOf(s)); i++) s = tick(s, 0.05, zero, CONTENT).state
+    expect(playerTileOf(s)).toEqual(HOME_FRONT)
+    expect(isHome({ x: Math.round(s.companion!.x), y: Math.round(s.companion!.y) })).toBe(false)
   })
 })
 
@@ -318,8 +418,10 @@ describe('집 단계와 지도 맞추기', () => {
     const one = sleep(orderHome(rich())!)
     setHomeLevel(0)
     deserialize(serialize(one), CONTENT)
-    expect(tileAt(11, 4)).toBe('f')
+    expect(tileAt(SIDE_ROOM.x0, SIDE_ROOM.y0 + 1)).toBe('f')
+    expect(tileAt(HOUSE_RECT.x0 - 1, HOUSE_RECT.y1)).toBe('#')
     newGame(CONTENT)
-    expect(tileAt(11, 4)).toBe('.')
+    expect(tileAt(SIDE_ROOM.x0, SIDE_ROOM.y0 + 1)).toBe('_')
+    expect(tileAt(HOUSE_RECT.x0 - 1, HOUSE_RECT.y1)).toBe('.')
   })
 })
