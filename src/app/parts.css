@@ -1568,3 +1568,23 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
 .award-list li { display: grid; gap: 2px; padding: 4px 8px; border: 1px dashed var(--panel-line); color: var(--ink-soft); font-size: 13px; }
 .award-list li.on { border-style: solid; border-color: var(--panel-edge); color: var(--ink); background: var(--panel-soft); }
 .award-day { font-size: 12px; color: var(--ink-soft); }
+
+/* ── 곁에 선 이웃에게 말 걸기 ── */
+.talk-button {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  z-index: 3;
+  padding: 6px 14px;
+  font-size: 14px;
+  background: var(--panel);
+  border: 2px solid var(--panel-edge);
+  box-shadow: 0 2px 0 var(--panel-edge);
+  white-space: nowrap;
+}
+.talk-button.waiting {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent-lo);
+}

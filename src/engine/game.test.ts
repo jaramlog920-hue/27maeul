@@ -35,8 +35,7 @@ import {
   TRADES,
   readScripture,
   inGathering,
-  type GameState,
-} from './game'
+  type GameState, neighborBeside } from './game'
 import { BABY_PARTY_SPOTS, HILL_SPOTS } from './bonds'
 import { REQUESTS as REQUESTS_T } from './bonds'
 import { fulfillRequest as fulfillRequestT, interactTile as interactTileT, pressTile as pressTileT, walkDirection as walkDirectionT } from './game'
@@ -125,13 +124,17 @@ describe('걷기와 도착', () => {
     expect(r.events[0].type).toBe('arrived')
     expect(Math.abs(r.state.player.x - 6) + Math.abs(r.state.player.y - 33)).toBe(1)
   })
-  it('이웃에게 걸어가 옆에 서면 도착한다', () => {
+  it('이웃에게 걸어가 옆에 서면 곁에 선다 — 대화는 대화하기 단추로 (곁에서 누르면 바로 도착)', () => {
     let s = at(outside(), 8 * 60)
     s = { ...s, npcs: Object.fromEntries(Object.entries(s.npcs)) }
     const r0 = tick(s, 0.01, zero, CONTENT).state
     const baker = r0.npcs.baker
     expect(baker.visible).toBe(true)
-    const r = runUntilEvent(tapTile(r0, { x: Math.round(baker.x), y: Math.round(baker.y) }))
+    const bt = { x: Math.round(baker.x), y: Math.round(baker.y) }
+    let w = tapTile(r0, bt)
+    for (let i = 0; i < 1800 && (w.player.path.length || w.target); i++) w = tick(w, 0.05, zero, CONTENT).state
+    expect(neighborBeside(w)).toBe('baker')
+    const r = runUntilEvent(tapTile(w, { x: Math.round(w.npcs.baker.x), y: Math.round(w.npcs.baker.y) }))
     expect(r.events[0].type).toBe('arrived')
   })
   it('갈 수 없는 곳은 무시, 기록자를 누르면 돌아본다', () => {

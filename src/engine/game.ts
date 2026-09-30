@@ -581,7 +581,7 @@ export function tapTile(s: GameState, tile: Tile): GameState {
   const pet = s.companion && sameTile({ x: Math.round(s.companion.x), y: Math.round(s.companion.y) }, tile)
   const place = placeAt(tile)
   if (npc) {
-    target = { kind: 'neighbor', id: npc.id, tries: 0 }
+    target = { kind: 'neighbor', id: npc.id, tries: 0, talk: isNear(from, tile) }
     path = pathToward(from, tile, blockers)
   } else if (stray) {
     target = { kind: 'stray', animal: stray }
@@ -677,7 +677,8 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
     if (target.kind === 'neighbor') {
       const n = npcs[target.id]
       if (n?.visible && isNear(now, npcTile(n))) {
-        events.push({ type: 'arrived', target })
+        // 곁에서 누른 것만 바로 대화 — 걸어와 닿으면 곁에 서 있고, 화면의 '대화하기' 단추로 말을 건다
+        if (target.talk) events.push({ type: 'arrived', target })
         target = null
       } else if (n?.visible && target.tries < 3) {
         // 걸어가는 사이 이웃이 움직였다 — 다시 따라간다
@@ -795,6 +796,32 @@ export function eventNow(s: GoalState, npc: string): PersonEvent | null {
   return p.events.find((e) => !life.seen.includes(e.id) && stage >= e.stage && whenMatches(e.when, m) && reqMet(e.req, ctx) && (!e.confess || ctx.suitor)) ?? null
 }
 
+/** 이 사람이 지금 이야기(이벤트)를 품고 제자리에 와 있는가 — 머리 위에 말풍선, 말을 걸면 열린다 */
+export function eventWaiting(s: GameState, npc: string): PersonEvent | null {
+  const n = s.npcs[npc]
+  const e = n?.visible ? eventNow(s, npc) : null
+  return e && near(npcTile(n), e.at, 1) ? e : null
+}
+
+/** 말을 걸었을 때 기다리던 이야기가 열린다 (계획 6b 이벤트 — 가까이 가기만 해서는 열리지 않는다) */
+export function openEvent(s: GameState, npc: string): GameState | null {
+  const e = eventWaiting(s, npc)
+  if (!e) return null
+  const life = s.life ?? NO_LIFE
+  let next: GameState = { ...s, life: { ...life, seen: [...life.seen, e.id] }, scenes: [...s.scenes, `ev:${e.id}`] }
+  if (e.gain) next = heartUp(next, npc, e.gain)
+  if (e.cool) next = { ...next, life: { ...next.life, cool: { ...next.life.cool, [npc]: s.clock.day + e.cool } } }
+  return next
+}
+
+/** 기록자 곁(한 칸)에 서 있는 이웃 — '대화하기' 단추 */
+export function neighborBeside(s: GameState): string | null {
+  if (s.player.path.length) return null
+  const here = playerTile(s)
+  const n = Object.values(s.npcs).find((o) => o.visible && isNear(here, npcTile(o)))
+  return n?.id ?? null
+}
+
 /** 지금 벌어지는 목격 장면 (플레이어가 보든 안 보든 그 사람은 그 자리에 간다) */
 function sightingNow(s: GoalState, npc: string) {
   const life = s.life ?? NO_LIFE
@@ -857,15 +884,6 @@ function liveNearby(s: GameState, now: Tile, events: GameEvent[]): GameState {
     if (!n.visible) continue
     const at = npcTile(n)
     if (!sameArea(at, now)) continue
-    const e = eventNow({ ...s, life }, id)
-    if (e && near(at, e.at, 1) && near(now, e.at, 3)) {
-      life = { ...life, seen: [...life.seen, e.id] }
-      next = { ...next, life, scenes: [...next.scenes, `ev:${e.id}`] }
-      if (e.gain) next = heartUp(next, id, e.gain)
-      if (e.cool) next = { ...next, life: { ...next.life, cool: { ...next.life.cool, [id]: s.clock.day + e.cool } } }
-      events.push({ type: 'moment', id: `ev:${e.id}` })
-      return next
-    }
     const w = sightingNow({ ...s, life }, id)
     if (w && near(at, w.at, 1) && near(now, w.at, 4)) {
       life = remember({ ...life, seen: [...life.seen, w.id] }, id, w.memory, s)

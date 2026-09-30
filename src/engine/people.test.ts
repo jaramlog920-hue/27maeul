@@ -1,7 +1,7 @@
 // 계획 6b: 살아 움직이는 사람들 — 일과·목격·마을 사건·기억·말·사이 단계·조건 이벤트
 import { CONTENT, PEOPLE } from '../content/catalog'
 import { isWet, weatherOf } from './calendar'
-import { chooseInEvent, eventNow, goToSleep, greetNeighbor, newGame, personLine, routineOf, stageWith, tick, type GameState } from './game'
+import { chooseInEvent, eventNow, goToSleep, greetNeighbor, newGame, personLine, routineOf, stageWith, tick, type GameState, eventWaiting, openEvent } from './game'
 import {
   depthOf,
   hasMemory,
@@ -132,12 +132,15 @@ describe('게임 안에서 (game.ts)', () => {
     expect(again.life.heard).toBe(r.state.life.heard)
   })
 
-  it('이벤트: 사이·자리·때가 맞으면 곁에 갔을 때 열린다 — 고른 말은 기억·색·약속으로 남는다 (정답 없음)', () => {
+  it('이벤트: 사이·자리·때가 맞으면 말을 걸 때 열린다 (곁에 가기만 해서는 열리지 않는다) — 고른 말은 기억·색·약속으로 남는다 (정답 없음)', () => {
     const base = { ...at(newGame(CONTENT), 2, 700), hearts: { tilly: 10 } }
     expect(eventNow(base, 'tilly')?.id).toBe('first')
     expect(eventNow({ ...base, hearts: {} }, 'tilly')).toBeNull()
     const s = { ...base, npcs: { ...base.npcs, tilly: { ...base.npcs.tilly, x: 32, y: 26, visible: true, path: [] } }, player: { ...base.player, x: 33, y: 27, path: [] } }
-    const r = tick(s, 0.02, zero, CONTENT).state
+    const walked = tick(s, 0.02, zero, CONTENT).state
+    expect(walked.scenes).not.toContain('ev:first')
+    expect(eventWaiting(walked, 'tilly')?.id).toBe('first')
+    const r = openEvent(walked, 'tilly')!
     expect(r.scenes).toContain('ev:first')
     expect(r.life.seen).toContain('first')
     expect(r.hearts.tilly).toBe(16)

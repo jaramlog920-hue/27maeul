@@ -68,6 +68,7 @@ import {
   takeTrip,
   nameChild,
   recordProgress,
+  openEvent,
   warmByHearth,
   playerTile,
   receiveVisit,
@@ -259,6 +260,8 @@ interface Store {
   doBoard: (r: BoardRequest) => void
   goTrip: (dest: DestId, buys: ItemId[]) => void
   setChildName: (name: string) => void
+  /** 곁에 선 이웃에게 말 걸기 ('대화하기' 단추) */
+  talkTo: (id: string) => void
   startTeach: () => void
   startLetter: () => void
   // 손일
@@ -560,6 +563,12 @@ export const useGame = create<Store>((set, get) => {
   function arrive(game: GameState, target: Target): { game: GameState; modal: Modal | null } {
     const rng = get().rng
     if (target.kind === 'neighbor') {
+      // 기다리던 이야기(이벤트)가 있으면 그 장면부터 (계획 6b)
+      const ev = openEvent(game, target.id)
+      if (ev) {
+        sfx('talk')
+        return { game: persist(greetNeighbor(ev, target.id)), modal: { kind: 'scene', id: ev.scenes[ev.scenes.length - 1] } }
+      }
       let g = greetNeighbor(game, target.id)
       sfx('talk')
       // 배우자는 아침에 처음 말 걸 때 작은 선물을 챙겨 준다 (계획 6)
@@ -913,6 +922,12 @@ export const useGame = create<Store>((set, get) => {
       sfx('gift')
       toastGain(get().game.inv, next.inv)
       set({ game: persist(next) })
+    },
+
+    talkTo: (id) => {
+      const a = arrive(get().game, { kind: 'neighbor', id, tries: 0, talk: true })
+      set({ game: a.game, modal: a.modal })
+      if (a.modal?.kind === 'scene') snapAlbum(a.modal.id, get().capture)
     },
 
     setChildName: (name) => set({ game: persist(nameChild(get().game, name)), modal: null }),

@@ -56,7 +56,8 @@ export type PlaceId =
   | 'wildHerb'
 export type Target =
   | { kind: 'place'; id: PlaceId; tile: Tile }
-  | { kind: 'neighbor'; id: string; tries: number }
+  /** talk: 곁에서 누른 것 (닿으면 바로 대화) — 멀리서 누르면 걸어가 곁에 서고, 대화는 '대화하기' 단추로 */
+  | { kind: 'neighbor'; id: string; tries: number; talk?: boolean }
   | { kind: 'companion' }
   | { kind: 'stray'; animal: 'cat' | 'dog' }
   | { kind: 'ground' }

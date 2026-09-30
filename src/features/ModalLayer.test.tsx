@@ -105,6 +105,9 @@ describe('이웃', () => {
     act(() => useGame.getState().tap({ x: Math.round(npc.x), y: Math.round(npc.y) }))
     walk()
     const role = CONTENT.neighbors.find((n) => n.id === who)!.role
+    // 걸어가 곁에 서기만 해서는 창이 뜨지 않는다 — '대화하기' 단추로 말을 건다
+    expect(screen.queryByRole('dialog', { name: role })).toBeNull()
+    act(() => useGame.getState().talkTo(who))
     expect(screen.getByRole('dialog', { name: role })).toBeInTheDocument()
     expect(useGame.getState().game.hearts[who]).toBe(2)
     await user.click(screen.getByRole('button', { name: '이야기 듣기' }))

@@ -10,6 +10,7 @@ import { useKeyboardMovement } from './useKeyboardMovement'
 import { NextEventBar, useEventAlerts } from './EventSchedule'
 import { Joystick } from './Joystick'
 import { ControlDeck } from './ControlDeck'
+import { TalkButton } from './TalkButton'
 
 export function Play() {
   useKeyboardMovement()
@@ -35,6 +36,7 @@ export function Play() {
         <Joystick />
         <Toast />
         <AwardBanner />
+        <TalkButton />
       </div>
       <StatusPanel />
       <DecorateBar />
