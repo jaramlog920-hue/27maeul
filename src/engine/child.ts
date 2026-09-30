@@ -19,6 +19,20 @@ export interface Child {
   stats: Stats
   /** 같을 때 먼저 고르는 능력치 (배우자 집안의 능력치) */
   lean: StatId | null
+  /**
+   * 데리고 다니기(follow)·집에 두기(home)·혼자 다니기(roam, 돕는 아이만).
+   * 비어 있으면 자라는 단계대로: 걷는 아이는 따라다니고, 돕는 아이는 혼자 마을을 다닌다
+   */
+  mode?: ChildMode
+}
+export type ChildMode = 'follow' | 'home' | 'roam'
+
+/** 지금 아이가 어떻게 지내는가 (아기는 늘 요람) */
+export function childMode(c: Pick<Child, 'born' | 'mode'>, day: number): ChildMode | 'cradle' {
+  const st = childStage(c, day)
+  if (st === 'baby') return 'cradle'
+  if (c.mode === 'roam' && st !== 'helper') return 'follow'
+  return c.mode ?? (st === 'helper' ? 'roam' : 'follow')
 }
 
 /** 결혼하고 이만큼 지난 아침에 태어난다 */
@@ -93,5 +107,6 @@ export function sanitizeChild(raw: unknown): Child | null {
   const o = raw as Partial<Child>
   if (typeof o.name !== 'string' || (o.look !== 'boy' && o.look !== 'girl') || typeof o.born !== 'number') return null
   const lean = typeof o.lean === 'string' && (STAT_IDS as readonly string[]).includes(o.lean) ? (o.lean as StatId) : null
-  return { name: o.name.slice(0, 12), look: o.look, born: o.born, stats: sanitizeStats(o.stats), lean }
+  const mode = o.mode === 'follow' || o.mode === 'home' || o.mode === 'roam' ? o.mode : undefined
+  return { name: o.name.slice(0, 12), look: o.look, born: o.born, stats: sanitizeStats(o.stats), lean, ...(mode ? { mode } : {}) }
 }

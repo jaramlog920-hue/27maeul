@@ -13,7 +13,7 @@ import { FURNI_PALETTE, FURNITURE_ART } from './furniture-art'
 import { drawDecor, lanternLights, sheepCount } from './decor'
 import { FIRE, isNear, npcTile } from '../engine/neighbors'
 import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
-import { childStage, CRADLE_SPOT, helperSpot } from '../engine/child'
+import { childMode, childStage, CRADLE_SPOT, helperSpot } from '../engine/child'
 import { actsDoorGlows, feastToday, sideShelfSpines } from '../engine/library'
 import { ACTS_ROOM, ATTIC, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, HEIGHT, HOUSE_RECT, housesNow, houseAt, LOCKED_DOORS, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
 import { GOSPELS, type Book, type Facing, type NeighborDef, type GameContent, type Season, type Tile } from '../engine/types'
@@ -1592,7 +1592,14 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       const kid = game.child
       if (kid) {
         const st = childStage(kid, day)
-        if (st === 'baby') {
+        const mode = childMode(kid, day)
+        const kidRows = () => recolor(spriteRows('child', 'down', { frame: 0, blink: isBlinking(t + 1.3), growth: 2 }), kid.look === 'boy' ? { z: 'E', Z: 'M' } : { z: 'V', Z: 'X' })
+        // 걷는 아이는 아기 걸음 그림, 돕는 아이는 물 긷는 아이 그림에 옷 색만 바꿔서
+        const drawKid = (x: number, y: number, bob: number) =>
+          st === 'toddler'
+            ? drawSprite(g, paint('baby/walk', BABY.walk, SMALL_PALETTE), x, y, bob)
+            : drawSprite(g, paint(`kid/${kid.look}/${isBlinking(t + 1.3)}`, kidRows(), PALETTE), x, y, bob)
+        if (mode === 'cradle') {
           const c = CRADLE_SPOT
           items.push({
             y: c.y,
@@ -1601,16 +1608,15 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
               drawSprite(g, paint('baby/baby', BABY.baby, SMALL_PALETTE), c.x, c.y, 5 + (Math.floor(t * 1.5) % 2))
             },
           })
-        } else if (st === 'toddler') {
+        } else if (mode === 'follow') {
           // 기록자 뒤에 한 걸음 떨어져 (보는 쪽의 반대편)
           const back = { left: [0.7, 0.1], right: [-0.7, 0.1], up: [0, 0.6], down: [-0.6, -0.1] }[p.facing]
           const kx = p.x + back[0]
           const ky = p.y + back[1]
-          items.push({ y: ky, paint: () => drawSprite(g, paint('baby/walk', BABY.walk, SMALL_PALETTE), kx, ky, p.path.length ? Math.floor(t * 8) % 2 : 0) })
+          items.push({ y: ky, paint: () => drawKid(kx, ky, p.path.length ? Math.floor(t * 8) % 2 : 0) })
         } else {
-          const at = helperSpot(game.clock.minute)
-          const rows = recolor(spriteRows('child', 'down', { frame: 0, blink: isBlinking(t + 1.3), growth: 2 }), kid.look === 'boy' ? { z: 'E', Z: 'M' } : { z: 'V', Z: 'X' })
-          items.push({ y: at.y, paint: () => drawSprite(g, paint(`kid/${kid.look}/${isBlinking(t + 1.3)}`, rows, PALETTE), at.x, at.y, breathOffset(t + 1.3)) })
+          const at = mode === 'home' ? CRADLE_SPOT : helperSpot(game.clock.minute)
+          items.push({ y: at.y, paint: () => drawKid(at.x, at.y, st === 'toddler' ? 0 : breathOffset(t + 1.3)) })
         }
       }
 

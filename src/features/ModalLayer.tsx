@@ -26,6 +26,7 @@ import { TradeBoard } from './talk/TradeBoard'
 import { BoardView } from './talk/BoardView'
 import { TravelView } from './talk/TravelView'
 import { ChildName } from './child/ChildName'
+import { FollowMenu } from './companion/FollowMenu'
 import { GameGuide } from './play/GameGuide'
 import { Settings } from './play/Settings'
 import { ScheduleDialog } from './play/EventSchedule'
@@ -69,6 +70,8 @@ function Body() {
       return <TravelView />
     case 'childName':
       return <ChildName />
+    case 'follow':
+      return <FollowMenu who={modal.who} />
     case 'letter':
       return <LetterBox />
     case 'menu':

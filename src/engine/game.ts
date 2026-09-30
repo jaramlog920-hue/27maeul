@@ -99,12 +99,12 @@ import {
   momentNow,
   onceKey,
 } from './stories'
-import { ATTIC, BED_STAND, HEARTH_STAND, HOME_FRONT, inAttic, isHome, isIndoor, isWalkable, key, LADDER, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setMailbox, setOpenDoors, START, tileAt, WARPS } from './world'
+import { ATTIC, BED_STAND, HEARTH_STAND, PET_HOME, HOME_FRONT, inAttic, isHome, isIndoor, isWalkable, key, LADDER, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setMailbox, setOpenDoors, START, tileAt, WARPS } from './world'
 import { GOSPELS, type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
 import type { Avatar } from './avatar'
 import { BOARD_GAIN, boardFor, type BoardRequest } from './board'
 import { newlyAchieved, withFound, type Achievement } from './achievements'
-import { CHILD_AFTER_WEDDING, childStage, helpStat, newChild, type Child } from './child'
+import { CHILD_AFTER_WEDDING, childMode, childStage, CRADLE_SPOT, helperSpot, helpStat, newChild, type Child, type ChildMode } from './child'
 import { DESTS, TRIP_FRIEND_GAIN, TRIP_LEAVE_BY, tripCost, type DestId } from './travel'
 import { BIRTHDAY_MUL, isBirthday, NO_NOTEBOOK, noteGift, noteHeard, noteMet, noteSeen, seenLabel, type Notebook } from './notebook'
 import { CARPENTER_WORKS, fromChest, hasStock, HOME_MAILBOX, INK_JAR_HOLD, LIGHT_SHOES, owns, RACK_HOLD, RACK_PAPYRUS, RAIN_WATER, SOOT_CATCH, stash, stashOverflows, stock, takeStock, walkMul, type CarpenterWork, type EasyId } from './easier'
@@ -579,8 +579,12 @@ export function tapTile(s: GameState, tile: Tile): GameState {
   const npc = Object.values(s.npcs).find((n) => n.visible && sameTile(npcTile(n), tile))
   const stray = straysToday(s).find((a) => sameTile(STRAY_SPOTS[a], tile))
   const pet = s.companion && sameTile({ x: Math.round(s.companion.x), y: Math.round(s.companion.y) }, tile)
+  const kid = childTile(s)
   const place = placeAt(tile)
-  if (npc) {
+  if (kid && sameTile(kid, tile) && !npc) {
+    target = { kind: 'child' }
+    path = sameTile(kid, from) ? [] : pathToward(from, tile, new Set([...blockers, key(tile)]))
+  } else if (npc) {
     target = { kind: 'neighbor', id: npc.id, tries: 0, talk: isNear(from, tile) }
     path = pathToward(from, tile, blockers)
   } else if (stray) {
@@ -610,6 +614,7 @@ function targetTile(s: GameState, target: Target): Tile | null {
   if (target.kind === 'place') return target.tile
   if (target.kind === 'stray') return STRAY_SPOTS[target.animal]
   if (target.kind === 'companion' && s.companion) return { x: Math.round(s.companion.x), y: Math.round(s.companion.y) }
+  if (target.kind === 'child') return childTile(s)
   return null
 }
 
@@ -701,7 +706,8 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
 
   // 동반 동물
   let companion = s.companion
-  if (companion) {
+  // 집에 둔 동물은 집 안 자리에서 기다린다 (따라오지 않는다)
+  if (companion && !companion.stay) {
     const rainOut = isWet(weatherOf(clock.day)) && !isIndoor(now)
     // 내 집 문을 드나들면 동물도 함께 (집 안은 지도 아래 따로 된 방이라 걸어서는 못 따라온다)
     const homeWarp = warp && (isHome(warp) || isHome(now))
@@ -812,6 +818,36 @@ export function openEvent(s: GameState, npc: string): GameState | null {
   if (e.gain) next = heartUp(next, npc, e.gain)
   if (e.cool) next = { ...next, life: { ...next.life, cool: { ...next.life.cool, [npc]: s.clock.day + e.cool } } }
   return next
+}
+
+// ── 데리고 다니기·집에 두기 (동물 친구·우리 아이) ──
+
+/** 동물 친구를 집에 두거나(집 안 자리로) 다시 데리고 다닌다(기록자 곁으로) */
+export function setCompanionStay(s: GameState, stay: boolean): GameState {
+  const c = s.companion
+  if (!c) return s
+  if (stay) return { ...s, companion: { ...c, stay: true, x: PET_HOME.x, y: PET_HOME.y, path: [] } }
+  const near = besideNotDoor(playerTile(s)) ?? playerTile(s)
+  return { ...s, companion: { ...c, stay: false, x: near.x, y: near.y, path: [] } }
+}
+
+/** 아이를 데리고 다니기·집에 두기·혼자 다니게 두기 */
+export function setChildMode(s: GameState, mode: ChildMode): GameState {
+  return s.child ? { ...s, child: { ...s.child, mode } } : s
+}
+
+/**
+ * 아이가 지금 있는 칸 (누르면 데리고 다닐지 정한다): 아기와 집에 둔 아이는 요람 곁, 따라다니는 아이는 기록자 곁(보는 쪽 반대),
+ * 혼자 다니는 아이는 때마다 정한 자리
+ */
+export function childTile(s: Pick<GameState, 'child' | 'clock' | 'player'>): Tile | null {
+  const c = s.child
+  if (!c) return null
+  const mode = childMode(c, s.clock.day)
+  if (mode === 'cradle' || mode === 'home') return CRADLE_SPOT
+  if (mode === 'roam') return helperSpot(s.clock.minute)
+  const back = { left: { x: 1, y: 0 }, right: { x: -1, y: 0 }, up: { x: 0, y: 1 }, down: { x: 0, y: -1 } }[s.player.facing]
+  return { x: Math.round(s.player.x) + back.x, y: Math.round(s.player.y) + back.y }
 }
 
 /** 기록자 곁(한 칸)에 서 있는 이웃 — '대화하기' 단추 */

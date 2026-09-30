@@ -7,6 +7,7 @@ import { handEase, leveledUp, XP, type StatId } from '../engine/stats'
 import type { FixtureLine } from '../engine/fixtures'
 import type { BoardRequest } from '../engine/board'
 import { DESTS, type DestId } from '../engine/travel'
+import type { ChildMode } from '../engine/child'
 import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
 import { bookRoomOpen, openDoorsFor } from '../engine/books'
 import { actsDoorGlows, canShelve, payRetry, poolFor, shelve } from '../engine/library'
@@ -69,6 +70,8 @@ import {
   nameChild,
   recordProgress,
   openEvent,
+  setCompanionStay,
+  setChildMode,
   warmByHearth,
   playerTile,
   receiveVisit,
@@ -149,6 +152,8 @@ export type Modal =
   | { kind: 'travel' }
   /** 아이 이름 정하기 (계획 12) */
   | { kind: 'childName' }
+  /** 동물 친구·우리 아이: 데리고 다니기·집에 두기 */
+  | { kind: 'follow'; who: 'pet' | 'child' }
   | { kind: 'menu'; place: MenuPlace }
   | { kind: 'readPick' }
   | { kind: 'quiz'; mode: QuizMode; questions: Question[]; index: number; wrong: string[]; solved: boolean; misses: number; missed: string[] }
@@ -262,6 +267,9 @@ interface Store {
   setChildName: (name: string) => void
   /** 곁에 선 이웃에게 말 걸기 ('대화하기' 단추) */
   talkTo: (id: string) => void
+  petCompanion: () => void
+  keepCompanion: (stay: boolean) => void
+  keepChild: (mode: ChildMode) => void
   startTeach: () => void
   startLetter: () => void
   // 손일
@@ -594,10 +602,10 @@ export const useGame = create<Store>((set, get) => {
     if (target.kind === 'stray') return { game, modal: { kind: 'companion', animal: target.animal } }
     if (target.kind === 'companion') {
       sfx(game.companion?.kind === 'dog' ? 'bark' : 'meow')
-      get().say(T.ui.pet)
-      // 쪼그려 앉아 쓰다듬는 자세가 잠시 보이도록 (renderer: idle.seconds % 12 > 8)
-      return { game: { ...game, idle: { seconds: 9, action: null, cooldown: 3 } }, modal: null }
+      // 쓰다듬기·데리고 다니기·집에 두기를 고른다
+      return { game, modal: { kind: 'follow', who: 'pet' } }
     }
+    if (target.kind === 'child') return { game, modal: { kind: 'follow', who: 'child' } }
     if (target.kind !== 'place') return { game, modal: null }
     switch (target.id) {
       case 'bed': {
@@ -922,6 +930,23 @@ export const useGame = create<Store>((set, get) => {
       sfx('gift')
       toastGain(get().game.inv, next.inv)
       set({ game: persist(next) })
+    },
+
+    petCompanion: () => {
+      get().say(T.ui.pet)
+      // 쪼그려 앉아 쓰다듬는 자세가 잠시 보이도록 (renderer: idle.seconds % 12 > 8)
+      set({ game: { ...get().game, idle: { seconds: 9, action: null, cooldown: 3 } }, modal: null })
+    },
+    keepCompanion: (stay) => {
+      const g = setCompanionStay(get().game, stay)
+      set({ game: persist(g), modal: null })
+      get().say(`${g.companion?.name ?? ''} · ${stay ? '집에서 기다려요' : '함께 다녀요'}`)
+    },
+    keepChild: (mode) => {
+      const g = setChildMode(get().game, mode)
+      set({ game: persist(g), modal: null })
+      const n = g.child?.name ?? '아이'
+      get().say(`${n} · ${mode === 'follow' ? '함께 다녀요' : mode === 'home' ? '집에서 기다려요' : '혼자 마을을 다녀요'}`)
     },
 
     talkTo: (id) => {

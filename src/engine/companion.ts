@@ -9,6 +9,8 @@ export interface Companion extends Actor {
   kind: Animal
   name: string
   since: number
+  /** 집에 두기: 따라다니지 않고 집 안 자리(PET_HOME)에서 기다린다 */
+  stay?: boolean
 }
 
 export const STRAY_DAY = 2

@@ -675,6 +675,8 @@ const tilesOf = (ch: string): Tile[] => {
 
 export const BED_STAND: Tile = home(2, 1)
 export const HEARTH_STAND: Tile = home(4, 2)
+/** 집에 둔 동물 친구가 기다리는 자리 (들어오는 문깔개 곁) */
+export const PET_HOME: Tile = home(3, 4)
 
 export const PLACES: Record<PlaceId, Place> = {
   // 집 안 (HOME_ROOM의 붙박이와 같은 자리)

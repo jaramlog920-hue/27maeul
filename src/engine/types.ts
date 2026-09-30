@@ -59,6 +59,8 @@ export type Target =
   /** talk: 곁에서 누른 것 (닿으면 바로 대화) — 멀리서 누르면 걸어가 곁에 서고, 대화는 '대화하기' 단추로 */
   | { kind: 'neighbor'; id: string; tries: number; talk?: boolean }
   | { kind: 'companion' }
+  /** 우리 아이 (계획 12) */
+  | { kind: 'child' }
   | { kind: 'stray'; animal: 'cat' | 'dog' }
   | { kind: 'ground' }
 /** 네 복음서 — 도장·복음서 탐정·"어느 복음서"·복음서 방은 이 네 권만 */
