@@ -4,7 +4,7 @@ import neighbors from '../content/neighbors.json'
 import * as bonds from './bonds'
 import * as companion from './companion'
 import { findPath } from './movement'
-import { FESTIVAL_SPOTS, FIRE, goalFor } from './neighbors'
+import { FESTIVAL_SPOTS, FIRE, goalFor, route } from './neighbors'
 import * as stories from './stories'
 import type { Tile } from './types'
 import { HOME_FRONT, isWalkable, lockedTiles, lockedZones, MAP, PLACES, ROOMS, zoneAt } from './world'
@@ -22,7 +22,8 @@ describe('지도 위의 자리', () => {
         for (const t of [e.tile, e.wet]) {
           if (!t) continue
           expect(isWalkable(t), `${d.id} ${e.from} ${where(t)}`).toBe(true)
-          expect(findPath(d.door, t), `${d.id} ${e.from} 길`).not.toBeNull()
+          // 집 안(찻집 종업원 등)은 문을 건너 닿는다
+          expect(findPath(d.door, t) ?? route(d.door, t), `${d.id} ${e.from} 길`).not.toBeNull()
         }
       }
     }

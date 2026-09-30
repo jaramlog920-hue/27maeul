@@ -4,7 +4,7 @@ import { darkness, phaseOf, seasonOf } from '../engine/clock'
 import { isGrown, STRAY_SPOTS, EAVES } from '../engine/companion'
 import { totalChapters } from '../engine/books'
 import { shelfRoom } from '../engine/shelf-rooms'
-import { shelvedCount, straysToday, type GameState } from '../engine/game'
+import { shelvedCount, straysToday, weddingToday, type GameState } from '../engine/game'
 import { FURNITURE_DEFS, type Furniture } from '../engine/room'
 import { FURNI_PALETTE, FURNITURE_ART } from './furniture-art'
 import { drawDecor, lanternLights, sheepCount } from './decor'
@@ -12,7 +12,7 @@ import { FIRE, isNear, npcTile } from '../engine/neighbors'
 import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
 import { actsDoorGlows, feastToday, sideShelfSpines } from '../engine/library'
 import { ACTS_ROOM, ATTIC, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, HEIGHT, HOME_DOOR, HOUSE_RECT, housesNow, houseAt, LOCKED_DOORS, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
-import { GOSPELS, type Book, type Facing, type GameContent, type Season, type Tile } from '../engine/types'
+import { GOSPELS, type Book, type Facing, type NeighborDef, type GameContent, type Season, type Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { avatarKey, withLookDefaults, type FullAvatar } from '../engine/avatar'
 import {
@@ -872,6 +872,15 @@ function emote(g: Ctx, id: EmoteId, cx: number, top: number) {
   })
 }
 
+/** 이웃 그림: 연애 후보(계획 6)는 주인공 모양 고르기와 같은 머리·옷으로, 나머지는 이웃마다 정한 옷으로 */
+function neighborPerson(def: NeighborDef, facing: Facing, frame: 0 | 1 | 2, blink: boolean, season: Season, growth?: number) {
+  if (def.avatar && def.look) {
+    const avatar = withLookDefaults({ look: def.look, name: def.role, ...def.avatar })
+    return person('writer', facing, frame, blink, 'stand', season, { look: def.look, avatar })
+  }
+  return person(def.sprite as Who, facing, frame, blink, 'stand', season, { growth })
+}
+
 function drawSprite(g: Ctx, c: HTMLCanvasElement, wx: number, wy: number, dy = 0) {
   // 발이 칸 아래쪽에 닿도록, 가운데 맞춤
   const px = Math.round(wx * TILE + (TILE - c.width) / 2)
@@ -1282,7 +1291,8 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       // 행사 모닥불
       const fest = festivalOf(day)
       // 복음서 방 잔치 저녁에는 비가 와도 모닥불을 피운다
-      festOn = ((!!fest && !wet) || feastToday(game)) && minute >= FESTIVAL_FROM && minute < FESTIVAL_TO
+      // 결혼 잔치 날 저녁도 모닥불 (계획 6)
+      festOn = ((!!fest && !wet) || feastToday(game) || weddingToday(game)) && minute >= FESTIVAL_FROM && minute < FESTIVAL_TO
       if (festOn) {
         g.fillStyle = C.woodDark
         g.fillRect(FIRE.x * TILE + 3, FIRE.y * TILE + 12, 10, 3)
@@ -1413,7 +1423,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
             const growth = def.id === 'child' ? childGrowth(day) : undefined
             items.push({
               y: home.sit.y,
-              paint: () => drawSprite(g, person(def.sprite as Who, 'down', 0, isBlinking(t + def.id.length), 'stand', season, { growth }), home.sit.x, home.sit.y, breathOffset(t + def.id.length)),
+              paint: () => drawSprite(g, neighborPerson(def, 'down', 0, isBlinking(t + def.id.length), season, growth), home.sit.x, home.sit.y, breathOffset(t + def.id.length)),
             })
           }
           continue
@@ -1425,7 +1435,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         items.push({
           y: n.y,
           paint: () => {
-            const spr = person(def.sprite as Who, facing, moving ? walkFrame(n.walkTime) : 0, isBlinking(t + offset), 'stand', season, { growth })
+            const spr = neighborPerson(def, facing, moving ? walkFrame(n.walkTime) : 0, isBlinking(t + offset), season, growth)
             drawSprite(g, spr, n.x, n.y, moving ? 0 : breathOffset(t + offset))
             if (game.offers[def.id]) emote(g, 'talk', n.x * TILE + 8, n.y * TILE + TILE - spr.height - 2 - Math.round(Math.sin(t * 3)))
           },

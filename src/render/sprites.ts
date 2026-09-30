@@ -506,6 +506,9 @@ export const ICONS: Record<string, SpriteRows> = {
   leatherBag: ['..NNNN..', '.N....N.', 'NNNNNNNN', 'NnnnnnnN', 'NnnyynnN', 'NnnnnnnN', 'NnnnnnnN', '.NNNNNN.'],
   sturdyShoes: ['........', '........', '.NNN....', '.NnN....', '.NnnNN..', '.NnnnnNN', 'NNNNNNNN', 'kkkkkkkk'],
   lightShoes: ['........', '........', '.c..c...', '.cWcW...', '.cwwcc..', '.cwwwwcc', 'cWWWWWWc', '.NNNNNN.'],
+  // 연애와 결혼 (계획 6): 분홍·흰 들꽃 다발(풀빛 줄기, 끈), 붉게 꼰 약속의 끈
+  bouquet: ['..f.a...', '.faf.f..', '..f.faf.', '..E.Ef..', '...EE...', '...rr...', '...EE...', '........'],
+  promiseCord: ['........', '.rN.....', '..rN....', '...rNrN.', '....NrN.', '...Nr...', '..rN....', '........'],
 }
 
 // 가구 20종은 그림을 줄여 아이콘으로

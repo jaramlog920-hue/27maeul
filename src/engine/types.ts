@@ -164,6 +164,9 @@ export type ItemId =
   | 'leatherBag'
   | 'sturdyShoes'
   | 'lightShoes'
+  // 연애와 결혼 (계획 6): 고백에 건네는 들꽃 다발, 청혼에 건네는 약속의 끈
+  | 'bouquet'
+  | 'promiseCord'
 
 export type Minigame = 'mash' | 'timing' | 'pick'
 
@@ -192,6 +195,28 @@ export interface NeighborDef {
     minigame: Minigame
     needs?: Partial<Record<ItemId, number>>
     gives: Partial<Record<ItemId, number>>
+  }
+  /** 연애 후보 (계획 6): 주인공과 다른 모습의 후보만 연애할 수 있다. 같은 모습이면 친구 */
+  romanceable?: boolean
+  /** 후보의 모습 (여자/남자) */
+  look?: 'f' | 'm'
+  /** 후보의 집안 이웃 id */
+  family?: string
+  /** 서고 권수로 이사 오는 집안(약방·어부·목수)의 후보: 그 집안이 이사 온 아침부터 보인다 (따로 소개 장면 없음) */
+  joinsWithFamily?: boolean
+  /** 후보가 잘하는 능력치 (아이에게 물려준다 — 계획 12) */
+  stat?: 'wit' | 'hand' | 'charm' | 'strength' | 'luck'
+  /** 후보의 모습 (주인공 모양 고르기와 같은 값 — 머리·옷·색) */
+  avatar?: {
+    skin?: number
+    hairFront?: number
+    hairBack?: number
+    top?: number
+    bottom?: number
+    acc?: number
+    hairColor?: [number, number, number]
+    eyeColor?: [number, number, number]
+    bottomColor?: [number, number, number]
   }
 }
 

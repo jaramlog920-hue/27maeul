@@ -34,13 +34,31 @@ import {
   type Gathering,
 } from './bonds'
 import { COVER_FROM, jobOf, SELL_FROM } from './job'
-import { FESTIVAL_SPOTS, goalFor, isNear, npcTile, placeNpc, stepNpc, type Npc } from './neighbors'
+import { FESTIVAL_SPOTS, FIRE, goalFor, isNear, npcTile, placeNpc, stepNpc, type Npc } from './neighbors'
 import { GAIN, heartsOf, MAX_POINTS } from './hearts'
 import { bookDone, bookRoomOpen, emptyProgress, openDoorsFor, roomOpen, totalChapters, type Progress } from './books'
 import { arrivesOf, modeOf, SHELF_ROOMS } from './shelf-rooms'
 import { currentChapter, offersForDay } from './offers'
 import { addXp, charmBonus, freshStats, luckyExtra, rainBonus, sellBonus, tiredScale, visitBonus, XP, type StatId, type Stats } from './stats'
 import { HALL_GUESTS, HALL_PLAY_GAIN, HALL_PLAY_MINUTES, HALL_SPOTS, hallGuests, hallOpen, SUNSET_MINUTES, sunsetTime, TEA_MINUTES, TEA_PRICE, teaOpen } from './places'
+import {
+  BOUQUET_GAIN,
+  BOUQUET_HEARTS,
+  CORD_GAIN,
+  CORD_HEARTS,
+  DATE_GAIN,
+  DATE_TEA_PRICE,
+  DATING_DAYS,
+  isCandidateId,
+  nextMarketAfter,
+  NO_ROMANCE,
+  SPOUSE_HOME_FROM,
+  SPOUSE_HOME_TO,
+  SPOUSE_SPOT,
+  STORY_HEARTS,
+  WEDDING_SPOT,
+  type Romance,
+} from './romance'
 import { POSTMAN, postForDay, starPostFor } from './post'
 import { blanksFor } from './copy'
 import { checkArrangement, moveItem, type ArrangeResult } from './scroll'
@@ -151,6 +169,8 @@ export interface GameState {
   chest: Inventory
   /** 능력치 다섯 (계획 11 작업 4): 지능·손재주·매력·근력·운 — 단계·경험치·타고난 값 */
   stats: Stats
+  /** 연애와 결혼 (계획 6): 연인·약혼자·배우자 한 명 */
+  romance: Romance
 }
 
 /** 지도(world.tileAt)가 이 게임의 집 단계·열린 서고 방 문(방 표)을 보게 한다. 지도를 읽는 엔진 입구마다 부른다 */
@@ -179,7 +199,7 @@ function defsById(content: GameContent): Record<string, NeighborDef> {
   return Object.fromEntries(content.neighbors.map((n) => [n.id, n]))
 }
 
-type GoalState = Pick<GameState, 'clock' | 'flags' | 'progress' | 'hearts' | 'today' | 'shelved'>
+type GoalState = Pick<GameState, 'clock' | 'flags' | 'progress' | 'hearts' | 'today' | 'shelved'> & Partial<Pick<GameState, 'romance' | 'homeLevel'>>
 
 /**
  * 서고에 꽂은 복음서 수 — 마을 구역(lockedZones)·서고 권수로 이사 오는 이웃·직업 단계가 이것을 센다.
@@ -194,7 +214,9 @@ export function shelvedCount(s: Pick<GameState, 'shelved'>): number {
  * 소개 장면이 나온 아침(잠들 때 세운 movedIn 표식)이 아직 오지 않았다
  */
 const notYet = (d: NeighborDef, level: number, flags: Record<string, number>) =>
-  (d.joinsAt !== undefined && level < d.joinsAt) || (d.joinsAtBooks !== undefined && !flags[`movedIn:${d.id}`])
+  (d.joinsAt !== undefined && level < d.joinsAt) ||
+  (d.joinsAtBooks !== undefined && !flags[`movedIn:${d.id}`]) ||
+  (!!d.joinsWithFamily && !!d.family && !flags[`movedIn:${d.family}`])
 
 function goalContext(s: GoalState, content: GameContent) {
   const w = weatherOf(s.clock.day)
@@ -218,11 +240,19 @@ function goalContext(s: GoalState, content: GameContent) {
     const skip = t.gathering === 'starNight' ? 'shepherd' : ''
     if (m >= from && m < to) for (const [id, spot] of Object.entries(spots)) if (joined(id) && id !== skip) special[id] = spot
   }
+  // 배우자 (계획 6): 저녁 일곱 시부터 아침 일곱 시까지 내 집 넓힌 방에서 지낸다 (잔치·모임이 있으면 아래에서 그쪽으로)
+  const r = s.romance ?? NO_ROMANCE
+  if (r.stage === 'married' && r.partner && (m >= SPOUSE_HOME_FROM || m < SPOUSE_HOME_TO)) special[r.partner] = SPOUSE_SPOT
   // 마을 사랑방 (계획 10): 모임·잔치·저녁 초대가 없는 저녁, 이웃 셋이 긴 탁자 둘레에 모인다 (비 와도 — 집 안이라)
   if (hallOpen(m)) hallGuestsToday(s, content).forEach((id, i) => (special[id] = HALL_SPOTS[i]))
   // 복음서 방 잔치 저녁: 이사 온 이웃은 모두(상인도) 광장 모닥불 둘레로 — 비가 와도 연다
   if (feastToday(s) && m >= FESTIVAL_FROM && m < FESTIVAL_TO)
     for (const [id, spot] of Object.entries(FESTIVAL_SPOTS)) if (joined(id)) special[id] = spot
+  // 결혼 잔치 저녁 (계획 6): 이사 온 이웃은 모두 광장 모닥불 둘레로, 약혼자는 모닥불 바로 위 — 비가 와도 연다
+  if (weddingToday(s) && m >= FESTIVAL_FROM && m < FESTIVAL_TO) {
+    for (const [id, spot] of Object.entries(FESTIVAL_SPOTS)) if (joined(id)) special[id] = spot
+    special[r.partner!] = WEDDING_SPOT
+  }
   return {
     minute: s.clock.minute,
     wet: isWet(w),
@@ -239,10 +269,12 @@ function goalContext(s: GoalState, content: GameContent) {
  */
 export function hallGuestsToday(s: GoalState, content: GameContent): string[] {
   const t = s.today ?? NO_TODAY
-  if (festivalOf(s.clock.day) || feastToday(s) || t.gathering === 'babyParty' || t.gathering === 'starNight') return []
+  if (festivalOf(s.clock.day) || feastToday(s) || weddingToday(s) || t.gathering === 'babyParty' || t.gathering === 'starNight') return []
   const level = s.flags.villageLevel ?? 0
   const joined = content.neighbors.filter((d) => !d.marketOnly && !notYet(d, level, s.flags)).map((d) => d.id)
-  return hallGuests(s.clock.day, joined.filter((id) => id !== t.inviter)).slice(0, HALL_GUESTS)
+  // 배우자는 저녁에 집에 있다
+  const spouse = s.romance?.stage === 'married' ? s.romance.partner : null
+  return hallGuests(s.clock.day, joined.filter((id) => id !== t.inviter && id !== spouse)).slice(0, HALL_GUESTS)
 }
 
 /** 오늘 저녁 아이가 글자를 배우러 오는가 */
@@ -274,7 +306,9 @@ function todaysOffers(day: number, collected: string[], s: Pick<GameState, 'acti
   // 편지는 이웃이 조각으로 나눠 건네지 않는다 — 편지 나르는 이웃만 장째로 (계획 7 작업 2)
   if (modeOf(s.activeBook) === 'letters') return {}
   const pieces = content.pieces.filter((p) => p.book === s.activeBook)
-  return offersForDay({ day, pieces, collected, chapter: currentChapter(pieces, s.progress[s.activeBook].completed), neighborIds: npcs })
+  // 이야기 조각은 마을 이웃이 건넨다 — 연애 후보(계획 6)는 건네지 않는다 (필사 흐름의 빠르기가 바뀌지 않게)
+  const tellers = npcs.filter((id) => !content.neighbors.find((d) => d.id === id)?.romanceable)
+  return offersForDay({ day, pieces, collected, chapter: currentChapter(pieces, s.progress[s.activeBook].completed), neighborIds: tellers })
 }
 
 /**
@@ -363,6 +397,7 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
     churches: [],
     chest: {},
     stats: freshStats(),
+    romance: NO_ROMANCE,
   }
 }
 
@@ -618,6 +653,11 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
   const idle = moving ? IDLE_RESET : stepIdle(s.idle, dt, clock.minute, rng, totalChapters(s) >= 3)
   const next: GameState = { ...s, clock, needs, player, target, idle, npcs, companion, trails }
 
+  // 결혼 잔치 (계획 6): 약혼한 다음 장날 저녁, 광장 모닥불 둘레에 오면 잔치가 열리고 부부가 된다
+  if (weddingToday(next) && clock.minute >= FESTIVAL_FROM && clock.minute < FESTIVAL_TO && atWeddingFire(now)) {
+    events.push({ type: 'moment', id: `wedding:${next.romance.partner}` })
+    return { state: train(marry(next), 'luck', XP.festival), events }
+  }
   const g = (s.today ?? NO_TODAY).gathering
   if (g && !s.flags[`done:${g}`] && inGathering(g, clock.minute, now)) {
     events.push({ type: 'moment', id: g })
@@ -680,6 +720,12 @@ function heartUp(s: GameState, id: string, points: number): GameState {
       scenes: [...next.scenes, 'lightShoes'],
     }
   }
+  // 연애 후보의 이야기 (계획 6): 마음 4·6이 되면 그 사람의 옛이야기 (같은 모습이면 친구로 듣는다) — 한 번씩
+  if (isCandidateId(id))
+    STORY_HEARTS.forEach((h, i) => {
+      const key = `romance${i + 1}:${id}`
+      if (after >= h && !next.flags[key]) next = { ...next, flags: { ...next.flags, [key]: 1 }, scenes: [...next.scenes, key] }
+    })
   // 집 앞 편지함 (계획 11 작업 3): 편지 나르는 이웃과 마음 4 — 한 번
   if (id === HOME_MAILBOX.npc && after >= HOME_MAILBOX.hearts && !owns(next.flags, 'homeMailbox')) {
     next = { ...next, flags: { ...next.flags, 'unlock:homeMailbox': 1 }, scenes: [...next.scenes, 'homeMailbox'] }
@@ -864,6 +910,9 @@ export const TRADES: readonly Trade[] = [
   // 가방과 신 (계획 11 작업 2): 가죽 가방은 한 칸 18, 튼튼한 신은 걷는 속도 ×1.2 (가벼운 신은 양치기의 선물)
   { id: 'leatherBag', pay: {}, coins: 120, get: { leatherBag: 1 } },
   { id: 'sturdyShoes', pay: {}, coins: 60, get: { sturdyShoes: 1 } },
+  // 연애와 결혼 (계획 6): 들꽃 다발은 늘, 약속의 끈은 연인이 생긴 뒤에
+  { id: 'bouquet', pay: {}, coins: 30, get: { bouquet: 1 } },
+  { id: 'promiseCord', pay: {}, coins: 150, get: { promiseCord: 1 }, requires: 'dating' },
 ]
 
 /** 이미 가진 도구·설치물을 또 사게 되는 거래인가 (도구는 하나씩) */
@@ -1295,6 +1344,158 @@ export function watchSunset(s: GameState): GameState {
   return train(passTime(next, SUNSET_MINUTES), 'luck', XP.stars)
 }
 
+// ── 연애와 결혼 (계획 6, 단계와 값은 romance.ts) ──
+
+/** 주인공 모습 (옛 저장처럼 고르지 않았으면 여자) */
+export function playerLook(s: Pick<GameState, 'avatar'>): 'f' | 'm' {
+  return s.avatar?.look ?? 'f'
+}
+
+/** 연애할 수 있는 후보: 주인공과 다른 모습 */
+export function isSuitor(s: Pick<GameState, 'avatar'>, def: NeighborDef | undefined): boolean {
+  return !!def?.romanceable && !!def.look && def.look !== playerLook(s)
+}
+
+/** 이 이웃과의 사이: 친구·연인·약혼·부부 */
+export function romanceWith(s: Pick<GameState, 'romance'>, id: string): 'friend' | 'dating' | 'engaged' | 'married' {
+  const r = s.romance ?? NO_ROMANCE
+  return r.partner === id && r.stage ? r.stage : 'friend'
+}
+
+export type BouquetBlock = 'notSuitor' | 'taken' | 'already' | 'hearts' | 'noItem' | null
+export function canGiveBouquet(s: GameState, def: NeighborDef): BouquetBlock {
+  if (!isSuitor(s, def)) return 'notSuitor'
+  const r = s.romance ?? NO_ROMANCE
+  if (r.partner === def.id) return 'already'
+  if (r.partner) return 'taken'
+  if (heartsOf(s.hearts[def.id]) < BOUQUET_HEARTS) return 'hearts'
+  if (count(s.inv, 'bouquet') === 0) return 'noItem'
+  return null
+}
+
+/** 들꽃 다발을 건네면 연인이 된다 (한 명만). 장면 confess:<id>(앨범), 장날 약속의 끈을 살 수 있게 된다 */
+export function giveBouquet(s: GameState, def: NeighborDef): GameState {
+  if (canGiveBouquet(s, def)) return s
+  const next: GameState = {
+    ...s,
+    inv: take(s.inv, { bouquet: 1 })!,
+    romance: { ...NO_ROMANCE, partner: def.id, stage: 'dating', since: s.clock.day },
+    flags: { ...s.flags, 'unlock:dating': 1 },
+    scenes: [...s.scenes, `confess:${def.id}`],
+  }
+  return heartUp(next, def.id, BOUQUET_GAIN)
+}
+
+export type CordBlock = 'notPartner' | 'stage' | 'days' | 'hearts' | 'room' | 'noItem' | null
+export function canGiveCord(s: GameState, def: NeighborDef): CordBlock {
+  const r = s.romance ?? NO_ROMANCE
+  if (r.partner !== def.id) return 'notPartner'
+  if (r.stage !== 'dating') return 'stage'
+  if (s.clock.day - (r.since ?? s.clock.day) < DATING_DAYS) return 'days'
+  if (heartsOf(s.hearts[def.id]) < CORD_HEARTS) return 'hearts'
+  // 함께 살 방이 있어야 한다 (집 넓히기 1단계)
+  if (s.homeLevel < 1) return 'room'
+  if (count(s.inv, 'promiseCord') === 0) return 'noItem'
+  return null
+}
+
+/** 약속의 끈을 건네면 약혼 — 다음 장날 저녁 광장에서 마을 잔치로 결혼한다. 장면 propose:<id> */
+export function giveCord(s: GameState, def: NeighborDef): GameState {
+  if (canGiveCord(s, def)) return s
+  return heartUp(
+    {
+      ...s,
+      inv: take(s.inv, { promiseCord: 1 })!,
+      romance: { ...s.romance, stage: 'engaged', weddingDay: nextMarketAfter(s.clock.day) },
+      scenes: [...s.scenes, `propose:${def.id}`],
+    },
+    def.id,
+    CORD_GAIN,
+  )
+}
+
+/** 오늘이 결혼 잔치 날인가 */
+export function weddingToday(s: Pick<GameState, 'clock'> & Partial<Pick<GameState, 'romance'>>): boolean {
+  const r = s.romance ?? NO_ROMANCE
+  return r.stage === 'engaged' && !!r.partner && r.weddingDay === s.clock.day
+}
+
+/** 결혼 잔치 자리: 광장 모닥불 둘레 (이 안에 들어오면 잔치가 열린다) */
+function atWeddingFire(p: Tile): boolean {
+  return Math.abs(p.x - FIRE.x) + Math.abs(p.y - FIRE.y) <= 4
+}
+
+/** 결혼 (잔치 장면이 열릴 때): 부부가 되고, 그날 밤부터 배우자가 내 집에서 지낸다 */
+function marry(s: GameState): GameState {
+  const id = s.romance.partner!
+  return {
+    ...s,
+    romance: { ...s.romance, stage: 'married', weddingDay: null, marriedDay: s.clock.day },
+    scenes: [...s.scenes, `wedding:${id}`],
+    flags: { ...s.flags, [onceKey('wedding', s.clock.day)]: 1 },
+  }
+}
+
+/** 배우자의 아침 선물 (하루 한 번, 처음 말 걸 때): 배우자 집안 일에서 나는 것 하나 */
+export function spouseGift(s: GameState, def: NeighborDef): { state: GameState; gift: Partial<Record<ItemId, number>> } | null {
+  if (romanceWith(s, def.id) !== 'married' || s.flags.spouseGiftDay === s.clock.day) return null
+  const [id] = Object.keys(def.help.gives) as ItemId[]
+  const gift = { [id]: 1 } as Partial<Record<ItemId, number>>
+  return { state: { ...putAway(s, gift), flags: { ...s.flags, spouseGiftDay: s.clock.day } }, gift }
+}
+
+export type DateBlock = 'noPartner' | 'done' | 'closed' | 'coins' | 'notYet' | 'cloudy' | null
+/** 둘이 가는 곳 (계획 10 작업 4): 연인·약혼·부부만, 하루 한 번 (찻집이든 정자든) */
+function dateBlock(s: GameState): DateBlock {
+  const r = s.romance ?? NO_ROMANCE
+  if (!r.partner || !r.stage) return 'noPartner'
+  if (s.flags.dateDay === s.clock.day) return 'done'
+  return null
+}
+export function canDateTea(s: GameState): DateBlock {
+  const b = dateBlock(s)
+  if (b) return b
+  if (!teaOpen(s.clock.minute)) return 'closed'
+  if (s.coins < DATE_TEA_PRICE) return 'coins'
+  return null
+}
+export function canDateSunset(s: GameState): DateBlock {
+  const b = dateBlock(s)
+  if (b) return b
+  const sun = canWatchSunset(s)
+  return sun === 'notYet' ? 'notYet' : sun === 'cloudy' ? 'cloudy' : null
+}
+
+/** 함께 차 마시기 (닢 4): 둘 다 쉬고, 마음 +5점. 처음 한 번 장면 dateTea */
+export function dateTea(s: GameState): GameState {
+  if (canDateTea(s)) return s
+  const first = !s.flags.dateTeas
+  const next: GameState = {
+    ...s,
+    coins: s.coins - DATE_TEA_PRICE,
+    needs: rest(s.needs),
+    flags: { ...s.flags, dateDay: s.clock.day, dateTeas: (s.flags.dateTeas ?? 0) + 1 },
+    scenes: first ? [...s.scenes, 'dateTea'] : s.scenes,
+  }
+  return passTime(heartUp(next, s.romance.partner!, DATE_GAIN), TEA_MINUTES)
+}
+
+/** 함께 노을 보기: 쉬고, 마음 +5점, 그날 처음이면 운. 처음 한 번 장면 dateSunset */
+export function dateSunset(s: GameState): GameState {
+  if (canDateSunset(s)) return s
+  const first = !s.flags.dateSunsets
+  const key = onceKey('sunset', s.clock.day)
+  const lucky = !s.flags[key]
+  const next: GameState = {
+    ...s,
+    needs: rest(s.needs),
+    flags: { ...s.flags, dateDay: s.clock.day, dateSunsets: (s.flags.dateSunsets ?? 0) + 1, [key]: 1 },
+    scenes: first ? [...s.scenes, 'dateSunset'] : s.scenes,
+  }
+  const done = passTime(heartUp(next, s.romance.partner!, DATE_GAIN), SUNSET_MINUTES)
+  return lucky ? train(done, 'luck', XP.stars) : done
+}
+
 /** 담요를 덮어 주면 추위가 가신다 (담요는 닳지 않는다) */
 export function coverWithBlanket(s: GameState): GameState | null {
   if (count(s.inv, 'blanket') === 0) return null
@@ -1641,8 +1842,11 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
     scenes.push(`invite:${inviter}`)
   }
   const today: Today = { visitor, visitGot: false, inviter, dined: false, gathering }
+  // 결혼 잔치 날 저녁을 놓쳤으면 다음 장날로 미룬다
+  const romance = s.romance?.stage === 'engaged' && s.romance.weddingDay !== null && s.romance.weddingDay < day ? { ...s.romance, weddingDay: nextMarketAfter(day - 1) } : (s.romance ?? NO_ROMANCE)
   const next: GameState = {
     ...s,
+    romance,
     today,
     clock,
     needs,

@@ -7,7 +7,7 @@ import { handEase, leveledUp, XP, type StatId } from '../engine/stats'
 import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
 import { bookRoomOpen, openDoorsFor } from '../engine/books'
 import { actsDoorGlows, canShelve, payRetry, poolFor, shelve } from '../engine/library'
-import { ALBUM_IDS, fill, itemList, itemName, NEIGHBOR_LINES, roomTitle, SCENES, T, withAnd, withObject } from '../content/text'
+import { ALBUM_IDS, fill, itemList, itemName, NEIGHBOR_LINES, roomTitle, SCENES, T, withAnd, withObject, withSubject } from '../content/text'
 import { grapesRipe, isWet, weatherOf } from '../engine/calendar'
 import { cleanName, type Animal } from '../engine/companion'
 import {
@@ -38,6 +38,11 @@ import {
   openMailbox,
   train,
   hallFriendsHere,
+  giveBouquet,
+  giveCord,
+  dateTea,
+  dateSunset,
+  spouseGift,
   sellHerbs,
   playHall,
   drinkTea,
@@ -237,6 +242,10 @@ interface Store {
   rest: () => void
   playHall: () => void
   sellHerbs: () => void
+  giveBouquet: (id: string) => void
+  giveCord: (id: string) => void
+  dateTea: () => void
+  dateSunset: () => void
   drinkTea: () => void
   watchSunset: () => void
   sitHill: () => void
@@ -455,6 +464,12 @@ function announceRoom(before: GameState, after: GameState) {
   useGame.getState().say(name, 2200)
 }
 
+/** 연인·약혼자·배우자 이름 (없으면 빈 글자) */
+export function partnerName(game: GameState): string {
+  const id = game.romance?.partner
+  return (id && CONTENT.neighbors.find((n) => n.id === id)?.role) || ''
+}
+
 /** 누르면 할 일 창이 뜨는 자리 */
 export type MenuPlace = 'hearth' | 'workbench' | 'press' | 'hill' | 'bench' | 'hallTable' | 'teaTable' | 'pavilion'
 
@@ -484,6 +499,13 @@ export const useGame = create<Store>((set, get) => {
     if (target.kind === 'neighbor') {
       let g = greetNeighbor(game, target.id)
       sfx('talk')
+      // 배우자는 아침에 처음 말 걸 때 작은 선물을 챙겨 준다 (계획 6)
+      const def = CONTENT.neighbors.find((n) => n.id === target.id)
+      const sg = def ? spouseGift(g, def) : null
+      if (sg) {
+        g = sg.state
+        get().say(fill(T.romance.spouseGift, { who: withSubject(def!.role), items: itemList(sg.gift) }))
+      }
       // 아침에 들른 이웃은 들고 온 것을 건넨다
       const v = receiveVisit(g, target.id)
       if (v) {
@@ -849,6 +871,39 @@ export const useGame = create<Store>((set, get) => {
       const names = friends.map((id) => CONTENT.neighbors.find((n) => n.id === id)?.role ?? id).join('·')
       set({ game: persist(next), modal: null })
       get().say(fill(T.places.hallDone, { with: withAnd(names) }), 3200)
+    },
+    // 연애와 결혼 (계획 6): 다발·끈은 장면을 먼저 보인다 (장면은 매 프레임 scenes에서 연다)
+    giveBouquet: (id) => {
+      const def = CONTENT.neighbors.find((n) => n.id === id)
+      if (!def) return
+      const next = giveBouquet(get().game, def)
+      if (next === get().game) return
+      sfx('gift')
+      set({ game: persist(next), modal: null })
+    },
+    giveCord: (id) => {
+      const def = CONTENT.neighbors.find((n) => n.id === id)
+      if (!def) return
+      const next = giveCord(get().game, def)
+      if (next === get().game) return
+      sfx('gift')
+      set({ game: persist(next), modal: null })
+      get().say(fill(T.romance.weddingSoon, { day: next.romance.weddingDay ?? 0 }), 4000)
+    },
+    dateTea: () => {
+      const before = get().game
+      const next = dateTea(before)
+      if (next === before) return
+      sfx('eat')
+      set({ game: persist(next), modal: null })
+      get().say(fill(T.romance.dateDone, { with: withAnd(partnerName(before)) }))
+    },
+    dateSunset: () => {
+      const before = get().game
+      const next = dateSunset(before)
+      if (next === before) return
+      set({ game: persist(next), modal: null })
+      get().say(fill(T.romance.dateDone, { with: withAnd(partnerName(before)) }))
     },
     // 약방에 약초 팔기 (장날이 아니어도)
     sellHerbs: () => {

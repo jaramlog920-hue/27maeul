@@ -1,5 +1,5 @@
 import { adopt, cleanName, companionGoal, EAVES, isGrown, STRAY_SPOTS, stepCompanion } from './companion'
-import { goalFor, placeNpc, stepNpc, FESTIVAL_SPOTS } from './neighbors'
+import { goalFor, placeNpc, route, stepNpc, FESTIVAL_SPOTS } from './neighbors'
 import { findPath } from './movement'
 import { isWalkable, PLACES } from './world'
 import neighbors from '../content/neighbors.json'
@@ -15,7 +15,8 @@ describe('neighbors', () => {
     for (const d of defs) {
       expect(isWalkable(d.door), `${d.id} door`).toBe(true)
       const spots = [...d.schedule.flatMap((e) => [e.tile, e.wet]), FESTIVAL_SPOTS[d.id]].filter(Boolean)
-      for (const t of spots) expect(findPath(d.door, t!), `${d.id} → ${t!.x},${t!.y}`).not.toBeNull()
+      // 집 안 자리(찻집 종업원)는 문을 건너 닿는다
+      for (const t of spots) expect(findPath(d.door, t!) ?? route(d.door, t!), `${d.id} → ${t!.x},${t!.y}`).not.toBeNull()
     }
   })
   it('이웃 자리는 기록자가 서는 칸과 겹치지 않는다', () => {

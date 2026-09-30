@@ -661,5 +661,706 @@
         "olive": 2
       }
     }
+  },
+  {
+    "id": "wendell",
+    "role": "웬델",
+    "sprite": "writer",
+    "door": {
+      "x": 5,
+      "y": 17
+    },
+    "schedule": [
+      {
+        "from": 360,
+        "tile": {
+          "x": 9,
+          "y": 18
+        },
+        "wet": {
+          "x": 4,
+          "y": 18
+        }
+      },
+      {
+        "from": 780,
+        "tile": {
+          "x": 25,
+          "y": 16
+        },
+        "wet": {
+          "x": 4,
+          "y": 18
+        }
+      },
+      {
+        "from": 1020,
+        "tile": {
+          "x": 9,
+          "y": 18
+        },
+        "wet": {
+          "x": 4,
+          "y": 18
+        }
+      },
+      {
+        "from": 1260
+      }
+    ],
+    "likes": [
+      "honey",
+      "fig"
+    ],
+    "help": {
+      "minigame": "mash",
+      "gives": {
+        "bread": 1
+      }
+    },
+    "romanceable": true,
+    "look": "m",
+    "family": "baker",
+    "stat": "hand",
+    "avatar": {
+      "skin": 1,
+      "hairFront": 0,
+      "hairBack": 0,
+      "top": 7,
+      "bottom": 2,
+      "acc": 0,
+      "hairColor": [
+        30,
+        55,
+        55
+      ]
+    }
+  },
+  {
+    "id": "cosmo",
+    "role": "코스모",
+    "sprite": "writer",
+    "door": {
+      "x": 12,
+      "y": 31
+    },
+    "joinsWithFamily": true,
+    "schedule": [
+      {
+        "from": 330,
+        "tile": {
+          "x": 13,
+          "y": 32
+        },
+        "wet": {
+          "x": 13,
+          "y": 32
+        }
+      },
+      {
+        "from": 900,
+        "tile": {
+          "x": 28,
+          "y": 17
+        },
+        "wet": {
+          "x": 13,
+          "y": 32
+        }
+      },
+      {
+        "from": 1080
+      }
+    ],
+    "likes": [
+      "bread",
+      "grapes"
+    ],
+    "help": {
+      "minigame": "timing",
+      "gives": {
+        "reed": 2
+      }
+    },
+    "romanceable": true,
+    "look": "m",
+    "family": "fisher",
+    "stat": "strength",
+    "avatar": {
+      "skin": 3,
+      "hairFront": 4,
+      "hairBack": 0,
+      "top": 3,
+      "bottom": 3,
+      "acc": 5,
+      "hairColor": [
+        20,
+        40,
+        25
+      ]
+    }
+  },
+  {
+    "id": "rudy",
+    "role": "루디",
+    "sprite": "writer",
+    "door": {
+      "x": 14,
+      "y": 22
+    },
+    "joinsWithFamily": true,
+    "schedule": [
+      {
+        "from": 420,
+        "tile": {
+          "x": 16,
+          "y": 23
+        },
+        "wet": {
+          "x": 16,
+          "y": 23
+        }
+      },
+      {
+        "from": 720,
+        "tile": {
+          "x": 19,
+          "y": 16
+        },
+        "wet": {
+          "x": 16,
+          "y": 23
+        }
+      },
+      {
+        "from": 960,
+        "tile": {
+          "x": 16,
+          "y": 23
+        },
+        "wet": {
+          "x": 16,
+          "y": 23
+        }
+      },
+      {
+        "from": 1140
+      }
+    ],
+    "likes": [
+      "olive",
+      "bread"
+    ],
+    "help": {
+      "minigame": "timing",
+      "gives": {
+        "papyrus": 1
+      }
+    },
+    "romanceable": true,
+    "look": "m",
+    "family": "carpenter",
+    "stat": "wit",
+    "avatar": {
+      "skin": 2,
+      "hairFront": 2,
+      "hairBack": 0,
+      "top": 9,
+      "bottom": 2,
+      "acc": 0,
+      "hairColor": [
+        15,
+        60,
+        40
+      ]
+    }
+  },
+  {
+    "id": "dexter",
+    "role": "덱스터",
+    "sprite": "writer",
+    "door": {
+      "x": 1,
+      "y": 23
+    },
+    "schedule": [
+      {
+        "from": 400,
+        "tile": {
+          "x": 3,
+          "y": 28
+        },
+        "wet": {
+          "x": 3,
+          "y": 28
+        }
+      },
+      {
+        "from": 1000,
+        "tile": {
+          "x": 9,
+          "y": 22
+        },
+        "wet": {
+          "x": 3,
+          "y": 28
+        }
+      },
+      {
+        "from": 1200
+      }
+    ],
+    "likes": [
+      "fig",
+      "honey"
+    ],
+    "help": {
+      "minigame": "pick",
+      "gives": {
+        "wool": 1
+      }
+    },
+    "romanceable": true,
+    "look": "m",
+    "family": "shepherd",
+    "stat": "luck",
+    "avatar": {
+      "skin": 1,
+      "hairFront": 3,
+      "hairBack": 0,
+      "top": 11,
+      "bottom": 2,
+      "acc": 0,
+      "hairColor": [
+        40,
+        50,
+        70
+      ]
+    }
+  },
+  {
+    "id": "basil",
+    "role": "바질",
+    "sprite": "writer",
+    "door": {
+      "x": 20,
+      "y": 28
+    },
+    "joinsWithFamily": true,
+    "schedule": [
+      {
+        "from": 420,
+        "tile": {
+          "x": 18,
+          "y": 29
+        },
+        "wet": {
+          "x": 18,
+          "y": 29
+        }
+      },
+      {
+        "from": 660,
+        "tile": {
+          "x": 2,
+          "y": 21
+        },
+        "wet": {
+          "x": 18,
+          "y": 29
+        }
+      },
+      {
+        "from": 900,
+        "tile": {
+          "x": 18,
+          "y": 29
+        },
+        "wet": {
+          "x": 18,
+          "y": 29
+        }
+      },
+      {
+        "from": 1260
+      }
+    ],
+    "likes": [
+      "honey",
+      "herb"
+    ],
+    "help": {
+      "minigame": "pick",
+      "gives": {
+        "herb": 1
+      }
+    },
+    "romanceable": true,
+    "look": "m",
+    "family": "apothecary",
+    "stat": "charm",
+    "avatar": {
+      "skin": 0,
+      "hairFront": 1,
+      "hairBack": 0,
+      "top": 8,
+      "bottom": 2,
+      "acc": 0,
+      "hairColor": [
+        25,
+        30,
+        20
+      ]
+    }
+  },
+  {
+    "id": "marigold",
+    "role": "메리골드",
+    "sprite": "writer",
+    "door": {
+      "x": 35,
+      "y": 5
+    },
+    "schedule": [
+      {
+        "from": 420,
+        "tile": {
+          "x": 37,
+          "y": 8
+        },
+        "wet": {
+          "x": 34,
+          "y": 7
+        }
+      },
+      {
+        "from": 720,
+        "tile": {
+          "x": 38,
+          "y": 9
+        },
+        "wet": {
+          "x": 34,
+          "y": 7
+        }
+      },
+      {
+        "from": 1000,
+        "tile": {
+          "x": 33,
+          "y": 8
+        },
+        "wet": {
+          "x": 34,
+          "y": 7
+        }
+      },
+      {
+        "from": 1170
+      }
+    ],
+    "likes": [
+      "bread",
+      "herb"
+    ],
+    "help": {
+      "minigame": "pick",
+      "gives": {
+        "grapes": 1
+      }
+    },
+    "romanceable": true,
+    "look": "f",
+    "family": "grandpa",
+    "stat": "luck",
+    "avatar": {
+      "skin": 1,
+      "hairFront": 1,
+      "hairBack": 6,
+      "top": 2,
+      "bottom": 0,
+      "acc": 2,
+      "hairColor": [
+        30,
+        70,
+        60
+      ]
+    }
+  },
+  {
+    "id": "penelope",
+    "role": "페넬로피",
+    "sprite": "writer",
+    "door": {
+      "x": 28,
+      "y": 28
+    },
+    "joinsAt": 2,
+    "schedule": [
+      {
+        "from": 450,
+        "tile": {
+          "x": 31,
+          "y": 29
+        },
+        "wet": {
+          "x": 31,
+          "y": 29
+        }
+      },
+      {
+        "from": 720,
+        "tile": {
+          "x": 20,
+          "y": 17
+        },
+        "wet": {
+          "x": 31,
+          "y": 29
+        }
+      },
+      {
+        "from": 900,
+        "tile": {
+          "x": 31,
+          "y": 29
+        },
+        "wet": {
+          "x": 31,
+          "y": 29
+        }
+      },
+      {
+        "from": 1140
+      }
+    ],
+    "likes": [
+      "fig",
+      "grapes"
+    ],
+    "help": {
+      "minigame": "timing",
+      "gives": {
+        "wool": 1
+      }
+    },
+    "romanceable": true,
+    "look": "f",
+    "family": "weaver",
+    "stat": "hand",
+    "avatar": {
+      "skin": 0,
+      "hairFront": 2,
+      "hairBack": 3,
+      "top": 5,
+      "bottom": 0,
+      "acc": 1,
+      "hairColor": [
+        10,
+        45,
+        30
+      ]
+    }
+  },
+  {
+    "id": "tilly",
+    "role": "틸리",
+    "sprite": "writer",
+    "door": {
+      "x": 46,
+      "y": 23
+    },
+    "schedule": [
+      {
+        "from": 420,
+        "tile": {
+          "x": 32,
+          "y": 26
+        },
+        "wet": {
+          "x": 32,
+          "y": 26
+        }
+      },
+      {
+        "from": 780,
+        "tile": {
+          "x": 27,
+          "y": 16
+        },
+        "wet": {
+          "x": 32,
+          "y": 26
+        }
+      },
+      {
+        "from": 1000,
+        "tile": {
+          "x": 32,
+          "y": 26
+        },
+        "wet": {
+          "x": 32,
+          "y": 26
+        }
+      },
+      {
+        "from": 1140
+      }
+    ],
+    "likes": [
+      "bread",
+      "olive"
+    ],
+    "help": {
+      "minigame": "mash",
+      "gives": {
+        "soot": 1
+      }
+    },
+    "romanceable": true,
+    "look": "f",
+    "family": "smith",
+    "stat": "strength",
+    "avatar": {
+      "skin": 3,
+      "hairFront": 4,
+      "hairBack": 4,
+      "top": 6,
+      "bottom": 2,
+      "acc": 5,
+      "hairColor": [
+        20,
+        55,
+        30
+      ]
+    }
+  },
+  {
+    "id": "juniper",
+    "role": "주니퍼",
+    "sprite": "writer",
+    "door": {
+      "x": 42,
+      "y": 31
+    },
+    "joinsAt": 4,
+    "schedule": [
+      {
+        "from": 420,
+        "tile": {
+          "x": 36,
+          "y": 31
+        },
+        "wet": {
+          "x": 36,
+          "y": 31
+        }
+      },
+      {
+        "from": 780,
+        "tile": {
+          "x": 26,
+          "y": 12
+        },
+        "wet": {
+          "x": 36,
+          "y": 31
+        }
+      },
+      {
+        "from": 960,
+        "tile": {
+          "x": 36,
+          "y": 31
+        },
+        "wet": {
+          "x": 36,
+          "y": 31
+        }
+      },
+      {
+        "from": 1140
+      }
+    ],
+    "likes": [
+      "herb",
+      "fig"
+    ],
+    "help": {
+      "minigame": "pick",
+      "gives": {
+        "honey": 1
+      }
+    },
+    "romanceable": true,
+    "look": "f",
+    "family": "beekeeper",
+    "stat": "wit",
+    "avatar": {
+      "skin": 2,
+      "hairFront": 0,
+      "hairBack": 1,
+      "top": 1,
+      "bottom": 1,
+      "acc": 0,
+      "hairColor": [
+        35,
+        40,
+        75
+      ]
+    }
+  },
+  {
+    "id": "poppy",
+    "role": "파피",
+    "sprite": "writer",
+    "door": {
+      "x": 30,
+      "y": 9
+    },
+    "schedule": [
+      {
+        "from": 480,
+        "tile": {
+          "x": 44,
+          "y": 62
+        },
+        "wet": {
+          "x": 44,
+          "y": 62
+        }
+      },
+      {
+        "from": 1140
+      }
+    ],
+    "likes": [
+      "herb",
+      "honey"
+    ],
+    "help": {
+      "minigame": "mash",
+      "gives": {
+        "bread": 1
+      }
+    },
+    "romanceable": true,
+    "look": "f",
+    "family": "teahouse",
+    "stat": "charm",
+    "avatar": {
+      "skin": 1,
+      "hairFront": 1,
+      "hairBack": 2,
+      "top": 4,
+      "bottom": 0,
+      "acc": 2,
+      "hairColor": [
+        5,
+        55,
+        45
+      ]
+    }
   }
 ]

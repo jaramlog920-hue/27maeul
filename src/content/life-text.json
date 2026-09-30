@@ -535,6 +535,14 @@
     "lightShoes": {
       "name": "가벼운 신",
       "desc": "양치기가 언덕길에 신던 대로 지어 준 신. 걸음이 한결 가볍다."
+    },
+    "bouquet": {
+      "name": "들꽃 다발",
+      "desc": "마음을 전할 때 건네는 들꽃 한 다발."
+    },
+    "promiseCord": {
+      "name": "약속의 끈",
+      "desc": "함께 살자고 약속할 때 건네는 곱게 꼰 끈."
     }
   },
   "recipes": {
@@ -610,7 +618,9 @@
     "rainJar": "빗물 항아리",
     "inkJar": "잉크 항아리",
     "leatherBag": "가죽 가방",
-    "sturdyShoes": "튼튼한 신"
+    "sturdyShoes": "튼튼한 신",
+    "bouquet": "들꽃 다발",
+    "promiseCord": "약속의 끈"
   },
   "letters": {
     "title": "편지 바구니",
@@ -1341,6 +1351,486 @@
         "thanks": "든든하네요. 올리브 좀 가져가요."
       },
       "giftLiked": "오, 이거 좋지요!",
+      "giftPlain": "고마워요."
+    },
+    "wendell": {
+      "offer": [
+        {
+          "speaker": "wendell",
+          "text": "들려드릴 이야기는 마을 어른들이 전해 줄 거예요."
+        }
+      ],
+      "idle": [
+        {
+          "speaker": "wendell",
+          "text": "새벽 가마는 제가 맡아요. 불 앞에 있으면 졸음이 싹 달아나요."
+        },
+        {
+          "speaker": "wendell",
+          "text": "무화과를 넣은 빵을 연습하고 있어요. 아직 반쯤은 타요."
+        }
+      ],
+      "warm": [
+        {
+          "speaker": "wendell",
+          "text": "오늘 첫 빵이에요. 제일 잘 부푼 걸로 골랐어요."
+        }
+      ],
+      "close": [
+        {
+          "speaker": "wendell",
+          "text": "요즘은 빵 반죽할 때마다 필사가님 생각이 나요. 이상하죠?"
+        }
+      ],
+      "wet": [
+        {
+          "speaker": "wendell",
+          "text": "비 오는 날엔 반죽이 천천히 부풀어요. 기다리는 것도 일이에요."
+        }
+      ],
+      "visit": [
+        {
+          "speaker": "wendell",
+          "text": "오늘 구운 것 중에 제일 잘 된 거예요."
+        }
+      ],
+      "help": {
+        "label": "반죽 치대기 돕기",
+        "thanks": "팔 힘이 좋으시네요! 빵 하나 가져가요."
+      },
+      "giftLiked": "꿀이요? 내일 빵에 발라 볼게요!",
+      "giftPlain": "고마워요."
+    },
+    "cosmo": {
+      "offer": [
+        {
+          "speaker": "cosmo",
+          "text": "들려드릴 이야기는 마을 어른들이 전해 줄 거예요."
+        }
+      ],
+      "idle": [
+        {
+          "speaker": "cosmo",
+          "text": "호수 바람이 서쪽에서 불면 내일은 맑아요."
+        },
+        {
+          "speaker": "cosmo",
+          "text": "그물 깁는 건 아버지보다 제가 빨라요. 비밀이에요."
+        }
+      ],
+      "warm": [
+        {
+          "speaker": "cosmo",
+          "text": "오늘은 물이 잔잔했어요. 필사가님 얼굴처럼요."
+        }
+      ],
+      "close": [
+        {
+          "speaker": "cosmo",
+          "text": "배 위에서 필사가님이 좋아할 만한 조약돌을 주웠어요."
+        }
+      ],
+      "wet": [
+        {
+          "speaker": "cosmo",
+          "text": "비 오는 날엔 배를 못 띄워요. 대신 그물을 기워요."
+        }
+      ],
+      "visit": [
+        {
+          "speaker": "cosmo",
+          "text": "갈대가 잘 자랐길래 한 단 베어 왔어요."
+        }
+      ],
+      "help": {
+        "label": "그물 걷기 돕기",
+        "thanks": "손이 척척이네요! 갈대 두 단 가져가요."
+      },
+      "giftLiked": "와, 이거 배에서 먹으면 딱이겠어요!",
+      "giftPlain": "고마워요."
+    },
+    "rudy": {
+      "offer": [
+        {
+          "speaker": "rudy",
+          "text": "들려드릴 이야기는 마을 어른들이 전해 줄 거예요."
+        }
+      ],
+      "idle": [
+        {
+          "speaker": "rudy",
+          "text": "책 표지 나무는 결을 잘 봐야 해요. 결이 곧아야 안 휘어요."
+        },
+        {
+          "speaker": "rudy",
+          "text": "아버지 몰래 작은 책꽂이를 짜고 있어요."
+        }
+      ],
+      "warm": [
+        {
+          "speaker": "rudy",
+          "text": "필사가님이 엮은 책, 제본 골목에서도 다들 칭찬해요."
+        }
+      ],
+      "close": [
+        {
+          "speaker": "rudy",
+          "text": "필사가님 책상 모서리가 닳았던데, 제가 다듬어 드릴까요?"
+        }
+      ],
+      "wet": [
+        {
+          "speaker": "rudy",
+          "text": "비 오는 날엔 나무가 물을 먹어요. 대패질은 내일 해요."
+        }
+      ],
+      "visit": [
+        {
+          "speaker": "rudy",
+          "text": "파피루스 한 장 남았길래 챙겨 왔어요."
+        }
+      ],
+      "help": {
+        "label": "대패질 돕기",
+        "thanks": "결을 잘 보시네요! 파피루스 한 장 가져가요."
+      },
+      "giftLiked": "올리브요? 공방에서 새참으로 먹을게요!",
+      "giftPlain": "고마워요."
+    },
+    "dexter": {
+      "offer": [
+        {
+          "speaker": "dexter",
+          "text": "들려드릴 이야기는 마을 어른들이 전해 줄 거예요."
+        }
+      ],
+      "idle": [
+        {
+          "speaker": "dexter",
+          "text": "양들은 제 휘파람 소리를 알아들어요."
+        },
+        {
+          "speaker": "dexter",
+          "text": "언덕 위에서 별자리를 세다 보면 밤이 금방 가요."
+        }
+      ],
+      "warm": [
+        {
+          "speaker": "dexter",
+          "text": "오늘은 양들이 유난히 순했어요. 좋은 일이 있으려나 봐요."
+        }
+      ],
+      "close": [
+        {
+          "speaker": "dexter",
+          "text": "필사가님 오는 걸 양들이 먼저 알아봐요. 저보다 눈치가 빨라요."
+        }
+      ],
+      "wet": [
+        {
+          "speaker": "dexter",
+          "text": "비 오는 날엔 양털이 무거워져요. 양들도 저도 느릿느릿해요."
+        }
+      ],
+      "visit": [
+        {
+          "speaker": "dexter",
+          "text": "올해 첫 양털이에요. 제일 부드러운 걸로 골랐어요."
+        }
+      ],
+      "help": {
+        "label": "양 몰기 돕기",
+        "thanks": "휘파람 소질이 있으시네요! 양털 한 줌 가져가요."
+      },
+      "giftLiked": "무화과! 언덕에서 먹으면 꿀맛이에요.",
+      "giftPlain": "고마워요."
+    },
+    "basil": {
+      "offer": [
+        {
+          "speaker": "basil",
+          "text": "들려드릴 이야기는 마을 어른들이 전해 줄 거예요."
+        }
+      ],
+      "idle": [
+        {
+          "speaker": "basil",
+          "text": "박하는 해 뜨기 전에 따야 향이 진해요."
+        },
+        {
+          "speaker": "basil",
+          "text": "풀밭에 흰 꽃 핀 풀포기가 약초예요. 캐 오면 어머니가 사 줘요."
+        }
+      ],
+      "warm": [
+        {
+          "speaker": "basil",
+          "text": "얼굴빛이 좋아 보여요. 약보다 잘 먹고 잘 자는 게 최고예요."
+        }
+      ],
+      "close": [
+        {
+          "speaker": "basil",
+          "text": "필사가님 몫으로 향 좋은 박하를 따로 말려 뒀어요."
+        }
+      ],
+      "wet": [
+        {
+          "speaker": "basil",
+          "text": "비 온 뒤엔 약초가 쑥쑥 자라요. 내일 풀밭에 가 보세요."
+        }
+      ],
+      "visit": [
+        {
+          "speaker": "basil",
+          "text": "말린 약초 한 줌이에요. 차로 우려 드세요."
+        }
+      ],
+      "help": {
+        "label": "약초 고르기 돕기",
+        "thanks": "눈이 밝으시네요! 약초 한 줌 가져가요."
+      },
+      "giftLiked": "꿀이요? 약차에 넣으면 딱이에요, 고마워요!",
+      "giftPlain": "고마워요."
+    },
+    "marigold": {
+      "offer": [
+        {
+          "speaker": "marigold",
+          "text": "들려드릴 이야기는 마을 어른들이 전해 줄 거예요."
+        }
+      ],
+      "idle": [
+        {
+          "speaker": "marigold",
+          "text": "할아버지 포도는 해를 많이 볼수록 달아져요."
+        },
+        {
+          "speaker": "marigold",
+          "text": "포도 넝쿨 사이에 숨으면 아무도 못 찾아요."
+        }
+      ],
+      "warm": [
+        {
+          "speaker": "marigold",
+          "text": "오늘 포도원 바람이 참 좋았어요. 같이 걸었으면 좋았을 텐데요."
+        }
+      ],
+      "close": [
+        {
+          "speaker": "marigold",
+          "text": "할아버지가 필사가님 이야기를 하면 저도 모르게 웃게 돼요."
+        }
+      ],
+      "wet": [
+        {
+          "speaker": "marigold",
+          "text": "비 오는 날엔 포도알이 반짝반짝해요."
+        }
+      ],
+      "visit": [
+        {
+          "speaker": "marigold",
+          "text": "할아버지 몰래 제일 잘 익은 송이를 땄어요. 비밀이에요!"
+        }
+      ],
+      "help": {
+        "label": "포도 고르기 돕기",
+        "thanks": "잘 익은 걸 금방 아시네요! 포도 한 송이 가져가요."
+      },
+      "giftLiked": "빵! 포도랑 같이 먹으면 최고예요!",
+      "giftPlain": "고마워요."
+    },
+    "penelope": {
+      "offer": [
+        {
+          "speaker": "penelope",
+          "text": "들려드릴 이야기는 마을 어른들이 전해 줄 거예요."
+        }
+      ],
+      "idle": [
+        {
+          "speaker": "penelope",
+          "text": "베틀 소리가 일정하면 마음도 차분해져요."
+        },
+        {
+          "speaker": "penelope",
+          "text": "꽃잎으로 실을 물들이면 봄 냄새가 나요."
+        }
+      ],
+      "warm": [
+        {
+          "speaker": "penelope",
+          "text": "오늘 짠 천이 유난히 고왔어요. 좋은 하루네요."
+        }
+      ],
+      "close": [
+        {
+          "speaker": "penelope",
+          "text": "필사가님 책 표지에 두를 천을 몰래 짜고 있어요."
+        }
+      ],
+      "wet": [
+        {
+          "speaker": "penelope",
+          "text": "비 오는 날엔 실이 잘 안 말라요. 대신 무늬를 궁리해요."
+        }
+      ],
+      "visit": [
+        {
+          "speaker": "penelope",
+          "text": "자투리 양털이에요. 쓸 데가 있을 거예요."
+        }
+      ],
+      "help": {
+        "label": "실 감기 돕기",
+        "thanks": "손끝이 야무지시네요! 양털 한 줌 가져가요."
+      },
+      "giftLiked": "무화과요? 베틀 옆에 두고 아껴 먹을게요!",
+      "giftPlain": "고마워요."
+    },
+    "tilly": {
+      "offer": [
+        {
+          "speaker": "tilly",
+          "text": "들려드릴 이야기는 마을 어른들이 전해 줄 거예요."
+        }
+      ],
+      "idle": [
+        {
+          "speaker": "tilly",
+          "text": "풀무는 제가 밟아요. 아버지보다 불을 잘 살려요."
+        },
+        {
+          "speaker": "tilly",
+          "text": "쇠는 달궈졌을 때 두드려야 해요. 마음도 그렇고요."
+        }
+      ],
+      "warm": [
+        {
+          "speaker": "tilly",
+          "text": "오늘 불이 아주 잘 붙었어요. 기분 좋은 날이에요!"
+        }
+      ],
+      "close": [
+        {
+          "speaker": "tilly",
+          "text": "필사가님 등잔 고리가 헐거웠죠? 제가 새로 두드려 드릴게요."
+        }
+      ],
+      "wet": [
+        {
+          "speaker": "tilly",
+          "text": "비 오는 날엔 대장간이 쉬어요. 저도 좀 쉬고요."
+        }
+      ],
+      "visit": [
+        {
+          "speaker": "tilly",
+          "text": "그을음 좀 모아 왔어요. 잉크 만들 때 쓰세요!"
+        }
+      ],
+      "help": {
+        "label": "풀무 밟기 돕기",
+        "thanks": "바람을 잘 넣으시네요! 그을음 가져가요."
+      },
+      "giftLiked": "빵! 대장간 일은 배가 금방 고파요!",
+      "giftPlain": "고마워요."
+    },
+    "juniper": {
+      "offer": [
+        {
+          "speaker": "juniper",
+          "text": "들려드릴 이야기는 마을 어른들이 전해 줄 거예요."
+        }
+      ],
+      "idle": [
+        {
+          "speaker": "juniper",
+          "text": "벌은 춤으로 꽃 있는 곳을 알려 줘요. 신기하죠?"
+        },
+        {
+          "speaker": "juniper",
+          "text": "벌통 곁에선 천천히 움직여야 해요. 벌도 놀라니까요."
+        }
+      ],
+      "warm": [
+        {
+          "speaker": "juniper",
+          "text": "오늘 벌들이 새 꽃밭을 찾았어요. 필사가님한테 제일 먼저 알려 주고 싶었어요."
+        }
+      ],
+      "close": [
+        {
+          "speaker": "juniper",
+          "text": "벌 관찰 공책에 필사가님 이름을 몇 번이나 썼는지 몰라요."
+        }
+      ],
+      "wet": [
+        {
+          "speaker": "juniper",
+          "text": "비 오는 날엔 벌들도 집에 있어요. 저는 공책을 정리해요."
+        }
+      ],
+      "visit": [
+        {
+          "speaker": "juniper",
+          "text": "올해 첫 꿀이에요. 조금 덜어 왔어요."
+        }
+      ],
+      "help": {
+        "label": "벌통 살피기 돕기",
+        "thanks": "벌들이 좋아하네요! 꿀 한 병 가져가요."
+      },
+      "giftLiked": "약초요? 벌들이 좋아하는 꽃이 피는 풀이에요!",
+      "giftPlain": "고마워요."
+    },
+    "poppy": {
+      "offer": [
+        {
+          "speaker": "poppy",
+          "text": "들려드릴 이야기는 마을 어른들이 전해 줄 거예요."
+        }
+      ],
+      "idle": [
+        {
+          "speaker": "poppy",
+          "text": "찻잎은 물이 끓기 직전에 넣어야 쓰지 않아요."
+        },
+        {
+          "speaker": "poppy",
+          "text": "창가 자리는 오후 햇살이 제일 예뻐요."
+        }
+      ],
+      "warm": [
+        {
+          "speaker": "poppy",
+          "text": "어서 오세요! 오늘은 꽃차가 향이 좋아요."
+        }
+      ],
+      "close": [
+        {
+          "speaker": "poppy",
+          "text": "필사가님 찻잔은 따로 두고 있어요. 제일 예쁜 걸로요."
+        }
+      ],
+      "wet": [
+        {
+          "speaker": "poppy",
+          "text": "비 오는 날엔 손님이 늘어요. 다들 따뜻한 게 그리운가 봐요."
+        }
+      ],
+      "visit": [
+        {
+          "speaker": "poppy",
+          "text": "찻집에서 구운 작은 빵이에요. 차랑 같이 드세요."
+        }
+      ],
+      "help": {
+        "label": "찻잎 덖기 돕기",
+        "thanks": "향이 잘 올라왔어요! 빵 하나 가져가요."
+      },
+      "giftLiked": "어머, 약초네요! 새 차로 우려 볼게요!",
       "giftPlain": "고마워요."
     }
   },
@@ -2976,6 +3466,744 @@
         }
       ],
       "album": "호숫가 노을"
+    },
+    "romance1:wendell": {
+      "title": "웬델의 이야기",
+      "lines": [
+        {
+          "speaker": "wendell",
+          "text": "어릴 땐 가마 불이 무서웠어요."
+        },
+        {
+          "speaker": "wendell",
+          "text": "아버지가 불은 무서운 게 아니라 조심하는 거라고 하셨죠. 그 뒤로 새벽마다 제가 불을 지펴요."
+        }
+      ]
+    },
+    "romance2:wendell": {
+      "title": "웬델의 이야기",
+      "lines": [
+        {
+          "speaker": "wendell",
+          "text": "언젠가 제 이름을 붙인 빵을 만들고 싶어요."
+        },
+        {
+          "speaker": "wendell",
+          "text": "그 빵은… 필사가님이 제일 먼저 맛봐 줬으면 좋겠어요."
+        }
+      ]
+    },
+    "confess:wendell": {
+      "title": "들꽃 다발",
+      "lines": [
+        {
+          "speaker": "wendell",
+          "text": "이 들꽃… 저한테 주시는 거예요?"
+        },
+        {
+          "speaker": "wendell",
+          "text": "저도 오래전부터 필사가님이 좋았어요. 이제 새벽 가마 앞에서 필사가님 생각만 해도 되겠네요."
+        }
+      ],
+      "album": "웬델에게 건넨 들꽃"
+    },
+    "propose:wendell": {
+      "title": "약속의 끈",
+      "lines": [
+        {
+          "speaker": "wendell",
+          "text": "약속의 끈이네요."
+        },
+        {
+          "speaker": "wendell",
+          "text": "앞으로 매일 아침 첫 빵은 우리 식탁에 올릴게요. 평생이요."
+        }
+      ]
+    },
+    "wedding:wendell": {
+      "title": "마을 잔치",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "광장 모닥불 둘레에 등불이 켜지고, 이웃들이 모두 모였다."
+        },
+        {
+          "speaker": "wendell",
+          "text": "오늘 빵은 제가 밤새 구웠어요. 다들 배불리 드세요!"
+        },
+        {
+          "speaker": "narration",
+          "text": "오늘부터 둘이 한집에서 산다."
+        }
+      ],
+      "album": "결혼 잔치"
+    },
+    "romance1:cosmo": {
+      "title": "코스모의 이야기",
+      "lines": [
+        {
+          "speaker": "cosmo",
+          "text": "처음 혼자 배를 몰던 날, 안개가 짙게 꼈어요."
+        },
+        {
+          "speaker": "cosmo",
+          "text": "나루 등불만 보고 겨우 돌아왔죠. 그 뒤로 등불을 보면 마음이 놓여요."
+        }
+      ]
+    },
+    "romance2:cosmo": {
+      "title": "코스모의 이야기",
+      "lines": [
+        {
+          "speaker": "cosmo",
+          "text": "호수 한가운데 가면 마을이 한눈에 보여요."
+        },
+        {
+          "speaker": "cosmo",
+          "text": "언제 한번 같이 가요. 필사가님 집 지붕도 보일 거예요."
+        }
+      ]
+    },
+    "confess:cosmo": {
+      "title": "들꽃 다발",
+      "lines": [
+        {
+          "speaker": "cosmo",
+          "text": "이거… 저 주는 거 맞죠?"
+        },
+        {
+          "speaker": "cosmo",
+          "text": "저도요. 호수 위에서 제일 먼저 떠올리는 얼굴이 필사가님이에요."
+        }
+      ],
+      "album": "코스모에게 건넨 들꽃"
+    },
+    "propose:cosmo": {
+      "title": "약속의 끈",
+      "lines": [
+        {
+          "speaker": "cosmo",
+          "text": "약속의 끈…"
+        },
+        {
+          "speaker": "cosmo",
+          "text": "그물처럼 튼튼하게 묶을게요. 어떤 바람이 불어도 풀리지 않게요."
+        }
+      ]
+    },
+    "wedding:cosmo": {
+      "title": "마을 잔치",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "광장 모닥불 둘레에 등불이 켜지고, 이웃들이 모두 모였다."
+        },
+        {
+          "speaker": "cosmo",
+          "text": "오늘 잡은 물고기는 다 잔치에 내놨어요. 실컷 드세요!"
+        },
+        {
+          "speaker": "narration",
+          "text": "오늘부터 둘이 한집에서 산다."
+        }
+      ],
+      "album": "결혼 잔치"
+    },
+    "romance1:rudy": {
+      "title": "루디의 이야기",
+      "lines": [
+        {
+          "speaker": "rudy",
+          "text": "처음 짠 의자는 다리가 하나 짧았어요."
+        },
+        {
+          "speaker": "rudy",
+          "text": "그래도 할머니가 십 년을 앉으셨죠. 쓰는 사람이 아껴 주면 물건은 오래가요."
+        }
+      ]
+    },
+    "romance2:rudy": {
+      "title": "루디의 이야기",
+      "lines": [
+        {
+          "speaker": "rudy",
+          "text": "필사가님이 엮는 책을 보면 저도 뭔가 오래 남는 걸 만들고 싶어져요."
+        },
+        {
+          "speaker": "rudy",
+          "text": "언젠가 필사가님 책을 꽂을 책장을 짜 드리고 싶어요."
+        }
+      ]
+    },
+    "confess:rudy": {
+      "title": "들꽃 다발",
+      "lines": [
+        {
+          "speaker": "rudy",
+          "text": "들꽃… 저한테요?"
+        },
+        {
+          "speaker": "rudy",
+          "text": "실은 필사가님 책상 다듬어 드린다는 건 핑계였어요. 자주 보고 싶어서요."
+        }
+      ],
+      "album": "루디에게 건넨 들꽃"
+    },
+    "propose:rudy": {
+      "title": "약속의 끈",
+      "lines": [
+        {
+          "speaker": "rudy",
+          "text": "약속의 끈이군요."
+        },
+        {
+          "speaker": "rudy",
+          "text": "우리 집 기둥은 제가 세울게요. 흔들리지 않게, 오래오래."
+        }
+      ]
+    },
+    "wedding:rudy": {
+      "title": "마을 잔치",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "광장 모닥불 둘레에 등불이 켜지고, 이웃들이 모두 모였다."
+        },
+        {
+          "speaker": "rudy",
+          "text": "잔치 탁자는 제가 밤새 짰어요. 튼튼하니까 마음껏 올려놓으세요!"
+        },
+        {
+          "speaker": "narration",
+          "text": "오늘부터 둘이 한집에서 산다."
+        }
+      ],
+      "album": "결혼 잔치"
+    },
+    "romance1:dexter": {
+      "title": "덱스터의 이야기",
+      "lines": [
+        {
+          "speaker": "dexter",
+          "text": "길 잃은 어린 양을 밤새 찾은 적이 있어요."
+        },
+        {
+          "speaker": "dexter",
+          "text": "새벽에 바위틈에서 찾았을 때, 그 녀석이 먼저 울면서 달려오더라고요."
+        }
+      ]
+    },
+    "romance2:dexter": {
+      "title": "덱스터의 이야기",
+      "lines": [
+        {
+          "speaker": "dexter",
+          "text": "언덕 위 별은 마을에서 보는 별보다 조금 더 가까워요."
+        },
+        {
+          "speaker": "dexter",
+          "text": "다음에 맑은 밤이 오면 같이 올라가요. 제일 밝은 별을 알려 드릴게요."
+        }
+      ]
+    },
+    "confess:dexter": {
+      "title": "들꽃 다발",
+      "lines": [
+        {
+          "speaker": "dexter",
+          "text": "이 들꽃, 언덕에 핀 거랑 똑같네요."
+        },
+        {
+          "speaker": "dexter",
+          "text": "저도 좋아해요. 별을 셀 때마다 필사가님 이름을 하나씩 붙였어요."
+        }
+      ],
+      "album": "덱스터에게 건넨 들꽃"
+    },
+    "propose:dexter": {
+      "title": "약속의 끈",
+      "lines": [
+        {
+          "speaker": "dexter",
+          "text": "약속의 끈이라니…"
+        },
+        {
+          "speaker": "dexter",
+          "text": "어떤 날씨에도 필사가님 곁을 지킬게요. 양들을 지키듯이요."
+        }
+      ]
+    },
+    "wedding:dexter": {
+      "title": "마을 잔치",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "광장 모닥불 둘레에 등불이 켜지고, 이웃들이 모두 모였다."
+        },
+        {
+          "speaker": "dexter",
+          "text": "양들도 목에 꽃을 달았어요. 오늘은 다들 멋쟁이예요!"
+        },
+        {
+          "speaker": "narration",
+          "text": "오늘부터 둘이 한집에서 산다."
+        }
+      ],
+      "album": "결혼 잔치"
+    },
+    "romance1:basil": {
+      "title": "바질의 이야기",
+      "lines": [
+        {
+          "speaker": "basil",
+          "text": "어릴 때 독풀을 약초인 줄 알고 캐 온 적이 있어요."
+        },
+        {
+          "speaker": "basil",
+          "text": "어머니가 잎 모양을 하나하나 짚어 주셨죠. 그 뒤로 잎은 꼭 두 번 봐요."
+        }
+      ]
+    },
+    "romance2:basil": {
+      "title": "바질의 이야기",
+      "lines": [
+        {
+          "speaker": "basil",
+          "text": "아픈 사람이 차 한 잔 마시고 웃는 걸 보면 이 일이 좋아요."
+        },
+        {
+          "speaker": "basil",
+          "text": "필사가님이 지친 날엔… 제가 제일 먼저 차를 우려 드리고 싶어요."
+        }
+      ]
+    },
+    "confess:basil": {
+      "title": "들꽃 다발",
+      "lines": [
+        {
+          "speaker": "basil",
+          "text": "들꽃이네요. 약초는 아니지만, 제일 좋은 꽃이에요."
+        },
+        {
+          "speaker": "basil",
+          "text": "저도 필사가님이 좋아요. 박하를 따로 말려 둔 것도 그래서였어요."
+        }
+      ],
+      "album": "바질에게 건넨 들꽃"
+    },
+    "propose:basil": {
+      "title": "약속의 끈",
+      "lines": [
+        {
+          "speaker": "basil",
+          "text": "약속의 끈…"
+        },
+        {
+          "speaker": "basil",
+          "text": "아플 때도 기쁠 때도 제가 곁에서 차를 우릴게요. 약속해요."
+        }
+      ]
+    },
+    "wedding:basil": {
+      "title": "마을 잔치",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "광장 모닥불 둘레에 등불이 켜지고, 이웃들이 모두 모였다."
+        },
+        {
+          "speaker": "basil",
+          "text": "오늘 약차엔 꿀을 듬뿍 넣었어요. 달콤하게 드세요!"
+        },
+        {
+          "speaker": "narration",
+          "text": "오늘부터 둘이 한집에서 산다."
+        }
+      ],
+      "album": "결혼 잔치"
+    },
+    "romance1:marigold": {
+      "title": "메리골드의 이야기",
+      "lines": [
+        {
+          "speaker": "marigold",
+          "text": "어렸을 때 할아버지 포도주 통에 들어가 숨었다가 크게 혼났어요."
+        },
+        {
+          "speaker": "marigold",
+          "text": "그래도 할아버지는 그날 밤 제 머리를 오래 쓰다듬어 주셨어요."
+        }
+      ]
+    },
+    "romance2:marigold": {
+      "title": "메리골드의 이야기",
+      "lines": [
+        {
+          "speaker": "marigold",
+          "text": "언젠가 제 이름 붙은 포도나무를 한 그루 심고 싶어요."
+        },
+        {
+          "speaker": "marigold",
+          "text": "그 나무 아래서 필사가님이랑 첫 송이를 나눠 먹고 싶어요."
+        }
+      ]
+    },
+    "confess:marigold": {
+      "title": "들꽃 다발",
+      "lines": [
+        {
+          "speaker": "marigold",
+          "text": "어머, 들꽃 다발이에요?"
+        },
+        {
+          "speaker": "marigold",
+          "text": "저도 좋아해요! 할아버지한테 제일 먼저 자랑해야겠어요."
+        }
+      ],
+      "album": "메리골드에게 건넨 들꽃"
+    },
+    "propose:marigold": {
+      "title": "약속의 끈",
+      "lines": [
+        {
+          "speaker": "marigold",
+          "text": "약속의 끈… 정말요?"
+        },
+        {
+          "speaker": "marigold",
+          "text": "포도나무처럼 뿌리 깊게, 오래오래 같이 살아요."
+        }
+      ]
+    },
+    "wedding:marigold": {
+      "title": "마을 잔치",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "광장 모닥불 둘레에 등불이 켜지고, 이웃들이 모두 모였다."
+        },
+        {
+          "speaker": "marigold",
+          "text": "할아버지가 아껴 둔 포도를 다 꺼내 오셨어요. 모두 맛보세요!"
+        },
+        {
+          "speaker": "narration",
+          "text": "오늘부터 둘이 한집에서 산다."
+        }
+      ],
+      "album": "결혼 잔치"
+    },
+    "romance1:penelope": {
+      "title": "페넬로피의 이야기",
+      "lines": [
+        {
+          "speaker": "penelope",
+          "text": "처음 짠 천은 구멍투성이였어요."
+        },
+        {
+          "speaker": "penelope",
+          "text": "어머니는 그걸 버리지 않고 창가에 걸어 두셨죠. 첫 마음을 잊지 말라고요."
+        }
+      ]
+    },
+    "romance2:penelope": {
+      "title": "페넬로피의 이야기",
+      "lines": [
+        {
+          "speaker": "penelope",
+          "text": "실 한 올은 약하지만 엮으면 튼튼해져요."
+        },
+        {
+          "speaker": "penelope",
+          "text": "필사가님이 엮는 책도 그렇지 않을까요? 저도 그 곁에서 뭔가 엮고 싶어요."
+        }
+      ]
+    },
+    "confess:penelope": {
+      "title": "들꽃 다발",
+      "lines": [
+        {
+          "speaker": "penelope",
+          "text": "들꽃 다발… 제가 좋아하는 색만 골랐네요."
+        },
+        {
+          "speaker": "penelope",
+          "text": "저도 필사가님이 좋아요. 책 표지 천은 사실 그래서 짜고 있었어요."
+        }
+      ],
+      "album": "페넬로피에게 건넨 들꽃"
+    },
+    "propose:penelope": {
+      "title": "약속의 끈",
+      "lines": [
+        {
+          "speaker": "penelope",
+          "text": "약속의 끈이네요. 제가 짠 것보다 더 곱네요."
+        },
+        {
+          "speaker": "penelope",
+          "text": "둘이 엮으면 더 튼튼할 거예요. 같이 살아요."
+        }
+      ]
+    },
+    "wedding:penelope": {
+      "title": "마을 잔치",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "광장 모닥불 둘레에 등불이 켜지고, 이웃들이 모두 모였다."
+        },
+        {
+          "speaker": "penelope",
+          "text": "잔치 깃발은 제가 짰어요. 바람에 날리는 거 보세요!"
+        },
+        {
+          "speaker": "narration",
+          "text": "오늘부터 둘이 한집에서 산다."
+        }
+      ],
+      "album": "결혼 잔치"
+    },
+    "romance1:tilly": {
+      "title": "틸리의 이야기",
+      "lines": [
+        {
+          "speaker": "tilly",
+          "text": "처음 망치를 들었을 땐 손바닥에 물집이 잡혔어요."
+        },
+        {
+          "speaker": "tilly",
+          "text": "아버지는 약 대신 튼튼한 장갑을 주셨죠. 그게 우리 집 방식이에요."
+        }
+      ]
+    },
+    "romance2:tilly": {
+      "title": "틸리의 이야기",
+      "lines": [
+        {
+          "speaker": "tilly",
+          "text": "언젠가 제 손으로 마을 등불 고리를 전부 만들고 싶어요."
+        },
+        {
+          "speaker": "tilly",
+          "text": "밤에 등불이 켜지면, 필사가님 집 앞 고리가 제일 반짝이게요."
+        }
+      ]
+    },
+    "confess:tilly": {
+      "title": "들꽃 다발",
+      "lines": [
+        {
+          "speaker": "tilly",
+          "text": "들꽃?! 저, 저한테요?"
+        },
+        {
+          "speaker": "tilly",
+          "text": "…저도 좋아해요! 망치질하다 필사가님 생각에 손가락 찧은 적도 있다고요."
+        }
+      ],
+      "album": "틸리에게 건넨 들꽃"
+    },
+    "propose:tilly": {
+      "title": "약속의 끈",
+      "lines": [
+        {
+          "speaker": "tilly",
+          "text": "약속의 끈… 쇠보다 단단하게 묶어요!"
+        },
+        {
+          "speaker": "tilly",
+          "text": "무슨 일이 있어도 필사가님 편이 될게요. 약속이에요."
+        }
+      ]
+    },
+    "wedding:tilly": {
+      "title": "마을 잔치",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "광장 모닥불 둘레에 등불이 켜지고, 이웃들이 모두 모였다."
+        },
+        {
+          "speaker": "tilly",
+          "text": "잔치 등불 고리는 제가 다 새로 두드렸어요. 반짝이죠?"
+        },
+        {
+          "speaker": "narration",
+          "text": "오늘부터 둘이 한집에서 산다."
+        }
+      ],
+      "album": "결혼 잔치"
+    },
+    "romance1:juniper": {
+      "title": "주니퍼의 이야기",
+      "lines": [
+        {
+          "speaker": "juniper",
+          "text": "어릴 때 벌에 쏘이고 한참 울었어요."
+        },
+        {
+          "speaker": "juniper",
+          "text": "그래도 다음 날 또 벌통에 갔대요. 무섭지만 궁금한 게 더 컸나 봐요."
+        }
+      ]
+    },
+    "romance2:juniper": {
+      "title": "주니퍼의 이야기",
+      "lines": [
+        {
+          "speaker": "juniper",
+          "text": "벌은 혼자서는 꿀을 못 만들어요. 다 같이 해야 해요."
+        },
+        {
+          "speaker": "juniper",
+          "text": "저도 누군가랑 같이 무언가를 만들어 보고 싶어요. 필사가님이랑이면 좋겠어요."
+        }
+      ]
+    },
+    "confess:juniper": {
+      "title": "들꽃 다발",
+      "lines": [
+        {
+          "speaker": "juniper",
+          "text": "들꽃 다발… 벌들이 좋아하는 꽃이네요."
+        },
+        {
+          "speaker": "juniper",
+          "text": "저도 필사가님이 좋아요. 공책에 쓴 이름, 다 진심이었어요."
+        }
+      ],
+      "album": "주니퍼에게 건넨 들꽃"
+    },
+    "propose:juniper": {
+      "title": "약속의 끈",
+      "lines": [
+        {
+          "speaker": "juniper",
+          "text": "약속의 끈이요?"
+        },
+        {
+          "speaker": "juniper",
+          "text": "벌들처럼 부지런히, 같이 달콤하게 살아요."
+        }
+      ]
+    },
+    "wedding:juniper": {
+      "title": "마을 잔치",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "광장 모닥불 둘레에 등불이 켜지고, 이웃들이 모두 모였다."
+        },
+        {
+          "speaker": "juniper",
+          "text": "오늘 꿀은 벌들이 주는 선물이에요. 한 숟가락씩 드세요!"
+        },
+        {
+          "speaker": "narration",
+          "text": "오늘부터 둘이 한집에서 산다."
+        }
+      ],
+      "album": "결혼 잔치"
+    },
+    "romance1:poppy": {
+      "title": "파피의 이야기",
+      "lines": [
+        {
+          "speaker": "poppy",
+          "text": "처음 찻집에서 일할 땐 찻잔을 세 개나 깼어요."
+        },
+        {
+          "speaker": "poppy",
+          "text": "주인 아주머니는 깨진 조각으로 화분 받침을 만들어 주셨죠. 그 화분, 아직 창가에 있어요."
+        }
+      ]
+    },
+    "romance2:poppy": {
+      "title": "파피의 이야기",
+      "lines": [
+        {
+          "speaker": "poppy",
+          "text": "언젠가 제 이름으로 된 차를 만들고 싶어요."
+        },
+        {
+          "speaker": "poppy",
+          "text": "그 차 이름은… 필사가님이 지어 주면 좋겠어요."
+        }
+      ]
+    },
+    "confess:poppy": {
+      "title": "들꽃 다발",
+      "lines": [
+        {
+          "speaker": "poppy",
+          "text": "들꽃 다발! 찻잔에 꽂아 둘게요, 오래오래."
+        },
+        {
+          "speaker": "poppy",
+          "text": "저도 좋아해요. 필사가님 찻잔 따로 둔 거, 눈치채셨죠?"
+        }
+      ],
+      "album": "파피에게 건넨 들꽃"
+    },
+    "propose:poppy": {
+      "title": "약속의 끈",
+      "lines": [
+        {
+          "speaker": "poppy",
+          "text": "약속의 끈… 가슴이 두근거려요."
+        },
+        {
+          "speaker": "poppy",
+          "text": "매일 저녁 둘이 마실 차를 우릴게요. 평생이요."
+        }
+      ]
+    },
+    "wedding:poppy": {
+      "title": "마을 잔치",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "광장 모닥불 둘레에 등불이 켜지고, 이웃들이 모두 모였다."
+        },
+        {
+          "speaker": "poppy",
+          "text": "잔치 차는 제가 다 우렸어요. 따뜻할 때 드세요!"
+        },
+        {
+          "speaker": "narration",
+          "text": "오늘부터 둘이 한집에서 산다."
+        }
+      ],
+      "album": "결혼 잔치"
+    },
+    "dateTea": {
+      "title": "둘이 마시는 차",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "창가 탁자에 마주 앉아 같은 차를 나눠 마셨다."
+        },
+        {
+          "speaker": "narration",
+          "text": "찻잔이 식는 줄도 모르고 이야기가 이어졌다."
+        }
+      ],
+      "album": "둘이 마신 차"
+    },
+    "dateSunset": {
+      "title": "둘이 본 노을",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "정자 벤치에 나란히 앉아 호수 너머로 지는 해를 보았다."
+        },
+        {
+          "speaker": "narration",
+          "text": "말은 많지 않았지만, 마음은 한참 따뜻했다."
+        }
+      ],
+      "album": "둘이 본 노을"
     }
   },
   "journal": {
@@ -3047,7 +4275,59 @@
       "homeMailbox": " 집 앞에 편지함이 섰다.",
       "hallNight": " 저녁에 사랑방에서 이웃들과 놀았다.",
       "teaFirst": " 정원 찻집에서 차를 마셨다.",
-      "sunset": " 호숫가 정자에서 노을을 보았다."
+      "sunset": " 호숫가 정자에서 노을을 보았다.",
+      "romance1:wendell": " 웬델의 옛이야기를 들었다.",
+      "romance2:wendell": " 웬델과 오래 이야기했다.",
+      "confess:wendell": " 웬델에게 들꽃 다발을 건넸다.",
+      "propose:wendell": " 웬델에게 약속의 끈을 건넸다.",
+      "wedding:wendell": " 웬델과 마을 잔치를 열었다.",
+      "romance1:cosmo": " 코스모의 옛이야기를 들었다.",
+      "romance2:cosmo": " 코스모와 오래 이야기했다.",
+      "confess:cosmo": " 코스모에게 들꽃 다발을 건넸다.",
+      "propose:cosmo": " 코스모에게 약속의 끈을 건넸다.",
+      "wedding:cosmo": " 코스모와 마을 잔치를 열었다.",
+      "romance1:rudy": " 루디의 옛이야기를 들었다.",
+      "romance2:rudy": " 루디와 오래 이야기했다.",
+      "confess:rudy": " 루디에게 들꽃 다발을 건넸다.",
+      "propose:rudy": " 루디에게 약속의 끈을 건넸다.",
+      "wedding:rudy": " 루디와 마을 잔치를 열었다.",
+      "romance1:dexter": " 덱스터의 옛이야기를 들었다.",
+      "romance2:dexter": " 덱스터와 오래 이야기했다.",
+      "confess:dexter": " 덱스터에게 들꽃 다발을 건넸다.",
+      "propose:dexter": " 덱스터에게 약속의 끈을 건넸다.",
+      "wedding:dexter": " 덱스터와 마을 잔치를 열었다.",
+      "romance1:basil": " 바질의 옛이야기를 들었다.",
+      "romance2:basil": " 바질과 오래 이야기했다.",
+      "confess:basil": " 바질에게 들꽃 다발을 건넸다.",
+      "propose:basil": " 바질에게 약속의 끈을 건넸다.",
+      "wedding:basil": " 바질과 마을 잔치를 열었다.",
+      "romance1:marigold": " 메리골드의 옛이야기를 들었다.",
+      "romance2:marigold": " 메리골드와 오래 이야기했다.",
+      "confess:marigold": " 메리골드에게 들꽃 다발을 건넸다.",
+      "propose:marigold": " 메리골드에게 약속의 끈을 건넸다.",
+      "wedding:marigold": " 메리골드와 마을 잔치를 열었다.",
+      "romance1:penelope": " 페넬로피의 옛이야기를 들었다.",
+      "romance2:penelope": " 페넬로피와 오래 이야기했다.",
+      "confess:penelope": " 페넬로피에게 들꽃 다발을 건넸다.",
+      "propose:penelope": " 페넬로피에게 약속의 끈을 건넸다.",
+      "wedding:penelope": " 페넬로피와 마을 잔치를 열었다.",
+      "romance1:tilly": " 틸리의 옛이야기를 들었다.",
+      "romance2:tilly": " 틸리와 오래 이야기했다.",
+      "confess:tilly": " 틸리에게 들꽃 다발을 건넸다.",
+      "propose:tilly": " 틸리에게 약속의 끈을 건넸다.",
+      "wedding:tilly": " 틸리와 마을 잔치를 열었다.",
+      "romance1:juniper": " 주니퍼의 옛이야기를 들었다.",
+      "romance2:juniper": " 주니퍼와 오래 이야기했다.",
+      "confess:juniper": " 주니퍼에게 들꽃 다발을 건넸다.",
+      "propose:juniper": " 주니퍼에게 약속의 끈을 건넸다.",
+      "wedding:juniper": " 주니퍼와 마을 잔치를 열었다.",
+      "romance1:poppy": " 파피의 옛이야기를 들었다.",
+      "romance2:poppy": " 파피와 오래 이야기했다.",
+      "confess:poppy": " 파피에게 들꽃 다발을 건넸다.",
+      "propose:poppy": " 파피에게 약속의 끈을 건넸다.",
+      "wedding:poppy": " 파피와 마을 잔치를 열었다.",
+      "dateTea": " 찻집에서 둘이 차를 마셨다.",
+      "dateSunset": " 정자에서 둘이 노을을 보았다."
     }
   },
   "quiz": {
@@ -3235,5 +4515,28 @@
     "sold": "약초 {n}줌을 팔아 {coins}닢을 받았다.",
     "soldOut": "오늘은 약초를 넉넉히 샀어요. 내일 또 가져와요.",
     "hint": "마을 가장자리 풀밭에서 약초를 캘 수 있어요. 하루에 네 줌까지."
+  },
+  "romance": {
+    "stage": {
+      "dating": "연인",
+      "engaged": "약혼",
+      "married": "배우자"
+    },
+    "friend": "친구",
+    "giveBouquet": "들꽃 다발 건네기",
+    "giveCord": "약속의 끈 건네기",
+    "bouquetHearts": "마음이 {n}개 넘게 쌓이면 들꽃 다발로 마음을 전할 수 있어요.",
+    "bouquetNoItem": "들꽃 다발은 장날 상인에게서 살 수 있어요.",
+    "taken": "이미 마음을 준 사람이 있어요.",
+    "cordDays": "연인이 된 지 {n}일이 지나면 약속의 끈을 건넬 수 있어요.",
+    "cordHearts": "마음이 가득 차면 약속의 끈을 건넬 수 있어요.",
+    "cordRoom": "함께 살 방이 있으면 좋겠어요. 목수에게 집 넓히기를 부탁해 보세요.",
+    "cordNoItem": "약속의 끈은 장날 상인에게서 살 수 있어요.",
+    "weddingSoon": "{day}일째 저녁, 광장 모닥불에서 마을 잔치를 열어요.",
+    "spouseGift": "{who} 챙겨 주었다: {items}",
+    "dateTea": "{with} 차 마시기 ({n}닢)",
+    "dateSunset": "{with} 노을 보기",
+    "dateDone": "{with} 오붓한 시간을 보냈다.",
+    "dateAlready": "오늘은 벌써 둘이 시간을 보냈어요."
   }
 }
