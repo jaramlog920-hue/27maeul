@@ -4,7 +4,7 @@ import { useGame } from '../../store/game-store'
 import { ModalLayer } from '../ModalLayer'
 import { DecorateBar } from './DecorateBar'
 import { GameCanvas } from './GameCanvas'
-import { Hud, Toast } from './Hud'
+import { Hud, Toast, AwardBanner } from './Hud'
 import { StatusPanel } from './StatusPanel'
 import { useKeyboardMovement } from './useKeyboardMovement'
 import { NextEventBar, useEventAlerts } from './EventSchedule'
@@ -34,6 +34,7 @@ export function Play() {
         <GameCanvas zoom={zoom} />
         <Joystick />
         <Toast />
+        <AwardBanner />
       </div>
       <StatusPanel />
       <DecorateBar />

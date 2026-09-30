@@ -67,6 +67,7 @@ import {
   fulfillBoard,
   takeTrip,
   nameChild,
+  recordProgress,
   warmByHearth,
   playerTile,
   receiveVisit,
@@ -120,7 +121,7 @@ export type Pending =
 export type QuizMode = { kind: 'chapter'; book: Book; chapter: number } | { kind: 'library'; book: Book; retry: boolean }
 
 /** 선반의 칸 */
-export type ShelfTab = 'dex' | 'gifts' | 'recipes' | 'album' | 'lines'
+export type ShelfTab = 'dex' | 'gifts' | 'recipes' | 'album' | 'lines' | 'items' | 'awards'
 
 export type Modal =
   | { kind: 'settings' }
@@ -213,6 +214,8 @@ interface Store {
   game: GameState
   modal: Modal | null
   toast: { text: string; until: number } | null
+  /** 새로 이룬 업적 (알림과 따로, 위쪽 작은 띠) */
+  award: { text: string; until: number } | null
   /** 지금 장면 창을 닫은 뒤 띄울 알림 (별 보는 밤: 장면을 먼저 보이고 편지함 알림) */
   afterScene: string | null
   /** 방 꾸미기: 놓을 물건, 또는 치우기 */
@@ -527,7 +530,13 @@ export type MenuPlace = 'hearth' | 'workbench' | 'press' | 'hill' | 'bench' | 'h
 
 export const useGame = create<Store>((set, get) => {
   let warnedSaveFail = false
-  const persist = (game: GameState) => {
+  const persist = (g: GameState) => {
+    // 물건 도감·업적: 저장할 때마다 새로 적고, 새로 이룬 업적은 알림과 따로 띄운다
+    const { state: game, fresh } = recordProgress(g)
+    if (fresh.length) {
+      const text = fresh.length === 1 ? `업적 · ${fresh[0].name}` : `업적 ${fresh.length}개 · 선반 → 업적`
+      set({ award: { text, until: get().clockMs + 4000 } })
+    }
     // 저장 공간이 가득 차는 등으로 실패하면 한 번 알린다 (조용히 진행을 잃지 않도록)
     if (!saveGame(game) && hasStorage() && !warnedSaveFail) {
       warnedSaveFail = true
@@ -539,6 +548,8 @@ export const useGame = create<Store>((set, get) => {
   const expireToast = () => {
     const cur = get().toast
     if (cur && cur.until < get().clockMs) set({ toast: null })
+    const aw = get().award
+    if (aw && aw.until < get().clockMs) set({ award: null })
   }
   const toastGainFrom = (before: Inventory, after: Inventory) => toastGain(before, after)
   const toastGain = (before: Inventory, after: Inventory) => {
@@ -702,6 +713,7 @@ export const useGame = create<Store>((set, get) => {
     game: newGame(CONTENT),
     modal: null,
     toast: null,
+    award: null,
     afterScene: null,
     decorating: null,
     muted: loadMuted(),

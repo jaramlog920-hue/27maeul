@@ -70,6 +70,17 @@ function chapterNow(game: GameState): { text: string; hint: boolean } {
   return { text: `${BOOK_NAME[book]} ${fill(T.ui.chapterLabel, { chapter: ch })} ${got}/${inChapter.length}`, hint: false }
 }
 
+/** 새로 이룬 업적 (도감·업적) */
+export function AwardBanner() {
+  const award = useGame((s) => s.award)
+  if (!award) return null
+  return (
+    <div className="award" role="status">
+      ★ {award.text}
+    </div>
+  )
+}
+
 export function Toast() {
   const toast = useGame((s) => s.toast)
   if (!toast) return null

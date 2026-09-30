@@ -7,7 +7,8 @@ import { fill, ITEM_TEXT, roomTitle, SCENES, T } from "../../content/text";
 import { FURNITURE } from "../../engine/room";
 import { ItemIcon } from "../../shared/ItemIcon";
 import { bookLineKey } from "../../engine/game";
-import { BOOKS, isGospel, type Book, type Piece } from "../../engine/types";
+import { BOOKS, isGospel, type Book, type ItemId, type Piece } from "../../engine/types";
+import { ACHIEVEMENTS } from "../../engine/achievements";
 import { lineLabel } from "../passage/MyLineForm";
 import { albumImage, useGame, type ShelfTab } from "../../store/game-store";
 
@@ -22,6 +23,8 @@ export function Shelf({ tab: first = "dex" }: { tab?: Tab }) {
     ["lines", T.ui.myLinesTitle],
     ["gifts", T.ui.gifts],
     ["recipes", T.ui.recipes],
+    ["items", "물건 도감"],
+    ["awards", "업적"],
   ];
   return (
     <div className="dialog shelf" role="dialog" aria-label={T.ui.shelfTitle}>
@@ -49,6 +52,8 @@ export function Shelf({ tab: first = "dex" }: { tab?: Tab }) {
       {tab === "recipes" && <Recipes />}
       {tab === "album" && <Album />}
       {tab === "lines" && <Lines />}
+      {tab === "items" && <Items />}
+      {tab === "awards" && <Awards />}
     </div>
   );
 }
@@ -230,6 +235,59 @@ export function Dex() {
         );
       })}
     </div>
+  );
+}
+
+/** 물건 도감: 한 번이라도 가져 본 물건 (못 가져 본 것은 ?) */
+function Items() {
+  const found = useGame((s) => s.game.found ?? []);
+  const all = Object.keys(ITEM_TEXT) as ItemId[];
+  return (
+    <>
+      <p className="hint">
+        모은 물건 {found.length} / {all.length}
+      </p>
+      <ul className="bag-list">
+        {all.map((id) =>
+          found.includes(id) ? (
+            <li key={id}>
+              <ItemIcon id={id} />
+              <span className="bag-name">{ITEM_TEXT[id].name}</span>
+              <span className="bag-desc">{ITEM_TEXT[id].desc}</span>
+            </li>
+          ) : (
+            <li key={id} className="unknown">
+              <span className="bag-name">?</span>
+              <span className="bag-desc">아직 가져 본 적 없는 물건</span>
+            </li>
+          ),
+        )}
+      </ul>
+    </>
+  );
+}
+
+/** 업적: 이룬 것은 이룬 날과 함께, 못 이룬 것은 흐리게 */
+function Awards() {
+  const achieved = useGame((s) => s.game.achieved ?? []);
+  return (
+    <>
+      <p className="hint">
+        이룬 업적 {achieved.length} / {ACHIEVEMENTS.length}
+      </p>
+      <ul className="award-list">
+        {ACHIEVEMENTS.map((a) => {
+          const got = achieved.find((x) => x.id === a.id);
+          return (
+            <li key={a.id} className={got ? "on" : ""}>
+              <strong>{got ? "★" : "☆"} {a.name}</strong>
+              <span>{a.desc}</span>
+              {got && <span className="award-day">{fill(T.ui.day, { day: got.day })}</span>}
+            </li>
+          );
+        })}
+      </ul>
+    </>
   );
 }
 
