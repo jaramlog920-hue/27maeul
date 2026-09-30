@@ -103,6 +103,7 @@ import { ATTIC, BED_STAND, HEARTH_STAND, HOME_FRONT, inAttic, isHome, isIndoor, 
 import { GOSPELS, type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
 import type { Avatar } from './avatar'
 import { BOARD_GAIN, boardFor, type BoardRequest } from './board'
+import { DESTS, TRIP_FRIEND_GAIN, TRIP_LEAVE_BY, tripCost, type DestId } from './travel'
 import { BIRTHDAY_MUL, isBirthday, NO_NOTEBOOK, noteGift, noteHeard, noteMet, noteSeen, seenLabel, type Notebook } from './notebook'
 import { CARPENTER_WORKS, fromChest, hasStock, HOME_MAILBOX, INK_JAR_HOLD, LIGHT_SHOES, owns, RACK_HOLD, RACK_PAPYRUS, RAIN_WATER, SOOT_CATCH, stash, stashOverflows, stock, takeStock, walkMul, type CarpenterWork, type EasyId } from './easier'
 
@@ -1280,6 +1281,42 @@ export function fulfillBoard(s: GameState, r: BoardRequest): GameState | null {
   if (r.rare) next = putAway(next, { [r.rare]: 1 })
   next = { ...next, coins: next.coins + r.coins, flags: { ...next.flags, [`board:${r.id}`]: 1 } }
   return train(heartUp(next, r.npc, BOARD_GAIN), 'charm', XP.gift)
+}
+
+// ── 이웃 마을 여행 (계획 13 작업 6, 여행지는 travel.ts) ──
+
+export type TripBlock = 'late' | 'tired' | 'coins' | 'food' | 'full' | null
+/** 떠날 수 있는가: 아침(정오 전), 지치지 않았고, 배삯·숙박비·산 물건 값과 길양식이 있다 */
+export function canTrip(s: GameState, id: DestId, buys: readonly ItemId[] = []): TripBlock {
+  const d = DESTS[id]
+  if (s.clock.minute >= TRIP_LEAVE_BY) return 'late'
+  if (exhausted(s.needs)) return 'tired'
+  if (s.coins < tripCost(d, buys)) return 'coins'
+  if (!haveStock(s, d.food)) return 'food'
+  const got = Object.fromEntries(buys.map((b) => [b, 1]))
+  if (buys.length && overflows(useStock(s, d.food)!, got)) return 'full'
+  return null
+}
+
+/**
+ * 여행을 다녀온다 (한꺼번에 — 도중에 저장되지 않는다): 값을 치르고, 산 것을 챙기고, 처음 간 곳이면 이야기가 앨범·일지에 남고
+ * 이어진 이웃의 마음이 오른다. 하룻밤 묵고 다음 날 아침 집에서 눈을 뜬다
+ */
+export function takeTrip(s: GameState, content: GameContent, id: DestId, buys: readonly ItemId[] = []): GameState | null {
+  const d = DESTS[id]
+  const items = [...new Set(buys)].filter((b) => d.shop[b] !== undefined)
+  if (canTrip(s, id, items)) return null
+  let next = useStock(s, d.food)!
+  next = putAway({ ...next, coins: next.coins - tripCost(d, items) }, Object.fromEntries(items.map((b) => [b, 1])))
+  const visits = s.flags[`trip:${id}`] ?? 0
+  next = { ...next, flags: { ...next.flags, [`trip:${id}`]: visits + 1 } }
+  const note = `trip:${id}`
+  if (!visits) {
+    next = heartUp({ ...next, inv: addGift(next.inv, d.keepsake) }, d.friend, TRIP_FRIEND_GAIN)
+    next = { ...next, album: next.album.some((a) => a.id === note) ? next.album : [...next.album, { id: note, day: s.clock.day }] }
+  }
+  next = { ...next, todayNotes: next.todayNotes.includes(note) ? next.todayNotes : [...next.todayNotes, note] }
+  return goToSleep(next, content)
 }
 
 /** 아이에게 글자 가르치기 (하루 한 번, 저녁에 집으로 올 때) */

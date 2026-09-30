@@ -49,6 +49,7 @@ export type PlaceId =
   // 모이는 곳과 둘이 가는 곳 (계획 10): 사랑방 탁자, 찻집 탁자, 호숫가 정자
   | 'hallTable'
   | 'hallBoard'
+  | 'boat'
   | 'teaTable'
   | 'pavilion'
   // 들 약초 (약방이 사 준다)

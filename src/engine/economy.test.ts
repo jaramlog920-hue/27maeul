@@ -5,6 +5,8 @@ import {
   boardToday,
   buyRare,
   canBuyRare,
+  canTrip,
+  takeTrip,
   canCraft,
   canFulfillBoard,
   canSell,
@@ -18,6 +20,7 @@ import {
   type GameState,
 } from './game'
 import { RARE_ITEMS } from './fixtures'
+import { DESTS, tripCost } from './travel'
 import { PLACES, placeAt } from './world'
 import type { NeighborDef } from './types'
 
@@ -97,5 +100,35 @@ describe('의뢰 게시판 (계획 13 작업 5)', () => {
 
   it('게시판은 사랑방 벽에 있다', () => {
     expect(placeAt(PLACES.hallBoard.tiles[0])).toBe('hallBoard')
+  })
+})
+
+describe('이웃 마을 여행 (계획 13 작업 6)', () => {
+  it('나루의 배에서 떠난다', () => {
+    expect(placeAt(PLACES.boat.tiles[0])).toBe('boat')
+  })
+
+  it('배를 타고 가서 사고, 하룻밤 묵고 다음 날 아침 돌아온다', () => {
+    const s = { ...newGame(CONTENT), coins: 200 }
+    const back = takeTrip(s, CONTENT, 'harbor', ['perfumeOil'])!
+    expect(back.clock.day).toBe(s.clock.day + 1)
+    expect(back.coins).toBe(200 - tripCost(DESTS.harbor, ['perfumeOil']))
+    expect((back.inv.perfumeOil ?? 0) + (back.chest.perfumeOil ?? 0)).toBe(1)
+    expect(back.flags['trip:harbor']).toBe(1)
+    const warm = back.hearts.wendell
+    expect(warm).toBeGreaterThan(0)
+    expect(back.album.some((a) => a.id === 'trip:harbor')).toBe(true)
+    // 두 번째는 이야기·마음 없이
+    const again = takeTrip({ ...back, coins: 200 }, CONTENT, 'harbor')!
+    expect(again.hearts.wendell).toBe(warm)
+    expect(again.flags['trip:harbor']).toBe(2)
+  })
+
+  it('걸어가면 길양식이 든다, 정오가 지나면 못 떠난다, 닢이 모자라면 못 떠난다', () => {
+    const s = { ...newGame(CONTENT), coins: 100, inv: {} }
+    expect(canTrip(s, 'hillTown')).toBe('food')
+    expect(canTrip({ ...s, inv: { bread: 2 } }, 'hillTown')).toBeNull()
+    expect(canTrip(on({ ...s, inv: { bread: 2 } }, 1, 13 * 60), 'hillTown')).toBe('late')
+    expect(canTrip({ ...s, coins: 5 }, 'harbor')).toBe('coins')
   })
 })

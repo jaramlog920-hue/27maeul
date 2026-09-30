@@ -701,6 +701,8 @@ export const PLACES: Record<PlaceId, Place> = {
   churchBoard: { tiles: [4, 5, 6].map((dx) => ({ x: REV_X0 + dx, y: REV_Y0 })), stand: { x: REV_X0 + 5, y: REV_Y0 + 1 } },
   revTable: { tiles: [{ x: REV_X0 + 5, y: REV_Y0 + 4 }], stand: { x: REV_X0 + 5, y: REV_Y0 + 5 } },
   // 모이는 곳과 둘이 가는 곳 (계획 10): 사랑방 긴 탁자, 찻집 탁자, 호숫가 정자 벤치
+  // 나루의 배 (계획 13 작업 6): 이웃 마을 여행
+  boat: { tiles: [{ x: 25, y: 35 }, { x: 25, y: 34 }], stand: { x: 24, y: 34 } },
   // 의뢰 게시판 (계획 13 작업 5): 사랑방 벽
   hallBoard: { tiles: [5, 6].map((dx) => ({ x: HALL_ROOM_X0 + dx, y: HALL_ROOM_Y0 })), stand: { x: HALL_ROOM_X0 + 5, y: HALL_ROOM_Y0 + 1 } },
   hallTable: { tiles: [4, 5, 6, 7].map((dx) => ({ x: HALL_ROOM_X0 + dx, y: HALL_ROOM_Y0 + 3 })), stand: { x: HALL_ROOM_X0 + 5, y: HALL_ROOM_Y0 + 4 } },

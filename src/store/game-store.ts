@@ -6,6 +6,7 @@ import { currentChapter } from '../engine/offers'
 import { handEase, leveledUp, XP, type StatId } from '../engine/stats'
 import type { FixtureLine } from '../engine/fixtures'
 import type { BoardRequest } from '../engine/board'
+import { DESTS, type DestId } from '../engine/travel'
 import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
 import { bookRoomOpen, openDoorsFor } from '../engine/books'
 import { actsDoorGlows, canShelve, payRetry, poolFor, shelve } from '../engine/library'
@@ -64,6 +65,7 @@ import {
   trade as doTrade,
   buyRare,
   fulfillBoard,
+  takeTrip,
   warmByHearth,
   playerTile,
   receiveVisit,
@@ -140,6 +142,8 @@ export type Modal =
   | { kind: 'trade' }
   /** 사랑방 벽의 의뢰 게시판 (계획 13 작업 5) */
   | { kind: 'board' }
+  /** 나루의 배: 이웃 마을 여행 (계획 13 작업 6) */
+  | { kind: 'travel' }
   | { kind: 'menu'; place: MenuPlace }
   | { kind: 'readPick' }
   | { kind: 'quiz'; mode: QuizMode; questions: Question[]; index: number; wrong: string[]; solved: boolean; misses: number; missed: string[] }
@@ -247,6 +251,7 @@ interface Store {
   sellItem: (item: ItemId) => void
   buyRareItem: (item: ItemId) => void
   doBoard: (r: BoardRequest) => void
+  goTrip: (dest: DestId, buys: ItemId[]) => void
   startTeach: () => void
   startLetter: () => void
   // 손일
@@ -598,6 +603,8 @@ export const useGame = create<Store>((set, get) => {
         return { game, modal: { kind: 'roomShelf', room: 'rev' } }
       case 'hallBoard':
         return { game, modal: { kind: 'board' } }
+      case 'boat':
+        return { game, modal: { kind: 'travel' } }
       case 'journeyBoard':
         return { game, modal: { kind: 'journey' } }
       case 'churchBoard':
@@ -880,6 +887,13 @@ export const useGame = create<Store>((set, get) => {
       sfx('gift')
       toastGain(get().game.inv, next.inv)
       set({ game: persist(next) })
+    },
+
+    goTrip: (dest, buys) => {
+      const next = takeTrip(get().game, CONTENT, dest, buys)
+      if (!next) return
+      set({ game: persist(next), modal: null })
+      get().say(`${DESTS[dest].name}에서 하룻밤 묵고 집으로 돌아왔어요`, 3400)
     },
 
     doBoard: (r) => {
