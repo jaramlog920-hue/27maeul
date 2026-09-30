@@ -1871,11 +1871,13 @@ function tripMapFor(dest: 'harbor' | 'hillTown', season: Season): HTMLCanvasElem
         continue
       }
       if (ch === 'c' || ch === 'F') {
+        // 벽돌 줄눈은 칸 안에서만 (옆 칸 잔디로 삐져나가지 않게)
         f('#f3e6c8', 0, 0, 16, 16)
-        for (const [dx, dy] of [[0, 0], [8, 0], [4, 8], [12, 8], [-4, 8]]) {
-          f('#e3d1a9', dx, dy + 7, 8, 1)
-          f('#e3d1a9', dx + 7, dy, 1, 8)
-        }
+        f('#e3d1a9', 0, 7, 16, 1)
+        f('#e3d1a9', 0, 15, 16, 1)
+        f('#e3d1a9', 7, 0, 1, 7)
+        f('#e3d1a9', 3, 8, 1, 7)
+        f('#e3d1a9', 11, 8, 1, 7)
         continue
       }
       const h = houseOf(x, y)
