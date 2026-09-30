@@ -93,6 +93,17 @@ export function totalXp(stat: Stat | undefined): number {
   return XP_TO_NEXT.slice(0, stat.level - 1).reduce((a, b) => a + b, 0) + stat.xp
 }
 
+/** 5단계까지 쌓는 경험치 모두 */
+export const MAX_TOTAL_XP = XP_TO_NEXT.reduce((a, b) => a + b, 0)
+
+/**
+ * 능력치 점수 1–100 (화면에 보이는 값, 2026-09-30 사용자 요청): 쌓은 경험치를 1–100으로 편다.
+ * 효과(단계별)는 그대로 — 1단계 1점, 5단계 100점, 사이는 경험치만큼
+ */
+export function statScore(stat: Stat | undefined): number {
+  return Math.max(1, Math.min(100, 1 + Math.round((99 * totalXp(stat)) / MAX_TOTAL_XP)))
+}
+
 /** 한 번의 일로 쌓일 수 있는 가장 큰 경험치 (타고난 값 2까지 쳐서) — 이보다 크게 뛰면 저장을 불러온 것이다 */
 export const MAX_STEP_XP = Math.max(...Object.values(XP)) * (1 + BORN_BONUS * MAX_BORN)
 

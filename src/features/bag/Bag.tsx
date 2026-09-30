@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { fill, ITEM_TEXT, T } from '../../content/text'
 import { chestOf, playerTile } from '../../engine/game'
-import { MAX_LEVEL, progressOf, STAT_IDS, type StatId, type Stats } from '../../engine/stats'
+import { MAX_LEVEL, progressOf, STAT_IDS, statScore, type StatId, type Stats } from '../../engine/stats'
 import { isHome } from '../../engine/world'
 import type { ItemId } from '../../engine/types'
 import { ItemIcon } from '../../shared/ItemIcon'
@@ -42,7 +42,10 @@ export function StatsView({ stats }: { stats: Stats }) {
                   )
                 })}
               </span>
-              <span className="stat-level">{fill(T.stats.level, { n: st.level })}</span>
+              <span className="stat-level" title={fill(T.stats.level, { n: st.level })}>
+                {statScore(st)}
+                <small>/100</small>
+              </span>
               {open === id && <p className="tap-explain">{STAT_DESC[id]}</p>}
             </li>
           )

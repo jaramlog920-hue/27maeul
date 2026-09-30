@@ -29,8 +29,7 @@ import {
   XP,
   XP_TO_NEXT,
   type StatId,
-  type Stats,
-} from './stats'
+  type Stats, statScore } from './stats'
 
 const def = (id: string) => CONTENT.neighbors.find((n) => n.id === id)!
 /** 이 능력치를 이 단계로 */
@@ -246,12 +245,19 @@ describe('효과는 작게', () => {
 })
 
 describe('가방의 능력치', () => {
+  it('점수는 1단계 1점, 5단계 100점', () => {
+    expect(statScore({ level: 1, xp: 0, born: 0 })).toBe(1)
+    expect(statScore({ level: 5, xp: 0, born: 0 })).toBe(100)
+    expect(statScore({ level: 3, xp: 0, born: 0 })).toBe(27)
+  })
   it('다섯 이름·단계·타고난 별', () => {
     const stats = { ...at(3, 'charm'), luck: { level: 1, xp: 0, born: 2 } }
     const { container } = render(<StatsView stats={stats} />)
     const names = T.stats.names as Record<StatId, string>
     for (const id of STAT_IDS) expect(container.textContent).toContain(names[id])
-    expect(container.querySelector('[data-stat="charm"] .stat-level')!.textContent).toBe('3단계')
+    // 점수 1–100 (3단계 시작 = 쌓은 경험치 90/340 → 27점), 단계는 title에
+    expect(container.querySelector('[data-stat="charm"] .stat-level')!.textContent).toBe(`${statScore(stats.charm)}/100`)
+    expect(container.querySelector('[data-stat="charm"] .stat-level')!.getAttribute('title')).toBe('3단계')
     expect(container.querySelector('[data-stat="luck"] .stat-born')!.textContent).toBe('★★')
     expect(container.querySelectorAll('[data-stat="charm"] .stat-bar > span[style*="100%"]')).toHaveLength(3)
   })
