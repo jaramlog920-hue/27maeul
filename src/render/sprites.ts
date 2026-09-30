@@ -432,7 +432,12 @@ export function spriteRows(who: Who, facing: Facing, opts: SpriteOpts): string[]
     setPixel(rows, 7, 10, 'r')
   }
   if (who === 'writer') {
-    if (opts.avatar) dressAvatar(rows, facing, opts.avatar, opts.blink)
+    if (opts.avatar) {
+      dressAvatar(rows, facing, opts.avatar, opts.blink)
+      // 팔: 몸통 옆 그늘 칸을 한 단계 더 진하게 — 밝은 옷에서도 팔이 몸통과 구분된다 (사용자, 2026-09-30)
+      if (facing === 'down' || facing === 'up') for (const y of [8, 9]) for (const x of [2, 7]) if (rows[y][x] === 'R') setPixel(rows, x, y, '3')
+      else for (const y of [8, 9]) if (rows[y][7] === 'l' || rows[y][7] === 'r') setPixel(rows, 7, y, '3')
+    }
     // 여자 모습: 어깨까지 내려오는 머리 (얼굴 양옆의 빈 칸)
     else if (opts.look === 'f') longHair(rows)
     if (opts.inky && facing === 'down' && rows[10][2] === 's') setPixel(rows, 2, 10, 'K')
@@ -448,6 +453,13 @@ export function spriteRows(who: Who, facing: Facing, opts: SpriteOpts): string[]
 }
 
 /** 기록자의 계절 옷 색 */
+/** 16진 색을 곱해서 어둡게 */
+function darkerHex(hex: string, f: number): string {
+  const n = parseInt(hex.slice(1), 16)
+  const c = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => Math.round(v * f))
+  return '#' + c.map((v) => v.toString(16).padStart(2, '0')).join('')
+}
+
 export function writerPalette(season: Season, avatar?: FullAvatar): Record<string, string> {
   if (!avatar) {
     const [r, R] = SEASON_ROBE[season]
@@ -465,6 +477,7 @@ export function writerPalette(season: Season, avatar?: FullAvatar): Record<strin
     b: l,
     d: hsvToHex(avatar.bottomColor),
     D: hsvToHex(shadeOf(avatar.bottomColor)),
+    '3': darkerHex(R, 0.72),
     x: '#b05848',
     f: '#d888b4',
     y: '#d4b060',
