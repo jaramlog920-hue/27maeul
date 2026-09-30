@@ -65,10 +65,10 @@ describe('life-text', () => {
 
 describe('책별 콘텐츠', () => {
   it('조각이 있는 책과 책별 조각', () => {
-    // 편지 열세 권(계획 7)과 여덟 권(계획 8)은 본문에서 만든 장 조각이 있다
+    // 편지 열세 권(계획 7)과 여덟 권(계획 8), 요한계시록(계획 9)은 본문에서 만든 장 조각이 있다
     expect(BOOKS_WITH_CONTENT).toEqual([
       'mt', 'mk', 'lk', 'jn', 'ac', 'rom', '1co', '2co', 'gal', 'eph', 'php', 'col', '1th', '2th', '1ti', '2ti', 'tit', 'phm',
-      'heb', 'jas', '1pe', '2pe', '1jn', '2jn', '3jn', 'jud',
+      'heb', 'jas', '1pe', '2pe', '1jn', '2jn', '3jn', 'jud', 'rev',
     ])
     expect(piecesOf('mk').length).toBe(98)
     expect(piecesOf('mk').every((p) => p.book === 'mk')).toBe(true)
@@ -84,7 +84,7 @@ describe('책별 콘텐츠', () => {
   })
   it('조각이 있는 책의 조각 합이 pieces.json 전체와 같고, 대표 조각의 제목·범위가 원본(scripts/pieces)과 맞는다', () => {
     expect(BOOKS_WITH_CONTENT.reduce((n, b) => n + piecesOf(b).length, 0)).toBe(PIECES.length)
-    expect(PIECES).toHaveLength(533 + 66 + 73 + 87 + 34) // 네 복음서 533 + 사도행전 1–14장 66 + 15–28장 73 + 편지 87장 + 34장(장마다 하나)
+    expect(PIECES).toHaveLength(533 + 66 + 73 + 87 + 34 + 22) // 네 복음서 533 + 사도행전 1–14장 66 + 15–28장 73 + 편지 87장 + 34장 + 요한계시록 22장(장마다 하나)
     expect(pieceById('ac-008-032')).toMatchObject({ book: 'ac', ref: '행 8:32-40', chapter: 8, title: '물 있는 곳' })
     expect(pieceOfVerse('행 8:37')).toBeUndefined() // (없음) — 번호만 조각 범위에 걸친다
     expect(pieceOfVerse('행 8:38')?.id).toBe('ac-008-032')

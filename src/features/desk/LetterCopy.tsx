@@ -7,6 +7,7 @@ import { fill, T } from '../../content/text'
 import { blankParts, blanksFor } from '../../engine/copy'
 import type { SubmitResult } from '../../engine/game'
 import { currentChapter } from '../../engine/offers'
+import { arrivesOf } from '../../engine/shelf-rooms'
 import type { Book } from '../../engine/types'
 import { copyPadFor, useGame } from '../../store/game-store'
 
@@ -72,7 +73,7 @@ export function LetterCopy({ book, result, dark, onChangeBook }: { book: Book; r
       ) : chapter === null || !piece ? (
         <p>{T.ui.allDone}</p>
       ) : !received ? (
-        <p>{T.copy.notReceived}</p>
+        <p>{arrivesOf(book) === 'stars' ? T.copy.notReceivedStars : T.copy.notReceived}</p>
       ) : (
         pad && (
           <>

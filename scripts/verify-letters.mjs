@@ -1,5 +1,5 @@
 // 편지 첫머리(보낸 이·받는 이) 정확도 게이트 (계획 7 작업 5). 오류가 하나라도 있으면 exit 1 → prebuild가 빌드를 막는다.
-// - 책은 서고 방 표에서 편지로 엮는 책(mode 'letters')이다
+// - 책은 서고 방 표에서 편지로 엮는 책(mode 'letters')이다. 첫머리 문제를 내지 않는 방(noOpening — 요한계시록)의 책은 줄이 있으면 오류
 // - 칸 이름은 "보낸 이"·"받는 곳"·"받는 사람" 셋 중 하나
 // - 구절은 그 편지 1장의 실제 절이고 본문이 없는 절이 아니다. 이름 줄은 한 절, "적혀 있지 않음" 줄은 확인한 범위를 쓸 수 있다
 // - 이름은 띄어쓰기 없이 그 구절 본문(띄어쓰기 뺀)에 글자 그대로 있다
@@ -25,11 +25,14 @@ const fail = (where, msg) => {
 // verify-pieces.mjs·catalog.ts의 noText와 같은 규칙
 const noText = (text) => text === '(없음)' || /^\(\d+절에 포함되어 있음\)$/.test(text)
 
-/** 편지로 엮는 책 (방 표 순서) → 본문 책 id */
-const letterIds = SHELF_ROOMS.filter((r) => r.mode === 'letters').flatMap((r) => r.books).map(bibleIdOf)
+/** 편지로 엮는 책 (방 표 순서) → 본문 책 id. 첫머리 문제를 내지 않는 방(noOpening — 요한계시록)의 책은 뺀다 */
+const letterIds = SHELF_ROOMS.filter((r) => r.mode === 'letters' && !r.noOpening).flatMap((r) => r.books).map(bibleIdOf)
+/** 장째로 옮겨 적지만 첫머리 문제를 내지 않는 책 — opening.txt에 줄이 있으면 오류 */
+const noOpeningIds = SHELF_ROOMS.filter((r) => r.mode === 'letters' && r.noOpening).flatMap((r) => r.books).map(bibleIdOf)
 const abbrToId = Object.fromEntries(books.map((b) => [b.abbr, b.id]))
 const idToAbbr = Object.fromEntries(books.map((b) => [b.id, b.abbr]))
 const letterAbbrs = new Set(letterIds.map((id) => idToAbbr[id]))
+const noOpeningAbbrs = new Set(noOpeningIds.map((id) => idToAbbr[id]))
 
 const fixture = process.argv[2]
 let rows = []
@@ -43,7 +46,8 @@ const seen = new Set()
 rows.forEach((r) => {
   const w = `${r.abbr} | ${r.roleLabel} | ${r.name} | ${r.ref}`
   const notWritten = r.name === NOT_WRITTEN
-  if (!letterAbbrs.has(r.abbr)) fail(w, `편지 책이 아님 (${r.abbr}) — 서고 방 표의 편지 책: ${[...letterAbbrs].join(' ')}`)
+  if (noOpeningAbbrs.has(r.abbr)) fail(w, `첫머리 문제를 내지 않는 책 (${r.abbr}) — 서고 방 표의 noOpening 방`)
+  else if (!letterAbbrs.has(r.abbr)) fail(w, `편지 책이 아님 (${r.abbr}) — 서고 방 표의 편지 책: ${[...letterAbbrs].join(' ')}`)
   if (!(r.roleLabel in ROLES)) fail(w, `칸 이름 "${r.roleLabel}"은 ${Object.keys(ROLES).map((k) => `"${k}"`).join('·')} 중 하나여야 함`)
   const key = `${r.abbr}\u0000${r.roleLabel}\u0000${r.name}`
   if (seen.has(key)) fail(w, '같은 편지·칸에 같은 이름이 두 번')

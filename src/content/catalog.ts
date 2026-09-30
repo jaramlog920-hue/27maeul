@@ -32,19 +32,24 @@ const ABBR_BOOK: Record<string, Book> = Object.fromEntries(BOOKS.map((b) => [BOO
  * 끝 절 번호는 본문 배열 길이 ('(없음)' 절이 있어도 번호는 걸친다 — 보이는 것은 versesOf가 거른다).
  * 제목은 책 이름 + 장 번호뿐 (해석 라벨도 본문 문장도 아니다). pieces.json·verify-pieces의 덮기 규칙에는 넣지 않는다
  */
-export const LETTER_PIECES: readonly Piece[] = LETTERS.flatMap((b) =>
-  (bible[BOOK_IDS[b]] ?? []).map((verses, i) => ({
-    id: `${b}-${String(i + 1).padStart(3, '0')}`,
-    book: b,
-    ref: `${BOOK_ABBR[b]} ${i + 1}:1-${verses.length}`,
-    chapter: i + 1,
-    title: `${bookInfo(b).name} ${i + 1}장`,
-    stamps: [],
-  })),
-)
+function chapterPieces(bs: readonly Book[]): Piece[] {
+  return bs.flatMap((b) =>
+    (bible[BOOK_IDS[b]] ?? []).map((verses, i) => ({
+      id: `${b}-${String(i + 1).padStart(3, '0')}`,
+      book: b,
+      ref: `${BOOK_ABBR[b]} ${i + 1}:1-${verses.length}`,
+      chapter: i + 1,
+      title: `${bookInfo(b).name} ${i + 1}장`,
+      stamps: [],
+    })),
+  )
+}
+export const LETTER_PIECES: readonly Piece[] = chapterPieces(LETTERS)
+/** 요한계시록의 장 조각 (계획 9): 편지와 같은 규칙 — 장 하나에 조각 하나 */
+export const REV_PIECES: readonly Piece[] = chapterPieces(['rev'])
 
-/** 모든 책의 조각: pieces.json(복음서·사도행전) + 편지 장 조각 */
-const ALL_PIECES: Piece[] = [...(piecesRaw as unknown as Piece[]), ...LETTER_PIECES]
+/** 모든 책의 조각: pieces.json(복음서·사도행전) + 편지 장 조각 + 요한계시록 장 조각 */
+const ALL_PIECES: Piece[] = [...(piecesRaw as unknown as Piece[]), ...LETTER_PIECES, ...REV_PIECES]
 /** 엔진과 화면이 쓰는 조각 — 모든 책 (책별로는 piecesOf) */
 export const PIECES = ALL_PIECES
 export const NEIGHBORS = neighborsRaw as unknown as NeighborDef[]

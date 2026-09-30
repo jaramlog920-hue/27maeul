@@ -29,8 +29,16 @@ describe('verify-letters.mjs', () => {
       '구절의 책(롬)이 줄의 책(갈)과 다름',
       '이름 줄의 구절은 한 절이어야 함',
       '본문이 없는 절 롬 16:24 "(없음)"',
-      '편지 책이 아님 (계)',
+      '편지 책이 아님 (막)',
     ]) expect(r.out, msg).toContain(msg)
+  })
+
+  it('첫머리 문제를 내지 않는 책(요한계시록)의 줄이 있으면 실패 — 편지가 아닌 책과 따로 알린다', () => {
+    const r = run('scripts/fixtures/bad-letters-rev.txt')
+    expect(r.code).toBe(1)
+    expect(r.out).toContain('계 | 보낸 이 | 요한 | 계 1:4: 첫머리 문제를 내지 않는 책 (계)')
+    expect(r.out).toContain('계 | 받는 곳 | 아시아 | 계 1:4: 첫머리 문제를 내지 않는 책 (계)')
+    expect(r.out).not.toContain('편지 책이 아님')
   })
 
   it('칸 이름 틀림·칸 빠짐·"적혀 있지 않음" 규칙 어김은 실패', () => {

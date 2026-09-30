@@ -1280,7 +1280,7 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
     scenes.push('actsShip')
   }
   // ── 서고의 다음 방: 앞 방의 책이 모두 꽂힌 날 밤 → 다음 날 아침 열린다 (사도행전 방 다음부터, 방 표 순서) ──
-  // 콘텐츠가 없는 방(계획 9 전의 요한계시록)은 표식을 세우지 않는다 — 책이 들어온 다음 잠에서 열린다
+  // 콘텐츠가 없는 방은 표식을 세우지 않는다 — 책이 들어온 다음 잠에서 열린다 (요한계시록 방은 계획 9부터 콘텐츠가 있다)
   for (let i = 2; i < SHELF_ROOMS.length; i++) {
     const prev = SHELF_ROOMS[i - 1]
     const room = SHELF_ROOMS[i]

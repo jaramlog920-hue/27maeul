@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { pieceById, versesOf } from '../../content/catalog'
 import { fill, T } from '../../content/text'
 import { NOT_WRITTEN_OPTION, type GospelId, type Question } from '../../engine/quiz'
-import { isGospel, type Book } from '../../engine/types'
+import { isGospel, isLetter, type Book } from '../../engine/types'
 import { useGame, type Modal } from '../../store/game-store'
 import { Passage } from '../passage/Passage'
 
@@ -169,12 +169,12 @@ function OpeningNoneQuestion({ q, wrong, solved, onAnswer }: { q: Extract<Questi
   )
 }
 
-/** 먼저 나오는 구절 (편지): 두 구절의 본문만 보이고, 참조는 맞힌 뒤에 보인다 */
-function VerseOrderQuestion({ q, wrong, solved, onAnswer }: { q: Extract<Question, { kind: 'verseOrder' }>; wrong: string[]; solved: boolean; onAnswer: (o: string) => void }) {
+/** 먼저 나오는 구절 (장째로 옮겨 적는 책): 두 구절의 본문만 보이고, 참조는 맞힌 뒤에 보인다. 편지가 아니면(요한계시록) "이 책에서"로 묻는다 */
+function VerseOrderQuestion({ q, book, wrong, solved, onAnswer }: { q: Extract<Question, { kind: 'verseOrder' }>; book: Book; wrong: string[]; solved: boolean; onAnswer: (o: string) => void }) {
   const label = (o: string) => fill(T.quiz.verseOrderLabel, { n: q.options.indexOf(o) + 1 })
   return (
     <>
-      <p className="quiz-prompt">{T.quiz.verseOrder}</p>
+      <p className="quiz-prompt">{isLetter(book) ? T.quiz.verseOrder : T.quiz.verseOrderBook}</p>
       {q.options.map((r) => (
         <section key={r} className="passage" aria-label={solved ? `성경 본문 ${r}` : `성경 본문 ${label(r)}`}>
           <header className="passage-ref">
@@ -219,7 +219,7 @@ export function QuizView({ modal }: { modal: Extract<Modal, { kind: 'quiz' }> })
         {q.kind === 'book' && <BookQuestion q={q} wrong={modal.wrong} solved={modal.solved} onAnswer={answerQuiz} />}
         {q.kind === 'opening' && <OpeningQuestion q={q} wrong={modal.wrong} solved={modal.solved} onAnswer={answerQuiz} />}
         {q.kind === 'openingNone' && <OpeningNoneQuestion q={q} wrong={modal.wrong} solved={modal.solved} onAnswer={answerQuiz} />}
-        {q.kind === 'verseOrder' && <VerseOrderQuestion q={q} wrong={modal.wrong} solved={modal.solved} onAnswer={answerQuiz} />}
+        {q.kind === 'verseOrder' && <VerseOrderQuestion q={q} book={modal.mode.book} wrong={modal.wrong} solved={modal.solved} onAnswer={answerQuiz} />}
         {q.kind === 'verse' && (
           <>
             <p className="quiz-prompt">{T.quiz.verse}</p>

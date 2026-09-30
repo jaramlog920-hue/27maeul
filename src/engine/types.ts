@@ -56,15 +56,18 @@ export type Gospel = 'mt' | 'mk' | 'lk' | 'jn'
 export type Letter =
   | 'rom' | '1co' | '2co' | 'gal' | 'eph' | 'php' | 'col' | '1th' | '2th' | '1ti' | '2ti' | 'tit' | 'phm'
   | 'heb' | 'jas' | '1pe' | '2pe' | '1jn' | '2jn' | '3jn' | 'jud'
-/** 엮고 서고에 꽂는 책 (계획 5: 사도행전 'ac', 계획 7·8: 편지 스물한 권) */
-export type Book = Gospel | 'ac' | Letter
+/**
+ * 엮고 서고에 꽂는 책 (계획 5: 사도행전 'ac', 계획 7·8: 편지 스물한 권, 계획 9: 요한계시록 'rev').
+ * 요한계시록은 편지처럼 장째로 옮겨 적지만 Letter(LETTERS)에는 넣지 않는다 — 편지 테스트·첫머리 검증을 흔들지 않게
+ */
+export type Book = Gospel | 'ac' | Letter | 'rev'
 export const GOSPELS: readonly Gospel[] = ['mt', 'mk', 'lk', 'jn']
 export const LETTERS: readonly Letter[] = [
   'rom', '1co', '2co', 'gal', 'eph', 'php', 'col', '1th', '2th', '1ti', '2ti', 'tit', 'phm',
   'heb', 'jas', '1pe', '2pe', '1jn', '2jn', '3jn', 'jud',
 ]
 /** 오늘 우리가 보는 신약성경의 순서 (= shelf-rooms의 방 표 순서 — 테스트가 맞춘다) */
-export const BOOKS: readonly Book[] = [...GOSPELS, 'ac', ...LETTERS]
+export const BOOKS: readonly Book[] = [...GOSPELS, 'ac', ...LETTERS, 'rev']
 export function isGospel(b: Book): b is Gospel {
   return (GOSPELS as readonly Book[]).includes(b)
 }

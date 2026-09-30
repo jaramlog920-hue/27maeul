@@ -7,7 +7,7 @@ describe('책별 진행', () => {
     const p = emptyProgress()
     expect(Object.keys(p)).toEqual([
       'mt', 'mk', 'lk', 'jn', 'ac', 'rom', '1co', '2co', 'gal', 'eph', 'php', 'col', '1th', '2th', '1ti', '2ti', 'tit', 'phm',
-      'heb', 'jas', '1pe', '2pe', '1jn', '2jn', '3jn', 'jud',
+      'heb', 'jas', '1pe', '2pe', '1jn', '2jn', '3jn', 'jud', 'rev',
     ])
     expect(totalChapters({ progress: p })).toBe(0)
     // 마가 전체 16장
