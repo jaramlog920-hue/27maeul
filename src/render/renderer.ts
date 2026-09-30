@@ -5,8 +5,7 @@ import { isGrown, STRAY_SPOTS, EAVES } from '../engine/companion'
 import { totalChapters } from '../engine/books'
 import { shelfRoom } from '../engine/shelf-rooms'
 import { letterWaiting } from '../engine/requests'
-import { POSTMAN } from '../engine/post'
-import { childAtSchool, closedHouseIds, storyWaiting, routineOf, SCHOOL_SEAT, shelvedCount, straysToday, weddingToday, type GameState } from '../engine/game'
+import { childAtSchool, closedHouseIds, mailboxHasPost, storyWaiting, routineOf, SCHOOL_SEAT, shelvedCount, straysToday, weddingToday, type GameState } from '../engine/game'
 import type { Activity } from '../engine/people'
 import { fixtureTier, RARE_ITEMS } from '../engine/fixtures'
 import { FURNITURE_DEFS, type Furniture } from '../engine/room'
@@ -1583,7 +1582,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       const items: Item[] = []
 
       // 안 읽은 편지 (2026-09-30 사용자): 문 앞 편지 바구니 위에 봉투 말풍선
-      if (letterWaiting(game)) {
+      if (letterWaiting(game) || mailboxHasPost(game)) {
         const bk = PLACES.basket.tiles[0]
         items.push({ y: bk.y + 0.4, paint: () => emote(g, 'letter', bk.x * TILE + 8, bk.y * TILE - 2 - Math.round(Math.sin(t * 3))) })
       }
@@ -1628,9 +1627,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
             drawSprite(g, spr, n.x, n.y, moving ? 0 : breathOffset(t + offset))
             // 이야기를 건넬 이웃, 기다리던 이야기(이벤트)를 품은 이웃은 머리 위에 말풍선 — 말을 걸면 열린다
             const bubbleY = n.y * TILE + TILE - spr.height - 2 - Math.round(Math.sin(t * 3))
-            // 편지 나르는 이웃이 오늘 편지를 들고 있으면 봉투 말풍선
-            if (def.id === POSTMAN && (game.post?.length ?? 0) > 0) emote(g, 'letter', n.x * TILE + 8, bubbleY)
-            else if (game.offers[def.id] || storyWaiting(game, def.id)) emote(g, 'talk', n.x * TILE + 8, bubbleY)
+            if (game.offers[def.id] || storyWaiting(game, def.id)) emote(g, 'talk', n.x * TILE + 8, bubbleY)
             else if (!moving) {
               // 일과 자리에서 하는 일 (계획 6b)
               const r = routineOf(game, def.id)

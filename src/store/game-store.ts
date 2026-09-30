@@ -705,10 +705,17 @@ export const useGame = create<Store>((set, get) => {
         if (game.collected.length > 0) return { game, modal: { kind: 'readPick' } }
         get().say(T.acts.tableEmpty)
         return { game, modal: null }
-      case 'basket':
-        if (letterWaiting(game)) return { game, modal: { kind: 'letter' } }
-        get().say(T.letters.none)
-        return { game, modal: null }
+      case 'basket': {
+        // 문 앞 편지 바구니: 편지 책의 편지(예전 우체통 몫)를 먼저 꺼내고, 오늘 의뢰 편지가 있으면 연다
+        const { state, pieceIds } = openMailbox(game, CONTENT)
+        if (pieceIds.length) {
+          sfx('scroll')
+          get().say(fill(T.post.mailboxTook, { n: pieceIds.length }))
+        }
+        if (letterWaiting(state)) return { game: pieceIds.length ? persist(state) : state, modal: { kind: 'letter' } }
+        if (!pieceIds.length) get().say(T.letters.none)
+        return { game: pieceIds.length ? persist(state) : state, modal: null }
+      }
       case 'mailbox': {
         // 집 앞 편지함: 편지 나르는 이웃을 찾아가지 않아도 오늘 편지를 꺼낸다 (본문은 책상에서)
         const { state, pieceIds } = openMailbox(game, CONTENT)
