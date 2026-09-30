@@ -1,6 +1,6 @@
 // 엔진 상태 ↔ 화면 연결. 창(모달)이 열려 있으면 시간과 걸음이 멈춘다.
 import { create } from 'zustand'
-import { CONTENT, copySourceFor, LETTER_OPENINGS, pieceById, pieceOfQuestion, piecesOf, quizSourceFor } from '../content/catalog'
+import { CONTENT, neighborById, copySourceFor, LETTER_OPENINGS, pieceById, pieceOfQuestion, piecesOf, quizSourceFor } from '../content/catalog'
 import { blanksFor } from '../engine/copy'
 import { currentChapter } from '../engine/offers'
 import { handEase, leveledUp, XP, type StatId } from '../engine/stats'
@@ -38,6 +38,8 @@ import {
   openMailbox,
   train,
   hallFriendsHere,
+  personLine,
+  chooseInEvent,
   giveBouquet,
   giveCord,
   dateTea,
@@ -124,7 +126,7 @@ export type Modal =
   /** attic: 다락 창가에서 연 자기 전 읽기 */
   | { kind: 'review'; pieceId: string | null; attic?: boolean }
   | { kind: 'journal' }
-  | { kind: 'scene'; id: string }
+  | { kind: 'scene'; id: string; chosen?: number }
   | { kind: 'mini'; state: MiniState; pending: Pending }
   | { kind: 'gift'; neighborId: string }
   | { kind: 'trade' }
@@ -287,6 +289,7 @@ interface Store {
   startDecorate: (item: ItemId | 'pick') => void
   stopDecorate: () => void
   nextScene: () => void
+  chooseScene: (index: number) => void
   setMuted: (m: boolean) => void
   setJoystick: (on: boolean) => void
   setJoystickShape: (shape: JoystickShape) => void
@@ -514,6 +517,9 @@ export const useGame = create<Store>((set, get) => {
         const l = NEIGHBOR_LINES[target.id]
         return { game: persist(g), modal: { kind: 'talk', neighborId: target.id, line: l?.visit.length ? pick(l.visit, rng).text : lineFor(g, target.id, rng) } }
       }
+      // 살아 움직이는 사람들 (계획 6b): 지금 상황·사이·기억에 맞는 말 (되풀이하지 않는다)
+      const pl = personLine(g, target.id, rng())
+      if (pl) return { game: persist(pl.state), modal: { kind: 'talk', neighborId: target.id, line: pl.text } }
       return { game: persist(g), modal: { kind: 'talk', neighborId: target.id, line: lineFor(g, target.id, rng) } }
     }
     if (target.kind === 'stray') return { game, modal: { kind: 'companion', animal: target.animal } }
@@ -761,6 +767,9 @@ export const useGame = create<Store>((set, get) => {
       announceRoom(s.game, game)
       let modal: Modal | null = null
       for (const e of r.events) {
+        // 가까이 지나가면 들리는 혼잣말, 지킨 약속 (계획 6b)
+        if (e.type === 'mutter') get().say(fill(T.people.mutter, { who: neighborById(e.npc)?.role ?? '', text: e.text }), 3400)
+        if (e.type === 'promiseKept') get().say(fill(T.people.promiseKept, { who: withSubject(neighborById(e.npc)?.role ?? '') }), 3400)
         if (e.type === 'arrived') {
           const a = arrive(game, e.target)
           game = a.game
@@ -1166,6 +1175,13 @@ export const useGame = create<Store>((set, get) => {
     startDecorate: (item) => set({ decorating: item, modal: null }),
     stopDecorate: () => set({ decorating: null }),
 
+    // 이벤트에서 말 고르기 (정답 없음): 고르면 대답이 이어지고, 닫으면 본 것 (계획 6b)
+    chooseScene: (index) => {
+      const m = get().modal
+      if (m?.kind !== 'scene' || m.chosen !== undefined) return
+      const game = m.id.startsWith('ev:') ? chooseInEvent(get().game, m.id.slice(3), index) : get().game
+      set({ game: persist(game), modal: { ...m, chosen: index } })
+    },
     nextScene: () => {
       const m = get().modal
       const id = m?.kind === 'scene' ? m.id : null

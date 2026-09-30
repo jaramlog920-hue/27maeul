@@ -1084,3 +1084,15 @@ button.copy-blank.on {
   font-size: 14px;
   text-align: center;
 }
+
+/* 사이의 이름 (계획 6b): 숫자 대신 작은 꼬리표 */
+.talk-bond {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 1px 7px;
+  border-radius: 9px;
+  font-size: 11px;
+  background: #f3e3c4;
+  color: var(--ink-soft);
+  border: 1px solid #d9c9b0;
+}

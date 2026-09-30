@@ -7,6 +7,8 @@ import neighborsRaw from './neighbors.json'
 import journeyRaw from './journey.json'
 import churchesRaw from './churches.json'
 import lettersRaw from './letters.json'
+import peopleRaw from './people.json'
+import { setPeopleData, type PeopleData } from '../engine/people'
 import { expandRef, countsFrom } from './ref'
 import { BOOKS, LETTERS, type Book, type GameContent, type NeighborDef, type Piece } from '../engine/types'
 import { bibleIdOf } from '../engine/shelf-rooms'
@@ -199,3 +201,7 @@ export function pieceOfQuestion(q: Question): string | null {
   if (q.kind === 'openingNone') return pieceOfVerse(q.ref.replace(/-\d+$/, ''))?.id ?? null
   return pieceOfVerse(q.ref)?.id ?? null
 }
+
+// 살아 움직이는 사람들 (계획 6b): 일과·목격·마을 사건·말·이벤트
+export const PEOPLE = peopleRaw as unknown as PeopleData
+setPeopleData(PEOPLE)

@@ -50,7 +50,7 @@ function Body() {
     case 'journal':
       return <Journal />
     case 'scene':
-      return <SceneView id={modal.id} />
+      return <SceneView id={modal.id} chosen={modal.chosen} />
     case 'mini':
       return <MiniGame state={modal.state} pending={modal.pending} />
     case 'gift':

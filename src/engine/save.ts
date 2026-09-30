@@ -1,4 +1,5 @@
 // 브라우저 저장. 저장소가 없거나 막혀 있어도 게임은 돌아야 하므로 모든 접근을 try/catch로 감싼다.
+import { sanitizeLife } from './people'
 import { sanitizeRomance } from './romance'
 import { sanitizeStats } from './stats'
 import { IDLE_RESET } from './autonomy'
@@ -134,6 +135,8 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     stats: sanitizeStats(s.stats),
     // 연애와 결혼 (계획 6): 옛 저장은 빈 연애
     romance: sanitizeRomance(s.romance),
+    // 살아 움직이는 사람들 (계획 6b): 옛 저장은 빈 기억
+    life: sanitizeLife(s.life),
     needs: { ...s.needs, heat: s.needs?.heat ?? 0 },
     collected,
     progress,

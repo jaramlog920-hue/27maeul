@@ -4,7 +4,8 @@ import { darkness, phaseOf, seasonOf } from '../engine/clock'
 import { isGrown, STRAY_SPOTS, EAVES } from '../engine/companion'
 import { totalChapters } from '../engine/books'
 import { shelfRoom } from '../engine/shelf-rooms'
-import { shelvedCount, straysToday, weddingToday, type GameState } from '../engine/game'
+import { routineOf, shelvedCount, straysToday, weddingToday, type GameState } from '../engine/game'
+import type { Activity } from '../engine/people'
 import { FURNITURE_DEFS, type Furniture } from '../engine/room'
 import { FURNI_PALETTE, FURNITURE_ART } from './furniture-art'
 import { drawDecor, lanternLights, sheepCount } from './decor'
@@ -818,6 +819,40 @@ function bubble(g: Ctx, cx: number, top: number, draw: (x: number, y: number) =>
 }
 
 type EmoteId = 'z' | 'note' | 'yawn' | 'talk' | 'heart' | 'sweat' | 'hungry' | 'shiver'
+/** 하고 있는 일 (계획 6b): 일과 자리에 선 사람 머리 위 작은 그림 — 말을 걸기 전에도 무엇을 하는지 보인다 */
+const DOING: Record<Activity, string[]> = {
+  hammer: ['..kkkk..', '..kkkk..', '...nn...', '...nn...', '...nn...', '........'],
+  net: ['b.b.b.b.', '.b.b.b.b', 'b.b.b.b.', '.b.b.b.b', 'b.b.b.b.', '........'],
+  tea: ['..w.w...', '........', '.oooooo.', '.oooooook', '..oooo.k', '........'],
+  book: ['........', '.wwkwww.', '.wwkwww.', '.wwkwww.', '.nnknnn.', '........'],
+  bread: ['........', '..yyyy..', '.yoyoyy.', 'yyyyyyyy', '.oooooo.', '........'],
+  sheep: ['..wwww..', '.wwwwwwk', 'wwwwwwkk', '.wwwwww.', '.k.k.k..', '........'],
+  herb: ['...g....', '..ggg...', '.ggggg..', '..ggg.g.', '...n.gg.', '...n....'],
+  weave: ['pppppppp', 'p.p.p.p.', 'pppppppp', '.p.p.p.p', 'pppppppp', '........'],
+  bee: ['..w.w...', '.ykyky..', 'ykykyk..', '.ykyky..', '........', '........'],
+  grape: ['...g....', '..pp....', '.pppp...', '.ppp....', '..p.....', '........'],
+  music: ['...kkk..', '...k.k..', '...k.k..', '.kkk.kk.', '.kk.....', '........'],
+  rest: ['........', 'kkk.....', '..k.kk..', '.k....k.', 'kkk.kk..', '........'],
+  wait: ['........', '.kk.kk..', '........', '........', '.k..k..k', '........'],
+  wood: ['........', 'nnnnnnn.', 'n.n.n.nn', 'nnnnnnn.', '........', '........'],
+  cat: ['.k...k..', '.kk.kk..', '.kkkkk..', '.kwkwk..', '..kkk...', '........'],
+}
+const DOING_COL: Record<string, string> = { k: '#3b2a20', n: '#94704f', b: '#6f9cc2', w: '#fbf3e0', o: '#d49a72', y: '#e0c878', g: '#6f9a5a', p: '#9a6aa8' }
+function doingIcon(g: Ctx, kind: Activity, cx: number, top: number) {
+  const rows = DOING[kind]
+  if (!rows) return
+  bubble(g, cx, top, (x, y) => {
+    rows.forEach((row, dy) => {
+      for (let dx = 0; dx < row.length; dx++) {
+        const c = DOING_COL[row[dx]]
+        if (!c) continue
+        g.fillStyle = c
+        g.fillRect(x + 1 + dx, y + dy + 1, 1, 1)
+      }
+    })
+  })
+}
+
 function emote(g: Ctx, id: EmoteId, cx: number, top: number) {
   bubble(g, cx, top, (x, y) => {
     const f = (dx: number, dy: number, w = 1, h = 1, col = '#3b2a20') => {
@@ -1438,6 +1473,11 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
             const spr = neighborPerson(def, facing, moving ? walkFrame(n.walkTime) : 0, isBlinking(t + offset), season, growth)
             drawSprite(g, spr, n.x, n.y, moving ? 0 : breathOffset(t + offset))
             if (game.offers[def.id]) emote(g, 'talk', n.x * TILE + 8, n.y * TILE + TILE - spr.height - 2 - Math.round(Math.sin(t * 3)))
+            else if (!moving) {
+              // 일과 자리에서 하는 일 (계획 6b)
+              const r = routineOf(game, def.id)
+              if (r?.doing && Math.round(n.x) === r.at.x && Math.round(n.y) === r.at.y) doingIcon(g, r.doing, n.x * TILE + 8, n.y * TILE + TILE - spr.height - 2)
+            }
           },
         })
         // 아이가 데려간 동물은 아이 곁에

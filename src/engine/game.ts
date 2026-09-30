@@ -59,6 +59,27 @@ import {
   WEDDING_SPOT,
   type Romance,
 } from './romance'
+import {
+  allSightings,
+  depthOf,
+  hasMemory,
+  NO_LIFE,
+  personOf,
+  peopleData,
+  pickLine,
+  RECENT_KEEP,
+  reqMet,
+  routineNow,
+  STAGE_POINTS,
+  stageOfPoints,
+  whenMatches,
+  type Life,
+  type Moment,
+  type Person,
+  type PersonEvent,
+  type Routine,
+  type Stage,
+} from './people'
 import { POSTMAN, postForDay, starPostFor } from './post'
 import { blanksFor } from './copy'
 import { checkArrangement, moveItem, type ArrangeResult } from './scroll'
@@ -171,6 +192,8 @@ export interface GameState {
   stats: Stats
   /** 연애와 결혼 (계획 6): 연인·약혼자·배우자 한 명 */
   romance: Romance
+  /** 살아 움직이는 사람들 (계획 6b): 본 장면·기억·관계의 색·최근 말·서먹함·약속 */
+  life: Life
 }
 
 /** 지도(world.tileAt)가 이 게임의 집 단계·열린 서고 방 문(방 표)을 보게 한다. 지도를 읽는 엔진 입구마다 부른다 */
@@ -192,6 +215,10 @@ export const NO_TODAY: Today = { visitor: null, visitGot: false, inviter: null, 
 export type GameEvent =
   | { type: 'arrived'; target: Target }
   | { type: 'moment'; id: string }
+  /** 가까이 지나갈 때 들리는 혼잣말 (계획 6b) */
+  | { type: 'mutter'; npc: string; text: string }
+  /** 지킨 약속 (계획 6b) */
+  | { type: 'promiseKept'; npc: string }
 
 // ── 만들기 ──
 
@@ -199,7 +226,7 @@ function defsById(content: GameContent): Record<string, NeighborDef> {
   return Object.fromEntries(content.neighbors.map((n) => [n.id, n]))
 }
 
-type GoalState = Pick<GameState, 'clock' | 'flags' | 'progress' | 'hearts' | 'today' | 'shelved'> & Partial<Pick<GameState, 'romance' | 'homeLevel'>>
+type GoalState = Pick<GameState, 'clock' | 'flags' | 'progress' | 'hearts' | 'today' | 'shelved'> & Partial<Pick<GameState, 'romance' | 'homeLevel' | 'life' | 'avatar'>>
 
 /**
  * 서고에 꽂은 복음서 수 — 마을 구역(lockedZones)·서고 권수로 이사 오는 이웃·직업 단계가 이것을 센다.
@@ -219,6 +246,7 @@ const notYet = (d: NeighborDef, level: number, flags: Record<string, number>) =>
   (!!d.joinsWithFamily && !!d.family && !flags[`movedIn:${d.family}`])
 
 function goalContext(s: GoalState, content: GameContent) {
+  rememberDefs(content)
   const w = weatherOf(s.clock.day)
   const m = s.clock.minute
   const special: Record<string, Tile | null> = {}
@@ -226,6 +254,11 @@ function goalContext(s: GoalState, content: GameContent) {
   const level = s.flags.villageLevel ?? 0
   for (const d of content.neighbors) if (notYet(d, level, s.flags)) special[d.id] = null
   const joined = (id: string) => !(id in special)
+  // 살아 움직이는 사람들 (계획 6b): 이벤트 자리 > 목격 자리 > 일과 (아래 잔치·모임·사랑방이 덮는다)
+  for (const d of content.neighbors) if (joined(d.id)) {
+    const at = personSpot(s, d.id)
+    if (at) special[d.id] = at
+  }
   // 단짝이 된 아이는 오후에 양 우리 곁에서 논다
   if (s.flags['done:friends'] && m >= FRIENDS_FROM && m < FRIENDS_TO && !isWet(w)) special.child = FRIENDS_SPOT
   if (lessonTime(s)) special.child = LESSON_SPOT
@@ -398,6 +431,7 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
     chest: {},
     stats: freshStats(),
     romance: NO_ROMANCE,
+    life: NO_LIFE,
   }
 }
 
@@ -651,7 +685,9 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
   }
 
   const idle = moving ? IDLE_RESET : stepIdle(s.idle, dt, clock.minute, rng, totalChapters(s) >= 3)
-  const next: GameState = { ...s, clock, needs, player, target, idle, npcs, companion, trails }
+  const lived = liveNearby({ ...s, clock, needs, player, target, idle, npcs, companion, trails }, now, events)
+  if (lived.scenes.length > s.scenes.length) return { state: lived, events }
+  const next: GameState = lived
 
   // 결혼 잔치 (계획 6): 약혼한 다음 장날 저녁, 광장 모닥불 둘레에 오면 잔치가 열리고 부부가 된다
   if (weddingToday(next) && clock.minute >= FESTIVAL_FROM && clock.minute < FESTIVAL_TO && atWeddingFire(now)) {
@@ -693,7 +729,217 @@ export function passTime(s: GameState, minutes: number): GameState {
 // ── 이웃과 말하기 ──
 
 /** 마음 점수를 더한다 (hearts에는 점수 0~100이 들어 있고, 하트 수는 heartsOf로 본다) */
+// ── 살아 움직이는 사람들 (계획 6b, 판단은 people.ts) ──
+
+export function momentOf(s: Pick<GameState, 'clock'>): Moment {
+  return { day: s.clock.day, minute: s.clock.minute, weather: weatherOf(s.clock.day), season: seasonOf(s.clock.day) }
+}
+
+/** 이 사람과의 사이 단계 (0 낯선 사람 … 5 연애 가능) */
+export function stageWith(s: Pick<GameState, 'hearts'>, id: string): Stage {
+  return stageOfPoints(s.hearts[id] ?? 0)
+}
+
+function reqCtx(s: GoalState, npc: string) {
+  const r = s.romance ?? NO_ROMANCE
+  const def = CONTENT_DEFS.get(npc)
+  return {
+    life: s.life ?? NO_LIFE,
+    npc,
+    day: s.clock.day,
+    lover: r.partner === npc && !!r.stage,
+    suitor: !!def?.romanceable && !!def.look && def.look !== (s.avatar?.look ?? 'f'),
+    threads: peopleData().threads,
+  }
+}
+/** 이웃 정의 (people 판단이 모습·후보 여부를 볼 때) — newGame·settle 때 채운다 */
+const CONTENT_DEFS = new Map<string, NeighborDef>()
+function rememberDefs(content: GameContent) {
+  if (CONTENT_DEFS.size !== content.neighbors.length) for (const d of content.neighbors) CONTENT_DEFS.set(d.id, d)
+}
+
+/** 지금 열릴 수 있는 이 사람의 이벤트 (조건이 맞고 아직 안 본 것 — 먼저 적힌 것부터) */
+export function eventNow(s: GoalState, npc: string): PersonEvent | null {
+  const p = personOf(npc)
+  if (!p?.events) return null
+  const life = s.life ?? NO_LIFE
+  const ctx = reqCtx(s, npc)
+  const m = momentOf(s)
+  const stage = stageWith(s, npc)
+  return p.events.find((e) => !life.seen.includes(e.id) && stage >= e.stage && whenMatches(e.when, m) && reqMet(e.req, ctx) && (!e.confess || ctx.suitor)) ?? null
+}
+
+/** 지금 벌어지는 목격 장면 (플레이어가 보든 안 보든 그 사람은 그 자리에 간다) */
+function sightingNow(s: GoalState, npc: string) {
+  const life = s.life ?? NO_LIFE
+  const m = momentOf(s)
+  const ctx = reqCtx(s, npc)
+  const stage = stageWith(s, npc)
+  return allSightings().find(
+    (x) =>
+      x.npc === npc &&
+      !life.seen.includes(x.id) &&
+      (x.stage === undefined || stage >= x.stage) &&
+      (x.thread === undefined || threadPhaseOf(x.thread) === x.phase) &&
+      whenMatches(x.when, m) &&
+      reqMet(x.req, ctx),
+  )
+  function threadPhaseOf(id: string) {
+    const t = peopleData().threads.find((t) => t.id === id)
+    if (!t) return -9
+    let at = -1
+    t.phases.forEach((p, i) => {
+      if (s.clock.day >= p.day) at = i
+    })
+    return s.clock.day >= t.end ? t.phases.length : at
+  }
+}
+
+/** 지금 이 사람의 일과 */
+export function routineOf(s: GoalState, npc: string): Routine | null {
+  const p = personOf(npc)
+  return p ? routineNow(p, momentOf(s), peopleData().threads) : null
+}
+
+/** 이 사람이 지금 가 있을 곳 (없으면 neighbors.json 시간표) */
+function personSpot(s: GoalState, npc: string): Tile | null {
+  const e = eventNow(s, npc)
+  if (e) return e.at
+  const w = sightingNow(s, npc)
+  if (w) return w.at
+  return routineOf(s, npc)?.at ?? null
+}
+
+const near = (a: Tile, b: Tile, d: number) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y) <= d
+const sameArea = (a: Tile, b: Tile) => roomAt(a) === roomAt(b) && isHome(a) === isHome(b)
+
+function remember(life: Life, npc: string, tag: string, s: Pick<GameState, 'clock'>): Life {
+  if (hasMemory(life, npc, tag)) return life
+  const m = momentOf(s)
+  return { ...life, memories: { ...life.memories, [npc]: [...(life.memories[npc] ?? []), { tag, day: m.day, weather: m.weather, season: m.season }] } }
+}
+
+/**
+ * 가까이 있는 사람들의 삶: 이벤트(그 사람이 그 자리에 와 있고 플레이어가 곁에 오면), 목격(모르는 사이에 보게 되는 장면),
+ * 혼잣말(가까이 지나가면 하루 한 번), 약속(그 시각 그 자리에 오면 지킨 것)
+ */
+function liveNearby(s: GameState, now: Tile, events: GameEvent[]): GameState {
+  let life = s.life ?? NO_LIFE
+  let next = s
+  if (life.mutterDay !== s.clock.day) life = { ...life, mutterDay: s.clock.day, muttered: [] }
+  for (const [id, n] of Object.entries(s.npcs)) {
+    if (!n.visible) continue
+    const at = npcTile(n)
+    if (!sameArea(at, now)) continue
+    const e = eventNow({ ...s, life }, id)
+    if (e && near(at, e.at, 1) && near(now, e.at, 3)) {
+      life = { ...life, seen: [...life.seen, e.id] }
+      next = { ...next, life, scenes: [...next.scenes, `ev:${e.id}`] }
+      if (e.gain) next = heartUp(next, id, e.gain)
+      if (e.cool) next = { ...next, life: { ...next.life, cool: { ...next.life.cool, [id]: s.clock.day + e.cool } } }
+      events.push({ type: 'moment', id: `ev:${e.id}` })
+      return next
+    }
+    const w = sightingNow({ ...s, life }, id)
+    if (w && near(at, w.at, 1) && near(now, w.at, 4)) {
+      life = remember({ ...life, seen: [...life.seen, w.id] }, id, w.memory, s)
+      events.push({ type: 'moment', id: `saw:${w.id}` })
+      return { ...next, life, scenes: [...next.scenes, `saw:${w.id}`] }
+    }
+    const r = routineOf({ ...s, life }, id)
+    if (r?.mutter?.length && near(at, r.at, 0) && near(now, at, 2) && !life.muttered.includes(id)) {
+      life = { ...life, muttered: [...life.muttered, id] }
+      const text = r.mutter[Math.floor(((s.clock.day * 7 + id.length) % 97) / 97 * r.mutter.length)]
+      events.push({ type: 'mutter', npc: id, text })
+    }
+  }
+  // 약속: 그날 그 시각 그 자리에 오면 지킨 것
+  const kept = life.promises.find((p) => p.day === s.clock.day && s.clock.minute >= p.from && s.clock.minute < p.to && near(now, p.at, 2))
+  if (kept) {
+    life = remember({ ...life, promises: life.promises.filter((p) => p !== kept) }, kept.npc, `kept:${kept.id}`, s)
+    next = heartUp({ ...next, life }, kept.npc, PROMISE_GAIN)
+    events.push({ type: 'promiseKept', npc: kept.npc })
+    return next
+  }
+  return life === s.life ? next : { ...next, life }
+}
+export const PROMISE_GAIN = 4
+/** 잊은 약속: 며칠 서먹 (영영 닫히지 않는다) */
+export const FORGOT_COOL = 3
+
+/** 잠든 사이 지난 약속은 잊은 것 — 기억과 며칠의 서먹함 */
+function forgetPromises(s: GameState, day: number): GameState {
+  let life = s.life ?? NO_LIFE
+  for (const p of life.promises.filter((p) => p.day < day)) {
+    life = remember(life, p.npc, `forgot:${p.id}`, s)
+    life = { ...life, cool: { ...life.cool, [p.npc]: day + FORGOT_COOL } }
+  }
+  return { ...s, life: { ...life, promises: life.promises.filter((p) => p.day >= day) } }
+}
+
+/** 이벤트에서 고른 말 (정답 없음): 기억·관계의 색·약속, 연애 시작 이벤트면 연인 (고르지 않고 닫아도 이벤트는 본 것) */
+export function chooseInEvent(s: GameState, eventId: string, index: number): GameState {
+  for (const p of Object.values(peopleData().people)) {
+    const e = p.events?.find((x) => x.id === eventId)
+    if (!e) continue
+    const c = e.choices?.[index]
+    if (!c) return s
+    let life = s.life ?? NO_LIFE
+    life = { ...life, colors: { ...life.colors, [p.id]: { ...life.colors[p.id], [c.color]: (life.colors[p.id]?.[c.color] ?? 0) + 1 } } }
+    if (c.memory) life = remember(life, p.id, c.memory, s)
+    if (c.promise) life = { ...life, promises: [...life.promises, { id: c.promise.id, npc: p.id, day: s.clock.day + 1, at: c.promise.at, from: c.promise.from, to: c.promise.to }] }
+    let next: GameState = { ...s, life }
+    if (e.confess && !s.romance?.partner && reqCtx(s, p.id).suitor) {
+      next = { ...next, romance: { ...NO_ROMANCE, partner: p.id, stage: 'dating', since: s.clock.day }, flags: { ...next.flags, 'unlock:dating': 1 } }
+    }
+    return next
+  }
+  return s
+}
+
+/** 말 걸 때 저절로 남는 기억: 비 오는 날 함께 있었던 일 (아는 사이부터) */
+function greetMemories(s: GameState, id: string): GameState {
+  if (!personOf(id) || stageWith(s, id) < 1) return s
+  if (isWet(weatherOf(s.clock.day))) return { ...s, life: remember(s.life ?? NO_LIFE, id, 'rain', s) }
+  return s
+}
+
+/** 지금 이 사람이 할 말 (people.json의 말 풀). 말 풀이 없거나 맞는 말이 없으면 null — 예전 대사로 */
+export function personLine(s: GameState, id: string, rnd: number): { state: GameState; text: string } | null {
+  const p = personOf(id)
+  if (!p) return null
+  const life = s.life ?? NO_LIFE
+  const ctx = reqCtx(s, id)
+  const cool = (life.cool[id] ?? 0) >= s.clock.day
+  const line = pickLine(p, { ...ctx, m: momentOf(s), depth: depthOf(stageWith(s, id), ctx.lover), cool, here: playerTile(s) }, rnd)
+  if (!line) return null
+  const recent = [...(life.recent[id] ?? []).filter((x) => x !== line.id), line.id].slice(-RECENT_KEEP)
+  return { state: { ...s, life: { ...life, recent: { ...life.recent, [id]: recent } } }, text: line.text }
+}
+
+/** 마음 점수의 문턱: 다음 사이로 넘어가려면 그 사람의 이벤트(opens)를 겪어야 한다 — 점수는 그 문턱 바로 아래에서 멈춘다 */
+function gateCap(s: GameState, p: Person): number {
+  const life = s.life ?? NO_LIFE
+  for (const st of [1, 2, 3, 4, 5] as Stage[]) {
+    const gate = p.events?.find((e) => e.opens === st)
+    if (gate && !life.seen.includes(gate.id)) return STAGE_POINTS[st] - 1
+  }
+  return MAX_POINTS
+}
+
 function heartUp(s: GameState, id: string, points: number): GameState {
+  const p = personOf(id)
+  if (p && points > 0) {
+    // 사람마다 마음이 열리는 빠르기, 서먹할 땐 반만, 문턱에서 멈춘다
+    const cool = (s.life?.cool[id] ?? 0) >= s.clock.day ? 0.5 : 1
+    const scaled = Math.max(1, Math.round(points * p.pace * cool))
+    const room = Math.max(0, gateCap(s, p) - (s.hearts[id] ?? 0))
+    return heartUpRaw(s, id, Math.min(scaled, room))
+  }
+  return heartUpRaw(s, id, points)
+}
+
+function heartUpRaw(s: GameState, id: string, points: number): GameState {
   const beforePts = s.hearts[id] ?? 0
   // 매력 단계만큼 조금 더 (3단계 +1점, 5단계 +2점)
   const afterPts = Math.min(MAX_POINTS, beforePts + points + (points > 0 ? charmBonus(s.stats) : 0))
@@ -739,7 +985,7 @@ function heartUp(s: GameState, id: string, points: number): GameState {
 /** 말을 걸면 그날 처음 한 번 하트가 오른다 */
 export function greetNeighbor(s: GameState, id: string): GameState {
   if (s.talked.includes(id)) return s
-  return train(heartUp({ ...s, talked: [...s.talked, id] }, id, GAIN.talk), 'charm', XP.greet)
+  return train(heartUp(greetMemories({ ...s, talked: [...s.talked, id] }, id), id, GAIN.talk), 'charm', XP.greet)
 }
 
 /**
@@ -845,7 +1091,10 @@ export function giveGift(s: GameState, def: NeighborDef, item: ItemId): { state:
   const left = take(s.inv, { [item]: 1 })
   if (!left) return null
   const liked = def.likes.includes(item)
-  const given = heartUp({ ...s, inv: left, gifted: [...s.gifted, def.id] }, def.id, liked ? GAIN.giftLiked : GAIN.giftPlain)
+  // 싫어하는 것을 건넨 첫날은 기억에 남는다 (나중에 웃음거리가 된다 — 계획 6b)
+  const disliked = !!personOf(def.id)?.dislikes?.includes(item)
+  const base = disliked ? { ...s, life: remember(s.life ?? NO_LIFE, def.id, 'badGift', s) } : s
+  const given = heartUp({ ...base, inv: left, gifted: [...s.gifted, def.id] }, def.id, disliked ? 0 : liked ? GAIN.giftLiked : GAIN.giftPlain)
   return { state: train(given, 'charm', XP.gift), liked }
 }
 
@@ -1871,7 +2120,7 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
     room,
     inv,
   }
-  const morning = morningSupplies(next, s.clock.day)
+  const morning = forgetPromises(morningSupplies(next, s.clock.day), day)
   return { ...morning, npcs: placeAllNpcs(morning, content) }
 }
 

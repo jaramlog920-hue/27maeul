@@ -257,6 +257,8 @@ function walk(node, path) {
 }
 walk(life, 'life-text')
 walk(neighbors, 'neighbors')
+// 살아 움직이는 사람들 (계획 6b): 혼잣말·말·목격·이벤트 문장
+walk(await read('src/content/people.json'), 'people')
 
 if (errors) {
   console.error(`\n✗ verify-pieces 실패: 오류 ${errors}개, 경고 ${warnings}개`)

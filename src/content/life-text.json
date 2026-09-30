@@ -4538,5 +4538,17 @@
     "dateSunset": "{with} 노을 보기",
     "dateDone": "{with} 오붓한 시간을 보냈다.",
     "dateAlready": "오늘은 벌써 둘이 시간을 보냈어요."
+  },
+  "people": {
+    "stages": [
+      "낯선 사람",
+      "아는 사람",
+      "편한 사이",
+      "친구",
+      "특별한 사람",
+      "마음이 가는 사이"
+    ],
+    "mutter": "{who}: “{text}”",
+    "promiseKept": "{who} 기다리고 있었다는 듯 활짝 웃었다."
   }
 }

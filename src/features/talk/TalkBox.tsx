@@ -2,13 +2,22 @@
 import { neighborById } from '../../content/catalog'
 import { fill, itemList, NEIGHBOR_LINES, T } from '../../content/text'
 import { grapesRipe, isMarketDay } from '../../engine/calendar'
-import { activeRequest, APOTHECARY, canHelp, canOrderHome, canOrderWork, GIFTABLE, herbsSellLeft, lessonTime, nextHomeStage, sellPrice } from '../../engine/game'
+import { activeRequest, APOTHECARY, isSuitor, romanceWith, stageWith, type GameState, canHelp, canOrderHome, canOrderWork, GIFTABLE, herbsSellLeft, lessonTime, nextHomeStage, sellPrice } from '../../engine/game'
 import { CARPENTER_WORKS } from '../../engine/easier'
 import { requestFor, reqState } from '../../engine/bonds'
 import { has } from '../../engine/items'
 import { MAX_HEART } from '../../engine/neighbors'
 import { heartsOf } from '../../engine/hearts'
+import { personOf } from '../../engine/people'
 import { postLine, starPostHint, useGame, type Modal } from '../../store/game-store'
+
+/** 사이의 이름: 연인·약혼·배우자, 아니면 낯선 사람 … 마음이 가는 사이 (같은 모습이면 특별한 사람까지) */
+export function bondLabel(game: GameState, id: string): string {
+  const r = romanceWith(game, id)
+  if (r !== 'friend') return (T.romance.stage as Record<string, string>)[r]
+  const st = Math.min(stageWith(game, id), isSuitor(game, neighborById(id)) ? 5 : 4)
+  return T.people.stages[st]
+}
 
 export function Hearts({ n }: { n: number }) {
   return (
@@ -48,7 +57,9 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
   return (
     <div className="dialog talk" role="dialog" aria-label={def.role}>
       <p className="talk-role">
-        {def.role} <Hearts n={heartsOf(game.hearts[def.id])} />
+        {def.role}{' '}
+        {/* 살아 움직이는 사람들 (계획 6b): 숫자 대신 사이의 이름 */}
+        {personOf(def.id) ? <span className="talk-bond">{bondLabel(game, def.id)}</span> : <Hearts n={heartsOf(game.hearts[def.id])} />}
       </p>
       {/* 요한계시록은 낮에 건네지 않는다 — 평소 말 위에 언덕 편지함 안내 한 줄 */}
       {starHint && <p className="talk-line">{starHint}</p>}
