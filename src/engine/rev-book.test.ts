@@ -255,9 +255,9 @@ describe('⑥ 서고 퀴즈 — 편지 모양, 첫머리 문제 없음', () => {
 })
 
 describe('⑦ shelvedCount', () => {
-  it('요한계시록을 꽂아도 그대로', () => {
+  it('요한계시록도 꽂은 책 한 권으로 센다 (마을 구역·이사 조건)', () => {
     const s = hebJudShelved(HEB_JUD)
-    expect(shelvedCount({ shelved: { ...s.shelved, rev: 2 } })).toBe(shelvedCount(s))
-    expect(shelvedCount({ shelved: { rev: 1 } })).toBe(0)
+    expect(shelvedCount({ shelved: { ...s.shelved, rev: 2 } })).toBe(shelvedCount(s) + 1)
+    expect(shelvedCount({ shelved: { rev: 1 } })).toBe(1)
   })
 })

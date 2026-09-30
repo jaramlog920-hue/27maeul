@@ -313,13 +313,12 @@ describe('책 고르기와 불러오기', () => {
     }
   })
 
-  it('⑦ 서고에 편지를 꽂아도 shelvedCount가 늘지 않는다', () => {
+  it('⑦ 서고에 꽂은 책은 편지도 한 권씩 센다 (마을 구역·이사 조건)', () => {
     const s = actsShelved()
-    expect(shelvedCount(s)).toBe(4)
+    expect(shelvedCount(s)).toBe(5)
     const all = Object.fromEntries(LETTERS.map((b) => [b, 2]))
-    expect(shelvedCount({ shelved: { ...s.shelved, ...all } })).toBe(4)
-    expect(shelvedCount({ shelved: { rom: 2, phm: 1 } })).toBe(0)
-    // 여덟 권(히브리서–유다서)도 세지 않는다
-    expect(shelvedCount({ shelved: Object.fromEntries(HEB_JUD_IDS.map((b) => [b, 1])) })).toBe(0)
+    expect(shelvedCount({ shelved: { ...s.shelved, ...all } })).toBe(5 + LETTERS.length)
+    expect(shelvedCount({ shelved: { rom: 2, phm: 1 } })).toBe(2)
+    expect(shelvedCount({ shelved: Object.fromEntries(HEB_JUD_IDS.map((b) => [b, 1])) })).toBe(HEB_JUD_IDS.length)
   })
 })

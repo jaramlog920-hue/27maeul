@@ -101,7 +101,7 @@ import {
   onceKey,
 } from './stories'
 import { ATTIC, BED_STAND, HEARTH_STAND, HOUSES, PET_HOME, HOME_FRONT, inAttic, isHome, isIndoor, isWalkable, key, LADDER, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setMailbox, setOpenDoors, START, tileAt, WARPS } from './world'
-import { GOSPELS, type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
+import { type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
 import { withLookDefaults, type Avatar, type FullAvatar } from './avatar'
 import { BOARD_GAIN, boardFor, type BoardRequest } from './board'
 import { newlyAchieved, withFound, type Achievement } from './achievements'
@@ -249,11 +249,12 @@ function defsById(content: GameContent): Record<string, NeighborDef> {
 type GoalState = Pick<GameState, 'clock' | 'flags' | 'progress' | 'hearts' | 'today' | 'shelved'> & Partial<Pick<GameState, 'romance' | 'homeLevel' | 'life' | 'avatar'>>
 
 /**
- * 서고에 꽂은 복음서 수 — 마을 구역(lockedZones)·서고 권수로 이사 오는 이웃·직업 단계가 이것을 센다.
- * 사도행전(계획 5)은 세지 않는다: 이 흐름들은 복음서 방 네 권을 기준으로 짜였고, 사도행전 방은 그다음 이야기다
+ * 서고에 꽂은 책 수 (복음서·사도행전·편지 모두) — 마을 구역(lockedZones)과 서고 권수로 이사 오는 이웃이 이것을 센다.
+ * 1권 포도밭 · 2권 약방 주인 · 3권 어부 · 4권 나루(여행) · 5권 벌통 · 6권 목수 (2026-09-30 사용자).
+ * 직업 단계(job.ts)와 복음서 방 잔치는 복음서만 따로 센다
  */
 export function shelvedCount(s: Pick<GameState, 'shelved'>): number {
-  return GOSPELS.filter((b) => s.shelved[b] !== undefined).length
+  return Object.values(s.shelved).filter((g) => g !== undefined).length
 }
 
 /**

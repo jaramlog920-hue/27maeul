@@ -82,18 +82,21 @@ it('움직인 이웃을 다시 따라가는 기록자도 가구를 피한다', (
 })
 
 describe('서고 권수로 이사 오는 이웃', () => {
+  const TWO = { mk: 1, mt: 1 } as const
   const nextMorning = (shelved: Partial<Record<Book, Grade>>): GameState => settle(goToSleep({ ...newGame(CONTENT), shelved }, CONTENT), CONTENT)
-  it('편지 나르는 이웃은 처음부터, 약방 주인은 1권, 어부는 2권, 목수는 3권부터 마을에 보인다', () => {
+  it('편지 나르는 이웃은 처음부터, 약방 주인은 2권, 어부는 3권, 목수는 6권부터 마을에 보인다', () => {
     const none = nextMorning({})
     expect(Object.keys(none.npcs)).toContain('postman')
     expect(neighborsPresent(none, CONTENT)).not.toContain('apothecary')
-    expect(neighborsPresent(nextMorning({ mk: 1 }), CONTENT)).toContain('apothecary')
-    expect(neighborsPresent(nextMorning({ mk: 1 }), CONTENT)).not.toContain('fisher')
-    expect(neighborsPresent(nextMorning({ mk: 1, lk: 0 }), CONTENT)).toContain('fisher')
-    expect(neighborsPresent(nextMorning({ mk: 1, lk: 0 }), CONTENT)).not.toContain('carpenter')
+    expect(neighborsPresent(nextMorning({ mk: 1 }), CONTENT)).not.toContain('apothecary')
+    expect(neighborsPresent(nextMorning(TWO), CONTENT)).toContain('apothecary')
+    expect(neighborsPresent(nextMorning(TWO), CONTENT)).not.toContain('fisher')
+    expect(neighborsPresent(nextMorning({ ...TWO, lk: 0 }), CONTENT)).toContain('fisher')
+    expect(neighborsPresent(nextMorning({ ...TWO, lk: 0, jn: 0 }), CONTENT)).not.toContain('carpenter')
+    expect(neighborsPresent(nextMorning({ ...TWO, lk: 0, jn: 0, ac: 1, rom: 1 }), CONTENT)).toContain('carpenter')
   })
   it('이사 온 날 아침에 소개 장면', () => {
-    const s = { ...newGame(CONTENT), shelved: { mk: 1 as const } }
+    const s = { ...newGame(CONTENT), shelved: TWO }
     expect(goToSleep(s, CONTENT).scenes).toContain('movedIn:apothecary')
     const again = goToSleep(goToSleep(s, CONTENT), CONTENT)
     expect(again.scenes.filter((x) => x === 'movedIn:apothecary')).toHaveLength(1)
@@ -103,7 +106,7 @@ describe('서고 권수로 이사 오는 이웃', () => {
     const before = newGame(CONTENT)
     expect(neighborsPresent(before, CONTENT)).not.toContain('apothecary')
     // 낮 동안 책을 꽂아 서고 권수가 올라가도, 잠들기 전까지는 아직 나타나지 않는다
-    const midDay = { ...before, shelved: { mk: 1 as const } }
+    const midDay = { ...before, shelved: TWO }
     expect(neighborsPresent(midDay, CONTENT)).not.toContain('apothecary')
     // 잠들며 소개 장면이 걸린 다음 날 아침부터 보인다
     const next = settle(goToSleep(midDay, CONTENT), CONTENT)

@@ -136,10 +136,10 @@ describe('다섯 번째 책 사도행전', () => {
       }
   })
 
-  it('서고 출제 범위는 다섯 권 순서, 마을 구역·직업·복음서 방은 복음서만 센다', () => {
+  it('서고 출제 범위는 다섯 권 순서, 직업·복음서 방은 복음서만 세고 마을 구역은 꽂은 책 모두를 센다', () => {
     expect(poolFor({ mk: 1 }, 'ac')).toEqual(['mk', 'ac'])
     const three = { mt: 2, mk: 1, lk: 0, ac: 2 } as const
-    expect(shelvedCount({ shelved: three })).toBe(3)
+    expect(shelvedCount({ shelved: three })).toBe(4)
     expect(gospelRoomFull({ shelved: three })).toBe(false)
     expect(gospelRoomFull({ shelved: { ...three, jn: 1 } })).toBe(true)
     expect(jobOf({ lettersDone: 0, shelved: three })).toBe(0)

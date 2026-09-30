@@ -541,7 +541,7 @@
       "x": 36,
       "y": 31
     },
-    "joinsAtBooks": 1,
+    "joinsAtBooks": 2,
     "schedule": [
       {
         "from": 420,
@@ -603,7 +603,7 @@
       "x": 29,
       "y": 31
     },
-    "joinsAtBooks": 2,
+    "joinsAtBooks": 3,
     "schedule": [
       {
         "from": 330,
@@ -661,7 +661,7 @@
       "x": 5,
       "y": 23
     },
-    "joinsAtBooks": 3,
+    "joinsAtBooks": 6,
     "schedule": [
       {
         "from": 420,

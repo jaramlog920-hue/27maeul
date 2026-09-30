@@ -83,7 +83,8 @@ describe('서고 권수로 열리는 구역', () => {
   it('책이 꽂힐수록 하나씩 열린다', () => {
     expect(lockedZones(0).map((z) => z.id)).toEqual(['vineyard', 'dock', 'hives'])
     expect(lockedZones(1).map((z) => z.id)).toEqual(['dock', 'hives'])
-    expect(lockedZones(3)).toEqual([])
+    expect(lockedZones(4).map((z) => z.id)).toEqual(['hives'])
+    expect(lockedZones(5)).toEqual([])
     expect(lockedTiles(0).has(`${vine.x},${vine.y}`)).toBe(true)
     expect(lockedTiles(1).has(`${vine.x},${vine.y}`)).toBe(false)
   })
