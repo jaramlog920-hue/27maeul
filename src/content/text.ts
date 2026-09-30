@@ -53,6 +53,13 @@ export function withObject(word: string): string {
   return word + (hasFinal ? '을' : '를')
 }
 
+/** 낱말 뒤에 받침에 맞는 '와/과'를 붙인다 (양치기와 / 빵 굽는 이웃과) */
+export function withAnd(word: string): string {
+  const code = word.charCodeAt(word.length - 1) - 0xac00
+  const hasFinal = code >= 0 && code <= 11171 && code % 28 !== 0
+  return word + (hasFinal ? '과' : '와')
+}
+
 export function itemName(id: ItemId): string {
   return ITEM_TEXT[id]?.name ?? id
 }

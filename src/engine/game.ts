@@ -40,6 +40,7 @@ import { bookDone, bookRoomOpen, emptyProgress, openDoorsFor, roomOpen, totalCha
 import { arrivesOf, modeOf, SHELF_ROOMS } from './shelf-rooms'
 import { currentChapter, offersForDay } from './offers'
 import { addXp, charmBonus, freshStats, luckyExtra, rainBonus, sellBonus, tiredScale, visitBonus, XP, type StatId, type Stats } from './stats'
+import { HALL_GUESTS, HALL_PLAY_GAIN, HALL_PLAY_MINUTES, HALL_SPOTS, hallGuests, hallOpen, SUNSET_MINUTES, sunsetTime, TEA_MINUTES, TEA_PRICE, teaOpen } from './places'
 import { POSTMAN, postForDay, starPostFor } from './post'
 import { blanksFor } from './copy'
 import { checkArrangement, moveItem, type ArrangeResult } from './scroll'
@@ -217,6 +218,8 @@ function goalContext(s: GoalState, content: GameContent) {
     const skip = t.gathering === 'starNight' ? 'shepherd' : ''
     if (m >= from && m < to) for (const [id, spot] of Object.entries(spots)) if (joined(id) && id !== skip) special[id] = spot
   }
+  // 마을 사랑방 (계획 10): 모임·잔치·저녁 초대가 없는 저녁, 이웃 셋이 긴 탁자 둘레에 모인다 (비 와도 — 집 안이라)
+  if (hallOpen(m)) hallGuestsToday(s, content).forEach((id, i) => (special[id] = HALL_SPOTS[i]))
   // 복음서 방 잔치 저녁: 이사 온 이웃은 모두(상인도) 광장 모닥불 둘레로 — 비가 와도 연다
   if (feastToday(s) && m >= FESTIVAL_FROM && m < FESTIVAL_TO)
     for (const [id, spot] of Object.entries(FESTIVAL_SPOTS)) if (joined(id)) special[id] = spot
@@ -228,6 +231,18 @@ function goalContext(s: GoalState, content: GameContent) {
     special,
     locked: lockedTiles(shelvedCount(s)),
   }
+}
+
+/**
+ * 오늘 저녁 사랑방에 모이는 이웃 (계획 10). 마을 잔치·이웃 모임·복음서 방 잔치 날 저녁은 모두 그쪽에 가므로 없다.
+ * 이사 온 이웃 중에서 (상인·아이 빼고) 날 씨앗으로 셋, 오늘 저녁 초대한 이웃은 제 집에 있으니 뺀다
+ */
+export function hallGuestsToday(s: GoalState, content: GameContent): string[] {
+  const t = s.today ?? NO_TODAY
+  if (festivalOf(s.clock.day) || feastToday(s) || t.gathering === 'babyParty' || t.gathering === 'starNight') return []
+  const level = s.flags.villageLevel ?? 0
+  const joined = content.neighbors.filter((d) => !d.marketOnly && !notYet(d, level, s.flags)).map((d) => d.id)
+  return hallGuests(s.clock.day, joined.filter((id) => id !== t.inviter)).slice(0, HALL_GUESTS)
 }
 
 /** 오늘 저녁 아이가 글자를 배우러 오는가 */
@@ -1172,6 +1187,76 @@ export function warmByHearth(s: GameState): GameState {
 
 export function restAt(s: GameState): GameState {
   return passTime({ ...s, needs: rest(s.needs) }, 30)
+}
+
+// ── 모이는 곳과 둘이 가는 곳 (계획 10, 때와 값은 places.ts) ──
+
+export type HallBlock = 'closed' | 'empty' | 'played' | 'tired' | null
+/** 사랑방 놀이: 저녁 모임 때, 모인 이웃이 방에 와 있고, 오늘 아직 놀지 않았을 때 */
+export function canPlayHall(s: GameState, content: GameContent): HallBlock {
+  if (!hallOpen(s.clock.minute)) return 'closed'
+  if (s.flags.hallDay === s.clock.day) return 'played'
+  if (exhausted(s.needs)) return 'tired'
+  if (hallFriendsHere(s, content).length === 0) return 'empty'
+  return null
+}
+
+/** 사랑방 방석 자리에 와 앉은 이웃 */
+export function hallFriendsHere(s: GameState, content: GameContent): string[] {
+  return hallGuestsToday(s, content).filter((id, i) => {
+    const n = s.npcs[id]
+    return n?.visible && sameTile(npcTile(n), HALL_SPOTS[i])
+  })
+}
+
+/**
+ * 사랑방에서 이웃과 수수께끼·실뜨기 놀이 (하루 한 번): 함께 논 이웃마다 마음 +3점, 매력이 조금 오른다.
+ * 처음 한 번은 짧은 장면 (hallNight)
+ */
+export function playHall(s: GameState, content: GameContent): GameState {
+  if (canPlayHall(s, content)) return s
+  let next: GameState = { ...s, flags: { ...s.flags, hallDay: s.clock.day, hallPlays: (s.flags.hallPlays ?? 0) + 1 } }
+  for (const id of hallFriendsHere(s, content)) next = heartUp(next, id, HALL_PLAY_GAIN)
+  if (!s.flags.hallPlays) next = { ...next, scenes: [...next.scenes, 'hallNight'] }
+  return train(passTime(next, HALL_PLAY_MINUTES), 'charm', XP.help)
+}
+
+export type TeaBlock = 'closed' | 'coins' | null
+export function canDrinkTea(s: GameState): TeaBlock {
+  if (!teaOpen(s.clock.minute)) return 'closed'
+  if (s.coins < TEA_PRICE) return 'coins'
+  return null
+}
+
+/** 찻집에서 차 한 잔 (닢 2): 쉬어서 피로가 풀리고 배도 조금 부르다. 처음 한 번은 짧은 장면 (teaFirst) */
+export function drinkTea(s: GameState): GameState {
+  if (canDrinkTea(s)) return s
+  const needs = rest({ ...s.needs, hunger: Math.max(0, s.needs.hunger - 10) })
+  const first = !s.flags.teaCups
+  const next: GameState = { ...s, coins: s.coins - TEA_PRICE, needs, flags: { ...s.flags, teaCups: (s.flags.teaCups ?? 0) + 1 }, scenes: first ? [...s.scenes, 'teaFirst'] : s.scenes }
+  return passTime(next, TEA_MINUTES)
+}
+
+export type SunsetBlock = 'notYet' | 'cloudy' | null
+export function canWatchSunset(s: GameState): SunsetBlock {
+  if (!sunsetTime(s.clock.minute)) return 'notYet'
+  if (!clearSky(s.clock.day)) return 'cloudy'
+  return null
+}
+
+/** 호숫가 정자에서 노을 보기: 쉬고, 그날 처음이면 운이 조금, 처음 한 번은 장면 (sunset — 앨범) */
+export function watchSunset(s: GameState): GameState {
+  if (canWatchSunset(s)) return s
+  const key = onceKey('sunset', s.clock.day)
+  if (s.flags[key]) return passTime({ ...s, needs: rest(s.needs) }, SUNSET_MINUTES)
+  const first = !s.flags.sunsets
+  const next: GameState = {
+    ...s,
+    needs: rest(s.needs),
+    flags: { ...s.flags, [key]: 1, sunsets: (s.flags.sunsets ?? 0) + 1 },
+    scenes: first ? [...s.scenes, 'sunset'] : s.scenes,
+  }
+  return train(passTime(next, SUNSET_MINUTES), 'luck', XP.stars)
 }
 
 /** 담요를 덮어 주면 추위가 가신다 (담요는 닳지 않는다) */

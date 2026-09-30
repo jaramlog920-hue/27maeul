@@ -7,7 +7,7 @@ import { handEase, leveledUp, XP, type StatId } from '../engine/stats'
 import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
 import { bookRoomOpen, openDoorsFor } from '../engine/books'
 import { actsDoorGlows, canShelve, payRetry, poolFor, shelve } from '../engine/library'
-import { ALBUM_IDS, fill, itemList, itemName, NEIGHBOR_LINES, roomTitle, SCENES, T, withObject } from '../content/text'
+import { ALBUM_IDS, fill, itemList, itemName, NEIGHBOR_LINES, roomTitle, SCENES, T, withAnd, withObject } from '../content/text'
 import { grapesRipe, isWet, weatherOf } from '../engine/calendar'
 import { cleanName, type Animal } from '../engine/companion'
 import {
@@ -37,6 +37,10 @@ import {
   stargaze,
   openMailbox,
   train,
+  hallFriendsHere,
+  playHall,
+  drinkTea,
+  watchSunset,
   clearSky,
   submitChapter,
   tapTile,
@@ -118,7 +122,7 @@ export type Modal =
   | { kind: 'mini'; state: MiniState; pending: Pending }
   | { kind: 'gift'; neighborId: string }
   | { kind: 'trade' }
-  | { kind: 'menu'; place: 'hearth' | 'workbench' | 'press' | 'hill' | 'bench' }
+  | { kind: 'menu'; place: MenuPlace }
   | { kind: 'readPick' }
   | { kind: 'quiz'; mode: QuizMode; questions: Question[]; index: number; wrong: string[]; solved: boolean; misses: number; missed: string[] }
   | { kind: 'care' }
@@ -230,6 +234,9 @@ interface Store {
   warm: () => void
   eat: () => void
   rest: () => void
+  playHall: () => void
+  drinkTea: () => void
+  watchSunset: () => void
   sitHill: () => void
   requestAsk: (npc: string) => void
   requestGive: (npc: string) => void
@@ -436,11 +443,18 @@ function announceRoom(before: GameState, after: GameState) {
       ? T.ui.libraryRoom
       : room.owner === 'acts'
         ? T.ui.actsRoom
+        : room.owner === 'hall'
+          ? T.places.hallRoom
+          : room.owner === 'teahouse'
+            ? T.places.teaRoom
         : letterRoom
           ? roomTitle(shelfRoom(letterRoom))
           : fill(T.ui.roomOf, { who: who ?? '' })
   useGame.getState().say(name, 2200)
 }
+
+/** 누르면 할 일 창이 뜨는 자리 */
+export type MenuPlace = 'hearth' | 'workbench' | 'press' | 'hill' | 'bench' | 'hallTable' | 'teaTable' | 'pavilion'
 
 export const useGame = create<Store>((set, get) => {
   let warnedSaveFail = false
@@ -504,6 +518,9 @@ export const useGame = create<Store>((set, get) => {
       case 'press':
       case 'hill':
       case 'bench':
+      case 'hallTable':
+      case 'teaTable':
+      case 'pavilion':
         return { game, modal: { kind: 'menu', place: target.id } }
       case 'shelf':
         return { game, modal: { kind: 'shelf' } }
@@ -820,6 +837,30 @@ export const useGame = create<Store>((set, get) => {
       }
     },
     rest: () => set({ game: persist(restAt(get().game)), modal: null }),
+    // 모이는 곳 (계획 10): 장면이 있으면 장면 먼저, 없으면 한 줄
+    playHall: () => {
+      const before = get().game
+      const friends = hallFriendsHere(before, CONTENT)
+      const next = playHall(before, CONTENT)
+      if (next === before) return
+      sfx('gift')
+      const names = friends.map((id) => CONTENT.neighbors.find((n) => n.id === id)?.role ?? id).join('·')
+      set({ game: persist(next), modal: null })
+      get().say(fill(T.places.hallDone, { with: withAnd(names) }), 3200)
+    },
+    drinkTea: () => {
+      const next = drinkTea(get().game)
+      if (next === get().game) return
+      sfx('eat')
+      set({ game: persist(next), modal: null })
+      get().say(T.places.teaDone)
+    },
+    watchSunset: () => {
+      const next = watchSunset(get().game)
+      if (next === get().game) return
+      set({ game: persist(next), modal: null })
+      get().say(T.places.sunsetDone)
+    },
     // 별 보기: 궂은 밤이면 흐림 알림, 편지함에서 꺼냈으면 장면(있으면)을 먼저 보이고 알림
     sitHill: () => {
       const before = get().game

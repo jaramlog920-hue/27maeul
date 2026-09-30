@@ -546,14 +546,26 @@
     "cover": "제본 표지 — 파피루스 2, 양털 1 (작업대)"
   },
   "places": {
-    "well": "물 긷기",
-    "reeds": "갈대 베기",
-    "olive": "올리브 따기",
-    "vine": "포도 따기",
-    "field": "보리 거두기",
-    "fieldGlean": "이삭 줍기",
-    "library": "마을 서고",
-    "garden": "텃밭"
+    "hallRoom": "마을 사랑방",
+    "teaRoom": "정원 찻집",
+    "hallTitle": "사랑방 긴 탁자",
+    "hallPlay": "이웃과 놀기 (수수께끼·실뜨기)",
+    "hallDone": "{with} 수수께끼를 내고 실뜨기를 했다.",
+    "hallClosed": "저녁 여섯 시가 지나면 이웃이 사랑방에 모여요.",
+    "hallEmpty": "아직 아무도 오지 않았어요. 조금 기다려 봐요.",
+    "hallPlayed": "오늘은 실컷 놀았어요. 내일 저녁에 또 와요.",
+    "hallHint": "잔치나 이웃 모임이 있는 날 저녁에는 모두 그쪽에 가요.",
+    "teaTitle": "찻집 탁자",
+    "teaDrink": "차 한 잔 ({n}닢)",
+    "teaDone": "따뜻한 차를 마시며 한숨 돌렸다.",
+    "teaClosed": "찻집은 아침 여덟 시부터 저녁 일곱 시까지 열어요.",
+    "teaCoins": "닢이 모자라요.",
+    "pavilionTitle": "호숫가 정자",
+    "sunsetWatch": "노을 보기",
+    "sit": "앉아 쉬기",
+    "sunsetDone": "호수 위로 해가 천천히 내려앉았다.",
+    "sunsetNotYet": "노을은 저녁 다섯 시 반쯤부터 보여요.",
+    "sunsetCloudy": "오늘은 구름이 끼어 노을이 보이지 않아요."
   },
   "trades": {
     "pen": "좋은 펜",
@@ -2919,6 +2931,51 @@
           "text": "이제 편지는 여기 넣어 둘게요. 비 오는 날에도요."
         }
       ]
+    },
+    "hallNight": {
+      "title": "사랑방의 저녁",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "사랑방 긴 탁자에 등불이 켜지고, 이웃들이 방석에 둘러앉았다."
+        },
+        {
+          "speaker": "baker",
+          "text": "오늘은 어느 분이 수수께끼를 낼 차례죠?"
+        },
+        {
+          "speaker": "narration",
+          "text": "웃음소리가 늦게까지 이어졌다. 저녁마다 누군가는 이 방에 모인다."
+        }
+      ],
+      "album": "사랑방의 저녁"
+    },
+    "teaFirst": {
+      "title": "정원 찻집",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "창가 탁자에 앉자 말린 꽃 냄새가 은은하게 났다."
+        },
+        {
+          "speaker": "narration",
+          "text": "따뜻한 찻잔을 두 손으로 감싸니 하루가 조금 느려졌다."
+        }
+      ]
+    },
+    "sunset": {
+      "title": "호숫가 노을",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "정자 벤치에 앉아 호수를 바라보았다."
+        },
+        {
+          "speaker": "narration",
+          "text": "물결 위로 주황빛이 번지다가, 천천히 보랏빛으로 바뀌었다."
+        }
+      ],
+      "album": "호숫가 노을"
     }
   },
   "journal": {
@@ -2987,7 +3044,10 @@
       "built:reedRack": " 집 옆에 갈대 말리는 틀이 섰다.",
       "reedRack": " 어부가 틀에 갈대를 걸어 두고 갔다.",
       "lightShoes": " 양치기에게 가벼운 신을 받았다.",
-      "homeMailbox": " 집 앞에 편지함이 섰다."
+      "homeMailbox": " 집 앞에 편지함이 섰다.",
+      "hallNight": " 저녁에 사랑방에서 이웃들과 놀았다.",
+      "teaFirst": " 정원 찻집에서 차를 마셨다.",
+      "sunset": " 호숫가 정자에서 노을을 보았다."
     }
   },
   "quiz": {

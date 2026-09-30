@@ -1,12 +1,26 @@
-// 화덕·작업대·기름틀·언덕 벤치에서 할 수 있는 일
+// 화덕·작업대·기름틀·언덕 벤치, 그리고 모이는 곳(사랑방·찻집·정자 — 계획 10)에서 할 수 있는 일
+import { CONTENT } from '../../content/catalog'
 import { fill, T } from '../../content/text'
-import { canCraft, hasFood, starsOut } from '../../engine/game'
-import { useGame } from '../../store/game-store'
+import { canCraft, canDrinkTea, canPlayHall, canWatchSunset, hasFood, starsOut } from '../../engine/game'
+import { TEA_PRICE } from '../../engine/places'
+import { useGame, type MenuPlace } from '../../store/game-store'
 
-export function PlaceMenu({ place }: { place: 'hearth' | 'workbench' | 'press' | 'hill' | 'bench' }) {
+export function PlaceMenu({ place }: { place: MenuPlace }) {
   const game = useGame((s) => s.game)
-  const { startCraft, warm, eat, closeModal, open, sitHill } = useGame.getState()
-  const title = { hearth: T.ui.hearthTitle, workbench: T.ui.workbenchTitle, press: T.ui.pressTitle, hill: T.ui.hillTitle, bench: T.ui.benchTitle }[place]
+  const { startCraft, warm, eat, closeModal, open, sitHill, playHall, drinkTea, watchSunset, rest } = useGame.getState()
+  const title = {
+    hearth: T.ui.hearthTitle,
+    workbench: T.ui.workbenchTitle,
+    press: T.ui.pressTitle,
+    hill: T.ui.hillTitle,
+    bench: T.ui.benchTitle,
+    hallTable: T.places.hallTitle,
+    teaTable: T.places.teaTitle,
+    pavilion: T.places.pavilionTitle,
+  }[place]
+  const hall = place === 'hallTable' ? canPlayHall(game, CONTENT) : null
+  const tea = place === 'teaTable' ? canDrinkTea(game) : null
+  const sunset = place === 'pavilion' ? canWatchSunset(game) : null
   return (
     <div className="dialog" role="dialog" aria-label={title}>
       <h2>{title}</h2>
@@ -49,8 +63,26 @@ export function PlaceMenu({ place }: { place: 'hearth' | 'workbench' | 'press' |
             {T.ui.hillStars}
           </button>
         )}
-        {(place === 'hill' || place === 'bench') && (
-          <button className="primary" disabled={game.collected.length === 0} onClick={() => open({ kind: 'readPick' })}>
+        {place === 'hallTable' && (
+          <button className="primary" disabled={hall !== null} onClick={playHall}>
+            {T.places.hallPlay}
+          </button>
+        )}
+        {place === 'teaTable' && (
+          <button className="primary" disabled={tea !== null} onClick={drinkTea}>
+            {fill(T.places.teaDrink, { n: TEA_PRICE })}
+          </button>
+        )}
+        {place === 'pavilion' && (
+          <>
+            <button className="primary" disabled={sunset !== null} onClick={watchSunset}>
+              {T.places.sunsetWatch}
+            </button>
+            <button onClick={rest}>{T.places.sit}</button>
+          </>
+        )}
+        {(place === 'hill' || place === 'bench' || place === 'pavilion') && (
+          <button className={place === 'pavilion' ? '' : 'primary'} disabled={game.collected.length === 0} onClick={() => open({ kind: 'readPick' })}>
             {T.ui.readScripture}
           </button>
         )}
@@ -58,7 +90,15 @@ export function PlaceMenu({ place }: { place: 'hearth' | 'workbench' | 'press' |
       </div>
       {place === 'hill' && !starsOut(game.clock.minute) && <p className="hint">{T.ui.starsNotYet}</p>}
       {(place === 'hill' || place === 'bench') && <p className="hint">{T.ui.readHint}</p>}
-      {game.needs.fatigue >= 100 && place !== 'hill' && place !== 'bench' && <p className="hint">{T.ui.tooTired}</p>}
+      {hall === 'closed' && <p className="hint">{T.places.hallClosed}</p>}
+      {hall === 'empty' && <p className="hint">{T.places.hallEmpty}</p>}
+      {hall === 'played' && <p className="hint">{T.places.hallPlayed}</p>}
+      {place === 'hallTable' && <p className="hint">{T.places.hallHint}</p>}
+      {tea === 'closed' && <p className="hint">{T.places.teaClosed}</p>}
+      {tea === 'coins' && <p className="hint">{T.places.teaCoins}</p>}
+      {sunset === 'notYet' && <p className="hint">{T.places.sunsetNotYet}</p>}
+      {sunset === 'cloudy' && <p className="hint">{T.places.sunsetCloudy}</p>}
+      {game.needs.fatigue >= 100 && !['hill', 'bench', 'teaTable', 'pavilion'].includes(place) && <p className="hint">{T.ui.tooTired}</p>}
       {(['bread', 'papyrus', 'ink', 'oil', 'blanket', 'cover'] as const).some((r) => canCraft(game, r) === 'full') && <p className="hint">{T.ui.bagFull}</p>}
     </div>
   )
