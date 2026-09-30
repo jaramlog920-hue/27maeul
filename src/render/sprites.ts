@@ -24,7 +24,7 @@ export const PALETTE: Record<string, string> = {
   W: '#e8e0d8', g: '#4880b4', G: '#3c6c9c', // 할아버지
   H: '#b05c88', p: '#c8a04c', Q: '#ac883c', // 상인
   j: '#2a2020', n: '#a86048', N: '#845038', L: '#583828', // 대장장이
-  e: '#f0d8b0', u: '#987858', U: '#80644a', // 양치기
+  e: '#f0d8b0', u: '#987858', U: '#80644a', O: '#b86848', // 양치기 (O: 적갈색 곱슬머리 — 다른 이웃과 겹치지 않게)
   q: '#58984c', i: '#d4b060', I: '#ac883c', // 기름 짜는 이웃
   z: '#5c94c4', Z: '#4880b4', // 아이
   V: '#b05c88', X: '#944850', F: '#d888b4', // 베 짜는 이웃
@@ -296,8 +296,12 @@ function dressNeighbor(who: Who, rows: string[]): string[] {
       for (let y = 9; y <= 12; y++) for (let x = 3; x <= 6; x++) if (out[y][x] === 'n' || out[y][x] === 'N') setPixel(out, x, y, 'L')
       return out
     }
-    case 'shepherd':
-      return recolor(rows, { h: 'e', r: 'u', R: 'U', b: 'e' })
+    case 'shepherd': {
+      // 적갈색 곱슬머리 (윗머리가 양털처럼 부푼다) — 다른 이웃과 겹치지 않는 머리
+      const out = recolor(rows, { h: 'O', r: 'u', R: 'U', b: 'e' })
+      for (const [x, y] of [[1, 1], [8, 1]]) if (out[y][x] === '.') setPixel(out, x, y, 'O')
+      return out
+    }
     case 'presser': {
       const out = recolor(rows, { r: 'i', R: 'I', b: 'q' })
       for (let x = 2; x <= 7; x++) if (out[2][x] === 'h') setPixel(out, x, 2, 'q')

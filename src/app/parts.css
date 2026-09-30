@@ -1522,6 +1522,9 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
 .nb-face { width: 40px; height: 56px; object-fit: contain; object-position: bottom; image-rendering: pixelated; }
 .nb-name { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .nb-job { font-size: 12px; color: var(--ink-soft); }
+.nb-tags { display: inline-flex; gap: 4px; margin-left: 6px; vertical-align: middle; }
+.nb-tag { font-size: 11px; padding: 0 5px; border-radius: 6px; border: 1px solid var(--panel-edge); color: var(--ink-soft); font-weight: normal; }
+.nb-tag.love { color: #a0405a; border-color: #d99aac; background: #fbe8ee; }
 .nb-today { font-size: 12px; color: var(--accent); font-weight: 700; }
 .nb-bond { font-size: 12px; color: var(--ink-soft); white-space: nowrap; }
 .nb-card.unmet .nb-name strong { color: var(--ink-soft); }

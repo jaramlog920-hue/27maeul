@@ -80,7 +80,7 @@ import {
   type Routine,
   type Stage,
 } from './people'
-import { CAREFUL_AT, careScore, RARE_ITEMS, fixtureTier, FIXTURE_STEPS, lampNightsPerOil, nextFixture, type FixtureLine, type FixtureStep } from './fixtures'
+import { RARE_ITEMS, fixtureTier, FIXTURE_STEPS, lampNightsPerOil, nextFixture, type FixtureLine, type FixtureStep } from './fixtures'
 import { POSTMAN, postForDay, starPostFor } from './post'
 import { blanksFor } from './copy'
 import { checkArrangement, moveItem, type ArrangeResult } from './scroll'
@@ -99,7 +99,7 @@ import {
   momentNow,
   onceKey,
 } from './stories'
-import { ATTIC, BED_STAND, HEARTH_STAND, PET_HOME, HOME_FRONT, inAttic, isHome, isIndoor, isWalkable, key, LADDER, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setMailbox, setOpenDoors, START, tileAt, WARPS } from './world'
+import { ATTIC, BED_STAND, HEARTH_STAND, HOUSES, PET_HOME, HOME_FRONT, inAttic, isHome, isIndoor, isWalkable, key, LADDER, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setMailbox, setOpenDoors, START, tileAt, WARPS } from './world'
 import { GOSPELS, type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
 import type { Avatar } from './avatar'
 import { BOARD_GAIN, boardFor, type BoardRequest } from './board'
@@ -498,7 +498,17 @@ export function outdoors(s: GameState): boolean {
 }
 
 function blockersOf(s: GameState): Set<string> {
-  return new Set([...Object.values(s.npcs).filter((n) => n.visible).map((n) => key(npcTile(n))), ...solidTiles(s.room), ...lockedTiles(shelvedCount(s))])
+  return new Set([...Object.values(s.npcs).filter((n) => n.visible).map((n) => key(npcTile(n))), ...solidTiles(s.room), ...lockedTiles(shelvedCount(s)), ...closedDoors(s)])
+}
+
+/** 아직 이사 오지 않은 이웃의 집 — 열리기 전에는 덤불로 덮이고 들어갈 수 없다 (2026-09-30 사용자) */
+export function closedHouseIds(s: Pick<GameState, 'flags'>): string[] {
+  const level = s.flags.villageLevel ?? 0
+  return [...CONTENT_DEFS.values()].filter((d) => notYet(d, level, s.flags) && HOUSES.some((h) => h.id === d.id)).map((d) => d.id)
+}
+function closedDoors(s: Pick<GameState, 'flags'>): string[] {
+  const ids = closedHouseIds(s)
+  return HOUSES.filter((h) => ids.includes(h.id)).map((h) => `${h.doorX},${h.y1}`)
 }
 
 /** 오늘 들판에 있는 떠돌이 새끼들 */
@@ -2151,9 +2161,9 @@ export function chapterReady(s: GameState, book: Book, chapter: number, content:
 /** 퀴즈까지 마친 뒤 실제로 기록한다 (재료를 쓰고 장을 완성). 한 권의 마지막 장이면 'bookBound' 장면 */
 // ── 정성 들인 장 (계획 13, 규칙은 fixtures.ts) ──
 
-/** 한 장에 드는 것: 책상에서 '좋은 파피루스로 쓰기'를 켜고 좋은 파피루스가 있으면 그것으로 */
-export function chapterCost(s: Pick<GameState, 'inv' | 'flags' | 'chest'>): Partial<Record<ItemId, number>> {
-  return s.flags.useFine && stockOf(s, 'finePapyrus') > 0 ? { finePapyrus: 1, ink: 1 } : CHAPTER_COST
+/** 한 장에 드는 것 (정성 등급은 없앴다 — 2026-09-30 사용자) */
+export function chapterCost(_s?: unknown): Partial<Record<ItemId, number>> {
+  return CHAPTER_COST
 }
 
 /** 오늘 먹었고 배고프지 않으면 집중 */
@@ -2161,21 +2171,9 @@ export function focused(s: Pick<GameState, 'flags' | 'clock' | 'needs'>): boolea
   return s.flags.ateDay === s.clock.day && s.needs.hunger < 70
 }
 
-/** 지금 기록하면 정성 점수 몇 점인가 (책상 화면에 미리 보인다) */
-export function careNow(s: GameState): { score: number; fine: boolean; focused: boolean; goodLight: boolean; deskTier: number } {
-  const fine = 'finePapyrus' in chapterCost(s)
-  const night = needsLamp(s)
-  const c = { fine, focused: focused(s), goodLight: !night || fixtureTier(s, 'lamp') >= 1, deskTier: fixtureTier(s, 'desk') }
-  return { ...c, score: careScore(c) }
-}
-
-/** 장을 기록할 때 재료를 쓰고, 정성 들인 장이면 적어 둔다 */
-function payChapter(s: GameState, book: Book, chapter: number): GameState {
-  const care = careNow(s)
-  const paid = useStock(s, chapterCost(s))!
-  if (care.score < CAREFUL_AT) return paid
-  const list = s.careful?.[book] ?? []
-  return { ...paid, careful: { ...s.careful, [book]: list.includes(chapter) ? list : [...list, chapter] } }
+/** 장을 기록할 때 재료를 쓴다 */
+function payChapter(s: GameState): GameState {
+  return useStock(s, chapterCost(s))!
 }
 
 export type SealBlock = 'notShelved' | 'sealed' | 'noWax' | null
@@ -2195,7 +2193,7 @@ export function submitChapter(s: GameState, book: Book, chapter: number, content
   const result = chapterReady(s, book, chapter, content)
   const bp = s.progress[book]
   if (result.kind !== 'done' || bp.completed.includes(chapter)) return { state: s, result }
-  const paid = payChapter(s, book, chapter)
+  const paid = payChapter(s)
   const progress = { ...s.progress, [book]: { ...bp, completed: [...bp.completed, chapter] } }
   const scenes = [...s.scenes]
   if (totalChapters(s) === 0) scenes.push('firstChapter')
@@ -2247,7 +2245,7 @@ export function recordLetter(s: GameState, book: Book, chapter: number, picks: r
   const scenes = [...s.scenes]
   if (totalChapters(s) === 0) scenes.push('firstChapter')
   if (bookDone({ progress }, book, content)) scenes.push('bookBound')
-  const recorded = passTime({ ...payChapter(s, book, chapter), progress, scenes, needs: work(s.needs, 6) }, bindMinutes(s))
+  const recorded = passTime({ ...payChapter(s), progress, scenes, needs: work(s.needs, 6) }, bindMinutes(s))
   // 요한계시록 2·3장을 옮겨 적으면 그 장의 교회 카드가 일곱 교회 판에 들어온다
   return book === 'rev' ? syncBoard(recorded, 'churches', content) : recorded
 }

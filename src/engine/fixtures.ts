@@ -1,6 +1,6 @@
-// 살림과 서고 (계획 13): 기록 설비 단계와 정성 들인 장.
+// 살림과 서고 (계획 13): 기록 설비 단계. (정성 등급·금테는 2026-09-30 사용자 요청으로 없앴다)
 // 돈 자체가 목표가 아니라 "생활해서 마련함 → 기록자의 일을 계속함 → 서고가 자란다".
-// 설비는 필사를 빠르게 하지 않는다(계획 11 원칙) — 좋아지는 것은 정성(책등 금테·봉인)과 덜 번거로움(잉크·기름).
+// 설비는 필사를 빠르게 하지 않는다(계획 11 원칙) — 좋아지는 것은 덜 번거로움(잉크·기름)과 서재 모습.
 import { count, type Inventory } from './items'
 import type { ItemId } from './types'
 
@@ -57,28 +57,8 @@ export function lampNightsPerOil(s: { flags: Record<string, number>; inv: Invent
   return 1 + fixtureTier(s, 'lamp')
 }
 
-// ── 정성 들인 장 ──
+// ── 희귀품 ──
 
 /** 희귀품 (장날 희귀 좌판·이웃 이벤트·여행에서만) */
 export const RARE_ITEMS: readonly ItemId[] = ['finePapyrus', 'sealWax', 'purpleCloth', 'perfumeOil', 'bronzeOrnament']
 
-export interface CareInput {
-  /** 좋은 파피루스로 썼는가 */
-  fine: boolean
-  /** 오늘 무언가를 먹었고 배고프지 않은가 (집중) */
-  focused: boolean
-  /** 낮이거나, 밤이면 두 심지 이상 등잔 */
-  goodLight: boolean
-  deskTier: number
-}
-
-/** 정성 점수: 좋은 파피루스·집중·좋은 빛·장인의 기록대 한 점씩. 둘 이상이면 정성 들인 장 */
-export function careScore(c: CareInput): number {
-  return (c.fine ? 1 : 0) + (c.focused ? 1 : 0) + (c.goodLight ? 1 : 0) + (c.deskTier >= 2 ? 1 : 0)
-}
-export const CAREFUL_AT = 2
-
-/** 한 권의 반 이상이 정성 들인 장이면 책등에 금테 */
-export function goldTrim(careful: readonly number[] | undefined, chapters: number): boolean {
-  return chapters > 0 && (careful?.length ?? 0) * 2 >= chapters
-}

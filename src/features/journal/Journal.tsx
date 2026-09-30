@@ -4,7 +4,7 @@ import { CONTENT, neighborById, pieceById } from '../../content/catalog'
 import { fill, itemName, JOB_NAME, JOURNAL_NOTES, T } from '../../content/text'
 import { weatherOf } from '../../engine/calendar'
 import { seasonOf } from '../../engine/clock'
-import { dislikesOf, notYet, type GameState, type JournalEntry } from '../../engine/game'
+import { dislikesOf, isSuitor, notYet, type GameState, type JournalEntry } from '../../engine/game'
 import { heartsOf } from '../../engine/hearts'
 import { birthdayLabel, isBirthday, knownTastes, NO_NOTEBOOK, SLOT_LABEL, SLOTS, spotName } from '../../engine/notebook'
 import { NO_LIFE } from '../../engine/people'
@@ -84,6 +84,11 @@ export function jobOf(def: NeighborDef): string {
   return ''
 }
 
+/** 성별: 연애 후보는 look, 원래 이웃은 gender */
+function genderOf(d: NeighborDef): 'f' | 'm' {
+  return d.gender ?? d.look ?? 'f'
+}
+
 function NeighborBook() {
   const game = useGame((s) => s.game)
   const [open, setOpen] = useState<string | null>(null)
@@ -103,6 +108,10 @@ function NeighborBook() {
               <Portrait def={d} season={seasonOf(game.clock.day)} />
               <span className="nb-name">
                 <strong>{d.role}</strong>
+                <span className="nb-tags">
+                  <span className="nb-tag">{genderOf(d) === 'm' ? '남' : '여'}</span>
+                  {isSuitor(game, d) && <span className="nb-tag love">연애 가능</span>}
+                </span>
                 {jobOf(d) && <span className="nb-job">{jobOf(d)}</span>}
                 {isBirthday(d.id, game.clock.day) && <span className="nb-today">오늘 생일</span>}
               </span>

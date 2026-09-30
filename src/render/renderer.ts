@@ -4,10 +4,9 @@ import { darkness, phaseOf, seasonOf } from '../engine/clock'
 import { isGrown, STRAY_SPOTS, EAVES } from '../engine/companion'
 import { totalChapters } from '../engine/books'
 import { shelfRoom } from '../engine/shelf-rooms'
-import { childAtSchool, storyWaiting, routineOf, SCHOOL_SEAT, shelvedCount, straysToday, weddingToday, type GameState } from '../engine/game'
+import { childAtSchool, closedHouseIds, storyWaiting, routineOf, SCHOOL_SEAT, shelvedCount, straysToday, weddingToday, type GameState } from '../engine/game'
 import type { Activity } from '../engine/people'
-import { fixtureTier, goldTrim, RARE_ITEMS } from '../engine/fixtures'
-import { chaptersOf } from '../engine/books'
+import { fixtureTier, RARE_ITEMS } from '../engine/fixtures'
 import { FURNITURE_DEFS, type Furniture } from '../engine/room'
 import { FURNI_PALETTE, FURNITURE_ART } from './furniture-art'
 import { drawDecor, lanternLights, sheepCount } from './decor'
@@ -979,8 +978,26 @@ export function drawVillageMap(g: Ctx, game: GameState): void {
   const season = seasonOf(game.clock.day)
   g.imageSmoothingEnabled = false
   g.drawImage(mapFor(season), 0, 0, WIDTH * TILE, VILLAGE_H * TILE, 0, 0, WIDTH * TILE, VILLAGE_H * TILE)
+  coverLocked(g, game, season)
+}
+
+/**
+ * 아직 열리지 않은 곳을 덤불로 덮는다: 서고 권수로 열리는 구역(물만 보이고 잔교·배도 덮는다),
+ * 그리고 아직 이사 오지 않은 이웃의 집 (2026-09-30 사용자 — 열리기 전엔 보이지 않게)
+ */
+function coverLocked(g: Ctx, game: GameState, season: Season) {
   for (const z of lockedZones(shelvedCount(game)))
-    for (let y = z.y0; y <= z.y1; y++) for (let x = z.x0; x <= z.x1; x++) if (!'~=u'.includes(tileAt(x, y))) drawBush(g, x, y, season)
+    for (let y = z.y0; y <= z.y1; y++)
+      for (let x = z.x0; x <= z.x1; x++) {
+        const c = tileAt(x, y)
+        // 잔교·배는 물로 덮어 아직 없는 것처럼 (같은 줄 옆 물 칸을 그대로 옮겨 그린다)
+        if (c === '=' || c === 'u') g.drawImage(mapFor(season), (z.x0 - 1) * TILE, y * TILE, TILE, TILE, x * TILE, y * TILE, TILE, TILE)
+        else if (c !== '~') drawBush(g, x, y, season)
+      }
+  const closed = closedHouseIds(game)
+  for (const h of housesNow().filter((h) => closed.includes(h.id)))
+    for (let y = h.y0 - 1; y <= h.y1; y++)
+      for (let x = h.x0; x <= h.x1; x++) if (y >= h.y0 || tileAt(x, y) === '.') drawBush(g, x, y, season)
 }
 
 /** 이웃 수첩에 붙이는 앞모습 한 장 */
@@ -1432,12 +1449,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           g.fillStyle = BAND[grade]
           g.fillRect(sx, sy + 2, 8, 2)
           g.fillRect(sx, sy + 7, 8, 1)
-          // 정성 (계획 13): 금테는 위아래 금빛 줄, 봉인은 가운데 붉은 점
-          if (goldTrim(game.careful?.[b], chaptersOf(b, content).length)) {
-            g.fillStyle = '#ffd555'
-            g.fillRect(sx, sy, 8, 1)
-            g.fillRect(sx, sy + 9, 8, 1)
-          }
+          // 봉인은 가운데 붉은 점
           if ((game.sealed ?? []).includes(b)) {
             g.fillStyle = '#db4627'
             g.fillRect(sx + 3, sy + 4, 2, 2)
@@ -1548,10 +1560,8 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
 
       // 마음이 쌓여 마을에 생긴 것들
       drawDecor(g, game, weather, t, phase === 'morning' || phase === 'day')
-      // 아직 열리지 않은 구역: 땅도 집도 덤불로 덮는다 (물만 보인다) — 열리기 전엔 그 집이 보이지 않게
-      for (const z of lockedZones(shelvedCount(game)))
-        for (let y = z.y0; y <= z.y1; y++)
-          for (let x = z.x0; x <= z.x1; x++) if (!'~=u'.includes(tileAt(x, y))) drawBush(g, x, y, season)
+      // 아직 열리지 않은 구역·이사 오기 전 이웃의 집: 덤불로 덮는다 (물만 보인다)
+      coverLocked(g, game, season)
 
       type Item = { y: number; paint: () => void }
       const items: Item[] = []

@@ -1,6 +1,7 @@
 [
   {
     "id": "baker",
+    "gender": "f",
     "role": "빵 굽는 이웃",
     "sprite": "baker",
     "door": {
@@ -64,6 +65,7 @@
   },
   {
     "id": "child",
+    "gender": "f",
     "role": "물 긷는 아이",
     "sprite": "child",
     "door": {
@@ -135,6 +137,7 @@
   },
   {
     "id": "grandpa",
+    "gender": "m",
     "role": "포도원 할아버지",
     "sprite": "grandpa",
     "door": {
@@ -194,6 +197,7 @@
   },
   {
     "id": "merchant",
+    "gender": "m",
     "role": "떠돌이 상인",
     "sprite": "merchant",
     "door": {
@@ -232,6 +236,7 @@
   },
   {
     "id": "smith",
+    "gender": "m",
     "role": "대장장이",
     "sprite": "smith",
     "door": {
@@ -265,6 +270,7 @@
   },
   {
     "id": "shepherd",
+    "gender": "m",
     "role": "양치기",
     "sprite": "shepherd",
     "door": {
@@ -314,6 +320,7 @@
   },
   {
     "id": "presser",
+    "gender": "m",
     "role": "기름 짜는 이웃",
     "sprite": "presser",
     "door": {
@@ -351,6 +358,7 @@
   },
   {
     "id": "weaver",
+    "gender": "f",
     "role": "베 짜는 이웃",
     "sprite": "weaver",
     "door": {
@@ -412,6 +420,7 @@
   },
   {
     "id": "beekeeper",
+    "gender": "f",
     "role": "벌 치는 이웃",
     "sprite": "beekeeper",
     "door": {
@@ -461,6 +470,7 @@
   },
   {
     "id": "postman",
+    "gender": "m",
     "role": "편지 나르는 이웃",
     "sprite": "postman",
     "door": {
@@ -524,6 +534,7 @@
   },
   {
     "id": "apothecary",
+    "gender": "f",
     "role": "약방 주인",
     "sprite": "apothecary",
     "door": {
@@ -585,6 +596,7 @@
   },
   {
     "id": "fisher",
+    "gender": "m",
     "role": "어부",
     "sprite": "fisher",
     "door": {
@@ -642,6 +654,7 @@
   },
   {
     "id": "carpenter",
+    "gender": "m",
     "role": "제본 골목의 목수",
     "sprite": "carpenter",
     "door": {

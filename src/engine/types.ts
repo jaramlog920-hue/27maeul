@@ -222,6 +222,8 @@ export interface NeighborDef {
   romanceable?: boolean
   /** 후보의 모습 (여자/남자) */
   look?: 'f' | 'm'
+  /** 성별 (연애 후보는 look과 같다 — 이웃 수첩에 보인다) */
+  gender?: 'f' | 'm'
   /** 후보의 집안 이웃 id */
   family?: string
   /** 서고 권수로 이사 오는 집안(약방·어부·목수)의 후보: 그 집안이 이사 온 아침부터 보인다 (따로 소개 장면 없음) */

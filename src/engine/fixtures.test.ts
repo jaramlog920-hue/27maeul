@@ -1,15 +1,12 @@
-// 계획 13: 기록 설비 단계와 정성 들인 장 — 빠르기는 그대로, 정성과 덜 번거로움만
+// 계획 13: 기록 설비 단계 — 빠르기는 그대로, 덜 번거로움만 (정성 등급은 없앴다)
 import { CONTENT, piecesOf } from '../content/catalog'
 import { SCENES } from '../content/text'
-import { chaptersOf } from './books'
 import {
   bindMinutes,
   canOrderFixture,
   canSeal,
-  careNow,
   chapterCost,
   chooseBook,
-  eatBread,
   finishCraft,
   fixtureOffers,
   goToSleep,
@@ -23,7 +20,7 @@ import {
 } from './game'
 import { currentChapter } from './offers'
 import { canonicalOrder } from './scroll'
-import { CAREFUL_AT, careScore, FIXTURE_STEPS, fixtureTier, goldTrim, inkYield, lampNightsPerOil, nextFixture } from './fixtures'
+import { FIXTURE_STEPS, fixtureTier, inkYield, lampNightsPerOil, nextFixture } from './fixtures'
 
 const at = (s: GameState, minute: number): GameState => ({ ...s, clock: { ...s.clock, minute } })
 const moved = (s: GameState): GameState => ({ ...s, flags: { ...s.flags, 'movedIn:carpenter': 1 } })
@@ -93,45 +90,18 @@ describe('기록 설비 단계', () => {
   })
 })
 
-describe('정성 들인 장', () => {
-  it('좋은 파피루스·집중·좋은 빛·장인의 기록대 한 점씩, 둘 이상이면 정성', () => {
-    expect(CAREFUL_AT).toBe(2)
-    expect(careScore({ fine: false, focused: false, goodLight: true, deskTier: 0 })).toBe(1)
-    expect(careScore({ fine: true, focused: true, goodLight: true, deskTier: 2 })).toBe(4)
-  })
-
-  it('낮엔 빛이 좋고, 밤엔 두 심지 등잔부터 — 먹은 날은 집중', () => {
-    const s = at(newGame(CONTENT), 10 * 60)
-    expect(careNow(s).goodLight).toBe(true)
-    expect(careNow(at(s, 21 * 60)).goodLight).toBe(false)
-    expect(careNow({ ...at(s, 21 * 60), inv: { brightLamp: 1 } }).goodLight).toBe(true)
-    expect(careNow(s).focused).toBe(false)
-    const ate = eatBread({ ...s, inv: { bread: 1 }, needs: { ...s.needs, hunger: 40 } })!
-    expect(careNow(ate).focused).toBe(true)
-    expect(careNow(ate).score).toBe(2)
-  })
-
-  it('좋은 파피루스로 쓰기를 켜고 있으면 그것으로 — 없으면 보통 파피루스', () => {
-    const s = { ...newGame(CONTENT), inv: { papyrus: 1, ink: 1, finePapyrus: 1 } }
-    expect(chapterCost(s)).toEqual({ papyrus: 1, ink: 1 })
-    const on = { ...s, flags: { ...s.flags, useFine: 1 } }
-    expect(chapterCost(on)).toEqual({ finePapyrus: 1, ink: 1 })
-    expect(chapterCost({ ...on, inv: { papyrus: 1, ink: 1 } })).toEqual({ papyrus: 1, ink: 1 })
-  })
-
-  it('정성 들인 장이면 적어 두고, 반을 넘으면 책등에 금테', () => {
+describe('장 엮기와 봉인 (정성 등급은 없앴다)', () => {
+  it('등불·좋은 파피루스와 상관없이 한 장은 늘 파피루스 하나·잉크 하나, 정성 기록은 남지 않는다', () => {
     let s = chooseBook(newGame(CONTENT), 'mk', CONTENT)
     const pieces = piecesOf('mk')
     const ch = currentChapter(pieces, [])!
     s = { ...setArrangement(s, 'mk', ch, canonicalOrder(pieces, ch)), collected: pieces.filter((p) => p.chapter === ch).map((p) => p.id) }
-    s = { ...at(s, 10 * 60), inv: { papyrus: 1, ink: 1, bread: 1 }, needs: { ...s.needs, hunger: 30 } }
-    s = eatBread(s)!
+    s = { ...at(s, 10 * 60), inv: { papyrus: 1, ink: 1, finePapyrus: 1 }, flags: { ...s.flags, useFine: 1 } }
+    expect(chapterCost(s)).toEqual({ papyrus: 1, ink: 1 })
     const { state, result } = submitChapter(s, 'mk', ch, CONTENT)
     expect(result.kind).toBe('done')
-    expect(state.careful.mk).toEqual([ch])
-    const n = chaptersOf('mk', CONTENT).length
-    expect(goldTrim([ch], n)).toBe(n <= 2)
-    expect(goldTrim([...Array(Math.ceil(n / 2)).keys()], n)).toBe(true)
+    expect(state.careful.mk ?? []).toEqual([])
+    expect(state.inv.finePapyrus).toBe(1)
   })
 
   it('봉인: 서고에 꽂은 책을 봉인용 밀랍으로 한 번', () => {

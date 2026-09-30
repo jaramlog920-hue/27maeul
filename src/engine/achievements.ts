@@ -44,7 +44,6 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
   { id: 'gospelRoom', name: '복음서 방', desc: '네 복음서를 모두 서고에 꽂았다.', done: (s) => shelvedN(s, GOSPELS) === GOSPELS.length },
   { id: 'allBooks', name: '스물일곱 권', desc: '서고의 스물일곱 칸을 모두 채웠다.', done: (s) => shelvedN(s, BOOKS) === BOOKS.length },
   { id: 'goldSpine', name: '금박 책등', desc: '서고 퀴즈로 금박 책등을 받았다.', done: (s) => Object.values(s.shelved).some((g) => g === 2) },
-  { id: 'careful', name: '정성 들인 장', desc: '정성 들인 장을 열 장 엮었다.', done: (s) => Object.values(s.careful).reduce((n, l) => n + l.length, 0) >= 10 },
   { id: 'sealed', name: '붉은 봉인', desc: '다 엮은 책을 봉인용 밀랍으로 봉인했다.', done: (s) => s.sealed.length >= 1 },
   { id: 'letters10', name: '편지 대필 열 통', desc: '이웃의 편지를 열 통 대신 써 주었다.', done: (s) => s.lettersDone >= 10 },
   { id: 'met10', name: '열 사람과 인사', desc: '이웃 열 명과 말을 나눴다.', done: (s) => s.notebook.met.length >= 10 },

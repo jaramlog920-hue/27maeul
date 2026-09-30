@@ -9,7 +9,6 @@ import { stockOf, type SubmitResult } from '../../engine/game'
 import { currentChapter } from '../../engine/offers'
 import { arrivesOf } from '../../engine/shelf-rooms'
 import type { Book } from '../../engine/types'
-import { CareLine } from './CareLine'
 import { copyPadFor, useGame } from '../../store/game-store'
 
 const BOOK_NAME = T.quiz.books as Record<string, string>
@@ -64,7 +63,6 @@ export function LetterCopy({ book, result, dark, onChangeBook }: { book: Book; r
         {fill(T.ui.deskHave, { papyrus: stockOf(game, 'papyrus'), ink: stockOf(game, 'ink') })}
         {received && !dark && pad && <> · {fill(T.copy.filled, { got, all: blanks.length })}</>}
       </p>
-      <CareLine />
       {message && (
         <p className={`desk-message ${tone}`} role="status">
           {message}

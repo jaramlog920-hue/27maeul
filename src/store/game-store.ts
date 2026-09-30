@@ -297,8 +297,6 @@ interface Store {
   rest: () => void
   playHall: () => void
   sellHerbs: () => void
-  /** 책상: 좋은 파피루스로 쓰기 켜고 끄기 (계획 13) */
-  toggleFine: () => void
   /** 서고: 봉인용 밀랍으로 봉인 */
   seal: (book: Book) => void
   /** 목수·대장장이에게 기록 설비 부탁 */
@@ -1112,10 +1110,6 @@ export const useGame = create<Store>((set, get) => {
       if (next === before) return
       set({ game: persist(next), modal: null })
       get().say(fill(T.romance.dateDone, { with: withAnd(partnerName(before)) }))
-    },
-    toggleFine: () => {
-      const g = get().game
-      set({ game: persist({ ...g, flags: { ...g.flags, useFine: g.flags.useFine ? 0 : 1 } }) })
     },
     seal: (book) => {
       const next = sealBook(get().game, book)
