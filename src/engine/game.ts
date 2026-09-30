@@ -831,14 +831,15 @@ export function sightingWaiting(s: GameState, npc: string) {
   return w && near(npcTile(n), w.at, 1) ? w : null
 }
 
-/** 그 자리에서 흘리는 혼잣말 (하루 한 번) — 말을 걸면 첫마디로 듣는다 */
+/** 지금 하던 말 (예전의 혼잣말) — 대화하기를 누르면 첫마디로 듣는다 (하루 한 번) */
 export function mutterWaiting(s: GameState, npc: string): string | null {
   const n = s.npcs[npc]
   if (!n?.visible) return null
   const life = s.life ?? NO_LIFE
   if (life.mutterDay === s.clock.day && life.muttered.includes(npc)) return null
   const r = routineOf(s, npc)
-  if (!r?.mutter?.length || !near(npcTile(n), r.at, 0)) return null
+  // 혼잣말은 따로 뜨지 않는다 — 대화하기를 누르면 지금 하던 말(이웃끼리 나누던 말 포함)이 첫마디로 (자리와 상관없이, 하루 한 번)
+  if (!r?.mutter?.length) return null
   return r.mutter[Math.floor((((s.clock.day * 7 + npc.length) % 97) / 97) * r.mutter.length)]
 }
 
