@@ -98,28 +98,28 @@
 }
 :root[data-theme="pink"] {
   /* 마을 그림의 차양(흐린 분홍)·지붕(흙빛 빨강)·벽(크림)에서 뽑은 낮은 채도의 장밋빛 */
-  --bg: #e6ccc1;
+  --bg: #d3a592;
   --panel: #faf5ef;
   --panel-soft: #efddce;
   --panel-line: #d6ac9f;
   --hover: #efd8ca;
-  --panel-edge: #9d535b;
+  --panel-edge: #7f4349;
   --ink: #4a3636;
   --ink-soft: #8d5a5a;
-  --on-bg: #8c5159;
+  --on-bg: #7f4a51;
   --on-bg-strong: #5a3034;
-  --accent: #c26374;
+  --accent: #b24659;
   --accent-ink: #fffaf6;
-  --accent-lo: #984b5a;
-  --accent-hi: #d68e9a;
+  --accent-lo: #793c48;
+  --accent-hi: #ca6c7c;
   --glow: #a43b58;
   --ok: #6f8f55;
   --warn: #b0504a;
   --meter-bg: #fbf2ed;
-  --deck-body: #ddb9af;
-  --deck-key: #bf818a;
-  --deck-key-hi: #cd979d;
-  --deck-key-lo: #8b4b5c;
+  --deck-body: #c99081;
+  --deck-key: #a85562;
+  --deck-key-hi: #b76a73;
+  --deck-key-lo: #6d3b48;
   --deck-glyph: #fffaf6;
 }
 
