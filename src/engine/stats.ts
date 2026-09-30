@@ -87,10 +87,24 @@ export function addXp(stats: Stats | undefined, id: StatId, xp: number): Stats {
   return { ...base, [id]: { ...cur, level, xp: level >= MAX_LEVEL ? 0 : Math.round(got * 100) / 100 } }
 }
 
-/** 이번에 단계가 오른 능력치들 (알림용) */
+/** 1단계부터 쌓은 경험치 모두 */
+export function totalXp(stat: Stat | undefined): number {
+  if (!stat) return 0
+  return XP_TO_NEXT.slice(0, stat.level - 1).reduce((a, b) => a + b, 0) + stat.xp
+}
+
+/** 한 번의 일로 쌓일 수 있는 가장 큰 경험치 (타고난 값 2까지 쳐서) — 이보다 크게 뛰면 저장을 불러온 것이다 */
+export const MAX_STEP_XP = Math.max(...Object.values(XP)) * (1 + BORN_BONUS * MAX_BORN)
+
+/**
+ * 이번 일로 단계가 오른 능력치들 (알림용). 저장을 불러오거나 새로 시작해 한꺼번에 크게 바뀐 것은 치지 않는다
+ */
 export function leveledUp(before: Stats | undefined, after: Stats | undefined): StatId[] {
   if (!after) return []
-  return STAT_IDS.filter((id) => levelOf(after, id) > levelOf(before, id))
+  return STAT_IDS.filter((id) => {
+    const gained = totalXp(after[id]) - totalXp(before?.[id] ?? { level: 1, xp: 0, born: 0 })
+    return levelOf(after, id) > levelOf(before, id) && gained > 0 && gained <= MAX_STEP_XP
+  })
 }
 
 /** 다음 단계까지 얼마나 찼는가 0–1 (5단계면 1) */

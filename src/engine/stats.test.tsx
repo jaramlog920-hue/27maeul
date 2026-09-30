@@ -70,10 +70,13 @@ describe('단계와 경험치', () => {
   })
 
   it('오른 능력치를 알려 주고, 찬 정도를 0–1로', () => {
-    const before = freshStats()
-    const after = addXp(before, 'charm', 31)
+    const before = addXp(freshStats(), 'charm', 28)
+    const after = addXp(before, 'charm', 3)
     expect(leveledUp(before, after)).toEqual(['charm'])
     expect(leveledUp(after, after)).toEqual([])
+    // 저장을 불러와 한꺼번에 크게 바뀐 것은 알리지 않는다
+    expect(leveledUp(before, addXp(before, 'charm', 100))).toEqual([])
+    expect(leveledUp(addXp(before, 'charm', 100), before)).toEqual([])
     expect(progressOf(after.charm)).toBeCloseTo(1 / 60)
     expect(progressOf({ level: MAX_LEVEL, xp: 0, born: 0 })).toBe(1)
   })
