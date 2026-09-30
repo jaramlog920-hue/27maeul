@@ -1,11 +1,10 @@
 // 여행 주사위 판 (새 장면, 2026-09-30 사용자 설계): 팝업이 아니라 화면 전체가 여행지 동네다.
 // 둘레 길 위 돌판 24개를 주인공이 직접 걸어서 옮겨 다니고, 데려온 아이는 한 걸음 뒤를 따른다.
 // 가장자리에만 작은 것: 왼쪽 위 얼굴과 남은 턴 점, 오른쪽 아래 주사위. 칸에 닿으면 머리 위에 짧은 말풍선 (1초 남짓).
-// 성경 칸은 원래 쓰던 본문 팝업. 한 바퀴를 돌거나 스무 번째가 끝나면 여행 수확을 정리해 보여 주고 마을 가게로.
+// 성경 구절은 판 위에서 주지 않는다 — 집에 돌아와 조용할 때 한 조각. 한 바퀴를 돌거나 다섯 번째가 끝나면 여행 수확을 정리해 보여 주고 마을 가게로.
 import { useEffect, useRef, useState } from 'react'
-import { CONTENT, pieceById } from '../../content/catalog'
+import { pieceById } from '../../content/catalog'
 import { itemName, T } from '../../content/text'
-import { nextTripPiece } from '../../engine/game'
 import { STAT_IDS, type StatId } from '../../engine/stats'
 import { DESTS, type DestId } from '../../engine/travel'
 import { NEW_BOARD, playTurn, rollDie, stoneTile, TRIP_TURNS, walkPath, type BoardState, type TripReward } from '../../engine/trip-board'
@@ -22,12 +21,15 @@ const DIE = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅']
 const STAT_NAME = T.stats.names as Record<StatId, string>
 
 /** 말풍선 한 줄 (짧게) */
-function shortLine(rewards: readonly TripReward[], kid: string, lap: boolean): string {
+function shortLine(rewards: readonly TripReward[], kid: string, lap: boolean, say = ''): string {
   if (lap) return '한 바퀴! +10닢'
+  if (say === 'jump') return '지름길! 두 칸 더'
+  if (say === 'rest') return '쉼터 · 잠깐 쉬어요'
+  if (say === 'kidAlone') return '골목을 지나요'
   const one = (r: TripReward) => {
     switch (r.kind) {
       case 'piece':
-        return '📖 본문 발견'
+        return ''
       case 'items': {
         const [id, n] = Object.entries(r.items)[0] as [ItemId, number]
         return `${itemName(id)} ${n} 획득`
@@ -82,7 +84,7 @@ export function TripScene({ dest, withChild }: { dest: DestId; withChild: boolea
   const me = useRef<TripActor & { path: { x: number; y: number }[] }>({ x: start.x, y: start.y, facing: 'down', walking: false, path: [] })
   const kid = useRef<TripActor & { trail: { x: number; y: number }[] }>({ x: start.x - 1, y: start.y, facing: 'down', walking: false, trail: [] })
   const bubbleAt = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
-  const pending = useRef<{ board: BoardState; rewards: TripReward[]; lap: boolean } | null>(null)
+  const pending = useRef<{ board: BoardState; rewards: TripReward[]; lap: boolean; say: string } | null>(null)
 
   // 그리기 루프
   useEffect(() => {
@@ -165,31 +167,29 @@ export function TripScene({ dest, withChild }: { dest: DestId; withChild: boolea
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dest, withChild])
 
-  /** 돌판에 닿았을 때: 짧은 말풍선, 성경 칸이면 원래 본문 팝업 */
+  /** 돌판에 닿았을 때: 짧은 말풍선 */
   function arrive() {
     const p = pending.current
     if (!p) return
     pending.current = null
     setBoard(p.board)
     setWalking(false)
-    const text = shortLine(p.rewards, kidName, p.lap)
+    const text = shortLine(p.rewards, kidName, p.lap, p.say)
     if (text) {
       const key = Date.now()
       setBubble({ text, key })
       setTimeout(() => setBubble((b) => (b?.key === key ? null : b)), BUBBLE_MS)
     }
-    const piece = p.rewards.find((x) => x.kind === 'piece')
-    if (piece && piece.kind === 'piece') useGame.getState().open({ kind: 'passage', pieceId: piece.id, askLine: false })
-    if (p.board.done) setTimeout(() => setHarvest(true), piece ? 0 : BUBBLE_MS)
+    if (p.board.done) setTimeout(() => setHarvest(true), BUBBLE_MS)
   }
 
   const roll = () => {
     if (walking || board.done || modal) return
     const rnd = useGame.getState().rng
     const n = rollDie(rnd)
-    const r = playTurn(board, n, rnd, { withChild, nextPiece: (taken) => nextTripPiece(game, CONTENT, taken) })
-    pending.current = { board: r.board, rewards: r.landing.rewards, lap: r.landing.say === 'lap' }
-    me.current.path = walkPath(board.pos, n)
+    const r = playTurn(board, n, rnd, { withChild })
+    pending.current = { board: r.board, rewards: r.landing.rewards, lap: r.landing.say === 'lap', say: r.landing.say }
+    me.current.path = walkPath(board.pos, n + (r.landing.extra ?? 0))
     setBoard({ ...board, lastRoll: n })
     setWalking(true)
     setBubble(null)

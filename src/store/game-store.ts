@@ -71,6 +71,7 @@ import {
   nameChild,
   recordProgress,
   openEvent,
+  nextTripPiece,
   mutterWaiting,
   hearMutter,
   setCompanionStay,
@@ -1003,10 +1004,12 @@ export const useGame = create<Store>((set, get) => {
     setChildName: (name) => set({ game: persist(nameChild(get().game, name)), modal: null }),
 
     goTrip: (dest, buys, rewards = []) => {
-      const next = takeTrip(get().game, CONTENT, dest, buys, rewards)
+      // 성경 구절은 판 위가 아니라 집에 돌아와 조용할 때 — 여행길에서 들은 이야기 한 조각 (원래 쓰던 본문 창)
+      const piece = nextTripPiece(get().game, CONTENT)
+      const next = takeTrip(get().game, CONTENT, dest, buys, piece ? [...rewards, { kind: 'piece', id: piece }] : rewards)
       if (!next) return
-      set({ game: persist(next), modal: null })
-      get().say(`${DESTS[dest].name}에서 하룻밤 묵고 집으로 돌아왔어요`, 3400)
+      set({ game: persist(next), modal: piece ? { kind: 'passage', pieceId: piece, askLine: false } : null })
+      get().say(piece ? `${DESTS[dest].name}에서 돌아와 여행길에서 들은 이야기를 펼쳐요` : `${DESTS[dest].name}에서 하룻밤 묵고 집으로 돌아왔어요`, 3400)
       sayChildHelp(next, get().say)
     },
 
@@ -1062,7 +1065,10 @@ export const useGame = create<Store>((set, get) => {
         set({ game: persist(next), modal: null })
       }
     },
-    rest: () => set({ game: persist(restAt(get().game)), modal: null }),
+    rest: () => {
+      set({ game: persist(restAt(get().game)), modal: null })
+      get().say(T.places.sitDone)
+    },
     // 모이는 곳 (계획 10): 장면이 있으면 장면 먼저, 없으면 한 줄
     playHall: () => {
       const before = get().game

@@ -1,20 +1,24 @@
 // 여행 주사위 보드게임 (2026-09-30 사용자 요청): 이웃 마을에 가면 그 마을 둘레를 도는 주사위 판이 열린다.
-// 스무 번 안에 한 바퀴를 돌면 끝. 칸마다 성경 조각(이웃을 찾아가지 않아도 지금 책의 다음 조각)·재료·능력치·이벤트·상자.
+// 주사위 다섯 번이면 끝 (한 바퀴를 돌면 그 자리에서 끝). 칸마다 쉼터·재료·능력치·이벤트·상자·지름길·인사·아이 칸.
+// 성경 구절은 판 위에서 주지 않는다 — 들뜬 놀이 한가운데가 아니라, 집에 돌아와 조용할 때 한 조각 (사용자, 2026-09-30)
 // 아이를 데려가면 능력치 칸에서 아이도 자란다. 얻은 것은 돌아올 때 한꺼번에 받는다 (여행은 도중에 저장되지 않는다).
 import { RARE_ITEMS } from './fixtures'
 import { STAT_IDS, type StatId } from './stats'
 import type { ItemId } from './types'
 
-export type Cell = 'start' | 'plain' | 'book' | 'item' | 'star' | 'event' | 'chest'
+export type Cell = 'start' | 'plain' | 'rest' | 'item' | 'star' | 'event' | 'chest' | 'jump' | 'greet' | 'kid'
 
-/** 판 둘레 24칸 (7×7 판의 가장자리, 왼쪽 위에서 시계 방향). 성경 칸은 네 군데 */
+/** 판 둘레 24칸 (왼쪽 위에서 시계 방향). 쉼터 넷, 빈 길은 둘뿐 — 지름길·인사·아이 칸으로 채운다 */
 export const BOARD: readonly Cell[] = [
-  'start', 'plain', 'book', 'item', 'plain', 'event', 'star',
-  'plain', 'item', 'book', 'plain', 'chest', 'event',
-  'plain', 'star', 'item', 'book', 'plain', 'event',
-  'plain', 'item', 'book', 'star', 'chest',
+  'start', 'plain', 'rest', 'item', 'greet', 'event', 'star',
+  'jump', 'item', 'rest', 'kid', 'chest', 'event',
+  'greet', 'star', 'item', 'rest', 'plain', 'event',
+  'jump', 'item', 'rest', 'star', 'chest',
 ]
-export const TRIP_TURNS = 20
+/** 지름길 칸: 몇 칸 더 간다 */
+export const JUMP = 2
+/** 여행 한 번에 주사위 다섯 번 (사용자, 2026-09-30) */
+export const TRIP_TURNS = 5
 
 export type TripReward =
   | { kind: 'piece'; id: string }
@@ -53,33 +57,44 @@ export interface Landing {
   /** 알림 한 줄의 열쇠 (tripBoard.say.*, 이벤트면 tripBoard.events.*) */
   say: string
   rewards: TripReward[]
+  /** 지름길로 더 간 칸 수 (걷는 그림용) */
+  extra?: number
 }
 
 /**
  * 주사위 한 번: 굴린 수만큼 가서 칸의 일을 한다. nextPiece는 지금 책의 다음 조각(이미 이번 여행에서 받은 것은 빼고)을 준다.
  * 판 끝(시작 칸)을 지나면 한 바퀴 — 끝. 스무 번째에도 끝
  */
-export function playTurn(b: BoardState, roll: number, rnd: () => number, ctx: { withChild: boolean; nextPiece: (taken: string[]) => string | null }): { board: BoardState; landing: Landing } {
-  const to = b.pos + roll
+export function playTurn(b: BoardState, roll: number, rnd: () => number, ctx: { withChild: boolean }): { board: BoardState; landing: Landing } {
+  let to = b.pos + roll
+  const extra = to < BOARD.length && BOARD[to] === 'jump' ? JUMP : 0
+  to += extra
   const lapped = to >= BOARD.length
   const pos = lapped ? 0 : to
   const turn = b.turn + 1
   const cell = BOARD[pos]
   let landing: Landing
   if (lapped) landing = { cell: 'start', say: 'lap', rewards: [{ kind: 'coins', n: 10 }] }
-  else landing = land(cell, rnd, ctx, b.rewards)
+  else if (extra) landing = { cell: 'jump', say: 'jump', rewards: [] }
+  else landing = land(cell, rnd, ctx)
+  if (extra) landing = { ...landing, extra }
   const board: BoardState = { pos, turn, lastRoll: roll, lapped: b.lapped || lapped, done: lapped || turn >= TRIP_TURNS, rewards: [...b.rewards, ...landing.rewards] }
   return { board, landing }
 }
 
-function land(cell: Cell, rnd: () => number, ctx: { withChild: boolean; nextPiece: (taken: string[]) => string | null }, got: readonly TripReward[]): Landing {
+function land(cell: Cell, rnd: () => number, ctx: { withChild: boolean }): Landing {
   const pick = <T>(list: readonly T[]) => list[Math.min(list.length - 1, Math.floor(rnd() * list.length))]
   switch (cell) {
-    case 'book': {
-      const taken = got.flatMap((r) => (r.kind === 'piece' ? [r.id] : []))
-      const id = ctx.nextPiece(taken)
-      // 지금 책의 다음 조각이 없으면(책을 고르지 않았거나 이 장을 다 모았으면) 읽은 만큼 지능이 오른다
-      return id ? { cell, say: 'book', rewards: [{ kind: 'piece', id }] } : { cell, say: 'bookNone', rewards: [{ kind: 'stat', who: 'me', stat: 'wit', xp: 6 }] }
+    case 'rest':
+      // 샘가 쉼터: 잠깐 숨을 고른다 (운이 조금)
+      return { cell, say: 'rest', rewards: [{ kind: 'stat', who: 'me', stat: 'luck', xp: 3 }] }
+    case 'greet':
+      return { cell, say: 'greet', rewards: [{ kind: 'stat', who: 'me', stat: 'charm', xp: 6 }] }
+    case 'kid': {
+      // 아이를 데려왔으면 아이가 길가에서 무언가를 주워 온다
+      if (!ctx.withChild) return { cell, say: 'kidAlone', rewards: [] }
+      const item = pick(ITEM_CELL)
+      return { cell, say: 'kid', rewards: [{ kind: 'items', items: { [item]: 1 } }, { kind: 'stat', who: 'child', stat: 'wit', xp: 6 }] }
     }
     case 'item': {
       const item = pick(ITEM_CELL)

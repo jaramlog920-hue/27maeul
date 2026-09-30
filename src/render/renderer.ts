@@ -1824,21 +1824,27 @@ export function butterflies(season: Season, wet: boolean, phase: string, t: numb
 const STONE_GLYPH: Record<TripCell, readonly string[]> = {
   start: ['.k......', '.kccc...', '.kcccc..', '.kccc...', '.k......', '.k......', '.k......', 'kkk.....'],
   plain: ['........', '........', '........', '........', '........', '........', '........', '........'],
-  book: ['........', '.kk..kk.', 'kwwkkwwk', 'kwwkkwwk', 'kwwkkwwk', 'kwwkkwwk', '.kkkkkk.', '........'],
+  rest: ['...kk...', '...kk...', '..kcck..', '.kcccck.', '.kccwck.', '.kcccck.', '..kkkk..', '........'], // 샘물 한 방울
   item: ['........', '.cc..cc.', 'ccc..ccc', '.cckkcc.', '...kk...', '...kk...', '..kkkk..', '........'],
   star: ['...kk...', '...kk...', 'kkkkkkkk', '.kkkkkk.', '..kkkk..', '.kk..kk.', 'kk....kk', '........'],
   event: ['..kkkk..', '.kk..kk.', '.....kk.', '....kk..', '...kk...', '........', '...kk...', '........'],
   chest: ['........', '.kkkkkk.', 'kcccccck', 'kkkkkkkk', 'kccwwcck', 'kcccccck', 'kkkkkkkk', '........'],
+  jump: ['........', 'k...k...', 'kk..kk..', 'kkk.kkk.', 'kkk.kkk.', 'kk..kk..', 'k...k...', '........'],
+  greet: ['........', '.kk..kk.', 'kcckkcck', 'kcccccck', '.kcccck.', '..kcck..', '...kk...', '........'],
+  kid: ['...kk...', '..kwwk..', '...kk...', '.kkkkkk.', '...kk...', '..k..k..', '.k....k.', '........'],
 }
 /** 돌판 표식의 색 (파스텔 — 모양이 먼저, 색은 작은 원으로만) */
 const STONE_TINT: Record<TripCell, string> = {
   start: '#e3c9a0',
   plain: '#e6dccb',
-  book: '#a9c4ec',
+  rest: '#a9d8ec',
   item: '#b8dea4',
   star: '#f5dc92',
   event: '#f4b6b0',
   chest: '#d3c0ee',
+  jump: '#f7cfa6',
+  greet: '#f6c2d6',
+  kid: '#fbe3a8',
 }
 
 function tripMapFor(dest: 'harbor' | 'hillTown', season: Season): HTMLCanvasElement {

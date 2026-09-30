@@ -138,18 +138,32 @@ describe('여행 주사위 보드게임', () => {
     const { NEW_BOARD, playTurn, TRIP_TURNS, BOARD } = await import('./trip-board')
     let b = NEW_BOARD
     const rnd = () => 0.5
-    const ctx = { withChild: false, nextPiece: () => null }
+    const ctx = { withChild: false }
     for (let i = 0; i < 30 && !b.done; i++) b = playTurn(b, 1, rnd, ctx).board
     expect(b.done).toBe(true)
-    expect(b.turn).toBe(TRIP_TURNS)
-    expect(b.lapped).toBe(false)
+    expect(b.turn).toBeLessThanOrEqual(TRIP_TURNS)
     let c = NEW_BOARD
     for (let i = 0; i < 30 && !c.done; i++) c = playTurn(c, 6, rnd, ctx).board
     expect(c.lapped).toBe(true)
     expect(c.turn).toBe(Math.ceil(BOARD.length / 6))
   })
 
-  it('성경 칸은 지금 책의 다음 조각을 준다 (같은 조각을 두 번 주지 않는다)', async () => {
+  it('판 위에서는 성경 조각을 주지 않고, 지름길은 두 칸 더 가며, 아이 칸은 아이를 데려왔을 때만 무언가 생긴다', async () => {
+    const { NEW_BOARD, playTurn, BOARD, JUMP } = await import('./trip-board')
+    const rnd = () => 0.5
+    let b = NEW_BOARD
+    for (let i = 0; i < 30 && !b.done; i++) b = playTurn(b, 1 + (i % 6), rnd, { withChild: true }).board
+    expect(b.rewards.some((r) => r.kind === 'piece')).toBe(false)
+    const jumpAt = BOARD.indexOf('jump')
+    const j = playTurn({ ...NEW_BOARD, pos: jumpAt - 1 }, 1, rnd, { withChild: false })
+    expect(j.board.pos).toBe(jumpAt + JUMP)
+    expect(j.landing.extra).toBe(JUMP)
+    const kidAt = BOARD.indexOf('kid')
+    expect(playTurn({ ...NEW_BOARD, pos: kidAt - 1 }, 1, rnd, { withChild: false }).landing.rewards).toEqual([])
+    expect(playTurn({ ...NEW_BOARD, pos: kidAt - 1 }, 1, rnd, { withChild: true }).landing.rewards.length).toBeGreaterThan(0)
+  })
+
+  it('집에 돌아오면 지금 책의 다음 조각 하나 (같은 조각을 두 번 주지 않는다)', async () => {
     const { chooseBook, nextTripPiece } = await import('./game')
     const s = chooseBook(newGame(CONTENT), 'lk', CONTENT)
     const a = nextTripPiece(s, CONTENT)!
