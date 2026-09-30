@@ -1,4 +1,5 @@
 // 브라우저 저장. 저장소가 없거나 막혀 있어도 게임은 돌아야 하므로 모든 접근을 try/catch로 감싼다.
+import { sanitizeStats } from './stats'
 import { IDLE_RESET } from './autonomy'
 import { bookDone, bookRoomOpen, emptyProgress, type Progress } from './books'
 import { newGame, settle, type GameState } from './game'
@@ -128,6 +129,8 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     inv,
     // 재료 궤짝 (계획 11): 옛 저장(칸이 없던 때)은 빈 궤짝. 수가 아닌 값은 버린다
     chest: Object.fromEntries(Object.entries(isObj(s.chest) ? s.chest : {}).filter(([, n]) => Number.isInteger(n) && (n as number) > 0)),
+    // 능력치 (계획 11 작업 4): 옛 저장(칸이 없던 때)은 모두 1단계, 타고난 값 0
+    stats: sanitizeStats(s.stats),
     needs: { ...s.needs, heat: s.needs?.heat ?? 0 },
     collected,
     progress,

@@ -2,6 +2,7 @@
 import { seasonOf } from './clock'
 import type { GameState } from './game'
 import { add, has, count, stackCap, take } from './items'
+import { addXp, XP } from './stats'
 import type { ItemId, Tile } from './types'
 
 export type CropId = 'herb' | 'bean'
@@ -32,13 +33,14 @@ export function canPlant(s: Pick<GameState, 'clock' | 'garden' | 'inv'>, at: Til
 
 export function plant(s: GameState, at: Tile, crop: CropId): GameState | null {
   if (canPlant(s, at, crop)) return null
-  return { ...s, inv: take(s.inv, { [CROPS[crop].seed]: 1 })!, garden: { ...s.garden, [keyOf(at)]: { crop, grown: 0, wateredDay: null } } }
+  // 텃밭 일은 근력을 조금 올린다 (계획 11 작업 4)
+  return { ...s, stats: addXp(s.stats, 'strength', XP.garden), inv: take(s.inv, { [CROPS[crop].seed]: 1 })!, garden: { ...s.garden, [keyOf(at)]: { crop, grown: 0, wateredDay: null } } }
 }
 
 export function water(s: GameState, at: Tile): GameState | null {
   const p = s.garden[keyOf(at)]
   if (!p || p.wateredDay === s.clock.day || isRipe(p) || seasonOf(s.clock.day) === 'winter') return null
-  return { ...s, garden: { ...s.garden, [keyOf(at)]: { ...p, wateredDay: s.clock.day } } }
+  return { ...s, stats: addXp(s.stats, 'strength', XP.garden), garden: { ...s.garden, [keyOf(at)]: { ...p, wateredDay: s.clock.day } } }
 }
 
 export function isRipe(p: Plot): boolean {
@@ -52,7 +54,7 @@ export function harvest(s: GameState, at: Tile): GameState | null {
   if ((Object.entries(gives) as [ItemId, number][]).some(([id, n]) => count(s.inv, id) + n > stackCap(s.inv))) return null
   const garden = { ...s.garden }
   delete garden[keyOf(at)]
-  return { ...s, inv: add(s.inv, gives), garden }
+  return { ...s, stats: addXp(s.stats, 'strength', XP.garden), inv: add(s.inv, gives), garden }
 }
 
 /** 잠들 때: 오늘 물 준 칸만 하루 자란다 */

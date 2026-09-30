@@ -4,6 +4,8 @@ import type { Minigame, Rng } from './types'
 export interface MashState {
   kind: 'mash'
   progress: number
+  /** 한 번 찧을 때 차는 양 (없으면 MASH_GAIN — 손재주가 높으면 조금 더) */
+  gain?: number
 }
 export interface TimingState {
   kind: 'timing'
@@ -22,6 +24,8 @@ export interface PickItem {
 }
 export interface PickState {
   kind: 'pick'
+  /** 열매가 머무는 시간 (없으면 PICK_LIFE — 손재주가 높으면 조금 더) */
+  life?: number
   items: PickItem[]
   got: number
   nextId: number
@@ -40,13 +44,15 @@ export const PICK_EVERY = 0.7
 export const PICK_COLS = 5
 export const PICK_ROWS = 3
 
-export function startMini(kind: Minigame, rng: Rng): MiniState {
-  if (kind === 'mash') return { kind, progress: 0 }
+/** ease: 손놀림이 너그러운 정도 0~0.2 (손재주 — 계획 11 작업 4). 0이면 예전 그대로 */
+export function startMini(kind: Minigame, rng: Rng, ease = 0): MiniState {
+  const e = Math.max(0, Math.min(0.2, ease))
+  if (kind === 'mash') return e ? { kind, progress: 0, gain: MASH_GAIN * (1 + e) } : { kind, progress: 0 }
   if (kind === 'timing') {
     const a = 0.25 + rng() * 0.4
-    return { kind, t: 0, hits: 0, misses: 0, zone: [a, a + 0.22], flash: null }
+    return { kind, t: 0, hits: 0, misses: 0, zone: [a, Math.min(1, a + 0.22 + e / 2)], flash: null }
   }
-  return { kind, items: [], got: 0, nextId: 1, spawn: 0 }
+  return e ? { kind, items: [], got: 0, nextId: 1, spawn: 0, life: PICK_LIFE * (1 + e) } : { kind, items: [], got: 0, nextId: 1, spawn: 0 }
 }
 
 /** 타이밍 막대의 위치 0~1 (오가며 움직인다) */
@@ -59,7 +65,7 @@ export function stepMini(s: MiniState, dt: number, rng: Rng): MiniState {
   if (isDone(s)) return s
   if (s.kind === 'mash') return { ...s, progress: Math.max(0, s.progress - MASH_DECAY * dt) }
   if (s.kind === 'timing') return { ...s, t: s.t + dt }
-  let items = s.items.map((i) => ({ ...i, age: i.age + dt })).filter((i) => i.age < PICK_LIFE)
+  let items = s.items.map((i) => ({ ...i, age: i.age + dt })).filter((i) => i.age < (s.life ?? PICK_LIFE))
   let spawn = s.spawn - dt
   let nextId = s.nextId
   if (spawn <= 0 && items.length < 4) {
@@ -75,7 +81,7 @@ export function stepMini(s: MiniState, dt: number, rng: Rng): MiniState {
 
 export function tapMini(s: MiniState, itemId?: number): MiniState {
   if (isDone(s)) return s
-  if (s.kind === 'mash') return { ...s, progress: Math.min(1, s.progress + MASH_GAIN) }
+  if (s.kind === 'mash') return { ...s, progress: Math.min(1, s.progress + (s.gain ?? MASH_GAIN)) }
   if (s.kind === 'timing') {
     const c = cursorOf(s.t)
     const hit = c >= s.zone[0] && c <= s.zone[1]

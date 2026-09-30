@@ -39,6 +39,7 @@ import { GAIN, heartsOf, MAX_POINTS } from './hearts'
 import { bookDone, bookRoomOpen, emptyProgress, openDoorsFor, roomOpen, totalChapters, type Progress } from './books'
 import { arrivesOf, modeOf, SHELF_ROOMS } from './shelf-rooms'
 import { currentChapter, offersForDay } from './offers'
+import { addXp, charmBonus, freshStats, luckyExtra, rainBonus, sellBonus, tiredScale, visitBonus, XP, type StatId, type Stats } from './stats'
 import { POSTMAN, postForDay, starPostFor } from './post'
 import { blanksFor } from './copy'
 import { checkArrangement, moveItem, type ArrangeResult } from './scroll'
@@ -147,6 +148,8 @@ export interface GameState {
   churches: number[]
   /** 재료 궤짝 (계획 11 작업 1): 가방이 차면 남는 재료가 들어가고, 책상·작업대가 꺼내 쓴다. 궤짝이 없으면 비어 있다 */
   chest: Inventory
+  /** 능력치 다섯 (계획 11 작업 4): 지능·손재주·매력·근력·운 — 단계·경험치·타고난 값 */
+  stats: Stats
 }
 
 /** 지도(world.tileAt)가 이 게임의 집 단계·열린 서고 방 문(방 표)을 보게 한다. 지도를 읽는 엔진 입구마다 부른다 */
@@ -344,6 +347,7 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
     journey: [],
     churches: [],
     chest: {},
+    stats: freshStats(),
   }
 }
 
@@ -602,12 +606,15 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
   const g = (s.today ?? NO_TODAY).gathering
   if (g && !s.flags[`done:${g}`] && inGathering(g, clock.minute, now)) {
     events.push({ type: 'moment', id: g })
-    return { state: { ...next, scenes: [...next.scenes, g], flags: { ...next.flags, [`done:${g}`]: 1 } }, events }
+    // 이웃 모임에 함께하면 운이 조금 (계획 11 작업 4)
+    return { state: train({ ...next, scenes: [...next.scenes, g], flags: { ...next.flags, [`done:${g}`]: 1 } }, 'luck', XP.festival), events }
   }
   const m = momentNow({ day: clock.day, minute: clock.minute, outdoors: !isIndoor(now), player: now, flags: s.flags })
   if (m && !next.scenes.includes(m)) {
     events.push({ type: 'moment', id: m })
-    return { state: { ...next, scenes: [...next.scenes, m], flags: { ...next.flags, [onceKey(m, clock.day)]: 1 } }, events }
+    const seen = { ...next, scenes: [...next.scenes, m], flags: { ...next.flags, [onceKey(m, clock.day)]: 1 } }
+    // 마을 잔치에 함께하면 운이 조금 (계획 11 작업 4)
+    return { state: m.startsWith('festival:') ? train(seen, 'luck', XP.festival) : seen, events }
   }
   return { state: next, events }
 }
@@ -633,7 +640,8 @@ export function passTime(s: GameState, minutes: number): GameState {
 /** 마음 점수를 더한다 (hearts에는 점수 0~100이 들어 있고, 하트 수는 heartsOf로 본다) */
 function heartUp(s: GameState, id: string, points: number): GameState {
   const beforePts = s.hearts[id] ?? 0
-  const afterPts = Math.min(MAX_POINTS, beforePts + points)
+  // 매력 단계만큼 조금 더 (3단계 +1점, 5단계 +2점)
+  const afterPts = Math.min(MAX_POINTS, beforePts + points + (points > 0 ? charmBonus(s.stats) : 0))
   const before = heartsOf(beforePts)
   const after = heartsOf(afterPts)
   let next: GameState = { ...s, hearts: { ...s.hearts, [id]: afterPts } }
@@ -670,7 +678,7 @@ function heartUp(s: GameState, id: string, points: number): GameState {
 /** 말을 걸면 그날 처음 한 번 하트가 오른다 */
 export function greetNeighbor(s: GameState, id: string): GameState {
   if (s.talked.includes(id)) return s
-  return heartUp({ ...s, talked: [...s.talked, id] }, id, GAIN.talk)
+  return train(heartUp({ ...s, talked: [...s.talked, id] }, id, GAIN.talk), 'charm', XP.greet)
 }
 
 /**
@@ -689,14 +697,15 @@ export function listen(s: GameState, neighborId: string, content: GameContent): 
   const bp = s.progress[piece.book]
   const placed = bp.arrangement[piece.chapter] ?? []
   return {
-    state: {
+    // 이웃 이야기를 들으면 지능이 오른다 (계획 11 작업 4)
+    state: train({
       ...s,
       offers,
       collected: [...s.collected, pieceId],
       todayHeard: [...s.todayHeard, pieceId],
       listened: s.listened.includes(neighborId) ? s.listened : [...s.listened, neighborId],
       progress: { ...s.progress, [piece.book]: { ...bp, arrangement: { ...bp.arrangement, [piece.chapter]: [...placed, pieceId] } } },
-    },
+    }, 'wit', XP.listen),
     pieceId,
     pieceIds: [pieceId],
   }
@@ -764,8 +773,9 @@ export function canHelp(s: GameState, def: NeighborDef): HelpBlock {
 export function finishHelp(s: GameState, def: NeighborDef): GameState {
   if (canHelp(s, def)) return s
   const paid = def.help.needs ? take(s.inv, def.help.needs)! : s.inv
-  const next = { ...putAway({ ...s, inv: paid }, helpReward(def, s.clock.day, s.flags)), helped: [...s.helped, def.id], needs: work(s.needs, 8) }
-  return heartUp(passTime(next, 30), def.id, GAIN.help)
+  const next = { ...putAway({ ...s, inv: paid }, helpReward(def, s.clock.day, s.flags)), helped: [...s.helped, def.id], needs: toil(s, 8) }
+  // 돕기는 마음(매력)과 몸(근력)을 함께 쓴다
+  return train(train(heartUp(passTime(next, 30), def.id, GAIN.help), 'charm', XP.help), 'strength', XP.help)
 }
 
 /** 선물은 하루에 한 이웃에게 한 번. 좋아하는 것이면 마음이 더 오른다 */
@@ -774,7 +784,8 @@ export function giveGift(s: GameState, def: NeighborDef, item: ItemId): { state:
   const left = take(s.inv, { [item]: 1 })
   if (!left) return null
   const liked = def.likes.includes(item)
-  return { state: heartUp({ ...s, inv: left, gifted: [...s.gifted, def.id] }, def.id, liked ? GAIN.giftLiked : GAIN.giftPlain), liked }
+  const given = heartUp({ ...s, inv: left, gifted: [...s.gifted, def.id] }, def.id, liked ? GAIN.giftLiked : GAIN.giftPlain)
+  return { state: train(given, 'charm', XP.gift), liked }
 }
 
 export const GIFTABLE: readonly ItemId[] = ['bread', 'grapes', 'fig', 'wool', 'olive', 'oil', 'barley', 'honey', 'herb', 'bean']
@@ -1046,10 +1057,33 @@ export function takeFromChest(s: GameState, id: ItemId): GameState | null {
   return r ? { ...s, inv: r.inv, chest: r.chest } : null
 }
 
+// ── 능력치 (계획 11 작업 4, 규칙은 stats.ts) ──
+
+/** 능력치 경험치를 쌓는다 */
+export function train(s: GameState, id: StatId, xp: number): GameState {
+  return { ...s, stats: addXp(s.stats, id, xp) }
+}
+
+/** 몸을 쓰는 일의 피로 — 근력 단계만큼 덜 */
+function toil(s: GameState, amount: number): Needs {
+  return work(s.needs, Math.round(amount * tiredScale(s.stats) * 10) / 10)
+}
+
+/** 가끔 하나 더 (손재주·근력, 운이 거든다): 받는 것 중 첫 물건에 하나 — 넘치면 더하지 않는다 */
+function withExtra(s: GameState, gives: Partial<Record<ItemId, number>>, id: 'hand' | 'strength', salt: number): Partial<Record<ItemId, number>> {
+  const first = (Object.keys(gives) as ItemId[]).find((k) => !TOOLS.includes(k))
+  if (!first || !luckyExtra(s.stats, id, s.clock.day, salt, s.clock.minute)) return gives
+  const more = { ...gives, [first]: (gives[first] ?? 0) + 1 }
+  return overflows(s, more) ? gives : more
+}
+
+const GATHER_SALT: Partial<Record<PlaceId, number>> = { well: 1, reeds: 2, olive: 3, vine: 4, field: 5 }
+
 export function finishGather(s: GameState, place: PlaceId): GameState {
   const info = gatherInfo(s, place)
   if (!info || 'blocked' in info) return s
-  return passTime({ ...putAway(s, info.gives), needs: work(s.needs, 4) }, info.minutes)
+  const gives = withExtra(s, info.gives, 'strength', GATHER_SALT[place] ?? 0)
+  return train(passTime({ ...putAway(s, gives), needs: toil(s, 4) }, info.minutes), 'strength', XP.gather)
 }
 
 export type CraftBlock = 'needs' | 'tired' | 'full' | 'job' | null
@@ -1065,9 +1099,10 @@ export function canCraft(s: GameState, id: RecipeId): CraftBlock {
 export function finishCraft(s: GameState, id: RecipeId): GameState {
   if (canCraft(s, id)) return s
   const r = RECIPES[id]
-  const made = putAway(useStock(s, r.needs)!, recipeGives(r, s.inv, s.flags))
+  const paid = useStock(s, r.needs)!
+  const made = putAway(paid, withExtra(paid, recipeGives(r, s.inv, s.flags), 'hand', 10 + Object.keys(RECIPES).indexOf(id)))
   const recipesKnown = s.recipesKnown.includes(id) ? s.recipesKnown : [...s.recipesKnown, id]
-  const done = passTime({ ...made, recipesKnown, needs: work(s.needs, 5) }, r.minutes)
+  const done = train(passTime({ ...made, recipesKnown, needs: work(s.needs, 5) }, r.minutes), 'hand', XP.craft)
   // 화덕을 쓰면 그을음 받이에 그을음이 모인다
   return r.at === 'hearth' ? catchSoot(done) : done
 }
@@ -1102,12 +1137,18 @@ export function canSell(s: GameState, item: ItemId): SellBlock {
   return null
 }
 
+/** 장날 파는 값 — 매력 3단계부터 +1닢 */
+export function sellPrice(s: Pick<GameState, 'stats'>, item: ItemId): number | undefined {
+  const base = SELL_PRICES[item]
+  return base === undefined ? undefined : base + sellBonus(s.stats)
+}
+
 export function sell(s: GameState, item: ItemId): GameState | null {
   if (canSell(s, item)) return null
   return {
     ...s,
     inv: take(s.inv, { [item]: 1 })!,
-    coins: s.coins + SELL_PRICES[item]!,
+    coins: s.coins + sellPrice(s, item)!,
     flags: { ...s.flags, soldDay: s.clock.day, soldCount: soldToday(s) + 1 },
   }
 }
@@ -1178,8 +1219,9 @@ function starPostTonight(s: GameState, content: GameContent): string[] {
 export function stargaze(s: GameState, content: GameContent): { state: GameState; pieceIds: string[] } {
   const night = phaseOf(s.clock.minute) === 'night'
   let next = passTime({ ...s, needs: rest(s.needs) }, 20)
+  // 맑은 밤 별을 보면 운이 조금 (하루 한 번 — 계획 11 작업 4)
   if (clearSky(s.clock.day) && night && !s.flags[onceKey('stars', s.clock.day)])
-    next = { ...next, scenes: [...next.scenes, 'stars'], flags: { ...next.flags, [onceKey('stars', s.clock.day)]: 1 } }
+    next = train({ ...next, scenes: [...next.scenes, 'stars'], flags: { ...next.flags, [onceKey('stars', s.clock.day)]: 1 } }, 'luck', XP.stars)
   const ids = starPostTonight(s, content)
   if (!ids.length) return { state: next, pieceIds: [] }
   const got = takeChapters(next, ids, content)
@@ -1432,7 +1474,7 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
       scenes.push(`movedIn:${d.id}`)
     }
   const present = neighborsOfDay(day, content, level, flags)
-  const visitor = clock.minute >= VISIT_TO ? null : pickVisitor(day, s.hearts, flags, present)
+  const visitor = clock.minute >= VISIT_TO ? null : pickVisitor(day, s.hearts, flags, present, visitBonus(s.stats))
   if (visitor) flags[`visitDay:${visitor}`] = day
   let gathering = planGathering(day, level, flags)
   // ── 복음서 방 완성 잔치: 네 권을 다 꽂고 처음 잠든 다음 날 (한 번). 그다음 밤부터는 잔치가 지난 것 ──
@@ -1516,7 +1558,7 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
  */
 function morningSupplies(s: GameState, endedDay: number): GameState {
   let next = s
-  if (owns(s.flags, 'rainJar')) next = putAway(next, { water: weatherOf(endedDay) === 'rain' ? RAIN_WATER.afterRain : RAIN_WATER.usual })
+  if (owns(s.flags, 'rainJar')) next = putAway(next, { water: weatherOf(endedDay) === 'rain' ? RAIN_WATER.afterRain + rainBonus(s.stats) : RAIN_WATER.usual })
   if (owns(s.flags, 'reedRack')) {
     if (stockOf(next, 'papyrus') < RACK_HOLD) next = putAway(next, { papyrus: RACK_PAPYRUS })
     if (!next.flags.rackSeen) next = { ...next, scenes: [...next.scenes, 'reedRack'], flags: { ...next.flags, rackSeen: 1 } }

@@ -3,6 +3,7 @@ import { create } from 'zustand'
 import { CONTENT, copySourceFor, LETTER_OPENINGS, pieceById, pieceOfQuestion, piecesOf, quizSourceFor } from '../content/catalog'
 import { blanksFor } from '../engine/copy'
 import { currentChapter } from '../engine/offers'
+import { handEase, leveledUp, XP, type StatId } from '../engine/stats'
 import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
 import { bookRoomOpen, openDoorsFor } from '../engine/books'
 import { actsDoorGlows, canShelve, payRetry, poolFor, shelve } from '../engine/library'
@@ -35,6 +36,7 @@ import {
   setMyLine,
   stargaze,
   openMailbox,
+  train,
   clearSky,
   submitChapter,
   tapTile,
@@ -61,7 +63,7 @@ import {
   readScripture,
   passTime,
   sell,
-  SELL_PRICES,
+  sellPrice,
   orderHome,
   orderWork,
   takeFromChest,
@@ -776,7 +778,7 @@ export const useGame = create<Store>((set, get) => {
     },
 
     sellItem: (item) => {
-      const price = SELL_PRICES[item]
+      const price = sellPrice(get().game, item)
       const next = sell(get().game, item)
       if (!next) return
       sfx('gift')
@@ -789,7 +791,7 @@ export const useGame = create<Store>((set, get) => {
 
     startCraft: (recipe) => {
       if (canCraft(get().game, recipe)) return
-      set({ modal: { kind: 'mini', state: startMini(RECIPES[recipe].minigame, get().rng), pending: { kind: 'craft', recipe } } })
+      set({ modal: { kind: 'mini', state: startMini(RECIPES[recipe].minigame, get().rng, handEase(get().game.stats)), pending: { kind: 'craft', recipe } } })
     },
 
     // 손일을 그만두면 아무것도 쓰지 않았으므로 그냥 닫는다
@@ -968,6 +970,8 @@ export const useGame = create<Store>((set, get) => {
       const q = m.questions[m.index]
       if (isCorrect(q, given)) {
         sfx('hit')
+        // 한 번에 맞히면 지능이 오른다 (계획 11 작업 4)
+        if (m.wrong.length === 0) set({ game: persist(train(get().game, 'wit', XP.quizRight)) })
         set({ modal: { ...m, solved: true } })
       } else {
         sfx('miss')
@@ -1103,6 +1107,19 @@ export const useGame = create<Store>((set, get) => {
       set({ joystickSide })
     },
   }
+})
+
+// 능력치 단계가 오르면 아래 칸에 한 줄 (계획 11 작업 4). 같은 날 같은 판에서만 — 저장을 불러오거나 새로 시작할 때는 알리지 않는다
+useGame.subscribe((s, prev) => {
+  const a = prev.game
+  const b = s.game
+  if (a === b || a.clock.day !== b.clock.day || b.clock.minute < a.clock.minute || a.avatar !== b.avatar) return
+  const ups = leveledUp(a.stats, b.stats)
+  if (!ups.length) return
+  const id: StatId = ups[0]
+  const line = fill(T.stats.up, { name: (T.stats.names as Record<StatId, string>)[id], n: b.stats[id].level })
+  // 방금 띄운 알림(얻은 것 등)을 덮지 않게 조금 뒤에
+  setTimeout(() => useGame.getState().say(line, 3200), 1800)
 })
 
 /** 가방에 물건을 넣는 테스트 도우미 */

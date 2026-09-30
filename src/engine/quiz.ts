@@ -527,3 +527,14 @@ export function isCorrect(q: Question, given: string[] | string): boolean {
   }
   return given === q.answer
 }
+
+/**
+ * 지능 힌트 (계획 11 작업 4): 보기 하나를 고르는 문제에서 흐리게 보일 틀린 보기 n개.
+ * 보기 중 답이 아닌 것을 보기 차례의 뒤에서부터 (같은 문제는 늘 같은 보기). 보기 셋 이상일 때 적어도 둘은 남긴다
+ */
+export function hintOptions(q: Question, n: number): string[] {
+  if (n <= 0 || q.kind === 'puzzle' || q.kind === 'detective') return []
+  const options = q.options as readonly string[]
+  const wrong = options.filter((o) => o !== q.answer)
+  return wrong.slice(-Math.min(n, Math.max(0, options.length - 2))).reverse()
+}

@@ -233,6 +233,48 @@ button.big {
 .need-bar.happy > div {
   background: #d9b44a;
 }
+/* 능력치 다섯 (계획 11 작업 4): 이름 · 막대 다섯 · 단계 */
+.stats h3 {
+  margin: 8px 0 4px;
+}
+.stats-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 6px;
+}
+.stats-list li {
+  display: grid;
+  grid-template-columns: 5.5em 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 3px 0;
+  font-size: 13px;
+}
+.stat-born {
+  margin-left: 3px;
+  font-size: 10px;
+  color: #d9b44a;
+}
+.stat-bars {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 3px;
+}
+.stat-bar {
+  height: 8px;
+  border-radius: 2px;
+  background: #e8dcc6;
+  overflow: hidden;
+}
+.stat-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+}
+.stat-level {
+  font-size: 11px;
+  color: var(--ink-soft);
+}
 .bag-list {
   list-style: none;
   padding: 0;

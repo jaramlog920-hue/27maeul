@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { fill, itemList, itemName, T } from '../../content/text'
-import { canSell, overflows, ownsTradeTool, SELL_PRICES, tradesFor } from '../../engine/game'
+import { canSell, overflows, ownsTradeTool, SELL_PRICES, sellPrice, tradesFor } from '../../engine/game'
 import { jobOf, SELL_FROM } from '../../engine/job'
 import { has, take } from '../../engine/items'
 import type { ItemId } from '../../engine/types'
@@ -57,7 +57,7 @@ export function TradeBoard() {
                     <span className="trade-get">
                       {itemName(id)} ({game.inv[id] ?? 0})
                     </span>
-                    <span className="trade-pay">{fill(T.ui.sellPrice, { n: SELL_PRICES[id]! })}</span>
+                    <span className="trade-pay">{fill(T.ui.sellPrice, { n: sellPrice(game, id)! })}</span>
                     <button disabled={block !== null} onClick={() => sellItem(id)}>
                       {T.ui.tradeSell}
                     </button>

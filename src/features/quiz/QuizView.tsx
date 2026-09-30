@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import { pieceById, versesOf } from '../../content/catalog'
 import { fill, T } from '../../content/text'
-import { NOT_WRITTEN_OPTION, type GospelId, type Question } from '../../engine/quiz'
+import { hintOptions, NOT_WRITTEN_OPTION, type GospelId, type Question } from '../../engine/quiz'
+import { quizDims } from '../../engine/stats'
 import { isGospel, isLetter, type Book } from '../../engine/types'
 import { useGame, type Modal } from '../../store/game-store'
 import { Passage } from '../passage/Passage'
@@ -197,6 +198,10 @@ export function QuizView({ modal }: { modal: Extract<Modal, { kind: 'quiz' }> })
   const last = modal.index === modal.questions.length - 1
   const title = (id: string) => pieceById(id).title
   const lib = modal.mode.kind === 'library'
+  // 지능 3단계부터 장 기록 퀴즈의 틀린 보기를 흐리게 (서고 퀴즈는 책등 등급이 걸려 있어 돕지 않는다)
+  const dims = useGame((s) => quizDims(s.game.stats))
+  const hinted = lib || modal.solved ? [] : hintOptions(q, dims)
+  const wrong = [...modal.wrong, ...hinted.filter((o) => !modal.wrong.includes(o))]
   return (
     <div className="dialog scroll-dialog quiz" role="dialog" aria-label={T.quiz.title}>
       <h2>
@@ -212,25 +217,25 @@ export function QuizView({ modal }: { modal: Extract<Modal, { kind: 'quiz' }> })
             <VerseBox refText={q.ref}>
               {q.before} <span className="blank-slot">{modal.solved ? q.answer : '＿＿＿'}</span> {q.after}
             </VerseBox>
-            <Choices options={q.options} label={(o) => o} answer={q.answer} wrong={modal.wrong} solved={modal.solved} onAnswer={answerQuiz} />
+            <Choices options={q.options} label={(o) => o} answer={q.answer} wrong={wrong} solved={modal.solved} onAnswer={answerQuiz} />
           </>
         )}
         {q.kind === 'detective' && <Detective q={q} solved={modal.solved} onAnswer={answerQuiz} pool={lib} />}
-        {q.kind === 'book' && <BookQuestion q={q} wrong={modal.wrong} solved={modal.solved} onAnswer={answerQuiz} />}
-        {q.kind === 'opening' && <OpeningQuestion q={q} wrong={modal.wrong} solved={modal.solved} onAnswer={answerQuiz} />}
-        {q.kind === 'openingNone' && <OpeningNoneQuestion q={q} wrong={modal.wrong} solved={modal.solved} onAnswer={answerQuiz} />}
-        {q.kind === 'verseOrder' && <VerseOrderQuestion q={q} book={modal.mode.book} wrong={modal.wrong} solved={modal.solved} onAnswer={answerQuiz} />}
+        {q.kind === 'book' && <BookQuestion q={q} wrong={wrong} solved={modal.solved} onAnswer={answerQuiz} />}
+        {q.kind === 'opening' && <OpeningQuestion q={q} wrong={wrong} solved={modal.solved} onAnswer={answerQuiz} />}
+        {q.kind === 'openingNone' && <OpeningNoneQuestion q={q} wrong={wrong} solved={modal.solved} onAnswer={answerQuiz} />}
+        {q.kind === 'verseOrder' && <VerseOrderQuestion q={q} book={modal.mode.book} wrong={wrong} solved={modal.solved} onAnswer={answerQuiz} />}
         {q.kind === 'verse' && (
           <>
             <p className="quiz-prompt">{T.quiz.verse}</p>
             <Passage refText={q.ref} />
-            <Choices options={q.options} label={title} answer={q.answer} wrong={modal.wrong} solved={modal.solved} onAnswer={answerQuiz} />
+            <Choices options={q.options} label={title} answer={q.answer} wrong={wrong} solved={modal.solved} onAnswer={answerQuiz} />
           </>
         )}
         {q.kind === 'order' && (
           <>
             <p className="quiz-prompt">{lib ? T.quiz.orderBook : T.quiz.order}</p>
-            <Choices options={q.options} label={title} answer={q.answer} wrong={modal.wrong} solved={modal.solved} onAnswer={answerQuiz} />
+            <Choices options={q.options} label={title} answer={q.answer} wrong={wrong} solved={modal.solved} onAnswer={answerQuiz} />
           </>
         )}
       </div>
