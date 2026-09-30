@@ -73,7 +73,7 @@ describe('서고 권수로 열리는 구역', () => {
   const vine = PLACES.vine.tiles[0]
   it('구역마다 맡은 곳을 덮고, 마을의 기본 자리는 덮지 않는다', () => {
     expect(zoneAt(vine)?.id).toBe('vineyard')
-    expect(zoneAt({ x: 24, y: 33 })?.id).toBe('dock') // 나루
+    expect(zoneAt({ x: 24, y: 34 })?.id).toBe('dock') // 나루
     expect(zoneAt(ROOMS.find((r) => r.owner === 'beekeeper')!.door)?.id).toBe('hives')
     expect(zoneAt(PLACES.anvil.tiles[0])).toBeNull() // 대장간은 처음부터 열려 있다
     for (const id of ['bed', 'desk', 'well', 'hill', 'bench', 'library', 'basket', 'field'] as const)

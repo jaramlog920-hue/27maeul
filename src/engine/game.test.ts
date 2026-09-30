@@ -119,10 +119,10 @@ describe('걷기와 도착', () => {
     expect(r.state.player.facing).toBe('left')
   })
   it('갈대처럼 서는 칸이 없는 곳은 옆 칸까지 간다', () => {
-    const s = tapTile(outside(), { x: 6, y: 33 })
+    const s = tapTile(outside(), { x: 6, y: 34 })
     const r = runUntilEvent(s)
     expect(r.events[0].type).toBe('arrived')
-    expect(Math.abs(r.state.player.x - 6) + Math.abs(r.state.player.y - 33)).toBe(1)
+    expect(Math.abs(r.state.player.x - 6) + Math.abs(r.state.player.y - 34)).toBe(1)
   })
   it('이웃에게 걸어가 옆에 서면 곁에 선다 — 대화는 대화하기 단추로 (곁에서 누르면 바로 도착)', () => {
     let s = at(outside(), 8 * 60)

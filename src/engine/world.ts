@@ -528,12 +528,12 @@ function build(): string[] {
   for (const t of WILD_HERBS) set(t.x, t.y, 'j')
 
   // ── 호숫가: 모래길, 갈대, 나루와 고깃배 ──
-  rect(1, 32, 46, 32, ',')
-  rect(1, 33, 46, VILLAGE_H - 2, '~')
-  for (let x = 3; x <= 9; x++) set(x, 33, 'r')
-  for (let x = 36; x <= 40; x++) set(x, 33, 'r')
-  rect(24, 33, 24, 35, '=')
-  set(25, 35, 'u')
+  rect(1, 32, 46, 33, ',') // 호숫가 길은 두 줄 — 이웃이 서 있어도 지나갈 수 있게
+  rect(1, 34, 46, VILLAGE_H - 2, '~')
+  for (let x = 3; x <= 9; x++) set(x, 34, 'r')
+  for (let x = 36; x <= 40; x++) set(x, 34, 'r')
+  rect(24, 34, 24, 36, '=')
+  set(25, 36, 'u')
 
   // ── 이웃집 안, 내 집 안, 그리고 내 집 다락 (다락은 사다리로만 오르므로 늘 지어 둔다) ──
   for (const room of [...ROOMS, ATTIC, HOME_ROOM]) {
@@ -600,7 +600,7 @@ export interface Zone {
 export const ZONES: readonly Zone[] = [
   { id: 'vineyard', books: 1, x0: 41, y0: 1, x1: 46, y1: 9 },
   // 나루는 잔교만 — 호숫가 길은 처음부터 끝까지 걸을 수 있다
-  { id: 'dock', books: 2, x0: 23, y0: 33, x1: 26, y1: 35 },
+  { id: 'dock', books: 2, x0: 23, y0: 34, x1: 26, y1: 36 },
   { id: 'hives', books: 3, x0: 41, y0: 26, x1: 46, y1: 31 },
 ]
 // 대장간은 처음부터 열려 있다 — 첫날부터 대장장이를 도와 그을음(→ 잉크)을 얻어야 첫 장을 엮을 수 있다
@@ -722,7 +722,7 @@ export const PLACES: Record<PlaceId, Place> = {
   revTable: { tiles: [{ x: REV_X0 + 5, y: REV_Y0 + 4 }], stand: { x: REV_X0 + 5, y: REV_Y0 + 5 } },
   // 모이는 곳과 둘이 가는 곳 (계획 10): 사랑방 긴 탁자, 찻집 탁자, 호숫가 정자 벤치
   // 나루의 배 (계획 13 작업 6): 이웃 마을 여행
-  boat: { tiles: [{ x: 25, y: 35 }, { x: 25, y: 34 }], stand: { x: 24, y: 34 } },
+  boat: { tiles: [{ x: 25, y: 36 }, { x: 25, y: 35 }], stand: { x: 24, y: 35 } },
   // 배움터의 배움 탁자: 아이를 맡겨 능력치를 기른다 (탁자 아래 칸에 선다)
   learnTable: { tiles: [{ x: 20, y: 44 }, { x: 21, y: 44 }], stand: { x: 20, y: 45 } },
   // 의뢰 게시판 (계획 13 작업 5): 사랑방 벽

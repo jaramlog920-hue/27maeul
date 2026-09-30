@@ -63,7 +63,7 @@ export const LANTERNS: readonly Tile[] = [
 ]
 
 /** 여정을 다 이은 다음 날부터 나루(24열 =) 왼쪽 물 위에 머무는 큰 배의 왼쪽 위 칸 (세 칸 폭) */
-export const SHIP_AT: Tile = { x: 21, y: 34 }
+export const SHIP_AT: Tile = { x: 21, y: 35 }
 
 /**
  * 큰 배: 차분한 나뭇빛 선체와 잿빛 파랑 띠, 크림 돛 하나, 둥근 창 셋(가운데 둔 대칭), 나루에 맨 밧줄.

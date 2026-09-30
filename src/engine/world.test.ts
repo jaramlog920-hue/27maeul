@@ -33,7 +33,7 @@ describe('world', () => {
   })
   it('placeAt·집 안', () => {
     expect(placeAt({ x: HOME_ROOM.x0 + 1, y: HOME_ROOM.y0 + 3 })).toBe('desk')
-    expect(placeAt({ x: 6, y: 33 })).toBe('reeds')
+    expect(placeAt({ x: 6, y: 34 })).toBe('reeds')
     expect(placeAt({ x: 12, y: 28 })).toBe('field')
     expect(placeAt({ x: 36, y: 50 })).toBe('library')
     expect(placeAt({ x: HOME_DOOR.x + 1, y: HOME_DOOR.y + 1 })).toBe('basket')
