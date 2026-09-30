@@ -1,7 +1,8 @@
 import { CONTENT, piecesOf } from '../content/catalog'
 import { chaptersOf } from './books'
 import { chooseBook, newGame, readScripture, type GameState } from './game'
-import { canRetry, canShelve, gradeOf, payRetry, poolFor, readOff, RETRY_COST, shelve } from './library'
+import { canRetry, canShelve, gradeOf, payRetry, poolFor, readOff, RETRY_COST, shelve, sideShelfSpines, SIDE_SHELF, SPINES_PER_BOOK, type Grade } from './library'
+import { BOOKS, type Book } from './types'
 
 function withMarkDone(): GameState {
   const s = chooseBook(newGame(CONTENT), 'mk', CONTENT)
@@ -60,5 +61,27 @@ describe('마을 서고', () => {
     expect(readOff(s, 'mk-001-009').rereads).toEqual(['mk-002-001'])
     const r = readScripture(s, 'mk-002-001')!
     expect(r.state.rereads).toEqual(['mk-001-009'])
+  })
+})
+
+describe('서고 양옆 책장: 복음서 다음에 꽂은 책마다 책등 둘씩, 왼쪽·오른쪽 번갈아', () => {
+  it('복음서만 꽂았으면 비어 있다', () => {
+    expect(sideShelfSpines({ mt: 2, mk: 1, lk: 0, jn: 2 })).toEqual([])
+  })
+  it('사도행전 한 권이면 왼쪽·오른쪽 첫 자리에 하나씩, 등급 그대로', () => {
+    expect(sideShelfSpines({ mt: 2, mk: 1, lk: 0, jn: 2, ac: 1 })).toEqual([
+      { book: 'ac', grade: 1, side: 'left', tile: 0, row: 0, col: 0 },
+      { book: 'ac', grade: 1, side: 'right', tile: 0, row: 0, col: 0 },
+    ])
+  })
+  it('스물세 권을 다 꽂으면 46자리 — 자리가 겹치지 않고 두 단 모두 찬다', () => {
+    const all = Object.fromEntries(BOOKS.map((b) => [b, 2])) as Partial<Record<Book, Grade>>
+    const spines = sideShelfSpines(all)
+    expect(spines).toHaveLength((BOOKS.length - 4) * SPINES_PER_BOOK)
+    const keys = spines.map((s) => `${s.side}${s.tile}${s.row}${s.col}`)
+    expect(new Set(keys).size).toBe(keys.length)
+    expect(spines.every((s) => s.tile < SIDE_SHELF.tiles && s.row < SIDE_SHELF.rows && s.col < SIDE_SHELF.perRow)).toBe(true)
+    expect(spines.some((s) => s.row === 1)).toBe(true)
+    expect(spines.at(-1)!.book).toBe('rev')
   })
 })

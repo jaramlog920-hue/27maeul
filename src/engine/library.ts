@@ -84,3 +84,42 @@ export function actsDoorGlows(s: Pick<GameState, 'flags'>): boolean {
 export function readOff(s: GameState, pieceId: string): GameState {
   return s.rereads.includes(pieceId) ? { ...s, rereads: s.rereads.filter((id) => id !== pieceId) } : s
 }
+
+// ── 서고 양옆 책장 ──
+// 가운데 선반은 복음서 네 권. 그 뒤로 꽂는 책(사도행전·편지·요한계시록, 23권)은 제 방 선반에도 꽂히고,
+// 서고 양옆 책장에도 한 권마다 책등 둘씩 늘어 점점 찬다 — 왼쪽·오른쪽을 번갈아, 위 칸부터.
+
+/** 양옆 책장 한쪽: 책장 세 칸 × 두 단 × 한 단에 책등 넷 */
+export const SIDE_SHELF = { tiles: 3, rows: 2, perRow: 4 } as const
+/** 한 권마다 책등 수 */
+export const SPINES_PER_BOOK = 2
+
+export interface SideSpine {
+  book: Book
+  grade: Grade
+  side: 'left' | 'right'
+  /** 그쪽 책장의 몇째 칸 (0–2, 왼쪽에서부터) */
+  tile: number
+  /** 위 단 0, 아래 단 1 */
+  row: number
+  /** 그 칸 단에서 몇째 (0–3) */
+  col: number
+}
+
+/** 양옆 책장에 보일 책등: 복음서 밖의 꽂힌 책을 성경 차례로, 한 권에 둘씩 */
+export function sideShelfSpines(shelved: Partial<Record<Book, Grade>>): SideSpine[] {
+  const books = BOOKS.filter((b) => !(GOSPELS as readonly Book[]).includes(b) && shelved[b] !== undefined)
+  const perSide = SIDE_SHELF.tiles * SIDE_SHELF.rows * SIDE_SHELF.perRow
+  const out: SideSpine[] = []
+  let n = 0
+  for (const book of books)
+    for (let k = 0; k < SPINES_PER_BOOK; k++, n++) {
+      const side = n % 2 === 0 ? 'left' : 'right'
+      const i = Math.floor(n / 2)
+      if (i >= perSide) return out
+      const row = Math.floor(i / (SIDE_SHELF.tiles * SIDE_SHELF.perRow))
+      const inRow = i % (SIDE_SHELF.tiles * SIDE_SHELF.perRow)
+      out.push({ book, grade: shelved[book]!, side, tile: Math.floor(inRow / SIDE_SHELF.perRow), row, col: inRow % SIDE_SHELF.perRow })
+    }
+  return out
+}

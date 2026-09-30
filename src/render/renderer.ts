@@ -10,9 +10,9 @@ import { FURNI_PALETTE, FURNITURE_ART } from './furniture-art'
 import { drawDecor, lanternLights, sheepCount } from './decor'
 import { FIRE, isNear, npcTile } from '../engine/neighbors'
 import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
-import { actsDoorGlows, feastToday } from '../engine/library'
+import { actsDoorGlows, feastToday, sideShelfSpines } from '../engine/library'
 import { ACTS_ROOM, ATTIC, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, HEIGHT, HOME_DOOR, HOUSE_RECT, housesNow, houseAt, LOCKED_DOORS, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
-import { GOSPELS, type Facing, type GameContent, type Season, type Tile } from '../engine/types'
+import { GOSPELS, type Book, type Facing, type GameContent, type Season, type Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { avatarKey, withLookDefaults, type FullAvatar } from '../engine/avatar'
 import {
@@ -1294,6 +1294,23 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           g.fillRect(sx, sy + 2, 8, 2)
           g.fillRect(sx, sy + 7, 8, 1)
         })
+        // 양옆 책장: 복음서 다음에 꽂은 책(사도행전·편지·요한계시록)마다 책등 둘씩 — 방마다 다른 책등 색, 등급 띠
+        const SIDE_SPINE: [readonly Book[], readonly [string, string]][] = [
+          [['ac'], ['#a894c4', '#b8a4d2']],
+          [shelfRoom('romPhm').books, ['#d49a78', '#e2b08a']],
+          [shelfRoom('hebJud').books, ['#86b8ae', '#9ccabe']],
+          [['rev'], ['#c88aa0', '#d69cb0']],
+        ]
+        for (const sp of sideShelfSpines(game.shelved)) {
+          const tx = sp.side === 'left' ? first.x - 4 + sp.tile : first.x + 4 + sp.tile
+          const x = tx * TILE + 2 + sp.col * 3
+          const y = first.y * TILE + (sp.row === 0 ? 5 : 10)
+          const pair = SIDE_SPINE.find(([bs]) => bs.includes(sp.book))?.[1] ?? SIDE_SPINE[1][1]
+          g.fillStyle = pair[sp.col % 2]
+          g.fillRect(x, y, 2, 4)
+          g.fillStyle = BAND[sp.grade]
+          g.fillRect(x, y + 1, 2, 1)
+        }
         // 잔치 다음 날부터: 사도행전 방 문으로 새는 따뜻한 불빛
         if (actsGlow) drawDoorGlow(g, LOCKED_DOORS[0], t)
       }
