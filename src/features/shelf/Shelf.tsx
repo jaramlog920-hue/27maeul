@@ -1,8 +1,9 @@
 // 선반: 모은 것들을 본다 — 이야기 도감·받은 선물·만들 줄 아는 것·풍경 앨범·나의 한 줄·방 꾸미기
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { PIECES } from "../../content/catalog";
-import { pickableBooks } from "../../engine/books";
-import { fill, ITEM_TEXT, SCENES, T } from "../../content/text";
+import { groupByRoom, pickableBooks } from "../../engine/books";
+import { roomOf } from "../../engine/shelf-rooms";
+import { fill, ITEM_TEXT, roomTitle, SCENES, T } from "../../content/text";
 import { FURNITURE } from "../../engine/room";
 import { ItemIcon } from "../../shared/ItemIcon";
 import { bookLineKey } from "../../engine/game";
@@ -75,9 +76,15 @@ export function dexView(
   book: Book | "all",
   only: boolean,
 ): { books: Book[]; list: Piece[] } {
-  const books = pickableBooks(flags, BOOKS.filter((b) => pieces.some((p) => p.book === b)));
+  const books = pickableBooks(
+    flags,
+    BOOKS.filter((b) => pieces.some((p) => p.book === b)),
+  );
   const list = pieces.filter(
-    (p) => books.includes(p.book) && (book === "all" || p.book === book) && (!only || onlyHere(p)),
+    (p) =>
+      books.includes(p.book) &&
+      (book === "all" || p.book === book) &&
+      (!only || onlyHere(p)),
   );
   return { books, list };
 }
@@ -98,6 +105,17 @@ export function Dex() {
   };
   const got = new Set(collected);
   const { books, list } = dexView(PIECES, flags, book, only);
+  const rooms = groupByRoom(books);
+  const filterButton = (b: Book | "all") => (
+    <button
+      key={b}
+      className={book === b ? "on" : ""}
+      aria-pressed={book === b}
+      onClick={() => setBook(b)}
+    >
+      {BOOK_LABEL[b]}
+    </button>
+  );
   // 책마다 장을 따로 (마가 1장과 누가 1장을 한데 섞지 않는다)
   const sections = [...new Set(list.map((p) => `${p.book}:${p.chapter}`))].map(
     (k) => {
@@ -107,16 +125,16 @@ export function Dex() {
   );
   return (
     <div className="dex">
+      {/* 책 거르기도 서고의 방으로 묶는다 (방이 둘 이상 열렸을 때만 방 이름) */}
       <div className="dex-filter" role="group" aria-label={T.ui.dexBookPick}>
-        {(["all", ...books] as const).map((b) => (
-          <button
-            key={b}
-            className={book === b ? "on" : ""}
-            aria-pressed={book === b}
-            onClick={() => setBook(b)}
-          >
-            {BOOK_LABEL[b]}
-          </button>
+        {filterButton("all")}
+        {rooms.map(({ room, books: bs }) => (
+          <Fragment key={room.id}>
+            {rooms.length > 1 && (
+              <span className="dex-room-name">{roomTitle(room)}</span>
+            )}
+            {bs.map(filterButton)}
+          </Fragment>
         ))}
       </div>
       <div className="dex-filter">
@@ -134,71 +152,81 @@ export function Dex() {
         </span>
       </div>
       <p className="stamp-note">{T.ui.stampNote}</p>
-      {sections.map(({ key, book: b, chapter: c }) => {
+      {sections.map(({ key, book: b, chapter: c }, i) => {
         const inChapter = list.filter((p) => p.book === b && p.chapter === c);
+        // 방이 바뀌는 자리에 방 이름 (방이 둘 이상 열렸을 때)
+        const room = roomOf(b as Book);
+        const newRoom =
+          rooms.length > 1 &&
+          (i === 0 || roomOf(sections[i - 1].book as Book).id !== room.id);
         return (
-          // 장이 많아지므로 기본은 접어 두고, 제목 줄에 모은 수만 보인다
-          <details
-            key={key}
-            className="dex-section"
-            open={rememberOpen.has(key)}
-            onToggle={(e) =>
-              e.currentTarget.open
-                ? rememberOpen.add(key)
-                : rememberOpen.delete(key)
-            }
-          >
-            <summary>
-              <span>
-                {(T.quiz.books as Record<string, string>)[b]}{" "}
-                {fill(T.ui.chapterLabel, { chapter: c })}
-              </span>
-              <span className="hint">
-                {fill(T.ui.dexCount, {
-                  got: inChapter.filter((p) => got.has(p.id)).length,
-                  all: inChapter.length,
-                })}
-              </span>
-            </summary>
-            <ul className="dex-list">
-              {inChapter.map((p) =>
-                got.has(p.id) ? (
-                  <li key={p.id}>
-                    <button
-                      className={`dex-item ${onlyHere(p) ? "only" : ""}`}
-                      onClick={() =>
-                        open({
-                          kind: "passage",
-                          pieceId: p.id,
-                          askLine: false,
-                          back: true,
-                        })
-                      }
-                    >
-                      <span className="piece-title">
-                        {onlyHere(p) && "✦ "}
-                        {p.title}
-                      </span>
+          <Fragment key={key}>
+            {newRoom && <h3>{roomTitle(room)}</h3>}
+            {/* 장이 많아지므로 기본은 접어 두고, 제목 줄에 모은 수만 보인다 */}
+            <details
+              className="dex-section"
+              open={rememberOpen.has(key)}
+              onToggle={(e) =>
+                e.currentTarget.open
+                  ? rememberOpen.add(key)
+                  : rememberOpen.delete(key)
+              }
+            >
+              <summary>
+                <span>
+                  {(T.quiz.books as Record<string, string>)[b]}{" "}
+                  {fill(T.ui.chapterLabel, { chapter: c })}
+                </span>
+                <span className="hint">
+                  {fill(T.ui.dexCount, {
+                    got: inChapter.filter((p) => got.has(p.id)).length,
+                    all: inChapter.length,
+                  })}
+                </span>
+              </summary>
+              <ul className="dex-list">
+                {inChapter.map((p) =>
+                  got.has(p.id) ? (
+                    <li key={p.id}>
+                      <button
+                        className={`dex-item ${onlyHere(p) ? "only" : ""}`}
+                        onClick={() =>
+                          open({
+                            kind: "passage",
+                            pieceId: p.id,
+                            askLine: false,
+                            back: true,
+                          })
+                        }
+                      >
+                        <span className="piece-title">
+                          {onlyHere(p) && "✦ "}
+                          {p.title}
+                        </span>
+                        <span className="piece-ref">{p.ref}</span>
+                        <span className="dex-stamps">
+                          {p.stamps.map((s) => (
+                            <span
+                              key={s.ref}
+                              className={`mini-stamp ${s.kind}`}
+                            >
+                              {s.ref.split(" ")[0]}
+                              {s.kind === "similar" ? "≈" : ""}
+                            </span>
+                          ))}
+                        </span>
+                      </button>
+                    </li>
+                  ) : (
+                    <li key={p.id} className="dex-item unknown">
+                      <span className="piece-title">{T.ui.dexUnknown}</span>
                       <span className="piece-ref">{p.ref}</span>
-                      <span className="dex-stamps">
-                        {p.stamps.map((s) => (
-                          <span key={s.ref} className={`mini-stamp ${s.kind}`}>
-                            {s.ref.split(" ")[0]}
-                            {s.kind === "similar" ? "≈" : ""}
-                          </span>
-                        ))}
-                      </span>
-                    </button>
-                  </li>
-                ) : (
-                  <li key={p.id} className="dex-item unknown">
-                    <span className="piece-title">{T.ui.dexUnknown}</span>
-                    <span className="piece-ref">{p.ref}</span>
-                  </li>
-                ),
-              )}
-            </ul>
-          </details>
+                    </li>
+                  ),
+                )}
+              </ul>
+            </details>
+          </Fragment>
         );
       })}
     </div>
@@ -265,6 +293,7 @@ export function Lines() {
   const books = BOOKS.filter(
     (b) => shelved[b] !== undefined || lines[bookLineKey(b)] !== undefined,
   );
+  const rooms = groupByRoom(books);
   // 조각 한 줄: 옛 저장부터 써 온 조각 키
   const pieces = Object.entries(lines).filter(([k]) => !k.startsWith("book:"));
   if (!books.length && !pieces.length) return <p>{T.ui.myLinesEmpty}</p>;
@@ -273,23 +302,36 @@ export function Lines() {
       {books.length > 0 && (
         <>
           <h3>{T.ui.bookLinesTitle}</h3>
-          <ul className="my-lines">
-            {books.map((b) => {
-              const key = bookLineKey(b);
-              const text = lines[key];
-              return (
-                <li key={key}>
-                  <span className="piece-ref">{lineLabel(key)}</span>
-                  {text ? <q>{text}</q> : <span className="hint">{T.ui.bookLineNone}</span>}
-                  <button
-                    onClick={() => open({ kind: "myLine", lineKey: key, back: "shelf" })}
-                  >
-                    {text ? T.ui.bookLineEdit : T.ui.bookLineWrite}
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+          {rooms.map(({ room, books: bs }) => (
+            <Fragment key={room.id}>
+              {rooms.length > 1 && (
+                <h4 className="lines-room">{roomTitle(room)}</h4>
+              )}
+              <ul className="my-lines">
+                {bs.map((b) => {
+                  const key = bookLineKey(b);
+                  const text = lines[key];
+                  return (
+                    <li key={key}>
+                      <span className="piece-ref">{lineLabel(key)}</span>
+                      {text ? (
+                        <q>{text}</q>
+                      ) : (
+                        <span className="hint">{T.ui.bookLineNone}</span>
+                      )}
+                      <button
+                        onClick={() =>
+                          open({ kind: "myLine", lineKey: key, back: "shelf" })
+                        }
+                      >
+                        {text ? T.ui.bookLineEdit : T.ui.bookLineWrite}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </Fragment>
+          ))}
         </>
       )}
       {pieces.length > 0 && (

@@ -54,3 +54,8 @@ export function itemName(id: ItemId): string {
 export function itemList(items: Partial<Record<ItemId, number>>): string {
   return (Object.entries(items) as [ItemId, number][]).map(([id, n]) => `${itemName(id)} ${n}`).join(' · ')
 }
+
+/** 서고 방의 이름 (책 범위 — 분류 이름을 쓰지 않는다): 복음서 방은 library.gospelRoom, 그 뒤 방은 잠긴 문 순서의 lockedRooms */
+export function roomTitle(room: { door: number | null }): string {
+  return room.door === null ? lifeText.library.gospelRoom : lifeText.library.lockedRooms[room.door]
+}

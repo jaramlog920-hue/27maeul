@@ -1,5 +1,5 @@
 // 책별 진행: 어느 장까지 이었는지, 책상 위에 어떤 순서로 놓였는지. 순수 계산만.
-import { SHELF_ROOMS, type ShelfRoomId } from './shelf-rooms'
+import { SHELF_ROOMS, type ShelfRoom, type ShelfRoomId } from './shelf-rooms'
 import { BOOKS, GOSPELS, type Book, type GameContent } from './types'
 
 export interface BookProgress {
@@ -55,6 +55,14 @@ export function pickableBooks(flags: Readonly<Record<string, number | undefined>
   return SHELF_ROOMS.filter((r) => roomOpen(r.id, flags)).flatMap((r) =>
     r.id === 'gospels' ? [...GOSPELS] : r.books.filter((b) => withContent.includes(b)),
   )
+}
+
+/**
+ * 책들을 서고의 방으로 묶는다 (방 표 순서, 방 안은 오늘 성경 순서). 책이 하나도 없는 방은 뺀다.
+ * 책 고르기·도감·내 책장이 모두 이것을 쓴다 — 닫힌 방의 책은 넘겨주는 쪽(pickableBooks)이 이미 거른다
+ */
+export function groupByRoom(books: readonly Book[]): { room: ShelfRoom; books: Book[] }[] {
+  return SHELF_ROOMS.map((room) => ({ room, books: room.books.filter((b) => books.includes(b)) })).filter((g) => g.books.length > 0)
 }
 
 export function bookDone(s: { progress: Progress }, book: Book, content: GameContent): boolean {

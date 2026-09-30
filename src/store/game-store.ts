@@ -1,6 +1,8 @@
 // 엔진 상태 ↔ 화면 연결. 창(모달)이 열려 있으면 시간과 걸음이 멈춘다.
 import { create } from 'zustand'
-import { CONTENT, pieceById, pieceOfQuestion, piecesOf, quizSourceFor } from '../content/catalog'
+import { CONTENT, copySourceFor, pieceById, pieceOfQuestion, piecesOf, quizSourceFor } from '../content/catalog'
+import { blanksFor } from '../engine/copy'
+import { currentChapter } from '../engine/offers'
 import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
 import { actsRoomOpen } from '../engine/books'
 import { actsDoorGlows, canShelve, payRetry, poolFor, shelve } from '../engine/library'
@@ -52,6 +54,8 @@ import {
   askRequest,
   fulfillRequest,
   chapterReady,
+  letterReady,
+  recordLetter,
   readScripture,
   passTime,
   sell,
@@ -98,7 +102,8 @@ export type Modal =
   | { kind: 'passage'; pieceId: string; askLine: boolean; back?: boolean }
   /** lineKey: 조각 id 또는 'book:mk' 같은 책 키. back: 적거나 넘긴 뒤 돌아갈 창 */
   | { kind: 'myLine'; lineKey: string; back?: 'library' | 'shelf' | 'actsShelf' }
-  | { kind: 'desk'; result: SubmitResult | null; dark: boolean }
+  /** copy: 편지 옮겨 적기의 고른 답 (창 상태로만 — 게임 저장에 남지 않는다) */
+  | { kind: 'desk'; result: SubmitResult | null; dark: boolean; copy?: CopyPad }
   /** attic: 다락 창가에서 연 자기 전 읽기 */
   | { kind: 'review'; pieceId: string | null; attic?: boolean }
   | { kind: 'journal' }
@@ -119,6 +124,32 @@ export type Modal =
   | { kind: 'journey' }
   | { kind: 'letter' }
   | { kind: 'garden'; at: Tile }
+
+/** 편지 한 장 옮겨 적기에서 고른 것: 칸마다 맞힌 낱말(아직이면 null), 흐려진(틀린) 보기, 방금 틀린 칸 */
+export interface CopyPad {
+  book: Book
+  chapter: number
+  picks: (string | null)[]
+  dimmed: string[][]
+  miss: number | null
+}
+
+/** 지금 옮겨 적는 장 (편지 책이 아니거나 다 적었으면 null) */
+export function copyChapter(game: GameState): { book: Book; chapter: number } | null {
+  const book = game.activeBook
+  if (!book || modeOf(book) !== 'letters') return null
+  const chapter = currentChapter(piecesOf(book), game.progress[book].completed)
+  return chapter === null ? null : { book, chapter }
+}
+
+/** 창에 남은 고른 답이 지금 장의 것이면 그대로, 아니면 빈 칸들 */
+export function copyPadFor(game: GameState, pad: CopyPad | undefined): CopyPad | null {
+  const at = copyChapter(game)
+  if (!at) return null
+  if (pad && pad.book === at.book && pad.chapter === at.chapter) return pad
+  const n = blanksFor(at.book, at.chapter, copySourceFor(at.book)).length
+  return { ...at, picks: Array(n).fill(null), dimmed: Array.from({ length: n }, () => []), miss: null }
+}
 
 /** 나의 한 줄 창을 닫은 뒤 돌아갈 곳 */
 function afterMyLine(m: Modal | null): Modal | null {
@@ -189,6 +220,10 @@ interface Store {
   pickBook: (book: Book) => void
   moveInDesk: (book: Book, chapter: number, index: number, delta: number) => void
   submitDesk: (book: Book, chapter: number) => void
+  /** 편지 옮겨 적기: 칸 하나에 보기 하나 (맞으면 채우고, 틀리면 그 보기를 흐린다 — 불이익 없음) */
+  copyPick: (blank: number, option: string) => void
+  /** 세 칸을 다 채웠으면 옮겨 적는다 (recordLetter) */
+  submitCopy: () => void
   answerQuiz: (given: string | string[]) => void
   nextQuiz: () => void
   // 서고
@@ -773,6 +808,41 @@ export const useGame = create<Store>((set, get) => {
       sfx('scroll')
       const questions = buildQuiz(piecesOf(book), chapter, get().rng, quizSourceFor([book]))
       set({ modal: { kind: 'quiz', mode: { kind: 'chapter', book, chapter }, questions, index: 0, wrong: [], solved: false, misses: 0, missed: [] } })
+    },
+    copyPick: (blank, option) => {
+      const m = get().modal
+      if (m?.kind !== 'desk' || m.dark) return
+      const game = get().game
+      const pad = copyPadFor(game, m.copy)
+      if (!pad || pad.picks[blank] !== null) return
+      const b = blanksFor(pad.book, pad.chapter, copySourceFor(pad.book))[blank]
+      if (!b || !b.options.includes(option)) return
+      if (option === b.answer) {
+        sfx('pen')
+        const picks = pad.picks.map((p, i) => (i === blank ? option : p))
+        set({ modal: { ...m, result: null, copy: { ...pad, picks, miss: null } } })
+      } else {
+        sfx('miss')
+        const dimmed = pad.dimmed.map((d, i) => (i === blank && !d.includes(option) ? [...d, option] : d))
+        set({ modal: { ...m, result: null, copy: { ...pad, dimmed, miss: blank } } })
+      }
+    },
+    submitCopy: () => {
+      const m = get().modal
+      if (m?.kind !== 'desk' || m.dark) return
+      const game = get().game
+      const pad = copyPadFor(game, m.copy)
+      if (!pad || pad.picks.some((p) => p === null)) return
+      const next = recordLetter(game, pad.book, pad.chapter, pad.picks as string[], CONTENT)
+      if (next === game) {
+        // 조각 책상과 같은 안내 (재료·피로). 고른 답은 그대로 남긴다
+        const r = letterReady(game, pad.book, pad.chapter, CONTENT)
+        const result: SubmitResult | null = r?.kind === 'tired' ? { kind: 'tired' } : r?.kind === 'supplies' ? r : null
+        set({ modal: { ...m, result, copy: { ...pad, miss: null } } })
+        return
+      }
+      sfx('done')
+      set({ game: persist(next), modal: { kind: 'desk', result: { kind: 'done' }, dark: false } })
     },
     answerQuiz: (given) => {
       const m = get().modal

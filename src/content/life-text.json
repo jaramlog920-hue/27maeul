@@ -82,6 +82,7 @@
     "bookProgress": "{done}/{all}장",
     "bookNotYet": "시험판에는 아직 없어요",
     "bookChange": "다른 책 고르기",
+    "bookBound": "다 엮음",
     "chapterNote": "장 구분은 뒷날 붙인 것입니다. 여기서는 차례를 익히기 쉽도록 장 단위로 잇습니다.",
     "up": "위로",
     "down": "아래로",
@@ -593,6 +594,21 @@
     "bringOne": "편지 한 통 가져왔어요. {book} {chapter}장이에요.",
     "receive": "편지 받기",
     "received": "편지 {n}통을 받았어요."
+  },
+  "copy": {
+    "title": "{book} {chapter}장 옮겨 적기",
+    "titleDone": "{book} 옮겨 적기",
+    "pickHint": "편지는 편지 나르는 이웃이 장째로 가져다줘요.",
+    "notReceived": "아직 이 장 편지가 오지 않았어요. 편지 나르는 이웃을 찾아가 보세요.",
+    "hint": "밑줄 칸을 누르고 보기에서 알맞은 낱말을 고르세요.",
+    "blank": "빈칸 {n}",
+    "blankFilled": "빈칸 {n}: {word}",
+    "jump": "빈칸 {n} 찾아가기",
+    "options": "빈칸 {n} 보기",
+    "filled": "채운 빈칸 {got} / {all}",
+    "wrong": "다시 골라 보세요.",
+    "submit": "옮겨 적기",
+    "done": "{book} {chapter}장을 옮겨 적었습니다."
   },
   "jobs": [
     "견습 필사가",
