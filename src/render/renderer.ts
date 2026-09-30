@@ -980,7 +980,7 @@ export function drawVillageMap(g: Ctx, game: GameState): void {
   g.imageSmoothingEnabled = false
   g.drawImage(mapFor(season), 0, 0, WIDTH * TILE, VILLAGE_H * TILE, 0, 0, WIDTH * TILE, VILLAGE_H * TILE)
   for (const z of lockedZones(shelvedCount(game)))
-    for (let y = z.y0; y <= z.y1; y++) for (let x = z.x0; x <= z.x1; x++) if (!'~=uR#DS'.includes(tileAt(x, y))) drawBush(g, x, y, season)
+    for (let y = z.y0; y <= z.y1; y++) for (let x = z.x0; x <= z.x1; x++) if (!'~=u'.includes(tileAt(x, y))) drawBush(g, x, y, season)
 }
 
 /** 이웃 수첩에 붙이는 앞모습 한 장 */
@@ -1548,10 +1548,10 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
 
       // 마음이 쌓여 마을에 생긴 것들
       drawDecor(g, game, weather, t, phase === 'morning' || phase === 'day')
-      // 아직 열리지 않은 구역: 땅을 덮은 덤불 (물·집은 그대로 보인다)
+      // 아직 열리지 않은 구역: 땅도 집도 덤불로 덮는다 (물만 보인다) — 열리기 전엔 그 집이 보이지 않게
       for (const z of lockedZones(shelvedCount(game)))
         for (let y = z.y0; y <= z.y1; y++)
-          for (let x = z.x0; x <= z.x1; x++) if (!'~=uR#DS'.includes(tileAt(x, y))) drawBush(g, x, y, season)
+          for (let x = z.x0; x <= z.x1; x++) if (!'~=u'.includes(tileAt(x, y))) drawBush(g, x, y, season)
 
       type Item = { y: number; paint: () => void }
       const items: Item[] = []

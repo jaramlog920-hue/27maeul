@@ -68,7 +68,7 @@ export const INVITE_TO = 20 * 60 + 30
 /** 저녁에 초대하는 이웃과 그 집 문 */
 export const INVITE_DOORS: Record<string, Tile> = {
   baker: { x: 5, y: 16 },
-  child: { x: 36, y: 16 },
+  child: { x: 35, y: 16 },
   grandpa: { x: 36, y: 7 },
 }
 export const VISIT_GIFTS: Record<string, Items> = {
