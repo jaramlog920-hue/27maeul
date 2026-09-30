@@ -6,7 +6,8 @@ import { dexView } from './shelf/Shelf'
 import { chaptersOf, emptyProgress } from '../engine/books'
 import { chooseBook, newGame, playerTile, type GameState } from '../engine/game'
 import { mulberry32 } from '../engine/offers'
-import { ACTS_ROOM, HOME_FRONT, key, LOCKED_DOORS, OLD_HOME, PLACES, roomAt, ROOMS, WARPS } from '../engine/world'
+import { ACTS_ROOM, HOME_FRONT, key, LETTERS_ROOM, LOCKED_DOORS, OLD_HOME, PLACES, roomAt, ROOMS, WARPS } from '../engine/world'
+import { SCENES } from '../content/text'
 import { STRAY_SPOTS } from '../engine/companion'
 import { useGame } from '../store/game-store'
 import { saveGame } from '../engine/save'
@@ -691,6 +692,99 @@ describe('사도행전 방의 여정 판 (계획 5 작업 5)', () => {
     expect(dialog).toHaveTextContent('나루')
     await user.click(screen.getByRole('button', { name: '닫기' }))
     expect(useGame.getState().game.album.filter((a) => a.id === 'actsShip')).toHaveLength(1)
+  })
+})
+
+describe('로마서–빌레몬서 방 (계획 7 작업 7)', () => {
+  const lib = () => ROOMS.find((r) => r.owner === 'library')!
+  const inLib = () => WARPS.get(key(lib().door))!
+  const opened = { heartPoints: 1, gospelFeast: 2, 'room:romPhm': 1 }
+  const shelvedAll = { mt: 2, mk: 1, lk: 1, jn: 0, ac: 1 } as const
+
+  it('닫혀 있으면 둘째 문을 누르면 잠겨 있다고, 열리면 걸어 들어가 방 이름을 알린다', () => {
+    reset({ flags: { heartPoints: 1, gospelFeast: 2 }, shelved: shelvedAll, player: { ...newGame(CONTENT).player, ...inLib(), path: [] } })
+    act(() => useGame.getState().tap(LOCKED_DOORS[1]))
+    expect(useGame.getState().toast?.text).toBe('로마서–빌레몬서 방은 아직 잠겨 있어요.')
+    reset({ flags: opened, shelved: shelvedAll, player: { ...newGame(CONTENT).player, ...inLib(), path: [] } })
+    act(() => useGame.getState().tap(LOCKED_DOORS[1]))
+    expect(useGame.getState().toast).toBeNull()
+    act(() => {
+      for (let i = 0; i < 400 && roomAt(playerTile(useGame.getState().game)) !== LETTERS_ROOM; i++) useGame.getState().frame(0.05)
+    })
+    expect(roomAt(playerTile(useGame.getState().game))).toBe(LETTERS_ROOM)
+    expect(useGame.getState().toast?.text).toBe('로마서–빌레몬서 방')
+    // 사도행전 방 문도 그대로 열려 있고, 나머지 둘은 잠겨 있다
+    act(() => useGame.getState().tap(LOCKED_DOORS[2]))
+    expect(useGame.getState().toast?.text).toContain('아직 잠겨 있어요')
+  })
+
+  it('편지 선반: 열세 권, 다 적은 책은 꽂기 → 편지 서고 퀴즈 → 이 선반으로 돌아온다', async () => {
+    const phm = chaptersOf('phm', CONTENT)
+    reset({ flags: opened, shelved: shelvedAll, progress: { ...emptyProgress(), phm: { completed: phm, arrangement: {} } } })
+    useGame.setState({ modal: { kind: 'roomShelf', room: 'romPhm' }, rng: mulberry32(3) })
+    const user = userEvent.setup()
+    const { container } = render(<ModalLayer />)
+    const dialog = screen.getByRole('dialog', { name: '편지 선반' })
+    expect(container.querySelectorAll('.library-shelf .spine')).toHaveLength(13)
+    expect(dialog.textContent).toContain('로마서')
+    expect(dialog.textContent).toContain('빌레몬서')
+    expect(screen.getAllByRole('button', { name: '꽂기' })).toHaveLength(1)
+    await user.click(screen.getByRole('button', { name: '꽂기' }))
+    const m = useGame.getState().modal
+    if (m?.kind !== 'quiz') throw new Error('quiz expected')
+    expect(m.mode).toEqual({ kind: 'library', book: 'phm', retry: false })
+    solveQuiz()
+    act(() => useGame.getState().nextQuiz())
+    expect(useGame.getState().game.shelved.phm).toBeDefined()
+    expect(useGame.getState().modal).toEqual({ kind: 'myLine', lineKey: 'book:phm', back: 'room:romPhm' })
+    act(() => useGame.getState().skipMyLine())
+    expect(useGame.getState().modal).toEqual({ kind: 'roomShelf', room: 'romPhm' })
+  })
+
+  it('사도행전 방 선반도 같은 선반 — 꽂으면 사도행전 방 선반으로 돌아온다', async () => {
+    const ac = chaptersOf('ac', CONTENT)
+    reset({ flags: { heartPoints: 1, gospelFeast: 2 }, shelved: { mt: 2, mk: 1, lk: 1, jn: 0 }, progress: { ...emptyProgress(), ac: { completed: ac, arrangement: {} } } })
+    useGame.setState({ modal: { kind: 'roomShelf', room: 'acts' }, rng: mulberry32(3) })
+    const user = userEvent.setup()
+    const { container } = render(<ModalLayer />)
+    expect(screen.getByRole('dialog', { name: '사도행전 선반' })).toBeInTheDocument()
+    expect(container.querySelectorAll('.library-shelf .spine')).toHaveLength(1)
+    await user.click(screen.getByRole('button', { name: '꽂기' }))
+    solveQuiz()
+    act(() => useGame.getState().nextQuiz())
+    expect(useGame.getState().modal).toEqual({ kind: 'myLine', lineKey: 'book:ac', back: 'room:acts' })
+    act(() => useGame.getState().skipMyLine())
+    expect(useGame.getState().modal).toEqual({ kind: 'roomShelf', room: 'acts' })
+  })
+
+  it('서고 안 잠긴 방 목록: 열린 방은 "열려 있어요" (방 표로 판정)', () => {
+    reset({ flags: opened, shelved: shelvedAll })
+    useGame.setState({ modal: { kind: 'library' } })
+    const { container } = render(<ModalLayer />)
+    const items = [...container.querySelectorAll('.library-locked li')].map((li) => li.textContent)
+    expect(items[0]).toBe('사도행전 방 · 열려 있어요')
+    expect(items[1]).toBe('로마서–빌레몬서 방 · 열려 있어요')
+    expect(items[2]).toContain('🔒')
+    expect(items[3]).toContain('🔒')
+  })
+
+  it('방이 열린 아침 장면: 성경 본문 없이, 닫으면 앨범에 한 장', async () => {
+    reset({ scenes: ['roomOpen:romPhm'], flags: opened, shelved: shelvedAll })
+    const user = userEvent.setup()
+    render(<ModalLayer />)
+    walk()
+    const dialog = screen.getByRole('dialog', { name: SCENES['roomOpen:romPhm'].title })
+    expect(dialog).toHaveTextContent('서고 왼쪽 아래 문')
+    expect(screen.queryByLabelText(/성경 본문/)).toBeNull()
+    await user.click(screen.getByRole('button', { name: '닫기' }))
+    expect(useGame.getState().game.album.filter((a) => a.id === 'roomOpen:romPhm')).toHaveLength(1)
+  })
+
+  it('방 안 읽는 탁자: 모은 이야기가 있으면 골라 읽기', () => {
+    reset({ flags: opened, shelved: shelvedAll, collected: ['lk-015-008'], player: { ...newGame(CONTENT).player, ...PLACES.lettersTable.stand!, path: [] } })
+    act(() => useGame.getState().tap(PLACES.lettersTable.tiles[0]))
+    walk()
+    expect(useGame.getState().modal).toEqual({ kind: 'readPick' })
   })
 })
 

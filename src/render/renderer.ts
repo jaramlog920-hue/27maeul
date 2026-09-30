@@ -3,6 +3,7 @@ import { barleyRipe, festivalOf, FESTIVAL_FROM, FESTIVAL_TO, grapesRipe, isWet, 
 import { darkness, phaseOf, seasonOf } from '../engine/clock'
 import { isGrown, STRAY_SPOTS, EAVES } from '../engine/companion'
 import { totalChapters } from '../engine/books'
+import { shelfRoom } from '../engine/shelf-rooms'
 import { shelvedCount, straysToday, type GameState } from '../engine/game'
 import { FURNITURE_DEFS, type Furniture } from '../engine/room'
 import { FURNI_PALETTE, FURNITURE_ART } from './furniture-art'
@@ -10,7 +11,7 @@ import { drawDecor, lanternLights, sheepCount } from './decor'
 import { FIRE, isNear, npcTile } from '../engine/neighbors'
 import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
 import { actsDoorGlows, feastToday } from '../engine/library'
-import { ACTS_ROOM, actsDoorOpen, ATTIC, cameraFor, currentHomeLevel, HEIGHT, HOME_DOOR, HOUSE_RECT, housesNow, houseAt, LOCKED_DOORS, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
+import { ACTS_ROOM, ATTIC, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, HEIGHT, HOME_DOOR, HOUSE_RECT, housesNow, houseAt, LOCKED_DOORS, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
 import { GOSPELS, type Facing, type GameContent, type Season, type Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { avatarKey, withLookDefaults, type FullAvatar } from '../engine/avatar'
@@ -343,8 +344,51 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r('#efe2c6', x0 + (L ? 2 : 0), 4, x1 - x0 - (L ? 2 : 0) - (R ? 2 : 0), 9)
       break
     }
+    case 'Y': {
+      // 로마서–빌레몬서 방의 편지 선반 (세 칸이 한 선반): 옅은 잿빛 나무, 위 테는 연한 하늘색 (얇은 책등 열세 권은 그릴 때 얹는다)
+      const L = tileAt(x - 1, y) !== 'Y'
+      const R = tileAt(x + 1, y) !== 'Y'
+      r(C.shadow, 0, 13, 16, 3)
+      r('#8f8272', 0, 0, 16, 14)
+      r('#d6cab6', L ? 2 : 0, 2, 16 - (L ? 2 : 0) - (R ? 2 : 0), 9)
+      r('#8f8272', 0, 11, 16, 2)
+      r('#a9c4d4', 0, 0, 16, 2)
+      break
+    }
+    case 'V': {
+      // 벽에 건 편지꽂이 (세 칸에 걸친 한 장): 옅은 잿빛 나무 칸칸이 접힌 크림색 편지. 막힌 칸, 누르는 곳이 아니다
+      const L = tileAt(x - 1, y) !== 'V'
+      const R = tileAt(x + 1, y) !== 'V'
+      r(C.wall, 0, 0, 16, 16)
+      r(C.wallTop, 0, 0, 16, 2)
+      const x0 = L ? 2 : 0
+      const x1 = R ? 14 : 16
+      // 뒤판 (옅은 잿빛 나무, 테두리 2픽셀)
+      r('#8f8272', x0, 3, x1 - x0, 12)
+      r('#cdbfab', x0 + (L ? 2 : 0), 5, x1 - x0 - (L ? 2 : 0) - (R ? 2 : 0), 8)
+      // 칸마다 접힌 편지 두 통이 주머니 위로 비죽 나와 있다 (칸 하나가 좌우 대칭 — 세 칸을 이어도 대칭)
+      for (const lx of [4, 9]) {
+        r('#f4ead2', lx, 4, 3, 7)
+        r('#cfe3ec', lx, 4, 3, 2)
+      }
+      // 앞쪽 주머니 판: 윗단은 짙게
+      r('#b7aa98', x0, 9, x1 - x0, 5)
+      r('#8f8272', x0, 9, x1 - x0, 2)
+      break
+    }
+    case 'N':
+      // 방 벽의 창 (한 칸, 창 자체도 좌우 대칭): 잿빛 나무 창틀, 연한 하늘빛 유리, 가운데 창살
+      r(C.wall, 0, 0, 16, 16)
+      r(C.wallTop, 0, 0, 16, 2)
+      r('#a79a88', 3, 3, 10, 11)
+      r('#cfe3ec', 5, 5, 6, 7)
+      r('#e6f0f4', 5, 5, 6, 2)
+      r('#a79a88', 7, 5, 2, 7)
+      r('#a79a88', 5, 8, 6, 2)
+      r('#cbbfae', 2, 13, 12, 2)
+      break
     case 'J':
-      // 열린 사도행전 방 문: 문설주, 안쪽 방의 따뜻한 빛, 오른쪽으로 열어 둔 문짝
+      // 열린 서고 방 문 (사도행전 방·로마서–빌레몬서 방): 문설주, 안쪽 방의 따뜻한 빛, 오른쪽으로 열어 둔 문짝
       r(C.wall, 0, 0, 16, 16)
       r('#ae9068', 2, 1, 12, 15)
       r('#f3d9a0', 4, 3, 8, 13)
@@ -664,7 +708,7 @@ function drawRoof(g: Ctx, tx0: number, ty0: number, tx1: number, ty1: number, [c
 /** 계절과 집 단계마다 한 장 (집을 넓히면 그 칸들의 그림이 바뀐다) */
 const mapCache = new Map<string, HTMLCanvasElement>()
 function mapFor(season: Season): HTMLCanvasElement {
-  const cacheKey = `${season}/${currentHomeLevel()}/${actsDoorOpen() ? 'acts' : ''}`
+  const cacheKey = `${season}/${currentHomeLevel()}/${openDoors().join(',')}`
   let c = mapCache.get(cacheKey)
   if (c) return c
   c = document.createElement('canvas')
@@ -1191,6 +1235,26 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           g.fillStyle = '#8497a8'
           g.fillRect(bx + i * 6 + 1, by + 6, 2, 2)
         }
+      }
+      // 로마서–빌레몬서 방: 편지 선반의 얇은 책등 열세 권 (방 표 순서) — 꽂힌 책만 색, 은박·금박이면 띠
+      if (roomAt(here) === LETTERS_ROOM) {
+        const [s0] = PLACES.lettersShelf.tiles
+        const books = shelfRoom('romPhm').books
+        const SPINES = ['#8a9bb0', '#a3917e', '#8fa396', '#a98f8f', '#9a93ad']
+        books.forEach((b, i) => {
+          const sx = s0.x * TILE + 5 + i * 3
+          const sy = s0.y * TILE + 2
+          const grade = game.shelved[b]
+          // 아직 꽂지 않은 책의 자리는 비워 둔다
+          if (grade === undefined) return
+          g.fillStyle = SPINES[i % SPINES.length]
+          g.fillRect(sx, sy + 1, 2, 8)
+          if (grade > 0) {
+            g.fillStyle = grade === 2 ? '#d9b44a' : '#c7ccd4'
+            g.fillRect(sx, sy + 2, 2, 2)
+            g.fillRect(sx, sy + 6, 2, 2)
+          }
+        })
       }
 
       // 마음이 쌓여 마을에 생긴 것들

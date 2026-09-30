@@ -1,7 +1,8 @@
 // 이름 없는 작은 마을 (exclusion-list §2-3). 한 칸 = TILE 픽셀. 지도는 코드로 짓는다 — 폭이 어긋나는 실수를 막기 위해.
 // 언덕 위 서고, 가운데 장터 광장, 알록달록한 기와지붕 이웃집, 포도원·올리브 숲, 남쪽 호숫가 나루.
 // 범례
-//   집 안: n 탁자 · g 항아리 · p 화분 · W 베틀 · G 복음서 선반 · K 잠긴 방 문 · Z 큰 가구 (막힘), z 바닥 가구 (걸음) · e 깔개 · E 문깔개(밟으면 밖으로) (걸음) · _ 빈 곳
+//   집 안: n 탁자 · g 항아리 · p 화분 · W 베틀 · G 복음서 선반 · K 잠긴 방 문 · Q 사도행전 선반 · M 여정 판 · Y 편지 선반 · V 편지꽂이 · N 방 창 · Z 큰 가구 (막힘)
+//          J 열린 서고 방 문 (걸음), z 바닥 가구 (걸음) · e 깔개 · E 문깔개(밟으면 밖으로) (걸음) · _ 빈 곳
 //   막힘: T 나무 · # 벽 · R 지붕 · S 서고 돌벽 · b 침대 · d 책상 · h 화덕 · s 선반 · k 작업대 · w 우물 · B 벤치
 //         ~ 호수 · r 갈대 · v 포도나무 · L 서고 문 · o 올리브나무 · P 기름틀 · A 모루 · O 빵 굽는 가마 · m 장터 좌판
 //         x 울타리 · q 편지 바구니 · u 고깃배
@@ -11,7 +12,7 @@ import type { ItemId, PlaceId, Tile } from './types'
 
 export const TILE = 16
 export const WIDTH = 48
-/** 마을 부분의 높이. 그 아래(40~68줄)는 이웃집 안 방들이 있는 보이지 않는 곳 (60줄부터 사도행전 방과 내 집 안) */
+/** 마을 부분의 높이. 그 아래(40~68줄)는 이웃집 안 방들이 있는 보이지 않는 곳 (60줄부터 사도행전 방, 내 집 안, 로마서–빌레몬서 방) */
 export const VILLAGE_H = 40
 export const HEIGHT = 70
 /** 화면에 보이는 칸 수 */
@@ -58,15 +59,16 @@ export function currentHomeLevel(): number {
 }
 
 /**
- * 서고의 사도행전 방이 열렸는가 (books.actsRoomOpen — 게임 상태와 맞추는 것은 game.ts의 syncHome).
- * 열리면 서고 왼쪽 위 잠긴 문(K)이 걸을 수 있는 열린 문(J)이 된다
+ * 서고의 열린 방 문 번호들 (LOCKED_DOORS 번호 = 방 표 shelf-rooms의 door — 판정은 books.openDoorsFor,
+ * 게임 상태와 맞추는 것은 game.ts의 syncHome). 열린 방의 잠긴 문(K)은 걸을 수 있는 열린 문(J)이 된다
  */
-let actsOpen = false
-export function setActsOpen(open: boolean): void {
-  actsOpen = open
+let openDoorSet: ReadonlySet<number> = new Set()
+export function setOpenDoors(doors: readonly number[]): void {
+  openDoorSet = new Set(doors)
 }
-export function actsDoorOpen(): boolean {
-  return actsOpen
+/** 지금 열린 문 번호 (작은 것부터) */
+export function openDoors(): number[] {
+  return [...openDoorSet].sort((a, b) => a - b)
 }
 
 /** 단계별로 덧씌우는 칸 ('x,y' → 글자) */
@@ -164,6 +166,27 @@ const actsThings: [number, number, string][] = [
   [1, 6, 'p'], [9, 6, 'p'],
 ]
 
+/** 서고 왼쪽 아래 잠긴 문 = 로마서–빌레몬서 방 문 (LOCKED_DOORS[1], 방 표 romPhm의 door) */
+export const LETTERS_DOOR: Tile = { x: LIBRARY_X0 + 0, y: LIBRARY_Y0 + 6 }
+
+/**
+ * 로마서–빌레몬서 방 (계획 7 작업 7, 11×8, 지도 아래 60줄 — 서고 바로 아래 보이지 않는 곳).
+ * 계획서는 15열을 적었지만 계획 7-1에서 내 집 안(16~27열)이 그 자리로 와서, 겹치지 않는 30열로 옮겼다.
+ * 서고 왼쪽 아래 문을 밟으면 들어오고, 문깔개를 밟으면 서고 안 그 문 오른쪽 칸으로 나간다.
+ * 문을 가운데 둔 대칭: 위 벽 가운데 편지꽂이(V), 그 양옆에 같은 창(N) 둘, 왼쪽 편지 선반(Y)·오른쪽 책장, 가운데 읽는 탁자. 놀이판은 없다
+ */
+export const LETTERS_W = 11
+export const LETTERS_H = 8
+const LETTERS_X0 = 30
+const LETTERS_Y0 = 60
+const lettersThings: [number, number, string][] = [
+  [2, 0, 'N'], [4, 0, 'V'], [5, 0, 'V'], [6, 0, 'V'], [8, 0, 'N'],
+  [1, 1, 'Y'], [2, 1, 'Y'], [3, 1, 'Y'], [7, 1, 's'], [8, 1, 's'], [9, 1, 's'],
+  [5, 4, 'n'],
+  [5, 5, 'e'], [5, 6, 'e'],
+  [1, 6, 'p'], [9, 6, 'p'],
+]
+
 export const ROOMS: readonly Room[] = [
   // 빵 굽는 이웃: 가마 둘, 찬장, 밀가루 항아리, 과일 접시·주전자 올린 탁자, 둥근 깔개
   room('baker', 2, 41, { x: 5, y: 17 }, [5, 4],
@@ -195,9 +218,13 @@ export const ROOMS: readonly Room[] = [
   room('library', LIBRARY_X0, LIBRARY_Y0, { x: 24, y: 5 }, [6, 2], libraryThings, [], LIBRARY_W, LIBRARY_H),
   // 사도행전 방: 문은 서고 안 잠긴 문, 나가면 그 문 오른쪽 서고 바닥
   { ...room('acts', ACTS_X0, ACTS_Y0, ACTS_DOOR, [5, 3], actsThings, [], ACTS_W, ACTS_H), out: { x: ACTS_DOOR.x + 1, y: ACTS_DOOR.y } },
+  // 로마서–빌레몬서 방: 문은 서고 안 둘째 잠긴 문, 나가면 그 문 오른쪽 서고 바닥
+  { ...room('letters', LETTERS_X0, LETTERS_Y0, LETTERS_DOOR, [5, 3], lettersThings, [], LETTERS_W, LETTERS_H), out: { x: LETTERS_DOOR.x + 1, y: LETTERS_DOOR.y } },
 ]
 /** 사도행전 방 */
 export const ACTS_ROOM: Room = ROOMS.find((r) => r.owner === 'acts')!
+/** 로마서–빌레몬서 방 */
+export const LETTERS_ROOM: Room = ROOMS.find((r) => r.owner === 'letters')!
 
 /**
  * 다락 서재 (8×6, 지도 아래 보이지 않는 곳 — 할아버지 집 방 오른쪽). 사다리로 올라오고 문깔개로 내려간다.
@@ -398,15 +425,18 @@ export const MAP: readonly string[] = build()
 
 // 'l'(텃밭)은 'y'(보리밭)처럼 걸을 수 있다 — 두둑 가운데 안쪽 칸은 사방이 막히면 다가갈 수 없어서 (task-3 적응)
 // 'H'(사다리)는 누르는 곳이라 길찾기가 지나가지 않는다 — 지나가다 다락으로 올라가 버리지 않게. 'I'는 다락 창
-// 'Q' 사도행전 선반, 'M' 벽의 여정 판. 'J'(열린 사도행전 방 문)는 걷는 칸
-const BLOCKED = new Set(['H', 'I', '_', 'Z', 'n', 'g', 'p', 'W', 'G', 'K', 'Q', 'M', 'T', '#', 'R', 'S', 'u', 'b', 'd', 'h', 's', 'k', 'w', 'B', '~', 'r', 'v', 'o', 'P', 'A', 'O', 'm', 'x', 'q'])
+// 'Q' 사도행전 선반, 'M' 벽의 여정 판. 'Y' 편지 선반, 'V' 벽의 편지꽂이, 'N' 방 벽의 창. 'J'(열린 서고 방 문)는 걷는 칸
+const BLOCKED = new Set(['Y', 'V', 'N', 'H', 'I', '_','Z', 'n', 'g', 'p', 'W', 'G', 'K', 'Q', 'M', 'T', '#', 'R', 'S', 'u', 'b', 'd', 'h', 's', 'k', 'w', 'B', '~', 'r', 'v', 'o', 'P', 'A', 'O', 'm', 'x', 'q'])
 
 export function tileAt(x: number, y: number): string {
   if (homeLevel > 0) {
     const o = HOME_OVERLAY[homeLevel].get(`${x},${y}`)
     if (o) return o
   }
-  if (actsOpen && x === ACTS_DOOR.x && y === ACTS_DOOR.y) return 'J'
+  if (openDoorSet.size > 0 && (x === LIBRARY_X0 || x === LIBRARY_X0 + LIBRARY_W - 1)) {
+    const i = LOCKED_DOORS.findIndex((d) => d.x === x && d.y === y)
+    if (i >= 0 && openDoorSet.has(i)) return 'J'
+  }
   return MAP[y]?.[x] ?? 'T'
 }
 
@@ -543,6 +573,9 @@ export const PLACES: Record<PlaceId, Place> = {
   actsShelf: { tiles: [1, 2, 3].map((dx) => ({ x: ACTS_X0 + dx, y: ACTS_Y0 + 1 })), stand: { x: ACTS_X0 + 2, y: ACTS_Y0 + 2 } },
   journeyBoard: { tiles: [4, 5, 6].map((dx) => ({ x: ACTS_X0 + dx, y: ACTS_Y0 })), stand: { x: ACTS_X0 + 5, y: ACTS_Y0 + 1 } },
   actsTable: { tiles: [{ x: ACTS_X0 + 5, y: ACTS_Y0 + 4 }], stand: { x: ACTS_X0 + 5, y: ACTS_Y0 + 5 } },
+  // 로마서–빌레몬서 방: 편지 선반, 읽는 탁자 (편지꽂이는 장식)
+  lettersShelf: { tiles: [1, 2, 3].map((dx) => ({ x: LETTERS_X0 + dx, y: LETTERS_Y0 + 1 })), stand: { x: LETTERS_X0 + 2, y: LETTERS_Y0 + 2 } },
+  lettersTable: { tiles: [{ x: LETTERS_X0 + 5, y: LETTERS_Y0 + 4 }], stand: { x: LETTERS_X0 + 5, y: LETTERS_Y0 + 5 } },
 }
 
 /** 이 장소가 지금 있는가 (다락 서재는 2단계부터) */

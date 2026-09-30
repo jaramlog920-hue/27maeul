@@ -4,7 +4,7 @@ import { emptyProgress } from './books'
 import { goToSleep, moveJourneyCard, newGame, setArrangement, submitChapter, syncHome, syncJourney, type GameState } from './game'
 import { boardInOrder, journeyComplete, placeNewCards, type JourneyCard } from './journey'
 import { deserialize, serialize } from './save'
-import { ACTS_DOOR, isWalkable, setActsOpen } from './world'
+import { ACTS_DOOR, isWalkable, setOpenDoors } from './world'
 
 const ALL = Array.from({ length: 28 }, (_, i) => i + 1)
 const opened = (): GameState => {
@@ -27,7 +27,7 @@ function sortBoard(s: GameState): GameState {
   return s
 }
 
-afterEach(() => setActsOpen(false))
+afterEach(() => setOpenDoors([]))
 
 describe('사도행전 방 열림', () => {
   it('잔치 전·잔치 날에는 서고 문이 막히고, 잔치 다음 날(gospelFeast 2)부터 걸어 들어간다', () => {
@@ -138,7 +138,7 @@ describe('저장과 불러오기', () => {
   })
 
   it('불러오면 지도도 이 저장의 방 열림에 맞춘다', () => {
-    setActsOpen(true)
+    setOpenDoors([0])
     deserialize(serialize(newGame(CONTENT)), CONTENT)
     expect(isWalkable(ACTS_DOOR)).toBe(false)
     deserialize(serialize(opened()), CONTENT)

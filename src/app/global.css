@@ -712,6 +712,9 @@ button:focus-visible {
 .spine.grade-1 { border-left-color: #c0c4c8; }
 .spine.grade-2 { border-left-color: #d9b44a; }
 .spine-grade { font-size: 0.9em; opacity: 0.8; }
+/* 열세 권 편지 선반: 얇은 책등처럼 촘촘하게 */
+.library-shelf.many { gap: 4px; }
+.library-shelf.many .spine { padding: 4px 10px; border-left-width: 6px; }
 .library-locked { list-style: none; padding: 0; opacity: 0.6; }
 .reread-tag { font-size: 0.8em; background: #d9b44a; color: #3b2a20; padding: 0 4px; margin-right: 4px; }
 .guide-flow { padding-left: 1.2em; display: grid; gap: 4px; }

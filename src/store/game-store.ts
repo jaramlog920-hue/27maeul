@@ -4,9 +4,9 @@ import { CONTENT, copySourceFor, LETTER_OPENINGS, pieceById, pieceOfQuestion, pi
 import { blanksFor } from '../engine/copy'
 import { currentChapter } from '../engine/offers'
 import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
-import { actsRoomOpen } from '../engine/books'
+import { openDoorsFor } from '../engine/books'
 import { actsDoorGlows, canShelve, payRetry, poolFor, shelve } from '../engine/library'
-import { ALBUM_IDS, fill, itemList, itemName, NEIGHBOR_LINES, SCENES, T } from '../content/text'
+import { ALBUM_IDS, fill, itemList, itemName, NEIGHBOR_LINES, roomTitle, SCENES, T } from '../content/text'
 import { grapesRipe, isWet, weatherOf } from '../engine/calendar'
 import { cleanName, type Animal } from '../engine/companion'
 import {
@@ -76,7 +76,7 @@ import { plant, water, harvest, type CropId } from '../engine/garden'
 import { isDone, startMini, stepMini, tapMini, type MiniState } from '../engine/minigame'
 import { finishLetter, letterPay, letterWaiting } from '../engine/requests'
 import { POSTMAN } from '../engine/post'
-import { modeOf } from '../engine/shelf-rooms'
+import { modeOf, roomOf, shelfRoom, type ShelfRoomId } from '../engine/shelf-rooms'
 import { saveGame } from '../engine/save'
 import { moveItem } from '../engine/scroll'
 import type { Book, ItemId, PlaceId, Rng, Target, Tile } from '../engine/types'
@@ -101,7 +101,7 @@ export type Modal =
   | { kind: 'talk'; neighborId: string; line: string }
   | { kind: 'passage'; pieceId: string; askLine: boolean; back?: boolean }
   /** lineKey: 조각 id 또는 'book:mk' 같은 책 키. back: 적거나 넘긴 뒤 돌아갈 창 */
-  | { kind: 'myLine'; lineKey: string; back?: 'library' | 'shelf' | 'actsShelf' }
+  | { kind: 'myLine'; lineKey: string; back?: 'library' | 'shelf' | `room:${ShelfRoomId}` }
   /** copy: 편지 옮겨 적기의 고른 답 (창 상태로만 — 게임 저장에 남지 않는다) */
   | { kind: 'desk'; result: SubmitResult | null; dark: boolean; copy?: CopyPad }
   /** attic: 다락 창가에서 연 자기 전 읽기 */
@@ -119,8 +119,8 @@ export type Modal =
   | { kind: 'shelf'; tab?: ShelfTab }
   | { kind: 'companion'; animal: Animal }
   | { kind: 'library' }
-  /** 사도행전 방: 사도행전 선반, 벽의 여정 판 */
-  | { kind: 'actsShelf' }
+  /** 서고 방의 선반 (사도행전 방·로마서–빌레몬서 방 — RoomShelf), 사도행전 방 벽의 여정 판 */
+  | { kind: 'roomShelf'; room: ShelfRoomId }
   | { kind: 'journey' }
   | { kind: 'letter' }
   | { kind: 'garden'; at: Tile }
@@ -154,7 +154,15 @@ export function copyPadFor(game: GameState, pad: CopyPad | undefined): CopyPad |
 /** 나의 한 줄 창을 닫은 뒤 돌아갈 곳 */
 function afterMyLine(m: Modal | null): Modal | null {
   if (m?.kind !== 'myLine' || !m.back) return null
-  return m.back === 'shelf' ? { kind: 'shelf', tab: 'lines' } : m.back === 'actsShelf' ? { kind: 'actsShelf' } : { kind: 'library' }
+  if (m.back === 'shelf') return { kind: 'shelf', tab: 'lines' }
+  if (m.back === 'library') return { kind: 'library' }
+  return { kind: 'roomShelf', room: m.back.slice('room:'.length) as ShelfRoomId }
+}
+
+/** 이 책을 꽂는 선반 창: 복음서는 서고 선반, 그 뒤 책은 자기 방 선반 (방 표) */
+function shelfBackOf(book: Book): 'library' | `room:${ShelfRoomId}` {
+  const room = roomOf(book).id
+  return room === 'gospels' ? 'library' : `room:${room}`
 }
 
 interface Store {
@@ -370,7 +378,14 @@ function announceRoom(before: GameState, after: GameState) {
   const room = roomAt(playerTile(after))
   if (!room || room === roomAt(playerTile(before))) return
   const who = CONTENT.neighbors.find((d) => d.id === room.owner)?.role
-  const name = room.owner === 'library' ? T.ui.libraryRoom : room.owner === 'acts' ? T.ui.actsRoom : fill(T.ui.roomOf, { who: who ?? '' })
+  const name =
+    room.owner === 'library'
+      ? T.ui.libraryRoom
+      : room.owner === 'acts'
+        ? T.ui.actsRoom
+        : room.owner === 'letters'
+          ? roomTitle(shelfRoom('romPhm'))
+          : fill(T.ui.roomOf, { who: who ?? '' })
   useGame.getState().say(name, 2200)
 }
 
@@ -442,10 +457,13 @@ export const useGame = create<Store>((set, get) => {
       case 'library':
         return { game, modal: { kind: 'library' } }
       case 'actsShelf':
-        return { game, modal: { kind: 'actsShelf' } }
+        return { game, modal: { kind: 'roomShelf', room: 'acts' } }
+      case 'lettersShelf':
+        return { game, modal: { kind: 'roomShelf', room: 'romPhm' } }
       case 'journeyBoard':
         return { game, modal: { kind: 'journey' } }
       case 'actsTable':
+      case 'lettersTable':
         // 읽는 탁자: 벤치처럼 모은 이야기를 골라 읽는다
         if (game.collected.length > 0) return { game, modal: { kind: 'readPick' } }
         get().say(T.acts.tableEmpty)
@@ -577,8 +595,8 @@ export const useGame = create<Store>((set, get) => {
         return
       }
       const locked = LOCKED_DOORS.findIndex((d) => sameTile(d, tile))
-      // 사도행전 방이 열리면 첫 문은 걸어 들어가는 문이다 (아래 tapTile로)
-      if (locked >= 0 && !(locked === 0 && actsRoomOpen(game.flags))) {
+      // 열린 방의 문은 걸어 들어가는 문이다 (아래 tapTile로) — 방 표로 판정
+      if (locked >= 0 && !openDoorsFor(game.flags).includes(locked)) {
         // 잔치 다음 날부터 첫 잠긴 문(사도행전 방)은 문틈으로 불빛이 샌다 — 문은 아직 잠겨 있다
         const line = locked === 0 && actsDoorGlows(game) ? T.library.lockedRoomGlow : T.library.lockedRoomTap
         get().say(fill(line, { room: (T.library.lockedRooms as string[])[locked] }))
@@ -878,9 +896,10 @@ export const useGame = create<Store>((set, get) => {
         const opened = lockedZones(shelvedCount(get().game)).filter((z) => shelvedCount(next) >= z.books)
         if (opened.length) setTimeout(() => get().say(fill(T.ui.zoneOpened, { name: (T.ui.zones as Record<string, string>)[opened[0].id] }), 4000), 4200)
         // 처음 꽂은 책이면 그 책에 대한 나의 한 줄을 물어본다 (넘겨도 된다)
-        // 사도행전은 사도행전 방 선반으로 돌아간다
-        const back = m.mode.book === 'ac' ? 'actsShelf' : 'library'
-        set({ game: persist(next), modal: firstTime ? { kind: 'myLine', lineKey: bookLineKey(m.mode.book), back } : { kind: back } })
+        // 사도행전·편지는 자기 방 선반으로 돌아간다 (방 표)
+        const back = shelfBackOf(m.mode.book)
+        const myLine: Modal = { kind: 'myLine', lineKey: bookLineKey(m.mode.book), back }
+        set({ game: persist(next), modal: firstTime ? myLine : afterMyLine(myLine) })
         return
       }
       const { state, result } = submitChapter(get().game, m.mode.book, m.mode.chapter, CONTENT)

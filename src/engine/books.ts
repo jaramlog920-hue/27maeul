@@ -41,6 +41,11 @@ export function roomOpen(id: ShelfRoomId, flags: Readonly<Record<string, number 
   return (flags[`room:${id}`] ?? 0) >= 1
 }
 
+/** 서고의 열린 방 문 번호들 (world.LOCKED_DOORS 번호, 방 표의 door) — 지도의 열린 문과 잠긴 문 누르기가 이것 하나를 쓴다 */
+export function openDoorsFor(flags: Readonly<Record<string, number | undefined>>): number[] {
+  return SHELF_ROOMS.filter((r) => r.door !== null && roomOpen(r.id, flags)).map((r) => r.door as number)
+}
+
 /** 그 책의 방이 열렸는가 */
 export function bookRoomOpen(book: Book, flags: Readonly<Record<string, number | undefined>>): boolean {
   const room = SHELF_ROOMS.find((r) => r.books.includes(book))

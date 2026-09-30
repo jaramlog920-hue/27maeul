@@ -35,7 +35,7 @@ import {
 import { COVER_FROM, jobOf, SELL_FROM } from './job'
 import { FESTIVAL_SPOTS, goalFor, isNear, npcTile, placeNpc, stepNpc, type Npc } from './neighbors'
 import { GAIN, heartsOf, MAX_POINTS } from './hearts'
-import { actsRoomOpen, bookDone, bookRoomOpen, emptyProgress, roomOpen, totalChapters, type Progress } from './books'
+import { bookDone, bookRoomOpen, emptyProgress, openDoorsFor, roomOpen, totalChapters, type Progress } from './books'
 import { modeOf, SHELF_ROOMS } from './shelf-rooms'
 import { currentChapter, offersForDay } from './offers'
 import { POSTMAN, postForDay } from './post'
@@ -56,7 +56,7 @@ import {
   momentNow,
   onceKey,
 } from './stories'
-import { ATTIC, BED_STAND, HEARTH_STAND, HOME_FRONT, inAttic, isHome, isIndoor, isWalkable, key, LADDER, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setActsOpen, setHomeLevel, START, tileAt, WARPS } from './world'
+import { ATTIC, BED_STAND, HEARTH_STAND, HOME_FRONT, inAttic, isHome, isIndoor, isWalkable, key, LADDER, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setOpenDoors, START, tileAt, WARPS } from './world'
 import { GOSPELS, type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
 import type { Avatar } from './avatar'
 
@@ -140,10 +140,10 @@ export interface GameState {
   journey: number[]
 }
 
-/** 지도(world.tileAt)가 이 게임의 집 단계·사도행전 방 문을 보게 한다. 지도를 읽는 엔진 입구마다 부른다 */
+/** 지도(world.tileAt)가 이 게임의 집 단계·열린 서고 방 문(방 표)을 보게 한다. 지도를 읽는 엔진 입구마다 부른다 */
 export function syncHome(s: Pick<GameState, 'homeLevel'> & Partial<Pick<GameState, 'flags'>>): void {
   setHomeLevel(s.homeLevel ?? 0)
-  setActsOpen(actsRoomOpen(s.flags ?? {}))
+  setOpenDoors(openDoorsFor(s.flags ?? {}))
 }
 
 export interface Today {
@@ -282,9 +282,9 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
   const flags: Record<string, number> = { heartPoints: 1, homeRoom: 1 }
   const progress = emptyProgress()
   const base = { clock, flags, progress, hearts: {}, today: NO_TODAY, shelved: {} }
-  // 새 게임은 넓히기 전 집 — 지도(모듈 전역 집 단계)도 0으로, 사도행전 방은 닫힌 채
+  // 새 게임은 넓히기 전 집 — 지도(모듈 전역 집 단계)도 0으로, 서고의 방 문은 모두 닫힌 채
   setHomeLevel(0)
-  setActsOpen(false)
+  setOpenDoors([])
   return {
     version: 1,
     clock,

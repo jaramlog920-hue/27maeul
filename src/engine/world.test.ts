@@ -1,4 +1,4 @@
-import { MAP, WIDTH, HEIGHT, PLACES, HOUSES, START, HOME_DOOR, HOME_ENTRY, HOME_FRONT, HOME_ROOM, HOUSE_GROW, HOUSE_RECT, homeHouse, houseAt, isWalkable, placeAt, cameraFor, VIEW_W, VIEW_H, VILLAGE_H, isHome, tileAt, ROOMS, WARPS, roomAt, key, ROOM_W, ROOM_H, LOCKED_DOORS, ATTIC, inAttic, ACTS_DOOR, ACTS_ROOM, setActsOpen, setHomeLevel } from './world'
+import { MAP, WIDTH, HEIGHT, PLACES, HOUSES, START, HOME_DOOR, HOME_ENTRY, HOME_FRONT, HOME_ROOM, HOUSE_GROW, HOUSE_RECT, homeHouse, houseAt, isWalkable, placeAt, cameraFor, VIEW_W, VIEW_H, VILLAGE_H, isHome, tileAt, ROOMS, WARPS, roomAt, key, ROOM_W, ROOM_H, LOCKED_DOORS, ATTIC, inAttic, ACTS_DOOR, ACTS_ROOM, setOpenDoors, setHomeLevel } from './world'
 import { findPath, pathToward, stepActor, type Actor } from './movement'
 
 const adjacent = (a: { x: number; y: number }, b: { x: number; y: number }) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y) === 1
@@ -74,9 +74,9 @@ describe('world', () => {
 
 describe('이웃집 안', () => {
   it('집마다 방이 있고, 문 ↔ 방 안이 서로 이어진다', () => {
-    expect(ROOMS.map((r) => r.owner)).toEqual(['baker', 'child', 'grandpa', 'weaver', 'beekeeper', 'library', 'acts'])
-    // 사도행전 방은 서고 안 잠긴 문에서 드나든다 (아래 '사도행전 방'에서 따로)
-    for (const r of ROOMS.filter((r) => r.owner !== 'acts')) {
+    expect(ROOMS.map((r) => r.owner)).toEqual(['baker', 'child', 'grandpa', 'weaver', 'beekeeper', 'library', 'acts', 'letters'])
+    // 서고 방(사도행전·로마서–빌레몬서)은 서고 안 잠긴 문에서 드나든다 (아래와 letters-room.test에서 따로)
+    for (const r of ROOMS.filter((r) => r.owner !== 'acts' && r.owner !== 'letters')) {
       expect(tileAt(r.door.x, r.door.y), r.owner).toBe(r.owner === 'library' ? 'L' : 'D')
       const inside = WARPS.get(key(r.door))!
       expect(roomAt(inside)?.owner).toBe(r.owner)
@@ -206,7 +206,7 @@ describe('내 집 (계획 7-1 작업 5)', () => {
 })
 
 describe('사도행전 방 (계획 5 작업 5)', () => {
-  afterEach(() => setActsOpen(false))
+  afterEach(() => setOpenDoors([]))
   const lib = () => ROOMS.find((r) => r.owner === 'library')!
 
   it('문은 서고 왼쪽 위 잠긴 문 — 닫혀 있으면 막히고, 열리면 걸어 들어가는 문(J)', () => {
@@ -214,7 +214,7 @@ describe('사도행전 방 (계획 5 작업 5)', () => {
     expect(ACTS_ROOM.door).toEqual(ACTS_DOOR)
     expect(tileAt(ACTS_DOOR.x, ACTS_DOOR.y)).toBe('K')
     expect(findPath(lib().entry, ACTS_DOOR)).toBeNull()
-    setActsOpen(true)
+    setOpenDoors([0])
     expect(tileAt(ACTS_DOOR.x, ACTS_DOOR.y)).toBe('J')
     expect(isWalkable(ACTS_DOOR)).toBe(true)
     expect(findPath(lib().entry, ACTS_DOOR)).not.toBeNull()
