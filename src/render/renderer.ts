@@ -1889,15 +1889,28 @@ function tripMapFor(dest: 'harbor' | 'hillTown', season: Season): HTMLCanvasElem
       }
       switch (ch) {
         case '^':
-          // 꽃화단: 둥근 풀 덤불 위에 파스텔 꽃
-          f('rgba(90,60,30,0.12)', 2, 13, 12, 2)
-          f('#8cc478', 2, 4, 12, 10)
-          f('#8cc478', 4, 2, 8, 13)
-          f('#a9d994', 4, 3, 7, 4)
-          for (let k = 0; k < 6; k++) {
-            const fx = 3 + ((k * 5 + x * 3) % 9)
-            const fy = 3 + ((k * 7 + y * 5) % 9)
-            f(['#f7b8c8', '#fde08e', '#ffffff', '#cdb8f0'][(k + x + y) % 4], fx, fy, 2, 2)
+          // 꽃화단: 낮은 크림빛 돌 테두리(화단 바깥쪽에만) 안에 흙, 그 위에 줄 맞춰 심은 꽃 넷 (꽃잎·가운데·줄기·잎)
+          {
+            const edge = '#efe4cf'
+            const edgeDark = '#d8c7a6'
+            f('#a8805c', 0, 0, 16, 16)
+            f('#94704f', 0, 7, 16, 1)
+            if (at(x, y - 1) !== '^') f(edge, 0, 0, 16, 2)
+            if (at(x, y + 1) !== '^') {
+              f(edge, 0, 13, 16, 3)
+              f(edgeDark, 0, 15, 16, 1)
+            }
+            if (at(x - 1, y) !== '^') f(edge, 0, 0, 2, 16)
+            if (at(x + 1, y) !== '^') f(edge, 14, 0, 2, 16)
+            const petals = ['#f7b8c8', '#fde08e', '#ffffff', '#cdb8f0']
+            for (const [bx, by, k] of [[3, 3, 0], [9, 3, 1], [3, 8, 2], [9, 8, 3]]) {
+              const pc = petals[(k + x + y) % petals.length]
+              f('#7fb86a', bx + 1, by + 3, 1, 3)
+              f('#7fb86a', bx + 2, by + 4, 2, 1)
+              f(pc, bx + 1, by, 1, 3)
+              f(pc, bx, by + 1, 3, 1)
+              f('#f2a33a', bx + 1, by + 1, 1, 1)
+            }
           }
           break
         case '!':

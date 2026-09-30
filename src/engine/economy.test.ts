@@ -187,7 +187,9 @@ describe('여행 판 동네 (새 장면)', () => {
       const idx = BOARD.map((_, i) => stoneRingIndex(i))
       expect(new Set(idx).size).toBe(BOARD.length)
       // 2×2 돌판 사이에 판석 길 한 칸 이상
-      for (let i = 1; i < idx.length; i++) expect(idx[i] - idx[i - 1]).toBeGreaterThanOrEqual(3)
+      // 모든 발판 사이가 똑같이 세 자리 (돌판 두 칸 + 판석 한 칸), 네 모퉁이에 하나씩
+      for (let i = 1; i < idx.length; i++) expect(idx[i] - idx[i - 1]).toBe(3)
+      expect(RING_TILES.length).toBe(BOARD.length * 3)
       // 판석 길(두 칸 폭)은 마을 흙길이 아니라 이 장소의 판석
       for (const t of RING_TILES) for (const [dx, dy] of [[0, 0], [1, 0], [0, 1], [1, 1]]) expect(map[t.y + dy][t.x + dx]).toBe('@')
       expect(map.join('')).not.toContain(',')

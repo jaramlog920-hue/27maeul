@@ -116,12 +116,13 @@ export function rollDie(rnd: () => number): number {
 //   그 밖에는 마을과 같은 그림: . 풀 · T 나무 · B 벤치 · * 꽃 · m 좌판 · x 울타리 · R/# 집
 
 export const TRIP_W = 16
-export const TRIP_H = 36
+export const TRIP_H = 34
 /**
  * 판석 길은 두 칸 폭. 길 위의 자리는 2×2 칸 덩이의 왼쪽 위 칸으로 센다 (한 칸씩 나아간다).
  * 보드 칸은 이 덩이만 한 돌판, 돌판 사이에는 판석 길 한 칸
  */
-const RING = { x0: 2, y0: 4, x1: 12, y1: 30 }
+// 가로 12칸·세로 24칸 (모두 3의 배수) — 네 모퉁이에 발판이 하나씩, 모든 발판 사이가 판석 한 칸으로 똑같다
+const RING = { x0: 1, y0: 4, x1: 13, y1: 28 }
 
 export interface TripHouse {
   id: string
@@ -148,9 +149,10 @@ export const RING_TILES: readonly { x: number; y: number }[] = (() => {
   return out
 })()
 
-/** 돌판 i가 놓인 판석 길의 자리 (고르게 띄워서) */
+/** 돌판 i가 놓인 판석 길의 자리 — 세 자리마다 하나 (2×2 돌판 + 판석 한 칸) */
+export const STONE_STEP = 3
 export function stoneRingIndex(i: number): number {
-  return Math.round((i * RING_TILES.length) / BOARD.length) % RING_TILES.length
+  return (i * STONE_STEP) % RING_TILES.length
 }
 /** 돌판 i의 왼쪽 위 칸 (돌판은 2×2 칸) */
 export function stoneTile(i: number): { x: number; y: number } {
@@ -168,7 +170,7 @@ export function tripLayout(dest: 'harbor' | 'hillTown'): TripLayout {
   const rect = (x0: number, y0: number, x1: number, y1: number, c: string) => {
     for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) set(x, y, c)
   }
-  // 판석 길 띠: 바깥 x 2–13, y 4–31
+  // 판석 길 띠: 바깥 x 1–14, y 4–29 (양옆 바깥은 한 줄씩: 왼쪽 0열, 오른쪽 15열)
   const bx0 = RING.x0
   const by0 = RING.y0
   const bx1 = RING.x1 + 1
@@ -190,26 +192,19 @@ export function tripLayout(dest: 'harbor' | 'hillTown'): TripLayout {
   rect(7, 1, 8, by0 - 1, 'c')
   // ── 판석 길 한 바퀴 ──
   for (const t of RING_TILES) rect(t.x, t.y, t.x + 1, t.y + 1, '@')
-  // ── 왼쪽: 울타리와 꽃화단이 번갈아 (네 줄마다 같은 무늬) ──
-  for (let y = by0 + 2; y <= by1 - 2; y++) {
-    const k = (y - by0 - 2) % 4
-    set(0, y, k === 3 ? '!' : 'x')
-    set(1, y, k === 0 || k === 1 ? '^' : '.')
+  // ── 왼쪽: 나무와 꽃화단이 번갈아 (세 줄마다 같은 무늬 — 발판 간격과 맞춘다) ──
+  for (let y = by0; y <= by1; y++) {
+    const k = (y - by0) % 3
+    set(0, y, k === 0 ? 'T' : k === 1 ? '^' : '.')
   }
-  // ── 오른쪽: 작은 장터 앞 — 좌판과 나무가 번갈아 ──
-  for (let y = by0 + 2; y <= by1 - 2; y++) {
-    const k = (y - by0 - 2) % 5
-    set(14, y, k === 0 ? 'm' : k === 2 ? 'T' : k === 4 ? '!' : '.')
-    set(15, y, k === 1 || k === 3 ? 'T' : '.')
+  // ── 오른쪽: 작은 장터 앞 — 좌판, 그 옆 벤치, 나무 (세 줄마다, 등불 없음) ──
+  for (let y = by0; y <= by1; y++) {
+    const k = (y - by0) % 6
+    set(15, y, k === 0 ? 'm' : k === 1 ? 'B' : k === 3 ? 'T' : '.')
   }
-  // ── 아래: 광장 끝 — 돌바닥, 벤치 둘, 나무, 낮은 울타리로 마감 ──
-  rect(0, by1 + 1, TRIP_W - 1, TRIP_H - 2, 'c')
-  set(4, by1 + 2, 'B')
-  set(11, by1 + 2, 'B')
-  for (const x of [1, 14]) set(x, by1 + 2, 'T')
-  rect(0, TRIP_H - 1, TRIP_W - 1, TRIP_H - 1, 'x')
-  for (const x of [6, 9]) set(x, TRIP_H - 1, 'T')
-  // ── 가운데 정원 (x 4–11, y 6–29): 돌바닥 띠 → 잔디 → 꽃화단(좌우 대칭) → 분수 광장 ──
+  // ── 아래: 돌길만 ──
+  rect(0, by1 + 1, TRIP_W - 1, TRIP_H - 1, 'c')
+  // ── 가운데 정원 (x 3–12, y 6–27): 돌바닥 띠 → 잔디 → 꽃화단(좌우 대칭) → 분수 광장 ──
   const ix0 = bx0 + 2
   const iy0 = by0 + 2
   const ix1 = bx1 - 2
@@ -229,9 +224,10 @@ export function tripLayout(dest: 'harbor' | 'hillTown'): TripLayout {
     set(x, cy + 1, 'B')
   }
   for (const [x, y] of [[ix0 + 1, iy0 + 1], [ix1 - 1, iy0 + 1], [ix0 + 1, iy1 - 1], [ix1 - 1, iy1 - 1]]) set(x, y, 'T')
+  // 등불 대신 나무 (좌우 대칭)
   for (const y of [iy0 + 7, iy1 - 7]) {
-    set(ix0 + 1, y, '!')
-    set(ix1 - 1, y, '!')
+    set(ix0 + 1, y, 'T')
+    set(ix1 - 1, y, 'T')
   }
   const layout = { map: g.map((r) => r.join('')), houses }
   layoutCache.set(dest, layout)
