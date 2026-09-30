@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { pieceById, versesOf } from '../../content/catalog'
 import { fill, T } from '../../content/text'
-import type { GospelId, Question } from '../../engine/quiz'
+import { NOT_WRITTEN_OPTION, type GospelId, type Question } from '../../engine/quiz'
 import { isGospel, type Book } from '../../engine/types'
 import { useGame, type Modal } from '../../store/game-store'
 import { Passage } from '../passage/Passage'
@@ -141,6 +141,34 @@ function OpeningQuestion({ q, wrong, solved, onAnswer }: { q: Extract<Question, 
   )
 }
 
+/**
+ * 첫머리에 보낸 이 이름이 적혀 있지 않은 편지 (계획 8 작업 3): 첫머리 범위의 절을 절 번호와 함께 그대로 — 빈칸 없음, 책 이름 없음.
+ * 보기 "적혀 있지 않음"은 엔진 값 NOT_WRITTEN_OPTION을 life-text 문구로 보인다. 참조는 맞힌 뒤에 보인다
+ */
+function OpeningNoneQuestion({ q, wrong, solved, onAnswer }: { q: Extract<Question, { kind: 'openingNone' }>; wrong: string[]; solved: boolean; onAnswer: (o: string) => void }) {
+  const verses = versesOf(q.ref)
+  return (
+    <>
+      <p className="quiz-prompt">{T.quiz.openingNone}</p>
+      <section className="passage" aria-label={solved ? `성경 본문 ${q.ref}` : '성경 본문'}>
+        <header className="passage-ref">
+          <span>{solved ? q.ref : T.quiz.bookHidden}</span>
+          <span className="passage-src">{T.ui.bibleSource}</span>
+        </header>
+        <div className="passage-body">
+          {verses.map((v) => (
+            <p key={`${v.chapter}:${v.verse}`}>
+              <sup>{v.verse}</sup>
+              {v.text}
+            </p>
+          ))}
+        </div>
+      </section>
+      <Choices options={q.options} label={(o) => (o === NOT_WRITTEN_OPTION ? T.quiz.notWritten : o)} answer={q.answer} wrong={wrong} solved={solved} onAnswer={onAnswer} />
+    </>
+  )
+}
+
 /** 먼저 나오는 구절 (편지): 두 구절의 본문만 보이고, 참조는 맞힌 뒤에 보인다 */
 function VerseOrderQuestion({ q, wrong, solved, onAnswer }: { q: Extract<Question, { kind: 'verseOrder' }>; wrong: string[]; solved: boolean; onAnswer: (o: string) => void }) {
   const label = (o: string) => fill(T.quiz.verseOrderLabel, { n: q.options.indexOf(o) + 1 })
@@ -190,6 +218,7 @@ export function QuizView({ modal }: { modal: Extract<Modal, { kind: 'quiz' }> })
         {q.kind === 'detective' && <Detective q={q} solved={modal.solved} onAnswer={answerQuiz} pool={lib} />}
         {q.kind === 'book' && <BookQuestion q={q} wrong={modal.wrong} solved={modal.solved} onAnswer={answerQuiz} />}
         {q.kind === 'opening' && <OpeningQuestion q={q} wrong={modal.wrong} solved={modal.solved} onAnswer={answerQuiz} />}
+        {q.kind === 'openingNone' && <OpeningNoneQuestion q={q} wrong={modal.wrong} solved={modal.solved} onAnswer={answerQuiz} />}
         {q.kind === 'verseOrder' && <VerseOrderQuestion q={q} wrong={modal.wrong} solved={modal.solved} onAnswer={answerQuiz} />}
         {q.kind === 'verse' && (
           <>

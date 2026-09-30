@@ -180,5 +180,7 @@ export function pieceOfQuestion(q: Question): string | null {
   if (q.kind === 'order' || q.kind === 'verse') return q.answer
   // 먼저 나오는 구절: 앞 구절의 장 조각. 첫머리: 그 이름이 적힌 구절의 장 조각(아래 q.ref)
   if (q.kind === 'verseOrder') return pieceOfVerse(q.answer)?.id ?? null
+  // "적혀 있지 않음": 범위(히 1:1-4) 첫 절의 장 조각
+  if (q.kind === 'openingNone') return pieceOfVerse(q.ref.replace(/-\d+$/, ''))?.id ?? null
   return pieceOfVerse(q.ref)?.id ?? null
 }

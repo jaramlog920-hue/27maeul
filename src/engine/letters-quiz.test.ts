@@ -1,7 +1,7 @@
 // 편지 서고 퀴즈 (계획 7 작업 6): 어느 책?(보기 다섯 권까지)·첫머리의 이름·빈칸·먼저 나오는 구절. 탐정·도장 없음.
 import { BOOK_ABBR, inBrackets, LETTER_OPENINGS, noText, pieceOfQuestion, pieceOfVerse, piecesOf, quizSourceFor, versesOf } from '../content/catalog'
 import { mulberry32 } from './offers'
-import { buildLibraryQuiz, MAX_BOOK_OPTIONS, OPENING_MIN_WRONG, QUIZ_SIZE, quizzable, type Question } from './quiz'
+import { buildLibraryQuiz, isCorrect, MAX_BOOK_OPTIONS, NOT_WRITTEN_OPTION, OPENING_MIN_WRONG, QUIZ_SIZE, quizzable, type Question } from './quiz'
 import T from '../content/life-text.json'
 import { roomOf } from './shelf-rooms'
 import { BOOKS, GOSPELS, LETTERS, type Book, type Letter } from './types'
@@ -16,6 +16,24 @@ function openingText(book: Letter): string {
   const last = Math.max(...rows.map((o) => Number(/1:(\d+)(?:-(\d+))?$/.exec(o.ref)!.slice(1).filter(Boolean).pop())))
   return norm(versesOf(`${BOOK_ABBR[book]} 1:1-${last}`).map((v) => v.text).join(''))
 }
+/** 그 편지 본문 전체 (띄어쓰기 뺀 것) — "적혀 있지 않음" 문제의 오답은 여기 어디에도 없어야 한다 */
+const bookTexts = new Map<Book, string>()
+function bookText(book: Book): string {
+  let t = bookTexts.get(book)
+  if (t === undefined) {
+    t = norm(piecesOf(book).flatMap((p) => versesOf(p.ref).map((v) => v.text)).join(''))
+    bookTexts.set(book, t)
+  }
+  return t
+}
+/** 보낸 이 줄이 모두 "적혀 있지 않음"인 편지 */
+const fromNone = (book: Book) => {
+  const rows = LETTER_OPENINGS.filter((o) => o.book === book && o.role === 'from')
+  return rows.length > 0 && rows.every((o) => o.name === null)
+}
+/** 문제가 보이는 절 참조 (범위는 펼쳐서) */
+const refsOfQ = (q: Question, pool: Book[]) =>
+  q.kind === 'verseOrder' ? q.options : q.kind === 'openingNone' ? quizSourceFor(pool).versesOf(q.ref).map((v) => v.ref) : 'ref' in q ? [q.ref] : []
 const refOrder = (ref: string) => {
   const [, c, v] = /(\d+):(\d+)$/.exec(ref)!
   return Number(c) * 1000 + Number(v)
@@ -47,6 +65,8 @@ function check(qs: Question[], current: Letter, pool: Book[], where: string) {
       expect(q.options.length, w).toBeLessThanOrEqual(4)
       expect(new Set(q.options).size, w).toBe(q.options.length)
       expect(q.options, w).toContain(q.answer)
+      // 이름이 적힌 첫머리 문제에는 "적혀 있지 않음"을 보기로 넣지 않는다 (빈칸이 보이므로)
+      expect(q.options, w).not.toContain(NOT_WRITTEN_OPTION)
       // 빈칸을 답으로 채우면 그 구절 본문(개역한글)과 한 글자도 다르지 않고, 답 이름은 그 구절에 한 번만 나온다
       const verse = versesOf(q.ref)
       expect(verse, w).toHaveLength(1)
@@ -60,6 +80,29 @@ function check(qs: Question[], current: Letter, pool: Book[], where: string) {
         // 오답 이름은 이 편지 첫머리 구절 어디에도 없고, 다른 편지의 같은 칸 이름이다
         expect(opening.includes(norm(o)), `${w} ${o}`).toBe(false)
         expect(LETTER_OPENINGS.some((x) => x.book !== current && x.role === q.role && x.name === o), `${w} ${o}`).toBe(true)
+      }
+    } else if (q.kind === 'openingNone') {
+      expect(q.book, w).toBe(current)
+      expect(fromNone(current), w).toBe(true)
+      expect(q.ref, w).toBe(LETTER_OPENINGS.find((o) => o.book === current && o.role === 'from')!.ref)
+      expect(q.answer, w).toBe(NOT_WRITTEN_OPTION)
+      expect(q.options.length, w).toBeGreaterThanOrEqual(1 + OPENING_MIN_WRONG)
+      expect(q.options.length, w).toBeLessThanOrEqual(4)
+      expect(new Set(q.options).size, w).toBe(q.options.length)
+      expect(q.options, w).toContain(q.answer)
+      // 보이는 절: 모두 문제로 쓸 수 있고 출제 범위에서 유일, 지금 책의 절
+      const vs = src.versesOf(q.ref)
+      expect(vs.length, w).toBeGreaterThan(0)
+      for (const v of vs) {
+        expect(quizzable(v.text, v.inBrackets), `${w} ${v.ref}`).toBe(true)
+        expect(noText(v.text), `${w} ${v.ref}`).toBe(false)
+        expect(src.countVerse(v.text), `${w} ${v.ref}`).toBe(1)
+        expect(pieceOfVerse(v.ref)?.book, `${w} ${v.ref}`).toBe(current)
+      }
+      // 오답: 다른 편지의 보낸 이 이름, 이 편지 본문 전체 어디에도 없는 이름
+      for (const o of q.options.filter((x) => x !== q.answer)) {
+        expect(bookText(current).includes(norm(o)), `${w} ${o}`).toBe(false)
+        expect(LETTER_OPENINGS.some((x) => x.book !== current && x.role === 'from' && x.name === o), `${w} ${o}`).toBe(true)
       }
     } else if (q.kind === 'verseOrder') {
       expect(q.options, w).toHaveLength(2)
@@ -114,7 +157,7 @@ describe('편지 서고 퀴즈', () => {
         const src = quizSourceFor(pool)
         for (let seed = 1; seed <= 12; seed++) {
           const qs = buildLibraryQuiz({ current, pool, piecesOf, rng: mulberry32(seed), src, openings: LETTER_OPENINGS })
-          const refs = qs.flatMap((q) => (q.kind === 'verseOrder' ? q.options : 'ref' in q ? [q.ref] : []))
+          const refs = qs.flatMap((q) => refsOfQ(q, pool))
           expect(new Set(refs).size, `${current}/${pool.length}/${seed}`).toBe(refs.length)
         }
       }
@@ -266,6 +309,80 @@ describe('편지 서고 퀴즈', () => {
     for (let seed = 1; seed <= 10; seed++)
       for (const q of buildLibraryQuiz({ current: 'ac', pool: FIVE, piecesOf, rng: mulberry32(seed), src, openings: LETTER_OPENINGS }))
         if (q.kind === 'book') expect(q.options).toEqual(FIVE)
+  })
+
+  describe('"적혀 있지 않음" 첫머리 문제 (계획 8 작업 3)', () => {
+    const NONE: Letter[] = ['heb', '1jn', '2jn', '3jn']
+    /** [편지, 범위 이름, 문제] — 그 책만 · 서고 전부 × 씨앗 1–30 */
+    const noneQs = (() => {
+      const out: [Letter, string, Extract<Question, { kind: 'openingNone' }>, Question[]][] = []
+      for (const current of LETTERS)
+        for (const [name, pool] of [
+          ['그 책만', [current]],
+          ['서고 전부', [...BOOKS]],
+        ] as [string, Book[]][]) {
+          const src = quizSourceFor(pool)
+          for (let seed = 1; seed <= 30; seed++) {
+            const qs = buildLibraryQuiz({ current, pool, piecesOf, rng: mulberry32(seed), src, openings: LETTER_OPENINGS })
+            for (const q of qs) if (q.kind === 'openingNone') out.push([current, name, q, qs])
+          }
+        }
+      return out
+    })()
+
+    it('히브리서·요한일서·요한이서·요한삼서에서 (그 책만 / 서고 전부) 실제로 나오고, 다른 편지에는 없다', () => {
+      for (const b of NONE) for (const name of ['그 책만', '서고 전부']) expect(noneQs.some(([c, n]) => c === b && n === name), `${b} ${name}`).toBe(true)
+      const books = new Set(noneQs.map(([c]) => c))
+      for (const b of LETTERS) expect(books.has(b), b).toBe(NONE.includes(b))
+      for (const b of ['jas', '1pe', '2pe', 'jud'] as Letter[]) expect(books.has(b), b).toBe(false)
+    })
+
+    it('답은 "적혀 있지 않음", 오답은 그 책 본문 어디에도 없는 다른 편지의 보낸 이 (히브리서 오답에 디모데·유다 없음)', () => {
+      for (const [c, name, q] of noneQs) {
+        const w = `${c}/${name}`
+        expect(q.answer, w).toBe(NOT_WRITTEN_OPTION)
+        expect(isCorrect(q, NOT_WRITTEN_OPTION), w).toBe(true)
+        for (const o of q.options.filter((x) => x !== q.answer)) {
+          expect(isCorrect(q, o), `${w} ${o}`).toBe(false)
+          expect(bookText(c).includes(norm(o)), `${w} ${o}`).toBe(false)
+        }
+        if (c === 'heb') {
+          expect(q.options, w).not.toContain('디모데') // 히 13:23
+          expect(q.options, w).not.toContain('유다') // 히 7:14
+        }
+      }
+      // 보기 넷(오답 셋)인 문제가 실제로 있다
+      expect(noneQs.some(([, , q]) => q.options.length === 4)).toBe(true)
+    })
+
+    it('보이는 범위는 첫머리 보낸 이 줄의 구절 (히 1:1-4 · 요일 1:1-4 · 요이 1:1 · 요삼 1:1), 범위의 절은 한 퀴즈에서 다른 문제로 다시 나오지 않는다', () => {
+      const want: Record<string, string> = { heb: '히 1:1-4', '1jn': '요일 1:1-4', '2jn': '요이 1:1', '3jn': '요삼 1:1' }
+      for (const [c, name, q, qs] of noneQs) {
+        expect(q.ref, c).toBe(want[c])
+        const pool = name === '그 책만' ? [c] : [...BOOKS]
+        const mine = new Set(refsOfQ(q, pool))
+        expect(mine.size, c).toBe(c === 'heb' || c === '1jn' ? 4 : 1)
+        for (const o of qs) if (o !== q) for (const r of refsOfQ(o, pool)) expect(mine.has(r), `${c}/${name} ${o.kind} ${r}`).toBe(false)
+      }
+    })
+
+    it('요한삼서는 "적혀 있지 않음" 문제와 받는 사람 가이오 빈칸이 둘 다 나온다 (한 퀴즈에는 하나)', () => {
+      expect(noneQs.some(([c]) => c === '3jn')).toBe(true)
+      expect(openingQs.some((q) => q.book === '3jn' && q.role === 'toPerson' && q.answer === '가이오')).toBe(true)
+      for (const [c, , , qs] of noneQs) if (c === '3jn') expect(qs.some((q) => q.kind === 'opening'), c).toBe(false)
+    })
+
+    it('문구: 보기 이름은 "적혀 있지 않음", 묻는 말에 책 이름이 없다', () => {
+      expect(T.quiz.notWritten).toBe('적혀 있지 않음')
+      expect(T.quiz.openingNone).not.toContain('{book}')
+      for (const name of Object.values(T.quiz.books)) expect(T.quiz.openingNone).not.toContain(name)
+      expect(T.quiz.kinds.openingNone.length).toBeGreaterThan(0)
+    })
+
+    it('다시 읽을 구절: 범위 첫 절의 장', () => {
+      expect(pieceOfQuestion({ kind: 'openingNone', book: 'heb', ref: '히 1:1-4', options: [], answer: NOT_WRITTEN_OPTION })).toBe('heb-001')
+      expect(pieceOfQuestion({ kind: 'openingNone', book: '3jn', ref: '요삼 1:1', options: [], answer: NOT_WRITTEN_OPTION })).toBe('3jn-001')
+    })
   })
 
   it('틀린 문제의 다시 읽을 구절: 첫머리는 그 구절의 장, 먼저 나오는 구절은 앞 구절의 장', () => {

@@ -7,6 +7,7 @@
 //   먼저 나오는 이야기: 조각 id 순서 = 본문 순서
 //   사도행전(계획 5)에는 도장이 없으므로 탐정 문제를 내지 않고, 탐정 보기에도 넣지 않는다 (GOSPELS만)
 //   편지(계획 7 작업 6): 어느 책?·첫머리의 이름·빈칸·먼저 나오는 구절 — 탐정·도장·장 조각의 order·verse 문제는 없다
+//   계획 8 작업 3: 보낸 이가 적혀 있지 않은 편지(히·요일·요이·요삼)는 첫머리 범위 본문 + 보기 "적혀 있지 않음"(openingNone)
 import { modeOf, roomOf } from './shelf-rooms'
 import { BOOKS, GOSPELS, isGospel, type Book, type Gospel, type Piece, type Rng } from './types'
 
@@ -15,7 +16,7 @@ export { GOSPELS }
 
 /** 편지 첫머리 칸 (letters.json): 보낸 이 · 받는 곳 · 받는 사람 */
 export type OpeningRole = 'from' | 'toPlace' | 'toPerson'
-/** letters.json 한 줄. name이 null이면 "적혀 있지 않음" (계획 8 — 이번에는 문제로 쓰지 않는다) */
+/** letters.json 한 줄. name이 null이면 "적혀 있지 않음" — 보낸 이 칸만 openingNone 문제로 쓴다 (계획 8 작업 3) */
 export interface LetterOpening {
   book: Book
   role: OpeningRole
@@ -35,6 +36,8 @@ export type Question =
    * 책 이름은 묻는 말에 넣지 않는다(답이 드러나므로). ref는 맞힌 뒤 보인다
    */
   | { kind: 'opening'; book: Book; role: OpeningRole; ref: string; before: string; after: string; options: string[]; answer: string }
+  /** 첫머리에 보낸 이 이름이 적혀 있지 않은 편지 — 첫머리 범위 본문을 그대로 보이고, 답은 늘 NOT_WRITTEN_OPTION */
+  | { kind: 'openingNone'; book: Book; ref: string; options: string[]; answer: string }
   /** 먼저 나오는 구절 — options·answer는 절 참조, 화면은 맞히기 전에는 본문만 보인다 */
   | { kind: 'verseOrder'; options: string[]; answer: string }
 
@@ -166,7 +169,13 @@ function order(chapterPieces: readonly Piece[], rng: Rng): Extract<Question, { k
 }
 
 const keyOf = (q: Question) =>
-  q.kind === 'detective' ? q.pieceId : q.kind === 'opening' ? `opening:${q.role}` : q.kind === 'verseOrder' ? `order:${[...q.options].sort().join('|')}` : 'ref' in q ? q.ref : ''
+  q.kind === 'detective'
+    ? q.pieceId
+    : q.kind === 'opening'
+      ? `opening:${q.role}`
+      : q.kind === 'openingNone'
+        ? `openingNone:${q.book}`
+        : q.kind === 'verseOrder' ? `order:${[...q.options].sort().join('|')}` : 'ref' in q ? q.ref : ''
 
 export function buildQuiz(allPieces: readonly Piece[], chapter: number, rng: Rng, src: QuizSource): Question[] {
   // 괄호 조각은 문제·보기·정답 어디에도 쓰지 않는다
@@ -294,9 +303,10 @@ const occurrences = (text: string, name: string) => text.split(name).length - 1
  * 답은 그 칸에 적힌 이름 하나. 그 이름이 보이는 구절에 두 번 이상 나오면 그 줄은 묻지 않는다(빈칸이 하나여야 하므로).
  * 오답은 다른 편지들의 같은 칸 이름 중 이 편지 첫머리(1:1부터 letters.json의 가장 뒤 구절까지) 본문 어디에도 없는 이름 —
  * 같은 편지에 보낸 이가 여럿이어도 그 누구도 오답이 되지 않는다. 오답을 둘(OPENING_MIN_WRONG) 못 채우는 칸은 묻지 않는다.
- * 이름이 null("적혀 있지 않음")인 줄은 문제로 쓰지 않는다 (계획 8에서 보기 모양을 정한다)
+ * 보낸 이 줄이 모두 null("적혀 있지 않음")인 편지는 보낸 이 칸을 openingNoneQuestion으로 묻는다 (계획 8 작업 3).
+ * 받는 쪽의 null 줄은 문제로 쓰지 않는다 (무리를 가리키는 말을 곳·사람 어느 쪽으로 볼지 정하지 않기 위해)
  */
-function openingQuestion(current: Book, openings: readonly LetterOpening[], src: QuizSource, rng: Rng): Question | null {
+function openingQuestion(current: Book, openings: readonly LetterOpening[], bookText: () => string, src: QuizSource, rng: Rng): Question | null {
   const rows = openings.filter((o) => o.book === current)
   const ends = rows.map((o) => openingEnd(o.ref)).filter((e) => e !== null)
   if (ends.length === 0) return null
@@ -309,6 +319,11 @@ function openingQuestion(current: Book, openings: readonly LetterOpening[], src:
   )
   const roles = shuffle([...new Set(rows.map((o) => o.role))], rng)
   for (const role of roles) {
+    if (role === 'from' && rows.every((o) => o.role !== 'from' || o.name === null)) {
+      const q = openingNoneQuestion(current, rows.find((o) => o.role === 'from')!.ref, openings, bookText, src, rng)
+      if (q) return q
+      continue
+    }
     const wrong = [
       ...new Set(openings.filter((o) => o.book !== current && o.role === role && o.name !== null).map((o) => o.name!)),
     ].filter((n) => !text.includes(norm(n)))
@@ -331,6 +346,25 @@ function openingQuestion(current: Book, openings: readonly LetterOpening[], src:
   return null
 }
 
+/** "적혀 있지 않음" 보기의 엔진 값 — 화면 문구는 life-text의 quiz.notWritten */
+export const NOT_WRITTEN_OPTION = 'notWritten'
+
+/**
+ * 첫머리에 보낸 이 이름이 적혀 있지 않은 편지 (계획 8 작업 3, exclusion-list §4-6): 보낸 이 줄의 구절 범위(히 1:1-4 등) 본문을 그대로 보이고
+ * "보낸 사람으로 적힌 이름은?"을 묻는다 — 빈칸 없음, 책 이름 없음, 참조는 맞힌 뒤. 답은 늘 NOT_WRITTEN_OPTION.
+ * 오답은 다른 편지의 보낸 이 이름 중 이 편지 본문 전체(첫머리만이 아니라 — 히 13:23 디모데처럼 끝에 나오는 이름도) 어디에도 없는 것, 셋까지.
+ * 둘도 못 채우거나, 보이는 절 중 하나라도 문제로 쓸 수 없거나 출제 범위에서 유일하지 않으면 묻지 않는다
+ */
+function openingNoneQuestion(current: Book, ref: string, openings: readonly LetterOpening[], bookText: () => string, src: QuizSource, rng: Rng): Question | null {
+  const vs = src.versesOf(ref)
+  if (vs.length === 0 || !vs.every((v) => quizzable(v.text, v.inBrackets) && src.countVerse(v.text) === 1)) return null
+  const text = bookText()
+  const wrong = [...new Set(openings.filter((o) => o.book !== current && o.role === 'from' && o.name !== null).map((o) => o.name!))].filter((n) => !text.includes(norm(n)))
+  if (wrong.length < OPENING_MIN_WRONG) return null
+  const options = shuffle([NOT_WRITTEN_OPTION, ...shuffle(wrong, rng).slice(0, OPENING_MAX_WRONG)], rng)
+  return { kind: 'openingNone', book: current, ref, options, answer: NOT_WRITTEN_OPTION }
+}
+
 /**
  * 먼저 나오는 구절 (편지): 지금 책의 서로 다른 두 장에서 한 절씩 — 참조 없이 본문만 보이고, 맞힌 뒤 참조가 보인다.
  * (장 조각의 order 문제는 보기가 "로마서 3장/5장"이라 답이 드러나므로 편지에는 내지 않는다)
@@ -348,8 +382,19 @@ function verseOrderQuestion(mine: readonly Piece[], src: QuizSource, rng: Rng): 
 }
 
 /** 편지 책을 꽂을 때 (계획 7 작업 6): 어느 책? 둘 · 첫머리 · 빈칸 · 먼저 나오는 구절, 모자라면 빈칸·먼저 나오는 구절을 다른 절로, 그다음 낱말 맞추기 */
-function buildLetterQuiz(current: Book, pool: readonly Book[], piecesOf: (b: Book) => readonly Piece[], openings: readonly LetterOpening[], src: QuizSource, rng: Rng): Question[] {
+function buildLetterQuiz(
+  current: Book,
+  pool: readonly Book[],
+  piecesOf: (b: Book) => readonly Piece[],
+  bookPieces: readonly Piece[],
+  openings: readonly LetterOpening[],
+  src: QuizSource,
+  rng: Rng,
+): Question[] {
   const mine = piecesOf(current)
+  // 이 편지 본문 전체 (띄어쓰기 뺀 것) — "적혀 있지 않음" 문제의 오답 거르기에만, 필요할 때 한 번
+  let whole: string | undefined
+  const bookText = () => (whole ??= norm(bookPieces.flatMap((p) => src.versesOf(p.ref).map((v) => v.text)).join('')))
   const others = pool.filter((b) => b !== current)
   const blankQ = () => firstOf(shuffle(mine, rng), (p) => blank(p, [p], src, rng))
   const orderQ = () => verseOrderQuestion(mine, src, rng)
@@ -359,13 +404,15 @@ function buildLetterQuiz(current: Book, pool: readonly Book[], piecesOf: (b: Boo
     makers.push(() => bookQuestion(current, pool, piecesOf, src, rng))
     makers.push(() => bookQuestion(pickOne(others, rng)!, pool, piecesOf, src, rng))
   }
-  makers.push(() => openingQuestion(current, openings, src, rng))
+  makers.push(() => openingQuestion(current, openings, bookText, src, rng))
   makers.push(blankQ, orderQ)
   const out: Question[] = []
   const used = new Set<string>()
   // 한 퀴즈에 같은 구절이 두 문제에 나오지 않게 (첫머리의 빈칸 이름이 다른 문제에 그대로 보이면 안 된다)
   const usedRefs = new Set<string>()
-  const refsOf = (q: Question): string[] => (q.kind === 'verseOrder' ? q.options : 'ref' in q ? [q.ref] : [])
+  // "적혀 있지 않음" 문제는 범위의 절을 모두 펼쳐 넣는다 (히 1:2가 다른 문제에 다시 나오지 않게)
+  const refsOf = (q: Question): string[] =>
+    q.kind === 'verseOrder' ? q.options : q.kind === 'openingNone' ? src.versesOf(q.ref).map((v) => v.ref) : 'ref' in q ? [q.ref] : []
   const tryAdd = (make: () => Question | null) => {
     if (out.length >= QUIZ_SIZE) return
     const q = make()
@@ -395,7 +442,7 @@ export function buildLibraryQuiz(args: {
   const { current, pool, rng, src } = args
   // 괄호 조각은 문제·보기·정답 어디에도 쓰지 않는다
   const piecesOf = (b: Book) => args.piecesOf(b).filter((p) => quizzablePiece(p, src))
-  if (modeOf(current) === 'letters') return buildLetterQuiz(current, pool, piecesOf, args.openings ?? [], src, rng)
+  if (modeOf(current) === 'letters') return buildLetterQuiz(current, pool, piecesOf, args.piecesOf(current), args.openings ?? [], src, rng)
   const mine = piecesOf(current)
   const others = pool.filter((b) => b !== current)
   const makers: (() => Question | null)[] = []
