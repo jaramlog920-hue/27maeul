@@ -1,24 +1,49 @@
-// 사도행전 방 벽의 여정 판: 엮은 장에서 얻은 곳 이름 카드를 본문 순서대로 잇는다 (설계 §7-1).
-// 조작은 책상 잇기와 같은 ▲▼. 카드를 누르면 그 곳이 나오는 구절(개역한글)을 본문 창으로 보여 준다.
+// 서고 방 벽의 카드 판: 사도행전 방의 여정 판(설계 §7-1), 요한계시록 방의 일곱 교회 카드 판(계획 9 작업 4).
+// 옮기거나 엮은 장에서 얻은 이름 카드를 본문 순서대로 놓는다. 조작은 책상 잇기와 같은 ▲▼.
+// 카드를 누르면 그 이름이 나오는 구절(개역한글)을 본문 창으로 보여 준다 — 풀이 없이.
 import { useState } from 'react'
-import { JOURNEY } from '../../content/catalog'
+import { CHURCHES, JOURNEY } from '../../content/catalog'
 import { fill, T } from '../../content/text'
-import { boardInOrder } from '../../engine/journey'
-import { useGame } from '../../store/game-store'
+import { boardInOrder, type JourneyCard } from '../../engine/journey'
+import { useGame, type CardBoard } from '../../store/game-store'
 import { Passage } from '../passage/Passage'
 
-const byOrder = new Map(JOURNEY.map((c) => [c.order, c]))
+/** 판마다 카드 목록·문구 묶음·게임 상태 칸·완성 표식 */
+const BOARDS: Record<
+  CardBoard,
+  {
+    cards: readonly JourneyCard[]
+    field: 'journey' | 'churches'
+    flag: string
+    text: {
+      boardTitle: string
+      boardHint: string
+      boardCount: string
+      boardEmpty: string
+      boardInOrder: string
+      boardWrong: string
+      boardDone: string
+      cardVerse: string
+    }
+  }
+> = {
+  acts: { cards: JOURNEY, field: 'journey', flag: 'actsShip', text: T.acts },
+  churches: { cards: CHURCHES, field: 'churches', flag: 'churchesDone', text: T.revRoom },
+}
 
-export function JourneyBoard() {
+export function JourneyBoard({ board: id = 'acts' }: { board?: CardBoard }) {
+  const def = BOARDS[id]
+  const txt = def.text
   const [reading, setReading] = useState<number | null>(null)
   const [checked, setChecked] = useState<'ok' | 'wrong' | null>(null)
-  const board = useGame((s) => s.game.journey)
-  const done = useGame((s) => !!s.game.flags.actsShip)
-  const { moveJourney, closeModal } = useGame.getState()
+  const board = useGame((s) => s.game[def.field] ?? [])
+  const done = useGame((s) => !!s.game.flags[def.flag])
+  const { moveBoard, closeModal } = useGame.getState()
+  const byOrder = new Map(def.cards.map((c) => [c.order, c]))
 
   if (reading !== null) {
     const card = byOrder.get(reading)!
-    const title = fill(T.acts.cardVerse, { place: card.place })
+    const title = fill(txt.cardVerse, { place: card.place })
     return (
       <div className="dialog scroll-dialog" role="dialog" aria-label={title}>
         <h2>{title}</h2>
@@ -34,25 +59,25 @@ export function JourneyBoard() {
 
   const move = (i: number, d: number) => {
     setChecked(null)
-    moveJourney(i, d)
+    moveBoard(id, i, d)
   }
   return (
-    <div className="dialog desk journey" role="dialog" aria-label={T.acts.boardTitle}>
-      <h2>{T.acts.boardTitle}</h2>
-      <p className="hint">{T.acts.boardHint}</p>
-      <p className="hint">{fill(T.acts.boardCount, { got: board.length, all: JOURNEY.length })}</p>
+    <div className="dialog desk journey" role="dialog" aria-label={txt.boardTitle}>
+      <h2>{txt.boardTitle}</h2>
+      <p className="hint">{txt.boardHint}</p>
+      <p className="hint">{fill(txt.boardCount, { got: board.length, all: def.cards.length })}</p>
       {done && (
         <p className="desk-message done" role="status">
-          {T.acts.boardDone}
+          {txt.boardDone}
         </p>
       )}
       {!done && checked && (
         <p className={`desk-message ${checked === 'ok' ? 'done' : 'wrong'}`} role="status">
-          {checked === 'ok' ? T.acts.boardInOrder : T.acts.boardWrong}
+          {checked === 'ok' ? txt.boardInOrder : txt.boardWrong}
         </p>
       )}
       {board.length === 0 ? (
-        <p>{T.acts.boardEmpty}</p>
+        <p>{txt.boardEmpty}</p>
       ) : (
         <ol className="scroll-list journey-list">
           {board.map((order, i) => {

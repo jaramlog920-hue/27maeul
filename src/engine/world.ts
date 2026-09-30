@@ -1,7 +1,8 @@
 // 이름 없는 작은 마을 (exclusion-list §2-3). 한 칸 = TILE 픽셀. 지도는 코드로 짓는다 — 폭이 어긋나는 실수를 막기 위해.
 // 언덕 위 서고, 가운데 장터 광장, 알록달록한 기와지붕 이웃집, 포도원·올리브 숲, 남쪽 호숫가 나루.
 // 범례
-//   집 안: n 탁자 · g 항아리 · p 화분 · W 베틀 · G 복음서 선반 · K 잠긴 방 문 · Q 사도행전 선반 · M 여정 판 · Y 편지 선반 · V 편지꽂이 · N 방 창 · Z 큰 가구 (막힘)
+//   집 안: n 탁자 · g 항아리 · p 화분 · W 베틀 · G 복음서 선반 · K 잠긴 방 문 · Q 한 권 선반(사도행전·요한계시록) · M 여정 판
+//          C 일곱 교회 카드 판 · Y 편지 선반 · V 편지꽂이 · N 방 창 · Z 큰 가구 (막힘)
 //          J 열린 서고 방 문 (걸음), z 바닥 가구 (걸음) · e 깔개 · E 문깔개(밟으면 밖으로) (걸음) · _ 빈 곳
 //   막힘: T 나무 · # 벽 · R 지붕 · S 서고 돌벽 · b 침대 · d 책상 · h 화덕 · s 선반 · k 작업대 · w 우물 · B 벤치
 //         ~ 호수 · r 갈대 · v 포도나무 · L 서고 문 · o 올리브나무 · P 기름틀 · A 모루 · O 빵 굽는 가마 · m 장터 좌판
@@ -14,7 +15,7 @@ export const TILE = 16
 export const WIDTH = 48
 /**
  * 마을 부분의 높이. 그 아래(40~79줄)는 이웃집 안 방들이 있는 보이지 않는 곳
- * (60줄부터 사도행전 방, 내 집 안, 로마서–빌레몬서 방 / 70줄부터 히브리서–유다서 방. 78–79줄은 비워 둔다)
+ * (60줄부터 사도행전 방, 내 집 안, 로마서–빌레몬서 방 / 70줄부터 요한계시록 방, 히브리서–유다서 방. 78–79줄은 비워 둔다)
  */
 export const VILLAGE_H = 40
 /** 계획 8 작업 5에서 70 → 80 (히브리서–유다서 방 자리). 저장에는 지도 크기가 들어가지 않는다 */
@@ -116,11 +117,16 @@ export interface Room {
   sit: Tile
   /** 붙박이 [x0에서 떨어진 칸, y0에서 떨어진 칸, 글자] */
   things: [number, number, string][]
-  /** 가구 그림 [칸, 칸, 가구] — 바닥 것은 밟고, 큰 것은 막고, 작은 것은 탁자 위에 */
-  decor: [number, number, ItemId, 'flip'?][]
+  /**
+   * 가구 그림 [칸, 칸, 가구, 모양] — 바닥 것은 밟고, 큰 것은 막고, 작은 것은 탁자 위에.
+   * 모양 'flip'은 좌우를 뒤집어, 'half'는 그림만 반 칸 오른쪽으로 옮겨 그린다 (짝수 폭 가구를 홀수 폭 방 가운데에 — 칸은 그대로)
+   */
+  decor: Decor[]
   /** 문깔개를 밟으면 나가는 곳 (없으면 문 바로 아래 칸) */
   out?: Tile
 }
+
+export type Decor = [number, number, ItemId, ('flip' | 'half')?]
 
 function room(
   owner: string,
@@ -129,7 +135,7 @@ function room(
   door: Tile,
   sit: [number, number],
   things: [number, number, string][],
-  decor: [number, number, ItemId, 'flip'?][] = [],
+  decor: Decor[] = [],
   w = ROOM_W,
   h = ROOM_H,
 ): Room {
@@ -199,7 +205,7 @@ export const HEB_JUD_DOOR: Tile = { x: LIBRARY_X0 + LIBRARY_W - 1, y: LIBRARY_Y0
  * 서고 오른쪽 위 문을 밟으면 들어오고, 문깔개를 밟으면 서고 안 그 문 **왼쪽** 칸으로 나간다 (오른쪽 벽 문).
  * 붙박이는 로마서–빌레몬서 방과 같다(위 벽 편지꽂이·같은 창 둘, 왼쪽 편지 선반·오른쪽 책장, 가운데 읽는 탁자).
  * 두 방을 가르는 것은 구석 화분 대신 등잔대 둘, 탁자 아래 깔개, 선반 위 테 색과 책등 색 묶음. 놀이판은 없다.
- * 계획 9(요한계시록 방)는 같은 70줄의 2열이나 16열에 지을 수 있다 — 지도 높이를 다시 늘리지 않게
+ * 계획 9(요한계시록 방)는 같은 70줄의 16열에 지었다 — 지도 높이를 다시 늘리지 않게
  */
 export const HEB_JUD_W = 11
 export const HEB_JUD_H = 8
@@ -211,10 +217,33 @@ const hebJudThings: [number, number, string][] = [
   [5, 4, 'n'],
 ]
 /** 등잔대 둘(좌우 거울)과 탁자 아래 세 칸 깔개(문 앞 긴 깔개 자리를 대신한다) — 문을 가운데 둔 대칭 */
-const hebJudDecor: [number, number, ItemId, 'flip'?][] = [
+const hebJudDecor: Decor[] = [
   [1, 6, 'lampStand'], [9, 6, 'lampStand', 'flip'],
   [4, 5, 'rug'],
 ]
+
+/** 서고 오른쪽 아래 잠긴 문 = 요한계시록 방 문 (LOCKED_DOORS[3], 방 표 rev의 door) */
+export const REV_DOOR: Tile = { x: LIBRARY_X0 + LIBRARY_W - 1, y: LIBRARY_Y0 + 6 }
+
+/**
+ * 요한계시록 방 (계획 9 작업 4, 11×8, 지도 아래 70줄 16열 — 내 집 안(16–27 × 60–65) 바로 아래, 히브리서–유다서 방 왼쪽).
+ * 서고 오른쪽 아래 문을 밟으면 들어오고, 문깔개를 밟으면 서고 안 그 문 **왼쪽** 칸으로 나간다 (오른쪽 벽 문).
+ * 문을 가운데 둔 대칭: 위 벽 가운데 일곱 교회 카드 판(C, 여정 판과 같은 나무 테), 그 양옆에 같은 창(N) 둘,
+ * 왼쪽 한 권 선반(Q — 사도행전 선반 그림, 위 테 색만 다름)·오른쪽 책장, 가운데 읽는 탁자와 그 아래 둥근 깔개, 구석 화분 둘.
+ * 요한계시록의 상(별·촛대 등)은 그리지 않는다 — 등잔대도 두지 않는다 (exclusion §4-7)
+ */
+export const REV_W = 11
+export const REV_H = 8
+const REV_X0 = 16
+const REV_Y0 = 70
+const revThings: [number, number, string][] = [
+  [2, 0, 'N'], [4, 0, 'C'], [5, 0, 'C'], [6, 0, 'C'], [8, 0, 'N'],
+  [1, 1, 'Q'], [2, 1, 'Q'], [3, 1, 'Q'], [7, 1, 's'], [8, 1, 's'], [9, 1, 's'],
+  [5, 4, 'n'],
+  [1, 6, 'p'], [9, 6, 'p'],
+]
+/** 탁자 아래 둥근 깔개 (두 칸 폭이라 그림만 반 칸 옮겨 문 줄 가운데에) */
+const revDecor: Decor[] = [[4, 5, 'roundRug', 'half']]
 
 export const ROOMS: readonly Room[] = [
   // 빵 굽는 이웃: 가마 둘, 찬장, 밀가루 항아리, 과일 접시·주전자 올린 탁자, 둥근 깔개
@@ -251,6 +280,8 @@ export const ROOMS: readonly Room[] = [
   { ...room('letters', LETTERS_X0, LETTERS_Y0, LETTERS_DOOR, [5, 3], lettersThings, [], LETTERS_W, LETTERS_H), out: { x: LETTERS_DOOR.x + 1, y: LETTERS_DOOR.y } },
   // 히브리서–유다서 방: 문은 서고 오른쪽 위 잠긴 문, 나가면 그 문 왼쪽 서고 바닥 (오른쪽 벽)
   { ...room('hebJud', HEB_JUD_X0, HEB_JUD_Y0, HEB_JUD_DOOR, [5, 3], hebJudThings, hebJudDecor, HEB_JUD_W, HEB_JUD_H), out: { x: HEB_JUD_DOOR.x - 1, y: HEB_JUD_DOOR.y } },
+  // 요한계시록 방: 문은 서고 오른쪽 아래 잠긴 문, 나가면 그 문 왼쪽 서고 바닥 (오른쪽 벽)
+  { ...room('rev', REV_X0, REV_Y0, REV_DOOR, [5, 3], revThings, revDecor, REV_W, REV_H), out: { x: REV_DOOR.x - 1, y: REV_DOOR.y } },
 ]
 /** 사도행전 방 */
 export const ACTS_ROOM: Room = ROOMS.find((r) => r.owner === 'acts')!
@@ -258,6 +289,8 @@ export const ACTS_ROOM: Room = ROOMS.find((r) => r.owner === 'acts')!
 export const LETTERS_ROOM: Room = ROOMS.find((r) => r.owner === 'letters')!
 /** 히브리서–유다서 방 */
 export const HEB_JUD_ROOM: Room = ROOMS.find((r) => r.owner === 'hebJud')!
+/** 요한계시록 방 */
+export const REV_ROOM: Room = ROOMS.find((r) => r.owner === 'rev')!
 
 /**
  * 다락 서재 (8×6, 지도 아래 보이지 않는 곳 — 할아버지 집 방 오른쪽). 사다리로 올라오고 문깔개로 내려간다.
@@ -463,8 +496,8 @@ export const MAP: readonly string[] = build()
 
 // 'l'(텃밭)은 'y'(보리밭)처럼 걸을 수 있다 — 두둑 가운데 안쪽 칸은 사방이 막히면 다가갈 수 없어서 (task-3 적응)
 // 'H'(사다리)는 누르는 곳이라 길찾기가 지나가지 않는다 — 지나가다 다락으로 올라가 버리지 않게. 'I'는 다락 창
-// 'Q' 사도행전 선반, 'M' 벽의 여정 판. 'Y' 편지 선반, 'V' 벽의 편지꽂이, 'N' 방 벽의 창. 'J'(열린 서고 방 문)는 걷는 칸
-const BLOCKED = new Set(['Y', 'V', 'N', 'H', 'I', '_','Z', 'n', 'g', 'p', 'W', 'G', 'K', 'Q', 'M', 'T', '#', 'R', 'S', 'u', 'b', 'd', 'h', 's', 'k', 'w', 'B', '~', 'r', 'v', 'o', 'P', 'A', 'O', 'm', 'x', 'q'])
+// 'Q' 한 권 선반(사도행전·요한계시록), 'M' 벽의 여정 판, 'C' 벽의 일곱 교회 카드 판. 'Y' 편지 선반, 'V' 벽의 편지꽂이, 'N' 방 벽의 창. 'J'(열린 서고 방 문)는 걷는 칸
+const BLOCKED = new Set(['C', 'Y', 'V', 'N', 'H', 'I', '_','Z', 'n', 'g', 'p', 'W', 'G', 'K', 'Q', 'M', 'T', '#', 'R', 'S', 'u', 'b', 'd', 'h', 's', 'k', 'w', 'B', '~', 'r', 'v', 'o', 'P', 'A', 'O', 'm', 'x', 'q'])
 
 export function tileAt(x: number, y: number): string {
   if (homeLevel > 0) {
@@ -617,6 +650,10 @@ export const PLACES: Record<PlaceId, Place> = {
   // 히브리서–유다서 방: 편지 선반, 읽는 탁자 (로마서–빌레몬서 방과 같은 자리)
   hebJudShelf: { tiles: [1, 2, 3].map((dx) => ({ x: HEB_JUD_X0 + dx, y: HEB_JUD_Y0 + 1 })), stand: { x: HEB_JUD_X0 + 2, y: HEB_JUD_Y0 + 2 } },
   hebJudTable: { tiles: [{ x: HEB_JUD_X0 + 5, y: HEB_JUD_Y0 + 4 }], stand: { x: HEB_JUD_X0 + 5, y: HEB_JUD_Y0 + 5 } },
+  // 요한계시록 방: 한 권 선반, 벽의 일곱 교회 카드 판, 읽는 탁자 (사도행전 방과 같은 자리)
+  revShelf: { tiles: [1, 2, 3].map((dx) => ({ x: REV_X0 + dx, y: REV_Y0 + 1 })), stand: { x: REV_X0 + 2, y: REV_Y0 + 2 } },
+  churchBoard: { tiles: [4, 5, 6].map((dx) => ({ x: REV_X0 + dx, y: REV_Y0 })), stand: { x: REV_X0 + 5, y: REV_Y0 + 1 } },
+  revTable: { tiles: [{ x: REV_X0 + 5, y: REV_Y0 + 4 }], stand: { x: REV_X0 + 5, y: REV_Y0 + 5 } },
 }
 
 /** 이 장소가 지금 있는가 (다락 서재는 2단계부터) */

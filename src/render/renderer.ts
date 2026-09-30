@@ -11,7 +11,7 @@ import { drawDecor, lanternLights, sheepCount } from './decor'
 import { FIRE, isNear, npcTile } from '../engine/neighbors'
 import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
 import { actsDoorGlows, feastToday } from '../engine/library'
-import { ACTS_ROOM, ATTIC, HEB_JUD_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, HEIGHT, HOME_DOOR, HOUSE_RECT, housesNow, houseAt, LOCKED_DOORS, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
+import { ACTS_ROOM, ATTIC, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, HEIGHT, HOME_DOOR, HOUSE_RECT, housesNow, houseAt, LOCKED_DOORS, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
 import { GOSPELS, type Facing, type GameContent, type Season, type Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { avatarKey, withLookDefaults, type FullAvatar } from '../engine/avatar'
@@ -325,12 +325,13 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r('#d9b44a', 0, 0, 16, 1)
       break
     case 'Q':
-      // 사도행전 선반: 복음서 선반과 같은 나무, 위 테는 잿빛 파랑 (꽂은 책은 그릴 때 얹는다)
+      // 한 권 선반 (사도행전 방·요한계시록 방): 복음서 선반과 같은 나무, 위 테는 방마다 —
+      // 사도행전 방은 잿빛 파랑, 요한계시록 방은 옅은 라벤더 (꽂은 책은 그릴 때 얹는다)
       r(C.shadow, 0, 13, 16, 3)
       r(C.woodDark, 0, 0, 16, 14)
       r(C.wood, 1, 1, 14, 12)
       r(C.woodDark, 1, 11, 14, 2)
-      r('#8497a8', 0, 0, 16, 2)
+      r(roomAt({ x, y }) === REV_ROOM ? '#b8b0cc' : '#8497a8', 0, 0, 16, 2)
       break
     case 'M': {
       // 벽에 건 여정 판 (세 칸에 걸친 한 장): 나무 테두리와 옅은 양피지 바탕. 카드와 실은 그릴 때 얹는다
@@ -342,6 +343,19 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       const x1 = R ? 14 : 16
       r(C.woodDark, x0, 2, x1 - x0, 13)
       r('#efe2c6', x0 + (L ? 2 : 0), 4, x1 - x0 - (L ? 2 : 0) - (R ? 2 : 0), 9)
+      break
+    }
+    case 'C': {
+      // 벽에 건 일곱 교회 카드 판 (세 칸에 걸친 한 장): 여정 판과 같은 나무 테, 바탕은 옅은 잿빛 하늘색.
+      // 카드 자리 일곱 칸(옅은 테)과 놓인 카드·실은 그릴 때 얹는다 (drawCardBoard)
+      const L = tileAt(x - 1, y) !== 'C'
+      const R = tileAt(x + 1, y) !== 'C'
+      r(C.wall, 0, 0, 16, 16)
+      r(C.wallTop, 0, 0, 16, 2)
+      const x0 = L ? 2 : 0
+      const x1 = R ? 14 : 16
+      r(C.woodDark, x0, 2, x1 - x0, 13)
+      r('#dde5ea', x0 + (L ? 2 : 0), 4, x1 - x0 - (L ? 2 : 0) - (R ? 2 : 0), 9)
       break
     }
     case 'Y': {
@@ -736,8 +750,11 @@ function mapFor(season: Season): HTMLCanvasElement {
       if (!a) continue
       const x = rm.x0 + dx
       const y = rm.y0 + dy
-      const rows = flip ? mirror(a.rows) : a.rows
-      g.drawImage(paint(`furni/${item}/${flip ?? ''}`, rows, FURNI_PALETTE), x * TILE, y * TILE + (MAP[y][x] === 'n' ? -6 : 0))
+      const mirrored = flip === 'flip'
+      const rows = mirrored ? mirror(a.rows) : a.rows
+      // 'half': 짝수 폭 가구를 홀수 폭 방 가운데에 (그림만 반 칸 오른쪽으로)
+      const nudge = flip === 'half' ? TILE / 2 : 0
+      g.drawImage(paint(`furni/${item}/${mirrored ? 'flip' : ''}`, rows, FURNI_PALETTE), x * TILE + nudge, y * TILE + (MAP[y][x] === 'n' ? -6 : 0))
     }
   mapCache.set(cacheKey, c)
   return c
@@ -1051,6 +1068,34 @@ function drawLetterSpines(g: Ctx, shelved: GameState['shelved'], room: 'romPhm' 
 }
 
 /**
+ * 벽 카드 판의 일곱 자리와 놓인 카드 (요한계시록 방 일곱 교회 카드 판): 자리는 바탕보다 조금 짙은 옅은 칸, 놓인 카드 수만큼
+ * 앞자리부터 크림색 카드 (4×6, 아래 2픽셀은 짙은 크림 테). 자리 순서 = 판 순서 — 맞는지는 그림으로 알려 주지 않는다.
+ * 카드가 있으면 그 위를 잇는 실 (사도행전 여정 판과 같은 짜임), 다 놓으면(done) 실이 금빛
+ */
+function drawCardBoard(g: Ctx, first: Tile, placed: number, done: boolean) {
+  // 판 안쪽 바탕은 첫 칸 4픽셀부터 40픽셀 (나무 테 안) — 자리 일곱 개를 6픽셀 간격으로 꼭 맞게
+  const bx = first.x * TILE + 4
+  const by = first.y * TILE
+  const n = Math.min(placed, 7)
+  for (let i = 0; i < 7; i++) {
+    g.fillStyle = '#c6d2d9'
+    g.fillRect(bx + i * 6, by + 7, 4, 6)
+  }
+  if (n > 0) {
+    g.fillStyle = done ? '#d9b44a' : '#b8a4a0'
+    g.fillRect(bx, by + 5, 6 * (n - 1) + 4, 2)
+  }
+  for (let i = 0; i < n; i++) {
+    g.fillStyle = '#fbf3e0'
+    g.fillRect(bx + i * 6, by + 7, 4, 4)
+    g.fillStyle = '#e3d3ae'
+    g.fillRect(bx + i * 6, by + 11, 4, 2)
+    g.fillStyle = '#8f8aa8'
+    g.fillRect(bx + i * 6 + 1, by + 5, 2, 2)
+  }
+}
+
+/**
  * 잠긴 문틈으로 새는 불빛: 문 둘레의 은은한 빛,가운데 문틈과 문지방의 2픽셀 빛줄기, 방바닥에 번지는 빛.
  * 천천히 숨 쉬듯 밝아졌다 옅어진다 (차분한 파스텔 — 창과 같은 따뜻한 노랑)
  */
@@ -1266,6 +1311,22 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           g.fillStyle = '#8497a8'
           g.fillRect(bx + i * 6 + 1, by + 6, 2, 2)
         }
+      }
+      // 요한계시록 방: 한 권 선반의 요한계시록 책등, 벽 일곱 교회 카드 판의 자리·카드·실
+      if (roomAt(here) === REV_ROOM) {
+        const mid = PLACES.revShelf.tiles[1]
+        const grade = game.shelved.rev
+        if (grade === undefined) {
+          g.fillStyle = 'rgba(40,25,15,0.35)'
+          g.fillRect(mid.x * TILE + 4, mid.y * TILE + 3, 8, 9)
+        } else {
+          g.fillStyle = '#6f8a8c'
+          g.fillRect(mid.x * TILE + 4, mid.y * TILE + 2, 8, 10)
+          g.fillStyle = ['#c9b89a', '#c7ccd4', '#d9b44a'][grade]
+          g.fillRect(mid.x * TILE + 4, mid.y * TILE + 4, 8, 2)
+          g.fillRect(mid.x * TILE + 4, mid.y * TILE + 9, 8, 2)
+        }
+        drawCardBoard(g, PLACES.churchBoard.tiles[0], game.churches.length, (game.flags.churchesDone ?? 0) > 0)
       }
       // 편지 방: 편지 선반의 얇은 책등 (방 표 순서)
       if (roomAt(here) === LETTERS_ROOM) drawLetterSpines(g, game.shelved, 'romPhm')

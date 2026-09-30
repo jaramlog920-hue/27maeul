@@ -78,7 +78,7 @@ function Body() {
     case 'roomShelf':
       return <RoomShelf key={modal.room} room={modal.room} />
     case 'journey':
-      return <JourneyBoard />
+      return <JourneyBoard key={modal.board ?? 'acts'} board={modal.board ?? 'acts'} />
     case 'garden':
       return <GardenMenu at={modal.at} />
   }

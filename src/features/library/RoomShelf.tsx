@@ -1,4 +1,4 @@
-// 서고 방의 선반 (사도행전 방·로마서–빌레몬서 방·히브리서–유다서 방): 다 엮은(옮겨 적은) 책을 꽂는다 —
+// 서고 방의 선반 (사도행전 방·로마서–빌레몬서 방·히브리서–유다서 방·요한계시록 방): 다 엮은(옮겨 적은) 책을 꽂는다 —
 // 서고 복음서 방 선반과 같은 흐름(꽂기 → 서고 퀴즈 → 책등 등급). 책 목록은 방 표(shelf-rooms) 순서
 import { CONTENT } from '../../content/catalog'
 import { fill, T } from '../../content/text'
@@ -17,6 +17,8 @@ const HEAD: Partial<Record<ShelfRoomId, { title: string; notice: string; notYet:
   // 편지는 엮지 않고 옮겨 적는다
   romPhm: { title: T.letterRoom.shelfTitle, notice: T.letterRoom.shelfNotice, notYet: T.letterRoom.notYet },
   hebJud: { title: T.letterRoom.shelfTitle, notice: T.letterRoom.shelfNotice, notYet: T.letterRoom.notYet },
+  // 요한계시록은 한 권 — 편지처럼 옮겨 적는다
+  rev: { title: T.revRoom.shelfTitle, notice: T.revRoom.shelfNotice, notYet: T.letterRoom.notYet },
 }
 
 export function RoomShelf({ room }: { room: ShelfRoomId }) {

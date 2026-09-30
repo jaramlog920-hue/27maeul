@@ -63,7 +63,7 @@ import {
   SELL_PRICES,
   orderHome,
   syncHome,
-  moveJourneyCard,
+  moveBoardCard,
   type GameState,
   type SubmitResult,
   type Trade,
@@ -120,9 +120,9 @@ export type Modal =
   | { kind: 'shelf'; tab?: ShelfTab }
   | { kind: 'companion'; animal: Animal }
   | { kind: 'library' }
-  /** 서고 방의 선반 (사도행전 방·로마서–빌레몬서 방 — RoomShelf), 사도행전 방 벽의 여정 판 */
+  /** 서고 방의 선반 (사도행전 방·편지 방·요한계시록 방 — RoomShelf), 벽의 카드 판 (board 없으면 사도행전 방 여정 판) */
   | { kind: 'roomShelf'; room: ShelfRoomId }
-  | { kind: 'journey' }
+  | { kind: 'journey'; board?: 'churches' }
   | { kind: 'letter' }
   | { kind: 'garden'; at: Tile }
 
@@ -150,6 +150,14 @@ export function copyPadFor(game: GameState, pad: CopyPad | undefined): CopyPad |
   if (pad && pad.book === at.book && pad.chapter === at.chapter) return pad
   const n = blanksFor(at.book, at.chapter, copySourceFor(at.book)).length
   return { ...at, picks: Array(n).fill(null), dimmed: Array.from({ length: n }, () => []), miss: null }
+}
+
+/** 서고 방 벽의 카드 판: 사도행전 방 여정 판 / 요한계시록 방 일곱 교회 카드 판 */
+export type CardBoard = 'acts' | 'churches'
+/** 판마다 게임 상태 칸(game.ts BoardId)·완성 표식·완성 알림 */
+const CARD_BOARDS: Record<CardBoard, { field: 'journey' | 'churches'; flag: string; doneToast: string }> = {
+  acts: { field: 'journey', flag: 'actsShip', doneToast: T.acts.boardDoneToast },
+  churches: { field: 'churches', flag: 'churchesDone', doneToast: T.revRoom.boardDone },
 }
 
 /** 나의 한 줄 창을 닫은 뒤 돌아갈 곳 */
@@ -238,8 +246,8 @@ interface Store {
   answerQuiz: (given: string | string[]) => void
   nextQuiz: () => void
   // 서고
-  /** 여정 판의 카드를 위(-1)·아래(+1)로 */
-  moveJourney: (index: number, delta: number) => void
+  /** 카드 판(여정 판·일곱 교회 카드 판)의 카드를 위(-1)·아래(+1)로 */
+  moveBoard: (board: CardBoard, index: number, delta: number) => void
   startShelve: (book: Book) => void
   startRetry: (book: Book) => void
   sleep: () => void
@@ -391,7 +399,7 @@ function gained(before: Inventory, after: Inventory): Partial<Record<ItemId, num
 }
 
 /** 지도의 편지 방(world ROOMS의 owner) → 방 표의 방 id */
-const LETTER_ROOM_OF: Partial<Record<string, ShelfRoomId>> = { letters: 'romPhm', hebJud: 'hebJud' }
+const LETTER_ROOM_OF: Partial<Record<string, ShelfRoomId>> = { letters: 'romPhm', hebJud: 'hebJud', rev: 'rev' }
 
 /** 집 안에 막 들어왔으면 누구 집인지 알린다 (다락에 오르면 다락 서재) */
 function announceRoom(before: GameState, after: GameState) {
@@ -487,11 +495,16 @@ export const useGame = create<Store>((set, get) => {
         return { game, modal: { kind: 'roomShelf', room: 'romPhm' } }
       case 'hebJudShelf':
         return { game, modal: { kind: 'roomShelf', room: 'hebJud' } }
+      case 'revShelf':
+        return { game, modal: { kind: 'roomShelf', room: 'rev' } }
       case 'journeyBoard':
         return { game, modal: { kind: 'journey' } }
+      case 'churchBoard':
+        return { game, modal: { kind: 'journey', board: 'churches' } }
       case 'actsTable':
       case 'lettersTable':
       case 'hebJudTable':
+      case 'revTable':
         // 읽는 탁자: 벤치처럼 모은 이야기를 골라 읽는다
         if (game.collected.length > 0) return { game, modal: { kind: 'readPick' } }
         get().say(T.acts.tableEmpty)
@@ -903,6 +916,9 @@ export const useGame = create<Store>((set, get) => {
         return
       }
       sfx('done')
+      // 요한계시록 2·3장: 일곱 교회 카드가 생겼다
+      const newCards = next.churches.length - game.churches.length
+      if (newCards > 0) get().say(fill(T.revRoom.cardsGot, { n: newCards }), 3200)
       set({ game: persist(next), modal: { kind: 'desk', result: { kind: 'done' }, dark: false } })
     },
     answerQuiz: (given) => {
@@ -951,14 +967,15 @@ export const useGame = create<Store>((set, get) => {
       if (newCards > 0) get().say(fill(T.acts.cardsGot, { n: newCards }), 3200)
       set({ game: persist(state), modal: { kind: 'desk', result, dark: false } })
     },
-    moveJourney: (index, delta) => {
+    moveBoard: (board, index, delta) => {
       const game = get().game
-      const next = moveJourneyCard(game, index, delta, CONTENT)
+      const def = CARD_BOARDS[board]
+      const next = moveBoardCard(game, def.field, index, delta, CONTENT)
       if (next === game) return
       sfx('pen')
-      if (next.flags.actsShip && !game.flags.actsShip) {
+      if (next.flags[def.flag] && !game.flags[def.flag]) {
         sfx('done')
-        get().say(T.acts.boardDoneToast, 3200)
+        get().say(def.doneToast, 3200)
       }
       set({ game: persist(next) })
     },

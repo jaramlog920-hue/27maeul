@@ -40,6 +40,10 @@ export type PlaceId =
   // 히브리서–유다서 방 (계획 8 작업 5): 편지 선반, 읽는 탁자
   | 'hebJudShelf'
   | 'hebJudTable'
+  // 요한계시록 방 (계획 9 작업 4): 한 권 선반, 벽의 일곱 교회 카드 판, 읽는 탁자
+  | 'revShelf'
+  | 'churchBoard'
+  | 'revTable'
 export type Target =
   | { kind: 'place'; id: PlaceId; tile: Tile }
   | { kind: 'neighbor'; id: string; tries: number }
