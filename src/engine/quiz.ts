@@ -30,8 +30,11 @@ export type Question =
   | { kind: 'verse'; ref: string; options: string[]; answer: string }
   | { kind: 'order'; options: string[]; answer: string }
   | { kind: 'book'; ref: string; options: Book[]; answer: Book }
-  /** 편지 첫머리에 그 칸으로 적힌 이름 — ref는 답 이름이 적힌 구절 (맞힌 뒤 보인다) */
-  | { kind: 'opening'; book: Book; role: OpeningRole; ref: string; options: string[]; answer: string }
+  /**
+   * 편지 첫머리 구절 속 빈칸 — 그 칸으로 적힌 이름이 빈칸이다. before + answer + after = 그 구절 본문(개역한글) 그대로.
+   * 책 이름은 묻는 말에 넣지 않는다(답이 드러나므로). ref는 맞힌 뒤 보인다
+   */
+  | { kind: 'opening'; book: Book; role: OpeningRole; ref: string; before: string; after: string; options: string[]; answer: string }
   /** 먼저 나오는 구절 — options·answer는 절 참조, 화면은 맞히기 전에는 본문만 보인다 */
   | { kind: 'verseOrder'; options: string[]; answer: string }
 
@@ -278,10 +281,19 @@ const openingEnd = (ref: string) => {
   return m ? { abbr: m[1], last: Number(m[3] ?? m[2]) } : null
 }
 
+/** 첫머리 문제의 오답 보기 수: 둘까지 줄일 수 있다(보기 셋). 셋이 되면 셋 */
+export const OPENING_MIN_WRONG = 2
+const OPENING_MAX_WRONG = 3
+
+/** text 안에 name이 몇 번 나오나 (글자 그대로) */
+const occurrences = (text: string, name: string) => text.split(name).length - 1
+
 /**
- * 첫머리 문제 (exclusion-list §4-6): "이 편지 첫머리에 보낸 사람으로 적힌 이름은?" — "누가 썼나요?"로 묻지 않는다.
- * 답은 그 칸에 적힌 이름 하나. 오답 셋은 다른 편지들의 같은 칸 이름 중 이 편지 첫머리(1:1부터 letters.json의 가장 뒤 구절까지)
- * 본문 어디에도 없는 이름 — 같은 편지에 보낸 이가 여럿이어도 그 누구도 오답이 되지 않는다. 셋을 못 채우는 칸은 묻지 않는다.
+ * 첫머리 문제 (exclusion-list §4-6): 이름이 적힌 첫머리 구절을 보이고 그 이름 자리를 빈칸으로 — "누가 썼나요?"로 묻지 않고,
+ * 책 이름도 말하지 않는다(로마서→로마처럼 답이 드러나므로). 구절의 참조는 맞힌 뒤에 보인다.
+ * 답은 그 칸에 적힌 이름 하나. 그 이름이 보이는 구절에 두 번 이상 나오면 그 줄은 묻지 않는다(빈칸이 하나여야 하므로).
+ * 오답은 다른 편지들의 같은 칸 이름 중 이 편지 첫머리(1:1부터 letters.json의 가장 뒤 구절까지) 본문 어디에도 없는 이름 —
+ * 같은 편지에 보낸 이가 여럿이어도 그 누구도 오답이 되지 않는다. 오답을 둘(OPENING_MIN_WRONG) 못 채우는 칸은 묻지 않는다.
  * 이름이 null("적혀 있지 않음")인 줄은 문제로 쓰지 않는다 (계획 8에서 보기 모양을 정한다)
  */
 function openingQuestion(current: Book, openings: readonly LetterOpening[], src: QuizSource, rng: Rng): Question | null {
@@ -297,14 +309,24 @@ function openingQuestion(current: Book, openings: readonly LetterOpening[], src:
   )
   const roles = shuffle([...new Set(rows.map((o) => o.role))], rng)
   for (const role of roles) {
-    const answers = rows.filter((o) => o.role === role && o.name !== null && text.includes(norm(o.name)))
     const wrong = [
       ...new Set(openings.filter((o) => o.book !== current && o.role === role && o.name !== null).map((o) => o.name!)),
     ].filter((n) => !text.includes(norm(n)))
+    if (wrong.length < OPENING_MIN_WRONG) continue
+    const answers = rows.flatMap((o) => {
+      if (o.role !== role || o.name === null || !text.includes(norm(o.name))) return []
+      const vs = src.versesOf(o.ref)
+      if (vs.length !== 1) return []
+      const v = vs[0]
+      if (!quizzable(v.text, v.inBrackets) || occurrences(v.text, o.name) !== 1) return []
+      const i = v.text.indexOf(o.name)
+      return [{ row: o, before: v.text.slice(0, i), after: v.text.slice(i + o.name.length) }]
+    })
     const a = pickOne(answers, rng)
-    if (!a || wrong.length < 3) continue
-    const options = shuffle([a.name!, ...shuffle(wrong, rng).slice(0, 3)], rng)
-    return { kind: 'opening', book: current, role, ref: a.ref, options, answer: a.name! }
+    if (!a) continue
+    const answer = a.row.name!
+    const options = shuffle([answer, ...shuffle(wrong, rng).slice(0, OPENING_MAX_WRONG)], rng)
+    return { kind: 'opening', book: current, role, ref: a.row.ref, before: a.before, after: a.after, options, answer }
   }
   return null
 }

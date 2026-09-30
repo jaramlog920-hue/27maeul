@@ -1,7 +1,8 @@
 // 편지 서고 퀴즈 (계획 7 작업 6): 어느 책?(보기 다섯 권까지)·첫머리의 이름·빈칸·먼저 나오는 구절. 탐정·도장 없음.
 import { BOOK_ABBR, inBrackets, LETTER_OPENINGS, noText, pieceOfQuestion, pieceOfVerse, piecesOf, quizSourceFor, versesOf } from '../content/catalog'
 import { mulberry32 } from './offers'
-import { buildLibraryQuiz, MAX_BOOK_OPTIONS, QUIZ_SIZE, quizzable, type Question } from './quiz'
+import { buildLibraryQuiz, MAX_BOOK_OPTIONS, OPENING_MIN_WRONG, QUIZ_SIZE, quizzable, type Question } from './quiz'
+import T from '../content/life-text.json'
 import { roomOf } from './shelf-rooms'
 import { BOOKS, GOSPELS, LETTERS, type Book, type Letter } from './types'
 
@@ -41,9 +42,18 @@ function check(qs: Question[], current: Letter, pool: Book[], where: string) {
       const names = LETTER_OPENINGS.filter((o) => o.book === current && o.role === q.role).map((o) => o.name)
       expect(names, w).toContain(q.answer)
       expect(LETTER_OPENINGS.find((o) => o.book === current && o.role === q.role && o.name === q.answer)!.ref, w).toBe(q.ref)
-      expect(q.options, w).toHaveLength(4)
-      expect(new Set(q.options).size, w).toBe(4)
+      // 보기는 셋이나 넷 (오답 둘 이상)
+      expect(q.options.length, w).toBeGreaterThanOrEqual(1 + OPENING_MIN_WRONG)
+      expect(q.options.length, w).toBeLessThanOrEqual(4)
+      expect(new Set(q.options).size, w).toBe(q.options.length)
       expect(q.options, w).toContain(q.answer)
+      // 빈칸을 답으로 채우면 그 구절 본문(개역한글)과 한 글자도 다르지 않고, 답 이름은 그 구절에 한 번만 나온다
+      const verse = versesOf(q.ref)
+      expect(verse, w).toHaveLength(1)
+      expect(q.before + q.answer + q.after, w).toBe(verse[0].text)
+      expect(verse[0].text.split(q.answer).length - 1, w).toBe(1)
+      // 묻는 말에 책 이름이 없도록 문구에 {book}을 쓰지 않는다 — 보이는 구절에 빈칸 말고는 답 이름이 없다
+      expect((q.before + q.after).includes(q.answer), w).toBe(false)
       const opening = openingText(current)
       expect(opening, w).toContain(q.answer)
       for (const o of q.options.filter((x) => x !== q.answer)) {
@@ -97,17 +107,76 @@ describe('편지 서고 퀴즈', () => {
     }
   }
 
-  it('첫머리 문제가 실제로 나온다 (로마서 보낸 이, 디모데전서 받는 사람 등)', () => {
-    const seen = new Set<string>()
+  /** 편지마다 씨앗 여럿으로 나온 첫머리 문제 전부 (그 책만 · 서고 전부) */
+  const openingQs = (() => {
+    const out: Extract<Question, { kind: 'opening' }>[] = []
     for (const current of LETTERS)
-      for (let seed = 1; seed <= 30; seed++)
-        for (const q of buildLibraryQuiz({ current, pool: [current], piecesOf, rng: mulberry32(seed), src: quizSourceFor([current]), openings: LETTER_OPENINGS }))
-          if (q.kind === 'opening') seen.add(`${q.book}:${q.role}`)
+      for (const pool of [[current], [...BOOKS]] as Book[][]) {
+        const src = quizSourceFor(pool)
+        for (let seed = 1; seed <= 60; seed++)
+          for (const q of buildLibraryQuiz({ current, pool, piecesOf, rng: mulberry32(seed), src, openings: LETTER_OPENINGS })) if (q.kind === 'opening') out.push(q)
+      }
+    return out
+  })()
+
+  it('첫머리 문제가 실제로 나온다 (로마서 보낸 이, 디모데전서 받는 사람 등), 오답이 둘뿐인 칸도 나온다', () => {
+    const seen = new Set(openingQs.map((q) => `${q.book}:${q.role}`))
     expect(seen).toContain('rom:from')
     expect(seen).toContain('rom:toPlace')
     expect(seen).toContain('1ti:toPerson')
-    // 데살로니가전서 보낸 이(바울·실루아노·디모데)는 오답 셋을 못 채워 내지 않는다
+    // 오답 둘(소스데네·실루아노)로 보기 셋 — 디모데는 첫머리에 있어 오답이 될 수 없다
+    expect(seen).toContain('1ti:from')
+    expect(seen).toContain('2ti:from')
+    expect(seen).toContain('phm:from')
+    expect(openingQs.some((q) => q.options.length === 3)).toBe(true)
+    // 데살로니가전서 보낸 이(바울·실루아노·디모데)는 오답이 소스데네 하나뿐이라 내지 않는다
     expect(seen).not.toContain('1th:from')
+    expect(seen).not.toContain('2th:from')
+    // 빌레몬서 받는 사람(빌레몬·압비아·아킵보)은 다른 편지의 받는 사람 디모데·디도 중 디모데가 첫머리(몬 1:1)에 있어 오답이 디도 하나뿐 — 내지 않는다
+    expect(seen).not.toContain('phm:toPerson')
+  })
+
+  it('첫머리 문제: 쓰인 모든 이름 줄에서 빈칸을 답으로 채우면 구절 본문 그대로다', () => {
+    const used = new Set(openingQs.map((q) => `${q.book}|${q.role}|${q.answer}|${q.ref}`))
+    for (const q of openingQs) expect(q.before + q.answer + q.after, `${q.book} ${q.ref}`).toBe(versesOf(q.ref)[0].text)
+    // 물을 수 있는 줄(이름이 그 구절에 한 번, 그 칸 오답 둘 이상)은 모두 한 번 이상 쓰였다
+    for (const o of LETTER_OPENINGS) {
+      if (o.name === null) continue
+      const text = versesOf(o.ref)[0].text
+      const opening = openingText(o.book as Letter)
+      const wrong = new Set(LETTER_OPENINGS.filter((x) => x.book !== o.book && x.role === o.role && x.name !== null && !opening.includes(norm(x.name))).map((x) => x.name))
+      const askable = text.split(o.name).length - 1 === 1 && wrong.size >= OPENING_MIN_WRONG
+      expect(used.has(`${o.book}|${o.role}|${o.name}|${o.ref}`), `${o.book} ${o.role} ${o.name}`).toBe(askable)
+    }
+  })
+
+  it('데살로니가(살전·살후 받는 곳): 빈칸은 "데살로니가"만, "인의"는 본문 그대로 남는다', () => {
+    const th = openingQs.filter((q) => (q.book === '1th' || q.book === '2th') && q.role === 'toPlace')
+    expect(th.length).toBeGreaterThan(0)
+    for (const q of th) {
+      expect(q.answer).toBe('데살로니가')
+      expect(q.after.startsWith('인의 교회에')).toBe(true)
+      expect(q.before.endsWith('안에 있는 ')).toBe(true)
+      expect(q.before + q.answer + q.after).toBe(versesOf(q.ref)[0].text)
+    }
+  })
+
+  it('첫머리 오답은 그 편지 첫머리에 없다: 몬 받는 사람·딤전/딤후 보낸 이에 디모데가 오답으로 나오지 않는다', () => {
+    for (const q of openingQs) {
+      if (q.book === 'phm') expect(q.options.filter((o) => o !== q.answer)).not.toContain('디모데')
+      if ((q.book === '1ti' || q.book === '2ti') && q.role === 'from') {
+        expect(q.answer).toBe('바울')
+        expect(q.options).not.toContain('디모데')
+      }
+    }
+    expect(openingQs.some((q) => q.book === '1ti' && q.role === 'from')).toBe(true)
+  })
+
+  it('첫머리 문제의 묻는 말에 책 이름이 없다', () => {
+    for (const s of Object.values(T.quiz.opening)) {
+      expect(s).not.toContain('{book}')
+      for (const name of Object.values(T.quiz.books)) expect(s).not.toContain(name)
+    }
   })
 
   it('먼저 나오는 구절 문제가 여러 장짜리 편지에서 나오고, 빌레몬서(한 장)에서는 나오지 않는다', () => {
@@ -164,7 +233,7 @@ describe('편지 서고 퀴즈', () => {
   })
 
   it('틀린 문제의 다시 읽을 구절: 첫머리는 그 구절의 장, 먼저 나오는 구절은 앞 구절의 장', () => {
-    expect(pieceOfQuestion({ kind: 'opening', book: 'rom', role: 'from', ref: '롬 1:1', options: [], answer: '바울' })).toBe('rom-001')
+    expect(pieceOfQuestion({ kind: 'opening', book: 'rom', role: 'from', ref: '롬 1:1', before: '', after: '', options: [], answer: '바울' })).toBe('rom-001')
     expect(pieceOfQuestion({ kind: 'verseOrder', options: ['롬 5:1', '롬 3:1'], answer: '롬 3:1' })).toBe('rom-003')
   })
 })

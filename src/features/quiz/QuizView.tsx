@@ -117,20 +117,26 @@ function BookQuestion({ q, wrong, solved, onAnswer }: { q: Extract<Question, { k
 }
 
 /**
- * 편지 첫머리 문제 (exclusion-list §4-6): 첫머리에 그 칸으로 "적힌 이름"을 묻는다 — "누가 썼나요?"로 묻지 않는다.
- * 맞히기 전에는 본문을 보이지 않고(이름이 드러나므로), 맞힌 뒤 그 구절을 보인다
+ * 편지 첫머리 문제 (exclusion-list §4-6): 첫머리 구절(개역한글 그대로)에서 그 칸으로 "적힌 이름" 자리만 빈칸 — "누가 썼나요?"로 묻지 않고,
+ * 책 이름도 말하지 않는다(답이 드러나므로). 참조는 맞힌 뒤에 보이고, 그때 빈칸이 채워져 구절 전체가 보인다
  */
 function OpeningQuestion({ q, wrong, solved, onAnswer }: { q: Extract<Question, { kind: 'opening' }>; wrong: string[]; solved: boolean; onAnswer: (o: string) => void }) {
   return (
     <>
-      <p className="quiz-prompt">{fill(T.quiz.opening[q.role], { book: BOOK_NAME[q.book] })}</p>
+      <p className="quiz-prompt">{T.quiz.opening[q.role]}</p>
+      <section className="passage" aria-label={solved ? `성경 본문 ${q.ref}` : '성경 본문'}>
+        <header className="passage-ref">
+          <span>{solved ? q.ref : T.quiz.bookHidden}</span>
+          <span className="passage-src">{T.ui.bibleSource}</span>
+        </header>
+        <div className="passage-body">
+          <p>
+            {q.before}<span className="blank-slot">{solved ? q.answer : '＿＿＿'}</span>{q.after}
+          </p>
+        </div>
+      </section>
+      {solved && <p className="stamp-note">{T.quiz.openingAfter}</p>}
       <Choices options={q.options} label={(o) => o} answer={q.answer} wrong={wrong} solved={solved} onAnswer={onAnswer} />
-      {solved && (
-        <>
-          <p className="stamp-note">{T.quiz.openingAfter}</p>
-          <Passage refText={q.ref} />
-        </>
-      )}
     </>
   )
 }
