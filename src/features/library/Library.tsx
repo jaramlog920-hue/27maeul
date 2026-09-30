@@ -5,6 +5,7 @@ import { bookDone, openDoorsFor } from '../../engine/books'
 import { has } from '../../engine/items'
 import { RETRY_COST } from '../../engine/library'
 import { GOSPELS } from '../../engine/types'
+import { SpineMarks } from './SpineMarks'
 import { useGame } from '../../store/game-store'
 
 const BOOK_NAME = T.quiz.books as Record<string, string>
@@ -34,6 +35,7 @@ export function Library() {
             <li key={b} className={`spine grade-${g ?? 'none'}`}>
               <span className="spine-name">{BOOK_NAME[b]}</span>
               <span className="spine-grade">{status}</span>
+              <SpineMarks book={b} />
               {g === undefined && done && (
                 <button className="primary" onClick={() => startShelve(b)}>
                   {T.library.shelve}

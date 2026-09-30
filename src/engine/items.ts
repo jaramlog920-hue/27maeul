@@ -80,9 +80,9 @@ export const RECIPES: Record<RecipeId, Recipe> = {
   cover: { id: 'cover', at: 'workbench', needs: { papyrus: 2, wool: 1 }, gives: { cover: 1 }, minutes: 40, minigame: 'timing' },
 }
 
-/** 좋은 펜이 있으면 잉크 한 번 만들 때 두 병 */
+/** 잉크 한 번 만들 때: 기본 한 병, 좋은 펜 +1, 잉크 제조대(계획 13) +2 — fixtures.inkYield와 같은 셈 */
 export function recipeGives(r: Recipe, inv: Inventory, flags: Record<string, number> = {}): Partial<Record<ItemId, number>> {
-  if (r.id === 'ink' && count(inv, 'goodPen') > 0) return { ink: 2 }
+  if (r.id === 'ink') return { ink: 1 + (count(inv, 'goodPen') > 0 ? 1 : 0) + ((flags['fix:inkStand'] ?? 0) >= 1 ? 2 : 0) }
   // 새 손잡이를 단 기름틀은 한 병 더
   if (r.id === 'oil' && (flags['unlock:pressHandle'] ?? 0) > 0) return { oil: 2 }
   return r.gives

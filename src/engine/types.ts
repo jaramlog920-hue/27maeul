@@ -167,6 +167,12 @@ export type ItemId =
   // 연애와 결혼 (계획 6): 고백에 건네는 들꽃 다발, 청혼에 건네는 약속의 끈
   | 'bouquet'
   | 'promiseCord'
+  // 살림과 서고 (계획 13): 희귀품 — 장날 희귀 좌판·이웃 이벤트·여행에서만
+  | 'finePapyrus'
+  | 'sealWax'
+  | 'purpleCloth'
+  | 'perfumeOil'
+  | 'bronzeOrnament'
 
 export type Minigame = 'mash' | 'timing' | 'pick'
 

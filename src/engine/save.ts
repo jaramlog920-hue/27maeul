@@ -137,6 +137,9 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     romance: sanitizeRomance(s.romance),
     // 살아 움직이는 사람들 (계획 6b): 옛 저장은 빈 기억
     life: sanitizeLife(s.life),
+    // 살림과 서고 (계획 13): 옛 저장은 정성 들인 장 없음, 봉인 없음
+    careful: Object.fromEntries(Object.entries(isObj(s.careful) ? s.careful : {}).filter(([, v]) => Array.isArray(v)).map(([k, v]) => [k, (v as unknown[]).filter((n): n is number => Number.isInteger(n))])),
+    sealed: isStrArray(s.sealed) ? s.sealed : [],
     needs: { ...s.needs, heat: s.needs?.heat ?? 0 },
     collected,
     progress,

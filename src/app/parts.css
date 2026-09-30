@@ -1096,3 +1096,67 @@ button.copy-blank.on {
   color: var(--ink-soft);
   border: 1px solid #d9c9b0;
 }
+
+/* 부탁하기 (계획 13): 줄마다 이름·좋아지는 것·드는 것, 오른쪽에 부탁 단추 */
+.order-list {
+  list-style: none;
+  padding: 0;
+  margin: 6px 0;
+}
+.order-list li {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 0;
+  border-bottom: 1px dashed #d9c9b0;
+}
+.order-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.order-effect {
+  font-size: 12px;
+  color: var(--ink);
+}
+.order-cost {
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+.order-list button {
+  flex-shrink: 0;
+}
+
+/* 책상의 정성 (계획 13) */
+.care-line .careful {
+  color: #9a6a1a;
+  font-weight: 600;
+}
+.care-fine {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 12px;
+  margin: 2px 0 4px;
+}
+
+/* 서고 책등의 금테·봉인 (계획 13) */
+.spine-mark {
+  display: inline-block;
+  padding: 0 6px;
+  border-radius: 8px;
+  font-size: 11px;
+  margin-left: 4px;
+}
+.spine-mark.gold {
+  background: #f3e2a8;
+  color: #7a5a14;
+  border: 1px solid #d9b44a;
+}
+.spine-mark.seal {
+  background: #f0cfc8;
+  color: #8e3f30;
+  border: 1px solid #c77a6a;
+}

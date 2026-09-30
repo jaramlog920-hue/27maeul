@@ -80,6 +80,7 @@ import {
   type Routine,
   type Stage,
 } from './people'
+import { CAREFUL_AT, careScore, fixtureTier, FIXTURE_STEPS, lampNightsPerOil, nextFixture, type FixtureLine, type FixtureStep } from './fixtures'
 import { POSTMAN, postForDay, starPostFor } from './post'
 import { blanksFor } from './copy'
 import { checkArrangement, moveItem, type ArrangeResult } from './scroll'
@@ -194,6 +195,10 @@ export interface GameState {
   romance: Romance
   /** 살아 움직이는 사람들 (계획 6b): 본 장면·기억·관계의 색·최근 말·서먹함·약속 */
   life: Life
+  /** 살림과 서고 (계획 13): 책마다 정성 들인 장 번호 */
+  careful: Record<string, number[]>
+  /** 봉인용 밀랍으로 봉인한 책 */
+  sealed: string[]
 }
 
 /** 지도(world.tileAt)가 이 게임의 집 단계·열린 서고 방 문(방 표)을 보게 한다. 지도를 읽는 엔진 입구마다 부른다 */
@@ -434,6 +439,8 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
     stats: freshStats(),
     romance: NO_ROMANCE,
     life: NO_LIFE,
+    careful: {},
+    sealed: [],
   }
 }
 
@@ -1509,7 +1516,8 @@ export function sell(s: GameState, item: ItemId): GameState | null {
 export function eatBread(s: GameState): GameState | null {
   for (const [id, amount] of FOODS) {
     const left = take(s.inv, { [id]: 1 })
-    if (left) return { ...s, inv: left, needs: { ...s.needs, hunger: Math.max(0, s.needs.hunger - amount) } }
+    // 먹은 날은 집중 (정성 들인 장 — 계획 13)
+    if (left) return { ...s, inv: left, needs: { ...s.needs, hunger: Math.max(0, s.needs.hunger - amount) }, flags: { ...s.flags, ateDay: s.clock.day } }
   }
   return null
 }
@@ -1830,7 +1838,8 @@ export function lightLamp(s: GameState): GameState | null {
   // 책상 곁이라 궤짝의 기름도 쓴다
   const left = useStock(s, { oil: 1 })
   if (!left) return null
-  const extra = count(s.inv, 'brightLamp') > 0 ? 1 : 0
+  // 기름 한 병으로 켜는 밤: 작은 등잔 1, 두 심지 2, 청동 3 (계획 13)
+  const extra = lampNightsPerOil(s) - 1
   return { ...left, lampFuel: extra, lampLitDay: s.clock.day, flags: { ...s.flags, lampNights: (s.flags.lampNights ?? 0) + 1 } }
 }
 
@@ -1850,16 +1859,58 @@ export function chapterReady(s: GameState, book: Book, chapter: number, content:
   const result = checkArrangement(pieces, chapter, bp.arrangement[chapter] ?? [], s.collected)
   if (result.kind !== 'done' || bp.completed.includes(chapter)) return result
   if (exhausted(s.needs)) return { kind: 'tired' }
-  if (!haveStock(s, CHAPTER_COST)) return { kind: 'supplies', need: CHAPTER_COST }
+  if (!haveStock(s, chapterCost(s))) return { kind: 'supplies', need: chapterCost(s) }
   return result
 }
 
 /** 퀴즈까지 마친 뒤 실제로 기록한다 (재료를 쓰고 장을 완성). 한 권의 마지막 장이면 'bookBound' 장면 */
+// ── 정성 들인 장 (계획 13, 규칙은 fixtures.ts) ──
+
+/** 한 장에 드는 것: 책상에서 '좋은 파피루스로 쓰기'를 켜고 좋은 파피루스가 있으면 그것으로 */
+export function chapterCost(s: Pick<GameState, 'inv' | 'flags' | 'chest'>): Partial<Record<ItemId, number>> {
+  return s.flags.useFine && stockOf(s, 'finePapyrus') > 0 ? { finePapyrus: 1, ink: 1 } : CHAPTER_COST
+}
+
+/** 오늘 먹었고 배고프지 않으면 집중 */
+export function focused(s: Pick<GameState, 'flags' | 'clock' | 'needs'>): boolean {
+  return s.flags.ateDay === s.clock.day && s.needs.hunger < 70
+}
+
+/** 지금 기록하면 정성 점수 몇 점인가 (책상 화면에 미리 보인다) */
+export function careNow(s: GameState): { score: number; fine: boolean; focused: boolean; goodLight: boolean; deskTier: number } {
+  const fine = 'finePapyrus' in chapterCost(s)
+  const night = needsLamp(s)
+  const c = { fine, focused: focused(s), goodLight: !night || fixtureTier(s, 'lamp') >= 1, deskTier: fixtureTier(s, 'desk') }
+  return { ...c, score: careScore(c) }
+}
+
+/** 장을 기록할 때 재료를 쓰고, 정성 들인 장이면 적어 둔다 */
+function payChapter(s: GameState, book: Book, chapter: number): GameState {
+  const care = careNow(s)
+  const paid = useStock(s, chapterCost(s))!
+  if (care.score < CAREFUL_AT) return paid
+  const list = s.careful?.[book] ?? []
+  return { ...paid, careful: { ...s.careful, [book]: list.includes(chapter) ? list : [...list, chapter] } }
+}
+
+export type SealBlock = 'notShelved' | 'sealed' | 'noWax' | null
+/** 서고에 꽂은 책을 봉인용 밀랍으로 봉인한다 (책등에 붉은 봉인) */
+export function canSeal(s: GameState, book: Book): SealBlock {
+  if (s.shelved[book] === undefined) return 'notShelved'
+  if ((s.sealed ?? []).includes(book)) return 'sealed'
+  if (stockOf(s, 'sealWax') === 0) return 'noWax'
+  return null
+}
+export function sealBook(s: GameState, book: Book): GameState {
+  if (canSeal(s, book)) return s
+  return { ...useStock(s, { sealWax: 1 })!, sealed: [...(s.sealed ?? []), book] }
+}
+
 export function submitChapter(s: GameState, book: Book, chapter: number, content: GameContent): { state: GameState; result: SubmitResult } {
   const result = chapterReady(s, book, chapter, content)
   const bp = s.progress[book]
   if (result.kind !== 'done' || bp.completed.includes(chapter)) return { state: s, result }
-  const paid = useStock(s, CHAPTER_COST)!
+  const paid = payChapter(s, book, chapter)
   const progress = { ...s.progress, [book]: { ...bp, completed: [...bp.completed, chapter] } }
   const scenes = [...s.scenes]
   if (totalChapters(s) === 0) scenes.push('firstChapter')
@@ -1893,7 +1944,7 @@ export function letterReady(s: GameState, book: Book, chapter: number, content: 
   if (!s.collected.includes(piece.id)) return { kind: 'notReceived' }
   if (currentChapter(pieces, bp.completed) !== chapter) return { kind: 'order' }
   if (exhausted(s.needs)) return { kind: 'tired' }
-  if (!haveStock(s, CHAPTER_COST)) return { kind: 'supplies', need: CHAPTER_COST }
+  if (!haveStock(s, chapterCost(s))) return { kind: 'supplies', need: chapterCost(s) }
   return { kind: 'ready' }
 }
 
@@ -1911,7 +1962,7 @@ export function recordLetter(s: GameState, book: Book, chapter: number, picks: r
   const scenes = [...s.scenes]
   if (totalChapters(s) === 0) scenes.push('firstChapter')
   if (bookDone({ progress }, book, content)) scenes.push('bookBound')
-  const recorded = passTime({ ...useStock(s, CHAPTER_COST)!, progress, scenes, needs: work(s.needs, 6) }, bindMinutes(s))
+  const recorded = passTime({ ...payChapter(s, book, chapter), progress, scenes, needs: work(s.needs, 6) }, bindMinutes(s))
   // 요한계시록 2·3장을 옮겨 적으면 그 장의 교회 카드가 일곱 교회 판에 들어온다
   return book === 'rev' ? syncBoard(recorded, 'churches', content) : recorded
 }
@@ -1960,9 +2011,9 @@ export function moveJourneyCard(s: GameState, index: number, delta: number, cont
 }
 
 /** 한 장을 엮는 데 드는 분: 기분이 좋으면 45, 아니면 60. 넓은 책상이면 20% 덜 */
-export function bindMinutes(s: Pick<GameState, 'needs' | 'clock' | 'room' | 'inv'>): number {
+export function bindMinutes(s: Pick<GameState, 'needs' | 'clock' | 'room' | 'inv'> & Partial<Pick<GameState, 'flags'>>): number {
   const base = inGoodMood(s) ? 45 : 60
-  return count(s.inv, 'wideDesk') > 0 ? Math.round(base * 0.8) : base
+  return fixtureTier({ flags: s.flags ?? {}, inv: s.inv }, 'desk') >= 1 ? Math.round(base * 0.8) : base
 }
 
 // ── 잠과 새 날 ──
@@ -2144,6 +2195,14 @@ function morningSupplies(s: GameState, endedDay: number): GameState {
     const paid = useStock(next, { soot: 1, water: 1 })
     if (paid) next = putAway(paid, { ink: 1 })
   }
+  // 부탁해 둔 기록 설비가 설치된다 (계획 13)
+  for (const line of ['desk', 'lamp', 'shelf', 'inkStand'] as FixtureLine[]) {
+    const tier = next.flags[`fixOrder:${line}`]
+    if (!tier) continue
+    const flags = { ...next.flags, [`fix:${line}`]: tier }
+    delete flags[`fixOrder:${line}`]
+    next = { ...next, flags, scenes: [...next.scenes, `fixed:${line}:${tier}`] }
+  }
   for (const w of CARPENTER_WORKS) {
     if (!next.flags[`order:${w.id}`]) continue
     const flags = { ...next.flags, [`unlock:${w.id}`]: 1 }
@@ -2246,6 +2305,35 @@ export function orderWork(s: GameState, id: CarpenterWork['id']): GameState | nu
   const w = CARPENTER_WORKS.find((x) => x.id === id)
   if (!w || canOrderWork(s, id)) return null
   return { ...s, coins: s.coins - w.coins, flags: { ...s.flags, [`order:${id}`]: 1 } }
+}
+
+// ── 기록 설비 부탁 (계획 13): 목수(기록대·서가·잉크 제조대), 대장장이(등잔) — 다음 날 아침 설치 ──
+
+export type FixtureBlock = 'notMoved' | 'done' | 'ordered' | 'coins' | 'needs' | null
+/** 이 이웃에게 부탁할 수 있는 다음 설비들 */
+export function fixtureOffers(s: GameState, maker: FixtureStep['maker']): { step: FixtureStep; block: FixtureBlock }[] {
+  const lines = [...new Set(FIXTURE_STEPS.filter((x) => x.maker === maker).map((x) => x.line))]
+  return lines.flatMap((line) => {
+    const step = nextFixture(s, line)
+    return step && step.maker === maker ? [{ step, block: canOrderFixture(s, line) }] : []
+  })
+}
+
+export function canOrderFixture(s: GameState, line: FixtureLine): FixtureBlock {
+  const step = nextFixture(s, line)
+  if (!step) return 'done'
+  if (step.maker === 'carpenter' && !s.flags['movedIn:carpenter']) return 'notMoved'
+  if (s.flags[`fixOrder:${line}`]) return 'ordered'
+  if (s.coins < step.coins) return 'coins'
+  if (!haveStock(s, step.needs)) return 'needs'
+  return null
+}
+
+export function orderFixture(s: GameState, line: FixtureLine): GameState | null {
+  const step = nextFixture(s, line)
+  if (!step || canOrderFixture(s, line)) return null
+  const paid = useStock(s, step.needs)!
+  return { ...paid, coins: s.coins - step.coins, flags: { ...paid.flags, [`fixOrder:${line}`]: step.tier } }
 }
 
 /** 목수에게 다음 단계를 부탁한다 (닢과 재료를 내고, 다음 날 아침 지어진다) */

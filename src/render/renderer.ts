@@ -6,6 +6,8 @@ import { totalChapters } from '../engine/books'
 import { shelfRoom } from '../engine/shelf-rooms'
 import { routineOf, shelvedCount, straysToday, weddingToday, type GameState } from '../engine/game'
 import type { Activity } from '../engine/people'
+import { fixtureTier, goldTrim, RARE_ITEMS } from '../engine/fixtures'
+import { chaptersOf } from '../engine/books'
 import { FURNITURE_DEFS, type Furniture } from '../engine/room'
 import { FURNI_PALETTE, FURNITURE_ART } from './furniture-art'
 import { drawDecor, lanternLights, sheepCount } from './decor'
@@ -1353,7 +1355,50 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           g.fillStyle = BAND[grade]
           g.fillRect(sx, sy + 2, 8, 2)
           g.fillRect(sx, sy + 7, 8, 1)
+          // 정성 (계획 13): 금테는 위아래 금빛 줄, 봉인은 가운데 붉은 점
+          if (goldTrim(game.careful?.[b], chaptersOf(b, content).length)) {
+            g.fillStyle = '#e8c55a'
+            g.fillRect(sx, sy, 8, 1)
+            g.fillRect(sx, sy + 9, 8, 1)
+          }
+          if ((game.sealed ?? []).includes(b)) {
+            g.fillStyle = '#b4533f'
+            g.fillRect(sx + 3, sy + 4, 2, 2)
+          }
         })
+        // 서고 서가 단계 (계획 13): 벽면 서가는 양옆 책장을 밝은 나무로 새로 짜고 윗단을 두른다,
+        // 완성된 서고는 가운데 선반 위 자주색 천 드림과 양옆 청동 등, 그리고 모은 희귀품 진열
+        const shelfTier = fixtureTier(game, 'shelf')
+        if (shelfTier >= 1)
+          for (const dx of [-4, -3, -2, 4, 5, 6]) {
+            const x0 = (first.x + dx) * TILE
+            const y0 = first.y * TILE
+            g.fillStyle = '#b08a62'
+            g.fillRect(x0 + 1, y0 + 1, 14, 2)
+            g.fillRect(x0 + 1, y0 + 1, 1, 14)
+            g.fillRect(x0 + 14, y0 + 1, 1, 14)
+          }
+        if (shelfTier >= 2) {
+          const cx = first.x * TILE
+          const cy = first.y * TILE
+          g.fillStyle = '#7a4a6b'
+          g.fillRect(cx + 2, cy - 12, 44, 5)
+          g.fillStyle = '#9a6a8b'
+          for (let i = 0; i < 11; i++) g.fillRect(cx + 3 + i * 4, cy - 7, 2, 3)
+          g.fillStyle = '#c9a15a'
+          for (const dx of [-5, 7]) {
+            g.fillRect((first.x + dx) * TILE + 6, cy - 2, 4, 6)
+            g.fillStyle = '#f5c542'
+            g.fillRect((first.x + dx) * TILE + 7, cy - 4, 2, 2)
+            g.fillStyle = '#c9a15a'
+          }
+          // 진열: 가진 희귀품을 양옆 책장 윗단에 하나씩
+          RARE_ITEMS.filter((id) => (game.inv[id] ?? 0) > 0 || (game.chest?.[id] ?? 0) > 0).forEach((id, i) => {
+            const c = iconCanvas(id)
+            const dx = [-4, 4, -3, 5, -2][i]
+            if (c && dx !== undefined) g.drawImage(c, (first.x + dx) * TILE + 4, first.y * TILE - 5)
+          })
+        }
         // 양옆 책장: 복음서 다음에 꽂은 책(사도행전·편지·요한계시록)마다 책등 둘씩 — 방마다 다른 책등 색, 등급 띠
         const SIDE_SPINE: [readonly Book[], readonly [string, string]][] = [
           [['ac'], ['#a894c4', '#b8a4d2']],

@@ -18,6 +18,7 @@ import { MyLineForm } from './passage/MyLineForm'
 import { PassageWindow } from './passage/PassageWindow'
 import { Review } from './review/Review'
 import { SceneView } from './scene/SceneView'
+import { OrdersView } from './talk/OrdersView'
 import { Shelf } from './shelf/Shelf'
 import { GiftPicker } from './talk/GiftPicker'
 import { TalkBox } from './talk/TalkBox'
@@ -51,6 +52,8 @@ function Body() {
       return <Journal />
     case 'scene':
       return <SceneView id={modal.id} chosen={modal.chosen} />
+    case 'orders':
+      return <OrdersView npc={modal.npc} />
     case 'mini':
       return <MiniGame state={modal.state} pending={modal.pending} />
     case 'gift':

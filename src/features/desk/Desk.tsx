@@ -8,6 +8,7 @@ import { modeOf, roomOf } from '../../engine/shelf-rooms'
 import { LetterCopy } from './LetterCopy'
 import { stockOf, type SubmitResult } from '../../engine/game'
 import { currentChapter } from '../../engine/offers'
+import { CareLine } from './CareLine'
 import { useGame } from '../../store/game-store'
 
 const BOOK_NAME = T.quiz.books as Record<string, string>
@@ -107,7 +108,7 @@ export function Desk({ result, dark }: { result: SubmitResult | null; dark: bool
       <div className="dialog scroll-dialog" role="dialog" aria-label={piece.title}>
         <h2>{piece.title}</h2>
         <Passage refText={piece.ref} />
-        <div className="actions"><button autoFocus onClick={() => setReading(null)}>이어붙이기로 돌아가기</button></div>
+        <div className="actions"><button autoFocus onClick={() => setReading(null)}>{T.ui.deskBack}</button></div>
       </div>
     )
   }
@@ -122,6 +123,7 @@ export function Desk({ result, dark }: { result: SubmitResult | null; dark: bool
         {chapter !== null && <> · {fill(T.ui.deskCollected, { got: list.length, all })}</>}
       </p>
       <p className="hint">{T.ui.chapterNote}</p>
+      <CareLine />
       {message && (
         <p className={`desk-message ${result?.kind}`} role="status">
           {message}

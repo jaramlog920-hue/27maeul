@@ -4,6 +4,7 @@ import { CONTENT, neighborById, copySourceFor, LETTER_OPENINGS, pieceById, piece
 import { blanksFor } from '../engine/copy'
 import { currentChapter } from '../engine/offers'
 import { handEase, leveledUp, XP, type StatId } from '../engine/stats'
+import type { FixtureLine } from '../engine/fixtures'
 import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
 import { bookRoomOpen, openDoorsFor } from '../engine/books'
 import { actsDoorGlows, canShelve, payRetry, poolFor, shelve } from '../engine/library'
@@ -38,6 +39,8 @@ import {
   openMailbox,
   train,
   hallFriendsHere,
+  sealBook,
+  orderFixture,
   personLine,
   chooseInEvent,
   giveBouquet,
@@ -127,6 +130,8 @@ export type Modal =
   | { kind: 'review'; pieceId: string | null; attic?: boolean }
   | { kind: 'journal' }
   | { kind: 'scene'; id: string; chosen?: number }
+  /** 부탁하기 창 (계획 13) */
+  | { kind: 'orders'; npc: string }
   | { kind: 'mini'; state: MiniState; pending: Pending }
   | { kind: 'gift'; neighborId: string }
   | { kind: 'trade' }
@@ -244,6 +249,12 @@ interface Store {
   rest: () => void
   playHall: () => void
   sellHerbs: () => void
+  /** 책상: 좋은 파피루스로 쓰기 켜고 끄기 (계획 13) */
+  toggleFine: () => void
+  /** 서고: 봉인용 밀랍으로 봉인 */
+  seal: (book: Book) => void
+  /** 목수·대장장이에게 기록 설비 부탁 */
+  askFixture: (npc: string, line: FixtureLine) => void
   giveBouquet: (id: string) => void
   giveCord: (id: string) => void
   dateTea: () => void
@@ -916,6 +927,23 @@ export const useGame = create<Store>((set, get) => {
       if (next === before) return
       set({ game: persist(next), modal: null })
       get().say(fill(T.romance.dateDone, { with: withAnd(partnerName(before)) }))
+    },
+    toggleFine: () => {
+      const g = get().game
+      set({ game: persist({ ...g, flags: { ...g.flags, useFine: g.flags.useFine ? 0 : 1 } }) })
+    },
+    seal: (book) => {
+      const next = sealBook(get().game, book)
+      if (next === get().game) return
+      sfx('gift')
+      set({ game: persist(next) })
+      get().say(T.care.sealed)
+    },
+    askFixture: (npc, line) => {
+      const next = orderFixture(get().game, line)
+      if (!next) return
+      sfx('gift')
+      set({ game: persist(next), modal: { kind: 'talk', neighborId: npc, line: T.fixtures.ordered } })
     },
     // 약방에 약초 팔기 (장날이 아니어도)
     sellHerbs: () => {

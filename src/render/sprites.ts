@@ -509,6 +509,12 @@ export const ICONS: Record<string, SpriteRows> = {
   // 연애와 결혼 (계획 6): 분홍·흰 들꽃 다발(풀빛 줄기, 끈), 붉게 꼰 약속의 끈
   bouquet: ['..f.a...', '.faf.f..', '..f.faf.', '..E.Ef..', '...EE...', '...rr...', '...EE...', '........'],
   promiseCord: ['........', '.rN.....', '..rN....', '...rNrN.', '....NrN.', '...Nr...', '..rN....', '........'],
+  // 희귀품 (계획 13): 흰 테두리 좋은 파피루스, 붉은 봉랍, 자주색 천, 향유 병, 청동 장식
+  finePapyrus: ['........', '.wwwwww.', '.wyyyyw.', '.wy..yw.', '.wyyyyw.', '.wy..yw.', '.wwwwww.', '........'],
+  sealWax: ['........', '..rrrr..', '.rrrrrr.', '.rrwwrr.', '.rrwwrr.', '.rrrrrr.', '..rrrr..', '........'],
+  purpleCloth: ['........', '.pppppp.', '.pPppPp.', '.pppppp.', '.pPppPp.', '.pppppp.', '..p..p..', '........'],
+  perfumeOil: ['...kk...', '...yy...', '..kyyk..', '.kyllyk.', '.kyllyk.', '.kyyyyk.', '..kkkk..', '........'],
+  bronzeOrnament: ['........', '...YY...', '..YyyY..', '.YyYYyY.', '.YyYYyY.', '..YyyY..', '...YY...', '........'],
 }
 
 // 가구 20종은 그림을 줄여 아이콘으로

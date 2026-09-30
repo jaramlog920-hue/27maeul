@@ -274,7 +274,8 @@
     "atticRoom": "다락 서재",
     "actsRoom": "사도행전 방",
     "atticReadHint": "다락 창가에서 읽고 잠들면 평안이 하루 더 갑니다.",
-    "moreBelow": "아래로 더 있어요 ▾"
+    "moreBelow": "아래로 더 있어요 ▾",
+    "deskBack": "이어붙이기로 돌아가기"
   },
   "controls": {
     "joystick": "모바일 조이스틱",
@@ -543,6 +544,26 @@
     "promiseCord": {
       "name": "약속의 끈",
       "desc": "함께 살자고 약속할 때 건네는 곱게 꼰 끈."
+    },
+    "finePapyrus": {
+      "name": "좋은 파피루스",
+      "desc": "결이 곱고 잉크가 번지지 않는 파피루스. 정성 들인 장에 쓴다."
+    },
+    "sealWax": {
+      "name": "봉인용 밀랍",
+      "desc": "다 엮어 서고에 꽂은 책을 봉인하는 붉은 밀랍."
+    },
+    "purpleCloth": {
+      "name": "자주색 천",
+      "desc": "귀한 물감으로 물들인 천. 서고를 완성하는 데 쓴다."
+    },
+    "perfumeOil": {
+      "name": "향유",
+      "desc": "작은 병에 담긴 향기로운 기름. 귀한 선물이 된다."
+    },
+    "bronzeOrnament": {
+      "name": "청동 장식",
+      "desc": "정교하게 두드린 청동 장식. 좋은 설비에 쓴다."
     }
   },
   "recipes": {
@@ -4204,6 +4225,69 @@
         }
       ],
       "album": "둘이 본 노을"
+    },
+    "fixed:desk:1": {
+      "title": "넓은 기록대",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "목수가 넓은 기록대를 들여놓고 갔다. 파피루스를 펼쳐 놓을 자리가 넉넉하다."
+        }
+      ]
+    },
+    "fixed:desk:2": {
+      "title": "장인의 기록대",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "목수가 장인의 기록대를 짜 왔다. 청동 장식이 달린 경사판에 손을 올리자 마음이 가라앉는다."
+        }
+      ]
+    },
+    "fixed:lamp:1": {
+      "title": "두 심지 등잔",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "대장장이가 두 심지 등잔을 두고 갔다. 불빛이 한결 고르다."
+        }
+      ]
+    },
+    "fixed:lamp:2": {
+      "title": "밝은 청동 등잔",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "대장장이가 청동으로 두드린 등잔을 가져왔다. 기름 한 병으로 사흘 밤을 밝힌다."
+        }
+      ]
+    },
+    "fixed:shelf:1": {
+      "title": "벽면 서가",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "서고 벽을 따라 새 서가가 섰다. 빈 칸이 채워지길 기다린다."
+        }
+      ]
+    },
+    "fixed:shelf:2": {
+      "title": "완성된 서고",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "자주색 천을 드리우고 청동 장식을 단 서가. 서고가 비로소 완성된 모습이다. 가운데 진열칸에 모은 희귀품이 놓인다."
+        }
+      ]
+    },
+    "fixed:inkStand:1": {
+      "title": "잉크 제조대",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "목수가 작업대 곁에 잉크 제조대를 달았다. 한 번 개면 잉크가 세 병 나온다."
+        }
+      ]
     }
   },
   "journal": {
@@ -4327,7 +4411,14 @@
       "propose:poppy": " 파피에게 약속의 끈을 건넸다.",
       "wedding:poppy": " 파피와 마을 잔치를 열었다.",
       "dateTea": " 찻집에서 둘이 차를 마셨다.",
-      "dateSunset": " 정자에서 둘이 노을을 보았다."
+      "dateSunset": " 정자에서 둘이 노을을 보았다.",
+      "fixed:desk:1": " 넓은 기록대를 들였다.",
+      "fixed:desk:2": " 장인의 기록대를 들였다.",
+      "fixed:lamp:1": " 두 심지 등잔을 들였다.",
+      "fixed:lamp:2": " 밝은 청동 등잔을 들였다.",
+      "fixed:shelf:1": " 벽면 서가를 들였다.",
+      "fixed:shelf:2": " 완성된 서고를 들였다.",
+      "fixed:inkStand:1": " 잉크 제조대를 들였다."
     }
   },
   "quiz": {
@@ -4550,5 +4641,62 @@
     ],
     "mutter": "{who}: “{text}”",
     "promiseKept": "{who} 기다리고 있었다는 듯 활짝 웃었다."
+  },
+  "fixtures": {
+    "names": {
+      "desk": [
+        "낡은 책상",
+        "넓은 기록대",
+        "장인의 기록대"
+      ],
+      "lamp": [
+        "작은 등잔",
+        "두 심지 등잔",
+        "밝은 청동 등잔"
+      ],
+      "shelf": [
+        "낡은 나무 선반",
+        "벽면 서가",
+        "완성된 서고"
+      ],
+      "inkStand": [
+        "",
+        "잉크 제조대"
+      ]
+    },
+    "effect": {
+      "desk1": "기록하는 자리가 넓어진다.",
+      "desk2": "정성 들인 장이 쉬워진다 (정성 +1).",
+      "lamp1": "기름 한 병으로 이틀 밤. 밤에도 좋은 빛.",
+      "lamp2": "기름 한 병으로 사흘 밤.",
+      "shelf1": "서고 벽에 서가가 선다.",
+      "shelf2": "서고가 완성되고, 희귀품을 진열한다.",
+      "inkStand1": "잉크를 한 번에 세 병 (좋은 펜이면 네 병)."
+    },
+    "order": "{name} 부탁하기 ({coins}닢{needs})",
+    "ordered": "내일 아침까지 해 둘게요.",
+    "needsMore": "재료가 모자라요: {items}",
+    "coinsShort": "닢이 모자라요.",
+    "title": "기록 설비",
+    "carpenterHint": "기록대·서가·잉크 제조대는 목수에게, 등잔은 대장장이에게 부탁할 수 있어요.",
+    "ask": "부탁하기",
+    "open": "부탁하기",
+    "allDone": "지금은 부탁할 일이 없어요.",
+    "needsShort": "재료가 모자라요"
+  },
+  "care": {
+    "title": "정성",
+    "useFine": "좋은 파피루스로 쓰기",
+    "score": "정성 {n}/4 — {parts}",
+    "fine": "좋은 파피루스",
+    "focus": "집중(오늘 먹음)",
+    "light": "좋은 빛",
+    "desk": "장인의 기록대",
+    "careful": "정성 들인 장이 된다",
+    "plain": "보통 장",
+    "hint": "정성 들인 장이 한 권의 반을 넘으면 서고 책등에 금테가 둘러진다.",
+    "seal": "봉인용 밀랍으로 봉인하기",
+    "sealed": "봉인했다.",
+    "goldTrim": "금테"
   }
 }

@@ -2,7 +2,7 @@
 import { neighborById } from '../../content/catalog'
 import { callName, fill, itemList, NEIGHBOR_LINES, T } from '../../content/text'
 import { grapesRipe, isMarketDay } from '../../engine/calendar'
-import { activeRequest, APOTHECARY, isSuitor, romanceWith, stageWith, type GameState, canHelp, canOrderHome, canOrderWork, GIFTABLE, herbsSellLeft, lessonTime, nextHomeStage, sellPrice } from '../../engine/game'
+import { activeRequest, APOTHECARY, isSuitor, romanceWith, stageWith, type GameState, canHelp, canOrderHome, canOrderWork, fixtureOffers, GIFTABLE, herbsSellLeft, lessonTime, nextHomeStage, sellPrice } from '../../engine/game'
 import { CARPENTER_WORKS } from '../../engine/easier'
 import { requestFor, reqState } from '../../engine/bonds'
 import { has } from '../../engine/items'
@@ -45,13 +45,16 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
   const req = requestFor(def.id, game.hearts[def.id], game.flags)
   const askable = req && reqState(game.flags, req.id) === 0
   const active = activeRequest(game, def.id)
-  const { requestAsk, requestGive, askHome, askWork } = useGame.getState()
+  const { requestAsk, requestGive } = useGame.getState()
   // 목수에게 집 넓히기 부탁 (이사 온 뒤, 다음 단계가 남아 있으면)
   const homeStage = def.id === 'carpenter' ? nextHomeStage(game) : null
   const homeBlock = homeStage ? canOrderHome(game) : 'done'
   // 목수에게 살림 부탁 (계획 11): 이사 온 뒤, 아직 없는 것만
   const works = def.id === 'carpenter' ? CARPENTER_WORKS.map((w) => ({ w, block: canOrderWork(game, w.id) })).filter((x) => x.block !== 'notMoved' && x.block !== 'owned') : []
-  const easyName = (id: string) => (T.easy.names as Record<string, string>)[id]
+  // 부탁할 일이 하나라도 있으면 '부탁하기' (목수: 집·살림·설비, 대장장이: 등잔)
+  const orderable =
+    (def.id === 'carpenter' && game.flags['movedIn:carpenter'] && ((homeStage && homeBlock !== 'notMoved') || works.length > 0 || fixtureOffers(game, 'carpenter').length > 0)) ||
+    (def.id === 'smith' && fixtureOffers(game, 'smith').length > 0)
   const post = postLine(game, def.id)
   const starHint = starPostHint(game, def.id)
   return (
@@ -63,7 +66,7 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
       </p>
       {/* 요한계시록은 낮에 건네지 않는다 — 평소 말 위에 언덕 편지함 안내 한 줄 */}
       {starHint && <p className="talk-line">{starHint}</p>}
-      <p className="talk-line">{callName(modal.line, game.avatar?.name)}</p>
+      {modal.line && <p className="talk-line">{callName(modal.line, game.avatar?.name)}</p>}
       {/* 아침 방문 말 등 다른 말이 먼저 나와도 편지 알림은 가려지지 않는다 */}
       {post && post !== modal.line && <p className="talk-line">{post}</p>}
       <div className="actions menu">
@@ -92,16 +95,8 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
             {T.ui.talkFulfill}
           </button>
         )}
-        {homeStage && homeBlock !== 'notMoved' && (
-          <button disabled={homeBlock !== null} onClick={() => askHome(def.id)}>
-            {homeStage.level === 1 ? T.ui.homeStage1 : T.ui.homeStage2}
-          </button>
-        )}
-        {works.map(({ w, block }) => (
-          <button key={w.id} disabled={block !== null} onClick={() => askWork(def.id, w.id)}>
-            {fill(T.easy.order, { name: easyName(w.id) })}
-          </button>
-        ))}
+        {/* 부탁하기 (계획 13): 집 넓히기·살림·기록 설비를 한 창에 — 대화 창이 붐비지 않게 */}
+        {orderable && <button onClick={() => open({ kind: 'orders', npc: def.id })}>{T.fixtures.open}</button>}
         {def.marketOnly && isMarketDay(game.clock.day) && <button onClick={() => open({ kind: 'trade' })}>{T.ui.talkTrade}</button>}
         {/* 약방: 약초를 사 준다 (장날이 아니어도) */}
         {def.id === APOTHECARY && (
@@ -122,19 +117,6 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
       {block === 'tired' && <p className="hint">{T.ui.helpTired}</p>}
       {block === 'full' && <p className="hint">{T.ui.bagFull}</p>}
       {active && <p className="hint">{fill(T.ui.requestNeeds, { items: itemList(active.needs) })}</p>}
-      {homeStage && homeBlock === 'ordered' && <p className="hint">{T.ui.homeWaiting}</p>}
-      {homeStage && (homeBlock === null || homeBlock === 'coins' || homeBlock === 'needs') && (
-        <p className="hint">{fill(T.ui.homeCost, { coins: homeStage.coins, items: itemList(homeStage.needs) })}</p>
-      )}
-      {works.some((x) => x.block === 'ordered') && <p className="hint">{T.easy.waiting}</p>}
-      {works.some((x) => x.block === null || x.block === 'coins') && (
-        <p className="hint">
-          {works
-            .filter((x) => x.block === null || x.block === 'coins')
-            .map((x) => fill(T.easy.orderCost, { name: easyName(x.w.id), coins: x.w.coins }))
-            .join(' · ')}
-        </p>
-      )}
       {game.gifted.includes(def.id) && <p className="hint">{T.ui.giftDone}</p>}
       {def.id === APOTHECARY && herbsSellLeft(game) <= 0 && <p className="hint">{T.herbs.soldOut}</p>}
       {def.id === APOTHECARY && (game.inv.herb ?? 0) === 0 && <p className="hint">{T.herbs.hint}</p>}
