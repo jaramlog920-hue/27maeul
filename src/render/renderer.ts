@@ -42,53 +42,54 @@ import {
 
 const C = {
   // 참고 그림(2026-09-30 사용자)에 맞춘 밝고 선명한 색: 연두 풀밭, 모래빛 흙길, 맑은 하늘빛 호수, 또렷한 지붕
-  grass: '#a5d67a',
-  grass2: '#93c96a',
-  grass3: '#bde592',
+  grass: '#a8d08c',
+  grass2: '#a0c880',
+  grass3: '#b0d494',
   worn: '#c9c27a',
   worn2: '#d8bd84',
-  path: '#eed39c',
-  path2: '#e0c083',
+  path: '#ecd0a0',
+  path2: '#e0c898',
   floor: '#e9c48f',
   floor2: '#d6ad76',
-  wall: '#fcedcb',
-  wallTop: '#fff8e2',
-  wallDark: '#d2ab7a',
-  leaf: '#58a943',
-  leaf2: '#3d8a34',
-  leaf3: '#7cc75a',
-  trunk: '#7a5230',
+  wall: '#f4e0c0',
+  wallTop: '#f8e8cc',
+  wallDark: '#e8d0a8',
+  leaf: '#509048',
+  leaf2: '#408040',
+  leaf3: '#74ac5c',
+  trunk: '#906038',
   stone: '#bdb7ab',
   stoneDark: '#8f887c',
-  water: '#62bfdc',
-  water2: '#a6e3f0',
-  wood: '#b98452',
-  woodDark: '#8d5f38',
+  water: '#60b8c4',
+  water2: '#98d8e0',
+  wood: '#a87850',
+  woodDark: '#845038',
   blanket: '#e27d86',
   blanketDark: '#c25e6a',
   pillow: '#fff5e4',
   paper: '#fbeecb',
   lamp: '#ffd24a',
-  door: '#8d5f38',
+  door: '#906040',
   shadow: 'rgba(60,40,10,0.2)',
   fire: '#ff8c32',
   fire2: '#ffd873',
-  reed: '#7cc75a',
-  reed2: '#4f9a3c',
-  olive: '#6fbf52',
-  olive2: '#4f9a3c',
-  vine: '#3f9a3a',
+  reed: '#74ac5c',
+  reed2: '#509048',
+  olive: '#74ac5c',
+  olive2: '#509048',
+  vine: '#549044',
   grapes: '#7b3f96',
-  fence: '#a8703f',
+  fence: '#845038',
   awning: '#e2574c',
   awning2: '#fffdf6',
   flower: ['#ff9aa8', '#ffe070', '#ffffff', '#f7b5d8'],
 }
 
 const SEASON_GRASS: Record<Season, [string, string, string]> = {
-  spring: ['#a5d67a', '#93c96a', '#bde592'],
-  summer: ['#9ccf6a', '#89c05a', '#b4df86'],
-  autumn: ['#cdcf7c', '#bcbd68', '#dde193'],
+  // 봄 풀빛은 참고 그림(2026-09-30 사용자)에서 뽑은 그대로
+  spring: ['#a8d08c', '#a0c880', '#b0d494'],
+  summer: ['#a0c880', '#98c078', '#a8d08c'],
+  autumn: ['#c8c88c', '#bcbc80', '#d4d49c'],
   winter: ['#dfe8dc', '#cfdacb', '#eef3ec'],
 }
 
@@ -108,27 +109,26 @@ interface HouseStyle {
   awning?: [string, string]
 }
 const HOUSE_STYLES: Record<string, HouseStyle> = {
-  // 참고 그림처럼 지붕은 또렷한 빨강·파랑·초록·밤색, 벽은 밝은 크림
-  home: { roof: ['#c9644a', '#9c4633', '#e08466'], pattern: 'tile', wall: '#fcedcb', base: '#eed7a8', window: 'square', shutter: '#b07a48', door: '#8d5f38' },
-  library: { roof: ['#3f9d3f', '#2d7a30', '#5cbb55'], pattern: 'tile', wall: '#fcedcb', base: '#eed7a8', window: 'arch', shutter: '#b07a48', door: '#8d5f38' },
-  baker: { roof: ['#b8543e', '#8c3b2b', '#d6735a'], pattern: 'tile', wall: '#f9d6ae', base: '#ecc08e', window: 'square', shutter: '#b07a48', door: '#8d5f38', awning: ['#e2574c', '#fffdf6'] },
-  child: { roof: ['#3a9a45', '#2a7634', '#58b85f'], pattern: 'tile', wall: '#fcedcb', base: '#eed7a8', window: 'round', shutter: '#b07a48', door: '#8d5f38' },
-  grandpa: { roof: ['#8b5a3c', '#6a4129', '#a8755a'], pattern: 'tile', wall: '#f8e2b8', base: '#e8cf9c', window: 'square', shutter: '#b07a48', door: '#7a5230', timber: '#b07a48' },
-  weaver: { roof: ['#cf6344', '#a64a31', '#e8836a'], pattern: 'tile', wall: '#fcedcb', base: '#eed7a8', window: 'arch', shutter: '#b07a48', door: '#8d5f38' },
-  beekeeper: { roof: ['#c9a33c', '#9e7c26', '#e2c05e'], pattern: 'tile', wall: '#f8e2b8', base: '#e8cf9c', window: 'round', shutter: '#b07a48', door: '#8d5f38' },
-  postman: { roof: ['#3e67b8', '#2c4f92', '#5c86d4'], pattern: 'tile', wall: '#fcedcb', base: '#eed7a8', window: 'square', shutter: '#6f84a8', door: '#7a5a40' },
-  apothecary: { roof: ['#b0384f', '#88283c', '#cc5a70'], pattern: 'tile', wall: '#fcedcb', base: '#eed7a8', window: 'arch', shutter: '#b07a48', door: '#7a5230', awning: ['#58b85f', '#fffdf6'] },
-  fisher: { roof: ['#2f8fa3', '#216e80', '#4fb0c3'], pattern: 'tile', wall: '#fcedcb', base: '#eed7a8', window: 'round', shutter: '#6f9aa0', door: '#7a5a40' },
-  carpenter: { roof: ['#7d5a3e', '#5e412b', '#9a7658'], pattern: 'tile', wall: '#f8e2b8', base: '#e8cf9c', window: 'square', shutter: '#b07a48', door: '#7a5230', timber: '#a0703f' },
-  hall: { roof: ['#3e67b8', '#2c4f92', '#5c86d4'], pattern: 'tile', wall: '#fcedcb', base: '#eed7a8', window: 'arch', shutter: '#6f84a8', door: '#7a5a40', timber: '#a0703f', awning: ['#ffd24a', '#fffdf6'] },
-  // 여행지 동네의 집 (항구 마을·언덕 너머 마을)
-  tripA: { roof: ['#3e67b8', '#2c4f92', '#5c86d4'], pattern: 'tile', wall: '#fcedcb', base: '#eed7a8', window: 'square', shutter: '#6f84a8', door: '#7a5a40' },
-  tripB: { roof: ['#c9644a', '#9c4633', '#e08466'], pattern: 'tile', wall: '#fcedcb', base: '#eed7a8', window: 'round', shutter: '#b07a48', door: '#8d5f38', awning: ['#e2574c', '#fffdf6'] },
-  tripC: { roof: ['#2f8fa3', '#216e80', '#4fb0c3'], pattern: 'tile', wall: '#fcedcb', base: '#eed7a8', window: 'arch', shutter: '#6f9aa0', door: '#7a5a40' },
-  tripD: { roof: ['#8b5a3c', '#6a4129', '#a8755a'], pattern: 'tile', wall: '#f8e2b8', base: '#e8cf9c', window: 'square', shutter: '#b07a48', door: '#7a5230', timber: '#b07a48' },
-  tripE: { roof: ['#c9a33c', '#9e7c26', '#e2c05e'], pattern: 'tile', wall: '#f8e2b8', base: '#e8cf9c', window: 'round', shutter: '#b07a48', door: '#8d5f38' },
-  tripF: { roof: ['#3f9d3f', '#2d7a30', '#5cbb55'], pattern: 'tile', wall: '#fcedcb', base: '#eed7a8', window: 'arch', shutter: '#b07a48', door: '#8d5f38' },
-  teahouse: { roof: ['#d45fa8', '#aa4486', '#e882c0'], pattern: 'tile', wall: '#fff2e2', base: '#f2dcc4', window: 'round', shutter: '#c48aa8', door: '#8d5f48', awning: ['#f07ab8', '#fffdf6'] },
+  // 지붕·벽·문·창틀 색은 참고 그림(2026-09-30 사용자)에서 뽑은 그대로 — 새 색 조합을 만들지 않는다
+  home: { roof: ['#c07058', '#a86048', '#cc8468'], pattern: 'tile', wall: '#f4e0c0', base: '#f0d8b0', window: 'square', shutter: '#ac7444', door: '#906040' },
+  library: { roof: ['#58984c', '#488040', '#6cac5c'], pattern: 'tile', wall: '#f4e0c0', base: '#f0d8b0', window: 'arch', shutter: '#ac7444', door: '#906040' },
+  baker: { roof: ['#a06450', '#885444', '#b07864'], pattern: 'tile', wall: '#f8c094', base: '#eeb080', window: 'square', shutter: '#ac7444', door: '#906040', awning: ['#c07058', '#f8e8cc'] },
+  child: { roof: ['#58984c', '#488040', '#6cac5c'], pattern: 'tile', wall: '#f4e0c0', base: '#f0d8b0', window: 'round', shutter: '#ac7444', door: '#906040' },
+  grandpa: { roof: ['#a06450', '#885444', '#b07864'], pattern: 'tile', wall: '#f4e0c0', base: '#f0d8b0', window: 'square', shutter: '#ac7444', door: '#906040', timber: '#ac7444' },
+  weaver: { roof: ['#bc6c54', '#a45a44', '#cc8068'], pattern: 'tile', wall: '#f4e0c0', base: '#f0d8b0', window: 'arch', shutter: '#ac7444', door: '#906040' },
+  beekeeper: { roof: ['#c8a04c', '#ac883c', '#d4b060'], pattern: 'tile', wall: '#f4e0c0', base: '#f0d8b0', window: 'round', shutter: '#ac7444', door: '#906040' },
+  postman: { roof: ['#4880b4', '#3c6c9c', '#5c94c4'], pattern: 'tile', wall: '#f4e0c0', base: '#f0d8b0', window: 'square', shutter: '#ac7444', door: '#906040' },
+  apothecary: { roof: ['#b05860', '#944850', '#c06c74'], pattern: 'tile', wall: '#f4e0c0', base: '#f0d8b0', window: 'arch', shutter: '#ac7444', door: '#906040', awning: ['#58984c', '#f8e8cc'] },
+  fisher: { roof: ['#4898a4', '#3c808c', '#5cacb8'], pattern: 'tile', wall: '#f4e0c0', base: '#f0d8b0', window: 'round', shutter: '#ac7444', door: '#906040' },
+  carpenter: { roof: ['#987858', '#80644a', '#ac8c6c'], pattern: 'tile', wall: '#f4e0c0', base: '#f0d8b0', window: 'square', shutter: '#ac7444', door: '#906040', timber: '#ac7444' },
+  hall: { roof: ['#4880b4', '#3c6c9c', '#5c94c4'], pattern: 'tile', wall: '#f4e0c0', base: '#f0d8b0', window: 'arch', shutter: '#ac7444', door: '#906040', timber: '#ac7444', awning: ['#c8a04c', '#f8e8cc'] },
+  tripA: { roof: ['#4880b4', '#3c6c9c', '#5c94c4'], pattern: 'tile', wall: '#f4e0c0', base: '#f0d8b0', window: 'square', shutter: '#ac7444', door: '#906040' },
+  tripB: { roof: ['#c07058', '#a86048', '#cc8468'], pattern: 'tile', wall: '#f4e0c0', base: '#f0d8b0', window: 'round', shutter: '#ac7444', door: '#906040', awning: ['#c07058', '#f8e8cc'] },
+  tripC: { roof: ['#4898a4', '#3c808c', '#5cacb8'], pattern: 'tile', wall: '#f4e0c0', base: '#f0d8b0', window: 'arch', shutter: '#ac7444', door: '#906040' },
+  tripD: { roof: ['#a06450', '#885444', '#b07864'], pattern: 'tile', wall: '#f4e0c0', base: '#f0d8b0', window: 'square', shutter: '#ac7444', door: '#906040', timber: '#ac7444' },
+  tripE: { roof: ['#c8a04c', '#ac883c', '#d4b060'], pattern: 'tile', wall: '#f4e0c0', base: '#f0d8b0', window: 'round', shutter: '#ac7444', door: '#906040' },
+  tripF: { roof: ['#58984c', '#488040', '#6cac5c'], pattern: 'tile', wall: '#f4e0c0', base: '#f0d8b0', window: 'arch', shutter: '#ac7444', door: '#906040' },
+  teahouse: { roof: ['#cc70a0', '#b05c88', '#d888b4'], pattern: 'tile', wall: '#f4e0c0', base: '#f0d8b0', window: 'round', shutter: '#ac7444', door: '#906040', awning: ['#cc70a0', '#f8e8cc'] },
 }
 const PLAIN_STYLE = HOUSE_STYLES.child
 /** 앞벽 한 칸: 위 줄은 처마 그림자뿐, 아래 줄에 꽃 상자 달린 창과 문 */
@@ -1968,9 +1968,6 @@ function tripMapFor(dest: 'harbor' | 'hillTown', season: Season): HTMLCanvasElem
       g.fillRect(fx + 2, ay + 7, 1, 1)
     }
   }
-  // 파스텔 한 겹: 마을 그림의 선명한 색을 따뜻하고 부드럽게 (이 동네만)
-  g.fillStyle = 'rgba(255, 244, 228, 0.22)'
-  g.fillRect(0, 0, c.width, c.height)
   // 보드 칸: 길에 놓인 표식 돌 — 모서리가 둥근 얇은 판석, 가운데 작은 색 원과 새긴 문양 (버튼처럼 두껍지 않게)
   BOARD.forEach((cell, i) => {
     const t = stoneTile(i)

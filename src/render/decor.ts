@@ -44,9 +44,9 @@ function hive(g: Ctx, t: Tile) {
 
 function tree(g: Ctx, t: Tile) {
   px(g, t.x, t.y, 3, 13, 11, 3, 'rgba(40,25,10,0.22)')
-  px(g, t.x, t.y, 7, 9, 3, 6, '#804e24')
-  px(g, t.x, t.y, 2, 2, 12, 9, '#5a8a34')
-  px(g, t.x, t.y, 3, 3, 9, 6, '#73a84f')
+  px(g, t.x, t.y, 7, 9, 3, 6, '#906038')
+  px(g, t.x, t.y, 2, 2, 12, 9, '#408040')
+  px(g, t.x, t.y, 3, 3, 9, 6, '#509048')
 }
 
 const onGardenPlot = (t: Tile) => GARDEN_TILES.some((p) => p.x === t.x && p.y === t.y)
