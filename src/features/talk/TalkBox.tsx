@@ -1,6 +1,6 @@
 // 이웃과의 생활 대화 — 게임이 지어낸 말. 성경 이야기는 '이야기 듣기'를 눌러 본문 창으로만 본다.
 import { neighborById } from '../../content/catalog'
-import { fill, itemList, NEIGHBOR_LINES, T } from '../../content/text'
+import { callName, fill, itemList, NEIGHBOR_LINES, T } from '../../content/text'
 import { grapesRipe, isMarketDay } from '../../engine/calendar'
 import { activeRequest, APOTHECARY, isSuitor, romanceWith, stageWith, type GameState, canHelp, canOrderHome, canOrderWork, GIFTABLE, herbsSellLeft, lessonTime, nextHomeStage, sellPrice } from '../../engine/game'
 import { CARPENTER_WORKS } from '../../engine/easier'
@@ -63,7 +63,7 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
       </p>
       {/* 요한계시록은 낮에 건네지 않는다 — 평소 말 위에 언덕 편지함 안내 한 줄 */}
       {starHint && <p className="talk-line">{starHint}</p>}
-      <p className="talk-line">{modal.line}</p>
+      <p className="talk-line">{callName(modal.line, game.avatar?.name)}</p>
       {/* 아침 방문 말 등 다른 말이 먼저 나와도 편지 알림은 가려지지 않는다 */}
       {post && post !== modal.line && <p className="talk-line">{post}</p>}
       <div className="actions menu">

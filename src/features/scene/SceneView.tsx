@@ -1,7 +1,7 @@
 // 이웃 이야기 장면 — 모두 게임 창작. 말하는 이는 이웃이나 해설(기록자는 말하지 않는다)
 import { useEffect } from 'react'
 import { neighborById } from '../../content/catalog'
-import { SCENES, T } from '../../content/text'
+import { callName, SCENES, T } from '../../content/text'
 import { useGame } from '../../store/game-store'
 
 export function speakerName(speaker: string): string | null {
@@ -12,6 +12,7 @@ export function speakerName(speaker: string): string | null {
 export function SceneView({ id, chosen }: { id: string; chosen?: number }) {
   const nextScene = useGame((s) => s.nextScene)
   const chooseScene = useGame((s) => s.chooseScene)
+  const me = useGame((s) => s.game.avatar?.name)
   const scene = SCENES[id]
   // 고르는 말이 있는 장면 (계획 6b): 고르기 전엔 닫지 않는다, 고르면 대답이 이어진다
   const asking = !!scene?.choices?.length && chosen === undefined
@@ -30,7 +31,7 @@ export function SceneView({ id, chosen }: { id: string; chosen?: number }) {
           return (
             <p key={i} className={who ? 'scene-line said' : 'scene-line narration'}>
               {who && <span className="talk-role">{who}</span>}
-              {l.text}
+              {callName(l.text, me)}
             </p>
           )
         })}
@@ -40,7 +41,7 @@ export function SceneView({ id, chosen }: { id: string; chosen?: number }) {
         <div className="actions menu column">
           {scene.choices!.map((c, i) => (
             <button key={i} onClick={() => chooseScene(i)}>
-              {c.label}
+              {callName(c.label, me)}
             </button>
           ))}
         </div>

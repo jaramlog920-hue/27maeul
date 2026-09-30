@@ -127,8 +127,9 @@ describe('게임 안에서 (game.ts)', () => {
     const base = at(newGame(CONTENT), 2, 600)
     const s = { ...base, npcs: { ...base.npcs, tilly: { ...base.npcs.tilly, x: 32, y: 26, visible: true, path: [] } }, player: { ...base.player, x: 32, y: 27, path: [] } }
     const r = tick(s, 0.02, zero, CONTENT)
-    expect(r.events).toContainEqual({ type: 'mutter', npc: 'tilly', text: '쇠는 달궜을 때.' })
-    expect(tick(r.state, 0.02, zero, CONTENT).events.some((e) => e.type === 'mutter')).toBe(false)
+    expect(r.state.life.heard).toEqual({ npc: 'tilly', text: '쇠는 달궜을 때.' })
+    const again = tick(r.state, 0.02, zero, CONTENT).state
+    expect(again.life.heard).toBe(r.state.life.heard)
   })
 
   it('이벤트: 사이·자리·때가 맞으면 곁에 갔을 때 열린다 — 고른 말은 기억·색·약속으로 남는다 (정답 없음)', () => {

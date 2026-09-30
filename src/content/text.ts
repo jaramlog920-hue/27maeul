@@ -66,6 +66,11 @@ export function withObject(word: string): string {
   return word + (hasFinal ? '을' : '를')
 }
 
+/** 이웃이 부르는 이름: 문장 속 {player}를 주인공이 정한 이름으로 (정하지 않았으면 '필사가') */
+export function callName(text: string, name: string | undefined | null): string {
+  return text.includes('{player}') ? text.replaceAll('{player}', name?.trim() || '필사가') : text
+}
+
 /** 낱말 뒤에 받침에 맞는 '이/가'를 붙인다 (웬델이 / 파피가) */
 export function withSubject(word: string): string {
   const code = word.charCodeAt(word.length - 1) - 0xac00

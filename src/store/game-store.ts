@@ -7,7 +7,7 @@ import { handEase, leveledUp, XP, type StatId } from '../engine/stats'
 import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
 import { bookRoomOpen, openDoorsFor } from '../engine/books'
 import { actsDoorGlows, canShelve, payRetry, poolFor, shelve } from '../engine/library'
-import { ALBUM_IDS, fill, itemList, itemName, NEIGHBOR_LINES, roomTitle, SCENES, T, withAnd, withObject, withSubject } from '../content/text'
+import { ALBUM_IDS, fill, itemList, itemName, NEIGHBOR_LINES, roomTitle, SCENES, T, withAnd, withObject, withSubject, callName } from '../content/text'
 import { grapesRipe, isWet, weatherOf } from '../engine/calendar'
 import { cleanName, type Animal } from '../engine/companion'
 import {
@@ -518,7 +518,7 @@ export const useGame = create<Store>((set, get) => {
         return { game: persist(g), modal: { kind: 'talk', neighborId: target.id, line: l?.visit.length ? pick(l.visit, rng).text : lineFor(g, target.id, rng) } }
       }
       // 살아 움직이는 사람들 (계획 6b): 지금 상황·사이·기억에 맞는 말 (되풀이하지 않는다)
-      const pl = personLine(g, target.id, rng())
+      const pl = g.offers[target.id] || postLine(g, target.id) ? null : personLine(g, target.id, rng())
       if (pl) return { game: persist(pl.state), modal: { kind: 'talk', neighborId: target.id, line: pl.text } }
       return { game: persist(g), modal: { kind: 'talk', neighborId: target.id, line: lineFor(g, target.id, rng) } }
     }
@@ -666,7 +666,8 @@ export const useGame = create<Store>((set, get) => {
       set({ game, modal: null, decorating: null })
     },
 
-    say: (text, ms = 2600) => set({ toast: { text, until: get().clockMs + ms } }),
+    // 이웃이 부르는 이름은 주인공이 정한 이름으로 ({player})
+    say: (text, ms = 2600) => set({ toast: { text: callName(text, get().game.avatar?.name), until: get().clockMs + ms } }),
 
     walk: (dx, dy) => {
       const { game, modal, decorating } = get()
@@ -768,7 +769,6 @@ export const useGame = create<Store>((set, get) => {
       let modal: Modal | null = null
       for (const e of r.events) {
         // 가까이 지나가면 들리는 혼잣말, 지킨 약속 (계획 6b)
-        if (e.type === 'mutter') get().say(fill(T.people.mutter, { who: neighborById(e.npc)?.role ?? '', text: e.text }), 3400)
         if (e.type === 'promiseKept') get().say(fill(T.people.promiseKept, { who: withSubject(neighborById(e.npc)?.role ?? '') }), 3400)
         if (e.type === 'arrived') {
           const a = arrive(game, e.target)
@@ -777,6 +777,9 @@ export const useGame = create<Store>((set, get) => {
         }
       }
       if (!modal && game.scenes.length) modal = { kind: 'scene', id: game.scenes[0] }
+      // 가까이 지나가며 들은 혼잣말 (계획 6b): 다른 알림이 떠 있으면 덮지 않는다
+      const heard = game.life?.heard
+      if (heard && heard !== s.game.life?.heard && !get().toast) get().say(fill(T.people.mutter, { who: neighborById(heard.npc)?.role ?? '', text: heard.text }), 3400)
       set({ game, modal, clockMs })
       expireToast()
       if (modal?.kind === 'scene') snapAlbum(modal.id, get().capture)

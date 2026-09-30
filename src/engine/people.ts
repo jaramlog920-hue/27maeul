@@ -251,6 +251,8 @@ export interface Life {
   muttered: string[]
   /** 지킬 약속 */
   promises: { id: string; npc: string; day: number; at: Tile; from: number; to: number }[]
+  /** 방금 들린 혼잣말 (화면이 한 줄 띄운다 — 바뀔 때마다 새 객체) */
+  heard?: { npc: string; text: string } | null
 }
 
 export const NO_LIFE: Life = { seen: [], memories: {}, colors: {}, recent: {}, cool: {}, mutterDay: 0, muttered: [], promises: [] }

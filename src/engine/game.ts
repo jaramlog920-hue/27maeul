@@ -215,8 +215,6 @@ export const NO_TODAY: Today = { visitor: null, visitGot: false, inviter: null, 
 export type GameEvent =
   | { type: 'arrived'; target: Target }
   | { type: 'moment'; id: string }
-  /** 가까이 지나갈 때 들리는 혼잣말 (계획 6b) */
-  | { type: 'mutter'; npc: string; text: string }
   /** 지킨 약속 (계획 6b) */
   | { type: 'promiseKept'; npc: string }
 
@@ -847,10 +845,10 @@ function liveNearby(s: GameState, now: Tile, events: GameEvent[]): GameState {
       return { ...next, life, scenes: [...next.scenes, `saw:${w.id}`] }
     }
     const r = routineOf({ ...s, life }, id)
-    if (r?.mutter?.length && near(at, r.at, 0) && near(now, at, 2) && !life.muttered.includes(id)) {
-      life = { ...life, muttered: [...life.muttered, id] }
-      const text = r.mutter[Math.floor(((s.clock.day * 7 + id.length) % 97) / 97 * r.mutter.length)]
-      events.push({ type: 'mutter', npc: id, text })
+    // 무언가 하러 가는 길(target)에는 혼잣말을 흘려듣는다 — 도착 알림이 먼저
+    if (r?.mutter?.length && !s.target && near(at, r.at, 0) && near(now, at, 2) && !life.muttered.includes(id)) {
+      const text = r.mutter[Math.floor((((s.clock.day * 7 + id.length) % 97) / 97) * r.mutter.length)]
+      life = { ...life, muttered: [...life.muttered, id], heard: { npc: id, text } }
     }
   }
   // 약속: 그날 그 시각 그 자리에 오면 지킨 것
@@ -921,8 +919,9 @@ export function personLine(s: GameState, id: string, rnd: number): { state: Game
 function gateCap(s: GameState, p: Person): number {
   const life = s.life ?? NO_LIFE
   for (const st of [1, 2, 3, 4, 5] as Stage[]) {
-    const gate = p.events?.find((e) => e.opens === st)
-    if (gate && !life.seen.includes(gate.id)) return STAGE_POINTS[st] - 1
+    // 한 문턱에 이벤트가 여럿이면(목격했는지에 따라 갈래가 다른 것) 그중 하나만 겪으면 된다
+    const gates = p.events?.filter((e) => e.opens === st) ?? []
+    if (gates.length && !gates.some((e) => life.seen.includes(e.id))) return STAGE_POINTS[st] - 1
   }
   return MAX_POINTS
 }
