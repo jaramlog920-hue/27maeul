@@ -98,3 +98,7 @@ export function itemList(items: Partial<Record<ItemId, number>>): string {
 export function roomTitle(room: { door: number | null }): string {
   return room.door === null ? lifeText.library.gospelRoom : lifeText.library.lockedRooms[room.door]
 }
+
+/** 어른이 된 아이의 일 이름 (계획 12 뒤, 2026-09-30) */
+export const JOB_NAME = (lifeText as unknown as { adultChild: { jobs: Record<string, string> } }).adultChild.jobs
+export const KID_LETTERS = (lifeText as unknown as { adultChild: { letters: string[] } }).adultChild.letters

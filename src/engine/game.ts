@@ -104,7 +104,7 @@ import { GOSPELS, type Book, type Facing, type GameContent, type ItemId, type Ne
 import type { Avatar } from './avatar'
 import { BOARD_GAIN, boardFor, type BoardRequest } from './board'
 import { newlyAchieved, withFound, type Achievement } from './achievements'
-import { CHILD_AFTER_WEDDING, childMode, childStage, CRADLE_SPOT, helperSpot, helpStat, newChild, type Child, type ChildMode } from './child'
+import { adultJob, JOB_GIFTS, kidCoins, kidMailFor, CHILD_AFTER_WEDDING, childMode, childStage, CRADLE_SPOT, helperSpot, helpStat, newChild, type Child, type ChildMode } from './child'
 import { DESTS, TRIP_FRIEND_GAIN, TRIP_LEAVE_BY, tripCost, type DestId } from './travel'
 import type { TripReward } from './trip-board'
 import { BIRTHDAY_MUL, isBirthday, NO_NOTEBOOK, noteGift, noteHeard, noteMet, noteSeen, seenLabel, type Notebook } from './notebook'
@@ -845,6 +845,7 @@ export function childTile(s: Pick<GameState, 'child' | 'clock' | 'player'>): Til
   const c = s.child
   if (!c) return null
   const mode = childMode(c, s.clock.day)
+  if (mode === 'away') return null
   if (mode === 'cradle' || mode === 'home') return CRADLE_SPOT
   if (mode === 'roam') return helperSpot(s.clock.minute)
   const back = { left: { x: 1, y: 0 }, right: { x: -1, y: 0 }, up: { x: 0, y: 1 }, down: { x: 0, y: -1 } }[s.player.facing]
@@ -2432,10 +2433,26 @@ function childMorning(s: GameState, content: GameContent): GameState {
       flags: { ...next.flags, childNaming: 1 },
     }
   }
-  const child = next.child!
+  let child = next.child!
   const stage = childStage(child, day)
   if (stage !== 'baby' && !next.flags.childWalked) next = { ...next, scenes: [...next.scenes, 'childWalks'], flags: { ...next.flags, childWalked: 1 } }
-  if (stage !== 'helper') return next
+  if (stage === 'adult') {
+    // 어른이 된 아침: 가장 높은 능력치로 일이 정해지고, 남거나 떠난다
+    if (!child.job) {
+      const j = adultJob(child)
+      child = { ...child, job: j.job, left: j.left, ...(j.left ? { mode: undefined } : {}) }
+      next = { ...next, child, scenes: [...next.scenes, j.left ? 'childLeaves' : 'childStays'] }
+    }
+    // 가끔 편지·선물·닢 (떠난 아이가 더 자주)
+    const mail = kidMailFor(child, day)
+    if (mail) {
+      if (mail === 'gift') next = { ...next, inv: addGift(next.inv, JOB_GIFTS[child.job!]) }
+      if (mail === 'coins') next = { ...next, coins: next.coins + kidCoins(day) }
+      next = { ...next, todayNotes: [...next.todayNotes, `kidMail:${mail}`], flags: { ...next.flags, kidMailDay: day, kidMailKind: ['letter', 'gift', 'coins'].indexOf(mail) } }
+    }
+    // 떠난 아이는 날마다 돕지 않는다
+    if (child.left) return next
+  } else if (stage !== 'helper') return next
   if (!next.flags.childHelping) next = { ...next, scenes: [...next.scenes, 'childHelps'], flags: { ...next.flags, childHelping: 1 } }
   const kind = helpStat(child)
   const finds = CHILD_FINDS[kind]

@@ -7,12 +7,12 @@ import { handEase, leveledUp, XP, type StatId } from '../engine/stats'
 import type { FixtureLine } from '../engine/fixtures'
 import type { BoardRequest } from '../engine/board'
 import { DESTS, type DestId } from '../engine/travel'
-import type { ChildMode } from '../engine/child'
+import { JOB_GIFTS, kidCoins, type ChildMode } from '../engine/child'
 import type { TripReward } from '../engine/trip-board'
 import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
 import { bookRoomOpen, openDoorsFor } from '../engine/books'
 import { actsDoorGlows, canShelve, payRetry, poolFor, shelve } from '../engine/library'
-import { ALBUM_IDS, fill, itemList, itemName, NEIGHBOR_LINES, roomTitle, SCENES, T, withAnd, withObject, withSubject, callName } from '../content/text'
+import { ALBUM_IDS, fill, itemList, itemName, KID_LETTERS, NEIGHBOR_LINES, roomTitle, SCENES, T, withAnd, withObject, withSubject, callName } from '../content/text'
 import { grapesRipe, isWet, weatherOf } from '../engine/calendar'
 import { cleanName, type Animal } from '../engine/companion'
 import {
@@ -386,6 +386,15 @@ function snapAlbum(sceneId: string, capture: (() => string | null) | null) {
 /** 아침에 아이가 해 온 일 (계획 12): 한 줄 알림 */
 const CHILD_HELP_LINE = ['이웃 이야기를 듣고 왔어요', '파피루스나 잉크를 만들어 왔어요', '이웃에게 대신 인사하고 왔어요', '물이나 갈대를 날라 왔어요', '뜻밖의 선물을 들고 왔어요']
 function sayChildHelp(g: GameState, say: (text: string, ms?: number) => void) {
+  // 어른이 된 아이의 편지·선물·닢이 먼저
+  if (g.child && g.flags.kidMailDay === g.clock.day) {
+    const n = g.child.name
+    const mk = g.flags.kidMailKind
+    if (mk === 0) say(`${n}의 편지: “${KID_LETTERS[(g.clock.day * 7) % KID_LETTERS.length]}”`, 5000)
+    else if (mk === 1) say(`${n}에게서 선물이 왔어요 · ${itemList(JOB_GIFTS[g.child.job!])}`, 4000)
+    else if (mk === 2) say(`${n}에게서 닢 ${kidCoins(g.clock.day)}이 왔어요`, 4000)
+    return
+  }
   const k = g.flags.childHelpKind
   if (!g.child || g.flags.childHelpDay !== g.clock.day || k === undefined || k < 0) return
   say(`${g.child.name}: ${CHILD_HELP_LINE[k]}`, 3400)

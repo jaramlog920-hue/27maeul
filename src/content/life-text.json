@@ -1914,6 +1914,23 @@
     }
   },
   "scenes": {
+    "childStays": {
+      "title": "어른이 된 날",
+      "album": "{child}, 어른이 된 날",
+      "lines": [
+        { "speaker": "narration", "text": "어느새 훌쩍 자란 {child}. 아침 식탁에서 조심스레 말을 꺼낸다." },
+        { "speaker": "narration", "text": "\"저, 이 마을에서 일을 하며 살고 싶어요. 가까이 있을게요.\"" }
+      ]
+    },
+    "childLeaves": {
+      "title": "떠나는 날",
+      "album": "{child}, 먼 길을 떠난 날",
+      "lines": [
+        { "speaker": "narration", "text": "어느새 훌쩍 자란 {child}. 봇짐을 메고 문 앞에 섰다." },
+        { "speaker": "narration", "text": "\"더 넓은 곳에서 제 솜씨를 펼쳐 보고 싶어요. 편지 자주 할게요!\"" },
+        { "speaker": "narration", "text": "나루까지 배웅하고 돌아오는 길, 집이 조금 넓어 보였다." }
+      ]
+    },
     "childBorn": {
       "title": "새 식구",
       "album": "아이가 태어난 날",
@@ -4397,6 +4414,11 @@
     "heard": " 이야기를 들었다({refs}).",
     "quiet": " 조용한 하루였다.",
     "notes": {
+      "childStays": " 아이가 어른이 되어 마을에 남기로 했다.",
+      "childLeaves": " 아이가 어른이 되어 먼 길을 떠났다.",
+      "kidMail:letter": " 아이에게서 편지가 왔다.",
+      "kidMail:gift": " 아이가 선물을 보내왔다.",
+      "kidMail:coins": " 아이가 닢을 조금 보내왔다.",
       "childBorn": " 아이가 태어났다.",
       "childWalks": " 아이가 처음 걸었다.",
       "childHelps": " 아이가 처음 심부름을 했다.",
@@ -4690,6 +4712,32 @@
     "chestTake": "꺼내기",
     "chestHint": "궤짝의 것은 집 안에서 꺼낼 수 있다. 책상과 작업대는 궤짝의 것도 그대로 쓴다.",
     "chestFull": "가방에 더 들어가지 않는다."
+  },
+  "adultChild": {
+    "jobs": {
+      "scribe": "마을 서기",
+      "scholar": "도시의 학자",
+      "woodworker": "목수",
+      "shipwright": "항구의 배 목수",
+      "teaKeeper": "찻집 일꾼",
+      "merchant": "떠돌이 상인",
+      "fisher": "어부",
+      "sailor": "뱃사람",
+      "herbalist": "약초꾼",
+      "traveler": "여행자"
+    },
+    "letters": [
+      "잘 지내시죠? 여기는 바람이 좋아요. 밥 잘 챙겨 드세요.",
+      "오늘 일을 칭찬받았어요. 어릴 때 집에서 배운 덕분이에요.",
+      "창밖을 보다 우리 마을 호숫가가 생각났어요.",
+      "서고에 책이 얼마나 찼는지 궁금해요. 다음 편지에 알려 주세요.",
+      "새 친구가 생겼어요. 언젠가 꼭 데려갈게요.",
+      "장날마다 우리 집 빵 냄새가 그리워요."
+    ],
+    "gift": "{child}에게서 선물이 왔어요",
+    "coins": "{child}에게서 닢 {n}이 왔어요",
+    "away": "{job} · 마을을 떠나 산다",
+    "home": "{job} · 마을에 남아 산다"
   },
   "tripBoard": {
     "title": "{dest} 한 바퀴",

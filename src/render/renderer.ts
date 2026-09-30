@@ -1623,7 +1623,8 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
 
       // 우리 아이 (계획 12): 아기는 요람, 걷는 아이는 곁을 따라다니고, 돕는 아이는 때마다 마을 곳곳에
       const kid = game.child
-      if (kid) {
+      // 마을을 떠난 어른 아이는 그리지 않는다
+      if (kid && childMode(kid, day) !== 'away') {
         const st = childStage(kid, day)
         const mode = childMode(kid, day)
         const kidRows = () => recolor(spriteRows('child', 'down', { frame: 0, blink: isBlinking(t + 1.3), growth: 2 }), kid.look === 'boy' ? { z: 'E', Z: 'M' } : { z: 'V', Z: 'X' })

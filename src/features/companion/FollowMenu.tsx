@@ -1,5 +1,6 @@
 // 동물 친구·우리 아이를 눌렀을 때: 데리고 다니기·집에 두기 (돕는 아이는 혼자 다니게 두기도)
 import { childMode, childStage } from '../../engine/child'
+import { JOB_NAME } from '../../content/text'
 import { T } from '../../content/text'
 import { useGame } from '../../store/game-store'
 
@@ -30,6 +31,7 @@ export function FollowMenu({ who }: { who: 'pet' | 'child' }) {
   if (!k) return null
   const day = game.clock.day
   const mode = childMode(k, day)
+  if (mode === 'away') return null
   if (mode === 'cradle')
     return (
       <div className="dialog follow" role="dialog" aria-label={k.name}>
@@ -40,11 +42,12 @@ export function FollowMenu({ who }: { who: 'pet' | 'child' }) {
         </div>
       </div>
     )
-  const helper = childStage(k, day) === 'helper'
+  const helper = childStage(k, day) === 'helper' || childStage(k, day) === 'adult'
   const now = mode === 'follow' ? '지금은 곁을 따라다녀요.' : mode === 'home' ? '지금은 집에서 기다려요.' : '지금은 혼자 마을을 다녀요.'
   return (
     <div className="dialog follow" role="dialog" aria-label={k.name}>
       <h2>{k.name}</h2>
+      {k.job && <p>{JOB_NAME[k.job]} · 마을에 남아 산다</p>}
       <p className="hint">{now}</p>
       <div className="actions column">
         <button className={mode === 'follow' ? 'primary' : ''} disabled={mode === 'follow'} onClick={() => keepChild('follow')}>

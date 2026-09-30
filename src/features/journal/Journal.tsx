@@ -1,7 +1,7 @@
 // 일지 — 게임 속에서 일어난 사실만 적는다. 두 번째 탭은 이웃 수첩 (만난 이웃, 알게 된 것)
 import { useEffect, useRef, useState } from 'react'
 import { CONTENT, neighborById, pieceById } from '../../content/catalog'
-import { fill, itemName, JOURNAL_NOTES, T } from '../../content/text'
+import { fill, itemName, JOB_NAME, JOURNAL_NOTES, T } from '../../content/text'
 import { weatherOf } from '../../engine/calendar'
 import { seasonOf } from '../../engine/clock'
 import { dislikesOf, notYet, type GameState, type JournalEntry } from '../../engine/game'
@@ -51,13 +51,21 @@ export function Journal() {
 
 function Days() {
   const journal = useGame((s) => s.game.journal)
+  const kid = useGame((s) => s.game.child)
   if (journal.length === 0) return <p>{T.ui.journalEmpty}</p>
   return (
+    <>
+    {kid?.job && (
+      <p className="hint">
+        {kid.name} · {JOB_NAME[kid.job]} · {kid.left ? '마을을 떠나 산다' : '마을에 남아 산다'}
+      </p>
+    )}
     <ul className="journal-list">
       {[...journal].reverse().map((e) => (
         <li key={e.day}>{journalLine(e)}</li>
       ))}
     </ul>
+    </>
   )
 }
 

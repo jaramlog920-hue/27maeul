@@ -3,12 +3,13 @@
 // 자라는 단계: 아기(요람) → 걷는 아이(곁을 따라다님) → 돕는 아이(혼자 마을을 다니며 하루 한 번 돕는다).
 // 모든 도움은 "덜 반복"이지 "공짜"가 아니다 — 하루 한 번, 한 개씩.
 import { mulberry32 } from './offers'
-import { freshStats, sanitizeStats, STAT_IDS, type StatId, type Stats } from './stats'
+import { freshStats, sanitizeStats, STAT_IDS, statScore, type StatId, type Stats } from './stats'
+import type { ItemId } from './types'
 import type { Tile } from './types'
 import { HOME_FRONT, SIDE_ROOM } from './world'
 
 export type ChildLook = 'boy' | 'girl'
-export type ChildStage = 'baby' | 'toddler' | 'helper'
+export type ChildStage = 'baby' | 'toddler' | 'helper' | 'adult'
 
 export interface Child {
   name: string
@@ -24,15 +25,74 @@ export interface Child {
    * 비어 있으면 자라는 단계대로: 걷는 아이는 따라다니고, 돕는 아이는 혼자 마을을 다닌다
    */
   mode?: ChildMode
+  /** 어른이 된 뒤의 일 (ADULT_AT에 정해진다) */
+  job?: AdultJob
+  /** 마을을 떠나 사는가 */
+  left?: boolean
+}
+
+// ── 어른이 된 아이 (2026-09-30 사용자 요청) ──
+// 가장 높은 능력치(1–100 점수)로 일이 정해진다. 그 점수가 LEAVE_SCORE 이상이면 더 넓은 곳으로 떠나고, 아니면 마을에 남는다.
+// 남든 떠나든 가끔 편지·선물·닢을 보낸다 (떠난 아이가 더 자주).
+export const ADULT_AT = 84
+export const LEAVE_SCORE = 60
+export type AdultJob = 'scribe' | 'scholar' | 'woodworker' | 'shipwright' | 'teaKeeper' | 'merchant' | 'fisher' | 'sailor' | 'herbalist' | 'traveler'
+/** 능력치 → [마을에 남는 일, 떠나는 일] */
+export const JOBS_BY_STAT: Record<StatId, [AdultJob, AdultJob]> = {
+  wit: ['scribe', 'scholar'],
+  hand: ['woodworker', 'shipwright'],
+  charm: ['teaKeeper', 'merchant'],
+  strength: ['fisher', 'sailor'],
+  luck: ['herbalist', 'traveler'],
+}
+/** 일마다 보내 주는 선물 */
+export const JOB_GIFTS: Record<AdultJob, Partial<Record<ItemId, number>>> = {
+  scribe: { papyrus: 2 },
+  scholar: { finePapyrus: 1 },
+  woodworker: { table: 1 },
+  shipwright: { bronzeOrnament: 1 },
+  teaKeeper: { honey: 2 },
+  merchant: { purpleCloth: 1 },
+  fisher: { fig: 3 },
+  sailor: { perfumeOil: 1 },
+  herbalist: { herb: 3 },
+  traveler: { sealWax: 1 },
+}
+
+/** 가장 높은 능력치 점수로 일과 떠남을 정한다 (같으면 배우자 쪽 능력치를 먼저) */
+export function adultJob(c: Pick<Child, 'stats' | 'lean'>): { job: AdultJob; left: boolean; stat: StatId } {
+  let best: StatId = c.lean ?? 'strength'
+  let n = statScore(c.stats[best])
+  for (const id of STAT_IDS) {
+    const sc = statScore(c.stats[id])
+    if (sc > n) [best, n] = [id, sc]
+  }
+  const left = n >= LEAVE_SCORE
+  return { job: JOBS_BY_STAT[best][left ? 1 : 0], left, stat: best }
+}
+
+export type KidMail = 'letter' | 'gift' | 'coins'
+/** 어른이 된 아이가 오늘 무언가 보내는가 (날 씨앗): 떠난 아이는 나흘에 한 번꼴, 남은 아이는 이레에 한 번꼴 */
+export function kidMailFor(c: Pick<Child, 'born' | 'left'>, day: number): KidMail | null {
+  const rnd = mulberry32(day * 389 + c.born * 17 + 3)
+  if (rnd() >= (c.left ? 0.25 : 1 / 7)) return null
+  const k = rnd()
+  return k < 0.4 ? 'letter' : k < 0.7 ? 'gift' : 'coins'
+}
+/** 보내 주는 닢 */
+export function kidCoins(day: number): number {
+  return 10 + Math.floor(mulberry32(day * 97 + 11)() * 21)
 }
 export type ChildMode = 'follow' | 'home' | 'roam'
 
 /** 지금 아이가 어떻게 지내는가 (아기는 늘 요람) */
-export function childMode(c: Pick<Child, 'born' | 'mode'>, day: number): ChildMode | 'cradle' {
+export function childMode(c: Pick<Child, 'born' | 'mode' | 'left'>, day: number): ChildMode | 'cradle' | 'away' {
   const st = childStage(c, day)
   if (st === 'baby') return 'cradle'
-  if (c.mode === 'roam' && st !== 'helper') return 'follow'
-  return c.mode ?? (st === 'helper' ? 'roam' : 'follow')
+  if (st === 'adult' && c.left) return 'away'
+  const grown = st === 'helper' || st === 'adult'
+  if (c.mode === 'roam' && !grown) return 'follow'
+  return c.mode ?? (grown ? 'roam' : 'follow')
 }
 
 /** 결혼하고 이만큼 지난 아침에 태어난다 */
@@ -49,7 +109,7 @@ export const CHILD_NAMES: Record<ChildLook, readonly string[]> = {
 
 export function childStage(c: Pick<Child, 'born'>, day: number): ChildStage {
   const age = day - c.born
-  return age >= HELPER_AT ? 'helper' : age >= TODDLER_AT ? 'toddler' : 'baby'
+  return age >= ADULT_AT ? 'adult' : age >= HELPER_AT ? 'helper' : age >= TODDLER_AT ? 'toddler' : 'baby'
 }
 
 /** 물려받는 타고난 값: 플레이어의 단계 4 이상 능력치 +1, 배우자 집안 능력치 +1, 한 능력치 최대 2 */
@@ -108,5 +168,6 @@ export function sanitizeChild(raw: unknown): Child | null {
   if (typeof o.name !== 'string' || (o.look !== 'boy' && o.look !== 'girl') || typeof o.born !== 'number') return null
   const lean = typeof o.lean === 'string' && (STAT_IDS as readonly string[]).includes(o.lean) ? (o.lean as StatId) : null
   const mode = o.mode === 'follow' || o.mode === 'home' || o.mode === 'roam' ? o.mode : undefined
-  return { name: o.name.slice(0, 12), look: o.look, born: o.born, stats: sanitizeStats(o.stats), lean, ...(mode ? { mode } : {}) }
+  const job = typeof o.job === 'string' && o.job in JOB_GIFTS ? (o.job as AdultJob) : undefined
+  return { name: o.name.slice(0, 12), look: o.look, born: o.born, stats: sanitizeStats(o.stats), lean, ...(mode ? { mode } : {}), ...(job ? { job, left: !!o.left } : {}) }
 }

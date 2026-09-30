@@ -96,3 +96,50 @@ describe('아이 (계획 12)', () => {
     expect(sanitizeChild({ name: 3 })).toBeNull()
   })
 })
+
+describe('어른이 된 아이', () => {
+  it('가장 높은 능력치 점수로 일이 정해지고, 60점 이상이면 떠난다', async () => {
+    const { adultJob } = await import('./child')
+    const low = freshStats()
+    low.hand = { level: 2, xp: 0, born: 0 }
+    expect(adultJob({ stats: low, lean: null })).toMatchObject({ job: 'woodworker', left: false })
+    const high = freshStats()
+    high.wit = { level: 5, xp: 0, born: 0 }
+    expect(adultJob({ stats: high, lean: 'hand' })).toMatchObject({ job: 'scholar', left: true })
+  })
+
+  it('어른이 된 아침에 장면, 떠난 아이는 날마다 돕지 않고 지도에서 보이지 않는다', async () => {
+    const { ADULT_AT } = await import('./child')
+    const { childTile } = await import('./game')
+    const s0 = nameChild(sleepUntil(married(10), 24), '재스퍼')
+    const high = freshStats()
+    high.strength = { level: 5, xp: 0, born: 0 }
+    const grown = sleepUntil({ ...s0, child: { ...s0.child!, stats: high } }, 24 + ADULT_AT)
+    expect(grown.child!.job).toBe('sailor')
+    expect(grown.child!.left).toBe(true)
+    expect(grown.scenes).toContain('childLeaves')
+    expect(childTile(grown)).toBeNull()
+    expect(grown.todayNotes.some((n) => n.startsWith('childHelp:'))).toBe(false)
+  })
+
+  it('남든 떠나든 가끔 편지·선물·닢이 온다 (한 달에 몇 번)', async () => {
+    const { kidMailFor } = await import('./child')
+    let away = 0
+    let stay = 0
+    for (let d = 100; d < 160; d++) {
+      if (kidMailFor({ born: 20, left: true }, d)) away++
+      if (kidMailFor({ born: 20, left: false }, d)) stay++
+    }
+    expect(away).toBeGreaterThan(stay)
+    expect(stay).toBeGreaterThan(0)
+  })
+
+  it('편지·선물·닢 문구와 일 이름이 모두 있다', async () => {
+    const { JOB_GIFTS } = await import('./child')
+    const { JOB_NAME, KID_LETTERS } = await import('../content/text')
+    for (const j of Object.keys(JOB_GIFTS)) expect(JOB_NAME[j], j).toBeDefined()
+    expect(KID_LETTERS.length).toBeGreaterThan(3)
+    for (const id of ['childStays', 'childLeaves']) expect(SCENES[id]).toBeDefined()
+    for (const k of ['letter', 'gift', 'coins']) expect(JOURNAL_NOTES[`kidMail:${k}`]).toBeDefined()
+  })
+})
