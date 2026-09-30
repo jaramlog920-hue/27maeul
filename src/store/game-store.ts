@@ -369,6 +369,9 @@ function gained(before: Inventory, after: Inventory): Partial<Record<ItemId, num
   return out
 }
 
+/** 지도의 편지 방(world ROOMS의 owner) → 방 표의 방 id */
+const LETTER_ROOM_OF: Partial<Record<string, ShelfRoomId>> = { letters: 'romPhm', hebJud: 'hebJud' }
+
 /** 집 안에 막 들어왔으면 누구 집인지 알린다 (다락에 오르면 다락 서재) */
 function announceRoom(before: GameState, after: GameState) {
   if (inAttic(playerTile(after)) && !inAttic(playerTile(before))) {
@@ -378,13 +381,14 @@ function announceRoom(before: GameState, after: GameState) {
   const room = roomAt(playerTile(after))
   if (!room || room === roomAt(playerTile(before))) return
   const who = CONTENT.neighbors.find((d) => d.id === room.owner)?.role
+  const letterRoom = LETTER_ROOM_OF[room.owner]
   const name =
     room.owner === 'library'
       ? T.ui.libraryRoom
       : room.owner === 'acts'
         ? T.ui.actsRoom
-        : room.owner === 'letters'
-          ? roomTitle(shelfRoom('romPhm'))
+        : letterRoom
+          ? roomTitle(shelfRoom(letterRoom))
           : fill(T.ui.roomOf, { who: who ?? '' })
   useGame.getState().say(name, 2200)
 }
@@ -460,10 +464,13 @@ export const useGame = create<Store>((set, get) => {
         return { game, modal: { kind: 'roomShelf', room: 'acts' } }
       case 'lettersShelf':
         return { game, modal: { kind: 'roomShelf', room: 'romPhm' } }
+      case 'hebJudShelf':
+        return { game, modal: { kind: 'roomShelf', room: 'hebJud' } }
       case 'journeyBoard':
         return { game, modal: { kind: 'journey' } }
       case 'actsTable':
       case 'lettersTable':
+      case 'hebJudTable':
         // 읽는 탁자: 벤치처럼 모은 이야기를 골라 읽는다
         if (game.collected.length > 0) return { game, modal: { kind: 'readPick' } }
         get().say(T.acts.tableEmpty)

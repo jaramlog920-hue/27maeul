@@ -37,6 +37,9 @@ export type PlaceId =
   // 로마서–빌레몬서 방 (계획 7 작업 7): 편지 선반, 읽는 탁자
   | 'lettersShelf'
   | 'lettersTable'
+  // 히브리서–유다서 방 (계획 8 작업 5): 편지 선반, 읽는 탁자
+  | 'hebJudShelf'
+  | 'hebJudTable'
 export type Target =
   | { kind: 'place'; id: PlaceId; tile: Tile }
   | { kind: 'neighbor'; id: string; tries: number }

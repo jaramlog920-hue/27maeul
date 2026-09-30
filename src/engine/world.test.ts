@@ -74,9 +74,9 @@ describe('world', () => {
 
 describe('이웃집 안', () => {
   it('집마다 방이 있고, 문 ↔ 방 안이 서로 이어진다', () => {
-    expect(ROOMS.map((r) => r.owner)).toEqual(['baker', 'child', 'grandpa', 'weaver', 'beekeeper', 'library', 'acts', 'letters'])
-    // 서고 방(사도행전·로마서–빌레몬서)은 서고 안 잠긴 문에서 드나든다 (아래와 letters-room.test에서 따로)
-    for (const r of ROOMS.filter((r) => r.owner !== 'acts' && r.owner !== 'letters')) {
+    expect(ROOMS.map((r) => r.owner)).toEqual(['baker', 'child', 'grandpa', 'weaver', 'beekeeper', 'library', 'acts', 'letters', 'hebJud'])
+    // 서고 방(사도행전·로마서–빌레몬서·히브리서–유다서)은 서고 안 잠긴 문에서 드나든다 (아래와 letters-room·hebjud-room.test에서 따로)
+    for (const r of ROOMS.filter((r) => !['acts', 'letters', 'hebJud'].includes(r.owner))) {
       expect(tileAt(r.door.x, r.door.y), r.owner).toBe(r.owner === 'library' ? 'L' : 'D')
       const inside = WARPS.get(key(r.door))!
       expect(roomAt(inside)?.owner).toBe(r.owner)

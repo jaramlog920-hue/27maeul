@@ -6,7 +6,7 @@ import { dexView } from './shelf/Shelf'
 import { chaptersOf, emptyProgress } from '../engine/books'
 import { chooseBook, newGame, playerTile, type GameState } from '../engine/game'
 import { mulberry32 } from '../engine/offers'
-import { ACTS_ROOM, HOME_FRONT, key, LETTERS_ROOM, LOCKED_DOORS, OLD_HOME, PLACES, roomAt, ROOMS, WARPS } from '../engine/world'
+import { ACTS_ROOM, HEB_JUD_ROOM, HOME_FRONT, key, LETTERS_ROOM, LOCKED_DOORS, OLD_HOME, PLACES, roomAt, ROOMS, WARPS } from '../engine/world'
 import { SCENES } from '../content/text'
 import { STRAY_SPOTS } from '../engine/companion'
 import { useGame } from '../store/game-store'
@@ -785,6 +785,68 @@ describe('로마서–빌레몬서 방 (계획 7 작업 7)', () => {
     act(() => useGame.getState().tap(PLACES.lettersTable.tiles[0]))
     walk()
     expect(useGame.getState().modal).toEqual({ kind: 'readPick' })
+  })
+})
+
+describe('히브리서–유다서 방 (계획 8 작업 5)', () => {
+  const lib = () => ROOMS.find((r) => r.owner === 'library')!
+  const inLib = () => WARPS.get(key(lib().door))!
+  const romPhmAll = Object.fromEntries(
+    ['rom', '1co', '2co', 'gal', 'eph', 'php', 'col', '1th', '2th', '1ti', '2ti', 'tit', 'phm'].map((b) => [b, 1 as const]),
+  )
+  const shelvedAll: GameState['shelved'] = { mt: 2, mk: 1, lk: 1, jn: 0, ac: 1, ...romPhmAll }
+  const before = { heartPoints: 1, gospelFeast: 2, 'room:romPhm': 1 }
+  const opened = { ...before, 'room:hebJud': 1 }
+
+  it('닫혀 있으면 셋째 문을 누르면 잠겨 있다고, 열리면 걸어 들어가 방 이름을 알린다', () => {
+    reset({ flags: before, shelved: shelvedAll, player: { ...newGame(CONTENT).player, ...inLib(), path: [] } })
+    act(() => useGame.getState().tap(LOCKED_DOORS[2]))
+    expect(useGame.getState().toast?.text).toBe('히브리서–유다서 방은 아직 잠겨 있어요.')
+    reset({ flags: opened, shelved: shelvedAll, player: { ...newGame(CONTENT).player, ...inLib(), path: [] } })
+    act(() => useGame.getState().tap(LOCKED_DOORS[2]))
+    expect(useGame.getState().toast).toBeNull()
+    act(() => {
+      for (let i = 0; i < 400 && roomAt(playerTile(useGame.getState().game)) !== HEB_JUD_ROOM; i++) useGame.getState().frame(0.05)
+    })
+    expect(roomAt(playerTile(useGame.getState().game))).toBe(HEB_JUD_ROOM)
+    expect(useGame.getState().toast?.text).toBe('히브리서–유다서 방')
+    // 넷째 문은 아직 잠겨 있다
+    act(() => useGame.getState().tap(LOCKED_DOORS[3]))
+    expect(useGame.getState().toast?.text).toContain('아직 잠겨 있어요')
+  })
+
+  it('편지 선반: 여덟 권, 다 적은 책은 꽂기 → 편지 서고 퀴즈 → 이 선반으로 돌아온다', async () => {
+    const jn2 = chaptersOf('2jn', CONTENT)
+    reset({ flags: opened, shelved: shelvedAll, progress: { ...emptyProgress(), '2jn': { completed: jn2, arrangement: {} } } })
+    useGame.setState({ modal: { kind: 'roomShelf', room: 'hebJud' }, rng: mulberry32(3) })
+    const user = userEvent.setup()
+    const { container } = render(<ModalLayer />)
+    const dialog = screen.getByRole('dialog', { name: '편지 선반' })
+    expect(container.querySelectorAll('.library-shelf .spine')).toHaveLength(8)
+    expect(dialog.textContent).toContain('히브리서')
+    expect(dialog.textContent).toContain('유다서')
+    expect(screen.getAllByRole('button', { name: '꽂기' })).toHaveLength(1)
+    await user.click(screen.getByRole('button', { name: '꽂기' }))
+    const m = useGame.getState().modal
+    if (m?.kind !== 'quiz') throw new Error('quiz expected')
+    expect(m.mode).toEqual({ kind: 'library', book: '2jn', retry: false })
+    solveQuiz()
+    act(() => useGame.getState().nextQuiz())
+    expect(useGame.getState().game.shelved['2jn']).toBeDefined()
+    expect(useGame.getState().modal).toEqual({ kind: 'myLine', lineKey: 'book:2jn', back: 'room:hebJud' })
+    act(() => useGame.getState().skipMyLine())
+    expect(useGame.getState().modal).toEqual({ kind: 'roomShelf', room: 'hebJud' })
+  })
+
+  it('방 안 선반·읽는 탁자를 누르면 그 창이 열린다', () => {
+    reset({ flags: opened, shelved: shelvedAll, collected: ['lk-015-008'], player: { ...newGame(CONTENT).player, ...PLACES.hebJudTable.stand!, path: [] } })
+    act(() => useGame.getState().tap(PLACES.hebJudTable.tiles[0]))
+    walk()
+    expect(useGame.getState().modal).toEqual({ kind: 'readPick' })
+    reset({ flags: opened, shelved: shelvedAll, player: { ...newGame(CONTENT).player, ...PLACES.hebJudShelf.stand!, path: [] } })
+    act(() => useGame.getState().tap(PLACES.hebJudShelf.tiles[1]))
+    walk()
+    expect(useGame.getState().modal).toEqual({ kind: 'roomShelf', room: 'hebJud' })
   })
 })
 

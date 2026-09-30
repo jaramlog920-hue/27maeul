@@ -11,7 +11,7 @@ import { drawDecor, lanternLights, sheepCount } from './decor'
 import { FIRE, isNear, npcTile } from '../engine/neighbors'
 import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
 import { actsDoorGlows, feastToday } from '../engine/library'
-import { ACTS_ROOM, ATTIC, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, HEIGHT, HOME_DOOR, HOUSE_RECT, housesNow, houseAt, LOCKED_DOORS, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
+import { ACTS_ROOM, ATTIC, HEB_JUD_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, HEIGHT, HOME_DOOR, HOUSE_RECT, housesNow, houseAt, LOCKED_DOORS, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
 import { GOSPELS, type Facing, type GameContent, type Season, type Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { avatarKey, withLookDefaults, type FullAvatar } from '../engine/avatar'
@@ -345,14 +345,15 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       break
     }
     case 'Y': {
-      // 로마서–빌레몬서 방의 편지 선반 (세 칸이 한 선반): 옅은 잿빛 나무, 위 테는 연한 하늘색 (얇은 책등 열세 권은 그릴 때 얹는다)
+      // 편지 방의 편지 선반 (세 칸이 한 선반): 옅은 잿빛 나무, 위 테는 방마다 — 로마서–빌레몬서 방은 연한 하늘색,
+      // 히브리서–유다서 방은 연한 쑥색 (얇은 책등은 그릴 때 얹는다)
       const L = tileAt(x - 1, y) !== 'Y'
       const R = tileAt(x + 1, y) !== 'Y'
       r(C.shadow, 0, 13, 16, 3)
       r('#8f8272', 0, 0, 16, 14)
       r('#d6cab6', L ? 2 : 0, 2, 16 - (L ? 2 : 0) - (R ? 2 : 0), 9)
       r('#8f8272', 0, 11, 16, 2)
-      r('#a9c4d4', 0, 0, 16, 2)
+      r(roomAt({ x, y }) === HEB_JUD_ROOM ? '#b9cdaa' : '#a9c4d4', 0, 0, 16, 2)
       break
     }
     case 'V': {
@@ -387,15 +388,19 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r('#a79a88', 5, 8, 6, 2)
       r('#cbbfae', 2, 13, 12, 2)
       break
-    case 'J':
-      // 열린 서고 방 문 (사도행전 방·로마서–빌레몬서 방): 문설주, 안쪽 방의 따뜻한 빛, 오른쪽으로 열어 둔 문짝
+    case 'J': {
+      // 열린 서고 방 문: 문설주, 안쪽 방의 따뜻한 빛, 열어 둔 문짝.
+      // 왼쪽 벽 문(사도행전 방·로마서–빌레몬서 방)은 문짝이 오른쪽, 오른쪽 벽 문(히브리서–유다서 방)은 좌우를 뒤집어 왼쪽
+      // (문설주·불빛은 가운데 대칭이라 그대로)
+      const leaf = isRightWallDoor(x, y) ? 2 : 10
       r(C.wall, 0, 0, 16, 16)
       r('#ae9068', 2, 1, 12, 15)
       r('#f3d9a0', 4, 3, 8, 13)
       r('#f8e6c0', 4, 12, 8, 4)
-      r(C.woodDark, 10, 3, 4, 13)
-      r(C.wood, 11, 4, 2, 12)
+      r(C.woodDark, leaf, 3, 4, 13)
+      r(C.wood, leaf + 1, 4, 2, 12)
       break
+    }
     case 'K':
       // 잠긴 방 문: 벽에 난 나무문과 자물쇠
       r(C.wall, 0, 0, 16, 16)
@@ -1020,7 +1025,33 @@ function glow(g: Ctx, x: number, y: number, radius: number, alpha: number, color
 }
 
 /**
- * 잠긴 문틈으로 새는 불빛: 문 둘레의 은은한 빛, 가운데 문틈과 문지방의 2픽셀 빛줄기, 방바닥에 번지는 빛.
+ * 편지 방 선반의 얇은 책등 (방 표 순서) — 꽂힌 책만 색, 은박·금박이면 띠 둘. 꽂지 않은 책의 자리는 비워 둔다.
+ * 방마다 책등 색 묶음이 다르다 (로마서–빌레몬서 방은 하늘·모래, 히브리서–유다서 방은 쑥·청회색). 여덟 권은 조금 굵게
+ */
+const LETTER_SPINES: Record<'romPhm' | 'hebJud', { colors: string[]; w: number; step: number }> = {
+  romPhm: { colors: ['#8a9bb0', '#a3917e', '#8fa396', '#a98f8f', '#9a93ad'], w: 2, step: 3 },
+  hebJud: { colors: ['#8fa38e', '#8e9db0', '#ab9a84', '#9aa7a0', '#a49196'], w: 3, step: 5 },
+}
+function drawLetterSpines(g: Ctx, shelved: GameState['shelved'], room: 'romPhm' | 'hebJud') {
+  const [s0] = (room === 'romPhm' ? PLACES.lettersShelf : PLACES.hebJudShelf).tiles
+  const { colors, w, step } = LETTER_SPINES[room]
+  shelfRoom(room).books.forEach((b, i) => {
+    const sx = s0.x * TILE + 5 + i * step
+    const sy = s0.y * TILE + 2
+    const grade = shelved[b]
+    if (grade === undefined) return
+    g.fillStyle = colors[i % colors.length]
+    g.fillRect(sx, sy + 1, w, 8)
+    if (grade > 0) {
+      g.fillStyle = grade === 2 ? '#d9b44a' : '#c7ccd4'
+      g.fillRect(sx, sy + 2, w, 2)
+      g.fillRect(sx, sy + 6, w, 2)
+    }
+  })
+}
+
+/**
+ * 잠긴 문틈으로 새는 불빛: 문 둘레의 은은한 빛,가운데 문틈과 문지방의 2픽셀 빛줄기, 방바닥에 번지는 빛.
  * 천천히 숨 쉬듯 밝아졌다 옅어진다 (차분한 파스텔 — 창과 같은 따뜻한 노랑)
  */
 function drawDoorGlow(g: Ctx, door: Tile, t: number) {
@@ -1236,26 +1267,9 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           g.fillRect(bx + i * 6 + 1, by + 6, 2, 2)
         }
       }
-      // 로마서–빌레몬서 방: 편지 선반의 얇은 책등 열세 권 (방 표 순서) — 꽂힌 책만 색, 은박·금박이면 띠
-      if (roomAt(here) === LETTERS_ROOM) {
-        const [s0] = PLACES.lettersShelf.tiles
-        const books = shelfRoom('romPhm').books
-        const SPINES = ['#8a9bb0', '#a3917e', '#8fa396', '#a98f8f', '#9a93ad']
-        books.forEach((b, i) => {
-          const sx = s0.x * TILE + 5 + i * 3
-          const sy = s0.y * TILE + 2
-          const grade = game.shelved[b]
-          // 아직 꽂지 않은 책의 자리는 비워 둔다
-          if (grade === undefined) return
-          g.fillStyle = SPINES[i % SPINES.length]
-          g.fillRect(sx, sy + 1, 2, 8)
-          if (grade > 0) {
-            g.fillStyle = grade === 2 ? '#d9b44a' : '#c7ccd4'
-            g.fillRect(sx, sy + 2, 2, 2)
-            g.fillRect(sx, sy + 6, 2, 2)
-          }
-        })
-      }
+      // 편지 방: 편지 선반의 얇은 책등 (방 표 순서)
+      if (roomAt(here) === LETTERS_ROOM) drawLetterSpines(g, game.shelved, 'romPhm')
+      if (roomAt(here) === HEB_JUD_ROOM) drawLetterSpines(g, game.shelved, 'hebJud')
 
       // 마음이 쌓여 마을에 생긴 것들
       drawDecor(g, game, weather, t, phase === 'morning' || phase === 'day')

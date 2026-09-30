@@ -12,9 +12,13 @@ import type { ItemId, PlaceId, Tile } from './types'
 
 export const TILE = 16
 export const WIDTH = 48
-/** 마을 부분의 높이. 그 아래(40~68줄)는 이웃집 안 방들이 있는 보이지 않는 곳 (60줄부터 사도행전 방, 내 집 안, 로마서–빌레몬서 방) */
+/**
+ * 마을 부분의 높이. 그 아래(40~79줄)는 이웃집 안 방들이 있는 보이지 않는 곳
+ * (60줄부터 사도행전 방, 내 집 안, 로마서–빌레몬서 방 / 70줄부터 히브리서–유다서 방. 78–79줄은 비워 둔다)
+ */
 export const VILLAGE_H = 40
-export const HEIGHT = 70
+/** 계획 8 작업 5에서 70 → 80 (히브리서–유다서 방 자리). 저장에는 지도 크기가 들어가지 않는다 */
+export const HEIGHT = 80
 /** 화면에 보이는 칸 수 */
 export const VIEW_W = 16
 export const VIEW_H = 20
@@ -187,6 +191,31 @@ const lettersThings: [number, number, string][] = [
   [1, 6, 'p'], [9, 6, 'p'],
 ]
 
+/** 서고 오른쪽 위 잠긴 문 = 히브리서–유다서 방 문 (LOCKED_DOORS[2], 방 표 hebJud의 door) */
+export const HEB_JUD_DOOR: Tile = { x: LIBRARY_X0 + LIBRARY_W - 1, y: LIBRARY_Y0 + 3 }
+
+/**
+ * 히브리서–유다서 방 (계획 8 작업 5, 11×8, 지도 아래 70줄 — 로마서–빌레몬서 방 바로 아래 보이지 않는 곳).
+ * 서고 오른쪽 위 문을 밟으면 들어오고, 문깔개를 밟으면 서고 안 그 문 **왼쪽** 칸으로 나간다 (오른쪽 벽 문).
+ * 붙박이는 로마서–빌레몬서 방과 같다(위 벽 편지꽂이·같은 창 둘, 왼쪽 편지 선반·오른쪽 책장, 가운데 읽는 탁자).
+ * 두 방을 가르는 것은 구석 화분 대신 등잔대 둘, 탁자 아래 깔개, 선반 위 테 색과 책등 색 묶음. 놀이판은 없다.
+ * 계획 9(요한계시록 방)는 같은 70줄의 2열이나 16열에 지을 수 있다 — 지도 높이를 다시 늘리지 않게
+ */
+export const HEB_JUD_W = 11
+export const HEB_JUD_H = 8
+const HEB_JUD_X0 = 30
+const HEB_JUD_Y0 = 70
+const hebJudThings: [number, number, string][] = [
+  [2, 0, 'N'], [4, 0, 'V'], [5, 0, 'V'], [6, 0, 'V'], [8, 0, 'N'],
+  [1, 1, 'Y'], [2, 1, 'Y'], [3, 1, 'Y'], [7, 1, 's'], [8, 1, 's'], [9, 1, 's'],
+  [5, 4, 'n'],
+]
+/** 등잔대 둘(좌우 거울)과 탁자 아래 세 칸 깔개(문 앞 긴 깔개 자리를 대신한다) — 문을 가운데 둔 대칭 */
+const hebJudDecor: [number, number, ItemId, 'flip'?][] = [
+  [1, 6, 'lampStand'], [9, 6, 'lampStand', 'flip'],
+  [4, 5, 'rug'],
+]
+
 export const ROOMS: readonly Room[] = [
   // 빵 굽는 이웃: 가마 둘, 찬장, 밀가루 항아리, 과일 접시·주전자 올린 탁자, 둥근 깔개
   room('baker', 2, 41, { x: 5, y: 17 }, [5, 4],
@@ -220,11 +249,15 @@ export const ROOMS: readonly Room[] = [
   { ...room('acts', ACTS_X0, ACTS_Y0, ACTS_DOOR, [5, 3], actsThings, [], ACTS_W, ACTS_H), out: { x: ACTS_DOOR.x + 1, y: ACTS_DOOR.y } },
   // 로마서–빌레몬서 방: 문은 서고 안 둘째 잠긴 문, 나가면 그 문 오른쪽 서고 바닥
   { ...room('letters', LETTERS_X0, LETTERS_Y0, LETTERS_DOOR, [5, 3], lettersThings, [], LETTERS_W, LETTERS_H), out: { x: LETTERS_DOOR.x + 1, y: LETTERS_DOOR.y } },
+  // 히브리서–유다서 방: 문은 서고 오른쪽 위 잠긴 문, 나가면 그 문 왼쪽 서고 바닥 (오른쪽 벽)
+  { ...room('hebJud', HEB_JUD_X0, HEB_JUD_Y0, HEB_JUD_DOOR, [5, 3], hebJudThings, hebJudDecor, HEB_JUD_W, HEB_JUD_H), out: { x: HEB_JUD_DOOR.x - 1, y: HEB_JUD_DOOR.y } },
 ]
 /** 사도행전 방 */
 export const ACTS_ROOM: Room = ROOMS.find((r) => r.owner === 'acts')!
 /** 로마서–빌레몬서 방 */
 export const LETTERS_ROOM: Room = ROOMS.find((r) => r.owner === 'letters')!
+/** 히브리서–유다서 방 */
+export const HEB_JUD_ROOM: Room = ROOMS.find((r) => r.owner === 'hebJud')!
 
 /**
  * 다락 서재 (8×6, 지도 아래 보이지 않는 곳 — 할아버지 집 방 오른쪽). 사다리로 올라오고 문깔개로 내려간다.
@@ -275,6 +308,11 @@ export const LOCKED_DOORS: readonly Tile[] = (() => {
     .map(([dx, dy]) => ({ x: lib.x0 + dx, y: lib.y0 + dy }))
     .sort((a, b) => a.x - b.x || a.y - b.y)
 })()
+
+/** 서고 오른쪽 벽의 잠긴 방 문인가 (열린 문 그림을 좌우로 뒤집고, 방에서 나오면 문 왼쪽 칸에 선다) */
+export function isRightWallDoor(x: number, y: number): boolean {
+  return x === LIBRARY_X0 + LIBRARY_W - 1 && LOCKED_DOORS.some((d) => d.x === x && d.y === y)
+}
 
 /** 마을의 집들 (그리는 쪽이 집마다 다른 모양을 입힌다). 지도를 지을 때 채워진다 */
 export interface House {
@@ -576,6 +614,9 @@ export const PLACES: Record<PlaceId, Place> = {
   // 로마서–빌레몬서 방: 편지 선반, 읽는 탁자 (편지꽂이는 장식)
   lettersShelf: { tiles: [1, 2, 3].map((dx) => ({ x: LETTERS_X0 + dx, y: LETTERS_Y0 + 1 })), stand: { x: LETTERS_X0 + 2, y: LETTERS_Y0 + 2 } },
   lettersTable: { tiles: [{ x: LETTERS_X0 + 5, y: LETTERS_Y0 + 4 }], stand: { x: LETTERS_X0 + 5, y: LETTERS_Y0 + 5 } },
+  // 히브리서–유다서 방: 편지 선반, 읽는 탁자 (로마서–빌레몬서 방과 같은 자리)
+  hebJudShelf: { tiles: [1, 2, 3].map((dx) => ({ x: HEB_JUD_X0 + dx, y: HEB_JUD_Y0 + 1 })), stand: { x: HEB_JUD_X0 + 2, y: HEB_JUD_Y0 + 2 } },
+  hebJudTable: { tiles: [{ x: HEB_JUD_X0 + 5, y: HEB_JUD_Y0 + 4 }], stand: { x: HEB_JUD_X0 + 5, y: HEB_JUD_Y0 + 5 } },
 }
 
 /** 이 장소가 지금 있는가 (다락 서재는 2단계부터) */
