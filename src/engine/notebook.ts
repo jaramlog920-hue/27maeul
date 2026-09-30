@@ -153,7 +153,7 @@ export const BIRTHDAY_MUL = 2
 
 const ROOM_NAME: Record<string, string> = {
   baker: '빵집',
-  child: '물 긷는 아이네 집',
+  child: '배움터',
   grandpa: '포도원 할아버지 집',
   weaver: '베 짜는 집',
   beekeeper: '벌 치는 집',

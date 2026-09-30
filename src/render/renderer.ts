@@ -4,7 +4,7 @@ import { darkness, phaseOf, seasonOf } from '../engine/clock'
 import { isGrown, STRAY_SPOTS, EAVES } from '../engine/companion'
 import { totalChapters } from '../engine/books'
 import { shelfRoom } from '../engine/shelf-rooms'
-import { eventWaiting, routineOf, shelvedCount, straysToday, weddingToday, type GameState } from '../engine/game'
+import { childAtSchool, eventWaiting, routineOf, SCHOOL_SEAT, shelvedCount, straysToday, weddingToday, type GameState } from '../engine/game'
 import type { Activity } from '../engine/people'
 import { fixtureTier, goldTrim, RARE_ITEMS } from '../engine/fixtures'
 import { chaptersOf } from '../engine/books'
@@ -1633,7 +1633,11 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           st === 'toddler'
             ? drawSprite(g, paint('baby/walk', BABY.walk, SMALL_PALETTE), x, y, bob)
             : drawSprite(g, paint(`kid/${kid.look}/${isBlinking(t + 1.3)}`, kidRows(), PALETTE), x, y, bob)
-        if (mode === 'cradle') {
+        if (childAtSchool(game)) {
+          // 배움터에 맡긴 날: 배움 탁자 곁에 앉아 있다
+          const at = SCHOOL_SEAT
+          items.push({ y: at.y, paint: () => drawKid(at.x, at.y, 0) })
+        } else if (mode === 'cradle') {
           const c = CRADLE_SPOT
           items.push({
             y: c.y,

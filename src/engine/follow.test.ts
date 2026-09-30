@@ -51,3 +51,21 @@ describe('데리고 다니기·집에 두기', () => {
     expect(tapTile(s, kid).target).toEqual({ kind: 'child' })
   })
 })
+
+describe('배움터', () => {
+  it('닢을 내고 아이를 맡기면 고른 능력치가 자라고, 저녁까지 배움터에 있다 (하루 한 번)', async () => {
+    const { canSchool, childAtSchool, SCHOOL_FEE, SCHOOL_SEAT, sendToSchool } = await import('./game')
+    const { PLACES, placeAt } = await import('./world')
+    expect(placeAt(PLACES.learnTable.tiles[0])).toBe('learnTable')
+    const s = { ...withKid(TODDLER_AT), coins: 40, clock: { ...withKid(TODDLER_AT).clock, minute: 9 * 60 } }
+    const g = sendToSchool(s, 'wit')!
+    expect(g.coins).toBe(40 - SCHOOL_FEE)
+    expect(g.child!.stats.wit.xp).toBeGreaterThan(0)
+    expect(childAtSchool(g)).toBe(true)
+    expect(childTile(g)).toEqual(SCHOOL_SEAT)
+    expect(canSchool(g)).toBe('done')
+    expect(canSchool(withKid(3))).toBe('baby')
+    expect(canSchool({ ...s, coins: 1 })).toBe('coins')
+    expect(childAtSchool({ ...g, clock: { ...g.clock, minute: 19 * 60 } })).toBe(false)
+  })
+})

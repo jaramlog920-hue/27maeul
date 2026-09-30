@@ -277,7 +277,7 @@ export const ROOMS: readonly Room[] = [
     [[1, 1, 'O'], [2, 1, 'O'], [8, 1, 'g'], [8, 2, 'g'], [3, 3, 'n'], [4, 3, 'n'], [8, 5, 'b']],
     [[4, 1, 'cupboard'], [7, 1, 'barrel'], [2, 3, 'chair'], [5, 3, 'chair', 'flip'], [3, 3, 'fruitBowl'], [4, 3, 'teapot'],
      [5, 4, 'roundRug'], [1, 5, 'bigPlant'], [7, 5, 'pillows'], [1, 2, 'lampStand']]),
-  // 물 긷는 아이네: 침대 둘, 궤짝, 화덕, 물항아리, 둘러앉는 탁자, 돗자리
+  // 배움터 (물 긷는 아이가 맏이로 동생들을 돌보는 집 — 2026-09-30 '아이네'에서): 침대 둘, 궤짝, 화덕, 물항아리, 둘러앉는 배움 탁자, 돗자리
   room('child', 16, 41, { x: 36, y: 16 }, [3, 4],
     [[1, 1, 'b'], [2, 1, 'b'], [5, 1, 'h'], [8, 1, 'g'], [8, 2, 'g'], [4, 3, 'n'], [5, 3, 'n']],
     [[3, 1, 'chest'], [3, 3, 'chair'], [6, 3, 'chair', 'flip'], [4, 3, 'teapot'], [5, 3, 'fruitBowl'],
@@ -493,11 +493,11 @@ function build(): string[] {
   set(14, 10, 'B') // 언덕 벤치
   set(16, 10, 'T')
 
-  // ── 가운데 위 (문이 가로 큰길에 바로 닿는다): 빵집 · 사랑방 · 아이네 · 올리브 숲 ──
+  // ── 가운데 위 (문이 가로 큰길에 바로 닿는다): 빵집 · 사랑방 · 배움터 · 올리브 숲 ──
   roofed('baker', 2, 12, 8, 16, 5) // 빵 굽는 이웃
   set(1, 16, 'O') // 바깥 화덕 (빵집 서쪽 벽 곁, 큰길 어귀)
   roofed('hall', HALL_RECT.x0, HALL_RECT.y0, HALL_RECT.x1, HALL_RECT.y1, HALL_DOOR.x) // 마을 사랑방
-  roofed('child', 33, 12, 39, 16, 36) // 물 긷는 아이네
+  roofed('child', 33, 12, 39, 16, 36) // 배움터 (물 긷는 아이네)
   for (const [x, y] of [[42, 11], [44, 11], [46, 11], [41, 13], [43, 13], [45, 13], [42, 15], [44, 15], [46, 15]]) set(x, y, 'o')
 
   // ── 가운데 아래 (앞마당 24줄, 문이 남쪽 골목에): 목수 · 편지 나르는 이웃 · 베 짜는 집 · 대장간 마당 ──
@@ -689,7 +689,7 @@ export const PLACES: Record<PlaceId, Place> = {
   well: { tiles: [{ x: 24, y: 14 }], stand: { x: 24, y: 15 } },
   hill: { tiles: [{ x: 14, y: 10 }], stand: { x: 14, y: 11 } },
   bench: { tiles: [{ x: 29, y: 21 }], stand: { x: 28, y: 21 } },
-  // 저녁 초대를 받는 이웃집 문 (빵집·아이네·할아버지 집)
+  // 저녁 초대를 받는 이웃집 문 (빵집·배움터·할아버지 집)
   house: { tiles: [{ x: 5, y: 16 }, { x: 36, y: 16 }, { x: 36, y: 7 }] },
   reeds: { tiles: tilesOf('r') },
   vine: { tiles: tilesOf('v') },
@@ -723,6 +723,8 @@ export const PLACES: Record<PlaceId, Place> = {
   // 모이는 곳과 둘이 가는 곳 (계획 10): 사랑방 긴 탁자, 찻집 탁자, 호숫가 정자 벤치
   // 나루의 배 (계획 13 작업 6): 이웃 마을 여행
   boat: { tiles: [{ x: 25, y: 35 }, { x: 25, y: 34 }], stand: { x: 24, y: 34 } },
+  // 배움터의 배움 탁자: 아이를 맡겨 능력치를 기른다 (탁자 아래 칸에 선다)
+  learnTable: { tiles: [{ x: 20, y: 44 }, { x: 21, y: 44 }], stand: { x: 20, y: 45 } },
   // 의뢰 게시판 (계획 13 작업 5): 사랑방 벽
   hallBoard: { tiles: [5, 6].map((dx) => ({ x: HALL_ROOM_X0 + dx, y: HALL_ROOM_Y0 })), stand: { x: HALL_ROOM_X0 + 5, y: HALL_ROOM_Y0 + 1 } },
   hallTable: { tiles: [4, 5, 6, 7].map((dx) => ({ x: HALL_ROOM_X0 + dx, y: HALL_ROOM_Y0 + 3 })), stand: { x: HALL_ROOM_X0 + 5, y: HALL_ROOM_Y0 + 4 } },

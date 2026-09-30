@@ -837,15 +837,52 @@ export function setChildMode(s: GameState, mode: ChildMode): GameState {
   return s.child ? { ...s, child: { ...s.child, mode } } : s
 }
 
+// ── 배움터 (2026-09-30): 닢을 내고 아이를 맡기면 고른 능력치가 자란다 (하루 한 번, 저녁 여섯 시까지 배움터에) ──
+export const SCHOOL_FEE = 15
+export const SCHOOL_XP = 15
+/** 맡긴 아이가 앉는 자리 (배움 탁자 곁) */
+export const SCHOOL_SEAT: Tile = { x: 21, y: 45 }
+export const SCHOOL_UNTIL = 18 * 60
+const SCHOOL_STATS: readonly StatId[] = ['wit', 'hand', 'charm', 'strength', 'luck']
+
+export type SchoolBlock = 'noChild' | 'baby' | 'away' | 'done' | 'late' | 'coins' | null
+export function canSchool(s: GameState): SchoolBlock {
+  const c = s.child
+  if (!c) return 'noChild'
+  if (childStage(c, s.clock.day) === 'baby') return 'baby'
+  if (childMode(c, s.clock.day) === 'away') return 'away'
+  if (s.flags.schoolDay === s.clock.day) return 'done'
+  if (s.clock.minute >= SCHOOL_UNTIL) return 'late'
+  if (s.coins < SCHOOL_FEE) return 'coins'
+  return null
+}
+
+export function sendToSchool(s: GameState, stat: StatId): GameState | null {
+  if (canSchool(s)) return null
+  const c = s.child!
+  return {
+    ...s,
+    coins: s.coins - SCHOOL_FEE,
+    child: { ...c, stats: addXp(c.stats, stat, SCHOOL_XP) },
+    flags: { ...s.flags, schoolDay: s.clock.day, schoolStat: SCHOOL_STATS.indexOf(stat) },
+  }
+}
+
+/** 오늘 배움터에 맡긴 아이가 아직 거기 있는가 */
+export function childAtSchool(s: Pick<GameState, 'flags' | 'clock'>): boolean {
+  return s.flags.schoolDay === s.clock.day && s.clock.minute < SCHOOL_UNTIL
+}
+
 /**
  * 아이가 지금 있는 칸 (누르면 데리고 다닐지 정한다): 아기와 집에 둔 아이는 요람 곁, 따라다니는 아이는 기록자 곁(보는 쪽 반대),
  * 혼자 다니는 아이는 때마다 정한 자리
  */
-export function childTile(s: Pick<GameState, 'child' | 'clock' | 'player'>): Tile | null {
+export function childTile(s: Pick<GameState, 'child' | 'clock' | 'player'> & Partial<Pick<GameState, 'flags'>>): Tile | null {
   const c = s.child
   if (!c) return null
   const mode = childMode(c, s.clock.day)
   if (mode === 'away') return null
+  if (s.flags && childAtSchool(s as Pick<GameState, 'flags' | 'clock'>)) return SCHOOL_SEAT
   if (mode === 'cradle' || mode === 'home') return CRADLE_SPOT
   if (mode === 'roam') return helperSpot(s.clock.minute)
   const back = { left: { x: 1, y: 0 }, right: { x: -1, y: 0 }, up: { x: 0, y: 1 }, down: { x: 0, y: -1 } }[s.player.facing]

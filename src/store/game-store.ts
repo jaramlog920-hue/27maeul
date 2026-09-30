@@ -73,6 +73,7 @@ import {
   openEvent,
   setCompanionStay,
   setChildMode,
+  sendToSchool,
   warmByHearth,
   playerTile,
   receiveVisit,
@@ -157,6 +158,8 @@ export type Modal =
   | { kind: 'follow'; who: 'pet' | 'child' }
   /** 마을 지도: 마을 전체를 한 장으로 (설정에서) */
   | { kind: 'villageMap' }
+  /** 배움터: 아이 맡기기 */
+  | { kind: 'school' }
   | { kind: 'menu'; place: MenuPlace }
   | { kind: 'readPick' }
   | { kind: 'quiz'; mode: QuizMode; questions: Question[]; index: number; wrong: string[]; solved: boolean; misses: number; missed: string[] }
@@ -273,6 +276,7 @@ interface Store {
   petCompanion: () => void
   keepCompanion: (stay: boolean) => void
   keepChild: (mode: ChildMode) => void
+  goSchool: (stat: StatId) => void
   startTeach: () => void
   startLetter: () => void
   // 손일
@@ -536,6 +540,8 @@ function announceRoom(before: GameState, after: GameState) {
           ? T.places.hallRoom
           : room.owner === 'teahouse'
             ? T.places.teaRoom
+            : room.owner === 'child'
+              ? '배움터'
         : letterRoom
           ? roomTitle(shelfRoom(letterRoom))
           : fill(T.ui.roomOf, { who: who ?? '' })
@@ -657,6 +663,8 @@ export const useGame = create<Store>((set, get) => {
         return { game, modal: { kind: 'board' } }
       case 'boat':
         return { game, modal: { kind: 'travel' } }
+      case 'learnTable':
+        return { game, modal: { kind: 'school' } }
       case 'journeyBoard':
         return { game, modal: { kind: 'journey' } }
       case 'churchBoard':
@@ -953,6 +961,13 @@ export const useGame = create<Store>((set, get) => {
       const g = setCompanionStay(get().game, stay)
       set({ game: persist(g), modal: null })
       get().say(`${g.companion?.name ?? ''} · ${stay ? '집에서 기다려요' : '함께 다녀요'}`)
+    },
+    goSchool: (stat) => {
+      const g = sendToSchool(get().game, stat)
+      if (!g) return
+      sfx('gift')
+      set({ game: persist(g), modal: null })
+      get().say(`${g.child?.name ?? '아이'} · 배움터에서 ${withObject((T.stats.names as Record<StatId, string>)[stat])} 배워요 (저녁 여섯 시까지)`, 3400)
     },
     keepChild: (mode) => {
       const g = setChildMode(get().game, mode)

@@ -50,6 +50,7 @@ export type PlaceId =
   | 'hallTable'
   | 'hallBoard'
   | 'boat'
+  | 'learnTable'
   | 'teaTable'
   | 'pavilion'
   // 들 약초 (약방이 사 준다)

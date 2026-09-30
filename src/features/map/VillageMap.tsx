@@ -18,7 +18,7 @@ const HOUSE_NAME: Record<string, string> = {
   carpenter: '목수네',
   postman: '편지 집',
   weaver: '베 짜는 집',
-  child: '아이네',
+  child: '배움터',
   grandpa: '할아버지 집',
   beekeeper: '벌 치는 집',
   fisher: '어부네',

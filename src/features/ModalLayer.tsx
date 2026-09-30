@@ -28,6 +28,7 @@ import { TravelView } from './talk/TravelView'
 import { ChildName } from './child/ChildName'
 import { FollowMenu } from './companion/FollowMenu'
 import { VillageMap } from './map/VillageMap'
+import { SchoolView } from './child/SchoolView'
 import { GameGuide } from './play/GameGuide'
 import { Settings } from './play/Settings'
 import { ScheduleDialog } from './play/EventSchedule'
@@ -75,6 +76,8 @@ function Body() {
       return <FollowMenu who={modal.who} />
     case 'villageMap':
       return <VillageMap />
+    case 'school':
+      return <SchoolView />
     case 'letter':
       return <LetterBox />
     case 'menu':
