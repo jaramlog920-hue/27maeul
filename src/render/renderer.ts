@@ -963,6 +963,18 @@ function neighborPerson(def: NeighborDef, facing: Facing, frame: 0 | 1 | 2, blin
 const CRADLE: SpriteRows = ['..........', '.k......k.', '.kccccccK.', '.kwwwwwwk.', '.kWWWWWWk.', '..k....k..', '.kk....kk.']
 const CRADLE_PALETTE: Record<string, string> = { k: '#854e27', K: '#854e27', w: '#ce9759', W: '#a5713d', c: '#fdf5e0' }
 
+/**
+ * 마을 지도 (설정 → 마을 지도): 마을 전체를 한 장으로 — 붙박이 그림(mapFor)에서 마을 부분만 잘라 그리고,
+ * 아직 열리지 않은 구역은 덤불로 덮고, 기록자 자리에 표시를 둔다. 캔버스 크기는 WIDTH×VILLAGE_H 칸
+ */
+export function drawVillageMap(g: Ctx, game: GameState): void {
+  const season = seasonOf(game.clock.day)
+  g.imageSmoothingEnabled = false
+  g.drawImage(mapFor(season), 0, 0, WIDTH * TILE, VILLAGE_H * TILE, 0, 0, WIDTH * TILE, VILLAGE_H * TILE)
+  for (const z of lockedZones(shelvedCount(game)))
+    for (let y = z.y0; y <= z.y1; y++) for (let x = z.x0; x <= z.x1; x++) if (!'~=uR#DS'.includes(tileAt(x, y))) drawBush(g, x, y, season)
+}
+
 /** 이웃 수첩에 붙이는 앞모습 한 장 */
 export function neighborPortrait(def: NeighborDef, season: Season) {
   return neighborPerson(def, 'down', 0, false, season)

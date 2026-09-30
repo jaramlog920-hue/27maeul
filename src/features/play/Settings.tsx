@@ -184,6 +184,12 @@ export function Settings() {
       </section>
       <section className="settings-section">
         <div className="settings-row">
+          <h3>마을 지도</h3>
+          <button aria-label="마을 지도" onClick={() => open({ kind: 'villageMap' })}>보기</button>
+        </div>
+      </section>
+      <section className="settings-section">
+        <div className="settings-row">
           <h3>도움말</h3>
           <button aria-label="도움말" onClick={() => open({ kind: 'guide' })}>열기</button>
         </div>

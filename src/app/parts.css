@@ -1595,3 +1595,33 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
 .trade-list li.with-icon .trade-get,
 .trade-list li.with-icon .trade-pay { grid-column: 2; }
 .trade-list li.with-icon button { grid-column: 3; }
+
+/* ── 마을 지도 (설정 → 마을 지도) ── */
+.dialog.village-map { max-width: 720px; }
+.vmap { position: relative; width: 100%; border: 2px solid var(--panel-edge); line-height: 0; }
+.vmap canvas { width: 100%; height: auto; image-rendering: pixelated; display: block; }
+.vmap-label {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  font-size: 10px;
+  line-height: 1.2;
+  white-space: nowrap;
+  padding: 1px 4px;
+  background: rgba(255, 250, 238, 0.88);
+  color: #4a3226;
+  border-radius: 3px;
+  pointer-events: none;
+}
+.vmap-label.soft { background: rgba(255, 250, 238, 0.7); transform: translate(-50%, -50%); }
+.vmap-label.locked { background: rgba(60, 90, 40, 0.8); color: #fff; transform: translate(-50%, -50%); }
+.vmap-me {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  color: #e2402f;
+  font-size: 16px;
+  line-height: 1;
+  text-shadow: 0 0 2px #fff, 0 0 2px #fff;
+  animation: vmap-blink 1s steps(2) infinite;
+  pointer-events: none;
+}
+@keyframes vmap-blink { 50% { opacity: 0.35; } }

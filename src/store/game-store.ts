@@ -154,6 +154,8 @@ export type Modal =
   | { kind: 'childName' }
   /** 동물 친구·우리 아이: 데리고 다니기·집에 두기 */
   | { kind: 'follow'; who: 'pet' | 'child' }
+  /** 마을 지도: 마을 전체를 한 장으로 (설정에서) */
+  | { kind: 'villageMap' }
   | { kind: 'menu'; place: MenuPlace }
   | { kind: 'readPick' }
   | { kind: 'quiz'; mode: QuizMode; questions: Question[]; index: number; wrong: string[]; solved: boolean; misses: number; missed: string[] }
