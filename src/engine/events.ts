@@ -15,7 +15,7 @@ export interface ScheduledEvent {
   to: number
   done?: boolean
 }
-const festivals = { barley: '보리 거둔 날 잔치', grapes: '포도 수확 잔치', hearth: '모닥불 모임' }
+const festivals = { blossom: '봄꽃 잔치', barley: '보리 거둔 날 잔치', grapes: '포도 수확 잔치', hearth: '모닥불 모임' }
 const gatherings = { babyParty: '아기 잔치', picnic: '언덕 소풍', starNight: '별 보는 밤' }
 
 /** 미래의 친밀도 이벤트는 추측하지 않고, 확정된 날짜와 오늘 정해진 일정만 안내한다. */

@@ -91,6 +91,7 @@ describe('calendar', () => {
   it('장날·행사·거둘 때', () => {
     expect(isMarketDay(7)).toBe(true)
     expect(isMarketDay(8)).toBe(false)
+    expect(festivalOf(dayOf('spring', 20))).toBe('blossom')
     expect(festivalOf(dayOf('summer', 25))).toBe('barley')
     expect(festivalOf(dayOf('autumn', 30))).toBe('grapes')
     expect(festivalOf(dayOf('winter', 20))).toBe('hearth')

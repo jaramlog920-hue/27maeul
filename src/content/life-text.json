@@ -2111,6 +2111,28 @@
       ],
       "album": "병문안 온 날"
     },
+    "festival:blossom": {
+      "title": "봄꽃 잔치",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "장터에 모닥불이 피었다. 들꽃이 한창인 봄밤의 잔치다."
+        },
+        {
+          "speaker": "baker",
+          "text": "들꽃 꿀을 넣어 구운 봄빵이에요. 하나 드세요!"
+        },
+        {
+          "speaker": "grandpa",
+          "text": "포도나무에 새순이 올랐네. 올해도 잘 되겠어."
+        },
+        {
+          "speaker": "child",
+          "text": "꽃잎이 불빛에 날려요!"
+        }
+      ],
+      "album": "봄꽃 잔치"
+    },
     "festival:barley": {
       "title": "보리 거둔 날 잔치",
       "lines": [
@@ -4437,6 +4459,7 @@
       "childLearned": " 아이가 혼자 읽기 시작했다.",
       "babyBorn": " 빵집에 아기가 태어났다.",
       "sick": " 앓아누웠고, 이웃이 수프를 가져왔다.",
+      "festival:blossom": " 봄꽃 잔치에 갔다.",
       "festival:barley": " 보리 거둔 날 잔치에 갔다.",
       "festival:grapes": " 포도 수확 잔치에 갔다.",
       "festival:hearth": " 모닥불 곁에 모였다.",

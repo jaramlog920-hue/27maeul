@@ -48,12 +48,13 @@ export function isMarketDay(day: number): boolean {
   return day % 7 === 0
 }
 
-export type Festival = 'barley' | 'grapes' | 'hearth'
+export type Festival = 'blossom' | 'barley' | 'grapes' | 'hearth'
 
 /** 오늘 저녁(18~21시)에 열리는 마을 행사 */
 export function festivalOf(day: number): Festival | null {
   const s = seasonOf(day)
   const d = seasonDay(day)
+  if (s === 'spring' && d === 20) return 'blossom' // 봄꽃 잔치 (2026-09-30 사용자)
   if (s === 'summer' && d === 25) return 'barley'
   if (s === 'autumn' && d === 30) return 'grapes'
   if (s === 'winter' && d === 20) return 'hearth'
