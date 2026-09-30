@@ -40,54 +40,55 @@ import {
 } from './sprites'
 
 const C = {
-  grass: '#bfcfa4',
-  grass2: '#abc292',
-  grass3: '#cfdcb6',
-  worn: '#b2ae75',
-  worn2: '#bca378',
-  path: '#e5d3aa',
-  path2: '#d6c194',
-  floor: '#dbb682',
-  floor2: '#c9a171',
-  wall: '#f8e6c0',
-  wallTop: '#fff6db',
-  wallDark: '#ae9068',
-  leaf: '#7b9a60',
-  leaf2: '#708754',
-  leaf3: '#99b67b',
-  trunk: '#82684f',
-  stone: '#b3ada2',
-  stoneDark: '#878176',
-  water: '#98c5bb',
-  water2: '#bddbcc',
-  wood: '#ad845d',
-  woodDark: '#8e6a4d',
-  blanket: '#c29095',
-  blanketDark: '#a2747a',
-  pillow: '#f3ead8',
-  paper: '#f1e3bf',
-  lamp: '#f5c542',
-  door: '#987654',
-  shadow: 'rgba(40,25,10,0.22)',
-  fire: '#f28c3a',
-  fire2: '#d8c587',
-  reed: '#99b67b',
-  reed2: '#7b9a60',
-  olive: '#97af83',
-  olive2: '#7f9a6c',
-  vine: '#618747',
-  grapes: '#6b4079',
-  fence: '#ad845d',
-  awning: '#d98a6a',
-  awning2: '#fefdf8',
-  flower: ['#f1b999', '#fce2a7', '#fefdf8', '#e8a88a'],
+  // 참고 그림(2026-09-30 사용자)에 맞춘 밝고 선명한 색: 연두 풀밭, 모래빛 흙길, 맑은 하늘빛 호수, 또렷한 지붕
+  grass: '#a5d67a',
+  grass2: '#93c96a',
+  grass3: '#bde592',
+  worn: '#c9c27a',
+  worn2: '#d8bd84',
+  path: '#eed39c',
+  path2: '#e0c083',
+  floor: '#e9c48f',
+  floor2: '#d6ad76',
+  wall: '#fcedcb',
+  wallTop: '#fff8e2',
+  wallDark: '#d2ab7a',
+  leaf: '#58a943',
+  leaf2: '#3d8a34',
+  leaf3: '#7cc75a',
+  trunk: '#7a5230',
+  stone: '#bdb7ab',
+  stoneDark: '#8f887c',
+  water: '#62bfdc',
+  water2: '#a6e3f0',
+  wood: '#b98452',
+  woodDark: '#8d5f38',
+  blanket: '#e27d86',
+  blanketDark: '#c25e6a',
+  pillow: '#fff5e4',
+  paper: '#fbeecb',
+  lamp: '#ffd24a',
+  door: '#8d5f38',
+  shadow: 'rgba(60,40,10,0.2)',
+  fire: '#ff8c32',
+  fire2: '#ffd873',
+  reed: '#7cc75a',
+  reed2: '#4f9a3c',
+  olive: '#6fbf52',
+  olive2: '#4f9a3c',
+  vine: '#3f9a3a',
+  grapes: '#7b3f96',
+  fence: '#a8703f',
+  awning: '#e2574c',
+  awning2: '#fffdf6',
+  flower: ['#ff9aa8', '#ffe070', '#ffffff', '#f7b5d8'],
 }
 
 const SEASON_GRASS: Record<Season, [string, string, string]> = {
-  spring: ['#bfcfa4', '#abc292', '#cfdcb6'],
-  summer: ['#bccb96', '#a6b980', '#ccd8a8'],
-  autumn: ['#cfc79a', '#bdb483', '#ddd5ac'],
-  winter: ['#d3d8c6', '#c2c8b4', '#e0e4d6'],
+  spring: ['#a5d67a', '#93c96a', '#bde592'],
+  summer: ['#9ccf6a', '#89c05a', '#b4df86'],
+  autumn: ['#cdcf7c', '#bcbd68', '#dde193'],
+  winter: ['#dfe8dc', '#cfdacb', '#eef3ec'],
 }
 
 type Ctx = CanvasRenderingContext2D
@@ -106,21 +107,20 @@ interface HouseStyle {
   awning?: [string, string]
 }
 const HOUSE_STYLES: Record<string, HouseStyle> = {
-  home: { roof: ['#b9805c', '#8e6a4d', '#d49a72'], pattern: 'tile', wall: '#f8e6c0', base: '#e5d3aa', window: 'square', shutter: '#ae9068', door: '#987654' },
-  library: { roof: ['#7b9a60', '#5f7a48', '#99b67b'], pattern: 'tile', wall: '#f8e6c0', base: '#e5d3aa', window: 'arch', shutter: '#ae9068', door: '#8e6a4d' },
-  baker: { roof: ['#ac7759', '#82684f', '#c98f6a'], pattern: 'tile', wall: '#eec59c', base: '#dbb682', window: 'square', shutter: '#ae9068', door: '#987654', awning: ['#d98a6a', '#fefdf8'] },
-  child: { roof: ['#7b9a60', '#5f7a48', '#99b67b'], pattern: 'tile', wall: '#f8e6c0', base: '#e5d3aa', window: 'round', shutter: '#ae9068', door: '#987654' },
-  grandpa: { roof: ['#a0785c', '#7a5d46', '#bf9474'], pattern: 'tile', wall: '#f3dbb0', base: '#dbc79a', window: 'square', shutter: '#ae9068', door: '#82684f', timber: '#ae9068' },
-  weaver: { roof: ['#c48a66', '#9a6a4d', '#dca482'], pattern: 'tile', wall: '#f8e6c0', base: '#e5d3aa', window: 'arch', shutter: '#ae9068', door: '#987654' },
-  beekeeper: { roof: ['#b99a5c', '#8e7447', '#d4b87a'], pattern: 'tile', wall: '#f3dbb0', base: '#dbc79a', window: 'round', shutter: '#ae9068', door: '#987654' },
-  // 새 이웃 넷 (계획 2): 이웃과 겹치지 않는 차분한 빛 — 잿빛 파랑, 흙빛 장미, 물빛 초록, 나뭇빛
-  postman: { roof: ['#8497a8', '#66788a', '#a3b4c3'], pattern: 'tile', wall: '#f3e3c4', base: '#ddd0ad', window: 'square', shutter: '#8e9aa6', door: '#7c6a58' },
-  apothecary: { roof: ['#b0786a', '#8a5a4f', '#c9968a'], pattern: 'tile', wall: '#f5dfbe', base: '#e0c9a0', window: 'arch', shutter: '#ae9068', door: '#82684f', awning: ['#a9b88f', '#fefdf8'] },
-  fisher: { roof: ['#7f9f98', '#5f7d77', '#9dbab3'], pattern: 'tile', wall: '#efe2c6', base: '#d9ccab', window: 'round', shutter: '#8a9c8e', door: '#7c6a58' },
-  carpenter: { roof: ['#a58a66', '#7e694c', '#c1a680'], pattern: 'tile', wall: '#f3dbb0', base: '#dbc79a', window: 'square', shutter: '#ae9068', door: '#82684f', timber: '#98795a' },
-  // 모이는 곳 (계획 10): 이웃집과 달라 보이게 — 사랑방은 쪽빛 지붕에 나무 기둥·줄무늬 차양, 찻집은 분홍 지붕에 꽃빛 차양
-  hall: { roof: ['#6f8fa8', '#56718a', '#8eaac0'], pattern: 'tile', wall: '#f6e4c4', base: '#e0cfa6', window: 'arch', shutter: '#8e9aa6', door: '#7c6a58', timber: '#98795a', awning: ['#e0b86a', '#fefdf8'] },
-  teahouse: { roof: ['#c98a98', '#a06c7a', '#e0a8b4'], pattern: 'tile', wall: '#fbeede', base: '#e8d6bc', window: 'round', shutter: '#b8948a', door: '#8e6a5a', awning: ['#e6a6b4', '#fefdf8'] },
+  // 참고 그림처럼 지붕은 또렷한 빨강·파랑·초록·밤색, 벽은 밝은 크림
+  home: { roof: ['#c9644a', '#9c4633', '#e08466'], pattern: 'tile', wall: '#fcedcb', base: '#eed7a8', window: 'square', shutter: '#b07a48', door: '#8d5f38' },
+  library: { roof: ['#3f9d3f', '#2d7a30', '#5cbb55'], pattern: 'tile', wall: '#fcedcb', base: '#eed7a8', window: 'arch', shutter: '#b07a48', door: '#8d5f38' },
+  baker: { roof: ['#b8543e', '#8c3b2b', '#d6735a'], pattern: 'tile', wall: '#f9d6ae', base: '#ecc08e', window: 'square', shutter: '#b07a48', door: '#8d5f38', awning: ['#e2574c', '#fffdf6'] },
+  child: { roof: ['#3a9a45', '#2a7634', '#58b85f'], pattern: 'tile', wall: '#fcedcb', base: '#eed7a8', window: 'round', shutter: '#b07a48', door: '#8d5f38' },
+  grandpa: { roof: ['#8b5a3c', '#6a4129', '#a8755a'], pattern: 'tile', wall: '#f8e2b8', base: '#e8cf9c', window: 'square', shutter: '#b07a48', door: '#7a5230', timber: '#b07a48' },
+  weaver: { roof: ['#cf6344', '#a64a31', '#e8836a'], pattern: 'tile', wall: '#fcedcb', base: '#eed7a8', window: 'arch', shutter: '#b07a48', door: '#8d5f38' },
+  beekeeper: { roof: ['#c9a33c', '#9e7c26', '#e2c05e'], pattern: 'tile', wall: '#f8e2b8', base: '#e8cf9c', window: 'round', shutter: '#b07a48', door: '#8d5f38' },
+  postman: { roof: ['#3e67b8', '#2c4f92', '#5c86d4'], pattern: 'tile', wall: '#fcedcb', base: '#eed7a8', window: 'square', shutter: '#6f84a8', door: '#7a5a40' },
+  apothecary: { roof: ['#b0384f', '#88283c', '#cc5a70'], pattern: 'tile', wall: '#fcedcb', base: '#eed7a8', window: 'arch', shutter: '#b07a48', door: '#7a5230', awning: ['#58b85f', '#fffdf6'] },
+  fisher: { roof: ['#2f8fa3', '#216e80', '#4fb0c3'], pattern: 'tile', wall: '#fcedcb', base: '#eed7a8', window: 'round', shutter: '#6f9aa0', door: '#7a5a40' },
+  carpenter: { roof: ['#7d5a3e', '#5e412b', '#9a7658'], pattern: 'tile', wall: '#f8e2b8', base: '#e8cf9c', window: 'square', shutter: '#b07a48', door: '#7a5230', timber: '#a0703f' },
+  hall: { roof: ['#3e67b8', '#2c4f92', '#5c86d4'], pattern: 'tile', wall: '#fcedcb', base: '#eed7a8', window: 'arch', shutter: '#6f84a8', door: '#7a5a40', timber: '#a0703f', awning: ['#ffd24a', '#fffdf6'] },
+  teahouse: { roof: ['#d45fa8', '#aa4486', '#e882c0'], pattern: 'tile', wall: '#fff2e2', base: '#f2dcc4', window: 'round', shutter: '#c48aa8', door: '#8d5f48', awning: ['#f07ab8', '#fffdf6'] },
 }
 const PLAIN_STYLE = HOUSE_STYLES.child
 /** 앞벽 한 칸: 위 줄은 처마 그림자뿐, 아래 줄에 꽃 상자 달린 창과 문 */
@@ -152,9 +152,9 @@ function houseWallTile(g: Ctx, x: number, y: number, ch: string, id: string, h: 
   const main = id === 'home' ? { ...h, x0: HOUSE_RECT.x0 } : h
   const k = main.x1 - main.x0 + 1 >= 7 ? 2 : 1
   const winCol = x >= main.x0 && Math.abs(x - main.doorX) === k
-  const glass = '#f1bf6b'
-  const glow = '#fce2a7'
-  const frame = '#ae9068'
+  const glass = '#ffca70'
+  const glow = '#ffeaba'
+  const frame = '#c59a61'
   const tileRect = r
   /** 창 하나 (ox: 칸 안에서 옆으로 옮기기 — 두 칸 사이에 걸친 창) */
   const window = (dy: number, ox = 0) => {
@@ -187,33 +187,33 @@ function houseWallTile(g: Ctx, x: number, y: number, ch: string, id: string, h: 
       const left = x === h.doorX - 3 || x === h.doorX + 2
       const wx = left ? 8 : 0
       if (upper) {
-        r('#ae9068', left ? 6 : 0, 4, 10, 12)
-        r('#ae9068', left ? 7 : 0, 3, left ? 9 : 9, 1)
-        r('#f1bf6b', wx, 6, 8, 10)
-        r('#ae9068', left ? 14 : 0, 6, 2, 10)
+        r('#c59a61', left ? 6 : 0, 4, 10, 12)
+        r('#c59a61', left ? 7 : 0, 3, left ? 9 : 9, 1)
+        r('#ffca70', wx, 6, 8, 10)
+        r('#c59a61', left ? 14 : 0, 6, 2, 10)
       } else {
-        r('#ae9068', left ? 6 : 0, 0, 10, 10)
-        r('#f1bf6b', wx, 0, 8, 8)
-        r('#ae9068', left ? 14 : 0, 0, 2, 8)
-        r('#ae9068', wx, 4, 8, 1)
-        r('#e5d3aa', left ? 6 : 0, 9, 10, 2)
+        r('#c59a61', left ? 6 : 0, 0, 10, 10)
+        r('#ffca70', wx, 0, 8, 8)
+        r('#c59a61', left ? 14 : 0, 0, 2, 8)
+        r('#c59a61', wx, 4, 8, 1)
+        r('#f5e0af', left ? 6 : 0, 9, 10, 2)
       }
     }
     // 위 줄(2층 높이)에는 아무것도 달지 않는다 — 창은 아래 줄에만
   } else if (!upper && winCol) {
     window(1)
-    r('#ad845d', 3, 10, 10, 2) // 꽃 상자
-    for (let i = 0; i < 4; i++) r(['#f1b999', '#fefdf8', '#e8a88a', '#99b67b'][(x + i) % 4], 4 + i * 2, 9, 2, 1)
+    r('#c68b54', 3, 10, 10, 2) // 꽃 상자
+    for (let i = 0; i < 4; i++) r(['#ffc2a0', '#fefdf8', '#feae88', '#a2cb78'][(x + i) % 4], 4 + i * 2, 9, 2, 1)
   }
   if (door && !upper) {
     // 둥근 나무 문과 놋쇠 손잡이
-    const dc = ch === 'L' ? '#8e6a4d' : st.door
+    const dc = ch === 'L' ? '#a96f3f' : st.door
     r(frame, 2, 1, 12, 15)
     r(dc, 3, 2, 10, 14)
     r(dc, 4, 1, 8, 1)
     r(mix(dc, '#000000', 0.18), 6, 3, 1, 13)
     r(mix(dc, '#000000', 0.18), 9, 3, 1, 13)
-    r('#f1bf6b', 10, 9, 2, 2)
+    r('#ffca70', 10, 9, 2, 2)
   }
   if (id === 'home' && h.x0 < HOUSE_RECT.x0) {
     // 넓힌 집(1단계): 왼쪽에 붙인 두 칸 — 이어 붙인 자리에 기둥, 두 칸 가운데에 창 하나 (본채 창은 문을 가운데 둔 대칭 그대로)
@@ -221,8 +221,8 @@ function houseWallTile(g: Ctx, x: number, y: number, ch: string, id: string, h: 
     if (!upper && x === HOUSE_RECT.x0 - 1) {
       // 오른쪽 칸을 그릴 때 왼쪽 칸에 반쯤 걸쳐 그린다 (왼쪽 칸은 이미 그려져 있다)
       window(1, -8)
-      r('#ad845d', -5, 10, 10, 2) // 꽃 상자
-      for (let i = 0; i < 4; i++) r(['#f1b999', '#fefdf8', '#e8a88a', '#99b67b'][(x + i) % 4], -4 + i * 2, 9, 2, 1)
+      r('#c68b54', -5, 10, 10, 2) // 꽃 상자
+      for (let i = 0; i < 4; i++) r(['#ffc2a0', '#fefdf8', '#feae88', '#a2cb78'][(x + i) % 4], -4 + i * 2, 9, 2, 1)
     }
   }
   if (st.awning && !upper && Math.abs(x - h.doorX) <= 1) {
@@ -276,6 +276,15 @@ function drawGround(g: Ctx, ch: string, x: number, y: number, season: Season) {
     g.fillRect(px, py, TILE, TILE)
     speckle(g, px, py, x, y, g2, 7)
     speckle(g, px, py, x + 99, y, g3, 3)
+    // 풀밭이 흙길과 만나는 가장자리는 한 톤 짙게 (참고 그림처럼 풀밭 조각이 또렷하게)
+    if (y < VILLAGE_H) {
+      g.fillStyle = g2
+      const isPath = (c: string) => c === ',' || c === 'm' || c === 'A' || c === 'P'
+      if (isPath(tileAt(x, y - 1))) g.fillRect(px, py, TILE, 2)
+      if (isPath(tileAt(x, y + 1))) g.fillRect(px, py + TILE - 2, TILE, 2)
+      if (isPath(tileAt(x - 1, y))) g.fillRect(px, py, 2, TILE)
+      if (isPath(tileAt(x + 1, y))) g.fillRect(px + TILE - 2, py, 2, TILE)
+    }
   }
 }
 
@@ -294,10 +303,22 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
         houseWallTile(g, x, y, ch, h.id, h)
         break
       }
-      // 집 안 벽: 크림 회벽과 나무 들보
+      // 집 안 벽: 크림 회벽과 나무 들보.
+      // 옆벽(위아래가 벽으로 이어진 칸)은 세로로 한 장처럼 — 칸마다 가로줄을 긋지 않고, 방 쪽 가장자리에만 밝은 선
+      const wallAt = (xx: number, yy: number) => '#SNVFJKMCQY'.includes(tileAt(xx, yy))
+      const vertical = wallAt(x, y - 1) && wallAt(x, y + 1) && !(wallAt(x - 1, y) && wallAt(x + 1, y))
       r(C.wall, 0, 0, 16, 16)
-      r(C.wallTop, 0, 0, 16, 2)
-      r(C.wallDark, 0, 15, 16, 1)
+      if (vertical) {
+        const inRight = !wallAt(x + 1, y) && tileAt(x + 1, y) !== '_'
+        const inLeft = !wallAt(x - 1, y) && tileAt(x - 1, y) !== '_'
+        if (inRight) r(C.wallTop, 14, 0, 2, 16)
+        if (inLeft) r(C.wallTop, 0, 0, 2, 16)
+        if (!inLeft) r(C.wallDark, 0, 0, 1, 16)
+        if (!inRight) r(C.wallDark, 15, 0, 1, 16)
+      } else {
+        r(C.wallTop, 0, 0, 16, 2)
+        r(C.wallDark, 0, 15, 16, 1)
+      }
       break
     }
     case 'R':
@@ -306,7 +327,7 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
     case 'T': {
       // 둥근 나무: 그림자, 짧은 줄기, 어두운 아랫잎 → 바탕 → 밝은 윗잎
       const [d, m, l] =
-        season === 'autumn' ? ['#b08a4a', '#c9a060', '#dcbb7c'] : season === 'winter' ? ['#8f9c86', '#a6b19c', '#c2cab8'] : [C.leaf2, C.leaf, C.leaf3]
+        season === 'autumn' ? ['#cf983a', '#e5ad55', '#f4c977'] : season === 'winter' ? ['#96ac87', '#afc09f', '#cdd8bf'] : [C.leaf2, C.leaf, C.leaf3]
       r('rgba(90,80,50,0.18)', 3, 13, 10, 2)
       r(C.trunk, 7, 10, 2, 5)
       r(d, 3, 3, 10, 8)
@@ -330,7 +351,7 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r(C.woodDark, 0, 0, 16, 14)
       r(C.wood, 1, 1, 14, 12)
       r(C.woodDark, 1, 12, 14, 1)
-      r('#d9b44a', 0, 0, 16, 1)
+      r('#fac839', 0, 0, 16, 1)
       break
     case 'Q':
       // 한 권 선반 (사도행전 방·요한계시록 방): 복음서 선반과 같은 나무, 위 테는 방마다 —
@@ -339,7 +360,7 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r(C.woodDark, 0, 0, 16, 14)
       r(C.wood, 1, 1, 14, 12)
       r(C.woodDark, 1, 11, 14, 2)
-      r(roomAt({ x, y }) === REV_ROOM ? '#b8b0cc' : '#8497a8', 0, 0, 16, 2)
+      r(roomAt({ x, y }) === REV_ROOM ? '#c0b5db' : '#84a0ba', 0, 0, 16, 2)
       break
     case 'M': {
       // 벽에 건 여정 판 (세 칸에 걸친 한 장): 나무 테두리와 옅은 양피지 바탕. 카드와 실은 그릴 때 얹는다
@@ -350,7 +371,7 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       const x0 = L ? 2 : 0
       const x1 = R ? 14 : 16
       r(C.woodDark, x0, 2, x1 - x0, 13)
-      r('#efe2c6', x0 + (L ? 2 : 0), 4, x1 - x0 - (L ? 2 : 0) - (R ? 2 : 0), 9)
+      r('#fbedd1', x0 + (L ? 2 : 0), 4, x1 - x0 - (L ? 2 : 0) - (R ? 2 : 0), 9)
       break
     }
     case 'C': {
@@ -363,7 +384,7 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       const x0 = L ? 2 : 0
       const x1 = R ? 14 : 16
       r(C.woodDark, x0, 2, x1 - x0, 13)
-      r('#dde5ea', x0 + (L ? 2 : 0), 4, x1 - x0 - (L ? 2 : 0) - (R ? 2 : 0), 9)
+      r('#e9f1f5', x0 + (L ? 2 : 0), 4, x1 - x0 - (L ? 2 : 0) - (R ? 2 : 0), 9)
       break
     }
     case 'Y': {
@@ -372,10 +393,10 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       const L = tileAt(x - 1, y) !== 'Y'
       const R = tileAt(x + 1, y) !== 'Y'
       r(C.shadow, 0, 13, 16, 3)
-      r('#8f8272', 0, 0, 16, 14)
-      r('#d6cab6', L ? 2 : 0, 2, 16 - (L ? 2 : 0) - (R ? 2 : 0), 9)
-      r('#8f8272', 0, 11, 16, 2)
-      r(roomAt({ x, y }) === HEB_JUD_ROOM ? '#b9cdaa' : '#a9c4d4', 0, 0, 16, 2)
+      r('#a08b70', 0, 0, 16, 14)
+      r('#e5d6bc', L ? 2 : 0, 2, 16 - (L ? 2 : 0) - (R ? 2 : 0), 9)
+      r('#a08b70', 0, 11, 16, 2)
+      r(roomAt({ x, y }) === HEB_JUD_ROOM ? '#c2ddae' : '#add0e4', 0, 0, 16, 2)
       break
     }
     case 'V': {
@@ -387,16 +408,16 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       const x0 = L ? 2 : 0
       const x1 = R ? 14 : 16
       // 뒤판 (옅은 잿빛 나무, 테두리 2픽셀)
-      r('#8f8272', x0, 3, x1 - x0, 12)
-      r('#cdbfab', x0 + (L ? 2 : 0), 5, x1 - x0 - (L ? 2 : 0) - (R ? 2 : 0), 8)
+      r('#a08b70', x0, 3, x1 - x0, 12)
+      r('#ddcab0', x0 + (L ? 2 : 0), 5, x1 - x0 - (L ? 2 : 0) - (R ? 2 : 0), 8)
       // 칸마다 접힌 편지 두 통이 주머니 위로 비죽 나와 있다 (칸 하나가 좌우 대칭 — 세 칸을 이어도 대칭)
       for (const lx of [4, 9]) {
-        r('#f4ead2', lx, 4, 3, 7)
-        r('#cfe3ec', lx, 4, 3, 2)
+        r('#fdf5e0', lx, 4, 3, 7)
+        r('#dbeef7', lx, 4, 3, 2)
       }
       // 앞쪽 주머니 판: 윗단은 짙게
-      r('#b7aa98', x0, 9, x1 - x0, 5)
-      r('#8f8272', x0, 9, x1 - x0, 2)
+      r('#c7b49a', x0, 9, x1 - x0, 5)
+      r('#a08b70', x0, 9, x1 - x0, 2)
       break
     }
     case 'F': {
@@ -407,13 +428,13 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r(C.wallTop, 0, 0, 16, 2)
       const x0 = L ? 2 : 0
       const x1 = R ? 14 : 16
-      r('#8a6a4a', x0, 3, x1 - x0, 11)
-      r('#b58e62', x0 + (L ? 1 : 0), 4, x1 - x0 - (L ? 1 : 0) - (R ? 1 : 0), 9)
+      r('#a5713d', x0, 3, x1 - x0, 11)
+      r('#ce9759', x0 + (L ? 1 : 0), 4, x1 - x0 - (L ? 1 : 0) - (R ? 1 : 0), 9)
       for (const [nx, ny, h] of L ? [[4, 5, 6], [9, 6, 5]] : [[2, 6, 5], [7, 5, 6]]) {
-        r('#f4ead2', nx, ny, 4, h)
-        r('#cdbfab', nx + 1, ny + 2, 2, 1)
-        r('#cdbfab', nx + 1, ny + 4, 2, 1)
-        r('#bf5b3c', nx + 1, ny, 1, 1)
+        r('#fdf5e0', nx, ny, 4, h)
+        r('#ddcab0', nx + 1, ny + 2, 2, 1)
+        r('#ddcab0', nx + 1, ny + 4, 2, 1)
+        r('#e35427', nx + 1, ny, 1, 1)
       }
       break
     }
@@ -421,12 +442,12 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       // 방 벽의 창 (한 칸, 창 자체도 좌우 대칭): 잿빛 나무 창틀, 연한 하늘빛 유리, 가운데 창살
       r(C.wall, 0, 0, 16, 16)
       r(C.wallTop, 0, 0, 16, 2)
-      r('#a79a88', 3, 3, 10, 11)
-      r('#cfe3ec', 5, 5, 6, 7)
-      r('#e6f0f4', 5, 5, 6, 2)
-      r('#a79a88', 7, 5, 2, 7)
-      r('#a79a88', 5, 8, 6, 2)
-      r('#cbbfae', 2, 13, 12, 2)
+      r('#b8a488', 3, 3, 10, 11)
+      r('#dbeef7', 5, 5, 6, 7)
+      r('#ebf5fa', 5, 5, 6, 2)
+      r('#b8a488', 7, 5, 2, 7)
+      r('#b8a488', 5, 8, 6, 2)
+      r('#dacab3', 2, 13, 12, 2)
       break
     case 'J': {
       // 열린 서고 방 문: 문설주, 안쪽 방의 따뜻한 빛, 열어 둔 문짝.
@@ -434,9 +455,9 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       // (문설주·불빛은 가운데 대칭이라 그대로)
       const leaf = isRightWallDoor(x, y) ? 2 : 10
       r(C.wall, 0, 0, 16, 16)
-      r('#ae9068', 2, 1, 12, 15)
-      r('#f3d9a0', 4, 3, 8, 13)
-      r('#f8e6c0', 4, 12, 8, 4)
+      r('#c59a61', 2, 1, 12, 15)
+      r('#ffe4a9', 4, 3, 8, 13)
+      r('#fff0d0', 4, 12, 8, 4)
       r(C.woodDark, leaf, 3, 4, 13)
       r(C.wood, leaf + 1, 4, 2, 12)
       break
@@ -444,12 +465,12 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
     case 'K':
       // 잠긴 방 문: 벽에 난 나무문과 자물쇠
       r(C.wall, 0, 0, 16, 16)
-      r('#ae9068', 2, 1, 12, 15)
+      r('#c59a61', 2, 1, 12, 15)
       r(C.woodDark, 3, 2, 10, 14)
       r(C.wood, 4, 3, 8, 13)
       r(C.woodDark, 8, 3, 1, 13)
       r('#8a8478', 6, 8, 4, 4)
-      r('#b3ada2', 7, 9, 2, 2)
+      r('#c1b8a6', 7, 9, 2, 2)
       break
     case 'n':
       // 탁자와 식탁보
@@ -457,34 +478,34 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r(C.woodDark, 2, 10, 2, 5)
       r(C.woodDark, 12, 10, 2, 5)
       r(C.wood, 1, 4, 14, 7)
-      r('#efe4d4', 2, 4, 12, 4)
-      for (let i = 0; i < 6; i++) r('#b98a8a', 2 + i * 2, 7, 1, 1)
+      r('#f9efe1', 2, 4, 12, 4)
+      for (let i = 0; i < 6; i++) r('#cc8989', 2 + i * 2, 7, 1, 1)
       break
     case 'g':
       // 항아리
       r(C.shadow, 3, 13, 10, 3)
-      r('#c2a48a', 4, 5, 8, 9)
-      r('#a88a70', 3, 7, 10, 5)
-      r('#dcc6b0', 5, 6, 2, 3)
-      r('#7f6450', 5, 3, 6, 2)
+      r('#d6ac89', 4, 5, 8, 9)
+      r('#bd916b', 3, 7, 10, 5)
+      r('#ebd0b5', 5, 6, 2, 3)
+      r('#966847', 5, 3, 6, 2)
       break
     case 'p':
       // 꽃 화분
       r(C.shadow, 3, 13, 10, 3)
-      r('#b78b7c', 4, 9, 8, 5)
-      r('#9b7063', 4, 9, 8, 1)
-      r('#7f9c77', 7, 4, 2, 5)
-      r('#7f9c77', 4, 5, 3, 2)
-      r('#7f9c77', 9, 5, 3, 2)
-      r('#e1a6af', 6, 1, 4, 3)
-      r('#dbca97', 7, 2, 2, 1)
+      r('#cc8e79', 4, 9, 8, 5)
+      r('#b1705d', 4, 9, 8, 1)
+      r('#81ae75', 7, 4, 2, 5)
+      r('#81ae75', 4, 5, 3, 2)
+      r('#81ae75', 9, 5, 3, 2)
+      r('#f2aab5', 6, 1, 4, 3)
+      r('#eed998', 7, 2, 2, 1)
       break
     case 'W':
       // 베틀과 짜다 만 천
       r(C.woodDark, 1, 1, 2, 14)
       r(C.woodDark, 13, 1, 2, 14)
       r(C.wood, 1, 1, 14, 2)
-      for (let i = 0; i < 5; i++) r(['#c89097', '#93afc8', '#c3ae7b', '#a59bbf', '#9dbb94'][(x + i) % 5], 3 + i * 2, 3, 2, 9)
+      for (let i = 0; i < 5; i++) r(['#db9099', '#93b9db', '#d9bc77', '#ab9dd0', '#a2cc95'][(x + i) % 5], 3 + i * 2, 3, 2, 9)
       r(C.wood, 2, 12, 12, 2)
       break
     case 'e': {
@@ -494,11 +515,11 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       const b = rugAt(0, 1) ? 16 : 14
       const l = rugAt(-1, 0) ? 0 : 2
       const rr = rugAt(1, 0) ? 16 : 14
-      r('#b86e52', l, t, rr - l, b - t)
-      r('#c98f6a', l + (l ? 2 : 0), t + (t ? 2 : 0), rr - l - (l ? 2 : 0) - (rr < 16 ? 2 : 0), b - t - (t ? 2 : 0) - (b < 16 ? 2 : 0))
+      r('#d46d46', l, t, rr - l, b - t)
+      r('#e39462', l + (l ? 2 : 0), t + (t ? 2 : 0), rr - l - (l ? 2 : 0) - (rr < 16 ? 2 : 0), b - t - (t ? 2 : 0) - (b < 16 ? 2 : 0))
       // 가운데 크림 무늬 (칸마다 같은 자리에 — 이어 붙이면 줄무늬가 된다)
-      r('#f3dbb0', 7, 4, 2, 2)
-      r('#f3dbb0', 7, 10, 2, 2)
+      r('#ffe6ba', 7, 4, 2, 2)
+      r('#ffe6ba', 7, 10, 2, 2)
       break
     }
     case 'E':
@@ -506,8 +527,8 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r(C.wall, 0, 0, 16, 16)
       r(C.woodDark, 2, 0, 12, 16)
       r(C.wood, 3, 1, 10, 15)
-      r('#e7d8b8', 4, 3, 8, 4)
-      r('#a88a80', 3, 12, 10, 3)
+      r('#f5e4bf', 4, 3, 8, 4)
+      r('#ba8e7f', 3, 12, 10, 3)
       break
     case 'u':
       // 나루에 매어 둔 고깃배
@@ -515,7 +536,7 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r(C.woodDark, 1, 5, 14, 7)
       r(C.wood, 2, 5, 12, 4)
       r(C.woodDark, 7, 0, 1, 6)
-      r('#f1e6cf', 8, 0, 5, 4)
+      r('#fbf1dc', 8, 0, 5, 4)
       break
     case 'w':
       r(C.shadow, 2, 13, 13, 3)
@@ -547,7 +568,7 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
     case 'h':
       r(C.stoneDark, 1, 2, 14, 13)
       r(C.stone, 2, 3, 12, 6)
-      r('#2a1f1a', 4, 9, 8, 5)
+      r('#342118', 4, 9, 8, 5)
       break
     case 's':
       r(C.woodDark, 1, 1, 14, 14)
@@ -561,7 +582,7 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r(C.woodDark, 12, 10, 2, 5)
       r(C.wood, 1, 5, 14, 6)
       r(C.reed, 3, 6, 5, 2)
-      r('#2a2230', 10, 6, 3, 3)
+      r('#2f213a', 10, 6, 3, 3)
       break
     case 'B':
       r(C.shadow, 1, 11, 15, 3)
@@ -581,7 +602,7 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
     }
     case 'H':
       // 다락으로 오르는 사다리: 벽에 기댄 두 기둥과 가로대, 위로 난 어두운 구멍
-      r('#7a6352', 2, 0, 12, 3)
+      r('#8f684a', 2, 0, 12, 3)
       r(C.shadow, 3, 13, 11, 3)
       r(C.woodDark, 3, 0, 2, 15)
       r(C.woodDark, 11, 0, 2, 15)
@@ -592,13 +613,13 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       const left = tileAt(x + 1, y) === 'I'
       r(C.wall, 0, 0, 16, 16)
       r(C.wallTop, 0, 0, 16, 2)
-      r('#ae9068', left ? 4 : 0, 3, 12, 11)
-      r('#cfe3e8', left ? 6 : 0, 5, 10, 7)
-      r('#e6f0f0', left ? 6 : 2, 5, 4, 3)
-      r('#ae9068', left ? 14 : 0, 5, 2, 7)
-      r('#ae9068', left ? 6 : 0, 8, 10, 2)
-      if (!left) r('#ae9068', 10, 3, 2, 11)
-      r('#d6c194', left ? 3 : 0, 13, 13, 2)
+      r('#c59a61', left ? 4 : 0, 3, 12, 11)
+      r('#daeff4', left ? 6 : 0, 5, 10, 7)
+      r('#edf7f7', left ? 6 : 2, 5, 4, 3)
+      r('#c59a61', left ? 14 : 0, 5, 2, 7)
+      r('#c59a61', left ? 6 : 0, 8, 10, 2)
+      if (!left) r('#c59a61', 10, 3, 2, 11)
+      r('#e9ce94', left ? 3 : 0, 13, 13, 2)
       break
     }
     case 'r':
@@ -609,16 +630,16 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
     case 'v':
       r(C.woodDark, 0, 7, 16, 1)
       r(C.woodDark, 7, 3, 2, 12)
-      r(season === 'winter' ? '#7a6a52' : C.vine, 2, 2, 12, 7)
+      r(season === 'winter' ? '#8f734a' : C.vine, 2, 2, 12, 7)
       if (season !== 'winter') r(C.leaf3, 4, 3, 3, 2)
       break
     case 'j':
       // 들 약초: 낮은 풀포기에 잎 셋, 봄·여름·가을엔 작은 흰 꽃 (겨울엔 마른 잎)
       r('rgba(60,70,40,0.18)', 3, 12, 10, 2)
-      r(season === 'winter' ? '#a39a7a' : '#6f9a5a', 4, 7, 8, 6)
-      r(season === 'winter' ? '#b8ae8c' : '#86b26a', 2, 9, 4, 3)
-      r(season === 'winter' ? '#b8ae8c' : '#86b26a', 10, 9, 4, 3)
-      r(season === 'winter' ? '#b8ae8c' : '#9cc47e', 6, 4, 4, 4)
+      r(season === 'winter' ? '#b6a878' : '#70b54e', 4, 7, 8, 6)
+      r(season === 'winter' ? '#cabc8c' : '#8bc963', 2, 9, 4, 3)
+      r(season === 'winter' ? '#cabc8c' : '#8bc963', 10, 9, 4, 3)
+      r(season === 'winter' ? '#cabc8c' : '#a3da7a', 6, 4, 4, 4)
       if (season !== 'winter') {
         r('#fefdf8', 5, 5, 2, 2)
         r('#fefdf8', 9, 6, 2, 2)
@@ -631,7 +652,7 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r(C.olive2, 3, 3, 10, 7)
       r(C.olive, 4, 2, 8, 6)
       r(C.olive, 3, 4, 10, 3)
-      r('#b5c7a2', 5, 3, 3, 2)
+      r('#bfd7a5', 5, 3, 3, 2)
       break
     case 'P':
       r(C.shadow, 1, 12, 15, 3)
@@ -649,7 +670,7 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
     case 'O':
       r(C.stoneDark, 1, 3, 14, 12)
       r(C.stone, 2, 4, 12, 6)
-      r('#2a1f1a', 5, 9, 6, 5)
+      r('#342118', 5, 9, 6, 5)
       r(C.fire, 6, 11, 4, 3)
       break
     case 'm':
@@ -657,21 +678,21 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r(C.woodDark, 13, 6, 2, 10)
       for (let i = 0; i < 4; i++) r(i % 2 ? C.awning2 : C.awning, i * 4, 1, 4, 5)
       r(C.wood, 1, 10, 14, 3)
-      r(x < 16 ? '#cfbf89' : '#6b4079', 3, 8, 3, 2)
-      r(x < 16 ? '#f1e6cf' : '#7a9c5b', 9, 8, 3, 2)
+      r(x < 16 ? '#e4cf87' : '#7a3491', 3, 8, 3, 2)
+      r(x < 16 ? '#fbf1dc' : '#81b650', 9, 8, 3, 2)
       break
     case 'q':
       // 문 앞 편지 바구니
       r(C.shadow, 3, 12, 10, 3)
       r(C.woodDark, 3, 7, 10, 7)
       r(C.wood, 4, 8, 8, 5)
-      r('#f6f1e6', 5, 5, 6, 4)
+      r('#fbf6e9', 5, 5, 6, 4)
       break
     case 'l':
       // 텃밭 흙두둑
-      r('#8a6a4a', 1, 3, 14, 12)
-      r('#735538', 1, 6, 14, 1)
-      r('#735538', 1, 10, 14, 1)
+      r('#a5713d', 1, 3, 14, 12)
+      r('#8b5b2c', 1, 6, 14, 1)
+      r('#8b5b2c', 1, 10, 14, 1)
       break
     case 'x':
       r(C.fence, 0, 5, 16, 2)
@@ -680,7 +701,7 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r(C.woodDark, 12, 3, 2, 11)
       break
     case 'y': {
-      const col = season === 'summer' ? ['#c7b379', '#b09863'] : season === 'spring' ? ['#8eaf6a', '#769955'] : season === 'autumn' ? ['#ab9567', '#927d52'] : ['#9a8a6a', '#86765a']
+      const col = season === 'summer' ? ['#dec374', '#c8a65b'] : season === 'spring' ? ['#97c664', '#7db647'] : season === 'autumn' ? ['#c2a260', '#ae8b45'] : ['#ae9666', '#9d8152']
       g.fillStyle = col[1]
       g.fillRect(px, py, TILE, TILE)
       for (let i = 0; i < 4; i++) r(col[0], 1 + i * 4, 2, 2, 11)
@@ -705,9 +726,9 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
 function drawBush(g: Ctx, x: number, y: number, season: Season) {
   const px = x * TILE
   const py = y * TILE
-  const dark = season === 'winter' ? '#8f9c86' : C.leaf2
-  const mid = season === 'autumn' ? '#b8a468' : season === 'winter' ? '#a6b19c' : C.leaf
-  const light = season === 'winter' ? '#c2cab8' : C.leaf3
+  const dark = season === 'winter' ? '#96ac87' : C.leaf2
+  const mid = season === 'autumn' ? '#d0b460' : season === 'winter' ? '#afc09f' : C.leaf
+  const light = season === 'winter' ? '#cdd8bf' : C.leaf3
   g.fillStyle = dark
   g.fillRect(px, py + 2, TILE, TILE - 2)
   for (let i = 0; i < 5; i++) {
@@ -720,7 +741,7 @@ function drawBush(g: Ctx, x: number, y: number, season: Season) {
   }
   // 가끔 작은 열매
   if (hash(x, y, 40) < 0.3) {
-    g.fillStyle = '#b98a8a'
+    g.fillStyle = '#cc8989'
     g.fillRect(px + 4 + Math.floor(hash(x, y, 41) * 8), py + 6 + Math.floor(hash(x, y, 42) * 6), 2, 2)
   }
 }
@@ -756,9 +777,9 @@ function drawRoof(g: Ctx, tx0: number, ty0: number, tx1: number, ty1: number, [c
   r(mix(c2, '#000000', 0.15), 0, H - 2, W, 2)
   if (chimney) {
     const cx = Math.floor(W * 0.72)
-    r('#c9a079', cx, -6, 8, 12)
-    r('#82684f', cx - 2, -8, 12, 2)
-    r(mix('#c9a079', '#82684f', 0.4), cx + 6, -6, 2, 12)
+    r('#e0a974', cx, -6, 8, 12)
+    r('#9a6e45', cx - 2, -8, 12, 2)
+    r(mix('#e0a974', '#9a6e45', 0.4), cx + 6, -6, 2, 12)
   }
 }
 
@@ -831,12 +852,12 @@ export function iconCanvas(id: string): HTMLCanvasElement | null {
 function bubble(g: Ctx, cx: number, top: number, draw: (x: number, y: number) => void) {
   const x = Math.round(cx - 5)
   const y = Math.round(top - 10)
-  g.fillStyle = '#3b2a20'
+  g.fillStyle = '#492c1b'
   g.fillRect(x - 1, y - 1, 12, 10)
   g.fillStyle = '#fffaf0'
   g.fillRect(x, y, 10, 8)
   g.fillRect(x + 3, y + 8, 2, 2)
-  g.fillStyle = '#3b2a20'
+  g.fillStyle = '#492c1b'
   draw(x, y)
 }
 
@@ -859,7 +880,7 @@ const DOING: Record<Activity, string[]> = {
   wood: ['........', 'nnnnnnn.', 'n.n.n.nn', 'nnnnnnn.', '........', '........'],
   cat: ['.k...k..', '.kk.kk..', '.kkkkk..', '.kwkwk..', '..kkk...', '........'],
 }
-const DOING_COL: Record<string, string> = { k: '#3b2a20', n: '#94704f', b: '#6f9cc2', w: '#fbf3e0', o: '#d49a72', y: '#e0c878', g: '#6f9a5a', p: '#9a6aa8' }
+const DOING_COL: Record<string, string> = { k: '#492c1b', n: '#b17640', b: '#68a6da', w: '#fff7e5', o: '#eda06b', y: '#f9da72', g: '#70b54e', p: '#aa64be' }
 function doingIcon(g: Ctx, kind: Activity, cx: number, top: number) {
   const rows = DOING[kind]
   if (!rows) return
@@ -877,7 +898,7 @@ function doingIcon(g: Ctx, kind: Activity, cx: number, top: number) {
 
 function emote(g: Ctx, id: EmoteId, cx: number, top: number) {
   bubble(g, cx, top, (x, y) => {
-    const f = (dx: number, dy: number, w = 1, h = 1, col = '#3b2a20') => {
+    const f = (dx: number, dy: number, w = 1, h = 1, col = '#492c1b') => {
       g.fillStyle = col
       g.fillRect(x + dx, y + dy, w, h)
     }
@@ -905,25 +926,25 @@ function emote(g: Ctx, id: EmoteId, cx: number, top: number) {
         f(6, 4)
         break
       case 'heart':
-        f(2, 2, 2, 1, '#be6e7c')
-        f(6, 2, 2, 1, '#be6e7c')
-        f(1, 3, 8, 2, '#be6e7c')
-        f(2, 5, 6, 1, '#be6e7c')
-        f(4, 6, 2, 1, '#be6e7c')
+        f(2, 2, 2, 1, '#d6677b')
+        f(6, 2, 2, 1, '#d6677b')
+        f(1, 3, 8, 2, '#d6677b')
+        f(2, 5, 6, 1, '#d6677b')
+        f(4, 6, 2, 1, '#d6677b')
         break
       case 'sweat':
-        f(5, 1, 1, 1, '#729dc0')
-        f(4, 2, 3, 3, '#729dc0')
-        f(5, 5, 1, 1, '#729dc0')
+        f(5, 1, 1, 1, '#6ca7d7')
+        f(4, 2, 3, 3, '#6ca7d7')
+        f(5, 5, 1, 1, '#6ca7d7')
         break
       case 'hungry':
-        f(2, 4, 6, 3, '#94704f')
-        f(3, 3, 4, 1, '#cfbf89')
+        f(2, 4, 6, 3, '#b17640')
+        f(3, 3, 4, 1, '#e4cf87')
         break
       case 'shiver':
-        f(1, 2, 1, 4, '#7da0c2')
-        f(8, 2, 1, 4, '#7da0c2')
-        f(4, 3, 2, 2, '#7da0c2')
+        f(1, 2, 1, 4, '#79a9d8')
+        f(8, 2, 1, 4, '#79a9d8')
+        f(4, 3, 2, 2, '#79a9d8')
         break
     }
   })
@@ -940,7 +961,7 @@ function neighborPerson(def: NeighborDef, facing: Facing, frame: 0 | 1 | 2, blin
 
 /** 아이 요람 (계획 12): 나무 요람, 크림색 이불 */
 const CRADLE: SpriteRows = ['..........', '.k......k.', '.kccccccK.', '.kwwwwwwk.', '.kWWWWWWk.', '..k....k..', '.kk....kk.']
-const CRADLE_PALETTE: Record<string, string> = { k: '#6d4b33', K: '#6d4b33', w: '#b58e62', W: '#8a6a4a', c: '#f4ead2' }
+const CRADLE_PALETTE: Record<string, string> = { k: '#854e27', K: '#854e27', w: '#ce9759', W: '#a5713d', c: '#fdf5e0' }
 
 /** 이웃 수첩에 붙이는 앞모습 한 장 */
 export function neighborPortrait(def: NeighborDef, season: Season) {
@@ -1001,10 +1022,10 @@ function drawWideDesk(g: Ctx, at: Tile, season: Season) {
   r(C.woodDark, 0, 10, 19, 2)
   // 펼친 종이와 말린 두루마리
   r(C.paper, 2, 5, 7, 5)
-  r('#d6c194', 3, 6, 5, 2)
+  r('#e9ce94', 3, 6, 5, 2)
   r(C.paper, 11, 6, 6, 3)
-  r('#e5d3aa', 10, 5, 2, 5)
-  r('#e5d3aa', 16, 5, 2, 5)
+  r('#f5e0af', 10, 5, 2, 5)
+  r('#f5e0af', 16, 5, 2, 5)
   r(C.lamp, 12, 3, 2, 3)
 }
 
@@ -1014,11 +1035,11 @@ function drawSootCatcher(g: Ctx, at: Tile) {
     g.fillStyle = color
     g.fillRect(at.x * TILE + dx, at.y * TILE + dy, w, h)
   }
-  r('#968b7c', 2, 0, 12, 2)
-  r('#7f7468', 3, 2, 10, 2)
-  r('#6f665c', 4, 4, 8, 2)
-  r('#3b3430', 5, 4, 2, 2)
-  r('#3b3430', 9, 4, 2, 2)
+  r('#a6947c', 2, 0, 12, 2)
+  r('#917c65', 3, 2, 10, 2)
+  r('#7f6d5a', 4, 4, 8, 2)
+  r('#45372f', 5, 4, 2, 2)
+  r('#45372f', 9, 4, 2, 2)
 }
 
 function furnitureOrder(f: Furniture): number {
@@ -1037,21 +1058,21 @@ function drawFurniture(g: Ctx, f: Furniture) {
   switch (f.item) {
     case 'rug': {
       // 3×2칸 무늬 깔개
-      r('#81483d', 1, 2, 46, 28)
-      r('#9f6154', 3, 4, 42, 24)
-      r('#cfbf89', 6, 7, 36, 18)
-      r('#9f6154', 9, 10, 30, 12)
-      for (let i = 0; i < 5; i++) r('#cfbf89', 12 + i * 6, 15, 3, 3)
+      r('#9c402f', 1, 2, 46, 28)
+      r('#bc5a45', 3, 4, 42, 24)
+      r('#e4cf87', 6, 7, 36, 18)
+      r('#bc5a45', 9, 10, 30, 12)
+      for (let i = 0; i < 5; i++) r('#e4cf87', 12 + i * 6, 15, 3, 3)
       for (let i = 0; i < 12; i++) {
-        r('#f1e6cf', 2 + i * 4, 0, 1, 2)
-        r('#f1e6cf', 2 + i * 4, 30, 1, 2)
+        r('#fbf1dc', 2 + i * 4, 0, 1, 2)
+        r('#fbf1dc', 2 + i * 4, 30, 1, 2)
       }
       return
     }
     case 'cushion':
-      r('#d9ccb0', 2, 7, 12, 8)
-      r('#f6f1e6', 3, 6, 10, 7)
-      r('#d9ccb0', 7, 8, 2, 2)
+      r('#e8d8b5', 2, 7, 12, 8)
+      r('#fbf6e9', 3, 6, 10, 7)
+      r('#e8d8b5', 7, 8, 2, 2)
       return
     case 'table':
       r(C.shadow, 1, 13, 30, 3)
@@ -1059,14 +1080,14 @@ function drawFurniture(g: Ctx, f: Furniture) {
       r(C.woodDark, 28, 9, 2, 6)
       r(C.woodDark, 0, 8, 32, 2)
       r(C.wood, 0, 3, 32, 6)
-      r('#ae8a67', 1, 4, 30, 1)
+      r('#c59260', 1, 4, 30, 1)
       return
     case 'nightstand':
       r(C.shadow, 2, 13, 13, 3)
       r(C.woodDark, 2, 4, 12, 11)
       r(C.wood, 3, 5, 10, 4)
       r(C.wood, 3, 10, 10, 4)
-      r('#3b2a20', 7, 11, 2, 1)
+      r('#492c1b', 7, 11, 2, 1)
       return
     case 'stool':
       r(C.shadow, 3, 13, 10, 3)
@@ -1109,7 +1130,7 @@ function drawWeather(g: Ctx, weather: string, t: number, w: number, h: number) {
     }
   } else if (weather === 'wind') {
     for (let i = 0; i < 10; i++) {
-      g.fillStyle = i % 2 ? '#7ca260' : '#b09863'
+      g.fillStyle = i % 2 ? '#81b959' : '#c8a65b'
       const x = (hash(i, 5, 3) * w + t * 90) % w
       const y = (hash(i, 6, 5) * h + Math.sin(t * 3 + i) * 10) % h
       g.fillRect(Math.round(x), Math.round(y), 2, 1)
@@ -1124,7 +1145,7 @@ function drawWeather(g: Ctx, weather: string, t: number, w: number, h: number) {
 }
 
 function drawRainbow(g: Ctx, w: number) {
-  const cols = ['#d08282', '#cba271', '#d8c587', '#82ba77', '#80a2ca', '#907ac0']
+  const cols = ['#e67f7f', '#e4ac6a', '#eed584', '#82d072', '#7caae0', '#9476d6']
   cols.forEach((c, i) => {
     g.strokeStyle = c
     g.globalAlpha = 0.45
@@ -1149,8 +1170,8 @@ function glow(g: Ctx, x: number, y: number, radius: number, alpha: number, color
  * 방마다 책등 색 묶음이 다르다 (로마서–빌레몬서 방은 하늘·모래, 히브리서–유다서 방은 쑥·청회색). 여덟 권은 조금 굵게
  */
 const LETTER_SPINES: Record<'romPhm' | 'hebJud', { colors: string[]; w: number; step: number }> = {
-  romPhm: { colors: ['#8a9bb0', '#a3917e', '#8fa396', '#a98f8f', '#9a93ad'], w: 2, step: 3 },
-  hebJud: { colors: ['#8fa38e', '#8e9db0', '#ab9a84', '#9aa7a0', '#a49196'], w: 3, step: 5 },
+  romPhm: { colors: ['#8aa3c2', '#b59a7d', '#91b29d', '#b99191', '#a095bd'], w: 2, step: 3 },
+  hebJud: { colors: ['#92b290', '#8fa5c1', '#bda483', '#9aa7a0', '#b3939c'], w: 3, step: 5 },
 }
 function drawLetterSpines(g: Ctx, shelved: GameState['shelved'], room: 'romPhm' | 'hebJud') {
   const [s0] = (room === 'romPhm' ? PLACES.lettersShelf : PLACES.hebJudShelf).tiles
@@ -1163,7 +1184,7 @@ function drawLetterSpines(g: Ctx, shelved: GameState['shelved'], room: 'romPhm' 
     g.fillStyle = colors[i % colors.length]
     g.fillRect(sx, sy + 1, w, 8)
     if (grade > 0) {
-      g.fillStyle = grade === 2 ? '#d9b44a' : '#c7ccd4'
+      g.fillStyle = grade === 2 ? '#fac839' : '#d0d6e1'
       g.fillRect(sx, sy + 2, w, 2)
       g.fillRect(sx, sy + 6, w, 2)
     }
@@ -1181,19 +1202,19 @@ function drawCardBoard(g: Ctx, first: Tile, placed: number, done: boolean) {
   const by = first.y * TILE
   const n = Math.min(placed, 7)
   for (let i = 0; i < 7; i++) {
-    g.fillStyle = '#c6d2d9'
+    g.fillStyle = '#cfdde6'
     g.fillRect(bx + i * 6, by + 7, 4, 6)
   }
   if (n > 0) {
-    g.fillStyle = done ? '#d9b44a' : '#b8a4a0'
+    g.fillStyle = done ? '#fac839' : '#c7aaa4'
     g.fillRect(bx, by + 5, 6 * (n - 1) + 4, 2)
   }
   for (let i = 0; i < n; i++) {
-    g.fillStyle = '#fbf3e0'
+    g.fillStyle = '#fff7e5'
     g.fillRect(bx + i * 6, by + 7, 4, 4)
-    g.fillStyle = '#e3d3ae'
+    g.fillStyle = '#f3e0b3'
     g.fillRect(bx + i * 6, by + 11, 4, 2)
-    g.fillStyle = '#8f8aa8'
+    g.fillStyle = '#928bb9'
     g.fillRect(bx + i * 6 + 1, by + 5, 2, 2)
   }
 }
@@ -1284,7 +1305,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       const actsGlow = actsDoorGlows(game) && roomAt(here)?.owner === 'library'
       g.save()
       try {
-      g.fillStyle = '#2b2118'
+      g.fillStyle = '#362515'
       g.fillRect(0, 0, W, H)
       g.translate(-ox, -oy)
       g.drawImage(mapFor(season), 0, 0)
@@ -1342,7 +1363,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       const [desk] = PLACES.desk.tiles
       const [hearth] = PLACES.hearth.tiles
       for (let i = 0; i < Math.min(12, done); i++) {
-        g.fillStyle = i % 2 ? '#e9d9b0' : '#f3e6c4'
+        g.fillStyle = i % 2 ? '#f8e6b6' : '#fef1cf'
         g.fillRect(shelf.x * TILE + 3 + (i % 4) * 3, shelf.y * TILE + 1 + Math.floor(i / 4) * 5, 2, 3)
       }
       for (let i = 0; i < Math.min(8, done); i++) {
@@ -1375,8 +1396,8 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       // 서고 안 복음서 선반: 네 칸, 꽂은 책은 책등 색과 등급 띠(맨 책·은박·금박)
       if (roomAt(here)?.owner === 'library') {
         const [first] = PLACES.library.tiles
-        const SPINE: Record<string, string> = { mt: '#8a6a6a', mk: '#6a7a8a', lk: '#7a8a6a', jn: '#8a7a5a' }
-        const BAND = ['#c9b89a', '#c7ccd4', '#d9b44a']
+        const SPINE: Record<string, string> = { mt: '#9e6565', mk: '#65819e', lk: '#819e65', jn: '#a28751' }
+        const BAND = ['#dbc49c', '#d0d6e1', '#fac839']
         GOSPELS.forEach((b, i) => {
           const sx = first.x * TILE + 4 + i * 11
           const sy = first.y * TILE + 2
@@ -1393,12 +1414,12 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           g.fillRect(sx, sy + 7, 8, 1)
           // 정성 (계획 13): 금테는 위아래 금빛 줄, 봉인은 가운데 붉은 점
           if (goldTrim(game.careful?.[b], chaptersOf(b, content).length)) {
-            g.fillStyle = '#e8c55a'
+            g.fillStyle = '#ffd555'
             g.fillRect(sx, sy, 8, 1)
             g.fillRect(sx, sy + 9, 8, 1)
           }
           if ((game.sealed ?? []).includes(b)) {
-            g.fillStyle = '#b4533f'
+            g.fillStyle = '#db4627'
             g.fillRect(sx + 3, sy + 4, 2, 2)
           }
         })
@@ -1409,7 +1430,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           for (const dx of [-4, -3, -2, 4, 5, 6]) {
             const x0 = (first.x + dx) * TILE
             const y0 = first.y * TILE
-            g.fillStyle = '#b08a62'
+            g.fillStyle = '#c8925a'
             g.fillRect(x0 + 1, y0 + 1, 14, 2)
             g.fillRect(x0 + 1, y0 + 1, 1, 14)
             g.fillRect(x0 + 14, y0 + 1, 1, 14)
@@ -1417,16 +1438,16 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         if (shelfTier >= 2) {
           const cx = first.x * TILE
           const cy = first.y * TILE
-          g.fillStyle = '#7a4a6b'
+          g.fillStyle = '#904077'
           g.fillRect(cx + 2, cy - 12, 44, 5)
-          g.fillStyle = '#9a6a8b'
+          g.fillStyle = '#ae6697'
           for (let i = 0; i < 11; i++) g.fillRect(cx + 3 + i * 4, cy - 7, 2, 3)
-          g.fillStyle = '#c9a15a'
+          g.fillStyle = '#e6af4e'
           for (const dx of [-5, 7]) {
             g.fillRect((first.x + dx) * TILE + 6, cy - 2, 4, 6)
-            g.fillStyle = '#f5c542'
+            g.fillStyle = '#ffce4a'
             g.fillRect((first.x + dx) * TILE + 7, cy - 4, 2, 2)
-            g.fillStyle = '#c9a15a'
+            g.fillStyle = '#e6af4e'
           }
           // 진열: 가진 희귀품을 양옆 책장 윗단에 하나씩
           RARE_ITEMS.filter((id) => (game.inv[id] ?? 0) > 0 || (game.chest?.[id] ?? 0) > 0).forEach((id, i) => {
@@ -1437,10 +1458,10 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         }
         // 양옆 책장: 복음서 다음에 꽂은 책(사도행전·편지·요한계시록)마다 책등 둘씩 — 방마다 다른 책등 색, 등급 띠
         const SIDE_SPINE: [readonly Book[], readonly [string, string]][] = [
-          [['ac'], ['#a894c4', '#b8a4d2']],
-          [shelfRoom('romPhm').books, ['#d49a78', '#e2b08a']],
-          [shelfRoom('hebJud').books, ['#86b8ae', '#9ccabe']],
-          [['rev'], ['#c88aa0', '#d69cb0']],
+          [['ac'], ['#b095d6', '#c1a7e3']],
+          [shelfRoom('romPhm').books, ['#ec9f72', '#f8b888']],
+          [shelfRoom('hebJud').books, ['#85cbbd', '#9edbcb']],
+          [['rev'], ['#dc89a6', '#e89eb7']],
         ]
         for (const sp of sideShelfSpines(game.shelved)) {
           const tx = sp.side === 'left' ? first.x - 4 + sp.tile : first.x + 4 + sp.tile
@@ -1463,9 +1484,9 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           g.fillStyle = 'rgba(40,25,15,0.35)'
           g.fillRect(mid.x * TILE + 4, mid.y * TILE + 3, 8, 9)
         } else {
-          g.fillStyle = '#7a6a8a'
+          g.fillStyle = '#81659e'
           g.fillRect(mid.x * TILE + 4, mid.y * TILE + 2, 8, 10)
-          g.fillStyle = ['#c9b89a', '#c7ccd4', '#d9b44a'][grade]
+          g.fillStyle = ['#dbc49c', '#d0d6e1', '#fac839'][grade]
           g.fillRect(mid.x * TILE + 4, mid.y * TILE + 4, 8, 2)
           g.fillRect(mid.x * TILE + 4, mid.y * TILE + 9, 8, 2)
         }
@@ -1475,13 +1496,13 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         const all = content.journey?.length ?? 0
         const shown = all ? Math.ceil((game.journey.length / all) * 7) : 0
         if (shown > 0) {
-          g.fillStyle = (game.flags.actsShip ?? 0) > 0 ? '#d9b44a' : '#c9968a'
+          g.fillStyle = (game.flags.actsShip ?? 0) > 0 ? '#fac839' : '#dd9988'
           g.fillRect(bx, by + 6, 40, 2)
         }
         for (let i = 0; i < shown; i++) {
-          g.fillStyle = '#fbf3e0'
+          g.fillStyle = '#fff7e5'
           g.fillRect(bx + i * 6, by + 8, 4, 4)
-          g.fillStyle = '#8497a8'
+          g.fillStyle = '#84a0ba'
           g.fillRect(bx + i * 6 + 1, by + 6, 2, 2)
         }
       }
@@ -1493,9 +1514,9 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           g.fillStyle = 'rgba(40,25,15,0.35)'
           g.fillRect(mid.x * TILE + 4, mid.y * TILE + 3, 8, 9)
         } else {
-          g.fillStyle = '#6f8a8c'
+          g.fillStyle = '#6c9a9e'
           g.fillRect(mid.x * TILE + 4, mid.y * TILE + 2, 8, 10)
-          g.fillStyle = ['#c9b89a', '#c7ccd4', '#d9b44a'][grade]
+          g.fillStyle = ['#dbc49c', '#d0d6e1', '#fac839'][grade]
           g.fillRect(mid.x * TILE + 4, mid.y * TILE + 4, 8, 2)
           g.fillRect(mid.x * TILE + 4, mid.y * TILE + 9, 8, 2)
         }
@@ -1699,7 +1720,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       })
 
       // 나비
-      for (const b of flies) items.push({ y: b.y + 0.5, paint: () => g.drawImage(paint(`bf/${b.frame}/${b.hue}`, BUTTERFLY[b.frame], { ...SMALL_PALETTE, o: b.hue ? '#98b8d7' : '#d0977c', O: b.hue ? '#7696b8' : '#d8c587' }), Math.round(b.x * TILE), Math.round(b.y * TILE)) })
+      for (const b of flies) items.push({ y: b.y + 0.5, paint: () => g.drawImage(paint(`bf/${b.frame}/${b.hue}`, BUTTERFLY[b.frame], { ...SMALL_PALETTE, o: b.hue ? '#99c2ea' : '#e79b77', O: b.hue ? '#719ece' : '#eed584' }), Math.round(b.x * TILE), Math.round(b.y * TILE)) })
 
       items.sort((a, b) => a.y - b.y).forEach((i) => i.paint())
       const room = viewRoomAt(here)

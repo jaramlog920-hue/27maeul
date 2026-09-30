@@ -9,38 +9,39 @@ export const SPRITE_W = 10
 export const SPRITE_H = 14
 
 export const PALETTE: Record<string, string> = {
-  k: '#3b2a20', // 윤곽
-  s: '#e0bba0', // 피부
-  h: '#5a3a22', // 머리
-  r: '#876a4d', // 겉옷
-  R: '#6d5238', // 겉옷 그늘
-  b: '#b69c6d', // 띠
-  P: '#e5d8ab', // 귀에 꽂은 펜
-  K: '#2b2238', // 잉크 묻은 손
-  S: '#94564f', // 겨울 목도리
+  k: '#4a3226', // 윤곽 (참고 그림처럼 새까맣지 않은 따뜻한 밤색)
+  '+': '#f59a9a', // 볼 발그레 (귀엽게 — 참고 그림)
+  s: '#f2c4a3', // 피부
+  h: '#703d16', // 머리
+  r: '#a17141', // 겉옷
+  R: '#84582d', // 겉옷 그늘
+  b: '#cda967', // 띠
+  P: '#f5e6b0', // 귀에 꽂은 펜
+  K: '#2e1e44', // 잉크 묻은 손
+  S: '#b14c40', // 겨울 목도리
   // 이웃
-  c: '#9f6154', C: '#81483d', a: '#f1e6cf', y: '#cfbf89', // 빵 굽는 이웃
-  W: '#e8e4dc', g: '#6b7a8f', G: '#55627a', // 할아버지
-  H: '#783d6a', p: '#a1824d', Q: '#846637', // 상인
-  j: '#2a2020', n: '#855c44', N: '#69442e', L: '#4a3a30', // 대장장이
-  e: '#d8cfae', u: '#7c6a4f', U: '#5f503a', // 양치기
-  q: '#4f7a4a', i: '#a6996c', I: '#877a4f', // 기름 짜는 이웃
-  z: '#698eaa', Z: '#51728f', // 아이
-  V: '#7a5d97', X: '#5f4579', F: '#e2a6b3', // 베 짜는 이웃
-  E: '#6d8747', M: '#566e33', Y: '#c9b477', // 벌 치는 이웃
+  c: '#bc5a45', C: '#9c402f', a: '#fbf1dc', y: '#e4cf87', // 빵 굽는 이웃
+  W: '#f3f0e8', g: '#6780a2', G: '#4e658e', // 할아버지
+  H: '#91317a', p: '#c2903b', Q: '#a17126', // 상인
+  j: '#322020', n: '#a05d36', N: '#814521', L: '#583d2c', // 대장장이
+  e: '#e8dcb3', u: '#927446', U: '#715833', // 양치기
+  q: '#499040', i: '#bba867', I: '#a08b44', // 기름 짜는 이웃
+  z: '#6398c0', Z: '#447aaa', // 아이
+  V: '#8153b0', X: '#653a90', F: '#f3aaba', // 베 짜는 이웃
+  E: '#77a23a', M: '#5f8627', Y: '#e0c472', // 벌 치는 이웃
   // 새 이웃 넷 — o·l·d·D는 주인공 옷 글자(writerPalette)라 비어 있는 글자를 쓴다
-  t: '#5b7fa3', T: '#46668a', // 편지 나르는 이웃
-  A: '#a3563f', B: '#84432f', // 주막 주인
-  J: '#4f8a8b', w: '#3d6e6f', // 어부
-  v: '#b08850', m: '#8d6a3a', // 목수
+  t: '#5287bb', T: '#386ba6', // 편지 나르는 이웃
+  A: '#c74d29', B: '#a33c1c', // 주막 주인
+  J: '#43a4a5', w: '#338385', // 어부
+  v: '#cc9344', m: '#ac7428', // 목수
 }
 
 /** 계절 옷 (겉옷, 그늘) */
 const SEASON_ROBE: Record<Season, [string, string]> = {
-  spring: ['#876a4d', '#6d5238'],
-  summer: ['#baa17f', '#9a8260'],
-  autumn: ['#77533b', '#5e3e2a'],
-  winter: ['#5b4a44', '#453733'],
+  spring: ['#a17141', '#84582d'],
+  summer: ['#cfac7c', '#b18c58'],
+  autumn: ['#90552e', '#73401f'],
+  winter: ['#6a4b41', '#513831'],
 }
 
 export type SpriteRows = readonly string[]
@@ -51,7 +52,7 @@ const FRONT: SpriteRows = [
   '.khhhhhhk.',
   '.khsssshk.',
   '.kskssksk.',
-  '.kssssssk.',
+  '.k+ssss+k.',
   '..kssssk..',
   '.krrrrrrk.',
   '.kRrrrrRk.',
@@ -86,7 +87,7 @@ const SIDE: SpriteRows = [
   '.khhhhhhk.',
   '.khhhsssk.',
   '.khhssksk.',
-  '.khsssssk.',
+  '.khssss+k.',
   '..kssssk..',
   '.krrrrrrk.',
   '.krrrrrrk.',
@@ -402,17 +403,17 @@ export function writerPalette(season: Season, avatar?: FullAvatar): Record<strin
     b: l,
     d: hsvToHex(avatar.bottomColor),
     D: hsvToHex(shadeOf(avatar.bottomColor)),
-    x: '#9f6154',
-    f: '#e2a6b3',
-    y: '#c9b477',
+    x: '#bc5a45',
+    f: '#f3aaba',
+    y: '#e0c472',
   }
 }
 
 // ── 동물과 작은 것들 (자기 팔레트) ──
 
 export const ANIMAL_PALETTE: Record<'cat' | 'dog', Record<string, string>> = {
-  cat: { a: '#bb9168', A: '#a07552', e: '#2a2020', n: '#e3a6a6', w: '#f6efe2' },
-  dog: { a: '#9e7a57', A: '#7e5b3c', e: '#2a2020', n: '#3a2a20', w: '#f1e3c8' },
+  cat: { a: '#d49960', A: '#bf7a42', e: '#322020', n: '#f4aaaa', w: '#fcf5e8' },
+  dog: { a: '#ba814a', A: '#99602e', e: '#322020', n: '#472c1b', w: '#fceed4' },
 }
 
 /** 왼쪽을 본다 (눈 e·코 n이 왼쪽 끝, 꼬리가 오른쪽). 오른쪽을 보게 하려면 animalRows로 뒤집는다 */
@@ -436,8 +437,8 @@ export function animalRows(kind: 'cat' | 'dog', form: 'adult' | 'baby' | 'curl',
 }
 
 export const SMALL_PALETTE: Record<string, string> = {
-  w: '#f6f1e6', W: '#d9d1c0', k: '#3b2a20', s: '#e0bba0', a: '#f1e6cf', y: '#cfbf89', z: '#698eaa',
-  o: '#d0977c', O: '#d8c587', b: '#98b8d7', B: '#7696b8',
+  w: '#fbf6e9', W: '#e7ddc8', k: '#492c1b', s: '#f2c4a3', a: '#fbf1dc', y: '#e4cf87', z: '#6398c0',
+  o: '#e79b77', O: '#eed584', b: '#99c2ea', B: '#719ece',
 }
 
 export const SHEEP: SpriteRows = ['.wwwww..', 'wwwwwwkk', 'wWwwwwks', '.wwwwww.', '.k.k.k..']
@@ -454,10 +455,10 @@ export const BUTTERFLY: [SpriteRows, SpriteRows] = [
 // ── 가방 아이콘 (8×8) ──
 
 export const ICON_PALETTE: Record<string, string> = {
-  k: '#3b2a20', b: '#83adcc', B: '#547d9f', g: '#7a9c5b', G: '#507538', y: '#ccb981', Y: '#a08b54',
-  w: '#f4ecd8', W: '#d9ccb0', p: '#784f8a', P: '#563169', r: '#9f6154', o: '#698544', O: '#3f5a22',
-  d: '#2a2230', l: '#f5c542', n: '#94704f', N: '#745336', s: '#e0bba0', f: '#d18ba0', c: '#c7b18c',
-  E: '#6d8747', a: '#f1e6cf', V: '#7a5d97',
+  k: '#492c1b', b: '#80b8e2', B: '#4586bc', g: '#81b650', G: '#528e2b', y: '#e2c87e', Y: '#bd9c46',
+  w: '#fdf6e7', W: '#e8d8b5', p: '#8643a4', P: '#612580', r: '#bc5a45', o: '#72a036', O: '#457016',
+  d: '#2f213a', l: '#ffce4a', n: '#b17640', N: '#8d5829', s: '#f2c4a3', f: '#e689a5', c: '#dbbd8b',
+  E: '#77a23a', a: '#fbf1dc', V: '#8153b0',
   // 가구 그림에서 줄인 아이콘의 색 (furniture-art ICON_CHAR)
   ...Object.fromEntries(Object.entries(ICON_CHAR).map(([from, to]) => [to, FURNI_PALETTE[from]])),
 }

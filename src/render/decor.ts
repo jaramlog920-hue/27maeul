@@ -8,9 +8,9 @@ import type { Tile, Weather } from '../engine/types'
 
 type Ctx = CanvasRenderingContext2D
 
-const WOOD = '#94704f'
-const WOOD_DARK = '#745336'
-const FLOWERS = ['#e29caa', '#d8c587', '#ffffff', '#b494d6']
+const WOOD = '#b17640'
+const WOOD_DARK = '#8d5829'
+const FLOWERS = ['#f59eaf', '#eed584', '#ffffff', '#bd94e9']
 
 function px(g: Ctx, x: number, y: number, dx: number, dy: number, w: number, h: number, c: string) {
   g.fillStyle = c
@@ -36,17 +36,17 @@ function awning(g: Ctx, t: Tile, w: number, a: string, b: string) {
 
 function hive(g: Ctx, t: Tile) {
   px(g, t.x, t.y, 3, 12, 11, 3, 'rgba(40,25,10,0.22)')
-  px(g, t.x, t.y, 4, 5, 8, 9, '#bb9e68')
-  px(g, t.x, t.y, 4, 7, 8, 1, '#907243')
-  px(g, t.x, t.y, 4, 10, 8, 1, '#907243')
-  px(g, t.x, t.y, 7, 12, 2, 2, '#3b2a20')
+  px(g, t.x, t.y, 4, 5, 8, 9, '#d4ab60')
+  px(g, t.x, t.y, 4, 7, 8, 1, '#ae7e32')
+  px(g, t.x, t.y, 4, 10, 8, 1, '#ae7e32')
+  px(g, t.x, t.y, 7, 12, 2, 2, '#492c1b')
 }
 
 function tree(g: Ctx, t: Tile) {
   px(g, t.x, t.y, 3, 13, 11, 3, 'rgba(40,25,10,0.22)')
-  px(g, t.x, t.y, 7, 9, 3, 6, '#694a30')
-  px(g, t.x, t.y, 2, 2, 12, 9, '#56733f')
-  px(g, t.x, t.y, 3, 3, 9, 6, '#6f8f5a')
+  px(g, t.x, t.y, 7, 9, 3, 6, '#804e24')
+  px(g, t.x, t.y, 2, 2, 12, 9, '#5a8a34')
+  px(g, t.x, t.y, 3, 3, 9, 6, '#73a84f')
 }
 
 const onGardenPlot = (t: Tile) => GARDEN_TILES.some((p) => p.x === t.x && p.y === t.y)
@@ -74,27 +74,27 @@ function ship(g: Ctx, t: number) {
   const s = (dx: number, dy: number, w: number, h: number, c: string) => px(g, SHIP_AT.x, SHIP_AT.y, dx, dy + bob, w, h, c)
   // 물 그림자와 물결
   px(g, SHIP_AT.x, SHIP_AT.y, 4, 28, 40, 2, 'rgba(60, 90, 100, 0.2)')
-  px(g, SHIP_AT.x, SHIP_AT.y, 0, 28, 4, 2, '#bddbcc')
-  px(g, SHIP_AT.x, SHIP_AT.y, 44, 28, 4, 2, '#bddbcc')
+  px(g, SHIP_AT.x, SHIP_AT.y, 0, 28, 4, 2, '#c5e9d7')
+  px(g, SHIP_AT.x, SHIP_AT.y, 44, 28, 4, 2, '#c5e9d7')
   // 돛대와 활대, 돛 (돛대는 돛 위로만 보인다)
-  s(23, -14, 2, 32, '#82684f')
-  s(25, -14, 6, 2, '#a3b4c3')
-  s(11, -10, 26, 2, '#82684f')
-  s(12, -8, 24, 20, '#f1e6cf')
-  s(12, 10, 24, 2, '#d6c194')
-  s(12, 1, 24, 2, '#a3b4c3')
-  s(12, -8, 2, 20, '#e3d3b0')
+  s(23, -14, 2, 32, '#9a6e45')
+  s(25, -14, 6, 2, '#a7bed3')
+  s(11, -10, 26, 2, '#9a6e45')
+  s(12, -8, 24, 20, '#fbf1dc')
+  s(12, 10, 24, 2, '#e9ce94')
+  s(12, 1, 24, 2, '#a7bed3')
+  s(12, -8, 2, 20, '#f2dfb6')
   // 난간·선체·띠
-  s(4, 14, 40, 2, '#ad845d')
-  s(0, 12, 4, 6, '#8e6a4d')
-  s(44, 12, 4, 6, '#8e6a4d')
-  s(2, 16, 44, 4, '#ad845d')
-  s(2, 16, 44, 2, '#8497a8')
-  s(4, 20, 40, 4, '#8e6a4d')
-  s(7, 24, 34, 3, '#7a5d46')
-  for (const dx of [12, 23, 34]) s(dx, 20, 2, 2, '#efe2c6')
+  s(4, 14, 40, 2, '#c68b54')
+  s(0, 12, 4, 6, '#a96f3f')
+  s(44, 12, 4, 6, '#a96f3f')
+  s(2, 16, 44, 4, '#c68b54')
+  s(2, 16, 44, 2, '#84a0ba')
+  s(4, 20, 40, 4, '#a96f3f')
+  s(7, 24, 34, 3, '#91613b')
+  for (const dx of [12, 23, 34]) s(dx, 20, 2, 2, '#fbedd1')
   // 나루 말뚝에 맨 밧줄
-  s(46, 14, 4, 2, '#c9b89a')
+  s(46, 14, 4, 2, '#dbc49c')
 }
 
 /**
@@ -111,14 +111,14 @@ export function hillMailbox(game: Pick<GameState, 'flags'>): Tile | null {
 /** 옅은 잿빛 나무 편지함: 기둥·상자·좌우 대칭 지붕 뚜껑·투입구에 비친 크림색 편지 끝 (선은 모두 2픽셀) */
 function mailbox(g: Ctx, t: Tile, empty = false) {
   px(g, t.x, t.y, 4, 13, 8, 2, 'rgba(40,25,10,0.22)')
-  px(g, t.x, t.y, 7, 9, 2, 5, '#7f7468')
-  px(g, t.x, t.y, 4, 4, 8, 6, '#b3a898')
-  px(g, t.x, t.y, 4, 8, 8, 2, '#968b7c')
-  px(g, t.x, t.y, 3, 3, 10, 2, '#968b7c')
-  px(g, t.x, t.y, 5, 1, 6, 2, '#968b7c')
-  px(g, t.x, t.y, 5, 6, 6, 2, '#6f665c')
+  px(g, t.x, t.y, 7, 9, 2, 5, '#917c65')
+  px(g, t.x, t.y, 4, 4, 8, 6, '#c3b29a')
+  px(g, t.x, t.y, 4, 8, 8, 2, '#a6947c')
+  px(g, t.x, t.y, 3, 3, 10, 2, '#a6947c')
+  px(g, t.x, t.y, 5, 1, 6, 2, '#a6947c')
+  px(g, t.x, t.y, 5, 6, 6, 2, '#7f6d5a')
   // 스물일곱 권 잔치 뒤에는 편지함을 비워 둔다(편지 나르는 이웃의 말과 맞춤)
-  if (!empty) px(g, t.x, t.y, 6, 5, 4, 2, '#f1e6cf')
+  if (!empty) px(g, t.x, t.y, 6, 5, 4, 2, '#fbf1dc')
 }
 
 /**
@@ -131,11 +131,11 @@ export const REED_RACK_AT: Tile = { x: 8, y: 6 }
 /** 빗물 항아리: 넓은 입의 테라코타 항아리, 입 안에 물빛 (선은 모두 2픽셀 이상) */
 function rainJar(g: Ctx, t: Tile) {
   px(g, t.x, t.y, 3, 13, 10, 2, 'rgba(40,25,10,0.22)')
-  px(g, t.x, t.y, 4, 6, 8, 7, '#d0977c')
-  px(g, t.x, t.y, 5, 11, 6, 2, '#b8806a')
-  px(g, t.x, t.y, 5, 7, 2, 3, '#e5b39a')
-  px(g, t.x, t.y, 3, 3, 10, 3, '#b8806a')
-  px(g, t.x, t.y, 5, 3, 6, 2, '#98c5bb')
+  px(g, t.x, t.y, 4, 6, 8, 7, '#e79b77')
+  px(g, t.x, t.y, 5, 11, 6, 2, '#d08263')
+  px(g, t.x, t.y, 5, 7, 2, 3, '#f8ba9c')
+  px(g, t.x, t.y, 3, 3, 10, 3, '#d08263')
+  px(g, t.x, t.y, 5, 3, 6, 2, '#99d7c9')
 }
 
 /** 갈대 말리는 틀: 기둥 둘과 가로대 둘, 윗대에 걸린 갈대 다발 셋 (좌우 대칭) */
@@ -145,7 +145,7 @@ function reedRack(g: Ctx, t: Tile) {
   px(g, t.x, t.y, 12, 2, 2, 13, WOOD_DARK)
   px(g, t.x, t.y, 1, 2, 14, 2, WOOD)
   px(g, t.x, t.y, 2, 10, 12, 2, WOOD)
-  for (const [dx, len, c] of [[4, 7, '#c9c08a'], [7, 8, '#a9a56a'], [10, 7, '#c9c08a']] as const) px(g, t.x, t.y, dx, 4, 2, len, c)
+  for (const [dx, len, c] of [[4, 7, '#ddd188'], [7, 8, '#bfb964'], [10, 7, '#ddd188']] as const) px(g, t.x, t.y, dx, 4, 2, len, c)
 }
 
 /**
@@ -166,13 +166,13 @@ function pavilion(g: Ctx) {
   g.fillStyle = WOOD
   for (const dx of [14, w - 16]) g.fillRect(left + dx, top + 4, 2, 12)
   // 지붕: 두 겹 판과 물결 처마 (분홍빛 기와)
-  g.fillStyle = '#a06c7a'
+  g.fillStyle = '#b4677c'
   g.fillRect(left, top - 2, w, 4)
-  g.fillStyle = '#c98a98'
+  g.fillStyle = '#dd889b'
   g.fillRect(left + 2, top - 6, w - 4, 5)
-  g.fillStyle = '#e0a8b4'
+  g.fillStyle = '#f1acbb'
   g.fillRect(left + 6, top - 9, w - 12, 3)
-  g.fillStyle = '#a06c7a'
+  g.fillStyle = '#b4677c'
   for (let i = 0; i < w / 8; i++) g.fillRect(left + i * 8 + 2, top + 2, 4, 2)
   // 기둥 곁 꽃 둘
   flowers(g, { x: x0, y: y0 + 1 }, 2)
@@ -219,8 +219,8 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
     px(g, loom.x, loom.y, 2, 3, 2, 11, WOOD_DARK)
     px(g, loom.x, loom.y, 12, 3, 2, 11, WOOD_DARK)
     px(g, loom.x, loom.y, 2, 3, 12, 2, WOOD)
-    for (let i = 0; i < 5; i++) px(g, loom.x, loom.y, 4 + i * 2, 5, 1, 7, ['#9f6154', '#cfbf89', '#698eaa', '#7a5d97', '#f1e6cf'][i])
-    if (unlocked(f, 'loomAwning')) awning(g, { x: 37, y: 24 }, 2, '#7a5d97', '#f1e6cf')
+    for (let i = 0; i < 5; i++) px(g, loom.x, loom.y, 4 + i * 2, 5, 1, 7, ['#bc5a45', '#e4cf87', '#6398c0', '#8153b0', '#fbf1dc'][i])
+    if (unlocked(f, 'loomAwning')) awning(g, { x: 37, y: 24 }, 2, '#8153b0', '#fbf1dc')
   }
   // C4 벌통
   if (level >= 4) {
@@ -233,7 +233,7 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
     if (daytime && weather !== 'rain' && weather !== 'snow')
       for (let i = 0; i < hives.length * 2; i++) {
         const h = hives[i % hives.length]
-        px(g, h.x, h.y, 8 + Math.round(Math.cos(t * 3 + i) * 7), 2 + Math.round(Math.sin(t * 4 + i * 2) * 4), 1, 1, '#2a2020')
+        px(g, h.x, h.y, 8 + Math.round(Math.cos(t * 3 + i) * 7), 2 + Math.round(Math.sin(t * 4 + i * 2) * 4), 1, 1, '#322020')
       }
   }
 
@@ -250,12 +250,12 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
       px(g, x, 9, 2, 2, 2, 12, WOOD)
       px(g, x, 9, 12, 2, 2, 12, WOOD)
       px(g, x, 9, 0, 1, 16, 2, WOOD)
-      px(g, x, 9, 1, 0, 14, 3, '#709252')
-      px(g, x, 9, 6, 3, 3, 3, '#784d89')
+      px(g, x, 9, 1, 0, 14, 3, '#76ae45')
+      px(g, x, 9, 6, 3, 3, 3, '#8741a3')
     }
   }
   if (unlocked(f, 'grandpaBench')) bench(g, { x: 31, y: 8 })
-  if (unlocked(f, 'stallAwning')) awning(g, { x: 19, y: 13 }, 3, '#698eaa', '#d8c587')
+  if (unlocked(f, 'stallAwning')) awning(g, { x: 19, y: 13 }, 3, '#6398c0', '#eed584')
   if (unlocked(f, 'pressHandle')) {
     px(g, 45, 21, 7, -3, 2, 5, WOOD_DARK)
     px(g, 45, 21, 3, -4, 10, 2, WOOD)
@@ -266,12 +266,12 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
   }
   if (unlocked(f, 'bigBellows')) {
     // 대장간 지붕
-    for (let i = 0; i < 12; i++) px(g, 42, 20, i * 4 - 8, 1, 4, 4, i % 2 ? '#81483d' : '#9f6154')
+    for (let i = 0; i < 12; i++) px(g, 42, 20, i * 4 - 8, 1, 4, 4, i % 2 ? '#9c402f' : '#bc5a45')
   }
   if (unlocked(f, 'lanterns'))
     for (const l of LANTERNS) {
       px(g, l.x, l.y, 7, 2, 2, 12, WOOD_DARK)
-      px(g, l.x, l.y, 5, 0, 6, 4, daytime ? '#cfbf89' : '#d8c587')
+      px(g, l.x, l.y, 5, 0, 6, 4, daytime ? '#e4cf87' : '#eed584')
     }
   // 바람 부는 날·맑은 날, 언덕 위에 연
   if (unlocked(f, 'kite') && daytime && (weather === 'wind' || weather === 'sunny')) {
@@ -284,9 +284,9 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
     g.moveTo(15 * TILE + 8, 12 * TILE + 4)
     g.lineTo(kx, ky + 6)
     g.stroke()
-    g.fillStyle = '#be6e7c'
+    g.fillStyle = '#d6677b'
     g.fillRect(kx - 3, ky, 6, 6)
-    g.fillStyle = '#d8c587'
+    g.fillStyle = '#eed584'
     g.fillRect(kx - 1, ky + 2, 2, 2)
   }
 
@@ -295,10 +295,10 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
     const [x, y] = k.split(',').map(Number)
     const ripe = isRipe(p)
     const hgt = 3 + Math.min(p.grown, 4) * 2
-    px(g, x, y, 7, 13 - hgt, 2, hgt, '#6d8747')
-    if (p.grown >= 1) px(g, x, y, 5, 13 - hgt + 2, 6, 2, '#7aa84f')
-    if (ripe) px(g, x, y, 6, 13 - hgt - 1, 4, 3, p.crop === 'herb' ? '#b8d27a' : '#c9b477')
-    if (p.wateredDay === game.clock.day) px(g, x, y, 2, 13, 12, 2, '#5f503a')
+    px(g, x, y, 7, 13 - hgt, 2, hgt, '#77a23a')
+    if (p.grown >= 1) px(g, x, y, 5, 13 - hgt + 2, 6, 2, '#81c73f')
+    if (ripe) px(g, x, y, 6, 13 - hgt - 1, 4, 3, p.crop === 'herb' ? '#c7ea75' : '#e0c472')
+    if (p.wateredDay === game.clock.day) px(g, x, y, 2, 13, 12, 2, '#715833')
   }
 }
 
