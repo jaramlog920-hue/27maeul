@@ -3,7 +3,7 @@
 // 가진 것은 flags[`unlock:${id}`] (이웃 부탁이 연 것과 같은 표식) — 가방 칸을 차지하지 않는 설치물이다.
 // 잉크 항아리·재료 궤짝은 방 꾸미기 가구로도 받아 집 안 자리를 고를 수 있다(그림일 뿐, 효과는 설치 표식으로).
 import { unlocked } from './bonds'
-import { add, count, MAX_STACK, TOOLS, type Inventory } from './items'
+import { add, count, MAX_STACK, stackCap, TOOLS, type Inventory } from './items'
 import type { ItemId } from './types'
 
 type Items = Partial<Record<ItemId, number>>
@@ -29,7 +29,7 @@ export const CARPENTER_WORKS: readonly CarpenterWork[] = [
 
 /** 빗물 항아리: 아침마다 물 1, 비 온 다음 날 아침 물 3 */
 export const RAIN_WATER = { usual: 1, afterRain: 3 } as const
-/** 갈대 말리는 틀: 밤마다 파피루스 1 (가방·궤짝에 이만큼 있으면 쉬어 간다) */
+/** 갈대 말리는 틀: 밤마다 파피루스 1 (가방·궤짝에 이만큼 있으면 쉬어 간다 — 가죽 가방이 있어도 9, 과하게 쌓이지 않게) */
 export const RACK_PAPYRUS = 1
 export const RACK_HOLD = MAX_STACK
 /** 그을음 받이: 화덕을 쓸 때마다 그을음 1 — 하루 두 번까지, 가진 그을음이 다섯이면 더 모이지 않는다 */
@@ -80,7 +80,7 @@ export function stash(inv: Inventory, chest: Inventory | null, gives: Items): { 
       bag = add(bag, { [id]: n })
       continue
     }
-    const room = Math.max(0, MAX_STACK - count(bag, id))
+    const room = Math.max(0, stackCap(bag) - count(bag, id))
     const toBag = Math.min(room, n)
     if (toBag > 0) bag = add(bag, { [id]: toBag })
     const toBox = Math.min(n - toBag, Math.max(0, CHEST_STACK - count(box, id)))
@@ -92,17 +92,32 @@ export function stash(inv: Inventory, chest: Inventory | null, gives: Items): { 
 /** 넣으면 넘쳐서 버려지는 것이 있는가 (가방 + 궤짝) */
 export function stashOverflows(inv: Inventory, chest: Inventory | null, gives: Items): boolean {
   return (Object.entries(gives) as [ItemId, number][]).some(([id, n]) => {
-    if (TOOLS.includes(id) || !chest) return count(inv, id) + n > MAX_STACK
-    return Math.max(0, MAX_STACK - count(inv, id)) + Math.max(0, CHEST_STACK - count(chest, id)) < n
+    if (TOOLS.includes(id)) return false
+    if (!chest) return count(inv, id) + n > stackCap(inv)
+    return Math.max(0, stackCap(inv) - count(inv, id)) + Math.max(0, CHEST_STACK - count(chest, id)) < n
   })
 }
 
 /** 궤짝에서 가방으로 꺼낸다 (가방에 들어가는 만큼만). 꺼낼 것이 없으면 null */
 export function fromChest(inv: Inventory, chest: Inventory, id: ItemId): { inv: Inventory; chest: Inventory } | null {
-  const n = Math.min(count(chest, id), Math.max(0, MAX_STACK - count(inv, id)))
+  const n = Math.min(count(chest, id), Math.max(0, stackCap(inv) - count(inv, id)))
   if (n <= 0) return null
   const box = { ...chest }
   if (count(box, id) - n > 0) box[id] = count(box, id) - n
   else delete box[id]
   return { inv: { ...inv, [id]: count(inv, id) + n }, chest: box }
 }
+
+// ── 신 (계획 11 작업 2) ──
+
+/** 걷는 속도 배수: 튼튼한 신(장날) ×1.2, 가벼운 신(양치기 선물) ×1.4 — 이 이상은 없다 (도트가 미끄러져 보이지 않게) */
+export const WALK_MUL = { sturdyShoes: 1.2, lightShoes: 1.4 } as const
+
+export function walkMul(inv: Inventory): number {
+  if (count(inv, 'lightShoes') > 0) return WALK_MUL.lightShoes
+  if (count(inv, 'sturdyShoes') > 0) return WALK_MUL.sturdyShoes
+  return 1
+}
+
+/** 가벼운 신: 튼튼한 신을 산 뒤, 양치기와 마음 5가 되면 인사할 때 준다 (한 번) */
+export const LIGHT_SHOES = { npc: 'shepherd', hearts: 5 } as const

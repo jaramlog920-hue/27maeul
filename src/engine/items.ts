@@ -1,10 +1,18 @@
-// 가방과 만들기. 모든 수는 0 이상 정수, 한 물건은 최대 MAX_STACK개.
+// 가방과 만들기. 모든 수는 0 이상 정수, 한 물건은 최대 stackCap(inv)개 (가죽 가방이 있으면 BIG_STACK).
 import type { ItemId } from './types'
 
 export type Inventory = Partial<Record<ItemId, number>>
 export const MAX_STACK = 9
+/** 가죽 가방이 있을 때 한 칸 최대 (계획 11 작업 2) */
+export const BIG_STACK = 18
 
-export const TOOLS: readonly ItemId[] = ['goodPen', 'brightLamp', 'wideDesk']
+/** 한 번 사면 계속 쓰는 도구 (가방에 하나). 가죽 가방·신 둘은 계획 11 작업 2 */
+export const TOOLS: readonly ItemId[] = ['goodPen', 'brightLamp', 'wideDesk', 'leatherBag', 'sturdyShoes', 'lightShoes']
+
+/** 이 가방의 한 칸 최대 — 가죽 가방이 있으면 18 */
+export function stackCap(inv: Inventory): number {
+  return (inv.leatherBag ?? 0) > 0 ? BIG_STACK : MAX_STACK
+}
 /** 먹을 수 있는 것과 배고픔을 덜어 주는 정도 (좋은 것부터) */
 export const FOODS: readonly [ItemId, number][] = [
   ['bread', 50],
@@ -24,8 +32,9 @@ export function has(inv: Inventory, need: Partial<Record<ItemId, number>>): bool
 /** 넣기. 넘치는 만큼은 버려지고, 실제로 들어간 수를 함께 돌려준다 */
 export function add(inv: Inventory, gives: Partial<Record<ItemId, number>>): Inventory {
   const out = { ...inv }
+  const stack = stackCap(inv)
   for (const [id, n] of Object.entries(gives) as [ItemId, number][]) {
-    const cap = TOOLS.includes(id) ? 1 : MAX_STACK
+    const cap = TOOLS.includes(id) ? 1 : stack
     const now = count(out, id)
     // 선물로 이미 한도를 넘은 수는 줄이지 않는다
     out[id] = Math.max(now, Math.min(cap, now + n))

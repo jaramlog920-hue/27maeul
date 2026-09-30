@@ -524,6 +524,18 @@
     "supplyChest": {
       "name": "재료 궤짝",
       "desc": "재료를 넣어 두는 궤짝. 가방이 차면 남는 재료가 여기로 들어가고, 책상과 작업대에서 꺼내 쓴다."
+    },
+    "leatherBag": {
+      "name": "가죽 가방",
+      "desc": "두꺼운 가죽으로 지은 가방. 한 칸에 열여덟 개까지 들어간다."
+    },
+    "sturdyShoes": {
+      "name": "튼튼한 신",
+      "desc": "밑창을 두 겹 댄 가죽신. 걸음이 조금 빨라진다."
+    },
+    "lightShoes": {
+      "name": "가벼운 신",
+      "desc": "양치기가 언덕길에 신던 대로 지어 준 신. 걸음이 한결 가볍다."
     }
   },
   "recipes": {
@@ -585,7 +597,9 @@
     "brightLamp": "밝은 등잔",
     "wideDesk": "넓은 책상",
     "rainJar": "빗물 항아리",
-    "inkJar": "잉크 항아리"
+    "inkJar": "잉크 항아리",
+    "leatherBag": "가죽 가방",
+    "sturdyShoes": "튼튼한 신"
   },
   "letters": {
     "title": "편지 바구니",
@@ -2870,6 +2884,23 @@
         }
       ],
       "album": "틀에 갈대가 걸린 아침"
+    },
+    "lightShoes": {
+      "title": "가벼운 신",
+      "lines": [
+        {
+          "speaker": "shepherd",
+          "text": "장에서 산 신이네요. 튼튼하긴 한데, 언덕길엔 좀 무겁죠?"
+        },
+        {
+          "speaker": "narration",
+          "text": "양치기가 품에서 가죽끈을 엮은 신 한 켤레를 꺼냈다."
+        },
+        {
+          "speaker": "shepherd",
+          "text": "양 따라 종일 걷는 사람들이 신는 거예요. 발에 맞게 끈을 조여 봐요."
+        }
+      ]
     }
   },
   "journal": {
@@ -2936,7 +2967,8 @@
       "built:supplyChest": " 목수가 재료 궤짝을 짜 왔다.",
       "built:sootCatcher": " 화덕에 그을음 받이가 달렸다.",
       "built:reedRack": " 집 옆에 갈대 말리는 틀이 섰다.",
-      "reedRack": " 어부가 틀에 갈대를 걸어 두고 갔다."
+      "reedRack": " 어부가 틀에 갈대를 걸어 두고 갔다.",
+      "lightShoes": " 양치기에게 가벼운 신을 받았다."
     }
   },
   "quiz": {

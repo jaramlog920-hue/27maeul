@@ -152,6 +152,10 @@ export type ItemId =
   // 편해지는 살림 (계획 11 작업 1): 집 안에 놓는 설치물
   | 'inkJar'
   | 'supplyChest'
+  // 가방과 신 (계획 11 작업 2): 한 번 얻으면 계속 쓰는 도구
+  | 'leatherBag'
+  | 'sturdyShoes'
+  | 'lightShoes'
 
 export type Minigame = 'mash' | 'timing' | 'pick'
 

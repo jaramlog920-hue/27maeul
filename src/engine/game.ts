@@ -3,7 +3,7 @@ import { festivalOf, FESTIVAL_FROM, FESTIVAL_TO, isMarketDay, isWet, weatherOf, 
 import { advance, newClock, phaseOf, seasonOf, sleepClock, type Clock } from './clock'
 import { DURATION, greet, IDLE_GAP, IDLE_RESET, stepIdle, type IdleState } from './autonomy'
 import { adopt, companionGoal, STRAY_DAY, STRAY_SPOTS, stepCompanion, type Animal, type Companion } from './companion'
-import { add, addGift, CHAPTER_COST, FOODS, count, has, MAX_STACK, RECIPES, recipeGives, take, TOOLS, type Inventory, type RecipeId } from './items'
+import { add, addGift, CHAPTER_COST, FOODS, count, has, RECIPES, recipeGives, stackCap, take, TOOLS, type Inventory, type RecipeId } from './items'
 import { facingFor, findPath, pathToward, stepActor, type Actor } from './movement'
 import { coolDown, exhausted, fallsSick, FRESH, rest, sleepNeeds, starving, tickNeeds, warmUp, work, type Needs } from './needs'
 import { inGoodMood } from './mood'
@@ -60,7 +60,7 @@ import {
 import { ATTIC, BED_STAND, HEARTH_STAND, HOME_FRONT, inAttic, isHome, isIndoor, isWalkable, key, LADDER, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setOpenDoors, START, tileAt, WARPS } from './world'
 import { GOSPELS, type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
 import type { Avatar } from './avatar'
-import { CARPENTER_WORKS, fromChest, hasStock, INK_JAR_HOLD, owns, RACK_HOLD, RACK_PAPYRUS, RAIN_WATER, SOOT_CATCH, stash, stashOverflows, stock, takeStock, type CarpenterWork, type EasyId } from './easier'
+import { CARPENTER_WORKS, fromChest, hasStock, INK_JAR_HOLD, LIGHT_SHOES, owns, RACK_HOLD, RACK_PAPYRUS, RAIN_WATER, SOOT_CATCH, stash, stashOverflows, stock, takeStock, walkMul, type CarpenterWork, type EasyId } from './easier'
 
 export interface JournalEntry {
   day: number
@@ -534,9 +534,10 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
     hot: weatherOf(clock.day) === 'hot',
   })
 
-  // 기록자
+  // 기록자 — 신을 신으면 빨리 걷는다(×1.2·×1.4). 걸음 그림(walkTime)도 같은 배수로 흘러 발이 미끄러지지 않는다
   const moving = s.player.path.length > 0
-  let player = stepActor(s.player, starving(needs) ? dt * 0.7 : dt).actor
+  const pace = walkMul(s.inv)
+  let player = stepActor(s.player, (starving(needs) ? dt * 0.7 : dt) * pace).actor
   const now = { x: Math.round(player.x), y: Math.round(player.y) }
   let trails = s.trails
   if (!sameTile(now, here) && tileAt(now.x, now.y) === '.') trails = { ...trails, [key(now)]: (trails[key(now)] ?? 0) + 1 }
@@ -587,7 +588,8 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
     const homeWarp = warp && (isHome(warp) || isHome(now))
     const near = homeWarp ? besideNotDoor(warp) : null
     if (near) companion = { ...companion, x: near.x, y: near.y, path: [] }
-    else companion = stepCompanion(companion, companionGoal(now, rainOut), dt)
+    // 동물도 신의 배수만큼 빨리 — 늘 기록자보다 조금 빠르게 따라온다
+    else companion = stepCompanion(companion, companionGoal(now, rainOut), dt * pace)
   }
 
   const idle = moving ? IDLE_RESET : stepIdle(s.idle, dt, clock.minute, rng, totalChapters(s) >= 3)
@@ -640,6 +642,15 @@ function heartUp(s: GameState, id: string, points: number): GameState {
         giftsGot: [...new Set([...next.giftsGot, ...(Object.keys(gift) as ItemId[])])],
         scenes: [...next.scenes, `gift:${id}:${m}`],
       }
+    }
+  }
+  // 가벼운 신 (계획 11 작업 2): 장날 튼튼한 신을 산 뒤, 양치기와 마음 5 — 마음이 오를 때(인사·돕기·선물) 한 번
+  if (id === LIGHT_SHOES.npc && after >= LIGHT_SHOES.hearts && count(next.inv, 'sturdyShoes') > 0 && count(next.inv, 'lightShoes') === 0) {
+    next = {
+      ...next,
+      inv: addGift(next.inv, { lightShoes: 1 }),
+      giftsGot: next.giftsGot.includes('lightShoes') ? next.giftsGot : [...next.giftsGot, 'lightShoes'],
+      scenes: [...next.scenes, 'lightShoes'],
     }
   }
   if (id === 'child' && after >= CHILD_ASKS_AT && !next.flags.childAsked) {
@@ -801,6 +812,9 @@ export const TRADES: readonly Trade[] = [
   // 편해지는 살림 (계획 11 작업 1): 빗물 항아리는 집 앞에 놓인다, 잉크 항아리는 그을음 받이를 단 뒤에 (집 안 자리를 고른다)
   { id: 'rainJar', pay: {}, coins: 40, get: {}, grants: 'rainJar' },
   { id: 'inkJar', pay: {}, coins: 100, get: { inkJar: 1 }, grants: 'inkJar', requires: 'sootCatcher' },
+  // 가방과 신 (계획 11 작업 2): 가죽 가방은 한 칸 18, 튼튼한 신은 걷는 속도 ×1.2 (가벼운 신은 양치기의 선물)
+  { id: 'leatherBag', pay: {}, coins: 120, get: { leatherBag: 1 } },
+  { id: 'sturdyShoes', pay: {}, coins: 60, get: { sturdyShoes: 1 } },
 ]
 
 /** 이미 가진 도구·설치물을 또 사게 되는 거래인가 (도구는 하나씩) */
@@ -960,9 +974,9 @@ export function gatherInfo(s: GameState, place: PlaceId): GatherResult | null {
   return info
 }
 
-/** 넣으면 넘치는가 (넘치는 물건은 사라지므로 미리 막는다) */
+/** 넣으면 넘치는가 (넘치는 물건은 사라지므로 미리 막는다). 한도는 가방에 따라 9 또는 18 */
 export function wouldOverflow(inv: Inventory, gives: Partial<Record<ItemId, number>>): boolean {
-  return (Object.entries(gives) as [ItemId, number][]).some(([id, n]) => count(inv, id) + n > MAX_STACK)
+  return (Object.entries(gives) as [ItemId, number][]).some(([id, n]) => count(inv, id) + n > stackCap(inv))
 }
 
 // ── 가방과 재료 궤짝 (계획 11 작업 1, 규칙은 easier.ts) ──

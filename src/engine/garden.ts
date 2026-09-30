@@ -1,7 +1,7 @@
 // 집 오른쪽 위 텃밭 열두 칸 (설계 §2.5). 씨앗을 심고, 날마다 물을 주면 자라고, 다 자라면 거둔다. 겨울엔 쉰다.
 import { seasonOf } from './clock'
 import type { GameState } from './game'
-import { add, has, MAX_STACK, count, take } from './items'
+import { add, has, count, stackCap, take } from './items'
 import type { ItemId, Tile } from './types'
 
 export type CropId = 'herb' | 'bean'
@@ -49,7 +49,7 @@ export function harvest(s: GameState, at: Tile): GameState | null {
   const p = s.garden[keyOf(at)]
   if (!p || !isRipe(p)) return null
   const gives = CROPS[p.crop].gives
-  if ((Object.entries(gives) as [ItemId, number][]).some(([id, n]) => count(s.inv, id) + n > MAX_STACK)) return null
+  if ((Object.entries(gives) as [ItemId, number][]).some(([id, n]) => count(s.inv, id) + n > stackCap(s.inv))) return null
   const garden = { ...s.garden }
   delete garden[keyOf(at)]
   return { ...s, inv: add(s.inv, gives), garden }

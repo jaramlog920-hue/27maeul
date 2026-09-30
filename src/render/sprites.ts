@@ -502,6 +502,10 @@ export const ICONS: Record<string, SpriteRows> = {
   herb: ['...E....', '..EEE...', '.EEEEE..', '..EEE.E.', '...k.EEE', '...k..E.', '...k....', '........'],
   bean: ['........', '.yy.....', 'yYyy.yy.', '.yyyyYy.', '...yyyy.', '........', '........', '........'],
   cover: ['........', '.kkkkkk.', '.kVVVVk.', '.kVyyVk.', '.kVVVVk.', '.kVVVVk.', '.kkkkkk.', '........'],
+  // 가방과 신 (계획 11 작업 2): 끈 달린 가죽 가방(덮개·쇠고리), 두 겹 밑창 가죽신, 끈을 엮은 연한 가죽신
+  leatherBag: ['..NNNN..', '.N....N.', 'NNNNNNNN', 'NnnnnnnN', 'NnnyynnN', 'NnnnnnnN', 'NnnnnnnN', '.NNNNNN.'],
+  sturdyShoes: ['........', '........', '.NNN....', '.NnN....', '.NnnNN..', '.NnnnnNN', 'NNNNNNNN', 'kkkkkkkk'],
+  lightShoes: ['........', '........', '.c..c...', '.cWcW...', '.cwwcc..', '.cwwwwcc', 'cWWWWWWc', '.NNNNNN.'],
 }
 
 // 가구 20종은 그림을 줄여 아이콘으로
