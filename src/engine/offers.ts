@@ -28,7 +28,13 @@ export function currentChapter(pieces: readonly Piece[], completed: readonly num
   return chapters.find((c) => !completed.includes(c)) ?? null
 }
 
-/** 이웃마다 하루 하나씩, 지금 장에서 아직 듣지 않은 조각을 섞어서 나눠 준다 */
+/** 하루에 이야기를 건네는 이웃은 많아야 여섯 (2026-09-30 사용자) */
+export const MAX_OFFERS_PER_DAY = 6
+
+/**
+ * 이웃마다 하루 하나씩, 많아야 여섯 명에게 나눠 준다. 지금 장에서 아직 듣지 않은 조각을 먼저(섞어서),
+ * 지금 장 조각이 모자라면 다음 장 조각으로 채운다 — 하루에 한 장 넘게 모을 수 있다
+ */
 export function offersForDay(args: {
   day: number
   pieces: readonly Piece[]
@@ -38,11 +44,14 @@ export function offersForDay(args: {
 }): Record<string, string> {
   const out: Record<string, string> = {}
   if (args.chapter === null) return out
-  const remaining = args.pieces.filter((p) => p.chapter === args.chapter && !args.collected.includes(p.id))
-  const shuffled = seededShuffle(remaining, args.day)
+  const chapter = args.chapter
+  const left = args.pieces.filter((p) => !args.collected.includes(p.id) && p.chapter >= chapter)
+  const chapters = [...new Set(left.map((p) => p.chapter))].sort((a, b) => a - b)
+  // 장 순서대로, 한 장 안에서는 섞어서
+  const queue = chapters.flatMap((c, i) => seededShuffle(left.filter((p) => p.chapter === c), args.day + i * 131)).slice(0, MAX_OFFERS_PER_DAY)
   // 조각이 이웃보다 적은 날에도 이야기가 골고루 돌도록 이웃 순서도 섞는다
   seededShuffle(args.neighborIds, args.day + 7777).forEach((id, i) => {
-    if (shuffled[i]) out[id] = shuffled[i].id
+    if (queue[i]) out[id] = queue[i].id
   })
   return out
 }
