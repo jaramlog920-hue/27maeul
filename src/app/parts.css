@@ -1534,3 +1534,10 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
 .nb-none { color: var(--ink-soft); }
 .nb-slots { list-style: none; margin: 0; padding: 0; }
 .nb-slot { display: inline-block; min-width: 2.5em; color: var(--ink-soft); }
+.trade-list li.trade-group {
+  display: block;
+  padding: 6px 0 2px;
+  border-bottom: 2px solid var(--panel-edge);
+  font-weight: 700;
+  color: var(--ink-soft);
+}

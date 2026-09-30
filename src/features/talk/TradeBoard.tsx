@@ -1,10 +1,22 @@
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
+import { FURNITURE_DEFS } from '../../engine/furniture-defs'
+import type { Trade } from '../../engine/game'
 import { fill, itemList, itemName, T } from '../../content/text'
 import { canBuyRare, canSell, overflows, ownsTradeTool, RARE_PRICES, rareStall, SELL_PRICES, sellPrice, tradesFor } from '../../engine/game'
 import { jobOf, SELL_FROM } from '../../engine/job'
 import { has, take } from '../../engine/items'
 import type { ItemId } from '../../engine/types'
 import { useGame } from '../../store/game-store'
+
+/** 사기 목록을 셋으로 묶는다: 재료, 도구·살림, 가구·장식 */
+type Group = 'stuff' | 'tools' | 'decor'
+const GROUP_LABEL: Record<Group, string> = { stuff: '재료', tools: '도구 · 살림', decor: '가구 · 장식' }
+function groupOf(t: Trade): Group {
+  const got = Object.keys(t.get) as ItemId[]
+  if (got.some((id) => FURNITURE_DEFS[id])) return 'decor'
+  if (t.grants || t.coins !== undefined) return 'tools'
+  return 'stuff'
+}
 
 export function TradeBoard() {
   const [tab, setTab] = useState<'buy' | 'rare' | 'sell'>('buy')
@@ -30,21 +42,28 @@ export function TradeBoard() {
       </div>
       {tab === 'buy' && (
         <ul className="trade-list">
-          {tradesFor(flags).map((t) => {
-            const owned = ownsTradeTool(inv, t, flags)
-            const paid = take(inv, t.pay)
-            // 재료 궤짝이 있으면 궤짝까지 친다
-            const full = !!paid && overflows({ ...game, inv: paid }, t.get)
-            return (
-              <li key={t.id}>
-                <span className="trade-get">{names[t.id]}</span>
-                <span className="trade-pay">{t.coins !== undefined ? fill(T.ui.coins, { n: t.coins }) : itemList(t.pay)}</span>
-                <button disabled={owned || full || !has(inv, t.pay) || (t.coins !== undefined && coins < t.coins)} onClick={() => doTrade(t)}>
-                  {owned ? T.ui.tradeOwned : full ? T.ui.bagFullShort : T.ui.talkTrade}
-                </button>
-              </li>
-            )
-          })}
+          {(['stuff', 'tools', 'decor'] as Group[]).map((g) => (
+            <Fragment key={g}>
+              <li className="trade-group">{GROUP_LABEL[g]}</li>
+              {tradesFor(flags)
+                .filter((t) => groupOf(t) === g)
+                .map((t) => {
+                  const owned = ownsTradeTool(inv, t, flags)
+                  const paid = take(inv, t.pay)
+                  // 재료 궤짝이 있으면 궤짝까지 친다
+                  const full = !!paid && overflows({ ...game, inv: paid }, t.get)
+                  return (
+                    <li key={t.id}>
+                      <span className="trade-get">{names[t.id]}</span>
+                      <span className="trade-pay">{t.coins !== undefined ? fill(T.ui.coins, { n: t.coins }) : itemList(t.pay)}</span>
+                      <button disabled={owned || full || !has(inv, t.pay) || (t.coins !== undefined && coins < t.coins)} onClick={() => doTrade(t)}>
+                        {owned ? T.ui.tradeOwned : full ? T.ui.bagFullShort : t.coins !== undefined ? T.ui.tradeBuy : T.ui.talkTrade}
+                      </button>
+                    </li>
+                  )
+                })}
+            </Fragment>
+          ))}
         </ul>
       )}
       {tab === 'rare' && (
@@ -58,7 +77,7 @@ export function TradeBoard() {
                   <span className="trade-get">{itemName(id)}</span>
                   <span className="trade-pay">{fill(T.ui.coins, { n: RARE_PRICES[id]! })}</span>
                   <button disabled={block !== null} onClick={() => buyRareItem(id)}>
-                    {block === 'bought' ? '샀어요' : block === 'full' ? T.ui.bagFullShort : T.ui.talkTrade}
+                    {block === 'bought' ? '샀어요' : block === 'full' ? T.ui.bagFullShort : T.ui.tradeBuy}
                   </button>
                 </li>
               )
