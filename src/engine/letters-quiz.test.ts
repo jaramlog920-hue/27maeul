@@ -1,7 +1,8 @@
 // 편지 서고 퀴즈 (계획 7 작업 6): 어느 책?(보기 다섯 권까지)·첫머리의 이름·빈칸·먼저 나오는 구절. 탐정·도장 없음.
 import { BOOK_ABBR, inBrackets, LETTER_OPENINGS, noText, pieceOfQuestion, pieceOfVerse, piecesOf, quizSourceFor, versesOf } from '../content/catalog'
 import { mulberry32 } from './offers'
-import { buildLibraryQuiz, isCorrect, MAX_BOOK_OPTIONS, NOT_WRITTEN_OPTION, OPENING_MIN_WRONG, QUIZ_SIZE, quizzable, type Question } from './quiz'
+import { buildLibraryQuiz, isCorrect, MAX_BOOK_OPTIONS, NOT_WRITTEN_OPTION, OPENING_MIN_WRONG, QUIZ_SIZE, quizzable, wordsOf, type Question } from './quiz'
+import { isContentWord } from './word-options'
 import T from '../content/life-text.json'
 import { roomOf } from './shelf-rooms'
 import { BOOKS, GOSPELS, LETTERS, type Book, type Letter } from './types'
@@ -382,6 +383,59 @@ describe('편지 서고 퀴즈', () => {
     it('다시 읽을 구절: 범위 첫 절의 장', () => {
       expect(pieceOfQuestion({ kind: 'openingNone', book: 'heb', ref: '히 1:1-4', options: [], answer: NOT_WRITTEN_OPTION })).toBe('heb-001')
       expect(pieceOfQuestion({ kind: 'openingNone', book: '3jn', ref: '요삼 1:1', options: [], answer: NOT_WRITTEN_OPTION })).toBe('3jn-001')
+    })
+  })
+
+  describe('편지 빈칸 — 끝말로 답이 드러나지 않게 (계획 8 작업 4)', () => {
+    const allSrc = quizSourceFor(BOOKS)
+    const pnorm = (s: string) => s.replace(/[\s,.!?]+/g, '')
+    /** [편지, 범위 이름, 빈칸 문제] — 스물한 권 × (그 책만 / 서고 전부) × 씨앗 1–10 */
+    const blankQs = (() => {
+      const out: [Letter, Book[], Extract<Question, { kind: 'blank' }>][] = []
+      for (const current of LETTERS)
+        for (const pool of [[current], [...BOOKS]] as Book[][]) {
+          const src = quizSourceFor(pool)
+          for (let seed = 1; seed <= 10; seed++)
+            for (const q of buildLibraryQuiz({ current, pool, piecesOf, rng: mulberry32(seed), src, openings: LETTER_OPENINGS })) if (q.kind === 'blank') out.push([current, pool, q])
+        }
+      return out
+    })()
+
+    it('스물한 권 모두에서 빈칸 문제가 나온다', () => {
+      for (const b of LETTERS) expect(blankQs.some(([c]) => c === b), b).toBe(true)
+    })
+
+    it('답은 내용 낱말, 오답으로 채운 절은 범위에도 앱 본문 전체에도 없음, 보기 넷 서로 다름, 보기는 모두 같은 책 낱말', () => {
+      for (const [c, pool, q] of blankQs) {
+        const w = `${c}/${pool.length} ${q.ref} ${q.answer}`
+        const src = quizSourceFor(pool)
+        expect(isContentWord(q.answer), w).toBe(true)
+        expect(pieceOfVerse(q.ref)?.book, w).toBe(c)
+        const text = [q.before, q.answer, q.after].filter(Boolean).join(' ')
+        expect(norm(text), w).toBe(norm(versesOf(q.ref)[0].text))
+        // 답은 그 절에 한 번만
+        expect(wordsOf(text).map(pnorm).filter((x) => x === pnorm(q.answer)), w).toHaveLength(1)
+        expect(q.options, w).toHaveLength(4)
+        expect(new Set(q.options.map(norm)).size, w).toBe(4)
+        const words = new Set(piecesOf(c).flatMap((p) => versesOf(p.ref)).flatMap((v) => wordsOf(v.text)))
+        for (const o of q.options) {
+          expect(words.has(o), `${w} ${o}`).toBe(true)
+          if (o === q.answer) continue
+          const filled = [q.before, o, q.after].filter(Boolean).join(' ')
+          expect(src.countVerse(filled), `${w} ${o}`).toBe(0)
+          expect(allSrc.countVerse(filled), `${w} ${o}`).toBe(0)
+        }
+      }
+    })
+
+    it('끝 글자가 답과 같은 오답의 비율이 바꾸기 전보다 높다', () => {
+      // 잰 값(2026-09-30, 스물한 권 × 두 범위 × 씨앗 1–10): 바꾸기 전 65/2121 = 3.1% → 바꾼 뒤 1862/2121 = 87.8%
+      const BEFORE = 65 / 2121
+      const wrong = blankQs.flatMap(([, , q]) => q.options.filter((o) => o !== q.answer).map((o) => ({ o, a: q.answer })))
+      const same = wrong.filter(({ o, a }) => pnorm(o).slice(-1) === pnorm(a).slice(-1)).length
+      const rate = same / wrong.length
+      expect(rate).toBeGreaterThan(BEFORE)
+      expect(rate).toBeGreaterThanOrEqual(0.85)
     })
   })
 

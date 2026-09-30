@@ -10,6 +10,7 @@
 //   계획 8 작업 3: 보낸 이가 적혀 있지 않은 편지(히·요일·요이·요삼)는 첫머리 범위 본문 + 보기 "적혀 있지 않음"(openingNone)
 import { modeOf, roomOf } from './shelf-rooms'
 import { BOOKS, GOSPELS, isGospel, type Book, type Gospel, type Piece, type Rng } from './types'
+import { isContentWord, rankOptions, wordNorm } from './word-options'
 
 export type GospelId = Gospel
 export { GOSPELS }
@@ -90,6 +91,8 @@ export interface QuizSource {
   versesOf: (ref: string) => VerseText[]
   /** 출제 본문(quizSourceFor로 고른 책들) 전체에서 이 문장을 가진 절의 수 */
   countVerse: (text: string) => number
+  /** 앱 본문의 모든 책에서 이 문장을 가진 절의 수 — 편지 빈칸의 틀린 보기로 채운 절이 어디에도 없어야 한다 (없으면 countVerse로 센다) */
+  countAnywhere?: (text: string) => number
 }
 
 /** 퀴즈에 (문제·보기·정답 어디로든) 쓸 수 있는 조각: 모든 절이 대괄호 구간 안인 조각(막 16:9-20)은 안 된다 */
@@ -138,6 +141,50 @@ function blank(p: Piece, chapterPieces: readonly Piece[], src: QuizSource, rng: 
       ).slice(0, 3)
       if (distractors.length < 3) continue
       return { kind: 'blank', ref: v.ref, before, after, options: shuffle([answer, ...distractors], rng), answer }
+    }
+  }
+  return null
+}
+
+/**
+ * 편지 책의 빈칸 (계획 8 작업 4): 옮겨 적기(copy.ts)처럼 보기를 고른다 — 끝말(조사·어미)만 보고 답을 고를 수 없게.
+ * 절 = 문제로 쓸 수 있고 14자 이상·출제 범위에서 유일. 답 = 내용 낱말이고 그 절에 한 번만 나오는 낱말.
+ * 보기 = 같은 책 다른 절의 내용 낱말(띄어쓰기·문장부호만 다른 것 제외)을 rankOptions 순서로 앞에서부터,
+ * 그 낱말로 채운 절이 출제 범위에도 앱 본문 어느 책에도 없는 것 셋. 못 채우면 다음 낱말, 다음 절.
+ * before·after는 blank와 같은 모양 (낱말을 한 칸 띄어 잇기)
+ */
+function letterBlank(p: Piece, bookPieces: readonly Piece[], src: QuizSource, rng: Rng): Question | null {
+  const verses = shuffle(
+    src.versesOf(p.ref).filter((v) => norm(v.text).length >= MIN_VERSE_CHARS && quizzable(v.text, v.inBrackets) && src.countVerse(v.text) === 1),
+    rng,
+  )
+  if (verses.length === 0) return null
+  const pool: { w: string; ref: string }[] = []
+  for (const bp of bookPieces)
+    for (const v of src.versesOf(bp.ref)) if (quizzable(v.text, v.inBrackets)) for (const w of wordsOf(v.text)) if (isContentWord(w)) pool.push({ w, ref: v.ref })
+  const countAnywhere = src.countAnywhere ?? src.countVerse
+  for (const v of verses) {
+    const ws = wordsOf(v.text)
+    const idxs = shuffle(
+      ws.map((_, i) => i).filter((i) => isContentWord(ws[i]) && ws.filter((x) => wordNorm(x) === wordNorm(ws[i])).length === 1),
+      rng,
+    )
+    for (const i of idxs) {
+      const answer = ws[i]
+      const before = ws.slice(0, i).join(' ')
+      const after = ws.slice(i + 1).join(' ')
+      const fill = (w: string) => [before, w, after].filter(Boolean).join(' ')
+      const cands = [...new Set(pool.filter((x) => x.ref !== v.ref && wordNorm(x.w) !== wordNorm(answer)).map((x) => x.w))]
+      const picked: string[] = []
+      for (const w of rankOptions(answer, cands, rng)) {
+        if (picked.some((x) => wordNorm(x) === wordNorm(w))) continue
+        const filled = fill(w)
+        if (src.countVerse(filled) !== 0 || countAnywhere(filled) !== 0) continue
+        picked.push(w)
+        if (picked.length === 3) break
+      }
+      if (picked.length < 3) continue
+      return { kind: 'blank', ref: v.ref, before, after, options: shuffle([answer, ...picked], rng), answer }
     }
   }
   return null
@@ -396,7 +443,7 @@ function buildLetterQuiz(
   let whole: string | undefined
   const bookText = () => (whole ??= norm(bookPieces.flatMap((p) => src.versesOf(p.ref).map((v) => v.text)).join('')))
   const others = pool.filter((b) => b !== current)
-  const blankQ = () => firstOf(shuffle(mine, rng), (p) => blank(p, [p], src, rng))
+  const blankQ = () => firstOf(shuffle(mine, rng), (p) => letterBlank(p, bookPieces, src, rng))
   const orderQ = () => verseOrderQuestion(mine, src, rng)
   const puzzleQ = () => firstOf(shuffle(mine, rng), (p) => puzzle(p, src, rng))
   const makers: (() => Question | null)[] = []

@@ -135,8 +135,11 @@ for (const b of BOOKS) {
 }
 export const inBrackets = (ref: string) => bracketed.has(ref.trim())
 
-/** 퀴즈가 쓰는 본문: 절마다 참조를 붙이고, 고른 책들 안에서 같은 문장이 몇 번 나오는지 센다 */
-export function quizSourceFor(books: readonly Book[]): QuizSource {
+/** 책들 안에서 같은 문장을 가진 절의 수 */
+const countIn = (books: readonly Book[], text: string) => books.reduce((n, b) => n + (verseCounts.get(b)?.get(quizKey(text)) ?? 0), 0)
+
+/** 퀴즈가 쓰는 본문: 절마다 참조를 붙이고, 고른 책들 안에서(countVerse)·앱 본문 모든 책에서(countAnywhere) 같은 문장이 몇 번 나오는지 센다 */
+export function quizSourceFor(books: readonly Book[]): QuizSource & { countAnywhere: (text: string) => number } {
   return {
     versesOf: (ref) => {
       const abbr = BOOK_ABBR[bookOfRef(ref)]
@@ -145,7 +148,8 @@ export function quizSourceFor(books: readonly Book[]): QuizSource {
         return { ref: r, text: v.text, inBrackets: bracketed.has(r) }
       })
     },
-    countVerse: (text) => books.reduce((n, b) => n + (verseCounts.get(b)?.get(quizKey(text)) ?? 0), 0),
+    countVerse: (text) => countIn(books, text),
+    countAnywhere: (text) => countIn(BOOKS, text),
   }
 }
 
