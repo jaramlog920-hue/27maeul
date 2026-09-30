@@ -121,7 +121,7 @@ const HOUSE_STYLES: Record<string, HouseStyle> = {
   apothecary: { roof: ['#b05860', '#944850', '#c06c74'], pattern: 'tile', wall: '#f4e0c0', base: '#f0d8b0', window: 'arch', shutter: '#ac7444', door: '#906040', awning: ['#58984c', '#f8e8cc'] },
   fisher: { roof: ['#4898a4', '#3c808c', '#5cacb8'], pattern: 'tile', wall: '#f4e0c0', base: '#f0d8b0', window: 'round', shutter: '#ac7444', door: '#906040' },
   carpenter: { roof: ['#987858', '#80644a', '#ac8c6c'], pattern: 'tile', wall: '#f4e0c0', base: '#f0d8b0', window: 'square', shutter: '#ac7444', door: '#906040', timber: '#ac7444' },
-  hall: { roof: ['#4880b4', '#3c6c9c', '#5c94c4'], pattern: 'tile', wall: '#f4e0c0', base: '#f0d8b0', window: 'arch', shutter: '#ac7444', door: '#906040', timber: '#ac7444', awning: ['#c8a04c', '#f8e8cc'] },
+  hall: { roof: ['#4880b4', '#3c6c9c', '#5c94c4'], pattern: 'tile', wall: '#f4e0c0', base: '#f0d8b0', window: 'arch', shutter: '#ac7444', door: '#906040', timber: '#ac7444' },
   tripA: { roof: ['#4880b4', '#3c6c9c', '#5c94c4'], pattern: 'tile', wall: '#f4e0c0', base: '#f0d8b0', window: 'square', shutter: '#ac7444', door: '#906040' },
   tripB: { roof: ['#c07058', '#a86048', '#cc8468'], pattern: 'tile', wall: '#f4e0c0', base: '#f0d8b0', window: 'round', shutter: '#ac7444', door: '#906040', awning: ['#c07058', '#f8e8cc'] },
   tripC: { roof: ['#4898a4', '#3c808c', '#5cacb8'], pattern: 'tile', wall: '#f4e0c0', base: '#f0d8b0', window: 'arch', shutter: '#ac7444', door: '#906040' },
@@ -233,8 +233,8 @@ function houseWallTile(g: Ctx, x: number, y: number, ch: string, id: string, h: 
       for (let i = 0; i < 4; i++) r(['#ffc2a0', '#fefdf8', '#feae88', '#a2cb78'][(x + i) % 4], -4 + i * 2, 9, 2, 1)
     }
   }
-  if (st.awning && !upper && Math.abs(x - h.doorX) <= 1) {
-    // 빵집 문 위 줄무늬 차양
+  if (st.awning && !st.timber && !upper && Math.abs(x - h.doorX) <= 1) {
+    // 문 위 줄무늬 차양 — 나무 줄(timber)이 있는 집에는 달지 않는다
     for (let i = 0; i < 4; i++) r(i % 2 ? st.awning[1] : st.awning[0], i * 4, 0, 4, 4)
     for (let i = 0; i < 4; i++) r(st.awning[0], i * 4 + 1, 4, 2, 1)
   }
