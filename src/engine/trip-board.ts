@@ -34,6 +34,19 @@ export interface BoardState {
   lapped: boolean
   lastRoll: number | null
   rewards: TripReward[]
+  /** 닢을 내고 더 받은 턴 (여행 한 번에 한 번, 두 번 더) */
+  bonus?: number
+}
+
+/** 두 번 더 굴리기: 여행 한 번에 한 번, 닢을 내고 (한 바퀴를 다 돌았으면 끝) */
+export const EXTRA_TURNS = 2
+export const EXTRA_PRICE = 10
+export function canExtend(b: BoardState, coins: number): boolean {
+  return !b.bonus && !b.lapped && coins >= EXTRA_PRICE
+}
+export function extendTurns(b: BoardState, coins: number): BoardState {
+  if (!canExtend(b, coins)) return b
+  return { ...b, bonus: EXTRA_TURNS, done: false, rewards: [...b.rewards, { kind: 'coins', n: -EXTRA_PRICE }] }
 }
 
 export const NEW_BOARD: BoardState = { pos: 0, turn: 0, done: false, lapped: false, lastRoll: null, rewards: [] }
@@ -78,7 +91,7 @@ export function playTurn(b: BoardState, roll: number, rnd: () => number, ctx: { 
   else if (extra) landing = { cell: 'jump', say: 'jump', rewards: [] }
   else landing = land(cell, rnd, ctx)
   if (extra) landing = { ...landing, extra }
-  const board: BoardState = { pos, turn, lastRoll: roll, lapped: b.lapped || lapped, done: lapped || turn >= TRIP_TURNS, rewards: [...b.rewards, ...landing.rewards] }
+  const board: BoardState = { pos, turn, lastRoll: roll, lapped: b.lapped || lapped, done: lapped || turn >= TRIP_TURNS + (b.bonus ?? 0), bonus: b.bonus, rewards: [...b.rewards, ...landing.rewards] }
   return { board, landing }
 }
 

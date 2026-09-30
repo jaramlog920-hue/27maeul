@@ -7,7 +7,7 @@ import { pieceById } from '../../content/catalog'
 import { itemName, T } from '../../content/text'
 import { STAT_IDS, type StatId } from '../../engine/stats'
 import { DESTS, type DestId } from '../../engine/travel'
-import { NEW_BOARD, playTurn, rollDie, stoneTile, TRIP_TURNS, walkPath, type BoardState, type TripReward } from '../../engine/trip-board'
+import { canExtend, extendTurns, EXTRA_PRICE, EXTRA_TURNS, NEW_BOARD, playTurn, rollDie, stoneTile, TRIP_TURNS, walkPath, type BoardState, type TripReward } from '../../engine/trip-board'
 import type { Facing, ItemId } from '../../engine/types'
 import { TILE, VIEW_W } from '../../engine/world'
 import { createTripRenderer, type TripActor } from '../../render/renderer'
@@ -195,6 +195,14 @@ export function TripScene({ dest, withChild }: { dest: DestId; withChild: boolea
     setBubble(null)
   }
 
+  /** 두 번 더 굴리기 (여행 한 번에 한 번, 닢을 내고) — 수확 창에서도 */
+  const extend = () => {
+    if (walking) return
+    setBoard(extendTurns(board, game.coins))
+    setHarvest(false)
+  }
+  const turns = TRIP_TURNS + (board.bonus ?? 0)
+
   // 수확이 뜬 뒤에 본문 팝업을 닫았다면 그대로 수확을 보인다
   const showHarvest = harvest && !modal
   return (
@@ -209,22 +217,29 @@ export function TripScene({ dest, withChild }: { dest: DestId; withChild: boolea
       </div>
       <div className="ts-hud">
         <Face />
-        <div className="ts-dots" aria-label={`${board.turn}/${TRIP_TURNS}번째`}>
-          {Array.from({ length: TRIP_TURNS }, (_, i) => (
+        <div className="ts-dots" aria-label={`${board.turn}/${turns}번째`}>
+          {Array.from({ length: turns }, (_, i) => (
             <span key={i} className={i < board.turn ? 'used' : ''} />
           ))}
         </div>
       </div>
+      {canExtend(board, game.coins) && !board.done && (
+        <button className="ts-extra" onClick={extend} disabled={walking}>
+          +{EXTRA_TURNS}번 더 · {EXTRA_PRICE}닢
+        </button>
+      )}
       <button className="ts-die" onClick={roll} disabled={walking || board.done} aria-label="주사위 굴리기">
         {board.lastRoll ? DIE[board.lastRoll - 1] : '🎲'}
       </button>
-      {showHarvest && <Harvest rewards={board.rewards} lapped={board.lapped} kid={kidName} onGo={() => finish(board.rewards)} />}
+      {showHarvest && (
+        <Harvest rewards={board.rewards} lapped={board.lapped} kid={kidName} onGo={() => finish(board.rewards)} onMore={canExtend(board, game.coins) ? extend : undefined} />
+      )}
     </div>
   )
 }
 
 /** 여행 수확: 이번 여행에서 얻은 본문 조각·능력치·재료·닢을 정리해서 */
-function Harvest({ rewards, lapped, kid, onGo }: { rewards: TripReward[]; lapped: boolean; kid: string; onGo: () => void }) {
+function Harvest({ rewards, lapped, kid, onGo, onMore }: { rewards: TripReward[]; lapped: boolean; kid: string; onGo: () => void; onMore?: () => void }) {
   const pieces = rewards.flatMap((r) => (r.kind === 'piece' ? [r.id] : []))
   const items: Partial<Record<ItemId, number>> = {}
   let coins = 0
@@ -277,6 +292,11 @@ function Harvest({ rewards, lapped, kid, onGo }: { rewards: TripReward[]; lapped
       </dl>
       {rewards.length === 0 && <p>이번엔 빈손이지만, 좋은 구경을 했어요.</p>}
       <div className="actions">
+        {onMore && (
+          <button onClick={onMore}>
+            {EXTRA_TURNS}번 더 굴리기 · {EXTRA_PRICE}닢
+          </button>
+        )}
         <button className="primary" onClick={onGo}>
           마을 가게로
         </button>

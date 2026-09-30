@@ -163,6 +163,24 @@ describe('여행 주사위 보드게임', () => {
     expect(playTurn({ ...NEW_BOARD, pos: kidAt - 1 }, 1, rnd, { withChild: true }).landing.rewards.length).toBeGreaterThan(0)
   })
 
+  it('두 번 더 굴리기: 닢을 내고 여행 한 번에 한 번, 한 바퀴를 돌았거나 닢이 모자라면 안 된다', async () => {
+    const { NEW_BOARD, playTurn, TRIP_TURNS, extendTurns, canExtend, EXTRA_PRICE, EXTRA_TURNS } = await import('./trip-board')
+    const rnd = () => 0.5
+    let b = NEW_BOARD
+    for (let i = 0; i < TRIP_TURNS; i++) b = playTurn(b, 1, rnd, { withChild: false }).board
+    expect(b.done).toBe(true)
+    expect(canExtend(b, EXTRA_PRICE - 1)).toBe(false)
+    const more = extendTurns(b, 50)
+    expect(more.done).toBe(false)
+    expect(more.rewards).toContainEqual({ kind: 'coins', n: -EXTRA_PRICE })
+    expect(canExtend(more, 50)).toBe(false)
+    let c = more
+    for (let i = 0; i < EXTRA_TURNS; i++) c = playTurn(c, 1, rnd, { withChild: false }).board
+    expect(c.done).toBe(true)
+    expect(c.turn).toBe(TRIP_TURNS + EXTRA_TURNS)
+    expect(canExtend({ ...b, lapped: true }, 50)).toBe(false)
+  })
+
   it('집에 돌아오면 지금 책의 다음 조각 하나 (같은 조각을 두 번 주지 않는다)', async () => {
     const { chooseBook, nextTripPiece } = await import('./game')
     const s = chooseBook(newGame(CONTENT), 'lk', CONTENT)

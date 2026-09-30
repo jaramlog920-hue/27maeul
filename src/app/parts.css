@@ -1728,6 +1728,19 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
   box-shadow: 0 4px 0 #8d5f38;
 }
 .ts-die:disabled { opacity: 0.7; }
+/* 두 번 더 굴리기: 주사위 곁 작은 단추 (발판이 아니다) */
+.ts-extra {
+  position: absolute;
+  right: 88px;
+  bottom: max(28px, calc(env(safe-area-inset-bottom) + 12px));
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 10px;
+  background: #fffaf0;
+  color: #4a3226;
+  border: 2px solid #8d5f38;
+}
+.ts-extra:disabled { opacity: 0.6; }
 .ts-bubble {
   position: absolute;
   transform: translate(-50%, -100%);
