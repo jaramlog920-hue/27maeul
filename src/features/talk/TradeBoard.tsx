@@ -1,18 +1,18 @@
 import { useState } from 'react'
 import { fill, itemList, itemName, T } from '../../content/text'
-import { canSell, overflows, ownsTradeTool, SELL_PRICES, sellPrice, tradesFor } from '../../engine/game'
+import { canBuyRare, canSell, overflows, ownsTradeTool, RARE_PRICES, rareStall, SELL_PRICES, sellPrice, tradesFor } from '../../engine/game'
 import { jobOf, SELL_FROM } from '../../engine/job'
 import { has, take } from '../../engine/items'
 import type { ItemId } from '../../engine/types'
 import { useGame } from '../../store/game-store'
 
 export function TradeBoard() {
-  const [tab, setTab] = useState<'buy' | 'sell'>('buy')
+  const [tab, setTab] = useState<'buy' | 'rare' | 'sell'>('buy')
   const game = useGame((s) => s.game)
   const inv = game.inv
   const flags = game.flags
   const coins = game.coins
-  const { doTrade, sellItem, closeModal } = useGame.getState()
+  const { doTrade, sellItem, buyRareItem, closeModal } = useGame.getState()
   const names = T.trades as Record<string, string>
   return (
     <div className="dialog" role="dialog" aria-label={T.ui.tradeTitle}>
@@ -20,6 +20,9 @@ export function TradeBoard() {
       <div className="actions">
         <button disabled={tab === 'buy'} onClick={() => setTab('buy')}>
           {T.ui.tradeBuy}
+        </button>
+        <button disabled={tab === 'rare'} onClick={() => setTab('rare')}>
+          희귀 좌판
         </button>
         <button disabled={tab === 'sell'} onClick={() => setTab('sell')}>
           {T.ui.tradeSell}
@@ -43,6 +46,25 @@ export function TradeBoard() {
             )
           })}
         </ul>
+      )}
+      {tab === 'rare' && (
+        <>
+          <p className="hint">장날마다 희귀품 셋이 돌아가며 나와요. 한 가지씩 하나만 살 수 있어요. · 가진 닢 {coins}</p>
+          <ul className="trade-list">
+            {rareStall(game.clock.day).map((id) => {
+              const block = canBuyRare(game, id)
+              return (
+                <li key={id}>
+                  <span className="trade-get">{itemName(id)}</span>
+                  <span className="trade-pay">{fill(T.ui.coins, { n: RARE_PRICES[id]! })}</span>
+                  <button disabled={block !== null} onClick={() => buyRareItem(id)}>
+                    {block === 'bought' ? '샀어요' : block === 'full' ? T.ui.bagFullShort : T.ui.talkTrade}
+                  </button>
+                </li>
+              )
+            })}
+          </ul>
+        </>
       )}
       {tab === 'sell' && (
         <>

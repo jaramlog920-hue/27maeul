@@ -397,6 +397,24 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r('#8f8272', x0, 9, x1 - x0, 2)
       break
     }
+    case 'F': {
+      // 사랑방 벽의 의뢰 게시판 (두 칸에 걸친 한 장): 나무 판에 핀으로 꽂은 쪽지 둘씩
+      const L = tileAt(x - 1, y) !== 'F'
+      const R = tileAt(x + 1, y) !== 'F'
+      r(C.wall, 0, 0, 16, 16)
+      r(C.wallTop, 0, 0, 16, 2)
+      const x0 = L ? 2 : 0
+      const x1 = R ? 14 : 16
+      r('#8a6a4a', x0, 3, x1 - x0, 11)
+      r('#b58e62', x0 + (L ? 1 : 0), 4, x1 - x0 - (L ? 1 : 0) - (R ? 1 : 0), 9)
+      for (const [nx, ny, h] of L ? [[4, 5, 6], [9, 6, 5]] : [[2, 6, 5], [7, 5, 6]]) {
+        r('#f4ead2', nx, ny, 4, h)
+        r('#cdbfab', nx + 1, ny + 2, 2, 1)
+        r('#cdbfab', nx + 1, ny + 4, 2, 1)
+        r('#bf5b3c', nx + 1, ny, 1, 1)
+      }
+      break
+    }
     case 'N':
       // 방 벽의 창 (한 칸, 창 자체도 좌우 대칭): 잿빛 나무 창틀, 연한 하늘빛 유리, 가운데 창살
       r(C.wall, 0, 0, 16, 16)

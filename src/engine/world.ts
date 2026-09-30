@@ -307,7 +307,7 @@ export const ROOMS: readonly Room[] = [
   { ...room('rev', REV_X0, REV_Y0, REV_DOOR, [5, 3], revThings, revDecor, REV_W, REV_H), out: { x: REV_DOOR.x - 1, y: REV_DOOR.y } },
   // 마을 사랑방 (계획 10): 긴 탁자 둘레에 방석, 등불, 선반과 항아리, 화분 — 저녁에 이웃이 모여 논다
   room('hall', HALL_ROOM_X0, HALL_ROOM_Y0, HALL_DOOR, [2, 4],
-    [[3, 0, 'N'], [8, 0, 'N'], [1, 1, 's'], [2, 1, 's'], [9, 1, 'g'], [10, 1, 'g'], [4, 3, 'n'], [5, 3, 'n'], [6, 3, 'n'], [7, 3, 'n'], [1, 6, 'p'], [10, 6, 'p']],
+    [[3, 0, 'N'], [5, 0, 'F'], [6, 0, 'F'], [8, 0, 'N'], [1, 1, 's'], [2, 1, 's'], [9, 1, 'g'], [10, 1, 'g'], [4, 3, 'n'], [5, 3, 'n'], [6, 3, 'n'], [7, 3, 'n'], [1, 6, 'p'], [10, 6, 'p']],
     [[4, 2, 'pillows'], [7, 2, 'pillows'], [3, 3, 'pillows'], [8, 3, 'pillows'], [5, 3, 'teapot'], [6, 3, 'fruitBowl'], [10, 3, 'lampStand'], [1, 3, 'lampStand'], [2, 5, 'mat']],
     12, 8),
   // 정원 찻집 (계획 10): 작은 탁자 둘, 찻주전자와 말린 꽃, 찻잎 항아리 — 차 한 잔 쉬어 가는 곳
@@ -540,8 +540,8 @@ export const MAP: readonly string[] = build()
 
 // 'l'(텃밭)은 'y'(보리밭)처럼 걸을 수 있다 — 두둑 가운데 안쪽 칸은 사방이 막히면 다가갈 수 없어서 (task-3 적응)
 // 'H'(사다리)는 누르는 곳이라 길찾기가 지나가지 않는다 — 지나가다 다락으로 올라가 버리지 않게. 'I'는 다락 창
-// 'Q' 한 권 선반(사도행전·요한계시록), 'M' 벽의 여정 판, 'C' 벽의 일곱 교회 카드 판. 'Y' 편지 선반, 'V' 벽의 편지꽂이, 'N' 방 벽의 창. 'J'(열린 서고 방 문)는 걷는 칸
-const BLOCKED = new Set(['j', 'C', 'Y', 'V', 'N', 'H', 'I', '_','Z', 'n', 'g', 'p', 'W', 'G', 'K', 'Q', 'M', 'T', '#', 'R', 'S', 'u', 'b', 'd', 'h', 's', 'k', 'w', 'B', '~', 'r', 'v', 'o', 'P', 'A', 'O', 'm', 'x', 'q'])
+// 'Q' 한 권 선반(사도행전·요한계시록), 'M' 벽의 여정 판, 'C' 벽의 일곱 교회 카드 판. 'Y' 편지 선반, 'V' 벽의 편지꽂이, 'N' 방 벽의 창, 'F' 사랑방 벽의 의뢰 게시판. 'J'(열린 서고 방 문)는 걷는 칸
+const BLOCKED = new Set(['F', 'j', 'C', 'Y', 'V', 'N', 'H', 'I', '_','Z', 'n', 'g', 'p', 'W', 'G', 'K', 'Q', 'M', 'T', '#', 'R', 'S', 'u', 'b', 'd', 'h', 's', 'k', 'w', 'B', '~', 'r', 'v', 'o', 'P', 'A', 'O', 'm', 'x', 'q'])
 
 export function tileAt(x: number, y: number): string {
   if (homeLevel > 0) {
@@ -701,6 +701,8 @@ export const PLACES: Record<PlaceId, Place> = {
   churchBoard: { tiles: [4, 5, 6].map((dx) => ({ x: REV_X0 + dx, y: REV_Y0 })), stand: { x: REV_X0 + 5, y: REV_Y0 + 1 } },
   revTable: { tiles: [{ x: REV_X0 + 5, y: REV_Y0 + 4 }], stand: { x: REV_X0 + 5, y: REV_Y0 + 5 } },
   // 모이는 곳과 둘이 가는 곳 (계획 10): 사랑방 긴 탁자, 찻집 탁자, 호숫가 정자 벤치
+  // 의뢰 게시판 (계획 13 작업 5): 사랑방 벽
+  hallBoard: { tiles: [5, 6].map((dx) => ({ x: HALL_ROOM_X0 + dx, y: HALL_ROOM_Y0 })), stand: { x: HALL_ROOM_X0 + 5, y: HALL_ROOM_Y0 + 1 } },
   hallTable: { tiles: [4, 5, 6, 7].map((dx) => ({ x: HALL_ROOM_X0 + dx, y: HALL_ROOM_Y0 + 3 })), stand: { x: HALL_ROOM_X0 + 5, y: HALL_ROOM_Y0 + 4 } },
   teaTable: { tiles: [{ x: TEA_ROOM_X0 + 2, y: TEA_ROOM_Y0 + 3 }, { x: TEA_ROOM_X0 + 4, y: TEA_ROOM_Y0 + 3 }], stand: { x: TEA_ROOM_X0 + 2, y: TEA_ROOM_Y0 + 4 } },
   pavilion: { tiles: [PAVILION_SEAT], stand: { x: PAVILION_SEAT.x, y: PAVILION_SEAT.y + 1 } },

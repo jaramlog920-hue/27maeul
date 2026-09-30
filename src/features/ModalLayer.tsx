@@ -23,6 +23,7 @@ import { Shelf } from './shelf/Shelf'
 import { GiftPicker } from './talk/GiftPicker'
 import { TalkBox } from './talk/TalkBox'
 import { TradeBoard } from './talk/TradeBoard'
+import { BoardView } from './talk/BoardView'
 import { GameGuide } from './play/GameGuide'
 import { Settings } from './play/Settings'
 import { ScheduleDialog } from './play/EventSchedule'
@@ -60,6 +61,8 @@ function Body() {
       return <GiftPicker neighborId={modal.neighborId} />
     case 'trade':
       return <TradeBoard />
+    case 'board':
+      return <BoardView />
     case 'letter':
       return <LetterBox />
     case 'menu':

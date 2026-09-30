@@ -513,6 +513,8 @@ export const ICONS: Record<string, SpriteRows> = {
   purpleCloth: ['........', '.pppppp.', '.pPppPp.', '.pppppp.', '.pPppPp.', '.pppppp.', '..p..p..', '........'],
   perfumeOil: ['...kk...', '...yy...', '..kyyk..', '.kyllyk.', '.kyllyk.', '.kyyyyk.', '..kkkk..', '........'],
   bronzeOrnament: ['........', '...YY...', '..YyyY..', '.YyYYyY.', '.YyYYyY.', '..YyyY..', '...YY...', '........'],
+  // 향초: 불꽃, 심지, 옅은 밀랍 몸통 두 개
+  scentCandle: ['..l..l..', '..y..y..', '..k..k..', '.ww.ww..', '.wW.wW..', '.ww.ww..', 'NNNNNNN.', '........'],
 }
 
 // 가구 20종은 그림을 줄여 아이콘으로

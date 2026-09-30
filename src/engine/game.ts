@@ -38,7 +38,7 @@ import { FESTIVAL_SPOTS, FIRE, goalFor, isNear, npcTile, placeNpc, stepNpc, type
 import { GAIN, heartsOf, MAX_POINTS } from './hearts'
 import { bookDone, bookRoomOpen, emptyProgress, openDoorsFor, roomOpen, totalChapters, type Progress } from './books'
 import { arrivesOf, modeOf, SHELF_ROOMS } from './shelf-rooms'
-import { currentChapter, offersForDay } from './offers'
+import { currentChapter, mulberry32, offersForDay } from './offers'
 import { addXp, charmBonus, freshStats, luckyExtra, rainBonus, sellBonus, tiredScale, visitBonus, XP, type StatId, type Stats } from './stats'
 import { HALL_GUESTS, HALL_PLAY_GAIN, HALL_PLAY_MINUTES, HALL_SPOTS, hallGuests, hallOpen, SUNSET_MINUTES, sunsetTime, TEA_MINUTES, TEA_PRICE, teaOpen } from './places'
 import {
@@ -80,7 +80,7 @@ import {
   type Routine,
   type Stage,
 } from './people'
-import { CAREFUL_AT, careScore, fixtureTier, FIXTURE_STEPS, lampNightsPerOil, nextFixture, type FixtureLine, type FixtureStep } from './fixtures'
+import { CAREFUL_AT, careScore, RARE_ITEMS, fixtureTier, FIXTURE_STEPS, lampNightsPerOil, nextFixture, type FixtureLine, type FixtureStep } from './fixtures'
 import { POSTMAN, postForDay, starPostFor } from './post'
 import { blanksFor } from './copy'
 import { checkArrangement, moveItem, type ArrangeResult } from './scroll'
@@ -102,6 +102,7 @@ import {
 import { ATTIC, BED_STAND, HEARTH_STAND, HOME_FRONT, inAttic, isHome, isIndoor, isWalkable, key, LADDER, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setMailbox, setOpenDoors, START, tileAt, WARPS } from './world'
 import { GOSPELS, type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
 import type { Avatar } from './avatar'
+import { BOARD_GAIN, boardFor, type BoardRequest } from './board'
 import { BIRTHDAY_MUL, isBirthday, NO_NOTEBOOK, noteGift, noteHeard, noteMet, noteSeen, seenLabel, type Notebook } from './notebook'
 import { CARPENTER_WORKS, fromChest, hasStock, HOME_MAILBOX, INK_JAR_HOLD, LIGHT_SHOES, owns, RACK_HOLD, RACK_PAPYRUS, RAIN_WATER, SOOT_CATCH, stash, stashOverflows, stock, takeStock, walkMul, type CarpenterWork, type EasyId } from './easier'
 
@@ -1111,7 +1112,8 @@ export function giveGift(s: GameState, def: NeighborDef, item: ItemId): { state:
   if (s.gifted.includes(def.id)) return null
   const left = take(s.inv, { [item]: 1 })
   if (!left) return null
-  const liked = def.likes.includes(item)
+  // 향유(희귀품)는 누구나 반기는 귀한 선물
+  const liked = def.likes.includes(item) || item === PRECIOUS_GIFT
   // 싫어하는 것을 건넨 첫날은 기억에 남는다 (나중에 웃음거리가 된다 — 계획 6b)
   const disliked = dislikesOf(def).includes(item)
   const base = disliked ? { ...s, life: remember(s.life ?? NO_LIFE, def.id, 'badGift', s) } : s
@@ -1129,7 +1131,8 @@ export function dislikesOf(def: Pick<NeighborDef, 'id' | 'dislikes'>): ItemId[] 
   return out
 }
 
-export const GIFTABLE: readonly ItemId[] = ['bread', 'grapes', 'fig', 'wool', 'olive', 'oil', 'barley', 'honey', 'herb', 'bean']
+export const PRECIOUS_GIFT: ItemId = 'perfumeOil'
+export const GIFTABLE: readonly ItemId[] = ['bread', 'grapes', 'fig', 'wool', 'olive', 'oil', 'barley', 'honey', 'herb', 'bean', 'scentCandle', PRECIOUS_GIFT]
 
 export interface Trade {
   id: string
@@ -1217,6 +1220,66 @@ export function trade(s: GameState, t: Trade): GameState | null {
   const got = putAway({ ...s, inv: left }, t.get)
   const flags = t.grants ? { ...s.flags, [`unlock:${t.grants}`]: 1 } : s.flags
   return { ...got, coins: s.coins - (t.coins ?? 0), flags }
+}
+
+// ── 장날 희귀 좌판 (계획 13 작업 2): 희귀품 다섯 중 셋이 날마다 돌아가며 나온다 ──
+
+/** 희귀품 값 — 며칠 모아야 사는 값 (편지 대필 12~30닢/일, 약초 최대 48닢/일) */
+export const RARE_PRICES: Partial<Record<ItemId, number>> = { finePapyrus: 18, sealWax: 35, perfumeOil: 60, purpleCloth: 90, bronzeOrnament: 110 }
+export const RARE_STALL_SIZE = 3
+
+/** 이 장날 희귀 좌판에 나온 것 (날 씨앗 — 같은 날은 늘 같다) */
+export function rareStall(day: number): ItemId[] {
+  const pool = [...RARE_ITEMS]
+  const rnd = mulberry32(day * 977 + 5)
+  const out: ItemId[] = []
+  while (out.length < RARE_STALL_SIZE && pool.length) out.push(pool.splice(Math.floor(rnd() * pool.length), 1)[0])
+  return out
+}
+
+export type RareBlock = 'notMarket' | 'notHere' | 'bought' | 'coins' | 'full' | null
+/** 희귀품은 장날에 한 가지씩 하나만 */
+export function canBuyRare(s: GameState, item: ItemId): RareBlock {
+  if (!isMarketDay(s.clock.day)) return 'notMarket'
+  if (!rareStall(s.clock.day).includes(item)) return 'notHere'
+  if (s.flags[`rare:${item}`] === s.clock.day) return 'bought'
+  if (s.coins < (RARE_PRICES[item] ?? Infinity)) return 'coins'
+  if (overflows(s, { [item]: 1 })) return 'full'
+  return null
+}
+
+export function buyRare(s: GameState, item: ItemId): GameState | null {
+  if (canBuyRare(s, item)) return null
+  return { ...putAway(s, { [item]: 1 }), coins: s.coins - RARE_PRICES[item]!, flags: { ...s.flags, [`rare:${item}`]: s.clock.day } }
+}
+
+// ── 의뢰 게시판 (계획 13 작업 5, 부탁 고르기는 board.ts) ──
+
+/** 오늘 게시판의 부탁 (장날에만 오는 상인은 빼고, 지금 마을에 사는 이웃만) */
+export function boardToday(s: Pick<GameState, 'clock' | 'flags'>, content: GameContent): BoardRequest[] {
+  const level = s.flags.villageLevel ?? 0
+  return boardFor(
+    s.clock.day,
+    content.neighbors.filter((d) => !d.marketOnly && !notYet(d, level, s.flags)),
+  )
+}
+
+export type BoardBlock = 'done' | 'needs' | 'full' | null
+export function canFulfillBoard(s: GameState, r: BoardRequest): BoardBlock {
+  if (s.flags[`board:${r.id}`]) return 'done'
+  const need = { [r.item]: r.n }
+  if (!haveStock(s, need)) return 'needs'
+  if (r.rare && overflows(useStock(s, need)!, { [r.rare]: 1 })) return 'full'
+  return null
+}
+
+/** 부탁을 들어준다: 물건을 건네고 닢·마음, 덤으로 희귀품 */
+export function fulfillBoard(s: GameState, r: BoardRequest): GameState | null {
+  if (canFulfillBoard(s, r)) return null
+  let next = useStock(s, { [r.item]: r.n })!
+  if (r.rare) next = putAway(next, { [r.rare]: 1 })
+  next = { ...next, coins: next.coins + r.coins, flags: { ...next.flags, [`board:${r.id}`]: 1 } }
+  return train(heartUp(next, r.npc, BOARD_GAIN), 'charm', XP.gift)
 }
 
 /** 아이에게 글자 가르치기 (하루 한 번, 저녁에 집으로 올 때) */
@@ -1500,8 +1563,23 @@ export function catchSoot(s: GameState): GameState {
   return { ...putAway(s, { soot: 1 }), flags: { ...s.flags, sootDay: s.clock.day, sootCaught: today + 1 } }
 }
 
-/** 장날에 파는 것: 공방 제품과 텃밭 작물뿐 — 엮은 말씀 책·조각은 팔지 않는다 (exclusion-list §3-3) */
-export const SELL_PRICES: Partial<Record<ItemId, number>> = { ink: 8, papyrus: 6, cover: 25, herb: 4, bean: 3 }
+/**
+ * 장날에 파는 것: 공방 제품·들과 텃밭에서 거둔 것 — 엮은 말씀 책·조각은 팔지 않는다 (exclusion-list §3-3).
+ * 판매용 생산물 (계획 13 작업 4): 올리브·양털·포도·기름·향초·꿀
+ */
+export const SELL_PRICES: Partial<Record<ItemId, number>> = {
+  ink: 8,
+  papyrus: 6,
+  cover: 25,
+  herb: 4,
+  bean: 3,
+  olive: 2,
+  wool: 4,
+  grapes: 3,
+  oil: 7,
+  honey: 6,
+  scentCandle: 9,
+}
 
 /** 장날 하루에 상인이 사는 물건 최대 개수 */
 export const SELL_CAP = 10

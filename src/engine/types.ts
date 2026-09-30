@@ -48,6 +48,7 @@ export type PlaceId =
   | 'revTable'
   // 모이는 곳과 둘이 가는 곳 (계획 10): 사랑방 탁자, 찻집 탁자, 호숫가 정자
   | 'hallTable'
+  | 'hallBoard'
   | 'teaTable'
   | 'pavilion'
   // 들 약초 (약방이 사 준다)
@@ -174,6 +175,8 @@ export type ItemId =
   | 'purpleCloth'
   | 'perfumeOil'
   | 'bronzeOrnament'
+  // 판매용 (계획 13 작업 4): 기름과 양털로 만드는 향초
+  | 'scentCandle'
 
 /** 손일 놀이: 찧기·맞추기·줍기·길게 누르기·번갈아 누르기·순서 기억하기 */
 export type Minigame = 'mash' | 'timing' | 'pick' | 'hold' | 'weave' | 'order'

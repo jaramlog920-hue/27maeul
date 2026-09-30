@@ -60,7 +60,7 @@ export function take(inv: Inventory, need: Partial<Record<ItemId, number>>): Inv
   return out
 }
 
-export type RecipeId = 'bread' | 'papyrus' | 'ink' | 'oil' | 'blanket' | 'cover'
+export type RecipeId = 'bread' | 'papyrus' | 'ink' | 'oil' | 'blanket' | 'cover' | 'scentCandle'
 
 export interface Recipe {
   id: RecipeId
@@ -78,6 +78,8 @@ export const RECIPES: Record<RecipeId, Recipe> = {
   oil: { id: 'oil', at: 'press', needs: { olive: 2 }, gives: { oil: 1 }, minutes: 30, minigame: 'hold' },
   blanket: { id: 'blanket', at: 'workbench', needs: { wool: 3 }, gives: { blanket: 1 }, minutes: 60, minigame: 'timing' },
   cover: { id: 'cover', at: 'workbench', needs: { papyrus: 2, wool: 1 }, gives: { cover: 1 }, minutes: 40, minigame: 'order' },
+  // 향초 (계획 13 작업 4): 장날에 파는 물건
+  scentCandle: { id: 'scentCandle', at: 'workbench', needs: { oil: 1, wool: 1 }, gives: { scentCandle: 2 }, minutes: 40, minigame: 'hold' },
 }
 
 /** 잉크 한 번 만들 때: 기본 한 병, 좋은 펜 +1, 잉크 제조대(계획 13) +2 — fixtures.inkYield와 같은 셈 */

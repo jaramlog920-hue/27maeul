@@ -50,6 +50,9 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
             <button disabled={canCraft(game, 'cover') !== null} onClick={() => startCraft('cover')}>
               {T.ui.workCover}
             </button>
+            <button disabled={canCraft(game, 'scentCandle') !== null} onClick={() => startCraft('scentCandle')}>
+              {T.ui.workCandle}
+            </button>
           </>
         )}
         {place === 'press' && (
@@ -99,7 +102,7 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
       {sunset === 'notYet' && <p className="hint">{T.places.sunsetNotYet}</p>}
       {sunset === 'cloudy' && <p className="hint">{T.places.sunsetCloudy}</p>}
       {game.needs.fatigue >= 100 && !['hill', 'bench', 'teaTable', 'pavilion'].includes(place) && <p className="hint">{T.ui.tooTired}</p>}
-      {(['bread', 'papyrus', 'ink', 'oil', 'blanket', 'cover'] as const).some((r) => canCraft(game, r) === 'full') && <p className="hint">{T.ui.bagFull}</p>}
+      {(['bread', 'papyrus', 'ink', 'oil', 'blanket', 'cover', 'scentCandle'] as const).some((r) => canCraft(game, r) === 'full') && <p className="hint">{T.ui.bagFull}</p>}
     </div>
   )
 }

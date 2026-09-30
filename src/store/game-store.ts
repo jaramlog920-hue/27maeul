@@ -5,6 +5,7 @@ import { blanksFor } from '../engine/copy'
 import { currentChapter } from '../engine/offers'
 import { handEase, leveledUp, XP, type StatId } from '../engine/stats'
 import type { FixtureLine } from '../engine/fixtures'
+import type { BoardRequest } from '../engine/board'
 import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
 import { bookRoomOpen, openDoorsFor } from '../engine/books'
 import { actsDoorGlows, canShelve, payRetry, poolFor, shelve } from '../engine/library'
@@ -61,6 +62,8 @@ import {
   teach,
   tick,
   trade as doTrade,
+  buyRare,
+  fulfillBoard,
   warmByHearth,
   playerTile,
   receiveVisit,
@@ -135,6 +138,8 @@ export type Modal =
   | { kind: 'mini'; state: MiniState; pending: Pending }
   | { kind: 'gift'; neighborId: string }
   | { kind: 'trade' }
+  /** 사랑방 벽의 의뢰 게시판 (계획 13 작업 5) */
+  | { kind: 'board' }
   | { kind: 'menu'; place: MenuPlace }
   | { kind: 'readPick' }
   | { kind: 'quiz'; mode: QuizMode; questions: Question[]; index: number; wrong: string[]; solved: boolean; misses: number; missed: string[] }
@@ -240,6 +245,8 @@ interface Store {
   gift: (neighborId: string, item: ItemId) => void
   doTrade: (t: Trade) => void
   sellItem: (item: ItemId) => void
+  buyRareItem: (item: ItemId) => void
+  doBoard: (r: BoardRequest) => void
   startTeach: () => void
   startLetter: () => void
   // 손일
@@ -589,6 +596,8 @@ export const useGame = create<Store>((set, get) => {
         return { game, modal: { kind: 'roomShelf', room: 'hebJud' } }
       case 'revShelf':
         return { game, modal: { kind: 'roomShelf', room: 'rev' } }
+      case 'hallBoard':
+        return { game, modal: { kind: 'board' } }
       case 'journeyBoard':
         return { game, modal: { kind: 'journey' } }
       case 'churchBoard':
@@ -863,6 +872,22 @@ export const useGame = create<Store>((set, get) => {
       sfx('gift')
       set({ game: persist(next) })
       get().say(fill(T.ui.soldLine, { item: itemName(item), n: price! }))
+    },
+
+    buyRareItem: (item) => {
+      const next = buyRare(get().game, item)
+      if (!next) return
+      sfx('gift')
+      toastGain(get().game.inv, next.inv)
+      set({ game: persist(next) })
+    },
+
+    doBoard: (r) => {
+      const next = fulfillBoard(get().game, r)
+      if (!next) return
+      sfx('gift')
+      get().say(`${neighborById(r.npc)?.role ?? '이웃'}의 부탁을 들어주었어요 · ${r.coins}닢${r.rare ? ` · ${itemName(r.rare)} 1` : ''}`)
+      set({ game: persist(next) })
     },
 
     startTeach: () => set({ modal: { kind: 'mini', state: startMini('order', get().rng), pending: { kind: 'teach' } } }),
