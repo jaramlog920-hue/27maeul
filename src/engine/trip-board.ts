@@ -116,7 +116,7 @@ export function rollDie(rnd: () => number): number {
 //   그 밖에는 마을과 같은 그림: . 풀 · T 나무 · B 벤치 · * 꽃 · m 좌판 · x 울타리 · R/# 집
 
 export const TRIP_W = 16
-export const TRIP_H = 34
+export const TRIP_H = 36
 /**
  * 판석 길은 두 칸 폭. 길 위의 자리는 2×2 칸 덩이의 왼쪽 위 칸으로 센다 (한 칸씩 나아간다).
  * 보드 칸은 이 덩이만 한 돌판, 돌판 사이에는 판석 길 한 칸
@@ -186,10 +186,10 @@ export function tripLayout(dest: 'harbor' | 'hillTown'): TripLayout {
     rect(h.x0, h.y1 - 1, h.x1, h.y1, '#')
     set(h.doorX, h.y1, 'D')
   }
-  rect(6, 0, 9, 0, 'T')
+  // 입구 돌길은 화면 위 끝까지 — 마을 밖으로 길이 이어진다
   set(6, 2, 'A')
   set(9, 2, 'A')
-  rect(7, 1, 8, by0 - 1, 'c')
+  rect(7, 0, 8, by0 - 1, 'c')
   // ── 판석 길 한 바퀴 ──
   for (const t of RING_TILES) rect(t.x, t.y, t.x + 1, t.y + 1, '@')
   // ── 왼쪽: 나무 줄 (세 줄마다 한 그루 — 발판 간격과 맞춘다) ──
