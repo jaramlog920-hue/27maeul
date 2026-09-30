@@ -103,6 +103,7 @@ import { ATTIC, BED_STAND, HEARTH_STAND, HOME_FRONT, inAttic, isHome, isIndoor, 
 import { GOSPELS, type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
 import type { Avatar } from './avatar'
 import { BOARD_GAIN, boardFor, type BoardRequest } from './board'
+import { newlyAchieved, withFound, type Achievement } from './achievements'
 import { CHILD_AFTER_WEDDING, childStage, helpStat, newChild, type Child } from './child'
 import { DESTS, TRIP_FRIEND_GAIN, TRIP_LEAVE_BY, tripCost, type DestId } from './travel'
 import { BIRTHDAY_MUL, isBirthday, NO_NOTEBOOK, noteGift, noteHeard, noteMet, noteSeen, seenLabel, type Notebook } from './notebook'
@@ -207,6 +208,10 @@ export interface GameState {
   notebook: Notebook
   /** 아이 (계획 12): 결혼 뒤 태어난다 */
   child: Child | null
+  /** 물건 도감: 한 번이라도 가져 본 물건 */
+  found: ItemId[]
+  /** 이룬 업적과 처음 이룬 날 */
+  achieved: { id: string; day: number }[]
 }
 
 /** 지도(world.tileAt)가 이 게임의 집 단계·열린 서고 방 문(방 표)을 보게 한다. 지도를 읽는 엔진 입구마다 부른다 */
@@ -451,6 +456,8 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
     sealed: [],
     notebook: NO_NOTEBOOK,
     child: null,
+    found: [],
+    achieved: [],
   }
 }
 
@@ -2376,6 +2383,16 @@ function childMorning(s: GameState, content: GameContent): GameState {
   }
 }
 const STAT_ORDER: readonly StatId[] = ['wit', 'hand', 'charm', 'strength', 'luck']
+
+/** 물건 도감과 업적을 새로 적는다 (저장할 때마다): 새로 이룬 업적을 돌려준다 */
+export function recordProgress(s: GameState): { state: GameState; fresh: Achievement[] } {
+  const found = withFound(s.found ?? [], s.inv, s.chest ?? {})
+  const base: GameState = found === s.found ? s : { ...s, found }
+  const achieved = base.achieved ?? []
+  const fresh = newlyAchieved({ ...base, romance: base.romance ?? NO_ROMANCE, notebook: base.notebook ?? NO_NOTEBOOK }, achieved)
+  if (!fresh.length) return { state: base, fresh }
+  return { state: { ...base, achieved: [...achieved, ...fresh.map((a) => ({ id: a.id, day: s.clock.day }))] }, fresh }
+}
 
 /** 아이 이름 정하기: '다른 이름'으로 다시 뽑고, 정하면 끝 */
 export function nameChild(s: GameState, name: string): GameState {

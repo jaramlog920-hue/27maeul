@@ -11,7 +11,7 @@ import { cardsForChapters, placeNewCards } from './journey'
 import { refitRoom } from './room'
 import { arrivesOf, modeOf } from './shelf-rooms'
 import { HOME_ENTRY, HOME_ROOM, isWalkable, OLD_HOME, sameTile, setHomeLevel } from './world'
-import { BOOKS, type Book, type GameContent, type Tile } from './types'
+import { BOOKS, type Book, type GameContent, type ItemId, type Tile } from './types'
 
 export const SAVE_KEY = 'twenty-seven/save'
 export const SAVE_VERSION = 1
@@ -144,6 +144,8 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     sealed: isStrArray(s.sealed) ? s.sealed : [],
     notebook: sanitizeNotebook(s.notebook),
     child: sanitizeChild(s.child),
+    found: isStrArray(s.found) ? (s.found as ItemId[]) : [],
+    achieved: Array.isArray(s.achieved) ? s.achieved.filter((a) => a && typeof a.id === 'string' && typeof a.day === 'number') : [],
     needs: { ...s.needs, heat: s.needs?.heat ?? 0 },
     collected,
     progress,
