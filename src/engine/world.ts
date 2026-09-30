@@ -21,9 +21,12 @@ export const VIEW_H = 20
 /**
  * 주인공의 집 (계획 7-1 작업 5): 밖에서 보는 집은 가장 작은 이웃집(어부 집)과 같은 5칸×4줄 — 지붕 두 줄, 앞벽 두 줄, 문은 아래 줄 가운데.
  * 집 안은 이웃집처럼 지도 아래 보이지 않는 곳의 방(HOME_ROOM). 문을 밟으면 들어가고 문깔개로 나온다.
- * 1단계 "방 하나 더"에는 밖의 집이 양옆으로 한 칸씩 넓어진다 (문은 그대로 가운데). 지금 모양은 homeHouse()
+ * 1단계 "방 하나 더"에는 밖의 집이 왼쪽으로만 두 칸 넓어진다 (문·길·바구니는 그대로, 오른쪽 텃밭 쪽 13열은 풀밭). 지금 모양은 homeHouse()
+ * 집 왼쪽 땅(HOUSE_GROW)은 집 넓히기 자리 — 다른 건물·자리를 두지 않는다
  */
 export const HOUSE_RECT = { x0: 8, y0: 4, x1: 12, y1: 7 }
+/** 1단계에 밖의 집이 넓어지는 왼쪽 두 줄 (넓히기 전에는 빈 풀밭) */
+export const HOUSE_GROW = { x0: HOUSE_RECT.x0 - 2, y0: HOUSE_RECT.y0, x1: HOUSE_RECT.x0 - 1, y1: HOUSE_RECT.y1 }
 /** 밖에서 들어가는 내 집 문 */
 export const HOME_DOOR: Tile = { x: 10, y: 7 }
 /** 내 집 문 앞 (문깔개로 나오면 서는 곳) */
@@ -72,9 +75,9 @@ const HOME_OVERLAY: readonly ReadonlyMap<string, string>[] = (() => {
   const { x0, y0, x1, y1 } = HOME_EXPAND_RECT
   for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) one.set(`${x},${y}`, x === x1 || y === y0 || y === y1 ? '#' : 'f')
   one.set(`${SIDE_DOOR.x},${SIDE_DOOR.y}`, 'D')
-  // 밖에서는 집이 양옆으로 한 칸씩 (지붕 두 줄, 앞벽 두 줄)
-  for (const x of [HOUSE_RECT.x0 - 1, HOUSE_RECT.x1 + 1])
-    for (let y = HOUSE_RECT.y0; y <= HOUSE_RECT.y1; y++) one.set(`${x},${y}`, y <= HOUSE_RECT.y1 - 2 ? 'R' : '#')
+  // 밖에서는 집이 왼쪽으로 두 칸 (지붕 두 줄, 앞벽 두 줄)
+  for (let x = HOUSE_GROW.x0; x <= HOUSE_GROW.x1; x++)
+    for (let y = HOUSE_GROW.y0; y <= HOUSE_GROW.y1; y++) one.set(`${x},${y}`, y <= HOUSE_RECT.y1 - 2 ? 'R' : '#')
   const two = new Map(one)
   two.set(`${LADDER.x},${LADDER.y}`, 'H')
   return [new Map(), one, two]
@@ -85,10 +88,9 @@ export function homeRect(level = homeLevel): { x0: number; y0: number; x1: numbe
   return level >= 1 ? { ...HOME_RECT, x1: HOME_EXPAND_RECT.x1 } : HOME_RECT
 }
 
-/** 밖에서 보는 지금 내 집 (1단계부터 양옆으로 한 칸씩 넓다) */
+/** 밖에서 보는 지금 내 집 (1단계부터 왼쪽으로 두 칸 넓다) */
 export function homeHouse(level = homeLevel): House {
-  const w = level >= 1 ? 1 : 0
-  return { id: 'home', x0: HOUSE_RECT.x0 - w, y0: HOUSE_RECT.y0, x1: HOUSE_RECT.x1 + w, y1: HOUSE_RECT.y1, doorX: HOME_DOOR.x }
+  return { id: 'home', x0: level >= 1 ? HOUSE_GROW.x0 : HOUSE_RECT.x0, y0: HOUSE_RECT.y0, x1: HOUSE_RECT.x1, y1: HOUSE_RECT.y1, doorX: HOME_DOOR.x }
 }
 
 /** 집 안 방 (이웃집은 벽 포함 10×8, 서고는 13×10). 바깥 문을 밟으면 entry로, 안의 문깔개(exit)를 밟으면 문 앞으로 */
@@ -304,7 +306,7 @@ function build(): string[] {
   roofed('home', HOUSE_RECT.x0, HOUSE_RECT.y0, HOUSE_RECT.x1, HOUSE_RECT.y1, HOME_DOOR.x)
   rect(HOME_DOOR.x, HOME_DOOR.y + 1, HOME_DOOR.x, 9, ',') // 집 문 앞에서 큰길까지
   set(HOME_DOOR.x + 1, HOME_DOOR.y + 1, 'q') // 문 앞 편지 바구니
-  // 텃밭 열두 칸은 집 오른쪽 위 볕 드는 곳에 (집이 넓어질 13열은 비워 둔다), 둘레에 꽃
+  // 텃밭 열두 칸은 집 오른쪽 위 볕 드는 곳에 (집과 텃밭 사이 13열은 풀밭, 집은 왼쪽으로만 넓어진다), 둘레에 꽃
   rect(14, 3, 17, 5, 'l')
   for (const [x, y] of [[14, 2], [17, 2], [18, 5], [16, 7]]) set(x, y, '*')
   // 언덕 벤치와 우물은 큰길 아래 빈 풀밭으로

@@ -487,6 +487,18 @@ function warpTo<T extends GameState['player']>(player: T, to: Tile): T {
   return { ...player, x: to.x, y: to.y, path: [], facing: roomAt(to) || inAttic(to) || isHome(to) ? 'up' : 'down' }
 }
 
+/**
+ * 문을 건너온 기록자 곁에 동물을 둘 칸: 위·왼쪽·오른쪽·아래 차례로, 문·문깔개(WARPS) 칸은 피한다
+ * (문깔개에 세우면 동물이 다시 밖으로 나가는 문 위에 서 있게 된다)
+ */
+function besideNotDoor(t: Tile): Tile | null {
+  for (const d of [FRONT.up, FRONT.left, FRONT.right, FRONT.down]) {
+    const n = { x: t.x + d.x, y: t.y + d.y }
+    if (isWalkable(n) && !WARPS.has(key(n))) return n
+  }
+  return null
+}
+
 /** 이웃집 문 앞에서 문을 눌렀을 때 들어간다 (저녁 초대가 없을 때) */
 export function enterDoor(s: GameState, door: Tile): GameState {
   const to = WARPS.get(key(door))
@@ -561,7 +573,7 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
     const rainOut = isWet(weatherOf(clock.day)) && !isIndoor(now)
     // 내 집 문을 드나들면 동물도 함께 (집 안은 지도 아래 따로 된 방이라 걸어서는 못 따라온다)
     const homeWarp = warp && (isHome(warp) || isHome(now))
-    const near = homeWarp ? companionGoal(warp, false) : null
+    const near = homeWarp ? besideNotDoor(warp) : null
     if (near) companion = { ...companion, x: near.x, y: near.y, path: [] }
     else companion = stepCompanion(companion, companionGoal(now, rainOut), dt)
   }

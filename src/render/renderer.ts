@@ -139,12 +139,17 @@ function houseWallTile(g: Ctx, x: number, y: number, ch: string, id: string, h: 
   const door = x === h.doorX
   // 창은 아래 줄에만, 문을 가운데 두고 양옆 같은 거리에
   // 넓은 집(7칸 이상)은 문에서 두 칸, 작은 집은 문 바로 옆 — 모서리에 붙지 않게
-  const k = h.x1 - h.x0 + 1 >= 7 ? 2 : 1
-  const winCol = Math.abs(x - h.doorX) === k
+  // 넓힌 내 집은 본채(5칸) 창을 그대로 두고, 왼쪽에 붙인 두 칸에 창을 따로 단다
+  const main = id === 'home' ? { ...h, x0: HOUSE_RECT.x0 } : h
+  const k = main.x1 - main.x0 + 1 >= 7 ? 2 : 1
+  const winCol = x >= main.x0 && Math.abs(x - main.doorX) === k
   const glass = '#f1bf6b'
   const glow = '#fce2a7'
   const frame = '#ae9068'
-  const window = (dy: number) => {
+  const tileRect = r
+  /** 창 하나 (ox: 칸 안에서 옆으로 옮기기 — 두 칸 사이에 걸친 창) */
+  const window = (dy: number, ox = 0) => {
+    const r = (color: string, dx: number, yy: number, w: number, hh: number) => tileRect(color, dx + ox, yy, w, hh)
     if (st.window === 'round') {
       r(frame, 4, dy + 1, 8, 6)
       r(frame, 5, dy, 6, 8)
@@ -202,9 +207,14 @@ function houseWallTile(g: Ctx, x: number, y: number, ch: string, id: string, h: 
     r('#f1bf6b', 10, 9, 2, 2)
   }
   if (id === 'home' && h.x0 < HOUSE_RECT.x0) {
-    // 넓힌 집(1단계): 양옆에 한 칸씩 이어 붙인 자리에 기둥 — 문을 가운데 둔 대칭 그대로
-    if (x === HOUSE_RECT.x0 - 1) r(st.base, 14, 0, 2, 16)
-    if (x === HOUSE_RECT.x1 + 1) r(st.base, 0, 0, 2, 16)
+    // 넓힌 집(1단계): 왼쪽에 붙인 두 칸 — 이어 붙인 자리에 기둥, 두 칸 가운데에 창 하나 (본채 창은 문을 가운데 둔 대칭 그대로)
+    if (x === HOUSE_RECT.x0) r(st.base, 0, 0, 2, 16)
+    if (!upper && x === HOUSE_RECT.x0 - 1) {
+      // 오른쪽 칸을 그릴 때 왼쪽 칸에 반쯤 걸쳐 그린다 (왼쪽 칸은 이미 그려져 있다)
+      window(1, -8)
+      r('#ad845d', -5, 10, 10, 2) // 꽃 상자
+      for (let i = 0; i < 4; i++) r(['#f1b999', '#fefdf8', '#e8a88a', '#99b67b'][(x + i) % 4], -4 + i * 2, 9, 2, 1)
+    }
   }
   if (st.awning && !upper && Math.abs(x - h.doorX) <= 1) {
     // 빵집 문 위 줄무늬 차양

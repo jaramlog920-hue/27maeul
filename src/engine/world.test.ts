@@ -1,4 +1,4 @@
-import { MAP, WIDTH, HEIGHT, PLACES, HOUSES, START, HOME_DOOR, HOME_ENTRY, HOME_FRONT, HOME_ROOM, HOUSE_RECT, homeHouse, houseAt, isWalkable, placeAt, cameraFor, VIEW_W, VIEW_H, VILLAGE_H, isHome, tileAt, ROOMS, WARPS, roomAt, key, ROOM_W, ROOM_H, LOCKED_DOORS, ATTIC, inAttic, ACTS_DOOR, ACTS_ROOM, setActsOpen, setHomeLevel } from './world'
+import { MAP, WIDTH, HEIGHT, PLACES, HOUSES, START, HOME_DOOR, HOME_ENTRY, HOME_FRONT, HOME_ROOM, HOUSE_GROW, HOUSE_RECT, homeHouse, houseAt, isWalkable, placeAt, cameraFor, VIEW_W, VIEW_H, VILLAGE_H, isHome, tileAt, ROOMS, WARPS, roomAt, key, ROOM_W, ROOM_H, LOCKED_DOORS, ATTIC, inAttic, ACTS_DOOR, ACTS_ROOM, setActsOpen, setHomeLevel } from './world'
 import { findPath, pathToward, stepActor, type Actor } from './movement'
 
 const adjacent = (a: { x: number; y: number }, b: { x: number; y: number }) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y) === 1
@@ -134,8 +134,11 @@ describe('내 집 (계획 7-1 작업 5)', () => {
   it('텃밭은 그대로, 집 옆 가까이에 있다', () => {
     expect(PLACES.garden.tiles).toHaveLength(12)
     for (const t of PLACES.garden.tiles) expect(t.x >= 14 && t.x <= 17 && t.y >= 3 && t.y <= 5).toBe(true)
-    // 넓힌 집(13열까지)과도 겹치지 않는다
-    expect(Math.min(...PLACES.garden.tiles.map((t) => t.x))).toBeGreaterThan(HOUSE_RECT.x1 + 1)
+    // 집은 왼쪽으로만 넓어지므로 넓힌 뒤에도 집(12열)과 텃밭(14열) 사이 13열은 풀밭
+    expect(Math.min(...PLACES.garden.tiles.map((t) => t.x))).toBe(HOUSE_RECT.x1 + 2)
+    setHomeLevel(1)
+    expect(homeHouse().x1).toBe(HOUSE_RECT.x1)
+    for (let y = HOUSE_RECT.y0; y <= HOUSE_RECT.y1; y++) expect(tileAt(HOUSE_RECT.x1 + 1, y)).toBe('.')
   })
   it('예전 집 자리는 풀밭 (나무를 흩어 두지 않는다)', () => {
     for (let y = 2; y <= 7; y++)
@@ -182,12 +185,16 @@ describe('내 집 (계획 7-1 작업 5)', () => {
     expect(c.x + VIEW_W / 2).toBeCloseTo(HOME_ROOM.x0 + HOME_ROOM.w / 2)
     expect(c.y + VIEW_H / 2).toBeCloseTo(HOME_ROOM.y0 + HOME_ROOM.h / 2)
   })
-  it('1단계에는 밖의 집이 양옆으로 한 칸씩 넓어진다 (문은 가운데 그대로)', () => {
+  it('1단계에는 밖의 집이 왼쪽으로만 두 칸 넓어진다 (문·길·바구니는 그대로)', () => {
     setHomeLevel(1)
     const h = homeHouse()
-    expect([h.x0, h.x1]).toEqual([HOUSE_RECT.x0 - 1, HOUSE_RECT.x1 + 1])
-    expect((h.x0 + h.x1) / 2).toBe(HOME_DOOR.x)
-    for (const x of [h.x0, h.x1]) {
+    expect([h.x0, h.x1]).toEqual([HOUSE_GROW.x0, HOUSE_RECT.x1])
+    expect(h.x1 - h.x0 + 1).toBe(7)
+    expect(h.doorX).toBe(HOME_DOOR.x)
+    expect(tileAt(HOME_DOOR.x, HOME_DOOR.y)).toBe('D')
+    expect(WARPS.get(key(HOME_DOOR))).toEqual(HOME_ENTRY)
+    expect(placeAt({ x: HOME_FRONT.x + 1, y: HOME_FRONT.y })).toBe('basket')
+    for (let x = HOUSE_GROW.x0; x <= HOUSE_GROW.x1; x++) {
       expect(tileAt(x, h.y0)).toBe('R')
       expect(tileAt(x, h.y1)).toBe('#')
       expect(houseAt(x, h.y1)?.id).toBe('home')

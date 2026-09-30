@@ -26,6 +26,7 @@ import {
   HOME_ENTRY,
   HOME_FRONT,
   HOME_RECT,
+  HOUSE_GROW,
   HOUSE_RECT,
   homeHouse,
   LADDER,
@@ -43,6 +44,8 @@ import {
   tileAt,
   viewRoomAt,
   roomAt,
+  WARPS,
+  key,
 } from './world'
 import { findPath } from './movement'
 import { placement } from './room'
@@ -50,6 +53,11 @@ import { deserialize, serialize } from './save'
 import { CONTENT, piecesOf } from '../content/catalog'
 import { SCENES, T } from '../content/text'
 import { TOOLS } from './items'
+import { BABY_PARTY_SPOTS, FRIENDS_SPOT, HILL_SPOTS, VISIT_SPOT } from './bonds'
+import { EAVES, STRAY_SPOTS } from './companion'
+import { FESTIVAL_SPOTS } from './neighbors'
+import { LESSON_SPOT } from './stories'
+import { drawDecor, LANTERNS } from '../render/decor'
 
 const zero = () => 0
 const playerTileOf = (s: GameState) => ({ x: Math.round(s.player.x), y: Math.round(s.player.y) })
@@ -76,14 +84,34 @@ describe('집 넓히기 자리', () => {
         expect(roomAt({ x, y }), `${x},${y}`).toBeNull()
       }
   })
-  it('밖에서 집이 넓어질 두 줄(양옆 한 칸씩)은 지금 풀밭이고, 이웃 시간표의 자리도 없다', () => {
-    for (const x of [HOUSE_RECT.x0 - 1, HOUSE_RECT.x1 + 1])
-      for (let y = HOUSE_RECT.y0; y <= HOUSE_RECT.y1; y++) {
+  it('밖에서 집이 넓어질 왼쪽 두 줄은 넓히기 전 빈 풀밭 — 등불·손님·동물·이웃·모임 자리도 없다', () => {
+    expect(HOUSE_GROW).toEqual({ x0: HOUSE_RECT.x0 - 2, y0: HOUSE_RECT.y0, x1: HOUSE_RECT.x0 - 1, y1: HOUSE_RECT.y1 })
+    const inGrow = (t: { x: number; y: number }) => t.x >= HOUSE_GROW.x0 && t.x <= HOUSE_GROW.x1 && t.y >= HOUSE_GROW.y0 && t.y <= HOUSE_GROW.y1
+    for (let y = HOUSE_GROW.y0; y <= HOUSE_GROW.y1; y++)
+      for (let x = HOUSE_GROW.x0; x <= HOUSE_GROW.x1; x++) {
         expect(MAP[y][x], `${x},${y}`).toBe('.')
+        expect(tileAt(x, y), `${x},${y}`).toBe('.')
         expect(placeAt({ x, y }), `${x},${y}`).toBeNull()
-        for (const d of CONTENT.neighbors)
-          for (const e of d.schedule) for (const t of [e.tile, e.wet]) if (t) expect(t.x === x && t.y === y, d.id).toBe(false)
       }
+    const spots: [string, { x: number; y: number }][] = [
+      ['EAVES', EAVES],
+      ['VISIT_SPOT', VISIT_SPOT],
+      ['LESSON_SPOT', LESSON_SPOT],
+      ['FRIENDS_SPOT', FRIENDS_SPOT],
+      ...Object.entries(STRAY_SPOTS),
+      ...Object.entries(FESTIVAL_SPOTS),
+      ...Object.entries(BABY_PARTY_SPOTS),
+      ...Object.entries(HILL_SPOTS),
+      ...LANTERNS.map((t, i) => [`등불 ${i}`, t] as [string, { x: number; y: number }]),
+      ...Object.values(PLACES).flatMap((p) => [...p.tiles, ...(p.stand ? [p.stand] : [])]).map((t) => ['장소', t] as [string, { x: number; y: number }]),
+    ]
+    for (const d of CONTENT.neighbors)
+      for (const e of d.schedule) for (const t of [e.tile, e.wet]) if (t) spots.push([d.id, t])
+    for (const [name, t] of spots) expect(inGrow(t), `${name} ${t.x},${t.y}`).toBe(false)
+    // 마을 꽃길(1단계)도 그 땅에 그리지 않는다
+    const ctx = { calls: [] as { x: number; y: number }[], fillStyle: '', strokeStyle: '', lineWidth: 1, fillRect(x: number, y: number) { this.calls.push({ x, y }) }, beginPath() {}, moveTo() {}, lineTo() {}, stroke() {} }
+    drawDecor(ctx as unknown as CanvasRenderingContext2D, { ...newGame(CONTENT), flags: { villageLevel: 4, 'unlock:lanterns': 1 } }, 'sunny', 0, true)
+    for (const c of ctx.calls) expect(inGrow({ x: Math.floor(c.x / 16), y: Math.floor(c.y / 16) }), `${c.x},${c.y}`).toBe(false)
   })
   it('다락은 지도 아래 보이지 않는 곳, 8×6, 다른 방과 겹치지 않는다', () => {
     expect(ATTIC.w).toBe(8)
@@ -98,7 +126,7 @@ describe('잠들 때 집 단계 맞추기', () => {
   it('모듈 전역이 0이어도 상태의 집 단계(1)로 지도를 맞춘 채 자고, 이웃도 그 지도로 놓는다', () => {
     const s = { ...newGame(CONTENT), homeLevel: 1 as const }
     setHomeLevel(0)
-    const wing = { x: HOUSE_RECT.x1 + 1, y: HOUSE_RECT.y1 - 1 }
+    const wing = { x: HOUSE_GROW.x0, y: HOUSE_RECT.y1 - 1 }
     expect(isWalkable(wing)).toBe(true)
     expect(tileAt(SIDE_ROOM.x0, SIDE_ROOM.y0)).toBe('_')
     const after = sleep(s)
@@ -158,14 +186,16 @@ describe('집 넓히기 1단계: 방 하나 더', () => {
     expect(homeRect()).toEqual({ ...HOME_RECT, x1: HOME_EXPAND_RECT.x1 })
     // 집 안에서 보는 화면도 넓어진다
     expect(viewRoomAt({ x: SIDE_ROOM.x0, y: SIDE_ROOM.y0 + 1 })).toEqual({ x0: HOME_RECT.x0, y0: HOME_RECT.y0, w: 12, h: 6 })
-    // 밖에서는 집이 양옆으로 한 칸씩, 문은 가운데
-    expect(homeHouse()).toMatchObject({ x0: HOUSE_RECT.x0 - 1, x1: HOUSE_RECT.x1 + 1, doorX: HOME_DOOR.x })
+    // 밖에서는 집이 왼쪽으로만 두 칸, 문은 그대로
+    expect(homeHouse()).toMatchObject({ x0: HOUSE_GROW.x0, x1: HOUSE_RECT.x1, doorX: HOME_DOOR.x })
   })
   it('넓힌 뒤 들어온 자리에서 새 방까지 걸어갈 수 있고, 밖에서는 넓어진 벽이 길을 막는다', () => {
     const s = sleep(orderHome(rich())!)
     expect(findPath(HOME_ENTRY, { x: SIDE_ROOM.x0, y: SIDE_ROOM.y1 })).not.toBeNull()
     expect(findPath(HOME_ENTRY, { x: SIDE_ROOM.x1, y: SIDE_ROOM.y0 })).not.toBeNull()
-    expect(isWalkable({ x: HOUSE_RECT.x1 + 1, y: HOUSE_RECT.y1 - 1 })).toBe(false)
+    expect(isWalkable({ x: HOUSE_GROW.x1, y: HOUSE_RECT.y1 - 1 })).toBe(false)
+    // 오른쪽(텃밭 쪽 13열)은 그대로 풀밭
+    expect(tileAt(HOUSE_RECT.x1 + 1, HOUSE_RECT.y1 - 1)).toBe('.')
     // 바로 옆 텃밭은 그대로 밟고 들어갈 수 있다
     for (const t of PLACES.garden.tiles) expect(isWalkable(t)).toBe(true)
     expect(findPath(HOME_FRONT, { x: 14, y: 4 })).not.toBeNull()
@@ -405,11 +435,19 @@ describe('문을 드나드는 동반 동물', () => {
     let s: GameState = { ...s0, npcs: {}, companion: cat, player: { ...s0.player, ...HOME_FRONT, path: [HOME_DOOR] } }
     for (let i = 0; i < 40 && !isHome(playerTileOf(s)); i++) s = tick(s, 0.05, zero, CONTENT).state
     expect(playerTileOf(s)).toEqual(HOME_ENTRY)
-    expect(isHome({ x: Math.round(s.companion!.x), y: Math.round(s.companion!.y) })).toBe(true)
+    const inside = { x: Math.round(s.companion!.x), y: Math.round(s.companion!.y) }
+    expect(isHome(inside)).toBe(true)
+    // 문깔개(나가는 문) 위가 아니라 기록자 위쪽 칸에
+    expect(WARPS.has(key(inside))).toBe(false)
+    expect(inside).toEqual({ x: HOME_ENTRY.x, y: HOME_ENTRY.y - 1 })
     s = { ...s, player: { ...s.player, path: [{ x: HOME_ENTRY.x, y: HOME_ENTRY.y + 1 }] } }
     for (let i = 0; i < 40 && isHome(playerTileOf(s)); i++) s = tick(s, 0.05, zero, CONTENT).state
     expect(playerTileOf(s)).toEqual(HOME_FRONT)
-    expect(isHome({ x: Math.round(s.companion!.x), y: Math.round(s.companion!.y) })).toBe(false)
+    const outside = { x: Math.round(s.companion!.x), y: Math.round(s.companion!.y) }
+    expect(isHome(outside)).toBe(false)
+    // 밖에서도 문 위에는 세우지 않는다
+    expect(WARPS.has(key(outside))).toBe(false)
+    expect(isWalkable(outside)).toBe(true)
   })
 })
 

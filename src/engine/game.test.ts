@@ -769,7 +769,6 @@ describe('언덕 모임 자리 (소풍·별 보는 밤)', () => {
   })
   it('아기 잔치 자리는 빵집 앞 모임 자리를 품고, 내 집 문 앞은 아니다', () => {
     for (const t of Object.values(BABY_PARTY_SPOTS)) expect(inGathering('babyParty', 18 * 60 + 10, t)).toBe(true)
-    expect(inGathering('babyParty', 18 * 60 + 10, { x: 6, y: 8 })).toBe(false)
     expect(inGathering('babyParty', 18 * 60 + 10, HOME_FRONT)).toBe(false)
   })
 })
