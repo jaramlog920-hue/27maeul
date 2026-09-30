@@ -15,7 +15,7 @@ import { FIRE, isNear, npcTile } from '../engine/neighbors'
 import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
 import { childStage, CRADLE_SPOT, helperSpot } from '../engine/child'
 import { actsDoorGlows, feastToday, sideShelfSpines } from '../engine/library'
-import { ACTS_ROOM, ATTIC, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, HEIGHT, HOME_DOOR, HOUSE_RECT, housesNow, houseAt, LOCKED_DOORS, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
+import { ACTS_ROOM, ATTIC, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, HEIGHT, HOUSE_RECT, housesNow, houseAt, LOCKED_DOORS, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
 import { GOSPELS, type Book, type Facing, type NeighborDef, type GameContent, type Season, type Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { avatarKey, withLookDefaults, type FullAvatar } from '../engine/avatar'
@@ -1517,11 +1517,11 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
 
       // 양 우리의 양 (우리를 넓히면 둘 더)
       ;[
-        [4, 27],
-        [6, 28],
-        [5, 26.5],
-        [4, 28.5],
-        [6.5, 26.5],
+        [4, 28],
+        [6, 29],
+        [5, 27.5],
+        [4, 29.5],
+        [6.5, 27.5],
       ].slice(0, sheepCount(game)).forEach(([sx, sy], i) => {
         const x = sx + Math.sin(t * 0.3 + i * 2) * 0.6
         const y = sy + Math.cos(t * 0.23 + i) * 0.5
@@ -1734,7 +1734,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           if (festOn) glow(g, sx(FIRE.x * TILE + 8), sy(FIRE.y * TILE + 8), 48, dark)
           if (actsGlow) glow(g, sx(LOCKED_DOORS[0].x * TILE + 10), sy(LOCKED_DOORS[0].y * TILE + 9), 26, dark * 0.7)
           // 집집마다 창에 불빛
-          for (const [x, y] of [[HOME_DOOR.x, HOME_DOOR.y], [5, 17], [36, 17], [35, 5], [28, 28], [42, 31], [24, 5], [13, 22], [20, 28], [12, 31], [43, 22]]) glow(g, sx(x * TILE + 8), sy(y * TILE + 4), 14, dark * 0.5)
+          for (const [x, y] of housesNow().map((h) => [h.doorX, h.y1])) glow(g, sx(x * TILE + 8), sy(y * TILE + 4), 14, dark * 0.5)
           // 길가의 등불
           for (const l of lanternLights(game)) glow(g, sx(l.x * TILE + 8), sy(l.y * TILE + 2), 26, dark * 0.8)
         }
@@ -1754,9 +1754,9 @@ interface Fly {
 export function butterflies(season: Season, wet: boolean, phase: string, t: number): Fly[] {
   if (wet || (season !== 'spring' && season !== 'summer') || (phase !== 'morning' && phase !== 'day')) return []
   const centers: Tile[] = [
-    { x: 15, y: 2 },
-    { x: 8, y: 9 },
-    { x: 8, y: 21 },
+    { x: 12, y: 3 },
+    { x: 3, y: 9 },
+    { x: 8, y: 24 },
   ]
   return centers.map((c, i) => ({
     x: c.x + Math.cos(t * 0.7 + i * 2) * 1.6,

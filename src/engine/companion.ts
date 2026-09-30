@@ -12,10 +12,10 @@ export interface Companion extends Actor {
 }
 
 export const STRAY_DAY = 2
-/** 둘째 날 떠돌이 새끼들이 기다리는 곳 — 내 집 앞 풀밭 (집이 왼쪽으로 넓어질 6·7열은 비워 둔다) */
-export const STRAY_SPOTS: Record<Animal, Tile> = { cat: { x: 4, y: 9 }, dog: { x: 12, y: 8 } }
+/** 둘째 날 떠돌이 새끼들이 기다리는 곳 — 내 집 앞 풀밭 (집이 왼쪽으로 넓어질 1·2열의 문 앞 줄) */
+export const STRAY_SPOTS: Record<Animal, Tile> = { cat: { x: 2, y: 8 }, dog: { x: 8, y: 8 } }
 /** 비 오는 날 웅크리는 처마 밑 (집 앞벽 오른쪽 아래) */
-export const EAVES: Tile = { x: 12, y: 8 }
+export const EAVES: Tile = { x: 7, y: 8 }
 export const GROWN_AFTER = 10
 export const COMPANION_SPEED = 4
 export const NAME_MAX = 8

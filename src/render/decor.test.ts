@@ -48,15 +48,15 @@ describe('마을 꽃·등불이 텃밭 위에 겹치지 않는다', () => {
     drawDecor(ctx as unknown as CanvasRenderingContext2D, game, 'sunny', 0, true)
     for (const p of GARDEN_TILES) expect(ctx.calls.some(tileOf(p.x, p.y)), `${p.x},${p.y}`).toBe(false)
     // 큰길 양쪽 꽃은 그려진다
-    expect(ctx.calls.some(tileOf(4, 9))).toBe(true)
-    expect(ctx.calls.some(tileOf(4, 11))).toBe(true)
+    expect(ctx.calls.some(tileOf(3, 11))).toBe(true)
+    expect(ctx.calls.some(tileOf(19, 8))).toBe(true)
   })
 
-  it('등불이 풀린 뒤에는 (5,9)에 기둥이 서고 텃밭 칸에는 서지 않는다', () => {
+  it('등불이 풀린 뒤에는 (3,8)에 기둥이 서고 텃밭 칸에는 서지 않는다', () => {
     const game = { ...newGame(CONTENT), flags: { villageLevel: 0, 'unlock:lanterns': 1 } }
     const ctx = new FakeCtx()
     drawDecor(ctx as unknown as CanvasRenderingContext2D, game, 'sunny', 0, true)
-    expect(ctx.calls.some(tileOf(5, 9))).toBe(true)
+    expect(ctx.calls.some(tileOf(3, 8))).toBe(true)
     for (const p of GARDEN_TILES) expect(ctx.calls.some(tileOf(p.x, p.y)), `${p.x},${p.y}`).toBe(false)
   })
 })

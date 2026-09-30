@@ -423,8 +423,8 @@ describe('옛 저장: 집 안이 지도 위에 있던 때 (계획 7-1 작업 5)'
   })
   it('이미 옮긴 저장은 다시 옮기지 않는다 (예전 집 자리 풀밭에 서 있어도)', () => {
     const s = newGame(CONTENT)
-    const back = deserialize(serialize({ ...s, player: { ...s.player, x: 5, y: 4 } }), CONTENT)!
-    expect({ x: back.player.x, y: back.player.y }).toEqual({ x: 5, y: 4 })
+    const back = deserialize(serialize({ ...s, player: { ...s.player, x: 17, y: 4 } }), CONTENT)!
+    expect({ x: back.player.x, y: back.player.y }).toEqual({ x: 17, y: 4 })
   })
 })
 

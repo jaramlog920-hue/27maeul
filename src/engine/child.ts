@@ -76,8 +76,8 @@ export const CRADLE_SPOT: Tile = { x: SIDE_ROOM.x0 + 1, y: SIDE_ROOM.y1 }
 
 /** 돕는 아이가 하루 동안 다니는 자리 (아침 우물가 → 낮 장터 → 저녁 집 앞 → 밤 집 안) */
 export const HELPER_SPOTS: readonly { from: number; at: Tile }[] = [
-  { from: 7 * 60, at: { x: 18, y: 13 } },
-  { from: 11 * 60, at: { x: 28, y: 18 } },
+  { from: 7 * 60, at: { x: 23, y: 15 } },
+  { from: 11 * 60, at: { x: 28, y: 15 } },
   { from: 16 * 60, at: { x: HOME_FRONT.x - 1, y: HOME_FRONT.y } },
   { from: 20 * 60, at: CRADLE_SPOT },
 ]

@@ -104,7 +104,7 @@ describe('서고 권수로 열리는 구역', () => {
     expect(zoneAt(shut)).toBeNull()
     expect(isWalkable(shut)).toBe(true)
     // 대장장이는 첫날부터 대장간에 나와 있다 (그을음 → 잉크가 있어야 첫 장을 엮는다)
-    expect(goalFor(smith, { ...ctx, locked: lockedTiles(0) })).toEqual({ x: 34, y: 26 })
+    expect(goalFor(smith, { ...ctx, locked: lockedTiles(0) })).toEqual({ x: 43, y: 22 })
     const nowhere = { ...smith, schedule: [{ from: 420, tile: vine }, { from: 1140 }] }
     expect(goalFor(nowhere, { ...ctx, locked: lockedTiles(0) })).toBeNull()
   })
@@ -127,7 +127,7 @@ describe('새 이웃 넷의 행사 자리', () => {
   it('잔치 자리는 광장 안, 선물은 마음 3·9 단계에 있다', () => {
     for (const id of NEW) {
       const t = FESTIVAL_SPOTS[id]
-      expect(t.x >= 19 && t.x <= 29 && t.y >= 13 && t.y <= 20, id).toBe(true)
+      expect(t.x >= 18 && t.x <= 31 && t.y >= 12 && t.y <= 23, id).toBe(true)
       expect(stories.MILESTONE_GIFTS[id]?.[3], id).toBeDefined()
       expect(stories.MILESTONE_GIFTS[id]?.[9], id).toBeDefined()
     }

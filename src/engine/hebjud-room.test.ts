@@ -55,7 +55,7 @@ afterEach(() => setOpenDoors([]))
 
 describe('지도 높이 80', () => {
   it('지도는 80줄, 모든 줄은 폭이 같고 마지막 두 줄(78–79)은 막힌 빈 곳', () => {
-    expect(HEIGHT).toBe(80)
+    expect(HEIGHT).toBe(90)
     expect(MAP).toHaveLength(HEIGHT)
     for (const row of MAP) expect(row).toHaveLength(WIDTH)
     for (const y of [78, 79]) for (let x = 0; x < WIDTH; x++) expect(isWalkable({ x, y }), `${x},${y}`).toBe(false)

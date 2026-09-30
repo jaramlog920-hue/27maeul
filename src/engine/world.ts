@@ -18,8 +18,11 @@ export const WIDTH = 48
  * (60줄부터 사도행전 방, 내 집 안, 로마서–빌레몬서 방 / 70줄부터 요한계시록 방, 히브리서–유다서 방. 78–79줄은 비워 둔다)
  */
 export const VILLAGE_H = 40
-/** 계획 8 작업 5에서 70 → 80 (히브리서–유다서 방 자리). 저장에는 지도 크기가 들어가지 않는다 */
-export const HEIGHT = 80
+/**
+ * 계획 8 작업 5에서 70 → 80 (히브리서–유다서 방 자리), 계획 14에서 80 → 90 (목수·편지 나르는 이웃·약방·어부 집 안, 81–88줄).
+ * 저장에는 지도 크기가 들어가지 않는다
+ */
+export const HEIGHT = 90
 /** 화면에 보이는 칸 수 */
 export const VIEW_W = 16
 export const VIEW_H = 20
@@ -30,11 +33,11 @@ export const VIEW_H = 20
  * 1단계 "방 하나 더"에는 밖의 집이 왼쪽으로만 두 칸 넓어진다 (문·길·바구니는 그대로, 오른쪽 텃밭 쪽 13열은 풀밭). 지금 모양은 homeHouse()
  * 집 왼쪽 땅(HOUSE_GROW)은 집 넓히기 자리 — 다른 건물·자리를 두지 않는다
  */
-export const HOUSE_RECT = { x0: 8, y0: 4, x1: 12, y1: 7 }
+export const HOUSE_RECT = { x0: 3, y0: 4, x1: 7, y1: 7 }
 /** 1단계에 밖의 집이 넓어지는 왼쪽 두 줄 (넓히기 전에는 빈 풀밭) */
 export const HOUSE_GROW = { x0: HOUSE_RECT.x0 - 2, y0: HOUSE_RECT.y0, x1: HOUSE_RECT.x0 - 1, y1: HOUSE_RECT.y1 }
 /** 밖에서 들어가는 내 집 문 */
-export const HOME_DOOR: Tile = { x: 10, y: 7 }
+export const HOME_DOOR: Tile = { x: 5, y: 7 }
 /** 내 집 문 앞 (문깔개로 나오면 서는 곳) */
 export const HOME_FRONT: Tile = { x: HOME_DOOR.x, y: HOME_DOOR.y + 1 }
 
@@ -252,51 +255,51 @@ const HALL_ROOM_Y0 = 70
 const TEA_ROOM_X0 = 41
 const TEA_ROOM_Y0 = 60
 /** 마을 사랑방 (7칸×4줄) — 문 앞이 큰길 */
-export const HALL_RECT = { x0: 15, y0: 6, x1: 21, y1: 9 }
-export const HALL_DOOR: Tile = { x: 18, y: 9 }
-/** 정원 찻집 (5칸×4줄) — 문 앞이 큰길 */
-export const TEA_RECT = { x0: 28, y0: 6, x1: 32, y1: 9 }
-export const TEA_DOOR: Tile = { x: 30, y: 9 }
-/** 호숫가 정자 (5칸×2줄 그림, 약방 앞벽과 한 줄 띄움) 가운데 벤치 — 앉는 자리는 그 아래 호숫가 길 */
-export const PAVILION_RECT = { x0: 15, y0: 30, x1: 19, y1: 31 }
-export const PAVILION_SEAT: Tile = { x: 17, y: 31 }
-/** 들 약초 자리 (지도 'j'): 북쪽 울타리 곁, 빵집 옆 모퉁이, 올리브 숲 위, 양 우리 아래 — 캐서 약방에 판다 */
+export const HALL_RECT = { x0: 10, y0: 12, x1: 16, y1: 16 }
+export const HALL_DOOR: Tile = { x: 13, y: 16 }
+/** 정원 찻집 (작은 집 5칸×4줄) — 나루 서쪽 호숫가, 문 앞이 호숫가 길 */
+export const TEA_RECT = { x0: 18, y0: 28, x1: 22, y1: 31 }
+export const TEA_DOOR: Tile = { x: 20, y: 31 }
+/** 호숫가 정자 (5칸×2줄 그림, 보리밭 아래) 가운데 벤치 — 앉는 자리는 그 아래 호숫가 길 */
+export const PAVILION_RECT = { x0: 11, y0: 30, x1: 15, y1: 31 }
+export const PAVILION_SEAT: Tile = { x: 13, y: 31 }
+/** 들 약초 자리 (지도 'j'): 서고 뒤 숲 곁, 서쪽 가장자리 두 곳, 올리브 숲 위 — 캐서 약방에 판다 */
 export const WILD_HERBS: readonly Tile[] = [
-  { x: 12, y: 1 },
-  { x: 1, y: 22 },
-  { x: 45, y: 11 },
-  { x: 8, y: 31 },
+  { x: 17, y: 1 },
+  { x: 1, y: 24 },
+  { x: 46, y: 10 },
+  { x: 1, y: 31 },
 ]
 
 export const ROOMS: readonly Room[] = [
   // 빵 굽는 이웃: 가마 둘, 찬장, 밀가루 항아리, 과일 접시·주전자 올린 탁자, 둥근 깔개
-  room('baker', 2, 41, { x: 5, y: 17 }, [5, 4],
+  room('baker', 2, 41, { x: 5, y: 16 }, [5, 4],
     [[1, 1, 'O'], [2, 1, 'O'], [8, 1, 'g'], [8, 2, 'g'], [3, 3, 'n'], [4, 3, 'n'], [8, 5, 'b']],
     [[4, 1, 'cupboard'], [7, 1, 'barrel'], [2, 3, 'chair'], [5, 3, 'chair', 'flip'], [3, 3, 'fruitBowl'], [4, 3, 'teapot'],
      [5, 4, 'roundRug'], [1, 5, 'bigPlant'], [7, 5, 'pillows'], [1, 2, 'lampStand']]),
   // 물 긷는 아이네: 침대 둘, 궤짝, 화덕, 물항아리, 둘러앉는 탁자, 돗자리
-  room('child', 16, 41, { x: 36, y: 17 }, [3, 4],
+  room('child', 16, 41, { x: 36, y: 16 }, [3, 4],
     [[1, 1, 'b'], [2, 1, 'b'], [5, 1, 'h'], [8, 1, 'g'], [8, 2, 'g'], [4, 3, 'n'], [5, 3, 'n']],
     [[3, 1, 'chest'], [3, 3, 'chair'], [6, 3, 'chair', 'flip'], [4, 3, 'teapot'], [5, 3, 'fruitBowl'],
      [2, 5, 'mat'], [1, 5, 'pillows'], [8, 5, 'bigPlant'], [8, 3, 'lampStand']]),
   // 포도원 할아버지: 책장 둘, 포도주 통, 화덕, 평상, 모래시계 올린 탁자
-  room('grandpa', 30, 41, { x: 35, y: 5 }, [5, 3],
+  room('grandpa', 30, 41, { x: 36, y: 7 }, [5, 3],
     [[1, 1, 'b'], [6, 1, 'h'], [2, 4, 'n']],
     [[3, 1, 'bookcase'], [4, 1, 'bookcase'], [8, 1, 'barrel'], [8, 2, 'barrel'], [2, 4, 'hourglass'], [1, 4, 'chair'],
      [3, 3, 'roundRug'], [6, 5, 'daybed'], [8, 4, 'lampStand'], [1, 6, 'bigPlant']]),
   // 베 짜는 이웃: 베틀, 물레, 실 선반, 궤짝, 둥근 깔개, 말린 꽃
-  room('weaver', 2, 50, { x: 28, y: 28 }, [4, 3],
+  room('weaver', 2, 50, { x: 36, y: 23 }, [4, 3],
     [[1, 1, 'W'], [2, 1, 'W'], [5, 1, 's'], [6, 1, 's'], [8, 1, 'b'], [6, 4, 'n']],
     [[3, 1, 'wheel'], [8, 3, 'chest'], [8, 2, 'pillows'], [3, 4, 'roundRug'], [7, 4, 'chair', 'flip'], [6, 4, 'dryFlowers'],
      [1, 4, 'lampStand'], [1, 6, 'bigPlant']]),
   // 벌 치는 이웃: 꿀 항아리, 선반, 찬장, 주전자 올린 탁자, 꽃 화분, 문 앞 돗자리
-  room('beekeeper', 16, 50, { x: 42, y: 31 }, [4, 3],
+  room('beekeeper', 16, 50, { x: 43, y: 31 }, [4, 3],
     [[1, 1, 's'], [2, 1, 'g'], [3, 1, 'g'], [4, 1, 'g'], [8, 1, 'b'], [5, 4, 'n'], [1, 4, 'p'], [8, 5, 'p']],
     [[6, 1, 'cupboard'], [6, 4, 'chair', 'flip'], [5, 4, 'teapot'], [8, 3, 'lampStand'], [1, 5, 'bigPlant'], [3, 6, 'mat'],
      [8, 2, 'pillows']]),
   // 마을 서고
   // 서고는 리모델링 전 모습이 좋다 (사용자, 2026-09-29) — 가구 그림을 더하지 않는다
-  room('library', LIBRARY_X0, LIBRARY_Y0, { x: 24, y: 5 }, [6, 2], libraryThings, [], LIBRARY_W, LIBRARY_H),
+  room('library', LIBRARY_X0, LIBRARY_Y0, { x: 24, y: 7 }, [6, 2], libraryThings, [], LIBRARY_W, LIBRARY_H),
   // 사도행전 방: 문은 서고 안 잠긴 문, 나가면 그 문 오른쪽 서고 바닥
   { ...room('acts', ACTS_X0, ACTS_Y0, ACTS_DOOR, [5, 3], actsThings, [], ACTS_W, ACTS_H), out: { x: ACTS_DOOR.x + 1, y: ACTS_DOOR.y } },
   // 로마서–빌레몬서 방: 문은 서고 안 둘째 잠긴 문, 나가면 그 문 오른쪽 서고 바닥
@@ -315,6 +318,23 @@ export const ROOMS: readonly Room[] = [
     [[3, 0, 'N'], [1, 1, 'g'], [2, 1, 'g'], [5, 1, 's'], [2, 3, 'n'], [4, 3, 'n']],
     [[2, 3, 'teapot'], [4, 3, 'dryFlowers'], [1, 3, 'chair'], [5, 3, 'chair', 'flip'], [5, 5, 'bigPlant']],
     7, 7),
+  // ── 계획 14: 들어갈 수 없던 집 넷 (81–88줄, 그 집의 일에 맞춘 가구) ──
+  // 제본 골목의 목수: 작업대 둘, 선반, 침대, 나무통·책장, 모래시계 올린 탁자
+  room('carpenter', 2, 81, { x: 5, y: 23 }, [4, 3],
+    [[1, 1, 'k'], [2, 1, 'k'], [5, 1, 's'], [6, 1, 's'], [8, 1, 'b'], [4, 4, 'n']],
+    [[8, 3, 'barrel'], [7, 1, 'bookcase'], [3, 4, 'chair'], [4, 4, 'hourglass'], [1, 3, 'lampStand'], [6, 5, 'mat'], [1, 6, 'bigPlant']]),
+  // 편지 나르는 이웃: 벽의 편지꽂이, 편지 쌓인 탁자, 궤짝, 침대
+  room('postman', 14, 81, { x: 13, y: 23 }, [4, 5],
+    [[2, 0, 'N'], [4, 0, 'V'], [5, 0, 'V'], [6, 0, 'V'], [1, 1, 'g'], [8, 1, 'b'], [4, 3, 'n'], [5, 3, 'n']],
+    [[4, 3, 'scrolls'], [5, 3, 'inkpot'], [1, 3, 'chest'], [3, 3, 'chair'], [6, 3, 'chair', 'flip'], [2, 5, 'roundRug'], [8, 5, 'bigPlant'], [8, 3, 'lampStand']]),
+  // 약방: 약초 선반과 항아리, 말린 꽃과 찻주전자를 올린 탁자, 화분
+  room('apothecary', 26, 81, { x: 36, y: 31 }, [5, 2],
+    [[1, 1, 's'], [2, 1, 's'], [3, 1, 's'], [6, 1, 'g'], [7, 1, 'g'], [8, 1, 'g'], [1, 4, 'p'], [8, 4, 'p'], [4, 4, 'n'], [5, 4, 'n']],
+    [[4, 4, 'dryFlowers'], [5, 4, 'teapot'], [3, 4, 'chair'], [6, 4, 'chair', 'flip'], [1, 6, 'bigPlant'], [7, 6, 'mat'], [8, 2, 'lampStand']]),
+  // 어부: 침대, 화덕, 생선 항아리, 나무통, 둘러앉는 탁자, 돗자리
+  room('fisher', 38, 81, { x: 29, y: 31 }, [3, 3],
+    [[1, 1, 'b'], [4, 1, 'h'], [7, 1, 'g'], [8, 1, 'g'], [3, 4, 'n']],
+    [[8, 3, 'barrel'], [8, 4, 'barrel'], [3, 4, 'fruitBowl'], [2, 4, 'chair'], [6, 6, 'mat'], [1, 6, 'pillows'], [1, 3, 'lampStand']]),
 ]
 /** 사도행전 방 */
 export const ACTS_ROOM: Room = ROOMS.find((r) => r.owner === 'acts')!
@@ -418,9 +438,6 @@ function build(): string[] {
     // 내 집은 단계마다 크기가 달라 homeHouse()가 따로 알려 준다
     if (id !== 'home') HOUSES.push({ id, x0, y0, x1, y1, doorX })
   }
-  const bed = (y: number, xs: number[]) => {
-    for (const x of xs) if (g[y][x] === '.') set(x, y, '*')
-  }
 
   // 테두리 (위·양옆은 나무, 아래는 호수 건너 숲)
   rect(0, 0, WIDTH - 1, 0, 'T')
@@ -428,80 +445,86 @@ function build(): string[] {
   rect(0, 0, 0, VILLAGE_H - 1, 'T')
   rect(WIDTH - 1, 0, WIDTH - 1, VILLAGE_H - 1, 'T')
 
-  // 큰길 둘 (동서), 서고 → 장터 → 나루로 내려가는 길
-  rect(1, 10, 46, 10, ',')
-  rect(1, 23, 46, 23, ',')
-  rect(24, 6, 24, 32, ',')
+  // ── 계획 14: 네 줄 × 다섯 칸의 바둑판 (docs/superpowers/plans/2026-09-30-plan-14-village-map.md) ──
+  // 세로 칸: 서쪽 A(2–8) · 골목 9 · 서쪽 B(10–16) · 광장(18–31) · 동쪽 C(33–39) · 골목 40 · 동쪽 D(41–46)
+  // 가로 줄: 북쪽 집(3–7, 앞마당 8, 골목 9) · 풀밭(10–11) · 가운데 위(12–16, 문이 큰길에) · 큰길(17–18)
+  //          · 가운데 아래(19–23, 앞마당 24, 골목 25) · 남쪽 호숫가 집(26–31, 문이 호숫가 길에) · 호숫가 길(32)
+  // 보통 집 7×5 · 작은 집 5×4 · 서고 9×5. 문 아래에는 늘 한 칸 서는 곳, 집 사이에는 한 칸 골목이나 풀
 
-  // ── 북쪽: 내 집, 벤치 언덕, 서고, 할아버지 집과 포도원 ──
-  // 내 집: 가장 작은 이웃집만 한 5칸×4줄 (집 안은 지도 아래 HOME_ROOM). 예전 집 자리는 풀밭으로 비워 둔다
+  // 길: 가로 큰길 두 칸(17–18), 세로 큰길 두 칸(24–25), 골목 한 칸(9줄·25줄·9열·40열), 호숫가 길(32)
+  rect(1, 17, 46, 18, ',')
+  rect(24, 8, 25, 32, ',')
+  rect(2, 9, 40, 9, ',')
+  rect(1, 25, 46, 25, ',')
+  rect(9, 9, 9, 32, ',')
+  rect(40, 9, 40, 25, ',')
+  // 가운데 광장: 위쪽에 마을 우물, 아래쪽은 잔치 모닥불 자리. 좌판 둘·벤치 둘은 좌우 대칭, 네 귀퉁이에 나무
+  rect(18, 12, 31, 23, ',')
+  set(24, 14, 'w')
+  set(20, 13, 'm')
+  set(29, 13, 'm')
+  set(20, 21, 'B') // 광장 벤치 둘 (좌우 대칭 — 오른쪽이 장터 벤치 자리)
+  set(29, 21, 'B')
+  for (const [x, y] of [[18, 12], [31, 12], [18, 23], [31, 23]]) set(x, y, 'T')
+
+  // 앞마당 꽃: 앞마당이 있는 집은 양 끝에 한 송이씩 (같은 규칙으로만)
+  const yard = (x0: number, x1: number, y: number) => {
+    for (const x of [x0, x1]) if (g[y][x] === '.') set(x, y, '*')
+  }
+
+  // ── 북쪽 줄: 내 집·텃밭 · 언덕 위 서고 · 포도원 할아버지·포도원 ──
   roofed('home', HOUSE_RECT.x0, HOUSE_RECT.y0, HOUSE_RECT.x1, HOUSE_RECT.y1, HOME_DOOR.x)
-  rect(HOME_DOOR.x, HOME_DOOR.y + 1, HOME_DOOR.x, 9, ',') // 집 문 앞에서 큰길까지
+  set(HOME_DOOR.x, HOME_DOOR.y + 1, ',')
   set(HOME_DOOR.x + 1, HOME_DOOR.y + 1, 'q') // 문 앞 편지 바구니
-  // 텃밭 열두 칸은 집 오른쪽 위 볕 드는 곳에 (집과 텃밭 사이 13열은 풀밭, 집은 왼쪽으로만 넓어진다), 둘레에 꽃
-  rect(14, 3, 17, 5, 'l')
-  for (const [x, y] of [[14, 2], [17, 2], [18, 5], [16, 7]]) set(x, y, '*')
-  // 언덕 벤치와 우물은 큰길 아래 빈 풀밭으로
-  set(14, 13, 'B') // 언덕 벤치
-  set(17, 12, 'w') // 우물
-  for (const [x, y] of [[12, 12], [15, 11], [13, 15], [16, 14], [12, 16]]) set(x, y, '*')
-  roofed('library', 20, 1, 28, 5, 24, 'S') // 마을 서고
-  bed(6, [21, 22, 26, 27])
-  for (const [x, y] of [[19, 3], [29, 3], [19, 7], [29, 7]]) set(x, y, '*')
-  roofed('grandpa', 32, 2, 38, 5, 35) // 포도원 할아버지
-  bed(6, [33, 34, 36, 37])
-  rect(35, 6, 35, 9, ',')
-  for (const y of [2, 4, 6, 8]) for (let x = 40; x <= 46; x++) if (x !== 43) set(x, y, 'v')
+  yard(HOUSE_RECT.x1 + 1, HOUSE_RECT.x1 + 1, 8)
+  rect(11, 4, 14, 6, 'l') // 텃밭 열두 칸 (집 오른쪽 볕 드는 곳)
+  roofed('library', 20, 3, 28, 7, 24, 'S') // 마을 서고
+  set(24, 8, ',')
+  yard(20, 28, 8)
+  roofed('grandpa', 33, 3, 39, 7, 36) // 포도원 할아버지
+  set(36, 8, ',')
+  yard(33, 39, 8)
+  for (const y of [2, 4, 6, 8]) for (let x = 41; x <= 46; x++) if (x !== 43) set(x, y, 'v')
 
-  // ── 가운데: 빵집, 장터 광장, 아이네, 올리브 숲 ──
-  roofed('baker', 2, 12, 8, 17, 5) // 빵 굽는 이웃
-  bed(18, [3, 6, 7])
-  set(9, 16, 'O') // 바깥 화덕
-  rect(5, 18, 5, 22, ',')
-  rect(19, 13, 29, 20, ',') // 장터 광장
-  set(20, 14, 'm')
-  set(28, 14, 'm')
-  set(30, 17, 'B') // 장터 벤치
-  roofed('child', 33, 13, 39, 17, 36) // 물 긷는 아이네
-  bed(18, [33, 34, 38, 39])
-  rect(36, 18, 36, 22, ',')
-  // 올리브 숲은 작게 두 줄 (남은 땅은 편지 나르는 이웃 집에)
-  for (const y of [13, 15]) for (const x of [41, 43, 45]) set(x + (y % 4 === 1 ? 0 : 1), y, 'o')
+  // 북쪽 풀밭: 집 칸 양 끝마다 나무 한 그루, 큰길 어귀에 나무 한 쌍, 언덕 벤치
+  for (const x of [2, 8, 33, 39]) set(x, 10, 'T')
+  set(22, 10, 'T')
+  set(27, 10, 'T')
+  set(14, 10, 'B') // 언덕 벤치
+  set(16, 10, 'T')
 
-  // ── 남쪽: 양 우리, 보리밭, 베 짜는 집, 대장간, 기름틀, 벌 치는 집 ──
-  rect(2, 25, 8, 30, 'x')
-  rect(3, 26, 7, 29, '.')
-  set(5, 25, ',')
+  // ── 가운데 위 (문이 가로 큰길에 바로 닿는다): 빵집 · 사랑방 · 아이네 · 올리브 숲 ──
+  roofed('baker', 2, 12, 8, 16, 5) // 빵 굽는 이웃
+  set(1, 16, 'O') // 바깥 화덕 (빵집 서쪽 벽 곁, 큰길 어귀)
+  roofed('hall', HALL_RECT.x0, HALL_RECT.y0, HALL_RECT.x1, HALL_RECT.y1, HALL_DOOR.x) // 마을 사랑방
+  roofed('child', 33, 12, 39, 16, 36) // 물 긷는 아이네
+  for (const [x, y] of [[42, 11], [44, 11], [46, 11], [41, 13], [43, 13], [45, 13], [42, 15], [44, 15], [46, 15]]) set(x, y, 'o')
+
+  // ── 가운데 아래 (앞마당 24줄, 문이 남쪽 골목에): 목수 · 편지 나르는 이웃 · 베 짜는 집 · 대장간 마당 ──
+  roofed('carpenter', 2, 19, 8, 23, 5) // 제본 골목의 목수
   set(5, 24, ',')
-  rect(10, 25, 14, 26, 'y') // 보리밭 (작게, 어부 집 위로 한 줄 띄움)
-  roofed('weaver', 26, 24, 30, 28, 28) // 베 짜는 이웃
-  bed(29, [26, 27, 29, 30])
-  rect(28, 29, 28, 31, ',')
-  // 모루와 기름틀은 큰길에서 이어지는 흙마당 위에 (풀밭 한가운데 흙 한 칸만 뜨지 않게)
-  rect(32, 24, 34, 26, ',')
-  rect(36, 24, 39, 26, ',')
-  set(33, 25, 'A') // 모루
-  set(38, 25, 'P') // 기름틀
-  for (let x = 34; x <= 38; x += 2) set(x, 28, 'o')
-  roofed('beekeeper', 39, 27, 45, 31, 42) // 벌 치는 이웃
+  yard(2, 8, 24)
+  roofed('postman', 10, 19, 16, 23, 13) // 편지 나르는 이웃
+  set(13, 24, ',')
+  yard(10, 16, 24)
+  roofed('weaver', 33, 19, 39, 23, 36) // 베 짜는 이웃
+  set(36, 24, ',')
+  yard(33, 39, 24)
+  rect(41, 19, 46, 23, ',') // 대장간 마당 (흙마당)
+  set(42, 21, 'A') // 모루
+  set(45, 21, 'P') // 기름틀
 
-  // ── 새 이웃 (계획 2) ──
-  // 집 사이가 빽빽하지 않게: 편지 나르는 이웃은 올리브 숲을 줄인 동쪽, 목수는 빵집과 떨어진 가운데
-  // 두 집 다 문이 큰길(23줄)에 바로 닿는다
-  roofed('postman', 41, 18, 45, 22, 43) // 편지 나르는 이웃 (아이네 집과 한 칸 띄워 40열로 지나간다)
-  roofed('carpenter', 11, 18, 17, 22, 14) // 제본 골목의 목수
-  roofed('apothecary', 17, 24, 23, 28, 20) // 약방 (예전 주막 자리)
-  rect(20, 29, 20, 31, ',')
-  roofed('fisher', 10, 28, 14, 31, 12) // 어부 (호숫가 길 위, 약방과 두 칸 띄움)
-
-  // ── 모이는 곳과 둘이 가는 곳 (계획 10) — 집을 옮기지 않고 큰길·호숫가 길 바로 위 빈 풀밭에 ──
-  // 마을 사랑방: 내 집 오른쪽 텃밭 아래, 문이 큰길에 바로 닿는다 (저녁에 이웃이 모여 논다)
-  roofed('hall', HALL_RECT.x0, HALL_RECT.y0, HALL_RECT.x1, HALL_RECT.y1, HALL_DOOR.x)
-  // 정원 찻집: 서고 길과 할아버지 집 사이 작은 집 (차 한 잔 쉬기, 둘이 가는 곳)
-  roofed('teahouse', TEA_RECT.x0, TEA_RECT.y0, TEA_RECT.x1, TEA_RECT.y1, TEA_DOOR.x)
-  // 호숫가 정자: 호숫가 길 위 풀밭, 지붕만 있는 정자 안 벤치 (노을 보기) — 지붕·기둥은 decor 그림
-  set(PAVILION_SEAT.x, PAVILION_SEAT.y, 'B')
-  // 들 약초 (약방이 사 준다): 마을 가장자리 풀밭 네 군데
+  // ── 남쪽 호숫가 줄 (문이 호숫가 길에 바로 닿는다): 양 우리·보리밭·정자 · 찻집 · 나루 · 어부 · 약방 · 벌 치는 집 ──
+  rect(2, 26, 8, 30, 'x')
+  rect(3, 27, 7, 29, '.')
+  set(5, 26, ',') // 우리 문 (남쪽 골목에서)
+  rect(11, 27, 15, 29, 'y') // 보리밭
+  set(PAVILION_SEAT.x, PAVILION_SEAT.y, 'B') // 호숫가 정자 벤치 (지붕·기둥은 decor 그림)
+  roofed('teahouse', TEA_RECT.x0, TEA_RECT.y0, TEA_RECT.x1, TEA_RECT.y1, TEA_DOOR.x) // 정원 찻집
+  roofed('fisher', 27, 28, 31, 31, 29) // 어부
+  roofed('apothecary', 33, 27, 39, 31, 36) // 약방
+  roofed('beekeeper', 41, 28, 45, 31, 43) // 벌 치는 이웃 (작은 집, 벌통은 decor 그림)
+  // 들 약초 (약방이 사 준다): 마을 가장자리 풀밭
   for (const t of WILD_HERBS) set(t.x, t.y, 'j')
 
   // ── 호숫가: 모래길, 갈대, 나루와 고깃배 ──
@@ -511,13 +534,6 @@ function build(): string[] {
   for (let x = 36; x <= 40; x++) set(x, 33, 'r')
   rect(24, 33, 24, 35, '=')
   set(25, 35, 'u')
-
-  // 나무는 벤치 곁 그늘에만 (길 가운데 흩어 두면 걷는 데 걸린다)
-  for (const [x, y] of [
-    [11, 13], [16, 16], // 언덕 벤치
-    [31, 13], [32, 20], // 장터 벤치
-  ])
-    set(x, y, 'T')
 
   // ── 이웃집 안, 내 집 안, 그리고 내 집 다락 (다락은 사다리로만 오르므로 늘 지어 둔다) ──
   for (const room of [...ROOMS, ATTIC, HOME_ROOM]) {
@@ -582,9 +598,10 @@ export interface Zone {
   y1: number
 }
 export const ZONES: readonly Zone[] = [
-  { id: 'vineyard', books: 1, x0: 39, y0: 1, x1: 46, y1: 9 },
-  { id: 'dock', books: 2, x0: 21, y0: 31, x1: 26, y1: 35 },
-  { id: 'hives', books: 3, x0: 34, y0: 28, x1: 46, y1: 32 },
+  { id: 'vineyard', books: 1, x0: 41, y0: 1, x1: 46, y1: 9 },
+  // 나루는 잔교만 — 호숫가 길은 처음부터 끝까지 걸을 수 있다
+  { id: 'dock', books: 2, x0: 23, y0: 33, x1: 26, y1: 35 },
+  { id: 'hives', books: 3, x0: 41, y0: 26, x1: 46, y1: 31 },
 ]
 // 대장간은 처음부터 열려 있다 — 첫날부터 대장장이를 도와 그을음(→ 잉크)을 얻어야 첫 장을 엮을 수 있다
 
@@ -666,16 +683,17 @@ export const PLACES: Record<PlaceId, Place> = {
   hearth: { tiles: [home(4, 1)], stand: HEARTH_STAND },
   shelf: { tiles: [home(7, 1)], stand: home(7, 2) },
   workbench: { tiles: [home(7, 3)], stand: home(6, 3) },
-  well: { tiles: [{ x: 17, y: 12 }], stand: { x: 17, y: 13 } },
-  hill: { tiles: [{ x: 14, y: 13 }], stand: { x: 14, y: 14 } },
-  bench: { tiles: [{ x: 30, y: 17 }], stand: { x: 29, y: 17 } },
+  // 광장 위쪽 마을 우물
+  well: { tiles: [{ x: 24, y: 14 }], stand: { x: 24, y: 15 } },
+  hill: { tiles: [{ x: 14, y: 10 }], stand: { x: 14, y: 11 } },
+  bench: { tiles: [{ x: 29, y: 21 }], stand: { x: 28, y: 21 } },
   // 저녁 초대를 받는 이웃집 문 (빵집·아이네·할아버지 집)
-  house: { tiles: [{ x: 5, y: 17 }, { x: 36, y: 17 }, { x: 35, y: 5 }] },
+  house: { tiles: [{ x: 5, y: 16 }, { x: 36, y: 16 }, { x: 36, y: 7 }] },
   reeds: { tiles: tilesOf('r') },
   vine: { tiles: tilesOf('v') },
   olive: { tiles: tilesOf('o') },
-  press: { tiles: [{ x: 38, y: 25 }], stand: { x: 37, y: 25 } },
-  anvil: { tiles: [{ x: 33, y: 25 }], stand: { x: 33, y: 26 } },
+  press: { tiles: [{ x: 45, y: 21 }], stand: { x: 44, y: 21 } },
+  anvil: { tiles: [{ x: 42, y: 21 }], stand: { x: 42, y: 22 } },
   field: { tiles: tilesOf('y') },
   // 서고 안 복음서 선반 (문은 걸어 들어가는 문)
   library: { tiles: [{ x: 35, y: 50 }, { x: 36, y: 50 }, { x: 37, y: 50 }], stand: { x: 36, y: 51 } },

@@ -764,9 +764,9 @@ describe('언덕 모임 자리 (소풍·별 보는 밤)', () => {
   it('새 언덕 벤치 곁에 서면 모임 장면이 나오고, 옛 자리(15,3)에서는 나오지 않는다', () => {
     expect(inGathering('picnic', 12 * 60, PLACES.hill.stand!)).toBe(true)
     expect(inGathering('picnic', 12 * 60, { x: 15, y: 3 })).toBe(false)
-    expect(on('picnic', 12 * 60, 14, 14)).toBe(true)
+    expect(on('picnic', 12 * 60, 14, 11)).toBe(true)
     expect(on('picnic', 12 * 60, 15, 3)).toBe(false)
-    expect(on('starNight', 20 * 60 + 30, 15, 14)).toBe(true)
+    expect(on('starNight', 20 * 60 + 30, 15, 11)).toBe(true)
     expect(on('starNight', 20 * 60 + 30, 15, 3)).toBe(false)
   })
   it('모임 자리는 이웃이 모이는 자리를 모두 품는다', () => {
@@ -784,7 +784,7 @@ describe('옛 저장에서 갇히지 않기', () => {
     return deserialize(JSON.stringify({ ...JSON.parse(serializeForTest(s)), player: { ...s.player, x, y }, companion }), CONTENT)!
   }
   it('지금은 집 안인 칸에 서 있던 저장은 집 앞으로 옮긴다', () => {
-    for (const [x, y] of [[42, 20], [11, 19], [39, 28]]) {
+    for (const [x, y] of [[3, 13], [11, 20], [36, 28]]) {
       const back = load(x, y)
       expect({ x: back.player.x, y: back.player.y }).toEqual(HOME_FRONT)
       expect(back.player.path).toEqual([])
@@ -795,7 +795,7 @@ describe('옛 저장에서 갇히지 않기', () => {
     expect({ x: back.player.x, y: back.player.y }).toEqual({ x: 20, y: 10 })
   })
   it('갇힌 동반 동물은 기록자 곁으로 옮긴다', () => {
-    const c = { kind: 'cat', name: '나비', since: 1, x: 42, y: 20, path: [], facing: 'down', walkTime: 0 }
+    const c = { kind: 'cat', name: '나비', since: 1, x: 3, y: 13, path: [], facing: 'down', walkTime: 0 }
     const back = load(20, 10, c)
     expect(Math.abs(back.companion!.x - 20) + Math.abs(back.companion!.y - 10)).toBe(1)
   })

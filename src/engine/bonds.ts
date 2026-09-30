@@ -62,14 +62,14 @@ export const INVITE_HEARTS = 7
 export const VISIT_FROM = 7 * 60
 export const VISIT_TO = 9 * 60 + 30
 /** 아침에 들르는 이웃이 서는 곳 — 내 집 문 앞 길 왼쪽 */
-export const VISIT_SPOT: Tile = { x: 9, y: 8 }
+export const VISIT_SPOT: Tile = { x: 4, y: 8 }
 export const INVITE_FROM = 18 * 60
 export const INVITE_TO = 20 * 60 + 30
 /** 저녁에 초대하는 이웃과 그 집 문 */
 export const INVITE_DOORS: Record<string, Tile> = {
-  baker: { x: 5, y: 17 },
-  child: { x: 36, y: 17 },
-  grandpa: { x: 35, y: 5 },
+  baker: { x: 5, y: 16 },
+  child: { x: 36, y: 16 },
+  grandpa: { x: 36, y: 7 },
 }
 export const VISIT_GIFTS: Record<string, Items> = {
   baker: { bread: 2 },
@@ -121,7 +121,7 @@ export const JOINS_AT: Record<string, number> = { weaver: 2, beekeeper: 4 }
 // ── D. 이웃끼리 ──
 
 export const FRIENDS_HEARTS = 5
-export const FRIENDS_SPOT: Tile = { x: 4, y: 18 }
+export const FRIENDS_SPOT: Tile = { x: 10, y: 26 }
 export const FRIENDS_FROM = 14 * 60
 export const FRIENDS_TO = 16 * 60
 export const BABY_PARTY_DAY = 22
@@ -134,31 +134,31 @@ export const STARS_TO = 22 * 60
 
 /** 모임 자리 (빵집 앞 아기 잔치 / 언덕 소풍·별 보기) */
 export const BABY_PARTY_SPOTS: Record<string, Tile> = {
-  baker: { x: 5, y: 19 },
-  child: { x: 4, y: 19 },
+  baker: { x: 5, y: 17 },
+  child: { x: 4, y: 17 },
   grandpa: { x: 7, y: 18 },
-  smith: { x: 3, y: 20 },
-  presser: { x: 2, y: 19 },
-  weaver: { x: 5, y: 20 },
-  beekeeper: { x: 4, y: 21 },
-  postman: { x: 6, y: 18 },
-  apothecary: { x: 3, y: 21 },
-  fisher: { x: 5, y: 21 },
-  carpenter: { x: 2, y: 20 },
+  smith: { x: 3, y: 18 },
+  presser: { x: 2, y: 17 },
+  weaver: { x: 5, y: 18 },
+  beekeeper: { x: 4, y: 18 },
+  postman: { x: 6, y: 17 },
+  apothecary: { x: 3, y: 17 },
+  fisher: { x: 6, y: 18 },
+  carpenter: { x: 2, y: 18 },
 }
 export const HILL_SPOTS: Record<string, Tile> = {
-  baker: { x: 13, y: 14 },
-  child: { x: 15, y: 14 },
-  grandpa: { x: 16, y: 13 },
-  smith: { x: 17, y: 15 },
-  shepherd: { x: 14, y: 12 },
-  presser: { x: 17, y: 14 },
-  weaver: { x: 13, y: 15 },
-  beekeeper: { x: 16, y: 15 },
-  postman: { x: 15, y: 15 },
-  apothecary: { x: 12, y: 14 },
-  fisher: { x: 15, y: 12 },
-  carpenter: { x: 12, y: 13 },
+  baker: { x: 13, y: 11 },
+  child: { x: 15, y: 11 },
+  grandpa: { x: 17, y: 10 },
+  smith: { x: 17, y: 11 },
+  shepherd: { x: 12, y: 10 },
+  presser: { x: 16, y: 11 },
+  weaver: { x: 12, y: 11 },
+  beekeeper: { x: 11, y: 11 },
+  postman: { x: 10, y: 11 },
+  apothecary: { x: 11, y: 10 },
+  fisher: { x: 13, y: 10 },
+  carpenter: { x: 10, y: 10 },
 }
 
 export type Gathering = 'babyParty' | 'picnic' | 'starNight'

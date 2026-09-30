@@ -3,7 +3,7 @@ import { unlocked } from '../engine/bonds'
 import { roomOpen } from '../engine/books'
 import { mailboxHasPost, type GameState } from '../engine/game'
 import { GARDEN_TILES, isRipe } from '../engine/garden'
-import { houseAt, PAVILION_RECT, PLACES, TILE } from '../engine/world'
+import { houseAt, PAVILION_RECT, PLACES, TILE, tileAt } from '../engine/world'
 import type { Tile, Weather } from '../engine/types'
 
 type Ctx = CanvasRenderingContext2D
@@ -52,13 +52,13 @@ function tree(g: Ctx, t: Tile) {
 const onGardenPlot = (t: Tile) => GARDEN_TILES.some((p) => p.x === t.x && p.y === t.y)
 
 export const LANTERNS: readonly Tile[] = [
-  { x: 5, y: 9 },
-  { x: 11, y: 9 },
+  { x: 3, y: 8 },
+  { x: 12, y: 8 },
   { x: 23, y: 11 },
-  { x: 18, y: 13 },
-  { x: 30, y: 13 },
-  { x: 18, y: 21 },
-  { x: 30, y: 21 },
+  { x: 19, y: 12 },
+  { x: 30, y: 12 },
+  { x: 19, y: 23 },
+  { x: 30, y: 23 },
   { x: 23, y: 31 },
 ]
 
@@ -101,7 +101,7 @@ function ship(g: Ctx, t: number) {
  * 언덕 벤치(14,13) 왼쪽 곁 빈 풀 한 칸의 작은 나무 편지함 (계획 9 작업 2).
  * 편지 나르는 이웃이 해 질 녘에 요한계시록 장을 넣어 두고, 맑은 밤 별 보기로 꺼낸다. 그림만 — 길을 막지 않는다
  */
-export const HILL_MAILBOX: Tile = { x: 13, y: 13 }
+export const HILL_MAILBOX: Tile = { x: 15, y: 10 }
 
 /** 편지함이 보이는 자리: 요한계시록 방이 열린 뒤부터 */
 export function hillMailbox(game: Pick<GameState, 'flags'>): Tile | null {
@@ -125,8 +125,8 @@ function mailbox(g: Ctx, t: Tile, empty = false) {
  * 편해지는 살림 (계획 11 작업 1): 집 앞 빗물 항아리(문 앞 편지 바구니 오른쪽), 집 오른쪽 볕 드는 풀밭의 갈대 말리는 틀.
  * 집 왼쪽 땅(HOUSE_GROW)은 집 넓히기 자리라 비워 둔다. 그림일 뿐 — 길을 막지 않는다
  */
-export const RAIN_JAR_AT: Tile = { x: 12, y: 8 }
-export const REED_RACK_AT: Tile = { x: 13, y: 6 }
+export const RAIN_JAR_AT: Tile = { x: 7, y: 8 }
+export const REED_RACK_AT: Tile = { x: 8, y: 6 }
 
 /** 빗물 항아리: 넓은 입의 테라코타 항아리, 입 안에 물빛 (선은 모두 2픽셀 이상) */
 function rainJar(g: Ctx, t: Tile) {
@@ -187,16 +187,17 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
 
   // C1 꽃길: 큰길 가장자리
   if (level >= 1)
-    [2, 4, 8, 13, 17, 21, 27, 32, 38].forEach((x, i) => {
-      const top = { x, y: 9 }
-      // 텃밭과 큰길 가 건물(사랑방·찻집) 앞벽에는 심지 않는다
-      if (!onGardenPlot(top) && !houseAt(top.x, top.y)) flowers(g, top, i)
-      flowers(g, { x, y: 11 }, i + 3)
+    [3, 11, 15, 19, 21, 29, 31, 35, 37].forEach((x, i) => {
+      // 북쪽 골목 양옆 풀밭에만 (앞마당·풀밭 줄, 집·나무·텃밭은 비켜서)
+      for (const [y, k] of [[8, i], [11, i + 3]] as const) {
+        const at = { x, y }
+        if (tileAt(x, y) === '.' && !onGardenPlot(at) && !houseAt(x, y)) flowers(g, at, k)
+      }
     })
   // C3 호숫가 쉼터
   if (level >= 3) {
-    bench(g, { x: 19, y: 31 })
-    bench(g, { x: 21, y: 31 })
+    bench(g, { x: 16, y: 31 })
+    bench(g, { x: 17, y: 31 })
     px(g, 30, 34, 2, 5, 12, 5, WOOD) // 작은 배
     px(g, 30, 34, 4, 4, 8, 1, WOOD_DARK)
   }
@@ -214,20 +215,20 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
   if (unlocked(f, 'homeMailbox')) mailbox(g, PLACES.mailbox.tiles[0], !mailboxHasPost(game))
   // C2 베 짜는 이웃의 베틀
   if (level >= 2) {
-    const loom = { x: 30, y: 29 }
+    const loom = { x: 38, y: 24 }
     px(g, loom.x, loom.y, 2, 3, 2, 11, WOOD_DARK)
     px(g, loom.x, loom.y, 12, 3, 2, 11, WOOD_DARK)
     px(g, loom.x, loom.y, 2, 3, 12, 2, WOOD)
     for (let i = 0; i < 5; i++) px(g, loom.x, loom.y, 4 + i * 2, 5, 1, 7, ['#9f6154', '#cfbf89', '#698eaa', '#7a5d97', '#f1e6cf'][i])
-    if (unlocked(f, 'loomAwning')) awning(g, { x: 29, y: 29 }, 2, '#7a5d97', '#f1e6cf')
+    if (unlocked(f, 'loomAwning')) awning(g, { x: 37, y: 24 }, 2, '#7a5d97', '#f1e6cf')
   }
   // C4 벌통
   if (level >= 4) {
     const hives: Tile[] = [
-      { x: 36, y: 30 },
-      { x: 37, y: 30 },
+      { x: 41, y: 26 },
+      { x: 42, y: 26 },
     ]
-    if (unlocked(f, 'moreHives')) hives.push({ x: 36, y: 31 }, { x: 37, y: 31 })
+    if (unlocked(f, 'moreHives')) hives.push({ x: 44, y: 26 }, { x: 45, y: 26 })
     hives.forEach((h) => hive(g, h))
     if (daytime && weather !== 'rain' && weather !== 'snow')
       for (let i = 0; i < hives.length * 2; i++) {
@@ -237,15 +238,15 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
   }
 
   // A 부탁을 들어준 뒤 생긴 것들
-  if (unlocked(f, 'bakeryBench')) bench(g, { x: 3, y: 18 })
+  if (unlocked(f, 'bakeryBench')) bench(g, { x: 1, y: 13 })
   if (unlocked(f, 'childGarden')) {
-    flowers(g, { x: 33, y: 18 }, 1)
-    flowers(g, { x: 34, y: 18 }, 2)
-    flowers(g, { x: 38, y: 18 }, 3)
+    flowers(g, { x: 32, y: 13 }, 1)
+    flowers(g, { x: 32, y: 14 }, 2)
+    flowers(g, { x: 32, y: 15 }, 3)
   }
   if (unlocked(f, 'grapeTrellis')) {
     // 반듯하게 다시 세운 포도 시렁: 기둥 둘 + 가로대 + 덩굴
-    for (const x of [40, 41, 42]) {
+    for (const x of [41, 42, 43]) {
       px(g, x, 9, 2, 2, 2, 12, WOOD)
       px(g, x, 9, 12, 2, 2, 12, WOOD)
       px(g, x, 9, 0, 1, 16, 2, WOOD)
@@ -253,19 +254,19 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
       px(g, x, 9, 6, 3, 3, 3, '#784d89')
     }
   }
-  if (unlocked(f, 'grandpaBench')) bench(g, { x: 37, y: 6 })
-  if (unlocked(f, 'stallAwning')) awning(g, { x: 19, y: 14 }, 3, '#698eaa', '#d8c587')
+  if (unlocked(f, 'grandpaBench')) bench(g, { x: 31, y: 8 })
+  if (unlocked(f, 'stallAwning')) awning(g, { x: 19, y: 13 }, 3, '#698eaa', '#d8c587')
   if (unlocked(f, 'pressHandle')) {
-    px(g, 38, 25, 7, -3, 2, 5, WOOD_DARK)
-    px(g, 38, 25, 3, -4, 10, 2, WOOD)
+    px(g, 45, 21, 7, -3, 2, 5, WOOD_DARK)
+    px(g, 45, 21, 3, -4, 10, 2, WOOD)
   }
   if (unlocked(f, 'oliveGrove')) {
-    tree(g, { x: 37, y: 27 })
-    tree(g, { x: 41, y: 26 })
+    tree(g, { x: 41, y: 11 })
+    tree(g, { x: 45, y: 15 })
   }
   if (unlocked(f, 'bigBellows')) {
     // 대장간 지붕
-    for (let i = 0; i < 12; i++) px(g, 33, 24, i * 4 - 8, 1, 4, 4, i % 2 ? '#81483d' : '#9f6154')
+    for (let i = 0; i < 12; i++) px(g, 42, 20, i * 4 - 8, 1, 4, 4, i % 2 ? '#81483d' : '#9f6154')
   }
   if (unlocked(f, 'lanterns'))
     for (const l of LANTERNS) {

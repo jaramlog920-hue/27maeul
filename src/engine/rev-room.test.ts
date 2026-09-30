@@ -62,10 +62,10 @@ function revOpen(): GameState {
 afterEach(() => setOpenDoors([]))
 
 describe('요한계시록 방 자리', () => {
-  it('16–26열 × 70–77줄 (11×8), 지도 높이는 80 그대로이고 78–79줄은 빈 곳', () => {
+  it('16–26열 × 70–77줄 (11×8), 78–79줄은 빈 곳 (지도 높이는 계획 14에서 90)', () => {
     expect([REV_ROOM.x0, REV_ROOM.y0, REV_ROOM.w, REV_ROOM.h]).toEqual([16, 70, 11, 8])
     expect(REV_ROOM.owner).toBe('rev')
-    expect(HEIGHT).toBe(80)
+    expect(HEIGHT).toBe(90)
     expect(MAP).toHaveLength(HEIGHT)
     for (const row of MAP) expect(row).toHaveLength(WIDTH)
     for (const y of [78, 79]) for (let x = 0; x < WIDTH; x++) expect(isWalkable({ x, y }), `${x},${y}`).toBe(false)

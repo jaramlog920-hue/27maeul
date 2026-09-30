@@ -15,32 +15,32 @@ export const MAX_HEART = 10
 
 /** 행사 날 저녁, 장터 모닥불 둘레 */
 export const FESTIVAL_SPOTS: Record<string, Tile> = {
-  baker: { x: 22, y: 16 },
-  child: { x: 24, y: 15 },
-  grandpa: { x: 26, y: 16 },
-  smith: { x: 22, y: 18 },
-  shepherd: { x: 26, y: 18 },
-  presser: { x: 25, y: 19 },
-  merchant: { x: 23, y: 19 },
-  weaver: { x: 21, y: 17 },
-  beekeeper: { x: 27, y: 17 },
-  postman: { x: 20, y: 15 },
-  apothecary: { x: 23, y: 14 },
-  fisher: { x: 28, y: 15 },
-  carpenter: { x: 20, y: 19 },
+  baker: { x: 22, y: 19 },
+  child: { x: 24, y: 18 },
+  grandpa: { x: 26, y: 19 },
+  smith: { x: 22, y: 21 },
+  shepherd: { x: 26, y: 21 },
+  presser: { x: 25, y: 22 },
+  merchant: { x: 23, y: 22 },
+  weaver: { x: 21, y: 20 },
+  beekeeper: { x: 27, y: 20 },
+  postman: { x: 20, y: 18 },
+  apothecary: { x: 23, y: 17 },
+  fisher: { x: 28, y: 18 },
+  carpenter: { x: 20, y: 22 },
   // 연애 후보 열 (계획 6): 바깥 둘레
-  wendell: { x: 19, y: 17 },
-  cosmo: { x: 29, y: 17 },
-  rudy: { x: 21, y: 20 },
-  dexter: { x: 27, y: 20 },
-  basil: { x: 25, y: 13 },
-  marigold: { x: 22, y: 13 },
-  penelope: { x: 29, y: 19 },
-  tilly: { x: 19, y: 19 },
-  juniper: { x: 28, y: 19 },
-  poppy: { x: 26, y: 14 },
+  wendell: { x: 19, y: 20 },
+  cosmo: { x: 29, y: 20 },
+  rudy: { x: 21, y: 23 },
+  dexter: { x: 27, y: 23 },
+  basil: { x: 25, y: 16 },
+  marigold: { x: 22, y: 16 },
+  penelope: { x: 29, y: 22 },
+  tilly: { x: 19, y: 22 },
+  juniper: { x: 28, y: 22 },
+  poppy: { x: 26, y: 17 },
 }
-export const FIRE: Tile = { x: 24, y: 17 }
+export const FIRE: Tile = { x: 24, y: 20 }
 
 export interface GoalContext {
   minute: number

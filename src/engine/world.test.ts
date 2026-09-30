@@ -34,15 +34,15 @@ describe('world', () => {
   it('placeAt·집 안', () => {
     expect(placeAt({ x: HOME_ROOM.x0 + 1, y: HOME_ROOM.y0 + 3 })).toBe('desk')
     expect(placeAt({ x: 6, y: 33 })).toBe('reeds')
-    expect(placeAt({ x: 12, y: 26 })).toBe('field')
+    expect(placeAt({ x: 12, y: 28 })).toBe('field')
     expect(placeAt({ x: 36, y: 50 })).toBe('library')
     expect(placeAt({ x: HOME_DOOR.x + 1, y: HOME_DOOR.y + 1 })).toBe('basket')
     expect(placeAt(START)).toBeNull()
     expect(isHome(START)).toBe(true)
     expect(isHome({ x: 5, y: 12 })).toBe(false)
-    // 예전 집 자리(지도 위 2~10열)는 이제 풀밭
+    // 지도 위 집의 지붕 칸은 집 안이 아니다 (집 안은 지도 아래 방)
     expect(isHome({ x: 5, y: 5 })).toBe(false)
-    expect(tileAt(5, 5)).toBe('.')
+    expect(tileAt(17, 4)).toBe('.')
     expect(tileAt(-1, 3)).toBe('T')
   })
   it('카메라는 지도 밖을 보여 주지 않는다', () => {
@@ -56,11 +56,12 @@ describe('world', () => {
   })
 
   it('새 이웃 집 넷은 문 앞이 걸을 수 있는 길과 이어진다', () => {
-    for (const [id, door] of [['postman', { x: 43, y: 22 }], ['carpenter', { x: 14, y: 22 }], ['apothecary', { x: 20, y: 28 }], ['fisher', { x: 12, y: 31 }]] as const) {
-      expect(HOUSES.some((h) => h.id === id), id).toBe(true)
-      expect(isWalkable({ x: door.x, y: door.y + 1 }), id).toBe(true)
+    for (const [id, door] of [['postman', { x: 13, y: 23 }], ['carpenter', { x: 5, y: 23 }], ['apothecary', { x: 36, y: 31 }], ['fisher', { x: 29, y: 31 }]] as const) {
+      expect(HOUSES.some((h) => h.id === id && h.doorX === door.x && h.y1 === door.y), id).toBe(true)
+      expect(tileAt(door.x, door.y + 1), id).toBe(',')
     }
-    expect(PLACES.field.tiles.length).toBe(10)
+    // 보리밭은 집 한 채만 한 크기 (계획 14)
+    expect(PLACES.field.tiles.length).toBe(15)
   })
 
   it('물 긷는 아이네 집과 편지 나르는 이웃 집 사이(40열)로 지나갈 수 있다', () => {
@@ -74,7 +75,9 @@ describe('world', () => {
 
 describe('이웃집 안', () => {
   it('집마다 방이 있고, 문 ↔ 방 안이 서로 이어진다', () => {
-    expect(ROOMS.map((r) => r.owner)).toEqual(['baker', 'child', 'grandpa', 'weaver', 'beekeeper', 'library', 'acts', 'letters', 'hebJud', 'rev', 'hall', 'teahouse'])
+    expect(ROOMS.map((r) => r.owner)).toEqual(['baker', 'child', 'grandpa', 'weaver', 'beekeeper', 'library', 'acts', 'letters', 'hebJud', 'rev', 'hall', 'teahouse', 'carpenter', 'postman', 'apothecary', 'fisher'])
+    // 마을의 집은 모두 들어갈 수 있다 (계획 14)
+    for (const h of HOUSES) expect(ROOMS.some((r) => r.owner === h.id && r.door.x === h.doorX && r.door.y === h.y1), h.id).toBe(true)
     // 서고 방(사도행전·로마서–빌레몬서·히브리서–유다서·요한계시록)은 서고 안 잠긴 문에서 드나든다 (아래와 letters-room·hebjud-room·rev-room.test에서 따로)
     for (const r of ROOMS.filter((r) => !['acts', 'letters', 'hebJud', 'rev'].includes(r.owner))) {
       expect(tileAt(r.door.x, r.door.y), r.owner).toBe(r.owner === 'library' ? 'L' : 'D')
@@ -133,16 +136,16 @@ describe('내 집 (계획 7-1 작업 5)', () => {
   })
   it('텃밭은 그대로, 집 옆 가까이에 있다', () => {
     expect(PLACES.garden.tiles).toHaveLength(12)
-    for (const t of PLACES.garden.tiles) expect(t.x >= 14 && t.x <= 17 && t.y >= 3 && t.y <= 5).toBe(true)
-    // 집은 왼쪽으로만 넓어지므로 넓힌 뒤에도 집(12열)과 텃밭(14열) 사이 13열은 풀밭
-    expect(Math.min(...PLACES.garden.tiles.map((t) => t.x))).toBe(HOUSE_RECT.x1 + 2)
+    for (const t of PLACES.garden.tiles) expect(t.x >= 11 && t.x <= 14 && t.y >= 4 && t.y <= 6).toBe(true)
+    // 집은 왼쪽으로만 넓어지므로 넓힌 뒤에도 집(7열)과 텃밭(11열) 사이는 풀밭과 골목
+    expect(Math.min(...PLACES.garden.tiles.map((t) => t.x))).toBe(HOUSE_RECT.x1 + 4)
     setHomeLevel(1)
     expect(homeHouse().x1).toBe(HOUSE_RECT.x1)
     for (let y = HOUSE_RECT.y0; y <= HOUSE_RECT.y1; y++) expect(tileAt(HOUSE_RECT.x1 + 1, y)).toBe('.')
   })
-  it('예전 집 자리는 풀밭 (나무를 흩어 두지 않는다)', () => {
-    for (let y = 2; y <= 7; y++)
-      for (let x = 2; x <= 7; x++) expect(tileAt(x, y), `${x},${y}`).toBe('.')
+  it('집 넓히기 땅(집 왼쪽 두 줄)은 풀밭 (나무를 흩어 두지 않는다)', () => {
+    for (let y = HOUSE_GROW.y0; y <= HOUSE_GROW.y1; y++)
+      for (let x = HOUSE_GROW.x0; x <= HOUSE_GROW.x1; x++) expect(tileAt(x, y), `${x},${y}`).toBe('.')
   })
   it('문을 밟으면 집 안 방으로, 문깔개를 밟으면 문 앞으로', () => {
     expect(WARPS.get(key(HOME_DOOR))).toEqual(HOME_ENTRY)
