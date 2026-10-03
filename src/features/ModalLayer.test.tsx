@@ -554,6 +554,28 @@ describe('벤치', () => {
   })
 })
 
+describe('자리마다 제 창이 열린다', () => {
+  // 집 앞 벤치(homeBench)를 더하면서 화덕·작업대·기름틀·언덕이 모두 "장터 벤치" 창을 열던 일 (2026-10-01)
+  it.each([
+    ['hearth', 'hearth'],
+    ['workbench', 'workbench'],
+    ['press', 'press'],
+    ['hill', 'hill'],
+    ['bench', 'bench'],
+    ['homeBench', 'homeBench'],
+  ] as const)('%s를 누르면 %s 창', (id, menu) => {
+    reset({})
+    const g = useGame.getState().game
+    const tile = PLACES[id].tiles[0]
+    useGame.setState({ modal: null, game: { ...g, player: { ...g.player, x: tile.x, y: tile.y + 1, path: [] } } })
+    act(() => useGame.getState().tap(tile))
+    act(() => {
+      for (let i = 0; i < 400 && useGame.getState().modal === null; i++) useGame.getState().frame(0.05)
+    })
+    expect(useGame.getState().modal).toEqual({ kind: 'menu', place: menu })
+  })
+})
+
 describe('언덕 별 보기 (계획 9 작업 2)', () => {
   const clearDay = [...Array(60).keys()].map((d) => d + 1).find((d) => !isWet(weatherOf(d)) && weatherOf(d) !== 'fog')!
   const wetDay = [...Array(60).keys()].map((d) => d + 1).find((d) => isWet(weatherOf(d)))!

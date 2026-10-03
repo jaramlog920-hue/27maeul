@@ -578,7 +578,7 @@ export function partnerName(game: GameState): string {
 }
 
 /** 누르면 할 일 창이 뜨는 자리 */
-export type MenuPlace = 'hearth' | 'workbench' | 'press' | 'hill' | 'bench' | 'hallTable' | 'teaTable' | 'pavilion'
+export type MenuPlace = 'hearth' | 'workbench' | 'press' | 'hill' | 'bench' | 'homeBench' | 'hallTable' | 'teaTable' | 'pavilion'
 
 export const useGame = create<Store>((set, get) => {
   let warnedSaveFail = false
@@ -669,7 +669,6 @@ export const useGame = create<Store>((set, get) => {
       case 'press':
       case 'hill':
       case 'homeBench':
-        return { game, modal: { kind: 'menu', place: 'bench' } }
       case 'bench':
       case 'hallTable':
       case 'teaTable':
