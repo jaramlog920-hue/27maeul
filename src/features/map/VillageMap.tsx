@@ -1,8 +1,8 @@
 // 마을 지도 (설정 → 마을 지도): 마을 전체를 한 장으로 펼쳐 보인다. 장소 이름과 지금 내 자리
 import { useEffect, useRef } from 'react'
 import { neighborById } from '../../content/catalog'
-import { T } from '../../content/text'
-import { shelvedCount } from '../../engine/game'
+import { fill, T } from '../../content/text'
+import { closedHouseIds, shelvedCount } from '../../engine/game'
 import { housesNow, isHome, lockedZones, roomAt, TILE, VILLAGE_H, WIDTH, type House } from '../../engine/world'
 import { drawVillageMap } from '../../render/renderer'
 import { useGame } from '../../store/game-store'
@@ -59,6 +59,14 @@ export function VillageMap() {
   const at = isHome(here) ? { x: housesNow().find((h) => h.id === 'home')!.doorX, y: housesNow().find((h) => h.id === 'home')!.y1 } : inside ? inside.door : here.y < VILLAGE_H ? here : null
   const pct = (x: number, y: number) => ({ left: `${((x + 0.5) / WIDTH) * 100}%`, top: `${((y + 0.5) / VILLAGE_H) * 100}%` })
   const locked = lockedZones(shelvedCount(game))
+  // 아직 이사 오지 않은 이웃의 집(덤불로 덮인 집)도 언제 열리는지 적는다 — 서고 권수 또는 마을 단계
+  const closedHouses = housesNow().filter((h) => closedHouseIds(game).includes(h.id))
+  const opensAt = (id: string) => {
+    const d = neighborById(id)
+    if (d?.joinsAtBooks) return `${d.joinsAtBooks}권`
+    if (d?.joinsAt) return fill(T.ui.villageLevel, { n: d.joinsAt })
+    return null
+  }
   return (
     <div className="dialog village-map" role="dialog" aria-label="마을 지도">
       <h2>마을 지도</h2>
@@ -79,13 +87,21 @@ export function VillageMap() {
             🔒 {z.books}권
           </span>
         ))}
+        {closedHouses.map((h) => {
+          const when = opensAt(h.id)
+          return when ? (
+            <span key={`lock-${h.id}`} className="vmap-label locked" style={pct((h.x0 + h.x1) / 2, (h.y0 + h.y1) / 2 + 0.5)}>
+              🔒 {when}
+            </span>
+          ) : null
+        })}
         {at && (
           <span className="vmap-me" style={pct(at.x, at.y)} aria-label="지금 내 자리">
             ●
           </span>
         )}
       </div>
-      <p className="hint">● 지금 내 자리 · 🔒 서고에 책을 더 꽂으면 열리는 곳</p>
+      <p className="hint">● 지금 내 자리 · 🔒 서고에 책을 더 꽂거나(권) 이웃과 더 가까워지면(마을 단계) 열리는 곳</p>
       <div className="actions">
         <button onClick={closeModal}>{T.ui.close}</button>
       </div>
