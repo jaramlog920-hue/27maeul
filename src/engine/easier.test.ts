@@ -254,7 +254,7 @@ describe('재료 궤짝: 가방이 차면 궤짝으로, 책상·작업대는 궤
     // 궤짝이 없으면(표식이 없으면) 궤짝 칸의 것은 쓰지 않는다
     expect(canCraft({ ...s, flags: ready().flags }, 'papyrus')).toBe('needs')
   })
-  it('책상은 궤짝의 파피루스·잉크로 옮겨 적는다', () => {
+  it('옮겨 적기는 궤짝의 파피루스·잉크를 쓰지 않는다 (계획 14 — 필사에 재료 없음)', () => {
     const s0 = newGame(CONTENT)
     const open = own(
       {
@@ -270,7 +270,7 @@ describe('재료 궤짝: 가방이 차면 궤짝으로, 책상·작업대는 궤
     expect(letterReady(s, 'rom', 1, CONTENT)).toEqual({ kind: 'ready' })
     const r = recordLetter(s, 'rom', 1, answers('rom', 1), CONTENT)
     expect(r.progress.rom.completed).toEqual([1])
-    expect(r.chest).toEqual({ papyrus: 1, ink: 1 })
+    expect(r.chest).toEqual({ papyrus: 2, ink: 2 })
   })
   it('궤짝의 것은 집 안에서만 가방으로 꺼낸다', () => {
     const s = { ...own({ ...ready(), inv: { reed: 8 } }, 'supplyChest'), chest: { reed: 5, fig: 2 } }

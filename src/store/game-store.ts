@@ -4,6 +4,7 @@ import type { FullAvatar } from '../engine/avatar'
 import { create } from 'zustand'
 import { CONTENT, neighborById, copySourceFor, LETTER_OPENINGS, pieceById, pieceOfQuestion, piecesOf, quizSourceFor } from '../content/catalog'
 import { blanksFor } from '../engine/copy'
+import { acceptInput, copySpot } from '../engine/copying'
 import { currentChapter } from '../engine/offers'
 import { handEase, leveledUp, XP, type StatId } from '../engine/stats'
 import type { FixtureLine } from '../engine/fixtures'
@@ -99,6 +100,9 @@ import {
   chapterReady,
   letterReady,
   recordLetter,
+  startCopy,
+  writeVerse,
+  type VerseResult,
   readScripture,
   passTime,
   sell,
@@ -150,6 +154,11 @@ export type Modal =
   | { kind: 'myLine'; lineKey: string; back?: 'library' | 'shelf' | `room:${ShelfRoomId}` }
   /** copy: 편지 옮겨 적기의 고른 답 (창 상태로만 — 게임 저장에 남지 않는다) */
   | { kind: 'desk'; result: SubmitResult | null; dark: boolean; copy?: CopyPad }
+  /**
+   * 필사 책상 (계획 14 작업 1 — 작업 2에서 집중 화면으로 바뀐다): 집 책상을 누르면 이것이 열린다.
+   * picking: 다른 책 고르기, last: 방금 적은 절·마친 장 (창 상태로만)
+   */
+  | { kind: 'copy'; picking?: boolean; last?: VerseResult | null }
   /** attic: 다락 창가에서 연 자기 전 읽기 */
   | { kind: 'review'; pieceId: string | null; attic?: boolean }
   | { kind: 'journal' }
@@ -344,6 +353,12 @@ interface Store {
   pickBook: (book: Book) => void
   moveInDesk: (book: Book, chapter: number, index: number, delta: number) => void
   submitDesk: (book: Book, chapter: number) => void
+  /** 필사: 쓸 책을 고른다 (27권 어느 책이든) */
+  copyBook: (book: Book) => void
+  /** 필사: 입력이 바뀌었다 (pasted: 붙여넣기·끌어 놓기). 한 절을 다 맞게 쓰면 기록하고 다음 절로 */
+  copyType: (text: string, pasted?: boolean) => void
+  /** 필사: 다른 책 고르기 창을 열고 닫는다 */
+  copyPicking: (on: boolean) => void
   /** 편지 옮겨 적기: 칸 하나에 보기 하나 (맞으면 채우고, 틀리면 그 보기를 흐린다 — 불이익 없음) */
   copyPick: (blank: number, option: string) => void
   /** 세 칸을 다 채웠으면 옮겨 적는다 (recordLetter) */
@@ -660,9 +675,10 @@ export const useGame = create<Store>((set, get) => {
         // 다락 창가에서도 자기 전 읽기를 하고 잘 수 있다 (평안이 하루 더)
         return { game, modal: { kind: 'review', pieceId: reviewPick(game, rng), attic: true } }
       case 'desk': {
+        // 계획 14: 책상은 필사 책상 — 재료·조각·등잔 기름 없이도 쓴다 (예전 엮기·옮겨 적기 창으로 가는 길은 닫았다).
+        // 밤에 기름이 있으면 예전처럼 등잔을 켠다 (켠 기름은 바로 저장 — 다시 불러와 기름을 되찾지 못하게)
         const lit = lightLamp(game)
-        // 등잔 기름을 쓴 것은 바로 저장한다 (다시 불러와 기름을 되찾지 못하게)
-        return { game: lit ? persist(lit) : game, modal: { kind: 'desk', result: null, dark: lit === null } }
+        return { game: lit ? persist(lit) : game, modal: { kind: 'copy', picking: !game.copy.book } }
       }
       case 'hearth':
       case 'workbench':
@@ -1319,6 +1335,37 @@ export const useGame = create<Store>((set, get) => {
       sfx('scroll')
       const questions = buildQuiz(piecesOf(book), chapter, get().rng, quizSourceFor([book]))
       set({ modal: { kind: 'quiz', mode: { kind: 'chapter', book, chapter }, questions, index: 0, wrong: [], solved: false, misses: 0, missed: [] } })
+    },
+    copyBook: (book) => {
+      const next = startCopy(get().game, book, CONTENT)
+      if (next === get().game && get().game.copy.book !== book) return
+      sfx('scroll')
+      set({ game: persist(next), modal: { kind: 'copy', picking: false, last: null } })
+    },
+    copyPicking: (on) => {
+      const m = get().modal
+      if (m?.kind !== 'copy') return
+      set({ modal: { ...m, picking: on } })
+    },
+    copyType: (text, pasted = false) => {
+      const m = get().modal
+      const game = get().game
+      const book = game.copy.book
+      if (m?.kind !== 'copy' || !book) return
+      const spot = copySpot(game, book, CONTENT)
+      if (!spot) return
+      // 붙여넣기·자동완성(한꺼번에 여러 글자)은 받지 않는다
+      const accepted = acceptInput(spot.draft, text, pasted)
+      if (accepted === spot.draft && text !== spot.draft) return
+      const { state, result } = writeVerse(game, book, accepted, CONTENT)
+      if (result.kind === 'notYet') {
+        // 쓰다 만 입력: 상태에만 (창 닫힘·다음 저장 때 함께 저장된다)
+        set({ game: state })
+        return
+      }
+      if (result.kind === 'none') return
+      sfx(result.kind === 'chapter' ? 'done' : 'pen')
+      set({ game: persist(state), modal: { ...m, last: result } })
     },
     copyPick: (blank, option) => {
       const m = get().modal

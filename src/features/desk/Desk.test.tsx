@@ -135,14 +135,14 @@ describe('옮겨 적기', () => {
     await user.click(screen.getByRole('button', { name: '옮겨 적기' }))
     const g = useGame.getState().game
     expect(g.progress.rom.completed).toEqual([1])
-    expect(g.inv.papyrus).toBe(2)
+    expect(g.inv.papyrus).toBe(3) // 재료는 들지 않는다 (계획 14)
     expect(screen.getByRole('status')).toHaveTextContent('로마서 1장을 옮겨 적었습니다.')
     expect(screen.getByRole('heading', { name: '로마서 2장 옮겨 적기' })).toBeInTheDocument()
     // 다음 장은 새 빈칸 (고른 답은 창 상태로만 — 게임 상태에 남지 않는다)
     expect(screen.getByRole('button', { name: '빈칸 1' })).toBeInTheDocument()
   })
 
-  it('재료가 없으면 조각 책상과 같은 안내, 기록되지 않는다', async () => {
+  it('재료가 없어도 기록된다 (계획 14)', async () => {
     reset({ flags: OPEN, inv: {} })
     const user = userEvent.setup()
     openDesk()
@@ -155,10 +155,8 @@ describe('옮겨 적기', () => {
       await user.click(within(screen.getByRole('group', { name: `빈칸 ${i + 1} 보기` })).getByRole('button', { name: blanks[i].answer }))
     }
     await user.click(screen.getByRole('button', { name: '옮겨 적기' }))
-    expect(screen.getByRole('status')).toHaveTextContent('파피루스와 잉크가 하나씩')
-    expect(useGame.getState().game.progress.rom.completed).toEqual([])
-    // 채운 칸은 그대로 남아 있다
-    expect(screen.getByLabelText(`빈칸 1: ${blanks[0].answer}`)).toBeInTheDocument()
+    expect(useGame.getState().game.progress.rom.completed).toEqual([1])
+    expect(useGame.getState().game.inv).toEqual({})
   })
 
   it('밤에 기름이 없으면 어둡다', async () => {

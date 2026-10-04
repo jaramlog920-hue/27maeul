@@ -37,10 +37,11 @@ import {
 import { COVER_FROM, jobOf, SELL_FROM } from './job'
 import { FESTIVAL_SPOTS, FIRE, goalFor, isNear, npcTile, placeNpc, stepNpc, type Npc } from './neighbors'
 import { GAIN, heartsOf, MAX_POINTS } from './hearts'
-import { bookDone, bookRoomOpen, emptyProgress, openDoorsFor, roomOpen, totalChapters, type Progress } from './books'
+import { bookDone, bookRoomOpen, chaptersOf, emptyProgress, openDoorsFor, roomOpen, totalChapters, type Progress } from './books'
 import { arrivesOf, modeOf, SHELF_ROOMS } from './shelf-rooms'
 import { currentChapter, mulberry32, offersForDay } from './offers'
-import { addXp, charmBonus, freshStats, luckyExtra, rainBonus, sellBonus, tiredScale, visitBonus, XP, type StatId, type Stats } from './stats'
+import { checkCopy, COPY_CHAPTER_XP, copySpot, copyVerses, nextOpenChapter, NO_COPY, NO_COPY_STATS, type CopyCheck, type CopyState, type CopyStats } from './copying'
+import { addXp, charmBonus, statScore, freshStats, luckyExtra, rainBonus, sellBonus, tiredScale, visitBonus, XP, type StatId, type Stats } from './stats'
 import { HALL_GUESTS, HALL_PLAY_GAIN, HALL_PLAY_MINUTES, HALL_SPOTS, hallGuests, hallOpen, SUNSET_MINUTES, sunsetTime, TEA_MINUTES, TEA_PRICE, teaOpen } from './places'
 import {
   BOUQUET_GAIN,
@@ -101,7 +102,7 @@ import {
   onceKey,
 } from './stories'
 import { ATTIC, BED_STAND, HEARTH_STAND, HOUSES, PET_HOME, HOME_FRONT, inAttic, isHome, isIndoor, isWalkable, key, LADDER, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setMailbox, setOpenDoors, START, tileAt, WARPS } from './world'
-import { type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
+import { BOOKS, type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
 import { withLookDefaults, type Avatar, type FullAvatar } from './avatar'
 import { BOARD_GAIN, boardFor, type BoardRequest } from './board'
 import { newlyAchieved, withFound, type Achievement } from './achievements'
@@ -216,6 +217,10 @@ export interface GameState {
   found: ItemId[]
   /** 이룬 업적과 처음 이룬 날 */
   achieved: { id: string; day: number }[]
+  /** 필사 (계획 14): 지금 쓰는 책, 책마다 다음에 쓸 절(쓰다 만 입력 포함), 예전에 엮은 장 */
+  copy: CopyState
+  /** 나의 필사 기록: 절·글자·장·권·처음 기록한 날 */
+  copyStats: CopyStats
 }
 
 /** 지도(world.tileAt)가 이 게임의 집 단계·열린 서고 방 문(방 표)을 보게 한다. 지도를 읽는 엔진 입구마다 부른다 */
@@ -465,6 +470,8 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
     child: null,
     found: [],
     achieved: [],
+    copy: NO_COPY,
+    copyStats: NO_COPY_STATS,
   }
 }
 
@@ -2251,14 +2258,13 @@ export function chapterReady(s: GameState, book: Book, chapter: number, content:
   const result = checkArrangement(pieces, chapter, bp.arrangement[chapter] ?? [], s.collected)
   if (result.kind !== 'done' || bp.completed.includes(chapter)) return result
   if (exhausted(s.needs)) return { kind: 'tired' }
-  if (!haveStock(s, chapterCost(s))) return { kind: 'supplies', need: chapterCost(s) }
+  // 재료는 들지 않는다 (계획 14 — 필사에 파피루스·잉크 요구 없음)
   return result
 }
 
-/** 퀴즈까지 마친 뒤 실제로 기록한다 (재료를 쓰고 장을 완성). 한 권의 마지막 장이면 'bookBound' 장면 */
 // ── 정성 들인 장 (계획 13, 규칙은 fixtures.ts) ──
 
-/** 한 장에 드는 것 (정성 등급은 없앴다 — 2026-09-30 사용자) */
+/** 예전에 한 장에 들던 것 (정성 등급은 없앴다 — 2026-09-30 사용자). 계획 14부터 장 기록·필사는 이것을 쓰지 않는다 */
 export function chapterCost(_s?: unknown): Partial<Record<ItemId, number>> {
   return CHAPTER_COST
 }
@@ -2266,11 +2272,6 @@ export function chapterCost(_s?: unknown): Partial<Record<ItemId, number>> {
 /** 오늘 먹었고 배고프지 않으면 집중 */
 export function focused(s: Pick<GameState, 'flags' | 'clock' | 'needs'>): boolean {
   return s.flags.ateDay === s.clock.day && s.needs.hunger < 70
-}
-
-/** 장을 기록할 때 재료를 쓴다 */
-function payChapter(s: GameState): GameState {
-  return useStock(s, chapterCost(s))!
 }
 
 export type SealBlock = 'notShelved' | 'sealed' | 'noWax' | null
@@ -2286,16 +2287,16 @@ export function sealBook(s: GameState, book: Book): GameState {
   return { ...useStock(s, { sealWax: 1 })!, sealed: [...(s.sealed ?? []), book] }
 }
 
+/** 퀴즈까지 마친 뒤 실제로 기록한다 (재료 없이 장을 완성 — 계획 14). 한 권의 마지막 장이면 'bookBound' 장면 */
 export function submitChapter(s: GameState, book: Book, chapter: number, content: GameContent): { state: GameState; result: SubmitResult } {
   const result = chapterReady(s, book, chapter, content)
   const bp = s.progress[book]
   if (result.kind !== 'done' || bp.completed.includes(chapter)) return { state: s, result }
-  const paid = payChapter(s)
   const progress = { ...s.progress, [book]: { ...bp, completed: [...bp.completed, chapter] } }
   const scenes = [...s.scenes]
   if (totalChapters(s) === 0) scenes.push('firstChapter')
   if (bookDone({ progress }, book, content)) scenes.push('bookBound')
-  const bound = passTime({ ...paid, progress, scenes, needs: work(s.needs, 6) }, bindMinutes(s))
+  const bound = passTime({ ...s, progress, scenes, needs: work(s.needs, 6) }, bindMinutes(s))
   // 사도행전 장을 엮으면 그 장에 나오는 곳 카드가 여정 판에 들어온다
   return { state: book === 'ac' ? syncJourney(bound, content) : bound, result }
 }
@@ -2312,7 +2313,7 @@ export type LetterReady =
 
 /**
  * 편지 한 장을 옮겨 적을 준비가 되었는가 (책상 화면용 — 아무것도 쓰지 않는다):
- * 이미 적은 장, 받지 않은 장(편지 나르는 이웃), 앞 장부터 차례대로, 몸(피로), 재료(조각 장과 같은 CHAPTER_COST)
+ * 이미 적은 장, 앞 장부터 차례대로, 몸(피로). 받은 장인지·재료는 보지 않는다 (계획 14). 'notReceived'·'supplies'는 더 나오지 않는다
  */
 export function letterReady(s: GameState, book: Book, chapter: number, content: GameContent): LetterReady | null {
   if (modeOf(book) !== 'letters') return null
@@ -2321,16 +2322,15 @@ export function letterReady(s: GameState, book: Book, chapter: number, content: 
   if (!piece) return null
   const bp = s.progress[book]
   if (bp.completed.includes(chapter)) return { kind: 'recorded' }
-  if (!s.collected.includes(piece.id)) return { kind: 'notReceived' }
+  // 받은 장인지·재료는 보지 않는다 (계획 14 — 조각·편지는 필사 재료가 아니다)
   if (currentChapter(pieces, bp.completed) !== chapter) return { kind: 'order' }
   if (exhausted(s.needs)) return { kind: 'tired' }
-  if (!haveStock(s, chapterCost(s))) return { kind: 'supplies', need: chapterCost(s) }
   return { kind: 'ready' }
 }
 
 /**
  * 빈칸을 채워 편지 한 장을 옮겨 적는다: 준비가 되었고(letterReady) picks가 blanksFor의 답과 모두 같을 때만.
- * 재료·피로·걸리는 시간은 조각 장과 같다. 장 기록 퀴즈는 없다 (옮겨 적기가 그 장을 익히는 일).
+ * 피로·걸리는 시간은 조각 장과 같다 (재료는 들지 않는다 — 계획 14). 장 기록 퀴즈는 없다 (옮겨 적기가 그 장을 익히는 일).
  * 첫 장이면 'firstChapter', 한 권의 마지막 장이면 'bookBound' 장면. 아니면 그대로 돌려준다
  */
 export function recordLetter(s: GameState, book: Book, chapter: number, picks: readonly string[], content: GameContent): GameState {
@@ -2342,9 +2342,103 @@ export function recordLetter(s: GameState, book: Book, chapter: number, picks: r
   const scenes = [...s.scenes]
   if (totalChapters(s) === 0) scenes.push('firstChapter')
   if (bookDone({ progress }, book, content)) scenes.push('bookBound')
-  const recorded = passTime({ ...payChapter(s), progress, scenes, needs: work(s.needs, 6) }, bindMinutes(s))
+  const recorded = passTime({ ...s, progress, scenes, needs: work(s.needs, 6) }, bindMinutes(s))
   // 요한계시록 2·3장을 옮겨 적으면 그 장의 교회 카드가 일곱 교회 판에 들어온다
   return book === 'rev' ? syncBoard(recorded, 'churches', content) : recorded
+}
+
+// ── 필사 (계획 14 작업 1): 한 절씩 따라 적기, 재료 없음 ──
+
+/** 책상에서 쓸 책을 고른다 — 27권 어느 책이든 (서고 방이 열리지 않아도). 필사할 장이 없는 책이면 그대로 */
+export function startCopy(s: GameState, book: Book, content: GameContent): GameState {
+  if (!(BOOKS as readonly Book[]).includes(book) || !copyVerses(book, chaptersOf(book, content)[0] ?? 0, content).length) return s
+  return { ...s, copy: { ...s.copy, book } }
+}
+
+/**
+ * 쓰다 만 입력을 그 절 자리에 저장한다 (자동 저장 — 나갔다 오면 그 절, 그 입력부터).
+ * pasted(붙여넣기·끌어 놓기 표식)면 받지 않는다. 한꺼번에 여러 글자가 들어온 입력은 화면이 copying.acceptInput으로 먼저 거른다
+ */
+export function saveCopyDraft(s: GameState, book: Book, input: string, content: GameContent, pasted = false): GameState {
+  const spot = copySpot(s, book, content)
+  if (!spot) return s
+  const draft = pasted ? spot.draft : input
+  return { ...s, copy: { ...s.copy, at: { ...s.copy.at, [book]: { chapter: spot.chapter, verse: spot.verse.verse, ...(draft ? { draft } : {}) } } } }
+}
+
+export type VerseResult =
+  /** 다 마친 책 (쓸 절이 없다) */
+  | { kind: 'none' }
+  /** 아직 다 쓰지 않았다 — 입력은 자리에 저장된다 */
+  | { kind: 'notYet'; check: CopyCheck }
+  /** 한 절을 기록했다 */
+  | { kind: 'verse'; chapter: number; verse: number }
+  /**
+   * 한 장을 마쳤다: 그 장의 절 수·글자 수, 오른 능력치 점수(1–100 화면 값의 차이, 5단계면 0), 이 장으로 한 권을 마쳤는가.
+   * next: 이어 쓸 장 (없으면 null)
+   */
+  | { kind: 'chapter'; chapter: number; verse: number; verses: number; chars: number; gains: { wit: number; hand: number }; bookDone: boolean; next: number | null }
+
+/**
+ * 한 절을 적는다: 입력이 그 절 본문과 다 맞으면(띄어쓰기·문장부호 무시) 기록하고 다음 절로.
+ * 장의 마지막 절이면 장을 마친다 — progress[book].completed에 더하고(서고·방 흐름 그대로, 첫 장이면 'firstChapter',
+ * 한 권의 마지막 장이면 'bookBound' 장면), 지능·손재주 경험치, 시간·피로는 예전 엮기와 같은 크기 (copyMinutes — 넓은 책상 효과 없음, 피로 6).
+ * 재료·조각·받은 편지는 보지 않는다. 덜 맞으면 입력만 자리에 저장한다 (pasted면 그것도 받지 않는다)
+ */
+export function writeVerse(s: GameState, book: Book, input: string, content: GameContent, pasted = false): { state: GameState; result: VerseResult } {
+  const spot = copySpot(s, book, content)
+  if (!spot) return { state: s, result: { kind: 'none' } }
+  const text = pasted ? spot.draft : input
+  const check = checkCopy(text, spot.verse.text)
+  if (!check.done) return { state: saveCopyDraft(s, book, text, content), result: { kind: 'notYet', check } }
+  const { chapter } = spot
+  const verses = copyVerses(book, chapter, content)
+  const day = s.clock.day
+  const stats: CopyStats = {
+    ...s.copyStats,
+    verses: s.copyStats.verses + 1,
+    chars: s.copyStats.chars + spot.verse.chars,
+    firstDay: s.copyStats.firstDay ?? day,
+  }
+  const last = spot.index === verses.length - 1
+  if (!last) {
+    const nextVerse = verses[spot.index + 1].verse
+    const state = { ...s, copyStats: stats, copy: { ...s.copy, at: { ...s.copy.at, [book]: { chapter, verse: nextVerse } } } }
+    return { state, result: { kind: 'verse', chapter, verse: spot.verse.verse } }
+  }
+  // 장을 마쳤다
+  const bp = s.progress[book]
+  const completed = bp.completed.includes(chapter) ? bp.completed : [...bp.completed, chapter]
+  const progress = { ...s.progress, [book]: { ...bp, completed } }
+  const finished = bookDone({ progress }, book, content)
+  const scenes = [...s.scenes]
+  if (totalChapters(s) === 0) scenes.push('firstChapter')
+  if (finished) scenes.push('bookBound')
+  const before = s.stats
+  const after = addXp(addXp(before, 'wit', COPY_CHAPTER_XP), 'hand', COPY_CHAPTER_XP)
+  const next = nextOpenChapter(book, completed, chapter, content)
+  const nextVerse = next === null ? null : copyVerses(book, next, content)[0]?.verse
+  const at = { ...s.copy.at }
+  if (next !== null && nextVerse !== undefined && nextVerse !== null) at[book] = { chapter: next, verse: nextVerse }
+  else delete at[book]
+  let state: GameState = passTime(
+    {
+      ...s,
+      progress,
+      scenes,
+      stats: after,
+      needs: work(s.needs, 6),
+      copy: { ...s.copy, at },
+      copyStats: { ...stats, chapters: stats.chapters + 1, books: stats.books + (finished ? 1 : 0) },
+    },
+    copyMinutes(s),
+  )
+  // 사도행전 장은 여정 판에, 요한계시록 2·3장은 일곱 교회 판에 카드가 들어온다 (예전 엮기·옮겨 적기와 같다)
+  if (book === 'ac') state = syncJourney(state, content)
+  if (book === 'rev') state = syncBoard(state, 'churches', content)
+  const gains = { wit: statScore(after.wit) - statScore(before.wit), hand: statScore(after.hand) - statScore(before.hand) }
+  const chars = verses.reduce((n, v) => n + v.chars, 0)
+  return { state, result: { kind: 'chapter', chapter, verse: spot.verse.verse, verses: verses.length, chars, gains, bookDone: finished, next } }
 }
 
 // ── 카드 판: 사도행전 방의 여정 판 (계획 5 작업 5), 요한계시록 방의 일곱 교회 판 (계획 9 작업 3) ──
@@ -2388,6 +2482,14 @@ export function syncJourney(s: GameState, content: GameContent): GameState {
 /** 여정 판의 카드 하나를 위(-1)·아래(+1)로 옮긴다. 다 이은 판은 그대로 둔다 */
 export function moveJourneyCard(s: GameState, index: number, delta: number, content: GameContent): GameState {
   return moveBoardCard(s, 'journey', index, delta, content)
+}
+
+/**
+ * 필사로 한 장을 마칠 때 흐르는 분 (계획 14): 기분이 좋으면 45, 아니면 60 — 예전 엮기와 같은 크기.
+ * 넓은 책상·책상 고치기는 필사를 빠르게 하지 않는다 (꾸미기 물건으로 바뀐다)
+ */
+export function copyMinutes(s: Pick<GameState, 'needs' | 'clock' | 'room' | 'inv'> & Partial<Pick<GameState, 'flags'>>): number {
+  return inGoodMood(s) ? 45 : 60
 }
 
 /** 한 장을 엮는 데 드는 분: 기분이 좋으면 45, 아니면 60. 넓은 책상이면 20% 덜 */

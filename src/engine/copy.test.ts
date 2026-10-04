@@ -3,7 +3,6 @@ import bible from '../content/nt-krv.json'
 import { CONTENT, copySourceFor, inBrackets, LETTER_PIECES, noText, piecesOf, quizSourceFor, versesOf } from '../content/catalog'
 import { blanksFor, COPY_BLANKS, fillVerse, isContentWord, optionRank, wordAt } from './copy'
 import { chapterReady, chooseBook, letterReady, listen, newGame, recordLetter, setArrangement, submitChapter, type GameState } from './game'
-import { CHAPTER_COST } from './items'
 import { POSTMAN } from './post'
 import { quizzable, MIN_VERSE_CHARS, wordsOf } from './quiz'
 import { BOOKS, LETTERS, type Book } from './types'
@@ -168,15 +167,15 @@ function ready(book: Book): GameState {
 const answers = (book: Book, chapter: number) => blanksFor(book, chapter, copySourceFor(book)).map((b) => b.answer)
 
 describe('recordLetter', () => {
-  it('맞게 채우면 재료가 줄고 장이 채워진다 (첫 장 장면)', () => {
+  it('맞게 채우면 장이 채워진다 — 재료는 들지 않는다 (계획 14, 첫 장 장면)', () => {
     const s = ready('rom')
     expect(s.collected).toContain('rom-001')
     expect(letterReady(s, 'rom', 1, CONTENT)).toEqual({ kind: 'ready' })
     const r = recordLetter(s, 'rom', 1, answers('rom', 1), CONTENT)
     expect(r).not.toBe(s)
     expect(r.progress.rom.completed).toEqual([1])
-    expect(r.inv.papyrus).toBe(5 - CHAPTER_COST.papyrus!)
-    expect(r.inv.ink).toBe(5 - CHAPTER_COST.ink!)
+    expect(r.inv.papyrus).toBe(5)
+    expect(r.inv.ink).toBe(5)
     expect(r.scenes).toContain('firstChapter')
     expect(r.clock.minute).toBeGreaterThan(s.clock.minute)
     expect(r.needs.fatigue).toBeGreaterThan(s.needs.fatigue)
@@ -197,15 +196,15 @@ describe('recordLetter', () => {
     expect(recordLetter(s, 'rom', 1, [...a, a[0]], CONTENT)).toBe(s)
   })
 
-  it('받지 않은 장이면 그대로', () => {
+  it('받지 않은 장도 기록한다 — 편지는 필사 재료가 아니다 (계획 14)', () => {
     const s = ready('rom')
     const notYet = s.collected.includes('rom-003') ? 4 : 3
     const done = { ...s, progress: { ...s.progress, rom: { ...s.progress.rom, completed: Array.from({ length: notYet - 1 }, (_, i) => i + 1) } } }
     expect(done.collected).not.toContain(`rom-${String(notYet).padStart(3, '0')}`)
-    expect(letterReady(done, 'rom', notYet, CONTENT)).toEqual({ kind: 'notReceived' })
-    expect(recordLetter(done, 'rom', notYet, answers('rom', notYet), CONTENT)).toBe(done)
+    expect(letterReady(done, 'rom', notYet, CONTENT)).toEqual({ kind: 'ready' })
+    expect(recordLetter(done, 'rom', notYet, answers('rom', notYet), CONTENT).progress.rom.completed).toContain(notYet)
     // 다른 책(아직 받지 않은 고린도전서)도
-    expect(recordLetter(s, '1co', 1, answers('1co', 1), CONTENT)).toBe(s)
+    expect(recordLetter(s, '1co', 1, answers('1co', 1), CONTENT).progress['1co'].completed).toEqual([1])
   })
 
   it('순서를 건너뛰면 그대로', () => {
@@ -215,11 +214,11 @@ describe('recordLetter', () => {
     expect(recordLetter(s, 'rom', 2, answers('rom', 2), CONTENT)).toBe(s)
   })
 
-  it('재료가 없거나 피곤하면 그대로', () => {
+  it('재료가 없어도 기록하고, 피곤하면 그대로', () => {
     const s = ready('rom')
     const poor = { ...s, inv: { ...s.inv, papyrus: 0, ink: 0 } }
-    expect(letterReady(poor, 'rom', 1, CONTENT)).toEqual({ kind: 'supplies', need: CHAPTER_COST })
-    expect(recordLetter(poor, 'rom', 1, answers('rom', 1), CONTENT)).toBe(poor)
+    expect(letterReady(poor, 'rom', 1, CONTENT)).toEqual({ kind: 'ready' })
+    expect(recordLetter(poor, 'rom', 1, answers('rom', 1), CONTENT).progress.rom.completed).toEqual([1])
     const tired = { ...s, needs: { ...s.needs, fatigue: 100 } }
     expect(letterReady(tired, 'rom', 1, CONTENT)).toEqual({ kind: 'tired' })
     expect(recordLetter(tired, 'rom', 1, answers('rom', 1), CONTENT)).toBe(tired)

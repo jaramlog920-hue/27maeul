@@ -6,6 +6,7 @@ import { Family } from './family/Family'
 import { Wardrobe } from './family/Wardrobe'
 import { AdoptForm } from './companion/AdoptForm'
 import { Desk } from './desk/Desk'
+import { CopyDesk } from './desk/CopyDesk'
 import { GardenMenu } from './garden/GardenMenu'
 import { Journal } from './journal/Journal'
 import { Library } from './library/Library'
@@ -54,7 +55,10 @@ function Body() {
     case 'myLine':
       return <MyLineForm key={modal.lineKey} lineKey={modal.lineKey} />
     case 'desk':
+      // 예전 엮기·옮겨 적기 창 — 계획 14부터 집 책상은 'copy'를 연다 (이 창으로 가는 길은 닫혔다)
       return <Desk result={modal.result} dark={modal.dark} />
+    case 'copy':
+      return <CopyDesk modal={modal} />
     case 'review':
       return <Review pieceId={modal.pieceId} attic={modal.attic} />
     case 'journal':

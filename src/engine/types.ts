@@ -255,6 +255,8 @@ export interface GameContent {
   churches?: JourneyCard[]
   /** 편지 옮겨 적기의 본문 (책마다, 계획 7). 없으면 편지를 기록할 수 없다 */
   copy?: (book: Book) => CopySource
+  /** 한 장의 본문 (필사, 계획 14): 절 번호와 본문. 본문이 없는 절은 이미 빠져 있다 (catalog.versesOf). 없으면 필사할 절이 없다 */
+  chapterText?: (book: Book, chapter: number) => readonly { verse: number; text: string }[]
 }
 /** 0 이상 1 미만의 난수를 돌려준다. 테스트에서는 고정값을 주입한다 */
 export type Rng = () => number

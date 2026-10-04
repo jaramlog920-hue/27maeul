@@ -4,6 +4,7 @@ import { sanitizeNotebook } from './notebook'
 import { sanitizeChild } from './child'
 import { sanitizeRomance } from './romance'
 import { sanitizeStats } from './stats'
+import { sanitizeCopy, sanitizeCopyStats } from './copying'
 import { IDLE_RESET } from './autonomy'
 import { bookDone, bookRoomOpen, emptyProgress, type Progress } from './books'
 import { newGame, settle, type GameState } from './game'
@@ -147,6 +148,10 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     notebook: sanitizeNotebook(s.notebook),
     child: sanitizeChild(s.child),
     found: isStrArray(s.found) ? (s.found as ItemId[]) : [],
+    // 필사 (계획 14): 옛 저장(칸이 없던 때 — deserialize가 null로 넘긴다)은 이미 마친 장을 "예전에 엮은 장"으로 남긴다.
+    // 마친 장(progress)은 그대로 마친 장이고, 글자 수 통계는 0에서 시작한다
+    copy: sanitizeCopy(s.copy, progress),
+    copyStats: sanitizeCopyStats(s.copyStats),
     achieved: Array.isArray(s.achieved) ? s.achieved.filter((a) => a && typeof a.id === 'string' && typeof a.day === 'number') : [],
     needs: { ...s.needs, heat: s.needs?.heat ?? 0 },
     collected,
@@ -199,7 +204,8 @@ export function deserialize(raw: string | null, content: GameContent): GameState
     if (!ok) return null
     // 나중에 더한 칸이 빠진 저장도 받아 준다
     const fresh = newGame(content)
-    return settle(sanitize({ ...fresh, ...o, version: SAVE_VERSION } as GameState, content), content)
+    // 필사 칸(계획 14)이 없는 옛 저장은 새 게임 기본값으로 덮지 않고 null로 넘긴다 — sanitize가 옛 저장임을 알아보게
+    return settle(sanitize({ ...fresh, ...o, copy: isObj(o.copy) ? o.copy : null, version: SAVE_VERSION } as GameState, content), content)
   } catch {
     return null
   }

@@ -306,13 +306,14 @@ describe('책상', () => {
     expect(next.lampFuel).toBe(0)
     expect(next.lampLitDay).toBe(2)
   })
-  it('장을 다 쓰려면 파피루스와 잉크가 든다', () => {
-    const s = ready()
-    expect(submitChapter(s, 'lk', 1, CONTENT).result.kind).toBe('supplies')
-    const ok = submitChapter({ ...s, inv: { papyrus: 1, ink: 1 } }, 'lk', 1, CONTENT)
+  it('장을 기록하는 데 재료가 들지 않는다 (계획 14)', () => {
+    const s = { ...ready(), inv: {} }
+    const ok = submitChapter(s, 'lk', 1, CONTENT)
     expect(ok.result.kind).toBe('done')
     expect(ok.state.progress.lk.completed).toEqual([1])
     expect(ok.state.inv).toEqual({})
+    // 가진 재료도 쓰지 않는다
+    expect(submitChapter({ ...s, inv: { papyrus: 1, ink: 1 } }, 'lk', 1, CONTENT).state.inv).toEqual({ papyrus: 1, ink: 1 })
     expect(ok.state.scenes).toContain('firstChapter')
   })
   it('순서가 틀리면 비용을 쓰지 않는다', () => {

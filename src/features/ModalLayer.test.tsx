@@ -176,33 +176,46 @@ describe('책상', () => {
   })
   const chapter1 = lkChapter1
 
-  it('재료가 없으면 알려 주고, 있으면 장을 마무리한다', async () => {
-    // 아직 책을 고르지 않았다 — 처음 책상을 열면 책 고르기
-    reset({ collected: chapter1, progress: { ...emptyProgress(), lk: { completed: [], arrangement: { 1: [...chapter1] } } } })
+  it('집 책상은 필사 책상: 27권 모두 고르고, 재료 없이 한 절씩 따라 적는다 (계획 14)', async () => {
+    reset({ inv: {}, collected: [] })
     const user = userEvent.setup()
     render(<ModalLayer />)
     act(() => useGame.getState().tap(PLACES.desk.tiles[0]))
     walk()
-    expect(screen.getByRole('dialog', { name: '어느 책을 엮을까요?' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: new RegExp(`마태복음 · 0/${chaptersOf('mt', CONTENT).length}장`) })).toBeEnabled()
-    expect(screen.getByRole('button', { name: new RegExp(`요한복음 · 0/${chaptersOf('jn', CONTENT).length}장`) })).toBeEnabled()
-    expect(chaptersOf('jn', CONTENT)).toHaveLength(21) // 요 1–21장 전부 (작업 7·8)
-    // 사도행전은 서고의 사도행전 방이 열리기 전에는 책 고르기에 없다 (계획 5)
-    expect(screen.queryByRole('button', { name: /사도행전/ })).toBeNull()
+    // 처음 책상을 열면 책 고르기 — 서고 방이 닫혀 있어도 사도행전·요한계시록까지 모두
+    expect(screen.getByRole('dialog', { name: '어느 책을 필사할까요?' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /사도행전 · 0\/28장/ })).toBeEnabled()
+    expect(screen.getByRole('button', { name: /요한계시록 · 0\/22장/ })).toBeEnabled()
     await user.click(screen.getByRole('button', { name: /누가복음 · 0\/24장/ }))
-    expect(useGame.getState().game.activeBook).toBe('lk')
-    expect(screen.getByRole('dialog', { name: '책상' })).toHaveTextContent('1장')
+    expect(useGame.getState().game.copy.book).toBe('lk')
+    const verses = versesOf('눅 1:1-80')
+    expect(screen.getByRole('heading')).toHaveTextContent(`누가복음 1장 · 1/${verses.length}절`)
+    expect(screen.getByLabelText('본문 눅 1:1')).toHaveTextContent(verses[0].text)
+    // 붙여넣기는 받지 않는다
+    const box = screen.getByLabelText('따라 적기')
+    box.focus()
+    await user.paste(verses[0].text)
+    expect(useGame.getState().game.copyStats.verses).toBe(0)
+    // 한 글자씩 따라 적으면 절이 기록되고 다음 절이 올라온다 (재료 없이)
+    await user.type(box, verses[0].text)
+    expect(screen.getByRole('status')).toHaveTextContent('✓ 눅 1:1 기록')
+    expect(screen.getByRole('heading')).toHaveTextContent(`누가복음 1장 · 2/${verses.length}절`)
+    expect(useGame.getState().game.copyStats.verses).toBe(1)
+    expect(useGame.getState().game.inv).toEqual({})
+  })
+
+  it('예전 엮기 창(테스트로만 열림)도 재료 없이 장을 마무리한다', async () => {
+    reset({ collected: chapter1, inv: {}, ...lkDesk({ 1: [...chapter1] }) })
+    const user = userEvent.setup()
+    useGame.setState({ modal: { kind: 'desk', result: null, dark: false } })
+    render(<ModalLayer />)
     await user.click(screen.getByRole('button', { name: '이어 붙이기' }))
-    expect(screen.getByRole('status')).toHaveTextContent('파피루스와 잉크가 하나씩')
-    act(() => useGame.setState((s) => ({ game: { ...s.game, inv: { papyrus: 1, ink: 1 } } })))
-    await user.click(screen.getByRole('button', { name: '이어 붙이기' }))
-    // 준비되면 기록하기 전에 다섯 문제 — 재료는 아직 그대로
     expect(screen.getByRole('dialog', { name: '기록하기 전에' })).toBeInTheDocument()
-    expect(useGame.getState().game.inv).toEqual({ papyrus: 1, ink: 1 })
     solveQuiz()
     await user.click(screen.getByRole('button', { name: '두루마리에 기록하기' }))
     expect(screen.getByRole('status')).toHaveTextContent('1장까지 차례대로 이어 붙였습니다.')
     expect(useGame.getState().game.scenes).toContain('firstChapter')
+    expect(useGame.getState().game.inv).toEqual({})
   })
 
   it('순서 바로잡기', async () => {
@@ -217,15 +230,13 @@ describe('책상', () => {
     expect(useGame.getState().game.progress.lk.arrangement[1]).toEqual(chapter1)
   })
 
-  it('밤에 기름이 없으면 어둡다 (책을 골라도)', async () => {
-    reset({ ...at(20 * 60), collected: chapter1, progress: { ...emptyProgress(), lk: { completed: [], arrangement: { 1: [...chapter1] } } } })
-    const user = userEvent.setup()
+  it('밤에 기름이 없어도 필사 책상은 쓸 수 있다 (재료 없음)', async () => {
+    reset({ ...at(20 * 60), inv: {}, copy: { book: 'lk', at: {}, legacy: {} } })
     render(<ModalLayer />)
     act(() => useGame.getState().tap(PLACES.desk.tiles[0]))
     walk()
-    await user.click(screen.getByRole('button', { name: /누가복음 · 0\/24장/ }))
-    expect(screen.getByText(/등잔 기름이 없어 어둡습니다/)).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: '이어 붙이기' })).toBeNull()
+    expect(screen.getByRole('heading')).toHaveTextContent('누가복음 1장 · 1/')
+    expect(screen.getByLabelText('따라 적기')).toBeEnabled()
   })
 })
 
@@ -247,7 +258,8 @@ describe('기록 퀴즈 화면', () => {
     solveQuiz()
     await user.click(screen.getByRole('button', { name: '두루마리에 기록하기' }))
     expect(useGame.getState().game.progress.lk.completed).toEqual([1])
-    expect(useGame.getState().game.inv).toEqual({})
+    // 재료는 들지 않는다 (계획 14)
+    expect(useGame.getState().game.inv).toEqual({ papyrus: 1, ink: 1 })
   })
 
   it('말씀 조각 맞추기: 낱말을 차례대로 눌러 맞힌다', async () => {

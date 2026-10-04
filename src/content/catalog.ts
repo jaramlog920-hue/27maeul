@@ -68,7 +68,14 @@ export const CHURCHES = churchesRaw as JourneyCard[]
  * 글자 그대로 있는지 확인). 편지 서고 퀴즈의 첫머리 문제가 읽는다 (계획 7 작업 6)
  */
 export const LETTER_OPENINGS = lettersRaw as unknown as readonly LetterOpening[]
-export const CONTENT: GameContent = { pieces: PIECES, neighbors: NEIGHBORS, journey: JOURNEY, churches: CHURCHES, copy: (b) => copySourceFor(b) }
+export const CONTENT: GameContent = {
+  pieces: PIECES,
+  neighbors: NEIGHBORS,
+  journey: JOURNEY,
+  churches: CHURCHES,
+  copy: (b) => copySourceFor(b),
+  chapterText: (b, c) => chapterText(b, c),
+}
 
 export interface Verse {
   chapter: number
@@ -87,6 +94,15 @@ export function versesOf(ref: string): Verse[] {
       return { chapter: k.chapter, verse: k.verse, text }
     })
     .filter((v) => !noText(v.text)) // 본문이 없는 절 — 어디에도 보이지 않는다
+}
+
+/**
+ * 필사할 한 장의 본문 (계획 14): 그 장 1절부터 끝 절까지 versesOf로 — 본문이 없는 절은 빠진다 (번호만 건너뜀).
+ * 장이 없으면 빈 목록
+ */
+export function chapterText(book: Book, chapter: number): Verse[] {
+  const n = bible[BOOK_IDS[book]]?.[chapter - 1]?.length ?? 0
+  return n ? versesOf(`${BOOK_ABBR[book]} ${chapter}:1-${n}`) : []
 }
 
 const pieceMap = new Map(PIECES.map((p) => [p.id, p]))
