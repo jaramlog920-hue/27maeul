@@ -221,7 +221,8 @@ function CopyWrite({ book, spot, modal }: { book: Book; spot: CopySpot; modal: E
 
 /** 장 완료 화면: 절·글자, 하나님에 대한 새로운 기록, 능력치, [책 덮기] [N장 계속 쓰기] */
 function CopyDone({ book, modal }: { book: Book; modal: Extract<Modal, { kind: 'copy' }> }) {
-  const { copyView, copyExit } = useGame.getState()
+  const { copyView, copyExit, openBind } = useGame.getState()
+  const unbound = useGame((s) => s.game.bound[book] === undefined && s.game.shelved[book] === undefined)
   const last = modal.last
   if (last?.kind !== 'chapter') return null
   const name = BOOK_NAME[book]
@@ -248,6 +249,18 @@ function CopyDone({ book, modal }: { book: Book; modal: Extract<Modal, { kind: '
       {last.bookDone && <p className="copy-book-done">{fill(C.bookDone, { book: name })}</p>}
       <div className="copy-menu-actions">
         <button onClick={copyExit}>{C.closeBook}</button>
+        {/* 한 권을 마쳤으면 바로 제본 창으로 (책상에서 나가며 쓰다 만 입력은 저장된다) */}
+        {last.bookDone && unbound && (
+          <button
+            className="primary"
+            onClick={() => {
+              copyExit()
+              openBind(book)
+            }}
+          >
+            {C.bind}
+          </button>
+        )}
         {last.next !== null && (
           <button className="primary" onClick={() => copyView('write')}>
             {fill(C.nextChapter, { chapter: last.next })}

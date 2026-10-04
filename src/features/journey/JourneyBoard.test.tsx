@@ -78,27 +78,27 @@ describe('요한계시록 방 문과 방 안 (계획 9 작업 4)', () => {
     expect(useGame.getState().modal).toEqual({ kind: 'journey' })
   })
 
-  it('한 권 선반: 다 옮겨 적은 요한계시록은 꽂기 → 편지식 서고 퀴즈 → 이 선반으로 돌아온다', async () => {
-    reset({ flags: opened, shelved: shelvedAll, progress: { ...emptyProgress(), rev: { completed: chaptersOf('rev', CONTENT), arrangement: {} } } })
+  it('한 권 선반: 제본한 요한계시록은 퀴즈 풀고 금박 책등 → 편지식 서고 퀴즈 → 이 선반으로 돌아온다', async () => {
+    reset({ flags: opened, shelved: shelvedAll, bound: { rev: { day: 1 } }, progress: { ...emptyProgress(), rev: { completed: chaptersOf('rev', CONTENT), arrangement: {} } } })
     useGame.setState({ modal: { kind: 'roomShelf', room: 'rev' }, rng: mulberry32(3) })
     const user = userEvent.setup()
     const { container } = render(<ModalLayer />)
     const dialog = screen.getByRole('dialog', { name: '요한계시록 선반' })
     expect(dialog).toHaveTextContent('다 옮겨 적은 요한계시록은 이 방 선반에 꽂습니다.')
     expect(container.querySelectorAll('.library-shelf .spine')).toHaveLength(1)
-    await user.click(screen.getByRole('button', { name: '꽂기' }))
+    await user.click(screen.getByRole('button', { name: '퀴즈 풀고 금박 책등' }))
     const m = useGame.getState().modal
     if (m?.kind !== 'quiz') throw new Error('quiz expected')
     expect(m.mode).toEqual({ kind: 'library', book: 'rev', retry: false })
     solveQuiz()
     act(() => useGame.getState().nextQuiz())
     expect(useGame.getState().game.shelved.rev).toBeDefined()
-    expect(useGame.getState().modal).toEqual({ kind: 'myLine', lineKey: 'book:rev', back: 'room:rev' })
-    act(() => useGame.getState().skipMyLine())
-    expect(useGame.getState().modal).toEqual({ kind: 'roomShelf', room: 'rev' })
+    // 앞의 스물여섯 권이 다 꽂혀 있었으니 스물일곱 번째 — 처음과 지금을 나란히 보이는 창 (계획 14 작업 4), 한 줄은 선반에서 나중에
+    expect(useGame.getState().modal).toEqual({ kind: 'shelfDone' })
+    act(() => useGame.getState().open({ kind: 'roomShelf', room: 'rev' }))
     // 꽂힌 뒤: 등급 (다 맞혔으니 금박, 다시 도전 없음)
     expect(screen.getByRole('dialog', { name: '요한계시록 선반' })).toHaveTextContent('금박')
-    expect(screen.queryByRole('button', { name: '꽂기' })).toBeNull()
+    expect(screen.queryByRole('button', { name: '바로 꽂기' })).toBeNull()
     expect(screen.queryByRole('button', { name: '다시 도전' })).toBeNull()
   })
 
@@ -107,7 +107,7 @@ describe('요한계시록 방 문과 방 안 (계획 9 작업 4)', () => {
     useGame.setState({ modal: { kind: 'roomShelf', room: 'rev' } })
     render(<ModalLayer />)
     expect(screen.getByRole('dialog', { name: '요한계시록 선반' })).toHaveTextContent('아직 옮겨 적는 중')
-    expect(screen.queryByRole('button', { name: '꽂기' })).toBeNull()
+    expect(screen.queryByRole('button', { name: '바로 꽂기' })).toBeNull()
   })
 })
 

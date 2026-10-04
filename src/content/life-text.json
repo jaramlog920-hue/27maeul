@@ -2295,11 +2295,11 @@
       "album": "담요를 덮어 준 날"
     },
     "bookBound": {
-      "title": "한 권을 다 엮었다",
+      "title": "한 권을 다 필사했다",
       "lines": [
         {
           "speaker": "narration",
-          "text": "한 권을 마지막 장까지 엮었다. 이제 마을 서고에 꽂을 수 있다."
+          "text": "한 권을 마지막 장까지 필사했다. 제본하면 완성본이 되고, 완성본은 마을 서고에 직접 가져가 꽂는다."
         }
       ]
     },
@@ -4775,7 +4775,73 @@
     "lockedRoomTap": "{room}은 아직 잠겨 있어요.",
     "lockedRoomGlow": "{room} 문틈으로 불빛이 새어 나와요.",
     "shelvedToast": "{bookObj} 서고에 꽂았습니다. 책등: {grade}",
-    "rereadNote": "틀린 구절은 '다시 읽을 구절'에 넣어 두었어요."
+    "rereadNote": "틀린 구절은 '다시 읽을 구절'에 넣어 두었어요.",
+    "count": "신약 {n}/27",
+    "picture": "서고 선반 · 신약 {n}/27",
+    "emptySlot": "{book} · 빈 칸",
+    "notBound": "제본을 기다려요",
+    "bound": "완성본 · 꽂을 수 있어요",
+    "bind": "제본하기",
+    "shelveNow": "바로 꽂기",
+    "shelveGold": "퀴즈 풀고 금박 책등",
+    "shelveChoice": "완성본은 바로 꽂아도 되고, 퀴즈를 풀면 맞힌 만큼 은박·금박 책등이 됩니다. 풀지 않아도 불이익은 없어요.",
+    "decorate": "표지 꾸미기",
+    "copiesTitle": "완성본",
+    "copiesHint": "마을 서고에 가져가 꽂을 수 있어요.",
+    "waitingTitle": "제본을 기다리는 책"
+  },
+  "binding": {
+    "title": "제본",
+    "doneLead": "📖 {book} 필사를 마쳤습니다.",
+    "plain": "그대로 제본하기",
+    "plainNote": "무료 · 언제나 할 수 있어요",
+    "special": "특별하게 제본하기",
+    "cost": "{items} → 표지 꾸미기",
+    "costItem": "{name} ×{n}",
+    "have": "가진 것: {items}",
+    "decorateTitle": "{book} 표지 꾸미기",
+    "color": "표지 색",
+    "pattern": "무늬",
+    "deco": "책등 장식",
+    "colors": {
+      "cream": "크림색",
+      "sky": "하늘색",
+      "sage": "쑥색",
+      "lavender": "연보라",
+      "sand": "모래색",
+      "slate": "청회색"
+    },
+    "patterns": {
+      "plain": "민무늬",
+      "lines": "줄무늬",
+      "dots": "점무늬",
+      "diamonds": "마름모무늬"
+    },
+    "decos": {
+      "cream": "크림색 실",
+      "leather": "가죽 띠",
+      "navy": "남색 실",
+      "bronze": "청동빛 장식"
+    },
+    "confirm": "이대로 제본하기",
+    "confirmRedo": "이대로 꾸미기",
+    "short": "재료가 모자라요. 그대로 제본해도 똑같이 서고에 꽂을 수 있어요.",
+    "shortRedo": "재료가 모자라요. 재료가 생기면 언제든 다시 꾸밀 수 있어요.",
+    "back": "뒤로",
+    "cover": "{book} 표지",
+    "made": "{book} 완성본이 생겼습니다.",
+    "madeBag": "완성본을 가방에 넣었어요. 마을 서고에 가져가 꽂아 주세요.",
+    "redone": "{book} 표지를 새로 꾸몄습니다."
+  },
+  "shelfDone": {
+    "title": "스물일곱 권의 서고",
+    "lead": "서고의 마지막 빈 칸이 채워졌습니다.",
+    "then": "처음",
+    "now": "지금",
+    "god": "✦ 하나님에 대한 기록 {n}",
+    "pieces": "말씀 조각 {n}",
+    "family": "함께 사는 가족 · {names}",
+    "back": "마을로"
   },
   "acts": {
     "shelfTitle": "사도행전 선반",
@@ -5044,6 +5110,7 @@
     "gain": "{name} +{n}",
     "closeBook": "책 덮기",
     "nextChapter": "{chapter}장 계속 쓰기",
-    "bookDone": "{book} 필사를 마쳤습니다. 서고에 꽂을 수 있어요."
+    "bookDone": "{book} 필사를 마쳤습니다. 제본하면 완성본이 됩니다.",
+    "bind": "제본하기"
   }
 }

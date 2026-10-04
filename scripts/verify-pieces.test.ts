@@ -51,6 +51,9 @@ describe('verify-pieces.mjs', () => {
     expect(r.out).toContain('life-text.ui.godTest: 금지어 (?<![가-힣])하나님')
     expect(r.out).not.toContain('life-text.copyFocus.godNew: 금지어 (?<![가-힣])하나님')
     expect(r.out).toContain('life-text.copyFocus.godNew: 금지어 (?<![가-힣])바울')
+    // 스물일곱 권 갈무리 화면의 같은 이름표(shelfDone.god)만 허용 — 같은 칸의 다른 문장은 걸린다 (계획 14 작업 4)
+    expect(r.out).not.toContain('life-text.shelfDone.god: 금지어')
+    expect(r.out).toContain('life-text.shelfDone.lead: 금지어 (?<![가-힣])하나님')
   })
 
   it('괄호 안 조각(막 16:9-20)에는 "같은 이야기" 도장이 없고, 그쪽을 가리키지도 않는다', () => {

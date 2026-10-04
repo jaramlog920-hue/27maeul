@@ -1873,3 +1873,64 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
 .copy-god-key { margin: 0; font-size: 13px; font-weight: 700; color: #5b4c38; }
 .copy-god-verse { margin: 2px 0 0; font-family: var(--scripture-font); font-size: 15px; line-height: 1.8; word-break: keep-all; overflow-wrap: anywhere; }
 .copy-gains, .copy-book-done { margin: 0; text-align: center; font-size: 13px; color: #7a6a52; }
+
+/* ── 서고의 시각적 성장과 제본 (계획 14 작업 4): 차분한 파스텔, 2픽셀 이상 선, 좌우 대칭 ── */
+.library-count { font-size: 13px; font-weight: normal; color: var(--ink-soft); margin-left: 6px; }
+/* 책등: 무늬는 가운데에 좌우 대칭으로, 은박·금박은 위아래 띠 */
+.spine-art {
+  position: relative; display: inline-block; flex: none; width: 16px; height: 42px; box-sizing: border-box;
+  background: var(--spine); border: 2px solid #6e5a48; border-radius: 2px;
+}
+.spine-art::before, .spine-art::after { content: ''; position: absolute; left: 50%; transform: translateX(-50%); background: var(--accent); }
+.spine-art.mark-band::before { top: 9px; width: 100%; height: 4px; }
+.spine-art.mark-band::after { bottom: 9px; width: 100%; height: 4px; }
+.spine-art.mark-stripe::before { top: 6px; bottom: 6px; width: 4px; }
+.spine-art.mark-dot::before { top: calc(50% - 3px); width: 6px; height: 6px; }
+.spine-art.mark-diamond::before { top: calc(50% - 4px); width: 7px; height: 7px; transform: translateX(-50%) rotate(45deg); }
+.spine-art.spine-grade-1 { box-shadow: inset 0 4px 0 #d0d6e1, inset 0 -4px 0 #d0d6e1; }
+.spine-art.spine-grade-2 { box-shadow: inset 0 4px 0 #e8c869, inset 0 -4px 0 #e8c869; }
+/* 서고 선반 전경: 방마다 한 줄, 아직 꽂지 않은 자리는 빈 칸이 또렷이 (점선 2픽셀) */
+.shelf-picture { margin: 8px 0; padding: 8px 8px 4px; background: #e9dcc4; border: 2px solid #b39a78; border-radius: 4px; }
+.shelf-picture-row {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; min-height: 44px; align-items: flex-end;
+  padding: 2px 4px 2px; margin-bottom: 4px; border-bottom: 4px solid #a3876a;
+}
+.spine-slot { display: inline-block; flex: none; width: 16px; height: 42px; box-sizing: border-box; border: 2px dashed #b9a383; border-radius: 2px; background: #e2d3b8; }
+.shelf-picture figcaption { text-align: center; font-size: 12px; color: var(--ink-soft); }
+.library-shelf .spine .spine-art { height: 36px; width: 14px; margin-right: 6px; vertical-align: middle; }
+/* 완성본 표지: 가운데 이름판, 왼쪽 책등 띠는 장식 색, 무늬는 고른 대로 */
+.book-cover {
+  position: relative; display: flex; align-items: center; justify-content: center; width: 96px; height: 128px; box-sizing: border-box;
+  background-color: var(--cover); border: 2px solid #6e5a48; border-left: 10px solid var(--deco); border-radius: 3px;
+}
+.book-cover.pattern-lines { background-image: repeating-linear-gradient(0deg, transparent 0 10px, rgba(255, 255, 255, 0.35) 10px 12px); }
+.book-cover.pattern-dots { background-image: radial-gradient(rgba(255, 255, 255, 0.45) 2px, transparent 2.5px); background-size: 12px 12px; background-position: center; }
+.book-cover.pattern-diamonds {
+  background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.3) 25%, transparent 25% 75%, rgba(255, 255, 255, 0.3) 75%),
+    linear-gradient(45deg, rgba(255, 255, 255, 0.3) 25%, transparent 25% 75%, rgba(255, 255, 255, 0.3) 75%);
+  background-size: 16px 16px; background-position: 0 0, 8px 8px;
+}
+.book-cover-plate { padding: 4px 6px; max-width: 70px; font-size: 12px; text-align: center; word-break: keep-all; color: #4a3b2e; background: #f6efdc; border: 2px solid #b39a78; border-radius: 2px; }
+/* 제본 창 */
+.bind-lead { margin: 4px 0 10px; font-size: 15px; }
+.bind-options { display: grid; gap: 10px; }
+.bind-option { display: grid; gap: 2px; }
+.bind-made { display: flex; justify-content: center; align-items: flex-end; gap: 14px; margin: 6px 0 10px; }
+.bind-made-line { text-align: center; font-weight: 700; margin: 4px 0; }
+.bind-choices { display: flex; flex-wrap: wrap; gap: 4px; margin: 0 0 8px; padding: 6px; border: 2px solid var(--panel-line); border-radius: 4px; }
+.bind-choices legend { font-size: 12px; color: var(--ink-soft); padding: 0 4px; }
+.bind-choices button { min-height: 32px; padding: 2px 8px; font-size: 12px; }
+.bind-choices button.on { background: var(--panel-soft); border-color: var(--accent); font-weight: 700; }
+.bind-cost { margin: 2px 0; font-size: 13px; }
+/* 가방의 완성본 */
+.bag-copies ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.bag-copies li { display: flex; align-items: center; gap: 6px; }
+.bag-copies .book-cover { width: 64px; height: 86px; border-left-width: 8px; }
+.bag-copies .book-cover-plate { font-size: 10px; max-width: 48px; padding: 2px 3px; }
+/* 스물일곱 권: 처음과 지금 나란히 (좁은 휴대폰에선 위아래로) */
+.shelf-done-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.shelf-done-pair .spine-art, .shelf-done-pair .spine-slot { width: 8px; height: 26px; border-width: 2px; }
+.shelf-done-pair .spine-art::before, .shelf-done-pair .spine-art::after { display: none; }
+.shelf-done-pair .shelf-picture-row { min-height: 30px; gap: 2px; padding: 2px; }
+.shelf-done-counts { list-style: none; padding: 0; margin: 8px 0; display: grid; gap: 4px; text-align: center; }
+@media (max-width: 360px) { .shelf-done-pair { grid-template-columns: 1fr; } }

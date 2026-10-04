@@ -11,6 +11,8 @@ import { GardenMenu } from './garden/GardenMenu'
 import { Journal } from './journal/Journal'
 import { Library } from './library/Library'
 import { RoomShelf } from './library/RoomShelf'
+import { BindView } from './library/BindView'
+import { ShelfDone } from './library/ShelfDone'
 import { JourneyBoard } from './journey/JourneyBoard'
 import { LetterBox } from './letters/LetterBox'
 import { CareMenu } from './menus/CareMenu'
@@ -109,6 +111,10 @@ function Body() {
       return <Library />
     case 'roomShelf':
       return <RoomShelf key={modal.room} room={modal.room} />
+    case 'bind':
+      return <BindView key={modal.book} modal={modal} />
+    case 'shelfDone':
+      return <ShelfDone />
     case 'journey':
       return <JourneyBoard key={modal.board ?? 'acts'} board={modal.board ?? 'acts'} />
     case 'garden':

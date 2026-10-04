@@ -1,6 +1,6 @@
 import { CONTENT, piecesOf } from '../content/catalog'
 import { chaptersOf } from './books'
-import { chooseBook, newGame, readScripture, type GameState } from './game'
+import { bindBook, chooseBook, newGame, readScripture, type GameState } from './game'
 import { canRetry, canShelve, gradeOf, payRetry, poolFor, readOff, RETRY_COST, shelve, sideShelfSpines, SIDE_SHELF, SPINES_PER_BOOK, type Grade } from './library'
 import { BOOKS, type Book } from './types'
 
@@ -21,10 +21,11 @@ describe('마을 서고', () => {
     expect(poolFor({ mk: 2, lk: 0 }, 'lk')).toEqual(['mk', 'lk'])
   })
 
-  it('다 엮은 책만, 한 번만 꽂는다', () => {
+  it('다 필사해 제본한 책만, 한 번만 꽂는다', () => {
     const s0 = chooseBook(newGame(CONTENT), 'mk', CONTENT)
     expect(canShelve(s0, 'mk', CONTENT)).toBe('notDone')
-    const s = withMarkDone()
+    expect(canShelve(withMarkDone(), 'mk', CONTENT)).toBe('notBound')
+    const s = bindBook(withMarkDone(), 'mk', CONTENT)
     expect(canShelve(s, 'mk', CONTENT)).toBeNull()
     const t = shelve(s, 'mk', 4, ['mk-001-009'])
     expect(t.shelved.mk).toBe(1)

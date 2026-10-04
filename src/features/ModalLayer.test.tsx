@@ -308,11 +308,11 @@ describe('기록 퀴즈 화면', () => {
 })
 
 describe('마을 서고', () => {
-  it('서고: 다 엮은 마가복음을 꽂으면 퀴즈가 열리고, 마치면 책등이 붙는다', async () => {
+  it('서고: 제본한 마가복음을 "퀴즈 풀고 금박 책등"으로 꽂으면 퀴즈가 열리고, 마치면 책등이 붙는다', async () => {
     const user = userEvent.setup()
     const base = chooseBook(newGame(CONTENT), 'mk', CONTENT)
     useGame.setState({
-      game: { ...base, collected: piecesOf('mk').map((p) => p.id), progress: { ...base.progress, mk: { completed: chaptersOf('mk', CONTENT), arrangement: {} } } },
+      game: { ...base, bound: { mk: { day: 1 } }, collected: piecesOf('mk').map((p) => p.id), progress: { ...base.progress, mk: { completed: chaptersOf('mk', CONTENT), arrangement: {} } } },
       modal: { kind: 'library' },
       rng: mulberry32(5),
     })
@@ -320,7 +320,7 @@ describe('마을 서고', () => {
     // 복음서 방 선반에는 네 복음서만 (사도행전은 자기 방 — 계획 5 작업 5)
     expect(container.querySelectorAll('.library-shelf .spine')).toHaveLength(4)
     expect(container.querySelector('.library-shelf')!.textContent).not.toContain('사도행전')
-    await user.click(screen.getByRole('button', { name: '꽂기' }))
+    await user.click(screen.getByRole('button', { name: '퀴즈 풀고 금박 책등' }))
     expect(screen.getByRole('dialog', { name: '기록하기 전에' }).textContent).toContain('서고에 꽂기 전에')
     // 모든 문제를 정답으로 푼다
     for (let i = 0; i < 5; i++) {
@@ -339,7 +339,7 @@ describe('마을 서고', () => {
     const base = chooseBook(newGame(CONTENT), 'mk', CONTENT)
     useGame.setState({
       // 세 권을 먼저 꽂아 두면 네 번째(마가복음)에 나루가 열린다 (4권 나루)
-      game: { ...base, shelved: { mt: 1, lk: 1, jn: 1 }, collected: piecesOf('mk').map((p) => p.id), progress: { ...base.progress, mk: { completed: chaptersOf('mk', CONTENT), arrangement: {} } } },
+      game: { ...base, shelved: { mt: 1, lk: 1, jn: 1 }, bound: { mk: { day: 1 } }, collected: piecesOf('mk').map((p) => p.id), progress: { ...base.progress, mk: { completed: chaptersOf('mk', CONTENT), arrangement: {} } } },
       modal: null,
       rng: mulberry32(5),
     })
@@ -364,7 +364,7 @@ describe('마을 서고', () => {
       const open = { ...newGame(CONTENT).flags, gospelFeast: 2, 'room:romPhm': 1 }
       const base = chooseBook({ ...newGame(CONTENT), flags: open }, book, CONTENT)
       useGame.setState({
-        game: { ...base, scenes: [], collected: piecesOf(book).map((p) => p.id), progress: { ...base.progress, [book]: { completed: chaptersOf(book, CONTENT), arrangement: {} } } },
+        game: { ...base, scenes: [], bound: { [book]: { day: 1 } }, collected: piecesOf(book).map((p) => p.id), progress: { ...base.progress, [book]: { completed: chaptersOf(book, CONTENT), arrangement: {} } } },
         modal: null,
         toast: null,
         rng: mulberry32(5),
@@ -387,7 +387,7 @@ describe('나의 한 줄 (책)', () => {
     const base = chooseBook(newGame(CONTENT), 'mk', CONTENT)
     localStorage.clear()
     useGame.setState({
-      game: { ...base, scenes: [], collected: piecesOf('mk').map((p) => p.id), progress: { ...base.progress, mk: { completed: chaptersOf('mk', CONTENT), arrangement: {} } }, inv: { goldLeaf: 1, oil: 1 } },
+      game: { ...base, scenes: [], bound: { mk: { day: 1 } }, collected: piecesOf('mk').map((p) => p.id), progress: { ...base.progress, mk: { completed: chaptersOf('mk', CONTENT), arrangement: {} } }, inv: { goldLeaf: 1, oil: 1 } },
       modal: { kind: 'library' },
       rng: mulberry32(5),
     })
@@ -406,7 +406,7 @@ describe('나의 한 줄 (책)', () => {
     shelveMk()
     const user = userEvent.setup()
     render(<ModalLayer />)
-    await user.click(screen.getByRole('button', { name: '꽂기' }))
+    await user.click(screen.getByRole('button', { name: '퀴즈 풀고 금박 책등' }))
     answerAll()
     const dialog = screen.getByRole('dialog', { name: '나의 한 줄' })
     expect(dialog).toHaveTextContent('마가복음')
@@ -422,7 +422,7 @@ describe('나의 한 줄 (책)', () => {
     shelveMk()
     const user = userEvent.setup()
     render(<ModalLayer />)
-    await user.click(screen.getByRole('button', { name: '꽂기' }))
+    await user.click(screen.getByRole('button', { name: '퀴즈 풀고 금박 책등' }))
     answerAll(true) // 하나 틀려 금박이 아니다 → 다시 도전할 수 있다
     await user.click(screen.getByRole('button', { name: '나중에 적기' }))
     expect(useGame.getState().game.myLines).toEqual({})
@@ -877,7 +877,7 @@ describe('로마서–빌레몬서 방 (계획 7 작업 7)', () => {
 
   it('편지 선반: 열세 권, 다 적은 책은 꽂기 → 편지 서고 퀴즈 → 이 선반으로 돌아온다', async () => {
     const phm = chaptersOf('phm', CONTENT)
-    reset({ flags: opened, shelved: shelvedAll, progress: { ...emptyProgress(), phm: { completed: phm, arrangement: {} } } })
+    reset({ flags: opened, shelved: shelvedAll, bound: { phm: { day: 1 } }, progress: { ...emptyProgress(), phm: { completed: phm, arrangement: {} } } })
     useGame.setState({ modal: { kind: 'roomShelf', room: 'romPhm' }, rng: mulberry32(3) })
     const user = userEvent.setup()
     const { container } = render(<ModalLayer />)
@@ -885,8 +885,8 @@ describe('로마서–빌레몬서 방 (계획 7 작업 7)', () => {
     expect(container.querySelectorAll('.library-shelf .spine')).toHaveLength(13)
     expect(dialog.textContent).toContain('로마서')
     expect(dialog.textContent).toContain('빌레몬서')
-    expect(screen.getAllByRole('button', { name: '꽂기' })).toHaveLength(1)
-    await user.click(screen.getByRole('button', { name: '꽂기' }))
+    expect(screen.getAllByRole('button', { name: '퀴즈 풀고 금박 책등' })).toHaveLength(1)
+    await user.click(screen.getByRole('button', { name: '퀴즈 풀고 금박 책등' }))
     const m = useGame.getState().modal
     if (m?.kind !== 'quiz') throw new Error('quiz expected')
     expect(m.mode).toEqual({ kind: 'library', book: 'phm', retry: false })
@@ -900,13 +900,13 @@ describe('로마서–빌레몬서 방 (계획 7 작업 7)', () => {
 
   it('사도행전 방 선반도 같은 선반 — 꽂으면 사도행전 방 선반으로 돌아온다', async () => {
     const ac = chaptersOf('ac', CONTENT)
-    reset({ flags: { heartPoints: 1, gospelFeast: 2 }, shelved: { mt: 2, mk: 1, lk: 1, jn: 0 }, progress: { ...emptyProgress(), ac: { completed: ac, arrangement: {} } } })
+    reset({ flags: { heartPoints: 1, gospelFeast: 2 }, shelved: { mt: 2, mk: 1, lk: 1, jn: 0 }, bound: { ac: { day: 1 } }, progress: { ...emptyProgress(), ac: { completed: ac, arrangement: {} } } })
     useGame.setState({ modal: { kind: 'roomShelf', room: 'acts' }, rng: mulberry32(3) })
     const user = userEvent.setup()
     const { container } = render(<ModalLayer />)
     expect(screen.getByRole('dialog', { name: '사도행전 선반' })).toBeInTheDocument()
     expect(container.querySelectorAll('.library-shelf .spine')).toHaveLength(1)
-    await user.click(screen.getByRole('button', { name: '꽂기' }))
+    await user.click(screen.getByRole('button', { name: '퀴즈 풀고 금박 책등' }))
     solveQuiz()
     act(() => useGame.getState().nextQuiz())
     expect(useGame.getState().modal).toEqual({ kind: 'myLine', lineKey: 'book:ac', back: 'room:acts' })
@@ -974,7 +974,7 @@ describe('히브리서–유다서 방 (계획 8 작업 5)', () => {
 
   it('편지 선반: 여덟 권, 다 적은 책은 꽂기 → 편지 서고 퀴즈 → 이 선반으로 돌아온다', async () => {
     const jn2 = chaptersOf('2jn', CONTENT)
-    reset({ flags: opened, shelved: shelvedAll, progress: { ...emptyProgress(), '2jn': { completed: jn2, arrangement: {} } } })
+    reset({ flags: opened, shelved: shelvedAll, bound: { '2jn': { day: 1 } }, progress: { ...emptyProgress(), '2jn': { completed: jn2, arrangement: {} } } })
     useGame.setState({ modal: { kind: 'roomShelf', room: 'hebJud' }, rng: mulberry32(3) })
     const user = userEvent.setup()
     const { container } = render(<ModalLayer />)
@@ -982,8 +982,8 @@ describe('히브리서–유다서 방 (계획 8 작업 5)', () => {
     expect(container.querySelectorAll('.library-shelf .spine')).toHaveLength(8)
     expect(dialog.textContent).toContain('히브리서')
     expect(dialog.textContent).toContain('유다서')
-    expect(screen.getAllByRole('button', { name: '꽂기' })).toHaveLength(1)
-    await user.click(screen.getByRole('button', { name: '꽂기' }))
+    expect(screen.getAllByRole('button', { name: '퀴즈 풀고 금박 책등' })).toHaveLength(1)
+    await user.click(screen.getByRole('button', { name: '퀴즈 풀고 금박 책등' }))
     const m = useGame.getState().modal
     if (m?.kind !== 'quiz') throw new Error('quiz expected')
     expect(m.mode).toEqual({ kind: 'library', book: '2jn', retry: false })

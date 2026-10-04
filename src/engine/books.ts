@@ -27,12 +27,14 @@ export function chaptersOf(book: Book, content: GameContent): number[] {
  * 방 열림 판정은 이 하나만 쓴다 — 책 고르기·chooseBook·불러오기·도감·서고 문 불빛이 서로 어긋나지 않게
  */
 export function actsRoomOpen(flags: Readonly<Record<string, number | undefined>>): boolean {
-  return (flags.gospelFeast ?? 0) >= 2
+  // 사도행전을 먼저 다 필사해 제본해도 열린다 (계획 14 작업 4: 그 방 책을 한 권 제본하면 방이 열린다 — flags['room:acts'])
+  return (flags.gospelFeast ?? 0) >= 2 || (flags['room:acts'] ?? 0) >= 1
 }
 
 /**
  * 서고의 방이 열렸는가 (방 표 shelf-rooms): 복음서 방은 늘, 사도행전 방은 잔치 다음 날(actsRoomOpen),
  * 그 뒤 방은 앞 방이 다 찬 날 밤에 세운 표식 flags['room:<id>'] (goToSleep) — 다음 날 아침부터 열려 있다.
+ * 그 방의 책을 한 권 제본해도 바로 같은 표식이 선다 (계획 14 작업 4, game.bindBook).
  * 책 고르기·chooseBook·불러오기·도감·서고 문이 모두 이 판정 하나를 쓴다
  */
 export function roomOpen(id: ShelfRoomId, flags: Readonly<Record<string, number | undefined>>): boolean {

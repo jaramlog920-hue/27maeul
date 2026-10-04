@@ -1,6 +1,10 @@
 import { useState } from 'react'
 import { fill, ITEM_TEXT, T } from '../../content/text'
-import { chestOf, playerTile } from '../../engine/game'
+import { canBind, chestOf, playerTile } from '../../engine/game'
+import { CONTENT } from '../../content/catalog'
+import { finishedCopies } from '../../engine/binding'
+import { BOOKS } from '../../engine/types'
+import { BookCover } from '../library/BookArt'
 import { MAX_LEVEL, STAT_IDS, statScore, type StatId, type Stats } from '../../engine/stats'
 import { isHome } from '../../engine/world'
 import type { ItemId } from '../../engine/types'
@@ -85,6 +89,48 @@ function ItemGrid({ items, picked, from, onPick }: { items: [ItemId, number][]; 
   )
 }
 
+/**
+ * 가방 속 완성본 (계획 14 작업 4): 제본했지만 아직 서고에 꽂지 않은 책 — 마을 서고에 직접 가져가 꽂는다.
+ * 다 필사했지만 아직 제본하지 않은 책은 여기서 제본 창을 연다
+ */
+function Copies() {
+  const game = useGame((s) => s.game)
+  const openBind = useGame((s) => s.openBind)
+  const copies = finishedCopies(game)
+  const waiting = BOOKS.filter((b) => canBind(game, b, CONTENT) === null)
+  if (!copies.length && !waiting.length) return null
+  return (
+    <>
+      {copies.length > 0 && (
+        <section className="bag-copies" aria-label={T.library.copiesTitle}>
+          <h3>{T.library.copiesTitle}</h3>
+          <ul>
+            {copies.map((b) => (
+              <li key={b}>
+                <BookCover book={b} binding={game.bound[b]} />
+              </li>
+            ))}
+          </ul>
+          <p className="hint">{T.library.copiesHint}</p>
+        </section>
+      )}
+      {waiting.length > 0 && (
+        <section className="bag-copies" aria-label={T.library.waitingTitle}>
+          <h3>{T.library.waitingTitle}</h3>
+          <ul>
+            {waiting.map((b) => (
+              <li key={b}>
+                <span>{(T.quiz.books as Record<string, string>)[b]}</span>
+                <button onClick={() => openBind(b, 'bag')}>{T.library.bind}</button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </>
+  )
+}
+
 export function Bag() {
   const game = useGame((s) => s.game)
   const closeModal = useGame((s) => s.closeModal)
@@ -130,6 +176,7 @@ export function Bag() {
           <p className="hint">{T.easy.chestHint}</p>
         </>
       )}
+      <Copies />
       <h3>{T.ui.statusTitle}</h3>
       <NeedsView explain />
       <StatsView stats={game.stats} />

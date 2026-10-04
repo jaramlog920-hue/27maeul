@@ -14,6 +14,10 @@
   "copyFocus": {
     "godNew": "✦ 하나님에 대한 새로운 기록 {n} — 바울"
   },
+  "shelfDone": {
+    "god": "✦ 하나님에 대한 기록 {n}",
+    "lead": "하나님이 채우셨다"
+  },
   "neighbors": {
     "x": {
       "idle": [

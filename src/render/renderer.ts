@@ -16,6 +16,7 @@ import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
 import { childMode, childStage, CRADLE_SPOT, helperSpot } from '../engine/child'
 import { BOARD, stoneTile, TRIP_H, TRIP_W, tripLayout, type Cell as TripCell } from '../engine/trip-board'
 import { actsDoorGlows, feastToday, sideShelfSpines } from '../engine/library'
+import { spineLook } from '../engine/binding'
 import { ACTS_ROOM, ATTIC, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, HEIGHT, HOUSE_RECT, housesNow, houseAt, LOCKED_DOORS, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
 import { GOSPELS, type Book, type Facing, type NeighborDef, type GameContent, type Season, type Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
@@ -1219,28 +1220,75 @@ function glow(g: Ctx, x: number, y: number, radius: number, alpha: number, color
   g.fillRect(x - radius, y - radius, radius * 2, radius * 2)
 }
 
+/** 책등 등급 띠: 맨 책·은박·금박 */
+const GRADE_BAND = ['#dbc49c', '#d0d6e1', '#fac839']
+
 /**
- * 편지 방 선반의 얇은 책등 (방 표 순서) — 꽂힌 책만 색, 은박·금박이면 띠 둘. 꽂지 않은 책의 자리는 비워 둔다.
- * 방마다 책등 색 묶음이 다르다 (로마서–빌레몬서 방은 하늘·모래, 히브리서–유다서 방은 쑥·청회색). 여덟 권은 조금 굵게
+ * 큰 책등 하나 (8×10 — 서고 복음서 선반·사도행전 방·요한계시록 방, 계획 14 작업 4): 책마다 다른 색과 무늬(제본 binding.spineLook —
+ * 특별 제본이면 고른 표지 색·무늬·장식), 은박·금박은 위아래 2픽셀 띠, 봉인은 아래 가운데 붉은 점. 무늬는 2픽셀 이상, 좌우 대칭
  */
-const LETTER_SPINES: Record<'romPhm' | 'hebJud', { colors: string[]; w: number; step: number }> = {
-  romPhm: { colors: ['#8aa3c2', '#b59a7d', '#91b29d', '#b99191', '#a095bd'], w: 2, step: 3 },
-  hebJud: { colors: ['#92b290', '#8fa5c1', '#bda483', '#9aa7a0', '#b3939c'], w: 3, step: 5 },
+function drawSpine(g: Ctx, sx: number, sy: number, book: Book, game: GameState) {
+  const grade = game.shelved[book]
+  if (grade === undefined) return
+  const look = spineLook(book, game.bound?.[book])
+  g.fillStyle = look.color
+  g.fillRect(sx, sy, 8, 10)
+  g.fillStyle = look.accent
+  if (look.mark === 'band') {
+    g.fillRect(sx, sy + 3, 8, 2)
+    g.fillRect(sx, sy + 6, 8, 2)
+  } else if (look.mark === 'stripe') g.fillRect(sx + 3, sy + 2, 2, 6)
+  else if (look.mark === 'dot') g.fillRect(sx + 2, sy + 3, 4, 4)
+  else if (look.mark === 'diamond') {
+    g.fillRect(sx + 3, sy + 2, 2, 6)
+    g.fillRect(sx + 2, sy + 4, 4, 2)
+  }
+  if (grade > 0) {
+    g.fillStyle = GRADE_BAND[grade]
+    g.fillRect(sx, sy, 8, 2)
+    g.fillRect(sx, sy + 8, 8, 2)
+  }
+  if ((game.sealed ?? []).includes(book)) {
+    g.fillStyle = '#db4627'
+    g.fillRect(sx + 3, sy + 7, 2, 2)
+  }
 }
-function drawLetterSpines(g: Ctx, shelved: GameState['shelved'], room: 'romPhm' | 'hebJud') {
+
+/** 아직 꽂지 않은 큰 책등 자리: 어두운 빈 칸과 2픽셀 밝은 나무 테 (빈 칸이 또렷이 보이게) */
+function drawEmptySlot(g: Ctx, sx: number, sy: number) {
+  g.fillStyle = 'rgba(40,25,15,0.4)'
+  g.fillRect(sx, sy, 8, 10)
+  g.fillStyle = 'rgba(236, 214, 170, 0.55)'
+  g.fillRect(sx, sy + 8, 8, 2)
+}
+
+/**
+ * 편지 방 선반의 얇은 책등 (방 표 순서) — 꽂힌 책만, 책마다 다른 색(binding.spineLook)과 가운데 장식 띠, 은박·금박이면 위아래 띠.
+ * 꽂지 않은 책의 자리는 비워 둔다. 여덟 권 방은 조금 굵게
+ */
+const LETTER_SPINES: Record<'romPhm' | 'hebJud', { w: number; step: number }> = {
+  romPhm: { w: 2, step: 3 },
+  hebJud: { w: 3, step: 5 },
+}
+function drawLetterSpines(g: Ctx, game: GameState, room: 'romPhm' | 'hebJud') {
   const [s0] = (room === 'romPhm' ? PLACES.lettersShelf : PLACES.hebJudShelf).tiles
-  const { colors, w, step } = LETTER_SPINES[room]
+  const { w, step } = LETTER_SPINES[room]
   shelfRoom(room).books.forEach((b, i) => {
     const sx = s0.x * TILE + 5 + i * step
     const sy = s0.y * TILE + 2
-    const grade = shelved[b]
+    const grade = game.shelved[b]
     if (grade === undefined) return
-    g.fillStyle = colors[i % colors.length]
+    const look = spineLook(b, game.bound?.[b])
+    g.fillStyle = look.color
     g.fillRect(sx, sy + 1, w, 8)
+    if (look.mark !== 'none') {
+      g.fillStyle = look.accent
+      g.fillRect(sx, sy + 4, w, 2)
+    }
     if (grade > 0) {
-      g.fillStyle = grade === 2 ? '#fac839' : '#d0d6e1'
-      g.fillRect(sx, sy + 2, w, 2)
-      g.fillRect(sx, sy + 6, w, 2)
+      g.fillStyle = GRADE_BAND[grade]
+      g.fillRect(sx, sy + 1, w, 2)
+      g.fillRect(sx, sy + 7, w, 2)
     }
   })
 }
@@ -1447,30 +1495,15 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         flame(g, FIRE.x * TILE + 8, FIRE.y * TILE + 13, t, true)
       }
 
-      // 서고 안 복음서 선반: 네 칸, 꽂은 책은 책등 색과 등급 띠(맨 책·은박·금박)
+      // 서고 안 복음서 선반: 네 칸 — 처음엔 빈 칸이 또렷이, 꽂은 책은 책마다 다른 책등(제본 모습)과 등급 띠 (계획 14 작업 4)
       if (roomAt(here)?.owner === 'library') {
         const [first] = PLACES.library.tiles
-        const SPINE: Record<string, string> = { mt: '#9e6565', mk: '#65819e', lk: '#819e65', jn: '#a28751' }
-        const BAND = ['#dbc49c', '#d0d6e1', '#fac839']
+        const BAND = GRADE_BAND
         GOSPELS.forEach((b, i) => {
           const sx = first.x * TILE + 4 + i * 11
           const sy = first.y * TILE + 2
-          const grade = game.shelved[b]
-          if (grade === undefined) {
-            g.fillStyle = 'rgba(40,25,15,0.35)'
-            g.fillRect(sx, sy + 1, 8, 9)
-            return
-          }
-          g.fillStyle = SPINE[b]
-          g.fillRect(sx, sy, 8, 10)
-          g.fillStyle = BAND[grade]
-          g.fillRect(sx, sy + 2, 8, 2)
-          g.fillRect(sx, sy + 7, 8, 1)
-          // 봉인은 가운데 붉은 점
-          if ((game.sealed ?? []).includes(b)) {
-            g.fillStyle = '#db4627'
-            g.fillRect(sx + 3, sy + 4, 2, 2)
-          }
+          if (game.shelved[b] === undefined) drawEmptySlot(g, sx, sy)
+          else drawSpine(g, sx, sy, b, game)
         })
         // 서고 서가 단계 (계획 13): 벽면 서가는 양옆 책장을 밝은 나무로 새로 짜고 윗단을 두른다,
         // 완성된 서고는 가운데 선반 위 자주색 천 드림과 양옆 청동 등, 그리고 모은 희귀품 진열
@@ -1505,22 +1538,19 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
             if (c && dx !== undefined) g.drawImage(c, (first.x + dx) * TILE + 4, first.y * TILE - 5)
           })
         }
-        // 양옆 책장: 복음서 다음에 꽂은 책(사도행전·편지·요한계시록)마다 책등 둘씩 — 방마다 다른 책등 색, 등급 띠
-        const SIDE_SPINE: [readonly Book[], readonly [string, string]][] = [
-          [['ac'], ['#b095d6', '#c1a7e3']],
-          [shelfRoom('romPhm').books, ['#ec9f72', '#f8b888']],
-          [shelfRoom('hebJud').books, ['#85cbbd', '#9edbcb']],
-          [['rev'], ['#dc89a6', '#e89eb7']],
-        ]
+        // 양옆 책장: 복음서 다음에 꽂은 책(사도행전·편지·요한계시록)마다 책등 둘씩 (왼쪽·오른쪽 짝) — 처음엔 텅 빈 책장이
+        // 권이 늘수록 찬다. 책마다 다른 색(제본 모습): 왼쪽은 책등 색, 오른쪽 짝은 장식 색. 은박·금박이면 위 2픽셀 띠
         for (const sp of sideShelfSpines(game.shelved)) {
           const tx = sp.side === 'left' ? first.x - 4 + sp.tile : first.x + 4 + sp.tile
           const x = tx * TILE + 2 + sp.col * 3
           const y = first.y * TILE + (sp.row === 0 ? 5 : 10)
-          const pair = SIDE_SPINE.find(([bs]) => bs.includes(sp.book))?.[1] ?? SIDE_SPINE[1][1]
-          g.fillStyle = pair[sp.col % 2]
+          const look = spineLook(sp.book, game.bound?.[sp.book])
+          g.fillStyle = sp.side === 'left' || look.mark === 'none' ? look.color : look.accent
           g.fillRect(x, y, 2, 4)
-          g.fillStyle = BAND[sp.grade]
-          g.fillRect(x, y + 1, 2, 1)
+          if (sp.grade > 0) {
+            g.fillStyle = BAND[sp.grade]
+            g.fillRect(x, y, 2, 2)
+          }
         }
         // 잔치 다음 날부터: 사도행전 방 문으로 새는 따뜻한 불빛
         if (actsGlow) drawDoorGlow(g, LOCKED_DOORS[0], t)
@@ -1528,17 +1558,8 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       // 사도행전 방: 선반의 사도행전 책등, 벽 여정 판의 실과 카드 (모은 만큼, 다 이으면 실이 금빛)
       if (roomAt(here) === ACTS_ROOM) {
         const mid = PLACES.actsShelf.tiles[1]
-        const grade = game.shelved.ac
-        if (grade === undefined) {
-          g.fillStyle = 'rgba(40,25,15,0.35)'
-          g.fillRect(mid.x * TILE + 4, mid.y * TILE + 3, 8, 9)
-        } else {
-          g.fillStyle = '#81659e'
-          g.fillRect(mid.x * TILE + 4, mid.y * TILE + 2, 8, 10)
-          g.fillStyle = ['#dbc49c', '#d0d6e1', '#fac839'][grade]
-          g.fillRect(mid.x * TILE + 4, mid.y * TILE + 4, 8, 2)
-          g.fillRect(mid.x * TILE + 4, mid.y * TILE + 9, 8, 2)
-        }
+        if (game.shelved.ac === undefined) drawEmptySlot(g, mid.x * TILE + 4, mid.y * TILE + 2)
+        else drawSpine(g, mid.x * TILE + 4, mid.y * TILE + 2, 'ac', game)
         const [b0] = PLACES.journeyBoard.tiles
         const bx = b0.x * TILE + 4
         const by = b0.y * TILE
@@ -1558,22 +1579,13 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       // 요한계시록 방: 한 권 선반의 요한계시록 책등, 벽 일곱 교회 카드 판의 자리·카드·실
       if (roomAt(here) === REV_ROOM) {
         const mid = PLACES.revShelf.tiles[1]
-        const grade = game.shelved.rev
-        if (grade === undefined) {
-          g.fillStyle = 'rgba(40,25,15,0.35)'
-          g.fillRect(mid.x * TILE + 4, mid.y * TILE + 3, 8, 9)
-        } else {
-          g.fillStyle = '#6c9a9e'
-          g.fillRect(mid.x * TILE + 4, mid.y * TILE + 2, 8, 10)
-          g.fillStyle = ['#dbc49c', '#d0d6e1', '#fac839'][grade]
-          g.fillRect(mid.x * TILE + 4, mid.y * TILE + 4, 8, 2)
-          g.fillRect(mid.x * TILE + 4, mid.y * TILE + 9, 8, 2)
-        }
+        if (game.shelved.rev === undefined) drawEmptySlot(g, mid.x * TILE + 4, mid.y * TILE + 2)
+        else drawSpine(g, mid.x * TILE + 4, mid.y * TILE + 2, 'rev', game)
         drawCardBoard(g, PLACES.churchBoard.tiles[0], game.churches.length, (game.flags.churchesDone ?? 0) > 0)
       }
       // 편지 방: 편지 선반의 얇은 책등 (방 표 순서)
-      if (roomAt(here) === LETTERS_ROOM) drawLetterSpines(g, game.shelved, 'romPhm')
-      if (roomAt(here) === HEB_JUD_ROOM) drawLetterSpines(g, game.shelved, 'hebJud')
+      if (roomAt(here) === LETTERS_ROOM) drawLetterSpines(g, game, 'romPhm')
+      if (roomAt(here) === HEB_JUD_ROOM) drawLetterSpines(g, game, 'hebJud')
 
       // 마음이 쌓여 마을에 생긴 것들
       drawDecor(g, game, weather, t, phase === 'morning' || phase === 'day')

@@ -42,6 +42,7 @@ import { arrivesOf, modeOf, SHELF_ROOMS } from './shelf-rooms'
 import { currentChapter, mulberry32, offersForDay } from './offers'
 import { checkCopy, COPY_CHAPTER_XP, copySpot, copyVerses, nextOpenChapter, NO_COPY, NO_COPY_STATS, type CopyCheck, type CopyState, type CopyStats } from './copying'
 import { chapterFinds, type GodFind } from './god-records'
+import { SPECIAL_COST, type Bindings, type SpecialChoice } from './binding'
 import { addXp, charmBonus, statScore, freshStats, luckyExtra, rainBonus, sellBonus, tiredScale, visitBonus, XP, type StatId, type Stats } from './stats'
 import { HALL_GUESTS, HALL_PLAY_GAIN, HALL_PLAY_MINUTES, HALL_SPOTS, hallGuests, hallOpen, SUNSET_MINUTES, sunsetTime, TEA_MINUTES, TEA_PRICE, teaOpen } from './places'
 import {
@@ -224,6 +225,11 @@ export interface GameState {
   copyStats: CopyStats
   /** 하나님 기록 (계획 14): 장을 다 필사해 발견한 줄 — 키워드·근거 구절·발견한 날 */
   godRecords: GodFind[]
+  /**
+   * 제본한 책 (계획 14 작업 4): 그대로 또는 특별하게(표지 색·무늬·책등 장식), 제본한 날.
+   * 제본했지만 서고에 꽂지 않은 책 = 가방 속 완성본. 예전에 꽂은 책은 기록이 없어도 그대로 꽂혀 있다
+   */
+  bound: Bindings
 }
 
 /** 지도(world.tileAt)가 이 게임의 집 단계·열린 서고 방 문(방 표)을 보게 한다. 지도를 읽는 엔진 입구마다 부른다 */
@@ -476,6 +482,7 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
     copy: NO_COPY,
     copyStats: NO_COPY_STATS,
     godRecords: [],
+    bound: {},
   }
 }
 
@@ -2289,6 +2296,47 @@ export function canSeal(s: GameState, book: Book): SealBlock {
 export function sealBook(s: GameState, book: Book): GameState {
   if (canSeal(s, book)) return s
   return { ...useStock(s, { sealWax: 1 })!, sealed: [...(s.sealed ?? []), book] }
+}
+
+// ── 제본 (계획 14 작업 4): 다 필사한 책 → 완성본(가방) → 서고에 직접 가져가 꽂는다 ──
+
+export type BindBlock = 'notDone' | 'bound' | null
+/** 제본할 수 있는가: 다 필사한 책이고 아직 제본하지 않았다 (이미 꽂힌 옛 책도 제본 기록이 없으면 다시 묶지 않는다 — 꾸미기만) */
+export function canBind(s: GameState, book: Book, content: GameContent): BindBlock {
+  if (!bookDone(s, book, content)) return 'notDone'
+  if (s.bound[book] !== undefined || s.shelved[book] !== undefined) return 'bound'
+  return null
+}
+
+/**
+ * 한 권을 제본한다. special이 없으면 그대로 제본하기 — 무료, 늘 가능. special이면 재료(SPECIAL_COST, 가방 먼저 그다음 궤짝)를
+ * 쓰고 고른 표지 색·무늬·책등 장식을 남긴다 (모자라면 그대로 돌려준다).
+ * 그 책의 서고 방이 닫혀 있으면 연다 (방 표식, 문 장면 — 사도행전 방은 장면 없이). 기다리던 'bookBound' 장면 하나를 거둔다
+ */
+export function bindBook(s: GameState, book: Book, content: GameContent, special?: SpecialChoice): GameState {
+  if (canBind(s, book, content)) return s
+  const paid = special ? useStock(s, SPECIAL_COST) : s
+  if (!paid) return s
+  const scenes = [...paid.scenes]
+  const waiting = scenes.indexOf('bookBound')
+  if (waiting >= 0) scenes.splice(waiting, 1)
+  const flags = { ...paid.flags }
+  const room = SHELF_ROOMS.find((r) => r.books.includes(book))!
+  if (room.id !== 'gospels' && !roomOpen(room.id, flags)) {
+    flags[`room:${room.id}`] = 1
+    if (room.id !== 'acts') scenes.push(`roomOpen:${room.id}`)
+  }
+  const binding = special ? { day: s.clock.day, special } : { day: s.clock.day }
+  return { ...paid, flags, scenes, bound: { ...paid.bound, [book]: binding } }
+}
+
+/** 제본한 책(완성본 또는 꽂은 책 — 제본 기록이 없는 옛 책 포함)의 표지를 재료로 다시 꾸민다. 등급·제본한 날은 그대로 */
+export function decorateBook(s: GameState, book: Book, special: SpecialChoice): GameState {
+  const before = s.bound[book]
+  if (before === undefined && s.shelved[book] === undefined) return s
+  const paid = useStock(s, SPECIAL_COST)
+  if (!paid) return s
+  return { ...paid, bound: { ...paid.bound, [book]: { day: before?.day ?? s.clock.day, special } } }
 }
 
 /** 퀴즈까지 마친 뒤 실제로 기록한다 (재료 없이 장을 완성 — 계획 14). 한 권의 마지막 장이면 'bookBound' 장면 */

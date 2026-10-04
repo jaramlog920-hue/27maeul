@@ -1,5 +1,5 @@
-// 마을 서고: 다 엮은 책을 꽂고, 서고 퀴즈로 책등 등급을 받는다 (설계 §2.4).
-// 책은 언제나 꽂힌다 — 틀린 만큼 등급이 낮고, 틀린 구절은 다시 읽을 구절로 돌아온다.
+// 마을 서고: 제본한 완성본을 꽂는다 (설계 §2.4, 계획 14 작업 4). 꽂을 때 [바로 꽂기] 또는 [퀴즈 풀고 금박 책등].
+// 책은 언제나 꽂힌다 — 퀴즈를 고르면 맞힌 만큼 은박·금박, 틀린 구절은 다시 읽을 구절로 돌아온다.
 import { actsRoomOpen, bookDone } from './books'
 import type { GameState } from './game'
 import { has, take } from './items'
@@ -18,11 +18,22 @@ export function poolFor(shelved: Partial<Record<Book, Grade>>, book: Book): Book
   return BOOKS.filter((b) => b === book || shelved[b] !== undefined)
 }
 
-export type ShelveBlock = 'notDone' | 'already' | null
+export type ShelveBlock = 'notDone' | 'notBound' | 'already' | null
+/** 꽂을 수 있는가: 다 필사해 제본한 완성본만 (계획 14 작업 4 — 가방의 완성본을 서고에 직접 가져가 꽂는다) */
 export function canShelve(s: GameState, book: Book, content: GameContent): ShelveBlock {
   if (s.shelved[book] !== undefined) return 'already'
   if (!bookDone(s, book, content)) return 'notDone'
+  if (s.bound?.[book] === undefined) return 'notBound'
   return null
+}
+
+/**
+ * 바로 꽂기 (계획 14 작업 4): 퀴즈 없이 꽂는다 — 책등은 맨 책, 다시 읽을 구절도 늘지 않는다 (안 풀어도 불이익 없음).
+ * 퀴즈를 고르면 예전처럼 맞힌 수로 은박·금박 책등 (shelve)
+ */
+export function shelveNow(s: GameState, book: Book, content: GameContent): GameState {
+  if (canShelve(s, book, content)) return s
+  return shelve(s, book, 0, [])
 }
 
 export function shelve(s: GameState, book: Book, correct: number, missed: readonly string[]): GameState {

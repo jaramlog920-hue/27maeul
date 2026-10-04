@@ -14,7 +14,8 @@ import { JOB_GIFTS, kidCoins, type ChildMode } from '../engine/child'
 import type { TripReward } from '../engine/trip-board'
 import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
 import { bookRoomOpen, openDoorsFor } from '../engine/books'
-import { actsDoorGlows, canShelve, payRetry, poolFor, shelve } from '../engine/library'
+import { actsDoorGlows, allShelved, canShelve, payRetry, poolFor, shelve, shelveNow as shelveQuick } from '../engine/library'
+import { DEFAULT_CHOICE, type SpecialChoice } from '../engine/binding'
 import { ALBUM_IDS, fill, itemList, itemName, KID_LETTERS, NEIGHBOR_LINES, roomTitle, SCENES, T, withAnd, withObject, withSubject, callName } from '../content/text'
 import { grapesRipe, isWet, weatherOf } from '../engine/calendar'
 import { cleanName, type Animal } from '../engine/companion'
@@ -103,6 +104,9 @@ import {
   recordLetter,
   startCopy,
   writeVerse,
+  bindBook,
+  canBind,
+  decorateBook,
   type VerseResult,
   readScripture,
   passTime,
@@ -194,12 +198,21 @@ export type Modal =
   | { kind: 'library' }
   /** 서고 방의 선반 (사도행전 방·편지 방·요한계시록 방 — RoomShelf), 벽의 카드 판 (board 없으면 사도행전 방 여정 판) */
   | { kind: 'roomShelf'; room: ShelfRoomId }
+  /**
+   * 제본 창 (계획 14 작업 4): step 'choose' [그대로 제본하기] [특별하게 제본하기], 'decorate' 표지 색·무늬·책등 장식 고르기,
+   * 'made' 실제 책이 된 모습. redo: 이미 제본한 책을 다시 꾸민다. choice: 고르는 중인 모습. back: 닫은 뒤 돌아갈 창
+   */
+  | { kind: 'bind'; book: Book; step: 'choose' | 'decorate' | 'made'; redo?: boolean; choice?: SpecialChoice; back?: BindBack }
+  /** 스물일곱 번째 책을 꽂은 날: 처음의 빈 서고와 지금을 나란히, 그리고 평소 마을로 */
+  | { kind: 'shelfDone' }
   | { kind: 'journey'; board?: 'churches' }
   | { kind: 'letter' }
   | { kind: 'garden'; at: Tile }
 
 /** 필사 책상의 화면 (계획 14 작업 2) */
 export type CopyView = 'menu' | 'pick' | 'write' | 'done'
+/** 제본 창을 닫은 뒤 돌아갈 곳: 서고·방 선반·가방 (없으면 마을로) */
+export type BindBack = 'library' | 'bag' | `room:${ShelfRoomId}`
 /** 필사 입력이 들어온 모양: 붙여넣기 표식·입력 종류 + 한글을 조합하는 중인가 (화면이 compositionstart/end로 안다) */
 export type CopyHow = Omit<InputHow, 'target'> & { composing?: boolean }
 
@@ -249,6 +262,14 @@ function afterMyLine(m: Modal | null): Modal | null {
 function shelfBackOf(book: Book): 'library' | `room:${ShelfRoomId}` {
   const room = roomOf(book).id
   return room === 'gospels' ? 'library' : `room:${room}`
+}
+
+/** 제본 창을 닫은 뒤 돌아갈 창 */
+function bindBackModal(back: BindBack | undefined): Modal | null {
+  if (!back) return null
+  if (back === 'library') return { kind: 'library' }
+  if (back === 'bag') return { kind: 'bag' }
+  return { kind: 'roomShelf', room: back.slice('room:'.length) as ShelfRoomId }
 }
 
 interface Store {
@@ -383,8 +404,19 @@ interface Store {
   // 서고
   /** 카드 판(여정 판·일곱 교회 카드 판)의 카드를 위(-1)·아래(+1)로 */
   moveBoard: (board: CardBoard, index: number, delta: number) => void
+  /** 퀴즈 풀고 금박 책등: 서고 퀴즈를 풀고 꽂는다 (맞힌 만큼 은박·금박) */
   startShelve: (book: Book) => void
+  /** 바로 꽂기: 퀴즈 없이 꽂는다 (불이익 없음) */
+  shelveNow: (book: Book) => void
   startRetry: (book: Book) => void
+  /** 제본 창을 연다: 아직 제본하지 않은 책은 고르기부터, 제본한 책(꽂은 책 포함)은 표지 꾸미기부터 */
+  openBind: (book: Book, back?: BindBack) => void
+  /** 제본 창: 그대로 제본하기 (무료) */
+  bindPlain: () => void
+  /** 제본 창: 고른 모습으로 특별하게 제본하기 / 다시 꾸미기 (재료가 모자라면 그대로) */
+  bindSpecial: (choice: SpecialChoice) => void
+  /** 제본 창을 닫는다 — 열기 전 창(서고·방 선반·가방)으로 */
+  closeBind: () => void
   sleep: () => void
   saveMyLine: (lineKey: string, text: string) => void
   /** 나의 한 줄을 적지 않고 넘긴다 (나중에 선반에서 적을 수 있다) */
@@ -637,6 +669,26 @@ export const useGame = create<Store>((set, get) => {
   const toastGain = (before: Inventory, after: Inventory) => {
     const g = gained(before, after)
     if (Object.keys(g).length) get().say(fill(T.ui.gotLine, { items: itemList(g) }))
+  }
+  /**
+   * 책을 꽂은 뒤 (바로 꽂기·퀴즈 풀고 금박 책등·다시 도전 모두): 책등 알림, 새로 열린 구역 알림, 처음 꽂은 책이면 나의 한 줄.
+   * 스물일곱 번째 책을 처음 꽂았으면 처음의 빈 서고와 지금을 나란히 보이는 창 (한 줄은 선반에서 나중에 적을 수 있다)
+   */
+  const afterShelved = (prev: GameState, next: GameState, book: Book, missed: readonly string[]) => {
+    const firstTime = prev.shelved[book] === undefined
+    sfx('done')
+    const grades = T.library.grades as string[]
+    get().say(fill(T.library.shelvedToast, { bookObj: withObject((T.quiz.books as Record<string, string>)[book]), grade: grades[next.shelved[book]!] }) + (missed.length ? ' ' + T.library.rereadNote : ''), 4000)
+    // 새로 열린 구역
+    const opened = lockedZones(shelvedCount(prev)).filter((z) => shelvedCount(next) >= z.books)
+    if (opened.length) setTimeout(() => get().say(fill(T.ui.zoneOpened, { name: (T.ui.zones as Record<string, string>)[opened[0].id] }), 4000), 4200)
+    if (firstTime && allShelved(next) && !allShelved(prev)) {
+      set({ game: persist(next), modal: { kind: 'shelfDone' } })
+      return
+    }
+    // 처음 꽂은 책이면 그 책에 대한 나의 한 줄을 물어본다 (넘겨도 된다). 사도행전·편지는 자기 방 선반으로 돌아간다 (방 표)
+    const myLine: Modal = { kind: 'myLine', lineKey: bookLineKey(book), back: shelfBackOf(book) }
+    set({ game: persist(next), modal: firstTime ? myLine : afterMyLine(myLine) })
   }
 
   function arrive(game: GameState, target: Target): { game: GameState; modal: Modal | null } {
@@ -1465,19 +1517,8 @@ export const useGame = create<Store>((set, get) => {
       }
       if (m.mode.kind === 'library') {
         const correct = m.questions.length - m.misses
-        const firstTime = get().game.shelved[m.mode.book] === undefined
-        const next = shelve(get().game, m.mode.book, correct, m.missed)
-        sfx('done')
-        const grades = T.library.grades as string[]
-        get().say(fill(T.library.shelvedToast, { bookObj: withObject((T.quiz.books as Record<string, string>)[m.mode.book]), grade: grades[next.shelved[m.mode.book]!] }) + (m.missed.length ? ' ' + T.library.rereadNote : ''), 4000)
-        // 새로 열린 구역
-        const opened = lockedZones(shelvedCount(get().game)).filter((z) => shelvedCount(next) >= z.books)
-        if (opened.length) setTimeout(() => get().say(fill(T.ui.zoneOpened, { name: (T.ui.zones as Record<string, string>)[opened[0].id] }), 4000), 4200)
-        // 처음 꽂은 책이면 그 책에 대한 나의 한 줄을 물어본다 (넘겨도 된다)
-        // 사도행전·편지는 자기 방 선반으로 돌아간다 (방 표)
-        const back = shelfBackOf(m.mode.book)
-        const myLine: Modal = { kind: 'myLine', lineKey: bookLineKey(m.mode.book), back }
-        set({ game: persist(next), modal: firstTime ? myLine : afterMyLine(myLine) })
+        const prev = get().game
+        afterShelved(prev, shelve(prev, m.mode.book, correct, m.missed), m.mode.book, m.missed)
         return
       }
       const { state, result } = submitChapter(get().game, m.mode.book, m.mode.chapter, CONTENT)
@@ -1505,6 +1546,45 @@ export const useGame = create<Store>((set, get) => {
       sfx('scroll')
       const questions = buildLibraryQuiz({ current: book, pool, piecesOf, rng: get().rng, src: quizSourceFor(pool), openings: LETTER_OPENINGS })
       set({ modal: { kind: 'quiz', mode: { kind: 'library', book, retry: false }, questions, index: 0, wrong: [], solved: false, misses: 0, missed: [] } })
+    },
+    shelveNow: (book) => {
+      const prev = get().game
+      const next = shelveQuick(prev, book, CONTENT)
+      if (next === prev) return
+      afterShelved(prev, next, book, [])
+    },
+    openBind: (book, back) => {
+      const game = get().game
+      const block = canBind(game, book, CONTENT)
+      // 아직 다 마치지 않은 책은 열지 않는다. 제본한 책(꽂은 옛 책 포함)은 표지 꾸미기부터
+      if (block === 'notDone') return
+      sfx('scroll')
+      const redo = block === 'bound'
+      const choice = game.bound[book]?.special ?? DEFAULT_CHOICE
+      set({ modal: { kind: 'bind', book, step: redo ? 'decorate' : 'choose', redo, choice, back } })
+    },
+    bindPlain: () => {
+      const m = get().modal
+      if (m?.kind !== 'bind' || m.redo) return
+      const game = get().game
+      const next = bindBook(game, m.book, CONTENT)
+      if (next === game) return
+      sfx('done')
+      set({ game: persist(next), modal: { ...m, step: 'made' } })
+    },
+    bindSpecial: (choice) => {
+      const m = get().modal
+      if (m?.kind !== 'bind') return
+      const game = get().game
+      const next = m.redo ? decorateBook(game, m.book, choice) : bindBook(game, m.book, CONTENT, choice)
+      if (next === game) return
+      sfx('done')
+      set({ game: persist(next), modal: { ...m, step: 'made', choice } })
+    },
+    closeBind: () => {
+      const m = get().modal
+      if (m?.kind !== 'bind') return
+      set({ modal: bindBackModal(m.back) })
     },
     startRetry: (book) => {
       const paid = payRetry(get().game, book)
