@@ -4,12 +4,13 @@ import { useGame } from '../../store/game-store'
 import { Passage } from './Passage'
 import { Stamps } from './Stamps'
 
-/** back: 닫으면 📖 말씀 › 말씀 조각으로 돌아간다 */
-export function PassageWindow({ pieceId, askLine, back }: { pieceId: string; askLine: boolean; back?: boolean }) {
+/** back: 닫으면 말씀 › 말씀 조각으로 돌아간다. said: 조각을 건넨 이웃의 말 (특별한 대화에서 바로 열렸을 때) */
+export function PassageWindow({ pieceId, askLine, back, said }: { pieceId: string; askLine: boolean; back?: boolean; said?: string }) {
   const piece = pieceById(pieceId)
   const { closeModal, open } = useGame.getState()
   return (
     <div className="dialog scroll-dialog" role="dialog" aria-label={piece.title}>
+      {said && <p className="talk-line">{said}</p>}
       <h2>{piece.title}</h2>
       <Passage refText={piece.ref} />
       <Stamps piece={piece} />

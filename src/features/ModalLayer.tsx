@@ -56,7 +56,7 @@ function Body() {
     case 'talk':
       return <TalkBox modal={modal} />
     case 'passage':
-      return <PassageWindow pieceId={modal.pieceId} askLine={modal.askLine} back={modal.back} />
+      return <PassageWindow pieceId={modal.pieceId} askLine={modal.askLine} back={modal.back} said={modal.said} />
     case 'myLine':
       return <MyLineForm key={modal.lineKey} lineKey={modal.lineKey} />
     case 'desk':

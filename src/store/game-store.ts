@@ -1,5 +1,4 @@
 // 엔진 상태 ↔ 화면 연결. 창(모달)이 열려 있으면 시간과 걸음이 멈춘다.
-import { SERVICES } from '../engine/services'
 import type { FullAvatar } from '../engine/avatar'
 import type { DatePlace } from '../engine/romance'
 import { create } from 'zustand'
@@ -58,7 +57,6 @@ import {
   giveCord,
   goOnDate,
   spouseGift,
-  sellHerbs,
   playHall,
   drinkTea,
   watchSunset,
@@ -79,7 +77,6 @@ import {
   openEvent,
   dressUp,
   type WardrobeWho,
-  doService,
   nightCopy,
   libraryRead,
   buyScroll,
@@ -159,7 +156,7 @@ export type Modal =
   | { kind: 'guide' }
   | { kind: 'schedule' }
   | { kind: 'talk'; neighborId: string; line: string }
-  | { kind: 'passage'; pieceId: string; askLine: boolean; back?: boolean }
+  | { kind: 'passage'; pieceId: string; askLine: boolean; back?: boolean; said?: string }
   /** lineKey: 조각 id 또는 'book:mk' 같은 책 키. back: 적거나 넘긴 뒤 돌아갈 창 ('word' = 📖 말씀 › 서고) */
   | { kind: 'myLine'; lineKey: string; back?: 'library' | 'word' | `room:${ShelfRoomId}` }
   /** copy: 편지 옮겨 적기의 고른 답 (창 상태로만 — 게임 저장에 남지 않는다) */
@@ -387,7 +384,6 @@ interface Store {
   eat: () => void
   rest: () => void
   playHall: () => void
-  sellHerbs: () => void
   /** 서고: 봉인용 밀랍으로 봉인 */
   seal: (book: Book) => void
   /** 목수·대장장이에게 기록 설비 부탁 */
@@ -412,8 +408,6 @@ interface Store {
   nightCopy: () => void
   /** 가족 옷장: 고른 모습을 입힌다 (피부는 그대로) */
   dressUp: (who: WardrobeWho, a: FullAvatar) => void
-  /** 집마다 직업 → 주고받기 */
-  service: (id: string) => void
   libraryRead: () => void
   buyScroll: () => void
   blanket: () => void
@@ -747,6 +741,22 @@ export const useGame = create<Store>((set, get) => {
     set({ game: persist(next), modal: firstTime ? myLine : afterMyLine(myLine) })
   }
 
+  /**
+   * 오늘 이 이웃이 건넬 말씀 조각(편지 나르는 이웃은 편지)을 받는다 — 받을 것이 없으면 null.
+   * 받은 조각은 말씀 탭의 말씀 조각 도감에 저절로 담긴다 (계획 14 작업 5). said: 본문 위에 보일 그 이웃의 말
+   */
+  function handOver(game: GameState, neighborId: string, said?: string): { game: GameState; modal: Modal | null } | null {
+    const { state, pieceId, pieceIds } = listen(game, neighborId, CONTENT)
+    if (!pieceId) return null
+    const letter = neighborId === POSTMAN
+    sfx(letter ? 'letter' : 'scroll')
+    get().say(gotLine(pieceIds, letter ? T.word.letterGot : T.word.got, T.word.gotMany), 3400)
+    // 장째로 된 조각(편지 책·요한계시록)이나 여럿이면 창을 닫는다 — 본문은 말씀 탭 [본문에서 보기]로
+    if (pieceIds.length > 1 || modeOf(pieceById(pieceId).book) === 'letters') return { game: persist(state), modal: null }
+    const onlyHere = pieceById(pieceId).stamps.length === 0
+    return { game: persist(state), modal: { kind: 'passage', pieceId, askLine: onlyHere, ...(said ? { said } : {}) } }
+  }
+
   function arrive(game: GameState, target: Target): { game: GameState; modal: Modal | null } {
     const rng = get().rng
     if (target.kind === 'neighbor') {
@@ -780,6 +790,13 @@ export const useGame = create<Store>((set, get) => {
         get().say(fill(T.ui.visitGot, { items: itemList(v.gift) }))
         const l = NEIGHBOR_LINES[target.id]
         return { game: persist(g), modal: { kind: 'talk', neighborId: target.id, line: l?.visit.length ? pick(l.visit, rng).text : lineFor(g, target.id, rng) } }
+      }
+      // 특별한 대화 (2026-10-05): 오늘 말씀 조각을 건넬 이웃은 말을 걸면 그 자리에서 건넨다 — 받기 단추 없이, 그 이웃의 말과 함께 본문으로
+      if (g.offers[target.id] && target.id !== POSTMAN) {
+        const l = NEIGHBOR_LINES[target.id]
+        const said = l?.offer.length ? `${def?.role ?? ''} · ${callName(pick(l.offer, rng).text, g.avatar?.name)}` : undefined
+        const h = handOver(g, target.id, said)
+        if (h) return h
       }
       // 평소 대화의 직업 선물 (계획 14 작업 5): 마음이 열린 이웃은 가끔 자기 일에서 난 것을 챙겨 준다 (말씀 조각과는 따로)
       const tg = def ? receiveTalkGift(g, target.id) : null
@@ -1105,19 +1122,8 @@ export const useGame = create<Store>((set, get) => {
     closeModal: () => set({ modal: null }),
 
     listenTo: (neighborId) => {
-      const { state, pieceId, pieceIds } = listen(get().game, neighborId, CONTENT)
-      if (!pieceId) return
-      // 받은 조각은 말씀 탭의 말씀 조각 도감에 저절로 담긴다 (계획 14 작업 5)
-      const letter = neighborId === POSTMAN
-      sfx(letter ? 'letter' : 'scroll')
-      get().say(gotLine(pieceIds, letter ? T.word.letterGot : T.word.got, T.word.gotMany), 3400)
-      // 장째로 된 조각(편지 책·요한계시록)이나 여럿이면 창을 닫는다 — 본문은 말씀 탭 [본문에서 보기]로
-      if (pieceIds.length > 1 || modeOf(pieceById(pieceId).book) === 'letters') {
-        set({ game: persist(state), modal: null })
-        return
-      }
-      const onlyHere = pieceById(pieceId).stamps.length === 0
-      set({ game: persist(state), modal: { kind: 'passage', pieceId, askLine: onlyHere } })
+      const h = handOver(get().game, neighborId)
+      if (h) set(h)
     },
 
     startHelp: (neighborId) => {
@@ -1324,14 +1330,6 @@ export const useGame = create<Store>((set, get) => {
       sfx('gift')
       set({ game: persist(next), modal: { kind: 'talk', neighborId: npc, line: T.fixtures.ordered } })
     },
-    // 약방에 약초 팔기 (장날이 아니어도)
-    sellHerbs: () => {
-      const r = sellHerbs(get().game)
-      if (!r) return
-      sfx('coin')
-      set({ game: persist(r.state) })
-      get().say(fill(T.herbs.sold, { n: r.n, coins: r.coins }))
-    },
     drinkTea: () => {
       const next = drinkTea(get().game)
       if (next === get().game) return
@@ -1387,17 +1385,6 @@ export const useGame = create<Store>((set, get) => {
       if (!next) return
       sfx('gift')
       set({ game: persist(next), modal: { kind: 'talk', neighborId: npc, line: T.ui.homeOrdered } })
-    },
-    service: (id) => {
-      const svc = SERVICES.find((x) => x.id === id)
-      if (!svc) return
-      const before = get().game
-      const next = doService(before, svc)
-      if (!next) return
-      sfx('coin')
-      const got = [Object.keys(svc.get).length ? itemList(svc.get) : '', svc.getCoins ? `${svc.getCoins}닢` : ''].filter(Boolean).join(' · ')
-      set({ game: persist(next) })
-      get().say(`${svc.label} · ${got}`)
     },
     dressUp: (who, a) => {
       const next = dressUp(get().game, who, a, CONTENT)

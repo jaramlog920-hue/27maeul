@@ -265,7 +265,7 @@ export const TEA_DOOR: Tile = { x: 20, y: 31 }
 /** 호숫가 정자 (5칸×2줄 그림, 보리밭 아래) 가운데 벤치 — 앉는 자리는 그 아래 호숫가 길 */
 export const PAVILION_RECT = { x0: 11, y0: 30, x1: 15, y1: 31 }
 export const PAVILION_SEAT: Tile = { x: 13, y: 31 }
-/** 들 약초 자리 (지도 'j'): 서고 뒤 숲 곁, 서쪽 가장자리 두 곳, 올리브 숲 위 — 캐서 약방에 판다 */
+/** 들 약초 자리 (지도 'j'): 서고 뒤 숲 곁, 서쪽 가장자리 두 곳, 올리브 숲 위 — 캐서 장날 좌판에 판다 */
 export const WILD_HERBS: readonly Tile[] = [
   { x: 17, y: 1 },
   { x: 1, y: 24 },

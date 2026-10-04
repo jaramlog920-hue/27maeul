@@ -112,12 +112,15 @@ describe('이웃', () => {
     const role = CONTENT.neighbors.find((n) => n.id === who)!.role
     // 걸어가 곁에 서기만 해서는 창이 뜨지 않는다 — '대화하기' 단추로 말을 건다
     expect(screen.queryByRole('dialog', { name: role })).toBeNull()
+    // 받기 단추 없이, 말을 걸면 그 자리에서 조각을 건네고 그 이웃의 말과 함께 본문이 열린다
     act(() => useGame.getState().talkTo(who))
-    expect(screen.getByRole('dialog', { name: role })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '말씀 조각 받기' })).toBeNull()
     expect(useGame.getState().game.hearts[who]).toBe(2)
-    await user.click(screen.getByRole('button', { name: '말씀 조각 받기' }))
     const got = useGame.getState().game.collected.at(-1)!
     expect(got.startsWith('lk-001-')).toBe(true)
+    expect(useGame.getState().game.offers[who]).toBeUndefined()
+    expect(screen.getByRole('dialog', { name: CONTENT.pieces.find((p) => p.id === got)!.title })).toHaveTextContent(role)
+    expect(useGame.getState().toast?.text).toContain('말씀 탭에 담겼어요')
     // 1장 조각은 모두 누가에만 → 나의 한 줄을 물어본다
     await user.click(screen.getByRole('button', { name: '다음' }))
     await user.type(screen.getByRole('textbox', { name: '나의 말로 한 줄' }), '차례대로')

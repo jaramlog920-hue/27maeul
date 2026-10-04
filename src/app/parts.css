@@ -1798,9 +1798,6 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
 .family .fam-bar { height: 8px; border-radius: 4px; background: rgba(0, 0, 0, 0.1); overflow: hidden; }
 .family .fam-bar span { display: block; height: 100%; background: var(--accent); }
 
-/* 주고받기 단추: 값과 받는 것을 작게 */
-.svc-cost { display: block; font-size: 11px; opacity: 0.8; }
-
 /* ── 필사 집중 화면 (계획 14 작업 2): 책상에 앉으면 마을이 사라지고 조용한 종이 한 장 ── */
 .village { display: contents; }
 .village[hidden] { display: none; }

@@ -2,9 +2,8 @@
 import { neighborById } from '../../content/catalog'
 import { callName, fill, itemList, NEIGHBOR_LINES, T } from '../../content/text'
 import { grapesRipe, isMarketDay } from '../../engine/calendar'
-import { activeRequest, APOTHECARY, canService, isSuitor, romanceWith, stageWith, type GameState, canHelp, canOrderHome, canOrderWork, fixtureOffers, GIFTABLE, herbsSellLeft, lessonTime, nextHomeStage, sellPrice } from '../../engine/game'
+import { activeRequest, isSuitor, romanceWith, stageWith, type GameState, canHelp, canOrderHome, canOrderWork, fixtureOffers, GIFTABLE, lessonTime, nextHomeStage } from '../../engine/game'
 import { CARPENTER_WORKS } from '../../engine/easier'
-import { servicesOf } from '../../engine/services'
 import { requestFor, reqState } from '../../engine/bonds'
 import { has } from '../../engine/items'
 import { MAX_HEART } from '../../engine/neighbors'
@@ -35,6 +34,7 @@ export function Hearts({ n }: { n: number }) {
 export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) {
   const game = useGame((s) => s.game)
   const { listenTo, startHelp, open, closeModal, startTeach } = useGame.getState()
+  // 이웃마다 있던 사기·팔기·받기 단추(주고받기·약방 약초 팔기)는 2026-10-05에 지웠다 — 사고팔기는 장날 좌판에서
   const def = neighborById(modal.neighborId)
   if (!def) return null
   const lines = NEIGHBOR_LINES[def.id]
@@ -71,11 +71,7 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
       {/* 아침 방문 말 등 다른 말이 먼저 나와도 편지 알림은 가려지지 않는다 */}
       {post && post !== modal.line && <p className="talk-line">{post}</p>}
       <div className="actions menu">
-        {game.offers[def.id] && (
-          <button className="primary" onClick={() => listenTo(def.id)}>
-            {T.ui.listen}
-          </button>
-        )}
+        {/* 말씀 조각은 말을 걸 때 그 자리에서 건넨다 (받기 단추 없음). 편지 나르는 이웃만 오늘 온 편지를 건넨다 */}
         {post && (
           <button className="primary" onClick={() => listenTo(def.id)}>
             {T.post.receive}
@@ -99,28 +95,6 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
         {/* 부탁하기 (계획 13): 집 넓히기·살림·기록 설비를 한 창에 — 대화 창이 붐비지 않게 */}
         {orderable && <button onClick={() => open({ kind: 'orders', npc: def.id })}>{T.fixtures.open}</button>}
         {def.marketOnly && isMarketDay(game.clock.day) && <button onClick={() => open({ kind: 'trade' })}>{T.ui.talkTrade}</button>}
-        {/* 약방: 약초를 사 준다 (장날이 아니어도) */}
-        {def.id === APOTHECARY && (
-          <button disabled={(game.inv.herb ?? 0) === 0 || herbsSellLeft(game) <= 0} onClick={useGame.getState().sellHerbs}>
-            {fill(T.herbs.sell, { price: sellPrice(game, 'herb')! })}
-          </button>
-        )}
-        {/* 집마다 직업 → 주고받기 (하루에 한 번씩) */}
-        {servicesOf(def.id).map((svc) => {
-          const b = canService(game, svc)
-          const cost = [svc.coins ? `${svc.coins}닢` : '', Object.keys(svc.pay).length ? itemList(svc.pay) : ''].filter(Boolean).join(' + ')
-          const got = [Object.keys(svc.get).length ? itemList(svc.get) : '', svc.getCoins ? `${svc.getCoins}닢` : ''].filter(Boolean).join(' + ')
-          return (
-            <button key={svc.id} disabled={b !== null} onClick={() => useGame.getState().service(svc.id)} title={b === 'season' ? svc.whenNote : b ?? ''}>
-              {svc.label}
-              <small className="svc-cost">
-                {cost ? `${cost} → ` : ''}
-                {got}
-                {b === 'done' ? ' · 오늘 함' : b === 'season' ? ` · ${svc.whenNote}` : b === 'full' ? ' · 가방 가득' : ''}
-              </small>
-            </button>
-          )
-        })}
         <button disabled={block !== null} onClick={() => startHelp(def.id)} title={block ?? ''}>
           {helpLabel}
         </button>
@@ -135,8 +109,6 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
       {block === 'full' && <p className="hint">{T.ui.bagFull}</p>}
       {active && <p className="hint">{fill(T.ui.requestNeeds, { items: itemList(active.needs) })}</p>}
       {game.gifted.includes(def.id) && <p className="hint">{T.ui.giftDone}</p>}
-      {def.id === APOTHECARY && herbsSellLeft(game) <= 0 && <p className="hint">{T.herbs.soldOut}</p>}
-      {def.id === APOTHECARY && (game.inv.herb ?? 0) === 0 && <p className="hint">{T.herbs.hint}</p>}
     </div>
   )
 }

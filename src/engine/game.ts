@@ -2,7 +2,6 @@
 import { festivalOf, FESTIVAL_FROM, FESTIVAL_TO, isMarketDay, isWet, weatherOf, barleyRipe, grapesRipe } from './calendar'
 import { advance, newClock, phaseOf, seasonOf, sleepClock, type Clock } from './clock'
 import { DURATION, greet, IDLE_GAP, IDLE_RESET, stepIdle, type IdleState } from './autonomy'
-import type { Service } from './services'
 import { adopt, companionGoal, STRAY_DAY, STRAY_SPOTS, stepCompanion, type Animal, type Companion } from './companion'
 import { add, addGift, CHAPTER_COST, FOODS, count, has, RECIPES, recipeGives, stackCap, take, TOOLS, type Inventory, type RecipeId } from './items'
 import { facingFor, findPath, pathToward, stepActor, type Actor } from './movement'
@@ -1420,7 +1419,7 @@ export function trade(s: GameState, t: Trade): GameState | null {
 
 // ── 장날 희귀 좌판 (계획 13 작업 2): 희귀품 다섯 중 셋이 날마다 돌아가며 나온다 ──
 
-/** 희귀품 값 — 며칠 모아야 사는 값 (편지 대필 12~30닢/일, 약초 최대 48닢/일) */
+/** 희귀품 값 — 며칠 모아야 사는 값 (편지 대필 12~30닢/일) */
 export const RARE_PRICES: Partial<Record<ItemId, number>> = { finePapyrus: 18, sealWax: 35, perfumeOil: 60, purpleCloth: 90, bronzeOrnament: 110 }
 export const RARE_STALL_SIZE = 3
 
@@ -1527,28 +1526,6 @@ export function applyTripRewards(s: GameState, rewards: readonly TripReward[], c
     else if (r.kind === 'coins') next = { ...next, coins: next.coins + r.n }
   }
   return next
-}
-
-// ── 집마다 직업 → 주고받기 (services.ts): 하루에 한 번씩 ──
-export type ServiceBlock = 'done' | 'season' | 'coins' | 'need' | 'full' | null
-export function canService(s: GameState, svc: Service): ServiceBlock {
-  if (s.flags[`svc:${svc.id}`] === s.clock.day) return 'done'
-  if (svc.when && !svc.when(s.clock.day)) return 'season'
-  if (s.coins < (svc.coins ?? 0)) return 'coins'
-  if (!haveStock(s, svc.pay)) return 'need'
-  if (Object.keys(svc.get).length && overflows(useStock(s, svc.pay)!, svc.get)) return 'full'
-  return null
-}
-export function doService(s: GameState, svc: Service): GameState | null {
-  if (canService(s, svc)) return null
-  const paid = useStock(s, svc.pay)!
-  const next: GameState = {
-    ...paid,
-    inv: add(paid.inv, svc.get),
-    coins: paid.coins - (svc.coins ?? 0) + (svc.getCoins ?? 0),
-    flags: { ...paid.flags, [`svc:${svc.id}`]: s.clock.day },
-  }
-  return passTime(heartUp(next, svc.npc, 1), svc.minutes ?? 5)
 }
 
 // ── 성경 이야기를 더 모으는 길 (2026-09-30 사용자): 밤 필사·이웃 선물·서고 열람석·떠돌이 상인의 두루마리·어른이 된 아이의 편지 ──
@@ -1753,32 +1730,11 @@ export type GatherResult = { gives: Partial<Record<ItemId, number>>; minutes: nu
 // ── 들 약초와 약방 (주막 자리에 약방 — 2026-09-30) ──
 /** 들 약초는 하루에 이만큼 캔다 (네 군데 한 번씩) */
 export const HERB_PICKS_PER_DAY = 4
-/** 약방이 하루에 사 주는 약초 수 */
-export const HERB_SELL_CAP = 12
 export const APOTHECARY = 'apothecary'
+// 캔 약초는 장날 좌판에서 판다 (SELL_PRICES.herb) — 약방에 따로 팔던 단추는 2026-10-05에 지웠다
 
 function herbPicksToday(s: Pick<GameState, 'clock' | 'flags'>): number {
   return s.flags.herbDay === s.clock.day ? (s.flags.herbPicks ?? 0) : 0
-}
-function herbsSoldToday(s: Pick<GameState, 'clock' | 'flags'>): number {
-  return s.flags.herbSoldDay === s.clock.day ? (s.flags.herbSold ?? 0) : 0
-}
-
-/** 약방에 약초를 판다 (장날이 아니어도 — 한 줌에 약초 값, 매력 3단계부터 +1닢). 하루 12줌까지. 판 게 없으면 null */
-export function sellHerbs(s: GameState): { state: GameState; n: number; coins: number } | null {
-  const n = Math.min(count(s.inv, 'herb'), HERB_SELL_CAP - herbsSoldToday(s))
-  if (n <= 0) return null
-  const coins = n * sellPrice(s, 'herb')!
-  return {
-    state: { ...s, inv: take(s.inv, { herb: n })!, coins: s.coins + coins, flags: { ...s.flags, herbSoldDay: s.clock.day, herbSold: herbsSoldToday(s) + n } },
-    n,
-    coins,
-  }
-}
-
-/** 약방이 오늘 더 사 줄 수 있는 약초 수 */
-export function herbsSellLeft(s: Pick<GameState, 'clock' | 'flags'>): number {
-  return HERB_SELL_CAP - herbsSoldToday(s)
 }
 
 /** 우물·갈대·포도·올리브·보리밭에서 얻는 것 */

@@ -1,8 +1,9 @@
-// 주막 자리에 약방 (2026-09-30): 들 약초를 캐서 약방에 판다 — 장날이 아니어도
+// 주막 자리에 약방 (2026-09-30): 들 약초를 캔다 — 캔 약초는 장날 좌판에서 판다 (2026-10-05: 약방의 따로 팔기 단추는 지움)
 import { CONTENT } from '../content/catalog'
-import { NEIGHBOR_LINES, SCENES, T } from '../content/text'
+import { NEIGHBOR_LINES, SCENES } from '../content/text'
+import { isMarketDay } from './calendar'
 import { seasonOf } from './clock'
-import { APOTHECARY, finishGather, gatherInfo, HERB_PICKS_PER_DAY, HERB_SELL_CAP, herbsSellLeft, newGame, sellHerbs, type GameState } from './game'
+import { APOTHECARY, canSell, finishGather, gatherInfo, HERB_PICKS_PER_DAY, newGame, sell, sellPrice, type GameState } from './game'
 import { deserialize, serialize } from './save'
 import { SELL_PRICES } from './game'
 import { freshStats } from './stats'
@@ -63,30 +64,17 @@ describe('들 약초: 마을 가장자리 네 군데, 하루 네 줌까지', () 
   })
 })
 
-describe('약방에 약초 팔기 (장날이 아니어도)', () => {
-  it('가진 약초를 한꺼번에 — 한 줌에 약초 값, 매력 3단계부터 +1닢', () => {
-    const s = { ...spring(), inv: { herb: 5 }, coins: 0 }
-    const r = sellHerbs(s)!
-    expect(r.n).toBe(5)
-    expect(r.coins).toBe(5 * SELL_PRICES.herb!)
-    expect(r.state.inv.herb ?? 0).toBe(0)
-    expect(r.state.coins).toBe(r.coins)
-    const charming = { ...s, stats: { ...freshStats(), charm: { level: 3, xp: 0, born: 0 } } }
-    expect(sellHerbs(charming)!.coins).toBe(5 * (SELL_PRICES.herb! + 1))
-  })
-
-  it('하루 12줌까지, 약초가 없으면 팔 것이 없다', () => {
-    const s = { ...spring(), inv: { herb: 9 }, coins: 0 }
-    const first = sellHerbs(s)!.state
-    expect(herbsSellLeft(first)).toBe(HERB_SELL_CAP - 9)
-    const second = sellHerbs({ ...first, inv: { herb: 9 } })!
-    expect(second.n).toBe(HERB_SELL_CAP - 9)
-    expect(sellHerbs({ ...second.state, inv: { herb: 9 } })).toBeNull()
-    expect(sellHerbs({ ...spring(), inv: {} })).toBeNull()
-  })
-
-  it('문구', () => {
-    expect(T.herbs.sell).toContain('{price}')
-    expect(T.herbs.sold).toContain('{coins}')
+describe('캔 약초는 장날 좌판에서 판다 (2026-10-05: 약방의 따로 팔기 단추는 지움)', () => {
+  it('장날 상인이 약초를 산다 — 한 줌에 약초 값, 매력 3단계부터 +1닢', () => {
+    const market = [...Array(14).keys()].map((d) => d + 1).find((d) => isMarketDay(d))!
+    const base = spring()
+    // 직업 1단계 (장날에 팔 수 있는 때): 열 장을 마쳤다
+    const progress = { ...base.progress, mt: { ...base.progress.mt, completed: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] } }
+    const s: GameState = { ...base, progress, clock: { ...base.clock, day: market, minute: 10 * 60 }, inv: { herb: 2 }, coins: 0, stats: freshStats() }
+    expect(canSell(s, 'herb')).toBeNull()
+    const sold = sell(s, 'herb')!
+    expect(sold.inv.herb).toBe(1)
+    expect(sold.coins).toBe(SELL_PRICES.herb)
+    expect(sellPrice({ stats: { ...freshStats(), charm: { level: 3, xp: 0, born: 0 } } }, 'herb')).toBe(SELL_PRICES.herb! + 1)
   })
 })
