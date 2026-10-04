@@ -34,6 +34,26 @@ export const PALETTE: Record<string, string> = {
   A: '#bc6c54', B: '#a45a44', // 주막 주인
   J: '#5cacb8', w: '#3c808c', '7': '#6c6460', // 어부 (7: 잿빛 머리 — 바닷바람에 센 머리)
   v: '#c8a04c', m: '#ac883c', // 목수
+  // 이웃 겨울 목도리 (계획 15): 옷과 어울리게 이웃마다 하나 — 붉은 흙빛·잿빛 파랑·세이지·옅은 장밋빛
+  // (크림색은 얼굴빛과 붙어 목도리로 안 보여서 쓰지 않는다)
+  '4': '#b05848', '6': '#7f9cb8', '8': '#86a872', '9': '#c98a9a',
+}
+
+/** 이웃마다 겨울 목도리 색 (PALETTE의 '4'·'6'·'8'·'9') — 옷 색과 겹치지 않게 */
+export const NEIGHBOR_SCARF: Partial<Record<Who, string>> = {
+  baker: '6',
+  grandpa: '4',
+  merchant: '8',
+  smith: '6',
+  shepherd: '4',
+  presser: '9',
+  child: '4',
+  weaver: '8',
+  beekeeper: '4',
+  postman: '4',
+  apothecary: '6',
+  fisher: '9',
+  carpenter: '8',
 }
 
 /** 계절 옷 (겉옷, 그늘) */
@@ -446,6 +466,9 @@ export function spriteRows(who: Who, facing: Facing, opts: SpriteOpts): string[]
     if (opts.season === 'winter') for (let x = 2; x <= 7; x++) if (rows[7][x] === 'r') setPixel(rows, x, 7, 'S')
   } else {
     rows = dressNeighbor(who, rows, facing)
+    // 겨울엔 이웃도 목도리 (목 줄의 옷 칸만 — 윤곽·피부·가방 끈은 그대로)
+    const scarf = NEIGHBOR_SCARF[who]
+    if (opts.season === 'winter' && scarf) for (let x = 2; x <= 7; x++) if (!'k.sL'.includes(rows[7][x])) setPixel(rows, x, 7, scarf)
   }
   // 물 긷는 아이, 그리고 옷장에서 모습을 입힌 우리 아이(short)는 몸통이 짧다
   if (who === 'child') rows = shorten(rows, opts.growth ?? 0)

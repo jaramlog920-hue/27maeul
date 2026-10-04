@@ -1,4 +1,4 @@
-import { ANIMAL, ANIMAL_PALETTE, animalRows, BABY, ICON_PALETTE, ICONS, PALETTE, SHEEP, SMALL_PALETTE, SPRITE_H, SPRITE_W, mirror, spriteRows, writerPalette, type Who } from './sprites'
+import { ANIMAL, ANIMAL_PALETTE, animalRows, BABY, ICON_PALETTE, ICONS, NEIGHBOR_SCARF, PALETTE, SHEEP, SMALL_PALETTE, SPRITE_H, SPRITE_W, mirror, spriteRows, writerPalette, type Who } from './sprites'
 import { ACCS, BOTTOMS, HAIR_BACKS, HAIR_FRONTS, SKINS, withLookDefaults } from '../engine/avatar'
 import { breathOffset, isBlinking, walkFrame, dozeNod, lookSide } from './anim'
 import { ITEM_TEXT } from '../content/text'
@@ -69,6 +69,15 @@ describe('사람 도트', () => {
   it('왼쪽은 오른쪽의 거울', () => {
     const right = spriteRows('writer', 'right', { frame: 0, blink: false })
     expect(spriteRows('writer', 'left', { frame: 0, blink: false })).toEqual(mirror(right))
+  })
+  it('겨울엔 이웃도 목에 목도리를 두른다 (다른 계절엔 없다)', () => {
+    for (const who of PEOPLE.filter((w) => w !== 'writer'))
+      for (const f of FACINGS) {
+        const scarf = NEIGHBOR_SCARF[who]!
+        expect(scarf, who).toBeDefined()
+        expect(spriteRows(who, f, { frame: 0, blink: false, season: 'winter', growth: 1 })[7], `${who}/${f}`).toContain(scarf)
+        expect(spriteRows(who, f, { frame: 0, blink: false, season: 'autumn', growth: 1 })[7], `${who}/${f}`).not.toContain(scarf)
+      }
   })
   it('이웃마다 모습이 다르다', () => {
     const seen = new Set(PEOPLE.map((w) => spriteRows(w, 'down', { frame: 0, blink: false }).join('|')))

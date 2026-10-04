@@ -64,6 +64,24 @@ export function festivalOf(day: number): Festival | null {
 export const FESTIVAL_FROM = 18 * 60
 export const FESTIVAL_TO = 21 * 60
 
+/** 비 온 뒤 길에 물웅덩이가 남는 때 (계획 15): 비 온 날 저녁(17시)부터 다음 날 낮(18시 전)까지 */
+export function puddlesOut(day: number, minute: number): boolean {
+  return (weatherOf(day) === 'rain' && minute >= 17 * 60) || (day > 1 && weatherOf(day - 1) === 'rain' && minute < 18 * 60)
+}
+
+/** 추운 아침 (계획 15): 겨울 맑은 날 6–9시 — 호숫가 물가에 살얼음이 한 줄 언다 */
+export function icyMorning(day: number, minute: number): boolean {
+  return seasonOf(day) === 'winter' && weatherOf(day) === 'sunny' && minute >= 6 * 60 && minute < 9 * 60
+}
+
+/** 굴뚝 연기 (계획 15): 겨울엔 깨어 있는 내내(5–22시) 집집마다 많이, 다른 계절엔 밥 짓는 때(6–8시, 17–19시)에만 몇 집 조금 */
+export function chimneySmoke(day: number, minute: number): 'none' | 'meal' | 'winter' {
+  const h = minute / 60
+  if (seasonOf(day) === 'winter' && h >= 5 && h < 22) return 'winter'
+  if ((h >= 6 && h < 8) || (h >= 17 && h < 19)) return 'meal'
+  return 'none'
+}
+
 /** 보리를 거둘 수 있는 때: 여름 열닷새째부터 */
 export function barleyRipe(day: number): boolean {
   return seasonOf(day) === 'summer' && seasonDay(day) >= 15

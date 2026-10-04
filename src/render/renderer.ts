@@ -1,5 +1,5 @@
 // 캔버스 그리기. 엔진 상태를 읽기만 하고 바꾸지 않는다.
-import { barleyRipe, festivalOf, FESTIVAL_FROM, FESTIVAL_TO, grapesRipe, isWet, weatherOf } from '../engine/calendar'
+import { barleyRipe, chimneySmoke, festivalOf, FESTIVAL_FROM, FESTIVAL_TO, grapesRipe, icyMorning, isWet, puddlesOut, weatherOf } from '../engine/calendar'
 import { darkness, phaseOf, seasonOf } from '../engine/clock'
 import { isGrown, STRAY_SPOTS, EAVES } from '../engine/companion'
 import { totalChapters } from '../engine/books'
@@ -17,7 +17,7 @@ import { childMode, childStage, CRADLE_SPOT, helperSpot } from '../engine/child'
 import { BOARD, stoneTile, TRIP_H, TRIP_W, tripLayout, type Cell as TripCell } from '../engine/trip-board'
 import { actsDoorGlows, feastToday, sideShelfSpines } from '../engine/library'
 import { spineLook } from '../engine/binding'
-import { ACTS_ROOM, ATTIC, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, HEIGHT, HOUSE_RECT, housesNow, houseAt, LOCKED_DOORS, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile, treeKind, type TreeKind } from '../engine/world'
+import { ACTS_ROOM, ATTIC, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, PAVILION_RECT, HEIGHT, HOUSE_RECT, housesNow, houseAt, LOCKED_DOORS, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile, treeKind, type TreeKind } from '../engine/world'
 import { GOSPELS, type Book, type Facing, type NeighborDef, type GameContent, type Season, type Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { avatarKey, withLookDefaults, type Avatar, type FullAvatar } from '../engine/avatar'
@@ -911,6 +911,11 @@ function mix(a: string, b: string, t: number): string {
   return '#' + pa.map((v, i) => Math.round(v + (pb[i] - v) * t).toString(16).padStart(2, '0')).join('')
 }
 
+/** 굴뚝의 왼쪽 끝 (지붕 왼쪽에서 몇 픽셀) — 지붕 폭의 72% 자리 */
+function chimneyX(tx0: number, tx1: number): number {
+  return Math.floor((tx1 - tx0 + 1) * TILE * 0.72)
+}
+
 /**
  * 네모난 기와지붕 하나 (칸 tx0..tx1, ty0..ty1): 용마루, 양옆 테두리, 처마, 옅은 기와 띠.
  * 화면이 정수배가 아닌 크기로 늘어나도 일렁이지 않게 선은 모두 2픽셀 이상.
@@ -934,7 +939,7 @@ function drawRoof(g: Ctx, tx0: number, ty0: number, tx1: number, ty1: number, [c
   r(c2, 0, H - 4, W, 4) // 처마
   r(mix(c2, '#000000', 0.15), 0, H - 2, W, 2)
   if (chimney) {
-    const cx = Math.floor(W * 0.72)
+    const cx = chimneyX(tx0, tx1)
     r('#e0a974', cx, -6, 8, 12)
     r('#9a6e45', cx - 2, -8, 12, 2)
     r(mix('#e0a974', '#9a6e45', 0.4), cx + 6, -6, 2, 12)
@@ -975,6 +980,205 @@ function mapFor(season: Season): HTMLCanvasElement {
     }
   mapCache.set(cacheKey, c)
   return c
+}
+
+// ── 그날의 날씨가 땅에 남기는 것 (계획 15 작업 2) ──
+
+const SNOW = '#f6f8fa'
+const SNOW_SHADE = '#dfe7ee'
+
+/**
+ * 눈 온 날 덮개 한 장 (집 단계·열린 문마다 한 번 굽는다): 지붕 윗줄과 굴뚝 머리, 풀밭이 길과 만나는 가장자리에 쌓인 눈,
+ * 풀밭 군데군데 눈 뭉치, 늘푸른나무 머리·빈 가지 끝, 울타리·벤치·좌판 차양 위. 길은 밟혀서 거의 맨땅. 선은 모두 2픽셀 이상
+ */
+const snowCache = new Map<string, HTMLCanvasElement>()
+function snowLayer(): HTMLCanvasElement {
+  const cacheKey = `${currentHomeLevel()}/${openDoors().join(',')}`
+  let c = snowCache.get(cacheKey)
+  if (c) return c
+  c = document.createElement('canvas')
+  c.width = WIDTH * TILE
+  c.height = VILLAGE_H * TILE
+  const g = c.getContext('2d')!
+  const f = (color: string, x: number, y: number, w: number, h: number) => {
+    g.fillStyle = color
+    g.fillRect(x, y, w, h)
+  }
+  const isPath = (ch: string) => ch === ',' || ch === 'm' || ch === 'A' || ch === 'P'
+  const isGrassy = (ch: string) => '.*jTxoylvqO'.includes(ch)
+  for (let y = 0; y < VILLAGE_H; y++)
+    for (let x = 0; x < WIDTH; x++) {
+      const ch = tileAt(x, y)
+      const px = x * TILE
+      const py = y * TILE
+      if (isGrassy(ch)) {
+        // 길과 만나는 가장자리에 쌓인 눈 (안쪽 끝은 들쭉날쭉)
+        if (isPath(tileAt(x, y - 1))) {
+          f(SNOW, px, py, TILE, 3)
+          for (let i = 0; i < 4; i++) if (hash(x, y, 80 + i) < 0.5) f(SNOW, px + i * 4, py + 3, 4, 2)
+        }
+        if (isPath(tileAt(x, y + 1))) {
+          f(SNOW, px, py + TILE - 3, TILE, 3)
+          for (let i = 0; i < 4; i++) if (hash(x, y, 84 + i) < 0.5) f(SNOW, px + i * 4, py + TILE - 5, 4, 2)
+        }
+        if (isPath(tileAt(x - 1, y))) f(SNOW, px, py, 3, TILE)
+        if (isPath(tileAt(x + 1, y))) f(SNOW, px + TILE - 3, py, 3, TILE)
+        // 풀밭 군데군데 눈 뭉치 (빈 풀 칸에만)
+        if (ch === '.')
+          for (let i = 0; i < 3; i++) {
+            const sx = 1 + Math.floor(hash(x, y, 90 + i) * 12)
+            const sy = 1 + Math.floor(hash(x, y, 93 + i) * 12)
+            f(SNOW, px + sx, py + sy, i === 0 ? 4 : 2, 2)
+          }
+      } else if (ch === ',' && hash(x, y, 96) < 0.35) {
+        // 밟힌 길: 가장자리에 남은 눈 몇 점
+        f('rgba(246,248,250,0.7)', px + 2 + Math.floor(hash(x, y, 97) * 10), py + 2 + Math.floor(hash(x, y, 98) * 10), 2, 2)
+      }
+      // 물건 위에 쌓인 눈
+      if (ch === 'T') {
+        if (treeKind(x, y) === 'evergreen') {
+          f(SNOW, px + 5, py + 1, 6, 2)
+          f(SNOW, px + 3, py + 3, 3, 2)
+          f(SNOW, px + 10, py + 3, 3, 2)
+        } else {
+          f(SNOW, px + 3, py + 2, 2, 2)
+          f(SNOW, px + 11, py + 1, 2, 2)
+          f(SNOW, px + 6, py + 0, 2, 2)
+          f(SNOW, px + 5, py + 6, 2, 2)
+        }
+      } else if (ch === 'o') f(SNOW, px + 5, py + 2, 6, 2)
+      else if (ch === 'x') f(SNOW, px, py + 3, 16, 2)
+      else if (ch === 'B') f(SNOW, px + 1, py + 5, 14, 2)
+      else if (ch === 'm') f(SNOW, px, py, 16, 2)
+      else if (ch === 'v') f(SNOW, px, py + 5, 16, 2)
+    }
+  // 지붕: 용마루를 덮는 윗줄 눈과 처마 쪽으로 늘어진 끝, 굴뚝 머리
+  for (const h of housesNow()) {
+    const ox = h.x0 * TILE
+    const oy = h.y0 * TILE
+    const w = (h.x1 - h.x0 + 1) * TILE
+    const rh = (h.y1 - 2 - h.y0 + 1) * TILE
+    for (let i = 0; i < w / 4; i++) {
+      const d = hash(h.x0 + i, h.y0, 99)
+      if (d < 0.55) f(SNOW_SHADE, ox + i * 4, oy + 6, 4, d < 0.25 ? 6 : 4)
+      if (d < 0.55) f(SNOW, ox + i * 4, oy + 6, 4, d < 0.25 ? 4 : 2)
+    }
+    f(SNOW, ox, oy, w, 6)
+    // 기와 띠마다 얇게 남은 눈
+    for (let y = 16; y < rh - 4; y += 8) for (let i = 0; i < w / 8; i++) if (hash(h.x0 + i, h.y0 + y, 100) < 0.4) f('rgba(246,248,250,0.85)', ox + i * 8 + 2, oy + y, 6, 2)
+    const cx = ox + chimneyX(h.x0, h.x1)
+    f(SNOW, cx - 2, oy - 10, 12, 2)
+  }
+  snowCache.set(cacheKey, c)
+  return c
+}
+
+/** 호숫가 정자 지붕 윗판에 쌓인 눈 (정자는 decor에서 지도 위에 덧그리므로 그 뒤에 그린다) */
+function drawPavilionSnow(g: Ctx) {
+  const { x0, y0, x1 } = PAVILION_RECT
+  const left = x0 * TILE
+  const top = y0 * TILE
+  const w = (x1 - x0 + 1) * TILE
+  g.fillStyle = SNOW_SHADE
+  g.fillRect(left + 6, top - 9, w - 12, 3)
+  g.fillStyle = SNOW
+  g.fillRect(left + 6, top - 12, w - 12, 4)
+  // 아랫판 처마 끝에 군데군데 남은 눈 (분홍 기와가 보이게 조금만)
+  for (let i = 0; i < (w - 4) / 6; i++) if (hash(x0 + i, y0, 101) < 0.5) g.fillRect(left + 2 + i * 6, top - 6, 4, 2)
+}
+
+/** 물웅덩이가 생길 수 있는 흙길 자리 (지도에서 한 번 고른다) — 그날그날 이 중 절반이 안 되게 */
+const PUDDLE_SPOTS: readonly Tile[] = (() => {
+  const out: Tile[] = []
+  for (let y = 1; y < VILLAGE_H - 1; y++)
+    for (let x = 1; x < WIDTH - 1; x++) if (MAP[y][x] === ',' && hash(x, y, 131) < 0.045) out.push({ x, y })
+  return out
+})()
+
+/** 비 온 뒤 흙길의 물웅덩이: 젖은 흙 테두리, 하늘빛 물, 빛 한 점 (비가 오는 중이면 빗방울 동그라미가 번진다) */
+function drawPuddles(g: Ctx, day: number, raining: boolean, t: number) {
+  for (const p of PUDDLE_SPOTS) {
+    if (hash(p.x, p.y, day) >= 0.45) continue
+    const px = p.x * TILE + Math.floor(hash(p.x, p.y, 132) * 3)
+    const py = p.y * TILE + Math.floor(hash(p.x, p.y, 133) * 4)
+    const big = hash(p.x, p.y, 134) < 0.5
+    const w = big ? 12 : 8
+    g.fillStyle = '#d9bd8c'
+    g.fillRect(px + 1, py + 5, w + 2, 6)
+    g.fillRect(px + 3, py + 4, w - 2, 8)
+    g.fillStyle = '#a9cad0'
+    g.fillRect(px + 2, py + 6, w, 4)
+    g.fillRect(px + 4, py + 5, w - 4, 6)
+    g.fillStyle = '#d6eaee'
+    g.fillRect(px + 4, py + 6, 3, 2)
+    if (raining && (t * 1.3 + hash(p.x, p.y, 135)) % 1 < 0.35) {
+      g.fillStyle = 'rgba(232,244,246,0.9)'
+      const rx = px + 4 + Math.floor(hash(p.x, p.y, Math.floor(t * 1.3)) * (w - 6))
+      g.fillRect(rx, py + 7, 2, 2)
+    }
+  }
+}
+
+/** 추운 아침 호숫가 물가 한 줄 살얼음 (호수 첫 줄 위쪽 가장자리) — 8시부터 9시까지 천천히 녹는다 */
+function drawShoreIce(g: Ctx, minute: number) {
+  const a = minute < 8 * 60 ? 1 : Math.max(0, (9 * 60 - minute) / 60)
+  if (a <= 0) return
+  const y = 34
+  for (let x = 1; x < WIDTH - 1; x++) {
+    if (tileAt(x, y) !== '~') continue
+    g.fillStyle = `rgba(226, 241, 244, ${0.9 * a})`
+    g.fillRect(x * TILE, y * TILE, TILE, 4)
+    // 안쪽 끝은 들쭉날쭉 (4픽셀 토막마다 한 줄 더 얼거나 그늘만)
+    for (let i = 0; i < 4; i++) {
+      const more = hash(x, y, 136 + i) < 0.5
+      g.fillStyle = more ? `rgba(226, 241, 244, ${0.9 * a})` : `rgba(196, 224, 230, ${0.8 * a})`
+      g.fillRect(x * TILE + i * 4, y * TILE + 4, 4, 2)
+      if (more) {
+        g.fillStyle = `rgba(196, 224, 230, ${0.8 * a})`
+        g.fillRect(x * TILE + i * 4, y * TILE + 6, 4, 2)
+      }
+    }
+    g.fillStyle = `rgba(255, 255, 255, ${a})`
+    g.fillRect(x * TILE + 2 + Math.floor(hash(x, y, 140) * 9), y * TILE + 1, 4, 2)
+  }
+}
+
+/** 여름 맑은 날 호수 물빛: 반짝이는 하이라이트 몇 점이 켜졌다 꺼진다 */
+function drawLakeGlints(g: Ctx, t: number) {
+  for (let i = 0; i < 40; i++) {
+    const ph = (t * 0.6 + hash(i, 7, 141)) % 1
+    if (ph > 0.45) continue
+    const cyc = Math.floor(t * 0.6 + hash(i, 7, 141))
+    const x = 1 + Math.floor(hash(i, cyc, 142) * (WIDTH - 2))
+    const y = 35 + Math.floor(hash(i, cyc, 143) * (VILLAGE_H - 37))
+    if (tileAt(x, y) !== '~') continue
+    g.fillStyle = ph < 0.15 || ph > 0.3 ? 'rgba(236, 250, 252, 0.6)' : 'rgba(255, 255, 255, 0.95)'
+    g.fillRect(x * TILE + Math.floor(hash(i, cyc, 144) * 10), y * TILE + Math.floor(hash(i, cyc, 145) * 12), ph < 0.15 || ph > 0.3 ? 2 : 4, 2)
+  }
+}
+
+/**
+ * 굴뚝 연기: 굴뚝 머리에서 연한 잿빛 덩이가 피어올라 옆으로 흩어진다.
+ * 겨울엔 집집마다 크고 많이, 밥 짓는 때엔 몇 집만 조금. 바람 부는 날엔 더 옆으로 눕는다
+ */
+function drawChimneySmoke(g: Ctx, game: GameState, kind: 'meal' | 'winter', windy: boolean, t: number) {
+  const closed = closedHouseIds(game)
+  const n = kind === 'winter' ? 7 : 3
+  for (const h of housesNow()) {
+    if (closed.includes(h.id)) continue
+    if (kind === 'meal' && hash(h.x0, h.y0, 150) >= 0.5) continue
+    const cx = h.x0 * TILE + chimneyX(h.x0, h.x1) + 3
+    const cy = h.y0 * TILE - 10
+    const seed = hash(h.x0, h.y0, 151)
+    for (let i = 0; i < n; i++) {
+      const ph = (t * 0.32 + seed + i / n) % 1
+      const size = (kind === 'winter' ? 4 : 2) + Math.floor(ph * (kind === 'winter' ? 4 : 3))
+      const drift = ph * (windy ? 20 : 7) + Math.sin(t * 1.3 + i + seed * 6) * 1.5
+      // 눈 덮인 풀밭·흰 지붕 위에서도 보이게 옅은 잿빛 보라 (흰색이면 눈에 묻힌다)
+      g.fillStyle = `rgba(196, 190, 198, ${(kind === 'winter' ? 0.85 : 0.6) * (1 - ph * 0.8)})`
+      g.fillRect(Math.round(cx + drift - size / 2), Math.round(cy - ph * (kind === 'winter' ? 30 : 18) - size / 2), size, size)
+    }
+  }
 }
 
 /** 키는 모두 몇 가지 값의 조합이라 늘어나지 않지만(옷차림 바꾸기만 조합이 는다), 혹시 몰라 넘치면 비운다 */
@@ -1189,7 +1393,7 @@ function person(
   const rows = spriteRows(who, facing, { frame, blink, pose, season, ...extra })
   const pal = who === 'writer' ? writerPalette(season, extra.avatar) : PALETTE
   return paint(
-    `${who}/${facing}/${frame}/${blink}/${pose}/${who === 'writer' ? season : ''}/${extra.inky ?? ''}/${extra.growth ?? ''}/${extra.short ?? ''}/${extra.look ?? ''}/${extra.avatar ? avatarKey(extra.avatar) : ''}`,
+    `${who}/${facing}/${frame}/${blink}/${pose}/${who === 'writer' ? season : season === 'winter' ? 'w' : ''}/${extra.inky ?? ''}/${extra.growth ?? ''}/${extra.short ?? ''}/${extra.look ?? ''}/${extra.avatar ? avatarKey(extra.avatar) : ''}`,
     rows,
     pal,
   )
@@ -1581,11 +1785,11 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         g.fillRect(st.x * TILE + 9, st.y * TILE + 9, 2, 3)
       }
 
-      // 눈 쌓인 땅
-      if (weather === 'snow') {
-        g.fillStyle = 'rgba(255,255,255,0.35)'
-        g.fillRect(0, 0, WIDTH * TILE, VILLAGE_H * TILE)
-      }
+      // 그날의 날씨가 땅에 남긴 것 (계획 15 작업 2): 눈 쌓임(구운 덮개), 비 온 뒤 물웅덩이, 추운 아침 살얼음, 여름 맑은 날 물빛
+      if (weather === 'snow') g.drawImage(snowLayer(), 0, 0)
+      else if (puddlesOut(day, minute)) drawPuddles(g, day, weather === 'rain', t)
+      if (icyMorning(day, minute)) drawShoreIce(g, minute)
+      if (season === 'summer' && (weather === 'sunny' || weather === 'hot') && minute >= 7 * 60 && minute < 19 * 60) drawLakeGlints(g, t)
 
       // 익은 포도
       if (grapesRipe(day))
@@ -1736,6 +1940,10 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       drawDecor(g, game, weather, t, phase === 'morning' || phase === 'day')
       // 아직 열리지 않은 구역·이사 오기 전 이웃의 집: 덤불로 덮는다 (물만 보인다)
       coverLocked(g, game, season)
+      // 정자 지붕의 눈 (정자는 덧그림이라 지도 덮개 위에 따로), 굴뚝 연기 (닫힌 집은 빼고)
+      if (weather === 'snow') drawPavilionSnow(g)
+      const smoke = chimneySmoke(day, minute)
+      if (smoke !== 'none') drawChimneySmoke(g, game, smoke, weather === 'wind', t)
 
       type Item = { y: number; paint: () => void }
       const items: Item[] = []
