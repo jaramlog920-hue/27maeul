@@ -1,6 +1,7 @@
 // 엔진 상태 ↔ 화면 연결. 창(모달)이 열려 있으면 시간과 걸음이 멈춘다.
 import { SERVICES } from '../engine/services'
 import type { FullAvatar } from '../engine/avatar'
+import type { DatePlace } from '../engine/romance'
 import { create } from 'zustand'
 import { CONTENT, neighborById, copySourceFor, LETTER_OPENINGS, pieceById, pieceOfQuestion, piecesOf, quizSourceFor } from '../content/catalog'
 import { blanksFor } from '../engine/copy'
@@ -55,8 +56,7 @@ import {
   chooseInEvent,
   giveBouquet,
   giveCord,
-  dateTea,
-  dateSunset,
+  goOnDate,
   spouseGift,
   sellHerbs,
   playHall,
@@ -394,8 +394,8 @@ interface Store {
   askFixture: (npc: string, line: FixtureLine) => void
   giveBouquet: (id: string) => void
   giveCord: (id: string) => void
-  dateTea: () => void
-  dateSunset: () => void
+  /** 연인과 함께 가기 (계획 10 작업 4): 찻집·정자·언덕 — 짧은 장면 뒤 한 줄 알림 */
+  goDate: (place: DatePlace) => void
   drinkTea: () => void
   watchSunset: () => void
   sitHill: () => void
@@ -1301,20 +1301,15 @@ export const useGame = create<Store>((set, get) => {
       set({ game: persist(next), modal: null })
       get().say(fill(T.romance.weddingSoon, { day: next.romance.weddingDay ?? 0 }), 4000)
     },
-    dateTea: () => {
+    goDate: (place) => {
       const before = get().game
-      const next = dateTea(before)
+      const next = goOnDate(before, place, CONTENT)
       if (next === before) return
-      sfx('eat')
-      set({ game: persist(next), modal: null })
-      get().say(fill(T.romance.dateDone, { with: withAnd(partnerName(before)) }))
-    },
-    dateSunset: () => {
-      const before = get().game
-      const next = dateSunset(before)
-      if (next === before) return
-      set({ game: persist(next), modal: null })
-      get().say(fill(T.romance.dateDone, { with: withAnd(partnerName(before)) }))
+      if (place === 'tea') sfx('eat')
+      const game = persist(next)
+      const scene = game.scenes.find((id) => !before.scenes.includes(id) && id.startsWith('date')) ?? game.scenes[game.scenes.length - 1]
+      set({ game, modal: { kind: 'scene', id: scene }, afterScene: fill(T.romance.dateDone, { with: withAnd(partnerName(before)) }) })
+      snapAlbum(scene, get().capture)
     },
     seal: (book) => {
       const next = sealBook(get().game, book)

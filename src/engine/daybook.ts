@@ -56,7 +56,7 @@ export function logGift<S extends WithLog>(s: S, from: string, items: Partial<Re
  * 가족 일로 적는 일지 표식: 내 아이(태어남·걸음·심부름·어른이 됨·편지와 선물), 동반 동물, 배우자와의 혼인·나들이.
  * 이웃 아이(글자 배우기)·빵집 아기는 가족이 아니다
  */
-const FAMILY_NOTE = /^(childBorn|childWalks|childHelps|childStays|childLeaves|kidMail:|childHelp:|companionJoined|wedding:|dateTea$|dateSunset$)/
+const FAMILY_NOTE = /^(childBorn|childWalks|childHelps|childStays|childLeaves|kidMail:|childHelp:|companionJoined|wedding:|dateTea$|dateSunset$|dateWalk$|date:)/
 
 export const isFamilyNote = (note: string): boolean => FAMILY_NOTE.test(note)
 

@@ -52,8 +52,11 @@ import {
   BOUQUET_HEARTS,
   CORD_GAIN,
   CORD_HEARTS,
+  DATE_COUNT_FLAG,
+  DATE_FIRST_SCENE,
   DATE_GAIN,
   DATE_TEA_PRICE,
+  DATE_VARIANTS,
   DATING_DAYS,
   isCandidateId,
   nextMarketAfter,
@@ -61,8 +64,14 @@ import {
   SPOUSE_HOME_FROM,
   SPOUSE_HOME_TO,
   SPOUSE_SPOT,
+  PARTNER_WORK,
   STORY_HEARTS,
+  WALK_FROM,
+  WALK_MINUTES,
+  WALK_TO,
   WEDDING_SPOT,
+  WORK_HERE,
+  type DatePlace,
   type Romance,
 } from './romance'
 import {
@@ -2158,55 +2167,68 @@ export function spouseGift(s: GameState, def: NeighborDef): { state: GameState; 
   return { state: { ...putAway(s, gift), flags: { ...s.flags, spouseGiftDay: s.clock.day } }, gift }
 }
 
-export type DateBlock = 'noPartner' | 'done' | 'closed' | 'coins' | 'notYet' | 'cloudy' | null
-/** 둘이 가는 곳 (계획 10 작업 4): 연인·약혼·부부만, 하루 한 번 (찻집이든 정자든) */
-function dateBlock(s: GameState): DateBlock {
+export type DateBlock = 'noPartner' | 'away' | 'busy' | 'done' | 'closed' | 'coins' | 'notYet' | 'cloudy' | 'wet' | null
+
+/**
+ * 연인이 지금 함께 갈 수 있는가 (계획 10 작업 4):
+ * - 오늘 마을에 나와 있어야 한다 (궂은 날 집에 있는 사람, 아직 이사 오지 않은 집안이면 'away').
+ * - 그 사람의 집안 일(PARTNER_WORK)을 하는 중이면 바쁘다 ('busy'). 점심처럼 누구와 함께 있는 때는 쉬는 때.
+ *   찻집이 일터인 파피는 찻집 탁자에서는 잠깐 마주 앉을 수 있다.
+ */
+export function partnerFree(s: GameState, content: GameContent, place: DatePlace): 'noPartner' | 'away' | 'busy' | null {
   const r = s.romance ?? NO_ROMANCE
   if (!r.partner || !r.stage) return 'noPartner'
+  if (!neighborsPresent(s, content).includes(r.partner)) return 'away'
+  const work = isCandidateId(r.partner) ? PARTNER_WORK[r.partner] : undefined
+  const now = routineOf(s, r.partner)
+  if (work && now?.doing === work && !now.with && WORK_HERE[work] !== place) return 'busy'
+  return null
+}
+
+/** 둘이 가는 곳 (계획 10 작업 4): 연인·약혼·부부만, 하루 한 번 (찻집이든 정자든 언덕이든), 그 사람이 마을에 있고 일하는 중이 아닐 때 */
+export function canDate(s: GameState, place: DatePlace, content: GameContent): DateBlock {
+  const who = partnerFree(s, content, place)
+  if (who === 'noPartner') return who
   if (s.flags.dateDay === s.clock.day) return 'done'
-  return null
-}
-export function canDateTea(s: GameState): DateBlock {
-  const b = dateBlock(s)
-  if (b) return b
-  if (!teaOpen(s.clock.minute)) return 'closed'
-  if (s.coins < DATE_TEA_PRICE) return 'coins'
-  return null
-}
-export function canDateSunset(s: GameState): DateBlock {
-  const b = dateBlock(s)
-  if (b) return b
-  const sun = canWatchSunset(s)
-  return sun === 'notYet' ? 'notYet' : sun === 'cloudy' ? 'cloudy' : null
+  if (place === 'tea') {
+    if (!teaOpen(s.clock.minute)) return 'closed'
+    if (s.coins < DATE_TEA_PRICE) return 'coins'
+  } else if (place === 'sunset') {
+    const sun = canWatchSunset(s)
+    if (sun) return sun
+  } else {
+    const m = s.clock.minute
+    if (m < WALK_FROM || m >= WALK_TO) return 'closed'
+    if (isWet(weatherOf(s.clock.day))) return 'wet'
+  }
+  return who
 }
 
-/** 함께 차 마시기 (닢 4): 둘 다 쉬고, 마음 +5점. 처음 한 번 장면 dateTea */
-export function dateTea(s: GameState): GameState {
-  if (canDateTea(s)) return s
-  const first = !s.flags.dateTeas
-  const next: GameState = {
-    ...s,
-    coins: s.coins - DATE_TEA_PRICE,
-    needs: rest(s.needs),
-    flags: { ...s.flags, dateDay: s.clock.day, dateTeas: (s.flags.dateTeas ?? 0) + 1 },
-    scenes: first ? [...s.scenes, 'dateTea'] : s.scenes,
-  }
-  return passTime(heartUp(next, s.romance.partner!, DATE_GAIN), TEA_MINUTES)
-}
+const DATE_MINUTES: Record<DatePlace, number> = { tea: TEA_MINUTES, sunset: SUNSET_MINUTES, walk: WALK_MINUTES }
 
-/** 함께 노을 보기: 쉬고, 마음 +5점, 그날 처음이면 운. 처음 한 번 장면 dateSunset */
-export function dateSunset(s: GameState): GameState {
-  if (canDateSunset(s)) return s
-  const first = !s.flags.dateSunsets
-  const key = onceKey('sunset', s.clock.day)
-  const lucky = !s.flags[key]
+/**
+ * 함께 가기: 짧은 장면 하나 (곳마다 처음이면 앨범에 남는 장면, 그다음부터는 날마다 다른 짧은 장면),
+ * 둘 다 쉬고, 마음 +5점, 오늘 기분 + (mood.ts가 dateDay를 본다). 찻집은 닢 4, 노을은 그날 처음이면 운.
+ */
+export function goOnDate(s: GameState, place: DatePlace, content: GameContent): GameState {
+  if (canDate(s, place, content)) return s
+  const countKey = DATE_COUNT_FLAG[place]
+  const first = !s.flags[countKey]
+  const variant = Math.floor(mulberry32(s.clock.day * 613 + place.charCodeAt(0))() * DATE_VARIANTS)
+  const scene = first ? DATE_FIRST_SCENE[place] : `date:${place}:${variant}`
+  const flags: Record<string, number> = { ...s.flags, dateDay: s.clock.day, [countKey]: (s.flags[countKey] ?? 0) + 1 }
+  const sunKey = onceKey('sunset', s.clock.day)
+  const lucky = place === 'sunset' && !s.flags[sunKey]
+  if (place === 'sunset') flags[sunKey] = 1
   const next: GameState = {
     ...s,
+    coins: place === 'tea' ? s.coins - DATE_TEA_PRICE : s.coins,
     needs: rest(s.needs),
-    flags: { ...s.flags, dateDay: s.clock.day, dateSunsets: (s.flags.dateSunsets ?? 0) + 1, [key]: 1 },
-    scenes: first ? [...s.scenes, 'dateSunset'] : s.scenes,
+    flags,
   }
-  const done = passTime(heartUp(next, s.romance.partner!, DATE_GAIN), SUNSET_MINUTES)
+  // 함께 간 장면을 마음이 오르며 열린 이야기보다 먼저 보인다
+  const warmed = heartUp(next, s.romance.partner!, DATE_GAIN)
+  const done = passTime({ ...warmed, scenes: [...s.scenes, scene, ...warmed.scenes.slice(s.scenes.length)] }, DATE_MINUTES[place])
   return lucky ? train(done, 'luck', XP.stars) : done
 }
 

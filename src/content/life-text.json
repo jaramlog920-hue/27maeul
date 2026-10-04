@@ -4581,32 +4581,179 @@
       "album": "결혼 잔치"
     },
     "dateTea": {
-      "title": "둘이 마시는 차",
+      "title": "처음 같이 간 찻집",
       "lines": [
         {
           "speaker": "narration",
-          "text": "창가 탁자에 마주 앉아 같은 차를 나눠 마셨다."
+          "text": "{partnerAnd} 찻집 창가 탁자에 마주 앉았다."
+        },
+        {
+          "speaker": "narration",
+          "text": "같은 차를 두 잔 시켰는데, 한 모금 마시자마자 둘 다 \"앗, 뜨거워\" 하고 웃음이 터졌다."
         },
         {
           "speaker": "narration",
           "text": "찻잔이 식는 줄도 모르고 이야기가 이어졌다."
         }
       ],
-      "album": "둘이 마신 차"
+      "album": "처음 찻집에 같이 간 날"
     },
     "dateSunset": {
-      "title": "둘이 본 노을",
+      "title": "처음 같이 본 노을",
       "lines": [
         {
           "speaker": "narration",
-          "text": "정자 벤치에 나란히 앉아 호수 너머로 지는 해를 보았다."
+          "text": "{partnerAnd} 정자 벤치에 나란히 앉아 호수 너머로 지는 해를 보았다."
         },
         {
           "speaker": "narration",
-          "text": "말은 많지 않았지만, 마음은 한참 따뜻했다."
+          "text": "물결 위로 붉은 빛이 길게 번졌다."
+        },
+        {
+          "speaker": "narration",
+          "text": "{partnerSubj} 작게 말했다. \"내일도 이렇게 맑으면 좋겠어요.\""
         }
       ],
-      "album": "둘이 본 노을"
+      "album": "처음 정자에서 같이 노을 본 날"
+    },
+    "dateWalk": {
+      "title": "처음 같이 걸은 언덕길",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "{partnerAnd} 언덕길을 천천히 걸어 올라갔다."
+        },
+        {
+          "speaker": "narration",
+          "text": "길가 들꽃 이름을 하나씩 대 보다가, 둘 다 모르는 꽃 앞에서 같이 멈춰 섰다."
+        },
+        {
+          "speaker": "narration",
+          "text": "언덕 벤치에 닿자 마을 지붕들이 한눈에 내려다보였다."
+        }
+      ],
+      "album": "처음 언덕길을 같이 걸은 날"
+    },
+    "date:tea:0": {
+      "title": "찻집의 오후",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "{partnerAnd} 늘 앉던 창가 자리에 앉았다."
+        },
+        {
+          "speaker": "narration",
+          "text": "{partnerSubj} 오늘 있었던 일을 하나하나 들려주었다."
+        }
+      ]
+    },
+    "date:tea:1": {
+      "title": "두 잔의 차",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "찻잔 두 개에서 김이 나란히 피어올랐다."
+        },
+        {
+          "speaker": "narration",
+          "text": "{partnerSubj} 과자 하나를 반으로 갈라 내밀었다."
+        },
+        {
+          "speaker": "narration",
+          "text": "별말 없어도 편안한 오후였다."
+        }
+      ]
+    },
+    "date:tea:2": {
+      "title": "어릴 적 이야기",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "{partnerSubj} 목소리를 낮추더니 어릴 적 장난 이야기를 꺼냈다."
+        },
+        {
+          "speaker": "narration",
+          "text": "웃음을 참느라 찻잔이 달그락거렸다."
+        }
+      ]
+    },
+    "date:sunset:0": {
+      "title": "정자의 저녁",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "{partnerAnd} 정자 난간에 기대어 해가 지는 쪽을 보았다."
+        },
+        {
+          "speaker": "narration",
+          "text": "호수 위로 새 몇 마리가 낮게 날아갔다."
+        }
+      ]
+    },
+    "date:sunset:1": {
+      "title": "노을빛",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "{partnerSubj} 오늘 노을 색을 무엇에 빗댈지 한참 고민했다."
+        },
+        {
+          "speaker": "narration",
+          "text": "\"잘 익은 살구 같아요.\" 둘 다 그 말이 마음에 들었다."
+        }
+      ]
+    },
+    "date:sunset:2": {
+      "title": "말없이 앉아",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "둘은 오래 아무 말 없이 앉아 있었다."
+        },
+        {
+          "speaker": "narration",
+          "text": "해가 다 지고 나서야 {partnerSubj} \"이제 갈까요?\" 하고 일어났다."
+        }
+      ]
+    },
+    "date:walk:0": {
+      "title": "언덕길 산책",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "{partnerAnd} 언덕길을 나란히 걸었다."
+        },
+        {
+          "speaker": "narration",
+          "text": "바람이 불 때마다 풀잎이 한쪽으로 눕고 다시 일어났다."
+        }
+      ]
+    },
+    "date:walk:1": {
+      "title": "들꽃 한 송이",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "{partnerSubj} 길가에서 작은 들꽃 하나를 꺾어 내밀었다."
+        },
+        {
+          "speaker": "narration",
+          "text": "\"이 길엔 늘 뭔가 피어 있네요.\""
+        }
+      ]
+    },
+    "date:walk:2": {
+      "title": "벤치까지 내기",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "언덕 벤치까지 먼저 닿는 쪽이 이기는 내기를 했다."
+        },
+        {
+          "speaker": "narration",
+          "text": "숨이 차서 둘 다 벤치에 털썩 앉아 한참 웃었다."
+        }
+      ]
     },
     "fixed:desk:1": {
       "title": "넓은 기록대",
@@ -4822,6 +4969,16 @@
       "wedding:poppy": " 파피와 마을 잔치를 열었다.",
       "dateTea": " 찻집에서 둘이 차를 마셨다.",
       "dateSunset": " 정자에서 둘이 노을을 보았다.",
+      "dateWalk": " 언덕길을 둘이 걸었다.",
+      "date:tea:0": " 찻집에서 둘이 차를 마셨다.",
+      "date:tea:1": " 찻집에서 둘이 차를 마셨다.",
+      "date:tea:2": " 찻집에서 둘이 차를 마셨다.",
+      "date:sunset:0": " 정자에서 둘이 노을을 보았다.",
+      "date:sunset:1": " 정자에서 둘이 노을을 보았다.",
+      "date:sunset:2": " 정자에서 둘이 노을을 보았다.",
+      "date:walk:0": " 언덕길을 둘이 걸었다.",
+      "date:walk:1": " 언덕길을 둘이 걸었다.",
+      "date:walk:2": " 언덕길을 둘이 걸었다.",
       "fixed:desk:1": " 넓은 기록대를 들였다.",
       "fixed:desk:2": " 장인의 기록대를 들였다.",
       "fixed:lamp:1": " 두 심지 등잔을 들였다.",
@@ -5170,10 +5327,15 @@
     "cordNoItem": "약속의 끈은 장날 상인에게서 살 수 있어요.",
     "weddingSoon": "{day}일째 저녁, 광장 모닥불에서 마을 잔치를 열어요.",
     "spouseGift": "{who} 챙겨 주었다: {items}",
-    "dateTea": "{with} 차 마시기 ({n}닢)",
-    "dateSunset": "{with} 노을 보기",
-    "dateDone": "{with} 오붓한 시간을 보냈다.",
-    "dateAlready": "오늘은 벌써 둘이 시간을 보냈어요."
+    "dateTea": "{with} 함께 차 마시기 ({n}닢)",
+    "dateSunset": "{with} 함께 노을 보기",
+    "dateWalk": "{with} 함께 언덕길 걷기",
+    "dateDone": "{with} 오붓한 시간을 보냈다. 마음이 한결 가볍다.",
+    "dateAlready": "오늘은 벌써 둘이 시간을 보냈어요. 내일 또 같이 와요.",
+    "dateAway": "{who} 오늘은 마을에 나오지 않았어요.",
+    "dateBusy": "{who} 지금 일하는 중이에요. 일이 끝나면 같이 와요.",
+    "walkClosed": "언덕길은 아침 여섯 시부터 저녁 일곱 시 반까지 걷기 좋아요.",
+    "walkWet": "비나 눈이 오는 날엔 언덕길이 미끄러워요."
   },
   "people": {
     "stages": [

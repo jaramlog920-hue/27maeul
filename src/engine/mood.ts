@@ -4,11 +4,14 @@ import type { GameState } from './game'
 import { count } from './items'
 
 export const GOOD_MOOD = 70
+/** 연인과 함께 간 날 (계획 10 작업 4): 그날 하루 기분 + */
+export const DATE_MOOD = 10
 
 const WEATHER_MOOD: Record<string, number> = { sunny: 10, wind: 0, fog: 0, rain: -5, snow: -5, hot: -5 }
 
-export function moodOf(s: Pick<GameState, 'needs' | 'clock' | 'room' | 'inv'>): number {
+export function moodOf(s: Pick<GameState, 'needs' | 'clock' | 'room' | 'inv'> & Partial<Pick<GameState, 'flags'>>): number {
   let m = 50 + (WEATHER_MOOD[weatherOf(s.clock.day)] ?? 0)
+  if (s.flags?.dateDay === s.clock.day) m += DATE_MOOD
   m += Math.min(15, s.room.length * 3)
   if (count(s.inv, 'goodPen') > 0) m += 5
   if (count(s.inv, 'brightLamp') > 0) m += 5
@@ -18,6 +21,6 @@ export function moodOf(s: Pick<GameState, 'needs' | 'clock' | 'room' | 'inv'>): 
   return Math.max(0, Math.min(100, m))
 }
 
-export function inGoodMood(s: Pick<GameState, 'needs' | 'clock' | 'room' | 'inv'>): boolean {
+export function inGoodMood(s: Pick<GameState, 'needs' | 'clock' | 'room' | 'inv'> & Partial<Pick<GameState, 'flags'>>): boolean {
   return moodOf(s) >= GOOD_MOOD
 }

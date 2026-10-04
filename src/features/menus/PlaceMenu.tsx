@@ -1,14 +1,19 @@
 // 화덕·작업대·기름틀·언덕 벤치, 그리고 모이는 곳(사랑방·찻집·정자 — 계획 10)에서 할 수 있는 일
+// 연인·약혼·부부면 찻집·정자·언덕에서 "○○와 함께" 가기 (계획 10 작업 4)
 import { CONTENT } from '../../content/catalog'
-import { fill, T } from '../../content/text'
-import { canCraft, canDrinkTea, canPlayHall, canWatchSunset, hasFood, starsOut } from '../../engine/game'
+import { fill, T, withAnd, withSubject } from '../../content/text'
+import { canCraft, canDate, canDrinkTea, canPlayHall, canWatchSunset, hasFood, starsOut } from '../../engine/game'
 import { inkYield } from '../../engine/fixtures'
 import { TEA_PRICE } from '../../engine/places'
-import { useGame, type MenuPlace } from '../../store/game-store'
+import { DATE_TEA_PRICE, type DatePlace } from '../../engine/romance'
+import { partnerName, useGame, type MenuPlace } from '../../store/game-store'
+
+const DATE_AT: Partial<Record<MenuPlace, DatePlace>> = { teaTable: 'tea', pavilion: 'sunset', hill: 'walk' }
+const DATE_LABEL: Record<DatePlace, string> = { tea: T.romance.dateTea, sunset: T.romance.dateSunset, walk: T.romance.dateWalk }
 
 export function PlaceMenu({ place }: { place: MenuPlace }) {
   const game = useGame((s) => s.game)
-  const { startCraft, warm, eat, closeModal, open, sitHill, playHall, drinkTea, watchSunset, rest } = useGame.getState()
+  const { startCraft, warm, eat, closeModal, open, sitHill, playHall, drinkTea, watchSunset, rest, goDate } = useGame.getState()
   const title = {
     hearth: T.ui.hearthTitle,
     workbench: T.ui.workbenchTitle,
@@ -23,6 +28,22 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
   const hall = place === 'hallTable' ? canPlayHall(game, CONTENT) : null
   const tea = place === 'teaTable' ? canDrinkTea(game) : null
   const sunset = place === 'pavilion' ? canWatchSunset(game) : null
+  // 함께 가기: 연인이 있을 때만 버튼이 보인다
+  const datePlace = DATE_AT[place]
+  const partner = partnerName(game)
+  const date = datePlace && game.romance?.stage ? canDate(game, datePlace, CONTENT) : 'noPartner'
+  const dateHint =
+    date === 'done'
+      ? T.romance.dateAlready
+      : date === 'away'
+        ? fill(T.romance.dateAway, { who: withSubject(partner) })
+        : date === 'busy'
+          ? fill(T.romance.dateBusy, { who: withSubject(partner) })
+          : datePlace === 'walk' && date === 'closed'
+            ? T.romance.walkClosed
+            : datePlace === 'walk' && date === 'wet'
+              ? T.romance.walkWet
+              : null
   return (
     <div className="dialog" role="dialog" aria-label={title}>
       <h2>{title}</h2>
@@ -92,6 +113,11 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
             <button onClick={rest}>{T.places.sit}</button>
           </>
         )}
+        {datePlace && date !== 'noPartner' && (
+          <button className="primary" disabled={date !== null} onClick={() => goDate(datePlace)}>
+            {fill(DATE_LABEL[datePlace], { with: withAnd(partner), n: DATE_TEA_PRICE })}
+          </button>
+        )}
         {(place === 'hill' || place === 'bench' || place === 'homeBench' || place === 'pavilion') && (
           <button className={place === 'pavilion' ? '' : 'primary'} disabled={game.collected.length === 0} onClick={() => open({ kind: 'readPick' })}>
             {T.ui.readScripture}
@@ -99,6 +125,7 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
         )}
         <button onClick={closeModal}>{T.ui.close}</button>
       </div>
+      {dateHint && <p className="hint">{dateHint}</p>}
       {place === 'hill' && !starsOut(game.clock.minute) && <p className="hint">{T.ui.starsNotYet}</p>}
       {(place === 'hill' || place === 'bench' || place === 'homeBench') && <p className="hint">{T.ui.readHint}</p>}
       {hall === 'closed' && <p className="hint">{T.places.hallClosed}</p>}

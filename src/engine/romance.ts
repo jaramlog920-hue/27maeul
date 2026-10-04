@@ -38,9 +38,41 @@ export const DATING_DAYS = 7
 export const BOUQUET_GAIN = 5
 export const CORD_GAIN = 5
 
-/** 둘이 가는 곳 (계획 10과 이음): 함께 차 마시기(닢 4)·함께 노을 보기, 하루 한 번 — 마음 +5점 */
+/**
+ * 함께 가기 (계획 10 작업 4): 연인·약혼·부부가 되면 찻집 탁자·호숫가 정자·언덕 벤치에서 그 사람과 함께 간다.
+ * 하루에 한 번 (어느 곳이든) — 마음 +5점, 오늘 기분 +, 곳마다 처음 간 날은 앨범 한 장.
+ */
+export type DatePlace = 'tea' | 'sunset' | 'walk'
+export const DATE_PLACES: readonly DatePlace[] = ['tea', 'sunset', 'walk']
 export const DATE_TEA_PRICE = 4
 export const DATE_GAIN = 5
+/** 곳마다 처음 함께 간 날의 장면 (앨범) — 그다음부터는 date:<곳>:<0~2> 짧은 장면 */
+export const DATE_FIRST_SCENE: Record<DatePlace, string> = { tea: 'dateTea', sunset: 'dateSunset', walk: 'dateWalk' }
+/** 곳마다 함께 간 횟수를 세는 표식 */
+export const DATE_COUNT_FLAG: Record<DatePlace, string> = { tea: 'dateTeas', sunset: 'dateSunsets', walk: 'dateWalks' }
+export const DATE_VARIANTS = 3
+/** 언덕길을 걷기 좋은 때 (06:00–19:30), 비·눈이 오면 미끄러워 걷지 않는다 */
+export const WALK_FROM = 6 * 60
+export const WALK_TO = 19 * 60 + 30
+export const WALK_MINUTES = 40
+/**
+ * 그 사람의 집안 일 (people.json 일과의 doing). 이 일을 하고 있는 동안은 바빠서 함께 가지 못한다.
+ * 점심처럼 누구와 함께 있는 때(일과의 with)는 쉬는 때로 본다. 찻집 일을 하는 파피는 찻집에서는 잠깐 마주 앉을 수 있다.
+ */
+export const PARTNER_WORK: Record<CandidateId, string> = {
+  wendell: 'bread',
+  cosmo: 'net',
+  rudy: 'wood',
+  dexter: 'sheep',
+  basil: 'herb',
+  marigold: 'grape',
+  penelope: 'weave',
+  tilly: 'hammer',
+  juniper: 'bee',
+  poppy: 'tea',
+}
+/** 일하는 곳이 곧 그곳이라 일하면서도 잠깐 앉을 수 있는 곳 */
+export const WORK_HERE: Partial<Record<string, DatePlace>> = { tea: 'tea' }
 
 /** 결혼 잔치: 광장 모닥불 바로 위 (신랑·신부 자리) */
 export const WEDDING_SPOT: Tile = { x: 24, y: 19 }

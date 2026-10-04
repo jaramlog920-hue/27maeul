@@ -101,6 +101,13 @@ export function spouseFill(text: string, name: string | undefined | null): strin
   return text.replaceAll('{spouseSubj}', withSubject(n)).replaceAll('{spouseAnd}', withAnd(n)).replaceAll('{spouse}', n)
 }
 
+/** 연인 이름 넣기 (함께 가기 장면, 계획 10 작업 4): {partnerSubj} 이/가, {partnerAnd} 와/과, {partner} 이름만 (없으면 '곁의 사람') */
+export function partnerFill(text: string, name: string | undefined | null): string {
+  if (!text.includes('{partner')) return text
+  const n = name?.trim() || '곁의 사람'
+  return text.replaceAll('{partnerSubj}', withSubject(n)).replaceAll('{partnerAnd}', withAnd(n)).replaceAll('{partner}', n)
+}
+
 export function itemName(id: ItemId): string {
   return ITEM_TEXT[id]?.name ?? id
 }

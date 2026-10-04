@@ -277,7 +277,7 @@ export function closeHearts(c: { close?: number } | null | undefined): number {
 }
 
 // ── 가족 앨범: 앨범의 "가족" 쪽에 모이는 장 (우리 아이·배우자·동물 친구의 날과 fam: 장면) ──
-const FAMILY_ALBUM = new Set(['childBorn', 'childWalks', 'childHelps', 'childStays', 'childLeaves', 'companionJoined', 'dateTea', 'dateSunset'])
+const FAMILY_ALBUM = new Set(['childBorn', 'childWalks', 'childHelps', 'childStays', 'childLeaves', 'companionJoined', 'dateTea', 'dateSunset', 'dateWalk'])
 export function isFamilyAlbum(id: string): boolean {
   return id.startsWith('fam:') || id.startsWith('wedding:') || id.startsWith('confess:') || FAMILY_ALBUM.has(id)
 }
