@@ -1875,6 +1875,122 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
 .copy-god-verse { margin: 2px 0 0; font-family: var(--scripture-font); font-size: 15px; line-height: 1.8; word-break: keep-all; overflow-wrap: anywhere; }
 .copy-gains, .copy-book-done { margin: 0; text-align: center; font-size: 13px; color: #7a6a52; }
 
+/* ── 필사 손맛 (2026-10-04): 조용한 화면에 맞게 작게 — 숫자 띄우기·연속 횟수 없음 ── */
+/* 글자 하나: 잉크가 0.2초쯤 살짝 번졌다가 진하게 가라앉는다 */
+.copy-bloom { animation: copy-ink-bloom 0.22s ease-out; }
+@keyframes copy-ink-bloom {
+  0% { color: #6b5638; text-shadow: 0 0 0 rgba(34, 26, 16, 0); }
+  35% { color: #4a3a24; text-shadow: 0 0 3px rgba(60, 42, 20, 0.55), 0 0 1px rgba(34, 26, 16, 0.6); }
+  100% { color: #221a10; text-shadow: 0 0 0 rgba(34, 26, 16, 0); }
+}
+/* 위의 작은 양피지 쪽: 마친 절마다 한 줄씩 잉크가 찬다 */
+.copy-page {
+  flex: none;
+  box-sizing: border-box;
+  width: 34px;
+  height: 44px;
+  padding: 6px 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: #f8edd2;
+  border: 2px solid #c9b088;
+  border-radius: 2px;
+  box-shadow: 2px 2px 0 rgba(120, 96, 60, 0.18);
+}
+/* 줄 자리(옅은 괘선) 위로 마친 절만큼 잉크가 늘어난다 */
+.copy-page-row { flex: none; height: 2px; background: rgba(184, 154, 100, 0.25); }
+.copy-page-ink { display: block; height: 100%; background: #6e5838; opacity: 0.8; }
+/* 방금 마친 절의 줄: 날아온 줄이 닿을 즈음 늘어난다 */
+.copy-page-new .copy-page-ink { transition: width 0.3s ease-out 0.65s; }
+/* 본문 칸 위로 마친 절이 잠깐 겹쳐 있다 (입력칸은 건드리지 않는다) */
+.copy-verse-wrap { position: relative; }
+.copy-ghost {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  min-height: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+.copy-ghost-fly { animation: copy-ghost-fly 0.95s ease-in both; }
+@keyframes copy-ghost-fly {
+  0% { transform: none; opacity: 1; }
+  14% { transform: translate(2px, 1px); }
+  20% { transform: translate(-2px, -1px); }
+  26% { transform: translate(1px, 0); }
+  32%, 48% { transform: none; opacity: 1; }
+  100% { transform: translate(var(--fly-x, 0px), var(--fly-y, -60px)) scale(0.08); opacity: 0; }
+}
+.copy-ghost-fade { animation: copy-ghost-fade 0.95s ease-out both; }
+@keyframes copy-ghost-fade { 0%, 50% { opacity: 1; } 100% { opacity: 0; } }
+/* 다음 절은 마친 절이 떠난 뒤에 살며시 */
+.copy-verse-arrive { animation: copy-verse-arrive 0.95s ease-out both; }
+@keyframes copy-verse-arrive { 0%, 45% { opacity: 0; } 100% { opacity: 1; } }
+/* 절 끝의 도장 "장:절": 1.25배에서 꾹 눌려 1배로 */
+.copy-stamp {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 5px;
+  font-family: var(--scripture-font);
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 700;
+  color: #9a3b2c;
+  border: 2px solid rgba(154, 59, 44, 0.75);
+  border-radius: 3px;
+  transform: rotate(-4deg);
+  vertical-align: middle;
+}
+.copy-stamp-press { animation: copy-stamp-press 0.22s cubic-bezier(0.3, 0, 0.4, 1) both; }
+@keyframes copy-stamp-press {
+  0% { transform: rotate(-4deg) scale(1.25); opacity: 0; }
+  55% { opacity: 1; }
+  100% { transform: rotate(-4deg) scale(1); opacity: 1; }
+}
+.copy-stamp-fade { animation: copy-stamp-fade 0.22s ease-out both; }
+@keyframes copy-stamp-fade { from { opacity: 0; } to { opacity: 1; } }
+/* 장을 마침: 꽉 찬 쪽이 가운데서 접히고, 그 뒤로 장 완료 화면이 떠오른다 */
+.copy-focus-inner { position: relative; }
+.copy-fold-stage { position: absolute; top: 8vh; left: 0; right: 0; display: flex; justify-content: center; pointer-events: none; z-index: 2; perspective: 320px; }
+.copy-page-fold { width: 68px; height: 88px; padding: 12px 9px; gap: 4px; transform-origin: center top; animation: copy-page-fold 0.9s ease-in both; }
+.copy-page-fold .copy-page-row { height: 4px; }
+@keyframes copy-page-fold {
+  0% { transform: scale(0.6); opacity: 0; }
+  20%, 40% { transform: scale(1); opacity: 1; }
+  80% { transform: rotateX(80deg) scaleY(0.5); opacity: 1; }
+  100% { transform: rotateX(90deg) scaleY(0.4); opacity: 0; }
+}
+.copy-page-fold-still { animation: copy-ghost-fade 0.9s ease-out both; }
+.copy-after-fold { animation: copy-after-fold 1.1s ease-out both; }
+@keyframes copy-after-fold { 0%, 65% { opacity: 0; } 100% { opacity: 1; } }
+/* 새로 생긴 하나님 기록: 은은하게 한 번 반짝 */
+.copy-god-new {
+  border-radius: 3px;
+  background: linear-gradient(100deg, transparent 30%, rgba(232, 200, 120, 0.38) 50%, transparent 70%) no-repeat;
+  background-size: 250% 100%;
+  background-position: 120% 0;
+  animation: copy-god-shimmer 1.8s ease-in-out 0.6s 2 both;
+}
+.copy-after-fold .copy-god-new { animation-delay: 1.1s; }
+@keyframes copy-god-shimmer { from { background-position: 120% 0; } to { background-position: -20% 0; } }
+/* 움직임 줄이기: 흔들림·날아가기·접기 없이 살짝 나타나고 사라지게 (도장은 그대로 나타난다) */
+.copy-still .copy-ghost-fly { animation-name: copy-ghost-fade; }
+.copy-still .copy-stamp-press { animation-name: copy-stamp-fade; }
+.copy-still .copy-page-fold { animation-name: copy-ghost-fade; }
+.copy-still .copy-page-new .copy-page-ink { transition: none; }
+.copy-still .copy-god-new { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .copy-ghost-fly { animation-name: copy-ghost-fade; }
+  .copy-stamp-press { animation-name: copy-stamp-fade; }
+  .copy-page-fold { animation-name: copy-ghost-fade; }
+  .copy-page-new .copy-page-ink { transition: none; }
+  .copy-god-new { animation: none; }
+}
+
 /* ── 서고의 시각적 성장과 제본 (계획 14 작업 4): 차분한 파스텔, 2픽셀 이상 선, 좌우 대칭 ── */
 .library-count { font-size: 13px; font-weight: normal; color: var(--ink-soft); margin-left: 6px; }
 /* 책등: 무늬는 가운데에 좌우 대칭으로, 은박·금박은 위아래 띠 */

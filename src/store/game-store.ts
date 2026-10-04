@@ -1485,11 +1485,11 @@ export const useGame = create<Store>((set, get) => {
       if (result.kind === 'none') return true
       // 밤에 한 절을 적으면 기름이 있을 때 등잔을 켠다 (그림의 불빛 — 없어도 쓴다)
       const lit = lightLamp(state) ?? state
-      // 한 절은 펜 소리, 한 장을 마치면 책장 넘기는 소리와 마침 소리
+      // 한 절은 펜을 책상에 내려놓는 소리(도장), 한 장을 마치면 책장 넘기는 소리와 마침 소리
       if (result.kind === 'chapter') {
         sfx('page')
         sfx('done')
-      } else sfx('pen')
+      } else sfx('stamp')
       set({ game: persist(lit), modal: { kind: 'copy', view: result.kind === 'chapter' ? 'done' : 'write', last: result, resume: false } })
       return true
     },

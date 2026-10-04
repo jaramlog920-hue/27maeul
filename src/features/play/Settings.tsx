@@ -14,6 +14,7 @@ import { eraseSave } from '../../engine/save'
 import { T } from '../../content/text'
 import { loadTheme, setTheme, THEMES, type ThemeId } from '../../app/theme'
 import { useGame, ZOOMS } from '../../store/game-store'
+import { copySoundOn, copyVibrateOn, setCopySound, setCopyVibrate } from '../desk/copy-feel'
 
 const C = T.controls
 
@@ -42,6 +43,37 @@ function VolumeSlider({ kind, label }: { kind: VolumeKind; label: string }) {
       />
       <output>{value}%</output>
     </label>
+  )
+}
+
+/** 필사 손맛 켜고 끄기 (펜 긁는 소리·절마다 진동) — 기본은 켬, 기기에 저장 */
+function CopyFeelToggle({ label, get, put, id }: { label: string; get: () => boolean; put: (on: boolean) => void; id: string }) {
+  const [on, setOn] = useState(get)
+  return (
+    <div className="settings-row">
+      <h4>{label}</h4>
+      <div className="settings-options pair-options" role="group" aria-label={label}>
+        {(
+          [
+            [true, '켬'],
+            [false, '끔'],
+          ] as const
+        ).map(([v, text]) => (
+          <button
+            key={text}
+            data-copy-feel={`${id}-${v ? 'on' : 'off'}`}
+            className={on === v ? 'on' : ''}
+            aria-pressed={on === v}
+            onClick={() => {
+              put(v)
+              setOn(v)
+            }}
+          >
+            {text}
+          </button>
+        ))}
+      </div>
+    </div>
   )
 }
 
@@ -89,6 +121,11 @@ export function Settings() {
         <h3>소리 크기</h3>
         <VolumeSlider kind="music" label="배경음" />
         <VolumeSlider kind="sfx" label="효과음" />
+      </section>
+      <section className="settings-section">
+        <h3>필사</h3>
+        <CopyFeelToggle id="sound" label="펜 긁는 소리" get={copySoundOn} put={setCopySound} />
+        <CopyFeelToggle id="vibrate" label="절마다 진동" get={copyVibrateOn} put={setCopyVibrate} />
       </section>
       <section className="settings-section">
         <h3>{C.theme}</h3>

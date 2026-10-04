@@ -6,7 +6,7 @@ import type { Season } from '../engine/types'
 
 export const SFX_NAMES = [
   'step', 'talk', 'scroll', 'tap', 'hit', 'miss', 'done', 'sleep', 'eat', 'gift', 'meow', 'bark', 'place', 'pen',
-  'page', 'bind', 'shelve', 'door', 'coin', 'bell', 'splash', 'letter', 'harvest',
+  'page', 'bind', 'shelve', 'door', 'coin', 'bell', 'splash', 'letter', 'harvest', 'quill', 'stamp',
 ] as const
 export type Sfx = (typeof SFX_NAMES)[number]
 
@@ -586,9 +586,18 @@ function bellAt(freq: number, vol: number, at = 0) {
   tone(freq * 2.76, 0.6, { type: 'sine', vol: vol * 0.2, at, attack: 0.003 })
 }
 
-export function sfx(name: Sfx) {
+/** pitch: 높이 배율 (글자마다 펜 소리를 조금씩 달리할 때만 쓴다) */
+export function sfx(name: Sfx, pitch = 1) {
   if (!ctx || !sfxGain || muted) return
   switch (name) {
+    case 'quill': // 필사 글자 하나: 깃펜 끝이 종이를 아주 짧게 긁는 소리 (아주 작게)
+      rustle(0.035, 0.03, 3700 * pitch, 0, { q: 4, attack: 0.006 })
+      rustle(0.025, 0.015, 5200 * pitch, 0.018, { q: 4, attack: 0.005 })
+      break
+    case 'stamp': // 한 절을 마침: 펜을 나무 책상에 톡 내려놓고 종이가 살짝 바스락
+      knock(190, 0.075)
+      rustle(0.16, 0.03, 2400, 0.07, { q: 0.8, attack: 0.04 })
+      break
     case 'step': // 흙길 발소리
       rustle(0.06, 0.12, 500, 0, { type: 'lowpass' })
       break
