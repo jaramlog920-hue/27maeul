@@ -17,7 +17,8 @@ export function StatusPanel() {
     <section className="status-panel" aria-label={T.ui.statusTitle}>
       <div className="status-row">
         {level > 0 && <span className="status-village">{fill(T.ui.villageLevel, { n: level })}</span>}
-        <span className="status-offers">{offers > 0 ? fill(T.ui.statusOffers, { n: offers }) : T.ui.statusNoOffers}</span>
+        {/* 조각을 가진 이웃이 있는 날만 조용히 한 줄 (없는 날엔 아무 말도 하지 않는다 — 2026-10-04 사용자) */}
+        {offers > 0 && <span className="status-offers">{fill(T.ui.statusOffers, { n: offers })}</span>}
       </div>
       <div className="status-supplies">
         {SUPPLIES.map((id) => (
