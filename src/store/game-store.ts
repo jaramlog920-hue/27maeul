@@ -1448,7 +1448,8 @@ export const useGame = create<Store>((set, get) => {
       if (result.kind === 'none') return true
       // 밤에 한 절을 적으면 기름이 있을 때 등잔을 켠다 (그림의 불빛 — 없어도 쓴다)
       const lit = lightLamp(state) ?? state
-      sfx('pen')
+      // 한 절은 펜 소리, 한 장을 마치면 마침 소리
+      sfx(result.kind === 'chapter' ? 'done' : 'pen')
       set({ game: persist(lit), modal: { kind: 'copy', view: result.kind === 'chapter' ? 'done' : 'write', last: result, resume: false } })
       return true
     },

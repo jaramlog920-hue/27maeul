@@ -1,6 +1,7 @@
 import { CONTENT, GOD_KEYWORDS, GOD_RECORDS, versesOf } from '../content/catalog'
 import { copyChapters } from './copying'
-import { chapterFinds, sanitizeGodRecords, type GodFind } from './god-records'
+import { backfillGodRecords, chapterFinds, sanitizeGodRecords, type GodFind } from './god-records'
+import { BOOKS, type Book } from './types'
 import { newGame } from './game'
 import { deserialize, serialize } from './save'
 
@@ -35,6 +36,35 @@ describe('하나님 기록 — 장을 마쳤을 때 새로 발견하는 줄', ()
     const old = JSON.parse(serialize(newGame(CONTENT)))
     delete old.godRecords
     expect(deserialize(JSON.stringify(old), CONTENT)!.godRecords).toEqual([])
+  })
+  it('예전에 엮은 장 채우기: 마친 장마다 아직 없는 줄만 그날 날짜로, 몇 번 해도 같다', () => {
+    const known: GodFind[] = [{ keyword: 'give', ref: '마 5:45', book: 'mt', chapter: 5, day: 3 }]
+    const completed = { ...(Object.fromEntries(BOOKS.map((b) => [b, [] as number[]])) as Record<Book, number[]>), mt: [6, 5] }
+    const once = backfillGodRecords(defs, known, completed, 20)
+    expect(once).toEqual([
+      known[0],
+      { keyword: 'perfect', ref: '마 5:48', book: 'mt', chapter: 5, day: 20 },
+      { keyword: 'knows', ref: '마 6:8', book: 'mt', chapter: 6, day: 20 },
+    ])
+    expect(backfillGodRecords(defs, once, completed, 30)).toEqual(once)
+  })
+  it('필사 전에 마친 장은 불러올 때 하나님 기록이 채워진다 (지금 날짜로, 다시 불러와도 그대로)', () => {
+    const fresh = newGame(CONTENT)
+    const kept = { keyword: 'x-kept', ref: '마 1:1', book: 'mt' as const, chapter: 1, day: 2 }
+    const s = {
+      ...fresh,
+      clock: { ...fresh.clock, day: 20 },
+      progress: { ...fresh.progress, mt: { ...fresh.progress.mt, completed: [5] } },
+      godRecords: [kept],
+    }
+    const loaded = deserialize(serialize(s), CONTENT)!
+    const mt5 = GOD_RECORDS.filter((r) => r.book === 'mt' && r.chapter === 5)
+    expect(mt5.length).toBeGreaterThan(0)
+    expect(loaded.progress.mt.completed).toEqual([5])
+    expect(loaded.godRecords).toEqual([kept, ...mt5.map((r) => ({ keyword: r.keyword, ref: r.ref, book: 'mt', chapter: 5, day: 20 }))])
+    // 다음 날 다시 불러와도 날짜가 바뀌거나 겹치지 않는다
+    const again = deserialize(serialize({ ...loaded, clock: { ...loaded.clock, day: 21 } }), CONTENT)!
+    expect(again.godRecords).toEqual(loaded.godRecords)
   })
 })
 

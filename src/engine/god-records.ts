@@ -37,6 +37,23 @@ export function chapterFinds(defs: readonly GodRecordDef[], known: readonly GodF
   return out
 }
 
+/**
+ * 예전에 엮은 장(필사 전에 마친 장)의 하나님 기록 채우기: 마친 장마다 아직 없는 줄을 발견한 날 = day로 더한다.
+ * 이미 있는 줄은 그대로 (몇 번을 불러도 같다). 기존 목록 뒤에 책 순서·장 순서·데이터 순서로
+ */
+export function backfillGodRecords(
+  defs: readonly GodRecordDef[],
+  known: readonly GodFind[],
+  completed: Readonly<Record<Book, readonly number[]>>,
+  day: number,
+): GodFind[] {
+  let out: GodFind[] = [...known]
+  for (const b of BOOKS) {
+    for (const ch of [...(completed[b] ?? [])].sort((x, y) => x - y)) out = [...out, ...chapterFinds(defs, out, b, ch, day)]
+  }
+  return out
+}
+
 const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v)
 
 /** 저장 정리: 모양이 맞는 줄만, 같은 줄은 한 번만. 옛 저장(칸이 없던 때)은 빈 목록 */

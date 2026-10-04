@@ -13,6 +13,8 @@ import { useGame, type Modal } from '../../store/game-store'
 
 const BOOK_NAME = T.quiz.books as Record<string, string>
 const C = T.copyFocus
+/** 절을 다 맞게 쓰고 조합 중인 채로 이만큼 멈추면 조합을 확정한다 */
+const COMMIT_IDLE_MS = 700
 
 /** 27권을 서고 방으로 묶어 고른다 (처음부터 모두) */
 function CopyBookPick() {
@@ -131,11 +133,21 @@ function CopyWrite({ book, spot, modal }: { book: Book; spot: CopySpot; modal: E
     if (!how.composing && text === lastSent.current) return
     const ok = copyType(text, how)
     if (!how.composing) lastSent.current = text
-    // 받지 않은 입력(붙여넣기·본문과 맞지 않는 뭉치)은 지운다 — 다만 조합 중인 글자는 절대 되돌리지 않는다
+    // 받지 않은 입력(붙여넣기·본문과 맞지 않는 뭉치)은 지운다 — 다만 조합 중인 글자는 절대 되돌리지 않는다.
+    // 되돌린 글을 마지막 입력으로 삼는다 — 같은 뭉치가 다시 들어와도 또 지우게 (입력칸과 저장이 어긋나지 않게)
     if (!ok && !how.composing) {
       const g = useGame.getState().game
-      setValue(copySpot(g, book, CONTENT)?.draft ?? '')
+      const restored = copySpot(g, book, CONTENT)?.draft ?? ''
+      lastSent.current = restored
+      setValue(restored)
     }
+  }
+  /** 조합이 끝났다 — 이제 마지막 글자가 정해졌으니 절을 마칠 수 있다 */
+  const endComposition = (text: string) => {
+    composing.current = false
+    setIme(false)
+    setValue(text)
+    send(text, { composing: false })
   }
   const onChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const native = e.nativeEvent as InputEvent
@@ -150,6 +162,21 @@ function CopyWrite({ book, spot, modal }: { book: Book; spot: CopySpot; modal: E
   const check = checkCopy(value, spot.verse.text)
   // 조합 중인 마지막 글자는 아직 바뀔 수 있다 — 오타로 표시하지 않는다
   const typo = check.typo && !(ime && check.matched === [...normalizeCopy(value)].length - 1)
+  // 한글 키보드는 마지막 글자를 조합 중으로 붙잡아 둔다 — 절을 다 맞게 쓰고 잠깐 멈추면 조합을 확정해 절을 마친다
+  // (입력칸을 잠깐 떠났다 돌아오면 브라우저가 compositionend를 보낸다. 그래도 안 오면 직접 끝낸다)
+  const verseDone = check.done
+  useEffect(() => {
+    if (!ime || !verseDone) return
+    const t = setTimeout(() => {
+      const el = box.current
+      if (!el || !composing.current) return
+      el.blur()
+      el.focus()
+      if (composing.current) endComposition(el.value)
+    }, COMMIT_IDLE_MS)
+    return () => clearTimeout(t)
+    // 이 렌더의 endComposition을 쓴다 — 입력이 바뀔 때마다 새로 건다
+  }, [ime, verseDone, value])
   const last = modal.last
   const status =
     last?.kind === 'verse'
@@ -198,21 +225,15 @@ function CopyWrite({ book, spot, modal }: { book: Book; spot: CopySpot; modal: E
           setIme(true)
         }}
         onCompositionEnd={(e) => {
-          composing.current = false
-          setIme(false)
-          // 조합이 끝났다 — 이제 마지막 글자가 정해졌으니 절을 마칠 수 있다
-          const text = e.currentTarget.value
-          setValue(text)
-          send(text, { composing: false })
+          // 잠깐 멈춤으로 이미 조합을 끝냈으면(아래 자동 확정) 늦게 온 compositionend는 받지 않는다
+          if (!composing.current) return
+          endComposition(e.currentTarget.value)
         }}
         onKeyDown={(e) => {
           // 줄바꿈은 본문에 없다 — 엔터는 아무것도 넣지 않는다 (조합 중이면 조합만 끝난다)
           if (e.key === 'Enter' && !e.nativeEvent.isComposing) e.preventDefault()
         }}
-        onPaste={(e) => {
-          e.preventDefault()
-          copyType(value, { pasted: true })
-        }}
+        onPaste={(e) => e.preventDefault()}
         onDrop={(e) => e.preventDefault()}
       />
     </div>

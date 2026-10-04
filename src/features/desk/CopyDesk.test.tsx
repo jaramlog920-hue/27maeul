@@ -254,6 +254,42 @@ describe('필사 집중 화면 — 휴대폰 한글 키보드 (조합)', () => {
     fireEvent.change(box(), { target: { value: chunk + '자동완성낱말' } })
     expect(draft()).toBe(chunk)
     expect(box().value).toBe(chunk)
+    // 같은 뭉치가 다시 들어와도 또 지운다 (입력칸과 저장이 어긋나지 않게)
+    fireEvent.change(box(), { target: { value: chunk + '자동완성낱말' } })
+    expect(draft()).toBe(chunk)
+    expect(box().value).toBe(chunk)
+  })
+
+  describe('조합 중인 마지막 글자에서 멈추지 않는다', () => {
+    beforeEach(() => vi.useFakeTimers())
+    afterEach(() => vi.useRealTimers())
+
+    it('절을 다 맞게 쓰고 조합 중인 채로 잠깐 멈추면 조합을 확정해 절을 마친다 (늦게 온 compositionend는 받지 않는다)', () => {
+      openWrite(writing('lk'))
+      fireEvent.compositionStart(box())
+      fireEvent.change(box(), { target: { value: text } })
+      act(() => void vi.advanceTimersByTime(699))
+      expect(useGame.getState().game.copyStats.verses).toBe(0)
+      act(() => void vi.advanceTimersByTime(1))
+      expect(useGame.getState().game.copyStats.verses).toBe(1)
+      expect(screen.getByRole('heading')).toHaveTextContent('누가복음 1장 · 2/')
+      expect(box().value).toBe('')
+      expect(document.activeElement).toBe(box())
+      // 브라우저가 늦게 보낸 compositionend가 다음 절 입력칸을 앞 절 글로 덮지 않는다
+      fireEvent.compositionEnd(box())
+      expect(box().value).toBe('')
+      expect(draft()).toBe('')
+      expect(useGame.getState().game.copyStats.verses).toBe(1)
+    })
+
+    it('아직 절을 다 쓰지 않았으면 멈춰도 조합을 건드리지 않는다', () => {
+      openWrite(writing('lk'))
+      fireEvent.compositionStart(box())
+      fireEvent.change(box(), { target: { value: text.slice(0, 5) } })
+      act(() => void vi.advanceTimersByTime(3000))
+      expect(useGame.getState().game.copyStats.verses).toBe(0)
+      expect(box().value).toBe(text.slice(0, 5))
+    })
   })
 
   it('붙여넣기·끌어 놓기·고쳐 쓰기 제안 입력은 들어오기 전에 막는다', () => {

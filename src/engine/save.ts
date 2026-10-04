@@ -5,7 +5,7 @@ import { sanitizeChild } from './child'
 import { sanitizeRomance } from './romance'
 import { sanitizeStats } from './stats'
 import { sanitizeCopy, sanitizeCopyStats } from './copying'
-import { sanitizeGodRecords } from './god-records'
+import { backfillGodRecords, sanitizeGodRecords } from './god-records'
 import { sanitizeBindings } from './binding'
 import { IDLE_RESET } from './autonomy'
 import { bookDone, bookRoomOpen, emptyProgress, type Progress } from './books'
@@ -154,8 +154,14 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     // 마친 장(progress)은 그대로 마친 장이고, 글자 수 통계는 0에서 시작한다
     copy: sanitizeCopy(s.copy, progress),
     copyStats: sanitizeCopyStats(s.copyStats),
-    // 하나님 기록 (계획 14): 옛 저장(칸이 없던 때)은 빈 목록. 모양이 맞는 줄만, 같은 줄은 한 번만
-    godRecords: sanitizeGodRecords(s.godRecords),
+    // 하나님 기록 (계획 14): 모양이 맞는 줄만, 같은 줄은 한 번만. 필사 전에 마친 장(옛 저장·예전에 엮은 장)의 줄은
+    // 불러올 때 지금 날짜로 채운다 — 이미 있는 줄은 그대로라 몇 번 불러와도 같다
+    godRecords: backfillGodRecords(
+      content.godRecords ?? [],
+      sanitizeGodRecords(s.godRecords),
+      Object.fromEntries(BOOKS.map((b) => [b, progress[b].completed])) as Record<Book, number[]>,
+      s.clock.day,
+    ),
     // 제본 (계획 14 작업 4): 옛 저장(칸이 없던 때)은 빈 목록 — 이미 꽂은 책은 아래 shelved에 등급 그대로 남는다
     bound: sanitizeBindings(s.bound, (b) => bookDone({ progress }, b, content)),
     achieved: Array.isArray(s.achieved) ? s.achieved.filter((a) => a && typeof a.id === 'string' && typeof a.day === 'number') : [],
