@@ -53,8 +53,9 @@ export const NIGHT_DARK = 0.58
 /** 화면을 덮는 어둠의 정도(0~NIGHT_DARK) */
 export function darkness(minute: number): number {
   const h = (minute % 1440) / 60
-  if (h < 5) return NIGHT_DARK
-  if (h < 7) return lerp(NIGHT_DARK, 0, (h - 5) / 2)
+  // 새벽은 4시부터 밝아져 6시(일어나는 때)엔 환한 아침 (2026-10-04 사용자: 일어났을 때 너무 어둡다)
+  if (h < 4) return NIGHT_DARK
+  if (h < 6) return lerp(NIGHT_DARK, 0, (h - 4) / 2)
   if (h < 17) return 0
   if (h < 21) return lerp(0, 0.35, (h - 17) / 4)
   if (h < 23) return lerp(0.35, NIGHT_DARK, (h - 21) / 2)

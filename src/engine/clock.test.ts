@@ -35,6 +35,9 @@ describe('clock', () => {
   })
   it('어둠은 낮에 0, 한밤에 최대', () => {
     expect(darkness(12 * 60)).toBe(0)
+    // 일어나는 6시와 늦잠 8시는 환한 아침
+    expect(darkness(6 * 60)).toBe(0)
+    expect(darkness(8 * 60)).toBe(0)
     expect(darkness(23 * 60 + 30)).toBe(NIGHT_DARK)
     expect(darkness(25 * 60)).toBe(NIGHT_DARK)
     const dusk = darkness(19 * 60)
