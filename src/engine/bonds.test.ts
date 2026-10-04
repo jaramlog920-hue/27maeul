@@ -142,7 +142,8 @@ describe('C. 마을이 자란다', () => {
     const before = goToSleep(chooseBook(newGame(CONTENT), 'lk', CONTENT), CONTENT)
     expect(before.npcs.weaver.visible).toBe(false)
     expect(before.offers.weaver).toBeUndefined()
-    const after = goToSleep({ ...at(chooseBook(newGame(CONTENT), 'lk', CONTENT), 22 * 60, 3), hearts: { baker: 100, child: 100, grandpa: 30 } }, CONTENT)
+    // 베 짜는 이웃은 서고에 책이 두 권 꽂히면 이사 온다 (2026-10-04 사용자 — 마을 단계 대신 권수)
+    const after = goToSleep({ ...at(chooseBook(newGame(CONTENT), 'lk', CONTENT), 22 * 60, 3), shelved: { mk: 1, lk: 1 } as GameState['shelved'] }, CONTENT)
     expect(after.clock.day).toBe(4)
     // 4일째 07:30 이후 베틀 곁
     let s = at(after, 8 * 60)

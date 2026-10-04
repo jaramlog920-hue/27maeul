@@ -3052,18 +3052,18 @@
       "album": "꽃길이 난 날"
     },
     "village:2": {
-      "title": "새 이웃",
+      "title": "오가는 발길",
       "lines": [
         {
           "speaker": "narration",
-          "text": "마을 남쪽 끝에 베틀을 가진 이웃이 이사 왔다."
+          "text": "이웃집 문을 두드리는 일이 잦아졌다."
         },
         {
-          "speaker": "weaver",
-          "text": "반가워요. 베 짜는 일을 해요. 앞으로 잘 부탁해요."
+          "speaker": "narration",
+          "text": "길에서 마주치면 먼저 손을 흔드는 사람이 늘었다."
         }
       ],
-      "album": "베 짜는 이웃이 온 날"
+      "album": "발길이 잦아진 날"
     },
     "village:3": {
       "title": "강가 쉼터",
@@ -3080,18 +3080,18 @@
       "album": "강가 쉼터"
     },
     "village:4": {
-      "title": "또 새 이웃",
+      "title": "정든 마을",
       "lines": [
         {
           "speaker": "narration",
-          "text": "올리브나무 곁에 벌통을 놓은 이웃이 이사 왔다."
+          "text": "마을 어디를 가도 이름을 불러 주는 사람이 있다."
         },
         {
-          "speaker": "beekeeper",
-          "text": "벌을 쳐요. 꽃이 많은 마을이라 좋네요."
+          "speaker": "narration",
+          "text": "이곳이 이제 정말 내 마을 같다."
         }
       ],
-      "album": "벌 치는 이웃이 온 날"
+      "album": "정든 마을"
     },
     "movedIn:apothecary": {
       "title": "새 이웃",
@@ -3110,6 +3110,34 @@
           "text": "나루가 열려서 호숫가에 자리를 잡았어요. 잘 부탁해요."
         }
       ]
+    },
+    "movedIn:weaver": {
+      "title": "새 이웃",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "베틀을 가진 이웃이 이사 왔다."
+        },
+        {
+          "speaker": "weaver",
+          "text": "반가워요. 베 짜는 일을 해요. 앞으로 잘 부탁해요."
+        }
+      ],
+      "album": "베 짜는 이웃이 온 날"
+    },
+    "movedIn:beekeeper": {
+      "title": "새 이웃",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "벌통 들판이 열리고, 벌을 치는 이웃이 이사 왔다."
+        },
+        {
+          "speaker": "beekeeper",
+          "text": "벌을 쳐요. 꽃이 많은 마을이라 좋네요."
+        }
+      ],
+      "album": "벌 치는 이웃이 온 날"
     },
     "movedIn:carpenter": {
       "title": "새 이웃",
@@ -4544,12 +4572,14 @@
       "picnic": " 언덕에서 소풍을 했다.",
       "starNight": " 이웃들과 언덕에서 별을 보았다.",
       "village:1": " 큰길가에 꽃이 피었다.",
-      "village:2": " 베 짜는 이웃이 이사 왔다.",
+      "village:2": " 이웃집을 오가는 일이 잦아졌다.",
       "village:3": " 강가에 쉼터가 생겼다.",
-      "village:4": " 벌 치는 이웃이 이사 왔다.",
+      "village:4": " 마을이 정들었다.",
       "movedIn:apothecary": " 약방 주인이 이사 왔다.",
       "movedIn:fisher": " 어부가 이사 왔다.",
       "movedIn:carpenter": " 제본 골목의 목수가 이사 왔다.",
+      "movedIn:weaver": " 베 짜는 이웃이 이사 왔다.",
+      "movedIn:beekeeper": " 벌 치는 이웃이 이사 왔다.",
       "dinner:baker": " 이웃집에서 저녁을 먹었다.",
       "dinner:child": " 이웃집에서 저녁을 먹었다.",
       "dinner:grandpa": " 이웃집에서 저녁을 먹었다.",

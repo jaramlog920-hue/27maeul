@@ -365,7 +365,6 @@
       "x": 35,
       "y": 23
     },
-    "joinsAt": 2,
     "schedule": [
       {
         "from": 450,
@@ -416,7 +415,8 @@
       "gives": {
         "wool": 1
       }
-    }
+    },
+    "joinsAtBooks": 2
   },
   {
     "id": "beekeeper",
@@ -427,7 +427,6 @@
       "x": 43,
       "y": 31
     },
-    "joinsAt": 4,
     "schedule": [
       {
         "from": 420,
@@ -466,7 +465,8 @@
       "gives": {
         "honey": 1
       }
-    }
+    },
+    "joinsAtBooks": 6
   },
   {
     "id": "postman",
@@ -1147,7 +1147,6 @@
       "x": 35,
       "y": 23
     },
-    "joinsAt": 2,
     "schedule": [
       {
         "from": 450,
@@ -1212,7 +1211,8 @@
         45,
         30
       ]
-    }
+    },
+    "joinsWithFamily": true
   },
   {
     "id": "tilly",
@@ -1296,7 +1296,6 @@
       "x": 43,
       "y": 31
     },
-    "joinsAt": 4,
     "schedule": [
       {
         "from": 420,
@@ -1361,7 +1360,8 @@
         40,
         75
       ]
-    }
+    },
+    "joinsWithFamily": true
   },
   {
     "id": "poppy",
