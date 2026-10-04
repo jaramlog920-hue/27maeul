@@ -23,7 +23,7 @@ function copiedPhm(): GameState {
   return {
     ...g,
     progress: { ...g.progress, phm: { completed: [1], arrangement: {} } },
-    copy: { ...g.copy, days: { phm: { start: 2, end: 4 } } },
+    copy: { ...g.copy, days: { phm: { start: 2, end: 4 } }, copied: { phm: [1] } },
     bound: { phm: { day: 5 } },
   }
 }

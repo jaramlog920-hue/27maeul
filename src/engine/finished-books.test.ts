@@ -82,6 +82,30 @@ describe('나의 필사 기록 (완성본 첫 쪽)', () => {
     const last = copyVerses('mk', 16, CONTENT)
     expect(bookRecord(done, 'mk', CONTENT)).toMatchObject({ copied: 1, legacy: 15, verses: last.length, chars: last.reduce((n, v) => n + v.chars, 0) })
   })
+
+  it('필사 기록이 없는 마친 장(조각 엮기·편지 옮겨 적기·옛 저장)은 따라 적은 장으로 세지 않는다', () => {
+    const all = chaptersOf('mk', CONTENT)
+    // 예전 장 목록에도 없고 따라 적은 기록도 없는 마친 장 하나 + 필사로 마친 마지막 장
+    const s = fresh({ progress: { ...emptyProgress(), mk: { completed: all.slice(0, -1), arrangement: {} } }, copy: { book: 'mk', at: {}, legacy: {} } })
+    expect(bookRecord(s, 'mk', CONTENT)).toMatchObject({ copied: 0, legacy: all.length - 1, verses: 0, chars: 0 })
+    expect(readChapters(s, 'mk', CONTENT).every((c) => c.legacy)).toBe(true)
+    const done = writeChapter(s, 'mk').state
+    expect(done.copy.copied?.mk).toEqual([all[all.length - 1]])
+    expect(bookRecord(done, 'mk', CONTENT)).toMatchObject({ copied: 1, legacy: all.length - 1 })
+    // 저장·불러오기에도 따라 적은 장은 남는다
+    expect(deserialize(serialize(done), CONTENT)!.copy.copied).toEqual(done.copy.copied)
+  })
+
+  it('이 칸이 생기기 전에 장을 마친 책: 첫 절을 적어도 시작한 날을 지금으로 속이지 않는다', () => {
+    const all = chaptersOf('mk', CONTENT)
+    const s = fresh({ progress: { ...emptyProgress(), mk: { completed: all.slice(0, -1), arrangement: {} } }, copy: { book: 'mk', at: {}, legacy: {} } })
+    const one = writeVerse(s, 'mk', copySpot(s, 'mk', CONTENT)!.verse.text, CONTENT).state
+    expect(one.copy.days?.mk).toBeUndefined()
+    const done = writeChapter(s, 'mk').state
+    expect(done.copy.days?.mk).toEqual({ end: done.clock.day })
+    expect(bookRecord(done, 'mk', CONTENT)).toMatchObject({ start: null, end: done.clock.day })
+    expect(sanitizeBookDays({ mk: { end: 4 } })).toEqual({ mk: { end: 4 } })
+  })
 })
 
 describe('펼쳐 보기·이 책에서 발견한 기록', () => {

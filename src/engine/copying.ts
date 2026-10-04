@@ -170,7 +170,8 @@ export interface CopyAt {
 
 /** 한 책을 쓴 날 (계획 14 작업 8 — 완성본 첫 쪽): 처음 한 절을 적은 날, 마지막 장을 필사로 마친 날 */
 export interface BookDays {
-  start: number
+  /** 없으면 모른다 (이 기록이 생기기 전에 이미 쓰던 책) */
+  start?: number
   end?: number
 }
 
@@ -183,6 +184,16 @@ export interface CopyState {
   legacy: Partial<Record<Book, number[]>>
   /** 책마다 쓰기 시작한 날·마친 날 (이 칸이 생기기 전 저장은 없다 — 완성본 첫 쪽에 "남아 있지 않음") */
   days?: Partial<Record<Book, BookDays>>
+  /**
+   * 책마다 필사로 실제로 따라 적어 마친 장 (writeVerse가 더한다). 이 칸에 없는 마친 장은 통계에서 예전에 엮은 장으로 센다
+   * (조각 엮기·편지 옮겨 적기로 마친 장, 이 칸이 생기기 전 저장의 장 — 조심스럽게)
+   */
+  copied?: Partial<Record<Book, number[]>>
+}
+
+/** 이 장은 필사로 실제로 따라 적은 장인가 */
+export function isCopiedChapter(copy: CopyState, book: Book, chapter: number): boolean {
+  return copy.copied?.[book]?.includes(chapter) ?? false
 }
 
 /** 나의 필사 기록 */
@@ -284,7 +295,21 @@ export function sanitizeCopy(raw: unknown, progress: Progress): CopyState {
       if (kept.length) legacy[b] = kept
     }
   const days = sanitizeBookDays(raw.days)
-  return { book: isBook(raw.book) ? raw.book : null, at, legacy, ...(Object.keys(days).length ? { days } : {}) }
+  // 필사로 따라 적은 장: 마친 장만, 예전에 엮은 장이면 뺀다. 칸이 없던 저장은 비어 있다 (마친 장은 모두 예전 장으로 센다)
+  const copied: Partial<Record<Book, number[]>> = {}
+  if (isObj(raw.copied))
+    for (const [b, v] of Object.entries(raw.copied)) {
+      if (!isBook(b) || !Array.isArray(v)) continue
+      const kept = [...new Set(v.filter((c): c is number => Number.isInteger(c) && progress[b].completed.includes(c as number) && !legacy[b]?.includes(c as number)))]
+      if (kept.length) copied[b] = kept
+    }
+  return {
+    book: isBook(raw.book) ? raw.book : null,
+    at,
+    legacy,
+    ...(Object.keys(days).length ? { days } : {}),
+    ...(Object.keys(copied).length ? { copied } : {}),
+  }
 }
 
 const dayOf = (n: unknown) => (typeof n === 'number' && Number.isInteger(n) && n >= 0 ? n : null)
@@ -296,8 +321,11 @@ export function sanitizeBookDays(raw: unknown): Partial<Record<Book, BookDays>> 
   for (const [b, v] of Object.entries(raw)) {
     if (!isBook(b) || !isObj(v)) continue
     const start = dayOf(v.start)
-    if (start === null) continue
     const end = dayOf(v.end)
+    if (start === null) {
+      if (end !== null) out[b] = { end }
+      continue
+    }
     out[b] = end !== null && end >= start ? { start, end } : { start }
   }
   return out

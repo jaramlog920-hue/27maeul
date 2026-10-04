@@ -2,7 +2,7 @@
 // 내가 필사한 본문(마친 장 그대로, 개역한글), 이 책에서 발견한 하나님 기록. 집 책장에는 다 쓴 책을 몇 권 둘 수 있다
 // (서고의 책을 옮기는 것이 아니라 한 부 더 두는 것 — 서고 권수는 그대로). 이 파일은 순수 계산과 저장 정리.
 import type { Bindings } from './binding'
-import { copyVerses, type CopyState, type CopyVerse } from './copying'
+import { copyVerses, isCopiedChapter, type CopyState, type CopyVerse } from './copying'
 export type { BookDays } from './copying'
 import type { GodFind } from './god-records'
 import { BOOKS, type Book, type GameContent } from './types'
@@ -47,8 +47,10 @@ export function bookRecord(
   book: Book,
   content: GameContent,
 ): BookRecord {
-  const legacy = new Set(s.copy.legacy[book] ?? [])
-  const done = s.progress[book].completed.filter((c) => !legacy.has(c))
+  // 필사로 실제로 따라 적은 장만 센다 — 조각 엮기·편지 옮겨 적기로 마친 장과 기록이 없는 장은 예전에 엮은 장
+  const all = s.progress[book].completed
+  const done = all.filter((c) => isCopiedChapter(s.copy, book, c))
+  const legacyCount = all.length - done.length
   let verses = 0
   let chars = 0
   for (const ch of done) {
@@ -64,7 +66,7 @@ export function bookRecord(
     verses,
     chars,
     copied: done.length,
-    legacy: [...legacy].filter((c) => s.progress[book].completed.includes(c)).length,
+    legacy: legacyCount,
     bound: s.bound[book]?.day ?? null,
   }
 }
@@ -78,10 +80,9 @@ export interface ReadChapter {
 
 /** 펼쳐 보기: 마친 장을 장 순서대로 (개역한글 그대로 — copyVerses) */
 export function readChapters(s: { progress: Progress; copy: CopyState }, book: Book, content: GameContent): ReadChapter[] {
-  const legacy = s.copy.legacy[book] ?? []
   return [...s.progress[book].completed]
     .sort((a, b) => a - b)
-    .map((chapter) => ({ chapter, legacy: legacy.includes(chapter), verses: copyVerses(book, chapter, content) }))
+    .map((chapter) => ({ chapter, legacy: !isCopiedChapter(s.copy, book, chapter), verses: copyVerses(book, chapter, content) }))
     .filter((c) => c.verses.length > 0)
 }
 

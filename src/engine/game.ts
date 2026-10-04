@@ -2506,9 +2506,11 @@ export function writeVerse(s: GameState, book: Book, input: string, content: Gam
     chars: s.copyStats.chars + spot.verse.chars,
     firstDay: s.copyStats.firstDay ?? day,
   }
-  // 이 책을 쓰기 시작한 날 (완성본 첫 쪽 — 작업 8). 처음 적은 절의 날 그대로 둔다
+  // 이 책을 쓰기 시작한 날 (완성본 첫 쪽 — 작업 8). 처음 적은 절의 날 그대로 둔다.
+  // 이 칸이 생기기 전에 이미 장을 마친 책이면 언제 시작했는지 모르므로 비워 둔다 (지금을 시작한 날로 속이지 않는다)
   const started = s.copy.days?.[book]
-  const days = started ? (s.copy.days ?? {}) : { ...s.copy.days, [book]: { start: day } }
+  const partlyDone = s.progress[book].completed.length > 0
+  const days = started || partlyDone ? (s.copy.days ?? {}) : { ...s.copy.days, [book]: { start: day } }
   const last = spot.index === verses.length - 1
   if (!last) {
     const nextVerse = verses[spot.index + 1].verse
@@ -2542,7 +2544,13 @@ export function writeVerse(s: GameState, book: Book, input: string, content: Gam
       needs: work(s.needs, 6),
       godRecords: [...s.godRecords, ...finds],
       // 이 장으로 한 권을 마쳤으면 마친 날을 남긴다
-      copy: { ...s.copy, at, days: finished ? { ...days, [book]: { start: days[book]!.start, end: day } } : days },
+      copy: {
+        ...s.copy,
+        at,
+        days: finished ? { ...days, [book]: { ...(days[book]?.start !== undefined ? { start: days[book]!.start } : {}), end: day } } : days,
+        // 필사로 실제로 따라 적은 장 (조각 엮기·편지 옮겨 적기로 마친 장은 여기 들어오지 않는다)
+        copied: { ...s.copy.copied, [book]: [...new Set([...(s.copy.copied?.[book] ?? []), chapter])] },
+      },
       copyStats: { ...stats, chapters: stats.chapters + 1, books: stats.books + (finished ? 1 : 0) },
     },
     copyMinutes(s),

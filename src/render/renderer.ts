@@ -1463,15 +1463,17 @@ function drawDeskTraces(g: Ctx, at: Tile, d: DeskTraces) {
   if (d.pages > 0) {
     // 다 쓴 종이 묶음: 한 겹은 2픽셀, 겹마다 크림색·연한 모래색이 번갈아
     const h = d.pages * 2
-    const top = 12 - h
+    // 작은 책상은 맨 아래를 14에 놓아 세 겹이어도 등잔 몸통(5~7줄) 아래에 둔다
+    const top = (d.wideDesk ? 12 : 14) - h
     for (let i = 0; i < d.pages; i++) r(i % 2 ? '#eadcb8' : '#fbf3dc', stackX, top + i * 2, 4, 2)
     // 맨 위 장에 쓴 줄 자국
     r('#b3aabb', stackX + 1, top, 2, 2)
   }
   if (d.books > 0) {
     // 덮어 둔 완성본 (두 권이면 아래에 한 권 더) — 쓰던 종이가 보이게 폭은 4
-    if (d.books > 1) r('#93b08f', 1, 10, 4, 2)
-    const by = d.books > 1 ? 6 : 8
+    // 위 책은 항상 8줄부터 — 펜꽂이(0~7줄)와 겹치지 않는다
+    if (d.books > 1) r('#93b08f', 1, 12, 4, 2)
+    const by = 8
     r('#8399bf', 1, by, 4, 2)
     r('#62779e', 1, by + 2, 4, 2)
   }
@@ -1874,13 +1876,14 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         g.fillStyle = 'rgba(30, 20, 40, 0.55)'
         g.fillRect(desk.x * TILE + 2 + Math.floor(hash(i, 3, 1) * 11), desk.y * TILE + 5 + Math.floor(hash(i, 4, 1) * 6), 1, 1)
       }
+      // 책상이 살아온 흔적 (계획 14 작업 7): 필사한 만큼 책갈피·펜꽂이·종이 묶음·등잔·완성본
+      drawDeskTraces(g, desk, deskTraces(game))
+      // 등잔 그을음: 흔적(등잔 불꽃 자리) 위에 그려 가려지지 않는다
       const soot = Math.min(0.7, (game.flags.lampNights ?? 0) * 0.04)
       if (soot > 0) {
         g.fillStyle = `rgba(30, 25, 20, ${soot})`
         g.fillRect(desk.x * TILE + 12, desk.y * TILE + 3, 2, 2)
       }
-      // 책상이 살아온 흔적 (계획 14 작업 7): 필사한 만큼 책갈피·펜꽂이·종이 묶음·등잔·완성본
-      drawDeskTraces(g, desk, deskTraces(game))
       // 그을음 받이 (계획 11 작업 1): 화덕 위의 얇은 쇠판과 그 아래 받침, 모인 그을음 두 점
       if ((game.flags['unlock:sootCatcher'] ?? 0) > 0) drawSootCatcher(g, hearth)
       // 방의 가구: 깔개 → 길을 막는 가구 → 위에 올린 작은 물건
