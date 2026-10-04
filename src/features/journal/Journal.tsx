@@ -14,6 +14,7 @@ import type { ItemId, NeighborDef, Season } from '../../engine/types'
 import { neighborPortrait } from '../../render/renderer'
 import { ItemIcon } from '../../shared/ItemIcon'
 import { albumImage, useGame, type JournalTab } from '../../store/game-store'
+import { isFamilyAlbum } from '../../engine/family'
 import { bondLabel, Hearts } from '../talk/TalkBox'
 
 export function journalLine(e: JournalEntry): string {
@@ -280,9 +281,12 @@ export function Album() {
   const album = useGame((s) => s.game.album)
   const kid = useGame((s) => s.game.child?.name)
   if (!album.length) return <p>{T.ui.albumEmpty}</p>
-  return (
+  // 가족 쪽(우리 아이·배우자·동물 친구, 함께 보낸 시간)과 마을·풍경 쪽으로 나눠 차곡차곡 (계획 12)
+  const family = album.filter((a) => isFamilyAlbum(a.id))
+  const other = album.filter((a) => !isFamilyAlbum(a.id))
+  const grid = (list: typeof album) => (
     <div className="album-grid">
-      {album.map((a) => {
+      {list.map((a) => {
         const img = albumImage(a.id)
         return (
           <figure key={a.id} className="album-card">
@@ -294,6 +298,15 @@ export function Album() {
         )
       })}
     </div>
+  )
+  if (!family.length) return grid(other)
+  return (
+    <>
+      <h3 className="album-part">{T.family.albumFamily}</h3>
+      {grid(family)}
+      {other.length > 0 && <h3 className="album-part">{T.family.albumOther}</h3>}
+      {other.length > 0 && grid(other)}
+    </>
   )
 }
 

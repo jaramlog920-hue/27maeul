@@ -1946,6 +1946,20 @@
     }
   },
   "scenes": {
+    "fam:deskNap": {
+      "title": "책상 옆에서",
+      "album": "{child}, 책상 옆에서 잠든 날",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "책장을 넘기던 {child}의 고개가 천천히 기울었다."
+        },
+        {
+          "speaker": "narration",
+          "text": "어느새 방석에 기대어 새근새근 잠이 들었다. 펜 소리를 줄이고 담요를 살며시 덮어 주었다."
+        }
+      ]
+    },
     "childStays": {
       "title": "어른이 된 날",
       "album": "{child}, 어른이 된 날",
@@ -5247,5 +5261,21 @@
     "take": "내려놓기",
     "full": "책장이 다 찼어요",
     "listTitle": "다 쓴 책"
+  },
+  "family": {
+    "desk": {
+      "title": "책상 곁에서",
+      "ask": "{who} 옆에 앉고 싶어 해요.",
+      "askNote": "곁에서 조용히 놀다가 잠들기도 해요.",
+      "together": "같이 있기",
+      "alone": "혼자 쓰기",
+      "quiet": "{with} 함께 조용한 시간을 보냈어요.",
+      "draw": "{who} 바닥에 엎드려 그림을 그려요",
+      "book": "{who} 곁에서 책장을 넘겨 봐요",
+      "doze": "{who} 방석에 기대어 새근새근 자요",
+      "spouse": "{who} 같은 방에서 책을 읽어요"
+    },
+    "albumFamily": "가족",
+    "albumOther": "마을과 풍경"
   }
 }

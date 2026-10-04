@@ -4,13 +4,14 @@
 // 오타로 깜빡이지 않으며(compositionstart/end + InputEvent.inputType), 조합이 끝난 뒤에 절을 마친다.
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ChangeEvent, type Ref, type RefObject } from 'react'
 import { CONTENT, GOD_KEYWORDS, versesOf } from '../../content/catalog'
-import { fill, roomTitle, T } from '../../content/text'
+import { fill, roomTitle, T, withAnd, withSubject } from '../../content/text'
 import { setQuiet } from '../../audio/sound'
 import { chaptersOf, groupByRoom } from '../../engine/books'
 import { BLOCKED_INPUT_TYPES, checkCopy, copySpot, copyVerses, normalizeCopy, originalEnd, type CopySpot, type CopyVerse } from '../../engine/copying'
+import { deskKidWith, deskPose, spouseReading } from '../../engine/family'
 import { BOOKS, type Book } from '../../engine/types'
-import { COPY_PEN, ICON_PALETTE } from '../../render/sprites'
-import { useGame, type Modal } from '../../store/game-store'
+import { COPY_PEN, FAMILY_DESK, ICON_PALETTE } from '../../render/sprites'
+import { partnerName, useGame, type Modal } from '../../store/game-store'
 import { prefersStill, quillScratch, verseBuzz } from './copy-feel'
 
 const BOOK_NAME = T.quiz.books as Record<string, string>
@@ -169,6 +170,74 @@ export function CopyPen() {
     )
   }, [kind])
   return <canvas ref={ref} className={`copy-pen copy-pen-${kind}`} width={8} height={8} role="img" aria-label={good ? C.penGood : C.penPlain} />
+}
+
+// ── 가족과 함께 있는 필사 (계획 14 작업 10): 곁에 앉은 아이와 같은 방에서 책을 읽는 배우자 — 보상 없는 작은 그림 ──
+const FD = T.family.desk
+type FamilyPose = keyof typeof FAMILY_DESK
+
+/** 가족 그림 한 칸 (16×12, 화면에서 두 배 이상으로 키운다). 아이 옷은 모습대로 (여자아이 보랏빛) */
+function FamilySprite({ pose, girl = false }: { pose: FamilyPose; girl?: boolean }) {
+  const ref = useRef<HTMLCanvasElement>(null)
+  useEffect(() => {
+    const g = ref.current?.getContext?.('2d')
+    if (!g) return
+    g.clearRect(0, 0, 16, 12)
+    FAMILY_DESK[pose].forEach((row, y) =>
+      [...row].forEach((ch, x) => {
+        const c = ICON_PALETTE[girl && ch === 'g' ? 'V' : ch]
+        if (ch === '.' || !c) return
+        g.fillStyle = c
+        g.fillRect(x, y, 1, 1)
+      }),
+    )
+  }, [pose, girl])
+  return <canvas ref={ref} className="copy-family-art" width={16} height={12} aria-hidden="true" data-pose={pose} />
+}
+
+/** 아이가 옆에 앉고 싶어 해요 → [같이 있기] / [혼자 쓰기] */
+function CopyAsk() {
+  const kid = useGame((s) => s.game.child)
+  const { deskAnswer } = useGame.getState()
+  return (
+    <div className="copy-panel copy-ask">
+      <h2>{FD.title}</h2>
+      <FamilySprite pose="draw" girl={kid?.look === 'girl'} />
+      <p>{fill(FD.ask, { who: withSubject(kid?.name ?? '') })}</p>
+      <p className="hint">{FD.askNote}</p>
+      <div className="copy-menu-actions">
+        <button className="primary" onClick={() => deskAnswer(true)}>
+          {FD.together}
+        </button>
+        <button onClick={() => deskAnswer(false)}>{FD.alone}</button>
+      </div>
+    </div>
+  )
+}
+
+/** 쓰는 동안 곁의 가족: 아이(그림 그리기 → 책 넘겨 보기 → 졸다 잠들기)와 저녁의 배우자 */
+function CopyFamily() {
+  const game = useGame((s) => s.game)
+  const kid = deskKidWith(game) ? game.child : null
+  const spouse = spouseReading(game) ? partnerName(game) : ''
+  if (!kid && !spouse) return null
+  const pose = deskPose(game)
+  return (
+    <div className="copy-family">
+      {kid && (
+        <p className="copy-family-one" data-kid={pose}>
+          <FamilySprite pose={pose} girl={kid.look === 'girl'} />
+          <span>{fill(FD[pose], { who: withSubject(kid.name) })}</span>
+        </p>
+      )}
+      {spouse && (
+        <p className="copy-family-one" data-spouse="">
+          <FamilySprite pose="spouse" />
+          <span>{fill(FD.spouse, { who: withSubject(spouse) })}</span>
+        </p>
+      )}
+    </div>
+  )
 }
 
 /** 위의 작은 양피지 쪽: 마친 절마다 한 줄씩 잉크가 찬다 (장이 끝나면 꽉 찬 쪽이 접힌다) */
@@ -399,6 +468,7 @@ function CopyWrite({ book, spot, modal, still }: { book: Book; spot: CopySpot; m
       <p className="copy-status" role="status">
         {status}
       </p>
+      <CopyFamily />
       <div className="copy-verse-wrap">
         <VerseLine
           text={spot.verse.text}
@@ -449,6 +519,8 @@ function CopyWrite({ book, spot, modal, still }: { book: Book; spot: CopySpot; m
 function CopyDone({ book, modal, folding }: { book: Book; modal: Extract<Modal, { kind: 'copy' }>; folding: boolean }) {
   const { copyView, copyExit, openBind } = useGame.getState()
   const unbound = useGame((s) => s.game.bound[book] === undefined && s.game.shelved[book] === undefined)
+  // 아이가 곁에 있었으면 장 완료 화면 끝에 한 줄 (보상 없음)
+  const kidName = useGame((s) => (deskKidWith(s.game) ? (s.game.child?.name ?? null) : null))
   const last = modal.last
   if (last?.kind !== 'chapter') return null
   const name = BOOK_NAME[book]
@@ -473,6 +545,7 @@ function CopyDone({ book, modal, folding }: { book: Book; modal: Extract<Modal, 
       )}
       {gains.length > 0 && <p className="copy-gains">{gains.join(' · ')}</p>}
       {last.bookDone && <p className="copy-book-done">{fill(C.bookDone, { book: name })}</p>}
+      {kidName && <p className="copy-family-quiet">{fill(FD.quiet, { with: withAnd(kidName) })}</p>}
       <div className="copy-menu-actions">
         <button onClick={copyExit}>{C.closeBook}</button>
         {/* 한 권을 마쳤으면 바로 제본 창으로 (책상에서 나가며 쓰다 만 입력은 저장된다) */}
@@ -523,7 +596,8 @@ export function CopyDesk({ modal }: { modal: Extract<Modal, { kind: 'copy' }> })
     return () => clearTimeout(t)
   }, [fold])
   let body
-  if (!book || modal.view === 'pick') body = <CopyBookPick />
+  if (modal.view === 'ask') body = <CopyAsk />
+  else if (!book || modal.view === 'pick') body = <CopyBookPick />
   else if (modal.view === 'menu') body = <CopyMenu book={book} />
   else if (modal.view === 'done')
     body =

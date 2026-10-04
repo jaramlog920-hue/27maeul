@@ -633,5 +633,68 @@ export const COPY_PEN: Record<'plain' | 'good', SpriteRows> = {
   good: ICONS.goodPen,
 }
 
+/**
+ * 필사 화면의 가족 (계획 14 작업 10): 곁에 앉은 아이(그림 그리기·책 넘겨 보기·졸다 잠들기)와 같은 방에서 책을 읽는 배우자.
+ * 16×12, ICON_PALETTE로 그린다. 아이 옷 'g'는 모습대로 바꾼다 (사내아이 풀빛, 여자아이 보랏빛 — 계획 12 그림과 같게)
+ */
+export const FAMILY_DESK: Record<'draw' | 'book' | 'doze' | 'spouse', SpriteRows> = {
+  draw: [
+    '................',
+    '..NNNN..........',
+    '.NNNNNN.........',
+    '.NNssss.........',
+    '.Nsskss.........',
+    '..ssss..........',
+    '..gggg..........',
+    '.gggggg.........',
+    '.ggggggss.......',
+    '.BBBBBBBfaaaaa..',
+    'BBBBBBBB.afaba..',
+    '.........aaaaa..',
+  ],
+  book: [
+    '................',
+    '..NNNN..........',
+    '.NNNNNN.........',
+    '.NNssss.........',
+    '.Nsskss.........',
+    '..ssss.aaaa.....',
+    '..ggggaaWaa.....',
+    '.ggggggaaaa.....',
+    '.ggggssrrrrr....',
+    '.BBBBBBB........',
+    'BBBBBBBB........',
+    '................',
+  ],
+  doze: [
+    '.........BBB....',
+    '..........B.....',
+    '.........BBB....',
+    '...NNNN.........',
+    '..NNNNNN........',
+    '..NNssss........',
+    '..Nskkss........',
+    '...ssss.........',
+    '.bbbbbbbb.......',
+    'bbBbbBbbbb......',
+    'bbbbbbbbbb......',
+    'WWWWWWWWWWW.....',
+  ],
+  spouse: [
+    '...NNNN.........',
+    '..NNNNNN........',
+    '..NNssss........',
+    '..Nsskss........',
+    '...ssss.........',
+    '..cccccc........',
+    '.ccccccc.aaaa...',
+    '.cccccccaaWaa...',
+    '.ccccccsrrrrr...',
+    '.cccccc.........',
+    '..N..N..........',
+    '..N..N..........',
+  ],
+}
+
 // 가구 20종은 그림을 줄여 아이콘으로
 for (const [id, a] of Object.entries(FURNITURE_ART)) ICONS[id] = iconFromArt(a)

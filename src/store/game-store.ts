@@ -5,6 +5,7 @@ import { create } from 'zustand'
 import { CONTENT, neighborById, copySourceFor, LETTER_OPENINGS, pieceById, pieceOfQuestion, piecesOf, quizSourceFor } from '../content/catalog'
 import { blanksFor } from '../engine/copy'
 import { acceptInput, copySpot, type InputHow } from '../engine/copying'
+import { answerDesk, deskAsks, deskKidVerse } from '../engine/family'
 import { currentChapter } from '../engine/offers'
 import { handEase, leveledUp, XP, type StatId } from '../engine/stats'
 import type { FixtureLine } from '../engine/fixtures'
@@ -237,7 +238,7 @@ export function bookBackModal(back: BookBack | undefined): Modal | null {
 export type WordTab = 'copy' | 'pieces' | 'god' | 'links' | 'library'
 
 /** 필사 책상의 화면 (계획 14 작업 2) */
-export type CopyView = 'menu' | 'pick' | 'write' | 'done'
+export type CopyView = 'menu' | 'pick' | 'write' | 'done' | 'ask'
 /** 제본 창을 닫은 뒤 돌아갈 곳: 서고·방 선반·가방 (없으면 마을로) */
 export type BindBack = 'library' | 'bag' | `room:${ShelfRoomId}`
 /** 필사 입력이 들어온 모양: 붙여넣기 표식·입력 종류 + 한글을 조합하는 중인가 (화면이 compositionstart/end로 안다) */
@@ -420,6 +421,8 @@ interface Store {
   copyView: (view: CopyView, resume?: boolean) => void
   /** 필사 책상에서 나간다 — 쓰다 만 입력을 저장하고 마을로 */
   copyExit: () => void
+  /** 아이가 옆에 앉고 싶어 할 때: [같이 있기](true) / [혼자 쓰기](false) — 그다음 책상 메뉴(또는 책 고르기) */
+  deskAnswer: (together: boolean) => void
   /** 말씀 탭의 [이어서 필사하기]: 쓰던 책이 있으면 그 절부터 필사 화면, 없으면 책 고르기 */
   wordContinue: () => void
   /** 쓰다 만 입력을 지금 저장한다 (잠깐 손을 멈췄을 때) */
@@ -789,6 +792,8 @@ export const useGame = create<Store>((set, get) => {
       case 'desk': {
         // 계획 14: 책상은 필사 책상 — 재료·조각·등잔 기름 없이도 쓴다 (예전 엮기·옮겨 적기 창으로 가는 길은 닫았다).
         // 앉기만 해서는 기름을 쓰지 않는다 — 밤에 실제로 한 절을 적을 때 기름이 있으면 등잔을 켠다 (copyType)
+        // 가족과 함께 있는 필사 (계획 14 작업 10): 아이가 자랐으면 가끔 옆에 앉고 싶어 한다 — 하루 한 번만 묻는다
+        if (deskAsks(game)) return { game: persist({ ...game, flags: { ...game.flags, deskAskDay: game.clock.day } }), modal: { kind: 'copy', view: 'ask' } }
         return { game, modal: { kind: 'copy', view: game.copy.book ? 'menu' : 'pick' } }
       }
       case 'hearth':
@@ -1469,6 +1474,12 @@ export const useGame = create<Store>((set, get) => {
       if (view === 'write' && !get().game.copy.book) return
       set({ modal: { kind: 'copy', view, last: null, resume: view === 'write' && resume } })
     },
+    deskAnswer: (together) => {
+      const m = get().modal
+      if (m?.kind !== 'copy' || m.view !== 'ask') return
+      const game = persist(answerDesk(get().game, together))
+      set({ game, modal: { kind: 'copy', view: game.copy.book ? 'menu' : 'pick' } })
+    },
     copyExit: () => {
       if (get().modal?.kind !== 'copy') return
       set({ game: persist(get().game), modal: null })
@@ -1509,8 +1520,8 @@ export const useGame = create<Store>((set, get) => {
         return true
       }
       if (result.kind === 'none') return true
-      // 밤에 한 절을 적으면 기름이 있을 때 등잔을 켠다 (그림의 불빛 — 없어도 쓴다)
-      const lit = lightLamp(state) ?? state
+      // 밤에 한 절을 적으면 기름이 있을 때 등잔을 켠다 (그림의 불빛 — 없어도 쓴다). 곁에 앉은 아이는 그림 그리다 졸다 잠든다
+      const lit = deskKidVerse(lightLamp(state) ?? state)
       // 한 절은 펜을 책상에 내려놓는 소리(도장), 한 장을 마치면 책장 넘기는 소리와 마침 소리
       if (result.kind === 'chapter') {
         sfx('page')

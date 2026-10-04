@@ -39,7 +39,7 @@ export function SceneView({ id, chosen }: { id: string; chosen?: number }) {
           )
         })}
       </div>
-      {scene.album && !asking && <p className="stamp-note">📷 {T.ui.album}: {scene.album}</p>}
+      {scene.album && !asking && <p className="stamp-note">📷 {T.ui.album}: {say(scene.album)}</p>}
       {asking ? (
         <div className="actions menu column">
           {scene.choices!.map((c, i) => (
