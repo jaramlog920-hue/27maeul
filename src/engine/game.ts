@@ -44,6 +44,7 @@ import { fragmentsForDay, logPieces, talkGiftOf, type PieceLog } from './fragmen
 import { checkCopy, COPY_CHAPTER_XP, copySpot, copyVerses, nextOpenChapter, NO_COPY, NO_COPY_STATS, type CopyCheck, type CopyState, type CopyStats } from './copying'
 import { chapterFinds, type GodFind } from './god-records'
 import { SPECIAL_COST, type Bindings, type SpecialChoice } from './binding'
+import { emptyDayLog, logChapter, logGift, type DayLog } from './daybook'
 import { addXp, charmBonus, statScore, freshStats, luckyExtra, rainBonus, sellBonus, tiredScale, visitBonus, XP, type StatId, type Stats } from './stats'
 import { HALL_GUESTS, HALL_PLAY_GAIN, HALL_PLAY_MINUTES, HALL_SPOTS, hallGuests, hallOpen, SUNSET_MINUTES, sunsetTime, TEA_MINUTES, TEA_PRICE, teaOpen } from './places'
 import {
@@ -237,6 +238,8 @@ export interface GameState {
    * 제본했지만 서고에 꽂지 않은 책 = 가방 속 완성본. 예전에 꽂은 책은 기록이 없어도 그대로 꽂혀 있다
    */
   bound: Bindings
+  /** 오늘의 기록 (계획 14 작업 6): 그날 필사로 마친 장·받은 선물 — 잠들기 전 작은 일기에 쓰고, 잠들면 새 날의 빈 기록 */
+  dayLog: DayLog
 }
 
 /** 지도(world.tileAt)가 이 게임의 집 단계·열린 서고 방 문(방 표)을 보게 한다. 지도를 읽는 엔진 입구마다 부른다 */
@@ -475,6 +478,7 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
     copyStats: NO_COPY_STATS,
     godRecords: [],
     bound: {},
+    dayLog: emptyDayLog(clock.day),
   }
 }
 
@@ -1118,6 +1122,7 @@ function heartUpRaw(s: GameState, id: string, points: number): GameState {
         giftsGot: [...new Set([...next.giftsGot, ...(Object.keys(gift) as ItemId[])])],
         scenes: [...next.scenes, `gift:${id}:${m}`],
       }
+      next = logGift(next, id, gift)
     }
   }
   // 가벼운 신 (계획 11 작업 2): 장날 튼튼한 신을 산 뒤, 양치기와 마음 5 — 마음이 오를 때(인사·돕기·선물) 한 번
@@ -1128,6 +1133,7 @@ function heartUpRaw(s: GameState, id: string, points: number): GameState {
       giftsGot: next.giftsGot.includes('lightShoes') ? next.giftsGot : [...next.giftsGot, 'lightShoes'],
       scenes: [...next.scenes, 'lightShoes'],
     }
+    next = logGift(next, LIGHT_SHOES.npc, { lightShoes: 1 })
   }
   // 연애 후보의 이야기 (계획 6): 마음 4·6이 되면 그 사람의 옛이야기 (같은 모습이면 친구로 듣는다) — 한 번씩
   if (isCandidateId(id))
@@ -1641,7 +1647,7 @@ export function receiveVisit(s: GameState, npc: string): { state: GameState; gif
   if (t.visitor !== npc || t.visitGot) return null
   if (s.clock.minute < VISIT_FROM || s.clock.minute >= VISIT_TO) return null
   const gift = VISIT_GIFTS[npc] ?? {}
-  return { state: { ...s, inv: addGift(s.inv, gift), today: { ...t, visitGot: true } }, gift }
+  return { state: logGift({ ...s, inv: addGift(s.inv, gift), today: { ...t, visitGot: true } }, npc, gift), gift }
 }
 
 /**
@@ -1654,7 +1660,7 @@ export function receiveTalkGift(s: GameState, npc: string): { state: GameState; 
   const gift = talkGiftOf(npc, s.clock.day, s.hearts, s.flags)
   if (!gift) return null
   const giftsGot = [...new Set([...s.giftsGot, ...(Object.keys(gift) as ItemId[])])]
-  return { state: { ...s, inv: addGift(s.inv, gift), giftsGot, flags: { ...s.flags, [`talkGift:${npc}`]: s.clock.day } }, gift }
+  return { state: logGift({ ...s, inv: addGift(s.inv, gift), giftsGot, flags: { ...s.flags, [`talkGift:${npc}`]: s.clock.day } }, npc, gift), gift }
 }
 
 /** 저녁 초대: 그 집 문 앞에서 */
@@ -2509,6 +2515,8 @@ export function writeVerse(s: GameState, book: Book, input: string, content: Gam
     },
     copyMinutes(s),
   )
+  // 오늘의 기록: 그날 필사로 마친 장 (잠들기 전 일기)
+  state = logChapter(state, book, chapter)
   // 사도행전 장은 여정 판에, 요한계시록 2·3장은 일곱 교회 판에 카드가 들어온다 (예전 엮기·옮겨 적기와 같다)
   if (book === 'ac') state = syncJourney(state, content)
   if (book === 'rev') state = syncBoard(state, 'churches', content)
@@ -2714,6 +2722,8 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
     journal: [...s.journal, { day: s.clock.day, heard: s.todayHeard, notes: s.todayNotes }],
     todayHeard: [],
     todayNotes: [],
+    // 오늘의 기록은 새 날의 빈 기록으로 (어제 것은 잠들기 전 일기로 보았다)
+    dayLog: emptyDayLog(day),
     talked: [],
     helped: [],
     gifted: [],

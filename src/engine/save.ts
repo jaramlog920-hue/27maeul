@@ -8,6 +8,7 @@ import { sanitizeCopy, sanitizeCopyStats } from './copying'
 import { backfillGodRecords, sanitizeGodRecords } from './god-records'
 import { sanitizeBindings } from './binding'
 import { sanitizePieceLog } from './fragments'
+import { sanitizeDayLog } from './daybook'
 import { IDLE_RESET } from './autonomy'
 import { bookDone, bookRoomOpen, emptyProgress, type Progress } from './books'
 import { newGame, settle, type GameState } from './game'
@@ -162,6 +163,8 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     ),
     // 제본 (계획 14 작업 4): 옛 저장(칸이 없던 때)은 빈 목록 — 이미 꽂은 책은 아래 shelved에 등급 그대로 남는다
     bound: sanitizeBindings(s.bound, (b) => bookDone({ progress }, b, content)),
+    // 오늘의 기록 (계획 14 작업 6): 옛 저장(칸이 없던 때)은 오늘의 빈 기록
+    dayLog: sanitizeDayLog(s.dayLog, s.clock.day),
     achieved: Array.isArray(s.achieved) ? s.achieved.filter((a) => a && typeof a.id === 'string' && typeof a.day === 'number') : [],
     needs: { ...s.needs, heat: s.needs?.heat ?? 0 },
     collected,

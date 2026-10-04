@@ -77,8 +77,10 @@
     "shelf": "엮은 장 {n}",
     "bagTapHint": "칸을 누르면 무엇인지 알려 줘요.",
     "bagExplainHint": "몸 상태와 능력치도 줄을 누르면 설명이 나와요.",
-    "hudPickBook": "책상에서 책 고르기",
-    "hudBookDone": "다 엮음 · 서고에 꽂기",
+    "hudJob": "✒ {job}",
+    "hudCopyAt": "📖 {book} {chapter}장 {done}/{all}",
+    "hudCopyNone": "📖 책상에서 책 고르기",
+    "hudCopyDone": "📖 {book} 필사를 마침",
     "coins": "{n}닢",
     "bookPickTitle": "어느 책을 엮을까요?",
     "bookPickHint": "고른 책의 조각을 이웃들이 전해 줍니다. 언제든 바꿀 수 있고, 책마다 진행이 따로 남아요.",
@@ -4525,6 +4527,16 @@
         }
       ]
     }
+  },
+  "diary": {
+    "title": "오늘의 기록",
+    "chapters": "필사한 장",
+    "gifts": "받은 선물",
+    "pieces": "새 말씀 조각",
+    "family": "가족",
+    "chapterList": "{book} {chapters}장",
+    "giftFrom": "{who} · {items}",
+    "piece": "{title} ({ref})"
   },
   "journal": {
     "day": "{day}일째.",

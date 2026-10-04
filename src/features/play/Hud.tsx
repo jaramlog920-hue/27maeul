@@ -1,10 +1,12 @@
+import { useMemo } from 'react'
+import { CONTENT } from '../../content/catalog'
 import { fill, T } from '../../content/text'
 import { isMarketDay, weatherOf } from '../../engine/calendar'
 import { formatTime, phaseOf, seasonOf } from '../../engine/clock'
-import { totalChapters } from '../../engine/books'
-import { piecesOf } from '../../content/catalog'
-import { currentChapter } from '../../engine/offers'
-import { peaceful, type GameState } from '../../engine/game'
+import { totalChapters, type Progress } from '../../engine/books'
+import { copySpot, type CopyAt } from '../../engine/copying'
+import { peaceful } from '../../engine/game'
+import type { Book } from '../../engine/types'
 import { jobOf } from '../../engine/job'
 import { useGame } from '../../store/game-store'
 
@@ -17,9 +19,11 @@ export function Hud() {
   const job = useGame((s) => jobOf(s.game))
   const name = useGame((s) => s.game.avatar?.name ?? '')
   const peace = useGame((s) => peaceful(s.game))
-  // 선택자는 글자·참거짓만 돌려준다 (새 객체를 돌려주면 매번 다시 그린다)
-  const chapterText = useGame((s) => chapterNow(s.game).text)
-  const chapterHint = useGame((s) => chapterNow(s.game).hint)
+  // 지금 필사 자리 (계획 14 작업 6): 바뀔 때만 다시 센다 — 선택자는 저장된 값(같은 참조)만 돌려준다
+  const book = useGame((s) => s.game.copy.book)
+  const at = useGame((s) => (book ? s.game.copy.at[book] : undefined))
+  const done = useGame((s) => (book ? s.game.progress[book].completed : NONE))
+  const copyText = useMemo(() => copyNow(book, at, done), [book, at, done])
   const { open } = useGame.getState()
   const weather = (T.ui.weather as Record<string, string>)[weatherOf(day)]
   return (
@@ -36,11 +40,14 @@ export function Hud() {
       </div>
       <div className="hud-row hud-toolbar">
         <span className="hud-shelf">
-          {name && <>{name} · </>}
-          {T.jobs[job]} · {fill(T.ui.coins, { n: coins })}
-          {/* PC는 엮은 장 수, 휴대폰(아래 조작판)은 상태 판 대신 지금 쓰는 장 */}
+          {/* 위 줄 (계획 14 작업 6): 직업 · 지금 필사 자리. 능력치는 가방 안에만 — 휴대폰에선 이름·엮은 장 수를 접는다 */}
+          {name && <span className="hud-name">{name} · </span>}
+          <span className="hud-job">{fill(T.ui.hudJob, { job: T.jobs[job] })}</span>
+          {' · '}
+          <span className="hud-chapter">{copyText}</span>
+          {' · '}
+          {fill(T.ui.coins, { n: coins })}
           <span className="hud-shelf-count"> · {fill(T.ui.shelf, { n: shelf })}</span>
-          <span className={`hud-chapter${chapterHint ? ' hint' : ''}`}> · {chapterText}</span>
         </span>
         <div className="hud-buttons">
           <button className="hud-btn hud-word" onClick={() => open({ kind: 'word' })}>
@@ -63,17 +70,17 @@ export function Hud() {
 }
 
 const BOOK_NAME = T.quiz.books as Record<string, string>
+const NONE: readonly number[] = []
 
-/** 위 줄에 쓰는 지금 쓰는 장: "마가복음 3장 2/5" · 책이 없으면 "책상에서 책 고르기" */
-function chapterNow(game: GameState): { text: string; hint: boolean } {
-  const book = game.activeBook
-  if (!book) return { text: T.ui.hudPickBook, hint: true }
-  const pieces = piecesOf(book)
-  const ch = currentChapter(pieces, game.progress[book].completed)
-  if (ch === null) return { text: T.ui.hudBookDone, hint: true }
-  const inChapter = pieces.filter((p) => p.chapter === ch)
-  const got = inChapter.filter((p) => game.collected.includes(p.id)).length
-  return { text: `${BOOK_NAME[book]} ${fill(T.ui.chapterLabel, { chapter: ch })} ${got}/${inChapter.length}`, hint: false }
+/**
+ * 위 줄의 지금 필사 자리: "📖 마태복음 2장 0/23" (그 장에서 쓴 절 / 필사할 절). 고른 책이 없으면 책상에서 고르기,
+ * 다 쓴 책이면 마쳤다고만 — 쓰라고 재촉하는 말은 없다
+ */
+function copyNow(book: Book | null, at: CopyAt | undefined, completed: readonly number[]): string {
+  if (!book) return T.ui.hudCopyNone
+  const spot = copySpot({ progress: { [book]: { completed } } as unknown as Progress, copy: { book, at: at ? { [book]: at } : {}, legacy: {} } }, book, CONTENT)
+  if (!spot) return fill(T.ui.hudCopyDone, { book: BOOK_NAME[book] })
+  return fill(T.ui.hudCopyAt, { book: BOOK_NAME[book], chapter: spot.chapter, done: spot.index, all: spot.count })
 }
 
 /** 새로 이룬 업적 (도감·업적) */
