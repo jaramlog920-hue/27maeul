@@ -5434,7 +5434,7 @@
     "bind": "제본하기"
   },
   "word": {
-    "open": "📖 말씀",
+    "open": "말씀",
     "title": "말씀",
     "continue": "이어서 필사하기",
     "start": "필사 시작하기",
@@ -5497,9 +5497,9 @@
     "libShelved": "꽂힘 · {grade}",
     "libNotShelved": "꽂기 전",
     "letterBring": "편지가 한 통 왔어요. 받아 가세요.",
-    "got": "말씀 조각을 받았어요 · {title} — 📖 말씀 탭에 담겼어요",
-    "letterGot": "편지에 말씀 조각이 들어 있어요 · {title} — 📖 말씀 탭에 담겼어요",
-    "gotMany": "말씀 조각 {n}개를 받았어요 — 📖 말씀 탭에 담겼어요",
+    "got": "말씀 조각을 받았어요 · {title} — 말씀 탭에 담겼어요",
+    "letterGot": "편지에 말씀 조각이 들어 있어요 · {title} — 말씀 탭에 담겼어요",
+    "gotMany": "말씀 조각 {n}개를 받았어요 — 말씀 탭에 담겼어요",
     "talkGift": "{who} 챙겨 줬어요 · {items}",
     "basketWho": "문 앞 편지 바구니"
   },

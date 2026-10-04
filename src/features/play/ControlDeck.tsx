@@ -118,7 +118,7 @@ export function ControlDeck() {
             </button>
             {menu && !modalOpen && (
               <div className="deck-menu-pop" role="menu">
-                <button role="menuitem" onClick={() => go({ kind: 'word' })}>{T.word.open}</button>
+                <button role="menuitem" className="menu-word" onClick={() => go({ kind: 'word' })}>{T.word.open}</button>
                 <button role="menuitem" onClick={() => go({ kind: 'bag' })}>{T.ui.bag}</button>
                 <button role="menuitem" onClick={() => go({ kind: 'journal' })}>{T.ui.journalTitle}</button>
                 <button role="menuitem" onClick={() => go({ kind: 'family' })}>가족</button>

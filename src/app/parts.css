@@ -1343,6 +1343,11 @@ button.copy-blank.on {
   box-shadow: 0 3px 0 var(--panel-edge), 0 4px 10px #0008;
 }
 .deck-menu-pop button { min-height: 38px; padding: 2px 8px; font-size: 13px; }
+/* 메뉴의 말씀: 아이콘 없이 진한 색으로 (위 줄 단추·조작판 메뉴 모두) — 글꼴·크기는 다른 단추와 같다 */
+button.menu-word {
+  background: var(--panel-edge);
+  color: var(--on-bg-strong);
+}
 /* 확인: 계단 모서리의 평평한 테라코타 단추 */
 .deck .deck-seal {
   order: 1;

@@ -174,7 +174,7 @@ describe('말 걸기 흐름 — 생활 말로 건넨다', () => {
     expect(g.post).toEqual([])
     expect(g.collected).toContain('phm-001')
     expect(useGame.getState().modal).toBeNull()
-    expect(useGame.getState().toast?.text).toContain('📖 말씀 탭에 담겼어요')
+    expect(useGame.getState().toast?.text).toContain('말씀 탭에 담겼어요')
   })
 })
 

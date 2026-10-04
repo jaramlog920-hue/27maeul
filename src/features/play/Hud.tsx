@@ -51,7 +51,7 @@ export function Hud() {
           <span className="hud-shelf-count"> · {fill(T.ui.shelf, { n: shelf })}</span>
         </span>
         <div className="hud-buttons">
-          <button className="hud-btn hud-word" onClick={() => open({ kind: 'word' })}>
+          <button className="hud-btn menu-word" onClick={() => open({ kind: 'word' })}>
             {T.word.open}
           </button>
           <button className="hud-btn" onClick={() => open({ kind: 'settings' })}>설정</button>
