@@ -6,7 +6,7 @@ import { useGame } from '../../store/game-store'
 
 export function FollowMenu({ who }: { who: 'pet' | 'child' }) {
   const game = useGame((s) => s.game)
-  const { petCompanion, keepCompanion, keepChild, closeModal } = useGame.getState()
+  const { petCompanion, keepCompanion, keepChild, closeModal, open } = useGame.getState()
   if (who === 'pet') {
     const c = game.companion
     if (!c) return null
@@ -50,6 +50,7 @@ export function FollowMenu({ who }: { who: 'pet' | 'child' }) {
       {k.job && <p>{JOB_NAME[k.job]} · 마을에 남아 산다</p>}
       <p className="hint">{now}</p>
       <div className="actions column">
+        {!k.job && <button onClick={() => open({ kind: 'kidTime' })}>{T.family.time.open}</button>}
         <button className={mode === 'follow' ? 'primary' : ''} disabled={mode === 'follow'} onClick={() => keepChild('follow')}>
           데리고 다니기
         </button>

@@ -194,6 +194,9 @@ export type ItemId =
   | 'creamPaper'
   | 'blueDye'
   | 'fineThread'
+  // 아이와 함께 보내는 시간 (계획 12): 같이 만든 작은 장난감 — 방에 놓는 꾸미기
+  | 'woodToy'
+  | 'clothDoll'
 
 /** 손일 놀이: 찧기·맞추기·줍기·길게 누르기·번갈아 누르기·순서 기억하기 */
 export type Minigame = 'mash' | 'timing' | 'pick' | 'hold' | 'weave' | 'order'

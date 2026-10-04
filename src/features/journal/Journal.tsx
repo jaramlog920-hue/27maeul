@@ -2,7 +2,7 @@
 // 2026-10-04: 따로 있던 선반의 풍경 앨범·받은 선물·업적을 이리로 옮겼다 (가족 창의 [가족 앨범]도 이 앨범 칸을 연다)
 import { useEffect, useRef, useState } from 'react'
 import { CONTENT, neighborById, pieceById } from '../../content/catalog'
-import { fill, ITEM_TEXT, itemName, JOB_NAME, JOURNAL_NOTES, SCENES, T } from '../../content/text'
+import { fill, ITEM_TEXT, itemName, JOB_NAME, JOURNAL_NOTES, kidFill, SCENES, T } from '../../content/text'
 import { ACHIEVEMENTS } from '../../engine/achievements'
 import { weatherOf } from '../../engine/calendar'
 import { seasonOf } from '../../engine/clock'
@@ -273,7 +273,7 @@ function Portrait({ def, season, shadow }: { def: NeighborDef; season: Season; s
 
 /** 앨범 제목: 아이 이름(계획 12)을 넣는다 */
 function albumTitle(id: string, kid: string | undefined): string {
-  return (SCENES[id]?.album ?? '').replaceAll('{child}', kid ?? '아이')
+  return kidFill(SCENES[id]?.album ?? '', kid)
 }
 
 /** 앨범: 풍경·가족의 날 (가족 창의 [가족 앨범]이 이 칸을 연다) */

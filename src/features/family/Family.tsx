@@ -3,6 +3,7 @@ import { neighborById } from '../../content/catalog'
 import { T } from '../../content/text'
 import { childMode, childStage, type AdultJob, type ChildStage } from '../../engine/child'
 import { heartsOf } from '../../engine/hearts'
+import { closeHearts } from '../../engine/family'
 import { STAT_IDS, statScore, type StatId } from '../../engine/stats'
 import { useGame } from '../../store/game-store'
 
@@ -61,6 +62,13 @@ export function Family() {
             태어난 지 {day - kid.born + 1}일 · {MODE_NAME[childMode(kid, day)]}
             {kid.job && ` · ${JOB_NAME[kid.job]}`}
           </p>
+          {(kid.close ?? 0) > 0 && (
+            <p className="kid-close">
+              {T.family.time.close} {'♥'.repeat(closeHearts(kid))}
+              {'♡'.repeat(5 - closeHearts(kid))}
+            </p>
+          )}
+          {!kid.job && childStage(kid, day) !== 'baby' && <button onClick={() => open({ kind: 'kidTime' })}>{T.family.time.open}</button>}
           <ul className="fam-stats">
             {STAT_IDS.map((id) => (
               <li key={id}>

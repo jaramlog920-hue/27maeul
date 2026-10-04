@@ -4,6 +4,7 @@ import { useGame } from '../store/game-store'
 import { Bag } from './bag/Bag'
 import { Family } from './family/Family'
 import { Wardrobe } from './family/Wardrobe'
+import { KidTime } from './family/KidTime'
 import { AdoptForm } from './companion/AdoptForm'
 import { Desk } from './desk/Desk'
 import { CopyDesk } from './desk/CopyDesk'
@@ -125,6 +126,8 @@ function Body() {
       return <BookView key={modal.book} modal={modal} />
     case 'homeShelf':
       return <HomeShelf />
+    case 'kidTime':
+      return <KidTime done={modal.done} />
   }
 }
 

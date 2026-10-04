@@ -1,7 +1,7 @@
 // 이웃 이야기 장면 — 모두 게임 창작. 말하는 이는 이웃이나 해설(기록자는 말하지 않는다)
 import { useEffect } from 'react'
 import { neighborById } from '../../content/catalog'
-import { callName, SCENES, T } from '../../content/text'
+import { callName, kidFill, SCENES, T } from '../../content/text'
 import { useGame } from '../../store/game-store'
 
 export function speakerName(speaker: string): string | null {
@@ -15,7 +15,7 @@ export function SceneView({ id, chosen }: { id: string; chosen?: number }) {
   const me = useGame((s) => s.game.avatar?.name)
   const kid = useGame((s) => s.game.child?.name)
   // 아이 이름 (계획 12): {child}
-  const say = (text: string) => callName(text, me).replaceAll('{child}', kid ?? '아이')
+  const say = (text: string) => kidFill(callName(text, me), kid)
   const scene = SCENES[id]
   // 고르는 말이 있는 장면 (계획 6b): 고르기 전엔 닫지 않는다, 고르면 대답이 이어진다
   const asking = !!scene?.choices?.length && chosen === undefined

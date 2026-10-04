@@ -5,7 +5,7 @@ import { create } from 'zustand'
 import { CONTENT, neighborById, copySourceFor, LETTER_OPENINGS, pieceById, pieceOfQuestion, piecesOf, quizSourceFor } from '../content/catalog'
 import { blanksFor } from '../engine/copy'
 import { acceptInput, copySpot, type InputHow } from '../engine/copying'
-import { answerDesk, deskAsks, deskKidVerse } from '../engine/family'
+import { answerDesk, deskAsks, deskKidVerse, doKidAct, familyTrip, type KidAct } from '../engine/family'
 import { currentChapter } from '../engine/offers'
 import { handEase, leveledUp, XP, type StatId } from '../engine/stats'
 import type { FixtureLine } from '../engine/fixtures'
@@ -221,6 +221,20 @@ export type Modal =
   | { kind: 'bookView'; book: Book; back?: BookBack }
   /** 집 책장 (계획 14 작업 8): 놓은 책장 가구를 누르면 — 다 쓴 책을 몇 권 골라 둔다 */
   | { kind: 'homeShelf' }
+  /** 아이와 함께 보내는 시간 (계획 12): 고르기, done이면 방금 한 일의 짧은 장면과 결과 */
+  | { kind: 'kidTime'; done?: KidDone }
+
+/** 방금 아이와 함께한 일 (창 상태로만) */
+export interface KidDone {
+  act: KidAct
+  variant: number
+  gains: Partial<Record<StatId, number>>
+  got: Partial<Record<ItemId, number>>
+  who: string | null
+  burnt: boolean
+  /** 처음 있는 일이라 가족 앨범에 한 장 (창을 닫으면 장면이 열린다) */
+  album: boolean
+}
 
 /** 완성본 창을 닫은 뒤 돌아갈 곳 */
 export type BookBack = 'word' | 'library' | 'homeShelf' | `room:${ShelfRoomId}`
@@ -359,6 +373,8 @@ interface Store {
   keepCompanion: (stay: boolean) => void
   keepChild: (mode: ChildMode) => void
   goSchool: (stat: StatId) => void
+  /** 아이와 함께하기 (계획 12): 짧은 장면과 결과를 보인다 */
+  kidAct: (act: KidAct) => void
   startTeach: () => void
   startLetter: () => void
   // 손일
@@ -929,6 +945,8 @@ export const useGame = create<Store>((set, get) => {
     finishTripBoard: (rewards) => {
       const t = get().trip
       if (!t) return
+      // 아이를 데리고 다녀왔으면 가까움, 처음이면 가족 앨범 (계획 12 가족 여행 — 여행 판은 그대로)
+      if (t.withChild && get().game.child) set({ game: persist(familyTrip(get().game)) })
       set({ trip: null, modal: { kind: 'travel', dest: t.dest, rewards } })
     },
     afterScene: null,
@@ -1156,6 +1174,14 @@ export const useGame = create<Store>((set, get) => {
       sfx('gift')
       set({ game: persist(g), modal: null })
       get().say(`${g.child?.name ?? '아이'} · 배움터에서 ${withObject((T.stats.names as Record<StatId, string>)[stat])} 배워요 (저녁 여섯 시까지)`, 3400)
+    },
+    kidAct: (act) => {
+      const before = get().game
+      const r = doKidAct(before, act, CONTENT)
+      if (!r) return
+      sfx('gift')
+      const album = r.state.scenes.length > before.scenes.length
+      set({ game: persist(r.state), modal: { kind: 'kidTime', done: { act, variant: r.variant, gains: r.gains, got: r.got, who: r.who, burnt: r.burnt, album } } })
     },
     keepChild: (mode) => {
       const g = setChildMode(get().game, mode)

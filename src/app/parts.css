@@ -1881,6 +1881,14 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
 .copy-family-art { width: 32px; height: 24px; flex: none; image-rendering: pixelated; }
 .copy-ask { text-align: center; }
 .copy-ask .copy-family-art { width: 64px; height: 48px; margin: 4px auto 0; display: block; }
+/* ── 아이와 함께 보내는 시간 (계획 12) ── */
+.kid-acts { list-style: none; margin: 6px 0; padding: 0; display: grid; gap: 6px; }
+.kid-acts li { display: flex; flex-direction: column; gap: 2px; }
+.kid-acts button { display: flex; justify-content: space-between; align-items: center; gap: 8px; width: 100%; text-align: left; }
+.kid-act-grows { font-size: 12px; color: #8a7a62; }
+.kid-act-why { font-size: 12px; color: #8a7a62; padding-left: 4px; }
+.kid-close { margin: 2px 0; font-size: 13px; color: #c47f92; }
+.kid-results { margin: 6px 0; padding-left: 18px; font-size: 13px; color: #6f5f48; }
 .album-part { margin: 10px 0 6px; font-size: 14px; color: #7a6a52; }
 .copy-family-quiet { margin: 0; text-align: center; font-size: 13px; color: #8a7a62; }
 

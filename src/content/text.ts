@@ -85,6 +85,15 @@ export function withAnd(word: string): string {
   return word + (hasFinal ? '과' : '와')
 }
 
+/**
+ * 우리 아이 이름 넣기 (계획 12): {childSubj} 이/가, {childAnd} 와/과, {child} 이름만 (조사를 받침에 맞춘다).
+ * 이름이 없으면 '아이'
+ */
+export function kidFill(text: string, name: string | undefined | null): string {
+  const n = name?.trim() || '아이'
+  return text.replaceAll('{childSubj}', withSubject(n)).replaceAll('{childAnd}', withAnd(n)).replaceAll('{child}', n)
+}
+
 export function itemName(id: ItemId): string {
   return ITEM_TEXT[id]?.name ?? id
 }

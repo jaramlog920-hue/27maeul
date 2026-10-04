@@ -1109,7 +1109,7 @@ function gateCap(s: GameState, p: Person): number {
   return MAX_POINTS
 }
 
-function heartUp(s: GameState, id: string, points: number): GameState {
+export function heartUp(s: GameState, id: string, points: number): GameState {
   const p = personOf(id)
   if (p && points > 0) {
     // 사람마다 마음이 열리는 빠르기, 서먹할 땐 반만, 문턱에서 멈춘다
@@ -1833,7 +1833,7 @@ function useStock(s: GameState, need: Partial<Record<ItemId, number>>): GameStat
 }
 
 /** 받은 것을 넣는다 — 가방이 차면 궤짝으로 */
-function putAway(s: GameState, gives: Partial<Record<ItemId, number>>): GameState {
+export function putAway(s: GameState, gives: Partial<Record<ItemId, number>>): GameState {
   const r = stash(s.inv, chestOf(s), gives)
   return { ...s, inv: r.inv, chest: r.chest ?? s.chest }
 }

@@ -622,6 +622,9 @@ export const ICONS: Record<string, SpriteRows> = {
   creamPaper: ['........', '.aaaaaa.', '.aaaaaa.', '.aaaaaW.', '.aaaaWW.', '.aaaaaa.', '.cccccc.', '........'],
   blueDye: ['...kk...', '...WW...', '..kbbk..', '.kbBbbk.', '.kbbbbk.', '.kbbBbk.', '..kkkk..', '........'],
   fineThread: ['........', '.NNNNNN.', '..aaaa..', '..aWaa..', '..aaWa..', '..aaaa..', '.NNNNNN.', '........'],
+  // 아이와 같이 만든 것 (계획 12): 흔들 받침 위의 작은 나무 말, 분홍 옷의 헝겊 인형
+  woodToy: ['........', '.....nN.', '....nnnk', '.nnnnnN.', '.nNnnnn.', '.n.n.n..', 'NNNNNNN.', '........'],
+  clothDoll: ['...NN...', '..NssN..', '..sksk..', '..ffff..', '.ffwfff.', '..ffff..', '..s..s..', '........'],
 }
 
 /**

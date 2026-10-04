@@ -29,6 +29,8 @@ export interface Child {
   job?: AdultJob
   /** 마을을 떠나 사는가 */
   left?: boolean
+  /** 함께 보낸 시간으로 쌓인 가까움 0~100 (계획 12 "아이와 함께 보내는 시간" — 옛 저장은 없다 = 0) */
+  close?: number
 }
 
 // ── 어른이 된 아이 (2026-09-30 사용자 요청) ──
@@ -169,5 +171,15 @@ export function sanitizeChild(raw: unknown): Child | null {
   const lean = typeof o.lean === 'string' && (STAT_IDS as readonly string[]).includes(o.lean) ? (o.lean as StatId) : null
   const mode = o.mode === 'follow' || o.mode === 'home' || o.mode === 'roam' ? o.mode : undefined
   const job = typeof o.job === 'string' && o.job in JOB_GIFTS ? (o.job as AdultJob) : undefined
-  return { name: o.name.slice(0, 12), look: o.look, born: o.born, stats: sanitizeStats(o.stats), lean, ...(mode ? { mode } : {}), ...(job ? { job, left: !!o.left } : {}) }
+  const close = typeof o.close === 'number' && Number.isFinite(o.close) ? Math.max(0, Math.min(100, Math.round(o.close))) : 0
+  return {
+    name: o.name.slice(0, 12),
+    look: o.look,
+    born: o.born,
+    stats: sanitizeStats(o.stats),
+    lean,
+    ...(mode ? { mode } : {}),
+    ...(job ? { job, left: !!o.left } : {}),
+    ...(close ? { close } : {}),
+  }
 }
