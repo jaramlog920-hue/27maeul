@@ -1,7 +1,8 @@
 import { ANIMAL, ANIMAL_PALETTE, animalRows, BABY, ICON_PALETTE, ICONS, NEIGHBOR_SCARF, PALETTE, SHEEP, SMALL_PALETTE, SPRITE_H, SPRITE_W, mirror, spriteRows, writerPalette, type Who } from './sprites'
-import { ACCS, BOTTOMS, HAIR_BACKS, HAIR_FRONTS, SKINS, withLookDefaults } from '../engine/avatar'
+import { ACCS, BOTTOMS, HAIR_BACKS, HAIR_FRONTS, SKINS, TOPS, withLookDefaults } from '../engine/avatar'
 import { breathOffset, isBlinking, walkFrame, dozeNod, lookSide } from './anim'
 import { ITEM_TEXT } from '../content/text'
+import { NEIGHBORS } from '../content/catalog'
 import type { Facing } from '../engine/types'
 
 const FACINGS: Facing[] = ['up', 'down', 'left', 'right']
@@ -16,6 +17,78 @@ function valid(rows: readonly string[], pal: Record<string, string>, w?: number)
 }
 
 describe('사람 도트', () => {
+  it('키가 작은 아이도 손이 사라지지 않는다', () => {
+    for (const growth of [0, 1, 2, 3]) for (const facing of ['down', 'right', 'up'] as const) {
+      const rows = spriteRows('child', facing, { frame: 0, blink: false, growth })
+      expect(rows.slice(7).join('')).toContain('s')
+      expect(rows.slice(7).join('')).toContain('!')
+    }
+  })
+  it('흰 머리는 그늘 경계가 남고 배달부의 앞머리는 눈과 눈 깜빡임을 가리지 않는다', () => {
+    for (const facing of FACINGS) {
+      const grandpa = spriteRows('grandpa', facing, { frame: 0, blink: false })
+      expect(grandpa.slice(0, 3).join('')).toContain('W')
+      expect(grandpa.slice(0, 3).join('')).toContain('7')
+    }
+    for (const facing of ['down', 'right'] as const) {
+      const open = spriteRows('postman', facing, { frame: 0, blink: false })
+      const shut = spriteRows('postman', facing, { frame: 0, blink: true })
+      for (const x of facing === 'down' ? [3, 6] : [6]) {
+        expect(open[4][x]).toBe('k')
+        expect(shut[4][x]).toBe('s')
+      }
+    }
+  })
+  it('앞·뒷머리와 장신구의 조합, 실제 NPC 23명의 선택이 모두 유효한 도트로 그려진다', () => {
+    const base = withLookDefaults({ look: 'm', name: '' })
+    for (let hairFront = 0; hairFront < HAIR_FRONTS.length; hairFront++)
+      for (let hairBack = 0; hairBack < HAIR_BACKS.length; hairBack++)
+        for (let acc = 0; acc < ACCS.length; acc++) for (const facing of FACINGS) {
+          const avatar = { ...base, hairFront, hairBack, acc }
+          const pal = writerPalette('spring', avatar)
+          const rows = spriteRows('writer', facing, { frame: 0, blink: false, avatar })
+          expect(rows).toHaveLength(SPRITE_H)
+          expect(rows.every((row) => row.length === SPRITE_W && [...row].every((ch) => ch === '.' || pal[ch] !== undefined))).toBe(true)
+          if (facing === 'down') {
+            expect(rows[4][3]).toBe('o')
+            expect(rows[4][6]).toBe('o')
+          }
+        }
+    for (const n of NEIGHBORS) for (const facing of FACINGS) {
+      const avatar = n.avatar && n.look ? withLookDefaults({ look: n.look, name: n.role, ...n.avatar }) : undefined
+      const pal = avatar ? writerPalette('spring', avatar) : PALETTE
+      const rows = spriteRows(n.sprite as Who, facing, { frame: 0, blink: false, avatar, growth: 3 })
+      expect(rows.every((row) => row.length === SPRITE_W && [...row].every((ch) => ch === '.' || pal[ch] !== undefined))).toBe(true)
+    }
+  })
+  it('옷 12종·하의 4종의 모든 방향과 자세가 기존 선택을 유지하며 유효하게 그려진다', () => {
+    const base = withLookDefaults({ look: 'm', name: '바다' })
+    for (let top = 0; top < TOPS.length; top++) for (let bottom = 0; bottom < BOTTOMS.length; bottom++) {
+      const avatar = { ...base, top, bottom }
+      const original = structuredClone(avatar)
+      const pal = writerPalette('spring', avatar)
+      for (const facing of FACINGS) for (const pose of ['stand', 'wave', 'handUp', 'crouch'] as const)
+        for (const frame of [0, 1, 2] as const) {
+          const rows = spriteRows('writer', facing, { frame, blink: false, avatar, pose })
+          expect(rows.every((row) => row.length === SPRITE_W && [...row].every((ch) => ch === '.' || pal[ch] !== undefined))).toBe(true)
+        }
+      const front = spriteRows('writer', 'down', { frame: 0, blink: false, avatar })
+      // 줄무늬·앞치마·조끼가 소매와 손을 덮지 않는다.
+      for (const x of [1, 8]) {
+        expect(front[8][x]).toBe('r')
+        expect(front[9][x]).toBe('r')
+        expect(front[10][x]).toBe('s')
+        expect(front[10][x === 1 ? 0 : 9]).toBe('!')
+        expect(front[11][x]).toBe('5')
+      }
+      expect(front[9].slice(1, 9)).not.toContain('.')
+      expect(front[10].slice(1, 9)).not.toContain('.')
+      expect(spriteRows('writer', 'left', { frame: 0, blink: false, avatar }))
+        .toEqual(mirror(spriteRows('writer', 'right', { frame: 0, blink: false, avatar })))
+      expect(avatar).toEqual(original)
+    }
+  })
+
   it('모든 사람·방향·자세가 10칸 폭이고 팔레트 밖의 색이 없다', () => {
     for (const who of PEOPLE)
       for (const f of FACINGS)

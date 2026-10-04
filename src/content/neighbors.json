@@ -843,12 +843,12 @@
       "hairFront": 2,
       "hairBack": 0,
       "top": 3,
-      "bottom": 3,
+      "bottom": 2,
       "acc": 0,
       "hairColor": [
-        20,
-        40,
-        25
+        25,
+        45,
+        38
       ]
     }
   },
@@ -1059,9 +1059,9 @@
       "bottom": 2,
       "acc": 0,
       "hairColor": [
-        25,
         30,
-        20
+        40,
+        35
       ]
     }
   },
