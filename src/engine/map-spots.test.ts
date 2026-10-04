@@ -1,6 +1,7 @@
 // 지도를 고치면 좌표가 흩어진 곳(이웃 하루·잔치·모임·고양이 자리)이 벽이나 물에 박히기 쉽다.
 // 모든 자리가 걸을 수 있고, 이웃은 자기 집 문에서 거기까지 걸어갈 수 있어야 한다.
 import neighbors from '../content/neighbors.json'
+import people from '../content/people.json'
 import * as bonds from './bonds'
 import * as companion from './companion'
 import { findPath } from './movement'
@@ -54,6 +55,25 @@ describe('지도 위의 자리', () => {
           if (!t || !inVillage(t)) continue
           expect(reachable(`${t.x},${t.y}`), `${d.id} ${e.from} ${where(t)}`).toBe(all - 1)
         }
+  })
+  it('이웃·마을 사람이 서는 자리는 문 앞(문 바로 아래·문깔개 바로 위)이 아니다 — 드나드는 길을 막지 않게', () => {
+    const doorish = (t: Tile) => 'DLE'.includes(MAP[t.y]?.[t.x] ?? 'T')
+    const front = (t: Tile) => doorish({ x: t.x, y: t.y - 1 }) || MAP[t.y + 1]?.[t.x] === 'E' || doorish(t)
+    const bad: string[] = []
+    const visit = (o: unknown, where: string) => {
+      if (Array.isArray(o)) o.forEach((v, i) => visit(v, `${where}[${i}]`))
+      else if (o && typeof o === 'object') {
+        for (const [k, v] of Object.entries(o as Record<string, unknown>)) {
+          if (k === 'door') continue
+          if ((k === 'at' || k === 'tile' || k === 'wet') && isTile(v)) {
+            if (front(v)) bad.push(`${where}.${k} ${where.length ? '' : ''}${v.x},${v.y}`)
+          } else visit(v, `${where}.${k}`)
+        }
+      }
+    }
+    visit(neighbors, 'neighbors')
+    visit(people, 'people')
+    expect(bad).toEqual([])
   })
   it('잔치·모임·이야기·동물 자리는 모두 걸을 수 있다', () => {
     const spots: [string, Tile][] = [['모닥불', FIRE]]
