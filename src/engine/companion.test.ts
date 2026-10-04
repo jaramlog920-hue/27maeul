@@ -32,7 +32,7 @@ describe('neighbors', () => {
     expect(goalFor(baker, { ...base, minute: 25 * 60 })).toBeNull()
   })
   it('비 오면 처마 밑, 상인은 장날에만', () => {
-    expect(goalFor(baker, { ...base, minute: 700, wet: true })).toEqual({ x: 5, y: 17 })
+    expect(goalFor(baker, { ...base, minute: 700, wet: true })).toEqual({ x: 6, y: 17 }) // 처마 밑, 문 바로 앞은 비워 둔다
     expect(goalFor(merchant, { ...base, minute: 700 })).toBeNull()
     expect(goalFor(merchant, { ...base, minute: 700, market: true })).toEqual({ x: 21, y: 14 })
   })
