@@ -586,6 +586,21 @@ describe('벤치', () => {
   })
 })
 
+describe('곁에서 누르면 그 자리에서 바로 열린다', () => {
+  it('작업대 대각선 곁에서 누르면 정해진 자리로 걸어가지 않고 연다', () => {
+    reset({})
+    const g = useGame.getState().game
+    const t = PLACES.workbench.tiles[0]
+    const at = { x: t.x - 1, y: t.y - 1 }
+    useGame.setState({ modal: null, game: { ...g, player: { ...g.player, x: at.x, y: at.y, path: [] } } })
+    act(() => useGame.getState().tap(t))
+    expect(useGame.getState().game.player.path).toEqual([])
+    act(() => useGame.getState().frame(0.05))
+    expect(useGame.getState().modal).toEqual({ kind: 'menu', place: 'workbench' })
+    expect(playerTile(useGame.getState().game)).toEqual(at)
+  })
+})
+
 describe('자리마다 제 창이 열린다', () => {
   // 집 앞 벤치(homeBench)를 더하면서 화덕·작업대·기름틀·언덕이 모두 "장터 벤치" 창을 열던 일 (2026-10-01)
   it.each([

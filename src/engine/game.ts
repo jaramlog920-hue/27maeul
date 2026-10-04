@@ -620,14 +620,16 @@ export function tapTile(s: GameState, tile: Tile): GameState {
     path = pathToward(from, tile, blockers)
   } else if (stray) {
     target = { kind: 'stray', animal: stray }
-    path = pathToward(from, tile, new Set([...blockers, key(tile)]))
+    path = isNear(from, tile) ? [] : pathToward(from, tile, new Set([...blockers, key(tile)]))
   } else if (pet) {
     target = { kind: 'companion' }
-    path = pathToward(from, tile, new Set([...blockers, key(tile)]))
+    path = isNear(from, tile) ? [] : pathToward(from, tile, new Set([...blockers, key(tile)]))
   } else if (place) {
     target = { kind: 'place', id: place, tile }
     const stand = PLACES[place].stand
-    path = stand ? findPath(from, stand, blockers) : pathToward(from, tile, blockers)
+    // 이미 곁에 서 있으면 정해진 자리로 옮겨 가지 않고 그 자리에서 바로 연다 (2026-10-04 사용자)
+    const near = PLACES[place].tiles.some((t) => Math.max(Math.abs(t.x - from.x), Math.abs(t.y - from.y)) <= 1) || (!!stand && sameTile(from, stand))
+    path = near ? [] : stand ? findPath(from, stand, blockers) : pathToward(from, tile, blockers)
   } else {
     target = { kind: 'ground' }
     path = findPath(from, tile, blockers)
