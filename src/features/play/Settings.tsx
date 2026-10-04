@@ -2,6 +2,7 @@ import { useState } from 'react'
 import {
   currentMusicChoice,
   currentVolume,
+  MUSIC_CHOICES,
   setMusicChoice,
   setVolume,
   sfx,
@@ -16,7 +17,7 @@ import { useGame, ZOOMS } from '../../store/game-store'
 
 const C = T.controls
 
-const TRACKS = [['default', 'A'], ['D', 'B'], ['E', 'C'], ['F', 'D']] as const
+const TRACKS = MUSIC_CHOICES.map((id) => [id, (C.tracks as Record<MusicChoice, string>)[id]] as const)
 
 function VolumeSlider({ kind, label }: { kind: VolumeKind; label: string }) {
   const [value, setValue] = useState(() => Math.round(currentVolume(kind) * 100))
@@ -61,11 +62,12 @@ export function Settings() {
     <div className="dialog settings" role="dialog" aria-label="설정">
       <h2>설정</h2>
       <section className="settings-section">
-        <h3>배경음악</h3>
-        <div className="settings-options">
+        <h3>{C.music}</h3>
+        <div className="settings-options" role="group" aria-label={C.music}>
           {TRACKS.map(([id, label]) => (
             <button
               key={id}
+              data-track={id}
               className={music === id && !muted ? 'on' : ''}
               aria-pressed={music === id && !muted}
               onClick={() => {

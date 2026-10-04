@@ -618,13 +618,14 @@ function gained(before: Inventory, after: Inventory): Partial<Record<ItemId, num
 const LETTER_ROOM_OF: Partial<Record<string, ShelfRoomId>> = { letters: 'romPhm', hebJud: 'hebJud', rev: 'rev' }
 
 /** 집 안에 막 들어왔으면 누구 집인지 알린다 (다락에 오르면 다락 서재) */
-function announceRoom(before: GameState, after: GameState) {
+function announceRoom(before: GameState, after: GameState, door = true) {
   if (inAttic(playerTile(after)) && !inAttic(playerTile(before))) {
     useGame.getState().say(T.ui.atticRoom, 2200)
     return
   }
   const room = roomAt(playerTile(after))
   if (!room || room === roomAt(playerTile(before))) return
+  if (door) sfx('door')
   const who = CONTENT.neighbors.find((d) => d.id === room.owner)?.role
   const letterRoom = LETTER_ROOM_OF[room.owner]
   const name =
@@ -687,7 +688,7 @@ export const useGame = create<Store>((set, get) => {
    */
   const afterShelved = (prev: GameState, next: GameState, book: Book, missed: readonly string[]) => {
     const firstTime = prev.shelved[book] === undefined
-    sfx('done')
+    sfx('shelve')
     const grades = T.library.grades as string[]
     get().say(fill(T.library.shelvedToast, { bookObj: withObject((T.quiz.books as Record<string, string>)[book]), grade: grades[next.shelved[book]!] }) + (missed.length ? ' ' + T.library.rereadNote : ''), 4000)
     // 새로 열린 구역
@@ -807,7 +808,7 @@ export const useGame = create<Store>((set, get) => {
         // 문 앞 편지 바구니: 오늘 온 편지(말씀 조각이 든 편지)를 먼저 꺼내고, 오늘 의뢰 편지가 있으면 연다
         const { state, pieceIds } = openMailbox(game, CONTENT)
         if (pieceIds.length) {
-          sfx('scroll')
+          sfx('letter')
           get().say(gotLine(pieceIds, T.word.letterGot, T.word.gotMany), 3400)
         }
         if (letterWaiting(state)) return { game: pieceIds.length ? persist(state) : state, modal: { kind: 'letter' } }
@@ -821,7 +822,7 @@ export const useGame = create<Store>((set, get) => {
           get().say(T.post.mailboxEmpty)
           return { game, modal: null }
         }
-        sfx('scroll')
+        sfx('letter')
         get().say(gotLine(pieceIds, T.word.letterGot, T.word.gotMany), 3400)
         return { game: persist(state), modal: null }
       }
@@ -833,9 +834,9 @@ export const useGame = create<Store>((set, get) => {
           return { game: persist(dined), modal: null }
         }
         // 초대받은 저녁이 아니면 그냥 들어가 본다
-        sfx('step')
+        sfx('door')
         const entered = enterDoor(game, target.tile)
-        announceRoom(game, entered)
+        announceRoom(game, entered, false)
         return { game: persist(entered), modal: null }
       }
       case 'anvil':
@@ -859,7 +860,10 @@ export const useGame = create<Store>((set, get) => {
   function finishPending(game: GameState, p: Pending, state: MiniState): GameState {
     const before = game.inv
     let next = game
-    if (p.kind === 'gather') next = finishGather(game, p.place)
+    if (p.kind === 'gather') {
+      next = finishGather(game, p.place)
+      if (next !== game) sfx(p.place === 'well' ? 'splash' : 'harvest')
+    }
     else if (p.kind === 'craft') next = finishCraft(game, p.recipe)
     else if (p.kind === 'help') {
       const def = CONTENT.neighbors.find((n) => n.id === p.neighborId)
@@ -885,7 +889,10 @@ export const useGame = create<Store>((set, get) => {
     toast: null,
     award: null,
     trip: null,
-    startTripBoard: (dest, withChild) => set({ trip: { dest, withChild }, modal: null }),
+    startTripBoard: (dest, withChild) => {
+      sfx('splash')
+      set({ trip: { dest, withChild }, modal: null })
+    },
     finishTripBoard: (rewards) => {
       const t = get().trip
       if (!t) return
@@ -1024,7 +1031,10 @@ export const useGame = create<Store>((set, get) => {
           modal = a.modal ?? modal
         }
       }
-      if (!modal && game.scenes.length) modal = { kind: 'scene', id: game.scenes[0] }
+      if (!modal && game.scenes.length) {
+        modal = { kind: 'scene', id: game.scenes[0] }
+        sfx('bell')
+      }
       // 아이가 태어난 장면을 본 뒤 이름을 정한다
       if (!modal && game.flags.childNaming && game.child) modal = { kind: 'childName' }
       set({ game, modal, clockMs })
@@ -1038,9 +1048,9 @@ export const useGame = create<Store>((set, get) => {
     listenTo: (neighborId) => {
       const { state, pieceId, pieceIds } = listen(get().game, neighborId, CONTENT)
       if (!pieceId) return
-      sfx('scroll')
       // 받은 조각은 말씀 탭의 말씀 조각 도감에 저절로 담긴다 (계획 14 작업 5)
       const letter = neighborId === POSTMAN
+      sfx(letter ? 'letter' : 'scroll')
       get().say(gotLine(pieceIds, letter ? T.word.letterGot : T.word.got, T.word.gotMany), 3400)
       // 장째로 된 조각(편지 책·요한계시록)이나 여럿이면 창을 닫는다 — 본문은 말씀 탭 [본문에서 보기]로
       if (pieceIds.length > 1 || modeOf(pieceById(pieceId).book) === 'letters') {
@@ -1071,7 +1081,7 @@ export const useGame = create<Store>((set, get) => {
     doTrade: (t) => {
       const next = doTrade(get().game, t)
       if (!next) return
-      sfx('gift')
+      sfx('coin')
       // 설치물은 무엇을 어디에 두었는지 한 줄 (빗물 항아리는 집 앞, 잉크 항아리는 집 안 자리를 고른다)
       if (t.grants) {
         const thing = withObject((T.easy.names as Record<string, string>)[t.grants])
@@ -1084,7 +1094,7 @@ export const useGame = create<Store>((set, get) => {
       const price = sellPrice(get().game, item)
       const next = sell(get().game, item)
       if (!next) return
-      sfx('gift')
+      sfx('coin')
       set({ game: persist(next) })
       get().say(fill(T.ui.soldLine, { item: itemName(item), n: price! }))
     },
@@ -1092,7 +1102,7 @@ export const useGame = create<Store>((set, get) => {
     buyRareItem: (item) => {
       const next = buyRare(get().game, item)
       if (!next) return
-      sfx('gift')
+      sfx('coin')
       toastGain(get().game.inv, next.inv)
       set({ game: persist(next) })
     },
@@ -1142,7 +1152,7 @@ export const useGame = create<Store>((set, get) => {
     doBoard: (r) => {
       const next = fulfillBoard(get().game, r)
       if (!next) return
-      sfx('gift')
+      sfx('coin')
       get().say(`${neighborById(r.npc)?.role ?? '이웃'}의 부탁을 들어주었어요 · ${r.coins}닢${r.rare ? ` · ${itemName(r.rare)} 1` : ''}`)
       set({ game: persist(next) })
     },
@@ -1256,7 +1266,7 @@ export const useGame = create<Store>((set, get) => {
     sellHerbs: () => {
       const r = sellHerbs(get().game)
       if (!r) return
-      sfx('gift')
+      sfx('coin')
       set({ game: persist(r.state) })
       get().say(fill(T.herbs.sold, { n: r.n, coins: r.coins }))
     },
@@ -1322,7 +1332,7 @@ export const useGame = create<Store>((set, get) => {
       const before = get().game
       const next = doService(before, svc)
       if (!next) return
-      sfx('gift')
+      sfx('coin')
       const got = [Object.keys(svc.get).length ? itemList(svc.get) : '', svc.getCoins ? `${svc.getCoins}닢` : ''].filter(Boolean).join(' · ')
       set({ game: persist(next) })
       get().say(`${svc.label} · ${got}`)
@@ -1349,7 +1359,7 @@ export const useGame = create<Store>((set, get) => {
     buyScroll: () => {
       const r = buyScroll(get().game, CONTENT)
       if (!r) return
-      sfx('scroll')
+      sfx('coin')
       get().say('떠돌이 상인에게서 다른 마을의 옛 사본을 샀어요')
       set({ game: persist(r.state), modal: { kind: 'passage', pieceId: r.pieceId, askLine: false } })
     },
@@ -1377,14 +1387,14 @@ export const useGame = create<Store>((set, get) => {
     waterAt: (at) => {
       const next = water(get().game, at)
       if (!next) return
-      sfx('tap')
+      sfx('splash')
       set({ game: persist(passTime({ ...next, needs: work(next.needs, 2) }, 10)), modal: null })
     },
     harvestAt: (at) => {
       const before = get().game.inv
       const next = harvest(get().game, at)
       if (!next) return get().say(T.ui.bagFull)
-      sfx('gift')
+      sfx('harvest')
       toastGain(before, next.inv)
       set({ game: persist(passTime(next, 10)), modal: null })
     },
@@ -1420,7 +1430,7 @@ export const useGame = create<Store>((set, get) => {
       const game = get().game
       const next = startCopy(game, book, CONTENT)
       if (next === game && game.copy.book !== book) return
-      sfx('scroll')
+      sfx('page')
       // 이미 쓰던 책(이어 쓸 자리나 마친 장이 있다)이면 "…부터 이어집니다"를 보인다
       const resume = !!next.copy.at[book] || next.progress[book].completed.length > 0
       set({ game: persist(next), modal: { kind: 'copy', view: 'write', last: null, resume } })
@@ -1445,7 +1455,7 @@ export const useGame = create<Store>((set, get) => {
         set({ modal: { kind: 'copy', view: 'pick' } })
         return
       }
-      sfx('scroll')
+      sfx('page')
       const spot = copySpot(game, book, CONTENT)
       set({ modal: { kind: 'copy', view: spot ? 'write' : 'menu', last: null, resume: !!spot } })
     },
@@ -1473,8 +1483,11 @@ export const useGame = create<Store>((set, get) => {
       if (result.kind === 'none') return true
       // 밤에 한 절을 적으면 기름이 있을 때 등잔을 켠다 (그림의 불빛 — 없어도 쓴다)
       const lit = lightLamp(state) ?? state
-      // 한 절은 펜 소리, 한 장을 마치면 마침 소리
-      sfx(result.kind === 'chapter' ? 'done' : 'pen')
+      // 한 절은 펜 소리, 한 장을 마치면 책장 넘기는 소리와 마침 소리
+      if (result.kind === 'chapter') {
+        sfx('page')
+        sfx('done')
+      } else sfx('pen')
       set({ game: persist(lit), modal: { kind: 'copy', view: result.kind === 'chapter' ? 'done' : 'write', last: result, resume: false } })
       return true
     },
@@ -1595,7 +1608,7 @@ export const useGame = create<Store>((set, get) => {
       const game = get().game
       const next = bindBook(game, m.book, CONTENT)
       if (next === game) return
-      sfx('done')
+      sfx('bind')
       set({ game: persist(next), modal: { ...m, step: 'made' } })
     },
     bindSpecial: (choice) => {
@@ -1604,7 +1617,7 @@ export const useGame = create<Store>((set, get) => {
       const game = get().game
       const next = m.redo ? decorateBook(game, m.book, choice) : bindBook(game, m.book, CONTENT, choice)
       if (next === game) return
-      sfx('done')
+      sfx('bind')
       set({ game: persist(next), modal: { ...m, step: 'made', choice } })
     },
     closeBind: () => {

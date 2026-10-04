@@ -174,6 +174,15 @@ describe('조이스틱 설정', () => {
     expect(loadJoystickShape()).toBe('round')
     expect(loadJoystickSide()).toBe('left')
   })
+  it('배경음악 단추는 곡 이름으로 보이고, 고르면 저장된다', () => {
+    render(<Settings />)
+    const names = Array.from(document.querySelectorAll('[data-track]')).map((b) => b.textContent)
+    expect(names).toEqual(['들판', '호숫가', '등불', '장날'])
+    act(() => (document.querySelector('[data-track="E"]') as HTMLButtonElement).click())
+    expect(localStorage.getItem('twenty-seven/music')).toBe('E')
+    act(() => (document.querySelector('[data-track="default"]') as HTMLButtonElement).click())
+    expect(localStorage.getItem('twenty-seven/music')).toBe('default')
+  })
   it('왼쪽 자리면 joystick-left class', () => {
     const { container, rerender } = render(<Joystick />)
     expect(container.querySelector('.joystick-left')).toBeNull()
