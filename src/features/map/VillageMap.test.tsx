@@ -11,4 +11,11 @@ describe('마을 지도', () => {
     expect(screen.getByText('서고')).toBeInTheDocument()
     expect(screen.getByText('광장')).toBeInTheDocument()
   })
+  it('잠긴 집 자물쇠: 2권은 약방 하나, 베 짜는 집은 7권 (2026-10-05)', () => {
+    const { container } = render(<ModalLayer />)
+    act(() => useGame.getState().open({ kind: 'villageMap' }))
+    const locks = [...container.querySelectorAll('.vmap-label.locked')].map((e) => e.textContent)
+    expect(locks.filter((t) => t === '🔒 2권')).toHaveLength(1)
+    expect(locks).toContain('🔒 7권')
+  })
 })

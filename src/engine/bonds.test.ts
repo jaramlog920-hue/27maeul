@@ -142,8 +142,13 @@ describe('C. 마을이 자란다', () => {
     const before = goToSleep(chooseBook(newGame(CONTENT), 'lk', CONTENT), CONTENT)
     expect(before.npcs.weaver.visible).toBe(false)
     expect(before.offers.weaver).toBeUndefined()
-    // 베 짜는 이웃은 서고에 책이 두 권 꽂히면 이사 온다 (2026-10-04 사용자 — 마을 단계 대신 권수)
-    const after = goToSleep({ ...at(chooseBook(newGame(CONTENT), 'lk', CONTENT), 22 * 60, 3), shelved: { mk: 1, lk: 1 } as GameState['shelved'] }, CONTENT)
+    // 베 짜는 이웃은 서고에 책이 일곱 권 꽂히면 이사 온다 (2026-10-04 사용자 — 마을 단계 대신 권수, 2026-10-05: 약방과 겹치던 2권 → 7권)
+    const six = { mt: 1, mk: 1, lk: 1, jn: 1, ac: 1, rom: 1 } as GameState['shelved']
+    const notYet = goToSleep({ ...at(chooseBook(newGame(CONTENT), 'lk', CONTENT), 22 * 60, 3), shelved: six }, CONTENT)
+    expect(notYet.flags['movedIn:weaver']).toBeUndefined()
+    expect(notYet.scenes).not.toContain('movedIn:weaver')
+    const after = goToSleep({ ...at(chooseBook(newGame(CONTENT), 'lk', CONTENT), 22 * 60, 3), shelved: { ...six, gal: 1 } as GameState['shelved'] }, CONTENT)
+    expect(after.scenes).toContain('movedIn:weaver')
     expect(after.clock.day).toBe(4)
     // 4일째 07:30 이후 베틀 곁
     let s = at(after, 8 * 60)
@@ -157,6 +162,15 @@ describe('C. 마을이 자란다', () => {
       d = goToSleep(d, CONTENT)
     }
     expect(tellers).toContain('weaver')
+  })
+  it('예전 2권 때 이미 이사 온 베 짜는 이웃은 7권이 안 되어도 그대로 산다 (옛 저장)', () => {
+    const old = { ...at(chooseBook(newGame(CONTENT), 'lk', CONTENT), 22 * 60, 3), shelved: { mk: 1, lk: 1 } as GameState['shelved'] }
+    const kept = goToSleep({ ...old, flags: { ...old.flags, 'movedIn:weaver': 1 } }, CONTENT)
+    expect(kept.flags['movedIn:weaver']).toBe(1)
+    expect(kept.scenes).not.toContain('movedIn:weaver')
+    let s = at(kept, 8 * 60)
+    for (let i = 0; i < 600; i++) s = tick(s, 0.05, zero, CONTENT).state
+    expect(s.npcs.weaver.visible).toBe(true)
   })
 })
 

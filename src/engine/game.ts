@@ -286,7 +286,8 @@ type GoalState = Pick<GameState, 'clock' | 'flags' | 'progress' | 'hearts' | 'to
 
 /**
  * 서고에 꽂은 책 수 (복음서·사도행전·편지 모두) — 마을 구역(lockedZones)과 서고 권수로 이사 오는 이웃이 이것을 센다.
- * 1권 목수 · 2권 약방 주인 · 3권 어부 · 4권 나루(여행) · 5권 포도밭 · 6권 벌통 (2026-09-30 사용자).
+ * 1권 목수 · 2권 약방 주인 · 3권 어부 · 4권 나루(여행) · 5권 포도밭 · 6권 벌통 (2026-09-30 사용자) · 7권 베 짜는 이웃
+ * (2026-10-05: 2권에 약방과 겹치던 것을 7권으로 — 이미 이사 온 옛 저장은 movedIn 표식으로 그대로 산다).
  * 직업 단계(job.ts)와 복음서 방 잔치는 복음서만 따로 센다
  */
 export function shelvedCount(s: Pick<GameState, 'shelved'>): number {
