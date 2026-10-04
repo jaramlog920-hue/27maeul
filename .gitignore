@@ -11,3 +11,4 @@ raw-art/
 .superpowers/
 
 .vercel
+.env*
