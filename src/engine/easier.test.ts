@@ -147,20 +147,22 @@ describe('빗물 항아리: 아침마다 물 1, 비 온 다음 날 물 3', () =>
 })
 
 describe('갈대 말리는 틀: 이웃(어부)이 몰래 갈대를 채운다 — 설치 다음 날 아침 한 번만 장면', () => {
-  it('설치한 아침에는 아직, 다음 날 아침 파피루스 1과 장면, 그 뒤로는 말없이 밤마다 1', () => {
+  it('설치한 아침에는 아직, 다음 날 아침 크림색 종이 1과 장면, 그 뒤로는 말없이 밤마다 1 (계획 14 — 파피루스 대신 꾸미기 재료)', () => {
     const built = sleep(orderWork(ready(), 'reedRack')!)
     expect(built.flags['unlock:reedRack']).toBe(1)
-    expect(built.inv.papyrus).toBeUndefined()
+    expect(built.inv.creamPaper).toBeUndefined()
     expect(built.scenes).not.toContain('reedRack')
     const day2 = sleep({ ...built, scenes: [] })
-    expect(day2.inv.papyrus).toBe(1)
+    expect(day2.inv.creamPaper).toBe(1)
+    expect(day2.inv.papyrus).toBeUndefined()
     expect(day2.scenes).toEqual(['reedRack'])
     const day3 = sleep({ ...day2, scenes: [] })
-    expect(day3.inv.papyrus).toBe(2)
+    expect(day3.inv.creamPaper).toBe(2)
     expect(day3.scenes).not.toContain('reedRack')
     const day4 = sleep({ ...day3, scenes: [] })
-    expect(day4.inv.papyrus).toBe(3)
+    expect(day4.inv.creamPaper).toBe(3)
     expect(day4.scenes).not.toContain('reedRack')
+    expect(SCENES.reedRack.lines[0].text).toContain('크림색 종이')
   })
   it('장면은 어부가 말한다 (플레이어가 갈대를 넣는 일은 없다)', () => {
     const scene = SCENES.reedRack
@@ -170,9 +172,9 @@ describe('갈대 말리는 틀: 이웃(어부)이 몰래 갈대를 채운다 —
     // 틀에 갈대를 넣는 버튼·부탁 문구가 없다
     expect(JSON.stringify(T.easy)).not.toMatch(/갈대를? 넣/)
   })
-  it('파피루스가 가방에 가득하면 쉬어 간다', () => {
-    const s = own({ ...ready(), inv: { papyrus: MAX_STACK }, flags: { ...ready().flags, rackSeen: 1 } }, 'reedRack')
-    expect(sleep(s).inv.papyrus).toBe(MAX_STACK)
+  it('크림색 종이가 가방에 가득하면 쉬어 간다 (하루 양·쌓이는 한도는 예전 그대로)', () => {
+    const s = own({ ...ready(), inv: { creamPaper: MAX_STACK, papyrus: 2 }, flags: { ...ready().flags, rackSeen: 1 } }, 'reedRack')
+    expect(sleep(s).inv).toMatchObject({ creamPaper: MAX_STACK, papyrus: 2 })
   })
 })
 
@@ -201,22 +203,50 @@ describe('그을음 받이: 화덕을 쓸 때마다 그을음 1 (하루 두 번�
   })
 })
 
-describe('잉크 항아리: 그을음·물이 있으면 아침마다 잉크 1', () => {
-  it('그을음 1 + 물 1 → 잉크 1, 하루 한 병', () => {
+describe('잉크 항아리: 물이 있으면 아침마다 푸른 염료 1 (계획 14 — 잉크 대신 꾸미기 재료)', () => {
+  it('물 1 → 푸른 염료 1, 하루 한 병 (그을음은 쓰지 않고, 잉크는 생기지 않는다)', () => {
     const s = own({ ...ready(), inv: { soot: 3, water: 3 } }, 'inkJar')
     const next = sleep(s)
-    expect(next.inv).toMatchObject({ soot: 2, water: 2, ink: 1 })
+    expect(next.inv).toMatchObject({ soot: 3, water: 2, blueDye: 1 })
+    expect(next.inv.ink).toBeUndefined()
   })
-  it('그을음이나 물이 없으면 그대로', () => {
-    expect(sleep(own({ ...ready(), inv: { water: 3 } }, 'inkJar')).inv.ink).toBeUndefined()
-    expect(sleep(own({ ...ready(), inv: { soot: 3 } }, 'inkJar')).inv.ink).toBeUndefined()
+  it('물이 없으면 그대로', () => {
+    expect(sleep(own({ ...ready(), inv: { soot: 3 } }, 'inkJar')).inv.blueDye).toBeUndefined()
   })
   it('빗물 항아리의 아침 물로도 우러난다', () => {
-    expect(sleep(own({ ...ready(), inv: { soot: 1 } }, 'inkJar', 'rainJar')).inv).toMatchObject({ ink: 1 })
+    expect(sleep(own({ ...ready(), inv: {} }, 'inkJar', 'rainJar')).inv).toMatchObject({ blueDye: 1 })
   })
-  it('잉크가 셋 있으면 쉬어 간다 (과하게 쌓이지 않게)', () => {
-    const s = own({ ...ready(), inv: { soot: 3, water: 3, ink: INK_JAR_HOLD } }, 'inkJar')
-    expect(sleep(s).inv).toMatchObject({ soot: 3, water: 3, ink: INK_JAR_HOLD })
+  it('염료가 셋 있으면 쉬어 간다 (과하게 쌓이지 않게)', () => {
+    const s = own({ ...ready(), inv: { water: 3, blueDye: INK_JAR_HOLD, ink: 1 } }, 'inkJar')
+    expect(sleep(s).inv).toMatchObject({ water: 3, blueDye: INK_JAR_HOLD, ink: 1 })
+  })
+})
+
+describe('꾸미기 재료를 얻는 길 (계획 14): 틀·항아리 말고도 작업대와 장날', () => {
+  it('작업대: 파피루스 2 → 크림색 종이 1, 양털 1 → 좋은 실 1 (예전에 모아 둔 파피루스도 쓸모가 있다)', () => {
+    const s = { ...ready(), inv: { papyrus: 5, wool: 2 } }
+    expect(canCraft(s, 'creamPaper')).toBeNull()
+    const p = finishCraft(s, 'creamPaper')
+    expect(p.inv).toMatchObject({ papyrus: 3, creamPaper: 1 })
+    const t = finishCraft(p, 'fineThread')
+    expect(t.inv).toMatchObject({ wool: 1, fineThread: 1 })
+    expect(canCraft({ ...ready(), inv: { papyrus: 1 } }, 'creamPaper')).toBe('needs')
+    for (const id of ['creamPaper', 'fineThread'] as const) expect((T.recipes as Record<string, string>)[id]).toBeTruthy()
+  })
+  it('장날 상인: 포도 2 또는 예전 잉크 2병 → 푸른 염료 1', () => {
+    const s = trade({ ...at(ready(), MARKET), inv: { grapes: 2 } }, byId('blueDye'))!
+    expect(s.inv).toMatchObject({ blueDye: 1 })
+    const u = trade({ ...at(ready(), MARKET), inv: { ink: 2 } }, byId('blueDyeInk'))!
+    expect(u.inv).toMatchObject({ blueDye: 1 })
+    expect(u.inv.ink).toBeUndefined()
+    for (const id of ['blueDye', 'blueDyeInk']) expect((T.trades as Record<string, string>)[id]).toBeTruthy()
+  })
+  it('새 재료는 이름·설명이 있다', () => {
+    for (const id of ['creamPaper', 'blueDye', 'fineThread'] as const) {
+      expect(ITEM_TEXT[id].name).toBeTruthy()
+      expect(ITEM_TEXT[id].desc).toBeTruthy()
+    }
+    expect(ITEM_TEXT.inkJar.desc).toContain('푸른 염료')
   })
 })
 
@@ -295,6 +325,17 @@ describe('저장과 불러오기', () => {
     expect(back.chest).toEqual({ reed: 12, water: 3 })
     for (const id of ['rainJar', 'reedRack', 'sootCatcher', 'inkJar', 'supplyChest']) expect(back.flags[`unlock:${id}`]).toBe(1)
     expect(back.flags).toMatchObject({ rackSeen: 1, sootDay: 1, sootCaught: 1, 'order:reedRack': 1 })
+  })
+  it('옛 저장(계획 14 전): 가진 파피루스·잉크·좋은 펜·넓은 책상·틀·항아리는 그대로, 다음 아침부터 꾸미기 재료가 생긴다', () => {
+    const old = {
+      ...own(ready(), 'reedRack', 'inkJar'),
+      inv: { papyrus: 4, ink: 3, water: 1, goodPen: 1, wideDesk: 1 },
+      flags: { ...own(ready(), 'reedRack', 'inkJar').flags, rackSeen: 1 },
+    }
+    const back = deserialize(serialize(old), CONTENT)!
+    expect(back.inv).toMatchObject({ papyrus: 4, ink: 3, goodPen: 1, wideDesk: 1 })
+    const morning = sleep(back)
+    expect(morning.inv).toMatchObject({ papyrus: 4, ink: 3, goodPen: 1, wideDesk: 1, creamPaper: 1, blueDye: 1 })
   })
   it('옛 저장(궤짝 칸이 없던 때)은 빈 궤짝', () => {
     const raw = JSON.parse(serialize(ready()))

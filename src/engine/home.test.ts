@@ -1,6 +1,7 @@
 // 집 넓히기 2단계(방 하나 더 → 다락 서재)와 넓은 책상 (계획 4 작업 5)
 import {
   bindMinutes,
+  copyMinutes,
   canOrderHome,
   chooseBook,
   goToSleep,
@@ -51,7 +52,7 @@ import { findPath } from './movement'
 import { placement } from './room'
 import { deserialize, serialize } from './save'
 import { CONTENT, piecesOf } from '../content/catalog'
-import { SCENES, T } from '../content/text'
+import { ITEM_TEXT, SCENES, T } from '../content/text'
 import { TOOLS } from './items'
 import { BABY_PARTY_SPOTS, FRIENDS_SPOT, HILL_SPOTS, VISIT_SPOT } from './bonds'
 import { EAVES, STRAY_SPOTS } from './companion'
@@ -328,14 +329,19 @@ describe('넓은 책상', () => {
     expect(trade({ ...at(s, 600, 7), coins: 79 }, t)).toBeNull()
     expect(T.trades[t.id as keyof typeof T.trades]).toBeDefined()
   })
-  it('장 엮기 시간이 20% 줄어든다', () => {
+  it('계획 14: 빠르게 하지 않는 꾸미기 물건 — 넓은 책상·기록대가 있어도 한 장에 드는 시간은 같다, 이미 산 책상은 그대로 가진다', () => {
     const base = ready()
     const plain = bindMinutes(base)
-    expect(bindMinutes({ ...base, inv: { wideDesk: 1 } })).toBe(Math.round(plain * 0.8))
-    const a = submitChapter({ ...base, inv: { papyrus: 1, ink: 1 } }, 'lk', 1, CONTENT).state
-    const b = submitChapter({ ...base, inv: { papyrus: 1, ink: 1, wideDesk: 1 } }, 'lk', 1, CONTENT).state
+    expect(bindMinutes({ ...base, inv: { wideDesk: 1 } })).toBe(plain)
+    expect(bindMinutes({ ...base, flags: { ...base.flags, 'fix:desk': 2 } })).toBe(plain)
+    expect(copyMinutes({ ...base, inv: { wideDesk: 1 } })).toBe(copyMinutes(base))
+    const a = submitChapter({ ...base, inv: {} }, 'lk', 1, CONTENT).state
+    const b = submitChapter({ ...base, inv: { wideDesk: 1 } }, 'lk', 1, CONTENT).state
     expect(a.clock.minute - base.clock.minute).toBe(plain)
-    expect(b.clock.minute - base.clock.minute).toBe(Math.round(plain * 0.8))
+    expect(b.clock.minute - base.clock.minute).toBe(plain)
+    expect(b.inv.wideDesk).toBe(1)
+    expect(ITEM_TEXT.wideDesk.desc).not.toMatch(/시간|빠르/)
+    expect(ITEM_TEXT.goodPen.desc).not.toMatch(/두 병|빠르/)
   })
 })
 

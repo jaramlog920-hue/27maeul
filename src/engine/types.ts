@@ -188,6 +188,10 @@ export type ItemId =
   | 'shell'
   | 'lantern'
   | 'purpleRug'
+  // 꾸미기 재료 (계획 14 — 재료 없는 필사): 특별 제본의 표지 종이·물감·엮는 실
+  | 'creamPaper'
+  | 'blueDye'
+  | 'fineThread'
 
 /** 손일 놀이: 찧기·맞추기·줍기·길게 누르기·번갈아 누르기·순서 기억하기 */
 export type Minigame = 'mash' | 'timing' | 'pick' | 'hold' | 'weave' | 'order'

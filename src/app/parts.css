@@ -1825,6 +1825,9 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
 .copy-menu-actions { display: grid; gap: 8px; max-width: 320px; width: 100%; margin: 6px auto 0; }
 .copy-write { display: grid; gap: 10px; }
 .copy-focus-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.copy-focus-head h2 { flex: 1; }
+/* 손에 쥔 펜 (좋은 펜이면 금빛) — 도트가 번지지 않게 */
+.copy-pen { width: 28px; height: 28px; flex: none; image-rendering: pixelated; }
 .copy-exit { padding: 4px 12px; font-size: 13px; background: transparent; border: 2px solid #c9b896; color: #7a6a52; box-shadow: none; }
 .copy-bar { height: 4px; border-radius: 2px; background: #ddd0b4; overflow: hidden; }
 .copy-bar span { display: block; height: 100%; background: #a88c5e; transition: width 0.4s ease-out; }

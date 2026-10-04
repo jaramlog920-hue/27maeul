@@ -595,6 +595,19 @@ export const ICONS: Record<string, SpriteRows> = {
   bronzeOrnament: ['........', '...YY...', '..YyyY..', '.YyYYyY.', '.YyYYyY.', '..YyyY..', '...YY...', '........'],
   // 향초: 불꽃, 심지, 옅은 밀랍 몸통 두 개
   scentCandle: ['..l..l..', '..y..y..', '..k..k..', '.ww.ww..', '.wW.wW..', '.ww.ww..', 'NNNNNNN.', '........'],
+  // 꾸미기 재료 (계획 14): 크림색 종이 한 장(접힌 귀), 푸른 염료 병, 좋은 실 타래(나무 실패)
+  creamPaper: ['........', '.aaaaaa.', '.aaaaaa.', '.aaaaaW.', '.aaaaWW.', '.aaaaaa.', '.cccccc.', '........'],
+  blueDye: ['...kk...', '...WW...', '..kbbk..', '.kbBbbk.', '.kbbbbk.', '.kbbBbk.', '..kkkk..', '........'],
+  fineThread: ['........', '.NNNNNN.', '..aaaa..', '..aWaa..', '..aaWa..', '..aaaa..', '.NNNNNN.', '........'],
+}
+
+/**
+ * 필사 화면에서 손에 쥔 펜 (계획 14 — 좋은 펜은 속도 대신 쓰는 느낌을 바꾸는 꾸미기 물건):
+ * plain 갈대 펜(나무빛 줄기, 검은 촉), good 좋은 펜(금빛 줄기 — 가방 아이콘과 같은 그림). ICON_PALETTE로 그린다
+ */
+export const COPY_PEN: Record<'plain' | 'good', SpriteRows> = {
+  plain: ['.......n', '......nN', '.....nN.', '....nN..', '...nN...', '..nN....', '.kN.....', 'kk......'],
+  good: ICONS.goodPen,
 }
 
 // 가구 20종은 그림을 줄여 아이콘으로

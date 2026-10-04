@@ -2,6 +2,7 @@
 import { CONTENT } from '../../content/catalog'
 import { fill, T } from '../../content/text'
 import { canCraft, canDrinkTea, canPlayHall, canWatchSunset, hasFood, starsOut } from '../../engine/game'
+import { inkYield } from '../../engine/fixtures'
 import { TEA_PRICE } from '../../engine/places'
 import { useGame, type MenuPlace } from '../../store/game-store'
 
@@ -43,7 +44,7 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
               {T.ui.workPapyrus}
             </button>
             <button disabled={canCraft(game, 'ink') !== null} onClick={() => startCraft('ink')}>
-              {fill(T.ui.workInk, { n: (game.inv.goodPen ?? 0) > 0 ? 2 : 1 })}
+              {fill(T.ui.workInk, { n: inkYield(game) })}
             </button>
             <button disabled={canCraft(game, 'blanket') !== null} onClick={() => startCraft('blanket')}>
               {T.ui.workBlanket}
@@ -53,6 +54,12 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
             </button>
             <button disabled={canCraft(game, 'scentCandle') !== null} onClick={() => startCraft('scentCandle')}>
               {T.ui.workCandle}
+            </button>
+            <button disabled={canCraft(game, 'creamPaper') !== null} onClick={() => startCraft('creamPaper')}>
+              {T.ui.workCream}
+            </button>
+            <button disabled={canCraft(game, 'fineThread') !== null} onClick={() => startCraft('fineThread')}>
+              {T.ui.workThread}
             </button>
           </>
         )}
@@ -103,7 +110,7 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
       {sunset === 'notYet' && <p className="hint">{T.places.sunsetNotYet}</p>}
       {sunset === 'cloudy' && <p className="hint">{T.places.sunsetCloudy}</p>}
       {game.needs.fatigue >= 100 && !['hill', 'bench', 'homeBench', 'teaTable', 'pavilion'].includes(place) && <p className="hint">{T.ui.tooTired}</p>}
-      {(['bread', 'papyrus', 'ink', 'oil', 'blanket', 'cover', 'scentCandle'] as const).some((r) => canCraft(game, r) === 'full') && <p className="hint">{T.ui.bagFull}</p>}
+      {(['bread', 'papyrus', 'ink', 'oil', 'blanket', 'cover', 'scentCandle', 'creamPaper', 'fineThread'] as const).some((r) => canCraft(game, r) === 'full') && <p className="hint">{T.ui.bagFull}</p>}
     </div>
   )
 }

@@ -86,7 +86,7 @@ import {
   type Routine,
   type Stage,
 } from './people'
-import { RARE_ITEMS, fixtureTier, FIXTURE_STEPS, lampNightsPerOil, nextFixture, type FixtureLine, type FixtureStep } from './fixtures'
+import { RARE_ITEMS, FIXTURE_STEPS, lampNightsPerOil, nextFixture, type FixtureLine, type FixtureStep } from './fixtures'
 import { POSTMAN, starPostFor } from './post'
 import { blanksFor } from './copy'
 import { checkArrangement, moveItem, type ArrangeResult } from './scroll'
@@ -114,7 +114,7 @@ import { adultJob, JOB_GIFTS, kidCoins, kidMailFor, CHILD_AFTER_WEDDING, childMo
 import { DESTS, TRIP_FRIEND_GAIN, TRIP_LEAVE_BY, tripCost, type DestId } from './travel'
 import type { TripReward } from './trip-board'
 import { BIRTHDAY_MUL, isBirthday, NO_NOTEBOOK, noteGift, noteHeard, noteMet, noteSeen, seenLabel, type Notebook } from './notebook'
-import { CARPENTER_WORKS, fromChest, hasStock, INK_JAR_HOLD, LIGHT_SHOES, owns, RACK_HOLD, RACK_PAPYRUS, RAIN_WATER, SOOT_CATCH, stash, stashOverflows, stock, takeStock, walkMul, type CarpenterWork, type EasyId } from './easier'
+import { CARPENTER_WORKS, fromChest, hasStock, INK_JAR_HOLD, LIGHT_SHOES, owns, RACK_HOLD, RACK_PAPER, RAIN_WATER, SOOT_CATCH, stash, stashOverflows, stock, takeStock, walkMul, type CarpenterWork, type EasyId } from './easier'
 
 export interface JournalEntry {
   day: number
@@ -1343,6 +1343,9 @@ export const TRADES: readonly Trade[] = [
   { id: 'hourglass', pay: { olive: 1, oil: 1 }, get: { hourglass: 1 } },
   // 꾸미기 (계획 13 작업 7): 자주색 천으로 짠 귀한 깔개
   { id: 'purpleRug', pay: { purpleCloth: 1, wool: 2 }, get: { purpleRug: 1 } },
+  // 꾸미기 재료 (계획 14): 푸른 염료 — 포도로, 또는 예전에 모아 둔 잉크 두 병과 바꾼다 (잉크 항아리가 없어도 특별 제본을 할 수 있게)
+  { id: 'blueDye', pay: { grapes: 2 }, get: { blueDye: 1 } },
+  { id: 'blueDyeInk', pay: { ink: 2 }, get: { blueDye: 1 } },
   { id: 'seedHerb', pay: {}, coins: 5, get: { seedHerb: 2 } },
   { id: 'seedBean', pay: {}, coins: 4, get: { seedBean: 2 } },
   { id: 'goodPenCoins', pay: {}, coins: 40, get: { goodPen: 1 } },
@@ -2578,10 +2581,9 @@ export function copyMinutes(s: Pick<GameState, 'needs' | 'clock' | 'room' | 'inv
   return inGoodMood(s) ? 45 : 60
 }
 
-/** 한 장을 엮는 데 드는 분: 기분이 좋으면 45, 아니면 60. 넓은 책상이면 20% 덜 */
+/** 예전 엮기·옮겨 적기로 한 장을 마칠 때 흐르는 분 — 필사와 같다 (계획 14: 넓은 책상·기록대는 빠르게 하지 않는 꾸미기 물건) */
 export function bindMinutes(s: Pick<GameState, 'needs' | 'clock' | 'room' | 'inv'> & Partial<Pick<GameState, 'flags'>>): number {
-  const base = inGoodMood(s) ? 45 : 60
-  return fixtureTier({ flags: s.flags ?? {}, inv: s.inv }, 'desk') >= 1 ? Math.round(base * 0.8) : base
+  return copyMinutes(s)
 }
 
 // ── 잠과 새 날 ──
@@ -2850,13 +2852,14 @@ export function nameChild(s: GameState, name: string): GameState {
 function morningSupplies(s: GameState, endedDay: number): GameState {
   let next = s
   if (owns(s.flags, 'rainJar')) next = putAway(next, { water: weatherOf(endedDay) === 'rain' ? RAIN_WATER.afterRain + rainBonus(s.stats) : RAIN_WATER.usual })
+  // 계획 14: 틀은 크림색 종이, 항아리는 푸른 염료 (특별 제본의 꾸미기 재료 — 하루 양은 예전 그대로)
   if (owns(s.flags, 'reedRack')) {
-    if (stockOf(next, 'papyrus') < RACK_HOLD) next = putAway(next, { papyrus: RACK_PAPYRUS })
+    if (stockOf(next, 'creamPaper') < RACK_HOLD) next = putAway(next, { creamPaper: RACK_PAPER })
     if (!next.flags.rackSeen) next = { ...next, scenes: [...next.scenes, 'reedRack'], flags: { ...next.flags, rackSeen: 1 } }
   }
-  if (owns(s.flags, 'inkJar') && stockOf(next, 'ink') < INK_JAR_HOLD) {
-    const paid = useStock(next, { soot: 1, water: 1 })
-    if (paid) next = putAway(paid, { ink: 1 })
+  if (owns(s.flags, 'inkJar') && stockOf(next, 'blueDye') < INK_JAR_HOLD) {
+    const paid = useStock(next, { water: 1 })
+    if (paid) next = putAway(paid, { blueDye: 1 })
   }
   // 부탁해 둔 기록 설비가 설치된다 (계획 13)
   for (const line of ['desk', 'lamp', 'shelf', 'inkStand'] as FixtureLine[]) {

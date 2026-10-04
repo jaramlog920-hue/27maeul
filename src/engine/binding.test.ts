@@ -11,7 +11,7 @@ function done(book: Book, s: GameState = { ...newGame(CONTENT), scenes: [] }): G
   return { ...s, progress: { ...s.progress, [book]: { completed: chaptersOf(book, CONTENT), arrangement: {} } } }
 }
 const choice: SpecialChoice = { color: 'sky', pattern: 'diamonds', deco: 'bronze' }
-const rich = (s: GameState): GameState => ({ ...s, inv: { ...s.inv, papyrus: 5, ink: 2, wool: 3 } })
+const rich = (s: GameState): GameState => ({ ...s, inv: { ...s.inv, creamPaper: 5, blueDye: 2, fineThread: 3 } })
 
 describe('책마다 다른 책등', () => {
   it('스물일곱 권 모두 책등이 있고, 같은 모습(색·무늬)이 둘 없다', () => {
@@ -46,17 +46,25 @@ describe('제본', () => {
     expect(bindBook(t, 'mk', CONTENT)).toBe(t)
   })
 
-  it('특별하게 제본하기: 파피루스 3 · 잉크 1 · 양털 2를 쓰고 고른 모습이 남는다. 모자라면 그대로', () => {
-    expect(SPECIAL_COST).toEqual({ papyrus: 3, ink: 1, wool: 2 })
-    const poor = { ...done('mk'), inv: { papyrus: 3, ink: 1, wool: 1 } }
+  it('특별하게 제본하기: 크림색 종이 3 · 푸른 염료 1 · 좋은 실 2를 쓰고 고른 모습이 남는다. 모자라면 그대로', () => {
+    expect(SPECIAL_COST).toEqual({ creamPaper: 3, blueDye: 1, fineThread: 2 })
+    const poor = { ...done('mk'), inv: { creamPaper: 3, blueDye: 1, fineThread: 1 } }
     expect(bindBook(poor, 'mk', CONTENT, choice)).toBe(poor)
     const t = bindBook(rich(done('mk')), 'mk', CONTENT, choice)
     expect(t.bound.mk).toEqual({ day: t.clock.day, special: choice })
-    expect(t.inv).toMatchObject({ papyrus: 2, ink: 1, wool: 1 })
+    expect(t.inv).toMatchObject({ creamPaper: 2, blueDye: 1, fineThread: 1 })
+  })
+
+  it('옛 저장의 파피루스·잉크·양털만으로는 특별 제본이 되지 않고, 그대로 가방에 남는다 (그대로 제본하기는 늘 된다)', () => {
+    const old = { ...done('mk'), inv: { papyrus: 9, ink: 9, wool: 9 } }
+    expect(bindBook(old, 'mk', CONTENT, choice)).toBe(old)
+    const plain = bindBook(old, 'mk', CONTENT)
+    expect(plain.bound.mk).toEqual({ day: old.clock.day })
+    expect(plain.inv).toEqual({ papyrus: 9, ink: 9, wool: 9 })
   })
 
   it('궤짝에 있는 재료도 쓴다', () => {
-    const s = { ...done('mk'), inv: {}, chest: { papyrus: 3, ink: 1, wool: 2 }, flags: { ...done('mk').flags, 'unlock:supplyChest': 1 } }
+    const s = { ...done('mk'), inv: {}, chest: { creamPaper: 3, blueDye: 1, fineThread: 2 }, flags: { ...done('mk').flags, 'unlock:supplyChest': 1 } }
     const t = bindBook(s, 'mk', CONTENT, choice)
     expect(t.bound.mk?.special).toEqual(choice)
   })

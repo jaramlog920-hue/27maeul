@@ -9,6 +9,7 @@ import { setQuiet } from '../../audio/sound'
 import { chaptersOf, groupByRoom } from '../../engine/books'
 import { BLOCKED_INPUT_TYPES, checkCopy, copySpot, normalizeCopy, originalEnd, type CopySpot } from '../../engine/copying'
 import { BOOKS, type Book } from '../../engine/types'
+import { COPY_PEN, ICON_PALETTE } from '../../render/sprites'
 import { useGame, type Modal } from '../../store/game-store'
 
 const BOOK_NAME = T.quiz.books as Record<string, string>
@@ -92,6 +93,27 @@ function VerseLine({ text, matched, typo, label }: { text: string; matched: numb
       {text.slice(end)}
     </p>
   )
+}
+
+/** 손에 쥔 펜 그림: 좋은 펜이 있으면 금빛 좋은 펜, 없으면 갈대 펜 (쓰는 느낌만 바뀐다 — 빠르게 하지 않는다) */
+export function CopyPen() {
+  const good = useGame((s) => (s.game.inv.goodPen ?? 0) > 0)
+  const ref = useRef<HTMLCanvasElement>(null)
+  const kind = good ? 'good' : 'plain'
+  useEffect(() => {
+    const g = ref.current?.getContext?.('2d')
+    if (!g) return
+    g.clearRect(0, 0, 8, 8)
+    COPY_PEN[kind].forEach((row, y) =>
+      [...row].forEach((ch, x) => {
+        const c = ICON_PALETTE[ch]
+        if (ch === '.' || !c) return
+        g.fillStyle = c
+        g.fillRect(x, y, 1, 1)
+      }),
+    )
+  }, [kind])
+  return <canvas ref={ref} className={`copy-pen copy-pen-${kind}`} width={8} height={8} role="img" aria-label={good ? C.penGood : C.penPlain} />
 }
 
 /** 한 절씩 따라 적기 */
@@ -188,6 +210,7 @@ function CopyWrite({ book, spot, modal }: { book: Book; spot: CopySpot; modal: E
   return (
     <div className="copy-write">
       <header className="copy-focus-head">
+        <CopyPen />
         <h2>{fill(C.header, { book: name, chapter: spot.chapter, n: spot.index + 1, count: spot.count })}</h2>
         <button className="copy-exit" onClick={copyExit}>
           {C.exit}

@@ -60,7 +60,7 @@ export function take(inv: Inventory, need: Partial<Record<ItemId, number>>): Inv
   return out
 }
 
-export type RecipeId = 'bread' | 'papyrus' | 'ink' | 'oil' | 'blanket' | 'cover' | 'scentCandle'
+export type RecipeId = 'bread' | 'papyrus' | 'ink' | 'oil' | 'blanket' | 'cover' | 'scentCandle' | 'creamPaper' | 'fineThread'
 
 export interface Recipe {
   id: RecipeId
@@ -80,11 +80,14 @@ export const RECIPES: Record<RecipeId, Recipe> = {
   cover: { id: 'cover', at: 'workbench', needs: { papyrus: 2, wool: 1 }, gives: { cover: 1 }, minutes: 40, minigame: 'order' },
   // 향초 (계획 13 작업 4): 장날에 파는 물건
   scentCandle: { id: 'scentCandle', at: 'workbench', needs: { oil: 1, wool: 1 }, gives: { scentCandle: 2 }, minutes: 40, minigame: 'hold' },
+  // 꾸미기 재료 (계획 14): 파피루스 두 장을 곱게 펴 크림색 종이 한 장, 양털 한 뭉치를 자아 좋은 실 한 타래 — 특별 제본에 쓴다
+  creamPaper: { id: 'creamPaper', at: 'workbench', needs: { papyrus: 2 }, gives: { creamPaper: 1 }, minutes: 20, minigame: 'weave' },
+  fineThread: { id: 'fineThread', at: 'workbench', needs: { wool: 1 }, gives: { fineThread: 1 }, minutes: 20, minigame: 'timing' },
 }
 
-/** 잉크 한 번 만들 때: 기본 한 병, 좋은 펜 +1, 잉크 제조대(계획 13) +2 — fixtures.inkYield와 같은 셈 */
-export function recipeGives(r: Recipe, inv: Inventory, flags: Record<string, number> = {}): Partial<Record<ItemId, number>> {
-  if (r.id === 'ink') return { ink: 1 + (count(inv, 'goodPen') > 0 ? 1 : 0) + ((flags['fix:inkStand'] ?? 0) >= 1 ? 2 : 0) }
+/** 잉크 한 번 만들 때: 기본 한 병, 잉크 제조대(계획 13) +2 — fixtures.inkYield와 같은 셈 (좋은 펜은 계획 14부터 꾸미기 물건) */
+export function recipeGives(r: Recipe, _inv: Inventory, flags: Record<string, number> = {}): Partial<Record<ItemId, number>> {
+  if (r.id === 'ink') return { ink: 1 + ((flags['fix:inkStand'] ?? 0) >= 1 ? 2 : 0) }
   // 새 손잡이를 단 기름틀은 한 병 더
   if (r.id === 'oil' && (flags['unlock:pressHandle'] ?? 0) > 0) return { oil: 2 }
   return r.gives

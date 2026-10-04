@@ -19,9 +19,16 @@ describe('items', () => {
     expect(craft({ barley: 1, water: 1 }, RECIPES.bread)).toEqual({ bread: 2 })
     expect(craft({ barley: 1 }, RECIPES.bread)).toBeNull()
   })
-  it('좋은 펜이 있으면 잉크가 두 병', () => {
+  it('좋은 펜은 꾸미기 물건 — 잉크는 한 병 그대로, 펜은 가방에 남는다 (계획 14)', () => {
     expect(craft({ soot: 1, water: 1 }, RECIPES.ink)).toEqual({ ink: 1 })
-    expect(craft({ soot: 1, water: 1, goodPen: 1 }, RECIPES.ink)).toEqual({ ink: 2, goodPen: 1 })
+    expect(craft({ soot: 1, water: 1, goodPen: 1 }, RECIPES.ink)).toEqual({ ink: 1, goodPen: 1 })
+  })
+  it('꾸미기 재료 만들기: 파피루스 2 → 크림색 종이 1, 양털 1 → 좋은 실 1 (작업대)', () => {
+    expect(craft({ papyrus: 2 }, RECIPES.creamPaper)).toEqual({ creamPaper: 1 })
+    expect(craft({ papyrus: 1 }, RECIPES.creamPaper)).toBeNull()
+    expect(craft({ wool: 1 }, RECIPES.fineThread)).toEqual({ fineThread: 1 })
+    expect(RECIPES.creamPaper.at).toBe('workbench')
+    expect(RECIPES.fineThread.at).toBe('workbench')
   })
 })
 

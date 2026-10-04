@@ -1,11 +1,12 @@
-// 화면 아래 오늘의 상태 판 — 몸, 글쓰기 재료, 이야기를 들려줄 이웃
+// 화면 아래 오늘의 상태 판 — 몸, 살림 재료, 이야기를 들려줄 이웃
 import { fill, T } from '../../content/text'
 import type { ItemId } from '../../engine/types'
 import { ItemIcon } from '../../shared/ItemIcon'
 import { useGame } from '../../store/game-store'
 import { NeedsView } from '../menus/CareMenu'
 
-const SUPPLIES: ItemId[] = ['papyrus', 'ink', 'oil', 'bread', 'water']
+/** 늘 보이는 살림 재료 — 파피루스·잉크는 필사에 들지 않으니(계획 14) 빼고, 먹을 것·물·등잔 기름만 */
+const SUPPLIES: ItemId[] = ['bread', 'water', 'oil']
 
 export function StatusPanel() {
   const inv = useGame((s) => s.game.inv)

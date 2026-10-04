@@ -47,9 +47,9 @@ export function nextFixture(s: { flags: Record<string, number>; inv: Inventory }
   return FIXTURE_STEPS.find((x) => x.line === line && x.tier === t + 1) ?? null
 }
 
-/** 잉크 한 번 만들 때 병 수: 기본 1, 좋은 펜 +1, 잉크 제조대 +2 */
+/** 잉크 한 번 만들 때 병 수: 기본 1, 잉크 제조대 +2 (좋은 펜은 계획 14부터 쓰는 느낌만 바꾸는 꾸미기 물건) */
 export function inkYield(s: { flags: Record<string, number>; inv: Inventory }): number {
-  return 1 + (count(s.inv, 'goodPen') > 0 ? 1 : 0) + (fixtureTier(s, 'inkStand') >= 1 ? 2 : 0)
+  return 1 + (fixtureTier(s, 'inkStand') >= 1 ? 2 : 0)
 }
 
 /** 등잔 기름 한 병으로 켜는 밤 수: 작은 등잔 1, 두 심지 2, 청동 3 */

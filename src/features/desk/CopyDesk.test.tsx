@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { CONTENT, GOD_KEYWORDS, GOD_RECORDS, versesOf } from '../../content/catalog'
 import { isQuiet } from '../../audio/sound'
@@ -8,6 +8,8 @@ import { PLACES } from '../../engine/world'
 import { useGame } from '../../store/game-store'
 import { ModalLayer } from '../ModalLayer'
 import { Play } from '../play/Play'
+import { StatusPanel } from '../play/StatusPanel'
+import { T } from '../../content/text'
 
 function reset(game: Partial<GameState> = {}) {
   localStorage.clear()
@@ -304,5 +306,42 @@ describe('필사 집중 화면 — 휴대폰 한글 키보드 (조합)', () => {
     expect(fire('insertReplacementText')).toBe(true)
     expect(fire('insertText')).toBe(false)
     expect(fire('insertCompositionText')).toBe(false)
+  })
+})
+
+describe('재료 없는 필사에 맞춰 — 펜·책상은 꾸미기, 밤에도 언제든', () => {
+  it('손에 쥔 펜 그림: 좋은 펜이 없으면 갈대 펜, 있으면 좋은 펜 (쓰는 느낌만 바뀐다)', () => {
+    openWrite(writing('lk'))
+    expect(screen.getByRole('img', { name: '손에 쥔 갈대 펜' })).toHaveClass('copy-pen-plain')
+    act(() => useGame.setState((s) => ({ game: { ...s.game, inv: { goodPen: 1 } } })))
+    expect(screen.getByRole('img', { name: '손에 쥔 좋은 펜' })).toHaveClass('copy-pen-good')
+  })
+
+  it('좋은 펜이 있어도 한 장에 드는 시간·능력치는 같다 (이미 산 펜은 그대로 가진다)', async () => {
+    const user = userEvent.setup()
+    openWrite({ ...writing('lk'), inv: { goodPen: 1 } })
+    await user.type(box(), lk1[0].text)
+    expect(useGame.getState().game.inv.goodPen).toBe(1)
+    expect(useGame.getState().game.copyStats.verses).toBe(1)
+  })
+
+  it('밤에 등잔 기름이 없어도 책상에 앉아 필사 화면이 열리고 한 절을 적는다', async () => {
+    reset({ clock: { day: 1, minute: 22 * 60 }, inv: {}, ...writing('lk') })
+    render(<ModalLayer />)
+    sit()
+    expect(useGame.getState().modal).toMatchObject({ kind: 'copy', view: 'menu' })
+    act(() => useGame.getState().copyView('write', true))
+    const user = userEvent.setup()
+    await user.type(box(), lk1[0].text)
+    expect(useGame.getState().game.copyStats.verses).toBe(1)
+  })
+
+  it('아래 상태 판에는 파피루스·잉크 수가 없다 (먹을 것·물·기름만)', () => {
+    reset({ inv: { papyrus: 3, ink: 2, bread: 1 } })
+    render(<StatusPanel />)
+    const panel = screen.getByRole('region', { name: T.ui.statusTitle })
+    expect(within(panel).queryByRole('img', { name: '파피루스' })).toBeNull()
+    expect(within(panel).queryByRole('img', { name: '잉크' })).toBeNull()
+    for (const name of ['빵', '물', '기름']) expect(within(panel).getByRole('img', { name })).toBeInTheDocument()
   })
 })

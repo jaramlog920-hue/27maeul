@@ -1,6 +1,7 @@
 // 편해지는 살림 (계획 11 작업 1): 아침에 저절로 생기는 재료와 재료 궤짝.
 // 모두 "덜 반복"이지 "공짜"가 아니다 — 저절로 생기는 것은 하루 한두 개로 묶는다 (설계의 하루 리듬, 균형 시뮬레이션 테스트).
 // 가진 것은 flags[`unlock:${id}`] (이웃 부탁이 연 것과 같은 표식) — 가방 칸을 차지하지 않는 설치물이다.
+// 계획 14부터 틀과 항아리는 파피루스·잉크 대신 꾸미기 재료(크림색 종이·푸른 염료)를 만든다 — 하루 양은 그대로.
 // 잉크 항아리·재료 궤짝은 방 꾸미기 가구로도 받아 집 안 자리를 고를 수 있다(그림일 뿐, 효과는 설치 표식으로).
 import { unlocked } from './bonds'
 import { add, count, MAX_STACK, stackCap, TOOLS, type Inventory } from './items'
@@ -29,12 +30,18 @@ export const CARPENTER_WORKS: readonly CarpenterWork[] = [
 
 /** 빗물 항아리: 아침마다 물 1, 비 온 다음 날 아침 물 3 */
 export const RAIN_WATER = { usual: 1, afterRain: 3 } as const
-/** 갈대 말리는 틀: 밤마다 파피루스 1 (가방·궤짝에 이만큼 있으면 쉬어 간다 — 가죽 가방이 있어도 9, 과하게 쌓이지 않게) */
-export const RACK_PAPYRUS = 1
+/**
+ * 갈대 말리는 틀: 밤마다 크림색 종이 1 (계획 14 — 필사에 재료가 들지 않으니 파피루스 대신 특별 제본의 꾸미기 재료).
+ * 가방·궤짝에 이만큼 있으면 쉬어 간다 — 가죽 가방이 있어도 9, 과하게 쌓이지 않게
+ */
+export const RACK_PAPER = 1
 export const RACK_HOLD = MAX_STACK
 /** 그을음 받이: 화덕을 쓸 때마다 그을음 1 — 하루 두 번까지, 가진 그을음이 다섯이면 더 모이지 않는다 */
 export const SOOT_CATCH = { perDay: 2, hold: 5 } as const
-/** 잉크 항아리: 그을음 1 + 물 1이 있으면 아침마다 잉크 1 — 가진 잉크가 셋이면 쉬어 간다 (과하게 쌓이지 않게) */
+/**
+ * 잉크 항아리: 물 1이 있으면 아침마다 푸른 염료 1 (계획 14 — 잉크 대신 특별 제본의 꾸미기 재료).
+ * 가진 염료가 셋이면 쉬어 간다 (과하게 쌓이지 않게)
+ */
 export const INK_JAR_HOLD = 3
 /** 재료 궤짝 한 칸 최대 */
 export const CHEST_STACK = 30

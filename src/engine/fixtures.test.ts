@@ -65,12 +65,13 @@ describe('기록 설비 단계', () => {
     expect(o.inv.bronzeOrnament ?? 0).toBe(0)
   })
 
-  it('잉크 제조대: 한 번에 세 병 (좋은 펜이면 네 병)', () => {
+  it('잉크 제조대: 한 번에 세 병 (좋은 펜은 계획 14부터 병 수를 바꾸지 않는다)', () => {
     const s = { ...newGame(CONTENT), inv: { soot: 1, water: 1 } }
     expect(inkYield(s)).toBe(1)
+    expect(inkYield({ ...s, inv: { ...s.inv, goodPen: 1 } })).toBe(1)
     const stand = { ...s, flags: { ...s.flags, 'fix:inkStand': 1 } }
     expect(inkYield(stand)).toBe(3)
-    expect(inkYield({ ...stand, inv: { ...stand.inv, goodPen: 1 } })).toBe(4)
+    expect(inkYield({ ...stand, inv: { ...stand.inv, goodPen: 1 } })).toBe(3)
     expect(finishCraft(stand, 'ink').inv.ink).toBe(3)
   })
 

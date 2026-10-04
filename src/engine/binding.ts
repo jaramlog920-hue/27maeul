@@ -28,8 +28,11 @@ export const DECO_HEX: Record<SpineDeco, string> = {
   bronze: '#b08a52',
 }
 
-/** 특별하게 제본하기에 드는 재료: 표지 종이(파피루스) 셋 · 물들일 잉크 하나 · 엮는 실(양털) 둘 */
-export const SPECIAL_COST: Partial<Record<ItemId, number>> = { papyrus: 3, ink: 1, wool: 2 }
+/**
+ * 특별하게 제본하기에 드는 꾸미기 재료 (2026-10-04 사용자 예시): 크림색 종이 셋 · 푸른 염료 하나 · 좋은 실 둘.
+ * 갈대 말리는 틀(크림색 종이)·잉크 항아리(푸른 염료)가 저절로 만들고, 작업대(종이·실)와 장날 상인(염료)에게서도 얻는다
+ */
+export const SPECIAL_COST: Partial<Record<ItemId, number>> = { creamPaper: 3, blueDye: 1, fineThread: 2 }
 
 export interface SpecialChoice {
   color: CoverColor
