@@ -1180,6 +1180,8 @@ export function listen(s: GameState, neighborId: string, content: GameContent): 
     state: train({
       ...s,
       offers,
+      // 조각을 건넨 날에는 같은 이웃이 직업 선물을 또 주지 않는다 (offers가 지워져도 막히게)
+      flags: { ...s.flags, [`talkGift:${neighborId}`]: s.clock.day },
       collected: [...s.collected, pieceId],
       pieceLog: logPieces(s.pieceLog, [pieceId], s.clock.day, `npc:${neighborId}`),
       todayHeard: [...s.todayHeard, pieceId],

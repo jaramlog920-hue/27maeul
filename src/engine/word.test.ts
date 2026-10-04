@@ -1,6 +1,6 @@
 // 계획 14 작업 5: 말씀 조각은 드물게 (편지·특별한 대화, 일주일에 몇 번), 평소 대화엔 직업 선물, 받은 기록
 import { CONTENT } from '../content/catalog'
-import { fragmentWayOf, FRAGMENTS_PER_WEEK, WEEK_DAYS } from './fragments'
+import { fragmentWayOf, FRAGMENTS_PER_WEEK, talkGiftOf, WEEK_DAYS } from './fragments'
 import { VISIT_GIFTS } from './bonds'
 import {
   chooseBook,
@@ -113,5 +113,18 @@ describe('평소 대화의 직업 선물', () => {
     expect(receiveTalkGift(s, 'baker')).toBeNull()
     // 특별한 대화가 있는 날엔 조각을 건넨다 (선물과 겹치지 않는다)
     expect(receiveTalkGift({ ...r!.state, flags: {}, offers: { baker: 'mk-001-001' } }, 'baker')).toBeNull()
+  })
+  it('조각을 건네받은 날엔 같은 이웃이 직업 선물을 또 주지 않고, 다음 날부터는 다시 줄 수 있다', () => {
+    const base: GameState = { ...fresh(), hearts: { baker: 100 }, inv: {} }
+    const gives = (d: number) => talkGiftOf('baker', d, base.hearts, {}) !== null
+    const day = Array.from({ length: 60 }, (_, i) => i + 1).find((d) => gives(d) && gives(d + 1))
+    // 이틀 연속 선물이 걸리는 날이 없으면, 선물이 걸리는 날과 그다음 걸리는 날로 확인한다
+    const d1 = day ?? Array.from({ length: 60 }, (_, i) => i + 1).find(gives)!
+    const d2 = day ? day + 1 : Array.from({ length: 60 }, (_, i) => i + d1 + 1).find(gives)!
+    const heard = listen({ ...base, clock: { day: d1, minute: 600 }, offers: { baker: 'mk-001-001' } }, 'baker', CONTENT)
+    expect(heard.pieceId).toBe('mk-001-001')
+    expect(heard.state.offers).toEqual({})
+    expect(receiveTalkGift(heard.state, 'baker')).toBeNull()
+    expect(receiveTalkGift({ ...heard.state, clock: { day: d2, minute: 600 } }, 'baker')).not.toBeNull()
   })
 })
