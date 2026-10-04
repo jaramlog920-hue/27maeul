@@ -638,7 +638,8 @@ export const COPY_PEN: Record<'plain' | 'good', SpriteRows> = {
 
 /**
  * 필사 화면의 가족 (계획 14 작업 10): 곁에 앉은 아이(그림 그리기·책 넘겨 보기·졸다 잠들기)와 같은 방에서 책을 읽는 배우자.
- * 16×12, ICON_PALETTE로 그린다. 아이 옷 'g'는 모습대로 바꾼다 (사내아이 풀빛, 여자아이 보랏빛 — 계획 12 그림과 같게)
+ * 16×12, ICON_PALETTE로 그린다 (종이는 'K' 크림 — 'a'·'V'는 가구 색이 덮어쓴다). 아이 옷 'g'는 모습대로 바꾼다
+ * (사내아이 풀빛, 여자아이는 'q' 연보랏빛 — 계획 12 그림과 같게)
  */
 export const FAMILY_DESK: Record<'draw' | 'book' | 'doze' | 'spouse', SpriteRows> = {
   draw: [
@@ -651,9 +652,9 @@ export const FAMILY_DESK: Record<'draw' | 'book' | 'doze' | 'spouse', SpriteRows
     '..gggg..........',
     '.gggggg.........',
     '.ggggggss.......',
-    '.BBBBBBBfaaaaa..',
-    'BBBBBBBB.afaba..',
-    '.........aaaaa..',
+    '.BBBBBBBfKKKKK..',
+    'BBBBBBBB.KfKbK..',
+    '.........KKKKK..',
   ],
   book: [
     '................',
@@ -661,9 +662,9 @@ export const FAMILY_DESK: Record<'draw' | 'book' | 'doze' | 'spouse', SpriteRows
     '.NNNNNN.........',
     '.NNssss.........',
     '.Nsskss.........',
-    '..ssss.aaaa.....',
-    '..ggggaaWaa.....',
-    '.ggggggaaaa.....',
+    '..ssss.KKKK.....',
+    '..ggggKKWKK.....',
+    '.ggggggKKKK.....',
     '.ggggssrrrrr....',
     '.BBBBBBB........',
     'BBBBBBBB........',
@@ -690,8 +691,8 @@ export const FAMILY_DESK: Record<'draw' | 'book' | 'doze' | 'spouse', SpriteRows
     '..Nsskss........',
     '...ssss.........',
     '..cccccc........',
-    '.ccccccc.aaaa...',
-    '.cccccccaaWaa...',
+    '.ccccccc.KKKK...',
+    '.cccccccKKWKK...',
     '.ccccccsrrrrr...',
     '.cccccc.........',
     '..N..N..........',

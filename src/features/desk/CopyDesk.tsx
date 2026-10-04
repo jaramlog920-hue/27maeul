@@ -185,7 +185,7 @@ function FamilySprite({ pose, girl = false }: { pose: FamilyPose; girl?: boolean
     g.clearRect(0, 0, 16, 12)
     FAMILY_DESK[pose].forEach((row, y) =>
       [...row].forEach((ch, x) => {
-        const c = ICON_PALETTE[girl && ch === 'g' ? 'V' : ch]
+        const c = ICON_PALETTE[girl && ch === 'g' ? 'q' : ch]
         if (ch === '.' || !c) return
         g.fillStyle = c
         g.fillRect(x, y, 1, 1)
