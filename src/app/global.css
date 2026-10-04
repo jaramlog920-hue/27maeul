@@ -25,7 +25,7 @@
   /* 바탕 위 큰 글씨(위 줄·첫 화면) — 밝은 바탕 색 조합에선 짙게 */
   --on-bg-strong: #f4f1e1;
   /* 조작판 눈금 바탕·십자 단추 세모 */
-  --meter-bg: #0f130f;
+  --meter-bg: #1a201b;
   --deck-glyph: #cfd3b8;
   --accent: #bf5b3c;
   --accent-ink: #fff8ef;
@@ -36,10 +36,11 @@
   --ok: #5a8a3a;
   --warn: #b0402f;
   /* 휴대폰 아래 조작판 몸체와 단추 */
-  --deck-body: #2c3530;
-  --deck-key: #4b5849;
-  --deck-key-hi: #5e6c5b;
-  --deck-key-lo: #151a16;
+  /* 아래 조작판은 한 톤 밝게 — 무거움 덜기 (2026-10-04 사용자) */
+  --deck-body: #3b4740;
+  --deck-key: #596757;
+  --deck-key-hi: #6c7b69;
+  --deck-key-lo: #222a24;
   /* 성경 본문은 게임 글꼴과 다른 명조체로 — 눈으로 구분되게 (exclusion-list §0) */
   --scripture-bg: #f4e7c8;
   --scripture-edge: #b89a64;
@@ -490,6 +491,12 @@ button:focus-visible {
 .volume-row input { width: 100%; min-height: 32px; accent-color: var(--accent); }
 .volume-row output { text-align: right; font-variant-numeric: tabular-nums; }
 
+/* 게임 그림 전체 채도를 조금 낮춘다 (2026-10-04 사용자: 10~15%) — 지도·첫 화면·마을 지도 캔버스에 같이 */
+.world,
+.title-scene,
+.vmap canvas {
+  filter: saturate(0.87);
+}
 .world {
   /* 모든 패널과 같은 폭을 쓰고, 화면 높이가 짧으면 페이지를 스크롤한다. */
   width: 100%;

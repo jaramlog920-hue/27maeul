@@ -42,9 +42,10 @@ import {
 
 const C = {
   // 참고 그림(2026-09-30 사용자)에 맞춘 밝고 선명한 색: 연두 풀밭, 모래빛 흙길, 맑은 하늘빛 호수, 또렷한 지붕
-  grass: '#a8d08c',
-  grass2: '#a0c880',
-  grass3: '#b0d494',
+  // 풀은 부드러운 세이지·연두 (2026-10-04 사용자)
+  grass: '#b0cc94',
+  grass2: '#a6c48a',
+  grass3: '#b8d29e',
   worn: '#c9c27a',
   worn2: '#d8bd84',
   path: '#ecd0a0',
@@ -87,8 +88,9 @@ const C = {
 
 const SEASON_GRASS: Record<Season, [string, string, string]> = {
   // 봄 풀빛은 참고 그림(2026-09-30 사용자)에서 뽑은 그대로
-  spring: ['#a8d08c', '#a0c880', '#b0d494'],
-  summer: ['#a0c880', '#98c078', '#a8d08c'],
+  // 봄·여름 풀은 부드러운 세이지·연두 (2026-10-04 사용자 — 참고 그림보다 한 톤 차분하게)
+  spring: ['#b0cc94', '#a6c48a', '#b8d29e'],
+  summer: ['#a8c48c', '#9ebc82', '#b0cc94'],
   autumn: ['#c8c88c', '#bcbc80', '#d4d49c'],
   winter: ['#dfe8dc', '#cfdacb', '#eef3ec'],
 }
