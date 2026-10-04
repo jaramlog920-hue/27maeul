@@ -1,7 +1,9 @@
-// 일지 — 게임 속에서 일어난 사실만 적는다. 두 번째 탭은 이웃 수첩 (만난 이웃, 알게 된 것)
+// 일지 — 게임 속에서 일어난 사실만 적는다. 하루 기록 · 이웃 수첩(만난 이웃, 알게 된 것, 받은 선물) · 앨범 · 업적.
+// 2026-10-04: 따로 있던 선반의 풍경 앨범·받은 선물·업적을 이리로 옮겼다 (가족 창의 [가족 앨범]도 이 앨범 칸을 연다)
 import { useEffect, useRef, useState } from 'react'
 import { CONTENT, neighborById, pieceById } from '../../content/catalog'
-import { fill, itemName, JOB_NAME, JOURNAL_NOTES, T } from '../../content/text'
+import { fill, ITEM_TEXT, itemName, JOB_NAME, JOURNAL_NOTES, SCENES, T } from '../../content/text'
+import { ACHIEVEMENTS } from '../../engine/achievements'
 import { weatherOf } from '../../engine/calendar'
 import { seasonOf } from '../../engine/clock'
 import { dislikesOf, isSuitor, notYet, type GameState, type JournalEntry } from '../../engine/game'
@@ -10,7 +12,8 @@ import { birthdayLabel, isBirthday, knownTastes, NO_NOTEBOOK, SLOT_LABEL, SLOTS,
 import { NO_LIFE } from '../../engine/people'
 import type { ItemId, NeighborDef, Season } from '../../engine/types'
 import { neighborPortrait } from '../../render/renderer'
-import { useGame } from '../../store/game-store'
+import { ItemIcon } from '../../shared/ItemIcon'
+import { albumImage, useGame, type JournalTab } from '../../store/game-store'
 import { bondLabel, Hearts } from '../talk/TalkBox'
 
 export function journalLine(e: JournalEntry): string {
@@ -21,11 +24,11 @@ export function journalLine(e: JournalEntry): string {
   return fill(T.journal.day, { day: e.day }) + weather + body
 }
 
-type Tab = 'days' | 'neighbors'
+type Tab = JournalTab
 
-export function Journal() {
+export function Journal({ tab: first = 'days' }: { tab?: Tab }) {
   const closeModal = useGame((s) => s.closeModal)
-  const [tab, setTab] = useState<Tab>('days')
+  const [tab, setTab] = useState<Tab>(first)
   return (
     <div className="dialog journal" role="dialog" aria-label={T.ui.journalTitle}>
       <h2>{T.ui.journalTitle}</h2>
@@ -34,6 +37,8 @@ export function Journal() {
           [
             ['days', '하루 기록'],
             ['neighbors', '이웃 수첩'],
+            ['album', '앨범'],
+            ['awards', '업적'],
           ] as [Tab, string][]
         ).map(([id, label]) => (
           <button key={id} role="tab" aria-selected={tab === id} className={tab === id ? 'on' : ''} onClick={() => setTab(id)}>
@@ -41,7 +46,10 @@ export function Journal() {
           </button>
         ))}
       </div>
-      {tab === 'days' ? <Days /> : <NeighborBook />}
+      {tab === 'days' && <Days />}
+      {tab === 'neighbors' && <NeighborBook />}
+      {tab === 'album' && <Album />}
+      {tab === 'awards' && <Awards />}
       <div className="actions">
         <button onClick={closeModal}>{T.ui.close}</button>
       </div>
@@ -132,7 +140,37 @@ function NeighborBook() {
           </li>
         ))}
       </ul>
+      <OtherGifts game={game} />
     </div>
+  )
+}
+
+/**
+ * 받은 선물 가운데 누구에게 받았는지 수첩에 적히지 않은 것 (옛 저장·아이·수첩에 없는 이웃) — 이웃 수첩 맨 아래에 짧게.
+ * 누구에게 받았는지 아는 선물은 그 이웃의 쪽(받은 선물)에 있다
+ */
+export function otherGifts(game: Pick<GameState, 'giftsGot' | 'notebook' | 'flags'>): ItemId[] {
+  const got = game.notebook?.got ?? {}
+  const shown = new Set(villageNeighbors(game).filter((d) => game.notebook?.met.includes(d.id)).flatMap((d) => got[d.id] ?? []))
+  return game.giftsGot.filter((id) => !shown.has(id))
+}
+
+function OtherGifts({ game }: { game: GameState }) {
+  const rest = otherGifts(game)
+  if (!rest.length) return null
+  return (
+    <section className="nb-gifts" aria-label={T.ui.gifts}>
+      <h3>{T.ui.gifts}</h3>
+      <ul className="bag-list">
+        {rest.map((id) => (
+          <li key={id}>
+            <ItemIcon id={id} />
+            <span className="bag-name">{ITEM_TEXT[id].name}</span>
+            <span className="bag-desc">{ITEM_TEXT[id].desc}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
   )
 }
 
@@ -156,6 +194,7 @@ function NeighborPage({ game, def }: { game: GameState; def: NeighborDef }) {
   const heard = notebook.heard[def.id] ?? []
   const promises = (game.life ?? NO_LIFE).promises.filter((p) => p.npc === def.id)
   const birthday = birthdayLabel(def.id)
+  const got = notebook.got?.[def.id] ?? []
   return (
     <dl className="nb-page">
       <dt>마음</dt>
@@ -186,6 +225,8 @@ function NeighborPage({ game, def }: { game: GameState; def: NeighborDef }) {
           ))}
         </ul>
       </dd>
+      <dt>{T.ui.gifts}</dt>
+      <dd>{got.length ? <Taste items={got} /> : <span className="nb-none">아직 없음</span>}</dd>
       <dt>보여 준 사본</dt>
       <dd>{heard.length ? heard.map((id) => pieceById(id).ref).join(', ') : <span className="nb-none">아직 없음</span>}</dd>
       {promises.length > 0 && (
@@ -227,4 +268,57 @@ function Portrait({ def, season, shadow }: { def: NeighborDef; season: Season; s
     }
   }, [def, season, shadow])
   return <canvas ref={ref} className="nb-face" aria-hidden="true" />
+}
+
+/** 앨범 제목: 아이 이름(계획 12)을 넣는다 */
+function albumTitle(id: string, kid: string | undefined): string {
+  return (SCENES[id]?.album ?? '').replaceAll('{child}', kid ?? '아이')
+}
+
+/** 앨범: 풍경·가족의 날 (가족 창의 [가족 앨범]이 이 칸을 연다) */
+export function Album() {
+  const album = useGame((s) => s.game.album)
+  const kid = useGame((s) => s.game.child?.name)
+  if (!album.length) return <p>{T.ui.albumEmpty}</p>
+  return (
+    <div className="album-grid">
+      {album.map((a) => {
+        const img = albumImage(a.id)
+        return (
+          <figure key={a.id} className="album-card">
+            {img ? <img src={img} alt={albumTitle(a.id, kid)} /> : <div className="album-blank" />}
+            <figcaption>
+              {albumTitle(a.id, kid)} · {fill(T.ui.day, { day: a.day })}
+            </figcaption>
+          </figure>
+        )
+      })}
+    </div>
+  )
+}
+
+/** 업적: 이룬 것은 이룬 날과 함께, 못 이룬 것은 흐리게 */
+export function Awards() {
+  const achieved = useGame((s) => s.game.achieved ?? [])
+  return (
+    <>
+      <p className="hint">
+        이룬 업적 {achieved.length} / {ACHIEVEMENTS.length}
+      </p>
+      <ul className="award-list">
+        {ACHIEVEMENTS.map((a) => {
+          const got = achieved.find((x) => x.id === a.id)
+          return (
+            <li key={a.id} className={got ? 'on' : ''}>
+              <strong>
+                {got ? '★' : '☆'} {a.name}
+              </strong>
+              <span>{a.desc}</span>
+              {got && <span className="award-day">{fill(T.ui.day, { day: got.day })}</span>}
+            </li>
+          )
+        })}
+      </ul>
+    </>
+  )
 }

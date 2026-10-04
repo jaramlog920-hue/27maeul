@@ -25,7 +25,6 @@ import { PassageWindow } from './passage/PassageWindow'
 import { Review } from './review/Review'
 import { SceneView } from './scene/SceneView'
 import { OrdersView } from './talk/OrdersView'
-import { Shelf } from './shelf/Shelf'
 import { GiftPicker } from './talk/GiftPicker'
 import { TalkBox } from './talk/TalkBox'
 import { TradeBoard } from './talk/TradeBoard'
@@ -65,7 +64,7 @@ function Body() {
     case 'review':
       return <Review pieceId={modal.pieceId} attic={modal.attic} />
     case 'journal':
-      return <Journal />
+      return <Journal tab={modal.tab} />
     case 'scene':
       return <SceneView id={modal.id} chosen={modal.chosen} />
     case 'orders':
@@ -103,9 +102,7 @@ function Body() {
     case 'wardrobe':
       return <Wardrobe who={modal.who} />
     case 'bag':
-      return <Bag />
-    case 'shelf':
-      return <Shelf tab={modal.tab} />
+      return <Bag tab={modal.tab} />
     case 'companion':
       return <AdoptForm animal={modal.animal} />
     case 'library':

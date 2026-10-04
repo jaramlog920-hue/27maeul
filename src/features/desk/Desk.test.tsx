@@ -10,7 +10,6 @@ import { shelfRoom } from '../../engine/shelf-rooms'
 import { LETTERS } from '../../engine/types'
 import { useGame } from '../../store/game-store'
 import { ModalLayer } from '../ModalLayer'
-import { dexView } from '../shelf/Shelf'
 
 const OPEN = { gospelFeast: 2, 'room:romPhm': 1 }
 const ROM_PHM = shelfRoom('romPhm').books
@@ -37,10 +36,12 @@ describe('groupByRoom', () => {
     expect(all[3].books).toEqual([...HEB_JUD])
   })
 
-  it('도감: 방이 닫히면 편지가 없고, 열리면 그 방의 책이 보인다', () => {
-    expect(dexView(PIECES, { gospelFeast: 2 }, 'all', false).books.some((b) => LETTERS.includes(b as never))).toBe(false)
-    expect(dexView(PIECES, OPEN, 'all', false).books.slice(5)).toEqual([...ROM_PHM])
-    expect(dexView(PIECES, { ...OPEN, 'room:hebJud': 1 }, 'all', false).books.slice(5)).toEqual([...LETTERS])
+  // 예전 선반 도감 시험 (2026-10-04 도감은 말씀 › 말씀 조각으로 옮겼고, 방 거르기는 책상 고르기에 남았다)
+  it('고를 수 있는 책: 방이 닫히면 편지가 없고, 열리면 그 방의 책이 보인다', () => {
+    const withContent = PIECES.map((p) => p.book)
+    expect(pickableBooks({ gospelFeast: 2 }, withContent).some((b) => LETTERS.includes(b as never))).toBe(false)
+    expect(pickableBooks(OPEN, withContent).slice(5)).toEqual([...ROM_PHM])
+    expect(pickableBooks({ ...OPEN, 'room:hebJud': 1 }, withContent).slice(5)).toEqual([...LETTERS])
   })
 })
 

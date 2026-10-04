@@ -147,8 +147,10 @@ export type Pending =
 
 export type QuizMode = { kind: 'chapter'; book: Book; chapter: number } | { kind: 'library'; book: Book; retry: boolean }
 
-/** 선반의 칸 */
-export type ShelfTab = 'dex' | 'gifts' | 'recipes' | 'album' | 'lines' | 'items' | 'awards'
+/** 일지의 칸: 하루 기록 · 이웃 수첩(받은 선물 포함) · 앨범 · 업적 */
+export type JournalTab = 'days' | 'neighbors' | 'album' | 'awards'
+/** 가방의 칸: 물건 · 만들기(만들 줄 아는 것) · 물건 도감 */
+export type BagTab = 'items' | 'make' | 'dex'
 
 export type Modal =
   | { kind: 'settings' }
@@ -156,8 +158,8 @@ export type Modal =
   | { kind: 'schedule' }
   | { kind: 'talk'; neighborId: string; line: string }
   | { kind: 'passage'; pieceId: string; askLine: boolean; back?: boolean }
-  /** lineKey: 조각 id 또는 'book:mk' 같은 책 키. back: 적거나 넘긴 뒤 돌아갈 창 */
-  | { kind: 'myLine'; lineKey: string; back?: 'library' | 'shelf' | `room:${ShelfRoomId}` }
+  /** lineKey: 조각 id 또는 'book:mk' 같은 책 키. back: 적거나 넘긴 뒤 돌아갈 창 ('word' = 📖 말씀 › 서고) */
+  | { kind: 'myLine'; lineKey: string; back?: 'library' | 'word' | `room:${ShelfRoomId}` }
   /** copy: 편지 옮겨 적기의 고른 답 (창 상태로만 — 게임 저장에 남지 않는다) */
   | { kind: 'desk'; result: SubmitResult | null; dark: boolean; copy?: CopyPad }
   /**
@@ -168,7 +170,7 @@ export type Modal =
   | { kind: 'copy'; view: CopyView; last?: VerseResult | null; resume?: boolean }
   /** attic: 다락 창가에서 연 자기 전 읽기 */
   | { kind: 'review'; pieceId: string | null; attic?: boolean }
-  | { kind: 'journal' }
+  | { kind: 'journal'; tab?: JournalTab }
   | { kind: 'scene'; id: string; chosen?: number }
   /** 부탁하기 창 (계획 13) */
   | { kind: 'orders'; npc: string }
@@ -191,10 +193,9 @@ export type Modal =
   | { kind: 'readPick' }
   | { kind: 'quiz'; mode: QuizMode; questions: Question[]; index: number; wrong: string[]; solved: boolean; misses: number; missed: string[] }
   | { kind: 'care' }
-  | { kind: 'bag' }
+  | { kind: 'bag'; tab?: BagTab }
   | { kind: 'family' }
   | { kind: 'wardrobe'; who: WardrobeWho }
-  | { kind: 'shelf'; tab?: ShelfTab }
   | { kind: 'companion'; animal: Animal }
   | { kind: 'library' }
   /** 서고 방의 선반 (사도행전 방·편지 방·요한계시록 방 — RoomShelf), 벽의 카드 판 (board 없으면 사도행전 방 여정 판) */
@@ -259,7 +260,7 @@ const CARD_BOARDS: Record<CardBoard, { field: 'journey' | 'churches'; flag: stri
 /** 나의 한 줄 창을 닫은 뒤 돌아갈 곳 */
 function afterMyLine(m: Modal | null): Modal | null {
   if (m?.kind !== 'myLine' || !m.back) return null
-  if (m.back === 'shelf') return { kind: 'shelf', tab: 'lines' }
+  if (m.back === 'word') return { kind: 'word', tab: 'library' }
   if (m.back === 'library') return { kind: 'library' }
   return { kind: 'roomShelf', room: m.back.slice('room:'.length) as ShelfRoomId }
 }
@@ -775,7 +776,8 @@ export const useGame = create<Store>((set, get) => {
       case 'pavilion':
         return { game, modal: { kind: 'menu', place: target.id } }
       case 'shelf':
-        return { game, modal: { kind: 'shelf' } }
+        // 집 선반 = 📖 말씀 › 서고 (2026-10-04: 따로 있던 선반 창은 말씀·가방·일지로 나눠 합쳤다)
+        return { game, modal: { kind: 'word', tab: 'library' } }
       case 'library':
         return { game, modal: { kind: 'library' } }
       case 'actsShelf':

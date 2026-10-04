@@ -39,8 +39,8 @@ describe('창에 아래로 더 있다는 표시', () => {
       expect(dialog.classList.contains('more-below')).toBe(true)
     })
 
-  it('선반도 같다', () => {
-    useGame.setState({ modal: { kind: 'shelf' } })
+  it('📖 말씀 창도 같다 (예전 선반 자리)', () => {
+    useGame.setState({ modal: { kind: 'word', tab: 'library' } })
     const { container } = render(<ModalLayer />)
     const dialog = container.querySelector('.dialog') as HTMLElement
     size(dialog, 900, 300)

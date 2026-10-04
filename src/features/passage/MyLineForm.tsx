@@ -1,5 +1,5 @@
 // 나의 한 줄 — 플레이어 자신의 말. 성경 본문과 섞이지 않게 모양과 안내를 따로 둔다 (설계 2.5-4)
-// 조각 키(조각 id)와 책 키('book:mk' — 서고에 처음 꽂은 직후, 또는 선반에서)를 함께 쓴다.
+// 조각 키(조각 id)와 책 키('book:mk' — 서고에 처음 꽂은 직후, 또는 📖 말씀 › 서고에서)를 함께 쓴다.
 import { useState } from 'react'
 import { pieceById } from '../../content/catalog'
 import { T } from '../../content/text'

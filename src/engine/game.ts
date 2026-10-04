@@ -113,7 +113,7 @@ import { newlyAchieved, withFound, type Achievement } from './achievements'
 import { adultJob, JOB_GIFTS, kidCoins, kidMailFor, CHILD_AFTER_WEDDING, childMode, childStage, CRADLE_SPOT, helperSpot, helpStat, newChild, type Child, type ChildMode } from './child'
 import { DESTS, TRIP_FRIEND_GAIN, TRIP_LEAVE_BY, tripCost, type DestId } from './travel'
 import type { TripReward } from './trip-board'
-import { BIRTHDAY_MUL, isBirthday, NO_NOTEBOOK, noteGift, noteHeard, noteMet, noteSeen, seenLabel, type Notebook } from './notebook'
+import { BIRTHDAY_MUL, isBirthday, NO_NOTEBOOK, noteGift, noteGot, noteHeard, noteMet, noteSeen, seenLabel, type Notebook } from './notebook'
 import { CARPENTER_WORKS, fromChest, hasStock, INK_JAR_HOLD, LIGHT_SHOES, owns, RACK_HOLD, RACK_PAPER, RAIN_WATER, SOOT_CATCH, stash, stashOverflows, stock, takeStock, walkMul, type CarpenterWork, type EasyId } from './easier'
 
 export interface JournalEntry {
@@ -1108,6 +1108,13 @@ function heartUp(s: GameState, id: string, points: number): GameState {
   return heartUpRaw(s, id, points)
 }
 
+/** 이웃에게 받은 것: 오늘의 기록(잠들기 전 일기)과 이웃 수첩(일지 › 이웃 수첩의 받은 선물)에 함께 적는다 */
+function logGiftFrom(s: GameState, npc: string, gift: Partial<Record<ItemId, number>>): GameState {
+  const items = (Object.entries(gift) as [ItemId, number][]).filter(([, n]) => n > 0).map(([id]) => id)
+  if (!items.length) return s
+  return logGift({ ...s, notebook: noteGot(s.notebook ?? NO_NOTEBOOK, npc, items) }, npc, gift)
+}
+
 function heartUpRaw(s: GameState, id: string, points: number): GameState {
   const beforePts = s.hearts[id] ?? 0
   // 매력 단계만큼 조금 더 (3단계 +1점, 5단계 +2점)
@@ -1124,7 +1131,7 @@ function heartUpRaw(s: GameState, id: string, points: number): GameState {
         giftsGot: [...new Set([...next.giftsGot, ...(Object.keys(gift) as ItemId[])])],
         scenes: [...next.scenes, `gift:${id}:${m}`],
       }
-      next = logGift(next, id, gift)
+      next = logGiftFrom(next, id, gift)
     }
   }
   // 가벼운 신 (계획 11 작업 2): 장날 튼튼한 신을 산 뒤, 양치기와 마음 5 — 마음이 오를 때(인사·돕기·선물) 한 번
@@ -1135,7 +1142,7 @@ function heartUpRaw(s: GameState, id: string, points: number): GameState {
       giftsGot: next.giftsGot.includes('lightShoes') ? next.giftsGot : [...next.giftsGot, 'lightShoes'],
       scenes: [...next.scenes, 'lightShoes'],
     }
-    next = logGift(next, LIGHT_SHOES.npc, { lightShoes: 1 })
+    next = logGiftFrom(next, LIGHT_SHOES.npc, { lightShoes: 1 })
   }
   // 연애 후보의 이야기 (계획 6): 마음 4·6이 되면 그 사람의 옛이야기 (같은 모습이면 친구로 듣는다) — 한 번씩
   if (isCandidateId(id))
@@ -1642,6 +1649,7 @@ export function fulfillRequest(s: GameState, npc: string): GameState | null {
     ...s,
     inv: addGift(left, r.reward),
     giftsGot: [...new Set([...s.giftsGot, ...kept])],
+    notebook: noteGot(s.notebook ?? NO_NOTEBOOK, npc, kept),
     flags: { ...s.flags, [`req:${r.id}`]: 2, [`unlock:${r.unlock}`]: 1 },
     scenes: [...s.scenes, `done:${r.id}`],
   }
@@ -1654,7 +1662,7 @@ export function receiveVisit(s: GameState, npc: string): { state: GameState; gif
   if (t.visitor !== npc || t.visitGot) return null
   if (s.clock.minute < VISIT_FROM || s.clock.minute >= VISIT_TO) return null
   const gift = VISIT_GIFTS[npc] ?? {}
-  return { state: logGift({ ...s, inv: addGift(s.inv, gift), today: { ...t, visitGot: true } }, npc, gift), gift }
+  return { state: logGiftFrom({ ...s, inv: addGift(s.inv, gift), today: { ...t, visitGot: true } }, npc, gift), gift }
 }
 
 /**
@@ -1667,7 +1675,7 @@ export function receiveTalkGift(s: GameState, npc: string): { state: GameState; 
   const gift = talkGiftOf(npc, s.clock.day, s.hearts, s.flags)
   if (!gift) return null
   const giftsGot = [...new Set([...s.giftsGot, ...(Object.keys(gift) as ItemId[])])]
-  return { state: logGift({ ...s, inv: addGift(s.inv, gift), giftsGot, flags: { ...s.flags, [`talkGift:${npc}`]: s.clock.day } }, npc, gift), gift }
+  return { state: logGiftFrom({ ...s, inv: addGift(s.inv, gift), giftsGot, flags: { ...s.flags, [`talkGift:${npc}`]: s.clock.day } }, npc, gift), gift }
 }
 
 /** 저녁 초대: 그 집 문 앞에서 */

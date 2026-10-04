@@ -1,4 +1,4 @@
-// 휴대폰 아래 조작판: 왼쪽 십자 단추, 오른쪽 둥근 "확인" 단추와 작은 메뉴(가방·일지·설정).
+// 휴대폰 아래 조작판: 왼쪽 십자 단추, 오른쪽 둥근 "확인" 단추와 작은 메뉴(말씀·가방·일지·가족·설정, 집 안이면 집 꾸미기).
 // 위 가장자리에는 몸 상태 눈금과 다음 일정 한 줄. 터치 화면에서만 보인다(CSS).
 import { useState } from 'react'
 import { unlockAudio } from '../../audio/sound'
@@ -9,6 +9,7 @@ import { seasonalNeed } from '../../engine/game'
 import { moodOf } from '../../engine/mood'
 import { markMapTap } from '../../shared/ghost'
 import { useGame } from '../../store/game-store'
+import { DecorateButton } from './DecorateButton'
 import { DirectionPad } from './Joystick'
 
 
@@ -121,6 +122,7 @@ export function ControlDeck() {
                 <button role="menuitem" onClick={() => go({ kind: 'bag' })}>{T.ui.bag}</button>
                 <button role="menuitem" onClick={() => go({ kind: 'journal' })}>{T.ui.journalTitle}</button>
                 <button role="menuitem" onClick={() => go({ kind: 'family' })}>가족</button>
+                <DecorateButton role="menuitem" onPick={() => setMenu(false)} />
                 <button role="menuitem" onClick={() => go({ kind: 'settings' })}>{D.settings}</button>
               </div>
             )}

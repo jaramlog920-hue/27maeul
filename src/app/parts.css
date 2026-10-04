@@ -1962,6 +1962,20 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
 .word-lib-ch { text-align: right; font-size: 13px; }
 .word-lib-bound, .word-lib-shelf { font-size: 12px; color: var(--ink-soft); }
 .word-lib-shelf { text-align: right; }
+/* 2026-10-04 선반을 나눠 합침: 서고 책 줄의 나의 한 줄, 말씀 조각의 도장·한 복음서에만·조각 한 줄 */
+.word-lib-line { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; margin-top: 2px; font-size: 13px; }
+.word-lib-line-label, .word-myline > span { font-size: 11px; color: #8a6a2e; }
+.word-lib-line q { flex: 1 1 100%; word-break: keep-all; overflow-wrap: anywhere; }
+.word-lib-line button { min-height: 32px; padding: 4px 10px; font-size: 12px; box-shadow: none; }
+.word-piece.only { border-color: var(--accent); background: #fff4dc; }
+.word-piece.only .piece-title::before { content: "✦ "; }
+.word-piece .dex-stamps { grid-column: 1 / -1; flex-wrap: wrap; }
+.word-myline { grid-column: 1 / -1; margin: 2px 0; display: grid; gap: 1px; }
+.word-myline q { word-break: keep-all; overflow-wrap: anywhere; }
+.word-pieces .stamp-note { margin: 0 0 6px; }
+.nb-gifts { margin-top: 12px; }
+.nb-gifts h3 { font-size: 14px; margin: 0 0 4px; }
+.hud-decorate { white-space: nowrap; }
 
 /* 잠들기 전 오늘의 기록 (계획 14 작업 6): 작은 일기장 — 있는 칸만, 휴대폰(375px)에서 줄바꿈 */
 .diary { margin: 4px 0 12px; padding: 8px 12px; background: #fffaf0; border: 2px solid #d8c8a4; border-radius: 4px; }

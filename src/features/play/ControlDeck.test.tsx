@@ -2,6 +2,7 @@ import { act, fireEvent, render } from '@testing-library/react'
 import { vi } from 'vitest'
 import { CONTENT } from '../../content/catalog'
 import { newGame } from '../../engine/game'
+import { HOME_FRONT } from '../../engine/world'
 import { loadDeck, useGame } from '../../store/game-store'
 import { ControlDeck } from './ControlDeck'
 import { Joystick } from './Joystick'
@@ -24,6 +25,17 @@ describe('아래 조작판', () => {
     act(() => getByText('메뉴').click())
     act(() => getByText('가방').click())
     expect(useGame.getState().modal).toEqual({ kind: 'bag' })
+  })
+  it('메뉴는 말씀·가방·일지·가족·설정 (+집 안이면 집 꾸미기) — 선반은 없다', () => {
+    const { getByText, getAllByRole } = render(<ControlDeck />)
+    act(() => getByText('메뉴').click())
+    expect(getAllByRole('menuitem').map((b) => b.textContent)).toEqual(['📖 말씀', '가방', '일지', '가족', '집 꾸미기', '설정'])
+    act(() => getByText('메뉴').click())
+    act(() => useGame.setState((s) => ({ game: { ...s.game, player: { ...s.game.player, ...HOME_FRONT, path: [] } } })))
+    act(() => getByText('메뉴').click())
+    const items = getAllByRole('menuitem').map((b) => b.textContent)
+    expect(items).toEqual(['📖 말씀', '가방', '일지', '가족', '설정'])
+    expect(items.join()).not.toContain('선반')
   })
   it('확인 단추는 바라보는 앞을 누른다', () => {
     const press = vi.fn()

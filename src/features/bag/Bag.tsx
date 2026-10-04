@@ -9,7 +9,7 @@ import { MAX_LEVEL, STAT_IDS, statScore, type StatId, type Stats } from '../../e
 import { isHome } from '../../engine/world'
 import type { ItemId } from '../../engine/types'
 import { ItemIcon } from '../../shared/ItemIcon'
-import { useGame } from '../../store/game-store'
+import { useGame, type BagTab } from '../../store/game-store'
 import { NeedsView } from '../menus/CareMenu'
 
 const STAT_NAME = T.stats.names as Record<StatId, string>
@@ -131,9 +131,84 @@ function Copies() {
   )
 }
 
-export function Bag() {
-  const game = useGame((s) => s.game)
+/** 만들기: 만들 줄 아는 것 (예전 선반의 요리법) */
+function Recipes() {
+  const known = useGame((s) => s.game.recipesKnown)
+  if (!known.length) return <p>{T.ui.recipesEmpty}</p>
+  return (
+    <>
+      <h3>{T.ui.recipes}</h3>
+      <ul className="journal-list">
+        {known.map((r) => (
+          <li key={r}>{(T.recipes as Record<string, string>)[r]}</li>
+        ))}
+      </ul>
+    </>
+  )
+}
+
+/** 물건 도감: 한 번이라도 가져 본 물건 (못 가져 본 것은 ?) */
+function ItemDex() {
+  const found = useGame((s) => s.game.found ?? [])
+  const all = Object.keys(ITEM_TEXT) as ItemId[]
+  return (
+    <>
+      <p className="hint">
+        모은 물건 {found.length} / {all.length}
+      </p>
+      <ul className="bag-list">
+        {all.map((id) =>
+          found.includes(id) ? (
+            <li key={id}>
+              <ItemIcon id={id} />
+              <span className="bag-name">{ITEM_TEXT[id].name}</span>
+              <span className="bag-desc">{ITEM_TEXT[id].desc}</span>
+            </li>
+          ) : (
+            <li key={id} className="unknown">
+              <span className="bag-name">?</span>
+              <span className="bag-desc">아직 가져 본 적 없는 물건</span>
+            </li>
+          ),
+        )}
+      </ul>
+    </>
+  )
+}
+
+const BAG_TABS: [BagTab, string][] = [
+  ['items', '물건'],
+  ['make', '만들기'],
+  ['dex', '물건 도감'],
+]
+
+/** 가방: 물건 · 만들기 · 물건 도감 (2026-10-04: 선반의 요리법·물건 도감을 이리로) */
+export function Bag({ tab: first = 'items' }: { tab?: BagTab }) {
+  const [tab, setTab] = useState<BagTab>(first)
   const closeModal = useGame((s) => s.closeModal)
+  return (
+    <div className="dialog bag" role="dialog" aria-label={T.ui.bag}>
+      <h2>{T.ui.bag}</h2>
+      <div className="tabs" role="tablist">
+        {BAG_TABS.map(([id, label]) => (
+          <button key={id} role="tab" aria-selected={tab === id} className={tab === id ? 'on' : ''} onClick={() => setTab(id)}>
+            {label}
+          </button>
+        ))}
+      </div>
+      {tab === 'items' && <Things />}
+      {tab === 'make' && <Recipes />}
+      {tab === 'dex' && <ItemDex />}
+      <div className="actions">
+        <button onClick={closeModal}>{T.ui.close}</button>
+      </div>
+    </div>
+  )
+}
+
+/** 물건 칸: 가진 것·재료 궤짝·완성본·몸 상태·능력치 */
+function Things() {
+  const game = useGame((s) => s.game)
   const takeChest = useGame((s) => s.takeChest)
   const inv = game.inv
   const items = (Object.entries(inv) as [ItemId, number][]).filter(([, n]) => n > 0)
@@ -164,8 +239,7 @@ export function Bag() {
       <p className="bag-detail hint">{T.ui.bagTapHint}</p>
     )
   return (
-    <div className="dialog bag" role="dialog" aria-label={T.ui.bag}>
-      <h2>{T.ui.bag}</h2>
+    <>
       {items.length === 0 ? <p>{T.ui.bagEmpty}</p> : <ItemGrid items={items} picked={picked} from="bag" onPick={setPicked} />}
       {items.length > 0 && detail('bag')}
       {chest && (
@@ -181,9 +255,6 @@ export function Bag() {
       <NeedsView explain />
       <StatsView stats={game.stats} />
       <p className="hint">{T.ui.bagExplainHint}</p>
-      <div className="actions">
-        <button onClick={closeModal}>{T.ui.close}</button>
-      </div>
-    </div>
+    </>
   )
 }

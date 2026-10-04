@@ -4,6 +4,7 @@ import { useGame } from '../../store/game-store'
 import { Passage } from './Passage'
 import { Stamps } from './Stamps'
 
+/** back: 닫으면 📖 말씀 › 말씀 조각으로 돌아간다 */
 export function PassageWindow({ pieceId, askLine, back }: { pieceId: string; askLine: boolean; back?: boolean }) {
   const piece = pieceById(pieceId)
   const { closeModal, open } = useGame.getState()
@@ -13,7 +14,7 @@ export function PassageWindow({ pieceId, askLine, back }: { pieceId: string; ask
       <Passage refText={piece.ref} />
       <Stamps piece={piece} />
       <div className="actions">
-        <button onClick={() => (askLine ? open({ kind: 'myLine', lineKey: pieceId }) : back ? open({ kind: 'shelf' }) : closeModal())}>
+        <button onClick={() => (askLine ? open({ kind: 'myLine', lineKey: pieceId }) : back ? open({ kind: 'word', tab: 'pieces' }) : closeModal())}>
           {askLine ? T.ui.next : back ? T.ui.back : T.ui.close}
         </button>
       </div>

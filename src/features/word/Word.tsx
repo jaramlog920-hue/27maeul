@@ -1,4 +1,5 @@
 // 📖 말씀 탭 (계획 14 작업 5): 말씀 루프에서 쌓인 것을 한곳에서 본다 — 필사본 | 말씀 조각 | 하나님 기록 | 서고.
+// 2026-10-04: 따로 있던 선반의 이야기 도감(책 거르기·한 복음서에만·도장)은 말씀 조각으로, 내가 남긴 한 줄은 서고(책 한 줄)·말씀 조각(조각 한 줄)으로 옮겼다.
 // 가장 큰 단추는 [이어서 필사하기]. 해설 문장은 없다 — 본문은 개역한글 그대로(versesOf), 지어낸 말은 life-text의 word 칸만.
 import { Fragment, useState } from 'react'
 import { CONTENT, contextOf, GOD_KEYWORDS, neighborById, PIECES, versesOf } from '../../content/catalog'
@@ -7,7 +8,8 @@ import { chaptersOf, groupByRoom } from '../../engine/books'
 import { copySpot } from '../../engine/copying'
 import { pieceFrom, whenOf, type PieceLog } from '../../engine/fragments'
 import type { GodFind } from '../../engine/god-records'
-import { BOOKS, type Book, type Piece } from '../../engine/types'
+import { bookLineKey } from '../../engine/game'
+import { BOOKS, isGospel, type Book, type Piece } from '../../engine/types'
 import { useGame, type WordTab } from '../../store/game-store'
 import { Spine } from '../library/BookArt'
 
@@ -48,6 +50,26 @@ export function godByKeyword(finds: readonly GodFind[]): { keyword: string; name
     .map((keyword) => ({ keyword, name: GOD_KEYWORDS[keyword]?.name ?? keyword, finds: finds.filter((f) => f.keyword === keyword) }))
     .filter((g) => g.finds.length > 0)
 }
+
+/** "한 복음서에만"(✦)은 네 복음서끼리 견준 표시 — 도장이 없는 복음서 조각에만 붙인다 (사도행전·편지 조각에는 붙이지 않는다) */
+export const onlyHere = (p: Piece) => isGospel(p.book) && p.stamps.length === 0
+
+/**
+ * 말씀 조각 거르기: 받은 조각 가운데 고른 책·"한 복음서에만"으로 거른다. 고를 수 있는 책은 받은 조각이 있는 책만 (성경 순서).
+ * 계획 14부터 27권 어느 책이든 필사하고 조각도 어느 책에서나 오므로, 서고 방이 열렸는지로 거르지 않는다
+ */
+export function dexView(collected: readonly string[], book: Book | 'all', only: boolean): { books: Book[]; list: Piece[] } {
+  const got = new Set(collected)
+  const mine = PIECES.filter((p) => got.has(p.id))
+  const books = BOOKS.filter((b) => mine.some((p) => p.book === b))
+  const pick = book !== 'all' && books.includes(book) ? book : 'all'
+  const list = mine.filter((p) => (pick === 'all' || p.book === pick) && (!only || onlyHere(p)))
+  return { books, list }
+}
+
+/** 본문을 보고 '뒤로' 오거나 창을 다시 열어도 고른 책·거르기를 기억한다 */
+let rememberOnly = false
+let rememberBook: Book | 'all' = 'all'
 
 export function Word({ tab: first = 'copy' }: { tab?: WordTab }) {
   const [tab, setTab] = useState<WordTab>(first)
@@ -130,17 +152,38 @@ function CopyRecord() {
   )
 }
 
-/** 말씀 조각 도감: 받은 조각만 성경 순서로, 받은 기록과 [본문에서 보기] */
+/** 말씀 조각 도감: 받은 조각만 성경 순서로, 받은 기록·도장·나의 한 줄과 [본문에서 보기]. 책 거르기·"한 복음서에만" */
 function PieceDex() {
   const collected = useGame((s) => s.game.collected)
   const log = useGame((s) => s.game.pieceLog ?? {})
+  const lines = useGame((s) => s.game.myLines)
   const [view, setView] = useState<string | null>(null)
-  const groups = piecesByBook(collected)
-  const got = groups.reduce((n, g) => n + g.pieces.length, 0)
+  const [only, setOnlyState] = useState(rememberOnly)
+  const setOnly = (v: boolean) => {
+    rememberOnly = v
+    setOnlyState(v)
+  }
+  const [book, setBookState] = useState(rememberBook)
+  const setBook = (b: Book | 'all') => {
+    rememberBook = b
+    setBookState(b)
+  }
+  const all = dexView(collected, 'all', false)
+  const got = all.list.length
+  const { books, list } = dexView(collected, book, only)
+  const pick = book !== 'all' && books.includes(book) ? book : 'all'
+  const gospels = all.list.some((p) => isGospel(p.book))
+  const groups = piecesByBook(list.map((p) => p.id))
+  const rooms = groupByRoom(books)
   if (view) {
     const p = PIECES.find((x) => x.id === view)
     if (p) return <PieceContext piece={p} onBack={() => setView(null)} />
   }
+  const filterButton = (b: Book | 'all') => (
+    <button key={b} className={pick === b ? 'on' : ''} aria-pressed={pick === b} onClick={() => setBook(b)}>
+      {b === 'all' ? T.ui.dexBookAll : BOOK_NAME[b]}
+    </button>
+  )
   return (
     <section className="word-pieces" aria-label={W.tabs.pieces}>
       <p className="hint">{fill(W.piecesCount, { got, all: PIECES.length })}</p>
@@ -149,15 +192,58 @@ function PieceDex() {
       ) : (
         <>
           <p className="hint">{W.piecesNote}</p>
-          {groups.map(({ book, pieces }) => (
-            <Fragment key={book}>
-              <h3>{BOOK_NAME[book]}</h3>
+          {/* 책 거르기: 받은 조각이 있는 책만, 서고의 방으로 묶어서 (방이 둘 이상일 때만 방 이름) */}
+          {books.length > 1 && (
+            <div className="dex-filter" role="group" aria-label={T.ui.dexBookPick}>
+              {filterButton('all')}
+              {rooms.map(({ room, books: bs }) => (
+                <Fragment key={room.id}>
+                  {rooms.length > 1 && <span className="dex-room-name">{roomTitle(room)}</span>}
+                  {bs.map(filterButton)}
+                </Fragment>
+              ))}
+            </div>
+          )}
+          {gospels && (
+            <>
+              <div className="dex-filter">
+                <button className={!only ? 'on' : ''} aria-pressed={!only} onClick={() => setOnly(false)}>
+                  {T.ui.dexAll}
+                </button>
+                <button className={only ? 'on' : ''} aria-pressed={only} onClick={() => setOnly(true)}>
+                  ✦ {T.ui.dexOnly}
+                </button>
+                <span className="hint">{fill(T.ui.dexCount, { got: list.length, all: got })}</span>
+              </div>
+              <p className="stamp-note">{T.ui.stampNote}</p>
+            </>
+          )}
+          {list.length === 0 && <p className="hint">{W.piecesNone}</p>}
+          {groups.map(({ book: b, pieces }) => (
+            <Fragment key={b}>
+              <h3>{BOOK_NAME[b]}</h3>
               <ul className="word-piece-list">
                 {pieces.map((p) => (
-                  <li key={p.id} className="word-piece">
+                  <li key={p.id} className={`word-piece${onlyHere(p) ? ' only' : ''}`}>
                     <span className="piece-title">{p.title}</span>
                     <span className="piece-ref">{p.ref}</span>
+                    {p.stamps.length > 0 && (
+                      <span className="dex-stamps">
+                        {p.stamps.map((st) => (
+                          <span key={st.ref} className={`mini-stamp ${st.kind}`}>
+                            {st.ref.split(' ')[0]}
+                            {st.kind === 'similar' ? '≈' : ''}
+                          </span>
+                        ))}
+                      </span>
+                    )}
                     <span className="word-got">{gotLabel(log, p.id)}</span>
+                    {lines[p.id] && (
+                      <p className="word-myline">
+                        <span>{T.ui.myLine}</span>
+                        <q>{lines[p.id]}</q>
+                      </p>
+                    )}
                     <button onClick={() => setView(p.id)} aria-label={`${W.viewText} · ${p.ref}`}>
                       {W.viewText}
                     </button>
@@ -236,11 +322,13 @@ function GodRecords() {
   )
 }
 
-/** 서고: 27권 현황 — 마친 장·제본·꽂힘·책등 (서고 방으로 묶어서) */
+/** 서고: 27권 현황 — 마친 장·제본·꽂힘·책등, 꽂은 책의 나의 한 줄 (서고 방으로 묶어서). 집 선반을 누르면 이 칸이 열린다 */
 function LibraryStatus() {
   const progress = useGame((s) => s.game.progress)
   const bound = useGame((s) => s.game.bound)
   const shelved = useGame((s) => s.game.shelved)
+  const lines = useGame((s) => s.game.myLines)
+  const open = useGame((s) => s.open)
   const n = BOOKS.filter((b) => shelved[b] !== undefined).length
   const grades = T.library.grades as string[]
   return (
@@ -254,6 +342,7 @@ function LibraryStatus() {
               const g = shelved[b]
               const bd = bound[b]
               const has = g !== undefined || bd !== undefined
+              const line = lines[bookLineKey(b)]
               return (
                 <li key={b} className="word-lib-row" data-book={b}>
                   {has ? <Spine book={b} binding={bd} grade={g} /> : <span className="spine-slot" aria-hidden="true" />}
@@ -261,6 +350,14 @@ function LibraryStatus() {
                   <span className="word-lib-ch">{fill(W.libChapters, { done: progress[b].completed.length, all: chaptersOf(b, CONTENT).length })}</span>
                   <span className="word-lib-bound">{bd ? (bd.special ? W.libSpecial : W.libBound) : W.libNotBound}</span>
                   <span className="word-lib-shelf">{g !== undefined ? fill(W.libShelved, { grade: grades[g] }) : W.libNotShelved}</span>
+                  {/* 책 한 줄: 서고에 꽂은 책마다 (나중에 적거나 고칠 수 있다) */}
+                  {(g !== undefined || line !== undefined) && (
+                    <div className="word-lib-line">
+                      <span className="word-lib-line-label">{T.ui.myLine}</span>
+                      {line ? <q>{line}</q> : <span className="hint">{T.ui.bookLineNone}</span>}
+                      <button onClick={() => open({ kind: 'myLine', lineKey: bookLineKey(b), back: 'word' })}>{line ? T.ui.bookLineEdit : T.ui.bookLineWrite}</button>
+                    </div>
+                  )}
                 </li>
               )
             })}

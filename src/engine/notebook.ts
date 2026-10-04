@@ -27,6 +27,8 @@ export interface Notebook {
   seen: Record<string, Partial<Record<Slot, string>>>
   /** 이 이웃에게서 들은 이야기 조각 */
   heard: Record<string, string[]>
+  /** 이 이웃에게 받은 선물 (일지 › 이웃 수첩). 옛 저장에는 없다 — 그 선물은 수첩 아래 '받은 선물'에 따로 */
+  got?: Record<string, ItemId[]>
 }
 
 export const NO_NOTEBOOK: Notebook = { met: [], likes: {}, dislikes: {}, seen: {}, heard: {} }
@@ -44,6 +46,7 @@ export function sanitizeNotebook(raw: unknown): Notebook {
     dislikes: lists(o.dislikes) as Record<string, ItemId[]>,
     seen: seen as Notebook['seen'],
     heard: lists(o.heard),
+    ...(o.got !== undefined ? { got: lists(o.got) as Record<string, ItemId[]> } : {}),
   }
 }
 
@@ -64,6 +67,14 @@ export function noteHeard(n: Notebook, id: string, pieceIds: readonly string[]):
   let heard = n.heard[id] ?? []
   for (const p of pieceIds) heard = addTo(heard, p)
   return { ...n, heard: { ...n.heard, [id]: heard } }
+}
+
+/** 이웃에게 받은 선물을 수첩에 적는다 (같은 물건은 한 번) */
+export function noteGot(n: Notebook, id: string, items: readonly ItemId[]): Notebook {
+  if (!items.length) return n
+  let got = n.got?.[id] ?? []
+  for (const it of items) got = addTo(got, it)
+  return { ...n, got: { ...n.got, [id]: got } }
 }
 
 export function noteGift(n: Notebook, id: string, item: ItemId, liked: boolean, disliked: boolean): Notebook {

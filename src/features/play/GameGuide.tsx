@@ -31,7 +31,7 @@ export function GameGuide() {
         <tbody>
           <tr><th scope="row">침대</th><td>잠자기, 다음 날로 넘어가기</td><td>왼쪽 위</td></tr>
           <tr><th scope="row">책상</th><td>모은 이야기 정리·기록</td><td>왼쪽 아래</td></tr>
-          <tr><th scope="row">선반</th><td>이야기 도감, 풍경 앨범, 나의 한 줄, 받은 선물, 제작법, 방 꾸미기</td><td>오른쪽 위</td></tr>
+          <tr><th scope="row">선반</th><td>📖 말씀의 서고 칸 열기 — 꽂은 책과 나의 한 줄 (집 안에서는 메뉴 옆 [집 꾸미기])</td><td>오른쪽 위</td></tr>
           <tr><th scope="row">작업대</th><td>파피루스·잉크·담요 만들기</td><td>오른쪽 아래</td></tr>
           <tr><th scope="row">벽난로</th><td>불 쬐기, 음식 먹기, 빵 굽기</td><td>위쪽 가운데</td></tr>
         </tbody>

@@ -2,9 +2,10 @@ import { describe, expect, it } from 'vitest'
 import { CONTENT } from '../content/catalog'
 import { festivalOf } from './calendar'
 import { scheduledEvents } from './events'
-import { dislikesOf, giveGift, greetNeighbor, listen, newGame, type GameState } from './game'
+import { VISIT_FROM } from './bonds'
+import { dislikesOf, giveGift, greetNeighbor, listen, newGame, receiveVisit, type GameState } from './game'
 import { deserialize, serialize } from './save'
-import { BIRTHDAYS, isBirthday, knownTastes, nextBirthday, NO_NOTEBOOK, sanitizeNotebook, slotOf } from './notebook'
+import { BIRTHDAYS, isBirthday, knownTastes, nextBirthday, NO_NOTEBOOK, noteGot, sanitizeNotebook, slotOf } from './notebook'
 import type { NeighborDef } from './types'
 
 const def = (id: string) => CONTENT.neighbors.find((n) => n.id === id) as NeighborDef
@@ -89,5 +90,20 @@ describe('이웃 수첩', () => {
     expect(back?.notebook.met).toContain('baker')
     expect(sanitizeNotebook(undefined)).toEqual(NO_NOTEBOOK)
     expect(sanitizeNotebook({ met: ['a', 3], likes: { a: ['fig', 1] } }).likes).toEqual({ a: ['fig'] })
+  })
+
+  it('이웃에게 받은 선물(일지 › 이웃 수첩): 같은 물건은 한 번, 저장했다 불러와도 남고 옛 저장에는 칸이 없다', () => {
+    const n = noteGot(noteGot(NO_NOTEBOOK, 'baker', ['bread']), 'baker', ['bread', 'fig'])
+    expect(n.got).toEqual({ baker: ['bread', 'fig'] })
+    expect(noteGot(n, 'baker', [])).toBe(n)
+    expect(sanitizeNotebook({ ...n, got: { baker: ['bread', 3] } }).got).toEqual({ baker: ['bread'] })
+    expect(sanitizeNotebook({ met: [] })).not.toHaveProperty('got')
+    // 아침에 들른 이웃이 두고 간 것도 그 이웃의 쪽에 적힌다
+    const s = on(newGame(CONTENT), 1, VISIT_FROM)
+    s.today = { ...s.today, visitor: 'baker' }
+    const r = receiveVisit(s, 'baker')!
+    expect(r.state.notebook.got?.baker).toEqual(Object.keys(r.gift))
+    const back = deserialize(serialize(r.state), CONTENT)
+    expect(back?.notebook.got?.baker).toEqual(Object.keys(r.gift))
   })
 })
