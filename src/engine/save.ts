@@ -7,6 +7,7 @@ import { sanitizeStats } from './stats'
 import { sanitizeCopy, sanitizeCopyStats } from './copying'
 import { backfillGodRecords, sanitizeGodRecords } from './god-records'
 import { sanitizeBindings } from './binding'
+import { isFinished, sanitizeHomeShelf } from './finished-books'
 import { sanitizePieceLog } from './fragments'
 import { sanitizeDayLog } from './daybook'
 import { IDLE_RESET } from './autonomy'
@@ -124,7 +125,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   // 일곱 교회 판도 같게: 옛 저장(계획 7·8, 칸이 없던 때)은 빈 판, 옮겨 적은 요한계시록 장의 카드만 남기고 빠진 카드는 채운다
   const churchBoard = Array.isArray(s.churches) ? s.churches.filter((n) => Number.isInteger(n)) : []
   const churches = placeNewCards(churchBoard, cardsForChapters(content.churches ?? [], progress.rev.completed))
-  return {
+  const out: GameState = {
     ...s,
     player: moved.player,
     companion: moved.companion,
@@ -192,6 +193,8 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     rereads: (s.rereads ?? []).filter((id) => known.has(id)),
     journal: s.journal.map((e) => ({ ...e, heard: (e.heard ?? []).filter((id) => known.has(id)) })),
   }
+  // 집 책장 (계획 14 작업 8): 옛 저장(칸이 없던 때)은 빈 책장. 다 쓴 책(제본했거나 꽂은 책)만, 몇 권까지
+  return { ...out, homeShelf: sanitizeHomeShelf(s.homeShelf, (b) => isFinished(out, b)) }
 }
 
 export function deserialize(raw: string | null, content: GameContent): GameState | null {

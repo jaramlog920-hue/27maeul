@@ -8,7 +8,7 @@ import { add, addGift, CHAPTER_COST, FOODS, count, has, RECIPES, recipeGives, st
 import { facingFor, findPath, pathToward, stepActor, type Actor } from './movement'
 import { coolDown, exhausted, fallsSick, FRESH, rest, sleepNeeds, starving, tickNeeds, warmUp, work, type Needs } from './needs'
 import { inGoodMood } from './mood'
-import { placement, refitRoom, removal, solidTiles, type Furniture } from './room'
+import { footprint, placement, refitRoom, removal, solidTiles, type Furniture } from './room'
 import {
   BABY_PARTY_SPOTS,
   FRIENDS_FROM,
@@ -240,6 +240,8 @@ export interface GameState {
   bound: Bindings
   /** 오늘의 기록 (계획 14 작업 6): 그날 필사로 마친 장·받은 선물 — 잠들기 전 작은 일기에 쓰고, 잠들면 새 날의 빈 기록 */
   dayLog: DayLog
+  /** 집 책장 (계획 14 작업 8): 집 책장 가구에 둔 다 쓴 책 (몇 권까지 — 서고의 책은 그대로, 한 부 더 두는 것) */
+  homeShelf: Book[]
 }
 
 /** 지도(world.tileAt)가 이 게임의 집 단계·열린 서고 방 문(방 표)을 보게 한다. 지도를 읽는 엔진 입구마다 부른다 */
@@ -479,6 +481,7 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
     godRecords: [],
     bound: {},
     dayLog: emptyDayLog(clock.day),
+    homeShelf: [],
   }
 }
 
@@ -564,8 +567,14 @@ function interactableAt(s: GameState, t: Tile): boolean {
     Object.values(s.npcs).some((n) => n.visible && sameTile(npcTile(n), t)) ||
     straysToday(s).some((a) => sameTile(STRAY_SPOTS[a], t)) ||
     (!!s.companion && sameTile({ x: Math.round(s.companion.x), y: Math.round(s.companion.y) }, t)) ||
-    placeAt(t) !== null
+    placeAt(t) !== null ||
+    bookcaseAt(s, t)
   )
+}
+
+/** 그 칸에 집 책장(놓은 책장 가구)이 있는가 — 누르면 집 책장 창 (계획 14 작업 8) */
+export function bookcaseAt(s: Pick<GameState, 'room'>, t: Tile): boolean {
+  return s.room.some((f) => f.item === 'bookcase' && !f.on && footprint(f).some((p) => sameTile(p, t)))
 }
 
 /**
@@ -624,6 +633,10 @@ export function tapTile(s: GameState, tile: Tile): GameState {
   } else if (pet) {
     target = { kind: 'companion' }
     path = isNear(from, tile) ? [] : pathToward(from, tile, new Set([...blockers, key(tile)]))
+  } else if (!place && bookcaseAt(s, tile)) {
+    // 집 책장: 곁에 서 있으면 그 자리에서 바로, 아니면 곁으로 걸어가서 연다
+    target = { kind: 'bookcase', tile }
+    path = isNear(from, tile) ? [] : pathToward(from, tile, blockers)
   } else if (place) {
     target = { kind: 'place', id: place, tile }
     const stand = PLACES[place].stand
@@ -644,7 +657,7 @@ function targetTile(s: GameState, target: Target): Tile | null {
     const n = s.npcs[target.id]
     return n ? npcTile(n) : null
   }
-  if (target.kind === 'place') return target.tile
+  if (target.kind === 'place' || target.kind === 'bookcase') return target.tile
   if (target.kind === 'stray') return STRAY_SPOTS[target.animal]
   if (target.kind === 'companion' && s.companion) return { x: Math.round(s.companion.x), y: Math.round(s.companion.y) }
   if (target.kind === 'child') return childTile(s)
@@ -2493,10 +2506,13 @@ export function writeVerse(s: GameState, book: Book, input: string, content: Gam
     chars: s.copyStats.chars + spot.verse.chars,
     firstDay: s.copyStats.firstDay ?? day,
   }
+  // 이 책을 쓰기 시작한 날 (완성본 첫 쪽 — 작업 8). 처음 적은 절의 날 그대로 둔다
+  const started = s.copy.days?.[book]
+  const days = started ? (s.copy.days ?? {}) : { ...s.copy.days, [book]: { start: day } }
   const last = spot.index === verses.length - 1
   if (!last) {
     const nextVerse = verses[spot.index + 1].verse
-    const state = { ...s, copyStats: stats, copy: { ...s.copy, at: { ...s.copy.at, [book]: { chapter, verse: nextVerse } } } }
+    const state = { ...s, copyStats: stats, copy: { ...s.copy, days, at: { ...s.copy.at, [book]: { chapter, verse: nextVerse } } } }
     return { state, result: { kind: 'verse', chapter, verse: spot.verse.verse } }
   }
   // 장을 마쳤다
@@ -2525,7 +2541,8 @@ export function writeVerse(s: GameState, book: Book, input: string, content: Gam
       // 피로는 장을 마칠 때만 붙는다 (지쳐도 쓸 수는 있다 — 사용자 결정 2026-10-04)
       needs: work(s.needs, 6),
       godRecords: [...s.godRecords, ...finds],
-      copy: { ...s.copy, at },
+      // 이 장으로 한 권을 마쳤으면 마친 날을 남긴다
+      copy: { ...s.copy, at, days: finished ? { ...days, [book]: { start: days[book]!.start, end: day } } : days },
       copyStats: { ...stats, chapters: stats.chapters + 1, books: stats.books + (finished ? 1 : 0) },
     },
     copyMinutes(s),

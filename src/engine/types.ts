@@ -65,6 +65,8 @@ export type Target =
   /** 우리 아이 (계획 12) */
   | { kind: 'child' }
   | { kind: 'stray'; animal: 'cat' | 'dog' }
+  /** 집에 놓은 책장 (계획 14 작업 8): 다 쓴 책을 몇 권 둔다 */
+  | { kind: 'bookcase'; tile: Tile }
   | { kind: 'ground' }
 /** 네 복음서 — 도장·복음서 탐정·"어느 복음서"·복음서 방은 이 네 권만 */
 export type Gospel = 'mt' | 'mk' | 'lk' | 'jn'

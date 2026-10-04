@@ -134,6 +134,7 @@ import { finishLetter, letterPay, letterWaiting } from '../engine/requests'
 import { POSTMAN } from '../engine/post'
 import { arrivesOf, modeOf, roomOf, shelfRoom, type ShelfRoomId } from '../engine/shelf-rooms'
 import { saveGame } from '../engine/save'
+import { isFinished, toggleHomeBook } from '../engine/finished-books'
 import { moveItem } from '../engine/scroll'
 import type { Book, ItemId, PlaceId, Rng, Target, Tile } from '../engine/types'
 import { sfx, setAudioMuted } from '../audio/sound'
@@ -212,6 +213,25 @@ export type Modal =
   | { kind: 'garden'; at: Tile }
   /** 📖 말씀 탭 (계획 14 작업 5): 필사본 · 말씀 조각 · 하나님 기록 · 서고 */
   | { kind: 'word'; tab?: WordTab }
+  /**
+   * 완성본 펼쳐 보기 (계획 14 작업 8): 첫 쪽 나의 필사 기록 → [펼쳐 보기] 내가 필사한 본문 / [이 책에서 발견한 하나님 기록].
+   * back: 닫은 뒤 돌아갈 창 (말씀 › 서고, 서고·방 선반, 집 책장)
+   */
+  | { kind: 'bookView'; book: Book; back?: BookBack }
+  /** 집 책장 (계획 14 작업 8): 놓은 책장 가구를 누르면 — 다 쓴 책을 몇 권 골라 둔다 */
+  | { kind: 'homeShelf' }
+
+/** 완성본 창을 닫은 뒤 돌아갈 곳 */
+export type BookBack = 'word' | 'library' | 'homeShelf' | `room:${ShelfRoomId}`
+
+/** 완성본 창을 닫은 뒤 돌아갈 창 (없으면 마을로) */
+export function bookBackModal(back: BookBack | undefined): Modal | null {
+  if (!back) return null
+  if (back === 'word') return { kind: 'word', tab: 'library' }
+  if (back === 'library') return { kind: 'library' }
+  if (back === 'homeShelf') return { kind: 'homeShelf' }
+  return { kind: 'roomShelf', room: back.slice('room:'.length) as ShelfRoomId }
+}
 
 /** 말씀 탭의 칸 */
 export type WordTab = 'copy' | 'pieces' | 'god' | 'library'
@@ -420,6 +440,10 @@ interface Store {
   startRetry: (book: Book) => void
   /** 제본 창을 연다: 아직 제본하지 않은 책은 고르기부터, 제본한 책(꽂은 책 포함)은 표지 꾸미기부터 */
   openBind: (book: Book, back?: BindBack) => void
+  /** 완성본 펼쳐 보기를 연다 (다 쓴 책 — 제본했거나 꽂은 책 — 만) */
+  openBook: (book: Book, back?: BookBack) => void
+  /** 집 책장에 두기·내려놓기 */
+  toggleHomeBook: (book: Book) => void
   /** 제본 창: 그대로 제본하기 (무료) */
   bindPlain: () => void
   /** 제본 창: 고른 모습으로 특별하게 제본하기 / 다시 꾸미기 (재료가 모자라면 그대로) */
@@ -751,6 +775,8 @@ export const useGame = create<Store>((set, get) => {
       return { game, modal: { kind: 'follow', who: 'pet' } }
     }
     if (target.kind === 'child') return { game, modal: { kind: 'follow', who: 'child' } }
+    // 집에 놓은 책장: 다 쓴 책을 몇 권 둔다 (계획 14 작업 8)
+    if (target.kind === 'bookcase') return { game, modal: { kind: 'homeShelf' } }
     if (target.kind !== 'place') return { game, modal: null }
     switch (target.id) {
       case 'bed': {
@@ -1593,6 +1619,18 @@ export const useGame = create<Store>((set, get) => {
       const next = shelveQuick(prev, book, CONTENT)
       if (next === prev) return
       afterShelved(prev, next, book, [])
+    },
+    openBook: (book, back) => {
+      if (!isFinished(get().game, book)) return
+      sfx('page')
+      set({ modal: { kind: 'bookView', book, back } })
+    },
+    toggleHomeBook: (book) => {
+      const prev = get().game
+      const next = toggleHomeBook(prev, book)
+      if (next === prev) return
+      sfx('shelve')
+      set({ game: persist(next) })
     },
     openBind: (book, back) => {
       const game = get().game

@@ -251,7 +251,8 @@ try {
 // 이름표일 뿐 지어낸 문장이 하나님에 대해 말하지 않는다 — 다른 금지어는 여기서도 그대로 걸린다
 // 스물일곱 권을 다 꽂은 날의 갈무리 화면(계획 14 작업 4)도 같은 이름표 "하나님에 대한 기록 {n}"
 // 말씀 탭의 칸 이름 "하나님 기록"(계획 14 작업 5)도 같은 이름표 — 칸 이름만, 그 칸의 안내 문장은 허용하지 않는다
-const GOD_LABELS = new Set(['life-text.copyFocus.godNew', 'life-text.shelfDone.god', 'life-text.word.tabs.god'])
+// 완성본 펼쳐 보기의 단추 "이 책에서 발견한 하나님 기록"(계획 14 작업 8)도 같은 이름표 — 단추 이름만
+const GOD_LABELS = new Set(['life-text.copyFocus.godNew', 'life-text.shelfDone.god', 'life-text.word.tabs.god', 'life-text.bookView.god'])
 const GOD_WORD = /하나님/
 function walk(node, path) {
   if (typeof node === 'string') {

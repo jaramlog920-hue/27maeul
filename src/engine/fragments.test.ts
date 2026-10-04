@@ -45,7 +45,8 @@ describe('어떤 조각이 오나', () => {
     const books = new Set<string>()
     for (let d = 1; d <= 400; d++) books.add(PIECES.find((p) => p.id === pickFragment(PIECES, [], d))!.book)
     expect(books.size).toBeGreaterThan(15)
-  })
+    // 400일을 고르느라 5초 안팎이 걸린다 — 전체 테스트가 몰릴 때 기본 시간(5초)에 걸리지 않게
+  }, 20_000)
 })
 
 describe('오늘의 조각 (편지 또는 특별한 대화)', () => {

@@ -18,7 +18,7 @@ export function ShelfRow({ book, back, notYet }: { book: Book; back: BindBack; n
   const binding = useGame((s) => s.game.bound[book])
   const progress = useGame((s) => s.game.progress)
   const inv = useGame((s) => s.game.inv)
-  const { startShelve, shelveNow, startRetry, openBind } = useGame.getState()
+  const { startShelve, shelveNow, startRetry, openBind, openBook } = useGame.getState()
   const done = bookDone({ progress }, book, CONTENT)
   const status = g !== undefined ? GRADES[g] : !done ? notYet : binding === undefined ? T.library.notBound : T.library.bound
   return (
@@ -46,6 +46,12 @@ export function ShelfRow({ book, back, notYet }: { book: Book; back: BindBack; n
         </button>
       )}
       {g !== undefined && <button onClick={() => openBind(book, back)}>{T.library.decorate}</button>}
+      {/* 다 쓴 책(제본했거나 꽂은 책)은 펼쳐 볼 수 있다 (계획 14 작업 8) */}
+      {(g !== undefined || binding !== undefined) && (
+        <button onClick={() => openBook(book, back === 'bag' ? undefined : back)} aria-label={`${BOOK_NAME[book]} · ${T.bookView.open}`}>
+          {T.bookView.open}
+        </button>
+      )}
     </li>
   )
 }

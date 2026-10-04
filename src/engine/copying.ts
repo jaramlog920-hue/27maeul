@@ -168,6 +168,12 @@ export interface CopyAt {
   draft?: string
 }
 
+/** 한 책을 쓴 날 (계획 14 작업 8 — 완성본 첫 쪽): 처음 한 절을 적은 날, 마지막 장을 필사로 마친 날 */
+export interface BookDays {
+  start: number
+  end?: number
+}
+
 export interface CopyState {
   /** 책상에서 지금 쓰는 책 (처음엔 없다) — 27권 어느 책이든 고를 수 있다 */
   book: Book | null
@@ -175,6 +181,8 @@ export interface CopyState {
   at: Partial<Record<Book, CopyAt>>
   /** 필사가 생기기 전 저장에서 이미 마친 장 ("예전에 엮은 장" — 글자 수 통계에 넣지 않는다) */
   legacy: Partial<Record<Book, number[]>>
+  /** 책마다 쓰기 시작한 날·마친 날 (이 칸이 생기기 전 저장은 없다 — 완성본 첫 쪽에 "남아 있지 않음") */
+  days?: Partial<Record<Book, BookDays>>
 }
 
 /** 나의 필사 기록 */
@@ -275,7 +283,24 @@ export function sanitizeCopy(raw: unknown, progress: Progress): CopyState {
       const kept = [...new Set(v.filter((c): c is number => Number.isInteger(c) && progress[b].completed.includes(c as number)))]
       if (kept.length) legacy[b] = kept
     }
-  return { book: isBook(raw.book) ? raw.book : null, at, legacy }
+  const days = sanitizeBookDays(raw.days)
+  return { book: isBook(raw.book) ? raw.book : null, at, legacy, ...(Object.keys(days).length ? { days } : {}) }
+}
+
+const dayOf = (n: unknown) => (typeof n === 'number' && Number.isInteger(n) && n >= 0 ? n : null)
+
+/** 책을 쓴 날 정리: 모양이 맞는 것만 (마친 날은 시작한 날 이후일 때만). 옛 저장(칸이 없던 때)은 빈 기록 */
+export function sanitizeBookDays(raw: unknown): Partial<Record<Book, BookDays>> {
+  const out: Partial<Record<Book, BookDays>> = {}
+  if (!isObj(raw)) return out
+  for (const [b, v] of Object.entries(raw)) {
+    if (!isBook(b) || !isObj(v)) continue
+    const start = dayOf(v.start)
+    if (start === null) continue
+    const end = dayOf(v.end)
+    out[b] = end !== null && end >= start ? { start, end } : { start }
+  }
+  return out
 }
 
 export function sanitizeCopyStats(raw: unknown): CopyStats {

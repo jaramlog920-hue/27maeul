@@ -13,6 +13,8 @@ import { Library } from './library/Library'
 import { RoomShelf } from './library/RoomShelf'
 import { BindView } from './library/BindView'
 import { ShelfDone } from './library/ShelfDone'
+import { BookView } from './library/BookView'
+import { HomeShelf } from './library/HomeShelf'
 import { JourneyBoard } from './journey/JourneyBoard'
 import { LetterBox } from './letters/LetterBox'
 import { CareMenu } from './menus/CareMenu'
@@ -119,6 +121,10 @@ function Body() {
       return <GardenMenu at={modal.at} />
     case 'word':
       return <Word tab={modal.tab} />
+    case 'bookView':
+      return <BookView key={modal.book} modal={modal} />
+    case 'homeShelf':
+      return <HomeShelf />
   }
 }
 

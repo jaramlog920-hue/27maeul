@@ -329,6 +329,7 @@ function LibraryStatus() {
   const shelved = useGame((s) => s.game.shelved)
   const lines = useGame((s) => s.game.myLines)
   const open = useGame((s) => s.open)
+  const openBook = useGame((s) => s.openBook)
   const n = BOOKS.filter((b) => shelved[b] !== undefined).length
   const grades = T.library.grades as string[]
   return (
@@ -350,6 +351,12 @@ function LibraryStatus() {
                   <span className="word-lib-ch">{fill(W.libChapters, { done: progress[b].completed.length, all: chaptersOf(b, CONTENT).length })}</span>
                   <span className="word-lib-bound">{bd ? (bd.special ? W.libSpecial : W.libBound) : W.libNotBound}</span>
                   <span className="word-lib-shelf">{g !== undefined ? fill(W.libShelved, { grade: grades[g] }) : W.libNotShelved}</span>
+                  {/* 다 쓴 책은 펼쳐 볼 수 있다 — 첫 쪽의 나의 필사 기록, 내가 필사한 본문, 이 책에서 발견한 기록 (계획 14 작업 8) */}
+                  {has && (
+                    <button className="word-lib-open" onClick={() => openBook(b, 'word')} aria-label={`${BOOK_NAME[b]} · ${T.bookView.open}`}>
+                      {T.bookView.open}
+                    </button>
+                  )}
                   {/* 책 한 줄: 서고에 꽂은 책마다 (나중에 적거나 고칠 수 있다) */}
                   {(g !== undefined || line !== undefined) && (
                     <div className="word-lib-line">
