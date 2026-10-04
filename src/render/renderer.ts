@@ -8,6 +8,7 @@ import { letterWaiting } from '../engine/requests'
 import { childAtSchool, closedHouseIds, mailboxHasPost, storyWaiting, routineOf, SCHOOL_SEAT, shelvedCount, straysToday, weddingToday, type GameState } from '../engine/game'
 import type { Activity } from '../engine/people'
 import { fixtureTier, RARE_ITEMS } from '../engine/fixtures'
+import { deskTraces, type DeskTraces } from '../engine/desk-traces'
 import { FURNITURE_DEFS, type Furniture } from '../engine/room'
 import { FURNI_PALETTE, FURNITURE_ART } from './furniture-art'
 import { drawDecor, lanternLights, sheepCount } from './decor'
@@ -1433,6 +1434,58 @@ function drawWideDesk(g: Ctx, at: Tile, season: Season) {
   r(C.lamp, 12, 3, 2, 3)
 }
 
+/**
+ * 책상이 살아온 흔적 (계획 14 작업 7): 필사한 만큼 책상 위에 생긴 작은 물건들. 무엇이 놓이는지는 engine/desk-traces.
+ * 모두 책상 칸 안(넓은 책상이면 그 상판 안)에만 — 왼쪽 뒤 펜꽂이, 오른쪽 뒤 등잔(불꽃 자리는 그대로),
+ * 오른쪽 앞 종이 묶음, 왼쪽 앞 덮어 둔 완성본, 종이 아래로 늘어진 책갈피 끈, 종이 위 좋은 펜. 선은 2픽셀 이상.
+ */
+function drawDeskTraces(g: Ctx, at: Tile, d: DeskTraces) {
+  const px = at.x * TILE
+  const py = at.y * TILE
+  const r = (color: string, dx: number, dy: number, w: number, h: number) => {
+    g.fillStyle = color
+    g.fillRect(px + dx, py + dy, w, h)
+  }
+  // 종이 묶음 자리: 작은 책상은 등잔 아래, 넓은 책상은 두루마리 옆 끝
+  const stackX = d.wideDesk ? 15 : 11
+  if (d.penCup) {
+    // 흙 펜꽂이와 꽂아 둔 갈대 펜 (끝이 잉크에 물들었다)
+    r('#e2c48a', 2, 0, 2, 3)
+    r('#7d6a8c', 2, 0, 2, 2)
+    r('#93654b', 1, 3, 3, 4)
+    r('#c48f6b', 1, 3, 3, 2)
+  }
+  if (d.lamp) {
+    // 흙 등잔: 불꽃 아래 낮은 몸통 (불꽃·그을음 자리는 그대로)
+    r('#b07a5a', 11, 5, 4, 2)
+    r(C.lamp, 12, 3, 2, 2)
+  }
+  if (d.pages > 0) {
+    // 다 쓴 종이 묶음: 한 겹은 2픽셀, 겹마다 크림색·연한 모래색이 번갈아
+    const h = d.pages * 2
+    const top = 12 - h
+    for (let i = 0; i < d.pages; i++) r(i % 2 ? '#eadcb8' : '#fbf3dc', stackX, top + i * 2, 4, 2)
+    // 맨 위 장에 쓴 줄 자국
+    r('#b3aabb', stackX + 1, top, 2, 2)
+  }
+  if (d.books > 0) {
+    // 덮어 둔 완성본 (두 권이면 아래에 한 권 더) — 쓰던 종이가 보이게 폭은 4
+    if (d.books > 1) r('#93b08f', 1, 10, 4, 2)
+    const by = d.books > 1 ? 6 : 8
+    r('#8399bf', 1, by, 4, 2)
+    r('#62779e', 1, by + 2, 4, 2)
+  }
+  if (d.ribbon) {
+    // 종이 아래로 늘어진 책갈피 끈
+    r('#c47f92', 8, 9, 2, 5)
+  }
+  if (d.goodPen) {
+    // 좋은 펜: 종이 윗머리에 가로로 놓인 자줏빛 펜과 금빛 펜촉
+    r('#6b5a7c', 5, 5, 4, 2)
+    r('#e3bb55', 9, 5, 2, 2)
+  }
+}
+
 /** 그을음 받이: 화덕 칸 위쪽 돌 위에 쇠판과 받침 (선은 모두 2픽셀) */
 function drawSootCatcher(g: Ctx, at: Tile) {
   const r = (color: string, dx: number, dy: number, w: number, h: number) => {
@@ -1826,6 +1879,8 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         g.fillStyle = `rgba(30, 25, 20, ${soot})`
         g.fillRect(desk.x * TILE + 12, desk.y * TILE + 3, 2, 2)
       }
+      // 책상이 살아온 흔적 (계획 14 작업 7): 필사한 만큼 책갈피·펜꽂이·종이 묶음·등잔·완성본
+      drawDeskTraces(g, desk, deskTraces(game))
       // 그을음 받이 (계획 11 작업 1): 화덕 위의 얇은 쇠판과 그 아래 받침, 모인 그을음 두 점
       if ((game.flags['unlock:sootCatcher'] ?? 0) > 0) drawSootCatcher(g, hearth)
       // 방의 가구: 깔개 → 길을 막는 가구 → 위에 올린 작은 물건
