@@ -189,6 +189,16 @@ export interface CopyState {
    * (조각 엮기·편지 옮겨 적기로 마친 장, 이 칸이 생기기 전 저장의 장 — 조심스럽게)
    */
   copied?: Partial<Record<Book, number[]>>
+  /** 필사 길잡이를 접어 두었다 (플레이어가 고른 것 — 없으면 펼쳐 보인다) */
+  guideFolded?: true
+}
+
+/** 필사 길잡이 접기·펼치기 (펼치면 칸을 지운다 — 처음과 같은 모양) */
+export function withGuideFolded(copy: CopyState, folded: boolean): CopyState {
+  if (folded === !!copy.guideFolded) return copy
+  if (folded) return { ...copy, guideFolded: true }
+  const { guideFolded: _drop, ...rest } = copy
+  return rest
 }
 
 /** 이 장은 필사로 실제로 따라 적은 장인가 */
@@ -309,6 +319,7 @@ export function sanitizeCopy(raw: unknown, progress: Progress): CopyState {
     legacy,
     ...(Object.keys(days).length ? { days } : {}),
     ...(Object.keys(copied).length ? { copied } : {}),
+    ...(raw.guideFolded === true ? { guideFolded: true as const } : {}),
   }
 }
 

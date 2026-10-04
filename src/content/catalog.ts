@@ -10,6 +10,7 @@ import lettersRaw from './letters.json'
 import peopleRaw from './people.json'
 import godRecordsRaw from './god-records.json'
 import connectionsRaw from './connections.json'
+import guidesRaw from './chapter-guides.json'
 import type { GodRecordDef } from '../engine/god-records'
 import type { NameDef } from '../engine/connections'
 import { setPeopleData, type PeopleData } from '../engine/people'
@@ -141,6 +142,19 @@ export function versesOf(ref: string): Verse[] {
 export function chapterText(book: Book, chapter: number): Verse[] {
   const n = bible[BOOK_IDS[book]]?.[chapter - 1]?.length ?? 0
   return n ? versesOf(`${BOOK_ABBR[book]} ${chapter}:1-${n}`) : []
+}
+
+/** 장별 필사 길잡이 (scripts/chapter-guides/*.txt → chapter-guides.json): 본문을 바탕으로 쓴 설명 — 성경 본문 인용이 아니다 */
+export interface ChapterGuide {
+  /** 말씀의 배경 */
+  background: string
+  /** 필사하며 살펴보기 */
+  look: string
+}
+const guides = guidesRaw as Record<string, Record<string, ChapterGuide>>
+/** 그 장의 길잡이 (장 전체에서 같은 길잡이). 없으면 null */
+export function chapterGuide(book: Book, chapter: number): ChapterGuide | null {
+  return guides[BOOK_IDS[book]]?.[String(chapter)] ?? null
 }
 
 /** 본문에서 보기의 한 절: 조각에 든 절이면 inPiece */

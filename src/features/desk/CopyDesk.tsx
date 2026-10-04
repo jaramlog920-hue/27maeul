@@ -3,7 +3,7 @@
 // 붙여넣기·끌어 놓기·자동완성은 받지 않는다. 휴대폰 한글 키보드: 조합 중인 글자는 되돌리지 않고, 조합 중인 마지막 글자를
 // 오타로 깜빡이지 않으며(compositionstart/end + InputEvent.inputType), 조합이 끝난 뒤에 절을 마친다.
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ChangeEvent, type Ref, type RefObject } from 'react'
-import { CONTENT, GOD_KEYWORDS, versesOf } from '../../content/catalog'
+import { chapterGuide, CONTENT, GOD_KEYWORDS, versesOf } from '../../content/catalog'
 import { fill, roomTitle, T, withAnd, withSubject } from '../../content/text'
 import { setQuiet } from '../../audio/sound'
 import { chaptersOf, groupByRoom } from '../../engine/books'
@@ -316,6 +316,47 @@ function VerseGhost({ ghost, still, pageRef }: { ghost: Ghost; still: boolean; p
   )
 }
 
+/**
+ * 필사 길잡이: 그 장 전체에서 같은 길잡이 (말씀의 배경 · 필사하며 살펴보기). 본문 아래의 차분한 상자 — 본문과 다른 바탕·글꼴,
+ * "본문을 바탕으로 쓴 설명" 표시. 입력칸 아래에 두어 쓰는 자리를 밀지 않고, 접기·펼치기는 플레이어 저장에 남는다.
+ * 단추를 눌러도 입력칸의 초점(휴대폰 키보드)을 빼앗지 않는다
+ */
+export function CopyGuide({ book, chapter }: { book: Book; chapter: number }) {
+  const folded = useGame((s) => !!s.game.copy.guideFolded)
+  const guide = chapterGuide(book, chapter)
+  if (!guide) return null
+  const { copyGuide } = useGame.getState()
+  return (
+    <section className="copy-guide" aria-label={C.guideTitle} data-guide={`${book}:${chapter}`}>
+      <div className="copy-guide-head">
+        <p className="copy-guide-title">{C.guideTitle}</p>
+        <button
+          type="button"
+          className="copy-guide-toggle"
+          aria-expanded={!folded}
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => copyGuide(!folded)}
+        >
+          {folded ? C.guideOpen : C.guideFold}
+        </button>
+      </div>
+      {!folded && (
+        <>
+          <p className="copy-guide-part">
+            <span className="copy-guide-label">{C.guideBackground}</span>
+            {guide.background}
+          </p>
+          <p className="copy-guide-part">
+            <span className="copy-guide-label">{C.guideLook}</span>
+            {guide.look}
+          </p>
+          <p className="copy-guide-note">{C.guideNote}</p>
+        </>
+      )}
+    </section>
+  )
+}
+
 let feelSeq = 0
 
 /** 한 절씩 따라 적기 */
@@ -511,6 +552,7 @@ function CopyWrite({ book, spot, modal, still }: { book: Book; spot: CopySpot; m
         onPaste={(e) => e.preventDefault()}
         onDrop={(e) => e.preventDefault()}
       />
+      <CopyGuide book={book} chapter={spot.chapter} />
     </div>
   )
 }

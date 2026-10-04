@@ -4,7 +4,7 @@ import type { DatePlace } from '../engine/romance'
 import { create } from 'zustand'
 import { CONTENT, neighborById, copySourceFor, LETTER_OPENINGS, pieceById, pieceOfQuestion, piecesOf, quizSourceFor } from '../content/catalog'
 import { blanksFor } from '../engine/copy'
-import { acceptInput, copySpot, type InputHow } from '../engine/copying'
+import { acceptInput, copySpot, withGuideFolded, type InputHow } from '../engine/copying'
 import { answerDesk, deskAsks, deskKidVerse, doKidAct, eatSupper, familyTrip, type KidAct } from '../engine/family'
 import { currentChapter } from '../engine/offers'
 import { handEase, leveledUp, XP, type StatId } from '../engine/stats'
@@ -437,6 +437,8 @@ interface Store {
   wordContinue: () => void
   /** 쓰다 만 입력을 지금 저장한다 (잠깐 손을 멈췄을 때) */
   copySave: () => void
+  /** 필사 길잡이를 접는다(true)·펼친다(false) — 플레이어 저장에 남는다 */
+  copyGuide: (folded: boolean) => void
   /** 편지 옮겨 적기: 칸 하나에 보기 하나 (맞으면 채우고, 틀리면 그 보기를 흐린다 — 불이익 없음) */
   copyPick: (blank: number, option: string) => void
   /** 세 칸을 다 채웠으면 옮겨 적는다 (recordLetter) */
@@ -1502,6 +1504,12 @@ export const useGame = create<Store>((set, get) => {
     },
     copySave: () => {
       if (get().modal?.kind === 'copy') saveGame(get().game)
+    },
+    copyGuide: (folded) => {
+      const game = get().game
+      const copy = withGuideFolded(game.copy, folded)
+      if (copy === game.copy) return
+      set({ game: persist({ ...game, copy }) })
     },
     wordContinue: () => {
       const game = get().game
