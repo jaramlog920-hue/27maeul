@@ -17,7 +17,7 @@ import { childMode, childStage, CRADLE_SPOT, helperSpot } from '../engine/child'
 import { BOARD, stoneTile, TRIP_H, TRIP_W, tripLayout, type Cell as TripCell } from '../engine/trip-board'
 import { actsDoorGlows, feastToday, sideShelfSpines } from '../engine/library'
 import { spineLook } from '../engine/binding'
-import { ACTS_ROOM, ATTIC, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, HEIGHT, HOUSE_RECT, housesNow, houseAt, LOCKED_DOORS, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile } from '../engine/world'
+import { ACTS_ROOM, ATTIC, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, HEIGHT, HOUSE_RECT, housesNow, houseAt, LOCKED_DOORS, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile, treeKind, type TreeKind } from '../engine/world'
 import { GOSPELS, type Book, type Facing, type NeighborDef, type GameContent, type Season, type Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { avatarKey, withLookDefaults, type Avatar, type FullAvatar } from '../engine/avatar'
@@ -297,11 +297,101 @@ function drawGround(g: Ctx, ch: string, x: number, y: number, season: Season, at
       if (isPath(at(x, y + 1))) g.fillRect(px, py + TILE - 2, TILE, 2)
       if (isPath(at(x - 1, y))) g.fillRect(px, py, 2, TILE)
       if (isPath(at(x + 1, y))) g.fillRect(px + TILE - 2, py, 2, TILE)
+      // 계절 풀밭 (빈 풀 칸에만): 봄엔 들꽃이 늘고, 여름엔 키 큰 풀포기
+      if (ch === '.' && season === 'spring' && hash(x, y, 71) < 0.12) {
+        const fx = 3 + Math.floor(hash(x, y, 72) * 8)
+        const fy = 3 + Math.floor(hash(x, y, 73) * 8)
+        g.fillStyle = C.flower[Math.floor(hash(x, y, 74) * 4)]
+        g.fillRect(px + fx, py + fy, 2, 2)
+        g.fillStyle = C.flower[Math.floor(hash(x, y, 75) * 4)]
+        g.fillRect(px + fx + 3, py + fy + 2, 2, 2)
+      }
+      if (ch === '.' && season === 'summer' && hash(x, y, 76) < 0.1) {
+        const fx = 3 + Math.floor(hash(x, y, 77) * 8)
+        const fy = 4 + Math.floor(hash(x, y, 78) * 5)
+        g.fillStyle = '#86a868'
+        g.fillRect(px + fx, py + fy + 1, 2, 6)
+        g.fillRect(px + fx + 2, py + fy + 3, 2, 4)
+        g.fillStyle = '#98b878'
+        g.fillRect(px + fx - 2, py + fy + 3, 2, 4)
+      }
     }
   }
 }
 
-function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
+/** 활엽수 잎빛: 봄은 바탕 그대로, 여름은 한 톤 짙게 [아랫잎, 바탕, 윗잎] */
+const LEAVES: Record<'spring' | 'summer', [string, string, string]> = {
+  spring: [C.leaf2, C.leaf, C.leaf3],
+  summer: ['#3a7440', '#488444', '#669e56'],
+}
+/** 가을에 물든 잎 (노랑·붉은 두 가지 — 차분한 파스텔) */
+const AUTUMN_LEAVES: [string, string, string][] = [
+  ['#cf983a', '#e5ad55', '#f4c977'],
+  ['#b8664c', '#cf8262', '#e6a283'],
+]
+/** 가을에 아직 물들지 않은 활엽수 — 여름보다 조금 바랜 초록 */
+const AUTUMN_GREEN: [string, string, string] = ['#4c7e40', '#5e8c48', '#7da462']
+/** 겨울 늘푸른나무 — 잎은 그대로, 빛만 조금 가라앉게 */
+const EVERGREEN_WINTER: [string, string, string] = ['#3e7246', '#4e8050', '#6c9a66']
+
+/**
+ * 지도의 둥근 나무 한 그루 (계획 15): 나무 종류(world.treeKind)와 계절에 따라 —
+ * 늘푸른나무는 한 해 내내 그대로, 활엽수·과일나무는 여름에 한 톤 짙고, 가을엔 일부만 노랑·붉게 물들어 밑에 낙엽 몇 장,
+ * 겨울엔 잎 진 빈 가지. 과일나무는 봄에 흰·분홍 꽃. 선은 모두 2픽셀
+ */
+function drawTree(g: Ctx, x: number, y: number, season: Season, kind: TreeKind) {
+  const px = x * TILE
+  const py = y * TILE
+  const r = (color: string, dx: number, dy: number, w: number, h: number) => {
+    g.fillStyle = color
+    g.fillRect(px + dx, py + dy, w, h)
+  }
+  r('rgba(90,80,50,0.18)', 3, 13, 10, 2)
+  if (kind !== 'evergreen' && season === 'winter') {
+    // 잎 진 가지: 줄기에서 양옆으로 갈라진 2픽셀 가지
+    const bark = '#8a6040'
+    const twig = '#a27a58'
+    r(bark, 7, 4, 2, 11)
+    r(bark, 5, 8, 2, 2)
+    r(bark, 3, 6, 2, 2)
+    r(twig, 3, 4, 2, 2)
+    r(bark, 9, 7, 2, 2)
+    r(bark, 11, 5, 2, 2)
+    r(twig, 11, 3, 2, 2)
+    r(twig, 6, 2, 2, 2)
+    r(twig, 9, 3, 2, 2)
+    return
+  }
+  let [d, m, l] = kind === 'evergreen' ? (season === 'winter' ? EVERGREEN_WINTER : LEAVES.spring) : season === 'spring' ? LEAVES.spring : LEAVES.summer
+  // 가을: 활엽수 절반쯤만 물든다 (자리마다 정해진 대로)
+  const turned = season === 'autumn' && kind !== 'evergreen' && hash(x, y, 61) < 0.55
+  if (season === 'autumn' && kind !== 'evergreen') [d, m, l] = turned ? AUTUMN_LEAVES[hash(x, y, 62) < 0.6 ? 0 : 1] : AUTUMN_GREEN
+  r(C.trunk, 7, 10, 2, 5)
+  r(d, 3, 3, 10, 8)
+  r(d, 2, 5, 12, 5)
+  r(d, 5, 1, 6, 11)
+  r(m, 3, 2, 10, 7)
+  r(m, 2, 4, 12, 4)
+  r(m, 5, 1, 6, 9)
+  r(l, 4, 2, 4, 3)
+  r(l, 5, 1, 2, 1)
+  if (turned) {
+    // 나무 밑 낙엽 몇 장
+    r(m, 2, 13, 2, 2)
+    r(l, 11, 12, 2, 2)
+    if (hash(x, y, 63) < 0.6) r(d, 5, 14, 2, 2)
+  }
+  if (kind === 'fruit' && season === 'spring') {
+    // 흰·분홍 꽃 (짝지은 두 그루는 같은 색 — 광장 쌍은 분홍, 풀밭 쌍은 흰 꽃. 다른 색이 조금 섞인다)
+    const pink = y % 2 === 0
+    const main = pink ? '#f6c3d2' : '#fbf6ee'
+    const other = pink ? '#fbf6ee' : '#f6c3d2'
+    for (const [bx, by] of [[4, 3], [9, 2], [6, 6], [11, 6], [3, 7], [8, 9]]) r(main, bx, by, 2, 2)
+    for (const [bx, by] of [[7, 1], [10, 9]]) r(other, bx, by, 2, 2)
+  }
+}
+
+function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season, tree: TreeKind = 'deciduous') {
   const px = x * TILE
   const py = y * TILE
   const r = (color: string, dx: number, dy: number, w: number, h: number) => {
@@ -337,22 +427,9 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
     case 'R':
       // 지붕은 집 하나를 통째로 나중에 그린다 (drawRoof)
       break
-    case 'T': {
-      // 둥근 나무: 그림자, 짧은 줄기, 어두운 아랫잎 → 바탕 → 밝은 윗잎
-      const [d, m, l] =
-        season === 'autumn' ? ['#cf983a', '#e5ad55', '#f4c977'] : season === 'winter' ? ['#96ac87', '#afc09f', '#cdd8bf'] : [C.leaf2, C.leaf, C.leaf3]
-      r('rgba(90,80,50,0.18)', 3, 13, 10, 2)
-      r(C.trunk, 7, 10, 2, 5)
-      r(d, 3, 3, 10, 8)
-      r(d, 2, 5, 12, 5)
-      r(d, 5, 1, 6, 11)
-      r(m, 3, 2, 10, 7)
-      r(m, 2, 4, 12, 4)
-      r(m, 5, 1, 6, 9)
-      r(l, 4, 2, 4, 3)
-      r(l, 5, 1, 2, 1)
+    case 'T':
+      drawTree(g, x, y, season, tree)
       break
-    }
     case 'L': {
       const h = houseAt(x, y)
       if (h) houseWallTile(g, x, y, ch, h.id, h)
@@ -635,16 +712,48 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r('#e9ce94', left ? 3 : 0, 13, 13, 2)
       break
     }
-    case 'r':
-      for (let i = 0; i < 5; i++) r(i % 2 ? C.reed2 : C.reed, 2 + i * 3, 2 + ((i * 5) % 4), 1, 12)
-      r(C.woodDark, 3, 2, 2, 3)
-      r(C.woodDark, 9, 1, 2, 3)
+    case 'r': {
+      // 갈대: 봄은 짧은 연두 새순, 여름은 키 큰 초록에 밤색 이삭, 가을은 갈색 줄기에 크림빛 이삭, 겨울은 마른 줄기 (줄기는 2픽셀)
+      const [s1, s2, head] =
+        season === 'spring'
+          ? ['#9ccb6c', '#86ba5a', null]
+          : season === 'summer'
+            ? [C.reed, C.reed2, C.woodDark]
+            : season === 'autumn'
+              ? ['#c4a062', '#ab8650', '#efe0bd']
+              : ['#cdbf98', '#b7a77e', null]
+      const grow = season === 'spring' ? 5 : season === 'winter' ? 3 : 0
+      for (const [i, sx] of [2, 6, 9, 13].entries()) {
+        const top = 2 + ((i * 5) % 4) + grow
+        r(i % 2 ? s2 : s1, sx, top, 2, 14 - top)
+        if (head && i % 2 === 0) r(head, sx, top - 1, 2, 4)
+      }
       break
+    }
     case 'v':
-      r(C.woodDark, 0, 7, 16, 1)
+      // 포도 덩굴: 봄은 연한 새잎이 듬성듬성, 여름은 짙게 우거지고, 가을은 잎 끝이 누렇게 (익은 포도는 그릴 때 얹는다),
+      // 겨울은 잎 진 마른 덩굴만 줄을 따라
+      r(C.woodDark, 0, 7, 16, 2)
       r(C.woodDark, 7, 3, 2, 12)
-      r(season === 'winter' ? '#8f734a' : C.vine, 2, 2, 12, 7)
-      if (season !== 'winter') r(C.leaf3, 4, 3, 3, 2)
+      if (season === 'winter') {
+        r('#9a7b52', 1, 5, 6, 2)
+        r('#9a7b52', 9, 5, 6, 2)
+        r('#9a7b52', 3, 3, 2, 2)
+        r('#9a7b52', 11, 3, 2, 2)
+        r('#c2a878', 13, 9, 2, 2)
+      } else if (season === 'spring') {
+        r('#7fb65a', 2, 3, 5, 5)
+        r('#7fb65a', 9, 3, 5, 5)
+        r('#a6d07c', 3, 3, 2, 2)
+        r('#a6d07c', 10, 4, 2, 2)
+      } else {
+        r(C.vine, 2, 2, 12, 7)
+        r(C.leaf3, 4, 3, 3, 2)
+        if (season === 'autumn') {
+          r('#d2b158', 10, 2, 4, 3)
+          r('#d2b158', 2, 6, 3, 2)
+        }
+      }
       break
     case 'j':
       // 들 약초: 낮은 풀포기에 잎 셋, 봄·여름·가을엔 작은 흰 꽃 (겨울엔 마른 잎)
@@ -691,8 +800,22 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r(C.woodDark, 13, 6, 2, 10)
       for (let i = 0; i < 4; i++) r(i % 2 ? C.awning2 : C.awning, i * 4, 1, 4, 5)
       r(C.wood, 1, 10, 14, 3)
-      r(x < 16 ? '#e4cf87' : '#7a3491', 3, 8, 3, 2)
-      r(x < 16 ? '#fbf1dc' : '#81b650', 9, 8, 3, 2)
+      if (season === 'autumn') {
+        // 가을 장터: 좌판 위와 밑에 수확 바구니 (석류·포도·호박·무화과 — 좌판마다 다르게)
+        const left = x < 25
+        const basket = (bx: number, by: number, w: number, fruit: string, fruit2: string) => {
+          r('#b8864c', bx, by + 2, w, 3)
+          r('#946638', bx, by + 2, w, 2)
+          r(fruit, bx + 1, by, w - 2, 2)
+          r(fruit2, bx + 1, by, 2, 2)
+        }
+        basket(2, 6, 6, left ? '#c8584c' : '#7b3f96', left ? '#e48a76' : '#a170b8')
+        basket(8, 6, 6, left ? '#e0a050' : '#9a6a8c', left ? '#f2c27a' : '#b98aa8')
+        basket(4, 11, 8, left ? '#e0c472' : '#c8584c', left ? '#f0dc96' : '#e48a76')
+      } else {
+        r(x < 16 ? '#e4cf87' : '#7a3491', 3, 8, 3, 2)
+        r(x < 16 ? '#fbf1dc' : '#81b650', 9, 8, 3, 2)
+      }
       break
     case 'q':
       // 문 앞 편지 바구니
@@ -714,10 +837,32 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season) {
       r(C.woodDark, 12, 3, 2, 11)
       break
     case 'y': {
-      const col = season === 'summer' ? ['#dec374', '#c8a65b'] : season === 'spring' ? ['#97c664', '#7db647'] : season === 'autumn' ? ['#c2a260', '#ae8b45'] : ['#ae9666', '#9d8152']
-      g.fillStyle = col[1]
-      g.fillRect(px, py, TILE, TILE)
-      for (let i = 0; i < 4; i++) r(col[0], 1 + i * 4, 2, 2, 11)
+      // 보리밭: 봄은 맨흙 두둑에 연두 새싹, 여름은 누렇게 익은 보리, 가을은 벤 뒤 그루터기, 겨울은 쉬는 맨흙
+      if (season === 'summer') {
+        r('#c8a65b', 0, 0, 16, 16)
+        for (let i = 0; i < 4; i++) {
+          r('#dec374', 1 + i * 4, 2, 2, 11)
+          r('#ecd690', 1 + i * 4, 2, 2, 3)
+        }
+      } else if (season === 'spring') {
+        r('#b58d62', 0, 0, 16, 16)
+        r('#a27a52', 0, 6, 16, 2)
+        r('#a27a52', 0, 14, 16, 2)
+        for (const row of [2, 10])
+          for (let i = 0; i < 4; i++) {
+            r('#a8d474', 1 + i * 4, row, 2, 4)
+            r('#8cc05e', 1 + i * 4 + 2, row + 2, 2, 2)
+          }
+      } else if (season === 'autumn') {
+        r('#d6bd84', 0, 0, 16, 16)
+        r('#c4a76c', 0, 7, 16, 2)
+        r('#c4a76c', 0, 14, 16, 2)
+        for (const row of [4, 12]) for (let i = 0; i < 4; i++) r('#b8975a', 1 + i * 4, row, 2, 3)
+      } else {
+        r('#ae8d68', 0, 0, 16, 16)
+        r('#9a7a56', 0, 4, 16, 2)
+        r('#9a7a56', 0, 12, 16, 2)
+      }
       break
     }
     case '*':
@@ -810,7 +955,7 @@ function mapFor(season: Season): HTMLCanvasElement {
     for (let x = 0; x < WIDTH; x++) {
       const ch = tileAt(x, y)
       drawGround(g, ch, x, y, season)
-      drawObject(g, ch, x, y, season)
+      drawObject(g, ch, x, y, season, ch === 'T' ? treeKind(x, y) : undefined)
     }
   // 집마다 지붕 하나
   for (const h of housesNow()) drawRoof(g, h.x0, h.y0, h.x1, h.y1 - 2, (HOUSE_STYLES[h.id] ?? PLAIN_STYLE).roof)

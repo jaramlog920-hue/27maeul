@@ -558,6 +558,29 @@ function build(): string[] {
 
 export const MAP: readonly string[] = build()
 
+/**
+ * 지도 나무의 종류 (계획 15): 활엽수는 계절마다 잎이 바뀌고(가을엔 일부만 물들고 겨울엔 빈 가지),
+ * 과일나무는 활엽수처럼 지되 봄에 흰·분홍 꽃이 핀다, 늘푸른나무(테두리 숲의 소나무·올리브)는 한 해 내내 그대로
+ */
+export type TreeKind = 'deciduous' | 'fruit' | 'evergreen'
+
+/** 봄에 꽃 피는 과일나무: 북쪽 풀밭 내 집 양옆 한 쌍, 광장 위쪽 귀퉁이 한 쌍 (큰길 가운데를 두고 대칭) */
+export const FRUIT_TREES: readonly Tile[] = [
+  { x: 2, y: 11 },
+  { x: 7, y: 11 },
+  { x: 18, y: 12 },
+  { x: 31, y: 12 },
+]
+
+/** 그 자리 나무의 종류. 테두리 숲은 대부분 늘푸른나무이고 세 그루에 한 그루꼴로 활엽수, 마을 안 나무는 활엽수 */
+export function treeKind(x: number, y: number): TreeKind {
+  if (MAP[y]?.[x] === 'o') return 'evergreen'
+  if (FRUIT_TREES.some((t) => t.x === x && t.y === y)) return 'fruit'
+  const border = y < VILLAGE_H && (x === 0 || x === WIDTH - 1 || y === 0 || y === VILLAGE_H - 1)
+  if (border) return (x + y) % 3 === 0 ? 'deciduous' : 'evergreen'
+  return 'deciduous'
+}
+
 // 'l'(텃밭)은 'y'(보리밭)처럼 걸을 수 있다 — 두둑 가운데 안쪽 칸은 사방이 막히면 다가갈 수 없어서 (task-3 적응)
 // 'H'(사다리)는 누르는 곳이라 길찾기가 지나가지 않는다 — 지나가다 다락으로 올라가 버리지 않게. 'I'는 다락 창
 // 'Q' 한 권 선반(사도행전·요한계시록), 'M' 벽의 여정 판, 'C' 벽의 일곱 교회 카드 판. 'Y' 편지 선반, 'V' 벽의 편지꽂이, 'N' 방 벽의 창, 'F' 사랑방 벽의 의뢰 게시판. 'J'(열린 서고 방 문)는 걷는 칸

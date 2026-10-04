@@ -1,5 +1,28 @@
 import { MAP, WIDTH, HEIGHT, PLACES, HOUSES, START, HOME_DOOR, HOME_ENTRY, HOME_FRONT, HOME_ROOM, HOUSE_GROW, HOUSE_RECT, homeHouse, houseAt, isWalkable, placeAt, cameraFor, VIEW_W, VIEW_H, VILLAGE_H, isHome, tileAt, ROOMS, WARPS, roomAt, key, ROOM_W, ROOM_H, LOCKED_DOORS, ATTIC, inAttic, ACTS_DOOR, ACTS_ROOM, setOpenDoors, setHomeLevel } from './world'
 import { findPath, pathToward, stepActor, type Actor } from './movement'
+import { FRUIT_TREES, treeKind, type TreeKind } from './world'
+
+describe('나무 종류 (계획 15)', () => {
+  const trees: { x: number; y: number; kind: TreeKind }[] = []
+  for (let y = 0; y < VILLAGE_H; y++) for (let x = 0; x < WIDTH; x++) if (MAP[y][x] === 'T') trees.push({ x, y, kind: treeKind(x, y) })
+  it('과일나무는 모두 지도의 둥근 나무 자리이고, 큰길 가운데를 두고 짝지어 있다', () => {
+    for (const t of FRUIT_TREES) {
+      expect(MAP[t.y][t.x], `${t.x},${t.y}`).toBe('T')
+      expect(treeKind(t.x, t.y)).toBe('fruit')
+    }
+    expect(FRUIT_TREES.filter((t) => t.x > 24).every((t) => FRUIT_TREES.some((u) => u.y === t.y && u.x === 49 - t.x))).toBe(true)
+  })
+  it('올리브나무는 늘푸른나무, 테두리 숲은 늘푸른나무와 활엽수가 섞이고, 마을 안 나무는 활엽수 또는 과일나무', () => {
+    for (let y = 0; y < VILLAGE_H; y++) for (let x = 0; x < WIDTH; x++) if (MAP[y][x] === 'o') expect(treeKind(x, y)).toBe('evergreen')
+    const border = trees.filter((t) => t.x === 0 || t.y === 0 || t.x === WIDTH - 1 || t.y === VILLAGE_H - 1)
+    const inner = trees.filter((t) => !border.includes(t))
+    expect(border.filter((t) => t.kind === 'evergreen').length).toBeGreaterThan(border.length / 2)
+    expect(border.some((t) => t.kind === 'deciduous')).toBe(true)
+    expect(inner.length).toBeGreaterThan(8)
+    for (const t of inner) expect(['deciduous', 'fruit'], `${t.x},${t.y}`).toContain(t.kind)
+    expect(inner.filter((t) => t.kind === 'deciduous').length).toBeGreaterThan(inner.filter((t) => t.kind === 'fruit').length)
+  })
+})
 
 const adjacent = (a: { x: number; y: number }, b: { x: number; y: number }) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y) === 1
 
