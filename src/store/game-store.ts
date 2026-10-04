@@ -5,7 +5,7 @@ import { create } from 'zustand'
 import { CONTENT, neighborById, copySourceFor, LETTER_OPENINGS, pieceById, pieceOfQuestion, piecesOf, quizSourceFor } from '../content/catalog'
 import { blanksFor } from '../engine/copy'
 import { acceptInput, copySpot, type InputHow } from '../engine/copying'
-import { answerDesk, deskAsks, deskKidVerse, doKidAct, familyTrip, type KidAct } from '../engine/family'
+import { answerDesk, deskAsks, deskKidVerse, doKidAct, eatSupper, familyTrip, type KidAct } from '../engine/family'
 import { currentChapter } from '../engine/offers'
 import { handEase, leveledUp, XP, type StatId } from '../engine/stats'
 import type { FixtureLine } from '../engine/fixtures'
@@ -755,6 +755,14 @@ export const useGame = create<Store>((set, get) => {
       if (ev) {
         sfx('talk')
         return { game: persist(greetNeighbor(ev, target.id)), modal: { kind: 'scene', id: ev.scenes[ev.scenes.length - 1] } }
+      }
+      // 배우자와 저녁 (계획 12): 저녁에 가끔, 집에서 말을 걸면 같이 먹는 짧은 장면
+      if (target.id === game.romance?.partner) {
+        const sup = eatSupper(game)
+        if (sup) {
+          sfx('talk')
+          return { game: persist(greetNeighbor(sup, target.id)), modal: { kind: 'scene', id: sup.scenes[sup.scenes.length - 1] } }
+        }
       }
       let g = greetNeighbor(game, target.id)
       sfx('talk')

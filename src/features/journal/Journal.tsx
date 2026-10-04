@@ -2,7 +2,7 @@
 // 2026-10-04: 따로 있던 선반의 풍경 앨범·받은 선물·업적을 이리로 옮겼다 (가족 창의 [가족 앨범]도 이 앨범 칸을 연다)
 import { useEffect, useRef, useState } from 'react'
 import { CONTENT, neighborById, pieceById } from '../../content/catalog'
-import { fill, ITEM_TEXT, itemName, JOB_NAME, JOURNAL_NOTES, kidFill, SCENES, T } from '../../content/text'
+import { fill, ITEM_TEXT, itemName, JOB_NAME, JOURNAL_NOTES, kidFill, SCENES, spouseFill, T } from '../../content/text'
 import { ACHIEVEMENTS } from '../../engine/achievements'
 import { weatherOf } from '../../engine/calendar'
 import { seasonOf } from '../../engine/clock'
@@ -13,7 +13,7 @@ import { NO_LIFE } from '../../engine/people'
 import type { ItemId, NeighborDef, Season } from '../../engine/types'
 import { neighborPortrait } from '../../render/renderer'
 import { ItemIcon } from '../../shared/ItemIcon'
-import { albumImage, useGame, type JournalTab } from '../../store/game-store'
+import { albumImage, partnerName, useGame, type JournalTab } from '../../store/game-store'
 import { isFamilyAlbum } from '../../engine/family'
 import { bondLabel, Hearts } from '../talk/TalkBox'
 
@@ -272,14 +272,15 @@ function Portrait({ def, season, shadow }: { def: NeighborDef; season: Season; s
 }
 
 /** 앨범 제목: 아이 이름(계획 12)을 넣는다 */
-function albumTitle(id: string, kid: string | undefined): string {
-  return kidFill(SCENES[id]?.album ?? '', kid)
+function albumTitle(id: string, kid: string | undefined, spouse = ''): string {
+  return spouseFill(kidFill(SCENES[id]?.album ?? '', kid), spouse)
 }
 
 /** 앨범: 풍경·가족의 날 (가족 창의 [가족 앨범]이 이 칸을 연다) */
 export function Album() {
   const album = useGame((s) => s.game.album)
   const kid = useGame((s) => s.game.child?.name)
+  const spouse = useGame((s) => (s.game.romance?.stage === 'married' ? partnerName(s.game) : ''))
   if (!album.length) return <p>{T.ui.albumEmpty}</p>
   // 가족 쪽(우리 아이·배우자·동물 친구, 함께 보낸 시간)과 마을·풍경 쪽으로 나눠 차곡차곡 (계획 12)
   const family = album.filter((a) => isFamilyAlbum(a.id))
@@ -290,9 +291,9 @@ export function Album() {
         const img = albumImage(a.id)
         return (
           <figure key={a.id} className="album-card">
-            {img ? <img src={img} alt={albumTitle(a.id, kid)} /> : <div className="album-blank" />}
+            {img ? <img src={img} alt={albumTitle(a.id, kid, spouse)} /> : <div className="album-blank" />}
             <figcaption>
-              {albumTitle(a.id, kid)} · {fill(T.ui.day, { day: a.day })}
+              {albumTitle(a.id, kid, spouse)} · {fill(T.ui.day, { day: a.day })}
             </figcaption>
           </figure>
         )

@@ -110,6 +110,7 @@ import { BOOKS, type Book, type Facing, type GameContent, type ItemId, type Neig
 import { withLookDefaults, type Avatar, type FullAvatar } from './avatar'
 import { BOARD_GAIN, boardFor, type BoardRequest } from './board'
 import { newlyAchieved, withFound, type Achievement } from './achievements'
+import { familyMorning } from './family-days'
 import { adultJob, JOB_GIFTS, kidCoins, kidMailFor, CHILD_AFTER_WEDDING, childMode, childStage, CRADLE_SPOT, helperSpot, helpStat, newChild, type Child, type ChildMode } from './child'
 import { DESTS, TRIP_FRIEND_GAIN, TRIP_LEAVE_BY, tripCost, type DestId } from './travel'
 import type { TripReward } from './trip-board'
@@ -2780,7 +2781,8 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
     room,
     inv,
   }
-  const morning = childMorning(forgetPromises(morningSupplies(next, s.clock.day), day), content)
+  // 가족 생일 아침 (계획 12): 배우자·아이 생일 장면
+  const morning = familyMorning(childMorning(forgetPromises(morningSupplies(next, s.clock.day), day), content))
   return { ...morning, npcs: placeAllNpcs(morning, content) }
 }
 

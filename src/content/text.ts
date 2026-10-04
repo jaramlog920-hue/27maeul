@@ -94,6 +94,13 @@ export function kidFill(text: string, name: string | undefined | null): string {
   return text.replaceAll('{childSubj}', withSubject(n)).replaceAll('{childAnd}', withAnd(n)).replaceAll('{child}', n)
 }
 
+/** 배우자 이름 넣기: {spouseSubj} 이/가, {spouseAnd} 와/과, {spouse} 이름만 (없으면 '곁의 사람') */
+export function spouseFill(text: string, name: string | undefined | null): string {
+  if (!text.includes('{spouse')) return text
+  const n = name?.trim() || '곁의 사람'
+  return text.replaceAll('{spouseSubj}', withSubject(n)).replaceAll('{spouseAnd}', withAnd(n)).replaceAll('{spouse}', n)
+}
+
 export function itemName(id: ItemId): string {
   return ITEM_TEXT[id]?.name ?? id
 }

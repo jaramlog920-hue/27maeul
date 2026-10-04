@@ -2032,6 +2032,52 @@
         { "speaker": "narration", "text": "돌아오는 배 위에서 {childSubj} 다음에는 어디에 가자고 손가락을 꼽았다." }
       ]
     },
+    "fam:supperFirst": {
+      "title": "둘이 먹는 저녁",
+      "album": "처음 둘이 먹은 저녁",
+      "lines": [
+        { "speaker": "narration", "text": "{spouseSubj} 따뜻한 국과 빵을 식탁에 올려 두었다." },
+        { "speaker": "narration", "text": "마주 앉아 오늘 있었던 일을 하나씩 이야기했다. 국이 식는 줄도 몰랐다." }
+      ]
+    },
+    "fam:supper": {
+      "title": "함께 먹는 저녁",
+      "lines": [
+        { "speaker": "narration", "text": "{spouseAnd} 마주 앉아 소박한 저녁을 나눠 먹었다." },
+        { "speaker": "narration", "text": "창밖이 어두워지는 동안 그릇이 천천히 비었다." }
+      ]
+    },
+    "fam:supperAll": {
+      "title": "식구가 둘러앉은 저녁",
+      "lines": [
+        { "speaker": "narration", "text": "{spouseSubj} 차린 저녁상에 {childSubj} 수저를 놓았다." },
+        { "speaker": "narration", "text": "셋이 둘러앉아 오늘 본 것을 서로 이야기했다. {childSubj} 제일 말이 많았다." }
+      ]
+    },
+    "fam:bdaySpouse": {
+      "title": "생일 아침",
+      "album": "{spouse}의 생일",
+      "lines": [
+        { "speaker": "narration", "text": "오늘은 {spouse}의 생일이다. 일찍 일어나 꿀을 바른 빵을 구워 두었다." },
+        { "speaker": "narration", "text": "{spouseSubj} 식탁을 보고 한참 웃었다. 마음에 드는 것을 하나 건네면 더 기뻐할 것 같다." }
+      ]
+    },
+    "fam:bdayChild": {
+      "title": "생일 아침",
+      "album": "{child}의 생일",
+      "lines": [
+        { "speaker": "narration", "text": "오늘은 {child}의 생일이다. 식구가 둘러앉아 작은 꿀빵을 나눠 먹었다." },
+        { "speaker": "narration", "text": "{childSubj} 한 해 동안 얼마나 컸는지 문설주에 키를 재어 보았다." }
+      ]
+    },
+    "fam:bdayChildFar": {
+      "title": "멀리 보낸 편지",
+      "album": "{child}에게 보낸 생일 편지",
+      "lines": [
+        { "speaker": "narration", "text": "오늘은 {child}의 생일이다. 먼 곳에 사는 {child}에게 생일 편지를 썼다." },
+        { "speaker": "narration", "text": "어릴 적 함께 만든 장난감 이야기도 한 줄 적어 넣었다." }
+      ]
+    },
     "childStays": {
       "title": "어른이 된 날",
       "album": "{child}, 어른이 된 날",

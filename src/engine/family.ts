@@ -235,6 +235,42 @@ export function familyTrip(s: GameState): GameState {
   return firstTime({ ...s, child: { ...c, close: Math.min(CLOSE_MAX, (c.close ?? 0) + STORY_CLOSE_GAIN) } }, 'fam:trip')
 }
 
+// ── 배우자와 저녁 (계획 12, 2026-10-04 사용자): 결혼 뒤 저녁에 가끔 집에서 배우자에게 말을 걸면 같이 먹는 짧은 장면 ──
+/** 저녁 먹는 때 (배우자가 집에 오는 일곱 시부터) */
+export const SUPPER_FROM = SPOUSE_HOME_FROM
+export const SUPPER_TO = 21 * 60 + 30
+/** 같이 먹는 저녁이 차려지는 날 (날 씨앗, 이틀에 한 번꼴) */
+export const SUPPER_CHANCE = 0.5
+export const SUPPER_HUNGER = 50
+export const SUPPER_HEART = 3
+export const SUPPER_MINUTES = 40
+
+/** 오늘 저녁 배우자와 같이 먹는가: 부부(결혼 잔치 날 빼고), 저녁 때, 오늘 아직 안 먹었고, 차려지는 날 */
+export function supperReady(s: Pick<GameState, 'clock' | 'flags'> & Partial<Pick<GameState, 'romance'>>): boolean {
+  const r = s.romance ?? NO_ROMANCE
+  const day = s.clock.day
+  const m = s.clock.minute
+  if (r.stage !== 'married' || !r.partner || r.marriedDay === day) return false
+  if (m < SUPPER_FROM || m >= SUPPER_TO || s.flags.supperDay === day) return false
+  return mulberry32(day * 577 + 13)() < SUPPER_CHANCE
+}
+
+/** 배우자와 저녁을 먹는다: 배고픔이 가시고 마음이 조금, 처음은 가족 앨범 (아이가 집에 있으면 셋이 둘러앉는 장면) */
+export function eatSupper(s: GameState): GameState | null {
+  if (!supperReady(s)) return null
+  const partner = s.romance.partner!
+  const n = (s.flags.suppers ?? 0) + 1
+  const kidHome = !!s.child && deskKidReady(s)
+  const scene = n === 1 ? 'fam:supperFirst' : kidHome ? 'fam:supperAll' : 'fam:supper'
+  const fed: GameState = {
+    ...s,
+    needs: { ...s.needs, hunger: Math.max(0, s.needs.hunger - SUPPER_HUNGER) },
+    flags: { ...s.flags, supperDay: s.clock.day, suppers: n },
+    scenes: [...s.scenes, scene],
+  }
+  return passTime(heartUp(fed, partner, SUPPER_HEART), SUPPER_MINUTES)
+}
+
 /** 가까움을 다섯 칸으로 */
 export function closeHearts(c: { close?: number } | null | undefined): number {
   return Math.round((c?.close ?? 0) / 20)

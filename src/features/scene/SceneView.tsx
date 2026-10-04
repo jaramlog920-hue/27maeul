@@ -1,8 +1,8 @@
 // 이웃 이야기 장면 — 모두 게임 창작. 말하는 이는 이웃이나 해설(기록자는 말하지 않는다)
 import { useEffect } from 'react'
 import { neighborById } from '../../content/catalog'
-import { callName, kidFill, SCENES, T } from '../../content/text'
-import { useGame } from '../../store/game-store'
+import { callName, kidFill, SCENES, spouseFill, T } from '../../content/text'
+import { partnerName, useGame } from '../../store/game-store'
 
 export function speakerName(speaker: string): string | null {
   if (speaker === 'narration') return null
@@ -14,8 +14,11 @@ export function SceneView({ id, chosen }: { id: string; chosen?: number }) {
   const chooseScene = useGame((s) => s.chooseScene)
   const me = useGame((s) => s.game.avatar?.name)
   const kid = useGame((s) => s.game.child?.name)
-  // 아이 이름 (계획 12): {child}
-  const say = (text: string) => kidFill(callName(text, me), kid)
+  const spouse = useGame((s) => (s.game.romance?.stage === 'married' ? partnerName(s.game) : ''))
+  // 해마다 다시 나오는 장면(가족 생일)은 앨범에 이미 있으면 앨범 표시를 하지 않는다
+  const inAlbum = useGame((s) => s.game.album.some((a) => a.id === id))
+  // 아이 이름 (계획 12): {child}·{childSubj}·{childAnd}, 배우자 이름: {spouse}·{spouseSubj}·{spouseAnd}
+  const say = (text: string) => spouseFill(kidFill(callName(text, me), kid), spouse)
   const scene = SCENES[id]
   // 고르는 말이 있는 장면 (계획 6b): 고르기 전엔 닫지 않는다, 고르면 대답이 이어진다
   const asking = !!scene?.choices?.length && chosen === undefined
@@ -39,7 +42,7 @@ export function SceneView({ id, chosen }: { id: string; chosen?: number }) {
           )
         })}
       </div>
-      {scene.album && !asking && <p className="stamp-note">📷 {T.ui.album}: {say(scene.album)}</p>}
+      {scene.album && !asking && !inAlbum && <p className="stamp-note">📷 {T.ui.album}: {say(scene.album)}</p>}
       {asking ? (
         <div className="actions menu column">
           {scene.choices!.map((c, i) => (
