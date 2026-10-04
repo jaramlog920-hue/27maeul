@@ -9,7 +9,9 @@ import churchesRaw from './churches.json'
 import lettersRaw from './letters.json'
 import peopleRaw from './people.json'
 import godRecordsRaw from './god-records.json'
+import connectionsRaw from './connections.json'
 import type { GodRecordDef } from '../engine/god-records'
+import type { NameDef } from '../engine/connections'
 import { setPeopleData, type PeopleData } from '../engine/people'
 import { expandRef, countsFrom } from './ref'
 import { BOOKS, LETTERS, type Book, type GameContent, type NeighborDef, type Piece } from '../engine/types'
@@ -83,6 +85,25 @@ export const GOD_RECORDS: readonly GodRecordDef[] = godRaw.records.map((r) => {
 })
 /** 키워드 id → 화면 이름 (사랑·거룩하심…) */
 export const GOD_KEYWORDS: Readonly<Record<string, { name: string; group: string }>> = Object.fromEntries(godRaw.keywords.map((k) => [k.id, { name: k.name, group: k.group }]))
+
+/**
+ * 연결 — 사람·곳 (계획 14 작업 9 데이터, scripts/connections/names.txt → connections.json, verify-connections가 본문과 대조).
+ * 구절에서 게임 책 id·장·절을 읽어 붙인다
+ */
+const namesRaw = connectionsRaw as { names: { name: string; kind: string; refs: string[] }[] }
+export const NAMES: readonly NameDef[] = namesRaw.names.map((n) => {
+  if (n.kind !== '사람' && n.kind !== '곳') throw new Error(`연결의 무리를 모름: ${n.name} ${n.kind}`)
+  return {
+    name: n.name,
+    kind: n.kind,
+    places: n.refs.map((ref) => {
+      const m = ref.match(/^(\S+) (\d+):(\d+)$/)
+      const book = m ? ABBR_BOOK[m[1]] : undefined
+      if (!m || !book) throw new Error(`연결의 구절을 모름: ${n.name} ${ref}`)
+      return { book, chapter: Number(m[2]), verse: Number(m[3]), ref }
+    }),
+  }
+})
 
 export const CONTENT: GameContent = {
   pieces: PIECES,

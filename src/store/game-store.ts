@@ -234,7 +234,7 @@ export function bookBackModal(back: BookBack | undefined): Modal | null {
 }
 
 /** 말씀 탭의 칸 */
-export type WordTab = 'copy' | 'pieces' | 'god' | 'library'
+export type WordTab = 'copy' | 'pieces' | 'god' | 'links' | 'library'
 
 /** 필사 책상의 화면 (계획 14 작업 2) */
 export type CopyView = 'menu' | 'pick' | 'write' | 'done'

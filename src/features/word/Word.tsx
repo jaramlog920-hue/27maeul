@@ -1,10 +1,11 @@
-// 📖 말씀 탭 (계획 14 작업 5): 말씀 루프에서 쌓인 것을 한곳에서 본다 — 필사본 | 말씀 조각 | 하나님 기록 | 서고.
+// 📖 말씀 탭 (계획 14 작업 5): 말씀 루프에서 쌓인 것을 한곳에서 본다 — 필사본 | 말씀 조각 | 하나님 기록 | 연결(작업 9) | 서고.
 // 2026-10-04: 따로 있던 선반의 이야기 도감(책 거르기·한 복음서에만·도장)은 말씀 조각으로, 내가 남긴 한 줄은 서고(책 한 줄)·말씀 조각(조각 한 줄)으로 옮겼다.
 // 가장 큰 단추는 [이어서 필사하기]. 해설 문장은 없다 — 본문은 개역한글 그대로(versesOf), 지어낸 말은 life-text의 word 칸만.
 import { Fragment, useState } from 'react'
-import { CONTENT, contextOf, GOD_KEYWORDS, neighborById, PIECES, versesOf } from '../../content/catalog'
+import { CONTENT, contextOf, GOD_KEYWORDS, NAMES, neighborById, PIECES, versesOf } from '../../content/catalog'
 import { fill, roomTitle, T } from '../../content/text'
 import { chaptersOf, groupByRoom } from '../../engine/books'
+import { connectionsOf, type Connection } from '../../engine/connections'
 import { copySpot } from '../../engine/copying'
 import { pieceFrom, whenOf, type PieceLog } from '../../engine/fragments'
 import type { GodFind } from '../../engine/god-records'
@@ -79,6 +80,7 @@ export function Word({ tab: first = 'copy' }: { tab?: WordTab }) {
     ['copy', W.tabs.copy],
     ['pieces', W.tabs.pieces],
     ['god', W.tabs.god],
+    ['links', W.tabs.links],
     ['library', W.tabs.library],
   ]
   return (
@@ -101,6 +103,7 @@ export function Word({ tab: first = 'copy' }: { tab?: WordTab }) {
       {tab === 'copy' && <CopyRecord />}
       {tab === 'pieces' && <PieceDex />}
       {tab === 'god' && <GodRecords />}
+      {tab === 'links' && <Links />}
       {tab === 'library' && <LibraryStatus />}
     </div>
   )
@@ -318,6 +321,58 @@ function GodRecords() {
           )
         })}
       </ul>
+    </section>
+  )
+}
+
+/**
+ * 연결 (계획 14 작업 9): 내가 필사한 곳에서 다시 만난 사람·곳 — 이름마다 필사한 곳 수와 책 차례(마태복음 → … → 사도행전).
+ * 이름을 누르면 그 구절들의 본문. 해설 문장은 없다 (이름·구절·본문만)
+ */
+function Links() {
+  const progress = useGame((s) => s.game.progress)
+  const copy = useGame((s) => s.game.copy)
+  const [open, setOpen] = useState<string | null>(null)
+  const links = connectionsOf(NAMES, { progress, copy })
+  if (!links.length) return <p className="word-links-empty">{W.linksEmpty}</p>
+  const people = links.filter((l) => l.kind === '사람')
+  const places = links.filter((l) => l.kind === '곳')
+  const group = (title: string, list: Connection[]) =>
+    list.length > 0 && (
+      <>
+        <h3>{title}</h3>
+        <ul className="word-god-list word-links-list">
+          {list.map((l) => {
+            const on = open === l.name
+            return (
+              <li key={l.name}>
+                <button className={`word-god-key word-links-key${on ? ' on' : ''}`} aria-expanded={on} onClick={() => setOpen(on ? null : l.name)}>
+                  <span className="word-links-name">{l.name}</span>
+                  <span className="hint">{fill(W.linksCount, { n: l.places.length })}</span>
+                  <span className="word-links-books">{l.books.map((b) => BOOK_NAME[b]).join(W.linksArrow)}</span>
+                </button>
+                {on && (
+                  <ul className="word-god-verses">
+                    {l.places.map((p) => (
+                      <li key={p.ref}>
+                        <p className="copy-god-key">{p.ref}</p>
+                        <p className="copy-god-verse">{versesOf(p.ref).map((v) => v.text).join(' ')}</p>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            )
+          })}
+        </ul>
+      </>
+    )
+  return (
+    <section className="word-links" aria-label={W.tabs.links}>
+      <p className="hint">{fill(W.linksTotal, { p: people.length, q: places.length })}</p>
+      <p className="hint">{W.linksNote}</p>
+      {group(W.linksPeople, people)}
+      {group(W.linksPlaces, places)}
     </section>
   )
 }

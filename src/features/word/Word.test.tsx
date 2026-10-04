@@ -1,6 +1,6 @@
 import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { CONTENT, contextOf, GOD_KEYWORDS, GOD_RECORDS, pieceById, versesOf } from '../../content/catalog'
+import { CONTENT, contextOf, GOD_KEYWORDS, GOD_RECORDS, NAMES, pieceById, versesOf } from '../../content/catalog'
 import { T } from '../../content/text'
 import { newGame, type GameState } from '../../engine/game'
 import { BOOKS } from '../../engine/types'
@@ -31,7 +31,7 @@ describe('📖 말씀 탭', () => {
     )
     await userEvent.setup().click(screen.getByRole('button', { name: T.word.open }))
     expect(useGame.getState().modal).toEqual({ kind: 'word' })
-    for (const n of ['필사본', '말씀 조각', '하나님 기록', '서고']) expect(tab(n)).toBeInTheDocument()
+    for (const n of ['필사본', '말씀 조각', '하나님 기록', '연결', '서고']) expect(tab(n)).toBeInTheDocument()
     expect(tab('필사본')).toHaveAttribute('aria-selected', 'true')
   })
 
@@ -120,6 +120,40 @@ describe('📖 말씀 탭', () => {
     await user.click(key)
     expect(key).toHaveAttribute('aria-expanded', 'true')
     expect(screen.getByText(versesOf(a.ref).map((v) => v.text).join(' '))).toBeInTheDocument()
+  })
+
+  it('연결: 아직 두 곳 이상 필사한 이름이 없으면 한 줄', async () => {
+    const progress = { ...newGame(CONTENT).progress, '3jn': { completed: [1], arrangement: {} } }
+    openWord({ progress })
+    await userEvent.setup().click(tab('연결'))
+    expect(screen.getByText(T.word.linksEmpty)).toBeInTheDocument()
+  })
+
+  it('연결: 필사한 곳에서 다시 만난 이름 — 필사한 곳 수와 책 차례, 누르면 구절 본문 (지금 쓰는 장은 쓴 절까지만)', async () => {
+    const progress = { ...newGame(CONTENT).progress, mt: { completed: [4], arrangement: {} }, ac: { completed: [1], arrangement: {} } }
+    // 요한복음 1장은 41절까지 썼다 (42절 "게바라 하리라"는 아직)
+    openWord({ progress, copy: { book: 'jn', at: { jn: { chapter: 1, verse: 42 } }, legacy: {} } })
+    const user = userEvent.setup()
+    await user.click(tab('연결'))
+    expect(screen.getByText(T.word.linksNote)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: T.word.linksPeople })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: T.word.linksPlaces })).toBeInTheDocument()
+    const peter = NAMES.find((n) => n.name === '베드로')!
+    const mine = peter.places.filter((p) => (p.book === 'mt' && p.chapter === 4) || (p.book === 'ac' && p.chapter === 1) || (p.book === 'jn' && p.chapter === 1 && p.verse < 42))
+    expect(mine.map((p) => p.ref)).toContain('요 1:40')
+    expect(mine.map((p) => p.ref)).not.toContain('요 1:42')
+    const key = screen.getByRole('button', { name: /^베드로/ })
+    expect(key).toHaveTextContent(`필사한 곳 ${mine.length}`)
+    expect(key).toHaveTextContent('마태복음 → 요한복음 → 사도행전')
+    expect(key).toHaveAttribute('aria-expanded', 'false')
+    await user.click(key)
+    expect(key).toHaveAttribute('aria-expanded', 'true')
+    const list = key.parentElement!.querySelector('.word-god-verses')!
+    expect(within(list as HTMLElement).getAllByRole('listitem').map((li) => li.querySelector('.copy-god-key')!.textContent)).toEqual(mine.map((p) => p.ref))
+    expect(screen.getByText(versesOf('마 4:18')[0].text)).toBeInTheDocument()
+    expect(screen.queryByText(versesOf('요 1:42')[0].text)).toBeNull()
+    // 곳: 갈릴리 (마태 4장에 여러 번)
+    expect(screen.getByRole('button', { name: /^갈릴리/ })).toHaveTextContent('마태복음')
   })
 
   it('하나님 기록: 아직 없으면 장을 마치면 쌓인다는 한 줄', async () => {

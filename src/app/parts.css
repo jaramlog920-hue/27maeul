@@ -2071,6 +2071,10 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
 .word-context .passage-body p.in-piece { font-weight: 700; }
 .word-god-key { display: flex; width: 100%; justify-content: space-between; align-items: center; gap: 8px; text-align: left; }
 .word-god-key.on { background: #efe3c4; }
+/* 연결 (계획 14 작업 9): 이름 · 필사한 곳 수, 아래 줄에 책 차례 */
+.word-links-key { flex-wrap: wrap; }
+.word-links-name { font-weight: 700; word-break: keep-all; }
+.word-links-books { flex-basis: 100%; font-size: 12px; color: var(--ink-soft); word-break: keep-all; overflow-wrap: anywhere; }
 .word-god-verses { margin: 6px 0 4px; padding: 8px 10px; background: #fffaf0; border: 2px solid #d8c8a4; border-radius: 4px; gap: 8px; }
 .word-lib-row { display: grid; grid-template-columns: 18px 1fr auto; gap: 2px 8px; align-items: center; padding: 6px 8px; border-bottom: 2px solid #e6d9bf; }
 .word-lib-row .spine-art, .word-lib-row .spine-slot { grid-row: span 2; width: 14px; height: 36px; }

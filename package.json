@@ -5,18 +5,19 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prebuild": "node scripts/verify-pieces.mjs && node scripts/verify-journey.mjs && node scripts/verify-letters.mjs && node scripts/verify-god-records.mjs",
+    "prebuild": "node scripts/verify-pieces.mjs && node scripts/verify-journey.mjs && node scripts/verify-letters.mjs && node scripts/verify-god-records.mjs && node scripts/verify-connections.mjs",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "verify": "node scripts/verify-pieces.mjs && node scripts/verify-journey.mjs && node scripts/verify-letters.mjs && node scripts/verify-god-records.mjs",
+    "verify": "node scripts/verify-pieces.mjs && node scripts/verify-journey.mjs && node scripts/verify-letters.mjs && node scripts/verify-god-records.mjs && node scripts/verify-connections.mjs",
     "ref": "node scripts/dump-ref.mjs",
     "build:bible": "node scripts/build-bible-subset.mjs",
     "build:pieces": "node scripts/build-pieces.mjs && node scripts/audit-table.mjs",
     "build:journey": "node scripts/build-journey.mjs",
     "build:letters": "node scripts/build-letters.mjs",
-    "build:god-records": "node scripts/build-god-records.mjs"
+    "build:god-records": "node scripts/build-god-records.mjs",
+    "build:connections": "node scripts/build-connections.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
