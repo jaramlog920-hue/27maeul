@@ -18,7 +18,7 @@ import { childMode, childStage, CRADLE_SPOT, helperSpot } from '../engine/child'
 import { BOARD, stoneTile, TRIP_H, TRIP_W, tripLayout, type Cell as TripCell } from '../engine/trip-board'
 import { actsDoorGlows, feastToday, sideShelfSpines } from '../engine/library'
 import { spineLook } from '../engine/binding'
-import { ACTS_ROOM, ATTIC, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, PAVILION_RECT, HEIGHT, HOUSE_RECT, housesNow, houseAt, LOCKED_DOORS, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile, treeKind, type TreeKind } from '../engine/world'
+import { ACTS_ROOM, ATTIC, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, PAVILION_RECT, HEIGHT, HOUSE_RECT, housesNow, houseAt, LOCKED_DOORS, lockedTiles, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile, treeKind, type TreeKind } from '../engine/world'
 import { GOSPELS, type Book, type Facing, type NeighborDef, type GameContent, type Season, type Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { avatarKey, withLookDefaults, type Avatar, type FullAvatar } from '../engine/avatar'
@@ -987,6 +987,8 @@ function mapFor(season: Season): HTMLCanvasElement {
 
 const SNOW = '#f6f8fa'
 const SNOW_SHADE = '#dfe7ee'
+/** 풀밭 눈 더미 아래 그늘 — 겨울 풀빛(#dfe8dc)과 구별되게 조금 더 푸른 잿빛 */
+const SNOW_DRIFT_SHADE = '#c8d5df'
 
 /**
  * 눈 온 날 덮개 한 장 (집 단계·열린 문마다 한 번 굽는다): 지붕 윗줄과 굴뚝 머리, 풀밭이 길과 만나는 가장자리에 쌓인 눈,
@@ -1024,8 +1026,24 @@ function snowLayer(): HTMLCanvasElement {
         }
         if (isPath(tileAt(x - 1, y))) f(SNOW, px, py, 3, TILE)
         if (isPath(tileAt(x + 1, y))) f(SNOW, px + TILE - 3, py, 3, TILE)
+        // 풀밭에 소복이 쌓인 눈 더미 (계획 15 작업 3): 겨울 풀이 이미 옅어서 흰 점만으론 맑은 날과 구별이 안 된다 —
+        // 둥근 모서리 눈 더미 한두 개에 옅은 잿빛 하늘색 그늘을 아래로 받쳐 도톰해 보이게. 길에는 놓지 않는다
+        // (지붕 바로 위 칸은 굴뚝이 솟아 있으니 빼고, 정자 지붕 아래도 뺀다)
+        const roofed = x >= PAVILION_RECT.x0 && x <= PAVILION_RECT.x1 && y >= PAVILION_RECT.y0 && y <= PAVILION_RECT.y1
+        if ((ch === '.' || ch === '*') && tileAt(x, y + 1) !== 'R' && !roofed)
+          for (let i = 0; i < 2; i++) {
+            if (hash(x, y, 102 + i) >= (i === 0 ? 0.75 : 0.35)) continue
+            const w = 6 + 2 * Math.floor(hash(x, y, 104 + i) * 3)
+            const h = 4 + 2 * Math.floor(hash(x, y, 106 + i) * 2)
+            const bx = px + 2 * Math.floor(hash(x, y, 108 + i) * ((TILE - w) / 2 + 1))
+            const by = py + 2 * Math.floor(hash(x, y, 110 + i) * ((TILE - h - 2) / 2 + 1))
+            f(SNOW_DRIFT_SHADE, bx + 2, by + h, w - 4, 2)
+            // 위는 좁고 아래는 넓은 둔덕 모양
+            f(SNOW, bx + 2, by, w - 4, 2)
+            f(SNOW, bx, by + 2, w, h - 2)
+          }
         // 풀밭 군데군데 눈 뭉치 (빈 풀 칸에만)
-        if (ch === '.')
+        if (ch === '.' && !roofed)
           for (let i = 0; i < 3; i++) {
             const sx = 1 + Math.floor(hash(x, y, 90 + i) * 12)
             const sy = 1 + Math.floor(hash(x, y, 93 + i) * 12)
@@ -1099,34 +1117,37 @@ const PUDDLE_SPOTS: readonly Tile[] = (() => {
 /** 비 온 뒤 흙길의 물웅덩이: 젖은 흙 테두리, 하늘빛 물, 빛 한 점 (비가 오는 중이면 빗방울 동그라미가 번진다) */
 function drawPuddles(g: Ctx, day: number, raining: boolean, t: number) {
   for (const p of PUDDLE_SPOTS) {
-    if (hash(p.x, p.y, day) >= 0.45) continue
-    const px = p.x * TILE + Math.floor(hash(p.x, p.y, 132) * 3)
-    const py = p.y * TILE + Math.floor(hash(p.x, p.y, 133) * 4)
+    // 그날 고른 자리의 3분의 1쯤만 (광장 한 화면에 너덧 개)
+    if (hash(p.x, p.y, day) >= 0.35) continue
     const big = hash(p.x, p.y, 134) < 0.5
     const w = big ? 12 : 8
+    // 칸 밖으로 넘치지 않게 (테두리까지 w + 4)
+    const px = p.x * TILE + 2 * Math.floor(hash(p.x, p.y, 132) * ((TILE - w - 4) / 2 + 1))
+    const py = p.y * TILE + 2 * Math.floor(hash(p.x, p.y, 133) * 2)
+    // 젖은 흙 테두리 2픽셀, 모서리는 깎아 둥글게
     g.fillStyle = '#d9bd8c'
-    g.fillRect(px + 1, py + 5, w + 2, 6)
-    g.fillRect(px + 3, py + 4, w - 2, 8)
+    g.fillRect(px, py + 6, w + 4, 4)
+    g.fillRect(px + 2, py + 4, w, 8)
     g.fillStyle = '#a9cad0'
     g.fillRect(px + 2, py + 6, w, 4)
-    g.fillRect(px + 4, py + 5, w - 4, 6)
     g.fillStyle = '#d6eaee'
-    g.fillRect(px + 4, py + 6, 3, 2)
+    g.fillRect(px + 4, py + 6, 2, 2)
     if (raining && (t * 1.3 + hash(p.x, p.y, 135)) % 1 < 0.35) {
       g.fillStyle = 'rgba(232,244,246,0.9)'
-      const rx = px + 4 + Math.floor(hash(p.x, p.y, Math.floor(t * 1.3)) * (w - 6))
-      g.fillRect(rx, py + 7, 2, 2)
+      const rx = px + 2 + 2 * Math.floor(hash(p.x, p.y, Math.floor(t * 1.3)) * (w / 2))
+      g.fillRect(rx, py + 8, 2, 2)
     }
   }
 }
 
 /** 추운 아침 호숫가 물가 한 줄 살얼음 (호수 첫 줄 위쪽 가장자리) — 8시부터 9시까지 천천히 녹는다 */
-function drawShoreIce(g: Ctx, minute: number) {
+function drawShoreIce(g: Ctx, minute: number, locked: ReadonlySet<string>) {
   const a = minute < 8 * 60 ? 1 : Math.max(0, (9 * 60 - minute) / 60)
   if (a <= 0) return
   const y = 34
   for (let x = 1; x < WIDTH - 1; x++) {
-    if (tileAt(x, y) !== '~') continue
+    // 물 칸만 — 아직 열리지 않아 물로 덮어 그린 잔교 칸도 물로 친다
+    if (tileAt(x, y) !== '~' && !(tileAt(x, y) === '=' && locked.has(`${x},${y}`))) continue
     g.fillStyle = `rgba(226, 241, 244, ${0.9 * a})`
     g.fillRect(x * TILE, y * TILE, TILE, 4)
     // 안쪽 끝은 들쭉날쭉 (4픽셀 토막마다 한 줄 더 얼거나 그늘만)
@@ -1174,7 +1195,8 @@ function drawChimneySmoke(g: Ctx, game: GameState, kind: 'meal' | 'winter', wind
     for (let i = 0; i < n; i++) {
       const ph = (t * 0.32 + seed + i / n) % 1
       const size = (kind === 'winter' ? 4 : 2) + Math.floor(ph * (kind === 'winter' ? 4 : 3))
-      const drift = ph * (windy ? 20 : 7) + Math.sin(t * 1.3 + i + seed * 6) * 1.5
+      // 처음엔 곧게 오르다 위로 갈수록 휘고 흔들린다 (곧은 계단 기둥처럼 보이지 않게)
+      const drift = ph * ph * (windy ? 24 : 10) + Math.sin(t * 1.1 + ph * 5 + seed * 6) * (0.5 + ph * 3)
       // 눈 덮인 풀밭·흰 지붕 위에서도 보이게 옅은 잿빛 보라 (흰색이면 눈에 묻힌다)
       g.fillStyle = `rgba(196, 190, 198, ${(kind === 'winter' ? 0.85 : 0.6) * (1 - ph * 0.8)})`
       g.fillRect(Math.round(cx + drift - size / 2), Math.round(cy - ph * (kind === 'winter' ? 30 : 18) - size / 2), size, size)
@@ -1843,7 +1865,6 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       // 그날의 날씨가 땅에 남긴 것 (계획 15 작업 2): 눈 쌓임(구운 덮개), 비 온 뒤 물웅덩이, 추운 아침 살얼음, 여름 맑은 날 물빛
       if (weather === 'snow') g.drawImage(snowLayer(), 0, 0)
       else if (puddlesOut(day, minute)) drawPuddles(g, day, weather === 'rain', t)
-      if (icyMorning(day, minute)) drawShoreIce(g, minute)
       if (season === 'summer' && (weather === 'sunny' || weather === 'hot') && minute >= 7 * 60 && minute < 19 * 60) drawLakeGlints(g, t)
 
       // 익은 포도
@@ -1998,6 +2019,8 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       drawDecor(g, game, weather, t, phase === 'morning' || phase === 'day')
       // 아직 열리지 않은 구역·이사 오기 전 이웃의 집: 덤불로 덮는다 (물만 보인다)
       coverLocked(g, game, season)
+      // 추운 아침 살얼음은 덮개 뒤에: 아직 안 열린 잔교는 물로 덮이므로 그 칸도 얼린다 (빈틈이 생기지 않게)
+      if (icyMorning(day, minute)) drawShoreIce(g, minute, lockedTiles(shelvedCount(game)))
       // 정자 지붕의 눈 (정자는 덧그림이라 지도 덮개 위에 따로), 굴뚝 연기 (닫힌 집은 빼고)
       if (weather === 'snow') drawPavilionSnow(g)
       const smoke = chimneySmoke(day, minute)
