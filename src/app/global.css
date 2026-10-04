@@ -404,83 +404,80 @@ button:focus-visible {
   padding: 0 0 10px;
   min-height: 0;
 }
-.joystick { display: none; }
-/* 가로로 돌린 휴대폰·태블릿에서도 보이도록 폭이 아니라 터치 여부로 판단한다 */
-@media (pointer: coarse) {
-  .joystick {
-    display: flex;
-    position: absolute;
-    right: 12px;
-    bottom: 22px;
-    touch-action: none;
-    user-select: none;
-    -webkit-user-select: none;
-    -webkit-touch-callout: none;
-    z-index: 2;
-  }
-  /* 자리: 왼쪽 아래 */
-  .joystick.joystick-left { right: auto; left: 12px; }
-
-  /* 둥근 조이스틱 */
-  .joystick.round {
-    width: 78px;
-    height: 78px;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid rgba(251,243,226,.6);
-    border-radius: 50%;
-    background: rgba(43,33,24,.36);
-  }
-  .joystick.round span {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: rgba(251,243,226,.7);
-    box-shadow: 0 1px 3px #0009;
-    pointer-events: none;
-    transition: transform 60ms linear;
-  }
-
-  /* 네 방향 패드: 44px 단추 다섯 개를 십자로 (모서리는 비워 화면을 덜 가린다) */
-  .joystick.dpad {
-    display: grid;
-    grid-template: repeat(3, 44px) / repeat(3, 44px);
-    grid-template-areas: ". up ." "left center right" ". down .";
-    width: 132px;
-    height: 132px;
-    /* 비운 네 모서리는 누름을 받지 않고 지도로 넘긴다 */
-    clip-path: polygon(33.4% 0, 66.6% 0, 66.6% 33.4%, 100% 33.4%, 100% 66.6%, 66.6% 66.6%, 66.6% 100%, 33.4% 100%, 33.4% 66.6%, 0 66.6%, 0 33.4%, 33.4% 33.4%);
-  }
-  .joystick.dpad span {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    line-height: 1;
-    color: rgba(251,243,226,.85);
-    background: rgba(43,33,24,.34);
-    border: 2px solid rgba(251,243,226,.5);
-    pointer-events: none;
-    transition: background 60ms linear, transform 60ms linear;
-  }
-  .joystick.dpad [data-zone="up"] { grid-area: up; border-radius: 10px 10px 0 0; border-bottom: 0; }
-  .joystick.dpad [data-zone="down"] { grid-area: down; border-radius: 0 0 10px 10px; border-top: 0; }
-  .joystick.dpad [data-zone="left"] { grid-area: left; border-radius: 10px 0 0 10px; border-right: 0; }
-  .joystick.dpad [data-zone="right"] { grid-area: right; border-radius: 0 10px 10px 0; border-left: 0; }
-  .joystick.dpad [data-zone="center"] {
-    grid-area: center;
-    border-radius: 50%;
-    margin: 4px;
-    font-size: 11px;
-    background: rgba(251,243,226,.42);
-    color: rgba(43,33,24,.7);
-  }
-  .joystick.dpad span.pressed {
-    background: rgba(251,243,226,.62);
-    color: rgba(43,33,24,.85);
-  }
-  .joystick.dpad [data-zone="center"].pressed { background: rgba(251,243,226,.8); transform: scale(.92); }
+/* 선택한 화면 조작을 마우스와 터치 모두에서 표시한다 */
+.joystick {
+  display: flex;
+  position: absolute;
+  right: 12px;
+  bottom: 22px;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  z-index: 2;
 }
+/* 자리: 왼쪽 아래 */
+.joystick.joystick-left { right: auto; left: 12px; }
+
+/* 둥근 조이스틱 */
+.joystick.round {
+  width: 78px;
+  height: 78px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(251,243,226,.6);
+  border-radius: 50%;
+  background: rgba(43,33,24,.36);
+}
+.joystick.round span {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(251,243,226,.7);
+  box-shadow: 0 1px 3px #0009;
+  pointer-events: none;
+  transition: transform 60ms linear;
+}
+
+/* 네 방향 패드: 44px 단추 다섯 개를 십자로 (모서리는 비워 화면을 덜 가린다) */
+.joystick.dpad {
+  display: grid;
+  grid-template: repeat(3, 44px) / repeat(3, 44px);
+  grid-template-areas: ". up ." "left center right" ". down .";
+  width: 132px;
+  height: 132px;
+  /* 비운 네 모서리는 누름을 받지 않고 지도로 넘긴다 */
+  clip-path: polygon(33.4% 0, 66.6% 0, 66.6% 33.4%, 100% 33.4%, 100% 66.6%, 66.6% 66.6%, 66.6% 100%, 33.4% 100%, 33.4% 66.6%, 0 66.6%, 0 33.4%, 33.4% 33.4%);
+}
+.joystick.dpad span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  line-height: 1;
+  color: rgba(251,243,226,.85);
+  background: rgba(43,33,24,.34);
+  border: 2px solid rgba(251,243,226,.5);
+  pointer-events: none;
+  transition: background 60ms linear, transform 60ms linear;
+}
+.joystick.dpad [data-zone="up"] { grid-area: up; border-radius: 10px 10px 0 0; border-bottom: 0; }
+.joystick.dpad [data-zone="down"] { grid-area: down; border-radius: 0 0 10px 10px; border-top: 0; }
+.joystick.dpad [data-zone="left"] { grid-area: left; border-radius: 10px 0 0 10px; border-right: 0; }
+.joystick.dpad [data-zone="right"] { grid-area: right; border-radius: 0 10px 10px 0; border-left: 0; }
+.joystick.dpad [data-zone="center"] {
+  grid-area: center;
+  border-radius: 50%;
+  margin: 4px;
+  font-size: 11px;
+  background: rgba(251,243,226,.42);
+  color: rgba(43,33,24,.7);
+}
+.joystick.dpad span.pressed {
+  background: rgba(251,243,226,.62);
+  color: rgba(43,33,24,.85);
+}
+.joystick.dpad [data-zone="center"].pressed { background: rgba(251,243,226,.8); transform: scale(.92); }
 .volume-row {
   display: grid;
   grid-template-columns: 4em 1fr 3.5em;

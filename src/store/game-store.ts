@@ -329,7 +329,7 @@ interface Store {
   /** 방 꾸미기: 놓을 물건, 또는 치우기 */
   decorating: ItemId | 'pick' | null
   muted: boolean
-  /** 터치 화면의 조이스틱 (설정에서 켜고 끈다, 처음엔 꺼짐) */
+  /** 떠 있는 조이스틱 (설정에서 켜고 끈다, 처음엔 꺼짐 — 마우스·터치 모두) */
   joystick: boolean
   /** 조이스틱 모양: 네 방향 패드(기본) 또는 둥근 조이스틱 */
   joystickShape: JoystickShape

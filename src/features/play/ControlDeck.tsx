@@ -1,5 +1,5 @@
 // 휴대폰 아래 조작판: 왼쪽 십자 단추, 오른쪽 둥근 "확인" 단추와 작은 메뉴(말씀·가방·일지·가족·설정, 집 안이면 집 꾸미기).
-// 위 가장자리에는 몸 상태 눈금과 다음 일정 한 줄. 터치 화면에서만 보인다(CSS).
+// 위 가장자리에는 몸 상태 눈금과 다음 일정 한 줄. 설정에서 선택하면 마우스·터치 화면 모두에서 보인다.
 import { useState } from 'react'
 import { unlockAudio } from '../../audio/sound'
 import { CONTENT, neighborById } from '../../content/catalog'
