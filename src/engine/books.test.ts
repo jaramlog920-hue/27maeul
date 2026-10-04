@@ -1,6 +1,6 @@
 import { CONTENT, piecesOf } from '../content/catalog'
 import { bookDone, chaptersOf, emptyProgress, totalChapters } from './books'
-import { chooseBook, goToSleep, listen, newGame, setArrangement, submitChapter } from './game'
+import { chooseBook, goToSleep, listen, newGame, setArrangement, submitChapter, type GameState } from './game'
 
 describe('책별 진행', () => {
   it('빈 진행과 장 수 세기', () => {
@@ -25,34 +25,25 @@ describe('책별 진행', () => {
     expect(s.collected).toEqual([])
   })
 
-  it('책을 고르면 그 책 1장의 조각이 이웃에게 배정된다', () => {
+  it('책을 골라도 그 책의 조각이 이웃에게 배정되지 않는다 — 말씀 조각은 고른 책과 묶지 않는다 (계획 14 작업 5)', () => {
     const s = chooseBook(newGame(CONTENT), 'mk', CONTENT)
-    const ids = Object.values(s.offers)
-    expect(ids.length).toBeGreaterThan(0)
-    for (const id of ids) expect(id.startsWith('mk-001-')).toBe(true)
-  })
-
-  it('눅 1:1-4도 이웃이 건넨다 (주인공은 누가복음을 쓴 사람이 아니다)', () => {
-    let s = chooseBook(newGame(CONTENT), 'lk', CONTENT)
-    const got = new Set<string>()
-    for (let d = 0; d < 12; d++) {
-      for (const n of Object.keys(s.offers)) {
-        const r = listen(s, n, CONTENT)
-        s = r.state
-        if (r.pieceId) got.add(r.pieceId)
-      }
-      s = goToSleep(s, CONTENT)
+    expect(s.offers).toEqual({})
+    // 며칠 지나면 드물게 오는 조각은 고른 책이 아닌 책의 것일 수도 있다
+    let d = s
+    const books = new Set<string>()
+    for (let i = 0; i < 40; i++) {
+      d = goToSleep(d, CONTENT)
+      for (const id of [...Object.values(d.offers), ...d.post]) books.add(id.split('-')[0])
     }
-    expect(got.has('lk-001-001')).toBe(true)
+    expect([...books].some((b) => b !== 'mk')).toBe(true)
   })
 
   it('같은 날 이미 건넨 이웃은 책을 바꿔도 또 건네지 않는다', () => {
-    let s = chooseBook(newGame(CONTENT), 'lk', CONTENT)
-    const n = Object.keys(s.offers)[0]
-    s = listen(s, n, CONTENT).state
+    let s: GameState = { ...chooseBook(newGame(CONTENT), 'lk', CONTENT), offers: { baker: 'lk-001-001' } }
+    s = listen(s, 'baker', CONTENT).state
     s = chooseBook(s, 'mk', CONTENT)
-    expect(s.offers[n]).toBeUndefined()
-    for (const id of Object.values(s.offers)) expect(id.startsWith('mk-')).toBe(true)
+    expect(s.offers.baker).toBeUndefined()
+    expect(listen(s, 'baker', CONTENT).pieceId).toBeNull()
   })
 
   it('장을 마치면 그 책의 진행에만 쌓이고, 마지막 장이면 한 권 완성 장면', () => {

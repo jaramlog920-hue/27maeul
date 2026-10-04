@@ -162,7 +162,9 @@ function ready(book: Book): GameState {
     shelved: { mt: 2, mk: 1, lk: 1, jn: 0, ac: 1 } as GameState['shelved'],
     inv: { ...s.inv, papyrus: 5, ink: 5 },
   }
-  return listen(chooseBook(open, book, CONTENT), POSTMAN, CONTENT).state
+  // 편지 나르는 이웃이 앞의 두 장을 건넨 상태 (계획 14 작업 5부터 편지는 드물게 오므로 직접 넣는다)
+  const first = CONTENT.pieces.filter((p) => p.book === book).sort((a, b) => a.chapter - b.chapter).slice(0, 2).map((p) => p.id)
+  return listen({ ...chooseBook(open, book, CONTENT), post: first }, POSTMAN, CONTENT).state
 }
 const answers = (book: Book, chapter: number) => blanksFor(book, chapter, copySourceFor(book)).map((b) => b.answer)
 

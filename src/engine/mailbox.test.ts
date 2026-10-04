@@ -24,9 +24,8 @@ describe('우체통은 없다', () => {
 })
 
 describe('편지 바구니에서 편지 책의 편지 꺼내기', () => {
-  it('편지 책이면 오늘 편지가 바구니에 — 이웃에게 받는 것과 같은 편지, 어느 쪽이든 한 번', () => {
-    const s = chooseBook(roomOpenState(), 'rom', CONTENT)
-    expect(s.post.length).toBeGreaterThan(0)
+  it('편지 날이면 오늘 편지(말씀 조각)가 바구니에 — 이웃에게 받는 것과 같은 편지, 어느 쪽이든 한 번', () => {
+    const s = { ...chooseBook(roomOpenState(), 'mk', CONTENT), post: ['rom-001'] }
     expect(mailboxHasPost(s)).toBe(true)
     const { state, pieceIds } = openMailbox(s, CONTENT)
     expect(pieceIds).toEqual(s.post)
@@ -37,7 +36,7 @@ describe('편지 바구니에서 편지 책의 편지 꺼내기', () => {
     expect(openMailbox(fromPostman, CONTENT).pieceIds).toEqual([])
   })
 
-  it('복음서를 엮을 때는 바구니에 편지 책의 편지가 없다', () => {
+  it('편지가 오지 않은 날은 바구니가 비어 있다', () => {
     const gospel = chooseBook(newGame(CONTENT), 'mk', CONTENT)
     expect(openMailbox(gospel, CONTENT).pieceIds).toEqual([])
     expect(mailboxHasPost(gospel)).toBe(false)

@@ -54,13 +54,13 @@ describe('성경 이야기를 더 모으기', () => {
     expect(canBuyScroll(b.state, CONTENT)).toBe('done')
   })
 
-  it('친구 이상인 이웃에게 선물하면 이야기를 한 조각 더 들려준다', () => {
+  it('선물은 생활 루프 — 친구 이상인 이웃에게 선물해도 말씀 조각을 주지 않는다 (계획 14 작업 5)', () => {
     const def = CONTENT.neighbors.find((n) => n.id === 'baker') as NeighborDef
     const s = { ...base(), inv: { grapes: 2 } }
     expect(giveGift({ ...s, hearts: { baker: 0 } }, def, 'grapes', CONTENT)!.pieceId).toBeUndefined()
     const r = giveGift({ ...s, hearts: { baker: GIFT_STORY_HEARTS } }, def, 'grapes', CONTENT)!
-    expect(r.pieceId).toBeDefined()
-    expect(r.state.collected).toContain(r.pieceId)
+    expect(r.pieceId).toBeUndefined()
+    expect(r.state.collected).toEqual(s.collected)
   })
 
   it('편지 책과 요한계시록도 밤 필사·열람석으로 다음 장 하나 (편지 나르는 이웃이 오늘 들고 온 장은 빼고)', () => {

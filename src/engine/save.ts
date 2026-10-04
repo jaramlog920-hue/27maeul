@@ -7,12 +7,12 @@ import { sanitizeStats } from './stats'
 import { sanitizeCopy, sanitizeCopyStats } from './copying'
 import { backfillGodRecords, sanitizeGodRecords } from './god-records'
 import { sanitizeBindings } from './binding'
+import { sanitizePieceLog } from './fragments'
 import { IDLE_RESET } from './autonomy'
 import { bookDone, bookRoomOpen, emptyProgress, type Progress } from './books'
 import { newGame, settle, type GameState } from './game'
 import { cardsForChapters, placeNewCards } from './journey'
 import { refitRoom } from './room'
-import { arrivesOf, modeOf } from './shelf-rooms'
 import { HOME_ENTRY, HOME_ROOM, isWalkable, OLD_HOME, sameTile, setHomeLevel } from './world'
 import { BOOKS, type Book, type GameContent, type ItemId, type Tile } from './types'
 
@@ -67,13 +67,16 @@ const isObj = (v: unknown) => !!v && typeof v === 'object' && !Array.isArray(v)
 export function sanitize(s: GameState, content: GameContent): GameState {
   const known = new Map(content.pieces.map((p) => [p.id, p]))
   const progress: Progress = emptyProgress()
-  const extra: string[] = []
   for (const b of BOOKS) {
     const chapters = new Set(content.pieces.filter((p) => p.book === b).map((p) => p.chapter))
     progress[b].completed = [...new Set(s.progress?.[b]?.completed ?? [])].filter((c) => chapters.has(c))
-    // 이미 끝낸 장에 (콘텐츠가 바뀌어) 새 조각이 생겼다면 모은 것으로 친다
-    extra.push(...content.pieces.filter((p) => p.book === b && progress[b].completed.includes(p.chapter)).map((p) => p.id))
   }
+  // 필사 (계획 14): 옛 저장(칸이 없던 때 — deserialize가 null로 넘긴다)은 이미 마친 장을 "예전에 엮은 장"으로 남긴다
+  const copy = sanitizeCopy(s.copy, progress)
+  // 예전에 엮은 장(조각을 모아 엮던 때)에 (콘텐츠가 바뀌어) 새 조각이 생겼다면 모은 것으로 친다.
+  // 필사로 마친 장은 조각과 상관없다 — 말씀 조각은 필사에서 떼어 냈다 (계획 14 작업 5)
+  const extra: string[] = []
+  for (const b of BOOKS) extra.push(...content.pieces.filter((p) => p.book === b && (copy.legacy[b] ?? []).includes(p.chapter)).map((p) => p.id))
   const collected = [...new Set([...s.collected, ...extra])].filter((id) => known.has(id))
   for (const b of BOOKS) {
     const old = s.progress?.[b]?.arrangement ?? {}
@@ -112,12 +115,8 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     s.activeBook && (BOOKS as readonly string[]).includes(s.activeBook) && content.pieces.some((p) => p.book === s.activeBook) && bookRoomOpen(s.activeBook, flags)
       ? s.activeBook
       : null
-  // 오늘 가져온 편지: 옛 저장(칸이 없던 때)은 빈 값. 지금 편지 책의 장 조각 중 아직 받지 않은 것만 남긴다
-  const post =
-    // 요한계시록(arrives 'stars')은 낮 편지로 오지 않는다 — 언덕 편지함에서 꺼낸다 (계획 9 작업 2)
-    activeBook && modeOf(activeBook) === 'letters' && arrivesOf(activeBook) === 'post' && isStrArray(s.post)
-      ? [...new Set(s.post)].filter((id) => known.get(id)?.book === activeBook && !collected.includes(id))
-      : []
+  // 오늘 온 편지(말씀 조각): 옛 저장(칸이 없던 때)은 빈 값. 있는 조각 중 아직 받지 않은 것만 남긴다 (고른 책과 상관없이 — 계획 14 작업 5)
+  const post = isStrArray(s.post) ? [...new Set(s.post)].filter((id) => known.has(id) && !collected.includes(id)) : []
   // 여정 판: 옛 저장(판이 없던 때)은 빈 판에서, 엮은 사도행전 장의 카드만 남기고 빠진 카드는 채운다
   const board = Array.isArray(s.journey) ? s.journey.filter((n) => Number.isInteger(n)) : []
   const journey = placeNewCards(board, cardsForChapters(content.journey ?? [], progress.ac.completed))
@@ -150,9 +149,8 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     notebook: sanitizeNotebook(s.notebook),
     child: sanitizeChild(s.child),
     found: isStrArray(s.found) ? (s.found as ItemId[]) : [],
-    // 필사 (계획 14): 옛 저장(칸이 없던 때 — deserialize가 null로 넘긴다)은 이미 마친 장을 "예전에 엮은 장"으로 남긴다.
-    // 마친 장(progress)은 그대로 마친 장이고, 글자 수 통계는 0에서 시작한다
-    copy: sanitizeCopy(s.copy, progress),
+    // 필사 (계획 14): 마친 장(progress)은 그대로 마친 장이고, 글자 수 통계는 0에서 시작한다
+    copy,
     copyStats: sanitizeCopyStats(s.copyStats),
     // 하나님 기록 (계획 14): 모양이 맞는 줄만, 같은 줄은 한 번만. 필사 전에 마친 장(옛 저장·예전에 엮은 장)의 줄은
     // 불러올 때 지금 날짜로 채운다 — 이미 있는 줄은 그대로라 몇 번 불러와도 같다
@@ -167,6 +165,8 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     achieved: Array.isArray(s.achieved) ? s.achieved.filter((a) => a && typeof a.id === 'string' && typeof a.day === 'number') : [],
     needs: { ...s.needs, heat: s.needs?.heat ?? 0 },
     collected,
+    // 받은 말씀 조각의 기록 (계획 14 작업 5): 옛 저장은 빈 기록 — 화면은 "언제 받았는지 남아 있지 않은 조각"
+    pieceLog: sanitizePieceLog(s.pieceLog, collected),
     progress,
     activeBook,
     offers,

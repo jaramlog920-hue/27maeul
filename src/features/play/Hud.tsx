@@ -43,6 +43,9 @@ export function Hud() {
           <span className={`hud-chapter${chapterHint ? ' hint' : ''}`}> · {chapterText}</span>
         </span>
         <div className="hud-buttons">
+          <button className="hud-btn hud-word" onClick={() => open({ kind: 'word' })}>
+            {T.word.open}
+          </button>
           <button className="hud-btn" onClick={() => open({ kind: 'settings' })}>설정</button>
           <button className="hud-btn" onClick={() => open({ kind: 'bag' })}>
             {T.ui.bag}

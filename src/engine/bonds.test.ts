@@ -149,10 +149,10 @@ describe('C. 마을이 자란다', () => {
     let s = at(after, 8 * 60)
     for (let i = 0; i < 600; i++) s = tick(s, 0.05, zero, CONTENT).state
     expect(s.npcs.weaver.visible).toBe(true)
-    // 며칠 지나는 동안 새 이웃도 이야기를 전한다
+    // 여러 주가 지나는 동안 새 이웃도 특별한 대화로 말씀 조각을 건넨다 (조각은 드물게 — 계획 14 작업 5)
     let d = after
     const tellers = new Set<string>()
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 300 && !tellers.has('weaver'); i++) {
       Object.keys(d.offers).forEach((k) => tellers.add(k))
       d = goToSleep(d, CONTENT)
     }

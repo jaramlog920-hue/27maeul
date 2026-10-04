@@ -83,6 +83,12 @@ describe('책 고르기', () => {
   })
 })
 
+/** 편지 나르는 이웃이 로마서 1·2장 편지를 건넨다 (계획 14 작업 5부터 편지는 드물게 오므로 오늘 편지를 직접 넣는다) */
+function giveLetter() {
+  useGame.setState({ game: { ...useGame.getState().game, post: ['rom-001', 'rom-002'] } })
+  useGame.getState().listenTo(POSTMAN)
+}
+
 describe('옮겨 적기', () => {
   const blanks = blanksFor('rom', 1, copySourceFor('rom'))
 
@@ -103,7 +109,7 @@ describe('옮겨 적기', () => {
     openDesk()
     render(<ModalLayer />)
     await user.click(screen.getByRole('button', { name: '로마서 · 0/16장' }))
-    act(() => useGame.getState().listenTo(POSTMAN))
+    act(() => giveLetter())
     expect(useGame.getState().game.collected).toContain('rom-001')
     openDesk()
 
@@ -148,7 +154,7 @@ describe('옮겨 적기', () => {
     openDesk()
     render(<ModalLayer />)
     await user.click(screen.getByRole('button', { name: '로마서 · 0/16장' }))
-    act(() => useGame.getState().listenTo(POSTMAN))
+    act(() => giveLetter())
     openDesk()
     for (let i = 0; i < blanks.length; i++) {
       await user.click(screen.getByRole('button', { name: `빈칸 ${i + 1}` }))

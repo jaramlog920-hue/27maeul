@@ -98,7 +98,10 @@ describe('이웃', () => {
     const user = userEvent.setup()
     render(<ModalLayer />)
     act(() => useGame.getState().frame(0.01))
-    // 오늘 이야기를 가진 이웃 가운데 보이는 이웃에게
+    // 오늘 특별한 대화로 말씀 조각을 건넬 이웃 (드물게 오므로 보이는 이웃 하나에 직접 배정 — 계획 14 작업 5)
+    const vis = useGame.getState().game
+    const teller = CONTENT.neighbors.find((n) => !n.romanceable && n.id !== 'postman' && vis.npcs[n.id]?.visible)!.id
+    act(() => useGame.setState((s) => ({ game: { ...s.game, offers: { [teller]: 'lk-001-001' } } })))
     const g0 = useGame.getState().game
     const who = Object.keys(g0.offers).find((id) => g0.npcs[id]?.visible)!
     const npc = g0.npcs[who]
@@ -110,7 +113,7 @@ describe('이웃', () => {
     act(() => useGame.getState().talkTo(who))
     expect(screen.getByRole('dialog', { name: role })).toBeInTheDocument()
     expect(useGame.getState().game.hearts[who]).toBe(2)
-    await user.click(screen.getByRole('button', { name: '사본 보여 주세요' }))
+    await user.click(screen.getByRole('button', { name: '말씀 조각 받기' }))
     const got = useGame.getState().game.collected.at(-1)!
     expect(got.startsWith('lk-001-')).toBe(true)
     // 1장 조각은 모두 누가에만 → 나의 한 줄을 물어본다

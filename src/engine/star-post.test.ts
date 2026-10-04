@@ -146,9 +146,10 @@ describe('⑤ 낮의 편지 나르는 이웃은 요한계시록을 건네지 않
     expect(starPostHint(chooseBook(s, 'rom', CONTENT), POSTMAN)).toBeNull()
   })
 
-  it('저장에 요한계시록 post가 끼어 있어도 불러오면 빈다', () => {
+  it('드문 편지(말씀 조각, 계획 14 작업 5)에 든 요한계시록 조각은 불러와도 남는다 — 이미 받은 장은 빠진다', () => {
     const s = revState(CLEAR_DAYS[0], 10 * 60)
-    expect(sanitize({ ...s, post: ['rev-001', 'rev-002'] }, CONTENT).post).toEqual([])
+    expect(sanitize({ ...s, post: ['rev-002'] }, CONTENT).post).toEqual(['rev-002'])
+    expect(sanitize({ ...s, post: ['rev-002'], collected: [...s.collected, 'rev-002'] }, CONTENT).post).toEqual([])
   })
 })
 

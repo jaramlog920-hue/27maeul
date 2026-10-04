@@ -122,6 +122,27 @@ export function chapterText(book: Book, chapter: number): Verse[] {
   return n ? versesOf(`${BOOK_ABBR[book]} ${chapter}:1-${n}`) : []
 }
 
+/** 본문에서 보기의 한 절: 조각에 든 절이면 inPiece */
+export interface ContextVerse extends Verse {
+  inPiece: boolean
+}
+
+/**
+ * 말씀 탭 [본문에서 보기] (계획 14 작업 5): 조각 구간과 그 앞뒤 around절씩 (조각이 걸친 장 안에서, 본문이 없는 절은 빠진다).
+ * 장 하나 통째인 조각(편지 책·요한계시록)은 그 장 그대로
+ */
+export function contextOf(ref: string, around = 3): ContextVerse[] {
+  const book = bookOfRef(ref)
+  const inner = versesOf(ref)
+  if (!inner.length) return []
+  const keys = new Set(inner.map((v) => `${v.chapter}:${v.verse}`))
+  const all = [...new Set(inner.map((v) => v.chapter))].flatMap((c) => chapterText(book, c))
+  const at = (v: Verse) => all.findIndex((x) => x.chapter === v.chapter && x.verse === v.verse)
+  const from = Math.max(0, at(inner[0]) - around)
+  const to = at(inner[inner.length - 1]) + around + 1
+  return all.slice(from, to).map((v) => ({ ...v, inPiece: keys.has(`${v.chapter}:${v.verse}`) }))
+}
+
 const pieceMap = new Map(PIECES.map((p) => [p.id, p]))
 export function pieceById(id: string): Piece {
   const p = pieceMap.get(id)

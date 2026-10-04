@@ -39,6 +39,7 @@ import { GameGuide } from './play/GameGuide'
 import { Settings } from './play/Settings'
 import { ScheduleDialog } from './play/EventSchedule'
 import { watchScrollHints } from './scroll-hint'
+import { Word } from './word/Word'
 
 function Body() {
   const modal = useGame((s) => s.modal)
@@ -119,6 +120,8 @@ function Body() {
       return <JourneyBoard key={modal.board ?? 'acts'} board={modal.board ?? 'acts'} />
     case 'garden':
       return <GardenMenu at={modal.at} />
+    case 'word':
+      return <Word tab={modal.tab} />
   }
 }
 

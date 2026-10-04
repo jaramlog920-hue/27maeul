@@ -75,15 +75,16 @@ function DeckNext() {
   )
 }
 
-/** 오늘 이야기를 들려줄 이웃 수 — 없으면 보이지 않는다. 누르면 누구인지 */
+/** 오늘 받을 말씀 조각 (드물게 — 특별한 대화의 이웃·문 앞 편지 바구니) — 없으면 보이지 않는다. 누르면 어디서인지 */
 function DeckStories() {
   const who = useGame((s) => Object.keys(s.game.offers).join(','))
-  if (!who) return null
-  const ids = who.split(',')
-  const names = ids.map((id) => neighborById(id)?.role ?? id).join(', ')
+  const letter = useGame((s) => (s.game.post ?? []).length > 0)
+  if (!who && !letter) return null
+  const ids = who ? who.split(',') : []
+  const names = [...ids.map((id) => neighborById(id)?.role ?? id), ...(letter ? [T.word.basketWho] : [])].join(', ')
   return (
     <button className="deck-stories" onClick={() => useGame.getState().say(fill(T.controls.storiesWho, { who: names }), 3600)}>
-      {fill(T.controls.stories, { n: ids.length })}
+      {fill(T.controls.stories, { n: ids.length + (letter ? 1 : 0) })}
     </button>
   )
 }
@@ -116,6 +117,7 @@ export function ControlDeck() {
             </button>
             {menu && !modalOpen && (
               <div className="deck-menu-pop" role="menu">
+                <button role="menuitem" onClick={() => go({ kind: 'word' })}>{T.word.open}</button>
                 <button role="menuitem" onClick={() => go({ kind: 'bag' })}>{T.ui.bag}</button>
                 <button role="menuitem" onClick={() => go({ kind: 'journal' })}>{T.ui.journalTitle}</button>
                 <button role="menuitem" onClick={() => go({ kind: 'family' })}>가족</button>

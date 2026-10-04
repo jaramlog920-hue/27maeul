@@ -35,6 +35,7 @@ import {
   TRADES,
   readScripture,
   inGathering,
+  neighborsPresent,
   type GameState, neighborBeside } from './game'
 import { BABY_PARTY_SPOTS, HILL_SPOTS } from './bonds'
 import { REQUESTS as REQUESTS_T } from './bonds'
@@ -96,16 +97,14 @@ describe('새 게임', () => {
     expect([s.player.x, s.player.y]).toEqual([START.x, START.y])
     expect(s.inv).toEqual({ water: 1, bread: 2 })
     expect(s.scenes).toEqual(['welcome'])
-    // 상인은 장날이 아니라 제안이 없다
-    expect(s.offers.merchant).toBeUndefined()
-    // 책을 고르기 전에는 아무도 조각을 건네지 않는다
+    // 첫날엔 아무도 말씀 조각을 건네지 않는다 (조각은 드물게 — 계획 14 작업 5)
     expect(s.offers).toEqual({})
+    expect(s.post).toEqual([])
     expect(s.collected).toEqual([])
-    // 누가복음을 고르면 1장 조각이 이웃에게 배정된다 (눅 1:1-4도 이웃이 건넨다)
+    expect(s.pieceLog).toEqual({})
+    // 책을 골라도 이웃에게 조각이 배정되지 않는다 (조각은 고른 책과 묶지 않는다)
     const lk = chooseBook(s, 'lk', CONTENT)
-    expect(lk.offers.merchant).toBeUndefined()
-    expect(Object.keys(lk.offers).length).toBe(6)
-    for (const id of Object.values(lk.offers)) expect(id.startsWith('lk-001-')).toBe(true)
+    expect(lk.offers).toEqual({})
     expect(lk.progress.lk.arrangement).toEqual({})
   })
 })
@@ -155,9 +154,9 @@ describe('이웃', () => {
     expect(heartsOf(s.hearts.baker)).toBe(0)
   })
   it('이야기는 한 번만 받는다', () => {
-    const s = chooseBook(newGame(CONTENT), 'lk', CONTENT)
-    // 오늘 이야기를 가진 이웃 하나
-    const who = Object.keys(s.offers)[0]
+    // 오늘 특별한 대화로 조각을 건넬 이웃 하나
+    const s = { ...chooseBook(newGame(CONTENT), 'lk', CONTENT), offers: { baker: 'lk-001-001' } }
+    const who = 'baker'
     const first = listen(s, who, CONTENT)
     expect(first.pieceId).toBe(s.offers[who])
     expect(first.state.progress.lk.arrangement[1]).toEqual([s.offers[who]])
@@ -427,8 +426,8 @@ describe('새 날 아침', () => {
 
 describe('잠과 새 날', () => {
   it('일지를 남기고 침대 앞에서 일어나며, 이웃 인사·돕기가 새로워진다', () => {
-    let s = chooseBook(newGame(CONTENT), 'lk', CONTENT)
-    const who = Object.keys(s.offers)[0]
+    let s: GameState = { ...chooseBook(newGame(CONTENT), 'lk', CONTENT), offers: { baker: 'lk-001-001' } }
+    const who = 'baker'
     const got = listen(greetNeighbor(s, who), who, CONTENT)
     s = { ...got.state, helped: [who] }
     expect(reviewPick(s, zero)).toBe(got.pieceId)
@@ -575,12 +574,16 @@ describe('특별한 순간', () => {
 })
 
 describe('리뷰 지적 회귀', () => {
-  it('M3: 궂은 날 집에서 쉬는 이웃(대장장이)에게는 이야기를 배정하지 않는다', () => {
-    // 3일째는 비
-    const s = goToSleep(at(chooseBook(newGame(CONTENT), 'lk', CONTENT), 22 * 60, 2), CONTENT)
-    expect(s.clock.day).toBe(3)
-    expect(s.offers.smith).toBeUndefined()
-    expect(s.offers.baker).toBeDefined()
+  it('M3: 궂은 날 집에서 쉬는 이웃(대장장이)에게는 말씀 조각을 배정하지 않는다 — 조각은 그날 나온 이웃만 건넨다', () => {
+    let talks = 0
+    for (let d = 1; d < 120; d++) {
+      const s = goToSleep(at(newGame(CONTENT), 22 * 60, d), CONTENT)
+      const present = neighborsPresent(s, CONTENT)
+      for (const id of Object.keys(s.offers)) expect(present, `day ${s.clock.day}`).toContain(id)
+      if (isWet(weatherOf(s.clock.day))) expect(s.offers.smith, `day ${s.clock.day}`).toBeUndefined()
+      talks += Object.keys(s.offers).length
+    }
+    expect(talks).toBeGreaterThan(0)
   })
   it('m2: 잔치 날 저녁에는 글자 수업이 없다', () => {
     const s: GameState = { ...at(newGame(CONTENT), 18 * 60 + 10, dayOf('summer', 25)), flags: { childAsked: 1 } }
@@ -623,10 +626,12 @@ describe('저장', () => {
     const back = deserialize(JSON.stringify(old), CONTENT)!
     expect(Object.keys(back.garden).sort()).toEqual(['14,3', '17,4'])
   })
-  it('N2·N4: 끝낸 장의 새 조각은 모은 것으로, 빠진 조각은 본문 순서 자리에', () => {
+  it('N2·N4: (필사 전 옛 저장) 끝낸 장의 새 조각은 모은 것으로, 빠진 조각은 본문 순서 자리에', () => {
     const s = newGame(CONTENT)
     const old = {
       ...JSON.parse(serializeForTest(s)),
+      // 필사 칸이 없던 옛 저장 — 끝낸 장은 "예전에 엮은 장" (필사로 마친 장은 조각과 상관없다, 계획 14 작업 5)
+      copy: undefined,
       collected: ['lk-001-026', 'lk-001-005', 'lk-001-001'],
       progress: { ...s.progress, lk: { arrangement: { 1: ['lk-001-026', 'lk-001-005'] }, completed: [2] } },
     }

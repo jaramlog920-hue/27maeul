@@ -39,7 +39,8 @@ import { FESTIVAL_SPOTS, FIRE, goalFor, isNear, npcTile, placeNpc, stepNpc, type
 import { GAIN, heartsOf, MAX_POINTS } from './hearts'
 import { bookDone, bookRoomOpen, chaptersOf, emptyProgress, openDoorsFor, roomOpen, totalChapters, type Progress } from './books'
 import { arrivesOf, modeOf, SHELF_ROOMS } from './shelf-rooms'
-import { currentChapter, mulberry32, offersForDay } from './offers'
+import { currentChapter, mulberry32 } from './offers'
+import { fragmentsForDay, logPieces, talkGiftOf, type PieceLog } from './fragments'
 import { checkCopy, COPY_CHAPTER_XP, copySpot, copyVerses, nextOpenChapter, NO_COPY, NO_COPY_STATS, type CopyCheck, type CopyState, type CopyStats } from './copying'
 import { chapterFinds, type GodFind } from './god-records'
 import { SPECIAL_COST, type Bindings, type SpecialChoice } from './binding'
@@ -85,7 +86,7 @@ import {
   type Stage,
 } from './people'
 import { RARE_ITEMS, fixtureTier, FIXTURE_STEPS, lampNightsPerOil, nextFixture, type FixtureLine, type FixtureStep } from './fixtures'
-import { POSTMAN, postForDay, starPostFor } from './post'
+import { POSTMAN, starPostFor } from './post'
 import { blanksFor } from './copy'
 import { checkArrangement, moveItem, type ArrangeResult } from './scroll'
 import { cardsForChapters, journeyComplete, placeNewCards, type JourneyCard } from './journey'
@@ -134,11 +135,17 @@ export interface GameState {
   player: Actor
   idle: IdleState
   target: Target | null
-  /** 이웃 id → 오늘 전해 줄 조각 id */
+  /**
+   * 이웃 id → 오늘 특별한 대화로 건넬 말씀 조각 id (계획 14 작업 5: 드물게 — 조각 오는 날에 많아야 한 명, fragments.ts).
+   * 옛 저장은 그날 몫이 남아 있을 수 있다
+   */
   offers: Record<string, string>
-  /** 오늘 편지 나르는 이웃이 가져온 편지(편지 책의 장 조각 id) — 지금 책이 편지 책일 때만, 한꺼번에 건넨다 */
+  /** 오늘 온 편지에 든 말씀 조각 id (편지 나르는 이웃에게서든 문 앞 편지 바구니에서든 한 번) — 조각 오는 날에 많아야 하나 */
   post: string[]
+  /** 받은 말씀 조각 (말씀 탭의 말씀 조각 도감) */
   collected: string[]
+  /** 받은 말씀 조각의 기록: 받은 날·어디서 (옛 저장의 조각은 기록이 없다 — 화면은 "언제 받았는지 남아 있지 않은 조각") */
+  pieceLog: PieceLog
   todayHeard: string[]
   /** 지금 엮는 책 (처음엔 고르지 않았다) */
   activeBook: Book | null
@@ -374,29 +381,13 @@ function placeAllNpcs(s: GoalState, content: GameContent): Record<string, Npc> {
   return Object.fromEntries(content.neighbors.map((d) => [d.id, placeNpc(d, goalFor(d, ctx))]))
 }
 
-function todaysOffers(day: number, collected: string[], s: Pick<GameState, 'activeBook' | 'progress'>, content: GameContent, npcs: string[]) {
-  if (!s.activeBook) return {}
-  // 편지는 이웃이 조각으로 나눠 건네지 않는다 — 편지 나르는 이웃만 장째로 (계획 7 작업 2)
-  if (modeOf(s.activeBook) === 'letters') return {}
-  const pieces = content.pieces.filter((p) => p.book === s.activeBook)
-  // 이야기 조각은 마을 이웃이 건넨다 — 연애 후보(계획 6)는 건네지 않는다 (필사 흐름의 빠르기가 바뀌지 않게)
-  const tellers = npcs.filter((id) => !content.neighbors.find((d) => d.id === id)?.romanceable)
-  return offersForDay({ day, pieces, collected, chapter: currentChapter(pieces, s.progress[s.activeBook].completed), neighborIds: tellers })
-}
-
 /**
- * 오늘 편지 나르는 이웃이 가져올 편지: 지금 책이 편지 책이고, 그 이웃이 오늘 나와 있고(present), 오늘 아직 건네지 않았을 때
- * (listened — 책을 바꿔도 같은 날 또 받지 않는다). 다른 이웃은 편지를 건네지 않는다.
- * 요한계시록(arrives 'stars')은 낮에 건네지 않는다 — 언덕 편지함에서 맑은 밤에 꺼낸다 (stargaze)
- * 집 앞 편지함이 섰으면 그 이웃이 나오지 않는 날(궂은 날 등)에도 편지함에 넣어 둔다 (계획 11 작업 3)
+ * 오늘의 말씀 조각 (계획 14 작업 5): 날마다 이웃 여럿이 건네던 조각(예전 offers)을 드문 조각으로 —
+ * 조각 오는 날(일주일에 몇 번, 날 씨앗)에 편지 하나(post) 또는 오늘 나온 이웃 한 명의 특별한 대화(offers).
+ * 고른 책·필사하는 책과 묶지 않는다 (27권 어느 책의 조각이든). 편지는 그 이웃이 나오지 않는 날에도 문 앞 편지 바구니에 든다
  */
-function todaysPost(day: number, s: Pick<GameState, 'activeBook' | 'collected' | 'listened' | 'flags'>, content: GameContent, present: string[]): string[] {
-  const book = s.activeBook
-  if (!book || modeOf(book) !== 'letters' || arrivesOf(book) !== 'post') return []
-  if (s.listened.includes(POSTMAN)) return []
-  // 편지 나르는 이웃이 나오지 않는 날에도 문 앞 편지 바구니에 넣어 둔다 (우체통 대신 바구니, 2026-09-30 사용자)
-  void present
-  return postForDay({ day, book, chapters: content.pieces.filter((p) => p.book === book), delivered: s.collected })
+function todaysFragments(day: number, collected: readonly string[], content: GameContent, present: readonly string[]): { offers: Record<string, string>; post: string[] } {
+  return fragmentsForDay({ day, pieces: content.pieces, collected, present })
 }
 
 /** 그날 밖에 나오는 이웃 (상인은 장날만, 궂은 날 쉬는 이웃은 빼고) — 이야기는 만날 수 있는 이웃에게만 배정한다 */
@@ -434,6 +425,7 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
     offers: {},
     post: [],
     collected: [],
+    pieceLog: {},
     todayHeard: [],
     activeBook: null,
     progress,
@@ -486,15 +478,15 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
   }
 }
 
-/** 지금 엮을 책을 고른다. 오늘 아직 조각을 건네지 않은 이웃에게 새 책의 조각을 배정한다 */
+/**
+ * 예전 엮기의 지금 책을 고른다 (계획 14부터 책상은 필사 — 이 길은 옛 흐름과 테스트용).
+ * 말씀 조각은 고른 책과 묶지 않으므로 오늘의 조각(offers·post)은 그대로 둔다 (계획 14 작업 5)
+ */
 export function chooseBook(s: GameState, book: Book, content: GameContent): GameState {
   if (!content.pieces.some((p) => p.book === book)) return s
   // 복음서 방 밖의 책은 그 서고 방이 열린 뒤에만 (화면이 막아도 엔진에서 한 번 더)
   if (!bookRoomOpen(book, s.flags)) return s
-  const level = s.flags.villageLevel ?? 0
-  const present = neighborsOfDay(s.clock.day, content, level, s.flags).filter((id) => !s.listened.includes(id))
-  const next = { ...s, activeBook: book }
-  return { ...next, offers: todaysOffers(s.clock.day, s.collected, next, content, present), post: todaysPost(s.clock.day, next, content, present) }
+  return { ...s, activeBook: book }
 }
 
 /** 불러온 뒤 이웃을 제자리에 세운다 (걷던 길은 저장하지 않으므로) */
@@ -1159,12 +1151,13 @@ export function greetNeighbor(s: GameState, id: string): GameState {
 }
 
 /**
- * 오늘 이 이웃이 전해 줄 이야기를 듣는다. pieceIds: 받은 조각 모두 (조각은 하나, 편지는 가져온 장 전부).
- * 지금 책이 편지 책이면 편지 나르는 이웃이 오늘 가져온 편지(post)를 한꺼번에 건넨다 — 다른 이웃은 건네지 않는다(offers가 비어 있다)
+ * 오늘 이 이웃에게 말씀 조각을 받는다 (특별한 대화 — 계획 14 작업 5). pieceIds: 받은 조각 모두.
+ * 편지 나르는 이웃은 오늘 온 편지(post)를 건넨다 (문 앞 편지 바구니와 같은 편지 — 어느 쪽에서 받든 한 번).
+ * 받은 조각은 받은 날·누구에게서와 함께 남는다 (pieceLog)
  */
 export function listen(s: GameState, neighborId: string, content: GameContent): { state: GameState; pieceId: string | null; pieceIds: string[] } {
   const none = { state: s, pieceId: null, pieceIds: [] as string[] }
-  if (neighborId === POSTMAN && s.activeBook && modeOf(s.activeBook) === 'letters') {
+  if (neighborId === POSTMAN && (s.post ?? []).length) {
     const r = receivePost(s, content)
     return r.pieceIds.length ? { ...r, state: { ...r.state, notebook: noteHeard(r.state.notebook ?? NO_NOTEBOOK, POSTMAN, r.pieceIds) } } : r
   }
@@ -1182,6 +1175,7 @@ export function listen(s: GameState, neighborId: string, content: GameContent): 
       ...s,
       offers,
       collected: [...s.collected, pieceId],
+      pieceLog: logPieces(s.pieceLog, [pieceId], s.clock.day, `npc:${neighborId}`),
       todayHeard: [...s.todayHeard, pieceId],
       listened: s.listened.includes(neighborId) ? s.listened : [...s.listened, neighborId],
       notebook: noteHeard(s.notebook ?? NO_NOTEBOOK, neighborId, [pieceId]),
@@ -1197,7 +1191,7 @@ function receivePost(s: GameState, content: GameContent): { state: GameState; pi
   const known = new Map(content.pieces.map((p) => [p.id, p]))
   const ids = (s.post ?? []).filter((id) => known.has(id) && !s.collected.includes(id))
   if (!ids.length) return { state: s, pieceId: null, pieceIds: [] }
-  const got = takeChapters(s, ids, content)
+  const got = takeChapters(s, ids, content, 'letter')
   return {
     state: { ...got, post: [], listened: s.listened.includes(POSTMAN) ? s.listened : [...s.listened, POSTMAN] },
     pieceId: ids[0],
@@ -1210,7 +1204,6 @@ function receivePost(s: GameState, content: GameContent): { state: GameState; pi
  * 이웃에게 받는 것과 같은 편지(post)다 — 어느 쪽에서 받든 한 번. 편지함이 없거나 비었으면 pieceIds가 빈다
  */
 export function openMailbox(s: GameState, content: GameContent): { state: GameState; pieceIds: string[] } {
-  if (!s.activeBook || modeOf(s.activeBook) !== 'letters') return { state: s, pieceIds: [] }
   const { state, pieceIds } = receivePost(s, content)
   return { state, pieceIds }
 }
@@ -1220,8 +1213,11 @@ export function mailboxHasPost(s: Pick<GameState, 'flags' | 'post' | 'collected'
   return (s.post ?? []).some((id) => !s.collected.includes(id))
 }
 
-/** 받은 장 조각을 collected·todayHeard에 넣는다 (편지 나르는 이웃·언덕 편지함이 함께 쓴다) */
-function takeChapters(s: GameState, ids: readonly string[], content: GameContent): GameState {
+/**
+ * 받은 조각을 collected·todayHeard에 넣고 받은 기록(pieceLog)을 남긴다 (편지·언덕 편지함·여행·열람석·두루마리·아이의 편지가 함께 쓴다).
+ * from: 어디서 받았나 (fragments.PieceGot)
+ */
+function takeChapters(s: GameState, ids: readonly string[], content: GameContent, from: string): GameState {
   const known = new Map(content.pieces.map((p) => [p.id, p]))
   // 책상 순서(arrangement)도 조각과 같게 채워 둔다 — 불러오기(sanitize)가 모은 조각으로 다시 채우는 것과 어긋나지 않게
   let progress = s.progress
@@ -1230,7 +1226,7 @@ function takeChapters(s: GameState, ids: readonly string[], content: GameContent
     const bp = progress[p.book]
     progress = { ...progress, [p.book]: { ...bp, arrangement: { ...bp.arrangement, [p.chapter]: [...(bp.arrangement[p.chapter] ?? []), id] } } }
   }
-  return { ...s, collected: [...s.collected, ...ids], todayHeard: [...s.todayHeard, ...ids], progress }
+  return { ...s, collected: [...s.collected, ...ids], pieceLog: logPieces(s.pieceLog, ids, s.clock.day, from), todayHeard: [...s.todayHeard, ...ids], progress }
 }
 
 /** 돕기 보상 (계절에 따라 바뀌는 이웃이 있다) */
@@ -1274,9 +1270,9 @@ export function giveGift(s: GameState, def: NeighborDef, item: ItemId, content?:
   const mul = isBirthday(def.id, s.clock.day) ? BIRTHDAY_MUL : 1
   const given = heartUp({ ...base, inv: left, gifted: [...s.gifted, def.id], notebook }, def.id, disliked ? 0 : (liked ? GAIN.giftLiked : GAIN.giftPlain) * mul)
   const trained = train(given, 'charm', XP.gift)
-  // 친구 이상인 이웃은 선물을 받으면 이야기를 한 조각 더 들려준다 (싫어하는 것이면 없음)
-  const story = content && !disliked && (s.hearts[def.id] ?? 0) >= GIFT_STORY_HEARTS ? extraPiece(trained, content) : null
-  return story ? { state: story.state, liked, pieceId: story.pieceId } : { state: trained, liked }
+  // 선물은 생활 루프 — 마음만 오른다. 말씀 조각은 선물·직업과 묶지 않는다 (계획 14 작업 5: 예전엔 친한 이웃이 조각을 더 들려줬다)
+  void content
+  return { state: trained, liked }
 }
 
 /** 이웃이 싫어하는 것 (neighbors.json과 people.json을 함께 본다) */
@@ -1472,15 +1468,15 @@ export function takeTrip(s: GameState, content: GameContent, id: DestId, buys: r
     next = { ...next, album: next.album.some((a) => a.id === note) ? next.album : [...next.album, { id: note, day: s.clock.day }] }
   }
   next = { ...next, todayNotes: next.todayNotes.includes(note) ? next.todayNotes : [...next.todayNotes, note] }
-  next = applyTripRewards(next, rewards, content)
+  next = applyTripRewards(next, rewards, content, `trip:${id}`)
   return goToSleep(next, content)
 }
 
 /** 여행 보드게임에서 얻은 것 (돌아올 때 한꺼번에): 성경 조각, 능력치(나·아이), 재료, 닢 */
-export function applyTripRewards(s: GameState, rewards: readonly TripReward[], content: GameContent): GameState {
+export function applyTripRewards(s: GameState, rewards: readonly TripReward[], content: GameContent, from = 'trip:'): GameState {
   let next = s
   const pieces = rewards.flatMap((r) => (r.kind === 'piece' && !s.collected.includes(r.id) ? [r.id] : []))
-  if (pieces.length) next = train(takeChapters(next, [...new Set(pieces)], content), 'wit', XP.listen * pieces.length)
+  if (pieces.length) next = train(takeChapters(next, [...new Set(pieces)], content, from), 'wit', XP.listen * pieces.length)
   for (const r of rewards) {
     if (r.kind === 'stat' && r.who === 'me') next = train(next, r.stat, r.xp)
     else if (r.kind === 'stat' && r.who === 'child' && next.child) next = { ...next, child: { ...next.child, stats: addXp(next.child.stats, r.stat, r.xp) } }
@@ -1515,10 +1511,10 @@ export function doService(s: GameState, svc: Service): GameState | null {
 // ── 성경 이야기를 더 모으는 길 (2026-09-30 사용자): 밤 필사·이웃 선물·서고 열람석·떠돌이 상인의 두루마리·어른이 된 아이의 편지 ──
 
 /** 지금 책의 다음 조각 하나를 모은다 (여행 판과 같은 규칙 — 편지 책은 편지 나르는 이웃이 가져온다) */
-export function extraPiece(s: GameState, content: GameContent): { state: GameState; pieceId: string } | null {
+export function extraPiece(s: GameState, content: GameContent, from: string): { state: GameState; pieceId: string } | null {
   const id = nextTripPiece(s, content)
   if (!id) return null
-  return { state: train(takeChapters(s, [id], content), 'wit', XP.listen), pieceId: id }
+  return { state: train(takeChapters(s, [id], content, from), 'wit', XP.listen), pieceId: id }
 }
 
 /** 밤 필사: 밤에 책상에서 등잔 기름 한 병으로 다음 조각을 옮겨 적는다 (원할 때마다, 기름이 있는 만큼) */
@@ -1533,7 +1529,7 @@ export function canNightCopy(s: GameState, content: GameContent): ExtraBlock {
 }
 export function nightCopy(s: GameState, content: GameContent): { state: GameState; pieceId: string } | null {
   if (canNightCopy(s, content)) return null
-  const r = extraPiece(useStock(s, { oil: NIGHT_COPY_OIL })!, content)!
+  const r = extraPiece(useStock(s, { oil: NIGHT_COPY_OIL })!, content, 'night')!
   return { state: passTime({ ...r.state, needs: work(r.state.needs, 4) }, NIGHT_COPY_MINUTES), pieceId: r.pieceId }
 }
 
@@ -1551,7 +1547,7 @@ export function libraryRead(s: GameState, content: GameContent): { state: GameSt
   if (canLibraryRead(s, content)) return null
   const used = s.flags.libReadDay === s.clock.day ? s.flags.libReads ?? 0 : 0
   const paid = { ...s, coins: s.coins - LIBRARY_READ_PRICE, flags: { ...s.flags, libReadDay: s.clock.day, libReads: used + 1 } }
-  const r = extraPiece(paid, content)!
+  const r = extraPiece(paid, content, 'library')!
   return { state: passTime(r.state, 30), pieceId: r.pieceId }
 }
 
@@ -1569,7 +1565,7 @@ export function canBuyScroll(s: GameState, content: GameContent): ExtraBlock {
 export function buyScroll(s: GameState, content: GameContent): { state: GameState; pieceId: string } | null {
   if (canBuyScroll(s, content)) return null
   const used = s.flags.scrollDay === s.clock.day ? s.flags.scrolls ?? 0 : 0
-  return extraPiece({ ...s, coins: s.coins - SCROLL_PRICE, flags: { ...s.flags, scrollDay: s.clock.day, scrolls: used + 1 } }, content)
+  return extraPiece({ ...s, coins: s.coins - SCROLL_PRICE, flags: { ...s.flags, scrollDay: s.clock.day, scrolls: used + 1 } }, content, 'scroll')
 }
 
 /** 이웃에게 선물: 마음이 친구(10) 이상인 이웃은 선물을 받으면 이야기 한 조각을 더 들려준다 */
@@ -1646,6 +1642,19 @@ export function receiveVisit(s: GameState, npc: string): { state: GameState; gif
   if (s.clock.minute < VISIT_FROM || s.clock.minute >= VISIT_TO) return null
   const gift = VISIT_GIFTS[npc] ?? {}
   return { state: { ...s, inv: addGift(s.inv, gift), today: { ...t, visitGot: true } }, gift }
+}
+
+/**
+ * 평소 대화의 직업 선물 (계획 14 작업 5, 두 루프의 생활 루프): 마음이 열린 이웃이 가끔 말을 걸 때 자기 일에서 난 것을 챙겨 준다
+ * (fragments.talkGiftOf — 날 씨앗, 하루 한 번). 오늘 특별한 대화로 말씀 조각을 건넬 이웃은 조각을 건넨다 (선물과 겹치지 않게).
+ * 조각과 직업 선물은 서로 묶지 않는다
+ */
+export function receiveTalkGift(s: GameState, npc: string): { state: GameState; gift: Partial<Record<ItemId, number>> } | null {
+  if (s.offers[npc]) return null
+  const gift = talkGiftOf(npc, s.clock.day, s.hearts, s.flags)
+  if (!gift) return null
+  const giftsGot = [...new Set([...s.giftsGot, ...(Object.keys(gift) as ItemId[])])]
+  return { state: { ...s, inv: addGift(s.inv, gift), giftsGot, flags: { ...s.flags, [`talkGift:${npc}`]: s.clock.day } }, gift }
 }
 
 /** 저녁 초대: 그 집 문 앞에서 */
@@ -2216,7 +2225,7 @@ export function stargaze(s: GameState, content: GameContent): { state: GameState
     next = train({ ...next, scenes: [...next.scenes, 'stars'], flags: { ...next.flags, [onceKey('stars', s.clock.day)]: 1 } }, 'luck', XP.stars)
   const ids = starPostTonight(s, content)
   if (!ids.length) return { state: next, pieceIds: [] }
-  const got = takeChapters(next, ids, content)
+  const got = takeChapters(next, ids, content, 'stars')
   return { state: { ...got, flags: { ...got.flags, starPostDay: s.clock.day } }, pieceIds: ids }
 }
 
@@ -2708,9 +2717,8 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
     talked: [],
     helped: [],
     gifted: [],
-    offers: todaysOffers(day, s.collected, s, content, present),
-    // 새 날의 편지 — 편지 나르는 이웃이 오늘 나오지 않으면 빈 채로
-    post: todaysPost(day, { ...s, listened: [] }, content, present),
+    // 새 날의 말씀 조각 (드물게 — 편지 하나 또는 특별한 대화 한 명, 계획 14 작업 5)
+    ...todaysFragments(day, s.collected, content, present),
     listened: [],
     garden: growGarden(s.garden, s.clock.day),
     player: { ...s.player, x: bed.x, y: bed.y, path: [], facing: 'down' },
@@ -2767,7 +2775,7 @@ function childMorning(s: GameState, content: GameContent): GameState {
       if (mail === 'coins') next = { ...next, coins: next.coins + kidCoins(day) }
       // 필경사·학자가 된 아이는 편지에 이야기 한 조각을 넣어 보낸다
       if (mail === 'letter' && (child.job === 'scribe' || child.job === 'scholar')) {
-        const story = extraPiece(next, content)
+        const story = extraPiece(next, content, 'child')
         if (story) next = { ...story.state, flags: { ...story.state.flags, kidMailPiece: day } }
       }
       next = { ...next, todayNotes: [...next.todayNotes, `kidMail:${mail}`], flags: { ...next.flags, kidMailDay: day, kidMailKind: ['letter', 'gift', 'coins'].indexOf(mail) } }

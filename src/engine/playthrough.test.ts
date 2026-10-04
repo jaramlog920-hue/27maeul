@@ -1,12 +1,9 @@
-// 처음부터 끝까지: 성실한 플레이어가 막히지 않고 누가복음 24장을 다 엮는가
+// 처음부터 끝까지: 성실한 플레이어가 막히지 않고 누가복음 24장을 다 필사하는가 (계획 14: 한 절씩 따라 적기, 재료·조각 없음)
 import { CONTENT, piecesOf } from '../content/catalog'
 import { bookDone } from './books'
-import { canonicalOrder } from './scroll'
-import { currentChapter } from './offers'
+import { copySpot } from './copying'
 import {
-  chooseBook,
   eatBread,
-  finishCraft,
   finishGather,
   finishHelp,
   goToSleep,
@@ -14,18 +11,30 @@ import {
   listen,
   newGame,
   sceneSeen,
-  setArrangement,
-  submitChapter,
+  startCopy,
+  writeVerse,
   type GameState,
 } from './game'
 import type { NeighborDef } from './types'
 
 const def = (id: string) => CONTENT.neighbors.find((n) => n.id === id) as NeighborDef
 
+/** 한 장을 끝까지 따라 적는다 */
+function copyChapter(s: GameState): GameState {
+  for (let i = 0; i < 200; i++) {
+    const spot = copySpot(s, 'lk', CONTENT)
+    if (!spot) return s
+    const r = writeVerse(s, 'lk', spot.verse.text, CONTENT)
+    s = r.state
+    if (r.result.kind === 'chapter' || r.result.kind === 'none') return s
+  }
+  return s
+}
+
 function oneDay(s: GameState): GameState {
   // 아침에 쌓인 장면은 본 것으로
   for (const id of [...s.scenes]) s = sceneSeen(s, id, [])
-  // 이웃에게 인사하고 이야기를 듣는다
+  // 오늘 특별한 대화로 말씀 조각을 건넬 이웃이 있으면 듣는다 (드물게)
   for (const id of Object.keys(s.offers)) {
     s = greetNeighbor(s, id)
     s = listen(s, id, CONTENT).state
@@ -34,26 +43,18 @@ function oneDay(s: GameState): GameState {
   s = finishGather(s, 'well')
   s = finishHelp(s, def('baker'))
   if (s.needs.hunger >= 50) s = eatBread(s) ?? s
-  // 글쓰기 재료: 갈대 → 파피루스, 대장간 그을음 + 물 → 잉크
-  s = finishGather(s, 'reeds')
-  s = finishHelp(s, def('smith'))
-  s = finishGather(s, 'well')
-  s = finishCraft(s, 'papyrus')
-  s = finishCraft(s, 'ink')
-  // 모은 장을 차례대로 잇는다 (낮에 쓰므로 등잔은 필요 없다)
-  const lk = piecesOf('lk')
-  const ch = currentChapter(lk, s.progress.lk.completed)
-  if (ch !== null) {
-    s = setArrangement(s, 'lk', ch, canonicalOrder(lk, ch))
-    s = submitChapter({ ...s, clock: { ...s.clock, minute: 12 * 60 } }, 'lk', ch, CONTENT).state
-  }
+  // 낮에 책상에서 두 장 필사 (재료는 들지 않는다)
+  s = { ...s, clock: { ...s.clock, minute: 12 * 60 } }
+  s = copyChapter(s)
+  if (s.needs.hunger >= 50) s = eatBread(s) ?? s
+  s = copyChapter(s)
   if (s.needs.hunger >= 50) s = eatBread(s) ?? s
   return goToSleep({ ...s, clock: { ...s.clock, minute: 21 * 60 } }, CONTENT)
 }
 
 describe('처음부터 끝까지', () => {
-  it('성실하게 살면 두 달 안에 누가복음 24장을 다 엮고, 앓아눕지 않는다', () => {
-    let s = chooseBook(newGame(CONTENT), 'lk', CONTENT)
+  it('성실하게 살면 두 달 안에 누가복음 24장을 다 필사하고, 앓아눕지 않는다', () => {
+    let s = startCopy(newGame(CONTENT), 'lk', CONTENT)
     let sickDays = 0
     let days = 0
     let bound = false
@@ -64,17 +65,12 @@ describe('처음부터 끝까지', () => {
       days++
     }
     expect(s.progress.lk.completed).toHaveLength(24)
-    expect(s.collected).toHaveLength(piecesOf('lk').length)
     expect(bound).toBe(true)
     expect(sickDays).toBe(0)
     expect(days).toBeLessThanOrEqual(45)
+    // 말씀 조각은 필사와 상관없이 드물게 — 다 모으지 않아도 책을 마친다
+    expect(s.collected.length).toBeLessThan(piecesOf('lk').length)
     // 일지는 하루도 빠짐없이
     expect(s.journal).toHaveLength(days)
-  })
-
-  it('하루에 모을 수 있는 이야기는 이웃 수만큼 — 한 장이 며칠 걸리기도 한다', () => {
-    const biggest = Math.max(...Array.from({ length: 24 }, (_, i) => piecesOf('lk').filter((p) => p.chapter === i + 1).length))
-    expect(biggest).toBeGreaterThan(6)
-    expect(biggest).toBeLessThanOrEqual(14)
   })
 })

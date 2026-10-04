@@ -300,16 +300,15 @@ describe('책 고르기와 불러오기', () => {
     expect(sanitize({ ...s, flags: { ...s.flags, 'room:romPhm': 1 } }, CONTENT).activeBook).toBe('rom')
   })
 
-  it('⑥ 편지 책을 고른 날·그다음 날 다른 이웃의 offers가 비어 있다', () => {
+  it('⑥ 어느 책을 고르든 오늘의 조각(offers)은 그대로 — 새 날의 특별한 대화도 많아야 한 명 (계획 14 작업 5)', () => {
     const s = actsShelved()
-    const open = { ...s, flags: { ...s.flags, 'room:romPhm': 1 } }
-    // 복음서를 고르면 이웃이 조각을 건넨다 (비교)
-    expect(Object.keys(chooseBook(open, 'mk', CONTENT).offers).length).toBeGreaterThan(0)
-    const rom = chooseBook({ ...open, offers: {} }, 'rom', CONTENT)
-    expect(rom.offers).toEqual({})
+    const open = { ...s, flags: { ...s.flags, 'room:romPhm': 1 }, offers: { baker: 'mk-001-001' } }
+    expect(chooseBook(open, 'mk', CONTENT).offers).toEqual(open.offers)
+    const rom = chooseBook(open, 'rom', CONTENT)
+    expect(rom.offers).toEqual(open.offers)
     for (let i = 0; i < 5; i++) {
       const next = goToSleep({ ...rom, clock: { ...rom.clock, day: rom.clock.day + i } }, CONTENT)
-      expect(next.offers, `day ${next.clock.day}`).toEqual({})
+      expect(Object.keys(next.offers).length, `day ${next.clock.day}`).toBeLessThanOrEqual(1)
     }
   })
 
