@@ -13,7 +13,7 @@ kind | 인자하심 | 성품
 good | 선하심 | 성품
 perfect | 온전하심 | 성품
 almighty | 전능하심 | 성품
-knows | 다 아심 | 성품
+knows | 아심 | 성품
 one | 한 분이심 | 성품
 true | 참되심 | 성품
 righteous | 의로우심 | 성품
@@ -21,6 +21,13 @@ impartial | 공평하심 | 성품
 spirit | 영이심 | 성품
 living | 살아 계심 | 성품
 near | 가까이 계심 | 성품
+faithful | 신실하심 | 성품
+patient | 오래 참으심 | 성품
+eternal | 영원하심 | 성품
+wise | 지혜 | 성품
+justice | 공의 | 성품
+unchanging | 변함없으심 | 성품
+light | 빛이심 | 성품
 
 # 하시는 일
 create | 창조하심 | 하시는 일
@@ -36,8 +43,12 @@ help | 도우심 | 하시는 일
 judge | 심판하심 | 하시는 일
 work | 일하심 | 하시는 일
 keep | 지키심 | 하시는 일
+comfort | 위로하심 | 하시는 일
+grow | 자라게 하심 | 하시는 일
 
 # 불리는 이름
 father | 아버지 | 불리는 이름
 lord-of-all | 천지의 주재 | 불리는 이름
 most-high | 지극히 높으신 이 | 불리는 이름
+king | 왕 | 불리는 이름
+god-of-peace | 평강의 하나님 | 불리는 이름

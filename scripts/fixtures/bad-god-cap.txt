@@ -1,5 +1,5 @@
 # 역방향 픽스처 — verify-god-records.mjs가 이 줄을 실제로 잡는지 (scripts/verify-god-records.test.ts)
-다 아심 | 마 6:8
+아심 | 마 6:8
 용서하심 | 마 6:14
 돌보심 | 마 6:26
 베푸심 | 마 6:30

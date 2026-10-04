@@ -42,7 +42,7 @@
     },
     {
       "id": "knows",
-      "name": "다 아심",
+      "name": "아심",
       "group": "성품"
     },
     {
@@ -78,6 +78,41 @@
     {
       "id": "near",
       "name": "가까이 계심",
+      "group": "성품"
+    },
+    {
+      "id": "faithful",
+      "name": "신실하심",
+      "group": "성품"
+    },
+    {
+      "id": "patient",
+      "name": "오래 참으심",
+      "group": "성품"
+    },
+    {
+      "id": "eternal",
+      "name": "영원하심",
+      "group": "성품"
+    },
+    {
+      "id": "wise",
+      "name": "지혜",
+      "group": "성품"
+    },
+    {
+      "id": "justice",
+      "name": "공의",
+      "group": "성품"
+    },
+    {
+      "id": "unchanging",
+      "name": "변함없으심",
+      "group": "성품"
+    },
+    {
+      "id": "light",
+      "name": "빛이심",
       "group": "성품"
     },
     {
@@ -146,6 +181,16 @@
       "group": "하시는 일"
     },
     {
+      "id": "comfort",
+      "name": "위로하심",
+      "group": "하시는 일"
+    },
+    {
+      "id": "grow",
+      "name": "자라게 하심",
+      "group": "하시는 일"
+    },
+    {
       "id": "father",
       "name": "아버지",
       "group": "불리는 이름"
@@ -159,15 +204,19 @@
       "id": "most-high",
       "name": "지극히 높으신 이",
       "group": "불리는 이름"
+    },
+    {
+      "id": "king",
+      "name": "왕",
+      "group": "불리는 이름"
+    },
+    {
+      "id": "god-of-peace",
+      "name": "평강의 하나님",
+      "group": "불리는 이름"
     }
   ],
   "records": [
-    {
-      "keyword": "with",
-      "ref": "마 1:23",
-      "book": "mat",
-      "chapter": 1
-    },
     {
       "keyword": "give",
       "ref": "마 5:45",
@@ -289,12 +338,6 @@
       "chapter": 6
     },
     {
-      "keyword": "care",
-      "ref": "눅 12:24",
-      "book": "luk",
-      "chapter": 12
-    },
-    {
       "keyword": "knows",
       "ref": "눅 16:15",
       "book": "luk",
@@ -379,12 +422,6 @@
       "chapter": 20
     },
     {
-      "keyword": "raise",
-      "ref": "행 2:24",
-      "book": "act",
-      "chapter": 2
-    },
-    {
       "keyword": "create",
       "ref": "행 4:24",
       "book": "act",
@@ -457,12 +494,6 @@
       "chapter": 17
     },
     {
-      "keyword": "judge",
-      "ref": "행 17:31",
-      "book": "act",
-      "chapter": 17
-    },
-    {
       "keyword": "raise",
       "ref": "행 26:8",
       "book": "act",
@@ -473,6 +504,522 @@
       "ref": "행 26:22",
       "book": "act",
       "chapter": 26
+    },
+    {
+      "keyword": "patient",
+      "ref": "롬 2:4",
+      "book": "rom",
+      "chapter": 2
+    },
+    {
+      "keyword": "kind",
+      "ref": "롬 2:4",
+      "book": "rom",
+      "chapter": 2
+    },
+    {
+      "keyword": "impartial",
+      "ref": "롬 2:11",
+      "book": "rom",
+      "chapter": 2
+    },
+    {
+      "keyword": "faithful",
+      "ref": "롬 3:3",
+      "book": "rom",
+      "chapter": 3
+    },
+    {
+      "keyword": "true",
+      "ref": "롬 3:4",
+      "book": "rom",
+      "chapter": 3
+    },
+    {
+      "keyword": "one",
+      "ref": "롬 3:30",
+      "book": "rom",
+      "chapter": 3
+    },
+    {
+      "keyword": "raise",
+      "ref": "롬 4:17",
+      "book": "rom",
+      "chapter": 4
+    },
+    {
+      "keyword": "love",
+      "ref": "롬 5:8",
+      "book": "rom",
+      "chapter": 5
+    },
+    {
+      "keyword": "love",
+      "ref": "롬 8:39",
+      "book": "rom",
+      "chapter": 8
+    },
+    {
+      "keyword": "mercy",
+      "ref": "롬 9:16",
+      "book": "rom",
+      "chapter": 9
+    },
+    {
+      "keyword": "wise",
+      "ref": "롬 11:33",
+      "book": "rom",
+      "chapter": 11
+    },
+    {
+      "keyword": "compassion",
+      "ref": "롬 12:1",
+      "book": "rom",
+      "chapter": 12
+    },
+    {
+      "keyword": "eternal",
+      "ref": "롬 16:26",
+      "book": "rom",
+      "chapter": 16
+    },
+    {
+      "keyword": "wise",
+      "ref": "롬 16:27",
+      "book": "rom",
+      "chapter": 16
+    },
+    {
+      "keyword": "faithful",
+      "ref": "고전 1:9",
+      "book": "1co",
+      "chapter": 1
+    },
+    {
+      "keyword": "grow",
+      "ref": "고전 3:7",
+      "book": "1co",
+      "chapter": 3
+    },
+    {
+      "keyword": "faithful",
+      "ref": "고전 10:13",
+      "book": "1co",
+      "chapter": 10
+    },
+    {
+      "keyword": "work",
+      "ref": "고전 12:6",
+      "book": "1co",
+      "chapter": 12
+    },
+    {
+      "keyword": "give",
+      "ref": "고전 15:57",
+      "book": "1co",
+      "chapter": 15
+    },
+    {
+      "keyword": "compassion",
+      "ref": "고후 1:3",
+      "book": "2co",
+      "chapter": 1
+    },
+    {
+      "keyword": "raise",
+      "ref": "고후 1:9",
+      "book": "2co",
+      "chapter": 1
+    },
+    {
+      "keyword": "faithful",
+      "ref": "고후 1:18",
+      "book": "2co",
+      "chapter": 1
+    },
+    {
+      "keyword": "with",
+      "ref": "고후 6:16",
+      "book": "2co",
+      "chapter": 6
+    },
+    {
+      "keyword": "almighty",
+      "ref": "고후 6:18",
+      "book": "2co",
+      "chapter": 6
+    },
+    {
+      "keyword": "comfort",
+      "ref": "고후 7:6",
+      "book": "2co",
+      "chapter": 7
+    },
+    {
+      "keyword": "love",
+      "ref": "고후 9:7",
+      "book": "2co",
+      "chapter": 9
+    },
+    {
+      "keyword": "give",
+      "ref": "고후 9:8",
+      "book": "2co",
+      "chapter": 9
+    },
+    {
+      "keyword": "god-of-peace",
+      "ref": "고후 13:11",
+      "book": "2co",
+      "chapter": 13
+    },
+    {
+      "keyword": "one",
+      "ref": "갈 3:20",
+      "book": "gal",
+      "chapter": 3
+    },
+    {
+      "keyword": "give",
+      "ref": "엡 1:3",
+      "book": "eph",
+      "chapter": 1
+    },
+    {
+      "keyword": "mercy",
+      "ref": "엡 2:4",
+      "book": "eph",
+      "chapter": 2
+    },
+    {
+      "keyword": "love",
+      "ref": "엡 2:4",
+      "book": "eph",
+      "chapter": 2
+    },
+    {
+      "keyword": "create",
+      "ref": "엡 3:9",
+      "book": "eph",
+      "chapter": 3
+    },
+    {
+      "keyword": "father",
+      "ref": "엡 4:6",
+      "book": "eph",
+      "chapter": 4
+    },
+    {
+      "keyword": "forgive",
+      "ref": "엡 4:32",
+      "book": "eph",
+      "chapter": 4
+    },
+    {
+      "keyword": "work",
+      "ref": "빌 2:13",
+      "book": "php",
+      "chapter": 2
+    },
+    {
+      "keyword": "mercy",
+      "ref": "빌 2:27",
+      "book": "php",
+      "chapter": 2
+    },
+    {
+      "keyword": "god-of-peace",
+      "ref": "빌 4:9",
+      "book": "php",
+      "chapter": 4
+    },
+    {
+      "keyword": "give",
+      "ref": "빌 4:19",
+      "book": "php",
+      "chapter": 4
+    },
+    {
+      "keyword": "forgive",
+      "ref": "골 2:13",
+      "book": "col",
+      "chapter": 2
+    },
+    {
+      "keyword": "love",
+      "ref": "살전 1:4",
+      "book": "1th",
+      "chapter": 1
+    },
+    {
+      "keyword": "true",
+      "ref": "살전 1:9",
+      "book": "1th",
+      "chapter": 1
+    },
+    {
+      "keyword": "living",
+      "ref": "살전 1:9",
+      "book": "1th",
+      "chapter": 1
+    },
+    {
+      "keyword": "knows",
+      "ref": "살전 2:4",
+      "book": "1th",
+      "chapter": 2
+    },
+    {
+      "keyword": "save",
+      "ref": "살전 5:9",
+      "book": "1th",
+      "chapter": 5
+    },
+    {
+      "keyword": "justice",
+      "ref": "살후 1:5",
+      "book": "2th",
+      "chapter": 1
+    },
+    {
+      "keyword": "king",
+      "ref": "딤전 1:17",
+      "book": "1ti",
+      "chapter": 1
+    },
+    {
+      "keyword": "save",
+      "ref": "딤전 2:4",
+      "book": "1ti",
+      "chapter": 2
+    },
+    {
+      "keyword": "create",
+      "ref": "딤전 4:4",
+      "book": "1ti",
+      "chapter": 4
+    },
+    {
+      "keyword": "save",
+      "ref": "딤전 4:10",
+      "book": "1ti",
+      "chapter": 4
+    },
+    {
+      "keyword": "king",
+      "ref": "딤전 6:15",
+      "book": "1ti",
+      "chapter": 6
+    },
+    {
+      "keyword": "give",
+      "ref": "딤전 6:17",
+      "book": "1ti",
+      "chapter": 6
+    },
+    {
+      "keyword": "give",
+      "ref": "딤후 1:7",
+      "book": "2ti",
+      "chapter": 1
+    },
+    {
+      "keyword": "save",
+      "ref": "딤후 1:9",
+      "book": "2ti",
+      "chapter": 1
+    },
+    {
+      "keyword": "true",
+      "ref": "딛 1:2",
+      "book": "tit",
+      "chapter": 1
+    },
+    {
+      "keyword": "promise",
+      "ref": "딛 1:2",
+      "book": "tit",
+      "chapter": 1
+    },
+    {
+      "keyword": "love",
+      "ref": "딛 3:4",
+      "book": "tit",
+      "chapter": 3
+    },
+    {
+      "keyword": "create",
+      "ref": "히 3:4",
+      "book": "heb",
+      "chapter": 3
+    },
+    {
+      "keyword": "righteous",
+      "ref": "히 6:10",
+      "book": "heb",
+      "chapter": 6
+    },
+    {
+      "keyword": "promise",
+      "ref": "히 6:13",
+      "book": "heb",
+      "chapter": 6
+    },
+    {
+      "keyword": "true",
+      "ref": "히 6:18",
+      "book": "heb",
+      "chapter": 6
+    },
+    {
+      "keyword": "give",
+      "ref": "히 11:6",
+      "book": "heb",
+      "chapter": 11
+    },
+    {
+      "keyword": "holy",
+      "ref": "히 12:10",
+      "book": "heb",
+      "chapter": 12
+    },
+    {
+      "keyword": "judge",
+      "ref": "히 12:23",
+      "book": "heb",
+      "chapter": 12
+    },
+    {
+      "keyword": "give",
+      "ref": "약 1:5",
+      "book": "jas",
+      "chapter": 1
+    },
+    {
+      "keyword": "unchanging",
+      "ref": "약 1:17",
+      "book": "jas",
+      "chapter": 1
+    },
+    {
+      "keyword": "near",
+      "ref": "약 4:8",
+      "book": "jas",
+      "chapter": 4
+    },
+    {
+      "keyword": "mercy",
+      "ref": "벧전 1:3",
+      "book": "1pe",
+      "chapter": 1
+    },
+    {
+      "keyword": "keep",
+      "ref": "벧전 1:5",
+      "book": "1pe",
+      "chapter": 1
+    },
+    {
+      "keyword": "impartial",
+      "ref": "벧전 1:17",
+      "book": "1pe",
+      "chapter": 1
+    },
+    {
+      "keyword": "patient",
+      "ref": "벧전 3:20",
+      "book": "1pe",
+      "chapter": 3
+    },
+    {
+      "keyword": "faithful",
+      "ref": "벧전 4:19",
+      "book": "1pe",
+      "chapter": 4
+    },
+    {
+      "keyword": "give",
+      "ref": "벧전 5:5",
+      "book": "1pe",
+      "chapter": 5
+    },
+    {
+      "keyword": "create",
+      "ref": "벧후 3:5",
+      "book": "2pe",
+      "chapter": 3
+    },
+    {
+      "keyword": "light",
+      "ref": "요일 1:5",
+      "book": "1jn",
+      "chapter": 1
+    },
+    {
+      "keyword": "love",
+      "ref": "요일 3:1",
+      "book": "1jn",
+      "chapter": 3
+    },
+    {
+      "keyword": "knows",
+      "ref": "요일 3:20",
+      "book": "1jn",
+      "chapter": 3
+    },
+    {
+      "keyword": "love",
+      "ref": "요일 4:8",
+      "book": "1jn",
+      "chapter": 4
+    },
+    {
+      "keyword": "give",
+      "ref": "요일 5:11",
+      "book": "1jn",
+      "chapter": 5
+    },
+    {
+      "keyword": "one",
+      "ref": "유 1:25",
+      "book": "jud",
+      "chapter": 1
+    },
+    {
+      "keyword": "almighty",
+      "ref": "계 1:8",
+      "book": "rev",
+      "chapter": 1
+    },
+    {
+      "keyword": "holy",
+      "ref": "계 4:8",
+      "book": "rev",
+      "chapter": 4
+    },
+    {
+      "keyword": "create",
+      "ref": "계 4:11",
+      "book": "rev",
+      "chapter": 4
+    },
+    {
+      "keyword": "king",
+      "ref": "계 15:3",
+      "book": "rev",
+      "chapter": 15
+    },
+    {
+      "keyword": "judge",
+      "ref": "계 16:7",
+      "book": "rev",
+      "chapter": 16
+    },
+    {
+      "keyword": "with",
+      "ref": "계 21:3",
+      "book": "rev",
+      "chapter": 21
     }
   ]
 }
