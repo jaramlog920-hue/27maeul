@@ -5,6 +5,7 @@ import { sanitizeChild } from './child'
 import { sanitizeRomance } from './romance'
 import { sanitizeStats } from './stats'
 import { sanitizeCopy, sanitizeCopyStats } from './copying'
+import { sanitizeGodRecords } from './god-records'
 import { IDLE_RESET } from './autonomy'
 import { bookDone, bookRoomOpen, emptyProgress, type Progress } from './books'
 import { newGame, settle, type GameState } from './game'
@@ -152,6 +153,8 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     // 마친 장(progress)은 그대로 마친 장이고, 글자 수 통계는 0에서 시작한다
     copy: sanitizeCopy(s.copy, progress),
     copyStats: sanitizeCopyStats(s.copyStats),
+    // 하나님 기록 (계획 14): 옛 저장(칸이 없던 때)은 빈 목록. 모양이 맞는 줄만, 같은 줄은 한 번만
+    godRecords: sanitizeGodRecords(s.godRecords),
     achieved: Array.isArray(s.achieved) ? s.achieved.filter((a) => a && typeof a.id === 'string' && typeof a.day === 'number') : [],
     needs: { ...s.needs, heat: s.needs?.heat ?? 0 },
     collected,

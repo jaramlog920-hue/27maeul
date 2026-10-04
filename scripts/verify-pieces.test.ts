@@ -47,6 +47,10 @@ describe('verify-pieces.mjs', () => {
     expect(r.out).not.toContain('"요한복음도 있어요"')
     expect(r.out).not.toContain('"필요한 것"')
     expect(r.out).toContain('금지어 (?<![가-힣])사도')
+    // '하나님'은 말씀 루프 이름표(copyFocus.godNew)에서만 허용 — 다른 자리는 걸리고, 이름표의 다른 금지어도 걸린다
+    expect(r.out).toContain('life-text.ui.godTest: 금지어 (?<![가-힣])하나님')
+    expect(r.out).not.toContain('life-text.copyFocus.godNew: 금지어 (?<![가-힣])하나님')
+    expect(r.out).toContain('life-text.copyFocus.godNew: 금지어 (?<![가-힣])바울')
   })
 
   it('괄호 안 조각(막 16:9-20)에는 "같은 이야기" 도장이 없고, 그쪽을 가리키지도 않는다', () => {

@@ -62,11 +62,24 @@ export function volumeGain(kind: VolumeKind, v: number): number {
 export function currentVolume(kind: VolumeKind): number {
   return volumes[kind]
 }
+/** 조용한 필사 화면 (계획 14 작업 2): 마을 배경음·빗소리를 잠시 끈다. 효과음(펜 소리)은 그대로 */
+let quiet = false
+const RAIN_LEVEL = 0.05
+export function setQuiet(on: boolean) {
+  quiet = on
+  if (!ctx) return
+  musicGain?.gain.setTargetAtTime(on ? 0 : volumeGain('music', volumes.music), ctx.currentTime, 0.3)
+  rainGain?.gain.setTargetAtTime(on ? 0 : RAIN_LEVEL, ctx.currentTime, 0.3)
+}
+export function isQuiet(): boolean {
+  return quiet
+}
+
 export function setVolume(kind: VolumeKind, v: number) {
   const value = Math.min(1, Math.max(0, v))
   volumes[kind] = value
   const node = kind === 'music' ? musicGain : sfxGain
-  if (node && ctx) node.gain.setTargetAtTime(volumeGain(kind, value), ctx.currentTime, 0.05)
+  if (node && ctx && !(quiet && kind === 'music')) node.gain.setTargetAtTime(volumeGain(kind, value), ctx.currentTime, 0.05)
   try {
     globalThis.localStorage?.setItem(VOLUME_KEY[kind], String(value))
   } catch {
@@ -89,7 +102,7 @@ export function unlockAudio() {
     master.gain.value = muted ? 0 : 0.6
     master.connect(ctx.destination)
     musicGain = ctx.createGain()
-    musicGain.gain.value = volumeGain('music', volumes.music)
+    musicGain.gain.value = quiet ? 0 : volumeGain('music', volumes.music)
     musicGain.connect(master)
     trackGain = ctx.createGain()
     trackGain.gain.value = trackLevel(musicChoice)
@@ -290,7 +303,7 @@ export function setRain(on: boolean) {
     f.type = 'highpass'
     f.frequency.value = 1500
     rainGain = ctx.createGain()
-    rainGain.gain.value = 0.05
+    rainGain.gain.value = quiet ? 0 : RAIN_LEVEL
     rainNode.connect(f)
     f.connect(rainGain)
     rainGain.connect(sfxGain)

@@ -8,6 +8,8 @@ import journeyRaw from './journey.json'
 import churchesRaw from './churches.json'
 import lettersRaw from './letters.json'
 import peopleRaw from './people.json'
+import godRecordsRaw from './god-records.json'
+import type { GodRecordDef } from '../engine/god-records'
 import { setPeopleData, type PeopleData } from '../engine/people'
 import { expandRef, countsFrom } from './ref'
 import { BOOKS, LETTERS, type Book, type GameContent, type NeighborDef, type Piece } from '../engine/types'
@@ -68,6 +70,20 @@ export const CHURCHES = churchesRaw as JourneyCard[]
  * 글자 그대로 있는지 확인). 편지 서고 퀴즈의 첫머리 문제가 읽는다 (계획 7 작업 6)
  */
 export const LETTER_OPENINGS = lettersRaw as unknown as readonly LetterOpening[]
+
+/**
+ * 하나님 기록 (계획 14 작업 3 데이터, scripts/god-records → god-records.json, verify-god-records가 본문과 대조).
+ * json의 book은 본문 책 id(mat·jhn…)라 게임 책 id는 구절의 약어에서 다시 읽는다
+ */
+const godRaw = godRecordsRaw as { keywords: { id: string; name: string; group: string }[]; records: { keyword: string; ref: string; chapter: number }[] }
+export const GOD_RECORDS: readonly GodRecordDef[] = godRaw.records.map((r) => {
+  const book = ABBR_BOOK[r.ref.trim().split(/\s+/)[0]]
+  if (!book) throw new Error(`하나님 기록의 책을 모름: ${r.ref}`)
+  return { keyword: r.keyword, ref: r.ref, book, chapter: r.chapter }
+})
+/** 키워드 id → 화면 이름 (사랑·거룩하심…) */
+export const GOD_KEYWORDS: Readonly<Record<string, { name: string; group: string }>> = Object.fromEntries(godRaw.keywords.map((k) => [k.id, { name: k.name, group: k.group }]))
+
 export const CONTENT: GameContent = {
   pieces: PIECES,
   neighbors: NEIGHBORS,
@@ -75,6 +91,7 @@ export const CONTENT: GameContent = {
   churches: CHURCHES,
   copy: (b) => copySourceFor(b),
   chapterText: (b, c) => chapterText(b, c),
+  godRecords: GOD_RECORDS,
 }
 
 export interface Verse {

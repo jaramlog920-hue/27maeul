@@ -1800,3 +1800,76 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
 
 /* 주고받기 단추: 값과 받는 것을 작게 */
 .svc-cost { display: block; font-size: 11px; opacity: 0.8; }
+
+/* ── 필사 집중 화면 (계획 14 작업 2): 책상에 앉으면 마을이 사라지고 조용한 종이 한 장 ── */
+.village { display: contents; }
+.village[hidden] { display: none; }
+.copy-focus {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  overflow-y: auto;
+  background: #efe6d2;
+  color: #3b3226;
+  display: flex;
+  justify-content: center;
+  padding: max(14px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+  animation: copy-fade 0.25s ease-out;
+}
+@keyframes copy-fade { from { opacity: 0; } to { opacity: 1; } }
+.copy-focus-inner { width: 100%; max-width: 560px; }
+.copy-focus h2 { margin: 0; font-size: 15px; font-weight: 700; color: #5b4c38; }
+.copy-focus button { min-height: 44px; }
+.copy-panel { display: grid; gap: 10px; }
+.copy-panel .actions { display: flex; justify-content: flex-end; gap: 8px; }
+.copy-menu { padding-top: 18vh; text-align: center; }
+.copy-menu-at { margin: 0; font-size: 14px; color: #7a6a52; }
+.copy-menu-actions { display: grid; gap: 8px; max-width: 320px; width: 100%; margin: 6px auto 0; }
+.copy-write { display: grid; gap: 10px; }
+.copy-focus-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.copy-exit { padding: 4px 12px; font-size: 13px; background: transparent; border: 2px solid #c9b896; color: #7a6a52; box-shadow: none; }
+.copy-bar { height: 4px; border-radius: 2px; background: #ddd0b4; overflow: hidden; }
+.copy-bar span { display: block; height: 100%; background: #a88c5e; transition: width 0.4s ease-out; }
+.copy-status { margin: 0; min-height: 18px; font-size: 13px; color: #6f8a5a; }
+.copy-focus-verse {
+  margin: 6px 0;
+  padding: 14px 16px;
+  font-family: var(--scripture-font);
+  font-size: 18px;
+  line-height: 1.9;
+  -webkit-font-smoothing: auto;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  /* 아직 쓰지 않은 부분도 읽기에 넉넉한 진하기 (따라 적으려면 읽혀야 한다) */
+  color: #74654e;
+  background: var(--scripture-bg);
+  border: 2px solid var(--scripture-edge);
+  border-radius: 4px;
+}
+/* 맞게 쓴 부분만 은은하게 진해진다 */
+.copy-done-part { color: #221a10; transition: color 0.3s ease-out; }
+/* 틀린 글자: 그 자리에 아주 살짝 (물결 밑줄) */
+.copy-typo { color: #8a5a4a; text-decoration: underline wavy rgba(176, 64, 47, 0.45); text-decoration-thickness: 2px; text-underline-offset: 4px; }
+.copy-input {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 96px;
+  padding: 12px 14px;
+  font-family: var(--scripture-font);
+  font-size: 17px;
+  line-height: 1.7;
+  color: #2f271c;
+  background: #fffaf0;
+  border: 2px solid #c9b896;
+  border-radius: 4px;
+  resize: none;
+}
+.copy-input:focus { outline: none; border-color: #a88c5e; }
+.copy-done { padding-top: 8vh; }
+.copy-done h2 { font-size: 16px; text-align: center; }
+.copy-god { padding: 10px 12px; background: #fffaf0; border: 2px solid #d8c8a4; border-radius: 4px; }
+.copy-god h3 { margin: 0 0 6px; font-size: 14px; color: #8a6a2e; }
+.copy-god ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.copy-god-key { margin: 0; font-size: 13px; font-weight: 700; color: #5b4c38; }
+.copy-god-verse { margin: 2px 0 0; font-family: var(--scripture-font); font-size: 15px; line-height: 1.8; word-break: keep-all; overflow-wrap: anywhere; }
+.copy-gains, .copy-book-done { margin: 0; text-align: center; font-size: 13px; color: #7a6a52; }

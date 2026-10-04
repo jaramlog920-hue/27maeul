@@ -41,6 +41,7 @@ import { bookDone, bookRoomOpen, chaptersOf, emptyProgress, openDoorsFor, roomOp
 import { arrivesOf, modeOf, SHELF_ROOMS } from './shelf-rooms'
 import { currentChapter, mulberry32, offersForDay } from './offers'
 import { checkCopy, COPY_CHAPTER_XP, copySpot, copyVerses, nextOpenChapter, NO_COPY, NO_COPY_STATS, type CopyCheck, type CopyState, type CopyStats } from './copying'
+import { chapterFinds, type GodFind } from './god-records'
 import { addXp, charmBonus, statScore, freshStats, luckyExtra, rainBonus, sellBonus, tiredScale, visitBonus, XP, type StatId, type Stats } from './stats'
 import { HALL_GUESTS, HALL_PLAY_GAIN, HALL_PLAY_MINUTES, HALL_SPOTS, hallGuests, hallOpen, SUNSET_MINUTES, sunsetTime, TEA_MINUTES, TEA_PRICE, teaOpen } from './places'
 import {
@@ -221,6 +222,8 @@ export interface GameState {
   copy: CopyState
   /** 나의 필사 기록: 절·글자·장·권·처음 기록한 날 */
   copyStats: CopyStats
+  /** 하나님 기록 (계획 14): 장을 다 필사해 발견한 줄 — 키워드·근거 구절·발견한 날 */
+  godRecords: GodFind[]
 }
 
 /** 지도(world.tileAt)가 이 게임의 집 단계·열린 서고 방 문(방 표)을 보게 한다. 지도를 읽는 엔진 입구마다 부른다 */
@@ -472,6 +475,7 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
     achieved: [],
     copy: NO_COPY,
     copyStats: NO_COPY_STATS,
+    godRecords: [],
   }
 }
 
@@ -2377,7 +2381,18 @@ export type VerseResult =
    * 한 장을 마쳤다: 그 장의 절 수·글자 수, 오른 능력치 점수(1–100 화면 값의 차이, 5단계면 0), 이 장으로 한 권을 마쳤는가.
    * next: 이어 쓸 장 (없으면 null)
    */
-  | { kind: 'chapter'; chapter: number; verse: number; verses: number; chars: number; gains: { wit: number; hand: number }; bookDone: boolean; next: number | null }
+  | {
+      kind: 'chapter'
+      chapter: number
+      verse: number
+      verses: number
+      chars: number
+      gains: { wit: number; hand: number }
+      bookDone: boolean
+      next: number | null
+      /** 이 장을 마쳐 새로 발견한 하나님 기록 (없으면 빈 목록) */
+      finds: GodFind[]
+    }
 
 /**
  * 한 절을 적는다: 입력이 그 절 본문과 다 맞으면(띄어쓰기·문장부호 무시) 기록하고 다음 절로.
@@ -2421,13 +2436,17 @@ export function writeVerse(s: GameState, book: Book, input: string, content: Gam
   const at = { ...s.copy.at }
   if (next !== null && nextVerse !== undefined && nextVerse !== null) at[book] = { chapter: next, verse: nextVerse }
   else delete at[book]
+  // 하나님 기록: 그 장의 줄 중 아직 발견하지 않은 것 (장을 마친 날과 함께 남는다 — 쓰는 도중에는 보이지 않는다)
+  const finds = chapterFinds(content.godRecords ?? [], s.godRecords, book, chapter, day)
   let state: GameState = passTime(
     {
       ...s,
       progress,
       scenes,
       stats: after,
+      // 피로는 장을 마칠 때만 붙는다 (지쳐도 쓸 수는 있다 — 사용자 결정 2026-10-04)
       needs: work(s.needs, 6),
+      godRecords: [...s.godRecords, ...finds],
       copy: { ...s.copy, at },
       copyStats: { ...stats, chapters: stats.chapters + 1, books: stats.books + (finished ? 1 : 0) },
     },
@@ -2438,7 +2457,7 @@ export function writeVerse(s: GameState, book: Book, input: string, content: Gam
   if (book === 'rev') state = syncBoard(state, 'churches', content)
   const gains = { wit: statScore(after.wit) - statScore(before.wit), hand: statScore(after.hand) - statScore(before.hand) }
   const chars = verses.reduce((n, v) => n + v.chars, 0)
-  return { state, result: { kind: 'chapter', chapter, verse: spot.verse.verse, verses: verses.length, chars, gains, bookDone: finished, next } }
+  return { state, result: { kind: 'chapter', chapter, verse: spot.verse.verse, verses: verses.length, chars, gains, bookDone: finished, next, finds } }
 }
 
 // ── 카드 판: 사도행전 방의 여정 판 (계획 5 작업 5), 요한계시록 방의 일곱 교회 판 (계획 9 작업 3) ──

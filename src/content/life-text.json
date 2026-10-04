@@ -5021,5 +5021,29 @@
     "seal": "봉인용 밀랍으로 봉인하기",
     "sealed": "봉인했다.",
     "goldTrim": "금테"
+  },
+  "copyFocus": {
+    "screen": "필사",
+    "deskTitle": "필사 책상",
+    "menuAt": "{book} {chapter}장 {verse}절",
+    "menuDone": "{book} 필사를 마쳤습니다.",
+    "continue": "이어서 필사",
+    "pickOther": "다른 책 선택",
+    "exit": "나가기",
+    "back": "뒤로",
+    "pickTitle": "어느 책을 필사할까요?",
+    "pickStatus": "{done}/{all}장",
+    "header": "{book} {chapter}장 · {n}/{count}절",
+    "progress": "{book} {chapter}장 진행",
+    "verseLabel": "본문 {book} {chapter}:{verse}",
+    "input": "따라 적기",
+    "resume": "{book} {chapter}장 {verse}절부터 이어집니다.",
+    "verseDone": "✓ {book} {chapter}:{verse} 기록",
+    "chapterDone": "{book} {chapter}장을 기록했습니다 · {verses}절 · {chars}자",
+    "godNew": "✦ 하나님에 대한 새로운 기록 {n}",
+    "gain": "{name} +{n}",
+    "closeBook": "책 덮기",
+    "nextChapter": "{chapter}장 계속 쓰기",
+    "bookDone": "{book} 필사를 마쳤습니다. 서고에 꽂을 수 있어요."
   }
 }

@@ -106,7 +106,23 @@ describe('맞게 쓴 길이·오타 뒤 고치기', () => {
 
 describe('자동완성·붙여넣기 막기', () => {
   it('붙여넣기 표식이면 앞 입력 그대로', () => {
-    expect(acceptInput('태초', '태초에 말씀이 계시니라', true)).toBe('태초')
+    expect(acceptInput('태초', '태초에 말씀이 계시니라', { pasted: true })).toBe('태초')
+    expect(acceptInput('태초', '태초에', { pasted: true })).toBe('태초')
+  })
+  it('붙여넣기·끌어 놓기·자동완성 입력 종류는 글자 수와 상관없이 받지 않는다', () => {
+    const target = '태초에 말씀이 계시니라'
+    for (const inputType of ['insertFromPaste', 'insertFromDrop', 'insertReplacementText', 'insertFromPasteAsQuotation', 'insertFromYank'])
+      expect(acceptInput('태초', '태초에', { inputType, target })).toBe('태초')
+    expect(acceptInput('태초', '태초에', { inputType: 'insertText', target })).toBe('태초에')
+  })
+  it('휴대폰 키보드가 여러 글자를 한꺼번에 확정해도 본문 앞부분과 맞으면 받는다', () => {
+    const target = '태초에 말씀이 계시니라'
+    expect(acceptInput('', '태초에 말씀이', { inputType: 'insertCompositionText', target })).toBe('태초에 말씀이')
+    expect(acceptInput('태초', '태초에 말씀이 계', { inputType: 'insertText', target })).toBe('태초에 말씀이 계')
+    // 마지막 글자가 조합 중이어도 맞게 가는 중이면 받는다
+    expect(acceptInput('', '태초에 말씀이 계신', { inputType: 'insertCompositionText', target })).toBe('태초에 말씀이 계신')
+    // 본문과 맞지 않는 뭉치는 받지 않는다
+    expect(acceptInput('', '태초에 말씀은 계', { inputType: 'insertCompositionText', target })).toBe('')
   })
   it('한 번에 여러 글자가 늘면 받지 않고, 한두 글자·지우기는 받는다', () => {
     expect(acceptInput('', '태초에 말씀이')).toBe('')

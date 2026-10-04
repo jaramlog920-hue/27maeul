@@ -183,14 +183,14 @@ describe('책상', () => {
     act(() => useGame.getState().tap(PLACES.desk.tiles[0]))
     walk()
     // 처음 책상을 열면 책 고르기 — 서고 방이 닫혀 있어도 사도행전·요한계시록까지 모두
-    expect(screen.getByRole('dialog', { name: '어느 책을 필사할까요?' })).toBeInTheDocument()
+    expect(screen.getByRole('dialog', { name: '필사' })).toHaveTextContent('어느 책을 필사할까요?')
     expect(screen.getByRole('button', { name: /사도행전 · 0\/28장/ })).toBeEnabled()
     expect(screen.getByRole('button', { name: /요한계시록 · 0\/22장/ })).toBeEnabled()
     await user.click(screen.getByRole('button', { name: /누가복음 · 0\/24장/ }))
     expect(useGame.getState().game.copy.book).toBe('lk')
     const verses = versesOf('눅 1:1-80')
     expect(screen.getByRole('heading')).toHaveTextContent(`누가복음 1장 · 1/${verses.length}절`)
-    expect(screen.getByLabelText('본문 눅 1:1')).toHaveTextContent(verses[0].text)
+    expect(screen.getByLabelText('본문 누가복음 1:1')).toHaveTextContent(verses[0].text)
     // 붙여넣기는 받지 않는다
     const box = screen.getByLabelText('따라 적기')
     box.focus()
@@ -198,7 +198,7 @@ describe('책상', () => {
     expect(useGame.getState().game.copyStats.verses).toBe(0)
     // 한 글자씩 따라 적으면 절이 기록되고 다음 절이 올라온다 (재료 없이)
     await user.type(box, verses[0].text)
-    expect(screen.getByRole('status')).toHaveTextContent('✓ 눅 1:1 기록')
+    expect(screen.getByRole('status')).toHaveTextContent('✓ 누가복음 1:1 기록')
     expect(screen.getByRole('heading')).toHaveTextContent(`누가복음 1장 · 2/${verses.length}절`)
     expect(useGame.getState().game.copyStats.verses).toBe(1)
     expect(useGame.getState().game.inv).toEqual({})
@@ -230,13 +230,30 @@ describe('책상', () => {
     expect(useGame.getState().game.progress.lk.arrangement[1]).toEqual(chapter1)
   })
 
-  it('밤에 기름이 없어도 필사 책상은 쓸 수 있다 (재료 없음)', async () => {
+  it('밤에 기름이 없어도 필사 책상은 쓸 수 있다 (재료 없음) — 앉기만 해서는 기름을 쓰지 않는다', async () => {
     reset({ ...at(20 * 60), inv: {}, copy: { book: 'lk', at: {}, legacy: {} } })
+    const user = userEvent.setup()
     render(<ModalLayer />)
     act(() => useGame.getState().tap(PLACES.desk.tiles[0]))
     walk()
+    // 쓰던 책이 있으면 책상 메뉴: [이어서 필사] [다른 책 선택]
+    expect(screen.getByRole('heading')).toHaveTextContent('필사 책상')
+    await user.click(screen.getByRole('button', { name: '이어서 필사' }))
     expect(screen.getByRole('heading')).toHaveTextContent('누가복음 1장 · 1/')
     expect(screen.getByLabelText('따라 적기')).toBeEnabled()
+  })
+
+  it('밤에 기름이 있으면 앉을 때가 아니라 한 절을 적을 때 등잔을 켠다', async () => {
+    reset({ ...at(20 * 60), inv: { oil: 1 }, copy: { book: 'lk', at: {}, legacy: {} } })
+    render(<ModalLayer />)
+    act(() => useGame.getState().tap(PLACES.desk.tiles[0]))
+    walk()
+    expect(useGame.getState().game.inv.oil).toBe(1)
+    act(() => useGame.getState().copyView('write'))
+    act(() => void useGame.getState().copyType(versesOf('눅 1:1')[0].text))
+    expect(useGame.getState().game.copyStats.verses).toBe(1)
+    expect(useGame.getState().game.inv.oil ?? 0).toBe(0)
+    expect(useGame.getState().game.lampLitDay).toBe(1)
   })
 })
 

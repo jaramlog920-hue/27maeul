@@ -247,9 +247,16 @@ try {
 }
 
 // ── 4·5. 지어낸 문장 ──
+// 말씀 루프의 이름표 (계획 14, 사용자가 정한 이름 "하나님에 대한 기록"): 이 자리에서만 '하나님'을 허용한다.
+// 이름표일 뿐 지어낸 문장이 하나님에 대해 말하지 않는다 — 다른 금지어는 여기서도 그대로 걸린다
+const GOD_LABELS = new Set(['life-text.copyFocus.godNew'])
+const GOD_WORD = /하나님/
 function walk(node, path) {
   if (typeof node === 'string') {
-    for (const re of FORBIDDEN) if (re.test(node)) fail(path, `금지어 ${re.source} — "${node}"`)
+    for (const re of FORBIDDEN) {
+      if (GOD_LABELS.has(path) && GOD_WORD.test(re.source)) continue
+      if (re.test(node)) fail(path, `금지어 ${re.source} — "${node}"`)
+    }
   } else if (Array.isArray(node)) node.forEach((n, i) => walk(n, `${path}[${i}]`))
   else if (node && typeof node === 'object') {
     for (const [k, v] of Object.entries(node)) walk(v, `${path}.${k}`)

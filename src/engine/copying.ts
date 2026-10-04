@@ -84,17 +84,42 @@ export function checkCopy(input: string, target: string): CopyCheck {
   return { matched: k, composing, typo: !composing, total: t.length, done: false }
 }
 
-/** 한 번의 입력으로 늘어날 수 있는 글자 수 (정규화). 이보다 많이 한꺼번에 들어오면 자동완성·붙여넣기로 보고 받지 않는다 */
+/** 한 번의 입력으로 늘어날 수 있는 글자 수 (정규화). 이보다 많이 한꺼번에 들어오면서 본문과 맞지 않으면 받지 않는다 */
 export const COPY_MAX_STEP = 3
 
 /**
- * 새 입력을 받을까: 붙여넣기 표식이 있거나(화면의 paste·drop 이벤트), 한 번에 COPY_MAX_STEP 글자보다 많이 늘었으면
- * 앞 입력을 그대로 둔다. 지우기·고치기는 언제나 받는다
+ * 붙여넣기·끌어 놓기·자동완성(고쳐 쓰기 제안)으로 들어오는 입력 종류 (InputEvent.inputType).
+ * 이것들은 글자 수와 상관없이 받지 않는다. 키를 눌러 치는 것(insertText)·한글 조합(insertCompositionText)은 받는다
  */
-export function acceptInput(prev: string, next: string, pasted = false): string {
-  if (pasted) return prev
+export const BLOCKED_INPUT_TYPES: readonly string[] = [
+  'insertFromPaste',
+  'insertFromPasteAsQuotation',
+  'insertFromDrop',
+  'insertFromYank',
+  'insertReplacementText',
+]
+
+export interface InputHow {
+  /** 화면이 paste·drop 이벤트를 보았다 */
+  pasted?: boolean
+  /** 브라우저가 알려 준 입력 종류 (InputEvent.inputType) */
+  inputType?: string
+  /** 지금 쓰는 절 본문 — 있으면 한꺼번에 여러 글자가 들어와도 본문 앞부분과 맞으면 받는다 (휴대폰 키보드의 조합 확정) */
+  target?: string
+}
+
+/**
+ * 새 입력을 받을까:
+ * - 붙여넣기 표식이 있거나 붙여넣기·끌어 놓기·자동완성 입력 종류면 앞 입력 그대로 (BLOCKED_INPUT_TYPES)
+ * - 한 번에 COPY_MAX_STEP 글자까지 늘면 받는다. 지우기·고치기는 언제나 받는다
+ * - 그보다 많이 늘었으면, 본문(target)의 앞부분과 맞을 때만 받는다 — 휴대폰 한글 키보드가 몇 글자를 한꺼번에 확정하는 경우.
+ *   본문과 맞지 않는 뭉치(자동완성 낱말 등)는 받지 않는다
+ */
+export function acceptInput(prev: string, next: string, how: InputHow = {}): string {
+  if (how.pasted || (how.inputType && BLOCKED_INPUT_TYPES.includes(how.inputType))) return prev
   const grew = [...normalizeCopy(next)].length - [...normalizeCopy(prev)].length
-  return grew > COPY_MAX_STEP ? prev : next
+  if (grew <= COPY_MAX_STEP) return next
+  return how.target !== undefined && !checkCopy(next, how.target).typo ? next : prev
 }
 
 /** 본문(원문)에서 정규화한 앞 n글자가 끝나는 자리 — 화면이 맞게 쓴 부분까지 진하게 칠할 때 쓴다 */

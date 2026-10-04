@@ -4,7 +4,7 @@ import type { FullAvatar } from '../engine/avatar'
 import { create } from 'zustand'
 import { CONTENT, neighborById, copySourceFor, LETTER_OPENINGS, pieceById, pieceOfQuestion, piecesOf, quizSourceFor } from '../content/catalog'
 import { blanksFor } from '../engine/copy'
-import { acceptInput, copySpot } from '../engine/copying'
+import { acceptInput, copySpot, type InputHow } from '../engine/copying'
 import { currentChapter } from '../engine/offers'
 import { handEase, leveledUp, XP, type StatId } from '../engine/stats'
 import type { FixtureLine } from '../engine/fixtures'
@@ -31,6 +31,7 @@ import {
   goToSleep,
   greetNeighbor,
   lightLamp,
+  saveCopyDraft,
   listen,
   newGame,
   chooseBook,
@@ -155,10 +156,11 @@ export type Modal =
   /** copy: 편지 옮겨 적기의 고른 답 (창 상태로만 — 게임 저장에 남지 않는다) */
   | { kind: 'desk'; result: SubmitResult | null; dark: boolean; copy?: CopyPad }
   /**
-   * 필사 책상 (계획 14 작업 1 — 작업 2에서 집중 화면으로 바뀐다): 집 책상을 누르면 이것이 열린다.
-   * picking: 다른 책 고르기, last: 방금 적은 절·마친 장 (창 상태로만)
+   * 필사 책상 (계획 14 작업 2): 집 책상을 누르면 이것이 열린다 — 마을·위 줄·조작판·마을 소리가 사라진 조용한 화면.
+   * view: 'menu' 책상 메뉴(이어서 필사·다른 책 선택), 'pick' 27권 고르기, 'write' 한 절씩 따라 적기, 'done' 장 완료 화면.
+   * last: 방금 적은 절·마친 장, resume: 들어올 때 "…부터 이어집니다" 알림을 보일까 (창 상태로만)
    */
-  | { kind: 'copy'; picking?: boolean; last?: VerseResult | null }
+  | { kind: 'copy'; view: CopyView; last?: VerseResult | null; resume?: boolean }
   /** attic: 다락 창가에서 연 자기 전 읽기 */
   | { kind: 'review'; pieceId: string | null; attic?: boolean }
   | { kind: 'journal' }
@@ -195,6 +197,11 @@ export type Modal =
   | { kind: 'journey'; board?: 'churches' }
   | { kind: 'letter' }
   | { kind: 'garden'; at: Tile }
+
+/** 필사 책상의 화면 (계획 14 작업 2) */
+export type CopyView = 'menu' | 'pick' | 'write' | 'done'
+/** 필사 입력이 들어온 모양: 붙여넣기 표식·입력 종류 + 한글을 조합하는 중인가 (화면이 compositionstart/end로 안다) */
+export type CopyHow = Omit<InputHow, 'target'> & { composing?: boolean }
 
 /** 편지 한 장 옮겨 적기에서 고른 것: 칸마다 맞힌 낱말(아직이면 null), 흐려진(틀린) 보기, 방금 틀린 칸 */
 export interface CopyPad {
@@ -355,10 +362,18 @@ interface Store {
   submitDesk: (book: Book, chapter: number) => void
   /** 필사: 쓸 책을 고른다 (27권 어느 책이든) */
   copyBook: (book: Book) => void
-  /** 필사: 입력이 바뀌었다 (pasted: 붙여넣기·끌어 놓기). 한 절을 다 맞게 쓰면 기록하고 다음 절로 */
-  copyType: (text: string, pasted?: boolean) => void
-  /** 필사: 다른 책 고르기 창을 열고 닫는다 */
-  copyPicking: (on: boolean) => void
+  /**
+   * 필사: 입력이 바뀌었다. how: 붙여넣기 표식·입력 종류(InputEvent.inputType)·한글 조합 중인가.
+   * 조합 중에는 쓰다 만 입력만 남기고 절을 마치지 않는다 (조합이 끝나면 다시 부른다).
+   * 한 절을 다 맞게 쓰면 기록하고 다음 절로. 받았으면 true, 받지 않았으면(붙여넣기·자동완성 뭉치) false
+   */
+  copyType: (text: string, how?: CopyHow) => boolean
+  /** 필사 책상의 화면을 바꾼다 (메뉴·책 고르기·쓰기). 'write'로 갈 때 resume이면 "…부터 이어집니다"를 보인다 */
+  copyView: (view: CopyView, resume?: boolean) => void
+  /** 필사 책상에서 나간다 — 쓰다 만 입력을 저장하고 마을로 */
+  copyExit: () => void
+  /** 쓰다 만 입력을 지금 저장한다 (잠깐 손을 멈췄을 때) */
+  copySave: () => void
   /** 편지 옮겨 적기: 칸 하나에 보기 하나 (맞으면 채우고, 틀리면 그 보기를 흐린다 — 불이익 없음) */
   copyPick: (blank: number, option: string) => void
   /** 세 칸을 다 채웠으면 옮겨 적는다 (recordLetter) */
@@ -676,9 +691,8 @@ export const useGame = create<Store>((set, get) => {
         return { game, modal: { kind: 'review', pieceId: reviewPick(game, rng), attic: true } }
       case 'desk': {
         // 계획 14: 책상은 필사 책상 — 재료·조각·등잔 기름 없이도 쓴다 (예전 엮기·옮겨 적기 창으로 가는 길은 닫았다).
-        // 밤에 기름이 있으면 예전처럼 등잔을 켠다 (켠 기름은 바로 저장 — 다시 불러와 기름을 되찾지 못하게)
-        const lit = lightLamp(game)
-        return { game: lit ? persist(lit) : game, modal: { kind: 'copy', picking: !game.copy.book } }
+        // 앉기만 해서는 기름을 쓰지 않는다 — 밤에 실제로 한 절을 적을 때 기름이 있으면 등잔을 켠다 (copyType)
+        return { game, modal: { kind: 'copy', view: game.copy.book ? 'menu' : 'pick' } }
       }
       case 'hearth':
       case 'workbench':
@@ -1337,35 +1351,54 @@ export const useGame = create<Store>((set, get) => {
       set({ modal: { kind: 'quiz', mode: { kind: 'chapter', book, chapter }, questions, index: 0, wrong: [], solved: false, misses: 0, missed: [] } })
     },
     copyBook: (book) => {
-      const next = startCopy(get().game, book, CONTENT)
-      if (next === get().game && get().game.copy.book !== book) return
+      const game = get().game
+      const next = startCopy(game, book, CONTENT)
+      if (next === game && game.copy.book !== book) return
       sfx('scroll')
-      set({ game: persist(next), modal: { kind: 'copy', picking: false, last: null } })
+      // 이미 쓰던 책(이어 쓸 자리나 마친 장이 있다)이면 "…부터 이어집니다"를 보인다
+      const resume = !!next.copy.at[book] || next.progress[book].completed.length > 0
+      set({ game: persist(next), modal: { kind: 'copy', view: 'write', last: null, resume } })
     },
-    copyPicking: (on) => {
+    copyView: (view, resume = false) => {
       const m = get().modal
       if (m?.kind !== 'copy') return
-      set({ modal: { ...m, picking: on } })
+      if (view === 'write' && !get().game.copy.book) return
+      set({ modal: { kind: 'copy', view, last: null, resume: view === 'write' && resume } })
     },
-    copyType: (text, pasted = false) => {
+    copyExit: () => {
+      if (get().modal?.kind !== 'copy') return
+      set({ game: persist(get().game), modal: null })
+    },
+    copySave: () => {
+      if (get().modal?.kind === 'copy') saveGame(get().game)
+    },
+    copyType: (text, how = {}) => {
       const m = get().modal
       const game = get().game
       const book = game.copy.book
-      if (m?.kind !== 'copy' || !book) return
+      if (m?.kind !== 'copy' || m.view !== 'write' || !book) return false
       const spot = copySpot(game, book, CONTENT)
-      if (!spot) return
-      // 붙여넣기·자동완성(한꺼번에 여러 글자)은 받지 않는다
-      const accepted = acceptInput(spot.draft, text, pasted)
-      if (accepted === spot.draft && text !== spot.draft) return
-      const { state, result } = writeVerse(game, book, accepted, CONTENT)
-      if (result.kind === 'notYet') {
-        // 쓰다 만 입력: 상태에만 (창 닫힘·다음 저장 때 함께 저장된다)
-        set({ game: state })
-        return
+      if (!spot) return false
+      // 붙여넣기·끌어 놓기·자동완성(본문과 맞지 않는 뭉치)은 받지 않는다. 휴대폰 키보드가 몇 글자를 한꺼번에 확정해도 본문과 맞으면 받는다
+      const accepted = acceptInput(spot.draft, text, { pasted: how.pasted, inputType: how.inputType, target: spot.verse.text })
+      if (accepted !== text) return false
+      if (how.composing) {
+        // 한글 조합 중: 쓰다 만 입력만 남긴다 — 마지막 글자가 아직 바뀔 수 있으니 절을 마치지 않는다 (조합이 끝나면 화면이 다시 부른다)
+        set({ game: saveCopyDraft(game, book, text, CONTENT) })
+        return true
       }
-      if (result.kind === 'none') return
-      sfx(result.kind === 'chapter' ? 'done' : 'pen')
-      set({ game: persist(state), modal: { ...m, last: result } })
+      const { state, result } = writeVerse(game, book, text, CONTENT)
+      if (result.kind === 'notYet') {
+        // 쓰다 만 입력: 상태에만 (화면이 손을 멈추면 copySave로, 나갈 때·절을 마칠 때 저장된다)
+        set({ game: state })
+        return true
+      }
+      if (result.kind === 'none') return true
+      // 밤에 한 절을 적으면 기름이 있을 때 등잔을 켠다 (그림의 불빛 — 없어도 쓴다)
+      const lit = lightLamp(state) ?? state
+      sfx('pen')
+      set({ game: persist(lit), modal: { kind: 'copy', view: result.kind === 'chapter' ? 'done' : 'write', last: result, resume: false } })
+      return true
     },
     copyPick: (blank, option) => {
       const m = get().modal
