@@ -60,7 +60,13 @@ export function VillageMap() {
   const pct = (x: number, y: number) => ({ left: `${((x + 0.5) / WIDTH) * 100}%`, top: `${((y + 0.5) / VILLAGE_H) * 100}%` })
   const locked = lockedZones(shelvedCount(game))
   // 아직 이사 오지 않은 이웃의 집(덤불로 덮인 집)도 언제 열리는지 적는다 — 서고 권수 또는 마을 단계
-  const closedHouses = housesNow().filter((h) => closedHouseIds(game).includes(h.id))
+  // 잠긴 구역 안에 있는 집은 구역 자물쇠 하나로 충분하다 (벌 치는 집 + 벌통 들판이 둘 다 6권으로 겹쳐 보이던 것)
+  const inLockedZone = (h: House) => {
+    const cx = (h.x0 + h.x1) / 2
+    const cy = (h.y0 + h.y1) / 2
+    return locked.some((z) => cx >= z.x0 && cx <= z.x1 && cy >= z.y0 && cy <= z.y1)
+  }
+  const closedHouses = housesNow().filter((h) => closedHouseIds(game).includes(h.id) && !inLockedZone(h))
   const opensAt = (id: string) => {
     const d = neighborById(id)
     if (d?.joinsAtBooks) return `${d.joinsAtBooks}권`
