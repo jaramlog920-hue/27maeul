@@ -1,0 +1,2 @@
+# 역방향 픽스처 — verify-god-records.mjs가 이 줄을 실제로 잡는지 (scripts/verify-god-records.test.ts)
+사랑 | 요 3:16

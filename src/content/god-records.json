@@ -1,0 +1,478 @@
+{
+  "keywords": [
+    {
+      "id": "love",
+      "name": "사랑",
+      "group": "성품"
+    },
+    {
+      "id": "holy",
+      "name": "거룩하심",
+      "group": "성품"
+    },
+    {
+      "id": "mercy",
+      "name": "긍휼",
+      "group": "성품"
+    },
+    {
+      "id": "compassion",
+      "name": "자비",
+      "group": "성품"
+    },
+    {
+      "id": "kind",
+      "name": "인자하심",
+      "group": "성품"
+    },
+    {
+      "id": "good",
+      "name": "선하심",
+      "group": "성품"
+    },
+    {
+      "id": "perfect",
+      "name": "온전하심",
+      "group": "성품"
+    },
+    {
+      "id": "almighty",
+      "name": "전능하심",
+      "group": "성품"
+    },
+    {
+      "id": "knows",
+      "name": "다 아심",
+      "group": "성품"
+    },
+    {
+      "id": "one",
+      "name": "한 분이심",
+      "group": "성품"
+    },
+    {
+      "id": "true",
+      "name": "참되심",
+      "group": "성품"
+    },
+    {
+      "id": "righteous",
+      "name": "의로우심",
+      "group": "성품"
+    },
+    {
+      "id": "impartial",
+      "name": "공평하심",
+      "group": "성품"
+    },
+    {
+      "id": "spirit",
+      "name": "영이심",
+      "group": "성품"
+    },
+    {
+      "id": "living",
+      "name": "살아 계심",
+      "group": "성품"
+    },
+    {
+      "id": "near",
+      "name": "가까이 계심",
+      "group": "성품"
+    },
+    {
+      "id": "create",
+      "name": "창조하심",
+      "group": "하시는 일"
+    },
+    {
+      "id": "save",
+      "name": "구원하심",
+      "group": "하시는 일"
+    },
+    {
+      "id": "forgive",
+      "name": "용서하심",
+      "group": "하시는 일"
+    },
+    {
+      "id": "care",
+      "name": "돌보심",
+      "group": "하시는 일"
+    },
+    {
+      "id": "give",
+      "name": "베푸심",
+      "group": "하시는 일"
+    },
+    {
+      "id": "with",
+      "name": "함께하심",
+      "group": "하시는 일"
+    },
+    {
+      "id": "promise",
+      "name": "약속하심",
+      "group": "하시는 일"
+    },
+    {
+      "id": "raise",
+      "name": "살리심",
+      "group": "하시는 일"
+    },
+    {
+      "id": "lead",
+      "name": "인도하심",
+      "group": "하시는 일"
+    },
+    {
+      "id": "help",
+      "name": "도우심",
+      "group": "하시는 일"
+    },
+    {
+      "id": "judge",
+      "name": "심판하심",
+      "group": "하시는 일"
+    },
+    {
+      "id": "work",
+      "name": "일하심",
+      "group": "하시는 일"
+    },
+    {
+      "id": "keep",
+      "name": "지키심",
+      "group": "하시는 일"
+    },
+    {
+      "id": "father",
+      "name": "아버지",
+      "group": "불리는 이름"
+    },
+    {
+      "id": "lord-of-all",
+      "name": "천지의 주재",
+      "group": "불리는 이름"
+    },
+    {
+      "id": "most-high",
+      "name": "지극히 높으신 이",
+      "group": "불리는 이름"
+    }
+  ],
+  "records": [
+    {
+      "keyword": "with",
+      "ref": "마 1:23",
+      "book": "mat",
+      "chapter": 1
+    },
+    {
+      "keyword": "give",
+      "ref": "마 5:45",
+      "book": "mat",
+      "chapter": 5
+    },
+    {
+      "keyword": "perfect",
+      "ref": "마 5:48",
+      "book": "mat",
+      "chapter": 5
+    },
+    {
+      "keyword": "knows",
+      "ref": "마 6:8",
+      "book": "mat",
+      "chapter": 6
+    },
+    {
+      "keyword": "forgive",
+      "ref": "마 6:14",
+      "book": "mat",
+      "chapter": 6
+    },
+    {
+      "keyword": "care",
+      "ref": "마 6:26",
+      "book": "mat",
+      "chapter": 6
+    },
+    {
+      "keyword": "give",
+      "ref": "마 7:11",
+      "book": "mat",
+      "chapter": 7
+    },
+    {
+      "keyword": "lord-of-all",
+      "ref": "마 11:25",
+      "book": "mat",
+      "chapter": 11
+    },
+    {
+      "keyword": "almighty",
+      "ref": "마 19:26",
+      "book": "mat",
+      "chapter": 19
+    },
+    {
+      "keyword": "father",
+      "ref": "마 23:9",
+      "book": "mat",
+      "chapter": 23
+    },
+    {
+      "keyword": "good",
+      "ref": "막 10:18",
+      "book": "mrk",
+      "chapter": 10
+    },
+    {
+      "keyword": "forgive",
+      "ref": "막 11:25",
+      "book": "mrk",
+      "chapter": 11
+    },
+    {
+      "keyword": "one",
+      "ref": "막 12:29",
+      "book": "mrk",
+      "chapter": 12
+    },
+    {
+      "keyword": "create",
+      "ref": "막 13:19",
+      "book": "mrk",
+      "chapter": 13
+    },
+    {
+      "keyword": "almighty",
+      "ref": "막 14:36",
+      "book": "mrk",
+      "chapter": 14
+    },
+    {
+      "keyword": "almighty",
+      "ref": "눅 1:37",
+      "book": "luk",
+      "chapter": 1
+    },
+    {
+      "keyword": "holy",
+      "ref": "눅 1:49",
+      "book": "luk",
+      "chapter": 1
+    },
+    {
+      "keyword": "mercy",
+      "ref": "눅 1:78",
+      "book": "luk",
+      "chapter": 1
+    },
+    {
+      "keyword": "save",
+      "ref": "눅 3:6",
+      "book": "luk",
+      "chapter": 3
+    },
+    {
+      "keyword": "kind",
+      "ref": "눅 6:35",
+      "book": "luk",
+      "chapter": 6
+    },
+    {
+      "keyword": "compassion",
+      "ref": "눅 6:36",
+      "book": "luk",
+      "chapter": 6
+    },
+    {
+      "keyword": "care",
+      "ref": "눅 12:24",
+      "book": "luk",
+      "chapter": 12
+    },
+    {
+      "keyword": "knows",
+      "ref": "눅 16:15",
+      "book": "luk",
+      "chapter": 16
+    },
+    {
+      "keyword": "promise",
+      "ref": "눅 24:49",
+      "book": "luk",
+      "chapter": 24
+    },
+    {
+      "keyword": "love",
+      "ref": "요 3:16",
+      "book": "jhn",
+      "chapter": 3
+    },
+    {
+      "keyword": "save",
+      "ref": "요 3:17",
+      "book": "jhn",
+      "chapter": 3
+    },
+    {
+      "keyword": "spirit",
+      "ref": "요 4:24",
+      "book": "jhn",
+      "chapter": 4
+    },
+    {
+      "keyword": "work",
+      "ref": "요 5:17",
+      "book": "jhn",
+      "chapter": 5
+    },
+    {
+      "keyword": "raise",
+      "ref": "요 5:21",
+      "book": "jhn",
+      "chapter": 5
+    },
+    {
+      "keyword": "living",
+      "ref": "요 6:57",
+      "book": "jhn",
+      "chapter": 6
+    },
+    {
+      "keyword": "keep",
+      "ref": "요 10:29",
+      "book": "jhn",
+      "chapter": 10
+    },
+    {
+      "keyword": "love",
+      "ref": "요 16:27",
+      "book": "jhn",
+      "chapter": 16
+    },
+    {
+      "keyword": "true",
+      "ref": "요 17:3",
+      "book": "jhn",
+      "chapter": 17
+    },
+    {
+      "keyword": "holy",
+      "ref": "요 17:11",
+      "book": "jhn",
+      "chapter": 17
+    },
+    {
+      "keyword": "righteous",
+      "ref": "요 17:25",
+      "book": "jhn",
+      "chapter": 17
+    },
+    {
+      "keyword": "father",
+      "ref": "요 20:17",
+      "book": "jhn",
+      "chapter": 20
+    },
+    {
+      "keyword": "raise",
+      "ref": "행 2:24",
+      "book": "act",
+      "chapter": 2
+    },
+    {
+      "keyword": "create",
+      "ref": "행 4:24",
+      "book": "act",
+      "chapter": 4
+    },
+    {
+      "keyword": "with",
+      "ref": "행 7:9",
+      "book": "act",
+      "chapter": 7
+    },
+    {
+      "keyword": "promise",
+      "ref": "행 7:17",
+      "book": "act",
+      "chapter": 7
+    },
+    {
+      "keyword": "most-high",
+      "ref": "행 7:48",
+      "book": "act",
+      "chapter": 7
+    },
+    {
+      "keyword": "impartial",
+      "ref": "행 10:34",
+      "book": "act",
+      "chapter": 10
+    },
+    {
+      "keyword": "lead",
+      "ref": "행 13:17",
+      "book": "act",
+      "chapter": 13
+    },
+    {
+      "keyword": "create",
+      "ref": "행 14:15",
+      "book": "act",
+      "chapter": 14
+    },
+    {
+      "keyword": "living",
+      "ref": "행 14:15",
+      "book": "act",
+      "chapter": 14
+    },
+    {
+      "keyword": "give",
+      "ref": "행 14:17",
+      "book": "act",
+      "chapter": 14
+    },
+    {
+      "keyword": "knows",
+      "ref": "행 15:8",
+      "book": "act",
+      "chapter": 15
+    },
+    {
+      "keyword": "give",
+      "ref": "행 17:25",
+      "book": "act",
+      "chapter": 17
+    },
+    {
+      "keyword": "near",
+      "ref": "행 17:27",
+      "book": "act",
+      "chapter": 17
+    },
+    {
+      "keyword": "judge",
+      "ref": "행 17:31",
+      "book": "act",
+      "chapter": 17
+    },
+    {
+      "keyword": "raise",
+      "ref": "행 26:8",
+      "book": "act",
+      "chapter": 26
+    },
+    {
+      "keyword": "help",
+      "ref": "행 26:22",
+      "book": "act",
+      "chapter": 26
+    }
+  ]
+}
