@@ -1,4 +1,4 @@
-// 이웃과의 생활 대화 — 게임이 지어낸 말. 성경 이야기는 '이야기 듣기'를 눌러 본문 창으로만 본다.
+// 이웃과의 생활 대화 — 게임이 지어낸 말. 성경 본문은 이웃이 건넨 말씀 조각·편지의 본문 창으로만 본다.
 import { neighborById } from '../../content/catalog'
 import { WorkEntry } from '../work/WorkDay'
 import { SkillEntry } from '../skills/SkillLesson'
@@ -11,7 +11,7 @@ import { has } from '../../engine/items'
 import { MAX_HEART } from '../../engine/neighbors'
 import { heartsOf } from '../../engine/hearts'
 import { personOf } from '../../engine/people'
-import { postLine, starPostHint, useGame, type Modal } from '../../store/game-store'
+import { starPostHint, useGame, type Modal } from '../../store/game-store'
 
 /** 사이의 이름: 연인·약혼·배우자, 아니면 낯선 사람 … 마음이 가는 사이 (같은 모습이면 특별한 사람까지) */
 export function bondLabel(game: GameState, id: string): string {
@@ -35,7 +35,7 @@ export function Hearts({ n }: { n: number }) {
 
 export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) {
   const game = useGame((s) => s.game)
-  const { listenTo, startHelp, open, closeModal, startTeach } = useGame.getState()
+  const { startHelp, open, closeModal, startTeach } = useGame.getState()
   // 이웃마다 있던 사기·팔기·받기 단추(주고받기·약방 약초 팔기)는 2026-10-05에 지웠다 — 사고팔기는 장날 좌판에서
   const def = neighborById(modal.neighborId)
   if (!def) return null
@@ -57,7 +57,8 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
   // 목수에게 집 넓히기와 살림만 부탁한다.
   const orderable =
     def.id === 'carpenter' && game.flags['movedIn:carpenter'] && ((homeStage && homeBlock !== 'notMoved') || works.length > 0)
-  const post = postLine(game, def.id)
+  // 편지 나르는 이웃은 말을 걸면 편지를 바로 건넨다 (2026-10-05: 편지 받기 단추 없음) — 건넨 편지 말 한 줄만 보인다
+  const post = modal.letter
   const starHint = starPostHint(game, def.id)
   return (
     <div className="dialog talk" role="dialog" aria-label={def.role}>
@@ -72,12 +73,7 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
       {/* 아침 방문 말 등 다른 말이 먼저 나와도 편지 알림은 가려지지 않는다 */}
       {post && post !== modal.line && <p className="talk-line">{post}</p>}
       <div className="actions menu">
-        {/* 말씀 조각은 말을 걸 때 그 자리에서 건넨다 (받기 단추 없음). 편지 나르는 이웃만 오늘 온 편지를 건넨다 */}
-        {post && (
-          <button className="primary" onClick={() => listenTo(def.id)}>
-            {T.post.receive}
-          </button>
-        )}
+        {/* 말씀 조각과 편지는 말을 걸 때 그 자리에서 건넨다 (받기 단추 없음) */}
         {teachable && (
           <button className="primary" onClick={startTeach}>
             {T.ui.talkTeach}

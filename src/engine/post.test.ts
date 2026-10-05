@@ -165,15 +165,14 @@ describe('말 걸기 흐름 — 생활 말로 건넨다', () => {
     expect(postLine({ ...s, post: [] }, POSTMAN)).toBeNull()
   })
 
-  it('편지 받기: 받고 창을 닫는다 — 말씀 탭에 담겼다는 알림', () => {
+  it('말을 걸면 편지를 바로 받는다 — 편지 책의 장은 대화 창에 편지 말 한 줄, 말씀 탭에 담겼다는 알림', () => {
     const s = { ...roomOpenState(), post: ['phm-001'] }
     useGame.getState().load(s)
-    useGame.setState({ modal: { kind: 'talk', neighborId: POSTMAN, line: postLine(s, POSTMAN)! } })
-    useGame.getState().listenTo(POSTMAN)
+    useGame.getState().talkTo(POSTMAN)
     const g = useGame.getState().game
     expect(g.post).toEqual([])
     expect(g.collected).toContain('phm-001')
-    expect(useGame.getState().modal).toBeNull()
+    expect(useGame.getState().modal).toMatchObject({ kind: 'talk', neighborId: POSTMAN, letter: T.word.letterBring })
     expect(useGame.getState().toast?.text).toContain('말씀 탭에 담겼어요')
   })
 })

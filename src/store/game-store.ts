@@ -163,7 +163,8 @@ export type Modal =
   | { kind: 'schedule' }
   | { kind: 'clubs' }
   | { kind: 'clubSession'; id: string }
-  | { kind: 'talk'; neighborId: string; line: string }
+  /** letter: 편지 나르는 이웃이 말을 걸자마자 편지를 건넸을 때 대화에 보일 편지 말 한 줄 */
+  | { kind: 'talk'; neighborId: string; line: string; letter?: string }
   | { kind: 'passage'; pieceId: string; askLine: boolean; back?: boolean; said?: string }
   /** lineKey: 조각 id 또는 'book:mk' 같은 책 키. back: 적거나 넘긴 뒤 돌아갈 창 ('word' = 📖 말씀 › 서고) */
   | { kind: 'myLine'; lineKey: string; back?: 'library' | 'word' | `room:${ShelfRoomId}` }
@@ -845,13 +846,25 @@ export const useGame = create<Store>((set, get) => {
         g = sg.state
         get().say(fill(T.romance.spouseGift, { who: withSubject(def!.role), items: itemList(sg.gift) }))
       }
+      // 편지 나르는 이웃 (2026-10-05): 오늘 온 편지는 말을 걸면 그 자리에서 건넨다 — 받기 단추 없이, 대화에 편지 말 한 줄.
+      // 조각 하나짜리 편지(편지 책이 아닌 조각)는 말씀 조각처럼 그 말과 함께 본문 창으로. 편지 책의 장·여러 통이면 대화 창에 편지 말
+      let letter: { letter?: string } = {}
+      if (target.id === POSTMAN && postLine(g, POSTMAN)) {
+        const said = T.word.letterBring
+        const h = handOver(g, POSTMAN, `${def?.role ?? ''} · ${said}`)
+        if (h?.modal) return h
+        if (h) {
+          g = h.game
+          letter = { letter: said }
+        }
+      }
       // 아침에 들른 이웃은 들고 온 것을 건넨다
       const v = receiveVisit(g, target.id)
       if (v) {
         g = v.state
         get().say(fill(T.ui.visitGot, { items: itemList(v.gift) }))
         const l = NEIGHBOR_LINES[target.id]
-        return { game: persist(g), modal: { kind: 'talk', neighborId: target.id, line: l?.visit.length ? pick(l.visit, rng).text : lineFor(g, target.id, rng) } }
+        return { game: persist(g), modal: { kind: 'talk', neighborId: target.id, line: l?.visit.length ? pick(l.visit, rng).text : lineFor(g, target.id, rng), ...letter } }
       }
       // 특별한 대화 (2026-10-05): 오늘 말씀 조각을 건넬 이웃은 말을 걸면 그 자리에서 건넨다 — 받기 단추 없이, 그 이웃의 말과 함께 본문으로
       if (g.offers[target.id] && target.id !== POSTMAN) {
@@ -873,12 +886,12 @@ export const useGame = create<Store>((set, get) => {
         const other = mutterPartner(g, target.id)
         const role = other ? neighborById(other)?.role : undefined
         const line = role ? fill(T.people.together, { otherAnd: withAnd(role), text: mut }) : mut
-        return { game: persist(hearMutter(g, target.id, mut)), modal: { kind: 'talk', neighborId: target.id, line } }
+        return { game: persist(hearMutter(g, target.id, mut)), modal: { kind: 'talk', neighborId: target.id, line, ...letter } }
       }
       // 살아 움직이는 사람들 (계획 6b): 지금 상황·사이·기억에 맞는 말 (되풀이하지 않는다)
       const pl = g.offers[target.id] || postLine(g, target.id) ? null : personLine(g, target.id, rng())
-      if (pl) return { game: persist(pl.state), modal: { kind: 'talk', neighborId: target.id, line: pl.text } }
-      return { game: persist(g), modal: { kind: 'talk', neighborId: target.id, line: lineFor(g, target.id, rng) } }
+      if (pl) return { game: persist(pl.state), modal: { kind: 'talk', neighborId: target.id, line: pl.text, ...letter } }
+      return { game: persist(g), modal: { kind: 'talk', neighborId: target.id, line: lineFor(g, target.id, rng), ...letter } }
     }
     if (target.kind === 'stray') return { game, modal: { kind: 'companion', animal: target.animal } }
     if (target.kind === 'companion') {

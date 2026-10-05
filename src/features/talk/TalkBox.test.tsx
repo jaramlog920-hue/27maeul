@@ -1,5 +1,5 @@
-// 편지 나르는 이웃: 아침 방문 말이 있어도 "편지가 한 통 왔어요" 알림이 가려지지 않는다 (계획 7 작업 2 검토 이월, 계획 14 작업 5 드문 편지)
-import { render, screen } from '@testing-library/react'
+// 편지 나르는 이웃: 말을 걸면 편지를 바로 건넨다 (2026-10-05, 편지 받기 단추 없음). 아침 방문 말이 있어도 편지 말이 가려지지 않는다 (계획 7 작업 2 검토 이월, 계획 14 작업 5 드문 편지)
+import { act, render, screen } from '@testing-library/react'
 import { CONTENT } from '../../content/catalog'
 import { T } from '../../content/text'
 import { newGame } from '../../engine/game'
@@ -14,23 +14,45 @@ function withPost() {
 }
 
 describe('편지 나르는 이웃과의 대화', () => {
-  it('방문 말과 편지 알림이 둘 다 보이고, 편지 받기 버튼이 있다', () => {
+  it('말을 걸면 편지를 바로 받는다 — 편지 받기 단추 없이, 대화에 편지 말 한 줄', () => {
     const game = withPost()
-    const post = postLine(game, POSTMAN)!
-    expect(post).toBe(T.word.letterBring)
-    useGame.setState({ game, modal: { kind: 'talk', neighborId: POSTMAN, line: '아침 방문 인사' } })
+    expect(postLine(game, POSTMAN)).toBe(T.word.letterBring)
+    useGame.getState().load(game)
     render(<ModalLayer />)
-    expect(screen.getByText('아침 방문 인사')).toBeInTheDocument()
-    expect(screen.getByText(post)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: '편지 받기' })).toBeInTheDocument()
+    act(() => useGame.getState().talkTo(POSTMAN))
+    const g = useGame.getState().game
+    expect(g.post).toEqual([])
+    expect(g.collected).toContain('rom-001')
+    expect(useGame.getState().modal).toMatchObject({ kind: 'talk', neighborId: POSTMAN, letter: T.word.letterBring })
+    expect(screen.getByText(T.word.letterBring)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /편지 받기/ })).not.toBeInTheDocument()
+    expect(useGame.getState().toast?.text).toContain('말씀 탭에 담겼어요')
+    // 다시 말을 걸어도 두 번 받지 않고, 편지 말도 없다
+    act(() => useGame.getState().talkTo(POSTMAN))
+    expect(useGame.getState().game.collected.filter((id) => id === 'rom-001')).toHaveLength(1)
+    expect(useGame.getState().modal).not.toHaveProperty('letter')
   })
 
-  it('말이 곧 편지 알림이면 한 번만 보인다', () => {
-    const game = withPost()
-    const post = postLine(game, POSTMAN)!
-    useGame.setState({ game, modal: { kind: 'talk', neighborId: POSTMAN, line: post } })
+  it('편지 책이 아닌 조각 하나짜리 편지는 그 말과 함께 본문 창이 바로 열린다', () => {
+    useGame.getState().load({ ...withPost(), post: ['lk-001-001'] })
+    act(() => useGame.getState().talkTo(POSTMAN))
+    expect(useGame.getState().game.collected).toContain('lk-001-001')
+    const m = useGame.getState().modal
+    expect(m).toMatchObject({ kind: 'passage', pieceId: 'lk-001-001' })
+    expect(m && 'said' in m ? m.said : '').toContain(T.word.letterBring)
+  })
+
+  it('방문 말과 편지 말이 둘 다 보인다', () => {
+    useGame.setState({ game: withPost(), modal: { kind: 'talk', neighborId: POSTMAN, line: '아침 방문 인사', letter: T.word.letterBring } })
     render(<ModalLayer />)
-    expect(screen.getAllByText(post)).toHaveLength(1)
+    expect(screen.getByText('아침 방문 인사')).toBeInTheDocument()
+    expect(screen.getByText(T.word.letterBring)).toBeInTheDocument()
+  })
+
+  it('말이 곧 편지 말이면 한 번만 보인다', () => {
+    useGame.setState({ game: withPost(), modal: { kind: 'talk', neighborId: POSTMAN, line: T.word.letterBring, letter: T.word.letterBring } })
+    render(<ModalLayer />)
+    expect(screen.getAllByText(T.word.letterBring)).toHaveLength(1)
   })
 })
 

@@ -876,7 +876,6 @@
   "post": {
     "bring": "편지 {n}통 가져왔어요. {book} {from}–{to}장이에요.",
     "bringOne": "편지 한 통 가져왔어요. {book} {chapter}장이에요.",
-    "receive": "편지 받기",
     "received": "편지 {n}통을 받았어요.",
     "starsBring": "벤치 곁 편지함에서 {n}통을 꺼냈어요. {book} {from}–{to}장이에요.",
     "starsBringOne": "벤치 곁 편지함에서 한 통을 꺼냈어요. {book} {chapter}장이에요.",
@@ -5607,7 +5606,7 @@
     "libNotBound": "제본 전",
     "libShelved": "꽂힘 · {grade}",
     "libNotShelved": "꽂기 전",
-    "letterBring": "편지가 한 통 왔어요. 받아 가세요.",
+    "letterBring": "편지가 한 통 왔어요. 여기 있어요.",
     "got": "말씀 조각을 받았어요 · {title} — 말씀 탭에 담겼어요",
     "letterGot": "편지에 말씀 조각이 들어 있어요 · {title} — 말씀 탭에 담겼어요",
     "gotMany": "말씀 조각 {n}개를 받았어요 — 말씀 탭에 담겼어요",
