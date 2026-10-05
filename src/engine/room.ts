@@ -18,7 +18,8 @@ export { FURNITURE_DEFS, type FurnitureDef, type Layer }
 export const FURNITURE = Object.keys(FURNITURE_DEFS) as ItemId[]
 
 export interface Furniture {
-  finish?: 'plain' | 'warm'
+  /** 배운 생활 기술로 고른 모습 (skill-defs styles — 모르는 값은 본래 그림) */
+  finish?: string
   item: ItemId
   x: number
   y: number

@@ -17,7 +17,7 @@ import { eventPropsNow, npcEventMotion, playerEventMotion, weddingEvening, type 
 import type { Activity } from '../engine/people'
 import { deskTraces, type DeskTraces } from '../engine/desk-traces'
 import { facingOf, FURNITURE_DEFS, type Furniture } from '../engine/room'
-import { FURNI_PALETTE, FURNITURE_ART } from './furniture-art'
+import { FURNI_PALETTE, FURNITURE_ART, STYLE_PALETTES } from './furniture-art'
 import { SPOUSE_ROOM_ART, SPOUSE_ROOM_VIEWS } from './spouse-room-art'
 import { HOME_SPACE_DIRECTIONS } from './home-space-directions'
 import { currentSpouseRoom, SPOUSE_ROOM } from '../engine/spouse-room'
@@ -1682,8 +1682,10 @@ function drawFurniture(g: Ctx, f: Furniture) {
   const turned = facingArt(f.item, facing)
   const sprite = turned ?? FURNITURE_ART[f.item]
   if (sprite) {
-    const palette = f.item === 'stool' && f.finish === 'warm' ? { ...FURNI_PALETTE, k: '#9f683e', W: '#8c5433', w: '#bb7446', l: '#e7a468' } : FURNI_PALETTE
-    g.drawImage(paint(`${turned ? `furni/${f.item}/${facing}` : `furni/${f.item}`}/${f.finish ?? 'plain'}`, sprite.rows, palette), px, py + (f.on ? -6 : 0))
+    // 배운 생활 기술의 모습 (기획 11): 색만 바꾼다. 모르는 값은 본래 그림
+    const style = f.finish ? STYLE_PALETTES[f.item]?.[f.finish] : undefined
+    const palette = style ? { ...FURNI_PALETTE, ...style } : FURNI_PALETTE
+    g.drawImage(paint(`${turned ? `furni/${f.item}/${facing}` : `furni/${f.item}`}/${style ? f.finish : 'plain'}`, sprite.rows, palette), px, py + (f.on ? -6 : 0))
     return
   }
   const r = (color: string, dx: number, dy: number, w: number, h: number) => {

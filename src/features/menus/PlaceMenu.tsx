@@ -55,6 +55,7 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
         {['hallTable','teaTable'].includes(place) && <button onClick={() => open({ kind: 'clubs' })}>{T.clubs.title}</button>}
         {place === 'hearth' && (
           <>
+            <SkillCraftOptions at="hearth" />
             <button disabled={canCraft(game, 'bread') !== null} onClick={() => startCraft('bread')}>
               {T.ui.hearthBake}
             </button>

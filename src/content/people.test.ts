@@ -1,4 +1,5 @@
 // 계획 6b: 사람들 내용(people.json)이 게임 안에서 실제로 돌아가는지 — 자리·말하는 이·장면·기억 표식·이름 부르기
+import { SKILL_IDS } from '../engine/skill-defs'
 import { CONTENT, PEOPLE } from './catalog'
 import { callName, SCENES } from './text'
 import { route } from '../engine/neighbors'
@@ -126,6 +127,8 @@ describe('people.json', () => {
     for (const id of STORY_IDS) exps.add(`story:${id}`)
     // 함께 일한 기억 work:<이웃> (계획 16 작업 17)
     for (const n of Object.values(WORK_SHOPS).flatMap((sh) => sh.npcs)) exps.add(`work:${n}`)
+    // 함께 배운 기억 learn:<기술> (계획 16 작업 18)
+    for (const id of SKILL_IDS) exps.add(`learn:${id}`)
     for (const x of exps) made.add(`exp:${x}`)
     for (const p of Object.values(PEOPLE.people)) {
       const reqs = [...p.lines.map((l) => l.req), ...(p.events ?? []).map((e) => e.req), ...(p.sightings ?? []).map((w) => w.req), ...p.routines.map((r) => r.req), ...(p.props ?? []).map((x) => x.req)]

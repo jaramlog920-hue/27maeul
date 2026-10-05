@@ -684,6 +684,16 @@
               "days": 7
             }
           }
+        },
+        {
+          "id": "tilly:learned",
+          "text": "그날 줄질하던 손, 처음 치고 안 떨렸어요. 저는 처음에 엄청 떨었거든요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "learn:hookFinish"
+            ]
+          }
         }
       ],
       "sightings": [
@@ -3016,6 +3026,16 @@
               "days": 7
             }
           }
+        },
+        {
+          "id": "wendell:learned",
+          "text": "같이 빚은 날 이후로, 진열한 빵 보면 모양부터 봐요. 그날 손 모양이 생각나서요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "learn:snackShape"
+            ]
+          }
         }
       ],
       "sightings": [
@@ -4670,6 +4690,16 @@
               "days": 7
             }
           }
+        },
+        {
+          "id": "smith:learned",
+          "text": "…줄질 배운 손이오. 끝은 늘 만져 보고 쓰시오.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "learn:hookFinish"
+            ]
+          }
         }
       ],
       "tastes": {
@@ -5783,6 +5813,16 @@
               "exp": "work:poppy",
               "days": 7
             }
+          }
+        },
+        {
+          "id": "poppy:learned",
+          "text": "같이 찻자리 꾸민 날 이후로, 자리 볼 때 색부터 봐요. 후후.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "learn:teaSetting"
+            ]
           }
         }
       ],
@@ -8882,6 +8922,16 @@
               "exp": "work:baker",
               "days": 7
             }
+          }
+        },
+        {
+          "id": "baker:learned",
+          "text": "그날 같이 빚은 반죽, 손 모양이 고르더라고요. 처음치고요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "learn:snackShape"
+            ]
           }
         }
       ],
@@ -14081,6 +14131,16 @@
               "days": 7
             }
           }
+        },
+        {
+          "id": "dexter:learned",
+          "text": "그 꽃 색, 하늘 볼 때 가끔 생각나요. 같이 묶은 날 거요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "learn:flowerKeep"
+            ]
+          }
         }
       ],
       "sightings": [
@@ -16117,6 +16177,16 @@
               "exp": "work:basil",
               "days": 7
             }
+          }
+        },
+        {
+          "id": "basil:learned",
+          "text": "흙 누르던 손이 꼼꼼했어요. 그날 옮긴 화분, 창가에 잘 있어요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "learn:potTidy"
+            ]
           }
         }
       ],
@@ -19575,6 +19645,16 @@
               "days": 7
             }
           }
+        },
+        {
+          "id": "penelope:learned",
+          "text": "그날 고른 색, 저도 가끔 따라 놓아 봐요. 다른 눈으로 고른 색은 새로워요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "learn:clothColor"
+            ]
+          }
         }
       ],
       "sightings": [
@@ -21316,6 +21396,16 @@
             ],
             "exp": [
               "choice:juniper:short:spouseHabit"
+            ]
+          }
+        },
+        {
+          "id": "juniper:learned",
+          "text": "그날 같이 말린 꽃, 제 공책에도 한 송이 그려 뒀어요. 아, 괜찮죠?",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "learn:flowerKeep"
             ]
           }
         }
@@ -24114,6 +24204,16 @@
               "exp": "work:carpenter",
               "days": 7
             }
+          }
+        },
+        {
+          "id": "carpenter:learned",
+          "text": "그날 같이 마감하던 손, 이제 결부터 보더군. 그거면 되오.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "learn:carpenterFinish"
+            ]
           }
         }
       ],
@@ -27340,6 +27440,16 @@
               "days": 7
             }
           }
+        },
+        {
+          "id": "grandpa:learned",
+          "text": "바구니 바닥 엮던 손, 제법이었다네. 한 철 써 보면 알 걸세.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "learn:basketCare"
+            ]
+          }
         }
       ],
       "tastes": {
@@ -29402,6 +29512,16 @@
               "days": 7
             }
           }
+        },
+        {
+          "id": "presser:learned",
+          "text": "매듭은 안쪽으로. 그날 같이 묶던 거 기억하죠?",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "learn:jarDecor"
+            ]
+          }
         }
       ],
       "tastes": {
@@ -30591,6 +30711,16 @@
               "days": 7
             }
           }
+        },
+        {
+          "id": "weaver:learned",
+          "text": "같이 실 대 보던 날 기억나요. 고른 색이 아직 눈에 남아 있어요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "learn:clothColor"
+            ]
+          }
         }
       ],
       "tastes": {
@@ -31298,6 +31428,16 @@
               "exp": "work:apothecary",
               "days": 7
             }
+          }
+        },
+        {
+          "id": "apothecary:learned",
+          "text": "그날 같이 옮긴 화분, 선반 줄에 맞춰 잘 있어요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "learn:potTidy"
+            ]
           }
         }
       ],

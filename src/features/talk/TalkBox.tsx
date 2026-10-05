@@ -2,7 +2,7 @@
 import { neighborById } from '../../content/catalog'
 import { useState } from 'react'
 import { WorkDayView, WorkEntry } from '../work/WorkDay'
-import { FinishLesson, SkillEntry } from '../skills/SkillLesson'
+import { SkillLessonView, SkillEntry } from '../skills/SkillLesson'
 import { callName, fill, itemList, NEIGHBOR_LINES, T } from '../../content/text'
 import { grapesRipe, isMarketDay } from '../../engine/calendar'
 import { activeRequest, isSuitor, romanceWith, stageWith, type GameState, canHelp, canOrderHome, canOrderWork, GIFTABLE, lessonTime, nextHomeStage } from '../../engine/game'
@@ -70,7 +70,7 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
     return (
       <div className="dialog talk" role="dialog" aria-label={def.role}>
         <p className="talk-role">{def.role}</p>
-        {focus === 'work' ? <WorkDayView npc={def.id} close={() => setFocus(null)} /> : <FinishLesson close={() => setFocus(null)} />}
+        {focus === 'work' ? <WorkDayView npc={def.id} close={() => setFocus(null)} /> : <SkillLessonView close={() => setFocus(null)} />}
       </div>
     )
   return (

@@ -35,6 +35,22 @@ export const FURNI_PALETTE: Record<string, string> = {
   t: '#e68e4e', // 구리
 }
 
+/**
+ * 이웃에게 배운 모습 (기획 11, skill-defs의 두 번째 모습). 같은 그림에 색만 바꾼다 — 본래 모습은 FURNI_PALETTE 그대로.
+ * 마을 그림 취향: 차분한 파스텔.
+ */
+export const STYLE_PALETTES: Record<string, Record<string, Record<string, string>>> = {
+  stool: { warm: { k: '#9f683e', W: '#8c5433', w: '#bb7446', l: '#e7a468' } },
+  cushion: { rose: { b: '#e7a3ad', C: '#f3d6cf', c: '#fbe9e4' } },
+  fruitBowl: { long: { r: '#d99a5b', y: '#e8b46e', g: '#c98b4f' } },
+  barrel: { copper: { s: '#e68e4e' } },
+  teapot: { blue: { c: '#d3ece6', C: '#a9d3c8', b: '#78bbac' } },
+  jar: { tied: { R: '#78bbac', o: '#ffc2a0' } },
+  basket: { vine: { l: '#e4cf87', w: '#81b158' } },
+  dryFlowers: { cool: { y: '#bd8fd0', p: '#99d7c9', C: '#ffffff' } },
+  pot: { stone: { r: '#c1b8a6', R: '#878176' } },
+}
+
 export interface FurnitureArt {
   /** 칸 수 */
   w: number

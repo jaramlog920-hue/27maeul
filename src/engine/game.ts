@@ -4,6 +4,7 @@ import type { Club, ClubSession } from './clubs'
 import type { Fest } from './fest'
 import { expireWorkDay, type WorkDay } from './work-day'
 import type { Skills, SkillLesson } from './skills'
+import { placedStyle } from './skill-defs'
 import { advancePlans, appointmentSpots, reservedMembers, NO_PLANS, type Plans } from './plans'
 // 게임 상태와 규칙의 조합. 순수 함수만 — 화면과 저장은 바깥(store)이 맡는다.
 import { festivalOf, FESTIVAL_FROM, FESTIVAL_TO, isMarketDay, isWet, weatherOf, barleyRipe, grapesRipe } from './calendar'
@@ -3195,7 +3196,9 @@ export function placeFurniture(s: GameState, item: ItemId, t: Tile): GameState |
   if (!f) return null
   const left = take(s.inv, { [item]: 1 })
   if (!left) return null
-  const piece: Furniture = item === 'stool' && s.flags['skillFinish:stool'] === 2 ? { ...f, finish: 'warm' } : f
+  // 배운 생활 기술의 모습 (기획 11) — 고른 모습만, 쓰임은 같다
+  const finish = placedStyle(s.flags, item)
+  const piece: Furniture = finish ? { ...f, finish } : f
   return { ...s, inv: left, room: [...s.room, piece] }
 }
 
