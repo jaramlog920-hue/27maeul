@@ -75,7 +75,7 @@ describe('함께 일하기를 여는 동안 (2026-10-05 사용자)', () => {
   it('함께 일하는 화면을 열면 선물하기 등 다른 단추가 사라지고, 잠깐 쉬기로 돌아온다', () => {
     const s = newGame(CONTENT)
     const workDay = { id: `work:carpenter:${s.clock.day}`, npc: 'carpenter', day: s.clock.day, startedAt: s.clock.minute, step: 0, choices: ['sort'], used: false, paid: false }
-    useGame.setState({ game: { ...s, scenes: [], workDay } as typeof s, modal: { kind: 'talk', neighborId: 'carpenter' } })
+    useGame.setState({ game: { ...s, scenes: [], workDay } as typeof s, modal: { kind: 'talk', neighborId: 'carpenter', line: '' } })
     render(<ModalLayer />)
     act(() => screen.getByRole('button', { name: T.work.resume }).click())
     expect(screen.getByRole('region', { name: T.work.title })).toBeInTheDocument()
@@ -86,7 +86,7 @@ describe('함께 일하기를 여는 동안 (2026-10-05 사용자)', () => {
 
   it('오늘 이미 도운 이웃에게 "이미 도왔습니다"·"이미 함께 수고했어요" 줄이 나오지 않는다 (단추는 막혀 있다)', () => {
     const s = newGame(CONTENT)
-    useGame.setState({ game: { ...s, scenes: [], helped: ['carpenter'] }, modal: { kind: 'talk', neighborId: 'carpenter' } })
+    useGame.setState({ game: { ...s, scenes: [], helped: ['carpenter'] }, modal: { kind: 'talk', neighborId: 'carpenter', line: '' } })
     render(<ModalLayer />)
     expect(screen.queryByText(T.ui.helpDone)).not.toBeInTheDocument()
     expect(screen.queryByText(T.work.blocks.done)).not.toBeInTheDocument()
