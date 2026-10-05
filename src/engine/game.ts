@@ -76,17 +76,19 @@ import {
 import {
   allSightings,
   depthOf,
-  hasMemory,
   NO_LIFE,
   personOf,
   peopleData,
   pickLine,
   RECENT_KEEP,
+  recordExperience,
+  rememberTag,
   reqMet,
   routineNow,
   STAGE_POINTS,
   stageOfPoints,
   whenMatches,
+  type ExperienceInput,
   type Life,
   type Moment,
   type Person,
@@ -839,6 +841,12 @@ function reqCtx(s: GoalState, npc: string) {
     lover: r.partner === npc && !!r.stage,
     suitor: !!def?.romanceable && !!def.look && def.look !== (s.avatar?.look ?? 'f'),
     threads: peopleData().threads,
+    // 계획 16 작업 2: 사이(rel·minStage)·이야기 완료 표식(story)
+    stage: stageWith(s, npc),
+    romance: r.partner === npc ? r.stage : null,
+    flags: s.flags,
+    // 이야기 뒤 소품(placed)은 작업 4에서 채운다 — 그 전엔 놓인 소품이 없다
+    placed: [] as readonly string[],
   }
 }
 /** 이웃 정의 (people 판단이 모습·후보 여부를 볼 때) — newGame·settle 때 채운다 */
@@ -1031,9 +1039,15 @@ function personSpot(s: GoalState, npc: string): Tile | null {
 const near = (a: Tile, b: Tile, d: number) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y) <= d
 
 function remember(life: Life, npc: string, tag: string, s: Pick<GameState, 'clock'>): Life {
-  if (hasMemory(life, npc, tag)) return life
-  const m = momentOf(s)
-  return { ...life, memories: { ...life.memories, [npc]: [...(life.memories[npc] ?? []), { tag, day: m.day, weather: m.weather, season: m.season }] } }
+  return rememberTag(life, npc, tag, momentOf(s))
+}
+
+/**
+ * 의미 있는 경험을 남긴다 (계획 16 작업 2): 같은 id는 한 항목 — 횟수·최근 날만 바뀌고, 참여한 주민마다 exp:<id> 기억 한 번.
+ * 입구는 이야기 완료·이벤트 선택·지킨 약속·좋아한 첫 선물·함께하기 결과뿐 (인사·클릭은 남기지 않는다)
+ */
+export function recordExperienceIn(s: GameState, exp: ExperienceInput): GameState {
+  return { ...s, life: recordExperience(s.life ?? NO_LIFE, exp, momentOf(s)) }
 }
 
 /**
@@ -1048,6 +1062,7 @@ function liveNearby(s: GameState, now: Tile, events: GameEvent[]): GameState {
   const kept = life.promises.find((p) => p.day === s.clock.day && s.clock.minute >= p.from && s.clock.minute < p.to && near(now, p.at, 2))
   if (kept) {
     life = remember({ ...life, promises: life.promises.filter((p) => p !== kept) }, kept.npc, `kept:${kept.id}`, s)
+    life = recordExperience(life, { id: `promise:${kept.id}`, kind: 'promise', with: [kept.npc] }, momentOf(s))
     next = heartUp({ ...next, life }, kept.npc, PROMISE_GAIN)
     events.push({ type: 'promiseKept', npc: kept.npc })
     return next
@@ -1078,6 +1093,8 @@ export function chooseInEvent(s: GameState, eventId: string, index: number): Gam
     let life = s.life ?? NO_LIFE
     life = { ...life, colors: { ...life.colors, [p.id]: { ...life.colors[p.id], [c.color]: (life.colors[p.id]?.[c.color] ?? 0) + 1 } } }
     if (c.memory) life = remember(life, p.id, c.memory, s)
+    // 주요 선택은 경험으로 (이벤트마다 한 항목 — 고른 갈래)
+    life = recordExperience(life, { id: `choice:${e.id}`, kind: 'choice', with: [p.id], choice: index }, momentOf(s))
     if (c.promise) life = { ...life, promises: [...life.promises, { id: c.promise.id, npc: p.id, day: s.clock.day + 1, at: c.promise.at, from: c.promise.from, to: c.promise.to }] }
     let next: GameState = { ...s, life }
     if (e.confess && !s.romance?.partner && reqCtx(s, p.id).suitor) {
@@ -1309,7 +1326,10 @@ export function giveGift(s: GameState, def: NeighborDef, item: ItemId, content?:
   // 생일에 건넨 선물은 마음이 두 배로 오른다 (싫어하는 것은 생일에도 그대로)
   const mul = isBirthday(def.id, s.clock.day) ? BIRTHDAY_MUL : 1
   const given = heartUp({ ...base, inv: left, gifted: [...s.gifted, def.id], notebook }, def.id, disliked ? 0 : (liked ? GAIN.giftLiked : GAIN.giftPlain) * mul)
-  const trained = train(given, 'charm', XP.gift)
+  // 좋아한 선물은 그 이웃에게 첫 번째만 경험으로 남긴다 (계획 16 작업 2)
+  const firstLiked = liked && !(given.life ?? NO_LIFE).experiences?.[`gift:${def.id}`]
+  const kept = firstLiked ? recordExperienceIn(given, { id: `gift:${def.id}`, kind: 'gift', with: [def.id], item }) : given
+  const trained = train(kept, 'charm', XP.gift)
   // 선물은 생활 루프 — 마음만 오른다. 말씀 조각은 선물·직업과 묶지 않는다 (계획 14 작업 5: 예전엔 친한 이웃이 조각을 더 들려줬다)
   void content
   return { state: trained, liked }

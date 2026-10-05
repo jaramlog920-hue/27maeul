@@ -98,6 +98,32 @@ export interface Req {
   lover?: boolean
   /** 연애할 수 있는 모습인가 (주인공과 다른 모습) */
   suitor?: boolean
+  // ── 계획 16 작업 2 ──
+  /** 이 중 하나라도 본 이벤트·목격 (갈래가 둘인 앞 사건을 이어받을 때) */
+  seenAny?: string[]
+  /** 끝난 이야기 (완료 표식 story:<id>). outcome이 있으면 그 갈래로 끝났을 때만 */
+  story?: { id: string; outcome?: number }[]
+  notStory?: string[]
+  /** 이 사람과 실제로 함께한 경험 (경험 id) */
+  exp?: string[]
+  notExp?: string[]
+  /** 지금 사이: 친구(3)·가까운 친구(4 이상)·연인(사귐·약혼)·배우자 — 하나라도 맞으면 */
+  rel?: Rel[]
+  /** 이 사이 단계 이상 */
+  minStage?: Stage
+  /** 이 사람과 함께한 그 경험이 최근 n일 안 */
+  recent?: { exp: string; days: number }
+  /** 이야기 뒤 소품이 지금 놓여 있을 때 (소품 id) */
+  placed?: string
+}
+
+/** 말을 나누는 사이 (사이 단계와 연애에서) */
+export type Rel = 'friend' | 'close' | 'lover' | 'spouse'
+
+export function relOf(stage: Stage, romance: 'dating' | 'engaged' | 'married' | null | undefined): Rel | null {
+  if (romance === 'married') return 'spouse'
+  if (romance) return 'lover'
+  return stage >= 4 ? 'close' : stage >= 3 ? 'friend' : null
 }
 
 export interface TalkLine {
@@ -253,9 +279,93 @@ export interface Life {
   promises: { id: string; npc: string; day: number; at: Tile; from: number; to: number }[]
   /** 방금 들린 혼잣말 (화면이 한 줄 띄운다 — 바뀔 때마다 새 객체) */
   heard?: { npc: string; text: string } | null
+  /** 함께한 경험 (계획 16 작업 2): 경험 id → 한 항목. 같은 경험은 횟수·최근 날짜만 바뀐다 */
+  experiences: Record<string, Experience>
 }
 
-export const NO_LIFE: Life = { seen: [], memories: {}, colors: {}, recent: {}, cool: {}, mutterDay: 0, muttered: [], promises: [] }
+// ── 경험 기억 (계획 16 작업 2) ──
+
+export const EXPERIENCE_KINDS = ['make', 'gift', 'invite', 'visit', 'trip', 'promise', 'choice', 'story', 'club', 'event', 'work', 'learn', 'project', 'family', 'pet'] as const
+export type ExperienceKind = (typeof EXPERIENCE_KINDS)[number]
+
+/**
+ * 의미 있는 경험 하나 (인사·클릭 같은 작은 행동은 기록하지 않는다).
+ * 기록 입구: 이야기 완료·이벤트 선택·지킨 약속·좋아한 첫 선물·함께하기 결과
+ */
+export interface Experience {
+  /** 고유 id (예: story:carpenterChair, choice:<이벤트>, promise:<약속>, gift:<이웃>) — 같은 id는 한 항목 */
+  id: string
+  kind: ExperienceKind
+  /** 실제로 함께한 주민만 */
+  with: string[]
+  /** 처음·최근 날 (모르면 null — 지어내지 않는다) */
+  first: number | null
+  last: number | null
+  count: number
+  place?: string
+  item?: string
+  /** 고른 갈래 (선택지 번호) */
+  choice?: number
+}
+
+/** 기록할 때 넘기는 것 (날짜·횟수는 엔진이 센다) */
+export type ExperienceInput = Pick<Experience, 'id' | 'kind' | 'with'> & Partial<Pick<Experience, 'place' | 'item' | 'choice'>>
+
+/** 그 사람에게 기억 표식 하나 (같은 표식은 한 번 — game.ts remember와 같은 규칙) */
+export function rememberTag(life: Life, npc: string, tag: string, m: Moment): Life {
+  if (hasMemory(life, npc, tag)) return life
+  return { ...life, memories: { ...life.memories, [npc]: [...(life.memories[npc] ?? []), { tag, day: m.day, weather: m.weather, season: m.season }] } }
+}
+
+/**
+ * 경험을 남긴다: 처음이면 만들고, 아니면 횟수+1·최근 날만 (항목이 끝없이 늘지 않는다).
+ * 참여한 주민마다 기억 표식 exp:<id>를 한 번 — 기존 Req.memory가 그대로 읽는다
+ */
+export function recordExperience(life: Life, exp: ExperienceInput, m: Moment): Life {
+  const was = life.experiences?.[exp.id]
+  const withs = [...(was?.with ?? [])]
+  for (const n of exp.with) if (!withs.includes(n)) withs.push(n)
+  const entry: Experience = was
+    ? { ...was, with: withs, last: m.day, count: was.count + 1, ...pickDefined(exp) }
+    : { id: exp.id, kind: exp.kind, with: withs, first: m.day, last: m.day, count: 1, ...pickDefined(exp) }
+  let next: Life = { ...life, experiences: { ...(life.experiences ?? {}), [exp.id]: entry } }
+  for (const n of withs) next = rememberTag(next, n, `exp:${exp.id}`, m)
+  return next
+}
+function pickDefined(e: ExperienceInput): Partial<Experience> {
+  const o: Partial<Experience> = {}
+  if (e.place !== undefined) o.place = e.place
+  if (e.item !== undefined) o.item = e.item
+  if (e.choice !== undefined) o.choice = e.choice
+  return o
+}
+
+/** 이 사람과 함께한 경험 (없거나 함께하지 않았으면 null) */
+export function sharedExperience(life: Life, npc: string, id: string): Experience | null {
+  const e = life.experiences?.[id]
+  return e && e.with.includes(npc) ? e : null
+}
+
+function sanitizeExperiences(raw: unknown): Record<string, Experience> {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {}
+  const day = (v: unknown) => v === null || (Number.isInteger(v) && (v as number) >= 0)
+  const out: Record<string, Experience> = {}
+  for (const [k, v] of Object.entries(raw as Record<string, unknown>)) {
+    if (!v || typeof v !== 'object') continue
+    const e = v as Record<string, unknown>
+    if (e.id !== k || !(EXPERIENCE_KINDS as readonly unknown[]).includes(e.kind)) continue
+    if (!Array.isArray(e.with) || !e.with.every((x) => typeof x === 'string')) continue
+    if (!day(e.first) || !day(e.last) || !Number.isInteger(e.count) || (e.count as number) < 1) continue
+    const x: Experience = { id: k, kind: e.kind as ExperienceKind, with: [...(e.with as string[])], first: e.first as number | null, last: e.last as number | null, count: e.count as number }
+    if (typeof e.place === 'string') x.place = e.place
+    if (typeof e.item === 'string') x.item = e.item
+    if (Number.isInteger(e.choice)) x.choice = e.choice as number
+    out[k] = x
+  }
+  return out
+}
+
+export const NO_LIFE: Life = { seen: [], memories: {}, colors: {}, recent: {}, cool: {}, mutterDay: 0, muttered: [], promises: [], experiences: {} }
 
 export function sanitizeLife(raw: unknown): Life {
   if (!raw || typeof raw !== 'object') return NO_LIFE
@@ -271,6 +381,8 @@ export function sanitizeLife(raw: unknown): Life {
     mutterDay: typeof o.mutterDay === 'number' ? o.mutterDay : 0,
     muttered: strs(o.muttered),
     promises: Array.isArray(o.promises) ? o.promises : [],
+    // 계획 16: 옛 저장은 빈 경험, 모양이 틀린 항목은 버린다
+    experiences: sanitizeExperiences(o.experiences),
   }
 }
 
@@ -293,12 +405,41 @@ export interface ReqCtx {
   lover: boolean
   suitor: boolean
   threads: Thread[]
+  // ── 계획 16 작업 2 (없으면: 낯선 사이·연애 없음·완료 표식 없음·놓인 소품 없음) ──
+  /** 이 사람과의 사이 단계 */
+  stage?: Stage
+  /** 이 사람이 연인이면 그 단계 */
+  romance?: 'dating' | 'engaged' | 'married' | null
+  /** 게임 표식 (story:<id> 완료 표식을 본다) */
+  flags?: Record<string, number>
+  /** 지금 놓여 있는 이야기 뒤 소품 id */
+  placed?: readonly string[]
+}
+
+/** 완료 표식 값: 1 = 끝남, 갈래가 있으면 outcome+1 (계획 16 작업 4가 쓴다) */
+export function storyFlag(flags: Record<string, number> | undefined, id: string): number {
+  return flags?.[`story:${id}`] ?? 0
 }
 
 export function reqMet(r: Req | undefined, c: ReqCtx): boolean {
   if (!r) return true
   if (r.seen && !r.seen.every((id) => c.life.seen.includes(id))) return false
   if (r.notSeen && r.notSeen.some((id) => c.life.seen.includes(id))) return false
+  if (r.seenAny && !r.seenAny.some((id) => c.life.seen.includes(id))) return false
+  if (r.story && !r.story.every((x) => (x.outcome === undefined ? storyFlag(c.flags, x.id) > 0 : storyFlag(c.flags, x.id) === x.outcome + 1))) return false
+  if (r.notStory && r.notStory.some((id) => storyFlag(c.flags, id) > 0)) return false
+  if (r.exp && !r.exp.every((id) => sharedExperience(c.life, c.npc, id))) return false
+  if (r.notExp && r.notExp.some((id) => sharedExperience(c.life, c.npc, id))) return false
+  if (r.recent) {
+    const e = sharedExperience(c.life, c.npc, r.recent.exp)
+    if (!e || e.last === null || c.day - e.last > r.recent.days) return false
+  }
+  if (r.minStage !== undefined && (c.stage ?? 0) < r.minStage) return false
+  if (r.rel) {
+    const rel = relOf(c.stage ?? 0, c.romance)
+    if (!rel || !r.rel.includes(rel)) return false
+  }
+  if (r.placed !== undefined && !(c.placed ?? []).includes(r.placed)) return false
   if (r.memory && !r.memory.every((t) => hasMemory(c.life, c.npc, t))) return false
   if (r.notMemory && r.notMemory.some((t) => hasMemory(c.life, c.npc, t))) return false
   if (r.color && topColor(c.life, c.npc) !== r.color) return false
@@ -356,7 +497,7 @@ export function pickLine(p: Person, c: ReqCtx & { m: Moment; depth: number; cool
       (!l.near || Math.abs(l.near.x - c.here.x) + Math.abs(l.near.y - c.here.y) <= 2),
   )
   if (!ok.length) return null
-  const score = (l: TalkLine) => l.depth * 2 + specificity(l.when) * 2 + (l.req ? Object.keys(l.req).length * 3 : 0) + (l.near ? 2 : 0)
+  const score = (l: TalkLine) => l.depth * 2 + specificity(l.when) * 2 + (l.req ? Object.keys(l.req).length * 3 : 0) + (l.near ? 2 : 0) + talkBonus(l.req)
   const fresh = ok.filter((l) => !recent.includes(l.id))
   const pool = fresh.length ? fresh : ok.slice().sort((a, b) => recent.indexOf(a.id) - recent.indexOf(b.id)).slice(0, 1)
   const top = Math.max(...pool.map(score))
@@ -365,6 +506,20 @@ export function pickLine(p: Person, c: ReqCtx & { m: Moment; depth: number; cool
 }
 
 export const RECENT_KEEP = 8
+
+/** 최근 경험 말은 일반 말보다 먼저 (계획 16 작업 2 — 숫자는 기본값) */
+export const RECENT_BONUS = 12
+/** 이야기·함께한 경험에 걸린 말도 조금 먼저 */
+export const STORY_BONUS = 4
+const STORY_EVENT = /:(story|small):/
+
+/** 최근 경험·진행 중이거나 끝난 이야기에 걸린 말의 덤 (조건이 맞아 후보가 된 말에만 붙는다) */
+function talkBonus(r: Req | undefined): number {
+  if (!r) return 0
+  if (r.recent) return RECENT_BONUS
+  const story = r.story || r.exp || [...(r.seen ?? []), ...(r.seenAny ?? [])].some((id) => STORY_EVENT.test(id))
+  return story ? STORY_BONUS : 0
+}
 
 // ── 내용 등록 (catalog가 people.json을 읽어 넣는다 — 엔진은 json을 직접 읽지 않는다) ──
 

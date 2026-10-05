@@ -9,6 +9,15 @@ import type { Tile } from '../engine/types'
 
 const doorOf = (id: string) => CONTENT.neighbors.find((n) => n.id === id)!.door
 const reach = (from: Tile, to: Tile) => findPath(from, to) ?? route(from, to)
+/**
+ * 완료 표식 story:<id>가 생기는 이야기 (docs/characters/00_사건_ID_표.txt §7 등록 목록 — 23개).
+ * 작업 4부터는 사건의 completes가 실제로 만든다 — 그때 이 목록과 맞춰 본다
+ */
+const STORY_IDS: readonly string[] = [
+  'bakerRest', 'childShelf', 'grandpaShelter', 'merchantBox', 'smithHook', 'shepherdTools', 'presserBench', 'weaverRug',
+  'beekeeperNotes', 'postmanBag', 'apothecaryPot', 'fisherToy', 'carpenterChair', 'wendellPath', 'cosmoDock', 'rudyStand',
+  'dexterViewing', 'basilRest', 'marigoldList', 'penelopeRug', 'tillyHook', 'juniperShow', 'poppyCorner',
+]
 const speakers = new Set([...CONTENT.neighbors.map((n) => n.id), 'narration'])
 
 describe('people.json', () => {
@@ -64,9 +73,24 @@ describe('people.json', () => {
       }
     }
     for (const s of allSightings()) made.add(s.memory)
+    // 경험 기억 exp:<id> (계획 16 작업 2): 이벤트 선택·지킨 약속·좋아한 첫 선물·이야기 완료(사건 ID 표 §7 등록 목록)
+    const exps = new Set<string>()
+    for (const p of Object.values(PEOPLE.people))
+      for (const e of p.events ?? []) {
+        if (e.choices?.length) exps.add(`choice:${e.id}`)
+        for (const c of e.choices ?? []) if (c.promise) exps.add(`promise:${c.promise.id}`)
+      }
+    for (const n of CONTENT.neighbors) exps.add(`gift:${n.id}`)
+    expect(new Set(STORY_IDS).size).toBe(23)
+    for (const id of STORY_IDS) exps.add(`story:${id}`)
+    for (const x of exps) made.add(`exp:${x}`)
     for (const p of Object.values(PEOPLE.people)) {
-      const reqs = [...p.lines.map((l) => l.req), ...(p.events ?? []).map((e) => e.req)]
-      for (const r of reqs) for (const m of [...(r?.memory ?? []), ...(r?.notMemory ?? [])]) expect(made.has(m), `${p.id}: ${m}`).toBe(true)
+      const reqs = [...p.lines.map((l) => l.req), ...(p.events ?? []).map((e) => e.req), ...(p.sightings ?? []).map((w) => w.req)]
+      for (const r of reqs) {
+        for (const m of [...(r?.memory ?? []), ...(r?.notMemory ?? [])]) expect(made.has(m), `${p.id}: ${m}`).toBe(true)
+        for (const id of [...(r?.story ?? []).map((x) => x.id), ...(r?.notStory ?? [])]) expect(STORY_IDS.includes(id), `${p.id}: story:${id}`).toBe(true)
+        for (const id of [...(r?.exp ?? []), ...(r?.notExp ?? []), ...(r?.recent ? [r.recent.exp] : [])]) expect(exps.has(id), `${p.id}: exp ${id}`).toBe(true)
+      }
     }
   })
 
