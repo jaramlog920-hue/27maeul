@@ -2,6 +2,8 @@ import { nameProblem } from './avatar'
 import { availability, scheduleAppt, attendAppt, settleAppt, apptSpots, venueFor, type Appt } from './plans'
 import { notYet, passTime, type GameState } from './game'
 import { key, lockedTiles } from './world'
+import { builtIds } from './projects'
+import { FACILITY_CLUBS, FACILITY_PLACES, SITES } from './village-sites'
 import { seasonOf } from './clock'
 import { weatherOf, isWet } from './calendar'
 import { harvest, water, isRipe } from './garden'
@@ -22,9 +24,13 @@ export const CLUB_SLOTS: Record<ClubSlot,readonly [number,number]>={morning:[600
 export type ClubInput=Omit<Club,'id'|'active'|'paused'>
 export const clubApptId=(club:string,day:number)=>`${club}:day:${day}`
 export function nextClubDay(day:number,weekday:number):number {return day+((weekday-day%7+7)%7)}
+/** 모임 장소가 될 수 있는 자리 전부 (저장에서 거를 때) — 공동 시설은 완성된 것만 clubVenues에 오른다 */
+export const CLUB_PLACES:readonly PlaceId[]=['hallTable','teaTable','pavilion','garden',...FACILITY_PLACES]
 export function clubVenues(s:GameState,activity:ClubActivity):PlaceId[] {
  const venues:PlaceId[]=['hallTable','teaTable','pavilion']
  if(activity==='garden' && Object.keys(s.garden).length) venues.push('garden')
+ // 주민이 함께 지은 공동 시설 (계획 16 작업 20): 완성된 곳만, 그 시설에서 할 수 있는 모임만 — 꽃밭은 관찰 모임, 그늘막·긴 벤치는 차·바느질
+ for(const id of builtIds(s.flags)) {const site=SITES[id]; if((FACILITY_CLUBS[site.place] as readonly string[]).includes(activity)) venues.push(site.place)}
  const locked=lockedTiles(Object.keys(s.shelved).length)
  return venues.filter(place=>apptSpots(place).length && apptSpots(place).every(t=>!locked.has(key(t))))
 }
@@ -129,7 +135,7 @@ export function finishClub(s:GameState,id:string,result:'home'|'club'='home'):Ga
 export function sanitizeClubs(raw:unknown):Club[] {
  if(!Array.isArray(raw)) return []
  const ids=new Set<string>()
- return raw.filter((c):c is Club=>!!c && typeof c.id==='string' && !ids.has(c.id) && !nameProblem(c.name??'') && ['tea','sew','observe','garden'].includes(c.activity) && ['hallTable','teaTable','pavilion','garden'].includes(c.place) && Array.isArray(c.members) && c.members.length>0 && c.members.length<=3 && c.members.every((id:unknown)=>typeof id==='string') && Number.isInteger(c.weekday) && c.weekday>=0 && c.weekday<=6 && c.slot in CLUB_SLOTS && !!ids.add(c.id)).slice(0,CLUB_MAX).map(c=>({...c,active:c.active!==false,paused:c.paused===true}))
+ return raw.filter((c):c is Club=>!!c && typeof c.id==='string' && !ids.has(c.id) && !nameProblem(c.name??'') && ['tea','sew','observe','garden'].includes(c.activity) && CLUB_PLACES.includes(c.place) && Array.isArray(c.members) && c.members.length>0 && c.members.length<=3 && c.members.every((id:unknown)=>typeof id==='string') && Number.isInteger(c.weekday) && c.weekday>=0 && c.weekday<=6 && c.slot in CLUB_SLOTS && !!ids.add(c.id)).slice(0,CLUB_MAX).map(c=>({...c,active:c.active!==false,paused:c.paused===true}))
 }
 export function sanitizeClubSessions(raw:unknown):Record<string,ClubSession> {
  if(!raw || typeof raw!=='object') return {}

@@ -8,6 +8,9 @@
 //   drawStoryProps(g, game)   // 마을 그리기에서 방의 가구(drawFurniture) 바로 뒤, 이웃 그리기 전에
 import { storyPropsNow, type GameState } from '../engine/game'
 import { STALL_SPOT, stallSceneNow } from '../engine/stall'
+import { villageScenes } from '../engine/projects'
+import { SITES } from '../engine/village-sites'
+import { HOME_SPACE_DIRECTIONS } from './home-space-directions'
 import type { StoryProp } from '../engine/people'
 import { TILE } from '../engine/world'
 import { FURNI_PALETTE, FURNITURE_ART, type FurnitureArt } from './furniture-art'
@@ -96,5 +99,47 @@ export function drawStall(g: CanvasRenderingContext2D, game: GameState): void {
   if (scene.look.deco !== 'none') {
     const a = PROPS[DECO_ART[scene.look.deco]]
     if (a) g.drawImage(painted(a), x0, y0 + 2 * TILE - 2)
+  }
+}
+
+/**
+ * 주민이 함께 바꾸는 마을의 공동 시설 (계획 16 작업 20): 짓는 중이면 진행 정도에 맞는 재료·골격 도트, 다 지으면 완성 도트.
+ * 그림만 — 지도(MAP)와 길은 그대로이고, 계절·날씨가 바뀌어도 같은 자리에 같은 모습이다. 이웃·주인공은 이 뒤에 그려진다.
+ * 도트는 assets/furniture/expansion(buildMaterials·shadeFrame·shadeComplete·flowerBorder·restSign…)과 기존 긴 벤치 그림.
+ */
+export function drawVillage(g: CanvasRenderingContext2D, game: GameState): void {
+  const prop = (id: string, x: number, y: number) => {
+    const a = PROPS[id]
+    if (a) g.drawImage(painted(a), x, y)
+  }
+  for (const sc of villageScenes(game)) {
+    const site = SITES[sc.id]
+    const x0 = site.tiles[0].x * TILE
+    const y0 = site.tiles[0].y * TILE
+    const built = sc.stage === 3
+    if (sc.id === 'longBench') {
+      if (built) g.drawImage(painted(HOME_SPACE_DIRECTIONS.longBench.down), x0, y0)
+      else {
+        prop('buildMaterials', x0, y0)
+        if (sc.stage >= 1) prop('woodParts', x0 + TILE, y0)
+      }
+      if (built && sc.look) prop(site.decorArt, x0 + 8, y0 - 3)
+    } else if (sc.id === 'flowerBed') {
+      if (built) for (let i = 0; i < 3; i++) prop('flowerBorder', x0 + i * TILE, y0)
+      else {
+        prop('buildMaterials', x0, y0)
+        if (sc.stage >= 1) prop('seedPackets', x0 + TILE, y0)
+        if (sc.stage >= 2) prop('flowerBorder', x0 + 2 * TILE, y0)
+      }
+      if (built && sc.look) prop(site.decorArt, x0 - 8, y0 + 2)
+    } else if (sc.id === 'shade') {
+      const v = VIEWS[built ? 'shadeComplete' : 'shadeFrame']?.down
+      if (sc.stage === 0) prop('buildMaterials', x0 + TILE, y0 + TILE)
+      else if (v) g.drawImage(painted(v), x0, y0)
+      if (built && sc.look) prop(site.decorArt, x0 + TILE, y0 + 14)
+    } else {
+      prop(built ? 'restSign' : 'buildMaterials', x0, y0)
+      if (built && sc.look) prop(site.decorArt, x0 + 8, y0 + 4)
+    }
   }
 }

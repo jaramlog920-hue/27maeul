@@ -13,6 +13,7 @@ import type { Furniture } from './room'
 import { FURNITURE_DEFS } from './furniture-defs'
 import type { ItemId, PlaceId, Tile } from './types'
 import { currentSpouseRoom, setSpouseRoomOwner } from './spouse-room'
+import { FACILITY_IDS, SITES, type FacilityPlace } from './village-sites'
 
 export const TILE = 16
 export const WIDTH = 48
@@ -802,6 +803,14 @@ export const PLACES: Record<PlaceId, Place> = {
   pavilion: { tiles: [PAVILION_SEAT], stand: { x: PAVILION_SEAT.x, y: PAVILION_SEAT.y + 1 } },
   // 들 약초 (약방)
   wildHerb: { tiles: [...WILD_HERBS] },
+  // 주민이 함께 바꾸는 마을 (계획 16 작업 20): 지도는 그대로, 진행 중이거나 완성된 공동 시설만 누를 수 있다 (placeActive)
+  ...(Object.fromEntries(FACILITY_IDS.map((id) => [SITES[id].place, { tiles: [...SITES[id].tiles], stand: SITES[id].stand }])) as Record<FacilityPlace, Place>),
+}
+
+let villageShown: ReadonlySet<string> = new Set()
+/** 지금 마을에 보이는(진행 중이거나 완성된) 공동 시설 자리 — 게임 상태와 맞추는 것은 엔진 입구(projects.ts·syncHome)가 한다 */
+export function setVillageShown(places: readonly string[]): void {
+  villageShown = new Set(places)
 }
 
 let mailboxOn = false
@@ -813,6 +822,7 @@ export function setMailbox(on: boolean): void {
 /** 이 장소가 지금 있는가 (집 붙박이는 그 가구가 놓여 있을 때, 집 앞 편지함은 선 뒤부터) */
 export function placeActive(id: PlaceId): boolean {
   if (id === 'mailbox') return mailboxOn
+  if (FACILITY_IDS.some((f) => SITES[f].place === id)) return villageShown.has(id)
   const fixture = Object.values(FIXTURES).find(f => f.place === id)
   return !fixture || homeFurniture.some(f => FIXTURES[f.item as keyof typeof FIXTURES]?.place === id)
 }

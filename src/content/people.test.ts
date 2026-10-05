@@ -13,6 +13,7 @@ import type { Tile } from '../engine/types'
 import { newGame, type GameState } from '../engine/game'
 import { WORK_SHOPS } from '../engine/work-day'
 import { deserialize, serialize } from '../engine/save'
+import { FACILITY_IDS } from '../engine/village-sites'
 
 const doorOf = (id: string) => CONTENT.neighbors.find((n) => n.id === id)!.door
 const reach = (from: Tile, to: Tile) => findPath(from, to) ?? route(from, to)
@@ -23,6 +24,8 @@ const reach = (from: Tile, to: Tile) => findPath(from, to) ?? route(from, to)
 const STORIES = new Map<string, Set<number>>()
 for (const p of Object.values(PEOPLE.people))
   for (const e of p.events ?? []) if (e.completes) STORIES.set(e.completes, new Set((e.choices ?? []).flatMap((c) => (c.outcome !== undefined ? [c.outcome] : []))))
+// 마을 공동 시설(계획 16 작업 20)은 이벤트가 아니라 사업 완료(projects.completeProject)가 story:village:<id> 표식을 남긴다
+for (const id of FACILITY_IDS) STORIES.set(`village:${id}`, new Set())
 const STORY_IDS: readonly string[] = [...STORIES.keys()]
 const speakers = new Set([...CONTENT.neighbors.map((n) => n.id), 'narration'])
 /** 방이 자기 이름이 아닌 이웃: 웬델은 빵 굽는 집에 같이 살고, 파피는 찻집에서 일한다 (계획 16 작업 10). 루디는 목수 집, 주니퍼는 벌 치는 집 (작업 11). 바질은 약방, 메리골드는 할아버지 집, 페넬로피는 베 짜는 집 (작업 12) */
@@ -129,6 +132,8 @@ describe('people.json', () => {
     for (const n of Object.values(WORK_SHOPS).flatMap((sh) => sh.npcs)) exps.add(`work:${n}`)
     // 함께 배운 기억 learn:<기술> (계획 16 작업 18)
     for (const id of SKILL_IDS) exps.add(`learn:${id}`)
+    // 함께 지은 기억 project:<시설> (계획 16 작업 20: 사업 진행·완성 때 completeProject·advanceVillage가 남긴다)
+    for (const id of FACILITY_IDS) exps.add(`project:${id}`)
     for (const x of exps) made.add(`exp:${x}`)
     for (const p of Object.values(PEOPLE.people)) {
       const reqs = [...p.lines.map((l) => l.req), ...(p.events ?? []).map((e) => e.req), ...(p.sightings ?? []).map((w) => w.req), ...p.routines.map((r) => r.req), ...(p.props ?? []).map((x) => x.req)]

@@ -5,6 +5,7 @@
 import { scheduleAppt, attendAppt, settleAppt, venueFor, type Appt } from './plans'
 import { clubCandidates, clubVenues, CLUB_SLOTS, type ClubSlot } from './clubs'
 import { passTime, recordExperienceIn, syncHome, type GameState } from './game'
+import { OUTDOOR_PLACES } from './village-sites'
 import { festivalOf, FESTIVAL_FROM, FESTIVAL_TO } from './calendar'
 import { addGift, has, take, type Inventory } from './items'
 import { isBirthday } from './notebook'
@@ -34,7 +35,7 @@ export const FEST_DECOR: readonly ItemId[] = ['vase','dryFlowers','candle','teap
 export const FEST_HELP: Readonly<Record<string,'snack'|'tea'|'cloth'|'prop'|'invite'>> = {
  baker:'snack', wendell:'snack', poppy:'tea', basil:'tea', weaver:'cloth', penelope:'cloth', carpenter:'prop', tilly:'prop', postman:'invite',
 }
-const FEST_PLACES: Record<Exclude<FestKind,'festival'|'housewarming'>, readonly PlaceId[]> = { tea:['hallTable','teaTable','pavilion'], showcase:['hallTable','teaTable'] }
+const FEST_PLACES: Record<Exclude<FestKind,'festival'|'housewarming'>, readonly PlaceId[]> = { tea:['hallTable','teaTable','pavilion','commonBench','shadeSpot'], showcase:['hallTable','teaTable'] }
 
 export interface Fest {
  id: string; kind: FestKind; day: number; place: PlaceId; alt?: PlaceId; members: string[]
@@ -138,7 +139,7 @@ export function createFest(s: GameState, input: FestInput, content: GameContent)
  const place: PlaceId = input.kind === 'housewarming' ? 'hearth' : input.place ?? 'hallTable'
  if (!festVenues(s, input.kind).includes(place)) return { state: s, error: 'venue' }
  // 야외는 실내 대체 자리를 미리 정한다
- if (place === 'pavilion' && (!input.alt || !['hallTable','teaTable'].includes(input.alt))) return { state: s, error: 'alt' }
+ if (OUTDOOR_PLACES.includes(place) && (!input.alt || !['hallTable','teaTable'].includes(input.alt))) return { state: s, error: 'alt' }
  const slot = input.slot && input.slot in CLUB_SLOTS ? input.slot : 'afternoon'
  const [from, to] = CLUB_SLOTS[slot]
  const seats = input.kind === 'housewarming' ? homeSeats(s, members.length) : undefined
@@ -146,14 +147,14 @@ export function createFest(s: GameState, input: FestInput, content: GameContent)
  const result = scheduleAppt(s, {
   kind: 'event', festId: id, title: lifeText.fest.kind[input.kind], day: input.day, from, to, place, members,
   activity: input.kind === 'showcase' ? 'make' : 'tea',
-  ...(place === 'pavilion' ? { alt: input.alt } : {}),
+  ...(OUTDOOR_PLACES.includes(place) ? { alt: input.alt } : {}),
   ...(seats ? { seats, requiresPlayer: true } : {}),
  }, content)
  if (!result.appt) return { state: s, error: typeof result.blocked === 'object' ? result.blocked.busy : String(result.blocked) }
  const birthday = members.find(m => isBirthday(m, input.day))
  const fest: Fest = {
   ...base, place, members, apptId: result.appt.id,
-  ...(place === 'pavilion' ? { alt: input.alt } : {}),
+  ...(OUTDOOR_PLACES.includes(place) ? { alt: input.alt } : {}),
   ...(input.help?.length ? { help: [...new Set(input.help)] } : {}),
   ...(input.kind === 'showcase' ? { work: input.work } : {}),
   ...(birthday ? { birthday } : {}),

@@ -25,7 +25,7 @@ import { facingArt } from './furniture-facing'
 import { HOME_FIXTURE_ART } from './home-space-art'
 import { REMAINING_FIXTURE_ART } from './remaining-furniture-art'
 import { EXPANSION_PROPS, EXPANSION_VIEWS } from './expansion-prop-art'
-import { drawStall, drawStoryProps, registerStoryPropArt } from './story-props'
+import { drawStall, drawStoryProps, drawVillage, registerStoryPropArt } from './story-props'
 import { LIFE_GAP_PROPS, LIFE_GAP_STRUCTURES } from './life-gap-art'
 import { drawDecor, lanternLights, sheepCount } from './decor'
 import { FIRE, isNear, npcTile } from '../engine/neighbors'
@@ -1402,6 +1402,8 @@ export function drawVillageMap(g: Ctx, game: GameState): void {
   g.imageSmoothingEnabled = false
   g.drawImage(mapFor(season), 0, 0, WIDTH * TILE, VILLAGE_H * TILE, 0, 0, WIDTH * TILE, VILLAGE_H * TILE)
   coverLocked(g, game, season)
+  // 주민이 함께 지은 공동 시설도 마을 그림에 남는다 (계획 16 작업 20)
+  drawVillage(g, game)
 }
 
 /**
@@ -2081,6 +2083,8 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       drawStoryProps(g, game)
       // 내 작은 장날 좌판 (계획 16 작업 19): 영업 중일 때만
       drawStall(g, game)
+      // 주민이 함께 바꾸는 마을 (계획 16 작업 20): 짓는 중이거나 완성된 공동 시설 — 같은 자리, 그림만
+      drawVillage(g, game)
       // 화덕 불
       if (hearth) flame(g, hearth.x * TILE + 8, hearth.y * TILE + 14, t)
       // 행사 모닥불

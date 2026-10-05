@@ -9,6 +9,8 @@ import { canCraft, canDate, canDrinkTea, canPlayHall, canWatchSunset, hasFood, s
 import { TEA_PRICE } from '../../engine/places'
 import { DATE_TEA_PRICE, type DatePlace } from '../../engine/romance'
 import { partnerName, useGame, type MenuPlace } from '../../store/game-store'
+import { isFacilityPlace, facilityOfPlace } from '../../engine/village-sites'
+import { FacilityHint, FacilityMenu } from '../village/FacilityMenu'
 
 const DATE_AT: Partial<Record<MenuPlace, DatePlace>> = { teaTable: 'tea', pavilion: 'sunset', hill: 'walk' }
 const DATE_LABEL: Record<DatePlace, string> = { tea: T.romance.dateTea, sunset: T.romance.dateSunset, walk: T.romance.dateWalk }
@@ -26,6 +28,10 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
     hallTable: T.places.hallTitle,
     teaTable: T.places.teaTitle,
     pavilion: T.places.pavilionTitle,
+    commonBench: T.village.defs.longBench.name,
+    flowerBed: T.village.defs.flowerBed.name,
+    shadeSpot: T.village.defs.shade.name,
+    signPost: T.village.defs.signPost.name,
   }[place]
   const hall = place === 'hallTable' ? canPlayHall(game, CONTENT) : null
   const tea = place === 'teaTable' ? canDrinkTea(game) : null
@@ -53,6 +59,7 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
         {clubHere(game,place) && <button className="primary" onClick={() => open({ kind: 'clubSession', id: clubHere(game,place)!.id })}>{T.clubs.join}</button>}
         {festHere(game,place) && <button className="primary" onClick={() => open({ kind: 'festSession', id: festHere(game,place)!.id })}>{T.fest.join}</button>}
         {['hallTable','teaTable'].includes(place) && <button onClick={() => open({ kind: 'clubs' })}>{T.clubs.title}</button>}
+        {isFacilityPlace(place) && <FacilityMenu place={place} />}
         {place === 'hearth' && (
           <>
             <SkillCraftOptions at="hearth" />
@@ -133,6 +140,7 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
         <button onClick={closeModal}>{T.ui.close}</button>
       </div>
       {dateHint && <p className="hint">{dateHint}</p>}
+      {isFacilityPlace(place) && facilityOfPlace(place) && <FacilityHint place={place} />}
       {place === 'hill' && !starsOut(game.clock.minute) && <p className="hint">{T.ui.starsNotYet}</p>}
       {(place === 'hill' || place === 'bench' || place === 'homeBench') && <p className="hint">{T.ui.readHint}</p>}
       {hall === 'closed' && <p className="hint">{T.places.hallClosed}</p>}
@@ -143,7 +151,7 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
       {tea === 'coins' && <p className="hint">{T.places.teaCoins}</p>}
       {sunset === 'notYet' && <p className="hint">{T.places.sunsetNotYet}</p>}
       {sunset === 'cloudy' && <p className="hint">{T.places.sunsetCloudy}</p>}
-      {game.needs.fatigue >= 100 && !['hill', 'bench', 'homeBench', 'teaTable', 'pavilion'].includes(place) && <p className="hint">{T.ui.tooTired}</p>}
+      {game.needs.fatigue >= 100 && !['hill', 'bench', 'homeBench', 'teaTable', 'pavilion', 'commonBench', 'shadeSpot'].includes(place) && <p className="hint">{T.ui.tooTired}</p>}
       {(['bread', 'papyrus', 'ink', 'oil', 'blanket', 'cover', 'scentCandle', 'creamPaper', 'fineThread'] as const).some((r) => canCraft(game, r) === 'full') && <p className="hint">{T.ui.bagFull}</p>}
     </div>
   )

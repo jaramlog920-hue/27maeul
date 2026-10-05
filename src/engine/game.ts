@@ -4,6 +4,7 @@ import type { Club, ClubSession } from './clubs'
 import type { Fest } from './fest'
 import { expireWorkDay, type WorkDay } from './work-day'
 import { expireStall, STALL_GUEST_SPOT, stallGuestNow, type Stall, type StallLook } from './stall'
+import { advanceVillage, crewNow, syncVillage, type Village } from './projects'
 import type { Skills, SkillLesson } from './skills'
 import { placedStyle } from './skill-defs'
 import { advancePlans, appointmentSpots, reservedMembers, NO_PLANS, type Plans } from './plans'
@@ -161,6 +162,8 @@ export interface GameState {
   /** 내 작은 장날 좌판 (계획 16 작업 19) — 옛 저장은 없음. stallLook: 고른 외형(다음 장날에도 유지) */
   stall?: Stall
   stallLook?: StallLook
+  /** 주민이 함께 바꾸는 마을 (계획 16 작업 20): 진행 중인 사업과 기여 — 옛 저장은 없음. 설치 여부는 flags['story:village:<id>']만 본다 */
+  village?: Village
   skills?: Skills
   skillLesson?: SkillLesson
   version: 1
@@ -316,13 +319,15 @@ export function startAct(s: GameState, kind: ActKind, at?: Tile): GameState {
 }
 
 /** 지도(world.tileAt)가 이 게임의 집 단계·열린 서고 방 문(방 표)을 보게 한다. 지도를 읽는 엔진 입구마다 부른다 */
-export function syncHome(s: Pick<GameState, 'homeLevel'> & Partial<Pick<GameState, 'flags' | 'romance' | 'room'>>): void {
+export function syncHome(s: Pick<GameState, 'homeLevel'> & Partial<Pick<GameState, 'flags' | 'romance' | 'room' | 'village'>>): void {
   setHomeLevel(s.homeLevel ?? 0)
   setHomeFurniture(s.room ?? initialHomeFurniture())
   setSpouseRoom(s.romance?.stage === 'married' ? s.romance.partner : null)
   setOpenDoors(openDoorsFor(s.flags ?? {}))
   // 집 앞 편지함(우체통)은 없앴다 — 편지는 문 앞 편지 바구니로 (2026-09-30 사용자)
   setMailbox(false)
+  // 마을 공동 시설: 진행 중이거나 완성된 자리만 누를 수 있다 (계획 16 작업 20)
+  syncVillage({ flags: s.flags ?? {}, village: s.village })
 }
 
 export interface Today {
@@ -346,7 +351,7 @@ function defsById(content: GameContent): Record<string, NeighborDef> {
   return Object.fromEntries(content.neighbors.map((n) => [n.id, n]))
 }
 
-type GoalState = Pick<GameState, 'clock' | 'flags' | 'progress' | 'hearts' | 'today' | 'shelved'> & Partial<Pick<GameState, 'romance' | 'homeLevel' | 'life' | 'avatar' | 'plans' | 'npcs' | 'room' | 'stall'>>
+type GoalState = Pick<GameState, 'clock' | 'flags' | 'progress' | 'hearts' | 'today' | 'shelved'> & Partial<Pick<GameState, 'romance' | 'homeLevel' | 'life' | 'avatar' | 'plans' | 'npcs' | 'room' | 'stall' | 'village'>>
 
 /**
  * 서고에 꽂은 책 수 (복음서·사도행전·편지 모두) — 마을 구역(lockedZones)과 서고 권수로 이사 오는 이웃이 이것을 센다.
@@ -449,6 +454,8 @@ function lateSpots(s: GoalState, content: Pick<GameContent, 'neighbors'>, joined
   // 내 좌판 손님 (계획 16 작업 19): 맞이하는 동안 좌판 곁에 서 있다 — 잔치·약속은 그대로 우선
   const guest = stallGuestNow(s)
   if (guest && joined(guest) && !(guest in special)) special[guest] = STALL_GUEST_SPOT
+  // 마을 공동 시설을 짓는 오전 (계획 16 작업 20): 보탤 몫이 남은 관심 이웃이 현장에 모인다 — 잔치·약속·이야기를 기다리는 이웃은 그대로 우선
+  for (const [id, spot] of Object.entries(crewNow(s, content, joined))) if (!(id in special) && !eventNow(s, id)) special[id] = spot
   return special
 }
 
@@ -527,6 +534,7 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
   setSpouseRoom(null)
   setOpenDoors([])
   setMailbox(false)
+  syncVillage({ flags })
   return {
     version: 1,
     plans: { ...NO_PLANS, appts: [] },
@@ -609,6 +617,8 @@ export function settle(s: GameState, content: GameContent): GameState {
   s = furnishSpouse(s)
   s = expireStall(expireWorkDay(s))
   s = advancePlans(s, content)
+  // 접속하지 않은 사이 이웃이 보탠 몫을 하루씩 따라잡는다 (같은 날은 한 번만)
+  s = advanceVillage(s, content)
   syncHome(s)
   // 지도를 옮기기 전 저장은 지금은 집 안인 칸에 서 있을 수 있다 — 갇히지 않게 집 앞으로 옮긴다
   // (방·내 집 안은 마을과 이어지지 않으므로 걸을 수 있기만 하면 된다)
@@ -835,7 +845,7 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
 
   // 이웃
   const defs = defsById(content)
-  s = advancePlans({ ...s, clock }, content)
+  s = advanceVillage(advancePlans({ ...s, clock }, content), content)
   const apptAt = appointmentSpots(s)
   const gctx = goalContext({ ...s, clock }, content)
   const npcs: Record<string, Npc> = {}
@@ -941,7 +951,8 @@ export function passTime(s: GameState, minutes: number): GameState {
     peace: peaceful(s),
     hot: weatherOf(clock.day) === 'hot',
   })
-  return advancePlans({ ...s, clock, needs }, { neighbors: [...CONTENT_DEFS.values()] })
+  const content = { neighbors: [...CONTENT_DEFS.values()] }
+  return advanceVillage(advancePlans({ ...s, clock, needs }, content), content)
 }
 
 // ── 이웃과 말하기 ──
@@ -3043,7 +3054,7 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
     inv,
   }
   // 가족 생일 아침 (계획 12): 배우자·아이 생일 장면
-  const morning = familyMorning(childMorning(forgetPromises(morningSupplies(expireStall(expireWorkDay(next)), s.clock.day), day), content))
+  const morning = advanceVillage(familyMorning(childMorning(forgetPromises(morningSupplies(expireStall(expireWorkDay(next)), s.clock.day), day), content)), content)
   // 침대 위에서 눈을 뜨고 일어난다 (그림만)
   return startAct({ ...morning, npcs: placeAllNpcs(morning, content) }, 'rise', PLACES.bed.tiles[0])
 }

@@ -223,6 +223,11 @@ export interface Person {
   workLines?: { start?: string; hand?: string; finish?: string; lover?: string; spouse?: string }
   /** 내 좌판 손님일 때 (계획 16 작업 19): 상품을 살필 때·산 뒤·사지 않고 간 뒤·단골일 때 한 줄 */
   stallLines?: { look?: string; sold?: string; looked?: string; regular?: string }
+  /**
+   * 마을 공동 시설 (계획 16 작업 20): 시설 id마다 이웃이 하는 말 — 의견(게시판에서 고르기 전), 다른 안이 먼저 골라진 뒤,
+   * 현장에서 거들 때, 완성된 시설을 함께 쓸 때. 고르지 않은 안의 이웃도 서운해하지 않는다
+   */
+  projectLines?: Record<string, { opinion?: string; next?: string; work?: string; used?: string }>
   id: string
   /** 마음이 열리는 빠르기 (1 보통, 크면 빨리) */
   pace: number

@@ -55,6 +55,11 @@ export type PlaceId =
   | 'pavilion'
   // 들 약초 (약방이 사 준다)
   | 'wildHerb'
+  // 주민이 함께 바꾸는 마을 (계획 16 작업 20): 진행 중이거나 완성된 공동 시설
+  | 'commonBench'
+  | 'flowerBed'
+  | 'shadeSpot'
+  | 'signPost'
 export type Target =
   | { kind: 'place'; id: PlaceId; tile: Tile }
   /** talk: 곁에서 누른 것 (닿으면 바로 대화) — 멀리서 누르면 걸어가 곁에 서고, 대화는 '대화하기' 단추로 */

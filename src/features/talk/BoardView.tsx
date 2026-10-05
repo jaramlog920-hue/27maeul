@@ -4,14 +4,36 @@ import { itemName, T } from '../../content/text'
 import { boardToday, canFulfillBoard } from '../../engine/game'
 import { useGame } from '../../store/game-store'
 import { ItemIcon } from '../../shared/ItemIcon'
+import { VillageBoard } from '../village/VillageBoard'
+import { useState } from 'react'
 
 export function BoardView() {
   const game = useGame((s) => s.game)
   const { doBoard, closeModal } = useGame.getState()
   const list = boardToday(game, CONTENT)
+  // 칸 둘: 날마다 붙는 부탁 쪽지 · 마을 일(주민이 함께 바꾸는 마을, 계획 16 작업 20)
+  const [tab, setTab] = useState<'notes' | 'village'>('notes')
+  if (tab === 'village')
+    return (
+      <div className="dialog board" role="dialog" aria-label={T.village.title}>
+        <h2>의뢰 게시판</h2>
+        <div className="actions">
+          <button aria-pressed={false} onClick={() => setTab('notes')}>부탁 쪽지</button>
+          <button className="primary" aria-pressed={true}>{T.village.tab}</button>
+        </div>
+        <VillageBoard />
+        <div className="actions">
+          <button onClick={closeModal}>{T.ui.close}</button>
+        </div>
+      </div>
+    )
   return (
     <div className="dialog board" role="dialog" aria-label="의뢰 게시판">
       <h2>의뢰 게시판</h2>
+      <div className="actions">
+        <button className="primary" aria-pressed={true}>부탁 쪽지</button>
+        <button aria-pressed={false} onClick={() => setTab('village')}>{T.village.tab}</button>
+      </div>
       <p className="hint">이웃들이 날마다 부탁 쪽지를 붙여 둬요. 물건을 가져다주면 닢과 마음을 받아요.</p>
       <ul className="trade-list">
         {list.map((r) => {

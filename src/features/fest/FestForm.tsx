@@ -6,6 +6,7 @@ import { createFest, festCapacity, festivalDays, festKinds, festVenues, festWork
 import { isBirthday } from '../../engine/notebook'
 import { availability, inviteReaction } from '../../engine/plans'
 import type { ItemId, PlaceId } from '../../engine/types'
+import { OUTDOOR_PLACES, tastePlaceOf } from '../../engine/village-sites'
 import { useGame } from '../../store/game-store'
 import { commitClub } from '../clubs/club-store'
 
@@ -55,7 +56,7 @@ export function FestForm({ onClose }: { onClose: () => void }) {
  const save = () => {
   const r = kind === 'festival'
    ? createFest(game, { kind, day: fday, role, members: [], ...(role === 'food' && snack ? { snack } : {}), ...(role === 'deco' && deco ? { deco } : {}) }, CONTENT)
-   : createFest(game, { kind, day, slot, place: where, ...(where === 'pavilion' ? { alt } : {}), members, help: help.filter(h => members.includes(h)), ...(snack ? { snack } : {}), ...(deco ? { deco } : {}), ...(kind === 'showcase' ? { work } : {}) }, CONTENT)
+   : createFest(game, { kind, day, slot, place: where, ...(OUTDOOR_PLACES.includes(where) ? { alt } : {}), members, help: help.filter(h => members.includes(h)), ...(snack ? { snack } : {}), ...(deco ? { deco } : {}), ...(kind === 'showcase' ? { work } : {}) }, CONTENT)
   if (r.error) { setError(r.error); return }
   commitClub(r.state)
   onClose()
@@ -71,11 +72,11 @@ export function FestForm({ onClose }: { onClose: () => void }) {
   <h2>{F.create} · {F.steps[step]}</h2>
   {step === 'kind' && <div className="actions menu column">{kinds.map(k => <button key={k} className={kind === k ? 'primary' : ''} onClick={() => { setKind(k); setMembers([]); setHelp([]) }}>{F.kind[k]}</button>)}<p className="hint">{F.kindHint[kind]}</p></div>}
   {step === 'work' && <div className="actions menu column">{works.map(w => <button key={w.id} className={work === w.id ? 'primary' : ''} onClick={() => { setWork(w.id); setMembers(w.with.filter(n => clubCandidates(game, CONTENT).includes(n)).slice(0, 3)) }}>{workLabel(w.id)}</button>)}</div>}
-  {step === 'place' && <><div className="actions menu column">{venues.map(p => <button key={p} className={where === p ? 'primary' : ''} onClick={() => setPlace(p)}>{P.place[p as keyof typeof P.place]}</button>)}</div>{where === 'pavilion' && <label>{F.alt}<select value={alt} onChange={e => setAlt(e.target.value as PlaceId)}>{(['hallTable', 'teaTable'] as const).map(p => <option key={p} value={p}>{P.place[p]}</option>)}</select></label>}</>}
+  {step === 'place' && <><div className="actions menu column">{venues.map(p => <button key={p} className={where === p ? 'primary' : ''} onClick={() => setPlace(p)}>{P.place[p as keyof typeof P.place]}</button>)}</div>{OUTDOOR_PLACES.includes(where) && <label>{F.alt}<select value={alt} onChange={e => setAlt(e.target.value as PlaceId)}>{(['hallTable', 'teaTable'] as const).map(p => <option key={p} value={p}>{P.place[p]}</option>)}</select></label>}</>}
   {step === 'time' && <><label>{F.dayLabel}<select value={day} onChange={e => setDay(Number(e.target.value))}>{days.map(d => <option key={d} value={d}>{dayLabel(d, game.clock.day)}</option>)}</select></label><label>{F.slotLabel}<select value={slot} onChange={e => setSlot(e.target.value as ClubSlot)}>{Object.entries(T.clubs.slot).map(([id, label]) => <option key={id} value={id} disabled={day === game.clock.day && CLUB_SLOTS[id as ClubSlot][0] <= game.clock.minute}>{label}</option>)}</select></label>{past && <p className="hint">{T.clubs.errors.past}</p>}</>}
   {step === 'members' && <><p className="hint">{T.clubs.members} · {members.length}/{cap}{cap < 3 ? ` · ${fill(F.capacity, { n: cap })}` : ''}</p><div className="actions menu column">{clubCandidates(game, CONTENT).map(id => {
    const b = busy(id), checked = members.includes(id)
-   const reaction = inviteReaction(id, activity, where === 'pavilion' ? 'lake' : 'indoor', time)
+   const reaction = inviteReaction(id, activity, tastePlaceOf(where), time)
    return <Fragment key={id}>
     <label className="check-row"><input type="checkbox" checked={checked} disabled={!checked && (members.length >= cap || b !== 'ok')} onChange={() => setMembers(checked ? members.filter(m => m !== id) : [...members, id])} />{neighborById(id)?.role} · {b === 'ok' ? T.clubs[reaction] : `${errorText(b.busy)}${b.suggest ? ` · ${dayLabel(b.suggest.day, game.clock.day)}` : ''}`}</label>
     {checked && FEST_HELP[id] && <label className="check-row sub hint"><input type="checkbox" checked={help.includes(id)} onChange={() => setHelp(help.includes(id) ? help.filter(h => h !== id) : [...help, id])} />{fill(F.askHelp, { who: neighborById(id)?.role ?? '' })} · {F.helpKind[FEST_HELP[id]]}</label>}
@@ -93,7 +94,7 @@ export function FestForm({ onClose }: { onClose: () => void }) {
    <p>{kind === 'festival' ? fill(F.festivalDay, { day: dayLabel(fday, game.clock.day) }) : `${dayLabel(day, game.clock.day)} · ${T.clubs.slot[slot]}`}</p>
    {kind === 'showcase' && <p>{workLabel(work)}</p>}
    {members.length > 0 && kind !== 'festival' && <p>{members.map(id => neighborById(id)?.role).join(' · ')}</p>}
-   {where === 'pavilion' && kind !== 'festival' && <p>{F.alt} · {P.place[alt as keyof typeof P.place]}</p>}
+   {OUTDOOR_PLACES.includes(where) && kind !== 'festival' && <p>{F.alt} · {P.place[alt as keyof typeof P.place]}</p>}
    <p>{snack ? itemName(snack) : F.basicSnack} · {deco ? itemName(deco) : F.basicDeco}</p>
    {help.filter(h => members.includes(h)).map(h => <p key={h} className="hint">{F.helpLabel} · {neighborById(h)?.role} · {F.helpKind[FEST_HELP[h]]}</p>)}
    {birthday && <p className="hint">{fill(F.birthday, { who: neighborById(birthday)?.role ?? '' })}</p>}

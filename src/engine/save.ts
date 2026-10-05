@@ -1,4 +1,5 @@
-import { sanitizeClubs, sanitizeClubSessions } from './clubs'
+import { CLUB_PLACES, sanitizeClubs, sanitizeClubSessions } from './clubs'
+import { sanitizeVillage } from './projects'
 import { sanitizeFests } from './fest'
 import { sanitizePlans } from './plans'
 import { sanitizeCompanion } from './companion'
@@ -159,13 +160,14 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     workDay: sanitizeWorkDay(s.workDay),
     stall: sanitizeStall(s.stall),
     stallLook: s.stallLook === undefined ? undefined : sanitizeStallLook(s.stallLook),
+    village: sanitizeVillage(s.village, flags, s.clock.day),
     skills: sanitizeSkills(s.skills),
     skillLesson: sanitizeSkillLesson(s.skillLesson),
     plans: sanitizePlans(s.plans, s.clock.day),
     clubs: sanitizeClubs(s.clubs),
     clubSessions: sanitizeClubSessions(s.clubSessions),
     fests: sanitizeFests(s.fests),
-    clubWorks: Object.fromEntries(Object.entries(s.clubWorks ?? {}).filter(([, w]) => w && w.item === 'cushion' && ['hallTable','teaTable','pavilion','garden'].includes(w.place))),
+    clubWorks: Object.fromEntries(Object.entries(s.clubWorks ?? {}).filter(([, w]) => w && w.item === 'cushion' && CLUB_PLACES.includes(w.place))),
     // 살림과 서고 (계획 13): 옛 저장은 정성 들인 장 없음, 봉인 없음
     careful: Object.fromEntries(Object.entries(isObj(s.careful) ? s.careful : {}).filter(([, v]) => Array.isArray(v)).map(([k, v]) => [k, (v as unknown[]).filter((n): n is number => Number.isInteger(n))])),
     sealed: isStrArray(s.sealed) ? s.sealed : [],

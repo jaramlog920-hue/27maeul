@@ -7,6 +7,7 @@ import { festivalOf, FESTIVAL_FROM, FESTIVAL_TO, isMarketDay, isWet, weatherOf }
 import { gatheringWindow, INVITE_FROM, INVITE_TO, VISIT_FROM, VISIT_TO, BABY_PARTY_DAY, BABY_PARTY_SPOTS, HILL_SPOTS } from './bonds'
 import { heartUp, notYet, recordExperienceIn, shelvedCount, eventNow, routineOf, type GameState } from './game'
 import { HALL_SPOTS } from './places'
+import { OUTDOOR_PLACES } from './village-sites'
 import { personOf } from './people'
 import { lockedTiles, key, PLACES, isWalkable } from './world'
 import type { GameContent, PlaceId, Tile } from './types'
@@ -81,7 +82,7 @@ export function inviteReaction(npc: string, activity: Activity, place: TastePlac
 }
 export function venueFor(appt: Appt, day = appt.day): {place:PlaceId; moved:false} | {place:PlaceId; moved:true; day:number; reason:'weather'} {
   const weather = weatherOf(day)
-  if (['pavilion','hill','garden'].includes(appt.place) && (isWet(weather) || weather === 'hot')) {
+  if (OUTDOOR_PLACES.includes(appt.place) && (isWet(weather) || weather === 'hot')) {
     if (appt.alt && ['hallTable','teaTable'].includes(appt.alt)) return {place:appt.alt,moved:false}
     return {place:appt.place,moved:true,day:day+1,reason:'weather'}
   }

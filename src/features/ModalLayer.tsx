@@ -2,6 +2,7 @@ import { ClubList } from './clubs/ClubList'
 import { ClubSession } from './clubs/ClubSession'
 import { FestList } from './fest/FestList'
 import { StallView } from './stall/StallView'
+import { VillageSite } from './village/VillageSite'
 import { FestSession } from './fest/FestSession'
 import { useCallback, type SyntheticEvent } from 'react'
 import { isGhostClick } from '../shared/ghost'
@@ -66,6 +67,8 @@ function Body() {
       return <FestSession id={modal.id} />
     case 'stall':
       return <StallView />
+    case 'village':
+      return <VillageSite id={modal.id} />
     case 'schedule':
       return <ScheduleDialog />
     case 'talk':

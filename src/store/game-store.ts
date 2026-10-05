@@ -141,6 +141,8 @@ import { saveGame } from '../engine/save'
 import { isFinished, toggleHomeBook } from '../engine/finished-books'
 import { moveItem } from '../engine/scroll'
 import type { Book, ItemId, PlaceId, Rng, Target, Tile } from '../engine/types'
+import { isBuilt } from '../engine/projects'
+import { facilityOfPlace, type FacilityId, type FacilityPlace } from '../engine/village-sites'
 import { sfx, setAudioMuted } from '../audio/sound'
 
 export type Pending =
@@ -170,6 +172,8 @@ export type Modal =
   | { kind: 'festSession'; id: string }
   /** 내 작은 장날 좌판 (계획 16 작업 19) */
   | { kind: 'stall' }
+  /** 마을 공동 시설 현장 (계획 16 작업 20): 진행 중인 사업의 현장 — 몫·거들기·선택 장식 */
+  | { kind: 'village'; id: FacilityId }
   /** letter: 편지 나르는 이웃이 말을 걸자마자 편지를 건넸을 때 대화에 보일 편지 말 한 줄 */
   | { kind: 'talk'; neighborId: string; line: string; letter?: string }
   | { kind: 'passage'; pieceId: string; askLine: boolean; back?: boolean; said?: string }
@@ -723,7 +727,7 @@ export function partnerName(game: GameState): string {
 }
 
 /** 누르면 할 일 창이 뜨는 자리 */
-export type MenuPlace = 'hearth' | 'workbench' | 'press' | 'hill' | 'bench' | 'homeBench' | 'hallTable' | 'teaTable' | 'pavilion'
+export type MenuPlace = 'hearth' | 'workbench' | 'press' | 'hill' | 'bench' | 'homeBench' | 'hallTable' | 'teaTable' | 'pavilion' | FacilityPlace
 
 /** 방 꾸미기에서 고른 가구 (방이 바뀌어 없어졌으면 undefined) */
 export function selectedPiece(room: readonly Furniture[], sel: Pick<Furniture, 'item' | 'x' | 'y' | 'on'> | null): Furniture | undefined {
@@ -954,6 +958,15 @@ export const useGame = create<Store>((set, get) => {
         return { game, modal: { kind: 'roomShelf', room: 'rev' } }
       case 'hallBoard':
         return { game, modal: { kind: 'board' } }
+      // 마을 공동 시설 (계획 16 작업 20): 짓는 중이면 현장, 다 지었으면 쓰는 자리
+      case 'commonBench':
+      case 'flowerBed':
+      case 'shadeSpot':
+      case 'signPost': {
+        const fid = facilityOfPlace(target.id)
+        if (!fid) return { game, modal: null }
+        return { game, modal: isBuilt(game.flags, fid) ? { kind: 'menu', place: target.id } : { kind: 'village', id: fid } }
+      }
       case 'boat':
         return { game, modal: { kind: 'travel' } }
       case 'learnTable':
