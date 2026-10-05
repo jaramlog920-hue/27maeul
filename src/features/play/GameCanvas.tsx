@@ -8,7 +8,8 @@ import { HEIGHT, isIndoor, TILE, VIEW_H, VIEW_W, WIDTH } from '../../engine/worl
 import { createRenderer, type Renderer } from '../../render/renderer'
 import { playMusic, setRain, unlockAudio } from '../../audio/sound'
 import { markMapTap } from '../../shared/ghost'
-import { useGame } from '../../store/game-store'
+import { selectedPiece, useGame } from '../../store/game-store'
+import { footprint } from '../../engine/room'
 
 /** 탭한 화면 좌표 → 마을 칸 (카메라 반영) */
 export function tileFromPoint(
@@ -67,7 +68,10 @@ export function GameCanvas({ zoom = 1 }: { zoom?: number }) {
         }
         const zoomChanged = r.zoom !== zoomRef.current
         r.zoom = zoomRef.current
-        r.draw(useGame.getState().game, Math.max(0, (now - t0) / 1000), zoomChanged ? 0 : dt)
+        const st = useGame.getState()
+        const sel = st.decorating ? selectedPiece(st.game.room, st.decorSel) : undefined
+        r.selected = sel ? footprint(sel) : null
+        r.draw(st.game, Math.max(0, (now - t0) / 1000), zoomChanged ? 0 : dt)
       } catch (err) {
         const msg = String(err)
         if (msg !== lastError) console.error(err)

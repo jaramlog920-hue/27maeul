@@ -42,6 +42,15 @@
   align-items: center;
   gap: 4px;
 }
+.decorate-sel {
+  margin-bottom: 6px;
+}
+.decorate-sel span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+}
 .decorate-items button.on {
   background: #fff4dc;
   border-color: var(--accent);

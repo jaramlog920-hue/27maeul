@@ -7,7 +7,7 @@ import { add, addGift, CHAPTER_COST, FOODS, count, has, RECIPES, recipeGives, st
 import { facingFor, findPath, pathToward, stepActor, type Actor } from './movement'
 import { coolDown, exhausted, fallsSick, FRESH, rest, sleepNeeds, starving, tickNeeds, warmUp, work, type Needs } from './needs'
 import { inGoodMood } from './mood'
-import { footprint, FURNITURE_DEFS, placement, refitRoom, removal, solidTiles, type Furniture } from './room'
+import { footprint, FURNITURE_DEFS, placement, refitRoom, removal, rotation, solidTiles, type Furniture } from './room'
 import {
   BABY_PARTY_SPOTS,
   FRIENDS_FROM,
@@ -3082,6 +3082,14 @@ export function placeFurniture(s: GameState, item: ItemId, t: Tile): GameState |
   const left = take(s.inv, { [item]: 1 })
   if (!left) return null
   return { ...s, inv: left, room: [...s.room, f] }
+}
+
+/** 놓인 가구를 한 번 돌린다 (계획 17 작업 2 — 못 돌리면 null, 자리·가방은 그대로) */
+export function rotateFurniture(s: GameState, f: Furniture): GameState | null {
+  syncHome(s)
+  const turned = rotation(s.room, f)
+  if (!turned) return null
+  return { ...s, room: s.room.map((o) => (o === f ? turned : o)) }
 }
 
 /** 치운 가구는 가방으로 (넘치면 치우지 않는다) */

@@ -56,3 +56,10 @@ export const FURNITURE_DEFS: Partial<Record<ItemId, FurnitureDef>> = {
   clothDoll: { w: 1, h: 1, layer: 'small' },
 }
 
+
+/**
+ * 가구 방향 (계획 17 작업 2): 저장에 방향이 없던 가구가 보던 쪽.
+ * 그림 원본(render/home-space-directions.ts의 HOME_SPACE_LEGACY_FACING)과 같은 값 — 엔진이 그림을 부르지 않게 값만 옮겨 둔다.
+ * 여기 없는 가구는 앞(down)을 본다.
+ */
+export const LEGACY_FACING: Partial<Record<ItemId, 'left' | 'right'>> = { chair: 'right', woodToy: 'right', teapot: 'left' }

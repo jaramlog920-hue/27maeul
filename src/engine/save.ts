@@ -14,7 +14,7 @@ import { IDLE_RESET } from './autonomy'
 import { bookDone, bookRoomOpen, emptyProgress, type Progress } from './books'
 import { newGame, settle, type GameState } from './game'
 import { cardsForChapters, placeNewCards } from './journey'
-import { refitRoom } from './room'
+import { isFacing, refitRoom } from './room'
 import { HOME_ENTRY, HOME_ROOM, isWalkable, OLD_HOME, sameTile, setHomeLevel } from './world'
 import { BOOKS, type Book, type GameContent, type ItemId, type Tile } from './types'
 
@@ -113,7 +113,14 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   flags.homeRoom = 1
   if (flags.homeOrder !== undefined && flags.homeOrder !== homeLevel + 1) delete flags.homeOrder
   // 가구 규칙이 바뀐 뒤의 저장: 지금 규칙으로 놓을 수 없는 것은 가방으로 (길이 막히지 않게)
-  const { room, inv } = refitRoom(moved.room ?? [], s.inv)
+  // 가구 방향 (계획 17 작업 2): 옛 저장은 칸이 없다(옛 그림 쪽). 잘못된 값은 버린다
+  const facedRoom = (moved.room ?? []).map((f) => {
+    if (f.facing === undefined || isFacing(f.facing)) return f
+    const { facing: _bad, ...rest } = f
+    void _bad
+    return rest
+  })
+  const { room, inv } = refitRoom(facedRoom, s.inv)
   // 고른 책: 조각이 있어야 하고, 그 책의 서고 방이 열려 있어야 한다 (chooseBook과 같은 규칙 — 사도행전·편지)
   const activeBook =
     s.activeBook && (BOOKS as readonly string[]).includes(s.activeBook) && content.pieces.some((p) => p.book === s.activeBook) && bookRoomOpen(s.activeBook, flags)

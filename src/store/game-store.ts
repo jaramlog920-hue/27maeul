@@ -38,6 +38,7 @@ import {
   newGame,
   chooseBook,
   placeFurniture,
+  rotateFurniture,
   removeFurniture,
   restAt,
   reviewPick,
@@ -124,7 +125,7 @@ import {
   type Trade,
 } from '../engine/game'
 import { inAttic, isHome, LOCKED_DOORS, lockedTiles, lockedZones, roomAt, sameTile, zoneAt } from '../engine/world'
-import { removal } from '../engine/room'
+import { footprint, removal, type Furniture } from '../engine/room'
 import { heartsOf } from '../engine/hearts'
 import { add, count, RECIPES, type Inventory, type RecipeId } from '../engine/items'
 import type { CarpenterWork } from '../engine/easier'
@@ -330,6 +331,8 @@ interface Store {
   afterScene: string | null
   /** 방 꾸미기: 놓을 물건, 또는 치우기 */
   decorating: ItemId | 'pick' | null
+  /** 방 꾸미기에서 고른 놓인 가구 (왼쪽 위 칸·탁자 위인지) — 돌리기·치우기 (계획 17 작업 2). 저장하지 않는다 */
+  decorSel: Pick<Furniture, 'item' | 'x' | 'y' | 'on'> | null
   muted: boolean
   /** 떠 있는 조이스틱 (설정에서 켜고 끈다, 처음엔 꺼짐 — 마우스·터치 모두) */
   joystick: boolean
@@ -485,6 +488,10 @@ interface Store {
   adopt: (animal: Animal, name: string) => void
   startDecorate: (item: ItemId | 'pick') => void
   stopDecorate: () => void
+  /** 고른 가구를 한 번 돌린다 (못 돌리면 한 줄로 알린다) */
+  turnSelected: () => void
+  /** 고른 가구를 가방으로 */
+  removeSelected: () => void
   nextScene: () => void
   chooseScene: (index: number) => void
   setMuted: (m: boolean) => void
@@ -705,6 +712,12 @@ export function partnerName(game: GameState): string {
 
 /** 누르면 할 일 창이 뜨는 자리 */
 export type MenuPlace = 'hearth' | 'workbench' | 'press' | 'hill' | 'bench' | 'homeBench' | 'hallTable' | 'teaTable' | 'pavilion'
+
+/** 방 꾸미기에서 고른 가구 (방이 바뀌어 없어졌으면 undefined) */
+export function selectedPiece(room: readonly Furniture[], sel: Pick<Furniture, 'item' | 'x' | 'y' | 'on'> | null): Furniture | undefined {
+  if (!sel) return undefined
+  return room.find((f) => f.item === sel.item && f.x === sel.x && f.y === sel.y && !!f.on === !!sel.on)
+}
 
 export const useGame = create<Store>((set, get) => {
   let warnedSaveFail = false
@@ -1028,6 +1041,7 @@ export const useGame = create<Store>((set, get) => {
     },
     afterScene: null,
     decorating: null,
+    decorSel: null,
     muted: loadMuted(),
     joystick: loadJoystick(),
     joystickShape: loadJoystickShape(),
@@ -1041,7 +1055,7 @@ export const useGame = create<Store>((set, get) => {
     load: (game) => {
       // 집 단계는 world의 모듈 전역(tileAt이 본다) — 불러온 게임의 단계로 맞춘다
       syncHome(game)
-      set({ game, modal: null, decorating: null })
+      set({ game, modal: null, decorating: null, decorSel: null })
     },
 
     // 이웃이 부르는 이름은 주인공이 정한 이름으로 ({player})
@@ -1078,19 +1092,20 @@ export const useGame = create<Store>((set, get) => {
           const placed = placeFurniture(game, decorating, tile)
           if (placed) {
             sfx('place')
-            set({ game: persist(placed), decorating: (placed.inv[decorating] ?? 0) > 0 ? decorating : 'pick' })
+            // 방금 놓은 것을 고른 채로 둔다 (바로 돌릴 수 있게)
+            const f = placed.room[placed.room.length - 1]
+            set({ game: persist(placed), decorating: (placed.inv[decorating] ?? 0) > 0 ? decorating : 'pick', decorSel: { item: f.item, x: f.x, y: f.y, on: f.on } })
             return
           }
         }
-        // 놓을 수 없는 자리에 가구가 있으면 치운다 — 가구가 차지한 칸 어디를 눌러도
-        if (removal(game.room, tile).length) {
-          const next = removeFurniture(game, tile)
-          if (next === game) get().say(T.ui.bagFull)
-          else {
-            set({ game: persist(next) })
-            sfx('place')
-          }
+        // 놓을 수 없는 자리에 가구가 있으면 고른다 — 가구가 차지한 칸 어디를 눌러도. 고른 것을 한 번 더 누르면 치운다
+        const hit = removal(game.room, tile)[0]
+        if (!hit) {
+          set({ decorSel: null })
+          return
         }
+        if (selectedPiece(game.room, get().decorSel) === hit) get().removeSelected()
+        else set({ decorSel: { item: hit.item, x: hit.x, y: hit.y, on: hit.on } })
         return
       }
       const locked = LOCKED_DOORS.findIndex((d) => sameTile(d, tile))
@@ -1775,8 +1790,34 @@ export const useGame = create<Store>((set, get) => {
       sfx(animal === 'dog' ? 'bark' : 'meow')
       set({ game: persist(next), modal: null })
     },
-    startDecorate: (item) => set({ decorating: item, modal: null }),
-    stopDecorate: () => set({ decorating: null }),
+    startDecorate: (item) => set({ decorating: item, modal: null, decorSel: null }),
+    stopDecorate: () => set({ decorating: null, decorSel: null }),
+    turnSelected: () => {
+      const { game, decorSel } = get()
+      const f = selectedPiece(game.room, decorSel)
+      if (!f) return
+      const next = rotateFurniture(game, f)
+      if (!next) {
+        get().say(T.ui.decorateTurnBlocked)
+        return
+      }
+      sfx('place')
+      set({ game: persist(next) })
+    },
+    removeSelected: () => {
+      const { game, decorSel } = get()
+      const f = selectedPiece(game.room, decorSel)
+      if (!f) return
+      // 이 가구가 맨 위에 있는 칸에서 치운다 (탁자 위 물건이 아니라 탁자를 고른 때)
+      const at = footprint(f).find((t) => removal(game.room, t)[0] === f)
+      if (!at) return
+      const next = removeFurniture(game, at)
+      if (next === game) get().say(T.ui.bagFull)
+      else {
+        set({ game: persist(next), decorSel: null })
+        sfx('place')
+      }
+    },
 
     // 이벤트에서 말 고르기 (정답 없음): 고르면 대답이 이어지고, 닫으면 본 것 (계획 6b)
     chooseScene: (index) => {

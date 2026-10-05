@@ -17,6 +17,7 @@ import { saveGame } from '../engine/save'
 import { ModalLayer } from './ModalLayer'
 import { NextEventBar, useEventAlerts } from './play/EventSchedule'
 import { Hud } from './play/Hud'
+import { DecorateBar } from './play/DecorateBar'
 import { journalLine } from './journal/Journal'
 
 /** 예전 지도 위 집의 칸 → 지금 집 안 방의 같은 칸 */
@@ -28,7 +29,7 @@ function goOutside() {
 
 function reset(game: Partial<GameState> = {}) {
   localStorage.clear()
-  useGame.setState({ game: { ...newGame(CONTENT), scenes: [], ...game }, modal: null, rng: () => 0, decorating: null, toast: null })
+  useGame.setState({ game: { ...newGame(CONTENT), scenes: [], ...game }, modal: null, rng: () => 0, decorating: null, decorSel: null, toast: null })
 }
 
 /** 퀴즈의 마지막 문제 직전까지 정답으로 넘긴다 */
@@ -1102,12 +1103,36 @@ describe('방 꾸미기 누르기 (QA)', () => {
     const g = useGame.getState().game
     expect(g.room).toEqual([{ item: 'nightstand', ...h(3, 4) }, { item: 'vase', ...h(3, 4), on: true }])
   })
-  it('치우기에서는 깔개가 차지한 어느 칸을 눌러도 치운다', () => {
+  it('치우기에서는 깔개가 차지한 어느 칸을 눌러도 고르고, 한 번 더 누르면 치운다', () => {
     reset({ room: [{ item: 'rug', ...h(3, 5) }], inv: {} })
     useGame.setState({ decorating: 'pick' })
     useGame.getState().tap(h(5, 6))
+    expect(useGame.getState().decorSel).toEqual({ item: 'rug', ...h(3, 5), on: undefined })
+    expect(useGame.getState().game.room).toHaveLength(1)
+    useGame.getState().tap(h(4, 5))
     expect(useGame.getState().game.room).toEqual([])
     expect(useGame.getState().game.inv.rug).toBe(1)
+  })
+  it('고른 가구는 돌리기 단추로 돌리고, 치우기 단추로 가방에 넣는다 (계획 17 작업 2)', async () => {
+    reset({ room: [{ item: 'table', ...h(5, 5) }], inv: {} })
+    useGame.setState({ decorating: 'pick' })
+    render(<DecorateBar />)
+    expect(screen.queryByRole('button', { name: T.ui.decorateTurn })).toBeNull()
+    act(() => useGame.getState().tap(h(6, 5)))
+    const user = userEvent.setup()
+    await user.click(screen.getByRole('button', { name: T.ui.decorateTurn }))
+    expect(useGame.getState().game.room).toEqual([{ item: 'table', ...h(5, 5), facing: 'right' }])
+    await user.click(screen.getByRole('button', { name: T.ui.decorateTake }))
+    expect(useGame.getState().game.room).toEqual([])
+    expect(useGame.getState().game.inv.table).toBe(1)
+  })
+  it('못 돌리는 자리면 한 줄로 알리고 그대로 둔다', () => {
+    reset({ room: [{ item: 'table', ...h(7, 3) }], inv: {} })
+    useGame.setState({ decorating: 'pick' })
+    useGame.getState().tap(h(7, 3))
+    useGame.getState().turnSelected()
+    expect(useGame.getState().game.room).toEqual([{ item: 'table', ...h(7, 3) }])
+    expect(useGame.getState().toast?.text).toBe(T.ui.decorateTurnBlocked)
   })
 })
 

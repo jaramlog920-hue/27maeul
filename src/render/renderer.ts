@@ -9,8 +9,9 @@ import { childAtSchool, closedHouseIds, mailboxHasPost, storyWaiting, routineOf,
 import type { Activity } from '../engine/people'
 import { fixtureTier, RARE_ITEMS } from '../engine/fixtures'
 import { deskTraces, type DeskTraces } from '../engine/desk-traces'
-import { FURNITURE_DEFS, type Furniture } from '../engine/room'
+import { facingOf, FURNITURE_DEFS, type Furniture } from '../engine/room'
 import { FURNI_PALETTE, FURNITURE_ART } from './furniture-art'
+import { facingArt } from './furniture-facing'
 import { HOME_FIXTURE_ART } from './home-space-art'
 import { REMAINING_FIXTURE_ART } from './remaining-furniture-art'
 import { EXPANSION_PROPS, EXPANSION_VIEWS } from './expansion-prop-art'
@@ -1541,13 +1542,28 @@ function furnitureOrder(f: Furniture): number {
   return layer === 'floor' ? 0 : layer === 'solid' ? 1 : 2
 }
 
+/** 고른 가구 테두리: 차지한 칸 둘레에 2px 밝은 선 (방 꾸미기) */
+function drawSelection(g: Ctx, tiles: readonly Tile[]) {
+  if (!tiles.length) return
+  const x0 = Math.min(...tiles.map((t) => t.x)) * TILE
+  const y0 = Math.min(...tiles.map((t) => t.y)) * TILE
+  const x1 = (Math.max(...tiles.map((t) => t.x)) + 1) * TILE
+  const y1 = (Math.max(...tiles.map((t) => t.y)) + 1) * TILE
+  g.strokeStyle = '#fff4dc'
+  g.lineWidth = 2
+  g.strokeRect(x0 + 1, y0 + 1, x1 - x0 - 2, y1 - y0 - 2)
+}
+
 function drawFurniture(g: Ctx, f: Furniture) {
   const px = f.x * TILE
   const py = f.y * TILE
   // 동일한 원본을 이웃집·플레이어 집·가방에 사용한다.
-  const sprite = FURNITURE_ART[f.item]
+  // 방향 그림이 있으면 보는 쪽 그림 (계획 17 작업 2 — 옛 저장은 옛 그림 쪽), 없으면 지금 그림
+  const facing = facingOf(f)
+  const turned = facingArt(f.item, facing)
+  const sprite = turned ?? FURNITURE_ART[f.item]
   if (sprite) {
-    g.drawImage(paint(`furni/${f.item}`, sprite.rows, FURNI_PALETTE), px, py + (f.on ? -6 : 0))
+    g.drawImage(paint(turned ? `furni/${f.item}/${facing}` : `furni/${f.item}`, sprite.rows, FURNI_PALETTE), px, py + (f.on ? -6 : 0))
     return
   }
   const r = (color: string, dx: number, dy: number, w: number, h: number) => {
@@ -1804,6 +1820,8 @@ export interface Renderer {
   scale: number
   /** 카메라 왼쪽 위 (칸) */
   camera: { x: number; y: number }
+  /** 방 꾸미기에서 고른 가구가 차지한 칸 (테두리를 그린다 — 계획 17 작업 2) */
+  selected: Tile[] | null
   draw(game: GameState, t: number, dt: number): void
 }
 
@@ -1814,6 +1832,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
   const renderer: Renderer = {
     zoom: 1,
     scale: 1,
+    selected: null,
     camera: { x: 0, y: 0 },
     draw(game, t, dt) {
       const W = VIEW_W * TILE / renderer.zoom
@@ -1928,6 +1947,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       // 방의 가구: 깔개 → 길을 막는 가구 → 위에 올린 작은 물건
       const ordered = [...game.room].sort((a, b) => furnitureOrder(a) - furnitureOrder(b) || a.y - b.y)
       for (const f of ordered) drawFurniture(g, f)
+      if (renderer.selected) drawSelection(g, renderer.selected)
       // 이야기 뒤 소품 (계획 16 작업 4 · 계획 17): 생활 확장 도트 → 없으면 가구 그림
       drawStoryProps(g, game)
       // 화덕 불

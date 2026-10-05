@@ -6,9 +6,9 @@ import { findPath } from './movement'
 import { ATTIC, BED_STAND, currentHomeLevel, HOME_ENTRY, inAttic, isHome, key, PLACES, placeActive, sameTile, SIDE_DOOR, tileAt, type Place } from './world'
 import { LESSON_SPOT } from './stories'
 import { addGift, type Inventory } from './items'
-import type { ItemId, PlaceId, Tile } from './types'
+import type { Facing, ItemId, PlaceId, Tile } from './types'
 
-import { FURNITURE_DEFS, type FurnitureDef, type Layer } from './furniture-defs'
+import { FURNITURE_DEFS, LEGACY_FACING, type FurnitureDef, type Layer } from './furniture-defs'
 
 export { FURNITURE_DEFS, type FurnitureDef, type Layer }
 
@@ -20,10 +20,30 @@ export interface Furniture {
   y: number
   /** 작은 물건이 탁자 위에 올려져 있다 */
   on?: boolean
+  /** 보는 쪽 (계획 17 작업 2). 없으면 옛 그림이 보던 쪽 — facingOf */
+  facing?: Facing
 }
 
-export function footprint(f: Pick<Furniture, 'item' | 'x' | 'y'>): Tile[] {
-  const d = FURNITURE_DEFS[f.item] ?? { w: 1, h: 1 }
+export const FACINGS: readonly Facing[] = ['down', 'up', 'left', 'right']
+/** 돌리기 순서: 앞 → 오른쪽 → 뒤 → 왼쪽 */
+const TURN: Record<Facing, Facing> = { down: 'right', right: 'up', up: 'left', left: 'down' }
+
+export function isFacing(v: unknown): v is Facing {
+  return typeof v === 'string' && (FACINGS as readonly string[]).includes(v)
+}
+
+export function facingOf(f: Pick<Furniture, 'item' | 'facing'>): Facing {
+  return f.facing ?? LEGACY_FACING[f.item] ?? 'down'
+}
+
+/** 방향에 따른 크기: 옆을 보면 가로·세로가 바뀐다 (탁자 2×1 → 1×2) */
+export function sizeOf(item: ItemId, facing: Facing = 'down'): { w: number; h: number } {
+  const d = FURNITURE_DEFS[item] ?? { w: 1, h: 1 }
+  return facing === 'left' || facing === 'right' ? { w: d.h, h: d.w } : { w: d.w, h: d.h }
+}
+
+export function footprint(f: Pick<Furniture, 'item' | 'x' | 'y' | 'facing'>): Tile[] {
+  const d = sizeOf(f.item, facingOf(f))
   const out: Tile[] = []
   for (let dy = 0; dy < d.h; dy++) for (let dx = 0; dx < d.w; dx++) out.push({ x: f.x + dx, y: f.y + dy })
   return out
@@ -58,19 +78,20 @@ function surfaceAt(room: readonly Furniture[], t: Tile): Furniture | undefined {
 }
 
 /** 이 자리에 놓으면 어떻게 놓이는가 (null = 못 놓음) */
-export function placement(room: readonly Furniture[], item: ItemId, t: Tile): Furniture | null {
+export function placement(room: readonly Furniture[], item: ItemId, t: Tile, facing?: Facing): Furniture | null {
   const def = FURNITURE_DEFS[item]
   if (!def) return null
   const clear = keepClear()
+  const turned = facing ? { facing } : {}
   if (def.layer === 'small') {
     // 탁자 위에 빈 칸이 있으면 그 위에
     const surf = surfaceAt(room, t)
-    if (surf) return room.some((f) => f.on && sameTile(f, t)) ? null : { item, x: t.x, y: t.y, on: true }
+    if (surf) return room.some((f) => f.on && sameTile(f, t)) ? null : { item, x: t.x, y: t.y, on: true, ...turned }
     if (!isFloor(t) || clear.some((c) => sameTile(c, t))) return null
     if (room.some((f) => layerOf(f) !== 'floor' && footprint(f).some((p) => sameTile(p, t)))) return null
-    return { item, x: t.x, y: t.y }
+    return { item, x: t.x, y: t.y, ...turned }
   }
-  const f: Furniture = { item, x: t.x, y: t.y }
+  const f: Furniture = { item, x: t.x, y: t.y, ...turned }
   const tiles = footprint(f)
   if (!tiles.every(isFloor)) return null
   if (def.layer === 'floor') {
@@ -89,6 +110,29 @@ export function placement(room: readonly Furniture[], item: ItemId, t: Tile): Fu
   return f
 }
 
+/**
+ * 놓인 가구를 한 번 돌린 모습 (null = 못 돌림). 왼쪽 위 칸은 그대로 두고, 크기가 바뀌면 놓기 규칙(벽·겹침·통로)을 다시 본다.
+ * 위에 물건이 올려진 탁자·협탁은 돌리지 않는다 — 물건을 먼저 치운다.
+ */
+export function rotation(room: readonly Furniture[], f: Furniture): Furniture | null {
+  if (!room.includes(f)) return null
+  const def = FURNITURE_DEFS[f.item]
+  if (!def) return null
+  if (def.surface && !f.on) {
+    const tiles = footprint(f)
+    if (room.some((o) => o.on && tiles.some((p) => sameTile(p, o)))) return null
+  }
+  const next = TURN[facingOf(f)]
+  const ok = placement(
+    room.filter((o) => o !== f),
+    f.item,
+    f,
+    next,
+  )
+  if (!ok || ok.x !== f.x || ok.y !== f.y || !!ok.on !== !!f.on) return null
+  return ok
+}
+
 /** 이 칸에서 치울 것: 위에 올린 작은 물건이 먼저, 그다음 가구 (탁자를 치우면 위의 것도 함께) */
 export function removal(room: readonly Furniture[], t: Tile): Furniture[] {
   const top = room.find((f) => f.on && sameTile(f, t))
@@ -105,7 +149,7 @@ export function refitRoom(room: readonly Furniture[], inv: Inventory): { room: F
   const kept: Furniture[] = []
   let bag = inv
   for (const f of room) {
-    const ok = placement(kept, f.item, f)
+    const ok = placement(kept, f.item, f, f.facing)
     if (ok && ok.x === f.x && ok.y === f.y && !!ok.on === !!f.on) kept.push(ok)
     else bag = addGift(bag, { [f.item]: 1 })
   }
