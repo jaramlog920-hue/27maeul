@@ -1,7 +1,7 @@
 // 편지 나르는 이웃: 말을 걸면 편지를 바로 건넨다 (2026-10-05, 편지 받기 단추 없음). 아침 방문 말이 있어도 편지 말이 가려지지 않는다 (계획 7 작업 2 검토 이월, 계획 14 작업 5 드문 편지)
 import { act, render, screen } from '@testing-library/react'
 import { CONTENT } from '../../content/catalog'
-import { T } from '../../content/text'
+import { fill, itemList, NEIGHBOR_LINES, T } from '../../content/text'
 import { newGame } from '../../engine/game'
 import { POSTMAN } from '../../engine/post'
 import { postLine, useGame } from '../../store/game-store'
@@ -91,5 +91,20 @@ describe('함께 일하기를 여는 동안 (2026-10-05 사용자)', () => {
     expect(screen.queryByText(T.ui.helpDone)).not.toBeInTheDocument()
     expect(screen.queryByText(T.work.blocks.done)).not.toBeInTheDocument()
     expect(screen.queryByText(T.ui.giftDone)).not.toBeInTheDocument()
+  })
+})
+
+describe('짧은 까닭은 누르면 알림으로 (2026-10-05 사용자)', () => {
+  it('물이 없을 때 빵 굽는 이웃 돕기: 대화칸에 "필요한 것" 줄이 없고, 누르면 알림이 뜬다', () => {
+    const s = newGame(CONTENT)
+    useGame.setState({ game: { ...s, scenes: [], inv: {} }, modal: { kind: 'talk', neighborId: 'baker', line: '' }, toast: null })
+    render(<ModalLayer />)
+    const note = fill(T.ui.helpNeeds, { items: itemList({ water: 1 }) })
+    expect(screen.queryByText(note)).not.toBeInTheDocument()
+    const btn = screen.getByRole('button', { name: NEIGHBOR_LINES.baker.help.label })
+    expect(btn).not.toBeDisabled()
+    act(() => btn.click())
+    expect(useGame.getState().toast?.text).toBe(note)
+    expect(useGame.getState().game.helped).not.toContain('baker')
   })
 })

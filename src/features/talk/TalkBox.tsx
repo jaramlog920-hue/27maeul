@@ -38,12 +38,15 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
   const game = useGame((s) => s.game)
   // 함께 일하기·배우기를 여는 동안에는 그 화면만 보인다 (선물하기 등 다른 단추를 가린다)
   const [focus, setFocus] = useState<'work' | 'skill' | null>(null)
-  const { startHelp, open, closeModal, startTeach } = useGame.getState()
+  const { startHelp, open, closeModal, startTeach, say } = useGame.getState()
   // 이웃마다 있던 사기·팔기·받기 단추(주고받기·약방 약초 팔기)는 2026-10-05에 지웠다 — 사고팔기는 장날 좌판에서
   const def = neighborById(modal.neighborId)
   if (!def) return null
   const lines = NEIGHBOR_LINES[def.id]
   const block = canHelp(game, def)
+  // 짧은 까닭(필요한 것·지침·가방 가득)은 대화칸에 줄로 달지 않고, 단추를 누르면 잠깐 뜨는 알림으로 (2026-10-05 사용자)
+  const blockNote =
+    block === 'needs' && def.help.needs ? fill(T.ui.helpNeeds, { items: itemList(def.help.needs) }) : block === 'tired' ? T.ui.helpTired : block === 'full' ? T.ui.bagFull : null
   const seasonal = def.id === 'grandpa' && grapesRipe(game.clock.day) && lines.helpSeason
   const helpLabel = seasonal ? lines.helpSeason!.label : lines.help.label
   const canGift = !game.gifted.includes(def.id) && GIFTABLE.some((i) => (game.inv[i] ?? 0) > 0)
@@ -95,14 +98,14 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
           </button>
         )}
         {active && (
-          <button className="primary" disabled={!has(game.inv, active.needs)} onClick={() => requestGive(def.id)}>
+          <button className="primary" onClick={() => (has(game.inv, active.needs) ? requestGive(def.id) : say(fill(T.ui.requestNeeds, { items: itemList(active.needs) })))}>
             {T.ui.talkFulfill}
           </button>
         )}
         {/* 집 넓히기와 살림 도구 부탁 */}
         {orderable && <button onClick={() => open({ kind: 'orders', npc: def.id })}>{T.orders.open}</button>}
         {def.marketOnly && isMarketDay(game.clock.day) && <button onClick={() => open({ kind: 'trade' })}>{T.ui.talkTrade}</button>}
-        <button disabled={block !== null} onClick={() => startHelp(def.id)} title={block ?? ''}>
+        <button disabled={block !== null && !blockNote} onClick={() => (blockNote ? say(blockNote) : startHelp(def.id))}>
           {helpLabel}
         </button>
         <button disabled={!canGift} onClick={() => open({ kind: 'gift', neighborId: def.id })}>
@@ -112,10 +115,6 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
         <SkillEntry npc={def.id} onOpen={() => setFocus('skill')} />
         <button onClick={closeModal}>{T.ui.close}</button>
       </div>
-      {block === 'needs' && def.help.needs && <p className="hint">{fill(T.ui.helpNeeds, { items: itemList(def.help.needs) })}</p>}
-      {block === 'tired' && <p className="hint">{T.ui.helpTired}</p>}
-      {block === 'full' && <p className="hint">{T.ui.bagFull}</p>}
-      {active && <p className="hint">{fill(T.ui.requestNeeds, { items: itemList(active.needs) })}</p>}
     </div>
   )
 }
