@@ -6,7 +6,7 @@ import { todayDiary, type Diary } from '../../engine/daybook'
 import { useGame } from '../../store/game-store'
 import { Passage } from '../passage/Passage'
 
-export function Review({ pieceId, attic }: { pieceId: string | null; attic?: boolean }) {
+export function Review({ pieceId }: { pieceId: string | null }) {
   const minute = useGame((s) => s.game.clock.minute)
   const game = useGame((s) => s.game)
   const { sleep, closeModal } = useGame.getState()
@@ -25,7 +25,6 @@ export function Review({ pieceId, attic }: { pieceId: string | null; attic?: boo
       ) : (
         <p>{T.ui.reviewNone}</p>
       )}
-      {attic && piece && <p className="hint">{T.ui.atticReadHint}</p>}
       {minute >= LATE && <p className="hint">{T.ui.sleepLate}</p>}
       <div className="actions">
         <button onClick={closeModal}>{T.ui.stayUp}</button>

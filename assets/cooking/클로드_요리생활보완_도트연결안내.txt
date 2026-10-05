@@ -1,0 +1,58 @@
+27마을 요리·남은 생활 기능 보완 도트 — 2026-10-05
+상태: 자산 제작 및 내보내기 완료. 게임 기능 연결은 별도.
+
+위치: assets/cooking/manifest.json, 미리보기.html
+원본: src/render/cooking-art.ts, src/render/life-gap-art.ts
+재생성: 프로젝트 폴더에서 node scripts/export-cooking-art.mjs
+
+제작 분량
+음식·도구·생활 보완 소품 78종, 네 방향 시설/상태 28개 = 정지 그림 106개.
+성인 요리 동작 21종 × 4방향 × 4프레임.
+아이 안전 준비 동작 8종 × 4방향 × 4프레임.
+보호자/아이 두 사람 배치 3종 × 4방향 × 4프레임.
+고양이/강아지·성체/새끼 성격 동작 6종 × 4방향 × 4프레임.
+각 동작의 개별 프레임, 시트, 성인/아이 소품 앞뒤·인물 레이어 제공.
+소품/시설에 8×8 가방 아이콘. 시설은 앞뒤 레이어 포함.
+
+13 요리
+보리·물·콩·허브·무화과·꿀 재료, 씻기/손질/반죽/성형 상태.
+길쭉/둥근/가장자리/표면 무늬 빵, 꿀빵·무화과 접시·콩 요리·허브 콩·허브 차.
+냄비 조리 전/끓는 중/완성/빈 상태, 완성 김, 빈 접시/그릇/찻잔.
+주걱·국자·화덕 빵삽·대야·도마·쟁반·식탁 천·장식 접시·2/4인 차림·정리 전후 그릇.
+올리브 곁들임 그림은 추후 메뉴용이며 실제 식용/획득 지원 전에는 노출하지 않음.
+물 항아리로 온도를 낮추는 냉장 찬장: closed/open/stocked × 4방향.
+현대 전기 냉장고가 아닌 옛 마을의 식재료 보관 가구. 부패/약효/무한 보관 시스템을 자동 추가하지 않음.
+
+남은 기능 대조표
+소모임: seatReserved(늦는 사람 자리), seatCleared(불참 뒤 정리), meetingRainCover, meetingRescheduled 추가.
+  실제 도착/퇴장은 기존 주민 걷기·인사, 일정 겹침 안내는 기존 UI를 사용.
+작은 행사: eventPreparing, eventWelcome, artCovered/artPresented, eventCleanup 추가.
+  기존 events의 housewarmingSign/exhibitStand 및 생일·잔치 도트 재사용.
+  hangDecor/unveil/clap/clearDecor는 events/additional/의 기존 동작 재사용.
+일터·배움: loomInProgress, ringInProgress, netInProgress, woolUnsorted/InProgress,
+  grapeBasketHalf, oilFilling, herbJarLabel, seedBoxSorted 추가.
+  완성 천·고리·그물·양털·기름·수확 바구니는 furniture/expansion의 기존 결과물 재사용.
+  plane/weave/craft/carry/pour/water/give/take는 기존 동작 재사용.
+좌판: marketFolded/marketClosing 4방향, marketNameTag, displayCandle/Textile/Ring/Toy 추가.
+  개점 marketOpen, 기존 선택 천, wrappedGoods 재사용. 상품 3자리/수량/이름은 게임 데이터로 배치.
+시설: benchBuilding/flowerBorderBuilding 4방향 추가.
+  기존 buildMaterials/constructionFrame/shadeFrame/shadeComplete/longBench/flowerBorder와 완공 행사 재사용.
+가족/집: familyPotFirst, childFirstDrawing, childPatternCloth, petWindowMat 추가.
+  기존 toyBoat/album/가구 레이어, child sit/draw/show, event holdBaby/walkHand를 현재 성장 단계에 맞춰 재사용.
+반려동물: shy/curious/playful/calm/turnHead/nuzzle 추가. 기존 walk/wait/sniff/play/fetch/wag/잠자기와 조합.
+근황: newBreadDisplay/lunchPlate 추가. clothPattern/bagRepaired/basketEmpty/beeDrawing 등 기존 주민 소품 재사용.
+
+연결 규칙
+이미지 크기·기준점·상호작용 위치·프레임 시간은 manifest에 있음. 확대는 nearest-neighbor.
+cookingFrame(who,facing,action,frame,opts)로 실제 머리·옷·피부·장신구를 유지.
+앞뒤 소품과 인물은 다른 팔레트. PNG의 기본 writer 외형을 모든 주민에게 고정 사용하지 않음.
+순서: 시설 뒤 → propBack → actor → propFront → 시설 앞.
+아이 동작은 CHILD_COOK_ACTIONS만 허용. 아기에게 요리 활동을 주지 않음.
+두 사람 시트는 배치 예시. 실제로는 보호자/아이 외형을 각각 호출하고 현재 키에 맞춰 기준점을 맞춤.
+요리 단계·실제 재료 소비·음식 지급·참석자·일정은 게임 엔진이 결정. 그림 재생으로 보상을 지급하지 않음.
+늦음/불참·날씨·일정 충돌은 이 자산만으로 구현 완료가 되지 않음.
+
+검증
+내보내기 중 모든 픽셀의 팔레트·행 크기·기준점·PNG 참조 검증.
+아이 위험 작업 호출 거부 검증. TypeScript 검사 통과.
+preview.png/motion-preview.png 육안 확인. 웹 미리보기에서 탭별 애니메이션 확인 가능.

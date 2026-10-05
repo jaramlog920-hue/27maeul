@@ -1,0 +1,13 @@
+27마을 배우자 방 13종 — 2026-10-05
+상태: 디자인·자산 및 북쪽 배우자방 연결 완료.
+상세 설계: docs/characters/25_배우자방_인테리어_설계.md
+원본: src/render/spouse-room-art.ts
+재생성: node scripts/export-spouse-rooms.mjs
+manifest.json의 rooms: 방별 placements/로컬 좌표/통행/개념/생활 행동. assets: 크기/방향/기준점/아이콘/앞뒤 레이어.
+src/engine/home-layout.ts의 북쪽 PARTNER_ROOM (18,104)과 PARTNER_DOOR (21,110)으로 연결 완료. 1단계 증축 후 출입하고 결혼 시 배우자 가구를 배치한다.
+실제 배우자 한 명의 방만 결혼 완료 시 한 번 생성. 기존 유저 집 가구·필사·서고 기능 보존.
+미리보기 PNG는 전체 디자인 확인용이며 실제 게임은 가구 뒤→현재 인물→가구 앞의 원본 레이어로 그릴 것.
+13명: wendell/cosmo/rudy/dexter/basil/marigold/penelope/tilly/juniper/poppy/merchant/presser/postman.
+기혼/기존 부모 일반 주민은 추가 후보가 아니므로 방 없음.
+새 도트: 소품 83개, 네 방향 탁자 52개, 8×8 아이콘, 탁자 앞뒤 레이어, 방 바닥·벽과 합성 미리보기.
+중앙 통로·가구 접근·팔레트·크기·파일 참조 검사 완료.

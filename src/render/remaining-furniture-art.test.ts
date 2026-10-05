@@ -5,7 +5,7 @@ import { FURNITURE_ART, FURNI_PALETTE, iconFromArt } from './furniture-art'
 import { REMAINING_FURNITURE_ART, REMAINING_FURNITURE_DIRECTIONS, REMAINING_FIXTURE_DIRECTIONS } from './remaining-furniture-art'
 
 it('기존에 만든 20종을 건드리지 않고 나머지 배치 가구를 모두 제공한다', () => {
-  const expected=Object.keys(FURNITURE_DEFS).filter(id=>!HOME_SPACE_ART[id])
+  const expected=Object.keys(FURNITURE_DEFS).filter(id=>!HOME_SPACE_ART[id] && !id.startsWith('home') && !id.startsWith('spouse:'))
   expect(Object.keys(REMAINING_FURNITURE_ART).sort()).toEqual(expected.sort())
   for(const [id,a] of Object.entries(HOME_SPACE_ART)) expect(FURNITURE_ART[id]).toBe(a)
   for(const [id,a] of Object.entries(REMAINING_FURNITURE_ART)) {

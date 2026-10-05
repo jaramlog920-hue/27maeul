@@ -1,10 +1,10 @@
 import { placement, removal, solidTiles, FURNITURE_DEFS, footprint, type Furniture } from './room'
 import { findPath } from './movement'
-import { HOME_DOOR, HOME_ENTRY, OLD_HOME, PLACES } from './world'
+import { HOME_DOOR, HOME_ENTRY, HOME_RECT, PLACES } from './world'
 import { LESSON_SPOT } from './stories'
 
 /** 예전 지도 위 집의 칸 → 지금 집 안 방의 같은 칸 */
-const h = (x: number, y: number) => ({ x: x + OLD_HOME.dx, y: y + OLD_HOME.dy })
+const h = (x: number, y: number) => ({ x: x + HOME_RECT.x0 - 2, y: y + HOME_RECT.y0 - 2 })
 
 describe('방 꾸미기', () => {
   it('깔개는 3×2, 식탁은 2×1', () => {

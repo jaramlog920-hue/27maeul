@@ -1,4 +1,4 @@
-import { MAP, WIDTH, HEIGHT, PLACES, HOUSES, START, HOME_DOOR, HOME_ENTRY, HOME_FRONT, HOME_ROOM, HOUSE_GROW, HOUSE_RECT, homeHouse, houseAt, isWalkable, placeAt, cameraFor, VIEW_W, VIEW_H, VILLAGE_H, isHome, tileAt, ROOMS, WARPS, roomAt, key, ROOM_W, ROOM_H, LOCKED_DOORS, ATTIC, inAttic, ACTS_DOOR, ACTS_ROOM, setOpenDoors, setHomeLevel } from './world'
+import { MAP, WIDTH, HEIGHT, PLACES, HOUSES, START, HOME_DOOR, HOME_ENTRY, HOME_FRONT, HOME_ROOM, HOUSE_GROW, HOUSE_RECT, homeHouse, houseAt, isWalkable, placeAt, cameraFor, VIEW_W, VIEW_H, VILLAGE_H, isHome, tileAt, ROOMS, WARPS, roomAt, key, ROOM_W, ROOM_H, LOCKED_DOORS, ACTS_DOOR, ACTS_ROOM, setOpenDoors, setHomeLevel } from './world'
 import { findPath, pathToward, stepActor, type Actor } from './movement'
 import { FRUIT_TREES, treeKind, type TreeKind } from './world'
 
@@ -49,7 +49,7 @@ describe('world', () => {
     for (const [id, p] of Object.entries(PLACES)) {
       const t = p.tiles[0]
       // 방 안의 장소는 그 방에 들어온 자리에서 걷는다 (다락 창은 다락 문깔개 앞에서, 집 안은 집 문깔개 앞에서)
-      const from = roomAt(t)?.entry ?? (inAttic(t) ? ATTIC.entry : t.y >= HOME_ROOM.y0 && t.x >= HOME_ROOM.x0 ? HOME_ENTRY : HOME_FRONT)
+      const from = roomAt(t)?.entry ?? (t.y >= HOME_ROOM.y0 && t.x >= HOME_ROOM.x0 ? HOME_ENTRY : HOME_FRONT)
       const path = p.stand ? findPath(from, p.stand) : pathToward(from, t)
       expect(path, id).not.toBeNull()
     }
@@ -183,7 +183,7 @@ describe('내 집 (계획 7-1 작업 5)', () => {
     expect(roomAt(HOME_ENTRY)).toBeNull()
     // 다른 방과 겹치지 않는다 (넓힌 새 방까지 3칸 더)
     const w = HOME_ROOM.w + 3
-    for (const r of [...ROOMS, ATTIC]) {
+    for (const r of ROOMS) {
       const apart = r.x0 + r.w <= HOME_ROOM.x0 || HOME_ROOM.x0 + w <= r.x0 || r.y0 + r.h <= HOME_ROOM.y0 || HOME_ROOM.y0 + HOME_ROOM.h <= r.y0
       expect(apart, r.owner).toBe(true)
     }
@@ -268,7 +268,7 @@ describe('사도행전 방 (계획 5 작업 5)', () => {
       expect(findPath(inside, p.stand!), id).not.toBeNull()
       for (const t of p.tiles) expect(placeAt(t), id).toBe(id)
     }
-    for (const r of [...ROOMS, ATTIC].filter((r) => r !== ACTS_ROOM)) {
+    for (const r of ROOMS.filter((r) => r !== ACTS_ROOM)) {
       const apart = r.x0 + r.w <= ACTS_ROOM.x0 || ACTS_ROOM.x0 + ACTS_ROOM.w <= r.x0 || r.y0 + r.h <= ACTS_ROOM.y0 || ACTS_ROOM.y0 + ACTS_ROOM.h <= r.y0
       expect(apart, r.owner).toBe(true)
     }

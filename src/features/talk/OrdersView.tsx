@@ -24,7 +24,7 @@ export function OrdersView({ npc }: { npc: string }) {
     const st = nextHomeStage(game)
     const hb = st ? canOrderHome(game) : 'done'
     if (st && hb !== 'notMoved')
-      rows.push({ key: 'home', name: st.level === 1 ? T.ui.homeStage1 : T.ui.homeStage2, cost: fill(T.ui.homeCost, { coins: st.coins, items: itemList(st.needs) }), block: hb, act: () => askHome(npc) })
+      rows.push({ key: 'home', name: st.level === 1 ? T.ui.homeStage1 : st.level === 2 ? T.ui.homeStage2 : T.ui.homeStage3, cost: fill(T.ui.homeCost, { coins: st.coins, items: itemList(st.needs) }), block: hb, act: () => askHome(npc) })
     for (const w of CARPENTER_WORKS) {
       const b = canOrderWork(game, w.id)
       if (b === 'owned' || b === 'notMoved') continue

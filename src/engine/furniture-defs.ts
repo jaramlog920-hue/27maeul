@@ -1,4 +1,5 @@
 // 가구 크기와 층 (방 꾸미기·이웃집 방이 함께 쓴다 — world가 room을 부르지 않게 따로 둔다)
+import designs from '../content/spouse-rooms.json'
 import type { ItemId } from './types'
 
 export type Layer = 'floor' | 'solid' | 'small'
@@ -11,6 +12,12 @@ export interface FurnitureDef {
 }
 
 export const FURNITURE_DEFS: Partial<Record<ItemId, FurnitureDef>> = {
+  homeCradle: { w: 1, h: 1, layer: 'solid' },
+  homeBed: { w: 1, h: 1, layer: 'solid' },
+  homeDesk: { w: 1, h: 1, layer: 'solid' },
+  homeHearth: { w: 1, h: 1, layer: 'solid' },
+  homeShelf: { w: 1, h: 1, layer: 'solid' },
+  homeWorkbench: { w: 1, h: 1, layer: 'solid' },
   rug: { w: 3, h: 2, layer: 'floor' },
   cushion: { w: 1, h: 1, layer: 'floor' },
   table: { w: 2, h: 1, layer: 'solid', surface: true },
@@ -63,3 +70,13 @@ export const FURNITURE_DEFS: Partial<Record<ItemId, FurnitureDef>> = {
  * 여기 없는 가구는 앞(down)을 본다.
  */
 export const LEGACY_FACING: Partial<Record<ItemId, 'left' | 'right'>> = { chair: 'right', woodToy: 'right', teapot: 'left' }
+
+export const SPOUSE_FURNITURE = Object.fromEntries(designs.flatMap(d => d.placements.map((p, i) => [`spouse:${d.id}:${i}`, { ...p, owner: d.name } ])))
+for (const [id, p] of Object.entries(SPOUSE_FURNITURE)) {
+  const side = p.facing === 'left' || p.facing === 'right'
+  FURNITURE_DEFS[id as ItemId] = { w: side ? p.h : p.w, h: side ? p.w : p.h,
+    layer: p.layer === 'floor' ? 'floor' : p.blocking ? 'solid' : 'small',
+    surface: p.layer === 'furniture' && (p.id.includes('desk') || p.id.includes('table') || p.id.includes('sideboard') || p.id === 'cupboard') }
+}
+
+for (const [id, p] of Object.entries(SPOUSE_FURNITURE)) if (p.facing === 'left' || p.facing === 'right') LEGACY_FACING[id as ItemId] = p.facing

@@ -32,8 +32,6 @@ export type PlaceId =
   // 집 앞 편지함 (계획 11 작업 3): 편지 나르는 이웃과 마음 4가 된 뒤부터
   | 'mailbox'
   | 'garden'
-  | 'ladder'
-  | 'atticWindow'
   // 사도행전 방 (계획 5 작업 5): 사도행전 선반, 벽의 여정 판, 읽는 탁자
   | 'actsShelf'
   | 'journeyBoard'
@@ -112,6 +110,8 @@ export interface Piece {
 }
 
 export type ItemId =
+  | 'homeCradle' | 'homeBed' | 'homeDesk' | 'homeHearth' | 'homeShelf' | 'homeWorkbench'
+  | `spouse:${string}`
   | 'water'
   | 'reed'
   | 'papyrus'

@@ -107,12 +107,21 @@ export function stepNpc(npc: Npc, def: NeighborDef, goal: Tile | null, dt: numbe
 export function route(from: Tile, to: Tile, blockers: ReadonlySet<string> = new Set()): Tile[] | null {
   const direct = findPath(from, to, blockers)
   if (direct) return direct
-  for (const [k, dest] of WARPS) {
+  const queue: { at: Tile; first: Tile[] | null }[] = [{ at: from, first: null }]
+  const visited = new Set<string>([key(from)])
+  while (queue.length) {
+    const leg = queue.shift()!
+    if (findPath(leg.at, to, blockers)) return leg.first
+    for (const [k, dest] of WARPS) {
     const [x, y] = k.split(',').map(Number)
     const door = { x, y }
-    if (findPath(dest, to, blockers) === null) continue
-    const p = findPath(from, door, blockers)
-    if (p) return p
+    if (visited.has(key(dest))) continue
+    const p = findPath(leg.at, door, blockers)
+    if (p) {
+      visited.add(key(dest))
+      queue.push({ at: dest, first: leg.first ?? p })
+    }
+    }
   }
   return null
 }

@@ -5,7 +5,6 @@
 // 연애 대화·장면에 성경 구절을 넣지 않는다 (설계 §8).
 import { isMarketDay } from './calendar'
 import type { Tile } from './types'
-import { HOME_EXPAND_RECT } from './world'
 
 /** 연애 후보 (neighbors.json의 romanceable과 같다 — 테스트가 맞춰 본다) */
 export const CANDIDATE_IDS = ['wendell', 'cosmo', 'rudy', 'dexter', 'basil', 'marigold', 'penelope', 'tilly', 'juniper', 'poppy'] as const
@@ -76,8 +75,6 @@ export const WORK_HERE: Partial<Record<string, DatePlace>> = { tea: 'tea' }
 
 /** 결혼 잔치: 광장 모닥불 바로 위 (신랑·신부 자리) */
 export const WEDDING_SPOT: Tile = { x: 24, y: 19 }
-/** 배우자가 저녁부터 아침까지 지내는 곳: 내 집 넓힌 방 */
-export const SPOUSE_SPOT: Tile = { x: HOME_EXPAND_RECT.x0 + 1, y: HOME_EXPAND_RECT.y0 + 2 }
 /** 배우자가 집에 돌아오는 때 (19:00), 아침에 나가는 때 (07:00) */
 export const SPOUSE_HOME_FROM = 19 * 60
 export const SPOUSE_HOME_TO = 7 * 60

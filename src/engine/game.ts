@@ -1,3 +1,5 @@
+import { SPOUSE_FURNITURE } from './furniture-defs'
+import { initialHomeFurniture, spouseFurniture } from './room'
 import type { Club, ClubSession } from './clubs'
 import { expireWorkDay, type WorkDay } from './work-day'
 import type { Skills, SkillLesson } from './skills'
@@ -67,7 +69,6 @@ import {
   NO_ROMANCE,
   SPOUSE_HOME_FROM,
   SPOUSE_HOME_TO,
-  SPOUSE_SPOT,
   PARTNER_WORK,
   STORY_HEARTS,
   WALK_FROM,
@@ -123,7 +124,8 @@ import {
   momentNow,
   onceKey,
 } from './stories'
-import { propFootprint, ATTIC, BED_STAND, HEARTH_STAND, HOUSES, PET_HOME, HOME_FRONT, inAttic, isHome, isIndoor, isWalkable, key, LADDER, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setMailbox, setOpenDoors, START, tileAt, WARPS } from './world'
+import { propFootprint, HOUSES, PET_HOME, HOME_FRONT, isHome, isIndoor, isWalkable, key, HOME_ENTRY, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setHomeFurniture, setMailbox, setOpenDoors, setSpouseRoom, START, tileAt, WARPS } from './world'
+import { SPOUSE_ROOM_STAND } from './spouse-room'
 import { BOOKS, type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
 import { withLookDefaults, type Avatar, type FullAvatar } from './avatar'
 import { BOARD_GAIN, boardFor, type BoardRequest } from './board'
@@ -222,8 +224,8 @@ export interface GameState {
   looks?: Record<string, Avatar>
   /** 텃밭 ('x,y' → 작물) */
   garden: Record<string, Plot>
-  /** 집 단계: 0 작업실, 1 방 하나 더, 2 다락 서재 (목수에게 부탁한 단계는 flags.homeOrder, 다음 날 아침 지어진다) */
-  homeLevel: 0 | 1 | 2
+  /** 집 단계: 0 작업실, 1 배우자방, 2 아이방, 3 생활방 (목수에게 부탁한 단계는 flags.homeOrder, 다음 날 아침 지어진다) */
+  homeLevel: 0 | 1 | 2 | 3
   /**
    * 사도행전 방의 여정 판: 놓인 카드 번호(journey.json의 order)의 차례. 얻은 카드는 장을 엮을 때 판에 들어온다.
    * 여정을 다 이으면 flags.actsShip 1 → 다음 날 아침 2 (나루에 배가 들어온다, 장면 actsShip)
@@ -305,8 +307,10 @@ export function startAct(s: GameState, kind: ActKind, at?: Tile): GameState {
 }
 
 /** 지도(world.tileAt)가 이 게임의 집 단계·열린 서고 방 문(방 표)을 보게 한다. 지도를 읽는 엔진 입구마다 부른다 */
-export function syncHome(s: Pick<GameState, 'homeLevel'> & Partial<Pick<GameState, 'flags'>>): void {
+export function syncHome(s: Pick<GameState, 'homeLevel'> & Partial<Pick<GameState, 'flags' | 'romance' | 'room'>>): void {
   setHomeLevel(s.homeLevel ?? 0)
+  setHomeFurniture(s.room ?? initialHomeFurniture())
+  setSpouseRoom(s.romance?.stage === 'married' ? s.romance.partner : null)
   setOpenDoors(openDoorsFor(s.flags ?? {}))
   // 집 앞 편지함(우체통)은 없앴다 — 편지는 문 앞 편지 바구니로 (2026-09-30 사용자)
   setMailbox(false)
@@ -333,7 +337,7 @@ function defsById(content: GameContent): Record<string, NeighborDef> {
   return Object.fromEntries(content.neighbors.map((n) => [n.id, n]))
 }
 
-type GoalState = Pick<GameState, 'clock' | 'flags' | 'progress' | 'hearts' | 'today' | 'shelved'> & Partial<Pick<GameState, 'romance' | 'homeLevel' | 'life' | 'avatar' | 'plans' | 'npcs'>>
+type GoalState = Pick<GameState, 'clock' | 'flags' | 'progress' | 'hearts' | 'today' | 'shelved'> & Partial<Pick<GameState, 'romance' | 'homeLevel' | 'life' | 'avatar' | 'plans' | 'npcs' | 'room'>>
 
 /**
  * 서고에 꽂은 책 수 (복음서·사도행전·편지 모두) — 마을 구역(lockedZones)과 서고 권수로 이사 오는 이웃이 이것을 센다.
@@ -415,7 +419,7 @@ function lateSpots(s: GoalState, content: Pick<GameContent, 'neighbors'>, joined
   }
   // 배우자 (계획 6): 저녁 일곱 시부터 아침 일곱 시까지 내 집 넓힌 방에서 지낸다 (잔치·모임이 있으면 아래에서 그쪽으로)
   const r = s.romance ?? NO_ROMANCE
-  if (r.stage === 'married' && r.partner && (m >= SPOUSE_HOME_FROM || m < SPOUSE_HOME_TO)) special[r.partner] = SPOUSE_SPOT
+  if (r.stage === 'married' && r.partner && (m >= SPOUSE_HOME_FROM || m < SPOUSE_HOME_TO)) special[r.partner] = safeHomeSpot(SPOUSE_ROOM_STAND, s.room ?? [])
   // 마을 사랑방 (계획 10): 모임·잔치·저녁 초대가 없는 저녁, 이웃 셋이 긴 탁자 둘레에 모인다 (비 와도 — 집 안이라)
   if (hallOpen(m)) hallGuestsToday(s, content).forEach((id, i) => (special[id] = HALL_SPOTS[i]))
   // 복음서 방 잔치 저녁: 이사 온 이웃은 모두(상인도) 광장 모닥불 둘레로 — 비가 와도 연다
@@ -501,12 +505,14 @@ export function neighborsPresent(s: GameState, content: GameContent): string[] {
 export function newGame(content: GameContent, avatar?: Avatar): GameState {
   const clock = newClock()
   // heartPoints: hearts에 점수(0~100)가 들어 있다는 표식 (예전 저장과 구분)
-  // homeRoom: 집 안이 지도 아래 따로 된 방이라는 표식 (그 전 저장은 불러올 때 자리를 옮긴다 — save.ts)
-  const flags: Record<string, number> = { heartPoints: 1, homeRoom: 1 }
+  // homeLayout: 지금 집 배치(작업실·배우자방·아이방·생활방)라는 표식 (그 전 저장은 불러올 때 집 안을 새로 놓는다 — save.ts)
+  const flags: Record<string, number> = { heartPoints: 1, homeLayout: 2 }
   const progress = emptyProgress()
   const base = { clock, flags, progress, hearts: {}, today: NO_TODAY, shelved: {} }
   // 새 게임은 넓히기 전 집 — 지도(모듈 전역 집 단계)도 0으로, 서고의 방 문은 모두 닫힌 채
   setHomeLevel(0)
+  setHomeFurniture(initialHomeFurniture())
+  setSpouseRoom(null)
   setOpenDoors([])
   setMailbox(false)
   return {
@@ -545,7 +551,7 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
     recipesKnown: [],
     myLines: {},
     trails: {},
-    room: [],
+    room: initialHomeFurniture(),
     todayNotes: [],
     today: NO_TODAY,
     coins: 0,
@@ -588,12 +594,13 @@ export function chooseBook(s: GameState, book: Book, content: GameContent): Game
 
 /** 불러온 뒤 이웃을 제자리에 세운다 (걷던 길은 저장하지 않으므로) */
 export function settle(s: GameState, content: GameContent): GameState {
+  s = furnishSpouse(s)
   s = expireWorkDay(s)
   s = advancePlans(s, content)
   syncHome(s)
   // 지도를 옮기기 전 저장은 지금은 집 안인 칸에 서 있을 수 있다 — 갇히지 않게 집 앞으로 옮긴다
-  // (방·다락·내 집 안은 마을과 이어지지 않으므로 걸을 수 있기만 하면 된다)
-  const stuck = (t: Tile) => !isWalkable(t) || (!roomAt(t) && !inAttic(t) && !isHome(t) && findPath(t, HOME_FRONT) === null)
+  // (방·내 집 안은 마을과 이어지지 않으므로 걸을 수 있기만 하면 된다)
+  const stuck = (t: Tile) => !isWalkable(t) || (!roomAt(t) && !isHome(t) && findPath(t, HOME_FRONT) === null)
   let player = { ...s.player, path: [] as Tile[] }
   if (stuck(playerTile(s))) player = { ...player, x: HOME_FRONT.x, y: HOME_FRONT.y, facing: 'down', walkTime: 0 }
   let companion = s.companion
@@ -640,8 +647,6 @@ export function walkDirection(s: GameState, dx: number, dy: number): GameState {
   syncHome(s)
   const from = playerTile(s)
   const to = { x: from.x + dx, y: from.y + dy }
-  // 사다리 쪽으로 걸으면 다락으로 올라간다
-  if (sameTile(to, LADDER) && placeAt(LADDER) === 'ladder') return { ...s, player: warpTo(s.player, ATTIC.entry), target: null, idle: IDLE_RESET }
   const path = findPath(from, to, blockersOf(s))
   if (!path || path.length !== 1) {
     // 막혀서 못 가도 그쪽을 바라본다 — 스페이스로 앞에 있는 이웃·물건과 상호작용하려면 필요하다
@@ -660,7 +665,7 @@ function interactableAt(s: GameState, t: Tile): boolean {
     straysToday(s).some((a) => sameTile(STRAY_SPOTS[a], t)) ||
     (!!s.companion && sameTile({ x: Math.round(s.companion.x), y: Math.round(s.companion.y) }, t)) ||
     placeAt(t) !== null ||
-    bookcaseAt(s, t)
+    bookcaseAt(s, t) || s.room.some(f => f.item.startsWith('spouse:') && footprint(f).some(p => sameTile(p, t)))
   )
 }
 
@@ -713,6 +718,16 @@ export function tapTile(s: GameState, tile: Tile): GameState {
   const pet = s.companion && sameTile({ x: Math.round(s.companion.x), y: Math.round(s.companion.y) }, tile)
   const kid = childTile(s)
   const place = placeAt(tile)
+  const custom = s.room.find(f => f.item.startsWith('spouse:') && footprint(f).some(p => sameTile(p, tile)))
+  if (!npc && !place && custom) {
+    const meta = SPOUSE_FURNITURE[custom.item]
+    if (isNear(from, tile) && !s.player.path.length) {
+      const kind: ActKind = meta.id.includes('desk') ? 'craft' : meta.id.includes('personal') || meta.id.includes('bookcase') ? 'read' : meta.id.includes('sideboard') || meta.id.includes('keepsake') ? 'reach' : 'sit'
+      return startAct({ ...s, target: null }, kind, tile)
+    }
+    const path = pathToward(from, tile, blockers)
+    return path ? { ...s, player: { ...s.player, path }, target: { kind: 'ground' }, idle: IDLE_RESET } : s
+  }
   if (kid && sameTile(kid, tile) && !npc) {
     target = { kind: 'child' }
     path = sameTile(kid, from) ? [] : pathToward(from, tile, new Set([...blockers, key(tile)]))
@@ -757,7 +772,7 @@ function targetTile(s: GameState, target: Target): Tile | null {
 }
 
 function warpTo<T extends GameState['player']>(player: T, to: Tile): T {
-  return { ...player, x: to.x, y: to.y, path: [], facing: roomAt(to) || inAttic(to) || isHome(to) ? 'up' : 'down' }
+  return { ...player, x: to.x, y: to.y, path: [], facing: roomAt(to) || isHome(to) ? 'up' : 'down' }
 }
 
 /**
@@ -789,7 +804,7 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
     indoor: isIndoor(here),
     season,
     phase: phaseOf(clock.minute),
-    warm: sameTile(here, HEARTH_STAND),
+    warm: !!PLACES.hearth.stand && sameTile(here, PLACES.hearth.stand),
     hasBlanket: count(s.inv, 'blanket') > 0,
     peace: peaceful(s),
     hot: weatherOf(clock.day) === 'hot',
@@ -835,15 +850,11 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
           target = { ...target, tries: target.tries + 1 }
         } else target = null
       } else target = null
-    } else if (target.kind === 'place' && target.id === 'ladder') {
-      // 사다리 앞에 닿으면 다락으로 올라간다
-      player = warpTo(player, ATTIC.entry)
-      target = null
     } else {
       events.push({ type: 'arrived', target })
       target = null
     }
-    if (tt && player.path.length === 0 && !inAttic(player)) player = { ...player, facing: facingFor(tt.x - now.x, tt.y - now.y, player.facing) }
+    if (tt && player.path.length === 0) player = { ...player, facing: facingFor(tt.x - now.x, tt.y - now.y, player.facing) }
   }
 
   // 동반 동물
@@ -1168,14 +1179,23 @@ export function childAtSchool(s: Pick<GameState, 'flags' | 'clock'>): boolean {
  * 아이가 지금 있는 칸 (누르면 데리고 다닐지 정한다): 아기와 집에 둔 아이는 요람 곁, 따라다니는 아이는 기록자 곁(보는 쪽 반대),
  * 혼자 다니는 아이는 때마다 정한 자리
  */
-export function childTile(s: Pick<GameState, 'child' | 'clock' | 'player'> & Partial<Pick<GameState, 'flags'>>): Tile | null {
+export function childTile(s: Pick<GameState, 'child' | 'clock' | 'player'> & Partial<Pick<GameState, 'flags' | 'room'>>): Tile | null {
   const c = s.child
   if (!c) return null
   const mode = childMode(c, s.clock.day)
   if (mode === 'away') return null
   if (s.flags && childAtSchool(s as Pick<GameState, 'flags' | 'clock'>)) return SCHOOL_SEAT
-  if (mode === 'cradle' || mode === 'home') return CRADLE_SPOT
-  if (mode === 'roam') return helperSpot(s.clock.minute)
+  if (mode === 'cradle' || mode === 'home') {
+    const crib = s.room?.find(f => f.item === 'homeCradle')
+    const at = crib ? { x: crib.x, y: crib.y } : HOME_ENTRY
+    return mode === 'cradle' ? at : safeHomeSpot(at, s.room ?? [])
+  }
+  if (mode === 'roam') {
+    const at = helperSpot(s.clock.minute)
+    if (!sameTile(at, CRADLE_SPOT)) return at
+    const crib = s.room?.find(f => f.item === 'homeCradle')
+    return safeHomeSpot(crib ? { x: crib.x, y: crib.y } : HOME_ENTRY, s.room ?? [])
+  }
   const back = { left: { x: 1, y: 0 }, right: { x: -1, y: 0 }, up: { x: 0, y: 1 }, down: { x: 0, y: -1 } }[s.player.facing]
   return { x: Math.round(s.player.x) + back.x, y: Math.round(s.player.y) + back.y }
 }
@@ -2347,12 +2367,12 @@ function atWeddingFire(p: Tile): boolean {
 /** 결혼 (잔치 장면이 열릴 때): 부부가 되고, 그날 밤부터 배우자가 내 집에서 지낸다 */
 function marry(s: GameState): GameState {
   const id = s.romance.partner!
-  return {
+  return furnishSpouse({
     ...s,
     romance: { ...s.romance, stage: 'married', weddingDay: null, marriedDay: s.clock.day },
     scenes: [...s.scenes, `wedding:${id}`],
     flags: { ...s.flags, [onceKey('wedding', s.clock.day)]: 1 },
-  }
+  })
 }
 
 /** 배우자의 아침 선물 (하루 한 번, 처음 말 걸 때): 배우자 집안 일에서 나는 것 하나 */
@@ -2363,7 +2383,20 @@ export function spouseGift(s: GameState, def: NeighborDef): { state: GameState; 
   return { state: { ...putAway(s, gift), flags: { ...s.flags, spouseGiftDay: s.clock.day } }, gift }
 }
 
-export type DateBlock = 'noPartner' | 'away' | 'busy' | 'done' | 'closed' | 'coins' | 'notYet' | 'cloudy' | 'wet' | null
+/**
+ * 배우자가 아이방 이야기를 꺼낸다: 결혼하고 아이가 올 날이 지났는데 아이방(2단계)이 없을 때,
+ * 사흘에 한 번 처음 말 걸 때 (아이는 아이방이 있어야 온다 — childMorning). 목수에게 부탁해 두었으면 꺼내지 않는다
+ */
+export function babyRoomTalk(s: GameState, id: string): GameState | null {
+  const r = s.romance ?? NO_ROMANCE
+  if (r.stage !== 'married' || r.partner !== id || r.marriedDay === null || s.child) return null
+  if (s.homeLevel >= 2 || s.flags.homeOrder === 2 || s.clock.day < r.marriedDay + CHILD_AFTER_WEDDING) return null
+  const last = s.flags.babyRoomTalkDay
+  if (last !== undefined && s.clock.day < last + 3) return null
+  return { ...s, flags: { ...s.flags, babyRoomTalkDay: s.clock.day } }
+}
+
+export type DateBlock ='noPartner' | 'away' | 'busy' | 'done' | 'closed' | 'coins' | 'notYet' | 'cloudy' | 'wet' | null
 
 /**
  * 연인이 지금 함께 갈 수 있는가 (계획 10 작업 4):
@@ -2843,9 +2876,9 @@ export function reviewPick(s: GameState, rng: Rng): string | null {
   return s.collected[Math.min(s.collected.length - 1, Math.floor(rng() * s.collected.length))]
 }
 
-/** 오늘이 평안인 날인가 (어젯밤 자기 전에 구절을 읽었다 — 다락 창가에서 읽었으면 그다음 날까지) */
+/** 오늘이 평안인 날인가 (어젯밤 자기 전에 구절을 읽었다 */
 export function peaceful(s: Pick<GameState, 'flags' | 'clock'>): boolean {
-  return s.flags.peaceDay === s.clock.day || s.flags.peaceDay2 === s.clock.day
+  return s.flags.peaceDay === s.clock.day
 }
 
 /** 이 계절에 보이는 몸 칸: 겨울 추위, 여름 더위, 봄·가을 없음 */
@@ -2863,17 +2896,16 @@ export function drinkWater(s: GameState): GameState | null {
 
 /**
  * opts.read: 자기 전 복습 구절을 읽고 잔다(평안). opts.pieceId: 그때 읽은 구절 — 다시 읽을 목록에서 뺀다.
- * opts.attic: 다락 창가에서 읽었다 (다락 서재가 있으면 평안이 하루 더 간다).
  * 창만 닫고(더 깨어 있기) 자면 read/pieceId가 없어 목록이 그대로 남는다.
  */
-export function goToSleep(s0: GameState, content: GameContent, opts: { read?: boolean; pieceId?: string; attic?: boolean } = {}): GameState {
+export function goToSleep(s0: GameState, content: GameContent, opts: { read?: boolean; pieceId?: string } = {}): GameState {
   syncHome(s0)
   const s = opts.read && opts.pieceId ? readOff(s0, opts.pieceId) : s0
   const sick = fallsSick(s.needs)
   let clock = sleepClock(s.clock)
   if (sick) clock = { ...clock, minute: 10 * 60 }
   const day = clock.day
-  const bed = BED_STAND
+  const bed = PLACES.bed.stand ?? HOME_ENTRY
   const scenes = [...s.scenes]
   if (sick) scenes.push('sick')
   if (day === BABY_DAY) scenes.push('babyBorn')
@@ -2883,15 +2915,13 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
   const flags = { ...s.flags }
   if (opts.read) flags.peaceDay = day
   else delete flags.peaceDay
-  // 다락 창가의 평안: 다음 날과 그다음 날. 지난 것은 지운다
-  if (opts.read && opts.attic && s.homeLevel >= 2) flags.peaceDay2 = day + 1
-  else if (!(flags.peaceDay2 !== undefined && flags.peaceDay2 >= day)) delete flags.peaceDay2
+  delete flags.peaceDay2 // 없앤 다락 창가의 평안 (옛 저장)
   // ── 집 넓히기: 부탁해 둔 단계가 아침에 지어진다. 새 모양에 맞지 않는 가구는 가방으로 ──
   let homeLevel = s.homeLevel ?? 0
   let room = s.room
   let inv = s.inv
   const order = flags.homeOrder
-  if (order === homeLevel + 1 && (order === 1 || order === 2)) {
+  if (order === homeLevel + 1 && (order === 1 || order === 2 || order === 3)) {
     homeLevel = order
     delete flags.homeOrder
     scenes.push(`home:${order}`)
@@ -2899,6 +2929,13 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
     const refit = refitRoom(room, inv)
     room = refit.room
     inv = refit.inv
+    if (order === 2 && !flags.cradleFurniture) {
+      syncHome({ ...s, homeLevel, room })
+      const cradle = placement(room, 'homeCradle', CRADLE_SPOT)
+      if (cradle) room = [...room, cradle]
+      else inv = addGift(inv, { homeCradle: 1 })
+      flags.cradleFurniture = 1
+    }
   }
   // ── 마음이 쌓인 마을의 새 날 ──
   const level = villageLevel(s.hearts)
@@ -3012,7 +3049,7 @@ function childMorning(s: GameState, content: GameContent): GameState {
   const r = s.romance ?? NO_ROMANCE
   let next = s
   if (!next.child) {
-    if (r.stage !== 'married' || r.marriedDay === null || day < r.marriedDay + CHILD_AFTER_WEDDING) return s
+    if (s.homeLevel < 2 || r.stage !== 'married' || r.marriedDay === null || day < r.marriedDay + CHILD_AFTER_WEDDING) return s
     const spouse = content.neighbors.find((d) => d.id === r.partner)
     return {
       ...next,
@@ -3165,6 +3202,25 @@ export function rotateFurniture(s: GameState, f: Furniture): GameState | null {
   return { ...s, room: s.room.map((o) => (o === f ? turned : o)) }
 }
 
+/** 가방을 거치지 않고 탁자 위 물건까지 한 번에 옮긴다. 실패하면 원래 배치를 보존한다. */
+export function moveFurniture(s: GameState, f: Furniture, to: Tile): GameState | null {
+  if (!s.room.includes(f)) return null
+  const tiles = footprint(f)
+  const carried = [f, ...s.room.filter(o => o !== f && o.on && tiles.some(t => sameTile(t, o)))]
+  let room = s.room.filter(o => !carried.includes(o))
+  syncHome({ ...s, room })
+  for (const piece of carried) {
+    const at = { x: to.x + piece.x - f.x, y: to.y + piece.y - f.y }
+    syncHome({ ...s, room: [...room, { ...piece, ...at }] })
+    const ok = placement(room, piece.item, at, piece.facing)
+    if (!ok) { syncHome(s); return null }
+    room = [...room, { ...piece, ...ok }]
+  }
+  const next = { ...s, room }
+  syncHome(next)
+  return next
+}
+
 /** 치운 가구는 가방으로 (넘치면 치우지 않는다) */
 export function removeFurniture(s: GameState, t: Tile): GameState {
   const gone = removal(s.room, t)
@@ -3175,16 +3231,17 @@ export function removeFurniture(s: GameState, t: Tile): GameState {
   return { ...s, room: s.room.filter((f) => !gone.includes(f)), inv: add(s.inv, back) }
 }
 
-// ── 집 넓히기 (목수에게 부탁 — 설계 §7-1: 방 하나 더 → 다락 서재) ──
+// ── 집 넓히기 (목수에게 부탁 — 설계 §7-1: 배우자방 → 아이방 → 생활방) ──
 
 export interface HomeStage {
-  level: 1 | 2
+  level: 1 | 2 | 3
   coins: number
   needs: Partial<Record<ItemId, number>>
 }
 export const HOME_STAGES: readonly HomeStage[] = [
   { level: 1, coins: 120, needs: { olive: 5 } },
   { level: 2, coins: 200, needs: { papyrus: 5 } },
+  { level: 3, coins: 300, needs: { olive: 8, papyrus: 5 } },
 ]
 
 /** 다음에 부탁할 단계 (다 지었으면 null) */
@@ -3253,4 +3310,31 @@ export function dressUp(s: GameState, who: WardrobeWho, a: FullAvatar, content: 
   if (who === 'me') return { ...s, avatar: { ...next, name: s.avatar!.name } }
   const key = who === 'child' ? 'child' : s.romance!.partner!
   return { ...s, looks: { ...(s.looks ?? {}), [key]: next } }
+}
+
+/** 결혼 첫날 또는 옛 저장에서 한 번만 지급한다. 옮기거나 보관한 가구는 다시 만들지 않는다. */
+export function furnishSpouse(s: GameState): GameState {
+  const partner = s.romance?.stage === 'married' ? s.romance.partner : null
+  if (!partner || s.homeLevel < 1 || s.flags[`spouseFurniture:${partner}`]) return s
+  syncHome(s)
+  let room = [...s.room], inv = { ...s.inv }
+  for (const f of spouseFurniture(partner)) {
+    const ok = placement(room, f.item, f, f.facing)
+    if (ok) room.push(ok)
+    else inv = addGift(inv, { [f.item]: 1 })
+  }
+  const next = { ...s, room, inv, flags: { ...s.flags, [`spouseFurniture:${partner}`]: 1 } }
+  syncHome(next)
+  return next
+}
+
+function safeHomeSpot(at: Tile, room: readonly Furniture[]): Tile {
+  const blockers = solidTiles(room)
+  for (let radius = 0; radius < 12; radius++) {
+    for (let dy = -radius; dy <= radius; dy++) for (let dx = -radius; dx <= radius; dx++) {
+      const t = { x: at.x + dx, y: at.y + dy }
+      if (isHome(t) && isWalkable(t, blockers) && findPath(HOME_ENTRY, t, blockers)) return t
+    }
+  }
+  return HOME_ENTRY
 }

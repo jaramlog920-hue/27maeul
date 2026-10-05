@@ -1,0 +1,745 @@
+[
+  {
+    "id": "wendell",
+    "name": "웬델",
+    "title": "새 맛을 적는 오후",
+    "window": {
+      "x": 5,
+      "y": 0,
+      "w": 1
+    },
+    "placements": [
+      {
+        "id": "wendell-signature",
+        "source": "spouse-room-art",
+        "x": 1,
+        "y": 1,
+        "facing": "down",
+        "w": 2,
+        "h": 2,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "wendell-desk",
+        "source": "spouse-room-art",
+        "x": 4,
+        "y": 3,
+        "facing": "down",
+        "w": 2,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "stool",
+        "source": "home-space-directions",
+        "x": 4,
+        "y": 4,
+        "facing": "down",
+        "w": 1,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "basket",
+        "source": "home-space-directions",
+        "x": 1,
+        "y": 4,
+        "facing": "down",
+        "w": 1,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      }
+    ]
+  },
+  {
+    "id": "cosmo",
+    "name": "코스모",
+    "title": "바람 소리와 느긋한 놀이",
+    "window": {
+      "x": 1,
+      "y": 0,
+      "w": 1
+    },
+    "placements": [
+      {
+        "id": "cosmo-signature",
+        "source": "spouse-room-art",
+        "x": 1,
+        "y": 1,
+        "facing": "down",
+        "w": 2,
+        "h": 2,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "cosmo-personal",
+        "source": "spouse-room-art",
+        "x": 1,
+        "y": 3,
+        "facing": "down",
+        "w": 2,
+        "h": 2,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "cosmo-sideboard",
+        "source": "spouse-room-art",
+        "x": 4,
+        "y": 2,
+        "facing": "down",
+        "w": 2,
+        "h": 2,
+        "blocking": true,
+        "layer": "furniture"
+      }
+    ]
+  },
+  {
+    "id": "rudy",
+    "name": "루디",
+    "title": "내 속도로 읽는 방",
+    "window": {
+      "x": 1,
+      "y": 0,
+      "w": 1
+    },
+    "placements": [
+      {
+        "id": "rudy-signature",
+        "source": "spouse-room-art",
+        "x": 4,
+        "y": 2,
+        "facing": "down",
+        "w": 2,
+        "h": 2,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "bookcase",
+        "source": "home-space-directions",
+        "x": 1,
+        "y": 1,
+        "facing": "down",
+        "w": 1,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "woodToy",
+        "source": "home-space-directions",
+        "x": 2,
+        "y": 4,
+        "facing": "down",
+        "w": 1,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "rudy-rug",
+        "source": "spouse-room-art",
+        "x": 1,
+        "y": 3,
+        "facing": "down",
+        "w": 2,
+        "h": 2,
+        "blocking": false,
+        "layer": "floor"
+      }
+    ]
+  },
+  {
+    "id": "dexter",
+    "name": "덱스터",
+    "title": "구름과 별의 작은 서재",
+    "window": {
+      "x": 5,
+      "y": 0,
+      "w": 1
+    },
+    "placements": [
+      {
+        "id": "dexter-signature",
+        "source": "spouse-room-art",
+        "x": 1,
+        "y": 1,
+        "facing": "down",
+        "w": 2,
+        "h": 2,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "dexter-cushion",
+        "source": "spouse-room-art",
+        "x": 1,
+        "y": 3,
+        "facing": "down",
+        "w": 1,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "dexter-rug",
+        "source": "spouse-room-art",
+        "x": 4,
+        "y": 3,
+        "facing": "down",
+        "w": 2,
+        "h": 2,
+        "blocking": false,
+        "layer": "floor"
+      },
+      {
+        "id": "lantern",
+        "source": "home-space-directions",
+        "x": 5,
+        "y": 1,
+        "facing": "down",
+        "w": 1,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      }
+    ]
+  },
+  {
+    "id": "basil",
+    "name": "바질",
+    "title": "돌보는 사람의 휴식방",
+    "window": {
+      "x": 5,
+      "y": 0,
+      "w": 1
+    },
+    "placements": [
+      {
+        "id": "basil-signature",
+        "source": "spouse-room-art",
+        "x": 4,
+        "y": 1,
+        "facing": "down",
+        "w": 2,
+        "h": 2,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "table",
+        "source": "home-space-directions",
+        "x": 1,
+        "y": 3,
+        "facing": "down",
+        "w": 2,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "chair",
+        "source": "home-space-directions",
+        "x": 1,
+        "y": 4,
+        "facing": "up",
+        "w": 1,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "teapot",
+        "source": "home-space-directions",
+        "x": 2,
+        "y": 1,
+        "facing": "down",
+        "w": 1,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      }
+    ]
+  },
+  {
+    "id": "marigold",
+    "name": "메리골드",
+    "title": "소풍을 기다리는 햇살방",
+    "window": {
+      "x": 5,
+      "y": 0,
+      "w": 1
+    },
+    "placements": [
+      {
+        "id": "marigold-signature",
+        "source": "spouse-room-art",
+        "x": 1,
+        "y": 1,
+        "facing": "down",
+        "w": 2,
+        "h": 2,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "marigold-personal",
+        "source": "spouse-room-art",
+        "x": 4,
+        "y": 3,
+        "facing": "down",
+        "w": 2,
+        "h": 2,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "marigold-keepsake",
+        "source": "spouse-room-art",
+        "x": 4,
+        "y": 1,
+        "facing": "down",
+        "w": 2,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "marigold-cushion",
+        "source": "spouse-room-art",
+        "x": 1,
+        "y": 4,
+        "facing": "down",
+        "w": 1,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      }
+    ]
+  },
+  {
+    "id": "penelope",
+    "name": "페넬로피",
+    "title": "두 색이 남는 손일방",
+    "window": {
+      "x": 1,
+      "y": 0,
+      "w": 1
+    },
+    "placements": [
+      {
+        "id": "penelope-signature",
+        "source": "spouse-room-art",
+        "x": 1,
+        "y": 2,
+        "facing": "down",
+        "w": 2,
+        "h": 2,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "stool",
+        "source": "home-space-directions",
+        "x": 1,
+        "y": 4,
+        "facing": "down",
+        "w": 1,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "penelope-desk",
+        "source": "spouse-room-art",
+        "x": 4,
+        "y": 1,
+        "facing": "down",
+        "w": 2,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "penelope-rug",
+        "source": "spouse-room-art",
+        "x": 4,
+        "y": 3,
+        "facing": "down",
+        "w": 2,
+        "h": 2,
+        "blocking": false,
+        "layer": "floor"
+      }
+    ]
+  },
+  {
+    "id": "tilly",
+    "name": "틸리",
+    "title": "튼튼하고 예쁜 등불방",
+    "window": {
+      "x": 5,
+      "y": 0,
+      "w": 1
+    },
+    "placements": [
+      {
+        "id": "tilly-signature",
+        "source": "spouse-room-art",
+        "x": 4,
+        "y": 1,
+        "facing": "down",
+        "w": 2,
+        "h": 2,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "tilly-desk",
+        "source": "spouse-room-art",
+        "x": 1,
+        "y": 3,
+        "facing": "down",
+        "w": 2,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "stool",
+        "source": "home-space-directions",
+        "x": 1,
+        "y": 4,
+        "facing": "down",
+        "w": 1,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "chest",
+        "source": "home-space-directions",
+        "x": 1,
+        "y": 1,
+        "facing": "down",
+        "w": 1,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "tilly-keepsake",
+        "source": "spouse-room-art",
+        "x": 4,
+        "y": 4,
+        "facing": "down",
+        "w": 2,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      }
+    ]
+  },
+  {
+    "id": "juniper",
+    "name": "주니퍼",
+    "title": "공책을 펴는 햇빛방",
+    "window": {
+      "x": 5,
+      "y": 0,
+      "w": 1
+    },
+    "placements": [
+      {
+        "id": "juniper-signature",
+        "source": "spouse-room-art",
+        "x": 1,
+        "y": 1,
+        "facing": "down",
+        "w": 2,
+        "h": 2,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "juniper-cushion",
+        "source": "spouse-room-art",
+        "x": 1,
+        "y": 3,
+        "facing": "down",
+        "w": 1,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "juniper-desk",
+        "source": "spouse-room-art",
+        "x": 4,
+        "y": 3,
+        "facing": "down",
+        "w": 2,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "stool",
+        "source": "home-space-directions",
+        "x": 4,
+        "y": 4,
+        "facing": "down",
+        "w": 1,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      }
+    ]
+  },
+  {
+    "id": "poppy",
+    "name": "파피",
+    "title": "손님이 아닌 나의 차자리",
+    "window": {
+      "x": 5,
+      "y": 0,
+      "w": 1
+    },
+    "placements": [
+      {
+        "id": "poppy-signature",
+        "source": "spouse-room-art",
+        "x": 1,
+        "y": 2,
+        "facing": "down",
+        "w": 2,
+        "h": 2,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "poppy-cushion",
+        "source": "spouse-room-art",
+        "x": 1,
+        "y": 4,
+        "facing": "down",
+        "w": 1,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "cupboard",
+        "source": "home-space-directions",
+        "x": 4,
+        "y": 1,
+        "facing": "down",
+        "w": 2,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "poppy-keepsake",
+        "source": "spouse-room-art",
+        "x": 4,
+        "y": 1,
+        "pixelOffset": {
+          "x": 0,
+          "y": -3
+        },
+        "w": 2,
+        "h": 1,
+        "blocking": false,
+        "layer": "surface",
+        "host": "cupboard"
+      },
+      {
+        "id": "poppy-cushion",
+        "source": "spouse-room-art",
+        "x": 4,
+        "y": 4,
+        "facing": "down",
+        "w": 1,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "teapot",
+        "source": "home-space-directions",
+        "x": 5,
+        "y": 3,
+        "facing": "down",
+        "w": 1,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      }
+    ]
+  },
+  {
+    "id": "merchant",
+    "name": "떠돌이 상인",
+    "title": "돌아올 자리가 있는 방",
+    "window": {
+      "x": 1,
+      "y": 0,
+      "w": 1
+    },
+    "placements": [
+      {
+        "id": "merchant-signature",
+        "source": "spouse-room-art",
+        "x": 4,
+        "y": 3,
+        "facing": "down",
+        "w": 2,
+        "h": 2,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "merchant-desk",
+        "source": "spouse-room-art",
+        "x": 1,
+        "y": 1,
+        "facing": "down",
+        "w": 2,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "chair",
+        "source": "home-space-directions",
+        "x": 1,
+        "y": 2,
+        "facing": "up",
+        "w": 1,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "merchant-keepsake",
+        "source": "spouse-room-art",
+        "x": 1,
+        "y": 4,
+        "facing": "down",
+        "w": 2,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      }
+    ]
+  },
+  {
+    "id": "presser",
+    "name": "기름 짜는 이웃",
+    "title": "차가 식을 때까지 쉬는 오후",
+    "window": {
+      "x": 5,
+      "y": 0,
+      "w": 1
+    },
+    "placements": [
+      {
+        "id": "presser-personal",
+        "source": "spouse-room-art",
+        "x": 1,
+        "y": 1,
+        "facing": "down",
+        "w": 2,
+        "h": 2,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "presser-signature",
+        "source": "spouse-room-art",
+        "x": 4,
+        "y": 3,
+        "facing": "down",
+        "w": 2,
+        "h": 2,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "chair",
+        "source": "home-space-directions",
+        "x": 1,
+        "y": 4,
+        "facing": "right",
+        "w": 1,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "stool",
+        "source": "home-space-directions",
+        "x": 2,
+        "y": 3,
+        "facing": "down",
+        "w": 1,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      }
+    ]
+  },
+  {
+    "id": "postman",
+    "name": "편지 나르는 이웃",
+    "title": "조용한 길을 닮은 독서방",
+    "window": {
+      "x": 5,
+      "y": 0,
+      "w": 1
+    },
+    "placements": [
+      {
+        "id": "postman-personal",
+        "source": "spouse-room-art",
+        "x": 1,
+        "y": 1,
+        "facing": "down",
+        "w": 2,
+        "h": 2,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "postman-signature",
+        "source": "spouse-room-art",
+        "x": 4,
+        "y": 2,
+        "facing": "down",
+        "w": 2,
+        "h": 2,
+        "blocking": true,
+        "layer": "furniture"
+      },
+      {
+        "id": "postman-keepsake",
+        "source": "spouse-room-art",
+        "x": 1,
+        "y": 4,
+        "facing": "down",
+        "w": 2,
+        "h": 1,
+        "blocking": true,
+        "layer": "furniture"
+      }
+    ]
+  }
+]

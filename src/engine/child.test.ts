@@ -10,7 +10,7 @@ import { NO_ROMANCE } from './romance'
 
 const married = (day = 10): GameState => {
   const s = newGame(CONTENT)
-  return { ...s, homeLevel: 1, clock: { ...s.clock, day, minute: 22 * 60 }, romance: { ...NO_ROMANCE, partner: 'tilly', stage: 'married', marriedDay: day } }
+  return { ...s, homeLevel: 2, room: [...s.room, { item: 'homeCradle', ...CRADLE_SPOT }], clock: { ...s.clock, day, minute: 22 * 60 }, romance: { ...NO_ROMANCE, partner: 'tilly', stage: 'married', marriedDay: day } }
 }
 const sleepUntil = (s: GameState, day: number): GameState => {
   let g = s

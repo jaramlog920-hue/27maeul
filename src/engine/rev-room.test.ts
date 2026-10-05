@@ -9,7 +9,6 @@ import { shelfRoom } from './shelf-rooms'
 import {
   ACTS_DOOR,
   ACTS_ROOM,
-  ATTIC,
   HEB_JUD_DOOR,
   HEB_JUD_ROOM,
   HEIGHT,
@@ -65,7 +64,7 @@ describe('요한계시록 방 자리', () => {
   it('16–26열 × 70–77줄 (11×8), 78–79줄은 빈 곳 (지도 높이는 계획 14에서 90)', () => {
     expect([REV_ROOM.x0, REV_ROOM.y0, REV_ROOM.w, REV_ROOM.h]).toEqual([16, 70, 11, 8])
     expect(REV_ROOM.owner).toBe('rev')
-    expect(HEIGHT).toBe(90)
+    expect(HEIGHT).toBe(120)
     expect(MAP).toHaveLength(HEIGHT)
     for (const row of MAP) expect(row).toHaveLength(WIDTH)
     for (const y of [78, 79]) for (let x = 0; x < WIDTH; x++) expect(isWalkable({ x, y }), `${x},${y}`).toBe(false)
@@ -73,8 +72,8 @@ describe('요한계시록 방 자리', () => {
 
   it('모든 방(이웃집·서고 방 넷·다락·넓힌 내 집)이 서로 겹치지 않고 지도 안에 있다', () => {
     const home = { ...HOME_ROOM, owner: 'home', w: HOME_EXPAND_RECT.x1 - HOME_ROOM.x0 + 1 }
-    expect([home.x0, home.y0, home.x0 + home.w - 1, home.y0 + home.h - 1]).toEqual([16, 60, 27, 65])
-    const all = [...ROOMS, ATTIC, home]
+    expect([home.x0, home.y0, home.x0 + home.w - 1, home.y0 + home.h - 1]).toEqual([16, 110, 31, 115])
+    const all = [...ROOMS, home]
     for (const [i, a] of all.entries()) {
       expect(a.y0 + a.h, a.owner).toBeLessThanOrEqual(HEIGHT)
       expect(a.x0 + a.w, a.owner).toBeLessThanOrEqual(WIDTH)

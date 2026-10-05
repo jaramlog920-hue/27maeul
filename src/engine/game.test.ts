@@ -42,10 +42,10 @@ import { REQUESTS as REQUESTS_T } from './bonds'
 import { fulfillRequest as fulfillRequestT, interactTile as interactTileT, pressTile as pressTileT, walkDirection as walkDirectionT } from './game'
 import { placeAt as placeAtT } from './world'
 import { deserialize, loadGame, saveGame, serialize as serializeForTest, SAVE_KEY } from './save'
-import { HOME_ENTRY, HOME_FRONT, OLD_HOME, PLACES, START } from './world'
+import { HOME_ENTRY, HOME_FRONT, HOME_RECT, PLACES, START } from './world'
 
 /** 예전 지도 위 집의 칸 → 지금 집 안 방의 같은 칸 */
-const h = (x: number, y: number) => ({ x: x + OLD_HOME.dx, y: y + OLD_HOME.dy })
+const h = (x: number, y: number) => ({ x: x + HOME_RECT.x0 - 2, y: y + HOME_RECT.y0 - 2 })
 /** 집 문 앞(마을)에 선 새 게임 */
 const outside = (s: GameState = newGame(CONTENT)): GameState => ({ ...s, player: { ...s.player, ...HOME_FRONT, path: [] } })
 import { heartsOf } from './hearts'
@@ -501,7 +501,7 @@ describe('동반 동물·방·나의 한 줄', () => {
     expect(a.scenes).toContain('companionJoined')
   })
   it('깔개는 3×2칸으로 깔리고, 치우면 가방으로', () => {
-    const s = { ...newGame(CONTENT), inv: { rug: 1 } }
+    const s = { ...newGame(CONTENT), room: [], inv: { rug: 1 } }
     const p = placeFurniture(s, 'rug', h(5, 4))!
     expect(p.room).toEqual([{ item: 'rug', ...h(5, 4) }])
     expect(p.inv.rug).toBeUndefined()
@@ -512,7 +512,7 @@ describe('동반 동물·방·나의 한 줄', () => {
     expect(removeFurniture(p, h(7, 5)).inv.rug).toBe(1)
   })
   it('식탁 위에 물병을 올리고, 식탁을 치우면 물병도 함께', () => {
-    const s = { ...newGame(CONTENT), inv: { table: 1, jar: 1 } }
+    const s = { ...newGame(CONTENT), room: [], inv: { table: 1, jar: 1 } }
     // 문깔개 바로 위(들어와 서는 칸)는 막을 수 없다
     expect(placeFurniture(s, 'table', HOME_ENTRY)).toBeNull()
     let p = placeFurniture(s, 'table', h(7, 6))!

@@ -1,3 +1,5 @@
+import { FIXTURES } from '../engine/home-layout'
+import { SPOUSE_FURNITURE } from '../engine/furniture-defs'
 // 게임이 지어낸 문장의 단일 입구 (exclusion-list §0). 성경 문장은 여기 두지 않는다.
 import lifeText from './life-text.json'
 import peopleRaw from './people.json'
@@ -48,6 +50,13 @@ export const SCENES = lifeText.scenes as Record<string, Scene>
   for (const th of data.threads) for (const ph of th.phases) for (const s of ph.sightings ?? []) SCENES[`saw:${s.id}`] = { title: s.title, lines: s.lines }
 }
 export const ITEM_TEXT = lifeText.items as Record<ItemId, { name: string; desc: string }>
+for (const [id, f] of Object.entries(FIXTURES)) ITEM_TEXT[id as ItemId] = { name: f.name, desc: '집의 어느 방으로든 옮길 수 있다.' }
+ITEM_TEXT.homeCradle = { name: '아기 요람', desc: '아이방과 다른 방 사이로 자유롭게 옮길 수 있다.' }
+const propNames: Record<string, string> = { signature: '취향 가구', desk: '취향 탁자', keepsake: '기념품', wall: '벽 장식', rug: '깔개', cushion: '방석', curtain: '커튼', personal: '개인 소품', sideboard: '수납장', bookcase: '책장', chair: '의자', stool: '작은 의자', lampStand: '등불' }
+for (const [id, p] of Object.entries(SPOUSE_FURNITURE)) {
+  const base = p.id.split('-').at(-1)!
+  ITEM_TEXT[id as ItemId] = { name: `${p.owner}의 ${propNames[base] ?? ITEM_TEXT[p.id as ItemId]?.name ?? '생활 소품'}`, desc: '방 구별 없이 옮길 수 있는 배우자의 가구.' }
+}
 export const JOURNAL_NOTES = lifeText.journal.notes as Record<string, string>
 
 /** 앨범에 남는 장면 id */

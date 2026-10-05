@@ -2,9 +2,12 @@
 //   floor  바닥에 깔리는 것(깔개·방석) — 밟고 지나간다, 다른 것 밑에 깔릴 수 있다
 //   solid  길을 막는 것(식탁·협탁·의자) — 놓은 뒤에도 집 안 모든 자리에 갈 수 있어야 한다
 //   small  작은 물건 — 탁자 위(한 칸에 하나) 또는 빈 바닥
+import designs from '../content/spouse-rooms.json'
+import { FIXTURES, LIVING_DOOR, PARTNER_DOOR } from './home-layout'
 import { findPath } from './movement'
-import { ATTIC, BED_STAND, currentHomeLevel, HOME_ENTRY, inAttic, isHome, key, PLACES, placeActive, sameTile, SIDE_DOOR, tileAt, type Place } from './world'
+import { BED_STAND, currentHomeLevel, HOME_ENTRY, isHome, key, PLACES, placeActive, sameTile, SIDE_DOOR, tileAt, type Place } from './world'
 import { LESSON_SPOT } from './stories'
+import { SPOUSE_ROOM, SPOUSE_ROOM_ENTRY, SPOUSE_ROOM_RETURN } from './spouse-room'
 import { addGift, type Inventory } from './items'
 import type { Facing, ItemId, PlaceId, Tile } from './types'
 
@@ -58,10 +61,11 @@ const layerOf = (f: Furniture): Layer => FURNITURE_DEFS[f.item]?.layer ?? 'small
  */
 function keepClear(): Tile[] {
   const stands = (Object.entries(PLACES) as [PlaceId, Place][]).flatMap(([id, p]) => (p.stand && placeActive(id) ? [p.stand] : []))
-  const out = [...stands, HOME_ENTRY, LESSON_SPOT]
+  const out = [...stands, HOME_ENTRY, LESSON_SPOT, SPOUSE_ROOM_RETURN]
+  if (currentHomeLevel() >= 1) out.push(SPOUSE_ROOM_ENTRY, PARTNER_DOOR)
   const level = currentHomeLevel()
-  if (level >= 1) out.push(SIDE_DOOR, { x: SIDE_DOOR.x + 1, y: SIDE_DOOR.y })
-  if (level >= 2) out.push(ATTIC.entry)
+  if (level >= 2) out.push(SIDE_DOOR, { x: SIDE_DOOR.x + 1, y: SIDE_DOOR.y }, { x: SIDE_DOOR.x - 1, y: SIDE_DOOR.y })
+  if (level >= 3) out.push(LIVING_DOOR, { x: LIVING_DOOR.x - 1, y: LIVING_DOOR.y }, { x: LIVING_DOOR.x + 1, y: LIVING_DOOR.y })
   return out
 }
 
@@ -105,9 +109,13 @@ export function placement(room: readonly Furniture[], item: ItemId, t: Tile, fac
   if (tiles.some((p) => room.some((o) => layerOf(o) !== 'floor' && !o.on && footprint(o).some((q) => sameTile(p, q))))) return null
   const blockers = solidTiles([...room, f])
   // 놓은 뒤에도 들어와 서는 칸에서 집 안 모든 자리에 갈 수 있어야 한다 (다락은 다락 문깔개 앞에서)
-  const reach = keepClear().filter((c) => !sameTile(c, HOME_ENTRY) && !sameTile(c, ATTIC.entry) && isHome(c))
-  for (const c of reach) if (findPath(inAttic(c) ? ATTIC.entry : HOME_ENTRY, c, blockers) === null) return null
-  if (findPath(HOME_ENTRY, BED_STAND, blockers) === null) return null
+  const reach = keepClear().filter((c) => !sameTile(c, HOME_ENTRY) && isHome(c))
+  for (const c of reach) if (findPath(HOME_ENTRY, c, blockers) === null) return null
+  if (placeActive('bed') && findPath(HOME_ENTRY, PLACES.bed.stand ?? BED_STAND, blockers) === null) return null
+  for (const placed of [...room, f].filter(p => FURNITURE_DEFS[p.item]?.layer === 'solid')) {
+    const around = footprint(placed).flatMap(p => [{ x: p.x + 1, y: p.y }, { x: p.x - 1, y: p.y }, { x: p.x, y: p.y + 1 }, { x: p.x, y: p.y - 1 }])
+    if (!around.some(p => isHome(p) && !blockers.has(key(p)) && findPath(HOME_ENTRY, p, blockers) !== null)) return null
+  }
   return f
 }
 
@@ -155,4 +163,14 @@ export function refitRoom(room: readonly Furniture[], inv: Inventory): { room: F
     else bag = addGift(bag, { [f.item]: 1 })
   }
   return { room: kept, inv: bag }
+}
+
+export function initialHomeFurniture(): Furniture[] {
+  return Object.entries(FIXTURES).map(([item, f]) => ({ item: item as ItemId, x: f.x, y: f.y }))
+}
+export function spouseFurniture(partner: string): Furniture[] {
+  const design = designs.find(d => d.id === partner)
+  return design?.placements.map((p, i) => ({ item: `spouse:${partner}:${i}` as ItemId,
+    x: SPOUSE_ROOM.x0 + p.x, y: SPOUSE_ROOM.y0 + p.y, facing: p.facing as Facing,
+    ...(p.layer === 'surface' ? { on: true } : {}) })) ?? []
 }

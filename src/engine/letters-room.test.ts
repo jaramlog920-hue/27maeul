@@ -8,7 +8,6 @@ import { shelfRoom } from './shelf-rooms'
 import {
   ACTS_DOOR,
   ACTS_ROOM,
-  ATTIC,
   HEIGHT,
   HOME_EXPAND_RECT,
   HOME_ROOM,
@@ -51,7 +50,7 @@ describe('로마서–빌레몬서 방 자리', () => {
   })
 
   it('지도 아래 보이지 않는 곳에 있고 다른 방·다락·내 집(넓힌 방까지)과 겹치지 않는다', () => {
-    const others = [...ROOMS.filter((r) => r !== LETTERS_ROOM), ATTIC, { ...HOME_ROOM, w: HOME_EXPAND_RECT.x1 - HOME_ROOM.x0 + 1 }]
+    const others = [...ROOMS.filter((r) => r !== LETTERS_ROOM), { ...HOME_ROOM, w: HOME_EXPAND_RECT.x1 - HOME_ROOM.x0 + 1 }]
     for (const r of others) {
       const apart =
         r.x0 + r.w <= LETTERS_ROOM.x0 || LETTERS_ROOM.x0 + LETTERS_ROOM.w <= r.x0 || r.y0 + r.h <= LETTERS_ROOM.y0 || LETTERS_ROOM.y0 + LETTERS_ROOM.h <= r.y0

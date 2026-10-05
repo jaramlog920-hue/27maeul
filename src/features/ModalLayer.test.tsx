@@ -9,7 +9,7 @@ import { chooseBook, newGame, playerTile, type GameState } from '../engine/game'
 import { mulberry32 } from '../engine/offers'
 import { isWet, weatherOf } from '../engine/calendar'
 import { onceKey } from '../engine/stories'
-import { ACTS_ROOM, HEB_JUD_ROOM, HOME_FRONT, key, LETTERS_ROOM, LOCKED_DOORS, OLD_HOME, PLACES, roomAt, ROOMS, WARPS } from '../engine/world'
+import { ACTS_ROOM, HEB_JUD_ROOM, HOME_FRONT, key, LETTERS_ROOM, LOCKED_DOORS, HOME_RECT, PLACES, roomAt, ROOMS, WARPS } from '../engine/world'
 import { ITEM_TEXT, SCENES, T } from '../content/text'
 import { STRAY_SPOTS } from '../engine/companion'
 import { useGame } from '../store/game-store'
@@ -21,7 +21,7 @@ import { DecorateBar } from './play/DecorateBar'
 import { journalLine } from './journal/Journal'
 
 /** 예전 지도 위 집의 칸 → 지금 집 안 방의 같은 칸 */
-const h = (x: number, y: number) => ({ x: x + OLD_HOME.dx, y: y + OLD_HOME.dy })
+const h = (x: number, y: number) => ({ x: x + HOME_RECT.x0 - 2, y: y + HOME_RECT.y0 - 2 })
 /** 기록자를 집 문 앞(마을)에 세운다 — 새 게임은 집 안(지도 아래 따로 된 방)에서 시작한다 */
 function goOutside() {
   useGame.setState((s) => ({ game: { ...s.game, player: { ...s.game.player, ...HOME_FRONT, path: [] } } }))
@@ -834,7 +834,7 @@ describe('선반을 나눠 합친 뒤', () => {
   })
 
   it('집 꾸미기: 깔개를 놓고 다시 거둔다', async () => {
-    reset({ inv: { rug: 1 } })
+    reset({ room: [], inv: { rug: 1 } })
     const user = userEvent.setup()
     render(<Hud />)
     await user.click(screen.getByRole('button', { name: '집 꾸미기' }))
@@ -848,7 +848,7 @@ describe('선반을 나눠 합친 뒤', () => {
   })
 
   it('집 꾸미기: 놓을 가구가 없으면 한 줄로 알려 주고, 집 밖에서는 단추가 없다', async () => {
-    reset()
+    reset({ room: [] })
     render(<Hud />)
     await userEvent.setup().click(screen.getByRole('button', { name: '집 꾸미기' }))
     expect(useGame.getState().decorating).toBeNull()

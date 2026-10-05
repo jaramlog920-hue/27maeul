@@ -1,3 +1,4 @@
+import { FIXTURES } from './home-layout'
 // 기분: 따로 쌓지 않고 그때그때 계산한다 (설계 §2.6). 좋은 날씨·꾸민 방·좋은 도구로 오르고, 몸이 힘들면 내려간다.
 import { weatherOf } from './calendar'
 import type { GameState } from './game'
@@ -12,7 +13,8 @@ const WEATHER_MOOD: Record<string, number> = { sunny: 10, wind: 0, fog: 0, rain:
 export function moodOf(s: Pick<GameState, 'needs' | 'clock' | 'room' | 'inv'> & Partial<Pick<GameState, 'flags'>>): number {
   let m = 50 + (WEATHER_MOOD[weatherOf(s.clock.day)] ?? 0)
   if (s.flags?.dateDay === s.clock.day) m += DATE_MOOD
-  m += Math.min(15, s.room.length * 3)
+  // 꾸민 방: 붙박이(침대·책상…)와 결혼할 때 따라온 배우자방 가구는 세지 않는다
+  m += Math.min(15, s.room.filter(f => !FIXTURES[f.item as keyof typeof FIXTURES] && !f.item.startsWith('spouse:')).length * 3)
   if (count(s.inv, 'goodPen') > 0) m += 5
   if (count(s.inv, 'brightLamp') > 0) m += 5
   if (s.needs.hunger >= 70) m -= 15

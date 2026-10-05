@@ -1,11 +1,12 @@
 // 가구 방향 돌리기 (계획 17 작업 2)
 import { CONTENT } from '../content/catalog'
-import { newGame, rotateFurniture } from './game'
+import { newGame, rotateFurniture, syncHome } from './game'
 import { deserialize, serialize } from './save'
 import { facingOf, footprint, placement, refitRoom, rotation, sizeOf, type Furniture } from './room'
-import { OLD_HOME } from './world'
+import { HOME_RECT } from './world'
 
-const h = (x: number, y: number) => ({ x: x + OLD_HOME.dx, y: y + OLD_HOME.dy })
+beforeEach(() => syncHome({ ...newGame(CONTENT), room: [] }))
+const h = (x: number, y: number) => ({ x: x + HOME_RECT.x0 - 2, y: y + HOME_RECT.y0 - 2 })
 
 describe('가구 방향', () => {
   it('방향이 없으면 옛 그림 쪽: 의자·나무 장난감은 오른쪽, 주전자는 왼쪽, 나머지는 앞', () => {
@@ -37,7 +38,7 @@ describe('가구 방향', () => {
     const ok = placement([], 'table', h(5, 5))!
     expect(rotation([ok], ok)).toMatchObject({ item: 'table', ...h(5, 5), facing: 'right' })
     // 아래가 벽이면 세로로 못 돌린다
-    const edge = placement([], 'table', h(7, 3))!
+    const edge = placement([], 'table', h(7, 6))!
     expect(edge).not.toBeNull()
     expect(rotation([edge], edge)).toBeNull()
     // 돌린 자리에 다른 가구가 있으면 못 돌린다
@@ -64,7 +65,7 @@ describe('가구 방향', () => {
     const next = rotateFurniture(s, s.room[0])!
     expect(next.room).toEqual([{ ...table, facing: 'right' }])
     expect(next.inv).toBe(s.inv)
-    const edge = placement([], 'table', h(7, 3))!
+    const edge = placement([], 'table', h(7, 6))!
     expect(rotateFurniture({ ...s, room: [edge] }, edge)).toBeNull()
   })
   it('집 모양 맞추기는 방향을 지킨다', () => {

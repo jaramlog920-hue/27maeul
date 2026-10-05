@@ -1,3 +1,9 @@
+import { FIXTURES } from '../engine/home-layout'
+import { SPOUSE_FURNITURE } from '../engine/furniture-defs'
+import { SPOUSE_ROOM_ART, SPOUSE_ROOM_VIEWS } from './spouse-room-art'
+import { HOME_SPACE_DIRECTIONS } from './home-space-directions'
+import { HOME_FIXTURE_ART } from './home-space-art'
+import { REMAINING_FIXTURE_DIRECTIONS, REMAINING_FIXTURE_ART } from './remaining-furniture-art'
 // 가구 20종의 도트 그림 (16픽셀 = 한 칸). 가방 아이콘(8×8)은 같은 그림을 줄여서 만든다.
 // 색은 마을 참고 그림의 차분한 톤에 맞춘다 (feedback-village-art-style).
 
@@ -419,3 +425,11 @@ export function iconFromArt(a: FurnitureArt): string[] {
   }
   return out
 }
+
+for (const [id, f] of Object.entries(FIXTURES)) FURNITURE_ART[id] = REMAINING_FIXTURE_ART[f.ch] ?? HOME_FIXTURE_ART[f.ch]
+for (const [id, p] of Object.entries(SPOUSE_FURNITURE)) {
+  const art = p.source === 'spouse-room-art' ? SPOUSE_ROOM_VIEWS[p.id]?.[p.facing as import('../engine/types').Facing] ?? SPOUSE_ROOM_ART[p.id] : HOME_SPACE_DIRECTIONS[p.id]?.[p.facing as import('../engine/types').Facing]
+  if (art) FURNITURE_ART[id] = art
+}
+
+FURNITURE_ART.homeCradle = REMAINING_FIXTURE_DIRECTIONS.cradle.down

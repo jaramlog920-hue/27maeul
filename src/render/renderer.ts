@@ -1,3 +1,5 @@
+import { FIXTURES } from '../engine/home-layout'
+import { SPOUSE_FURNITURE } from '../engine/furniture-defs'
 // 캔버스 그리기. 엔진 상태를 읽기만 하고 바꾸지 않는다.
 import { barleyRipe, chimneySmoke, festivalOf, FESTIVAL_FROM, FESTIVAL_TO, grapesRipe, icyMorning, isWet, puddlesOut, weatherOf } from '../engine/calendar'
 import { darkness, phaseOf, seasonOf } from '../engine/clock'
@@ -5,7 +7,7 @@ import { isGrown, STRAY_SPOTS, EAVES } from '../engine/companion'
 import { totalChapters } from '../engine/books'
 import { shelfRoom } from '../engine/shelf-rooms'
 import { letterWaiting } from '../engine/requests'
-import { childAtSchool, closedHouseIds, mailboxHasPost, storyWaiting, routineOf, SCHOOL_SEAT, shelvedCount, straysToday, weddingToday, type ActKind, type GameState, type PlayerAct } from '../engine/game'
+import { childTile, childAtSchool, closedHouseIds, mailboxHasPost, storyWaiting, routineOf, SCHOOL_SEAT, shelvedCount, straysToday, weddingToday, type ActKind, type GameState, type PlayerAct } from '../engine/game'
 import { furnitureUseFrame, USE_INFO, USE_PROP_PALETTE, USE_SIZE, type UseAction } from './furniture-use-motion'
 import { extraUseFrame, petMotionRows, type ExtraAction } from './expansion-life-motion'
 import { weddingActorFrame, type WeddingAction } from './wedding-art'
@@ -16,6 +18,9 @@ import type { Activity } from '../engine/people'
 import { deskTraces, type DeskTraces } from '../engine/desk-traces'
 import { facingOf, FURNITURE_DEFS, type Furniture } from '../engine/room'
 import { FURNI_PALETTE, FURNITURE_ART } from './furniture-art'
+import { SPOUSE_ROOM_ART, SPOUSE_ROOM_VIEWS } from './spouse-room-art'
+import { HOME_SPACE_DIRECTIONS } from './home-space-directions'
+import { currentSpouseRoom, SPOUSE_ROOM } from '../engine/spouse-room'
 import { facingArt } from './furniture-facing'
 import { HOME_FIXTURE_ART } from './home-space-art'
 import { REMAINING_FIXTURE_ART } from './remaining-furniture-art'
@@ -24,11 +29,11 @@ import { drawStoryProps, registerStoryPropArt } from './story-props'
 import { drawDecor, lanternLights, sheepCount } from './decor'
 import { FIRE, isNear, npcTile } from '../engine/neighbors'
 import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
-import { childMode, childStage, CRADLE_SPOT, helperSpot } from '../engine/child'
+import { childMode, childStage } from '../engine/child'
 import { BOARD, stoneTile, TRIP_H, TRIP_W, tripLayout, type Cell as TripCell } from '../engine/trip-board'
 import { actsDoorGlows, feastToday, sideShelfSpines } from '../engine/library'
 import { spineLook } from '../engine/binding'
-import { ACTS_ROOM, ATTIC, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, PAVILION_RECT, HEIGHT, HOUSE_RECT, housesNow, houseAt, LOCKED_DOORS, lockedTiles, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile, treeKind, type TreeKind } from '../engine/world'
+import { ACTS_ROOM, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, PAVILION_RECT, HEIGHT, HOUSE_RECT, housesNow, houseAt, LOCKED_DOORS, lockedTiles, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile, treeKind, type TreeKind } from '../engine/world'
 import { GOSPELS, type Book, type Facing, type NeighborDef, type GameContent, type Season, type Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { avatarKey, withLookDefaults, type Avatar, type FullAvatar } from '../engine/avatar'
@@ -968,7 +973,7 @@ function drawRoof(g: Ctx, tx0: number, ty0: number, tx1: number, ty1: number, [c
 /** 계절과 집 단계마다 한 장 (집을 넓히면 그 칸들의 그림이 바뀐다) */
 const mapCache = new Map<string, HTMLCanvasElement>()
 function mapFor(season: Season): HTMLCanvasElement {
-  const cacheKey = `${season}/${currentHomeLevel()}/${openDoors().join(',')}`
+  const cacheKey = `${season}/${currentHomeLevel()}/${openDoors().join(',')}/${currentSpouseRoom()?.id ?? ''}`
   let c = mapCache.get(cacheKey)
   if (c) return c
   c = document.createElement('canvas')
@@ -985,7 +990,7 @@ function mapFor(season: Season): HTMLCanvasElement {
   for (const h of housesNow()) drawRoof(g, h.x0, h.y0, h.x1, h.y1 - 2, (HOUSE_STYLES[h.id] ?? PLAIN_STYLE).roof)
   // 집 안 가구: 바닥 것 → 큰 것 → 탁자 위 작은 것
   const layerRank = { floor: 0, solid: 1, small: 2 } as const
-  for (const rm of [...ROOMS, ATTIC])
+  for (const rm of ROOMS)
     for (const [dx, dy, item, flip] of [...rm.decor].sort((p, q) => layerRank[FURNITURE_DEFS[p[2]]?.layer ?? 'small'] - layerRank[FURNITURE_DEFS[q[2]]?.layer ?? 'small'])) {
       const a = FURNITURE_ART[item]
       if (!a) continue
@@ -997,6 +1002,11 @@ function mapFor(season: Season): HTMLCanvasElement {
       const nudge = flip === 'half' ? TILE / 2 : 0
       g.drawImage(paint(`furni/${item}/${mirrored ? 'flip' : ''}`, rows, FURNI_PALETTE), x * TILE + nudge, y * TILE + (MAP[y][x] === 'n' ? -6 : 0))
     }
+  const spouse = currentHomeLevel() >= 1 ? currentSpouseRoom() : null
+  if (spouse) {
+    const wall = ['wendell', 'marigold', 'tilly', 'postman'].includes(spouse.id) ? `${spouse.id}-wall` : spouse.id === 'cosmo' ? 'cosmo-keepsake' : null
+    if (wall) g.drawImage(paint(`spouse-wall/${wall}`, SPOUSE_ROOM_ART[wall].rows, FURNI_PALETTE), (SPOUSE_ROOM.x0 + (spouse.id === 'cosmo' || spouse.window.x === 1 ? 4 : 1)) * TILE, SPOUSE_ROOM.y0 * TILE)
+  }
   mapCache.set(cacheKey, c)
   return c
 }
@@ -1381,8 +1391,6 @@ function neighborPerson(def: NeighborDef, facing: Facing, frame: 0 | 1 | 2, blin
 }
 
 /** 아이 요람 (계획 12): 나무 요람, 크림색 이불 */
-const CRADLE: SpriteRows = ['..........', '.k......k.', '.kccccccK.', '.kwwwwwwk.', '.kWWWWWWk.', '..k....k..', '.kk....kk.']
-const CRADLE_PALETTE: Record<string, string> = { k: '#854e27', K: '#854e27', w: '#ce9759', W: '#a5713d', c: '#fdf5e0' }
 
 /**
  * 마을 지도 (설정 → 마을 지도): 마을 전체를 한 장으로 — 붙박이 그림(mapFor)에서 마을 부분만 잘라 그리고,
@@ -1658,6 +1666,16 @@ function drawSelection(g: Ctx, tiles: readonly Tile[]) {
 function drawFurniture(g: Ctx, f: Furniture) {
   const px = f.x * TILE
   const py = f.y * TILE
+  const fixture = FIXTURES[f.item as keyof typeof FIXTURES]
+  if (fixture && !facingArt(f.item, facingOf(f))) { drawObject(g, fixture.ch, f.x, f.y, 'spring'); return }
+  const custom = SPOUSE_FURNITURE[f.item]
+  if (custom) {
+    const a = custom.source === 'spouse-room-art'
+      ? SPOUSE_ROOM_VIEWS[custom.id]?.[facingOf(f)] ?? SPOUSE_ROOM_ART[custom.id]
+      : HOME_SPACE_DIRECTIONS[custom.id]?.[facingOf(f)] ?? FURNITURE_ART[custom.id]
+    if (a) g.drawImage(paint(`spouse/${custom.id}/${facingOf(f)}`, a.rows.map(r => r.replaceAll('z', '.')), FURNI_PALETTE), px + (custom.pixelOffset?.x ?? 0), py + (custom.pixelOffset?.y ?? (f.on ? -6 : 0)))
+    return
+  }
   // 동일한 원본을 이웃집·플레이어 집·가방에 사용한다.
   // 방향 그림이 있으면 보는 쪽 그림 (계획 17 작업 2 — 옛 저장은 옛 그림 쪽), 없으면 지금 그림
   const facing = facingOf(f)
@@ -1924,6 +1942,8 @@ export interface Renderer {
   camera: { x: number; y: number }
   /** 방 꾸미기에서 고른 가구가 차지한 칸 (테두리를 그린다 — 계획 17 작업 2) */
   selected: Tile[] | null
+  /** 카메라가 기록자 대신 비출 칸 (방 꾸미기에서 고른 방) — 없으면 기록자 */
+  look: Tile | null
   draw(game: GameState, t: number, dt: number): void
 }
 
@@ -1937,6 +1957,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
     zoom: 1,
     scale: 1,
     selected: null,
+    look: null,
     camera: { x: 0, y: 0 },
     draw(game, t, dt) {
       const W = VIEW_W * TILE / renderer.zoom
@@ -1954,7 +1975,8 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       const here = { x: Math.round(p.x), y: Math.round(p.y) }
 
       // 카메라: 부드럽게 따라간다
-      const target = cameraFor(p.x, p.y, renderer.zoom)
+      const focus = renderer.look ?? p
+      const target = cameraFor(focus.x, focus.y, renderer.zoom)
       const cam = renderer.camera
       if (dt <= 0 || Math.abs(target.x - cam.x) + Math.abs(target.y - cam.y) > 6) {
         cam.x = target.x
@@ -2024,30 +2046,30 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       }
 
       // 넓은 책상: 책상 칸 안에 상판만 넓게 (서는 자리는 덮지 않는다)
-      if ((game.inv.wideDesk ?? 0) > 0) drawWideDesk(g, PLACES.desk.tiles[0], season)
+      if (PLACES.desk.tiles.length && (game.inv.wideDesk ?? 0) > 0) drawWideDesk(g, PLACES.desk.tiles[0], season)
       // 선반의 두루마리, 책상의 잉크 자국, 등잔 그을음
       const done = totalChapters(game)
       const [shelf] = PLACES.shelf.tiles
       const [desk] = PLACES.desk.tiles
       const [hearth] = PLACES.hearth.tiles
-      for (let i = 0; i < Math.min(12, done); i++) {
+      for (let i = 0; shelf && i < Math.min(12, done); i++) {
         g.fillStyle = i % 2 ? '#f8e6b6' : '#fef1cf'
         g.fillRect(shelf.x * TILE + 3 + (i % 4) * 3, shelf.y * TILE + 1 + Math.floor(i / 4) * 5, 2, 3)
       }
-      for (let i = 0; i < Math.min(8, done); i++) {
+      for (let i = 0; desk && i < Math.min(8, done); i++) {
         g.fillStyle = 'rgba(30, 20, 40, 0.55)'
         g.fillRect(desk.x * TILE + 2 + Math.floor(hash(i, 3, 1) * 11), desk.y * TILE + 5 + Math.floor(hash(i, 4, 1) * 6), 1, 1)
       }
       // 책상이 살아온 흔적 (계획 14 작업 7): 필사한 만큼 책갈피·펜꽂이·종이 묶음·등잔·완성본
-      drawDeskTraces(g, desk, deskTraces(game))
+      if (desk) drawDeskTraces(g, desk, deskTraces(game))
       // 등잔 그을음: 흔적(등잔 불꽃 자리) 위에 그려 가려지지 않는다
       const soot = Math.min(0.7, (game.flags.lampNights ?? 0) * 0.04)
-      if (soot > 0) {
+      if (desk && soot > 0) {
         g.fillStyle = `rgba(30, 25, 20, ${soot})`
         g.fillRect(desk.x * TILE + 12, desk.y * TILE + 3, 2, 2)
       }
       // 그을음 받이 (계획 11 작업 1): 화덕 위의 얇은 쇠판과 그 아래 받침, 모인 그을음 두 점
-      if ((game.flags['unlock:sootCatcher'] ?? 0) > 0) drawSootCatcher(g, hearth)
+      if (hearth && (game.flags['unlock:sootCatcher'] ?? 0) > 0) drawSootCatcher(g, hearth)
       // 방의 가구: 깔개 → 길을 막는 가구 → 위에 올린 작은 물건
       const ordered = [...game.room].sort((a, b) => furnitureOrder(a) - furnitureOrder(b) || a.y - b.y)
       for (const f of ordered) drawFurniture(g, f)
@@ -2055,7 +2077,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       // 이야기 뒤 소품 (계획 16 작업 4 · 계획 17): 생활 확장 도트 → 없으면 가구 그림
       drawStoryProps(g, game)
       // 화덕 불
-      flame(g, hearth.x * TILE + 8, hearth.y * TILE + 14, t)
+      if (hearth) flame(g, hearth.x * TILE + 8, hearth.y * TILE + 14, t)
       // 행사 모닥불
       const fest = festivalOf(day)
       // 복음서 방 잔치 저녁에는 비가 와도 모닥불을 피운다
@@ -2255,11 +2277,10 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           const at = SCHOOL_SEAT
           items.push({ y: at.y, paint: () => drawKid(at.x, at.y, 0) })
         } else if (mode === 'cradle') {
-          const c = CRADLE_SPOT
+          const c = childTile(game)!
           items.push({
             y: c.y,
             paint: () => {
-              drawSprite(g, paint('cradle', CRADLE, CRADLE_PALETTE), c.x, c.y)
               drawSprite(g, paint('baby/baby', BABY.baby, SMALL_PALETTE), c.x, c.y, 5 + (Math.floor(t * 1.5) % 2))
             },
           })
@@ -2270,7 +2291,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           const ky = p.y + back[1]
           items.push({ y: ky, paint: () => drawKid(kx, ky, p.path.length ? Math.floor(t * 8) % 2 : 0) })
         } else {
-          const at = mode === 'home' ? CRADLE_SPOT : helperSpot(game.clock.minute)
+          const at = childTile(game)!
           items.push({ y: at.y, paint: () => drawKid(at.x, at.y, st === 'toddler' ? 0 : breathOffset(t + 1.3)) })
         }
       }
@@ -2402,8 +2423,8 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           const sy = (wy: number) => wy - oy
           const [desk] = PLACES.desk.tiles
           const [hearth] = PLACES.hearth.tiles
-          if (game.lampLitDay === day) glow(g, sx(desk.x * TILE + 13), sy(desk.y * TILE + 4), 34, dark * 0.9)
-          glow(g, sx(hearth.x * TILE + 8), sy(hearth.y * TILE + 12), 22, dark * 0.6)
+          if (desk && game.lampLitDay === day) glow(g, sx(desk.x * TILE + 13), sy(desk.y * TILE + 4), 34, dark * 0.9)
+          if (hearth) glow(g, sx(hearth.x * TILE + 8), sy(hearth.y * TILE + 12), 22, dark * 0.6)
           if (festOn) glow(g, sx(FIRE.x * TILE + 8), sy(FIRE.y * TILE + 8), 48, dark)
           if (actsGlow) glow(g, sx(LOCKED_DOORS[0].x * TILE + 10), sy(LOCKED_DOORS[0].y * TILE + 9), 26, dark * 0.7)
           // 집집마다 창에 불빛

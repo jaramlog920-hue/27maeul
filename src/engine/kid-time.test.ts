@@ -76,7 +76,7 @@ describe('아이와 함께 보내는 시간 (계획 12)', () => {
     expect(c2.state.inv.bread).toBe(c1.state.inv.bread)
     expect(c2.state.scenes).toContain('fam:burnt')
     const w = run(kid(), 'walk')
-    expect(Object.values(w.got).reduce((x, y) => x + (y ?? 0), 0)).toBe(1)
+    expect(Object.values(w.got).reduce<number>((x, y) => x + (y ?? 0), 0)).toBe(1)
   })
 
   it('처음 있는 일은 가족 앨범 장면 한 번 (두 번째는 없다)', () => {

@@ -22,7 +22,9 @@
       "wendell": "빵집 · 빵 놓는 자리 고르기",
       "weaver": "베 짜는 집 · 실과 천 정돈",
       "penelope": "베 짜는 집 · 색 나누기",
-      "grandpa": "포도원 · 바구니 정돈", "presser": "기름틀 · 용기와 받침 정돈", "apothecary": "약방 · 용기와 표지 정돈",
+      "grandpa": "포도원 · 바구니 정돈",
+      "presser": "기름틀 · 용기와 받침 정돈",
+      "apothecary": "약방 · 용기와 표지 정돈",
       "shepherd": "양 우리 · 물통과 울타리 정돈",
       "dexter": "양 우리 · 천천히 주변 살피기",
       "poppy": "찻집 · 잔과 차 자리 정돈",
@@ -226,7 +228,7 @@
     "mute": "소리 끄기",
     "unmute": "소리 켜기",
     "decorate": "집 꾸미기",
-    "decorateHint": "놓을 것을 고른 뒤 집 안 바닥을 누르세요. 작은 물건은 탁자 위에도 올릴 수 있어요. 놓인 것을 누르면 골라지고, 한 번 더 누르면 다시 가방으로.",
+    "decorateHint": "가구를 골라 집 바닥에 놓으세요. 놓인 가구는 회수해서 다른 방에도 놓을 수 있어요.",
     "decorateDone": "다 꾸몄어요",
     "decorateTurn": "돌리기",
     "decorateTake": "치우기",
@@ -401,16 +403,15 @@
     "gardenHarvest": "거두기",
     "gardenWinter": "겨울엔 텃밭이 쉬어요.",
     "gardenNoSeed": "씨앗은 장날 상인에게 닢으로 살 수 있어요.",
-    "homeStage1": "방 하나 더 부탁하기",
-    "homeStage2": "다락 서재 부탁하기",
+    "homeStage1": "배우자방 부탁하기",
+    "homeStage2": "아이방 부탁하기",
     "homeCost": "드는 것: {coins}닢 · {items}",
     "homeOrdered": "내일 아침까지 지어 둘게요.",
     "homeWaiting": "부탁한 일은 내일 아침이면 끝나요.",
-    "atticRoom": "다락 서재",
     "actsRoom": "사도행전 방",
-    "atticReadHint": "다락 창가에서 읽고 잠들면 평안이 하루 더 갑니다.",
     "moreBelow": "아래로 더 있어요 ▾",
-    "deskBack": "이어붙이기로 돌아가기"
+    "deskBack": "이어붙이기로 돌아가기",
+    "homeStage3": "생활방 부탁하기"
   },
   "controls": {
     "joystick": "모바일 조이스틱",
@@ -3824,32 +3825,24 @@
       "album": "목수와 나눈 날들"
     },
     "home:1": {
-      "title": "방 하나 더",
+      "title": "배우자방",
       "lines": [
-        {
-          "speaker": "carpenter",
-          "text": "작업실 벽에 문을 내고 옆에 방을 하나 붙였어요."
-        },
-        {
-          "speaker": "carpenter",
-          "text": "좁아도 아늑해요. 마음대로 꾸며 보세요."
-        }
-      ],
-      "album": "방 하나 더 생긴 날"
-    },
-    "home:2": {
-      "title": "다락 서재",
-      "lines": [
-        {
-          "speaker": "carpenter",
-          "text": "선반 옆에 사다리를 놓았어요. 지붕 밑에 작은 서재가 있어요."
-        },
         {
           "speaker": "narration",
-          "text": "다락 창으로 마을 지붕들이 내려다보인다."
+          "text": "작업실 뒤에 빈 배우자방이 생겼다. 이제 함께 살 약속을 할 수 있다."
         }
       ],
-      "album": "다락 서재가 생긴 날"
+      "album": "배우자방이 생긴 날"
+    },
+    "home:2": {
+      "title": "아이방",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "작업실 오른쪽에 아이방이 생겼다. 가족을 맞이할 자리를 꾸며 보자."
+        }
+      ],
+      "album": "아이방이 생긴 날"
     },
     "actsShip": {
       "title": "나루에 배가 들어왔다",
@@ -4955,6 +4948,16 @@
           "text": "숨이 차서 둘 다 벤치에 털썩 앉아 한참 웃었다."
         }
       ]
+    },
+    "home:3": {
+      "title": "생활방",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "작업실 왼쪽에 넓은 생활방이 생겼다. 모든 방의 가구를 자유롭게 옮겨 꾸밀 수 있다."
+        }
+      ],
+      "album": "생활방이 생긴 날"
     }
   },
   "diary": {
@@ -5040,8 +5043,8 @@
       "done:presser:2": " 이웃의 부탁을 들어주었다.",
       "done:weaver:1": " 이웃의 부탁을 들어주었다.",
       "done:beekeeper:1": " 이웃의 부탁을 들어주었다.",
-      "home:1": " 집에 방이 하나 더 생겼다.",
-      "home:2": " 다락 서재가 생겼다.",
+      "home:1": " 작업실 뒤에 빈 배우자방이 생겼다. 이제 함께 살 약속을 할 수 있다.",
+      "home:2": " 작업실 오른쪽에 아이방이 생겼다. 가족을 맞이할 자리를 꾸며 보자.",
       "actsShip": " 나루에 큰 배가 들어왔다.",
       "roomOpen:romPhm": " 서고 왼쪽 아래 방이 열렸다.",
       "roomOpen:hebJud": " 서고 오른쪽 위 방이 열렸다.",
@@ -5116,7 +5119,8 @@
       "date:sunset:2": " 정자에서 둘이 노을을 보았다.",
       "date:walk:0": " 언덕길을 둘이 걸었다.",
       "date:walk:1": " 언덕길을 둘이 걸었다.",
-      "date:walk:2": " 언덕길을 둘이 걸었다."
+      "date:walk:2": " 언덕길을 둘이 걸었다.",
+      "home:3": " 작업실 왼쪽에 넓은 생활방이 생겼다. 모든 방의 가구를 자유롭게 옮겨 꾸밀 수 있다."
     }
   },
   "quiz": {
@@ -5460,6 +5464,7 @@
     "cordNoItem": "약속의 끈은 장날 상인에게서 살 수 있어요.",
     "weddingSoon": "{day}일째 저녁, 광장 모닥불에서 마을 잔치를 열어요.",
     "spouseGift": "{who} 챙겨 주었다: {items}",
+    "babyRoomTalk": "{who} 아이방 이야기를 꺼냈다. 목수에게 부탁해 볼까?",
     "dateTea": "{with} 함께 차 마시기 ({n}닢)",
     "dateSunset": "{with} 함께 노을 보기",
     "dateWalk": "{with} 함께 언덕길 걷기",

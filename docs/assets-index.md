@@ -15,6 +15,10 @@
 
 ## 폴더별
 
+2026-10-05 추가: `assets/spouse-rooms/` — 배우자 생활방 13종. 새 소품 65개·탁자 네 방향 52개·아이콘·가구 전후 레이어·방 타일·완성 미리보기. `manifest.json`에 방별 로컬 배치와 통행 정보. 원본 `spouse-room-art.ts`, 내보내기 `node scripts/export-spouse-rooms.mjs`. 상세 설계 `docs/characters/25_배우자방_인테리어_설계.md`. **디자인·자산 및 게임 연결 완료. 배우자방 증축·결혼 후 한 번 지급·모든 방 사이 가구 재배치는 `docs/home-expansion.md` 참조.**
+
+2026-10-05 추가: `assets/cooking/` — 요리·냉장 찬장·남은 생활 기능 보완. 정지 그림 106개, 성인 동작 84시퀀스, 아이 32시퀀스, 두 사람 12시퀀스, 동물 성격 96시퀀스. 원본 `cooking-art.ts`·`life-gap-art.ts`, 내보내기 `node scripts/export-cooking-art.mjs`. 상세 목록/재사용 대응은 `assets/cooking/클로드_요리생활보완_도트연결안내.txt`. **자산 준비 완료, 게임 연결은 별도.**
+
 | 폴더 | 분량 | 원본 코드 (src/render) | 내보내기 | 안내 txt | 연결 상태 |
 |---|---|---|---|---|---|
 | `furniture/` (맨 위) | `home-space-furniture-v1.png` 원안 시트 (가구 20종) | — | — | `README.txt` | 원안 그림 (게임 해상도로 다듬은 것은 아래 `directional`·`remaining`) |

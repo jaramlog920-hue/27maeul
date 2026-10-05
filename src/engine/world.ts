@@ -8,8 +8,11 @@
 //         ~ 호수 · r 갈대 · v 포도나무 · L 서고 문 · o 올리브나무 · P 기름틀 · A 모루 · O 빵 굽는 가마 · m 장터 좌판
 //         x 울타리 · q 편지 바구니 · u 고깃배
 //   걸음: . 풀 · , 흙길 · f 집 안 바닥 · D 문 · = 나루 · y 보리밭 · * 꽃 · l 텃밭 (보리밭처럼 밟고 들어가 돌본다)
+import { WORKSHOP, PARTNER_ROOM, BABY_ROOM, LIVING_ROOM, PARTNER_DOOR, BABY_DOOR, LIVING_DOOR, FIXTURES } from './home-layout'
+import type { Furniture } from './room'
 import { FURNITURE_DEFS } from './furniture-defs'
 import type { ItemId, PlaceId, Tile } from './types'
+import { currentSpouseRoom, setSpouseRoomOwner } from './spouse-room'
 
 export const TILE = 16
 export const WIDTH = 48
@@ -22,7 +25,7 @@ export const VILLAGE_H = 40
  * 계획 8 작업 5에서 70 → 80 (히브리서–유다서 방 자리), 계획 14에서 80 → 90 (목수·편지 나르는 이웃·약방·어부 집 안, 81–88줄).
  * 저장에는 지도 크기가 들어가지 않는다
  */
-export const HEIGHT = 90
+export const HEIGHT = 120
 /** 화면에 보이는 칸 수 */
 export const VIEW_W = 16
 export const VIEW_H = 20
@@ -30,7 +33,7 @@ export const VIEW_H = 20
 /**
  * 주인공의 집 (계획 7-1 작업 5): 밖에서 보는 집은 가장 작은 이웃집(어부 집)과 같은 5칸×4줄 — 지붕 두 줄, 앞벽 두 줄, 문은 아래 줄 가운데.
  * 집 안은 이웃집처럼 지도 아래 보이지 않는 곳의 방(HOME_ROOM). 문을 밟으면 들어가고 문깔개로 나온다.
- * 1단계 "방 하나 더"에는 밖의 집이 왼쪽으로만 두 칸 넓어진다 (문·길·바구니는 그대로, 오른쪽 텃밭 쪽 13열은 풀밭). 지금 모양은 homeHouse()
+ * 2단계 "아이방"에는 밖의 집이 왼쪽으로만 두 칸 넓어진다 (문·길·바구니는 그대로, 오른쪽 텃밭 쪽 13열은 풀밭). 지금 모양은 homeHouse()
  * 집 왼쪽 땅(HOUSE_GROW)은 집 넓히기 자리 — 다른 건물·자리를 두지 않는다
  */
 export const HOUSE_RECT = { x0: 3, y0: 4, x1: 7, y1: 7 }
@@ -44,28 +47,29 @@ export const HOME_FRONT: Tile = { x: HOME_DOOR.x, y: HOME_DOOR.y + 1 }
 export const HOME_BENCH: Tile = { x: 2, y: 8 }
 
 /** 집 안 방 — 넓히기 전 (벽 포함 9×6, 지도 아래 보이지 않는 곳). 지금 크기는 homeRect() */
-export const HOME_RECT = { x0: 16, y0: 60, x1: 24, y1: 65 }
-/** 집 안 방 오른쪽의 빈 곳 (1단계 "방 하나 더"에서 새 방이 된다) */
-export const HOME_EXPAND_RECT = { x0: 25, y0: 60, x1: 27, y1: 65 }
-/** 1단계에서 생기는 새 방의 바닥 (두 칸 폭 × 네 줄 — 계획 6에서 짝의 방이 된다). 바깥 벽은 27열 */
-export const SIDE_ROOM = { x0: 25, y0: 61, x1: 26, y1: 64 }
+export const HOME_RECT = WORKSHOP
+/** 집 안 방 오른쪽의 빈 곳 (2단계 "아이방"에서 새 방이 된다) */
+export const HOME_EXPAND_RECT = BABY_ROOM
+/** 2단계 아이방의 내부 바닥 (6×4칸) */
+export const SIDE_ROOM = { x0: BABY_ROOM.x0 + 1, y0: BABY_ROOM.y0 + 1, x1: BABY_ROOM.x1 - 1, y1: BABY_ROOM.y1 - 1 }
 /** 작업실과 새 방 사이 벽에 낸 문 (선반 앞 칸 옆) */
-export const SIDE_DOOR: Tile = { x: 24, y: 62 }
-/** 2단계 "다락 서재": 작업실 선반 옆의 사다리 */
-export const LADDER: Tile = { x: 22, y: 61 }
-/** 옛 저장의 집 안 (지도 위 2~10열, 넓히면 13열까지, 2~7줄) → 새 방으로 옮기는 거리 */
-export const OLD_HOME = { x0: 2, y0: 2, x1: 10, x1Wide: 13, y1: 7, dx: HOME_RECT.x0 - 2, dy: HOME_RECT.y0 - 2 }
+export const SIDE_DOOR: Tile = BABY_DOOR
 
 /**
- * 집 단계 (0 작업실, 1 방 하나 더, 2 다락 서재). 지도 문자열은 고정이므로 넓힌 칸은 tileAt이 덧씌워 돌려준다.
+ * 집 단계 (0 작업실, 1 배우자방, 2 아이방, 3 생활방). 지도 문자열은 고정이므로 넓힌 칸은 tileAt이 덧씌워 돌려준다.
  * 게임 상태(homeLevel)와 맞추는 것은 엔진 입구(game.ts의 syncHome)가 한다.
  */
 let homeLevel = 0
 export function setHomeLevel(level: number): void {
-  homeLevel = level === 1 || level === 2 ? level : 0
+  homeLevel = level === 1 || level === 2 || level === 3 ? level : 0
 }
 export function currentHomeLevel(): number {
   return homeLevel
+}
+
+/** 배우자 디자인은 결혼 상태에서 고른다. 방의 존재는 증축 단계가 정한다. */
+export function setSpouseRoom(partner: string | null): void {
+  setSpouseRoomOwner(partner)
 }
 
 /**
@@ -83,21 +87,26 @@ export function openDoors(): number[] {
 
 /** 단계별로 덧씌우는 칸 ('x,y' → 글자) */
 const HOME_OVERLAY: readonly ReadonlyMap<string, string>[] = (() => {
-  const one = new Map<string, string>()
-  const { x0, y0, x1, y1 } = HOME_EXPAND_RECT
-  for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) one.set(`${x},${y}`, x === x1 || y === y0 || y === y1 ? '#' : 'f')
-  one.set(`${SIDE_DOOR.x},${SIDE_DOOR.y}`, 'D')
-  // 밖에서는 집이 왼쪽으로 두 칸 (지붕 두 줄, 앞벽 두 줄)
-  for (let x = HOUSE_GROW.x0; x <= HOUSE_GROW.x1; x++)
-    for (let y = HOUSE_GROW.y0; y <= HOUSE_GROW.y1; y++) one.set(`${x},${y}`, y <= HOUSE_RECT.y1 - 2 ? 'R' : '#')
-  const two = new Map(one)
-  two.set(`${LADDER.x},${LADDER.y}`, 'H')
-  return [new Map(), one, two]
+  const stages: Map<string, string>[] = [new Map()]
+  for (const [i, r] of [PARTNER_ROOM, BABY_ROOM, LIVING_ROOM].entries()) {
+    const m = new Map(stages[i])
+    for (let y = r.y0; y <= r.y1; y++) for (let x = r.x0; x <= r.x1; x++)
+      m.set(`${x},${y}`, x === r.x0 || x === r.x1 || y === r.y0 || y === r.y1 ? '#' : 'f')
+    const door = [PARTNER_DOOR, BABY_DOOR, LIVING_DOOR][i]
+    m.set(`${door.x},${door.y}`, 'D')
+    // 외관은 마을의 기존 길·텃밭을 보존하고 1단계부터 왼쪽 두 칸을 넓힌다.
+    for (let x = HOUSE_GROW.x0; x <= HOUSE_GROW.x1; x++)
+      for (let y = HOUSE_GROW.y0; y <= HOUSE_GROW.y1; y++) m.set(`${x},${y}`, y <= HOUSE_RECT.y1 - 2 ? 'R' : '#')
+    stages.push(m)
+  }
+  return stages
 })()
 
-/** 지금 집의 크기 (벽 포함) */
 export function homeRect(level = homeLevel): { x0: number; y0: number; x1: number; y1: number } {
-  return level >= 1 ? { ...HOME_RECT, x1: HOME_EXPAND_RECT.x1 } : HOME_RECT
+  return { x0: level >= 3 ? LIVING_ROOM.x0 : HOME_RECT.x0,
+    y0: level >= 1 ? PARTNER_ROOM.y0 : HOME_RECT.y0,
+    x1: level >= 2 ? BABY_ROOM.x1 : HOME_RECT.x1,
+    y1: level >= 3 ? LIVING_ROOM.y1 : HOME_RECT.y1 }
 }
 
 /** 밖에서 보는 지금 내 집 (1단계부터 왼쪽으로 두 칸 넓다) */
@@ -347,23 +356,6 @@ export const HEB_JUD_ROOM: Room = ROOMS.find((r) => r.owner === 'hebJud')!
 /** 요한계시록 방 */
 export const REV_ROOM: Room = ROOMS.find((r) => r.owner === 'rev')!
 
-/**
- * 다락 서재 (8×6, 지도 아래 보이지 않는 곳 — 할아버지 집 방 오른쪽). 사다리로 올라오고 문깔개로 내려간다.
- * 위 벽 가운데에 창(I), 책장·독서대는 붙박이. door는 사다리 (밟는 문이 아니라 누르는 곳)
- */
-export const ATTIC: Room = room(
-  'attic',
-  40,
-  41,
-  LADDER,
-  [3, 2],
-  [[3, 0, 'I'], [4, 0, 'I']],
-  [[1, 1, 'bookcase'], [2, 1, 'bookcase'], [5, 1, 'lectern']],
-  8,
-  6,
-)
-/** 다락 창 (자기 전 읽기를 하는 곳) */
-export const ATTIC_WINDOW: Tile = { x: ATTIC.x0 + 3, y: ATTIC.y0 }
 
 /**
  * 내 집 안 (계획 7-1 작업 5): 예전 지도 위 집과 같은 넓이·배치 — 침대·화덕·선반은 윗벽 쪽, 책상·작업대는 그 아래.
@@ -376,7 +368,7 @@ export const HOME_ROOM: Room = {
     HOME_RECT.y0,
     HOME_DOOR,
     [3, 2],
-    [[1, 1, 'b'], [4, 1, 'h'], [7, 1, 's'], [1, 3, 'd'], [7, 3, 'k']],
+    [],
     [],
     HOME_RECT.x1 - HOME_RECT.x0 + 1,
     HOME_RECT.y1 - HOME_RECT.y0 + 1,
@@ -539,8 +531,8 @@ function build(): string[] {
   rect(24, 34, 24, 36, '=')
   set(25, 36, 'u')
 
-  // ── 이웃집 안, 내 집 안, 그리고 내 집 다락 (다락은 사다리로만 오르므로 늘 지어 둔다) ──
-  for (const room of [...ROOMS, ATTIC, HOME_ROOM]) {
+  // ── 이웃집 안, 내 집 안 ──
+  for (const room of [...ROOMS, HOME_ROOM]) {
     const { x0, y0 } = room
     rect(x0, y0, x0 + room.w - 1, y0 + room.h - 1, '#')
     rect(x0 + 1, y0 + 1, x0 + room.w - 2, y0 + room.h - 2, 'f')
@@ -582,11 +574,11 @@ export function treeKind(x: number, y: number): TreeKind {
 }
 
 // 'l'(텃밭)은 'y'(보리밭)처럼 걸을 수 있다 — 두둑 가운데 안쪽 칸은 사방이 막히면 다가갈 수 없어서 (task-3 적응)
-// 'H'(사다리)는 누르는 곳이라 길찾기가 지나가지 않는다 — 지나가다 다락으로 올라가 버리지 않게. 'I'는 다락 창
 // 'Q' 한 권 선반(사도행전·요한계시록), 'M' 벽의 여정 판, 'C' 벽의 일곱 교회 카드 판. 'Y' 편지 선반, 'V' 벽의 편지꽂이, 'N' 방 벽의 창, 'F' 사랑방 벽의 의뢰 게시판. 'J'(열린 서고 방 문)는 걷는 칸
 const BLOCKED = new Set(['F', 'j', 'C', 'Y', 'V', 'N', 'H', 'I', '_','Z', 'n', 'g', 'p', 'W', 'G', 'K', 'Q', 'M', 'T', '#', 'R', 'S', 'u', 'b', 'd', 'h', 's', 'k', 'w', 'B', '~', 'r', 'v', 'o', 'P', 'A', 'O', 'm', 'x', 'q'])
 
 export function tileAt(x: number, y: number): string {
+  if (homeLevel >= 1 && y === PARTNER_ROOM.y0 && x === PARTNER_ROOM.x0 + (currentSpouseRoom()?.window.x ?? 5)) return 'N'
   if (homeLevel > 0) {
     const o = HOME_OVERLAY[homeLevel].get(`${x},${y}`)
     if (o) return o
@@ -715,16 +707,12 @@ export function propSpotProblem(tiles: readonly Tile[], roomOwner?: string): str
 
 /** 화면을 방 하나로 좁혀 보여 주는 곳: 이웃집·서고 방, 그리고 내 집 안 */
 export function viewRoomAt(t: Tile): { x0: number; y0: number; w: number; h: number } | null {
-  const r = roomAt(t) ?? (inAttic(t) ? ATTIC : null)
+  const r = roomAt(t)
   if (r) return r
   const { x0, y0, x1, y1 } = homeRect()
   return isHome(t) ? { x0, y0, w: x1 - x0 + 1, h: y1 - y0 + 1 } : null
 }
 
-/** 다락 안 (벽 포함) */
-export function inAttic(t: Tile): boolean {
-  return t.x >= ATTIC.x0 && t.x < ATTIC.x0 + ATTIC.w && t.y >= ATTIC.y0 && t.y < ATTIC.y0 + ATTIC.h
-}
 
 /** 문을 밟으면 옮겨 가는 곳: 바깥 문 → 방 안, 방의 문깔개 → 바깥 문 앞 */
 export const WARPS: ReadonlyMap<string, Tile> = new Map(
@@ -733,14 +721,16 @@ export const WARPS: ReadonlyMap<string, Tile> = new Map(
     [key(r.exit), r.out ?? { x: r.door.x, y: r.door.y + 1 }] as const,
   ]),
 )
-  .set(key(ATTIC.exit), { x: LADDER.x, y: LADDER.y + 1 }) // 다락 문깔개 → 사다리 앞
   .set(key(HOME_DOOR), HOME_ENTRY) // 내 집 문 → 집 안
   .set(key(HOME_ROOM.exit), HOME_FRONT) // 집 안 문깔개 → 문 앞
 
 /** 기록자의 집 안인가 */
 export function isHome(t: Tile): boolean {
-  const { x0, x1, y0, y1 } = homeRect()
-  return ((t.x > x0 && t.x < x1 && t.y > y0 && t.y <= y1) || (homeLevel >= 2 && inAttic(t))) && isIndoor(t)
+  const inRect = (r: typeof HOME_RECT) => t.x > r.x0 && t.x < r.x1 && t.y > r.y0 && t.y < r.y1
+  return (inRect(HOME_RECT) || sameTile(t, HOME_ROOM.exit) ||
+    (homeLevel >= 1 && (inRect(PARTNER_ROOM) || sameTile(t, PARTNER_DOOR))) ||
+    (homeLevel >= 2 && (inRect(BABY_ROOM) || sameTile(t, BABY_DOOR))) ||
+    (homeLevel >= 3 && (inRect(LIVING_ROOM) || sameTile(t, LIVING_DOOR)))) && isIndoor(t)
 }
 
 /** 상호작용하는 곳. stand가 없으면 눌린 칸 옆으로 간다 */
@@ -786,9 +776,6 @@ export const PLACES: Record<PlaceId, Place> = {
   // 집 앞 편지함: 문 앞 길 왼쪽 풀밭 (편지 바구니 반대편). 그림일 뿐 길을 막지 않는다
   mailbox: { tiles: [{ x: HOME_FRONT.x - 1, y: HOME_FRONT.y }], stand: HOME_FRONT },
   garden: { tiles: tilesOf('l') },
-  // 다락 서재 (2단계): 선반 옆 사다리, 다락 창가
-  ladder: { tiles: [LADDER], stand: { x: LADDER.x, y: LADDER.y + 1 } },
-  atticWindow: { tiles: [ATTIC_WINDOW, { x: ATTIC_WINDOW.x + 1, y: ATTIC_WINDOW.y }], stand: { x: ATTIC_WINDOW.x, y: ATTIC_WINDOW.y + 1 } },
   // 사도행전 방: 선반(서고 복음서 선반처럼), 벽의 여정 판, 읽는 탁자
   actsShelf: { tiles: [1, 2, 3].map((dx) => ({ x: ACTS_X0 + dx, y: ACTS_Y0 + 1 })), stand: { x: ACTS_X0 + 2, y: ACTS_Y0 + 2 } },
   journeyBoard: { tiles: [4, 5, 6].map((dx) => ({ x: ACTS_X0 + dx, y: ACTS_Y0 })), stand: { x: ACTS_X0 + 5, y: ACTS_Y0 + 1 } },
@@ -823,10 +810,11 @@ export function setMailbox(on: boolean): void {
   mailboxOn = on
 }
 
-/** 이 장소가 지금 있는가 (다락 서재는 2단계부터, 집 앞 편지함은 선 뒤부터) */
+/** 이 장소가 지금 있는가 (집 붙박이는 그 가구가 놓여 있을 때, 집 앞 편지함은 선 뒤부터) */
 export function placeActive(id: PlaceId): boolean {
   if (id === 'mailbox') return mailboxOn
-  return (id !== 'ladder' && id !== 'atticWindow') || homeLevel >= 2
+  const fixture = Object.values(FIXTURES).find(f => f.place === id)
+  return !fixture || homeFurniture.some(f => FIXTURES[f.item as keyof typeof FIXTURES]?.place === id)
 }
 
 export function placeAt(t: Tile): PlaceId | null {
@@ -841,8 +829,34 @@ export const START: Tile = home(3, 2)
 export function cameraFor(x: number, y: number, zoom = 1): { x: number; y: number } {
   // 집 안(이웃집·서고·내 집): 방을 화면 가운데에 둔다 (둘레는 그리는 쪽에서 가린다)
   const room = viewRoomAt({ x: Math.round(x), y: Math.round(y) })
+  // 넓힌 내 집이 화면보다 크면 그 방향으로는 기록자를 따라간다 (집 끝에서 멈춘다), 작으면 가운데
+  if (room && isHome({ x: Math.round(x), y: Math.round(y) })) {
+    const follow = (p: number, start: number, size: number, view: number) =>
+      size > view ? Math.min(Math.max(p + 0.5 - view / 2, start), start + size - view) : start + size / 2 - view / 2
+    return { x: follow(x, room.x0, room.w, VIEW_W / zoom), y: follow(y, room.y0, room.h, VIEW_H / zoom) }
+  }
   if (room) return { x: room.x0 + room.w / 2 - VIEW_W / zoom / 2, y: room.y0 + room.h / 2 - VIEW_H / zoom / 2 }
   const cx = Math.min(Math.max(x + 0.5 - VIEW_W / zoom / 2, 0), WIDTH - VIEW_W / zoom)
   const cy = Math.min(Math.max(y + 0.5 - VIEW_H / zoom / 2, 0), VILLAGE_H - VIEW_H / zoom)
   return { x: cx, y: cy }
+}
+
+// 가구를 옮겨도 해당 가구의 기능·서 있는 자리가 같이 이동한다.
+let homeFurniture: readonly Furniture[] = Object.entries(FIXTURES).map(([item, f]) => ({ item: item as ItemId, x: f.x, y: f.y }))
+export function setHomeFurniture(furniture: readonly Furniture[]): void {
+  homeFurniture = furniture
+  const solid = new Set(furniture.filter(f => FURNITURE_DEFS[f.item]?.layer === 'solid').flatMap(f => {
+    const d = FURNITURE_DEFS[f.item]!
+    const side = f.facing === 'left' || f.facing === 'right'
+    const w = side ? d.h : d.w, h = side ? d.w : d.h
+    return Array.from({ length: w * h }, (_, i) => `${f.x + i % w},${f.y + Math.floor(i / w)}`)
+  }))
+  for (const [item, def] of Object.entries(FIXTURES)) {
+    const f = furniture.find(f => f.item === item)
+    const p = PLACES[def.place]
+    p.tiles = f ? [{ x: f.x, y: f.y }] : []
+    if (!f) { delete p.stand; continue }
+    const candidates = [{ x: f.x + 1, y: f.y }, { x: f.x, y: f.y + 1 }, { x: f.x - 1, y: f.y }, { x: f.x, y: f.y - 1 }]
+    p.stand = candidates.find(t => isHome(t) && isWalkable(t, solid))
+  }
 }

@@ -1,6 +1,7 @@
+import { HOME_ENTRY } from './world'
 import { describe, expect, it } from 'vitest'
 import { CONTENT } from '../content/catalog'
-import { childMode, CRADLE_SPOT, HELPER_AT, TODDLER_AT } from './child'
+import { childMode, HELPER_AT, TODDLER_AT } from './child'
 import { childTile, newGame, setChildMode, setCompanionStay, tapTile, tick, type GameState } from './game'
 import { freshStats } from './stats'
 import { PET_HOME } from './world'
@@ -39,7 +40,7 @@ describe('데리고 다니기·집에 두기', () => {
     const helper = withKid(HELPER_AT)
     expect(childMode(helper.child!, helper.clock.day)).toBe('roam')
     const home = setChildMode(helper, 'home')
-    expect(childTile(home)).toEqual(CRADLE_SPOT)
+    expect(childTile(home)).toEqual(HOME_ENTRY)
     // 걷는 아이는 혼자 다니지 않는다
     expect(childMode(setChildMode(toddler, 'roam').child!, toddler.clock.day)).toBe('follow')
   })

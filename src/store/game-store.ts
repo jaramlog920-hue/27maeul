@@ -1,3 +1,5 @@
+import { WORKSHOP, PARTNER_ROOM, BABY_ROOM, LIVING_ROOM } from '../engine/home-layout'
+import { moveFurniture } from '../engine/game'
 import { clubWeaveDone } from '../engine/clubs'
 // 엔진 상태 ↔ 화면 연결. 창(모달)이 열려 있으면 시간과 걸음이 멈춘다.
 import type { FullAvatar } from '../engine/avatar'
@@ -57,6 +59,7 @@ import {
   giveCord,
   goOnDate,
   spouseGift,
+  babyRoomTalk,
   playHall,
   drinkTea,
   watchSunset,
@@ -123,7 +126,7 @@ import {
   type SubmitResult,
   type Trade,
 } from '../engine/game'
-import { inAttic, isHome, LOCKED_DOORS, lockedTiles, lockedZones, roomAt, sameTile, zoneAt } from '../engine/world'
+import { isHome, LOCKED_DOORS, lockedTiles, lockedZones, roomAt, sameTile, zoneAt } from '../engine/world'
 import { footprint, removal, type Furniture } from '../engine/room'
 import { heartsOf } from '../engine/hearts'
 import { add, count, RECIPES, type Inventory, type RecipeId } from '../engine/items'
@@ -176,8 +179,7 @@ export type Modal =
    * last: 방금 적은 절·마친 장, resume: 들어올 때 "…부터 이어집니다" 알림을 보일까 (창 상태로만)
    */
   | { kind: 'copy'; view: CopyView; last?: VerseResult | null; resume?: boolean }
-  /** attic: 다락 창가에서 연 자기 전 읽기 */
-  | { kind: 'review'; pieceId: string | null; attic?: boolean }
+  | { kind: 'review'; pieceId: string | null }
   | { kind: 'journal'; tab?: JournalTab }
   | { kind: 'scene'; id: string; chosen?: number }
   /** 부탁하기 창 (계획 13) */
@@ -336,6 +338,11 @@ interface Store {
   decorating: ItemId | 'pick' | null
   /** 방 꾸미기에서 고른 놓인 가구 (왼쪽 위 칸·탁자 위인지) — 돌리기·치우기 (계획 17 작업 2). 저장하지 않는다 */
   decorSel: Pick<Furniture, 'item' | 'x' | 'y' | 'on'> | null
+  decorMoving: boolean
+  /** 방 꾸미기에서 화면에 비출 방의 칸 (기록자는 그대로 두고 카메라만 옮긴다). 저장하지 않는다 */
+  decorLook: Tile | null
+  moveSelected: () => void
+  showDecorRoom: (room: 'workshop' | 'partner' | 'baby' | 'living') => void
   muted: boolean
   /** 떠 있는 조이스틱 (설정에서 켜고 끈다, 처음엔 꺼짐 — 마우스·터치 모두) */
   joystick: boolean
@@ -681,12 +688,8 @@ function gained(before: Inventory, after: Inventory): Partial<Record<ItemId, num
 /** 지도의 편지 방(world ROOMS의 owner) → 방 표의 방 id */
 const LETTER_ROOM_OF: Partial<Record<string, ShelfRoomId>> = { letters: 'romPhm', hebJud: 'hebJud', rev: 'rev' }
 
-/** 집 안에 막 들어왔으면 누구 집인지 알린다 (다락에 오르면 다락 서재) */
+/** 집 안에 막 들어왔으면 누구 집인지 알린다 */
 function announceRoom(before: GameState, after: GameState, door = true) {
-  if (inAttic(playerTile(after)) && !inAttic(playerTile(before))) {
-    useGame.getState().say(T.ui.atticRoom, 2200)
-    return
-  }
   const room = roomAt(playerTile(after))
   if (!room || room === roomAt(playerTile(before))) return
   if (door) sfx('door')
@@ -728,6 +731,7 @@ export const useGame = create<Store>((set, get) => {
   let warnedSaveFail = false
   const persist = (g: GameState) => {
     // 물건 도감·업적: 저장할 때마다 새로 적고, 새로 이룬 업적은 알림과 따로 띄운다
+    syncHome(g)
     const { state: game, fresh } = recordProgress(g)
     if (fresh.length) {
       const text = fresh.length === 1 ? `업적 · ${fresh[0].name}` : `업적 ${fresh.length}개 · 선반 → 업적`
@@ -846,6 +850,12 @@ export const useGame = create<Store>((set, get) => {
         g = sg.state
         get().say(fill(T.romance.spouseGift, { who: withSubject(def!.role), items: itemList(sg.gift) }))
       }
+      // 아이방이 없으면 아이가 오지 않는다 — 배우자가 가끔 아이방 이야기를 꺼낸다 (선물 알림과 겹치지 않게 다음 말 걸 때)
+      const baby = def && !sg ? babyRoomTalk(g, def.id) : null
+      if (baby) {
+        g = baby
+        get().say(fill(T.romance.babyRoomTalk, { who: withSubject(def!.role) }))
+      }
       // 편지 나르는 이웃 (2026-10-05): 오늘 온 편지는 말을 걸면 그 자리에서 건넨다 — 받기 단추 없이, 대화에 편지 말 한 줄.
       // 조각 하나짜리 편지(편지 책이 아닌 조각)는 말씀 조각처럼 그 말과 함께 본문 창으로. 편지 책의 장·여러 통이면 대화 창에 편지 말
       let letter: { letter?: string } = {}
@@ -908,9 +918,6 @@ export const useGame = create<Store>((set, get) => {
         // 다시 읽을 목록에서는 여기서 빼지 않는다 — 읽고 자기(sleep)를 눌렀을 때만 뺀다
         return { game, modal: { kind: 'review', pieceId: reviewPick(game, rng) } }
       }
-      case 'atticWindow':
-        // 다락 창가에서도 자기 전 읽기를 하고 잘 수 있다 (평안이 하루 더)
-        return { game, modal: { kind: 'review', pieceId: reviewPick(game, rng), attic: true } }
       case 'desk': {
         // 계획 14: 책상은 필사 책상 — 재료·조각·등잔 기름 없이도 쓴다 (예전 엮기·옮겨 적기 창으로 가는 길은 닫았다).
         // 앉기만 해서는 기름을 쓰지 않는다 — 밤에 실제로 한 절을 적을 때 기름이 있으면 등잔을 켠다 (copyType)
@@ -1060,6 +1067,8 @@ export const useGame = create<Store>((set, get) => {
     afterScene: null,
     decorating: null,
     decorSel: null,
+    decorMoving: false,
+    decorLook: null,
     muted: loadMuted(),
     joystick: loadJoystick(),
     joystickShape: loadJoystickShape(),
@@ -1105,6 +1114,15 @@ export const useGame = create<Store>((set, get) => {
       const { modal, decorating, game } = get()
       if (modal) return
       if (decorating) {
+        if (get().decorMoving) {
+          const f = selectedPiece(game.room, get().decorSel)
+          const next = f && moveFurniture(game, f, tile)
+          if (!next) { get().say('그 자리는 가구가 겹치거나 통로가 막혀요.'); return }
+          const moved = next.room.find(o => o.item === f!.item && o.x === tile.x && o.y === tile.y)!
+          set({ game: persist(next), decorMoving: false, decorSel: moved })
+          sfx('place')
+          return
+        }
         // 물건을 들고 있으면 먼저 놓아 본다 (탁자·협탁 위에 올리기)
         if (decorating !== 'pick') {
           const placed = placeFurniture(game, decorating, tile)
@@ -1806,9 +1824,8 @@ export const useGame = create<Store>((set, get) => {
       sfx('sleep')
       const m = get().modal
       const pieceId = m?.kind === 'review' ? m.pieceId : null
-      const attic = m?.kind === 'review' && !!m.attic
       // 집 단계가 바뀌는 곳은 잠뿐: goToSleep이 새 단계로 지도(모듈 전역)를 맞춘다
-      const next = goToSleep(get().game, CONTENT, { read: pieceId !== null, pieceId: pieceId ?? undefined, attic })
+      const next = goToSleep(get().game, CONTENT, { read: pieceId !== null, pieceId: pieceId ?? undefined })
       set({ game: persist(next), modal: null })
       sayChildHelp(next, get().say)
     },
@@ -1821,8 +1838,17 @@ export const useGame = create<Store>((set, get) => {
       sfx(animal === 'dog' ? 'bark' : 'meow')
       set({ game: persist(next), modal: null })
     },
-    startDecorate: (item) => set({ decorating: item, modal: null, decorSel: null }),
-    stopDecorate: () => set({ decorating: null, decorSel: null }),
+    startDecorate: (item) => set({ decorating: item, modal: null, decorSel: null, decorMoving: false }),
+    stopDecorate: () => set({ decorating: null, decorSel: null, decorMoving: false, decorLook: null }),
+    moveSelected: () => set({ decorMoving: !get().decorMoving, decorating: 'pick' }),
+    showDecorRoom: (room) => {
+      const { game } = get()
+      const required = { workshop: 0, partner: 1, baby: 2, living: 3 }[room]
+      if (!get().decorating || game.homeLevel < required) return
+      // 기록자는 그대로 두고 화면만 그 방 가운데로 옮긴다
+      const r = { workshop: WORKSHOP, partner: PARTNER_ROOM, baby: BABY_ROOM, living: LIVING_ROOM }[room]
+      set({ decorLook: { x: (r.x0 + r.x1) / 2, y: (r.y0 + r.y1) / 2 } })
+    },
     turnSelected: () => {
       const { game, decorSel } = get()
       const f = selectedPiece(game.room, decorSel)
@@ -1845,7 +1871,7 @@ export const useGame = create<Store>((set, get) => {
       const next = removeFurniture(game, at)
       if (next === game) get().say(T.ui.bagFull)
       else {
-        set({ game: persist(next), decorSel: null })
+        set({ game: persist(next), decorSel: null, decorMoving: false })
         sfx('place')
       }
     },

@@ -8,7 +8,6 @@ import { shelfRoom } from './shelf-rooms'
 import {
   ACTS_DOOR,
   ACTS_ROOM,
-  ATTIC,
   HEB_JUD_DOOR,
   HEB_JUD_ROOM,
   HEIGHT,
@@ -55,14 +54,14 @@ afterEach(() => setOpenDoors([]))
 
 describe('지도 높이 80', () => {
   it('지도는 80줄, 모든 줄은 폭이 같고 마지막 두 줄(78–79)은 막힌 빈 곳', () => {
-    expect(HEIGHT).toBe(90)
+    expect(HEIGHT).toBe(120)
     expect(MAP).toHaveLength(HEIGHT)
     for (const row of MAP) expect(row).toHaveLength(WIDTH)
     for (const y of [78, 79]) for (let x = 0; x < WIDTH; x++) expect(isWalkable({ x, y }), `${x},${y}`).toBe(false)
   })
 
   it('모든 방(이웃집·서고 방·다락·넓힌 내 집)이 서로 겹치지 않고 지도 안에 있다', () => {
-    const all = [...ROOMS, ATTIC, { ...HOME_ROOM, owner: 'home', w: HOME_EXPAND_RECT.x1 - HOME_ROOM.x0 + 1 }]
+    const all = [...ROOMS, { ...HOME_ROOM, owner: 'home', w: HOME_EXPAND_RECT.x1 - HOME_ROOM.x0 + 1 }]
     for (const [i, a] of all.entries()) {
       expect(a.y0 + a.h, a.owner).toBeLessThanOrEqual(HEIGHT)
       expect(a.x0 + a.w, a.owner).toBeLessThanOrEqual(WIDTH)

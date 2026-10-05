@@ -71,7 +71,7 @@ function Body() {
     case 'copy':
       return <CopyDesk modal={modal} />
     case 'review':
-      return <Review pieceId={modal.pieceId} attic={modal.attic} />
+      return <Review pieceId={modal.pieceId} />
     case 'journal':
       return <Journal tab={modal.tab} />
     case 'scene':
