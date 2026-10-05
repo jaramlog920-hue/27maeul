@@ -1,7 +1,7 @@
 // 살아 움직이는 사람들 (계획 6b): 일과·목격·마을 사건·기억·말 고르기·사이 단계.
 // 사람마다 내용은 src/content/people.json 한 곳 (게임 문장이 들어 있어 verify가 금지어를 본다).
 // 이 파일은 상태를 바꾸지 않는 판단만 — 상태를 바꾸는 입구는 game.ts.
-import type { Season, Tile, Weather } from './types'
+import type { ItemId, Minigame, Season, Tile, Weather } from './types'
 
 // ── 조건 ──
 
@@ -153,6 +153,11 @@ export interface Choice {
   reply: SceneLine[]
   /** 약속: 다음 날 그 시각 그 자리 (지키면 kept:<id>, 잊으면 forgot:<id>와 며칠 서먹) */
   promise?: { id: string; at: Tile; from: number; to: number }
+  // ── 계획 16 작업 4 ──
+  /** 이야기의 갈래: 이 말을 고르면 완료 표식 story:<id> = outcome+1 (completes가 있는 사건에서만) */
+  outcome?: number
+  /** 고른 뒤 함께하는 손일 놀이 — 잘하든 못하든 끝나면 다음으로 (숙련으로 막지 않는다) */
+  mini?: Minigame
 }
 
 export interface PersonEvent {
@@ -175,6 +180,11 @@ export interface PersonEvent {
   /** 끝나면 며칠 서먹 */
   cool?: number
   album?: string
+  // ── 계획 16 작업 4: 이야기 이후의 변화 ──
+  /** 이 사건으로 끝나는 이야기 id → flags['story:<id>'] (1 = 끝남, 갈래면 고른 말의 outcome+1). 참여자 모두에게 경험 story:<id> */
+  completes?: string
+  /** 끝날 때 플레이어 가방에 남는 물건 하나 (집 꾸미기로 놓는다 — 장식이 아니다) */
+  keepsake?: ItemId
 }
 
 export interface Sighting {
@@ -200,6 +210,32 @@ export interface Person {
   lines: TalkLine[]
   sightings?: Sighting[]
   events?: PersonEvent[]
+  /** 이야기 뒤 이웃 집 방·작업장 앞 지정 칸에 놓이는 소품 (계획 16 작업 4) */
+  props?: StoryProp[]
+}
+
+/**
+ * 이야기 뒤 소품 (계획 16 작업 4): 조건(req — 보통 story)이 맞을 때만 보인다.
+ * at은 마을 지도 칸(소품의 왼쪽 위). room이 있으면 그 이웃 집 방 안, 없으면 작업장 앞 바깥 칸.
+ * 그림은 먼저 생활 확장 도트(art — assets/furniture/expansion/manifest.json의 id), 없으면 기존 가구 그림(item)
+ */
+export interface StoryProp {
+  id: string
+  room?: string
+  at: Tile
+  /** 기존 가구 (크기·길 막기·대신 그릴 그림) */
+  item?: ItemId
+  /** 생활 확장 도트 id (props/·structures/) */
+  art?: string
+  /** 방향이 있는 시설 도트(structures)의 방향 */
+  facing?: 'down' | 'up' | 'left' | 'right'
+  /** item이 없을 때 차지하는 칸 수 (기본 한 칸) */
+  size?: { w: number; h: number }
+  /** item이 없을 때 길을 막는가 (기본: 막지 않는 작은 물건) */
+  solid?: boolean
+  req: Req
+  /** 이 때에만 (예: 장날만 오는 상인의 좌판 곁) */
+  when?: When
 }
 
 export interface ThreadPhase {
@@ -283,6 +319,18 @@ export interface Life {
   heard?: { npc: string; text: string } | null
   /** 함께한 경험 (계획 16 작업 2): 경험 id → 한 항목. 같은 경험은 횟수·최근 날짜만 바뀐다 */
   experiences: Record<string, Experience>
+  /**
+   * 이어 갈 이야기 사건 (계획 16 작업 4): 고를 말이 남았거나(choice 없음) 고른 뒤 손일 놀이가 남은(mini) 사건.
+   * 이 사건은 다 끝나기 전엔 뒤 사건의 seen 조건에 '본 것'으로 치지 않는다. 다시 말을 걸면 그 자리에서 이어 간다
+   */
+  storyWait?: StoryWait | null
+}
+
+export interface StoryWait {
+  event: string
+  npc: string
+  choice?: number
+  mini?: Minigame
 }
 
 // ── 경험 기억 (계획 16 작업 2) ──
@@ -367,7 +415,7 @@ function sanitizeExperiences(raw: unknown): Record<string, Experience> {
   return out
 }
 
-export const NO_LIFE: Life = { seen: [], memories: {}, colors: {}, recent: {}, cool: {}, mutterDay: 0, muttered: [], promises: [], experiences: {} }
+export const NO_LIFE: Life = { seen: [], memories: {}, colors: {}, recent: {}, cool: {}, mutterDay: 0, muttered: [], promises: [], experiences: {}, storyWait: null }
 
 export function sanitizeLife(raw: unknown): Life {
   if (!raw || typeof raw !== 'object') return NO_LIFE
@@ -385,7 +433,20 @@ export function sanitizeLife(raw: unknown): Life {
     promises: Array.isArray(o.promises) ? o.promises : [],
     // 계획 16: 옛 저장은 빈 경험, 모양이 틀린 항목은 버린다
     experiences: sanitizeExperiences(o.experiences),
+    storyWait: sanitizeStoryWait(o.storyWait),
   }
+}
+
+const MINIGAMES: readonly Minigame[] = ['mash', 'timing', 'pick', 'hold', 'weave', 'order']
+function sanitizeStoryWait(raw: unknown): StoryWait | null {
+  if (!raw || typeof raw !== 'object') return null
+  const w = raw as Record<string, unknown>
+  if (typeof w.event !== 'string' || typeof w.npc !== 'string') return null
+  const out: StoryWait = { event: w.event, npc: w.npc }
+  if (Number.isInteger(w.choice) && (w.choice as number) >= 0) out.choice = w.choice as number
+  if (MINIGAMES.includes(w.mini as Minigame)) out.mini = w.mini as Minigame
+  if (out.mini && out.choice === undefined) return null
+  return out
 }
 
 export function hasMemory(life: Life, npc: string, tag: string): boolean {
@@ -423,11 +484,17 @@ export function storyFlag(flags: Record<string, number> | undefined, id: string)
   return flags?.[`story:${id}`] ?? 0
 }
 
+/** 다 겪은 사건 (이어 갈 손일·고를 말이 남은 사건은 아직 — 계획 16 작업 4) */
+export function seenDone(life: Life, id: string): boolean {
+  return life.seen.includes(id) && life.storyWait?.event !== id
+}
+
 export function reqMet(r: Req | undefined, c: ReqCtx): boolean {
   if (!r) return true
-  if (r.seen && !r.seen.every((id) => c.life.seen.includes(id))) return false
-  if (r.notSeen && r.notSeen.some((id) => c.life.seen.includes(id))) return false
-  if (r.seenAny && !r.seenAny.some((id) => c.life.seen.includes(id))) return false
+  const seen = (id: string) => seenDone(c.life, id)
+  if (r.seen && !r.seen.every(seen)) return false
+  if (r.notSeen && r.notSeen.some(seen)) return false
+  if (r.seenAny && !r.seenAny.some(seen)) return false
   if (r.story && !r.story.every((x) => (x.outcome === undefined ? storyFlag(c.flags, x.id) > 0 : storyFlag(c.flags, x.id) === x.outcome + 1))) return false
   if (r.notStory && r.notStory.some((id) => storyFlag(c.flags, id) > 0)) return false
   if (r.exp && !r.exp.every((id) => sharedExperience(c.life, c.npc, id))) return false
@@ -541,6 +608,23 @@ export function peopleData(): PeopleData {
 export function personOf(id: string): Person | undefined {
   return DATA.people[id]
 }
+/** 사건 id로 그 사건과 주인 (없으면 null) */
+export function eventById(id: string): { owner: string; event: PersonEvent } | null {
+  for (const p of Object.values(DATA.people)) {
+    const e = p.events?.find((x) => x.id === id)
+    if (e) return { owner: p.id, event: e }
+  }
+  return null
+}
+
+/** 사건에 실제로 등장한 주민 (주인 + 장면·고른 대답에서 말한 이웃 — 해설 빼고) */
+export function eventCast(owner: string, e: PersonEvent, choice?: number): string[] {
+  const lines = [...e.lines, ...(choice !== undefined ? (e.choices?.[choice]?.reply ?? []) : [])]
+  const out = [owner]
+  for (const l of lines) if (l.speaker !== 'narration' && !out.includes(l.speaker)) out.push(l.speaker)
+  return out
+}
+
 /** 사건 속 목격 장면(사건 단계에 딸린 것)까지 모두 */
 export function allSightings(): (Sighting & { npc: string; thread?: string; phase?: number })[] {
   const out: (Sighting & { npc: string; thread?: string; phase?: number })[] = []

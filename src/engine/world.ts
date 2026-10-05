@@ -658,6 +658,65 @@ export function roomAt(t: Tile): Room | null {
   return ROOMS.find((r) => t.x >= r.x0 && t.x < r.x0 + r.w && t.y >= r.y0 && t.y < r.y0 + r.h) ?? null
 }
 
+// ── 이야기 뒤 소품의 자리 (계획 16 작업 4) ──
+
+/** 사람이 다니는 길 글자 (소품을 두지 않는다) */
+const PATH_CHARS = new Set([',', 'm', 'A', 'P'])
+const DOOR_CHARS = new Set(['D', 'L', 'E', 'e', 'J'])
+const STEPS: readonly Tile[] = [{ x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: 1 }, { x: 0, y: -1 }]
+
+/** 소품 하나가 차지하는 칸 (at = 왼쪽 위). 기존 가구(item)면 그 크기, 아니면 size (기본 한 칸) */
+export function propFootprint(at: Tile, item?: ItemId, size?: { w: number; h: number }): Tile[] {
+  const d = (item && FURNITURE_DEFS[item]) || size || { w: 1, h: 1 }
+  const out: Tile[] = []
+  for (let y = 0; y < d.h; y++) for (let x = 0; x < d.w; x++) out.push({ x: at.x + x, y: at.y + y })
+  return out
+}
+
+/**
+ * 이야기 뒤 소품을 이 자리에 둘 수 없는 까닭 (둘 수 있으면 null).
+ * 방 안: 그 집 방의 맨바닥(가구·붙박이·문깔개가 아닌 칸)이고, 들어와 서는 칸·주인 자리가 아니며, 놓은 뒤에도 들어온 칸에서 방의 모든 바닥에 닿는다.
+ * 바깥(작업장 앞): 걸을 수 있는 땅이되 길·문·누르는 곳이 아니고, 집 문과 맞닿지 않는다
+ */
+export function propSpotProblem(tiles: readonly Tile[], roomOwner?: string): string | null {
+  if (!tiles.length) return 'empty'
+  const taken = new Set(tiles.map(key))
+  if (roomOwner) {
+    const r = ROOMS.find((x) => x.owner === roomOwner)
+    if (!r) return 'noRoom'
+    for (const t of tiles) {
+      if (roomAt(t) !== r || tileAt(t.x, t.y) !== 'f') return 'notFloor'
+      if (sameTile(t, r.entry) || sameTile(t, r.sit)) return 'entryOrSeat'
+      if (STEPS.some((d) => sameTile({ x: t.x + d.x, y: t.y + d.y }, r.exit))) return 'byExit'
+    }
+    // 놓은 뒤에도 들어온 칸에서 방의 걸을 수 있는 칸 모두에 닿는다 (통행을 막지 않는다)
+    const open = (t: Tile) => roomAt(t) === r && isWalkable(t) && !taken.has(key(t))
+    const seen = new Set([key(r.entry)])
+    const queue = [r.entry]
+    while (queue.length) {
+      const c = queue.shift()!
+      for (const d of STEPS) {
+        const n = { x: c.x + d.x, y: c.y + d.y }
+        if (!seen.has(key(n)) && open(n)) {
+          seen.add(key(n))
+          queue.push(n)
+        }
+      }
+    }
+    for (let y = r.y0; y < r.y0 + r.h; y++) for (let x = r.x0; x < r.x0 + r.w; x++) if (open({ x, y }) && !seen.has(`${x},${y}`)) return 'blocksWay'
+    return null
+  }
+  for (const t of tiles) {
+    if (t.y >= VILLAGE_H || roomAt(t)) return 'notOutside'
+    const ch = tileAt(t.x, t.y)
+    if (!isWalkable(t) || PATH_CHARS.has(ch) || DOOR_CHARS.has(ch)) return 'onWay'
+    if (placeAt(t)) return 'onPlace'
+    if (STEPS.some((d) => DOOR_CHARS.has(tileAt(t.x + d.x, t.y + d.y)))) return 'byDoor'
+    if (ROOMS.some((r) => sameTile(r.door, t) || STEPS.some((d) => sameTile({ x: r.door.x + d.x, y: r.door.y + d.y }, t)))) return 'byDoor'
+  }
+  return null
+}
+
 /** 화면을 방 하나로 좁혀 보여 주는 곳: 이웃집·서고 방, 그리고 내 집 안 */
 export function viewRoomAt(t: Tile): { x0: number; y0: number; w: number; h: number } | null {
   const r = roomAt(t) ?? (inAttic(t) ? ATTIC : null)

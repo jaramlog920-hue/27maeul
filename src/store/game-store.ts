@@ -75,6 +75,8 @@ import {
   nameChild,
   recordProgress,
   openEvent,
+  storyResume,
+  finishStoryMini,
   dressUp,
   type WardrobeWho,
   nightCopy,
@@ -144,6 +146,8 @@ export type Pending =
   | { kind: 'help'; neighborId: string }
   | { kind: 'teach' }
   | { kind: 'letter' }
+  /** 이야기 속에서 함께하는 손일 (계획 16 작업 4) — 잘하든 못하든 끝나면 이야기가 다음으로 */
+  | { kind: 'story'; event: string; npc: string }
 
 export type QuizMode = { kind: 'chapter'; book: Book; chapter: number } | { kind: 'library'; book: Book; retry: boolean }
 
@@ -792,6 +796,15 @@ export const useGame = create<Store>((set, get) => {
   function arrive(game: GameState, target: Target): { game: GameState; modal: Modal | null } {
     const rng = get().rng
     if (target.kind === 'neighbor') {
+      // 이어 갈 이야기 (계획 16 작업 4): 손일 놀이가 남았으면 그 놀이부터, 고를 말이 남았으면 그 장면부터 — 마음·장면은 다시 오르지 않는다
+      const resume = storyResume(game, target.id)
+      if (resume) {
+        sfx('talk')
+        const g = greetNeighbor(game, target.id)
+        return resume.mini
+          ? { game: persist(g), modal: { kind: 'mini', state: startMini(resume.mini, rng), pending: { kind: 'story', event: resume.event, npc: target.id } } }
+          : { game: persist(g), modal: { kind: 'scene', id: `ev:${resume.event}` } }
+      }
       // 기다리던 이야기(이벤트)가 있으면 그 장면부터 (계획 6b)
       const ev = openEvent(game, target.id)
       if (ev) {
@@ -985,7 +998,8 @@ export const useGame = create<Store>((set, get) => {
         const thanks = def.id === 'grandpa' && l.helpSeason && grapesRipe(game.clock.day) ? l.helpSeason.thanks : l.help.thanks
         get().say(thanks)
       }
-    } else if (p.kind === 'teach') next = teach(game)
+    } else if (p.kind === 'story') next = finishStoryMini(game)
+    else if (p.kind === 'teach') next = teach(game)
     else if (p.kind === 'letter') {
       const misses = state.kind === 'timing' ? state.misses : 0
       next = finishLetter(game, misses)
@@ -1777,6 +1791,13 @@ export const useGame = create<Store>((set, get) => {
       if (!id) return
       const game = persist(sceneSeen(get().game, id, ALBUM_IDS))
       const after = get().afterScene
+      // 고른 말이 손일을 함께하는 것이면 장면을 닫자마자 그 놀이로 (계획 16 작업 4)
+      const w = game.life?.storyWait
+      if (w?.mini && id === `ev:${w.event}`) {
+        set({ game, modal: { kind: 'mini', state: startMini(w.mini, get().rng), pending: { kind: 'story', event: w.event, npc: w.npc } }, afterScene: null })
+        if (after) get().say(after)
+        return
+      }
       set({ game, modal: null, afterScene: null })
       if (after) get().say(after)
     },

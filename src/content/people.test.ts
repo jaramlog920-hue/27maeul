@@ -3,21 +3,23 @@ import { CONTENT, PEOPLE } from './catalog'
 import { callName, SCENES } from './text'
 import { route } from '../engine/neighbors'
 import { findPath } from '../engine/movement'
-import { isWalkable } from '../engine/world'
+import { existsSync, readFileSync } from 'node:fs'
+import { isWalkable, propFootprint, propSpotProblem, key } from '../engine/world'
+import { FURNITURE_DEFS } from '../engine/room'
+import { CANDIDATE_IDS } from '../engine/romance'
 import { allSightings, type Routine, type When } from '../engine/people'
 import type { Tile } from '../engine/types'
 
 const doorOf = (id: string) => CONTENT.neighbors.find((n) => n.id === id)!.door
 const reach = (from: Tile, to: Tile) => findPath(from, to) ?? route(from, to)
 /**
- * 완료 표식 story:<id>가 생기는 이야기 (docs/characters/00_사건_ID_표.txt §7 등록 목록 — 23개).
- * 작업 4부터는 사건의 completes가 실제로 만든다 — 그때 이 목록과 맞춰 본다
+ * 완료 표식 story:<id>가 생기는 이야기 — 사건의 completes에서 센다 (계획 16 작업 4: 손으로 적은 목록 대신 실제 데이터).
+ * 이야기 id → 그 갈래들(고를 말의 outcome)
  */
-const STORY_IDS: readonly string[] = [
-  'bakerRest', 'childShelf', 'grandpaShelter', 'merchantBox', 'smithHook', 'shepherdTools', 'presserBench', 'weaverRug',
-  'beekeeperNotes', 'postmanBag', 'apothecaryPot', 'fisherToy', 'carpenterChair', 'wendellPath', 'cosmoDock', 'rudyStand',
-  'dexterViewing', 'basilRest', 'marigoldList', 'penelopeRug', 'tillyHook', 'juniperShow', 'poppyCorner',
-]
+const STORIES = new Map<string, Set<number>>()
+for (const p of Object.values(PEOPLE.people))
+  for (const e of p.events ?? []) if (e.completes) STORIES.set(e.completes, new Set((e.choices ?? []).flatMap((c) => (c.outcome !== undefined ? [c.outcome] : []))))
+const STORY_IDS: readonly string[] = [...STORIES.keys()]
 const speakers = new Set([...CONTENT.neighbors.map((n) => n.id), 'narration'])
 
 // ── 주민끼리 만나는 시간 (계획 16 작업 3) ──
@@ -103,14 +105,15 @@ describe('people.json', () => {
         for (const c of e.choices ?? []) if (c.promise) exps.add(`promise:${c.promise.id}`)
       }
     for (const n of CONTENT.neighbors) exps.add(`gift:${n.id}`)
-    expect(new Set(STORY_IDS).size).toBe(23)
     for (const id of STORY_IDS) exps.add(`story:${id}`)
     for (const x of exps) made.add(`exp:${x}`)
     for (const p of Object.values(PEOPLE.people)) {
-      const reqs = [...p.lines.map((l) => l.req), ...(p.events ?? []).map((e) => e.req), ...(p.sightings ?? []).map((w) => w.req), ...p.routines.map((r) => r.req)]
+      const reqs = [...p.lines.map((l) => l.req), ...(p.events ?? []).map((e) => e.req), ...(p.sightings ?? []).map((w) => w.req), ...p.routines.map((r) => r.req), ...(p.props ?? []).map((x) => x.req)]
       for (const r of reqs) {
         for (const m of [...(r?.memory ?? []), ...(r?.notMemory ?? [])]) expect(made.has(m), `${p.id}: ${m}`).toBe(true)
         for (const id of [...(r?.story ?? []).map((x) => x.id), ...(r?.notStory ?? [])]) expect(STORY_IDS.includes(id), `${p.id}: story:${id}`).toBe(true)
+        // 갈래를 기다리는 조건은 그 이야기에 실제로 있는 갈래만
+        for (const x of r?.story ?? []) if (x.outcome !== undefined) expect(STORIES.get(x.id)?.has(x.outcome), `${p.id}: story:${x.id} 갈래 ${x.outcome}`).toBe(true)
         for (const id of [...(r?.exp ?? []), ...(r?.notExp ?? []), ...(r?.recent ? [r.recent.exp] : [])]) expect(exps.has(id), `${p.id}: exp ${id}`).toBe(true)
       }
     }
@@ -143,6 +146,50 @@ describe('people.json', () => {
       }
   })
 
+  it('이야기 완료(completes)는 이야기마다 한 사건, 갈래는 모든 고를 말에 서로 다르게 — 남는 물건은 집에 놓는 가구', () => {
+    const owners = new Map<string, string>()
+    for (const p of Object.values(PEOPLE.people))
+      for (const e of p.events ?? []) {
+        for (const c of e.choices ?? []) if (c.outcome !== undefined) expect(e.completes, `${e.id}: 갈래는 completes 사건에만`).toBeDefined()
+        if (!e.completes) continue
+        expect(owners.has(e.completes), `${e.completes} 두 번`).toBe(false)
+        owners.set(e.completes, e.id)
+        const outs = (e.choices ?? []).map((c) => c.outcome)
+        if (outs.some((o) => o !== undefined)) {
+          expect(outs.every((o) => o !== undefined), `${e.id}: 갈래가 없는 고를 말`).toBe(true)
+          expect(new Set(outs).size, `${e.id}: 같은 갈래`).toBe(outs.length)
+        }
+        if (e.keepsake) expect(FURNITURE_DEFS[e.keepsake], `${e.id} keepsake`).toBeDefined()
+      }
+  })
+
+  it('이야기 뒤 소품은 그 이웃 집 방·작업장 앞의 지정 칸에만 — 길·문·누르는 곳·누군가 서는 자리가 아니다', () => {
+    const MANIFEST = 'assets/furniture/expansion/manifest.json'
+    const arts = existsSync(MANIFEST) ? new Set((JSON.parse(readFileSync(MANIFEST, 'utf-8')).items as { id: string }[]).map((x) => x.id)) : null
+    // 사람이 서는 자리 (일과·벗어나는 날·이벤트·목격·마을 사건·시간표)
+    const stands = new Set<string>()
+    for (const p of Object.values(PEOPLE.people)) {
+      for (const r of [...p.routines, ...(p.offDays?.routines ?? [])]) stands.add(key(r.at))
+      for (const e of p.events ?? []) stands.add(key(e.at))
+    }
+    for (const w of allSightings()) stands.add(key(w.at))
+    for (const t of PEOPLE.threads) for (const ph of t.phases) for (const rs of Object.values(ph.routines ?? {})) for (const r of rs) stands.add(key(r.at))
+    for (const n of CONTENT.neighbors) for (const e of n.schedule) for (const t of [e.tile, e.wet]) if (t) stands.add(key(t))
+    const ids = new Set<string>()
+    for (const p of Object.values(PEOPLE.people))
+      for (const pr of p.props ?? []) {
+        expect(ids.has(pr.id), `${pr.id} 두 번`).toBe(false)
+        ids.add(pr.id)
+        expect(pr.item || pr.art, `${pr.id}: 그림`).toBeTruthy()
+        if (pr.item) expect(FURNITURE_DEFS[pr.item], `${pr.id} item`).toBeDefined()
+        if (pr.art && arts) expect(arts.has(pr.art), `${pr.id} art ${pr.art}`).toBe(true)
+        if (pr.room) expect(pr.room, `${pr.id}: 그 이웃 집 방`).toBe(p.id)
+        const tiles = propFootprint(pr.at, pr.item, pr.size)
+        expect(propSpotProblem(tiles, pr.room), `${pr.id} 자리`).toBeNull()
+        for (const t of tiles) expect(stands.has(key(t)), `${pr.id}: ${t.x},${t.y}에 누군가 선다`).toBe(false)
+      }
+  })
+
   it('말 id는 사람 안에서 겹치지 않는다 (되풀이 피하기가 id로 센다)', () => {
     for (const p of Object.values(PEOPLE.people)) {
       const ids = p.lines.map((l) => l.id)
@@ -150,8 +197,15 @@ describe('people.json', () => {
     }
   })
 
-  it('사람마다 이벤트는 문턱(편한 사이·친구·특별한 사람·마음이 가는 사이)을 차례로 연다 (이벤트가 있는 사람만)', () => {
+  it('연애 후보는 이벤트로 문턱(편한 사이·친구·특별한 사람·마음이 가는 사이)을 차례로 열고, 일반 주민 이야기는 문턱·고백을 만들지 않는다', () => {
     for (const p of Object.values(PEOPLE.people)) {
+      if (!(CANDIDATE_IDS as readonly string[]).includes(p.id)) {
+        for (const e of p.events ?? []) {
+          expect(e.opens, `${e.id} opens`).toBeUndefined()
+          expect(e.confess, `${e.id} confess`).toBeUndefined()
+        }
+        continue
+      }
       if (!p.events?.length) continue
       const opens = new Set(p.events.map((e) => e.opens).filter((x) => x !== undefined))
       for (const st of [2, 3, 4, 5]) expect(opens.has(st as never), `${p.id} ${st}`).toBe(true)

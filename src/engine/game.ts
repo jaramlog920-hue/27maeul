@@ -7,7 +7,7 @@ import { add, addGift, CHAPTER_COST, FOODS, count, has, RECIPES, recipeGives, st
 import { facingFor, findPath, pathToward, stepActor, type Actor } from './movement'
 import { coolDown, exhausted, fallsSick, FRESH, rest, sleepNeeds, starving, tickNeeds, warmUp, work, type Needs } from './needs'
 import { inGoodMood } from './mood'
-import { footprint, placement, refitRoom, removal, solidTiles, type Furniture } from './room'
+import { footprint, FURNITURE_DEFS, placement, refitRoom, removal, solidTiles, type Furniture } from './room'
 import {
   BABY_PARTY_SPOTS,
   FRIENDS_FROM,
@@ -76,6 +76,8 @@ import {
 import {
   allSightings,
   depthOf,
+  eventById,
+  eventCast,
   NO_LIFE,
   personOf,
   peopleData,
@@ -95,6 +97,7 @@ import {
   type PersonEvent,
   type Routine,
   type Stage,
+  type StoryProp,
 } from './people'
 import { RARE_ITEMS, FIXTURE_STEPS, lampNightsPerOil, nextFixture, type FixtureLine, type FixtureStep } from './fixtures'
 import { POSTMAN, starPostFor } from './post'
@@ -115,10 +118,11 @@ import {
   momentNow,
   onceKey,
 } from './stories'
-import { ATTIC, BED_STAND, HEARTH_STAND, HOUSES, PET_HOME, HOME_FRONT, inAttic, isHome, isIndoor, isWalkable, key, LADDER, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setMailbox, setOpenDoors, START, tileAt, WARPS } from './world'
+import { propFootprint, ATTIC, BED_STAND, HEARTH_STAND, HOUSES, PET_HOME, HOME_FRONT, inAttic, isHome, isIndoor, isWalkable, key, LADDER, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setMailbox, setOpenDoors, START, tileAt, WARPS } from './world'
 import { BOOKS, type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
 import { withLookDefaults, type Avatar, type FullAvatar } from './avatar'
 import { BOARD_GAIN, boardFor, type BoardRequest } from './board'
+import type { Minigame } from './types'
 import { newlyAchieved, withFound, type Achievement } from './achievements'
 import { familyMorning } from './family-days'
 import { adultJob, JOB_GIFTS, kidCoins, kidMailFor, CHILD_AFTER_WEDDING, childMode, childStage, CRADLE_SPOT, helperSpot, helpStat, newChild, type Child, type ChildMode } from './child'
@@ -557,7 +561,7 @@ export function outdoors(s: GameState): boolean {
 }
 
 function blockersOf(s: GameState): Set<string> {
-  return new Set([...Object.values(s.npcs).filter((n) => n.visible).map((n) => key(npcTile(n))), ...solidTiles(s.room), ...lockedTiles(shelvedCount(s)), ...closedDoors(s)])
+  return new Set([...Object.values(s.npcs).filter((n) => n.visible).map((n) => key(npcTile(n))), ...solidTiles(s.room), ...lockedTiles(shelvedCount(s)), ...closedDoors(s), ...storyPropBlockers(s)])
 }
 
 /** 아직 이사 오지 않은 이웃의 집 — 열리기 전에는 덤불로 덮이고 들어갈 수 없다 (2026-09-30 사용자) */
@@ -754,7 +758,7 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
   const defs = defsById(content)
   const gctx = goalContext({ ...s, clock }, content)
   const npcs: Record<string, Npc> = {}
-  const furnitureBlockers = new Set([...solidTiles(s.room), ...lockedTiles(shelvedCount(s))])
+  const furnitureBlockers = new Set([...solidTiles(s.room), ...lockedTiles(shelvedCount(s)), ...storyPropBlockers(s)])
   for (const [id, n] of Object.entries(s.npcs)) npcs[id] = defs[id] ? stepNpc(n, defs[id], goalFor(defs[id], gctx), dt, furnitureBlockers) : n
 
   // 도착
@@ -855,9 +859,10 @@ export function stageWith(s: Pick<GameState, 'hearts'>, id: string): Stage {
   return stageOfPoints(s.hearts[id] ?? 0)
 }
 
-function reqCtx(s: GoalState, npc: string) {
+function reqCtx(s: GoalState, npc: string, propsReady = true) {
   const r = s.romance ?? NO_ROMANCE
   const def = CONTENT_DEFS.get(npc)
+  let placed: readonly string[] | null = null
   return {
     life: s.life ?? NO_LIFE,
     npc,
@@ -869,9 +874,72 @@ function reqCtx(s: GoalState, npc: string) {
     stage: stageWith(s, npc),
     romance: r.partner === npc ? r.stage : null,
     flags: s.flags,
-    // 이야기 뒤 소품(placed)은 작업 4에서 채운다 — 그 전엔 놓인 소품이 없다
-    placed: [] as readonly string[],
+    // 지금 놓여 있는 이야기 뒤 소품 (계획 16 작업 4) — 쓸 때만 센다. 소품 조건 안에서는 다른 소품을 보지 않는다(되묻기 없음)
+    get placed(): readonly string[] {
+      if (!propsReady) return []
+      return (placed ??= storyPropsNow(s).map((p) => p.id))
+    },
   }
+}
+
+// ── 이야기 이후의 변화 (계획 16 작업 4): 완료 표식 하나로 소품·일과·말 ──
+
+/** 지금 보이는 이야기 뒤 소품 (주인이 이사 와 있고 조건·때가 맞는 것) */
+export function storyPropsNow(s: GoalState): (StoryProp & { npc: string })[] {
+  const out: (StoryProp & { npc: string })[] = []
+  const m = momentOf(s)
+  for (const p of Object.values(peopleData().people)) {
+    if (!p.props?.length) continue
+    const def = CONTENT_DEFS.get(p.id)
+    if (def && notYet(def, s.flags.villageLevel ?? 0, s.flags)) continue
+    const ctx = reqCtx(s, p.id, false)
+    for (const pr of p.props) if (whenMatches(pr.when, m) && reqMet(pr.req, ctx)) out.push({ ...pr, npc: p.id })
+  }
+  return out
+}
+
+/** 길을 막는 이야기 뒤 소품 칸 (기존 가구 중 막는 것, 또는 solid로 적은 것) */
+function storyPropBlockers(s: GoalState): string[] {
+  return storyPropsNow(s)
+    .filter((p) => (p.item ? FURNITURE_DEFS[p.item]?.layer === 'solid' : !!p.solid))
+    .flatMap((p) => propFootprint(p.at, p.item, p.size).map(key))
+}
+
+/**
+ * 이야기를 끝낸다: 완료 표식 story:<id> (1, 갈래면 outcome+1) — 이미 있으면 바꾸지 않는다(다른 갈래가 섞이지 않게, 한 번만).
+ * 실제로 등장한 주민 모두에게 경험 story:<id>, 남는 물건이 있으면 가방에 하나. 다른 표식·해금·사건 단계는 건드리지 않는다
+ */
+function completeStory(s: GameState, owner: string, e: PersonEvent, choice?: number): GameState {
+  if (!e.completes) return s
+  const flag = `story:${e.completes}`
+  if (s.flags[flag]) return s
+  const outcome = choice !== undefined ? e.choices?.[choice]?.outcome : undefined
+  let next: GameState = { ...s, flags: { ...s.flags, [flag]: outcome !== undefined ? outcome + 1 : 1 } }
+  next = recordExperienceIn(next, { id: flag, kind: 'story', with: eventCast(owner, e, choice), ...(choice !== undefined ? { choice } : {}) })
+  if (e.keepsake) next = { ...next, inv: add(next.inv, { [e.keepsake]: 1 }) }
+  return next
+}
+
+/** 이 사건은 다 겪기 전에 이어 갈 것이 있는가 (고를 말로 끝나는 이야기, 손일을 함께하는 말) */
+const needsFollowUp = (e: PersonEvent) => !!e.choices?.length && (!!e.completes || e.choices.some((c) => c.mini))
+
+/**
+ * 이 이웃과 이어 갈 이야기 (계획 16 작업 4): 손일 놀이가 남았으면 'mini', 고를 말이 남았으면 'scene'.
+ * 놀이 도중 나가거나 다시 들어와도 그 사건 앞에서 이어 간다 (마음·장면은 두 번 오르지 않는다)
+ */
+export function storyResume(s: GameState, npc: string): { event: string; mini?: Minigame } | null {
+  const w = s.life?.storyWait
+  if (!w || w.npc !== npc || !s.npcs[npc]?.visible) return null
+  return w.mini ? { event: w.event, mini: w.mini } : { event: w.event }
+}
+
+/** 함께한 손일 놀이가 끝났다 — 잘했든 못했든 이야기는 다음으로 (완료 표식이 있으면 지금 남긴다) */
+export function finishStoryMini(s: GameState): GameState {
+  const w = s.life?.storyWait
+  if (!w?.mini) return s
+  const found = eventById(w.event)
+  const next: GameState = { ...s, life: { ...s.life, storyWait: null } }
+  return found ? completeStory(next, found.owner, found.event, w.choice) : next
 }
 /** 이웃 정의 (people 판단이 모습·후보 여부를 볼 때) — newGame·settle 때 채운다 */
 const CONTENT_DEFS = new Map<string, NeighborDef>()
@@ -887,7 +955,9 @@ export function eventNow(s: GoalState, npc: string): PersonEvent | null {
   const ctx = reqCtx(s, npc)
   const m = momentOf(s)
   const stage = stageWith(s, npc)
-  return p.events.find((e) => !life.seen.includes(e.id) && stage >= e.stage && whenMatches(e.when, m) && reqMet(e.req, ctx) && (!e.confess || ctx.suitor)) ?? null
+  // 이어 갈 이야기 사건이 하나 남아 있으면(다른 이웃의 손일·고를 말) 이어 갈 것이 생기는 사건은 그것을 마친 뒤에 — 이어 갈 자리는 하나뿐
+  const busy = (e: PersonEvent) => needsFollowUp(e) && !!life.storyWait && life.storyWait.event !== e.id
+  return p.events.find((e) => !life.seen.includes(e.id) && stage >= e.stage && whenMatches(e.when, m) && reqMet(e.req, ctx) && (!e.confess || ctx.suitor) && !busy(e)) ?? null
 }
 
 /** 이 사람이 지금 이야기(이벤트)를 품고 제자리에 와 있는가 — 머리 위에 말풍선, 말을 걸면 열린다 */
@@ -936,7 +1006,7 @@ export function hearMutter(s: GameState, npc: string, text: string): GameState {
 
 /** 말을 걸면 열릴 이야기(이벤트·목격)가 있는지 — 머리 위 말풍선과 대화하기 단추 표시용 */
 export function storyWaiting(s: GameState, npc: string): boolean {
-  return !!eventWaiting(s, npc) || !!sightingWaiting(s, npc)
+  return !!eventWaiting(s, npc) || !!sightingWaiting(s, npc) || !!storyResume(s, npc)
 }
 
 /** 말을 걸었을 때 기다리던 이야기가 열린다 (계획 6b 이벤트 — 가까이 가기만 해서는 열리지 않는다) */
@@ -948,9 +1018,12 @@ export function openEvent(s: GameState, npc: string): GameState | null {
     if (!w) return null
     return { ...s, life: remember({ ...life, seen: [...life.seen, w.id] }, npc, w.memory, s), scenes: [...s.scenes, `saw:${w.id}`] }
   }
-  let next: GameState = { ...s, life: { ...life, seen: [...life.seen, e.id] }, scenes: [...s.scenes, `ev:${e.id}`] }
+  const wait = needsFollowUp(e) ? { event: e.id, npc } : (life.storyWait ?? null)
+  let next: GameState = { ...s, life: { ...life, seen: [...life.seen, e.id], storyWait: wait }, scenes: [...s.scenes, `ev:${e.id}`] }
   if (e.gain) next = heartUp(next, npc, e.gain)
   if (e.cool) next = { ...next, life: { ...next.life, cool: { ...next.life.cool, [npc]: s.clock.day + e.cool } } }
+  // 고를 말이 없는 마지막 사건은 보는 것으로 이야기가 끝난다
+  if (!needsFollowUp(e)) next = completeStory(next, npc, e)
   return next
 }
 
@@ -1151,7 +1224,12 @@ export function chooseInEvent(s: GameState, eventId: string, index: number): Gam
     // 주요 선택은 경험으로 (이벤트마다 한 항목 — 고른 갈래)
     life = recordExperience(life, { id: `choice:${e.id}`, kind: 'choice', with: [p.id], choice: index }, momentOf(s))
     if (c.promise) life = { ...life, promises: [...life.promises, { id: c.promise.id, npc: p.id, day: s.clock.day + 1, at: c.promise.at, from: c.promise.from, to: c.promise.to }] }
+    // 계획 16 작업 4: 손일을 함께하는 말이면 놀이가 끝날 때까지 이어 갈 사건으로, 아니면 여기서 이야기가 끝난다(완료 표식)
+    const waiting = life.storyWait?.event === e.id
+    if (c.mini) life = { ...life, storyWait: { event: e.id, npc: p.id, choice: index, mini: c.mini } }
+    else if (waiting) life = { ...life, storyWait: null }
     let next: GameState = { ...s, life }
+    if (!c.mini) next = completeStory(next, p.id, e, index)
     if (e.confess && !s.romance?.partner && reqCtx(s, p.id).suitor) {
       next = { ...next, romance: { ...NO_ROMANCE, partner: p.id, stage: 'dating', since: s.clock.day }, flags: { ...next.flags, 'unlock:dating': 1 } }
     }
