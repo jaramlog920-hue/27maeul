@@ -1,3 +1,4 @@
+import { deserialize, serialize } from '../../engine/save'
 import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { chapterGuide, CONTENT, versesOf } from '../../content/catalog'
@@ -83,5 +84,18 @@ describe('길잡이 접기 저장', () => {
     const progress = newGame(CONTENT).progress
     expect(sanitizeCopy({ book: null, at: {}, legacy: {}, guideFolded: true }, progress).guideFolded).toBe(true)
     expect(sanitizeCopy({ book: null, at: {}, legacy: {}, guideFolded: 'yes' }, progress)).toEqual({ book: null, at: {}, legacy: {} })
+  })
+
+  it('한 줄 기록하기: 적고 저장하면 나의 한 줄에 남고 필사 화면은 그대로', () => {
+    openWrite(writing('mt'))
+    fireEvent.click(within(guideBox()).getByRole('button', { name: /한 줄 기록하기/ }))
+    fireEvent.change(within(guideBox()).getByRole('textbox', { name: '한 줄 기록하기' }), { target: { value: '세 시기로 나뉜다' } })
+    fireEvent.click(within(guideBox()).getByRole('button', { name: '저장' }))
+    expect(useGame.getState().game.myLines['guide:mt:1']).toBe('세 시기로 나뉜다')
+    expect(useGame.getState().modal).not.toBeNull()
+    expect(within(guideBox()).getByRole('button', { name: /한 줄 기록 고치기/ })).toBeInTheDocument()
+    // 다시 불러와도 남는다
+    const back = deserialize(serialize(useGame.getState().game), CONTENT)!
+    expect(back.myLines['guide:mt:1']).toBe('세 시기로 나뉜다')
   })
 })

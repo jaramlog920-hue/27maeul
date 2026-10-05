@@ -100,7 +100,9 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   const offers = Object.fromEntries(Object.entries(s.offers).filter(([, id]) => known.has(id) && !collected.includes(id)))
   // 조각 키(옛 저장 그대로)와 책 키('book:mk')만 남긴다
   const bookKeys = new Set(BOOKS.map((b) => `book:${b}`))
-  const myLines = Object.fromEntries(Object.entries(isObj(s.myLines) ? s.myLines : {}).filter(([id, t]) => (known.has(id) || bookKeys.has(id)) && typeof t === 'string'))
+  // 필사 길잡이의 한 줄은 'guide:mt:1' (책·장)
+  const guideKey = (id: string) => { const m = /^guide:([a-z0-9]+):(\d+)$/.exec(id); return !!m && (BOOKS as readonly string[]).includes(m[1]) }
+  const myLines = Object.fromEntries(Object.entries(isObj(s.myLines) ? s.myLines : {}).filter(([id, t]) => (known.has(id) || bookKeys.has(id) || guideKey(id)) && typeof t === 'string'))
   // 집 단계 (옛 저장은 0 — 넓히기 전). 부탁해 둔 단계는 바로 다음 단계일 때만 남긴다
   const homeLevel = s.homeLevel === 1 || s.homeLevel === 2 ? s.homeLevel : 0
   // 지도(모듈 전역 집 단계)를 이 저장에 맞춘 뒤 가구를 맞춘다 — newGame이 0으로 되돌려 둔 상태라서

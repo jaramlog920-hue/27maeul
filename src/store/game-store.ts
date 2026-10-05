@@ -467,6 +467,8 @@ interface Store {
   closeBind: () => void
   sleep: () => void
   saveMyLine: (lineKey: string, text: string) => void
+  /** 필사 길잡이의 한 줄: 저장만 하고 창(필사 화면)은 그대로 */
+  saveGuideLine: (lineKey: string, text: string) => void
   /** 나의 한 줄을 적지 않고 넘긴다 (나중에 선반에서 적을 수 있다) */
   skipMyLine: () => void
   // 동물·방
@@ -1720,6 +1722,7 @@ export const useGame = create<Store>((set, get) => {
       sayChildHelp(next, get().say)
     },
     saveMyLine: (lineKey, text) => set({ game: persist(setMyLine(get().game, lineKey, text)), modal: afterMyLine(get().modal) }),
+    saveGuideLine: (lineKey, text) => set({ game: persist(setMyLine(get().game, lineKey, text)) }),
     skipMyLine: () => set({ modal: afterMyLine(get().modal) }),
 
     adopt: (animal, name) => {

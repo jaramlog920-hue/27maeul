@@ -326,34 +326,67 @@ export function CopyGuide({ book, chapter }: { book: Book; chapter: number }) {
   const guide = chapterGuide(book, chapter)
   if (!guide) return null
   const { copyGuide } = useGame.getState()
+  // 예전 양피지 카드 모양 (2026-10-05 사용자): 책 그림·제목·꺾쇠가 한 줄인 머리, 배경과 살펴보기 사이 가는 선, 한 줄 기록하기
   return (
     <section className="copy-guide" aria-label={C.guideTitle} data-guide={`${book}:${chapter}`}>
-      <div className="copy-guide-head">
-        <p className="copy-guide-title">{C.guideTitle}</p>
-        <button
-          type="button"
-          className="copy-guide-toggle"
-          aria-expanded={!folded}
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={() => copyGuide(!folded)}
-        >
-          {folded ? C.guideOpen : C.guideFold}
-        </button>
-      </div>
+      <button
+        type="button"
+        className="copy-guide-toggle"
+        aria-expanded={!folded}
+        aria-label={folded ? C.guideOpen : C.guideFold}
+        onMouseDown={(e) => e.preventDefault()}
+        onClick={() => copyGuide(!folded)}
+      >
+        <svg className="copy-guide-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+          <path d="M12 5v15M3 4h5l4 2 4-2h5v15h-5l-4 2-4-2H3z" />
+        </svg>
+        <span className="copy-guide-title">{C.guideTitle}</span>
+        <span className="copy-guide-chevron" aria-hidden="true">{folded ? '⌄' : '⌃'}</span>
+      </button>
       {!folded && (
-        <>
-          <p className="copy-guide-part">
-            <span className="copy-guide-label">{C.guideBackground}</span>
-            {guide.background}
-          </p>
-          <p className="copy-guide-part">
-            <span className="copy-guide-label">{C.guideLook}</span>
-            {guide.look}
-          </p>
+        <div className="copy-guide-body">
+          <div>
+            <p className="copy-guide-label">{C.guideBackground}</p>
+            <p className="copy-guide-text">{guide.background}</p>
+          </div>
+          <div className="copy-guide-observe">
+            <p className="copy-guide-label">{C.guideLook}</p>
+            <p className="copy-guide-text">{guide.look}</p>
+          </div>
+          <GuideLine lineKey={`guide:${book}:${chapter}`} />
           <p className="copy-guide-note">{C.guideNote}</p>
-        </>
+        </div>
       )}
     </section>
+  )
+}
+
+/** 길잡이 아래 "한 줄 기록하기": 마음에 남을 때만 적는다 (나의 한 줄에 함께 남는다). 필사 화면은 닫히지 않는다 */
+function GuideLine({ lineKey }: { lineKey: string }) {
+  const saved = useGame((s) => s.game.myLines[lineKey] ?? '')
+  const [editing, setEditing] = useState(false)
+  const [text, setText] = useState(saved)
+  if (!editing)
+    return (
+      <button type="button" className="copy-guide-record" onMouseDown={(e) => e.preventDefault()} onClick={() => { setText(saved); setEditing(true) }}>
+        {saved ? C.guideLineEdit : C.guideLineWrite} <span aria-hidden="true">＋</span>
+      </button>
+    )
+  return (
+    <form
+      className="copy-guide-line"
+      onSubmit={(e) => {
+        e.preventDefault()
+        useGame.getState().saveGuideLine(lineKey, text)
+        setEditing(false)
+      }}
+    >
+      <textarea rows={2} maxLength={80} value={text} onChange={(e) => setText(e.target.value)} placeholder={C.guideLineHint} aria-label={C.guideLineWrite} />
+      <div className="copy-guide-actions">
+        <button type="button" onClick={() => { setEditing(false); setText(saved) }}>{C.guideLineCancel}</button>
+        <button type="submit">{C.guideLineSave}</button>
+      </div>
+    </form>
   )
 }
 
