@@ -8,6 +8,10 @@ import { letterWaiting } from '../engine/requests'
 import { childAtSchool, closedHouseIds, mailboxHasPost, storyWaiting, routineOf, SCHOOL_SEAT, shelvedCount, straysToday, weddingToday, type ActKind, type GameState, type PlayerAct } from '../engine/game'
 import { furnitureUseFrame, USE_INFO, USE_PROP_PALETTE, USE_SIZE, type UseAction } from './furniture-use-motion'
 import { extraUseFrame, petMotionRows, type ExtraAction } from './expansion-life-motion'
+import { weddingActorFrame, type WeddingAction } from './wedding-art'
+import { eventMotionFrame, type EventAction } from './event-life-motion'
+import { drawEventProp, eventPropSortY } from './event-props'
+import { eventPropsNow, npcEventMotion, playerEventMotion, weddingEvening, type EventMotion } from '../engine/event-scene'
 import type { Activity } from '../engine/people'
 import { deskTraces, type DeskTraces } from '../engine/desk-traces'
 import { facingOf, FURNITURE_DEFS, type Furniture } from '../engine/room'
@@ -1504,6 +1508,21 @@ function drawUse(g: Ctx, c: HTMLCanvasElement, stand: HTMLCanvasElement, wx: num
   g.drawImage(c, px - 7, py - 4)
 }
 
+/** 행사 동작 한 장 (계획 17 작업 4·5): 결혼식은 weddingActorFrame, 그 밖은 eventMotionFrame — 지금 외형으로 */
+function eventFrameCanvas(who: Who, m: EventMotion, blink: boolean, season: Season, extra: PersonExtra): HTMLCanvasElement {
+  const opts = { frame: 0 as const, blink, season, ...extra }
+  const actorPal = who === 'writer' ? writerPalette(season, extra.avatar) : PALETTE
+  const keyStr = `ev/${m.set}/${who}/${m.facing}/${m.action}/${m.frame}/${blink}/${lookKey(who, season, extra)}`
+  const layers = m.set === 'wedding' ? weddingActorFrame(who, m.facing, m.action as WeddingAction, m.frame, opts) : eventMotionFrame(who, m.facing, m.action as EventAction, m.frame, opts)
+  return motionCanvas(keyStr, layers, actorPal, FURNI_PALETTE)
+}
+
+/** 행사 동작을 서 있는 그림 자리에 */
+function drawEventMotion(g: Ctx, who: Who, m: EventMotion, wx: number, wy: number, blink: boolean, season: Season, extra: PersonExtra) {
+  const stand = person(who, m.facing, 0, false, 'stand', season, extra)
+  drawUse(g, eventFrameCanvas(who, m, blink, season, extra), stand, wx, wy, true)
+}
+
 /** 기록자의 지금 동작 (앉는 자리가 있으면 그 칸 위에서) */
 function drawPlayerAct(g: Ctx, act: PlayerAct, p: { x: number; y: number }, blink: boolean, season: Season, extra: PersonExtra) {
   const at = act.at ?? p
@@ -2034,12 +2053,15 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       const fest = festivalOf(day)
       // 복음서 방 잔치 저녁에는 비가 와도 모닥불을 피운다
       // 결혼 잔치 날 저녁도 모닥불 (계획 6)
-      festOn = ((!!fest && !wet) || feastToday(game) || weddingToday(game)) && minute >= FESTIVAL_FROM && minute < FESTIVAL_TO
+      festOn = (((!!fest && !wet) || feastToday(game) || weddingToday(game)) && minute >= FESTIVAL_FROM && minute < FESTIVAL_TO) || weddingEvening(game)
       if (festOn) {
         g.fillStyle = C.woodDark
         g.fillRect(FIRE.x * TILE + 3, FIRE.y * TILE + 12, 10, 3)
         flame(g, FIRE.x * TILE + 8, FIRE.y * TILE + 13, t, true)
       }
+      // 행사 소품 (계획 17 작업 4·5): 바닥에 까는 것은 여기서, 서 있는 것은 아래 사람들과 줄 순서로
+      const eventProps = eventPropsNow(game)
+      for (const ep of eventProps) if (ep.ground) drawEventProp(g, ep)
 
       // 서고 안 복음서 선반: 네 칸 — 처음엔 빈 칸이 또렷이, 꽂은 책은 책마다 다른 책등(제본 모습)과 등급 띠 (계획 14 작업 4)
       if (roomAt(here)?.owner === 'library') {
@@ -2113,6 +2135,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
 
       type Item = { y: number; paint: () => void }
       const items: Item[] = []
+      for (const ep of eventProps) if (!ep.ground) items.push({ y: eventPropSortY(ep), paint: () => drawEventProp(g, ep) })
 
       // 안 읽은 편지 (2026-09-30 사용자): 문 앞 편지 바구니 위에 봉투 말풍선
       if (letterWaiting(game) || mailboxHasPost(game)) {
@@ -2162,7 +2185,12 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           y: n.y,
           paint: () => {
             const spr = neighborPerson(def, facing, moving ? walkFrame(n.walkTime) : 0, isBlinking(t + offset), season, growth, game.looks?.[def.id])
-            drawSprite(g, spr, n.x, n.y, moving ? 0 : breathOffset(t + offset))
+            // 행사 동작 (계획 17 작업 4·5): 결혼식의 짝, 잔치·모임 자리의 이웃 — 지금 외형으로
+            const em = moving ? null : npcEventMotion(game, def.id, t)
+            if (em) {
+              const { who, extra } = neighborLook(def, growth, game.looks?.[def.id])
+              drawEventMotion(g, who, em, n.x, n.y, isBlinking(t + offset), season, extra)
+            } else drawSprite(g, spr, n.x, n.y, moving ? 0 : breathOffset(t + offset))
             // 이야기를 건넬 이웃, 기다리던 이야기(이벤트)를 품은 이웃은 머리 위에 말풍선 — 말을 걸면 열린다
             const bubbleY = n.y * TILE + TILE - spr.height - 2 - Math.round(Math.sin(t * 3))
             if (game.offers[def.id] || storyWaiting(game, def.id)) emote(g, 'talk', n.x * TILE + 8, bubbleY)
@@ -2301,7 +2329,10 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       const lift = moving ? 0 : kind === 'stretch' ? 1 : kind === 'doze' ? -dozeNod(t) : breathOffset(t)
       // 가구 쓰는 동작 중이면 (계획 17 작업 3) 그 동작 그림을 지금 외형으로 — 앉는 자리가 있으면 그 칸 위에
       const act = game.act
-      if (act) {
+      const playerEm = playerEventMotion(game, t)
+      if (playerEm) {
+        items.push({ y: p.y, paint: () => drawEventMotion(g, 'writer', playerEm, p.x, p.y, blink, season, { inky: done > 0, look: game.avatar?.look, avatar: game.avatar ? withLookDefaults(game.avatar) : undefined }) })
+      } else if (act) {
         const ay = act.at ? act.at.y + 0.01 : p.y
         items.push({ y: ay, paint: () => drawPlayerAct(g, act, p, isBlinking(t), season, { inky: done > 0, look: game.avatar?.look, avatar: game.avatar ? withLookDefaults(game.avatar) : undefined }) })
       } else items.push({

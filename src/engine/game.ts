@@ -38,6 +38,7 @@ import {
   type Gathering,
 } from './bonds'
 import { COVER_FROM, jobOf, SELL_FROM } from './job'
+import { weddingEvening } from './event-scene'
 import { FESTIVAL_SPOTS, FIRE, goalFor, isNear, npcTile, placeNpc, stepNpc, type Npc } from './neighbors'
 import { GAIN, heartsOf, MAX_POINTS } from './hearts'
 import { bookDone, bookRoomOpen, chaptersOf, emptyProgress, openDoorsFor, roomOpen, totalChapters, type Progress } from './books'
@@ -421,7 +422,8 @@ function lateSpots(s: GoalState, content: Pick<GameContent, 'neighbors'>, joined
   if (feastToday(s) && m >= FESTIVAL_FROM && m < FESTIVAL_TO)
     for (const [id, spot] of Object.entries(FESTIVAL_SPOTS)) if (joined(id)) special[id] = spot
   // 결혼 잔치 저녁 (계획 6): 이사 온 이웃은 모두 광장 모닥불 둘레로, 약혼자는 모닥불 바로 위 — 비가 와도 연다
-  if (weddingToday(s) && m >= FESTIVAL_FROM && m < FESTIVAL_TO) {
+  // 모닥불에 닿아 부부가 된 뒤에도 그날 잔치 시간 동안은 그대로 (계획 17 작업 4 — 결혼식 동작을 보이게)
+  if (weddingEvening(s)) {
     for (const [id, spot] of Object.entries(FESTIVAL_SPOTS)) if (joined(id)) special[id] = spot
     special[r.partner!] = WEDDING_SPOT
   }
