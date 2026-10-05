@@ -1905,7 +1905,6 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
 .copy-guide-line { display: grid; gap: 8px; margin-top: 12px; }
 .copy-guide-line textarea { width: 100%; box-sizing: border-box; background: #fffdf7; border: 2px solid #c9b896; border-radius: 4px; padding: 8px; font-size: 16px; resize: vertical; }
 .copy-guide-actions { display: flex; justify-content: flex-end; gap: 8px; }
-.copy-guide-note { margin: 10px 0 0; font-size: 11px; color: #8a7b62; }
 @media (max-width: 380px) { .copy-guide-body { padding: 2px 12px 12px; } .copy-guide-toggle { padding: 8px 12px; } }
 
 /* ── 필사 손맛 (2026-10-04): 조용한 화면에 맞게 작게 — 숫자 띄우기·연속 횟수 없음 ── */

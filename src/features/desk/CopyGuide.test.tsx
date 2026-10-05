@@ -28,7 +28,7 @@ describe('필사 길잡이 — 필사 화면', () => {
     expect(within(el).getByText('필사하며 살펴보기')).toHaveClass('copy-guide-label')
     expect(el).toHaveTextContent(g.background)
     expect(el).toHaveTextContent(g.look)
-    expect(el).toHaveTextContent('본문을 바탕으로 쓴 설명이에요.')
+    expect(el).not.toHaveTextContent('본문을 바탕으로 쓴 설명이에요.')
     // 원본의 검토용 칸 ("배경: 1:1–18 — …")은 화면 어디에도 없다
     const dialog = screen.getByRole('dialog')
     expect(dialog).not.toHaveTextContent('검토용')

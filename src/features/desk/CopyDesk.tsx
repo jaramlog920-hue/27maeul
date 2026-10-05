@@ -354,7 +354,6 @@ export function CopyGuide({ book, chapter }: { book: Book; chapter: number }) {
             <p className="copy-guide-text">{guide.look}</p>
           </div>
           <GuideLine lineKey={`guide:${book}:${chapter}`} />
-          <p className="copy-guide-note">{C.guideNote}</p>
         </div>
       )}
     </section>
