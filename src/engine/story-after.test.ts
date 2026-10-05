@@ -568,3 +568,186 @@ describe('일반 주민 2 — 대장장이·양치기·기름 짜는 이웃·베
     expect(eventNow(stand(step(old, 'weaver', day, 1120, room), 'penelope', { x: 6, y: 52 }), 'weaver')?.id).toBe('weaver:story:4')
   })
 })
+
+describe('일반 주민 3 — 벌 치는 이웃·편지 나르는 이웃·약방 주인·어부, 목수의 작은 이야기 (실제 내용)', () => {
+  beforeEach(() => setPeopleData(PEOPLE))
+  const ready = (npc: string, flags: Record<string, number> = {}): GameState => ({ ...start(), hearts: { [npc]: 40 }, flags: { ...start().flags, ...flags } })
+  const step = (s: GameState, npc: string, day: number, minute: number, t: Tile) => stand({ ...s, clock: { ...s.clock, day, minute } }, npc, t)
+  const dry = (from: number, weekday?: number) => Array.from({ length: 200 }, (_, i) => from + i).find((d) => !isWet(weatherOf(d)) && (weekday === undefined || d % 7 === weekday))!
+  const wet = (from: number, weekday?: number) => Array.from({ length: 400 }, (_, i) => from + i).find((d) => isWet(weatherOf(d)) && (weekday === undefined || d % 7 === weekday))!
+  const npcProps = (s: GameState, npc: string) => storyPropsNow(s).filter((p) => p.npc === npc).map((p) => p.id).sort()
+  const lineReq = (npc: string, id: string) => PEOPLE.people[npc].lines.find((l) => l.id === id)!.req
+  const ctxOf = (s: GameState, npc: string) => ({ life: s.life, npc, day: s.clock.day, threads: [], lover: false, suitor: false, flags: s.flags, stage: 3 as const })
+  const freeDay = (s: GameState, npc: string, from: number, minute: number, ok: (d: number) => boolean) =>
+    Array.from({ length: 120 }, (_, i) => from + i).filter(ok).map((d) => ({ ...s, clock: { ...s.clock, day: d, minute } })).find((g) => routineOf(g, npc)?.with)
+  const scenesOf = (npc: string, prefix: string) => JSON.stringify((PEOPLE.people[npc].events ?? []).filter((e) => e.id.startsWith(prefix)))
+
+  it('벌 치는 이웃: 서고 6권 이사 뒤 다름 듣기 → 주니퍼와 풀밭 → 장날 시식판(손일) → 찻집에 한 장, 공책 자리와 주니퍼와 관찰', () => {
+    const IN = { 'movedIn:beekeeper': 1 }
+    // 이사 전: 완료 표식이 있어도 소품이 없다
+    expect(npcProps(ready('beekeeper', { 'story:beekeeperNotes': 1 }), 'beekeeper')).toEqual([])
+    let s = ready('beekeeper', IN)
+    const hive = { x: 41, y: 27 }
+    let day = dry(70)
+    s = chooseInEvent(openEvent(step(s, 'beekeeper', day, 1000, hive), 'beekeeper')!, 'beekeeper:story:1', 1)
+    expect(eventNow(stand(step(s, 'beekeeper', day, 800, { x: 28, y: 11 }), 'juniper', { x: 27, y: 11 }), 'beekeeper')?.id).not.toBe('beekeeper:story:2') // 같은 날 이어지지 않는다
+    day = dry(day + 1)
+    s = step(s, 'beekeeper', day, 800, { x: 28, y: 11 })
+    expect(routineOf(s, 'beekeeper')?.at).toEqual({ x: 28, y: 11 })
+    expect(eventNow(stand(s, 'juniper', { x: 20, y: 20 }), 'beekeeper')?.id).not.toBe('beekeeper:story:2')
+    s = chooseInEvent(openEvent(stand(s, 'juniper', { x: 27, y: 11 }), 'beekeeper')!, 'beekeeper:story:2', 1)
+    expect(s.life.experiences['choice:beekeeper:story:2'].with.sort()).toEqual(['beekeeper', 'juniper'])
+    // 장날, 빵 굽는 이웃이 좌판에 와 있을 때
+    day = dry(day + 1, 0)
+    s = step(s, 'beekeeper', day, 860, { x: 21, y: 18 })
+    expect(routineOf(s, 'baker')?.at).toEqual({ x: 20, y: 17 })
+    expect(eventNow(stand(s, 'baker', { x: 2, y: 17 }), 'beekeeper')?.id).not.toBe('beekeeper:story:3')
+    s = chooseInEvent(openEvent(stand(s, 'baker', { x: 20, y: 17 }), 'beekeeper')!, 'beekeeper:story:3', 0)
+    expect(s.life.storyWait?.mini).toBe('mash')
+    s = finishStoryMini(s)
+    expect(s.life.experiences['choice:beekeeper:story:3'].with.sort()).toEqual(['baker', 'beekeeper'])
+    // 다음 날 찻집: 주니퍼는 그림 곁 자리로 온다
+    s = step(s, 'beekeeper', day + 1, 930, { x: 44, y: 63 })
+    expect(routineOf(s, 'juniper')?.at).toEqual({ x: 44, y: 64 })
+    s = stand(stand(s, 'juniper', { x: 44, y: 64 }), 'poppy', { x: 44, y: 62 })
+    s = chooseInEvent(openEvent(s, 'beekeeper')!, 'beekeeper:story:4', 1)
+    expect(s.flags['story:beekeeperNotes']).toBe(1)
+    expect(s.life.experiences['story:beekeeperNotes'].with.sort()).toEqual(['beekeeper', 'juniper', 'poppy'])
+    expect(npcProps(s, 'beekeeper')).toEqual(['beekeeperDrawing', 'beekeeperNotebook'])
+    // 공책 자리는 서고가 아니라 벌 치는 집 방
+    expect(storyPropsNow(s).filter((p) => p.npc === 'beekeeper').every((p) => p.room === 'beekeeper')).toBe(true)
+    const walk = freeDay(s, 'beekeeper', day + 2, 800, (d) => !isWet(weatherOf(d)))!
+    expect(routineOf(walk, 'beekeeper')).toMatchObject({ with: 'juniper', at: { x: 28, y: 11 } })
+    expect(routineOf(walk, 'juniper')?.with).toBe('beekeeper')
+    const market = freeDay(s, 'baker', day + 2, 860, (d) => d % 7 === 0 && !isWet(weatherOf(d)))!
+    expect(routineOf(market, 'baker')?.with).toBe('beekeeper')
+    expect(routineOf(market, 'beekeeper')?.with).toBe('baker')
+    for (const [npc, id] of [['juniper', 'juniper:beekeeperNotes'], ['baker', 'baker:beekeeperBoard'], ['poppy', 'poppy:beekeeperNotes']])
+      expect(reqMet(lineReq(npc, id), ctxOf(s, npc)), id).toBe(true)
+    const back = deserialize(serialize(s), CONTENT)!
+    expect(npcProps(back, 'beekeeper')).toEqual(['beekeeperDrawing', 'beekeeperNotebook'])
+  })
+
+  it('편지 나르는 이웃: 닳은 끈 → 본인이 덮개를 남김 → 목수에게 직접 부탁 → 우물 곁 쉼, 수선 가방과 쉬는 일과 — 편지 내용은 말하지 않는다', () => {
+    let s = ready('postman')
+    let day = dry(70)
+    s = chooseInEvent(openEvent(step(s, 'postman', day, 920, { x: 22, y: 8 }), 'postman')!, 'postman:story:1', 1)
+    expect(npcProps(s, 'postman')).toEqual([])
+    s = step(s, 'postman', day + 1, 1100, { x: 16, y: 83 })
+    expect(routineOf(s, 'postman')?.at).toEqual({ x: 16, y: 83 })
+    s = chooseInEvent(openEvent(s, 'postman')!, 'postman:story:2', 0)
+    expect(npcProps(s, 'postman')).toEqual(['postmanBagWorn'])
+    day = day + 2 + ((1 - ((day + 2) % 7) + 7) % 7)
+    s = step(s, 'postman', day, 930, { x: 7, y: 25 })
+    expect(routineOf(s, 'carpenter')?.at).toEqual({ x: 6, y: 24 })
+    expect(eventNow(stand(s, 'carpenter', { x: 20, y: 20 }), 'postman')?.id).not.toBe('postman:story:3')
+    s = chooseInEvent(openEvent(stand(s, 'carpenter', { x: 6, y: 24 }), 'postman')!, 'postman:story:3', 2)
+    expect(s.life.storyWait?.mini).toBe('hold')
+    s = finishStoryMini(s)
+    expect(s.life.experiences['choice:postman:story:3'].with.sort()).toEqual(['carpenter', 'postman'])
+    day = dry(day + 1)
+    s = chooseInEvent(openEvent(step(s, 'postman', day, 1040, { x: 25, y: 14 }), 'postman')!, 'postman:story:4', 0)
+    expect(s.flags['story:postmanBag']).toBe(1)
+    expect(s.life.experiences['story:postmanBag'].with).toEqual(['postman'])
+    expect(npcProps(s, 'postman')).toEqual(['postmanBagRepaired'])
+    expect(routineOf(step(s, 'postman', dry(day + 1), 1040, { x: 25, y: 14 }), 'postman')).toMatchObject({ doing: 'rest', at: { x: 25, y: 14 } })
+    expect(routineOf(step(s, 'postman', wet(day + 1), 1040, { x: 15, y: 24 }), 'postman')).toMatchObject({ doing: 'rest', at: { x: 15, y: 24 } })
+    expect(reqMet(lineReq('carpenter', 'carpenter:postmanBag'), ctxOf(s, 'carpenter'))).toBe(true)
+    // 넓은 어깨끈은 베 짜는 이웃이 서고 7권으로 이사 온 뒤에만
+    const strap = stand(step(s, 'postman', day + 1, 980, { x: 36, y: 24 }), 'weaver', { x: 37, y: 24 })
+    expect(eventNow(strap, 'postman')?.id).not.toBe('postman:small:newStrap')
+    expect(eventNow({ ...strap, flags: { ...strap.flags, 'movedIn:weaver': 1 } }, 'postman')?.id).toBe('postman:small:newStrap')
+    const all = JSON.stringify(PEOPLE.people.postman)
+    for (const w of ['말씀', '조각 편지', '편지에는', '편지 내용']) expect(all, w).not.toContain(w)
+    const back = deserialize(serialize(s), CONTENT)!
+    expect(npcProps(back, 'postman')).toEqual(['postmanBagRepaired'])
+  })
+
+  it('약방 주인: 서고 2권 이사 뒤 시든 화분 → 할아버지에게 묻기 → 바질과 물 주는 날 표(손일) → 파피가 고른 창가, 번갈아 쉬는 일과 — 치료·약효 문장 없음', () => {
+    expect(npcProps(ready('apothecary', { 'story:apothecaryPot': 1 }), 'apothecary')).toEqual([])
+    let s = ready('apothecary', { 'movedIn:apothecary': 1 })
+    const shop = { x: 37, y: 32 }
+    let day = dry(70)
+    s = chooseInEvent(openEvent(step(s, 'apothecary', day, 900, shop), 'apothecary')!, 'apothecary:story:1', 2)
+    expect(npcProps(s, 'apothecary')).toEqual(['apothecaryPotWilted'])
+    day = dry(day + 1)
+    s = step(s, 'apothecary', day, 980, { x: 40, y: 8 })
+    expect(routineOf(s, 'apothecary')?.at).toEqual({ x: 40, y: 8 })
+    expect(eventNow(stand(s, 'grandpa', { x: 20, y: 20 }), 'apothecary')?.id).not.toBe('apothecary:story:2')
+    s = chooseInEvent(openEvent(stand(s, 'grandpa', { x: 41, y: 7 }), 'apothecary')!, 'apothecary:story:2', 0)
+    expect(s.life.experiences['choice:apothecary:story:2'].with.sort()).toEqual(['apothecary', 'grandpa'])
+    s = step(s, 'apothecary', day + 1, 980, shop)
+    expect(routineOf(s, 'basil')?.at).toEqual({ x: 38, y: 32 })
+    s = chooseInEvent(openEvent(stand(s, 'basil', { x: 38, y: 32 }), 'apothecary')!, 'apothecary:story:3', 0)
+    expect(s.life.storyWait?.mini).toBe('order')
+    s = finishStoryMini(s)
+    expect(s.life.experiences['choice:apothecary:story:3'].with.sort()).toEqual(['apothecary', 'basil'])
+    s = stand(step(s, 'apothecary', day + 2, 930, { x: 43, y: 62 }), 'poppy', { x: 44, y: 62 })
+    s = chooseInEvent(openEvent(s, 'apothecary')!, 'apothecary:story:4', 1)
+    expect(s.flags['story:apothecaryPot']).toBe(1)
+    expect(s.life.experiences['story:apothecaryPot'].with.sort()).toEqual(['apothecary', 'poppy'])
+    expect(npcProps(s, 'apothecary')).toEqual(['apothecaryCan', 'apothecaryPotLeaf'])
+    // 둘째·다섯째 날은 약방 주인이 찻집에서 쉬고 바질이 물을, 셋째·여섯째 날은 약방 주인이 물을
+    const rest = { ...s, clock: { ...s.clock, day: day + 3 + ((2 - ((day + 3) % 7) + 7) % 7), minute: 930 } }
+    expect(routineOf(rest, 'apothecary')).toMatchObject({ doing: 'tea', at: { x: 43, y: 62 } })
+    expect(routineOf(rest, 'basil')).toMatchObject({ doing: 'herb', at: { x: 34, y: 32 } })
+    const water = { ...rest, clock: { ...rest.clock, day: rest.clock.day + 1 } }
+    expect(routineOf(water, 'apothecary')).toMatchObject({ doing: 'herb', at: shop })
+    for (const [npc, id] of [['grandpa', 'grandpa:apothecaryPot'], ['basil', 'basil:apothecaryPot'], ['poppy', 'poppy:apothecaryPot']])
+      expect(reqMet(lineReq(npc, id), ctxOf(s, npc)), id).toBe(true)
+    const all = JSON.stringify(PEOPLE.people.apothecary) + PEOPLE.people.basil.lines.find((l) => l.id === 'basil:apothecaryPot')!.text + PEOPLE.people.grandpa.lines.find((l) => l.id === 'grandpa:apothecaryPot')!.text
+    for (const w of ['치료', '약효', '효능', '효과', '진단', '처방', '낫', '나을', '아픈', '병']) expect(all, w).not.toContain(w)
+    const back = deserialize(serialize(s), CONTENT)!
+    expect(npcProps(back, 'apothecary')).toEqual(['apothecaryCan', 'apothecaryPotLeaf'])
+  })
+
+  it('어부: 서고 3권 이사 뒤 만들다 만 조각 → 목수와 바닥(손일 실패해도) → 코스모가 받은 돛 → 쉬는 날 상자, 장난감과 저녁 차 — 그물 가득 같은 장면 없음', () => {
+    expect(npcProps(ready('fisher', { 'story:fisherToy': 1 }), 'fisher')).toEqual([])
+    let s = ready('fisher', { 'movedIn:fisher': 1 })
+    const front = { x: 28, y: 32 }
+    let day = dry(70)
+    s = step(s, 'fisher', day, 980, front)
+    expect(routineOf(s, 'fisher')?.at).toEqual(front)
+    s = chooseInEvent(openEvent(s, 'fisher')!, 'fisher:story:1', 2)
+    day = dry(day + 1, 2)
+    s = step(s, 'fisher', day, 1040, { x: 24, y: 35 })
+    expect(routineOf(s, 'carpenter')?.at).toEqual({ x: 24, y: 34 })
+    expect(eventNow(stand(s, 'carpenter', { x: 6, y: 24 }), 'fisher')?.id).not.toBe('fisher:story:2')
+    s = chooseInEvent(openEvent(stand(s, 'carpenter', { x: 24, y: 34 }), 'fisher')!, 'fisher:story:2', 0)
+    s = finishStoryMini(s) // 잘하든 못하든
+    expect(s.life.experiences['choice:fisher:story:2'].with.sort()).toEqual(['carpenter', 'fisher'])
+    day = dry(day + 1)
+    s = step(s, 'fisher', day, 650, { x: 24, y: 34 })
+    expect(eventNow(stand(s, 'cosmo', { x: 30, y: 32 }), 'fisher')?.id).not.toBe('fisher:story:3')
+    s = chooseInEvent(openEvent(stand(s, 'cosmo', { x: 25, y: 33 }), 'fisher')!, 'fisher:story:3', 1)
+    expect(s.life.experiences['choice:fisher:story:3'].with.sort()).toEqual(['cosmo', 'fisher'])
+    day = dry(day + 1, 6)
+    s = chooseInEvent(openEvent(step(s, 'fisher', day, 700, front), 'fisher')!, 'fisher:story:4', 0)
+    expect(s.flags['story:fisherToy']).toBe(1)
+    expect(s.life.experiences['story:fisherToy'].with).toEqual(['fisher'])
+    expect(npcProps(s, 'fisher')).toEqual(['fisherToy', 'fisherWood'])
+    expect(routineOf(step(s, 'fisher', dry(day + 1, 6), 700, front), 'fisher')).toMatchObject({ doing: 'wood', at: front })
+    expect(routineOf(step(s, 'fisher', wet(day + 1, 6), 700, front), 'fisher')).toMatchObject({ doing: 'wood', at: { x: 39, y: 86 } })
+    expect(routineOf(step(s, 'fisher', dry(day + 1), 980, front), 'fisher')).toMatchObject({ doing: 'tea', at: { x: 24, y: 35 } })
+    for (const [npc, id] of [['carpenter', 'carpenter:fisherToy'], ['cosmo', 'cosmo:fisherToy']]) expect(reqMet(lineReq(npc, id), ctxOf(s, npc)), id).toBe(true)
+    // 코스모의 이야기 결과는 건드리지 않는다
+    expect(s.flags['story:cosmoDock']).toBeUndefined()
+    const scenes = scenesOf('fisher', 'fisher:') + PEOPLE.people.fisher.lines.filter((l) => !/^fisher\d$/.test(l.id)).map((l) => l.text).join()
+    for (const w of ['가득', '밤새', '한 마리도', '오른편', '건너편', '물 위를', '폭풍', '떡', '나누어 먹']) expect(scenes, w).not.toContain(w)
+    const back = deserialize(serialize(s), CONTENT)!
+    expect(npcProps(back, 'fisher')).toEqual(['fisherToy', 'fisherWood'])
+  })
+
+  it('목수: 의자 뒤 작업대 정돈(손일) → 연장 걸이, 아이 상자·어부 장난감은 같은 사건을 함께 쓴다', () => {
+    let s = ready('carpenter', { 'story:carpenterChair': 1 })
+    expect(npcProps(s, 'carpenter')).toEqual(['carpenterChair'])
+    s = step(s, 'carpenter', 75, 500, { x: 6, y: 24 })
+    expect(eventNow({ ...s, flags: { ...s.flags, 'story:carpenterChair': 0 } }, 'carpenter')?.id).not.toBe('carpenter:small:benchTidy')
+    s = finishStoryMini(chooseInEvent(openEvent(s, 'carpenter')!, 'carpenter:small:benchTidy', 0))
+    expect(npcProps(s, 'carpenter')).toEqual(['carpenterChair', 'carpenterToolRack'])
+    // 함께 쓰는 사건은 한 사람 파일에만
+    const owners = Object.values(PEOPLE.people).flatMap((p) => (p.events ?? []).map((e) => e.id))
+    for (const id of ['child:story:2', 'fisher:story:2']) expect(owners.filter((x) => x === id)).toHaveLength(1)
+    expect(PEOPLE.people.fisher.events!.find((e) => e.id === 'fisher:story:2')!.with).toEqual(['carpenter'])
+  })
+})

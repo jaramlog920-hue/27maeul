@@ -3829,6 +3829,36 @@
               "story:merchantBox"
             ]
           }
+        },
+        {
+          "id": "poppy:beekeeperNotes",
+          "text": "벽에 걸었던 꽃 그림, 손님들이 아직도 물어봐요. 주니퍼는 그때마다 귀가 빨개지고요.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "beekeeperNotes"
+              }
+            ],
+            "exp": [
+              "story:beekeeperNotes"
+            ]
+          }
+        },
+        {
+          "id": "poppy:apothecaryPot",
+          "text": "창가 화분은 약방 주인이 두고 간 거예요. 자리는 제가 골랐고요. 아침엔 해, 오후엔 그늘.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "apothecaryPot"
+              }
+            ],
+            "exp": [
+              "story:apothecaryPot"
+            ]
+          }
         }
       ],
       "sightings": [
@@ -4508,6 +4538,211 @@
           "mutter": [
             "빵 굽는 이웃, 처마 아래가 좋네요."
           ]
+        },
+        {
+          "at": {
+            "x": 15,
+            "y": 24
+          },
+          "when": {
+            "from": 390,
+            "to": 450
+          },
+          "doing": "sort",
+          "mutter": [
+            "끈부터 두 번 당겨 보고 나가요."
+          ]
+        },
+        {
+          "at": {
+            "x": 3,
+            "y": 9
+          },
+          "when": {
+            "from": 450,
+            "to": 600
+          },
+          "doing": "wait",
+          "mutter": [
+            "이른 길은 조용해서 좋아요. 발소리만 들려요."
+          ]
+        },
+        {
+          "at": {
+            "x": 23,
+            "y": 21
+          },
+          "when": {
+            "from": 600,
+            "to": 900,
+            "weather": [
+              "dry"
+            ]
+          },
+          "doing": "wait",
+          "mutter": [
+            "광장은 세 바퀴째예요. 오늘은 다 돌았어요."
+          ]
+        },
+        {
+          "at": {
+            "x": 22,
+            "y": 8
+          },
+          "when": {
+            "from": 900,
+            "to": 1080
+          },
+          "doing": "wait",
+          "mutter": [
+            "다 돈 집마다 수첩 귀를 하나씩 접어요."
+          ]
+        },
+        {
+          "at": {
+            "x": 16,
+            "y": 83
+          },
+          "when": {
+            "from": 1080,
+            "to": 1140
+          },
+          "doing": "sort",
+          "req": {
+            "seen": [
+              "postman:story:1"
+            ],
+            "notSeen": [
+              "postman:story:2"
+            ]
+          },
+          "mutter": [
+            "덮개, 끈, 안주머니… 하나만 남긴다면."
+          ]
+        },
+        {
+          "at": {
+            "x": 7,
+            "y": 25
+          },
+          "when": {
+            "from": 900,
+            "to": 960,
+            "days": [
+              1
+            ]
+          },
+          "doing": "wait",
+          "req": {
+            "seen": [
+              "postman:story:2"
+            ],
+            "notSeen": [
+              "postman:story:3"
+            ]
+          },
+          "mutter": [
+            "부탁은 제가 직접 할게요. 말은 몇 번 연습했어요."
+          ]
+        },
+        {
+          "at": {
+            "x": 25,
+            "y": 14
+          },
+          "when": {
+            "from": 1020,
+            "to": 1080,
+            "weather": [
+              "dry"
+            ]
+          },
+          "doing": "rest",
+          "req": {
+            "seen": [
+              "postman:story:3"
+            ],
+            "notSeen": [
+              "postman:story:4"
+            ]
+          },
+          "mutter": [
+            "고친 가방으로 한 바퀴 돌았어요. 오늘은 앉아 볼래요."
+          ]
+        },
+        {
+          "at": {
+            "x": 25,
+            "y": 14
+          },
+          "when": {
+            "from": 1020,
+            "to": 1080,
+            "weather": [
+              "dry"
+            ]
+          },
+          "doing": "rest",
+          "req": {
+            "story": [
+              {
+                "id": "postmanBag"
+              }
+            ]
+          },
+          "mutter": [
+            "오늘 길은 여기서 끝. 이제 앉아요.",
+            "우물 돌이 해를 받아서 따뜻하네요."
+          ]
+        },
+        {
+          "at": {
+            "x": 15,
+            "y": 24
+          },
+          "when": {
+            "from": 1020,
+            "to": 1080,
+            "weather": [
+              "wet"
+            ]
+          },
+          "doing": "rest",
+          "req": {
+            "story": [
+              {
+                "id": "postmanBag"
+              }
+            ]
+          },
+          "mutter": [
+            "비 오는 날은 처마 밑에서 쉬어요. 가방은 덮개를 덮고요."
+          ]
+        },
+        {
+          "at": {
+            "x": 36,
+            "y": 24
+          },
+          "when": {
+            "from": 960,
+            "to": 1020
+          },
+          "doing": "wait",
+          "with": "weaver",
+          "req": {
+            "story": [
+              {
+                "id": "postmanBag"
+              }
+            ],
+            "notSeen": [
+              "postman:small:newStrap"
+            ]
+          },
+          "mutter": [
+            "베 짜는 이웃, 어깨 닿는 쪽 끈 이야기를 하러 왔어요."
+          ]
         }
       ],
       "lines": [
@@ -4538,6 +4773,143 @@
               ]
             }
           }
+        },
+        {
+          "id": "postman:plain",
+          "text": "오늘 길은 거의 다 돌았어요. 남은 건 언덕 쪽 두 집이에요.",
+          "depth": 0
+        },
+        {
+          "id": "postman:short:strapCheck",
+          "text": "나서기 전에 끈부터 당겨 봐요. 두 번 당겨서 버티면 나가요.",
+          "depth": 0,
+          "when": {
+            "from": 390,
+            "to": 450
+          }
+        },
+        {
+          "id": "postman:short:foldPage",
+          "text": "다 돈 집마다 수첩 귀를 하나씩 접어요. 저녁에 펴 보면 오늘 길이 보여요.",
+          "depth": 0,
+          "when": {
+            "from": 900,
+            "to": 1080
+          }
+        },
+        {
+          "id": "postman:short:wellRest",
+          "text": "우물 곁은 늘 지나만 가요. 앉으면 못 일어날 것 같아서요.",
+          "depth": 0,
+          "req": {
+            "notStory": [
+              "postmanBag"
+            ]
+          },
+          "when": {
+            "from": 1020,
+            "to": 1080
+          }
+        },
+        {
+          "id": "postman:short:quietRoad",
+          "text": "이른 아침 길은 조용해서 좋아요. 발소리만 들려요.",
+          "depth": 0,
+          "when": {
+            "from": 450,
+            "to": 600
+          }
+        },
+        {
+          "id": "postman:short:winterRoad",
+          "text": "언 길에선 보폭을 반으로 줄여요. 늦는 것보다 넘어지는 게 더 늦어요.",
+          "depth": 0,
+          "when": {
+            "season": [
+              "winter"
+            ]
+          }
+        },
+        {
+          "id": "postman:short:rainyDay",
+          "text": "비 오는 날은 처마마다 잠깐씩 서요. 편지가 젖으면 안 되니까요.",
+          "depth": 0,
+          "when": {
+            "weather": [
+              "wet"
+            ]
+          }
+        },
+        {
+          "id": "postman:short:honeyBread",
+          "text": "그때 받은 것, 가방 맨 위에 넣고 다니며 아껴 먹었어요. 길에서 먹으니 더 맛있더라고요.",
+          "depth": 1,
+          "req": {
+            "exp": [
+              "gift:postman"
+            ]
+          }
+        },
+        {
+          "id": "postman:short:letterSafe",
+          "text": "어느 집에서 어디로 무엇이 갔는지는 말 못 해요. 그건 받는 분 거라서요.",
+          "depth": 1
+        },
+        {
+          "id": "postman:taste",
+          "text": "걸으면서 생각하는 게 편해요. 가만히 앉아 있으면 오히려 머리가 바빠요.",
+          "depth": 1,
+          "reveals": "activity.walk"
+        },
+        {
+          "id": "postman:bagWorking",
+          "text": "덮개는 남기기로 했어요. 잠금은 목수에게 부탁하려는데, 말을 고르는 중이에요.",
+          "depth": 0,
+          "req": {
+            "seen": [
+              "postman:story:2"
+            ],
+            "notSeen": [
+              "postman:story:3"
+            ]
+          }
+        },
+        {
+          "id": "postman:after",
+          "text": "잠금이 한 번에 열리니까 하루가 조금 남아요. 그 남는 시간에 우물 곁에 앉아요.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "postmanBag"
+              }
+            ]
+          }
+        },
+        {
+          "id": "postman:memory",
+          "text": "우물 곁에 처음 앉던 날, 곁에 있어 줘서 고마웠어요. 요즘은 저녁마다 거기 앉아요.",
+          "depth": 2,
+          "req": {
+            "story": [
+              {
+                "id": "postmanBag"
+              }
+            ],
+            "exp": [
+              "story:postmanBag"
+            ]
+          }
+        },
+        {
+          "id": "postman:newStrap",
+          "text": "어깨끈이 넓어지니 저녁에 어깨가 덜 뭉쳐요. 베 짜는 이웃이 제 끈 색을 그대로 맞춰 줬어요.",
+          "depth": 0,
+          "req": {
+            "seen": [
+              "postman:small:newStrap"
+            ]
+          }
         }
       ],
       "tastes": {
@@ -4548,7 +4920,477 @@
         "time": {
           "afternoon": 1
         }
-      }
+      },
+      "events": [
+        {
+          "id": "postman:story:1",
+          "title": "닳은 끈",
+          "stage": 1,
+          "at": {
+            "x": 22,
+            "y": 8
+          },
+          "when": {
+            "from": 900,
+            "to": 960
+          },
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "길가. 편지 나르는 이웃이 가방을 내려놓고 끈 매듭을 다시 묶고 있다. 끈 한쪽이 실처럼 가늘어졌다."
+            },
+            {
+              "speaker": "postman",
+              "text": "끈이 또 풀렸어요. 이 가방을 멘 지 열 해가 넘었어요. 바꾸자니 손이 먼저 아까워하네요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "가방 이야기를 듣는다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "처음 받았을 땐 뻣뻣했어요. 지금은 제 어깨 모양대로 휘었어요. 그래서 못 버려요."
+                }
+              ],
+              "memory": "wornStrap"
+            },
+            {
+              "label": "매듭을 같이 잡아 준다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "고마워요. 이렇게 두 번 감으면 오늘은 버틸 거예요. 내일은… 내일 생각할게요."
+                }
+              ],
+              "memory": "wornStrap"
+            },
+            {
+              "label": "잠깐 쉬어 가자고 한다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "쉬어 가자고요? …그럼 끈 묶는 동안만요. 앉으면 못 일어날 것 같아서요."
+                }
+              ],
+              "memory": "wornStrap"
+            }
+          ]
+        },
+        {
+          "id": "postman:story:2",
+          "title": "남길 부분",
+          "stage": 2,
+          "at": {
+            "x": 16,
+            "y": 83
+          },
+          "when": {
+            "from": 1080,
+            "to": 1140
+          },
+          "req": {
+            "seen": [
+              "postman:story:1"
+            ],
+            "after": {
+              "event": "postman:story:1",
+              "days": 1
+            }
+          },
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "방 탁자 위에 가방이 뒤집혀 놓여 있다. 덮개, 끈, 안주머니가 하나씩 펼쳐져 있다."
+            },
+            {
+              "speaker": "postman",
+              "text": "다 바꾸면 그냥 새 가방이죠. 그건 싫어요. 남길 데를 하나만 고르려고요."
+            },
+            {
+              "speaker": "postman",
+              "text": "…덮개요. 비 맞은 자국이 길 모양으로 남았거든요. 끈이랑 잠금은 부탁해 볼게요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "고르는 모습을 지켜본다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "정하고 나니 가볍네요. 가방 말고 제 마음이요."
+                }
+              ],
+              "memory": "bagKeep"
+            },
+            {
+              "label": "손때 묻은 자리를 묻는다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "여기 덮개 모서리요. 편지를 꺼낼 때마다 잡는 데라 반들반들해요."
+                }
+              ],
+              "memory": "bagKeep"
+            },
+            {
+              "label": "말없이 덮개를 쓸어 본다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "부드럽죠? 그 긴 세월 비랑 햇볕이 만든 거예요."
+                }
+              ],
+              "memory": "bagKeep"
+            }
+          ]
+        },
+        {
+          "id": "postman:story:3",
+          "title": "잠금 부탁",
+          "stage": 2,
+          "at": {
+            "x": 7,
+            "y": 25
+          },
+          "when": {
+            "from": 900,
+            "to": 960,
+            "days": [
+              1
+            ]
+          },
+          "with": [
+            "carpenter"
+          ],
+          "req": {
+            "seen": [
+              "postman:story:2"
+            ],
+            "after": {
+              "event": "postman:story:2",
+              "days": 1
+            }
+          },
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "목수 공방 앞. 편지 나르는 이웃이 가방을 작업대에 올려놓고 잠시 숨을 고른다."
+            },
+            {
+              "speaker": "postman",
+              "text": "목수, 잠금이 자꾸 헐거워져요. 덮개는 그대로 두고, 잠금만 새로 해 줄 수 있을까요? 끈 고리도요."
+            },
+            {
+              "speaker": "carpenter",
+              "text": "잠금은 나무로 깎겠소. 손가락 하나로 열리게. 비 오는 날 손이 젖어도 미끄러지지 않게 하겠소."
+            }
+          ],
+          "choices": [
+            {
+              "label": "부탁하는 동안 곁에 서 있는다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "곁에 있어 줘서 말이 덜 떨렸어요. 부탁은 받는 것보다 하는 게 어렵네요."
+                }
+              ],
+              "memory": "bagMended"
+            },
+            {
+              "label": "잠금 모양을 같이 고른다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "carpenter",
+                  "text": "둥근 모양이면 옷에 걸리지 않겠소. 그렇게 하지."
+                }
+              ],
+              "memory": "bagMended"
+            },
+            {
+              "label": "끈 고리를 잡아 준다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "carpenter",
+                  "text": "그대로 들고 계시오. 고리 구멍을 맞춰 보겠소."
+                }
+              ],
+              "memory": "bagMended",
+              "mini": "hold"
+            }
+          ]
+        },
+        {
+          "id": "postman:story:4",
+          "title": "우물 곁에 앉기",
+          "stage": 3,
+          "at": {
+            "x": 25,
+            "y": 14
+          },
+          "when": {
+            "from": 1020,
+            "to": 1080,
+            "weather": [
+              "dry"
+            ]
+          },
+          "req": {
+            "seen": [
+              "postman:story:3"
+            ],
+            "after": {
+              "event": "postman:story:3",
+              "days": 1
+            }
+          },
+          "completes": "postmanBag",
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "우물 곁 돌 위에 가방이 놓여 있다. 덮개는 그대로고, 둥근 나무 잠금이 새로 달렸다."
+            },
+            {
+              "speaker": "postman",
+              "text": "고친 가방으로 한 바퀴 돌았어요. 잠금이 한 번에 열리니까 집집마다 서 있는 시간이 줄었어요. 그 시간만큼 여기 앉아 보고 싶었어요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "곁에 앉는다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "앉으니까 길이 다르게 보이네요. 늘 지나가기만 했거든요."
+                }
+              ]
+            },
+            {
+              "label": "수첩에 적는 걸 본다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "배달 시각만 적던 수첩인데, 오늘은 한 줄 더 적었어요. \"우물, 쉼.\""
+                }
+              ]
+            },
+            {
+              "label": "새 잠금을 열어 본다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "딸깍. 좋죠? 목수가 손가락 하나로 열리게 해 줬어요."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "postman:small:rainCover",
+          "title": "비 오는 날 덮개",
+          "stage": 2,
+          "at": {
+            "x": 15,
+            "y": 24
+          },
+          "when": {
+            "from": 390,
+            "to": 900,
+            "weather": [
+              "wet"
+            ]
+          },
+          "lines": [
+            {
+              "speaker": "postman",
+              "text": "비 오는 날엔 가방 위에 기름 먹인 천을 덮어요. 그런데 이 천이 걸을 때마다 미끄러져요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "천 끝을 끈에 묶자고 한다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "묶으면 꺼낼 때 번거롭지 않을까… 아, 한쪽만 묶으면 되겠네요."
+                }
+              ],
+              "memory": "rainCover"
+            },
+            {
+              "label": "천을 같이 접어 본다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "세 번 접으니 딱 덮개 크기네요. 순서대로 접으면 금방이에요."
+                }
+              ],
+              "memory": "rainCover",
+              "mini": "order"
+            }
+          ]
+        },
+        {
+          "id": "postman:small:ownAppt",
+          "title": "내 약속 적기",
+          "stage": 3,
+          "at": {
+            "x": 25,
+            "y": 14
+          },
+          "when": {
+            "from": 1020,
+            "to": 1080,
+            "weather": [
+              "dry"
+            ]
+          },
+          "req": {
+            "story": [
+              {
+                "id": "postmanBag"
+              }
+            ]
+          },
+          "lines": [
+            {
+              "speaker": "postman",
+              "text": "집집마다 언제 들르는지는 다 외우는데, 제 약속은 자꾸 잊어요. 오늘은 제 것도 수첩에 적어 볼게요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "무엇을 적는지 듣는다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "\"저녁, 우물에서 쉬기.\" 처음 적는 제 약속이에요."
+                }
+              ],
+              "memory": "ownAppt"
+            },
+            {
+              "label": "다음 쉬는 날도 적어 보자고 한다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "다음 잔칫날은 배달을 쉬니까… 그날도 적어 둘게요. 지킬 수 있겠죠?"
+                }
+              ],
+              "memory": "ownAppt"
+            }
+          ]
+        },
+        {
+          "id": "postman:small:newStrap",
+          "title": "넓은 어깨끈",
+          "stage": 2,
+          "at": {
+            "x": 36,
+            "y": 24
+          },
+          "when": {
+            "from": 960,
+            "to": 1020
+          },
+          "with": [
+            "weaver"
+          ],
+          "req": {
+            "story": [
+              {
+                "id": "postmanBag"
+              }
+            ]
+          },
+          "lines": [
+            {
+              "speaker": "postman",
+              "text": "베 짜는 이웃, 어깨에 닿는 끈만 넓게 짜 줄 수 있을까요? 길이는 지금 그대로요."
+            },
+            {
+              "speaker": "weaver",
+              "text": "어깨 쪽만 손가락 두 마디 넓게요. 색은 원래 끈이랑 비슷하게 할게요. 본인이 매던 느낌이 남게."
+            }
+          ],
+          "choices": [
+            {
+              "label": "끈 색 고르는 걸 지켜본다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "weaver",
+                  "text": "이 밤색이 제일 가깝네요. 직접 대 보고 고르세요."
+                }
+              ],
+              "memory": "newStrap"
+            },
+            {
+              "label": "실을 같이 감는다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "weaver",
+                  "text": "천천히 감아 주세요. 고르게 감겨야 짤 때 안 엉켜요."
+                }
+              ],
+              "memory": "newStrap",
+              "mini": "weave"
+            }
+          ]
+        }
+      ],
+      "props": [
+        {
+          "id": "postmanBagWorn",
+          "room": "postman",
+          "at": {
+            "x": 20,
+            "y": 82
+          },
+          "art": "bagWorn",
+          "req": {
+            "seen": [
+              "postman:story:2"
+            ],
+            "notStory": [
+              "postmanBag"
+            ]
+          }
+        },
+        {
+          "id": "postmanBagRepaired",
+          "room": "postman",
+          "at": {
+            "x": 20,
+            "y": 82
+          },
+          "art": "bagRepaired",
+          "req": {
+            "story": [
+              {
+                "id": "postmanBag"
+              }
+            ]
+          }
+        }
+      ]
     },
     "baker": {
       "id": "baker",
@@ -4654,6 +5496,86 @@
           },
           "mutter": [
             "오늘 오후는 제가 고른 시간이에요."
+          ]
+        },
+        {
+          "at": {
+            "x": 20,
+            "y": 17
+          },
+          "when": {
+            "from": 840,
+            "to": 900,
+            "days": [
+              0
+            ],
+            "weather": [
+              "dry"
+            ]
+          },
+          "doing": "bread",
+          "req": {
+            "seen": [
+              "beekeeper:story:2"
+            ],
+            "notSeen": [
+              "beekeeper:story:3"
+            ]
+          },
+          "mutter": [
+            "빵은 얇게 잘라 왔어요. 꿀 맛을 가리면 안 되니까."
+          ]
+        },
+        {
+          "at": {
+            "x": 20,
+            "y": 17
+          },
+          "when": {
+            "from": 840,
+            "to": 900,
+            "days": [
+              0
+            ],
+            "weather": [
+              "dry"
+            ]
+          },
+          "doing": "bread",
+          "with": "beekeeper",
+          "req": {
+            "seen": [
+              "beekeeper:story:3"
+            ]
+          },
+          "mutter": [
+            "벌 치는 이웃, 이 빵엔 봄 꽃 꿀이 어울려요."
+          ]
+        },
+        {
+          "at": {
+            "x": 6,
+            "y": 43
+          },
+          "when": {
+            "from": 840,
+            "to": 900,
+            "days": [
+              0
+            ],
+            "weather": [
+              "wet"
+            ]
+          },
+          "doing": "bread",
+          "with": "beekeeper",
+          "req": {
+            "seen": [
+              "beekeeper:story:3"
+            ]
+          },
+          "mutter": [
+            "탁자 끝을 비워 뒀어요. 꿀 항아리 거기 두세요."
           ]
         }
       ],
@@ -4806,6 +5728,19 @@
             ]
           },
           "reveals": "time.afternoon"
+        },
+        {
+          "id": "baker:beekeeperBoard",
+          "text": "장날 시식판, 벌 치는 이웃이랑 같이 놓아요. 빵 한 조각에 꽃 이름 하나씩.",
+          "depth": 0,
+          "req": {
+            "seen": [
+              "beekeeper:story:3"
+            ],
+            "exp": [
+              "choice:beekeeper:story:3"
+            ]
+          }
         }
       ],
       "tastes": {
@@ -5643,6 +6578,21 @@
           "text": "어, 왔어요? …아니에요, 그냥 물 보고 있었어요.",
           "depth": 0,
           "cool": true
+        },
+        {
+          "id": "cosmo:fisherToy",
+          "text": "아버지 장난감 배 돛, 제가 달았어요. 삐뚤어요. 근데 바람은 받아요. 그거면 된대요.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "fisherToy"
+              }
+            ],
+            "exp": [
+              "choice:fisher:story:3"
+            ]
+          }
         }
       ],
       "sightings": [
@@ -8578,6 +9528,53 @@
           "mutter": [
             "기침은 좀 어떠세요. …네, 또 괜찮다고 하시겠죠."
           ]
+        },
+        {
+          "at": {
+            "x": 38,
+            "y": 32
+          },
+          "when": {
+            "from": 960,
+            "to": 1020
+          },
+          "doing": "herb",
+          "req": {
+            "seen": [
+              "apothecary:story:2"
+            ],
+            "notSeen": [
+              "apothecary:story:3"
+            ]
+          },
+          "mutter": [
+            "물 주는 날 표를 같이 짜기로 했어요."
+          ]
+        },
+        {
+          "at": {
+            "x": 34,
+            "y": 32
+          },
+          "when": {
+            "from": 900,
+            "to": 960,
+            "days": [
+              2,
+              5
+            ]
+          },
+          "doing": "herb",
+          "req": {
+            "story": [
+              {
+                "id": "apothecaryPot"
+              }
+            ]
+          },
+          "mutter": [
+            "오늘 물은 제가 줘요. 약방 주인은 찻집에 가 있고요."
+          ]
         }
       ],
       "offDays": {
@@ -8755,6 +9752,21 @@
           "text": "약초만 고르고 있을게요.",
           "depth": 0,
           "cool": true
+        },
+        {
+          "id": "basil:apothecaryPot",
+          "text": "약방 벽에 물 주는 날 표가 붙었어요. 쉬는 칸에는 \"찻집\"이라고 적혀 있고요. 제 글씨예요.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "apothecaryPot"
+              }
+            ],
+            "exp": [
+              "choice:apothecary:story:3"
+            ]
+          }
         }
       ],
       "sightings": [
@@ -11566,6 +12578,78 @@
           "mutter": [
             "비 오면 벌은 집에. 나도 집에. 비슷해."
           ]
+        },
+        {
+          "at": {
+            "x": 44,
+            "y": 64
+          },
+          "when": {
+            "from": 900,
+            "to": 960
+          },
+          "doing": "tea",
+          "req": {
+            "seen": [
+              "beekeeper:story:3"
+            ],
+            "notSeen": [
+              "beekeeper:story:4"
+            ]
+          },
+          "mutter": [
+            "…그림은 한 장만요. 어머니가 고르래요. 아니, 제가 골랐어요."
+          ]
+        },
+        {
+          "at": {
+            "x": 27,
+            "y": 11
+          },
+          "when": {
+            "from": 780,
+            "to": 840,
+            "weather": [
+              "dry"
+            ]
+          },
+          "doing": "bee",
+          "with": "beekeeper",
+          "req": {
+            "story": [
+              {
+                "id": "beekeeperNotes"
+              }
+            ]
+          },
+          "mutter": [
+            "어머니, 거기 서면 그림자가 꽃에 져요. 아, 네, 거기요."
+          ]
+        },
+        {
+          "at": {
+            "x": 11,
+            "y": 74
+          },
+          "when": {
+            "from": 780,
+            "to": 840,
+            "weather": [
+              "wet"
+            ]
+          },
+          "doing": "book",
+          "with": "beekeeper",
+          "req": {
+            "story": [
+              {
+                "id": "beekeeperNotes"
+              }
+            ]
+          },
+          "mutter": [
+            "어머니, 이 장은 어제 거예요. 숫자는 제가 적고, 어머니는 날씨를 적어요."
+          ]
         }
       ],
       "offDays": {
@@ -11734,6 +12818,21 @@
           "text": "(공책에 얼굴을 묻는다)",
           "depth": 0,
           "cool": true
+        },
+        {
+          "id": "juniper:beekeeperNotes",
+          "text": "어머니가 사람들 앞에서 제 공책 얘기를 했어요. 저는 그림 옆에만 서 있었는데… 그게 좋았어요.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "beekeeperNotes"
+              }
+            ],
+            "exp": [
+              "story:beekeeperNotes"
+            ]
+          }
         }
       ],
       "sightings": [
@@ -12469,7 +13568,217 @@
     "fisher": {
       "id": "fisher",
       "pace": 1,
-      "routines": [],
+      "routines": [
+        {
+          "at": {
+            "x": 24,
+            "y": 36
+          },
+          "when": {
+            "from": 330,
+            "to": 600
+          },
+          "doing": "net",
+          "mutter": [
+            "그물은 아침마다 한 코씩 손보오.",
+            "오늘은 갈대가 덜 눕는군."
+          ]
+        },
+        {
+          "at": {
+            "x": 11,
+            "y": 32
+          },
+          "when": {
+            "from": 600,
+            "to": 840
+          },
+          "doing": "net",
+          "mutter": [
+            "볕 좋을 때 줄에 너는 게 일이오."
+          ]
+        },
+        {
+          "at": {
+            "x": 28,
+            "y": 32
+          },
+          "when": {
+            "from": 960,
+            "to": 1020
+          },
+          "doing": "wood",
+          "req": {
+            "notStory": [
+              "fisherToy"
+            ]
+          },
+          "mutter": [
+            "이 조각은 아직 무엇이 될지 모르겠소.",
+            "저녁엔 손이 심심하오."
+          ]
+        },
+        {
+          "at": {
+            "x": 24,
+            "y": 35
+          },
+          "when": {
+            "from": 1020,
+            "to": 1080,
+            "days": [
+              2
+            ],
+            "weather": [
+              "dry"
+            ]
+          },
+          "doing": "wood",
+          "req": {
+            "seen": [
+              "fisher:story:1"
+            ],
+            "notSeen": [
+              "fisher:story:2"
+            ]
+          },
+          "mutter": [
+            "목수가 오면 바닥부터 보자고 하겠지."
+          ]
+        },
+        {
+          "at": {
+            "x": 24,
+            "y": 34
+          },
+          "when": {
+            "from": 600,
+            "to": 720,
+            "weather": [
+              "dry"
+            ]
+          },
+          "doing": "net",
+          "req": {
+            "seen": [
+              "fisher:story:2"
+            ],
+            "notSeen": [
+              "fisher:story:3"
+            ]
+          },
+          "mutter": [
+            "돛 이야기를 꺼내 볼까 하오. 받을지는 녀석이 정하겠지."
+          ]
+        },
+        {
+          "at": {
+            "x": 28,
+            "y": 32
+          },
+          "when": {
+            "from": 600,
+            "to": 840,
+            "days": [
+              6
+            ],
+            "weather": [
+              "dry"
+            ]
+          },
+          "doing": "wood",
+          "req": {
+            "seen": [
+              "fisher:story:3"
+            ],
+            "notSeen": [
+              "fisher:story:4"
+            ]
+          },
+          "mutter": [
+            "쉬는 날이오. 그물 대신 이걸 하오."
+          ]
+        },
+        {
+          "at": {
+            "x": 28,
+            "y": 32
+          },
+          "when": {
+            "from": 600,
+            "to": 840,
+            "days": [
+              6
+            ],
+            "weather": [
+              "dry"
+            ]
+          },
+          "doing": "wood",
+          "req": {
+            "story": [
+              {
+                "id": "fisherToy"
+              }
+            ]
+          },
+          "mutter": [
+            "쉬는 날이오. 오늘은 새 바닥을 밀어 볼까.",
+            "코스모 돛이 바람을 잘 받소."
+          ]
+        },
+        {
+          "at": {
+            "x": 39,
+            "y": 86
+          },
+          "when": {
+            "from": 600,
+            "to": 840,
+            "days": [
+              6
+            ],
+            "weather": [
+              "wet"
+            ]
+          },
+          "doing": "wood",
+          "req": {
+            "story": [
+              {
+                "id": "fisherToy"
+              }
+            ]
+          },
+          "mutter": [
+            "비 오는 쉬는 날엔 방에서 깎소. 조각이 마루에 떨어지는 소리가 좋소."
+          ]
+        },
+        {
+          "at": {
+            "x": 24,
+            "y": 35
+          },
+          "when": {
+            "from": 960,
+            "to": 1020,
+            "weather": [
+              "dry"
+            ]
+          },
+          "doing": "tea",
+          "req": {
+            "story": [
+              {
+                "id": "fisherToy"
+              }
+            ]
+          },
+          "mutter": [
+            "하루 일이 끝나야 차 맛이 나오."
+          ]
+        }
+      ],
       "lines": [
         {
           "id": "fisher1",
@@ -12509,6 +13818,154 @@
               ]
             }
           }
+        },
+        {
+          "id": "fisher:plain",
+          "text": "오늘 나루 일은 다 끝냈소. 이제 손 좀 쉬어야지.",
+          "depth": 0
+        },
+        {
+          "id": "fisher:short:netMend",
+          "text": "그물은 아침마다 한 코씩 손보오. 한꺼번에 하면 손이 굳소.",
+          "depth": 0,
+          "when": {
+            "from": 330,
+            "to": 600
+          }
+        },
+        {
+          "id": "fisher:short:windCheck",
+          "text": "나루에 서면 먼저 갈대를 보오. 눕는 쪽이 바람 쪽이지.",
+          "depth": 0,
+          "when": {
+            "from": 330,
+            "to": 600
+          }
+        },
+        {
+          "id": "fisher:short:woodPiece",
+          "text": "저녁엔 손이 심심해서 나무를 깎소. 아침엔 그럴 틈이 없소.",
+          "depth": 0,
+          "when": {
+            "from": 960,
+            "to": 1080
+          },
+          "req": {
+            "notStory": [
+              "fisherToy"
+            ]
+          }
+        },
+        {
+          "id": "fisher:short:dryFish",
+          "text": "볕 좋은 날엔 생선을 줄에 너오. 고양이만 조심하면 되오.",
+          "depth": 0,
+          "when": {
+            "from": 600,
+            "to": 840,
+            "weather": [
+              "dry"
+            ]
+          }
+        },
+        {
+          "id": "fisher:short:fogDay",
+          "text": "안개 낀 날엔 코스모 쪽을 한 번 보게 되오. 말은 안 하오.",
+          "depth": 0,
+          "when": {
+            "weather": [
+              "fog"
+            ]
+          }
+        },
+        {
+          "id": "fisher:short:winterNets",
+          "text": "겨울엔 그물을 방에 들여 손보오. 손가락이 굳지 않게 불 곁에서.",
+          "depth": 0,
+          "when": {
+            "season": [
+              "winter"
+            ]
+          }
+        },
+        {
+          "id": "fisher:short:autumnGrandpa",
+          "text": "가을이 되면 포도원 할아버지가 나루 바람을 쐬러 내려오시오. 포도 이야기를 한참 하고 가시지.",
+          "depth": 1,
+          "when": {
+            "season": [
+              "autumn"
+            ]
+          }
+        },
+        {
+          "id": "fisher:short:breadHerb",
+          "text": "그때 받은 것은 잘 먹었소. 집에 두었더니 코스모가 먼저 알아보더군.",
+          "depth": 1,
+          "req": {
+            "exp": [
+              "gift:fisher"
+            ]
+          }
+        },
+        {
+          "id": "fisher:taste",
+          "text": "저녁이 좋소. 하루 일이 끝나야 말이 나오오.",
+          "depth": 1,
+          "reveals": "time.evening"
+        },
+        {
+          "id": "fisher:toyShape",
+          "text": "바닥은 평평하게 하기로 했소. 목수 말이 맞았소.",
+          "depth": 0,
+          "req": {
+            "seen": [
+              "fisher:story:2"
+            ],
+            "notSeen": [
+              "fisher:story:3"
+            ]
+          }
+        },
+        {
+          "id": "fisher:toySail",
+          "text": "돛은 코스모가 달기로 했소. 제가 하겠다더군. 천도 직접 고른다오.",
+          "depth": 0,
+          "req": {
+            "seen": [
+              "fisher:story:3"
+            ],
+            "notSeen": [
+              "fisher:story:4"
+            ]
+          }
+        },
+        {
+          "id": "fisher:after",
+          "text": "쉬는 날엔 그물 대신 나무를 깎소. 그게 내가 쉬는 법이오.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "fisherToy"
+              }
+            ]
+          }
+        },
+        {
+          "id": "fisher:memory",
+          "text": "그 장난감 배, 아직 방에 있소. 그날 곁에서 깎던 손이 생각나오.",
+          "depth": 2,
+          "req": {
+            "story": [
+              {
+                "id": "fisherToy"
+              }
+            ],
+            "exp": [
+              "story:fisherToy"
+            ]
+          }
         }
       ],
       "tastes": {
@@ -12519,7 +13976,426 @@
         "time": {
           "evening": 1
         }
-      }
+      },
+      "events": [
+        {
+          "id": "fisher:story:1",
+          "title": "만들다 만 것",
+          "stage": 1,
+          "at": {
+            "x": 28,
+            "y": 32
+          },
+          "when": {
+            "from": 960,
+            "to": 1020
+          },
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "어부 집 앞. 어부가 손바닥만 한 나무 조각을 칼로 조금씩 깎다가 멈춘다. 뱃머리 같기도, 새 같기도 하다."
+            },
+            {
+              "speaker": "fisher",
+              "text": "몇 해 전에 깎다 둔 것이오. 무엇을 만들려 했는지 나도 잊었소. 버리자니 손이 기억하오."
+            }
+          ],
+          "choices": [
+            {
+              "label": "조각 이야기를 듣는다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "fisher",
+                  "text": "아침엔 일이 먼저라 손댈 틈이 없소. 저녁에 조금씩. 그러다 몇 해가 갔지."
+                }
+              ],
+              "memory": "toyHalf"
+            },
+            {
+              "label": "나무 조각을 같이 만져 본다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "fisher",
+                  "text": "결이 곱지? 나루에 닿은 판자에서 떼어 낸 것이오."
+                }
+              ],
+              "memory": "toyHalf"
+            },
+            {
+              "label": "무엇이 될지 묻는다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "fisher",
+                  "text": "작은 배였던 것 같소. 아이 손에 들릴 만한. 코스모 배와는 상관없는 것이오."
+                }
+              ],
+              "memory": "toyHalf"
+            }
+          ]
+        },
+        {
+          "id": "fisher:story:2",
+          "title": "평평한 바닥",
+          "stage": 2,
+          "at": {
+            "x": 24,
+            "y": 35
+          },
+          "when": {
+            "from": 1020,
+            "to": 1080,
+            "days": [
+              2
+            ],
+            "weather": [
+              "dry"
+            ]
+          },
+          "with": [
+            "carpenter"
+          ],
+          "req": {
+            "seen": [
+              "fisher:story:1"
+            ],
+            "after": {
+              "event": "fisher:story:1",
+              "days": 1
+            }
+          },
+          "lines": [
+            {
+              "speaker": "carpenter",
+              "text": "배 모양이면 바닥을 평평하게 하시오. 그래야 물에 띄웠을 때 옆으로 눕지 않소."
+            },
+            {
+              "speaker": "fisher",
+              "text": "물에 띄울 생각은 없었는데… 아이들이 띄우겠지. 그럼 바닥은 평평하게 하겠소."
+            },
+            {
+              "speaker": "narration",
+              "text": "목수가 바닥을 대패로 밀고, 어부는 뱃전 모양을 손가락으로 그어 본다."
+            }
+          ],
+          "choices": [
+            {
+              "label": "조각을 같이 붙잡는다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "carpenter",
+                  "text": "그대로 붙들고 계시오. 한 번에 밀어야 결이 일어나지 않소."
+                }
+              ],
+              "memory": "toyShape",
+              "mini": "hold"
+            },
+            {
+              "label": "두 사람 말을 듣는다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "fisher",
+                  "text": "목수는 바닥부터, 나는 뱃전부터 보오. 둘 다 맞소."
+                }
+              ],
+              "memory": "toyShape"
+            },
+            {
+              "label": "돛 자리를 제안한다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "carpenter",
+                  "text": "돛대 구멍 하나면 되겠소. 돛은 천 조각으로 하면 되지."
+                }
+              ],
+              "memory": "toyShape"
+            }
+          ]
+        },
+        {
+          "id": "fisher:story:3",
+          "title": "돛을 맡기다",
+          "stage": 3,
+          "at": {
+            "x": 24,
+            "y": 34
+          },
+          "when": {
+            "from": 600,
+            "to": 720,
+            "weather": [
+              "dry"
+            ]
+          },
+          "with": [
+            "cosmo"
+          ],
+          "req": {
+            "seen": [
+              "fisher:story:2"
+            ],
+            "after": {
+              "event": "fisher:story:2",
+              "days": 1
+            }
+          },
+          "lines": [
+            {
+              "speaker": "fisher",
+              "text": "코스모, 장난감 배 돛은 네가 달아 주겠나. 천 고르는 것부터 네 몫이오. 물에 띄우는 건 아이들이 할 테니, 너는 물가에 안 나가도 되오."
+            },
+            {
+              "speaker": "cosmo",
+              "text": "돛이요? …천 고르는 건 할 수 있어요. 바느질은 삐뚤 텐데. 그래도 제가 해 볼게요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "두 사람의 말을 듣는다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "fisher",
+                  "text": "맡길 일은 내가 고르고, 받을지는 녀석이 정했소. 그거면 됐소."
+                }
+              ],
+              "memory": "handOver"
+            },
+            {
+              "label": "코스모 곁에 선다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "cosmo",
+                  "text": "돛 색은 하늘색으로 할래요. 물 색 말고요. …이유는 묻지 마세요."
+                }
+              ],
+              "memory": "handOver"
+            },
+            {
+              "label": "대답을 말없이 기다린다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "fisher",
+                  "text": "기다려 주니 녀석이 제 말로 대답하는군. 고맙소."
+                }
+              ],
+              "memory": "handOver"
+            }
+          ]
+        },
+        {
+          "id": "fisher:story:4",
+          "title": "쉬는 날의 상자",
+          "stage": 3,
+          "at": {
+            "x": 28,
+            "y": 32
+          },
+          "when": {
+            "from": 600,
+            "to": 840,
+            "days": [
+              6
+            ],
+            "weather": [
+              "dry"
+            ]
+          },
+          "req": {
+            "seen": [
+              "fisher:story:3"
+            ],
+            "after": {
+              "event": "fisher:story:3",
+              "days": 1
+            }
+          },
+          "completes": "fisherToy",
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "쉬는 날 아침. 어부 집 앞에 작은 상자가 열려 있고, 나무 조각과 천 조각과 실이 칸칸이 나뉘어 있다. 장난감 배에는 하늘색 돛이 달렸다."
+            },
+            {
+              "speaker": "fisher",
+              "text": "쉬는 날엔 그물 대신 이걸 하오. 돛은 코스모가 달았소. 삐뚤지만 바람은 받소."
+            }
+          ],
+          "choices": [
+            {
+              "label": "곁에서 같이 깎는다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "fisher",
+                  "text": "그 조각은 다음 배 바닥이 될 거요. 천천히 하시오. 쉬는 날이니까."
+                }
+              ]
+            },
+            {
+              "label": "구경한다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "fisher",
+                  "text": "보는 사람이 있으니 손이 덜 서두르오."
+                }
+              ]
+            },
+            {
+              "label": "다음엔 무엇을 만들지 묻는다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "fisher",
+                  "text": "새를 하나 깎아 볼까 하오. 날개는 아직 모르겠소."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "fisher:small:netRack",
+          "title": "그물 거는 자리",
+          "stage": 2,
+          "at": {
+            "x": 24,
+            "y": 36
+          },
+          "when": {
+            "from": 330,
+            "to": 600,
+            "weather": [
+              "dry"
+            ]
+          },
+          "lines": [
+            {
+              "speaker": "fisher",
+              "text": "그물을 아무 데나 걸었더니 자꾸 엉키오. 말뚝 둘에 가로대 하나면 되겠는데, 그물을 어떤 순서로 걸지 정해야겠소."
+            }
+          ],
+          "choices": [
+            {
+              "label": "그물 거는 걸 같이 한다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "fisher",
+                  "text": "마른 것부터 위로. 코를 맞춰 접으면 내일 아침 손이 편하오."
+                }
+              ],
+              "memory": "netRack",
+              "mini": "weave"
+            },
+            {
+              "label": "거는 순서를 묻는다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "fisher",
+                  "text": "오늘 쓴 것은 아래, 내일 쓸 것은 위. 그게 다요."
+                }
+              ],
+              "memory": "netRack"
+            }
+          ]
+        },
+        {
+          "id": "fisher:small:duskTea",
+          "title": "나루의 저녁 차",
+          "stage": 3,
+          "at": {
+            "x": 24,
+            "y": 35
+          },
+          "when": {
+            "from": 960,
+            "to": 1020,
+            "weather": [
+              "dry"
+            ]
+          },
+          "req": {
+            "story": [
+              {
+                "id": "fisherToy"
+              }
+            ]
+          },
+          "lines": [
+            {
+              "speaker": "fisher",
+              "text": "아침에는 일이 먼저 떠오르지요. 저녁에 차 한 잔 놓고 앉아야 다른 말이 나오오."
+            }
+          ],
+          "choices": [
+            {
+              "label": "곁에 앉는다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "fisher",
+                  "text": "오늘은 말이 없어도 되오. 물소리가 대신 하니까."
+                }
+              ],
+              "memory": "duskTea"
+            },
+            {
+              "label": "오늘 바람을 묻는다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "fisher",
+                  "text": "서풍이오. 코스모 말대로면 내일은 맑겠군. 녀석 말이 대개 맞소."
+                }
+              ],
+              "memory": "duskTea"
+            }
+          ]
+        }
+      ],
+      "props": [
+        {
+          "id": "fisherToy",
+          "room": "fisher",
+          "at": {
+            "x": 43,
+            "y": 83
+          },
+          "art": "toyBoat",
+          "req": {
+            "story": [
+              {
+                "id": "fisherToy"
+              }
+            ]
+          }
+        },
+        {
+          "id": "fisherWood",
+          "room": "fisher",
+          "at": {
+            "x": 44,
+            "y": 83
+          },
+          "art": "woodParts",
+          "req": {
+            "story": [
+              {
+                "id": "fisherToy"
+              }
+            ]
+          }
+        }
+      ]
     },
     "carpenter": {
       "id": "carpenter",
@@ -12852,6 +14728,59 @@
           "mutter": [
             "기름 짜는 이웃, 작업대 높이를 재러 왔소."
           ]
+        },
+        {
+          "at": {
+            "x": 6,
+            "y": 24
+          },
+          "when": {
+            "from": 900,
+            "to": 960,
+            "days": [
+              1
+            ]
+          },
+          "doing": "wood",
+          "req": {
+            "seen": [
+              "postman:story:2"
+            ],
+            "notSeen": [
+              "postman:story:3"
+            ]
+          },
+          "mutter": [
+            "잠금쇠 자리는 손가락 하나 들어가게 파겠소."
+          ]
+        },
+        {
+          "at": {
+            "x": 24,
+            "y": 34
+          },
+          "when": {
+            "from": 1020,
+            "to": 1080,
+            "days": [
+              2
+            ],
+            "weather": [
+              "dry"
+            ]
+          },
+          "doing": "wood",
+          "req": {
+            "seen": [
+              "fisher:story:1"
+            ],
+            "notSeen": [
+              "fisher:story:2"
+            ]
+          },
+          "mutter": [
+            "어부, 바닥 깎을 대패는 가져왔소."
+          ]
         }
       ],
       "lines": [
@@ -12965,6 +14894,117 @@
             ],
             "exp": [
               "choice:presser:story:2"
+            ]
+          }
+        },
+        {
+          "id": "carpenter:postmanBag",
+          "text": "편지 나르는 이웃 잠금은 손가락 하나로 열리오. 비 오는 날 손이 젖어도.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "postmanBag"
+              }
+            ],
+            "exp": [
+              "choice:postman:story:3"
+            ]
+          }
+        },
+        {
+          "id": "carpenter:fisherToy",
+          "text": "어부 장난감 바닥은 내가 밀었소. 물에 띄워도 눕지 않을 거요.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "fisherToy"
+              }
+            ],
+            "exp": [
+              "choice:fisher:story:2"
+            ]
+          }
+        },
+        {
+          "id": "carpenter:short:grain",
+          "text": "아침엔 나무 결부터 보오. 해가 비스듬해야 결이 잘 보이지.",
+          "depth": 0,
+          "when": {
+            "from": 420,
+            "to": 600
+          }
+        },
+        {
+          "id": "carpenter:short:rockChair",
+          "text": "내 의자는 아직 한쪽 다리가 뜨오. 남의 의자는 잘 고치면서.",
+          "depth": 0,
+          "req": {
+            "seen": [
+              "carpenter:story:1"
+            ],
+            "notStory": [
+              "carpenterChair"
+            ]
+          }
+        },
+        {
+          "id": "carpenter:short:coverBoard",
+          "text": "표지 판자는 얇게 켜야 하오. 두꺼우면 책이 잘 덮이지 않지.",
+          "depth": 0,
+          "when": {
+            "from": 600,
+            "to": 960
+          }
+        },
+        {
+          "id": "carpenter:short:smithParts",
+          "text": "넷째 날엔 대장간에 가오. 쇠 부품은 대장장이 손이 맞소.",
+          "depth": 0,
+          "when": {
+            "days": [
+              4
+            ]
+          }
+        },
+        {
+          "id": "carpenter:short:rainWood",
+          "text": "비 오는 날엔 판자가 부푸오. 오늘은 맞추지 않고 재기만 하겠소.",
+          "depth": 0,
+          "when": {
+            "weather": [
+              "wet"
+            ]
+          }
+        },
+        {
+          "id": "carpenter:short:winterShelf",
+          "text": "겨울엔 우리 집 책장 다리를 다시 보오. 마른 바람에 틈이 벌어지지.",
+          "depth": 0,
+          "when": {
+            "season": [
+              "winter"
+            ]
+          }
+        },
+        {
+          "id": "carpenter:short:oilGrape",
+          "text": "그때 받은 것, 작업대 곁에 두고 아껴 썼소.",
+          "depth": 1,
+          "req": {
+            "exp": [
+              "gift:carpenter"
+            ]
+          }
+        },
+        {
+          "id": "carpenter:benchTidy",
+          "text": "연장 자리를 정하니 찾는 시간이 줄었소. 그 시간에 차를 마시지.",
+          "depth": 0,
+          "req": {
+            "seen": [
+              "carpenter:small:benchTidy"
             ]
           }
         }
@@ -13249,6 +15289,57 @@
               ]
             }
           ]
+        },
+        {
+          "id": "carpenter:small:benchTidy",
+          "title": "작업대 정돈",
+          "stage": 2,
+          "at": {
+            "x": 6,
+            "y": 24
+          },
+          "when": {
+            "from": 420,
+            "to": 720
+          },
+          "req": {
+            "story": [
+              {
+                "id": "carpenterChair"
+              }
+            ]
+          },
+          "lines": [
+            {
+              "speaker": "carpenter",
+              "text": "내 의자를 끝내고 보니 작업대가 엉망이오. 연장을 쓰는 순서대로 걸어 두겠소."
+            }
+          ],
+          "choices": [
+            {
+              "label": "연장을 같이 건다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "carpenter",
+                  "text": "대패, 끌, 망치. 오른손에서 멀어지는 순서요. 그대로 걸어 주시오."
+                }
+              ],
+              "memory": "benchTidy",
+              "mini": "order"
+            },
+            {
+              "label": "걸어 두는 순서를 묻는다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "carpenter",
+                  "text": "가장 자주 쓰는 것이 손에 가깝게. 그것뿐이오."
+                }
+              ],
+              "memory": "benchTidy"
+            }
+          ]
         }
       ],
       "props": [
@@ -13265,6 +15356,19 @@
               {
                 "id": "carpenterChair"
               }
+            ]
+          }
+        },
+        {
+          "id": "carpenterToolRack",
+          "at": {
+            "x": 4,
+            "y": 24
+          },
+          "art": "toolRack",
+          "req": {
+            "seen": [
+              "carpenter:small:benchTidy"
             ]
           }
         }
@@ -14099,7 +16203,229 @@
     "beekeeper": {
       "id": "beekeeper",
       "pace": 1,
-      "routines": [],
+      "routines": [
+        {
+          "at": {
+            "x": 41,
+            "y": 27
+          },
+          "when": {
+            "from": 420,
+            "to": 780
+          },
+          "doing": "bee",
+          "mutter": [
+            "벌통 둘레 풀부터 낮게 베어 둘게요.",
+            "오늘은 동쪽 들로 많이 나가네요."
+          ]
+        },
+        {
+          "at": {
+            "x": 26,
+            "y": 22
+          },
+          "when": {
+            "from": 780,
+            "to": 960
+          },
+          "doing": "bee",
+          "mutter": [
+            "광장 화분에도 벌들이 다녀가요. 몇 송이 피었나 볼까요."
+          ]
+        },
+        {
+          "at": {
+            "x": 41,
+            "y": 27
+          },
+          "when": {
+            "from": 960,
+            "to": 1140
+          },
+          "doing": "bee",
+          "mutter": [
+            "차는 한 김 식힌 뒤에 마실래요.",
+            "벌통 뚜껑은 해 지기 전에 한 번 더 보고요."
+          ]
+        },
+        {
+          "at": {
+            "x": 28,
+            "y": 11
+          },
+          "when": {
+            "from": 780,
+            "to": 840,
+            "weather": [
+              "dry"
+            ]
+          },
+          "doing": "bee",
+          "req": {
+            "seen": [
+              "beekeeper:story:1"
+            ],
+            "notSeen": [
+              "beekeeper:story:2"
+            ]
+          },
+          "mutter": [
+            "주니퍼가 앉는 자리는 저쪽이었죠."
+          ]
+        },
+        {
+          "at": {
+            "x": 21,
+            "y": 18
+          },
+          "when": {
+            "from": 840,
+            "to": 900,
+            "days": [
+              0
+            ],
+            "weather": [
+              "dry"
+            ]
+          },
+          "doing": "bee",
+          "req": {
+            "seen": [
+              "beekeeper:story:2"
+            ],
+            "notSeen": [
+              "beekeeper:story:3"
+            ]
+          },
+          "mutter": [
+            "빵 굽는 이웃이 접시를 가져온다고 했어요."
+          ]
+        },
+        {
+          "at": {
+            "x": 44,
+            "y": 63
+          },
+          "when": {
+            "from": 900,
+            "to": 960
+          },
+          "doing": "tea",
+          "req": {
+            "seen": [
+              "beekeeper:story:3"
+            ],
+            "notSeen": [
+              "beekeeper:story:4"
+            ]
+          },
+          "mutter": [
+            "찻집 벽에 한 장만 걸어도 된대요."
+          ]
+        },
+        {
+          "at": {
+            "x": 28,
+            "y": 11
+          },
+          "when": {
+            "from": 780,
+            "to": 840,
+            "weather": [
+              "dry"
+            ]
+          },
+          "doing": "bee",
+          "with": "juniper",
+          "req": {
+            "story": [
+              {
+                "id": "beekeeperNotes"
+              }
+            ]
+          },
+          "mutter": [
+            "주니퍼, 오늘은 네가 먼저 세. 나는 따라 셀게."
+          ]
+        },
+        {
+          "at": {
+            "x": 12,
+            "y": 74
+          },
+          "when": {
+            "from": 780,
+            "to": 840,
+            "weather": [
+              "wet"
+            ]
+          },
+          "doing": "tea",
+          "with": "juniper",
+          "req": {
+            "story": [
+              {
+                "id": "beekeeperNotes"
+              }
+            ]
+          },
+          "mutter": [
+            "비 오는 날엔 공책을 같이 넘겨 봐요. 주니퍼 글씨가 빨라졌어요."
+          ]
+        },
+        {
+          "at": {
+            "x": 21,
+            "y": 18
+          },
+          "when": {
+            "from": 840,
+            "to": 900,
+            "days": [
+              0
+            ],
+            "weather": [
+              "dry"
+            ]
+          },
+          "doing": "bee",
+          "with": "baker",
+          "req": {
+            "seen": [
+              "beekeeper:story:3"
+            ]
+          },
+          "mutter": [
+            "빵 굽는 이웃, 오늘은 어느 꽃 꿀부터 놓을까요?"
+          ]
+        },
+        {
+          "at": {
+            "x": 7,
+            "y": 43
+          },
+          "when": {
+            "from": 840,
+            "to": 900,
+            "days": [
+              0
+            ],
+            "weather": [
+              "wet"
+            ]
+          },
+          "doing": "bee",
+          "with": "baker",
+          "req": {
+            "seen": [
+              "beekeeper:story:3"
+            ]
+          },
+          "mutter": [
+            "비가 오니 시식판은 빵집 안에서 해요."
+          ]
+        }
+      ],
       "lines": [
         {
           "id": "beekeeper1",
@@ -14114,6 +16440,135 @@
               ]
             }
           }
+        },
+        {
+          "id": "beekeeper:plain",
+          "text": "벌들이 오늘은 동쪽 들로 많이 가요. 바람이 그쪽으로 불어서요.",
+          "depth": 0
+        },
+        {
+          "id": "beekeeper:short:hiveTidy",
+          "text": "벌통 둘레 풀은 낮게 베어 둬요. 벌들이 드나드는 길이 막히지 않게.",
+          "depth": 0,
+          "when": {
+            "from": 420,
+            "to": 780
+          }
+        },
+        {
+          "id": "beekeeper:short:teaTemp",
+          "text": "차는 잔을 손으로 감싸 보고 마셔요. 따뜻하다 싶을 때가 딱 좋아요. 그때부터 이야기가 길어지고요.",
+          "depth": 0,
+          "when": {
+            "from": 960,
+            "to": 1140
+          }
+        },
+        {
+          "id": "beekeeper:short:springFlowers",
+          "text": "봄엔 벌통 남쪽 들이 먼저 피어요. 벌들도 그쪽부터 가요.",
+          "depth": 0,
+          "when": {
+            "season": [
+              "spring"
+            ]
+          }
+        },
+        {
+          "id": "beekeeper:short:summerBees",
+          "text": "여름엔 벌이 많아져요. 벌통 가까이는 저 혼자 갈게요. 모자를 써도 쏘일 때가 있거든요.",
+          "depth": 0,
+          "when": {
+            "season": [
+              "summer"
+            ]
+          }
+        },
+        {
+          "id": "beekeeper:short:autumnFlowers",
+          "text": "가을 꽃은 작고 멀리 있어요. 벌들이 해 질 녘에야 돌아와요.",
+          "depth": 0,
+          "when": {
+            "season": [
+              "autumn"
+            ]
+          }
+        },
+        {
+          "id": "beekeeper:short:winterQuiet",
+          "text": "겨울 벌통은 귀를 대면 웅웅거려요. 안에서 서로 데우고 있는 소리예요.",
+          "depth": 0,
+          "when": {
+            "season": [
+              "winter"
+            ]
+          }
+        },
+        {
+          "id": "beekeeper:short:breadGrape",
+          "text": "그때 받은 것, 주니퍼랑 벌통 곁에서 나눠 먹었어요. 꿀 말고 다른 단맛은 오랜만이었어요.",
+          "depth": 1,
+          "req": {
+            "exp": [
+              "gift:beekeeper"
+            ]
+          }
+        },
+        {
+          "id": "beekeeper:short:juniperNote",
+          "text": "주니퍼 공책은 저도 다 못 봤어요. 보여 줄지는 그 아이가 정해요.",
+          "depth": 1,
+          "req": {
+            "notStory": [
+              "beekeeperNotes"
+            ]
+          }
+        },
+        {
+          "id": "beekeeper:taste",
+          "text": "가만히 보는 게 좋아요. 벌은 서두르면 안 보이거든요.",
+          "depth": 1,
+          "reveals": "activity.observe"
+        },
+        {
+          "id": "beekeeper:notesWorking",
+          "text": "장날에 빵 굽는 이웃이랑 시식판을 놓기로 했어요. 꽃 이름은 주니퍼 공책에서 가져왔어요.",
+          "depth": 0,
+          "req": {
+            "seen": [
+              "beekeeper:story:2"
+            ],
+            "notSeen": [
+              "beekeeper:story:3"
+            ]
+          }
+        },
+        {
+          "id": "beekeeper:after",
+          "text": "주니퍼가 적은 걸 보니, 저는 벌통만 세고 있었더라고요. 요즘은 꽃도 같이 봐요.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "beekeeperNotes"
+              }
+            ]
+          }
+        },
+        {
+          "id": "beekeeper:memory",
+          "text": "찻집에 걸었던 그 한 장, 주니퍼가 다시 공책에 붙였어요. 그날 와 줘서 고마웠어요.",
+          "depth": 2,
+          "req": {
+            "story": [
+              {
+                "id": "beekeeperNotes"
+              }
+            ],
+            "exp": [
+              "story:beekeeperNotes"
+            ]
+          }
         }
       ],
       "tastes": {
@@ -14124,7 +16579,433 @@
         "size": {
           "small": 1
         }
-      }
+      },
+      "events": [
+        {
+          "id": "beekeeper:story:1",
+          "title": "같은 벌, 다른 공책",
+          "stage": 1,
+          "at": {
+            "x": 41,
+            "y": 27
+          },
+          "when": {
+            "from": 960,
+            "to": 1080
+          },
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "벌통 곁 낮은 의자 위에 공책 한 권이 펼쳐져 있다. 숫자 사이사이에 작은 꽃 그림이 끼어 있다."
+            },
+            {
+              "speaker": "beekeeper",
+              "text": "주니퍼 공책이에요. 저는 벌통에서 몇 통이 나갔는지 세는데, 이 아이는 벌 한 마리가 어느 꽃에 몇 번 앉는지를 적어요. 같은 벌을 보는데 이렇게 달라요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "다르게 보는 이야기를 듣는다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "beekeeper",
+                  "text": "처음엔 일은 안 하고 뭘 그리나 했어요. 그런데 이 쪽을 보니, 제가 한 번도 안 본 꽃이 있더라고요."
+                }
+              ],
+              "memory": "heardDiff"
+            },
+            {
+              "label": "공책 한 쪽을 같이 들여다본다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "beekeeper",
+                  "text": "여기, 토끼풀에 네 번. 저는 토끼풀은 쳐다보지도 않았어요. 벌은 거기 가 있었는데."
+                }
+              ],
+              "memory": "heardDiff"
+            },
+            {
+              "label": "주니퍼에게 직접 물어봤는지 묻는다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "beekeeper",
+                  "text": "아직요. 물어보면 길게 대답할 거예요. 그 아이 말은 원래 길거든요. …그래도 들어 봐야겠죠."
+                }
+              ],
+              "memory": "heardDiff"
+            }
+          ]
+        },
+        {
+          "id": "beekeeper:story:2",
+          "title": "풀밭의 걸음",
+          "stage": 2,
+          "at": {
+            "x": 28,
+            "y": 11
+          },
+          "when": {
+            "from": 780,
+            "to": 840,
+            "weather": [
+              "dry"
+            ]
+          },
+          "with": [
+            "juniper"
+          ],
+          "req": {
+            "seen": [
+              "beekeeper:story:1"
+            ],
+            "after": {
+              "event": "beekeeper:story:1",
+              "days": 1
+            }
+          },
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "꽃 풀밭. 주니퍼가 앞서 걷다가 멈추고, 벌 치는 이웃은 그 뒤를 천천히 따른다."
+            },
+            {
+              "speaker": "juniper",
+              "text": "어머니, 여기서는 멈춰야 해요. 이 꽃엔 해가 높아지기 전에만 벌이 와요. 아, 너무 자세했죠."
+            },
+            {
+              "speaker": "beekeeper",
+              "text": "아니야. 멈추자. 오늘은 네 걸음으로 걸을게."
+            }
+          ],
+          "choices": [
+            {
+              "label": "두 사람 뒤에서 걷는다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "beekeeper",
+                  "text": "앞에서 걸을 땐 몰랐는데, 뒤에서 보니 이 아이는 땅을 먼저 봐요."
+                }
+              ],
+              "memory": "meadowWalk"
+            },
+            {
+              "label": "앉는 벌을 같이 센다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "juniper",
+                  "text": "…넷, 다섯. 같이 세 주시니까 안 틀렸어요. 혼자 세면 꼭 하나를 두 번 세거든요."
+                }
+              ],
+              "memory": "meadowWalk"
+            },
+            {
+              "label": "말없이 꽃만 본다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "beekeeper",
+                  "text": "조용하니까 날갯소리가 들리네요. 이 소리는 벌통 곁에서 듣는 거랑 달라요."
+                }
+              ],
+              "memory": "meadowWalk"
+            }
+          ]
+        },
+        {
+          "id": "beekeeper:story:3",
+          "title": "꽃 이름 시식판",
+          "stage": 2,
+          "at": {
+            "x": 21,
+            "y": 18
+          },
+          "when": {
+            "from": 840,
+            "to": 900,
+            "days": [
+              0
+            ],
+            "weather": [
+              "dry"
+            ]
+          },
+          "with": [
+            "baker"
+          ],
+          "req": {
+            "seen": [
+              "beekeeper:story:2"
+            ],
+            "after": {
+              "event": "beekeeper:story:2",
+              "days": 1
+            }
+          },
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "장날 광장. 좌판 끝에 작은 꿀 항아리 셋과 얇게 썬 빵 접시가 놓여 있다."
+            },
+            {
+              "speaker": "beekeeper",
+              "text": "봄 꽃, 여름 꽃, 가을 꽃. 주니퍼 공책에 적힌 대로 나눠 떠 왔어요. 이름표를 붙이면 사람들이 알아볼까요?"
+            },
+            {
+              "speaker": "baker",
+              "text": "빵은 얇게, 맛이 순한 걸로 가져왔어요. 꿀 맛을 가리면 안 되니까요. 어느 접시에 어느 꽃을 놓을지는 같이 정해요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "이름표 붙이기를 같이 한다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "baker",
+                  "text": "반죽 젓듯이 꿀도 한 번 저어 놓아야 고르게 발려요. 같이 해요."
+                }
+              ],
+              "memory": "tasteBoard",
+              "mini": "mash"
+            },
+            {
+              "label": "한 조각씩 맛을 본다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "beekeeper",
+                  "text": "어때요? 봄 꽃이 제일 가벼워요. 저는 가을 꽃이 좋은데, 주니퍼는 봄 꽃이래요."
+                }
+              ],
+              "memory": "tasteBoard"
+            },
+            {
+              "label": "빵과 꿀의 짝을 제안한다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "baker",
+                  "text": "그 빵엔 여름 꽃이요? 해 봐요. 안 맞으면 바꾸면 되죠."
+                }
+              ],
+              "memory": "tasteBoard"
+            }
+          ]
+        },
+        {
+          "id": "beekeeper:story:4",
+          "title": "한 장의 관찰",
+          "stage": 3,
+          "at": {
+            "x": 44,
+            "y": 63
+          },
+          "when": {
+            "from": 900,
+            "to": 960
+          },
+          "with": [
+            "juniper",
+            "poppy"
+          ],
+          "req": {
+            "seen": [
+              "beekeeper:story:3"
+            ],
+            "after": {
+              "event": "beekeeper:story:3",
+              "days": 1
+            }
+          },
+          "completes": "beekeeperNotes",
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "찻집 벽에 공책 한 장이 걸려 있다. 꽃 그림 곁에 주니퍼 글씨로 숫자가 줄지어 적혀 있다."
+            },
+            {
+              "speaker": "beekeeper",
+              "text": "우리 딸이 본 거예요. 저는 벌통을 세고, 이 아이는 꽃을 봐요. 둘 다 있어야 꿀맛이 왜 철마다 다른지 알겠더라고요."
+            },
+            {
+              "speaker": "juniper",
+              "text": "…저는 그림 옆에 서 있을게요. 말은 어머니가 하시고요. 물어보시면, 그건 제가 대답할게요."
+            },
+            {
+              "speaker": "poppy",
+              "text": "그림 옆자리는 비워 둘게요. 찻잔은 이쪽에 두세요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "조금 떨어져서 구경한다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "beekeeper",
+                  "text": "사람들이 그림 앞에서 오래 서 있네요. 벌통 앞에선 다들 금방 가는데."
+                }
+              ]
+            },
+            {
+              "label": "그림 앞에 서서 숫자를 묻는다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "juniper",
+                  "text": "토끼풀은 네 번이에요. 아침에만요. …아, 더 물어보셔도 돼요."
+                }
+              ]
+            },
+            {
+              "label": "다 듣고 손뼉을 친다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "poppy",
+                  "text": "박수 소리에 손님들이 다 돌아봤어요. 주니퍼, 고개 들어도 괜찮아요."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "beekeeper:small:flowerWalk",
+          "title": "봄 꽃 자리",
+          "stage": 2,
+          "at": {
+            "x": 41,
+            "y": 27
+          },
+          "when": {
+            "from": 420,
+            "to": 780,
+            "season": [
+              "spring"
+            ]
+          },
+          "lines": [
+            {
+              "speaker": "beekeeper",
+              "text": "봄엔 꽃 자리가 날마다 바뀌어요. 벌통 둘레를 한 바퀴 돌면서 어디 피었나 봐 둘래요?"
+            }
+          ],
+          "choices": [
+            {
+              "label": "같이 한 바퀴 돈다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "beekeeper",
+                  "text": "여기 민들레, 저쪽에 토끼풀. 이렇게 봐 두면 벌들이 어디로 갈지 대강 알아요."
+                }
+              ],
+              "memory": "flowerWalk"
+            },
+            {
+              "label": "먼저 핀 꽃이 어디인지 묻는다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "beekeeper",
+                  "text": "해가 먼저 드는 남쪽이요. 해마다 거기가 제일 빨라요."
+                }
+              ],
+              "memory": "flowerWalk"
+            }
+          ]
+        },
+        {
+          "id": "beekeeper:small:winterTools",
+          "title": "겨울 도구 닦기",
+          "stage": 2,
+          "at": {
+            "x": 41,
+            "y": 27
+          },
+          "when": {
+            "from": 960,
+            "to": 1140,
+            "season": [
+              "winter"
+            ]
+          },
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "벌통은 덮개를 쓰고 조용하다. 벌 치는 이웃이 연기 통과 긁개를 바구니에 늘어놓았다."
+            },
+            {
+              "speaker": "beekeeper",
+              "text": "겨울엔 벌들이 뭉쳐서 지내요. 그동안 저는 도구를 닦아요. 봄에 손이 헤매지 않게."
+            }
+          ],
+          "choices": [
+            {
+              "label": "긁개를 같이 닦는다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "beekeeper",
+                  "text": "날 쪽은 제가 할게요. 손잡이만 부탁해요. 순서대로 걸어 두면 돼요."
+                }
+              ],
+              "memory": "winterTools",
+              "mini": "order"
+            },
+            {
+              "label": "닦는 동안 곁에 앉아 있는다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "beekeeper",
+                  "text": "말이 없어도 괜찮아요. 차 한 잔 놓고 하면 금방이에요."
+                }
+              ],
+              "memory": "winterTools"
+            }
+          ]
+        }
+      ],
+      "props": [
+        {
+          "id": "beekeeperNotebook",
+          "room": "beekeeper",
+          "at": {
+            "x": 18,
+            "y": 52
+          },
+          "art": "notebookOpen",
+          "req": {
+            "story": [
+              {
+                "id": "beekeeperNotes"
+              }
+            ]
+          }
+        },
+        {
+          "id": "beekeeperDrawing",
+          "room": "beekeeper",
+          "at": {
+            "x": 19,
+            "y": 52
+          },
+          "art": "beeDrawing",
+          "req": {
+            "story": [
+              {
+                "id": "beekeeperNotes"
+              }
+            ]
+          }
+        }
+      ]
     },
     "child": {
       "id": "child",
@@ -15230,6 +18111,21 @@
             ],
             "exp": [
               "story:presserBench"
+            ]
+          }
+        },
+        {
+          "id": "grandpa:apothecaryPot",
+          "text": "약방 화분에 잎이 났다지? 흙 마를 때까지 잘 참았구먼.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "apothecaryPot"
+              }
+            ],
+            "exp": [
+              "choice:apothecary:story:2"
             ]
           }
         }
@@ -17259,6 +20155,19 @@
               "choice:shepherd:small:newApron"
             ]
           }
+        },
+        {
+          "id": "weaver:postmanStrap",
+          "text": "편지 나르는 이웃 끈은 어깨 쪽만 넓게 짰어요. 색은 본인이 대 보고 골랐고요.",
+          "depth": 0,
+          "req": {
+            "seen": [
+              "postman:small:newStrap"
+            ],
+            "exp": [
+              "choice:postman:small:newStrap"
+            ]
+          }
         }
       ],
       "tastes": {
@@ -17667,9 +20576,238 @@
           "mutter": [
             "선반 위부터 정리하고 있어요. 용기는 비어 있어요."
           ]
+        },
+        {
+          "at": {
+            "x": 37,
+            "y": 32
+          },
+          "when": {
+            "from": 660,
+            "to": 840,
+            "weather": [
+              "wet"
+            ]
+          },
+          "doing": "sort",
+          "mutter": [
+            "비 오는 날엔 표지가 번지지 않게 안쪽 선반부터요."
+          ]
+        },
+        {
+          "at": {
+            "x": 40,
+            "y": 8
+          },
+          "when": {
+            "from": 960,
+            "to": 1020,
+            "weather": [
+              "dry"
+            ]
+          },
+          "doing": "wait",
+          "req": {
+            "seen": [
+              "apothecary:story:1"
+            ],
+            "notSeen": [
+              "apothecary:story:2"
+            ]
+          },
+          "mutter": [
+            "할아버지께 여쭤보려고요. 화분 잎이 아래부터 노래져요."
+          ]
+        },
+        {
+          "at": {
+            "x": 43,
+            "y": 62
+          },
+          "when": {
+            "from": 900,
+            "to": 960
+          },
+          "doing": "tea",
+          "req": {
+            "seen": [
+              "apothecary:story:3"
+            ],
+            "notSeen": [
+              "apothecary:story:4"
+            ]
+          },
+          "mutter": [
+            "화분 자리는 파피 씨가 정하게 하려고요."
+          ]
+        },
+        {
+          "at": {
+            "x": 43,
+            "y": 62
+          },
+          "when": {
+            "from": 900,
+            "to": 960,
+            "days": [
+              2,
+              5
+            ]
+          },
+          "doing": "tea",
+          "req": {
+            "story": [
+              {
+                "id": "apothecaryPot"
+              }
+            ]
+          },
+          "mutter": [
+            "오늘은 쉬는 칸이에요. 표에 그렇게 적혀 있어요.",
+            "창가 화분 잎을 세어 보고 있어요."
+          ]
+        },
+        {
+          "at": {
+            "x": 37,
+            "y": 32
+          },
+          "when": {
+            "from": 900,
+            "to": 960,
+            "days": [
+              3,
+              6
+            ]
+          },
+          "doing": "herb",
+          "req": {
+            "story": [
+              {
+                "id": "apothecaryPot"
+              }
+            ]
+          },
+          "mutter": [
+            "오늘은 제가 물 주는 날. 흙부터 만져 보고요."
+          ]
         }
       ],
-      "lines": [],
+      "lines": [
+        {
+          "id": "apothecary:plain",
+          "text": "선반 위부터 정리하고 있어요. 찾는 게 있으면 말해 주세요.",
+          "depth": 0
+        },
+        {
+          "id": "apothecary:short:labels",
+          "text": "용기마다 표지를 붙여요. 날짜는 꼭 적어요. 기억은 믿지 않아요.",
+          "depth": 0,
+          "when": {
+            "from": 420,
+            "to": 660
+          }
+        },
+        {
+          "id": "apothecary:short:coolTea",
+          "text": "찻잔은 창가에 두고 식혀요. 잊고 있다가 다 식으면, 그것도 그것대로 마셔요.",
+          "depth": 0,
+          "when": {
+            "from": 840,
+            "to": 1140
+          }
+        },
+        {
+          "id": "apothecary:short:dawnHerbs",
+          "text": "해 뜨기 전에 딴 잎은 향이 진해요. 그래서 일찍 나가요.",
+          "depth": 0,
+          "when": {
+            "from": 420,
+            "to": 480
+          }
+        },
+        {
+          "id": "apothecary:short:wildHerbs",
+          "text": "서쪽 가장자리에 들 약초가 나요. 캐서 장날 좌판에 내놓으면 값을 쳐줘요.",
+          "depth": 1
+        },
+        {
+          "id": "apothecary:short:winterDry",
+          "text": "겨울엔 말린 잎을 한 번씩 다시 펼쳐 봐요. 눅눅한 게 있으면 따로 두고요.",
+          "depth": 0,
+          "when": {
+            "season": [
+              "winter"
+            ]
+          }
+        },
+        {
+          "id": "apothecary:short:basilBusy",
+          "text": "바질은 쉬는 날에도 산에 가요. 말리지는 않는데… 찻잔 하나는 들려 보내요.",
+          "depth": 1,
+          "req": {
+            "notStory": [
+              "apothecaryPot"
+            ]
+          }
+        },
+        {
+          "id": "apothecary:short:honeyHerb",
+          "text": "그때 받은 것, 선반 맨 앞에 두고 아껴 썼어요. 받은 날짜도 적어 놨어요.",
+          "depth": 1,
+          "req": {
+            "exp": [
+              "gift:apothecary"
+            ]
+          }
+        },
+        {
+          "id": "apothecary:taste",
+          "text": "흙 만지는 시간이 좋아요. 손이 바쁘면 머리가 조용해져요.",
+          "depth": 1,
+          "reveals": "activity.garden"
+        },
+        {
+          "id": "apothecary:potWorking",
+          "text": "화분은 아직 그대로예요. 흙이 한 마디 마를 때까지 참는 중이에요.",
+          "depth": 0,
+          "req": {
+            "seen": [
+              "apothecary:story:2"
+            ],
+            "notSeen": [
+              "apothecary:story:4"
+            ]
+          }
+        },
+        {
+          "id": "apothecary:after",
+          "text": "오늘은 제가 물어봤어요. 늘 대답만 하다가요. 묻는 것도 괜찮더라고요.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "apothecaryPot"
+              }
+            ]
+          }
+        },
+        {
+          "id": "apothecary:memory",
+          "text": "찻집 창가 화분 봤어요? 잎이 하나 더 났어요. 그날 같이 들고 가 줘서 고마웠어요.",
+          "depth": 2,
+          "req": {
+            "story": [
+              {
+                "id": "apothecaryPot"
+              }
+            ],
+            "exp": [
+              "story:apothecaryPot"
+            ]
+          }
+        }
+      ],
       "tastes": {
         "activity": {
           "garden": 1,
@@ -17681,7 +20819,453 @@
         "size": {
           "small": 1
         }
-      }
+      },
+      "events": [
+        {
+          "id": "apothecary:story:1",
+          "title": "시든 화분",
+          "stage": 1,
+          "at": {
+            "x": 37,
+            "y": 32
+          },
+          "when": {
+            "from": 840,
+            "to": 960
+          },
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "약방 문 앞 선반 끝에 잎이 축 처진 화분 하나가 놓여 있다."
+            },
+            {
+              "speaker": "apothecary",
+              "text": "선반 재료는 들여온 날짜까지 다 외우는데, 이 화분 하나는 모르겠어요. 물을 줘도, 안 줘도 이래요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "화분 이야기를 듣는다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "apothecary",
+                  "text": "이사 올 때 받은 거예요. 그래서 더 마음이 쓰여요. 내놓지는 못하겠어요."
+                }
+              ],
+              "memory": "wiltPot"
+            },
+            {
+              "label": "잎을 같이 들여다본다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "apothecary",
+                  "text": "아래 잎부터 노래졌네요. 위쪽 새순은… 아직 꼿꼿해요."
+                }
+              ],
+              "memory": "wiltPot"
+            },
+            {
+              "label": "누구에게 물어볼지 묻는다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "apothecary",
+                  "text": "물어본다… 저는 늘 대답하는 쪽이었는데. 포도원 할아버지라면 아실까요?"
+                }
+              ],
+              "memory": "wiltPot"
+            }
+          ]
+        },
+        {
+          "id": "apothecary:story:2",
+          "title": "물어보러 가는 길",
+          "stage": 2,
+          "at": {
+            "x": 40,
+            "y": 8
+          },
+          "when": {
+            "from": 960,
+            "to": 1020,
+            "weather": [
+              "dry"
+            ]
+          },
+          "with": [
+            "grandpa"
+          ],
+          "req": {
+            "seen": [
+              "apothecary:story:1"
+            ],
+            "after": {
+              "event": "apothecary:story:1",
+              "days": 1
+            }
+          },
+          "lines": [
+            {
+              "speaker": "apothecary",
+              "text": "할아버지, 여쭤볼 게 있어요. 화분 잎이 아래부터 노래져요."
+            },
+            {
+              "speaker": "grandpa",
+              "text": "물을 자주 주나? 넝쿨도 발이 늘 젖어 있으면 그러네. 흙이 손가락 한 마디만큼 마를 때까지 두고, 해가 반나절 드는 데로 옮겨 보게."
+            },
+            {
+              "speaker": "apothecary",
+              "text": "마를 때까지 두기… 그게 제일 어렵겠네요. 자꾸 뭘 해 주고 싶어서요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "곁에서 같이 듣는다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "grandpa",
+                  "text": "자네가 물으러 올 줄은 몰랐네. 늘 우리가 묻던 쪽이었는데."
+                }
+              ],
+              "memory": "askedHelp"
+            },
+            {
+              "label": "들은 걸 같이 외워 본다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "apothecary",
+                  "text": "한 마디 마르면 물, 해는 반나절. 둘이 외우면 안 잊겠죠."
+                }
+              ],
+              "memory": "askedHelp"
+            },
+            {
+              "label": "흙을 만져 보러 가자고 한다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "apothecary",
+                  "text": "지금요? …네, 가 봐요. 손으로 보는 게 제일 빠르죠."
+                }
+              ],
+              "memory": "askedHelp"
+            }
+          ]
+        },
+        {
+          "id": "apothecary:story:3",
+          "title": "물 주는 날 표",
+          "stage": 2,
+          "at": {
+            "x": 37,
+            "y": 32
+          },
+          "when": {
+            "from": 960,
+            "to": 1020
+          },
+          "with": [
+            "basil"
+          ],
+          "req": {
+            "seen": [
+              "apothecary:story:2"
+            ],
+            "after": {
+              "event": "apothecary:story:2",
+              "days": 1
+            }
+          },
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "약방 문 앞. 약방 주인이 얇은 판자에 칸을 긋고, 바질이 곁에서 화분 흙을 손가락으로 눌러 본다."
+            },
+            {
+              "speaker": "apothecary",
+              "text": "물 주는 날을 나눠 보려고. 나는 셋째 날, 여섯째 날."
+            },
+            {
+              "speaker": "basil",
+              "text": "그럼 저는 둘째, 다섯째요. 그날은 제가 볼 테니까, 그 칸에는 \"찻집\"이라고 적어요."
+            },
+            {
+              "speaker": "apothecary",
+              "text": "나더러 쉬라고? …그래. 그 칸은 비워 둘게."
+            }
+          ],
+          "choices": [
+            {
+              "label": "표의 칸을 같이 긋는다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "basil",
+                  "text": "칸이 반듯하네요. 날짜 순서대로 나무 표를 꽂아요."
+                }
+              ],
+              "memory": "shiftTable",
+              "mini": "order"
+            },
+            {
+              "label": "두 사람이 나누는 말을 듣는다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "apothecary",
+                  "text": "나누자고 먼저 말한 건 처음이에요. 바질이 바로 받아 주네요."
+                }
+              ],
+              "memory": "shiftTable"
+            },
+            {
+              "label": "쉬는 칸을 하나 더 넣자고 한다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "basil",
+                  "text": "좋아요. 저도 하나 넣을래요. 그날은 산에 가요."
+                }
+              ],
+              "memory": "shiftTable"
+            }
+          ]
+        },
+        {
+          "id": "apothecary:story:4",
+          "title": "창가 자리",
+          "stage": 3,
+          "at": {
+            "x": 43,
+            "y": 62
+          },
+          "when": {
+            "from": 900,
+            "to": 960
+          },
+          "with": [
+            "poppy"
+          ],
+          "req": {
+            "seen": [
+              "apothecary:story:3"
+            ],
+            "after": {
+              "event": "apothecary:story:3",
+              "days": 1
+            }
+          },
+          "completes": "apothecaryPot",
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "약방 주인이 새 잎이 난 화분을 두 손으로 들고 찻집에 들어선다."
+            },
+            {
+              "speaker": "apothecary",
+              "text": "파피 씨, 이 화분 여기 둬도 될까요? 약방보다 여기가 해가 반나절 들어요."
+            },
+            {
+              "speaker": "poppy",
+              "text": "그럼 창가요. 자리는 제가 골라도 되죠? 손님들 찻잔에 그늘 안 지는 데로요."
+            },
+            {
+              "speaker": "apothecary",
+              "text": "네. 파피 씨 가게니까요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "화분을 같이 든다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "apothecary",
+                  "text": "조심조심. 새 잎이 아직 얇아요. 고마워요."
+                }
+              ]
+            },
+            {
+              "label": "자리 고르는 걸 지켜본다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "poppy",
+                  "text": "여기요. 아침엔 해, 오후엔 그늘. 화분도 손님도 좋아할 자리예요."
+                }
+              ]
+            },
+            {
+              "label": "차를 한 잔 청한다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "poppy",
+                  "text": "오늘 차는 제가 낼게요. 화분 이사 온 날이니까."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "apothecary:small:shelf",
+          "title": "재료 선반 정돈",
+          "stage": 2,
+          "at": {
+            "x": 37,
+            "y": 32
+          },
+          "when": {
+            "from": 420,
+            "to": 660
+          },
+          "lines": [
+            {
+              "speaker": "apothecary",
+              "text": "용기 표지가 비에 번졌어요. 새로 붙이는 김에 자리도 바꾸려고요. 자주 꺼내는 건 손 닿는 데로."
+            }
+          ],
+          "choices": [
+            {
+              "label": "용기를 같이 늘어놓는다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "apothecary",
+                  "text": "표지 글씨가 앞으로 오게만 놓아 주세요. 순서는 제가 볼게요."
+                }
+              ],
+              "memory": "shelfTidy",
+              "mini": "order"
+            },
+            {
+              "label": "놓는 순서를 묻는다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "apothecary",
+                  "text": "들여온 날짜 순서요. 오래된 게 앞이에요. 그래야 먼저 쓰거든요."
+                }
+              ],
+              "memory": "shelfTidy"
+            }
+          ]
+        },
+        {
+          "id": "apothecary:small:dayOffTea",
+          "title": "쉬는 칸의 차",
+          "stage": 3,
+          "at": {
+            "x": 43,
+            "y": 62
+          },
+          "when": {
+            "from": 900,
+            "to": 960,
+            "days": [
+              2,
+              5
+            ]
+          },
+          "with": [
+            "poppy"
+          ],
+          "req": {
+            "story": [
+              {
+                "id": "apothecaryPot"
+              }
+            ]
+          },
+          "lines": [
+            {
+              "speaker": "apothecary",
+              "text": "쉬는 칸에 앉아 있으려니 손이 심심해요. 파피 씨, 오늘 차는 뭐예요?"
+            },
+            {
+              "speaker": "poppy",
+              "text": "보리차요. 아무것도 안 넣은 거. 오늘은 그냥 마시기만 하세요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "곁에 앉아 같이 마신다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "apothecary",
+                  "text": "그냥 마시기만… 이것도 연습이 필요하네요."
+                }
+              ],
+              "memory": "dayOffTea"
+            },
+            {
+              "label": "창가 화분 잎을 같이 센다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "apothecary",
+                  "text": "여섯 장이요. 지난번엔 네 장이었는데."
+                }
+              ],
+              "memory": "dayOffTea"
+            }
+          ]
+        }
+      ],
+      "props": [
+        {
+          "id": "apothecaryPotWilted",
+          "room": "apothecary",
+          "at": {
+            "x": 31,
+            "y": 82
+          },
+          "art": "potWilted",
+          "req": {
+            "seen": [
+              "apothecary:story:1"
+            ],
+            "notStory": [
+              "apothecaryPot"
+            ]
+          }
+        },
+        {
+          "id": "apothecaryPotLeaf",
+          "room": "apothecary",
+          "at": {
+            "x": 31,
+            "y": 82
+          },
+          "art": "potNewLeaf",
+          "req": {
+            "story": [
+              {
+                "id": "apothecaryPot"
+              }
+            ]
+          }
+        },
+        {
+          "id": "apothecaryCan",
+          "room": "apothecary",
+          "at": {
+            "x": 30,
+            "y": 82
+          },
+          "art": "wateringCan",
+          "req": {
+            "seen": [
+              "apothecary:story:3"
+            ]
+          }
+        }
+      ]
     }
   },
   "threads": [
