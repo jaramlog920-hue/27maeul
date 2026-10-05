@@ -23,6 +23,8 @@ for (const p of Object.values(PEOPLE.people))
   for (const e of p.events ?? []) if (e.completes) STORIES.set(e.completes, new Set((e.choices ?? []).flatMap((c) => (c.outcome !== undefined ? [c.outcome] : []))))
 const STORY_IDS: readonly string[] = [...STORIES.keys()]
 const speakers = new Set([...CONTENT.neighbors.map((n) => n.id), 'narration'])
+/** 방이 자기 이름이 아닌 이웃: 웬델은 빵 굽는 집에 같이 살고, 파피는 찻집에서 일한다 (계획 16 작업 10) */
+const HOME_ROOM: Record<string, string> = { wendell: 'baker', poppy: 'teahouse' }
 
 // ── 주민끼리 만나는 시간 (계획 16 작업 3) ──
 const dist = (a: Tile, b: Tile) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y)
@@ -197,7 +199,7 @@ describe('people.json', () => {
         expect(pr.item || pr.art, `${pr.id}: 그림`).toBeTruthy()
         if (pr.item) expect(FURNITURE_DEFS[pr.item], `${pr.id} item`).toBeDefined()
         if (pr.art && arts) expect(arts.has(pr.art), `${pr.id} art ${pr.art}`).toBe(true)
-        if (pr.room) expect(pr.room, `${pr.id}: 그 이웃 집 방`).toBe(p.id)
+        if (pr.room) expect(pr.room, `${pr.id}: 그 이웃 집 방`).toBe(HOME_ROOM[p.id] ?? p.id)
         const tiles = propFootprint(pr.at, pr.item, pr.size)
         expect(propSpotProblem(tiles, pr.room), `${pr.id} 자리`).toBeNull()
         for (const t of tiles) expect(stands.has(key(t)), `${pr.id}: ${t.x},${t.y}에 누군가 선다`).toBe(false)

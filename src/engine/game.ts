@@ -362,7 +362,8 @@ function goalContext(s: GoalState, content: GameContent) {
   // 아직 열리지 않은 구역(나루·벌통 들…) 안의 자리는 건너뛰고 시간표로 (goalFor가 열린 자리를 고른다)
   for (const d of content.neighbors) if (meet.joined(d.id)) {
     const at = personSpot(s, d.id, meet)
-    if (at && !meet.locked.has(key(at))) special[d.id] = at
+    if (at === 'away') special[d.id] = null
+    else if (at && !meet.locked.has(key(at))) special[d.id] = at
   }
   Object.assign(special, meet.late, appointmentSpots(s))
   const w = weatherOf(s.clock.day)
@@ -1218,16 +1219,17 @@ function partnerHere(s: GoalState, r: Routine, npc: string, meet: MeetContext, d
   if (eventNow(s, o) || sightingNow(s, o)) return false
   if (depth > 0) return true
   const theirs = routineIn(s, o, meet, depth + 1)
-  return !!theirs && !meet.locked.has(key(theirs.at)) && near(theirs.at, r.at, 2) && (!theirs.with || theirs.with === npc)
+  return !!theirs && !theirs.away && !meet.locked.has(key(theirs.at)) && near(theirs.at, r.at, 2) && (!theirs.with || theirs.with === npc)
 }
 
-/** 이 사람이 지금 가 있을 곳 (없으면 neighbors.json 시간표) */
-function personSpot(s: GoalState, npc: string, meet: MeetContext): Tile | null {
+/** 이 사람이 지금 가 있을 곳 (없으면 neighbors.json 시간표). 'away' = 그때만 마을에 없다 (집 문으로 들어가 보이지 않는다) */
+function personSpot(s: GoalState, npc: string, meet: MeetContext): Tile | 'away' | null {
   const e = eventNow(s, npc)
   if (e) return e.at
   const w = sightingNow(s, npc)
   if (w) return w.at
-  return routineOf(s, npc, meet)?.at ?? null
+  const r = routineOf(s, npc, meet)
+  return r?.away ? 'away' : (r?.at ?? null)
 }
 
 const near = (a: Tile, b: Tile, d: number) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y) <= d

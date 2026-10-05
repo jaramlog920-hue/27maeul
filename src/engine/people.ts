@@ -83,6 +83,8 @@ export interface Routine {
   mutter?: string[]
   /** 이 조건이 맞을 때만 고른다 (계획 16 작업 3 — 이야기 뒤 생긴 일과·사라진 일과) */
   req?: Req
+  /** 이 때는 마을에 없다 — 집 문으로 들어가 보이지 않고, 함께하는 일과의 상대도 기다리지 않는다 (계획 16 작업 10: 웬델이 배우러 가는 아침) */
+  away?: boolean
 }
 
 export interface Req {
