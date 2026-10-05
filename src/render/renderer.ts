@@ -1930,6 +1930,8 @@ export interface Renderer {
 export function createRenderer(g: Ctx, content: GameContent): Renderer {
   g.imageSmoothingEnabled = false
   const steps: { x: number; y: number; t: number }[] = []
+  /** 비·눈 발자국이 남는 실제 초 */
+  const STEP_SECONDS = 12
   let lastStep = ''
   const renderer: Renderer = {
     zoom: 1,
@@ -1988,15 +1990,15 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         g.globalAlpha = 1
       }
 
-      // 비·눈 오는 날 흙길에 남는 발자국 (1분 동안 옅어진다)
+      // 비·눈 오는 날 흙길에 남는 발자국 (12초 동안 옅게 사라진다 — 2026-10-05 사용자: 너무 오래·진하게 남았다)
       const stepKey = `${here.x},${here.y}`
       if (stepKey !== lastStep) {
         lastStep = stepKey
         if (wet && MAP[here.y]?.[here.x] === ',') steps.push({ x: here.x, y: here.y, t })
       }
-      while (steps.length && (t - steps[0].t > 60 || steps[0].t > t)) steps.shift()
+      while (steps.length && (t - steps[0].t > STEP_SECONDS || steps[0].t > t)) steps.shift()
       for (const st of steps) {
-        g.fillStyle = `rgba(80, 55, 30, ${0.5 * (1 - (t - st.t) / 60)})`
+        g.fillStyle = `rgba(80, 55, 30, ${0.2 * (1 - (t - st.t) / STEP_SECONDS)})`
         g.fillRect(st.x * TILE + 5, st.y * TILE + 6, 2, 3)
         g.fillRect(st.x * TILE + 9, st.y * TILE + 9, 2, 3)
       }
