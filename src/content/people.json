@@ -159,6 +159,31 @@
             "비 오는 날엔 불을 못 피우니까…",
             "쉿. 아무것도 안 해요."
           ]
+        },
+        {
+          "at": {
+            "x": 41,
+            "y": 22
+          },
+          "when": {
+            "from": 1080,
+            "to": 1170,
+            "season": [
+              "winter"
+            ]
+          },
+          "doing": "hammer",
+          "with": "smith",
+          "req": {
+            "story": [
+              {
+                "id": "smithHook"
+              }
+            ]
+          },
+          "mutter": [
+            "아빠, 거기 서면 불티 튀어요. 한 걸음만 뒤로요."
+          ]
         }
       ],
       "offDays": {
@@ -432,6 +457,21 @@
             ]
           },
           "cool": true
+        },
+        {
+          "id": "tilly:smithHook",
+          "text": "아빠가 도안 판을 대장간 옆에 세워 뒀어요. 제 잎사귀 옆에 아빠 굵은 선도 그대로 있어요.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "smithHook"
+              }
+            ],
+            "exp": [
+              "choice:smith:story:1"
+            ]
+          }
         }
       ],
       "sightings": [
@@ -2697,6 +2737,74 @@
           "mutter": [
             "목수, 뜨거운 쪽은 내가 맡겠소. 이 부품은 식었소."
           ]
+        },
+        {
+          "at": {
+            "x": 43,
+            "y": 22
+          },
+          "when": {
+            "from": 420,
+            "to": 480
+          },
+          "doing": "hammer",
+          "mutter": [
+            "자루부터 두드려 보겠소. 헐거우면 오늘 일은 그다음이오."
+          ]
+        },
+        {
+          "at": {
+            "x": 43,
+            "y": 22
+          },
+          "when": {
+            "from": 480,
+            "to": 1080
+          },
+          "doing": "hammer",
+          "mutter": [
+            "집게는 왼쪽, 망치는 오른쪽. 늘 그 자리요.",
+            "쇠가 붉을 때 한 번, 식기 전에 한 번."
+          ]
+        },
+        {
+          "at": {
+            "x": 43,
+            "y": 22
+          },
+          "when": {
+            "from": 1080,
+            "to": 1140
+          },
+          "doing": "rest",
+          "mutter": [
+            "오늘 만든 것을 한 번 더 들어 보겠소."
+          ]
+        },
+        {
+          "at": {
+            "x": 43,
+            "y": 22
+          },
+          "when": {
+            "from": 1080,
+            "to": 1140,
+            "season": [
+              "winter"
+            ]
+          },
+          "doing": "rest",
+          "with": "tilly",
+          "req": {
+            "story": [
+              {
+                "id": "smithHook"
+              }
+            ]
+          },
+          "mutter": [
+            "틸리, 쇠가 식기 전에 모양을 잡게. 나는 여기서 보겠소."
+          ]
         }
       ],
       "lines": [
@@ -2766,6 +2874,144 @@
               "choice:carpenter:story:3"
             ]
           }
+        },
+        {
+          "id": "smith:plain",
+          "text": "망치 자루가 헐거우면 손목이 먼저 아오. 오늘은 자루부터 봤소.",
+          "depth": 0
+        },
+        {
+          "id": "smith:short:hammerCheck",
+          "text": "자루를 두드려 보는 중이오. 소리가 맑으면 됐소.",
+          "depth": 0,
+          "when": {
+            "from": 420,
+            "to": 480
+          }
+        },
+        {
+          "id": "smith:short:toolsLine",
+          "text": "공구는 쓰던 자리에 둬야 손이 먼저 찾소.",
+          "depth": 0,
+          "when": {
+            "from": 480,
+            "to": 720
+          }
+        },
+        {
+          "id": "smith:short:eveningLook",
+          "text": "오늘 것은 다 식었소. 하나씩 들어 보고 내일 고칠 것을 고르겠소.",
+          "depth": 0,
+          "when": {
+            "from": 1080,
+            "to": 1140
+          }
+        },
+        {
+          "id": "smith:short:springTools",
+          "text": "봄에는 밭 연장을 먼저 손보오. 곧들 찾으러 올 테니.",
+          "depth": 0,
+          "when": {
+            "season": [
+              "spring"
+            ]
+          }
+        },
+        {
+          "id": "smith:short:summerHeat",
+          "text": "더운 날엔 물 한 동이를 곁에 두오. 쇠보다 내가 먼저 식어야 하니.",
+          "depth": 0,
+          "when": {
+            "season": [
+              "summer"
+            ]
+          }
+        },
+        {
+          "id": "smith:short:autumnCount",
+          "text": "가을엔 걸이와 못을 세어 두오. 겨울 전에 모자란 것을 채우려고.",
+          "depth": 0,
+          "when": {
+            "season": [
+              "autumn"
+            ]
+          }
+        },
+        {
+          "id": "smith:short:winterFire",
+          "text": "겨울엔 불 곁이 따뜻하오. 손님도 잠시 손을 녹이고 가시오.",
+          "depth": 0,
+          "when": {
+            "season": [
+              "winter"
+            ]
+          }
+        },
+        {
+          "id": "smith:short:rainSmall",
+          "text": "비 오는 날은 큰 불을 쉬오. 작은 걸이나 닦겠소.",
+          "depth": 0,
+          "when": {
+            "weather": [
+              "wet"
+            ]
+          }
+        },
+        {
+          "id": "smith:short:breadGift",
+          "text": "그때 받은 빵은 일하다 먹기 좋았소. 부스러기도 적고.",
+          "depth": 1,
+          "req": {
+            "exp": [
+              "gift:smith"
+            ]
+          }
+        },
+        {
+          "id": "smith:taste",
+          "text": "말보다 손이 편하오. 둘이 무엇을 같이 만들면 그게 이야기요.",
+          "depth": 1,
+          "reveals": "activity.make"
+        },
+        {
+          "id": "smith:hookWorking",
+          "text": "틸리 도안은 아직 내 눈엔 낯설소. 그래도 끝까지 들어 보겠소.",
+          "depth": 0,
+          "req": {
+            "seen": [
+              "smith:story:1"
+            ],
+            "notStory": [
+              "smithHook"
+            ]
+          }
+        },
+        {
+          "id": "smith:after",
+          "text": "튼튼한 건 확인했소. 모양은… 틸리가 고른 쪽이 더 낫더군.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "smithHook"
+              }
+            ]
+          }
+        },
+        {
+          "id": "smith:memory",
+          "text": "저녁마다 그 도안 판을 한 번씩 보오. 고리 시험하던 날, {player}도 곁에 있었지.",
+          "depth": 2,
+          "req": {
+            "story": [
+              {
+                "id": "smithHook"
+              }
+            ],
+            "exp": [
+              "story:smithHook"
+            ]
+          }
         }
       ],
       "tastes": {
@@ -2775,7 +3021,442 @@
         "size": {
           "small": 1
         }
-      }
+      },
+      "events": [
+        {
+          "id": "smith:story:1",
+          "title": "도안 판",
+          "stage": 2,
+          "at": {
+            "x": 43,
+            "y": 22
+          },
+          "when": {
+            "from": 780,
+            "to": 900
+          },
+          "with": [
+            "tilly"
+          ],
+          "req": {
+            "thread": {
+              "id": "forge",
+              "phase": [
+                3
+              ]
+            }
+          },
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "대장간 모루 곁에 도안 판이 세워져 있다. 잎사귀를 두른 고리 그림 위에 굵은 선이 하나 덧그어져 있다."
+            },
+            {
+              "speaker": "smith",
+              "text": "등잔을 걸 고리요. 나는 굵고 단순하게 가자는데, 틸리는 잎을 남기자 하오."
+            },
+            {
+              "speaker": "tilly",
+              "text": "잎이 있어도 무게는 버텨요. 아빠 선이 너무 굵어서 잎이 숨어요."
+            },
+            {
+              "speaker": "narration",
+              "text": "대장장이는 대답 대신 도안 판을 한 칸 틸리 쪽으로 밀어 놓는다."
+            }
+          ],
+          "choices": [
+            {
+              "label": "둘의 말을 곁에서 듣는다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "smith",
+                  "text": "들어 보니 둘 다 할 말이 있군. 도안은 틸리가 고르게 두겠소."
+                }
+              ],
+              "memory": "hookDesign"
+            },
+            {
+              "label": "두 선을 나란히 그려 보자고 한다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "tilly",
+                  "text": "굵은 선 옆에 잎을 하나씩요? 그건 제가 그려 볼게요."
+                }
+              ],
+              "memory": "hookDesign"
+            },
+            {
+              "label": "어디에 걸 고리인지 묻는다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "smith",
+                  "text": "처마 밑이오. 바람이 불어도 등잔이 떨어지면 안 되오."
+                }
+              ],
+              "memory": "hookDesign"
+            }
+          ]
+        },
+        {
+          "id": "smith:story:2",
+          "title": "고리 시험",
+          "stage": 3,
+          "at": {
+            "x": 43,
+            "y": 22
+          },
+          "when": {
+            "from": 960,
+            "to": 1020,
+            "days": [
+              4
+            ]
+          },
+          "with": [
+            "carpenter",
+            "tilly"
+          ],
+          "req": {
+            "seen": [
+              "smith:story:1"
+            ],
+            "after": {
+              "event": "smith:story:1",
+              "days": 1
+            }
+          },
+          "lines": [
+            {
+              "speaker": "carpenter",
+              "text": "처마 각목에 박을 자리를 재 왔소. 고리 목이 이만하면 나무가 갈라지지 않겠소."
+            },
+            {
+              "speaker": "smith",
+              "text": "뜨거운 쪽은 내가 잡겠소. 식은 부품만 받쳐 주면 되오."
+            },
+            {
+              "speaker": "tilly",
+              "text": "잎은 아직 안 붙였어요. 먼저 버티는지 보고요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "식은 부품을 받쳐 든다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "smith",
+                  "text": "손을 그대로 두시오. 이쪽은 다 식었소."
+                }
+              ],
+              "memory": "hookTest",
+              "mini": "hold"
+            },
+            {
+              "label": "셋이 맞추는 모습을 지켜본다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "carpenter",
+                  "text": "추를 달아 보니 흔들리지 않소. 이음새는 괜찮겠군."
+                }
+              ],
+              "memory": "hookTest"
+            },
+            {
+              "label": "추를 다는 순서를 제안한다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "tilly",
+                  "text": "가벼운 추부터 하나씩요. 그럼 어디서 휘는지 보여요."
+                }
+              ],
+              "memory": "hookTest"
+            }
+          ]
+        },
+        {
+          "id": "smith:story:3",
+          "title": "쓸모와 모양",
+          "stage": 3,
+          "at": {
+            "x": 43,
+            "y": 22
+          },
+          "when": {
+            "from": 1080,
+            "to": 1140
+          },
+          "req": {
+            "seen": [
+              "smith:story:2"
+            ],
+            "after": {
+              "event": "smith:story:2",
+              "days": 1
+            }
+          },
+          "completes": "smithHook",
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "저녁 대장간. 시험을 마친 고리 두 개가 모루 곁에 나란히 놓여 있다. 하나는 굵은 민고리, 하나는 잎사귀가 둘린 고리다."
+            },
+            {
+              "speaker": "smith",
+              "text": "둘 다 버텼소. 이제 하나를 고를 차례인데… 내 손은 자꾸 잎 쪽을 집는군."
+            },
+            {
+              "speaker": "narration",
+              "text": "대장장이는 도안 판을 대장간 옆에 세우고, 잎사귀 고리를 그 곁에 건다."
+            }
+          ],
+          "choices": [
+            {
+              "label": "튼튼한 쪽을 이야기한다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "smith",
+                  "text": "튼튼한 건 둘 다 확인했소. 그럼 남는 건 보기 좋은 쪽이오."
+                }
+              ]
+            },
+            {
+              "label": "잎사귀 모양을 이야기한다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "smith",
+                  "text": "잎이 바람을 덜 타는 것도 같소. 핑계일지도 모르지만."
+                }
+              ]
+            },
+            {
+              "label": "틸리가 고른 쪽이라고 말한다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "smith",
+                  "text": "그렇소. 틸리가 고른 쪽이 더 낫더군. 녀석에겐 내일 말하겠소."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "smith:small:newHandle",
+          "title": "새 집게 자루",
+          "stage": 2,
+          "at": {
+            "x": 43,
+            "y": 22
+          },
+          "when": {
+            "from": 480,
+            "to": 720
+          },
+          "req": {
+            "thread": {
+              "id": "forge",
+              "phase": [
+                3
+              ]
+            }
+          },
+          "lines": [
+            {
+              "speaker": "smith",
+              "text": "집게 자루가 갈라졌소. 목수가 두고 간 나무가 셋 있는데, 어느 걸로 깎을지 보던 참이오."
+            }
+          ],
+          "choices": [
+            {
+              "label": "결이 곧은 나무를 고른다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "smith",
+                  "text": "곧은 결은 오래 가오. 손에 익는 데는 조금 걸리겠지만."
+                }
+              ],
+              "memory": "handle"
+            },
+            {
+              "label": "손에 맞는 굵기를 쥐어 본다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "smith",
+                  "text": "쥐어 보니 가운데 것이 맞군. 그걸로 하겠소."
+                }
+              ],
+              "memory": "handle"
+            },
+            {
+              "label": "고르는 모습을 지켜본다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "smith",
+                  "text": "나무는 들어 보면 안다오. 이게 제일 가볍소."
+                }
+              ],
+              "memory": "handle"
+            }
+          ]
+        },
+        {
+          "id": "smith:small:carpenterHandle",
+          "title": "목수의 손잡이",
+          "stage": 3,
+          "at": {
+            "x": 43,
+            "y": 22
+          },
+          "when": {
+            "from": 960,
+            "to": 1020,
+            "days": [
+              4
+            ]
+          },
+          "with": [
+            "carpenter"
+          ],
+          "req": {
+            "story": [
+              {
+                "id": "smithHook"
+              }
+            ]
+          },
+          "lines": [
+            {
+              "speaker": "carpenter",
+              "text": "대패 손잡이 쇠테가 헐거워졌소. 대장장이 손을 빌리러 왔지."
+            },
+            {
+              "speaker": "smith",
+              "text": "쇠테는 내가 줄이겠소. 나무 쪽은 목수가 맞추시오."
+            }
+          ],
+          "choices": [
+            {
+              "label": "나무 손잡이를 붙잡아 준다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "carpenter",
+                  "text": "그대로 두시오. 쇠테가 들어가는 소리가 나면 된 거요."
+                }
+              ],
+              "memory": "carpenterHandle",
+              "mini": "hold"
+            },
+            {
+              "label": "둘이 맞추는 모습을 지켜본다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "smith",
+                  "text": "목수 손은 늘 나보다 반 박자 느리오. 그래서 틀리지 않지."
+                }
+              ],
+              "memory": "carpenterHandle"
+            }
+          ]
+        },
+        {
+          "id": "smith:small:earlyClose",
+          "title": "일찍 마치는 날",
+          "stage": 2,
+          "at": {
+            "x": 43,
+            "y": 22
+          },
+          "when": {
+            "from": 1020,
+            "to": 1080,
+            "season": [
+              "summer"
+            ],
+            "weather": [
+              "hot"
+            ]
+          },
+          "lines": [
+            {
+              "speaker": "smith",
+              "text": "이런 더위엔 망치를 일찍 내려놓소. 불씨는 재를 덮어 작게 남겨 두고."
+            },
+            {
+              "speaker": "narration",
+              "text": "대장장이는 물 한 바가지를 마시고 대장간 그늘에 앉는다."
+            }
+          ],
+          "choices": [
+            {
+              "label": "그늘에 같이 앉는다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "smith",
+                  "text": "바람이 조금 부는군. 이만하면 됐소."
+                }
+              ],
+              "memory": "earlyClose"
+            },
+            {
+              "label": "물을 한 바가지 더 떠 온다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "smith",
+                  "text": "고맙소. 오늘은 쇠보다 내가 먼저 식겠소."
+                }
+              ],
+              "memory": "earlyClose"
+            }
+          ]
+        }
+      ],
+      "props": [
+        {
+          "id": "smithBoard",
+          "at": {
+            "x": 46,
+            "y": 27
+          },
+          "art": "drawingBoard",
+          "req": {
+            "story": [
+              {
+                "id": "smithHook"
+              }
+            ]
+          }
+        },
+        {
+          "id": "smithRing",
+          "at": {
+            "x": 46,
+            "y": 28
+          },
+          "art": "ornamentRing",
+          "req": {
+            "story": [
+              {
+                "id": "smithHook"
+              }
+            ]
+          }
+        }
+      ]
     },
     "poppy": {
       "id": "poppy",
@@ -6835,6 +7516,50 @@
           "mutter": [
             "비 오면 양들이 서로 붙어 있어. 나도 끼고 싶다."
           ]
+        },
+        {
+          "at": {
+            "x": 4,
+            "y": 29
+          },
+          "when": {
+            "from": 780,
+            "to": 840
+          },
+          "doing": "sheep",
+          "with": "shepherd",
+          "req": {
+            "story": [
+              {
+                "id": "shepherdTools"
+              }
+            ]
+          },
+          "mutter": [
+            "아버지는 쉬어요. 흰둥이는 제가 볼게요."
+          ]
+        },
+        {
+          "at": {
+            "x": 6,
+            "y": 29
+          },
+          "when": {
+            "from": 840,
+            "to": 900
+          },
+          "doing": "rest",
+          "with": "shepherd",
+          "req": {
+            "story": [
+              {
+                "id": "shepherdTools"
+              }
+            ]
+          },
+          "mutter": [
+            "걸이에 빗이 그대로 걸려 있네. 신기하다."
+          ]
         }
       ],
       "offDays": {
@@ -7040,6 +7765,21 @@
           "text": "(양만 쓰다듬는다)",
           "depth": 0,
           "cool": true
+        },
+        {
+          "id": "dexter:shepherdTools",
+          "text": "아버지 빗이 이제 걸이에 있어요. 찾느라 저를 부르는 일이 줄었어요. …조금 아쉽네.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "shepherdTools"
+              }
+            ],
+            "exp": [
+              "story:shepherdTools"
+            ]
+          }
         }
       ],
       "sightings": [
@@ -9891,6 +10631,56 @@
           "mutter": [
             "비 오는 날엔 실이 차분해요. 저도요."
           ]
+        },
+        {
+          "at": {
+            "x": 6,
+            "y": 52
+          },
+          "when": {
+            "from": 1110,
+            "to": 1140,
+            "days": [
+              3
+            ]
+          },
+          "doing": "rest",
+          "req": {
+            "seen": [
+              "weaver:story:3"
+            ],
+            "notStory": [
+              "weaverRug"
+            ]
+          },
+          "mutter": [
+            "…차 마시러 오라고 했지. 방으로 가요."
+          ]
+        },
+        {
+          "at": {
+            "x": 6,
+            "y": 52
+          },
+          "when": {
+            "from": 1110,
+            "to": 1140,
+            "days": [
+              3
+            ]
+          },
+          "doing": "tea",
+          "with": "weaver",
+          "req": {
+            "story": [
+              {
+                "id": "weaverRug"
+              }
+            ]
+          },
+          "mutter": [
+            "줄무늬 쪽 끝에 앉을게요. …아니, 이쪽. 이쪽이요."
+          ]
         }
       ],
       "offDays": {
@@ -10049,6 +10839,21 @@
           "text": "…네. 그럴 수 있죠.",
           "depth": 0,
           "cool": true
+        },
+        {
+          "id": "penelope:weaverRug",
+          "text": "어머니 깔개는 민무늬예요. 저는 줄무늬가 좋고요. …둘 다 그대로 두기로 했어요.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "weaverRug"
+              }
+            ],
+            "exp": [
+              "story:weaverRug"
+            ]
+          }
         }
       ],
       "sightings": [
@@ -11970,6 +12775,83 @@
           "mutter": [
             "쉼터는 할아버지가 고른 자리부터 보겠소."
           ]
+        },
+        {
+          "at": {
+            "x": 44,
+            "y": 23
+          },
+          "when": {
+            "from": 960,
+            "to": 1020,
+            "days": [
+              4
+            ]
+          },
+          "doing": "wood",
+          "req": {
+            "seen": [
+              "smith:story:1"
+            ],
+            "notSeen": [
+              "smith:story:2"
+            ]
+          },
+          "mutter": [
+            "고리 박을 각목 치수는 재 왔소."
+          ]
+        },
+        {
+          "at": {
+            "x": 44,
+            "y": 23
+          },
+          "when": {
+            "from": 960,
+            "to": 1020,
+            "days": [
+              4
+            ]
+          },
+          "doing": "wood",
+          "req": {
+            "story": [
+              {
+                "id": "smithHook"
+              }
+            ],
+            "notSeen": [
+              "smith:small:carpenterHandle"
+            ]
+          },
+          "mutter": [
+            "대패 손잡이를 맡기러 왔소."
+          ]
+        },
+        {
+          "at": {
+            "x": 45,
+            "y": 22
+          },
+          "when": {
+            "from": 900,
+            "to": 960,
+            "days": [
+              2
+            ]
+          },
+          "doing": "wood",
+          "req": {
+            "seen": [
+              "presser:story:1"
+            ],
+            "notSeen": [
+              "presser:story:2"
+            ]
+          },
+          "mutter": [
+            "기름 짜는 이웃, 작업대 높이를 재러 왔소."
+          ]
         }
       ],
       "lines": [
@@ -12053,6 +12935,36 @@
             ],
             "exp": [
               "choice:grandpa:story:3"
+            ]
+          }
+        },
+        {
+          "id": "carpenter:smithHook",
+          "text": "대장장이 고리는 이음새가 곱소. 그날 함께 맞춘 부품이 거기 들어갔지.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "smithHook"
+              }
+            ],
+            "exp": [
+              "choice:smith:story:2"
+            ]
+          }
+        },
+        {
+          "id": "carpenter:presserBench",
+          "text": "기름 짜는 이웃 작업대는 가운데 높이로 맞췄소. 본인이 고른 높이요.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "presserBench"
+              }
+            ],
+            "exp": [
+              "choice:presser:story:2"
             ]
           }
         }
@@ -12361,7 +13273,95 @@
     "shepherd": {
       "id": "shepherd",
       "pace": 1,
-      "routines": [],
+      "routines": [
+        {
+          "at": {
+            "x": 5,
+            "y": 29
+          },
+          "when": {
+            "from": 400,
+            "to": 480
+          },
+          "doing": "sheep",
+          "mutter": [
+            "울타리 끝부터 한 바퀴 돌아요. 기운 데는 없네요."
+          ]
+        },
+        {
+          "at": {
+            "x": 5,
+            "y": 29
+          },
+          "when": {
+            "from": 480,
+            "to": 1080
+          },
+          "doing": "sheep",
+          "mutter": [
+            "흰 귀는 늘 물통부터 가요. 저 애는 그늘부터 찾고요.",
+            "오늘은 다들 걸음이 느긋하네요."
+          ]
+        },
+        {
+          "at": {
+            "x": 6,
+            "y": 28
+          },
+          "when": {
+            "from": 1080,
+            "to": 1200
+          },
+          "doing": "rest",
+          "mutter": [
+            "주머니에 뭐가 들었더라… 끈, 빗, 또 끈이네요."
+          ]
+        },
+        {
+          "at": {
+            "x": 6,
+            "y": 29
+          },
+          "when": {
+            "from": 780,
+            "to": 840
+          },
+          "doing": "rest",
+          "with": "dexter",
+          "req": {
+            "story": [
+              {
+                "id": "shepherdTools"
+              }
+            ]
+          },
+          "mutter": [
+            "덱스터, 이 시간엔 네가 봐 줘. 나는 주머니 정리할게."
+          ]
+        },
+        {
+          "at": {
+            "x": 5,
+            "y": 29
+          },
+          "when": {
+            "from": 840,
+            "to": 900
+          },
+          "doing": "sheep",
+          "with": "dexter",
+          "req": {
+            "story": [
+              {
+                "id": "shepherdTools"
+              }
+            ]
+          },
+          "mutter": [
+            "이제 내 차례야. 걸이 옆에서 쉬렴."
+          ]
+        }
+      ],
       "lines": [
         {
           "id": "shepherd1",
@@ -12389,6 +13389,200 @@
               ]
             }
           }
+        },
+        {
+          "id": "shepherd:plain",
+          "text": "양들이 오늘은 순해요. 저도 덩달아 느긋해지네요.",
+          "depth": 0
+        },
+        {
+          "id": "shepherd:short:penCheck",
+          "text": "아침엔 울타리 끝부터 한 바퀴 돌아요. 기운 데가 있으면 그때 고쳐 둬요.",
+          "depth": 0,
+          "when": {
+            "from": 400,
+            "to": 480
+          }
+        },
+        {
+          "id": "shepherd:short:sheepWays",
+          "text": "양마다 걸음이 달라요. 한 애는 물통부터, 한 애는 그늘부터 찾아요.",
+          "depth": 1
+        },
+        {
+          "id": "shepherd:short:pocketSearch",
+          "text": "주머니를 뒤지면 끈이 먼저 나와요. 찾던 건 늘 맨 밑에 있고요.",
+          "depth": 0,
+          "when": {
+            "from": 1080,
+            "to": 1200
+          }
+        },
+        {
+          "id": "shepherd:short:springGrass",
+          "text": "봄 풀이 올라와요. 양들이 울타리 쪽으로 자꾸 고개를 내밀어요.",
+          "depth": 0,
+          "when": {
+            "season": [
+              "spring"
+            ]
+          }
+        },
+        {
+          "id": "shepherd:short:summerShade",
+          "text": "한낮엔 양들을 그늘 쪽으로 몰아요. 저도 같이 그늘에 서요.",
+          "depth": 0,
+          "when": {
+            "season": [
+              "summer"
+            ]
+          }
+        },
+        {
+          "id": "shepherd:short:autumnComb",
+          "text": "가을엔 털이 다시 북슬해져요. 빗을 자주 꺼내요.",
+          "depth": 0,
+          "when": {
+            "season": [
+              "autumn"
+            ]
+          }
+        },
+        {
+          "id": "shepherd:short:winterStraw",
+          "text": "겨울엔 우리 바닥에 마른 풀을 두껍게 깔아요. 발이 시리면 양들이 안 누워요.",
+          "depth": 0,
+          "when": {
+            "season": [
+              "winter"
+            ]
+          }
+        },
+        {
+          "id": "shepherd:short:rainTrough",
+          "text": "비 오는 날엔 물통이 넘치지 않게 자주 봐요. 바닥이 질면 양들이 싫어해요.",
+          "depth": 0,
+          "when": {
+            "weather": [
+              "wet"
+            ]
+          }
+        },
+        {
+          "id": "shepherd:short:breadGrape",
+          "text": "그때 준 것, 덱스터랑 반씩 나눴어요. 걔가 조금 더 먹었지만요.",
+          "depth": 1,
+          "req": {
+            "exp": [
+              "gift:shepherd"
+            ]
+          }
+        },
+        {
+          "id": "shepherd:taste",
+          "text": "일 끝나면 우리 둘레를 천천히 걸어요. 걷다 보면 내일 할 일이 정리돼요.",
+          "depth": 1,
+          "reveals": "activity.walk"
+        },
+        {
+          "id": "shepherd:toolsWorking",
+          "text": "빗 걸 자리부터 정했어요. 나머지는 아직 바구니에 있어요.",
+          "depth": 0,
+          "req": {
+            "seen": [
+              "shepherd:story:1"
+            ],
+            "notStory": [
+              "shepherdTools"
+            ]
+          }
+        },
+        {
+          "id": "shepherd:after",
+          "text": "주머니를 하나 더 만들었어요. 그런데 뭘 넣을지 잊었네요.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "shepherdTools"
+              }
+            ]
+          }
+        },
+        {
+          "id": "shepherd:memory",
+          "text": "걸이에 처음 도구를 걸던 날이 생각나요. 덱스터가 요즘은 빗을 꼭 걸이에 다시 걸어요.",
+          "depth": 2,
+          "req": {
+            "story": [
+              {
+                "id": "shepherdTools"
+              }
+            ],
+            "exp": [
+              "story:shepherdTools"
+            ]
+          }
+        },
+        {
+          "id": "shepherd:short:newsSpring",
+          "text": "벌 치는 이웃이 올봄 꽃자리를 알려 줬어요. 그 풀밭은 양들을 데리고 돌아서 가요.",
+          "depth": 0,
+          "when": {
+            "season": [
+              "spring"
+            ]
+          },
+          "req": {
+            "exp": [
+              "choice:shepherd:short:seasonNews"
+            ]
+          }
+        },
+        {
+          "id": "shepherd:short:newsSummer",
+          "text": "더운 날엔 물가 꽃이 오래간대요. 벌 치는 이웃 말 듣고 물통을 하나 더 놨어요.",
+          "depth": 0,
+          "when": {
+            "season": [
+              "summer"
+            ]
+          },
+          "req": {
+            "exp": [
+              "choice:shepherd:short:seasonNews"
+            ]
+          }
+        },
+        {
+          "id": "shepherd:short:newsAutumn",
+          "text": "가을 털 이야기를 했더니 벌 치는 이웃은 벌통 덮개 이야기를 하더라고요. 둘 다 겨울 준비예요.",
+          "depth": 0,
+          "when": {
+            "season": [
+              "autumn"
+            ]
+          },
+          "req": {
+            "exp": [
+              "choice:shepherd:short:seasonNews"
+            ]
+          }
+        },
+        {
+          "id": "shepherd:short:newsWinter",
+          "text": "벌 치는 집은 겨울에 벌통을 짚으로 감싼대요. 우리 바닥에 까는 풀이랑 비슷하죠.",
+          "depth": 0,
+          "when": {
+            "season": [
+              "winter"
+            ]
+          },
+          "req": {
+            "exp": [
+              "choice:shepherd:short:seasonNews"
+            ]
+          }
         }
       ],
       "tastes": {
@@ -12399,7 +13593,508 @@
         "size": {
           "small": 1
         }
-      }
+      },
+      "events": [
+        {
+          "id": "shepherd:story:1",
+          "title": "뒤섞인 작업 자리",
+          "stage": 1,
+          "at": {
+            "x": 6,
+            "y": 28
+          },
+          "when": {
+            "from": 780,
+            "to": 900
+          },
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "양 우리 쉼터 곁. 가위·빗·끈·물바가지가 바구니 하나에 뒤엉켜 있다."
+            },
+            {
+              "speaker": "shepherd",
+              "text": "빗을 찾으면 끈이 나오고, 끈을 찾으면 가위가 나와요. 오늘은 빗이 끝까지 안 나오네요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "찾는 동안 곁에서 듣는다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "shepherd",
+                  "text": "저는 양 버릇은 다 외우는데, 제 물건 자리는 못 외워요."
+                }
+              ],
+              "memory": "toolMess"
+            },
+            {
+              "label": "같이 바구니를 뒤진다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "shepherd",
+                  "text": "여기 있네요, 빗! 끈에 감겨 있었어요."
+                }
+              ],
+              "memory": "toolMess",
+              "mini": "pick"
+            },
+            {
+              "label": "물건마다 걸어 둘 자리를 제안한다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "shepherd",
+                  "text": "걸어 두면 한눈에 보이겠네요. 어디에 걸지는 제가 좀 생각해 볼게요."
+                }
+              ],
+              "memory": "toolMess"
+            }
+          ]
+        },
+        {
+          "id": "shepherd:story:2",
+          "title": "앞치마 주머니",
+          "stage": 2,
+          "at": {
+            "x": 6,
+            "y": 28
+          },
+          "when": {
+            "from": 600,
+            "to": 720
+          },
+          "req": {
+            "seen": [
+              "shepherd:story:1"
+            ],
+            "after": {
+              "event": "shepherd:story:1",
+              "days": 1
+            }
+          },
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "양치기가 낡은 앞치마에 천 조각을 이리저리 대 보고 있다. 주머니 자리를 정하려는 모양이다."
+            },
+            {
+              "speaker": "shepherd",
+              "text": "양을 붙잡고 있으면 손이 하나뿐이에요. 그 손이 제일 먼저 가는 데에 빗 주머니를 달고 싶어요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "천 조각을 같이 시침한다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "shepherd",
+                  "text": "오른쪽 아래가 좋겠어요. 손을 내리면 바로 닿네요."
+                }
+              ],
+              "memory": "pocketSpot",
+              "mini": "weave"
+            },
+            {
+              "label": "주머니 자리를 하나 제안한다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "shepherd",
+                  "text": "거기도 좋네요. 그래도 저는 오른쪽 아래로 할래요. 손이 먼저 가요."
+                }
+              ],
+              "memory": "pocketSpot"
+            },
+            {
+              "label": "대 보는 모습을 지켜본다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "shepherd",
+                  "text": "여기, 오른쪽 아래. 손이 먼저 가는 데가 맞는 데겠죠."
+                }
+              ],
+              "memory": "pocketSpot"
+            }
+          ]
+        },
+        {
+          "id": "shepherd:story:3",
+          "title": "덱스터와 담당",
+          "stage": 3,
+          "at": {
+            "x": 5,
+            "y": 29
+          },
+          "when": {
+            "from": 780,
+            "to": 900
+          },
+          "with": [
+            "dexter"
+          ],
+          "req": {
+            "seen": [
+              "shepherd:story:2"
+            ]
+          },
+          "lines": [
+            {
+              "speaker": "dexter",
+              "text": "아버지, 아침 물통은 제가 할게요. 대신 털 빗기는 아버지가 해요. 저는 자꾸 엉켜요."
+            },
+            {
+              "speaker": "shepherd",
+              "text": "그럼 한낮엔 내가 먼저 쉬고, 그다음에 네가 쉬자. 둘이 같이 쉬면 양들이 울타리를 넘보거든."
+            },
+            {
+              "speaker": "narration",
+              "text": "둘은 울타리 기둥에 숯으로 작은 표를 그린다. 칸 이름은 둘이 하나씩 붙인다."
+            }
+          ],
+          "choices": [
+            {
+              "label": "둘이 나누는 말을 곁에서 듣는다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "shepherd",
+                  "text": "이렇게 나누니 덱스터도 쉴 시간이 생기네요."
+                }
+              ],
+              "memory": "dutySplit"
+            },
+            {
+              "label": "표 그리는 것을 돕는다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "dexter",
+                  "text": "칸을 하나 더 그려 주세요. 거기엔 ‘같이 보기’라고 쓸래요."
+                }
+              ],
+              "memory": "dutySplit"
+            },
+            {
+              "label": "쉬는 칸을 따로 두자고 한다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "shepherd",
+                  "text": "쉬는 칸이요? 좋아요. 그 칸은 덱스터가 이름 붙이게 할게요."
+                }
+              ],
+              "memory": "dutySplit"
+            }
+          ]
+        },
+        {
+          "id": "shepherd:story:4",
+          "title": "함께 쓰는 자리",
+          "stage": 3,
+          "at": {
+            "x": 4,
+            "y": 28
+          },
+          "when": {
+            "from": 840,
+            "to": 900
+          },
+          "with": [
+            "dexter"
+          ],
+          "req": {
+            "seen": [
+              "shepherd:story:3"
+            ],
+            "after": {
+              "event": "shepherd:story:3",
+              "days": 1
+            }
+          },
+          "completes": "shepherdTools",
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "우리 쉼터 기둥에 나무 걸이가 박혀 있다. 빗과 가위, 끈 뭉치가 차례로 걸리고, 앞치마는 맨 끝에 걸린다."
+            },
+            {
+              "speaker": "dexter",
+              "text": "빗은 여기, 가위는 그 옆. 이제 아버지가 저를 안 불러도 되겠네요."
+            },
+            {
+              "speaker": "shepherd",
+              "text": "그래도 부를 거야. 같이 쉬자고."
+            }
+          ],
+          "choices": [
+            {
+              "label": "도구 하나를 걸이에 건다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "shepherd",
+                  "text": "거기 걸면 되겠어요. 내일도 거기 있겠죠."
+                }
+              ]
+            },
+            {
+              "label": "걸리는 모습을 구경한다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "dexter",
+                  "text": "…다 걸었다. 양들이 이상하게 쳐다봐요."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "shepherd:small:woolSort",
+          "title": "양털 손질 날",
+          "stage": 2,
+          "at": {
+            "x": 6,
+            "y": 28
+          },
+          "when": {
+            "from": 600,
+            "to": 780,
+            "season": [
+              "spring"
+            ]
+          },
+          "lines": [
+            {
+              "speaker": "shepherd",
+              "text": "봄 털을 고르는 날이에요. 부드러운 건 이쪽, 거친 건 저쪽. 섞이면 베 짜는 집에서 곤란하대요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "같이 털을 고른다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "shepherd",
+                  "text": "손이 빠르네요. 부드러운 쪽이 벌써 한 자루예요."
+                }
+              ],
+              "memory": "woolSort",
+              "mini": "pick"
+            },
+            {
+              "label": "고르는 법을 묻는다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "shepherd",
+                  "text": "손등에 대 보면 알아요. 간지러우면 부드러운 거예요."
+                }
+              ],
+              "memory": "woolSort"
+            }
+          ]
+        },
+        {
+          "id": "shepherd:small:winterPen",
+          "title": "겨울 우리 준비",
+          "stage": 2,
+          "at": {
+            "x": 4,
+            "y": 28
+          },
+          "when": {
+            "from": 780,
+            "to": 900,
+            "season": [
+              "winter"
+            ]
+          },
+          "with": [
+            "dexter"
+          ],
+          "lines": [
+            {
+              "speaker": "shepherd",
+              "text": "오늘은 바닥 풀을 새로 깔아요. 바람 드는 틈은 덱스터가 찾아 줄 거예요."
+            },
+            {
+              "speaker": "dexter",
+              "text": "여기 기둥 아래요. 손을 대면 찬바람이 와요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "마른 풀을 날라 온다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "shepherd",
+                  "text": "두껍게 깔아 주세요. 양들이 먼저 와서 누울 거예요."
+                }
+              ],
+              "memory": "winterPen"
+            },
+            {
+              "label": "틈 찾는 덱스터를 따라간다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "dexter",
+                  "text": "여기도 틈이 있어요. 막아 두면 이번 겨울은 덜 춥겠다."
+                }
+              ],
+              "memory": "winterPen"
+            }
+          ]
+        },
+        {
+          "id": "shepherd:small:newApron",
+          "title": "새 앞치마",
+          "stage": 2,
+          "at": {
+            "x": 36,
+            "y": 24
+          },
+          "when": {
+            "from": 600,
+            "to": 720
+          },
+          "with": [
+            "weaver"
+          ],
+          "req": {
+            "story": [
+              {
+                "id": "shepherdTools"
+              }
+            ]
+          },
+          "lines": [
+            {
+              "speaker": "weaver",
+              "text": "주머니 자리는 오른쪽 아래랬죠? 천은 질긴 걸로 골라 뒀어요. 양털이 덜 붙는 실이에요."
+            },
+            {
+              "speaker": "shepherd",
+              "text": "주머니를 하나 더 달아도 될까요. 끈 넣을 데가 따로 있으면 좋겠어요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "천 대는 것을 돕는다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "weaver",
+                  "text": "그대로 잡아 주세요. 주머니 입구는 손이 들어갈 만큼만 넓힐게요."
+                }
+              ],
+              "memory": "newApron",
+              "mini": "weave"
+            },
+            {
+              "label": "둘이 정하는 말을 듣는다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "shepherd",
+                  "text": "자리는 제가 정하고, 바느질은 베 짜는 이웃이 해요. 그게 제일 빨라요."
+                }
+              ],
+              "memory": "newApron"
+            }
+          ]
+        },
+        {
+          "id": "shepherd:short:seasonNews",
+          "title": "계절 소식",
+          "stage": 1,
+          "at": {
+            "x": 25,
+            "y": 22
+          },
+          "when": {
+            "from": 780,
+            "to": 840
+          },
+          "with": [
+            "beekeeper"
+          ],
+          "lines": [
+            {
+              "speaker": "beekeeper",
+              "text": "양치기 이웃, 이번 철엔 꽃이 어디에 먼저 피었는지 아세요? 벌들이 오늘 그쪽으로만 가요."
+            },
+            {
+              "speaker": "shepherd",
+              "text": "양들도 그 풀밭은 냄새로 알아요. 그럼 그 길은 돌아서 갈게요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "둘의 계절 이야기를 듣는다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "beekeeper",
+                  "text": "철마다 이렇게 서로 알려 주면 좋겠어요."
+                }
+              ],
+              "memory": "seasonNews"
+            },
+            {
+              "label": "다음 철에도 알려 달라고 한다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "shepherd",
+                  "text": "다음 철엔 제가 먼저 털 소식을 전할게요."
+                }
+              ],
+              "memory": "seasonNews"
+            }
+          ]
+        }
+      ],
+      "props": [
+        {
+          "id": "shepherdRack",
+          "at": {
+            "x": 7,
+            "y": 28
+          },
+          "art": "toolRack",
+          "req": {
+            "story": [
+              {
+                "id": "shepherdTools"
+              }
+            ]
+          }
+        },
+        {
+          "id": "shepherdApron",
+          "at": {
+            "x": 7,
+            "y": 29
+          },
+          "art": "apron",
+          "req": {
+            "story": [
+              {
+                "id": "shepherdTools"
+              }
+            ]
+          }
+        }
+      ]
     },
     "beekeeper": {
       "id": "beekeeper",
@@ -13311,6 +15006,97 @@
           "mutter": [
             "메리골드, 옆자리에서 잠깐 쉬자꾸나."
           ]
+        },
+        {
+          "at": {
+            "x": 42,
+            "y": 10
+          },
+          "when": {
+            "from": 840,
+            "to": 900,
+            "weather": [
+              "dry"
+            ]
+          },
+          "doing": "rest",
+          "with": "presser",
+          "req": {
+            "notSeen": [
+              "presser:story:3"
+            ]
+          },
+          "mutter": [
+            "기름 짜는 이웃, 오늘도 항아리 이야기인가."
+          ]
+        },
+        {
+          "at": {
+            "x": 34,
+            "y": 43
+          },
+          "when": {
+            "from": 840,
+            "to": 900,
+            "weather": [
+              "wet"
+            ]
+          },
+          "doing": "rest",
+          "with": "presser",
+          "mutter": [
+            "비 오는 날엔 내 방에서 쉬다 가게."
+          ]
+        },
+        {
+          "at": {
+            "x": 44,
+            "y": 17
+          },
+          "when": {
+            "from": 840,
+            "to": 900,
+            "weather": [
+              "dry"
+            ]
+          },
+          "doing": "rest",
+          "req": {
+            "seen": [
+              "presser:story:3"
+            ],
+            "notStory": [
+              "presserBench"
+            ]
+          },
+          "mutter": [
+            "올리브 그늘이 그 친구 작업장 곁이지. 오늘은 내가 건너가 보세."
+          ]
+        },
+        {
+          "at": {
+            "x": 44,
+            "y": 17
+          },
+          "when": {
+            "from": 840,
+            "to": 900,
+            "weather": [
+              "dry"
+            ]
+          },
+          "doing": "rest",
+          "with": "presser",
+          "req": {
+            "story": [
+              {
+                "id": "presserBench"
+              }
+            ]
+          },
+          "mutter": [
+            "이 의자는 내 것이라더군. 앉으라고 놓았다니 앉아야지."
+          ]
         }
       ],
       "lines": [
@@ -13429,6 +15215,21 @@
             ],
             "exp": [
               "story:grandpaShelter"
+            ]
+          }
+        },
+        {
+          "id": "grandpa:presserBench",
+          "text": "기름 짜는 이웃이 작업장 앞에 의자를 놓았다네. 내 쉬는 참이 조금 길어졌지.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "presserBench"
+              }
+            ],
+            "exp": [
+              "story:presserBench"
             ]
           }
         }
@@ -14536,15 +16337,240 @@
           },
           "when": {
             "from": 420,
-            "to": 1140
+            "to": 480
+          },
+          "doing": "press",
+          "mutter": [
+            "항아리 줄부터 맞추겠어요. 입이 다 이쪽을 보게."
+          ]
+        },
+        {
+          "at": {
+            "x": 46,
+            "y": 21
+          },
+          "when": {
+            "from": 480,
+            "to": 840
           },
           "doing": "press",
           "mutter": [
             "빈 용기부터 나눠 놓겠어요."
           ]
+        },
+        {
+          "at": {
+            "x": 46,
+            "y": 21
+          },
+          "when": {
+            "from": 900,
+            "to": 1140
+          },
+          "doing": "press",
+          "mutter": [
+            "틀에서 항아리까지… 몇 걸음이더라."
+          ]
+        },
+        {
+          "at": {
+            "x": 43,
+            "y": 10
+          },
+          "when": {
+            "from": 840,
+            "to": 900,
+            "weather": [
+              "dry"
+            ]
+          },
+          "doing": "rest",
+          "with": "grandpa",
+          "req": {
+            "notSeen": [
+              "presser:story:3"
+            ]
+          },
+          "mutter": [
+            "할아버지, 넝쿨은 어땠어요? 저는 오늘도 항아리 이야기예요."
+          ]
+        },
+        {
+          "at": {
+            "x": 35,
+            "y": 43
+          },
+          "when": {
+            "from": 840,
+            "to": 900,
+            "weather": [
+              "wet"
+            ]
+          },
+          "doing": "rest",
+          "with": "grandpa",
+          "mutter": [
+            "비 오는 날엔 할아버지 방이 제일 따뜻해요."
+          ]
+        },
+        {
+          "at": {
+            "x": 45,
+            "y": 17
+          },
+          "when": {
+            "from": 840,
+            "to": 900,
+            "weather": [
+              "dry"
+            ]
+          },
+          "doing": "tea",
+          "with": "grandpa",
+          "req": {
+            "story": [
+              {
+                "id": "presserBench"
+              }
+            ]
+          },
+          "mutter": [
+            "할아버지 자리는 비워 뒀어요. 저는 서서도 쉬어요."
+          ]
         }
       ],
-      "lines": [],
+      "lines": [
+        {
+          "id": "presser:plain",
+          "text": "기름틀은 오늘도 천천히 돌려요. 서두르면 맑게 안 나와요.",
+          "depth": 0
+        },
+        {
+          "id": "presser:short:jarRow",
+          "text": "항아리는 입이 한쪽을 보게 줄을 맞춰요. 그래야 어느 게 빈 건지 한눈에 보여요.",
+          "depth": 0,
+          "when": {
+            "from": 420,
+            "to": 480
+          }
+        },
+        {
+          "id": "presser:short:pathCheck",
+          "text": "틀에서 항아리까지 몇 걸음인지 세어 봐요. 줄일 수 있으면 줄이고 싶어서요.",
+          "depth": 0,
+          "when": {
+            "from": 900,
+            "to": 1140
+          }
+        },
+        {
+          "id": "presser:short:offerChair",
+          "text": "앉을 데가 마땅찮네요. 이 상자라도 괜찮으면 앉아요.",
+          "depth": 0,
+          "req": {
+            "notStory": [
+              "presserBench"
+            ]
+          }
+        },
+        {
+          "id": "presser:short:oliveSeason",
+          "text": "가을엔 올리브가 한꺼번에 와요. 항아리를 미리 씻어 둬야 해요.",
+          "depth": 0,
+          "when": {
+            "season": [
+              "autumn"
+            ]
+          }
+        },
+        {
+          "id": "presser:short:winterStiff",
+          "text": "겨울엔 틀이 뻑뻑해요. 손을 녹이고 천천히 돌려요.",
+          "depth": 0,
+          "when": {
+            "season": [
+              "winter"
+            ]
+          }
+        },
+        {
+          "id": "presser:short:jars",
+          "text": "장날엔 상인 좌판에 빈 항아리를 보러 가요. 입이 좁은 게 붓기 좋거든요.",
+          "depth": 0,
+          "when": {
+            "from": 600,
+            "to": 1080,
+            "days": [
+              0
+            ]
+          }
+        },
+        {
+          "id": "presser:short:longTalk",
+          "text": "손님이랑 이야기하다 보면 해가 기울어요. 오늘도 그랬네요.",
+          "depth": 0,
+          "when": {
+            "from": 1080,
+            "to": 1140
+          }
+        },
+        {
+          "id": "presser:short:breadGift",
+          "text": "그때 준 빵, 일하다 반씩 나눠 먹었어요. 손에 기름 안 묻히고 먹기 좋더라고요.",
+          "depth": 1,
+          "req": {
+            "exp": [
+              "gift:presser"
+            ]
+          }
+        },
+        {
+          "id": "presser:taste",
+          "text": "오후 쉬는 참이 제일 좋아요. 차 한 잔 놓고 앉으면 손이 풀려요.",
+          "depth": 1,
+          "reveals": "time.afternoon"
+        },
+        {
+          "id": "presser:benchWorking",
+          "text": "작업대 높이를 아직 고르는 중이에요. 손목이 편한 데가 있을 거예요.",
+          "depth": 0,
+          "req": {
+            "seen": [
+              "presser:story:2"
+            ],
+            "notSeen": [
+              "presser:story:3"
+            ]
+          }
+        },
+        {
+          "id": "presser:after",
+          "text": "한 걸음 줄이려고 바꿨는데, 의자를 놓으니 사람들이 오래 앉는군요. 좋네요.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "presserBench"
+              }
+            ]
+          }
+        },
+        {
+          "id": "presser:memory",
+          "text": "의자를 놓던 날이 생각나요. 할아버지는 벌써 거기를 자기 자리라고 해요.",
+          "depth": 2,
+          "req": {
+            "story": [
+              {
+                "id": "presserBench"
+              }
+            ],
+            "exp": [
+              "story:presserBench"
+            ]
+          }
+        }
+      ],
       "tastes": {
         "activity": {
           "tea": 1,
@@ -14556,7 +16582,413 @@
         "time": {
           "afternoon": 1
         }
-      }
+      },
+      "events": [
+        {
+          "id": "presser:story:1",
+          "title": "배치 바꾸는 날",
+          "stage": 1,
+          "at": {
+            "x": 46,
+            "y": 21
+          },
+          "when": {
+            "from": 480,
+            "to": 600
+          },
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "기름틀 앞. 항아리들이 두 줄로 나와 있고, 작업대는 반쯤 돌려져 있다."
+            },
+            {
+              "speaker": "presser",
+              "text": "틀에서 항아리까지 일곱 걸음이에요. 다섯 걸음으로 줄여 보려고요. 어디부터 옮길지 보던 참이에요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "옮기는 이유를 듣는다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "하루에 몇십 번 오가거든요. 두 걸음이면 저녁에 다리가 덜 아파요."
+                }
+              ],
+              "memory": "layoutDay"
+            },
+            {
+              "label": "빈 항아리 옮기기를 돕는다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "빈 것만 부탁해요. 찬 것은 무거우니까 제가 들게요."
+                }
+              ],
+              "memory": "layoutDay",
+              "mini": "order"
+            },
+            {
+              "label": "항아리를 틀 가까이 두자고 한다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "그럼 지나갈 자리가 좁아지겠네요. 한번 재 볼게요."
+                }
+              ],
+              "memory": "layoutDay"
+            }
+          ]
+        },
+        {
+          "id": "presser:story:2",
+          "title": "배치 시험",
+          "stage": 2,
+          "at": {
+            "x": 46,
+            "y": 21
+          },
+          "when": {
+            "from": 900,
+            "to": 960,
+            "days": [
+              2
+            ]
+          },
+          "with": [
+            "carpenter"
+          ],
+          "req": {
+            "seen": [
+              "presser:story:1"
+            ],
+            "after": {
+              "event": "presser:story:1",
+              "days": 1
+            }
+          },
+          "lines": [
+            {
+              "speaker": "carpenter",
+              "text": "작업대를 이쪽으로 돌리면 틀까지 세 걸음이오. 대신 다리 하나를 줄여야 하오."
+            },
+            {
+              "speaker": "presser",
+              "text": "줄이면 흔들리지 않을까요? 기름 부을 땐 손이 떨리면 안 돼요."
+            },
+            {
+              "speaker": "narration",
+              "text": "목수가 다리 밑에 쐐기를 대 보고, 기름 짜는 이웃은 빈 항아리를 들고 오가 본다."
+            }
+          ],
+          "choices": [
+            {
+              "label": "작업대를 같이 받친다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "carpenter",
+                  "text": "그대로 받쳐 주시오. 쐐기를 박고 흔들어 보겠소."
+                }
+              ],
+              "memory": "layoutTry",
+              "mini": "hold"
+            },
+            {
+              "label": "두 사람 의견을 듣는다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "목수 말대로 하면 세 걸음, 제 생각대로 하면 네 걸음. 둘 다 해 볼게요."
+                }
+              ],
+              "memory": "layoutTry"
+            },
+            {
+              "label": "한 걸음 줄이는 자리를 제안한다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "그 자리면 틀 손잡이에 안 걸리겠네요. 거기도 재 봐요."
+                }
+              ],
+              "memory": "layoutTry"
+            }
+          ]
+        },
+        {
+          "id": "presser:story:3",
+          "title": "내 높이",
+          "stage": 3,
+          "at": {
+            "x": 46,
+            "y": 21
+          },
+          "when": {
+            "from": 600,
+            "to": 720
+          },
+          "req": {
+            "seen": [
+              "presser:story:2"
+            ],
+            "after": {
+              "event": "presser:story:2",
+              "days": 1
+            }
+          },
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "작업대 다리 밑에 받침이 셋 놓여 있다. 낮은 것, 가운데, 높은 것."
+            },
+            {
+              "speaker": "presser",
+              "text": "목수는 높은 게 보기 좋대요. 그런데 제 팔꿈치는 가운데가 편하다네요. 하루 종일 쓰는 건 저니까, 가운데로 할래요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "고르는 모습을 지켜본다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "네, 가운데. 손목이 꺾이지 않아요."
+                }
+              ],
+              "memory": "ownHeight"
+            },
+            {
+              "label": "작업대에 손을 대 본다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "손님 손엔 조금 낮죠? 괜찮아요. 제 작업대니까요."
+                }
+              ],
+              "memory": "ownHeight"
+            },
+            {
+              "label": "왜 가운데인지 묻는다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "기름을 붓다 보면 어깨가 먼저 알아요. 가운데에서 어깨가 안 올라가요."
+                }
+              ],
+              "memory": "ownHeight"
+            }
+          ]
+        },
+        {
+          "id": "presser:story:4",
+          "title": "손님 의자",
+          "stage": 3,
+          "at": {
+            "x": 45,
+            "y": 17
+          },
+          "when": {
+            "from": 840,
+            "to": 900,
+            "weather": [
+              "dry"
+            ]
+          },
+          "with": [
+            "grandpa"
+          ],
+          "req": {
+            "seen": [
+              "presser:story:3"
+            ],
+            "after": {
+              "event": "presser:story:3",
+              "days": 1
+            }
+          },
+          "completes": "presserBench",
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "작업장 앞 올리브 그늘에 작은 의자 하나가 놓였다. 기름 짜는 이웃이 의자 다리를 손으로 흔들어 본다."
+            },
+            {
+              "speaker": "presser",
+              "text": "작업대를 바꾸고 나니 여기 자리가 남았어요. 쉬어 가는 분들 앉으라고요."
+            },
+            {
+              "speaker": "grandpa",
+              "text": "자네 작업장에 앉을 데가 생겼구먼. 그럼 오늘부턴 내가 건너오지."
+            }
+          ],
+          "choices": [
+            {
+              "label": "의자에 먼저 앉아 본다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "어때요, 안 흔들리죠? 할아버지 차례예요."
+                }
+              ]
+            },
+            {
+              "label": "할아버지께 자리를 내준다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "grandpa",
+                  "text": "고맙네. 늙은이 엉덩이에 딱 맞는 높이야."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "presser:small:jarLabels",
+          "title": "항아리 표지",
+          "stage": 2,
+          "at": {
+            "x": 46,
+            "y": 21
+          },
+          "when": {
+            "from": 720,
+            "to": 840
+          },
+          "lines": [
+            {
+              "speaker": "presser",
+              "text": "항아리마다 짠 날을 적어 두고 싶은데, 글씨보다 그림이 빨라요. 올리브 하나면 첫 짠 것, 둘이면 두 번째."
+            }
+          ],
+          "choices": [
+            {
+              "label": "표지 그림을 같이 그린다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "올리브가 동그랗네요. 이건 첫 짠 것으로 할게요."
+                }
+              ],
+              "memory": "jarLabels"
+            },
+            {
+              "label": "표지 붙이는 순서를 묻는다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "오래된 것부터 앞에요. 그래야 먼저 쓰거든요."
+                }
+              ],
+              "memory": "jarLabels"
+            }
+          ]
+        },
+        {
+          "id": "presser:small:lateTea",
+          "title": "늦은 차",
+          "stage": 3,
+          "at": {
+            "x": 43,
+            "y": 10
+          },
+          "when": {
+            "from": 1080,
+            "to": 1140,
+            "weather": [
+              "dry"
+            ]
+          },
+          "with": [
+            "grandpa"
+          ],
+          "req": {
+            "story": [
+              {
+                "id": "presserBench"
+              }
+            ]
+          },
+          "lines": [
+            {
+              "speaker": "presser",
+              "text": "할아버지, 오늘은 제가 건너왔어요. 일 끝나고 마시는 차가 제일 맛있거든요."
+            },
+            {
+              "speaker": "grandpa",
+              "text": "일 이야기는 한 잔만 하고 그만하세. 넝쿨 이야기도 들어 줘야지."
+            }
+          ],
+          "choices": [
+            {
+              "label": "둘 사이에 앉는다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "grandpa",
+                  "text": "이렇게 셋이 앉으니 해가 천천히 지는구먼."
+                }
+              ],
+              "memory": "lateTea"
+            },
+            {
+              "label": "찻잔을 나른다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "고마워요. 할아버지 잔은 손잡이가 큰 쪽이에요."
+                }
+              ],
+              "memory": "lateTea"
+            }
+          ]
+        }
+      ],
+      "props": [
+        {
+          "id": "presserChair",
+          "at": {
+            "x": 44,
+            "y": 16
+          },
+          "item": "chair",
+          "req": {
+            "story": [
+              {
+                "id": "presserBench"
+              }
+            ]
+          }
+        },
+        {
+          "id": "presserJar",
+          "at": {
+            "x": 46,
+            "y": 16
+          },
+          "art": "oilFull",
+          "req": {
+            "story": [
+              {
+                "id": "presserBench"
+              }
+            ]
+          }
+        }
+      ]
     },
     "weaver": {
       "id": "weaver",
@@ -14586,6 +17018,93 @@
           "mutter": [
             "이 천은 끝을 접어 놓으면 달라 보여요."
           ]
+        },
+        {
+          "at": {
+            "x": 37,
+            "y": 24
+          },
+          "when": {
+            "from": 450,
+            "to": 720
+          },
+          "doing": "weave",
+          "mutter": [
+            "가장자리 올을 세어 봐요. 고르게 들어갔으면 됐어요."
+          ]
+        },
+        {
+          "at": {
+            "x": 21,
+            "y": 21
+          },
+          "when": {
+            "from": 720,
+            "to": 900,
+            "weather": [
+              "dry"
+            ]
+          },
+          "doing": "sort",
+          "mutter": [
+            "광장에선 손님 취향을 적어 둬요. 누구는 진한 색, 누구는 옅은 색."
+          ]
+        },
+        {
+          "at": {
+            "x": 37,
+            "y": 24
+          },
+          "when": {
+            "from": 720,
+            "to": 900,
+            "weather": [
+              "wet"
+            ]
+          },
+          "doing": "weave",
+          "mutter": [
+            "비 오는 날은 실이 눅눅해서 굵은 실부터 써요."
+          ]
+        },
+        {
+          "at": {
+            "x": 37,
+            "y": 24
+          },
+          "when": {
+            "from": 900,
+            "to": 1140
+          },
+          "doing": "weave",
+          "mutter": [
+            "색 실을 나란히 놓으면 다음 줄이 보여요."
+          ]
+        },
+        {
+          "at": {
+            "x": 4,
+            "y": 52
+          },
+          "when": {
+            "from": 1110,
+            "to": 1140,
+            "days": [
+              3
+            ]
+          },
+          "doing": "tea",
+          "with": "penelope",
+          "req": {
+            "story": [
+              {
+                "id": "weaverRug"
+              }
+            ]
+          },
+          "mutter": [
+            "페넬로피, 깔개 위에 앉자. 오늘은 차만 마셔."
+          ]
         }
       ],
       "lines": [
@@ -14601,6 +17120,143 @@
             ],
             "exp": [
               "choice:merchant:story:3"
+            ]
+          }
+        },
+        {
+          "id": "weaver:plain",
+          "text": "북이 지나가는 소리를 세다 보면 하루가 가요.",
+          "depth": 0
+        },
+        {
+          "id": "weaver:short:edgeTouch",
+          "text": "가장자리가 고르면 다 짠 거예요. 손끝이 먼저 알아요.",
+          "depth": 0,
+          "when": {
+            "from": 450,
+            "to": 720
+          }
+        },
+        {
+          "id": "weaver:short:threadRow",
+          "text": "색 실을 이렇게 나란히 놓아 봐요. 옆 색이 바뀌면 같은 실도 달라 보여요.",
+          "depth": 0,
+          "when": {
+            "from": 900,
+            "to": 1140
+          }
+        },
+        {
+          "id": "weaver:short:noteTaste",
+          "text": "손님마다 좋아하는 색을 적어 두는 버릇이 있어요. 제 것은 잘 안 적고요.",
+          "depth": 0,
+          "when": {
+            "from": 720,
+            "to": 900
+          }
+        },
+        {
+          "id": "weaver:short:springColor",
+          "text": "봄엔 새 색을 하나 들여요. 올해는 무슨 색일까요.",
+          "depth": 0,
+          "when": {
+            "season": [
+              "spring"
+            ]
+          }
+        },
+        {
+          "id": "weaver:short:summerThread",
+          "text": "여름엔 얇은 실로 바꿔요. 천도 바람이 통해야 하니까요.",
+          "depth": 0,
+          "when": {
+            "season": [
+              "summer"
+            ]
+          }
+        },
+        {
+          "id": "weaver:short:winterLoom",
+          "text": "겨울엔 손이 굳지 않게 천천히 짜요. 따뜻한 차를 곁에 두고요.",
+          "depth": 0,
+          "when": {
+            "season": [
+              "winter"
+            ]
+          }
+        },
+        {
+          "id": "weaver:short:penelopeTea",
+          "text": "페넬로피는 이제 찻집에 갈 시간이에요. 오늘 차는 고르고 갔으려나요.",
+          "depth": 0,
+          "when": {
+            "from": 1000,
+            "to": 1020
+          }
+        },
+        {
+          "id": "weaver:short:figHoney",
+          "text": "그때 준 것, 실 고르다 하나씩 먹었어요. 손이 끈적해서 웃었지만요.",
+          "depth": 1,
+          "req": {
+            "exp": [
+              "gift:weaver"
+            ]
+          }
+        },
+        {
+          "id": "weaver:taste",
+          "text": "여럿이 모이는 자리보다 둘셋이 좋아요. 색 이야기를 끝까지 할 수 있거든요.",
+          "depth": 1,
+          "reveals": "size.small"
+        },
+        {
+          "id": "weaver:rugWorking",
+          "text": "장밋빛 실을 따로 감아 두었어요. 제 깔개에 쓸 거예요.",
+          "depth": 0,
+          "req": {
+            "seen": [
+              "weaver:story:2"
+            ],
+            "notStory": [
+              "weaverRug"
+            ]
+          }
+        },
+        {
+          "id": "weaver:after",
+          "text": "이번 색은 손님이 고른 게 아니에요. 제가 매일 보고 싶어서 골랐어요.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "weaverRug"
+              }
+            ]
+          }
+        },
+        {
+          "id": "weaver:memory",
+          "text": "셋째 날 저녁엔 깔개 위에서 차를 마셔요. 처음 앉던 날이 자꾸 생각나요.",
+          "depth": 2,
+          "req": {
+            "story": [
+              {
+                "id": "weaverRug"
+              }
+            ],
+            "exp": [
+              "story:weaverRug"
+            ]
+          }
+        },
+        {
+          "id": "weaver:apron",
+          "text": "양치기 앞치마 주머니는 오른쪽 아래예요. 본인이 고른 자리니까 거기가 맞아요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "choice:shepherd:small:newApron"
             ]
           }
         }
@@ -14620,7 +17276,365 @@
       "clubLines": {
         "start": "둘러볼 것은 여기 펼쳐 둘게요. 편한 자리에서 같이 살펴봐요.",
         "finish": "함께 살펴본 자리는 제가 정리할게요."
-      }
+      },
+      "events": [
+        {
+          "id": "weaver:story:1",
+          "title": "빈 자리",
+          "stage": 1,
+          "at": {
+            "x": 4,
+            "y": 52
+          },
+          "when": {
+            "from": 900,
+            "to": 1020
+          },
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "베 짜는 집 방. 창 아래 바닥 한 칸이 비어 있다. 손님 깔개를 펼쳐 보던 자리다."
+            },
+            {
+              "speaker": "weaver",
+              "text": "손님 깔개는 여럿 짰는데, 제 방 바닥은 이렇게 비어 있네요. 짜고 나면 다 보내니까요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "빈 자리 이야기를 듣는다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "weaver",
+                  "text": "여기에 제 것을 하나 두면 어떨까 싶었어요. 생각만 오래 했어요."
+                }
+              ],
+              "memory": "emptySpot"
+            },
+            {
+              "label": "자리 크기를 같이 재 본다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "weaver",
+                  "text": "두 뼘 반이요. 작게 짜면 금방이겠네요."
+                }
+              ],
+              "memory": "emptySpot"
+            },
+            {
+              "label": "어떻게 쓰고 싶은지 묻는다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "weaver",
+                  "text": "차를 마실 때 앉고 싶어요. 둘이 앉을 만큼만요."
+                }
+              ],
+              "memory": "emptySpot"
+            }
+          ]
+        },
+        {
+          "id": "weaver:story:2",
+          "title": "내 색",
+          "stage": 2,
+          "at": {
+            "x": 4,
+            "y": 52
+          },
+          "when": {
+            "from": 450,
+            "to": 600
+          },
+          "req": {
+            "seen": [
+              "weaver:story:1"
+            ],
+            "after": {
+              "event": "weaver:story:1",
+              "days": 1
+            }
+          },
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "방바닥에 실 타래가 줄지어 놓였다. 흙빛, 풀빛, 물빛, 장밋빛."
+            },
+            {
+              "speaker": "weaver",
+              "text": "손님 주문이면 금방 고르는데, 제 것은 어렵네요. …이 장밋빛이요. 주문엔 잘 안 쓰는 색인데, 아침마다 보고 싶어요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "고르는 모습을 지켜본다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "weaver",
+                  "text": "네, 이걸로 할게요. 제가 골랐어요."
+                }
+              ],
+              "memory": "ownColor"
+            },
+            {
+              "label": "실을 나란히 놓는 것을 돕는다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "weaver",
+                  "text": "나란히 두니 장밋빛이 제일 따뜻해 보여요. 역시 이거예요."
+                }
+              ],
+              "memory": "ownColor"
+            },
+            {
+              "label": "좋아하는 색이 따로 있었는지 묻는다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "weaver",
+                  "text": "있었어요. 물어봐 주는 사람이 없어서 잊고 있었을 뿐이에요."
+                }
+              ],
+              "memory": "ownColor"
+            }
+          ]
+        },
+        {
+          "id": "weaver:story:3",
+          "title": "다른 무늬",
+          "stage": 3,
+          "at": {
+            "x": 37,
+            "y": 24
+          },
+          "when": {
+            "from": 900,
+            "to": 1020
+          },
+          "with": [
+            "penelope"
+          ],
+          "req": {
+            "seen": [
+              "weaver:story:2"
+            ]
+          },
+          "lines": [
+            {
+              "speaker": "penelope",
+              "text": "어머니 깔개에 줄무늬를 넣으면 어때요? …아니, 민무늬도 좋은데. 아니, 줄무늬."
+            },
+            {
+              "speaker": "weaver",
+              "text": "페넬로피는 줄무늬가 좋고, 저는 민무늬가 좋아요. 그럼 가장자리 한 줄만 네 무늬로 하자."
+            },
+            {
+              "speaker": "narration",
+              "text": "페넬로피가 실을 쥐었다 놓았다 한다. 베 짜는 이웃은 고르라고 재촉하지 않고 북을 건넨다."
+            }
+          ],
+          "choices": [
+            {
+              "label": "둘의 무늬 이야기를 듣는다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "weaver",
+                  "text": "둘이 다른 게 이상하지 않아요. 한 천에 같이 들어가면 돼요."
+                }
+              ],
+              "memory": "twoPatterns"
+            },
+            {
+              "label": "각자 한 줄씩 짜 보자고 한다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "penelope",
+                  "text": "제 줄은 조금 삐뚤어요. …그래도 이대로 둘래요."
+                }
+              ],
+              "memory": "twoPatterns",
+              "mini": "weave"
+            },
+            {
+              "label": "두 무늬를 하나씩 칭찬한다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "penelope",
+                  "text": "둘 다 좋다고 하면 또 못 고르는데요. …그래도 듣기 좋아요."
+                }
+              ],
+              "memory": "twoPatterns"
+            }
+          ]
+        },
+        {
+          "id": "weaver:story:4",
+          "title": "깔개 위 차",
+          "stage": 3,
+          "at": {
+            "x": 4,
+            "y": 52
+          },
+          "when": {
+            "from": 1110,
+            "to": 1140,
+            "days": [
+              3
+            ]
+          },
+          "with": [
+            "penelope"
+          ],
+          "req": {
+            "seen": [
+              "weaver:story:3"
+            ],
+            "after": {
+              "event": "weaver:story:3",
+              "days": 1
+            }
+          },
+          "completes": "weaverRug",
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "창 아래 빈 자리에 장밋빛 깔개가 깔렸다. 가장자리에 줄무늬가 한 줄 들어 있다."
+            },
+            {
+              "speaker": "weaver",
+              "text": "셋째 날 저녁엔 여기서 차를 마실래요. 손님 없이, 우리끼리."
+            },
+            {
+              "speaker": "penelope",
+              "text": "줄무늬 쪽에 앉을게요. …아니, 이쪽도 좋은데. 그냥 여기요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "깔개 위에 같이 앉는다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "weaver",
+                  "text": "셋이 앉으니 딱 맞네요. 크기를 잘 쟀어요."
+                }
+              ]
+            },
+            {
+              "label": "말없이 차를 마신다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "weaver",
+                  "text": "…좋네요. 이 색이 저녁에도 따뜻해요."
+                }
+              ]
+            },
+            {
+              "label": "깔개 무늬 이야기를 한다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "penelope",
+                  "text": "어머니 민무늬랑 제 줄무늬가 같이 있으니까, 둘 다 안 고른 것 같기도 하고 둘 다 고른 것 같기도 해요."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "weaver:small:scraps",
+          "title": "천 조각 나눔",
+          "stage": 2,
+          "at": {
+            "x": 21,
+            "y": 21
+          },
+          "when": {
+            "from": 720,
+            "to": 900,
+            "weather": [
+              "dry"
+            ]
+          },
+          "lines": [
+            {
+              "speaker": "weaver",
+              "text": "주문을 짜고 남은 조각이에요. 버리기엔 색이 고와서요. 필요한 사람이 있으면 나눠 주려고 들고 나왔어요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "조각을 색깔별로 나눠 놓는다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "weaver",
+                  "text": "그렇게 놓으니 고르기 쉽네요. 물 긷는 아이가 파란 걸 찾던데."
+                }
+              ],
+              "memory": "scraps"
+            },
+            {
+              "label": "어디에 쓰면 좋을지 묻는다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "weaver",
+                  "text": "그릇 받침도 되고, 방석 귀퉁이에 덧대도 돼요. 쓰는 사람 마음이에요."
+                }
+              ],
+              "memory": "scraps"
+            }
+          ]
+        }
+      ],
+      "props": [
+        {
+          "id": "weaverRug",
+          "room": "weaver",
+          "at": {
+            "x": 5,
+            "y": 52
+          },
+          "art": "clothRose",
+          "req": {
+            "story": [
+              {
+                "id": "weaverRug"
+              }
+            ]
+          }
+        },
+        {
+          "id": "weaverTea",
+          "room": "weaver",
+          "at": {
+            "x": 5,
+            "y": 53
+          },
+          "art": "teaTray",
+          "req": {
+            "story": [
+              {
+                "id": "weaverRug"
+              }
+            ]
+          },
+          "when": {
+            "days": [
+              3
+            ]
+          }
+        }
+      ]
     },
     "apothecary": {
       "id": "apothecary",
