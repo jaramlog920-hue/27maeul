@@ -1,5 +1,7 @@
 import { ClubList } from './clubs/ClubList'
 import { ClubSession } from './clubs/ClubSession'
+import { FestList } from './fest/FestList'
+import { FestSession } from './fest/FestSession'
 import { useCallback, type SyntheticEvent } from 'react'
 import { isGhostClick } from '../shared/ghost'
 import { useGame } from '../store/game-store'
@@ -57,6 +59,10 @@ function Body() {
       return <ClubList />
     case 'clubSession':
       return <ClubSession id={modal.id} />
+    case 'fests':
+      return <FestList />
+    case 'festSession':
+      return <FestSession id={modal.id} />
     case 'schedule':
       return <ScheduleDialog />
     case 'talk':

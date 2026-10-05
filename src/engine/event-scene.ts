@@ -7,7 +7,10 @@ import { BABY_PARTY_SPOTS, gatheringWindow, HILL_SPOTS, type Gathering } from '.
 import { FIRE, FESTIVAL_SPOTS, isNear } from './neighbors'
 import { isBirthday } from './notebook'
 import { WEDDING_SPOT, type Romance } from './romance'
-import { isWalkable, key } from './world'
+import { isHome, isWalkable, key, PLACES, START } from './world'
+import { spotsForAppt, venueFor, type Appt } from './plans'
+import { solidTiles, type Furniture } from './room'
+import type { Fest } from './fest'
 import type { Npc } from './neighbors'
 import type { Facing, Tile } from './types'
 
@@ -45,6 +48,10 @@ type SceneState = {
   gifted?: readonly string[]
   flags?: Record<string, number>
   today?: { gathering: Gathering | null } | null
+  /** 내가 준비하는 작은 행사 (계획 16 작업 16) */
+  plans?: { appts: readonly Appt[] }
+  fests?: readonly Fest[]
+  room?: readonly Furniture[]
 }
 
 const tileOf = (a: { x: number; y: number }): Tile => ({ x: Math.round(a.x), y: Math.round(a.y) })
@@ -200,6 +207,53 @@ function gatheringNow(s: SceneState): 'picnic' | 'babyParty' | null {
   return s.clock.minute >= from && s.clock.minute < to ? g : null
 }
 
+// ── 내가 준비하는 작은 행사 (계획 16 작업 16): assets/events의 집들이·작품 발표·생일 도트, 결혼식 찻잔 ──
+
+/** 지금 열리는 행사와 그 자리 */
+function festsNow(s: SceneState): { f: Fest; seats: readonly Tile[] }[] {
+  const out: { f: Fest; seats: readonly Tile[] }[] = []
+  for (const f of s.fests ?? []) {
+    const a = !f.closed && f.apptId ? s.plans?.appts.find((x) => x.id === f.apptId) : undefined
+    if (!a || a.state !== 'running' || a.day !== s.clock.day || s.clock.minute < a.from || s.clock.minute >= a.to || venueFor(a).moved) continue
+    out.push({ f, seats: spotsForAppt(a) })
+  }
+  return out
+}
+
+/** 앉은 자리 곁의 빈 칸 (자리·붙박이·서는 칸·가구를 피하고, 집 안 행사는 집 안에만) */
+function besideSeats(s: SceneState, seats: readonly Tile[], n: number): Tile[] {
+  const home = seats.some((t) => isHome(t))
+  const solid = home ? solidTiles(s.room ?? []) : undefined
+  // 기록자가 서 있는 칸·깨어 서는 칸에는 놓지 않는다 (사람 그림 밑에 숨지 않게)
+  const taken = new Set([...seats.map(key), key(tileOf(s.player)), key(START)])
+  const fixed = new Set(Object.values(PLACES).flatMap((p) => [...p.tiles, ...(p.stand ? [p.stand] : [])]).map(key))
+  const out: Tile[] = []
+  for (const seat of seats) for (const d of [{ x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: 1 }, { x: 0, y: -1 }]) {
+    const t = { x: seat.x + d.x, y: seat.y + d.y }
+    if (out.length >= n) return out
+    if (taken.has(key(t)) || fixed.has(key(t)) || !isWalkable(t, solid) || isHome(t) !== home) continue
+    taken.add(key(t))
+    out.push(t)
+  }
+  return out
+}
+
+/** 행사 소품: 차 모임 찻잔, 집들이 표지·바구니, 작품 소개 받침·작품, 생일이 겹치면 생일 장식 — 행사 시간에만 */
+export function festPropsNow(s: SceneState): EventProp[] {
+  const props: EventProp[] = []
+  for (const { f, seats } of festsNow(s)) {
+    const arts = f.kind === 'housewarming' ? ['housewarmingSign', 'welcomeBasket'] : f.kind === 'showcase' ? ['exhibitStand', 'artworkComplete'] : ['teaPair']
+    const tiles = besideSeats(s, seats, arts.length)
+    arts.forEach((art, i) => {
+      const at = tiles[i]
+      if (at) props.push({ art, at, w: 1, h: 1, foot: [at] })
+    })
+    // 생일 장식은 첫 자리 위에 거는 걸개 (땅에 닿지 않는다)
+    if (f.birthday && seats[0]) props.push({ art: 'birthdayBanner', at: { x: seats[0].x, y: seats[0].y - 1 }, w: 2, h: 1, dy: -3, foot: [] })
+  }
+  return props
+}
+
 /** 지금 놓인 행사 소품 (행사가 아니면 빈 목록) */
 export function eventPropsNow(s: SceneState): EventProp[] {
   const props: EventProp[] = []
@@ -209,6 +263,7 @@ export function eventPropsNow(s: SceneState): EventProp[] {
   const g = gatheringNow(s)
   if (g === 'picnic') props.push(PICNIC_CLOTH)
   if (g === 'babyParty') props.push(WELCOME_BASKET)
+  props.push(...festPropsNow(s))
   // 생일 빵: 촛불을 부는 동안은 기록자 손의 빵으로 그린다 (같은 빵이 둘로 보이지 않게)
   const me = tileOf(s.player)
   const blowing = s.act?.kind === 'blowCandle'
@@ -241,6 +296,11 @@ export function npcEventMotion(s: SceneState, id: string, t: number): EventMotio
   const g = gatheringNow(s)
   if (g === 'picnic' && standingAt(n, HILL_SPOTS[id])) return { set: 'event', ...oneShot('shareFood', id, t), facing: faceToward(HILL_SPOTS[id], PICNIC_CLOTH.at) }
   if (g === 'babyParty' && standingAt(n, BABY_PARTY_SPOTS[id])) return { set: 'event', ...oneShot('placePlate', id, t), facing: 'down' }
+  // 작은 행사: 앉은 자리에서 차 모임은 맛보기·웃음, 작품 소개는 박수·웃음 (이웃마다 박자가 다르다)
+  for (const { f, seats } of festsNow(s)) {
+    const seat = seats.find((t) => standingAt(n, t))
+    if (seat && f.members.includes(id)) return { set: 'event', ...rotate(f.kind === 'showcase' ? ['clap', 'smile'] : ['taste', 'smile'], id, t), facing: faceToward(seat, seats.find((x) => !same(x, seat)) ?? seat) }
+  }
   // 생일: 기록자가 촛불을 부는 동안 그 이웃은 박수
   if (s.act?.kind === 'blowCandle' && n && !n.path.length) {
     const b = birthdayBreads(s).find((x) => x.id === id)

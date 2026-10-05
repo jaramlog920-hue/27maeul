@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { CONTENT } from '../../content/catalog'
 import { formatTime } from '../../engine/clock'
 import { alertsBetween, eventName, eventStatus, eventSummary, nextEvent, scheduledEvents } from '../../engine/events'
+import { festKinds } from '../../engine/fest'
 import { useGame } from '../../store/game-store'
 
 /** 알림 풍선이 떠 있는 시간(ms) — 보통 안내보다 조금 길게 */
@@ -40,6 +41,9 @@ export function NextEventBar() {
 export function ScheduleDialog() {
   const { day, minute, events } = useEvents()
   const close = useGame((s) => s.closeModal)
+  // 작은 행사: 열 수 있는 종류가 있거나 준비 중인 행사가 있을 때만 (빈 메뉴를 보이지 않는다)
+  const game = useGame((s) => s.game)
+  const showFests = (game.fests ?? []).some((f) => !f.closed) || festKinds(game, CONTENT).length > 0
   return (
     <div className="dialog schedule" role="dialog" aria-label="일정">
       <h2>일정</h2>
@@ -64,6 +68,7 @@ export function ScheduleDialog() {
       <p className="hint">이웃 방문·초대·소풍은 그날 아침에 정해지면 표시돼요. 시작 30분 전과 시작할 때 알려 드려요.</p>
       <div className="actions">
         <button onClick={() => useGame.getState().open({ kind: 'clubs' })}>{lifeText.clubs.title}</button>
+        {showFests && <button onClick={() => useGame.getState().open({ kind: 'fests' })}>{lifeText.fest.title}</button>}
         <button onClick={close}>닫기</button>
       </div>
     </div>

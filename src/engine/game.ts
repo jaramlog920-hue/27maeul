@@ -1,6 +1,7 @@
 import { SPOUSE_FURNITURE } from './furniture-defs'
 import { initialHomeFurniture, spouseFurniture } from './room'
 import type { Club, ClubSession } from './clubs'
+import type { Fest } from './fest'
 import { expireWorkDay, type WorkDay } from './work-day'
 import type { Skills, SkillLesson } from './skills'
 import { advancePlans, appointmentSpots, reservedMembers, NO_PLANS, type Plans } from './plans'
@@ -162,6 +163,8 @@ export interface GameState {
   clubs: Club[]
   clubSessions: Record<string, ClubSession>
   clubWorks: Record<string, { item: 'cushion'; color: string; place: PlaceId }>
+  /** 내가 준비하는 작은 행사 (계획 16 작업 16) — 옛 저장은 빈 목록 */
+  fests: Fest[]
   clock: Clock
   player: Actor
   idle: IdleState
@@ -519,7 +522,7 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
   return {
     version: 1,
     plans: { ...NO_PLANS, appts: [] },
-    clubs: [], clubSessions: {}, clubWorks: {},
+    clubs: [], clubSessions: {}, clubWorks: {}, fests: [],
     clock,
     player: { x: START.x, y: START.y, path: [], facing: 'down', walkTime: 0 },
     idle: IDLE_RESET,

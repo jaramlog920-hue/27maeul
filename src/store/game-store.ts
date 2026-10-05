@@ -166,6 +166,8 @@ export type Modal =
   | { kind: 'schedule' }
   | { kind: 'clubs' }
   | { kind: 'clubSession'; id: string }
+  | { kind: 'fests' }
+  | { kind: 'festSession'; id: string }
   /** letter: 편지 나르는 이웃이 말을 걸자마자 편지를 건넸을 때 대화에 보일 편지 말 한 줄 */
   | { kind: 'talk'; neighborId: string; line: string; letter?: string }
   | { kind: 'passage'; pieceId: string; askLine: boolean; back?: boolean; said?: string }

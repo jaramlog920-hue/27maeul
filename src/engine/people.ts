@@ -215,6 +215,8 @@ export interface Sighting {
 
 export interface Person {
   clubLines?: { start?: string; finish?: string }
+  /** 작은 행사에 보태 준 날 (계획 16 작업 16): 가져온 것을 내려놓고 손님으로 앉는 한 줄 */
+  festLines?: { help?: string }
   id: string
   /** 마음이 열리는 빠르기 (1 보통, 크면 빨리) */
   pace: number

@@ -1,4 +1,5 @@
 import { clubHere } from '../../engine/clubs'
+import { festHere } from '../../engine/fest'
 import { SkillCraftOptions } from '../skills/SkillLesson'
 // 화덕·작업대·기름틀·언덕 벤치, 그리고 모이는 곳(사랑방·찻집·정자 — 계획 10)에서 할 수 있는 일
 // 연인·약혼·부부면 찻집·정자·언덕에서 "○○와 함께" 가기 (계획 10 작업 4)
@@ -50,6 +51,7 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
       <h2>{title}</h2>
       <div className="actions menu column">
         {clubHere(game,place) && <button className="primary" onClick={() => open({ kind: 'clubSession', id: clubHere(game,place)!.id })}>{T.clubs.join}</button>}
+        {festHere(game,place) && <button className="primary" onClick={() => open({ kind: 'festSession', id: festHere(game,place)!.id })}>{T.fest.join}</button>}
         {['hallTable','teaTable'].includes(place) && <button onClick={() => open({ kind: 'clubs' })}>{T.clubs.title}</button>}
         {place === 'hearth' && (
           <>

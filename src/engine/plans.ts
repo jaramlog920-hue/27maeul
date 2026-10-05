@@ -1,6 +1,7 @@
 import { solidTiles } from './room'
 import { isHome } from './world'
 import { expandClubs } from './clubs'
+import { settleFests } from './fest'
 import { noteExperienceTastes } from './notebook'
 import { festivalOf, FESTIVAL_FROM, FESTIVAL_TO, isMarketDay, isWet, weatherOf } from './calendar'
 import { gatheringWindow, INVITE_FROM, INVITE_TO, VISIT_FROM, VISIT_TO, BABY_PARTY_DAY, BABY_PARTY_SPOTS, HILL_SPOTS } from './bonds'
@@ -18,7 +19,7 @@ export interface Appt {
   place: PlaceId; alt?: PlaceId; host?: string; members: string[]; startedWith?: string[]
   state: 'planned'|'running'|'done'|'skipped'|'moved'; rewarded: boolean; remembered: boolean
   /** Player participation must be an explicit action, never inferred from being nearby. */
-  attended?: boolean; activity?: Activity; clubId?: string; festId?: string; title?: string; seats?: Tile[]; requiresPlayer?: boolean; movedFrom?: number; reason?: 'weather'|'closed'|'busy'
+  attended?: boolean; activity?: Activity; clubId?: string; festId?: string; title?: string; seats?: Tile[]; requiresPlayer?: boolean; movedFrom?: number; reason?: 'weather'|'closed'|'busy'|'host'
 }
 export interface Plans { appts: Appt[]; nextId: number }
 export const NO_PLANS: Plans = { appts: [], nextId: 1 }
@@ -140,7 +141,7 @@ export function settleAppt(s: GameState,id:string): GameState {
     next=heartUp(next,npc,APPT_HEART_CAP,APPT_HEART_CAP)
   }
   if (a.attended && members.length && !a.remembered) {
-    const recorded=recordExperienceIn({...next,clock:{day:a.day,minute:a.to}},{id:a.clubId??a.id,kind:a.kind,with:members,place:venueFor(a).place})
+    const recorded=recordExperienceIn({...next,clock:{day:a.day,minute:a.to}},{id:a.clubId??a.festId??a.id,kind:a.kind,with:members,place:venueFor(a).place})
     const reveals=Object.fromEntries(members.filter(id=>a.activity && personOf(id)?.tastes?.activity?.[a.activity]===1).map(id=>[id,`activity.${a.activity}`]))
     next={...recorded,clock:next.clock,notebook:noteExperienceTastes(next.notebook,{with:members},reveals)}
   }
@@ -160,7 +161,12 @@ export function advancePlans(s:GameState,content:Pick<GameContent,'neighbors'>):
     if (a.day!==s.clock.day || s.clock.minute<a.from) continue
     if(a.state==='running') {if(s.clock.minute>=a.to) next=settleAppt(next,a.id);continue}
     const venue=venueFor(a)
-    if(venue.moved || !openVenue(next,venue.place,a.seats) || (a.requiresPlayer && !isHome(next.player))) {
+    // 집에서 여는 행사(집들이)는 플레이어가 집에 없거나 자리가 막혔으면 저절로 열지 않는다 — 다시 잡거나 마치는 건 플레이어가 고른다
+    if(a.requiresPlayer && (!isHome(next.player) || !openVenue(next,venue.place,a.seats))) {
+      next={...next,plans:{...next.plans,appts:next.plans.appts.map(x=>x.id===a.id?{...x,state:'skipped',reason:'host'}:x)}}
+      continue
+    }
+    if(venue.moved || !openVenue(next,venue.place,a.seats)) {
       const day=venue.moved?venue.day:a.day+1
       next={...next,plans:{...next.plans,appts:next.plans.appts.map(x=>x.id===a.id?{...x,state:'moved',day,movedFrom:a.movedFrom??a.day,reason:venue.moved?'weather':'closed'}:x)}}
       continue
@@ -169,7 +175,7 @@ export function advancePlans(s:GameState,content:Pick<GameContent,'neighbors'>):
     a={...a,state:members.length?'running':'skipped',startedWith:members,reason:members.length?a.reason:'busy'}
     next={...next,plans:{...next.plans,appts:next.plans.appts.map(x=>x.id===a.id?a:x)}}
   }
-  return next
+  return settleFests(next)
 }
 export function sanitizePlans(raw:unknown,day:number): Plans {
   if(!raw || typeof raw!=='object') return {appts:[],nextId:1}
