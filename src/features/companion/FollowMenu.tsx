@@ -2,6 +2,8 @@
 import { childMode, childStage } from '../../engine/child'
 import { JOB_NAME } from '../../content/text'
 import { fill, T } from '../../content/text'
+import { favoriteSpot, favoriteToy } from '../../engine/companion'
+import { petHabitNow, petHabitText } from '../../content/pet-text'
 import { useGame } from '../../store/game-store'
 
 export function FollowMenu({ who }: { who: 'pet' | 'child' }) {
@@ -20,6 +22,18 @@ export function FollowMenu({ who }: { who: 'pet' | 'child' }) {
           {!c.found?.length && <p>{T.pet.unknown}</p>}
           {c.moments?.play !== undefined && <p>{T.pet.firstPlay} · {fill(T.pet.date, { day: c.moments.play })}</p>}
           {c.moments?.rest !== undefined && <p>{T.pet.firstRest} · {fill(T.pet.date, { day: c.moments.rest })}</p>}
+          {c.moments?.walk !== undefined && <p>{T.pet.firstWalk} · {fill(T.pet.date, { day: c.moments.walk })}</p>}
+          {c.moments?.toy !== undefined && <p>{T.pet.foundToy} · {fill(T.pet.date, { day: c.moments.toy })}</p>}
+          {c.moments?.spot !== undefined && <p>{T.pet.foundSpot} · {fill(T.pet.date, { day: c.moments.spot })}</p>}
+          {c.moments?.came !== undefined && <p>{T.pet.came} · {fill(T.pet.date, { day: c.moments.came })}</p>}
+        </details>
+        <details>
+          <summary>{T.pet.look}</summary>
+          {c.stay && <p>{T.pet.nowDoing} · {petHabitText(c, petHabitNow(c, game.clock.day, game.clock.minute))}</p>}
+          {c.found?.includes('toy') && <p>{fill(T.pet.favoriteToy, { toy: (T.pet.toys as Record<string, string>)[favoriteToy(c)] })}</p>}
+          {c.found?.includes('spot') && <p>{fill(T.pet.favoriteSpot, { spot: (T.pet.spots as Record<string, string>)[favoriteSpot(c)] })}</p>}
+          {!!Object.keys(c.walked ?? {}).length && <p>{fill(T.pet.walkedWith, { places: Object.keys(c.walked ?? {}).map((id) => (T.pet.places as Record<string, string>)[id]).join(' · ') })}</p>}
+          {!c.found?.some((f) => f === 'toy' || f === 'spot' || f === 'walk') && !c.stay && <p>{T.pet.lookNone}</p>}
         </details>
         <div className="actions column">
           <button onClick={petCompanion}>쓰다듬기</button>

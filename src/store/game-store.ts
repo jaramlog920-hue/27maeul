@@ -20,7 +20,8 @@ import { allShelved, canShelve, payRetry, poolFor, shelve, shelveNow as shelveQu
 import { DEFAULT_CHOICE, type SpecialChoice } from '../engine/binding'
 import { ALBUM_IDS, fill, itemList, itemName, KID_LETTERS, NEIGHBOR_LINES, roomTitle, SCENES, T, withAnd, withObject, withSubject, callName } from '../content/text'
 import { grapesRipe, isWet, weatherOf } from '../engine/calendar'
-import { cleanName, interactPet, petWays, type Animal } from '../engine/companion'
+import { cleanName, favoriteToy, interactPet, petWays, type Animal } from '../engine/companion'
+import { petEventText } from '../content/pet-text'
 import {
   adoptStray,
   canCraft,
@@ -1198,6 +1199,10 @@ export const useGame = create<Store>((set, get) => {
       let modal: Modal | null = null
       for (const e of r.events) {
         // 가까이 지나가면 들리는 혼잣말, 지킨 약속 (계획 6b)
+        if (e.type === 'pet') {
+          const c = game.companion
+          if (c) get().say(petEventText(e, c), 3600)
+        }
         if (e.type === 'promiseKept') get().say(fill(T.people.promiseKept, { who: withSubject(neighborById(e.npc)?.role ?? '') }), 3400)
         if (e.type === 'arrived') {
           const a = arrive(game, e.target)
@@ -1281,7 +1286,9 @@ export const useGame = create<Store>((set, get) => {
       const next = interactPet(c, action, g.clock.day, g.clock.minute)
       if (!next) { get().say(T.pet.wait); return }
       const ways = petWays(next)
-      get().say(action === 'play' ? ways.energy > 0 ? T.pet.playActive : T.pet.playQuiet : ways.distance > 0 ? T.pet.restApart : T.pet.restNear)
+      const toyNow = !c.found?.includes('toy') && next.found?.includes('toy')
+      get().say(toyNow ? fill(T.pet.toyFound, { pet: withSubject(next.name), toy: (T.pet.toys as Record<string, string>)[favoriteToy(next)] })
+        : action === 'play' ? ways.energy > 0 ? T.pet.playActive : T.pet.playQuiet : ways.distance > 0 ? T.pet.restApart : T.pet.restNear)
       set({ game: persist({ ...g, companion: next, idle: { seconds: 9, action: null, cooldown: 3 } }) })
     },
     chooseChildCareer: (job) => {

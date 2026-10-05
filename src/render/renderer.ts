@@ -3,7 +3,7 @@ import { SPOUSE_FURNITURE } from '../engine/furniture-defs'
 // 캔버스 그리기. 엔진 상태를 읽기만 하고 바꾸지 않는다.
 import { barleyRipe, chimneySmoke, festivalOf, FESTIVAL_FROM, FESTIVAL_TO, grapesRipe, icyMorning, isWet, puddlesOut, weatherOf } from '../engine/calendar'
 import { darkness, phaseOf, seasonOf } from '../engine/clock'
-import { isGrown, STRAY_SPOTS, EAVES } from '../engine/companion'
+import { isGrown, petFollowPose, petHabit, STRAY_SPOTS, EAVES } from '../engine/companion'
 import { totalChapters } from '../engine/books'
 import { shelfRoom } from '../engine/shelf-rooms'
 import { letterWaiting } from '../engine/requests'
@@ -2287,16 +2287,22 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       if (comp) {
         const cTile = { x: Math.round(comp.x), y: Math.round(comp.y) }
         const still = comp.path.length === 0
-        const sleeping = still && ((wet && sameTile(cTile, EAVES) && !isIndoor(here)) || (game.idle.seconds > 15 && isNear(cTile, here)))
-        const form = sleeping ? 'curl' : isGrown(comp, day) ? 'adult' : 'baby'
+        const baby = !isGrown(comp, day)
+        const side = comp.facing === 'left' ? 'left' : 'right'
+        // 집에 둔 동물은 습관 자세(낮잠·기다리기·살피기·놀이), 따라다니는 동물은 곁에서 가만히 서 있을 때 작은 자세. 명령이 늘 먼저
+        const habit = comp.stay && still && !comp.motion ? petHabit(comp, day, game.clock.minute, weather) : null
+        const follow = !comp.stay && still && !comp.motion && game.idle.seconds <= 15 ? petFollowPose(comp, game.idle.seconds, weather) : null
+        const sleeping = still && ((wet && sameTile(cTile, EAVES) && !isIndoor(here)) || (!comp.stay && game.idle.seconds > 15 && isNear(cTile, here)) || habit?.pose === 'nap')
+        const form = sleeping ? 'curl' : baby ? 'baby' : 'adult'
+        // 도트의 여섯 동작: walk(걷는 중)·wait·sniff·play·fetch·wag
+        const action = comp.motion ? (comp.motion.action === 'rest' ? 'wait' : comp.motion.action) : !still ? 'walk' : sleeping ? null : habit && habit.pose !== 'nap' ? habit.pose : follow && follow !== 'nap' ? follow : null
         items.push({
           y: comp.y,
           paint: () => {
-            if (comp.motion) {
-              const action = comp.motion.action === 'play' ? 'play' : 'wait'
-              const frame = Math.floor(t * 6) % 4
-              drawSprite(g, paint(`pet/${comp.kind}/${comp.facing}/${action}/${frame}/${isGrown(comp,day)}`, petMotionRows(comp.kind, comp.facing, action, frame, !isGrown(comp,day)), ANIMAL_PALETTE[comp.kind]), comp.x, comp.y)
-            } else drawSprite(g, animal(comp.kind, form, comp.facing === 'left' ? 'left' : 'right'), comp.x, comp.y, still || sleeping ? 0 : Math.floor(comp.walkTime * 8) % 2)
+            if (action) {
+              const frame = action === 'walk' ? Math.floor(comp.walkTime * 8) % 4 : Math.floor(t * 6) % 4
+              drawSprite(g, paint(`pet/${comp.kind}/${side}/${action}/${frame}/${!baby}`, petMotionRows(comp.kind, side, action, frame, baby), ANIMAL_PALETTE[comp.kind]), comp.x, comp.y)
+            } else drawSprite(g, animal(comp.kind, form, side), comp.x, comp.y)
             if (sleeping && Math.floor(t / 3) % 3 === 0) emote(g, 'z', comp.x * TILE + 8, comp.y * TILE + 8)
           },
         })

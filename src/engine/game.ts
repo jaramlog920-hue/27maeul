@@ -12,8 +12,9 @@ import { advancePlans, appointmentSpots, reservedMembers, NO_PLANS, type Plans }
 import { festivalOf, FESTIVAL_FROM, FESTIVAL_TO, isMarketDay, isWet, weatherOf, barleyRipe, grapesRipe } from './calendar'
 import { advance, newClock, phaseOf, seasonOf, sleepClock, type Clock } from './clock'
 import { DURATION, greet, IDLE_GAP, IDLE_RESET, stepIdle, type IdleState } from './autonomy'
-import { adopt, companionGoal, petHomeGoal, STRAY_DAY, STRAY_SPOTS, stepCompanion, type Animal, type Companion } from './companion'
+import { adopt, companionGoal, STRAY_DAY, STRAY_SPOTS, stepCompanion, type Animal, type Companion } from './companion'
 import { add, addGift, CHAPTER_COST, FOODS, count, has, RECIPES, recipeGives, stackCap, take, TOOLS, type Inventory, type RecipeId } from './items'
+import { petLife, petStayGoal, type PetEvent } from './pet-life'
 import { facingFor, findPath, pathToward, stepActor, type Actor } from './movement'
 import { coolDown, exhausted, fallsSick, FRESH, rest, sleepNeeds, starving, tickNeeds, warmUp, work, type Needs } from './needs'
 import { inGoodMood } from './mood'
@@ -344,6 +345,8 @@ export type GameEvent =
   | { type: 'moment'; id: string }
   /** 지킨 약속 (계획 6b) */
   | { type: 'promiseKept'; npc: string }
+  /** 동물의 작은 반응 한 줄 (계획 16 작업 21 — 글은 life-text pet.events) */
+  | ({ type: 'pet' } & PetEvent)
 
 // ── 만들기 ──
 
@@ -884,9 +887,11 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
   if (companion?.motion) companion = { ...companion, motion: companion.motion.left > dt ? { ...companion.motion, left: companion.motion.left - dt } : undefined }
   if (companion?.stay) {
     const occupied = new Set([...furnitureBlockers, ...Object.values(npcs).filter(n=>n.visible).map(n=>key(npcTile(n))), key(now)])
-    const homeGoal = petHomeGoal(companion, occupied)
-    // 家具が動いた後も、家の安全な床だけを使う。
-    companion = { ...companion, x: homeGoal.x, y: homeGoal.y, path: [] }
+    // 집에 두기가 습관보다 먼저: 좋아하는 자리·낮잠·놀이 자리를 시각·날씨·계절·성향에서 고르고, 꾸미기로 자리가 사라지면 안전한 다른 칸으로 옮긴다
+    const homeGoal = petStayGoal({ ...s, clock, player, idle: s.idle }, companion, occupied, now)
+    const here = { x: Math.round(companion.x), y: Math.round(companion.y) }
+    if (!isHome(here) || occupied.has(key(here))) companion = { ...companion, x: homeGoal.x, y: homeGoal.y, path: [] }
+    else companion = stepCompanion(companion, homeGoal, dt * pace, occupied)
   }
   // 집에 둔 동물은 집 안 자리에서 기다린다 (따라오지 않는다)
   if (companion && !companion.stay) {
@@ -902,7 +907,8 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
   const idle = moving ? IDLE_RESET : stepIdle(s.idle, dt, clock.minute, rng, totalChapters(s) >= 3)
   // 가구 쓰는 동작: 걷기 시작하면(길이 생기면) 끝, 아니면 실제 시간만큼 줄어 다 되면 끝
   const act = !s.act || moving || player.path.length > 0 || s.act.left <= dt ? undefined : { ...s.act, left: s.act.left - dt }
-  const lived = liveNearby({ ...s, clock, needs, player, target, idle, act, npcs, companion, trails }, now, events)
+  const base: GameState = { ...s, clock, needs, player, target, idle, act, npcs, companion, trails }
+  const lived = liveNearby(petLife(base, now, events, childTile(base)), now, events)
   if (lived.scenes.length > s.scenes.length) return { state: lived, events }
   const next: GameState = blowCandle(lived)
 

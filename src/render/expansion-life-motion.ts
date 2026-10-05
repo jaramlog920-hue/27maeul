@@ -49,7 +49,7 @@ export function petMotionRows(kind:'cat'|'dog',facing:Facing,action:typeof PET_A
   }else{
     const a=animalRows(kind,baby?'baby':'adult',facing)
     a.forEach((r,y)=>[...r].forEach((c,x)=>{if(c!=='.')put(4+x,5+y+(action==='sniff'&&x<(a[0].length/2)?f%2:0),c)}))
-    if(action==='walk') {for(let x=0;x<16;x++)if(p[10][x]==='a')p[10][x]='.';put(6+f%2,11,'a');put(10+(f+1)%2,11,'a')}
+    if(action==='walk') {for(let x=0;x<16;x++)if(p[10][x]==='a')p[10][x]='.';const o=f%2;put(4+o*2,10,'a');put(8+o*2,10,'a')}
     if(action==='wait'){for(let x=4;x<14;x++)p[11][x]='.';put(8,10,'a');put(9,10,'a')}
     if(action==='wag'){const tx=facing==='left'?11:4;put(tx,4+f%2,'a');put(tx,5+f%2,'a')}
   }
