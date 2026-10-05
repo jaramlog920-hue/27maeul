@@ -1,4 +1,5 @@
-// 연애와 결혼 (계획 6): 이웃 집안의 젊은 사람 열 명(남 다섯·여 다섯, 성 없이 이름만).
+// 연애와 결혼 (계획 6): 이웃 집안의 젊은 사람 열 명(남 다섯·여 다섯, 성 없이 이름만)
+// + 계획 16 작업 12b: 미혼·자녀 없는 추가 주민 셋(떠돌이 상인·기름 짜는 이웃·편지 나르는 이웃 — 지금 모습 그대로 남자).
 // 주인공과 다른 모습의 후보만 연애할 수 있고, 같은 모습이면 친구로 지낸다(교단마다 입장이 갈리는 부분을 게임이 먼저 열지 않는다).
 // 단계: 인사·선물로 마음 → 4·6에 그 사람의 이야기 → 8 + 들꽃 다발이면 연인 → 연인 7일 + 마음 10 + 약속의 끈이면 약혼
 // → 다음 장날 저녁 광장 마을 잔치(교파 예식이 아니다)에서 결혼 → 배우자가 내 집(넓힌 방)에서 함께 산다.
@@ -7,7 +8,7 @@ import { isMarketDay } from './calendar'
 import type { Tile } from './types'
 
 /** 연애 후보 (neighbors.json의 romanceable과 같다 — 테스트가 맞춰 본다) */
-export const CANDIDATE_IDS = ['wendell', 'cosmo', 'rudy', 'dexter', 'basil', 'marigold', 'penelope', 'tilly', 'juniper', 'poppy'] as const
+export const CANDIDATE_IDS = ['wendell', 'cosmo', 'rudy', 'dexter', 'basil', 'marigold', 'penelope', 'tilly', 'juniper', 'poppy', 'merchant', 'presser', 'postman'] as const
 export type CandidateId = (typeof CANDIDATE_IDS)[number]
 
 export function isCandidateId(id: string): id is CandidateId {
@@ -69,7 +70,16 @@ export const PARTNER_WORK: Record<CandidateId, string> = {
   tilly: 'hammer',
   juniper: 'bee',
   poppy: 'tea',
+  // 계획 16 작업 12b: 상인은 장날 좌판 공책 정리, 기름 짜는 이웃은 기름틀, 편지 나르는 이웃은 배달 길
+  merchant: 'book',
+  presser: 'press',
+  postman: 'wait',
 }
+/**
+ * 배우자의 아침 선물(하루 한 가지)을 주지 않는 사람 (계획 16 작업 12b, 기획 24: 결혼 뒤에도 매일 무료 재료·자동 수입 없음).
+ * 일과 쉼은 그대로 — 집에서 함께 정한 습관만 남는다
+ */
+export const NO_SPOUSE_GIFT: readonly string[] = ['merchant', 'presser', 'postman']
 /** 일하는 곳이 곧 그곳이라 일하면서도 잠깐 앉을 수 있는 곳 */
 export const WORK_HERE: Partial<Record<string, DatePlace>> = { tea: 'tea' }
 

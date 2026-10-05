@@ -67,6 +67,7 @@ import {
   isCandidateId,
   nextMarketAfter,
   NO_ROMANCE,
+  NO_SPOUSE_GIFT,
   SPOUSE_HOME_FROM,
   SPOUSE_HOME_TO,
   PARTNER_WORK,
@@ -1336,7 +1337,8 @@ export function chooseInEvent(s: GameState, eventId: string, index: number): Gam
     else if (waiting) life = { ...life, storyWait: null }
     let next: GameState = { ...s, life }
     if (!c.mini) next = completeStory(next, p.id, e, index)
-    if (e.confess && !s.romance?.partner && reqCtx(s, p.id).suitor) {
+    // 친구로 지내겠다는 말(stayFriends)을 고르면 연인이 되지 않는다 — 벌점·서먹함 없이, 고백은 다시 묻지 않는다 (계획 16 작업 12b)
+    if (e.confess && !c.stayFriends && !s.romance?.partner && reqCtx(s, p.id).suitor) {
       next = { ...next, romance: { ...NO_ROMANCE, partner: p.id, stage: 'dating', since: s.clock.day }, flags: { ...next.flags, 'unlock:dating': 1 } }
     }
     return next
@@ -2377,7 +2379,7 @@ function marry(s: GameState): GameState {
 
 /** 배우자의 아침 선물 (하루 한 번, 처음 말 걸 때): 배우자 집안 일에서 나는 것 하나 */
 export function spouseGift(s: GameState, def: NeighborDef): { state: GameState; gift: Partial<Record<ItemId, number>> } | null {
-  if (romanceWith(s, def.id) !== 'married' || s.flags.spouseGiftDay === s.clock.day) return null
+  if (romanceWith(s, def.id) !== 'married' || s.flags.spouseGiftDay === s.clock.day || NO_SPOUSE_GIFT.includes(def.id)) return null
   const [id] = Object.keys(def.help.gives) as ItemId[]
   const gift = { [id]: 1 } as Partial<Record<ItemId, number>>
   return { state: { ...putAway(s, gift), flags: { ...s.flags, spouseGiftDay: s.clock.day } }, gift }

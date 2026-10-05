@@ -123,6 +123,8 @@ export interface Req {
   after?: { event: string; days: number }
   /** 아직 이사 오지 않은 이웃 — 하나라도 와 있으면 안 맞는다 (계획 16 작업 11: 함께할 이웃 없이도 끝나는 다른 길) */
   notJoined?: string[]
+  /** 이 사람과의 연애 단계가 이 중 하나일 때만 (계획 16 작업 12b: 약혼 중에만 하는 생활 준비 장면) */
+  romance?: ('dating' | 'engaged' | 'married')[]
 }
 
 /** 말을 나누는 사이 (사이 단계와 연애에서) */
@@ -166,6 +168,8 @@ export interface Choice {
   outcome?: number
   /** 고른 뒤 함께하는 손일 놀이 — 잘하든 못하든 끝나면 다음으로 (숙련으로 막지 않는다) */
   mini?: Minigame
+  /** 고백 사건(confess)에서 "지금은 친구로" — 고르면 연인이 되지 않는다 (계획 16 작업 12b: 명시적 교제 선택) */
+  stayFriends?: boolean
 }
 
 export interface PersonEvent {
@@ -541,6 +545,7 @@ export function reqMet(r: Req | undefined, c: ReqCtx): boolean {
     const rel = relOf(c.stage ?? 0, c.romance)
     if (!rel || !r.rel.includes(rel)) return false
   }
+  if (r.romance && !(c.romance && r.romance.includes(c.romance))) return false
   if (r.placed !== undefined && !(c.placed ?? []).includes(r.placed)) return false
   if (r.memory && !r.memory.every((t) => hasMemory(c.life, c.npc, t))) return false
   if (r.notMemory && r.notMemory.some((t) => hasMemory(c.life, c.npc, t))) return false

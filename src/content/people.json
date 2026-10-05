@@ -7194,6 +7194,85 @@
               "choice:rudy:small:signPost"
             ]
           }
+        },
+        {
+          "id": "postman:blankWalk",
+          "text": "수첩 빈 줄에 \"산책\"이라고 적었어요. 배달 없는 길로요. 지켰어요.",
+          "depth": 1,
+          "req": {
+            "memory": [
+              "blankWalk"
+            ]
+          }
+        },
+        {
+          "id": "postman:blankRest",
+          "text": "수첩 빈 줄에 \"돌계단, 둘이\"라고 적었어요. 그 줄은 아직 지우지 않았어요.",
+          "depth": 1,
+          "req": {
+            "memory": [
+              "blankRest"
+            ]
+          }
+        },
+        {
+          "id": "postman:noParcel",
+          "text": "지난번에 들려준 얘기, 수첩에 안 적었는데도 기억나요. 그다음은 어떻게 됐어요?",
+          "depth": 1,
+          "req": {
+            "memory": [
+              "noParcel"
+            ]
+          }
+        },
+        {
+          "id": "postman:rel:friend",
+          "text": "배달 끝나면 돌계단에서 잠깐 쉬어요. 저녁 무렵엔 늘 거기 있어요. 같이 앉아요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "friend",
+              "close"
+            ]
+          }
+        },
+        {
+          "id": "postman:rel:lover",
+          "text": "오늘은 언덕 길 걸어요. 배달 없는 길로요.",
+          "depth": 0,
+          "when": {
+            "weather": [
+              "dry"
+            ]
+          },
+          "req": {
+            "rel": [
+              "lover"
+            ]
+          }
+        },
+        {
+          "id": "postman:rel:spouse",
+          "text": "배달은 그대로 다녀요. 마지막 목적지가 집이 된 것만 달라요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ]
+          }
+        },
+        {
+          "id": "postman:spouse:notes",
+          "text": "오늘 마지막 목적지는 여기예요. 이제 가방 내려놓을게요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "choice:postman:short:spouseHabit"
+            ]
+          }
         }
       ],
       "tastes": {
@@ -7262,7 +7341,8 @@
               ],
               "memory": "wornStrap"
             }
-          ]
+          ],
+          "opens": 2
         },
         {
           "id": "postman:story:2",
@@ -7333,7 +7413,8 @@
               ],
               "memory": "bagKeep"
             }
-          ]
+          ],
+          "opens": 3
         },
         {
           "id": "postman:story:3",
@@ -7636,6 +7717,436 @@
               ],
               "memory": "newStrap",
               "mini": "weave"
+            }
+          ]
+        },
+        {
+          "id": "romance:postman:blankLine",
+          "title": "수첩의 빈 줄",
+          "stage": 3,
+          "at": {
+            "x": 27,
+            "y": 14
+          },
+          "when": {
+            "from": 1020,
+            "to": 1080,
+            "weather": [
+              "dry"
+            ]
+          },
+          "req": {
+            "story": [
+              {
+                "id": "postmanBag"
+              }
+            ],
+            "seen": [
+              "postman:small:ownAppt"
+            ],
+            "after": {
+              "event": "postman:small:ownAppt",
+              "days": 1
+            }
+          },
+          "gain": 6,
+          "opens": 4,
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "돌계단 그늘. 이웃이 수첩을 펴 놓았다. \"돌계단, 쉼\" 한 줄 말고는 배달 시간이 빼곡하다."
+            },
+            {
+              "speaker": "postman",
+              "text": "쉬는 시간은 따로 안 적었어요. 남으면 쉬면 된다고 생각해서요."
+            },
+            {
+              "speaker": "postman",
+              "text": "…빈 줄을 하나 남겨 볼까 해요. 무엇으로 채울지는 같이 정하고 싶어요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "가까운 길을 걷자고 한다",
+              "color": "warm",
+              "memory": "blankWalk",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "그럼 빈 줄엔 \"산책\". 배달 없는 길로요."
+                }
+              ]
+            },
+            {
+              "label": "돌계단에 잠깐 같이 앉자고 한다",
+              "color": "quiet",
+              "memory": "blankRest",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "\"돌계단, 둘이.\" …이렇게 적으니까 수첩이 다르게 보여요."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "romance:postman:noParcel",
+          "title": "오늘은 빈손이에요",
+          "stage": 4,
+          "at": {
+            "x": 27,
+            "y": 14
+          },
+          "when": {
+            "from": 1020,
+            "to": 1080,
+            "weather": [
+              "dry"
+            ]
+          },
+          "req": {
+            "seen": [
+              "romance:postman:blankLine"
+            ],
+            "after": {
+              "event": "romance:postman:blankLine",
+              "days": 3
+            }
+          },
+          "gain": 6,
+          "opens": 5,
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "저녁. 편지 나르는 이웃이 가방 덮개를 열지도 않고 곧장 이쪽으로 걸어온다."
+            },
+            {
+              "speaker": "postman",
+              "text": "전할 건 없어요. 그냥 인사하러 왔어요. 이상하게 더 긴장되네요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "오늘 하루를 이야기한다",
+              "color": "warm",
+              "memory": "noParcel",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "그 얘기, 수첩에 안 적어도 기억할게요. 다음에 이어서 물어봐도 되죠?"
+                }
+              ]
+            },
+            {
+              "label": "길에서 본 게 있는지 묻는다",
+              "color": "honest",
+              "memory": "noParcel",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "언덕 길가에 노란 꽃이 피었어요. 배달할 땐 못 보는데, 오늘은 보였어요."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "romance:postman:confess",
+          "title": "수첩 맨 윗줄",
+          "stage": 5,
+          "at": {
+            "x": 27,
+            "y": 14
+          },
+          "when": {
+            "from": 1020,
+            "to": 1080,
+            "weather": [
+              "dry"
+            ]
+          },
+          "req": {
+            "seen": [
+              "romance:postman:noParcel"
+            ],
+            "after": {
+              "event": "romance:postman:noParcel",
+              "days": 3
+            }
+          },
+          "gain": 8,
+          "confess": true,
+          "album": "수첩 맨 윗줄",
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "돌계단 그늘. 이웃이 수첩을 펴서 보여 준다. 맨 윗줄에 배달 시간이 아닌 글이 한 줄 있다."
+            },
+            {
+              "speaker": "postman",
+              "text": "편지처럼 써 봤는데, 이건 부치면 안 될 것 같아서요. 직접 말할게요."
+            },
+            {
+              "speaker": "postman",
+              "text": "좋아해요. 대답은 지금 안 해도 돼요. 기다리는 건 제가 잘하는 일이에요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "나도 좋다고 말한다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "…이건 제가 받은 거네요. 수첩에 적을게요. 오늘 받은 대답이라고요."
+                }
+              ]
+            },
+            {
+              "label": "윗줄 아래에 내 글을 적는다",
+              "color": "tease",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "두 줄이 됐네요. 이 장은 접어 두지 않을게요."
+                }
+              ]
+            },
+            {
+              "label": "지금은 친구로 지내고 싶다고 말한다",
+              "color": "quiet",
+              "stayFriends": true,
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "네. 들어 줘서 고마워요. 돌계단 자리는 그대로예요. 쉬고 싶을 때 와요."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "romance:postman:ownMessage",
+          "title": "직접 전할 말",
+          "stage": 4,
+          "at": {
+            "x": 27,
+            "y": 14
+          },
+          "when": {
+            "from": 1020,
+            "to": 1080,
+            "weather": [
+              "dry"
+            ]
+          },
+          "req": {
+            "lover": true
+          },
+          "gain": 5,
+          "lines": [
+            {
+              "speaker": "postman",
+              "text": "이 말은 다른 사람에게 부탁하면 안 될 것 같아서요. 당신과 보내는 시간을 기다렸어요."
+            },
+            {
+              "speaker": "postman",
+              "text": "적어 온 게 있는데… 앉아서 들어도 되고, 걸으면서 들어도 돼요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "끝까지 듣는다",
+              "color": "quiet",
+              "memory": "ownMessage",
+              "reply": [
+                {
+                  "speaker": "narration",
+                  "text": "이웃은 종이를 보지 않고 말했다. 몇 번 멈췄지만, 끝까지 말했다."
+                }
+              ]
+            },
+            {
+              "label": "걸으면서 듣는다",
+              "color": "warm",
+              "memory": "ownMessage",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "걸으면 말이 덜 막혀요. 배달할 때처럼요. …이건 배달이 아니지만요."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "romance:postman:lastDelivery",
+          "title": "마지막 배달 뒤의 귀가",
+          "stage": 4,
+          "at": {
+            "x": 22,
+            "y": 8
+          },
+          "when": {
+            "from": 900,
+            "to": 1080
+          },
+          "req": {
+            "lover": true,
+            "romance": [
+              "engaged"
+            ]
+          },
+          "gain": 5,
+          "lines": [
+            {
+              "speaker": "postman",
+              "text": "장날엔 늦은 배달이 있어요. 그날 저녁은 조금 늦게 들어갈 거예요."
+            },
+            {
+              "speaker": "postman",
+              "text": "집에 돌아오는 시간도 적어 둘게요. 제가 지키고 싶은 약속이니까요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "장날 저녁은 늦게 먹자고 한다",
+              "color": "warm",
+              "memory": "lastDelivery",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "늦은 저녁이요. 그럼 그날은 제가 빵을 사 갈게요."
+                }
+              ]
+            },
+            {
+              "label": "늦는 날은 마중 나가겠다고 한다",
+              "color": "honest",
+              "memory": "lastDelivery",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "마중이요? …그럼 마지막 집은 서두르지 않고 갈게요. 기다리는 사람이 있으니까요."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "postman:short:spouseHabit",
+          "title": "문 옆 메모 꽂이",
+          "stage": 3,
+          "at": {
+            "x": 22,
+            "y": 8
+          },
+          "when": {
+            "from": 900,
+            "to": 1080
+          },
+          "req": {
+            "rel": [
+              "spouse"
+            ]
+          },
+          "gain": 3,
+          "lines": [
+            {
+              "speaker": "postman",
+              "text": "집 문 옆에 짧은 메모 꽂이를 하나 달았어요. 서로 한 줄씩 남기면 어때요? 오늘 첫 줄은 뭐로 할까요?"
+            }
+          ],
+          "choices": [
+            {
+              "label": "오늘 저녁 먹을 것",
+              "color": "warm",
+              "memory": "homeNotes",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "\"오늘 저녁, 콩죽.\" 첫 줄부터 맛있네요."
+                }
+              ]
+            },
+            {
+              "label": "“잘 다녀와”",
+              "color": "quiet",
+              "memory": "homeNotes",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "\"잘 다녀와.\" …가방 내려놓을 때마다 보이겠네요."
+                }
+              ]
+            },
+            {
+              "label": "내일 쉬는 시간",
+              "color": "honest",
+              "memory": "homeNotes",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "\"내일 저녁, 돌계단.\" 제 수첩에도 똑같이 적을게요."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "romance:postman:otherDay",
+          "title": "다른 날짜를 말하는 연습",
+          "stage": 3,
+          "at": {
+            "x": 22,
+            "y": 8
+          },
+          "when": {
+            "from": 900,
+            "to": 1080
+          },
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "seen": [
+              "postman:short:spouseHabit"
+            ]
+          },
+          "gain": 3,
+          "lines": [
+            {
+              "speaker": "postman",
+              "text": "오늘 배달하다 받은 부탁을 다 받아 버렸어요. 그래서 우리 저녁 약속이… 밀렸어요."
+            },
+            {
+              "speaker": "postman",
+              "text": "다른 날짜를 말하는 연습을 해 볼게요. \"오늘은 안 되고, 내일은 돼요.\" …어때요?"
+            }
+          ],
+          "choices": [
+            {
+              "label": "다른 날로 정하자고 한다",
+              "color": "warm",
+              "memory": "otherDay",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "내일 저녁으로 적을게요. 이번엔 이 줄을 먼저 지킬게요."
+                }
+              ]
+            },
+            {
+              "label": "연습을 한 번 더 해 보자고 한다",
+              "color": "honest",
+              "memory": "otherDay",
+              "reply": [
+                {
+                  "speaker": "postman",
+                  "text": "\"그건 모레 해 드릴게요.\" …말해 보니까 별일 아니네요."
+                }
+              ]
             }
           ]
         }
@@ -26641,7 +27152,7 @@
           },
           "doing": "rest",
           "mutter": [
-            "천 끝부터 펴야겠네요."
+            "천 끝부터 펴야겠다."
           ]
         },
         {
@@ -26658,7 +27169,7 @@
           },
           "doing": "book",
           "mutter": [
-            "생활 물건 목록은 이 공책에 적어요."
+            "생활 물건 목록은 이 공책에 적어 둬."
           ]
         },
         {
@@ -26675,7 +27186,7 @@
           },
           "doing": "rest",
           "mutter": [
-            "개인 상자는 닫아 두고 돌아가야죠."
+            "개인 상자는 닫아 두고 돌아가야지."
           ]
         },
         {
@@ -26700,14 +27211,14 @@
             ]
           },
           "mutter": [
-            "파피, 오늘도 장을 닫고 잠깐 쉬러 왔어요."
+            "파피, 오늘도 장 닫고 잠깐 쉬러 왔어."
           ]
         }
       ],
       "lines": [
         {
           "id": "merchant:short:clothSmooth",
-          "text": "천이 구겨진 쪽부터 펴요. 위에 올릴 물건은 그다음이에요.",
+          "text": "천은 구겨진 쪽부터 펴. 위에 올릴 물건은 그다음이고.",
           "depth": 0,
           "when": {
             "from": 450,
@@ -26719,7 +27230,7 @@
         },
         {
           "id": "merchant:short:sourceNote",
-          "text": "물건이 들어온 묶음은 공책에 표시해 두어요.",
+          "text": "물건이 들어온 묶음은 공책에 표시해 둬.",
           "depth": 0,
           "when": {
             "from": 600,
@@ -26731,7 +27242,7 @@
         },
         {
           "id": "merchant:short:boxClose",
-          "text": "장 마치기 전에 제 물건부터 상자에 넣을래요.",
+          "text": "장 마치기 전에 내 물건부터 상자에 넣을래.",
           "depth": 0,
           "when": {
             "from": 1050,
@@ -26743,7 +27254,7 @@
         },
         {
           "id": "merchant:short:roads",
-          "text": "오늘 오는 길은 마른 쪽으로 돌아왔어요. 바퀴가 덜 미끄러웠죠.",
+          "text": "오늘 오는 길은 마른 쪽으로 돌아왔어. 바퀴가 덜 미끄러웠지.",
           "depth": 0,
           "when": {
             "weather": [
@@ -26756,7 +27267,7 @@
         },
         {
           "id": "merchant:short:lostWay",
-          "text": "길 그림은 제가 보는 것이라 다른 분은 헷갈릴 수도 있어요.",
+          "text": "길 그림은 내가 보는 거라 다른 사람은 헷갈릴 수도 있어.",
           "depth": 0,
           "when": {
             "days": [
@@ -26766,7 +27277,7 @@
         },
         {
           "id": "merchant:short:winterGoods",
-          "text": "오늘은 두꺼운 생활 천을 위에 놓았어요. 펼쳐 보셔도 돼요.",
+          "text": "오늘은 두꺼운 생활 천을 위에 놓았어. 펼쳐 봐도 돼.",
           "depth": 0,
           "when": {
             "season": [
@@ -26779,7 +27290,7 @@
         },
         {
           "id": "merchant:short:summerShade",
-          "text": "천은 그늘에서 보세요. 눈이 부시면 제가 이쪽으로 옮길게요.",
+          "text": "천은 그늘에서 봐. 눈부시면 내가 이쪽으로 옮길게.",
           "depth": 0,
           "when": {
             "season": [
@@ -26792,7 +27303,7 @@
         },
         {
           "id": "merchant:short:rainCover",
-          "text": "젖지 않은 것부터 펼칠래요. 나머지는 덮어 두었어요.",
+          "text": "젖지 않은 것부터 펼칠게. 나머지는 덮어 뒀어.",
           "depth": 0,
           "when": {
             "weather": [
@@ -26805,7 +27316,7 @@
         },
         {
           "id": "merchant:plain",
-          "text": "오늘 가져온 생활 물건은 좌판 위에 있어요. 제 상자는 따로 두었고요.",
+          "text": "오늘 가져온 생활 물건은 좌판 위에 있어. 내 상자는 따로 뒀고.",
           "depth": 0,
           "when": {
             "days": [
@@ -26815,7 +27326,7 @@
         },
         {
           "id": "merchant:taste",
-          "text": "장을 마친 뒤 짧게 차를 마시는 시간이 좋아요. 길 떠나기 전에 숨을 고르고요.",
+          "text": "장 마치고 짧게 차 마시는 시간이 좋아. 길 떠나기 전에 숨 고르는 거지.",
           "depth": 1,
           "when": {
             "days": [
@@ -26826,7 +27337,7 @@
         },
         {
           "id": "merchant:after",
-          "text": "이 상자는 물건 목록에 없어요. 제가 펼쳐 보는 길 그림이 들어 있죠.",
+          "text": "이 상자는 물건 목록에 없어. 내가 펼쳐 보는 길 그림이 들어 있지.",
           "depth": 0,
           "when": {
             "days": [
@@ -26843,7 +27354,7 @@
         },
         {
           "id": "merchant:memory",
-          "text": "함께 장을 닫고 찻집에 갔었죠. 이번에도 짧게 앉았다 갈래요.",
+          "text": "같이 장 닫고 찻집 갔었지. 이번에도 잠깐 앉았다 갈래.",
           "depth": 2,
           "when": {
             "days": [
@@ -26858,6 +27369,118 @@
             ],
             "exp": [
               "story:merchantBox"
+            ]
+          }
+        },
+        {
+          "id": "merchant:askBack",
+          "text": "지난 장날에 네 하루 얘기 듣다 말았잖아. 오늘은 어땠어?",
+          "depth": 1,
+          "when": {
+            "days": [
+              0
+            ]
+          },
+          "req": {
+            "memory": [
+              "myDay"
+            ]
+          }
+        },
+        {
+          "id": "merchant:roadTale",
+          "text": "이번 길에도 그 다리에서 잠깐 섰어. 지난번에 얘기한 거기.",
+          "depth": 1,
+          "when": {
+            "days": [
+              0
+            ]
+          },
+          "req": {
+            "memory": [
+              "roadTale"
+            ]
+          }
+        },
+        {
+          "id": "merchant:savedSeat",
+          "text": "오늘도 문 닫을 시간 먼저 적어 왔어. 그 시간 지나면 장사 얘기 안 할게.",
+          "depth": 1,
+          "when": {
+            "days": [
+              0
+            ]
+          },
+          "req": {
+            "memory": [
+              "savedSeat"
+            ]
+          }
+        },
+        {
+          "id": "merchant:rel:friend",
+          "text": "장 마치고 찻집 갈 건데, 같이 갈래? 차는 내가 살게.",
+          "depth": 0,
+          "when": {
+            "days": [
+              0
+            ]
+          },
+          "req": {
+            "rel": [
+              "friend",
+              "close"
+            ]
+          }
+        },
+        {
+          "id": "merchant:rel:lover",
+          "text": "장 닫으면 정자 가자. 거기선 물건 얘기 안 할게.",
+          "depth": 0,
+          "when": {
+            "days": [
+              0
+            ],
+            "weather": [
+              "dry"
+            ]
+          },
+          "req": {
+            "rel": [
+              "lover"
+            ]
+          }
+        },
+        {
+          "id": "merchant:rel:spouse",
+          "text": "장사는 그대로 다녀. 다음 길은 짧게 다녀올게. 떠나는 날은 선반에 적어 뒀어.",
+          "depth": 0,
+          "when": {
+            "days": [
+              0
+            ]
+          },
+          "req": {
+            "rel": [
+              "spouse"
+            ]
+          }
+        },
+        {
+          "id": "merchant:spouse:back",
+          "text": "이번엔 좀 오래 걸렸지. 너는 어떻게 지냈어? 오늘은 네 얘기부터 듣고 싶어.",
+          "depth": 0,
+          "when": {
+            "days": [
+              0
+            ]
+          },
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "choice:merchant:short:spouseHabit"
             ]
           }
         }
@@ -26896,7 +27519,7 @@
             },
             {
               "speaker": "merchant",
-              "text": "그건 제 물건이에요. 판매 목록에는 없어요. 손에 익은 작은 것들을 넣었죠."
+              "text": "그건 내 물건이야. 판매 목록에는 없어. 손에 익은 작은 것들을 넣었지."
             }
           ],
           "choices": [
@@ -26906,7 +27529,7 @@
               "reply": [
                 {
                   "speaker": "merchant",
-                  "text": "가끔 꺼내서 정리해요. 팔려고 가져온 것은 아니고요."
+                  "text": "가끔 꺼내서 정리해. 팔려고 가져온 건 아니고."
                 }
               ],
               "memory": "boxSeen"
@@ -26917,7 +27540,7 @@
               "reply": [
                 {
                   "speaker": "merchant",
-                  "text": "천 끝만 펴고 이야기할게요."
+                  "text": "천 끝만 펴고 얘기할게."
                 }
               ],
               "memory": "boxSeen"
@@ -26928,12 +27551,13 @@
               "reply": [
                 {
                   "speaker": "merchant",
-                  "text": "이쪽은 가게 물건, 저 상자는 따로 두면 되겠어요."
+                  "text": "이쪽은 가게 물건, 저 상자는 따로 두면 되겠다."
                 }
               ],
               "memory": "boxSeen"
             }
-          ]
+          ],
+          "opens": 2
         },
         {
           "id": "merchant:story:2",
@@ -26962,7 +27586,7 @@
           "lines": [
             {
               "speaker": "merchant",
-              "text": "처음 다니던 길을 작은 천에 그렸어요. 제가 알아볼 만큼만요."
+              "text": "처음 다니던 길을 작은 천에 그렸어. 내가 알아볼 만큼만."
             },
             {
               "speaker": "narration",
@@ -26976,7 +27600,7 @@
               "reply": [
                 {
                   "speaker": "merchant",
-                  "text": "이 굽은 선은 제가 한 번 돌아갔던 자리예요."
+                  "text": "이 굽은 선은 내가 한 번 돌아갔던 자리야."
                 }
               ],
               "memory": "boxStory"
@@ -26987,7 +27611,7 @@
               "reply": [
                 {
                   "speaker": "merchant",
-                  "text": "저만 알아보는 모양으로요. 모서리가 닳으면 다시 그렸죠."
+                  "text": "나만 알아보는 모양으로. 모서리가 닳으면 다시 그렸지."
                 }
               ],
               "memory": "boxStory"
@@ -26998,12 +27622,13 @@
               "reply": [
                 {
                   "speaker": "merchant",
-                  "text": "오늘은 여기까지 볼래요. 다시 넣어 둘게요."
+                  "text": "오늘은 여기까지 볼래. 다시 넣어 둘게."
                 }
               ],
               "memory": "boxStory"
             }
-          ]
+          ],
+          "opens": 3
         },
         {
           "id": "merchant:story:3",
@@ -27039,7 +27664,7 @@
             },
             {
               "speaker": "merchant",
-              "text": "저는 파란 천을 고를래요. 길 그림 천은 상자에 그대로 두고요."
+              "text": "나는 파란 천을 고를래. 길 그림 천은 상자에 그대로 두고."
             }
           ],
           "choices": [
@@ -27049,7 +27674,7 @@
               "reply": [
                 {
                   "speaker": "merchant",
-                  "text": "끝은 이만큼만 접어 볼래요."
+                  "text": "끝은 이만큼만 접어 볼게."
                 }
               ],
               "mini": "weave",
@@ -27061,7 +27686,7 @@
               "reply": [
                 {
                   "speaker": "merchant",
-                  "text": "나란히 놓아 보니 저는 이쪽이 편하네요."
+                  "text": "나란히 놓아 보니 나는 이쪽이 편하네."
                 }
               ],
               "memory": "cloth:blue"
@@ -27072,7 +27697,7 @@
               "reply": [
                 {
                   "speaker": "merchant",
-                  "text": "작은 생활 물건을 올려 보고 제가 정할게요."
+                  "text": "작은 생활 물건을 올려 보고 내가 정할게."
                 }
               ],
               "memory": "cloth:blue"
@@ -27110,7 +27735,7 @@
           "lines": [
             {
               "speaker": "merchant",
-              "text": "오늘 장은 닫았어요. 길을 나서기 전에 제가 차 한 잔 권하고 싶네요."
+              "text": "오늘 장은 닫았어. 길 나서기 전에 차 한 잔 권하고 싶어."
             },
             {
               "speaker": "poppy",
@@ -27128,7 +27753,7 @@
               "reply": [
                 {
                   "speaker": "merchant",
-                  "text": "이렇게 앉는 시간도 장날에 남겨 두려고요."
+                  "text": "이렇게 앉는 시간도 장날에 남겨 두려고."
                 }
               ]
             },
@@ -27138,7 +27763,7 @@
               "reply": [
                 {
                   "speaker": "merchant",
-                  "text": "제 것은 손잡이가 넓은 쪽으로 할래요."
+                  "text": "내 건 손잡이 넓은 쪽으로 할래."
                 }
               ]
             },
@@ -27148,7 +27773,7 @@
               "reply": [
                 {
                   "speaker": "merchant",
-                  "text": "오는 길에는 천이 젖지 않게 한 번 더 싸 두었어요."
+                  "text": "오는 길엔 천이 안 젖게 한 번 더 싸 뒀어."
                 }
               ]
             }
@@ -27180,7 +27805,7 @@
           "lines": [
             {
               "speaker": "merchant",
-              "text": "처마 아래서 제 상자도 정리하려고요. 그릴 때 쓰던 작은 나무 조각은 따로 넣어요."
+              "text": "처마 아래서 내 상자도 정리하려고. 그릴 때 쓰던 작은 나무 조각은 따로 넣어."
             }
           ],
           "choices": [
@@ -27190,7 +27815,7 @@
               "reply": [
                 {
                   "speaker": "merchant",
-                  "text": "이건 제 기념품 칸이에요."
+                  "text": "이건 내 기념품 칸이야."
                 }
               ],
               "memory": "souvenirSort"
@@ -27201,7 +27826,7 @@
               "reply": [
                 {
                   "speaker": "merchant",
-                  "text": "고마워요. 상자 안쪽부터 덮을게요."
+                  "text": "고마워. 상자 안쪽부터 덮을게."
                 }
               ],
               "memory": "souvenirSort"
@@ -27226,7 +27851,7 @@
           "lines": [
             {
               "speaker": "merchant",
-              "text": "물건 앞 표지를 옮겼어요. 작은 것은 손에 닿는 쪽에 둘래요."
+              "text": "물건 앞 표지를 옮겼어. 작은 건 손 닿는 쪽에 둘래."
             }
           ],
           "choices": [
@@ -27236,7 +27861,7 @@
               "reply": [
                 {
                   "speaker": "merchant",
-                  "text": "처음 보는 분도 한 줄씩 볼 수 있겠네요."
+                  "text": "처음 보는 사람도 한 줄씩 볼 수 있겠다."
                 }
               ],
               "memory": "signOrder"
@@ -27247,10 +27872,505 @@
               "reply": [
                 {
                   "speaker": "merchant",
-                  "text": "여기 한 칸은 비워 둘게요."
+                  "text": "여기 한 칸은 비워 둘게."
                 }
               ],
               "memory": "signOrder"
+            }
+          ]
+        },
+        {
+          "id": "romance:merchant:noSale",
+          "title": "오늘은 파는 물건이 없어",
+          "stage": 3,
+          "at": {
+            "x": 21,
+            "y": 14
+          },
+          "when": {
+            "from": 1050,
+            "to": 1080,
+            "days": [
+              0
+            ]
+          },
+          "req": {
+            "seen": [
+              "merchant:story:2"
+            ]
+          },
+          "gain": 6,
+          "opens": 4,
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "장 마감 무렵. 상인이 좌판 위 물건을 하나씩 들어 설명하다가, 들고 있던 공책을 덮는다."
+            },
+            {
+              "speaker": "merchant",
+              "text": "이 천은 남쪽 마을에서 짠 건데… 아, 나 또 물건 얘기만 했네."
+            },
+            {
+              "speaker": "merchant",
+              "text": "오늘 오는 길에 있었던 얘기, 들어 볼래?"
+            }
+          ],
+          "choices": [
+            {
+              "label": "길 이야기를 청한다",
+              "color": "quiet",
+              "memory": "roadTale",
+              "reply": [
+                {
+                  "speaker": "merchant",
+                  "text": "강 건너는 다리 위에서 해 뜨는 걸 봤어. 짐 내려놓고 한참 서 있었지. 오늘 제일 좋았던 게 그거야."
+                }
+              ]
+            },
+            {
+              "label": "내 하루를 이야기한다",
+              "color": "warm",
+              "memory": "myDay",
+              "reply": [
+                {
+                  "speaker": "merchant",
+                  "text": "그래서 그다음엔? …아, 벌써 문 닫을 시간이네. 다음 장날에 이어서 들려줘. 내가 먼저 물어볼게."
+                }
+              ]
+            },
+            {
+              "label": "물건 얘기도 괜찮다고 한다",
+              "color": "honest",
+              "memory": "roadTale",
+              "reply": [
+                {
+                  "speaker": "merchant",
+                  "text": "괜찮다고? …그래도 오늘은 길 얘기 할래. 물건 얘기는 장날마다 하니까."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "romance:merchant:savedSeat",
+          "title": "남겨 둔 자리",
+          "stage": 4,
+          "at": {
+            "x": 45,
+            "y": 62
+          },
+          "when": {
+            "from": 1080,
+            "to": 1140,
+            "days": [
+              0
+            ]
+          },
+          "req": {
+            "story": [
+              {
+                "id": "merchantBox"
+              }
+            ],
+            "seen": [
+              "romance:merchant:noSale"
+            ],
+            "after": {
+              "event": "romance:merchant:noSale",
+              "days": 7
+            }
+          },
+          "gain": 6,
+          "opens": 5,
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "장날 저녁 찻집. 지난번 함께 앉았던 자리에 상인이 먼저 와 있다. 탁자 위엔 가격표 대신 쪽지 한 장."
+            },
+            {
+              "speaker": "merchant",
+              "text": "이번엔 언제 문 닫을지 먼저 정했어. 지난번엔 너무 기다리게 했잖아."
+            },
+            {
+              "speaker": "merchant",
+              "text": "…차 마실래, 아니면 좀 걸을래?"
+            }
+          ],
+          "choices": [
+            {
+              "label": "차 한 잔 하자고 한다",
+              "color": "warm",
+              "memory": "savedSeat",
+              "reply": [
+                {
+                  "speaker": "merchant",
+                  "text": "좋아. 오늘은 내가 고를게. 손잡이 넓은 걸로 두 잔."
+                }
+              ]
+            },
+            {
+              "label": "호숫가를 걷자고 한다",
+              "color": "honest",
+              "memory": "savedSeat",
+              "reply": [
+                {
+                  "speaker": "narration",
+                  "text": "둘은 찻집 앞 물가를 짧게 걸었다. 상인은 물건 얘기를 한 번도 꺼내지 않았다."
+                }
+              ]
+            },
+            {
+              "label": "쪽지를 받아 둔다",
+              "color": "quiet",
+              "memory": "savedSeat",
+              "reply": [
+                {
+                  "speaker": "merchant",
+                  "text": "그거 가져가도 돼. 별건 아니고… 내가 지킨 시간이야."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "romance:merchant:confess",
+          "title": "돌아오는 장날",
+          "stage": 5,
+          "at": {
+            "x": 45,
+            "y": 62
+          },
+          "when": {
+            "from": 1080,
+            "to": 1140,
+            "days": [
+              0
+            ]
+          },
+          "req": {
+            "seen": [
+              "romance:merchant:savedSeat"
+            ],
+            "after": {
+              "event": "romance:merchant:savedSeat",
+              "days": 7
+            }
+          },
+          "gain": 8,
+          "confess": true,
+          "album": "돌아오는 장날",
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "장날 저녁 찻집. 상인이 찻잔을 두 손으로 돌리기만 한다. 오늘은 공책도 꺼내지 않았다."
+            },
+            {
+              "speaker": "merchant",
+              "text": "물건 얘기는 술술 나오는데, 이건 잘 안 나오네."
+            },
+            {
+              "speaker": "merchant",
+              "text": "…너 좋아해. 장사는 계속할 거고 길도 계속 다닐 거야. 그래도 돌아오는 장날마다 너부터 보고 싶어."
+            },
+            {
+              "speaker": "merchant",
+              "text": "대답은 네가 정해. 지금 아니어도 돼."
+            }
+          ],
+          "choices": [
+            {
+              "label": "나도 좋다고 말한다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "merchant",
+                  "text": "…그럼 다음 장날은 손님 말고 너 만나러 오는 거네."
+                }
+              ]
+            },
+            {
+              "label": "길 떠나도 괜찮다고 말한다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "merchant",
+                  "text": "그 말 들으니까 오히려 빨리 돌아오고 싶어지네."
+                }
+              ]
+            },
+            {
+              "label": "지금은 친구로 지내고 싶다고 말한다",
+              "color": "quiet",
+              "stayFriends": true,
+              "reply": [
+                {
+                  "speaker": "merchant",
+                  "text": "응, 알았어. 말해 줘서 고마워. 다음 장날에도 차는 같이 마시자."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "romance:merchant:returnLetter",
+          "title": "도착 소식",
+          "stage": 4,
+          "at": {
+            "x": 21,
+            "y": 14
+          },
+          "when": {
+            "from": 450,
+            "to": 600,
+            "days": [
+              0
+            ]
+          },
+          "req": {
+            "lover": true
+          },
+          "gain": 5,
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "장날 아침. 상인이 좌판을 펴기 전에 접힌 종이 한 장을 꺼낸다. 길에서 쓴 편지다."
+            },
+            {
+              "speaker": "merchant",
+              "text": "물건 얘기는 안 적었어. 잘 도착했다고 쓰고 나니까, 네가 뭐 하고 있을지 궁금해지더라."
+            },
+            {
+              "speaker": "merchant",
+              "text": "부치진 않았어. 직접 읽어 주고 싶어서 들고 왔어."
+            }
+          ],
+          "choices": [
+            {
+              "label": "짧게 답한다",
+              "color": "quiet",
+              "memory": "replyStyle",
+              "reply": [
+                {
+                  "speaker": "merchant",
+                  "text": "짧아도 좋아. 다음 길엔 그 한 줄 들고 갈게."
+                }
+              ]
+            },
+            {
+              "label": "그동안 있었던 일을 길게 들려준다",
+              "color": "warm",
+              "memory": "replyStyle",
+              "reply": [
+                {
+                  "speaker": "merchant",
+                  "text": "그거 다 적어 갈래. 길에서 하나씩 꺼내 읽게."
+                }
+              ]
+            },
+            {
+              "label": "다음엔 그림으로 답하겠다고 한다",
+              "color": "honest",
+              "memory": "replyStyle",
+              "reply": [
+                {
+                  "speaker": "merchant",
+                  "text": "그림? 좋다. 내 길 그림 옆에 끼워 둘게."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "romance:merchant:homeShelf",
+          "title": "비워 둘 선반",
+          "stage": 4,
+          "at": {
+            "x": 21,
+            "y": 14
+          },
+          "when": {
+            "from": 600,
+            "to": 900,
+            "days": [
+              0
+            ]
+          },
+          "req": {
+            "lover": true,
+            "romance": [
+              "engaged"
+            ]
+          },
+          "gain": 5,
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "장날 아침. 상인이 좌판 대신 빈 나무 선반 그림을 펼쳐 놓았다."
+            },
+            {
+              "speaker": "merchant",
+              "text": "집에 여행 짐 놓을 선반 하나만 비워 줄래? 거기 짐이 있으면 나 돌아온 거야."
+            },
+            {
+              "speaker": "merchant",
+              "text": "결혼해도 장사는 계속하고 싶어. 대신 언제 돌아올지는 꼭 알려 줄게. 늦어지면 그것도."
+            }
+          ],
+          "choices": [
+            {
+              "label": "혼자 지낼 날 하고 싶은 걸 말한다",
+              "color": "honest",
+              "memory": "homeShelf",
+              "reply": [
+                {
+                  "speaker": "merchant",
+                  "text": "그날은 너 하고 싶은 거 해. 돌아오면 그 얘기부터 들을게."
+                }
+              ]
+            },
+            {
+              "label": "돌아올 날을 어디에 적을지 정한다",
+              "color": "warm",
+              "memory": "homeShelf",
+              "reply": [
+                {
+                  "speaker": "merchant",
+                  "text": "떠나기 전에 선반에 돌아올 날을 적어 둘게. 바뀌면 고쳐 적고."
+                }
+              ]
+            },
+            {
+              "label": "선반 자리를 같이 고른다",
+              "color": "quiet",
+              "memory": "homeShelf",
+              "reply": [
+                {
+                  "speaker": "merchant",
+                  "text": "문 옆이 좋겠다. 들어오자마자 내려놓게."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "merchant:short:spouseHabit",
+          "title": "귀가 일정표",
+          "stage": 3,
+          "at": {
+            "x": 21,
+            "y": 14
+          },
+          "when": {
+            "from": 450,
+            "to": 600,
+            "days": [
+              0
+            ]
+          },
+          "req": {
+            "rel": [
+              "spouse"
+            ]
+          },
+          "gain": 3,
+          "lines": [
+            {
+              "speaker": "merchant",
+              "text": "집에 귀가 일정표 하나 걸자. 내가 떠나는 날, 돌아오는 날. 네 칸도 만들고."
+            }
+          ],
+          "choices": [
+            {
+              "label": "내 칸에 하고 싶은 걸 적는다",
+              "color": "warm",
+              "memory": "homeSchedule",
+              "reply": [
+                {
+                  "speaker": "merchant",
+                  "text": "좋다. 네 칸이 채워져 있으면 돌아올 때 그거부터 물어볼게."
+                }
+              ]
+            },
+            {
+              "label": "돌아오는 날엔 저녁을 같이 먹자고 적는다",
+              "color": "honest",
+              "memory": "homeSchedule",
+              "reply": [
+                {
+                  "speaker": "merchant",
+                  "text": "돌아오는 날 저녁. 그 줄은 내가 제일 크게 쓸게."
+                }
+              ]
+            },
+            {
+              "label": "칸은 비워 두자고 한다",
+              "color": "quiet",
+              "memory": "homeSchedule",
+              "reply": [
+                {
+                  "speaker": "merchant",
+                  "text": "비워 두자. 그날 만나서 채우면 되지."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "romance:merchant:lateReturn",
+          "title": "밀린 귀가",
+          "stage": 3,
+          "at": {
+            "x": 21,
+            "y": 14
+          },
+          "when": {
+            "from": 600,
+            "to": 900,
+            "days": [
+              0
+            ]
+          },
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "seen": [
+              "merchant:short:spouseHabit"
+            ]
+          },
+          "gain": 3,
+          "lines": [
+            {
+              "speaker": "merchant",
+              "text": "다음 길에 큰 주문이 붙었어. 돌아오는 날이 한 장날 밀릴 것 같아."
+            },
+            {
+              "speaker": "merchant",
+              "text": "…먼저 말하는 거야. 그래서, 돌아오는 날 저녁은 뭐 할까?"
+            }
+          ],
+          "choices": [
+            {
+              "label": "돌아오는 날 저녁을 새로 정한다",
+              "color": "warm",
+              "memory": "lateReturn",
+              "reply": [
+                {
+                  "speaker": "merchant",
+                  "text": "그날 저녁은 내가 찻집 자리 잡아 둘게. 일정표에도 고쳐 적고."
+                }
+              ]
+            },
+            {
+              "label": "다음부턴 귀가 날을 먼저 적자고 한다",
+              "color": "honest",
+              "memory": "lateReturn",
+              "reply": [
+                {
+                  "speaker": "merchant",
+                  "text": "…그게 맞다. 이번 건 받고, 다음부턴 돌아올 날 먼저 적고 주문 받을게."
+                }
+              ]
             }
           ]
         }
@@ -27545,6 +28665,70 @@
               "story:presserBench"
             ]
           }
+        },
+        {
+          "id": "presser:extraMinutes",
+          "text": "십 분만 앉는다고 해 놓고, 요즘은 해를 안 봐요. 보면 일어나야 하니까요.",
+          "depth": 1,
+          "req": {
+            "exp": [
+              "choice:romance:presser:extraMinutes"
+            ]
+          }
+        },
+        {
+          "id": "presser:untimedTea",
+          "text": "시간표의 그 칸, 아직 비어 있어요. 이름 안 붙이길 잘했어요.",
+          "depth": 1,
+          "req": {
+            "memory": [
+              "untimedTea"
+            ]
+          }
+        },
+        {
+          "id": "presser:rel:friend",
+          "text": "오후 쉬는 참에 차 한 잔 할래요? 그늘 의자는 늘 비어 있어요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "friend",
+              "close"
+            ]
+          }
+        },
+        {
+          "id": "presser:rel:lover",
+          "text": "오늘은 찻집 가요. 거긴 걸음 셀 일이 없어서 좋아요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "lover"
+            ]
+          }
+        },
+        {
+          "id": "presser:rel:spouse",
+          "text": "기름틀은 그대로 돌려요. 집에 가면 차 마시는 짧은 시간이 하나 늘었고요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ]
+          }
+        },
+        {
+          "id": "presser:spouse:slot",
+          "text": "오늘 이 시간은 비워 뒀어요. 무슨 일을 할지는 만나서 정해요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "choice:presser:short:spouseHabit"
+            ]
+          }
         }
       ],
       "tastes": {
@@ -27617,7 +28801,8 @@
               ],
               "memory": "layoutDay"
             }
-          ]
+          ],
+          "opens": 2
         },
         {
           "id": "presser:story:2",
@@ -27695,7 +28880,8 @@
               ],
               "memory": "layoutTry"
             }
-          ]
+          ],
+          "opens": 3
         },
         {
           "id": "presser:story:3",
@@ -27929,6 +29115,454 @@
                 }
               ],
               "memory": "lateTea"
+            }
+          ]
+        },
+        {
+          "id": "romance:presser:extraMinutes",
+          "title": "딱 십 분이라더니",
+          "stage": 3,
+          "at": {
+            "x": 45,
+            "y": 17
+          },
+          "when": {
+            "from": 1080,
+            "to": 1140,
+            "weather": [
+              "dry"
+            ]
+          },
+          "req": {
+            "story": [
+              {
+                "id": "presserBench"
+              }
+            ]
+          },
+          "gain": 6,
+          "opens": 4,
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "작업을 마친 저녁, 올리브 그늘의 손님 의자. 기름 짜는 이웃이 곁 상자에 앉는다."
+            },
+            {
+              "speaker": "presser",
+              "text": "딱 십 분만 앉을게요. 항아리 닦을 게 남아서요."
+            },
+            {
+              "speaker": "narration",
+              "text": "이야기가 이어지고, 그늘이 길어진다. 이웃이 문득 해를 본다."
+            },
+            {
+              "speaker": "presser",
+              "text": "…십 분이 아니었네요. 일은 줄일 수 있는데 당신 얘기는 자꾸 다음 이야기가 생겨요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "오늘은 여기까지 하자고 한다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "네, 오늘은 여기까지. 다음엔 십 분이라고 안 할게요."
+                }
+              ]
+            },
+            {
+              "label": "조금 더 앉아 있자고 한다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "항아리는 내일 닦죠. 오늘 남은 그늘은 여기 써요."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "romance:presser:untimedTea",
+          "title": "시간을 재지 않은 차",
+          "stage": 4,
+          "at": {
+            "x": 45,
+            "y": 17
+          },
+          "when": {
+            "from": 1080,
+            "to": 1140,
+            "weather": [
+              "dry"
+            ]
+          },
+          "req": {
+            "seen": [
+              "romance:presser:extraMinutes"
+            ],
+            "after": {
+              "event": "romance:presser:extraMinutes",
+              "days": 3
+            }
+          },
+          "gain": 6,
+          "opens": 5,
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "손님 의자 곁 상자 위에 찻잔 둘. 작업장 벽 시간표의 휴식 칸 하나가 비어 있다."
+            },
+            {
+              "speaker": "presser",
+              "text": "아무것도 안 하는 시간이라고 적으려다 말았어요. 꼭 이름을 붙여야 하나 싶어서요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "차를 마신다",
+              "color": "warm",
+              "memory": "untimedTea",
+              "reply": [
+                {
+                  "speaker": "narration",
+                  "text": "차가 식을 때까지 둘은 별말이 없었다. 이웃은 한 번도 해를 보지 않았다."
+                }
+              ]
+            },
+            {
+              "label": "그늘 밖을 내다본다",
+              "color": "quiet",
+              "memory": "untimedTea",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "올리브 잎이 뒤집힐 때마다 색이 바뀌네요. 늘 보던 건데 처음 보는 것 같아요."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "romance:presser:confess",
+          "title": "빈칸 옆의 이름",
+          "stage": 5,
+          "at": {
+            "x": 45,
+            "y": 17
+          },
+          "when": {
+            "from": 1080,
+            "to": 1140,
+            "weather": [
+              "dry"
+            ]
+          },
+          "req": {
+            "seen": [
+              "romance:presser:untimedTea"
+            ],
+            "after": {
+              "event": "romance:presser:untimedTea",
+              "days": 3
+            }
+          },
+          "gain": 8,
+          "confess": true,
+          "album": "빈칸 옆의 이름",
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "저녁 그늘. 이웃이 벽의 시간표를 떼어 들고 온다. 빈 휴식 칸 옆에 작게 무언가 적혀 있다."
+            },
+            {
+              "speaker": "presser",
+              "text": "빈칸은 그대로 뒀어요. 대신 옆에 당신 이름을 적었어요. …적어 놓고 한참 봤어요."
+            },
+            {
+              "speaker": "presser",
+              "text": "좋아해요. 대답은 서두르지 않아도 돼요. 이 칸은 원래 시간을 안 재는 칸이니까요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "나도 좋다고 말한다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "…그럼 이 칸은 우리 둘 거네요."
+                }
+              ]
+            },
+            {
+              "label": "이름 옆에 내 이름도 적는다",
+              "color": "tease",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "두 줄이 됐네요. 칸이 좁아도 괜찮아요."
+                }
+              ]
+            },
+            {
+              "label": "지금은 친구로 지내고 싶다고 말한다",
+              "color": "quiet",
+              "stayFriends": true,
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "네. 알려 줘서 고마워요. 그늘 의자는 늘 여기 있으니까, 쉬고 싶을 때 와요."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "romance:presser:invitation",
+          "title": "손님 말고 당신",
+          "stage": 4,
+          "at": {
+            "x": 46,
+            "y": 21
+          },
+          "when": {
+            "from": 900,
+            "to": 1140
+          },
+          "req": {
+            "lover": true
+          },
+          "gain": 5,
+          "lines": [
+            {
+              "speaker": "presser",
+              "text": "손님 의자는 누구나 앉아도 돼요. 오늘 같이 있고 싶은 사람은 당신이에요."
+            },
+            {
+              "speaker": "presser",
+              "text": "오늘 저녁엔 어디 가 보고 싶어요? 당신이 고른 데로 가요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "정자에서 노을을 보자고 한다",
+              "color": "warm",
+              "memory": "invitation",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "정자요. 그럼 오늘은 항아리 수 안 세고 갈게요."
+                }
+              ]
+            },
+            {
+              "label": "찻집에 가자고 한다",
+              "color": "honest",
+              "memory": "invitation",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "찻집이요. 잔은 당신이 골라요. 저는 고르면 또 크기부터 재니까요."
+                }
+              ]
+            },
+            {
+              "label": "그냥 여기 앉아 있자고 한다",
+              "color": "quiet",
+              "memory": "invitation",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "여기요? …좋아요. 손님 의자 곁에 우리 자리를 하나 더 놓을게요."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "romance:presser:imperfectHouse",
+          "title": "조금 덜 반듯한 집",
+          "stage": 4,
+          "at": {
+            "x": 46,
+            "y": 21
+          },
+          "when": {
+            "from": 480,
+            "to": 840
+          },
+          "req": {
+            "lover": true,
+            "romance": [
+              "engaged"
+            ]
+          },
+          "gain": 5,
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "작업장 바닥에 집 그림 한 장. 이웃이 물건마다 작은 돌을 놓아 자리를 표시해 두었다."
+            },
+            {
+              "speaker": "presser",
+              "text": "내 방식대로 놓으면 빨라요. 우리 둘이 쓰기 좋은지는 따로 봐야겠네요."
+            },
+            {
+              "speaker": "presser",
+              "text": "그래서 반으로 나눴어요. 이쪽은 정돈 구역, 저쪽은 아무렇게나 둬도 되는 구역."
+            }
+          ],
+          "choices": [
+            {
+              "label": "아무렇게나 둘 구역을 하나 고른다",
+              "color": "warm",
+              "memory": "imperfectHouse",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "창가요? 좋아요. 거긴 제가 줄 안 맞출게요. …노력할게요."
+                }
+              ]
+            },
+            {
+              "label": "정돈 구역 규칙을 묻는다",
+              "color": "honest",
+              "memory": "imperfectHouse",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "항아리랑 잔은 입이 한쪽으로. 그거 하나예요. 나머진 같이 정해요."
+                }
+              ]
+            },
+            {
+              "label": "돌 놓는 걸 거든다",
+              "color": "quiet",
+              "memory": "imperfectHouse",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "그 돌은 그 자리 그대로 둬요. 당신이 놓은 거니까."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "presser:short:spouseHabit",
+          "title": "이름 없는 칸",
+          "stage": 3,
+          "at": {
+            "x": 46,
+            "y": 21
+          },
+          "when": {
+            "from": 480,
+            "to": 840
+          },
+          "req": {
+            "rel": [
+              "spouse"
+            ]
+          },
+          "gain": 3,
+          "lines": [
+            {
+              "speaker": "presser",
+              "text": "집 시간표에 빈칸 하나 남겨 뒀어요. 무슨 일을 할지는 만나서 정해요. 오늘은 뭐가 좋아요?"
+            }
+          ],
+          "choices": [
+            {
+              "label": "차 한 잔",
+              "color": "warm",
+              "memory": "emptySlot",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "차요. 그럼 잔은 오늘 당신이 골라요."
+                }
+              ]
+            },
+            {
+              "label": "아무것도 안 하기",
+              "color": "quiet",
+              "memory": "emptySlot",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "아무것도요. 그게 제일 어려운데, 같이 하면 될 것 같아요."
+                }
+              ]
+            },
+            {
+              "label": "그때 가서 정하자고 한다",
+              "color": "honest",
+              "memory": "emptySlot",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "그때 정하기. 좋아요. 빈칸은 원래 그런 거니까요."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "romance:presser:askFirst",
+          "title": "물어보고 짜는 하루",
+          "stage": 3,
+          "at": {
+            "x": 46,
+            "y": 21
+          },
+          "when": {
+            "from": 900,
+            "to": 1140
+          },
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "seen": [
+              "presser:short:spouseHabit"
+            ]
+          },
+          "gain": 3,
+          "lines": [
+            {
+              "speaker": "presser",
+              "text": "내일 일정, 당신 것까지 제가 다 짜 놨어요. 빨리 가는 순서로… 아, 또 그랬네요."
+            },
+            {
+              "speaker": "presser",
+              "text": "물어보고 정했어야 했는데. 지금부터 같이 고칠래요?"
+            }
+          ],
+          "choices": [
+            {
+              "label": "같이 고친다",
+              "color": "warm",
+              "memory": "askFirst",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "당신 칸은 당신이 적어요. 저는 옆에서 걸음 수만 셀게요."
+                }
+              ]
+            },
+            {
+              "label": "하나만 바꾸자고 한다",
+              "color": "honest",
+              "memory": "askFirst",
+              "reply": [
+                {
+                  "speaker": "presser",
+                  "text": "하나만요? …고마워요. 다음엔 짜기 전에 물어볼게요."
+                }
+              ]
             }
           ]
         }

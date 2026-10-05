@@ -232,7 +232,9 @@
       "gives": {
         "papyrus": 1
       }
-    }
+    },
+    "romanceable": true,
+    "look": "m"
   },
   {
     "id": "smith",
@@ -354,7 +356,9 @@
       "gives": {
         "oil": 1
       }
-    }
+    },
+    "romanceable": true,
+    "look": "m"
   },
   {
     "id": "weaver",
@@ -530,7 +534,9 @@
       "gives": {
         "papyrus": 1
       }
-    }
+    },
+    "romanceable": true,
+    "look": "m"
   },
   {
     "id": "apothecary",

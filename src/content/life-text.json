@@ -1098,51 +1098,51 @@
       "offer": [
         {
           "speaker": "merchant",
-          "text": "길에서 얻은 사본이 한 장 있지요. 보여 드릴까요?"
+          "text": "길에서 얻은 사본이 한 장 있어. 보여 줄까?"
         }
       ],
       "idle": [
         {
           "speaker": "merchant",
-          "text": "먼 데서 좋은 물건을 가져왔어요. 한번 보세요."
+          "text": "먼 데서 좋은 물건 가져왔어. 한번 봐."
         },
         {
           "speaker": "merchant",
-          "text": "이 마을은 늘 조용해서 좋아요."
+          "text": "이 마을은 늘 조용해서 좋아."
         }
       ],
       "warm": [
         {
           "speaker": "merchant",
-          "text": "다음 장날에도 들를게요."
+          "text": "다음 장날에도 들를게."
         }
       ],
       "wet": [
         {
           "speaker": "merchant",
-          "text": "비가 와도 장은 서야지요."
+          "text": "비가 와도 장은 서야지."
         }
       ],
       "help": {
         "label": "짐 정리 돕기",
-        "thanks": "손이 빠르시네요. 이거 한 장 드릴게요."
+        "thanks": "손 빠르네. 이거 한 장 줄게."
       },
-      "giftLiked": "양털이군요! 좋은 값에 팔리겠어요.",
-      "giftPlain": "고맙습니다.",
+      "giftLiked": "양털이네! 좋은 값에 팔리겠다.",
+      "giftPlain": "고마워.",
       "close": [
         {
           "speaker": "merchant",
-          "text": "이 마을에 올 때마다 당신부터 찾게 돼요."
+          "text": "이 마을에 올 때마다 너부터 찾게 돼."
         },
         {
           "speaker": "merchant",
-          "text": "먼 데 가면 당신 이야기를 해요. 부지런한 이웃이 있다고."
+          "text": "먼 데 가면 네 얘기를 해. 부지런한 이웃이 있다고."
         }
       ],
       "visit": [
         {
           "speaker": "merchant",
-          "text": "장에 가는 길에 들렀어요. 파피루스 한 장 드릴게요."
+          "text": "장에 가는 길에 들렀어. 파피루스 한 장 줄게."
         }
       ]
     },
@@ -2820,7 +2820,7 @@
       "lines": [
         {
           "speaker": "merchant",
-          "text": "글 쓰시는 분께는 이게 제일이지요. 파피루스 두 장이에요."
+          "text": "글 쓰는 사람한테는 이게 제일이지. 파피루스 두 장이야."
         }
       ]
     },
@@ -3027,11 +3027,11 @@
       "lines": [
         {
           "speaker": "merchant",
-          "text": "먼 길 떠날 때 먹을 게 모자라요."
+          "text": "먼 길 떠날 때 먹을 게 모자라."
         },
         {
           "speaker": "merchant",
-          "text": "빵 세 개만 챙겨 주면, 다음 장부터 물건을 더 가져올게요."
+          "text": "빵 세 개만 챙겨 주면, 다음 장부터 물건을 더 가져올게."
         }
       ]
     },
@@ -3040,11 +3040,11 @@
       "lines": [
         {
           "speaker": "merchant",
-          "text": "든든하네요! 약속대로 좌판에 새 물건을 놓을게요."
+          "text": "든든하다! 약속대로 좌판에 새 물건 놓을게."
         },
         {
           "speaker": "merchant",
-          "text": "이건 파피루스예요. 글 쓰시는 데 쓰세요."
+          "text": "이건 파피루스야. 글 쓰는 데 써."
         }
       ],
       "album": "넓어진 좌판"
@@ -3054,11 +3054,11 @@
       "lines": [
         {
           "speaker": "merchant",
-          "text": "좌판에 햇빛 가리개를 달고 싶어요."
+          "text": "좌판에 햇빛 가리개를 달고 싶어."
         },
         {
           "speaker": "merchant",
-          "text": "그을음 두 줌과 기름 한 병이면 천에 물을 들일 수 있어요."
+          "text": "그을음 두 줌이랑 기름 한 병이면 천에 물을 들일 수 있어."
         }
       ]
     },
@@ -3067,11 +3067,11 @@
       "lines": [
         {
           "speaker": "merchant",
-          "text": "보세요, 알록달록한 가리개예요!"
+          "text": "봐, 알록달록한 가리개야!"
         },
         {
           "speaker": "merchant",
-          "text": "깔개 하나 드릴게요. 먼 데서 가져온 거예요."
+          "text": "깔개 하나 줄게. 먼 데서 가져온 거야."
         }
       ],
       "album": "좌판 가리개"
@@ -3630,7 +3630,7 @@
       "lines": [
         {
           "speaker": "merchant",
-          "text": "먼 길에서 구한 제일 좋은 깔개예요. 당신 방에 어울릴 거예요."
+          "text": "먼 길에서 구한 제일 좋은 깔개야. 네 방에 어울릴 거야."
         }
       ],
       "album": "떠돌이 상인과 나눈 날들"
@@ -4774,6 +4774,231 @@
       ],
       "album": "결혼 잔치"
     },
+    "romance1:merchant": {
+      "title": "떠돌이 상인의 이야기",
+      "lines": [
+        {
+          "speaker": "merchant",
+          "text": "처음 장사 나섰을 땐 좌판도 없었어. 보자기 하나 펴고 앉았지."
+        },
+        {
+          "speaker": "merchant",
+          "text": "비 오면 보자기째 들고 처마 밑으로 뛰었어. 그래서 지금도 젖지 않은 것부터 펴는 버릇이 있어."
+        }
+      ]
+    },
+    "romance2:merchant": {
+      "title": "떠돌이 상인의 이야기",
+      "lines": [
+        {
+          "speaker": "merchant",
+          "text": "길에선 다들 내 이름보다 물건 이름을 먼저 불러. 그게 편할 때도 있었어."
+        },
+        {
+          "speaker": "merchant",
+          "text": "근데 이 마을에선… 이상하게 물건 얘기를 덜 하게 되네."
+        }
+      ]
+    },
+    "confess:merchant": {
+      "title": "들꽃 다발",
+      "lines": [
+        {
+          "speaker": "merchant",
+          "text": "들꽃? …장사하면서 꽃은 많이 팔아 봤는데, 받는 건 처음이야."
+        },
+        {
+          "speaker": "merchant",
+          "text": "나도 좋아해. 이건 팔 생각 없어. 진짜로."
+        }
+      ],
+      "album": "떠돌이 상인에게 건넨 들꽃"
+    },
+    "propose:merchant": {
+      "title": "약속의 끈",
+      "lines": [
+        {
+          "speaker": "merchant",
+          "text": "약속의 끈… 길에서도 안 풀리게 단단히 맬게."
+        },
+        {
+          "speaker": "merchant",
+          "text": "다음 길 떠나기 전에, 돌아올 날부터 같이 정하자."
+        }
+      ]
+    },
+    "wedding:merchant": {
+      "title": "마을 잔치",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "광장 모닥불 둘레에 등불이 켜지고, 이웃들이 모두 모였다."
+        },
+        {
+          "speaker": "narration",
+          "text": "모닥불 곁에 여러 마을에서 가져온 생활 천 조각이 작게 이어져 걸렸다."
+        },
+        {
+          "speaker": "merchant",
+          "text": "이 천들, 다 내가 다닌 길에서 온 거야. 오늘부턴 돌아오는 길이 하나로 정해졌네."
+        },
+        {
+          "speaker": "narration",
+          "text": "오늘부터 둘이 한집에서 산다."
+        }
+      ],
+      "album": "결혼 잔치"
+    },
+    "romance1:presser": {
+      "title": "기름 짜는 이웃의 이야기",
+      "lines": [
+        {
+          "speaker": "presser",
+          "text": "처음 기름틀 앞에 섰을 땐 하루에 항아리 하나 채우는 것도 버거웠어요."
+        },
+        {
+          "speaker": "presser",
+          "text": "그래서 걸음을 세기 시작했어요. 줄일 수 있는 건 다 줄이려고요."
+        }
+      ]
+    },
+    "romance2:presser": {
+      "title": "기름 짜는 이웃의 이야기",
+      "lines": [
+        {
+          "speaker": "presser",
+          "text": "일은 줄일수록 좋은데, 사람 만나는 시간은 줄이고 싶지 않더라고요."
+        },
+        {
+          "speaker": "presser",
+          "text": "당신이랑 얘기하다 보면 항아리 세는 걸 잊어요."
+        }
+      ]
+    },
+    "confess:presser": {
+      "title": "들꽃 다발",
+      "lines": [
+        {
+          "speaker": "presser",
+          "text": "들꽃… 작업장 말고 집 창가에 둘게요. 기름 냄새 안 배게요."
+        },
+        {
+          "speaker": "presser",
+          "text": "저도 좋아해요. 당신 얘기는 자꾸 다음 이야기가 생겨서요."
+        }
+      ],
+      "album": "기름 짜는 이웃에게 건넨 들꽃"
+    },
+    "propose:presser": {
+      "title": "약속의 끈",
+      "lines": [
+        {
+          "speaker": "presser",
+          "text": "약속의 끈이요? …손이 떨려서 매듭을 못 짓겠어요."
+        },
+        {
+          "speaker": "presser",
+          "text": "같이 정해요. 우리 둘이 쓰기 좋은 자리부터요."
+        }
+      ]
+    },
+    "wedding:presser": {
+      "title": "마을 잔치",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "광장 모닥불 둘레에 등불이 켜지고, 이웃들이 모두 모였다."
+        },
+        {
+          "speaker": "narration",
+          "text": "모닥불 곁 탁자에 올리브 잎 장식과 둘이 고른 찻잔 두 개가 놓였다."
+        },
+        {
+          "speaker": "presser",
+          "text": "오늘은 걸음 안 세요. 끝날 때까지 오래 앉아 있을게요."
+        },
+        {
+          "speaker": "narration",
+          "text": "오늘부터 둘이 한집에서 산다."
+        }
+      ],
+      "album": "결혼 잔치"
+    },
+    "romance1:postman": {
+      "title": "편지 나르는 이웃의 이야기",
+      "lines": [
+        {
+          "speaker": "postman",
+          "text": "처음 이 길을 돌던 날, 길을 잘못 들어 한 집 앞을 몇 번이나 지나갔어요."
+        },
+        {
+          "speaker": "postman",
+          "text": "그날부터 수첩을 썼어요. 지금은 이 마을 길을 눈 감고도 걸어요. …그러진 않지만요."
+        }
+      ]
+    },
+    "romance2:postman": {
+      "title": "편지 나르는 이웃의 이야기",
+      "lines": [
+        {
+          "speaker": "postman",
+          "text": "남의 약속은 하나도 안 놓치는데, 제 약속은 자꾸 뒤로 미뤄요."
+        },
+        {
+          "speaker": "postman",
+          "text": "당신하고 한 약속은 수첩 맨 위에 적어요. 그건 안 미뤄요."
+        }
+      ]
+    },
+    "confess:postman": {
+      "title": "들꽃 다발",
+      "lines": [
+        {
+          "speaker": "postman",
+          "text": "이건 제가 받는 거네요. 받는 건 처음이에요."
+        },
+        {
+          "speaker": "postman",
+          "text": "좋아해요. 이 말은 남한테 부탁하지 않고 직접 하고 싶었어요."
+        }
+      ],
+      "album": "편지 나르는 이웃에게 건넨 들꽃"
+    },
+    "propose:postman": {
+      "title": "약속의 끈",
+      "lines": [
+        {
+          "speaker": "postman",
+          "text": "약속의 끈… 수첩에 적는 대신 손목에 맬게요."
+        },
+        {
+          "speaker": "postman",
+          "text": "이건 제가 지키고 싶은 약속이에요."
+        }
+      ]
+    },
+    "wedding:postman": {
+      "title": "마을 잔치",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "광장 모닥불 둘레에 등불이 켜지고, 이웃들이 모두 모였다."
+        },
+        {
+          "speaker": "narration",
+          "text": "이웃들 손에 봉투 모양으로 접은 초대장이 들려 있다. 오늘은 배달을 쉬는 날이다."
+        },
+        {
+          "speaker": "postman",
+          "text": "초대장은 제가 직접 돌렸어요. 오늘 마지막 목적지는 여기예요."
+        },
+        {
+          "speaker": "narration",
+          "text": "오늘부터 둘이 한집에서 산다."
+        }
+      ],
+      "album": "결혼 잔치"
+    },
     "dateTea": {
       "title": "처음 같이 간 찻집",
       "lines": [
@@ -5108,6 +5333,21 @@
       "confess:poppy": " 파피에게 들꽃 다발을 건넸다.",
       "propose:poppy": " 파피에게 약속의 끈을 건넸다.",
       "wedding:poppy": " 파피와 마을 잔치를 열었다.",
+      "romance1:merchant": " 떠돌이 상인의 옛이야기를 들었다.",
+      "romance2:merchant": " 떠돌이 상인과 오래 이야기했다.",
+      "confess:merchant": " 떠돌이 상인에게 들꽃 다발을 건넸다.",
+      "propose:merchant": " 떠돌이 상인에게 약속의 끈을 건넸다.",
+      "wedding:merchant": " 떠돌이 상인과 마을 잔치를 열었다.",
+      "romance1:presser": " 기름 짜는 이웃의 옛이야기를 들었다.",
+      "romance2:presser": " 기름 짜는 이웃과 오래 이야기했다.",
+      "confess:presser": " 기름 짜는 이웃에게 들꽃 다발을 건넸다.",
+      "propose:presser": " 기름 짜는 이웃에게 약속의 끈을 건넸다.",
+      "wedding:presser": " 기름 짜는 이웃과 마을 잔치를 열었다.",
+      "romance1:postman": " 편지 나르는 이웃의 옛이야기를 들었다.",
+      "romance2:postman": " 편지 나르는 이웃과 오래 이야기했다.",
+      "confess:postman": " 편지 나르는 이웃에게 들꽃 다발을 건넸다.",
+      "propose:postman": " 편지 나르는 이웃에게 약속의 끈을 건넸다.",
+      "wedding:postman": " 편지 나르는 이웃과 마을 잔치를 열었다.",
       "dateTea": " 찻집에서 둘이 차를 마셨다.",
       "dateSunset": " 정자에서 둘이 노을을 보았다.",
       "dateWalk": " 언덕길을 둘이 걸었다.",
