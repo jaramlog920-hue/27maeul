@@ -15,6 +15,7 @@ import { T } from '../../content/text'
 import { loadTheme, setTheme, THEMES, type ThemeId } from '../../app/theme'
 import { useGame, ZOOMS } from '../../store/game-store'
 import { copySoundOn, copyVibrateOn, setCopySound, setCopyVibrate } from '../desk/copy-feel'
+import { copyVoiceOn, setCopyVoice, voiceAvailable } from '../desk/copy-voice'
 
 const C = T.controls
 
@@ -126,6 +127,13 @@ export function Settings() {
         <h3>필사</h3>
         <CopyFeelToggle id="sound" label="펜 긁는 소리" get={copySoundOn} put={setCopySound} />
         <CopyFeelToggle id="vibrate" label="절마다 진동" get={copyVibrateOn} put={setCopyVibrate} />
+        {/* 소리 내어 읽기: 음성 인식이 있는 브라우저에서만 (기본은 끔) */}
+        {voiceAvailable() && (
+          <>
+            <CopyFeelToggle id="voice" label={T.copyFocus.voiceSetting} get={copyVoiceOn} put={setCopyVoice} />
+            <p className="hint">{T.copyFocus.voiceSettingNote}</p>
+          </>
+        )}
       </section>
       <section className="settings-section">
         <h3>{C.theme}</h3>

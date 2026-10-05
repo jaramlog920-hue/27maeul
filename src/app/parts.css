@@ -1865,6 +1865,15 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
   resize: none;
 }
 .copy-input:focus { outline: none; border-color: #a88c5e; }
+/* 소리 내어 읽기 (설정에서 켰을 때만): 작은 단추 하나와 한 줄 안내. 듣는 동안 작은 점이 숨 쉬듯 */
+.copy-voice { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.copy-voice-btn { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; font-size: 13px; background: transparent; border: 2px solid #c9b896; color: #7a6a52; box-shadow: none; }
+.copy-voice-on { border-color: #a88c5e; color: #5b4c38; }
+.copy-voice-dot { width: 8px; height: 8px; border-radius: 50%; background: #b0704f; animation: copy-voice-breathe 1.2s ease-in-out infinite; }
+@keyframes copy-voice-breathe { 0%, 100% { opacity: 0.35; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.1); } }
+.copy-still .copy-voice-dot { animation: none; }
+@media (prefers-reduced-motion: reduce) { .copy-voice-dot { animation: none; } }
+.copy-voice-note { flex: 1 1 200px; margin: 0; font-size: 12px; color: #7a6a52; }
 .copy-done { padding-top: 8vh; }
 .copy-done h2 { font-size: 16px; text-align: center; }
 .copy-god { padding: 10px 12px; background: #fffaf0; border: 2px solid #d8c8a4; border-radius: 4px; }

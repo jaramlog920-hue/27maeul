@@ -122,6 +122,59 @@ export function acceptInput(prev: string, next: string, how: InputHow = {}): str
   return how.target !== undefined && !checkCopy(next, how.target).typo ? next : prev
 }
 
+// ── 소리 내어 읽기 (사용자 결정 2026-10-05) ──
+// 마이크로 한 절을 읽으면 브라우저 음성 인식이 받아 적은 글을 본문과 견준다. 음성 인식은 개역한글의 옛말을 자주 잘못 듣는다 —
+// 그래서 정규화한 두 글이 글자 단위로 이만큼 비슷하면 받는다. 받으면 기록하는 것은 언제나 본문 그대로 (받아 적은 글이 아니다)
+
+/** 소리 내어 읽은 절을 받는 비슷한 정도 (1 − 편집 거리 ÷ 긴 쪽 글자 수, 정규화한 글로) */
+export const VOICE_ACCEPT = 0.9
+
+export interface VoiceCheck {
+  /** 0–1 */
+  similarity: number
+  /** VOICE_ACCEPT 이상이다 */
+  ok: boolean
+  /** 본문(정규화)에서 읽은 글과 맞지 않은 글자 자리 (0부터) — 화면이 그 글자를 살짝 표시한다 */
+  miss: number[]
+}
+
+/** 받아 적은 글을 본문과 견준다 (띄어쓰기·문장부호 무시, 글자 단위 편집 거리) */
+export function checkVoice(transcript: string, target: string): VoiceCheck {
+  const a = [...normalizeCopy(transcript)]
+  const t = [...normalizeCopy(target)]
+  const n = a.length
+  const m = t.length
+  // d[i][j]: a의 앞 i글자 ↔ t의 앞 j글자 편집 거리
+  const d: number[][] = Array.from({ length: n + 1 }, (_, i) => {
+    const row = new Array<number>(m + 1).fill(0)
+    row[0] = i
+    return row
+  })
+  for (let j = 0; j <= m; j++) d[0][j] = j
+  for (let i = 1; i <= n; i++)
+    for (let j = 1; j <= m; j++)
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === t[j - 1] ? 0 : 1))
+  const longer = Math.max(n, m)
+  const similarity = longer === 0 ? 1 : 1 - d[n][m] / longer
+  // 거슬러 올라가며 본문 글자 중 그대로 맞은 것을 찾는다 — 나머지(바뀐 글자·빠진 글자)가 맞지 않은 자리
+  const hit = new Array<boolean>(m).fill(false)
+  let i = n
+  let j = m
+  while (i > 0 && j > 0) {
+    if (a[i - 1] === t[j - 1] && d[i][j] === d[i - 1][j - 1]) {
+      hit[j - 1] = true
+      i--
+      j--
+    } else if (d[i][j] === d[i - 1][j - 1] + 1) {
+      i--
+      j--
+    } else if (d[i][j] === d[i][j - 1] + 1) j--
+    else i--
+  }
+  const miss = hit.flatMap((h, k) => (h ? [] : [k]))
+  return { similarity, ok: m > 0 && similarity >= VOICE_ACCEPT, miss }
+}
+
 /** 본문(원문)에서 정규화한 앞 n글자가 끝나는 자리 — 화면이 맞게 쓴 부분까지 진하게 칠할 때 쓴다 */
 export function originalEnd(text: string, n: number): number {
   if (n <= 0) return 0

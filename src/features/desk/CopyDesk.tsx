@@ -7,12 +7,13 @@ import { chapterGuide, CONTENT, GOD_KEYWORDS, versesOf } from '../../content/cat
 import { fill, roomTitle, T, withAnd, withSubject } from '../../content/text'
 import { setQuiet } from '../../audio/sound'
 import { chaptersOf, groupByRoom } from '../../engine/books'
-import { BLOCKED_INPUT_TYPES, checkCopy, copySpot, copyVerses, normalizeCopy, originalEnd, type CopySpot, type CopyVerse } from '../../engine/copying'
+import { BLOCKED_INPUT_TYPES, checkCopy, checkVoice, copySpot, copyVerses, normalizeCopy, originalEnd, type CopySpot, type CopyVerse } from '../../engine/copying'
 import { deskKidWith, deskPose, spouseReading } from '../../engine/family'
 import { BOOKS, type Book } from '../../engine/types'
 import { COPY_PEN, FAMILY_DESK, ICON_PALETTE } from '../../render/sprites'
 import { partnerName, useGame, type Modal } from '../../store/game-store'
 import { prefersStill, quillScratch, verseBuzz } from './copy-feel'
+import { copyVoiceOn, newRecognizer, transcriptsOf, voiceAvailable, type VoiceRecognizer } from './copy-voice'
 
 const BOOK_NAME = T.quiz.books as Record<string, string>
 const C = T.copyFocus
@@ -120,6 +121,7 @@ function VerseLine({
   label,
   bloom,
   arriving,
+  miss,
 }: {
   text: string
   matched: number
@@ -127,9 +129,35 @@ function VerseLine({
   label: string
   bloom: Bloom | null
   arriving: boolean
+  /** 소리 내어 읽었는데 맞지 않은 글자 자리 (본문 정규화 글자 번호) — 있으면 그 글자들만 틀린 글자처럼 살짝 */
+  miss?: readonly number[] | null
 }) {
   const cut = originalEnd(text, matched)
   const cls = arriving ? 'copy-focus-verse copy-verse-arrive' : 'copy-focus-verse'
+  if (miss && miss.length) {
+    const marked = new Set(miss)
+    const parts: (string | { ch: string; at: number })[] = []
+    let k = -1
+    for (const ch of text) {
+      if (normalizeCopy(ch) !== '') k++
+      if (normalizeCopy(ch) !== '' && marked.has(k)) parts.push({ ch, at: k })
+      else if (typeof parts[parts.length - 1] === 'string') parts[parts.length - 1] += ch
+      else parts.push(ch)
+    }
+    return (
+      <p className={cls} aria-label={label}>
+        {parts.map((p, i) =>
+          typeof p === 'string' ? (
+            p
+          ) : (
+            <span key={i} className="copy-typo" data-voice-miss={p.at}>
+              {p.ch}
+            </span>
+          ),
+        )}
+      </p>
+    )
+  }
   if (!typo)
     return (
       <p className={cls} aria-label={label}>
@@ -405,9 +433,17 @@ function CopyWrite({ book, spot, modal, still }: { book: Book; spot: CopySpot; m
   // 절이 바뀌면(한 절을 기록했다) 입력칸을 그 절의 쓰다 만 입력으로 (렌더 중에 맞춘다 — 깜빡임 없이)
   const key = `${book}:${spot.chapter}:${spot.verse.verse}`
   const [seen, setSeen] = useState(key)
+  // 소리 내어 읽기: 설정에서 켰고 브라우저에 음성 인식이 있을 때만 (기본은 끔)
+  const [voiceOk] = useState(() => voiceAvailable() && copyVoiceOn())
+  const [listening, setListening] = useState(false)
+  const [voiceMiss, setVoiceMiss] = useState<number[] | null>(null)
+  const [voiceNote, setVoiceNote] = useState('')
+  const rec = useRef<VoiceRecognizer | null>(null)
   if (seen !== key) {
     setSeen(key)
     setValue(spot.draft)
+    setVoiceMiss(null)
+    setVoiceNote('')
   }
 
   // 붙여넣기·끌어 놓기·자동완성(고쳐 쓰기 제안)은 들어오기 전에 막는다
@@ -425,6 +461,76 @@ function CopyWrite({ book, spot, modal, still }: { book: Book; spot: CopySpot; m
     const t = setTimeout(copySave, 1500)
     return () => clearTimeout(t)
   }, [value, copySave])
+
+  /** 듣기를 멈춘다 (결과는 버린다) — 나가기·절이 바뀜·단추를 다시 누름 */
+  const stopVoice = () => {
+    const r = rec.current
+    rec.current = null
+    if (r) {
+      r.onresult = null
+      r.onerror = null
+      r.onend = null
+      try {
+        r.abort()
+      } catch {
+        /* 이미 끝났다 */
+      }
+    }
+    setListening(false)
+  }
+  // 절이 바뀌거나 필사 화면을 나가면 듣기를 멈춘다 (조용한 화면 — 저절로 다시 듣지 않는다)
+  useEffect(() => () => stopVoice(), [key])
+  /** 단추를 눌렀을 때만 듣는다. 말을 멈추면 끝 — 받아 적은 글 후보 중 본문과 가장 가까운 것으로 견준다 */
+  const startVoice = () => {
+    stopVoice()
+    const r = newRecognizer()
+    if (!r) return
+    const target = spot.verse.text
+    let heard: string[] = []
+    let judged = false
+    const judge = (texts: string[]) => {
+      if (judged) return
+      judged = true
+      stopVoice()
+      if (!texts.length) {
+        setVoiceNote(C.voiceSilent)
+        return
+      }
+      const best = texts.reduce((a, b) => (checkVoice(b, target).similarity > checkVoice(a, target).similarity ? b : a))
+      const res = useGame.getState().copyVoice(best)
+      if (!res) return
+      if (res.ok) {
+        setVoiceMiss(null)
+        setVoiceNote('')
+      } else {
+        setVoiceMiss(res.miss)
+        setVoiceNote(C.voiceMiss)
+      }
+    }
+    r.onresult = (e) => {
+      const { texts, final } = transcriptsOf(e)
+      if (texts.length) heard = texts
+      if (final) judge(heard)
+    }
+    r.onerror = (e) => {
+      if (e.error === 'aborted') return
+      judged = true
+      setVoiceNote(e.error === 'not-allowed' || e.error === 'service-not-allowed' ? C.voiceDenied : C.voiceSilent)
+      stopVoice()
+    }
+    // 확정 결과 없이 끝났으면 들은 데까지로 견준다
+    r.onend = () => judge(heard)
+    rec.current = r
+    try {
+      r.start()
+    } catch {
+      rec.current = null
+      return
+    }
+    setListening(true)
+    setVoiceMiss(null)
+    setVoiceNote(C.voiceListening)
+  }
 
   const send = (text: string, how: { inputType?: string; composing: boolean }) => {
     if (!how.composing && text === lastSent.current) return
@@ -452,6 +558,7 @@ function CopyWrite({ book, spot, modal, still }: { book: Book; spot: CopySpot; m
     if (inputType && BLOCKED_INPUT_TYPES.includes(inputType)) return
     const text = e.target.value
     const now = composing.current || native.isComposing === true || inputType === 'insertCompositionText'
+    if (voiceMiss) setVoiceMiss(null)
     setValue(text)
     send(text, { inputType, composing: now })
   }
@@ -550,6 +657,7 @@ function CopyWrite({ book, spot, modal, still }: { book: Book; spot: CopySpot; m
           label={fill(C.verseLabel, { book: name, chapter: spot.chapter, verse: spot.verse.verse })}
           bloom={bloom}
           arriving={ghost !== null}
+          miss={voiceMiss}
         />
         {ghost && <VerseGhost key={ghost.id} ghost={ghost} still={still} pageRef={pageRef} />}
       </div>
@@ -584,6 +692,28 @@ function CopyWrite({ book, spot, modal, still }: { book: Book; spot: CopySpot; m
         onPaste={(e) => e.preventDefault()}
         onDrop={(e) => e.preventDefault()}
       />
+      {voiceOk && (
+        <div className="copy-voice">
+          <button
+            type="button"
+            className={listening ? 'copy-voice-btn copy-voice-on' : 'copy-voice-btn'}
+            aria-pressed={listening}
+            onClick={() => {
+              if (!listening) return startVoice()
+              stopVoice()
+              setVoiceNote('')
+            }}
+          >
+            {listening && <span className="copy-voice-dot" aria-hidden="true" />}
+            {listening ? C.voiceStop : voiceMiss || voiceNote ? C.voiceAgain : C.voice}
+          </button>
+          {voiceNote && (
+            <p className="copy-voice-note" role="status">
+              {voiceNote}
+            </p>
+          )}
+        </div>
+      )}
       <CopyGuide book={book} chapter={spot.chapter} />
     </div>
   )

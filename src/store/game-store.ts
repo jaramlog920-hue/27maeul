@@ -4,7 +4,7 @@ import type { DatePlace } from '../engine/romance'
 import { create } from 'zustand'
 import { CONTENT, neighborById, copySourceFor, LETTER_OPENINGS, pieceById, pieceOfQuestion, piecesOf, quizSourceFor } from '../content/catalog'
 import { blanksFor } from '../engine/copy'
-import { acceptInput, copySpot, withGuideFolded, type InputHow } from '../engine/copying'
+import { acceptInput, checkVoice, copySpot, withGuideFolded, type InputHow, type VoiceCheck } from '../engine/copying'
 import { answerDesk, deskAsks, deskKidVerse, doKidAct, eatSupper, familyTrip, type KidAct } from '../engine/family'
 import { currentChapter } from '../engine/offers'
 import { handEase, leveledUp, XP, type StatId } from '../engine/stats'
@@ -427,6 +427,11 @@ interface Store {
    * 한 절을 다 맞게 쓰면 기록하고 다음 절로. 받았으면 true, 받지 않았으면(붙여넣기·자동완성 뭉치) false
    */
   copyType: (text: string, how?: CopyHow) => boolean
+  /**
+   * 필사 소리 내어 읽기: 음성 인식이 받아 적은 글을 지금 절과 견준다 (checkVoice). 받으면 본문 그대로를 손으로 다 쓴 것과
+   * 똑같이 기록한다 (통계·장 완료·하나님 기록·소리 모두 같다). 받지 않으면 아무것도 바꾸지 않는다. 쓰는 화면이 아니면 null
+   */
+  copyVoice: (transcript: string) => VoiceCheck | null
   /** 필사 책상의 화면을 바꾼다 (메뉴·책 고르기·쓰기). 'write'로 갈 때 resume이면 "…부터 이어집니다"를 보인다 */
   copyView: (view: CopyView, resume?: boolean) => void
   /** 필사 책상에서 나간다 — 쓰다 만 입력을 저장하고 마을로 */
@@ -711,6 +716,28 @@ export const useGame = create<Store>((set, get) => {
       get().say(T.ui.saveFailed)
     }
     return game
+  }
+  /**
+   * 필사 한 절 입력을 적는다 (writeVerse): 덜 맞으면 쓰다 만 입력만, 다 맞으면 기록 — 등잔·아이·소리·화면까지.
+   * 손으로 쓴 것(copyType)과 소리 내어 읽은 것(copyVoice)이 같은 길을 지난다
+   */
+  const commitVerse = (game: GameState, book: Book, text: string): boolean => {
+    const { state, result } = writeVerse(game, book, text, CONTENT)
+    if (result.kind === 'notYet') {
+      // 쓰다 만 입력: 상태에만 (화면이 손을 멈추면 copySave로, 나갈 때·절을 마칠 때 저장된다)
+      set({ game: state })
+      return true
+    }
+    if (result.kind === 'none') return true
+    // 밤에 한 절을 적으면 기름이 있을 때 등잔을 켠다 (그림의 불빛 — 없어도 쓴다). 곁에 앉은 아이는 그림 그리다 졸다 잠든다
+    const lit = deskKidVerse(lightLamp(state) ?? state)
+    // 한 절은 펜을 책상에 내려놓는 소리(도장), 한 장을 마치면 책장 넘기는 소리와 마침 소리
+    if (result.kind === 'chapter') {
+      sfx('page')
+      sfx('done')
+    } else sfx('stamp')
+    set({ game: persist(lit), modal: { kind: 'copy', view: result.kind === 'chapter' ? 'done' : 'write', last: result, resume: false } })
+    return true
   }
   // 알림은 프레임 끝에 지금 값을 보고 지운다 — 프레임 시작에 읽은 값을 되쓰면 방금 띄운 알림이 사라진다
   const expireToast = () => {
@@ -1539,22 +1566,19 @@ export const useGame = create<Store>((set, get) => {
         set({ game: saveCopyDraft(game, book, text, CONTENT) })
         return true
       }
-      const { state, result } = writeVerse(game, book, text, CONTENT)
-      if (result.kind === 'notYet') {
-        // 쓰다 만 입력: 상태에만 (화면이 손을 멈추면 copySave로, 나갈 때·절을 마칠 때 저장된다)
-        set({ game: state })
-        return true
-      }
-      if (result.kind === 'none') return true
-      // 밤에 한 절을 적으면 기름이 있을 때 등잔을 켠다 (그림의 불빛 — 없어도 쓴다). 곁에 앉은 아이는 그림 그리다 졸다 잠든다
-      const lit = deskKidVerse(lightLamp(state) ?? state)
-      // 한 절은 펜을 책상에 내려놓는 소리(도장), 한 장을 마치면 책장 넘기는 소리와 마침 소리
-      if (result.kind === 'chapter') {
-        sfx('page')
-        sfx('done')
-      } else sfx('stamp')
-      set({ game: persist(lit), modal: { kind: 'copy', view: result.kind === 'chapter' ? 'done' : 'write', last: result, resume: false } })
-      return true
+      return commitVerse(game, book, text)
+    },
+    copyVoice: (transcript) => {
+      const m = get().modal
+      const game = get().game
+      const book = game.copy.book
+      if (m?.kind !== 'copy' || m.view !== 'write' || !book) return null
+      const spot = copySpot(game, book, CONTENT)
+      if (!spot) return null
+      const check = checkVoice(transcript, spot.verse.text)
+      // 기록하는 것은 언제나 본문 그대로 — 손으로 한 절을 다 맞게 쓴 것과 똑같은 길로
+      if (check.ok) commitVerse(game, book, spot.verse.text)
+      return check
     },
     copyPick: (blank, option) => {
       const m = get().modal

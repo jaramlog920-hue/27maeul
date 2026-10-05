@@ -5436,7 +5436,16 @@
     "closeBook": "책 덮기",
     "nextChapter": "{chapter}장 계속 쓰기",
     "bookDone": "{book} 필사를 마쳤습니다. 제본하면 완성본이 됩니다.",
-    "bind": "제본하기"
+    "bind": "제본하기",
+    "voice": "🎙 소리 내어 읽기",
+    "voiceAgain": "🎙 다시 읽기",
+    "voiceStop": "듣기 멈추기",
+    "voiceListening": "듣고 있어요. 이 절을 천천히 읽어 주세요.",
+    "voiceMiss": "표시한 곳이 조금 다르게 들렸어요. 다시 읽거나 손으로 적어도 괜찮아요.",
+    "voiceDenied": "마이크를 쓸 수 없어요. 브라우저에서 마이크를 허락하면 읽을 수 있어요.",
+    "voiceSilent": "소리가 들리지 않았어요. 다시 읽어 보세요.",
+    "voiceSetting": "소리 내어 읽기(마이크)",
+    "voiceSettingNote": "켜면 필사 화면에서 한 절을 소리 내어 읽어 기록할 수 있어요. 음성은 브라우저의 음성 인식 서버를 거쳐요."
   },
   "word": {
     "open": "말씀",
