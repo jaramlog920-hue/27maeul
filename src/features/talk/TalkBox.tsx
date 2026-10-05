@@ -116,7 +116,6 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
       {block === 'tired' && <p className="hint">{T.ui.helpTired}</p>}
       {block === 'full' && <p className="hint">{T.ui.bagFull}</p>}
       {active && <p className="hint">{fill(T.ui.requestNeeds, { items: itemList(active.needs) })}</p>}
-      {game.gifted.includes(def.id) && <p className="hint">{T.ui.giftDone}</p>}
     </div>
   )
 }

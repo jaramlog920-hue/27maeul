@@ -90,5 +90,6 @@ describe('함께 일하기를 여는 동안 (2026-10-05 사용자)', () => {
     render(<ModalLayer />)
     expect(screen.queryByText(T.ui.helpDone)).not.toBeInTheDocument()
     expect(screen.queryByText(T.work.blocks.done)).not.toBeInTheDocument()
+    expect(screen.queryByText(T.ui.giftDone)).not.toBeInTheDocument()
   })
 })

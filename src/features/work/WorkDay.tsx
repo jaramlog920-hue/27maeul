@@ -19,7 +19,7 @@ export function WorkEntry({ npc = 'carpenter', onOpen }: {npc?:string; onOpen?:(
   const block=resume?null:canWorkDay(game,npc,CONTENT)
   if(block==='away'||block==='notWorking') return null
   if(opened) return <WorkDayView npc={npc} close={()=>setOpened(false)}/>
-  return <><button disabled={block!==null} onClick={()=>onOpen?onOpen():setOpened(true)}>{resume?T.work.resume:T.work.entry}</button>{block && block!=='done' && <p className="hint">{T.work.blocks[block]}</p>}</>
+  return <><button disabled={block!==null} onClick={()=>onOpen?onOpen():setOpened(true)}>{resume?T.work.resume:T.work.entry}</button></>
 }
 export function WorkDayView({npc,close}:{npc:string;close:()=>void}) {
   const game=useGame(s=>s.game) as WorkState
