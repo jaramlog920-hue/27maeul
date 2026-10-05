@@ -38,7 +38,7 @@ import {
   type Gathering,
 } from './bonds'
 import { COVER_FROM, jobOf, SELL_FROM } from './job'
-import { weddingEvening } from './event-scene'
+import { candleKey, candleToBlow, faceToward, weddingEvening } from './event-scene'
 import { FESTIVAL_SPOTS, FIRE, goalFor, isNear, npcTile, placeNpc, stepNpc, type Npc } from './neighbors'
 import { GAIN, heartsOf, MAX_POINTS } from './hearts'
 import { bookDone, bookRoomOpen, chaptersOf, emptyProgress, openDoorsFor, roomOpen, totalChapters, type Progress } from './books'
@@ -276,8 +276,8 @@ export interface GameState {
   act?: PlayerAct
 }
 
-/** 가구를 쓰는 동작 종류 — 그리는 쪽이 furnitureUseFrame/extraUseFrame으로 옮긴다 */
-export type ActKind = 'sit' | 'read' | 'drink' | 'craft' | 'knead' | 'reach' | 'rise'
+/** 가구를 쓰는 동작 종류 — 그리는 쪽이 furnitureUseFrame/extraUseFrame으로 옮긴다 (blowCandle은 생일 빵 촛불 불기 — eventMotionFrame) */
+export type ActKind = 'sit' | 'read' | 'drink' | 'craft' | 'knead' | 'reach' | 'rise' | 'blowCandle'
 export interface PlayerAct {
   kind: ActKind
   /** 남은 시간 (실제 초) */
@@ -290,7 +290,7 @@ export interface PlayerAct {
   at?: Tile
 }
 /** 동작 길이(실제 초): 사용 동작 한두 바퀴 (USE_INFO 프레임 시간 합 1.4~1.9초), 잠에서 깨기는 누운 채 잠깐 + 일어나기 */
-export const ACT_SECONDS: Record<ActKind, number> = { sit: 1.8, read: 1.8, drink: 1.8, craft: 1.9, knead: 1.8, reach: 1.2, rise: 2 }
+export const ACT_SECONDS: Record<ActKind, number> = { sit: 1.8, read: 1.8, drink: 1.8, craft: 1.9, knead: 1.8, reach: 1.2, rise: 2, blowCandle: 1.4 }
 /** 그 위에 앉는 자리 — 바라보는 앞 칸이 이것이면 그 칸 위에 앉아 앞을 본다 */
 const SEAT_PLACES: readonly PlaceId[] = ['bench', 'homeBench', 'pavilion', 'hill']
 
@@ -871,7 +871,7 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
   const act = !s.act || moving || player.path.length > 0 || s.act.left <= dt ? undefined : { ...s.act, left: s.act.left - dt }
   const lived = liveNearby({ ...s, clock, needs, player, target, idle, act, npcs, companion, trails }, now, events)
   if (lived.scenes.length > s.scenes.length) return { state: lived, events }
-  const next: GameState = lived
+  const next: GameState = blowCandle(lived)
 
   // 결혼 잔치 (계획 6): 약혼한 다음 장날 저녁, 광장 모닥불 둘레에 오면 잔치가 열리고 부부가 된다
   if (weddingToday(next) && clock.minute >= FESTIVAL_FROM && clock.minute < FESTIVAL_TO && atWeddingFire(now)) {
@@ -892,6 +892,17 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
     return { state: m.startsWith('festival:') ? train(seen, 'luck', XP.festival) : seen, events }
   }
   return { state: next, events }
+}
+
+/**
+ * 생일 빵 촛불 (계획 17 작업 5): 오늘 선물한 생일 이웃 곁의 빵 옆에 서면 그날 처음 한 번 촛불을 분다 —
+ * 꺼진 초 상태를 그날로 한 번 적어 두고(다시 켜지지 않는다) 촛불 부는 동작만. 보상은 없다
+ */
+function blowCandle(s: GameState): GameState {
+  const b = candleToBlow(s)
+  if (!b) return s
+  const facing = faceToward(playerTile(s), b.at, s.player.facing)
+  return { ...s, flags: { ...s.flags, [candleKey(b.id)]: s.clock.day }, act: { kind: 'blowCandle', left: ACT_SECONDS.blowCandle, total: ACT_SECONDS.blowCandle, facing } }
 }
 
 /** 시간을 한 번에 흘려보낸다 (손일·쉬기) */

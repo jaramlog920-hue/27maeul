@@ -1484,6 +1484,11 @@ function useFrameCanvas(who: Who, facing: Facing, kind: ActKind, elapsed: number
   const opts = { frame: 0 as const, blink, season, ...extra }
   const actorPal = who === 'writer' ? writerPalette(season, extra.avatar) : PALETTE
   const look = lookKey(who, season, extra)
+  // 생일 빵 촛불 불기 (계획 17 작업 5): 한 번 — 마지막 장(꺼진 초)에서 멈춘다
+  if (kind === 'blowCandle') {
+    const f = Math.min(3, Math.floor(elapsed / (total / 4)))
+    return motionCanvas(`ev/candle/${who}/${facing}/${f}/${blink}/${look}`, eventMotionFrame(who, facing, 'blowCandle', f, opts), actorPal, FURNI_PALETTE)
+  }
   if (kind === 'rise' && elapsed >= total - RISE_SECONDS) {
     const f = Math.min(3, Math.floor((elapsed - (total - RISE_SECONDS)) / (RISE_SECONDS / 4)))
     const action: ExtraAction = 'rise'
