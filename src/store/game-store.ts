@@ -1,3 +1,4 @@
+import { clubWeaveDone } from '../engine/clubs'
 // 엔진 상태 ↔ 화면 연결. 창(모달)이 열려 있으면 시간과 걸음이 멈춘다.
 import type { FullAvatar } from '../engine/avatar'
 import type { DatePlace } from '../engine/romance'
@@ -8,10 +9,9 @@ import { acceptInput, checkVoice, copySpot, withGuideFolded, type InputHow, type
 import { answerDesk, deskAsks, deskKidVerse, doKidAct, eatSupper, familyTrip, type KidAct } from '../engine/family'
 import { currentChapter } from '../engine/offers'
 import { handEase, leveledUp, XP, type StatId } from '../engine/stats'
-import type { FixtureLine } from '../engine/fixtures'
 import type { BoardRequest } from '../engine/board'
 import { DESTS, type DestId } from '../engine/travel'
-import { JOB_GIFTS, kidCoins, type ChildMode } from '../engine/child'
+import { JOB_GIFTS, kidCoins, ADULT_JOBS, childStage, type AdultJob, type ChildMode } from '../engine/child'
 import type { TripReward } from '../engine/trip-board'
 import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
 import { bookRoomOpen, openDoorsFor } from '../engine/books'
@@ -19,7 +19,7 @@ import { actsDoorGlows, allShelved, canShelve, payRetry, poolFor, shelve, shelve
 import { DEFAULT_CHOICE, type SpecialChoice } from '../engine/binding'
 import { ALBUM_IDS, fill, itemList, itemName, KID_LETTERS, NEIGHBOR_LINES, roomTitle, SCENES, T, withAnd, withObject, withSubject, callName } from '../content/text'
 import { grapesRipe, isWet, weatherOf } from '../engine/calendar'
-import { cleanName, type Animal } from '../engine/companion'
+import { cleanName, interactPet, petWays, type Animal } from '../engine/companion'
 import {
   adoptStray,
   canCraft,
@@ -51,7 +51,6 @@ import {
   train,
   hallFriendsHere,
   sealBook,
-  orderFixture,
   personLine,
   chooseInEvent,
   giveBouquet,
@@ -142,6 +141,7 @@ import type { Book, ItemId, PlaceId, Rng, Target, Tile } from '../engine/types'
 import { sfx, setAudioMuted } from '../audio/sound'
 
 export type Pending =
+  | { kind: 'club'; id: string }
   | { kind: 'gather'; place: PlaceId }
   | { kind: 'craft'; recipe: RecipeId }
   | { kind: 'help'; neighborId: string }
@@ -161,6 +161,8 @@ export type Modal =
   | { kind: 'settings' }
   | { kind: 'guide' }
   | { kind: 'schedule' }
+  | { kind: 'clubs' }
+  | { kind: 'clubSession'; id: string }
   | { kind: 'talk'; neighborId: string; line: string }
   | { kind: 'passage'; pieceId: string; askLine: boolean; back?: boolean; said?: string }
   /** lineKey: 조각 id 또는 'book:mk' 같은 책 키. back: 적거나 넘긴 뒤 돌아갈 창 ('word' = 📖 말씀 › 서고) */
@@ -375,6 +377,9 @@ interface Store {
   /** 곁에 선 이웃에게 말 걸기 ('대화하기' 단추) */
   talkTo: (id: string) => void
   petCompanion: () => void
+  petActivity: (action: 'play' | 'rest') => void
+  chooseChildCareer: (job: AdultJob) => void
+  setChildResidence: (away: boolean) => void
   keepCompanion: (stay: boolean) => void
   keepChild: (mode: ChildMode) => void
   goSchool: (stat: StatId) => void
@@ -395,7 +400,6 @@ interface Store {
   /** 서고: 봉인용 밀랍으로 봉인 */
   seal: (book: Book) => void
   /** 목수·대장장이에게 기록 설비 부탁 */
-  askFixture: (npc: string, line: FixtureLine) => void
   giveBouquet: (id: string) => void
   giveCord: (id: string) => void
   /** 연인과 함께 가기 (계획 10 작업 4): 찻집·정자·언덕 — 짧은 장면 뒤 한 줄 알림 */
@@ -1002,6 +1006,7 @@ export const useGame = create<Store>((set, get) => {
       next = finishGather(game, p.place)
       if (next !== game) sfx(p.place === 'well' ? 'splash' : 'harvest')
     }
+    else if (p.kind === 'club') next = clubWeaveDone(game,p.id)
     else if (p.kind === 'craft') next = finishCraft(game, p.recipe)
     else if (p.kind === 'help') {
       const def = CONTENT.neighbors.find((n) => n.id === p.neighborId)
@@ -1244,6 +1249,25 @@ export const useGame = create<Store>((set, get) => {
       // 쪼그려 앉아 쓰다듬는 자세가 잠시 보이도록 (renderer: idle.seconds % 12 > 8)
       set({ game: { ...get().game, idle: { seconds: 9, action: null, cooldown: 3 } }, modal: null })
     },
+    petActivity: (action) => {
+      const g = get().game, c = g.companion
+      if (!c || Math.abs(c.x - g.player.x) + Math.abs(c.y - g.player.y) > 2) return
+      const next = interactPet(c, action, g.clock.day, g.clock.minute)
+      if (!next) { get().say(T.pet.wait); return }
+      const ways = petWays(next)
+      get().say(action === 'play' ? ways.energy > 0 ? T.pet.playActive : T.pet.playQuiet : ways.distance > 0 ? T.pet.restApart : T.pet.restNear)
+      set({ game: persist({ ...g, companion: next, idle: { seconds: 9, action: null, cooldown: 3 } }) })
+    },
+    chooseChildCareer: (job) => {
+      const g = get().game, c = g.child
+      if (!c || childStage(c,g.clock.day)!=='adult' || c.jobConfirmed !== false || !ADULT_JOBS.includes(job)) return
+      set({ game: persist({ ...g, child: { ...c, job, jobConfirmed: true } }) })
+    },
+    setChildResidence: (away) => {
+      const g=get().game,c=g.child
+      if(!c || childStage(c,g.clock.day)!=='adult' || !c.job || c.jobConfirmed === false) return
+      set({ game:persist({ ...g,child:{...c,left:away,mode:away?undefined:'roam'} }) })
+    },
     keepCompanion: (stay) => {
       const g = setCompanionStay(get().game, stay)
       set({ game: persist(g), modal: null })
@@ -1314,7 +1338,7 @@ export const useGame = create<Store>((set, get) => {
       const m = get().modal
       if (m?.kind !== 'mini' || count(get().game.inv, 'handyKit') === 0) return
       sfx('hit')
-      set({ game: finishPending(get().game, m.pending, finishNow(m.state)), modal: null })
+      set({ game: finishPending(get().game, m.pending, finishNow(m.state)), modal: m.pending.kind === 'club' ? { kind: 'clubSession', id: m.pending.id } : null })
     },
 
     miniTap: (itemId) => {
@@ -1323,7 +1347,7 @@ export const useGame = create<Store>((set, get) => {
       if (isDone(m.state)) {
         // 길게 누르기의 마지막 뗌은 창을 닫지 않는다 (닫기 단추로)
         if (m.state.kind === 'hold' && itemId === HOLD_UP) return
-        set({ game: finishPending(get().game, m.pending, m.state), modal: null })
+        set({ game: finishPending(get().game, m.pending, m.state), modal: m.pending.kind === 'club' ? { kind: 'clubSession', id: m.pending.id } : null })
         return
       }
       const state = tapMini(m.state, itemId)
@@ -1390,12 +1414,6 @@ export const useGame = create<Store>((set, get) => {
       sfx('gift')
       set({ game: persist(next) })
       get().say(T.care.sealed)
-    },
-    askFixture: (npc, line) => {
-      const next = orderFixture(get().game, line)
-      if (!next) return
-      sfx('gift')
-      set({ game: persist(next), modal: { kind: 'talk', neighborId: npc, line: T.fixtures.ordered } })
     },
     drinkTea: () => {
       const next = drinkTea(get().game)

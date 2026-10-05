@@ -8,7 +8,9 @@ import { weatherOf } from '../../engine/calendar'
 import { seasonOf } from '../../engine/clock'
 import { dislikesOf, isSuitor, notYet, type GameState, type JournalEntry } from '../../engine/game'
 import { heartsOf } from '../../engine/hearts'
-import { birthdayLabel, isBirthday, knownTastes, NO_NOTEBOOK, SLOT_LABEL, SLOTS, spotName } from '../../engine/notebook'
+import { birthdayLabel, isBirthday, knownTastes, knownLifestyleTastes, noteTasteProposal, canProposeTea, sharedMemories, NO_NOTEBOOK, SLOT_LABEL, SLOTS, spotName } from '../../engine/notebook'
+import { availability, scheduleAppt } from '../../engine/plans'
+import { saveGame } from '../../engine/save'
 import { NO_LIFE } from '../../engine/people'
 import type { ItemId, NeighborDef, Season } from '../../engine/types'
 import { neighborPortrait } from '../../render/renderer'
@@ -196,6 +198,13 @@ function NeighborPage({ game, def }: { game: GameState; def: NeighborDef }) {
   const promises = (game.life ?? NO_LIFE).promises.filter((p) => p.npc === def.id)
   const birthday = birthdayLabel(def.id)
   const got = notebook.got?.[def.id] ?? []
+  const lifestyle = knownLifestyleTastes(notebook, def.id)
+  const memories = sharedMemories(game.life ?? NO_LIFE, def.id)
+  const memoryList = (list: typeof memories) => <ul>{list.map((e) => {
+    const scene = SCENES[e.id] ?? (e.kind === 'story' ? SCENES[`ev:${e.id.slice(6)}`] : undefined)
+    const title = scene?.title ?? (T.taste.kinds as Record<string, string>)[e.kind] ?? T.taste.memories
+    return <li key={e.id}>{title} · {e.first === null ? T.taste.unknownDate : fill(T.ui.day, { day: e.first })}{e.count > 1 ? ` · ${e.count}번` : ''}</li>
+  })}</ul>
   return (
     <dl className="nb-page">
       <dt>마음</dt>
@@ -226,6 +235,11 @@ function NeighborPage({ game, def }: { game: GameState; def: NeighborDef }) {
           ))}
         </ul>
       </dd>
+      <dt>{T.taste.title}</dt>
+      <dd>{lifestyle.length ? <ul>{lifestyle.map((label) => <li key={label}>{label}</li>)}</ul> : <span className="nb-none">{T.taste.unknown}</span>}</dd>
+      <dt>{T.taste.memories}</dt>
+      <dd>{memories.length ? <>{memoryList(memories.slice(0, 3))}{memories.length > 3 && <details><summary>{T.taste.all} ({memories.length})</summary>{memoryList(memories)}</details>}</> : <span className="nb-none">{T.taste.empty}</span>}</dd>
+      <dd><TasteProposal game={game} npc={def.id} /></dd>
       <dt>{T.ui.gifts}</dt>
       <dd>{got.length ? <Taste items={got} /> : <span className="nb-none">아직 없음</span>}</dd>
       <dt>보여 준 사본</dt>
@@ -244,6 +258,36 @@ function NeighborPage({ game, def }: { game: GameState; def: NeighborDef }) {
       )}
     </dl>
   )
+}
+
+/** 이미 함께 즐긴 차 자리를 다시 제안한다. 실제 일정 엔진이 가능한 때만 보여 준다. */
+function TasteProposal({ game, npc }: { game: GameState; npc: string }) {
+  const [reply, setReply] = useState('')
+  const n = game.notebook ?? NO_NOTEBOOK
+  const eligible = canProposeTea(n, npc, game.clock.day, game.hearts[npc] ?? 0,
+    (game.plans?.appts ?? []).some((a) => a.state === 'done' && !!a.attended && a.remembered && a.activity === 'tea' && !!a.startedWith?.includes(npc)))
+  let proposal: ReturnType<typeof scheduleAppt> | null = null
+  if (eligible) {
+    for (let day = game.clock.day + 1; day <= game.clock.day + 7 && !proposal; day++) {
+      for (const from of [10 * 60, 14 * 60, 18 * 60]) {
+        if (availability(game, npc, day, from, from + 60, CONTENT) !== 'ok') continue
+        const result = scheduleAppt(game, { kind: 'event', activity: 'tea', day, from, to: from + 60, place: 'teaTable', members: [npc] }, CONTENT)
+        if (result.appt) { proposal = result; break }
+      }
+    }
+  }
+  if (!proposal?.appt) return reply ? <p role="status">{reply}</p> : null
+  const appt = proposal.appt
+  const answer = (accept: boolean) => {
+    const current = useGame.getState().game
+    const result = accept ? scheduleAppt(current, { kind: 'event', activity: 'tea', day: appt.day, from: appt.from, to: appt.to, place: appt.place, members: [npc] }, CONTENT) : null
+    if (accept && !result?.appt) { setReply(T.taste.busy); return }
+    const next = { ...(result?.state ?? current), notebook: noteTasteProposal(current.notebook ?? NO_NOTEBOOK, npc, current.clock.day) }
+    saveGame(next)
+    useGame.setState({ game: next })
+    setReply(accept ? T.taste.accepted : T.taste.later)
+  }
+  return <div><p>{T.taste.proposal}</p><p>{fill(T.ui.day, { day: appt.day })} · {appt.from / 60}시 · 찻집</p><button onClick={() => answer(true)}>{T.taste.accept}</button><button onClick={() => answer(false)}>{T.taste.later}</button>{reply && <p role="status">{reply}</p>}</div>
 }
 
 const FACE = 4

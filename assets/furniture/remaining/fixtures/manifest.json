@@ -1,0 +1,494 @@
+{
+  "tileSize": 16,
+  "columns": 4,
+  "cellWidth": 40,
+  "cellHeight": 40,
+  "directions": [
+    "down",
+    "up",
+    "left",
+    "right"
+  ],
+  "items": [
+    {
+      "id": "bed-down",
+      "file": "bed-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 12,
+      "y": 12
+    },
+    {
+      "id": "bed-up",
+      "file": "bed-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 52,
+      "y": 12
+    },
+    {
+      "id": "bed-left",
+      "file": "bed-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 92,
+      "y": 12
+    },
+    {
+      "id": "bed-right",
+      "file": "bed-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 12
+    },
+    {
+      "id": "desk-down",
+      "file": "desk-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 12,
+      "y": 52
+    },
+    {
+      "id": "desk-up",
+      "file": "desk-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 52,
+      "y": 52
+    },
+    {
+      "id": "desk-left",
+      "file": "desk-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 92,
+      "y": 52
+    },
+    {
+      "id": "desk-right",
+      "file": "desk-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 52
+    },
+    {
+      "id": "workbench-down",
+      "file": "workbench-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 12,
+      "y": 92
+    },
+    {
+      "id": "workbench-up",
+      "file": "workbench-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 52,
+      "y": 92
+    },
+    {
+      "id": "workbench-left",
+      "file": "workbench-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 92,
+      "y": 92
+    },
+    {
+      "id": "workbench-right",
+      "file": "workbench-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 92
+    },
+    {
+      "id": "hearth-down",
+      "file": "hearth-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 12,
+      "y": 132
+    },
+    {
+      "id": "hearth-up",
+      "file": "hearth-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 52,
+      "y": 132
+    },
+    {
+      "id": "hearth-left",
+      "file": "hearth-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 92,
+      "y": 132
+    },
+    {
+      "id": "hearth-right",
+      "file": "hearth-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 132
+    },
+    {
+      "id": "loom-down",
+      "file": "loom-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 12,
+      "y": 172
+    },
+    {
+      "id": "loom-up",
+      "file": "loom-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 52,
+      "y": 172
+    },
+    {
+      "id": "loom-left",
+      "file": "loom-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 92,
+      "y": 172
+    },
+    {
+      "id": "loom-right",
+      "file": "loom-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 172
+    },
+    {
+      "id": "cradle-down",
+      "file": "cradle-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 12,
+      "y": 212
+    },
+    {
+      "id": "cradle-up",
+      "file": "cradle-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 52,
+      "y": 212
+    },
+    {
+      "id": "cradle-left",
+      "file": "cradle-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 92,
+      "y": 212
+    },
+    {
+      "id": "cradle-right",
+      "file": "cradle-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 212
+    },
+    {
+      "id": "fixedJar-down",
+      "file": "fixedJar-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 12,
+      "y": 252
+    },
+    {
+      "id": "fixedJar-up",
+      "file": "fixedJar-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 52,
+      "y": 252
+    },
+    {
+      "id": "fixedJar-left",
+      "file": "fixedJar-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 92,
+      "y": 252
+    },
+    {
+      "id": "fixedJar-right",
+      "file": "fixedJar-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 252
+    },
+    {
+      "id": "fixedPlant-down",
+      "file": "fixedPlant-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 12,
+      "y": 292
+    },
+    {
+      "id": "fixedPlant-up",
+      "file": "fixedPlant-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 52,
+      "y": 292
+    },
+    {
+      "id": "fixedPlant-left",
+      "file": "fixedPlant-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 92,
+      "y": 292
+    },
+    {
+      "id": "fixedPlant-right",
+      "file": "fixedPlant-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 292
+    },
+    {
+      "id": "wideDesk-down",
+      "file": "wideDesk-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 12,
+      "y": 332
+    },
+    {
+      "id": "wideDesk-up",
+      "file": "wideDesk-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 52,
+      "y": 332
+    },
+    {
+      "id": "wideDesk-left",
+      "file": "wideDesk-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 92,
+      "y": 332
+    },
+    {
+      "id": "wideDesk-right",
+      "file": "wideDesk-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 332
+    },
+    {
+      "id": "sootCatcher-down",
+      "file": "sootCatcher-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 12,
+      "y": 372
+    },
+    {
+      "id": "sootCatcher-up",
+      "file": "sootCatcher-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 52,
+      "y": 372
+    },
+    {
+      "id": "sootCatcher-left",
+      "file": "sootCatcher-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 92,
+      "y": 372
+    },
+    {
+      "id": "sootCatcher-right",
+      "file": "sootCatcher-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 372
+    }
+  ]
+}

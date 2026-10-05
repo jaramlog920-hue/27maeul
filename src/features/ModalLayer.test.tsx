@@ -252,7 +252,7 @@ describe('책상', () => {
     expect(screen.getByLabelText('따라 적기')).toBeEnabled()
   })
 
-  it('밤에 기름이 있으면 앉을 때가 아니라 한 절을 적을 때 등잔을 켠다', async () => {
+  it('밤에 한 절을 적으면 등잔을 켜고 기름은 소비하지 않는다', async () => {
     reset({ ...at(20 * 60), inv: { oil: 1 }, copy: { book: 'lk', at: {}, legacy: {} } })
     render(<ModalLayer />)
     act(() => useGame.getState().tap(PLACES.desk.tiles[0]))
@@ -261,7 +261,7 @@ describe('책상', () => {
     act(() => useGame.getState().copyView('write'))
     act(() => void useGame.getState().copyType(versesOf('눅 1:1')[0].text))
     expect(useGame.getState().game.copyStats.verses).toBe(1)
-    expect(useGame.getState().game.inv.oil ?? 0).toBe(0)
+    expect(useGame.getState().game.inv.oil ?? 0).toBe(1)
     expect(useGame.getState().game.lampLitDay).toBe(1)
   })
 })

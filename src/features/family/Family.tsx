@@ -1,7 +1,8 @@
 // 메뉴 → 가족 (2026-09-30 사용자): 배우자·아이·동물 친구와 가족 앨범을 한 화면에
 import { neighborById } from '../../content/catalog'
 import { T } from '../../content/text'
-import { childMode, childStage, type AdultJob, type ChildStage } from '../../engine/child'
+import { ADULT_JOBS, childMode, childStage, type AdultJob, type ChildStage } from '../../engine/child'
+import { useState } from 'react'
 import { heartsOf } from '../../engine/hearts'
 import { closeHearts } from '../../engine/family'
 import { STAT_IDS, statScore, type StatId } from '../../engine/stats'
@@ -10,22 +11,17 @@ import { useGame } from '../../store/game-store'
 const STAT_NAME = T.stats.names as Record<StatId, string>
 const STAGE_NAME: Record<ChildStage, string> = { baby: '아기', toddler: '걷는 아이', helper: '돕는 아이', adult: '어른' }
 export const JOB_NAME: Record<AdultJob, string> = {
-  scribe: '마을 필경사',
-  scholar: '먼 도시의 학자',
-  woodworker: '마을 목수',
-  shipwright: '큰 항구의 배 목수',
-  teaKeeper: '마을 찻집 주인',
-  merchant: '먼 길 다니는 상인',
-  fisher: '마을 어부',
-  sailor: '먼 바다의 뱃사람',
-  herbalist: '마을 약초꾼',
-  traveler: '세상을 도는 나그네',
+  scribe: '서기', scholar: '학자', woodworker: '목수', shipwright: '배 목수',
+  teaKeeper: '찻집 일꾼', merchant: '상인', fisher: '어부', sailor: '뱃사람',
+  herbalist: '약초꾼', traveler: '여행자', cook: '요리사', painter: '화가',
+  weaver: '직조가', gardener: '원예가', potter: '도예가', instrumentMaker: '악기 제작자',
 }
 const MODE_NAME = { follow: '데리고 다니는 중', home: '집에 있어요', roam: '혼자 마을을 다녀요', cradle: '요람에서 자요', away: '먼 곳에 살아요' } as const
 const STAGE_NAMES_ROMANCE = { dating: '사귀는 중', engaged: '약혼', married: '부부' } as Record<string, string>
 
 export function Family() {
   const game = useGame((s) => s.game)
+  const [careerChoice, setCareerChoice] = useState<AdultJob | null>(null)
   const { closeModal, open, keepCompanion } = useGame.getState()
   const day = game.clock.day
   const r = game.romance
@@ -69,6 +65,22 @@ export function Family() {
             </p>
           )}
           {!kid.job && childStage(kid, day) !== 'baby' && <button onClick={() => open({ kind: 'kidTime' })}>{T.family.time.open}</button>}
+          {Object.keys(kid.interests ?? {}).length > 0 && <p>함께 경험한 관심 분야: {ADULT_JOBS.filter(j => (kid.interests?.[j] ?? 0) > 0).map(j => JOB_NAME[j]).join(' · ')}</p>}
+          {kid.job && kid.jobConfirmed === false && (
+            <div className="actions">
+              <p>{kid.name}이 관심과 잘하는 일을 살펴보고 {JOB_NAME[kid.job]} 일을 제안했어요. 함께 진로를 정해요.</p>
+              <label>진로 <select value={careerChoice ?? kid.job} onChange={e => setCareerChoice(e.target.value as AdultJob)}>
+                {ADULT_JOBS.map(j => <option key={j} value={j}>{JOB_NAME[j]}{(kid.interests?.[j] ?? 0) > 0 ? ' · 함께 경험함' : ''}</option>)}
+              </select></label>
+              <button onClick={() => useGame.getState().chooseChildCareer(careerChoice ?? kid.job!)}>이 진로로 함께 결정하기</button>
+            </div>
+          )}
+          {kid.job && kid.jobConfirmed !== false && childStage(kid, day) === 'adult' && (
+            <div className="actions">
+              <p>직업과 사는 곳은 따로 정할 수 있어요.</p>
+              <button onClick={() => useGame.getState().setChildResidence(!kid.left)}>{kid.left ? '마을로 돌아와 살기' : '마을 밖에서 살아보기'}</button>
+            </div>
+          )}
           <ul className="fam-stats">
             {STAT_IDS.map((id) => (
               <li key={id}>

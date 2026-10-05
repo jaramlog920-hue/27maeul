@@ -1,0 +1,59 @@
+남은 모든 배치 가구·고정 가구 — 4방향 도트
+작성일: 2026-10-05
+
+범위
+기존 furniture-defs.ts의 배치 가구 39종 중 앞서 제작한 20종을 제외한 19종.
+추가로 아직 제작하지 않은 고정 가구 및 설치물 10종.
+이번 제작: 29종 × 4방향 = 개별 PNG 116개.
+이전에 만든 20종과 그 4방향 원본은 수정하지 않았습니다.
+
+배치 가구 19종 (이 폴더)
+rug 큰 깔개, pot 화분, vase 꽃병, jar 항아리, candle 초,
+bowl 그릇, bird 나무 새 장식, barrel 나무 통, wheel 물레,
+lampStand 등잔대, bigPlant 큰 화분, roundRug 둥근 깔개,
+shell 소라 장식, purpleRug 자주색 깔개, scrolls 두루마리,
+inkpot 펜꽂이, dryFlowers 마른 꽃, hourglass 모래시계, inkJar 잉크 항아리.
+
+고정 가구·설치물 10종 (fixtures 폴더)
+bed 침대, desk 필사 책상, workbench 작업대, hearth 화덕,
+loom 베틀, cradle 요람, fixedJar 고정 항아리, fixedPlant 고정 화분,
+wideDesk 넓은 책상용 도트, sootCatcher 그을음 받이.
+서고의 말씀 선반·여정 판·카드 판은 진행 표시가 있는 별도 콘텐츠이며 이번 생활 가구 교체 범위에 넣지 않았습니다.
+집 벽·창·문·야외 생산 시설은 건축·장소 그림으로 구분합니다.
+
+파일과 원본
+가구ID-down/up/left/right.png: 16픽셀 타일의 실제 투명 PNG.
+각 폴더의 atlas.png: 4열, 가구당 한 행, 앞·뒤·왼쪽·오른쪽 순서.
+preview-3x.png: 동일 픽셀을 세 배 확대한 확인용 그림.
+manifest.json: 방향별 이미지 크기, 점유 칸과 시트 좌표.
+src/render/remaining-furniture-art.ts:
+REMAINING_FURNITURE_DIRECTIONS = 배치 가구 19종 네 방향.
+REMAINING_FIXTURE_DIRECTIONS = 고정 가구와 설치물 10종 네 방향.
+기존 20종 네 방향은 src/render/home-space-directions.ts에 있습니다.
+
+현재 코드 연결
+배치 가구 19종의 기본 그림은 FURNITURE_ART에 연결했습니다.
+지도 고정 b,d,k,h,W,g,p는 이번 앞면 원본에 연결했습니다.
+요람·넓은 책상·그을음 받이는 기존 특수 오버레이와 위치 규칙을 보존하며 원본만 준비했습니다.
+방향 변경 UI·배치·저장 기능과 사용 모션은 추가하지 않았습니다.
+이번 변경은 로컬 코드입니다. 운영 배포는 별도 요청 후 진행합니다.
+
+4방향 연결 시
+1. 기존 20종과 새 19종 방향 레코드를 합치면 배치 가구 39종을 모두 선택할 수 있습니다.
+2. 방향 상태는 down/up/left/right를 사용합니다.
+3. 큰 깔개 rug는 앞뒤 3×2칸, 좌우 2×3칸.
+   purpleRug는 앞뒤 2×1칸, 좌우 1×2칸.
+   roundRug는 모든 방향 2×2칸. 나머지 신규 배치 가구는 1×1칸.
+4. 평평한 깔개만 무늬를 평면상 회전했습니다. 세워진 물건은 옆면·뒷면을 별도로 그렸습니다.
+5. 대칭 물건은 방향별 그림이 같을 수 있습니다. 네 방향 키와 파일은 모두 있습니다.
+6. 고정 가구는 기존 상호작용 위치·불꽃·아이·책상 흔적을 함께 이동하거나 방향별로 조정해야 합니다.
+   현재는 기존 한 칸을 유지한 원본입니다. 단순히 그림만 돌리고 사용 위치를 그대로 두지 마세요.
+7. 넓은 책상의 기존 3px 옆 확장과 서는 자리 규칙은 별도로 확인해야 합니다.
+   새 wideDesk는 기본 한 칸 원본이며 기존 확장 오버레이를 자동으로 대체하지 않습니다.
+8. 회전 시 벽·문·통행·표면 소품·점유 칸 충돌과 저장 호환을 검증하세요.
+9. 옛 방향 누락 기본값은 이번 19종 down입니다. 이전 20종은 기존 legacyFacing 안내를 따르세요.
+10. 화덕 불꽃·촛불의 새 애니메이션 및 캐릭터 사용 모션은 별도 작업입니다.
+
+재생성
+node scripts/export-home-space-art.mjs --remaining
+node scripts/export-home-space-art.mjs --fixtures

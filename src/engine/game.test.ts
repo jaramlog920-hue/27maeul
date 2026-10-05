@@ -288,21 +288,22 @@ describe('손일', () => {
 describe('책상', () => {
   const chapter1 = piecesOf('lk').filter((p) => p.chapter === 1).map((p) => p.id)
   const ready = (): GameState => setArrangement({ ...chooseBook(newGame(CONTENT), 'lk', CONTENT), collected: chapter1 }, 'lk', 1, [...chapter1])
-  it('낮에는 등잔이 필요 없고, 밤에는 기름이 든다', () => {
+  it('밤에도 기름 없이 등잔을 켜고 재고를 소비하지 않는다', () => {
     const s = ready()
     expect(lightLamp(s)).toBe(s)
     const night = at(s, 20 * 60)
-    expect(lightLamp(night)).toBeNull()
+    expect(lightLamp(night).lampLitDay).toBe(1)
     const lit = lightLamp({ ...night, inv: { oil: 1 } })!
-    expect(lit.inv.oil).toBeUndefined()
+    expect(lit.inv.oil).toBe(1)
     expect(lit.lampLitDay).toBe(1)
     expect(lightLamp(lit)).toBe(lit)
   })
-  it('밝은 등잔이면 기름 하나로 두 밤', () => {
+  it('등잔 설비와 관계없이 매일 재료 없이 조명을 켠다', () => {
     const s = lightLamp({ ...at(ready(), 20 * 60), inv: { oil: 1, brightLamp: 1 } })!
-    expect(s.lampFuel).toBe(1)
+    expect(s.lampFuel).toBe(0)
     const next = lightLamp(at(s, 20 * 60, 2))!
     expect(next.lampFuel).toBe(0)
+    expect(next.inv.oil).toBe(1)
     expect(next.lampLitDay).toBe(2)
   })
   it('장을 기록하는 데 재료가 들지 않는다 (계획 14)', () => {

@@ -1,3 +1,4 @@
+import lifeText from '../../content/life-text.json'
 import { useEffect } from 'react'
 import { CONTENT } from '../../content/catalog'
 import { formatTime } from '../../engine/clock'
@@ -13,7 +14,8 @@ function useEvents() {
   const today = useGame((s) => s.game.today)
   const flags = useGame((s) => s.game.flags)
   const notebook = useGame((s) => s.game.notebook)
-  return { day, minute, events: scheduledEvents({ clock: { day, minute }, today, flags, notebook }, CONTENT) }
+  const plans = useGame((s) => s.game.plans)
+  return { day, minute, events: scheduledEvents({ clock: { day, minute }, today, flags, notebook, plans }, CONTENT) }
 }
 
 /** 상단에 늘 보이는 "다음 일정" 한 줄. 누르면 전체 일정 창 */
@@ -61,6 +63,7 @@ export function ScheduleDialog() {
       </ul>
       <p className="hint">이웃 방문·초대·소풍은 그날 아침에 정해지면 표시돼요. 시작 30분 전과 시작할 때 알려 드려요.</p>
       <div className="actions">
+        <button onClick={() => useGame.getState().open({ kind: 'clubs' })}>{lifeText.clubs.title}</button>
         <button onClick={close}>닫기</button>
       </div>
     </div>

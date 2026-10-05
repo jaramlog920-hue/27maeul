@@ -1,0 +1,57 @@
+27마을 — 추가 이벤트 모션 연결 안내
+위치: assets/events/additional/
+원본: src/render/event-life-motion.ts
+재생: 미리보기.html
+재생성: node scripts/export-event-life-motion.mjs
+
+분량
+17개 동작 × 성인/어린이 × 4방향 × 4프레임 = 544개 인물 프레임.
+전체 시트 + 인물 + 뒤 소품 + 앞 소품 시트 제공.
+둘이 음식 나누기/어른·아이 손잡기 배치 예시 2종 × 4방향 × 4프레임 = 32개.
+소품 상태 5종: 꺼진 생일 초, 풀린 선물, 덮인 작품, 접힌 천, 빈 접시.
+
+동작
+clap 박수 / blowCandle 촛불 불기 / shareFood 음식 나누기 /
+carryParcel 꾸러미 들고 걷기 / hangDecor 장식 걸기 / dance 잔치 춤 /
+smile 웃기 / nod 고개 끄덕이기 / taste 음식 맛보기 /
+holdBaby 아기 안기 / walkHand 아이와 손잡고 걷기 /
+spreadCloth 천 펼치기 / placePlate 접시 놓기 / clearDecor 장식 걷기 /
+unwrapGift 선물 풀기 / unveil 작품 공개하기 / useGift 받은 물건 살펴보기.
+웃기는 작은 도트에서 눈을 부드럽게 감는 표현. 주인공 감상을 대사로 대신하지 않는다.
+
+이벤트 연결
+생일: blowCandle + candleOut, clap. 기존 birthdayBread가 켜진 상태.
+집들이: carryParcel/shareFood/placePlate/hangDecor, 기존 인사/차 동작.
+작품 발표: unveil + artworkCovered/기존 artworkComplete, clap/nod.
+공동 완공: unveil/clap/dance. 기존 구조물 상태와 마무리 리본 재사용.
+첫 심부름: carryParcel + 기존 give/take. 같은 꾸러미가 두 번 지급되지 않게 실제 소유 전환.
+가족 나들이: walkHand/spreadCloth/shareFood/holdBaby.
+계절 잔치: hangDecor/dance/taste/clearDecor.
+받은 선물: unwrapGift/useGift. 샘플 장난감 대신 실제 받은 물건으로 소품 교체.
+손님: clap/smile/nod/taste, 기존 서기/걷기/차 마시기 조합.
+
+원본 함수
+현재 인물은 eventMotionFrame(who,facing,action,frame,opts)로 생성.
+opts.avatar/계절/키 옵션을 그대로 전달하여 머리·옷·피부 선택 유지.
+PNG는 기본 봄 외형 예시. 어린이 폴더의 holdBaby는 크기 확인용 샘플이며
+아동이 아기를 안는 행동을 자동 등록하지 않는다. 활동 허용은 실제 나이와 보호자 조건을 확인.
+인물 palette는 기존 writerPalette 또는 주민 팔레트.
+소품 palette는 FURNI_PALETTE. 아기 레이어도 이 팔레트의 담요/피부 색으로 구성.
+propBack → actor → propFront 순서. 가구 앞뒤 레이어 사이에 넣는다.
+manifest에 프레임 시간·anchor·handAnchor·loop 있음.
+걷기 모션은 그림만 제공. 실제 이동·충돌·따라다니기는 기존 게임 경로를 사용.
+반복: 박수·운반 걷기·춤·웃음·끄덕임·맛보기·아기 안기·손잡고 걷기.
+나머지는 단발. 미리보기에서는 확인을 위해 단발도 쉬었다 반복.
+촛불/선물/공개의 상태 변경은 실제 완료 순간에 저장하고, 반복 표시로 결과를 중복 처리하지 않는다.
+
+두 사람
+pairs는 기본 인물 둘의 합성 배치 예시. 고정 PNG로 실제 가족 외형을 대체하지 않는다.
+게임에서는 각자의 현재 외형으로 인물 레이어를 따로 생성하고 handAnchor를 기준으로
+서로의 손 위치를 맞춘다. 성인과 어린이의 바닥 높이를 맞춘 뒤 손과 팔 연결을 검수한다.
+음식/물건 교환은 단계에 따라 소품 소유자를 바꾸고 한 물건이 동시에 두 사람에게 나타나지 않게 한다.
+서로 마주보기/같은 방향 보기와 실제 가구 높이에 따라 소품 기준점을 조정.
+
+아직 게임 기능에 연결하거나 배포하지 않았다.
+픽셀 경계·팔레트·성인/어린이·4방향·소품 상태 변화 테스트 4개 통과. 전체 타입 검사는 다른 게임 작업 중 game.ts의 footprintLayer/Minigame 미정의 오류로 완료되지 못함.
+실제 인물 두 명의 접점, 아기를 안은 자세, 행사장/가구 겹침과 모바일 확인은 연결 단계에서 필요.
+

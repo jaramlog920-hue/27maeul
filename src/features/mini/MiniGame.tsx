@@ -11,6 +11,7 @@ const PLACE_ICON: Record<string, ItemId> = { well: 'water', reeds: 'reed', olive
 const RECIPE_ICON: Record<string, ItemId> = { bread: 'bread', papyrus: 'papyrus', ink: 'ink', oil: 'oil', blanket: 'blanket', cover: 'cover', scentCandle: 'scentCandle', creamPaper: 'creamPaper', fineThread: 'fineThread' }
 
 function titleOf(p: Pending): string {
+  if (p.kind === 'club') return T.plans.activity.sew
   if (p.kind === 'gather') return (T.ui.minigame.gather as Record<string, string>)[p.place] ?? (T.places as Record<string, string>)[p.place] ?? ''
   if (p.kind === 'craft') return (T.recipes as Record<string, string>)[p.recipe]?.split(' — ')[0] ?? ''
   if (p.kind === 'teach') return T.ui.talkTeach

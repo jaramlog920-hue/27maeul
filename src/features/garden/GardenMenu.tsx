@@ -1,3 +1,4 @@
+import { clubHere } from '../../engine/clubs'
 // 텃밭 한 칸: 비었으면 심기, 자라는 중이면 물 주기, 다 자랐으면 거두기
 import { fill, itemName, T } from '../../content/text'
 import { canPlant, CROPS, isRipe } from '../../engine/garden'
@@ -48,6 +49,7 @@ export function GardenMenu({ at }: { at: Tile }) {
         </>
       )}
       <div className="actions">
+        {clubHere(game,'garden') && <button onClick={() => useGame.getState().open({kind:'clubSession',id:clubHere(game,'garden')!.id})}>{T.clubs.join}</button>}
         <button onClick={closeModal}>{T.ui.close}</button>
       </div>
     </div>

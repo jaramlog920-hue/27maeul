@@ -3,8 +3,9 @@
 // 졸다 잠든다. 아이는 필사하지 않고 능력치도 얻지 않는다 (보상 없음). 배우자는 저녁에 같은 방에서 책을 읽는다.
 // 처음 잠든 날은 가족 앨범에 한 장 (장면 fam:deskNap — 책상에서 나온 뒤 마을에서 열린다).
 import { mulberry32 } from './offers'
-import { isMarketDay } from './calendar'
-import { childMode, childStage } from './child'
+import { isMarketDay, weatherOf } from './calendar'
+import { NO_LIFE, recordExperience } from './people'
+import { addCareerInterest, childMode, childStage, type AdultJob } from './child'
 import { seasonOf } from './clock'
 import { childAtSchool, heartUp, neighborsPresent, passTime, putAway, type GameState } from './game'
 import { NO_ROMANCE, SPOUSE_HOME_FROM, SPOUSE_HOME_TO } from './romance'
@@ -155,7 +156,13 @@ export interface KidResult {
 /** 처음 있는 일은 가족 앨범에 한 장 (한 번) */
 function firstTime(s: GameState, id: string): GameState {
   if (s.flags[id]) return s
-  return { ...s, flags: { ...s.flags, [id]: 1 }, scenes: [...s.scenes, id] }
+  const partner = s.romance?.stage === 'married' ? s.romance.partner : undefined
+  const npc = partner ? s.npcs[partner] : undefined
+  const withs = s.child ? ['family:child'] : []
+  if (partner && npc?.visible && Math.abs(npc.x-s.player.x)+Math.abs(npc.y-s.player.y) <= 2) withs.push(partner)
+  const life = recordExperience(s.life ?? NO_LIFE, { id, kind: 'family', with: withs },
+    { day: s.clock.day, minute: s.clock.minute, season: seasonOf(s.clock.day), weather: weatherOf(s.clock.day) })
+  return { ...s, life, flags: { ...s.flags, [id]: 1 }, scenes: [...s.scenes, id] }
 }
 
 /** 날마다 정해지는 이웃 하나 (오늘 마을에 나온 이웃 중, 배우자 빼고) */
@@ -181,7 +188,9 @@ export function doKidAct(s: GameState, act: KidAct, content: GameContent): KidRe
     flags.kidActs = kidActsToday(s) + 1
     flags.kidActDay = day
   }
-  let next: GameState = passTime({ ...s, child: { ...c, stats, close }, flags }, def.minutes)
+  const careerActivities: Partial<Record<KidAct, readonly AdultJob[]>> = { read: ['scribe','scholar'], puzzle: ['painter','potter'], make: ['woodworker','weaver','instrumentMaker'], cook: ['cook','teaKeeper'], walk: ['gardener','herbalist'], ball: ['fisher','sailor'], tour: ['traveler','shipwright'], errand: ['merchant'] }
+  const interested = addCareerInterest({ ...c, stats, close }, careerActivities[act] ?? [])
+  let next: GameState = passTime({ ...s, child: interested, flags }, def.minutes)
   const variant = Math.floor(mulberry32(day * 31 + KID_ACTS.indexOf(act) * 7 + 3)() * 3)
   let got: Partial<Record<ItemId, number>> = {}
   let who: string | null = null

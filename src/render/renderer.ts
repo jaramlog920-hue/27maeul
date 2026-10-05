@@ -5,9 +5,10 @@ import { isGrown, STRAY_SPOTS, EAVES } from '../engine/companion'
 import { totalChapters } from '../engine/books'
 import { shelfRoom } from '../engine/shelf-rooms'
 import { letterWaiting } from '../engine/requests'
-import { childAtSchool, closedHouseIds, mailboxHasPost, storyWaiting, routineOf, SCHOOL_SEAT, shelvedCount, straysToday, weddingToday, type GameState } from '../engine/game'
+import { childAtSchool, closedHouseIds, mailboxHasPost, storyWaiting, routineOf, SCHOOL_SEAT, shelvedCount, straysToday, weddingToday, type ActKind, type GameState, type PlayerAct } from '../engine/game'
+import { furnitureUseFrame, USE_INFO, USE_PROP_PALETTE, USE_SIZE, type UseAction } from './furniture-use-motion'
+import { extraUseFrame, petMotionRows, type ExtraAction } from './expansion-life-motion'
 import type { Activity } from '../engine/people'
-import { fixtureTier, RARE_ITEMS } from '../engine/fixtures'
 import { deskTraces, type DeskTraces } from '../engine/desk-traces'
 import { facingOf, FURNITURE_DEFS, type Furniture } from '../engine/room'
 import { FURNI_PALETTE, FURNITURE_ART } from './furniture-art'
@@ -1262,6 +1263,8 @@ function bubble(g: Ctx, cx: number, top: number, draw: (x: number, y: number) =>
 type EmoteId = 'z' | 'note' | 'yawn' | 'talk' | 'heart' | 'sweat' | 'hungry' | 'shiver' | 'letter'
 /** 하고 있는 일 (계획 6b): 일과 자리에 선 사람 머리 위 작은 그림 — 말을 걸기 전에도 무엇을 하는지 보인다 */
 const DOING: Record<Activity, string[]> = {
+  press: ['.nnnnnn.', '...nn...', '.k.kk.k.', '.k.kk.k.', '.kkkkkk.', '........'],
+  sort: ['.ww.ww..', '.wn.wn..', '.ww.ww..', '.kkkkkk.', '........', '........'],
   hammer: ['..kkkk..', '..kkkk..', '...nn...', '...nn...', '...nn...', '........'],
   net: ['b.b.b.b.', '.b.b.b.b', 'b.b.b.b.', '.b.b.b.b', 'b.b.b.b.', '........'],
   tea: ['..w.w...', '........', '.oooooo.', '.oooooook', '..oooo.k', '........'],
@@ -1360,13 +1363,17 @@ function emote(g: Ctx, id: EmoteId, cx: number, top: number) {
 }
 
 /** 이웃 그림: 연애 후보(계획 6)는 주인공 모양 고르기와 같은 머리·옷으로, 나머지는 이웃마다 정한 옷으로 */
-function neighborPerson(def: NeighborDef, facing: Facing, frame: 0 | 1 | 2, blink: boolean, season: Season, growth?: number, dressed?: Avatar) {
+function neighborLook(def: NeighborDef, growth?: number, dressed?: Avatar): { who: Who; extra: PersonExtra } {
   if (def.avatar && def.look) {
     // 옷장에서 바꾼 배우자 모습이 있으면 그것으로
     const avatar = withLookDefaults({ look: def.look, name: def.role, ...def.avatar, ...(dressed ?? {}) })
-    return person('writer', facing, frame, blink, 'stand', season, { look: def.look, avatar })
+    return { who: 'writer', extra: { look: def.look, avatar } }
   }
-  return person(def.sprite as Who, facing, frame, blink, 'stand', season, { growth })
+  return { who: def.sprite as Who, extra: { growth } }
+}
+function neighborPerson(def: NeighborDef, facing: Facing, frame: 0 | 1 | 2, blink: boolean, season: Season, growth?: number, dressed?: Avatar) {
+  const { who, extra } = neighborLook(def, growth, dressed)
+  return person(who, facing, frame, blink, 'stand', season, extra)
 }
 
 /** 아이 요람 (계획 12): 나무 요람, 크림색 이불 */
@@ -1417,22 +1424,92 @@ function drawSprite(g: Ctx, c: HTMLCanvasElement, wx: number, wy: number, dy = 0
   g.drawImage(c, px, py)
 }
 
-function person(
-  who: Who,
-  facing: Facing,
-  frame: 0 | 1 | 2,
-  blink: boolean,
-  pose: Pose,
-  season: Season,
-  extra: { inky?: boolean; growth?: number; look?: Look; avatar?: FullAvatar; short?: number } = {},
-) {
+type PersonExtra = { inky?: boolean; growth?: number; look?: Look; avatar?: FullAvatar; short?: number }
+/** 사람 그림 캐시 키의 외형 부분 (계절·잉크·키·모습) */
+function lookKey(who: Who, season: Season, extra: PersonExtra): string {
+  return `${who === 'writer' ? season : season === 'winter' ? 'w' : ''}/${extra.inky ?? ''}/${extra.growth ?? ''}/${extra.short ?? ''}/${extra.look ?? ''}/${extra.avatar ? avatarKey(extra.avatar) : ''}`
+}
+
+function person(who: Who, facing: Facing, frame: 0 | 1 | 2, blink: boolean, pose: Pose, season: Season, extra: PersonExtra = {}) {
   const rows = spriteRows(who, facing, { frame, blink, pose, season, ...extra })
   const pal = who === 'writer' ? writerPalette(season, extra.avatar) : PALETTE
-  return paint(
-    `${who}/${facing}/${frame}/${blink}/${pose}/${who === 'writer' ? season : season === 'winter' ? 'w' : ''}/${extra.inky ?? ''}/${extra.growth ?? ''}/${extra.short ?? ''}/${extra.look ?? ''}/${extra.avatar ? avatarKey(extra.avatar) : ''}`,
-    rows,
-    pal,
-  )
+  return paint(`${who}/${facing}/${frame}/${blink}/${pose}/${lookKey(who, season, extra)}`, rows, pal)
+}
+
+// ── 가구 쓰는 동작 (계획 17 작업 3) ──
+
+/** 24×24 동작 한 장: 뒤 소품 → 사람 → 앞 소품 순으로 겹쳐 한 번만 칠해 둔다 (사람은 지금 외형의 팔레트, 소품은 소품 팔레트) */
+const motionCache = new Map<string, HTMLCanvasElement>()
+function motionCanvas(keyStr: string, layers: { actor: string[]; propBack: string[]; propFront: string[] }, actorPal: Record<string, string>, propPal: Record<string, string>): HTMLCanvasElement {
+  let c = motionCache.get(keyStr)
+  if (c) return c
+  c = document.createElement('canvas')
+  c.width = USE_SIZE
+  c.height = USE_SIZE
+  const g = c.getContext('2d')!
+  for (const [rows, pal] of [[layers.propBack, propPal], [layers.actor, actorPal], [layers.propFront, propPal]] as const)
+    rows.forEach((row, y) =>
+      [...row].forEach((ch, x) => {
+        const col = pal[ch]
+        if (ch === '.' || !col) return
+        g.fillStyle = col
+        g.fillRect(x, y, 1, 1)
+      }),
+    )
+  if (motionCache.size >= SPRITE_CACHE_MAX) motionCache.clear()
+  motionCache.set(keyStr, c)
+  return c
+}
+
+/** 되풀이 동작의 몇째 박자인지: USE_INFO의 프레임 시간(ms)을 차례로 쌓아 돈다 */
+function usePhase(action: UseAction, ms: number): number {
+  const d = USE_INFO[action].durations
+  let m = ms % d.reduce((a, b) => a + b, 0)
+  for (let i = 0; i < d.length; i++) {
+    if (m < d[i]) return i
+    m -= d[i]
+  }
+  return 0
+}
+
+/** 일어나기(단발) 네 박자 길이 — extraUseFrame의 단발 동작은 한 박자 180ms */
+const RISE_SECONDS = 0.72
+
+/** 동작 한 장. 사용 동작은 furnitureUseFrame, 일어나기는 누운 채 있다가 마지막에 extraUseFrame('rise') 한 번 */
+function useFrameCanvas(who: Who, facing: Facing, kind: ActKind, elapsed: number, total: number, blink: boolean, season: Season, extra: PersonExtra): HTMLCanvasElement {
+  const opts = { frame: 0 as const, blink, season, ...extra }
+  const actorPal = who === 'writer' ? writerPalette(season, extra.avatar) : PALETTE
+  const look = lookKey(who, season, extra)
+  if (kind === 'rise' && elapsed >= total - RISE_SECONDS) {
+    const f = Math.min(3, Math.floor((elapsed - (total - RISE_SECONDS)) / (RISE_SECONDS / 4)))
+    const action: ExtraAction = 'rise'
+    return motionCanvas(`xuse/${who}/${facing}/${action}/${f}/${blink}/${look}`, extraUseFrame(who, facing, action, f, opts), actorPal, FURNI_PALETTE)
+  }
+  const action: UseAction = kind === 'rise' ? 'lie' : kind
+  const phase = usePhase(action, elapsed * 1000)
+  return motionCanvas(`use/${who}/${facing}/${action}/${phase}/${blink}/${look}`, furnitureUseFrame(who, facing, action, phase, opts), actorPal, USE_PROP_PALETTE)
+}
+
+/**
+ * 동작 그림을 서 있는 그림과 같은 자리에: 동작 캔버스 안의 사람은 (7, 4)에서 시작하므로 서 있는 그림의 왼쪽 위에서 그만큼 뺀다.
+ * 누운 몸이 아니면 서 있을 때처럼 발밑 그림자
+ */
+function drawUse(g: Ctx, c: HTMLCanvasElement, stand: HTMLCanvasElement, wx: number, wy: number, shadow: boolean) {
+  const px = Math.round(wx * TILE + (TILE - stand.width) / 2)
+  const py = Math.round(wy * TILE + TILE - 1 - stand.height)
+  if (shadow) {
+    g.fillStyle = C.shadow
+    g.fillRect(px + 1, Math.round(wy * TILE) + 13, stand.width - 2, 2)
+  }
+  g.drawImage(c, px - 7, py - 4)
+}
+
+/** 기록자의 지금 동작 (앉는 자리가 있으면 그 칸 위에서) */
+function drawPlayerAct(g: Ctx, act: PlayerAct, p: { x: number; y: number }, blink: boolean, season: Season, extra: PersonExtra) {
+  const at = act.at ?? p
+  const stand = person('writer', act.facing, 0, false, 'stand', season, extra)
+  const c = useFrameCanvas('writer', act.facing, act.kind, act.total - act.left, act.total, blink, season, extra)
+  drawUse(g, c, stand, at.x, at.y, act.kind !== 'rise')
 }
 
 function animal(kind: 'cat' | 'dog', form: 'adult' | 'baby' | 'curl', facing: Facing) {
@@ -1563,7 +1640,8 @@ function drawFurniture(g: Ctx, f: Furniture) {
   const turned = facingArt(f.item, facing)
   const sprite = turned ?? FURNITURE_ART[f.item]
   if (sprite) {
-    g.drawImage(paint(turned ? `furni/${f.item}/${facing}` : `furni/${f.item}`, sprite.rows, FURNI_PALETTE), px, py + (f.on ? -6 : 0))
+    const palette = f.item === 'stool' && f.finish === 'warm' ? { ...FURNI_PALETTE, k: '#9f683e', W: '#8c5433', w: '#bb7446', l: '#e7a468' } : FURNI_PALETTE
+    g.drawImage(paint(`${turned ? `furni/${f.item}/${facing}` : `furni/${f.item}`}/${f.finish ?? 'plain'}`, sprite.rows, palette), px, py + (f.on ? -6 : 0))
     return
   }
   const r = (color: string, dx: number, dy: number, w: number, h: number) => {
@@ -1973,39 +2051,6 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           if (game.shelved[b] === undefined) drawEmptySlot(g, sx, sy)
           else drawSpine(g, sx, sy, b, game)
         })
-        // 서고 서가 단계 (계획 13): 벽면 서가는 양옆 책장을 밝은 나무로 새로 짜고 윗단을 두른다,
-        // 완성된 서고는 가운데 선반 위 자주색 천 드림과 양옆 청동 등, 그리고 모은 희귀품 진열
-        const shelfTier = fixtureTier(game, 'shelf')
-        if (shelfTier >= 1)
-          for (const dx of [-4, -3, -2, 4, 5, 6]) {
-            const x0 = (first.x + dx) * TILE
-            const y0 = first.y * TILE
-            g.fillStyle = '#c8925a'
-            g.fillRect(x0 + 1, y0 + 1, 14, 2)
-            g.fillRect(x0 + 1, y0 + 1, 1, 14)
-            g.fillRect(x0 + 14, y0 + 1, 1, 14)
-          }
-        if (shelfTier >= 2) {
-          const cx = first.x * TILE
-          const cy = first.y * TILE
-          g.fillStyle = '#904077'
-          g.fillRect(cx + 2, cy - 12, 44, 5)
-          g.fillStyle = '#ae6697'
-          for (let i = 0; i < 11; i++) g.fillRect(cx + 3 + i * 4, cy - 7, 2, 3)
-          g.fillStyle = '#e6af4e'
-          for (const dx of [-5, 7]) {
-            g.fillRect((first.x + dx) * TILE + 6, cy - 2, 4, 6)
-            g.fillStyle = '#ffce4a'
-            g.fillRect((first.x + dx) * TILE + 7, cy - 4, 2, 2)
-            g.fillStyle = '#e6af4e'
-          }
-          // 진열: 가진 희귀품을 양옆 책장 윗단에 하나씩
-          RARE_ITEMS.filter((id) => (game.inv[id] ?? 0) > 0 || (game.chest?.[id] ?? 0) > 0).forEach((id, i) => {
-            const c = iconCanvas(id)
-            const dx = [-4, 4, -3, 5, -2][i]
-            if (c && dx !== undefined) g.drawImage(c, (first.x + dx) * TILE + 4, first.y * TILE - 5)
-          })
-        }
         // 양옆 책장: 복음서 다음에 꽂은 책(사도행전·편지·요한계시록)마다 책등 둘씩 (왼쪽·오른쪽 짝) — 처음엔 텅 빈 책장이
         // 권이 늘수록 찬다. 책마다 다른 색(제본 모습): 왼쪽은 책등 색, 오른쪽 짝은 장식 색. 은박·금박이면 위 2픽셀 띠
         for (const sp of sideShelfSpines(game.shelved)) {
@@ -2099,7 +2144,12 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
             const growth = def.id === 'child' ? childGrowth(day) : undefined
             items.push({
               y: home.sit.y,
-              paint: () => drawSprite(g, neighborPerson(def, 'down', 0, isBlinking(t + def.id.length), season, growth, game.looks?.[def.id]), home.sit.x, home.sit.y, breathOffset(t + def.id.length)),
+              // 제 집 앉는 자리에서는 앉은 모습 (계획 17 작업 3) — 숨 쉬는 박자는 앉기 동작에 들어 있다
+              paint: () => {
+                const { who, extra } = neighborLook(def, growth, game.looks?.[def.id])
+                const stand = person(who, 'down', 0, false, 'stand', season, extra)
+                drawUse(g, useFrameCanvas(who, 'down', 'sit', t + def.id.length, 1, isBlinking(t + def.id.length), season, extra), stand, home.sit.x, home.sit.y, true)
+              },
             })
           }
           continue
@@ -2200,7 +2250,11 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         items.push({
           y: comp.y,
           paint: () => {
-            drawSprite(g, animal(comp.kind, form, comp.facing === 'left' ? 'left' : 'right'), comp.x, comp.y, still || sleeping ? 0 : Math.floor(comp.walkTime * 8) % 2)
+            if (comp.motion) {
+              const action = comp.motion.action === 'play' ? 'play' : 'wait'
+              const frame = Math.floor(t * 6) % 4
+              drawSprite(g, paint(`pet/${comp.kind}/${comp.facing}/${action}/${frame}/${isGrown(comp,day)}`, petMotionRows(comp.kind, comp.facing, action, frame, !isGrown(comp,day)), ANIMAL_PALETTE[comp.kind]), comp.x, comp.y)
+            } else drawSprite(g, animal(comp.kind, form, comp.facing === 'left' ? 'left' : 'right'), comp.x, comp.y, still || sleeping ? 0 : Math.floor(comp.walkTime * 8) % 2)
             if (sleeping && Math.floor(t / 3) % 3 === 0) emote(g, 'z', comp.x * TILE + 8, comp.y * TILE + 8)
           },
         })
@@ -2245,7 +2299,12 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       const frame = moving ? walkFrame(p.walkTime) : 0
       const blink = kind === 'doze' || kind === 'yawn' || isBlinking(t)
       const lift = moving ? 0 : kind === 'stretch' ? 1 : kind === 'doze' ? -dozeNod(t) : breathOffset(t)
-      items.push({
+      // 가구 쓰는 동작 중이면 (계획 17 작업 3) 그 동작 그림을 지금 외형으로 — 앉는 자리가 있으면 그 칸 위에
+      const act = game.act
+      if (act) {
+        const ay = act.at ? act.at.y + 0.01 : p.y
+        items.push({ y: ay, paint: () => drawPlayerAct(g, act, p, isBlinking(t), season, { inky: done > 0, look: game.avatar?.look, avatar: game.avatar ? withLookDefaults(game.avatar) : undefined }) })
+      } else items.push({
         y: p.y,
         paint: () => {
           const spr = person('writer', facing, frame, blink, pose, season, { inky: done > 0, look: game.avatar?.look, avatar: game.avatar ? withLookDefaults(game.avatar) : undefined })

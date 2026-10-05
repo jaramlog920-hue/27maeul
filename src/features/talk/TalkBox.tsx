@@ -1,8 +1,10 @@
 // 이웃과의 생활 대화 — 게임이 지어낸 말. 성경 이야기는 '이야기 듣기'를 눌러 본문 창으로만 본다.
 import { neighborById } from '../../content/catalog'
+import { WorkEntry } from '../work/WorkDay'
+import { SkillEntry } from '../skills/SkillLesson'
 import { callName, fill, itemList, NEIGHBOR_LINES, T } from '../../content/text'
 import { grapesRipe, isMarketDay } from '../../engine/calendar'
-import { activeRequest, isSuitor, romanceWith, stageWith, type GameState, canHelp, canOrderHome, canOrderWork, fixtureOffers, GIFTABLE, lessonTime, nextHomeStage } from '../../engine/game'
+import { activeRequest, isSuitor, romanceWith, stageWith, type GameState, canHelp, canOrderHome, canOrderWork, GIFTABLE, lessonTime, nextHomeStage } from '../../engine/game'
 import { CARPENTER_WORKS } from '../../engine/easier'
 import { requestFor, reqState } from '../../engine/bonds'
 import { has } from '../../engine/items'
@@ -52,10 +54,9 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
   const homeBlock = homeStage ? canOrderHome(game) : 'done'
   // 목수에게 살림 부탁 (계획 11): 이사 온 뒤, 아직 없는 것만
   const works = def.id === 'carpenter' ? CARPENTER_WORKS.map((w) => ({ w, block: canOrderWork(game, w.id) })).filter((x) => x.block !== 'notMoved' && x.block !== 'owned') : []
-  // 부탁할 일이 하나라도 있으면 '부탁하기' (목수: 집·살림·설비, 대장장이: 등잔)
+  // 목수에게 집 넓히기와 살림만 부탁한다.
   const orderable =
-    (def.id === 'carpenter' && game.flags['movedIn:carpenter'] && ((homeStage && homeBlock !== 'notMoved') || works.length > 0 || fixtureOffers(game, 'carpenter').length > 0)) ||
-    (def.id === 'smith' && fixtureOffers(game, 'smith').length > 0)
+    def.id === 'carpenter' && game.flags['movedIn:carpenter'] && ((homeStage && homeBlock !== 'notMoved') || works.length > 0)
   const post = postLine(game, def.id)
   const starHint = starPostHint(game, def.id)
   return (
@@ -92,8 +93,8 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
             {T.ui.talkFulfill}
           </button>
         )}
-        {/* 부탁하기 (계획 13): 집 넓히기·살림·기록 설비를 한 창에 — 대화 창이 붐비지 않게 */}
-        {orderable && <button onClick={() => open({ kind: 'orders', npc: def.id })}>{T.fixtures.open}</button>}
+        {/* 집 넓히기와 살림 도구 부탁 */}
+        {orderable && <button onClick={() => open({ kind: 'orders', npc: def.id })}>{T.orders.open}</button>}
         {def.marketOnly && isMarketDay(game.clock.day) && <button onClick={() => open({ kind: 'trade' })}>{T.ui.talkTrade}</button>}
         <button disabled={block !== null} onClick={() => startHelp(def.id)} title={block ?? ''}>
           {helpLabel}
@@ -101,6 +102,8 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
         <button disabled={!canGift} onClick={() => open({ kind: 'gift', neighborId: def.id })}>
           {T.ui.talkGift}
         </button>
+        <WorkEntry npc={def.id} />
+        <SkillEntry npc={def.id} />
         <button onClick={closeModal}>{T.ui.close}</button>
       </div>
       {block === 'needs' && def.help.needs && <p className="hint">{fill(T.ui.helpNeeds, { items: itemList(def.help.needs) })}</p>}

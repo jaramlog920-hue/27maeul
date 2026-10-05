@@ -689,21 +689,17 @@ export function propSpotProblem(tiles: readonly Tile[], roomOwner?: string): str
       if (sameTile(t, r.entry) || sameTile(t, r.sit)) return 'entryOrSeat'
       if (STEPS.some((d) => sameTile({ x: t.x + d.x, y: t.y + d.y }, r.exit))) return 'byExit'
     }
-    // 놓은 뒤에도 들어온 칸에서 방의 걸을 수 있는 칸 모두에 닿는다 (통행을 막지 않는다)
-    const open = (t: Tile) => roomAt(t) === r && isWalkable(t) && !taken.has(key(t))
-    const seen = new Set([key(r.entry)])
-    const queue = [r.entry]
-    while (queue.length) {
-      const c = queue.shift()!
-      for (const d of STEPS) {
-        const n = { x: c.x + d.x, y: c.y + d.y }
-        if (!seen.has(key(n)) && open(n)) {
-          seen.add(key(n))
-          queue.push(n)
-        }
+    // 붙박이 가구로 이미 떨어진 바닥은 그대로 두고, 기존 통행을 끊는 변화만 막는다.
+    const reachable = (blocked: ReadonlySet<string>) => {
+      const seen = new Set([key(r.entry)]), queue = [r.entry]
+      for (let i = 0; i < queue.length; i++) for (const d of STEPS) {
+        const n = { x: queue[i].x + d.x, y: queue[i].y + d.y }
+        if (!seen.has(key(n)) && roomAt(n) === r && isWalkable(n) && !blocked.has(key(n))) { seen.add(key(n)); queue.push(n) }
       }
+      return seen
     }
-    for (let y = r.y0; y < r.y0 + r.h; y++) for (let x = r.x0; x < r.x0 + r.w; x++) if (open({ x, y }) && !seen.has(`${x},${y}`)) return 'blocksWay'
+    const before = reachable(new Set()), after = reachable(taken)
+    for (const spot of before) if (!taken.has(spot) && !after.has(spot)) return 'blocksWay'
     return null
   }
   for (const t of tiles) {

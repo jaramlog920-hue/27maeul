@@ -15,7 +15,8 @@ const BOOK_NAME = T.quiz.books as Record<string, string>
 
 const blankId = (i: number) => `copy-blank-${i}`
 
-export function LetterCopy({ book, result, dark, onChangeBook }: { book: Book; result: SubmitResult | null; dark: boolean; onChangeBook: () => void }) {
+export function LetterCopy({ book, result, onChangeBook }: { book: Book; result: SubmitResult | null; dark: boolean; onChangeBook: () => void }) {
+  const dark = false
   const game = useGame((s) => s.game)
   const saved = useGame((s) => (s.modal?.kind === 'desk' ? s.modal.copy : undefined))
   const { copyPick, submitCopy, closeModal } = useGame.getState()

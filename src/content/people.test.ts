@@ -45,6 +45,18 @@ function overlaps(a: When | undefined, b: When | undefined): boolean {
 }
 
 describe('people.json', () => {
+  it('23명 생활 취향은 기존 선물 취향과 별개이며, 말에서 밝히는 키는 실제 선호에 있다', () => {
+    expect(Object.keys(PEOPLE.people)).toHaveLength(23)
+    for (const n of CONTENT.neighbors) {
+      const p = PEOPLE.people[n.id]
+      expect(p?.tastes, n.id).toBeDefined()
+      for (const map of Object.values(p.tastes!)) for (const value of Object.values(map)) expect([-1, 0, 1]).toContain(value)
+      for (const line of p.lines) if (line.reveals) {
+        const [group, key] = line.reveals.split('.')
+        expect((p.tastes as Record<string, Record<string, number>>)[group]?.[key], line.id).toBe(1)
+      }
+    }
+  })
   it('사람은 모두 마을 이웃이다', () => {
     for (const id of Object.keys(PEOPLE.people)) expect(CONTENT.neighbors.some((n) => n.id === id), id).toBe(true)
   })

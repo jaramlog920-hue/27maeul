@@ -57,7 +57,6 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
   { id: 'board10', name: '게시판 단골', desc: '의뢰 게시판의 부탁을 열 번 들어주었다.', done: (s) => flagCount(s, 'board:') >= 10 },
   { id: 'trip', name: '먼 길', desc: '이웃 마을로 여행을 다녀왔다.', done: (s) => flagCount(s, 'trip:') >= 1 },
   { id: 'allTrips', name: '두 마을', desc: '항구 마을과 언덕 너머 마을을 모두 다녀왔다.', done: (s) => flagCount(s, 'trip:') >= 2 },
-  { id: 'fixture', name: '장인의 설비', desc: '기록 설비 하나를 가장 높은 단계로 올렸다.', done: (s) => ['desk', 'lamp', 'shelf'].some((l) => (s.flags[`fix:${l}`] ?? 0) >= 2) },
   { id: 'attic', name: '다락 서재', desc: '집을 넓혀 다락 서재를 들였다.', done: (s) => s.homeLevel >= 2 },
   { id: 'album10', name: '풍경 앨범', desc: '앨범에 열 장면을 모았다.', done: (s) => s.album.length >= 10 },
   { id: 'master', name: '손에 익은 솜씨', desc: '능력치 하나가 가장 높은 단계에 올랐다.', done: (s) => STAT_IDS.some((id) => (s.stats[id]?.level ?? 1) >= 5) },

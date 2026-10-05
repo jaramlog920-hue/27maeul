@@ -216,14 +216,14 @@ describe('recordLetter', () => {
     expect(recordLetter(s, 'rom', 2, answers('rom', 2), CONTENT)).toBe(s)
   })
 
-  it('재료가 없어도 기록하고, 피곤하면 그대로', () => {
+  it('재료가 없거나 피곤해도 기록한다', () => {
     const s = ready('rom')
     const poor = { ...s, inv: { ...s.inv, papyrus: 0, ink: 0 } }
     expect(letterReady(poor, 'rom', 1, CONTENT)).toEqual({ kind: 'ready' })
     expect(recordLetter(poor, 'rom', 1, answers('rom', 1), CONTENT).progress.rom.completed).toEqual([1])
     const tired = { ...s, needs: { ...s.needs, fatigue: 100 } }
-    expect(letterReady(tired, 'rom', 1, CONTENT)).toEqual({ kind: 'tired' })
-    expect(recordLetter(tired, 'rom', 1, answers('rom', 1), CONTENT)).toBe(tired)
+    expect(letterReady(tired, 'rom', 1, CONTENT)).toEqual({ kind: 'ready' })
+    expect(recordLetter(tired, 'rom', 1, answers('rom', 1), CONTENT).progress.rom.completed).toContain(1)
   })
 
   it('조각 책(복음서)은 옮겨 적기로 기록하지 않는다', () => {

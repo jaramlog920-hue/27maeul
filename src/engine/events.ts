@@ -1,3 +1,5 @@
+import { venueFor } from './plans'
+import lifeText from '../content/life-text.json'
 import { festivalOf, FESTIVAL_FROM, FESTIVAL_TO, isMarketDay, isWet, weatherOf } from './calendar'
 import { BABY_PARTY_DAY, gatheringWindow, VISIT_FROM, VISIT_TO, INVITE_FROM, INVITE_TO, FRIENDS_FROM, FRIENDS_TO } from './bonds'
 import { lessonTime, type GameState } from './game'
@@ -19,7 +21,7 @@ const festivals = { blossom: '봄꽃 잔치', barley: '보리 거둔 날 잔치'
 const gatherings = { babyParty: '아기 잔치', picnic: '언덕 소풍', starNight: '별 보는 밤' }
 
 /** 미래의 친밀도 이벤트는 추측하지 않고, 확정된 날짜와 오늘 정해진 일정만 안내한다. */
-export function scheduledEvents(s: Pick<GameState, 'clock' | 'today' | 'flags'> & Partial<Pick<GameState, 'notebook'>>, content: GameContent): ScheduledEvent[] {
+export function scheduledEvents(s: Pick<GameState, 'clock' | 'today' | 'flags'> & Partial<Pick<GameState, 'notebook' | 'plans'>>, content: GameContent): ScheduledEvent[] {
   const events: ScheduledEvent[] = []
   const day = s.clock.day
   const add = (id: string, title: string, location: string, from: number, to: number, done = false, onDay = day) => {
@@ -60,6 +62,14 @@ export function scheduledEvents(s: Pick<GameState, 'clock' | 'today' | 'flags'> 
   if (lessonTime({ ...s, clock: { day, minute: LESSON_FROM } })) add('lesson', '아이와 글자 공부', '내 집 안', LESSON_FROM, LESSON_TO)
   if (s.flags['done:friends'] && !isWet(weatherOf(day))) add('friends', '아이와 양치기 친구', '양 우리 근처', FRIENDS_FROM, FRIENDS_TO)
   if (seasonOf(day) === 'autumn' && weatherOf(day) === 'rain') add('rainbow', '비 오는 날 무지개', '집 밖', 16 * 60, 17.5 * 60)
+  for (const appt of s.plans?.appts ?? []) {
+    if (appt.day < day || appt.day > day + 7 || appt.state === 'skipped') continue
+    const venue = venueFor(appt)
+    const labels = lifeText.plans
+    const title = appt.title ?? (appt.activity ? labels.activity[appt.activity] : labels.kind[appt.kind])
+    const location = labels.place[venue.place as keyof typeof labels.place] ?? '마을'
+    add(appt.id, title, location, appt.from, appt.to, appt.state === 'done', appt.day)
+  }
   return events.sort((a, b) => a.day - b.day || a.from - b.from)
 }
 

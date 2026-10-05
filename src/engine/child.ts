@@ -31,15 +31,19 @@ export interface Child {
   left?: boolean
   /** 함께 보낸 시간으로 쌓인 가까움 0~100 (계획 12 "아이와 함께 보내는 시간" — 옛 저장은 없다 = 0) */
   close?: number
+  interests?: Partial<Record<AdultJob, number>>
+  jobConfirmed?: boolean
 }
 
 // ── 어른이 된 아이 (2026-09-30 사용자 요청) ──
-// 가장 높은 능력치(1–100 점수)로 일이 정해진다. 그 점수가 LEAVE_SCORE 이상이면 더 넓은 곳으로 떠나고, 아니면 마을에 남는다.
+// 함께한 활동의 관심을 우선하고 능력치로 진로를 추천한다. 직업과 거주지는 별도로 정한다.
 // 남든 떠나든 가끔 편지·선물·닢을 보낸다 (떠난 아이가 더 자주).
 export const ADULT_AT = 84
 export const LEAVE_SCORE = 60
-export type AdultJob = 'scribe' | 'scholar' | 'woodworker' | 'shipwright' | 'teaKeeper' | 'merchant' | 'fisher' | 'sailor' | 'herbalist' | 'traveler'
-/** 능력치 → [마을에 남는 일, 떠나는 일] */
+export type AdultJob = 'scribe' | 'scholar' | 'woodworker' | 'shipwright' | 'teaKeeper' | 'merchant' | 'fisher' | 'sailor' | 'herbalist' | 'traveler' | 'cook' | 'painter' | 'weaver' | 'gardener' | 'potter' | 'instrumentMaker'
+export const JOB_STAT: Record<AdultJob, StatId> = { scribe:'wit',scholar:'wit',woodworker:'hand',shipwright:'hand',teaKeeper:'charm',merchant:'charm',fisher:'strength',sailor:'strength',herbalist:'luck',traveler:'luck',cook:'hand',painter:'wit',weaver:'hand',gardener:'luck',potter:'hand',instrumentMaker:'hand' }
+export const ADULT_JOBS = Object.keys(JOB_STAT) as AdultJob[]
+/** 능력치 → 기본/높은 숙련 진로. 거주지와는 독립적이다. */
 export const JOBS_BY_STAT: Record<StatId, [AdultJob, AdultJob]> = {
   wit: ['scribe', 'scholar'],
   hand: ['woodworker', 'shipwright'],
@@ -59,18 +63,32 @@ export const JOB_GIFTS: Record<AdultJob, Partial<Record<ItemId, number>>> = {
   sailor: { perfumeOil: 1 },
   herbalist: { herb: 3 },
   traveler: { sealWax: 1 },
+  cook: { bread: 2 },
+  painter: { ink: 1 },
+  weaver: { fineThread: 1 },
+  gardener: { seedHerb: 2 },
+  potter: { pot: 1 },
+  instrumentMaker: { bronzeOrnament: 1 },
 }
 
-/** 가장 높은 능력치 점수로 일과 떠남을 정한다 (같으면 배우자 쪽 능력치를 먼저) */
-export function adultJob(c: Pick<Child, 'stats' | 'lean'>): { job: AdultJob; left: boolean; stat: StatId } {
+/** 경험한 관심과 능력치로 직업을 추천하며 기존 거주 선택을 보존한다. */
+export function adultJob(c: Pick<Child, 'stats' | 'lean'> & Partial<Pick<Child,'interests'|'left'>>): { job: AdultJob; left: boolean; stat: StatId } {
   let best: StatId = c.lean ?? 'strength'
   let n = statScore(c.stats[best])
   for (const id of STAT_IDS) {
     const sc = statScore(c.stats[id])
     if (sc > n) [best, n] = [id, sc]
   }
-  const left = n >= LEAVE_SCORE
-  return { job: JOBS_BY_STAT[best][left ? 1 : 0], left, stat: best }
+  const experienced = ADULT_JOBS.filter(j => (c.interests?.[j] ?? 0) > 0)
+    .sort((a,b) => (c.interests?.[b] ?? 0) - (c.interests?.[a] ?? 0) || statScore(c.stats[JOB_STAT[b]]) - statScore(c.stats[JOB_STAT[a]]))
+  const job = experienced[0] ?? JOBS_BY_STAT[best][n >= LEAVE_SCORE ? 1 : 0]
+  return { job, left: c.left ?? false, stat: JOB_STAT[job] }
+}
+
+export function addCareerInterest(c: Child, jobs: readonly AdultJob[]): Child {
+  const interests = { ...c.interests }
+  for (const job of jobs) interests[job] = Math.min(100, (interests[job] ?? 0) + 1)
+  return { ...c, interests }
 }
 
 export type KidMail = 'letter' | 'gift' | 'coins'
@@ -170,7 +188,12 @@ export function sanitizeChild(raw: unknown): Child | null {
   if (typeof o.name !== 'string' || (o.look !== 'boy' && o.look !== 'girl') || typeof o.born !== 'number') return null
   const lean = typeof o.lean === 'string' && (STAT_IDS as readonly string[]).includes(o.lean) ? (o.lean as StatId) : null
   const mode = o.mode === 'follow' || o.mode === 'home' || o.mode === 'roam' ? o.mode : undefined
-  const job = typeof o.job === 'string' && o.job in JOB_GIFTS ? (o.job as AdultJob) : undefined
+  const job = typeof o.job === 'string' && ADULT_JOBS.includes(o.job as AdultJob) ? (o.job as AdultJob) : undefined
+  const interests: Partial<Record<AdultJob,number>> = {}
+  if(o.interests && typeof o.interests === 'object') for(const id of ADULT_JOBS) {
+    const n=o.interests[id]
+    if(typeof n==='number' && Number.isFinite(n) && n>0) interests[id]=Math.min(100,Math.floor(n))
+  }
   const close = typeof o.close === 'number' && Number.isFinite(o.close) ? Math.max(0, Math.min(100, Math.round(o.close))) : 0
   return {
     name: o.name.slice(0, 12),
@@ -179,7 +202,8 @@ export function sanitizeChild(raw: unknown): Child | null {
     stats: sanitizeStats(o.stats),
     lean,
     ...(mode ? { mode } : {}),
-    ...(job ? { job, left: !!o.left } : {}),
+    ...(job ? { job, left: !!o.left, jobConfirmed: o.jobConfirmed !== false } : {}),
+    ...(Object.keys(interests).length ? { interests } : {}),
     ...(close ? { close } : {}),
   }
 }

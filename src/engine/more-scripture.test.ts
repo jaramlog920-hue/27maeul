@@ -22,16 +22,17 @@ const at = (s: GameState, day: number, minute: number): GameState => ({ ...s, cl
 const base = () => ({ ...chooseBook(newGame(CONTENT), 'lk', CONTENT), coins: 100 })
 
 describe('성경 이야기를 더 모으기', () => {
-  it('밤 필사: 밤에만, 기름 한 병으로 다음 조각 하나 — 기름이 있는 만큼 여러 번', () => {
+  it('사본 옮겨 적기는 낮과 밤 모두 기름 없이 가능하다', () => {
     const s = { ...at(base(), 3, 21 * 60), inv: { oil: 2 } }
-    expect(canNightCopy(at(s, 3, 10 * 60), CONTENT)).toBe('notNight')
-    expect(canNightCopy({ ...s, inv: {} }, CONTENT)).toBe('noOil')
+    expect(canNightCopy(at(s, 3, 10 * 60), CONTENT)).toBeNull()
+    expect(canNightCopy({ ...s, inv: {} }, CONTENT)).toBeNull()
     const a = nightCopy(s, CONTENT)!
     expect(a.state.collected).toContain(a.pieceId)
-    expect(a.state.inv.oil ?? 0).toBe(1)
+    expect(a.state.inv.oil ?? 0).toBe(2)
     const b = nightCopy(a.state, CONTENT)!
     expect(b.pieceId).not.toBe(a.pieceId)
-    expect(canNightCopy(b.state, CONTENT)).toBe('noOil')
+    expect(b.state.inv.oil).toBe(2)
+    expect(nightCopy({ ...b.state, inv: {} }, CONTENT)).not.toBeNull()
   })
 
   it('서고 열람석: 닢 셋, 하루 두 번까지', () => {

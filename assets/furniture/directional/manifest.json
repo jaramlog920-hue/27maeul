@@ -1,0 +1,996 @@
+{
+  "tileSize": 16,
+  "columns": 4,
+  "cellWidth": 40,
+  "cellHeight": 40,
+  "directions": [
+    "down",
+    "up",
+    "left",
+    "right"
+  ],
+  "legacyFacing": {
+    "table": "down",
+    "chair": "right",
+    "stool": "down",
+    "teapot": "left",
+    "cupboard": "down",
+    "fruitBowl": "down",
+    "supplyChest": "down",
+    "basket": "down",
+    "chest": "down",
+    "longBench": "down",
+    "daybed": "down",
+    "cushion": "down",
+    "pillows": "down",
+    "mat": "down",
+    "woodToy": "right",
+    "clothDoll": "down",
+    "bookcase": "down",
+    "lectern": "down",
+    "nightstand": "down",
+    "lantern": "down"
+  },
+  "items": [
+    {
+      "id": "table-down",
+      "file": "table-down.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "x": 4,
+      "y": 12
+    },
+    {
+      "id": "table-up",
+      "file": "table-up.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "x": 44,
+      "y": 12
+    },
+    {
+      "id": "table-left",
+      "file": "table-left.png",
+      "width": 16,
+      "height": 32,
+      "footprint": {
+        "w": 1,
+        "h": 2
+      },
+      "x": 92,
+      "y": 4
+    },
+    {
+      "id": "table-right",
+      "file": "table-right.png",
+      "width": 16,
+      "height": 32,
+      "footprint": {
+        "w": 1,
+        "h": 2
+      },
+      "x": 132,
+      "y": 4
+    },
+    {
+      "id": "chair-down",
+      "file": "chair-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 12,
+      "y": 52
+    },
+    {
+      "id": "chair-up",
+      "file": "chair-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 52,
+      "y": 52
+    },
+    {
+      "id": "chair-left",
+      "file": "chair-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 92,
+      "y": 52
+    },
+    {
+      "id": "chair-right",
+      "file": "chair-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 52
+    },
+    {
+      "id": "stool-down",
+      "file": "stool-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 12,
+      "y": 92
+    },
+    {
+      "id": "stool-up",
+      "file": "stool-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 52,
+      "y": 92
+    },
+    {
+      "id": "stool-left",
+      "file": "stool-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 92,
+      "y": 92
+    },
+    {
+      "id": "stool-right",
+      "file": "stool-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 92
+    },
+    {
+      "id": "teapot-down",
+      "file": "teapot-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 12,
+      "y": 132
+    },
+    {
+      "id": "teapot-up",
+      "file": "teapot-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 52,
+      "y": 132
+    },
+    {
+      "id": "teapot-left",
+      "file": "teapot-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 92,
+      "y": 132
+    },
+    {
+      "id": "teapot-right",
+      "file": "teapot-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 132
+    },
+    {
+      "id": "cupboard-down",
+      "file": "cupboard-down.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "x": 4,
+      "y": 172
+    },
+    {
+      "id": "cupboard-up",
+      "file": "cupboard-up.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "x": 44,
+      "y": 172
+    },
+    {
+      "id": "cupboard-left",
+      "file": "cupboard-left.png",
+      "width": 16,
+      "height": 32,
+      "footprint": {
+        "w": 1,
+        "h": 2
+      },
+      "x": 92,
+      "y": 164
+    },
+    {
+      "id": "cupboard-right",
+      "file": "cupboard-right.png",
+      "width": 16,
+      "height": 32,
+      "footprint": {
+        "w": 1,
+        "h": 2
+      },
+      "x": 132,
+      "y": 164
+    },
+    {
+      "id": "fruitBowl-down",
+      "file": "fruitBowl-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 12,
+      "y": 212
+    },
+    {
+      "id": "fruitBowl-up",
+      "file": "fruitBowl-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 52,
+      "y": 212
+    },
+    {
+      "id": "fruitBowl-left",
+      "file": "fruitBowl-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 92,
+      "y": 212
+    },
+    {
+      "id": "fruitBowl-right",
+      "file": "fruitBowl-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 212
+    },
+    {
+      "id": "supplyChest-down",
+      "file": "supplyChest-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 12,
+      "y": 252
+    },
+    {
+      "id": "supplyChest-up",
+      "file": "supplyChest-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 52,
+      "y": 252
+    },
+    {
+      "id": "supplyChest-left",
+      "file": "supplyChest-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 92,
+      "y": 252
+    },
+    {
+      "id": "supplyChest-right",
+      "file": "supplyChest-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 252
+    },
+    {
+      "id": "basket-down",
+      "file": "basket-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 12,
+      "y": 292
+    },
+    {
+      "id": "basket-up",
+      "file": "basket-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 52,
+      "y": 292
+    },
+    {
+      "id": "basket-left",
+      "file": "basket-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 92,
+      "y": 292
+    },
+    {
+      "id": "basket-right",
+      "file": "basket-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 292
+    },
+    {
+      "id": "chest-down",
+      "file": "chest-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 12,
+      "y": 332
+    },
+    {
+      "id": "chest-up",
+      "file": "chest-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 52,
+      "y": 332
+    },
+    {
+      "id": "chest-left",
+      "file": "chest-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 92,
+      "y": 332
+    },
+    {
+      "id": "chest-right",
+      "file": "chest-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 332
+    },
+    {
+      "id": "longBench-down",
+      "file": "longBench-down.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "x": 4,
+      "y": 372
+    },
+    {
+      "id": "longBench-up",
+      "file": "longBench-up.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "x": 44,
+      "y": 372
+    },
+    {
+      "id": "longBench-left",
+      "file": "longBench-left.png",
+      "width": 16,
+      "height": 32,
+      "footprint": {
+        "w": 1,
+        "h": 2
+      },
+      "x": 92,
+      "y": 364
+    },
+    {
+      "id": "longBench-right",
+      "file": "longBench-right.png",
+      "width": 16,
+      "height": 32,
+      "footprint": {
+        "w": 1,
+        "h": 2
+      },
+      "x": 132,
+      "y": 364
+    },
+    {
+      "id": "daybed-down",
+      "file": "daybed-down.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "x": 4,
+      "y": 412
+    },
+    {
+      "id": "daybed-up",
+      "file": "daybed-up.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "x": 44,
+      "y": 412
+    },
+    {
+      "id": "daybed-left",
+      "file": "daybed-left.png",
+      "width": 16,
+      "height": 32,
+      "footprint": {
+        "w": 1,
+        "h": 2
+      },
+      "x": 92,
+      "y": 404
+    },
+    {
+      "id": "daybed-right",
+      "file": "daybed-right.png",
+      "width": 16,
+      "height": 32,
+      "footprint": {
+        "w": 1,
+        "h": 2
+      },
+      "x": 132,
+      "y": 404
+    },
+    {
+      "id": "cushion-down",
+      "file": "cushion-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 12,
+      "y": 452
+    },
+    {
+      "id": "cushion-up",
+      "file": "cushion-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 52,
+      "y": 452
+    },
+    {
+      "id": "cushion-left",
+      "file": "cushion-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 92,
+      "y": 452
+    },
+    {
+      "id": "cushion-right",
+      "file": "cushion-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 452
+    },
+    {
+      "id": "pillows-down",
+      "file": "pillows-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 12,
+      "y": 492
+    },
+    {
+      "id": "pillows-up",
+      "file": "pillows-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 52,
+      "y": 492
+    },
+    {
+      "id": "pillows-left",
+      "file": "pillows-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 92,
+      "y": 492
+    },
+    {
+      "id": "pillows-right",
+      "file": "pillows-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 492
+    },
+    {
+      "id": "mat-down",
+      "file": "mat-down.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "x": 4,
+      "y": 532
+    },
+    {
+      "id": "mat-up",
+      "file": "mat-up.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "x": 44,
+      "y": 532
+    },
+    {
+      "id": "mat-left",
+      "file": "mat-left.png",
+      "width": 16,
+      "height": 32,
+      "footprint": {
+        "w": 1,
+        "h": 2
+      },
+      "x": 92,
+      "y": 524
+    },
+    {
+      "id": "mat-right",
+      "file": "mat-right.png",
+      "width": 16,
+      "height": 32,
+      "footprint": {
+        "w": 1,
+        "h": 2
+      },
+      "x": 132,
+      "y": 524
+    },
+    {
+      "id": "woodToy-down",
+      "file": "woodToy-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 12,
+      "y": 572
+    },
+    {
+      "id": "woodToy-up",
+      "file": "woodToy-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 52,
+      "y": 572
+    },
+    {
+      "id": "woodToy-left",
+      "file": "woodToy-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 92,
+      "y": 572
+    },
+    {
+      "id": "woodToy-right",
+      "file": "woodToy-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 572
+    },
+    {
+      "id": "clothDoll-down",
+      "file": "clothDoll-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 12,
+      "y": 612
+    },
+    {
+      "id": "clothDoll-up",
+      "file": "clothDoll-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 52,
+      "y": 612
+    },
+    {
+      "id": "clothDoll-left",
+      "file": "clothDoll-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 92,
+      "y": 612
+    },
+    {
+      "id": "clothDoll-right",
+      "file": "clothDoll-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 612
+    },
+    {
+      "id": "bookcase-down",
+      "file": "bookcase-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 12,
+      "y": 652
+    },
+    {
+      "id": "bookcase-up",
+      "file": "bookcase-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 52,
+      "y": 652
+    },
+    {
+      "id": "bookcase-left",
+      "file": "bookcase-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 92,
+      "y": 652
+    },
+    {
+      "id": "bookcase-right",
+      "file": "bookcase-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 652
+    },
+    {
+      "id": "lectern-down",
+      "file": "lectern-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 12,
+      "y": 692
+    },
+    {
+      "id": "lectern-up",
+      "file": "lectern-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 52,
+      "y": 692
+    },
+    {
+      "id": "lectern-left",
+      "file": "lectern-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 92,
+      "y": 692
+    },
+    {
+      "id": "lectern-right",
+      "file": "lectern-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 692
+    },
+    {
+      "id": "nightstand-down",
+      "file": "nightstand-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 12,
+      "y": 732
+    },
+    {
+      "id": "nightstand-up",
+      "file": "nightstand-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 52,
+      "y": 732
+    },
+    {
+      "id": "nightstand-left",
+      "file": "nightstand-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 92,
+      "y": 732
+    },
+    {
+      "id": "nightstand-right",
+      "file": "nightstand-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 732
+    },
+    {
+      "id": "lantern-down",
+      "file": "lantern-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 12,
+      "y": 772
+    },
+    {
+      "id": "lantern-up",
+      "file": "lantern-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 52,
+      "y": 772
+    },
+    {
+      "id": "lantern-left",
+      "file": "lantern-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 92,
+      "y": 772
+    },
+    {
+      "id": "lantern-right",
+      "file": "lantern-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 772
+    }
+  ]
+}

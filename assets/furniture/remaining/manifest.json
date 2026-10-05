@@ -1,0 +1,926 @@
+{
+  "tileSize": 16,
+  "columns": 4,
+  "cellWidth": 56,
+  "cellHeight": 56,
+  "directions": [
+    "down",
+    "up",
+    "left",
+    "right"
+  ],
+  "items": [
+    {
+      "id": "rug-down",
+      "file": "rug-down.png",
+      "width": 48,
+      "height": 32,
+      "footprint": {
+        "w": 3,
+        "h": 2
+      },
+      "x": 4,
+      "y": 12
+    },
+    {
+      "id": "rug-up",
+      "file": "rug-up.png",
+      "width": 48,
+      "height": 32,
+      "footprint": {
+        "w": 3,
+        "h": 2
+      },
+      "x": 60,
+      "y": 12
+    },
+    {
+      "id": "rug-left",
+      "file": "rug-left.png",
+      "width": 32,
+      "height": 48,
+      "footprint": {
+        "w": 2,
+        "h": 3
+      },
+      "x": 124,
+      "y": 4
+    },
+    {
+      "id": "rug-right",
+      "file": "rug-right.png",
+      "width": 32,
+      "height": 48,
+      "footprint": {
+        "w": 2,
+        "h": 3
+      },
+      "x": 180,
+      "y": 4
+    },
+    {
+      "id": "pot-down",
+      "file": "pot-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 20,
+      "y": 76
+    },
+    {
+      "id": "pot-up",
+      "file": "pot-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 76,
+      "y": 76
+    },
+    {
+      "id": "pot-left",
+      "file": "pot-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 76
+    },
+    {
+      "id": "pot-right",
+      "file": "pot-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 188,
+      "y": 76
+    },
+    {
+      "id": "vase-down",
+      "file": "vase-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 20,
+      "y": 132
+    },
+    {
+      "id": "vase-up",
+      "file": "vase-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 76,
+      "y": 132
+    },
+    {
+      "id": "vase-left",
+      "file": "vase-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 132
+    },
+    {
+      "id": "vase-right",
+      "file": "vase-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 188,
+      "y": 132
+    },
+    {
+      "id": "jar-down",
+      "file": "jar-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 20,
+      "y": 188
+    },
+    {
+      "id": "jar-up",
+      "file": "jar-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 76,
+      "y": 188
+    },
+    {
+      "id": "jar-left",
+      "file": "jar-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 188
+    },
+    {
+      "id": "jar-right",
+      "file": "jar-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 188,
+      "y": 188
+    },
+    {
+      "id": "candle-down",
+      "file": "candle-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 20,
+      "y": 244
+    },
+    {
+      "id": "candle-up",
+      "file": "candle-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 76,
+      "y": 244
+    },
+    {
+      "id": "candle-left",
+      "file": "candle-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 244
+    },
+    {
+      "id": "candle-right",
+      "file": "candle-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 188,
+      "y": 244
+    },
+    {
+      "id": "bowl-down",
+      "file": "bowl-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 20,
+      "y": 300
+    },
+    {
+      "id": "bowl-up",
+      "file": "bowl-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 76,
+      "y": 300
+    },
+    {
+      "id": "bowl-left",
+      "file": "bowl-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 300
+    },
+    {
+      "id": "bowl-right",
+      "file": "bowl-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 188,
+      "y": 300
+    },
+    {
+      "id": "bird-down",
+      "file": "bird-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 20,
+      "y": 356
+    },
+    {
+      "id": "bird-up",
+      "file": "bird-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 76,
+      "y": 356
+    },
+    {
+      "id": "bird-left",
+      "file": "bird-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 356
+    },
+    {
+      "id": "bird-right",
+      "file": "bird-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 188,
+      "y": 356
+    },
+    {
+      "id": "barrel-down",
+      "file": "barrel-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 20,
+      "y": 412
+    },
+    {
+      "id": "barrel-up",
+      "file": "barrel-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 76,
+      "y": 412
+    },
+    {
+      "id": "barrel-left",
+      "file": "barrel-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 412
+    },
+    {
+      "id": "barrel-right",
+      "file": "barrel-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 188,
+      "y": 412
+    },
+    {
+      "id": "wheel-down",
+      "file": "wheel-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 20,
+      "y": 468
+    },
+    {
+      "id": "wheel-up",
+      "file": "wheel-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 76,
+      "y": 468
+    },
+    {
+      "id": "wheel-left",
+      "file": "wheel-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 468
+    },
+    {
+      "id": "wheel-right",
+      "file": "wheel-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 188,
+      "y": 468
+    },
+    {
+      "id": "lampStand-down",
+      "file": "lampStand-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 20,
+      "y": 524
+    },
+    {
+      "id": "lampStand-up",
+      "file": "lampStand-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 76,
+      "y": 524
+    },
+    {
+      "id": "lampStand-left",
+      "file": "lampStand-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 524
+    },
+    {
+      "id": "lampStand-right",
+      "file": "lampStand-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 188,
+      "y": 524
+    },
+    {
+      "id": "bigPlant-down",
+      "file": "bigPlant-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 20,
+      "y": 580
+    },
+    {
+      "id": "bigPlant-up",
+      "file": "bigPlant-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 76,
+      "y": 580
+    },
+    {
+      "id": "bigPlant-left",
+      "file": "bigPlant-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 580
+    },
+    {
+      "id": "bigPlant-right",
+      "file": "bigPlant-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 188,
+      "y": 580
+    },
+    {
+      "id": "roundRug-down",
+      "file": "roundRug-down.png",
+      "width": 32,
+      "height": 32,
+      "footprint": {
+        "w": 2,
+        "h": 2
+      },
+      "x": 12,
+      "y": 628
+    },
+    {
+      "id": "roundRug-up",
+      "file": "roundRug-up.png",
+      "width": 32,
+      "height": 32,
+      "footprint": {
+        "w": 2,
+        "h": 2
+      },
+      "x": 68,
+      "y": 628
+    },
+    {
+      "id": "roundRug-left",
+      "file": "roundRug-left.png",
+      "width": 32,
+      "height": 32,
+      "footprint": {
+        "w": 2,
+        "h": 2
+      },
+      "x": 124,
+      "y": 628
+    },
+    {
+      "id": "roundRug-right",
+      "file": "roundRug-right.png",
+      "width": 32,
+      "height": 32,
+      "footprint": {
+        "w": 2,
+        "h": 2
+      },
+      "x": 180,
+      "y": 628
+    },
+    {
+      "id": "shell-down",
+      "file": "shell-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 20,
+      "y": 692
+    },
+    {
+      "id": "shell-up",
+      "file": "shell-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 76,
+      "y": 692
+    },
+    {
+      "id": "shell-left",
+      "file": "shell-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 692
+    },
+    {
+      "id": "shell-right",
+      "file": "shell-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 188,
+      "y": 692
+    },
+    {
+      "id": "purpleRug-down",
+      "file": "purpleRug-down.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "x": 12,
+      "y": 748
+    },
+    {
+      "id": "purpleRug-up",
+      "file": "purpleRug-up.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "x": 68,
+      "y": 748
+    },
+    {
+      "id": "purpleRug-left",
+      "file": "purpleRug-left.png",
+      "width": 16,
+      "height": 32,
+      "footprint": {
+        "w": 1,
+        "h": 2
+      },
+      "x": 132,
+      "y": 740
+    },
+    {
+      "id": "purpleRug-right",
+      "file": "purpleRug-right.png",
+      "width": 16,
+      "height": 32,
+      "footprint": {
+        "w": 1,
+        "h": 2
+      },
+      "x": 188,
+      "y": 740
+    },
+    {
+      "id": "scrolls-down",
+      "file": "scrolls-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 20,
+      "y": 804
+    },
+    {
+      "id": "scrolls-up",
+      "file": "scrolls-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 76,
+      "y": 804
+    },
+    {
+      "id": "scrolls-left",
+      "file": "scrolls-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 804
+    },
+    {
+      "id": "scrolls-right",
+      "file": "scrolls-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 188,
+      "y": 804
+    },
+    {
+      "id": "inkpot-down",
+      "file": "inkpot-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 20,
+      "y": 860
+    },
+    {
+      "id": "inkpot-up",
+      "file": "inkpot-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 76,
+      "y": 860
+    },
+    {
+      "id": "inkpot-left",
+      "file": "inkpot-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 860
+    },
+    {
+      "id": "inkpot-right",
+      "file": "inkpot-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 188,
+      "y": 860
+    },
+    {
+      "id": "dryFlowers-down",
+      "file": "dryFlowers-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 20,
+      "y": 916
+    },
+    {
+      "id": "dryFlowers-up",
+      "file": "dryFlowers-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 76,
+      "y": 916
+    },
+    {
+      "id": "dryFlowers-left",
+      "file": "dryFlowers-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 916
+    },
+    {
+      "id": "dryFlowers-right",
+      "file": "dryFlowers-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 188,
+      "y": 916
+    },
+    {
+      "id": "hourglass-down",
+      "file": "hourglass-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 20,
+      "y": 972
+    },
+    {
+      "id": "hourglass-up",
+      "file": "hourglass-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 76,
+      "y": 972
+    },
+    {
+      "id": "hourglass-left",
+      "file": "hourglass-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 972
+    },
+    {
+      "id": "hourglass-right",
+      "file": "hourglass-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 188,
+      "y": 972
+    },
+    {
+      "id": "inkJar-down",
+      "file": "inkJar-down.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 20,
+      "y": 1028
+    },
+    {
+      "id": "inkJar-up",
+      "file": "inkJar-up.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 76,
+      "y": 1028
+    },
+    {
+      "id": "inkJar-left",
+      "file": "inkJar-left.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 132,
+      "y": 1028
+    },
+    {
+      "id": "inkJar-right",
+      "file": "inkJar-right.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "x": 188,
+      "y": 1028
+    }
+  ]
+}

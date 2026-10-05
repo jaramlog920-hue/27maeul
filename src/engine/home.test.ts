@@ -13,7 +13,6 @@ import {
   submitChapter,
   tapTile,
   tick,
-  trade,
   TRADES,
   walkDirection,
   HOME_STAGES,
@@ -52,7 +51,7 @@ import { findPath } from './movement'
 import { placement } from './room'
 import { deserialize, serialize } from './save'
 import { CONTENT, piecesOf } from '../content/catalog'
-import { ITEM_TEXT, SCENES, T } from '../content/text'
+import { ITEM_TEXT, SCENES } from '../content/text'
 import { TOOLS } from './items'
 import { BABY_PARTY_SPOTS, FRIENDS_SPOT, HILL_SPOTS, VISIT_SPOT } from './bonds'
 import { EAVES, STRAY_SPOTS } from './companion'
@@ -316,18 +315,11 @@ describe("다락 창가에서 읽고 자면 '평안'이 하루 더", () => {
 describe('넓은 책상', () => {
   const chapter1 = piecesOf('lk').filter((p) => p.chapter === 1).map((p) => p.id)
   const ready = (): GameState => setArrangement({ ...chooseBook(newGame(CONTENT), 'lk', CONTENT), collected: chapter1 }, 'lk', 1, [...chapter1])
-  it('장날 닢 80, 도구라 하나만', () => {
+  it('옛 넓은 책상은 보존하지만 기록 설비 판매는 없다', () => {
     expect(TOOLS).toContain('wideDesk')
-    const t = TRADES.find((x) => x.get.wideDesk)!
-    expect(t.coins).toBe(80)
-    const s = { ...newGame(CONTENT), coins: 200 }
-    expect(trade(at(s, 600, 6), t)).toBeNull()
-    const bought = trade(at(s, 600, 7), t)!
-    expect(bought.coins).toBe(120)
-    expect(bought.inv.wideDesk).toBe(1)
-    expect(trade(bought, t)).toBeNull()
-    expect(trade({ ...at(s, 600, 7), coins: 79 }, t)).toBeNull()
-    expect(T.trades[t.id as keyof typeof T.trades]).toBeDefined()
+    expect(TRADES.some((x) => x.get.wideDesk || x.get.brightLamp)).toBe(false)
+    const old = { ...newGame(CONTENT), inv: { wideDesk: 1 } }
+    expect(deserialize(serialize(old), CONTENT)!.inv.wideDesk).toBe(1)
   })
   it('계획 14: 빠르게 하지 않는 꾸미기 물건 — 넓은 책상·기록대가 있어도 한 장에 드는 시간은 같다, 이미 산 책상은 그대로 가진다', () => {
     const base = ready()

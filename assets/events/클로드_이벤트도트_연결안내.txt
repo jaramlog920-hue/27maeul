@@ -1,0 +1,42 @@
+27마을 — 결혼식 및 다른 이벤트 도트 연결 안내
+폴더: assets/events/
+원본: src/render/wedding-art.ts, event-art.ts
+내보내기: node scripts/export-event-art.mjs
+확인: 미리보기.html
+
+결혼식
+꽃 아치 4방향, 꽃다발·화관·옷에 꽂는 꽃·반지 상자 닫힘/열림·화분·표지·잔치 쟁반·찻잔·선물·꽃잎·촛대·통로 천·잔치 탁자 14종.
+6개 인물 동작 × 4방향 × 4프레임 = 96개 투명 PNG.
+arrive 입장 / bow 인사 / offerFlowers 꽃다발 / exchange 기념 반지 /
+holdHands 손잡기 / celebrate 축하 인사.
+PNG는 기본 인물 예시. 실제 부부는 weddingActorFrame(who,facing,action,frame,opts)에 현재 외형을 전달.
+actor는 기존 인물 팔레트, propBack/propFront는 FURNI_PALETTE 사용.
+뒤 소품→인물→앞 소품 순서. 상대와 손잡는 동작은 두 인물을 실제 손 위치에 맞춰 배치.
+꽃다발과 반지 교환은 소품을 들고 건네는 기본 자세. 상대방과의 접점과 물건 소유 전환은 게임 상태에서 연결.
+입장·손잡기·축하는 반복, 인사·꽃다발·교환은 단발. 미리보기는 확인을 위해 모든 동작을 반복.
+화관/옷꽃은 선택 소품이며 머리나 옷을 강제로 바꾸지 않는다.
+현재 결혼식은 weddingToday 및 모닥불 장소/시간 규칙이 있음.
+실제 결혼 완료 로직과 날짜·배우자·저장을 유지하고 이 자산 때문에 새 결혼 보상을 중복 지급하지 않는다.
+반지 그림은 선택 연출이며 가방 재료/구매 조건을 새로 요구하지 않는다.
+
+다른 이벤트 20종
+생일: birthdayBread/birthdayBanner. 기존 생일 상태에 연결.
+집들이/이사 환영: welcomeBasket/housewarmingSign.
+작품 발표/첫 공동 만들기: exhibitStand, artworkUnfinished/Complete, firstToy.
+공동 시설 완공: openingRibbon/ribbonAfter. 안전한 마무리 연출 소품이며 가위 동작은 없음.
+첫 심부름: errandParcel. 실제 완료 때만 표시.
+가족 나들이/여행: travelBundle/picnicCloth.
+가족 재회/생활 소식: reunionLetter. 생활 편지만 사용.
+계절 잔치: springGarland/summerShadeDecor/autumnHarvest/winterLantern/feastBoard.
+가족 기억: familyMemoryFrame. 액자 속 사람은 기본 장식 예시이며 실제 앨범은 참여자 도트를 조합.
+일정·이름·간판 글자는 화면에서 실제 데이터로 표시.
+추가 이벤트 동작은 기존 expansion/motions의 give/take/show/carry/tidy와 wedding의 bow/celebrate 재사용.
+
+사용 기준
+원본은 16px 타일 정수 도트, 투명 PNG. 확대는 nearest-neighbor.
+아치: 앞뒤 64×48, 좌우 32×48. 차례/위치/통행 영역은 실제 행사 장소에 맞춰 확정.
+scene.png/scene-preview-4x.png는 자산 배치 예시이며 지도에 그대로 덮는 배경이 아니다.
+manifest.json에 파일·크기·방향·프레임 시간·기준점·반복 여부.
+파티 장식은 이벤트 중에만 표시하고 끝나면 정리. 실제 결과물만 사건 완료 상태에 따라 남김.
+전용 이벤트 도트는 생성 완료. 게임 메뉴/렌더러/상태/저장 연결과 배포는 이번 작업에 포함되지 않음.
+연결 후 부부 외형·아이·손 접점·소품 겹침·통행·모바일 화면을 검수.

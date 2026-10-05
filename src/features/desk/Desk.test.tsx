@@ -166,11 +166,11 @@ describe('옮겨 적기', () => {
     expect(useGame.getState().game.inv).toEqual({})
   })
 
-  it('밤에 기름이 없으면 어둡다', async () => {
+  it('옛 어둠 표식이 있어도 기름 없이 필사할 수 있다', async () => {
     reset({ flags: OPEN, activeBook: 'rom', collected: ['rom-001'], inv: { papyrus: 3, ink: 3 } })
     openDesk(true)
     render(<ModalLayer />)
-    expect(screen.getByText(/등잔 기름이 없어 어둡습니다/)).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: '빈칸 1' })).toBeNull()
+    expect(screen.queryByText(/등잔 기름이 없어/)).toBeNull()
+    expect(screen.getByRole('button', { name: '빈칸 1' })).toBeEnabled()
   })
 })

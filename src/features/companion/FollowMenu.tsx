@@ -1,12 +1,12 @@
 // 동물 친구·우리 아이를 눌렀을 때: 데리고 다니기·집에 두기 (돕는 아이는 혼자 다니게 두기도)
 import { childMode, childStage } from '../../engine/child'
 import { JOB_NAME } from '../../content/text'
-import { T } from '../../content/text'
+import { fill, T } from '../../content/text'
 import { useGame } from '../../store/game-store'
 
 export function FollowMenu({ who }: { who: 'pet' | 'child' }) {
   const game = useGame((s) => s.game)
-  const { petCompanion, keepCompanion, keepChild, closeModal, open } = useGame.getState()
+  const { petCompanion, petActivity, keepCompanion, keepChild, closeModal, open } = useGame.getState()
   if (who === 'pet') {
     const c = game.companion
     if (!c) return null
@@ -14,8 +14,17 @@ export function FollowMenu({ who }: { who: 'pet' | 'child' }) {
       <div className="dialog follow" role="dialog" aria-label={c.name}>
         <h2>{c.name}</h2>
         <p className="hint">{c.stay ? '지금은 집에서 기다리고 있어요.' : '지금은 곁을 따라다녀요.'}</p>
+        <details>
+          <summary>{T.pet.record}</summary>
+          <p>{fill(T.pet.days, { days: Math.max(1, game.clock.day - c.since + 1) })}</p>
+          {!c.found?.length && <p>{T.pet.unknown}</p>}
+          {c.moments?.play !== undefined && <p>{T.pet.firstPlay} · {fill(T.pet.date, { day: c.moments.play })}</p>}
+          {c.moments?.rest !== undefined && <p>{T.pet.firstRest} · {fill(T.pet.date, { day: c.moments.rest })}</p>}
+        </details>
         <div className="actions column">
           <button onClick={petCompanion}>쓰다듬기</button>
+          <button disabled={Math.abs(c.x-game.player.x)+Math.abs(c.y-game.player.y)>2} onClick={() => petActivity('play')}>{T.pet.play}</button>
+          <button disabled={Math.abs(c.x-game.player.x)+Math.abs(c.y-game.player.y)>2} onClick={() => petActivity('rest')}>{T.pet.rest}</button>
           <button className={!c.stay ? 'primary' : ''} disabled={!c.stay} onClick={() => keepCompanion(false)}>
             데리고 다니기
           </button>

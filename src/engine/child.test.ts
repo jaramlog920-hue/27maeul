@@ -98,23 +98,23 @@ describe('아이 (계획 12)', () => {
 })
 
 describe('어른이 된 아이', () => {
-  it('가장 높은 능력치 점수로 일이 정해지고, 60점 이상이면 떠난다', async () => {
+  it('능력치는 진로에 반영되지만 높은 점수로 자동 이주하지 않는다', async () => {
     const { adultJob } = await import('./child')
     const low = freshStats()
     low.hand = { level: 2, xp: 0, born: 0 }
     expect(adultJob({ stats: low, lean: null })).toMatchObject({ job: 'woodworker', left: false })
     const high = freshStats()
     high.wit = { level: 5, xp: 0, born: 0 }
-    expect(adultJob({ stats: high, lean: 'hand' })).toMatchObject({ job: 'scholar', left: true })
+    expect(adultJob({ stats: high, lean: 'hand' })).toMatchObject({ job: 'scholar', left: false })
   })
 
-  it('어른이 된 아침에 장면, 떠난 아이는 날마다 돕지 않고 지도에서 보이지 않는다', async () => {
+  it('기존 이주 선택을 유지하고 떠난 성인 자식은 지도에서 보이지 않는다', async () => {
     const { ADULT_AT } = await import('./child')
     const { childTile } = await import('./game')
     const s0 = nameChild(sleepUntil(married(10), 24), '재스퍼')
     const high = freshStats()
     high.strength = { level: 5, xp: 0, born: 0 }
-    const grown = sleepUntil({ ...s0, child: { ...s0.child!, stats: high } }, 24 + ADULT_AT)
+    const grown = sleepUntil({ ...s0, child: { ...s0.child!, stats: high, left: true } }, 24 + ADULT_AT)
     expect(grown.child!.job).toBe('sailor')
     expect(grown.child!.left).toBe(true)
     expect(grown.scenes).toContain('childLeaves')
@@ -142,4 +142,26 @@ describe('어른이 된 아이', () => {
     for (const id of ['childStays', 'childLeaves']) expect(SCENES[id]).toBeDefined()
     for (const k of ['letter', 'gift', 'coins']) expect(JOURNAL_NOTES[`kidMail:${k}`]).toBeDefined()
   })
+})
+
+
+describe('확장된 자식 진로와 저장 호환',()=>{
+ it('16종 모두 기존 가방에서 지원하는 선물을 갖는다',async()=>{
+  const {ADULT_JOBS,JOB_GIFTS}=await import('./child')
+  const {JOB_NAME}=await import('../content/text')
+  expect(ADULT_JOBS).toHaveLength(16)
+  for(const j of ADULT_JOBS){expect(JOB_NAME[j]).toBeTruthy();expect(Object.keys(JOB_GIFTS[j]).length).toBeGreaterThan(0)}
+ })
+ it('활동에서 얻은 관심으로 요리 진로를 제안하며 거주지를 바꾸지 않는다',async()=>{
+  const {addCareerInterest,adultJob,newChild}=await import('./child')
+  const c=addCareerInterest(newChild(1,freshStats(),undefined),['cook'])
+  expect(adultJob(c)).toMatchObject({job:'cook',left:false})
+  expect(adultJob({...c,left:true})).toMatchObject({job:'cook',left:true})
+ })
+ it('기존 확정 직업을 보존하고 새로운 미확정 진로와 관심도 저장한다',()=>{
+  const base={name:'루시',look:'girl',born:1,stats:freshStats(),lean:null}
+  expect(sanitizeChild({...base,job:'scholar',left:true})).toMatchObject({job:'scholar',left:true,jobConfirmed:true})
+  expect(sanitizeChild({...base,job:'potter',left:false,jobConfirmed:false,interests:{potter:3,cook:Infinity,unknown:9}})).toMatchObject({job:'potter',jobConfirmed:false,interests:{potter:3}})
+  expect(sanitizeChild({...base,job:'toString'})?.job).toBeUndefined()
+ })
 })

@@ -71,7 +71,7 @@ export function depthOf(stage: Stage, lover: boolean): 0 | 1 | 2 | 3 {
 // ── 사람 한 명의 내용 (people.json) ──
 
 export type Color = 'warm' | 'tease' | 'honest' | 'quiet'
-export type Activity = 'hammer' | 'net' | 'tea' | 'book' | 'bread' | 'sheep' | 'herb' | 'weave' | 'bee' | 'grape' | 'music' | 'rest' | 'wait' | 'wood' | 'cat'
+export type Activity = 'hammer' | 'net' | 'tea' | 'book' | 'bread' | 'sheep' | 'herb' | 'weave' | 'bee' | 'grape' | 'music' | 'rest' | 'wait' | 'wood' | 'cat' | 'press' | 'sort'
 
 export interface Routine {
   when?: When
@@ -117,6 +117,8 @@ export interface Req {
   recent?: { exp: string; days: number }
   /** 이야기 뒤 소품이 지금 놓여 있을 때 (소품 id) */
   placed?: string
+  /** 앞 사건의 선택을 마친 날에서 며칠 뒤 (날짜 미상인 옛 저장은 본 사건으로 판단) */
+  after?: { event: string; days: number }
 }
 
 /** 말을 나누는 사이 (사이 단계와 연애에서) */
@@ -138,6 +140,8 @@ export interface TalkLine {
   near?: Tile
   /** 서먹할 때만 하는 말 */
   cool?: boolean
+  /** 이 말에서 직접 알게 되는 생활 취향 키 */
+  reveals?: string
 }
 
 export interface SceneLine {
@@ -168,6 +172,8 @@ export interface PersonEvent {
   /** 이 사람이 서 있는 곳 (플레이어가 가까이 가면 열린다) */
   at: Tile
   when?: When
+  /** 실제로 곁에 있어야 장면에 참여하는 주민 */
+  with?: string[]
   req?: Req
   lines: SceneLine[]
   choices?: Choice[]
@@ -200,10 +206,12 @@ export interface Sighting {
 }
 
 export interface Person {
+  clubLines?: { start?: string; finish?: string }
   id: string
   /** 마음이 열리는 빠르기 (1 보통, 크면 빨리) */
   pace: number
   dislikes?: string[]
+  tastes?: LifestyleTastes
   routines: Routine[]
   /** 평소에서 벗어나는 날의 일과 (날 씨앗으로 한 달에 몇 번) */
   offDays?: { chance: number; routines: Routine[]; gossip?: string }
@@ -212,6 +220,13 @@ export interface Person {
   events?: PersonEvent[]
   /** 이야기 뒤 이웃 집 방·작업장 앞 지정 칸에 놓이는 소품 (계획 16 작업 4) */
   props?: StoryProp[]
+}
+
+export interface LifestyleTastes {
+  activity?: Partial<Record<'tea' | 'sew' | 'garden' | 'observe' | 'taste' | 'make' | 'walk' | 'work', -1 | 0 | 1>>
+  place?: Partial<Record<'indoor' | 'hill' | 'market' | 'shade' | 'lake', -1 | 0 | 1>>
+  size?: Partial<Record<'small' | 'many', -1 | 0 | 1>>
+  time?: Partial<Record<'early' | 'afternoon' | 'evening', -1 | 0 | 1>>
 }
 
 /**
@@ -495,6 +510,11 @@ export function reqMet(r: Req | undefined, c: ReqCtx): boolean {
   if (r.seen && !r.seen.every(seen)) return false
   if (r.notSeen && r.notSeen.some(seen)) return false
   if (r.seenAny && !r.seenAny.some(seen)) return false
+  if (r.after) {
+    if (!seen(r.after.event)) return false
+    const day = c.life.experiences[`choice:${r.after.event}`]?.last
+    if (day !== undefined && day !== null && c.day - day < r.after.days) return false
+  }
   if (r.story && !r.story.every((x) => (x.outcome === undefined ? storyFlag(c.flags, x.id) > 0 : storyFlag(c.flags, x.id) === x.outcome + 1))) return false
   if (r.notStory && r.notStory.some((id) => storyFlag(c.flags, id) > 0)) return false
   if (r.exp && !r.exp.every((id) => sharedExperience(c.life, c.npc, id))) return false

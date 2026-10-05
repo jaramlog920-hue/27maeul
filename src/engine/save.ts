@@ -1,3 +1,8 @@
+import { sanitizeClubs, sanitizeClubSessions } from './clubs'
+import { sanitizePlans } from './plans'
+import { sanitizeCompanion } from './companion'
+import { sanitizeWorkDay } from './work-day'
+import { sanitizeSkills, sanitizeSkillLesson } from './skills'
 // 브라우저 저장. 저장소가 없거나 막혀 있어도 게임은 돌아야 하므로 모든 접근을 try/catch로 감싼다.
 import { sanitizeLife } from './people'
 import { sanitizeNotebook } from './notebook'
@@ -31,7 +36,8 @@ function storage(): Storage | undefined {
 
 export function serialize(s: GameState): string {
   // 걷던 길·자율 동작·이웃 위치는 저장하지 않는다 (doze의 Infinity는 JSON이 못 담는다)
-  return JSON.stringify({ ...s, player: { ...s.player, path: [] }, target: null, idle: IDLE_RESET, npcs: {} })
+  // 가구 쓰는 동작(act)도 그림만이라 저장하지 않는다
+  return JSON.stringify({ ...s, player: { ...s.player, path: [] }, target: null, idle: IDLE_RESET, act: undefined, npcs: {} })
 }
 
 /**
@@ -67,6 +73,20 @@ const isObj = (v: unknown) => !!v && typeof v === 'object' && !Array.isArray(v)
  * (없는 id가 남으면 도감·일지에서 오류가 나고, 책상 순서가 영원히 "틀림"이 될 수 있다)
  */
 export function sanitize(s: GameState, content: GameContent): GameState {
+  // 제거한 설비의 주문·장면은 옛 저장에서도 다시 등장하지 않는다.
+  const canceledCosts: Record<string, readonly number[]> = { desk: [0, 80, 300], lamp: [0, 60, 250], shelf: [0, 200, 500], inkStand: [0, 120] }
+  let refundedCoins = 0
+  const refundedInv = { ...s.inv }
+  for (const [line, costs] of Object.entries(canceledCosts)) {
+    const tier = s.flags?.[`fixOrder:${line}`]
+    if (!Number.isInteger(tier) || !costs[tier]) continue
+    refundedCoins += costs[tier]
+    if (tier === 2 && ['desk','lamp','shelf'].includes(line)) refundedInv.bronzeOrnament = (refundedInv.bronzeOrnament ?? 0) + 1
+    if (tier === 2 && line === 'shelf') refundedInv.purpleCloth = (refundedInv.purpleCloth ?? 0) + 1
+  }
+  const retiredFlags = Object.fromEntries(Object.entries(s.flags ?? {}).filter(([k]) => !k.startsWith('fix:') && !k.startsWith('fixOrder:')))
+  s = { ...s, coins: s.coins + refundedCoins, inv: refundedInv, flags: retiredFlags, scenes: (s.scenes ?? []).filter(id => !id.startsWith('fixed:')),
+    achieved: (s.achieved ?? []).filter(a => a.id !== 'fixture') }
   const known = new Map(content.pieces.map((p) => [p.id, p]))
   const progress: Progress = emptyProgress()
   for (const b of BOOKS) {
@@ -137,7 +157,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   const out: GameState = {
     ...s,
     player: moved.player,
-    companion: moved.companion,
+    companion: sanitizeCompanion(moved.companion),
     homeLevel,
     flags,
     journey,
@@ -154,6 +174,13 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     looks: Object.fromEntries(Object.entries((isObj(s.looks) ? s.looks : {}) as Record<string, unknown>).filter(([, v]) => isObj(v) && ((v as { look?: unknown }).look === 'f' || (v as { look?: unknown }).look === 'm'))) as GameState['looks'],
     // 살아 움직이는 사람들 (계획 6b): 옛 저장은 빈 기억
     life: sanitizeLife(s.life),
+    workDay: sanitizeWorkDay(s.workDay),
+    skills: sanitizeSkills(s.skills),
+    skillLesson: sanitizeSkillLesson(s.skillLesson),
+    plans: sanitizePlans(s.plans, s.clock.day),
+    clubs: sanitizeClubs(s.clubs),
+    clubSessions: sanitizeClubSessions(s.clubSessions),
+    clubWorks: Object.fromEntries(Object.entries(s.clubWorks ?? {}).filter(([, w]) => w && w.item === 'cushion' && ['hallTable','teaTable','pavilion','garden'].includes(w.place))),
     // 살림과 서고 (계획 13): 옛 저장은 정성 들인 장 없음, 봉인 없음
     careful: Object.fromEntries(Object.entries(isObj(s.careful) ? s.careful : {}).filter(([, v]) => Array.isArray(v)).map(([k, v]) => [k, (v as unknown[]).filter((n): n is number => Number.isInteger(n))])),
     sealed: isStrArray(s.sealed) ? s.sealed : [],

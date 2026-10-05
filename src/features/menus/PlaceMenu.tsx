@@ -1,9 +1,10 @@
+import { clubHere } from '../../engine/clubs'
+import { SkillCraftOptions } from '../skills/SkillLesson'
 // 화덕·작업대·기름틀·언덕 벤치, 그리고 모이는 곳(사랑방·찻집·정자 — 계획 10)에서 할 수 있는 일
 // 연인·약혼·부부면 찻집·정자·언덕에서 "○○와 함께" 가기 (계획 10 작업 4)
 import { CONTENT } from '../../content/catalog'
 import { fill, T, withAnd, withSubject } from '../../content/text'
 import { canCraft, canDate, canDrinkTea, canPlayHall, canWatchSunset, hasFood, starsOut } from '../../engine/game'
-import { inkYield } from '../../engine/fixtures'
 import { TEA_PRICE } from '../../engine/places'
 import { DATE_TEA_PRICE, type DatePlace } from '../../engine/romance'
 import { partnerName, useGame, type MenuPlace } from '../../store/game-store'
@@ -48,6 +49,8 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
     <div className="dialog" role="dialog" aria-label={title}>
       <h2>{title}</h2>
       <div className="actions menu column">
+        {clubHere(game,place) && <button className="primary" onClick={() => open({ kind: 'clubSession', id: clubHere(game,place)!.id })}>{T.clubs.join}</button>}
+        {['hallTable','teaTable'].includes(place) && <button onClick={() => open({ kind: 'clubs' })}>{T.clubs.title}</button>}
         {place === 'hearth' && (
           <>
             <button disabled={canCraft(game, 'bread') !== null} onClick={() => startCraft('bread')}>
@@ -61,11 +64,12 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
         )}
         {place === 'workbench' && (
           <>
+            <SkillCraftOptions />
             <button disabled={canCraft(game, 'papyrus') !== null} onClick={() => startCraft('papyrus')}>
               {T.ui.workPapyrus}
             </button>
             <button disabled={canCraft(game, 'ink') !== null} onClick={() => startCraft('ink')}>
-              {fill(T.ui.workInk, { n: inkYield(game) })}
+              {fill(T.ui.workInk, { n: 1 })}
             </button>
             <button disabled={canCraft(game, 'blanket') !== null} onClick={() => startCraft('blanket')}>
               {T.ui.workBlanket}

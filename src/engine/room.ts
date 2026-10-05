@@ -15,6 +15,7 @@ export { FURNITURE_DEFS, type FurnitureDef, type Layer }
 export const FURNITURE = Object.keys(FURNITURE_DEFS) as ItemId[]
 
 export interface Furniture {
+  finish?: 'plain' | 'warm'
   item: ItemId
   x: number
   y: number

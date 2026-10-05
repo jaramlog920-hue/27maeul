@@ -1,0 +1,113 @@
+27마을 — 생활 확장 도트 납품 및 클로드 연결 안내
+제작일: 2026-10-05
+자산 폴더: assets/furniture/expansion/
+재생 확인: 미리보기.html
+
+이번에 만든 분량
+- 생활 소품/작업물 68종, 각각 16×16 투명 PNG.
+- 가방/목록용 아이콘 68개, 8×8 PNG.
+- 방향별 시설/상태 9종 × 4방향 = 36개 PNG.
+- 기존 가구 12종 × 4방향 × 앞/뒤 = 96개 레이어 PNG.
+- 성인 추가 동작 14종 × 4방향 × 4프레임 = 224개 프레임.
+- 어린이 추가 14종 + 기존 사용 동작 8종 × 4방향 × 4프레임 = 352개 프레임.
+- 고양이/강아지 × 성체/새끼 × 6동작 × 4방향 × 4프레임 = 384개 프레임.
+- 위 동작에 전체 시트와 인물 앞/뒤 소품 시트를 함께 제공.
+기존 성인 사용 동작 8종은 ../use-motion/을 그대로 사용.
+
+파일 찾기
+props/: 재료·작업물·완성품·이야기 소품.
+icons/: 같은 ID의 8×8 아이콘.
+structures/: 좌판 마감/개점, 나루 보관대, 조립 골격, 열린 상자/찬장,
+  미완성 의자, 그늘막 골격/완성. 4방향.
+layers/: 기존 가구의 back/front. 기존 형태와 크기를 유지.
+motions/: 앉기·일어나기·눕기·일어나기·건네기·받기·물주기·그리기·보여주기·다듬기·직조·따르기·운반·정리.
+children/: 위 14동작 + sit/drink/read/craft/knead/reach/pet/lie.
+pets/: walk/wait/sniff/play/fetch/wag.
+manifest.json: 크기·방향·프레임 시간·기준점·반복 여부.
+preview.png: 정적 소품/시설 확인.
+motion-preview-4x.png, pet-preview-4x.png: 동작 프레임 확인.
+
+기획별 연결
+01 모임: teaTray, snackPlate, yarnPair, needleTools, clothPattern,
+  seedPackets, wateringCan, notebookOpen, flowerDrawing/cloudDrawing. drink/craft/water/draw/show.
+02 작업: dough/breadPlain/breadRound/breadTray, woodParts/planeTool,
+  metalParts/ornamentRing, yarnPair/clothEdge, oilEmpty/oilFull,
+  basketEmpty/basketGrapes, woolSorted, teaTray/cupPersonal, netTorn/netRepaired.
+03 좌판: marketClosed/marketOpen, clothBlue/clothRose, nameSign,
+  wrappedGoods, 상품 원본/아이콘. give/take/tidy.
+04 추억: notebookClosed/notebookOpen, 앨범 및 실제 인물/작품 조합 썸네일.
+05 행사: invitation, teaTray/snackPlate/coaster, 선택 천, 도안판/작품. show/pour/tidy.
+06 동물: petBlanket/petToy/toyBall, 동물 6동작. 현재 놀이 대상은 작은 예시 소품.
+07 공동 시설: buildMaterials/constructionFrame/shadeFrame/shadeComplete,
+  flowerBorder, sharedPlan. 긴 벤치는 기존 longBench를 재사용. carry/water/plane.
+08 가족: toyBoatParts/toyBoat, cushionPattern/clothPattern, potGrowing,
+  관찰 그림, album, 어린이 동작. 기존 아기/요람 자산을 함께 사용.
+09 집 공간: 기존 가구 레이어 + 기존 사용 동작/새 전환 동작 + 찻잔/담요.
+10 근황: 빵 진열·천 변형·가방·그림·목록·바구니를 재사용.
+11 배움: woodenFinishLight/Dark, clothPattern/Edge, breadPlain/Round,
+  ringRound/Square, candlePlain/Decor, plantSupport, 그림과 도구를 재사용.
+
+캐릭터 개인 이야기 연결
+빵 굽는 이웃: restSign, breadTray/snackPlate.
+물 긷는 아이: displayEmpty/displaySeason, seasonalLeaves/smoothStones/namePlate.
+할아버지: 기존 chair, constructionFrame/sharedPlan, 앉기.
+상인: 좌판 천, 기존 chest/chestOpen, nameSign.
+대장장이: drawingBoard, metalParts/ornamentRing/hookNamed.
+양치기: toolRack/apron/woolSorted.
+기름 짜는 이웃: 기존 workbench/chair + oilEmpty/Full.
+베 짜는 이웃: 기존 rug 색 변형 또는 clothBlue/Rose/Pattern.
+벌 치는 이웃: notebookOpen/Closed, beeDrawing.
+편지 나르는 이웃: bagWorn/bagRepaired. 착용 소품은 동일 그림의 방향/크기를 캐릭터에 맞춰 별도 연결.
+약방 주인: potWilted/potGrowing/potNewLeaf.
+어부: toyBoatParts/toyBoat, 기존 supplyChest, netTorn/Repaired.
+목수: chairUnfinished + 기존 chair + woodParts/planeTool.
+웬델: 선택 갈래에 breadTray 또는 schedule.
+코스모: dockRack/toyBoat/namePlate.
+루디: 기존 lectern/독서 받침 + namePlate + carry. 실제 받침을 들고 가는 경우 propId 교체.
+덱스터: cloudDrawing/notebookOpen.
+바질: schedule/cupPersonal/potGrowing.
+메리골드: sharedPlan/schedule/notebookClosed.
+페넬로피: clothPattern/clothEdge/yarnPair.
+틸리: hookNamed/ringRound/Square/metalParts/drawingBoard.
+주니퍼: flowerDrawing/beeDrawing/notebookOpen/Closed.
+파피: cupPersonal/coaster/namePlate/teaTray.
+
+연결 규칙
+원본 TS: src/render/expansion-prop-art.ts, expansion-life-motion.ts.
+내보내기: node scripts/export-expansion-art.mjs
+게임에 기능/렌더러/메뉴/저장 연결은 이번 작업에서 하지 않음. 배포도 하지 않음.
+선택 색·모양과 사건 완료 표식은 기능 담당자가 실제 데이터와 대조해 연결.
+같은 외형의 표지·일정표는 데이터 글자를 UI로 얹는다. 실제 이름을 도트에 고정하지 않는다.
+props는 방향 독립적인 작은 물건. 4방향이 필요한 시설은 structures 사용.
+좌판과 그늘막은 앞/뒤 3×2타일, 좌/우 1×3타일. 배치 충돌 영역은 기능에서 확정.
+열린 찬장/미완성 의자 등은 상태 자산이며 기존 가구를 자동 교체하지 않는다.
+
+외형과 그리기
+PNG는 기본 봄 외형 예시. 현재 머리/옷/피부는 extraUseFrame(who,facing,action,frame,opts)로 유지.
+actor는 기존 writerPalette 또는 주민 팔레트. extraUseFrame의 propBack/propFront는 FURNI_PALETTE.
+기존 furnitureUseFrame의 소품은 USE_PROP_PALETTE. 두 소품 팔레트를 혼동하지 않는다.
+props와 배우자/아이는 현재 실제 참여자·선택 물건으로 조합.
+extraUseFrame의 기본 propId는 예시다. 실제 상품/작품/도구로 교체 가능.
+물주기와 차따르기 기본 대상은 소품 예시이며 실제 대상 화분/컵 위치를 맞출 것.
+동물 기본 샘플의 놀이/물어오기 물건도 실제 petToy/toyBall에 맞춰 교체 가능.
+소품 자체 투명 PNG를 흰 배경으로 바꾸지 말 것. 확대는 nearest-neighbor.
+
+앞뒤 레이어
+가구 back → propBack → actor → propFront → 가구 front 순으로 겹친다.
+이번 분리는 기존 픽셀을 앞뒤로 나눈 기본 마스크. 두 레이어를 합치면 원본과 정확히 일치.
+실제 착석 위치/침대 방향/어린이 키에 따라 컷 위치와 기준점을 화면에서 검수·조정해야 함.
+자동 분할만으로 모든 겹침이 맞는다고 간주하지 않는다.
+명령/이동/사용 취소와 자리 예약은 그림 자산에서 처리하지 않는다.
+
+반복
+sitDown/standUp/lieDown/rise/give/take는 단발 재생. 나머지는 반복.
+미리보기는 확인을 위해 단발 동작도 잠깐 쉬었다 반복하지만 게임은 완료 후 상태를 전환.
+어린이 기존 사용 8종은 반복 동작으로 재생.
+성장·아기·성인·반려동물 명령 조건은 실제 기능 상태를 따르며 그림으로 판정하지 않는다.
+
+검증과 남은 연결
+정수 픽셀·지원 팔레트·캔버스 경계·가구 레이어 복원·동물 프레임 변화 검사.
+실제 집과 마을에서 4방향·휴대폰·긴 머리/옷·어린이·새끼 동물의 겹침 확인은 기능 연결 후 필요.
+이 패키지는 전체 기획에서 공유할 기본 자산 묶음이다. 최종 상품 종류/추가 선택 갈래마다
+전용 무늬/소품이 필요해지면 지원된 원본 템플릿에서 확장한다.
+말씀 조각·필사본은 상품/재료/생활 작품으로 사용하지 않는다.

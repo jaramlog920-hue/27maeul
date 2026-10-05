@@ -1,7 +1,8 @@
 // 이웃 수첩 (일지 탭): 만난 이웃, 알게 된 좋아하는 것·싫어하는 것, 마주친 때와 자리, 들은 이야기, 생일.
 // 좋아하는 것·싫어하는 것은 선물로 알게 되거나, 사이가 깊어지면 이웃이 먼저 털어놓는다(수첩의 ? 칸이 열린다).
 import { SEASON_DAYS, seasonOf } from './clock'
-import { stageOfPoints, type Activity } from './people'
+import { stageOfPoints, type Activity, type Experience, type Life } from './people'
+import lifeText from '../content/life-text.json'
 import type { ItemId, NeighborDef, Season, Tile } from './types'
 import { HALL_RECT, isHome, PAVILION_RECT, roomAt, TEA_RECT, zoneAt } from './world'
 
@@ -29,6 +30,10 @@ export interface Notebook {
   heard: Record<string, string[]>
   /** 이 이웃에게 받은 선물 (일지 › 이웃 수첩). 옛 저장에는 없다 — 그 선물은 수첩 아래 '받은 선물'에 따로 */
   got?: Record<string, ItemId[]>
+  /** 직접 들었거나 함께 지내며 확인한 생활 취향. 선물 취향과 구분한다. */
+  tastes?: Record<string, string[]>
+  /** 제안을 수락하거나 다음으로 미룬 날. 관계 점수와 별개. */
+  tasteProposed?: Record<string, number>
 }
 
 export const NO_NOTEBOOK: Notebook = { met: [], likes: {}, dislikes: {}, seen: {}, heard: {} }
@@ -47,7 +52,51 @@ export function sanitizeNotebook(raw: unknown): Notebook {
     seen: seen as Notebook['seen'],
     heard: lists(o.heard),
     ...(o.got !== undefined ? { got: lists(o.got) as Record<string, ItemId[]> } : {}),
+    ...(o.tastes !== undefined ? { tastes: Object.fromEntries(Object.entries(lists(o.tastes)).map(([npc, keys]) => [npc, [...new Set(keys.filter(isLifestyleTaste))]])) } : {}),
+    ...(o.tasteProposed && typeof o.tasteProposed === 'object' ? { tasteProposed: Object.fromEntries(Object.entries(o.tasteProposed).filter(([, day]) => Number.isInteger(day) && day > 0)) } : {}),
   }
+}
+
+export function isLifestyleTaste(key: string): boolean {
+  return Object.hasOwn(lifeText.taste.labels, key)
+}
+
+/** 관계의 깊이만으로 열리지 않는다. 실제 발견 입구에서만 부른다. */
+export function noteTaste(n: Notebook, npc: string, key: string): Notebook {
+  if (!isLifestyleTaste(key) || n.tastes?.[npc]?.includes(key)) return n
+  return { ...n, tastes: { ...n.tastes, [npc]: [...(n.tastes?.[npc] ?? []), key] } }
+}
+
+export function knownLifestyleTastes(n: Notebook, npc: string): string[] {
+  const labels = lifeText.taste.labels as Record<string, string>
+  return (n.tastes?.[npc] ?? []).flatMap((key) => labels[key] ? [labels[key]] : [])
+}
+
+/** 행동 관찰은 본 사실만 남긴다. 일하고 있다는 이유로 좋아한다고 단정하지 않는다. */
+export function noteObservedTaste(n: Notebook, npc: string, doing?: Activity, preference?: Readonly<Record<string, number>>): Notebook {
+  const activity = doing === 'tea' ? 'tea' : doing === 'weave' ? 'sew' : doing === 'grape' ? 'garden' : null
+  if (activity && preference?.[activity] === 1) return noteTaste(n, npc, `activity.${activity}`)
+  const key = doing === 'tea' ? 'seenTea' : doing === 'cat' ? 'seenCat' : doing === 'music' ? 'seenMusic' : null
+  return key ? noteTaste(n, npc, key) : n
+}
+
+/** 참여자와 명시된 발견만. 참여 자체를 취향의 증거로 삼지 않는다. */
+export function noteExperienceTastes(n: Notebook, exp: Pick<Experience, 'with'>, reveals: Readonly<Record<string, string>> = {}): Notebook {
+  return exp.with.reduce((book, npc) => reveals[npc] ? noteTaste(book, npc, reveals[npc]) : book, n)
+}
+
+/** 가족·동물 기록은 각각의 앨범에 둔다. */
+export function sharedMemories(life: Pick<Life, 'experiences'>, npc: string): Experience[] {
+  return Object.values(life.experiences ?? {}).filter((e) => e.with.includes(npc) && e.kind !== 'pet' && e.kind !== 'family')
+    .sort((a, b) => (b.last ?? -1) - (a.last ?? -1))
+}
+
+export function noteTasteProposal(n: Notebook, npc: string, day: number): Notebook {
+  return { ...n, tasteProposed: { ...n.tasteProposed, [npc]: day } }
+}
+
+export function canProposeTea(n: Notebook, npc: string, day: number, points: number, sharedTea: boolean): boolean {
+  return stageOfPoints(points) >= 3 && !!n.tastes?.[npc]?.includes('activity.tea') && sharedTea && day - (n.tasteProposed?.[npc] ?? -7) >= 7
 }
 
 const addTo = <T>(list: readonly T[] | undefined, x: T): T[] => (list?.includes(x) ? [...list] : [...(list ?? []), x])
@@ -191,6 +240,8 @@ export const DOING_LABEL: Record<Activity, string> = {
   wait: '누군가를 기다림',
   wood: '나무 손질',
   cat: '고양이와 놀기',
+  press: '기름틀 용기 정돈',
+  sort: '용기와 표지 정돈',
 }
 
 export function spotName(t: Tile): string {
