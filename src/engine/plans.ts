@@ -4,7 +4,7 @@ import { expandClubs } from './clubs'
 import { noteExperienceTastes } from './notebook'
 import { festivalOf, FESTIVAL_FROM, FESTIVAL_TO, isMarketDay, isWet, weatherOf } from './calendar'
 import { gatheringWindow, INVITE_FROM, INVITE_TO, VISIT_FROM, VISIT_TO, BABY_PARTY_DAY, BABY_PARTY_SPOTS, HILL_SPOTS } from './bonds'
-import { heartUp, notYet, recordExperienceIn, shelvedCount, eventNow, type GameState } from './game'
+import { heartUp, notYet, recordExperienceIn, shelvedCount, eventNow, routineOf, type GameState } from './game'
 import { HALL_SPOTS } from './places'
 import { personOf } from './people'
 import { lockedTiles, key, PLACES, isWalkable } from './world'
@@ -51,6 +51,12 @@ function busyAt(s: PlanState, npc: string, day: number, from: number, to: number
     if (npc in spots && !(gathering === 'starNight' && npc === 'shepherd') && overlap(from,to,gfrom,gto)) return 'gathering'
   }
   if (s.progress && s.hearts && s.life) {
+    // 마을 밖에 나가 있는 일과(away) 동안은 모임·약속·함께 일하기에 넣을 수 없다 (웬델의 둘째 날 아침 등)
+    if (personOf(npc)?.routines?.some(r => r.away)) {
+      for (let minute=from; minute<to; minute+=10) {
+        if (routineOf({ ...s, clock: { day, minute }, progress:s.progress, hearts:s.hearts }, npc)?.away) return 'away'
+      }
+    }
     for (let minute=from; minute<to; minute+=1) {
       if (eventNow({ ...s, clock: { day, minute }, progress:s.progress, hearts:s.hearts }, npc)) return 'story'
     }

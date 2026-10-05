@@ -443,7 +443,7 @@ export function sanitizeLife(raw: unknown): Life {
     seen: strs(o.seen),
     memories: obj(o.memories, {}),
     colors: obj(o.colors, {}),
-    recent: obj(o.recent, {}),
+    recent: renameRecent(obj(o.recent, {})),
     cool: obj(o.cool, {}),
     mutterDay: typeof o.mutterDay === 'number' ? o.mutterDay : 0,
     muttered: strs(o.muttered),
@@ -452,6 +452,12 @@ export function sanitizeLife(raw: unknown): Life {
     experiences: sanitizeExperiences(o.experiences),
     storyWait: sanitizeStoryWait(o.storyWait),
   }
+}
+
+/** 말 id를 바꾼 경우 (같은 id의 사건과 겹치던 파피의 동생 편지 말 — 2026-10-05): 최근에 한 말 목록도 새 id로 */
+const RENAMED_LINES: Record<string, string> = { 'poppy:sister': 'poppy:sisterLetter' }
+function renameRecent(recent: Record<string, string[]>): Record<string, string[]> {
+  return Object.fromEntries(Object.entries(recent).map(([npc, ids]) => [npc, Array.isArray(ids) ? ids.map((id) => RENAMED_LINES[id] ?? id) : ids]))
 }
 
 const MINIGAMES: readonly Minigame[] = ['mash', 'timing', 'pick', 'hold', 'weave', 'order']

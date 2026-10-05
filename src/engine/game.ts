@@ -2362,7 +2362,7 @@ export type DateBlock = 'noPartner' | 'away' | 'busy' | 'done' | 'closed' | 'coi
 
 /**
  * 연인이 지금 함께 갈 수 있는가 (계획 10 작업 4):
- * - 오늘 마을에 나와 있어야 한다 (궂은 날 집에 있는 사람, 아직 이사 오지 않은 집안이면 'away').
+ * - 오늘 마을에 나와 있어야 한다 (궂은 날 집에 있는 사람, 아직 이사 오지 않은 집안, 지금 일과가 마을 밖(away)이면 'away').
  * - 그 사람의 집안 일(PARTNER_WORK)을 하는 중이면 바쁘다 ('busy'). 점심처럼 누구와 함께 있는 때는 쉬는 때.
  *   찻집이 일터인 파피는 찻집 탁자에서는 잠깐 마주 앉을 수 있다.
  */
@@ -2372,6 +2372,7 @@ export function partnerFree(s: GameState, content: GameContent, place: DatePlace
   if (!neighborsPresent(s, content).includes(r.partner)) return 'away'
   const work = isCandidateId(r.partner) ? PARTNER_WORK[r.partner] : undefined
   const now = routineOf(s, r.partner)
+  if (now?.away) return 'away'
   if (work && now?.doing === work && !now.with && WORK_HERE[work] !== place) return 'busy'
   return null
 }

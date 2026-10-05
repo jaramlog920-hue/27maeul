@@ -3,6 +3,7 @@ import { CONTENT, PEOPLE } from '../content/catalog'
 import {
   chooseInEvent,
   eventNow,
+  partnerFree,
   finishStoryMini,
   newGame,
   openEvent,
@@ -18,6 +19,8 @@ import { count } from './items'
 import { hasMemory, NO_LIFE, reqMet, sanitizeLife, setPeopleData, type PeopleData, type SceneLine } from './people'
 import type { Tile } from './types'
 import { deserialize, serialize } from './save'
+import { availability } from './plans'
+import { NO_ROMANCE } from './romance'
 import { isWet, weatherOf } from './calendar'
 import { seasonOf } from './clock'
 import { HOME_FRONT, propFootprint, propSpotProblem, ROOMS, tileAt, VILLAGE_H, WIDTH } from './world'
@@ -785,10 +788,10 @@ describe('연애 후보 1 — 웬델·틸리·파피의 이후 생활 (실제 �
     s = chooseInEvent(openEvent(stand(s, 'baker', { x: 2, y: 17 }), 'wendell')!, 'wendell:story:2', 0)
     expect(s.life.experiences['choice:wendell:story:2'].with.sort()).toEqual(['baker', 'wendell'])
     // 바깥 갈래의 아침·일정표·말은 보이지 않는다
-    expect(eventNow(step(s, 'wendell', dry(day + 1, (d) => d % 7 === 2), 330, { x: 4, y: 17 }), 'wendell')?.id).not.toBe('wendell:story:2b')
+    expect(eventNow(step(s, 'wendell', dry(day + 1, (d) => d % 7 === 2), 430, { x: 4, y: 17 }), 'wendell')?.id).not.toBe('wendell:story:2b')
     const tuesday = { ...s, clock: { ...s.clock, day: day + 1 + ((2 - ((day + 1) % 7) + 7) % 7), minute: 300 } }
     expect(routineOf(tuesday, 'wendell')).toMatchObject({ doing: 'bread', at: BAKERY })
-    expect(routineOf({ ...tuesday, clock: { ...tuesday.clock, minute: 400 } }, 'wendell')?.away).toBeUndefined()
+    expect(routineOf({ ...tuesday, clock: { ...tuesday.clock, minute: 500 } }, 'wendell')?.away).toBeUndefined()
     expect(reqMet(lineReq('wendell', 'wendell:path:bread'), ctxOf(s, 'wendell'))).toBe(true)
     expect(reqMet(lineReq('wendell', 'wendell:path:out'), ctxOf(s, 'wendell'))).toBe(false)
     expect(reqMet(lineReq('baker', 'baker:wendellBread'), ctxOf(s, 'baker'))).toBe(true)
@@ -796,16 +799,19 @@ describe('연애 후보 1 — 웬델·틸리·파피의 이후 생활 (실제 �
     expect(npcProps(back, 'wendell')).toEqual(['wendellBread'])
   })
 
-  it('웬델: 바깥 일 갈래 — 둘째 날 새벽 길목까지, 점심 전까지는 마을에 없고 가마는 어머니가, 점심엔 틸리와', () => {
+  it('웬델: 바깥 일 갈래 — 둘째 날 아침 7시 길목까지(배우자도 집을 나선 뒤), 점심 전까지는 마을에 없고 가마는 어머니가, 점심엔 틸리와', () => {
     let s = step(ready({ wendell: 60, baker: 40, tilly: 40 }, [...oldSeen('wendell'), ...oldSeen('tilly'), 'baker:story:3', 'wendell:short:lunchSwap']), 'wendell', 70, 1100, BAKERY)
     s = chooseInEvent(openEvent(s, 'wendell')!, 'wendell:story:1', 1)
     expect(s.flags['story:wendellPath']).toBe(2)
     expect(npcProps(s, 'wendell')).toEqual(['wendellSchedule'])
     const day = dry(71, (d) => d % 7 === 2)
-    s = step(s, 'wendell', day, 330, { x: 4, y: 17 })
+    // 새벽(배우자가 아직 집에 있을 때)에는 배웅 장면이 없다 — 07:00부터 30분
+    expect(eventNow(step(s, 'wendell', day, 330, { x: 4, y: 17 }), 'wendell')?.id).not.toBe('wendell:story:2b')
+    expect(routineOf(step(s, 'wendell', day, 400, BAKERY), 'wendell')?.away).toBeUndefined()
+    s = step(s, 'wendell', day, 430, { x: 4, y: 17 })
     expect(routineOf(s, 'wendell')?.at).toEqual({ x: 4, y: 17 })
     s = chooseInEvent(openEvent(s, 'wendell')!, 'wendell:story:2b', 2)
-    const morning = { ...s, clock: { ...s.clock, minute: 400 } }
+    const morning = { ...s, clock: { ...s.clock, minute: 460 } }
     expect(routineOf(morning, 'wendell')?.away).toBe(true)
     expect(settle(morning, CONTENT).npcs.wendell.visible).toBe(false)
     expect(routineOf(morning, 'baker')?.mutter?.[0]).toContain('웬델 이야기')
@@ -813,7 +819,18 @@ describe('연애 후보 1 — 웬델·틸리·파피의 이후 생활 (실제 �
     expect(lunch.npcs.wendell.visible).toBe(true)
     expect(routineOf(lunch, 'wendell')?.with).toBe('tilly')
     // 다른 날 아침은 그대로 가게에
-    expect(settle({ ...s, clock: { ...s.clock, day: day + 1, minute: 400 } }, CONTENT).npcs.wendell.visible).toBe(true)
+    expect(settle({ ...s, clock: { ...s.clock, day: day + 1, minute: 460 } }, CONTENT).npcs.wendell.visible).toBe(true)
+    // 마을에 없는 동안은 함께 가기도, 약속·모임도 안 된다
+    const dating = { ...morning, romance: { ...NO_ROMANCE, partner: 'wendell', stage: 'dating' as const, since: 1 } }
+    expect(partnerFree(dating, CONTENT, 'tea')).toBe('away')
+    expect(partnerFree({ ...dating, clock: { ...dating.clock, minute: 800 } }, CONTENT, 'walk')).toBeNull()
+    const nextTue = day + 7
+    expect(availability(s, 'wendell', nextTue, 8 * 60, 9 * 60, CONTENT)).toMatchObject({ busy: 'away' })
+    expect(availability(s, 'wendell', nextTue, 700, 760, CONTENT)).toMatchObject({ busy: 'away' })
+    expect(availability(s, 'wendell', nextTue, 13 * 60, 14 * 60, CONTENT)).toBe('ok')
+    expect(availability(s, 'wendell', nextTue + 1, 8 * 60, 9 * 60, CONTENT)).toBe('ok')
+    // 배우자 집 습관(첫 빵 한 조각)은 마을에 없는 둘째 날엔 열리지 않는다
+    expect(PEOPLE.people.wendell.events!.find((e) => e.id === 'wendell:short:spouseHabit')!.when?.days).not.toContain(2)
     expect(reqMet(lineReq('wendell', 'wendell:path:out'), ctxOf(s, 'wendell'))).toBe(true)
     expect(reqMet(lineReq('wendell', 'wendell:path:bread'), ctxOf(s, 'wendell'))).toBe(false)
     // "사흘" 말은 연인 사건을 본 경우만
@@ -832,17 +849,16 @@ describe('연애 후보 1 — 웬델·틸리·파피의 이후 생활 (실제 �
     expect(reqMet(lineReq('tilly', 'tilly:lunchSwap'), ctxOf(ready({}, []), 'tilly'))).toBe(false)
   })
 
-  it('틸리: 대장간 고리 뒤 페넬로피와 색 → 아버지와 마을에 건다, 이름 고리와 본인 작업 시간 — 대장장이 결과는 그대로', () => {
-    const IN = { 'story:smithHook': 1, 'movedIn:weaver': 1 }
-    // 대장장이 고리 이야기 전에는 열리지 않는다
+  it('틸리: 대장간 고리 뒤 잎 끝을 본인이 정하고 → 아버지와 마을에 건다 (페넬로피 이사 전에도), 색 실은 페넬로피가 이사 온 뒤 작은 이야기로', () => {
+    // 대장간 고리 이야기 전에는 열리지 않는다
     const tue = dry(70, (d) => d % 7 === 2)
-    const before = stand(step(ready({ tilly: 40 }, oldSeen('tilly'), { 'movedIn:weaver': 1 }), 'tilly', tue, 800, FORGE), 'penelope', { x: 40, y: 22 })
-    expect(eventNow(before, 'tilly')?.id).not.toBe('tilly:story:3')
-    let s = step(ready({ tilly: 40 }, oldSeen('tilly'), IN), 'tilly', tue, 800, FORGE)
-    expect(routineOf(s, 'penelope')?.at).toEqual({ x: 40, y: 22 }) // 페넬로피가 제 발로 온다
-    expect(eventNow(stand(s, 'penelope', { x: 20, y: 20 }), 'tilly')?.id).not.toBe('tilly:story:3')
-    s = chooseInEvent(openEvent(stand(s, 'penelope', { x: 40, y: 22 }), 'tilly')!, 'tilly:story:3', 1)
-    expect(s.life.experiences['choice:tilly:story:3'].with.sort()).toEqual(['penelope', 'tilly'])
+    expect(eventNow(step(ready({ tilly: 40 }, oldSeen('tilly')), 'tilly', tue, 800, FORGE), 'tilly')?.id).not.toBe('tilly:story:3')
+    // 페넬로피(서고 7권 뒤 이사)가 없어도 큰 이야기는 끝까지 간다
+    let s = step(ready({ tilly: 40 }, [...oldSeen('tilly'), 'penelope:blue'], { 'story:smithHook': 1 }), 'tilly', tue, 800, FORGE)
+    expect(reqMet(lineReq('tilly', 'tilly:hookColorWait'), ctxOf(s, 'tilly'))).toBe(true)
+    expect(reqMet(lineReq('tilly', 'tilly:hookColorWait'), ctxOf({ ...s, life: { ...s.life, seen: oldSeen('tilly') } }, 'tilly'))).toBe(false) // 페넬로피를 아직 모르면
+    s = chooseInEvent(openEvent(s, 'tilly')!, 'tilly:story:3', 1)
+    expect(s.life.experiences['choice:tilly:story:3'].with).toEqual(['tilly'])
     expect(npcProps(s, 'tilly')).toEqual([])
     expect(eventNow(stand(step(s, 'tilly', tue, 1100, FORGE), 'smith', { x: 43, y: 22 }), 'tilly')?.id).not.toBe('tilly:story:4') // 같은 날 이어지지 않는다
     s = stand(step(s, 'tilly', dry(tue + 1), 1100, FORGE), 'smith', { x: 43, y: 22 })
@@ -853,26 +869,44 @@ describe('연애 후보 1 — 웬델·틸리·파피의 이후 생활 (실제 �
     expect(npcProps(s, 'tilly')).toEqual(['tillyHook'])
     const work = { ...s, clock: { ...s.clock, day: s.clock.day + 1, minute: 800 } }
     expect(routineOf(work, 'tilly')?.mutter?.[0]).toContain('고리 시간')
-    expect(routineOf(work, 'penelope')?.at).not.toEqual({ x: 40, y: 22 })
-    for (const [npc, id] of [['tilly', 'tilly:after'], ['tilly', 'tilly:fireStill'], ['smith', 'smith:tillyHook'], ['penelope', 'penelope:tillyHook']])
+    for (const [npc, id] of [['tilly', 'tilly:after'], ['tilly', 'tilly:fireStill'], ['smith', 'smith:tillyHook']])
       expect(reqMet(lineReq(npc, id), ctxOf(s, npc)), id).toBe(true)
+    expect(reqMet(lineReq('penelope', 'penelope:tillyHook'), ctxOf(s, 'penelope'))).toBe(false)
+    // 색 실: 이사 전에는 없고, 이사 오면 페넬로피가 제 발로 대장간 앞에
+    const colorDay = dry(s.clock.day + 1, (d) => d % 7 === 2 || d % 7 === 5)
+    const before = stand(step(s, 'tilly', colorDay, 800, FORGE), 'penelope', { x: 40, y: 22 })
+    expect(eventNow(before, 'tilly')?.id).not.toBe('tilly:small:hookColor')
+    let m = step({ ...s, flags: { ...s.flags, 'movedIn:weaver': 1 } }, 'tilly', colorDay, 800, FORGE)
+    expect(routineOf(m, 'penelope')?.at).toEqual({ x: 40, y: 22 })
+    expect(eventNow(stand(m, 'penelope', { x: 20, y: 20 }), 'tilly')?.id).not.toBe('tilly:small:hookColor')
+    // 옛 저장: 예전 잎 끝 장면(페넬로피와 색 실, 기억 hookColor)을 이미 본 경우 되풀이되지 않는다
+    const old = { ...m, life: { ...m.life, memories: { ...m.life.memories, tilly: [...(m.life.memories.tilly ?? []), { ...m.life.memories.tilly![0], tag: 'hookColor' }] } } }
+    expect(eventNow(stand(old, 'penelope', { x: 40, y: 22 }), 'tilly')?.id).not.toBe('tilly:small:hookColor')
+    m = chooseInEvent(openEvent(stand(m, 'penelope', { x: 40, y: 22 }), 'tilly')!, 'tilly:small:hookColor', 0)
+    expect(m.life.experiences['choice:tilly:small:hookColor'].with.sort()).toEqual(['penelope', 'tilly'])
+    expect(reqMet(lineReq('penelope', 'penelope:hookColor'), ctxOf(m, 'penelope'))).toBe(true)
+    expect(reqMet(lineReq('tilly', 'tilly:hookColorWait'), ctxOf(m, 'tilly'))).toBe(false)
+    const later = dry(colorDay + 1, (d) => d % 7 === 2 || d % 7 === 5)
+    expect(routineOf(step(m, 'tilly', later, 800, FORGE), 'penelope')?.at).not.toEqual({ x: 40, y: 22 })
     const back = deserialize(serialize(s), CONTENT)!
     expect(npcProps(back, 'tilly')).toEqual(['tillyHook'])
   })
 
-  it('파피: 문 닫은 찻집 뒤 자리 이름 → 웬델·페넬로피와 간식·받침 → 제 뜻으로 부르는 자리, 찻잔·표지와 저녁 자리 (연애와 상관없이)', () => {
-    let s = step(ready({ poppy: 60 }, oldSeen('poppy'), { 'movedIn:weaver': 1 }), 'poppy', 70, 1115, TEA)
+  it('파피: 문 닫은 찻집 뒤 자리 이름 → 웬델과 간식·찻잔 → 제 뜻으로 부르는 자리 (페넬로피 이사 전에도), 차받침은 이사 뒤 작은 이야기로', () => {
+    let s = step(ready({ poppy: 60 }, [...oldSeen('poppy'), 'penelope:blue']), 'poppy', 70, 1115, TEA)
     expect(eventNow(s, 'poppy')?.id).toBe('poppy:story:1')
     s = chooseInEvent(openEvent(s, 'poppy')!, 'poppy:story:1', 2)
     const day = dry(71, (d) => d % 7 === 1 || d % 7 === 6)
     s = step(s, 'poppy', day, 930, TEA)
     expect(routineOf(s, 'wendell')?.at).toEqual({ x: 45, y: 62 })
-    expect(routineOf(s, 'penelope')?.at).toEqual({ x: 43, y: 62 })
     expect(eventNow(stand(s, 'wendell', { x: 1, y: 17 }), 'poppy')?.id).not.toBe('poppy:story:2')
-    s = stand(stand(s, 'wendell', { x: 45, y: 62 }), 'penelope', { x: 43, y: 62 })
+    s = stand(s, 'wendell', { x: 45, y: 62 })
     s = chooseInEvent(openEvent(s, 'poppy')!, 'poppy:story:2', 2)
-    expect(s.life.experiences['choice:poppy:story:2'].with.sort()).toEqual(['penelope', 'poppy', 'wendell'])
+    expect(s.life.experiences['choice:poppy:story:2'].with.sort()).toEqual(['poppy', 'wendell'])
     expect(npcProps(s, 'poppy')).toEqual([])
+    // 웬델은 간식 날이 지나면 찻집에서 기다리지 않는다
+    const nextWait = dry(day + 1, (d) => d % 7 === 1 || d % 7 === 6)
+    expect(routineOf(step(s, 'poppy', nextWait, 930, TEA), 'wendell')?.at).not.toEqual({ x: 45, y: 62 })
     const next = Array.from({ length: 3 }, (_, i) => day + 1 + i).find(weekday)!
     s = chooseInEvent(openEvent(step(s, 'poppy', next, 1100, TEA), 'poppy')!, 'poppy:story:3', 1)
     expect(s.flags['story:poppyCorner']).toBe(1)
@@ -882,8 +916,23 @@ describe('연애 후보 1 — 웬델·틸리·파피의 이후 생활 (실제 �
     expect(storyPropsNow(s).filter((p) => p.npc === 'poppy').every((p) => p.room === 'teahouse')).toBe(true)
     const evening = { ...s, clock: { ...s.clock, day: next + 1 + (((next + 1) % 7 === 0) ? 1 : 0), minute: 1100 } }
     expect(routineOf(evening, 'poppy')?.mutter?.[0]).toContain('제 자리')
-    for (const [npc, id] of [['poppy', 'poppy:after'], ['poppy', 'poppy:fearStill'], ['wendell', 'wendell:poppyCorner'], ['penelope', 'penelope:poppyCorner']])
+    for (const [npc, id] of [['poppy', 'poppy:after'], ['poppy', 'poppy:fearStill'], ['wendell', 'wendell:poppyCorner']])
       expect(reqMet(lineReq(npc, id), ctxOf(s, npc)), id).toBe(true)
+    expect(reqMet(lineReq('penelope', 'penelope:poppyCorner'), ctxOf(s, 'penelope'))).toBe(false)
+    // 차받침: 페넬로피가 이사 온 뒤, 제 발로 찻집에
+    const moved = { ...s, flags: { ...s.flags, 'movedIn:weaver': 1 } }
+    // 페넬로피가 쉬는 날(offDays)이 아닌 첫째·여섯째 날
+    const cDay = dry(next + 1, (d) => (d % 7 === 1 || d % 7 === 6) && routineOf(step(moved, 'poppy', d, 930, TEA), 'penelope')?.at?.y === 62)
+    expect(eventNow(stand(step(s, 'poppy', cDay, 930, TEA), 'penelope', { x: 43, y: 62 }), 'poppy')?.id).not.toBe('poppy:small:coaster')
+    let m = step(moved, 'poppy', cDay, 930, TEA)
+    expect(routineOf(m, 'penelope')?.at).toEqual({ x: 43, y: 62 })
+    // 옛 저장: 예전 간식·받침 장면(기억 pairing)을 이미 본 경우 되풀이되지 않는다
+    const old = { ...m, life: { ...m.life, memories: { ...m.life.memories, poppy: [...m.life.memories.poppy!, { ...m.life.memories.poppy![0], tag: 'pairing' }] } } }
+    expect(eventNow(stand(old, 'penelope', { x: 43, y: 62 }), 'poppy')?.id).not.toBe('poppy:small:coaster')
+    m = chooseInEvent(openEvent(stand(m, 'penelope', { x: 43, y: 62 }), 'poppy')!, 'poppy:small:coaster', 0)
+    expect(m.life.experiences['choice:poppy:small:coaster'].with.sort()).toEqual(['penelope', 'poppy'])
+    expect(reqMet(lineReq('penelope', 'penelope:coaster'), ctxOf(m, 'penelope'))).toBe(true)
+    expect(routineOf(step(m, 'poppy', dry(cDay + 1, (d) => d % 7 === 1 || d % 7 === 6), 930, TEA), 'penelope')?.at).not.toEqual({ x: 43, y: 62 })
     const back = deserialize(serialize(s), CONTENT)!
     expect(npcProps(back, 'poppy')).toEqual(['poppyCup', 'poppySign'])
   })
@@ -912,6 +961,14 @@ describe('연애 후보 1 — 웬델·틸리·파피의 이후 생활 (실제 �
     // 성경 이야기를 떠올리는 소재 없음 (웬델 바깥 갈래: 몫·탕진·잔치 구도, 등불: 됫박·빛)
     const text = ['wendell', 'tilly', 'poppy'].map((npc) => JSON.stringify(PEOPLE.people[npc].events!.filter((x) => NEW.test(x.id))) + PEOPLE.people[npc].lines.filter((l) => l.id.includes(':')).map((l) => l.text).join()).join()
     for (const w of ['잔치', '탕진', '됫박', '누룩', '효모', '등불', '빛', '필사가님', '치료', '약효']) expect(text, w).not.toContain(w)
+    // 언덕·정자에 가자는 연인 말은 맑은 날만
+    for (const id of ['wendell:rel:lover', 'tilly:rel:lover']) expect(PEOPLE.people[id.split(':')[0]].lines.find((l) => l.id === id)!.when?.weather, id).toEqual(['dry'])
+    // 말 id가 사건 id와 겹치지 않는다 (파피의 동생 편지 말 → poppy:sisterLetter, 옛 저장의 최근 말 목록도 옮긴다)
+    for (const npc of ['wendell', 'tilly', 'poppy']) {
+      const events = new Set((PEOPLE.people[npc].events ?? []).map((e) => e.id))
+      for (const l of PEOPLE.people[npc].lines) expect(events.has(l.id), l.id).toBe(false)
+    }
+    expect(sanitizeLife({ ...NO_LIFE, recent: { poppy: ['poppy6', 'poppy:sister'] } }).recent.poppy).toEqual(['poppy6', 'poppy:sisterLetter'])
   })
 })
 

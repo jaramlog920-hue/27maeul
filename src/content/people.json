@@ -511,8 +511,11 @@
                 "id": "smithHook"
               }
             ],
-            "notSeen": [
-              "tilly:story:3"
+            "seen": [
+              "penelope:blue"
+            ],
+            "notMemory": [
+              "hookColor"
             ]
           }
         },
@@ -637,6 +640,11 @@
           "id": "tilly:rel:lover",
           "text": "오늘은 호숫가 말고 정자 가요. 거기선 돌 안 던지고 그냥 앉아 있을래요.",
           "depth": 0,
+          "when": {
+            "weather": [
+              "dry"
+            ]
+          },
           "req": {
             "rel": [
               "lover"
@@ -1635,7 +1643,7 @@
         },
         {
           "id": "tilly:story:3",
-          "title": "잎 끝의 색",
+          "title": "잎 끝의 결",
           "stage": 3,
           "at": {
             "x": 41,
@@ -1652,9 +1660,6 @@
               "dry"
             ]
           },
-          "with": [
-            "penelope"
-          ],
           "req": {
             "story": [
               {
@@ -1666,54 +1671,50 @@
           "lines": [
             {
               "speaker": "narration",
-              "text": "대장간 앞. 틸리가 식은 잎사귀 고리를 모루 곁 나무판에 올려 둔다. 페넬로피가 실 타래 몇 개를 들고 서 있다."
+              "text": "대장간 앞. 틸리가 식은 잎사귀 고리를 모루 곁 나무판에 올려 둔다. 줄 하나와 작은 망치가 나란히 놓여 있다."
             },
             {
               "speaker": "tilly",
-              "text": "잎 끝에 색 실을 감고 싶어요. 비 맞아도 안 빠지는 걸로요. 페넬로피가 그런 실을 안대요."
+              "text": "잎 끝을 어떻게 끝낼지 아직 못 정했어요. 줄로 매끈하게 갈지, 망치 자국을 남길지요."
             },
             {
-              "speaker": "penelope",
-              "text": "이 초록이요. …아니, 이 초록. 둘 다 물에 안 빠져요. 고르는 건 틸리가요."
+              "speaker": "tilly",
+              "text": "아빠는 둘 다 괜찮대요. 고르는 건 저래요. …고르는 동안 곁에 있어 줄래요?"
             }
           ],
           "choices": [
             {
-              "label": "둘 사이에서 듣는다",
+              "label": "둘을 번갈아 만져 본다",
               "color": "quiet",
               "reply": [
                 {
                   "speaker": "tilly",
-                  "text": "하나, 둘… 왼쪽 초록이 잎 결이랑 맞아요. 이걸로 할래요."
+                  "text": "매끈한 쪽은 손이 미끄러지고, 자국 있는 쪽은 손에 걸려요. 거는 고리니까… 자국 남길래요."
                 }
               ],
-              "memory": "hookColor"
+              "memory": "hookTip"
             },
             {
               "label": "고를 때까지 기다린다",
               "color": "warm",
               "reply": [
                 {
-                  "speaker": "penelope",
-                  "text": "…기다려 주니까 저도 덜 급해요."
-                },
-                {
                   "speaker": "tilly",
-                  "text": "셋 셀 동안만 더 볼게요. …셋. 이거요."
+                  "text": "셋 셀 동안만 더 볼게요. …셋. 망치 자국이요. 제가 두드린 거니까요."
                 }
               ],
-              "memory": "hookColor"
+              "memory": "hookTip"
             },
             {
-              "label": "실을 한 바퀴만 감아 보자고 한다",
+              "label": "끝만 한 번 줄질해 보자고 한다",
               "color": "honest",
               "reply": [
                 {
                   "speaker": "tilly",
-                  "text": "한 바퀴만요. …좋네요. 쓸모는 그대로고, 보기엔 더 좋고."
+                  "text": "끝만요. …좋네요. 손 벨 데는 없고, 자국은 그대로고."
                 }
               ],
-              "memory": "hookColor"
+              "memory": "hookTip"
             }
           ]
         },
@@ -1749,11 +1750,11 @@
           "lines": [
             {
               "speaker": "narration",
-              "text": "저녁 대장간 앞. 틸리가 초록 실을 감은 잎사귀 고리를 처마 기둥에 댄다. 고리 안쪽에 작은 글씨로 틸리 이름이 새겨져 있다."
+              "text": "저녁 대장간 앞. 틸리가 잎 끝을 다듬은 잎사귀 고리를 처마 기둥에 댄다. 고리 안쪽에 작은 글씨로 틸리 이름이 새겨져 있다."
             },
             {
               "speaker": "smith",
-              "text": "못은 내가 박겠소. 거는 건 틸리가 하시오."
+              "text": "못은 내가 박겠소. 거는 건 틸리가 하게."
             },
             {
               "speaker": "tilly",
@@ -1797,10 +1798,100 @@
                 },
                 {
                   "speaker": "smith",
-                  "text": "보이는 데 새겨도 되겠던데. 다음 건 그렇게 하시오."
+                  "text": "보이는 데 새겨도 되겠던데. 다음 건 그렇게 하게."
                 }
               ],
               "memory": "hungHook"
+            }
+          ]
+        },
+        {
+          "id": "tilly:small:hookColor",
+          "title": "잎 끝의 색",
+          "stage": 3,
+          "at": {
+            "x": 41,
+            "y": 22
+          },
+          "when": {
+            "from": 780,
+            "to": 900,
+            "days": [
+              2,
+              5
+            ],
+            "weather": [
+              "dry"
+            ]
+          },
+          "with": [
+            "penelope"
+          ],
+          "req": {
+            "story": [
+              {
+                "id": "tillyHook"
+              }
+            ],
+            "seen": [
+              "penelope:blue"
+            ],
+            "notMemory": [
+              "hookColor"
+            ]
+          },
+          "gain": 3,
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "대장간 처마 기둥 아래. 틸리가 걸어 둔 잎사귀 고리를 내려 모루 곁 나무판에 올려 둔다. 페넬로피가 실 타래 몇 개를 들고 서 있다."
+            },
+            {
+              "speaker": "tilly",
+              "text": "잎 끝에 색 실을 감고 싶었어요. 비 맞아도 안 빠지는 걸로요. 페넬로피가 그런 실을 안대요."
+            },
+            {
+              "speaker": "penelope",
+              "text": "이 초록이요. …아니, 이 초록. 둘 다 물에 안 빠져요. 고르는 건 틸리가요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "둘 사이에서 듣는다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "tilly",
+                  "text": "하나, 둘… 왼쪽 초록이 잎 결이랑 맞아요. 이걸로 할래요."
+                }
+              ],
+              "memory": "hookColor"
+            },
+            {
+              "label": "고를 때까지 기다린다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "penelope",
+                  "text": "…기다려 주니까 저도 덜 급해요."
+                },
+                {
+                  "speaker": "tilly",
+                  "text": "셋 셀 동안만 더 볼게요. …셋. 이거요."
+                }
+              ],
+              "memory": "hookColor"
+            },
+            {
+              "label": "실을 한 바퀴만 감아 보자고 한다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "tilly",
+                  "text": "한 바퀴만요. …좋네요. 쓸모는 그대로고, 보기엔 더 좋고."
+                }
+              ],
+              "memory": "hookColor"
             }
           ]
         },
@@ -1878,10 +1969,6 @@
             ]
           },
           "req": {
-            "rel": [
-              "friend",
-              "close"
-            ],
             "seenAny": [
               "tilly:birdSeen",
               "tilly:birdNew"
@@ -2262,8 +2349,8 @@
             "y": 17
           },
           "when": {
-            "from": 300,
-            "to": 390,
+            "from": 420,
+            "to": 450,
             "days": [
               2
             ]
@@ -2287,7 +2374,7 @@
             "y": 17
           },
           "when": {
-            "from": 390,
+            "from": 450,
             "to": 720,
             "days": [
               2
@@ -2633,7 +2720,7 @@
         },
         {
           "id": "wendell:lunchAfter",
-          "text": "이제 올리브 빵은 안 숨겨요. 하나만 내놓으면 싸움도 하나만 해요.",
+          "text": "이제 올리브 빵은 숨기는 척만 해요. 하나만 내놓으면 싸움도 하나만 해요.",
           "depth": 0,
           "req": {
             "exp": [
@@ -2772,7 +2859,7 @@
         },
         {
           "id": "wendell:rel:friend",
-          "text": "찻집에서 차 한 잔 해요. 과자 연구 말고 그냥 차요. 제가 먼저 가 있을게요.",
+          "text": "언제 찻집에서 차 한 잔 해요. 과자 연구 말고 그냥 차요.",
           "depth": 0,
           "req": {
             "rel": [
@@ -2785,6 +2872,11 @@
           "id": "wendell:rel:lover",
           "text": "오늘 저녁엔 언덕 가요. 빵 냄새 안 나는 데서 {player}님 얘기 듣고 싶어요.",
           "depth": 0,
+          "when": {
+            "weather": [
+              "dry"
+            ]
+          },
           "req": {
             "rel": [
               "lover"
@@ -2826,7 +2918,7 @@
         },
         {
           "id": "wendell:poppyCorner",
-          "text": "파피 자리 옆에 제 간식이 놓여요. 고른 건 셋이고, 정한 건 파피예요.",
+          "text": "파피 자리 옆에 제 간식이 놓여요. 같이 고르긴 했어도, 정한 건 파피예요.",
           "depth": 0,
           "req": {
             "story": [
@@ -3857,8 +3949,8 @@
             "y": 17
           },
           "when": {
-            "from": 300,
-            "to": 390,
+            "from": 420,
+            "to": 450,
             "days": [
               2
             ]
@@ -3879,7 +3971,7 @@
           "lines": [
             {
               "speaker": "narration",
-              "text": "둘째 날 새벽, 빵집 문 앞. 웬델이 작은 보따리를 메고 앞치마 끈을 한 번 더 묶는다."
+              "text": "둘째 날 아침, 빵집 문 앞. 새벽 판을 다 넣은 웬델이 작은 보따리를 메고 끈을 한 번 더 묶는다."
             },
             {
               "speaker": "wendell",
@@ -3994,7 +4086,15 @@
           },
           "when": {
             "from": 300,
-            "to": 540
+            "to": 540,
+            "days": [
+              0,
+              1,
+              3,
+              4,
+              5,
+              6
+            ]
           },
           "req": {
             "rel": [
@@ -5371,7 +5471,7 @@
           }
         },
         {
-          "id": "poppy:sister",
+          "id": "poppy:sisterLetter",
           "text": "동생한테 이번 달에도 썼어요. 제가 웃은 날 이야기로요.",
           "depth": 1,
           "req": {
@@ -5382,7 +5482,7 @@
         },
         {
           "id": "poppy:rel:friend",
-          "text": "오늘 손님 다 가고 나면 차 한 잔 해요. 이번엔 제가 먼저 부르는 거예요.",
+          "text": "언제 손님 다 가고 나면 차 한 잔 해요. 그땐 제가 먼저 부를게요.",
           "depth": 0,
           "req": {
             "rel": [
@@ -6119,7 +6219,7 @@
         },
         {
           "id": "poppy:story:2",
-          "title": "간식과 차받침",
+          "title": "간식과 찻잔",
           "stage": 4,
           "at": {
             "x": 44,
@@ -6134,8 +6234,7 @@
             ]
           },
           "with": [
-            "wendell",
-            "penelope"
+            "wendell"
           ],
           "req": {
             "seen": [
@@ -6150,19 +6249,15 @@
           "lines": [
             {
               "speaker": "narration",
-              "text": "오전 찻집. 탁자 위에 웬델이 가져온 작은 빵 세 가지와 페넬로피가 짠 차받침 네 장이 나란히 놓여 있다."
+              "text": "오전 찻집. 탁자 위에 웬델이 가져온 작은 빵 세 가지와 찻집 찻잔 세 개가 나란히 놓여 있다."
             },
             {
               "speaker": "poppy",
-              "text": "제 자리 차에 맞는 간식이랑 받침을 고르는 날이에요. 셋이 같이 보기로 했어요."
+              "text": "제 자리 차에 맞는 간식이랑 찻잔을 고르는 날이에요. 웬델이랑 같이 보기로 했어요."
             },
             {
               "speaker": "wendell",
               "text": "제 빵이 이기는 건 바라지도 않아요. …조금 바라요."
-            },
-            {
-              "speaker": "penelope",
-              "text": "받침은 이 색이 차랑 맞을 것 같아요. …아니, 이 색. 파피가 먼저 마셔 보고 말해 줘요."
             }
           ],
           "choices": [
@@ -6172,21 +6267,21 @@
               "reply": [
                 {
                   "speaker": "wendell",
-                  "text": "꿀 넣은 작은 거요? 파피 차엔 그게 맞대요. 셋 중 둘이 그랬으니까 된 거예요."
+                  "text": "꿀 넣은 작은 거요? 파피 차엔 그게 맞대요. 제 빵이 이긴 게 아니라, 파피 차가 고른 거예요."
                 }
               ],
-              "memory": "pairing"
+              "memory": "snackPair"
             },
             {
-              "label": "받침 색을 비교하는 걸 곁에서 본다",
+              "label": "찻잔을 고르는 걸 곁에서 본다",
               "color": "quiet",
               "reply": [
                 {
-                  "speaker": "penelope",
-                  "text": "찻잔 놓아 보니까 알겠어요. 이쪽이요. …이번엔 안 바꿀래요."
+                  "speaker": "poppy",
+                  "text": "차를 따라 보니까 알겠어요. 테두리만 흰 거요. …이번엔 안 바꿀래요."
                 }
               ],
-              "memory": "pairing"
+              "memory": "snackPair"
             },
             {
               "label": "차와 간식을 하나씩 짝지어 보자고 한다",
@@ -6194,10 +6289,10 @@
               "reply": [
                 {
                   "speaker": "poppy",
-                  "text": "짝을 지어 보니까 쉬워요. 같이 본 건 셋이고, 정하는 건 제가 할게요. 이 짝이요."
+                  "text": "짝을 지어 보니까 쉬워요. 같이 보긴 했어도, 정하는 건 제가 할게요. 이 짝이요."
                 }
               ],
-              "memory": "pairing"
+              "memory": "snackPair"
             }
           ]
         },
@@ -6235,7 +6330,7 @@
           "lines": [
             {
               "speaker": "narration",
-              "text": "저녁 찻집. 창가 구석 탁자에 새 나무 표지가 서 있다. 페넬로피의 차받침 위에 무늬 없는 찻잔 하나가 놓여 있다."
+              "text": "저녁 찻집. 창가 구석 탁자에 새 나무 표지가 서 있다. 테두리만 흰 찻잔 하나가 놓여 있다."
             },
             {
               "speaker": "poppy",
@@ -6276,6 +6371,78 @@
                   "text": "박하 한 잎이랑 꿀 조금. 처음 왔을 때부터 제가 좋아하던 거예요. 메뉴판엔 없어요. 이 자리에만 있어요."
                 }
               ]
+            }
+          ]
+        },
+        {
+          "id": "poppy:small:coaster",
+          "title": "차받침",
+          "stage": 4,
+          "at": {
+            "x": 44,
+            "y": 62
+          },
+          "when": {
+            "from": 900,
+            "to": 1000,
+            "days": [
+              1,
+              6
+            ]
+          },
+          "with": [
+            "penelope"
+          ],
+          "req": {
+            "story": [
+              {
+                "id": "poppyCorner"
+              }
+            ],
+            "seen": [
+              "penelope:blue"
+            ],
+            "notMemory": [
+              "pairing"
+            ]
+          },
+          "gain": 3,
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "오전 찻집. 창가 구석 탁자 위에 페넬로피가 짠 차받침 네 장이 나란히 놓여 있다."
+            },
+            {
+              "speaker": "poppy",
+              "text": "제 자리 찻잔 밑에 받침을 하나 두고 싶었어요. 페넬로피가 짜 왔대요."
+            },
+            {
+              "speaker": "penelope",
+              "text": "받침은 이 색이 차랑 맞을 것 같아요. …아니, 이 색. 파피가 먼저 마셔 보고 말해 줘요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "받침 색을 비교하는 걸 곁에서 본다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "penelope",
+                  "text": "찻잔 놓아 보니까 알겠어요. 이쪽이요. …이번엔 안 바꿀래요."
+                }
+              ],
+              "memory": "pairing"
+            },
+            {
+              "label": "파피가 먼저 마셔 보길 기다린다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "poppy",
+                  "text": "…이 색이요. 차 색이랑 같이 보면 더 따뜻해요. 정했어요."
+                }
+              ],
+              "memory": "pairing"
             }
           ]
         },
@@ -6322,7 +6489,7 @@
               "reply": [
                 {
                   "speaker": "poppy",
-                  "text": "페넬로피 칸은 늘 지웠다 썼다 해요. 그래서 연필로만 써요."
+                  "text": "어떤 칸은 늘 지웠다 썼다 해요. 그래서 연필로만 써요."
                 }
               ],
               "memory": "regularNotes"
@@ -13548,12 +13715,12 @@
           },
           "choices": [
             {
-              "label": "“서고에 걸어요”",
+              "label": "“양 우리 곁에 걸어요”",
               "color": "warm",
               "reply": [
                 {
                   "speaker": "dexter",
-                  "text": "…서고에요? 제 지도가 책들 옆에?"
+                  "text": "…우리 곁에요? 양들도 매일 보고, 저도 매일 보겠네요."
                 },
                 {
                   "speaker": "narration",
@@ -16504,11 +16671,15 @@
           "req": {
             "story": [
               {
-                "id": "smithHook"
+                "id": "tillyHook"
               }
             ],
-            "notSeen": [
-              "tilly:story:3"
+            "seen": [
+              "penelope:blue"
+            ],
+            "notExp": [
+              "choice:tilly:story:3",
+              "choice:tilly:small:hookColor"
             ]
           },
           "mutter": [
@@ -16530,11 +16701,17 @@
           },
           "doing": "tea",
           "req": {
-            "seen": [
-              "poppy:story:1"
+            "story": [
+              {
+                "id": "poppyCorner"
+              }
             ],
-            "notSeen": [
-              "poppy:story:2"
+            "seen": [
+              "penelope:blue"
+            ],
+            "notExp": [
+              "choice:poppy:story:2",
+              "choice:poppy:small:coaster"
             ]
           },
           "mutter": [
@@ -16730,6 +16907,21 @@
           }
         },
         {
+          "id": "penelope:hookColor",
+          "text": "틸리가 고른 초록, 비 맞고도 그대로예요. …다행이에요. 제가 가져간 실이라서.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "tillyHook"
+              }
+            ],
+            "exp": [
+              "choice:tilly:small:hookColor"
+            ]
+          }
+        },
+        {
           "id": "penelope:poppyCorner",
           "text": "파피 자리 받침은 제가 짠 거예요. 색은 파피가 골랐어요. 안 바꾸고요.",
           "depth": 0,
@@ -16741,6 +16933,21 @@
             ],
             "exp": [
               "choice:poppy:story:2"
+            ]
+          }
+        },
+        {
+          "id": "penelope:coaster",
+          "text": "파피 자리 받침은 제가 짠 거예요. 색은 파피가 골랐어요. 안 바꾸고요.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "poppyCorner"
+              }
+            ],
+            "exp": [
+              "choice:poppy:small:coaster"
             ]
           }
         }
