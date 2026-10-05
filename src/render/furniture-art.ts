@@ -1,6 +1,9 @@
 // 가구 20종의 도트 그림 (16픽셀 = 한 칸). 가방 아이콘(8×8)은 같은 그림을 줄여서 만든다.
 // 색은 마을 참고 그림의 차분한 톤에 맞춘다 (feedback-village-art-style).
 
+import { HOME_SPACE_ART } from './home-space-art'
+import { REMAINING_FURNITURE_ART } from './remaining-furniture-art'
+
 export const FURNI_PALETTE: Record<string, string> = {
   k: '#b57e4e', // 윤곽 — 둘레 나무색 정도로 연하게 (원래 가구처럼 튀지 않게)
   W: '#a96f3f', // 짙은 나무
@@ -379,6 +382,10 @@ export const FURNITURE_ART: Record<string, FurnitureArt> = {
     '...zzzzzzzzzz...',
   ]),
 }
+
+// 집 공간용 도트는 기존 배치 가구와 가방 아이콘에 함께 반영한다.
+Object.assign(FURNITURE_ART, HOME_SPACE_ART)
+Object.assign(FURNITURE_ART, REMAINING_FURNITURE_ART)
 
 /** 가구 그림 글자 → 가방 아이콘 팔레트(ICON_PALETTE)에 더한 글자 */
 export const ICON_CHAR: Record<string, string> = {

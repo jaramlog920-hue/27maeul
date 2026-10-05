@@ -11,6 +11,10 @@ import { fixtureTier, RARE_ITEMS } from '../engine/fixtures'
 import { deskTraces, type DeskTraces } from '../engine/desk-traces'
 import { FURNITURE_DEFS, type Furniture } from '../engine/room'
 import { FURNI_PALETTE, FURNITURE_ART } from './furniture-art'
+import { HOME_FIXTURE_ART } from './home-space-art'
+import { REMAINING_FIXTURE_ART } from './remaining-furniture-art'
+import { EXPANSION_PROPS, EXPANSION_VIEWS } from './expansion-prop-art'
+import { drawStoryProps, registerStoryPropArt } from './story-props'
 import { drawDecor, lanternLights, sheepCount } from './decor'
 import { FIRE, isNear, npcTile } from '../engine/neighbors'
 import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
@@ -41,6 +45,9 @@ import {
   type SpriteRows,
   type Who,
 } from './sprites'
+
+// 생활 확장 도트를 이야기 뒤 소품 그림으로 한 번 등록한다
+registerStoryPropArt(EXPANSION_PROPS, EXPANSION_VIEWS)
 
 const C = {
   // 참고 그림(2026-09-30 사용자)에 맞춘 밝고 선명한 색: 연두 풀밭, 모래빛 흙길, 맑은 하늘빛 호수, 또렷한 지붕
@@ -395,6 +402,11 @@ function drawTree(g: Ctx, x: number, y: number, season: Season, kind: TreeKind) 
 function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season, tree: TreeKind = 'deciduous') {
   const px = x * TILE
   const py = y * TILE
+  const fixture = HOME_FIXTURE_ART[ch] ?? REMAINING_FIXTURE_ART[ch]
+  if (fixture) {
+    g.drawImage(paint(`fixture/${ch}`, fixture.rows, FURNI_PALETTE), px, py)
+    return
+  }
   const r = (color: string, dx: number, dy: number, w: number, h: number) => {
     g.fillStyle = color
     g.fillRect(px + dx, py + dy, w, h)
@@ -1532,6 +1544,12 @@ function furnitureOrder(f: Furniture): number {
 function drawFurniture(g: Ctx, f: Furniture) {
   const px = f.x * TILE
   const py = f.y * TILE
+  // 동일한 원본을 이웃집·플레이어 집·가방에 사용한다.
+  const sprite = FURNITURE_ART[f.item]
+  if (sprite) {
+    g.drawImage(paint(`furni/${f.item}`, sprite.rows, FURNI_PALETTE), px, py + (f.on ? -6 : 0))
+    return
+  }
   const r = (color: string, dx: number, dy: number, w: number, h: number) => {
     g.fillStyle = color
     g.fillRect(px + dx, py + dy, w, h)
@@ -1910,6 +1928,8 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       // 방의 가구: 깔개 → 길을 막는 가구 → 위에 올린 작은 물건
       const ordered = [...game.room].sort((a, b) => furnitureOrder(a) - furnitureOrder(b) || a.y - b.y)
       for (const f of ordered) drawFurniture(g, f)
+      // 이야기 뒤 소품 (계획 16 작업 4 · 계획 17): 생활 확장 도트 → 없으면 가구 그림
+      drawStoryProps(g, game)
       // 화덕 불
       flame(g, hearth.x * TILE + 8, hearth.y * TILE + 14, t)
       // 행사 모닥불
