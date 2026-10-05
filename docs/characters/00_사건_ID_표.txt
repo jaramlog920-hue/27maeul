@@ -448,7 +448,7 @@ R43 | 바질↔틸리 | 기존 방문 | R22와 같음 | — | — | — | 새 �
 작은 이야기
   (공유) shepherd:story:2 = 앞치마 주문
   (공유) merchant:story:3 = 좌판 천 맞추기
-  weaver:small:scraps 천 조각 나눔 | 사이 2 · 광장 720–900 | 아이·이웃에게 조각 | 기억 — 통으로 짠 옷·옷 제비뽑기·옷자락 만져 낫기 연출 금지(§6)
+  weaver:small:scraps 자투리 천 상자 | 사이 2 · 광장 720–900 | 아이·이웃에게 조각 | 기억 — 통으로 짠 옷·옷 제비뽑기·옷자락 만져 낫기 연출 금지(§6)
 짧은 사건 (8)
   weaver:short:edgeTouch — 천 가장자리 만지기
   weaver:short:threadRow — 색 실 나란히
