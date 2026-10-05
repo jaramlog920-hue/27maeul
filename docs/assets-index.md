@@ -30,6 +30,11 @@
 | `events/other/` | 다른 이벤트 소품 20종: 생일(birthdayBread·birthdayBanner), 집들이(welcomeBasket·housewarmingSign), 작품 발표(exhibitStand·artworkUnfinished/Complete·firstToy), 완공(openingRibbon·ribbonAfter), 첫 심부름(errandParcel), 나들이(travelBundle·picnicCloth), 재회 편지(reunionLetter), 계절 잔치(springGarland·summerShadeDecor·autumnHarvest·winterLantern·feastBoard), 가족 액자(familyMemoryFrame) | `event-art.ts` | `export-event-art.mjs` | `../클로드_이벤트도트_연결안내.txt` | 일부 연결(작업 5, d1032fb): birthdayBread, 계절 잔치 4종 + feastBoard, picnicCloth, welcomeBasket. 나머지(집들이 표지·작품 발표·완공 리본·첫 심부름·나들이 짐·재회 편지·가족 액자·birthdayBanner)는 그 기능이 생길 때 |
 | `events/additional/` **(새로 추가)** | 행사 동작 17종 × 성인/어린이 × 4방향 × 4프레임 = 544 + 시트: 박수·촛불 불기·음식 나누기·꾸러미 들고 걷기·장식 걸기·춤·웃기·끄덕이기·맛보기·아기 안기·아이와 손잡고 걷기·천 펼치기·접시 놓기·장식 걷기·선물 풀기·작품 공개·받은 물건 살펴보기 / 두 사람 배치 예시 2종(`pairs/`: 음식 나누기·손잡고 걷기) / 소품 상태 5종(`states/`: 꺼진 초·풀린 선물·덮인 작품·접힌 천·빈 접시) | `event-life-motion.ts` (`eventMotionFrame`) | `export-event-life-motion.mjs` | `클로드_추가이벤트모션_연결안내.txt` | 일부 연결(작업 4·5): clap·smile(결혼 손님), dance·taste·clap(계절 잔치), blowCandle + states/candleOut(생일, 그날 한 번 저장), shareFood(소풍), placePlate(아기 잔치). 나머지 동작·상태는 그 기능이 생길 때 |
 
+## 구약 마을·주민 세대 추가 자산 (2026-10-06)
+
+`assets/old-testament-generations/` — 정지 그림 267개(방향/공사 상태/내부 배치 포함), 4프레임 시퀀스 168개. 원본 `old-village-art.ts`, `generation-art.ts`, 내보내기 `node scripts/export-old-village-art.mjs`.
+서고·주택·꿈터·16개 자식 직업 대응 일터, 지형/가족 소품, 성장 단계, 가족 동작과 두 사람 배치. 전용 검사 4개 통과. **자산 준비, 계획 18·19의 게임 기능 연결은 별도.** 상세: `docs/old-testament-generations-assets.md`.
+
 ## 이벤트별로 쓸 것 (안내 txt 요약)
 
 | 이벤트 | 소품 | 동작 |
