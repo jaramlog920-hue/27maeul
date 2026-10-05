@@ -2,6 +2,7 @@
 import { neighborById } from '../../content/catalog'
 import { useState } from 'react'
 import { WorkDayView, WorkEntry } from '../work/WorkDay'
+import { StallEntry } from '../stall/StallView'
 import { SkillLessonView, SkillEntry } from '../skills/SkillLesson'
 import { callName, fill, itemList, NEIGHBOR_LINES, T } from '../../content/text'
 import { grapesRipe, isMarketDay } from '../../engine/calendar'
@@ -105,6 +106,7 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
         {/* 집 넓히기와 살림 도구 부탁 */}
         {orderable && <button onClick={() => open({ kind: 'orders', npc: def.id })}>{T.orders.open}</button>}
         {def.marketOnly && isMarketDay(game.clock.day) && <button onClick={() => open({ kind: 'trade' })}>{T.ui.talkTrade}</button>}
+        {def.marketOnly && isMarketDay(game.clock.day) && <StallEntry label={T.stall.ask} />}
         <button disabled={block !== null && !blockNote} onClick={() => (blockNote ? say(blockNote) : startHelp(def.id))}>
           {helpLabel}
         </button>

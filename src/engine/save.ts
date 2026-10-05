@@ -3,6 +3,7 @@ import { sanitizeFests } from './fest'
 import { sanitizePlans } from './plans'
 import { sanitizeCompanion } from './companion'
 import { sanitizeWorkDay } from './work-day'
+import { sanitizeStall, sanitizeStallLook } from './stall'
 import { sanitizeSkills, sanitizeSkillLesson } from './skills'
 // 브라우저 저장. 저장소가 없거나 막혀 있어도 게임은 돌아야 하므로 모든 접근을 try/catch로 감싼다.
 import { sanitizeLife } from './people'
@@ -156,6 +157,8 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     // 살아 움직이는 사람들 (계획 6b): 옛 저장은 빈 기억
     life: sanitizeLife(s.life),
     workDay: sanitizeWorkDay(s.workDay),
+    stall: sanitizeStall(s.stall),
+    stallLook: s.stallLook === undefined ? undefined : sanitizeStallLook(s.stallLook),
     skills: sanitizeSkills(s.skills),
     skillLesson: sanitizeSkillLesson(s.skillLesson),
     plans: sanitizePlans(s.plans, s.clock.day),

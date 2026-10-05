@@ -5,6 +5,7 @@ import { formatTime } from '../../engine/clock'
 import { alertsBetween, eventName, eventStatus, eventSummary, nextEvent, scheduledEvents } from '../../engine/events'
 import { festKinds } from '../../engine/fest'
 import { useGame } from '../../store/game-store'
+import { StallEntry } from '../stall/StallView'
 
 /** 알림 풍선이 떠 있는 시간(ms) — 보통 안내보다 조금 길게 */
 const ALERT_MS = 4200
@@ -68,6 +69,7 @@ export function ScheduleDialog() {
       <p className="hint">이웃 방문·초대·소풍은 그날 아침에 정해지면 표시돼요. 시작 30분 전과 시작할 때 알려 드려요.</p>
       <div className="actions">
         <button onClick={() => useGame.getState().open({ kind: 'clubs' })}>{lifeText.clubs.title}</button>
+        <StallEntry />
         {showFests && <button onClick={() => useGame.getState().open({ kind: 'fests' })}>{lifeText.fest.title}</button>}
         <button onClick={close}>닫기</button>
       </div>

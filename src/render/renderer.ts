@@ -25,7 +25,8 @@ import { facingArt } from './furniture-facing'
 import { HOME_FIXTURE_ART } from './home-space-art'
 import { REMAINING_FIXTURE_ART } from './remaining-furniture-art'
 import { EXPANSION_PROPS, EXPANSION_VIEWS } from './expansion-prop-art'
-import { drawStoryProps, registerStoryPropArt } from './story-props'
+import { drawStall, drawStoryProps, registerStoryPropArt } from './story-props'
+import { LIFE_GAP_PROPS, LIFE_GAP_STRUCTURES } from './life-gap-art'
 import { drawDecor, lanternLights, sheepCount } from './decor'
 import { FIRE, isNear, npcTile } from '../engine/neighbors'
 import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
@@ -58,7 +59,7 @@ import {
 } from './sprites'
 
 // 생활 확장 도트를 이야기 뒤 소품 그림으로 한 번 등록한다
-registerStoryPropArt(EXPANSION_PROPS, EXPANSION_VIEWS)
+registerStoryPropArt({ ...EXPANSION_PROPS, ...LIFE_GAP_PROPS }, { ...EXPANSION_VIEWS, ...LIFE_GAP_STRUCTURES })
 
 const C = {
   // 참고 그림(2026-09-30 사용자)에 맞춘 밝고 선명한 색: 연두 풀밭, 모래빛 흙길, 맑은 하늘빛 호수, 또렷한 지붕
@@ -2078,6 +2079,8 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       if (renderer.selected) drawSelection(g, renderer.selected)
       // 이야기 뒤 소품 (계획 16 작업 4 · 계획 17): 생활 확장 도트 → 없으면 가구 그림
       drawStoryProps(g, game)
+      // 내 작은 장날 좌판 (계획 16 작업 19): 영업 중일 때만
+      drawStall(g, game)
       // 화덕 불
       if (hearth) flame(g, hearth.x * TILE + 8, hearth.y * TILE + 14, t)
       // 행사 모닥불

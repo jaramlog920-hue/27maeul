@@ -221,6 +221,8 @@ export interface Person {
   festLines?: { help?: string }
   /** 함께 일하는 하루 (계획 16 작업 17): 작업장 안내·손일 중·마무리 한 줄, 연인·배우자에게 다른 첫마디 */
   workLines?: { start?: string; hand?: string; finish?: string; lover?: string; spouse?: string }
+  /** 내 좌판 손님일 때 (계획 16 작업 19): 상품을 살필 때·산 뒤·사지 않고 간 뒤·단골일 때 한 줄 */
+  stallLines?: { look?: string; sold?: string; looked?: string; regular?: string }
   id: string
   /** 마음이 열리는 빠르기 (1 보통, 크면 빨리) */
   pace: number
@@ -364,7 +366,7 @@ export interface StoryWait {
 
 // ── 경험 기억 (계획 16 작업 2) ──
 
-export const EXPERIENCE_KINDS = ['make', 'gift', 'invite', 'visit', 'trip', 'promise', 'choice', 'story', 'club', 'event', 'work', 'learn', 'project', 'family', 'pet'] as const
+export const EXPERIENCE_KINDS = ['make', 'gift', 'invite', 'visit', 'trip', 'promise', 'choice', 'story', 'club', 'event', 'work', 'learn', 'project', 'family', 'pet', 'stall'] as const
 export type ExperienceKind = (typeof EXPERIENCE_KINDS)[number]
 
 /**

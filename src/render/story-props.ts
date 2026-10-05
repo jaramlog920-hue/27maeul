@@ -7,6 +7,7 @@
 //   registerStoryPropArt(EXPANSION_PROPS, EXPANSION_VIEWS)   // 모듈 위에서 한 번
 //   drawStoryProps(g, game)   // 마을 그리기에서 방의 가구(drawFurniture) 바로 뒤, 이웃 그리기 전에
 import { storyPropsNow, type GameState } from '../engine/game'
+import { STALL_SPOT, stallSceneNow } from '../engine/stall'
 import type { StoryProp } from '../engine/people'
 import { TILE } from '../engine/world'
 import { FURNI_PALETTE, FURNITURE_ART, type FurnitureArt } from './furniture-art'
@@ -58,5 +59,42 @@ export function drawStoryProps(g: CanvasRenderingContext2D, game: GameState): vo
   for (const p of list) {
     const a = storyPropArt(p)
     if (a) g.drawImage(painted(a), p.at.x * TILE, p.at.y * TILE)
+  }
+}
+
+/** 상품마다 좌판 위에 놓일 도트 (assets 소품 — 없는 것은 포장한 물건) */
+const GOOD_ART: Record<string, string> = {
+  scentCandle: 'displayCandle', cushion: 'displayTextile', blanket: 'displayTextile', oil: 'oilFull', grapes: 'basketGrapes', basket: 'basketEmpty', fruitBowl: 'snackPlate',
+}
+const DECO_ART = { candle: 'candleDecor', plant: 'potGrowing', basket: 'basketEmpty' } as const
+const CLOTH_COLOR = { blue: ['#5b7fb0', '#7d9cc8'], rose: ['#c46d83', '#da8fa2'] } as const
+
+/**
+ * 내 작은 장날 좌판 (계획 16 작업 19): 영업 중일 때만, 광장 위쪽 자리에 열린 좌판 도트(marketOpen) → 고른 천 → 상품 → 간판 → 작은 장식.
+ * 길을 막지 않는 그림이다. 이웃·주인공은 이 뒤에 그려진다
+ */
+export function drawStall(g: CanvasRenderingContext2D, game: GameState): void {
+  const scene = stallSceneNow(game)
+  const base = VIEWS.marketOpen?.down
+  if (!scene || !base) return
+  const x0 = STALL_SPOT.x * TILE
+  const y0 = STALL_SPOT.y * TILE
+  g.drawImage(painted(base), x0, y0)
+  if (scene.look.cloth !== 'plain') {
+    const [c, hi] = CLOTH_COLOR[scene.look.cloth]
+    g.fillStyle = c
+    g.fillRect(x0 + 2, y0 + 11, 44, 5)
+    g.fillStyle = hi
+    g.fillRect(x0 + 2, y0 + 11, 44, 1)
+  }
+  scene.goods.slice(0, 3).forEach((item, i) => {
+    const a = PROPS[GOOD_ART[item] ?? 'wrappedGoods']
+    if (a) g.drawImage(painted(a), x0 + 1 + i * 14, y0 - 6)
+  })
+  const tag = PROPS.marketNameTag
+  if (tag) g.drawImage(painted(tag), x0 + 16, y0 - 14)
+  if (scene.look.deco !== 'none') {
+    const a = PROPS[DECO_ART[scene.look.deco]]
+    if (a) g.drawImage(painted(a), x0, y0 + 2 * TILE - 2)
   }
 }

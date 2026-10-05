@@ -168,6 +168,8 @@ export type Modal =
   | { kind: 'clubSession'; id: string }
   | { kind: 'fests' }
   | { kind: 'festSession'; id: string }
+  /** 내 작은 장날 좌판 (계획 16 작업 19) */
+  | { kind: 'stall' }
   /** letter: 편지 나르는 이웃이 말을 걸자마자 편지를 건넸을 때 대화에 보일 편지 말 한 줄 */
   | { kind: 'talk'; neighborId: string; line: string; letter?: string }
   | { kind: 'passage'; pieceId: string; askLine: boolean; back?: boolean; said?: string }
