@@ -1,8 +1,23 @@
 import { CONTENT } from '../content/catalog'
 import { ACCS, BOTTOMS, HAIR_BACKS, HAIR_FRONTS, SKINS, TOPS, cleanAvatarName, cycle, hsvToHex, nameProblem, randomAvatar, withLookDefaults } from './avatar'
 import { newGame } from './game'
+import { deserialize, serialize } from './save'
+import { writerPalette } from '../render/sprites'
+import { avatarKey } from './avatar'
 
 describe('주인공', () => {
+  it('장신구 색이 저장되고 도트 색과 캐시에 반영되며 기본 배색으로 되돌릴 수 있다', () => {
+    const base = withLookDefaults({ look: 'f', name: '하늘', acc: 6 })
+    expect(base.accColor).toBeNull()
+    expect(writerPalette('spring', base).f).toBe('#d888b4')
+    const colored = { ...base, accColor: [120, 100, 80] as [number, number, number] }
+    const back = deserialize(serialize(newGame(CONTENT, colored)), CONTENT)!
+    expect(back.avatar?.accColor).toEqual(colored.accColor)
+    expect(writerPalette('spring', colored).f).toBe('#00cc00')
+    expect(avatarKey(colored)).not.toBe(avatarKey(base))
+    expect(writerPalette('spring', { ...colored, accColor: null })).toEqual(writerPalette('spring', base))
+    expect(writerPalette('spring', colored).h).toBe(writerPalette('spring', base).h)
+  })
   it('이름 검사: 비었거나 길거나 금지어면 안 된다', () => {
     expect(nameProblem('  ')).toBe('empty')
     expect(nameProblem('가나다라마바사아자')).toBe('long')

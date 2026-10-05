@@ -445,6 +445,19 @@ export function writerPalette(season: Season, avatar?: FullAvatar): Record<strin
     x: '#b05848',
     f: '#d888b4',
     y: '#d4b060',
+    v: '#87956b',
+    V: '#586b46',
+    p: '#b28c60',
+    P: '#77563e',
+    ...(avatar.accColor ? {
+      x: hsvToHex(shadeOf(avatar.accColor)),
+      f: hsvToHex(avatar.accColor),
+      v: hsvToHex(avatar.accColor),
+      V: hsvToHex(shadeOf(avatar.accColor)),
+      p: hsvToHex(avatar.accColor),
+      P: hsvToHex(shadeOf(avatar.accColor)),
+      y: hsvToHex([avatar.accColor[0], Math.max(0, avatar.accColor[1] - 15), Math.min(100, avatar.accColor[2] + 18)]),
+    } : {}),
   }
 }
 

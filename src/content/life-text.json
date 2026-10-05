@@ -134,7 +134,8 @@
     "colors": {
       "eyeColor": "눈 색",
       "hairColor": "머리 색",
-      "bottomColor": "아래옷 색"
+      "bottomColor": "아래옷 색",
+      "accColor": "장신구 색"
     },
     "sliders": [
       "색조",

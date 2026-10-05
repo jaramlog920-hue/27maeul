@@ -9,7 +9,7 @@ import { Preview, SLIDER_MAX } from '../intro/AvatarForm'
 import { useGame } from '../../store/game-store'
 
 type RowKey = 'hairFront' | 'hairBack' | 'top' | 'bottom' | 'acc'
-type ColorKey = 'eyeColor' | 'hairColor' | 'bottomColor'
+type ColorKey = 'eyeColor' | 'hairColor' | 'bottomColor' | 'accColor'
 const ROWS: { key: RowKey; names: readonly string[] }[] = [
   { key: 'hairFront', names: HAIR_FRONTS },
   { key: 'hairBack', names: HAIR_BACKS },
@@ -32,11 +32,11 @@ export function Wardrobe({ who }: { who: WardrobeWho }) {
   const colorLabels = T.avatar.colors as Record<ColorKey, string>
   const step = (key: RowKey, n: number, d: number) => setA({ ...a, [key]: cycle(a[key], d, n) })
   const slide = (i: number, v: number) => {
-    const next = [...a[colorKey]] as Hsv
+    const next = [...(a[colorKey] ?? [10, 55, 70])] as Hsv
     next[i] = v
     setA({ ...a, [colorKey]: next })
   }
-  const hsv = a[colorKey]
+  const hsv = a[colorKey] ?? [10, 55, 70]
   // 무작위도 피부는 그대로
   const shuffle = () => setA({ ...randomAvatar(a.look, a.name), skin: start.skin, look: a.look, name: a.name })
   return (
@@ -69,11 +69,11 @@ export function Wardrobe({ who }: { who: WardrobeWho }) {
         <div className="creator-color-tabs" role="tablist">
           {(Object.keys(colorLabels) as ColorKey[]).map((k) => (
             <button key={k} role="tab" aria-selected={colorKey === k} className={colorKey === k ? 'primary' : ''} onClick={() => setColorKey(k)}>
-              <i className="creator-swatch" style={{ background: hsvToHex(a[k]) }} /> {colorLabels[k]}
+              <i className="creator-swatch" style={{ background: hsvToHex(a[k] ?? [10, 55, 70]) }} /> {colorLabels[k]}
             </button>
           ))}
         </div>
-        {T.avatar.sliders.map((label: string, i: number) => (
+        {colorKey === 'accColor' && <button onClick={() => setA((cur) => cur ? { ...cur, accColor: null } : cur)}>기본 배색으로</button>}{T.avatar.sliders.map((label: string, i: number) => (
           <label className="creator-slider" key={label}>
             <span>{label}</span>
             <input type="range" min={0} max={SLIDER_MAX[i]} value={hsv[i]} onChange={(e) => slide(i, Number(e.target.value))} />

@@ -61,7 +61,7 @@ describe('사람 도트', () => {
       expect(rows.every((row) => row.length === SPRITE_W && [...row].every((ch) => ch === '.' || pal[ch] !== undefined))).toBe(true)
     }
   })
-  it('옷 12종·하의 4종의 모든 방향과 자세가 기존 선택을 유지하며 유효하게 그려진다', () => {
+  it('모든 옷·하의의 방향과 자세가 기존 선택을 유지하며 유효하게 그려진다', () => {
     const base = withLookDefaults({ look: 'm', name: '바다' })
     for (let top = 0; top < TOPS.length; top++) for (let bottom = 0; bottom < BOTTOMS.length; bottom++) {
       const avatar = { ...base, top, bottom }

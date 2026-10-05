@@ -45,7 +45,7 @@ export function Preview({ avatar, facing }: { avatar: FullAvatar; facing: Facing
 }
 
 type RowKey = 'skin' | 'hairFront' | 'hairBack' | 'top' | 'bottom' | 'acc'
-type ColorKey = 'eyeColor' | 'hairColor' | 'bottomColor'
+type ColorKey = 'eyeColor' | 'hairColor' | 'bottomColor' | 'accColor'
 
 const ROWS: { key: RowKey; names: readonly string[] }[] = [
   { key: 'skin', names: SKINS.map((_, i) => `${i + 1}`) },
@@ -77,11 +77,11 @@ export function AvatarForm({ onDone, onBack }: { onDone: (a: Avatar) => void; on
   const step = (key: RowKey, n: number, delta: number) => setA((cur) => ({ ...cur, [key]: cycle(cur[key], delta, n) }))
   const slide = (i: number, v: number) =>
     setA((cur) => {
-      const next = [...cur[colorKey]] as Hsv
+      const next = [...(cur[colorKey] ?? [10, 55, 70])] as Hsv
       next[i] = v
       return { ...cur, [colorKey]: next }
     })
-  const hsv = a[colorKey]
+  const hsv = a[colorKey] ?? [10, 55, 70]
   const track = (i: number) => {
     // 막대 바탕: 그 칸만 바꿨을 때의 색 변화
     const stops = [0, 0.25, 0.5, 0.75, 1].map((t) => {
@@ -160,11 +160,11 @@ export function AvatarForm({ onDone, onBack }: { onDone: (a: Avatar) => void; on
           <div className="creator-color-tabs" role="tablist">
             {(Object.keys(colorLabels) as ColorKey[]).map((k) => (
               <button key={k} role="tab" aria-selected={colorKey === k} className={colorKey === k ? 'primary' : ''} onClick={() => setColorKey(k)}>
-                <i className="creator-swatch" style={{ background: hsvToHex(a[k]) }} /> {colorLabels[k]}
+                <i className="creator-swatch" style={{ background: hsvToHex(a[k] ?? [10, 55, 70]) }} /> {colorLabels[k]}
               </button>
             ))}
           </div>
-          {T.avatar.sliders.map((label: string, i: number) => (
+          {colorKey === 'accColor' && <button onClick={() => setA((cur) => cur ? { ...cur, accColor: null } : cur)}>기본 배색으로</button>}{T.avatar.sliders.map((label: string, i: number) => (
             <label className="creator-slider" key={label}>
               <span>{label}</span>
               <input
