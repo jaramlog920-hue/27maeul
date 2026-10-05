@@ -914,3 +914,220 @@ describe('연애 후보 1 — 웬델·틸리·파피의 이후 생활 (실제 �
     for (const w of ['잔치', '탕진', '됫박', '누룩', '효모', '등불', '빛', '필사가님', '치료', '약효']) expect(text, w).not.toContain(w)
   })
 })
+
+describe('연애 후보 2 — 코스모·루디·덱스터·주니퍼의 이후 생활 (실제 내용)', () => {
+  beforeEach(() => setPeopleData(PEOPLE))
+  const NEW = /:(story|small|short):/
+  const FOUR = ['cosmo', 'rudy', 'dexter', 'juniper']
+  /** 기존 사건·목격은 다 본 것으로 (새 이야기만 시험한다 — 고백·연인 사건은 조건이 아니다) */
+  const oldSeen = (npc: string) => [...(PEOPLE.people[npc].events ?? []).map((e) => e.id), ...(PEOPLE.people[npc].sightings ?? []).map((w) => w.id)].filter((id) => !NEW.test(id))
+  const ready = (hearts: Record<string, number>, seen: string[], flags: Record<string, number> = {}): GameState =>
+    ({ ...start(), hearts, flags: { ...start().flags, ...flags }, life: { ...NO_LIFE, seen } })
+  const step = (s: GameState, npc: string, day: number, minute: number, t: Tile) => stand({ ...s, clock: { ...s.clock, day, minute } }, npc, t)
+  const CLEAR: string[] = ['sunny', 'wind', 'hot']
+  const days = (from: number) => Array.from({ length: 400 }, (_, i) => from + i)
+  const clear = (from: number, ok: (d: number) => boolean = () => true) => days(from).find((d) => CLEAR.includes(weatherOf(d)) && ok(d))!
+  const dry = (from: number, ok: (d: number) => boolean = () => true) => days(from).find((d) => !isWet(weatherOf(d)) && ok(d))!
+  const wet = (from: number, ok: (d: number) => boolean = () => true) => days(from).find((d) => isWet(weatherOf(d)) && ok(d))!
+  const npcProps = (s: GameState, npc: string) => storyPropsNow(s).filter((p) => p.npc === npc).map((p) => p.id).sort()
+  const lineReq = (npc: string, id: string) => PEOPLE.people[npc].lines.find((l) => l.id === id)!.req
+  const ctxOf = (s: GameState, npc: string, romance: 'dating' | 'married' | null = null) =>
+    ({ life: s.life, npc, day: s.clock.day, threads: [], lover: !!romance, suitor: false, flags: s.flags, stage: 4 as const, romance })
+  const at = (s: GameState, day: number, minute: number): GameState => ({ ...s, clock: { ...s.clock, day, minute } })
+  const newText = (npc: string) =>
+    JSON.stringify(PEOPLE.people[npc].events!.filter((x) => NEW.test(x.id))) +
+    PEOPLE.people[npc].lines.filter((l) => l.id.includes(':')).map((l) => l.text).join() +
+    JSON.stringify(PEOPLE.people[npc].routines.filter((r) => r.req))
+  const IN = { 'movedIn:fisher': 1, 'movedIn:beekeeper': 1 }
+  const DOCK = { x: 25, y: 33 }, RUDY_DOCK = { x: 24, y: 33 }, SHOP = { x: 6, y: 24 }, LIB = { x: 24, y: 9 }
+  const HILL = { x: 13, y: 9 }, VIEW = { x: 22, y: 14 }, JUN = { x: 23, y: 15 }, SHELF = { x: 18, y: 53 }
+
+  it('코스모: 배·안개 뒤 본인이 고른 쉬는 자리 → 루디와 보관대(손일 실패해도) → 먼저 청한 말없는 저녁, 보관대·장식과 다섯째 날 루디 — 안개 낀 날은 그대로', () => {
+    const seen = oldSeen('cosmo')
+    // 배 사건이 끝나기 전(날 30 전)에는 열리지 않는다
+    const early = clear(21)
+    expect(early).toBeLessThan(30)
+    expect(eventNow(step(ready({ cosmo: 40 }, seen, IN), 'cosmo', early, 1050, DOCK), 'cosmo')?.id).not.toBe('cosmo:story:1')
+    // 안개 장면을 안 봤으면 열리지 않는다
+    expect(eventNow(step(ready({ cosmo: 40 }, seen.filter((x) => x !== 'cosmo:fogWalk'), IN), 'cosmo', clear(70), 1050, DOCK), 'cosmo')?.id).not.toBe('cosmo:story:1')
+    let s = step(ready({ cosmo: 40 }, seen, IN), 'cosmo', clear(70), 1050, DOCK)
+    expect(eventNow(s, 'cosmo')?.id).toBe('cosmo:story:1')
+    s = chooseInEvent(openEvent(s, 'cosmo')!, 'cosmo:story:1', 1)
+    expect(npcProps(s, 'cosmo')).toEqual([])
+    const fri = clear(s.clock.day + 1, (d) => d % 7 === 5)
+    s = step(s, 'cosmo', fri, 980, DOCK)
+    expect(routineOf(s, 'rudy')?.at).toEqual(RUDY_DOCK) // 루디가 제 발로 나루에
+    expect(eventNow(stand(s, 'rudy', SHOP), 'cosmo')?.id).not.toBe('cosmo:story:2')
+    s = chooseInEvent(openEvent(stand(s, 'rudy', RUDY_DOCK), 'cosmo')!, 'cosmo:story:2', 0)
+    expect(s.life.storyWait?.mini).toBe('hold')
+    s = finishStoryMini(s) // 잘하든 못하든
+    expect(s.life.experiences['choice:cosmo:story:2'].with.sort()).toEqual(['cosmo', 'rudy'])
+    expect(eventNow(step(s, 'cosmo', fri, 1100, DOCK), 'cosmo')?.id).not.toBe('cosmo:story:3') // 같은 날 이어지지 않는다
+    const eve = clear(fri + 1)
+    s = chooseInEvent(openEvent(step(s, 'cosmo', eve, 1100, DOCK), 'cosmo')!, 'cosmo:story:3', 0)
+    expect(s.flags['story:cosmoDock']).toBe(1)
+    expect(s.romance?.partner ?? null).toBeNull()
+    expect(s.life.experiences['story:cosmoDock'].with).toEqual(['cosmo'])
+    expect(npcProps(s, 'cosmo')).toEqual(['cosmoCharm', 'cosmoRack'])
+    // R36 다섯째 날 루디와 보관대, 비 오면 사랑방
+    const fifth = at(s, clear(eve + 1, (d) => d % 7 === 5), 980)
+    expect(routineOf(fifth, 'cosmo')).toMatchObject({ with: 'rudy', at: DOCK })
+    expect(routineOf(fifth, 'rudy')).toMatchObject({ with: 'cosmo', at: RUDY_DOCK })
+    // (비 오는 날 끈 장식 장면이 남아 있으면 코스모는 그 장면 자리로 — 본 뒤의 일과)
+    const rain = at({ ...s, life: { ...s.life, seen: [...s.life.seen, 'cosmo:small:rainCraft'] } }, wet(eve + 1, (d) => d % 7 === 5), 980)
+    expect(routineOf(rain, 'cosmo')).toMatchObject({ with: 'rudy', at: { x: 10, y: 75 } })
+    expect(routineOf(rain, 'rudy')).toMatchObject({ with: 'cosmo', at: { x: 10, y: 74 } })
+    // 저녁엔 나루에서 조용히 — 안개 낀 날은 나루에 가지 않는다
+    expect(routineOf(at(s, clear(eve + 1), 1100), 'cosmo')).toMatchObject({ doing: 'rest', at: DOCK })
+    const fog = days(eve + 1).find((d) => weatherOf(d) === 'fog')!
+    expect(routineOf(at(s, fog, 1100), 'cosmo')?.at).not.toEqual(DOCK)
+    for (const [npc, id] of [['cosmo', 'cosmo:after'], ['cosmo', 'cosmo:fearStill'], ['cosmo', 'cosmo:fogStill'], ['cosmo', 'cosmo:memory'], ['rudy', 'rudy:cosmoDock']])
+      expect(reqMet(lineReq(npc, id), ctxOf(s, npc)), id).toBe(true)
+    // 어부 장난감 이야기 결과는 건드리지 않는다
+    expect(s.flags['story:fisherToy']).toBeUndefined()
+    const back = deserialize(serialize(s), CONTENT)!
+    expect(npcProps(back, 'cosmo')).toEqual(['cosmoCharm', 'cosmoRack'])
+  })
+
+  it('루디: 서고 문 앞 뒤 표지 모양 → 목수와 책 받침(손일) → 본인이 고른 서고 앞 한 시간, 목수 집에 받침·표지 — 서고 권수와 무관, 읽기를 고치는 보상 없음', () => {
+    const seen = oldSeen('rudy')
+    const weekday = (d: number) => d % 7 !== 0
+    let day = dry(70, weekday)
+    expect(eventNow(step(ready({ rudy: 40 }, seen.filter((x) => x !== 'rudy:library' && x !== 'rudy:shelf')), 'rudy', day, 800, SHOP), 'rudy')?.id).not.toBe('rudy:story:1')
+    let s = step(ready({ rudy: 40 }, seen), 'rudy', day, 800, SHOP)
+    expect(eventNow(s, 'rudy')?.id).toBe('rudy:story:1')
+    s = chooseInEvent(openEvent(s, 'rudy')!, 'rudy:story:1', 2)
+    day = dry(day + 1, (d) => [1, 2, 3, 5, 6].includes(d % 7))
+    s = step(s, 'rudy', day, 1000, SHOP)
+    expect(routineOf(s, 'carpenter')?.at).toEqual(SHOP)
+    expect(eventNow(stand(s, 'carpenter', { x: 20, y: 20 }), 'rudy')?.id).not.toBe('rudy:story:2')
+    s = chooseInEvent(openEvent(stand(s, 'carpenter', SHOP), 'rudy')!, 'rudy:story:2', 0)
+    expect(s.life.storyWait?.mini).toBe('hold')
+    s = finishStoryMini(s)
+    expect(s.life.experiences['choice:rudy:story:2'].with.sort()).toEqual(['carpenter', 'rudy'])
+    s = chooseInEvent(openEvent(step(s, 'rudy', dry(day + 1), 1100, LIB), 'rudy')!, 'rudy:story:3', 1)
+    expect(s.flags['story:rudyStand']).toBe(1)
+    expect(s.life.experiences['story:rudyStand'].with).toEqual(['rudy'])
+    expect(npcProps(s, 'rudy')).toEqual(['rudyMark', 'rudyStand'])
+    expect(storyPropsNow(s).filter((p) => p.npc === 'rudy').every((p) => p.room === 'carpenter')).toBe(true)
+    // 책을 한 권도 꽂지 않은 저장에서도 해 질 무렵 서고 앞
+    expect(Object.values(s.shelved).filter((g) => g !== undefined)).toHaveLength(0)
+    expect(routineOf(at(s, dry(day + 2), 1100), 'rudy')).toMatchObject({ doing: 'book', at: LIB })
+    for (const [npc, id] of [['rudy', 'rudy:after'], ['rudy', 'rudy:slowStill'], ['rudy', 'rudy:memory'], ['carpenter', 'carpenter:rudyStand']])
+      expect(reqMet(lineReq(npc, id), ctxOf(s, npc)), id).toBe(true)
+    // 아버지 의자 곁 말은 목수 의자 이야기가 끝난 경우만
+    expect(reqMet(lineReq('rudy', 'rudy:standChair'), ctxOf(s, 'rudy'))).toBe(false)
+    expect(reqMet(lineReq('rudy', 'rudy:standChair'), ctxOf({ ...s, flags: { ...s.flags, 'story:carpenterChair': 1 } }, 'rudy'))).toBe(true)
+    // 길 표지: 편지 나르는 이웃과 함께한 경우에만 그 이웃이 말한다
+    expect(reqMet(lineReq('postman', 'postman:rudySign'), ctxOf(s, 'postman'))).toBe(false)
+    s = step(s, 'rudy', dry(day + 2, weekday), 950, { x: 23, y: 8 })
+    expect(routineOf(s, 'postman')?.at).toEqual({ x: 22, y: 8 })
+    s = chooseInEvent(openEvent(stand(s, 'postman', { x: 22, y: 8 }), 'rudy')!, 'rudy:small:signPost', 1)
+    expect(s.life.experiences['choice:rudy:small:signPost'].with.sort()).toEqual(['postman', 'rudy'])
+    expect(reqMet(lineReq('postman', 'postman:rudySign'), ctxOf(s, 'postman'))).toBe(true)
+    for (const w of ['빨리 읽', '빨라졌', '안 느려', '술술', '고쳐졌']) expect(newText('rudy'), w).not.toContain(w)
+    const back = deserialize(serialize(s), CONTENT)!
+    expect(npcProps(back, 'rudy')).toEqual(['rudyMark', 'rudyStand'])
+  })
+
+  it('덱스터·주니퍼: 남길 모양 → 주니퍼와 비교 → 첫째 날 작은 보기 모임(말할지 그림일지는 주니퍼) → 주니퍼 제 방 선반, 관찰 종이와 첫째 날 보기 — 서고와 따로', () => {
+    const seen = [...oldSeen('dexter'), ...oldSeen('juniper')]
+    let day = clear(70)
+    let s = step(ready({ dexter: 40, juniper: 60 }, seen, IN), 'dexter', day, 650, HILL)
+    expect(eventNow(s, 'dexter')?.id).toBe('dexter:story:1')
+    s = chooseInEvent(openEvent(s, 'dexter')!, 'dexter:story:1', 0)
+    day = clear(day + 1)
+    // 주니퍼가 이사 오기 전에는 비교 장면이 열리지 않는다
+    const noJ = { ...step(s, 'dexter', day, 1040, VIEW), flags: { ...s.flags, 'movedIn:beekeeper': 0 } }
+    expect(eventNow(stand(noJ, 'juniper', JUN), 'dexter')?.id).not.toBe('dexter:story:2')
+    s = step(s, 'dexter', day, 1040, VIEW)
+    expect(routineOf(s, 'juniper')?.at).toEqual(JUN)
+    s = chooseInEvent(openEvent(stand(s, 'juniper', JUN), 'dexter')!, 'dexter:story:2', 1)
+    expect(s.life.experiences['choice:dexter:story:2'].with.sort()).toEqual(['dexter', 'juniper'])
+    // 주니퍼가 보여 줄 그림을 고른다
+    s = chooseInEvent(openEvent(step(s, 'juniper', day, 1100, JUN), 'juniper')!, 'juniper:story:1', 0)
+    expect(npcProps(s, 'juniper')).toEqual([])
+    const mon = clear(day + 1, (d) => d % 7 === 1)
+    s = chooseInEvent(openEvent(stand(step(s, 'dexter', mon, 1040, VIEW), 'juniper', JUN), 'dexter')!, 'dexter:story:3', 0)
+    expect(s.flags['story:dexterViewing']).toBe(1)
+    expect(s.life.experiences['story:dexterViewing'].with.sort()).toEqual(['dexter', 'juniper'])
+    expect(npcProps(s, 'dexter')).toEqual(['dexterPaper'])
+    // 주니퍼가 말할지 그림일지는 장면 안에서 주니퍼가 — 플레이어 고를 말은 반응뿐 (갈래 없음)
+    expect(PEOPLE.people.dexter.events!.find((e) => e.id === 'dexter:story:3')!.choices!.every((c) => c.outcome === undefined)).toBe(true)
+    expect(eventNow(step(s, 'juniper', mon, 980, SHELF), 'juniper')?.id).not.toBe('juniper:story:4') // 같은 날 아님
+    s = chooseInEvent(openEvent(step(s, 'juniper', mon + 1, 980, SHELF), 'juniper')!, 'juniper:story:4', 1)
+    expect(s.flags['story:juniperShow']).toBe(1)
+    expect(npcProps(s, 'juniper')).toEqual(['juniperDrawing', 'juniperNotebook'])
+    expect(storyPropsNow(s).filter((p) => p.npc === 'juniper').every((p) => p.room === 'beekeeper')).toBe(true)
+    // R37 첫째 날 해 지기 전 언덕, 비 오면 사랑방
+    const nextMon = at(s, clear(mon + 2, (d) => d % 7 === 1), 1040)
+    expect(routineOf(nextMon, 'dexter')).toMatchObject({ with: 'juniper', at: VIEW })
+    expect(routineOf(nextMon, 'juniper')).toMatchObject({ with: 'dexter', at: JUN })
+    const wetMon = at(s, wet(mon + 2, (d) => d % 7 === 1), 1040)
+    expect(routineOf(wetMon, 'dexter')).toMatchObject({ with: 'juniper', at: { x: 11, y: 74 } })
+    expect(routineOf(wetMon, 'juniper')).toMatchObject({ with: 'dexter', at: { x: 12, y: 74 } })
+    expect(routineOf(at(s, days(mon + 2).find((d) => d % 7 === 3)!, 980), 'juniper')).toMatchObject({ doing: 'book', at: SHELF })
+    for (const [npc, id] of [['dexter', 'dexter:after'], ['dexter', 'dexter:quietOk'], ['juniper', 'juniper:after'], ['juniper', 'juniper:shelf'], ['juniper', 'juniper:wordsStill'], ['juniper', 'juniper:dexterViewing'], ['dexter', 'dexter:compared']])
+      expect(reqMet(lineReq(npc, id), ctxOf(s, npc)), id).toBe(true)
+    // 창작 공책·그림은 말씀 서고와 따로 (사용자 결정 2: 옛 대사도 제 방 선반으로)
+    expect(JSON.stringify(PEOPLE.people.juniper)).not.toContain('서고')
+    expect(PEOPLE.people.juniper.events!.find((e) => e.id === 'juniper:book')!.lines[0].text).toContain('제 방 선반')
+    // 양 이야기: 없어지거나 찾는 말, 백 마리 세기 숫자가 없다
+    for (const w of ['없어졌', '찾았', '찾아', '잃', '아흔', '백 ', '모자라']) expect(newText('dexter') + newText('juniper'), w).not.toContain(w)
+    const back = deserialize(serialize(s), CONTENT)!
+    expect(npcProps(back, 'juniper')).toEqual(['juniperDrawing', 'juniperNotebook'])
+    expect(npcProps(back, 'dexter')).toEqual(['dexterPaper'])
+  })
+
+  it('구름 모양·벌 운세: 점심·광장 자리에 제 발로 와 있고, 함께한 이웃만 뒷말', () => {
+    const seen = [...oldSeen('dexter'), ...oldSeen('cosmo'), ...oldSeen('juniper'), 'juniper:story:1']
+    const LUNCH = { x: 27, y: 22 }, COSMO_LUNCH = { x: 28, y: 22 }
+    const sunny = days(70).find((d) => ['sunny', 'wind'].includes(weatherOf(d)))!
+    let s = step(ready({ dexter: 40, cosmo: 40, juniper: 60 }, seen, IN), 'dexter', sunny, 730, LUNCH)
+    expect(routineOf(s, 'cosmo')?.at).toEqual(COSMO_LUNCH)
+    expect(reqMet(lineReq('cosmo', 'cosmo:cloudShapes'), ctxOf(s, 'cosmo'))).toBe(false)
+    s = chooseInEvent(openEvent(stand(s, 'cosmo', COSMO_LUNCH), 'dexter')!, 'dexter:small:cloudShapes', 1)
+    expect(s.life.experiences['choice:dexter:small:cloudShapes'].with.sort()).toEqual(['cosmo', 'dexter'])
+    expect(reqMet(lineReq('cosmo', 'cosmo:cloudShapes'), ctxOf(s, 'cosmo'))).toBe(true)
+    // 본 뒤에는 다시 둘이 함께하는 점심
+    expect(routineOf(at(s, clear(sunny + 1), 730), 'cosmo')?.with).toBe('dexter')
+    const laughDay = clear(sunny + 1)
+    s = step(s, 'juniper', laughDay, 1040, { x: 21, y: 22 })
+    expect(routineOf(s, 'cosmo')?.at).toEqual({ x: 21, y: 21 })
+    s = chooseInEvent(openEvent(stand(s, 'cosmo', { x: 21, y: 21 }), 'juniper')!, 'juniper:short:laugh', 0)
+    expect(s.life.experiences['choice:juniper:short:laugh'].with.sort()).toEqual(['cosmo', 'juniper'])
+    for (const [npc, id] of [['cosmo', 'cosmo:juniperLaugh'], ['juniper', 'juniper:laugh']]) expect(reqMet(lineReq(npc, id), ctxOf(s, npc)), id).toBe(true)
+    // 이야기 뒷말은 실제로 함께한 이웃만: 보관대는 루디, 받침은 목수, 보기 모임은 주니퍼
+    const readers = (sid: string) => Object.values(PEOPLE.people).filter((p) => p.lines.some((l) => l.req?.story?.some((x) => x.id === sid))).map((p) => p.id).sort()
+    expect(readers('cosmoDock')).toEqual(['cosmo', 'rudy'])
+    expect(readers('rudyStand')).toEqual(['carpenter', 'rudy'])
+    expect(readers('dexterViewing')).toEqual(['dexter', 'juniper'])
+    expect(readers('juniperShow')).toEqual(['juniper'])
+  })
+
+  it('친구·연인·배우자는 서로 다른 말과 먼저 하는 제안 — 배우자는 낮에 제 일과, 새 이야기는 고백·문턱을 만들지 않는다', () => {
+    const s = ready({}, [])
+    for (const npc of FOUR) {
+      const rel = (romance: 'dating' | 'married' | null) => ['friend', 'lover', 'spouse'].filter((r) => reqMet(lineReq(npc, `${npc}:rel:${r}`), ctxOf(s, npc, romance)))
+      expect(rel(null), npc).toEqual(['friend'])
+      expect(rel('dating'), npc).toEqual(['lover'])
+      expect(rel('married'), npc).toEqual(['spouse'])
+      const habit = PEOPLE.people[npc].events!.find((e) => e.id === `${npc}:short:spouseHabit`)!
+      expect(habit.req?.rel).toEqual(['spouse'])
+      for (const e of PEOPLE.people[npc].events!.filter((x) => NEW.test(x.id))) {
+        expect(e.opens, e.id).toBeUndefined()
+        expect(e.confess, e.id).toBeUndefined()
+        expect(e.req?.lover, e.id).toBeUndefined()
+      }
+      // 배우자여도 낮 일과는 그대로 (연애 조건이 걸린 일과가 없다)
+      expect(PEOPLE.people[npc].routines.some((r) => r.req?.rel || r.req?.lover), npc).toBe(false)
+    }
+    // 연인일 때 먼저 말하는 곳: 코스모는 물가가 아닌 정자
+    expect(PEOPLE.people.cosmo.lines.find((l) => l.id === 'cosmo:rel:lover')!.text).toContain('정자')
+    // 생활 취향은 말에서 직접 알게 된다
+    for (const [npc, key] of [['cosmo', 'time.evening'], ['rudy', 'size.small'], ['dexter', 'place.hill'], ['juniper', 'activity.observe']])
+      expect(PEOPLE.people[npc].lines.some((l) => l.reveals === key), npc).toBe(true)
+    const text = FOUR.map(newText).join()
+    for (const w of ['잔치', '등불', '등잔', '빛', '필사가님', '치료', '약효', '폭풍', '가득', '밤새', '물 위를', '건져']) expect(text, w).not.toContain(w)
+  })
+})
