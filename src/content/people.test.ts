@@ -10,6 +10,7 @@ import { CANDIDATE_IDS } from '../engine/romance'
 import { allSightings, type Routine, type When } from '../engine/people'
 import type { Tile } from '../engine/types'
 import { newGame, type GameState } from '../engine/game'
+import { WORK_SHOPS } from '../engine/work-day'
 import { deserialize, serialize } from '../engine/save'
 
 const doorOf = (id: string) => CONTENT.neighbors.find((n) => n.id === id)!.door
@@ -85,7 +86,8 @@ describe('people.json', () => {
       expect(isWalkable(s.at), s.id).toBe(true)
       expect(reach(doorOf(s.npc), s.at), `${s.id} 길`).not.toBeNull()
     }
-  })
+    // 모든 자리 길찾기라 전체 실행 중에는 5초를 넘기기도 한다 (HEAD에서도 같은 시간 초과)
+  }, 30000)
 
   it('이벤트·목격은 장면으로 뜨고, 말하는 이는 이웃이나 해설뿐 (기록자는 말하지 않는다)', () => {
     for (const p of Object.values(PEOPLE.people))
@@ -122,6 +124,8 @@ describe('people.json', () => {
       }
     for (const n of CONTENT.neighbors) exps.add(`gift:${n.id}`)
     for (const id of STORY_IDS) exps.add(`story:${id}`)
+    // 함께 일한 기억 work:<이웃> (계획 16 작업 17)
+    for (const n of Object.values(WORK_SHOPS).flatMap((sh) => sh.npcs)) exps.add(`work:${n}`)
     for (const x of exps) made.add(`exp:${x}`)
     for (const p of Object.values(PEOPLE.people)) {
       const reqs = [...p.lines.map((l) => l.req), ...(p.events ?? []).map((e) => e.req), ...(p.sightings ?? []).map((w) => w.req), ...p.routines.map((r) => r.req), ...(p.props ?? []).map((x) => x.req)]
@@ -130,7 +134,7 @@ describe('people.json', () => {
         for (const id of [...(r?.story ?? []).map((x) => x.id), ...(r?.notStory ?? [])]) expect(STORY_IDS.includes(id), `${p.id}: story:${id}`).toBe(true)
         // 갈래를 기다리는 조건은 그 이야기에 실제로 있는 갈래만
         for (const x of r?.story ?? []) if (x.outcome !== undefined) expect(STORIES.get(x.id)?.has(x.outcome), `${p.id}: story:${x.id} 갈래 ${x.outcome}`).toBe(true)
-        for (const id of [...(r?.exp ?? []), ...(r?.notExp ?? []), ...(r?.recent ? [r.recent.exp] : [])]) expect(exps.has(id), `${p.id}: exp ${id}`).toBe(true)
+        for (const id of [...(r?.exp ?? []), ...(r?.notExp ?? []), ...(r?.recent ? [r.recent.exp] : []), ...(r?.expItem ? [r.expItem.exp] : [])]) expect(exps.has(id), `${p.id}: exp ${id}`).toBe(true)
       }
     }
   })

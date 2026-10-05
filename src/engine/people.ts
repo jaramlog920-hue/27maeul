@@ -117,6 +117,8 @@ export interface Req {
   minStage?: Stage
   /** 이 사람과 함께한 그 경험이 최근 n일 안 */
   recent?: { exp: string; days: number }
+  /** 이 사람과 함께한 그 경험에 남은 결과물이 이것일 때 (계획 16 작업 17: 함께 일한 마무리의 흔적) */
+  expItem?: { exp: string; item: string }
   /** 이야기 뒤 소품이 지금 놓여 있을 때 (소품 id) */
   placed?: string
   /** 앞 사건의 선택을 마친 날에서 며칠 뒤 (날짜 미상인 옛 저장은 본 사건으로 판단) */
@@ -217,6 +219,8 @@ export interface Person {
   clubLines?: { start?: string; finish?: string }
   /** 작은 행사에 보태 준 날 (계획 16 작업 16): 가져온 것을 내려놓고 손님으로 앉는 한 줄 */
   festLines?: { help?: string }
+  /** 함께 일하는 하루 (계획 16 작업 17): 작업장 안내·손일 중·마무리 한 줄, 연인·배우자에게 다른 첫마디 */
+  workLines?: { start?: string; hand?: string; finish?: string; lover?: string; spouse?: string }
   id: string
   /** 마음이 열리는 빠르기 (1 보통, 크면 빨리) */
   pace: number
@@ -542,6 +546,7 @@ export function reqMet(r: Req | undefined, c: ReqCtx): boolean {
     const e = sharedExperience(c.life, c.npc, r.recent.exp)
     if (!e || e.last === null || c.day - e.last > r.recent.days) return false
   }
+  if (r.expItem && sharedExperience(c.life, c.npc, r.expItem.exp)?.item !== r.expItem.item) return false
   if (r.minStage !== undefined && (c.stage ?? 0) < r.minStage) return false
   if (r.rel) {
     const rel = relOf(c.stage ?? 0, c.romance)

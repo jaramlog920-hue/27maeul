@@ -673,6 +673,17 @@
               "choice:tilly:short:spouseHabit"
             ]
           }
+        },
+        {
+          "id": "tilly:work",
+          "text": "같이 일한 날 고리 열둘이었어요. 그 숫자, 대장간 벽에 적어 놨어요.",
+          "depth": 0,
+          "req": {
+            "recent": {
+              "exp": "work:tilly",
+              "days": 7
+            }
+          }
         }
       ],
       "sightings": [
@@ -2124,8 +2135,69 @@
               }
             ]
           }
+        },
+        {
+          "id": "tillyWork_ringRound",
+          "at": {
+            "x": 42,
+            "y": 27
+          },
+          "art": "ringRound",
+          "req": {
+            "recent": {
+              "exp": "work:tilly",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:tilly",
+              "item": "ringRound"
+            }
+          }
+        },
+        {
+          "id": "tillyWork_ringSquare",
+          "at": {
+            "x": 42,
+            "y": 27
+          },
+          "art": "ringSquare",
+          "req": {
+            "recent": {
+              "exp": "work:tilly",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:tilly",
+              "item": "ringSquare"
+            }
+          }
+        },
+        {
+          "id": "tillyWork_metalParts",
+          "at": {
+            "x": 42,
+            "y": 27
+          },
+          "art": "metalParts",
+          "req": {
+            "recent": {
+              "exp": "work:tilly",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:tilly",
+              "item": "metalParts"
+            }
+          }
         }
-      ]
+      ],
+      "workLines": {
+        "start": "오늘 고리 몇 개 나오는지 같이 세요. 어제는 열하나였어요.",
+        "hand": "하나, 둘… 지금 일곱이에요. 줄질은 세 번씩이요.",
+        "finish": "오늘은 열둘이에요. 어제보다 하나 많아요.",
+        "lover": "오늘 고리는 둘이서 세요. 먼저 틀리는 쪽도 세 볼래요.",
+        "spouse": "집에서 세던 거, 여기서도 세요. 오늘은 몇 개까지 갈까요?"
+      }
     },
     "wendell": {
       "id": "wendell",
@@ -2932,6 +3004,17 @@
             "exp": [
               "choice:poppy:story:2"
             ]
+          }
+        },
+        {
+          "id": "wendell:work",
+          "text": "그날 고른 진열 그대로 해 봤어요. 손님들이 그쪽부터 봐요.",
+          "depth": 0,
+          "req": {
+            "recent": {
+              "exp": "work:wendell",
+              "days": 7
+            }
           }
         }
       ],
@@ -4201,8 +4284,69 @@
               }
             ]
           }
+        },
+        {
+          "id": "wendellWork_breadRound",
+          "at": {
+            "x": 1,
+            "y": 16
+          },
+          "art": "breadRound",
+          "req": {
+            "recent": {
+              "exp": "work:wendell",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:wendell",
+              "item": "breadRound"
+            }
+          }
+        },
+        {
+          "id": "wendellWork_breadPlain",
+          "at": {
+            "x": 1,
+            "y": 16
+          },
+          "art": "breadPlain",
+          "req": {
+            "recent": {
+              "exp": "work:wendell",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:wendell",
+              "item": "breadPlain"
+            }
+          }
+        },
+        {
+          "id": "wendellWork_breadTray",
+          "at": {
+            "x": 1,
+            "y": 16
+          },
+          "art": "breadTray",
+          "req": {
+            "recent": {
+              "exp": "work:wendell",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:wendell",
+              "item": "breadTray"
+            }
+          }
         }
-      ]
+      ],
+      "workLines": {
+        "start": "가마는 제가 맡을게요. 오늘 진열은 어떻게 하고 싶어요? 미리 생각해 둬요.",
+        "hand": "반죽이 손에 붙으면 가루 조금만요. 정말 조금만.",
+        "finish": "앞줄이 좋아요, 쟁반이 좋아요? 저는 둘 다 좋아서 못 고르겠어요.",
+        "lover": "오늘 진열은 둘이 골라요. 제 취향만 말하지 않을게요.",
+        "spouse": "아침에 집에서 빚던 모양, 여기서도 해 볼래요?"
+      }
     },
     "smith": {
       "id": "smith",
@@ -4514,6 +4658,17 @@
             "exp": [
               "story:tillyHook"
             ]
+          }
+        },
+        {
+          "id": "smith:work",
+          "text": "같이 손질한 것, 아직 대장간 앞에 있소. 지나가는 사람들이 한 번씩 만져 보더군.",
+          "depth": 0,
+          "req": {
+            "recent": {
+              "exp": "work:smith",
+              "days": 7
+            }
           }
         }
       ],
@@ -4958,8 +5113,67 @@
               }
             ]
           }
+        },
+        {
+          "id": "smithWork_ringRound",
+          "at": {
+            "x": 43,
+            "y": 27
+          },
+          "art": "ringRound",
+          "req": {
+            "recent": {
+              "exp": "work:smith",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:smith",
+              "item": "ringRound"
+            }
+          }
+        },
+        {
+          "id": "smithWork_ringSquare",
+          "at": {
+            "x": 43,
+            "y": 27
+          },
+          "art": "ringSquare",
+          "req": {
+            "recent": {
+              "exp": "work:smith",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:smith",
+              "item": "ringSquare"
+            }
+          }
+        },
+        {
+          "id": "smithWork_metalParts",
+          "at": {
+            "x": 43,
+            "y": 27
+          },
+          "art": "metalParts",
+          "req": {
+            "recent": {
+              "exp": "work:smith",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:smith",
+              "item": "metalParts"
+            }
+          }
         }
-      ]
+      ],
+      "workLines": {
+        "start": "쇠 달구는 건 내가 하오. 식은 것만 건네겠소.",
+        "hand": "줄은 한 방향으로만. 틸리가 그렇게 하더군.",
+        "finish": "다 됐으면 걸지 담을지 정하오."
+      }
     },
     "poppy": {
       "id": "poppy",
@@ -5558,6 +5772,17 @@
             "exp": [
               "story:penelopeRug"
             ]
+          }
+        },
+        {
+          "id": "poppy:work",
+          "text": "그날 차린 자리에 손님이 오래 앉았다 갔어요.",
+          "depth": 0,
+          "req": {
+            "recent": {
+              "exp": "work:poppy",
+              "days": 7
+            }
           }
         }
       ],
@@ -6779,8 +7004,53 @@
               }
             ]
           }
+        },
+        {
+          "id": "poppyWork_teaTray",
+          "room": "teahouse",
+          "at": {
+            "x": 46,
+            "y": 62
+          },
+          "art": "teaTray",
+          "req": {
+            "recent": {
+              "exp": "work:poppy",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:poppy",
+              "item": "teaTray"
+            }
+          }
+        },
+        {
+          "id": "poppyWork_cupPersonal",
+          "room": "teahouse",
+          "at": {
+            "x": 46,
+            "y": 62
+          },
+          "art": "cupPersonal",
+          "req": {
+            "recent": {
+              "exp": "work:poppy",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:poppy",
+              "item": "cupPersonal"
+            }
+          }
         }
-      ]
+      ],
+      "workLines": {
+        "start": "잔은 여기, 간식 접시는 저기요. 손님 오기 전에 같이 골라요.",
+        "hand": "물은 조금 식혀서요. 찻잎이 놀라지 않게요.",
+        "finish": "쟁반에 차릴까요, 자리에 놓을까요? 오늘은 정해 줘요.",
+        "lover": "오늘 잔 하나는 우리 몫으로 남겨 둘게요.",
+        "spouse": "집에서 쓰는 잔 말고, 손님 잔부터 닦아요."
+      }
     },
     "postman": {
       "id": "postman",
@@ -8602,6 +8872,17 @@
               }
             ]
           }
+        },
+        {
+          "id": "baker:work",
+          "text": "같이 빚은 빵, 오전에 다 나갔어요. 모양 보고 집어 간 손님도 있었어요.",
+          "depth": 0,
+          "req": {
+            "recent": {
+              "exp": "work:baker",
+              "days": 7
+            }
+          }
         }
       ],
       "tastes": {
@@ -9074,6 +9355,60 @@
               "taste:plain"
             ]
           }
+        },
+        {
+          "id": "bakerWork_breadRound",
+          "at": {
+            "x": 2,
+            "y": 15
+          },
+          "art": "breadRound",
+          "req": {
+            "recent": {
+              "exp": "work:baker",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:baker",
+              "item": "breadRound"
+            }
+          }
+        },
+        {
+          "id": "bakerWork_breadPlain",
+          "at": {
+            "x": 2,
+            "y": 15
+          },
+          "art": "breadPlain",
+          "req": {
+            "recent": {
+              "exp": "work:baker",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:baker",
+              "item": "breadPlain"
+            }
+          }
+        },
+        {
+          "id": "bakerWork_breadTray",
+          "at": {
+            "x": 2,
+            "y": 15
+          },
+          "art": "breadTray",
+          "req": {
+            "recent": {
+              "exp": "work:baker",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:baker",
+              "item": "breadTray"
+            }
+          }
         }
       ],
       "clubLines": {
@@ -9082,6 +9417,11 @@
       },
       "festLines": {
         "help": "작은 빵 몇 개 구워 왔어요. 내려놓았으니 이제 저도 앉아서 쉴게요."
+      },
+      "workLines": {
+        "start": "화덕은 제가 볼게요. 반죽 빚는 것만 같이 해요.",
+        "hand": "손바닥 아래쪽으로 밀어요. 힘은 반만요.",
+        "finish": "어디 놓을지 정해 줘요. 손님들이 먼저 보는 쪽이 있거든요."
       }
     },
     "cosmo": {
@@ -13730,6 +14070,17 @@
               "choice:dexter:short:spouseHabit"
             ]
           }
+        },
+        {
+          "id": "dexter:work",
+          "text": "같이 나눈 털 더미, 아직 구름 같아요.",
+          "depth": 0,
+          "req": {
+            "recent": {
+              "exp": "work:dexter",
+              "days": 7
+            }
+          }
         }
       ],
       "sightings": [
@@ -15204,8 +15555,33 @@
               }
             ]
           }
+        },
+        {
+          "id": "dexterWork_woolSorted",
+          "at": {
+            "x": 3,
+            "y": 28
+          },
+          "art": "woolSorted",
+          "req": {
+            "recent": {
+              "exp": "work:dexter",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:dexter",
+              "item": "woolSorted"
+            }
+          }
         }
-      ]
+      ],
+      "workLines": {
+        "start": "양들이 먼저예요. 물 마시는 거 보고 나서 털 볼게요.",
+        "hand": "이 털은 구름 같아요. 이건 덜 구름 같고요.",
+        "finish": "다 나눴어요. 처음 쌓아 둔 거랑 모양이 달라 보여요.",
+        "lover": "오늘은 양들 먼저 보고, 그다음에 같이 털 나눠요. 천천히요.",
+        "spouse": "집에서처럼 말 안 해도 돼요. 양들 소리만 들어도 좋아요."
+      }
     },
     "basil": {
       "id": "basil",
@@ -15730,6 +16106,17 @@
             "exp": [
               "choice:basil:short:spouseHabit"
             ]
+          }
+        },
+        {
+          "id": "basil:work",
+          "text": "그날 맡긴 표지, 고치지 않고 그대로 뒀어요.",
+          "depth": 0,
+          "req": {
+            "recent": {
+              "exp": "work:basil",
+              "days": 7
+            }
           }
         }
       ],
@@ -16781,8 +17168,33 @@
               }
             ]
           }
+        },
+        {
+          "id": "basilWork_namePlate",
+          "at": {
+            "x": 33,
+            "y": 31
+          },
+          "art": "namePlate",
+          "req": {
+            "recent": {
+              "exp": "work:basil",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:basil",
+              "item": "namePlate"
+            }
+          }
         }
-      ]
+      ],
+      "workLines": {
+        "start": "오늘은 표지 쪽을 맡겨 볼게요. 저는 곁에서 용기만 볼게요.",
+        "hand": "제가 하면 금방인데… 아니에요. 맡긴 거니까 기다릴게요.",
+        "finish": "맡기니까 제 손이 비네요. 이상하게 괜찮아요.",
+        "lover": "오늘은 제 일 하나를 맡길게요. 맡기는 것도 연습이 필요하더라고요.",
+        "spouse": "집에서처럼 하나씩 나눠요. 이번엔 제가 덜 할게요."
+      }
     },
     "marigold": {
       "id": "marigold",
@@ -19152,6 +19564,17 @@
               "choice:penelope:short:spouseHabit"
             ]
           }
+        },
+        {
+          "id": "penelope:work",
+          "text": "그날 견주던 두 색, 아직 나란히 놓아 뒀어요.",
+          "depth": 0,
+          "req": {
+            "recent": {
+              "exp": "work:penelope",
+              "days": 7
+            }
+          }
         }
       ],
       "sightings": [
@@ -20169,8 +20592,51 @@
               }
             ]
           }
+        },
+        {
+          "id": "penelopeWork_clothBlue",
+          "at": {
+            "x": 39,
+            "y": 27
+          },
+          "art": "clothBlue",
+          "req": {
+            "recent": {
+              "exp": "work:penelope",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:penelope",
+              "item": "clothBlue"
+            }
+          }
+        },
+        {
+          "id": "penelopeWork_clothRose",
+          "at": {
+            "x": 39,
+            "y": 27
+          },
+          "art": "clothRose",
+          "req": {
+            "recent": {
+              "exp": "work:penelope",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:penelope",
+              "item": "clothRose"
+            }
+          }
         }
-      ]
+      ],
+      "workLines": {
+        "start": "두 색을 나란히 놓고 조금 볼게요. 서두르지 않아도 돼요.",
+        "hand": "그 줄, 햇빛에 대 보면 색이 또 달라요.",
+        "finish": "두 색을 다시 대 봤어요. 고른 쪽이 맞는 것 같아요.",
+        "lover": "오늘 색은 같이 대 보고 정해요. 제가 먼저 고르지 않을게요.",
+        "spouse": "집 창가에서 보던 색이랑 견줘 볼래요?"
+      }
     },
     "juniper": {
       "id": "juniper",
@@ -22548,6 +23014,17 @@
               "story:fisherToy"
             ]
           }
+        },
+        {
+          "id": "fisher:work",
+          "text": "그날 손본 그물, 잘 버티오.",
+          "depth": 0,
+          "req": {
+            "recent": {
+              "exp": "work:fisher",
+              "days": 7
+            }
+          }
         }
       ],
       "tastes": {
@@ -22976,8 +23453,31 @@
               }
             ]
           }
+        },
+        {
+          "id": "fisherWork_netRepaired",
+          "at": {
+            "x": 23,
+            "y": 31
+          },
+          "art": "netRepaired",
+          "req": {
+            "recent": {
+              "exp": "work:fisher",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:fisher",
+              "item": "netRepaired"
+            }
+          }
         }
-      ]
+      ],
+      "workLines": {
+        "start": "마른 그물만 손보오. 젖은 건 내일이오.",
+        "hand": "그물코는 하나씩. 끊긴 데만 잇소.",
+        "finish": "걸어 둘지 상자에 넣을지 정하시오."
+      }
     },
     "carpenter": {
       "id": "carpenter",
@@ -23604,6 +24104,17 @@
               "choice:rudy:story:2"
             ]
           }
+        },
+        {
+          "id": "carpenter:work",
+          "text": "그날 고른 마감, 손님들이 손으로 쓸어 보고 가오. 손이 먼저 아는 거지.",
+          "depth": 0,
+          "req": {
+            "recent": {
+              "exp": "work:carpenter",
+              "days": 7
+            }
+          }
         }
       ],
       "tastes": {
@@ -23971,8 +24482,49 @@
               "carpenter:small:benchTidy"
             ]
           }
+        },
+        {
+          "id": "carpenterWork_woodenFinishLight",
+          "at": {
+            "x": 8,
+            "y": 24
+          },
+          "art": "woodenFinishLight",
+          "req": {
+            "recent": {
+              "exp": "work:carpenter",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:carpenter",
+              "item": "woodenFinishLight"
+            }
+          }
+        },
+        {
+          "id": "carpenterWork_woodenFinishDark",
+          "at": {
+            "x": 8,
+            "y": 24
+          },
+          "art": "woodenFinishDark",
+          "req": {
+            "recent": {
+              "exp": "work:carpenter",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:carpenter",
+              "item": "woodenFinishDark"
+            }
+          }
         }
-      ]
+      ],
+      "workLines": {
+        "start": "이 판을 보오. 결이 일어난 데는 손바닥으로 쓸어 보면 아오.",
+        "hand": "손목 말고 어깨로 미오. 이렇게.",
+        "finish": "어느 쪽으로 마감할지 골라 보오. 판은 둘 다 받아 주오."
+      }
     },
     "shepherd": {
       "id": "shepherd",
@@ -24286,6 +24838,17 @@
             "exp": [
               "choice:shepherd:short:seasonNews"
             ]
+          }
+        },
+        {
+          "id": "shepherd:work",
+          "text": "같이 나눈 털, 마른 데 잘 두었어요. 양들도 잘 있고요.",
+          "depth": 0,
+          "req": {
+            "recent": {
+              "exp": "work:shepherd",
+              "days": 7
+            }
           }
         }
       ],
@@ -24797,8 +25360,31 @@
               }
             ]
           }
+        },
+        {
+          "id": "shepherdWork_woolSorted",
+          "at": {
+            "x": 6,
+            "y": 30
+          },
+          "art": "woolSorted",
+          "req": {
+            "recent": {
+              "exp": "work:shepherd",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:shepherd",
+              "item": "woolSorted"
+            }
+          }
         }
-      ]
+      ],
+      "workLines": {
+        "start": "물통부터 봐요. 양들 목마른 게 먼저예요.",
+        "hand": "털은 손끝으로 갈라요. 엉킨 건 따로 두고요.",
+        "finish": "자루든 선반이든 마른 데면 돼요."
+      }
     },
     "beekeeper": {
       "id": "beekeeper",
@@ -26743,6 +27329,17 @@
               "story:marigoldList"
             ]
           }
+        },
+        {
+          "id": "grandpa:work",
+          "text": "같이 일한 날은 허리가 덜 울었다네. 바구니도 늘 두던 데 있고.",
+          "depth": 0,
+          "req": {
+            "recent": {
+              "exp": "work:grandpa",
+              "days": 7
+            }
+          }
         }
       ],
       "tastes": {
@@ -27151,11 +27748,52 @@
               }
             ]
           }
+        },
+        {
+          "id": "grandpaWork_basketGrapes",
+          "at": {
+            "x": 38,
+            "y": 8
+          },
+          "art": "basketGrapes",
+          "req": {
+            "recent": {
+              "exp": "work:grandpa",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:grandpa",
+              "item": "basketGrapes"
+            }
+          }
+        },
+        {
+          "id": "grandpaWork_basketEmpty",
+          "at": {
+            "x": 38,
+            "y": 8
+          },
+          "art": "basketEmpty",
+          "req": {
+            "recent": {
+              "exp": "work:grandpa",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:grandpa",
+              "item": "basketEmpty"
+            }
+          }
         }
       ],
       "clubLines": {
         "start": "나는 편한 쪽에 앉겠네. 천천히 함께해도 되겠지.",
         "finish": "나란히 앉아 쉬니 한때가 잘 지나갔구먼."
+      },
+      "workLines": {
+        "start": "먼저 송이를 같이 보세. 철마다 할 일이 다르다네.",
+        "hand": "서두르지 말게. 나도 쉬어 가며 한다네.",
+        "finish": "끝은 같이 하세. 혼자 들면 허리가 운다네."
       }
     },
     "merchant": {
@@ -28753,6 +29391,17 @@
               "choice:presser:short:spouseHabit"
             ]
           }
+        },
+        {
+          "id": "presser:work",
+          "text": "그날 채운 단지, 그늘에서 잘 있어요. 날짜 보고 꺼내 쓰고 있어요.",
+          "depth": 0,
+          "req": {
+            "recent": {
+              "exp": "work:presser",
+              "days": 7
+            }
+          }
         }
       ],
       "tastes": {
@@ -29621,8 +30270,33 @@
               }
             ]
           }
+        },
+        {
+          "id": "presserWork_oilFull",
+          "at": {
+            "x": 46,
+            "y": 14
+          },
+          "art": "oilFull",
+          "req": {
+            "recent": {
+              "exp": "work:presser",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:presser",
+              "item": "oilFull"
+            }
+          }
         }
-      ]
+      ],
+      "workLines": {
+        "start": "올리브는 가게 것으로 해요. 넷이면 단지 둘이 차요.",
+        "hand": "누름대는 천천히요. 서두르면 거름천이 밀려요.",
+        "finish": "그늘에 둘지, 표지를 달지 골라 줘요.",
+        "lover": "오늘은 단지 둘만 채워요. 남는 시간엔 그냥 앉아 있어도 되고요.",
+        "spouse": "집에서 하던 대로 천천히 해요. 오늘도 단지는 둘이에요."
+      }
     },
     "weaver": {
       "id": "weaver",
@@ -29905,6 +30579,17 @@
             "exp": [
               "choice:postman:small:newStrap"
             ]
+          }
+        },
+        {
+          "id": "weaver:work",
+          "text": "같이 짠 천, 가장자리가 반듯해요. 그 색을 찾는 손님이 있었어요.",
+          "depth": 0,
+          "req": {
+            "recent": {
+              "exp": "work:weaver",
+              "days": 7
+            }
           }
         }
       ],
@@ -30283,8 +30968,49 @@
               3
             ]
           }
+        },
+        {
+          "id": "weaverWork_clothBlue",
+          "at": {
+            "x": 38,
+            "y": 23
+          },
+          "art": "clothBlue",
+          "req": {
+            "recent": {
+              "exp": "work:weaver",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:weaver",
+              "item": "clothBlue"
+            }
+          }
+        },
+        {
+          "id": "weaverWork_clothRose",
+          "at": {
+            "x": 38,
+            "y": 23
+          },
+          "art": "clothRose",
+          "req": {
+            "recent": {
+              "exp": "work:weaver",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:weaver",
+              "item": "clothRose"
+            }
+          }
         }
-      ]
+      ],
+      "workLines": {
+        "start": "실은 여기 다 펼쳐 둘게요. 마음 가는 색부터 집어요.",
+        "hand": "북은 천천히요. 줄이 조금 비뚤어도 다음 줄이 잡아 줘요.",
+        "finish": "펴 둘지 접어서 건넬지 골라요. 색은 그대로 남아요."
+      }
     },
     "apothecary": {
       "id": "apothecary",
@@ -30561,6 +31287,17 @@
             "exp": [
               "choice:basil:story:2"
             ]
+          }
+        },
+        {
+          "id": "apothecary:work",
+          "text": "같이 붙인 표지 덕에 찾는 게 빨라졌어요.",
+          "depth": 0,
+          "req": {
+            "recent": {
+              "exp": "work:apothecary",
+              "days": 7
+            }
           }
         }
       ],
@@ -31020,8 +31757,31 @@
               "apothecary:story:3"
             ]
           }
+        },
+        {
+          "id": "apothecaryWork_namePlate",
+          "at": {
+            "x": 39,
+            "y": 31
+          },
+          "art": "namePlate",
+          "req": {
+            "recent": {
+              "exp": "work:apothecary",
+              "days": 3
+            },
+            "expItem": {
+              "exp": "work:apothecary",
+              "item": "namePlate"
+            }
+          }
         }
-      ]
+      ],
+      "workLines": {
+        "start": "약초는 제가 볼게요. 용기랑 표지만 같이 해 줘요.",
+        "hand": "표지는 큰 글씨로요. 할아버지도 읽으시게.",
+        "finish": "선반에 둘지, 자리를 알려 줄지 정해 줘요."
+      }
     }
   },
   "threads": [
