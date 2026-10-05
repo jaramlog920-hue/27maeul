@@ -23,8 +23,8 @@ for (const p of Object.values(PEOPLE.people))
   for (const e of p.events ?? []) if (e.completes) STORIES.set(e.completes, new Set((e.choices ?? []).flatMap((c) => (c.outcome !== undefined ? [c.outcome] : []))))
 const STORY_IDS: readonly string[] = [...STORIES.keys()]
 const speakers = new Set([...CONTENT.neighbors.map((n) => n.id), 'narration'])
-/** 방이 자기 이름이 아닌 이웃: 웬델은 빵 굽는 집에 같이 살고, 파피는 찻집에서 일한다 (계획 16 작업 10). 루디는 목수 집, 주니퍼는 벌 치는 집 (작업 11) */
-const HOME_ROOM: Record<string, string> = { wendell: 'baker', poppy: 'teahouse', rudy: 'carpenter', juniper: 'beekeeper' }
+/** 방이 자기 이름이 아닌 이웃: 웬델은 빵 굽는 집에 같이 살고, 파피는 찻집에서 일한다 (계획 16 작업 10). 루디는 목수 집, 주니퍼는 벌 치는 집 (작업 11). 바질은 약방, 메리골드는 할아버지 집, 페넬로피는 베 짜는 집 (작업 12) */
+const HOME_ROOM: Record<string, string> = { wendell: 'baker', poppy: 'teahouse', rudy: 'carpenter', juniper: 'beekeeper', basil: 'apothecary', marigold: 'grandpa', penelope: 'weaver' }
 
 // ── 주민끼리 만나는 시간 (계획 16 작업 3) ──
 const dist = (a: Tile, b: Tile) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y)

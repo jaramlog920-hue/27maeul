@@ -1290,3 +1290,191 @@ describe('연애 후보 2 — 코스모·루디·덱스터·주니퍼의 이후 
     for (const w of ['잔치', '등불', '등잔', '빛', '필사가님', '치료', '약효', '폭풍', '가득', '밤새', '물 위를', '건져']) expect(text, w).not.toContain(w)
   })
 })
+
+describe('연애 후보 3 — 바질·메리골드·페넬로피의 이후 생활 (실제 내용)', () => {
+  beforeEach(() => setPeopleData(PEOPLE))
+  const NEW = /:(story|small|short):/
+  const THREE = ['basil', 'marigold', 'penelope']
+  const oldSeen = (npc: string) => [...(PEOPLE.people[npc].events ?? []).map((e) => e.id), ...(PEOPLE.people[npc].sightings ?? []).map((w) => w.id)].filter((id) => !NEW.test(id))
+  const ready = (hearts: Record<string, number>, seen: string[], flags: Record<string, number> = {}): GameState =>
+    ({ ...start(), hearts, flags: { ...start().flags, ...flags }, life: { ...NO_LIFE, seen } })
+  const step = (s: GameState, npc: string, day: number, minute: number, t: Tile) => stand({ ...s, clock: { ...s.clock, day, minute } }, npc, t)
+  const days = (from: number) => Array.from({ length: 400 }, (_, i) => from + i)
+  const dry = (from: number, ok: (d: number) => boolean = () => true) => days(from).find((d) => !isWet(weatherOf(d)) && ok(d))!
+  const wet = (from: number, ok: (d: number) => boolean = () => true) => days(from).find((d) => isWet(weatherOf(d)) && ok(d))!
+  const npcProps = (s: GameState, npc: string) => storyPropsNow(s).filter((p) => p.npc === npc).map((p) => p.id).sort()
+  const lineReq = (npc: string, id: string) => PEOPLE.people[npc].lines.find((l) => l.id === id)!.req
+  const ctxOf = (s: GameState, npc: string, romance: 'dating' | 'married' | null = null) =>
+    ({ life: s.life, npc, day: s.clock.day, threads: [], lover: !!romance, suitor: false, flags: s.flags, stage: 4 as const, romance })
+  const at = (s: GameState, day: number, minute: number): GameState => ({ ...s, clock: { ...s.clock, day, minute } })
+  const newText = (npc: string) =>
+    JSON.stringify(PEOPLE.people[npc].events!.filter((x) => NEW.test(x.id))) +
+    PEOPLE.people[npc].lines.filter((l) => l.id.includes(':')).map((l) => l.text).join() +
+    JSON.stringify(PEOPLE.people[npc].routines.filter((r) => r.req))
+  const APO = { 'movedIn:apothecary': 1 }, WEAVER = { 'movedIn:weaver': 1 }
+  const HERB = { x: 34, y: 32 }, TEA_SEAT = { x: 45, y: 62 }, POPPY = { x: 44, y: 62 }, MOTHER = { x: 37, y: 32 }
+  const SQUARE = { x: 24, y: 12 }, SHADE = { x: 40, y: 7 }, GRANDPA = { x: 41, y: 7 }, LOOM = { x: 39, y: 24 }, PEN_TEA = { x: 42, y: 62 }
+
+  it('바질: 산 너머 이야기 뒤 쉬는 오후를 고르고 → 어머니께 맡기고 → 찻집에서 제 차, 교대표·찻잔과 셋째·여섯째 날 쉼 — 돌봄을 거절해도 마음은 그대로', () => {
+    const seen = oldSeen('basil')
+    const d1 = dry(70)
+    // 산 너머 이야기를 안 봤으면 열리지 않는다
+    expect(eventNow(step(ready({ basil: 60 }, seen.filter((x) => x !== 'basil:mountain'), APO), 'basil', d1, 930, HERB), 'basil')?.id).not.toBe('basil:story:1')
+    let s = step(ready({ basil: 60, apothecary: 30, poppy: 30 }, seen, APO), 'basil', d1, 930, HERB)
+    expect(eventNow(s, 'basil')?.id).toBe('basil:story:1')
+    s = chooseInEvent(openEvent(s, 'basil')!, 'basil:story:1', 1) // 들러도 되는지 묻자 혼자 쉬겠다고 한다
+    expect(s.hearts.basil).toBeGreaterThanOrEqual(60)
+    expect(s.life.cool.basil).toBeUndefined()
+    expect(reqMet(lineReq('basil', 'basil:restWait'), ctxOf(s, 'basil'))).toBe(true)
+    expect(npcProps(s, 'basil')).toEqual([])
+    // 다음 날: 어머니가 곁에 있을 때만 맡기는 말
+    const d2 = d1 + 1
+    s = step(s, 'basil', d2, 930, HERB)
+    expect(eventNow(stand(s, 'apothecary', { x: 20, y: 20 }), 'basil')?.id).not.toBe('basil:story:2')
+    s = chooseInEvent(openEvent(stand(s, 'apothecary', MOTHER), 'basil')!, 'basil:story:2', 2)
+    expect(s.life.experiences['choice:basil:story:2'].with.sort()).toEqual(['apothecary', 'basil'])
+    // 셋째·여섯째 날 오후에 찻집 안쪽 자리 (파피 곁)
+    const d3 = days(d2 + 1).find((d) => d % 7 === 3 || d % 7 === 6)!
+    s = at(s, d3, 930)
+    expect(routineOf(s, 'basil')?.at).toEqual(TEA_SEAT)
+    expect(eventNow(stand(stand(s, 'basil', TEA_SEAT), 'poppy', { x: 20, y: 20 }), 'basil')?.id).not.toBe('basil:story:3')
+    s = chooseInEvent(openEvent(stand(stand(s, 'basil', TEA_SEAT), 'poppy', POPPY), 'basil')!, 'basil:story:3', 0)
+    expect(s.flags['story:basilRest']).toBe(1)
+    expect(s.romance?.partner ?? null).toBeNull()
+    expect(s.life.experiences['story:basilRest'].with.sort()).toEqual(['basil', 'poppy'])
+    expect(npcProps(s, 'basil')).toEqual(['basilCup', 'basilSchedule'])
+    expect(storyPropsNow(s).filter((p) => p.npc === 'basil').every((p) => p.room === 'apothecary')).toBe(true)
+    const later = at(s, days(d3 + 1).find((d) => d % 7 === 3 || d % 7 === 6)!, 930)
+    expect(routineOf(later, 'basil')?.mutter?.[0]).toContain('제가 마실 차')
+    for (const [npc, id] of [['basil', 'basil:after'], ['basil', 'basil:stillWorry'], ['basil', 'basil:memory'], ['poppy', 'poppy:basilRest'], ['apothecary', 'apothecary:basilRest']])
+      expect(reqMet(lineReq(npc, id), ctxOf(s, npc)), id).toBe(true)
+    // 약방 화분 이야기 결과는 건드리지 않는다
+    expect(s.flags['story:apothecaryPot']).toBeUndefined()
+    const back = deserialize(serialize(s), CONTENT)!
+    expect(npcProps(back, 'basil')).toEqual(['basilCup', 'basilSchedule'])
+  })
+
+  it('바질: 약방 물 주는 날 표를 이미 함께 짰으면 맡기는 말은 건너뛰고 찻집으로 — 그 자리에 없던 어머니는 뒷말이 없다', () => {
+    const d1 = dry(70)
+    let s = step(ready({ basil: 60, poppy: 30 }, [...oldSeen('basil'), 'apothecary:story:1', 'apothecary:story:2', 'apothecary:story:3'], APO), 'basil', d1, 930, HERB)
+    s = chooseInEvent(openEvent(s, 'basil')!, 'basil:story:1', 0)
+    expect(eventNow(stand(step(s, 'basil', d1 + 1, 930, HERB), 'apothecary', MOTHER), 'basil')?.id).not.toBe('basil:story:2')
+    const d3 = days(d1 + 1).find((d) => d % 7 === 3 || d % 7 === 6)!
+    s = stand(step(s, 'basil', d3, 930, TEA_SEAT), 'poppy', POPPY)
+    expect(eventNow(s, 'basil')?.id).toBe('basil:story:3')
+    s = chooseInEvent(openEvent(s, 'basil')!, 'basil:story:3', 1)
+    expect(s.flags['story:basilRest']).toBe(1)
+    expect(reqMet(lineReq('apothecary', 'apothecary:basilRest'), ctxOf(s, 'apothecary'))).toBe(false)
+  })
+
+  it('메리골드: 할아버지가 쓰러진 뒤 먼저 묻기 → 그늘에서 일 나누기(손일 실패해도) → 빈칸 있는 목록, 할아버지 방 목록과 빈칸 날 — 돈 걱정은 그대로, 쉼터 결과와 섞이지 않는다', () => {
+    const seen = oldSeen('marigold')
+    const coins = ready({}, []).coins
+    expect(eventNow(step(ready({ marigold: 60 }, seen.filter((x) => x !== 'marigold:grandpaIll')), 'marigold', dry(70), 1090, SQUARE), 'marigold')?.id).not.toBe('marigold:story:1')
+    let s = step(ready({ marigold: 60, grandpa: 30 }, seen), 'marigold', dry(70), 1090, SQUARE)
+    expect(eventNow(s, 'marigold')?.id).toBe('marigold:story:1')
+    s = chooseInEvent(openEvent(s, 'marigold')!, 'marigold:story:1', 1)
+    expect(reqMet(lineReq('marigold', 'marigold:listWait'), ctxOf(s, 'marigold'))).toBe(true)
+    // 다음 맑은 날 할아버지 쉬는 그늘에서 — 할아버지가 곁에 있을 때만
+    const d2 = dry(s.clock.day + 1)
+    s = at(s, d2, 950)
+    expect(routineOf(s, 'marigold')?.at).toEqual(SHADE)
+    expect(routineOf(s, 'grandpa')?.at).toEqual(GRANDPA)
+    expect(eventNow(stand(stand(s, 'marigold', SHADE), 'grandpa', { x: 30, y: 20 }), 'marigold')?.id).not.toBe('marigold:story:2')
+    s = chooseInEvent(openEvent(stand(stand(s, 'marigold', SHADE), 'grandpa', GRANDPA), 'marigold')!, 'marigold:story:2', 0)
+    expect(s.life.storyWait?.mini).toBe('pick')
+    s = finishStoryMini(s)
+    expect(s.life.experiences['choice:marigold:story:2'].with.sort()).toEqual(['grandpa', 'marigold'])
+    expect(eventNow(stand(step(s, 'marigold', d2, 1040, SHADE), 'grandpa', GRANDPA), 'marigold')?.id).not.toBe('marigold:story:3') // 같은 날 이어지지 않는다
+    const d3 = dry(d2 + 1)
+    s = stand(step(s, 'marigold', d3, 1040, SHADE), 'grandpa', GRANDPA)
+    expect(eventNow(s, 'marigold')?.id).toBe('marigold:story:3')
+    s = chooseInEvent(openEvent(s, 'marigold')!, 'marigold:story:3', 1)
+    expect(s.flags['story:marigoldList']).toBe(1)
+    expect(s.flags['story:grandpaShelter']).toBeUndefined()
+    expect(s.life.experiences['story:marigoldList'].with.sort()).toEqual(['grandpa', 'marigold'])
+    expect(npcProps(s, 'marigold')).toEqual(['marigoldList'])
+    expect(storyPropsNow(s).find((p) => p.id === 'marigoldList')?.room).toBe('grandpa')
+    expect(s.coins).toBe(coins) // 큰 돈 하나로 걱정을 덮지 않는다
+    // 넷째 날 오후는 빈칸 — 호숫가에서 아무것도 안 하기
+    const thu = dry(d3 + 1, (d) => d % 7 === 4)
+    expect(routineOf(at(s, thu, 950), 'marigold')).toMatchObject({ doing: 'rest', at: { x: 23, y: 30 } })
+    expect(eventNow(step(s, 'marigold', thu, 950, { x: 23, y: 30 }), 'marigold')?.id).toBe('marigold:small:freeAfternoon')
+    for (const [npc, id] of [['marigold', 'marigold:after'], ['marigold', 'marigold:stillCount'], ['marigold', 'marigold:memory'], ['marigold', 'marigold:rel:friendRest'], ['grandpa', 'grandpa:marigoldList']])
+      expect(reqMet(lineReq(npc, id), ctxOf(s, npc)), id).toBe(true)
+    expect(reqMet(lineReq('marigold', 'marigold:rel:friend'), ctxOf(s, 'marigold'))).toBe(false)
+    // 비 오는 날 할아버지 방에서 비용표를 두 장으로 — 모자란 건 그대로
+    const rainy = step(s, 'marigold', wet(d3 + 1), 700, { x: 34, y: 43 })
+    expect(eventNow(rainy, 'marigold')?.id).toBe('marigold:small:costSheet')
+    const back = deserialize(serialize(s), CONTENT)!
+    expect(npcProps(back, 'marigold')).toEqual(['marigoldList'])
+  })
+
+  it('페넬로피: 한 올·망설임 뒤 두 도안 → 남길 한 줄을 본인이 고르고(손일 실패해도) → 찻집에서 펴 보이기, 실타래가 무늬 천으로 — 망설임은 그대로', () => {
+    // 파피 쪽 사건은 다 본 것으로 (파피가 제 사건 자리에 가 있으면 저녁 차 자리가 비므로)
+    const seen = [...oldSeen('penelope'), ...PEOPLE.people.poppy.events!.map((e) => e.id)]
+    const d1 = dry(70)
+    // 이사 전에는 나오지 않는다
+    expect(settle(at(ready({ penelope: 60 }, seen), d1, 500), CONTENT).npcs.penelope.visible).toBe(false)
+    expect(eventNow(step(ready({ penelope: 60 }, seen.filter((x) => x !== 'penelope:hesitate2'), WEAVER), 'penelope', d1, 500, LOOM), 'penelope')?.id).not.toBe('penelope:story:1')
+    let s = step(ready({ penelope: 60, poppy: 30 }, seen, WEAVER), 'penelope', d1, 500, LOOM)
+    expect(eventNow(s, 'penelope')?.id).toBe('penelope:story:1')
+    s = chooseInEvent(openEvent(s, 'penelope')!, 'penelope:story:1', 2)
+    expect(npcProps(s, 'penelope')).toEqual(['penelopeYarn'])
+    expect(reqMet(lineReq('penelope', 'penelope:rugWait'), ctxOf(s, 'penelope'))).toBe(true)
+    const d2 = dry(d1 + 1)
+    s = step(s, 'penelope', d2, 900, LOOM)
+    s = finishStoryMini(chooseInEvent(openEvent(s, 'penelope')!, 'penelope:story:2', 1))
+    expect(s.life.storyWait).toBeNull()
+    // 다음 날 저녁 찻집 — 파피가 곁에 있을 때
+    const d3 = d2 + 1
+    s = step(s, 'penelope', d3, 1050, PEN_TEA)
+    expect(routineOf(s, 'penelope')?.at).toEqual(PEN_TEA)
+    expect(eventNow(stand(s, 'poppy', { x: 20, y: 20 }), 'penelope')?.id).not.toBe('penelope:story:3')
+    s = chooseInEvent(openEvent(stand(s, 'poppy', POPPY), 'penelope')!, 'penelope:story:3', 0)
+    expect(s.flags['story:penelopeRug']).toBe(1)
+    expect(s.romance?.partner ?? null).toBeNull()
+    expect(s.life.experiences['story:penelopeRug'].with.sort()).toEqual(['penelope', 'poppy'])
+    expect(npcProps(s, 'penelope')).toEqual(['penelopeCloth'])
+    expect(storyPropsNow(s).find((p) => p.id === 'penelopeCloth')?.room).toBe('weaver')
+    // 첫째·넷째 날 저녁엔 제 방에서 무늬를 설명한다
+    const mon = days(d3 + 1).find((d) => d % 7 === 1 || d % 7 === 4)!
+    expect(routineOf(at(s, mon, 1120), 'penelope')).toMatchObject({ at: { x: 7, y: 53 } })
+    expect(routineOf(at(s, mon, 1120), 'penelope')?.mutter?.[0]).toContain('그대로 뒀어요')
+    for (const [npc, id] of [['penelope', 'penelope:after'], ['penelope', 'penelope:stillChoose'], ['penelope', 'penelope:memory'], ['poppy', 'poppy:penelopeRug']])
+      expect(reqMet(lineReq(npc, id), ctxOf(s, npc)), id).toBe(true)
+    // 베 짜는 이웃 깔개 이야기는 건드리지 않는다
+    expect(s.flags['story:weaverRug']).toBeUndefined()
+    const back = deserialize(serialize(s), CONTENT)!
+    expect(npcProps(back, 'penelope')).toEqual(['penelopeCloth'])
+  })
+
+  it('친구·연인·배우자는 서로 다른 말과 먼저 하는 제안 — 새 이야기는 고백·문턱·연인 조건이 없고, 말투·소재를 지킨다', () => {
+    const s = ready({}, [])
+    for (const npc of THREE) {
+      const rel = (romance: 'dating' | 'married' | null) => ['friend', 'lover', 'spouse'].filter((r) => reqMet(lineReq(npc, `${npc}:rel:${r}`), ctxOf(s, npc, romance)))
+      expect(rel(null), npc).toEqual(['friend'])
+      expect(rel('dating'), npc).toEqual(['lover'])
+      expect(rel('married'), npc).toEqual(['spouse'])
+      const habit = PEOPLE.people[npc].events!.find((e) => e.id === `${npc}:short:spouseHabit`)!
+      expect(habit.req?.rel).toEqual(['spouse'])
+      for (const e of PEOPLE.people[npc].events!.filter((x) => NEW.test(x.id))) {
+        expect(e.opens, e.id).toBeUndefined()
+        expect(e.confess, e.id).toBeUndefined()
+        expect(e.req?.lover, e.id).toBeUndefined()
+      }
+      expect(PEOPLE.people[npc].routines.some((r) => r.req?.rel || r.req?.lover), npc).toBe(false)
+      expect((newText(npc).match(/제가 정|내가 정한|정했어요/g) ?? []).length, npc).toBeLessThanOrEqual(1)
+      const t = PEOPLE.people[npc].lines.find((l) => l.id === `${npc}:rel:spouse`)!.text
+      expect(t, npc).not.toMatch(/^낮엔|저녁엔 집/)
+    }
+    // 연인일 때 먼저 말하는 곳: 바질·페넬로피는 찻집, 메리골드는 정자(맑은 날)
+    expect(PEOPLE.people.basil.lines.find((l) => l.id === 'basil:rel:lover')!.text).toContain('찻집')
+    expect(PEOPLE.people.penelope.lines.find((l) => l.id === 'penelope:rel:lover')!.text).toContain('찻집')
+    expect(PEOPLE.people.marigold.lines.find((l) => l.id === 'marigold:rel:lover')!.when?.weather).toEqual(['dry'])
+    for (const [npc, key] of [['basil', 'activity.walk'], ['marigold', 'time.afternoon'], ['penelope', 'activity.sew']])
+      expect(PEOPLE.people[npc].lines.some((l) => l.reveals === key), npc).toBe(true)
+    const text = THREE.map(newText).join()
+    for (const w of ['잔치', '등불', '등잔', '빛', '필사가님', '치료', '약효', '처방', '진단', '낫', '동전을 찾', '갚', '가득', '나무에 올']) expect(text, w).not.toContain(w)
+  })
+})

@@ -5523,6 +5523,36 @@
               "choice:poppy:short:spouseHabit"
             ]
           }
+        },
+        {
+          "id": "poppy:basilRest",
+          "text": "바질 씨가 자기 차를 처음 시킨 날이요. 저는 아무것도 안 섞었어요. 그게 주문이었거든요.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "basilRest"
+              }
+            ],
+            "exp": [
+              "story:basilRest"
+            ]
+          }
+        },
+        {
+          "id": "poppy:penelopeRug",
+          "text": "페넬로피가 찻집에서 깔개를 끝까지 폈어요. 저는 찻잔만 들고 있었고요.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "penelopeRug"
+              }
+            ],
+            "exp": [
+              "story:penelopeRug"
+            ]
+          }
         }
       ],
       "sightings": [
@@ -14787,6 +14817,90 @@
           "mutter": [
             "오늘 물은 제가 줘요. 어머니는 찻집에 가 있고요."
           ]
+        },
+        {
+          "at": {
+            "x": 45,
+            "y": 62
+          },
+          "when": {
+            "from": 900,
+            "to": 960,
+            "days": [
+              3,
+              6
+            ]
+          },
+          "doing": "tea",
+          "req": {
+            "seen": [
+              "basil:story:1"
+            ],
+            "seenAny": [
+              "basil:story:2",
+              "apothecary:story:3"
+            ],
+            "notStory": [
+              "basilRest"
+            ]
+          },
+          "mutter": [
+            "쉬는 오후라서 앉았어요. …앉아 있는 연습 중이에요."
+          ]
+        },
+        {
+          "at": {
+            "x": 45,
+            "y": 62
+          },
+          "when": {
+            "from": 900,
+            "to": 960,
+            "days": [
+              3,
+              6
+            ]
+          },
+          "doing": "tea",
+          "req": {
+            "story": [
+              {
+                "id": "basilRest"
+              }
+            ]
+          },
+          "mutter": [
+            "오늘은 제가 마실 차예요. 식기 전에 앉으려고요.",
+            "약방 쪽은 한 번만 돌아봤어요. 한 번만요."
+          ]
+        },
+        {
+          "at": {
+            "x": 21,
+            "y": 32
+          },
+          "when": {
+            "from": 960,
+            "to": 1020,
+            "days": [
+              3,
+              6
+            ],
+            "weather": [
+              "dry"
+            ]
+          },
+          "doing": "rest",
+          "req": {
+            "story": [
+              {
+                "id": "basilRest"
+              }
+            ]
+          },
+          "mutter": [
+            "물가 바람은 약초 말리는 바람이랑 달라요."
+          ]
         }
       ],
       "offDays": {
@@ -14977,6 +15091,118 @@
             ],
             "exp": [
               "choice:apothecary:story:3"
+            ]
+          }
+        },
+        {
+          "id": "basil:taste",
+          "text": "쉬는 날이 생기면 호숫가를 한 바퀴 걷고 싶어요. 아무 데도 안 들르고요.",
+          "depth": 1,
+          "reveals": "activity.walk"
+        },
+        {
+          "id": "basil:restWait",
+          "text": "쉬는 오후를 정하긴 했어요. 그 시간에 가만히 앉아 있는 건 아직 연습 중이에요.",
+          "depth": 0,
+          "req": {
+            "seen": [
+              "basil:story:1"
+            ],
+            "notStory": [
+              "basilRest"
+            ]
+          }
+        },
+        {
+          "id": "basil:after",
+          "text": "셋째 날, 여섯째 날 오후는 비워요. 그날 약방 일은 어머니 차례고요.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "basilRest"
+              }
+            ]
+          }
+        },
+        {
+          "id": "basil:stillWorry",
+          "text": "쉬는 날에도 약방 쪽을 한 번은 돌아봐요. 그건 아직 그대로예요. 한 번에서 더 늘리지만 않으려고요.",
+          "depth": 2,
+          "req": {
+            "story": [
+              {
+                "id": "basilRest"
+              }
+            ]
+          }
+        },
+        {
+          "id": "basil:memory",
+          "text": "처음 쉬던 날 곁에 있어 줬죠. 그날 차는 식기 전에 다 마셨어요. 처음으로요.",
+          "depth": 2,
+          "req": {
+            "story": [
+              {
+                "id": "basilRest"
+              }
+            ],
+            "exp": [
+              "story:basilRest"
+            ]
+          }
+        },
+        {
+          "id": "basil:lakeWalk",
+          "text": "호숫가에서 물풀이 바람 따라 한쪽으로 눕던 거, 아직 기억해요. 약초 이름 말고 본 것 중에선 그게 제일 오래 남았어요.",
+          "depth": 1,
+          "req": {
+            "exp": [
+              "choice:basil:small:walk"
+            ]
+          }
+        },
+        {
+          "id": "basil:rel:friend",
+          "text": "쉬는 날 찻집에서 차 한 잔 해요. 그날은 제가 약방 사람 말고 손님이에요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "friend",
+              "close"
+            ]
+          }
+        },
+        {
+          "id": "basil:rel:lover",
+          "text": "약방 말고 찻집에서 만나요. 거기선 걱정 대신 차를 고를 수 있어서요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "lover"
+            ]
+          }
+        },
+        {
+          "id": "basil:rel:spouse",
+          "text": "약방 일은 그대로 나가요. 셋째 날 오후는 우리 집 차 마시는 날로 남겨 뒀어요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ]
+          }
+        },
+        {
+          "id": "basil:spouse:tea",
+          "text": "집 차 자리에 잔을 하나 더 꺼내 둬요. 그날 앉고 싶은 사람이 앉으면 되게요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "choice:basil:short:spouseHabit"
             ]
           }
         }
@@ -15617,6 +15843,365 @@
             }
           ],
           "cool": 1
+        },
+        {
+          "id": "basil:story:1",
+          "title": "쉬는 오후",
+          "stage": 4,
+          "at": {
+            "x": 34,
+            "y": 32
+          },
+          "when": {
+            "from": 900,
+            "to": 960
+          },
+          "req": {
+            "seen": [
+              "basil:mountain"
+            ],
+            "after": {
+              "event": "basil:mountain",
+              "days": 1
+            }
+          },
+          "gain": 5,
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "약방 앞 평상. 바질이 약초 바구니를 옆에 밀어 두고, 손가락을 하나씩 접으며 날짜를 센다."
+            },
+            {
+              "speaker": "basil",
+              "text": "어머니 쉬는 날은 늘 챙기는데, 제 쉬는 날은 정해 본 적이 없어요. 오늘은 하나 정해 보려고요."
+            },
+            {
+              "speaker": "basil",
+              "text": "…정하는 것까진 할 수 있을 것 같아요. 그 시간에 가만히 앉아 있을 수 있을지는 모르겠지만요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "고를 때까지 듣는다",
+              "color": "quiet",
+              "memory": "restPicked",
+              "reply": [
+                {
+                  "speaker": "basil",
+                  "text": "셋째 날이랑 여섯째 날 오후요. 약초가 덜 들어오는 날이거든요. …핑계 같아도, 정했어요."
+                }
+              ]
+            },
+            {
+              "label": "쉬는 날 들러도 되는지 묻는다",
+              "color": "honest",
+              "memory": "restPicked",
+              "reply": [
+                {
+                  "speaker": "basil",
+                  "text": "그날은 혼자 앉아 볼래요. 혼자서도 쉬어지는지 보고 싶어서요. 물어봐 줘서 고마워요."
+                }
+              ]
+            },
+            {
+              "label": "접는 손가락을 같이 센다",
+              "color": "warm",
+              "memory": "restPicked",
+              "reply": [
+                {
+                  "speaker": "basil",
+                  "text": "셋째, 여섯째. 같이 세니까 금방이네요. 그날 오후는 비워 둘게요."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "basil:story:2",
+          "title": "맡기는 말",
+          "stage": 4,
+          "at": {
+            "x": 35,
+            "y": 32
+          },
+          "when": {
+            "from": 900,
+            "to": 960
+          },
+          "with": [
+            "apothecary"
+          ],
+          "req": {
+            "seen": [
+              "basil:story:1"
+            ],
+            "notSeen": [
+              "apothecary:story:3"
+            ],
+            "after": {
+              "event": "basil:story:1",
+              "days": 1
+            }
+          },
+          "gain": 5,
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "약방 앞. 바질이 약초 바구니를 들었다 놓았다 하다가, 선반 앞 어머니에게 간다."
+            },
+            {
+              "speaker": "basil",
+              "text": "어머니, 셋째 날 오후 약초 고르는 거… 맡아 주실 수 있어요? 저 그날 쉬려고요."
+            },
+            {
+              "speaker": "apothecary",
+              "text": "네가 쉰다고? …그래. 그날은 내가 볼게. 풀 가르는 건 내가 너보다 오래 했잖니."
+            }
+          ],
+          "choices": [
+            {
+              "label": "곁에서 듣는다",
+              "color": "quiet",
+              "memory": "handedOver",
+              "reply": [
+                {
+                  "speaker": "basil",
+                  "text": "맡긴다고 말하는 게 약초 고르는 것보다 어렵네요. 그래도 말했어요."
+                }
+              ]
+            },
+            {
+              "label": "바구니 넘기는 걸 거든다",
+              "color": "warm",
+              "memory": "handedOver",
+              "reply": [
+                {
+                  "speaker": "apothecary",
+                  "text": "바구니는 이쪽에 두렴. 네 손 버릇대로 놓여 있구나. 그대로 쓸게."
+                }
+              ]
+            },
+            {
+              "label": "여섯째 날도 맡기자고 한다",
+              "color": "honest",
+              "memory": "handedOver",
+              "reply": [
+                {
+                  "speaker": "basil",
+                  "text": "여섯째 날도요? …어머니가 고개를 끄덕이셨어요. 그럼 둘 다요."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "basil:story:3",
+          "title": "제 차",
+          "stage": 4,
+          "at": {
+            "x": 45,
+            "y": 62
+          },
+          "when": {
+            "from": 900,
+            "to": 960,
+            "days": [
+              3,
+              6
+            ]
+          },
+          "with": [
+            "poppy"
+          ],
+          "req": {
+            "seen": [
+              "basil:story:1"
+            ],
+            "seenAny": [
+              "basil:story:2",
+              "apothecary:story:3"
+            ],
+            "after": {
+              "event": "basil:story:1",
+              "days": 1
+            }
+          },
+          "completes": "basilRest",
+          "gain": 6,
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "오후 찻집. 바질이 찻잎 자루 없이 들어와, 처음으로 찻잔을 자기 앞에 놓는다."
+            },
+            {
+              "speaker": "poppy",
+              "text": "찻잎 대 주러 온 날 말고, 손님으로 앉은 건 처음이죠? 오늘은 뭐로 드릴까요?"
+            },
+            {
+              "speaker": "basil",
+              "text": "…박하 한 잎이요. 아무것도 더 넣지 말고요. 오늘은 제가 마실 차예요. 식기 전에 마셔 보려고요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "같이 마신다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "basil",
+                  "text": "따뜻할 때 마시니까 이런 맛이었네요. 늘 식은 것만 마셨어요."
+                }
+              ]
+            },
+            {
+              "label": "말없이 곁에 앉는다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "narration",
+                  "text": "바질은 찻잔을 두 손으로 감싸고, 다 마실 때까지 약방 쪽을 한 번만 돌아보았다."
+                }
+              ]
+            },
+            {
+              "label": "창밖에 뭐가 보이는지 묻는다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "basil",
+                  "text": "바람이 물가 쪽으로 불어요. 약초 말리기 좋은 날인데… 오늘은 그냥 볼게요."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "basil:small:walk",
+          "title": "호숫가 한 바퀴",
+          "stage": 4,
+          "at": {
+            "x": 21,
+            "y": 32
+          },
+          "when": {
+            "from": 960,
+            "to": 1020,
+            "days": [
+              3,
+              6
+            ],
+            "weather": [
+              "dry"
+            ]
+          },
+          "req": {
+            "story": [
+              {
+                "id": "basilRest"
+              }
+            ]
+          },
+          "gain": 3,
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "쉬는 날 오후, 호숫가 길. 바질이 바구니 없이 걷고 있다. 손이 허전한지 자꾸 소매를 만진다."
+            },
+            {
+              "speaker": "basil",
+              "text": "바구니 없이 걸으니까 손을 어디 둘지 모르겠어요. 그래도 풀은 안 뜯을래요. 오늘은요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "곁에서 걷는다",
+              "color": "quiet",
+              "memory": "lakeWalk",
+              "reply": [
+                {
+                  "speaker": "narration",
+                  "text": "둘은 말없이 물가를 한 바퀴 돌았다. 바질은 약초 한 포기 앞에서 멈췄다가, 그냥 지나갔다."
+                }
+              ]
+            },
+            {
+              "label": "보이는 걸 하나씩 말해 본다",
+              "color": "warm",
+              "memory": "lakeWalk",
+              "reply": [
+                {
+                  "speaker": "basil",
+                  "text": "물풀이 한쪽으로 누웠어요. 물새가 둘. …약초 이름 말고 이런 걸 말하는 거, 오랜만이에요."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "basil:short:spouseHabit",
+          "title": "우리 집 차 자리",
+          "stage": 3,
+          "at": {
+            "x": 34,
+            "y": 32
+          },
+          "when": {
+            "from": 600,
+            "to": 1080,
+            "days": [
+              1,
+              2,
+              4,
+              5
+            ]
+          },
+          "req": {
+            "rel": [
+              "spouse"
+            ]
+          },
+          "gain": 3,
+          "lines": [
+            {
+              "speaker": "basil",
+              "text": "집에 차 자리를 하나 만들고 싶어요. 약방 일은 거기 안 가져가는 자리요. 잔은 뭘로 둘까요?"
+            }
+          ],
+          "choices": [
+            {
+              "label": "둘이 같이 쓰는 큰 잔",
+              "color": "warm",
+              "memory": "familyTea",
+              "reply": [
+                {
+                  "speaker": "basil",
+                  "text": "큰 잔이요. 그럼 천천히 마셔도 덜 식겠네요."
+                }
+              ]
+            },
+            {
+              "label": "잔은 각자 고르자고 한다",
+              "color": "honest",
+              "memory": "familyTea",
+              "reply": [
+                {
+                  "speaker": "basil",
+                  "text": "제 건 제가 고를게요. 처음으로 제 잔이요."
+                }
+              ]
+            },
+            {
+              "label": "자리부터 두고 잔은 나중에",
+              "color": "quiet",
+              "memory": "familyTea",
+              "reply": [
+                {
+                  "speaker": "basil",
+                  "text": "자리부터. 그것도 좋네요. 앉는 게 먼저니까요."
+                }
+              ]
+            }
+          ]
         }
       ],
       "tastes": {
@@ -15634,7 +16219,41 @@
       "clubLines": {
         "start": "오늘은 준비를 조금 나눠 맡아 볼까요? 저는 잠깐 앉아 있을게요.",
         "finish": "곁에서 함께하니 제 손에도 쉬는 틈이 생겼네요."
-      }
+      },
+      "props": [
+        {
+          "id": "basilSchedule",
+          "room": "apothecary",
+          "at": {
+            "x": 28,
+            "y": 83
+          },
+          "art": "schedule",
+          "req": {
+            "story": [
+              {
+                "id": "basilRest"
+              }
+            ]
+          }
+        },
+        {
+          "id": "basilCup",
+          "room": "apothecary",
+          "at": {
+            "x": 33,
+            "y": 83
+          },
+          "art": "cupPersonal",
+          "req": {
+            "story": [
+              {
+                "id": "basilRest"
+              }
+            ]
+          }
+        }
+      ]
     },
     "marigold": {
       "id": "marigold",
@@ -15870,6 +16489,83 @@
           "mutter": [
             "할아버지, 제 할 일에도 쉬는 칸이 있어요."
           ]
+        },
+        {
+          "at": {
+            "x": 40,
+            "y": 7
+          },
+          "when": {
+            "from": 900,
+            "to": 1020,
+            "weather": [
+              "dry"
+            ]
+          },
+          "doing": "grape",
+          "req": {
+            "seen": [
+              "marigold:story:1"
+            ],
+            "notSeen": [
+              "marigold:story:2"
+            ]
+          },
+          "mutter": [
+            "할아버지 쉬실 때 물어볼 거예요. 일하실 때 말고요."
+          ]
+        },
+        {
+          "at": {
+            "x": 40,
+            "y": 7
+          },
+          "when": {
+            "from": 1020,
+            "to": 1080,
+            "weather": [
+              "dry"
+            ]
+          },
+          "doing": "rest",
+          "req": {
+            "seen": [
+              "marigold:story:2"
+            ],
+            "notStory": [
+              "marigoldList"
+            ]
+          },
+          "mutter": [
+            "목록 맨 아래 칸은 아직 비워 뒀어요."
+          ]
+        },
+        {
+          "at": {
+            "x": 23,
+            "y": 30
+          },
+          "when": {
+            "from": 900,
+            "to": 1020,
+            "days": [
+              4
+            ],
+            "weather": [
+              "dry"
+            ]
+          },
+          "doing": "rest",
+          "req": {
+            "story": [
+              {
+                "id": "marigoldList"
+              }
+            ]
+          },
+          "mutter": [
+            "오늘은 목록의 빈칸 날이에요. 물 색만 보고 있어요."
+          ]
         }
       ],
       "offDays": {
@@ -16051,6 +16747,156 @@
             ],
             "exp": [
               "story:grandpaShelter"
+            ]
+          }
+        },
+        {
+          "id": "marigold:taste",
+          "text": "해가 기우는 오후가 좋아요. 그때는 목록을 덮어도 마음이 안 급해요.",
+          "depth": 1,
+          "reveals": "time.afternoon"
+        },
+        {
+          "id": "marigold:listWait",
+          "text": "목록 맨 위에 한 줄만 적어 놨어요. 할아버지 쉬실 때 물어볼 거예요.",
+          "depth": 0,
+          "req": {
+            "seen": [
+              "marigold:story:1"
+            ],
+            "notSeen": [
+              "marigold:story:2"
+            ]
+          }
+        },
+        {
+          "id": "marigold:after",
+          "text": "할아버지 방 벽에 목록 붙였어요. 할아버지 칸, 제 칸, 빈칸. 빈칸이 제일 어려워요.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "marigoldList"
+              }
+            ]
+          }
+        },
+        {
+          "id": "marigold:stillCount",
+          "text": "동전은 아직 모자라요. 그건 그대로예요. 다만 세는 날은 한 달에 한 번으로 줄였어요.",
+          "depth": 2,
+          "req": {
+            "story": [
+              {
+                "id": "marigoldList"
+              }
+            ],
+            "seenAny": [
+              "marigold:ledgerTalk",
+              "marigold:ledgerNew"
+            ]
+          }
+        },
+        {
+          "id": "marigold:memory",
+          "text": "빈칸 처음 남기던 날, 곁에 있어 줘서 덜 무서웠어요. 요즘은 그 칸을 조금 기다려요.",
+          "depth": 2,
+          "req": {
+            "story": [
+              {
+                "id": "marigoldList"
+              }
+            ],
+            "exp": [
+              "story:marigoldList"
+            ]
+          }
+        },
+        {
+          "id": "marigold:freeAfter",
+          "text": "호숫가에서 아무것도 안 하던 날이요. 그날 일은 목록에 안 적었어요. 안 적어도 남더라고요.",
+          "depth": 1,
+          "req": {
+            "exp": [
+              "choice:marigold:small:freeAfternoon"
+            ]
+          }
+        },
+        {
+          "id": "marigold:costSheet",
+          "text": "비용표는 두 장으로 나눠 뒀어요. 이번 달 장만 위에 둬요.",
+          "depth": 1,
+          "req": {
+            "exp": [
+              "choice:marigold:small:costSheet"
+            ]
+          }
+        },
+        {
+          "id": "marigold:rel:friend",
+          "text": "포도 바구니 정리하는 날 같이 할래요? 둘이 하면 반나절이면 끝나요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "friend",
+              "close"
+            ],
+            "notStory": [
+              "marigoldList"
+            ]
+          }
+        },
+        {
+          "id": "marigold:rel:friendRest",
+          "text": "목록 빈칸 날에 같이 쉬어요. 일 말고 쉬는 걸 같이 하자고 하는 건 처음이에요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "friend",
+              "close"
+            ],
+            "story": [
+              {
+                "id": "marigoldList"
+              }
+            ]
+          }
+        },
+        {
+          "id": "marigold:rel:lover",
+          "text": "정자 가요! 거긴 목록에 없는 데라 좋아요. 아무것도 안 챙겨 가도 돼요.",
+          "depth": 0,
+          "when": {
+            "weather": [
+              "dry"
+            ]
+          },
+          "req": {
+            "rel": [
+              "lover"
+            ]
+          }
+        },
+        {
+          "id": "marigold:rel:spouse",
+          "text": "포도원 일은 할아버지랑 반씩 해요. 달력 맨 끝 칸은 우리 집 쉬는 날이고요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ]
+          }
+        },
+        {
+          "id": "marigold:spouse:calendar",
+          "text": "달력에 칠한 쉬는 날, 이번 주에도 지켰어요. 제가요!",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "choice:marigold:short:spouseHabit"
             ]
           }
         }
@@ -16763,6 +17609,422 @@
             }
           ],
           "cool": 1
+        },
+        {
+          "id": "marigold:story:1",
+          "title": "맨 위 한 줄",
+          "stage": 4,
+          "at": {
+            "x": 24,
+            "y": 12
+          },
+          "when": {
+            "from": 1080,
+            "to": 1110,
+            "weather": [
+              "dry"
+            ]
+          },
+          "req": {
+            "seen": [
+              "marigold:grandpaIll"
+            ],
+            "after": {
+              "event": "marigold:grandpaIll",
+              "days": 1
+            }
+          },
+          "gain": 5,
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "저녁 광장. 메리골드가 새 목록 종이를 펼쳐 놓고, 맨 위 줄 하나만 비워 두었다."
+            },
+            {
+              "speaker": "marigold",
+              "text": "원래는 제가 할 일부터 다 적어요. 마흔 개쯤요. 이번엔 맨 위에 하나만 적으려고요."
+            },
+            {
+              "speaker": "marigold",
+              "text": "\"할아버지한테 먼저 묻기.\" 할아버지가 하고 싶은 일이 뭔지, 저 한 번도 안 물어봤어요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "적는 걸 곁에서 본다",
+              "color": "quiet",
+              "memory": "askFirst",
+              "reply": [
+                {
+                  "speaker": "marigold",
+                  "text": "다 적었어요. 한 줄인데 손이 떨려요. 마흔 줄 쓸 땐 안 떨렸는데."
+                }
+              ]
+            },
+            {
+              "label": "직접 묻는 게 좋겠다고 말한다",
+              "color": "honest",
+              "memory": "askFirst",
+              "reply": [
+                {
+                  "speaker": "marigold",
+                  "text": "…네. 제가 물어야죠. 대신 물어 달라고 하면 또 제가 다 정해 버린 거나 마찬가지라서요."
+                }
+              ]
+            },
+            {
+              "label": "무엇을 물을지 같이 고른다",
+              "color": "warm",
+              "memory": "askFirst",
+              "reply": [
+                {
+                  "speaker": "marigold",
+                  "text": "\"할아버지는 올해 뭐 하고 싶어요?\" …이거면 돼요. 짧은 게 좋겠어요."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "marigold:story:2",
+          "title": "나눠 적는 일",
+          "stage": 4,
+          "at": {
+            "x": 40,
+            "y": 7
+          },
+          "when": {
+            "from": 900,
+            "to": 1020,
+            "weather": [
+              "dry"
+            ]
+          },
+          "with": [
+            "grandpa"
+          ],
+          "req": {
+            "seen": [
+              "marigold:story:1"
+            ],
+            "after": {
+              "event": "marigold:story:1",
+              "days": 1
+            }
+          },
+          "gain": 5,
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "포도원 그늘. 쉬고 있는 할아버지 곁에 메리골드가 목록 종이를 들고 선다."
+            },
+            {
+              "speaker": "marigold",
+              "text": "할아버지, 올해 포도원에서 뭐 하고 싶어요? 제가 다 하겠다는 말은 안 할게요. 오늘은 듣기만요."
+            },
+            {
+              "speaker": "grandpa",
+              "text": "…가을 수확은 내 손으로 하고 싶구나. 천천히. 넝쿨 묶는 건 네가 해 주면 좋겠고."
+            },
+            {
+              "speaker": "marigold",
+              "text": "수확은 할아버지, 넝쿨은 저. …나눠서 적을게요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "일 쪽지를 같이 나눈다",
+              "color": "warm",
+              "memory": "splitWork",
+              "mini": "pick",
+              "reply": [
+                {
+                  "speaker": "marigold",
+                  "text": "할아버지 칸, 제 칸. 둘이 나누니까 제 쪽 쪽지가 반으로 줄었어요."
+                }
+              ]
+            },
+            {
+              "label": "두 사람 말을 듣는다",
+              "color": "quiet",
+              "memory": "splitWork",
+              "reply": [
+                {
+                  "speaker": "grandpa",
+                  "text": "네가 묻길 기다렸다. 묻지 않으면 늘 네가 다 해 버리니까."
+                }
+              ]
+            },
+            {
+              "label": "쉬는 시간도 나누자고 한다",
+              "color": "honest",
+              "memory": "splitWork",
+              "reply": [
+                {
+                  "speaker": "marigold",
+                  "text": "쉬는 시간까지요? …할아버지가 웃으셨어요. 그럼 그것도 나눠 적어요."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "marigold:story:3",
+          "title": "빈칸",
+          "stage": 4,
+          "at": {
+            "x": 40,
+            "y": 7
+          },
+          "when": {
+            "from": 1020,
+            "to": 1080,
+            "weather": [
+              "dry"
+            ]
+          },
+          "with": [
+            "grandpa"
+          ],
+          "req": {
+            "seen": [
+              "marigold:story:2"
+            ],
+            "after": {
+              "event": "marigold:story:2",
+              "days": 1
+            }
+          },
+          "completes": "marigoldList",
+          "gain": 6,
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "저녁 그늘. 메리골드가 새 목록을 무릎에 펼친다. 할아버지 칸, 메리골드 칸, 그리고 아무것도 적히지 않은 칸 하나."
+            },
+            {
+              "speaker": "marigold",
+              "text": "빈칸도 하나 남겼어요. 그 시간에는 아무 일도 안 정했어요."
+            },
+            {
+              "speaker": "marigold",
+              "text": "…적고 나니까 좀 무서워요. 비어 있으면 뭘 빠뜨린 것 같아서요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "빈칸을 그대로 두는 걸 지켜본다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "marigold",
+                  "text": "안 채울게요. 오늘은요. 내일도… 아마요."
+                }
+              ]
+            },
+            {
+              "label": "곁에 앉아 같이 쉰다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "grandpa",
+                  "text": "앉거라. 빈칸은 이렇게 쓰는 거다."
+                },
+                {
+                  "speaker": "narration",
+                  "text": "메리골드는 목록을 접고, 할아버지 곁에 다리를 쭉 뻗었다."
+                }
+              ]
+            },
+            {
+              "label": "목록을 어디 둘지 묻는다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "marigold",
+                  "text": "할아버지 방 벽에요. 둘 다 보이는 데에요. 제 머릿속에만 두면 또 혼자 세니까요."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "marigold:small:freeAfternoon",
+          "title": "계획 없는 오후",
+          "stage": 4,
+          "at": {
+            "x": 23,
+            "y": 30
+          },
+          "when": {
+            "from": 900,
+            "to": 1020,
+            "days": [
+              4
+            ],
+            "weather": [
+              "dry"
+            ]
+          },
+          "req": {
+            "story": [
+              {
+                "id": "marigoldList"
+              }
+            ]
+          },
+          "gain": 3,
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "빈칸 날 오후, 호숫가. 메리골드가 아무것도 들지 않고 앉아 있다. 목록도, 바구니도 없다."
+            },
+            {
+              "speaker": "marigold",
+              "text": "뭐 하냐고요? 아무것도요. …이거 생각보다 할 게 많네요. 바람 소리 듣기, 물 색 보기."
+            }
+          ],
+          "choices": [
+            {
+              "label": "곁에 앉는다",
+              "color": "quiet",
+              "memory": "freeAfternoon",
+              "reply": [
+                {
+                  "speaker": "marigold",
+                  "text": "같이 아무것도 안 하니까 덜 어색해요."
+                }
+              ]
+            },
+            {
+              "label": "물 색이 어떤지 묻는다",
+              "color": "honest",
+              "memory": "freeAfternoon",
+              "reply": [
+                {
+                  "speaker": "marigold",
+                  "text": "오늘은 회색 섞인 초록이요. 포도잎 뒷면 색이에요. …또 포도 얘기 했네요."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "marigold:small:costSheet",
+          "title": "두 장짜리 비용표",
+          "stage": 4,
+          "at": {
+            "x": 34,
+            "y": 43
+          },
+          "when": {
+            "from": 600,
+            "to": 1020,
+            "weather": [
+              "wet"
+            ]
+          },
+          "req": {
+            "seenAny": [
+              "marigold:ledgerTalk",
+              "marigold:ledgerNew"
+            ]
+          },
+          "gain": 3,
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "비 오는 날 할아버지 방. 메리골드가 비용표 한 장을 두 장으로 옮겨 적고 있다."
+            },
+            {
+              "speaker": "marigold",
+              "text": "모자란 동전 계산은 따로 떼어 놨어요. 한 장에 다 적으니까 볼 때마다 숨이 막혀서요. 이번 달 할 것만 이쪽에요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "나누는 걸 지켜본다",
+              "color": "quiet",
+              "memory": "costSheet",
+              "reply": [
+                {
+                  "speaker": "marigold",
+                  "text": "모자란 건 그대로예요. 그래도 이번 달 건 반 장이면 돼요."
+                }
+              ]
+            },
+            {
+              "label": "어느 장을 위에 둘지 묻는다",
+              "color": "honest",
+              "memory": "costSheet",
+              "reply": [
+                {
+                  "speaker": "marigold",
+                  "text": "이번 달 거요. 먼 쪽은 밑에요. 한 달에 한 번만 꺼내 볼래요."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "marigold:short:spouseHabit",
+          "title": "우리 집 달력",
+          "stage": 3,
+          "at": {
+            "x": 39,
+            "y": 11
+          },
+          "when": {
+            "from": 780,
+            "to": 1020
+          },
+          "req": {
+            "rel": [
+              "spouse"
+            ]
+          },
+          "gain": 3,
+          "lines": [
+            {
+              "speaker": "marigold",
+              "text": "우리 집 달력에 표시를 하려고요. 제 일, {player}님 일, 그리고 같이 쉬는 날. 무슨 색으로 할까요?"
+            }
+          ],
+          "choices": [
+            {
+              "label": "쉬는 날은 초록으로",
+              "color": "warm",
+              "memory": "familyCalendar",
+              "reply": [
+                {
+                  "speaker": "marigold",
+                  "text": "초록이요. 포도잎 색. 그날을 제일 크게 칠할게요."
+                }
+              ]
+            },
+            {
+              "label": "색은 메리골드가 고르게 한다",
+              "color": "quiet",
+              "memory": "familyCalendar",
+              "reply": [
+                {
+                  "speaker": "marigold",
+                  "text": "그럼 노랑이요. 볕 드는 색이요. 쉬는 날에 칠할게요."
+                }
+              ]
+            },
+            {
+              "label": "같이 쉬는 날을 하나 더 넣자고 한다",
+              "color": "honest",
+              "memory": "familyCalendar",
+              "reply": [
+                {
+                  "speaker": "marigold",
+                  "text": "하나 더요? …좋아요. 쉬는 날이 둘이면 하나쯤은 꼭 지켜지겠죠."
+                }
+              ]
+            }
+          ]
         }
       ],
       "tastes": {
@@ -16773,7 +18035,25 @@
         "time": {
           "afternoon": 1
         }
-      }
+      },
+      "props": [
+        {
+          "id": "marigoldList",
+          "room": "grandpa",
+          "at": {
+            "x": 37,
+            "y": 42
+          },
+          "art": "sharedPlan",
+          "req": {
+            "story": [
+              {
+                "id": "marigoldList"
+              }
+            ]
+          }
+        }
+      ]
     },
     "penelope": {
       "id": "penelope",
@@ -16971,6 +18251,32 @@
           },
           "mutter": [
             "차받침 네 장… 아니, 다섯 장 가져올 걸."
+          ]
+        },
+        {
+          "at": {
+            "x": 7,
+            "y": 53
+          },
+          "when": {
+            "from": 1110,
+            "to": 1140,
+            "days": [
+              1,
+              4
+            ]
+          },
+          "doing": "weave",
+          "req": {
+            "story": [
+              {
+                "id": "penelopeRug"
+              }
+            ]
+          },
+          "mutter": [
+            "여기는 그대로 뒀어요. 이번에는 제가 그러고 싶었어요.",
+            "꽃 옆 한 줄이요. 비 오던 날 짠 거예요."
           ]
         }
       ],
@@ -17203,6 +18509,118 @@
             ],
             "exp": [
               "choice:poppy:small:coaster"
+            ]
+          }
+        },
+        {
+          "id": "penelope:taste",
+          "text": "바느질은 한 땀씩이라 좋아요. 다음 땀만 고르면 되니까요.",
+          "depth": 1,
+          "reveals": "activity.sew"
+        },
+        {
+          "id": "penelope:rugWait",
+          "text": "깔개 도안은 아직 둘 다 붙여 놨어요. 하나를 떼는 날이 올지, 둘 다 쓸지 모르겠어요.",
+          "depth": 0,
+          "req": {
+            "seen": [
+              "penelope:story:1"
+            ],
+            "notStory": [
+              "penelopeRug"
+            ]
+          }
+        },
+        {
+          "id": "penelope:after",
+          "text": "제 방 깔개, 줄 사이에 꽃 하나 있어요. 그 옆 비뚠 한 줄은 그대로 뒀고요.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "penelopeRug"
+              }
+            ]
+          }
+        },
+        {
+          "id": "penelope:stillChoose",
+          "text": "고르는 건 아직 오래 걸려요. 이번 무늬도 열흘 걸렸어요. 그래도 다 짠 걸 풀지는 않았어요.",
+          "depth": 2,
+          "req": {
+            "story": [
+              {
+                "id": "penelopeRug"
+              }
+            ]
+          }
+        },
+        {
+          "id": "penelope:memory",
+          "text": "찻집에서 깔개 펴던 날, 기다려 줬잖아요. 반쯤 펴고 멈췄을 때요.",
+          "depth": 2,
+          "req": {
+            "story": [
+              {
+                "id": "penelopeRug"
+              }
+            ],
+            "exp": [
+              "story:penelopeRug"
+            ]
+          }
+        },
+        {
+          "id": "penelope:colorNames",
+          "text": "'아직 이름 없는 초록'은 지금도 이름이 없어요. 그게 마음에 들어요.",
+          "depth": 1,
+          "req": {
+            "exp": [
+              "choice:penelope:small:colorNames"
+            ]
+          }
+        },
+        {
+          "id": "penelope:rel:friend",
+          "text": "언제 작은 바느질 같이 해요. 큰 거 말고 차받침 하나쯤. 색은 각자 고르고요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "friend",
+              "close"
+            ]
+          }
+        },
+        {
+          "id": "penelope:rel:lover",
+          "text": "찻집 그 자리에서 만나요. 고르지 않아도 되는 자리가 하나쯤 있으면 좋아서요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "lover"
+            ]
+          }
+        },
+        {
+          "id": "penelope:rel:spouse",
+          "text": "베틀 일은 그대로예요. 집 탁자에 깔 천은 아직 반만 짰어요. 서두르지 않을래요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ]
+          }
+        },
+        {
+          "id": "penelope:spouse:cloth",
+          "text": "집 탁자 천, 한 줄 더 짰어요. 둘이 고른 무늬가 섞인 데가 제일 마음에 들어요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "choice:penelope:short:spouseHabit"
             ]
           }
         }
@@ -17817,6 +19235,358 @@
             }
           ],
           "cool": 1
+        },
+        {
+          "id": "penelope:story:1",
+          "title": "두 장의 도안",
+          "stage": 4,
+          "at": {
+            "x": 39,
+            "y": 24
+          },
+          "when": {
+            "from": 420,
+            "to": 720,
+            "weather": [
+              "dry"
+            ]
+          },
+          "req": {
+            "seen": [
+              "penelope:unpickTalk",
+              "penelope:hesitate2"
+            ],
+            "after": {
+              "event": "penelope:hesitate2",
+              "days": 1
+            }
+          },
+          "gain": 5,
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "베 짜는 집 앞. 페넬로피가 종이 두 장을 나란히 놓았다. 한 장은 줄무늬, 한 장은 작은 꽃무늬. 둘 다 깔개 도안이다."
+            },
+            {
+              "speaker": "penelope",
+              "text": "어머니 깔개 말고, 제 깔개요. 제 방에 깔 거. …무늬를 아직 못 골랐어요."
+            },
+            {
+              "speaker": "penelope",
+              "text": "고르라고는 하지 말아 줘요. 오늘은 둘 다 그려 보는 날이에요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "다 그릴 때까지 기다린다",
+              "color": "quiet",
+              "memory": "rugDraft",
+              "reply": [
+                {
+                  "speaker": "penelope",
+                  "text": "기다려 주니까 손이 덜 급해요. 줄무늬 쪽이 조금 더 그려졌네요. 아직 정한 건 아니에요."
+                }
+              ]
+            },
+            {
+              "label": "두 장을 나란히 다시 놓아 본다",
+              "color": "warm",
+              "memory": "rugDraft",
+              "reply": [
+                {
+                  "speaker": "penelope",
+                  "text": "나란히 두니까 꽃이 줄 사이에 들어가도 되겠다 싶어요. …그것도 하나의 무늬죠."
+                }
+              ]
+            },
+            {
+              "label": "어느 쪽이 좋은지 묻지 않는다",
+              "color": "honest",
+              "memory": "rugDraft",
+              "reply": [
+                {
+                  "speaker": "penelope",
+                  "text": "안 물어봐 줘서 고마워요. 물었으면 대답하느라 또 바꿨을 거예요."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "penelope:story:2",
+          "title": "남길 한 줄",
+          "stage": 4,
+          "at": {
+            "x": 39,
+            "y": 24
+          },
+          "when": {
+            "from": 780,
+            "to": 1020,
+            "weather": [
+              "dry"
+            ]
+          },
+          "req": {
+            "seen": [
+              "penelope:story:1"
+            ],
+            "after": {
+              "event": "penelope:story:1",
+              "days": 1
+            }
+          },
+          "gain": 5,
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "베 짜는 집 앞. 짜다 만 깔개가 무릎에 걸쳐 있다. 줄무늬 사이에 꽃 하나가 들어가 있고, 그 옆 한 줄이 조금 비뚤다."
+            },
+            {
+              "speaker": "penelope",
+              "text": "여기 한 줄, 틀렸어요. 풀까 했는데… 손이 아직 안 움직여요."
+            },
+            {
+              "speaker": "penelope",
+              "text": "고칠 데는 고치고, 남길 데는 남길래요. 어디를 남길지는 제가 정할게요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "고르는 걸 곁에서 기다린다",
+              "color": "quiet",
+              "memory": "keepThread",
+              "reply": [
+                {
+                  "speaker": "penelope",
+                  "text": "꽃 옆 한 줄은 그대로 둘게요. 끝단만 다시 짤래요."
+                }
+              ]
+            },
+            {
+              "label": "곁에서 실을 감는다",
+              "color": "warm",
+              "memory": "keepThread",
+              "mini": "weave",
+              "reply": [
+                {
+                  "speaker": "penelope",
+                  "text": "실 감는 동안 마음먹었어요. 비뚠 한 줄은 남기고, 끝단만 고쳐요."
+                }
+              ]
+            },
+            {
+              "label": "왜 남기고 싶은지 묻는다",
+              "color": "honest",
+              "memory": "keepThread",
+              "reply": [
+                {
+                  "speaker": "penelope",
+                  "text": "그 줄 짤 때 비가 왔거든요. 실이 차분했어요. 그날을 남기고 싶어요."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "penelope:story:3",
+          "title": "펴 보이는 저녁",
+          "stage": 4,
+          "at": {
+            "x": 42,
+            "y": 62
+          },
+          "when": {
+            "from": 1020,
+            "to": 1110
+          },
+          "with": [
+            "poppy"
+          ],
+          "req": {
+            "seen": [
+              "penelope:story:2"
+            ],
+            "after": {
+              "event": "penelope:story:2",
+              "days": 1
+            }
+          },
+          "completes": "penelopeRug",
+          "gain": 6,
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "저녁 찻집. 페넬로피가 다 짠 작은 깔개를 접은 채 무릎에 올려 두었다. 파피가 찻잔 둘을 놓는다."
+            },
+            {
+              "speaker": "poppy",
+              "text": "보여 줄 거면 보여 주고, 아니면 차만 마셔도 돼요. 둘 다 좋아요."
+            },
+            {
+              "speaker": "penelope",
+              "text": "…보여 줄래요. 펴는 데 시간이 좀 걸려도요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "다 펼 때까지 구경한다",
+              "color": "quiet",
+              "reply": [
+                {
+                  "speaker": "narration",
+                  "text": "페넬로피는 깔개를 반쯤 폈다가 멈추고, 숨을 한 번 쉰 뒤 끝까지 폈다. 줄무늬 사이 꽃 하나, 그 옆 비뚠 한 줄."
+                },
+                {
+                  "speaker": "penelope",
+                  "text": "여기는 그대로 뒀어요. 이번에는 제가 그러고 싶었어요."
+                }
+              ]
+            },
+            {
+              "label": "꽃을 어떻게 넣었는지 묻는다",
+              "color": "honest",
+              "reply": [
+                {
+                  "speaker": "penelope",
+                  "text": "줄 하나를 비우고 넣었어요. 처음엔 둘 중에 고르려고 했는데, 둘 다 넣는 것도 고르는 거더라고요."
+                }
+              ]
+            },
+            {
+              "label": "말없이 찻잔을 든다",
+              "color": "warm",
+              "reply": [
+                {
+                  "speaker": "poppy",
+                  "text": "예쁘다는 말은 제가 할게요. 예뻐요."
+                },
+                {
+                  "speaker": "narration",
+                  "text": "페넬로피가 웃었다. 깔개는 그 자리에서 다시 접지 않았다."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "penelope:small:colorNames",
+          "title": "색 이름 쪽지",
+          "stage": 4,
+          "at": {
+            "x": 6,
+            "y": 53
+          },
+          "when": {
+            "from": 600,
+            "to": 1020,
+            "weather": [
+              "wet"
+            ]
+          },
+          "req": {
+            "seen": [
+              "penelope:unpickTalk"
+            ]
+          },
+          "gain": 3,
+          "lines": [
+            {
+              "speaker": "narration",
+              "text": "비 오는 날 베틀 방. 페넬로피가 실타래마다 작은 종이 쪽지를 묶고 있다."
+            },
+            {
+              "speaker": "penelope",
+              "text": "색 이름 쪽지예요. '첫 파랑', '두 번째 파랑', '비 온 날 파랑'… 이름을 붙이면 고를 때 덜 헷갈려요. 아마요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "이름 붙이는 걸 듣는다",
+              "color": "quiet",
+              "memory": "colorNames",
+              "reply": [
+                {
+                  "speaker": "penelope",
+                  "text": "이건 '아직 이름 없는 초록'. 이름을 못 정한 것도 이름으로 할래요."
+                }
+              ]
+            },
+            {
+              "label": "쪽지 묶는 걸 거든다",
+              "color": "warm",
+              "memory": "colorNames",
+              "reply": [
+                {
+                  "speaker": "penelope",
+                  "text": "매듭은 한 번만요. 두 번 묶으면 풀 때 또 망설여요."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "penelope:short:spouseHabit",
+          "title": "우리 집 탁자 천",
+          "stage": 3,
+          "at": {
+            "x": 39,
+            "y": 24
+          },
+          "when": {
+            "from": 780,
+            "to": 1020,
+            "weather": [
+              "dry"
+            ]
+          },
+          "req": {
+            "rel": [
+              "spouse"
+            ]
+          },
+          "gain": 3,
+          "lines": [
+            {
+              "speaker": "penelope",
+              "text": "집 탁자에 깔 천을 짜려고요. 무늬는… 하나씩 고르면 어때요? 섞이는 데는 제가 맞춰 볼게요."
+            }
+          ],
+          "choices": [
+            {
+              "label": "줄무늬 하나를 고른다",
+              "color": "warm",
+              "memory": "homeCloth",
+              "reply": [
+                {
+                  "speaker": "penelope",
+                  "text": "줄무늬. 그럼 저는 작은 꽃. 둘 다 들어가는 천이 되겠네요."
+                }
+              ]
+            },
+            {
+              "label": "무늬 없는 칸도 넣자고 한다",
+              "color": "honest",
+              "memory": "homeCloth",
+              "reply": [
+                {
+                  "speaker": "penelope",
+                  "text": "빈 칸이요? …좋아요. 거기 뭘 넣을지는 그때 고르면 되니까요."
+                }
+              ]
+            },
+            {
+              "label": "페넬로피가 고를 때까지 기다린다",
+              "color": "quiet",
+              "memory": "homeCloth",
+              "reply": [
+                {
+                  "speaker": "penelope",
+                  "text": "고르는 데 오래 걸려도 괜찮죠? 이번엔 그 시간도 같이 있어 줘요."
+                }
+              ]
+            }
+          ]
         }
       ],
       "tastes": {
@@ -17833,7 +19603,42 @@
       "clubLines": {
         "start": "서로 다르게 고르는 모습이 재미있어요. 어떤 쪽이 편한가요?",
         "finish": "다른 방식으로 함께해도 잘 어울리는 시간이네요."
-      }
+      },
+      "props": [
+        {
+          "id": "penelopeYarn",
+          "room": "weaver",
+          "at": {
+            "x": 8,
+            "y": 52
+          },
+          "art": "yarnPair",
+          "req": {
+            "seen": [
+              "penelope:story:1"
+            ],
+            "notStory": [
+              "penelopeRug"
+            ]
+          }
+        },
+        {
+          "id": "penelopeCloth",
+          "room": "weaver",
+          "at": {
+            "x": 8,
+            "y": 52
+          },
+          "art": "clothPattern",
+          "req": {
+            "story": [
+              {
+                "id": "penelopeRug"
+              }
+            ]
+          }
+        }
+      ]
     },
     "juniper": {
       "id": "juniper",
@@ -24388,6 +26193,21 @@
               "choice:apothecary:story:2"
             ]
           }
+        },
+        {
+          "id": "grandpa:marigoldList",
+          "text": "그 아이가 처음으로 내게 먼저 물었네. 수확은 내 몫이야. 천천히 할 걸세.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "marigoldList"
+              }
+            ],
+            "exp": [
+              "story:marigoldList"
+            ]
+          }
         }
       ],
       "tastes": {
@@ -27064,6 +28884,21 @@
             ],
             "exp": [
               "story:apothecaryPot"
+            ]
+          }
+        },
+        {
+          "id": "apothecary:basilRest",
+          "text": "셋째 날 오후는 제가 약초를 봐요. 바질이 맡기고 간 일이라 더 꼼꼼히요.",
+          "depth": 0,
+          "req": {
+            "story": [
+              {
+                "id": "basilRest"
+              }
+            ],
+            "exp": [
+              "choice:basil:story:2"
             ]
           }
         }
