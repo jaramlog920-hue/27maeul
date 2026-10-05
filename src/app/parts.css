@@ -1874,6 +1874,21 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
   resize: none;
 }
 .copy-input:focus { outline: none; border-color: #a88c5e; }
+/* 휴대폰 키보드 맞춤 (2026-10-05): 평소 쓰는 자리는 칸 없이 그대로 흐르고, 키보드가 올라오면(copy-kb) 화면을 키보드 위
+   보이는 만큼(--vvh)으로 줄여 [머리 · 본문 칸 · 입력칸]으로 채운다 — 본문이 입력칸 바로 위, 길잡이는 그 아래로 내려 본다 */
+.copy-work { display: contents; }
+.copy-focus.copy-kb { top: var(--vvtop, 0px); bottom: auto; height: var(--vvh, 100%); padding-top: 8px; padding-bottom: 8px; }
+.copy-kb .copy-work { display: flex; flex-direction: column; gap: 6px; height: calc(var(--vvh, 100vh) - 16px); }
+.copy-kb .copy-focus-head h2 { font-size: 13px; }
+.copy-kb .copy-exit { min-height: 36px; }
+.copy-kb .copy-family { display: none; }
+.copy-kb .copy-status { min-height: 0; font-size: 12px; }
+.copy-kb .copy-status:empty { display: none; }
+/* 본문 칸이 남은 높이를 다 쓴다 — 넘치면 그 안에서 스크롤 (마친 절이 겹쳐 있는 동안의 높이 고정도 풀어 입력칸을 밀지 않게) */
+.copy-kb .copy-verse-wrap { flex: 1 1 auto; min-height: 0 !important; overflow-y: auto; overscroll-behavior: contain; }
+.copy-kb .copy-focus-verse { margin: 0; min-height: 100%; box-sizing: border-box; padding: 10px 14px; }
+.copy-kb .copy-input { flex: none; min-height: 0; height: clamp(calc(3.4em + 28px), calc(var(--vvh, 100vh) * 0.2), calc(5.1em + 28px)); }
+.copy-kb .copy-voice { flex: none; }
 /* 소리 내어 읽기 (설정에서 켰을 때만): 작은 단추 하나와 한 줄 안내. 듣는 동안 작은 점이 숨 쉬듯 */
 .copy-voice { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
 .copy-voice-btn { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; font-size: 13px; background: transparent; border: 2px solid #c9b896; color: #7a6a52; box-shadow: none; }

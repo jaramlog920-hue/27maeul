@@ -14,6 +14,7 @@ import { COPY_PEN, FAMILY_DESK, ICON_PALETTE } from '../../render/sprites'
 import { partnerName, useGame, type Modal } from '../../store/game-store'
 import { prefersStill, quillScratch, verseBuzz } from './copy-feel'
 import { copyVoiceOn, newRecognizer, transcriptsOf, voiceAvailable, type VoiceRecognizer } from './copy-voice'
+import { useKeyboardFit } from './copy-keyboard'
 
 const BOOK_NAME = T.quiz.books as Record<string, string>
 const C = T.copyFocus
@@ -569,6 +570,10 @@ function CopyWrite({ book, spot, modal, still }: { book: Book; spot: CopySpot; m
   // 한글 키보드는 마지막 글자를 조합 중으로 붙잡아 둔다 — 절을 다 맞게 쓰고 잠깐 멈추면 조합을 확정해 절을 마친다
   // (입력칸을 잠깐 떠났다 돌아오면 브라우저가 compositionend를 보낸다. 그래도 안 오면 직접 끝낸다)
   const verseDone = check.done
+  // 휴대폰 키보드가 올라오면 [머리 · 본문 칸 · 입력칸]을 키보드 위 보이는 자리에 맞춘다 (본문이 입력칸 바로 위에)
+  const work = useRef<HTMLDivElement>(null)
+  const verseWrap = useRef<HTMLDivElement>(null)
+  useKeyboardFit({ input: box, work, verse: verseWrap }, key, check.matched)
 
   // ── 잉크 번짐: 이 절에서 처음으로 더 멀리 맞게 쓴 글자만 (조합 중에 마지막 글자가 바뀌며 오르내려도 다시 번지지 않게) ──
   const matched = check.matched
@@ -634,86 +639,89 @@ function CopyWrite({ book, spot, modal, still }: { book: Book; spot: CopySpot; m
   const label = fill(C.progress, { book: name, chapter: spot.chapter })
   return (
     <div className="copy-write">
-      <header className="copy-focus-head">
-        <CopyPen />
-        <h2>{fill(C.header, { book: name, chapter: spot.chapter, n: spot.index + 1, count: spot.count })}</h2>
-        <CopyPage verses={verses} done={spot.index} fresh={ghost?.chapter === spot.chapter ? ghost.verse : undefined} pageRef={pageRef} />
-        <button className="copy-exit" onClick={copyExit}>
-          {C.exit}
-        </button>
-      </header>
-      <div className="copy-bar" role="progressbar" aria-label={label} aria-valuemin={0} aria-valuemax={spot.count} aria-valuenow={spot.index}>
-        <span style={{ width: `${(spot.index / spot.count) * 100}%` }} />
-      </div>
-      <p className="copy-status" role="status">
-        {status}
-      </p>
-      <CopyFamily />
-      <div className="copy-verse-wrap">
-        <VerseLine
-          text={spot.verse.text}
-          matched={check.matched}
-          typo={typo}
-          label={fill(C.verseLabel, { book: name, chapter: spot.chapter, verse: spot.verse.verse })}
-          bloom={bloom}
-          arriving={ghost !== null}
-          miss={voiceMiss}
-        />
-        {ghost && <VerseGhost key={ghost.id} ghost={ghost} still={still} pageRef={pageRef} />}
-      </div>
-      <textarea
-        ref={box}
-        className="copy-input"
-        aria-label={C.input}
-        aria-invalid={typo || undefined}
-        value={value}
-        rows={3}
-        autoFocus
-        autoComplete="off"
-        autoCorrect="off"
-        autoCapitalize="off"
-        spellCheck={false}
-        inputMode="text"
-        enterKeyHint="done"
-        onChange={onChange}
-        onCompositionStart={() => {
-          composing.current = true
-          setIme(true)
-        }}
-        onCompositionEnd={(e) => {
-          // 잠깐 멈춤으로 이미 조합을 끝냈으면(아래 자동 확정) 늦게 온 compositionend는 받지 않는다
-          if (!composing.current) return
-          endComposition(e.currentTarget.value)
-        }}
-        onKeyDown={(e) => {
-          // 줄바꿈은 본문에 없다 — 엔터는 아무것도 넣지 않는다 (조합 중이면 조합만 끝난다)
-          if (e.key === 'Enter' && !e.nativeEvent.isComposing) e.preventDefault()
-        }}
-        onPaste={(e) => e.preventDefault()}
-        onDrop={(e) => e.preventDefault()}
-      />
-      {voiceOk && (
-        <div className="copy-voice">
-          <button
-            type="button"
-            className={listening ? 'copy-voice-btn copy-voice-on' : 'copy-voice-btn'}
-            aria-pressed={listening}
-            onClick={() => {
-              if (!listening) return startVoice()
-              stopVoice()
-              setVoiceNote('')
-            }}
-          >
-            {listening && <span className="copy-voice-dot" aria-hidden="true" />}
-            {listening ? C.voiceStop : voiceMiss || voiceNote ? C.voiceAgain : C.voice}
+      {/* 쓰는 자리 (머리~입력칸) — 평소엔 그대로 흘러가고, 키보드가 올라오면 키보드 위 높이에 맞춘 한 칸이 된다 */}
+      <div ref={work} className="copy-work">
+        <header className="copy-focus-head">
+          <CopyPen />
+          <h2>{fill(C.header, { book: name, chapter: spot.chapter, n: spot.index + 1, count: spot.count })}</h2>
+          <CopyPage verses={verses} done={spot.index} fresh={ghost?.chapter === spot.chapter ? ghost.verse : undefined} pageRef={pageRef} />
+          <button className="copy-exit" onClick={copyExit}>
+            {C.exit}
           </button>
-          {voiceNote && (
-            <p className="copy-voice-note" role="status">
-              {voiceNote}
-            </p>
-          )}
+        </header>
+        <div className="copy-bar" role="progressbar" aria-label={label} aria-valuemin={0} aria-valuemax={spot.count} aria-valuenow={spot.index}>
+          <span style={{ width: `${(spot.index / spot.count) * 100}%` }} />
         </div>
-      )}
+        <p className="copy-status" role="status">
+          {status}
+        </p>
+        <CopyFamily />
+        <div ref={verseWrap} className="copy-verse-wrap">
+          <VerseLine
+            text={spot.verse.text}
+            matched={check.matched}
+            typo={typo}
+            label={fill(C.verseLabel, { book: name, chapter: spot.chapter, verse: spot.verse.verse })}
+            bloom={bloom}
+            arriving={ghost !== null}
+            miss={voiceMiss}
+          />
+          {ghost && <VerseGhost key={ghost.id} ghost={ghost} still={still} pageRef={pageRef} />}
+        </div>
+        <textarea
+          ref={box}
+          className="copy-input"
+          aria-label={C.input}
+          aria-invalid={typo || undefined}
+          value={value}
+          rows={3}
+          autoFocus
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck={false}
+          inputMode="text"
+          enterKeyHint="done"
+          onChange={onChange}
+          onCompositionStart={() => {
+            composing.current = true
+            setIme(true)
+          }}
+          onCompositionEnd={(e) => {
+            // 잠깐 멈춤으로 이미 조합을 끝냈으면(아래 자동 확정) 늦게 온 compositionend는 받지 않는다
+            if (!composing.current) return
+            endComposition(e.currentTarget.value)
+          }}
+          onKeyDown={(e) => {
+            // 줄바꿈은 본문에 없다 — 엔터는 아무것도 넣지 않는다 (조합 중이면 조합만 끝난다)
+            if (e.key === 'Enter' && !e.nativeEvent.isComposing) e.preventDefault()
+          }}
+          onPaste={(e) => e.preventDefault()}
+          onDrop={(e) => e.preventDefault()}
+        />
+        {voiceOk && (
+          <div className="copy-voice">
+            <button
+              type="button"
+              className={listening ? 'copy-voice-btn copy-voice-on' : 'copy-voice-btn'}
+              aria-pressed={listening}
+              onClick={() => {
+                if (!listening) return startVoice()
+                stopVoice()
+                setVoiceNote('')
+              }}
+            >
+              {listening && <span className="copy-voice-dot" aria-hidden="true" />}
+              {listening ? C.voiceStop : voiceMiss || voiceNote ? C.voiceAgain : C.voice}
+            </button>
+            {voiceNote && (
+              <p className="copy-voice-note" role="status">
+                {voiceNote}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
       <CopyGuide book={book} chapter={spot.chapter} />
     </div>
   )
