@@ -129,36 +129,27 @@ describe('③ 옮겨 적기 — 22장 전부', () => {
   })
 })
 
-describe('④ 방 열림 — 히브리서–유다서 여덟 권이 다 꽂힌 다음 날', () => {
-  it('여덟 권 중 하나라도 안 꽂혔으면 닫힘, 모두 꽂고 잔 다음 날 열림·장면 roomOpen:rev', () => {
-    for (const missing of HEB_JUD) {
-      const slept = goToSleep(hebJudShelved(HEB_JUD.filter((b) => b !== missing)), CONTENT)
-      expect(roomOpen('rev', slept.flags), missing).toBe(false)
+describe('④ 방 열림 — 요한계시록 방도 처음부터 열려 있다', () => {
+  it('앞 방의 책을 하나도 꽂지 않아도 열려 있고, 자도 방 열림 장면이 서지 않는다', () => {
+    const fresh = newGame(CONTENT)
+    expect(roomOpen('rev', fresh.flags)).toBe(true)
+    for (const s of [fresh, hebJudShelved(HEB_JUD.slice(1))]) {
+      const slept = goToSleep(s, CONTENT)
       expect(slept.scenes).not.toContain('roomOpen:rev')
+      expect(slept.flags['room:rev']).toBeUndefined()
     }
-    const full = hebJudShelved(HEB_JUD)
-    expect(roomOpen('rev', full.flags)).toBe(false)
-    const next = goToSleep(full, CONTENT)
-    expect(roomOpen('rev', next.flags)).toBe(true)
-    expect(next.flags['room:rev']).toBe(1)
-    expect(next.scenes).toContain('roomOpen:rev')
-    const again = goToSleep({ ...next, scenes: [] }, CONTENT)
-    expect(again.scenes).not.toContain('roomOpen:rev')
   })
 
-  it('열리기 전에는 pickableBooks에 없고 chooseBook("rev")이 그대로, 열리면 고를 수 있다', () => {
-    const s = hebJudShelved(HEB_JUD)
-    expect(pickableBooks(s.flags, BOOKS_WITH_CONTENT)).not.toContain('rev')
-    expect(chooseBook(s, 'rev', CONTENT)).toBe(s)
-    const open = goToSleep(s, CONTENT)
-    expect(pickableBooks(open.flags, BOOKS_WITH_CONTENT)).toEqual(BOOKS)
-    const picked = chooseBook(open, 'rev', CONTENT)
+  it('새 게임에서 pickableBooks에 있고 chooseBook("rev")이 바로 된다', () => {
+    const s = newGame(CONTENT)
+    expect(pickableBooks(s.flags, BOOKS_WITH_CONTENT)).toEqual(BOOKS)
+    const picked = chooseBook(s, 'rev', CONTENT)
     expect(picked.activeBook).toBe('rev')
     // 장째로 오는 책 — 이웃이 조각을 건네지 않는다
     expect(picked.offers).toEqual({})
   })
 
-  it('방 열림 장면·앨범·일지 문구 (앞 두 방과 같은 짜임)', () => {
+  it('방 열림 장면·앨범·일지 문구는 옛 저장의 쌓인 장면을 위해 남아 있다', () => {
     const scene = SCENES['roomOpen:rev']
     expect(scene.title).toBe('서고 오른쪽 아래 문')
     expect(scene.lines.map((l) => l.speaker)).toEqual(['narration', 'narration', 'postman'])
@@ -177,7 +168,7 @@ describe('④ 방 열림 — 히브리서–유다서 여덟 권이 다 꽂힌 �
 })
 
 describe('⑤ 옛 저장', () => {
-  it('계획 7 배포본 모양(열여덟 권)·계획 8 모양(스물여섯 권) 저장을 불러와도 progress.rev가 있고, 방이 닫혀 고를 수 없다', () => {
+  it('계획 7 배포본 모양(열여덟 권)·계획 8 모양(스물여섯 권) 저장을 불러와도 progress.rev가 있고, 방이 열려 있어 고를 수 있다', () => {
     const s = hebJudShelved([])
     const o = JSON.parse(serialize(chooseBook(s, 'heb', CONTENT)))
     const pick = (ids: readonly string[]) => Object.fromEntries(ids.map((b) => [b, o.progress[b]]))
@@ -190,7 +181,7 @@ describe('⑤ 옛 저장', () => {
       const back = deserialize(JSON.stringify({ ...o, progress, flags: JSON.parse(JSON.stringify(flags)) }), CONTENT)!
       expect(back, name).not.toBeNull()
       expect(back.progress.rev, name).toEqual({ completed: [], arrangement: {} })
-      expect(pickableBooks(back.flags, BOOKS_WITH_CONTENT), name).not.toContain('rev')
+      expect(pickableBooks(back.flags, BOOKS_WITH_CONTENT), name).toContain('rev')
     }
   })
 })

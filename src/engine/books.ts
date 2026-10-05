@@ -23,24 +23,12 @@ export function chaptersOf(book: Book, content: GameContent): number[] {
 }
 
 /**
- * 서고의 사도행전 방이 열렸는가: 복음서 방 잔치 다음 날부터 (flags.gospelFeast 2).
- * 방 열림 판정은 이 하나만 쓴다 — 책 고르기·chooseBook·불러오기·도감·서고 문 불빛이 서로 어긋나지 않게
- */
-export function actsRoomOpen(flags: Readonly<Record<string, number | undefined>>): boolean {
-  // 사도행전을 먼저 다 필사해 제본해도 열린다 (계획 14 작업 4: 그 방 책을 한 권 제본하면 방이 열린다 — flags['room:acts'])
-  return (flags.gospelFeast ?? 0) >= 2 || (flags['room:acts'] ?? 0) >= 1
-}
-
-/**
- * 서고의 방이 열렸는가 (방 표 shelf-rooms): 복음서 방은 늘, 사도행전 방은 잔치 다음 날(actsRoomOpen),
- * 그 뒤 방은 앞 방이 다 찬 날 밤에 세운 표식 flags['room:<id>'] (goToSleep) — 다음 날 아침부터 열려 있다.
- * 그 방의 책을 한 권 제본해도 바로 같은 표식이 선다 (계획 14 작업 4, game.bindBook).
+ * 서고의 방이 열렸는가 (방 표 shelf-rooms): 2026-10-06부터 다섯 방 모두 처음부터 열려 있다 (사용자 결정 —
+ * 예전의 차례 잠금·flags['room:<id>']·gospelFeast 조건은 없앴다. 옛 저장에 남은 표식은 아무 일도 하지 않는다).
  * 책 고르기·chooseBook·불러오기·도감·서고 문이 모두 이 판정 하나를 쓴다
  */
-export function roomOpen(id: ShelfRoomId, flags: Readonly<Record<string, number | undefined>>): boolean {
-  if (id === 'gospels') return true
-  if (id === 'acts') return actsRoomOpen(flags)
-  return (flags[`room:${id}`] ?? 0) >= 1
+export function roomOpen(_id: ShelfRoomId, _flags: Readonly<Record<string, number | undefined>>): boolean {
+  return true
 }
 
 /** 서고의 열린 방 문 번호들 (world.LOCKED_DOORS 번호, 방 표의 door) — 지도의 열린 문과 잠긴 문 누르기가 이것 하나를 쓴다 */
@@ -55,7 +43,7 @@ export function bookRoomOpen(book: Book, flags: Readonly<Record<string, number |
 }
 
 /**
- * 책상에서 고를 수 있는 책(= 도감에 보이는 책): 열린 방의 책 중 콘텐츠가 있는 것, 방 순서대로.
+ * 책상에서 고를 수 있는 책(= 도감에 보이는 책): 콘텐츠가 있는 책, 방 순서대로 (방은 모두 열려 있다).
  * 네 복음서는 (예전과 같이) 언제나 보인다
  */
 export function pickableBooks(flags: Readonly<Record<string, number | undefined>>, withContent: readonly Book[]): Book[] {

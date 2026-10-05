@@ -4,9 +4,10 @@ import bible from '../content/nt-krv.json'
 import subset from '../content/bible-subset.json'
 import { BOOKS_WITH_CONTENT, CONTENT, LETTER_PIECES, noText, PIECES, pieceOfVerse, piecesOf, quizSourceFor, versesOf } from '../content/catalog'
 import { JOURNAL_NOTES, SCENES, T } from '../content/text'
-import { emptyProgress, pickableBooks, roomOpen } from './books'
-import { chooseBook, goToSleep, newGame, shelvedCount, type GameState } from './game'
+import { chaptersOf, emptyProgress, openDoorsFor, pickableBooks, roomOpen } from './books'
+import { bindBook, canBind, chooseBook, goToSleep, newGame, shelvedCount, type GameState } from './game'
 import { deserialize, sanitize, serialize } from './save'
+import { lockedZones } from './world'
 import { modeOf, roomOf, shelfRoom, SHELF_ROOMS, SUBSET_BOOKS } from './shelf-rooms'
 import { BOOKS, GOSPELS, isLetter, LETTERS, type Book } from './types'
 
@@ -161,113 +162,58 @@ describe('편지 "장 조각" — 장 하나에 조각 하나', () => {
   })
 })
 
-describe('로마서–빌레몬서 방 열림', () => {
-  it('③ 사도행전을 꽂고 잔 다음 날 열린다 — 꽂기 전·그날 밤 전에는 닫힘', () => {
-    const before = newGame(CONTENT)
-    const feastDone = { ...before, flags: { ...before.flags, gospelFeast: 2 }, shelved: { mt: 2, mk: 1, lk: 1, jn: 0 } } as GameState
-    expect(roomOpen('romPhm', feastDone.flags)).toBe(false)
-    // 사도행전을 꽂지 않고 자면 닫힌 채
-    const slept = goToSleep(feastDone, CONTENT)
-    expect(roomOpen('romPhm', slept.flags)).toBe(false)
-    expect(slept.scenes).not.toContain('roomOpen:romPhm')
-    // 사도행전을 꽂은 그날(밤 전)은 아직 닫힘
-    const shelvedDay = actsShelved()
-    expect(roomOpen('romPhm', shelvedDay.flags)).toBe(false)
-    // 자고 일어나면 열린다 — 아침 장면
-    const next = goToSleep(shelvedDay, CONTENT)
-    expect(roomOpen('romPhm', next.flags)).toBe(true)
-    expect(next.flags['room:romPhm']).toBe(1)
-    expect(next.scenes).toContain('roomOpen:romPhm')
-    // 다음 밤에는 장면을 또 세우지 않는다
-    const again = goToSleep({ ...next, scenes: [] }, CONTENT)
-    expect(again.scenes).not.toContain('roomOpen:romPhm')
-    expect(roomOpen('romPhm', again.flags)).toBe(true)
+describe('서고의 방은 처음부터 모두 열려 있다 (2026-10-06)', () => {
+  it('새 게임에서 다섯 방이 모두 열려 있고, 문 번호 넷이 모두 열린 문이다', () => {
+    const s = newGame(CONTENT)
+    for (const r of SHELF_ROOMS) expect(roomOpen(r.id, s.flags), r.id).toBe(true)
+    expect(openDoorsFor(s.flags)).toEqual([0, 1, 2, 3])
+    expect(pickableBooks(s.flags, BOOKS_WITH_CONTENT)).toEqual(BOOKS_WITH_CONTENT)
+    for (const b of BOOKS_WITH_CONTENT) expect(chooseBook(s, b, CONTENT).activeBook, b).toBe(b)
   })
 
-  it('복음서 방은 늘, 사도행전 방은 잔치 다음 날부터 (actsRoomOpen 그대로)', () => {
-    expect(roomOpen('gospels', {})).toBe(true)
-    expect(roomOpen('acts', {})).toBe(false)
-    expect(roomOpen('acts', { gospelFeast: 1 })).toBe(false)
-    expect(roomOpen('acts', { gospelFeast: 2 })).toBe(true)
+  it('방 표식(flags)이 있든 없든 같다 — 옛 저장의 표식은 그대로 무해하다', () => {
+    for (const flags of [{}, { gospelFeast: 1 }, { gospelFeast: 2, 'room:romPhm': 1, 'room:hebJud': 1, 'room:rev': 1 }] as const)
+      for (const r of SHELF_ROOMS) expect(roomOpen(r.id, flags)).toBe(true)
   })
 
-  it('콘텐츠가 없는 방은 앞 방이 다 차도 표식을 세우지 않는다 (계획 9부터 요한계시록 방은 콘텐츠가 있어 열린다)', () => {
+  it('자도 방 열림 장면이 서지 않고 표식도 세우지 않는다 (앞 방이 차도, 비어 있어도)', () => {
     const s = actsShelved()
     const all = Object.fromEntries(LETTERS.map((b) => [b, 1]))
-    const full = { ...s, flags: { ...s.flags, 'room:romPhm': 1, 'room:hebJud': 1 }, shelved: { ...s.shelved, ...all } }
-    // 요한계시록 조각을 뺀 콘텐츠 — 방은 닫힌 채
-    const noRev = { ...CONTENT, pieces: CONTENT.pieces.filter((p) => p.book !== 'rev') }
-    const closed = goToSleep(full, noRev)
-    expect(closed.flags['room:rev']).toBeUndefined()
-    expect(roomOpen('rev', closed.flags)).toBe(false)
-    expect(closed.scenes.filter((x) => x.startsWith('roomOpen:'))).toEqual([])
-    // 지금 콘텐츠로는 열린다
-    const next = goToSleep(full, CONTENT)
-    expect(roomOpen('rev', next.flags)).toBe(true)
-    expect(next.scenes.filter((x) => x.startsWith('roomOpen:'))).toEqual(['roomOpen:rev'])
+    for (const from of [newGame(CONTENT), s, { ...s, shelved: { ...s.shelved, ...all } }]) {
+      const next = goToSleep(from, CONTENT)
+      expect(next.scenes.filter((x) => x.startsWith('roomOpen:'))).toEqual([])
+      expect(Object.keys(next.flags).filter((k) => k.startsWith('room:'))).toEqual([])
+    }
+  })
+
+  it('복음서를 꽂지 않고 먼저 다른 책(편지·요한계시록)을 필사해 제본해도, 서고에 꽂아도 막힘이 없다', () => {
+    const s = newGame(CONTENT)
+    for (const book of ['rev', 'phm', 'jud', 'ac'] as const) {
+      const done = { ...s, progress: { ...s.progress, [book]: { completed: chaptersOf(book, CONTENT), arrangement: {} } } }
+      expect(canBind(done, book, CONTENT)).toBeNull()
+      const bound = bindBook(done, book, CONTENT)
+      expect(bound.bound[book]).toBeDefined()
+      expect(bound.scenes.filter((x) => x.startsWith('roomOpen:'))).toEqual([])
+    }
   })
 })
-
-describe('히브리서–유다서 방 열림', () => {
-  /** 로마서–빌레몬서 방이 열린 상태 + 그 방의 책 몇 권을 꽂음 */
-  const romPhmShelved = (books: readonly Book[]): GameState => {
-    const s = actsShelved()
-    return { ...s, flags: { ...s.flags, 'room:romPhm': 1 }, shelved: { ...s.shelved, ...Object.fromEntries(books.map((b) => [b, 1])) } }
-  }
-
-  it('③ 열세 권 중 하나라도 안 꽂혔으면 닫힘 — 모두 꽂고 잔 다음 날 열린다', () => {
-    for (const missing of ROM_PHM_IDS) {
-      const s = romPhmShelved(ROM_PHM_IDS.filter((b) => b !== missing))
-      const slept = goToSleep(s, CONTENT)
-      expect(roomOpen('hebJud', slept.flags), missing).toBe(false)
-      expect(slept.scenes).not.toContain('roomOpen:hebJud')
-    }
-    const full = romPhmShelved(ROM_PHM_IDS)
-    // 꽂은 그날(밤 전)은 아직 닫힘
-    expect(roomOpen('hebJud', full.flags)).toBe(false)
-    const next = goToSleep(full, CONTENT)
-    expect(roomOpen('hebJud', next.flags)).toBe(true)
-    expect(next.flags['room:hebJud']).toBe(1)
-    expect(next.scenes).toContain('roomOpen:hebJud')
-    // 다음 밤에는 장면을 또 세우지 않는다
-    const again = goToSleep({ ...next, scenes: [] }, CONTENT)
-    expect(again.scenes).not.toContain('roomOpen:hebJud')
-    expect(roomOpen('hebJud', again.flags)).toBe(true)
-  })
-
-  it('③ 열리기 전에는 pickableBooks에 여덟 권이 없고 chooseBook("heb")이 그대로, 열리면 고를 수 있다', () => {
-    const s = romPhmShelved(ROM_PHM_IDS)
-    expect(pickableBooks(s.flags, BOOKS_WITH_CONTENT)).toEqual(['mt', 'mk', 'lk', 'jn', 'ac', ...ROM_PHM_IDS])
-    for (const b of HEB_JUD_IDS) expect(chooseBook(s, b, CONTENT), b).toBe(s)
-    const open = goToSleep(s, CONTENT)
-    // 요한계시록 방은 아직 닫혀 있다
-    expect(pickableBooks(open.flags, BOOKS_WITH_CONTENT)).toEqual(BOOKS.filter((b) => b !== 'rev'))
-    expect(chooseBook(open, 'heb', CONTENT).activeBook).toBe('heb')
-  })
-
-  it('방 열림 장면·앨범·일지 문구가 있다 (로마서–빌레몬서 방과 같은 짜임)', () => {
+describe('방 열림 장면 문구 (옛 저장에 쌓여 있던 장면을 위해 남겨 둔다)', () => {
+  it('방 열림 장면·앨범·일지 문구가 아직 있다', () => {
     const scene = SCENES['roomOpen:hebJud']
     expect(scene.title).toBe('서고 오른쪽 위 문')
-    expect(scene.lines[0]).toEqual({ speaker: 'narration', text: '늘 잠겨 있던 서고 오른쪽 위 문이 열렸다는 소식이 들려왔다.' })
     expect(scene.lines.map((l) => l.speaker)).toEqual(['narration', 'narration', 'postman'])
     expect(scene.album).toBe('서고 오른쪽 위 방이 열린 날')
     expect(JOURNAL_NOTES['roomOpen:hebJud']).toBe(' 서고 오른쪽 위 방이 열렸다.')
   })
 })
-
 describe('책 고르기와 불러오기', () => {
-  it('④ 방이 닫혀 있으면 pickableBooks에 편지가 없고 chooseBook("rom")이 그대로', () => {
+  it('④ 새 게임에서도 편지가 모두 pickableBooks에 있고 chooseBook("rom")이 바로 된다', () => {
     const s = actsShelved()
-    expect(pickableBooks(s.flags, BOOKS_WITH_CONTENT)).toEqual(['mt', 'mk', 'lk', 'jn', 'ac'])
-    expect(chooseBook(s, 'rom', CONTENT)).toBe(s)
-    const open = { ...s, flags: { ...s.flags, 'room:romPhm': 1 } }
-    // 로마서–빌레몬서 방만 열렸으면 여덟 권은 아직 없다
-    expect(pickableBooks(open.flags, BOOKS_WITH_CONTENT)).toEqual(['mt', 'mk', 'lk', 'jn', 'ac', ...ROM_PHM_IDS])
-    // 콘텐츠가 없는 책은 방이 열려도 없다
-    expect(pickableBooks(open.flags, ['mt', 'mk', 'lk', 'jn', 'ac'])).toEqual(['mt', 'mk', 'lk', 'jn', 'ac'])
-    expect(chooseBook(open, 'rom', CONTENT).activeBook).toBe('rom')
+    expect(pickableBooks(s.flags, BOOKS_WITH_CONTENT)).toEqual(BOOKS_WITH_CONTENT)
+    expect(chooseBook(s, 'rom', CONTENT).activeBook).toBe('rom')
+    // 콘텐츠가 없는 책은 없다
+    expect(pickableBooks(s.flags, ['mt', 'mk', 'lk', 'jn', 'ac'])).toEqual(['mt', 'mk', 'lk', 'jn', 'ac'])
   })
-
   it('⑤ 네 권짜리·다섯 권짜리 옛 저장을 불러와도 progress.rom이 있다', () => {
     const o = JSON.parse(serialize(newGame(CONTENT)))
     const five = Object.fromEntries(['mt', 'mk', 'lk', 'jn', 'ac'].map((b) => [b, o.progress[b]]))
@@ -279,8 +225,8 @@ describe('책 고르기와 불러오기', () => {
     }
   })
 
-  it('④ 계획 7 배포본 모양(열여덟 권) 옛 저장을 불러와도 progress.heb가 있고, 방이 닫혀 여덟 권을 고를 수 없다', () => {
-    const s = { ...actsShelved(), flags: { ...actsShelved().flags, 'room:romPhm': 1 } }
+  it('④ 계획 7 배포본 모양(열여덟 권) 옛 저장을 불러와도 progress.heb가 있고, 여덟 권도 고를 수 있다', () => {
+    const s = actsShelved()
     const o = JSON.parse(serialize(chooseBook(s, 'rom', CONTENT)))
     const eighteen = Object.fromEntries(['mt', 'mk', 'lk', 'jn', 'ac', ...ROM_PHM_IDS].map((b) => [b, o.progress[b]]))
     eighteen.rom = { completed: [], arrangement: {} }
@@ -288,18 +234,15 @@ describe('책 고르기와 불러오기', () => {
     expect(back).not.toBeNull()
     expect(back.activeBook).toBe('rom')
     for (const b of HEB_JUD_IDS) expect(back.progress[b], b).toEqual({ completed: [], arrangement: {} })
-    expect(pickableBooks(back.flags, BOOKS_WITH_CONTENT).filter((b) => (HEB_JUD_IDS as readonly string[]).includes(b))).toEqual([])
-    // 방이 닫혔는데 여덟 권 중 하나를 고른 채로 저장돼 있으면 비운다
-    expect(sanitize({ ...back, activeBook: 'heb' }, CONTENT).activeBook).toBeNull()
-    expect(sanitize({ ...back, activeBook: 'heb', flags: { ...back.flags, 'room:hebJud': 1 } }, CONTENT).activeBook).toBe('heb')
+    expect(pickableBooks(back.flags, BOOKS_WITH_CONTENT).filter((b) => (HEB_JUD_IDS as readonly string[]).includes(b))).toEqual([...HEB_JUD_IDS])
+    // 방 표식 없이 여덟 권 중 하나를 고른 채로 저장돼 있어도 그대로 둔다
+    expect(sanitize({ ...back, activeBook: 'heb' }, CONTENT).activeBook).toBe('heb')
   })
 
-  it('불러올 때 편지 책을 고른 채인데 방이 닫혀 있으면 고른 책을 비운다', () => {
+  it('불러올 때 편지 책을 고른 채면 방 표식이 없어도 그대로 둔다', () => {
     const s = { ...actsShelved(), activeBook: 'rom' as const }
-    expect(sanitize(s, CONTENT).activeBook).toBeNull()
-    expect(sanitize({ ...s, flags: { ...s.flags, 'room:romPhm': 1 } }, CONTENT).activeBook).toBe('rom')
+    expect(sanitize(s, CONTENT).activeBook).toBe('rom')
   })
-
   it('⑥ 어느 책을 고르든 오늘의 조각(offers)은 그대로 — 새 날의 특별한 대화도 많아야 한 명 (계획 14 작업 5)', () => {
     const s = actsShelved()
     const open = { ...s, flags: { ...s.flags, 'room:romPhm': 1 }, offers: { baker: 'mk-001-001' } }
@@ -320,4 +263,19 @@ describe('책 고르기와 불러오기', () => {
     expect(shelvedCount({ shelved: { rom: 2, phm: 1 } })).toBe(2)
     expect(shelvedCount({ shelved: Object.fromEntries(HEB_JUD_IDS.map((b) => [b, 1])) })).toBe(HEB_JUD_IDS.length)
   })
-})
+
+  it('⑧ 마을 해금은 어느 책이든 꽂은 권수로 — 편지·요한계시록만 꽂아도 센다', () => {
+    expect(shelvedCount({ shelved: { rev: 1 } })).toBe(1)
+    expect(shelvedCount({ shelved: { rev: 1, phm: 2 } })).toBe(2)
+    expect(shelvedCount({ shelved: { '3jn': 0, '2jn': 1, jud: 1, phm: 1 } })).toBe(4)
+  })
+  it('⑧ 이웃 이사·마을 구역은 어느 책이든 꽂은 권수로 — 복음서 없이 편지만 꽂아도 1권 목수, 2권 약방 주인이 온다', () => {
+    const base = { ...newGame(CONTENT), shelved: { phm: 1 } as GameState['shelved'] }
+    const one = goToSleep(base, CONTENT)
+    expect(one.flags['movedIn:carpenter']).toBe(1)
+    expect(one.flags['movedIn:apothecary']).toBeUndefined()
+    const two = goToSleep({ ...base, shelved: { phm: 1, rev: 2 } as GameState['shelved'] }, CONTENT)
+    expect(two.flags['movedIn:apothecary']).toBe(1)
+    // 마을 구역: 1권을 어느 책으로든 꽂으면 그 수만큼 열린다
+    expect(lockedZones(shelvedCount({ shelved: { jud: 1 } })).length).toBe(lockedZones(shelvedCount({ shelved: { mt: 1 } })).length)
+  })})

@@ -109,16 +109,13 @@ describe('stargaze — 맑은 밤 별 보기로 편지함에서 꺼낸다', () =
     expect(r.pieceIds.length).toBe(starPostCountOf(nextClear))
   })
 
-  it('④ 지금 책이 다른 책이면 없음, 방이 닫혔으면 없음', () => {
+  it('④ 지금 책이 다른 책이면 없음, 방은 새 게임부터 열려 있어 요한계시록을 바로 고른다', () => {
     const d = CLEAR_DAYS[0]
     const rom = chooseBook(revState(d), 'rom', CONTENT)
     expect(rom.activeBook).toBe('rom')
     expect(stargaze(rom, CONTENT).pieceIds).toEqual([])
-    const closed = revState(d)
-    expect(stargaze({ ...closed, flags: { ...closed.flags, 'room:rev': 0 } }, CONTENT).pieceIds).toEqual([])
-    // 방이 닫혀 있으면 요한계시록을 고를 수도 없다
-    const s = newGame(CONTENT)
-    expect(chooseBook(s, 'rev', CONTENT).activeBook).toBeNull()
+    // 방이 처음부터 열려 있으므로 새 게임에서도 요한계시록을 고를 수 있다
+    expect(chooseBook(newGame(CONTENT), 'rev', CONTENT).activeBook).toBe('rev')
   })
 
   it('맑은 밤 stars 장면은 전처럼 한 번 (편지를 받은 밤에도 함께)', () => {
@@ -210,9 +207,8 @@ describe('언덕 편지함 그림 자리', () => {
     expect(Math.abs(bench.x - HILL_MAILBOX.x) + Math.abs(bench.y - HILL_MAILBOX.y)).toBe(1)
   })
 
-  it('요한계시록 방이 열린 뒤부터 보인다', () => {
+  it('요한계시록 방이 처음부터 열려 있어 새 게임에서도 보인다', () => {
     const s = newGame(CONTENT)
-    expect(hillMailbox(s)).toBeNull()
-    expect(hillMailbox({ ...s, flags: { ...s.flags, 'room:rev': 1 } })).toEqual(HILL_MAILBOX)
+    expect(hillMailbox(s)).toEqual(HILL_MAILBOX)
   })
 })

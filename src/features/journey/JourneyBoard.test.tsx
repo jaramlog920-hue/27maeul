@@ -44,11 +44,8 @@ const opened = { ...before, 'room:rev': 1 }
 const player = (t: { x: number; y: number }) => ({ ...newGame(CONTENT).player, ...t, path: [] })
 
 describe('요한계시록 방 문과 방 안 (계획 9 작업 4)', () => {
-  it('닫혀 있으면 넷째 문을 누르면 잠겨 있다고, 열리면 걸어 들어가 방 이름을 알린다', () => {
-    reset({ flags: before, shelved: shelvedAll, player: player(inLib()) })
-    act(() => useGame.getState().tap(LOCKED_DOORS[3]))
-    expect(useGame.getState().toast?.text).toBe('요한계시록 방은 아직 잠겨 있어요.')
-    reset({ flags: opened, shelved: shelvedAll, player: player(inLib()) })
+  it('넷째 문도 방 표식이 없어도 열려 있어 걸어 들어가 방 이름을 알린다', () => {
+    reset({ flags: { heartPoints: 1 }, shelved: shelvedAll, player: player(inLib()) })
     act(() => useGame.getState().tap(LOCKED_DOORS[3]))
     expect(useGame.getState().toast).toBeNull()
     act(() => {
@@ -57,7 +54,6 @@ describe('요한계시록 방 문과 방 안 (계획 9 작업 4)', () => {
     expect(roomAt(playerTile(useGame.getState().game))).toBe(REV_ROOM)
     expect(useGame.getState().toast?.text).toBe('요한계시록 방')
   })
-
   it('카드 판·선반·읽는 탁자를 누르면 그 창이 열린다', () => {
     reset({ flags: opened, shelved: shelvedAll, player: player(PLACES.churchBoard.stand!) })
     act(() => useGame.getState().tap(PLACES.churchBoard.tiles[1]))

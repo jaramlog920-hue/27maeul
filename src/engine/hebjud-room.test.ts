@@ -1,7 +1,7 @@
 // 계획 8 작업 5: 히브리서–유다서 방 — 서고 오른쪽 위 잠긴 문, 편지 선반·편지꽂이·읽는 탁자 (지도 높이 70 → 80)
 import { CONTENT } from '../content/catalog'
 import { openDoorsFor } from './books'
-import { goToSleep, newGame, settle, syncHome, type GameState } from './game'
+import { newGame, settle, syncHome, type GameState } from './game'
 import { findPath } from './movement'
 import { deserialize, serialize } from './save'
 import { shelfRoom } from './shelf-rooms'
@@ -122,24 +122,14 @@ describe('히브리서–유다서 방 자리', () => {
 })
 
 describe('히브리서–유다서 방 문', () => {
-  it('닫혀 있으면 셋째 문은 막혀 있고, 열리면 걸어 들어가는 문(J) — 다른 문은 따로', () => {
-    syncHome(romPhmFull())
-    expect(tileAt(HEB_JUD_DOOR.x, HEB_JUD_DOOR.y)).toBe('K')
-    expect(isWalkable(HEB_JUD_DOOR)).toBe(false)
-    expect(findPath(lib().entry, HEB_JUD_DOOR)).toBeNull()
-    syncHome(hebJudOpen())
+  it('새 게임에서도 셋째 문은 열려 있어 걸어 들어가는 문(J) — 다른 문도 모두 열림', () => {
+    const fresh = newGame(CONTENT)
+    syncHome(fresh)
     expect(tileAt(HEB_JUD_DOOR.x, HEB_JUD_DOOR.y)).toBe('J')
     expect(findPath(lib().entry, HEB_JUD_DOOR)).not.toBeNull()
-    expect(isWalkable(ACTS_DOOR)).toBe(true)
-    expect(isWalkable(LETTERS_DOOR)).toBe(true)
-    expect(isWalkable(LOCKED_DOORS[3])).toBe(false)
-    expect(openDoors()).toEqual([0, 1, 2])
-    expect(openDoorsFor(hebJudOpen().flags)).toEqual([0, 1, 2])
-  })
-
-  it('열세 권을 다 꽂은 날 밤을 자고 나면 문이 열린다', () => {
-    syncHome(goToSleep(romPhmFull(), CONTENT))
-    expect(isWalkable(HEB_JUD_DOOR)).toBe(true)
+    for (const d of LOCKED_DOORS) expect(isWalkable(d)).toBe(true)
+    expect(openDoors()).toEqual([0, 1, 2, 3])
+    expect(openDoorsFor(fresh.flags)).toEqual([0, 1, 2, 3])
   })
 
   it('문을 밟으면 방 안으로, 문깔개를 밟으면 서고 안 그 문 왼쪽으로 (오른쪽 벽)', () => {
@@ -170,10 +160,10 @@ describe('히브리서–유다서 방 문', () => {
 })
 
 describe('저장과 불러오기', () => {
-  it('불러오면 문 상태가 그대로 (열림·닫힘 모두)', () => {
-    setOpenDoors([0, 1, 2])
+  it('불러오면 문이 모두 열린다 (옛 저장에 방 표식이 없어도)', () => {
+    setOpenDoors([])
     deserialize(serialize(romPhmFull()), CONTENT)
-    expect(isWalkable(HEB_JUD_DOOR)).toBe(false)
+    expect(isWalkable(HEB_JUD_DOOR)).toBe(true)
     expect(isWalkable(LETTERS_DOOR)).toBe(true)
     deserialize(serialize(hebJudOpen()), CONTENT)
     expect(isWalkable(HEB_JUD_DOOR)).toBe(true)

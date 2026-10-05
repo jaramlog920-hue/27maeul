@@ -24,39 +24,38 @@ const openDesk = (dark = false) => act(() => useGame.setState({ modal: { kind: '
 const room = (title: string) => screen.getByText(title, { selector: 'summary' }).closest('details')!
 
 describe('groupByRoom', () => {
-  it('방 표 순서로 묶고, 빈 방은 뺀다', () => {
-    const books = pickableBooks(OPEN, CONTENT.pieces.map((p) => p.book))
+  it('방 표 순서로 묶고, 책이 없는 방은 뺀다 (방은 모두 열려 있다)', () => {
+    const books = pickableBooks({}, CONTENT.pieces.map((p) => p.book))
     const g = groupByRoom(books)
-    expect(g.map((x) => x.room.id)).toEqual(['gospels', 'acts', 'romPhm'])
+    expect(g.map((x) => x.room.id)).toEqual(['gospels', 'acts', 'romPhm', 'hebJud', 'rev'])
     expect(g[2].books).toEqual([...ROM_PHM])
-    expect(groupByRoom(pickableBooks({}, books)).map((x) => x.room.id)).toEqual(['gospels'])
-    // 히브리서–유다서 방이 열리면 여덟 권이 넷째 묶음으로
-    const all = groupByRoom(pickableBooks({ ...OPEN, 'room:hebJud': 1 }, CONTENT.pieces.map((p) => p.book)))
-    expect(all.map((x) => x.room.id)).toEqual(['gospels', 'acts', 'romPhm', 'hebJud'])
-    expect(all[3].books).toEqual([...HEB_JUD])
+    expect(g[3].books).toEqual([...HEB_JUD])
+    // 책이 없는 방은 빠진다 (복음서만 있으면 복음서 방 하나)
+    expect(groupByRoom(pickableBooks({}, ['mt', 'mk', 'lk', 'jn'])).map((x) => x.room.id)).toEqual(['gospels'])
+    // 방 표식은 아무 영향이 없다
+    expect(groupByRoom(pickableBooks(OPEN, books))).toEqual(g)
   })
 
   // 예전 선반 도감 시험 (2026-10-04 도감은 말씀 › 말씀 조각으로 옮겼고, 방 거르기는 책상 고르기에 남았다)
-  it('고를 수 있는 책: 방이 닫히면 편지가 없고, 열리면 그 방의 책이 보인다', () => {
+  it('고를 수 있는 책: 방 표식이 없어도 편지까지 모두 보인다', () => {
     const withContent = PIECES.map((p) => p.book)
-    expect(pickableBooks({ gospelFeast: 2 }, withContent).some((b) => LETTERS.includes(b as never))).toBe(false)
-    expect(pickableBooks(OPEN, withContent).slice(5)).toEqual([...ROM_PHM])
-    expect(pickableBooks({ ...OPEN, 'room:hebJud': 1 }, withContent).slice(5)).toEqual([...LETTERS])
+    expect(pickableBooks({}, withContent).slice(5, 5 + LETTERS.length)).toEqual([...LETTERS])
+    expect(pickableBooks({}, withContent)).toEqual(pickableBooks(OPEN, withContent))
   })
 })
-
 describe('책 고르기', () => {
-  it('방이 닫혀 있으면 편지가 없다 (자리 표시도 없다)', () => {
-    reset({ flags: { gospelFeast: 2 } })
+  it('새 게임에서도 모든 방과 편지가 책상에 보인다', () => {
+    reset({ flags: {} })
     openDesk()
     render(<ModalLayer />)
     expect(screen.getByRole('dialog', { name: '어느 책을 엮을까요?' })).toBeInTheDocument()
     expect(room('복음서 방')).toBeInTheDocument()
     expect(room('사도행전 방')).toBeInTheDocument()
-    expect(screen.queryByText('로마서–빌레몬서 방')).toBeNull()
-    for (const n of LETTER_NAMES) expect(screen.queryByRole('button', { name: new RegExp(`^${n} ·`) })).toBeNull()
+    expect(room('로마서–빌레몬서 방')).toBeInTheDocument()
+    expect(room('히브리서–유다서 방')).toBeInTheDocument()
+    expect(room('요한계시록 방')).toBeInTheDocument()
+    for (const n of LETTER_NAMES) expect(screen.getByRole('button', { name: new RegExp(`^${n} ·`) })).toBeEnabled()
   })
-
   it('방이 열리면 "로마서–빌레몬서 방" 묶음에 열세 권, 지금 책의 방만 펼쳐 둔다', () => {
     reset({ flags: OPEN, activeBook: 'lk', shelved: { mt: 2, mk: 1, lk: 1, jn: 0, ac: 1 } as GameState['shelved'] })
     act(() => useGame.setState({ modal: { kind: 'desk', result: null, dark: false } }))

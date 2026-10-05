@@ -1,9 +1,9 @@
 // 계획 5 작업 1: 다섯 번째 책(사도행전, 'ac') 자리 — 조각·엮기·서고는 BOOKS(다섯 권), 도장·탐정·"어느 복음서"는 GOSPELS(네 권)
 import { BOOKS_WITH_CONTENT, CONTENT, piecesOf, quizSourceFor } from '../content/catalog'
-import { actsRoomOpen, emptyProgress, pickableBooks } from './books'
+import { emptyProgress, pickableBooks, roomOpen } from './books'
 import { chooseBook, newGame, shelvedCount } from './game'
 import { jobOf } from './job'
-import { actsDoorGlows, gospelRoomFull, poolFor } from './library'
+import { gospelRoomFull, poolFor } from './library'
 import { mulberry32 } from './offers'
 import { buildLibraryQuiz, buildQuiz, detectiveAnswer, QUIZ_SIZE } from './quiz'
 import { deserialize, sanitize, serialize } from './save'
@@ -53,16 +53,12 @@ describe('다섯 번째 책 사도행전', () => {
     expect(back.myLines).toEqual({ 'book:ac': '길 위의 이야기' })
   })
 
-  it('책 고르기: 사도행전은 방이 열리고(잔치 다음 날부터) 조각이 있을 때만', () => {
-    // 조각이 없는 책은 방이 열려도 고를 수 없다
-    expect(pickableBooks({ gospelFeast: 2 }, ['mt', 'mk', 'lk', 'jn'])).toEqual(['mt', 'mk', 'lk', 'jn'])
-    // 지금 콘텐츠(사도행전 1–28장 있음): 방이 열린 뒤에만 사도행전
-    expect(pickableBooks({}, BOOKS_WITH_CONTENT)).toEqual(['mt', 'mk', 'lk', 'jn'])
-    expect(pickableBooks({ gospelFeast: 2 }, BOOKS_WITH_CONTENT)).toEqual(['mt', 'mk', 'lk', 'jn', 'ac'])
-    // 조각이 있어도 방이 열리기 전(잔치 전·잔치 날)에는 없다
-    expect(pickableBooks({}, BOOKS)).not.toContain('ac')
-    expect(pickableBooks({ gospelFeast: 1 }, BOOKS)).not.toContain('ac')
-    expect(pickableBooks({ gospelFeast: 2 }, BOOKS)).toEqual(['mt', 'mk', 'lk', 'jn', 'ac'])
+  it('책 고르기: 방은 처음부터 모두 열려 있어 조각이 있는 책이면 사도행전도 처음부터 고른다', () => {
+    // 조각이 없는 책은 고를 수 없다
+    expect(pickableBooks({}, ['mt', 'mk', 'lk', 'jn'])).toEqual(['mt', 'mk', 'lk', 'jn'])
+    expect(pickableBooks({}, BOOKS_WITH_CONTENT)).toContain('ac')
+    expect(pickableBooks({}, BOOKS).slice(0, 5)).toEqual(['mt', 'mk', 'lk', 'jn', 'ac'])
+    expect(pickableBooks({ gospelFeast: 1 }, BOOKS)).toEqual(pickableBooks({ gospelFeast: 2 }, BOOKS))
   })
 
   it('탐정 문제는 사도행전을 보기로 내지 않고, 사도행전 조각으로 탐정 문제를 내지 않는다', () => {
@@ -95,29 +91,19 @@ describe('다섯 번째 책 사도행전', () => {
     expect(books).toBeGreaterThan(0)
   })
 
-  it('사도행전 방 열림 판정은 하나 (actsRoomOpen) — 서고 문 불빛도 같은 판정', () => {
-    for (const [flags, open] of [[{}, false], [{ gospelFeast: 1 }, false], [{ gospelFeast: 2 }, true]] as const) {
-      expect(actsRoomOpen(flags)).toBe(open)
-      expect(actsDoorGlows({ flags })).toBe(open)
-    }
+  it('사도행전 방 열림 판정은 하나 (roomOpen) — 새 게임에서도 열려 있다', () => {
+    for (const flags of [{}, { gospelFeast: 1 }, { gospelFeast: 2 }] as const) expect(roomOpen('acts', flags)).toBe(true)
   })
 
-  it('엔진도 막는다: 방이 열리기 전 chooseBook("ac")은 상태를 그대로 돌려준다', () => {
-    const closed = newGame(withActs)
-    expect(chooseBook(closed, 'ac', withActs)).toBe(closed)
-    const feastDay = { ...closed, flags: { ...closed.flags, gospelFeast: 1 } }
-    expect(chooseBook(feastDay, 'ac', withActs)).toBe(feastDay)
-    const open = chooseBook({ ...closed, flags: { ...closed.flags, gospelFeast: 2 } }, 'ac', withActs)
-    expect(open.activeBook).toBe('ac')
-    // 복음서는 그대로 고를 수 있다
-    expect(chooseBook(closed, 'mk', withActs).activeBook).toBe('mk')
+  it('새 게임에서 chooseBook("ac")이 바로 된다 (방이 처음부터 열려 있다)', () => {
+    const fresh = newGame(withActs)
+    expect(chooseBook(fresh, 'ac', withActs).activeBook).toBe('ac')
+    expect(chooseBook(fresh, 'mk', withActs).activeBook).toBe('mk')
   })
 
-  it('불러올 때 고른 책이 사도행전인데 방이 닫혀 있으면 고른 책을 비운다', () => {
+  it('불러올 때 고른 책이 사도행전이면 방 표식이 없어도 그대로 둔다', () => {
     const s = { ...newGame(withActs), activeBook: 'ac' as const }
-    expect(sanitize(s, withActs).activeBook).toBeNull()
-    expect(sanitize({ ...s, flags: { ...s.flags, gospelFeast: 1 } }, withActs).activeBook).toBeNull()
-    expect(sanitize({ ...s, flags: { ...s.flags, gospelFeast: 2 } }, withActs).activeBook).toBe('ac')
+    expect(sanitize(s, withActs).activeBook).toBe('ac')
   })
 
   it('서고 퀴즈는 탐정을 못 내는 범위(mk만·ac만·mk+ac)에서도 다섯 문제를 채운다', () => {

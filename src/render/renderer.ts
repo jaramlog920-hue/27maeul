@@ -32,9 +32,9 @@ import { FIRE, isNear, npcTile } from '../engine/neighbors'
 import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
 import { childMode, childStage } from '../engine/child'
 import { BOARD, stoneTile, TRIP_H, TRIP_W, tripLayout, type Cell as TripCell } from '../engine/trip-board'
-import { actsDoorGlows, feastToday, sideShelfSpines } from '../engine/library'
+import { feastToday, sideShelfSpines } from '../engine/library'
 import { spineLook } from '../engine/binding'
-import { ACTS_ROOM, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, PAVILION_RECT, HEIGHT, HOUSE_RECT, housesNow, houseAt, LOCKED_DOORS, lockedTiles, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile, treeKind, type TreeKind } from '../engine/world'
+import { ACTS_ROOM, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, PAVILION_RECT, HEIGHT, HOUSE_RECT, housesNow, houseAt, lockedTiles, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile, treeKind, type TreeKind } from '../engine/world'
 import { GOSPELS, type Book, type Facing, type NeighborDef, type GameContent, type Season, type Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { avatarKey, withLookDefaults, type Avatar, type FullAvatar } from '../engine/avatar'
@@ -1906,27 +1906,7 @@ function drawCardBoard(g: Ctx, first: Tile, placed: number, done: boolean) {
   }
 }
 
-/**
- * 잠긴 문틈으로 새는 불빛: 문 둘레의 은은한 빛,가운데 문틈과 문지방의 2픽셀 빛줄기, 방바닥에 번지는 빛.
- * 천천히 숨 쉬듯 밝아졌다 옅어진다 (차분한 파스텔 — 창과 같은 따뜻한 노랑)
- */
-function drawDoorGlow(g: Ctx, door: Tile, t: number) {
-  const px = door.x * TILE
-  const py = door.y * TILE
-  const breathe = 0.5 + 0.5 * Math.sin(t * 1.3)
-  // 문 둘레의 은은한 빛, 오른쪽 방바닥에 계단처럼 옅어지며 번지는 빛 (픽셀 그림답게 네모로)
-  glow(g, px + 9, py + 9, 24, 0.3 + 0.1 * breathe, '246, 213, 142')
-  g.fillStyle = `rgba(248, 222, 160, ${0.28 + 0.1 * breathe})`
-  g.fillRect(px + 16, py + 4, 6, 12)
-  g.fillStyle = `rgba(248, 222, 160, ${0.16 + 0.06 * breathe})`
-  g.fillRect(px + 22, py + 6, 6, 8)
-  // 문틈 (자물쇠 위·아래)과 문지방: 2픽셀 빛줄기
-  g.fillStyle = `rgba(248, 226, 170, ${0.75 + 0.2 * breathe})`
-  g.fillRect(px + 7, py + 3, 2, 5)
-  g.fillRect(px + 7, py + 12, 2, 3)
-  g.fillStyle = `rgba(241, 191, 107, ${0.55 + 0.2 * breathe})`
-  g.fillRect(px + 3, py + 14, 10, 2)
-}
+
 
 function flame(g: Ctx, px: number, py: number, t: number, big = false) {
   const f = Math.floor(t * 8) % 3
@@ -1998,7 +1978,6 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
 
       const outdoors = !isIndoor(here)
       let festOn = false
-      const actsGlow = actsDoorGlows(game) && roomAt(here)?.owner === 'library'
       g.save()
       try {
       g.fillStyle = '#362515'
@@ -2125,8 +2104,6 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
             g.fillRect(x, y, 2, 2)
           }
         }
-        // 잔치 다음 날부터: 사도행전 방 문으로 새는 따뜻한 불빛
-        if (actsGlow) drawDoorGlow(g, LOCKED_DOORS[0], t)
       }
       // 사도행전 방: 선반의 사도행전 책등, 벽 여정 판의 실과 카드 (모은 만큼, 다 이으면 실이 금빛)
       if (roomAt(here) === ACTS_ROOM) {
@@ -2435,7 +2412,6 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           if (desk && game.lampLitDay === day) glow(g, sx(desk.x * TILE + 13), sy(desk.y * TILE + 4), 34, dark * 0.9)
           if (hearth) glow(g, sx(hearth.x * TILE + 8), sy(hearth.y * TILE + 12), 22, dark * 0.6)
           if (festOn) glow(g, sx(FIRE.x * TILE + 8), sy(FIRE.y * TILE + 8), 48, dark)
-          if (actsGlow) glow(g, sx(LOCKED_DOORS[0].x * TILE + 10), sy(LOCKED_DOORS[0].y * TILE + 9), 26, dark * 0.7)
           // 집집마다 창에 불빛
           for (const [x, y] of housesNow().map((h) => [h.doorX, h.y1])) glow(g, sx(x * TILE + 8), sy(y * TILE + 4), 14, dark * 0.5)
           // 길가의 등불

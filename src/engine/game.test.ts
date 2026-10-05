@@ -55,7 +55,6 @@ import type { NeighborDef } from './types'
 import { dayOf, FESTIVAL_FROM, FESTIVAL_TO, festivalOf, isWet, weatherOf } from './calendar'
 import { scheduledEvents } from './events'
 import { FESTIVAL_SPOTS } from './neighbors'
-import { actsDoorGlows } from './library'
 import { ALBUM_IDS, SCENES } from '../content/text'
 
 const zero = () => 0
@@ -365,13 +364,11 @@ describe('복음서 방 완성 잔치', () => {
     expect(ALBUM_IDS).not.toContain('feastFire')
     expect(SCENES.feastFire.photoFor).toBe('gospelFeast')
   })
-  it('두 번째 밤에는 다시 나오지 않고, 잔치 다음 날부터 사도행전 방 문이 빛난다', () => {
+  it('두 번째 밤에는 다시 나오지 않는다', () => {
     const s = goToSleep(night(FOUR), CONTENT)
-    expect(actsDoorGlows(s)).toBe(false)
     const s2 = goToSleep(at({ ...s, scenes: [] }, 22 * 60), CONTENT)
     expect(s2.scenes).not.toContain('gospelFeast')
     expect(s2.flags.gospelFeast).toBe(2)
-    expect(actsDoorGlows(s2)).toBe(true)
     // 잔치 날이 지나면 모닥불 자리로 모이지 않는다 (결말 없이 하루가 이어진다)
     expect(eve(s2, FESTIVAL_FROM + 1).state.npcs.baker.goal).not.toEqual(FESTIVAL_SPOTS.baker)
     const s3 = goToSleep(at({ ...s2, scenes: [] }, 22 * 60), CONTENT)
@@ -415,7 +412,6 @@ describe('복음서 방 완성 잔치', () => {
     const s = goToSleep(night({ mt: 1, mk: 1, lk: 1 }), CONTENT)
     expect(s.scenes).not.toContain('gospelFeast')
     expect(s.flags.gospelFeast).toBeUndefined()
-    expect(actsDoorGlows(s)).toBe(false)
   })
 })
 

@@ -1,7 +1,7 @@
 // 계획 9 작업 4: 요한계시록 방 — 서고 오른쪽 아래 잠긴 문, 한 권 선반·일곱 교회 카드 판·읽는 탁자 (16열·70줄, 지도 높이 80 그대로)
 import { CONTENT } from '../content/catalog'
 import { openDoorsFor } from './books'
-import { goToSleep, newGame, settle, syncHome, type GameState } from './game'
+import { newGame, settle, syncHome, type GameState } from './game'
 import { FURNITURE_DEFS } from './furniture-defs'
 import { findPath } from './movement'
 import { deserialize, serialize } from './save'
@@ -149,23 +149,15 @@ describe('요한계시록 방 자리', () => {
 })
 
 describe('요한계시록 방 문', () => {
-  it('닫혀 있으면 넷째 문은 막혀 있고, 열리면 걸어 들어가는 문(J) — 다른 문은 그대로', () => {
-    syncHome(hebJudFull())
-    expect(tileAt(REV_DOOR.x, REV_DOOR.y)).toBe('K')
-    expect(isWalkable(REV_DOOR)).toBe(false)
-    expect(findPath(lib().entry, REV_DOOR)).toBeNull()
-    expect(openDoors()).toEqual([0, 1, 2])
-    syncHome(revOpen())
+  it('새 게임에서도 넷째 문은 열려 있어 걸어 들어가는 문(J) — 다른 문도 모두 열림', () => {
+    const fresh = newGame(CONTENT)
+    syncHome(fresh)
     expect(tileAt(REV_DOOR.x, REV_DOOR.y)).toBe('J')
+    expect(isWalkable(REV_DOOR)).toBe(true)
     expect(findPath(lib().entry, REV_DOOR)).not.toBeNull()
     for (const d of [ACTS_DOOR, LETTERS_DOOR, HEB_JUD_DOOR]) expect(isWalkable(d)).toBe(true)
     expect(openDoors()).toEqual([0, 1, 2, 3])
-    expect(openDoorsFor(revOpen().flags)).toEqual([0, 1, 2, 3])
-  })
-
-  it('여덟 권을 다 꽂은 날 밤을 자고 나면 문이 열린다', () => {
-    syncHome(goToSleep(hebJudFull(), CONTENT))
-    expect(isWalkable(REV_DOOR)).toBe(true)
+    expect(openDoorsFor(fresh.flags)).toEqual([0, 1, 2, 3])
   })
 
   it('문을 밟으면 방 문깔개 위로, 문깔개를 밟으면 서고 안 그 문 왼쪽으로 (오른쪽 벽)', () => {
@@ -199,10 +191,10 @@ describe('요한계시록 방 문', () => {
 })
 
 describe('저장과 불러오기', () => {
-  it('불러오면 문 상태가 그대로 (열림·닫힘 모두)', () => {
-    setOpenDoors([0, 1, 2, 3])
+  it('불러오면 문이 모두 열린다 (옛 저장에 방 표식이 없어도)', () => {
+    setOpenDoors([])
     deserialize(serialize(hebJudFull()), CONTENT)
-    expect(isWalkable(REV_DOOR)).toBe(false)
+    expect(isWalkable(REV_DOOR)).toBe(true)
     expect(isWalkable(HEB_JUD_DOOR)).toBe(true)
     deserialize(serialize(revOpen()), CONTENT)
     expect(isWalkable(REV_DOOR)).toBe(true)

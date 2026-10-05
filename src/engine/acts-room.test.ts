@@ -30,11 +30,11 @@ function sortBoard(s: GameState): GameState {
 afterEach(() => setOpenDoors([]))
 
 describe('사도행전 방 열림', () => {
-  it('잔치 전·잔치 날에는 서고 문이 막히고, 잔치 다음 날(gospelFeast 2)부터 걸어 들어간다', () => {
+  it('새 게임에서도 서고 문이 열려 있다 (잔치 전·잔치 날·잔치 다음 날 모두 같다)', () => {
     const s = newGame(CONTENT)
-    for (const [feast, open] of [[undefined, false], [1, false], [2, true]] as const) {
+    for (const feast of [undefined, 1, 2] as const) {
       syncHome({ ...s, flags: { ...s.flags, ...(feast ? { gospelFeast: feast } : {}) } })
-      expect(isWalkable(ACTS_DOOR), String(feast)).toBe(open)
+      expect(isWalkable(ACTS_DOOR), String(feast)).toBe(true)
     }
   })
 
@@ -137,10 +137,10 @@ describe('저장과 불러오기', () => {
     expect(deserialize(JSON.stringify(o), CONTENT)!.journey).toEqual(first)
   })
 
-  it('불러오면 지도도 이 저장의 방 열림에 맞춘다', () => {
-    setOpenDoors([0])
+  it('불러오면 지도도 방이 열린 채다 (새 게임 저장도)', () => {
+    setOpenDoors([])
     deserialize(serialize(newGame(CONTENT)), CONTENT)
-    expect(isWalkable(ACTS_DOOR)).toBe(false)
+    expect(isWalkable(ACTS_DOOR)).toBe(true)
     deserialize(serialize(opened()), CONTENT)
     expect(isWalkable(ACTS_DOOR)).toBe(true)
   })

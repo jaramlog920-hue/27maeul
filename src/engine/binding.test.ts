@@ -4,6 +4,7 @@ import { chaptersOf, roomOpen } from './books'
 import { COVER_HEX, DECO_HEX, finishedCopies, sanitizeBindings, SPECIAL_COST, SPINE_DESIGN, spineLook, type SpecialChoice } from './binding'
 import { bindBook, canBind, decorateBook, newGame, type GameState } from './game'
 import { canShelve, shelveNow } from './library'
+import { roomOf } from './shelf-rooms'
 import { deserialize, serialize } from './save'
 import { BOOKS, type Book } from './types'
 
@@ -74,19 +75,15 @@ describe('제본', () => {
     expect(bindBook(s, 'mk', CONTENT).scenes).toEqual(['welcome'])
   })
 
-  it('닫힌 서고 방의 책을 제본하면 그 방이 열린다 (복음서 방은 늘 열려 있다)', () => {
-    const jn2 = bindBook(done('2jn'), '2jn', CONTENT)
-    expect(roomOpen('hebJud', jn2.flags)).toBe(true)
-    expect(jn2.scenes).toContain('roomOpen:hebJud')
-    const ac = bindBook(done('ac'), 'ac', CONTENT)
-    expect(roomOpen('acts', ac.flags)).toBe(true)
-    const mk = bindBook(done('mk'), 'mk', CONTENT)
-    expect(mk.flags).toEqual(done('mk').flags)
-    // 이미 열린 방은 장면을 다시 띄우지 않는다
-    const open = done('2jn', { ...newGame(CONTENT), scenes: [], flags: { ...newGame(CONTENT).flags, 'room:hebJud': 1 } })
-    expect(bindBook(open, '2jn', CONTENT).scenes).not.toContain('roomOpen:hebJud')
+  it('어느 방의 책을 제본해도 방 열림 표식·장면이 서지 않는다 (방은 처음부터 모두 열려 있다)', () => {
+    for (const book of ['2jn', 'ac', 'mk', 'rev'] as const) {
+      const before = done(book)
+      const bound = bindBook(before, book, CONTENT)
+      expect(bound.flags).toEqual(before.flags)
+      expect(bound.scenes.filter((x) => x.startsWith('roomOpen:'))).toEqual([])
+      expect(roomOpen(roomOf(book).id, bound.flags)).toBe(true)
+    }
   })
-
   it('나중에 재료가 생기면 다시 꾸민다 — 완성본도, 이미 꽂은 책도(옛 저장 포함), 등급은 그대로', () => {
     const bound = bindBook(done('mk'), 'mk', CONTENT)
     expect(decorateBook(bound, 'mk', choice)).toBe(bound)

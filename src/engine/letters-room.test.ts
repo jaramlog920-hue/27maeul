@@ -1,7 +1,7 @@
 // 계획 7 작업 7: 로마서–빌레몬서 방 — 서고 왼쪽 아래 잠긴 문, 편지 선반·편지꽂이·읽는 탁자
 import { CONTENT } from '../content/catalog'
 import { openDoorsFor } from './books'
-import { goToSleep, newGame, settle, syncHome, type GameState } from './game'
+import { newGame, settle, syncHome, type GameState } from './game'
 import { findPath } from './movement'
 import { deserialize, serialize } from './save'
 import { shelfRoom } from './shelf-rooms'
@@ -79,31 +79,20 @@ describe('로마서–빌레몬서 방 자리', () => {
 })
 
 describe('로마서–빌레몬서 방 문', () => {
-  it('닫혀 있으면 둘째 문은 막혀 있고, 열리면 걸어 들어가는 문(J) — 첫 문(사도행전 방)은 따로', () => {
-    syncHome(actsShelved())
-    expect(tileAt(LETTERS_DOOR.x, LETTERS_DOOR.y)).toBe('K')
-    expect(isWalkable(LETTERS_DOOR)).toBe(false)
-    expect(findPath(lib().entry, LETTERS_DOOR)).toBeNull()
-    expect(isWalkable(ACTS_DOOR)).toBe(true)
-    syncHome(lettersOpen())
+  it('새 게임에서도 둘째 문은 열려 있어 걸어 들어가는 문(J) — 첫 문(사도행전 방)도 열림', () => {
+    syncHome(newGame(CONTENT))
     expect(tileAt(LETTERS_DOOR.x, LETTERS_DOOR.y)).toBe('J')
     expect(findPath(lib().entry, LETTERS_DOOR)).not.toBeNull()
     expect(isWalkable(ACTS_DOOR)).toBe(true)
-    for (const d of LOCKED_DOORS.slice(2)) expect(isWalkable(d)).toBe(false)
+    for (const d of LOCKED_DOORS) expect(isWalkable(d)).toBe(true)
   })
 
-  it('열린 문 번호는 방 표로 정한다', () => {
-    expect(openDoorsFor({})).toEqual([])
-    expect(openDoorsFor({ gospelFeast: 2 })).toEqual([0])
-    expect(openDoorsFor({ gospelFeast: 2, 'room:romPhm': 1 })).toEqual([0, 1])
+  it('열린 문 번호는 방 표로 정한다 — 방 표식이 없어도 모두', () => {
+    expect(openDoorsFor({})).toEqual([0, 1, 2, 3])
+    expect(openDoorsFor({ gospelFeast: 2 })).toEqual([0, 1, 2, 3])
+    expect(openDoorsFor({ gospelFeast: 2, 'room:romPhm': 1 })).toEqual([0, 1, 2, 3])
     syncHome(lettersOpen())
-    expect(openDoors()).toEqual([0, 1])
-  })
-
-  it('사도행전을 꽂은 날 밤을 자고 나면 문이 열린다', () => {
-    const next = goToSleep(actsShelved(), CONTENT)
-    syncHome(next)
-    expect(isWalkable(LETTERS_DOOR)).toBe(true)
+    expect(openDoors()).toEqual([0, 1, 2, 3])
   })
 
   it('문을 밟으면 방 안으로, 문깔개를 밟으면 서고 안 그 문 오른쪽으로', () => {
@@ -130,10 +119,10 @@ describe('로마서–빌레몬서 방 문', () => {
 })
 
 describe('저장과 불러오기', () => {
-  it('불러오면 문 상태가 그대로 (열림·닫힘 모두)', () => {
-    setOpenDoors([0, 1])
+  it('불러오면 문이 모두 열린다 (옛 저장에 방 표식이 없어도)', () => {
+    setOpenDoors([])
     deserialize(serialize(actsShelved()), CONTENT)
-    expect(isWalkable(LETTERS_DOOR)).toBe(false)
+    expect(isWalkable(LETTERS_DOOR)).toBe(true)
     expect(isWalkable(ACTS_DOOR)).toBe(true)
     deserialize(serialize(lettersOpen()), CONTENT)
     expect(isWalkable(LETTERS_DOOR)).toBe(true)

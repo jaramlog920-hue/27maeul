@@ -47,8 +47,8 @@ import { COVER_FROM, jobOf, SELL_FROM } from './job'
 import { candleKey, candleToBlow, faceToward, weddingEvening } from './event-scene'
 import { FESTIVAL_SPOTS, FIRE, goalFor, isNear, npcTile, placeNpc, stepNpc, type Npc } from './neighbors'
 import { GAIN, heartsOf, MAX_POINTS } from './hearts'
-import { bookDone, bookRoomOpen, chaptersOf, emptyProgress, openDoorsFor, roomOpen, totalChapters, type Progress } from './books'
-import { arrivesOf, modeOf, SHELF_ROOMS } from './shelf-rooms'
+import { bookDone, bookRoomOpen, chaptersOf, emptyProgress, openDoorsFor, totalChapters, type Progress } from './books'
+import { arrivesOf, modeOf } from './shelf-rooms'
 import { currentChapter, mulberry32 } from './offers'
 import { fragmentsForDay, logPieces, talkGiftOf, type PieceLog } from './fragments'
 import { checkCopy, COPY_CHAPTER_XP, copySpot, copyVerses, nextOpenChapter, NO_COPY, NO_COPY_STATS, type CopyCheck, type CopyState, type CopyStats } from './copying'
@@ -2634,11 +2634,6 @@ export function bindBook(s: GameState, book: Book, content: GameContent, special
   const waiting = scenes.indexOf('bookBound')
   if (waiting >= 0) scenes.splice(waiting, 1)
   const flags = { ...paid.flags }
-  const room = SHELF_ROOMS.find((r) => r.books.includes(book))!
-  if (room.id !== 'gospels' && !roomOpen(room.id, flags)) {
-    flags[`room:${room.id}`] = 1
-    if (room.id !== 'acts') scenes.push(`roomOpen:${room.id}`)
-  }
   const binding = special ? { day: s.clock.day, special } : { day: s.clock.day }
   return { ...paid, flags, scenes, bound: { ...paid.bound, [book]: binding } }
 }
@@ -3001,19 +2996,7 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
     flags.actsShip = 2
     scenes.push('actsShip')
   }
-  // ── 서고의 다음 방: 앞 방의 책이 모두 꽂힌 날 밤 → 다음 날 아침 열린다 (사도행전 방 다음부터, 방 표 순서) ──
-  // 콘텐츠가 없는 방은 표식을 세우지 않는다 — 책이 들어온 다음 잠에서 열린다 (요한계시록 방은 계획 9부터 콘텐츠가 있다)
-  for (let i = 2; i < SHELF_ROOMS.length; i++) {
-    const prev = SHELF_ROOMS[i - 1]
-    const room = SHELF_ROOMS[i]
-    if (roomOpen(room.id, flags)) continue
-    const prevFull = prev.books.length > 0 && prev.books.every((b) => s.shelved[b] !== undefined)
-    const hasContent = content.pieces.some((p) => room.books.includes(p.book))
-    if (prevFull && hasContent) {
-      flags[`room:${room.id}`] = 1
-      scenes.push(`roomOpen:${room.id}`)
-    }
-  }
+  // (서고의 방은 모두 처음부터 열려 있다 — 예전의 "앞 방이 차면 다음 방" 열림 장면은 없앴다)
   if (gathering) scenes.push(`notice:${gathering}`)
   // 저녁 모임(아기 잔치·별 보는 밤·복음서 방 잔치·스물일곱 권 잔치)이 있는 날은 저녁 초대를 하지 않는다
   const eveningBusy = gathering === 'babyParty' || gathering === 'starNight' || feastToday({ flags })

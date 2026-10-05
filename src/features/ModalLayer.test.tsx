@@ -744,10 +744,10 @@ describe('선반을 나눠 합친 뒤', () => {
     expect(dexView(got, 'mk', false).list).toHaveLength(v.list.length)
     expect(dexView(got, 'ac', false).list.map((p) => p.id)).toEqual([ac[0].id])
     expect(dexView(got, 'all', true).list.some((p) => p.book === 'ac')).toBe(false)
-    // 서고 방 거르기(책상 고르기)는 그대로: 방이 열리기 전에는 네 복음서만
+    // 서고 방은 처음부터 모두 열려 있다 — 책상 고르기도 방 표식과 상관없이 같다
     const withContent = PIECES.map((p) => p.book)
-    expect(pickableBooks({ gospelFeast: 1 }, withContent)).toEqual(['mt', 'mk', 'lk', 'jn'])
-    expect(pickableBooks({ gospelFeast: 2 }, withContent)).toEqual(['mt', 'mk', 'lk', 'jn', 'ac'])
+    expect(pickableBooks({ gospelFeast: 1 }, withContent)).toEqual(pickableBooks({}, withContent))
+    expect(pickableBooks({}, withContent).slice(0, 5)).toEqual(['mt', 'mk', 'lk', 'jn', 'ac'])
   })
 
   it('말씀 조각: 책 거르기·한 복음서에만·도장, 본문을 보고 와도 고른 책이 남는다', async () => {
@@ -877,14 +877,10 @@ describe('복음서 방 잔치와 사도행전 방 예고', () => {
     act(() => useGame.getState().frame(1))
     expect(useGame.getState().game.clock.minute).toBeGreaterThan(before)
   })
-  it('잔치 날에는 사도행전 방이 잠겨 있고, 다음 날부터 문을 밟고 들어간다 (계획 5 작업 5)', () => {
-    reset({ flags: { heartPoints: 1, gospelFeast: 1 } })
-    act(() => useGame.getState().tap(LOCKED_DOORS[0]))
-    expect(useGame.getState().toast?.text).toBe('사도행전 방은 아직 잠겨 있어요.')
-    // 잔치 다음 날: 서고 안에서 문을 누르면 잠겼다는 말 없이 걸어 들어간다
+  it('사도행전 방 문은 잔치 전에도 잠겨 있지 않아, 서고 안에서 누르면 걸어 들어간다 (2026-10-06)', () => {
     const lib = ROOMS.find((r) => r.owner === 'library')!
     const inLib = WARPS.get(key(lib.door))!
-    reset({ flags: { heartPoints: 1, gospelFeast: 2 }, player: { ...newGame(CONTENT).player, x: inLib.x, y: inLib.y, path: [] } })
+    reset({ flags: { heartPoints: 1 }, player: { ...newGame(CONTENT).player, x: inLib.x, y: inLib.y, path: [] } })
     act(() => useGame.getState().tap(LOCKED_DOORS[0]))
     expect(useGame.getState().toast).toBeNull()
     act(() => {
@@ -892,9 +888,6 @@ describe('복음서 방 잔치와 사도행전 방 예고', () => {
     })
     expect(roomAt(playerTile(useGame.getState().game))).toBe(ACTS_ROOM)
     expect(useGame.getState().toast?.text).toBe('사도행전 방')
-    // 다른 잠긴 방은 그대로
-    act(() => useGame.getState().tap(LOCKED_DOORS[1]))
-    expect(useGame.getState().toast?.text).toContain('아직 잠겨 있어요')
   })
 })
 
@@ -946,11 +939,8 @@ describe('로마서–빌레몬서 방 (계획 7 작업 7)', () => {
   const opened = { heartPoints: 1, gospelFeast: 2, 'room:romPhm': 1 }
   const shelvedAll = { mt: 2, mk: 1, lk: 1, jn: 0, ac: 1 } as const
 
-  it('닫혀 있으면 둘째 문을 누르면 잠겨 있다고, 열리면 걸어 들어가 방 이름을 알린다', () => {
-    reset({ flags: { heartPoints: 1, gospelFeast: 2 }, shelved: shelvedAll, player: { ...newGame(CONTENT).player, ...inLib(), path: [] } })
-    act(() => useGame.getState().tap(LOCKED_DOORS[1]))
-    expect(useGame.getState().toast?.text).toBe('로마서–빌레몬서 방은 아직 잠겨 있어요.')
-    reset({ flags: opened, shelved: shelvedAll, player: { ...newGame(CONTENT).player, ...inLib(), path: [] } })
+  it('둘째 문은 방 표식이 없어도 열려 있어 걸어 들어가 방 이름을 알린다', () => {
+    reset({ flags: { heartPoints: 1 }, shelved: shelvedAll, player: { ...newGame(CONTENT).player, ...inLib(), path: [] } })
     act(() => useGame.getState().tap(LOCKED_DOORS[1]))
     expect(useGame.getState().toast).toBeNull()
     act(() => {
@@ -958,11 +948,7 @@ describe('로마서–빌레몬서 방 (계획 7 작업 7)', () => {
     })
     expect(roomAt(playerTile(useGame.getState().game))).toBe(LETTERS_ROOM)
     expect(useGame.getState().toast?.text).toBe('로마서–빌레몬서 방')
-    // 사도행전 방 문도 그대로 열려 있고, 나머지 둘은 잠겨 있다
-    act(() => useGame.getState().tap(LOCKED_DOORS[2]))
-    expect(useGame.getState().toast?.text).toContain('아직 잠겨 있어요')
   })
-
   it('편지 선반: 열세 권, 다 적은 책은 꽂기 → 편지 서고 퀴즈 → 이 선반으로 돌아온다', async () => {
     const phm = chaptersOf('phm', CONTENT)
     reset({ flags: opened, shelved: shelvedAll, bound: { phm: { day: 1 } }, progress: { ...emptyProgress(), phm: { completed: phm, arrangement: {} } } })
@@ -1002,17 +988,13 @@ describe('로마서–빌레몬서 방 (계획 7 작업 7)', () => {
     expect(useGame.getState().modal).toEqual({ kind: 'roomShelf', room: 'acts' })
   })
 
-  it('서고 안 잠긴 방 목록: 열린 방은 "열려 있어요" (방 표로 판정)', () => {
-    reset({ flags: opened, shelved: shelvedAll })
+  it('서고 안 방 목록: 네 방 모두 "열려 있어요" (새 게임에서도)', () => {
+    reset({ flags: { heartPoints: 1 } })
     useGame.setState({ modal: { kind: 'library' } })
     const { container } = render(<ModalLayer />)
     const items = [...container.querySelectorAll('.library-locked li')].map((li) => li.textContent)
-    expect(items[0]).toBe('사도행전 방 · 열려 있어요')
-    expect(items[1]).toBe('로마서–빌레몬서 방 · 열려 있어요')
-    expect(items[2]).toContain('🔒')
-    expect(items[3]).toContain('🔒')
+    expect(items).toEqual(['사도행전 방', '로마서–빌레몬서 방', '히브리서–유다서 방', '요한계시록 방'].map((r) => `${r} · 열려 있어요`))
   })
-
   it('방이 열린 아침 장면: 성경 본문 없이, 닫으면 앨범에 한 장', async () => {
     reset({ scenes: ['roomOpen:romPhm'], flags: opened, shelved: shelvedAll })
     const user = userEvent.setup()
@@ -1043,11 +1025,8 @@ describe('히브리서–유다서 방 (계획 8 작업 5)', () => {
   const before = { heartPoints: 1, gospelFeast: 2, 'room:romPhm': 1 }
   const opened = { ...before, 'room:hebJud': 1 }
 
-  it('닫혀 있으면 셋째 문을 누르면 잠겨 있다고, 열리면 걸어 들어가 방 이름을 알린다', () => {
-    reset({ flags: before, shelved: shelvedAll, player: { ...newGame(CONTENT).player, ...inLib(), path: [] } })
-    act(() => useGame.getState().tap(LOCKED_DOORS[2]))
-    expect(useGame.getState().toast?.text).toBe('히브리서–유다서 방은 아직 잠겨 있어요.')
-    reset({ flags: opened, shelved: shelvedAll, player: { ...newGame(CONTENT).player, ...inLib(), path: [] } })
+  it('셋째 문도 방 표식이 없어도 열려 있어 걸어 들어가 방 이름을 알린다', () => {
+    reset({ flags: { heartPoints: 1 }, shelved: shelvedAll, player: { ...newGame(CONTENT).player, ...inLib(), path: [] } })
     act(() => useGame.getState().tap(LOCKED_DOORS[2]))
     expect(useGame.getState().toast).toBeNull()
     act(() => {
@@ -1055,11 +1034,7 @@ describe('히브리서–유다서 방 (계획 8 작업 5)', () => {
     })
     expect(roomAt(playerTile(useGame.getState().game))).toBe(HEB_JUD_ROOM)
     expect(useGame.getState().toast?.text).toBe('히브리서–유다서 방')
-    // 넷째 문은 아직 잠겨 있다
-    act(() => useGame.getState().tap(LOCKED_DOORS[3]))
-    expect(useGame.getState().toast?.text).toContain('아직 잠겨 있어요')
   })
-
   it('편지 선반: 여덟 권, 다 적은 책은 꽂기 → 편지 서고 퀴즈 → 이 선반으로 돌아온다', async () => {
     const jn2 = chaptersOf('2jn', CONTENT)
     reset({ flags: opened, shelved: shelvedAll, bound: { '2jn': { day: 1 } }, progress: { ...emptyProgress(), '2jn': { completed: jn2, arrangement: {} } } })

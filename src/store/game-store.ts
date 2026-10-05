@@ -16,8 +16,8 @@ import { DESTS, type DestId } from '../engine/travel'
 import { JOB_GIFTS, kidCoins, ADULT_JOBS, childStage, type AdultJob, type ChildMode } from '../engine/child'
 import type { TripReward } from '../engine/trip-board'
 import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
-import { bookRoomOpen, openDoorsFor } from '../engine/books'
-import { actsDoorGlows, allShelved, canShelve, payRetry, poolFor, shelve, shelveNow as shelveQuick } from '../engine/library'
+import { bookRoomOpen } from '../engine/books'
+import { allShelved, canShelve, payRetry, poolFor, shelve, shelveNow as shelveQuick } from '../engine/library'
 import { DEFAULT_CHOICE, type SpecialChoice } from '../engine/binding'
 import { ALBUM_IDS, fill, itemList, itemName, KID_LETTERS, NEIGHBOR_LINES, roomTitle, SCENES, T, withAnd, withObject, withSubject, callName } from '../content/text'
 import { grapesRipe, isWet, weatherOf } from '../engine/calendar'
@@ -126,7 +126,7 @@ import {
   type SubmitResult,
   type Trade,
 } from '../engine/game'
-import { isHome, LOCKED_DOORS, lockedTiles, lockedZones, roomAt, sameTile, zoneAt } from '../engine/world'
+import { isHome, lockedTiles, lockedZones, roomAt, sameTile, zoneAt } from '../engine/world'
 import { footprint, removal, type Furniture } from '../engine/room'
 import { heartsOf } from '../engine/hearts'
 import { add, count, RECIPES, type Inventory, type RecipeId } from '../engine/items'
@@ -1161,14 +1161,7 @@ export const useGame = create<Store>((set, get) => {
         else set({ decorSel: { item: hit.item, x: hit.x, y: hit.y, on: hit.on } })
         return
       }
-      const locked = LOCKED_DOORS.findIndex((d) => sameTile(d, tile))
-      // 열린 방의 문은 걸어 들어가는 문이다 (아래 tapTile로) — 방 표로 판정
-      if (locked >= 0 && !openDoorsFor(game.flags).includes(locked)) {
-        // 잔치 다음 날부터 첫 잠긴 문(사도행전 방)은 문틈으로 불빛이 샌다 — 문은 아직 잠겨 있다
-        const line = locked === 0 && actsDoorGlows(game) ? T.library.lockedRoomGlow : T.library.lockedRoomTap
-        get().say(fill(line, { room: (T.library.lockedRooms as string[])[locked] }))
-        return
-      }
+      // 서고의 방 문은 모두 처음부터 열려 있다 (걸어 들어가는 문 — 아래 tapTile로)
       const zone = zoneAt(tile)
       if (zone && lockedTiles(shelvedCount(game)).has(`${tile.x},${tile.y}`)) {
         get().say(fill(T.ui.zoneLocked, { n: zone.books }))

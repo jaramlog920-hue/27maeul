@@ -1,6 +1,6 @@
 // 마을 서고: 제본한 완성본을 꽂는다 (설계 §2.4, 계획 14 작업 4). 꽂을 때 [바로 꽂기] 또는 [퀴즈 풀고 금박 책등].
 // 책은 언제나 꽂힌다 — 퀴즈를 고르면 맞힌 만큼 은박·금박, 틀린 구절은 다시 읽을 구절로 돌아온다.
-import { actsRoomOpen, bookDone } from './books'
+import { bookDone } from './books'
 import type { GameState } from './game'
 import { has, take } from './items'
 import { BOOKS, GOSPELS, type Book, type GameContent, type ItemId } from './types'
@@ -85,11 +85,6 @@ export function allFeastReady(s: Pick<GameState, 'shelved' | 'flags'>): boolean 
 /** 오늘이 잔치 날인가 — 복음서 방 잔치 또는 스물일곱 권 잔치 (저녁 광장 모닥불) */
 export function feastToday(s: Pick<GameState, 'flags'>): boolean {
   return s.flags.gospelFeast === 1 || s.flags.allFeast === 1
-}
-
-/** 잔치 다음 날부터 서고의 첫 잠긴 문(사도행전 방)이 은은하게 빛난다 — 사도행전 방이 열린 것과 같은 판정 */
-export function actsDoorGlows(s: Pick<GameState, 'flags'>): boolean {
-  return actsRoomOpen(s.flags)
 }
 
 export function readOff(s: GameState, pieceId: string): GameState {
