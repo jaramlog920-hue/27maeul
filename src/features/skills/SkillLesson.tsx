@@ -8,7 +8,8 @@ import { useGame } from '../../store/game-store'
 import { applyLifeState } from '../work/WorkDay'
 import { HandPractice } from '../work/HandPractice'
 
-export function SkillEntry({npc='carpenter'}:{npc?:string}) {
+/** onOpen을 주면 배우는 화면을 부르는 쪽(말 걸기 창)이 연다 */
+export function SkillEntry({npc='carpenter',onOpen}:{npc?:string;onOpen?:()=>void}) {
   const game=useGame(s=>s.game) as SkillState
   const [opened,setOpened]=useState(false)
   const [shown,setShown]=useState(false)
@@ -17,9 +18,9 @@ export function SkillEntry({npc='carpenter'}:{npc?:string}) {
   const block=canLearnFinish(game,CONTENT)
   if(known) return <><p>{T.skill.known}</p>{canShowFinishedStool(game)&&<button onClick={()=>setShown(true)}>{T.skill.show}</button>}{shown&&<p role="status">{T.skill.reply}</p>}</>
   if(opened) return <FinishLesson close={()=>setOpened(false)}/>
-  return <button disabled={block==='busy'} onClick={()=>{applyLifeState(startFinishLesson(useGame.getState().game,CONTENT));setOpened(true)}}>{T.skill.entry}</button>
+  return <button disabled={block==='busy'} onClick={()=>{applyLifeState(startFinishLesson(useGame.getState().game,CONTENT));if(onOpen)onOpen();else setOpened(true)}}>{T.skill.entry}</button>
 }
-function FinishLesson({close}:{close:()=>void}) {
+export function FinishLesson({close}:{close:()=>void}) {
   const game=useGame(s=>s.game) as SkillState
   const l=game.skillLesson
   const tick=useCallback((dt:number)=>{const s=useGame.getState();applyLifeState(finishLessonHand(s.game,'tick',dt,s.rng),false)},[])

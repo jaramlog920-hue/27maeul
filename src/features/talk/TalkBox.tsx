@@ -1,7 +1,8 @@
 // 이웃과의 생활 대화 — 게임이 지어낸 말. 성경 본문은 이웃이 건넨 말씀 조각·편지의 본문 창으로만 본다.
 import { neighborById } from '../../content/catalog'
-import { WorkEntry } from '../work/WorkDay'
-import { SkillEntry } from '../skills/SkillLesson'
+import { useState } from 'react'
+import { WorkDayView, WorkEntry } from '../work/WorkDay'
+import { FinishLesson, SkillEntry } from '../skills/SkillLesson'
 import { callName, fill, itemList, NEIGHBOR_LINES, T } from '../../content/text'
 import { grapesRipe, isMarketDay } from '../../engine/calendar'
 import { activeRequest, isSuitor, romanceWith, stageWith, type GameState, canHelp, canOrderHome, canOrderWork, GIFTABLE, lessonTime, nextHomeStage } from '../../engine/game'
@@ -35,6 +36,8 @@ export function Hearts({ n }: { n: number }) {
 
 export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) {
   const game = useGame((s) => s.game)
+  // 함께 일하기·배우기를 여는 동안에는 그 화면만 보인다 (선물하기 등 다른 단추를 가린다)
+  const [focus, setFocus] = useState<'work' | 'skill' | null>(null)
   const { startHelp, open, closeModal, startTeach } = useGame.getState()
   // 이웃마다 있던 사기·팔기·받기 단추(주고받기·약방 약초 팔기)는 2026-10-05에 지웠다 — 사고팔기는 장날 좌판에서
   const def = neighborById(modal.neighborId)
@@ -60,6 +63,13 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
   // 편지 나르는 이웃은 말을 걸면 편지를 바로 건넨다 (2026-10-05: 편지 받기 단추 없음) — 건넨 편지 말 한 줄만 보인다
   const post = modal.letter
   const starHint = starPostHint(game, def.id)
+  if (focus)
+    return (
+      <div className="dialog talk" role="dialog" aria-label={def.role}>
+        <p className="talk-role">{def.role}</p>
+        {focus === 'work' ? <WorkDayView npc={def.id} close={() => setFocus(null)} /> : <FinishLesson close={() => setFocus(null)} />}
+      </div>
+    )
   return (
     <div className="dialog talk" role="dialog" aria-label={def.role}>
       <p className="talk-role">
@@ -98,12 +108,11 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
         <button disabled={!canGift} onClick={() => open({ kind: 'gift', neighborId: def.id })}>
           {T.ui.talkGift}
         </button>
-        <WorkEntry npc={def.id} />
-        <SkillEntry npc={def.id} />
+        <WorkEntry npc={def.id} onOpen={() => setFocus('work')} />
+        <SkillEntry npc={def.id} onOpen={() => setFocus('skill')} />
         <button onClick={closeModal}>{T.ui.close}</button>
       </div>
       {block === 'needs' && def.help.needs && <p className="hint">{fill(T.ui.helpNeeds, { items: itemList(def.help.needs) })}</p>}
-      {block === 'done' && <p className="hint">{T.ui.helpDone}</p>}
       {block === 'tired' && <p className="hint">{T.ui.helpTired}</p>}
       {block === 'full' && <p className="hint">{T.ui.bagFull}</p>}
       {active && <p className="hint">{fill(T.ui.requestNeeds, { items: itemList(active.needs) })}</p>}

@@ -10,7 +10,8 @@ export function applyLifeState(next:WorkState,save=true) {
   if(save) saveGame(next)
   useGame.setState({game:next})
 }
-export function WorkEntry({ npc = 'carpenter' }: {npc?:string}) {
+/** onOpen을 주면 여는 일을 부르는 쪽(말 걸기 창)에 맡긴다 — 함께 일하는 동안 다른 단추를 가리려고 */
+export function WorkEntry({ npc = 'carpenter', onOpen }: {npc?:string; onOpen?:()=>void}) {
   const game=useGame(s=>s.game) as WorkState
   const [opened,setOpened]=useState(false)
   const w=game.workDay
@@ -18,7 +19,7 @@ export function WorkEntry({ npc = 'carpenter' }: {npc?:string}) {
   const block=resume?null:canWorkDay(game,npc,CONTENT)
   if(block==='away'||block==='notWorking') return null
   if(opened) return <WorkDayView npc={npc} close={()=>setOpened(false)}/>
-  return <><button disabled={block!==null} onClick={()=>setOpened(true)}>{resume?T.work.resume:T.work.entry}</button>{block && <p className="hint">{T.work.blocks[block]}</p>}</>
+  return <><button disabled={block!==null} onClick={()=>onOpen?onOpen():setOpened(true)}>{resume?T.work.resume:T.work.entry}</button>{block && block!=='done' && <p className="hint">{T.work.blocks[block]}</p>}</>
 }
 export function WorkDayView({npc,close}:{npc:string;close:()=>void}) {
   const game=useGame(s=>s.game) as WorkState
