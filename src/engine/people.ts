@@ -121,6 +121,8 @@ export interface Req {
   placed?: string
   /** 앞 사건의 선택을 마친 날에서 며칠 뒤 (날짜 미상인 옛 저장은 본 사건으로 판단) */
   after?: { event: string; days: number }
+  /** 아직 이사 오지 않은 이웃 — 하나라도 와 있으면 안 맞는다 (계획 16 작업 11: 함께할 이웃 없이도 끝나는 다른 길) */
+  notJoined?: string[]
 }
 
 /** 말을 나누는 사이 (사이 단계와 연애에서) */
@@ -500,6 +502,8 @@ export interface ReqCtx {
   flags?: Record<string, number>
   /** 지금 놓여 있는 이야기 뒤 소품 id */
   placed?: readonly string[]
+  /** 이 이웃이 마을에 이사 와 있는가 (없으면 모두 와 있는 것으로) */
+  joined?: (id: string) => boolean
 }
 
 /** 완료 표식 값: 1 = 끝남, 갈래가 있으면 outcome+1 (계획 16 작업 4가 쓴다) */
@@ -518,6 +522,7 @@ export function reqMet(r: Req | undefined, c: ReqCtx): boolean {
   if (r.seen && !r.seen.every(seen)) return false
   if (r.notSeen && r.notSeen.some(seen)) return false
   if (r.seenAny && !r.seenAny.some(seen)) return false
+  if (r.notJoined && r.notJoined.some((id) => c.joined?.(id) ?? true)) return false
   if (r.after) {
     if (!seen(r.after.event)) return false
     const day = c.life.experiences[`choice:${r.after.event}`]?.last

@@ -16,7 +16,7 @@ import {
   type GameState,
 } from './game'
 import { count } from './items'
-import { hasMemory, NO_LIFE, reqMet, sanitizeLife, setPeopleData, type PeopleData, type SceneLine } from './people'
+import { hasMemory, isOffDay, NO_LIFE, reqMet, sanitizeLife, setPeopleData, type PeopleData, type SceneLine } from './people'
 import type { Tile } from './types'
 import { deserialize, serialize } from './save'
 import { availability } from './plans'
@@ -1054,7 +1054,7 @@ describe('연애 후보 2 — 코스모·루디·덱스터·주니퍼의 이후 
     let s = step(ready({ rudy: 40 }, seen), 'rudy', day, 800, SHOP)
     expect(eventNow(s, 'rudy')?.id).toBe('rudy:story:1')
     s = chooseInEvent(openEvent(s, 'rudy')!, 'rudy:story:1', 2)
-    day = dry(day + 1, (d) => [1, 2, 3, 5, 6].includes(d % 7))
+    day = dry(day + 1, (d) => [1, 2, 3, 6].includes(d % 7))
     s = step(s, 'rudy', day, 1000, SHOP)
     expect(routineOf(s, 'carpenter')?.at).toEqual(SHOP)
     expect(eventNow(stand(s, 'carpenter', { x: 20, y: 20 }), 'rudy')?.id).not.toBe('rudy:story:2')
@@ -1111,7 +1111,9 @@ describe('연애 후보 2 — 코스모·루디·덱스터·주니퍼의 이후 
     expect(npcProps(s, 'dexter')).toEqual(['dexterPaper'])
     // 주니퍼가 말할지 그림일지는 장면 안에서 주니퍼가 — 플레이어 고를 말은 반응뿐 (갈래 없음)
     expect(PEOPLE.people.dexter.events!.find((e) => e.id === 'dexter:story:3')!.choices!.every((c) => c.outcome === undefined)).toBe(true)
-    expect(eventNow(step(s, 'juniper', mon, 980, SHELF), 'juniper')?.id).not.toBe('juniper:story:4') // 같은 날 아님
+    // 덱스터 모임 뒤에는 한 사람 앞 장면 없이 바로 제 방 선반으로
+    expect(reqMet(PEOPLE.people.juniper.events!.find((e) => e.id === 'juniper:story:2')!.req, ctxOf(at(s, mon + 30, 1040), 'juniper'))).toBe(false)
+    expect(reqMet(lineReq('juniper', 'juniper:pickWait'), ctxOf(s, 'juniper'))).toBe(false)
     s = chooseInEvent(openEvent(step(s, 'juniper', mon + 1, 980, SHELF), 'juniper')!, 'juniper:story:4', 1)
     expect(s.flags['story:juniperShow']).toBe(1)
     expect(npcProps(s, 'juniper')).toEqual(['juniperDrawing', 'juniperNotebook'])
@@ -1134,10 +1136,100 @@ describe('연애 후보 2 — 코스모·루디·덱스터·주니퍼의 이후 
     const back = deserialize(serialize(s), CONTENT)!
     expect(npcProps(back, 'juniper')).toEqual(['juniperDrawing', 'juniperNotebook'])
     expect(npcProps(back, 'dexter')).toEqual(['dexterPaper'])
+    // 겨울 첫째 날은 언덕 대신 사랑방 창 (둘 다)
+    const winterMon = at(s, days(mon + 2).find((d) => d % 7 === 1 && seasonOf(d) === 'winter' && !isWet(weatherOf(d)) && !isOffDay(PEOPLE.people.dexter, d) && !isOffDay(PEOPLE.people.juniper, d))!, 1040)
+    expect(routineOf(winterMon, 'dexter')).toMatchObject({ with: 'juniper', at: { x: 11, y: 74 } })
+    expect(routineOf(winterMon, 'juniper')).toMatchObject({ with: 'dexter', at: { x: 12, y: 74 } })
+  })
+
+  it('주니퍼: 덱스터 모임이 없어도 — 그림을 고른 지 이레 뒤 한 사람 앞에서 보여 주고 → 제 방 선반 (어느 쪽이든 하나 본 뒤)', () => {
+    const seen = [...oldSeen('dexter'), ...oldSeen('juniper')]
+    const day = clear(70)
+    let s = step(ready({ juniper: 60 }, seen, IN), 'juniper', day, 1100, JUN)
+    s = chooseInEvent(openEvent(s, 'juniper')!, 'juniper:story:1', 0)
+    // 고르는 장면은 덱스터의 부탁이 아니다 (순서와 상관없이 맞는 말)
+    expect(JSON.stringify(PEOPLE.people.juniper.events!.find((e) => e.id === 'juniper:story:1'))).not.toContain('덱스터')
+    expect(reqMet(lineReq('juniper', 'juniper:pickWait'), ctxOf(s, 'juniper'))).toBe(true)
+    // 이레가 안 됐으면 한 사람 앞 장면도, 선반도 아직
+    expect(eventNow(step(s, 'juniper', clear(day + 1), 1040, JUN), 'juniper')?.id).not.toBe('juniper:story:2')
+    expect(eventNow(step(s, 'juniper', day + 1, 980, SHELF), 'juniper')?.id).not.toBe('juniper:story:4')
+    const week = clear(day + 7)
+    s = step(s, 'juniper', week, 1040, JUN)
+    expect(eventNow(s, 'juniper')?.id).toBe('juniper:story:2')
+    // 덱스터와 비교를 이미 했으면 이 장면은 없다 (모임 쪽으로)
+    expect(reqMet(PEOPLE.people.juniper.events!.find((e) => e.id === 'juniper:story:2')!.req, ctxOf({ ...s, life: { ...s.life, seen: [...s.life.seen, 'dexter:story:2'] } }, 'juniper'))).toBe(false)
+    s = chooseInEvent(openEvent(s, 'juniper')!, 'juniper:story:2', 2)
+    expect(s.life.experiences['choice:juniper:story:2'].with).toEqual(['juniper'])
+    // 고를 말은 반응뿐 (말할지 내밀지는 주니퍼가)
+    expect(PEOPLE.people.juniper.events!.find((e) => e.id === 'juniper:story:2')!.choices!.map((c) => c.color).sort()).toEqual(['honest', 'quiet', 'warm'])
+    expect(reqMet(lineReq('juniper', 'juniper:pickWait'), ctxOf(s, 'juniper'))).toBe(false)
+    s = chooseInEvent(openEvent(step(s, 'juniper', week + 1, 980, SHELF), 'juniper')!, 'juniper:story:4', 0)
+    expect(s.flags['story:juniperShow']).toBe(1)
+    expect(npcProps(s, 'juniper')).toEqual(['juniperDrawing', 'juniperNotebook'])
+    const j4 = JSON.stringify(PEOPLE.people.juniper.events!.find((e) => e.id === 'juniper:story:4'))
+    for (const w of ['모임', '찻집']) expect(j4, w).not.toContain(w)
+    // seenAny: 고른 그림 + (덱스터 모임 또는 한 사람 앞) 중 하나
+    const j4req = PEOPLE.people.juniper.events!.find((e) => e.id === 'juniper:story:4')!.req
+    const withSeen = (ids: string[]) => ctxOf({ ...s, life: { ...s.life, seen: ids } }, 'juniper')
+    expect(reqMet(j4req, withSeen(['juniper:story:1']))).toBe(false)
+    expect(reqMet(j4req, withSeen(['juniper:story:1', 'juniper:story:2']))).toBe(true)
+    expect(reqMet(j4req, withSeen(['juniper:story:1', 'dexter:story:3']))).toBe(true)
+    expect(reqMet(j4req, withSeen(['juniper:story:2', 'dexter:story:3']))).toBe(false)
+  })
+
+  it('덱스터: 주니퍼가 이사 오기 전이면 플레이어와 하늘·땅을 견주고 작은 보기로 끝난다 — 중간에 주니퍼가 와도 막히지 않고, 주니퍼 길과 섞이지 않는다', () => {
+    // 이사 오지 않은 이웃 조건 (없으면 와 있는 것으로)
+    const base = ctxOf(ready({}, []), 'dexter')
+    expect(reqMet({ notJoined: ['juniper'] }, { ...base, joined: () => false })).toBe(true)
+    expect(reqMet({ notJoined: ['juniper'] }, { ...base, joined: (id) => id === 'juniper' })).toBe(false)
+    expect(reqMet({ notJoined: ['juniper'] }, base)).toBe(false)
+    const seen = oldSeen('dexter')
+    let day = clear(70)
+    let s = step(ready({ dexter: 40 }, seen), 'dexter', day, 650, HILL)
+    s = chooseInEvent(openEvent(s, 'dexter')!, 'dexter:story:1', 0)
+    day = clear(day + 1)
+    // 주니퍼가 이사 와 있으면 이 길은 없다
+    expect(eventNow(stand(step({ ...s, flags: { ...s.flags, ...IN } }, 'dexter', day, 1040, VIEW), 'juniper', JUN), 'dexter')?.id).toBe('dexter:story:2')
+    s = step(s, 'dexter', day, 1040, VIEW)
+    expect(eventNow(s, 'dexter')?.id).toBe('dexter:story:2b')
+    s = chooseInEvent(openEvent(s, 'dexter')!, 'dexter:story:2b', 1)
+    expect(s.life.experiences['choice:dexter:story:2b'].with).toEqual(['dexter'])
+    expect(reqMet(lineReq('dexter', 'dexter:viewWaitSolo'), ctxOf(s, 'dexter'))).toBe(true)
+    for (const id of ['dexter:viewWait', 'dexter:formWait', 'dexter:compared']) expect(reqMet(lineReq('dexter', id), ctxOf(s, 'dexter')), id).toBe(false)
+    const mon = clear(day + 1, (d) => d % 7 === 1)
+    // 그사이 주니퍼가 이사 와도 이 길로 끝난다 (주니퍼 모임을 기다리며 멈추지 않는다)
+    const moved = { ...s, flags: { ...s.flags, ...IN } }
+    expect(eventNow(stand(step(moved, 'dexter', mon, 1040, VIEW), 'juniper', JUN), 'dexter')?.id).toBe('dexter:story:3b')
+    s = chooseInEvent(openEvent(step(s, 'dexter', mon, 1040, VIEW), 'dexter')!, 'dexter:story:3b', 2)
+    expect(s.flags['story:dexterViewing']).toBe(1)
+    expect(s.life.experiences['story:dexterViewing'].with).toEqual(['dexter'])
+    expect(npcProps(s, 'dexter')).toEqual(['dexterPaper'])
+    for (const id of ['dexter:after', 'dexter:quietOk', 'dexter:memory', 'dexter:short:market']) expect(reqMet(lineReq('dexter', id), ctxOf(s, 'dexter')), id).toBe(true)
+    // 주니퍼는 함께하지 않았으니 모임 뒷말이 없고, 덱스터의 주니퍼 길은 다시 열리지 않는다
+    expect(reqMet(lineReq('juniper', 'juniper:dexterViewing'), ctxOf(s, 'juniper'))).toBe(false)
+    const later = stand(step({ ...s, flags: { ...s.flags, ...IN } }, 'dexter', clear(mon + 1, (d) => d % 7 === 1), 1040, VIEW), 'juniper', JUN)
+    expect(['dexter:story:2', 'dexter:story:3']).not.toContain(eventNow(later, 'dexter')?.id)
+    // 주니퍼 쪽은 자기 길(한 사람 앞에서)로 이어질 수 있다
+    expect(reqMet(PEOPLE.people.juniper.events!.find((e) => e.id === 'juniper:story:2')!.req, ctxOf({ ...s, life: { ...s.life, seen: [...s.life.seen, 'juniper:story:1'] } }, 'juniper'))).toBe(true)
+    // 계절 말은 주니퍼 없이도 맞는다
+    expect(PEOPLE.people.dexter.lines.filter((l) => l.req?.story?.some((x) => x.id === 'dexterViewing') && !l.req.exp).map((l) => l.text).join()).not.toContain('주니퍼')
+    const back = deserialize(serialize(s), CONTENT)!
+    expect(back.flags['story:dexterViewing']).toBe(1)
+  })
+
+  it('겹친 날: 루디 받침(목수와)은 다섯째 날을 피한다 — 그날은 코스모 보관대 날', () => {
+    const rudy2 = PEOPLE.people.rudy.events!.find((e) => e.id === 'rudy:story:2')!
+    const cosmo2 = PEOPLE.people.cosmo.events!.find((e) => e.id === 'cosmo:story:2')!
+    expect(rudy2.when?.days).toEqual([1, 2, 3, 6])
+    for (const d of cosmo2.when!.days!) expect(rudy2.when!.days).not.toContain(d)
+    const fri = clear(70, (d) => d % 7 === 5)
+    const s = ready({ rudy: 40, cosmo: 40 }, [...oldSeen('rudy'), ...oldSeen('cosmo'), 'rudy:story:1', 'cosmo:story:1'], IN)
+    expect(eventNow(stand(step(s, 'rudy', fri, 1000, SHOP), 'carpenter', SHOP), 'rudy')?.id).not.toBe('rudy:story:2')
+    expect(eventNow(stand(step(s, 'cosmo', fri, 980, DOCK), 'rudy', RUDY_DOCK), 'cosmo')?.id).toBe('cosmo:story:2')
   })
 
   it('구름 모양·벌 운세: 점심·광장 자리에 제 발로 와 있고, 함께한 이웃만 뒷말', () => {
-    const seen = [...oldSeen('dexter'), ...oldSeen('cosmo'), ...oldSeen('juniper'), 'juniper:story:1']
+    const seen = [...oldSeen('dexter'), ...oldSeen('cosmo'), ...oldSeen('juniper'), 'juniper:story:1', 'juniper:story:2']
     const LUNCH = { x: 27, y: 22 }, COSMO_LUNCH = { x: 28, y: 22 }
     const sunny = days(70).find((d) => ['sunny', 'wind'].includes(weatherOf(d)))!
     let s = step(ready({ dexter: 40, cosmo: 40, juniper: 60 }, seen, IN), 'dexter', sunny, 730, LUNCH)
@@ -1181,6 +1273,16 @@ describe('연애 후보 2 — 코스모·루디·덱스터·주니퍼의 이후 
     }
     // 연인일 때 먼저 말하는 곳: 코스모는 물가가 아닌 정자
     expect(PEOPLE.people.cosmo.lines.find((l) => l.id === 'cosmo:rel:lover')!.text).toContain('정자')
+    // 언덕·정자 연인 말은 맑은 날만, 첫마디가 서로 다르다. 배우자 말은 같은 틀(낮엔 … 저녁엔 집에 가요)이 아니다
+    const lover = FOUR.map((npc) => PEOPLE.people[npc].lines.find((l) => l.id === `${npc}:rel:lover`)!)
+    for (const l of lover) expect(l.when?.weather, l.id).toEqual(['dry'])
+    expect(new Set(lover.map((l) => l.text.slice(0, 5))).size).toBe(FOUR.length)
+    for (const npc of [...FOUR, 'tilly']) {
+      const t = PEOPLE.people[npc].lines.find((l) => l.id === `${npc}:rel:spouse`)!.text
+      expect(t, npc).not.toMatch(/^낮엔|저녁엔 집/)
+    }
+    // "제가 정한" 같은 설계 말투는 한 사람에 하나까지
+    for (const npc of FOUR) expect((newText(npc).match(/제가 정|내가 정한|정했어요/g) ?? []).length, npc).toBeLessThanOrEqual(1)
     // 생활 취향은 말에서 직접 알게 된다
     for (const [npc, key] of [['cosmo', 'time.evening'], ['rudy', 'size.small'], ['dexter', 'place.hill'], ['juniper', 'activity.observe']])
       expect(PEOPLE.people[npc].lines.some((l) => l.reveals === key), npc).toBe(true)

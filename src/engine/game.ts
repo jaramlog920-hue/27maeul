@@ -955,6 +955,11 @@ function reqCtx(s: GoalState, npc: string, propsReady = true) {
       if (!propsReady) return []
       return (placed ??= storyPropsNow(s).map((p) => p.id))
     },
+    // 계획 16 작업 11: 아직 이사 오지 않은 이웃 (notJoined) — 그 이웃 없이 끝나는 다른 길
+    joined: (id: string) => {
+      const d = CONTENT_DEFS.get(id)
+      return !d || !notYet(d, s.flags.villageLevel ?? 0, s.flags)
+    },
   }
 }
 

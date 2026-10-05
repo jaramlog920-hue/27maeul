@@ -168,7 +168,12 @@ describe('people.json', () => {
       for (const e of p.events ?? []) {
         for (const c of e.choices ?? []) if (c.outcome !== undefined) expect(e.completes, `${e.id}: 갈래는 completes 사건에만`).toBeDefined()
         if (!e.completes) continue
-        expect(owners.has(e.completes), `${e.completes} 두 번`).toBe(false)
+        // 같은 이야기를 끝내는 다른 길(이웃 없이 끝나는 길 — 계획 16 작업 11)은 서로를 notSeen으로 막을 때만
+        const other = owners.get(e.completes)
+        if (other) {
+          const otherEvent = Object.values(PEOPLE.people).flatMap((q) => q.events ?? []).find((x) => x.id === other)!
+          expect(!!e.req?.notSeen?.includes(other) && !!otherEvent.req?.notSeen?.includes(e.id), `${e.completes} 두 번 (${other}·${e.id})`).toBe(true)
+        }
         owners.set(e.completes, e.id)
         const outs = (e.choices ?? []).map((c) => c.outcome)
         if (outs.some((o) => o !== undefined)) {
