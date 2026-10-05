@@ -9,6 +9,8 @@ import { FURNITURE_DEFS } from '../engine/room'
 import { CANDIDATE_IDS } from '../engine/romance'
 import { allSightings, type Routine, type When } from '../engine/people'
 import type { Tile } from '../engine/types'
+import { newGame, type GameState } from '../engine/game'
+import { deserialize, serialize } from '../engine/save'
 
 const doorOf = (id: string) => CONTENT.neighbors.find((n) => n.id === id)!.door
 const reach = (from: Tile, to: Tile) => findPath(from, to) ?? route(from, to)
@@ -235,5 +237,38 @@ describe('이웃이 부르는 이름', () => {
   it('이웃 말·장면에는 "필사가님"이 없다 — 모두 {player}로 부른다', () => {
     const all = JSON.stringify(PEOPLE) + JSON.stringify(SCENES)
     expect(all.includes('필사가님')).toBe(false)
+  })
+})
+
+describe('양 이야기 (2026-10-05: 잃고 찾는 이야기에서 토끼풀 첫 입으로)', () => {
+  const lamb = PEOPLE.threads.find((t) => t.id === 'lamb')!
+  it('양이 없어지거나 찾는 말이 없다 — 날짜·사람·장면 모양은 그대로', () => {
+    const people = Object.values(PEOPLE.people)
+    const text =
+      JSON.stringify(lamb) +
+      JSON.stringify(people.flatMap((p) => p.lines.filter((l) => l.req?.thread?.id === 'lamb'))) +
+      JSON.stringify(people.flatMap((p) => (p.events ?? []).filter((e) => e.id === 'juniper:lamb' || e.id === 'dexter:count')))
+    for (const w of ['없어졌', '찾았', '찾아 줬', '찾던', '숨어 있었', '모자라요']) expect(text.includes(w), w).toBe(false)
+    expect(lamb.phases.map((p) => p.day)).toEqual([30, 32, 33])
+    expect(allSightings().filter((s) => s.thread === 'lamb').map((s) => [s.id, s.npc, s.memory])).toEqual([
+      ['lamb:clover', 'juniper', 'saw:lambClover'],
+      ['lamb:firstBite', 'basil', 'saw:lambFirstBite'],
+    ])
+    expect(SCENES['saw:lamb:clover'].title).toBe('벌통 들의 토끼풀')
+  })
+  it('옛 저장의 목격·기억·장면 표식은 새 id로 옮겨진다', () => {
+    const s = newGame(CONTENT)
+    const old: GameState = {
+      ...s,
+      life: { ...s.life, seen: ['lamb:found', 'lamb:splint', 'juniper:lamb'], memories: { juniper: [{ tag: 'saw:lambFound', day: 32, weather: 'sunny', season: 'spring' }], basil: [{ tag: 'saw:lambSplint', day: 33, weather: 'sunny', season: 'spring' }] } },
+      scenes: [...s.scenes, 'saw:lamb:found', 'saw:lamb:splint'],
+    } as GameState
+    const back = deserialize(serialize(old), CONTENT)!
+    expect(back.life.seen).toEqual(['lamb:clover', 'lamb:firstBite', 'juniper:lamb'])
+    expect(back.life.memories.juniper.map((m) => m.tag)).toEqual(['saw:lambClover'])
+    expect(back.life.memories.basil.map((m) => m.tag)).toEqual(['saw:lambFirstBite'])
+    expect(back.scenes).toContain('saw:lamb:clover')
+    expect(back.scenes).toContain('saw:lamb:firstBite')
+    expect(back.scenes.some((x) => x.includes('found') || x.includes('splint'))).toBe(false)
   })
 })

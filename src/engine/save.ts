@@ -237,7 +237,15 @@ export function deserialize(raw: string | null, content: GameContent): GameState
   if (!raw) return null
   try {
     // 주막이 약방으로 바뀌었다 (2026-09-30): 옛 저장의 이웃 id(마음·표식·장면·일지)를 함께 옮긴다
-    const o = JSON.parse(raw.replace(/innkeeper/g, 'apothecary'))
+    // 양 이야기가 '잃고 찾기'에서 '토끼풀 첫 입'으로 바뀌었다 (2026-10-05): 옛 목격 id·기억 표식·장면을 새 id로 옮긴다
+    const o = JSON.parse(
+      raw
+        .replace(/innkeeper/g, 'apothecary')
+        .replace(/lamb:found/g, 'lamb:clover')
+        .replace(/lambFound/g, 'lambClover')
+        .replace(/lamb:splint/g, 'lamb:firstBite')
+        .replace(/lambSplint/g, 'lambFirstBite'),
+    )
     if (!isObj(o) || o.version !== SAVE_VERSION) return null
     const ok =
       typeof o.clock?.day === 'number' &&
