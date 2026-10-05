@@ -81,6 +81,8 @@ export interface Routine {
   with?: string
   /** 가까이 지나가면 들리는 혼잣말 (하나를 고른다) */
   mutter?: string[]
+  /** 이 조건이 맞을 때만 고른다 (계획 16 작업 3 — 이야기 뒤 생긴 일과·사라진 일과) */
+  req?: Req
 }
 
 export interface Req {
@@ -454,31 +456,37 @@ export function reqMet(r: Req | undefined, c: ReqCtx): boolean {
 
 // ── 일과 고르기 ──
 
-/** 지금 이 사람이 있을 일과 (마을 사건 > 벗어나는 날 > 평소, 같은 무리에선 조건이 구체적인 것) */
-export function routineNow(p: Person, m: Moment, threads: Thread[]): Routine | null {
+/**
+ * 지금 이 사람이 있을 일과 (마을 사건 > 벗어나는 날 > 평소, 같은 무리에선 조건이 구체적인 것).
+ * ok가 있으면 그것이 받아 주는 일과만 고른다 (계획 16 작업 3: 일과 조건 req·함께할 상대가 있는가) — 아니면 다음 후보로
+ */
+export function routineNow(p: Person, m: Moment, threads: Thread[], ok?: (r: Routine) => boolean): Routine | null {
   for (const t of threads) {
     const ph = threadPhase(t, m.day)
     const list = ph >= 0 && ph < t.phases.length ? t.phases[ph].routines?.[p.id] : undefined
-    const r = list && pickRoutine(list, m)
+    const r = list && pickRoutine(list, m, ok)
     if (r) return r
   }
   if (isOffDay(p, m.day) && p.offDays) {
-    const r = pickRoutine(p.offDays.routines, m)
+    const r = pickRoutine(p.offDays.routines, m, ok)
     if (r) return r
   }
-  return pickRoutine(p.routines, m)
+  return pickRoutine(p.routines, m, ok)
 }
 
-function pickRoutine(list: readonly Routine[], m: Moment): Routine | null {
+function pickRoutine(list: readonly Routine[], m: Moment, ok?: (r: Routine) => boolean): Routine | null {
   let best: Routine | null = null
   let score = -1
   for (const r of list)
-    if (whenMatches(r.when, m) && specificity(r.when) > score) {
+    if (whenMatches(r.when, m) && routineScore(r) > score && (!ok || ok(r))) {
       best = r
-      score = specificity(r.when)
+      score = routineScore(r)
     }
   return best
 }
+
+/** 조건(req)이 걸린 일과는 같은 때의 평소 일과보다 먼저 — 이야기 뒤 바뀐 일과가 옛 일과를 덮는다 */
+const routineScore = (r: Routine) => specificity(r.when) + (r.req ? 3 : 0)
 
 // ── 말 고르기 ──
 

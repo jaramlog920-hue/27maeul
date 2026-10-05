@@ -82,6 +82,7 @@ import {
   buyScroll,
   nextTripPiece,
   mutterWaiting,
+  mutterPartner,
   hearMutter,
   setCompanionStay,
   setChildMode,
@@ -837,7 +838,13 @@ export const useGame = create<Store>((set, get) => {
       }
       // 그 자리에서 흘리던 혼잣말 (계획 6b): 말을 걸면 첫마디로 듣는다 (곁을 지나가기만 해서는 뜨지 않는다)
       const mut = mutterWaiting(g, target.id)
-      if (mut) return { game: persist(hearMutter(g, target.id, mut)), modal: { kind: 'talk', neighborId: target.id, line: mut } }
+      if (mut) {
+        // 둘이 함께인 일과 (계획 16 작업 3): 곁에 상대가 있으면 둘이 나누던 한 줄로 — 상대 이름과 함께
+        const other = mutterPartner(g, target.id)
+        const role = other ? neighborById(other)?.role : undefined
+        const line = role ? fill(T.people.together, { otherAnd: withAnd(role), text: mut }) : mut
+        return { game: persist(hearMutter(g, target.id, mut)), modal: { kind: 'talk', neighborId: target.id, line } }
+      }
       // 살아 움직이는 사람들 (계획 6b): 지금 상황·사이·기억에 맞는 말 (되풀이하지 않는다)
       const pl = g.offers[target.id] || postLine(g, target.id) ? null : personLine(g, target.id, rng())
       if (pl) return { game: persist(pl.state), modal: { kind: 'talk', neighborId: target.id, line: pl.text } }

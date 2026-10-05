@@ -4,7 +4,7 @@ import { callName, SCENES } from './text'
 import { route } from '../engine/neighbors'
 import { findPath } from '../engine/movement'
 import { isWalkable } from '../engine/world'
-import { allSightings } from '../engine/people'
+import { allSightings, type Routine, type When } from '../engine/people'
 import type { Tile } from '../engine/types'
 
 const doorOf = (id: string) => CONTENT.neighbors.find((n) => n.id === id)!.door
@@ -19,6 +19,28 @@ const STORY_IDS: readonly string[] = [
   'dexterViewing', 'basilRest', 'marigoldList', 'penelopeRug', 'tillyHook', 'juniperShow', 'poppyCorner',
 ]
 const speakers = new Set([...CONTENT.neighbors.map((n) => n.id), 'narration'])
+
+// ── 주민끼리 만나는 시간 (계획 16 작업 3) ──
+const dist = (a: Tile, b: Tile) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y)
+const withRoutines = (id: string): Routine[] => {
+  const p = PEOPLE.people[id]
+  return p ? [...p.routines, ...(p.offDays?.routines ?? [])].filter((r) => r.with) : []
+}
+const WET_KINDS = ['rain', 'snow', 'wet']
+function weatherKinds(w: When['weather']): Set<'dry' | 'wet'> {
+  if (!w) return new Set(['dry', 'wet'])
+  return new Set(w.map((x) => (WET_KINDS.includes(x) ? 'wet' : 'dry')))
+}
+/** 두 때 조건이 함께 맞는 순간이 있는가 (시각·요일·날씨·계절) */
+function overlaps(a: When | undefined, b: When | undefined): boolean {
+  const lo = Math.max(a?.from ?? 0, b?.from ?? 0)
+  const hi = Math.min(a?.to ?? 1500, b?.to ?? 1500)
+  if (lo >= hi) return false
+  if (a?.days && b?.days && !a.days.some((d) => b.days!.includes(d))) return false
+  if (a?.season && b?.season && !a.season.some((x) => b.season!.includes(x))) return false
+  const wa = weatherKinds(a?.weather)
+  return [...weatherKinds(b?.weather)].some((x) => wa.has(x))
+}
 
 describe('people.json', () => {
   it('사람은 모두 마을 이웃이다', () => {
@@ -85,13 +107,40 @@ describe('people.json', () => {
     for (const id of STORY_IDS) exps.add(`story:${id}`)
     for (const x of exps) made.add(`exp:${x}`)
     for (const p of Object.values(PEOPLE.people)) {
-      const reqs = [...p.lines.map((l) => l.req), ...(p.events ?? []).map((e) => e.req), ...(p.sightings ?? []).map((w) => w.req)]
+      const reqs = [...p.lines.map((l) => l.req), ...(p.events ?? []).map((e) => e.req), ...(p.sightings ?? []).map((w) => w.req), ...p.routines.map((r) => r.req)]
       for (const r of reqs) {
         for (const m of [...(r?.memory ?? []), ...(r?.notMemory ?? [])]) expect(made.has(m), `${p.id}: ${m}`).toBe(true)
         for (const id of [...(r?.story ?? []).map((x) => x.id), ...(r?.notStory ?? [])]) expect(STORY_IDS.includes(id), `${p.id}: story:${id}`).toBe(true)
         for (const id of [...(r?.exp ?? []), ...(r?.notExp ?? []), ...(r?.recent ? [r.recent.exp] : [])]) expect(exps.has(id), `${p.id}: exp ${id}`).toBe(true)
       }
     }
+  })
+
+  it('함께하는 일과(with)는 상대에게도 겹치는 때·맞닿는 칸(거리 2 이내)의 일과가 있고, 두 칸 모두 걸을 수 있고 각자 집에서 닿는다', () => {
+    for (const p of Object.values(PEOPLE.people))
+      for (const r of withRoutines(p.id)) {
+        const other = PEOPLE.people[r.with!]
+        expect(other, `${p.id} → ${r.with}`).toBeDefined()
+        const match = [...other.routines, ...(other.offDays?.routines ?? [])].find((o) => overlaps(r.when, o.when) && dist(o.at, r.at) <= 2)
+        expect(match, `${p.id} ${r.when?.from}–${r.when?.to} → ${r.with}`).toBeDefined()
+        for (const [who, t] of [[p.id, r.at], [other.id, match!.at]] as [string, Tile][]) {
+          expect(isWalkable(t), `${who} ${t.x},${t.y}`).toBe(true)
+          expect(reach(doorOf(who), t), `${who} ${t.x},${t.y} 길`).not.toBeNull()
+        }
+      }
+  })
+
+  it('맑은 날만 함께하는 일과는 같은 때 궂은 날 대체 일과가 양쪽에 있다 (서로 곁에서)', () => {
+    for (const p of Object.values(PEOPLE.people))
+      for (const r of withRoutines(p.id)) {
+        if (!r.when?.weather || weatherKinds(r.when.weather).has('wet')) continue
+        const wetWhen = { ...r.when, weather: ['wet' as const] }
+        const mine = withRoutines(p.id).find((o) => o.with === r.with && overlaps(wetWhen, o.when) && weatherKinds(o.when?.weather).has('wet'))
+        const theirs = withRoutines(r.with!).find((o) => o.with === p.id && overlaps(wetWhen, o.when) && weatherKinds(o.when?.weather).has('wet'))
+        expect(mine, `${p.id} 궂은 날 ${r.when.from}`).toBeDefined()
+        expect(theirs, `${r.with} 궂은 날 ${r.when.from}`).toBeDefined()
+        expect(dist(mine!.at, theirs!.at), `${p.id}·${r.with} 궂은 날 자리`).toBeLessThanOrEqual(2)
+      }
   })
 
   it('말 id는 사람 안에서 겹치지 않는다 (되풀이 피하기가 id로 센다)', () => {

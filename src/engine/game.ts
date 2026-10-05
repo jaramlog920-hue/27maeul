@@ -307,22 +307,48 @@ export const notYet = (d: NeighborDef, level: number, flags: Record<string, numb
 
 function goalContext(s: GoalState, content: GameContent) {
   rememberDefs(content)
-  const w = weatherOf(s.clock.day)
-  const m = s.clock.minute
   const special: Record<string, Tile | null> = {}
-  // 아직 이사 오지 않은 이웃은 보이지 않는다 — 소개 장면이 나오는 새 날 아침부터 (잠들 때 정한 단계)
-  const level = s.flags.villageLevel ?? 0
-  for (const d of content.neighbors) if (notYet(d, level, s.flags)) special[d.id] = null
-  // 이사 오지 않은 이웃만 따로 기억한다 (아래에서 일과 자리를 넣어도 '이사 옴'은 그대로)
-  const notJoined = new Set(Object.keys(special))
-  const joined = (id: string) => !notJoined.has(id)
+  const meet = meetContext(s, content)
+  for (const d of content.neighbors) if (!meet.joined(d.id)) special[d.id] = null
   // 살아 움직이는 사람들 (계획 6b): 이벤트 자리 > 목격 자리 > 일과 (아래 잔치·모임·사랑방이 덮는다).
   // 아직 열리지 않은 구역(나루·벌통 들…) 안의 자리는 건너뛰고 시간표로 (goalFor가 열린 자리를 고른다)
-  const lockedNow = lockedTiles(shelvedCount(s))
-  for (const d of content.neighbors) if (joined(d.id)) {
-    const at = personSpot(s, d.id)
-    if (at && !lockedNow.has(key(at))) special[d.id] = at
+  for (const d of content.neighbors) if (meet.joined(d.id)) {
+    const at = personSpot(s, d.id, meet)
+    if (at && !meet.locked.has(key(at))) special[d.id] = at
   }
+  Object.assign(special, meet.late)
+  const w = weatherOf(s.clock.day)
+  return {
+    minute: s.clock.minute,
+    wet: isWet(w),
+    market: isMarketDay(s.clock.day),
+    festival: festivalOf(s.clock.day) !== null && !isWet(w),
+    special,
+    locked: meet.locked,
+  }
+}
+
+/** 일과를 고를 때 보는 것 (계획 16 작업 3): 이사 온 이웃, 열리지 않은 칸, 일과 위에 덮이는 자리 */
+interface MeetContext {
+  joined: (id: string) => boolean
+  locked: ReadonlySet<string>
+  /** 일과 위에 덮이는 자리 (아이 놀이·배움, 아침 손님, 이웃 모임, 배우자, 사랑방, 잔치·결혼 잔치) */
+  late: Record<string, Tile>
+}
+
+function meetContext(s: GoalState, content: Pick<GameContent, 'neighbors'>): MeetContext {
+  // 아직 이사 오지 않은 이웃은 보이지 않는다 — 소개 장면이 나오는 새 날 아침부터 (잠들 때 정한 단계)
+  const level = s.flags.villageLevel ?? 0
+  const notJoined = new Set(content.neighbors.filter((d) => notYet(d, level, s.flags)).map((d) => d.id))
+  const joined = (id: string) => !notJoined.has(id)
+  return { joined, locked: lockedTiles(shelvedCount(s)), late: lateSpots(s, content, joined) }
+}
+
+/** 일과 위에 덮이는 자리 — 우선순위는 이벤트 > 목격 > 일과 > (이것들) */
+function lateSpots(s: GoalState, content: Pick<GameContent, 'neighbors'>, joined: (id: string) => boolean): Record<string, Tile> {
+  const w = weatherOf(s.clock.day)
+  const m = s.clock.minute
+  const special: Record<string, Tile> = {}
   // 단짝이 된 아이는 오후에 양 우리 곁에서 논다
   if (s.flags['done:friends'] && m >= FRIENDS_FROM && m < FRIENDS_TO && !isWet(w)) special.child = FRIENDS_SPOT
   if (lessonTime(s)) special.child = LESSON_SPOT
@@ -350,21 +376,19 @@ function goalContext(s: GoalState, content: GameContent) {
     for (const [id, spot] of Object.entries(FESTIVAL_SPOTS)) if (joined(id)) special[id] = spot
     special[r.partner!] = WEDDING_SPOT
   }
-  return {
-    minute: s.clock.minute,
-    wet: isWet(w),
-    market: isMarketDay(s.clock.day),
-    festival: festivalOf(s.clock.day) !== null && !isWet(w),
-    special,
-    locked: lockedTiles(shelvedCount(s)),
-  }
+  // 마을 잔치 저녁 (맑은 날): 일과보다 모닥불이 먼저 (계획 16 작업 3 — 예전엔 일과가 있는 이웃이 일과 자리에 남았다).
+  // 장날만 오는 상인은 장날 잔치에만, 이미 다른 자리(결혼 잔치·배우자…)가 정해진 이웃은 그대로
+  if (festivalOf(s.clock.day) && !isWet(w) && m >= FESTIVAL_FROM && m < FESTIVAL_TO)
+    for (const d of content.neighbors)
+      if (joined(d.id) && FESTIVAL_SPOTS[d.id] && !(d.id in special) && (!d.marketOnly || isMarketDay(s.clock.day))) special[d.id] = FESTIVAL_SPOTS[d.id]
+  return special
 }
 
 /**
  * 오늘 저녁 사랑방에 모이는 이웃 (계획 10). 마을 잔치·이웃 모임·복음서 방 잔치 날 저녁은 모두 그쪽에 가므로 없다.
  * 이사 온 이웃 중에서 (상인·아이 빼고) 날 씨앗으로 셋, 오늘 저녁 초대한 이웃은 제 집에 있으니 뺀다
  */
-export function hallGuestsToday(s: GoalState, content: GameContent): string[] {
+export function hallGuestsToday(s: GoalState, content: Pick<GameContent, 'neighbors'>): string[] {
   const t = s.today ?? NO_TODAY
   if (festivalOf(s.clock.day) || feastToday(s) || weddingToday(s) || t.gathering === 'babyParty' || t.gathering === 'starNight') return []
   const level = s.flags.villageLevel ?? 0
@@ -892,6 +916,17 @@ export function mutterWaiting(s: GameState, npc: string): string | null {
   return r.mutter[Math.floor((((s.clock.day * 7 + npc.length) % 97) / 97) * r.mutter.length)]
 }
 
+/**
+ * 둘이 함께인 일과에서 첫마디를 나누는 상대 (계획 16 작업 3) — 지금 일과가 누구와 함께이고 그 사람이 곁(두 칸 안)에 보일 때만.
+ * 화면은 혼잣말을 상대 이름과 함께 한 줄로 띄운다
+ */
+export function mutterPartner(s: GameState, npc: string): string | null {
+  const n = s.npcs[npc]
+  const o = n?.visible ? routineOf(s, npc)?.with : undefined
+  const m = o ? s.npcs[o] : undefined
+  return o && m?.visible && near(npcTile(m), npcTile(n), 2) ? o : null
+}
+
 /** 혼잣말을 들은 것으로 적는다 */
 export function hearMutter(s: GameState, npc: string, text: string): GameState {
   let life = s.life ?? NO_LIFE
@@ -1021,19 +1056,39 @@ function sightingNow(s: GoalState, npc: string) {
   }
 }
 
-/** 지금 이 사람의 일과 */
-export function routineOf(s: GoalState, npc: string): Routine | null {
+/**
+ * 지금 이 사람의 일과. 계획 16 작업 3: 조건(req)이 맞지 않는 일과는 고르지 않고,
+ * 함께하는 일과(with)는 상대가 이사 와 있고 다른 특별한 자리(이벤트·목격·방문·모임·사랑방·잔치)에 가 있지 않으며
+ * 상대의 지금 일과도 곁(거리 2 이내)일 때만 — 아니면 그 일과를 건너뛰고 다음 후보로 (혼자 상대를 기다리지 않는다)
+ */
+export function routineOf(s: GoalState, npc: string, meet?: MeetContext): Routine | null {
+  return routineIn(s, npc, meet ?? meetContext(s, { neighbors: [...CONTENT_DEFS.values()] }), 0)
+}
+
+function routineIn(s: GoalState, npc: string, meet: MeetContext, depth: number): Routine | null {
   const p = personOf(npc)
-  return p ? routineNow(p, momentOf(s), peopleData().threads) : null
+  if (!p) return null
+  const ctx = reqCtx(s, npc)
+  return routineNow(p, momentOf(s), peopleData().threads, (r) => reqMet(r.req, ctx) && (!r.with || partnerHere(s, r, npc, meet, depth)))
+}
+
+/** 함께하는 일과의 상대가 지금 곁에 올 수 있는가 (상대 쪽에서 한 번만 되묻는다 — 서로 끝없이 묻지 않게) */
+function partnerHere(s: GoalState, r: Routine, npc: string, meet: MeetContext, depth: number): boolean {
+  const o = r.with!
+  if (meet.locked.has(key(r.at)) || !meet.joined(o) || o in meet.late) return false
+  if (eventNow(s, o) || sightingNow(s, o)) return false
+  if (depth > 0) return true
+  const theirs = routineIn(s, o, meet, depth + 1)
+  return !!theirs && !meet.locked.has(key(theirs.at)) && near(theirs.at, r.at, 2) && (!theirs.with || theirs.with === npc)
 }
 
 /** 이 사람이 지금 가 있을 곳 (없으면 neighbors.json 시간표) */
-function personSpot(s: GoalState, npc: string): Tile | null {
+function personSpot(s: GoalState, npc: string, meet: MeetContext): Tile | null {
   const e = eventNow(s, npc)
   if (e) return e.at
   const w = sightingNow(s, npc)
   if (w) return w.at
-  return routineOf(s, npc)?.at ?? null
+  return routineOf(s, npc, meet)?.at ?? null
 }
 
 const near = (a: Tile, b: Tile, d: number) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y) <= d
