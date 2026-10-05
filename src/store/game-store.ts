@@ -16,7 +16,6 @@ import { DESTS, type DestId } from '../engine/travel'
 import { JOB_GIFTS, kidCoins, ADULT_JOBS, childStage, type AdultJob, type ChildMode } from '../engine/child'
 import type { TripReward } from '../engine/trip-board'
 import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
-import { bookRoomOpen } from '../engine/books'
 import { allShelved, canShelve, payRetry, poolFor, shelve, shelveNow as shelveQuick } from '../engine/library'
 import { DEFAULT_CHOICE, type SpecialChoice } from '../engine/binding'
 import { ALBUM_IDS, fill, itemList, itemName, KID_LETTERS, NEIGHBOR_LINES, roomTitle, SCENES, T, withAnd, withObject, withSubject, callName } from '../content/text'
@@ -136,7 +135,7 @@ import { plant, water, harvest, type CropId } from '../engine/garden'
 import { finishNow, HOLD_UP, isDone, startMini, stepMini, tapMini, type MiniState } from '../engine/minigame'
 import { finishLetter, letterPay, letterWaiting } from '../engine/requests'
 import { POSTMAN } from '../engine/post'
-import { arrivesOf, modeOf, roomOf, shelfRoom, type ShelfRoomId } from '../engine/shelf-rooms'
+import { modeOf, roomOf, shelfRoom, type ShelfRoomId } from '../engine/shelf-rooms'
 import { saveGame } from '../engine/save'
 import { isFinished, toggleHomeBook } from '../engine/finished-books'
 import { moveItem } from '../engine/scroll'
@@ -653,24 +652,10 @@ function gotLine(pieceIds: readonly string[], one: string, many: string): string
   return pieceIds.length === 1 ? fill(one, { title: pieceById(pieceIds[0]).title }) : fill(many, { n: pieceIds.length })
 }
 
-/**
- * 낮에 편지 나르는 이웃에게 말을 걸면: 지금 책이 별 보는 밤에 오는 책(요한계시록)이고 방이 열렸고 아직 받을 장이 남았으면
- * 언덕 편지함 안내 한 줄 (이웃은 건네지 않는다 — 밤 언덕에는 이웃이 나오지 않는다, 계획 9 작업 2)
- */
-export function starPostHint(game: GameState, neighborId: string): string | null {
-  const book = game.activeBook
-  if (neighborId !== POSTMAN || !book || modeOf(book) !== 'letters' || arrivesOf(book) !== 'stars' || !bookRoomOpen(book, game.flags)) return null
-  return piecesOf(book).some((p) => !game.collected.includes(p.id)) ? T.post.revHint : null
-}
-
-/** 언덕 편지함에서 꺼낸 장 알림 */
+/** 언덕 편지함에서 꺼낸 말씀 조각 알림 (한 조각) */
 function starsLine(pieceIds: readonly string[]): string {
-  const ps = pieceIds.map(pieceById).sort((a, b) => a.chapter - b.chapter)
-  const book = (T.quiz.books as Record<string, string>)[ps[0].book]
-  if (ps.length === 1) return fill(T.post.starsBringOne, { book, chapter: ps[0].chapter })
-  return fill(T.post.starsBring, { n: ps.length, book, from: ps[0].chapter, to: ps[ps.length - 1].chapter })
+  return fill(T.post.starsGot, { title: pieceById(pieceIds[0]).title })
 }
-
 function lineFor(game: GameState, neighborId: string, rng: Rng): string {
   const l = NEIGHBOR_LINES[neighborId]
   if (!l) return ''
@@ -1346,7 +1331,7 @@ export const useGame = create<Store>((set, get) => {
 
     goTrip: (dest, buys, rewards = []) => {
       // 성경 구절은 판 위가 아니라 집에 돌아와 조용할 때 — 여행길에서 들은 이야기 한 조각 (원래 쓰던 본문 창)
-      const piece = nextTripPiece(get().game, CONTENT)
+      const piece = nextTripPiece(get().game, CONTENT, [], `trip:${dest}`)
       const next = takeTrip(get().game, CONTENT, dest, buys, piece ? [...rewards, { kind: 'piece', id: piece }] : rewards)
       if (!next) return
       set({ game: persist(next), modal: piece ? { kind: 'passage', pieceId: piece, askLine: false } : null })

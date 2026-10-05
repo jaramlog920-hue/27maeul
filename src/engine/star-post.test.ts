@@ -1,52 +1,25 @@
-// 계획 9 작업 2: 별 보는 밤에 받는 장 — 맑은 밤 언덕 "별 보기"로 편지함에서 요한계시록을 한두 장씩
-import { CONTENT, piecesOf } from '../content/catalog'
-import { T } from '../content/text'
+// 맑은 밤 언덕 "별 보기"로 편지함에서 말씀 조각 하나를 꺼낸다 (2026-10-06: 27권 전체의 아직 없는 조각 무작위 하나 —
+// 예전의 요한계시록 전용 "한 밤 1–2장, 장 순서" 몫은 없앴다)
+import { CONTENT, PIECES } from '../content/catalog'
 import { hillMailbox, HILL_MAILBOX, LANTERNS } from '../render/decor'
 import { HILL_SPOTS } from './bonds'
 import { isWet, weatherOf } from './calendar'
-import { chooseBook, goToSleep, listen, newGame, stargaze, starsOut, type GameState } from './game'
-import { POSTMAN, postCountOf, starPostCountOf, starPostFor } from './post'
-import { deserialize, sanitize, serialize } from './save'
+import { chooseBook, goToSleep, newGame, stargaze, starsOut, type GameState } from './game'
+import { deserialize, serialize } from './save'
 import { isWalkable, PLACES, tileAt } from './world'
-import { postLine, starPostHint } from '../store/game-store'
 
-const REV = piecesOf('rev')
 const clear = (d: number) => !isWet(weatherOf(d)) && weatherOf(d) !== 'fog'
 const DAYS = [...Array(200).keys()].map((d) => d + 1)
 const CLEAR_DAYS = DAYS.filter(clear)
 const WET_DAYS = DAYS.filter((d) => isWet(weatherOf(d)))
 const FOG_DAYS = DAYS.filter((d) => weatherOf(d) === 'fog')
-const chapterOf = (id: string) => Number(id.slice(-3))
 
-/** 요한계시록 방까지 열리고 요한계시록을 고른 상태, 그날 그 시각 */
-function revState(day: number, minute = 22 * 60): GameState {
+/** 새 게임(서고 방은 처음부터 모두 열려 있다), 그날 그 시각 */
+function nightState(day: number, minute = 22 * 60): GameState {
   const s = newGame(CONTENT)
-  const open = { ...s, clock: { day, minute }, flags: { ...s.flags, gospelFeast: 2, 'room:romPhm': 1, 'room:hebJud': 1, 'room:rev': 1 } }
-  return chooseBook(open, 'rev', CONTENT)
+  return { ...s, clock: { day, minute } }
 }
 const at = (s: GameState, day: number, minute: number): GameState => ({ ...s, clock: { day, minute } })
-
-describe('starPostFor — 아직 받지 않은 장을 장 순서대로 한 밤 1–2장', () => {
-  it('한 밤 1장 또는 2장, 둘 다 나오고 같은 날은 같은 결과, 낮 편지 수와 곱수가 다르다', () => {
-    const counts = new Set<number>()
-    let differs = false
-    for (const day of DAYS.slice(0, 60)) {
-      const got = starPostFor({ day, book: 'rev', chapters: REV, delivered: [] })
-      expect(got.length).toBe(starPostCountOf(day))
-      expect(got).toEqual(REV.slice(0, got.length).map((p) => p.id))
-      counts.add(got.length)
-      if (got.length !== postCountOf(day)) differs = true
-    }
-    expect([...counts].sort()).toEqual([1, 2])
-    expect(differs).toBe(true)
-  })
-
-  it('받은 장은 건너뛰고, 끝 장 다음엔 빈 배열', () => {
-    const all = REV.map((p) => p.id)
-    expect(starPostFor({ day: 1, book: 'rev', chapters: REV, delivered: all.slice(0, 21) })).toEqual(['rev-022'])
-    expect(starPostFor({ day: 1, book: 'rev', chapters: REV, delivered: all })).toEqual([])
-  })
-})
 
 describe('starsOut — 별은 저녁 여덟 시부터', () => {
   it('20:00 이후(시간이 멈추는 02:00까지)나 05:00 전', () => {
@@ -60,136 +33,109 @@ describe('starsOut — 별은 저녁 여덟 시부터', () => {
   })
 })
 
-describe('stargaze — 맑은 밤 별 보기로 편지함에서 꺼낸다', () => {
-  it('① 맑은 밤 22:00 → 1장부터 1–2장, 같은 밤 두 번째는 없음, 다음 맑은 밤에 이어서', () => {
-    const [d1, d2] = CLEAR_DAYS
-    const r = stargaze(revState(d1), CONTENT)
-    expect(r.pieceIds).toEqual(REV.slice(0, starPostCountOf(d1)).map((p) => p.id))
-    for (const id of r.pieceIds) {
-      expect(r.state.collected).toContain(id)
-      expect(r.state.todayHeard).toContain(id)
-      expect(r.state.progress.rev.arrangement[chapterOf(id)]).toEqual([id])
-    }
+describe('stargaze — 맑은 밤 별 보기로 편지함에서 한 조각을 꺼낸다', () => {
+  it('① 맑은 밤 22:00 → 정확히 한 조각, 같은 밤 두 번째는 없음, 같은 날은 같은 조각 (불러와도 그대로)', () => {
+    const d = CLEAR_DAYS[0]
+    const r = stargaze(nightState(d), CONTENT)
+    expect(r.pieceIds).toHaveLength(1)
+    const [id] = r.pieceIds
+    expect(PIECES.some((p) => p.id === id)).toBe(true)
+    expect(r.state.collected).toContain(id)
+    expect(r.state.todayHeard).toContain(id)
+    expect(r.state.pieceLog[id]).toEqual({ day: d, from: 'stars' })
     // 같은 밤 다시 보면 없다 (쉬기와 20분은 그대로)
     const again = stargaze(r.state, CONTENT)
     expect(again.pieceIds).toEqual([])
     expect(again.state.collected).toEqual(r.state.collected)
     expect(again.state.clock.minute).toBe(r.state.clock.minute + 20)
-    // 다음 맑은 밤: 받은 다음 장부터
-    const next = goToSleep(at(r.state, d2 - 1, 22 * 60), CONTENT)
-    const r2 = stargaze(at(next, d2, 22 * 60), CONTENT)
-    const n = r.pieceIds.length
-    expect(r2.pieceIds).toEqual(REV.slice(n, n + starPostCountOf(d2)).map((p) => p.id))
+    // 같은 상태에서 다시 하면 같은 조각 (날 씨앗)
+    expect(stargaze(nightState(d), CONTENT).pieceIds).toEqual([id])
   })
 
-  it('② 낮 12:00·19:00에는 없음, 20:30에는 있음, 01:00에도 그 날 몫은 한 번뿐', () => {
+  it('② 낮 12:00·19:00에는 없음, 20:30에는 하나, 01:00에도 그 날 몫은 한 번뿐', () => {
     const d = CLEAR_DAYS[0]
-    expect(stargaze(revState(d, 12 * 60), CONTENT).pieceIds).toEqual([])
-    expect(stargaze(revState(d, 19 * 60), CONTENT).pieceIds).toEqual([])
-    expect(stargaze(revState(d, 20 * 60 + 30), CONTENT).pieceIds.length).toBeGreaterThan(0)
+    expect(stargaze(nightState(d, 12 * 60), CONTENT).pieceIds).toEqual([])
+    expect(stargaze(nightState(d, 19 * 60), CONTENT).pieceIds).toEqual([])
+    expect(stargaze(nightState(d, 20 * 60 + 30), CONTENT).pieceIds).toHaveLength(1)
     // 22:00에 받았으면 01:00(아직 같은 날)에는 없다
-    const took = stargaze(revState(d), CONTENT).state
+    const took = stargaze(nightState(d), CONTENT).state
     expect(stargaze(at(took, d, 25 * 60), CONTENT).pieceIds).toEqual([])
     // 받지 않았으면 01:00에도 받는다
-    expect(stargaze(revState(d, 25 * 60), CONTENT).pieceIds.length).toBeGreaterThan(0)
+    expect(stargaze(nightState(d, 25 * 60), CONTENT).pieceIds).toHaveLength(1)
   })
 
   it('③ 비·눈·안개 날 밤에는 없음 — 궂은 밤 몫은 쌓이지 않는다', () => {
     expect(WET_DAYS.length).toBeGreaterThan(0)
     expect(FOG_DAYS.length).toBeGreaterThan(0)
     for (const d of [...WET_DAYS.slice(0, 5), ...FOG_DAYS.slice(0, 3)]) {
-      const r = stargaze(revState(d), CONTENT)
+      const r = stargaze(nightState(d), CONTENT)
       expect(r.pieceIds, `day ${d}`).toEqual([])
-      expect(r.state.collected.some((id) => id.startsWith('rev-'))).toBe(false)
+      expect(r.state.collected).toEqual([])
     }
-    // 궂은 밤 뒤 맑은 밤: 밀린 몫 없이 그 밤 몫만
+    // 궂은 밤 뒤 맑은 밤: 밀린 몫 없이 그 밤 한 조각만
     const wet = WET_DAYS[0]
     const nextClear = CLEAR_DAYS.find((d) => d > wet)!
-    const r = stargaze(revState(nextClear), CONTENT)
-    expect(r.pieceIds.length).toBe(starPostCountOf(nextClear))
+    expect(stargaze(nightState(nextClear), CONTENT).pieceIds).toHaveLength(1)
   })
 
-  it('④ 지금 책이 다른 책이면 없음, 방은 새 게임부터 열려 있어 요한계시록을 바로 고른다', () => {
+  it('④ 지금 고른 책이 무엇이든(없든) 같다 — 27권 중 아직 없는 조각 하나', () => {
     const d = CLEAR_DAYS[0]
-    const rom = chooseBook(revState(d), 'rom', CONTENT)
-    expect(rom.activeBook).toBe('rom')
-    expect(stargaze(rom, CONTENT).pieceIds).toEqual([])
-    // 방이 처음부터 열려 있으므로 새 게임에서도 요한계시록을 고를 수 있다
-    expect(chooseBook(newGame(CONTENT), 'rev', CONTENT).activeBook).toBe('rev')
+    const none = stargaze(nightState(d), CONTENT).pieceIds
+    for (const book of ['mt', 'rom', 'rev'] as const) {
+      const picked = chooseBook(nightState(d), book, CONTENT)
+      expect(picked.activeBook).toBe(book)
+      expect(stargaze(picked, CONTENT).pieceIds, book).toEqual(none)
+    }
   })
 
-  it('맑은 밤 stars 장면은 전처럼 한 번 (편지를 받은 밤에도 함께)', () => {
-    const d = CLEAR_DAYS[0]
-    const r = stargaze(revState(d), CONTENT)
+  it('⑤ 요한계시록 방과 상관없이 새 게임에서도 받고, 맑은 밤마다 다른 조각 (이미 받은 조각은 다시 오지 않는다)', () => {
+    let s = nightState(1)
+    const seen = new Set<string>()
+    for (const d of CLEAR_DAYS.slice(0, 40)) {
+      s = at(s, d, 22 * 60)
+      const r = stargaze(s, CONTENT)
+      expect(r.pieceIds, `day ${d}`).toHaveLength(1)
+      expect(seen.has(r.pieceIds[0]), `dup ${r.pieceIds[0]}`).toBe(false)
+      seen.add(r.pieceIds[0])
+      s = r.state
+    }
+    // 여러 책에서 나온다 (복음서·사도행전·편지·요한계시록 어느 조각이든 될 수 있다)
+    expect(new Set([...seen].map((id) => id.split('-')[0])).size).toBeGreaterThan(5)
+  })
+
+  it('⑥ 27권 조각을 다 모았으면 아무것도 받지 않고, 별 장면·20분은 그대로 (오류 없음)', () => {
+    const all = nightState(CLEAR_DAYS[0])
+    const full = { ...all, collected: PIECES.map((p) => p.id) }
+    const r = stargaze(full, CONTENT)
+    expect(r.pieceIds).toEqual([])
+    expect(r.state.collected).toEqual(full.collected)
+    expect(r.state.clock.minute).toBe(full.clock.minute + 20)
+    expect(r.state.scenes).toContain('stars')
+  })
+
+  it('맑은 밤 stars 장면은 전처럼 한 번 (조각을 받은 밤에도 함께)', () => {
+    const r = stargaze(nightState(CLEAR_DAYS[0]), CONTENT)
     expect(r.state.scenes).toContain('stars')
     expect(stargaze(r.state, CONTENT).state.scenes.filter((x) => x === 'stars')).toHaveLength(1)
   })
 })
 
-describe('⑤ 낮의 편지 나르는 이웃은 요한계시록을 건네지 않는다', () => {
-  it('post가 비고, 편지 받기 말도 없고, 받을 것도 없다 — 대신 언덕 편지함 안내 한 줄', () => {
-    const s = revState(CLEAR_DAYS[0], 10 * 60)
+describe('⑦ 낮의 편지 나르는 이웃은 별 편지함 일을 하지 않는다', () => {
+  it('별 보기로 받은 조각은 편지 바구니(post)를 건드리지 않고, 자도 post는 말씀 조각 날에만 하나', () => {
+    const s = nightState(CLEAR_DAYS[0], 10 * 60)
     expect(s.post).toEqual([])
     expect(s.offers).toEqual({})
-    expect(postLine(s, POSTMAN)).toBeNull()
-    const r = listen(s, POSTMAN, CONTENT)
-    expect(r.pieceId).toBeNull()
-    expect(goToSleep(s, CONTENT).post).toEqual([])
-    expect(starPostHint(s, POSTMAN)).toBe(T.post.revHint)
-    expect(starPostHint(s, 'baker')).toBeNull()
-    // 다 받았으면 안내도 없다
-    expect(starPostHint({ ...s, collected: REV.map((p) => p.id) }, POSTMAN)).toBeNull()
-    // 다른 편지 책이면 안내 없음
-    expect(starPostHint(chooseBook(s, 'rom', CONTENT), POSTMAN)).toBeNull()
-  })
-
-  it('드문 편지(말씀 조각, 계획 14 작업 5)에 든 요한계시록 조각은 불러와도 남는다 — 이미 받은 장은 빠진다', () => {
-    const s = revState(CLEAR_DAYS[0], 10 * 60)
-    expect(sanitize({ ...s, post: ['rev-002'] }, CONTENT).post).toEqual(['rev-002'])
-    expect(sanitize({ ...s, post: ['rev-002'], collected: [...s.collected, 'rev-002'] }, CONTENT).post).toEqual([])
+    const slept = goToSleep(s, CONTENT)
+    expect(slept.post.length).toBeLessThanOrEqual(1)
   })
 })
 
-describe('⑥ 저장과 불러오기', () => {
-  it('받은 장이 남고, 같은 밤 다시 받지 않는다', () => {
-    const r = stargaze(revState(CLEAR_DAYS[0]), CONTENT)
+describe('⑧ 저장과 불러오기', () => {
+  it('받은 조각이 남고, 같은 밤 다시 받지 않는다', () => {
+    const r = stargaze(nightState(CLEAR_DAYS[0]), CONTENT)
     const back = deserialize(serialize(r.state), CONTENT)!
     for (const id of r.pieceIds) expect(back.collected).toContain(id)
-    expect(back.activeBook).toBe('rev')
     expect(stargaze(back, CONTENT).pieceIds).toEqual([])
-  })
-})
-
-/** 방이 열린 날부터 매일 밤 22:00 언덕에서 별 보기 → 22장을 다 받는 날 */
-function daysToCollectAll(start: number): { days: number; clearNights: number } {
-  let s = revState(start)
-  let clearNights = 0
-  for (let i = 0; i < 400; i++) {
-    const day = start + i
-    s = at(s, day, 22 * 60)
-    const r = stargaze(s, CONTENT)
-    if (r.pieceIds.length) clearNights++
-    s = r.state
-    if (REV.every((p) => s.collected.includes(p.id))) return { days: i + 1, clearNights }
-    s = goToSleep(s, CONTENT)
-  }
-  throw new Error('never')
-}
-
-describe('⑦ 시뮬레이션 — 매일 밤 별을 보면 22장을 다 받는 날 수', () => {
-  // 잰 값(2026-09-30): 1일에 열리면 맑은 밤 15번·16일. 1–112일(네 해 계절 한 바퀴씩) 어느 날에 열려도 맑은 밤 12–15번, 15–24일 (평균 약 20일)
-  it('1일에 열리면 맑은 밤 14번·18일째에 22장을 다 받는다 (한 계절 40일)', () => {
-    expect(daysToCollectAll(1)).toEqual({ days: 18, clearNights: 14 })
-  })
-
-  it('방이 열린 날이 1–112일 어느 날이어도 맑은 밤 12–16번, 30일 안에 (한 계절 40일이라 궂은 날이 몰릴 수 있다)', () => {
-    const runs = DAYS.slice(0, 112).map(daysToCollectAll)
-    for (const r of runs) {
-      expect(r.clearNights).toBeGreaterThanOrEqual(12)
-      expect(r.clearNights).toBeLessThanOrEqual(16)
-      expect(r.days).toBeGreaterThanOrEqual(r.clearNights)
-      expect(r.days).toBeLessThanOrEqual(30)
-    }
   })
 })
 
@@ -207,7 +153,7 @@ describe('언덕 편지함 그림 자리', () => {
     expect(Math.abs(bench.x - HILL_MAILBOX.x) + Math.abs(bench.y - HILL_MAILBOX.y)).toBe(1)
   })
 
-  it('요한계시록 방이 처음부터 열려 있어 새 게임에서도 보인다', () => {
+  it('요한계시록 방과 상관없이 새 게임에서도 보인다', () => {
     const s = newGame(CONTENT)
     expect(hillMailbox(s)).toEqual(HILL_MAILBOX)
   })

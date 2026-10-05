@@ -639,10 +639,10 @@ describe('자리마다 제 창이 열린다', () => {
 describe('언덕 별 보기 (계획 9 작업 2)', () => {
   const clearDay = [...Array(60).keys()].map((d) => d + 1).find((d) => !isWet(weatherOf(d)) && weatherOf(d) !== 'fog')!
   const wetDay = [...Array(60).keys()].map((d) => d + 1).find((d) => isWet(weatherOf(d)))!
-  /** 요한계시록 방이 열리고 요한계시록을 고른 상태 */
+  /** 새 게임 + 요한계시록을 고른 상태 (고른 책과 상관없이 별 편지함은 같다) */
   function revChosen(day: number, minute: number) {
     const s = newGame(CONTENT)
-    const open = { ...s, clock: { day, minute }, flags: { ...s.flags, gospelFeast: 2, 'room:romPhm': 1, 'room:hebJud': 1, 'room:rev': 1 } }
+    const open = { ...s, clock: { day, minute }, flags: { ...s.flags } }
     reset(chooseBook(open, 'rev', CONTENT))
   }
 
@@ -661,21 +661,19 @@ describe('언덕 별 보기 (계획 9 작업 2)', () => {
     expect(screen.queryByRole('button', { name: '별 보기' })).not.toBeInTheDocument()
   })
 
-  it('맑은 밤: 별 장면을 먼저 보이고, 닫으면 편지함에서 꺼낸 장 알림', async () => {
+  it('맑은 밤: 별 장면을 먼저 보이고, 닫으면 편지함에서 꺼낸 말씀 조각 하나 알림', async () => {
     revChosen(clearDay, 22 * 60)
     const user = userEvent.setup()
     useGame.setState({ modal: { kind: 'menu', place: 'hill' } })
     render(<ModalLayer />)
     await user.click(screen.getByRole('button', { name: '별 보기' }))
     expect(useGame.getState().modal).toEqual({ kind: 'scene', id: 'stars' })
-    const got = useGame.getState().game.collected.filter((id) => id.startsWith('rev-'))
-    expect(got[0]).toBe('rev-001')
+    const got = useGame.getState().game.collected
+    expect(got).toHaveLength(1)
     expect(useGame.getState().toast).toBeNull()
     act(() => useGame.getState().nextScene())
     expect(useGame.getState().modal).toBeNull()
-    expect(useGame.getState().toast?.text).toBe(
-      got.length === 1 ? '벤치 곁 편지함에서 한 통을 꺼냈어요. 요한계시록 1장이에요.' : '벤치 곁 편지함에서 2통을 꺼냈어요. 요한계시록 1–2장이에요.',
-    )
+    expect(useGame.getState().toast?.text).toBe(`벤치 곁 편지함에서 말씀 조각 하나를 꺼냈어요 · ${pieceById(got[0]).title} — 말씀 탭에 담겼어요`)
   })
 
   it('맑은 밤 별 장면을 별 보기로 바로 열어도 풍경 앨범 사진을 남긴다', () => {
@@ -699,15 +697,15 @@ describe('언덕 별 보기 (계획 9 작업 2)', () => {
   it('궂은 밤: 편지는 없고 흐림 알림', () => {
     revChosen(wetDay, 22 * 60)
     act(() => useGame.getState().sitHill())
-    expect(useGame.getState().game.collected.some((id) => id.startsWith('rev-'))).toBe(false)
+    expect(useGame.getState().game.collected).toEqual([])
     expect(useGame.getState().toast?.text).toBe('오늘 밤은 하늘이 흐려 별이 잘 보이지 않아요.')
   })
 
-  it('낮에 편지 나르는 이웃: 편지 받기 없이 언덕 편지함 안내 한 줄', () => {
+  it('낮에 편지 나르는 이웃: 편지 받기 단추도, 언덕 편지함 안내 줄도 없다', () => {
     revChosen(clearDay, 10 * 60)
     useGame.setState({ modal: { kind: 'talk', neighborId: 'postman', line: '안녕하세요.' } })
     render(<ModalLayer />)
-    expect(screen.getByText('그 방 책은 해 질 녘에 언덕 편지함에 넣어 둬요. 맑은 밤에 꺼내 가세요.')).toBeInTheDocument()
+    expect(screen.queryByText(/언덕 편지함/)).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: '편지 받기' })).not.toBeInTheDocument()
   })
 })

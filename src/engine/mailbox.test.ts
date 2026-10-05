@@ -44,6 +44,6 @@ describe('편지 바구니에서 편지 책의 편지 꺼내기', () => {
 
   it('문구', () => {
     expect(T.post.mailboxTook).toContain('편지 바구니')
-    expect(T.post.mailboxTook).toContain('{n}')
+    expect(T.post.mailboxTook).toContain('한 통')
   })
 })

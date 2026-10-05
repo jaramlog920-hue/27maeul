@@ -33,8 +33,7 @@ function BookPick({ onDone }: { onDone?: () => void }) {
       {groups.map(({ room, books }) => (
         <details key={room.id} className="pick-room" open={room.id === openRoom}>
           <summary>{roomTitle(room)}</summary>
-          {/* 장이 오는 길은 방마다: 편지 나르는 이웃(낮) / 언덕 벤치 곁 편지함(맑은 밤, 요한계시록) */}
-          {room.mode === 'letters' && <p className="hint">{room.arrives === 'stars' ? T.copy.pickHintStars : T.copy.pickHint}</p>}
+          {room.mode === 'letters' && <p className="hint">{T.copy.pickHint}</p>}
           <div className="book-grid">
             {books.map((b) => {
               const ready = BOOKS_WITH_CONTENT.includes(b)

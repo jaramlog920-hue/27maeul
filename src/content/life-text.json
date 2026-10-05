@@ -1163,22 +1163,16 @@
     "mini": "편지 대필"
   },
   "post": {
-    "bring": "편지 {n}통 가져왔어요. {book} {from}–{to}장이에요.",
-    "bringOne": "편지 한 통 가져왔어요. {book} {chapter}장이에요.",
-    "received": "편지 {n}통을 받았어요.",
-    "starsBring": "벤치 곁 편지함에서 {n}통을 꺼냈어요. {book} {from}–{to}장이에요.",
-    "starsBringOne": "벤치 곁 편지함에서 한 통을 꺼냈어요. {book} {chapter}장이에요.",
-    "revHint": "그 방 책은 해 질 녘에 언덕 편지함에 넣어 둬요. 맑은 밤에 꺼내 가세요.",
-    "mailboxTook": "편지 바구니에서 편지 {n}통을 꺼냈어요.",
+    "received": "편지 한 통을 받았어요.",
+    "starsGot": "벤치 곁 편지함에서 말씀 조각 하나를 꺼냈어요 · {title} — 말씀 탭에 담겼어요",
+    "mailboxTook": "편지 바구니에서 편지 한 통을 꺼냈어요.",
     "mailboxEmpty": "편지함이 비어 있다."
   },
   "copy": {
     "title": "{book} {chapter}장 옮겨 적기",
     "titleDone": "{book} 옮겨 적기",
-    "pickHint": "편지는 편지 나르는 이웃이 장째로 가져다줘요.",
-    "notReceived": "아직 이 장 편지가 오지 않았어요. 편지 나르는 이웃을 찾아가 보세요.",
-    "pickHintStars": "요한계시록은 맑은 밤, 언덕 벤치 곁 편지함에서 한두 장씩 꺼내 와요.",
-    "notReceivedStars": "아직 이 장이 오지 않았어요. 맑은 밤에 언덕에 올라 별을 보세요.",
+    "pickHint": "편지 책은 장 하나가 조각 하나예요. 받은 장은 앞 장부터 차례대로 옮겨 적어요.",
+    "notReceived": "아직 이 장을 받지 못했어요.",
     "hint": "밑줄 칸을 누르고 보기에서 알맞은 낱말을 고르세요.",
     "blank": "빈칸 {n}",
     "blankFilled": "빈칸 {n}: {word}",

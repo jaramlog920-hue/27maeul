@@ -8,7 +8,7 @@ import { chooseBook, goToSleep, newGame, shelvedCount, type GameState } from './
 import { mulberry32 } from './offers'
 import { buildLibraryQuiz, MAX_BOOK_OPTIONS, QUIZ_SIZE, quizzable, type Question } from './quiz'
 import { deserialize, serialize } from './save'
-import { arrivesOf, modeOf, roomOf, shelfRoom, SHELF_ROOMS, SUBSET_BOOKS } from './shelf-rooms'
+import { modeOf, roomOf, shelfRoom, SHELF_ROOMS, SUBSET_BOOKS } from './shelf-rooms'
 import { BOOKS, isLetter, LETTERS, type Book } from './types'
 
 const FULL = bible as Record<string, string[][]>
@@ -26,15 +26,12 @@ function hebJudShelved(books: readonly Book[]): GameState {
 }
 
 describe('방 표의 요한계시록 줄', () => {
-  it('rev 방: 책 rev 하나, 장째로(letters), 넷째 문, 별 보는 밤에 오고, 첫머리 문제 없음', () => {
-    expect(shelfRoom('rev')).toEqual({ id: 'rev', books: ['rev'], mode: 'letters', door: 3, arrives: 'stars', noOpening: true })
+  it('rev 방: 책 rev 하나, 장째로(letters), 넷째 문, 첫머리 문제 없음 (장이 오는 길은 다른 방과 같다)', () => {
+    expect(shelfRoom('rev')).toEqual({ id: 'rev', books: ['rev'], mode: 'letters', door: 3, noOpening: true })
     expect(roomOf('rev').id).toBe('rev')
     expect(modeOf('rev')).toBe('letters')
-    expect(arrivesOf('rev')).toBe('stars')
-    for (const b of LETTERS) expect(arrivesOf(b), b).toBe('post')
     // 다른 방에는 새 칸이 없다
     for (const r of SHELF_ROOMS.filter((x) => x.id !== 'rev')) {
-      expect(r.arrives, r.id).toBeUndefined()
       expect(r.noOpening, r.id).toBeUndefined()
     }
   })
@@ -161,11 +158,8 @@ describe('④ 방 열림 — 요한계시록 방도 처음부터 열려 있다',
   })
 
   it('책상·퀴즈 문구', () => {
-    expect(T.copy.pickHintStars).toBe('요한계시록은 맑은 밤, 언덕 벤치 곁 편지함에서 한두 장씩 꺼내 와요.')
-    expect(T.copy.notReceivedStars).toBe('아직 이 장이 오지 않았어요. 맑은 밤에 언덕에 올라 별을 보세요.')
     expect(T.quiz.verseOrderBook).toBe('이 책에서 먼저 나오는 구절은 어느 쪽인가요?')
-  })
-})
+  })})
 
 describe('⑤ 옛 저장', () => {
   it('계획 7 배포본 모양(열여덟 권)·계획 8 모양(스물여섯 권) 저장을 불러와도 progress.rev가 있고, 방이 열려 있어 고를 수 있다', () => {

@@ -64,18 +64,28 @@ describe('성경 이야기를 더 모으기', () => {
     expect(r.state.collected).toEqual(s.collected)
   })
 
-  it('편지 책과 요한계시록도 밤 필사·열람석으로 다음 장 하나 (편지 나르는 이웃이 오늘 들고 온 장은 빼고)', () => {
-    const open = { ...newGame(CONTENT), flags: { ...newGame(CONTENT).flags, 'room:rev': 1, 'room:romPhm': 1 } }
-    const rev = { ...at(chooseBook(open, 'rev', CONTENT), 3, 21 * 60), inv: { oil: 1 }, coins: 20 }
+  it('어느 책을 골랐든(편지 책·요한계시록 포함) 밤 필사·열람석은 27권 중 아직 없는 조각 하나 — 오늘 편지·이웃 조각은 빼고', () => {
+    const rev = { ...at(chooseBook(newGame(CONTENT), 'rev', CONTENT), 3, 21 * 60), inv: { oil: 1 }, coins: 20 }
     const r = nightCopy(rev, CONTENT)!
-    expect(r.pieceId.startsWith('rev-001')).toBe(true)
-    expect(r.state.collected).toContain(r.pieceId)
-    const rom = at(chooseBook(open, 'rom', CONTENT), 3, 10 * 60)
-    const first = CONTENT.pieces.filter((p) => p.book === 'rom').sort((a, b) => a.chapter - b.chapter)[0].id
-    const lib = libraryRead({ ...rom, coins: 20, post: [first] }, CONTENT)!
+    expect(CONTENT.pieces.some((p) => p.id === r.pieceId)).toBe(true)
+    expect(r.state.collected).toEqual([r.pieceId])
+    // 같은 날 같은 길은 같은 조각 (씨앗), 두 번째는 다른 조각
+    expect(nightCopy(rev, CONTENT)!.pieceId).toBe(r.pieceId)
+    expect(nightCopy(r.state, CONTENT)!.pieceId).not.toBe(r.pieceId)
+    const rom = at(chooseBook(newGame(CONTENT), 'rom', CONTENT), 3, 10 * 60)
+    const first = libraryRead({ ...rom, coins: 20 }, CONTENT)!.pieceId
+    const lib = libraryRead({ ...rom, coins: 20, post: [first], offers: { baker: first } }, CONTENT)!
     expect(lib.pieceId).not.toBe(first)
   })
 
+  it('조각을 다 모았으면 아무것도 받지 않는다 (오류 없이 막힘)', () => {
+    const full = { ...at(chooseBook(newGame(CONTENT), 'lk', CONTENT), 3, 10 * 60), coins: 100, collected: CONTENT.pieces.map((p) => p.id) }
+    expect(canNightCopy(full, CONTENT)).toBe('noPiece')
+    expect(nightCopy(full, CONTENT)).toBeNull()
+    expect(canLibraryRead(full, CONTENT)).toBe('noPiece')
+    expect(libraryRead(full, CONTENT)).toBeNull()
+    expect(canBuyScroll({ ...full, clock: { ...full.clock, day: 7 } }, CONTENT)).toBe('noPiece')
+  })
   it('계절 날짜 도우미', () => {
     expect(dayOf('spring', 1)).toBe(1)
     expect(dayOf('winter', 1)).toBe(121)

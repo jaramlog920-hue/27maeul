@@ -1,10 +1,10 @@
-// 계획 7 작업 2: 편지 나르는 이웃이 편지를 장째로 — 하루 두세 통.
-// 계획 14 작업 5부터 날마다 오던 편지는 드문 말씀 조각(fragments.ts)이 되었다 — postForDay는 장 순서 계산으로 남는다
-import { CONTENT, piecesOf } from '../content/catalog'
+// 편지 나르는 이웃과 편지 바구니. 계획 14 작업 5부터 편지는 드문 말씀 조각(fragments.ts)이고,
+// 2026-10-06부터 27권 전체의 아직 없는 조각 하나다 (하루 2~3통·장 순서 배달은 없다)
+import { CONTENT } from '../content/catalog'
 import { isWet, weatherOf } from './calendar'
 import { chooseBook, goToSleep, listen, neighborsPresent, newGame, type GameState } from './game'
 import { fragmentWayOf } from './fragments'
-import { POSTMAN, postCountOf, postForDay } from './post'
+import { POSTMAN } from './post'
 import { deserialize, sanitize, serialize } from './save'
 import { T } from '../content/text'
 import { postLine, useGame } from '../store/game-store'
@@ -19,70 +19,6 @@ function roomOpenState(): GameState {
 function wakeOn(s: GameState, day: number): GameState {
   return goToSleep({ ...s, clock: { ...s.clock, day: day - 1 } }, CONTENT)
 }
-
-describe('postForDay — 아직 받지 않은 장을 장 번호 순서대로 하루 두세 통', () => {
-  const rom = piecesOf('rom')
-
-  it('하루 2통 또는 3통, 날마다 둘 다 나온다 — 같은 날은 같은 결과', () => {
-    const counts = new Set<number>()
-    for (let day = 1; day <= 60; day++) {
-      const got = postForDay({ day, book: 'rom', chapters: rom, delivered: [] })
-      expect([2, 3], `day ${day}`).toContain(got.length)
-      expect(got.length).toBe(postCountOf(day))
-      counts.add(got.length)
-      expect(postForDay({ day, book: 'rom', chapters: rom, delivered: [] })).toEqual(got)
-    }
-    expect([...counts].sort()).toEqual([2, 3])
-  })
-
-  it('앞에서부터 장 순서대로 — 받은 장은 건너뛴다 (조각 순서가 섞여 있어도)', () => {
-    const shuffled = [...rom].reverse()
-    const day = [...Array(40).keys()].find((d) => postCountOf(d + 1) === 3)! + 1
-    expect(postForDay({ day, book: 'rom', chapters: shuffled, delivered: [] })).toEqual(['rom-001', 'rom-002', 'rom-003'])
-    expect(postForDay({ day, book: 'rom', chapters: rom, delivered: ['rom-001', 'rom-002', 'rom-004'] })).toEqual(['rom-003', 'rom-005', 'rom-006'])
-  })
-
-  it('남은 장이 적으면 남은 것 전부, 끝 장 다음엔 빈 배열', () => {
-    const all = rom.map((p) => p.id)
-    for (let day = 1; day <= 10; day++) {
-      expect(postForDay({ day, book: 'rom', chapters: rom, delivered: all.slice(0, 15) })).toEqual(['rom-016'])
-      expect(postForDay({ day, book: 'rom', chapters: rom, delivered: all })).toEqual([])
-    }
-  })
-
-  it('빌레몬서(1장)는 한 통에 통째로', () => {
-    const phm = piecesOf('phm')
-    expect(phm).toHaveLength(1)
-    for (let day = 1; day <= 10; day++) expect(postForDay({ day, book: 'phm', chapters: phm, delivered: [] })).toEqual(['phm-001'])
-  })
-
-  it('⑤ 요한이서·요한삼서·유다서(1장)는 한 통에 통째로', () => {
-    for (const b of ['2jn', '3jn', 'jud'] as const) {
-      const ps = piecesOf(b)
-      expect(ps, b).toHaveLength(1)
-      for (let day = 1; day <= 10; day++) expect(postForDay({ day, book: b, chapters: ps, delivered: [] }), b).toEqual([`${b}-001`])
-      expect(postForDay({ day: 1, book: b, chapters: ps, delivered: [`${b}-001`] })).toEqual([])
-    }
-  })
-
-  it('⑤ 히브리서(13장)는 하루 2–3통, 장 순서대로 끝까지', () => {
-    const heb = piecesOf('heb')
-    expect(heb).toHaveLength(13)
-    const delivered: string[] = []
-    for (let day = 1; day <= 20 && delivered.length < 13; day++) {
-      const got = postForDay({ day, book: 'heb', chapters: heb, delivered })
-      const left = 13 - delivered.length
-      expect(got.length, `day ${day}`).toBe(Math.min(postCountOf(day), left))
-      expect(got).toEqual(heb.slice(delivered.length, delivered.length + got.length).map((p) => p.id))
-      delivered.push(...got)
-    }
-    expect(delivered).toEqual(heb.map((p) => p.id))
-  })
-
-  it('다른 책의 조각은 섞지 않는다', () => {
-    expect(postForDay({ day: 3, book: 'gal', chapters: [...piecesOf('rom'), ...piecesOf('gal')], delivered: [] }).every((id) => id.startsWith('gal-'))).toBe(true)
-  })
-})
 
 describe('편지는 드물게 — 말씀 조각 하나 (계획 14 작업 5)', () => {
   it('편지 책을 골라도 편지가 차지 않는다 — 편지는 고른 책과 묶지 않는다', () => {

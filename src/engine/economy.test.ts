@@ -181,15 +181,18 @@ describe('여행 주사위 보드게임', () => {
     expect(canExtend({ ...b, lapped: true }, 50)).toBe(false)
   })
 
-  it('집에 돌아오면 지금 책의 다음 조각 하나 (같은 조각을 두 번 주지 않는다)', async () => {
+  it('집에 돌아오면 27권 중 아직 없는 조각 하나 (같은 조각을 두 번 주지 않고, 책을 고르지 않아도 된다)', async () => {
     const { chooseBook, nextTripPiece } = await import('./game')
     const s = chooseBook(newGame(CONTENT), 'lk', CONTENT)
     const a = nextTripPiece(s, CONTENT)!
-    expect(a.startsWith('lk-001-')).toBe(true)
+    expect(CONTENT.pieces.some((p) => p.id === a)).toBe(true)
+    expect(nextTripPiece(s, CONTENT)).toBe(a)
     expect(nextTripPiece(s, CONTENT, [a])).not.toBe(a)
-    expect(nextTripPiece(newGame(CONTENT), CONTENT)).toBeNull()
+    // 책을 고르지 않았어도 받는다
+    expect(nextTripPiece(newGame(CONTENT), CONTENT)).not.toBeNull()
+    // 다 모았으면 없음
+    expect(nextTripPiece({ ...s, collected: CONTENT.pieces.map((p) => p.id) }, CONTENT)).toBeNull()
   })
-
   it('돌아오면 얻은 것을 한꺼번에: 조각·능력치·재료·닢, 아이 능력치', async () => {
     const { applyTripRewards, chooseBook, nextTripPiece } = await import('./game')
     const { freshStats } = await import('./stats')

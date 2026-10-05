@@ -1,5 +1,6 @@
 // 말씀 조각 (계획 14 작업 5): 조각은 필사 재료가 아니라 말씀 수집품이다. 그래서 드물게 온다 —
 // 편지나 이웃과의 특별한 대화로 일주일에 몇 번 (날 씨앗으로 정해진다). 평소 대화엔 직업다운 선물만.
+// 어느 길로 받든 한 번에 한 조각, 27권 전체의 아직 없는 조각 중 무작위 하나 (drawFragment).
 // 조각은 직업과 묶지 않는다: 어느 이웃이 건네든 27권 어느 책의 조각이든 될 수 있다 ("빵집 이웃 = 특정 구절"이 아니다).
 // 이 파일은 순수 계산 — 오늘 조각이 오는가, 어떤 조각인가, 누가 건네는가, 받은 기록, 평소 대화의 직업 선물.
 import { VISIT_GIFTS } from './bonds'
@@ -31,12 +32,28 @@ export function fragmentWayOf(day: number): FragmentWay | null {
   return mulberry32(week * 7919 + i * 131 + 3)() < 0.5 ? 'letter' : 'talk'
 }
 
-/** 아직 받지 않은 조각 중 하나 (날 씨앗). 27권 어느 책이든 — 다 받았으면 null */
-export function pickFragment(pieces: readonly Piece[], collected: readonly string[], day: number): string | null {
+const idSeed = (id: string) => [...id].reduce((n, ch) => (n * 31 + ch.charCodeAt(0)) >>> 0, 7)
+
+/**
+ * 말씀 조각 한 개 뽑기 (2026-10-06 사용자 결정): 어느 길로 받든 — 편지·특별한 대화·여행·서고 열람석·두루마리·밤 필사·
+ * 아이의 편지·언덕 별 보기 — 27권 전체의 아직 없는 조각 중 무작위 하나다. 그날 몫 1~2장이나 장 순서·책 제한은 없다.
+ * 씨앗은 날과 길(source)로 정해져서 같은 날 같은 길은 불러와도 같은 조각이다. 다 모았으면 null (오류 없음)
+ */
+export function drawFragment(pieces: readonly Piece[], collected: readonly string[], seed: number): string | null {
   const got = new Set(collected)
   const left = pieces.filter((p) => !got.has(p.id))
   if (!left.length) return null
-  return left[Math.min(left.length - 1, Math.floor(mulberry32(day * 4441 + 17)() * left.length))].id
+  return left[Math.min(left.length - 1, Math.floor(mulberry32(seed)() * left.length))].id
+}
+
+/** 날과 받는 길로 정하는 씨앗. 오늘의 조각('day')은 예전 씨앗 그대로 */
+export function fragmentSeed(day: number, source: string): number {
+  return day * 4441 + 17 + (source === 'day' ? 0 : idSeed(source) * 100003)
+}
+
+/** 아직 받지 않은 조각 중 하나 (날 씨앗). 27권 어느 책이든 — 다 받았으면 null */
+export function pickFragment(pieces: readonly Piece[], collected: readonly string[], day: number): string | null {
+  return drawFragment(pieces, collected, fragmentSeed(day, 'day'))
 }
 
 /**
@@ -120,8 +137,6 @@ export function sanitizePieceLog(raw: unknown, collected: readonly string[]): Pi
 export const TALK_GIFT_HEARTS = 2
 /** 하루에 그 이웃이 챙겨 줄 확률 (날 씨앗 — 같은 날은 늘 같다) */
 const TALK_GIFT_CHANCE = 0.3
-
-const idSeed = (id: string) => [...id].reduce((n, ch) => (n * 31 + ch.charCodeAt(0)) >>> 0, 7)
 
 /**
  * 평소 대화의 직업 선물: 빵 굽는 이웃은 빵, 양치기는 양털, 어부는 갈대… (bonds.VISIT_GIFTS — 아침 방문 선물과 같은 직업 물건).

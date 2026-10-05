@@ -48,9 +48,9 @@ import { candleKey, candleToBlow, faceToward, weddingEvening } from './event-sce
 import { FESTIVAL_SPOTS, FIRE, goalFor, isNear, npcTile, placeNpc, stepNpc, type Npc } from './neighbors'
 import { GAIN, heartsOf, MAX_POINTS } from './hearts'
 import { bookDone, bookRoomOpen, chaptersOf, emptyProgress, openDoorsFor, totalChapters, type Progress } from './books'
-import { arrivesOf, modeOf } from './shelf-rooms'
+import { modeOf } from './shelf-rooms'
 import { currentChapter, mulberry32 } from './offers'
-import { fragmentsForDay, logPieces, talkGiftOf, type PieceLog } from './fragments'
+import { drawFragment, fragmentSeed, fragmentsForDay, logPieces, talkGiftOf, type PieceLog } from './fragments'
 import { checkCopy, COPY_CHAPTER_XP, copySpot, copyVerses, nextOpenChapter, NO_COPY, NO_COPY_STATS, type CopyCheck, type CopyState, type CopyStats } from './copying'
 import { chapterFinds, type GodFind } from './god-records'
 import { SPECIAL_COST, type Bindings, type SpecialChoice } from './binding'
@@ -111,7 +111,7 @@ import {
   type StoryProp,
 } from './people'
 import { RARE_ITEMS } from './fixtures'
-import { POSTMAN, starPostFor } from './post'
+import { POSTMAN } from './post'
 import { blanksFor } from './copy'
 import { checkArrangement, moveItem, type ArrangeResult } from './scroll'
 import { cardsForChapters, journeyComplete, placeNewCards, type JourneyCard } from './journey'
@@ -1817,9 +1817,12 @@ export function applyTripRewards(s: GameState, rewards: readonly TripReward[], c
 
 // ── 성경 이야기를 더 모으는 길 (2026-09-30 사용자): 밤 필사·이웃 선물·서고 열람석·떠돌이 상인의 두루마리·어른이 된 아이의 편지 ──
 
-/** 지금 책의 다음 조각 하나를 모은다 (여행 판과 같은 규칙 — 편지 책은 편지 나르는 이웃이 가져온다) */
+/**
+ * 말씀 조각 하나를 모은다 (2026-10-06 사용자 결정): 어느 길(from)로든 27권 전체의 아직 없는 조각 중 무작위 하나 —
+ * 지금 고른 책이나 장 순서와 무관하다 (fragments.drawFragment). 같은 날 같은 길은 같은 조각 (불러와도 그대로)
+ */
 export function extraPiece(s: GameState, content: GameContent, from: string): { state: GameState; pieceId: string } | null {
-  const id = nextTripPiece(s, content)
+  const id = nextTripPiece(s, content, [], from)
   if (!id) return null
   return { state: train(takeChapters(s, [id], content, from), 'wit', XP.listen), pieceId: id }
 }
@@ -1875,20 +1878,13 @@ export function buyScroll(s: GameState, content: GameContent): { state: GameStat
 /** 이웃에게 선물: 마음이 친구(10) 이상인 이웃은 선물을 받으면 이야기 한 조각을 더 들려준다 */
 export const GIFT_STORY_HEARTS = 10
 
-/** 지금 책에서 아직 모으지 않은 다음 조각 (밤 필사·열람석·두루마리·선물·여행이 쓴다) — 편지 책·요한계시록은 다음 장 하나 */
-export function nextTripPiece(s: Pick<GameState, 'activeBook' | 'progress' | 'collected'> & Partial<Pick<GameState, 'post' | 'flags'>>, content: GameContent, taken: readonly string[] = []): string | null {
-  const b = s.activeBook
-  if (!b) return null
-  // 편지 책·요한계시록 (2026-09-30 사용자): 장째로 오는 책은 아직 받지 않은 다음 장 하나 — 오늘 편지 나르는 이웃이 들고 온 장은 빼고
-  if (modeOf(b) === 'letters') {
-    if (s.flags && !bookRoomOpen(b, s.flags)) return null
-    const skip = new Set([...s.collected, ...(s.post ?? []), ...taken])
-    return content.pieces.filter((p) => p.book === b && !skip.has(p.id)).sort((x, y) => x.chapter - y.chapter)[0]?.id ?? null
-  }
-  const pieces = content.pieces.filter((p) => p.book === b)
-  const ch = currentChapter(pieces, s.progress[b].completed)
-  if (ch === null) return null
-  return pieces.find((p) => p.chapter === ch && !s.collected.includes(p.id) && !taken.includes(p.id))?.id ?? null
+/**
+ * 아직 모으지 않은 조각 중 무작위 하나 (밤 필사·열람석·두루마리·여행·아이의 편지·별 보기가 쓴다) — 27권 전체, 한 번에 한 조각.
+ * 오늘 편지 바구니(post)·이웃(offers)에 이미 든 조각과 taken은 빼서 겹치지 않게 한다. 모두 모았으면 null
+ */
+export function nextTripPiece(s: Pick<GameState, 'collected' | 'clock'> & Partial<Pick<GameState, 'post' | 'offers'>>, content: GameContent, taken: readonly string[] = [], from = 'trip'): string | null {
+  const skip = [...s.collected, ...(s.post ?? []), ...Object.values(s.offers ?? {}), ...taken]
+  return drawFragment(content.pieces, skip, fragmentSeed(s.clock.day, from))
 }
 
 /** 아이에게 글자 가르치기 (하루 한 번, 저녁에 집으로 올 때) */
@@ -2514,18 +2510,17 @@ export function clearSky(day: number): boolean {
 }
 
 /**
- * 오늘 밤 언덕 편지함에서 꺼낼 장: 지금 책이 별 보는 밤에 오는 책(요한계시록)이고, 그 방이 열렸고,
- * 맑은 밤 별이 보이는 때이고, 오늘 밤 아직 꺼내지 않았을 때 (flags.starPostDay — 궂은 밤 몫은 쌓이지 않는다)
+ * 오늘 밤 언덕 편지함에서 꺼낼 조각: 맑은 밤 별이 보이는 때이고 오늘 밤 아직 꺼내지 않았을 때 (flags.starPostDay — 궂은 밤 몫은 쌓이지 않는다).
+ * 책이나 방과 상관없이 27권 중 아직 없는 조각 하나 (2026-10-06 사용자 결정 — 요한계시록만 별로 오던 것을 없앴다)
  */
 function starPostTonight(s: GameState, content: GameContent): string[] {
-  const book = s.activeBook
-  if (!book || modeOf(book) !== 'letters' || arrivesOf(book) !== 'stars' || !bookRoomOpen(book, s.flags)) return []
   if (!clearSky(s.clock.day) || !starsOut(s.clock.minute) || s.flags.starPostDay === s.clock.day) return []
-  return starPostFor({ day: s.clock.day, book, chapters: content.pieces.filter((p) => p.book === book), delivered: s.collected })
+  const id = nextTripPiece(s, content, [], 'stars')
+  return id ? [id] : []
 }
 
 /**
- * 별 보기: 앉아 쉬고 20분, 맑은 밤이면 stars 장면(한 번). 요한계시록을 엮는 중이면 벤치 곁 편지함에서 오늘 밤 몫(1–2장)을 꺼낸다.
+ * 별 보기: 앉아 쉬고 20분, 맑은 밤이면 stars 장면(한 번). 맑은 밤이면 벤치 곁 편지함에서 오늘 밤 몫(말씀 조각 하나)을 꺼낸다.
  * 자리와 무관한 함수다 — 지금은 언덕 메뉴에만 붙어 있지만 다른 "별 보는 밤" 자리(계획 10 호숫가 정자 등)도 이것을 부르면 된다.
  */
 export function stargaze(s: GameState, content: GameContent): { state: GameState; pieceIds: string[] } {

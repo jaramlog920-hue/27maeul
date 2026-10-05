@@ -1,6 +1,5 @@
 // 마음이 쌓여 마을에 생긴 것들 (6번 A·C). 모두 그림일 뿐 길을 막지 않는다.
 import { unlocked } from '../engine/bonds'
-import { roomOpen } from '../engine/books'
 import type { GameState } from '../engine/game'
 import { GARDEN_TILES, isRipe } from '../engine/garden'
 import { houseAt, PAVILION_RECT, TILE, tileAt } from '../engine/world'
@@ -99,13 +98,13 @@ function ship(g: Ctx, t: number) {
 
 /**
  * 언덕 벤치(14,13) 왼쪽 곁 빈 풀 한 칸의 작은 나무 편지함 (계획 9 작업 2).
- * 편지 나르는 이웃이 해 질 녘에 요한계시록 장을 넣어 두고, 맑은 밤 별 보기로 꺼낸다. 그림만 — 길을 막지 않는다
+ * 맑은 밤 별 보기로 이곳 편지함에서 말씀 조각 하나를 꺼낸다 (27권 중 아직 없는 조각 무작위 하나). 그림만 — 길을 막지 않는다
  */
 export const HILL_MAILBOX: Tile = { x: 15, y: 11 }
 
-/** 편지함이 보이는 자리: 요한계시록 방이 열린 뒤부터 */
-export function hillMailbox(game: Pick<GameState, 'flags'>): Tile | null {
-  return roomOpen('rev', game.flags) ? HILL_MAILBOX : null
+/** 편지함이 보이는 자리: 언제나 (요한계시록 방이 열려야 보이던 것은 없앴다) */
+export function hillMailbox(_game?: Pick<GameState, 'flags'>): Tile | null {
+  return HILL_MAILBOX
 }
 
 /** 옅은 잿빛 나무 편지함: 기둥·상자·좌우 대칭 지붕 뚜껑·투입구에 비친 크림색 편지 끝 (선은 모두 2픽셀) */

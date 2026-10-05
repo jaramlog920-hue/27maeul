@@ -2,6 +2,8 @@
 import { CONTENT, PIECES } from '../content/catalog'
 import {
   FRAGMENTS_PER_WEEK,
+  drawFragment,
+  fragmentSeed,
   fragmentWayOf,
   fragmentsForDay,
   pickFragment,
@@ -49,6 +51,43 @@ describe('어떤 조각이 오나', () => {
   }, 20_000)
 })
 
+describe('한 번에 정확히 한 조각 — 27권 전체의 아직 없는 조각 무작위 (2026-10-06)', () => {
+  it('drawFragment: 아직 없는 조각만, 씨앗이 같으면 같고 다르면 흩어지며, 다 모았으면 null', () => {
+    const got = PIECES.slice(0, 100).map((p) => p.id)
+    const seen = new Set<string>()
+    for (let seed = 1; seed <= 300; seed++) {
+      const id = drawFragment(PIECES, got, seed)!
+      expect(got).not.toContain(id)
+      expect(drawFragment(PIECES, got, seed)).toBe(id)
+      seen.add(id)
+    }
+    expect(seen.size).toBeGreaterThan(100)
+    expect(drawFragment(PIECES, PIECES.map((p) => p.id), 1)).toBeNull()
+    expect(drawFragment([], [], 1)).toBeNull()
+  })
+  it('책 제한도 장 순서도 없다 — 복음서·사도행전·편지·요한계시록 조각이 모두 나온다 (장 번호가 뒤죽박죽)', () => {
+    const picked = Array.from({ length: 600 }, (_, i) => PIECES.find((p) => p.id === drawFragment(PIECES, [], fragmentSeed(i + 1, 'night')))!)
+    const books = new Set(picked.map((p) => p.book))
+    for (const b of ['mt', 'ac', 'rom', 'heb', 'rev'] as const) expect(books.has(b), b).toBe(true)
+    // 첫 장부터 차례로가 아니다
+    expect(picked.slice(0, 20).every((p, i, a) => i === 0 || p.chapter >= a[i - 1].chapter)).toBe(false)
+  })
+  it('길(source)마다 씨앗이 달라 같은 날 다른 길은 보통 다른 조각이고, 오늘의 조각 씨앗은 예전 그대로', () => {
+    expect(fragmentSeed(9, 'day')).toBe(9 * 4441 + 17)
+    const same = ['night', 'library', 'scroll', 'stars', 'child', 'trip:harbor'].map((s) => drawFragment(PIECES, [], fragmentSeed(12, s)))
+    expect(new Set(same).size).toBeGreaterThan(3)
+  })
+  it('오늘의 조각(fragmentsForDay)은 하루에 한 조각 — 편지 post도 대화 offers도 하나뿐이다', () => {
+    for (let d = 1; d <= 140; d++) {
+      const r = fragmentsForDay({ day: d, pieces: CONTENT.pieces, collected: [], present: ['baker', 'smith'] })
+      expect(r.post.length + Object.keys(r.offers).length).toBe(fragmentWayOf(d) ? 1 : 0)
+    }
+  })
+  it('다 모았으면 오늘의 조각도 없다 (오류 없음)', () => {
+    const all = CONTENT.pieces.map((p) => p.id)
+    for (let d = 1; d <= 30; d++) expect(fragmentsForDay({ day: d, pieces: CONTENT.pieces, collected: all, present: ['baker'] })).toEqual({ offers: {}, post: [] })
+  })
+})
 describe('오늘의 조각 (편지 또는 특별한 대화)', () => {
   const day = (way: 'letter' | 'talk') => {
     for (let d = 1; d < 100; d++) if (fragmentWayOf(d) === way) return d

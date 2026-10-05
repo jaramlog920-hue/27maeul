@@ -13,7 +13,7 @@ import { has } from '../../engine/items'
 import { MAX_HEART } from '../../engine/neighbors'
 import { heartsOf } from '../../engine/hearts'
 import { personOf } from '../../engine/people'
-import { starPostHint, useGame, type Modal } from '../../store/game-store'
+import { useGame, type Modal } from '../../store/game-store'
 
 /** 사이의 이름: 연인·약혼·배우자, 아니면 낯선 사람 … 마음이 가는 사이 (같은 모습이면 특별한 사람까지) */
 export function bondLabel(game: GameState, id: string): string {
@@ -66,7 +66,6 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
     def.id === 'carpenter' && game.flags['movedIn:carpenter'] && ((homeStage && homeBlock !== 'notMoved') || works.length > 0)
   // 편지 나르는 이웃은 말을 걸면 편지를 바로 건넨다 (2026-10-05: 편지 받기 단추 없음) — 건넨 편지 말 한 줄만 보인다
   const post = modal.letter
-  const starHint = starPostHint(game, def.id)
   if (focus)
     return (
       <div className="dialog talk" role="dialog" aria-label={def.role}>
@@ -81,8 +80,6 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
         {/* 살아 움직이는 사람들 (계획 6b): 숫자 대신 사이의 이름 */}
         {personOf(def.id) ? <span className="talk-bond">{bondLabel(game, def.id)}</span> : <Hearts n={heartsOf(game.hearts[def.id])} />}
       </p>
-      {/* 요한계시록은 낮에 건네지 않는다 — 평소 말 위에 언덕 편지함 안내 한 줄 */}
-      {starHint && <p className="talk-line">{starHint}</p>}
       {modal.line && <p className="talk-line">{callName(modal.line, game.avatar?.name)}</p>}
       {/* 아침 방문 말 등 다른 말이 먼저 나와도 편지 알림은 가려지지 않는다 */}
       {post && post !== modal.line && <p className="talk-line">{post}</p>}

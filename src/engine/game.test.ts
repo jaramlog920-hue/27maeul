@@ -279,8 +279,8 @@ describe('손일', () => {
     expect(b.scenes).toContain('blanket')
     expect(stargaze(at(s, 22 * 60, 1), CONTENT).state.scenes).toContain('stars')
     expect(stargaze(at(s, 12 * 60, 1), CONTENT).state.scenes).not.toContain('stars')
-    // 요한계시록을 엮지 않으면 편지함에서 꺼낼 것이 없다
-    expect(stargaze(at(s, 22 * 60, 1), CONTENT).pieceIds).toEqual([])
+    // 맑은 밤이면 편지함에서 말씀 조각 하나 (고른 책과 상관없이), 아니면 없음 — 많아야 한 조각
+    expect(stargaze(at(s, 22 * 60, 1), CONTENT).pieceIds.length).toBeLessThanOrEqual(1)
   })
 })
 

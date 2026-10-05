@@ -12,8 +12,6 @@ export interface ShelfRoom {
   mode: 'pieces' | 'letters'
   /** 서고 잠긴 문 번호 (world.LOCKED_DOORS, life-text library.lockedRooms와 같은 순서). 복음서 방은 null */
   door: number | null
-  /** 장이 오는 길 (mode 'letters'만): 없으면 편지 나르는 이웃(낮), 'stars'면 맑은 밤 언덕에서 별 볼 때 (요한계시록, 계획 9 작업 2) */
-  arrives?: 'stars'
   /** 서고 퀴즈에 첫머리 문제를 내지 않는다 — letters.json에 줄이 없고 verify-letters도 이 방 책을 빼고 본다 (요한계시록) */
   noOpening?: true
 }
@@ -30,7 +28,7 @@ export const SHELF_ROOMS: readonly ShelfRoom[] = [
   },
   { id: 'hebJud', books: ['heb', 'jas', '1pe', '2pe', '1jn', '2jn', '3jn', 'jud'], mode: 'letters', door: 2 },
   // 요한계시록 (계획 9): 방 id와 책 id가 같은 'rev'지만 쓰이는 표가 다르다 (ShelfRoomId / Book)
-  { id: 'rev', books: ['rev'], mode: 'letters', door: 3, arrives: 'stars', noOpening: true },
+  { id: 'rev', books: ['rev'], mode: 'letters', door: 3, noOpening: true },
 ]
 
 export function shelfRoom(id: ShelfRoomId): ShelfRoom {
@@ -47,11 +45,6 @@ export function roomOf(book: Book): ShelfRoom {
 /** 그 책을 엮는 방식 */
 export function modeOf(book: Book): ShelfRoom['mode'] {
   return roomOf(book).mode
-}
-
-/** 그 책의 장이 오는 길: 'post' 편지 나르는 이웃(낮) / 'stars' 맑은 밤 언덕에서 별 볼 때 */
-export function arrivesOf(book: Book): 'post' | 'stars' {
-  return roomOf(book).arrives ?? 'post'
 }
 
 /** 책 id → 본문(nt-krv.json·books.json)의 책 id. 편지는 books.json id를 그대로 책 id로 쓴다 */

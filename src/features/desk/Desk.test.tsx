@@ -92,14 +92,14 @@ function giveLetter() {
 describe('옮겨 적기', () => {
   const blanks = blanksFor('rom', 1, copySourceFor('rom'))
 
-  it('받지 않은 장이면 편지 나르는 이웃을 찾아가라고 한다', async () => {
+  it('받지 않은 장이면 아직 받지 못했다고 한다', async () => {
     reset({ flags: OPEN, inv: { papyrus: 3, ink: 3 } })
     const user = userEvent.setup()
     openDesk()
     render(<ModalLayer />)
     await user.click(screen.getByRole('button', { name: '로마서 · 0/16장' }))
     expect(screen.getByRole('heading', { name: '로마서 1장 옮겨 적기' })).toBeInTheDocument()
-    expect(screen.getByText('아직 이 장 편지가 오지 않았어요. 편지 나르는 이웃을 찾아가 보세요.')).toBeInTheDocument()
+    expect(screen.getByText('아직 이 장을 받지 못했어요.')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: '옮겨 적기' })).toBeNull()
   })
 
