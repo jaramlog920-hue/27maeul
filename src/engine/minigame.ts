@@ -175,8 +175,9 @@ export function tapMini(s: MiniState, itemId?: number): MiniState {
   }
   if (s.kind === 'order') {
     if (showing(s) || itemId === undefined) return s
-    // 틀리면 차례를 한 번 더 보여 준다 (지금까지 맞힌 것은 그대로)
-    if (itemId !== s.seq[s.step]) return { ...s, shown: 0, flash: 'miss' }
+    // 틀리면 차례를 처음부터 한 번 더 보여 주고, 처음 칸부터 다시 누른다
+    // (예전엔 맞힌 칸 다음부터 이어 받아서, 다시 본 대로 첫 칸부터 누르면 또 틀렸다 — 2026-10-07 사용자)
+    if (itemId !== s.seq[s.step]) return { ...s, shown: 0, step: 0, flash: 'miss' }
     const step = s.step + 1
     if (step < s.seq.length) return { ...s, step, flash: 'hit' }
     return { ...s, rounds: s.rounds + 1, step: 0, flash: 'hit', ...(s.rounds + 1 < ORDER_ROUNDS ? { seq: nextSeq(s.seq), shown: -ORDER_SHOW } : {}) }

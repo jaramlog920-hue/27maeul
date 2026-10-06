@@ -69,12 +69,15 @@ describe('순서 기억하기', () => {
     }
     expect(isDone(s)).toBe(true)
   })
-  it('틀리면 차례를 다시 보여 주고, 맞힌 것은 그대로', () => {
+  it('틀리면 차례를 처음부터 다시 보여 주고, 다시 본 대로 첫 칸부터 누르면 맞는다', () => {
     let s = startMini('order', rng) as OrderState
     while (showing(s)) s = stepMini(s, 0.3, rng) as OrderState
     s = tapMini(s, s.seq[0]) as OrderState
-    s = tapMini(s, (s.seq[1] + 1) % 4 === s.seq[1] ? 0 : (s.seq[1] + 1) % 4) as OrderState
-    expect([s.step, s.flash, showing(s)]).toEqual([1, 'miss', true])
+    s = tapMini(s, (s.seq[1] + 1) % 4) as OrderState
+    expect([s.step, s.flash, showing(s)]).toEqual([0, 'miss', true])
+    while (showing(s)) s = stepMini(s, 0.3, rng) as OrderState
+    for (const n of [...s.seq]) s = tapMini(s, n) as OrderState
+    expect(s.rounds).toBe(1)
   })
 })
 
