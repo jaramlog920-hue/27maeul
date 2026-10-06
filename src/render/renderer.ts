@@ -8,14 +8,13 @@ import { isGrown, petCornerProp, petFollowPose, petHabit, STRAY_SPOTS, EAVES } f
 import { totalChapters } from '../engine/books'
 import { shelfRoom } from '../engine/shelf-rooms'
 import { letterWaiting } from '../engine/requests'
-import { childTile, childAtSchool, closedHouseIds, mailboxHasPost, storyWaiting, routineOf, SCHOOL_SEAT, shelvedCount, straysToday, weddingToday, type ActKind, type GameState, type PlayerAct } from '../engine/game'
+import { childTile, childAtSchool, closedHouseIds, mailboxHasPost, storyWaiting, SCHOOL_SEAT, shelvedCount, straysToday, weddingToday, type ActKind, type GameState, type PlayerAct } from '../engine/game'
 import { furnitureUseFrame, USE_INFO, USE_PROP_PALETTE, USE_SIZE, type UseAction } from './furniture-use-motion'
 import { extraUseFrame, petMotionRows, type ExtraAction } from './expansion-life-motion'
 import { weddingActorFrame, type WeddingAction } from './wedding-art'
 import { eventMotionFrame, type EventAction } from './event-life-motion'
 import { drawEventProp, eventPropSortY } from './event-props'
 import { eventPropsNow, npcEventMotion, playerEventMotion, weddingEvening, type EventMotion } from '../engine/event-scene'
-import type { Activity } from '../engine/people'
 import { deskTraces, type DeskTraces } from '../engine/desk-traces'
 import { facingOf, footprint, FURNITURE_DEFS, type Furniture } from '../engine/room'
 import { liveSpaces, spaceFurniture, type SpaceUse } from '../engine/spaces'
@@ -1290,41 +1289,6 @@ function bubble(g: Ctx, cx: number, top: number, draw: (x: number, y: number) =>
 }
 
 type EmoteId = 'z' | 'note' | 'yawn' | 'talk' | 'heart' | 'sweat' | 'hungry' | 'shiver' | 'letter'
-/** 하고 있는 일 (계획 6b): 일과 자리에 선 사람 머리 위 작은 그림 — 말을 걸기 전에도 무엇을 하는지 보인다 */
-const DOING: Record<Activity, string[]> = {
-  press: ['.nnnnnn.', '...nn...', '.k.kk.k.', '.k.kk.k.', '.kkkkkk.', '........'],
-  sort: ['.ww.ww..', '.wn.wn..', '.ww.ww..', '.kkkkkk.', '........', '........'],
-  hammer: ['..kkkk..', '..kkkk..', '...nn...', '...nn...', '...nn...', '........'],
-  net: ['b.b.b.b.', '.b.b.b.b', 'b.b.b.b.', '.b.b.b.b', 'b.b.b.b.', '........'],
-  tea: ['..w.w...', '........', '.oooooo.', '.oooooook', '..oooo.k', '........'],
-  book: ['........', '.wwkwww.', '.wwkwww.', '.wwkwww.', '.nnknnn.', '........'],
-  bread: ['........', '..yyyy..', '.yoyoyy.', 'yyyyyyyy', '.oooooo.', '........'],
-  sheep: ['..wwww..', '.wwwwwwk', 'wwwwwwkk', '.wwwwww.', '.k.k.k..', '........'],
-  herb: ['...g....', '..ggg...', '.ggggg..', '..ggg.g.', '...n.gg.', '...n....'],
-  weave: ['pppppppp', 'p.p.p.p.', 'pppppppp', '.p.p.p.p', 'pppppppp', '........'],
-  bee: ['..w.w...', '.ykyky..', 'ykykyk..', '.ykyky..', '........', '........'],
-  grape: ['...g....', '..pp....', '.pppp...', '.ppp....', '..p.....', '........'],
-  music: ['...kkk..', '...k.k..', '...k.k..', '.kkk.kk.', '.kk.....', '........'],
-  rest: ['........', 'kkk.....', '..k.kk..', '.k....k.', 'kkk.kk..', '........'],
-  wait: ['........', '.kk.kk..', '........', '........', '.k..k..k', '........'],
-  wood: ['........', 'nnnnnnn.', 'n.n.n.nn', 'nnnnnnn.', '........', '........'],
-  cat: ['.k...k..', '.kk.kk..', '.kkkkk..', '.kwkwk..', '..kkk...', '........'],
-}
-const DOING_COL: Record<string, string> = { k: '#492c1b', n: '#b17640', b: '#68a6da', w: '#fff7e5', o: '#eda06b', y: '#f9da72', g: '#70b54e', p: '#aa64be' }
-function doingIcon(g: Ctx, kind: Activity, cx: number, top: number) {
-  const rows = DOING[kind]
-  if (!rows) return
-  bubble(g, cx, top, (x, y) => {
-    rows.forEach((row, dy) => {
-      for (let dx = 0; dx < row.length; dx++) {
-        const c = DOING_COL[row[dx]]
-        if (!c) continue
-        g.fillStyle = c
-        g.fillRect(x + 1 + dx, y + dy + 1, 1, 1)
-      }
-    })
-  })
-}
 
 function emote(g: Ctx, id: EmoteId, cx: number, top: number) {
   bubble(g, cx, top, (x, y) => {
@@ -2435,12 +2399,8 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
             } else drawSprite(g, spr, n.x, n.y, moving ? 0 : breathOffset(t + offset))
             // 이야기를 건넬 이웃, 기다리던 이야기(이벤트)를 품은 이웃은 머리 위에 말풍선 — 말을 걸면 열린다
             const bubbleY = n.y * TILE + TILE - spr.height - 2 - Math.round(Math.sin(t * 3))
+            // 일과 자리에서 하는 일 그림(포도 등)은 2026-10-07 사용자 요청으로 지웠다
             if (game.offers[def.id] || storyWaiting(game, def.id)) emote(g, 'talk', n.x * TILE + 8, bubbleY)
-            else if (!moving) {
-              // 일과 자리에서 하는 일 (계획 6b)
-              const r = routineOf(game, def.id)
-              if (r?.doing && Math.round(n.x) === r.at.x && Math.round(n.y) === r.at.y) doingIcon(g, r.doing, n.x * TILE + 8, n.y * TILE + TILE - spr.height - 2)
-            }
           },
         })
         // 아이가 데려간 동물은 아이 곁에
