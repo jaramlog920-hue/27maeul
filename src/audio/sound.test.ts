@@ -23,7 +23,7 @@ const db = (a: number, b: number) => 10 * Math.log10(a / b)
 describe('네 곡', () => {
   it('저장 값은 예전 그대로, 이름은 들판·호숫가·등불·장날', () => {
     expect(MUSIC_CHOICES).toEqual(['default', 'D', 'E', 'F'])
-    expect(MUSIC_CHOICES.map((c) => (T.controls.tracks as Record<MusicChoice, string>)[c])).toEqual(['들판', '호숫가', '등불', '장날'])
+    expect(MUSIC_CHOICES.map((c) => (T.controls.tracks as Record<MusicChoice, string>)[c])).toEqual(['1', '2', '3', '4'])
   })
   it('악보는 언제 만들어도 같고, 모든 음이 고리 안에 있다', () => {
     for (const c of MUSIC_CHOICES)

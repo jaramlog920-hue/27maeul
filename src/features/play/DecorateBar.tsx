@@ -29,8 +29,10 @@ export function DecorateBar() {
   const items = FURNITURE.filter((f) => (inv[f] ?? 0) > 0)
   return (
     <div className="decorate-bar" role="toolbar" aria-label={T.ui.decorate}>
-      <p className="hint">{moving ? '옮길 방을 고르고 빈 바닥을 누르세요.' : T.ui.decorateHint}</p>
-      {!inHouse && (
+      {/* 설명 줄은 옮기는 중일 때만 짧게 (2026-10-07 사용자 — 가독성) */}
+      {moving && <p className="hint">빈 바닥을 누르세요.</p>}
+      {/* 방이 하나뿐이면 방 고르기 단추를 보이지 않는다 */}
+      {!inHouse && level >= 1 && (
         <div className="decorate-items" role="group" aria-label="꾸밀 방 선택">
           <button onClick={() => showDecorRoom('workshop')}>작업실</button>
           {level >= 1 && <button onClick={() => showDecorRoom('partner')}>배우자방</button>}
@@ -40,7 +42,7 @@ export function DecorateBar() {
       )}
       {sel && (
         <div className="decorate-items decorate-sel">
-          <span>
+          <span className="decorate-sel-name">
             <ItemIcon id={sel.item} /> {itemName(sel.item)}
           </span>
           <button onClick={moveSelected}>{moving ? '옮기기 취소' : '옮기기'}</button>

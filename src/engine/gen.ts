@@ -253,17 +253,25 @@ export function ensureFixed(g: GenState, content: GameContent): GenState {
  * 처음 호감도 (P1): 이미 설정상 친한 쌍 — 양쪽 모두에 서로 함께하는 일과(with)가 있거나 집안(family)으로 이어진 쌍 — 은 30, 나머지 0.
  * 일과는 people.json에서 받아 온다 (gen은 콘텐츠 파일을 직접 읽지 않는다)
  */
-export function startAffinity(content: GameContent, withPairs: readonly [string, string][]): Record<string, number> {
+export function startAffinity(content: GameContent, withPairs: readonly [string, string][], seed = FALLBACK_SEED): Record<string, number> {
   const ids = new Set(content.neighbors.map((n) => n.id))
+  const look = (id: string) => { const n = content.neighbors.find((d) => d.id === id); return n ? lookOf(n) : undefined }
   const out: Record<string, number> = {}
-  for (const [a, b] of withPairs) if (a !== b && ids.has(a) && ids.has(b)) out[relationId(a, b)] = START_CLOSE
+  for (const [a, b] of withPairs) {
+    if (a === b || !ids.has(a) || !ids.has(b)) continue
+    // 연인이 될 수 있는 쌍(참여 대상·서로 다른 모습)은 회차마다 0–15에서 출발 — 늘 같은 쌍이 먼저 맺어지지 않게 (사용자 2026-10-07,
+    // 씨앗 40개 시험에서 30으로 두면 첫 연인이 40번 모두 같은 두 쌍이었다)
+    const couple = genEligible(a) && genEligible(b) && generationOf(a) === generationOf(b) && !!look(a) && !!look(b) && look(a) !== look(b)
+    const v = couple ? Math.round(genRng(seed, 'start', [a, b], 0)() * (START_CLOSE / 2)) : START_CLOSE
+    if (v) out[relationId(a, b)] = v
+  }
   for (const n of content.neighbors) if (n.family && ids.has(n.family) && n.family !== n.id) out[relationId(n.id, n.family)] = START_CLOSE
   return out
 }
 
 export function newGenState(content: GameContent, seed: number, day: number, withPairs: readonly [string, string][] = []): GenState {
   return ensureFixed(
-    { on: true, seed: seed >>> 0, settledDay: day, persons: {}, affinity: startAffinity(content, withPairs), meets: {}, breakup: {}, relations: {}, households: {}, events: [], log: [], nextPerson: 1, nextEvent: 1 },
+    { on: true, seed: seed >>> 0, settledDay: day, persons: {}, affinity: startAffinity(content, withPairs, seed >>> 0), meets: {}, breakup: {}, relations: {}, households: {}, events: [], log: [], nextPerson: 1, nextEvent: 1 },
     content,
   )
 }

@@ -23,11 +23,15 @@ describe('처음 만들기', () => {
     expect(g.persons.smith.look).toBe('m')
     expect(g.on).toBe(true)
   })
-  it('처음 호감도: 양쪽에 함께하는 일과가 있는 쌍·집안으로 이어진 쌍은 30, 나머지는 0', () => {
+  it('처음 호감도: 함께하는 일과·집안 쌍은 30, 연인이 될 수 있는 쌍은 회차마다 0–15, 나머지는 0', () => {
     const g = fresh()
-    expect(affinityOf(g, 'smith', 'carpenter')).toBe(START_CLOSE) // 양쪽 with
-    expect(affinityOf(g, 'tilly', 'wendell')).toBe(START_CLOSE)
+    expect(affinityOf(g, 'smith', 'carpenter')).toBe(START_CLOSE) // 양쪽 with (같은 모습 — 친구)
+    expect(affinityOf(g, 'cosmo', 'rudy')).toBe(START_CLOSE)
     expect(affinityOf(g, 'rudy', 'carpenter')).toBe(START_CLOSE) // 집안
+    // 틸리·웬델은 연인이 될 수 있는 쌍 — 씨앗마다 0–15, 씨앗이 다르면 달라질 수 있다
+    const tw = [1, 2, 3, 4, 5, 6, 7, 8].map((seed) => affinityOf(newGenState(CONTENT, seed, 1, withPairs()), 'tilly', 'wendell'))
+    for (const v of tw) expect(v >= 0 && v <= 15).toBe(true)
+    expect(new Set(tw).size).toBeGreaterThan(1)
     expect(affinityOf(g, 'rudy', 'juniper')).toBe(0)
     expect(withPairs().length).toBeGreaterThan(5)
   })

@@ -51,6 +51,13 @@
   gap: 4px;
   font-size: 13px;
 }
+/* 고른 가구 이름은 한 줄을 다 쓰고, 옮기기·돌리기·치우기는 그 아래 한 줄에 나란히 (2026-10-07 사용자 — 단추가 들쭉날쭉했다) */
+.decorate-sel .decorate-sel-name {
+  flex-basis: 100%;
+}
+.decorate-items + .decorate-items {
+  margin-top: 6px;
+}
 .decorate-items button.on {
   background: #fff4dc;
   border-color: var(--accent);
@@ -2172,6 +2179,22 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
 .word-links-name { font-weight: 700; word-break: keep-all; }
 .word-links-books { flex-basis: 100%; font-size: 12px; color: var(--ink-soft); word-break: keep-all; overflow-wrap: anywhere; }
 .word-god-verses { margin: 6px 0 4px; padding: 8px 10px; background: #fffaf0; border: 2px solid #d8c8a4; border-radius: 4px; gap: 8px; }
+/* ── 공통 목록 줄 (2026-10-07 사용자: 서고 목록처럼 — 굵은 이름 · 아래 작은 상태 · 오른쪽 숫자, 줄 사이 구분선, 설명 문장 없이) ──
+   <ul class="rows"><li><button class="row">[아이콘] <span class="row-main"><b>이름</b><small>상태</small></span><span class="row-meta">숫자</span></button></li></ul>
+   누르는 줄은 줄 전체가 단추 (오른쪽 ›), 누를 수 없는 줄은 <div class="row"> */
+.rows { list-style: none; margin: 0 0 8px; padding: 0; }
+.rows > li { margin: 0; padding: 0; }
+.row { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 52px; padding: 8px 6px; border: 0; border-bottom: 2px solid #e6d9bf; border-radius: 0; background: transparent; box-shadow: none; color: inherit; font: inherit; text-align: left; }
+button.row { cursor: pointer; }
+button.row:not(:disabled)::after { content: '›'; margin-left: 2px; font-size: 20px; color: #a88c5e; }
+button.row:disabled { opacity: 0.5; }
+button.row:active:not(:disabled) { background: #efe3c4; }
+.row-main { display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; gap: 2px; }
+.row-main b { font-weight: 700; word-break: keep-all; overflow-wrap: anywhere; }
+.row-main small { font-size: 12px; color: var(--ink-soft); word-break: keep-all; overflow-wrap: anywhere; }
+.row-meta { flex: none; font-size: 13px; text-align: right; color: var(--ink-soft); }
+.row-icon { flex: none; display: inline-flex; }
+.rows-title { margin: 12px 0 2px; font-size: 14px; }
 .word-lib-row { display: grid; grid-template-columns: 18px 1fr auto; gap: 2px 8px; align-items: center; padding: 6px 8px; border-bottom: 2px solid #e6d9bf; }
 .word-lib-row .spine-art, .word-lib-row .spine-slot { grid-row: span 2; width: 14px; height: 36px; }
 .word-lib-name { font-weight: 700; word-break: keep-all; }

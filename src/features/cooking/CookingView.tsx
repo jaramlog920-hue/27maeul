@@ -17,7 +17,6 @@ import { HandPractice } from '../work/HandPractice'
 const C = T.cooking
 type DishText = { name: string; note: string; hands?: string[]; looks?: string[]; art?: string[] }
 const dishText = (id: DishId) => (C.dishes as Record<string, DishText>)[id]
-const how = (item: string) => (C.how as Record<string, string>)[item] ?? ''
 
 /** assets/cooking 도트 하나를 그대로 키워 보인다 (16×16 원본, 확대는 nearest-neighbor) */
 export function DishArt({ id, size = 48 }: { id: string; size?: number }) {
@@ -72,7 +71,7 @@ export function CookingView() {
       </>}
       {run.phase === 'finish' && <>
         <p>{C.finishAsk}</p>
-        {kidCanChoose(game) && <p><label><input type="checkbox" checked={byKid} onChange={(e) => setByKid(e.target.checked)} /> {C.kidChoose}</label><span className="hint"> {C.kidNote}</span></p>}
+        {kidCanChoose(game) && <p><label><input type="checkbox" checked={byKid} onChange={(e) => setByKid(e.target.checked)} /> {C.kidChoose}</label></p>}
         <div className="actions menu column">
           {[0, 1].map((i) => <button key={i} className="primary" onClick={() => {
             const next = chooseLook(useGame.getState().game, i, byKid)
@@ -84,7 +83,7 @@ export function CookingView() {
       {run.phase === 'ready' && <>
         <p><DishArt id={def.art[run.look]} /> {fill(C.resultLine, { item: itemName(def.item), n: def.qty })}</p>
         {run.uneven && <p className="hint">{C.uneven}</p>}
-        <p className="hint">{C.waitFull}</p>
+        {readyBlock(game) !== null && <p className="hint">{C.waitFull}</p>}
         <button className="primary" disabled={readyBlock(game) !== null} onClick={() => { const next = deliverCook(useGame.getState().game); applyLifeState(next); got(next, run) }}>{C.receive}</button>
       </>}
       <div className="actions"><button onClick={close}>{C.later}</button></div>
@@ -136,7 +135,6 @@ export function CookingView() {
           }}>{guests.length ? fill(C.sitWith, { n: guests.length }) : C.sitAlone}</button>
           <button onClick={() => { applyLifeState(clearTable(useGame.getState().game)); setReactions([]); setNote('') }}>{C.clear}</button>
         </div>
-        <p className="hint">{C.clearNote}</p>
       </> : <>
         {block === 'away' && <p className="hint">{C.tableAway}</p>}
         {block === 'noSpace' && <p className="hint">{C.tableNoSpace}</p>}
@@ -168,19 +166,15 @@ export function CookingView() {
     const block = dish === 'bread' ? canCraft(game, 'bread') : canCook(game, dish)
     return <div className="dialog" role="dialog" aria-label={text.name}><h2>{text.name}</h2>
       <p><DishArt id={def.art[dish === 'bread' ? c.breadShape : c.looks[dish] ?? 0]} /> {text.note}</p>
-      <p className="hint">{fill(C.needLine, { items: itemLine(def.needs, have) })}</p>
-      <p className="hint">{fill(C.makesLine, { item: itemName(def.item), n: def.qty })}</p>
-      <p className="hint">{fill(C.timeLine, { n: def.minutes })}</p>
-      {miss.length > 0 && <><p>{fill(C.missing, { items: itemLine(Object.fromEntries(miss.map((m) => [m.item, m.need - m.have]))) })}</p>
-        <ul>{miss.map((m) => <li key={m.item} className="hint">{itemName(m.item)}: {how(m.item)}</li>)}</ul></>}
+      {/* 필요한 것·시간을 한 줄로 (2026-10-07 사용자 — 설명이 너무 많았다) */}
+      <p className="hint">{fill(C.needLine, { items: itemLine(def.needs, have) })} · {fill(C.timeLine, { n: def.minutes })}</p>
+      {miss.length > 0 && <p>{fill(C.missing, { items: itemLine(Object.fromEntries(miss.map((m) => [m.item, m.need - m.have]))) })}</p>}
       {block && block !== 'needs' && <p className="hint">{(C.blocks as Record<string, string>)[block === 'tired' || block === 'full' || block === 'busy' || block === 'unknown' ? block : 'needs']}</p>}
       {dish === 'bread' ? <>
         <p>{C.breadShape}</p>
         <div className="actions">{C.breadShapes.map((n, i) => <button key={n} aria-pressed={c.breadShape === i} onClick={() => applyLifeState(setBreadShape(useGame.getState().game, i))}><DishArt id={def.art[i]} size={32} /> {n}</button>)}</div>
-        <p className="hint">{C.breadNote}</p>
         <button className="primary" disabled={block !== null} onClick={() => useGame.getState().startCraft('bread')}>{C.breadBake}</button>
       </> : <>
-        <p className="hint">{C.startNote}</p>
         <button className="primary" disabled={block !== null} onClick={() => { applyLifeState(startCook(useGame.getState().game, dish, rng())); setByKid(false) }}>{C.start}</button>
       </>}
       <div className="actions"><button onClick={() => setView('home')}>{T.ui.close}</button></div>
@@ -192,19 +186,32 @@ export function CookingView() {
   const known = (Object.keys(DISHES) as DishId[]).filter((d) => d === 'bread' || knownDish(game, d))
   const unknown = NEW_DISHES.filter((d) => !knownDish(game, d))
   return <div className="dialog" role="dialog" aria-label={C.title}><h2>{C.title}</h2>
-    <p>{C.lead}</p>
     {note && <p role="status">{note}</p>}
-    <h3>{C.list}</h3>
-    <div className="actions menu column">{known.map((d) => <button key={d} onClick={() => setView(d)}><DishArt id={DISHES[d].art[0]} size={32} /> {dishText(d).name}</button>)}</div>
-    {unknown.length > 0 && <><h3>{C.unknownTitle}</h3>
-      <ul>{unknown.map((d) => <li key={d}><b>{dishText(d).name}</b> <span className="hint">{fill(C.teachers, { who: DISHES[d].teachers.map(whoName).join(' · ') })}</span></li>)}</ul>
-      <p className="hint">{C.learnHint}</p></>}
-    <h3>{C.bagFoods}</h3>
-    {have.length === 0 ? <p className="hint">{C.noFood}</p> : <div className="actions menu column">{have.map((i) => <button key={i} onClick={() => { applyLifeState(eatDish(useGame.getState().game, i)); setNote(fill(i === 'herbTea' ? C.drank : C.ate, { item: withObject(itemName(i)) })) }}>{itemName(i)} {count(game.inv, i)} · {C.alone} {i === 'herbTea' ? `(${C.drink})` : ''}</button>)}</div>}
-    <div className="actions menu column">
-      <button onClick={() => setView('table')}>{c.table ? fill(C.onTable, { item: itemName(c.table.item), n: c.table.left }) : C.toTable}</button>
-      <button onClick={close}>{T.ui.close}</button>
-    </div>
+    {/* 서고 목록처럼: 이름 · 필요한 것 · 시간 (2026-10-07 사용자) */}
+    <h3 className="rows-title">{C.list}</h3>
+    <ul className="rows">{known.map((d) => {
+      const def = DISHES[d]
+      const ok = (d === 'bread' ? canCraft(game, 'bread') : canCook(game, d)) === null
+      return <li key={d}><button className="row" onClick={() => setView(d)}>
+        <span className="row-icon"><DishArt id={def.art[0]} size={32} /></span>
+        <span className="row-main"><b>{dishText(d).name}</b><small>{itemLine(def.needs, (id) => count(game.inv, id) + count(game.chest ?? {}, id))}</small></span>
+        <span className="row-meta">{ok ? fill(C.timeLine, { n: def.minutes }) : C.blocks.needs}</span>
+      </button></li>
+    })}</ul>
+    {unknown.length > 0 && <><h3 className="rows-title">{C.unknownTitle}</h3>
+      <ul className="rows">{unknown.map((d) => <li key={d}><div className="row">
+        <span className="row-icon"><DishArt id={DISHES[d].art[0]} size={32} /></span>
+        <span className="row-main"><b>{dishText(d).name}</b><small>{fill(C.teachers, { who: DISHES[d].teachers.map(whoName).join(' · ') })}</small></span>
+      </div></li>)}</ul></>}
+    {have.length > 0 && <><h3 className="rows-title">{C.bagFoods}</h3>
+      <ul className="rows">{have.map((i) => <li key={i}><button className="row" onClick={() => { applyLifeState(eatDish(useGame.getState().game, i)); setNote(fill(i === 'herbTea' ? C.drank : C.ate, { item: withObject(itemName(i)) })) }}>
+        <span className="row-main"><b>{itemName(i)}</b><small>{i === 'herbTea' ? C.drink : C.alone}</small></span>
+        <span className="row-meta">{count(game.inv, i)}</span>
+      </button></li>)}</ul></>}
+    <ul className="rows"><li><button className="row" onClick={() => setView('table')}>
+      <span className="row-main"><b>{C.toTable}</b>{c.table && <small>{fill(C.onTable, { item: itemName(c.table.item), n: c.table.left })}</small>}</span>
+    </button></li></ul>
+    <div className="actions"><button onClick={close}>{T.ui.close}</button></div>
   </div>
 }
 

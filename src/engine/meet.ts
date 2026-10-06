@@ -31,13 +31,20 @@ export function fitOf(a: string, b: string, likes: (id: string) => readonly stri
   return Math.min(3, n)
 }
 
+/** 이 회차에서 두 사람이 잘 맞는 정도 −2–+2 (저장된 씨앗으로 정해져 회차 안에서는 늘 같다) */
+export function chemistry(g: GenState, a: string, b: string): number {
+  return Math.floor(genRng(g.seed, 'chem', [a, b], 0)() * 5) - 2
+}
+
 /** 만남 하나의 결과 (P2): 웃음 35 / 이야기 30 / 하트 15(친한 사이 이상만) / 머쓱 12 / 화남 8, 취향 1당 화남 −3·하트 +3. 헤어진 지 7일 안은 이야기·머쓱만 */
 export function meetResult(g: GenState, a: string, b: string, day: number, n: number, fit: number): EmoteKind {
   const quiet = quietAfterBreakup(g, a, b, day)
   const close = stageOf(g, a, b) !== 'neighbor'
+  // 고정 취향은 조금만(0–1), 이 회차의 궁합(−2–+2)이 더 크게 — 회차마다 잘 맞는 쌍이 달라진다 (사용자 2026-10-07)
+  const c = Math.min(1, fit) + chemistry(g, a, b)
   const w: [EmoteKind, number][] = quiet
     ? [['talk', 30], ['sweat', 12]]
-    : [['laugh', 35], ['talk', 30], [close ? 'heart' : 'laugh', 15 + fit * 3], ['sweat', 12], ['angry', Math.max(0, 8 - fit * 3)]]
+    : [['laugh', 35 + c * 3], ['talk', 30], [close ? 'heart' : 'laugh', Math.max(3, 15 + c * 4)], ['sweat', 12], ['angry', Math.max(2, 8 - c * 3)]]
   const total = w.reduce((s, [, x]) => s + x, 0)
   let r = genRng(g.seed, 'meet', [a, b], day * 10 + n)() * total
   for (const [k, x] of w) if ((r -= x) < 0) return k

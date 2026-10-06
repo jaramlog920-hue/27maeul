@@ -90,11 +90,11 @@
     "resume": "하던 요리 이어가기: {dish}",
     "list": "만들 수 있는 요리",
     "unknownTitle": "아직 모르는 요리",
-    "teachers": "가르쳐 줄 이웃: {who}",
+    "teachers": "{who}",
     "learnHint": "그 이웃과 함께한 일이 생기면, 곁에서 '함께 요리 배우기'로 익힐 수 있어요.",
-    "needLine": "필요한 것: {items}",
+    "needLine": "{items}",
     "makesLine": "만들어지는 것: {item} {n}",
-    "timeLine": "걸리는 시간: 약 {n}분 · 만드는 곳: 화덕",
+    "timeLine": "약 {n}분",
     "missing": "모자라는 것: {items}",
     "how": {
       "water": "우물에서 길어요.",
@@ -123,7 +123,7 @@
     "resultTitle": "완성",
     "resultLine": "{item} {n}개가 만들어졌어요.",
     "uneven": "모양이 조금 삐뚤어졌지만 맛은 같아요.",
-    "waitFull": "가방이 가득해서 받지 못했어요. 가방을 비우면 받을 수 있고, 완성한 요리는 그대로 기다려요.",
+    "waitFull": "가방이 가득해요.",
     "receive": "받기",
     "afterTitle": "이제 어떻게 할까요?",
     "eat": "먹기",
@@ -936,10 +936,10 @@
     },
     "music": "배경음악",
     "tracks": {
-      "default": "들판",
-      "D": "호숫가",
-      "E": "등불",
-      "F": "장날"
+      "default": "1",
+      "D": "2",
+      "E": "3",
+      "F": "4"
     },
     "stories": "말씀 조각 {n}",
     "storiesWho": "오늘 받을 말씀 조각이 있어요 · {who}",

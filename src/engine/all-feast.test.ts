@@ -86,7 +86,7 @@ describe('스물일곱 권 잔치 — 조건과 한 번뿐', () => {
     expect(feast.clock.day).toBe(G + 1)
     expect(feast.flags.allFeast).toBe(1)
     const ev = scheduledEvents(feast, CONTENT).find((e) => e.id === `${G + 1}:allFeast`)!
-    expect(ev).toMatchObject({ title: '스물일곱 권 잔치', location: '장터 모닥불 · 특별 장면은 18:30부터', from: FESTIVAL_FROM, to: FESTIVAL_TO })
+    expect(ev).toMatchObject({ title: '스물일곱 권 잔치', location: '장터 모닥불', from: FESTIVAL_FROM, to: FESTIVAL_TO })
   })
 })
 

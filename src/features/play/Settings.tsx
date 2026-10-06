@@ -164,7 +164,6 @@ export function Settings() {
             </button>
           ))}
         </div>
-        <p className="hint">크게 할수록 필사가 주변이 크게 보이고, 한 화면에 보이는 마을은 좁아져요.</p>
       </section>
       <section className="settings-section">
         <h3>{C.mode}</h3>
@@ -227,7 +226,6 @@ export function Settings() {
             </div>
           </>
         )}
-        <p className="hint">{mode === 'deck' ? C.deckHint : C.hint}</p>
       </section>
       <section className="settings-section">
         <div className="settings-row">
@@ -246,7 +244,7 @@ export function Settings() {
           <h3>기록 초기화</h3>
           {!resetting && <button onClick={() => setResetting(true)}>처음부터</button>}
         </div>
-        {resetting ? (
+        {resetting && (
           <div className="reset-confirm">
             <p className="hint">엮은 책, 모은 조각, 서고, 가방, 이웃과의 정이 모두 지워지고 첫날부터 다시 시작해요. 되돌릴 수 없어요.</p>
             <div className="settings-options reset-options">
@@ -262,8 +260,6 @@ export function Settings() {
               </button>
             </div>
           </div>
-        ) : (
-          <p className="hint">잘못 눌러도 한 번 더 묻고 나서 지워요.</p>
         )}
       </section>
       <div className="actions">

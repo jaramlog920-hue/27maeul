@@ -24,19 +24,19 @@ describe('요리하기 화면', () => {
     act(() => fireEvent.click(getByText(C.open)))
     expect(useGame.getState().modal).toEqual({ kind: 'cooking' })
   })
-  it('모르는 요리는 가르쳐 줄 이웃을 안내하고 빈 메뉴로 보이지 않는다', () => {
+  it('모르는 요리는 가르쳐 줄 이웃 이름만 짧게, 설명 문장·빈 가방 칸은 없다', () => {
     useGame.setState({ game: start({}), modal: { kind: 'cooking' } })
     const { container } = render(<CookingView />)
     expect(container.textContent).toContain(C.unknownTitle)
     expect(container.textContent).toContain(C.dishes.honeyBread.name)
-    expect(container.textContent).toContain(C.learnHint)
-    expect(container.textContent).toContain(C.noFood)
+    expect(container.textContent).not.toContain(C.learnHint)
+    expect(container.textContent).not.toContain(C.noFood)
+    expect(container.textContent).not.toContain(C.lead)
   })
   it('콩 요리를 골라 시작하면 재료가 한 번 빠지고 손 동작 화면이 나온다', () => {
     useGame.setState({ game: start({ bean: 1, water: 1 }), modal: { kind: 'cooking' } })
     const { getByText, container } = render(<CookingView />)
     act(() => fireEvent.click(getByText(C.dishes.beanDish.name)))
-    expect(container.textContent).toContain(C.startNote)
     act(() => fireEvent.click(getByText(C.start)))
     const g = useGame.getState().game
     expect(cookOf(g).run?.dish).toBe('beanDish')
@@ -44,11 +44,11 @@ describe('요리하기 화면', () => {
     expect(container.textContent).toContain(C.dishes.beanDish.hands[0])
     expect(container.textContent).toContain(C.later)
   })
-  it('재료가 모자라면 모자란 것과 얻는 방법을 보이고 시작 단추가 막힌다', () => {
+  it('재료가 모자라면 모자란 것을 보이고 시작 단추가 막힌다', () => {
     useGame.setState({ game: start({ bean: 1 }), modal: { kind: 'cooking' } })
     const { getByText, container } = render(<CookingView />)
     act(() => fireEvent.click(getByText(C.dishes.beanDish.name)))
-    expect(container.textContent).toContain(C.how.water)
+    expect(container.textContent).toContain('모자라는 것')
     expect((getByText(C.start) as HTMLButtonElement).disabled).toBe(true)
   })
   it('가방의 음식은 혼자 먹을 수 있고, 식탁은 자리가 없으면 안내한다', () => {

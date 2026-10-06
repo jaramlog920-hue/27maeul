@@ -71,6 +71,31 @@ describe('자리 고르기', () => {
     expect(new Set(keys).size).toBe(keys.length)
     expect(keys.length).toBe(Math.min(ids.length, all.length))
   })
+  it('단짝이어도 늘 붙어 다니지 않고, 여러 이웃과 고루 같은 자리에 선다 (120일)', () => {
+    const rp = 'poppy|rudy'
+    const best = { ...g, affinity: { ...g.affinity, [rp]: 100 } }
+    const partners = new Map<string, Set<string>>(ids.map((id) => [id, new Set()]))
+    let together = 0, slots = 0
+    for (let day = 1; day <= 120; day++) {
+      for (let m = 480; m < 1200; m += 120) {
+        const spots = freeSpotsFor(best, day, m, ids)
+        const byTile = new Map<number, string[]>()
+        for (const [id, t] of Object.entries(spots)) {
+          const i = FREE_SPOTS.findIndex((p) => p.some((x) => x.x === t.x && x.y === t.y))
+          byTile.set(i, [...(byTile.get(i) ?? []), id])
+        }
+        for (const pair of byTile.values()) if (pair.length === 2) {
+          partners.get(pair[0])!.add(pair[1])
+          partners.get(pair[1])!.add(pair[0])
+          if (pair.includes('rudy') && pair.includes('poppy')) together++
+        }
+        if (spots.rudy && spots.poppy) slots++
+      }
+    }
+    expect(together / slots).toBeLessThan(0.2)
+    expect(partners.get('rudy')!.size).toBeGreaterThanOrEqual(12)
+    expect(partners.get('carpenter')!.size).toBeGreaterThanOrEqual(12)
+  })
   it('두 시간이 지나면 다시 고른다', () => {
     const a = freeSpotsFor(g, 5, 600, ids), b = freeSpotsFor(g, 5, 720, ids)
     expect(b).not.toEqual(a)

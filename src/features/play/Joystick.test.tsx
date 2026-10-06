@@ -174,10 +174,10 @@ describe('조이스틱 설정', () => {
     expect(loadJoystickShape()).toBe('round')
     expect(loadJoystickSide()).toBe('left')
   })
-  it('배경음악 단추는 곡 이름으로 보이고, 고르면 저장된다', () => {
+  it('배경음악 단추는 1–4 번호로 보이고, 고르면 저장된다', () => {
     render(<Settings />)
     const names = Array.from(document.querySelectorAll('[data-track]')).map((b) => b.textContent)
-    expect(names).toEqual(['들판', '호숫가', '등불', '장날'])
+    expect(names).toEqual(['1', '2', '3', '4'])
     act(() => (document.querySelector('[data-track="E"]') as HTMLButtonElement).click())
     expect(localStorage.getItem('twenty-seven/music')).toBe('E')
     act(() => (document.querySelector('[data-track="default"]') as HTMLButtonElement).click())

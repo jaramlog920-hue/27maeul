@@ -46,8 +46,8 @@ export const freeSlotOf = (minute: number): number => Math.floor(minute / FREE_S
 let memo: { key: string; affinity: GenState['affinity']; spots: Record<string, Tile> } | null = null
 
 /**
- * 이 두 시간 칸에 사람마다 갈 자리 (겹치지 않게). 사람은 id 순으로 하나씩 고르고,
- * 이미 자리를 고른 친한 사람(호감도 30 이상) 곁의 자리일수록 잘 고른다 — 가중 = 1 + 호감도/25.
+ * 이 두 시간 칸에 사람마다 갈 자리 (겹치지 않게). 사람은 씨앗으로 섞은 순서로 하나씩 고르고,
+ * 이미 자리를 고른 친한 사람(호감도 30 이상) 곁의 자리를 조금 더 잘 고른다 — 가중 = 1 + min(1, 호감도/100).
  * 자리보다 사람이 많으면 남은 사람은 고르지 않는다 (일과표 그대로)
  */
 export function freeSpotsFor(g: GenState, day: number, minute: number, ids: readonly string[]): Record<string, Tile> {
@@ -56,7 +56,13 @@ export function freeSpotsFor(g: GenState, day: number, minute: number, ids: read
   if (memo && memo.key === key && memo.affinity === g.affinity) return memo.spots
   const seats: (string | null)[][] = FREE_SPOTS.map(() => [null, null])
   const out: Record<string, Tile> = {}
+  // 고르는 순서도 두 시간마다 섞는다 — 이름 순이면 늘 뒤 사람만 친구 덤을 받는다
   const order = [...ids].sort()
+  const mix = genRng(g.seed, 'freeOrder', [], day * 24 + slot)
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(mix() * (i + 1))
+    ;[order[i], order[j]] = [order[j], order[i]]
+  }
   for (const id of order) {
     const rnd = genRng(g.seed, 'free', [id], day * 24 + slot)
     const weights = FREE_SPOTS.map((_, i) => {
@@ -65,7 +71,8 @@ export function freeSpotsFor(g: GenState, day: number, minute: number, ids: read
       for (const other of seats[i]) {
         if (!other) continue
         const a = g.affinity[id < other ? `${id}|${other}` : `${other}|${id}`] ?? 0
-        if (a >= 30) w += a / 25
+        // 친구 곁 덤은 많아야 1 (다른 자리의 두 배까지) — 친한 쌍만 계속 만나 굳어지지 않게 (사용자 2026-10-07)
+        if (a >= 30) w += Math.min(1, a / 100)
       }
       return w
     })

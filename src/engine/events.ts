@@ -29,7 +29,7 @@ export function scheduledEvents(s: Pick<GameState, 'clock' | 'today' | 'flags'> 
   }
   for (let d = day; d <= day + 7; d++) {
     const festival = festivalOf(d)
-    if (festival) add('festival', festivals[festival], '장터 모닥불 · 특별 장면은 18:30부터', FESTIVAL_FROM, FESTIVAL_TO, false, d)
+    if (festival) add('festival', festivals[festival], '장터 모닥불', FESTIVAL_FROM, FESTIVAL_TO, false, d)
     if (isMarketDay(d)) {
       const schedule = content.neighbors.find(n => n.id === 'merchant')?.schedule ?? []
       const first = schedule.find(e => e.tile)
@@ -40,7 +40,7 @@ export function scheduledEvents(s: Pick<GameState, 'clock' | 'today' | 'flags'> 
     for (const id of s.notebook?.met ?? []) {
       if (!isBirthday(id, d)) continue
       const role = content.neighbors.find((n) => n.id === id)?.role ?? '이웃'
-      add(`birthday:${id}`, `${role} 생일`, '선물하면 마음이 두 배', 6 * 60, 22 * 60, false, d)
+      add(`birthday:${id}`, `${role} 생일`, '선물 두 배', 6 * 60, 22 * 60, false, d)
     }
     if (d > day && d === BABY_PARTY_DAY && !isWet(weatherOf(d))) {
       const [from, to] = gatheringWindow('babyParty')
@@ -48,9 +48,9 @@ export function scheduledEvents(s: Pick<GameState, 'clock' | 'today' | 'flags'> 
     }
   }
   // 복음서 방 잔치 (비가 와도 연다)
-  if (s.flags.gospelFeast === 1) add('gospelFeast', '복음서 방 잔치', '장터 모닥불 · 특별 장면은 18:30부터', FESTIVAL_FROM, FESTIVAL_TO)
+  if (s.flags.gospelFeast === 1) add('gospelFeast', '복음서 방 잔치', '장터 모닥불', FESTIVAL_FROM, FESTIVAL_TO)
   // 스물일곱 권 잔치 (비가 와도 연다)
-  if (s.flags.allFeast === 1) add('allFeast', '스물일곱 권 잔치', '장터 모닥불 · 특별 장면은 18:30부터', FESTIVAL_FROM, FESTIVAL_TO)
+  if (s.flags.allFeast === 1) add('allFeast', '스물일곱 권 잔치', '장터 모닥불', FESTIVAL_FROM, FESTIVAL_TO)
   const today = s.today
   const role = (id: string) => content.neighbors.find(n => n.id === id)?.role ?? '이웃'
   if (today?.visitor) add('visit', `${role(today.visitor)} 방문`, '내 집 앞', VISIT_FROM, VISIT_TO, today.visitGot)

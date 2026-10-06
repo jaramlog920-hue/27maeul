@@ -3,7 +3,7 @@ import { CONTENT } from '../../content/catalog'
 import { fill, T } from '../../content/text'
 import { isMarketDay, weatherOf } from '../../engine/calendar'
 import { formatTime, phaseOf, seasonOf } from '../../engine/clock'
-import { progressOf, totalChapters, type Progress } from '../../engine/books'
+import { progressOf, type Progress } from '../../engine/books'
 import { OT_NAME } from '../../content/ot-catalog'
 import { chapterUnit, isOtBook, otRow, type CopyBook } from '../../engine/ot-books'
 import { copySpot, type CopyAt } from '../../engine/copying'
@@ -16,7 +16,6 @@ export function Hud() {
   const day = useGame((s) => s.game.clock.day)
   // 10분 단위로만 다시 그린다
   const minute = useGame((s) => Math.floor(s.game.clock.minute / 10) * 10)
-  const shelf = useGame((s) => totalChapters(s.game))
   const coins = useGame((s) => s.game.coins)
   const job = useGame((s) => jobOf(s.game))
   const name = useGame((s) => s.game.avatar?.name ?? '')
@@ -49,7 +48,7 @@ export function Hud() {
           <span className="hud-chapter">{copyText}</span>
           {' · '}
           {fill(T.ui.coins, { n: coins })}
-          <span className="hud-shelf-count"> · {fill(T.ui.shelf, { n: shelf })}</span>
+          {/* 엮은 장 수는 맨 위에 보이지 않는다 (2026-10-07 사용자) — 말씀 창에서 본다 */}
         </span>
         <div className="hud-buttons">
           <button className="hud-btn menu-word" onClick={() => open({ kind: 'word' })}>

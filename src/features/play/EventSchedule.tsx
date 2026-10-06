@@ -48,7 +48,6 @@ export function ScheduleDialog() {
   return (
     <div className="dialog schedule" role="dialog" aria-label="일정">
       <h2>일정</h2>
-      <p className="hint">게임 속 시간 기준 · 앞으로 7일</p>
       {!events.some((e) => e.day === day) && <p className="hint">오늘은 예정된 일정이 없어요.</p>}
       <ul className="event-list">
         {events.map((e) => {
@@ -60,13 +59,13 @@ export function ScheduleDialog() {
                 <span className="event-status">{status}</span>
               </div>
               <span>
-                {e.day === day ? '오늘' : `${e.day}일째`} · {formatTime(e.from)}~{formatTime(e.to)} · {e.location}
+                {/* 둘째 줄은 짧게 (2026-10-07 사용자 — 줄이 꺾여 읽기 힘들었다): 하루 내내인 것은 '하루 종일' */}
+                {e.day === day ? '오늘' : `${e.day}일째`} · {e.from <= 6 * 60 && e.to >= 22 * 60 ? '하루 종일' : `${formatTime(e.from)}~${formatTime(e.to)}`} · {e.location}
               </span>
             </li>
           )
         })}
       </ul>
-      <p className="hint">이웃 방문·초대·소풍은 그날 아침에 정해지면 표시돼요. 시작 30분 전과 시작할 때 알려 드려요.</p>
       <div className="actions">
         <button onClick={() => useGame.getState().open({ kind: 'clubs' })}>{lifeText.clubs.title}</button>
         <StallEntry />
