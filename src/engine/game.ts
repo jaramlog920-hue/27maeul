@@ -2092,10 +2092,11 @@ export function fulfillBoard(s: GameState, r: BoardRequest): GameState | null {
 
 export type TripBlock = 'late' | 'tired' | 'coins' | 'food' | 'full' | null
 /** 떠날 수 있는가: 아침(정오 전), 지치지 않았고, 배삯·숙박비·산 물건 값과 길양식이 있다 */
-export function canTrip(s: GameState, id: DestId, buys: readonly ItemId[] = []): TripBlock {
+export function canTrip(s: GameState, id: DestId, buys: readonly ItemId[] = [], returning = false): TripBlock {
   const d = DESTS[id]
-  if (s.clock.minute >= TRIP_LEAVE_BY) return 'late'
-  if (exhausted(s.needs)) return 'tired'
+  // 돌아갈 때는 시각·피로로 막지 않는다 — 판을 이미 돌았으니 집에는 늘 돌아갈 수 있어야 한다 (2026-10-07)
+  if (!returning && s.clock.minute >= TRIP_LEAVE_BY) return 'late'
+  if (!returning && exhausted(s.needs)) return 'tired'
   if (s.coins < tripCost(d, buys)) return 'coins'
   if (!haveStock(s, d.food)) return 'food'
   const got = Object.fromEntries(buys.map((b) => [b, 1]))
@@ -2110,7 +2111,7 @@ export function canTrip(s: GameState, id: DestId, buys: readonly ItemId[] = []):
 export function takeTrip(s: GameState, content: GameContent, id: DestId, buys: readonly ItemId[] = [], rewards: readonly TripReward[] = []): GameState | null {
   const d = DESTS[id]
   const items = [...new Set(buys)].filter((b) => d.shop[b] !== undefined)
-  if (canTrip(s, id, items)) return null
+  if (canTrip(s, id, items, true)) return null
   let next = useStock(s, d.food)!
   next = putAway({ ...next, coins: next.coins - tripCost(d, items) }, Object.fromEntries(items.map((b) => [b, 1])))
   const visits = s.flags[`trip:${id}`] ?? 0

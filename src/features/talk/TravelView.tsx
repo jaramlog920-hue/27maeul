@@ -62,7 +62,7 @@ export function TravelView({ dest: back, rewards: brought }: { dest?: DestId; re
   if (!rewards) return null
   const first = !game.flags[`trip:${dest}`]
   const story = first ? SCENES[`trip:${dest}`] : null
-  const block = canTrip(game, dest, buys)
+  const block = canTrip(game, dest, buys, true)
   const toggle = (id: ItemId) => setBuys(buys.includes(id) ? buys.filter((b) => b !== id) : [...buys, id])
   return (
     <div className="dialog travel" role="dialog" aria-label={d.name}>
@@ -94,6 +94,8 @@ export function TravelView({ dest: back, rewards: brought }: { dest?: DestId; re
         <button className="primary" disabled={block !== null} onClick={() => goTrip(dest, buys, rewards)}>
           하룻밤 묵고 돌아가기
         </button>
+        {/* 고른 물건 때문에 못 돌아가면, 아무것도 안 사고 돌아가는 길은 늘 열려 있다 */}
+        {block !== null && buys.length > 0 && <button onClick={() => goTrip(dest, [], rewards)}>사지 않고 돌아가기</button>}
       </div>
     </div>
   )
