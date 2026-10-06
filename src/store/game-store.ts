@@ -141,6 +141,7 @@ import { isHome, lockedTiles, lockedZones, roomAt, sameTile, zoneAt } from '../e
 import { footprint, removal, type Furniture } from '../engine/room'
 import { inBuildingRoom, roomOf as furnitureRoomOf } from '../engine/newland-rooms'
 import { heartsOf } from '../engine/hearts'
+import { canLearnDish, dishTaughtBy, learnDish } from '../engine/cooking'
 import { add, count, RECIPES, type Inventory, type RecipeId } from '../engine/items'
 import type { CarpenterWork } from '../engine/easier'
 import { work } from '../engine/needs'
@@ -197,7 +198,8 @@ export type Modal =
   /** 마을 공동 시설 현장 (계획 16 작업 20): 진행 중인 사업의 현장 — 몫·거들기·선택 장식 */
   | { kind: 'village'; id: FacilityId }
   /** letter: 편지 나르는 이웃이 말을 걸자마자 편지를 건넸을 때 대화에 보일 편지 말 한 줄 */
-  | { kind: 'talk'; neighborId: string; line: string; letter?: string }
+  // popup: 말을 걸었을 때 처음 하는 특별한 말(레시피 알려 주기·혼잣말·방문 말 등)은 이름 밑이 아니라 팝업으로 (2026-10-07 사용자)
+  | { kind: 'talk'; neighborId: string; line: string; letter?: string; popup?: string[] }
   | { kind: 'passage'; pieceId: string; askLine: boolean; back?: boolean; said?: string }
   /** lineKey: 조각 id 또는 'book:mk' 같은 책 키. back: 적거나 넘긴 뒤 돌아갈 창 ('word' = 📖 말씀 › 서고) */
   | { kind: 'myLine'; lineKey: string; back?: 'library' | 'word' | `room:${ShelfRoomId}` }
@@ -657,14 +659,15 @@ function remember(key: string, value: string) {
     /* 저장 불가 시에도 이번 판에는 적용 */
   }
 }
+// 처음 화면 크기는 125% (2026-10-07 사용자)
 const ZOOM_KEY = 'twenty-seven-zoom'
 export const ZOOMS = [1, 1.25, 1.5, 1.75, 2] as const
 function loadZoom(): number {
   try {
     const saved = Number(globalThis.localStorage?.getItem(ZOOM_KEY))
-    return (ZOOMS as readonly number[]).includes(saved) ? saved : 1
+    return (ZOOMS as readonly number[]).includes(saved) ? saved : 1.25
   } catch {
-    return 1
+    return 1.25
   }
 }
 /** 조이스틱은 처음엔 꺼져 있다 — 설정에서 켠 사람만 ('on'으로 저장) */
@@ -863,6 +866,17 @@ export const useGame = create<Store>((set, get) => {
     return { game: persist(state), modal: { kind: 'passage', pieceId, askLine: onlyHere, ...(said ? { said } : {}) } }
   }
 
+  /** 호감도가 찼으면 말을 걸 때 레시피를 알려 준다 (2026-10-07 사용자: 함께한 시간이 아니라 호감도 기준, 단추 없이 팝업으로) */
+  function teachRecipe(g: GameState, npc: string): { game: GameState; popup: string[] } {
+    const dish = dishTaughtBy(npc)
+    if (!dish || canLearnDish(g, npc)) return { game: g, popup: [] }
+    const C = T.cooking
+    const name = (C.dishes as Record<string, { name: string }>)[dish].name
+    const said = fill(C.learned, { who: withSubject(neighborById(npc)?.role ?? ''), dish: name })
+    const how = (C.learnedLine as Record<string, string>)[npc]
+    return { game: learnDish(g, npc), popup: [how ? `${said} ${how}` : said] }
+  }
+
   function arrive(game: GameState, target: Target): { game: GameState; modal: Modal | null } {
     const rng = get().rng
     if (target.kind === 'neighbor') {
@@ -917,12 +931,18 @@ export const useGame = create<Store>((set, get) => {
         }
       }
       // 아침에 들른 이웃은 들고 온 것을 건넨다
+      // 늘 하는 말은 이름 밑에, 특별한 말은 팝업으로 — 알려 줄 레시피가 있으면 팝업 맨 앞에
+      const talk = (st: GameState, line: string, special: boolean) => {
+        const r = teachRecipe(st, target.id)
+        const popup = special && line ? [...r.popup, line] : r.popup
+        return { game: persist(r.game), modal: { kind: 'talk' as const, neighborId: target.id, line: special ? '' : line, ...(popup.length ? { popup } : {}), ...letter } }
+      }
       const v = receiveVisit(g, target.id)
       if (v) {
         g = v.state
         get().say(fill(T.ui.visitGot, { items: itemList(v.gift) }))
         const l = NEIGHBOR_LINES[target.id]
-        return { game: persist(g), modal: { kind: 'talk', neighborId: target.id, line: l?.visit.length ? pick(l.visit, rng).text : lineFor(g, target.id, rng), ...letter } }
+        return l?.visit.length ? talk(g, pick(l.visit, rng).text, true) : talk(g, lineFor(g, target.id, rng), false)
       }
       // 특별한 대화 (2026-10-05): 오늘 말씀 조각을 건넬 이웃은 말을 걸면 그 자리에서 건넨다 — 받기 단추 없이, 그 이웃의 말과 함께 본문으로
       if (g.offers[target.id] && target.id !== POSTMAN) {
@@ -944,12 +964,12 @@ export const useGame = create<Store>((set, get) => {
         const other = mutterPartner(g, target.id)
         const role = other ? neighborById(other)?.role : undefined
         const line = role ? fill(T.people.together, { otherAnd: withAnd(role), text: mut }) : mut
-        return { game: persist(hearMutter(g, target.id, mut)), modal: { kind: 'talk', neighborId: target.id, line, ...letter } }
+        return talk(hearMutter(g, target.id, mut), line, true)
       }
       // 살아 움직이는 사람들 (계획 6b): 지금 상황·사이·기억에 맞는 말 (되풀이하지 않는다)
       const pl = g.offers[target.id] || postLine(g, target.id) ? null : personLine(g, target.id, rng())
-      if (pl) return { game: persist(pl.state), modal: { kind: 'talk', neighborId: target.id, line: pl.text, ...letter } }
-      return { game: persist(g), modal: { kind: 'talk', neighborId: target.id, line: lineFor(g, target.id, rng), ...letter } }
+      if (pl) return talk(pl.state, pl.text, pl.special)
+      return talk(g, lineFor(g, target.id, rng), false)
     }
     if (target.kind === 'stray') return { game, modal: { kind: 'companion', animal: target.animal } }
     if (target.kind === 'companion') {

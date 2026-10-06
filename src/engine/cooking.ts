@@ -4,8 +4,7 @@
 // 가끔 모양이 조금 삐뚤어질 뿐(맛·분량 같음). 완성품이 가방에 안 들어가면 가방을 비울 때까지 그대로 기다린다.
 // 식탁에 차린 음식은 가방에서 식탁으로 옮겨 한 곳에서만 쓴다: 먹기·치우기(남은 것 한 번 돌려받기)·날짜가 바뀌거나 자리가 없어지면 돌려받기.
 // 함께 먹은 기억은 그 자리에 실제로 있던 사람만, 식사 한 번마다 고유 id. 말씀 조각·필사본·성경 장면을 음식 재료·상품으로 쓰지 않는다.
-import { availability } from './plans'
-import { childTile, notYet, overflows, passTime, playerTile, putAway, recordExperienceIn, startAct, syncHome, useStock, haveStock, catchSoot, type GameState } from './game'
+import { childTile, overflows, passTime, playerTile, putAway, recordExperienceIn, startAct, syncHome, useStock, haveStock, catchSoot, type GameState } from './game'
 import { childStage } from './child'
 import { addGift, count, COOKED_ITEMS, DISH_HUNGER, take } from './items'
 import { startMini, stepMini, tapMini, isDone, type MiniState } from './minigame'
@@ -13,9 +12,10 @@ import { exhausted } from './needs'
 import { npcTile } from './neighbors'
 import { mulberry32 } from './offers'
 import { personOf } from './people'
+import { heartsOf } from './hearts'
 import { liveSpaces, reserveSeats, type HomeSpace } from './spaces'
 import { isHome } from './world'
-import type { GameContent, ItemId, Minigame, Rng, Tile } from './types'
+import type { ItemId, Minigame, Rng, Tile } from './types'
 
 export type DishId = 'bread' | 'beanDish' | 'herbBeanDish' | 'honeyBread' | 'figPlate' | 'herbTea'
 export const DISH_IDS: readonly DishId[] = ['bread', 'beanDish', 'herbBeanDish', 'honeyBread', 'figPlate', 'herbTea']
@@ -51,8 +51,6 @@ export const TABLE_MAX = 4
 export const EAT_MINUTES = 20
 export const TEA_MINUTES = 15
 export const TABLE_MINUTES = 30
-/** 같이 배우는 데 드는 분 */
-export const COOK_LESSON_MINUTES = 30
 /** 가끔 모양이 조금 삐뚤어지는 날 (날 씨앗) — 맛·분량·값은 그대로 */
 export const UNEVEN_CHANCE = 0.18
 
@@ -315,28 +313,24 @@ export function sitTable(s: GameState, guests: readonly string[]): SitResult | n
   return { state: next, reactions: people.map(p => mealReaction(p, t.item)), firstFamily }
 }
 
-// ── 이웃과 함께 배우기 ──
-const LEARN_KINDS = ['work', 'club', 'event', 'story', 'project']
-export type LearnBlock = 'none' | 'known' | 'unknown' | 'away' | 'busy' | 'late' | null
-/** 가르쳐 줄 이웃과 실제로 함께한 일이 있고, 지금 곁에 있고, 바쁘지 않을 때만 — 바쁘면 다른 때를 안내할 뿐 불이익은 없다 */
-export function canLearnDish(s: GameState, npc: string, content: Pick<GameContent, 'neighbors'>): LearnBlock {
+// ── 이웃에게 요리 배우기 ──
+/** 레시피는 함께한 시간이 아니라 호감도로 연다 (2026-10-07 사용자): 하트가 이만큼 차면 말을 걸 때 알려 준다 */
+export const LEARN_HEARTS = 3
+export type LearnBlock = 'none' | 'known' | 'unknown' | null
+/** 가르쳐 줄 이웃이고, 아직 모르는 요리이고, 하트가 LEARN_HEARTS 이상일 때만 */
+export function canLearnDish(s: GameState, npc: string): LearnBlock {
   const dish = dishTaughtBy(npc)
   if (!dish) return 'none'
   if (cookOf(s).learned[dish]) return 'known'
-  if (!Object.values(s.life.experiences ?? {}).some(e => e.with.includes(npc) && LEARN_KINDS.includes(e.kind))) return 'unknown'
-  const d = content.neighbors.find(n => n.id === npc), n = s.npcs[npc]
-  const me = playerTile(s)
-  if (!d || notYet(d, s.flags.villageLevel ?? 0, s.flags) || !n?.visible || !near(npcTile(n), me, 3)) return 'away'
-  if ((s.workDay && s.workDay.day === s.clock.day && !s.workDay.paid)) return 'busy'
-  if (s.clock.minute + COOK_LESSON_MINUTES > 18 * 60) return 'late'
-  return availability(s, npc, s.clock.day, s.clock.minute, s.clock.minute + COOK_LESSON_MINUTES, content) === 'ok' ? null : 'busy'
+  if (heartsOf(s.hearts[npc]) < LEARN_HEARTS) return 'unknown'
+  return null
 }
-/** 함께 해 보고 익힌다: 한 번만. 재료·물건 보상은 없고, 함께 배운 기억이 가르쳐 준 이웃에게만 남는다 */
-export function learnDish(s: GameState, npc: string, content: Pick<GameContent, 'neighbors'>): GameState {
-  if (canLearnDish(s, npc, content)) return s
+/** 말을 걸 때 알려 준다: 한 번만, 시간은 흐르지 않는다. 재료·물건 보상은 없고, 배운 기억이 가르쳐 준 이웃에게만 남는다 */
+export function learnDish(s: GameState, npc: string): GameState {
+  if (canLearnDish(s, npc)) return s
   const dish = dishTaughtBy(npc)!
   const next = withCooking(s, { learned: { ...cookOf(s).learned, [dish]: { day: s.clock.day, from: npc } } })
-  return passTime(recordExperienceIn(next, { id: `learn:cook:${dish}`, kind: 'learn', with: [npc], item: DISHES[dish].item }), COOK_LESSON_MINUTES)
+  return recordExperienceIn(next, { id: `learn:cook:${dish}`, kind: 'learn', with: [npc], item: DISHES[dish].item })
 }
 
 // ── 저장 ──

@@ -599,6 +599,16 @@ button:focus-visible {
   line-height: 1.6;
   margin: 0;
 }
+/* 처음 말을 걸었을 때의 특별한 말 — 이름 밑 한 줄이 아니라 따로 뜨는 말풍선 */
+.talk-popup-line {
+  font-size: 15px;
+  line-height: 1.7;
+  margin: 4px 0 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--panel-soft);
+  border: 2px solid var(--accent);
+}
 
 .stamps {
   font-size: 12px;

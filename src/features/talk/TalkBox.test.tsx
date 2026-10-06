@@ -1,7 +1,7 @@
 // 편지 나르는 이웃: 말을 걸면 편지를 바로 건넨다 (2026-10-05, 편지 받기 단추 없음). 아침 방문 말이 있어도 편지 말이 가려지지 않는다 (계획 7 작업 2 검토 이월, 계획 14 작업 5 드문 편지)
 import { act, render, screen } from '@testing-library/react'
 import { CONTENT } from '../../content/catalog'
-import { fill, itemList, NEIGHBOR_LINES, T } from '../../content/text'
+import { fill, itemList, T } from '../../content/text'
 import { newGame } from '../../engine/game'
 import { POSTMAN } from '../../engine/post'
 import { postLine, useGame } from '../../store/game-store'
@@ -42,11 +42,24 @@ describe('편지 나르는 이웃과의 대화', () => {
     expect(m && 'said' in m ? m.said : '').toContain(T.word.letterBring)
   })
 
-  it('방문 말과 편지 말이 둘 다 보인다', () => {
+  it('방문 말과 편지 말이 둘 다 보인다 — 편지 말은 팝업으로 먼저', () => {
     useGame.setState({ game: withPost(), modal: { kind: 'talk', neighborId: POSTMAN, line: '아침 방문 인사', letter: T.word.letterBring } })
     render(<ModalLayer />)
-    expect(screen.getByText('아침 방문 인사')).toBeInTheDocument()
     expect(screen.getByText(T.word.letterBring)).toBeInTheDocument()
+    act(() => screen.getByRole('button', { name: T.ui.next }).click())
+    expect(screen.getByText('아침 방문 인사')).toBeInTheDocument()
+  })
+
+  it('특별한 말은 팝업으로 한 장씩 보고, 다 보면 이름 밑에 호감도와 단추가 보인다', () => {
+    useGame.setState({ game: withPost(), modal: { kind: 'talk', neighborId: 'baker', line: '', popup: ['레시피 말', '혼잣말'] } })
+    render(<ModalLayer />)
+    expect(screen.getByText('레시피 말')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: T.ui.talkHelp })).not.toBeInTheDocument()
+    act(() => screen.getByRole('button', { name: T.ui.next }).click())
+    expect(screen.getByText('혼잣말')).toBeInTheDocument()
+    act(() => screen.getByRole('button', { name: T.ui.next }).click())
+    expect(screen.getByRole('button', { name: T.ui.talkHelp })).toBeInTheDocument()
+    expect(screen.getByLabelText(new RegExp(T.ui.hearts))).toBeInTheDocument()
   })
 
   it('말이 곧 편지 말이면 한 번만 보인다', () => {
@@ -101,7 +114,7 @@ describe('짧은 까닭은 누르면 알림으로 (2026-10-05 사용자)', () =>
     render(<ModalLayer />)
     const note = fill(T.ui.helpNeeds, { items: itemList({ water: 1 }) })
     expect(screen.queryByText(note)).not.toBeInTheDocument()
-    const btn = screen.getByRole('button', { name: NEIGHBOR_LINES.baker.help.label })
+    const btn = screen.getByRole('button', { name: T.ui.talkHelp })
     expect(btn).not.toBeDisabled()
     act(() => btn.click())
     expect(useGame.getState().toast?.text).toBe(note)

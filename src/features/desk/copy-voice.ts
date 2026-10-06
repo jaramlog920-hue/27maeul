@@ -40,19 +40,19 @@ export function voiceAvailable(): boolean {
   return voiceCtor() !== null
 }
 
-/** 설정: 소리 내어 읽기(마이크) — 기본은 끔 */
+/** 설정: 소리 내어 읽기(마이크) — 기본은 켬 (2026-10-07 사용자), 끈 사람만 '0' */
 export function copyVoiceOn(): boolean {
   try {
-    return globalThis.localStorage?.getItem(VOICE_KEY) === '1'
+    return globalThis.localStorage?.getItem(VOICE_KEY) !== '0'
   } catch {
-    return false
+    return true
   }
 }
 export function setCopyVoice(on: boolean) {
   try {
     globalThis.localStorage?.setItem(VOICE_KEY, on ? '1' : '0')
   } catch {
-    /* 저장할 수 없으면 켜지지 않는다 (기본은 끔) */
+    /* 저장할 수 없으면 기본(켬) 그대로 */
   }
 }
 

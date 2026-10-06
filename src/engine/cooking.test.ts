@@ -4,11 +4,12 @@ import { ITEM_TEXT, T } from '../content/text'
 import { newGame, syncHome, type GameState } from './game'
 import {
   canCook, canLearnDish, canServe, canSit, chooseLook, clearTable, cookHand, cookOf, DISHES, deliverCook, dinersNear, dishTaughtBy, eatDish, kidCanChoose, knownDish,
-  learnDish, mealReaction, missingFor, NEW_DISHES, nextCookStep, readyBlock, sanitizeCooking, serveMax, serveTable, setBreadShape, settleTable, sitTable, startCook, UNEVEN_CHANCE,
+  learnDish, LEARN_HEARTS, mealReaction, missingFor, NEW_DISHES, nextCookStep, readyBlock, sanitizeCooking, serveMax, serveTable, setBreadShape, settleTable, sitTable, startCook, UNEVEN_CHANCE,
 } from './cooking'
 import { FEST_SNACKS, festReactions, type Fest } from './fest'
 import { COOKED_ITEMS, count, DISH_HUNGER, FOODS, MAX_STACK } from './items'
 import { moodOf } from './mood'
+import { POINTS_PER_HEART } from './hearts'
 import { finishNow } from './minigame'
 import { newChild } from './child'
 import { placement, type Furniture } from './room'
@@ -345,32 +346,30 @@ describe('주민 취향 반응', () => {
   })
 })
 
-describe('이웃과 함께 배우기', () => {
-  function near(npc: string): GameState {
-    let s = base()
-    s = { ...s, flags: { ...s.flags, villageLevel: 10 } }
-    const n = s.npcs[npc]
-    s = { ...s, npcs: { ...s.npcs, [npc]: { ...n, visible: true, x: s.player.x + 1, y: s.player.y, path: [] } } }
-    return s
+describe('이웃에게 레시피 배우기', () => {
+  const withHearts = (npc: string, hearts: number): GameState => {
+    const s = base()
+    return { ...s, hearts: { ...s.hearts, [npc]: hearts * POINTS_PER_HEART } }
   }
-  it('함께한 일이 없으면 배울 수 없다', () => {
-    expect(canLearnDish(near('baker'), 'baker', CONTENT)).toBe('unknown')
-  })
-  it('함께한 일이 있고 곁에 있으면 한 번 배우고, 되풀이해도 중복되지 않는다', () => {
-    let s = near('baker')
+  it('함께한 시간이 있어도 호감도가 모자라면 배울 수 없다', () => {
+    let s = withHearts('baker', LEARN_HEARTS - 1)
     s = { ...s, life: { ...s.life, experiences: { 'work:baker': { id: 'work:baker', kind: 'work', with: ['baker'], first: 1, last: 1, count: 1 } } } }
-    const block = canLearnDish(s, 'baker', CONTENT)
-    if (block !== null) { expect(['away', 'busy', 'late']).toContain(block); return }
-    const l = learnDish(s, 'baker', CONTENT)
+    expect(canLearnDish(s, 'baker')).toBe('unknown')
+  })
+  it('호감도가 차면 한 번 배우고, 되풀이해도 중복되지 않으며 시간이 흐르지 않는다', () => {
+    const s = withHearts('baker', LEARN_HEARTS)
+    expect(canLearnDish(s, 'baker')).toBe(null)
+    const l = learnDish(s, 'baker')
     expect(knownDish(l, 'honeyBread')).toBe(true)
     expect(cookOf(l).learned.honeyBread).toMatchObject({ from: 'baker' })
     expect(l.life.experiences['learn:cook:honeyBread']).toMatchObject({ kind: 'learn', with: ['baker'] })
-    expect(canLearnDish(l, 'baker', CONTENT)).toBe('known')
-    expect(learnDish(l, 'baker', CONTENT)).toBe(l)
+    expect(canLearnDish(l, 'baker')).toBe('known')
+    expect(learnDish(l, 'baker')).toBe(l)
     expect(l.inv).toEqual(s.inv)
+    expect(l.clock).toEqual(s.clock)
   })
   it('가르치지 않는 이웃에게는 배울 수 없다', () => {
-    expect(canLearnDish(near('smith'), 'smith', CONTENT)).toBe('none')
+    expect(canLearnDish(withHearts('smith', 10), 'smith')).toBe('none')
   })
 })
 

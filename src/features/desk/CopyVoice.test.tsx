@@ -90,7 +90,9 @@ describe('소리 내어 읽기 — 견주기 (checkVoice)', () => {
 })
 
 describe('소리 내어 읽기 — 단추가 보이는 때', () => {
-  it('설정이 꺼져 있으면(기본) 단추가 없다', () => {
+  it('처음엔 켜져 있고, 끄면 단추가 없다', () => {
+    expect(copyVoiceOn()).toBe(true)
+    localStorage.setItem('twenty-seven/copy-voice', '0')
     expect(copyVoiceOn()).toBe(false)
     openWrite(writing('lk'))
     expect(voiceBtn()).toBeNull()

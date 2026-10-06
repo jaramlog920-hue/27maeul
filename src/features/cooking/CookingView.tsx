@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { CONTENT, neighborById } from '../../content/catalog'
+import { neighborById } from '../../content/catalog'
 import { fill, itemName, T, withObject } from '../../content/text'
 import {
-  canCook, canLearnDish, canServe, canSit, chooseLook, clearTable, cookHand, cookOf, DISHES, deliverCook, dinersNear, dishTaughtBy, eatDish, kidCanChoose, knownDish,
-  missingFor, NEW_DISHES, nextCookStep, readyBlock, learnDish, serveMax, serveTable, setBreadShape, sitTable, startCook, type DishId, type MealReaction,
+  canCook, canServe, canSit, chooseLook, clearTable, cookHand, cookOf, DISHES, deliverCook, dinersNear, eatDish, kidCanChoose, knownDish,
+  missingFor, NEW_DISHES, nextCookStep, readyBlock, serveMax, serveTable, setBreadShape, sitTable, startCook, type DishId, type MealReaction,
 } from '../../engine/cooking'
 import { canCraft } from '../../engine/game'
 import { COOKED_ITEMS, count } from '../../engine/items'
@@ -208,27 +208,3 @@ export function CookingView() {
   </div>
 }
 
-/** 말 걸기 창의 "함께 요리 배우기" — 가르쳐 줄 요리가 있고 함께한 일이 있을 때만 보인다 */
-export function CookLearnEntry({ npc }: { npc: string }) {
-  const game = useGame((s) => s.game)
-  const [line, setLine] = useState('')
-  const dish = dishTaughtBy(npc)
-  if (!dish) return null
-  if (cookOf(game).learned[dish]) return line ? <p className="talk-line" role="status">{line}</p> : null
-  return <LearnButton npc={npc} dish={dish} line={line} setLine={setLine} />
-}
-function LearnButton({ npc, dish, line, setLine }: { npc: string; dish: DishId; line: string; setLine: (s: string) => void }) {
-  const game = useGame((s) => s.game)
-  const block = canLearnDish(game, npc, CONTENT)
-  if (block === 'unknown' || block === 'known' || block === 'none') return null
-  return <>
-    <button onClick={() => {
-      const st = useGame.getState()
-      const b = canLearnDish(st.game, npc, CONTENT)
-      if (b) { st.say((C.learnBlocks as Record<string, string>)[b] ?? ''); return }
-      applyLifeState(learnDish(st.game, npc, CONTENT))
-      setLine(`${fill(C.learned, { dish: withObject(dishText(dish).name) })} ${(C.learnedLine as Record<string, string>)[npc] ?? ''}`)
-    }}>{`${dishText(dish).name} · ${C.learn}`}</button>
-    {line && <p className="talk-line" role="status">{line}</p>}
-  </>
-}

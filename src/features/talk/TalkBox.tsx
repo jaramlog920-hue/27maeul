@@ -4,9 +4,8 @@ import { useState } from 'react'
 import { WorkDayView, WorkEntry } from '../work/WorkDay'
 import { StallEntry } from '../stall/StallView'
 import { SkillLessonView, SkillEntry } from '../skills/SkillLesson'
-import { CookLearnEntry } from '../cooking/CookingView'
-import { callName, fill, itemList, NEIGHBOR_LINES, T } from '../../content/text'
-import { grapesRipe, isMarketDay } from '../../engine/calendar'
+import { callName, fill, itemList, T } from '../../content/text'
+import { isMarketDay } from '../../engine/calendar'
 import { activeRequest, isSuitor, romanceWith, stageWith, type GameState, canHelp, canOrderHome, canOrderWork, GIFTABLE, lessonTime, nextHomeStage } from '../../engine/game'
 import { CARPENTER_WORKS } from '../../engine/easier'
 import { requestFor, reqState } from '../../engine/bonds'
@@ -40,17 +39,18 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
   const game = useGame((s) => s.game)
   // 함께 일하기·배우기를 여는 동안에는 그 화면만 보인다 (선물하기 등 다른 단추를 가린다)
   const [focus, setFocus] = useState<'work' | 'skill' | null>(null)
+  // 처음 말을 걸었을 때의 특별한 말(레시피 알려 주기 등)은 팝업으로 한 장씩 — 다 보면 대화칸
+  const [seenOf, setSeen] = useState({ modal, n: 0 })
+  const seen = seenOf.modal === modal ? seenOf.n : 0
   const { startHelp, open, closeModal, startTeach, say } = useGame.getState()
   // 이웃마다 있던 사기·팔기·받기 단추(주고받기·약방 약초 팔기)는 2026-10-05에 지웠다 — 사고팔기는 장날 좌판에서
   const def = neighborById(modal.neighborId)
   if (!def) return null
-  const lines = NEIGHBOR_LINES[def.id]
   const block = canHelp(game, def)
   // 짧은 까닭(필요한 것·지침·가방 가득)은 대화칸에 줄로 달지 않고, 단추를 누르면 잠깐 뜨는 알림으로 (2026-10-05 사용자)
   const blockNote =
     block === 'needs' && def.help.needs ? fill(T.ui.helpNeeds, { items: itemList(def.help.needs) }) : block === 'tired' ? T.ui.helpTired : block === 'full' ? T.ui.bagFull : null
-  const seasonal = def.id === 'grandpa' && grapesRipe(game.clock.day) && lines.helpSeason
-  const helpLabel = seasonal ? lines.helpSeason!.label : lines.help.label
+  // 단추 이름은 이웃마다 다른 일 이름 대신 그냥 "돕기" (2026-10-07 사용자)
   const canGift = !game.gifted.includes(def.id) && GIFTABLE.some((i) => (game.inv[i] ?? 0) > 0)
   const teachable = def.id === 'child' && lessonTime(game)
   const req = requestFor(def.id, game.hearts[def.id], game.flags)
@@ -67,6 +67,20 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
     def.id === 'carpenter' && game.flags['movedIn:carpenter'] && ((homeStage && homeBlock !== 'notMoved') || works.length > 0)
   // 편지 나르는 이웃은 말을 걸면 편지를 바로 건넨다 (2026-10-05: 편지 받기 단추 없음) — 건넨 편지 말 한 줄만 보인다
   const post = modal.letter
+  // 건넨 편지 말도 특별한 말이라 팝업으로
+  const popup = [...(post && post !== modal.line ? [post] : []), ...(modal.popup ?? [])][seen]
+  if (popup)
+    return (
+      <div className="dialog talk talk-popup" role="dialog" aria-label={def.role}>
+        <p className="talk-role">{def.role}</p>
+        <p className="talk-popup-line">{callName(popup, game.avatar?.name)}</p>
+        <div className="actions">
+          <button className="primary" autoFocus onClick={() => setSeen({ modal, n: seen + 1 })}>
+            {T.ui.next}
+          </button>
+        </div>
+      </div>
+    )
   if (focus)
     return (
       <div className="dialog talk" role="dialog" aria-label={def.role}>
@@ -79,11 +93,11 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
       <p className="talk-role">
         {def.role}{' '}
         {/* 살아 움직이는 사람들 (계획 6b): 숫자 대신 사이의 이름 */}
-        {personOf(def.id) ? <span className="talk-bond">{bondLabel(game, def.id)}</span> : <Hearts n={heartsOf(game.hearts[def.id])} />}
+        {personOf(def.id) && <span className="talk-bond">{bondLabel(game, def.id)}</span>}{' '}
+        {/* 호감도는 사이의 이름과 함께 늘 보인다 (2026-10-07 사용자) */}
+        <Hearts n={heartsOf(game.hearts[def.id])} />
       </p>
       {modal.line && <p className="talk-line">{callName(modal.line, game.avatar?.name)}</p>}
-      {/* 아침 방문 말 등 다른 말이 먼저 나와도 편지 알림은 가려지지 않는다 */}
-      {post && post !== modal.line && <p className="talk-line">{post}</p>}
       <div className="actions menu">
         {/* 말씀 조각과 편지는 말을 걸 때 그 자리에서 건넨다 (받기 단추 없음) */}
         {teachable && (
@@ -106,14 +120,13 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
         {def.marketOnly && isMarketDay(game.clock.day) && <button onClick={() => open({ kind: 'trade' })}>{T.ui.talkTrade}</button>}
         {def.marketOnly && isMarketDay(game.clock.day) && <StallEntry label={T.stall.ask} />}
         <button disabled={block !== null && !blockNote} onClick={() => (blockNote ? say(blockNote) : startHelp(def.id))}>
-          {helpLabel}
+          {T.ui.talkHelp}
         </button>
         <button disabled={!canGift} onClick={() => open({ kind: 'gift', neighborId: def.id })}>
           {T.ui.talkGift}
         </button>
         <WorkEntry npc={def.id} onOpen={() => setFocus('work')} />
         <SkillEntry npc={def.id} onOpen={() => setFocus('skill')} />
-        <CookLearnEntry npc={def.id} />
         <button onClick={closeModal}>{T.ui.close}</button>
       </div>
     </div>

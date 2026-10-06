@@ -11,16 +11,16 @@ const SHOW_WHY: Record<string, string> = {
   noChild: '',
   stage: '',
   notAtSchool: '',
-  nothing: '같이 만든 작은 물건이 있으면 보여 줄 수 있어요. 구경은 언제든 해요.',
-  done: '오늘은 교실에 다녀왔어요.',
+  nothing: '보여 줄 물건이 없어요.',
+  done: '오늘은 다녀왔어요.',
 }
 const WHY: Record<string, string> = {
-  noChild: '맡길 아이가 없어요. 물 긷는 아이가 동생들과 글자를 익히고 있어요.',
-  baby: '아기는 아직 요람에 있어야 해요. 걸음마를 떼면 맡길 수 있어요.',
-  away: '아이는 마을을 떠나 살고 있어요.',
-  done: '오늘은 이미 맡겼어요. 내일 또 와요.',
-  late: '배움터는 저녁 여섯 시에 끝나요. 내일 아침에 맡겨요.',
-  coins: `닢이 모자라요 (하루 ${SCHOOL_FEE}닢).`,
+  noChild: '맡길 아이가 없어요.',
+  baby: '아직 아기예요.',
+  away: '아이가 마을을 떠났어요.',
+  done: '오늘은 이미 맡겼어요.',
+  late: '오늘은 끝났어요.',
+  coins: '닢이 모자라요.',
 }
 
 export function SchoolView() {
@@ -37,7 +37,7 @@ export function SchoolView() {
     <div className="dialog school" role="dialog" aria-label="배움터">
       <h2>배움터</h2>
       <p className="hint">
-        하루 {SCHOOL_FEE}닢을 내고 아이를 맡기면, 고른 것을 배우며 자라요 (경험치 +{SCHOOL_XP}). 가진 닢 {game.coins}
+        하루 {SCHOOL_FEE}닢 · 경험치 +{SCHOOL_XP}
       </p>
       {kid && block !== 'noChild' && block !== 'away' && (
         <ul className="trade-list">
@@ -60,7 +60,6 @@ export function SchoolView() {
       {showing && (
         <section className="school-show">
           <h3>교실 한쪽</h3>
-          <p className="hint">순위도 점수도 없어요. 편한 방식으로 해요.</p>
           <ul className="kid-acts">
             {SHOW_MODES.map((m) => (
               <li key={m}>
@@ -74,7 +73,7 @@ export function SchoolView() {
           {watch === 'done' && <p className="hint">{SHOW_WHY.done}</p>}
         </section>
       )}
-      {work && kid && <p className="hint">교실 선반에 보여 준 작품 하나가 놓여 있어요 · {itemName(work as never)}</p>}
+      {work && kid && <p className="hint">교실 선반 · {itemName(work as never)}</p>}
       <div className="actions">
         <button onClick={closeModal}>{T.ui.close}</button>
       </div>

@@ -1696,7 +1696,7 @@ function greetMemories(s: GameState, id: string): GameState {
 }
 
 /** 지금 이 사람이 할 말 (people.json의 말 풀). 말 풀이 없거나 맞는 말이 없으면 null — 예전 대사로 */
-export function personLine(s: GameState, id: string, rnd: number): { state: GameState; text: string } | null {
+export function personLine(s: GameState, id: string, rnd: number): { state: GameState; text: string; special: boolean } | null {
   const p = personOf(id)
   if (!p) return null
   const life = s.life ?? NO_LIFE
@@ -1706,7 +1706,9 @@ export function personLine(s: GameState, id: string, rnd: number): { state: Game
   if (!line) return null
   const recent = [...(life.recent[id] ?? []).filter((x) => x !== line.id), line.id].slice(-RECENT_KEEP)
   const notebook = line.reveals ? noteTaste(s.notebook ?? NO_NOTEBOOK, id, line.reveals) : s.notebook
-  return { state: { ...s, notebook, life: { ...life, recent: { ...life.recent, [id]: recent } } }, text: line.text }
+  // 기억·이야기·자리·취향에 걸린 말은 특별한 말(팝업), 때와 사이만 맞춘 말은 늘 하는 말 (2026-10-07 사용자)
+  const special = !!(line.req || line.near || line.reveals)
+  return { state: { ...s, notebook, life: { ...life, recent: { ...life.recent, [id]: recent } } }, text: line.text, special }
 }
 
 /** 마음 점수의 문턱: 다음 사이로 넘어가려면 그 사람의 이벤트(opens)를 겪어야 한다 — 점수는 그 문턱 바로 아래에서 멈춘다 */
