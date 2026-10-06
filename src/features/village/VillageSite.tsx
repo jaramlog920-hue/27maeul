@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { CONTENT, neighborById } from '../../content/catalog'
-import { callName, fill, itemName, T, withAnd } from '../../content/text'
+import { callName, fill, itemName, T } from '../../content/text'
 import type { GameState } from '../../engine/game'
 import { canDonate, canWork, crewPresent, donate, dropWork, finishWork, isBuilt, PROJECT_SUPPLY, projectLine, startWork, villageOf, workHand } from '../../engine/projects'
 import { saveGame } from '../../engine/save'
@@ -39,11 +39,9 @@ export function DecorBox({ id }: { id: FacilityId }) {
         <p className="hint" role="status">{V.site.donated}</p>
       ) : (
         <>
-          <p className="hint">{fill(V.site.decorLead, { mats })} {V.noteMats}</p>
           <div className="actions">
             <button disabled={block !== null} onClick={() => commitVillage(donate(useGame.getState().game, id))}>{V.site.donate} · {mats}</button>
           </div>
-          {block === 'have' && <p className="hint">{V.site.have} {V.site.bagHint}</p>}
         </>
       )}
     </div>
@@ -98,7 +96,6 @@ export function VillageSite({ id }: { id: FacilityId }) {
       {line && <p className="talk-line">{callName(line, game.avatar?.name)}</p>}
       {w ? (
         <>
-          <p className="hint">{fill(V.site.workLead, { who: withAnd(who || V.site.crew) })}</p>
           <HandPractice state={w.mini} tick={tick} tap={tap} finish={() => commitVillage(finishWork(useGame.getState().game, CONTENT))} />
           {!isDone(w.mini) && <div className="actions"><button onClick={() => commitVillage(dropWork(useGame.getState().game))}>{V.site.workPause}</button></div>}
         </>
@@ -110,7 +107,6 @@ export function VillageSite({ id }: { id: FacilityId }) {
       )}
       {p?.worked.includes(game.clock.day) && !w && <p role="status">{V.site.workDone}</p>}
       <DecorBox id={id} />
-      <p className="hint">{V.noDeadline}</p>
       <div className="actions">{exit}</div>
     </div>
   )

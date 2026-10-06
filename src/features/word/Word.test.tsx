@@ -69,7 +69,8 @@ describe('📖 말씀 탭', () => {
     openWord({ progress, copy: { book: null, at: {}, legacy: { mk: [1, 2] } } })
     expect(screen.getByText(T.word.nowNone)).toBeInTheDocument()
     expect(screen.getByText('기록한 절').closest('dl')).toHaveTextContent('아직 없음')
-    expect(screen.getByText('예전에 엮은 장 2장은 마친 장으로 함께 셉니다.')).toBeInTheDocument()
+    // 예전에 엮은 장 안내 줄은 2026-10-07 화면 정리에서 뺐다 (설명 줄 최소화)
+    expect(screen.queryByText('예전에 엮은 장 2장은 마친 장으로 함께 셉니다.')).toBeNull()
   })
 
   it('말씀 조각: 받은 조각이 성경 순서로 저절로 담기고, 받은 기록("3년째 봄 · 빵 굽는 이웃에게 받은 조각")이 붙는다 — 옛 조각은 기록 없음', async () => {
@@ -135,7 +136,7 @@ describe('📖 말씀 탭', () => {
     openWord({ progress, copy: { book: 'jn', at: { jn: { chapter: 1, verse: 42 } }, legacy: {} } })
     const user = userEvent.setup()
     await user.click(tab('연결'))
-    expect(screen.getByText(T.word.linksNote)).toBeInTheDocument()
+    expect(screen.queryByText(T.word.linksNote)).toBeNull()
     expect(screen.getByRole('heading', { name: T.word.linksPeople })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: T.word.linksPlaces })).toBeInTheDocument()
     const peter = NAMES.find((n) => n.name === '베드로')!

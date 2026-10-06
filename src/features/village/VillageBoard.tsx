@@ -33,7 +33,6 @@ export function VillageBoard() {
         <p className="hint">{V.work} · {t.work}</p>
         <p className="hint">{fill(V.workLine, { n: joined.length, max: PROJECT_WORK_MAX })}</p>
         <p className="hint">{V.decorLabel} · {t.decor} ({fill(V.materials, { item: itemName(d.item), n: d.n })})</p>
-        <p className="hint">{V.noteMats}</p>
         <p>{V.neighbors}</p>
         <ul className="village-opinions">
           {joined.map((n) => {
@@ -49,7 +48,6 @@ export function VillageBoard() {
         <p className="hint">{V.balanceTitle} · {t.balance}</p>
         <div className="actions menu column">
           <button className="primary" disabled={block !== null} onClick={() => { commitVillage(pickProject(useGame.getState().game, id, CONTENT)); setSel(null) }}>{V.pick}</button>
-          {block === 'active' && <p className="hint">{V.nextIntro}</p>}
           <button onClick={() => setSel(null)}>{V.back}</button>
         </div>
       </section>
@@ -60,7 +58,6 @@ export function VillageBoard() {
   return (
     <section aria-label={V.title}>
       <h3>{V.title}</h3>
-      <p className="hint">{V.intro}</p>
       {active && act && (
         <div className="village-active">
           <p><strong>{V.activeTitle}</strong> · {defText(active).name}</p>
@@ -74,7 +71,6 @@ export function VillageBoard() {
           <p className="hint">{fill(V.siteHint, { where: defText(active).where })}</p>
           <DecorBox id={active} />
           {canUndoPick(game) && <div className="actions"><button onClick={() => commitVillage(undoPick(useGame.getState().game))}>{V.undo}</button></div>}
-          <p className="hint">{V.afterPick}</p>
         </div>
       )}
       {offered.filter((id) => id !== active).length > 0 && <p>{active ? V.queued : V.listHint}</p>}
@@ -99,10 +95,8 @@ export function VillageBoard() {
               )
             })}
           </ul>
-          <p className="hint">{V.builtNote}</p>
         </>
       )}
-      <p className="hint">{V.noDeadline}</p>
     </section>
   )
 }

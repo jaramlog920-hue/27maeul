@@ -124,7 +124,6 @@ function CopyRecord() {
     const chs = chaptersOf(b, CONTENT)
     return chs.length > 0 && chs.every((c) => game.progress[b].completed.includes(c))
   }).length
-  const legacy = BOOKS.reduce((n, b) => n + (game.copy.legacy[b]?.length ?? 0), 0)
   const rows: [string, string][] = [
     [W.recVerses, stats.verses.toLocaleString('ko-KR')],
     [W.recChars, stats.chars.toLocaleString('ko-KR')],
@@ -163,7 +162,6 @@ function CopyRecord() {
           </Fragment>
         ))}
       </dl>
-      {legacy > 0 && <p className="hint">{fill(W.legacy, { n: legacy })}</p>}
     </section>
   )
 }
@@ -207,7 +205,6 @@ function PieceDex() {
         <p>{W.piecesEmpty}</p>
       ) : (
         <>
-          <p className="hint">{W.piecesNote}</p>
           {/* 책 거르기: 받은 조각이 있는 책만, 서고의 방으로 묶어서 (방이 둘 이상일 때만 방 이름) */}
           {books.length > 1 && (
             <div className="dex-filter" role="group" aria-label={T.ui.dexBookPick}>
@@ -400,7 +397,6 @@ function Links() {
   return (
     <section className="word-links" aria-label={W.tabs.links}>
       <p className="hint">{fill(W.linksTotal, { p: people.length, q: places.length })}</p>
-      <p className="hint">{W.linksNote}</p>
       {group(W.linksPeople, people)}
       {group(W.linksPlaces, places)}
     </section>

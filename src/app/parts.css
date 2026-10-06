@@ -1134,9 +1134,35 @@ button.copy-blank.on {
   font-weight: 400;
   color: var(--ink-soft);
 }
+/* 창 머리: 왼쪽 제목(두 줄까지) · 오른쪽 위 작은 닫기 (2026-10-07 사용자) */
+.dialog-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.dialog-head > :first-child {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.dialog-head .head-close {
+  flex: none;
+  min-height: 34px;
+  padding: 4px 12px;
+  font-size: 14px;
+}
+.talk-who .talk-role {
+  margin: 0;
+}
+.talk-bond-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 4px 0 0;
+}
 .talk-bond {
   display: inline-block;
-  margin-left: 4px;
   padding: 1px 7px;
   border-radius: 9px;
   font-size: 11px;

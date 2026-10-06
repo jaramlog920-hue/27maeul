@@ -3,7 +3,7 @@ import { CONTENT, neighborById } from '../../content/catalog'
 import { fill, T } from '../../content/text'
 import {
   answerGuest, buyerOf, canOpenStall, closeStall, DEFAULT_LOOK, expireStall, guestText, openStall, stallGoodsAvailable, stallPrice, stallStatus, stallSummary, waitAtStall, welcomeGuest,
-  STALL_CLOTHS, STALL_COIN_CAP, STALL_DECOS, STALL_GOODS_MAX, STALL_PER_GOOD, STALL_PRICES, STALL_WAYS, STALL_SIGNS,
+  STALL_CLOTHS, STALL_DECOS, STALL_GOODS_MAX, STALL_PER_GOOD, STALL_PRICES, STALL_WAYS, STALL_SIGNS,
   type StallLook, type StallPrice, type StallWay,
 } from '../../engine/stall'
 import { saveGame } from '../../engine/save'
@@ -54,9 +54,7 @@ export function StallView() {
       <div className="dialog fest-form stall" role="dialog" aria-label={S.title}>
         <h2>{S.summaryTitle}</h2>
         <p>{fill(S.summary, { v: sum.visitors, s: sum.sold, c: sum.coins })}</p>
-        <p className="hint">{back ? fill(S.returned, { list: back }) : S.returnedNone}</p>
-        {sum.visitors > 0 && <p className="hint">{S.memoryNote}</p>}
-        <p className="hint">{S.closedNote}</p>
+        {back && <p className="hint">{fill(S.returned, { list: back })}</p>}
         <div className="actions">{exit}</div>
       </div>
     )
@@ -68,7 +66,6 @@ export function StallView() {
     return (
       <div className="dialog fest-form stall" role="dialog" aria-label={S.title}>
         <h2>{S.title}</h2>
-        <p className="hint">{S.guide}</p>
         <p>{S.block[block]}</p>
         <div className="actions">{exit}</div>
       </div>
@@ -93,8 +90,6 @@ export function StallView() {
       {step === 'goods' && (
         <>
           {!game.stallLook && <p><strong>{neighborById('merchant')?.role}</strong> {S.merchantSays}</p>}
-          <p className="hint">{S.guide}</p>
-          <p className="hint">{fill(S.goodsHint, { n: STALL_PER_GOOD })}</p>
           <ul className="stall-goods">
             {avail.map(({ item, have }) => {
               const p = picks[item]
@@ -120,8 +115,6 @@ export function StallView() {
               )
             })}
           </ul>
-          <p className="hint">{S.priceHint}</p>
-          <p className="hint">{S.goodsMoved}</p>
           <div className="actions">
             <button className="primary" disabled={!chosen.length} onClick={() => setStep('look')}>{S.next}</button>
             {exit}
@@ -130,7 +123,6 @@ export function StallView() {
       )}
       {step === 'look' && (
         <>
-          <p className="hint">{S.lookHint}</p>
           <p>{S.signLabel}</p>
           <div className="actions menu column">
             {Array.from({ length: STALL_SIGNS }, (_, i) => (
@@ -145,7 +137,6 @@ export function StallView() {
           <div className="actions menu column">
             {STALL_DECOS.map((d) => <button key={d} className={look.deco === d ? 'primary' : ''} aria-pressed={look.deco === d} onClick={() => setLook({ ...look, deco: d })}>{S.decos[d]}</button>)}
           </div>
-          <p className="hint">{S.openNote}</p>
           <div className="actions">
             <button className="primary" onClick={open}>{S.open}</button>
             <button onClick={() => setStep('goods')}>{S.back}</button>
@@ -172,7 +163,6 @@ function Running() {
     <div className="dialog fest-form stall" role="dialog" aria-label={S.title}>
       <h2>{fill(S.openTitle, { sign: S.signs[st.look.sign] })}</h2>
       <p>{fill(S.stats, { v: sum.visitors, s: sum.sold, c: sum.coins })}</p>
-      <p className="hint">{fill(S.cap, { c: STALL_COIN_CAP })}</p>
       <ul className="stall-goods">
         {st.goods.map((x) => (
           <li key={x.item}>{fill(S.goodLine, { name: itemName(x.item), left: x.left, qty: x.qty, price: fill(S.priceNow, { n: stallPrice(game, x.item, x.price) }) })}</li>
@@ -205,7 +195,6 @@ function Running() {
         <button className={status === 'finished' || status === 'over' ? 'primary' : ''} onClick={() => act(closeStall)}>{S.close}</button>
         <button onClick={closeModal}>{S.pause}</button>
       </div>
-      <p className="hint">{S.pauseNote}</p>
     </div>
   )
 }

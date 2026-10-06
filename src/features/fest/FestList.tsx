@@ -32,7 +32,7 @@ export function FestList() {
  const kinds = festKinds(game, CONTENT)
  const list = (game.fests ?? []).filter(f => !f.closed)
  const role = festivalRoleReady(game)
- return <div className="dialog fest-form" role="dialog" aria-label={F.title}><h2>{F.title}</h2><p className="hint">{F.intro}</p>
+ return <div className="dialog fest-form" role="dialog" aria-label={F.title}><h2>{F.title}</h2>
   {!list.length && <p>{F.none}</p>}
   <ul className="event-list">{list.map(f => {
    const a = f.apptId ? game.plans.appts.find(x => x.id === f.apptId) : undefined

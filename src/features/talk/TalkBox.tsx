@@ -90,14 +90,22 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
     )
   return (
     <div className="dialog talk" role="dialog" aria-label={def.role}>
-      <p className="talk-role">
-        {def.role}{' '}
-        {def.job && <span className="talk-job">{def.job}</span>}{' '}
-        {/* 살아 움직이는 사람들 (계획 6b): 숫자 대신 사이의 이름 */}
-        {personOf(def.id) && <span className="talk-bond">{bondLabel(game, def.id)}</span>}{' '}
-        {/* 호감도는 사이의 이름과 함께 늘 보인다 (2026-10-07 사용자) */}
-        <Hearts n={heartsOf(game.hearts[def.id])} />
-      </p>
+      {/* 머리 두 줄 + 오른쪽 위 닫기 (2026-10-07 사용자): 1줄 이름·하는 일, 2줄 사이의 이름·하트 */}
+      <div className="dialog-head talk-head">
+        <div className="talk-who">
+          <p className="talk-role">
+            {def.role}
+            {def.job && <span className="talk-job"> {def.job}</span>}
+          </p>
+          <p className="talk-bond-row">
+            {/* 살아 움직이는 사람들 (계획 6b): 숫자 대신 사이의 이름 */}
+            {personOf(def.id) && <span className="talk-bond">{bondLabel(game, def.id)}</span>}
+            {/* 호감도는 사이의 이름과 함께 늘 보인다 (2026-10-07 사용자) */}
+            <Hearts n={heartsOf(game.hearts[def.id])} />
+          </p>
+        </div>
+        <button data-close className="head-close" onClick={closeModal}>{T.ui.close}</button>
+      </div>
       {modal.line && <p className="talk-line">{callName(modal.line, game.avatar?.name)}</p>}
       <div className="actions menu">
         {/* 말씀 조각과 편지는 말을 걸 때 그 자리에서 건넨다 (받기 단추 없음) */}
@@ -128,7 +136,6 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
         </button>
         <WorkEntry npc={def.id} onOpen={() => setFocus('work')} />
         <SkillEntry npc={def.id} onOpen={() => setFocus('skill')} />
-        <button data-close onClick={closeModal}>{T.ui.close}</button>
       </div>
     </div>
   )
