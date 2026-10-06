@@ -700,6 +700,42 @@
               "learn:hookFinish"
             ]
           }
+        },
+        {
+          "id": "tilly:famAct",
+          "text": "불 앞엔 안 데려가요. 모양은 아이가 골랐고, 종이에 그림으로만 남아 있어요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "fam:with:tilly"
+            ]
+          }
+        },
+        {
+          "id": "tilly:famToy",
+          "text": "장난감은 손으로만 만들었어요. 불 쓰는 건 하나도 없이요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "fam:make"
+            ]
+          }
+        },
+        {
+          "id": "tilly:famMarket",
+          "text": "장 구경하던 {player}님네 아이랑 마주쳤어요. 제 고리 장식 앞에서 한참 서 있었어요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "fam:market"
+            ]
+          }
         }
       ],
       "sightings": [
@@ -3048,6 +3084,42 @@
               "learn:snackShape"
             ]
           }
+        },
+        {
+          "id": "wendell:famAct",
+          "text": "화덕에 넣는 건 제가 했지만, 모양은 아이가 골랐어요. 간식 접시에 올라가니 아이가 자꾸 쳐다봐요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "fam:with:wendell"
+            ]
+          }
+        },
+        {
+          "id": "wendell:famToy",
+          "text": "장난감 만든 날, 어디를 아이가 꿰맸는지 꼭 짚어서 알려 주던데요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "fam:make"
+            ]
+          }
+        },
+        {
+          "id": "wendell:famMarket",
+          "text": "장에서 {player}님네 아이를 봤어요. 빵 진열대 앞에서 모양을 하나하나 세던데요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "fam:market"
+            ]
+          }
         }
       ],
       "sightings": [
@@ -4748,6 +4820,16 @@
               "learn:hookFinish"
             ]
           }
+        },
+        {
+          "id": "smith:famMarket",
+          "text": "장날에 {player}님네 아이가 쇠 소리 나는 쪽을 쳐다보길래 멀리서 손만 흔들어 줬어요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "fam:market"
+            ]
+          }
         }
       ],
       "tastes": {
@@ -5884,6 +5966,42 @@
           "req": {
             "exp": [
               "learn:teaSetting"
+            ]
+          }
+        },
+        {
+          "id": "poppy:famAct",
+          "text": "아이 잔은 아이가 골랐어요. 간식 자리에는 뜨거운 건 안 올려요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "fam:with:poppy"
+            ]
+          }
+        },
+        {
+          "id": "poppy:famToy",
+          "text": "장난감 만든 날, 아이가 잔 받침을 얹어 보자고 했어요. 안 어울렸는데 웃었어요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "fam:make"
+            ]
+          }
+        },
+        {
+          "id": "poppy:famMarket",
+          "text": "장날에 {player}님네 아이가 지나갔어요. 찻잔 쪽을 오래 봐서 저도 모르게 웃었어요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "fam:market"
             ]
           }
         }
@@ -7684,6 +7802,42 @@
               "choice:postman:short:spouseHabit"
             ]
           }
+        },
+        {
+          "id": "postman:famAct",
+          "text": "아이가 접은 종이는 아이 거예요. 남의 편지엔 손대지 않는다는 것도 같이 보여 줬어요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "fam:with:postman"
+            ]
+          }
+        },
+        {
+          "id": "postman:famToy",
+          "text": "장난감을 만든 날, 아이가 어디에 둘지 한참 정했어요. 문 가까이는 안 된대요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "fam:make"
+            ]
+          }
+        },
+        {
+          "id": "postman:famMarket",
+          "text": "장날에 {player}님네 아이와 인사했어요. 짐 사이로 길을 비켜 줬더니 꾸벅하던데요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "fam:market"
+            ]
+          }
         }
       ],
       "tastes": {
@@ -9039,6 +9193,16 @@
               "learn:snackShape"
             ]
           }
+        },
+        {
+          "id": "baker:famMarket",
+          "text": "장에서 {player}님네 아이가 빵 냄새를 따라왔어요. 눈이 먼저 갔나 봐요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "fam:market"
+            ]
+          }
         }
       ],
       "tastes": {
@@ -10302,6 +10466,42 @@
             ],
             "exp": [
               "choice:cosmo:short:spouseHabit"
+            ]
+          }
+        },
+        {
+          "id": "cosmo:famAct",
+          "text": "아이가 배 옆에 그린 물결이 제 것보다 나은데요. 그 배는 마루 위에서만 다녀요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "fam:with:cosmo"
+            ]
+          }
+        },
+        {
+          "id": "cosmo:famToy",
+          "text": "장난감 만들던 날 아이 손이 저보다 빨랐어요. 저는 끈 묶는 데서 멈췄고요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "fam:make"
+            ]
+          }
+        },
+        {
+          "id": "cosmo:famMarket",
+          "text": "장 구경하는 {player}님네 아이를 봤어요. 물고기 좌판 앞에서 발을 못 떼더라고요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "fam:market"
             ]
           }
         }
@@ -12208,6 +12408,42 @@
             ],
             "exp": [
               "choice:rudy:short:spouseHabit"
+            ]
+          }
+        },
+        {
+          "id": "rudy:famAct",
+          "text": "아이가 고른 모양을 그림으로 설명할 때가 제일 진지했어요. 저도 덩달아 그림부터 그리게 되던데요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "fam:with:rudy"
+            ]
+          }
+        },
+        {
+          "id": "rudy:famToy",
+          "text": "그날 만든 장난감은 모양을 아이가 먼저 골랐어요. 저는 따라 깎기만 했어요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "fam:make"
+            ]
+          }
+        },
+        {
+          "id": "rudy:famMarket",
+          "text": "장에서 {player}님네 아이를 마주쳤어요. 나무 그릇을 뒤집어 보던 손이 진지했어요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "fam:market"
             ]
           }
         }
@@ -14251,6 +14487,42 @@
           "req": {
             "exp": [
               "learn:flowerKeep"
+            ]
+          }
+        },
+        {
+          "id": "dexter:famAct",
+          "text": "아이가 본 구름은 종이에 있어요. 말은 안 시켰어요. 그림 옆 한 줄은 제가 적었고요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "fam:with:dexter"
+            ]
+          }
+        },
+        {
+          "id": "dexter:famToy",
+          "text": "아이가 장난감을 만드는 내내 말이 없었어요. 저도 옆에서 같이 조용했어요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "fam:make"
+            ]
+          }
+        },
+        {
+          "id": "dexter:famMarket",
+          "text": "장날에 {player}님네 아이랑 눈이 마주쳤어요. 하늘만 보는 저를 따라 한 번 올려다보던데요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "fam:market"
             ]
           }
         }
@@ -16300,6 +16572,42 @@
               "learn:potTidy"
             ]
           }
+        },
+        {
+          "id": "basil:famAct",
+          "text": "화분 이름표는 아이가 붙였어요. 물 주는 건 제가 할게요. 아이는 보고 있기만 해도 돼요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "fam:with:basil"
+            ]
+          }
+        },
+        {
+          "id": "basil:famToy",
+          "text": "같이 만든 장난감을 아이가 한참 쓰다듬었어요. 저는 옆에서 차만 식혔어요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "fam:make"
+            ]
+          }
+        },
+        {
+          "id": "basil:famMarket",
+          "text": "장에서 {player}님네 아이랑 스쳤어요. 약초 묶음 냄새를 맡아 보고 있었어요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "fam:market"
+            ]
+          }
         }
       ],
       "sightings": [
@@ -18020,6 +18328,42 @@
             ],
             "exp": [
               "choice:marigold:short:spouseHabit"
+            ]
+          }
+        },
+        {
+          "id": "marigold:famAct",
+          "text": "일정표 귀퉁이에 아이 그림이 있으니 오늘 칸이 환해요. 바구니 천도 아이가 골랐어요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "fam:with:marigold"
+            ]
+          }
+        },
+        {
+          "id": "marigold:famToy",
+          "text": "장난감 만든 날, 아이가 헝겊 색부터 골랐어요. 손이 야무졌어요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "fam:make"
+            ]
+          }
+        },
+        {
+          "id": "marigold:famMarket",
+          "text": "장날에 {player}님네 아이와 마주쳤어요. 바구니 사이를 요리조리 잘 다니던데요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "fam:market"
             ]
           }
         }
@@ -19771,6 +20115,42 @@
           "req": {
             "exp": [
               "learn:clothColor"
+            ]
+          }
+        },
+        {
+          "id": "penelope:famAct",
+          "text": "아이가 고른 무늬는 줄이 삐뚤어져도 그대로 뒀어요. 그게 아이 무늬니까요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "fam:with:penelope"
+            ]
+          }
+        },
+        {
+          "id": "penelope:famToy",
+          "text": "헝겊 고르는 아이 손이 정확해요. 그날 만든 것도 색은 아이가 골랐어요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "fam:make"
+            ]
+          }
+        },
+        {
+          "id": "penelope:famMarket",
+          "text": "장 구경하던 {player}님네 아이가 천 한 조각을 만져 봤어요. 색을 한참 보더라고요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "fam:market"
             ]
           }
         }
@@ -21556,6 +21936,42 @@
               "learn:flowerKeep"
             ]
           }
+        },
+        {
+          "id": "juniper:famAct",
+          "text": "아이가 처음 본 날을 공책 구석에 적어 뒀어요. 그림 옆에 날짜가 있어요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "fam:with:juniper"
+            ]
+          }
+        },
+        {
+          "id": "juniper:famToy",
+          "text": "아이가 장난감 얼굴을 한참 그렸어요. 눈 하나 때문에요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "fam:make"
+            ]
+          }
+        },
+        {
+          "id": "juniper:famMarket",
+          "text": "장에서 {player}님네 아이를 봤어요. 꽃 그림이 있는 좌판 앞에 쭈그려 앉아 있었어요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "fam:market"
+            ]
+          }
         }
       ],
       "sightings": [
@@ -23271,6 +23687,16 @@
               "days": 7
             }
           }
+        },
+        {
+          "id": "fisher:famMarket",
+          "text": "장날에 {player}님네 아이가 생선 앞에 서길래 이름 몇 개를 알려 줬어요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "fam:market"
+            ]
+          }
         }
       ],
       "tastes": {
@@ -24467,6 +24893,16 @@
               "learn:carpenterFinish"
             ]
           }
+        },
+        {
+          "id": "carpenter:famMarket",
+          "text": "장에서 {player}님네 아이랑 마주쳤어요. 나무 냄새가 좋다고 하길래 저도 좋다고 했어요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "fam:market"
+            ]
+          }
         }
       ],
       "tastes": {
@@ -25227,6 +25663,16 @@
               "exp": "work:shepherd",
               "days": 7
             }
+          }
+        },
+        {
+          "id": "shepherd:famMarket",
+          "text": "장날 {player}님네 아이가 지나가기에 조용히 길을 내줬어요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "fam:market"
+            ]
           }
         }
       ],
@@ -26161,6 +26607,16 @@
             ],
             "exp": [
               "story:beekeeperNotes"
+            ]
+          }
+        },
+        {
+          "id": "beekeeper:famMarket",
+          "text": "장에서 {player}님네 아이가 꿀 항아리를 한참 들여다봤어요. 뚜껑은 제가 닫아 줬어요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "fam:market"
             ]
           }
         }
@@ -27845,6 +28301,16 @@
               "learn:basketCare"
             ]
           }
+        },
+        {
+          "id": "grandpa:famMarket",
+          "text": "장날에 {player}님네 아이를 봤네. 두리번거리던 걸음이 어찌나 또박또박하던지.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "fam:market"
+            ]
+          }
         }
       ],
       "tastes": {
@@ -28661,6 +29127,42 @@
             ],
             "exp": [
               "choice:merchant:short:spouseHabit"
+            ]
+          }
+        },
+        {
+          "id": "merchant:famAct",
+          "text": "아이가 고른 모양은 그림으로 보는 게 더 낫더라. 팔 물건 아니고, 그냥 모양이 좋아서 그래.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "fam:with:merchant"
+            ]
+          }
+        },
+        {
+          "id": "merchant:famToy",
+          "text": "같이 만든 장난감 말인데, 아이가 제일 먼저 정하더라. 나는 구경만 한 셈이지.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "fam:make"
+            ]
+          }
+        },
+        {
+          "id": "merchant:famMarket",
+          "text": "장날에 그 {player}님네 아이가 내 좌판 앞에서 한참 구경하더라. 사라는 말은 안 했어.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "fam:market"
             ]
           }
         }
@@ -29960,6 +30462,42 @@
               "learn:jarDecor"
             ]
           }
+        },
+        {
+          "id": "presser:famAct",
+          "text": "병 모양은 아이가 골랐어요. 틀 쪽엔 안 가요, 그건 제 일이라서요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "fam:with:presser"
+            ]
+          }
+        },
+        {
+          "id": "presser:famToy",
+          "text": "장난감 만든 날 얘기를 아이가 또박또박 해요. 저는 듣기만 해요.",
+          "depth": 0,
+          "req": {
+            "rel": [
+              "spouse"
+            ],
+            "exp": [
+              "fam:make"
+            ]
+          }
+        },
+        {
+          "id": "presser:famMarket",
+          "text": "장에서 {player}님네 아이가 기름병을 들여다봤어요. 뚜껑 닫힌 걸 보고 손을 뗐어요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "fam:market"
+            ]
+          }
         }
       ],
       "tastes": {
@@ -31197,6 +31735,16 @@
               "learn:clothColor"
             ]
           }
+        },
+        {
+          "id": "weaver:famMarket",
+          "text": "장에서 {player}님네 아이가 천 끝을 살짝 만졌어요. 만져 봐도 되냐고 먼저 묻더라고요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "fam:market"
+            ]
+          }
         }
       ],
       "tastes": {
@@ -31921,6 +32469,16 @@
           "req": {
             "exp": [
               "learn:potTidy"
+            ]
+          }
+        },
+        {
+          "id": "apothecary:famMarket",
+          "text": "장날에 {player}님네 아이와 마주쳤어요. 약초 향이 신기한지 코를 가까이 대던데요.",
+          "depth": 0,
+          "req": {
+            "exp": [
+              "fam:market"
             ]
           }
         }

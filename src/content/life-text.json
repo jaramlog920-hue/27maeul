@@ -2400,6 +2400,230 @@
     }
   },
   "scenes": {
+    "fam:with:wendell": {
+        "title": "빵 모양을 고른 저녁",
+        "album": "{child}, 웬델과 빵 모양을 고른 날",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "웬델은 화덕에서 먼 탁자에 반죽 한 덩이를 올려 주었다. 아이 손에 맞게 작게 뗀 것이었다."
+          },
+          {
+            "speaker": "narration",
+            "text": "{childSubj} 모양을 고르고 손바닥으로 꾹 눌렀다. 화덕에 넣는 일은 웬델이 했다."
+          }
+        ]
+      },
+      "fam:with:cosmo": {
+        "title": "마루 위의 작은 배",
+        "album": "{child}, 코스모와 배 장난감을 그린 날",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "코스모는 물에서 먼 마루에 앉아 나무 조각으로 배 모양을 잡는 법을 보여 주었다. 칼은 코스모가 잡았다."
+          },
+          {
+            "speaker": "narration",
+            "text": "{childSubj} 배 옆에 물결을 그려 넣었다. 배는 마루 위에서만 다니는 배였다."
+          }
+        ]
+      },
+      "fam:with:rudy": {
+        "title": "모양을 하나 고른 저녁",
+        "album": "{child}, 루디와 목공 모양을 고른 날",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "루디는 목공 조각 세 가지를 탁자에 놓고, 어디에 쓰는 모양인지 그림으로 하나씩 설명해 주었다."
+          },
+          {
+            "speaker": "narration",
+            "text": "{childSubj} 마음에 드는 모양을 골라 그 옆에 제 그림을 보탰다."
+          }
+        ]
+      },
+      "fam:with:dexter": {
+        "title": "창가에서 본 구름",
+        "album": "{child}, 덱스터와 구름을 그린 날",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "덱스터는 창가에 자리를 만들고 저녁 하늘을 아이와 나란히 올려다보았다. 말은 아이가 하고 싶을 때만 했다."
+          },
+          {
+            "speaker": "narration",
+            "text": "{childSubj} 본 구름을 종이에 그렸다. 덱스터는 그림 한 장에 한 줄만 적어 주었다."
+          }
+        ]
+      },
+      "fam:with:basil": {
+        "title": "창가의 작은 화분",
+        "album": "{child}, 바질과 화분을 고른 날",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "바질은 화분 세 개를 창가에 내놓고 흙을 담는 법을 보여 주었다. 물 주는 날은 바질이 정해 둔 대로였다."
+          },
+          {
+            "speaker": "narration",
+            "text": "{childSubj} 마음에 드는 화분에 이름표를 붙였다. 쉬는 자리에는 방석이 하나 더 놓였다."
+          }
+        ]
+      },
+      "fam:with:marigold": {
+        "title": "바구니 손잡이의 천",
+        "album": "{child}, 메리골드와 바구니를 꾸민 날",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "메리골드는 빈 바구니를 내밀며 어디에 무엇을 담을지 칸을 나눠 보여 주었다."
+          },
+          {
+            "speaker": "narration",
+            "text": "{childSubj} 고른 천을 손잡이에 감고, 가족 일정표 귀퉁이에 오늘 날짜 옆 작은 그림을 그렸다."
+          }
+        ]
+      },
+      "fam:with:penelope": {
+        "title": "아이가 고른 무늬",
+        "album": "{child}, 페넬로피와 무늬 천을 만든 날",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "페넬로피는 남은 실로 짠 작은 천 몇 장을 펼쳐 놓고 색을 하나씩 대 보게 했다."
+          },
+          {
+            "speaker": "narration",
+            "text": "{childSubj} 무늬를 골라 짜 나갔다. 줄이 조금 엇갈렸지만 그대로 두었다."
+          }
+        ]
+      },
+      "fam:with:tilly": {
+        "title": "식은 조각의 모양",
+        "album": "{child}, 틸리와 장식 모양을 고른 날",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "틸리는 대장간에서 가져온 모양 본만 탁자에 펼쳤다. 불 앞에는 아이를 데려가지 않았다."
+          },
+          {
+            "speaker": "narration",
+            "text": "{childSubj} 마음에 드는 모양을 골라 종이에 그려 두었다."
+          }
+        ]
+      },
+      "fam:with:juniper": {
+        "title": "공책 속의 꽃",
+        "album": "{child}, 주니퍼와 꽃을 관찰한 날",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "주니퍼는 창가 화분 앞에 아이를 앉히고, 만지지 않고 보기만 하는 거리를 정해 주었다."
+          },
+          {
+            "speaker": "narration",
+            "text": "{childSubj} 본 것을 공책에 그리고, 처음 본 날을 구석에 적었다."
+          }
+        ]
+      },
+      "fam:with:poppy": {
+        "title": "아이의 찻잔",
+        "album": "{child}, 파피와 찻잔을 고른 날",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "파피는 찻잔 몇 개를 낮은 탁자에 놓고, 아이 손이 닿는 곳에 간식 자리를 마련했다. 뜨거운 차는 어른 쪽에만 두었다."
+          },
+          {
+            "speaker": "narration",
+            "text": "{childSubj} 마음에 드는 잔을 골라 제 자리에 놓았다."
+          }
+        ]
+      },
+      "fam:with:merchant": {
+        "title": "그림으로 본 먼 곳의 물건",
+        "album": "{child}, 떠돌이 상인과 먼 곳 물건을 그린 날",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "떠돌이 상인은 팔 물건 대신 빈 종이를 꺼내, 다녀 본 먼 장터의 물건 모양을 그림으로 보여 주었다."
+          },
+          {
+            "speaker": "narration",
+            "text": "{childSubj} 마음에 든 모양 하나를 골라 제 종이에 따라 그렸다."
+          }
+        ]
+      },
+      "fam:with:presser": {
+        "title": "탁자 위의 병 그림",
+        "album": "{child}, 기름 짜는 이웃과 병 모양을 고른 날",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "기름 짜는 이웃은 기름틀을 멀리 두고, 탁자에 빈 병 모양을 그린 종이 몇 장을 놓았다."
+          },
+          {
+            "speaker": "narration",
+            "text": "{childSubj} 마음에 드는 병 모양을 골라 색연필로 칠했다."
+          }
+        ]
+      },
+      "fam:with:postman": {
+        "title": "접은 종이 한 장",
+        "album": "{child}, 편지 나르는 이웃과 종이를 접은 날",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "편지 나르는 이웃은 빈 종이로 접는 법만 보여 주었다. 남의 편지는 탁자에 올리지 않았다."
+          },
+          {
+            "speaker": "narration",
+            "text": "{childSubj} 접은 종이 위에 마을 길을 선으로 그리며, 우물과 집이 어디인지 짚어 보았다."
+          }
+        ]
+      },
+      "fam:play": {
+        "title": "처음 고른 놀이",
+        "album": "{child}, 처음 놀이를 고른 날",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "오늘은 무엇을 하고 놀지 {childSubj} 먼저 말했다."
+          },
+          {
+            "speaker": "narration",
+            "text": "고른 놀이를 하는 동안 {childSubj} 한 번도 딴 데를 보지 않았다."
+          }
+        ]
+      },
+      "fam:errand": {
+        "title": "첫 심부름",
+        "album": "{child}, 첫 심부름을 마친 날",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "작은 심부름을 받은 {childSubj} 마을 길을 또박또박 걸었다."
+          },
+          {
+            "speaker": "narration",
+            "text": "받는 사람 앞에서 {childSubj} 두 손으로 건네고 돌아왔다."
+          }
+        ]
+      },
+      "fam:show": {
+        "title": "작품을 보여 준 날",
+        "album": "{child}, 처음 작품을 보여 준 날",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "배움터 한쪽에 {childSubj} 만든 것을 올려 두었다."
+          },
+          {
+            "speaker": "narration",
+            "text": "소리 내어 소개하든 그림으로 보여 주든 {childSubj} 편한 방식으로 했다. 잘했는지 가리는 사람은 없었다."
+          }
+        ]
+      },
     "fam:deskNap": {
       "title": "책상 옆에서",
       "album": "{child}, 책상 옆에서 잠든 날",
@@ -6234,6 +6458,196 @@
       "book": "{who} 곁에서 책장을 넘겨 봐요",
       "doze": "{who} 방석에 기대어 새근새근 자요",
       "spouse": "{who} 같은 방에서 책을 읽어요"
+    },
+    "withSpouse": {
+      "title": "배우자와 함께하는 시간",
+      "open": "배우자와 함께하기",
+      "hint": "저녁에 배우자가 집에 있을 때, 하루에 한 번 함께할 수 있어요. {childSubj} 고르는 대로 해요.",
+      "blocks": {
+        "noSpouse": "함께 사는 배우자가 있을 때만 할 수 있어요.",
+        "noChild": "함께할 아이가 없어요.",
+        "baby": "아기는 아직 요람에서 자요.",
+        "grown": "다 자란 아이는 제 일을 하며 지내요.",
+        "school": "지금은 배움터에 있어요. 저녁 여섯 시에 돌아와요.",
+        "time": "배우자가 집에 있는 저녁(일곱 시부터 아홉 시 반까지)에 할 수 있어요.",
+        "notHome": "집 안에서 함께해요.",
+        "done": "오늘은 함께했어요. 내일 또 해요."
+      },
+      "pick": "{child}의 선택",
+      "closer": "{childAnd} 조금 더 가까워졌어요",
+      "album": "가족 앨범에 한 장이 남아요",
+      "close": "닫기",
+      "spouses": {
+        "wendell": {
+          "label": "웬델과 빵 모양 만들기",
+          "choices": [
+            "둥근 빵",
+            "별 모양 빵",
+            "길쭉한 빵"
+          ],
+          "picks": [
+            "{childSubj} 둥근 빵 모양을 골랐다.",
+            "{childSubj} 별 모양 빵을 골랐다.",
+            "{childSubj} 길쭉한 빵 모양을 골랐다."
+          ]
+        },
+        "cosmo": {
+          "label": "코스모와 배 장난감 그림",
+          "choices": [
+            "작은 돛배",
+            "넓은 나룻배",
+            "물고기 모양 배"
+          ],
+          "picks": [
+            "{childSubj} 작은 돛배를 골랐다.",
+            "{childSubj} 넓은 나룻배를 골랐다.",
+            "{childSubj} 물고기 모양 배를 골랐다."
+          ]
+        },
+        "rudy": {
+          "label": "루디와 목공 모양 고르기",
+          "choices": [
+            "네모난 조각",
+            "둥근 조각",
+            "세모난 조각"
+          ],
+          "picks": [
+            "{childSubj} 네모난 조각을 골랐다.",
+            "{childSubj} 둥근 조각을 골랐다.",
+            "{childSubj} 세모난 조각을 골랐다."
+          ]
+        },
+        "dexter": {
+          "label": "덱스터와 구름 그림",
+          "choices": [
+            "솜 같은 구름",
+            "길게 늘어진 구름",
+            "물결 같은 구름"
+          ],
+          "picks": [
+            "{childSubj} 솜 같은 구름을 그렸다.",
+            "{childSubj} 길게 늘어진 구름을 그렸다.",
+            "{childSubj} 물결 같은 구름을 그렸다."
+          ]
+        },
+        "basil": {
+          "label": "바질과 화분 돌보기",
+          "choices": [
+            "작은 잎 화분",
+            "꽃이 달린 화분",
+            "향 나는 풀 화분"
+          ],
+          "picks": [
+            "{childSubj} 작은 잎 화분을 골랐다.",
+            "{childSubj} 꽃이 달린 화분을 골랐다.",
+            "{childSubj} 향 나는 풀 화분을 골랐다."
+          ]
+        },
+        "marigold": {
+          "label": "메리골드와 수확 바구니 꾸미기",
+          "choices": [
+            "붉은 천 조각",
+            "노란 천 조각",
+            "푸른 천 조각"
+          ],
+          "picks": [
+            "{childSubj} 붉은 천 조각을 골랐다.",
+            "{childSubj} 노란 천 조각을 골랐다.",
+            "{childSubj} 푸른 천 조각을 골랐다."
+          ]
+        },
+        "penelope": {
+          "label": "페넬로피와 무늬 천 만들기",
+          "choices": [
+            "줄무늬",
+            "물결무늬",
+            "점무늬"
+          ],
+          "picks": [
+            "{childSubj} 줄무늬를 골랐다.",
+            "{childSubj} 물결무늬를 골랐다.",
+            "{childSubj} 점무늬를 골랐다."
+          ]
+        },
+        "tilly": {
+          "label": "틸리와 장식 모양 고르기",
+          "choices": [
+            "동그란 조각",
+            "잎 모양 조각",
+            "별 모양 조각"
+          ],
+          "picks": [
+            "{childSubj} 동그란 조각을 골랐다.",
+            "{childSubj} 잎 모양 조각을 골랐다.",
+            "{childSubj} 별 모양 조각을 골랐다."
+          ]
+        },
+        "juniper": {
+          "label": "주니퍼와 꽃 관찰 그림",
+          "choices": [
+            "작은 들꽃",
+            "노란 꽃",
+            "잎이 큰 풀"
+          ],
+          "picks": [
+            "{childSubj} 작은 들꽃을 그렸다.",
+            "{childSubj} 노란 꽃을 그렸다.",
+            "{childSubj} 잎이 큰 풀을 그렸다."
+          ]
+        },
+        "poppy": {
+          "label": "파피와 찻잔 고르기",
+          "choices": [
+            "하늘색 찻잔",
+            "노란 찻잔",
+            "꽃무늬 찻잔"
+          ],
+          "picks": [
+            "{childSubj} 하늘색 찻잔을 골랐다.",
+            "{childSubj} 노란 찻잔을 골랐다.",
+            "{childSubj} 꽃무늬 찻잔을 골랐다."
+          ]
+        },
+        "merchant": {
+          "label": "떠돌이 상인과 먼 곳 물건 그림",
+          "choices": [
+            "둥근 항아리",
+            "접는 부채",
+            "긴 끈 꾸러미"
+          ],
+          "picks": [
+            "{childSubj} 둥근 항아리를 골랐다.",
+            "{childSubj} 접는 부채를 골랐다.",
+            "{childSubj} 긴 끈 꾸러미를 골랐다."
+          ]
+        },
+        "presser": {
+          "label": "기름 짜는 이웃과 병 모양 고르기",
+          "choices": [
+            "둥근 병",
+            "긴 병",
+            "납작한 병"
+          ],
+          "picks": [
+            "{childSubj} 둥근 병을 골랐다.",
+            "{childSubj} 긴 병을 골랐다.",
+            "{childSubj} 납작한 병을 골랐다."
+          ]
+        },
+        "postman": {
+          "label": "편지 나르는 이웃과 종이 접기",
+          "choices": [
+            "네모로 접기",
+            "세모로 접기",
+            "작은 봉투로 접기"
+          ],
+          "picks": [
+            "{childSubj} 네모로 접었다.",
+            "{childSubj} 세모로 접었다.",
+            "{childSubj} 작은 봉투로 접었다."
+          ]
+        }
+      }
     },
     "albumFamily": "가족",
     "albumOther": "마을과 풍경",

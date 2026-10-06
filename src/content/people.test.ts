@@ -134,6 +134,9 @@ describe('people.json', () => {
     for (const id of SKILL_IDS) exps.add(`learn:${id}`)
     // 함께 지은 기억 project:<시설> (계획 16 작업 20: 사업 진행·완성 때 completeProject·advanceVillage가 남긴다)
     for (const id of FACILITY_IDS) exps.add(`project:${id}`)
+    // 가족 첫 경험 fam:<id> (계획 16 작업 22: 배우자와 함께한 활동 fam:with:<배우자>, 같이 만든 장난감·장 구경)
+    for (const id of CANDIDATE_IDS) exps.add(`fam:with:${id}`)
+    for (const id of ['fam:make', 'fam:market']) exps.add(id)
     for (const x of exps) made.add(`exp:${x}`)
     for (const p of Object.values(PEOPLE.people)) {
       const reqs = [...p.lines.map((l) => l.req), ...(p.events ?? []).map((e) => e.req), ...(p.sightings ?? []).map((w) => w.req), ...p.routines.map((r) => r.req), ...(p.props ?? []).map((x) => x.req)]

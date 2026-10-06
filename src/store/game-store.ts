@@ -8,6 +8,7 @@ import { create } from 'zustand'
 import { CONTENT, neighborById, copySourceFor, LETTER_OPENINGS, pieceById, pieceOfQuestion, piecesOf, quizSourceFor } from '../content/catalog'
 import { blanksFor } from '../engine/copy'
 import { acceptInput, checkVoice, copySpot, withGuideFolded, type InputHow, type VoiceCheck } from '../engine/copying'
+import { doSpouseAct, showAtSchool, type ShowMode } from '../engine/family-memory'
 import { answerDesk, deskAsks, deskKidVerse, doKidAct, eatSupper, familyTrip, type KidAct } from '../engine/family'
 import { currentChapter } from '../engine/offers'
 import { handEase, leveledUp, XP, type StatId } from '../engine/stats'
@@ -238,7 +239,14 @@ export type Modal =
   /** 집 책장 (계획 14 작업 8): 놓은 책장 가구를 누르면 — 다 쓴 책을 몇 권 골라 둔다 */
   | { kind: 'homeShelf' }
   /** 아이와 함께 보내는 시간 (계획 12): 고르기, done이면 방금 한 일의 짧은 장면과 결과 */
-  | { kind: 'kidTime'; done?: KidDone }
+  | { kind: 'kidTime'; done?: KidDone; spouse?: SpouseDone }
+
+/** 방금 배우자와 아이가 함께한 가족 활동 (창 상태로만) */
+export interface SpouseDone {
+  partner: string
+  choice: number
+  album: boolean
+}
 
 /** 방금 아이와 함께한 일 (창 상태로만) */
 export interface KidDone {
@@ -401,6 +409,10 @@ interface Store {
   goSchool: (stat: StatId) => void
   /** 아이와 함께하기 (계획 12): 짧은 장면과 결과를 보인다 */
   kidAct: (act: KidAct) => void
+  /** 배우자와 아이가 함께하는 가족 활동 (아이가 고른 것) */
+  spouseKidAct: (choice: number) => void
+  /** 배움터에서 작품 보여 주기·구경하기 */
+  showAtSchool: (mode: ShowMode) => void
   startTeach: () => void
   startLetter: () => void
   // 손일
@@ -1320,6 +1332,19 @@ export const useGame = create<Store>((set, get) => {
       sfx('gift')
       const album = r.state.scenes.length > before.scenes.length
       set({ game: persist(r.state), modal: { kind: 'kidTime', done: { act, variant: r.variant, gains: r.gains, got: r.got, who: r.who, burnt: r.burnt, album } } })
+    },
+    spouseKidAct: (choice) => {
+      const r = doSpouseAct(get().game, choice)
+      if (!r) return
+      sfx('gift')
+      set({ game: persist(r.state), modal: { kind: 'kidTime', spouse: { partner: r.partner, choice: r.choice, album: r.album } } })
+    },
+    showAtSchool: (mode) => {
+      const r = showAtSchool(get().game, mode)
+      if (!r) return
+      sfx('gift')
+      set({ game: persist(r.state), modal: null })
+      get().say(`${r.state.child?.name ?? '아이'} · ${mode === 'watch' ? '교실에서 친구들의 작품을 조용히 구경했어요' : mode === 'speak' ? '작품을 소개했어요' : '그림으로 작품을 보여 주었어요'}`, 3400)
     },
     keepChild: (mode) => {
       const g = setChildMode(get().game, mode)

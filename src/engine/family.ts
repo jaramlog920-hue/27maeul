@@ -5,7 +5,7 @@
 import { mulberry32 } from './offers'
 import { isMarketDay, weatherOf } from './calendar'
 import { NO_LIFE, recordExperience } from './people'
-import { addCareerInterest, childMode, childStage, type AdultJob } from './child'
+import { addCareerInterest, childMode, childStage, type AdultJob, type ChildStage } from './child'
 import { seasonOf } from './clock'
 import { childAtSchool, heartUp, neighborsPresent, passTime, putAway, type GameState } from './game'
 import { NO_ROMANCE, SPOUSE_HOME_FROM, SPOUSE_HOME_TO } from './romance'
@@ -153,14 +153,21 @@ export interface KidResult {
   burnt: boolean
 }
 
-/** 처음 있는 일은 가족 앨범에 한 장 (한 번) */
-function firstTime(s: GameState, id: string): GameState {
+/**
+ * 처음 있는 일은 가족 앨범에 한 장 (한 번). 경험 기록과 앨범은 같은 ID.
+ * stages: 이 단계의 아이일 때만 (아니면 기록도 앨범도 없이 지나간다 — 나중에 맞는 단계에서 할 수 있다)
+ * extra: 그 자리에 실제로 있었던 이웃, choice: 아이가 고른 것
+ */
+export function firstTime(s: GameState, id: string, opts: { stages?: readonly ChildStage[]; extra?: readonly string[]; choice?: number; item?: string; place?: string } = {}): GameState {
   if (s.flags[id]) return s
+  if (opts.stages && (!s.child || !opts.stages.includes(childStage(s.child, s.clock.day)))) return s
   const partner = s.romance?.stage === 'married' ? s.romance.partner : undefined
   const npc = partner ? s.npcs[partner] : undefined
   const withs = s.child ? ['family:child'] : []
   if (partner && npc?.visible && Math.abs(npc.x-s.player.x)+Math.abs(npc.y-s.player.y) <= 2) withs.push(partner)
-  const life = recordExperience(s.life ?? NO_LIFE, { id, kind: 'family', with: withs },
+  for (const n of opts.extra ?? []) if (!withs.includes(n)) withs.push(n)
+  const life = recordExperience(s.life ?? NO_LIFE, { id, kind: 'family', with: withs,
+    ...(opts.choice !== undefined ? { choice: opts.choice } : {}), ...(opts.item ? { item: opts.item } : {}), ...(opts.place ? { place: opts.place } : {}) },
     { day: s.clock.day, minute: s.clock.minute, season: seasonOf(s.clock.day), weather: weatherOf(s.clock.day) })
   return { ...s, life, flags: { ...s.flags, [id]: 1 }, scenes: [...s.scenes, id] }
 }
@@ -219,13 +226,23 @@ export function doKidAct(s: GameState, act: KidAct, content: GameContent): KidRe
       // 봄에 처음 나선 산책은 봄 소풍으로
       if (seasonOf(day) === 'spring') next = firstTime(next, 'fam:picnic')
       break
+    case 'puzzle':
+    case 'ball':
+      // 걷는 아이가 처음 고른 놀이 (퍼즐이면 0, 공이면 1)
+      next = firstTime(next, 'fam:play', { stages: ['toddler'], choice: act === 'puzzle' ? 0 : 1 })
+      break
     case 'tour':
       who = neighborToday(next, content, 1)
-      if (isMarketDay(day)) next = firstTime(next, 'fam:market')
+      // 장 구경은 그날 실제로 마주친 이웃만 함께한 기억으로
+      if (isMarketDay(day)) next = firstTime(next, 'fam:market', who ? { extra: [who] } : {})
       break
     case 'errand':
       who = neighborToday(next, content, 2)
-      if (who) next = heartUp(next, who, 3)
+      if (who) {
+        next = heartUp(next, who, 3)
+        // 돕는 아이의 첫 심부름 — 실제로 이웃을 만나 마친 날만
+        next = firstTime(next, 'fam:errand', { stages: ['helper'], extra: [who] })
+      }
       break
     case 'story':
       // 잠들기 전 이야기: 능력치 없이 가까움과 마음 — 하루의 피로가 조금 풀린다

@@ -145,7 +145,7 @@ function Body() {
     case 'homeShelf':
       return <HomeShelf />
     case 'kidTime':
-      return <KidTime done={modal.done} />
+      return <KidTime done={modal.done} spouse={modal.spouse} />
   }
 }
 

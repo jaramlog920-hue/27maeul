@@ -4,6 +4,9 @@
 import { childMode, type Child } from './child'
 import { SEASON_DAYS } from './clock'
 import { isBirthday } from './notebook'
+import { NO_LIFE, recordExperience, type Life } from './people'
+import { weatherOf } from './calendar'
+import { seasonOf } from './clock'
 import type { Romance } from './romance'
 
 /** 한 해 = 네 철 */
@@ -20,14 +23,30 @@ export function spouseBirthday(r: Romance | null | undefined, day: number): bool
   return r?.stage === 'married' && !!r.partner && isBirthday(r.partner, day)
 }
 
-type MorningState = { clock: { day: number }; child: Child | null; romance: Romance; scenes: string[] }
+type MorningState = { clock: { day: number }; child: Child | null; romance: Romance; scenes: string[]; life?: Life }
 
 /** 새 날 아침: 생일 장면 (배우자 fam:bdaySpouse, 아이 fam:bdayChild — 먼 곳에 사는 아이는 fam:bdayChildFar 편지) */
 export function familyMorning<S extends MorningState>(s: S): S {
   const day = s.clock.day
   const add: string[] = []
-  if (spouseBirthday(s.romance, day)) add.push('fam:bdaySpouse')
+  // 해마다 같은 생일: 장면은 그대로 나오고, 경험은 한 항목에 참여한 횟수·마지막 해만 쌓인다 (첫 날짜 유지)
+  const marks: { id: string; with: string[] }[] = []
+  const partner = s.romance?.stage === 'married' ? s.romance.partner : null
+  if (spouseBirthday(s.romance, day)) {
+    add.push('fam:bdaySpouse')
+    marks.push({ id: 'fam:bday:spouse', with: [partner!, ...(s.child && childMode(s.child, day) !== 'away' ? ['family:child'] : [])] })
+  }
   const c = s.child
-  if (c && childBirthday(c, day)) add.push(childMode(c, day) === 'away' ? 'fam:bdayChildFar' : 'fam:bdayChild')
-  return add.length ? { ...s, scenes: [...s.scenes, ...add] } : s
+  if (c && childBirthday(c, day)) {
+    const far = childMode(c, day) === 'away'
+    add.push(far ? 'fam:bdayChildFar' : 'fam:bdayChild')
+    // 떠나 사는 아이의 생일은 편지로만 — 같은 자리의 참여 기록이 아니다
+    if (!far) marks.push({ id: 'fam:bday:child', with: ['family:child', ...(partner ? [partner] : [])] })
+  }
+  if (!add.length) return s
+  let life = s.life ?? NO_LIFE
+  for (const m of marks) {
+    life = recordExperience(life, { id: m.id, kind: 'family', with: m.with }, { day, minute: 6 * 60, season: seasonOf(day), weather: weatherOf(day) })
+  }
+  return { ...s, scenes: [...s.scenes, ...add], ...(marks.length ? { life } : {}) }
 }
