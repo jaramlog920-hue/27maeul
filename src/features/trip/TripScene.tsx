@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react'
 import { pieceById } from '../../content/catalog'
 import { itemName, T } from '../../content/text'
 import { STAT_IDS, type StatId } from '../../engine/stats'
-import { DESTS, type DestId } from '../../engine/travel'
+import { DESTS, tripCost, type DestId } from '../../engine/travel'
 import { canExtend, extendTurns, EXTRA_PRICE, EXTRA_TURNS, NEW_BOARD, playTurn, rollDie, stoneTile, TRIP_TURNS, walkPath, type BoardState, type TripReward } from '../../engine/trip-board'
 import type { Facing, ItemId } from '../../engine/types'
 import { TILE, VIEW_W } from '../../engine/world'
@@ -195,10 +195,12 @@ export function TripScene({ dest, withChild }: { dest: DestId; withChild: boolea
     setBubble(null)
   }
 
+  // 더 굴리는 값은 돌아갈 배삯·숙박비를 남기고 낼 수 있을 때만 — 돌아올 때 닢이 모자라 마이너스가 되던 것 (2026-10-07)
+  const spare = game.coins - tripCost(DESTS[dest], [])
   /** 두 번 더 굴리기 (여행 한 번에 한 번, 닢을 내고) — 수확 창에서도 */
   const extend = () => {
     if (walking) return
-    setBoard(extendTurns(board, game.coins))
+    setBoard(extendTurns(board, spare))
     setHarvest(false)
   }
   const turns = TRIP_TURNS + (board.bonus ?? 0)
@@ -223,7 +225,7 @@ export function TripScene({ dest, withChild }: { dest: DestId; withChild: boolea
           ))}
         </div>
       </div>
-      {canExtend(board, game.coins) && !board.done && (
+      {canExtend(board, spare) && !board.done && (
         <button className="ts-extra" onClick={extend} disabled={walking}>
           +{EXTRA_TURNS}번 더 · {EXTRA_PRICE}닢
         </button>
@@ -232,7 +234,7 @@ export function TripScene({ dest, withChild }: { dest: DestId; withChild: boolea
         {board.lastRoll ? DIE[board.lastRoll - 1] : '🎲'}
       </button>
       {showHarvest && (
-        <Harvest rewards={board.rewards} lapped={board.lapped} kid={kidName} onGo={() => finish(board.rewards)} onMore={canExtend(board, game.coins) ? extend : undefined} />
+        <Harvest rewards={board.rewards} lapped={board.lapped} kid={kidName} onGo={() => finish(board.rewards)} onMore={canExtend(board, spare) ? extend : undefined} />
       )}
     </div>
   )
