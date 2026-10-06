@@ -7,12 +7,16 @@ import { count } from './items'
 export const GOOD_MOOD = 70
 /** 연인과 함께 간 날 (계획 10 작업 4): 그날 하루 기분 + */
 export const DATE_MOOD = 10
+/** 집 안 정해 둔 자리에서 쉰 날: 그날 하루 기분 + (기분 말고는 아무 덤도 없다) */
+export const SPACE_MOOD = 5
 
 const WEATHER_MOOD: Record<string, number> = { sunny: 10, wind: 0, fog: 0, rain: -5, snow: -5, hot: -5 }
 
 export function moodOf(s: Pick<GameState, 'needs' | 'clock' | 'room' | 'inv'> & Partial<Pick<GameState, 'flags'>>): number {
   let m = 50 + (WEATHER_MOOD[weatherOf(s.clock.day)] ?? 0)
   if (s.flags?.dateDay === s.clock.day) m += DATE_MOOD
+  // 정해 둔 자리에서 쉰 날 (계획 16 작업 23): 그날 하루 기분 +
+  if (s.flags?.spaceDay === s.clock.day) m += SPACE_MOOD
   // 꾸민 방: 붙박이(침대·책상…)와 결혼할 때 따라온 배우자방 가구는 세지 않는다
   m += Math.min(15, s.room.filter(f => !FIXTURES[f.item as keyof typeof FIXTURES] && !f.item.startsWith('spouse:')).length * 3)
   if (count(s.inv, 'goodPen') > 0) m += 5

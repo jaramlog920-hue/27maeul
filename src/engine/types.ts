@@ -70,6 +70,8 @@ export type Target =
   | { kind: 'stray'; animal: 'cat' | 'dog' }
   /** 집에 놓은 책장 (계획 14 작업 8): 다 쓴 책을 몇 권 둔다 */
   | { kind: 'bookcase'; tile: Tile }
+  /** 집 안에서 정해 둔 자리의 의자·탁자 (계획 16 작업 23): 곁에 서면 쓰임 메뉴 */
+  | { kind: 'space'; id: string; tile: Tile }
   | { kind: 'ground' }
 /** 네 복음서 — 도장·복음서 탐정·"어느 복음서"·복음서 방은 이 네 권만 */
 export type Gospel = 'mt' | 'mk' | 'lk' | 'jn'

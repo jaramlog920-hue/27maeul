@@ -5,7 +5,8 @@ import { seasonOf } from './clock'
 import { weatherOf } from './calendar'
 import { childMode, childStage } from './child'
 import { CLOSE_MAX, KID_CLOSE_GAIN, KID_MADE, SUPPER_TO, spouseReading } from './family'
-import { childAtSchool, passTime, type GameState } from './game'
+import { childAtSchool, homeSeatsNow, passTime, recordExperienceIn, type GameState } from './game'
+import { SPACE_TOGETHER_ID } from './space-life'
 import { NO_LIFE, recordExperience } from './people'
 import { SPOUSE_HOME_FROM } from './romance'
 import { isHome } from './world'
@@ -63,6 +64,10 @@ export function doSpouseAct(s: GameState, choice: number): SpouseActResult | nul
     child: { ...c, close: Math.min(CLOSE_MAX, (c.close ?? 0) + KID_CLOSE_GAIN) },
     flags: { ...s.flags, spouseActDay: s.clock.day },
   }, SPOUSE_ACT_MINUTES)
+  // 정해 둔 차 자리·가족 쉼터가 있으면 식구가 그 자리에 둘러앉아 한다 (작업 23): 그날 기분 + 함께 정한 자리의 기억 한 번
+  const seated = homeSeatsNow(s)
+  if (seated.spouse && seated.child)
+    next = recordExperienceIn({ ...next, flags: { ...next.flags, spaceDay: s.clock.day } }, { id: SPACE_TOGETHER_ID, kind: 'family', with: ['family:child', partner], place: 'home' })
   const had = !!next.life?.experiences?.[id]
   if (!had && next.flags[id]) {
     // 옛 저장에 앨범만 남은 경우 — 없던 첫 날짜를 지어내지 않고 이번부터 적는다

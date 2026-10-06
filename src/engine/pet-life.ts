@@ -7,6 +7,7 @@ import { seasonOf } from './clock'
 import { childMode, childStage } from './child'
 import { isNear, npcTile } from './neighbors'
 import { NO_LIFE, recordExperience } from './people'
+import { petSpaceTile } from './spaces'
 import { isHome, isIndoor, roomAt } from './world'
 import type { GameEvent, GameState } from './game'
 import type { Tile } from './types'
@@ -46,7 +47,13 @@ export function petStayGoal(s: GameState, c: Companion, occupied: ReadonlySet<st
       if (petSpotSafe(t, occupied)) return t
     }
   }
-  return petHomeGoal(c, occupied, petHabit(c, s.clock.day, m, weatherOf(s.clock.day)).spot)
+  const spot = petHabit(c, s.clock.day, m, weatherOf(s.clock.day)).spot
+  // 동물 쉼터를 정해 뒀으면 낮잠·놀이 자리는 거기로 (작업 23) — 쉼터가 쉬고 있거나 막히면 기존 자리
+  if (spot === 'blanket' || spot === 'toy') {
+    const corner = petSpaceTile(s, occupied)
+    if (corner) return corner
+  }
+  return petHomeGoal(c, occupied, spot)
 }
 
 /**

@@ -25,6 +25,7 @@ import { HomeShelf } from './library/HomeShelf'
 import { JourneyBoard } from './journey/JourneyBoard'
 import { LetterBox } from './letters/LetterBox'
 import { CareMenu } from './menus/CareMenu'
+import { SpaceMenu } from './menus/SpaceMenu'
 import { PlaceMenu } from './menus/PlaceMenu'
 import { ReadPick } from './menus/ReadPick'
 import { QuizView } from './quiz/QuizView'
@@ -144,6 +145,8 @@ function Body() {
       return <BookView key={modal.book} modal={modal} />
     case 'homeShelf':
       return <HomeShelf />
+    case 'space':
+      return <SpaceMenu id={modal.id} />
     case 'kidTime':
       return <KidTime done={modal.done} spouse={modal.spouse} />
   }

@@ -22,6 +22,8 @@ import { DEFAULT_CHOICE, type SpecialChoice } from '../engine/binding'
 import { ALBUM_IDS, fill, itemList, itemName, KID_LETTERS, NEIGHBOR_LINES, roomTitle, SCENES, T, withAnd, withObject, withSubject, callName } from '../content/text'
 import { grapesRipe, isWet, weatherOf } from '../engine/calendar'
 import { cleanName, favoriteToy, interactPet, petWays, type Animal } from '../engine/companion'
+import { canUseSpace, setSpace, unsetSpace, useSpace } from '../engine/space-life'
+import { usesFor, type SpaceUse } from '../engine/spaces'
 import { petEventText } from '../content/pet-text'
 import {
   adoptStray,
@@ -238,6 +240,8 @@ export type Modal =
   | { kind: 'bookView'; book: Book; back?: BookBack }
   /** 집 책장 (계획 14 작업 8): 놓은 책장 가구를 누르면 — 다 쓴 책을 몇 권 골라 둔다 */
   | { kind: 'homeShelf' }
+  /** 정해 둔 집 안 자리 (계획 16 작업 23): 의자·탁자 곁에서 앉아 쉬기·차 마시기·손일·읽기 */
+  | { kind: 'space'; id: string }
   /** 아이와 함께 보내는 시간 (계획 12): 고르기, done이면 방금 한 일의 짧은 장면과 결과 */
   | { kind: 'kidTime'; done?: KidDone; spouse?: SpouseDone }
 
@@ -358,6 +362,10 @@ interface Store {
   /** 방 꾸미기에서 화면에 비출 방의 칸 (기록자는 그대로 두고 카메라만 옮긴다). 저장하지 않는다 */
   decorLook: Tile | null
   moveSelected: () => void
+  /** 방 꾸미기에서 고른 가구로 자리의 쓰임을 정하고 푼다 (계획 16 작업 23) */
+  setSpaceUse: (use: SpaceUse) => void
+  clearSpaceUse: (id: string) => void
+  useSpaceAt: (id: string) => void
   showDecorRoom: (room: 'workshop' | 'partner' | 'baby' | 'living') => void
   muted: boolean
   /** 떠 있는 조이스틱 (설정에서 켜고 끈다, 처음엔 꺼짐 — 마우스·터치 모두) */
@@ -918,6 +926,7 @@ export const useGame = create<Store>((set, get) => {
     if (target.kind === 'child') return { game, modal: { kind: 'follow', who: 'child' } }
     // 집에 놓은 책장: 다 쓴 책을 몇 권 둔다 (계획 14 작업 8)
     if (target.kind === 'bookcase') return { game, modal: { kind: 'homeShelf' } }
+    if (target.kind === 'space') return { game, modal: { kind: 'space', id: target.id } }
     if (target.kind !== 'place') return { game, modal: null }
     switch (target.id) {
       case 'bed': {
@@ -1868,6 +1877,30 @@ export const useGame = create<Store>((set, get) => {
     startDecorate: (item) => set({ decorating: item, modal: null, decorSel: null, decorMoving: false }),
     stopDecorate: () => set({ decorating: null, decorSel: null, decorMoving: false, decorLook: null }),
     moveSelected: () => set({ decorMoving: !get().decorMoving, decorating: 'pick' }),
+    setSpaceUse: (use) => {
+      const g = get().game
+      const f = selectedPiece(g.room, get().decorSel)
+      if (!f) return
+      const next = setSpace(g, f, use)
+      if (!next) { get().say(usesFor(g.room, f).includes(use) ? T.space.full : T.space.setFail); return }
+      sfx('place')
+      set({ game: persist(next) })
+      get().say(T.space.setDone)
+    },
+    clearSpaceUse: (id) => set({ game: persist(unsetSpace(get().game, id)) }),
+    useSpaceAt: (id) => {
+      const g = get().game
+      const block = canUseSpace(g, id)
+      if (block) {
+        get().say(block === 'full' ? T.space.busy : block === 'away' ? T.space.away : T.space.gone)
+        if (block !== 'full') set({ modal: null })
+        return
+      }
+      const r = useSpace(g, id)
+      if (!r) return
+      set({ game: persist(r.state), modal: null })
+      get().say(r.first ? T.space.first : r.together.length ? T.space.together : T.space.toast[r.use as 'tea' | 'craft' | 'family' | 'read'], 3000)
+    },
     showDecorRoom: (room) => {
       const { game } = get()
       const required = { workshop: 0, partner: 1, baby: 2, living: 3 }[room]

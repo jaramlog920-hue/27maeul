@@ -19,6 +19,7 @@ import { facingFor, findPath, pathToward, stepActor, type Actor } from './moveme
 import { coolDown, exhausted, fallsSick, FRESH, rest, sleepNeeds, starving, tickNeeds, warmUp, work, type Needs } from './needs'
 import { inGoodMood } from './mood'
 import { footprint, FURNITURE_DEFS, placement, refitRoom, removal, rotation, solidTiles, type Furniture } from './room'
+import { familySeats, type FamilyWants, moveInSpaces, pruneSpaces, SPACE_FROM, SPACE_TO, KID_SPACE_FROM, spaceAtTile, type HomeSpace } from './spaces'
 import {
   BABY_PARTY_SPOTS,
   FRIENDS_FROM,
@@ -174,6 +175,8 @@ export interface GameState {
   clubWorks: Record<string, { item: 'cushion'; color: string; place: PlaceId }>
   /** 내가 준비하는 작은 행사 (계획 16 작업 16) — 옛 저장은 빈 목록 */
   fests: Fest[]
+  /** 집 안 공간별 쓰임 (계획 16 작업 23): 정해 둔 차 자리·손일 자리·가족 쉼터·동물 쉼터·읽는 자리 — 옛 저장은 빈 목록. 쓸 수 있는지는 지금 가구로 다시 따진다 */
+  spaces: HomeSpace[]
   clock: Clock
   player: Actor
   idle: IdleState
@@ -354,7 +357,7 @@ function defsById(content: GameContent): Record<string, NeighborDef> {
   return Object.fromEntries(content.neighbors.map((n) => [n.id, n]))
 }
 
-type GoalState = Pick<GameState, 'clock' | 'flags' | 'progress' | 'hearts' | 'today' | 'shelved'> & Partial<Pick<GameState, 'romance' | 'homeLevel' | 'life' | 'avatar' | 'plans' | 'npcs' | 'room' | 'stall' | 'village'>>
+type GoalState = Pick<GameState, 'clock' | 'flags' | 'progress' | 'hearts' | 'today' | 'shelved'> & Partial<Pick<GameState, 'romance' | 'homeLevel' | 'life' | 'avatar' | 'plans' | 'npcs' | 'room' | 'stall' | 'village' | 'spaces' | 'player' | 'act' | 'child' | 'companion'>>
 
 /**
  * 서고에 꽂은 책 수 (복음서·사도행전·편지 모두) — 마을 구역(lockedZones)과 서고 권수로 이사 오는 이웃이 이것을 센다.
@@ -436,7 +439,7 @@ function lateSpots(s: GoalState, content: Pick<GameContent, 'neighbors'>, joined
   }
   // 배우자 (계획 6): 저녁 일곱 시부터 아침 일곱 시까지 내 집 넓힌 방에서 지낸다 (잔치·모임이 있으면 아래에서 그쪽으로)
   const r = s.romance ?? NO_ROMANCE
-  if (r.stage === 'married' && r.partner && (m >= SPOUSE_HOME_FROM || m < SPOUSE_HOME_TO)) special[r.partner] = safeHomeSpot(SPOUSE_ROOM_STAND, s.room ?? [])
+  if (r.stage === 'married' && r.partner && (m >= SPOUSE_HOME_FROM || m < SPOUSE_HOME_TO)) special[r.partner] = homeSeatsNow(s).spouse ?? safeHomeSpot(SPOUSE_ROOM_STAND, s.room ?? [])
   // 마을 사랑방 (계획 10): 모임·잔치·저녁 초대가 없는 저녁, 이웃 셋이 긴 탁자 둘레에 모인다 (비 와도 — 집 안이라)
   if (hallOpen(m)) hallGuestsToday(s, content).forEach((id, i) => (special[id] = HALL_SPOTS[i]))
   // 복음서 방 잔치 저녁: 이사 온 이웃은 모두(상인도) 광장 모닥불 둘레로 — 비가 와도 연다
@@ -541,7 +544,7 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
   return {
     version: 1,
     plans: { ...NO_PLANS, appts: [] },
-    clubs: [], clubSessions: {}, clubWorks: {}, fests: [],
+    clubs: [], clubSessions: {}, clubWorks: {}, fests: [], spaces: [],
     clock,
     player: { x: START.x, y: START.y, path: [], facing: 'down', walkTime: 0 },
     idle: IDLE_RESET,
@@ -690,7 +693,7 @@ function interactableAt(s: GameState, t: Tile): boolean {
     straysToday(s).some((a) => sameTile(STRAY_SPOTS[a], t)) ||
     (!!s.companion && sameTile({ x: Math.round(s.companion.x), y: Math.round(s.companion.y) }, t)) ||
     placeAt(t) !== null ||
-    bookcaseAt(s, t) || s.room.some(f => f.item.startsWith('spouse:') && footprint(f).some(p => sameTile(p, t)))
+    bookcaseAt(s, t) || !!spaceAtTile(s, t) || s.room.some(f => f.item.startsWith('spouse:') && footprint(f).some(p => sameTile(p, t)))
   )
 }
 
@@ -765,6 +768,10 @@ export function tapTile(s: GameState, tile: Tile): GameState {
   } else if (pet) {
     target = { kind: 'companion' }
     path = isNear(from, tile) ? [] : pathToward(from, tile, new Set([...blockers, key(tile)]))
+  } else if (!place && !bookcaseAt(s, tile) && spaceAtTile(s, tile)) {
+    // 정해 둔 자리의 의자·탁자: 곁에 서 있으면 바로, 아니면 곁으로 걸어가 쓰임 메뉴를 연다
+    target = { kind: 'space', id: spaceAtTile(s, tile)!.id, tile }
+    path = isNear(from, tile) ? [] : pathToward(from, tile, blockers)
   } else if (!place && bookcaseAt(s, tile)) {
     // 집 책장: 곁에 서 있으면 그 자리에서 바로, 아니면 곁으로 걸어가서 연다
     target = { kind: 'bookcase', tile }
@@ -789,7 +796,7 @@ function targetTile(s: GameState, target: Target): Tile | null {
     const n = s.npcs[target.id]
     return n ? npcTile(n) : null
   }
-  if (target.kind === 'place' || target.kind === 'bookcase') return target.tile
+  if (target.kind === 'place' || target.kind === 'bookcase' || target.kind === 'space') return target.tile
   if (target.kind === 'stray') return STRAY_SPOTS[target.animal]
   if (target.kind === 'companion' && s.companion) return { x: Math.round(s.companion.x), y: Math.round(s.companion.y) }
   if (target.kind === 'child') return childTile(s)
@@ -1208,7 +1215,33 @@ export function childAtSchool(s: Pick<GameState, 'flags' | 'clock'>): boolean {
  * 아이가 지금 있는 칸 (누르면 데리고 다닐지 정한다): 아기와 집에 둔 아이는 요람 곁, 따라다니는 아이는 기록자 곁(보는 쪽 반대),
  * 혼자 다니는 아이는 때마다 정한 자리
  */
-export function childTile(s: Pick<GameState, 'child' | 'clock' | 'player'> & Partial<Pick<GameState, 'flags' | 'room'>>): Tile | null {
+/**
+ * 저녁 집 안에서 배우자와 아이가 앉을 자리 (계획 16 작업 23): 정해 둔 자리가 있고 저녁(배우자) 또는 집에 있는 때(걷는 아이·저녁의 돕는 아이)이면
+ * 배우자는 취향 맞는 자리, 아이는 단계에 맞는 놀이·탁자 자리. 기록자가 서 있는 칸·동물 칸은 피한다. 자리가 없으면 빈 값(기존 자리 그대로)
+ */
+type SeatState = Pick<GameState, 'clock'> & Partial<Pick<GameState, 'room' | 'spaces' | 'romance' | 'child' | 'player' | 'act' | 'companion' | 'flags'>>
+export function homeSeatsNow(s: SeatState): { spouse?: Tile; child?: Tile } {
+  if (!s.room || !s.spaces?.length) return {}
+  const m = s.clock.minute
+  const r = s.romance ?? NO_ROMANCE
+  const want: FamilyWants = {}
+  if (r.stage === 'married' && r.partner && m >= SPACE_FROM && m < SPACE_TO) want.spouse = r.partner
+  const c = s.child
+  if (c && m < SPACE_TO && !(s.flags && childAtSchool({ flags: s.flags, clock: s.clock }))) {
+    const mode = childMode(c, s.clock.day), stage = childStage(c, s.clock.day)
+    if ((stage === 'toddler' || stage === 'helper') && ((mode === 'home' && m >= KID_SPACE_FROM) || (mode === 'roam' && m >= 20 * 60))) want.child = { stage }
+  }
+  if (!want.spouse && !want.child) return {}
+  const occupied = new Set<string>()
+  if (s.player) {
+    occupied.add(key({ x: Math.round(s.player.x), y: Math.round(s.player.y) }))
+    if (s.act?.at) occupied.add(key(s.act.at))
+  }
+  if (s.companion) occupied.add(key({ x: Math.round(s.companion.x), y: Math.round(s.companion.y) }))
+  return familySeats({ room: s.room, spaces: s.spaces }, want, occupied)
+}
+
+export function childTile(s: Pick<GameState, 'child' | 'clock' | 'player'> & Partial<Pick<GameState, 'flags' | 'room' | 'spaces' | 'romance' | 'act' | 'companion'>>): Tile | null {
   const c = s.child
   if (!c) return null
   const mode = childMode(c, s.clock.day)
@@ -1217,13 +1250,15 @@ export function childTile(s: Pick<GameState, 'child' | 'clock' | 'player'> & Par
   if (mode === 'cradle' || mode === 'home') {
     const crib = s.room?.find(f => f.item === 'homeCradle')
     const at = crib ? { x: crib.x, y: crib.y } : HOME_ENTRY
-    return mode === 'cradle' ? at : safeHomeSpot(at, s.room ?? [])
+    if (mode === 'cradle') return at
+    // 놀이·탁자 자리가 있으면 그 곁 (작업 23) — 없으면 요람 곁
+    return homeSeatsNow(s).child ?? safeHomeSpot(at, s.room ?? [])
   }
   if (mode === 'roam') {
     const at = helperSpot(s.clock.minute)
     if (!sameTile(at, CRADLE_SPOT)) return at
     const crib = s.room?.find(f => f.item === 'homeCradle')
-    return safeHomeSpot(crib ? { x: crib.x, y: crib.y } : HOME_ENTRY, s.room ?? [])
+    return homeSeatsNow(s).child ?? safeHomeSpot(crib ? { x: crib.x, y: crib.y } : HOME_ENTRY, s.room ?? [])
   }
   const back = { left: { x: 1, y: 0 }, right: { x: -1, y: 0 }, up: { x: 0, y: 1 }, down: { x: 0, y: -1 } }[s.player.facing]
   return { x: Math.round(s.player.x) + back.x, y: Math.round(s.player.y) + back.y }
@@ -3035,6 +3070,7 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
     flags,
     homeLevel,
     room,
+    spaces: pruneSpaces(s.spaces ?? [], room),
     inv,
   }
   // 가족 생일 아침 (계획 12): 배우자·아이 생일 장면
@@ -3226,7 +3262,10 @@ export function moveFurniture(s: GameState, f: Furniture, to: Tile): GameState |
     if (!ok) { syncHome(s); return null }
     room = [...room, { ...piece, ...ok }]
   }
-  const next = { ...s, room }
+  // 옮긴 가구를 따라 정해 둔 자리도 함께 옮겨 간다 (쓸 수 있는지는 새 자리에서 다시 따진다)
+  let spaces = s.spaces ?? []
+  for (const piece of carried) spaces = moveInSpaces(spaces, piece, { item: piece.item, x: to.x + piece.x - f.x, y: to.y + piece.y - f.y })
+  const next = { ...s, room, spaces }
   syncHome(next)
   return next
 }
@@ -3238,7 +3277,8 @@ export function removeFurniture(s: GameState, t: Tile): GameState {
   const back: Partial<Record<ItemId, number>> = {}
   for (const f of gone) back[f.item] = (back[f.item] ?? 0) + 1
   if (wouldOverflow(s.inv, back)) return s
-  return { ...s, room: s.room.filter((f) => !gone.includes(f)), inv: add(s.inv, back) }
+  const room = s.room.filter((f) => !gone.includes(f))
+  return { ...s, room, spaces: pruneSpaces(s.spaces ?? [], room), inv: add(s.inv, back) }
 }
 
 // ── 집 넓히기 (목수에게 부탁 — 설계 §7-1: 배우자방 → 아이방 → 생활방) ──

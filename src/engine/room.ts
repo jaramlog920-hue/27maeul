@@ -60,7 +60,7 @@ const layerOf = (f: Furniture): Layer => FURNITURE_DEFS[f.item]?.layer ?? 'small
  * 집 안에서 늘 비워 둬야 하는 칸: 물건 앞 서는 자리, 문깔개 앞(들어와 서는 칸), 아이가 글자를 배우러 오는 자리.
  * 넓힌 집: 새 방으로 드는 문과 그 안쪽 칸, 다락 문깔개 앞 (사다리·다락 창 앞은 PLACES의 서는 자리)
  */
-function keepClear(): Tile[] {
+export function keepClear(): Tile[] {
   const stands = (Object.entries(PLACES) as [PlaceId, Place][]).flatMap(([id, p]) => (p.stand && placeActive(id) ? [p.stand] : []))
   const out = [...stands, HOME_ENTRY, LESSON_SPOT, SPOUSE_ROOM_RETURN]
   if (currentHomeLevel() >= 1) out.push(SPOUSE_ROOM_ENTRY, PARTNER_DOOR)

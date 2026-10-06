@@ -11,6 +11,7 @@ import { addGift, has, take, type Inventory } from './items'
 import { isBirthday } from './notebook'
 import { personOf } from './people'
 import { placement } from './room'
+import { guestStands } from './spaces'
 import { CRADLE_SPOT, HELPER_SPOTS } from './child'
 import { FESTIVAL_SPOTS, FIRE } from './neighbors'
 import { HEARTH_STAND, HOME_ENTRY, homeRect, isHome, PET_HOME, START } from './world'
@@ -56,7 +57,7 @@ const apptOf = (s: GameState, f: Fest) => f.apptId ? s.plans.appts.find(a => a.i
 const withFest = (s: GameState, id: string, change: Partial<Fest>): GameState => ({ ...s, fests: fests(s).map(f => f.id === id ? { ...f, ...change } : f) })
 
 /** 집들이 자리: 집 안 바닥 중 가구 놓기 규칙으로도 놓을 수 있는 칸(서는 자리·문·통로를 막지 않음), 화덕 쪽부터 */
-export function homeSeats(s: Pick<GameState,'room'|'homeLevel'|'flags'|'romance'>, n: number): Tile[] {
+export function homeSeats(s: Pick<GameState,'room'|'homeLevel'|'flags'|'romance'> & Partial<Pick<GameState,'spaces'>>, n: number): Tile[] {
  syncHome(s)
  const { x0, y0, x1, y1 } = homeRect()
  // 동물·아기·돕는 아이 자리, 기록자가 깨어 서는 칸, 들어오는 칸과 그 둘레(문에서 들어오는 길)는 비워 둔다
@@ -66,10 +67,12 @@ export function homeSeats(s: Pick<GameState,'room'|'homeLevel'|'flags'|'romance'
  for (let y = y0 + 1; y < y1; y++) for (let x = x0 + 1; x < x1; x++) tiles.push({ x, y })
  tiles.sort((a, b) => Math.abs(a.x - HEARTH_STAND.x) + Math.abs(a.y - HEARTH_STAND.y) - (Math.abs(b.x - HEARTH_STAND.x) + Math.abs(b.y - HEARTH_STAND.y)) || a.y - b.y || a.x - b.x)
  let room: Furniture[] = [...s.room]
- const out: Tile[] = []
+ // 정해 둔 차 자리·쉼터가 있으면 손님은 그 자리의 의자 앞에 먼저 앉는다 (작업 23). 없거나 모자라면 아래 기본 자리
+ const out: Tile[] = guestStands(s, n, avoid)
+ for (const t of out) { const seat = placement(room, 'stool', t); if (seat) room = [...room, seat] }
  for (const t of tiles) {
   if (out.length >= n) break
-  if (!isHome(t) || avoid.some(a => a.x === t.x && a.y === t.y)) continue
+  if (!isHome(t) || avoid.some(a => a.x === t.x && a.y === t.y) || out.some(a => a.x === t.x && a.y === t.y)) continue
   // 손님 한 명 = 1칸 의자 하나를 놓는 것과 같은 규칙: 놓은 뒤에도 집 안 모든 자리에 갈 수 있어야 한다
   const seat = placement(room, 'stool', t)
   if (!seat) continue

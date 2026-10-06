@@ -72,6 +72,7 @@ export function GameCanvas({ zoom = 1 }: { zoom?: number }) {
         const sel = st.decorating ? selectedPiece(st.game.room, st.decorSel) : undefined
         r.selected = sel ? footprint(sel) : null
         r.look = st.decorating ? st.decorLook : null
+        r.decorating = !!st.decorating
         r.draw(st.game, Math.max(0, (now - t0) / 1000), zoomChanged ? 0 : dt)
       } catch (err) {
         const msg = String(err)

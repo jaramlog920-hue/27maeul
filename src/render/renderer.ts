@@ -16,7 +16,8 @@ import { drawEventProp, eventPropSortY } from './event-props'
 import { eventPropsNow, npcEventMotion, playerEventMotion, weddingEvening, type EventMotion } from '../engine/event-scene'
 import type { Activity } from '../engine/people'
 import { deskTraces, type DeskTraces } from '../engine/desk-traces'
-import { facingOf, FURNITURE_DEFS, type Furniture } from '../engine/room'
+import { facingOf, footprint, FURNITURE_DEFS, type Furniture } from '../engine/room'
+import { liveSpaces, spaceFurniture, type SpaceUse } from '../engine/spaces'
 import { FURNI_PALETTE, FURNITURE_ART, STYLE_PALETTES } from './furniture-art'
 import { SPOUSE_ROOM_ART, SPOUSE_ROOM_VIEWS } from './spouse-room-art'
 import { HOME_SPACE_DIRECTIONS } from './home-space-directions'
@@ -1666,6 +1667,30 @@ function drawSelection(g: Ctx, tiles: readonly Tile[]) {
   g.strokeRect(x0 + 1, y0 + 1, x1 - x0 - 2, y1 - y0 - 2)
 }
 
+const SPACE_COLOR: Record<SpaceUse, string> = { tea: '#e9b872', craft: '#a8c8e8', family: '#f2c9a0', pet: '#cfe0a0', read: '#c9b6e8' }
+/** 정해 둔 집 안 자리 (계획 16 작업 23): 쓸 수 있는 곳은 가구 위에 작고 조용한 점, 방 꾸미기 중에는 쓰는 가구 둘레에 얇은 테두리 */
+function drawSpaceMarks(g: Ctx, game: GameState, editing: boolean, t: number) {
+  const spaces = game.spaces ?? []
+  if (!spaces.length) return
+  const live = new Set(liveSpaces(game).map((s) => s.id))
+  for (const sp of spaces) {
+    const ready = live.has(sp.id)
+    if (!ready && !editing) continue
+    if (editing) {
+      g.strokeStyle = ready ? SPACE_COLOR[sp.use] : '#a9a39a'
+      g.lineWidth = 1
+      for (const f of spaceFurniture(game.room, sp)) for (const p of footprint(f)) g.strokeRect(p.x * TILE + 0.5, p.y * TILE + 0.5, TILE - 1, TILE - 1)
+    }
+    if (ready && sp.use !== 'pet') {
+      const bob = Math.floor(t * 1.5) % 2
+      g.fillStyle = SPACE_COLOR[sp.use]
+      g.fillRect(sp.at.x * TILE + 6, sp.at.y * TILE - 4 + bob, 4, 3)
+      g.fillStyle = 'rgba(60, 40, 20, 0.45)'
+      g.fillRect(sp.at.x * TILE + 6, sp.at.y * TILE - 1 + bob, 4, 1)
+    }
+  }
+}
+
 function drawFurniture(g: Ctx, f: Furniture) {
   const px = f.x * TILE
   const py = f.y * TILE
@@ -1929,6 +1954,8 @@ export interface Renderer {
   selected: Tile[] | null
   /** 카메라가 기록자 대신 비출 칸 (방 꾸미기에서 고른 방) — 없으면 기록자 */
   look: Tile | null
+  /** 방 꾸미기 중이면 정해 둔 자리의 테두리도 보인다 (계획 16 작업 23) */
+  decorating: boolean
   draw(game: GameState, t: number, dt: number): void
 }
 
@@ -1943,6 +1970,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
     scale: 1,
     selected: null,
     look: null,
+    decorating: false,
     camera: { x: 0, y: 0 },
     draw(game, t, dt) {
       const W = VIEW_W * TILE / renderer.zoom
@@ -2058,6 +2086,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       const ordered = [...game.room].sort((a, b) => furnitureOrder(a) - furnitureOrder(b) || a.y - b.y)
       for (const f of ordered) drawFurniture(g, f)
       if (renderer.selected) drawSelection(g, renderer.selected)
+      drawSpaceMarks(g, game, renderer.decorating, t)
       // 이야기 뒤 소품 (계획 16 작업 4 · 계획 17): 생활 확장 도트 → 없으면 가구 그림
       drawStoryProps(g, game)
       // 내 작은 장날 좌판 (계획 16 작업 19): 영업 중일 때만
