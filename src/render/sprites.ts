@@ -280,8 +280,10 @@ function dressNeighbor(who: Who, rows: string[], facing: Facing): string[] {
     }
     case 'child': {
       const out = recolor(rows, { r: 'z', R: 'Z', b: 'y' })
-      setPixel(out, back ? 4 : 9, 3, 'y')
-      for (const y of [4, 5, 6]) setPixel(out, back ? 4 : 9, y, 'h')
+      // 옆으로 묶은 머리: 옆모습에서는 얼굴 앞이 아니라 뒤통수 쪽(0번 칸)에 (2026-10-07 버그)
+      const tail = back ? 4 : front ? 9 : 0
+      setPixel(out, tail, 3, 'y')
+      for (const y of [4, 5, 6]) setPixel(out, tail, y, 'h')
       if (!back) setPixel(out, 5, 8, 'a')
       return out
     }
