@@ -146,6 +146,8 @@ import { SPOUSE_ROOM_STAND } from './spouse-room'
 import type { Cooking } from './cooking'
 import type { GenState } from './gen'
 import { settleGen } from './gen-settle'
+import { freeSpotsFor, freeTimeOpen, isFreeRoutine } from './free-time'
+import { checkMeets, tickEmotes, type Emote } from './meet'
 import { BOOKS, type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
 import { withLookDefaults, type Avatar, type FullAvatar } from './avatar'
 import { BOARD_GAIN, boardFor, type BoardRequest } from './board'
@@ -327,6 +329,8 @@ export interface GameState {
   newland?: NewlandState
   /** 주민의 자율 가족 (계획 20 작업 10): 인물·관계·가구·계보·씨앗·정산한 날. 옛 저장은 없음 — 첫 정산에서 만든다 */
   gen?: GenState
+  /** 머리 위 이모티콘 (계획 20 2부 작업 B) — 화면 상태만, 저장하지 않는다 */
+  emotes?: Emote[]
   /** 새 터 입주 주택 안 가구 — 소유 공간별 ('newland:<건물 id>', 계획 20 작업 7). 첫 마을 집의 room과 섞이지 않는다 */
   rooms?: Record<string, Furniture[]>
 }
@@ -404,7 +408,7 @@ function defsById(content: GameContent): Record<string, NeighborDef> {
   return Object.fromEntries(content.neighbors.map((n) => [n.id, n]))
 }
 
-type GoalState = Pick<GameState, 'clock' | 'flags' | 'progress' | 'hearts' | 'today' | 'shelved'> & Partial<Pick<GameState, 'romance' | 'homeLevel' | 'life' | 'avatar' | 'plans' | 'npcs' | 'room' | 'stall' | 'village' | 'spaces' | 'player' | 'act' | 'child' | 'companion'>>
+type GoalState = Pick<GameState, 'clock' | 'flags' | 'progress' | 'hearts' | 'today' | 'shelved'> & Partial<Pick<GameState, 'romance' | 'homeLevel' | 'life' | 'avatar' | 'plans' | 'npcs' | 'room' | 'stall' | 'village' | 'spaces' | 'player' | 'act' | 'child' | 'companion' | 'gen'>>
 
 /**
  * 서고에 꽂은 책 수 (복음서·사도행전·편지 모두) — 마을 구역(lockedZones)과 서고 권수로 이사 오는 이웃이 이것을 센다.
@@ -432,8 +436,13 @@ function goalContext(s: GoalState, content: GameContent) {
   for (const d of content.neighbors) if (!meet.joined(d.id)) special[d.id] = null
   // 살아 움직이는 사람들 (계획 6b): 이벤트 자리 > 목격 자리 > 일과 (아래 잔치·모임·사랑방이 덮는다).
   // 아직 열리지 않은 구역(나루·벌통 들…) 안의 자리는 건너뛰고 시간표로 (goalFor가 열린 자리를 고른다)
+  // 자유 시간 (계획 20 2부 작업 B): 자율 생활이 켜진 맑은 낮에는 평범한 쉬는 일과 대신 스스로 고른 쉬는 자리로
+  const wetNow = isWet(weatherOf(s.clock.day))
+  const free = freeTimeOpen(s.gen, s.clock.minute, wetNow)
+    ? freeSpotsFor(s.gen, s.clock.day, s.clock.minute, content.neighbors.filter((d) => meet.joined(d.id) && !d.marketOnly && s.romance?.partner !== d.id).map((d) => d.id))
+    : null
   for (const d of content.neighbors) if (meet.joined(d.id)) {
-    const at = personSpot(s, d.id, meet)
+    const at = personSpot(s, d.id, meet, free)
     if (at === 'away') special[d.id] = null
     else if (at && !meet.locked.has(key(at))) special[d.id] = at
   }
@@ -982,7 +991,20 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
   const idle = moving ? IDLE_RESET : stepIdle(s.idle, dt, clock.minute, rng, totalChapters(s) >= 3)
   // 가구 쓰는 동작: 걷기 시작하면(길이 생기면) 끝, 아니면 실제 시간만큼 줄어 다 되면 끝
   const act = !s.act || moving || player.path.length > 0 || s.act.left <= dt ? undefined : { ...s.act, left: s.act.left - dt }
-  const base: GameState = { ...s, clock, needs, player, target, idle, act, npcs, companion, trails }
+  // 쉬는 이웃끼리 만남 (계획 20 2부 작업 B): 게임 시간 1분마다, 자리에 닿아 서 있는 이웃끼리만
+  let gen = s.gen
+  let emotes = tickEmotes(s.emotes, dt)
+  if (gen?.on && (Math.floor(clock.minute) !== Math.floor(s.clock.minute) || clock.day !== s.clock.day)) {
+    const free = freeNow({ ...s, clock }, content)
+    if (free.size > 1) {
+      const at: Record<string, Tile> = {}
+      for (const id of free) if (npcs[id]?.visible && npcs[id].path.length === 0) at[id] = npcTile(npcs[id])
+      const met = checkMeets(gen, at, free, clock.day, Math.floor(clock.minute), (id) => defs[id]?.likes ?? [])
+      gen = met.g
+      if (met.emotes.length) emotes = [...(emotes ?? []).filter((e) => !met.emotes.some((m) => m.npc === e.npc)), ...met.emotes]
+    }
+  }
+  const base: GameState = { ...s, clock, needs, player, target, idle, act, npcs, companion, trails, gen, emotes }
   const lived = liveNearby(petLife(base, now, events, childTile(base)), now, events)
   if (lived.scenes.length > s.scenes.length) return { state: lived, events }
   const next: GameState = blowCandle(lived)
@@ -1608,13 +1630,25 @@ function partnerHere(s: GoalState, r: Routine, npc: string, meet: MeetContext, d
 }
 
 /** 이 사람이 지금 가 있을 곳 (없으면 neighbors.json 시간표). 'away' = 그때만 마을에 없다 (집 문으로 들어가 보이지 않는다) */
-function personSpot(s: GoalState, npc: string, meet: MeetContext): Tile | 'away' | null {
+function personSpot(s: GoalState, npc: string, meet: MeetContext, free: Record<string, Tile> | null = null): Tile | 'away' | null {
   const e = eventNow(s, npc)
   if (e) return e.at
   const w = sightingNow(s, npc)
   if (w) return w.at
   const r = routineOf(s, npc, meet)
-  return r?.away ? 'away' : (r?.at ?? null)
+  if (r?.away) return 'away'
+  if (free?.[npc] && isFreeRoutine(npc, r)) return free[npc]
+  return r?.at ?? null
+}
+
+/** 지금 자유 시간 자리에 가 있는 (또는 가는) 이웃 — 만남은 둘 다 쉬는 중일 때만 (P2) */
+export function freeNow(s: GoalState, content: GameContent): Set<string> {
+  const out = new Set<string>()
+  if (!freeTimeOpen(s.gen, s.clock.minute, isWet(weatherOf(s.clock.day)))) return out
+  const meet = meetContext(s, content)
+  const free = freeSpotsFor(s.gen, s.clock.day, s.clock.minute, content.neighbors.filter((d) => meet.joined(d.id) && !d.marketOnly && s.romance?.partner !== d.id).map((d) => d.id))
+  for (const id of Object.keys(free)) if (!eventNow(s, id) && !sightingNow(s, id) && isFreeRoutine(id, routineOf(s, id, meet))) out.add(id)
+  return out
 }
 
 const near = (a: Tile, b: Tile, d: number) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y) <= d

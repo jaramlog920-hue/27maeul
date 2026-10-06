@@ -1914,9 +1914,10 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
 .copy-kb .copy-family { display: none; }
 .copy-kb .copy-status { min-height: 0; font-size: 12px; }
 .copy-kb .copy-status:empty { display: none; }
-/* 본문 칸이 남은 높이를 다 쓴다 — 넘치면 그 안에서 스크롤 (마친 절이 겹쳐 있는 동안의 높이 고정도 풀어 입력칸을 밀지 않게) */
-.copy-kb .copy-verse-wrap { flex: 1 1 auto; min-height: 0 !important; overflow-y: auto; overscroll-behavior: contain; }
-.copy-kb .copy-focus-verse { margin: 0; min-height: 100%; box-sizing: border-box; padding: 10px 14px; }
+/* 본문 칸은 글 길이만큼만 (2026-10-07 사용자 — 짧은 절에도 칸이 길게 늘어났다), 남은 높이보다 길면 그 안에서 스크롤.
+   마친 절이 겹쳐 있는 동안의 높이 고정도 풀어 입력칸을 밀지 않게 */
+.copy-kb .copy-verse-wrap { flex: 0 1 auto; min-height: 0 !important; overflow-y: auto; overscroll-behavior: contain; }
+.copy-kb .copy-focus-verse { margin: 0; min-height: 0; box-sizing: border-box; padding: 10px 14px; }
 .copy-kb .copy-input { flex: none; min-height: 0; height: clamp(calc(3.4em + 28px), calc(var(--vvh, 100vh) * 0.2), calc(5.1em + 28px)); }
 .copy-kb .copy-voice { flex: none; }
 /* 소리 내어 읽기 (설정에서 켰을 때만): 작은 단추 하나와 한 줄 안내. 듣는 동안 작은 점이 숨 쉬듯 */

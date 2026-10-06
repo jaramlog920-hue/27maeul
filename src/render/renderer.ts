@@ -1287,7 +1287,7 @@ function bubble(g: Ctx, cx: number, top: number, draw: (x: number, y: number) =>
   draw(x, y)
 }
 
-type EmoteId = 'z' | 'note' | 'yawn' | 'talk' | 'heart' | 'sweat' | 'hungry' | 'shiver' | 'letter'
+type EmoteId = 'z' | 'note' | 'yawn' | 'talk' | 'heart' | 'sweat' | 'hungry' | 'shiver' | 'letter' | 'laugh' | 'angry'
 
 function emote(g: Ctx, id: EmoteId, cx: number, top: number) {
   bubble(g, cx, top, (x, y) => {
@@ -1329,6 +1329,22 @@ function emote(g: Ctx, id: EmoteId, cx: number, top: number) {
         f(5, 1, 1, 1, '#6ca7d7')
         f(4, 2, 3, 3, '#6ca7d7')
         f(5, 5, 1, 1, '#6ca7d7')
+        break
+      case 'laugh':
+        // 웃는 눈 둘과 입 (차분한 머스터드) — 이웃끼리 만남 (계획 20 2부)
+        f(2, 2, 2, 1, '#b8892f')
+        f(6, 2, 2, 1, '#b8892f')
+        f(2, 4, 1, 1, '#b8892f')
+        f(7, 4, 1, 1, '#b8892f')
+        f(3, 5, 4, 1, '#b8892f')
+        break
+      case 'angry':
+        // 찡그린 표시 (흐린 벽돌색, 연하게)
+        f(2, 2, 2, 1, '#b9584a')
+        f(6, 2, 2, 1, '#b9584a')
+        f(2, 5, 2, 1, '#b9584a')
+        f(6, 5, 2, 1, '#b9584a')
+        f(4, 3, 2, 2, '#b9584a')
         break
       case 'hungry':
         f(2, 4, 6, 3, '#b17640')
@@ -2401,7 +2417,10 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
             // 이야기를 건넬 이웃, 기다리던 이야기(이벤트)를 품은 이웃은 머리 위에 말풍선 — 말을 걸면 열린다
             const bubbleY = n.y * TILE + TILE - spr.height - 2 - Math.round(Math.sin(t * 3))
             // 일과 자리에서 하는 일 그림(포도 등)은 2026-10-07 사용자 요청으로 지웠다
+            // 이웃끼리 만난 순간의 표정 (계획 20 2부) — 이야기 말풍선이 먼저
+            const met = game.emotes?.find((e) => e.npc === def.id)
             if (game.offers[def.id] || storyWaiting(game, def.id)) emote(g, 'talk', n.x * TILE + 8, bubbleY)
+            else if (met) emote(g, met.kind, n.x * TILE + 8, bubbleY)
           },
         })
         // 아이가 데려간 동물은 아이 곁에

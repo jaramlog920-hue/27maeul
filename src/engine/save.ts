@@ -49,7 +49,7 @@ function storage(): Storage | undefined {
 export function serialize(s: GameState): string {
   // 걷던 길·자율 동작·이웃 위치는 저장하지 않는다 (doze의 Infinity는 JSON이 못 담는다)
   // 가구 쓰는 동작(act)도 그림만이라 저장하지 않는다
-  return JSON.stringify({ ...s, player: { ...s.player, path: [] }, target: null, idle: IDLE_RESET, act: undefined, npcs: {} })
+  return JSON.stringify({ ...s, player: { ...s.player, path: [] }, target: null, idle: IDLE_RESET, act: undefined, npcs: {}, emotes: undefined })
 }
 
 /**
