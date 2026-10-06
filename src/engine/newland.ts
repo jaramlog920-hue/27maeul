@@ -2,10 +2,11 @@
 // 범례는 world.ts와 같다: T 나무 · . 풀 · , 길 · S 돌벽 · D 문 · # 벽 · f 집 안 바닥 · E 문깔개 · d 책상 · s 선반 · * 꽃 · _ 빈 곳
 // 새 글자 하나: > 왕래 표식 (밟을 수 있는 칸, 누르면 건너가는 창)
 // world.ts의 tileAt/isWalkable/isIndoor가 새 터에 있을 때 이 파일의 칸 함수로 맡긴다.
-import type { Tile } from './types'
+import { BOOKS, type Tile } from './types'
+import type { GameState } from './game'
 import { currentMapId, type MapId } from './maps'
 import {
-  ARCHIVE, INTERIOR, INTERIOR_DESK, INTERIOR_ENTRY, INTERIOR_EXIT, INTERIOR_SHELF, NEWLAND_H, NEWLAND_PORTAL, NEWLAND_PORTAL_FRONT, NEWLAND_VISIBLE_H, NEWLAND_W, VILLAGE_PORTAL, VILLAGE_PORTAL_FRONT,
+  ARCHIVE, INTERIOR, INTERIOR_DESK, INTERIOR_ENTRY, INTERIOR_EXIT, INTERIOR_SHELF, NEWLAND_H, NEWLAND_PORTAL, NEWLAND_PORTAL_FRONT, NEWLAND_VISIBLE_H, PREVIEW_LAST_ROW, NEWLAND_W, VILLAGE_PORTAL, VILLAGE_PORTAL_FRONT,
 } from './newland-config'
 
 function build(): string[] {
@@ -44,9 +45,17 @@ function build(): string[] {
 
 export const NEWLAND_MAP: readonly string[] = build()
 
-/** 새 터의 한 칸 (지도 밖은 숲) */
+/**
+ * 땅이 드러나기 전에는 서고와 빈 땅 첫머리만 보이고, 그 아래 바깥 칸은 숲(T)으로 돌려준다 (계획 20 D8).
+ * 드러난 뒤에는 칸을 그대로. 서고 안 방(보이지 않는 줄)과 가장자리 숲은 건드리지 않는다.
+ */
+export function newlandBounds(revealed: boolean, y: number, c: string): string {
+  return !revealed && y > PREVIEW_LAST_ROW && y < NEWLAND_VISIBLE_H - 1 ? 'T' : c
+}
+
+/** 새 터의 한 칸 (지도 밖은 숲). 땅이 드러나기 전에는 newlandBounds가 바깥을 가린다 */
 export function newlandTileAt(x: number, y: number): string {
-  return NEWLAND_MAP[y]?.[x] ?? 'T'
+  return newlandBounds(revealedOn, y, NEWLAND_MAP[y]?.[x] ?? 'T')
 }
 
 /** 서고 문 → 서고 안, 서고 안 문깔개 → 서고 문 앞 (좌표 문자열 'x,y' → 칸) */
@@ -66,6 +75,7 @@ export function inArchiveRoom(t: Tile): boolean {
 // ── 왕래 표식 ──
 
 let open = false
+let revealedOn = true
 /** 새 터가 열렸는가 — 게임 상태(flags.newlandGift)와 맞추는 것은 엔진 입구(game.ts의 syncHome)가 한다 */
 export function setNewlandOpen(on: boolean): void {
   open = on
@@ -84,3 +94,52 @@ export function portalAt(t: Tile): MapId | null {
 export function entryFront(id: MapId): Tile {
   return id === 'newland' ? { ...NEWLAND_PORTAL_FRONT } : { ...VILLAGE_PORTAL_FRONT }
 }
+
+/** 땅이 드러났는가 — 게임 상태(flags.newlandRevealed)와 맞추는 것은 syncHome이 한다. 기본은 드러난 상태(칸 함수를 직접 읽는 곳을 위해) */
+export function setNewlandRevealed(on: boolean): void {
+  revealedOn = on
+}
+export function newlandRevealedOn(): boolean {
+  return revealedOn
+}
+
+// ── 완필 보상과 첫 방문 (계획 20 작업 4) ──
+
+/** locked 아직 · gift 조건이 맞았으나 아직 못 받음 · open 받았다 */
+export type NewlandStatus = 'locked' | 'gift' | 'open'
+type GiftBase = Pick<GameState, 'shelved' | 'flags'>
+
+/** 개방 조건 (D7): 27권 모두 꽂힘 + 스물일곱 권 잔치가 지났다(allFeast 2) */
+function conditionMet(s: GiftBase): boolean {
+  return BOOKS.every((b) => s.shelved[b] !== undefined) && s.flags.allFeast === 2
+}
+
+export function newlandStatus(s: GiftBase): NewlandStatus {
+  if (s.flags.newlandGift) return 'open'
+  return conditionMet(s) ? 'gift' : 'locked'
+}
+
+/**
+ * 보상을 한 번 받는다: 플래그 하나(newlandGift)와 장면 하나. 이미 받았거나 조건이 안 맞으면 false.
+ * 잠자기(goToSleep)와 불러온 뒤 첫 기회(settle)가 같은 이 함수를 부른다 — 중복 방지는 플래그 하나다.
+ * 받을 때 flags·scenes를 직접 고친다 (goToSleep은 만드는 중인 flags·scenes를 쓴다)
+ */
+export function claimNewland(shelved: GiftBase['shelved'], flags: Record<string, number>, scenes: string[]): boolean {
+  if (newlandStatus({ shelved, flags }) !== 'gift') return false
+  flags.newlandGift = 1
+  scenes.push('newlandGift')
+  return true
+}
+
+/** 상태 하나로 받는 꼴 (불러온 뒤 첫 기회) */
+export function grantNewland<T extends Pick<GameState, 'shelved' | 'flags' | 'scenes'>>(s: T): T {
+  const flags = { ...s.flags }
+  const scenes = [...s.scenes]
+  return claimNewland(s.shelved, flags, scenes) ? { ...s, flags, scenes } : s
+}
+
+/** 땅을 드러낸다 (첫 구약 절을 적었을 때 — 작업 5 — 또는 "땅 둘러보기"). 이미 드러났으면 그대로 */
+export function revealNewland<T extends Pick<GameState, 'flags'>>(s: T): T {
+  return s.flags.newlandRevealed ? s : { ...s, flags: { ...s.flags, newlandRevealed: 1 } }
+}
+export const newlandRevealed = (s: Pick<GameState, 'flags'>): boolean => !!s.flags.newlandRevealed

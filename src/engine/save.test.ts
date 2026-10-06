@@ -48,7 +48,7 @@ describe('두 지도 저장', () => {
   it('새 터에서 저장 → 불러오기: 맵과 칸이 그대로, 서고 문 앞도 유효한 칸', () => {
     const there = travel(opened(), 'newland', CONTENT)
     for (const at of [NEWLAND_PORTAL_FRONT, ARCHIVE.front, INTERIOR_ENTRY, { x: 12, y: 15 }]) {
-      const back = deserialize(serialize({ ...there, player: { ...there.player, x: at.x, y: at.y, path: [] } }), CONTENT)!
+      const back = deserialize(serialize({ ...there, flags: { ...there.flags, newlandRevealed: 1 }, player: { ...there.player, x: at.x, y: at.y, path: [] } }), CONTENT)!
       expect(back.map, JSON.stringify(at)).toBe('newland')
       expect(playerTile(back)).toEqual(at)
       expect(currentMapId()).toBe('newland')

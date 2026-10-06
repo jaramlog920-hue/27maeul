@@ -3552,6 +3552,24 @@
       ],
       "album": "스물일곱 권이 다 꽂힌 날"
     },
+    "newlandGift": {
+      "title": "큰길 끝의 표지",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "마을 동쪽 큰길이 끝나는 곳에 처음 보는 표지가 서 있다."
+        },
+        {
+          "speaker": "narration",
+          "text": "표지 너머에 아직 아무도 쓰지 않은 땅과 작은 서고 하나가 있다."
+        },
+        {
+          "speaker": "narration",
+          "text": "가고 싶을 때 가면 된다. 오늘 가지 않아도 표지는 그대로 있다."
+        }
+      ],
+      "album": "큰길 끝에 표지가 선 날"
+    },
     "allFeastFire": {
       "title": "광장 모닥불 잔치",
       "photoFor": "allFeast",
@@ -6053,6 +6071,7 @@
       "feastFire": " 광장 모닥불 잔치에 갔다.",
       "allFeast": " 서고에 스물일곱 권이 다 꽂혔다.",
       "allFeastFire": " 스물일곱 권 잔치 모닥불 곁에 앉았다.",
+      "newlandGift": " 큰길 끝에 새 터로 가는 표지가 섰다.",
       "friends": " 아이와 양치기가 단짝이 되었다.",
       "babyParty": " 빵집 앞 아기 잔치에 갔다.",
       "picnic": " 언덕에서 소풍을 했다.",
@@ -7542,5 +7561,14 @@
     "toVillage": "첫 마을로 돌아가기 · 30분",
     "time": "건너가는 데 30분이 걸려요.",
     "late": "날이 저물었어요."
+  },
+  "newland": {
+    "lookTitle": "새 터",
+    "look": "땅 둘러보기",
+    "lookClose": "닫기",
+    "lightTitle": "작은 서고의 아침",
+    "firstWrite": "첫 장을 써 본다",
+    "later": "나중에",
+    "opening": "책을 펼치는 중"
   }
 }

@@ -56,3 +56,11 @@ export const INTERIOR_ENTRY = { x: INTERIOR_EXIT.x, y: INTERIOR_EXIT.y - 1 } as 
 /** 서고 안 책상·책장 칸 (작업 5가 연결한다 — 지금은 칸과 서는 자리만 마련) */
 export const INTERIOR_DESK = { tile: { x: 16, y: 32 }, stand: { x: 16, y: 33 } } as const
 export const INTERIOR_SHELF = { tile: { x: 22, y: 32 }, stand: { x: 22, y: 33 } } as const
+
+/** 땅이 드러나기 전에 보이는 줄: 0..이 줄까지 (서고·길·빈 땅 첫머리). 그 아래 바깥 칸은 숲으로 보인다 (계획 20 D8) */
+export const PREVIEW_LAST_ROW = 12
+/** 첫 방문 아침빛: 걸리는 초와 시작 어둡기 (0 = 환함) */
+export const FIRST_LIGHT_SECONDS = 2.5
+export const FIRST_LIGHT_DARK = 0.8
+/** 서고 문을 처음 밟으면 보이는 구절 (본문은 Passage가 불러온 구약에서만 읽는다) */
+export const FIRST_REF = '창 1:3'

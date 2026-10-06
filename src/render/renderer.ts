@@ -38,7 +38,7 @@ import { feastToday, sideShelfSpines } from '../engine/library'
 import { spineLook } from '../engine/binding'
 import { ACTS_ROOM, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, PAVILION_RECT, HEIGHT, HOUSE_RECT, housesNow, houseAt, lockedTiles, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile, treeKind, type TreeKind } from '../engine/world'
 import { currentMapId, mapVisibleHeight, setActiveMap } from '../engine/maps'
-import { newlandOpen, newlandTileAt } from '../engine/newland'
+import { newlandOpen, newlandRevealedOn, newlandTileAt } from '../engine/newland'
 import { ARCHIVE, NEWLAND_H, NEWLAND_W } from '../engine/newland-config'
 import { OLD_BUILDINGS, OLD_TERRAIN, OLD_VILLAGE_PALETTE } from './old-village-art'
 import { GOSPELS, type Book, type Facing, type NeighborDef, type GameContent, type Season, type Tile } from '../engine/types'
@@ -1978,9 +1978,11 @@ export interface Renderer {
 // ── 새 터 (계획 20 작업 3): 첫 마을의 타일 팔레트·계절·밝기를 그대로 쓰는 두 번째 지도 ──
 
 /** 계절마다 한 장. 새 터 지도는 정해져 있으므로 집 단계 같은 열쇠가 없다 */
-const newlandCache = new Map<Season, HTMLCanvasElement>()
+const newlandCache = new Map<string, HTMLCanvasElement>()
 function newlandMapFor(season: Season): HTMLCanvasElement {
-  let c = newlandCache.get(season)
+  // 땅이 드러나기 전·후는 다른 그림이다
+  const key = `${season}/${newlandRevealedOn() ? 'r' : ''}`
+  let c = newlandCache.get(key)
   if (c) return c
   c = document.createElement('canvas')
   c.width = NEWLAND_W * TILE
@@ -1999,8 +2001,17 @@ function newlandMapFor(season: Season): HTMLCanvasElement {
     }
   // 작은 서고 (자산 old-village-art의 archive, 앞쪽): 그림 4×4칸, 아랫줄이 문 — 칸 구성은 newland-config가 따로 정했다
   g.drawImage(paint('old/archive/down', OLD_BUILDINGS.archive.down.rows, OLD_VILLAGE_PALETTE), ARCHIVE.x0 * TILE, ARCHIVE.y0 * TILE)
-  newlandCache.set(season, c)
+  newlandCache.set(key, c)
   return c
+}
+
+/**
+ * 밝기 덮어쓰기 (계획 20 작업 4 첫 방문 아침빛): 0(환함)~1이면 시계의 어둠 대신 이 값으로 새 터를 덮는다. null이면 시계를 따른다.
+ * 엔진 상태가 아니라 화면 연출 값이라 저장하지 않는다
+ */
+let darknessOverride: number | null = null
+export function setDarknessOverride(v: number | null): void {
+  darknessOverride = v === null ? null : Math.max(0, Math.min(1, v))
 }
 
 /** 새 터 한 장면: 땅과 서고, 기록자, 계절 날씨·밤. 첫 마을의 이웃·동물·아이·행사는 이 지도에 없다 */
@@ -2038,7 +2049,7 @@ function drawNewland(g: Ctx, game: GameState, t: number, W: number, H: number, o
     g.restore()
   }
   if (outdoors) drawWeather(g, weather, t, W, H)
-  const dark = darkness(game.clock.minute)
+  const dark = darknessOverride ?? darkness(game.clock.minute)
   if (dark > 0) {
     g.fillStyle = `rgba(20, 22, 60, ${dark})`
     g.fillRect(0, 0, W, H)

@@ -136,8 +136,8 @@ import {
 } from './stories'
 import { propFootprint, HOUSES, PET_HOME, HOME_FRONT, isHome, isIndoor, isWalkable, key, HOME_ENTRY, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setHomeFurniture, setMailbox, setOpenDoors, setSpouseRoom, START, tileAt, WARPS, warpAt } from './world'
 import { currentMapId, setActiveMap, type MapId } from './maps'
-import { entryFront, inArchiveRoom, portalAt, setNewlandOpen } from './newland'
-import { NEWLAND_PORTAL, TRAVEL_FROM_MINUTE, TRAVEL_LAST_MINUTE, TRAVEL_MINUTES, VILLAGE_PORTAL } from './newland-config'
+import { claimNewland, entryFront, grantNewland, inArchiveRoom, portalAt, setNewlandOpen, setNewlandRevealed } from './newland'
+import { ARCHIVE, NEWLAND_PORTAL, TRAVEL_FROM_MINUTE, TRAVEL_LAST_MINUTE, TRAVEL_MINUTES, VILLAGE_PORTAL } from './newland-config'
 import { SPOUSE_ROOM_STAND } from './spouse-room'
 import type { Cooking } from './cooking'
 import { BOOKS, type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
@@ -343,6 +343,7 @@ export function syncHome(s: Pick<GameState, 'homeLevel'> & Partial<Pick<GameStat
   // 지금 어느 지도에 있는가, 새 터의 입구가 열렸는가 (계획 20 작업 3)
   setActiveMap(s.map ?? 'village')
   setNewlandOpen(!!s.flags?.newlandGift)
+  setNewlandRevealed(!!s.flags?.newlandRevealed)
   setHomeLevel(s.homeLevel ?? 0)
   setHomeFurniture(s.room ?? initialHomeFurniture())
   setSpouseRoom(s.romance?.stage === 'married' ? s.romance.partner : null)
@@ -365,6 +366,8 @@ export const NO_TODAY: Today = { visitor: null, visitGot: false, inviter: null, 
 export type GameEvent =
   | { type: 'arrived'; target: Target }
   | { type: 'moment'; id: string }
+  /** 새 터 서고 문을 처음 밟았다 (계획 20 작업 4 — 아침빛과 본문 카드는 화면이 맡는다) */
+  | { type: 'firstLight' }
   /** 지킨 약속 (계획 6b) */
   | { type: 'promiseKept'; npc: string }
   /** 동물의 작은 반응 한 줄 (계획 16 작업 21 — 글은 life-text pet.events) */
@@ -645,6 +648,8 @@ export function settle(s: GameState, content: GameContent): GameState {
   setActiveMap('village')
   s = furnishSpouse(s)
   s = expireStall(expireWorkDay(s))
+  // 옛 저장에서 이미 잔치가 지났으면 불러온 뒤 첫 기회에 받는다 (한 번 — 플래그 newlandGift)
+  s = grantNewland(s)
   s = advancePlans(s, content)
   // 접속하지 않은 사이 이웃이 보탠 몫을 하루씩 따라잡는다 (같은 날은 한 번만)
   s = advanceVillage(s, content)
@@ -1076,6 +1081,14 @@ function tickNewland(s: GameState, dt: number, rng: Rng): { state: GameState; ev
   const warp = !sameTile(now, here) ? warpAt(now) : undefined
   if (warp) player = { ...player, x: warp.x, y: warp.y, path: [], facing: inArchiveRoom(warp) ? 'up' : 'down' }
   let target = warp ? null : s.target
+  // 서고 문을 처음 밟는 순간 (한 번 — 플래그 newlandLight): 어두운 안이 아침빛으로 밝아지고 본문 카드가 이어진다
+  let flags = s.flags
+  // 새 터에 처음 들어온 뒤 첫 걸음 (표식만 남긴다 — 필사·건축과 무관)
+  if (!flags.newlandVisited) flags = { ...flags, newlandVisited: 1 }
+  if (warp && !flags.newlandLight && now.x === ARCHIVE.door.x && now.y === ARCHIVE.door.y) {
+    flags = { ...flags, newlandLight: 1 }
+    events.push({ type: 'firstLight' })
+  }
   if (target && player.path.length === 0) {
     events.push({ type: 'arrived', target })
     const tt = targetTile(s, target)
@@ -1084,7 +1097,7 @@ function tickNewland(s: GameState, dt: number, rng: Rng): { state: GameState; ev
   }
   const idle = moving ? IDLE_RESET : stepIdle(s.idle, dt, clock.minute, rng, totalChapters(s) >= 3)
   const act = !s.act || moving || player.path.length > 0 || s.act.left <= dt ? undefined : { ...s.act, left: s.act.left - dt }
-  return { state: { ...s, clock, needs, player, target, idle, act }, events }
+  return { state: { ...s, clock, needs, player, target, idle, act, flags }, events }
 }
 
 /** 시간을 한 번에 흘려보낸다 (손일·쉬기) */
@@ -3254,6 +3267,8 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
     scenes.push('allFeast')
     if (gathering === 'starNight') gathering = null
   }
+  // ── 신약 완필 보상: 잔치가 지난 아침 새 터와 작은 서고를 받는다 (저장당 한 번 — 플래그 newlandGift) ──
+  claimNewland(s.shelved, flags, scenes)
   // ── 여정을 다 이은 다음 날 아침: 호숫가 나루에 큰 배가 들어온다 (한 번) ──
   if (flags.actsShip === 1) {
     flags.actsShip = 2

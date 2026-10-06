@@ -1,6 +1,8 @@
 import { WORKSHOP, PARTNER_ROOM, BABY_ROOM, LIVING_ROOM } from '../engine/home-layout'
 import { canTravel, moveFurniture, travel } from '../engine/game'
-import type { MapId } from '../engine/maps'
+import { currentMapId, type MapId } from '../engine/maps'
+import { newlandRevealed, revealNewland } from '../engine/newland'
+import { ARCHIVE } from '../engine/newland-config'
 import { clubWeaveDone } from '../engine/clubs'
 // 엔진 상태 ↔ 화면 연결. 창(모달)이 열려 있으면 시간과 걸음이 멈춘다.
 import type { FullAvatar } from '../engine/avatar'
@@ -170,6 +172,10 @@ export type Modal =
   | { kind: 'settings' }
   /** 왕래 표식 (계획 20 작업 3): 첫 마을 ↔ 새 터 건너가기 (to = 건너갈 곳) */
   | { kind: 'crossing'; to: MapId }
+  /** 새 터 서고 문을 처음 밟은 아침빛과 창 1:3 카드 (계획 20 작업 4) */
+  | { kind: 'firstLight' }
+  /** 새 터 입구·서고 문 앞의 땅 둘러보기 */
+  | { kind: 'lookAround' }
   | { kind: 'guide' }
   | { kind: 'schedule' }
   | { kind: 'clubs' }
@@ -439,6 +445,8 @@ interface Store {
   rest: () => void
   /** 왕래 표식 창에서 건너간다 (30분) */
   travelTo: (to: MapId) => void
+  /** 땅 둘러보기: 새 터의 땅을 드러낸다 (비용 없음, 이미 드러났으면 그대로) */
+  lookAround: () => void
   playHall: () => void
   /** 서고: 봉인용 밀랍으로 봉인 */
   seal: (book: Book) => void
@@ -940,6 +948,11 @@ export const useGame = create<Store>((set, get) => {
       if (why === 'late') get().say(T.travel.late)
       return { game, modal: why ? null : { kind: 'crossing', to: target.to } }
     }
+    // 새 터 서고 문 앞을 눌러 선 자리: 땅이 아직 드러나지 않았으면 둘러볼지 묻는다 (계획 20 D8)
+    if (target.kind === 'ground' && currentMapId() === 'newland' && !newlandRevealed(game)) {
+      const here = playerTile(game)
+      if (here.x === ARCHIVE.front.x && here.y === ARCHIVE.front.y) return { game, modal: { kind: 'lookAround' } }
+    }
     if (target.kind !== 'place') return { game, modal: null }
     switch (target.id) {
       case 'bed': {
@@ -1243,6 +1256,7 @@ export const useGame = create<Store>((set, get) => {
           game = a.game
           modal = a.modal ?? modal
         }
+        if (e.type === 'firstLight') modal = { kind: 'firstLight' }
       }
       if (!modal && game.scenes.length) {
         modal = { kind: 'scene', id: game.scenes[0] }
@@ -1455,6 +1469,9 @@ export const useGame = create<Store>((set, get) => {
       }
       sfx('door')
       set({ game: persist(travel(g, to, CONTENT)), modal: null })
+    },
+    lookAround: () => {
+      set({ game: persist(revealNewland(get().game)), modal: null })
     },
     rest: () => {
       set({ game: persist(restAt(get().game)), modal: null })

@@ -27,7 +27,7 @@ import { cardsForChapters, placeNewCards } from './journey'
 import { initialHomeFurniture, isFacing, refitRoom } from './room'
 import { HOME_ENTRY, HOME_FRONT, setHomeLevel, setHomeFurniture, setSpouseRoom, walkableOn } from './world'
 import { MAP_IDS, isMapId, setActiveMap, type MapId } from './maps'
-import { entryFront } from './newland'
+import { entryFront, setNewlandRevealed } from './newland'
 import { BOOKS, type Book, type GameContent, type ItemId } from './types'
 
 export const SAVE_KEY = 'twenty-seven/save'
@@ -53,6 +53,8 @@ export function serialize(s: GameState): string {
  * 옛 저장(map 없음)은 그대로 첫 마을
  */
 function sanitizeMaps(s: GameState): Pick<GameState, 'player' | 'map' | 'mapAt'> {
+  // 땅이 드러나기 전 저장은 드러나지 않은 칸 기준으로 위치를 살핀다 (계획 20 작업 4)
+  setNewlandRevealed(!!s.flags.newlandRevealed)
   const raw = s as unknown as { map?: unknown; mapAt?: unknown }
   const valid = (id: MapId, t: unknown): t is { x: number; y: number } =>
     isObj(t) && Number.isInteger((t as { x: unknown }).x) && Number.isInteger((t as { y: unknown }).y) && walkableOn(id, t as { x: number; y: number })

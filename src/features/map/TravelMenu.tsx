@@ -1,11 +1,13 @@
 // 왕래 표식을 눌렀을 때 (계획 20 작업 3): 첫 마을 ↔ 새 터. 시간 설명 한 줄 외 안내는 없다
 import { T } from '../../content/text'
 import type { MapId } from '../../engine/maps'
+import { newlandRevealed } from '../../engine/newland'
 import { useGame } from '../../store/game-store'
 
 export function TravelMenu({ to }: { to: MapId }) {
-  const { travelTo, closeModal } = useGame.getState()
+  const { travelTo, closeModal, lookAround } = useGame.getState()
   const toNewland = to === 'newland'
+  const canLook = !toNewland && !newlandRevealed(useGame.getState().game)
   const title = toNewland ? T.travel.titleNewland : T.travel.titleVillage
   return (
     <div className="dialog" role="dialog" aria-label={title}>
@@ -15,6 +17,7 @@ export function TravelMenu({ to }: { to: MapId }) {
         <button className="primary" onClick={() => travelTo(to)}>
           {toNewland ? T.travel.toNewland : T.travel.toVillage}
         </button>
+        {canLook && <button onClick={lookAround}>{T.newland.look}</button>}
         <button onClick={closeModal}>{T.ui.close}</button>
       </div>
     </div>

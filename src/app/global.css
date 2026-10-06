@@ -816,3 +816,14 @@ button:focus-visible {
 .library-locked { list-style: none; padding: 0; opacity: 0.6; }
 .reread-tag { font-size: 0.8em; background: #d9b44a; color: #3b2a20; padding: 0 4px; margin-right: 4px; }
 .guide-flow { padding-left: 1.2em; display: grid; gap: 4px; }
+
+/* ── 새 터 서고 첫 방문 아침빛 (계획 20 작업 4): 연출 동안 뒤 화면이 그대로 보이고, 어디를 눌러도 건너뛴다 ── */
+.modal-backdrop:has(.first-light-veil) {
+  background: transparent;
+  padding: 0;
+}
+.first-light-veil {
+  position: absolute;
+  inset: 0;
+  touch-action: manipulation;
+}
