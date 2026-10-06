@@ -38,9 +38,10 @@ import { feastToday, sideShelfSpines } from '../engine/library'
 import { spineLook } from '../engine/binding'
 import { ACTS_ROOM, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, PAVILION_RECT, HEIGHT, HOUSE_RECT, housesNow, houseAt, lockedTiles, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile, treeKind, type TreeKind } from '../engine/world'
 import { currentMapId, mapVisibleHeight, setActiveMap } from '../engine/maps'
-import { newlandOpen, newlandRevealedOn, newlandTileAt } from '../engine/newland'
+import { newlandGroundAt, newlandOpen, newlandRevealedOn } from '../engine/newland'
+import { areaOf } from '../engine/newland-build'
 import { ARCHIVE, INTERIOR_SHELF, NEWLAND_H, NEWLAND_W } from '../engine/newland-config'
-import { OLD_BUILDINGS, OLD_PROPS, OLD_TERRAIN, OLD_VILLAGE_PALETTE } from './old-village-art'
+import { OLD_BUILDINGS, OLD_CONSTRUCTION, OLD_PROPS, OLD_TERRAIN, OLD_VILLAGE_PALETTE } from './old-village-art'
 import { GOSPELS, type Book, type Facing, type NeighborDef, type GameContent, type Season, type Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { avatarKey, withLookDefaults, type Avatar, type FullAvatar } from '../engine/avatar'
@@ -1990,25 +1991,57 @@ function newlandMapFor(season: Season): HTMLCanvasElement {
   const g = c.getContext('2d')!
   for (let y = 0; y < NEWLAND_H; y++)
     for (let x = 0; x < NEWLAND_W; x++) {
-      const ch = newlandTileAt(x, y)
+      const ch = newlandGroundAt(x, y)
       // 서고 그림이 덮는 칸은 풀밭 위에 그림만 얹는다 (돌벽 칸 그림이 그림 둘레 빈 곳으로 비치지 않게)
       if (x >= ARCHIVE.x0 && x < ARCHIVE.x0 + ARCHIVE.w && y > ARCHIVE.y0 && y <= ARCHIVE.y0 + ARCHIVE.h) {
-        drawGround(g, '.', x, y, season, newlandTileAt)
+        drawGround(g, '.', x, y, season, newlandGroundAt)
         continue
       }
       // 서고 안 작은 책장: 자산 old-village-art의 두루마리 책장 (책상은 기존 필사 책상 그림 그대로)
       if (x === INTERIOR_SHELF.tile.x && y === INTERIOR_SHELF.tile.y) {
-        drawGround(g, 'f', x, y, season, newlandTileAt)
+        drawGround(g, 'f', x, y, season, newlandGroundAt)
         g.drawImage(paint('old/prop/scrollCabinet', OLD_PROPS.scrollCabinet.rows, OLD_VILLAGE_PALETTE), x * TILE, y * TILE)
         continue
       }
-      drawGround(g, ch, x, y, season, newlandTileAt)
+      drawGround(g, ch, x, y, season, newlandGroundAt)
       drawObject(g, ch, x, y, season, ch === 'T' ? treeKind(x, y) : undefined)
     }
   // 작은 서고 (자산 old-village-art의 archive, 앞쪽): 그림 4×4칸, 아랫줄이 문 — 칸 구성은 newland-config가 따로 정했다
   g.drawImage(paint('old/archive/down', OLD_BUILDINGS.archive.down.rows, OLD_VILLAGE_PALETTE), ARCHIVE.x0 * TILE, ARCHIVE.y0 * TILE)
   newlandCache.set(key, c)
   return c
+}
+
+/**
+ * 새 터에 지은 것 (계획 20 작업 6): 깐 길·정원 칸, 마당, 입주 주택·공사 중 골격·주문한 터의 말뚝. 지도 그림(계절별 캐시) 위에 얹는다.
+ * over가 false면 기록자 뒤에 그릴 것(길·마당·말뚝, 기록자가 문 앞이거나 더 위인 건물), true면 기록자 앞을 가리는 건물.
+ * 공사 그림의 입구는 쓰지 않는다 — 공사 중에는 문이 막혀 있다 (엔진이 정한다)
+ */
+function drawNewlandSites(g: Ctx, game: GameState, playerY: number, over: boolean) {
+  const nl = game.newland
+  if (!nl || !newlandRevealedOn()) return
+  if (!over) {
+    for (const [k, kind] of Object.entries(nl.tiles)) {
+      const [x, y] = k.split(',').map(Number)
+      const art = kind === 'path' ? OLD_TERRAIN.path : OLD_TERRAIN.plantingBed
+      g.drawImage(paint(`old/terrain/${kind}`, art.rows, OLD_VILLAGE_PALETTE), x * TILE, y * TILE)
+    }
+  }
+  for (const b of [...nl.builds].sort((a, c) => a.y - c.y)) {
+    const behind = b.kind === 'courtyard' || b.state === 'ordered' || b.y + 3 <= playerY
+    if (behind === over) continue
+    if (b.state === 'ordered') {
+      // 주문한 터: 막히는 영역의 네 귀퉁이에 부지 말뚝
+      const area = areaOf(b.kind, b.x, b.y)
+      const xs = [Math.min(...area.map((t) => t.x)), Math.max(...area.map((t) => t.x))]
+      const ys = [Math.min(...area.map((t) => t.y)), Math.max(...area.map((t) => t.y))]
+      for (const x of xs) for (const y of ys) g.drawImage(paint('old/prop/plotPeg', OLD_PROPS.plotPeg.rows, OLD_VILLAGE_PALETTE), x * TILE, y * TILE)
+      continue
+    }
+    const set = b.state === 'done' ? OLD_BUILDINGS : OLD_CONSTRUCTION
+    const art = set[b.kind][b.facing]
+    g.drawImage(paint(`old/${b.state}/${b.kind}/${b.facing}`, art.rows, OLD_VILLAGE_PALETTE), b.x * TILE, b.y * TILE)
+  }
 }
 
 /**
@@ -2033,11 +2066,13 @@ function drawNewland(g: Ctx, game: GameState, t: number, W: number, H: number, o
     g.fillRect(0, 0, W, H)
     g.translate(-ox, -oy)
     g.drawImage(newlandMapFor(season), 0, 0)
+    drawNewlandSites(g, game, here.y, false)
     const moving = p.path.length > 0
     const done = totalChapters(game)
     const blink = isBlinking(t)
     const spr = person('writer', p.facing, moving ? walkFrame(p.walkTime) : 0, blink, 'stand', season, { inky: done > 0, look: game.avatar?.look, avatar: game.avatar ? withLookDefaults(game.avatar) : undefined })
     drawSprite(g, spr, p.x, p.y, moving ? 0 : breathOffset(t))
+    drawNewlandSites(g, game, here.y, true)
     // 서고 안은 방 하나만 보이게 둘레를 가린다 (첫 마을의 집 안과 같은 방식)
     const room = viewRoomAt(here)
     if (room) {

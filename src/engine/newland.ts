@@ -53,9 +53,24 @@ export function newlandBounds(revealed: boolean, y: number, c: string): string {
   return !revealed && y > PREVIEW_LAST_ROW && y < NEWLAND_VISIBLE_H - 1 ? 'T' : c
 }
 
-/** 새 터의 한 칸 (지도 밖은 숲). 땅이 드러나기 전에는 newlandBounds가 바깥을 가린다 */
-export function newlandTileAt(x: number, y: number): string {
+/** 새 터의 바탕 한 칸 (지도 밖은 숲, 지은 것·깐 길은 아직 없는 모습). 땅이 드러나기 전에는 newlandBounds가 바깥을 가린다 */
+export function newlandGroundAt(x: number, y: number): string {
   return newlandBounds(revealedOn, y, NEWLAND_MAP[y]?.[x] ?? 'T')
+}
+
+/**
+ * 지은 것·깐 길이 덧씌우는 칸 ('x,y' → 글자, 계획 20 작업 6). 막히는 칸은 S, 걸을 수 있는 칸은 길(,)·풀(.).
+ * 게임 상태와 맞추는 것은 syncHome이 한다 (newland-build.ts의 overlayFor)
+ */
+let overlay: ReadonlyMap<string, string> = new Map()
+export function setNewlandOverlay(m: ReadonlyMap<string, string>): void {
+  overlay = m
+}
+
+/** 새 터의 한 칸 — 바탕에 지은 것을 덧씌운 것. 땅이 드러나기 전에는 덧씌우지 않는다 */
+export function newlandTileAt(x: number, y: number): string {
+  const base = newlandGroundAt(x, y)
+  return revealedOn && overlay.size > 0 ? (overlay.get(`${x},${y}`) ?? base) : base
 }
 
 /** 서고 문 → 서고 안, 서고 안 문깔개 → 서고 문 앞 (좌표 문자열 'x,y' → 칸) */

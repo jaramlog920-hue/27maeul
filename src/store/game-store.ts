@@ -5,6 +5,8 @@ import { newlandRevealed, revealNewland } from '../engine/newland'
 import { progressOf } from '../engine/books'
 import { isOtBook, type CopyBook } from '../engine/ot-books'
 import { ARCHIVE } from '../engine/newland-config'
+import { buildsOf, cancelBuild, clearTile, demolishBuild, orderBuild } from '../engine/newland-build'
+import type { SiteKind } from '../engine/newland-sites'
 import { clubWeaveDone } from '../engine/clubs'
 // 엔진 상태 ↔ 화면 연결. 창(모달)이 열려 있으면 시간과 걸음이 멈춘다.
 import type { FullAvatar } from '../engine/avatar'
@@ -148,7 +150,7 @@ import { modeOf, roomOf, shelfRoom, type ShelfRoomId } from '../engine/shelf-roo
 import { saveGame } from '../engine/save'
 import { isFinished, toggleHomeBook } from '../engine/finished-books'
 import { moveItem } from '../engine/scroll'
-import type { Book, ItemId, PlaceId, Rng, Target, Tile } from '../engine/types'
+import type { Book, Facing, ItemId, PlaceId, Rng, Target, Tile } from '../engine/types'
 import { isBuilt } from '../engine/projects'
 import { facilityOfPlace, type FacilityId, type FacilityPlace } from '../engine/village-sites'
 import { sfx, setAudioMuted } from '../audio/sound'
@@ -178,6 +180,8 @@ export type Modal =
   | { kind: 'firstLight' }
   /** 새 터 입구·서고 문 앞의 땅 둘러보기 */
   | { kind: 'lookAround' }
+  /** 새 터 입구 표지의 터 가꾸기: 놓을 것 고르기·부지 미리보기·지은 것 목록 (계획 20 작업 6) */
+  | { kind: 'build' }
   | { kind: 'guide' }
   | { kind: 'schedule' }
   | { kind: 'clubs' }
@@ -451,6 +455,14 @@ interface Store {
   travelTo: (to: MapId) => void
   /** 땅 둘러보기: 새 터의 땅을 드러낸다 (비용 없음, 이미 드러났으면 그대로) */
   lookAround: () => void
+  /** 터 가꾸기 창 열기 (땅이 드러난 새 터에서만) */
+  openBuild: () => void
+  /** 놓기 확정: 건물은 주문(다음 날 공사), 길·정원은 바로. 놓을 수 없으면 아무 일도 없다 — 창은 그대로 둔다 */
+  orderSite: (kind: SiteKind, x: number, y: number, facing: Facing, size: number) => boolean
+  /** 주문 취소(공사 전·중) 또는 철거(완공) — 환불과 기록 삭제가 한 번에 */
+  removeBuild: (id: string) => void
+  /** 깐 길·정원 칸 걷어내기 */
+  eraseTile: (x: number, y: number) => boolean
   playHall: () => void
   /** 서고: 봉인용 밀랍으로 봉인 */
   seal: (book: Book) => void
@@ -1485,6 +1497,32 @@ export const useGame = create<Store>((set, get) => {
       const next = revealNewland(get().game)
       syncHome(next)
       set({ game: persist(next), modal: null })
+    },
+    openBuild: () => {
+      const g = get().game
+      if (currentMapId() === 'newland' && newlandRevealed(g)) set({ modal: { kind: 'build' } })
+    },
+    orderSite: (kind, x, y, facing, size) => {
+      const g = get().game
+      if (currentMapId() !== 'newland') return false
+      const next = orderBuild(g, kind, x, y, facing, size)
+      if (!next) return false
+      sfx('gift')
+      set({ game: persist(next) })
+      return true
+    },
+    removeBuild: (id) => {
+      const g = get().game
+      const b = buildsOf(g).find((x) => x.id === id)
+      if (!b) return
+      const next = b.state === 'done' ? demolishBuild(g, id) : cancelBuild(g, id)
+      if (next) set({ game: persist(next) })
+    },
+    eraseTile: (x, y) => {
+      const next = clearTile(get().game, x, y)
+      if (!next) return false
+      set({ game: persist(next) })
+      return true
     },
     rest: () => {
       set({ game: persist(restAt(get().game)), modal: null })

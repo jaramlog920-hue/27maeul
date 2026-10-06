@@ -137,7 +137,8 @@ import {
 } from './stories'
 import { propFootprint, HOUSES, PET_HOME, HOME_FRONT, isHome, isIndoor, isWalkable, key, HOME_ENTRY, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setHomeFurniture, setMailbox, setOpenDoors, setSpouseRoom, START, tileAt, WARPS, warpAt } from './world'
 import { currentMapId, setActiveMap, type MapId } from './maps'
-import { claimNewland, entryFront, grantNewland, inArchiveRoom, portalAt, revealNewland, setNewlandOpen, setNewlandRevealed } from './newland'
+import { claimNewland, entryFront, grantNewland, inArchiveRoom, portalAt, revealNewland, setNewlandOpen, setNewlandOverlay, setNewlandRevealed } from './newland'
+import { advanceBuilds, overlayFor, type NewlandState } from './newland-build'
 import { ARCHIVE, NEWLAND_PORTAL, TRAVEL_FROM_MINUTE, TRAVEL_LAST_MINUTE, TRAVEL_MINUTES, VILLAGE_PORTAL } from './newland-config'
 import { SPOUSE_ROOM_STAND } from './spouse-room'
 import type { Cooking } from './cooking'
@@ -313,6 +314,11 @@ export interface GameState {
   map?: MapId
   /** 지도마다 마지막으로 서 있던 칸 (떠날 때 적는다). 저장에서 불러올 때 걸을 수 없는 칸이면 그 지도의 입구 앞으로 */
   mapAt?: Partial<Record<MapId, Tile>>
+  /**
+   * 새 터의 건축 (계획 20 작업 6): 지은 것·공사 중인 것·깐 길과 정원. 땅이 드러났는지는 flags.newlandRevealed 하나로 본다.
+   * 없으면 아무것도 짓지 않은 땅 (옛 저장·건물 0채)
+   */
+  newland?: NewlandState
 }
 
 /** 가구를 쓰는 동작 종류 — 그리는 쪽이 furnitureUseFrame/extraUseFrame으로 옮긴다 (blowCandle은 생일 빵 촛불 불기 — eventMotionFrame) */
@@ -344,11 +350,12 @@ export function startAct(s: GameState, kind: ActKind, at?: Tile): GameState {
 }
 
 /** 지도(world.tileAt)가 이 게임의 집 단계·열린 서고 방 문(방 표)을 보게 한다. 지도를 읽는 엔진 입구마다 부른다 */
-export function syncHome(s: Pick<GameState, 'homeLevel'> & Partial<Pick<GameState, 'flags' | 'romance' | 'room' | 'village' | 'map'>>): void {
+export function syncHome(s: Pick<GameState, 'homeLevel'> & Partial<Pick<GameState, 'flags' | 'romance' | 'room' | 'village' | 'map' | 'newland'>>): void {
   // 지금 어느 지도에 있는가, 새 터의 입구가 열렸는가 (계획 20 작업 3)
   setActiveMap(s.map ?? 'village')
   setNewlandOpen(!!s.flags?.newlandGift)
   setNewlandRevealed(!!s.flags?.newlandRevealed)
+  setNewlandOverlay(overlayFor(s.newland))
   setHomeLevel(s.homeLevel ?? 0)
   setHomeFurniture(s.room ?? initialHomeFurniture())
   setSpouseRoom(s.romance?.stage === 'married' ? s.romance.partner : null)
@@ -3357,7 +3364,7 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
     inv,
   }
   // 가족 생일 아침 (계획 12): 배우자·아이 생일 장면
-  const morning = advanceVillage(familyMorning(childMorning(forgetPromises(morningSupplies(expireStall(expireWorkDay(next)), s.clock.day), day), content)), content)
+  const morning = advanceBuilds(advanceVillage(familyMorning(childMorning(forgetPromises(morningSupplies(expireStall(expireWorkDay(next)), s.clock.day), day), content)), content))
   // 침대 위에서 눈을 뜨고 일어난다 (그림만)
   return startAct({ ...morning, npcs: placeAllNpcs(morning, content) }, 'rise', PLACES.bed.tiles[0])
 }

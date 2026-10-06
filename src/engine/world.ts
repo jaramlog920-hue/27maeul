@@ -588,6 +588,9 @@ export function treeKind(x: number, y: number): TreeKind {
 // 'Q' 한 권 선반(사도행전·요한계시록), 'M' 벽의 여정 판, 'C' 벽의 일곱 교회 카드 판. 'Y' 편지 선반, 'V' 벽의 편지꽂이, 'N' 방 벽의 창, 'F' 사랑방 벽의 의뢰 게시판. 'J'(열린 서고 방 문)는 걷는 칸
 const BLOCKED = new Set(['F', 'j', 'C', 'Y', 'V', 'N', 'H', 'I', '_','Z', 'n', 'g', 'p', 'W', 'G', 'K', 'Q', 'M', 'T', '#', 'R', 'S', 'u', 'b', 'd', 'h', 's', 'k', 'w', 'B', '~', 'r', 'v', 'o', 'P', 'A', 'O', 'm', 'x', 'q'])
 
+/** 이 글자의 칸이 막히는 땅인가 (새 터 건축의 길찾기 검사가 쓴다) */
+export const isBlockedChar = (c: string): boolean => BLOCKED.has(c)
+
 /** 첫 마을의 한 칸 (집 단계·열린 서고 문·열린 새 터 입구를 덧씌운다). 지금 지도가 새 터여도 첫 마을 칸을 돌려준다 */
 export function villageTileAt(x: number, y: number): string {
   if (homeLevel >= 1 && y === PARTNER_ROOM.y0 && x === PARTNER_ROOM.x0 + (currentSpouseRoom()?.window.x ?? 5)) return 'N'

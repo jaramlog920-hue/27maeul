@@ -46,6 +46,7 @@ import { FollowMenu } from './companion/FollowMenu'
 import { VillageMap } from './map/VillageMap'
 import { TravelMenu } from './map/TravelMenu'
 import { FirstLight, LookAround } from './newland/FirstLight'
+import { BuildMenu } from './newland/BuildMenu'
 import { OtShelf } from './newland/OtShelf'
 import { SchoolView } from './child/SchoolView'
 import { GameGuide } from './play/GameGuide'
@@ -66,6 +67,8 @@ function Body() {
       return <FirstLight />
     case 'lookAround':
       return <LookAround />
+    case 'build':
+      return <BuildMenu />
     case 'otShelf':
       return <OtShelf />
     case 'guide':

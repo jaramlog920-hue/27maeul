@@ -2223,3 +2223,18 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
 .home-shelf-list li { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 6px 4px; border-bottom: 2px solid #e6d9bf; }
 .home-shelf-name { flex: 1 1 auto; font-weight: 700; word-break: keep-all; }
 .home-shelf-list button { min-height: 36px; padding: 4px 10px; font-size: 13px; }
+
+/* 터 가꾸기 (계획 20 작업 6): 부지 미리보기 — 28×18칸 그림, 휴대폰 폭에 맞춰 줄인다 */
+.build-menu .tabs { margin: 6px 0; }
+.build-list, .build-built { list-style: none; margin: 8px 0; padding: 0; display: grid; gap: 6px; }
+.build-pick { width: 100%; display: grid; gap: 2px; text-align: left; padding: 8px 10px; min-height: 44px; word-break: keep-all; }
+.build-pick .hint { margin: 0; }
+.build-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px; padding: 6px 4px; border-bottom: 2px solid #e6d9bf; }
+.build-name { font-weight: 700; word-break: keep-all; }
+.build-confirm { flex: 1 1 100%; }
+.build-row button { min-height: 40px; }
+.site-canvas { display: block; width: 100%; max-width: 420px; margin: 6px auto; image-rendering: pixelated; border: 2px solid #b59a74; border-radius: 4px; touch-action: manipulation; }
+.site-move { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 6px 0; }
+.site-move button { min-height: 44px; padding: 4px 2px; }
+.site-reason { margin: 6px 0; font-weight: 700; color: #6b4e2e; word-break: keep-all; }
+.site-preview .tabs button { min-height: 40px; }
