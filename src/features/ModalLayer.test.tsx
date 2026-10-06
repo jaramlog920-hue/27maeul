@@ -136,7 +136,7 @@ describe('이웃', () => {
     useGame.setState({ modal: { kind: 'talk', neighborId: 'baker', line: '…' } })
     render(<ModalLayer />)
     await user.click(screen.getByRole('button', { name: T.ui.talkHelp }))
-    expect(screen.getByRole('dialog', { name: /빵 굽는 이웃 · 반죽 치대기 돕기/ })).toBeInTheDocument()
+    expect(screen.getByRole('dialog', { name: /헤이즐 · 반죽 치대기 돕기/ })).toBeInTheDocument()
     for (let i = 0; i < 9; i++) act(() => useGame.getState().miniTap())
     expect(screen.getByText('다 했어요!')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: '닫기' }))

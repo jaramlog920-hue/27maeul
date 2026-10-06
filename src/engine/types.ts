@@ -231,7 +231,10 @@ export interface ScheduleEntry {
 
 export interface NeighborDef {
   id: string
+  /** 부르는 이름 (화면에 보이는 이름) */
   role: string
+  /** 하는 일 (이름이 따로 없던 이웃에게 2026-10-07 이름을 붙이며 옛 역할 이름을 여기로) */
+  job?: string
   sprite: string
   door: Tile
   schedule: ScheduleEntry[]

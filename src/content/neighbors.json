@@ -2,7 +2,8 @@
   {
     "id": "baker",
     "gender": "f",
-    "role": "빵 굽는 이웃",
+    "role": "헤이즐",
+    "job": "빵 굽는 이웃",
     "sprite": "baker",
     "door": {
       "x": 5,
@@ -66,7 +67,8 @@
   {
     "id": "child",
     "gender": "f",
-    "role": "물 긷는 아이",
+    "role": "윌로",
+    "job": "물 긷는 아이",
     "sprite": "child",
     "door": {
       "x": 35,
@@ -138,7 +140,8 @@
   {
     "id": "grandpa",
     "gender": "m",
-    "role": "포도원 할아버지",
+    "role": "버나드",
+    "job": "포도원 할아버지",
     "sprite": "grandpa",
     "door": {
       "x": 36,
@@ -198,7 +201,8 @@
   {
     "id": "merchant",
     "gender": "m",
-    "role": "떠돌이 상인",
+    "role": "오스카",
+    "job": "떠돌이 상인",
     "sprite": "merchant",
     "door": {
       "x": 1,
@@ -239,7 +243,8 @@
   {
     "id": "smith",
     "gender": "m",
-    "role": "대장장이",
+    "role": "브루노",
+    "job": "대장장이",
     "sprite": "smith",
     "door": {
       "x": 46,
@@ -273,7 +278,8 @@
   {
     "id": "shepherd",
     "gender": "m",
-    "role": "양치기",
+    "role": "오웬",
+    "job": "양치기",
     "sprite": "shepherd",
     "door": {
       "x": 1,
@@ -323,7 +329,8 @@
   {
     "id": "presser",
     "gender": "m",
-    "role": "기름 짜는 이웃",
+    "role": "올리버",
+    "job": "기름 짜는 이웃",
     "sprite": "presser",
     "door": {
       "x": 46,
@@ -363,7 +370,8 @@
   {
     "id": "weaver",
     "gender": "f",
-    "role": "베 짜는 이웃",
+    "role": "아이리스",
+    "job": "베 짜는 이웃",
     "sprite": "weaver",
     "door": {
       "x": 35,
@@ -425,7 +433,8 @@
   {
     "id": "beekeeper",
     "gender": "f",
-    "role": "벌 치는 이웃",
+    "role": "클로버",
+    "job": "벌 치는 이웃",
     "sprite": "beekeeper",
     "door": {
       "x": 43,
@@ -475,7 +484,8 @@
   {
     "id": "postman",
     "gender": "m",
-    "role": "편지 나르는 이웃",
+    "role": "마일로",
+    "job": "편지 나르는 이웃",
     "sprite": "postman",
     "door": {
       "x": 14,
@@ -541,7 +551,8 @@
   {
     "id": "apothecary",
     "gender": "f",
-    "role": "약방 주인",
+    "role": "세이지",
+    "job": "약방 주인",
     "sprite": "apothecary",
     "door": {
       "x": 36,
@@ -603,7 +614,8 @@
   {
     "id": "fisher",
     "gender": "m",
-    "role": "어부",
+    "role": "핀",
+    "job": "어부",
     "sprite": "fisher",
     "door": {
       "x": 29,
@@ -661,7 +673,8 @@
   {
     "id": "carpenter",
     "gender": "m",
-    "role": "제본 골목의 목수",
+    "role": "아서",
+    "job": "제본 골목의 목수",
     "sprite": "carpenter",
     "door": {
       "x": 5,

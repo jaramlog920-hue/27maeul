@@ -1706,8 +1706,9 @@ export function personLine(s: GameState, id: string, rnd: number): { state: Game
   if (!line) return null
   const recent = [...(life.recent[id] ?? []).filter((x) => x !== line.id), line.id].slice(-RECENT_KEEP)
   const notebook = line.reveals ? noteTaste(s.notebook ?? NO_NOTEBOOK, id, line.reveals) : s.notebook
-  // 기억·이야기·자리·취향에 걸린 말은 특별한 말(팝업), 때와 사이만 맞춘 말은 늘 하는 말 (2026-10-07 사용자)
-  const special = !!(line.req || line.near || line.reveals)
+  // 함께 겪은 이야기·기억에 걸린 말만 특별한 말(팝업). 때·자리·사이·취향만 맞춘 말은 늘 하는 말 (2026-10-07 사용자)
+  const r = line.req
+  const special = !!r && !!(r.seen?.length || r.seenAny?.length || r.story?.length || r.memory?.length || r.exp?.length || r.recent || r.thread)
   return { state: { ...s, notebook, life: { ...life, recent: { ...life.recent, [id]: recent } } }, text: line.text, special }
 }
 

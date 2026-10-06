@@ -18,7 +18,7 @@ const spring = (): GameState => {
 describe('약방 이웃', () => {
   it('주막 주인 대신 약방 주인 — 같은 집, 서고 2권에 이사 온다', () => {
     const d = CONTENT.neighbors.find((n) => n.id === APOTHECARY)!
-    expect(d.role).toBe('약방 주인')
+    expect(d.role).toBe('세이지')
     expect(d.joinsAtBooks).toBe(2)
     expect(CONTENT.neighbors.some((n) => n.id === 'innkeeper')).toBe(false)
     expect(NEIGHBOR_LINES[APOTHECARY].help.label).toBe('약초 말리기 돕기')

@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { CONTENT, neighborById } from '../../content/catalog'
-import { callName, fill, itemName, T } from '../../content/text'
+import { callName, fill, itemName, T, withAnd } from '../../content/text'
 import type { GameState } from '../../engine/game'
 import { canDonate, canWork, crewPresent, donate, dropWork, finishWork, isBuilt, PROJECT_SUPPLY, projectLine, startWork, villageOf, workHand } from '../../engine/projects'
 import { saveGame } from '../../engine/save'
@@ -98,7 +98,7 @@ export function VillageSite({ id }: { id: FacilityId }) {
       {line && <p className="talk-line">{callName(line, game.avatar?.name)}</p>}
       {w ? (
         <>
-          <p className="hint">{fill(V.site.workLead, { who: who || V.site.crew })}</p>
+          <p className="hint">{fill(V.site.workLead, { who: withAnd(who || V.site.crew) })}</p>
           <HandPractice state={w.mini} tick={tick} tap={tap} finish={() => commitVillage(finishWork(useGame.getState().game, CONTENT))} />
           {!isDone(w.mini) && <div className="actions"><button onClick={() => commitVillage(dropWork(useGame.getState().game))}>{V.site.workPause}</button></div>}
         </>

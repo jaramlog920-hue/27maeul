@@ -80,7 +80,7 @@ describe('📖 말씀 탭', () => {
     expect(items[0]).toHaveTextContent(pieceById('mt-001-001').title)
     expect(items[0]).toHaveTextContent('언제 받았는지 남아 있지 않은 조각')
     expect(items[1]).toHaveTextContent(pieceById('mk-002-001').title)
-    expect(items[1]).toHaveTextContent('3년째 봄 · 빵 굽는 이웃에게 받은 조각')
+    expect(items[1]).toHaveTextContent('3년째 봄 · 헤이즐에게 받은 조각')
   })
 
   it('말씀 조각: 아직 없으면 언제 받게 되는지 한 줄', async () => {

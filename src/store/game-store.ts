@@ -964,7 +964,8 @@ export const useGame = create<Store>((set, get) => {
         const other = mutterPartner(g, target.id)
         const role = other ? neighborById(other)?.role : undefined
         const line = role ? fill(T.people.together, { otherAnd: withAnd(role), text: mut }) : mut
-        return talk(hearMutter(g, target.id, mut), line, true)
+        // 혼잣말은 늘 하는 말 — 이름 밑에 (2026-10-07 사용자)
+        return talk(hearMutter(g, target.id, mut), line, false)
       }
       // 살아 움직이는 사람들 (계획 6b): 지금 상황·사이·기억에 맞는 말 (되풀이하지 않는다)
       const pl = g.offers[target.id] || postLine(g, target.id) ? null : personLine(g, target.id, rng())

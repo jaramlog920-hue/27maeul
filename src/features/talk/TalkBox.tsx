@@ -92,6 +92,7 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
     <div className="dialog talk" role="dialog" aria-label={def.role}>
       <p className="talk-role">
         {def.role}{' '}
+        {def.job && <span className="talk-job">{def.job}</span>}{' '}
         {/* 살아 움직이는 사람들 (계획 6b): 숫자 대신 사이의 이름 */}
         {personOf(def.id) && <span className="talk-bond">{bondLabel(game, def.id)}</span>}{' '}
         {/* 호감도는 사이의 이름과 함께 늘 보인다 (2026-10-07 사용자) */}
