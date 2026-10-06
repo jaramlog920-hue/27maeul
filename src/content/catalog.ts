@@ -20,6 +20,8 @@ import { bibleIdOf } from '../engine/shelf-rooms'
 import type { LetterOpening, Question, QuizSource } from '../engine/quiz'
 import type { JourneyCard } from '../engine/journey'
 import type { CopySource } from '../engine/copy'
+import { isOtBook, type CopyBook } from '../engine/ot-books'
+import { otBookOfRef, otChapterText, otCopySource, otVersesOf } from './ot-catalog'
 
 const bible = raw as Record<string, string[][]>
 const byAbbr = Object.fromEntries(books.map((b) => [b.abbr, b.id]))
@@ -126,6 +128,8 @@ export interface Verse {
 export const noText = (text: string) => text === '(없음)' || /^\(\d+절에 포함되어 있음\)$/.test(text)
 
 export function versesOf(ref: string): Verse[] {
+  // 구약 약칭('창 1:3')은 책별로 불러온 구약 본문에서 — 불러오기 전이면 `not loaded: gen` (ot-catalog.ts)
+  if (otBookOfRef(ref)) return otVersesOf(ref)
   return expandRef(ref, byAbbr, counts)
     .map((k) => {
       const text = bible[k.bookId]?.[k.chapter - 1]?.[k.verse - 1]
@@ -139,7 +143,8 @@ export function versesOf(ref: string): Verse[] {
  * 필사할 한 장의 본문 (계획 14): 그 장 1절부터 끝 절까지 versesOf로 — 본문이 없는 절은 빠진다 (번호만 건너뜀).
  * 장이 없으면 빈 목록
  */
-export function chapterText(book: Book, chapter: number): Verse[] {
+export function chapterText(book: CopyBook, chapter: number): Verse[] {
+  if (isOtBook(book)) return otChapterText(book, chapter)
   const n = bible[BOOK_IDS[book]]?.[chapter - 1]?.length ?? 0
   return n ? versesOf(`${BOOK_ABBR[book]} ${chapter}:1-${n}`) : []
 }
@@ -206,11 +211,14 @@ for (const b of BOOKS) {
   verseCounts.set(b, m)
 }
 
-const bookOfRef = (ref: string): Book => {
+/** 신약 책만 (퀴즈·조각은 구약을 넣지 않는다) */
+const ntBookOfRef = (ref: string): Book => {
   const b = ABBR_BOOK[ref.trim().split(/\s+/)[0]]
   if (!b) throw new Error(`not a book ref: ${ref}`)
   return b
 }
+/** 신약 약칭이면 그 책, 구약 약칭이면 구약 책 */
+const bookOfRef = (ref: string): CopyBook => otBookOfRef(ref) ?? ntBookOfRef(ref)
 
 /**
  * 괄호 구간에 든 절 ('막 16:10') — 퀴즈에 쓰지 않는다.
@@ -244,7 +252,7 @@ const countIn = (books: readonly Book[], text: string) => books.reduce((n, b) =>
 export function quizSourceFor(books: readonly Book[]): QuizSource & { countAnywhere: (text: string) => number } {
   return {
     versesOf: (ref) => {
-      const abbr = BOOK_ABBR[bookOfRef(ref)]
+      const abbr = BOOK_ABBR[ntBookOfRef(ref)]
       return versesOf(ref).map((v) => {
         const r = `${abbr} ${v.chapter}:${v.verse}`
         return { ref: r, text: v.text, inBrackets: bracketed.has(r) }
@@ -260,7 +268,8 @@ const allBooks = quizSourceFor(BOOKS)
 
 /** 편지 옮겨 적기가 읽는 본문 (계획 7 작업 3): 그 책 안에서만 — 장 참조·절·같은 문장 세기(+ 모든 책에서 세기). 책마다 하나 (빈칸 기억이 이것에 붙는다) */
 const copySources = new Map<Book, CopySource>()
-export function copySourceFor(book: Book): CopySource {
+export function copySourceFor(book: CopyBook): CopySource {
+  if (isOtBook(book)) return otCopySource(book)
   let src = copySources.get(book)
   if (!src) {
     src = {
