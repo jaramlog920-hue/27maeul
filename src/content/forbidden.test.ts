@@ -15,4 +15,8 @@ describe('금지어', () => {
     for (const t of ['정경', '정경이 모였다', '휴거', '천년왕국', '적그리스도', '666', '숫자 666', '짐승의 표']) expect(forbiddenIn(t), t).not.toBeNull()
     for (const t of ['요한계시록', '1666닢', '6667', '짐승', '표 한 장', '일곱 교회']) expect(forbiddenIn(t), t).toBeNull()
   })
+  it('구약 인물·지명(계획 20)은 걸린다 — 곡식·형용사·책 이름은 통과', () => {
+    for (const t of ['아브라함', '모세', '다윗', '솔로몬', '야곱', '이스라엘', '가나안', '애굽', '바벨론', '여호와', '엘리야', '다윗의 집']) expect(forbiddenIn(t), t).not.toBeNull()
+    for (const t of ['이삭 한 단', '아담한 집', '새 터', '창세기', '시편', '이사야', '고운 모래']) expect(forbiddenIn(t), t).toBeNull()
+  })
 })
