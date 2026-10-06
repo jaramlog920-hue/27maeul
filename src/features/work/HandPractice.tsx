@@ -6,10 +6,13 @@ import { T } from '../../content/text'
 export function HandPractice({ state, tick, tap, finish }: {state:MiniState;tick:(dt:number)=>void;tap:(input:number)=>void;finish:()=>void}) {
   const done=isDone(state)
   const M=T.ui.minigame
+  // 화면 새로 그릴 때마다 실제 흐른 시간만큼 움직인다 — 0.1초 간격이면 막대가 뚝뚝 끊겨 보이는 자리와 판정 자리가 어긋났다 (2026-10-07)
   useEffect(()=>{
     if(done) return
-    const timer=window.setInterval(()=>tick(.1),100)
-    return ()=>window.clearInterval(timer)
+    let last=performance.now(), raf=0
+    const loop=(now:number)=>{tick(Math.min(.1,Math.max(0,(now-last)/1000)));last=now;raf=requestAnimationFrame(loop)}
+    raf=requestAnimationFrame(loop)
+    return ()=>cancelAnimationFrame(raf)
   },[done,tick])
   const watching=state.kind==='order' && showing(state)
   return <div className="mini">

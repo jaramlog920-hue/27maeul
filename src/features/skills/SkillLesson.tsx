@@ -65,7 +65,7 @@ export function SkillLessonView({ close }: { close: () => void }) {
   const game = useGame((s) => s.game) as SkillState
   const l = game.skillLesson
   const tick = useCallback((dt: number) => { const s = useGame.getState(); applyLifeState(lessonHand(s.game, 'tick', dt, s.rng), false) }, [])
-  const tap = useCallback((input: number) => { const s = useGame.getState(); applyLifeState(lessonHand(s.game, 'tap', input, s.rng)) }, [])
+  const tap = useCallback((input: number) => { const s = useGame.getState(); applyLifeState(lessonHand(s.game, 'tap', input, s.rng), false) }, [])
   if (!l || !SKILL_IDS.includes(l.id)) return <section aria-label={S.title}><button onClick={close}>{S.pause}</button></section>
   const def = SKILL_DEFS[l.id]
   const text = lessonText(l.id)

@@ -1,6 +1,6 @@
 // 계획 16 작업 3: 일과 조건과 주민끼리 만나는 시간 — 둘 다 있을 때만 함께, 궂은 날 대체 자리, 잔치·모임이 먼저
 import { CONTENT, neighborById, PEOPLE } from '../content/catalog'
-import { fill, T, withAnd } from '../content/text'
+import { fill, T } from '../content/text'
 import { festivalOf, FESTIVAL_FROM, isMarketDay, isWet, weatherOf } from './calendar'
 import { hallGuestsToday, mutterPartner, mutterWaiting, newGame, routineOf, settle, type GameState } from './game'
 import { FESTIVAL_SPOTS } from './neighbors'

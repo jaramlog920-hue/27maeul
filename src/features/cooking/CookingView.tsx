@@ -55,7 +55,7 @@ export function CookingView() {
   const c = cookOf(game)
   const run = c.run
   const tick = useCallback((dt: number) => { const s = useGame.getState(); applyLifeState(cookHand(s.game, 'tick', dt, s.rng), false) }, [])
-  const tap = useCallback((input: number) => { const s = useGame.getState(); applyLifeState(cookHand(s.game, 'tap', input, s.rng)) }, [])
+  const tap = useCallback((input: number) => { const s = useGame.getState(); applyLifeState(cookHand(s.game, 'tap', input, s.rng), false) }, [])
   const rng = () => useGame.getState().rng
   const got = (next: typeof game, from: NonNullable<typeof run>) => {
     const left = cookOf(next).run

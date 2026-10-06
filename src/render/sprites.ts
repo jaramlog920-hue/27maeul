@@ -27,6 +27,7 @@ export const PALETTE: Record<string, string> = {
   '!': '#aa8062', // 손 옆의 부드러운 갈색 경계. 아래 그늘(5)과 분리한다.
   // 이웃
   c: '#b8826b', C: '#805b49', a: '#eee2c8', y: '#d5b77f', // 빵 굽는 이웃
+  '3': '#8e4a30', // 헤이즐 머리: 적갈색 (2026-10-07)
   W: '#b4b5ae', g: '#718b99', G: '#4b626f', // 할아버지: 배경보다 진한 은회색 머리
   H: '#977582', p: '#bba071', Q: '#877044', // 상인
   j: '#51463d', n: '#a86048', N: '#845038', L: '#583828', // 대장장이: 그을음빛 갈색
@@ -211,11 +212,12 @@ function dressNeighbor(who: Who, rows: string[], facing: Facing): string[] {
   }
   switch (who) {
     case 'baker': {
-      const out = recolor(rows, { h: 'y', r: 'c', R: 'C', b: 'a' })
+      // 헤이즐 (2026-10-07 사용자: 머리 바꾸기): 두건 대신 적갈색 웨이브 머리를 어깨까지
+      const out = recolor(rows, { h: '3', r: 'c', R: 'C', b: 'a' })
       for (let y = 8; y <= 11; y++) for (let x = 3; x <= 6; x++) if (out[y][x] === 'c') setPixel(out, x, y, 'a')
-      // 작은 두건 + 앞치마의 가슴판과 주머니.
-      for (const x of [3, 4, 5, 6]) setPixel(out, x, 0, 'a')
-      for (const x of [2, 3, 4, 5, 6, 7]) setPixel(out, x, 1, 'a')
+      hairShape(out, facing, 'curly', '3')
+      for (let y = 3; y <= 7; y++) for (const x of [0, 9]) if (out[y]?.[x] === '.') setPixel(out, x, y, '3')
+      // 앞치마의 가슴판과 주머니.
       if (!back) { panel(out, 'a', 7, 8, [4, 5]); setPixel(out, 5, 10, 'C') }
       else { setPixel(out, 4, 9, 'a'); setPixel(out, 5, 9, 'a') }
       return out

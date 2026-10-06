@@ -245,7 +245,7 @@
     "gender": "m",
     "role": "브루노",
     "job": "대장장이",
-    "sprite": "smith",
+    "sprite": "presser",
     "door": {
       "x": 46,
       "y": 23
@@ -331,7 +331,7 @@
     "gender": "m",
     "role": "올리버",
     "job": "기름 짜는 이웃",
-    "sprite": "presser",
+    "sprite": "smith",
     "door": {
       "x": 46,
       "y": 24
@@ -1150,7 +1150,7 @@
       "hairBack": 6,
       "top": 2,
       "bottom": 0,
-      "acc": 2,
+      "acc": 0,
       "hairColor": [
         30,
         70,

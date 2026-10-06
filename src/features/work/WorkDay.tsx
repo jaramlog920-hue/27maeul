@@ -32,7 +32,7 @@ export function WorkDayView({npc,close}:{npc:string;close:()=>void}) {
   const current=!!w && w.npc===npc && w.day===game.clock.day
   const shop=shopOf(npc)
   const tick=useCallback((dt:number)=>{const s=useGame.getState();applyLifeState(workDayHand(s.game,'tick',dt,s.rng),false)},[])
-  const tap=useCallback((input:number)=>{const s=useGame.getState();applyLifeState(workDayHand(s.game,'tap',input,s.rng))},[])
+  const tap=useCallback((input:number)=>{const s=useGame.getState();applyLifeState(workDayHand(s.game,'tap',input,s.rng),false)},[])
   const step=()=>{const s=useGame.getState();applyLifeState(finishWorkStep(s.game,s.rng))}
   if(!shop) return null
   const sh=WORK_SHOPS[shop], tx=SHOP_TEXT[shop]
