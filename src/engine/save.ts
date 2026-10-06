@@ -2,6 +2,7 @@ import { CLUB_PLACES, sanitizeClubs, sanitizeClubSessions } from './clubs'
 import { sanitizeVillage } from './projects'
 import { sanitizeFests } from './fest'
 import { sanitizeCooking } from './cooking'
+import { sanitizeGen } from './gen'
 import { sanitizeSpaces } from './spaces'
 import { sanitizePlans } from './plans'
 import { sanitizeCompanion } from './companion'
@@ -192,9 +193,10 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   const churchBoard = Array.isArray(s.churches) ? s.churches.filter((n) => Number.isInteger(n)) : []
   const churches = placeNewCards(churchBoard, cardsForChapters(content.churches ?? [], progress.rev.completed))
   // 구약 칸은 원본을 펼치지 않는다 — 정리한 결과가 있을 때만 아래에서 넣는다 (깨진 값이 남지 않게)
-  const { otProgress: _rawOtProgress, otCopyStats: _rawOtStats, newland: _rawNewland, otCollected: _rawOtCollected, rooms: _rawRooms, inv: _inv, ...sRest } = { ...s, rooms: (s as { rooms?: unknown }).rooms } as typeof s & { rooms?: unknown }
+  const { otProgress: _rawOtProgress, otCopyStats: _rawOtStats, newland: _rawNewland, otCollected: _rawOtCollected, rooms: _rawRooms, gen: _rawGen, inv: _inv, ...sRest } = { ...s, rooms: (s as { rooms?: unknown }).rooms } as typeof s & { rooms?: unknown }
   // 새 터 건축 (계획 20 작업 6): 옛 저장은 없음, 깨진 기록은 걸러 낸다
   const newland = sanitizeNewlandBuild(_rawNewland, s.clock.day)
+  const gen = sanitizeGen(_rawGen, s.clock.day)
   // 건물 안 가구 (작업 7): 옛 저장은 없음. 주인 없는 방·맞지 않는 가구는 가방으로
   const fitted = sanitizeRooms(_rawRooms, { newland }, inv)
   void _inv
@@ -245,6 +247,8 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     ...(Object.keys(otProgress).length ? { otProgress } : {}),
     ...(isObj(s.otCopyStats) ? { otCopyStats: sanitizeCopyStats(s.otCopyStats) } : {}),
     ...(newland ? { newland } : {}),
+    // 주민의 자율 가족 (작업 10): 옛 저장은 없음, 깨진 항목만 버리고 계보는 복구
+    ...(gen ? { gen } : {}),
     ...(fitted.rooms ? { rooms: fitted.rooms } : {}),
     // 구약 말씀 조각: 새 터를 받은 뒤에만 있다 — 모르는 id·중복은 버리고, 옛 저장(없음)은 칸을 만들지 않는다
     ...(s.flags?.newlandGift && sanitizeOtCollected(_rawOtCollected).length ? { otCollected: sanitizeOtCollected(_rawOtCollected) } : {}),

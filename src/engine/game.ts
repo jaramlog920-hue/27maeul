@@ -144,6 +144,8 @@ import { roomOf, roomTarget, withRoomOf } from './newland-rooms'
 import { ARCHIVE, NEWLAND_PORTAL, TRAVEL_FROM_MINUTE, TRAVEL_LAST_MINUTE, TRAVEL_MINUTES, VILLAGE_PORTAL } from './newland-config'
 import { SPOUSE_ROOM_STAND } from './spouse-room'
 import type { Cooking } from './cooking'
+import type { GenState } from './gen'
+import { settleGen } from './gen-settle'
 import { BOOKS, type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
 import { withLookDefaults, type Avatar, type FullAvatar } from './avatar'
 import { BOARD_GAIN, boardFor, type BoardRequest } from './board'
@@ -323,6 +325,8 @@ export interface GameState {
    * 없으면 아무것도 짓지 않은 땅 (옛 저장·건물 0채)
    */
   newland?: NewlandState
+  /** 주민의 자율 가족 (계획 20 작업 10): 인물·관계·가구·계보·씨앗·정산한 날. 옛 저장은 없음 — 첫 정산에서 만든다 */
+  gen?: GenState
   /** 새 터 입주 주택 안 가구 — 소유 공간별 ('newland:<건물 id>', 계획 20 작업 7). 첫 마을 집의 room과 섞이지 않는다 */
   rooms?: Record<string, Furniture[]>
 }
@@ -3388,7 +3392,15 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
     inv,
   }
   // 가족 생일 아침 (계획 12): 배우자·아이 생일 장면
-  const morning = advanceBuilds(advanceVillage(familyMorning(childMorning(forgetPromises(morningSupplies(expireStall(expireWorkDay(next)), s.clock.day), day), content)), content))
+  const villaged = advanceVillage(familyMorning(childMorning(forgetPromises(morningSupplies(expireStall(expireWorkDay(next)), s.clock.day), day), content)), content)
+  // 주민 자율 가족 하루 정산 (계획 20 작업 10): 아침 단계에서 하루에 한 번, 큰 사건이 걸린 주민은 보류
+  const morning = advanceBuilds(
+    settleGen(villaged, content, {
+      busy: (npc) => !!eventNow(villaged, npc),
+      // 주민 결혼식은 장날·마을 잔치·플레이어 결혼 잔치 날을 피한다
+      weddingFree: (d) => !festivalOf(d) && !isMarketDay(d) && villaged.romance?.weddingDay !== d,
+    }),
+  )
   // 침대 위에서 눈을 뜨고 일어난다 (그림만)
   return startAct({ ...morning, npcs: placeAllNpcs(morning, content) }, 'rise', PLACES.bed.tiles[0])
 }
