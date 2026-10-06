@@ -35,15 +35,15 @@ import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
 import { childMode, childStage } from '../engine/child'
 import { BOARD, stoneTile, TRIP_H, TRIP_W, tripLayout, type Cell as TripCell } from '../engine/trip-board'
 import { feastToday, sideShelfSpines } from '../engine/library'
-import { SHELF_FILL, shelfFillSteps } from '../engine/fragments'
+import { roomPieceRatio, SHELF_FILL, shelfFillSteps } from '../engine/fragments'
 import { spineLook } from '../engine/binding'
-import { ACTS_ROOM, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, PAVILION_RECT, HEIGHT, HOUSE_RECT, housesNow, houseAt, lockedTiles, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile, treeKind, type TreeKind } from '../engine/world'
+import { bookcaseTiles, ACTS_ROOM, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, PAVILION_RECT, HEIGHT, HOUSE_RECT, housesNow, houseAt, lockedTiles, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile, treeKind, type TreeKind } from '../engine/world'
 import { currentMapId, mapVisibleHeight, setActiveMap } from '../engine/maps'
 import { newlandGroundAt, newlandOpen, newlandRevealedOn } from '../engine/newland'
 import { areaOf } from '../engine/newland-build'
 import { ARCHIVE, INTERIOR_SHELF, NEWLAND_H, NEWLAND_W } from '../engine/newland-config'
 import { OLD_BUILDINGS, OLD_CONSTRUCTION, OLD_PROPS, OLD_TERRAIN, OLD_VILLAGE_PALETTE } from './old-village-art'
-import { GOSPELS, type Book, type Facing, type NeighborDef, type GameContent, type Season, type Tile } from '../engine/types'
+import { GOSPELS, type Book, type Facing, type NeighborDef, type GameContent, type Piece, type Season, type Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { avatarKey, withLookDefaults, type Avatar, type FullAvatar } from '../engine/avatar'
 import {
@@ -2056,21 +2056,33 @@ export function setDarknessOverride(v: number | null): void {
 
 /** 작은 책장 여섯 칸에 얹는 책등 색 — 채도 낮은 파스텔·갈색 */
 const SHELF_FILL_COLORS = ['#c9b08a', '#b8a58c', '#a9b49a', '#9fa9b4', '#bba3a9', '#cdbf9a', '#a89078']
-/** 서고 작은 책장 채우기: slots번째 책등까지. 책장 순서는 왼쪽 셋(31~33열)·오른쪽 셋(39~41열), 선반 단은 위(3픽셀 높이)·가운데·아래(4픽셀) */
-function drawShelfFill(g: Ctx, firstX: number, firstY: number, steps: number) {
+/**
+ * 작은 책장 채우기: steps번째 책등까지. 책장은 tiles 순서대로 (서고 큰 방은 왼쪽 셋 → 오른쪽 셋), 한 책장에 열두 칸 —
+ * 선반 단은 위(3픽셀 높이)·가운데·아래(4픽셀), 단마다 왼쪽부터 책등 넷. 책등은 2픽셀 너비
+ */
+function drawShelfFill(g: Ctx, tiles: readonly Tile[], steps: number) {
   const { rows, perRow } = SHELF_FILL
   for (let n = 0; n < steps; n++) {
     const shelf = Math.floor(n / (rows * perRow))
+    const t = tiles[shelf]
+    if (!t) break
     const inShelf = n % (rows * perRow)
     const row = Math.floor(inShelf / perRow)
     const col = inShelf % perRow
-    const tx = shelf < 3 ? firstX - 4 + shelf : firstX + 4 + (shelf - 3)
     g.fillStyle = SHELF_FILL_COLORS[(n * 3 + shelf) % SHELF_FILL_COLORS.length]
     // 선반 판은 타일 안 y=4·9·14 줄 — 책등은 판 위에 선다
     const y = row === 0 ? 1 : row === 1 ? 5 : 10
     const h = row === 0 ? 3 : 4
-    g.fillRect(tx * TILE + 2 + col * 3, firstY * TILE + y, 2, h)
+    g.fillRect(t.x * TILE + 2 + col * 3, t.y * TILE + y, 2, h)
   }
+}
+
+/** 서고 방 하나의 책장 채움: 그 방에 속한 책들의 조각 비율 (큰 방은 신약 전체) */
+function drawRoomShelfFill(g: Ctx, game: GameState, pieces: readonly Piece[], room: 'library' | 'acts' | 'romPhm' | 'hebJud' | 'rev') {
+  const tiles = bookcaseTiles(room)
+  const books = room === 'library' ? undefined : shelfRoom(room).books
+  const { got, total } = roomPieceRatio(pieces, game.collected, books)
+  drawShelfFill(g, tiles, shelfFillSteps(got, total, tiles.length))
 }
 
 /** 새 터 한 장면: 땅과 서고, 기록자, 계절 날씨·밤. 첫 마을의 이웃·동물·아이·행사는 이 지도에 없다 */
@@ -2285,7 +2297,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         })
         // 작은 책장 여섯 개: 모은 말씀 조각 ÷ 27권 전체 조각만큼 왼쪽 위 책장부터 한 단씩 차오른다 (왼쪽 셋 → 오른쪽 셋, 책장마다 위 단부터).
         // 아래 양옆 책장의 꽂은 책 책등은 이 위에 겹쳐 그린다. 책등은 2픽셀 너비, 차분한 파스텔·갈색
-        drawShelfFill(g, first.x, first.y, shelfFillSteps(game.collected.length, content.pieces.length))
+        drawRoomShelfFill(g, game, content.pieces, 'library')
         // 양옆 책장: 복음서 다음에 꽂은 책(사도행전·편지·요한계시록)마다 책등 둘씩 (왼쪽·오른쪽 짝) — 처음엔 텅 빈 책장이
         // 권이 늘수록 찬다. 책마다 다른 색(제본 모습): 왼쪽은 책등 색, 오른쪽 짝은 장식 색. 은박·금박이면 위 2픽셀 띠
         for (const sp of sideShelfSpines(game.shelved)) {
@@ -2303,6 +2315,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       }
       // 사도행전 방: 선반의 사도행전 책등, 벽 여정 판의 실과 카드 (모은 만큼, 다 이으면 실이 금빛)
       if (roomAt(here) === ACTS_ROOM) {
+        drawRoomShelfFill(g, game, content.pieces, 'acts')
         const mid = PLACES.actsShelf.tiles[1]
         if (game.shelved.ac === undefined) drawEmptySlot(g, mid.x * TILE + 4, mid.y * TILE + 2)
         else drawSpine(g, mid.x * TILE + 4, mid.y * TILE + 2, 'ac', game)
@@ -2324,14 +2337,21 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       }
       // 요한계시록 방: 한 권 선반의 요한계시록 책등, 벽 일곱 교회 카드 판의 자리·카드·실
       if (roomAt(here) === REV_ROOM) {
+        drawRoomShelfFill(g, game, content.pieces, 'rev')
         const mid = PLACES.revShelf.tiles[1]
         if (game.shelved.rev === undefined) drawEmptySlot(g, mid.x * TILE + 4, mid.y * TILE + 2)
         else drawSpine(g, mid.x * TILE + 4, mid.y * TILE + 2, 'rev', game)
         drawCardBoard(g, PLACES.churchBoard.tiles[0], game.churches.length, (game.flags.churchesDone ?? 0) > 0)
       }
       // 편지 방: 편지 선반의 얇은 책등 (방 표 순서)
-      if (roomAt(here) === LETTERS_ROOM) drawLetterSpines(g, game, 'romPhm')
-      if (roomAt(here) === HEB_JUD_ROOM) drawLetterSpines(g, game, 'hebJud')
+      if (roomAt(here) === LETTERS_ROOM) {
+        drawRoomShelfFill(g, game, content.pieces, 'romPhm')
+        drawLetterSpines(g, game, 'romPhm')
+      }
+      if (roomAt(here) === HEB_JUD_ROOM) {
+        drawRoomShelfFill(g, game, content.pieces, 'hebJud')
+        drawLetterSpines(g, game, 'hebJud')
+      }
 
       // 마음이 쌓여 마을에 생긴 것들
       drawDecor(g, game, weather, t, phase === 'morning' || phase === 'day')

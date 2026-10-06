@@ -868,6 +868,19 @@ export function placeActive(id: PlaceId): boolean {
   return !fixture || homeFurniture.some(f => FIXTURES[f.item as keyof typeof FIXTURES]?.place === id)
 }
 
+/**
+ * 서고 안 작은 책장 칸들 (조각 채움 그림이 쓴다). 서고 큰 방(library)은 양옆 여섯 (왼쪽 셋 → 오른쪽 셋),
+ * 사도행전·로마서–빌레몬서·히브리서–유다서·요한계시록 방은 오른쪽 책장 셋 (선반 왼쪽 칸에서 6칸 오른쪽)
+ */
+export function bookcaseTiles(room: 'library' | 'acts' | 'romPhm' | 'hebJud' | 'rev'): Tile[] {
+  if (room === 'library') {
+    const [first] = PLACES.library.tiles
+    return [0, 1, 2].map((i) => ({ x: first.x - 4 + i, y: first.y })).concat([0, 1, 2].map((i) => ({ x: first.x + 4 + i, y: first.y })))
+  }
+  const shelf = room === 'acts' ? PLACES.actsShelf : room === 'romPhm' ? PLACES.lettersShelf : room === 'hebJud' ? PLACES.hebJudShelf : PLACES.revShelf
+  return shelf.tiles.map((t) => ({ x: t.x + 6, y: t.y }))
+}
+
 export function placeAt(t: Tile): PlaceId | null {
   // 새 터에는 서고 안 책상·책장만 있다 (그 밖의 장소·이웃·가구는 이 지도에 없다)
   if (currentMapId() === 'newland') return (['otDesk', 'otShelf'] as const).find((id) => PLACES[id].tiles.some((pt) => sameTile(pt, t))) ?? null

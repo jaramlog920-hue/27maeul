@@ -165,11 +165,19 @@ export const SHELF_FILL = { shelves: 6, rows: 3, perRow: 4 } as const
 export const SHELF_FILL_SLOTS = SHELF_FILL.shelves * SHELF_FILL.rows * SHELF_FILL.perRow
 
 /**
- * 채울 책등 수 (0 ~ SHELF_FILL_SLOTS): 조각이 하나도 없으면 0, 하나라도 있으면 1 이상, 다 모아야 가득.
- * 모은 수가 늘면 줄지 않는다 (단조 증가)
+ * 채울 책등 수 (0 ~ 책장 수 × 12): 조각이 하나도 없으면 0, 하나라도 있으면 1 이상, 다 모아야 가득.
+ * 모은 수가 늘면 줄지 않는다 (단조 증가). shelves는 그 방의 책장 칸 수 (첫 마을 서고 큰 방 여섯, 다른 방 셋, 새 터 서고 하나)
  */
-export function shelfFillSteps(collected: number, total: number): number {
-  if (total <= 0 || collected <= 0) return 0
-  if (collected >= total) return SHELF_FILL_SLOTS
-  return Math.min(SHELF_FILL_SLOTS - 1, Math.max(1, Math.floor((collected / total) * SHELF_FILL_SLOTS)))
+export function shelfFillSteps(collected: number, total: number, shelves: number = SHELF_FILL.shelves): number {
+  const slots = shelves * SHELF_FILL.rows * SHELF_FILL.perRow
+  if (total <= 0 || collected <= 0 || slots <= 0) return 0
+  if (collected >= total) return slots
+  return Math.min(slots - 1, Math.max(1, Math.floor((collected / total) * slots)))
+}
+
+/** 어떤 방의 조각 비율: 그 방에 속한 책들의 조각 중 모은 수 / 전체 수 (책이 없으면 전부) */
+export function roomPieceRatio(pieces: readonly Piece[], collected: readonly string[], books?: readonly string[]): { got: number; total: number } {
+  const mine = books ? pieces.filter((p) => books.includes(p.book)) : pieces
+  const have = new Set(collected)
+  return { got: mine.filter((p) => have.has(p.id)).length, total: mine.length }
 }
