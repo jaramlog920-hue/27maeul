@@ -64,14 +64,24 @@ export function avatarDetails(rows: string[], facing: Facing, a: FullAvatar, bli
   // 뒷머리. 끝선과 묶는 위치가 서로 달라 색 없이도 구분된다.
   const sides = side ? [[0, 1]] : [[0, 1], [9, 8]]
   const hair = (x: number, y: number, c = 'h') => dot(rows, x, y, c)
-  if (a.hairBack === 1 || a.hairBack === 2) {
-    const end = a.hairBack === 1 ? 8 : 5
+  if (a.hairBack === 1) {
+    const end = 8
     for (const [outer, inner] of sides) {
       for (let y = 2; y <= end; y++) hair(outer, y)
       for (let y = 3; y < end; y++) hair(inner, y)
       hair(outer, end + 1, '1')
     }
     if (back) for (let y = 6; y <= end; y++) for (let x = 2; x <= 7; x++) hair(x, y)
+  }
+  if (a.hairBack === 2) {
+    // 단발 (2026-10-07 사용자): 귀까지 머리로 덮고, 옆머리가 일자로 떨어져 끝선이 반듯하다
+    for (const [outer, inner] of sides) {
+      for (let y = 2; y <= 6; y++) hair(outer, y)
+      for (let y = 3; y <= 6; y++) hair(inner, y)
+      hair(outer, 7, '1')
+      hair(inner, 7, '1')
+    }
+    if (back) for (let y = 6; y <= 7; y++) for (let x = 2; x <= 7; x++) hair(x, y, y === 7 ? '1' : 'h')
   }
   if (a.hairBack === 3) {
     for (const x of [3, 4, 5, 6]) hair(x, 0)
@@ -96,8 +106,10 @@ export function avatarDetails(rows: string[], facing: Facing, a: FullAvatar, bli
   }
   if (a.hairBack === 7) {
     for (const [outer, inner] of sides) {
-      for (let y = 3; y <= 7; y++) hair(outer, y)
-      for (const y of [4, 6, 8]) hair(inner, y, y === 8 ? '1' : 'h')
+      // 귀가 보이지 않게 안쪽 줄도 빈틈없이 덮는다 (2026-10-07 사용자). 물결은 바깥 줄의 밝은 결로
+      for (let y = 3; y <= 7; y++) hair(outer, y, y === 5 ? '0' : 'h')
+      for (let y = 3; y <= 7; y++) hair(inner, y)
+      hair(inner, 8, '1')
     }
     if (back) for (let y = 6; y <= 7; y++) for (let x = 2; x <= 7; x++) hair(x, y)
   }
