@@ -102,10 +102,15 @@ for(const id of Object.keys(BUILDING_LABELS)) {
   OLD_CONSTRUCTION[id]=Object.fromEntries((['down','up','left','right'] as Facing[]).map(f=>[f,building(id,f,true)])) as Record<Facing,FurnitureArt>
 }
 export const OLD_INTERIORS:Record<string,FurnitureArt>={}
-for(const id of Object.keys(BUILDING_LABELS).filter(id=>!['courtyard','garden'].includes(id))) {
+/** 건물 안 바닥과 벽만 (간판·소품은 빼고 — 가구 재배치 화면이 소품을 따로 올린다). OLD_INTERIORS의 바탕과 같은 도트 */
+function interiorShell():FurnitureArt{
   const r:Rect[]=[['W',0,0,128,96],['u',2,2,124,20],['I',2,22,124,72],['w',2,23,124,1],['U',2,24,3,70],['U',123,24,3,70],['W',55,92,18,4],['u',57,92,14,4],['W',88,5,20,13],['a',90,6,16,10],['l',97,6,1,10]]
   for(let y=30;y<91;y+=12){r.push(['i',5,y,118,1]);for(let x=10+(y%24?0:12);x<120;x+=24)r.push(['i',x,y-5,1,5])}
-  let a=pixels(8,6,r)
+  return pixels(8,6,r)
+}
+export const OLD_INTERIOR_SHELL=interiorShell()
+for(const id of Object.keys(BUILDING_LABELS).filter(id=>!['courtyard','garden'].includes(id))) {
+  let a=interiorShell()
   a=put(a,sign(id),12,30);a=put(a,id==='archive'?OLD_PROPS.scrollCabinet:OLD_PROPS.departureChest,100,30)
   a=put(a,id==='archive'?OLD_PROPS.readingCushions:OLD_PROPS.sharedMeal,48,50)
   if(id==='family')a=put(a,OLD_PROPS.growthMeasure,26,30)

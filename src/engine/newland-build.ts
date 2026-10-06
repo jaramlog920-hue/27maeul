@@ -3,7 +3,8 @@
 // 이 파일은 GameState를 타입으로만 읽는다 (game.ts가 이 파일을 부른다).
 import type { GameState } from './game'
 import { addGift, has, take } from './items'
-import { ARCHIVE, BUILD_RECT, NEWLAND_PORTAL_FRONT, NEWLAND_VISIBLE_H, NEWLAND_W } from './newland-config'
+import type { Furniture } from './room'
+import { ARCHIVE, BUILD_RECT, MAX_HOMES, NEWLAND_PORTAL_FRONT, NEWLAND_VISIBLE_H, NEWLAND_W, ROOM_SLOTS } from './newland-config'
 import { NEWLAND_MAP } from './newland'
 import {
   ART_TILES, BUILD_DAYS_TO_DONE, BUILD_DAYS_TO_START, isBuildKind, isTileKind, REFUND_BEFORE, REFUND_DEMOLISH_COINS, REFUND_DURING, SITES,
@@ -26,6 +27,8 @@ export interface Build {
   orderedDay: number
   /** 낸 것 — 환불은 이 값에서 계산한다 */
   paid: Cost
+  /** 입주 주택의 안 방 칸 번호 (ROOM_SLOTS) — 주문할 때 정해 저장한다. 같은 건물은 늘 같은 방 */
+  slot?: number
   /** 환불을 이미 마쳤다는 표식 — 환불은 기록 삭제와 한 번에 일어나므로 남아 있는 기록에서는 늘 false */
   refunded: boolean
 }
@@ -39,6 +42,8 @@ export interface NewlandState {
 }
 
 export const MAX_BUILDS = 12
+/** 입주 주택(안 방이 필요한 건물)의 최대 수 — 방 칸 수가 상한이다 (newland-config) */
+export { MAX_HOMES }
 export const emptyNewland = (): NewlandState => ({ builds: [], tiles: {}, nextId: 1, settledDay: 0 })
 
 type Base = Pick<GameState, 'newland' | 'flags' | 'clock' | 'coins' | 'inv' | 'player'>
@@ -84,6 +89,8 @@ const inRect = (t: Tile) => t.x >= BUILD_RECT.x0 && t.x <= BUILD_RECT.x1 && t.y 
 function blockedOf(builds: readonly Build[], finalState = false): Set<string> {
   const out = new Set<string>()
   for (const b of builds) {
+    // 공사 중 마당은 덧씌움에서 S로 막힌다 — 길 검사도 같이 막힌 칸으로 본다 (완공된 마당은 걸을 수 있다)
+    if (b.kind === 'courtyard' && b.state !== 'done') for (const t of areaOf('courtyard', b.x, b.y)) out.add(keyOf(t))
     if (b.kind !== 'home') continue
     const open = finalState || b.state === 'done' ? doorOf(b.kind, b.x, b.y, b.facing)?.door : undefined
     for (const t of areaOf(b.kind, b.x, b.y)) if (!(open && t.x === open.x && t.y === open.y)) out.add(keyOf(t))
@@ -118,7 +125,7 @@ const EMPTY: ReadonlyMap<string, string> = new Map()
 // ── 놓기 검사 ──
 
 /** 놓을 수 없는 까닭 하나 (화면은 이 하나만 보인다) */
-export type PlaceBlock = 'unrevealed' | 'facing' | 'outside' | 'overlap' | 'standing' | 'door' | 'sealed' | 'many' | 'same'
+export type PlaceBlock = 'unrevealed' | 'facing' | 'outside' | 'overlap' | 'standing' | 'door' | 'sealed' | 'many' | 'homes' | 'same'
 /** 주문할 수 없는 까닭: 놓기 + 비용 */
 export type OrderBlock = PlaceBlock | 'coins' | 'items' | 'unknown'
 
@@ -154,13 +161,21 @@ function reachable(builds: readonly Build[]): Set<string> {
   return seen
 }
 
+/** 공사 중 마당(울타리가 쳐진 칸) — 덧씌움이 S로 막는 칸들 */
+function fencedOf(builds: readonly Build[]): Set<string> {
+  return new Set(builds.filter((b) => b.kind === 'courtyard' && b.state !== 'done').flatMap((b) => areaOf('courtyard', b.x, b.y).map(keyOf)))
+}
+
 /** 서고 문 앞과 문, 모든 건물의 문 앞·문, 길·정원·마당 칸 — 입구에서 닿아야 하는 칸들 (끝 모양 기준) */
 function mustReach(builds: readonly Build[], tiles: Readonly<Record<string, TileKind>>): Tile[] {
   const others: Tile[] = [{ ...ARCHIVE.front }, { x: ARCHIVE.door.x, y: ARCHIVE.door.y }]
+  const fenced = fencedOf(builds)
   for (const b of builds) {
     const d = doorOf(b.kind, b.x, b.y, b.facing)
-    if (d) others.push(d.front, d.door)
-    if (b.kind === 'courtyard') others.push(...areaOf('courtyard', b.x, b.y))
+    // 문 앞이 공사 중 마당 울타리 안이면 완공까지 닿지 못하는 것이 맞다 — 세지 않는다
+    if (d && !fenced.has(keyOf(d.front))) others.push(d.front, d.door)
+    // 공사 중 마당은 막혀 있으니 닿을 칸으로 세지 않는다 (완공되면 걸을 수 있다)
+    if (b.kind === 'courtyard' && b.state === 'done') others.push(...areaOf('courtyard', b.x, b.y))
   }
   for (const k of Object.keys(tiles)) {
     const [x, y] = k.split(',').map(Number)
@@ -183,6 +198,7 @@ export function canPlace(s: Base, kind: SiteKind, x: number, y: number, facing: 
   const builds = buildsOf(s)
   const tiles = tilesOf(s)
   if (!isTile && builds.length >= MAX_BUILDS) return 'many'
+  if (kind === 'home' && builds.filter((b) => b.kind === 'home').length >= MAX_HOMES) return 'homes'
   // 겹침: 새 영역이 다른 영역에 닿으면 안 되고, 새 그림 상자가 다른 영역을 덮어도, 다른 그림 상자가 새 영역을 덮어도 안 된다
   const newArea = new Set(area.map(keyOf))
   const newBox = new Set(box.map(keyOf))
@@ -204,13 +220,15 @@ export function canPlace(s: Base, kind: SiteKind, x: number, y: number, facing: 
   // 놓은 뒤의 모양으로 길 검사
   const nextBuilds: Build[] = isTile
     ? [...builds]
-    : [...builds, { id: '', kind: kind as BuildKind, x, y, facing, state: 'done', orderedDay: 0, paid: { coins: 0, items: {} }, refunded: false }]
+    : [...builds, { id: '', kind: kind as BuildKind, x, y, facing, state: 'ordered', orderedDay: 0, paid: { coins: 0, items: {} }, refunded: false }]
   const nextTiles = isTile ? { ...tiles, ...Object.fromEntries(area.map((t) => [keyOf(t), kind as TileKind])) } : tiles
   const seen = reachable(nextBuilds)
   // 어느 집이든 문 앞·문에 닿지 못하면 "문 앞이 막힌다" (새로 놓는 집이든, 이미 있는 집의 문 앞을 덮는 것이든)
+  // (공사 중 마당 울타리 안의 문 앞은 완공될 때까지 닿지 못하는 것이 맞다 — 그 칸은 세지 않는다)
+  const fenced = fencedOf(nextBuilds)
   for (const b of nextBuilds) {
     const d = doorOf(b.kind, b.x, b.y, b.facing)
-    if (d && (!seen.has(keyOf(d.front)) || !seen.has(keyOf(d.door)))) return 'door'
+    if (d && !fenced.has(keyOf(d.front)) && (!seen.has(keyOf(d.front)) || !seen.has(keyOf(d.door)))) return 'door'
   }
   if (mustReach(nextBuilds, nextTiles).some((t) => !seen.has(keyOf(t)))) return 'sealed'
   return null
@@ -265,9 +283,44 @@ export function orderBuild<T extends Base & Ordered>(s: T, kind: SiteKind, x: nu
     for (const t of newTilesOf(s, kind, x, y, size)) tiles[keyOf(t)] = kind
     return { ...s, coins: paid.coins, inv: paid.inv, newland: { ...nl, tiles } }
   }
-  const b: Build = { id: `b${nl.nextId}`, kind: kind as BuildKind, x, y, facing, state: 'ordered', orderedDay: s.clock.day, paid: cost, refunded: false }
+  const slot = kind === 'home' ? freeSlot(nl.builds) : undefined
+  const b: Build = { id: `b${nl.nextId}`, kind: kind as BuildKind, x, y, facing, state: 'ordered', orderedDay: s.clock.day, paid: cost, refunded: false, ...(slot !== undefined ? { slot } : {}) }
   return { ...s, coins: paid.coins, inv: paid.inv, newland: { ...nl, builds: [...nl.builds, b], nextId: nl.nextId + 1 } }
 }
+
+/** 아직 어느 입주 주택도 쓰지 않는 가장 앞 방 칸 (없으면 undefined) */
+function freeSlot(builds: readonly Build[]): number | undefined {
+  const used = new Set(builds.filter((b) => b.kind === 'home').map((b) => b.slot))
+  for (let i = 0; i < ROOM_SLOTS.length; i++) if (!used.has(i)) return i
+  return undefined
+}
+
+// ── 문 ↔ 안 방 (World.warpAt이 읽는다) ──
+
+function buildWarps(nl: NewlandState): Map<string, Tile> {
+  const m = new Map<string, Tile>()
+  for (const b of nl.builds) {
+    if (b.kind !== 'home' || b.state !== 'done' || b.slot === undefined) continue
+    const slot = ROOM_SLOTS[b.slot]
+    const d = doorOf(b.kind, b.x, b.y, b.facing)
+    if (!slot || !d) continue
+    m.set(keyOf(d.door), { ...slot.entry })
+    m.set(keyOf(slot.exit), { ...d.front })
+  }
+  return m
+}
+let lastWarpNl: NewlandState | undefined
+let lastWarps: ReadonlyMap<string, Tile> = new Map()
+/** 완공된 입주 주택의 문 → 방 안, 방 문깔개 → 문 앞 (같은 상태 객체면 다시 만들지 않는다) */
+export function warpsFor(nl: NewlandState | undefined): ReadonlyMap<string, Tile> {
+  if (!nl || nl.builds.length === 0) return EMPTY_WARPS
+  if (nl !== lastWarpNl) {
+    lastWarpNl = nl
+    lastWarps = buildWarps(nl)
+  }
+  return lastWarps
+}
+const EMPTY_WARPS: ReadonlyMap<string, Tile> = new Map()
 
 // ── 공사 하루 ──
 
@@ -308,23 +361,40 @@ function refund<T extends Pick<GameState, 'coins' | 'inv'>>(s: T, c: Cost): T {
   return { ...s, coins: s.coins + c.coins, inv: Object.keys(c.items).length ? addGift(s.inv, c.items) : s.inv }
 }
 /** 환불과 기록 삭제를 한 번에: 이미 환불된 기록이면 아무것도 하지 않는다 */
-function settleRefund<T extends Pick<GameState, 'coins' | 'inv' | 'newland'>>(s: T, id: string, rate: (b: Build) => Cost | null): T | null {
+function settleRefund<T extends Pick<GameState, 'coins' | 'inv' | 'newland'> & { rooms?: Record<string, Furniture[]> }>(s: T, id: string, rate: (b: Build) => Cost | null): T | null {
   const nl = s.newland
   const b = nl?.builds.find((x) => x.id === id)
   if (!nl || !b || b.refunded) return null
   const back = rate(b)
   if (!back) return null
-  const gone = refund(s, back)
+  const gone = returnRoom(refund(s, back), id)
   return { ...gone, newland: { ...nl, builds: nl.builds.filter((x) => x.id !== id) } }
 }
 
+/** 소유 공간 키: 'newland:<건물 id>' (GameState.rooms) */
+export const roomKeyFor = (buildId: string): string => `newland:${buildId}`
+
+/** 건물이 사라질 때 안의 가구를 모두 가방으로 (가방이 가득해도 받는다 — 집을 넓힐 때 refitRoom과 같은 규칙) */
+export function returnRoom<T extends Pick<GameState, 'inv'> & { rooms?: Record<string, Furniture[]> }>(s: T, buildId: string): T {
+  const k = roomKeyFor(buildId)
+  const room = s.rooms?.[k]
+  if (!room) return s
+  const back: Items = {}
+  for (const f of room) back[f.item] = (back[f.item] ?? 0) + 1
+  const { [k]: _gone, ...rest } = s.rooms!
+  void _gone
+  const { rooms: _old, ...others } = s
+  void _old
+  return { ...others, inv: addGift(s.inv, back), ...(Object.keys(rest).length ? { rooms: rest } : {}) } as T
+}
+
 /** 취소: 공사 시작 전이면 100%, 공사 중이면 50% (닢·재료 각각 소수 버림). 완공된 것은 취소가 아니라 철거 */
-export function cancelBuild<T extends Pick<GameState, 'coins' | 'inv' | 'newland'>>(s: T, id: string): T | null {
+export function cancelBuild<T extends Pick<GameState, 'coins' | 'inv' | 'newland'> & { rooms?: Record<string, Furniture[]> }>(s: T, id: string): T | null {
   return settleRefund(s, id, (b) => (b.state === 'ordered' ? share(b.paid, REFUND_BEFORE, true) : b.state === 'building' ? share(b.paid, REFUND_DURING, true) : null))
 }
 
 /** 철거: 완공된 건물만 — 닢 50%, 재료 환급 없음. 서고(건물 기록이 아니다)는 철거할 수 없다 */
-export function demolishBuild<T extends Pick<GameState, 'coins' | 'inv' | 'newland'>>(s: T, id: string): T | null {
+export function demolishBuild<T extends Pick<GameState, 'coins' | 'inv' | 'newland'> & { rooms?: Record<string, Furniture[]> }>(s: T, id: string): T | null {
   return settleRefund(s, id, (b) => (b.state === 'done' ? { coins: Math.floor(b.paid.coins * REFUND_DEMOLISH_COINS), items: {} } : null))
 }
 
@@ -370,6 +440,7 @@ export function sanitizeNewlandBuild(raw: unknown, today: number): NewlandState 
   const builds: Build[] = []
   const taken = new Set<string>()
   const ids = new Set<string>()
+  const slots = new Set<number>()
   let maxN = 0
   if (Array.isArray(raw.builds)) {
     for (const r of raw.builds) {
@@ -384,13 +455,23 @@ export function sanitizeNewlandBuild(raw: unknown, today: number): NewlandState 
       if (!box.every(inRect)) continue
       if (area.some((t) => taken.has(keyOf(t)))) continue
       const p = isObj(paid) ? paid : {}
+      const rawSlot = (r as { slot?: unknown }).slot
+      const slot = kind === 'home' && isInt(rawSlot) && rawSlot >= 0 && rawSlot < ROOM_SLOTS.length && !slots.has(rawSlot) ? rawSlot : undefined
+      if (slot !== undefined) slots.add(slot)
       const coins = isInt(p.coins) && p.coins >= 0 && p.coins <= 100000 ? p.coins : 0
       const day = isInt(orderedDay) ? Math.min(orderedDay, today) : today
       area.forEach((t) => taken.add(keyOf(t)))
       ids.add(id)
       maxN = Math.max(maxN, Number(id.slice(1)))
-      builds.push({ id, kind, x, y, facing: facing as Facing, state, orderedDay: day, paid: { coins, items: sanitizeItems(p.items) }, refunded: false })
+      builds.push({ id, kind, x, y, facing: facing as Facing, state, orderedDay: day, paid: { coins, items: sanitizeItems(p.items) }, refunded: false, ...(slot !== undefined ? { slot } : {}) })
     }
+  }
+  // 방 칸이 없는 입주 주택(작업 6 저장 — 칸 번호 이전)은 앞 빈 칸부터 잇는다. 칸이 모자라면 방 없이 둔다 (문은 있으나 들어갈 수 없다)
+  for (let i = 0; i < builds.length; i++) {
+    const b = builds[i]
+    if (b.kind !== 'home' || b.slot !== undefined) continue
+    const free = freeSlot(builds)
+    if (free !== undefined) builds[i] = { ...b, slot: free }
   }
   const tiles: Record<string, TileKind> = {}
   if (isObj(raw.tiles)) {

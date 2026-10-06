@@ -138,8 +138,9 @@ import {
 import { propFootprint, HOUSES, PET_HOME, HOME_FRONT, isHome, isIndoor, isWalkable, key, HOME_ENTRY, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setHomeFurniture, setMailbox, setOpenDoors, setSpouseRoom, START, tileAt, WARPS, warpAt } from './world'
 import { currentMapId, setActiveMap, type MapId } from './maps'
 import { drawOtPiece, OT_PIECE_DAY_FLAG } from './ot-pieces'
-import { claimNewland, entryFront, grantNewland, inArchiveRoom, portalAt, revealNewland, setNewlandOpen, setNewlandOverlay, setNewlandRevealed } from './newland'
-import { advanceBuilds, overlayFor, type NewlandState } from './newland-build'
+import { claimNewland, entryFront, grantNewland, inArchiveRoom, portalAt, revealNewland, roomSlotAt, setNewlandOpen, setNewlandOverlay, setNewlandRevealed, setNewlandWarps } from './newland'
+import { advanceBuilds, overlayFor, warpsFor, type NewlandState } from './newland-build'
+import { roomOf, roomTarget, withRoomOf } from './newland-rooms'
 import { ARCHIVE, NEWLAND_PORTAL, TRAVEL_FROM_MINUTE, TRAVEL_LAST_MINUTE, TRAVEL_MINUTES, VILLAGE_PORTAL } from './newland-config'
 import { SPOUSE_ROOM_STAND } from './spouse-room'
 import type { Cooking } from './cooking'
@@ -322,6 +323,8 @@ export interface GameState {
    * 없으면 아무것도 짓지 않은 땅 (옛 저장·건물 0채)
    */
   newland?: NewlandState
+  /** 새 터 입주 주택 안 가구 — 소유 공간별 ('newland:<건물 id>', 계획 20 작업 7). 첫 마을 집의 room과 섞이지 않는다 */
+  rooms?: Record<string, Furniture[]>
 }
 
 /** 가구를 쓰는 동작 종류 — 그리는 쪽이 furnitureUseFrame/extraUseFrame으로 옮긴다 (blowCandle은 생일 빵 촛불 불기 — eventMotionFrame) */
@@ -359,6 +362,7 @@ export function syncHome(s: Pick<GameState, 'homeLevel'> & Partial<Pick<GameStat
   setNewlandOpen(!!s.flags?.newlandGift)
   setNewlandRevealed(!!s.flags?.newlandRevealed)
   setNewlandOverlay(overlayFor(s.newland))
+  setNewlandWarps(warpsFor(s.newland))
   setHomeLevel(s.homeLevel ?? 0)
   setHomeFurniture(s.room ?? initialHomeFurniture())
   setSpouseRoom(s.romance?.stage === 'married' ? s.romance.partner : null)
@@ -699,7 +703,8 @@ export function outdoors(s: GameState): boolean {
 
 function blockersOf(s: GameState): Set<string> {
   // 새 터: 첫 마을의 이웃·가구·잠긴 구역은 이 지도에 없다
-  if (currentMapId() === 'newland') return new Set()
+  // (입주 주택 안 방에서는 그 방의 길 막는 가구만)
+  if (currentMapId() === 'newland') return solidTiles(roomOf(s))
   return new Set([...Object.values(s.npcs).filter((n) => n.visible).map((n) => key(npcTile(n))), ...solidTiles(s.room), ...lockedTiles(shelvedCount(s)), ...closedDoors(s), ...storyPropBlockers(s)])
 }
 
@@ -1106,7 +1111,7 @@ function tickNewland(s: GameState, dt: number, rng: Rng): { state: GameState; ev
   let player = stepActor(s.player, (starving(needs) ? dt * 0.7 : dt) * walkMul(s.inv)).actor
   const now = { x: Math.round(player.x), y: Math.round(player.y) }
   const warp = !sameTile(now, here) ? warpAt(now) : undefined
-  if (warp) player = { ...player, x: warp.x, y: warp.y, path: [], facing: inArchiveRoom(warp) ? 'up' : 'down' }
+  if (warp) player = { ...player, x: warp.x, y: warp.y, path: [], facing: inArchiveRoom(warp) || roomSlotAt(warp) >= 0 ? 'up' : 'down' }
   let target = warp ? null : s.target
   // 서고 문을 처음 밟는 순간 (한 번 — 플래그 newlandLight): 어두운 안이 아침빛으로 밝아지고 본문 카드가 이어진다
   let flags = s.flags
@@ -3535,38 +3540,47 @@ export function setMyLine(s: GameState, key: string, text: string): GameState {
 
 export function placeFurniture(s: GameState, item: ItemId, t: Tile): GameState | null {
   syncHome(s)
-  const f = placement(s.room, item, t)
+  // 꾸밀 방: 첫 마을은 내 집, 새 터는 지금 들어와 있는 입주 주택 방 (방 밖이면 없음)
+  const at = roomTarget(s)
+  if (!at) return null
+  const f = placement(at.room, item, t, undefined, at.ctx)
   if (!f) return null
   const left = take(s.inv, { [item]: 1 })
   if (!left) return null
   // 배운 생활 기술의 모습 (기획 11) — 고른 모습만, 쓰임은 같다
   const finish = placedStyle(s.flags, item)
   const piece: Furniture = finish ? { ...f, finish } : f
-  return { ...s, inv: left, room: [...s.room, piece] }
+  return { ...withRoomOf(s, at.key, [...at.room, piece]), inv: left }
 }
 
 /** 놓인 가구를 한 번 돌린다 (계획 17 작업 2 — 못 돌리면 null, 자리·가방은 그대로) */
 export function rotateFurniture(s: GameState, f: Furniture): GameState | null {
   syncHome(s)
-  const turned = rotation(s.room, f)
+  const at = roomTarget(s)
+  if (!at) return null
+  const turned = rotation(at.room, f, at.ctx)
   if (!turned) return null
-  return { ...s, room: s.room.map((o) => (o === f ? turned : o)) }
+  return withRoomOf(s, at.key, at.room.map((o) => (o === f ? turned : o)))
 }
 
 /** 가방을 거치지 않고 탁자 위 물건까지 한 번에 옮긴다. 실패하면 원래 배치를 보존한다. */
 export function moveFurniture(s: GameState, f: Furniture, to: Tile): GameState | null {
-  if (!s.room.includes(f)) return null
+  const at = roomTarget(s)
+  if (!at || !at.room.includes(f)) return null
   const tiles = footprint(f)
-  const carried = [f, ...s.room.filter(o => o !== f && o.on && tiles.some(t => sameTile(t, o)))]
-  let room = s.room.filter(o => !carried.includes(o))
-  syncHome({ ...s, room })
+  const carried = [f, ...at.room.filter(o => o !== f && o.on && tiles.some(t => sameTile(t, o)))]
+  let room = at.room.filter(o => !carried.includes(o))
+  // 집은 옮기는 동안 붙박이 가구의 자리(PLACES)도 함께 맞춘다
+  const home = at.key === null
+  if (home) syncHome({ ...s, room })
   for (const piece of carried) {
-    const at = { x: to.x + piece.x - f.x, y: to.y + piece.y - f.y }
-    syncHome({ ...s, room: [...room, { ...piece, ...at }] })
-    const ok = placement(room, piece.item, at, piece.facing)
+    const dest = { x: to.x + piece.x - f.x, y: to.y + piece.y - f.y }
+    if (home) syncHome({ ...s, room: [...room, { ...piece, ...dest }] })
+    const ok = placement(room, piece.item, dest, piece.facing, at.ctx)
     if (!ok) { syncHome(s); return null }
     room = [...room, { ...piece, ...ok }]
   }
+  if (!home) return withRoomOf(s, at.key, room)
   // 옮긴 가구를 따라 정해 둔 자리도 함께 옮겨 간다 (쓸 수 있는지는 새 자리에서 다시 따진다)
   let spaces = s.spaces ?? []
   for (const piece of carried) spaces = moveInSpaces(spaces, piece, { item: piece.item, x: to.x + piece.x - f.x, y: to.y + piece.y - f.y })
@@ -3577,12 +3591,15 @@ export function moveFurniture(s: GameState, f: Furniture, to: Tile): GameState |
 
 /** 치운 가구는 가방으로 (넘치면 치우지 않는다) */
 export function removeFurniture(s: GameState, t: Tile): GameState {
-  const gone = removal(s.room, t)
+  const at = roomTarget(s)
+  if (!at) return s
+  const gone = removal(at.room, t)
   if (!gone.length) return s
   const back: Partial<Record<ItemId, number>> = {}
   for (const f of gone) back[f.item] = (back[f.item] ?? 0) + 1
   if (wouldOverflow(s.inv, back)) return s
-  const room = s.room.filter((f) => !gone.includes(f))
+  const room = at.room.filter((f) => !gone.includes(f))
+  if (at.key !== null) return { ...withRoomOf(s, at.key, room), inv: add(s.inv, back) }
   return { ...s, room, spaces: pruneSpaces(s.spaces ?? [], room), inv: add(s.inv, back) }
 }
 

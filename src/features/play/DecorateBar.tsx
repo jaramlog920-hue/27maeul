@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { itemName, T } from '../../content/text'
 import { FURNITURE } from '../../engine/room'
+import { inBuildingRoom, roomOf } from '../../engine/newland-rooms'
 import { liveSpaces, spacesOf, usesFor, furnitureId } from '../../engine/spaces'
 import { spaceOfPiece } from '../../engine/space-life'
 import { hasFacingArt } from '../../render/furniture-facing'
@@ -13,27 +14,30 @@ export function DecorateBar() {
   const level = useGame(s => s.game.homeLevel)
   const moving = useGame(s => s.decorMoving)
   const inv = useGame((s) => s.game.inv)
-  const sel = useGame((s) => selectedPiece(s.game.room, s.decorSel))
+  const sel = useGame((s) => selectedPiece(roomOf(s.game), s.decorSel))
+  const inHouse = useGame((s) => inBuildingRoom(s.game))
   const game = useGame((s) => s.game)
   const [spaceOpen, setSpaceOpen] = useState<string | null>(null)
   const { startDecorate, stopDecorate, turnSelected, removeSelected, moveSelected, showDecorRoom, setSpaceUse, clearSpaceUse } = useGame.getState()
   if (!decorating) return null
   // 자리의 쓰임 (계획 16 작업 23): 고른 가구로 되는 쓰임만 보인다 — 없으면 단추도 없다
-  const uses = sel ? usesFor(game.room, sel) : []
-  const belongs = sel ? spacesOf(game.spaces ?? [], sel) : []
+  const uses = sel && !inHouse ? usesFor(game.room, sel) : []
+  const belongs = sel && !inHouse ? spacesOf(game.spaces ?? [], sel) : []
   const live = liveSpaces(game)
-  const own = sel ? spaceOfPiece(game, sel) : undefined
+  const own = sel && !inHouse ? spaceOfPiece(game, sel) : undefined
   const selId = sel ? furnitureId(sel) : null
   const items = FURNITURE.filter((f) => (inv[f] ?? 0) > 0)
   return (
     <div className="decorate-bar" role="toolbar" aria-label={T.ui.decorate}>
       <p className="hint">{moving ? '옮길 방을 고르고 빈 바닥을 누르세요.' : T.ui.decorateHint}</p>
-      <div className="decorate-items" role="group" aria-label="꾸밀 방 선택">
-        <button onClick={() => showDecorRoom('workshop')}>작업실</button>
-        {level >= 1 && <button onClick={() => showDecorRoom('partner')}>배우자방</button>}
-        {level >= 2 && <button onClick={() => showDecorRoom('baby')}>아이방</button>}
-        {level >= 3 && <button onClick={() => showDecorRoom('living')}>생활방</button>}
-      </div>
+      {!inHouse && (
+        <div className="decorate-items" role="group" aria-label="꾸밀 방 선택">
+          <button onClick={() => showDecorRoom('workshop')}>작업실</button>
+          {level >= 1 && <button onClick={() => showDecorRoom('partner')}>배우자방</button>}
+          {level >= 2 && <button onClick={() => showDecorRoom('baby')}>아이방</button>}
+          {level >= 3 && <button onClick={() => showDecorRoom('living')}>생활방</button>}
+        </div>
+      )}
       {sel && (
         <div className="decorate-items decorate-sel">
           <span>

@@ -7627,6 +7627,7 @@
     "blockDoor": "문 앞이 막혀요.",
     "blockSealed": "길이 막혀요.",
     "blockMany": "이 터에는 더 지을 수 없어요.",
+    "blockHomes": "입주 주택은 더 지을 수 없어요.",
     "blockSame": "이미 깔려 있어요.",
     "blockCoins": "닢이 모자라요.",
     "blockItems": "재료가 모자라요.",

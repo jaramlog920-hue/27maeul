@@ -5,7 +5,7 @@ import { findPath } from './movement'
 import { setActiveMap } from './maps'
 import { setNewlandOpen } from './newland'
 import {
-  advanceBuilds, buildsOf, canOrder, canPlace, cancelBuild, clearTile, demolishBuild, doorOf, MAX_BUILDS, orderBuild, sanitizeNewlandBuild, tilesOf, type Build, type NewlandState,
+  advanceBuilds, buildsOf, MAX_HOMES, canOrder, canPlace, cancelBuild, clearTile, demolishBuild, doorOf, MAX_BUILDS, orderBuild, sanitizeNewlandBuild, tilesOf, type Build, type NewlandState,
 } from './newland-build'
 import { ARCHIVE, BUILD_RECT, INTERIOR_ENTRY, NEWLAND_PORTAL_FRONT } from './newland-config'
 import { deserialize, serialize } from './save'
@@ -134,11 +134,51 @@ describe('놓기 검사', () => {
     expect(canPlace(s, 'path', 10, 14)).toBe('sealed')
   })
 
+  it('공사 중 마당도 길을 막는다 — 덧씌움이 S로 막는 이틀 동안 끊기는 길을 놓기 검사가 지킨다', () => {
+    // 한 칸(10,15)을 집 셋이 북·서·남으로 에워싸고 동쪽은 마당이다. 마당이 공사 중이면 그 칸은 이틀 동안 닿지 못한다
+    const base = land()
+    const court = (state: Build['state']): Build => ({ id: 'b4', kind: 'courtyard', x: 11, y: 12, facing: 'down', state, orderedDay: 1, paid: { coins: 40, items: { reed: 4 } }, refunded: false })
+    const ring = (state: Build['state']): GameState => ({
+      ...base,
+      newland: { builds: [house('b1', 7, 11, 'left'), house('b2', 6, 14, 'left'), house('b3', 7, 15, 'left'), court(state)], tiles: {}, nextId: 5, settledDay: 0 },
+    })
+    const building = ring('building')
+    syncHome(building)
+    // 덧씌움이 실제로 공사 중 마당 칸을 막는다 (그 칸이 길찾기에서도 막힌 칸이어야 맞다)
+    expect(isWalkable({ x: 11, y: 15 })).toBe(false)
+    expect(canPlace(building, 'path', 10, 15)).toBe('sealed')
+    const ordered = ring('ordered')
+    syncHome(ordered)
+    expect(canPlace(ordered, 'path', 10, 15)).toBe('sealed')
+    // 완공된 마당은 걸을 수 있어 같은 자리가 된다
+    const done = ring('done')
+    syncHome(done)
+    expect(isWalkable({ x: 11, y: 15 })).toBe(true)
+    expect(canPlace(done, 'path', 10, 15)).toBeNull()
+  })
+
+  it('새로 놓는 마당도 놓은 날부터 막힌 칸으로 본다 (이미 깐 길을 끊는 마당은 거절)', () => {
+    const base = land()
+    const s: GameState = { ...base, newland: { builds: [house('b1', 7, 11, 'left'), house('b2', 6, 14, 'left'), house('b3', 7, 15, 'left')], tiles: { '10,15': 'path' }, nextId: 4, settledDay: 0 } }
+    syncHome(s)
+    expect(canPlace(s, 'courtyard', 11, 12)).toBe('sealed')
+    // 열린 동쪽을 덮지 않는 마당은 괜찮다
+    expect(canPlace(s, 'courtyard', 20, 20)).toBeNull()
+  })
+
+  it('집 문 앞을 덮는 마당은 놓을 수 있다 (문은 완공까지만 닫혀 있다)', () => {
+    const s = land()
+    const base = place(s, 'home', 10, 15)
+    const d = doorOf('home', 10, 15, 'down')!
+    expect(canPlace(base, 'courtyard', d.front.x - 1, d.front.y)).toBeNull()
+  })
+
   it('놓은 뒤에도 서고 문·모든 집의 문 앞에 길찾기로 닿는다', () => {
     let s = land({ inv: { olive: 20, papyrus: 20, reed: 20 } })
     s = place(s, 'home', 8, 11)
     s = place(s, 'home', 14, 11)
-    s = place(s, 'home', 20, 11)
+    // 입주 주택은 안 방 칸 수(둘)까지만 — 셋째 자리는 마당 (작업 7)
+    s = place(s, 'courtyard', 20, 11)
     s = place(s, 'courtyard', 12, 18)
     s = place(s, 'path', 12, 15, 'down', 3)
     syncHome(s)
@@ -470,10 +510,12 @@ describe('필사·서고와 무관', () => {
   })
 
   it('건물이 가득 차 있어도 서고·책상 길은 막히지 않는다 (놓기 검사가 지킨다)', () => {
-    let s = land({ coins: 5000, inv: { olive: 99, papyrus: 99 } })
+    let s = land({ coins: 5000, inv: { olive: 99, papyrus: 99, reed: 99 } })
     const spots: [number, number][] = [[6, 11], [11, 11], [16, 11], [21, 11], [26, 11], [6, 17], [11, 17], [16, 17], [21, 17], [26, 17]]
     for (const [x, y] of spots) {
-      const next = orderBuild(s, 'home', x, y, 'down')
+      // 입주 주택은 안 방 칸 수까지만 (작업 7) — 나머지 자리는 마당으로 채운다
+      const kind = buildsOf(s).filter((b) => b.kind === 'home').length >= MAX_HOMES ? 'courtyard' : 'home'
+      const next = orderBuild(s, kind, x, y, 'down')
       if (next) {
         s = next
         syncHome(s)
@@ -481,6 +523,6 @@ describe('필사·서고와 무관', () => {
     }
     expect(buildsOf(s).length).toBeGreaterThan(5)
     expect(findPath(NEWLAND_PORTAL_FRONT, ARCHIVE.door)).not.toBeNull()
-    for (const b of buildsOf(s)) expect(findPath(NEWLAND_PORTAL_FRONT, doorOf(b.kind, b.x, b.y, b.facing)!.front)).not.toBeNull()
+    for (const b of buildsOf(s).filter((x) => x.kind === 'home')) expect(findPath(NEWLAND_PORTAL_FRONT, doorOf(b.kind, b.x, b.y, b.facing)!.front)).not.toBeNull()
   })
 })

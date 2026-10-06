@@ -24,6 +24,7 @@ const BLOCK_TEXT: Record<OrderBlock, string> = {
   door: T.build.blockDoor,
   sealed: T.build.blockSealed,
   many: T.build.blockMany,
+  homes: T.build.blockHomes,
   same: T.build.blockSame,
   coins: T.build.blockCoins,
   items: T.build.blockItems,

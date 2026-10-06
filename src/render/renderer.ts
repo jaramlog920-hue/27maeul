@@ -42,8 +42,9 @@ import { bookcaseTiles, ACTS_ROOM, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETT
 import { currentMapId, mapVisibleHeight, setActiveMap } from '../engine/maps'
 import { inArchiveRoom, newlandGroundAt, newlandOpen, newlandRevealedOn } from '../engine/newland'
 import { areaOf } from '../engine/newland-build'
-import { ARCHIVE, INTERIOR_SHELF, NEWLAND_H, NEWLAND_W } from '../engine/newland-config'
-import { OLD_BUILDINGS, OLD_CONSTRUCTION, OLD_PROPS, OLD_TERRAIN, OLD_VILLAGE_PALETTE } from './old-village-art'
+import { ARCHIVE, INTERIOR_SHELF, NEWLAND_H, NEWLAND_W, ROOM_SLOTS } from '../engine/newland-config'
+import { inBuildingRoom, roomOf } from '../engine/newland-rooms'
+import { OLD_BUILDINGS, OLD_CONSTRUCTION, OLD_INTERIOR_SHELL, OLD_PROPS, OLD_TERRAIN, OLD_VILLAGE_PALETTE } from './old-village-art'
 import { GOSPELS, type Book, type Facing, type NeighborDef, type GameContent, type Piece, type Season, type Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { avatarKey, withLookDefaults, type Avatar, type FullAvatar } from '../engine/avatar'
@@ -2008,6 +2009,8 @@ function newlandMapFor(season: Season): HTMLCanvasElement {
       drawGround(g, ch, x, y, season, newlandGroundAt)
       drawObject(g, ch, x, y, season, ch === 'T' ? treeKind(x, y) : undefined)
     }
+  // 입주 주택 안 방 칸 (작업 7): 자산 OLD_INTERIORS의 바닥·벽 (128×96 = 8×6칸) — 간판·소품은 빼고, 가구는 방 주인의 가구를 위에 그린다
+  for (const r of ROOM_SLOTS) g.drawImage(paint('old/interior/shell', OLD_INTERIOR_SHELL.rows, OLD_VILLAGE_PALETTE), r.x0 * TILE, r.y0 * TILE)
   // 작은 서고 (자산 old-village-art의 archive, 앞쪽): 그림 4×4칸, 아랫줄이 문 — 칸 구성은 newland-config가 따로 정했다
   g.drawImage(paint('old/archive/down', OLD_BUILDINGS.archive.down.rows, OLD_VILLAGE_PALETTE), ARCHIVE.x0 * TILE, ARCHIVE.y0 * TILE)
   newlandCache.set(key, c)
@@ -2087,7 +2090,7 @@ function drawRoomShelfFill(g: Ctx, game: GameState, pieces: readonly Piece[], ro
 }
 
 /** 새 터 한 장면: 땅과 서고, 기록자, 계절 날씨·밤. 첫 마을의 이웃·동물·아이·행사는 이 지도에 없다 */
-function drawNewland(g: Ctx, game: GameState, t: number, W: number, H: number, ox: number, oy: number) {
+function drawNewland(g: Ctx, game: GameState, t: number, W: number, H: number, ox: number, oy: number, selected: readonly Tile[] | null = null) {
   const season = seasonOf(game.clock.day)
   const weather = weatherOf(game.clock.day)
   const p = game.player
@@ -2100,6 +2103,11 @@ function drawNewland(g: Ctx, game: GameState, t: number, W: number, H: number, o
     g.translate(-ox, -oy)
     g.drawImage(newlandMapFor(season), 0, 0)
     drawNewlandSites(g, game, here.y, false)
+    // 입주 주택 안 가구: 깔개 → 길을 막는 가구 → 위에 올린 작은 물건 (집 안과 같은 그림·순서)
+    if (inBuildingRoom(game)) {
+      for (const f of [...roomOf(game)].sort((a, b) => furnitureOrder(a) - furnitureOrder(b) || a.y - b.y)) drawFurniture(g, f)
+      if (selected) drawSelection(g, selected)
+    }
     // 서고 안 작은 책장: 모은 구약 조각 ÷ 구약 전체 조각만큼 (한 칸 열두 책등)
     if (inArchiveRoom(here)) drawShelfFill(g, [INTERIOR_SHELF.tile], shelfFillSteps((game.otCollected ?? []).length, OT_PIECE_COUNT, 1))
     const moving = p.path.length > 0
@@ -2178,7 +2186,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       const oy = Math.round(cam.y * TILE * sc) / sc
 
       if (currentMapId() === 'newland') {
-        drawNewland(g, game, t, W, H, ox, oy)
+        drawNewland(g, game, t, W, H, ox, oy, renderer.selected)
         return
       }
       const outdoors = !isIndoor(here)

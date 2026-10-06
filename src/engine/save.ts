@@ -29,8 +29,9 @@ import { initialHomeFurniture, isFacing, refitRoom } from './room'
 import { HOME_ENTRY, HOME_FRONT, setHomeLevel, setHomeFurniture, setSpouseRoom, walkableOn } from './world'
 import { MAP_IDS, isMapId, setActiveMap, type MapId } from './maps'
 import { sanitizeOtCollected } from './ot-pieces'
-import { entryFront, setNewlandOverlay, setNewlandRevealed } from './newland'
-import { overlayFor, sanitizeNewlandBuild } from './newland-build'
+import { entryFront, roomSlotAt, setNewlandOverlay, setNewlandRevealed, setNewlandWarps } from './newland'
+import { overlayFor, sanitizeNewlandBuild, warpsFor } from './newland-build'
+import { homeAtSlot, sanitizeRooms } from './newland-rooms'
 import { BOOKS, type Book, type GameContent, type ItemId } from './types'
 
 export const SAVE_KEY = 'twenty-seven/save'
@@ -59,6 +60,7 @@ function sanitizeMaps(s: GameState): Pick<GameState, 'player' | 'map' | 'mapAt'>
   // 땅이 드러나기 전 저장은 드러나지 않은 칸 기준으로 위치를 살핀다 (계획 20 작업 4)
   setNewlandRevealed(!!s.flags.newlandRevealed)
   setNewlandOverlay(overlayFor(s.newland))
+  setNewlandWarps(warpsFor(s.newland))
   const raw = s as unknown as { map?: unknown; mapAt?: unknown }
   const valid = (id: MapId, t: unknown): t is { x: number; y: number } =>
     isObj(t) && Number.isInteger((t as { x: unknown }).x) && Number.isInteger((t as { y: unknown }).y) && walkableOn(id, t as { x: number; y: number })
@@ -74,7 +76,10 @@ function sanitizeMaps(s: GameState): Pick<GameState, 'player' | 'map' | 'mapAt'>
   const map: MapId | undefined = wantsNewland && open ? 'newland' : isMapId(raw.map) ? 'village' : undefined
   let player = s.player
   if (map === 'newland') {
-    if (!valid('newland', { x: Math.round(player.x), y: Math.round(player.y) })) {
+    const here = { x: Math.round(player.x), y: Math.round(player.y) }
+    // 주인 없는 방 칸(지워진 건물의 방)에서 시작하지 않는다
+    const orphanRoom = (() => { const i = roomSlotAt(here); return i >= 0 && !homeAtSlot(s, i) })()
+    if (orphanRoom || !valid('newland', here)) {
       const at = entryFront('newland')
       player = { ...player, x: at.x, y: at.y, path: [] }
     }
@@ -187,9 +192,12 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   const churchBoard = Array.isArray(s.churches) ? s.churches.filter((n) => Number.isInteger(n)) : []
   const churches = placeNewCards(churchBoard, cardsForChapters(content.churches ?? [], progress.rev.completed))
   // 구약 칸은 원본을 펼치지 않는다 — 정리한 결과가 있을 때만 아래에서 넣는다 (깨진 값이 남지 않게)
-  const { otProgress: _rawOtProgress, otCopyStats: _rawOtStats, newland: _rawNewland, otCollected: _rawOtCollected, ...sRest } = s
+  const { otProgress: _rawOtProgress, otCopyStats: _rawOtStats, newland: _rawNewland, otCollected: _rawOtCollected, rooms: _rawRooms, inv: _inv, ...sRest } = { ...s, rooms: (s as { rooms?: unknown }).rooms } as typeof s & { rooms?: unknown }
   // 새 터 건축 (계획 20 작업 6): 옛 저장은 없음, 깨진 기록은 걸러 낸다
   const newland = sanitizeNewlandBuild(_rawNewland, s.clock.day)
+  // 건물 안 가구 (작업 7): 옛 저장은 없음. 주인 없는 방·맞지 않는 가구는 가방으로
+  const fitted = sanitizeRooms(_rawRooms, { newland }, inv)
+  void _inv
   const out: GameState = {
     ...sRest,
     player,
@@ -199,7 +207,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     journey,
     churches,
     room,
-    inv,
+    inv: fitted.inv,
     // 재료 궤짝 (계획 11): 옛 저장(칸이 없던 때)은 빈 궤짝. 수가 아닌 값은 버린다
     chest: Object.fromEntries(Object.entries(isObj(s.chest) ? s.chest : {}).filter(([, n]) => Number.isInteger(n) && (n as number) > 0)),
     // 능력치 (계획 11 작업 4): 옛 저장(칸이 없던 때)은 모두 1단계, 타고난 값 0
@@ -237,6 +245,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     ...(Object.keys(otProgress).length ? { otProgress } : {}),
     ...(isObj(s.otCopyStats) ? { otCopyStats: sanitizeCopyStats(s.otCopyStats) } : {}),
     ...(newland ? { newland } : {}),
+    ...(fitted.rooms ? { rooms: fitted.rooms } : {}),
     // 구약 말씀 조각: 새 터를 받은 뒤에만 있다 — 모르는 id·중복은 버리고, 옛 저장(없음)은 칸을 만들지 않는다
     ...(s.flags?.newlandGift && sanitizeOtCollected(_rawOtCollected).length ? { otCollected: sanitizeOtCollected(_rawOtCollected) } : {}),
     // 하나님 기록 (계획 14): 모양이 맞는 줄만, 같은 줄은 한 번만. 필사 전에 마친 장(옛 저장·예전에 엮은 장)의 줄은

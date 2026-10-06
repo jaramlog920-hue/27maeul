@@ -139,6 +139,7 @@ import {
 } from '../engine/game'
 import { isHome, lockedTiles, lockedZones, roomAt, sameTile, zoneAt } from '../engine/world'
 import { footprint, removal, type Furniture } from '../engine/room'
+import { roomOf as furnitureRoomOf } from '../engine/newland-rooms'
 import { heartsOf } from '../engine/hearts'
 import { add, count, RECIPES, type Inventory, type RecipeId } from '../engine/items'
 import type { CarpenterWork } from '../engine/easier'
@@ -1188,10 +1189,10 @@ export const useGame = create<Store>((set, get) => {
       if (modal) return
       if (decorating) {
         if (get().decorMoving) {
-          const f = selectedPiece(game.room, get().decorSel)
+          const f = selectedPiece(furnitureRoomOf(game), get().decorSel)
           const next = f && moveFurniture(game, f, tile)
           if (!next) { get().say('그 자리는 가구가 겹치거나 통로가 막혀요.'); return }
-          const moved = next.room.find(o => o.item === f!.item && o.x === tile.x && o.y === tile.y)!
+          const moved = furnitureRoomOf(next).find(o => o.item === f!.item && o.x === tile.x && o.y === tile.y)!
           set({ game: persist(next), decorMoving: false, decorSel: moved })
           sfx('place')
           return
@@ -1202,18 +1203,19 @@ export const useGame = create<Store>((set, get) => {
           if (placed) {
             sfx('place')
             // 방금 놓은 것을 고른 채로 둔다 (바로 돌릴 수 있게)
-            const f = placed.room[placed.room.length - 1]
+            const placedRoom = furnitureRoomOf(placed)
+            const f = placedRoom[placedRoom.length - 1]
             set({ game: persist(placed), decorating: (placed.inv[decorating] ?? 0) > 0 ? decorating : 'pick', decorSel: { item: f.item, x: f.x, y: f.y, on: f.on } })
             return
           }
         }
         // 놓을 수 없는 자리에 가구가 있으면 고른다 — 가구가 차지한 칸 어디를 눌러도. 고른 것을 한 번 더 누르면 치운다
-        const hit = removal(game.room, tile)[0]
+        const hit = removal(furnitureRoomOf(game), tile)[0]
         if (!hit) {
           set({ decorSel: null })
           return
         }
-        if (selectedPiece(game.room, get().decorSel) === hit) get().removeSelected()
+        if (selectedPiece(furnitureRoomOf(game), get().decorSel) === hit) get().removeSelected()
         else set({ decorSel: { item: hit.item, x: hit.x, y: hit.y, on: hit.on } })
         return
       }
@@ -2005,7 +2007,7 @@ export const useGame = create<Store>((set, get) => {
     },
     turnSelected: () => {
       const { game, decorSel } = get()
-      const f = selectedPiece(game.room, decorSel)
+      const f = selectedPiece(furnitureRoomOf(game), decorSel)
       if (!f) return
       const next = rotateFurniture(game, f)
       if (!next) {
@@ -2017,10 +2019,10 @@ export const useGame = create<Store>((set, get) => {
     },
     removeSelected: () => {
       const { game, decorSel } = get()
-      const f = selectedPiece(game.room, decorSel)
+      const f = selectedPiece(furnitureRoomOf(game), decorSel)
       if (!f) return
       // 이 가구가 맨 위에 있는 칸에서 치운다 (탁자 위 물건이 아니라 탁자를 고른 때)
-      const at = footprint(f).find((t) => removal(game.room, t)[0] === f)
+      const at = footprint(f).find((t) => removal(furnitureRoomOf(game), t)[0] === f)
       if (!at) return
       const next = removeFurniture(game, at)
       if (next === game) get().say(T.ui.bagFull)

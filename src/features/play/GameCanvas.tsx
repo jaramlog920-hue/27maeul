@@ -11,6 +11,7 @@ import { playMusic, setRain, unlockAudio } from '../../audio/sound'
 import { markMapTap } from '../../shared/ghost'
 import { selectedPiece, useGame } from '../../store/game-store'
 import { footprint } from '../../engine/room'
+import { roomOf } from '../../engine/newland-rooms'
 
 /** 탭한 화면 좌표 → 마을 칸 (카메라 반영) */
 export function tileFromPoint(
@@ -70,7 +71,7 @@ export function GameCanvas({ zoom = 1 }: { zoom?: number }) {
         const zoomChanged = r.zoom !== zoomRef.current
         r.zoom = zoomRef.current
         const st = useGame.getState()
-        const sel = st.decorating ? selectedPiece(st.game.room, st.decorSel) : undefined
+        const sel = st.decorating ? selectedPiece(roomOf(st.game), st.decorSel) : undefined
         r.selected = sel ? footprint(sel) : null
         r.look = st.decorating ? st.decorLook : null
         r.decorating = !!st.decorating

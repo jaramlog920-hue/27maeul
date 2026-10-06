@@ -53,6 +53,47 @@ export const INTERIOR = { x0: 13, y0: 30, w: 13, h: 10 } as const
 export const INTERIOR_EXIT = { x: INTERIOR.x0 + 6, y: INTERIOR.y0 + INTERIOR.h - 1 } as const
 export const INTERIOR_ENTRY = { x: INTERIOR_EXIT.x, y: INTERIOR_EXIT.y - 1 } as const
 
+/**
+ * 입주 주택 안 방 칸 (계획 20 작업 7): 지도 아래 보이지 않는 줄에서 서고 안 방(INTERIOR)을 뺀 가로 구간마다
+ * 8×6 방(자산 OLD_INTERIORS 128×96px)이 몇 개 들어가는지 세어 미리 나눈 칸이다. 윗 두 줄은 벽, 아래 네 줄은 바닥,
+ * 문깔개는 맨 아랫줄 가운데(exit), 들어오면 그 위 칸(entry)에 선다.
+ * 이 지도(40×10 숨은 줄, 서고 방 13칸 가로)에서는 왼쪽 구간 13칸에 1개, 오른쪽 구간 14칸에 1개, 세로는 10줄에 한 줄뿐이라 모두 2개다.
+ */
+export const ROOM_W = 8
+export const ROOM_H = 6
+export interface RoomSlot {
+  x0: number
+  y0: number
+  w: number
+  h: number
+  entry: { x: number; y: number }
+  exit: { x: number; y: number }
+}
+function makeRoomSlots(): RoomSlot[] {
+  const hidden = NEWLAND_H - NEWLAND_VISIBLE_H
+  const bands = Math.floor(hidden / ROOM_H)
+  const top = NEWLAND_VISIBLE_H + Math.floor((hidden - bands * ROOM_H) / 2)
+  const spans = [
+    [0, INTERIOR.x0],
+    [INTERIOR.x0 + INTERIOR.w, NEWLAND_W],
+  ]
+  const out: RoomSlot[] = []
+  for (let b = 0; b < bands; b++)
+    for (const [from, to] of spans) {
+      const n = Math.floor((to - from) / ROOM_W)
+      const left = from + Math.floor((to - from - n * ROOM_W) / 2)
+      for (let i = 0; i < n; i++) {
+        const x0 = left + i * ROOM_W
+        const y0 = top + b * ROOM_H
+        out.push({ x0, y0, w: ROOM_W, h: ROOM_H, exit: { x: x0 + 4, y: y0 + ROOM_H - 1 }, entry: { x: x0 + 4, y: y0 + ROOM_H - 2 } })
+      }
+    }
+  return out
+}
+export const ROOM_SLOTS: readonly RoomSlot[] = makeRoomSlots()
+/** 입주 주택(방이 있어야 하는 건물)을 지을 수 있는 최대 수 — 방 칸 수와 같다 */
+export const MAX_HOMES = ROOM_SLOTS.length
+
 /** 서고 안 책상·책장 칸 (작업 5가 연결한다 — 지금은 칸과 서는 자리만 마련) */
 export const INTERIOR_DESK = { tile: { x: 16, y: 32 }, stand: { x: 16, y: 33 } } as const
 export const INTERIOR_SHELF = { tile: { x: 22, y: 32 }, stand: { x: 22, y: 33 } } as const

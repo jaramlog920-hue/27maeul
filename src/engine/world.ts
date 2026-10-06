@@ -15,8 +15,8 @@ import type { ItemId, PlaceId, Tile } from './types'
 import { currentSpouseRoom, setSpouseRoomOwner } from './spouse-room'
 import { FACILITY_IDS, SITES, type FacilityPlace } from './village-sites'
 import { currentMapId, mapHeight, mapVisibleHeight, mapWidth, VILLAGE_TOTAL_H, VILLAGE_VISIBLE_H, VILLAGE_W } from './maps'
-import { inArchiveRoom, newlandOpen, newlandTileAt, newlandWarp } from './newland'
-import { INTERIOR, INTERIOR_DESK, INTERIOR_SHELF, VILLAGE_PORTAL } from './newland-config'
+import { inArchiveRoom, newlandOpen, newlandTileAt, newlandWarp, roomSlotAt } from './newland'
+import { INTERIOR, INTERIOR_DESK, INTERIOR_SHELF, ROOM_SLOTS, VILLAGE_PORTAL } from './newland-config'
 
 export const TILE = 16
 export const WIDTH = VILLAGE_W
@@ -738,7 +738,11 @@ export function propSpotProblem(tiles: readonly Tile[], roomOwner?: string): str
 
 /** 화면을 방 하나로 좁혀 보여 주는 곳: 이웃집·서고 방, 그리고 내 집 안 */
 export function viewRoomAt(t: Tile): { x0: number; y0: number; w: number; h: number } | null {
-  if (currentMapId() === 'newland') return inArchiveRoom(t) ? { ...INTERIOR } : null
+  if (currentMapId() === 'newland') {
+    if (inArchiveRoom(t)) return { ...INTERIOR }
+    const r = ROOM_SLOTS[roomSlotAt(t)]
+    return r ? { x0: r.x0, y0: r.y0, w: r.w, h: r.h } : null
+  }
   const r = roomAt(t)
   if (r) return r
   const { x0, y0, x1, y1 } = homeRect()

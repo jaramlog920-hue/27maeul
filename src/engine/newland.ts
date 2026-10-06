@@ -6,7 +6,7 @@ import { BOOKS, type Tile } from './types'
 import type { GameState } from './game'
 import { currentMapId, type MapId } from './maps'
 import {
-  ARCHIVE, INTERIOR, INTERIOR_DESK, INTERIOR_ENTRY, INTERIOR_EXIT, INTERIOR_SHELF, NEWLAND_H, NEWLAND_PORTAL, NEWLAND_PORTAL_FRONT, NEWLAND_VISIBLE_H, PREVIEW_LAST_ROW, NEWLAND_W, VILLAGE_PORTAL, VILLAGE_PORTAL_FRONT,
+  ARCHIVE, INTERIOR, INTERIOR_DESK, INTERIOR_ENTRY, INTERIOR_EXIT, INTERIOR_SHELF, NEWLAND_H, NEWLAND_PORTAL, NEWLAND_PORTAL_FRONT, NEWLAND_VISIBLE_H, PREVIEW_LAST_ROW, NEWLAND_W, ROOM_SLOTS, VILLAGE_PORTAL, VILLAGE_PORTAL_FRONT,
 } from './newland-config'
 
 function build(): string[] {
@@ -40,6 +40,12 @@ function build(): string[] {
   set(INTERIOR_EXIT.x, INTERIOR_EXIT.y, 'E')
   set(INTERIOR_DESK.tile.x, INTERIOR_DESK.tile.y, 'd')
   set(INTERIOR_SHELF.tile.x, INTERIOR_SHELF.tile.y, 's')
+  // 입주 주택 안 방 칸 (작업 7): 윗 두 줄 벽, 아래 네 줄 바닥, 맨 아랫줄 가운데 문깔개. 건물이 없는 칸은 닿는 문이 없다
+  for (const r of ROOM_SLOTS) {
+    rect(r.x0, r.y0, r.x0 + r.w - 1, r.y0 + 1, '#')
+    rect(r.x0, r.y0 + 2, r.x0 + r.w - 1, r.y0 + r.h - 1, 'f')
+    set(r.exit.x, r.exit.y, 'E')
+  }
   return g.map((r) => r.join(''))
 }
 
@@ -78,8 +84,19 @@ const WARPS: ReadonlyMap<string, Tile> = new Map<string, Tile>([
   [`${ARCHIVE.door.x},${ARCHIVE.door.y}`, { ...INTERIOR_ENTRY }],
   [`${INTERIOR_EXIT.x},${INTERIOR_EXIT.y}`, { ...ARCHIVE.front }],
 ])
+/** 완공된 입주 주택의 문 ↔ 안 방 문깔개 (게임 상태에서 오는 것 — syncHome이 맞춘다, newland-build의 warpsFor) */
+let dynWarps: ReadonlyMap<string, Tile> = new Map()
+export function setNewlandWarps(m: ReadonlyMap<string, Tile>): void {
+  dynWarps = m
+}
 export function newlandWarp(t: Tile): Tile | undefined {
-  return WARPS.get(`${t.x},${t.y}`)
+  const k = `${t.x},${t.y}`
+  return WARPS.get(k) ?? dynWarps.get(k)
+}
+
+/** 이 칸이 들어 있는 입주 주택 방 칸 번호 (없으면 -1) */
+export function roomSlotAt(t: Tile): number {
+  return ROOM_SLOTS.findIndex((r) => t.x >= r.x0 && t.x < r.x0 + r.w && t.y >= r.y0 && t.y < r.y0 + r.h)
 }
 
 /** 서고 안 방 안인가 (벽 포함) — 카메라가 방 하나로 좁혀 보여 준다 */

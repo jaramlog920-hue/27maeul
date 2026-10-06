@@ -79,15 +79,50 @@ function isFloor(t: Tile): boolean {
   return isHome(t) && tileAt(t.x, t.y) === 'f'
 }
 
+/**
+ * 방 하나의 규칙에 필요한 것 (계획 20 작업 7). 집 안은 HOME_CTX(지금 동작 그대로), 새 터 입주 주택 안 방은 그 방 기준 ctx.
+ *   isFloor   가구를 놓을 수 있는 바닥인가
+ *   inside    방 안인가 (문깔개 포함 — 길 막힘 검사에서 가구 곁 빈 칸을 찾을 때)
+ *   keepClear 늘 비워 둬야 하는 칸
+ *   entry     들어와 서는 칸 (길찾기의 출발)
+ *   reach     놓은 뒤에도 entry에서 닿아야 하는 칸들
+ *   bedStand  있으면 이 자리에도 닿아야 한다 (집의 침대 앞)
+ * 값은 호출할 때마다 읽는다 — 집 단계에 따라 집의 값이 달라지므로
+ */
+export interface RoomCtx {
+  isFloor(t: Tile): boolean
+  inside(t: Tile): boolean
+  keepClear(): Tile[]
+  readonly entry: Tile
+  readonly reach: Tile[]
+  readonly bedStand?: Tile
+}
+
+/** 첫 마을 내 집 (집 안 동작은 한 글자도 바뀌지 않는다) */
+export const HOME_CTX: RoomCtx = {
+  isFloor,
+  inside: isHome,
+  keepClear,
+  entry: HOME_ENTRY,
+  // 놓은 뒤에도 들어와 서는 칸에서 집 안 모든 자리에 갈 수 있어야 한다 (다락은 다락 문깔개 앞에서)
+  get reach() {
+    return keepClear().filter((c) => !sameTile(c, HOME_ENTRY) && isHome(c))
+  },
+  get bedStand() {
+    return placeActive('bed') ? (PLACES.bed.stand ?? BED_STAND) : undefined
+  },
+}
+
 function surfaceAt(room: readonly Furniture[], t: Tile): Furniture | undefined {
   return room.find((f) => FURNITURE_DEFS[f.item]?.surface && footprint(f).some((p) => sameTile(p, t)))
 }
 
 /** 이 자리에 놓으면 어떻게 놓이는가 (null = 못 놓음) */
-export function placement(room: readonly Furniture[], item: ItemId, t: Tile, facing?: Facing): Furniture | null {
+export function placement(room: readonly Furniture[], item: ItemId, t: Tile, facing?: Facing, ctx: RoomCtx = HOME_CTX): Furniture | null {
   const def = FURNITURE_DEFS[item]
   if (!def) return null
-  const clear = keepClear()
+  const clear = ctx.keepClear()
+  const isFloor = ctx.isFloor
   const turned = facing ? { facing } : {}
   if (def.layer === 'small') {
     // 탁자 위에 빈 칸이 있으면 그 위에
@@ -109,13 +144,13 @@ export function placement(room: readonly Furniture[], item: ItemId, t: Tile, fac
   if (tiles.some((p) => clear.some((c) => sameTile(c, p)))) return null
   if (tiles.some((p) => room.some((o) => layerOf(o) !== 'floor' && !o.on && footprint(o).some((q) => sameTile(p, q))))) return null
   const blockers = solidTiles([...room, f])
-  // 놓은 뒤에도 들어와 서는 칸에서 집 안 모든 자리에 갈 수 있어야 한다 (다락은 다락 문깔개 앞에서)
-  const reach = keepClear().filter((c) => !sameTile(c, HOME_ENTRY) && isHome(c))
-  for (const c of reach) if (findPath(HOME_ENTRY, c, blockers) === null) return null
-  if (placeActive('bed') && findPath(HOME_ENTRY, PLACES.bed.stand ?? BED_STAND, blockers) === null) return null
+  // 놓은 뒤에도 들어와 서는 칸에서 방 안 모든 자리에 갈 수 있어야 한다
+  for (const c of ctx.reach) if (findPath(ctx.entry, c, blockers) === null) return null
+  const bed = ctx.bedStand
+  if (bed && findPath(ctx.entry, bed, blockers) === null) return null
   for (const placed of [...room, f].filter(p => FURNITURE_DEFS[p.item]?.layer === 'solid')) {
     const around = footprint(placed).flatMap(p => [{ x: p.x + 1, y: p.y }, { x: p.x - 1, y: p.y }, { x: p.x, y: p.y + 1 }, { x: p.x, y: p.y - 1 }])
-    if (!around.some(p => isHome(p) && !blockers.has(key(p)) && findPath(HOME_ENTRY, p, blockers) !== null)) return null
+    if (!around.some(p => ctx.inside(p) && !blockers.has(key(p)) && findPath(ctx.entry, p, blockers) !== null)) return null
   }
   return f
 }
@@ -124,7 +159,7 @@ export function placement(room: readonly Furniture[], item: ItemId, t: Tile, fac
  * 놓인 가구를 한 번 돌린 모습 (null = 못 돌림). 왼쪽 위 칸은 그대로 두고, 크기가 바뀌면 놓기 규칙(벽·겹침·통로)을 다시 본다.
  * 위에 물건이 올려진 탁자·협탁은 돌리지 않는다 — 물건을 먼저 치운다.
  */
-export function rotation(room: readonly Furniture[], f: Furniture): Furniture | null {
+export function rotation(room: readonly Furniture[], f: Furniture, ctx: RoomCtx = HOME_CTX): Furniture | null {
   if (!room.includes(f)) return null
   const def = FURNITURE_DEFS[f.item]
   if (!def) return null
@@ -138,6 +173,7 @@ export function rotation(room: readonly Furniture[], f: Furniture): Furniture | 
     f.item,
     f,
     next,
+    ctx,
   )
   if (!ok || ok.x !== f.x || ok.y !== f.y || !!ok.on !== !!f.on) return null
   return ok
@@ -155,11 +191,11 @@ export function removal(room: readonly Furniture[], t: Tile): Furniture[] {
 }
 
 /** 지금 집 모양에 맞지 않는 가구는 가방으로 돌려보낸다 (집을 넓혔을 때·옛 저장) */
-export function refitRoom(room: readonly Furniture[], inv: Inventory): { room: Furniture[]; inv: Inventory } {
+export function refitRoom(room: readonly Furniture[], inv: Inventory, ctx: RoomCtx = HOME_CTX): { room: Furniture[]; inv: Inventory } {
   const kept: Furniture[] = []
   let bag = inv
   for (const f of room) {
-    const ok = placement(kept, f.item, f, f.facing)
+    const ok = placement(kept, f.item, f, f.facing, ctx)
     if (ok && ok.x === f.x && ok.y === f.y && !!ok.on === !!f.on) kept.push(ok)
     else bag = addGift(bag, { [f.item]: 1 })
   }
