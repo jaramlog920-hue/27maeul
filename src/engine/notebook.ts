@@ -34,6 +34,8 @@ export interface Notebook {
   tastes?: Record<string, string[]>
   /** 제안을 수락하거나 다음으로 미룬 날. 관계 점수와 별개. */
   tasteProposed?: Record<string, number>
+  /** 마을에서 직접 본 가장 최근의 작은 근황 (계획 16 작업 24): 이웃 → 근황 id·본 날. 수첩 "요즘"에만 쓰이고 관계·진행과 무관 */
+  news?: Record<string, { id: string; day: number }>
 }
 
 export const NO_NOTEBOOK: Notebook = { met: [], likes: {}, dislikes: {}, seen: {}, heard: {} }
@@ -54,7 +56,27 @@ export function sanitizeNotebook(raw: unknown): Notebook {
     ...(o.got !== undefined ? { got: lists(o.got) as Record<string, ItemId[]> } : {}),
     ...(o.tastes !== undefined ? { tastes: Object.fromEntries(Object.entries(lists(o.tastes)).map(([npc, keys]) => [npc, [...new Set(keys.filter(isLifestyleTaste))]])) } : {}),
     ...(o.tasteProposed && typeof o.tasteProposed === 'object' ? { tasteProposed: Object.fromEntries(Object.entries(o.tasteProposed).filter(([, day]) => Number.isInteger(day) && day > 0)) } : {}),
+    ...(o.news && typeof o.news === 'object' && !Array.isArray(o.news) ? { news: sanitizeNews(o.news) } : {}),
   }
+}
+
+/** 모르는 근황·깨진 값은 버린다 (옛 저장에는 칸이 없다) */
+function sanitizeNews(raw: object): Record<string, { id: string; day: number }> {
+  const items = (lifeText.news.items ?? {}) as Record<string, unknown>
+  const out: Record<string, { id: string; day: number }> = {}
+  for (const [npc, v] of Object.entries(raw as Record<string, unknown>)) {
+    const e = v as { id?: unknown; day?: unknown } | null
+    if (e && typeof e.id === 'string' && Object.hasOwn(items, e.id) && typeof e.day === 'number' && Number.isInteger(e.day) && e.day >= 1) out[npc] = { id: e.id, day: e.day }
+  }
+  return out
+}
+
+/** 이웃의 작은 근황을 직접 보았다 (그 이웃이 하던 모습 하나만 — 더 새로 본 것이 앞선다) */
+export function noteNews(n: Notebook, npc: string, id: string, day: number): Notebook {
+  const prev = n.news?.[npc]
+  if (prev && prev.id === id && prev.day === day) return n
+  if (prev && prev.day > day) return n
+  return { ...n, news: { ...n.news, [npc]: { id, day } } }
 }
 
 export function isLifestyleTaste(key: string): boolean {

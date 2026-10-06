@@ -6,7 +6,7 @@
 //   import { drawStoryProps, registerStoryPropArt } from './story-props'
 //   registerStoryPropArt(EXPANSION_PROPS, EXPANSION_VIEWS)   // 모듈 위에서 한 번
 //   drawStoryProps(g, game)   // 마을 그리기에서 방의 가구(drawFurniture) 바로 뒤, 이웃 그리기 전에
-import { storyPropsNow, type GameState } from '../engine/game'
+import { newsPropsNow, storyPropsNow, type GameState } from '../engine/game'
 import { STALL_SPOT, stallSceneNow } from '../engine/stall'
 import { villageScenes } from '../engine/projects'
 import { SITES } from '../engine/village-sites'
@@ -61,6 +61,11 @@ export function drawStoryProps(g: CanvasRenderingContext2D, game: GameState): vo
   const list = storyPropsNow(game).sort((a, b) => a.at.y - b.at.y || a.at.x - b.at.x)
   for (const p of list) {
     const a = storyPropArt(p)
+    if (a) g.drawImage(painted(a), p.at.x * TILE, p.at.y * TILE)
+  }
+  // 작은 근황의 일회성 소품 (계획 16 작업 24): 그 근황이 보이는 동안만 — 끝나면 걷힌다. 이야기 뒤 소품과 같은 칸을 쓰지 않는 자리뿐
+  for (const p of newsPropsNow(game)) {
+    const a = PROPS[p.art]
     if (a) g.drawImage(painted(a), p.at.x * TILE, p.at.y * TILE)
   }
 }

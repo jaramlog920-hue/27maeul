@@ -6,7 +6,7 @@ import { fill, ITEM_TEXT, itemName, JOB_NAME, JOURNAL_NOTES, kidFill, SCENES, sp
 import { ACHIEVEMENTS } from '../../engine/achievements'
 import { weatherOf } from '../../engine/calendar'
 import { seasonOf } from '../../engine/clock'
-import { dislikesOf, isSuitor, notYet, type GameState, type JournalEntry } from '../../engine/game'
+import { dislikesOf, isSuitor, newsRecent, notYet, type GameState, type JournalEntry } from '../../engine/game'
 import { heartsOf } from '../../engine/hearts'
 import { birthdayLabel, isBirthday, knownTastes, knownLifestyleTastes, noteTasteProposal, canProposeTea, sharedMemories, NO_NOTEBOOK, SLOT_LABEL, SLOTS, spotName } from '../../engine/notebook'
 import { availability, scheduleAppt } from '../../engine/plans'
@@ -200,6 +200,7 @@ function NeighborPage({ game, def }: { game: GameState; def: NeighborDef }) {
   const got = notebook.got?.[def.id] ?? []
   const lifestyle = knownLifestyleTastes(notebook, def.id)
   const memories = sharedMemories(game.life ?? NO_LIFE, def.id)
+  const recently = newsRecent(game, def.id)
   const memoryList = (list: typeof memories) => <ul>{list.map((e) => {
     const scene = SCENES[e.id] ?? (e.kind === 'story' ? SCENES[`ev:${e.id.slice(6)}`] : undefined)
     const title = scene?.title ?? (T.taste.kinds as Record<string, string>)[e.kind] ?? T.taste.memories
@@ -235,6 +236,12 @@ function NeighborPage({ game, def }: { game: GameState; def: NeighborDef }) {
           ))}
         </ul>
       </dd>
+      {recently.length > 0 && (
+        <>
+          <dt>{T.news.title}</dt>
+          <dd><ul>{recently.map((line) => <li key={line}>{line}</li>)}</ul></dd>
+        </>
+      )}
       <dt>{T.taste.title}</dt>
       <dd>{lifestyle.length ? <ul>{lifestyle.map((label) => <li key={label}>{label}</li>)}</ul> : <span className="nb-none">{T.taste.unknown}</span>}</dd>
       <dt>{T.taste.memories}</dt>

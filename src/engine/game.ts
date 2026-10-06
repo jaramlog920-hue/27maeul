@@ -91,6 +91,7 @@ import {
   depthOf,
   eventById,
   eventCast,
+  isOffDay,
   NO_LIFE,
   personOf,
   peopleData,
@@ -102,6 +103,7 @@ import {
   routineNow,
   STAGE_POINTS,
   stageOfPoints,
+  threadPhase,
   whenMatches,
   type ExperienceInput,
   type Life,
@@ -113,6 +115,7 @@ import {
   type StoryProp,
 } from './people'
 import { RARE_ITEMS } from './fixtures'
+import { HABITS, habitText, NEWS_BY_ID, NEWS_RECENT_DAYS, NEWS_TEXT, newsMutter, newsOfDay, newsPropArt, newsSeasonOk, newsSeenText, newsWeatherOk, type NewsDef } from './news'
 import { POSTMAN } from './post'
 import { blanksFor } from './copy'
 import { checkArrangement, moveItem, type ArrangeResult } from './scroll'
@@ -142,7 +145,7 @@ import { familyMorning } from './family-days'
 import { adultJob, JOB_GIFTS, kidCoins, kidMailFor, CHILD_AFTER_WEDDING, childMode, childStage, CRADLE_SPOT, helperSpot, helpStat, newChild, type Child, type ChildMode } from './child'
 import { DESTS, TRIP_FRIEND_GAIN, TRIP_LEAVE_BY, tripCost, type DestId } from './travel'
 import type { TripReward } from './trip-board'
-import { BIRTHDAY_MUL, isBirthday, NO_NOTEBOOK, noteGift, noteGot, noteHeard, noteMet, noteSeen, noteTaste, noteObservedTaste, seenLabel, type Notebook } from './notebook'
+import { BIRTHDAY_MUL, isBirthday, NO_NOTEBOOK, noteGift, noteGot, noteHeard, noteMet, noteNews, noteSeen, noteTaste, noteObservedTaste, seenLabel, type Notebook } from './notebook'
 import { CARPENTER_WORKS, fromChest, hasStock, INK_JAR_HOLD, LIGHT_SHOES, owns, RACK_HOLD, RACK_PAPER, RAIN_WATER, SOOT_CATCH, stash, stashOverflows, stock, takeStock, walkMul, type CarpenterWork, type EasyId } from './easier'
 
 export interface JournalEntry {
@@ -1133,7 +1136,10 @@ export function mutterPartner(s: GameState, npc: string): string | null {
 export function hearMutter(s: GameState, npc: string, text: string): GameState {
   let life = s.life ?? NO_LIFE
   if (life.mutterDay !== s.clock.day) life = { ...life, mutterDay: s.clock.day, muttered: [] }
-  return { ...s, life: { ...life, muttered: [...life.muttered, npc], heard: { npc, text } } }
+  // 작은 근황(계획 16 작업 24)이면 수첩 "요즘"에 본 모습으로 (이웃이 그 자리에서 하던 것을 직접 듣고 본 것)
+  const news = routineOf(s, npc)?.news
+  const notebook = news ? noteNews(s.notebook ?? NO_NOTEBOOK, npc, news, s.clock.day) : s.notebook
+  return { ...s, notebook, life: { ...life, muttered: [...life.muttered, npc], heard: { npc, text } } }
 }
 
 /** 말을 걸면 열릴 이야기(이벤트·목격)가 있는지 — 머리 위 말풍선과 대화하기 단추 표시용 */
@@ -1311,7 +1317,92 @@ function routineIn(s: GoalState, npc: string, meet: MeetContext, depth: number):
   const p = personOf(npc)
   if (!p) return null
   const ctx = reqCtx(s, npc)
-  return routineNow(p, momentOf(s), peopleData().threads, (r) => reqMet(r.req, ctx) && (!r.with || partnerHere(s, r, npc, meet, depth)))
+  const base = routineNow(p, momentOf(s), peopleData().threads, (r) => reqMet(r.req, ctx) && (!r.with || partnerHere(s, r, npc, meet, depth)))
+  // 작은 근황 (계획 16 작업 24): 평소 일과 위, 조건이 달린 일과(이야기 뒤·함께하는 자리)·벗어나는 날·마을 사건 일과 아래
+  if (base && (base.req || base.with || base.away)) return base
+  const n = newsRoutine(s, npc, meet)
+  return n && (!n.with || partnerHere(s, n, npc, meet, depth)) ? n : base
+}
+
+// ── 주민들의 작은 근황 (계획 16 작업 24, news.ts) ──
+
+/** 이 이웃의 오늘 하루 일과가 마을 사건 단계로 따로 정해져 있는가 (진행 중 사건과 겹치면 근황은 쉬어 간다) */
+function threadBusy(npc: string, day: number): boolean {
+  return peopleData().threads.some((t) => {
+    const p = threadPhase(t, day)
+    return p >= 0 && p < t.phases.length && !!t.phases[p].routines?.[npc]?.length
+  })
+}
+
+let newsMemo: { flags: GoalState['flags']; life: Life; shelved: GoalState['shelved']; romance: GoalState['romance']; day: number; picks: NewsDef[] } | null = null
+
+/**
+ * 오늘의 근황 (하루 두세 건, 날 씨앗). 이사 온 이웃·열린 칸·날씨·계절·이야기 조건으로만 거르고 저장하지 않는다 —
+ * 같은 날 같은 상태에서는 다시 접속해도 같다. 잔치 날은 쉰다. 연인·배우자의 일과는 연애·함께 가기가 이미 쓰므로 건드리지 않는다. 같은 상태를 매 화면마다 다시 따지지 않게 한 칸만 기억해 둔다
+ */
+export function newsPicks(s: GoalState, meet: MeetContext): NewsDef[] {
+  const life = s.life ?? NO_LIFE
+  const day = s.clock.day
+  const m = newsMemo
+  if (m && m.flags === s.flags && m.life === life && m.shelved === s.shelved && m.romance === s.romance && m.day === day) return m.picks
+  let picks: NewsDef[] = []
+  if (!festivalOf(day)) {
+    const w = weatherOf(day)
+    const season = seasonOf(day)
+    const here = (npc: string) => {
+      const p = personOf(npc)
+      const d = CONTENT_DEFS.get(npc)
+      return !!p && meet.joined(npc) && !(d?.marketOnly && !isMarketDay(day)) && !isOffDay(p, day) && !threadBusy(npc, day) && life.storyWait?.npc !== npc && s.romance?.partner !== npc
+    }
+    picks = newsOfDay(
+      day,
+      (d) => newsWeatherOk(d, w) && newsSeasonOk(d, season) && d.who.every((x) => here(x.npc) && !meet.locked.has(key(x.at))) && reqMet(d.req, reqCtx(s, d.who[0].npc, false)),
+    )
+  }
+  newsMemo = { flags: s.flags, life, shelved: s.shelved, romance: s.romance, day, picks }
+  return picks
+}
+
+/** 지금 이 이웃이 하고 있는 근황 (오늘의 근황 중 지금 시각에 맞는 것) */
+function newsRoutine(s: GoalState, npc: string, meet: MeetContext): Routine | null {
+  const minute = s.clock.minute
+  const d = newsPicks(s, meet).find((x) => x.from <= minute && minute < x.to && x.who.some((w) => w.npc === npc))
+  if (!d) return null
+  const me = d.who.find((w) => w.npc === npc)!
+  const other = d.who.find((w) => w.npc !== npc)
+  const mutter = newsMutter(d.id, npc)
+  return { when: { from: d.from, to: d.to }, at: me.at, ...(me.doing ? { doing: me.doing } : {}), ...(other ? { with: other.npc } : {}), ...(mutter.length ? { mutter } : {}), news: d.id }
+}
+
+/** 지금 놓여 있는 근황 소품 (그 근황의 주인이 실제로 그 자리에서 하고 있을 때만 — 근황이 끝나면 걷힌다) */
+export function newsPropsNow(s: GoalState): { id: string; art: string; at: Tile }[] {
+  const meet = meetContext(s, { neighbors: [...CONTENT_DEFS.values()] })
+  const minute = s.clock.minute
+  const out: { id: string; art: string; at: Tile }[] = []
+  for (const d of newsPicks(s, meet)) {
+    if (!d.prop || minute < d.from || minute >= d.to) continue
+    const art = newsPropArt(d, s.clock.day)
+    if (art) out.push({ id: d.id, art, at: d.prop.at })
+  }
+  return out
+}
+
+/** 수첩 "요즘": 직접 본 가장 최근의 근황 한 줄, 그리고 지금 사실로 남은 생활의 변화 (끝난 이야기·함께 지은 시설). 없으면 빈 목록 */
+export function newsRecent(s: GameState, npc: string): string[] {
+  const out: string[] = []
+  const seen = s.notebook?.news?.[npc]
+  if (seen && s.clock.day - seen.day <= NEWS_RECENT_DAYS && NEWS_BY_ID.has(seen.id)) {
+    const text = newsSeenText(seen.id, npc)
+    if (text) out.push((seen.day === s.clock.day ? NEWS_TEXT.seenToday : NEWS_TEXT.seenOn).replace('{day}', String(seen.day)).replace('{text}', text))
+  }
+  const ctx = reqCtx(s, npc, false)
+  for (const h of HABITS) {
+    if (h.npc !== npc || !reqMet(h.req, ctx)) continue
+    const text = habitText(h.id)
+    if (text && !out.includes(text)) out.push(text)
+    if (out.length >= 3) break
+  }
+  return out
 }
 
 /** 함께하는 일과의 상대가 지금 곁에 올 수 있는가 (상대 쪽에서 한 번만 되묻는다 — 서로 끝없이 묻지 않게) */
@@ -1510,6 +1601,7 @@ export function greetNeighbor(s: GameState, id: string): GameState {
     const routine = routineOf(s, id)
     notebook = noteSeen(notebook, id, s.clock.minute, seenLabel(npcTile(n), routine?.doing))
     if (n.visible && near(playerTile(s), npcTile(n), 2) && routine && near(npcTile(n), routine.at, 1)) notebook = noteObservedTaste(notebook, id, routine.doing, personOf(id)?.tastes?.activity)
+    if (n.visible && near(playerTile(s), npcTile(n), 3) && routine?.news && near(npcTile(n), routine.at, 1)) notebook = noteNews(notebook, id, routine.news, s.clock.day)
   }
   return train(heartUp(greetMemories({ ...s, talked: [...s.talked, id], notebook }, id), id, GAIN.talk), 'charm', XP.greet)
 }

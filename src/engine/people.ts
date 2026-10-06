@@ -85,6 +85,8 @@ export interface Routine {
   req?: Req
   /** 이 때는 마을에 없다 — 집 문으로 들어가 보이지 않고, 함께하는 일과의 상대도 기다리지 않는다 (계획 16 작업 10: 웬델이 배우러 가는 아침) */
   away?: boolean
+  /** 오늘의 작은 근황에서 온 일과 (계획 16 작업 24 — 근황 id) */
+  news?: string
 }
 
 export interface Req {
