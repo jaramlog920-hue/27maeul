@@ -39,8 +39,8 @@ import { spineLook } from '../engine/binding'
 import { ACTS_ROOM, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, PAVILION_RECT, HEIGHT, HOUSE_RECT, housesNow, houseAt, lockedTiles, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile, treeKind, type TreeKind } from '../engine/world'
 import { currentMapId, mapVisibleHeight, setActiveMap } from '../engine/maps'
 import { newlandOpen, newlandRevealedOn, newlandTileAt } from '../engine/newland'
-import { ARCHIVE, NEWLAND_H, NEWLAND_W } from '../engine/newland-config'
-import { OLD_BUILDINGS, OLD_TERRAIN, OLD_VILLAGE_PALETTE } from './old-village-art'
+import { ARCHIVE, INTERIOR_SHELF, NEWLAND_H, NEWLAND_W } from '../engine/newland-config'
+import { OLD_BUILDINGS, OLD_PROPS, OLD_TERRAIN, OLD_VILLAGE_PALETTE } from './old-village-art'
 import { GOSPELS, type Book, type Facing, type NeighborDef, type GameContent, type Season, type Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { avatarKey, withLookDefaults, type Avatar, type FullAvatar } from '../engine/avatar'
@@ -1994,6 +1994,12 @@ function newlandMapFor(season: Season): HTMLCanvasElement {
       // 서고 그림이 덮는 칸은 풀밭 위에 그림만 얹는다 (돌벽 칸 그림이 그림 둘레 빈 곳으로 비치지 않게)
       if (x >= ARCHIVE.x0 && x < ARCHIVE.x0 + ARCHIVE.w && y > ARCHIVE.y0 && y <= ARCHIVE.y0 + ARCHIVE.h) {
         drawGround(g, '.', x, y, season, newlandTileAt)
+        continue
+      }
+      // 서고 안 작은 책장: 자산 old-village-art의 두루마리 책장 (책상은 기존 필사 책상 그림 그대로)
+      if (x === INTERIOR_SHELF.tile.x && y === INTERIOR_SHELF.tile.y) {
+        drawGround(g, 'f', x, y, season, newlandTileAt)
+        g.drawImage(paint('old/prop/scrollCabinet', OLD_PROPS.scrollCabinet.rows, OLD_VILLAGE_PALETTE), x * TILE, y * TILE)
         continue
       }
       drawGround(g, ch, x, y, season, newlandTileAt)

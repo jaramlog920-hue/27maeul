@@ -4,8 +4,8 @@
 //
 // 허용(사용자 결정 2026-10-04): 띄어쓰기 차이, 문장부호 생략, 오타 바로 고치기, 자동 저장, 나갔다 오면 그 절부터.
 // 자동완성 없음 — 붙여넣기(화면이 알려 주는 표식)와 한 번에 여러 글자가 들어오는 입력은 받지 않는다.
-import { chaptersOf } from './books'
-import type { Progress } from './books'
+import { chaptersOf, progressOf, type OtProgress, type Progress } from './books'
+import { isOtBook, otRow, type CopyBook } from './ot-books'
 import { BOOKS, type Book, type GameContent } from './types'
 
 // ── 정규화 ──
@@ -201,12 +201,12 @@ export interface CopyVerse {
 }
 
 /** 필사하는 장: 조각이 있는 장 = 서고·방이 세는 장 (books.chaptersOf와 같다 — 27권 260장) */
-export function copyChapters(book: Book, content: GameContent): number[] {
+export function copyChapters(book: CopyBook, content: GameContent): number[] {
   return chaptersOf(book, content)
 }
 
 /** 한 장의 필사할 절: 본문이 없는 절('(없음)'·'(…포함되어 있음)')은 빠진다 (번호만 건너뜀). 대괄호 절은 본문이므로 넣는다 */
-export function copyVerses(book: Book, chapter: number, content: GameContent): CopyVerse[] {
+export function copyVerses(book: CopyBook, chapter: number, content: GameContent): CopyVerse[] {
   return (content.chapterText?.(book, chapter) ?? [])
     .map((v) => ({ verse: v.verse, text: v.text, chars: [...normalizeCopy(v.text)].length }))
     .filter((v) => v.chars > 0)
@@ -229,19 +229,19 @@ export interface BookDays {
 }
 
 export interface CopyState {
-  /** 책상에서 지금 쓰는 책 (처음엔 없다) — 27권 어느 책이든 고를 수 있다 */
-  book: Book | null
+  /** 책상에서 지금 쓰는 책 (처음엔 없다) — 신약 27권 어느 책이든, 새 터를 받았으면 구약 39권도 고를 수 있다 */
+  book: CopyBook | null
   /** 책마다 다음에 쓸 자리 */
-  at: Partial<Record<Book, CopyAt>>
-  /** 필사가 생기기 전 저장에서 이미 마친 장 ("예전에 엮은 장" — 글자 수 통계에 넣지 않는다) */
+  at: Partial<Record<CopyBook, CopyAt>>
+  /** 필사가 생기기 전 저장에서 이미 마친 장 ("예전에 엮은 장" — 글자 수 통계에 넣지 않는다). 구약에는 없다 (옛 저장 호환이 없다) */
   legacy: Partial<Record<Book, number[]>>
   /** 책마다 쓰기 시작한 날·마친 날 (이 칸이 생기기 전 저장은 없다 — 완성본 첫 쪽에 "남아 있지 않음") */
-  days?: Partial<Record<Book, BookDays>>
+  days?: Partial<Record<CopyBook, BookDays>>
   /**
    * 책마다 필사로 실제로 따라 적어 마친 장 (writeVerse가 더한다). 이 칸에 없는 마친 장은 통계에서 예전에 엮은 장으로 센다
    * (조각 엮기·편지 옮겨 적기로 마친 장, 이 칸이 생기기 전 저장의 장 — 조심스럽게)
    */
-  copied?: Partial<Record<Book, number[]>>
+  copied?: Partial<Record<CopyBook, number[]>>
   /** 필사 길잡이를 접어 두었다 (플레이어가 고른 것 — 없으면 펼쳐 보인다) */
   guideFolded?: true
 }
@@ -255,7 +255,7 @@ export function withGuideFolded(copy: CopyState, folded: boolean): CopyState {
 }
 
 /** 이 장은 필사로 실제로 따라 적은 장인가 */
-export function isCopiedChapter(copy: CopyState, book: Book, chapter: number): boolean {
+export function isCopiedChapter(copy: CopyState, book: CopyBook, chapter: number): boolean {
   return copy.copied?.[book]?.includes(chapter) ?? false
 }
 
@@ -290,7 +290,7 @@ export interface CopySpot {
 }
 
 /** 아직 마치지 않은 장 중 from 이상 첫 장 (없으면 앞에서부터 다시) */
-function openChapter(book: Book, completed: readonly number[], content: GameContent, from = 0): number | null {
+function openChapter(book: CopyBook, completed: readonly number[], content: GameContent, from = 0): number | null {
   const open = copyChapters(book, content).filter((c) => !completed.includes(c))
   return open.find((c) => c >= from) ?? open[0] ?? null
 }
@@ -299,8 +299,8 @@ function openChapter(book: Book, completed: readonly number[], content: GameCont
  * 이 책에서 다음에 쓸 절. 저장된 자리가 있으면 그 절부터(그 절이 본문 없는 절이면 다음 절), 그 장을 이미 마쳤거나
  * 자리가 없으면 아직 마치지 않은 첫 장의 첫 절. 다 마친 책이면 null
  */
-export function copySpot(s: { progress: Progress; copy: CopyState }, book: Book, content: GameContent): CopySpot | null {
-  const done = s.progress[book]?.completed ?? []
+export function copySpot(s: { progress: Progress; otProgress?: OtProgress; copy: CopyState }, book: CopyBook, content: GameContent): CopySpot | null {
+  const done = progressOf(s, book)?.completed ?? []
   const at = s.copy.at[book]
   let chapter = at && !done.includes(at.chapter) && copyChapters(book, content).includes(at.chapter) ? at.chapter : null
   const fromVerse = chapter !== null ? at!.verse : 0
@@ -319,14 +319,14 @@ export function copySpot(s: { progress: Progress; copy: CopyState }, book: Book,
 }
 
 /** 장을 마친 뒤 이어 쓸 장 (그다음 마치지 않은 장, 없으면 앞의 마치지 않은 장, 다 마쳤으면 null) */
-export function nextOpenChapter(book: Book, completed: readonly number[], after: number, content: GameContent): number | null {
+export function nextOpenChapter(book: CopyBook, completed: readonly number[], after: number, content: GameContent): number | null {
   return openChapter(book, completed, content, after + 1)
 }
 
 // ── 저장 정리 (save.ts) ──
 
 const isObj = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v)
-const isBook = (b: unknown): b is Book => typeof b === 'string' && (BOOKS as readonly string[]).includes(b)
+const isBook = (b: unknown): b is CopyBook => typeof b === 'string' && ((BOOKS as readonly string[]).includes(b) || isOtBook(b))
 const nat = (n: unknown, min: number) => (typeof n === 'number' && Number.isInteger(n) && n >= min ? n : null)
 /** 쓰다 만 입력은 이만큼까지만 저장한다 (가장 긴 절보다 넉넉히) */
 const DRAFT_MAX = 600
@@ -334,36 +334,42 @@ const DRAFT_MAX = 600
 /**
  * 필사 상태 정리. raw가 없으면(필사가 생기기 전 저장) 이미 마친 장을 모두 "예전에 엮은 장"으로 남긴다
  */
-export function sanitizeCopy(raw: unknown, progress: Progress): CopyState {
+export function sanitizeCopy(raw: unknown, progress: Progress, otProgress: OtProgress = {}): CopyState {
   if (!isObj(raw)) {
     const legacy: Partial<Record<Book, number[]>> = {}
     for (const b of BOOKS) if (progress[b].completed.length) legacy[b] = [...progress[b].completed]
     return { book: null, at: {}, legacy }
   }
-  const at: Partial<Record<Book, CopyAt>> = {}
+  // 마친 장: 신약은 progress, 구약은 otProgress (책 표의 장 수 안)
+  const doneOf = (b: CopyBook): readonly number[] => progressOf({ progress, otProgress }, b).completed
+  const at: Partial<Record<CopyBook, CopyAt>> = {}
   if (isObj(raw.at))
     for (const [b, v] of Object.entries(raw.at)) {
       if (!isBook(b) || !isObj(v)) continue
       const chapter = nat(v.chapter, 1)
       const verse = nat(v.verse, 0)
       if (chapter === null || verse === null) continue
+      if (isOtBook(b) && chapter > otRow(b).chapters) continue
       const draft = typeof v.draft === 'string' && v.draft !== '' ? v.draft.slice(0, DRAFT_MAX) : undefined
       at[b] = draft ? { chapter, verse, draft } : { chapter, verse }
     }
+  // 예전에 엮은 장은 신약에만 있다 (구약은 옛 저장 호환이 없다)
   const legacy: Partial<Record<Book, number[]>> = {}
   if (isObj(raw.legacy))
     for (const [b, v] of Object.entries(raw.legacy)) {
-      if (!isBook(b) || !Array.isArray(v)) continue
+      if (!isBook(b) || isOtBook(b) || !Array.isArray(v)) continue
       const kept = [...new Set(v.filter((c): c is number => Number.isInteger(c) && progress[b].completed.includes(c as number)))]
       if (kept.length) legacy[b] = kept
     }
   const days = sanitizeBookDays(raw.days)
   // 필사로 따라 적은 장: 마친 장만, 예전에 엮은 장이면 뺀다. 칸이 없던 저장은 비어 있다 (마친 장은 모두 예전 장으로 센다)
-  const copied: Partial<Record<Book, number[]>> = {}
+  const copied: Partial<Record<CopyBook, number[]>> = {}
   if (isObj(raw.copied))
     for (const [b, v] of Object.entries(raw.copied)) {
       if (!isBook(b) || !Array.isArray(v)) continue
-      const kept = [...new Set(v.filter((c): c is number => Number.isInteger(c) && progress[b].completed.includes(c as number) && !legacy[b]?.includes(c as number)))]
+      const kept = [
+        ...new Set(v.filter((c): c is number => Number.isInteger(c) && doneOf(b).includes(c as number) && !(!isOtBook(b) && legacy[b as Book]?.includes(c as number)))),
+      ]
       if (kept.length) copied[b] = kept
     }
   return {
@@ -379,8 +385,8 @@ export function sanitizeCopy(raw: unknown, progress: Progress): CopyState {
 const dayOf = (n: unknown) => (typeof n === 'number' && Number.isInteger(n) && n >= 0 ? n : null)
 
 /** 책을 쓴 날 정리: 모양이 맞는 것만 (마친 날은 시작한 날 이후일 때만). 옛 저장(칸이 없던 때)은 빈 기록 */
-export function sanitizeBookDays(raw: unknown): Partial<Record<Book, BookDays>> {
-  const out: Partial<Record<Book, BookDays>> = {}
+export function sanitizeBookDays(raw: unknown): Partial<Record<CopyBook, BookDays>> {
+  const out: Partial<Record<CopyBook, BookDays>> = {}
   if (!isObj(raw)) return out
   for (const [b, v] of Object.entries(raw)) {
     if (!isBook(b) || !isObj(v)) continue

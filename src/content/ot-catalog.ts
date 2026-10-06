@@ -4,6 +4,7 @@
 import { expandRef } from './ref'
 import { OT_BOOK_TABLE, isOtBook, otRow, type OtBook } from '../engine/ot-books'
 import type { CopySource } from '../engine/copy'
+import { hashSetOf, verseHash } from './verse-hash'
 
 export interface OtVerse {
   chapter: number
@@ -26,6 +27,28 @@ export const otNoText = (text: string) => text === '(없음)' || /^\(\d+절에 �
 
 const loaders = import.meta.glob<string[][]>('./ot/*.json', { import: 'default' })
 const loaderOf = (id: OtBook) => loaders[`./ot/${id}.json`]
+
+/**
+ * 66권 전체 절의 해시 목록 (scripts/build-verse-hashes.mjs, 약 180KB) — 구약 빈칸 오답 보기가 다른 책(신약 포함)의 실제 본문이 되지 않게
+ * 책 전체를 불러오지 않고 "어느 책에도 없는가"를 본다. 책을 처음 불러올 때 함께 불러온다
+ */
+let allVerses: Set<string> | null = null
+let hashPending: Promise<void> | null = null
+function ensureHashes(): Promise<void> {
+  if (allVerses) return Promise.resolve()
+  if (!hashPending)
+    hashPending = import('./verse-hashes.json').then(
+      (m) => {
+        allVerses = hashSetOf((m.default as { h: string }).h)
+        hashPending = null
+      },
+      (e) => {
+        hashPending = null
+        throw e
+      },
+    )
+  return hashPending
+}
 
 const loaded = new Map<OtBook, string[][]>()
 const pending = new Map<OtBook, Promise<void>>()
@@ -65,8 +88,8 @@ export function ensureOtBook(id: OtBook): Promise<void> {
   if (!p) {
     const load = loaderOf(id)
     if (!load) return Promise.reject(new Error(`no ot book file: ${id}`))
-    p = load().then(
-      (book) => {
+    p = Promise.all([load(), ensureHashes()]).then(
+      ([book]) => {
         loaded.set(id, book)
         index(id, book)
         pending.delete(id)
@@ -112,7 +135,7 @@ export function otChapterText(id: OtBook, chapter: number): OtVerse[] {
   return n ? otVersesOf(`${OT_ABBR[id]} ${chapter}:1-${n}`) : []
 }
 
-/** 구약 책의 필사 본문 (신약 copySourceFor와 같은 모양) — 같은 문장 세기는 그 책 안에서만 센다 */
+/** 구약 책의 필사 본문 (신약 copySourceFor와 같은 모양) — countVerse는 그 책 안, countAnywhere는 66권 전체(해시 목록)에서 센다 */
 export function otCopySource(id: OtBook): CopySource {
   const book = bookOf(id)
   const same = sameText.get(id)!
@@ -125,7 +148,8 @@ export function otCopySource(id: OtBook): CopySource {
         return { ref: r, text: v.text, inBrackets: br.has(r) }
       }),
     countVerse: count,
-    countAnywhere: count,
+    // 66권 전체: 그 책 안의 세기와 해시 목록 중 큰 쪽 (해시는 있다/없다만 알려 준다 — 쓰는 곳은 0인지만 본다)
+    countAnywhere: (t) => Math.max(count(t), allVerses?.has(verseHash(t)) ? 1 : 0),
     chapters: book.map((ch, i) => ({ chapter: i + 1, ref: `${OT_ABBR[id]} ${i + 1}:1-${ch.length}` })),
   }
 }

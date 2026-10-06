@@ -49,7 +49,8 @@ import { COVER_FROM, jobOf, SELL_FROM } from './job'
 import { candleKey, candleToBlow, faceToward, weddingEvening } from './event-scene'
 import { FESTIVAL_SPOTS, FIRE, goalFor, isNear, npcTile, placeNpc, stepNpc, type Npc } from './neighbors'
 import { GAIN, heartsOf, MAX_POINTS } from './hearts'
-import { bookDone, bookRoomOpen, chaptersOf, emptyProgress, openDoorsFor, totalChapters, type Progress } from './books'
+import { bookDone, bookRoomOpen, chaptersOf, emptyProgress, openDoorsFor, progressOf, totalChapters, type OtProgress, type Progress } from './books'
+import { isOtBook, type CopyBook } from './ot-books'
 import { modeOf } from './shelf-rooms'
 import { currentChapter, mulberry32 } from './offers'
 import { drawFragment, fragmentSeed, fragmentsForDay, logPieces, talkGiftOf, type PieceLog } from './fragments'
@@ -136,7 +137,7 @@ import {
 } from './stories'
 import { propFootprint, HOUSES, PET_HOME, HOME_FRONT, isHome, isIndoor, isWalkable, key, HOME_ENTRY, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setHomeFurniture, setMailbox, setOpenDoors, setSpouseRoom, START, tileAt, WARPS, warpAt } from './world'
 import { currentMapId, setActiveMap, type MapId } from './maps'
-import { claimNewland, entryFront, grantNewland, inArchiveRoom, portalAt, setNewlandOpen, setNewlandRevealed } from './newland'
+import { claimNewland, entryFront, grantNewland, inArchiveRoom, portalAt, revealNewland, setNewlandOpen, setNewlandRevealed } from './newland'
 import { ARCHIVE, NEWLAND_PORTAL, TRAVEL_FROM_MINUTE, TRAVEL_LAST_MINUTE, TRAVEL_MINUTES, VILLAGE_PORTAL } from './newland-config'
 import { SPOUSE_ROOM_STAND } from './spouse-room'
 import type { Cooking } from './cooking'
@@ -285,6 +286,10 @@ export interface GameState {
   copy: CopyState
   /** 나의 필사 기록: 절·글자·장·권·처음 기록한 날 */
   copyStats: CopyStats
+  /** 구약 책별 진행 (계획 20 작업 5) — 선택 필드, 없으면 빈 진행. 신약 progress 27키와 섞이지 않는다 */
+  otProgress?: OtProgress
+  /** 구약 필사 기록 — 신약 copyStats와 섞이지 않는다. 없으면 빈 기록 */
+  otCopyStats?: CopyStats
   /** 하나님 기록 (계획 14): 장을 다 필사해 발견한 줄 — 키워드·근거 구절·발견한 날 */
   godRecords: GodFind[]
   /**
@@ -1048,9 +1053,19 @@ function tapPortal(s: GameState, tile: Tile, to: MapId): GameState {
   return { ...s, player: { ...s.player, path: [...snap, ...path.slice(0, -1)] }, target: { kind: 'portal', to }, idle: IDLE_RESET }
 }
 
-/** 새 터의 땅을 눌렀을 때: 걸어갈 수 있는 곳이면 걸어간다 (이웃·가구·장소는 이 지도에 없다) */
+/** 새 터의 땅을 눌렀을 때: 걸어갈 수 있는 곳이면 걸어간다 (이웃·가구는 이 지도에 없고, 장소는 서고 안 책상·책장뿐) */
 function tapNewland(s: GameState, tile: Tile): GameState {
   const from = playerTile(s)
+  const place = placeAt(tile)
+  if (place) {
+    const stand = PLACES[place].stand
+    // 이미 곁에 서 있으면 정해진 자리로 옮겨 가지 않고 그 자리에서 바로 연다 (집 책상과 같다)
+    const near = PLACES[place].tiles.some((t) => Math.max(Math.abs(t.x - from.x), Math.abs(t.y - from.y)) <= 1) || (!!stand && sameTile(from, stand))
+    const path = near ? [] : stand ? findPath(from, stand) : null
+    if (path === null) return { ...s, idle: IDLE_RESET }
+    const snap = s.player.x !== from.x || s.player.y !== from.y ? [from] : []
+    return { ...s, player: { ...s.player, path: [...snap, ...path] }, target: { kind: 'place', id: place, tile }, idle: IDLE_RESET }
+  }
   if (sameTile(tile, from) && s.player.path.length === 0) return { ...s, player: { ...s.player, facing: 'down' }, idle: greet(), target: null }
   const path = findPath(from, tile)
   if (path === null) return { ...s, idle: IDLE_RESET }
@@ -2983,8 +2998,10 @@ export function recordLetter(s: GameState, book: Book, chapter: number, picks: r
 // ── 필사 (계획 14 작업 1): 한 절씩 따라 적기, 재료 없음 ──
 
 /** 책상에서 쓸 책을 고른다 — 27권 어느 책이든 (서고 방이 열리지 않아도). 필사할 장이 없는 책이면 그대로 */
-export function startCopy(s: GameState, book: Book, content: GameContent): GameState {
-  if (!(BOOKS as readonly Book[]).includes(book) || !copyVerses(book, chaptersOf(book, content)[0] ?? 0, content).length) return s
+export function startCopy(s: GameState, book: CopyBook, content: GameContent): GameState {
+  // 구약은 새 터를 받은 뒤에만 (집 책상·새 터 책상 모두) — 본문을 아직 안 불러왔으면 그대로 (책상이 먼저 불러온다)
+  if (isOtBook(book) ? !s.flags.newlandGift : !(BOOKS as readonly Book[]).includes(book)) return s
+  if (!copyVerses(book, chaptersOf(book, content)[0] ?? 0, content).length) return s
   return { ...s, copy: { ...s.copy, book } }
 }
 
@@ -2992,7 +3009,7 @@ export function startCopy(s: GameState, book: Book, content: GameContent): GameS
  * 쓰다 만 입력을 그 절 자리에 저장한다 (자동 저장 — 나갔다 오면 그 절, 그 입력부터).
  * pasted(붙여넣기·끌어 놓기 표식)면 받지 않는다. 한꺼번에 여러 글자가 들어온 입력은 화면이 copying.acceptInput으로 먼저 거른다
  */
-export function saveCopyDraft(s: GameState, book: Book, input: string, content: GameContent, pasted = false): GameState {
+export function saveCopyDraft(s: GameState, book: CopyBook, input: string, content: GameContent, pasted = false): GameState {
   const spot = copySpot(s, book, content)
   if (!spot) return s
   const draft = pasted ? spot.draft : input
@@ -3029,7 +3046,7 @@ export type VerseResult =
  * 한 권의 마지막 장이면 'bookBound' 장면), 지능·손재주 경험치, 시간·피로는 예전 엮기와 같은 크기 (copyMinutes — 넓은 책상 효과 없음, 피로 6).
  * 재료·조각·받은 편지는 보지 않는다. 덜 맞으면 입력만 자리에 저장한다 (pasted면 그것도 받지 않는다)
  */
-export function writeVerse(s: GameState, book: Book, input: string, content: GameContent, pasted = false): { state: GameState; result: VerseResult } {
+export function writeVerse(s: GameState, book: CopyBook, input: string, content: GameContent, pasted = false): { state: GameState; result: VerseResult } {
   const spot = copySpot(s, book, content)
   if (!spot) return { state: s, result: { kind: 'none' } }
   const text = pasted ? spot.draft : input
@@ -3038,49 +3055,69 @@ export function writeVerse(s: GameState, book: Book, input: string, content: Gam
   const { chapter } = spot
   const verses = copyVerses(book, chapter, content)
   const day = s.clock.day
+  // 구약 가지 (계획 20 작업 5, D9): 본문 비교·장 완료·시간·피로는 신약과 같은 코드. 다른 것은 아래 셋뿐이다 —
+  // 진행은 otProgress, 기록은 otCopyStats, 그리고 경험치·하나님 기록·판 동기화·'제본·첫 장' 장면·일기 기록은 건너뛴다 (말씀은 보상이 아니다)
+  const ot = isOtBook(book)
+  const baseStats = ot ? (s.otCopyStats ?? NO_COPY_STATS) : s.copyStats
   const stats: CopyStats = {
-    ...s.copyStats,
-    verses: s.copyStats.verses + 1,
-    chars: s.copyStats.chars + spot.verse.chars,
-    firstDay: s.copyStats.firstDay ?? day,
+    ...baseStats,
+    verses: baseStats.verses + 1,
+    chars: baseStats.chars + spot.verse.chars,
+    firstDay: baseStats.firstDay ?? day,
   }
   // 이 책을 쓰기 시작한 날 (완성본 첫 쪽 — 작업 8). 처음 적은 절의 날 그대로 둔다.
   // 이 칸이 생기기 전에 이미 장을 마친 책이면 언제 시작했는지 모르므로 비워 둔다 (지금을 시작한 날로 속이지 않는다)
   const started = s.copy.days?.[book]
-  const partlyDone = s.progress[book].completed.length > 0
+  const partlyDone = progressOf(s, book).completed.length > 0
   const days = started || partlyDone ? (s.copy.days ?? {}) : { ...s.copy.days, [book]: { start: day } }
+  /** 구약 첫 절이면 새 터의 땅이 드러난다 (땅 둘러보기와 같은 표식 — 비용 없음). 지도를 맞추는 syncHome도 함께 */
+  const revealed = <T extends GameState>(st: T): T => {
+    if (!ot) return st
+    const r = revealNewland(st)
+    if (r !== st) syncHome(r)
+    return r
+  }
   const last = spot.index === verses.length - 1
   if (!last) {
     const nextVerse = verses[spot.index + 1].verse
-    const state = { ...s, copyStats: stats, copy: { ...s.copy, days, at: { ...s.copy.at, [book]: { chapter, verse: nextVerse } } } }
+    const state = revealed({
+      ...s,
+      ...(ot ? { otCopyStats: stats } : { copyStats: stats }),
+      copy: { ...s.copy, days, at: { ...s.copy.at, [book]: { chapter, verse: nextVerse } } },
+    })
     return { state, result: { kind: 'verse', chapter, verse: spot.verse.verse } }
   }
   // 장을 마쳤다
-  const bp = s.progress[book]
+  const bp = progressOf(s, book)
   const completed = bp.completed.includes(chapter) ? bp.completed : [...bp.completed, chapter]
-  const progress = { ...s.progress, [book]: { ...bp, completed } }
-  const finished = bookDone({ progress }, book, content)
+  const progress = ot ? s.progress : { ...s.progress, [book]: { ...bp, completed } }
+  const otProgress = ot ? { ...s.otProgress, [book]: { ...bp, completed } } : s.otProgress
+  const finished = bookDone({ progress, otProgress }, book, content)
   const scenes = [...s.scenes]
-  if (totalChapters(s) === 0) scenes.push('firstChapter')
-  if (finished) scenes.push('bookBound')
+  if (!ot) {
+    if (totalChapters(s) === 0) scenes.push('firstChapter')
+    if (finished) scenes.push('bookBound')
+  }
   const before = s.stats
-  const after = addXp(addXp(before, 'wit', COPY_CHAPTER_XP), 'hand', COPY_CHAPTER_XP)
+  const after = ot ? before : addXp(addXp(before, 'wit', COPY_CHAPTER_XP), 'hand', COPY_CHAPTER_XP)
   const next = nextOpenChapter(book, completed, chapter, content)
   const nextVerse = next === null ? null : copyVerses(book, next, content)[0]?.verse
   const at = { ...s.copy.at }
   if (next !== null && nextVerse !== undefined && nextVerse !== null) at[book] = { chapter: next, verse: nextVerse }
   else delete at[book]
-  // 하나님 기록: 그 장의 줄 중 아직 발견하지 않은 것 (장을 마친 날과 함께 남는다 — 쓰는 도중에는 보이지 않는다)
-  const finds = chapterFinds(content.godRecords ?? [], s.godRecords, book, chapter, day)
+  // 하나님 기록: 그 장의 줄 중 아직 발견하지 않은 것 (장을 마친 날과 함께 남는다 — 쓰는 도중에는 보이지 않는다). 구약에는 없다
+  const finds = ot ? [] : chapterFinds(content.godRecords ?? [], s.godRecords, book as Book, chapter, day)
+  const chapterStats = { ...stats, chapters: stats.chapters + 1, books: stats.books + (finished ? 1 : 0) }
   let state: GameState = passTime(
     {
       ...s,
       progress,
+      ...(ot ? { otProgress } : {}),
       scenes,
       stats: after,
       // 피로는 장을 마칠 때만 붙는다 (지쳐도 쓸 수는 있다 — 사용자 결정 2026-10-04)
       needs: work(s.needs, 6),
-      godRecords: [...s.godRecords, ...finds],
+      godRecords: ot ? s.godRecords : [...s.godRecords, ...finds],
       // 이 장으로 한 권을 마쳤으면 마친 날을 남긴다
       copy: {
         ...s.copy,
@@ -3089,15 +3126,19 @@ export function writeVerse(s: GameState, book: Book, input: string, content: Gam
         // 필사로 실제로 따라 적은 장 (조각 엮기·편지 옮겨 적기로 마친 장은 여기 들어오지 않는다)
         copied: { ...s.copy.copied, [book]: [...new Set([...(s.copy.copied?.[book] ?? []), chapter])] },
       },
-      copyStats: { ...stats, chapters: stats.chapters + 1, books: stats.books + (finished ? 1 : 0) },
+      ...(ot ? { otCopyStats: chapterStats } : { copyStats: chapterStats }),
     },
     copyMinutes(s),
   )
-  // 오늘의 기록: 그날 필사로 마친 장 (잠들기 전 일기)
-  state = logChapter(state, book, chapter)
-  // 사도행전 장은 여정 판에, 요한계시록 2·3장은 일곱 교회 판에 카드가 들어온다 (예전 엮기·옮겨 적기와 같다)
-  if (book === 'ac') state = syncJourney(state, content)
-  if (book === 'rev') state = syncBoard(state, 'churches', content)
+  state = revealed(state)
+  if (!ot) {
+    const nt = book as Book
+    // 오늘의 기록: 그날 필사로 마친 장 (잠들기 전 일기)
+    state = logChapter(state, nt, chapter)
+    // 사도행전 장은 여정 판에, 요한계시록 2·3장은 일곱 교회 판에 카드가 들어온다 (예전 엮기·옮겨 적기와 같다)
+    if (nt === 'ac') state = syncJourney(state, content)
+    if (nt === 'rev') state = syncBoard(state, 'churches', content)
+  }
   const gains = { wit: statScore(after.wit) - statScore(before.wit), hand: statScore(after.hand) - statScore(before.hand) }
   const chars = verses.reduce((n, v) => n + v.chars, 0)
   return { state, result: { kind: 'chapter', chapter, verse: spot.verse.verse, verses: verses.length, chars, gains, bookDone: finished, next, finds } }

@@ -2,7 +2,8 @@
 // 이어 창 1:3 본문 카드와 단추 둘. 본문은 불러온 구약에서 Passage가 읽는다 — 글 파일에 옮겨 적지 않는다.
 import { useEffect, useRef, useState } from 'react'
 import { T } from '../../content/text'
-import { OT_NAME, ensureOtBook } from '../../content/ot-catalog'
+import { OT_NAME, ensureOtBook, otLoaded } from '../../content/ot-catalog'
+import { isOtBook } from '../../engine/ot-books'
 import { FIRST_LIGHT_DARK, FIRST_LIGHT_SECONDS, FIRST_REF } from '../../engine/newland-config'
 import { setDarknessOverride } from '../../render/renderer'
 import { useGame } from '../../store/game-store'
@@ -11,7 +12,8 @@ import { firstChapterDesk } from './first-desk'
 
 export function FirstLight() {
   const [phase, setPhase] = useState<'light' | 'card'>('light')
-  const [ready, setReady] = useState(false)
+  // 본문 불러오기: loading → ready, 못 불러오면 failed (오류 문구 없이 "책을 펼치는 중" 줄만 지운다)
+  const [load, setLoad] = useState<'loading' | 'ready' | 'failed'>(() => (otLoaded('gen') ? 'ready' : 'loading'))
   const done = useRef(false)
 
   // 아침빛: 시작 어둠에서 0까지 (끝나거나 건너뛰면 덮어쓰기를 풀고 카드로)
@@ -35,8 +37,8 @@ export function FirstLight() {
   useEffect(() => {
     let alive = true
     ensureOtBook('gen').then(
-      () => alive && setReady(true),
-      () => alive && setReady(false),
+      () => alive && setLoad('ready'),
+      () => alive && setLoad('failed'),
     )
     return () => {
       alive = false
@@ -55,7 +57,9 @@ export function FirstLight() {
     if (done.current) return
     done.current = true
     const s = useGame.getState()
-    s.open(firstChapterDesk(s.game))
+    // 이미 구약 책을 고른 적이 없고 창세기를 불러왔으면 바로 창세기 첫 장으로, 아니면 새 터 책상의 구약 칸으로
+    if (!isOtBook(s.game.copy.book) && otLoaded('gen')) s.copyBook('gen')
+    else s.open(firstChapterDesk(s.game))
   }
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -72,14 +76,13 @@ export function FirstLight() {
     return <div className="first-light-veil" role="presentation" aria-label={T.newland.lightTitle} onPointerDown={skip} />
   return (
     <div className="dialog first-light" role="dialog" aria-label={T.newland.lightTitle}>
-      {ready ? (
+      {load === 'ready' && (
         <>
           <Passage refText={FIRST_REF} />
           <p className="hint">{`${T.ui.bibleSource} · ${OT_NAME.gen} 1:3`}</p>
         </>
-      ) : (
-        <p>{T.newland.opening}</p>
       )}
+      {load === 'loading' && <p>{T.newland.opening}</p>}
       <div className="actions menu column">
         <button className="primary" onClick={write}>
           {T.newland.firstWrite}

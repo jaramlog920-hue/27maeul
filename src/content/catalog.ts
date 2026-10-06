@@ -21,7 +21,7 @@ import type { LetterOpening, Question, QuizSource } from '../engine/quiz'
 import type { JourneyCard } from '../engine/journey'
 import type { CopySource } from '../engine/copy'
 import { isOtBook, type CopyBook } from '../engine/ot-books'
-import { otBookOfRef, otChapterText, otCopySource, otVersesOf } from './ot-catalog'
+import { otBookOfRef, otChapterText, otCopySource, otLoaded, otVersesOf } from './ot-catalog'
 
 const bible = raw as Record<string, string[][]>
 const byAbbr = Object.fromEntries(books.map((b) => [b.abbr, b.id]))
@@ -114,7 +114,8 @@ export const CONTENT: GameContent = {
   journey: JOURNEY,
   churches: CHURCHES,
   copy: (b) => copySourceFor(b),
-  chapterText: (b, c) => chapterText(b, c),
+  // 구약은 책을 불러오기 전에는 빈 장 (책상이 먼저 ensureOtBook으로 불러온다)
+  chapterText: (b, c) => (isOtBook(b) && !otLoaded(b) ? [] : chapterText(b, c)),
   godRecords: GOD_RECORDS,
 }
 
@@ -157,8 +158,9 @@ export interface ChapterGuide {
   look: string
 }
 const guides = guidesRaw as Record<string, Record<string, ChapterGuide>>
-/** 그 장의 길잡이 (장 전체에서 같은 길잡이). 없으면 null */
-export function chapterGuide(book: Book, chapter: number): ChapterGuide | null {
+/** 그 장의 길잡이 (장 전체에서 같은 길잡이). 없으면 null. 구약은 이 첫 제작에서 길잡이를 쓰지 않는다 — 언제나 null (계획 20 D10) */
+export function chapterGuide(book: CopyBook, chapter: number): ChapterGuide | null {
+  if (isOtBook(book)) return null
   return guides[BOOK_IDS[book]]?.[String(chapter)] ?? null
 }
 

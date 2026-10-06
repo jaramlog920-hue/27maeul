@@ -1,8 +1,9 @@
-// "첫 장을 써 본다"가 여는 창 — 한 곳에 모았다 (계획 20 작업 4). 지금은 기존 책상(CopyDesk)을 여는 데까지이고,
-// 구약 필사 책상 연결(작업 5)은 이 함수만 바꾸면 된다.
+// "첫 장을 써 본다"가 여는 창 — 한 곳에 모았다 (계획 20 작업 4·5). 새 터 책상의 구약 칸을 연다 (창세기–신명기 방이 펼쳐져 있다).
+// 책은 플레이어가 고른다 — 본문은 책을 누를 때 불러온다. 기존에 고른 책이 구약이면 그 책의 메뉴로 간다.
 import type { GameState } from '../../engine/game'
+import { isOtBook } from '../../engine/ot-books'
 import type { Modal } from '../../store/game-store'
 
 export function firstChapterDesk(game: GameState): Modal {
-  return { kind: 'copy', view: game.copy.book ? 'menu' : 'pick' }
+  return { kind: 'copy', view: isOtBook(game.copy.book) ? 'menu' : 'pick', tab: 'ot' }
 }

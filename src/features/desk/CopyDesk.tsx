@@ -4,12 +4,14 @@
 // 오타로 깜빡이지 않으며(compositionstart/end + InputEvent.inputType), 조합이 끝난 뒤에 절을 마친다.
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ChangeEvent, type Ref, type RefObject } from 'react'
 import { chapterGuide, CONTENT, GOD_KEYWORDS, versesOf } from '../../content/catalog'
-import { fill, roomTitle, T, withAnd, withSubject } from '../../content/text'
+import { ensureOtBook, otLoaded } from '../../content/ot-catalog'
+import { copyBookName, fill, roomTitle, T, withAnd, withSubject } from '../../content/text'
 import { setQuiet } from '../../audio/sound'
 import { chaptersOf, groupByRoom } from '../../engine/books'
 import { BLOCKED_INPUT_TYPES, checkCopy, checkVoice, copySpot, copyVerses, normalizeCopy, originalEnd, type CopySpot, type CopyVerse } from '../../engine/copying'
 import { deskKidWith, deskPose, spouseReading } from '../../engine/family'
-import { BOOKS, type Book } from '../../engine/types'
+import { isOtBook, OT_ROOMS, otRow, type CopyBook, type OtBook } from '../../engine/ot-books'
+import { BOOKS } from '../../engine/types'
 import { COPY_PEN, FAMILY_DESK, ICON_PALETTE } from '../../render/sprites'
 import { partnerName, useGame, type Modal } from '../../store/game-store'
 import { prefersStill, quillScratch, verseBuzz } from './copy-feel'
@@ -33,16 +35,15 @@ const FEEL = { page: '이 장에 적은 쪽 · {n}/{count}절' }
 const PAGE_ROWS = 8
 const ROW_LENGTH = [100, 92, 97, 86, 100, 90, 95, 70]
 
-/** 27권을 서고 방으로 묶어 고른다 (처음부터 모두) */
-function CopyBookPick() {
+/** 신약 27권을 서고 방으로 묶어 고른다 (처음부터 모두) */
+function NtBookList() {
   const progress = useGame((s) => s.game.progress)
   const current = useGame((s) => s.game.copy.book)
-  const { copyBook, copyView, copyExit } = useGame.getState()
+  const { copyBook } = useGame.getState()
   return (
-    <div className="copy-panel">
-      <h2>{C.pickTitle}</h2>
+    <>
       {groupByRoom(BOOKS).map(({ room, books }) => (
-        <details key={room.id} className="pick-room" open={current ? room.books.includes(current) : room.id === 'gospels'}>
+        <details key={room.id} className="pick-room" open={current ? (room.books as readonly CopyBook[]).includes(current) : room.id === 'gospels'}>
           <summary>{roomTitle(room)}</summary>
           <div className="book-grid">
             {books.map((b) => {
@@ -57,6 +58,83 @@ function CopyBookPick() {
           </div>
         </details>
       ))}
+    </>
+  )
+}
+
+/** 구약 39권을 네 범위 방(책 범위 이름)으로 묶어 고른다. 책을 누르면 본문을 불러온 뒤 쓴다 — 불러오는 동안 한 줄, 못 불러오면 그 줄만 지운다 */
+function OtBookList() {
+  const otProgress = useGame((s) => s.game.otProgress)
+  const current = useGame((s) => s.game.copy.book)
+  const { copyBook } = useGame.getState()
+  const [loading, setLoading] = useState<OtBook | null>(null)
+  const alive = useRef(true)
+  useEffect(() => {
+    alive.current = true
+    return () => {
+      alive.current = false
+    }
+  }, [])
+  const pick = (b: OtBook) => {
+    if (loading) return
+    if (otLoaded(b)) return copyBook(b)
+    setLoading(b)
+    ensureOtBook(b).then(
+      () => {
+        if (!alive.current) return
+        setLoading(null)
+        copyBook(b)
+      },
+      // 못 불러와도 오류 문구는 띄우지 않는다 — 줄을 지우고 단추만 남긴다
+      () => alive.current && setLoading(null),
+    )
+  }
+  return (
+    <>
+      {OT_ROOMS.map((room) => (
+        <details key={room.id} className="pick-room" open={isOtBook(current) ? room.books.includes(current) : room.id === 'law'}>
+          <summary>{room.label}</summary>
+          <div className="book-grid">
+            {room.books.map((b) => {
+              const status = fill(C.pickStatus, { done: otProgress?.[b]?.completed.length ?? 0, all: otRow(b).chapters })
+              return (
+                <button key={b} className={b === current ? 'primary' : ''} aria-label={`${copyBookName(b)} · ${status}`} onClick={() => pick(b)}>
+                  <span className="pick-name">{copyBookName(b)}</span>
+                  <span className="pick-status">{status}</span>
+                </button>
+              )
+            })}
+          </div>
+        </details>
+      ))}
+      {loading && (
+        <p className="hint" role="status">
+          {T.ot.opening}
+        </p>
+      )}
+    </>
+  )
+}
+
+/** 책 고르기: 신약 27권, 새 터를 받았으면 신약·구약 두 칸 (집 책상·새 터 책상 모두) */
+function CopyBookPick({ tab: first }: { tab?: 'nt' | 'ot' }) {
+  const current = useGame((s) => s.game.copy.book)
+  const gift = useGame((s) => !!s.game.flags.newlandGift)
+  const [tab, setTab] = useState<'nt' | 'ot'>(gift && (first ?? (isOtBook(current) ? 'ot' : 'nt')) === 'ot' ? 'ot' : 'nt')
+  const { copyView, copyExit } = useGame.getState()
+  return (
+    <div className="copy-panel">
+      <h2>{C.pickTitle}</h2>
+      {gift && (
+        <div className="tabs" role="tablist" aria-label={T.ot.tabs}>
+          {(['nt', 'ot'] as const).map((id) => (
+            <button key={id} role="tab" aria-selected={tab === id} className={tab === id ? 'on' : ''} onClick={() => setTab(id)}>
+              {id === 'nt' ? T.ot.tabNt : T.ot.tabOt}
+            </button>
+          ))}
+        </div>
+      )}
+      {tab === 'ot' ? <OtBookList /> : <NtBookList />}
       <div className="actions">
         <button onClick={current ? () => copyView('menu') : copyExit}>{current ? C.back : C.exit}</button>
       </div>
@@ -65,11 +143,11 @@ function CopyBookPick() {
 }
 
 /** 책상 메뉴: [이어서 필사] [다른 책 선택] */
-function CopyMenu({ book }: { book: Book }) {
+function CopyMenu({ book }: { book: CopyBook }) {
   const game = useGame((s) => s.game)
   const { copyView, copyExit } = useGame.getState()
   const spot = copySpot(game, book, CONTENT)
-  const name = BOOK_NAME[book]
+  const name = copyBookName(book)
   return (
     <div className="copy-panel copy-menu">
       <h2>{C.deskTitle}</h2>
@@ -350,7 +428,7 @@ function VerseGhost({ ghost, still, pageRef }: { ghost: Ghost; still: boolean; p
  * "본문을 바탕으로 쓴 설명" 표시. 입력칸 아래에 두어 쓰는 자리를 밀지 않고, 접기·펼치기는 플레이어 저장에 남는다.
  * 단추를 눌러도 입력칸의 초점(휴대폰 키보드)을 빼앗지 않는다
  */
-export function CopyGuide({ book, chapter }: { book: Book; chapter: number }) {
+export function CopyGuide({ book, chapter }: { book: CopyBook; chapter: number }) {
   const folded = useGame((s) => !!s.game.copy.guideFolded)
   const guide = chapterGuide(book, chapter)
   if (!guide) return null
@@ -421,9 +499,9 @@ function GuideLine({ lineKey }: { lineKey: string }) {
 let feelSeq = 0
 
 /** 한 절씩 따라 적기 */
-function CopyWrite({ book, spot, modal, still }: { book: Book; spot: CopySpot; modal: Extract<Modal, { kind: 'copy' }>; still: boolean }) {
+function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpot; modal: Extract<Modal, { kind: 'copy' }>; still: boolean }) {
   const { copyType, copySave, copyExit } = useGame.getState()
-  const name = BOOK_NAME[book]
+  const name = copyBookName(book)
   const box = useRef<HTMLTextAreaElement>(null)
   /** 한글을 조합하는 중 (compositionstart ~ compositionend) */
   const composing = useRef(false)
@@ -655,7 +733,8 @@ function CopyWrite({ book, spot, modal, still }: { book: Book; spot: CopySpot; m
         <p className="copy-status" role="status">
           {status}
         </p>
-        <CopyFamily />
+        {/* 곁에 앉은 아이·배우자는 신약 필사에만 (구약은 새 터 서고에서 혼자 쓴다) */}
+        {!isOtBook(book) && <CopyFamily />}
         <div ref={verseWrap} className="copy-verse-wrap">
           <VerseLine
             text={spot.verse.text}
@@ -728,14 +807,15 @@ function CopyWrite({ book, spot, modal, still }: { book: Book; spot: CopySpot; m
 }
 
 /** 장 완료 화면: 절·글자, 하나님에 대한 새로운 기록, 능력치, [책 덮기] [N장 계속 쓰기] */
-function CopyDone({ book, modal, folding }: { book: Book; modal: Extract<Modal, { kind: 'copy' }>; folding: boolean }) {
+function CopyDone({ book, modal, folding }: { book: CopyBook; modal: Extract<Modal, { kind: 'copy' }>; folding: boolean }) {
   const { copyView, copyExit, openBind } = useGame.getState()
-  const unbound = useGame((s) => s.game.bound[book] === undefined && s.game.shelved[book] === undefined)
+  // 제본·서고는 신약만 (구약 책은 책등 전시뿐)
+  const unbound = useGame((s) => !isOtBook(book) && s.game.bound[book] === undefined && s.game.shelved[book] === undefined)
   // 아이가 곁에 있었으면 장 완료 화면 끝에 한 줄 (보상 없음)
-  const kidName = useGame((s) => (deskKidWith(s.game) ? (s.game.child?.name ?? null) : null))
+  const kidName = useGame((s) => (!isOtBook(book) && deskKidWith(s.game) ? (s.game.child?.name ?? null) : null))
   const last = modal.last
   if (last?.kind !== 'chapter') return null
-  const name = BOOK_NAME[book]
+  const name = copyBookName(book)
   const gains = (['wit', 'hand'] as const).filter((k) => last.gains[k] > 0).map((k) => fill(C.gain, { name: T.stats.names[k], n: last.gains[k] }))
   return (
     <div className={folding ? 'copy-panel copy-done copy-after-fold' : 'copy-panel copy-done'}>
@@ -766,7 +846,7 @@ function CopyDone({ book, modal, folding }: { book: Book; modal: Extract<Modal, 
             className="primary"
             onClick={() => {
               copyExit()
-              openBind(book)
+              if (!isOtBook(book)) openBind(book)
             }}
           >
             {C.bind}
@@ -777,6 +857,44 @@ function CopyDone({ book, modal, folding }: { book: Book; modal: Extract<Modal, 
             {fill(C.nextChapter, { chapter: last.next })}
           </button>
         )}
+      </div>
+    </div>
+  )
+}
+
+/** 구약 책의 본문이 불러와졌는가 — 신약 책이거나 이미 불러왔으면 바로 ready. 못 불러오면 failed (오류 문구는 띄우지 않는다) */
+function useOtReady(book: CopyBook | null): 'ready' | 'loading' | 'failed' {
+  const needs = !!book && isOtBook(book)
+  const [state, setState] = useState<{ book: string; v: 'ready' | 'failed' } | null>(null)
+  useEffect(() => {
+    if (!book || !isOtBook(book) || otLoaded(book)) return
+    let alive = true
+    ensureOtBook(book).then(
+      () => alive && setState({ book, v: 'ready' }),
+      () => alive && setState({ book, v: 'failed' }),
+    )
+    return () => {
+      alive = false
+    }
+  }, [book])
+  if (!needs || otLoaded(book)) return 'ready'
+  return state?.book === book && state.v === 'failed' ? 'failed' : 'loading'
+}
+
+/** 구약 책을 펼치는 동안: "책을 펼치는 중" 한 줄과 단추. 못 불러오면 줄을 지우고 단추만 남긴다 */
+function OtOpening({ failed }: { failed: boolean }) {
+  const { copyView, copyExit } = useGame.getState()
+  return (
+    <div className="copy-panel copy-menu">
+      <h2>{C.deskTitle}</h2>
+      {!failed && (
+        <p className="hint" role="status">
+          {T.ot.opening}
+        </p>
+      )}
+      <div className="copy-menu-actions">
+        <button onClick={() => copyView('pick')}>{C.pickOther}</button>
+        <button onClick={copyExit}>{C.exit}</button>
       </div>
     </div>
   )
@@ -807,9 +925,11 @@ export function CopyDesk({ modal }: { modal: Extract<Modal, { kind: 'copy' }> })
     const t = setTimeout(() => setFold(null), FOLD_MS)
     return () => clearTimeout(t)
   }, [fold])
+  const otReady = useOtReady(book)
   let body
   if (modal.view === 'ask') body = <CopyAsk />
-  else if (!book || modal.view === 'pick') body = <CopyBookPick />
+  else if (!book || modal.view === 'pick') body = <CopyBookPick tab={modal.tab} />
+  else if (otReady !== 'ready') body = <OtOpening failed={otReady === 'failed'} />
   else if (modal.view === 'menu') body = <CopyMenu book={book} />
   else if (modal.view === 'done')
     body =

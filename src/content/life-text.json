@@ -7570,5 +7570,15 @@
     "firstWrite": "첫 장을 써 본다",
     "later": "나중에",
     "opening": "책을 펼치는 중"
+  },
+  "ot": {
+    "tabs": "신약과 구약",
+    "tabNt": "신약",
+    "tabOt": "구약",
+    "opening": "책을 펼치는 중",
+    "hudAt": "{book} {chapter}장",
+    "shelfTitle": "작은 책장",
+    "shelfEmpty": "필사를 마친 책이 여기에 꽂힙니다.",
+    "shelfSpine": "{book} 책등"
   }
 }

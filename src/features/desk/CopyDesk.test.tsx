@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, within } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { CONTENT, GOD_KEYWORDS, GOD_RECORDS, versesOf } from '../../content/catalog'
 import { isQuiet } from '../../audio/sound'
@@ -10,6 +10,14 @@ import { ModalLayer } from '../ModalLayer'
 import { Play } from '../play/Play'
 import { StatusPanel } from '../play/StatusPanel'
 import { T } from '../../content/text'
+import { ensureOtBook } from '../../content/ot-catalog'
+import { OT_BOOK_TABLE } from '../../engine/ot-books'
+
+// 구약 책 불러오기는 그대로 부르되, 실패하는 경우를 시험에서 한 번씩 끼워 넣는다 (계획 20 작업 5)
+vi.mock('../../content/ot-catalog', async (importOriginal) => {
+  const m = await importOriginal<typeof import('../../content/ot-catalog')>()
+  return { ...m, ensureOtBook: vi.fn(m.ensureOtBook) }
+})
 
 function reset(game: Partial<GameState> = {}) {
   localStorage.clear()
@@ -343,5 +351,144 @@ describe('재료 없는 필사에 맞춰 — 펜·책상은 꾸미기, 밤에도
     expect(within(panel).queryByRole('img', { name: '파피루스' })).toBeNull()
     expect(within(panel).queryByRole('img', { name: '잉크' })).toBeNull()
     for (const name of ['빵', '물', '기름']) expect(within(panel).getByRole('img', { name })).toBeInTheDocument()
+  })
+})
+
+// ── 구약 필사 (계획 20 작업 5) ──
+describe('필사 책상 — 구약 칸', () => {
+  const gifted = (extra: Partial<GameState> = {}): Partial<GameState> => ({ flags: { ...newGame(CONTENT).flags, newlandGift: 1 }, ...extra })
+  const gen1 = () => versesOf('창 1:1-31')
+  beforeAll(async () => {
+    await ensureOtBook('gen')
+  })
+
+  it('새 터를 받기 전에는 구약 칸이 없다 — 책 고르기는 신약 27권만, 지금 화면 그대로', () => {
+    reset()
+    render(<ModalLayer />)
+    act(() => useGame.getState().open({ kind: 'copy', view: 'pick' }))
+    expect(screen.queryByRole('tablist', { name: T.ot.tabs })).toBeNull()
+    expect(screen.getByRole('button', { name: /^마태복음/ })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /^창세기/ })).toBeNull()
+  })
+
+  it('새 터를 받은 뒤에는 신약·구약 두 칸. 구약 칸은 책 범위 이름의 네 방에 39권 (분류 이름 없음)', () => {
+    reset(gifted())
+    render(<ModalLayer />)
+    act(() => useGame.getState().open({ kind: 'copy', view: 'pick' }))
+    const tabs = screen.getByRole('tablist', { name: T.ot.tabs })
+    expect(within(tabs).getAllByRole('tab').map((t) => t.textContent)).toEqual(['신약', '구약'])
+    expect(screen.getByRole('tab', { name: '신약' })).toHaveAttribute('aria-selected', 'true')
+    fireEvent.click(screen.getByRole('tab', { name: '구약' }))
+    for (const label of ['창세기–신명기', '여호수아–에스더', '욥기–아가', '이사야–말라기']) expect(screen.getByText(label)).toBeInTheDocument()
+    for (const word of ['율법서', '역사서', '시가서', '예언서']) expect(screen.queryByText(word)).toBeNull()
+    for (const r of OT_BOOK_TABLE) expect(screen.getByRole('button', { name: `${r.name} · 0/${r.chapters}장` })).toBeInTheDocument()
+  })
+
+  it('새 터 책상에서 열면 처음부터 구약 칸이고, 진행한 장 수가 보인다', () => {
+    reset(gifted({ otProgress: { rut: { completed: [1, 2], arrangement: {} } } }))
+    render(<ModalLayer />)
+    act(() => useGame.getState().open({ kind: 'copy', view: 'pick', tab: 'ot' }))
+    expect(screen.getByRole('tab', { name: '구약' })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('button', { name: '룻기 · 2/4장' })).toBeInTheDocument()
+  })
+
+  it('불러온 책을 고르면 곧바로 쓰기 화면: 헤더·한 절, 안내 상자·곁의 가족 없음', () => {
+    reset(gifted())
+    render(<ModalLayer />)
+    act(() => useGame.getState().open({ kind: 'copy', view: 'pick', tab: 'ot' }))
+    fireEvent.click(screen.getByRole('button', { name: '창세기 · 0/50장' }))
+    expect(screen.getByRole('heading')).toHaveTextContent(`창세기 1장 · 1/${gen1().length}절`)
+    expect(screen.getByLabelText('본문 창세기 1:1')).toHaveTextContent('태초에 하나님이 천지를 창조하시니라')
+    expect(useGame.getState().game.copy.book).toBe('gen')
+    // 안내 상자(chapterGuide)는 구약에 없다
+    expect(document.querySelector('.copy-guide')).toBeNull()
+    expect(screen.queryByLabelText(T.copyFocus.guideTitle)).toBeNull()
+    expect(document.querySelector('.copy-family')).toBeNull()
+  })
+
+  it('한글 입력: 한 절을 쓰면 기록되고(otCopyStats) 다음 절이 올라온다 — 신약 기록은 그대로', async () => {
+    reset(gifted({ copy: { book: 'gen', at: { gen: { chapter: 1, verse: 1 } }, legacy: {} } }))
+    render(<ModalLayer />)
+    act(() => useGame.getState().open({ kind: 'copy', view: 'write' }))
+    const user = userEvent.setup()
+    await user.type(box(), gen1()[0].text)
+    expect(screen.getByRole('status')).toHaveTextContent('✓ 창세기 1:1 기록')
+    expect(screen.getByRole('heading')).toHaveTextContent(`창세기 1장 · 2/${gen1().length}절`)
+    const g = useGame.getState().game
+    expect(g.otCopyStats?.verses).toBe(1)
+    expect(g.copyStats.verses).toBe(0)
+    expect(g.flags.newlandRevealed).toBe(1)
+  })
+
+  it('휴대폰 한글 키보드(조합)도 같다: 조합이 끝난 뒤에 절을 기록한다', () => {
+    reset(gifted({ copy: { book: 'gen', at: { gen: { chapter: 1, verse: 1 } }, legacy: {} } }))
+    render(<ModalLayer />)
+    act(() => useGame.getState().open({ kind: 'copy', view: 'write' }))
+    const text = gen1()[0].text
+    fireEvent.compositionStart(box())
+    fireEvent.change(box(), { target: { value: text } })
+    expect(useGame.getState().game.otCopyStats).toBeUndefined()
+    fireEvent.compositionEnd(box())
+    expect(useGame.getState().game.otCopyStats?.verses).toBe(1)
+  })
+
+  it('장을 마치면 장 완료 화면: 능력치·기록 줄·제본 단추 없이 [책 덮기]', async () => {
+    await ensureOtBook('oba')
+    reset(gifted({ copy: { book: 'oba', at: { oba: { chapter: 1, verse: 1 } }, legacy: {} } }))
+    render(<ModalLayer />)
+    act(() => useGame.getState().open({ kind: 'copy', view: 'write' }))
+    // 한 번에 들어오는 입력 (휴대폰 키보드 확정과 같다) — 본문과 맞으면 받는다
+    for (const v of versesOf('옵 1:1-21')) fireEvent.change(box(), { target: { value: v.text } })
+    expect(screen.getByRole('heading')).toHaveTextContent('오바댜 1장')
+    expect(screen.queryByText(T.copyFocus.bind)).toBeNull()
+    expect(document.querySelector('.copy-gains')).toBeNull()
+    expect(document.querySelector('.copy-god')).toBeNull()
+    expect(screen.getByRole('button', { name: T.copyFocus.closeBook })).toBeInTheDocument()
+    const g = useGame.getState().game
+    expect(g.otProgress?.oba?.completed).toEqual([1])
+    expect(g.stats).toEqual(newGame(CONTENT).stats)
+    expect(g.godRecords).toEqual([])
+  })
+
+  it('안 불러온 책을 고르면 "책을 펼치는 중" 한 줄이 보이다가 불러온 뒤 쓰기 화면', async () => {
+    reset(gifted())
+    render(<ModalLayer />)
+    act(() => useGame.getState().open({ kind: 'copy', view: 'pick', tab: 'ot' }))
+    fireEvent.click(screen.getByRole('button', { name: '레위기 · 0/27장' }))
+    expect(screen.getByRole('status')).toHaveTextContent('책을 펼치는 중')
+    expect(await screen.findByRole('heading', { name: /레위기 1장 · 1\// })).toBeInTheDocument()
+    expect(useGame.getState().game.copy.book).toBe('lev')
+  })
+
+  it('불러오기에 실패하면 그 줄을 지우고 단추만 남긴다 (오류 문구 없음)', async () => {
+    reset(gifted())
+    render(<ModalLayer />)
+    act(() => useGame.getState().open({ kind: 'copy', view: 'pick', tab: 'ot' }))
+    vi.mocked(ensureOtBook).mockRejectedValueOnce(new Error('network'))
+    fireEvent.click(screen.getByRole('button', { name: '민수기 · 0/36장' }))
+    expect(screen.getByRole('status')).toHaveTextContent('책을 펼치는 중')
+    await waitFor(() => expect(screen.queryByRole('status')).toBeNull())
+    expect(screen.queryByText(/오류|실패|network/)).toBeNull()
+    expect(screen.getByRole('button', { name: '민수기 · 0/36장' })).toBeInTheDocument()
+    expect(useGame.getState().game.copy.book).toBeNull()
+  })
+
+  it('이어 쓰던 구약 책을 책상에서 열었는데 본문이 아직 없으면 같은 처리: 줄 → (실패하면) 줄 지우고 단추만', async () => {
+    reset(gifted({ copy: { book: 'deu', at: { deu: { chapter: 2, verse: 1 } }, legacy: {} } }))
+    vi.mocked(ensureOtBook).mockRejectedValueOnce(new Error('offline'))
+    render(<ModalLayer />)
+    act(() => useGame.getState().open({ kind: 'copy', view: 'menu' }))
+    expect(screen.getByRole('status')).toHaveTextContent('책을 펼치는 중')
+    await waitFor(() => expect(screen.queryByRole('status')).toBeNull())
+    expect(screen.getByRole('button', { name: T.copyFocus.pickOther })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: T.copyFocus.exit })).toBeInTheDocument()
+  })
+
+  it('쓰기 중에는 필사창이 그대로 열려 있다 (프레임이 흘러도 다른 창이 끼어들지 않는다)', () => {
+    reset(gifted({ copy: { book: 'gen', at: { gen: { chapter: 1, verse: 1 } }, legacy: {} } }))
+    render(<ModalLayer />)
+    act(() => useGame.getState().open({ kind: 'copy', view: 'write' }))
+    for (let i = 0; i < 20; i++) act(() => useGame.getState().frame(0.1))
+    expect(useGame.getState().modal).toMatchObject({ kind: 'copy', view: 'write' })
   })
 })

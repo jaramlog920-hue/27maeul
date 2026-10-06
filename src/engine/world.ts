@@ -16,7 +16,7 @@ import { currentSpouseRoom, setSpouseRoomOwner } from './spouse-room'
 import { FACILITY_IDS, SITES, type FacilityPlace } from './village-sites'
 import { currentMapId, mapHeight, mapVisibleHeight, mapWidth, VILLAGE_TOTAL_H, VILLAGE_VISIBLE_H, VILLAGE_W } from './maps'
 import { inArchiveRoom, newlandOpen, newlandTileAt, newlandWarp } from './newland'
-import { INTERIOR, VILLAGE_PORTAL } from './newland-config'
+import { INTERIOR, INTERIOR_DESK, INTERIOR_SHELF, VILLAGE_PORTAL } from './newland-config'
 
 export const TILE = 16
 export const WIDTH = VILLAGE_W
@@ -789,6 +789,9 @@ export const PLACES: Record<PlaceId, Place> = {
   // 집 안 (HOME_ROOM의 붙박이와 같은 자리)
   bed: { tiles: [home(1, 1)], stand: BED_STAND },
   desk: { tiles: [home(1, 3)], stand: home(2, 3) },
+  // 새 터 서고 안 (계획 20 작업 5): 구약 필사 책상, 작은 책장 — 칸은 새 터 지도의 좌표라 새 터에 있을 때만 켜진다 (placeActive)
+  otDesk: { tiles: [{ ...INTERIOR_DESK.tile }], stand: { ...INTERIOR_DESK.stand } },
+  otShelf: { tiles: [{ ...INTERIOR_SHELF.tile }], stand: { ...INTERIOR_SHELF.stand } },
   hearth: { tiles: [home(4, 1)], stand: HEARTH_STAND },
   shelf: { tiles: [home(7, 1)], stand: home(7, 2) },
   workbench: { tiles: [home(7, 3)], stand: home(6, 3) },
@@ -855,6 +858,7 @@ export function setMailbox(on: boolean): void {
 
 /** 이 장소가 지금 있는가 (집 붙박이는 그 가구가 놓여 있을 때, 집 앞 편지함은 선 뒤부터) */
 export function placeActive(id: PlaceId): boolean {
+  if (id === 'otDesk' || id === 'otShelf') return currentMapId() === 'newland'
   if (id === 'mailbox') return mailboxOn
   if (FACILITY_IDS.some((f) => SITES[f].place === id)) return villageShown.has(id)
   const fixture = Object.values(FIXTURES).find(f => f.place === id)
@@ -862,7 +866,8 @@ export function placeActive(id: PlaceId): boolean {
 }
 
 export function placeAt(t: Tile): PlaceId | null {
-  if (currentMapId() === 'newland') return null
+  // 새 터에는 서고 안 책상·책장만 있다 (그 밖의 장소·이웃·가구는 이 지도에 없다)
+  if (currentMapId() === 'newland') return (['otDesk', 'otShelf'] as const).find((id) => PLACES[id].tiles.some((pt) => sameTile(pt, t))) ?? null
   for (const [id, p] of Object.entries(PLACES) as [PlaceId, Place][]) if (placeActive(id) && p.tiles.some((pt) => sameTile(pt, t))) return id
   return null
 }

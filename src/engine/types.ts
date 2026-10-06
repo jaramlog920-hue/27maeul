@@ -1,6 +1,7 @@
 import type { MapId } from './maps'
 import type { JourneyCard } from './journey'
 import type { CopySource } from './copy'
+import type { CopyBook } from './ot-books'
 
 export interface Tile {
   x: number
@@ -13,6 +14,9 @@ export type Weather = 'sunny' | 'rain' | 'wind' | 'fog' | 'hot' | 'snow'
 export type PlaceId =
   | 'bed'
   | 'desk'
+  // 새 터 서고 안 (계획 20 작업 5): 구약 필사 책상, 작은 책장 — 새 터에서만 있다
+  | 'otDesk'
+  | 'otShelf'
   | 'hearth'
   | 'shelf'
   | 'workbench'
@@ -281,7 +285,7 @@ export interface GameContent {
   /** 편지 옮겨 적기의 본문 (책마다, 계획 7). 없으면 편지를 기록할 수 없다 */
   copy?: (book: Book) => CopySource
   /** 한 장의 본문 (필사, 계획 14): 절 번호와 본문. 본문이 없는 절은 이미 빠져 있다 (catalog.versesOf). 없으면 필사할 절이 없다 */
-  chapterText?: (book: Book, chapter: number) => readonly { verse: number; text: string }[]
+  chapterText?: (book: CopyBook, chapter: number) => readonly { verse: number; text: string }[]
   /** 하나님 기록 줄 (계획 14, god-records.json): 키워드 id·근거 구절·책·장. 없으면 장을 마쳐도 발견이 없다 */
   godRecords?: readonly { keyword: string; ref: string; book: Book; chapter: number }[]
 }

@@ -1,9 +1,10 @@
+import { spawnSync } from 'node:child_process'
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import path from 'node:path'
 import bible from './bible-subset.json'
 import { chapterText, copySourceFor, noText, PIECES, versesOf } from './catalog'
 import { ensureOtBook, otChapterCount, otChapterText, otLoaded, otNoText, OT_ABBR, OT_NAME } from './ot-catalog'
-import { OT_BOOKS } from '../engine/ot-books'
+import { OT_BOOKS, OT_BOOK_TABLE } from '../engine/ot-books'
 
 // 이 파일에서 가장 먼저: 아직 아무 책도 불러오지 않았다
 describe('구약 본문 — 불러오기 전', () => {
@@ -95,16 +96,35 @@ describe('메인 번들에 구약 본문이 없다', () => {
     for (const f of ['catalog.ts', 'ot-catalog.ts']) expect(readFileSync(path.resolve(__dirname, f), 'utf8')).not.toMatch(/from\s+'\.\/ot\//)
   })
 
-  // npm run build 산출물이 있을 때만: 메인 청크에 구약 글자가 없고, 구약 책 청크가 있으면 39권이 따로다
+  // npm run build 산출물이 있을 때만 (구약 책 청크는 assets/ot/ 아래로 모은다 — PWA 사전 캐시에서 빼고 실행 중 캐시로, vite.config.ts)
   const assets = path.resolve(__dirname, '../../dist/assets')
-  it.skipIf(!existsSync(assets))('빌드 산출물: 메인 청크에 구약 본문이 없다', () => {
+  const otDir = path.join(assets, 'ot')
+  it.skipIf(!existsSync(otDir))('빌드 산출물: 메인 청크에 구약 본문이 없고, 구약 책 청크는 39권이 assets/ot/에 따로 있다', () => {
     const files = readdirSync(assets).filter((f) => f.endsWith('.js'))
     const main = files.find((f) => f.startsWith('index-'))!
     const mainText = readFileSync(path.join(assets, main), 'utf8')
     expect(mainText).not.toContain('태초에 하나님이 천지를 창조하시니라')
     expect(mainText).not.toContain('여호와는 나의 목자시니')
-    const otChunks = files.filter((f) => /^(\d?[a-z]{2,3}|1sa|2sa|1ki|2ki|1ch|2ch)-[\w-]+\.js$/.test(f) && f !== main && !f.startsWith('workbox'))
-    // 앱이 아직 구약을 불러오지 않으면 청크가 없고(안 쓰는 불러오기는 빌드에서 빠진다), 불러오면 책마다 하나
-    expect([0, 39]).toContain(otChunks.length)
+    // 앱이 책을 불러오므로(ensureOtBook) 책마다 청크 하나 — 39권 모두
+    const otChunks = readdirSync(otDir).filter((f) => f.endsWith('.js'))
+    expect(otChunks).toHaveLength(39)
+    for (const row of OT_BOOK_TABLE) expect(otChunks.some((f) => f.startsWith(`${row.id}-`)), row.id).toBe(true)
+    // 해시 목록(약 180KB)은 책 청크가 아니라 따로 하나
+    expect(files.filter((f) => f.startsWith('verse-hashes-'))).toHaveLength(1)
+  })
+
+  it('PWA: 구약 책 청크는 사전 캐시에서 빼고 실행 중 캐시(CacheFirst)로 둔다 (설정)', () => {
+    const cfg = readFileSync(path.resolve(__dirname, '../../vite.config.ts'), 'utf8')
+    expect(cfg).toContain("globIgnores: ['**/assets/ot/**']")
+    expect(cfg).toContain("handler: 'CacheFirst'")
+    expect(cfg).toContain("cacheName: 'ot-books'")
+  })
+})
+
+describe('66권 해시 목록 (빈칸 오답 보기 검사)', () => {
+  it('verse-hashes.json이 지금 본문에서 만든 것과 같다 (build-verse-hashes --check)', () => {
+    const r = spawnSync('node', [path.resolve(__dirname, '../../scripts/build-verse-hashes.mjs'), '--check'], { encoding: 'utf8' })
+    expect(r.stdout + r.stderr).toContain('✓ verse-hashes 일치')
+    expect(r.status).toBe(0)
   })
 })

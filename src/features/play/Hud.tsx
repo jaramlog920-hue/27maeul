@@ -3,10 +3,11 @@ import { CONTENT } from '../../content/catalog'
 import { fill, T } from '../../content/text'
 import { isMarketDay, weatherOf } from '../../engine/calendar'
 import { formatTime, phaseOf, seasonOf } from '../../engine/clock'
-import { totalChapters, type Progress } from '../../engine/books'
+import { progressOf, totalChapters, type Progress } from '../../engine/books'
+import { OT_NAME } from '../../content/ot-catalog'
+import { isOtBook, otRow, type CopyBook } from '../../engine/ot-books'
 import { copySpot, type CopyAt } from '../../engine/copying'
 import { peaceful } from '../../engine/game'
-import type { Book } from '../../engine/types'
 import { jobOf } from '../../engine/job'
 import { useGame } from '../../store/game-store'
 import { DecorateButton } from './DecorateButton'
@@ -23,7 +24,7 @@ export function Hud() {
   // 지금 필사 자리 (계획 14 작업 6): 바뀔 때만 다시 센다 — 선택자는 저장된 값(같은 참조)만 돌려준다
   const book = useGame((s) => s.game.copy.book)
   const at = useGame((s) => (book ? s.game.copy.at[book] : undefined))
-  const done = useGame((s) => (book ? s.game.progress[book].completed : NONE))
+  const done = useGame((s) => (book ? progressOf(s.game, book).completed : NONE))
   const copyText = useMemo(() => copyNow(book, at, done), [book, at, done])
   const { open } = useGame.getState()
   const weather = (T.ui.weather as Record<string, string>)[weatherOf(day)]
@@ -78,8 +79,14 @@ const NONE: readonly number[] = []
  * 위 줄의 지금 필사 자리: "📖 마태복음 2장 0/23" (그 장에서 쓴 절 / 필사할 절). 고른 책이 없으면 책상에서 고르기,
  * 다 쓴 책이면 마쳤다고만 — 쓰라고 재촉하는 말은 없다
  */
-function copyNow(book: Book | null, at: CopyAt | undefined, completed: readonly number[]): string {
+function copyNow(book: CopyBook | null, at: CopyAt | undefined, completed: readonly number[]): string {
   if (!book) return T.ui.hudCopyNone
+  // 구약: 본문을 안 불러왔을 수 있으니 장만 보인다 (절 수는 책상에서)
+  if (isOtBook(book)) {
+    const open = Array.from({ length: otRow(book).chapters }, (_, i) => i + 1).filter((c) => !completed.includes(c))
+    if (!open.length) return fill(T.ui.hudCopyDone, { book: OT_NAME[book] })
+    return fill(T.ot.hudAt, { book: OT_NAME[book], chapter: at && open.includes(at.chapter) ? at.chapter : open[0] })
+  }
   const spot = copySpot({ progress: { [book]: { completed } } as unknown as Progress, copy: { book, at: at ? { [book]: at } : {}, legacy: {} } }, book, CONTENT)
   if (!spot) return fill(T.ui.hudCopyDone, { book: BOOK_NAME[book] })
   return fill(T.ui.hudCopyAt, { book: BOOK_NAME[book], chapter: spot.chapter, done: spot.index, all: spot.count })

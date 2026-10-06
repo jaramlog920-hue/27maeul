@@ -21,7 +21,8 @@ import { isFinished, sanitizeHomeShelf } from './finished-books'
 import { sanitizePieceLog } from './fragments'
 import { sanitizeDayLog } from './daybook'
 import { IDLE_RESET } from './autonomy'
-import { bookDone, bookRoomOpen, emptyProgress, type Progress } from './books'
+import { bookDone, bookRoomOpen, emptyProgress, sanitizeOtProgress, type Progress } from './books'
+import { isOtBook } from './ot-books'
 import { newGame, settle, type GameState } from './game'
 import { cardsForChapters, placeNewCards } from './journey'
 import { initialHomeFurniture, isFacing, refitRoom } from './room'
@@ -113,7 +114,11 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     progress[b].completed = [...new Set(s.progress?.[b]?.completed ?? [])].filter((c) => chapters.has(c))
   }
   // 필사 (계획 14): 옛 저장(칸이 없던 때 — deserialize가 null로 넘긴다)은 이미 마친 장을 "예전에 엮은 장"으로 남긴다
-  const copy = sanitizeCopy(s.copy, progress)
+  // 구약 (계획 20 작업 5): 옛 저장·구약을 안 쓴 저장은 없다 — 새 칸은 모두 선택 필드, 없으면 빈 진행으로 읽는다
+  const otProgress = sanitizeOtProgress(s.otProgress)
+  const rawCopy = sanitizeCopy(s.copy, progress, otProgress)
+  // 구약 책은 새 터를 받은 뒤에만 고른다 — 받기 전 저장에 구약 책이 골라져 있으면 비운다 (자리·진행은 그대로)
+  const copy = isOtBook(rawCopy.book) && !s.flags?.newlandGift ? { ...rawCopy, book: null } : rawCopy
   // 예전에 엮은 장(조각을 모아 엮던 때)에 (콘텐츠가 바뀌어) 새 조각이 생겼다면 모은 것으로 친다.
   // 필사로 마친 장은 조각과 상관없다 — 말씀 조각은 필사에서 떼어 냈다 (계획 14 작업 5)
   const extra: string[] = []
@@ -222,6 +227,8 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     // 필사 (계획 14): 마친 장(progress)은 그대로 마친 장이고, 글자 수 통계는 0에서 시작한다
     copy,
     copyStats: sanitizeCopyStats(s.copyStats),
+    ...(Object.keys(otProgress).length ? { otProgress } : {}),
+    ...(isObj(s.otCopyStats) ? { otCopyStats: sanitizeCopyStats(s.otCopyStats) } : {}),
     // 하나님 기록 (계획 14): 모양이 맞는 줄만, 같은 줄은 한 번만. 필사 전에 마친 장(옛 저장·예전에 엮은 장)의 줄은
     // 불러올 때 지금 날짜로 채운다 — 이미 있는 줄은 그대로라 몇 번 불러와도 같다
     godRecords: backfillGodRecords(

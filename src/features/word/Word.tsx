@@ -3,8 +3,10 @@
 // 가장 큰 단추는 [이어서 필사하기]. 해설 문장은 없다 — 본문은 개역한글 그대로(versesOf), 지어낸 말은 life-text의 word 칸만.
 import { Fragment, useState } from 'react'
 import { CONTENT, contextOf, GOD_KEYWORDS, NAMES, neighborById, PIECES, versesOf } from '../../content/catalog'
-import { fill, roomTitle, T } from '../../content/text'
-import { chaptersOf, groupByRoom } from '../../engine/books'
+import { copyBookName, fill, roomTitle, T } from '../../content/text'
+import { otLoaded } from '../../content/ot-catalog'
+import { chaptersOf, groupByRoom, progressOf } from '../../engine/books'
+import { isOtBook, otRow } from '../../engine/ot-books'
 import { connectionsOf, type Connection } from '../../engine/connections'
 import { copySpot } from '../../engine/copying'
 import { pieceFrom, whenOf, type PieceLog } from '../../engine/fragments'
@@ -131,11 +133,20 @@ function CopyRecord() {
   ]
   return (
     <section className="word-copy" aria-label={W.tabs.copy}>
-      <p className="word-now">
-        {!book ? W.nowNone : spot ? fill(W.nowAt, { book: BOOK_NAME[book], chapter: spot.chapter, verse: spot.verse.verse }) : fill(W.nowDone, { book: BOOK_NAME[book] })}
-      </p>
+      {/* 구약 책은 본문을 불러오기 전에는 지금 자리(절)를 알 수 없다 — 줄을 비운다 */}
+      {!(book && isOtBook(book) && !otLoaded(book)) && (
+        <p className="word-now">
+          {!book ? W.nowNone : spot ? fill(W.nowAt, { book: copyBookName(book), chapter: spot.chapter, verse: spot.verse.verse }) : fill(W.nowDone, { book: copyBookName(book) })}
+        </p>
+      )}
       {book && (
-        <p className="hint">{fill(W.bookProgress, { book: BOOK_NAME[book], done: game.progress[book].completed.length, all: chaptersOf(book, CONTENT).length })}</p>
+        <p className="hint">
+          {fill(W.bookProgress, {
+            book: copyBookName(book),
+            done: progressOf(game, book).completed.length,
+            all: isOtBook(book) ? otRow(book).chapters : chaptersOf(book, CONTENT).length,
+          })}
+        </p>
       )}
       <p className="hint">{fill(W.allProgress, { done, all, books: booksDone })}</p>
       <div className="word-bar" role="progressbar" aria-label={W.tabs.copy} aria-valuemin={0} aria-valuemax={all} aria-valuenow={done}>

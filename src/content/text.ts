@@ -5,6 +5,7 @@ import lifeText from './life-text.json'
 import peopleRaw from './people.json'
 import type { PeopleData } from '../engine/people'
 import type { ItemId } from '../engine/types'
+import { isOtBook, otRow, type CopyBook } from '../engine/ot-books'
 
 export interface Line {
   speaker: string
@@ -38,6 +39,8 @@ export interface Scene {
 }
 
 export const T = lifeText
+/** 필사하는 책의 화면 이름 — 신약 27권과 구약 39권 */
+export const copyBookName = (b: CopyBook): string => (isOtBook(b) ? otRow(b).name : (lifeText.quiz.books as Record<string, string>)[b])
 export const NEIGHBOR_LINES = lifeText.neighbors as Record<string, NeighborLines>
 export const SCENES = lifeText.scenes as Record<string, Scene>
 // 살아 움직이는 사람들 (계획 6b): 이벤트는 ev:<id>, 목격은 saw:<id> 장면으로

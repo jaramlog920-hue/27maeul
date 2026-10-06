@@ -236,15 +236,17 @@ describe('서고 문 첫 밟기 — 아침빛 · 창 1:3 · 건너뛰기', () =>
     expect(playerTile(g).y).toBeGreaterThan(NEWLAND_VISIBLE_H - 1)
     for (let i = 0; i < 10; i++) useGame.getState().frame(0.1)
     expect(useGame.getState().modal).toBeNull()
-    expect(firstChapterDesk(g)).toEqual({ kind: 'copy', view: 'pick' })
+    expect(firstChapterDesk(g)).toEqual({ kind: 'copy', view: 'pick', tab: 'ot' })
     const out = walkDirection(g, 0, 1)
     expect(out.player.path.length + (out.player.facing === 'down' ? 1 : 0)).toBeGreaterThan(0)
   })
 
-  it('"첫 장을 써 본다"가 여는 창은 한 함수로 모여 있고, 지금은 기존 책상(필사창)이다', () => {
+  it('"첫 장을 써 본다"가 여는 창은 한 함수로 모여 있고, 새 터 책상의 구약 칸이다 (작업 5)', () => {
     const g = night(5, { newlandGift: 1 })
-    expect(firstChapterDesk(g)).toEqual({ kind: 'copy', view: 'pick' })
-    expect(firstChapterDesk({ ...g, copy: { ...g.copy, book: 'mt' } })).toEqual({ kind: 'copy', view: 'menu' })
+    expect(firstChapterDesk(g)).toEqual({ kind: 'copy', view: 'pick', tab: 'ot' })
+    // 신약 책을 쓰던 중이어도 구약 칸의 책 고르기, 구약 책을 고른 적이 있으면 그 책의 메뉴
+    expect(firstChapterDesk({ ...g, copy: { ...g.copy, book: 'mt' } })).toEqual({ kind: 'copy', view: 'pick', tab: 'ot' })
+    expect(firstChapterDesk({ ...g, copy: { ...g.copy, book: 'gen' } })).toEqual({ kind: 'copy', view: 'menu', tab: 'ot' })
   })
 })
 

@@ -2,6 +2,8 @@ import { WORKSHOP, PARTNER_ROOM, BABY_ROOM, LIVING_ROOM } from '../engine/home-l
 import { canTravel, moveFurniture, travel } from '../engine/game'
 import { currentMapId, type MapId } from '../engine/maps'
 import { newlandRevealed, revealNewland } from '../engine/newland'
+import { progressOf } from '../engine/books'
+import { isOtBook, type CopyBook } from '../engine/ot-books'
 import { ARCHIVE } from '../engine/newland-config'
 import { clubWeaveDone } from '../engine/clubs'
 // 엔진 상태 ↔ 화면 연결. 창(모달)이 열려 있으면 시간과 걸음이 멈춘다.
@@ -200,7 +202,9 @@ export type Modal =
    * view: 'menu' 책상 메뉴(이어서 필사·다른 책 선택), 'pick' 27권 고르기, 'write' 한 절씩 따라 적기, 'done' 장 완료 화면.
    * last: 방금 적은 절·마친 장, resume: 들어올 때 "…부터 이어집니다" 알림을 보일까 (창 상태로만)
    */
-  | { kind: 'copy'; view: CopyView; last?: VerseResult | null; resume?: boolean }
+  | { kind: 'copy'; view: CopyView; last?: VerseResult | null; resume?: boolean; tab?: 'nt' | 'ot' }
+  /** 새 터 서고 안 작은 책장: 필사를 끝낸 구약 책의 책등 전시 (계획 20 작업 5) */
+  | { kind: 'otShelf' }
   | { kind: 'review'; pieceId: string | null }
   | { kind: 'journal'; tab?: JournalTab }
   | { kind: 'scene'; id: string; chosen?: number }
@@ -483,7 +487,7 @@ interface Store {
   moveInDesk: (book: Book, chapter: number, index: number, delta: number) => void
   submitDesk: (book: Book, chapter: number) => void
   /** 필사: 쓸 책을 고른다 (27권 어느 책이든) */
-  copyBook: (book: Book) => void
+  copyBook: (book: CopyBook) => void
   /**
    * 필사: 입력이 바뀌었다. how: 붙여넣기 표식·입력 종류(InputEvent.inputType)·한글 조합 중인가.
    * 조합 중에는 쓰다 만 입력만 남기고 절을 마치지 않는다 (조합이 끝나면 다시 부른다).
@@ -777,7 +781,7 @@ export const useGame = create<Store>((set, get) => {
    * 필사 한 절 입력을 적는다 (writeVerse): 덜 맞으면 쓰다 만 입력만, 다 맞으면 기록 — 등잔·아이·소리·화면까지.
    * 손으로 쓴 것(copyType)과 소리 내어 읽은 것(copyVoice)이 같은 길을 지난다
    */
-  const commitVerse = (game: GameState, book: Book, text: string): boolean => {
+  const commitVerse = (game: GameState, book: CopyBook, text: string): boolean => {
     const { state, result } = writeVerse(game, book, text, CONTENT)
     if (result.kind === 'notYet') {
       // 쓰다 만 입력: 상태에만 (화면이 손을 멈추면 copySave로, 나갈 때·절을 마칠 때 저장된다)
@@ -786,7 +790,8 @@ export const useGame = create<Store>((set, get) => {
     }
     if (result.kind === 'none') return true
     // 밤에 한 절을 적으면 기름이 있을 때 등잔을 켠다 (그림의 불빛 — 없어도 쓴다). 곁에 앉은 아이는 그림 그리다 졸다 잠든다
-    const lit = deskKidVerse(lightLamp(state) ?? state)
+    // 구약은 새 터 서고에서 쓰는 것이 기본이라 집의 등잔·곁에 앉은 아이는 없다 (아무것도 더 세지 않는다)
+    const lit = isOtBook(book) ? state : deskKidVerse(lightLamp(state) ?? state)
     // 한 절은 펜을 책상에 내려놓는 소리(도장), 한 장을 마치면 책장 넘기는 소리와 마침 소리
     if (result.kind === 'chapter') {
       sfx('page')
@@ -959,6 +964,11 @@ export const useGame = create<Store>((set, get) => {
         // 다시 읽을 목록에서는 여기서 빼지 않는다 — 읽고 자기(sleep)를 눌렀을 때만 뺀다
         return { game, modal: { kind: 'review', pieceId: reviewPick(game, rng) } }
       }
+      // 새 터 서고 안 (계획 20 작업 5): 구약 필사 책상 (집 책상과 같은 창, 구약 칸으로), 작은 책장
+      case 'otDesk':
+        return { game, modal: { kind: 'copy', view: isOtBook(game.copy.book) ? 'menu' : 'pick', tab: 'ot' } }
+      case 'otShelf':
+        return { game, modal: { kind: 'otShelf' } }
       case 'desk': {
         // 계획 14: 책상은 필사 책상 — 재료·조각·등잔 기름 없이도 쓴다 (예전 엮기·옮겨 적기 창으로 가는 길은 닫았다).
         // 앉기만 해서는 기름을 쓰지 않는다 — 밤에 실제로 한 절을 적을 때 기름이 있으면 등잔을 켠다 (copyType)
@@ -1471,7 +1481,10 @@ export const useGame = create<Store>((set, get) => {
       set({ game: persist(travel(g, to, CONTENT)), modal: null })
     },
     lookAround: () => {
-      set({ game: persist(revealNewland(get().game)), modal: null })
+      // 땅이 드러나는 칸 그림을 바로 맞춘다 (persist의 syncHome을 기다리지 않고, 같은 프레임에)
+      const next = revealNewland(get().game)
+      syncHome(next)
+      set({ game: persist(next), modal: null })
     },
     rest: () => {
       set({ game: persist(restAt(get().game)), modal: null })
@@ -1674,7 +1687,7 @@ export const useGame = create<Store>((set, get) => {
       if (next === game && game.copy.book !== book) return
       sfx('page')
       // 이미 쓰던 책(이어 쓸 자리나 마친 장이 있다)이면 "…부터 이어집니다"를 보인다
-      const resume = !!next.copy.at[book] || next.progress[book].completed.length > 0
+      const resume = !!next.copy.at[book] || progressOf(next, book).completed.length > 0
       set({ game: persist(next), modal: { kind: 'copy', view: 'write', last: null, resume } })
     },
     copyView: (view, resume = false) => {
