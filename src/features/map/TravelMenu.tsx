@@ -15,7 +15,6 @@ export function TravelMenu({ to }: { to: MapId }) {
   return (
     <div className="dialog" role="dialog" aria-label={title}>
       <h2>{title}</h2>
-      <p>{T.travel.time}</p>
       <div className="actions menu column">
         <button className="primary" onClick={() => travelTo(to)}>
           {toNewland ? T.travel.toNewland : T.travel.toVillage}

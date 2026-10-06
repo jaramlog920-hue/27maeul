@@ -10,7 +10,7 @@ import { setQuiet } from '../../audio/sound'
 import { chaptersOf, groupByRoom } from '../../engine/books'
 import { BLOCKED_INPUT_TYPES, checkCopy, checkVoice, copySpot, copyVerses, normalizeCopy, originalEnd, type CopySpot, type CopyVerse } from '../../engine/copying'
 import { deskKidWith, deskPose, spouseReading } from '../../engine/family'
-import { isOtBook, OT_ROOMS, otRow, type CopyBook, type OtBook } from '../../engine/ot-books'
+import { chapterUnit, isOtBook, OT_ROOMS, otRow, type CopyBook, type OtBook } from '../../engine/ot-books'
 import { BOOKS } from '../../engine/types'
 import { COPY_PEN, FAMILY_DESK, ICON_PALETTE } from '../../render/sprites'
 import { partnerName, useGame, type Modal } from '../../store/game-store'
@@ -47,7 +47,7 @@ function NtBookList() {
           <summary>{roomTitle(room)}</summary>
           <div className="book-grid">
             {books.map((b) => {
-              const status = fill(C.pickStatus, { done: progress[b].completed.length, all: chaptersOf(b, CONTENT).length })
+              const status = fill(C.pickStatus, { done: progress[b].completed.length, all: chaptersOf(b, CONTENT).length, unit: chapterUnit(b) })
               return (
                 <button key={b} className={b === current ? 'primary' : ''} aria-label={`${BOOK_NAME[b]} · ${status}`} onClick={() => copyBook(b)}>
                   <span className="pick-name">{BOOK_NAME[b]}</span>
@@ -96,7 +96,7 @@ function OtBookList() {
           <summary>{room.label}</summary>
           <div className="book-grid">
             {room.books.map((b) => {
-              const status = fill(C.pickStatus, { done: otProgress?.[b]?.completed.length ?? 0, all: otRow(b).chapters })
+              const status = fill(C.pickStatus, { done: otProgress?.[b]?.completed.length ?? 0, all: otRow(b).chapters, unit: chapterUnit(b) })
               return (
                 <button key={b} className={b === current ? 'primary' : ''} aria-label={`${copyBookName(b)} · ${status}`} onClick={() => pick(b)}>
                   <span className="pick-name">{copyBookName(b)}</span>
@@ -151,7 +151,7 @@ function CopyMenu({ book }: { book: CopyBook }) {
   return (
     <div className="copy-panel copy-menu">
       <h2>{C.deskTitle}</h2>
-      <p className="copy-menu-at">{spot ? fill(C.menuAt, { book: name, chapter: spot.chapter, verse: spot.verse.verse }) : fill(C.menuDone, { book: name })}</p>
+      <p className="copy-menu-at">{spot ? fill(C.menuAt, { book: name, chapter: spot.chapter, unit: chapterUnit(book), verse: spot.verse.verse }) : fill(C.menuDone, { book: name })}</p>
       <div className="copy-menu-actions">
         {spot && (
           <button className="primary" onClick={() => copyView('write', true)}>
@@ -712,16 +712,16 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
     last?.kind === 'verse'
       ? fill(C.verseDone, { book: name, chapter: last.chapter, verse: last.verse })
       : modal.resume
-        ? fill(C.resume, { book: name, chapter: spot.chapter, verse: spot.verse.verse })
+        ? fill(C.resume, { book: name, chapter: spot.chapter, unit: chapterUnit(book), verse: spot.verse.verse })
         : ''
-  const label = fill(C.progress, { book: name, chapter: spot.chapter })
+  const label = fill(C.progress, { book: name, chapter: spot.chapter, unit: chapterUnit(book) })
   return (
     <div className="copy-write">
       {/* 쓰는 자리 (머리~입력칸) — 평소엔 그대로 흘러가고, 키보드가 올라오면 키보드 위 높이에 맞춘 한 칸이 된다 */}
       <div ref={work} className="copy-work">
         <header className="copy-focus-head">
           <CopyPen />
-          <h2>{fill(C.header, { book: name, chapter: spot.chapter, n: spot.index + 1, count: spot.count })}</h2>
+          <h2>{fill(C.header, { book: name, chapter: spot.chapter, unit: chapterUnit(book), n: spot.index + 1, count: spot.count })}</h2>
           <CopyPage verses={verses} done={spot.index} fresh={ghost?.chapter === spot.chapter ? ghost.verse : undefined} pageRef={pageRef} />
           <button className="copy-exit" onClick={copyExit}>
             {C.exit}
@@ -819,7 +819,7 @@ function CopyDone({ book, modal, folding }: { book: CopyBook; modal: Extract<Mod
   const gains = (['wit', 'hand'] as const).filter((k) => last.gains[k] > 0).map((k) => fill(C.gain, { name: T.stats.names[k], n: last.gains[k] }))
   return (
     <div className={folding ? 'copy-panel copy-done copy-after-fold' : 'copy-panel copy-done'}>
-      <h2>{fill(C.chapterDone, { book: name, chapter: last.chapter, verses: last.verses, chars: last.chars })}</h2>
+      <h2>{fill(C.chapterDone, { book: name, chapter: last.chapter, unit: chapterUnit(book), verses: last.verses, chars: last.chars })}</h2>
       {last.finds.length > 0 && (
         <section className="copy-god" aria-label={fill(C.godNew, { n: last.finds.length })}>
           <h3>{fill(C.godNew, { n: last.finds.length })}</h3>
@@ -854,7 +854,7 @@ function CopyDone({ book, modal, folding }: { book: CopyBook; modal: Extract<Mod
         )}
         {last.next !== null && (
           <button className="primary" onClick={() => copyView('write')}>
-            {fill(C.nextChapter, { chapter: last.next })}
+            {fill(C.nextChapter, { chapter: last.next, unit: chapterUnit(book) })}
           </button>
         )}
       </div>

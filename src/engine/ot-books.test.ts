@@ -1,5 +1,5 @@
 import books from '../content/books.json'
-import { OT_BOOK_TABLE, OT_BOOKS, OT_ROOMS, isOtBook, otRoomOf, testamentOf } from './ot-books'
+import { OT_BOOK_TABLE, OT_BOOKS, OT_ROOMS, chapterUnit, isOtBook, otChapterLabel, otRoomOf, testamentOf } from './ot-books'
 import { BOOKS } from './types'
 
 const STANDARD_ORDER =
@@ -80,5 +80,20 @@ describe('구약 방 (D11)', () => {
 describe('신약 회귀 — 구약을 더해도 신약 전용 판정은 그대로', () => {
   it('BOOKS는 여전히 27권이다', () => {
     expect(BOOKS).toHaveLength(27)
+  })
+})
+
+describe('장 이름 (시편은 편)', () => {
+  it('시편만 "편", 나머지는 "장"이다', () => {
+    expect(otChapterLabel('psa', 29)).toBe('29편')
+    expect(otChapterLabel('gen', 1)).toBe('1장')
+    expect(otChapterLabel('mal', 4)).toBe('4장')
+    expect(chapterUnit('psa')).toBe('편')
+    expect(chapterUnit('mat')).toBe('장')
+  })
+  it('구약 조각 이름에도 쓰인다', async () => {
+    const { OT_PIECES } = await import('./ot-pieces')
+    expect(OT_PIECES.find((p) => p.id === 'ot:psa:29')!.name).toBe('시편 29편')
+    expect(OT_PIECES.find((p) => p.id === 'ot:gen:1')!.name).toBe('창세기 1장')
   })
 })

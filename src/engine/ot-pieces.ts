@@ -1,9 +1,9 @@
-// 구약 말씀 조각 (2026-10-07 사용자 요청): 장 하나가 조각 하나 — 39권 929개. 이름은 "창세기 1장"처럼 책 이름+장이다 (제목을 짓지 않는다).
+// 구약 말씀 조각 (2026-10-07 사용자 요청): 장 하나가 조각 하나 — 39권 929개. 이름은 "창세기 1장"·"시편 29편"처럼 책 이름+장(편)이다 (제목을 짓지 않는다).
 // 조각 목록은 OT_BOOK_TABLE에서 코드로 만든다 — 본문 파일을 부르지 않는다 (성경 본문은 Passage에만).
 // 신약 조각(collected·drawFragment)과 섞지 않는다: 모은 구약 조각은 따로 otCollected에 담기고, 신약 무작위 뽑기에는 들어가지 않는다.
 // 구약 조각은 구약 필사의 조건도 보상도 아니다 — 모으는 수집품일 뿐이다.
 import { mulberry32 } from './offers'
-import { OT_BOOK_TABLE } from './ot-books'
+import { OT_BOOK_TABLE, otChapterLabel } from './ot-books'
 
 export interface OtPiece {
   id: string
@@ -17,7 +17,7 @@ export interface OtPiece {
 export const otPieceId = (book: string, chapter: number): string => `ot:${book}:${chapter}`
 
 export const OT_PIECES: readonly OtPiece[] = OT_BOOK_TABLE.flatMap((r) =>
-  Array.from({ length: r.chapters }, (_, i) => ({ id: otPieceId(r.id, i + 1), book: r.id, chapter: i + 1, name: `${r.name} ${i + 1}장` })),
+  Array.from({ length: r.chapters }, (_, i) => ({ id: otPieceId(r.id, i + 1), book: r.id, chapter: i + 1, name: `${r.name} ${otChapterLabel(r.id, i + 1)}` })),
 )
 
 export const OT_PIECE_COUNT = OT_PIECES.length

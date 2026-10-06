@@ -2,17 +2,20 @@
 // 놓을 수 없으면 초록·빨강 색 대신 그 자리에서 이유 한 줄만 보인다. 한 번에 한 가지만 미리 본다.
 import { useEffect, useRef, useState } from 'react'
 import { fill, itemList, T } from '../../content/text'
-import { BUILD_RECT } from '../../engine/newland-config'
+import { BUILD_RECT, NEWLAND_VISIBLE_H, NEWLAND_W } from '../../engine/newland-config'
+import { NEWLAND_MAP } from '../../engine/newland'
 import { areaOf, boxOf, buildsOf, canOrder, costOf, doorOf, tilesOf, type OrderBlock } from '../../engine/newland-build'
 import { SITES, type SiteKind } from '../../engine/newland-sites'
 import type { Facing, Tile } from '../../engine/types'
 import { BUILDING_LABELS } from '../../render/old-village-art'
 import { useGame } from '../../store/game-store'
 
-const CELL = 12
-const W = BUILD_RECT.x1 - BUILD_RECT.x0 + 1
-const H = BUILD_RECT.y1 - BUILD_RECT.y0 + 1
+const CELL = 8
+const W = NEWLAND_W
+const H = NEWLAND_VISIBLE_H
 
+/** 새 터 바탕 글자 → 흐린 색 (T 숲 · S 서고 벽 · D 서고 문 · , 길 · > 표지 · * 꽃) */
+const GROUND_COLOR: Record<string, string> = { '.': '#d6e0bd', T: '#b3c79d', S: '#cbc2b0', D: '#a8957c', ',': '#eadfc0', '>': '#d8c48a', '*': '#e3cfd3' }
 export type SitePick = SiteKind | 'eraser'
 
 const BLOCK_TEXT: Record<OrderBlock, string> = {
@@ -59,7 +62,7 @@ export function SitePreview({ pick, onBack, onPlaced }: { pick: SitePick; onBack
   const def = kind ? SITES[kind] : null
   const [facing, setFacing] = useState<Facing>('down')
   const [size, setSize] = useState<number>(def?.sizes[0] ?? 1)
-  const [pos, setPos] = useState<Tile>({ x: BUILD_RECT.x0 + Math.floor(W / 2) - 1, y: BUILD_RECT.y0 + Math.floor(H / 2) - 1 })
+  const [pos, setPos] = useState<Tile>({ x: BUILD_RECT.x0 + Math.floor((BUILD_RECT.x1 - BUILD_RECT.x0 + 1) / 2) - 1, y: BUILD_RECT.y0 + Math.floor((BUILD_RECT.y1 - BUILD_RECT.y0 + 1) / 2) - 1 })
   const ref = useRef<HTMLCanvasElement>(null)
   const span = spanOf(pick, size)
   const at = { x: clamp(pos.x, BUILD_RECT.x0, BUILD_RECT.x1 - span + 1), y: clamp(pos.y, BUILD_RECT.y0, BUILD_RECT.y1 - span + 1) }
@@ -71,25 +74,39 @@ export function SitePreview({ pick, onBack, onPlaced }: { pick: SitePick; onBack
     const g = c?.getContext('2d')
     if (!c || !g) return
     g.clearRect(0, 0, c.width, c.height)
-    g.fillStyle = '#d6e0bd'
+    // 드러난 새 터의 실제 칸 (흐린 색): 풀밭 바탕 위에 숲 가장자리·서고(벽·문)·길·표지·꽃
+    g.fillStyle = GROUND_COLOR['.']
     g.fillRect(0, 0, c.width, c.height)
+    for (let y = 0; y < H; y++) {
+      for (let x = 0; x < W; x++) {
+        const color = GROUND_COLOR[NEWLAND_MAP[y]?.[x] ?? '.']
+        if (!color || color === GROUND_COLOR['.']) continue
+        g.fillStyle = color
+        g.fillRect(x * CELL, y * CELL, CELL, CELL)
+      }
+    }
+    // 건축할 수 있는 구역만 옅은 격자
     g.strokeStyle = 'rgba(90,110,70,0.18)'
     g.lineWidth = 1
-    for (let i = 0; i <= W; i++) {
+    const gx0 = BUILD_RECT.x0 * CELL
+    const gx1 = (BUILD_RECT.x1 + 1) * CELL
+    const gy0 = BUILD_RECT.y0 * CELL
+    const gy1 = (BUILD_RECT.y1 + 1) * CELL
+    for (let i = BUILD_RECT.x0; i <= BUILD_RECT.x1 + 1; i++) {
       g.beginPath()
-      g.moveTo(i * CELL + 0.5, 0)
-      g.lineTo(i * CELL + 0.5, H * CELL)
+      g.moveTo(i * CELL + 0.5, gy0)
+      g.lineTo(i * CELL + 0.5, gy1)
       g.stroke()
     }
-    for (let j = 0; j <= H; j++) {
+    for (let j = BUILD_RECT.y0; j <= BUILD_RECT.y1 + 1; j++) {
       g.beginPath()
-      g.moveTo(0, j * CELL + 0.5)
-      g.lineTo(W * CELL, j * CELL + 0.5)
+      g.moveTo(gx0, j * CELL + 0.5)
+      g.lineTo(gx1, j * CELL + 0.5)
       g.stroke()
     }
     const cell = (t: Tile, color: string) => {
       g.fillStyle = color
-      g.fillRect((t.x - BUILD_RECT.x0) * CELL + 1, (t.y - BUILD_RECT.y0) * CELL + 1, CELL - 1, CELL - 1)
+      g.fillRect(t.x * CELL + 1, t.y * CELL + 1, CELL - 1, CELL - 1)
     }
     for (const [k, v] of Object.entries(tilesOf(game))) {
       const [x, y] = k.split(',').map(Number)
@@ -108,13 +125,13 @@ export function SitePreview({ pick, onBack, onPlaced }: { pick: SitePick; onBack
     g.strokeStyle = '#3d4f7a'
     g.lineWidth = 2
     g.setLineDash([4, 3])
-    g.strokeRect((x0 - BUILD_RECT.x0) * CELL + 1, (y0 - BUILD_RECT.y0) * CELL + 1, span * CELL - 2, span * CELL - 2)
+    g.strokeRect(x0 * CELL + 1, y0 * CELL + 1, span * CELL - 2, span * CELL - 2)
     g.setLineDash([])
     if (kind === 'home') {
       const d = doorOf('home', at.x, at.y, facing)
       if (d) {
         g.fillStyle = '#3d4f7a'
-        g.fillRect((d.door.x - BUILD_RECT.x0) * CELL + 3, (d.door.y - BUILD_RECT.y0) * CELL + 3, CELL - 5, CELL - 5)
+        g.fillRect(d.door.x * CELL + 2, d.door.y * CELL + 2, CELL - 4, CELL - 4)
       }
     }
   }, [game, kind, at.x, at.y, facing, size, span])
@@ -124,7 +141,7 @@ export function SitePreview({ pick, onBack, onPlaced }: { pick: SitePick; onBack
     const cx = Math.floor(((e.clientX - r.left) / r.width) * W)
     const cy = Math.floor(((e.clientY - r.top) / r.height) * H)
     const off = span > 1 ? 1 : 0
-    setPos({ x: BUILD_RECT.x0 + cx - off, y: BUILD_RECT.y0 + cy - off })
+    setPos({ x: cx - off, y: cy - off })
   }
   const move = (dx: number, dy: number) => setPos({ x: at.x + dx, y: at.y + dy })
 
@@ -142,13 +159,12 @@ export function SitePreview({ pick, onBack, onPlaced }: { pick: SitePick; onBack
   return (
     <div className="site-preview">
       <h2>{name}</h2>
-      <p className="hint">{T.build.pickHint}</p>
       <canvas ref={ref} className="site-canvas" width={W * CELL} height={H * CELL} role="img" aria-label={T.build.preview} onPointerDown={onTap} />
       <div className="site-move" role="group" aria-label={T.build.preview}>
-        <button onClick={() => move(0, -1)}>{T.build.up}</button>
-        <button onClick={() => move(-1, 0)}>{T.build.left}</button>
-        <button onClick={() => move(1, 0)}>{T.build.right}</button>
-        <button onClick={() => move(0, 1)}>{T.build.downMove}</button>
+        <button aria-label={T.build.left} onClick={() => move(-1, 0)}>{T.build.markLeft}</button>
+        <button aria-label={T.build.up} onClick={() => move(0, -1)}>{T.build.markUp}</button>
+        <button aria-label={T.build.downMove} onClick={() => move(0, 1)}>{T.build.markDown}</button>
+        <button aria-label={T.build.right} onClick={() => move(1, 0)}>{T.build.markRight}</button>
       </div>
       {def && def.sizes.length > 1 && (
         <div className="tabs" role="group" aria-label={T.build.size}>
@@ -161,6 +177,7 @@ export function SitePreview({ pick, onBack, onPlaced }: { pick: SitePick; onBack
       )}
       {def && def.facings.length > 1 && (
         <div className="tabs" role="group" aria-label={T.build.facing}>
+          <span className="site-facing-label">{T.build.facing}</span>
           {def.facings.map((f) => (
             <button key={f} className={facing === f ? 'on' : ''} aria-pressed={facing === f} onClick={() => setFacing(f)}>
               {FACING_TEXT[f]}
@@ -168,7 +185,12 @@ export function SitePreview({ pick, onBack, onPlaced }: { pick: SitePick; onBack
           ))}
         </div>
       )}
-      {kind && <p className="hint">{fill(T.build.cost, { cost: costText(kind, size) })}</p>}
+      {kind && (
+        <p className="hint">
+          {fill(T.build.cost, { cost: costText(kind, size) })}
+          {(kind === 'home' || kind === 'courtyard') && ` · ${T.build.days}`}
+        </p>
+      )}
       {reason && (
         <p className="site-reason" role="status">
           {reason}

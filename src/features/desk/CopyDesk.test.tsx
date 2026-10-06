@@ -381,7 +381,7 @@ describe('필사 책상 — 구약 칸', () => {
     fireEvent.click(screen.getByRole('tab', { name: '구약' }))
     for (const label of ['창세기–신명기', '여호수아–에스더', '욥기–아가', '이사야–말라기']) expect(screen.getByText(label)).toBeInTheDocument()
     for (const word of ['율법서', '역사서', '시가서', '예언서']) expect(screen.queryByText(word)).toBeNull()
-    for (const r of OT_BOOK_TABLE) expect(screen.getByRole('button', { name: `${r.name} · 0/${r.chapters}장` })).toBeInTheDocument()
+    for (const r of OT_BOOK_TABLE) expect(screen.getByRole('button', { name: `${r.name} · 0/${r.chapters}${r.id === 'psa' ? '편' : '장'}` })).toBeInTheDocument()
   })
 
   it('새 터 책상에서 열면 처음부터 구약 칸이고, 진행한 장 수가 보인다', () => {

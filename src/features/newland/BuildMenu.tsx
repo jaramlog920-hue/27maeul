@@ -80,14 +80,12 @@ export function BuildMenu() {
       {tab === 'place' ? (
         <ul className="build-list">
           {([...SITE_KINDS, 'eraser'] as SitePick[]).map((k) => {
-            const isBuild = k === 'courtyard' || k === 'home'
             return (
               <li key={k}>
                 <button className="build-pick" onClick={() => setPick(k)}>
                   <strong>{k === 'eraser' ? T.build.eraser : siteName(k as SiteKind)}</strong>
                   <span>{USE_TEXT[k]}</span>
                   {k !== 'eraser' && <span className="hint">{fill(T.build.cost, { cost: costText(k as SiteKind) })}</span>}
-                  {isBuild && <span className="hint">{T.build.days}</span>}
                 </button>
               </li>
             )

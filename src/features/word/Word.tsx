@@ -7,7 +7,7 @@ import { CONTENT, contextOf, GOD_KEYWORDS, NAMES, neighborById, PIECES, versesOf
 import { copyBookName, fill, roomTitle, T } from '../../content/text'
 import { otLoaded } from '../../content/ot-catalog'
 import { chaptersOf, groupByRoom, progressOf } from '../../engine/books'
-import { isOtBook, otRow } from '../../engine/ot-books'
+import { chapterUnit, isOtBook, otRow } from '../../engine/ot-books'
 import { connectionsOf, type Connection } from '../../engine/connections'
 import { copySpot } from '../../engine/copying'
 import { pieceFrom, whenOf, type PieceLog } from '../../engine/fragments'
@@ -137,13 +137,14 @@ function CopyRecord() {
       {/* 구약 책은 본문을 불러오기 전에는 지금 자리(절)를 알 수 없다 — 줄을 비운다 */}
       {!(book && isOtBook(book) && !otLoaded(book)) && (
         <p className="word-now">
-          {!book ? W.nowNone : spot ? fill(W.nowAt, { book: copyBookName(book), chapter: spot.chapter, verse: spot.verse.verse }) : fill(W.nowDone, { book: copyBookName(book) })}
+          {!book ? W.nowNone : spot ? fill(W.nowAt, { book: copyBookName(book), chapter: spot.chapter, unit: chapterUnit(book), verse: spot.verse.verse }) : fill(W.nowDone, { book: copyBookName(book) })}
         </p>
       )}
       {book && (
         <p className="hint">
           {fill(W.bookProgress, {
             book: copyBookName(book),
+            unit: chapterUnit(book),
             done: progressOf(game, book).completed.length,
             all: isOtBook(book) ? otRow(book).chapters : chaptersOf(book, CONTENT).length,
           })}

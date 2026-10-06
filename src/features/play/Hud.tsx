@@ -5,7 +5,7 @@ import { isMarketDay, weatherOf } from '../../engine/calendar'
 import { formatTime, phaseOf, seasonOf } from '../../engine/clock'
 import { progressOf, totalChapters, type Progress } from '../../engine/books'
 import { OT_NAME } from '../../content/ot-catalog'
-import { isOtBook, otRow, type CopyBook } from '../../engine/ot-books'
+import { chapterUnit, isOtBook, otRow, type CopyBook } from '../../engine/ot-books'
 import { copySpot, type CopyAt } from '../../engine/copying'
 import { peaceful } from '../../engine/game'
 import { jobOf } from '../../engine/job'
@@ -85,7 +85,7 @@ function copyNow(book: CopyBook | null, at: CopyAt | undefined, completed: reado
   if (isOtBook(book)) {
     const open = Array.from({ length: otRow(book).chapters }, (_, i) => i + 1).filter((c) => !completed.includes(c))
     if (!open.length) return fill(T.ui.hudCopyDone, { book: OT_NAME[book] })
-    return fill(T.ot.hudAt, { book: OT_NAME[book], chapter: at && open.includes(at.chapter) ? at.chapter : open[0] })
+    return fill(T.ot.hudAt, { book: OT_NAME[book], chapter: at && open.includes(at.chapter) ? at.chapter : open[0], unit: chapterUnit(book) })
   }
   const spot = copySpot({ progress: { [book]: { completed } } as unknown as Progress, copy: { book, at: at ? { [book]: at } : {}, legacy: {} } }, book, CONTENT)
   if (!spot) return fill(T.ui.hudCopyDone, { book: BOOK_NAME[book] })

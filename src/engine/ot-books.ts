@@ -79,6 +79,12 @@ export function otRow(b: OtBook): OtBookRow {
   return ROW_OF.get(b)!
 }
 
+/** 장을 부르는 단위: 시편은 "편", 나머지는 "장" (신약 포함) */
+export const chapterUnit = (b: string): string => (b === 'psa' ? '편' : '장')
+
+/** 사람에게 보이는 장 이름: "29편" · "3장" */
+export const otChapterLabel = (book: string, n: number): string => `${n}${chapterUnit(book)}`
+
 /** 구약 순서(0..38), 구약이 아니면 -1 */
 export function otIndex(b: string): number {
   return OT_BOOKS.indexOf(b as OtBook)

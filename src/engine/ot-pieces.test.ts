@@ -26,7 +26,7 @@ describe('구약 조각 목록', () => {
     const nt = new Set(PIECES.map((p) => p.id))
     expect(OT_PIECES.some((p) => nt.has(p.id))).toBe(false)
     expect(otPieceById('ot:gen:1')?.name).toBe('창세기 1장')
-    expect(otPieceById('ot:psa:150')?.name).toBe('시편 150장')
+    expect(otPieceById('ot:psa:150')?.name).toBe('시편 150편')
     expect(isOtPieceId('ot:gen:51')).toBe(false)
   })
   it('드로우: 같은 날 같은 결과, 이미 가진 것은 빼고, 다 모으면 null', () => {
