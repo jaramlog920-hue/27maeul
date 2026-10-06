@@ -6031,7 +6031,7 @@
       "feastFire": " 광장 모닥불 잔치에 갔다.",
       "allFeast": " 서고에 스물일곱 권이 다 꽂혔다.",
       "allFeastFire": " 스물일곱 권 잔치 모닥불 곁에 앉았다.",
-      "newlandGift": " 큰길 끝에 새 터로 가는 표지가 섰다.",
+      "newlandGift": " 큰길 끝에 서른아홉 권의 터로 가는 표지가 섰다.",
       "friends": " 아이와 양치기가 단짝이 되었다.",
       "babyParty": " 빵집 앞 아기 잔치에 갔다.",
       "picnic": " 언덕에서 소풍을 했다.",
@@ -6655,7 +6655,7 @@
     "otGot": "구약 말씀 조각을 받았어요 · {name}",
     "otTitle": "구약 말씀 조각",
     "otCount": "모은 구약 조각 {got} / {all}",
-    "otEmpty": "새 터 서고에 들어서는 날, 하루에 한 조각씩 받을 수 있어요.",
+    "otEmpty": "서른아홉 권의 터 서고에 들어서는 날, 하루에 한 조각씩 받을 수 있어요.",
     "talkGift": "{who} 챙겨 줬어요 · {items}",
     "basketWho": "문 앞 편지 바구니"
   },
@@ -7518,14 +7518,14 @@
     }
   },
   "travel": {
-    "titleNewland": "새 터",
+    "titleNewland": "서른아홉 권의 터",
     "titleVillage": "첫 마을",
-    "toNewland": "새 터로 가기 · 30분",
+    "toNewland": "서른아홉 권의 터로 가기 · 30분",
     "toVillage": "첫 마을로 돌아가기 · 30분",
     "late": "날이 저물었어요."
   },
   "newland": {
-    "lookTitle": "새 터",
+    "lookTitle": "서른아홉 권의 터",
     "look": "땅 둘러보기",
     "lookClose": "닫기",
     "lightTitle": "작은 서고의 아침",
