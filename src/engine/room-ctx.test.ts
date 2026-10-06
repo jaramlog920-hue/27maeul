@@ -276,17 +276,28 @@ describe('소유 공간별 저장', () => {
     expect(placeFurniture({ ...s, inv: {} }, 'stool', { x: ROOM_SLOTS[0].x0 + 2, y: ROOM_SLOTS[0].y0 + 3 })).toBeNull()
   })
 
-  it('철거하면 안의 가구가 모두 가방으로 (가방이 가득해도 받는다), 소유 칸은 지워진다', () => {
+  const stuffed = (): GameState => {
     let s = inRoom(twoHomes(), 0)
     const r = ROOM_SLOTS[0]
     s = must(placeFurniture(s, 'stool', { x: r.x0 + 1, y: r.y0 + 3 }))
     s = must(placeFurniture(s, 'stool', { x: r.x0 + 2, y: r.y0 + 3 }))
     s = must(placeFurniture(s, 'stool', { x: r.x0 + 6, y: r.y0 + 3 }))
     s = must(placeFurniture(s, 'table', { x: r.x0 + 1, y: r.y0 + 5 }))
-    // 가방에 이미 가득 있어도
-    s = { ...s, inv: { ...s.inv, stool: 9 } }
+    return { ...s, inv: { ...s.inv, stool: 7 } }
+  }
+
+  it('철거하면 안의 가구가 가방 한도까지 가방으로, 궤짝이 없으면 남는 것도 사라지지 않고 가방에 얹힌다', () => {
+    const out = must(demolishBuild(stuffed(), 'b1'))
+    expect(out.inv.stool).toBe(10)
+    expect(out.inv.table).toBe(1)
+    expect(out.rooms).toBeUndefined()
+  })
+
+  it('철거하면 가방이 가득 찬 만큼은 궤짝으로 (궤짝이 있을 때)', () => {
+    const s = { ...stuffed(), flags: { ...stuffed().flags, 'unlock:supplyChest': 1 }, chest: { stool: 2 } }
     const out = must(demolishBuild(s, 'b1'))
-    expect(out.inv.stool).toBe(12)
+    expect(out.inv.stool).toBe(9)
+    expect(out.chest?.stool).toBe(3)
     expect(out.inv.table).toBe(1)
     expect(out.rooms).toBeUndefined()
   })

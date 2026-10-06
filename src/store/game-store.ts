@@ -139,7 +139,7 @@ import {
 } from '../engine/game'
 import { isHome, lockedTiles, lockedZones, roomAt, sameTile, zoneAt } from '../engine/world'
 import { footprint, removal, type Furniture } from '../engine/room'
-import { roomOf as furnitureRoomOf } from '../engine/newland-rooms'
+import { inBuildingRoom, roomOf as furnitureRoomOf } from '../engine/newland-rooms'
 import { heartsOf } from '../engine/hearts'
 import { add, count, RECIPES, type Inventory, type RecipeId } from '../engine/items'
 import type { CarpenterWork } from '../engine/easier'
@@ -1504,7 +1504,7 @@ export const useGame = create<Store>((set, get) => {
     },
     openBuild: () => {
       const g = get().game
-      if (currentMapId() === 'newland' && newlandRevealed(g)) set({ modal: { kind: 'build' } })
+      if (currentMapId() === 'newland' && newlandRevealed(g) && !inBuildingRoom(g)) set({ modal: { kind: 'build' } })
     },
     orderSite: (kind, x, y, facing, size) => {
       const g = get().game
@@ -1518,7 +1518,7 @@ export const useGame = create<Store>((set, get) => {
     removeBuild: (id) => {
       const g = get().game
       const b = buildsOf(g).find((x) => x.id === id)
-      if (!b) return
+      if (!b || inBuildingRoom(g)) return
       const next = b.state === 'done' ? demolishBuild(g, id) : cancelBuild(g, id)
       if (next) set({ game: persist(next) })
     },

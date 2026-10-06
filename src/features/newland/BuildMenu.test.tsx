@@ -5,6 +5,7 @@ import { T } from '../../content/text'
 import { newGame, syncHome, type GameState } from '../../engine/game'
 import { setActiveMap } from '../../engine/maps'
 import { setNewlandOpen } from '../../engine/newland'
+import { ROOM_SLOTS } from '../../engine/newland-config'
 import { buildsOf } from '../../engine/newland-build'
 import { useGame } from '../../store/game-store'
 import { TravelMenu } from '../map/TravelMenu'
@@ -50,6 +51,16 @@ describe('입구 표지', () => {
     reset(true)
     useGame.getState().openBuild()
     expect(useGame.getState().modal).toEqual({ kind: 'build' })
+  })
+})
+
+describe('방 안에서는', () => {
+  it('건축 메뉴가 열리지 않는다', () => {
+    reset(true)
+    const g = useGame.getState().game
+    useGame.setState({ game: { ...g, player: { ...g.player, x: ROOM_SLOTS[0].entry.x, y: ROOM_SLOTS[0].entry.y, path: [] } } })
+    useGame.getState().openBuild()
+    expect(useGame.getState().modal).toBeNull()
   })
 })
 

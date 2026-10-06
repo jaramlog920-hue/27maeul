@@ -2,7 +2,8 @@
 // 필사·구약 진행·서고와 아무 상관이 없다 — 건물 0채여도 서고와 책상은 그대로 쓴다. 건물 안(가구)은 작업 7 몫이다.
 // 이 파일은 GameState를 타입으로만 읽는다 (game.ts가 이 파일을 부른다).
 import type { GameState } from './game'
-import { addGift, has, take } from './items'
+import { addGift, count, has, take } from './items'
+import { owns, stash } from './easier'
 import type { Furniture } from './room'
 import { ARCHIVE, BUILD_RECT, MAX_HOMES, NEWLAND_PORTAL_FRONT, NEWLAND_VISIBLE_H, NEWLAND_W, ROOM_SLOTS } from './newland-config'
 import { NEWLAND_MAP } from './newland'
@@ -361,7 +362,7 @@ function refund<T extends Pick<GameState, 'coins' | 'inv'>>(s: T, c: Cost): T {
   return { ...s, coins: s.coins + c.coins, inv: Object.keys(c.items).length ? addGift(s.inv, c.items) : s.inv }
 }
 /** 환불과 기록 삭제를 한 번에: 이미 환불된 기록이면 아무것도 하지 않는다 */
-function settleRefund<T extends Pick<GameState, 'coins' | 'inv' | 'newland'> & { rooms?: Record<string, Furniture[]> }>(s: T, id: string, rate: (b: Build) => Cost | null): T | null {
+function settleRefund<T extends Pick<GameState, 'coins' | 'inv' | 'newland'> & Partial<Pick<GameState, 'flags' | 'chest'>> & { rooms?: Record<string, Furniture[]> }>(s: T, id: string, rate: (b: Build) => Cost | null): T | null {
   const nl = s.newland
   const b = nl?.builds.find((x) => x.id === id)
   if (!nl || !b || b.refunded) return null
@@ -374,27 +375,38 @@ function settleRefund<T extends Pick<GameState, 'coins' | 'inv' | 'newland'> & {
 /** 소유 공간 키: 'newland:<건물 id>' (GameState.rooms) */
 export const roomKeyFor = (buildId: string): string => `newland:${buildId}`
 
-/** 건물이 사라질 때 안의 가구를 모두 가방으로 (가방이 가득해도 받는다 — 집을 넓힐 때 refitRoom과 같은 규칙) */
-export function returnRoom<T extends Pick<GameState, 'inv'> & { rooms?: Record<string, Furniture[]> }>(s: T, buildId: string): T {
+/**
+ * 건물이 사라질 때 안의 가구를 모두 돌려받는다: 가방 한도까지 가방에, 나머지는 궤짝에(궤짝이 있을 때, 규칙은 easier.ts stash),
+ * 그래도 남는 것은 가구가 사라지지 않게 마지막으로 가방에 얹는다 (집을 넓힐 때 refitRoom과 같은 소실 방지)
+ */
+export function returnRoom<T extends Pick<GameState, 'inv'> & Partial<Pick<GameState, 'flags' | 'chest'>> & { rooms?: Record<string, Furniture[]> }>(s: T, buildId: string): T {
   const k = roomKeyFor(buildId)
   const room = s.rooms?.[k]
   if (!room) return s
   const back: Items = {}
   for (const f of room) back[f.item] = (back[f.item] ?? 0) + 1
+  const box = s.flags && owns(s.flags, 'supplyChest') ? (s.chest ?? {}) : null
+  const r = stash(s.inv, box, back)
+  const left: Items = {}
+  for (const [id, n] of Object.entries(back) as [ItemId, number][]) {
+    const got = count(r.inv, id) - count(s.inv, id) + (r.chest ? count(r.chest, id) : 0) - (box ? count(box, id) : 0)
+    if (n - got > 0) left[id] = n - got
+  }
+  const inv = Object.keys(left).length ? addGift(r.inv, left) : r.inv
   const { [k]: _gone, ...rest } = s.rooms!
   void _gone
   const { rooms: _old, ...others } = s
   void _old
-  return { ...others, inv: addGift(s.inv, back), ...(Object.keys(rest).length ? { rooms: rest } : {}) } as T
+  return { ...others, inv, ...(box && r.chest ? { chest: r.chest } : {}), ...(Object.keys(rest).length ? { rooms: rest } : {}) } as T
 }
 
 /** 취소: 공사 시작 전이면 100%, 공사 중이면 50% (닢·재료 각각 소수 버림). 완공된 것은 취소가 아니라 철거 */
-export function cancelBuild<T extends Pick<GameState, 'coins' | 'inv' | 'newland'> & { rooms?: Record<string, Furniture[]> }>(s: T, id: string): T | null {
+export function cancelBuild<T extends Pick<GameState, 'coins' | 'inv' | 'newland'> & Partial<Pick<GameState, 'flags' | 'chest'>> & { rooms?: Record<string, Furniture[]> }>(s: T, id: string): T | null {
   return settleRefund(s, id, (b) => (b.state === 'ordered' ? share(b.paid, REFUND_BEFORE, true) : b.state === 'building' ? share(b.paid, REFUND_DURING, true) : null))
 }
 
 /** 철거: 완공된 건물만 — 닢 50%, 재료 환급 없음. 서고(건물 기록이 아니다)는 철거할 수 없다 */
-export function demolishBuild<T extends Pick<GameState, 'coins' | 'inv' | 'newland'> & { rooms?: Record<string, Furniture[]> }>(s: T, id: string): T | null {
+export function demolishBuild<T extends Pick<GameState, 'coins' | 'inv' | 'newland'> & Partial<Pick<GameState, 'flags' | 'chest'>> & { rooms?: Record<string, Furniture[]> }>(s: T, id: string): T | null {
   return settleRefund(s, id, (b) => (b.state === 'done' ? { coins: Math.floor(b.paid.coins * REFUND_DEMOLISH_COINS), items: {} } : null))
 }
 
