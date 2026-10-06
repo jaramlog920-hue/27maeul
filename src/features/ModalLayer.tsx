@@ -44,6 +44,7 @@ import { TravelView } from './talk/TravelView'
 import { ChildName } from './child/ChildName'
 import { FollowMenu } from './companion/FollowMenu'
 import { VillageMap } from './map/VillageMap'
+import { TravelMenu } from './map/TravelMenu'
 import { SchoolView } from './child/SchoolView'
 import { GameGuide } from './play/GameGuide'
 import { Settings } from './play/Settings'
@@ -57,6 +58,8 @@ function Body() {
   switch (modal.kind) {
     case 'settings':
       return <Settings />
+    case 'crossing':
+      return <TravelMenu to={modal.to} />
     case 'guide':
       return <GameGuide />
     case 'clubs':

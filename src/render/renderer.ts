@@ -37,6 +37,10 @@ import { BOARD, stoneTile, TRIP_H, TRIP_W, tripLayout, type Cell as TripCell } f
 import { feastToday, sideShelfSpines } from '../engine/library'
 import { spineLook } from '../engine/binding'
 import { ACTS_ROOM, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, PAVILION_RECT, HEIGHT, HOUSE_RECT, housesNow, houseAt, lockedTiles, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile, treeKind, type TreeKind } from '../engine/world'
+import { currentMapId, mapVisibleHeight, setActiveMap } from '../engine/maps'
+import { newlandOpen, newlandTileAt } from '../engine/newland'
+import { ARCHIVE, NEWLAND_H, NEWLAND_W } from '../engine/newland-config'
+import { OLD_BUILDINGS, OLD_TERRAIN, OLD_VILLAGE_PALETTE } from './old-village-art'
 import { GOSPELS, type Book, type Facing, type NeighborDef, type GameContent, type Season, type Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { avatarKey, withLookDefaults, type Avatar, type FullAvatar } from '../engine/avatar'
@@ -289,7 +293,7 @@ function drawGround(g: Ctx, ch: string, x: number, y: number, season: Season, at
     g.fillRect(px, py, TILE, TILE)
     return
   }
-  if ('fbdhskDH'.includes(ch) || (y >= VILLAGE_H && ch !== '#')) {
+  if ('fbdhskDH'.includes(ch) || (y >= mapVisibleHeight() && ch !== '#')) {
     g.fillStyle = C.floor
     g.fillRect(px, py, TILE, TILE)
     g.fillStyle = C.floor2
@@ -297,7 +301,7 @@ function drawGround(g: Ctx, ch: string, x: number, y: number, season: Season, at
     g.fillRect(px, py + 15, TILE, 1)
     g.fillRect(px + ((x + y) % 2 ? 4 : 11), py, 1, 7)
     g.fillRect(px + ((x + y) % 2 ? 10 : 2), py + 8, 1, 7)
-  } else if (ch === ',' || ch === 'm' || ch === 'A' || ch === 'P') {
+  } else if (ch === ',' || ch === 'm' || ch === 'A' || ch === 'P' || ch === '>') {
     g.fillStyle = C.path
     g.fillRect(px, py, TILE, TILE)
     speckle(g, px, py, x, y, C.path2, 6)
@@ -312,9 +316,9 @@ function drawGround(g: Ctx, ch: string, x: number, y: number, season: Season, at
     speckle(g, px, py, x, y, g2, 7)
     speckle(g, px, py, x + 99, y, g3, 3)
     // 풀밭이 흙길과 만나는 가장자리는 한 톤 짙게 (참고 그림처럼 풀밭 조각이 또렷하게)
-    if (y < VILLAGE_H) {
+    if (y < mapVisibleHeight()) {
       g.fillStyle = g2
-      const isPath = (c: string) => c === ',' || c === 'm' || c === 'A' || c === 'P'
+      const isPath = (c: string) => c === ',' || c === 'm' || c === 'A' || c === 'P' || c === '>'
       if (isPath(at(x, y - 1))) g.fillRect(px, py, TILE, 2)
       if (isPath(at(x, y + 1))) g.fillRect(px, py + TILE - 2, TILE, 2)
       if (isPath(at(x - 1, y))) g.fillRect(px, py, 2, TILE)
@@ -892,6 +896,10 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season, tr
       }
       break
     }
+    case '>':
+      // 왕래 표식 (자산 OLD_TERRAIN.mapWaySign): 길 위에 선 이정표 — 누르면 건너가는 창
+      g.drawImage(paint('old/terrain/mapWaySign', OLD_TERRAIN.mapWaySign.rows, OLD_VILLAGE_PALETTE), px, py)
+      break
     case '*':
       if (season !== 'winter')
         for (let i = 0; i < 3; i++) {
@@ -976,7 +984,7 @@ function drawRoof(g: Ctx, tx0: number, ty0: number, tx1: number, ty1: number, [c
 /** 계절과 집 단계마다 한 장 (집을 넓히면 그 칸들의 그림이 바뀐다) */
 const mapCache = new Map<string, HTMLCanvasElement>()
 function mapFor(season: Season): HTMLCanvasElement {
-  const cacheKey = `${season}/${currentHomeLevel()}/${openDoors().join(',')}/${currentSpouseRoom()?.id ?? ''}`
+  const cacheKey = `${season}/${currentHomeLevel()}/${openDoors().join(',')}/${currentSpouseRoom()?.id ?? ''}/${newlandOpen() ? 'nl' : ''}`
   let c = mapCache.get(cacheKey)
   if (c) return c
   c = document.createElement('canvas')
@@ -1027,7 +1035,7 @@ const SNOW_DRIFT_SHADE = '#c8d5df'
  */
 const snowCache = new Map<string, HTMLCanvasElement>()
 function snowLayer(): HTMLCanvasElement {
-  const cacheKey = `${currentHomeLevel()}/${openDoors().join(',')}`
+  const cacheKey = `${currentHomeLevel()}/${openDoors().join(',')}/${newlandOpen() ? 'nl' : ''}`
   let c = snowCache.get(cacheKey)
   if (c) return c
   c = document.createElement('canvas')
@@ -1402,10 +1410,17 @@ function neighborPerson(def: NeighborDef, facing: Facing, frame: 0 | 1 | 2, blin
 export function drawVillageMap(g: Ctx, game: GameState): void {
   const season = seasonOf(game.clock.day)
   g.imageSmoothingEnabled = false
-  g.drawImage(mapFor(season), 0, 0, WIDTH * TILE, VILLAGE_H * TILE, 0, 0, WIDTH * TILE, VILLAGE_H * TILE)
-  coverLocked(g, game, season)
-  // 주민이 함께 지은 공동 시설도 마을 그림에 남는다 (계획 16 작업 20)
-  drawVillage(g, game)
+  // 새 터에서 마을 지도를 열어도 첫 마을 칸으로 그린다 (지도 그림은 지금 지도가 아니라 첫 마을의 것)
+  const was = currentMapId()
+  setActiveMap('village')
+  try {
+    g.drawImage(mapFor(season), 0, 0, WIDTH * TILE, VILLAGE_H * TILE, 0, 0, WIDTH * TILE, VILLAGE_H * TILE)
+    coverLocked(g, game, season)
+    // 주민이 함께 지은 공동 시설도 마을 그림에 남는다 (계획 16 작업 20)
+    drawVillage(g, game)
+  } finally {
+    setActiveMap(was)
+  }
 }
 
 /**
@@ -1960,6 +1975,76 @@ export interface Renderer {
   draw(game: GameState, t: number, dt: number): void
 }
 
+// ── 새 터 (계획 20 작업 3): 첫 마을의 타일 팔레트·계절·밝기를 그대로 쓰는 두 번째 지도 ──
+
+/** 계절마다 한 장. 새 터 지도는 정해져 있으므로 집 단계 같은 열쇠가 없다 */
+const newlandCache = new Map<Season, HTMLCanvasElement>()
+function newlandMapFor(season: Season): HTMLCanvasElement {
+  let c = newlandCache.get(season)
+  if (c) return c
+  c = document.createElement('canvas')
+  c.width = NEWLAND_W * TILE
+  c.height = NEWLAND_H * TILE
+  const g = c.getContext('2d')!
+  for (let y = 0; y < NEWLAND_H; y++)
+    for (let x = 0; x < NEWLAND_W; x++) {
+      const ch = newlandTileAt(x, y)
+      // 서고 그림이 덮는 칸은 풀밭 위에 그림만 얹는다 (돌벽 칸 그림이 그림 둘레 빈 곳으로 비치지 않게)
+      if (x >= ARCHIVE.x0 && x < ARCHIVE.x0 + ARCHIVE.w && y > ARCHIVE.y0 && y <= ARCHIVE.y0 + ARCHIVE.h) {
+        drawGround(g, '.', x, y, season, newlandTileAt)
+        continue
+      }
+      drawGround(g, ch, x, y, season, newlandTileAt)
+      drawObject(g, ch, x, y, season, ch === 'T' ? treeKind(x, y) : undefined)
+    }
+  // 작은 서고 (자산 old-village-art의 archive, 앞쪽): 그림 4×4칸, 아랫줄이 문 — 칸 구성은 newland-config가 따로 정했다
+  g.drawImage(paint('old/archive/down', OLD_BUILDINGS.archive.down.rows, OLD_VILLAGE_PALETTE), ARCHIVE.x0 * TILE, ARCHIVE.y0 * TILE)
+  newlandCache.set(season, c)
+  return c
+}
+
+/** 새 터 한 장면: 땅과 서고, 기록자, 계절 날씨·밤. 첫 마을의 이웃·동물·아이·행사는 이 지도에 없다 */
+function drawNewland(g: Ctx, game: GameState, t: number, W: number, H: number, ox: number, oy: number) {
+  const season = seasonOf(game.clock.day)
+  const weather = weatherOf(game.clock.day)
+  const p = game.player
+  const here = { x: Math.round(p.x), y: Math.round(p.y) }
+  const outdoors = !isIndoor(here)
+  g.save()
+  try {
+    g.fillStyle = '#362515'
+    g.fillRect(0, 0, W, H)
+    g.translate(-ox, -oy)
+    g.drawImage(newlandMapFor(season), 0, 0)
+    const moving = p.path.length > 0
+    const done = totalChapters(game)
+    const blink = isBlinking(t)
+    const spr = person('writer', p.facing, moving ? walkFrame(p.walkTime) : 0, blink, 'stand', season, { inky: done > 0, look: game.avatar?.look, avatar: game.avatar ? withLookDefaults(game.avatar) : undefined })
+    drawSprite(g, spr, p.x, p.y, moving ? 0 : breathOffset(t))
+    // 서고 안은 방 하나만 보이게 둘레를 가린다 (첫 마을의 집 안과 같은 방식)
+    const room = viewRoomAt(here)
+    if (room) {
+      const rx = room.x0 * TILE
+      const ry = room.y0 * TILE
+      const rw = room.w * TILE
+      const rh = room.h * TILE
+      g.fillStyle = '#1c1510'
+      g.fillRect(ox - TILE, oy - TILE, W + 2 * TILE, ry - oy + TILE)
+      g.fillRect(ox - TILE, ry + rh, W + 2 * TILE, oy + H - ry - rh + TILE)
+      g.fillRect(ox - TILE, ry, rx - ox + TILE, rh)
+      g.fillRect(rx + rw, ry, ox + W - rx - rw + TILE, rh)
+    }
+  } finally {
+    g.restore()
+  }
+  if (outdoors) drawWeather(g, weather, t, W, H)
+  const dark = darkness(game.clock.minute)
+  if (dark > 0) {
+    g.fillStyle = `rgba(20, 22, 60, ${dark})`
+    g.fillRect(0, 0, W, H)
+  }
+}
+
 export function createRenderer(g: Ctx, content: GameContent): Renderer {
   g.imageSmoothingEnabled = false
   const steps: { x: number; y: number; t: number }[] = []
@@ -2005,6 +2090,10 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       const ox = Math.round(cam.x * TILE * sc) / sc
       const oy = Math.round(cam.y * TILE * sc) / sc
 
+      if (currentMapId() === 'newland') {
+        drawNewland(g, game, t, W, H, ox, oy)
+        return
+      }
       const outdoors = !isIndoor(here)
       let festOn = false
       g.save()

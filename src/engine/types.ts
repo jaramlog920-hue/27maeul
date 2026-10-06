@@ -1,3 +1,4 @@
+import type { MapId } from './maps'
 import type { JourneyCard } from './journey'
 import type { CopySource } from './copy'
 
@@ -72,6 +73,8 @@ export type Target =
   | { kind: 'bookcase'; tile: Tile }
   /** 집 안에서 정해 둔 자리의 의자·탁자 (계획 16 작업 23): 곁에 서면 쓰임 메뉴 */
   | { kind: 'space'; id: string; tile: Tile }
+  /** 왕래 표식 (계획 20 작업 3): 곁에 서면 건너가는 창 */
+  | { kind: 'portal'; to: MapId }
   | { kind: 'ground' }
 /** 네 복음서 — 도장·복음서 탐정·"어느 복음서"·복음서 방은 이 네 권만 */
 export type Gospel = 'mt' | 'mk' | 'lk' | 'jn'

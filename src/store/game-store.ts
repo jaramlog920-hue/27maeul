@@ -1,5 +1,6 @@
 import { WORKSHOP, PARTNER_ROOM, BABY_ROOM, LIVING_ROOM } from '../engine/home-layout'
-import { moveFurniture } from '../engine/game'
+import { canTravel, moveFurniture, travel } from '../engine/game'
+import type { MapId } from '../engine/maps'
 import { clubWeaveDone } from '../engine/clubs'
 // 엔진 상태 ↔ 화면 연결. 창(모달)이 열려 있으면 시간과 걸음이 멈춘다.
 import type { FullAvatar } from '../engine/avatar'
@@ -167,6 +168,8 @@ export type BagTab = 'items' | 'make' | 'dex'
 
 export type Modal =
   | { kind: 'settings' }
+  /** 왕래 표식 (계획 20 작업 3): 첫 마을 ↔ 새 터 건너가기 (to = 건너갈 곳) */
+  | { kind: 'crossing'; to: MapId }
   | { kind: 'guide' }
   | { kind: 'schedule' }
   | { kind: 'clubs' }
@@ -434,6 +437,8 @@ interface Store {
   warm: () => void
   eat: () => void
   rest: () => void
+  /** 왕래 표식 창에서 건너간다 (30분) */
+  travelTo: (to: MapId) => void
   playHall: () => void
   /** 서고: 봉인용 밀랍으로 봉인 */
   seal: (book: Book) => void
@@ -929,6 +934,12 @@ export const useGame = create<Store>((set, get) => {
     // 집에 놓은 책장: 다 쓴 책을 몇 권 둔다 (계획 14 작업 8)
     if (target.kind === 'bookcase') return { game, modal: { kind: 'homeShelf' } }
     if (target.kind === 'space') return { game, modal: { kind: 'space', id: target.id } }
+    // 왕래 표식 (계획 20 작업 3): 건널 수 있으면 건너가는 창, 날이 저물었으면 한 줄만, 그 밖(장면·약속)이면 아무 일도 없다
+    if (target.kind === 'portal') {
+      const why = canTravel(game, target.to)
+      if (why === 'late') get().say(T.travel.late)
+      return { game, modal: why ? null : { kind: 'crossing', to: target.to } }
+    }
     if (target.kind !== 'place') return { game, modal: null }
     switch (target.id) {
       case 'bed': {
@@ -1433,6 +1444,17 @@ export const useGame = create<Store>((set, get) => {
         sfx('eat')
         set({ game: persist(next), modal: null })
       }
+    },
+    travelTo: (to) => {
+      const g = get().game
+      const why = canTravel(g, to)
+      if (why) {
+        if (why === 'late') get().say(T.travel.late)
+        set({ modal: null })
+        return
+      }
+      sfx('door')
+      set({ game: persist(travel(g, to, CONTENT)), modal: null })
     },
     rest: () => {
       set({ game: persist(restAt(get().game)), modal: null })

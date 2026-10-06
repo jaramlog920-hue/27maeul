@@ -4,7 +4,8 @@ import { isWet, weatherOf } from '../../engine/calendar'
 import { phaseOf, seasonOf } from '../../engine/clock'
 import { playerTile } from '../../engine/game'
 import type { Book } from '../../engine/types'
-import { HEIGHT, isIndoor, TILE, VIEW_H, VIEW_W, WIDTH } from '../../engine/world'
+import { isIndoor, TILE, VIEW_H, VIEW_W } from '../../engine/world'
+import { mapHeight, mapWidth } from '../../engine/maps'
 import { createRenderer, type Renderer } from '../../render/renderer'
 import { playMusic, setRain, unlockAudio } from '../../audio/sound'
 import { markMapTap } from '../../shared/ghost'
@@ -21,7 +22,7 @@ export function tileFromPoint(
 ) {
   const x = Math.floor(cam.x + ((clientX - rect.left) / rect.width) * VIEW_W / zoom)
   const y = Math.floor(cam.y + ((clientY - rect.top) / rect.height) * VIEW_H / zoom)
-  return { x: Math.min(WIDTH - 1, Math.max(0, x)), y: Math.min(HEIGHT - 1, Math.max(0, y)) }
+  return { x: Math.min(mapWidth() - 1, Math.max(0, x)), y: Math.min(mapHeight() - 1, Math.max(0, y)) }
 }
 
 export function GameCanvas({ zoom = 1 }: { zoom?: number }) {

@@ -14,19 +14,22 @@ import { FURNITURE_DEFS } from './furniture-defs'
 import type { ItemId, PlaceId, Tile } from './types'
 import { currentSpouseRoom, setSpouseRoomOwner } from './spouse-room'
 import { FACILITY_IDS, SITES, type FacilityPlace } from './village-sites'
+import { currentMapId, mapHeight, mapVisibleHeight, mapWidth, VILLAGE_TOTAL_H, VILLAGE_VISIBLE_H, VILLAGE_W } from './maps'
+import { inArchiveRoom, newlandOpen, newlandTileAt, newlandWarp } from './newland'
+import { INTERIOR, VILLAGE_PORTAL } from './newland-config'
 
 export const TILE = 16
-export const WIDTH = 48
+export const WIDTH = VILLAGE_W
 /**
  * 마을 부분의 높이. 그 아래(40~79줄)는 이웃집 안 방들이 있는 보이지 않는 곳
  * (60줄부터 사도행전 방, 내 집 안, 로마서–빌레몬서 방 / 70줄부터 요한계시록 방, 히브리서–유다서 방. 78–79줄은 비워 둔다)
  */
-export const VILLAGE_H = 40
+export const VILLAGE_H = VILLAGE_VISIBLE_H
 /**
  * 계획 8 작업 5에서 70 → 80 (히브리서–유다서 방 자리), 계획 14에서 80 → 90 (목수·편지 나르는 이웃·약방·어부 집 안, 81–88줄).
  * 저장에는 지도 크기가 들어가지 않는다
  */
-export const HEIGHT = 120
+export const HEIGHT = VILLAGE_TOTAL_H
 /** 화면에 보이는 칸 수 */
 export const VIEW_W = 16
 export const VIEW_H = 20
@@ -410,6 +413,8 @@ export const HOUSES: House[] = []
 
 /** 지금 마을에 선 집 모두 (내 집은 지금 단계의 크기로) */
 export function housesNow(): House[] {
+  // 새 터에는 집이 없다 (집 좌표는 첫 마을의 것이다)
+  if (currentMapId() === 'newland') return []
   return [...HOUSES, homeHouse()]
 }
 
@@ -567,6 +572,11 @@ export const FRUIT_TREES: readonly Tile[] = [
 
 /** 그 자리 나무의 종류. 테두리 숲은 대부분 늘푸른나무이고 세 그루에 한 그루꼴로 활엽수, 마을 안 나무는 활엽수 */
 export function treeKind(x: number, y: number): TreeKind {
+  if (currentMapId() === 'newland') {
+    // 새 터: 가장자리 숲은 첫 마을과 같은 비율, 안쪽 나무는 활엽수
+    const edge = x === 0 || x === mapWidth() - 1 || y === 0 || y === mapVisibleHeight() - 1
+    return edge && (x + y) % 3 !== 0 ? 'evergreen' : 'deciduous'
+  }
   if (MAP[y]?.[x] === 'o') return 'evergreen'
   if (FRUIT_TREES.some((t) => t.x === x && t.y === y)) return 'fruit'
   const border = y < VILLAGE_H && (x === 0 || x === WIDTH - 1 || y === 0 || y === VILLAGE_H - 1)
@@ -578,7 +588,8 @@ export function treeKind(x: number, y: number): TreeKind {
 // 'Q' 한 권 선반(사도행전·요한계시록), 'M' 벽의 여정 판, 'C' 벽의 일곱 교회 카드 판. 'Y' 편지 선반, 'V' 벽의 편지꽂이, 'N' 방 벽의 창, 'F' 사랑방 벽의 의뢰 게시판. 'J'(열린 서고 방 문)는 걷는 칸
 const BLOCKED = new Set(['F', 'j', 'C', 'Y', 'V', 'N', 'H', 'I', '_','Z', 'n', 'g', 'p', 'W', 'G', 'K', 'Q', 'M', 'T', '#', 'R', 'S', 'u', 'b', 'd', 'h', 's', 'k', 'w', 'B', '~', 'r', 'v', 'o', 'P', 'A', 'O', 'm', 'x', 'q'])
 
-export function tileAt(x: number, y: number): string {
+/** 첫 마을의 한 칸 (집 단계·열린 서고 문·열린 새 터 입구를 덧씌운다). 지금 지도가 새 터여도 첫 마을 칸을 돌려준다 */
+export function villageTileAt(x: number, y: number): string {
   if (homeLevel >= 1 && y === PARTNER_ROOM.y0 && x === PARTNER_ROOM.x0 + (currentSpouseRoom()?.window.x ?? 5)) return 'N'
   if (homeLevel > 0) {
     const o = HOME_OVERLAY[homeLevel].get(`${x},${y}`)
@@ -588,7 +599,21 @@ export function tileAt(x: number, y: number): string {
     const i = LOCKED_DOORS.findIndex((d) => d.x === x && d.y === y)
     if (i >= 0 && openDoorSet.has(i)) return 'J'
   }
+  // 새 터가 열린 뒤에만 큰길 끝에 왕래 표식 (닫혀 있는 동안은 그냥 길 — 보이지도 건너가지도 못한다)
+  if (x === VILLAGE_PORTAL.x && y === VILLAGE_PORTAL.y && newlandOpen()) return '>'
   return MAP[y]?.[x] ?? 'T'
+}
+
+/** 지금 있는 지도의 한 칸 */
+export function tileAt(x: number, y: number): string {
+  return currentMapId() === 'newland' ? newlandTileAt(x, y) : villageTileAt(x, y)
+}
+
+/** 어느 지도든 그 지도의 칸이 걸을 수 있는 땅인가 (저장을 불러올 때 위치 확인용 — 지금 지도와 상관없다) */
+export function walkableOn(id: 'village' | 'newland', t: Tile): boolean {
+  if (!Number.isInteger(t.x) || !Number.isInteger(t.y) || t.x < 0 || t.y < 0 || t.x >= mapWidth(id) || t.y >= mapHeight(id)) return false
+  const ch = id === 'newland' ? newlandTileAt(t.x, t.y) : villageTileAt(t.x, t.y)
+  return !BLOCKED.has(ch)
 }
 
 export const key = (t: Tile): string => `${t.x},${t.y}`
@@ -626,6 +651,7 @@ export const ZONES: readonly Zone[] = [
 // 대장간은 처음부터 열려 있다 — 첫날부터 대장장이를 도와 그을음(→ 잉크)을 얻어야 첫 장을 엮을 수 있다
 
 export function zoneAt(t: Tile): Zone | null {
+  if (currentMapId() === 'newland') return null
   return ZONES.find((z) => t.x >= z.x0 && t.x <= z.x1 && t.y >= z.y0 && t.y <= z.y1) ?? null
 }
 
@@ -648,6 +674,7 @@ export function lockedTiles(books: number): ReadonlySet<string> {
 
 /** 이 칸이 들어 있는 이웃집 방 */
 export function roomAt(t: Tile): Room | null {
+  if (currentMapId() === 'newland') return null
   return ROOMS.find((r) => t.x >= r.x0 && t.x < r.x0 + r.w && t.y >= r.y0 && t.y < r.y0 + r.h) ?? null
 }
 
@@ -696,7 +723,7 @@ export function propSpotProblem(tiles: readonly Tile[], roomOwner?: string): str
     return null
   }
   for (const t of tiles) {
-    if (t.y >= VILLAGE_H || roomAt(t)) return 'notOutside'
+    if (t.y >= mapVisibleHeight() || roomAt(t)) return 'notOutside'
     const ch = tileAt(t.x, t.y)
     if (!isWalkable(t) || PATH_CHARS.has(ch) || DOOR_CHARS.has(ch)) return 'onWay'
     if (placeAt(t)) return 'onPlace'
@@ -708,6 +735,7 @@ export function propSpotProblem(tiles: readonly Tile[], roomOwner?: string): str
 
 /** 화면을 방 하나로 좁혀 보여 주는 곳: 이웃집·서고 방, 그리고 내 집 안 */
 export function viewRoomAt(t: Tile): { x0: number; y0: number; w: number; h: number } | null {
+  if (currentMapId() === 'newland') return inArchiveRoom(t) ? { ...INTERIOR } : null
   const r = roomAt(t)
   if (r) return r
   const { x0, y0, x1, y1 } = homeRect()
@@ -725,8 +753,14 @@ export const WARPS: ReadonlyMap<string, Tile> = new Map(
   .set(key(HOME_DOOR), HOME_ENTRY) // 내 집 문 → 집 안
   .set(key(HOME_ROOM.exit), HOME_FRONT) // 집 안 문깔개 → 문 앞
 
-/** 기록자의 집 안인가 */
+/** 문을 밟으면 옮겨 가는 곳 — 지금 있는 지도의 것 (새 터는 서고 문과 안의 문깔개) */
+export function warpAt(t: Tile): Tile | undefined {
+  return currentMapId() === 'newland' ? newlandWarp(t) : WARPS.get(key(t))
+}
+
+/** 기록자의 집 안인가 (새 터에는 내 집이 없다) */
 export function isHome(t: Tile): boolean {
+  if (currentMapId() === 'newland') return false
   const inRect = (r: typeof HOME_RECT) => t.x > r.x0 && t.x < r.x1 && t.y > r.y0 && t.y < r.y1
   return (inRect(HOME_RECT) || sameTile(t, HOME_ROOM.exit) ||
     (homeLevel >= 1 && (inRect(PARTNER_ROOM) || sameTile(t, PARTNER_DOOR))) ||
@@ -828,6 +862,7 @@ export function placeActive(id: PlaceId): boolean {
 }
 
 export function placeAt(t: Tile): PlaceId | null {
+  if (currentMapId() === 'newland') return null
   for (const [id, p] of Object.entries(PLACES) as [PlaceId, Place][]) if (placeActive(id) && p.tiles.some((pt) => sameTile(pt, t))) return id
   return null
 }
@@ -846,8 +881,8 @@ export function cameraFor(x: number, y: number, zoom = 1): { x: number; y: numbe
     return { x: follow(x, room.x0, room.w, VIEW_W / zoom), y: follow(y, room.y0, room.h, VIEW_H / zoom) }
   }
   if (room) return { x: room.x0 + room.w / 2 - VIEW_W / zoom / 2, y: room.y0 + room.h / 2 - VIEW_H / zoom / 2 }
-  const cx = Math.min(Math.max(x + 0.5 - VIEW_W / zoom / 2, 0), WIDTH - VIEW_W / zoom)
-  const cy = Math.min(Math.max(y + 0.5 - VIEW_H / zoom / 2, 0), VILLAGE_H - VIEW_H / zoom)
+  const cx = Math.min(Math.max(x + 0.5 - VIEW_W / zoom / 2, 0), mapWidth() - VIEW_W / zoom)
+  const cy = Math.min(Math.max(y + 0.5 - VIEW_H / zoom / 2, 0), mapVisibleHeight() - VIEW_H / zoom)
   return { x: cx, y: cy }
 }
 

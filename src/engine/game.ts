@@ -134,7 +134,10 @@ import {
   momentNow,
   onceKey,
 } from './stories'
-import { propFootprint, HOUSES, PET_HOME, HOME_FRONT, isHome, isIndoor, isWalkable, key, HOME_ENTRY, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setHomeFurniture, setMailbox, setOpenDoors, setSpouseRoom, START, tileAt, WARPS } from './world'
+import { propFootprint, HOUSES, PET_HOME, HOME_FRONT, isHome, isIndoor, isWalkable, key, HOME_ENTRY, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setHomeFurniture, setMailbox, setOpenDoors, setSpouseRoom, START, tileAt, WARPS, warpAt } from './world'
+import { currentMapId, setActiveMap, type MapId } from './maps'
+import { entryFront, inArchiveRoom, portalAt, setNewlandOpen } from './newland'
+import { NEWLAND_PORTAL, TRAVEL_FROM_MINUTE, TRAVEL_LAST_MINUTE, TRAVEL_MINUTES, VILLAGE_PORTAL } from './newland-config'
 import { SPOUSE_ROOM_STAND } from './spouse-room'
 import type { Cooking } from './cooking'
 import { BOOKS, type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
@@ -298,6 +301,13 @@ export interface GameState {
    * left는 남은 실제 초(tick이 줄인다), 걷기 시작하면 끝. 저장하지 않는다(serialize가 뺀다)
    */
   act?: PlayerAct
+  /**
+   * 지금 있는 지도 (계획 20 작업 3): 없으면 첫 마을. 새 터는 flags.newlandGift 뒤에만 — player의 칸은 이 지도의 칸이다.
+   * 새 터에 있는 동안 첫 마을의 이웃·동물·아이는 움직이지 않고 보이지 않는다 (같은 이웃이 두 곳에 있지 않다)
+   */
+  map?: MapId
+  /** 지도마다 마지막으로 서 있던 칸 (떠날 때 적는다). 저장에서 불러올 때 걸을 수 없는 칸이면 그 지도의 입구 앞으로 */
+  mapAt?: Partial<Record<MapId, Tile>>
 }
 
 /** 가구를 쓰는 동작 종류 — 그리는 쪽이 furnitureUseFrame/extraUseFrame으로 옮긴다 (blowCandle은 생일 빵 촛불 불기 — eventMotionFrame) */
@@ -329,7 +339,10 @@ export function startAct(s: GameState, kind: ActKind, at?: Tile): GameState {
 }
 
 /** 지도(world.tileAt)가 이 게임의 집 단계·열린 서고 방 문(방 표)을 보게 한다. 지도를 읽는 엔진 입구마다 부른다 */
-export function syncHome(s: Pick<GameState, 'homeLevel'> & Partial<Pick<GameState, 'flags' | 'romance' | 'room' | 'village'>>): void {
+export function syncHome(s: Pick<GameState, 'homeLevel'> & Partial<Pick<GameState, 'flags' | 'romance' | 'room' | 'village' | 'map'>>): void {
+  // 지금 어느 지도에 있는가, 새 터의 입구가 열렸는가 (계획 20 작업 3)
+  setActiveMap(s.map ?? 'village')
+  setNewlandOpen(!!s.flags?.newlandGift)
   setHomeLevel(s.homeLevel ?? 0)
   setHomeFurniture(s.room ?? initialHomeFurniture())
   setSpouseRoom(s.romance?.stage === 'married' ? s.romance.partner : null)
@@ -541,6 +554,8 @@ export function newGame(content: GameContent, avatar?: Avatar): GameState {
   const progress = emptyProgress()
   const base = { clock, flags, progress, hearts: {}, today: NO_TODAY, shelved: {} }
   // 새 게임은 넓히기 전 집 — 지도(모듈 전역 집 단계)도 0으로, 서고의 방 문은 모두 닫힌 채
+  setActiveMap('village')
+  setNewlandOpen(false)
   setHomeLevel(0)
   setHomeFurniture(initialHomeFurniture())
   setSpouseRoom(null)
@@ -626,6 +641,8 @@ export function chooseBook(s: GameState, book: Book, content: GameContent): Game
 
 /** 불러온 뒤 이웃을 제자리에 세운다 (걷던 길은 저장하지 않으므로) */
 export function settle(s: GameState, content: GameContent): GameState {
+  // 아래 따라잡기들은 첫 마을의 일이다 — 새 터에서 불러와도 먼저 첫 마을 지도로 (아래 syncHome이 저장의 지도로 맞춘다)
+  setActiveMap('village')
   s = furnishSpouse(s)
   s = expireStall(expireWorkDay(s))
   s = advancePlans(s, content)
@@ -634,11 +651,16 @@ export function settle(s: GameState, content: GameContent): GameState {
   syncHome(s)
   // 지도를 옮기기 전 저장은 지금은 집 안인 칸에 서 있을 수 있다 — 갇히지 않게 집 앞으로 옮긴다
   // (방·내 집 안은 마을과 이어지지 않으므로 걸을 수 있기만 하면 된다)
-  const stuck = (t: Tile) => !isWalkable(t) || (!roomAt(t) && !isHome(t) && findPath(t, HOME_FRONT) === null)
+  const away = currentMapId() === 'newland'
+  const stuck = (t: Tile) => !isWalkable(t) || (!away && !roomAt(t) && !isHome(t) && findPath(t, HOME_FRONT) === null)
   let player = { ...s.player, path: [] as Tile[] }
-  if (stuck(playerTile(s))) player = { ...player, x: HOME_FRONT.x, y: HOME_FRONT.y, facing: 'down', walkTime: 0 }
+  if (stuck(playerTile(s))) {
+    const at = away ? entryFront('newland') : HOME_FRONT
+    player = { ...player, x: at.x, y: at.y, facing: 'down', walkTime: 0 }
+  }
   let companion = s.companion
-  if (companion && stuck({ x: Math.round(companion.x), y: Math.round(companion.y) })) {
+  // 동물은 첫 마을에 남는다 — 새 터에서는 그 자리를 새 터 지도로 따지지 않는다
+  if (companion && !away && stuck({ x: Math.round(companion.x), y: Math.round(companion.y) })) {
     const near = companionGoal({ x: Math.round(player.x), y: Math.round(player.y) }, false) ?? { x: Math.round(player.x), y: Math.round(player.y) }
     companion = { ...companion, x: near.x, y: near.y, path: [] }
   }
@@ -654,6 +676,8 @@ export function outdoors(s: GameState): boolean {
 }
 
 function blockersOf(s: GameState): Set<string> {
+  // 새 터: 첫 마을의 이웃·가구·잠긴 구역은 이 지도에 없다
+  if (currentMapId() === 'newland') return new Set()
   return new Set([...Object.values(s.npcs).filter((n) => n.visible).map((n) => key(npcTile(n))), ...solidTiles(s.room), ...lockedTiles(shelvedCount(s)), ...closedDoors(s), ...storyPropBlockers(s)])
 }
 
@@ -694,6 +718,8 @@ const FRONT: Record<Facing, Tile> = { up: { x: 0, y: -1 }, down: { x: 0, y: 1 },
 
 /** 그 칸에 누를 만한 것(이웃·길 동물·동반 동물·장소)이 있는가 */
 function interactableAt(s: GameState, t: Tile): boolean {
+  if (portalAt(t)) return true
+  if (currentMapId() === 'newland') return false
   return (
     Object.values(s.npcs).some((n) => n.visible && sameTile(npcTile(n), t)) ||
     straysToday(s).some((a) => sameTile(STRAY_SPOTS[a], t)) ||
@@ -741,6 +767,9 @@ export function pressTile(s: GameState): Tile {
 export function tapTile(s: GameState, tile: Tile): GameState {
   syncHome(s)
   const from = playerTile(s)
+  const portal = portalAt(tile)
+  if (portal) return tapPortal(s, tile, portal)
+  if (currentMapId() === 'newland') return tapNewland(s, tile)
   if (sameTile(tile, from) && s.player.path.length === 0) {
     return { ...s, player: { ...s.player, facing: 'down' }, idle: greet(), target: null }
   }
@@ -798,6 +827,7 @@ export function tapTile(s: GameState, tile: Tile): GameState {
 }
 
 function targetTile(s: GameState, target: Target): Tile | null {
+  if (target.kind === 'portal') return currentMapId() === 'newland' ? NEWLAND_PORTAL : VILLAGE_PORTAL
   if (target.kind === 'neighbor') {
     const n = s.npcs[target.id]
     return n ? npcTile(n) : null
@@ -834,6 +864,7 @@ export function enterDoor(s: GameState, door: Tile): GameState {
 export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): { state: GameState; events: GameEvent[] } {
   const events: GameEvent[] = []
   syncHome(s)
+  if (currentMapId() === 'newland') return tickNewland(s, dt, rng)
   const clock = advance(s.clock, dt)
   const minutes = clock.minute - s.clock.minute
   const here = playerTile(s)
@@ -955,6 +986,105 @@ function blowCandle(s: GameState): GameState {
   if (!b) return s
   const facing = faceToward(playerTile(s), b.at, s.player.facing)
   return { ...s, flags: { ...s.flags, [candleKey(b.id)]: s.clock.day }, act: { kind: 'blowCandle', left: ACT_SECONDS.blowCandle, total: ACT_SECONDS.blowCandle, facing } }
+}
+
+// ── 두 맵 왕래 (계획 20 작업 3) ──
+
+/** 건너갈 수 없는 까닭 — 'here' 이미 그 지도 · 'locked' 새 터가 아직 열리지 않음 · 'copy' 필사창이 열려 있음 · 'scene' 장면이 남아 있음 · 'late' 날이 저묾 · 'appt' 약속이 진행 중 */
+export type TravelBlock = 'here' | 'locked' | 'copy' | 'scene' | 'late' | 'appt'
+
+/** 그 지도로 건너갈 수 없는 까닭 하나 (건널 수 있으면 null). 돌아가기는 날이 저물어도, 약속이 있어도 막지 않는다 */
+export function canTravel(s: GameState, to: MapId, opts: { copyOpen?: boolean } = {}): TravelBlock | null {
+  if (to === (s.map ?? 'village')) return 'here'
+  if (to === 'newland' && !s.flags.newlandGift) return 'locked'
+  if (opts.copyOpen) return 'copy'
+  if (s.scenes.length > 0) return 'scene'
+  if (to === 'newland') {
+    const m = Math.floor(s.clock.minute)
+    if (m < TRAVEL_FROM_MINUTE || m > TRAVEL_LAST_MINUTE) return 'late'
+    if (Object.keys(appointmentSpots(s)).length > 0) return 'appt'
+  }
+  return null
+}
+
+/**
+ * 건너간다: 30분이 흐르고(같은 날 안에서 — 날짜는 바뀌지 않는다), 지도가 바뀌고, 기록자는 그 지도의 입구 앞에 선다.
+ * 떠난 지도의 자리는 mapAt에 적는다. 첫 마을로 돌아오면 이웃을 그 시각의 자리에 한 번 놓는다
+ * (새 터에 있는 동안 이웃은 움직이지도 보이지도 않았다). 가구·소지품·돈·관계·필사 진행은 건드리지 않는다
+ */
+export function travel(s0: GameState, to: MapId, content: GameContent, opts: { copyOpen?: boolean } = {}): GameState {
+  syncHome(s0)
+  if (canTravel(s0, to, opts)) return s0
+  const from = s0.map ?? 'village'
+  const front = entryFront(to)
+  const mapAt = { ...s0.mapAt, [from]: playerTile(s0) }
+  const player = { ...s0.player, x: front.x, y: front.y, path: [] as Tile[], facing: to === 'newland' ? ('right' as const) : ('left' as const), walkTime: 0 }
+  if (to === 'newland') {
+    // 30분은 떠나는 첫 마을에서 흐른다 (이웃·약속의 정산이 첫 마을의 일이므로)
+    const timed = passTime(s0, TRAVEL_MINUTES)
+    const next: GameState = { ...timed, map: to, mapAt, player, target: null, act: undefined, idle: IDLE_RESET }
+    syncHome(next)
+    return next
+  }
+  const arrived: GameState = { ...s0, map: to, mapAt, player, target: null, act: undefined, idle: IDLE_RESET }
+  syncHome(arrived)
+  const timed = passTime(arrived, TRAVEL_MINUTES)
+  const next: GameState = { ...timed, npcs: placeAllNpcs(timed, content) }
+  syncHome(next)
+  return next
+}
+
+/** 왕래 표식을 눌렀을 때: 표식 바로 앞까지 걸어가 서고, 닿으면 건너가는 창이 열린다 (store의 arrive) */
+function tapPortal(s: GameState, tile: Tile, to: MapId): GameState {
+  const from = playerTile(s)
+  const path = findPath(from, tile, blockersOf(s))
+  if (path === null) return { ...s, idle: IDLE_RESET }
+  const snap = s.player.x !== from.x || s.player.y !== from.y ? [from] : []
+  return { ...s, player: { ...s.player, path: [...snap, ...path.slice(0, -1)] }, target: { kind: 'portal', to }, idle: IDLE_RESET }
+}
+
+/** 새 터의 땅을 눌렀을 때: 걸어갈 수 있는 곳이면 걸어간다 (이웃·가구·장소는 이 지도에 없다) */
+function tapNewland(s: GameState, tile: Tile): GameState {
+  const from = playerTile(s)
+  if (sameTile(tile, from) && s.player.path.length === 0) return { ...s, player: { ...s.player, facing: 'down' }, idle: greet(), target: null }
+  const path = findPath(from, tile)
+  if (path === null) return { ...s, idle: IDLE_RESET }
+  const snap = s.player.x !== from.x || s.player.y !== from.y ? [from] : []
+  return { ...s, player: { ...s.player, path: [...snap, ...path] }, target: { kind: 'ground' }, idle: IDLE_RESET }
+}
+
+/**
+ * 새 터에서의 한 걸음: 시간·몸 상태·걷기·서고 문 드나들기·도착 알림만. 첫 마을의 이웃·동물·아이·약속·행사·목격·말 걸기는 모두 건너뛴다
+ * (그들은 첫 마을에 그대로 있고, 돌아오면 travel이 한 번 다시 놓는다)
+ */
+function tickNewland(s: GameState, dt: number, rng: Rng): { state: GameState; events: GameEvent[] } {
+  const events: GameEvent[] = []
+  const clock = advance(s.clock, dt)
+  const here = playerTile(s)
+  const needs = tickNeeds(s.needs, clock.minute - s.clock.minute, {
+    indoor: isIndoor(here),
+    season: seasonOf(clock.day),
+    phase: phaseOf(clock.minute),
+    warm: false,
+    hasBlanket: count(s.inv, 'blanket') > 0,
+    peace: peaceful(s),
+    hot: weatherOf(clock.day) === 'hot',
+  })
+  const moving = s.player.path.length > 0
+  let player = stepActor(s.player, (starving(needs) ? dt * 0.7 : dt) * walkMul(s.inv)).actor
+  const now = { x: Math.round(player.x), y: Math.round(player.y) }
+  const warp = !sameTile(now, here) ? warpAt(now) : undefined
+  if (warp) player = { ...player, x: warp.x, y: warp.y, path: [], facing: inArchiveRoom(warp) ? 'up' : 'down' }
+  let target = warp ? null : s.target
+  if (target && player.path.length === 0) {
+    events.push({ type: 'arrived', target })
+    const tt = targetTile(s, target)
+    if (tt) player = { ...player, facing: facingFor(tt.x - now.x, tt.y - now.y, player.facing) }
+    target = null
+  }
+  const idle = moving ? IDLE_RESET : stepIdle(s.idle, dt, clock.minute, rng, totalChapters(s) >= 3)
+  const act = !s.act || moving || player.path.length > 0 || s.act.left <= dt ? undefined : { ...s.act, left: s.act.left - dt }
+  return { state: { ...s, clock, needs, player, target, idle, act }, events }
 }
 
 /** 시간을 한 번에 흘려보낸다 (손일·쉬기) */
@@ -1275,7 +1405,7 @@ export function childTile(s: Pick<GameState, 'child' | 'clock' | 'player'> & Par
 
 /** 기록자 곁(한 칸)에 서 있는 이웃 — '대화하기' 단추 */
 export function neighborBeside(s: GameState): string | null {
-  if (s.player.path.length) return null
+  if (s.player.path.length || (s.map ?? 'village') !== 'village') return null
   const here = playerTile(s)
   const n = Object.values(s.npcs).find((o) => o.visible && isNear(here, npcTile(o)))
   return n?.id ?? null
@@ -3049,6 +3179,8 @@ export function drinkWater(s: GameState): GameState | null {
  * 창만 닫고(더 깨어 있기) 자면 read/pieceId가 없어 목록이 그대로 남는다.
  */
 export function goToSleep(s0: GameState, content: GameContent, opts: { read?: boolean; pieceId?: string } = {}): GameState {
+  // 새 터에는 침대가 없다 — 억지로 잠들면 첫 마을 침대에서 깬다 (계획 20 D6)
+  if (s0.map && s0.map !== 'village') s0 = { ...s0, map: 'village' }
   syncHome(s0)
   const s = opts.read && opts.pieceId ? readOff(s0, opts.pieceId) : s0
   const sick = fallsSick(s.needs)

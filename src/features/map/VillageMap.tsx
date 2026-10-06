@@ -56,7 +56,9 @@ export function VillageMap() {
   const here = { x: Math.round(game.player.x), y: Math.round(game.player.y) }
   // 집 안에 있으면 그 집 문 앞에 표시
   const inside = roomAt(here)
-  const at = isHome(here) ? { x: housesNow().find((h) => h.id === 'home')!.doorX, y: housesNow().find((h) => h.id === 'home')!.y1 } : inside ? inside.door : here.y < VILLAGE_H ? here : null
+  // 새 터에 있으면 이 지도 위에 내 자리는 없다 (새 터 칸은 첫 마을 칸이 아니다)
+  const away = (game.map ?? 'village') !== 'village'
+  const at = away ? null : isHome(here) ? { x: housesNow().find((h) => h.id === 'home')!.doorX, y: housesNow().find((h) => h.id === 'home')!.y1 } : inside ? inside.door : here.y < VILLAGE_H ? here : null
   const pct = (x: number, y: number) => ({ left: `${((x + 0.5) / WIDTH) * 100}%`, top: `${((y + 0.5) / VILLAGE_H) * 100}%` })
   const locked = lockedZones(shelvedCount(game))
   // 아직 이사 오지 않은 이웃의 집(덤불로 덮인 집)도 언제 열리는지 적는다 — 서고 권수 또는 마을 단계

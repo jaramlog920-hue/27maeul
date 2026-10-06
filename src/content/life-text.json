@@ -7534,5 +7534,13 @@
         "seen": { "grandpa": "할아버지가 함께 세운 그늘막 밑에서 쉬고 있었다." }
       }
     }
+  },
+  "travel": {
+    "titleNewland": "새 터",
+    "titleVillage": "첫 마을",
+    "toNewland": "새 터로 가기 · 30분",
+    "toVillage": "첫 마을로 돌아가기 · 30분",
+    "time": "건너가는 데 30분이 걸려요.",
+    "late": "날이 저물었어요."
   }
 }

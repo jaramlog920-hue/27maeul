@@ -25,7 +25,9 @@ import { bookDone, bookRoomOpen, emptyProgress, type Progress } from './books'
 import { newGame, settle, type GameState } from './game'
 import { cardsForChapters, placeNewCards } from './journey'
 import { initialHomeFurniture, isFacing, refitRoom } from './room'
-import { HOME_ENTRY, setHomeLevel, setHomeFurniture, setSpouseRoom } from './world'
+import { HOME_ENTRY, HOME_FRONT, setHomeLevel, setHomeFurniture, setSpouseRoom, walkableOn } from './world'
+import { MAP_IDS, isMapId, setActiveMap, type MapId } from './maps'
+import { entryFront } from './newland'
 import { BOOKS, type Book, type GameContent, type ItemId } from './types'
 
 export const SAVE_KEY = 'twenty-seven/save'
@@ -45,6 +47,39 @@ export function serialize(s: GameState): string {
   return JSON.stringify({ ...s, player: { ...s.player, path: [] }, target: null, idle: IDLE_RESET, act: undefined, npcs: {} })
 }
 
+/**
+ * 두 지도 (계획 20 작업 3): 열리지 않은 새 터거나 모르는 값이면 첫 마을로 (위치는 첫 마을에서 마지막으로 서 있던 칸, 없으면 집 앞),
+ * mapAt의 칸이 그 지도에서 걸을 수 없거나 범위 밖이면 그 지도의 입구 앞으로 — 지워진 건물·잘못된 좌표에서 시작하지 않는다.
+ * 옛 저장(map 없음)은 그대로 첫 마을
+ */
+function sanitizeMaps(s: GameState): Pick<GameState, 'player' | 'map' | 'mapAt'> {
+  const raw = s as unknown as { map?: unknown; mapAt?: unknown }
+  const valid = (id: MapId, t: unknown): t is { x: number; y: number } =>
+    isObj(t) && Number.isInteger((t as { x: unknown }).x) && Number.isInteger((t as { y: unknown }).y) && walkableOn(id, t as { x: number; y: number })
+  const rawAt: Record<string, unknown> = isObj(raw.mapAt) ? (raw.mapAt as Record<string, unknown>) : {}
+  const mapAt: Partial<Record<MapId, { x: number; y: number }>> = {}
+  for (const id of MAP_IDS) {
+    const t = rawAt[id]
+    if (t === undefined) continue
+    mapAt[id] = valid(id, t) ? { x: (t as { x: number }).x, y: (t as { y: number }).y } : entryFront(id)
+  }
+  const open = !!s.flags.newlandGift
+  const wantsNewland = raw.map === 'newland'
+  const map: MapId | undefined = wantsNewland && open ? 'newland' : isMapId(raw.map) ? 'village' : undefined
+  let player = s.player
+  if (map === 'newland') {
+    if (!valid('newland', { x: Math.round(player.x), y: Math.round(player.y) })) {
+      const at = entryFront('newland')
+      player = { ...player, x: at.x, y: at.y, path: [] }
+    }
+  } else if (wantsNewland) {
+    // 열리지 않은 새 터 저장 — 위치는 새 터의 칸이니 첫 마을 자리로 옮긴다
+    const at = valid('village', rawAt.village) ? (rawAt.village as { x: number; y: number }) : HOME_FRONT
+    player = { ...player, x: at.x, y: at.y, path: [] }
+  }
+  return { player, ...(map ? { map } : {}), ...(Object.keys(mapAt).length ? { mapAt } : {}) }
+}
+
 const isStrArray = (v: unknown) => Array.isArray(v) && v.every((x) => typeof x === 'string')
 const isObj = (v: unknown) => !!v && typeof v === 'object' && !Array.isArray(v)
 
@@ -53,6 +88,8 @@ const isObj = (v: unknown) => !!v && typeof v === 'object' && !Array.isArray(v)
  * (없는 id가 남으면 도감·일지에서 오류가 나고, 책상 순서가 영원히 "틀림"이 될 수 있다)
  */
 export function sanitize(s: GameState, content: GameContent): GameState {
+  // 아래 정리들은 모두 첫 마을 지도로 한다 (새 터로 맞추는 것은 불러온 뒤 settle의 syncHome)
+  setActiveMap('village')
   // 제거한 설비의 주문·장면은 옛 저장에서도 다시 등장하지 않는다.
   const canceledCosts: Record<string, readonly number[]> = { desk: [0, 80, 300], lamp: [0, 60, 250], shelf: [0, 200, 500], inkStand: [0, 120] }
   let refundedCoins = 0
@@ -223,7 +260,10 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     journal: s.journal.map((e) => ({ ...e, heard: (e.heard ?? []).filter((id) => known.has(id)) })),
   }
   // 집 책장 (계획 14 작업 8): 옛 저장(칸이 없던 때)은 빈 책장. 다 쓴 책(제본했거나 꽂은 책)만, 몇 권까지
-  return { ...out, homeShelf: sanitizeHomeShelf(s.homeShelf, (b) => isFinished(out, b)) }
+  const { map: _map, mapAt: _mapAt, ...rest } = out
+  void _map
+  void _mapAt
+  return { ...rest, homeShelf: sanitizeHomeShelf(s.homeShelf, (b) => isFinished(out, b)), ...sanitizeMaps(out) }
 }
 
 export function deserialize(raw: string | null, content: GameContent): GameState | null {
