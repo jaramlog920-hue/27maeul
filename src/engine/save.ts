@@ -28,6 +28,7 @@ import { cardsForChapters, placeNewCards } from './journey'
 import { initialHomeFurniture, isFacing, refitRoom } from './room'
 import { HOME_ENTRY, HOME_FRONT, setHomeLevel, setHomeFurniture, setSpouseRoom, walkableOn } from './world'
 import { MAP_IDS, isMapId, setActiveMap, type MapId } from './maps'
+import { sanitizeOtCollected } from './ot-pieces'
 import { entryFront, setNewlandOverlay, setNewlandRevealed } from './newland'
 import { overlayFor, sanitizeNewlandBuild } from './newland-build'
 import { BOOKS, type Book, type GameContent, type ItemId } from './types'
@@ -186,7 +187,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   const churchBoard = Array.isArray(s.churches) ? s.churches.filter((n) => Number.isInteger(n)) : []
   const churches = placeNewCards(churchBoard, cardsForChapters(content.churches ?? [], progress.rev.completed))
   // 구약 칸은 원본을 펼치지 않는다 — 정리한 결과가 있을 때만 아래에서 넣는다 (깨진 값이 남지 않게)
-  const { otProgress: _rawOtProgress, otCopyStats: _rawOtStats, newland: _rawNewland, ...sRest } = s
+  const { otProgress: _rawOtProgress, otCopyStats: _rawOtStats, newland: _rawNewland, otCollected: _rawOtCollected, ...sRest } = s
   // 새 터 건축 (계획 20 작업 6): 옛 저장은 없음, 깨진 기록은 걸러 낸다
   const newland = sanitizeNewlandBuild(_rawNewland, s.clock.day)
   const out: GameState = {
@@ -236,6 +237,8 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     ...(Object.keys(otProgress).length ? { otProgress } : {}),
     ...(isObj(s.otCopyStats) ? { otCopyStats: sanitizeCopyStats(s.otCopyStats) } : {}),
     ...(newland ? { newland } : {}),
+    // 구약 말씀 조각: 새 터를 받은 뒤에만 있다 — 모르는 id·중복은 버리고, 옛 저장(없음)은 칸을 만들지 않는다
+    ...(s.flags?.newlandGift && sanitizeOtCollected(_rawOtCollected).length ? { otCollected: sanitizeOtCollected(_rawOtCollected) } : {}),
     // 하나님 기록 (계획 14): 모양이 맞는 줄만, 같은 줄은 한 번만. 필사 전에 마친 장(옛 저장·예전에 엮은 장)의 줄은
     // 불러올 때 지금 날짜로 채운다 — 이미 있는 줄은 그대로라 몇 번 불러와도 같다
     godRecords: backfillGodRecords(

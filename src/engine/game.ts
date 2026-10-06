@@ -137,6 +137,7 @@ import {
 } from './stories'
 import { propFootprint, HOUSES, PET_HOME, HOME_FRONT, isHome, isIndoor, isWalkable, key, HOME_ENTRY, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setHomeFurniture, setMailbox, setOpenDoors, setSpouseRoom, START, tileAt, WARPS, warpAt } from './world'
 import { currentMapId, setActiveMap, type MapId } from './maps'
+import { drawOtPiece, OT_PIECE_DAY_FLAG } from './ot-pieces'
 import { claimNewland, entryFront, grantNewland, inArchiveRoom, portalAt, revealNewland, setNewlandOpen, setNewlandOverlay, setNewlandRevealed } from './newland'
 import { advanceBuilds, overlayFor, type NewlandState } from './newland-build'
 import { ARCHIVE, NEWLAND_PORTAL, TRAVEL_FROM_MINUTE, TRAVEL_LAST_MINUTE, TRAVEL_MINUTES, VILLAGE_PORTAL } from './newland-config'
@@ -289,6 +290,8 @@ export interface GameState {
   copyStats: CopyStats
   /** 구약 책별 진행 (계획 20 작업 5) — 선택 필드, 없으면 빈 진행. 신약 progress 27키와 섞이지 않는다 */
   otProgress?: OtProgress
+  /** 받은 구약 말씀 조각 id ('ot:gen:1') — 신약 collected와 섞지 않는다. 옛 저장은 없음 (새 터를 받은 뒤에만 쌓인다) */
+  otCollected?: string[]
   /** 구약 필사 기록 — 신약 copyStats와 섞이지 않는다. 없으면 빈 기록 */
   otCopyStats?: CopyStats
   /** 하나님 기록 (계획 14): 장을 다 필사해 발견한 줄 — 키워드·근거 구절·발견한 날 */
@@ -380,6 +383,8 @@ export type GameEvent =
   | { type: 'moment'; id: string }
   /** 새 터 서고 문을 처음 밟았다 (계획 20 작업 4 — 아침빛과 본문 카드는 화면이 맡는다) */
   | { type: 'firstLight' }
+  /** 새 터 서고에 들어서서 구약 조각 하나를 받았다 (하루 한 번 — 알림은 화면이 맡는다) */
+  | { type: 'otPiece'; id: string }
   /** 지킨 약속 (계획 6b) */
   | { type: 'promiseKept'; npc: string }
   /** 동물의 작은 반응 한 줄 (계획 16 작업 21 — 글은 life-text pet.events) */
@@ -1111,6 +1116,16 @@ function tickNewland(s: GameState, dt: number, rng: Rng): { state: GameState; ev
     flags = { ...flags, newlandLight: 1 }
     events.push({ type: 'firstLight' })
   }
+  // 구약 조각: 새 터에 있는 날 서고에 처음 들어설 때 하루 한 번 — 아직 없는 구약 조각 중 날 씨앗으로 하나 (보상·필사 조건 아님)
+  let otCollected = s.otCollected
+  if (warp && inArchiveRoom(warp) && flags.newlandGift && flags[OT_PIECE_DAY_FLAG] !== clock.day) {
+    flags = { ...flags, [OT_PIECE_DAY_FLAG]: clock.day }
+    const id = drawOtPiece(otCollected ?? [], clock.day)
+    if (id) {
+      otCollected = [...(otCollected ?? []), id]
+      events.push({ type: 'otPiece', id })
+    }
+  }
   if (target && player.path.length === 0) {
     events.push({ type: 'arrived', target })
     const tt = targetTile(s, target)
@@ -1119,7 +1134,7 @@ function tickNewland(s: GameState, dt: number, rng: Rng): { state: GameState; ev
   }
   const idle = moving ? IDLE_RESET : stepIdle(s.idle, dt, clock.minute, rng, totalChapters(s) >= 3)
   const act = !s.act || moving || player.path.length > 0 || s.act.left <= dt ? undefined : { ...s.act, left: s.act.left - dt }
-  return { state: { ...s, clock, needs, player, target, idle, act, flags }, events }
+  return { state: { ...s, clock, needs, player, target, idle, act, flags, ...(otCollected ? { otCollected } : {}) }, events }
 }
 
 /** 시간을 한 번에 흘려보낸다 (손일·쉬기) */

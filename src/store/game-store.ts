@@ -1,4 +1,5 @@
 import { WORKSHOP, PARTNER_ROOM, BABY_ROOM, LIVING_ROOM } from '../engine/home-layout'
+import { otPieceById } from '../engine/ot-pieces'
 import { canTravel, moveFurniture, travel } from '../engine/game'
 import { currentMapId, type MapId } from '../engine/maps'
 import { newlandRevealed, revealNewland } from '../engine/newland'
@@ -1279,6 +1280,7 @@ export const useGame = create<Store>((set, get) => {
           modal = a.modal ?? modal
         }
         if (e.type === 'firstLight') modal = { kind: 'firstLight' }
+        if (e.type === 'otPiece') get().say(fill(T.word.otGot, { name: otPieceById(e.id)?.name ?? '' }), 3400)
       }
       if (!modal && game.scenes.length) {
         modal = { kind: 'scene', id: game.scenes[0] }

@@ -36,10 +36,11 @@ import { childMode, childStage } from '../engine/child'
 import { BOARD, stoneTile, TRIP_H, TRIP_W, tripLayout, type Cell as TripCell } from '../engine/trip-board'
 import { feastToday, sideShelfSpines } from '../engine/library'
 import { roomPieceRatio, SHELF_FILL, shelfFillSteps } from '../engine/fragments'
+import { OT_PIECE_COUNT } from '../engine/ot-pieces'
 import { spineLook } from '../engine/binding'
 import { bookcaseTiles, ACTS_ROOM, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, PAVILION_RECT, HEIGHT, HOUSE_RECT, housesNow, houseAt, lockedTiles, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile, treeKind, type TreeKind } from '../engine/world'
 import { currentMapId, mapVisibleHeight, setActiveMap } from '../engine/maps'
-import { newlandGroundAt, newlandOpen, newlandRevealedOn } from '../engine/newland'
+import { inArchiveRoom, newlandGroundAt, newlandOpen, newlandRevealedOn } from '../engine/newland'
 import { areaOf } from '../engine/newland-build'
 import { ARCHIVE, INTERIOR_SHELF, NEWLAND_H, NEWLAND_W } from '../engine/newland-config'
 import { OLD_BUILDINGS, OLD_CONSTRUCTION, OLD_PROPS, OLD_TERRAIN, OLD_VILLAGE_PALETTE } from './old-village-art'
@@ -2099,6 +2100,8 @@ function drawNewland(g: Ctx, game: GameState, t: number, W: number, H: number, o
     g.translate(-ox, -oy)
     g.drawImage(newlandMapFor(season), 0, 0)
     drawNewlandSites(g, game, here.y, false)
+    // 서고 안 작은 책장: 모은 구약 조각 ÷ 구약 전체 조각만큼 (한 칸 열두 책등)
+    if (inArchiveRoom(here)) drawShelfFill(g, [INTERIOR_SHELF.tile], shelfFillSteps((game.otCollected ?? []).length, OT_PIECE_COUNT, 1))
     const moving = p.path.length > 0
     const done = totalChapters(game)
     const blink = isBlinking(t)

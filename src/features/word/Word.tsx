@@ -2,6 +2,7 @@
 // 2026-10-04: 따로 있던 선반의 이야기 도감(책 거르기·한 복음서에만·도장)은 말씀 조각으로, 내가 남긴 한 줄은 서고(책 한 줄)·말씀 조각(조각 한 줄)으로 옮겼다.
 // 가장 큰 단추는 [이어서 필사하기]. 해설 문장은 없다 — 본문은 개역한글 그대로(versesOf), 지어낸 말은 life-text의 word 칸만.
 import { Fragment, useState } from 'react'
+import { OT_PIECES, OT_PIECE_COUNT } from '../../engine/ot-pieces'
 import { CONTENT, contextOf, GOD_KEYWORDS, NAMES, neighborById, PIECES, versesOf } from '../../content/catalog'
 import { copyBookName, fill, roomTitle, T } from '../../content/text'
 import { otLoaded } from '../../content/ot-catalog'
@@ -268,6 +269,23 @@ function PieceDex() {
           ))}
         </>
       )}
+      <OtPieceDex />
+    </section>
+  )
+}
+
+/** 구약 말씀 조각 칸: 새 터를 받은 뒤에만 보인다. 받은 조각을 책 순서로 "창세기 1장"처럼만 (본문은 부르지 않는다) */
+function OtPieceDex() {
+  const gift = useGame((s) => !!s.game.flags.newlandGift)
+  const ot = useGame((s) => s.game.otCollected)
+  if (!gift) return null
+  const got = new Set(ot ?? [])
+  const mine = OT_PIECES.filter((p) => got.has(p.id))
+  return (
+    <section className="word-ot-pieces" aria-label={W.otTitle}>
+      <h3>{W.otTitle}</h3>
+      <p className="hint">{fill(W.otCount, { got: mine.length, all: OT_PIECE_COUNT })}</p>
+      {mine.length === 0 ? <p>{W.otEmpty}</p> : <p>{mine.map((p) => p.name).join(' · ')}</p>}
     </section>
   )
 }
