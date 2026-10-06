@@ -931,11 +931,11 @@ export const useGame = create<Store>((set, get) => {
         }
       }
       // 아침에 들른 이웃은 들고 온 것을 건넨다
-      // 늘 하는 말은 이름 밑에, 특별한 말은 팝업으로 — 알려 줄 레시피가 있으면 팝업 맨 앞에
+      // 늘 하는 말은 이름 밑에, 특별한 말은 팝업으로 먼저 보이고 닫은 뒤에도 이름 밑에 남는다 — 알려 줄 레시피가 있으면 팝업 맨 앞에
       const talk = (st: GameState, line: string, special: boolean) => {
         const r = teachRecipe(st, target.id)
         const popup = special && line ? [...r.popup, line] : r.popup
-        return { game: persist(r.game), modal: { kind: 'talk' as const, neighborId: target.id, line: special ? '' : line, ...(popup.length ? { popup } : {}), ...letter } }
+        return { game: persist(r.game), modal: { kind: 'talk' as const, neighborId: target.id, line, ...(popup.length ? { popup } : {}), ...letter } }
       }
       const v = receiveVisit(g, target.id)
       if (v) {
