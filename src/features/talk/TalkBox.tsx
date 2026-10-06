@@ -128,7 +128,7 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
         </button>
         <WorkEntry npc={def.id} onOpen={() => setFocus('work')} />
         <SkillEntry npc={def.id} onOpen={() => setFocus('skill')} />
-        <button onClick={closeModal}>{T.ui.close}</button>
+        <button data-close onClick={closeModal}>{T.ui.close}</button>
       </div>
     </div>
   )

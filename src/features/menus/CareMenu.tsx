@@ -25,7 +25,7 @@ export function CareMenu() {
         {canRest && <button onClick={rest}>{T.ui.careRest}</button>}
         {canDrink && <button onClick={drink}>{T.ui.careDrink}</button>}
         {!canEat && !canCover && !canRest && !canDrink && <p>{T.ui.careNothing}</p>}
-        <button onClick={closeModal}>{T.ui.close}</button>
+        <button data-close onClick={closeModal}>{T.ui.close}</button>
       </div>
     </div>
   )

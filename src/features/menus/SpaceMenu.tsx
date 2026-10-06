@@ -18,7 +18,7 @@ export function SpaceMenu({ id }: { id: string }) {
         <button className="primary" disabled={!!block} onClick={() => useSpaceAt(id)}>
           {T.space.doIt[use]}
         </button>
-        <button onClick={closeModal}>{T.ui.close}</button>
+        <button data-close onClick={closeModal}>{T.ui.close}</button>
       </div>
     </div>
   )

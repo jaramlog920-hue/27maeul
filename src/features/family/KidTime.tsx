@@ -59,7 +59,7 @@ export function KidTime({ done, spouse }: { done?: KidDone; spouse?: SpouseDone 
           {spouse.album && <li>{W.album}</li>}
         </ul>
         <div className="actions">
-          <button className="primary" onClick={closeModal}>
+          <button data-close className="primary" onClick={closeModal}>
             {T.ui.close}
           </button>
         </div>
@@ -79,7 +79,7 @@ export function KidTime({ done, spouse }: { done?: KidDone; spouse?: SpouseDone 
         </ul>
         <div className="actions">
           <button onClick={() => open({ kind: 'kidTime' })}>{K.again}</button>
-          <button className="primary" onClick={closeModal}>
+          <button data-close className="primary" onClick={closeModal}>
             {T.ui.close}
           </button>
         </div>
@@ -134,7 +134,7 @@ export function KidTime({ done, spouse }: { done?: KidDone; spouse?: SpouseDone 
       )}
       <p className="hint">{kidFill(K.trip, name)}</p>
       <div className="actions">
-        <button onClick={closeModal}>{T.ui.close}</button>
+        <button data-close onClick={closeModal}>{T.ui.close}</button>
       </div>
     </div>
   )

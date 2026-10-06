@@ -45,7 +45,7 @@ export function StallView() {
   }, [])
   const st = game.stall && game.stall.day === game.clock.day ? game.stall : undefined
   const block = canOpenStall(game)
-  const exit = <button onClick={closeModal}>{T.ui.close}</button>
+  const exit = <button data-close onClick={closeModal}>{T.ui.close}</button>
 
   if (st?.closed) {
     const sum = stallSummary(st)

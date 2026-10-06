@@ -53,7 +53,7 @@ export function BindView({ modal }: { modal: Extract<Modal, { kind: 'bind' }> })
         </p>
         {!modal.redo && <p className="hint">{B.madeBag}</p>}
         <div className="actions">
-          <button className="primary" onClick={closeBind}>
+          <button data-close className="primary" onClick={closeBind}>
             {T.ui.close}
           </button>
         </div>
@@ -104,7 +104,7 @@ export function BindView({ modal }: { modal: Extract<Modal, { kind: 'bind' }> })
       </div>
       <p className="hint">{fill(B.have, { items: have })}</p>
       <div className="actions">
-        <button onClick={closeBind}>{T.ui.close}</button>
+        <button data-close onClick={closeBind}>{T.ui.close}</button>
       </div>
     </div>
   )

@@ -263,7 +263,7 @@ export function Settings() {
         )}
       </section>
       <div className="actions">
-        <button onClick={close}>닫기</button>
+        <button data-close onClick={close}>닫기</button>
       </div>
     </div>
   )

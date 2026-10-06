@@ -14,7 +14,7 @@ export function LetterBox() {
       <p>{requests[day % requests.length]}</p>
       <p className="hint">{fill(T.letters.payHint, { pay })}</p>
       <div className="actions">
-        <button onClick={closeModal}>{T.ui.close}</button>
+        <button data-close onClick={closeModal}>{T.ui.close}</button>
         <button className="primary" onClick={startLetter}>
           {T.letters.start}
         </button>

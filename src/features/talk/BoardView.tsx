@@ -23,7 +23,7 @@ export function BoardView() {
         </div>
         <VillageBoard />
         <div className="actions">
-          <button onClick={closeModal}>{T.ui.close}</button>
+          <button data-close onClick={closeModal}>{T.ui.close}</button>
         </div>
       </div>
     )
@@ -57,7 +57,7 @@ export function BoardView() {
       </ul>
       {list.length === 0 && <p className="hint">오늘은 붙은 쪽지가 없어요.</p>}
       <div className="actions">
-        <button onClick={closeModal}>{T.ui.close}</button>
+        <button data-close onClick={closeModal}>{T.ui.close}</button>
       </div>
     </div>
   )

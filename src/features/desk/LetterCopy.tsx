@@ -153,7 +153,7 @@ export function LetterCopy({ book, result, onChangeBook }: { book: Book; result:
         )
       )}
       <div className="actions">
-        <button onClick={closeModal}>{T.ui.close}</button>
+        <button data-close onClick={closeModal}>{T.ui.close}</button>
         <button onClick={onChangeBook}>{T.ui.bookChange}</button>
         {!dark && received && allFilled && (
           <button className="primary" onClick={submitCopy}>

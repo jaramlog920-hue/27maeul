@@ -21,7 +21,7 @@ export function TravelMenu({ to }: { to: MapId }) {
         </button>
         {canLook && <button onClick={lookAround}>{T.newland.look}</button>}
         {canBuild && <button onClick={openBuild}>{T.build.open}</button>}
-        <button onClick={closeModal}>{T.ui.close}</button>
+        <button data-close onClick={closeModal}>{T.ui.close}</button>
       </div>
     </div>
   )

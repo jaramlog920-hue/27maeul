@@ -60,7 +60,7 @@ export function OrdersView({ npc }: { npc: string }) {
       )}
       <div className="actions">
         <button onClick={() => open({ kind: 'talk', neighborId: npc, line: '' })}>{T.ui.back}</button>
-        <button onClick={closeModal}>{T.ui.close}</button>
+        <button data-close onClick={closeModal}>{T.ui.close}</button>
       </div>
     </div>
   )

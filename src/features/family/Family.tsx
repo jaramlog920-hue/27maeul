@@ -105,7 +105,7 @@ export function Family() {
       )}
       <div className="actions">
         <button onClick={() => open({ kind: 'journal', tab: 'album' })}>가족 앨범</button>
-        <button onClick={closeModal}>{T.ui.close}</button>
+        <button data-close onClick={closeModal}>{T.ui.close}</button>
       </div>
     </div>
   )

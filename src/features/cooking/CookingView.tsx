@@ -211,7 +211,7 @@ export function CookingView() {
     <ul className="rows"><li><button className="row" onClick={() => setView('table')}>
       <span className="row-main"><b>{C.toTable}</b>{c.table && <small>{fill(C.onTable, { item: itemName(c.table.item), n: c.table.left })}</small>}</span>
     </button></li></ul>
-    <div className="actions"><button onClick={close}>{T.ui.close}</button></div>
+    <div className="actions"><button data-close onClick={close}>{T.ui.close}</button></div>
   </div>
 }
 

@@ -70,7 +70,7 @@ export function ScheduleDialog() {
         <button onClick={() => useGame.getState().open({ kind: 'clubs' })}>{lifeText.clubs.title}</button>
         <StallEntry />
         {showFests && <button onClick={() => useGame.getState().open({ kind: 'fests' })}>{lifeText.fest.title}</button>}
-        <button onClick={close}>닫기</button>
+        <button data-close onClick={close}>닫기</button>
       </div>
     </div>
   )

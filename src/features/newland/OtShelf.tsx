@@ -47,7 +47,7 @@ export function OtShelf() {
         </figure>
       )}
       <div className="actions">
-        <button onClick={closeModal}>{T.ui.close}</button>
+        <button data-close onClick={closeModal}>{T.ui.close}</button>
       </div>
     </div>
   )

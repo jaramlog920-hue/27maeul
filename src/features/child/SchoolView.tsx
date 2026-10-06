@@ -75,7 +75,7 @@ export function SchoolView() {
       )}
       {work && kid && <p className="hint">교실 선반 · {itemName(work as never)}</p>}
       <div className="actions">
-        <button onClick={closeModal}>{T.ui.close}</button>
+        <button data-close onClick={closeModal}>{T.ui.close}</button>
       </div>
     </div>
   )

@@ -67,7 +67,7 @@ function BookPick({ onDone }: { onDone?: () => void }) {
         </details>
       ))}
       <div className="actions">
-        <button onClick={onDone ?? closeModal}>{T.ui.close}</button>
+        <button data-close onClick={onDone ?? closeModal}>{T.ui.close}</button>
       </div>
     </div>
   )
@@ -155,7 +155,7 @@ export function Desk({ result }: { result: SubmitResult | null; dark: boolean })
         </>
       )}
       <div className="actions">
-        <button onClick={closeModal}>{T.ui.close}</button>
+        <button data-close onClick={closeModal}>{T.ui.close}</button>
         <button onClick={() => setPicking(true)}>{T.ui.bookChange}</button>
         {!dark && chapter !== null && list.length > 0 && (
           <button className="primary" onClick={() => submitDesk(book, chapter)}>

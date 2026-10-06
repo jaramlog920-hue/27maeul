@@ -51,7 +51,7 @@ export function GameGuide() {
           <tr><th scope="row">장터</th><td>장날에 상인과 거래</td><td>마을 가운데</td></tr>
         </tbody>
       </table>
-      <div className="actions"><button ref={button} onClick={close}>닫기</button></div>
+      <div className="actions"><button data-close ref={button} onClick={close}>닫기</button></div>
     </div>
   )
 }

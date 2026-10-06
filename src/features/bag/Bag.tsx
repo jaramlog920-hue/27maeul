@@ -200,7 +200,7 @@ export function Bag({ tab: first = 'items' }: { tab?: BagTab }) {
       {tab === 'make' && <Recipes />}
       {tab === 'dex' && <ItemDex />}
       <div className="actions">
-        <button onClick={closeModal}>{T.ui.close}</button>
+        <button data-close onClick={closeModal}>{T.ui.close}</button>
       </div>
     </div>
   )

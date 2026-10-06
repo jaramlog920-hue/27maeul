@@ -89,9 +89,10 @@ export type PieceLog = Record<string, PieceGot>
 
 export type PieceSource =
   | { kind: 'npc' | 'trip'; who: string }
-  | { kind: 'letter' | 'child' | 'library' | 'scroll' | 'night' | 'stars' | 'unknown' }
+  | { kind: 'letter' | 'child' | 'library' | 'scroll' | 'night' | 'stars' | 'pet' | 'unknown' }
 
-const PLAIN = ['letter', 'child', 'library', 'scroll', 'night', 'stars'] as const
+// 'pet': 데리고 다니는 동물이 길에서 물어 온 조각 (2026-10-07)
+const PLAIN = ['letter', 'child', 'library', 'scroll', 'night', 'stars', 'pet'] as const
 
 /** 기록의 from을 읽는다 — 모르는 값·기록 없음(옛 저장)은 unknown */
 export function pieceFrom(from: string | undefined): PieceSource {

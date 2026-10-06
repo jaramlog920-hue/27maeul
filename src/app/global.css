@@ -211,6 +211,16 @@ button:focus-visible {
 .actions.column {
   flex-direction: column;
 }
+/* 닫기는 어느 창에서나 오른쪽 (2026-10-07 사용자) — 닫기 단추에는 data-close (scripts/mark-close-buttons.mjs) */
+[data-close] {
+  margin-left: auto;
+}
+.actions.column > [data-close],
+.menu.column > [data-close] {
+  align-self: flex-end;
+  width: auto;
+  min-width: 88px;
+}
 
 /* ── 성경 본문 ── */
 .passage {

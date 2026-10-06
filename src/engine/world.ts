@@ -899,13 +899,13 @@ export const START: Tile = home(3, 2)
 export function cameraFor(x: number, y: number, zoom = 1): { x: number; y: number } {
   // 집 안(이웃집·서고·내 집): 방을 화면 가운데에 둔다 (둘레는 그리는 쪽에서 가린다)
   const room = viewRoomAt({ x: Math.round(x), y: Math.round(y) })
-  // 넓힌 내 집이 화면보다 크면 그 방향으로는 기록자를 따라간다 (집 끝에서 멈춘다), 작으면 가운데
-  if (room && isHome({ x: Math.round(x), y: Math.round(y) })) {
+  // 방이 화면보다 크면(넓힌 내 집, 화면을 크게 키웠을 때의 이웃집·서고·사랑방) 그 방향으로는 기록자를 따라간다 (방 끝에서 멈춘다), 작으면 가운데
+  // (2026-10-07 사용자 — 화면 크기를 키우면 방이 한눈에 안 보이는데 따라오지 않았다)
+  if (room) {
     const follow = (p: number, start: number, size: number, view: number) =>
       size > view ? Math.min(Math.max(p + 0.5 - view / 2, start), start + size - view) : start + size / 2 - view / 2
     return { x: follow(x, room.x0, room.w, VIEW_W / zoom), y: follow(y, room.y0, room.h, VIEW_H / zoom) }
   }
-  if (room) return { x: room.x0 + room.w / 2 - VIEW_W / zoom / 2, y: room.y0 + room.h / 2 - VIEW_H / zoom / 2 }
   const cx = Math.min(Math.max(x + 0.5 - VIEW_W / zoom / 2, 0), mapWidth() - VIEW_W / zoom)
   const cy = Math.min(Math.max(y + 0.5 - VIEW_H / zoom / 2, 0), mapVisibleHeight() - VIEW_H / zoom)
   return { x: cx, y: cy }

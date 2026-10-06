@@ -90,7 +90,7 @@ export function Word({ tab: first = 'copy' }: { tab?: WordTab }) {
     <div className="dialog shelf word" role="dialog" aria-label={W.title}>
       <div className="shelf-head">
         <h2>{W.title}</h2>
-        <button onClick={closeModal}>{T.ui.close}</button>
+        <button data-close onClick={closeModal}>{T.ui.close}</button>
       </div>
       {/* 첫 화면 가장 큰 단추 */}
       <button className="primary word-continue" onClick={wordContinue}>

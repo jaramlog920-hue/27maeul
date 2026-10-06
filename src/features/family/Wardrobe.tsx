@@ -5,7 +5,7 @@ import { T } from '../../content/text'
 import { ACCS, BOTTOMS, HAIR_BACKS, HAIR_FRONTS, TOPS, cycle, hsvToHex, randomAvatar, type FullAvatar, type Hsv } from '../../engine/avatar'
 import { lookOf, type WardrobeWho } from '../../engine/game'
 import type { Facing } from '../../engine/types'
-import { Preview, SLIDER_MAX } from '../intro/AvatarForm'
+import { Preview, SLIDER_MAX, sliderTrack } from '../intro/AvatarForm'
 import { useGame } from '../../store/game-store'
 
 type RowKey = 'hairFront' | 'hairBack' | 'top' | 'bottom' | 'acc'
@@ -41,8 +41,8 @@ export function Wardrobe({ who }: { who: WardrobeWho }) {
   const shuffle = () => setA({ ...randomAvatar(a.look, a.name), skin: start.skin, look: a.look, name: a.name })
   return (
     <div className="dialog creator wardrobe" role="dialog" aria-label="옷장">
-      <h2>옷장 · {who === 'me' ? '나' : `${WHO_NAME[who]} ${a.name}`}</h2>
-      <p className="hint">머리부터 옷까지 바꿀 수 있어요. 피부색은 그대로예요.</p>
+      {/* 제목은 '옷장'만, 설명 줄 없이 (2026-10-07 사용자) — 누구 옷장인지는 가족 화면에서 고른다 */}
+      <h2 aria-label={`옷장 · ${who === 'me' ? '나' : `${WHO_NAME[who]} ${a.name}`}`}>옷장</h2>
       <div className="creator-top">
         <div className="creator-portrait">
           <div className="creator-frame">
@@ -76,7 +76,7 @@ export function Wardrobe({ who }: { who: WardrobeWho }) {
         {colorKey === 'accColor' && <button onClick={() => setA((cur) => cur ? { ...cur, accColor: null } : cur)}>기본 배색으로</button>}{T.avatar.sliders.map((label: string, i: number) => (
           <label className="creator-slider" key={label}>
             <span>{label}</span>
-            <input type="range" min={0} max={SLIDER_MAX[i]} value={hsv[i]} onChange={(e) => slide(i, Number(e.target.value))} />
+            <input type="range" min={0} max={SLIDER_MAX[i]} value={hsv[i]} style={{ background: sliderTrack(hsv, i) }} onChange={(e) => slide(i, Number(e.target.value))} />
           </label>
         ))}
       </div>

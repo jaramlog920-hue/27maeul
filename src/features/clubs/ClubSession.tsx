@@ -34,6 +34,6 @@ export function ClubSession({id}:{id:string}) {
  {run?.step==='done'&&<p>{C.done}</p>}
  {follow&&<p className="club-follow">{neighborById(follow.npc)?.role} · {follow.text}</p>}
  {(a.startedWith??[]).map(npc=>{const p=clubPerson(npc,activity),line=p?(run?.step==='done'?p.finish:p.start):personOf(npc)?.clubLines?.[run?.step==='done'?'finish':'start'];return line?<p key={npc} className="club-person">{neighborById(npc)?.role} · {p&&<span className="hint">{p.does} · </span>}{line}</p>:null})}
- <div className="actions"><button onClick={useGame.getState().closeModal}>{T.ui.close}</button></div>
+ <div className="actions"><button data-close onClick={useGame.getState().closeModal}>{T.ui.close}</button></div>
  </div>
 }

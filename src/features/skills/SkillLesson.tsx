@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { CONTENT, neighborById } from '../../content/catalog'
-import { fill, itemList, itemName, T, withObject } from '../../content/text'
+import { fill, itemList, itemName, T } from '../../content/text'
 import { canLearn, canShowSkillItem, chooseSkillStyle, chooseStyle, craftLearned, discoveredSkill, finishLesson, lessonHand, lookAgain, SKILL_DEFS, SKILL_IDS, skillOf, startLesson, styleOf, type SkillState } from '../../engine/skills'
 import { has } from '../../engine/items'
 import { overflows, stageWith } from '../../engine/game'
@@ -105,8 +105,8 @@ export function SkillCraftOptions({ at = 'workbench' }: { at?: 'workbench' | 'he
         {def.needs
           ? <><p className="hint">{fill(S.materials, { items: itemList(def.needs), item })}</p>
             <button disabled={!!needs || full} onClick={() => applyLifeState(craftLearned(useGame.getState().game, id))}>{fill(S.make, { item })}</button>
-            {(needs || full) && <p className="hint">{needs ? S.needs : S.full}</p>}</>
-          : <p className="hint">{fill(S.styleOnly, { item: withObject(item) })}</p>}
+            </>
+          : null}
       </div>
     })}
   </section>

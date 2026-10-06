@@ -52,6 +52,6 @@ export function FestList() {
     {f.kind === 'festival' && role?.id !== f.id && <p className="hint">{F.roleNear}</p>}
    </li>
   })}</ul>
-  <div className="actions">{kinds.length > 0 && <button onClick={() => setCreating(true)}>{F.create}</button>}<button onClick={useGame.getState().closeModal}>{T.ui.close}</button></div>
+  <div className="actions">{kinds.length > 0 && <button onClick={() => setCreating(true)}>{F.create}</button>}<button data-close onClick={useGame.getState().closeModal}>{T.ui.close}</button></div>
  </div>
 }

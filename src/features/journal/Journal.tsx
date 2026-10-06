@@ -54,7 +54,7 @@ export function Journal({ tab: first = 'days' }: { tab?: Tab }) {
       {tab === 'album' && <Album />}
       {tab === 'awards' && <Awards />}
       <div className="actions">
-        <button onClick={closeModal}>{T.ui.close}</button>
+        <button data-close onClick={closeModal}>{T.ui.close}</button>
       </div>
     </div>
   )

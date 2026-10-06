@@ -807,13 +807,15 @@ button.wood.primary {
   border-radius: 4px;
   padding: 8px;
 }
+/* 색 고르기 탭은 두 줄 두 칸 — 네 개를 한 줄에 두면 좁은 화면에서 '장신구 색'이 밖으로 튀어나왔다 (2026-10-07 사용자) */
 .creator-color-tabs {
   display: flex;
+  flex-wrap: wrap;
   gap: 4px;
   margin-bottom: 8px;
 }
 .creator-color-tabs button {
-  flex: 1;
+  flex: 1 1 40%;
   font-size: 12px;
   padding: 4px 2px;
   white-space: nowrap;

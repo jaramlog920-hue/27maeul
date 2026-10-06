@@ -100,6 +100,6 @@ export function FestForm({ onClose }: { onClose: () => void }) {
    {birthday && <p className="hint">{fill(F.birthday, { who: neighborById(birthday)?.role ?? '' })}</p>}
   </>}
   {error && <p role="alert">{errorText(error)}</p>}
-  <div className="actions">{at > 0 && <button onClick={() => { setError(''); setAt(at - 1) }}>{F.back}</button>}{at < steps.length - 1 ? <button disabled={!valid} onClick={() => { setError(''); setAt(at + 1) }}>{F.nextButton}</button> : <button className="primary" onClick={save}>{F.save}</button>}<button onClick={onClose}>{T.ui.close}</button></div>
+  <div className="actions">{at > 0 && <button onClick={() => { setError(''); setAt(at - 1) }}>{F.back}</button>}{at < steps.length - 1 ? <button disabled={!valid} onClick={() => { setError(''); setAt(at + 1) }}>{F.nextButton}</button> : <button className="primary" onClick={save}>{F.save}</button>}<button data-close onClick={onClose}>{T.ui.close}</button></div>
  </div>
 }

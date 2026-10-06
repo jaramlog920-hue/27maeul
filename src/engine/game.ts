@@ -14,7 +14,7 @@ import { advance, newClock, phaseOf, seasonOf, sleepClock, type Clock } from './
 import { DURATION, greet, IDLE_GAP, IDLE_RESET, stepIdle, type IdleState } from './autonomy'
 import { adopt, companionGoal, STRAY_DAY, STRAY_SPOTS, stepCompanion, type Animal, type Companion } from './companion'
 import { add, addGift, CHAPTER_COST, FOODS, count, has, RECIPES, recipeGives, stackCap, take, TOOLS, type Inventory, type RecipeId } from './items'
-import { petLife, petStayGoal, type PetEvent } from './pet-life'
+import { petLife, petPieceCheck, petStayGoal, type PetEvent } from './pet-life'
 import { facingFor, findPath, pathToward, stepActor, type Actor } from './movement'
 import { coolDown, exhausted, fallsSick, FRESH, rest, sleepNeeds, starving, tickNeeds, warmUp, work, type Needs } from './needs'
 import { inGoodMood } from './mood'
@@ -1005,8 +1005,18 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
     }
   }
   const base: GameState = { ...s, clock, needs, player, target, idle, act, npcs, companion, trails, gen, emotes }
-  const lived = liveNearby(petLife(base, now, events, childTile(base)), now, events)
+  let lived = liveNearby(petLife(base, now, events, childTile(base)), now, events)
   if (lived.scenes.length > s.scenes.length) return { state: lived, events }
+  // 데리고 다니는 동물이 가끔 길가에서 말씀 조각을 물어 온다 (2026-10-07 사용자) — 하루 한 번 살피고, 조각은 언제나 27권 중 아직 없는 것 무작위
+  const petPiece = petPieceCheck(lived, now, tileAt(now.x, now.y) === ',')
+  if (petPiece) {
+    lived = { ...lived, flags: { ...lived.flags, petPieceDay: clock.day } }
+    const got = petPiece === 'find' ? extraPiece(lived, content, 'pet') : null
+    if (got) {
+      lived = got.state
+      events.push({ type: 'pet', key: 'piece' })
+    }
+  }
   const next: GameState = blowCandle(lived)
 
   // 결혼 잔치 (계획 6): 약혼한 다음 장날 저녁, 광장 모닥불 둘레에 오면 잔치가 열리고 부부가 된다

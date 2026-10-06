@@ -18,7 +18,7 @@ export function FestSession({ id }: { id: string }) {
   const ready = festivalRoleReady(game)?.id === id
   return <div className="dialog" role="dialog" aria-label={title}><h2>{title}{f.role ? ` · ${F.roles[f.role]}` : ''}</h2>
    {done ? <p>{F.done}</p> : <><p>{f.role ? F.roleDo[f.role] : ''}</p>{!ready && <p className="hint">{F.roleNear}</p>}</>}
-   <div className="actions">{!done && <button className="primary" disabled={!ready} onClick={() => commitClub(doFestivalRole(game, id))}>{F.roleButton}</button>}<button onClick={close}>{T.ui.close}</button></div>
+   <div className="actions">{!done && <button className="primary" disabled={!ready} onClick={() => commitClub(doFestivalRole(game, id))}>{F.roleButton}</button>}<button data-close onClick={close}>{T.ui.close}</button></div>
   </div>
  }
  const a = game.plans.appts.find(x => x.id === f.apptId)
@@ -42,6 +42,6 @@ export function FestSession({ id }: { id: string }) {
    </div>
   </>}
   {done && <p>{F.done}</p>}
-  <div className="actions"><button onClick={close}>{T.ui.close}</button></div>
+  <div className="actions"><button data-close onClick={close}>{T.ui.close}</button></div>
  </div>
 }

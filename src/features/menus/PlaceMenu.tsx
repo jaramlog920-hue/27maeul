@@ -140,16 +140,14 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
             {T.ui.readScripture}
           </button>
         )}
-        <button onClick={closeModal}>{T.ui.close}</button>
+        <button data-close onClick={closeModal}>{T.ui.close}</button>
       </div>
       {dateHint && <p className="hint">{dateHint}</p>}
       {isFacilityPlace(place) && facilityOfPlace(place) && <FacilityHint place={place} />}
       {place === 'hill' && !starsOut(game.clock.minute) && <p className="hint">{T.ui.starsNotYet}</p>}
-      {(place === 'hill' || place === 'bench' || place === 'homeBench') && <p className="hint">{T.ui.readHint}</p>}
       {hall === 'closed' && <p className="hint">{T.places.hallClosed}</p>}
       {hall === 'empty' && <p className="hint">{T.places.hallEmpty}</p>}
       {hall === 'played' && <p className="hint">{T.places.hallPlayed}</p>}
-      {place === 'hallTable' && <p className="hint">{T.places.hallHint}</p>}
       {tea === 'closed' && <p className="hint">{T.places.teaClosed}</p>}
       {tea === 'coins' && <p className="hint">{T.places.teaCoins}</p>}
       {sunset === 'notYet' && <p className="hint">{T.places.sunsetNotYet}</p>}

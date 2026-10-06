@@ -57,6 +57,20 @@ const ROWS: { key: RowKey; names: readonly string[] }[] = [
 ]
 export const SLIDER_MAX = [360, 100, 100]
 
+/** 색 막대 바탕: 그 칸만 바꿨을 때의 색 변화 (처음 만들기·옷장이 함께 쓴다) */
+export function sliderTrack(hsv: Hsv, i: number): string {
+  const stops = [0, 0.25, 0.5, 0.75, 1].map((t) => {
+    const c = [...hsv] as Hsv
+    c[i] = t * SLIDER_MAX[i]
+    if (i === 0) {
+      c[1] = Math.max(c[1], 60)
+      c[2] = Math.max(c[2], 70)
+    }
+    return hsvToHex(c)
+  })
+  return `linear-gradient(to right, ${stops.join(', ')})`
+}
+
 export function AvatarForm({ onDone, onBack }: { onDone: (a: Avatar) => void; onBack: () => void }) {
   const [look, setLook] = useState<Look>('f')
   const [name, setName] = useState('')
@@ -82,19 +96,7 @@ export function AvatarForm({ onDone, onBack }: { onDone: (a: Avatar) => void; on
       return { ...cur, [colorKey]: next }
     })
   const hsv = a[colorKey] ?? [10, 55, 70]
-  const track = (i: number) => {
-    // 막대 바탕: 그 칸만 바꿨을 때의 색 변화
-    const stops = [0, 0.25, 0.5, 0.75, 1].map((t) => {
-      const c = [...hsv] as Hsv
-      c[i] = t * SLIDER_MAX[i]
-      if (i === 0) {
-        c[1] = Math.max(c[1], 60)
-        c[2] = Math.max(c[2], 70)
-      }
-      return hsvToHex(c)
-    })
-    return `linear-gradient(to right, ${stops.join(', ')})`
-  }
+  const track = (i: number) => sliderTrack(hsv, i)
 
   return (
     <main className="title avatar-form">

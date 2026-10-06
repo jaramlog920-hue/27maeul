@@ -11,12 +11,10 @@ const SUPPLIES: ItemId[] = ['bread', 'water', 'oil']
 export function StatusPanel() {
   const inv = useGame((s) => s.game.inv)
   const offers = useGame((s) => Object.keys(s.game.offers).length)
-  const level = useGame((s) => s.game.flags.villageLevel ?? 0)
   // 지금 필사 자리는 위 줄(Hud)이 늘 보여 준다 (계획 14 작업 6) — 여기선 되풀이하지 않는다
   return (
     <section className="status-panel" aria-label={T.ui.statusTitle}>
       <div className="status-row">
-        {level > 0 && <span className="status-village">{fill(T.ui.villageLevel, { n: level })}</span>}
         {/* 조각을 가진 이웃이 있는 날만 조용히 한 줄 (없는 날엔 아무 말도 하지 않는다 — 2026-10-04 사용자) */}
         {offers > 0 && <span className="status-offers">{fill(T.ui.statusOffers, { n: offers })}</span>}
       </div>

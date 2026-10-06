@@ -50,7 +50,7 @@ export function GardenMenu({ at }: { at: Tile }) {
       )}
       <div className="actions">
         {clubHere(game,'garden') && <button onClick={() => useGame.getState().open({kind:'clubSession',id:clubHere(game,'garden')!.id})}>{T.clubs.join}</button>}
-        <button onClick={closeModal}>{T.ui.close}</button>
+        <button data-close onClick={closeModal}>{T.ui.close}</button>
       </div>
     </div>
   )

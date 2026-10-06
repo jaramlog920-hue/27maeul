@@ -45,7 +45,7 @@ export function FollowMenu({ who }: { who: 'pet' | 'child' }) {
           <button className={c.stay ? 'primary' : ''} disabled={!!c.stay} onClick={() => keepCompanion(true)}>
             집에 두기
           </button>
-          <button onClick={closeModal}>{T.ui.close}</button>
+          <button data-close onClick={closeModal}>{T.ui.close}</button>
         </div>
       </div>
     )
@@ -61,7 +61,7 @@ export function FollowMenu({ who }: { who: 'pet' | 'child' }) {
         <h2>{k.name}</h2>
         <p>요람에서 새근새근 자고 있어요.</p>
         <div className="actions">
-          <button onClick={closeModal}>{T.ui.close}</button>
+          <button data-close onClick={closeModal}>{T.ui.close}</button>
         </div>
       </div>
     )
@@ -85,7 +85,7 @@ export function FollowMenu({ who }: { who: 'pet' | 'child' }) {
             혼자 다니게 두기
           </button>
         )}
-        <button onClick={closeModal}>{T.ui.close}</button>
+        <button data-close onClick={closeModal}>{T.ui.close}</button>
       </div>
     </div>
   )

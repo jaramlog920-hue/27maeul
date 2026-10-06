@@ -1,7 +1,7 @@
 // 마을 지도 (설정 → 마을 지도): 마을 전체를 한 장으로 펼쳐 보인다. 장소 이름과 지금 내 자리
 import { useEffect, useRef } from 'react'
 import { neighborById } from '../../content/catalog'
-import { fill, T } from '../../content/text'
+import { T } from '../../content/text'
 import { closedHouseIds, shelvedCount } from '../../engine/game'
 import { housesNow, isHome, lockedZones, roomAt, TILE, VILLAGE_H, WIDTH, type House } from '../../engine/world'
 import { drawVillageMap } from '../../render/renderer'
@@ -71,9 +71,8 @@ export function VillageMap() {
   const closedHouses = housesNow().filter((h) => closedHouseIds(game).includes(h.id) && !inLockedZone(h))
   const opensAt = (id: string) => {
     const d = neighborById(id)
-    if (d?.joinsAtBooks) return `${d.joinsAtBooks}권`
-    if (d?.joinsAt) return fill(T.ui.villageLevel, { n: d.joinsAt })
-    return null
+    // 마을 단계는 없어졌다 (2026-10-07 사용자) — 서고 권수로 열리는 집만 적는다
+    return d?.joinsAtBooks ? `${d.joinsAtBooks}권` : null
   }
   return (
     <div className="dialog village-map" role="dialog" aria-label="마을 지도">
@@ -109,9 +108,9 @@ export function VillageMap() {
           </span>
         )}
       </div>
-      <p className="hint">● 지금 내 자리 · 🔒 서고에 책을 더 꽂거나(권) 이웃과 더 가까워지면(마을 단계) 열리는 곳</p>
+      <p className="hint">● 내 자리 · 🔒 서고 권수</p>
       <div className="actions">
-        <button onClick={closeModal}>{T.ui.close}</button>
+        <button data-close onClick={closeModal}>{T.ui.close}</button>
       </div>
     </div>
   )
