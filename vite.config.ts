@@ -60,5 +60,7 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/setupTests.ts'],
+    // 전체 실행이 무거울 때 스크립트를 띄우는 검사가 기본 5초를 넘겨 가끔 실패했다 (2026-10-07)
+    testTimeout: 30000,
   },
 })
