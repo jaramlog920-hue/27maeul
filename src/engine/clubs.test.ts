@@ -1,7 +1,10 @@
 import { CONTENT, PEOPLE } from '../content/catalog'
 import { newGame, settle, type GameState } from './game'
-import { createClub, nextClubDay, expandClubs, pauseClub, dissolveClub, joinClub, chooseClub, doClubActivity, clubWeaveDone, finishClub, clubVenues, sanitizeClubs, type ClubInput } from './clubs'
-import { advancePlans, appointmentSpots } from './plans'
+import { createClub, nextClubDay, expandClubs, pauseClub, dissolveClub, joinClub, chooseClub, doClubActivity, clubWeaveDone, finishClub, clubVenues, sanitizeClubs, clubWorkSpots, canLeaveWork, type ClubInput } from './clubs'
+import { clubFollowUp, clubMissed, clubPerson, clubVoice } from './club-life'
+import { T } from '../content/text'
+import { isWalkable, key, lockedTiles, PLACES } from './world'
+import { advancePlans, appointmentSpots, apptSpots } from './plans'
 import { deserialize, serialize } from './save'
 import { isMarketDay, weatherOf } from './calendar'
 
@@ -22,6 +25,127 @@ function joined(activity:ClubInput['activity']='tea',mode:'direct'|'beside'|'bri
  const spot=appointmentSpots(s).baker
  return joinClub({...s,player:{...s.player,...spot}},id,mode)
 }
+/** 방석을 직접 만들어 마친 첫 회차 (result: 집에 두기/모임 자리에 남기기) */
+function sewnFirst(result:'home'|'club',extra:Partial<ClubInput>={}):GameState {
+ let s=joined('sew')
+ if(extra.place) throw new Error('use created() directly')
+ const id=s.plans.appts[0].id
+ s={...s,inv:{...s.inv,wool:2}}
+ return finishClub(clubWeaveDone(chooseClub(s,id,'파랑'),id),id,result)
+}
+describe('club work left at the club (계획 16 작업 15)',()=>{
+ it('shows nothing until the cushion is left; then one dot on a dedicated table tile, not a seat or locked tile',()=>{
+  const home=sewnFirst('home')
+  expect(clubWorkSpots(home)).toEqual([])
+  const left=sewnFirst('club')
+  const spots=clubWorkSpots(left)
+  expect(spots).toHaveLength(1)
+  const [w]=spots
+  expect(w).toMatchObject({club:'club:1',art:'cushionPattern',place:'hallTable',color:'파랑'})
+  expect(PLACES.hallTable.tiles.some(t=>key(t)===key(w.at))).toBe(true)
+  expect(apptSpots('hallTable').some(t=>key(t)===key(w.at))).toBe(false)
+  expect(lockedTiles(Object.keys(left.shelved).length).has(key(w.at))).toBe(false)
+  expect(isWalkable(w.at)).toBe(false)
+ })
+ it('disappears when the club is dissolved and survives save and reload',()=>{
+  const left=sewnFirst('club')
+  expect(clubWorkSpots(dissolveClub(left,'club:1'))).toEqual([])
+  const reloaded=deserialize(serialize(left),CONTENT)!
+  expect(clubWorkSpots(reloaded).map(w=>w.at)).toEqual(clubWorkSpots(left).map(w=>w.at))
+  expect(clubWorkSpots({...left,clubWorks:{}})).toEqual([])
+ })
+ it('two clubs at one place get different tiles; the leave choice closes when the place has no free tile',()=>{
+  let s=created({activity:'sew'})
+  s=created({activity:'sew',weekday:3},s)
+  s=created({activity:'sew',weekday:4},s)
+  const work=(place:'hallTable'|'teaTable')=>({item:'cushion' as const,color:'초록',place})
+  const two={...s,clubWorks:{'club:1':work('hallTable'),'club:2':work('hallTable')}}
+  const [a,b]=clubWorkSpots(two)
+  expect(key(a.at)).not.toBe(key(b.at))
+  const tea={...s,clubWorks:{'club:1':work('teaTable'),'club:2':work('teaTable')}}
+  expect(canLeaveWork(tea,'club:3','teaTable')).toBe(false)
+  expect(canLeaveWork(tea,'club:2','teaTable')).toBe(true)
+  expect(canLeaveWork(two,'club:3','hallTable')).toBe(true)
+ })
+ it('falls back to the home option when the venue cannot hold another work',()=>{
+  let s=joined('sew')
+  const id=s.plans.appts[0].id
+  const other=()=>({item:'cushion' as const,color:'노랑',place:'hallTable' as const})
+  s={...s,inv:{...s.inv,wool:2},clubWorks:{'club:8':other(),'club:9':other(),'club:10':other(),'club:11':other()},clubs:[...s.clubs,...[8,9,10,11].map(n=>({...s.clubs[0],id:`club:${n}`}))]}
+  s=finishClub(clubWeaveDone(chooseClub(s,id,'파랑'),id),id,'club')
+  expect(s.inv.cushion).toBe(1)
+  expect(s.clubWorks['club:1']).toBeUndefined()
+})
+})
+describe('villager club behaviour and follow-ups (계획 16 작업 15)',()=>{
+ it('follow-up asks about the real cushion only after a session where it was made',()=>{
+  const first=sewnFirst('home')
+  let s=expandClubs({...first,clock:{day:3,minute:480}},CONTENT)
+  s=advancePlans({...s,clock:{day:9,minute:600}},CONTENT)
+  const next=s.plans.appts.find(a=>a.state==='running')!
+  const line=clubFollowUp(s,next)
+  expect(line).toMatchObject({npc:'baker'})
+  expect(line!.text).toContain('파란 방석')
+  expect(line!.text).toContain('집에')
+  // 집에 두지 않고 모임 자리에 남긴 경우엔 그 자리 이야기
+  const left=sewnFirst('club')
+  let t=expandClubs({...left,clock:{day:3,minute:480}},CONTENT)
+  t=advancePlans({...t,clock:{day:9,minute:600}},CONTENT)
+  expect(clubFollowUp(t,t.plans.appts.find(a=>a.state==='running')!)!.text).toContain('놓여 있')
+  // 첫 회차: 아직 지난 일이 없다
+  const fresh=advancePlans({...created({activity:'sew'}),clock:{day:2,minute:600}},CONTENT)
+  expect(clubFollowUp(fresh,fresh.plans.appts.find(a=>a.state==='running')!)).toBeNull()
+ })
+ it('no follow-up when the player only watched, and none for a session without player memory',()=>{
+  let s=joined('sew','beside'),id=s.plans.appts[0].id
+  s=finishClub(doClubActivity(chooseClub(s,id,'초록'),id),id)
+  s=expandClubs({...s,clock:{day:3,minute:480}},CONTENT)
+  s=advancePlans({...s,clock:{day:9,minute:600}},CONTENT)
+  const next=s.plans.appts.find(a=>a.state==='running')!
+  expect(clubFollowUp(s,next)).toBeNull()
+ })
+ it('missed sessions are told only by who really gathered, without guilt, and only for a week',()=>{
+  let s=created({activity:'sew'})
+  s=advancePlans({...s,clock:{day:2,minute:600}},CONTENT)
+  s=advancePlans({...s,clock:{day:2,minute:720}},CONTENT)
+  const missed=clubMissed({...s,clock:{day:3,minute:480}},'club:1')
+  expect(missed?.items.map(i=>i.npc)).toEqual(['baker'])
+  expect(missed?.items[0].does).toBe(clubPerson('baker','sew')!.does)
+  expect(clubMissed({...s,clock:{day:10,minute:480}},'club:1')).toBeNull()
+  expect(s.hearts).toEqual(created({activity:'sew'}).hearts)
+ })
+ it('every villager has a distinct behaviour and distinct lines for each club activity',()=>{
+  for(const activity of ['tea','sew','garden','observe'] as const) {
+   const seenDoes=new Set<string>(),seenStart=new Set<string>()
+   for(const n of CONTENT.neighbors) {
+    const p=clubPerson(n.id,activity)
+    expect(p,`${n.id} ${activity}`).not.toBeNull()
+    expect(p!.does.length).toBeGreaterThan(3)
+    expect(seenDoes.has(p!.does),`${n.id} does ${activity}`).toBe(false)
+    expect(seenStart.has(p!.start),`${n.id} start ${activity}`).toBe(false)
+    seenDoes.add(p!.does);seenStart.add(p!.start)
+   }
+  }
+ })
+ it('speech levels match each villager and the lines make no claims about health, rewards or guilt',()=>{
+  const ends=(t:string)=>t.split(/(?<=[.?!…])\s+/).map(x=>x.trim()).filter(x=>x.length>8)
+  for(const n of CONTENT.neighbors) {
+   const voice=clubVoice(n.id)
+   for(const activity of ['tea','sew','garden','observe'] as const) {
+    const p=clubPerson(n.id,activity)!
+    for(const line of [p.start,p.finish]) {
+     for(const sentence of ends(line)) {
+      const last=sentence.replace(/[.?!…”"]+$/,'')
+      if(voice==='casual'||voice==='sir'||voice==='old') expect(last,`${n.id}: ${sentence}`).not.toMatch(/요$/)
+      if(voice==='polite') expect(last,`${n.id}: ${sentence}`).toMatch(/(요|죠|까|니다)$/)
+     }
+     expect(line,n.id).not.toMatch(/(효과|치료|낫|병|벌점|죄송|미안|왜 안)/)
+    }
+   }
+  }
+  for(const voice of Object.values(T.clubs.follow)) for(const text of Object.values(voice)) expect(text).not.toMatch(/(왜 |안 왔|못 왔)/)
+ })
+})
 describe('player-created clubs',()=>{
  it('weekly date uses the market-day anchor and passed time moves to next week',()=>{
   expect(nextClubDay(2,2)).toBe(2)

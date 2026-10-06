@@ -1,14 +1,14 @@
 import { nameProblem } from './avatar'
 import { availability, scheduleAppt, attendAppt, settleAppt, apptSpots, venueFor, type Appt } from './plans'
 import { notYet, passTime, type GameState } from './game'
-import { key, lockedTiles } from './world'
+import { key, lockedTiles, PLACES } from './world'
 import { builtIds } from './projects'
 import { FACILITY_CLUBS, FACILITY_PLACES, SITES } from './village-sites'
 import { seasonOf } from './clock'
 import { weatherOf, isWet } from './calendar'
 import { harvest, water, isRipe } from './garden'
 import { has, take, addGift } from './items'
-import type { GameContent, PlaceId } from './types'
+import type { GameContent, PlaceId, Tile } from './types'
 
 export type ClubActivity = 'tea'|'sew'|'garden'|'observe'
 export type ClubSlot = 'morning'|'afternoon'|'evening'
@@ -33,6 +33,31 @@ export function clubVenues(s:GameState,activity:ClubActivity):PlaceId[] {
  for(const id of builtIds(s.flags)) {const site=SITES[id]; if((FACILITY_CLUBS[site.place] as readonly string[]).includes(activity)) venues.push(site.place)}
  const locked=lockedTiles(Object.keys(s.shelved).length)
  return venues.filter(place=>apptSpots(place).length && apptSpots(place).every(t=>!locked.has(key(t))))
+}
+/** 함께 만든 작품 자리 (계획 16 작업 15): 모임 장소의 탁자·벤치 칸 중 앉는 자리·잠긴 칸이 아닌 곳만 — 길·앉는 자리·서는 칸을 쓰지 않는다. 같은 장소의 작품은 모임 번호 차례로 한 칸씩 */
+export function clubWorkTiles(s:Pick<GameState,'shelved'>,place:PlaceId):Tile[] {
+ const seats=new Set(apptSpots(place).map(key)),locked=lockedTiles(Object.keys(s.shelved).length)
+ return (PLACES[place]?.tiles??[]).filter(t=>!seats.has(key(t)) && !locked.has(key(t)))
+}
+/** 이 모임 작품을 모임 자리에 남길 수 있는가 — 다른 모임 작품과 칸을 나눠 쓰고, 칸이 모자라면 집에 두기만 */
+export function canLeaveWork(s:GameState,clubId:string,place:PlaceId):boolean {
+ const others=Object.entries(s.clubWorks??{}).filter(([id,w])=>id!==clubId && w.place===place && (s.clubs??[]).some(c=>c.id===id && c.active)).length
+ return clubWorkTiles(s,place).length>others
+}
+export interface ClubWorkSpot {club:string; art:'cushionPattern'; color:string; place:PlaceId; at:Tile}
+/** 지금 모임 자리에 놓여 있는 작품 — 해산한 모임·아직 짓지 않은 공동 시설의 작품은 보이지 않는다 */
+export function clubWorkSpots(s:Pick<GameState,'clubs'|'clubWorks'|'shelved'|'flags'>):ClubWorkSpot[] {
+ const out:ClubWorkSpot[]=[],used:Record<string,number>={}
+ const built=new Set(builtIds(s.flags).map(id=>SITES[id].place))
+ const ids=Object.keys(s.clubWorks??{}).sort((a,b)=>(Number(a.split(':')[1])||0)-(Number(b.split(':')[1])||0))
+ for(const club of ids) {
+  const w=s.clubWorks[club]
+  if(!(s.clubs??[]).some(c=>c.id===club && c.active) || !CLUB_PLACES.includes(w.place) || (FACILITY_PLACES.includes(w.place as never) && !built.has(w.place as never))) continue
+  const at=clubWorkTiles(s,w.place)[used[w.place]??0]
+  used[w.place]=(used[w.place]??0)+1
+  if(at) out.push({club,art:'cushionPattern',color:w.color,place:w.place,at})
+ }
+ return out
 }
 export function clubCandidates(s:GameState,content:GameContent):string[] {
  return content.neighbors.filter(n=>s.notebook.met.includes(n.id) && !notYet(n,s.flags.villageLevel??0,s.flags)).map(n=>n.id)
@@ -122,6 +147,8 @@ export function finishClub(s:GameState,id:string,result:'home'|'club'='home'):Ga
  const run=s.clubSessions?.[id],a=s.plans.appts.find(a=>a.id===id)
  if(!run || run.step!=='finish' || !a || !a.attended || a.state!=='running') return s
  let next=s
+ // 전용 자리가 없으면(칸이 모자람) 작품은 집으로 — 길을 막지 않는다
+ if(result==='club' && !canLeaveWork(s,a.clubId!,venueFor(a).place)) result='home'
  if(a.activity==='sew' && run.mode==='direct' && run.woven && !run.made && has(s.inv,{wool:2})) {
   next={...next,inv:take(next.inv,{wool:2})!}
   if(result==='home') next={...next,inv:addGift(next.inv,{cushion:1})}

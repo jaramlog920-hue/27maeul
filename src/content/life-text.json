@@ -7149,6 +7149,38 @@
     "wool": "직접 방석을 만들려면 양털 2개가 필요해요. 구경과 도안 고르기는 준비물이 없어도 함께할 수 있어요.",
     "done": "함께한 회차를 마쳤어요. 각자 하던 일로 돌아가요.",
     "summary": "이 회차는 주민끼리 마쳤어요.",
+    "lastTime": "지난 모임",
+    "madeWork": "함께 만든 것",
+    "workAtClub": "{color} 방석 · 모임 자리에 놓여 있어요",
+    "workAtHome": "{color} 방석 · 집으로 가져갔어요",
+    "colorWord": { "파랑": "파란", "초록": "초록", "노랑": "노란" },
+    "follow": {
+      "polite": {
+        "cushionHome": "지난번 그 {color} 방석, 집에 놓았어요?",
+        "cushionClub": "{color} 방석은 저 자리에 잘 놓여 있네요. 볼 때마다 그날이 떠올라요.",
+        "again": "지난번엔 “{picked}”로 하셨죠. 오늘도 같이 골라요."
+      },
+      "sir": {
+        "cushionHome": "지난번 그 {color} 방석, 집에 놓았소?",
+        "cushionClub": "{color} 방석이 저 자리에 잘 놓여 있소. 볼 때마다 그날이 떠오르오.",
+        "again": "지난번엔 “{picked}”로 했소. 오늘도 같이 고르겠소."
+      },
+      "old": {
+        "cushionHome": "지난번 그 {color} 방석, 집에 놓았는가?",
+        "cushionClub": "{color} 방석이 저기 잘 놓여 있구먼. 볼 때마다 흐뭇하네.",
+        "again": "지난번엔 “{picked}”로 했었지. 오늘도 함께 골라 보세."
+      },
+      "casual": {
+        "cushionHome": "지난번 그 {color} 방석, 집에 놨어?",
+        "cushionClub": "{color} 방석이 저기 잘 있네. 볼 때마다 그날 생각나.",
+        "again": "지난번엔 “{picked}” 골랐었지. 오늘도 같이 골라 보자."
+      },
+      "child": {
+        "cushionHome": "지난번 그 {color} 방석, 집에 놨어요?",
+        "cushionClub": "{color} 방석이 저기 있어요! 볼 때마다 좋아요.",
+        "again": "지난번엔 “{picked}” 했었죠. 오늘도 해요!"
+      }
+    },
     "likes": "좋아하는 활동이에요.",
     "new": "새롭게 함께해 볼 활동이에요.",
     "conflict": "구경부터 편하게 함께할 수 있어요.",

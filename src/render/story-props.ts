@@ -8,6 +8,7 @@
 //   drawStoryProps(g, game)   // 마을 그리기에서 방의 가구(drawFurniture) 바로 뒤, 이웃 그리기 전에
 import { newsPropsNow, storyPropsNow, type GameState } from '../engine/game'
 import { STALL_SPOT, stallSceneNow } from '../engine/stall'
+import { clubWorkSpots } from '../engine/clubs'
 import { villageScenes } from '../engine/projects'
 import { SITES } from '../engine/village-sites'
 import { HOME_SPACE_DIRECTIONS } from './home-space-directions'
@@ -67,6 +68,17 @@ export function drawStoryProps(g: CanvasRenderingContext2D, game: GameState): vo
   for (const p of newsPropsNow(game)) {
     const a = PROPS[p.art]
     if (a) g.drawImage(painted(a), p.at.x * TILE, p.at.y * TILE)
+  }
+}
+
+/**
+ * 모임에서 함께 만들어 모임 자리에 남긴 작품 (계획 16 작업 15): 모임 장소의 전용 칸(탁자·벤치 위)에 도트(cushionPattern)로.
+ * 앉는 자리·길·서는 칸을 쓰지 않는다(엔진 clubWorkSpots가 정한다). 공동 시설 위(벤치·그늘막)에도 보이도록 drawVillage 뒤에 그린다.
+ */
+export function drawClubWorks(g: CanvasRenderingContext2D, game: GameState): void {
+  for (const w of clubWorkSpots(game)) {
+    const a = PROPS[w.art]
+    if (a) g.drawImage(painted(a), w.at.x * TILE, w.at.y * TILE)
   }
 }
 
