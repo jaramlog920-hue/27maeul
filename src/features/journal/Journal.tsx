@@ -109,9 +109,6 @@ function NeighborBook() {
   const unmet = all.filter((d) => !notebook.met.includes(d.id))
   return (
     <div className="neighbor-book">
-      <p className="hint">
-        만난 이웃 {met.length} / {all.length} · 선물하거나 사이가 깊어지면 ? 칸이 열려요
-      </p>
       <ul className="nb-list">
         {met.map((d) => (
           <li key={d.id} className={`nb-card${open === d.id ? ' open' : ''}`}>
