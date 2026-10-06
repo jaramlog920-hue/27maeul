@@ -147,7 +147,7 @@ import type { CarpenterWork } from '../engine/easier'
 import { work } from '../engine/needs'
 import { plant, water, harvest, type CropId } from '../engine/garden'
 import { finishNow, HOLD_UP, isDone, startMini, stepMini, tapMini, type MiniState } from '../engine/minigame'
-import { finishLetter, letterPay, letterWaiting } from '../engine/requests'
+import { finishLetter, letterPay } from '../engine/requests'
 import { POSTMAN } from '../engine/post'
 import { modeOf, roomOf, shelfRoom, type ShelfRoomId } from '../engine/shelf-rooms'
 import { saveGame } from '../engine/save'
@@ -1062,15 +1062,15 @@ export const useGame = create<Store>((set, get) => {
         get().say(T.acts.tableEmpty)
         return { game, modal: null }
       case 'basket': {
-        // 문 앞 편지 바구니: 오늘 온 편지(말씀 조각이 든 편지)를 먼저 꺼내고, 오늘 의뢰 편지가 있으면 연다
+        // 문 앞 편지 바구니: 오늘 온 편지(말씀 조각이 든 편지)만 꺼낸다. 의뢰는 게시판으로 (2026-10-07 사용자: 바구니 의뢰 없앰)
         const { state, pieceIds } = openMailbox(game, CONTENT)
-        if (pieceIds.length) {
-          sfx('letter')
-          get().say(gotLine(pieceIds, T.word.letterGot, T.word.gotMany), 3400)
+        if (!pieceIds.length) {
+          get().say(T.post.mailboxEmpty)
+          return { game, modal: null }
         }
-        if (letterWaiting(state)) return { game: pieceIds.length ? persist(state) : state, modal: { kind: 'letter' } }
-        if (!pieceIds.length) get().say(T.letters.none)
-        return { game: pieceIds.length ? persist(state) : state, modal: null }
+        sfx('letter')
+        get().say(gotLine(pieceIds, T.word.letterGot, T.word.gotMany), 3400)
+        return { game: persist(state), modal: null }
       }
       case 'mailbox': {
         // 집 앞 편지함: 편지 나르는 이웃을 찾아가지 않아도 오늘 편지를 꺼낸다 (본문은 책상에서)

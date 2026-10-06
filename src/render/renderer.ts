@@ -7,7 +7,6 @@ import { darkness, phaseOf, seasonOf } from '../engine/clock'
 import { isGrown, petCornerProp, petFollowPose, petHabit, STRAY_SPOTS, EAVES } from '../engine/companion'
 import { totalChapters } from '../engine/books'
 import { shelfRoom } from '../engine/shelf-rooms'
-import { letterWaiting } from '../engine/requests'
 import { childTile, childAtSchool, closedHouseIds, mailboxHasPost, storyWaiting, SCHOOL_SEAT, shelvedCount, straysToday, weddingToday, type ActKind, type GameState, type PlayerAct } from '../engine/game'
 import { furnitureUseFrame, USE_INFO, USE_PROP_PALETTE, USE_SIZE, type UseAction } from './furniture-use-motion'
 import { extraUseFrame, petMotionRows, type ExtraAction } from './expansion-life-motion'
@@ -2344,7 +2343,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       for (const ep of eventProps) if (!ep.ground) items.push({ y: eventPropSortY(ep), paint: () => drawEventProp(g, ep) })
 
       // 안 읽은 편지 (2026-09-30 사용자): 문 앞 편지 바구니 위에 봉투 말풍선
-      if (letterWaiting(game) || mailboxHasPost(game)) {
+      if (mailboxHasPost(game)) {
         const bk = PLACES.basket.tiles[0]
         items.push({ y: bk.y + 0.4, paint: () => emote(g, 'letter', bk.x * TILE + 8, bk.y * TILE - 2 - Math.round(Math.sin(t * 3))) })
       }
