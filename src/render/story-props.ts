@@ -71,6 +71,12 @@ export function drawStoryProps(g: CanvasRenderingContext2D, game: GameState): vo
   }
 }
 
+/** 집에 둔 동물 곁 소품(담요·장난감, 계획 17): 칸 왼쪽 위 기준, dx 픽셀만큼 옆으로 비켜 그린다 */
+export function drawPetProp(g: CanvasRenderingContext2D, art: string, tx: number, ty: number, dx = 0): void {
+  const a = PROPS[art]
+  if (a) g.drawImage(painted(a), tx * TILE + dx, ty * TILE)
+}
+
 /**
  * 모임에서 함께 만들어 모임 자리에 남긴 작품 (계획 16 작업 15): 모임 장소의 전용 칸(탁자·벤치 위)에 도트(cushionPattern)로.
  * 앉는 자리·길·서는 칸을 쓰지 않는다(엔진 clubWorkSpots가 정한다). 공동 시설 위(벤치·그늘막)에도 보이도록 drawVillage 뒤에 그린다.

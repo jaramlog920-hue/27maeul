@@ -4,7 +4,7 @@ import './dish-icons'
 // 캔버스 그리기. 엔진 상태를 읽기만 하고 바꾸지 않는다.
 import { barleyRipe, chimneySmoke, festivalOf, FESTIVAL_FROM, FESTIVAL_TO, grapesRipe, icyMorning, isWet, puddlesOut, weatherOf } from '../engine/calendar'
 import { darkness, phaseOf, seasonOf } from '../engine/clock'
-import { isGrown, petFollowPose, petHabit, STRAY_SPOTS, EAVES } from '../engine/companion'
+import { isGrown, petCornerProp, petFollowPose, petHabit, STRAY_SPOTS, EAVES } from '../engine/companion'
 import { totalChapters } from '../engine/books'
 import { shelfRoom } from '../engine/shelf-rooms'
 import { letterWaiting } from '../engine/requests'
@@ -27,7 +27,7 @@ import { facingArt } from './furniture-facing'
 import { HOME_FIXTURE_ART } from './home-space-art'
 import { REMAINING_FIXTURE_ART } from './remaining-furniture-art'
 import { EXPANSION_PROPS, EXPANSION_VIEWS } from './expansion-prop-art'
-import { drawClubWorks, drawStall, drawStoryProps, drawVillage, registerStoryPropArt } from './story-props'
+import { drawClubWorks, drawPetProp, drawStall, drawStoryProps, drawVillage, registerStoryPropArt } from './story-props'
 import { LIFE_GAP_PROPS, LIFE_GAP_STRUCTURES } from './life-gap-art'
 import { drawDecor, lanternLights, sheepCount } from './decor'
 import { FIRE, isNear, npcTile } from '../engine/neighbors'
@@ -2328,13 +2328,17 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         const form = sleeping ? 'curl' : baby ? 'baby' : 'adult'
         // 도트의 여섯 동작: walk(걷는 중)·wait·sniff·play·fetch·wag
         const action = comp.motion ? (comp.motion.action === 'rest' ? 'wait' : comp.motion.action) : !still ? 'walk' : sleeping ? null : habit && habit.pose !== 'nap' ? habit.pose : follow && follow !== 'nap' ? follow : null
+        // 집에 둔 동물 곁 소품: 담요 자리에서는 깔개, 장난감 자리에서는 장난감 (그림만, 동물이 선 칸 위)
+        const corner = petCornerProp(comp, day, game.clock.minute, weather)
         items.push({
           y: comp.y,
           paint: () => {
+            if (corner?.art === 'petBlanket') drawPetProp(g, corner.art, corner.at.x, corner.at.y)
             if (action) {
               const frame = action === 'walk' ? Math.floor(comp.walkTime * 8) % 4 : Math.floor(t * 6) % 4
               drawSprite(g, paint(`pet/${comp.kind}/${side}/${action}/${frame}/${!baby}`, petMotionRows(comp.kind, side, action, frame, baby), ANIMAL_PALETTE[comp.kind]), comp.x, comp.y)
             } else drawSprite(g, animal(comp.kind, form, side), comp.x, comp.y)
+            if (corner?.art === 'petToy') drawPetProp(g, corner.art, corner.at.x, corner.at.y, corner.side === 'left' ? -10 : 10)
             if (sleeping && Math.floor(t / 3) % 3 === 0) emote(g, 'z', comp.x * TILE + 8, comp.y * TILE + 8)
           },
         })
