@@ -1414,12 +1414,14 @@ export function neighborPortrait(def: NeighborDef, season: Season) {
   return neighborPerson(def, 'down', 0, false, season)
 }
 
-function drawSprite(g: Ctx, c: HTMLCanvasElement, wx: number, wy: number, dy = 0) {
+function drawSprite(g: Ctx, c: HTMLCanvasElement, wx: number, wy: number, dy = 0, shadow = true) {
   // 발이 칸 아래쪽에 닿도록, 가운데 맞춤
   const px = Math.round(wx * TILE + (TILE - c.width) / 2)
   const py = Math.round(wy * TILE + TILE - 1 - c.height - dy)
-  g.fillStyle = C.shadow
-  g.fillRect(px + 1, Math.round(wy * TILE) + 13, c.width - 2, 2)
+  if (shadow) {
+    g.fillStyle = C.shadow
+    g.fillRect(px + 1, Math.round(wy * TILE) + 13, c.width - 2, 2)
+  }
   g.drawImage(c, px, py)
 }
 
@@ -2405,7 +2407,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         // 아이가 데려간 동물은 아이 곁에
         if (def.id === 'child' && game.flags.childPet) {
           const kind = game.flags.childPet === 1 ? 'cat' : 'dog'
-          items.push({ y: n.y + 0.1, paint: () => drawSprite(g, animal(kind, day - (game.companion?.since ?? day) >= 10 ? 'adult' : 'baby', 'left'), n.x + 0.7, n.y + 0.1) })
+          items.push({ y: n.y + 0.1, paint: () => drawSprite(g, animal(kind, day - (game.companion?.since ?? day) >= 10 ? 'adult' : 'baby', 'left'), n.x + 0.7, n.y + 0.1, 0, false) })
         }
         // 빵집 아기
         if (def.id === 'baker' && !moving && !wet) {
@@ -2425,7 +2427,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       // 떠돌이 새끼들
       for (const a of straysToday(game)) {
         const s = STRAY_SPOTS[a]
-        items.push({ y: s.y, paint: () => drawSprite(g, animal(a, 'baby', Math.sin(t + (a === 'cat' ? 0 : 2)) > 0 ? 'right' : 'left'), s.x, s.y, Math.floor(t * 2) % 2) })
+        items.push({ y: s.y, paint: () => drawSprite(g, animal(a, 'baby', Math.sin(t + (a === 'cat' ? 0 : 2)) > 0 ? 'right' : 'left'), s.x, s.y, Math.floor(t * 2) % 2, false) })
       }
 
       // 우리 아이 (계획 12): 아기는 요람, 걷는 아이는 곁을 따라다니고, 돕는 아이는 때마다 마을 곳곳에
@@ -2488,10 +2490,11 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           y: comp.y,
           paint: () => {
             if (corner?.art === 'petBlanket') drawPetProp(g, corner.art, corner.at.x, corner.at.y)
+            // 동물 친구는 발밑 그림자를 그리지 않는다 (2026-10-07 사용자 — 걸을 때만 보여 어색했다)
             if (action) {
               const frame = action === 'walk' ? Math.floor(comp.walkTime * 8) % 4 : Math.floor(t * 6) % 4
-              drawSprite(g, paint(`pet/${comp.kind}/${side}/${action}/${frame}/${!baby}`, petMotionRows(comp.kind, side, action, frame, baby), ANIMAL_PALETTE[comp.kind]), comp.x, comp.y)
-            } else drawSprite(g, animal(comp.kind, form, side), comp.x, comp.y)
+              drawSprite(g, paint(`pet/${comp.kind}/${side}/${action}/${frame}/${!baby}`, petMotionRows(comp.kind, side, action, frame, baby), ANIMAL_PALETTE[comp.kind]), comp.x, comp.y, 0, false)
+            } else drawSprite(g, animal(comp.kind, form, side), comp.x, comp.y, 0, false)
             if (corner?.art === 'petToy') drawPetProp(g, corner.art, corner.at.x, corner.at.y, corner.side === 'left' ? -10 : 10)
             if (sleeping && Math.floor(t / 3) % 3 === 0) emote(g, 'z', comp.x * TILE + 8, comp.y * TILE + 8)
           },
