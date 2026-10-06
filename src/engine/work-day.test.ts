@@ -46,6 +46,7 @@ describe('함께 일하는 하루',()=>{
     n=finishHand(n);n=finishHand(n);n=finishWorkDay(n,'dark')
     expect(n.clock.minute-s.clock.minute).toBe(120)
     expect(n.coins-s.coins).toBe(8)
+    expect((n.hearts.carpenter??0)-(s.hearts.carpenter??0)).toBeGreaterThan(0)
     expect(n.workDay?.choices).toEqual(['finish','dark'])
     expect(n.life.experiences['work:carpenter']).toMatchObject({with:['carpenter'],kind:'work',choice:1,item:'woodenFinishDark',count:1})
     expect(n.inv).toEqual(s.inv)

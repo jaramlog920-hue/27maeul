@@ -1,6 +1,7 @@
 import { availability } from './plans'
-import { notYet, passTime, playerTile, recordExperienceIn, routineOf, stageWith, type GameState } from './game'
+import { heartUp, notYet, passTime, playerTile, recordExperienceIn, routineOf, stageWith, type GameState } from './game'
 import { npcTile } from './neighbors'
+import { GAIN } from './hearts'
 import { isDone, startMini, stepMini, tapMini, type MiniState } from './minigame'
 import { personOf, relOf, type Activity } from './people'
 import type { GameContent, Minigame, Rng } from './types'
@@ -104,7 +105,7 @@ export function finishWorkStep(s: WorkState, rng: Rng): WorkState {
   const next=passTime(s,30)
   return { ...next,workDay:{...w,step:w.step+1,mini:w.step===1?startMini(handsOf(w)[1],rng):undefined} }
 }
-/** 마무리 방식을 고르고 끝낸다. 수고비는 하루 한 번, 가게 물건은 가방에 들지 않는다 — 흔적은 작업장 앞 소품으로 남는다 */
+/** 마무리 방식을 고르고 끝낸다. 수고비는 하루 한 번, 마음(GAIN.work)이 오르고, 가게 물건은 가방에 들지 않는다 — 흔적은 작업장 앞 소품으로 남는다 */
 export function finishWorkDay(s: WorkState, finish?: string): WorkState {
   const w=s.workDay
   if (!w || w.paid || w.day!==s.clock.day || w.step!==3 || !nearby(s,w.npc)) return s
@@ -115,6 +116,8 @@ export function finishWorkDay(s: WorkState, finish?: string): WorkState {
   let next:WorkState={...s,coins:s.coins+pay,flags:{...s.flags,workPayDay:s.clock.day},workDay:{...w,step:4,paid:true,choices:[prep,fin]}}
   // 같은 이웃과 함께 일한 기억은 한 항목 (횟수·최근 날이 쌓인다). 함께한 그 이웃만
   next=recordExperienceIn(next,{id:`work:${w.npc}`,kind:'work',with:[w.npc],choice:sh.finish.indexOf(fin),place:shopOf(w.npc)!,item:sh.art(prep,fin,handsOf(w))})
+  // 끝까지 함께 일하면 마음도 오른다 (중간에 그만둔 날은 수고비만)
+  next=heartUp(next,w.npc,GAIN.work)
   return passTime(next,30)
 }
 /** 자리를 떠나도 끝낸 단계는 남는다. 다음 날은 끝낸 손일 하나당 2닢만 한 번 정산한다(기억·흔적은 남지 않는다). */

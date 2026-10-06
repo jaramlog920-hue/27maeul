@@ -7,6 +7,8 @@ export const POINTS_PER_HEART = 10
 export const GAIN = {
   talk: 2,
   help: 3,
+  /** 함께 일하기를 끝까지 (2시간) — 돕기보다 조금 더 (2026-10-07 사용자) */
+  work: 5,
   giftLiked: 5,
   giftPlain: 2,
   teach: 3,
