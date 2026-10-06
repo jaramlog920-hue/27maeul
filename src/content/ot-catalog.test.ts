@@ -128,3 +128,19 @@ describe('66권 해시 목록 (빈칸 오답 보기 검사)', () => {
     expect(r.status).toBe(0)
   })
 })
+
+describe('해시 목록을 못 불러와도 책은 열린다', () => {
+  it('verse-hashes 로드 실패 → ensureOtBook은 성공, countAnywhere는 책 안 세기만', async () => {
+    vi.resetModules()
+    vi.doMock('./verse-hashes.json', () => {
+      throw new Error('hash fail')
+    })
+    const m = await import('./ot-catalog')
+    await m.ensureOtBook('oba')
+    expect(m.otLoaded('oba')).toBe(true)
+    const src = m.otCopySource('oba')
+    const t = m.otChapterText('oba', 1)[0].text
+    expect(src.countAnywhere(t)).toBe(src.countVerse(t))
+    vi.doUnmock('./verse-hashes.json')
+  })
+})

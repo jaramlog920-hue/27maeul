@@ -183,8 +183,10 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   // 일곱 교회 판도 같게: 옛 저장(계획 7·8, 칸이 없던 때)은 빈 판, 옮겨 적은 요한계시록 장의 카드만 남기고 빠진 카드는 채운다
   const churchBoard = Array.isArray(s.churches) ? s.churches.filter((n) => Number.isInteger(n)) : []
   const churches = placeNewCards(churchBoard, cardsForChapters(content.churches ?? [], progress.rev.completed))
+  // 구약 칸은 원본을 펼치지 않는다 — 정리한 결과가 있을 때만 아래에서 넣는다 (깨진 값이 남지 않게)
+  const { otProgress: _rawOtProgress, otCopyStats: _rawOtStats, ...sRest } = s
   const out: GameState = {
-    ...s,
+    ...sRest,
     player,
     companion: sanitizeCompanion(fresh && s.companion ? { ...s.companion, ...HOME_ENTRY, path: [] } : s.companion),
     homeLevel,

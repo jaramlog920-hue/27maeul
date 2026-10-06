@@ -88,7 +88,8 @@ export function ensureOtBook(id: OtBook): Promise<void> {
   if (!p) {
     const load = loaderOf(id)
     if (!load) return Promise.reject(new Error(`no ot book file: ${id}`))
-    p = Promise.all([load(), ensureHashes()]).then(
+    // 해시 목록이 안 와도 책은 연다 (필사는 막지 않는다) — 그땐 책 안 세기만
+    p = Promise.all([load(), ensureHashes().catch(() => undefined)]).then(
       ([book]) => {
         loaded.set(id, book)
         index(id, book)

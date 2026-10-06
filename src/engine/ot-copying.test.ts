@@ -236,6 +236,17 @@ describe('저장·불러오기·옛 저장', () => {
     expect(back.otProgress).toEqual({ oba: { completed: [1], arrangement: {} }, gen: { completed: [1, 3], arrangement: {} } })
   })
 
+  it('깨진 구약 값은 원본이 남지 않는다: 정리 결과가 빈 경우·비객체·otCopyStats 비객체', () => {
+    const base = JSON.parse(serialize(gifted()))
+    for (const bad of [{ exo: 'bad' }, 5, 'x', [1], { gen: { completed: 'no' } }]) {
+      const back = deserialize(JSON.stringify({ ...base, otProgress: bad, otCopyStats: 7 }), CONTENT)!
+      expect('otProgress' in back).toBe(false)
+      expect('otCopyStats' in back).toBe(false)
+      expect(progressOf(back, 'exo').completed).toEqual([])
+      expect(() => writeOne(startCopy(back, 'gen', CONTENT), 'gen')).not.toThrow()
+    }
+  })
+
   it('필사 정리: 구약에는 예전에 엮은 장(legacy)이 없다', () => {
     const progress = newGame(CONTENT).progress
     const c = sanitizeCopy({ book: 'gen', at: {}, legacy: { gen: [1], mt: [] }, copied: { gen: [1] } }, progress, { gen: { completed: [1], arrangement: {} } })
