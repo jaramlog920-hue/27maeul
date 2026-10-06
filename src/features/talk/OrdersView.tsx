@@ -58,7 +58,6 @@ export function OrdersView({ npc }: { npc: string }) {
           ))}
         </ul>
       )}
-      <p className="hint">{T.orders.carpenterHint}</p>
       <div className="actions">
         <button onClick={() => open({ kind: 'talk', neighborId: npc, line: '' })}>{T.ui.back}</button>
         <button onClick={closeModal}>{T.ui.close}</button>

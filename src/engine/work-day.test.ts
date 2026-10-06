@@ -81,15 +81,14 @@ describe('함께 일하는 하루',()=>{
 describe('작업장별 함께 일하기',()=>{
   it('작업장마다 맡을 부분·손일 둘·마무리 둘, 화면 문구와 이웃 말이 있다',()=>{
     for (const [id,sh] of Object.entries(WORK_SHOPS)) {
-      const tx=(T.work.shops as Record<string,{about:string;prep:Record<string,string>;hands:string[];finish:Record<string,string>;result:string}>)[id]
-      expect(tx?.about,id).toBeTruthy()
+      const tx=(T.work.shops as Record<string,{prep:Record<string,string>;hands:string[];finish:Record<string,string>;result:string}>)[id]
+      expect(tx,id).toBeTruthy()
       for (const p of sh.prep) expect(tx.prep[p],`${id} ${p}`).toBeTruthy()
       for (const f of sh.finish) expect(tx.finish[f],`${id} ${f}`).toBeTruthy()
       expect(tx.hands).toHaveLength(2)
       expect(sh.prep.length).toBeGreaterThanOrEqual(2)
       expect(sh.finish.length).toBeGreaterThanOrEqual(2)
       for (const npc of sh.npcs) {
-        expect((T.work.jobs as Record<string,string>)[npc],npc).toBeTruthy()
         for (const at of ['start','hand','finish'] as const) expect(workLine(working(),npc,at),`${npc} ${at}`).toBeTruthy()
       }
     }

@@ -73,12 +73,10 @@ export function SkillLessonView({ close }: { close: () => void }) {
   const learned = !!game.skills?.[l.id]
   return <section aria-label={text.name}><h3>{text.name}</h3>
     {l.step === 0 && <>
-      <p>{S.lead}</p>
       <p className="talk-line">{text.demo[l.npc]}</p>
       {def.styles.map((st, i) => <button key={st} onClick={() => pick(st)}><PropPreview id={def.art[i]} /> {text.styles[st]}</button>)}
     </>}
     {l.step === 1 && l.mini && <>
-      <p>{S.practice}</p>
       <HandPractice state={l.mini} tick={tick} tap={tap} finish={() => applyLifeState(finishLesson(useGame.getState().game))} />
       <button onClick={() => applyLifeState(lookAgain(useGame.getState().game))}>{S.again}</button>
     </>}

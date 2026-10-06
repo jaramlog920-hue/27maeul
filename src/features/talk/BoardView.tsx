@@ -34,7 +34,6 @@ export function BoardView() {
         <button className="primary" aria-pressed={true}>부탁 쪽지</button>
         <button aria-pressed={false} onClick={() => setTab('village')}>{T.village.tab}</button>
       </div>
-      <p className="hint">이웃들이 날마다 부탁 쪽지를 붙여 둬요. 물건을 가져다주면 닢과 마음을 받아요.</p>
       <ul className="trade-list">
         {list.map((r) => {
           const block = canFulfillBoard(game, r)

@@ -9,14 +9,6 @@ import { childStage } from '../../engine/child'
 import type { TripReward } from '../../engine/trip-board'
 import { ItemIcon } from '../../shared/ItemIcon'
 
-const WHY: Record<string, string> = {
-  late: '여행은 아침에 떠나요. 정오가 지났어요.',
-  tired: '너무 지쳐서 먼 길을 갈 수 없어요.',
-  coins: '닢이 모자라요.',
-  food: '길에서 먹을 것이 모자라요.',
-  full: '가방이 가득 찼어요.',
-}
-
 export function TravelView({ dest: back, rewards: brought }: { dest?: DestId; rewards?: TripReward[] } = {}) {
   const game = useGame((s) => s.game)
   const { goTrip, closeModal } = useGame.getState()
@@ -31,7 +23,7 @@ export function TravelView({ dest: back, rewards: brought }: { dest?: DestId; re
     return (
       <div className="dialog travel" role="dialog" aria-label="이웃 마을 여행">
         <h2>이웃 마을 여행</h2>
-        <p className="hint">아침에 떠나 하룻밤 묵고 다음 날 아침 돌아와요. · 가진 닢 {game.coins}</p>
+        <p className="hint">가진 닢 {game.coins}</p>
         <ul className="trade-list">
           {DEST_IDS.map((id) => {
             const d = DESTS[id]
@@ -60,7 +52,6 @@ export function TravelView({ dest: back, rewards: brought }: { dest?: DestId; re
             <input type="checkbox" checked={withChild} onChange={(e) => setWithChild(e.target.checked)} /> {game.child!.name} 데리고 가기
           </label>
         )}
-        {DEST_IDS.every((id) => canTrip(game, id) !== null) && <p className="hint">{WHY[canTrip(game, DEST_IDS[0]) ?? ''] ?? ''}</p>}
         <div className="actions">
           <button onClick={closeModal}>{T.ui.close}</button>
         </div>
@@ -82,7 +73,6 @@ export function TravelView({ dest: back, rewards: brought }: { dest?: DestId; re
         <p>낯익은 골목과 가게가 반갑게 맞아 준다.</p>
       )}
       <h3>희귀품 가게</h3>
-      <p className="hint">한 가지씩 하나만 살 수 있어요.</p>
       <ul className="trade-list">
         {(Object.entries(d.shop) as [ItemId, number][]).map(([id, price]) => (
           <li key={id} className="with-icon">
@@ -100,7 +90,6 @@ export function TravelView({ dest: back, rewards: brought }: { dest?: DestId; re
       <p>
         모두 {tripCost(d, buys)}닢 (배삯·숙박 포함) · 가진 닢 {game.coins}
       </p>
-      {block && <p className="hint">{WHY[block]}</p>}
       <div className="actions">
         <button className="primary" disabled={block !== null} onClick={() => goTrip(dest, buys, rewards)}>
           하룻밤 묵고 돌아가기

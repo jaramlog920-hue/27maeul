@@ -6,7 +6,6 @@ import type { Trade } from '../../engine/game'
 import { fill, itemList, itemName, T } from '../../content/text'
 import { canBuyRare, canBuyScroll, SCROLL_PRICE, canSell, overflows, ownsTradeTool, RARE_PRICES, rareStall, SELL_PRICES, sellPrice, tradesFor } from '../../engine/game'
 import { CONTENT } from '../../content/catalog'
-import { jobOf, SELL_FROM } from '../../engine/job'
 import { has, take } from '../../engine/items'
 import type { ItemId } from '../../engine/types'
 import { useGame } from '../../store/game-store'
@@ -79,7 +78,7 @@ export function TradeBoard() {
       )}
       {tab === 'rare' && (
         <>
-          <p className="hint">장날마다 희귀품 셋이 돌아가며 나와요. 한 가지씩 하나만 살 수 있어요. · 가진 닢 {coins}</p>
+          <p className="hint">가진 닢 {coins}</p>
           <ul className="trade-list">
             <ScrollRow />
             {rareStall(game.clock.day).map((id) => {
@@ -125,8 +124,6 @@ export function TradeBoard() {
               })}
             </ul>
           )}
-          {jobOf(game) < SELL_FROM && <p className="hint">{T.ui.sellJob}</p>}
-          {(Object.keys(SELL_PRICES) as ItemId[]).some((id) => canSell(game, id) === 'cap') && <p className="hint">{T.ui.sellCap}</p>}
         </>
       )}
       <div className="actions">

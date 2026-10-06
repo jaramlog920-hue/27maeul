@@ -6,7 +6,7 @@ import { saveGame } from '../../engine/save'
 import { useGame } from '../../store/game-store'
 import { HandPractice } from './HandPractice'
 
-interface ShopText { about: string; prep: Record<string, string>; hands: string[]; handsOff?: string[]; finish: Record<string, string>; result: string }
+interface ShopText { prep: Record<string, string>; hands: string[]; handsOff?: string[]; finish: Record<string, string>; result: string }
 const SHOP_TEXT = T.work.shops as Record<string, ShopText>
 const fill = (t: string, v: Record<string, string | number>) => t.replace(/\{(\w+)\}/g, (_, k) => String(v[k] ?? ''))
 
@@ -39,8 +39,8 @@ export function WorkDayView({npc,close}:{npc:string;close:()=>void}) {
   const say=(at:'start'|'hand'|'finish')=>{const l=workLine(game,npc,at);return l?<p className="talk-line">{callName(l,game.avatar?.name)}</p>:null}
   const handLabels=(shop==='vineyard' && w?.hands?.[0]!=='pick' && tx.handsOff) ? tx.handsOff : tx.hands
   return <section aria-label={T.work.title}>
-    <h3>{T.work.title}</h3><p>{(T.work.jobs as Record<string,string>)[npc]??T.work.title}</p>
-    {!current && <>{say('start')}<p>{tx.about}</p><p className="hint">{T.work.lead}</p><p className="hint">{T.work.supplies}</p><p className="hint">{T.work.partial}</p>
+    <h3>{T.work.title}</h3>
+    {!current && <>{say('start')}
       <p>{T.work.part}</p>
       {sh.prep.map(p=><button key={p} onClick={()=>applyLifeState(startWorkDay(useGame.getState().game,npc,p,CONTENT))}>{tx.prep[p]}</button>)}</>}
     {current && w.step===0 && <><p>{tx.prep[w.choices[0]] ?? ''}</p><button onClick={()=>{const s=useGame.getState();applyLifeState(prepareWorkDay(s.game,s.rng))}}>{T.work.prepare}</button></>}
