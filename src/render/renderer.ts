@@ -35,6 +35,7 @@ import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
 import { childMode, childStage } from '../engine/child'
 import { BOARD, stoneTile, TRIP_H, TRIP_W, tripLayout, type Cell as TripCell } from '../engine/trip-board'
 import { feastToday, sideShelfSpines } from '../engine/library'
+import { SHELF_FILL, shelfFillSteps } from '../engine/fragments'
 import { spineLook } from '../engine/binding'
 import { ACTS_ROOM, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, PAVILION_RECT, HEIGHT, HOUSE_RECT, housesNow, houseAt, lockedTiles, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile, treeKind, type TreeKind } from '../engine/world'
 import { currentMapId, mapVisibleHeight, setActiveMap } from '../engine/maps'
@@ -2053,6 +2054,25 @@ export function setDarknessOverride(v: number | null): void {
   darknessOverride = v === null ? null : Math.max(0, Math.min(1, v))
 }
 
+/** 작은 책장 여섯 칸에 얹는 책등 색 — 채도 낮은 파스텔·갈색 */
+const SHELF_FILL_COLORS = ['#c9b08a', '#b8a58c', '#a9b49a', '#9fa9b4', '#bba3a9', '#cdbf9a', '#a89078']
+/** 서고 작은 책장 채우기: slots번째 책등까지. 책장 순서는 왼쪽 셋(31~33열)·오른쪽 셋(39~41열), 선반 단은 위(3픽셀 높이)·가운데·아래(4픽셀) */
+function drawShelfFill(g: Ctx, firstX: number, firstY: number, steps: number) {
+  const { rows, perRow } = SHELF_FILL
+  for (let n = 0; n < steps; n++) {
+    const shelf = Math.floor(n / (rows * perRow))
+    const inShelf = n % (rows * perRow)
+    const row = Math.floor(inShelf / perRow)
+    const col = inShelf % perRow
+    const tx = shelf < 3 ? firstX - 4 + shelf : firstX + 4 + (shelf - 3)
+    g.fillStyle = SHELF_FILL_COLORS[(n * 3 + shelf) % SHELF_FILL_COLORS.length]
+    // 선반 판은 타일 안 y=4·9·14 줄 — 책등은 판 위에 선다
+    const y = row === 0 ? 1 : row === 1 ? 5 : 10
+    const h = row === 0 ? 3 : 4
+    g.fillRect(tx * TILE + 2 + col * 3, firstY * TILE + y, 2, h)
+  }
+}
+
 /** 새 터 한 장면: 땅과 서고, 기록자, 계절 날씨·밤. 첫 마을의 이웃·동물·아이·행사는 이 지도에 없다 */
 function drawNewland(g: Ctx, game: GameState, t: number, W: number, H: number, ox: number, oy: number) {
   const season = seasonOf(game.clock.day)
@@ -2263,6 +2283,9 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           if (game.shelved[b] === undefined) drawEmptySlot(g, sx, sy)
           else drawSpine(g, sx, sy, b, game)
         })
+        // 작은 책장 여섯 개: 모은 말씀 조각 ÷ 27권 전체 조각만큼 왼쪽 위 책장부터 한 단씩 차오른다 (왼쪽 셋 → 오른쪽 셋, 책장마다 위 단부터).
+        // 아래 양옆 책장의 꽂은 책 책등은 이 위에 겹쳐 그린다. 책등은 2픽셀 너비, 차분한 파스텔·갈색
+        drawShelfFill(g, first.x, first.y, shelfFillSteps(game.collected.length, content.pieces.length))
         // 양옆 책장: 복음서 다음에 꽂은 책(사도행전·편지·요한계시록)마다 책등 둘씩 (왼쪽·오른쪽 짝) — 처음엔 텅 빈 책장이
         // 권이 늘수록 찬다. 책마다 다른 색(제본 모습): 왼쪽은 책등 색, 오른쪽 짝은 장식 색. 은박·금박이면 위 2픽셀 띠
         for (const sp of sideShelfSpines(game.shelved)) {

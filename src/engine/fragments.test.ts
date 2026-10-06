@@ -2,6 +2,8 @@
 import { CONTENT, PIECES } from '../content/catalog'
 import {
   FRAGMENTS_PER_WEEK,
+  SHELF_FILL_SLOTS,
+  shelfFillSteps,
   drawFragment,
   fragmentSeed,
   fragmentWayOf,
@@ -159,5 +161,24 @@ describe('평소 대화의 직업 선물', () => {
     expect(TALK_GIFT_HEARTS).toBeGreaterThan(0)
     expect(talkGiftOf('baker', d, { baker: 100 }, { 'talkGift:baker': d })).toBeNull()
     expect(talkGiftOf('wendell', d, { wendell: 100 }, {})).toBeNull()
+  })
+})
+
+describe('서고 작은 책장 채움', () => {
+  it('조각 0개는 빈 선반, 다 모으면 가득, 일부는 그 사이', () => {
+    expect(shelfFillSteps(0, 200)).toBe(0)
+    expect(shelfFillSteps(1, 2000)).toBe(1)
+    expect(shelfFillSteps(100, 200)).toBe(SHELF_FILL_SLOTS / 2)
+    expect(shelfFillSteps(199, 200)).toBeLessThan(SHELF_FILL_SLOTS)
+    expect(shelfFillSteps(200, 200)).toBe(SHELF_FILL_SLOTS)
+    expect(shelfFillSteps(5, 0)).toBe(0)
+  })
+  it('모을수록 줄지 않는다', () => {
+    let prev = 0
+    for (let n = 0; n <= 300; n++) {
+      const s = shelfFillSteps(n, 300)
+      expect(s).toBeGreaterThanOrEqual(prev)
+      prev = s
+    }
   })
 })

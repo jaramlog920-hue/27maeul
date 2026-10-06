@@ -156,3 +156,20 @@ export function talkGiftOf(
   if (mulberry32(day * 613 + idSeed(npc))() >= TALK_GIFT_CHANCE) return null
   return gift
 }
+
+// ── 서고 안 작은 책장 여섯 개 (2026-10-07 사용자 요청) ──
+// 모은 말씀 조각이 27권 전체 조각의 얼마인가에 따라 왼쪽 위 책장부터 한 칸씩 차오른다 (서고에 꽂은 책 수와는 따로다).
+
+/** 작은 책장 여섯 개 (왼쪽 셋 · 오른쪽 셋) × 선반 세 단 × 한 단에 책등 넷 */
+export const SHELF_FILL = { shelves: 6, rows: 3, perRow: 4 } as const
+export const SHELF_FILL_SLOTS = SHELF_FILL.shelves * SHELF_FILL.rows * SHELF_FILL.perRow
+
+/**
+ * 채울 책등 수 (0 ~ SHELF_FILL_SLOTS): 조각이 하나도 없으면 0, 하나라도 있으면 1 이상, 다 모아야 가득.
+ * 모은 수가 늘면 줄지 않는다 (단조 증가)
+ */
+export function shelfFillSteps(collected: number, total: number): number {
+  if (total <= 0 || collected <= 0) return 0
+  if (collected >= total) return SHELF_FILL_SLOTS
+  return Math.min(SHELF_FILL_SLOTS - 1, Math.max(1, Math.floor((collected / total) * SHELF_FILL_SLOTS)))
+}
