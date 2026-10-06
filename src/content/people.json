@@ -1022,7 +1022,7 @@
               "memory": "helpedStall"
             },
             {
-              "label": "“안 휘면 돈 돌려드림!” 이라고 써 붙이자고 한다",
+              "label": "“안 휘면 환불!” 써 붙이기",
               "color": "tease",
               "reply": [
                 {
@@ -1172,7 +1172,7 @@
           },
           "choices": [
             {
-              "label": "“아버지도 걱정돼서였을 거예요”",
+              "label": "“아버지도 걱정돼서예요”",
               "color": "honest",
               "reply": [
                 {
@@ -1266,7 +1266,7 @@
               "memory": "birdFree"
             },
             {
-              "label": "“그날 밤에 봤어요” 하고 솔직하게 말한다",
+              "label": "“그날 밤에 봤어요”",
               "color": "honest",
               "reply": [
                 {
@@ -1396,7 +1396,7 @@
           },
           "choices": [
             {
-              "label": "“약방에 같이 가 봐요, 내일”",
+              "label": "“내일 약방에 같이 가요”",
               "color": "warm",
               "reply": [
                 {
@@ -1515,7 +1515,7 @@
               ]
             },
             {
-              "label": "“코에 그을음 묻었어요” 하고 웃는다",
+              "label": "“코에 그을음 묻었어요”",
               "color": "tease",
               "reply": [
                 {
@@ -1589,7 +1589,7 @@
           },
           "choices": [
             {
-              "label": "다섯 번 튕기는 돌을 골라 준다",
+              "label": "잘 튕기는 돌을 골라 준다",
               "color": "warm",
               "reply": [
                 {
@@ -1678,7 +1678,7 @@
               "memory": "workedTogether"
             },
             {
-              "label": "“조금 서운해요” 하고 솔직하게 말한다",
+              "label": "“조금 서운해요”",
               "color": "honest",
               "reply": [
                 {
@@ -1769,7 +1769,7 @@
               "memory": "hookTip"
             },
             {
-              "label": "끝만 한 번 줄질해 보자고 한다",
+              "label": "끝만 줄질해 보자",
               "color": "honest",
               "reply": [
                 {
@@ -1946,7 +1946,7 @@
               "memory": "hookColor"
             },
             {
-              "label": "실을 한 바퀴만 감아 보자고 한다",
+              "label": "실을 한 바퀴만 감아 보기",
               "color": "honest",
               "reply": [
                 {
@@ -3275,7 +3275,7 @@
               "memory": "lullaby"
             },
             {
-              "label": "같이 노래를 부른다 (둘 다 음정이 틀린다)",
+              "label": "같이 노래를 부른다",
               "color": "tease",
               "reply": [
                 {
@@ -3447,7 +3447,7 @@
               "memory": "stallJoke"
             },
             {
-              "label": "빵 하나와 과자 하나를 같이 산다",
+              "label": "빵과 과자를 같이 산다",
               "color": "warm",
               "reply": [
                 {
@@ -3491,7 +3491,7 @@
           },
           "choices": [
             {
-              "label": "“이 빵들, 직접 만든 거예요?”",
+              "label": "“직접 만든 거예요?”",
               "color": "honest",
               "reply": [
                 {
@@ -3506,7 +3506,7 @@
               "memory": "notebook"
             },
             {
-              "label": "“그림 실력이 빵보다 나은데요”",
+              "label": "“그림이 빵보다 낫네요”",
               "color": "tease",
               "reply": [
                 {
@@ -3574,7 +3574,7 @@
           },
           "choices": [
             {
-              "label": "“가 봐요. 돌아오면 되잖아요”",
+              "label": "“가 봐요, 돌아오면 돼요”",
               "color": "honest",
               "reply": [
                 {
@@ -3751,7 +3751,7 @@
               ]
             },
             {
-              "label": "빵을 반으로 나눠 한쪽을 건넨다",
+              "label": "빵을 반 나눠 건넨다",
               "color": "quiet",
               "reply": [
                 {
@@ -3815,7 +3815,7 @@
               "memory": "ateHisCake"
             },
             {
-              "label": "“웬델 빵이 더 좋아요”라고 속삭인다",
+              "label": "“웬델 빵이 더 좋아요”",
               "color": "warm",
               "reply": [
                 {
@@ -3870,7 +3870,7 @@
           },
           "choices": [
             {
-              "label": "“돌아오면 도시 빵 먼저 구워 줘요”",
+              "label": "“도시 빵 구워 줘요”",
               "color": "warm",
               "reply": [
                 {
@@ -3881,7 +3881,7 @@
               "memory": "tripPromise"
             },
             {
-              "label": "“사흘이면 저 잊을 거예요?” 하고 놀린다",
+              "label": "“사흘이면 저 잊어요?”",
               "color": "tease",
               "reply": [
                 {
@@ -3959,7 +3959,7 @@
               "memory": "lunchSwap"
             },
             {
-              "label": "내일 것도 미리 맡아 두자고 한다",
+              "label": "내일 것도 맡아 두자",
               "color": "tease",
               "reply": [
                 {
@@ -4011,7 +4011,7 @@
           ],
           "choices": [
             {
-              "label": "여기서 해 보고 싶은 빵을 묻는다",
+              "label": "해 보고 싶은 빵을 묻기",
               "color": "honest",
               "outcome": 0,
               "memory": "pathTalk",
@@ -4027,7 +4027,7 @@
               ]
             },
             {
-              "label": "바깥에서 배우고 싶은 걸 묻는다",
+              "label": "배우고 싶은 걸 묻는다",
               "color": "warm",
               "outcome": 1,
               "memory": "pathTalk",
@@ -4311,7 +4311,7 @@
               "memory": "homeBread"
             },
             {
-              "label": "제일 못생긴 조각으로 하자고 한다",
+              "label": "제일 못생긴 조각으로",
               "color": "tease",
               "reply": [
                 {
@@ -4895,7 +4895,7 @@
               "memory": "hookDesign"
             },
             {
-              "label": "두 선을 나란히 그려 보자고 한다",
+              "label": "두 선을 나란히 그려 보기",
               "color": "warm",
               "reply": [
                 {
@@ -6190,7 +6190,7 @@
           },
           "choices": [
             {
-              "label": "“좋아요, 제 자리가 생긴 것 같아서”",
+              "label": "“제 자리가 생긴 것 같아요”",
               "color": "warm",
               "reply": [
                 {
@@ -6259,7 +6259,7 @@
           },
           "choices": [
             {
-              "label": "“못 나올 것 같은 이유, 들어도 돼요?”",
+              "label": "“이유, 들어도 돼요?”",
               "color": "honest",
               "reply": [
                 {
@@ -6274,7 +6274,7 @@
               "memory": "heardFamily"
             },
             {
-              "label": "“동생한테 이 호수 얘기 써 줘요”",
+              "label": "“동생한테 호수 얘기 써요”",
               "color": "warm",
               "reply": [
                 {
@@ -6386,7 +6386,7 @@
           },
           "choices": [
             {
-              "label": "“파피가 여기 있는 이유는 찻집만이 아니에요”",
+              "label": "“찻집 때문만은 아니죠”",
               "color": "warm",
               "reply": [
                 {
@@ -6484,7 +6484,7 @@
               ]
             },
             {
-              "label": "따로 둔 찻잔에 차를 한 잔 더 따른다",
+              "label": "찻잔에 한 잔 더 따른다",
               "color": "quiet",
               "reply": [
                 {
@@ -6532,7 +6532,7 @@
           },
           "choices": [
             {
-              "label": "“물론이죠. 찻집에서 기다릴게요”",
+              "label": "“찻집에서 기다릴게요”",
               "color": "warm",
               "reply": [
                 {
@@ -6598,7 +6598,7 @@
           },
           "choices": [
             {
-              "label": "“안 웃어도 돼요. 제 앞에선 쉬어요”",
+              "label": "“제 앞에선 쉬어요”",
               "color": "warm",
               "reply": [
                 {
@@ -6609,7 +6609,7 @@
               "memory": "restFace"
             },
             {
-              "label": "“힘들다고 말해 줘서 다행이에요”",
+              "label": "“말해 줘서 다행이에요”",
               "color": "honest",
               "reply": [
                 {
@@ -6686,7 +6686,7 @@
               "memory": "cornerName"
             },
             {
-              "label": "이름은 파피가 짓는 게 좋겠다고 한다",
+              "label": "이름은 파피가 짓자고 한다",
               "color": "honest",
               "reply": [
                 {
@@ -6765,7 +6765,7 @@
               "memory": "snackPair"
             },
             {
-              "label": "차와 간식을 하나씩 짝지어 보자고 한다",
+              "label": "차와 간식을 짝지어 보기",
               "color": "honest",
               "reply": [
                 {
@@ -6904,7 +6904,7 @@
           ],
           "choices": [
             {
-              "label": "받침 색을 비교하는 걸 곁에서 본다",
+              "label": "색 비교를 곁에서 본다",
               "color": "quiet",
               "reply": [
                 {
@@ -6915,7 +6915,7 @@
               "memory": "pairing"
             },
             {
-              "label": "파피가 먼저 마셔 보길 기다린다",
+              "label": "파피가 마시길 기다린다",
               "color": "warm",
               "reply": [
                 {
@@ -8218,7 +8218,7 @@
               "memory": "ownAppt"
             },
             {
-              "label": "다음 쉬는 날도 적어 보자고 한다",
+              "label": "다음 쉬는 날도 적자",
               "color": "warm",
               "reply": [
                 {
@@ -8346,7 +8346,7 @@
               ]
             },
             {
-              "label": "돌계단에 잠깐 같이 앉자고 한다",
+              "label": "돌계단에 같이 앉자",
               "color": "quiet",
               "memory": "blankRest",
               "reply": [
@@ -8482,7 +8482,7 @@
               ]
             },
             {
-              "label": "지금은 친구로 지내고 싶다고 말한다",
+              "label": "“지금은 친구로 지내요”",
               "color": "quiet",
               "stayFriends": true,
               "reply": [
@@ -8590,7 +8590,7 @@
               ]
             },
             {
-              "label": "늦는 날은 마중 나가겠다고 한다",
+              "label": "늦는 날은 마중 갈게",
               "color": "honest",
               "memory": "lastDelivery",
               "reply": [
@@ -8706,7 +8706,7 @@
               ]
             },
             {
-              "label": "연습을 한 번 더 해 보자고 한다",
+              "label": "한 번 더 연습하자",
               "color": "honest",
               "memory": "otherDay",
               "reply": [
@@ -10663,7 +10663,7 @@
               "memory": "mendedNets"
             },
             {
-              "label": "“같이 찔려 드릴게요” 하고 바늘을 든다",
+              "label": "“같이 찔려 드릴게요”",
               "color": "tease",
               "reply": [
                 {
@@ -10931,7 +10931,7 @@
               "memory": "rowedCircle"
             },
             {
-              "label": "“코스모가 저어요, 전 경치 볼래요”",
+              "label": "“전 경치 볼래요”",
               "color": "tease",
               "reply": [
                 {
@@ -11011,7 +11011,7 @@
               ]
             },
             {
-              "label": "“농담 없는 코스모, 처음 봐요”",
+              "label": "“이런 코스모 처음 봐요”",
               "color": "tease",
               "reply": [
                 {
@@ -11080,7 +11080,7 @@
               "memory": "backwardName"
             },
             {
-              "label": "“고마워요” 하고 배를 쓰다듬는다",
+              "label": "“고마워요” 뱃전 쓰다듬기",
               "color": "warm",
               "reply": [
                 {
@@ -11134,7 +11134,7 @@
               "memory": "decideTogether"
             },
             {
-              "label": "“여기 있어요, 제 뱃사공이잖아요”",
+              "label": "“제 뱃사공이잖아요”",
               "color": "tease",
               "reply": [
                 {
@@ -11315,7 +11315,7 @@
               ]
             },
             {
-              "label": "둘이 의논하는 걸 곁에서 듣는다",
+              "label": "곁에서 의논을 듣는다",
               "color": "quiet",
               "memory": "dockDecor",
               "reply": [
@@ -11338,7 +11338,7 @@
               ]
             },
             {
-              "label": "어느 장식이 좋은지 코스모에게 묻는다",
+              "label": "코스모에게 장식을 묻는다",
               "color": "honest",
               "memory": "dockDecor",
               "reply": [
@@ -12725,7 +12725,7 @@
           },
           "choices": [
             {
-              "label": "“책장 보러 들어가요. 루디 전문이잖아요”",
+              "label": "“책장 보러 가요, 같이”",
               "color": "warm",
               "reply": [
                 {
@@ -12744,7 +12744,7 @@
               "memory": "enteredLibrary"
             },
             {
-              "label": "“못 읽어도 들어갈 수 있어요”",
+              "label": "“못 읽어도 괜찮아요”",
               "color": "honest",
               "reply": [
                 {
@@ -12793,7 +12793,7 @@
           },
           "choices": [
             {
-              "label": "틀린 글자 옆에 맞는 글자를 손가락으로 써 준다",
+              "label": "옆에 맞는 글자를 써 준다",
               "color": "warm",
               "reply": [
                 {
@@ -12817,7 +12817,7 @@
               }
             },
             {
-              "label": "“이 정도면 거의 다 맞았어요”",
+              "label": "“거의 다 맞았어요”",
               "color": "honest",
               "reply": [
                 {
@@ -12950,7 +12950,7 @@
               ]
             },
             {
-              "label": "나무판 아래에 손가락으로 '저도요'라고 써 준다",
+              "label": "아래에 '저도요'라고 쓴다",
               "color": "tease",
               "reply": [
                 {
@@ -13023,7 +13023,7 @@
               "memory": "firstLine"
             },
             {
-              "label": "한 줄 끝날 때마다 박수를 친다",
+              "label": "줄마다 박수를 친다",
               "color": "tease",
               "reply": [
                 {
@@ -13100,7 +13100,7 @@
               "memory": "toldFather"
             },
             {
-              "label": "“읽는 건 제가 할게요, 둘이 하면 돼요”",
+              "label": "“읽는 건 제가 할게요”",
               "color": "warm",
               "reply": [
                 {
@@ -13279,7 +13279,7 @@
               ]
             },
             {
-              "label": "기울기를 맞추는 걸 곁에서 본다",
+              "label": "기울기 맞추는 걸 본다",
               "color": "quiet",
               "memory": "bookRest",
               "reply": [
@@ -15142,7 +15142,7 @@
               "memory": "mapLibrary"
             },
             {
-              "label": "“양 이름 별이 스물아홉 개네요”",
+              "label": "“별이 스물아홉 개네요”",
               "color": "tease",
               "reply": [
                 {
@@ -15274,7 +15274,7 @@
               ]
             },
             {
-              "label": "어떤 게 제일 덱스터 같은지 묻는다",
+              "label": "제일 덱스터 같은 걸 묻기",
               "color": "honest",
               "memory": "viewForm",
               "reply": [
@@ -15285,7 +15285,7 @@
               ]
             },
             {
-              "label": "종이가 날아가지 않게 눌러 준다",
+              "label": "종이를 눌러 준다",
               "color": "warm",
               "memory": "viewForm",
               "reply": [
@@ -15388,7 +15388,7 @@
               ]
             },
             {
-              "label": "다른 점을 하나씩 말해 달라고 한다",
+              "label": "다른 점을 말해 달라 한다",
               "color": "honest",
               "memory": "compared",
               "reply": [
@@ -15493,7 +15493,7 @@
               ]
             },
             {
-              "label": "주니퍼의 그림을 더 가까이 본다",
+              "label": "주니퍼 그림을 가까이 본다",
               "color": "honest",
               "reply": [
                 {
@@ -15685,7 +15685,7 @@
               ]
             },
             {
-              "label": "다음엔 누구와 같이 보고 싶은지 묻는다",
+              "label": "다음엔 누구랑 볼지 묻기",
               "color": "honest",
               "reply": [
                 {
@@ -15880,7 +15880,7 @@
               ]
             },
             {
-              "label": "그림자가 닿을 때까지 같이 본다",
+              "label": "그림자가 닿을 때까지 본다",
               "color": "quiet",
               "memory": "shadowStick",
               "reply": [
@@ -15944,7 +15944,7 @@
               ]
             },
             {
-              "label": "못 그린 날은 어떻게 하냐고 묻는다",
+              "label": "못 그린 날은 어쩌냐 묻기",
               "color": "honest",
               "memory": "cloudWall",
               "reply": [
@@ -16696,7 +16696,7 @@
               "memory": "sleepTea"
             },
             {
-              "label": "“바질 씨 손등이 더 걱정인데요”",
+              "label": "“손등이 더 걱정인데요”",
               "color": "tease",
               "reply": [
                 {
@@ -16741,7 +16741,7 @@
           },
           "choices": [
             {
-              "label": "잎을 하나하나 비춰 보며 고른다",
+              "label": "잎을 비춰 보며 고른다",
               "color": "warm",
               "reply": [
                 {
@@ -16831,7 +16831,7 @@
               "memory": "laughedLegend"
             },
             {
-              "label": "“열 살에 벌써 약방 사람이었네요”",
+              "label": "“열 살에 벌써 약방 사람”",
               "color": "honest",
               "reply": [
                 {
@@ -16877,7 +16877,7 @@
           },
           "choices": [
             {
-              "label": "“틸리한테 말해요. 틸리도 알아야 해요”",
+              "label": "“틸리한테 말해요”",
               "color": "honest",
               "reply": [
                 {
@@ -17019,7 +17019,7 @@
               "memory": "planTrip"
             },
             {
-              "label": "“바질 씨도 걱정해 주는 사람이 있어야 해요”",
+              "label": "“바질 씨도 걱정 받아야죠”",
               "color": "honest",
               "reply": [
                 {
@@ -17091,7 +17091,7 @@
               ]
             },
             {
-              "label": "“처방이 없다고요?” 하고 놀린다",
+              "label": "“처방이 없다고요?”",
               "color": "tease",
               "reply": [
                 {
@@ -17211,7 +17211,7 @@
           },
           "choices": [
             {
-              "label": "“걱정해 줘서 좋아요. 다섯 개는 좀 많지만”",
+              "label": "“좋아요. 다섯 개는 많지만”",
               "color": "warm",
               "reply": [
                 {
@@ -17226,7 +17226,7 @@
               "memory": "fourBottles"
             },
             {
-              "label": "“가끔은 그냥 괜찮냐고만 물어봐 줘요”",
+              "label": "“괜찮냐고만 물어봐 줘요”",
               "color": "honest",
               "reply": [
                 {
@@ -18518,7 +18518,7 @@
               "memory": "prunedTogether"
             },
             {
-              "label": "“아프게 잘라야 한다는 거, 사람한테도 그래요?”",
+              "label": "“사람한테도 그래요?”",
               "color": "honest",
               "reply": [
                 {
@@ -18581,7 +18581,7 @@
               "memory": "volunteered"
             },
             {
-              "label": "“마흔일곱 개를 혼자 하려고요?”",
+              "label": "“그걸 혼자 하려고요?”",
               "color": "honest",
               "reply": [
                 {
@@ -18596,7 +18596,7 @@
               "memory": "askedHelp"
             },
             {
-              "label": "목록에 '메리골드 쉬기'를 적어 넣는다",
+              "label": "'메리골드 쉬기'를 적는다",
               "color": "tease",
               "reply": [
                 {
@@ -18645,7 +18645,7 @@
           },
           "choices": [
             {
-              "label": "할아버지께 포도원 이야기를 청한다",
+              "label": "포도원 이야기를 청한다",
               "color": "warm",
               "reply": [
                 {
@@ -18701,7 +18701,7 @@
           },
           "choices": [
             {
-              "label": "“포도원 지키려고 모으는 거죠”",
+              "label": "“포도원 지키려는 거죠”",
               "color": "honest",
               "reply": [
                 {
@@ -18835,7 +18835,7 @@
           },
           "choices": [
             {
-              "label": "“이유가 할아버지만은 아니잖아요”",
+              "label": "“할아버지 때문만은 아니죠”",
               "color": "warm",
               "reply": [
                 {
@@ -18850,7 +18850,7 @@
               "memory": "moreReasons"
             },
             {
-              "label": "할아버지를 함께 부축해 집에 모신다",
+              "label": "할아버지를 함께 부축한다",
               "color": "quiet",
               "reply": [
                 {
@@ -18918,7 +18918,7 @@
               ]
             },
             {
-              "label": "종이 뒷면에 '2. 대답 듣기 ✓'라고 쓴다",
+              "label": "'대답 듣기 ✓'라고 쓴다",
               "color": "tease",
               "reply": [
                 {
@@ -18980,7 +18980,7 @@
           },
           "choices": [
             {
-              "label": "할아버지께 먼저 한 잔 드리자고 한다",
+              "label": "할아버지께 먼저 드리자",
               "color": "warm",
               "reply": [
                 {
@@ -19045,7 +19045,7 @@
           },
           "choices": [
             {
-              "label": "“데이트는 목록에서 빼요. 오늘은 쉬는 날”",
+              "label": "“오늘은 목록 없는 날”",
               "color": "warm",
               "reply": [
                 {
@@ -19280,7 +19280,7 @@
           ],
           "choices": [
             {
-              "label": "빈칸을 그대로 두는 걸 지켜본다",
+              "label": "빈칸 두는 걸 지켜본다",
               "color": "quiet",
               "reply": [
                 {
@@ -19481,7 +19481,7 @@
               ]
             },
             {
-              "label": "같이 쉬는 날을 하나 더 넣자고 한다",
+              "label": "쉬는 날을 하나 더 넣자",
               "color": "honest",
               "memory": "familyCalendar",
               "reply": [
@@ -20410,7 +20410,7 @@
           },
           "choices": [
             {
-              "label": "“틀린 올, 저는 못 찾겠어요”",
+              "label": "“저는 못 찾겠어요”",
               "color": "honest",
               "reply": [
                 {
@@ -20532,7 +20532,7 @@
           },
           "choices": [
             {
-              "label": "“놓치는 게 뭔지 들어 보고 싶어요”",
+              "label": "“뭘 놓치는지 듣고 싶어요”",
               "color": "honest",
               "reply": [
                 {
@@ -20605,7 +20605,7 @@
           },
           "choices": [
             {
-              "label": "틀린 한 올을 손가락으로 쓸어 본다",
+              "label": "틀린 한 올을 쓸어 본다",
               "color": "warm",
               "reply": [
                 {
@@ -20619,7 +20619,7 @@
               ]
             },
             {
-              "label": "“망설임 세 번, 기다린 보람 있네요”",
+              "label": "“기다린 보람 있네요”",
               "color": "tease",
               "reply": [
                 {
@@ -20819,7 +20819,7 @@
               ]
             },
             {
-              "label": "두 장을 나란히 다시 놓아 본다",
+              "label": "두 장을 나란히 놓는다",
               "color": "warm",
               "memory": "rugDraft",
               "reply": [
@@ -21106,7 +21106,7 @@
               ]
             },
             {
-              "label": "페넬로피가 고를 때까지 기다린다",
+              "label": "고를 때까지 기다린다",
               "color": "quiet",
               "memory": "homeCloth",
               "reply": [
@@ -22060,7 +22060,7 @@
               "memory": "countedFlowers"
             },
             {
-              "label": "“벌들은 어느 꽃을 좋아해요?”",
+              "label": "“어느 꽃을 좋아해요?”",
               "color": "honest",
               "reply": [
                 {
@@ -22120,7 +22120,7 @@
               "memory": "drewBees"
             },
             {
-              "label": "“여덟 개짜리 새로운 벌이네요”",
+              "label": "“여덟 개짜리 새 벌이네요”",
               "color": "tease",
               "reply": [
                 {
@@ -22184,7 +22184,7 @@
               "memory": "treatedSting"
             },
             {
-              "label": "“벌도 주니퍼를 지키려던 거예요”",
+              "label": "“벌도 지키려던 거예요”",
               "color": "honest",
               "reply": [
                 {
@@ -22603,7 +22603,7 @@
               "memory": "beeShelf"
             },
             {
-              "label": "“표지 이름은 어느 분이 썼어요?”",
+              "label": "“표지 글씨는 누구 거예요?”",
               "color": "tease",
               "reply": [
                 {
@@ -22657,7 +22657,7 @@
           },
           "choices": [
             {
-              "label": "말없이 옆에 앉아 벌을 같이 본다",
+              "label": "옆에 앉아 벌을 본다",
               "color": "quiet",
               "reply": [
                 {
@@ -22672,7 +22672,7 @@
               "memory": "watchedBees"
             },
             {
-              "label": "“어머니께 공책 보여 드려요, 같이”",
+              "label": "“어머니께 같이 보여 드려요”",
               "color": "honest",
               "reply": [
                 {
@@ -25733,7 +25733,7 @@
               "mini": "pick"
             },
             {
-              "label": "물건마다 걸어 둘 자리를 제안한다",
+              "label": "걸어 둘 자리를 제안한다",
               "color": "honest",
               "reply": [
                 {
@@ -25849,7 +25849,7 @@
           ],
           "choices": [
             {
-              "label": "둘이 나누는 말을 곁에서 듣는다",
+              "label": "곁에서 둘의 말을 듣는다",
               "color": "quiet",
               "reply": [
                 {
@@ -26677,7 +26677,7 @@
               "memory": "heardDiff"
             },
             {
-              "label": "주니퍼에게 직접 물어봤는지 묻는다",
+              "label": "주니퍼에게 물어봤는지 묻기",
               "color": "honest",
               "reply": [
                 {
@@ -27661,7 +27661,7 @@
               "memory": "labelTurn"
             },
             {
-              "label": "아이에게 자리를 골라 달라고 한다",
+              "label": "아이에게 자리를 맡긴다",
               "color": "quiet",
               "reply": [
                 {
@@ -29781,7 +29781,7 @@
               ]
             },
             {
-              "label": "지금은 친구로 지내고 싶다고 말한다",
+              "label": "“지금은 친구로 지내요”",
               "color": "quiet",
               "stayFriends": true,
               "reply": [
@@ -29839,7 +29839,7 @@
               ]
             },
             {
-              "label": "그동안 있었던 일을 길게 들려준다",
+              "label": "그동안 일을 들려준다",
               "color": "warm",
               "memory": "replyStyle",
               "reply": [
@@ -29850,7 +29850,7 @@
               ]
             },
             {
-              "label": "다음엔 그림으로 답하겠다고 한다",
+              "label": "다음엔 그림으로 답할게",
               "color": "honest",
               "memory": "replyStyle",
               "reply": [
@@ -29900,7 +29900,7 @@
           ],
           "choices": [
             {
-              "label": "혼자 지낼 날 하고 싶은 걸 말한다",
+              "label": "혼자 할 일을 말해 준다",
               "color": "honest",
               "memory": "homeShelf",
               "reply": [
@@ -29911,7 +29911,7 @@
               ]
             },
             {
-              "label": "돌아올 날을 어디에 적을지 정한다",
+              "label": "돌아올 날 적을 곳 정하기",
               "color": "warm",
               "memory": "homeShelf",
               "reply": [
@@ -29974,7 +29974,7 @@
               ]
             },
             {
-              "label": "돌아오는 날엔 저녁을 같이 먹자고 적는다",
+              "label": "돌아오는 날 저녁 약속",
               "color": "honest",
               "memory": "homeSchedule",
               "reply": [
@@ -30033,7 +30033,7 @@
           ],
           "choices": [
             {
-              "label": "돌아오는 날 저녁을 새로 정한다",
+              "label": "저녁 약속을 새로 정한다",
               "color": "warm",
               "memory": "lateReturn",
               "reply": [
@@ -30044,7 +30044,7 @@
               ]
             },
             {
-              "label": "다음부턴 귀가 날을 먼저 적자고 한다",
+              "label": "귀가 날을 먼저 적자",
               "color": "honest",
               "memory": "lateReturn",
               "reply": [
@@ -30560,7 +30560,7 @@
               "mini": "order"
             },
             {
-              "label": "항아리를 틀 가까이 두자고 한다",
+              "label": "항아리를 틀 곁에 두자",
               "color": "honest",
               "reply": [
                 {
@@ -30639,7 +30639,7 @@
               "memory": "layoutTry"
             },
             {
-              "label": "한 걸음 줄이는 자리를 제안한다",
+              "label": "한 걸음 줄일 자리 제안",
               "color": "honest",
               "reply": [
                 {
@@ -31076,7 +31076,7 @@
               ]
             },
             {
-              "label": "지금은 친구로 지내고 싶다고 말한다",
+              "label": "“지금은 친구로 지내요”",
               "color": "quiet",
               "stayFriends": true,
               "reply": [
@@ -31185,7 +31185,7 @@
           ],
           "choices": [
             {
-              "label": "아무렇게나 둘 구역을 하나 고른다",
+              "label": "아무렇게나 둘 곳 고르기",
               "color": "warm",
               "memory": "imperfectHouse",
               "reply": [
@@ -31880,7 +31880,7 @@
               "memory": "ownColor"
             },
             {
-              "label": "좋아하는 색이 따로 있었는지 묻는다",
+              "label": "좋아하던 색을 묻는다",
               "color": "honest",
               "reply": [
                 {
@@ -32698,7 +32698,7 @@
               "memory": "shiftTable"
             },
             {
-              "label": "쉬는 칸을 하나 더 넣자고 한다",
+              "label": "쉬는 칸을 하나 더 넣자",
               "color": "honest",
               "reply": [
                 {

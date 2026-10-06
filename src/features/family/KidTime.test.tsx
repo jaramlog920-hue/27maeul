@@ -5,6 +5,7 @@ import { newGame, type GameState } from '../../engine/game'
 import { freshStats } from '../../engine/stats'
 import { useGame } from '../../store/game-store'
 import { ModalLayer } from '../ModalLayer'
+import { pageThrough } from '../../test/scene-pages'
 
 function reset(minute = 10 * 60) {
   localStorage.clear()
@@ -32,7 +33,7 @@ describe('함께하는 시간 — 화면', () => {
     fireEvent.click(screen.getByRole('button', { name: '닫기' }))
     act(() => useGame.getState().frame(0.05))
     expect(useGame.getState().modal).toEqual({ kind: 'scene', id: 'fam:read' })
-    expect(screen.getByText(/루시, 처음 같이 책 읽은 날/)).toBeInTheDocument()
+    expect(pageThrough()).toMatch(/루시, 처음 같이 책 읽은 날/)
   })
 
   it('두 번 하면 남은 일은 잠기고 "내일 또 해요" — 잠들기 전 이야기는 저녁부터', () => {

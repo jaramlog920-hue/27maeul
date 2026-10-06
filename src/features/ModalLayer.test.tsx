@@ -1,5 +1,6 @@
 import { act, render, renderHook, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { pageThrough } from '../test/scene-pages'
 import { CONTENT, JOURNEY, pieceById, PIECES, piecesOf, versesOf } from '../content/catalog'
 import type { Piece } from '../engine/types'
 import { dexView } from './word/Word'
@@ -497,6 +498,7 @@ describe('하루', () => {
     expect(useGame.getState().game.clock.day).toBe(2)
     walk() // 둘째 날 아침의 장면(작은 손님)
     expect(screen.getByRole('dialog', { name: '작은 손님' })).toBeInTheDocument()
+    pageThrough()
     await user.click(screen.getByRole('button', { name: '닫기' }))
     act(() => useGame.getState().open({ kind: 'journal' }))
     expect(screen.getByText(/1일째\. 맑음\. 사본을 보고 베꼈다\(눅 15:8-10\)\./)).toBeInTheDocument()
@@ -512,7 +514,8 @@ describe('하루', () => {
     const user = userEvent.setup()
     render(<ModalLayer />)
     walk()
-    expect(screen.getByRole('dialog', { name: '이름 없는 작은 마을' })).toHaveTextContent('마을 서고를 맡게 된 견습 필사가입니다')
+    expect(screen.getByRole('dialog', { name: '이름 없는 작은 마을' })).toBeInTheDocument()
+    expect(pageThrough()).toContain('마을 서고를 맡게 된 견습 필사가입니다')
     await user.click(screen.getByRole('button', { name: '닫기' }))
     expect(useGame.getState().game.scenes).toEqual([])
     act(() => useGame.getState().frame(0.05))
@@ -864,9 +867,9 @@ describe('복음서 방 잔치와 사도행전 방 예고', () => {
     const user = userEvent.setup()
     render(<ModalLayer />)
     walk()
-    const dialog = screen.getByRole('dialog', { name: '복음서 방이 다 찼다' })
-    expect(dialog).toHaveTextContent('광장')
+    expect(screen.getByRole('dialog', { name: '복음서 방이 다 찼다' })).toBeInTheDocument()
     expect(screen.queryByLabelText(/성경 본문/)).toBeNull()
+    expect(pageThrough()).toContain('광장')
     await user.click(screen.getByRole('button', { name: '닫기' }))
     expect(useGame.getState().modal).toBeNull()
     expect(useGame.getState().game.album.filter((a) => a.id === 'gospelFeast')).toHaveLength(1)
@@ -923,9 +926,9 @@ describe('사도행전 방의 여정 판 (계획 5 작업 5)', () => {
     const user = userEvent.setup()
     render(<ModalLayer />)
     walk()
-    const dialog = screen.getByRole('dialog', { name: '나루에 배가 들어왔다' })
+    expect(screen.getByRole('dialog', { name: '나루에 배가 들어왔다' })).toBeInTheDocument()
     expect(screen.queryByLabelText(/성경 본문/)).toBeNull()
-    expect(dialog).toHaveTextContent('나루')
+    expect(pageThrough()).toContain('나루')
     await user.click(screen.getByRole('button', { name: '닫기' }))
     expect(useGame.getState().game.album.filter((a) => a.id === 'actsShip')).toHaveLength(1)
   })
@@ -998,9 +1001,9 @@ describe('로마서–빌레몬서 방 (계획 7 작업 7)', () => {
     const user = userEvent.setup()
     render(<ModalLayer />)
     walk()
-    const dialog = screen.getByRole('dialog', { name: SCENES['roomOpen:romPhm'].title })
-    expect(dialog).toHaveTextContent('서고 왼쪽 아래 문')
+    expect(screen.getByRole('dialog', { name: SCENES['roomOpen:romPhm'].title })).toBeInTheDocument()
     expect(screen.queryByLabelText(/성경 본문/)).toBeNull()
+    expect(pageThrough()).toContain('서고 왼쪽 아래 문')
     await user.click(screen.getByRole('button', { name: '닫기' }))
     expect(useGame.getState().game.album.filter((a) => a.id === 'roomOpen:romPhm')).toHaveLength(1)
   })
