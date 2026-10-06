@@ -6521,7 +6521,7 @@
       "마음이 가는 사이"
     ],
     "mutter": "{who}: “{text}”",
-    "together": "({otherAnd} 함께) {text}",
+    "together": "{other}, {text}",
     "promiseKept": "{who} 기다리고 있었다는 듯 활짝 웃었다."
   },
   "care": {

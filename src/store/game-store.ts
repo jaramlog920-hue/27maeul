@@ -713,6 +713,11 @@ function gotLine(pieceIds: readonly string[], one: string, many: string): string
 function starsLine(pieceIds: readonly string[]): string {
   return fill(T.post.starsGot, { title: pieceById(pieceIds[0]).title })
 }
+/** 이 줄이 이미 상대를 부르고 있는가 — 상대 이름이 들었거나, 줄 첫머리가 "아버지," "형," "상인님," 같은 부르는 말 */
+export function callsAlready(text: string, name: string): boolean {
+  return text.includes(name) || /^(아빠|아버지|어머니|엄마|형|누나|언니|오빠|할아버지|할머니|[가-힣]+님|[가-힣]+ 씨),/.test(text)
+}
+
 function lineFor(game: GameState, neighborId: string, rng: Rng): string {
   const l = NEIGHBOR_LINES[neighborId]
   if (!l) return ''
@@ -963,7 +968,8 @@ export const useGame = create<Store>((set, get) => {
         // 둘이 함께인 일과 (계획 16 작업 3): 곁에 상대가 있으면 둘이 나누던 한 줄로 — 상대 이름과 함께
         const other = mutterPartner(g, target.id)
         const role = other ? neighborById(other)?.role : undefined
-        const line = role ? fill(T.people.together, { otherAnd: withAnd(role), text: mut }) : mut
+        // "(○○와 함께)" 대신 "마일로, …"처럼 부르며 말한다 (2026-10-07 사용자). 이미 부르는 말(이름·아버지·형·님…)이 든 줄은 그대로
+        const line = role && !callsAlready(mut, role) ? fill(T.people.together, { other: role, text: mut }) : mut
         // 혼잣말은 늘 하는 말 — 이름 밑에 (2026-10-07 사용자)
         return talk(hearMutter(g, target.id, mut), line, false)
       }

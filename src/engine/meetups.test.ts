@@ -160,7 +160,7 @@ describe('일과 조건과 상대 (시험용 내용)', () => {
     expect(mutterWaiting(s, 'tilly')).toBe('tilly 점심')
     expect(mutterPartner(s, 'tilly')).toBe('wendell')
     // 화면 한 줄: 상대 이름(역할 이름)과 함께
-    expect(fill(T.people.together, { otherAnd: withAnd(neighborById('wendell')!.role), text: 'tilly 점심' })).toBe(`(${withAnd(neighborById('wendell')!.role)} 함께) tilly 점심`)
+    expect(fill(T.people.together, { other: neighborById('wendell')!.role, text: 'tilly 점심' })).toBe(`${neighborById('wendell')!.role}, tilly 점심`)
     // 상대가 자리에 없으면 혼잣말 그대로
     const gone = { ...s, npcs: { ...s.npcs, wendell: { ...s.npcs.wendell, visible: false } } }
     expect(mutterPartner(gone, 'tilly')).toBeNull()
