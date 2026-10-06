@@ -373,7 +373,7 @@ export interface StoryWait {
 
 // ── 경험 기억 (계획 16 작업 2) ──
 
-export const EXPERIENCE_KINDS = ['make', 'gift', 'invite', 'visit', 'trip', 'promise', 'choice', 'story', 'club', 'event', 'work', 'learn', 'project', 'family', 'pet', 'stall'] as const
+export const EXPERIENCE_KINDS = ['make', 'gift', 'invite', 'visit', 'trip', 'promise', 'choice', 'story', 'club', 'event', 'work', 'learn', 'project', 'family', 'pet', 'stall', 'meal'] as const
 export type ExperienceKind = (typeof EXPERIENCE_KINDS)[number]
 
 /**

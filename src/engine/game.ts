@@ -136,6 +136,7 @@ import {
 } from './stories'
 import { propFootprint, HOUSES, PET_HOME, HOME_FRONT, isHome, isIndoor, isWalkable, key, HOME_ENTRY, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setHomeFurniture, setMailbox, setOpenDoors, setSpouseRoom, START, tileAt, WARPS } from './world'
 import { SPOUSE_ROOM_STAND } from './spouse-room'
+import type { Cooking } from './cooking'
 import { BOOKS, type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
 import { withLookDefaults, type Avatar, type FullAvatar } from './avatar'
 import { BOARD_GAIN, boardFor, type BoardRequest } from './board'
@@ -171,6 +172,8 @@ export interface GameState {
   village?: Village
   skills?: Skills
   skillLesson?: SkillLesson
+  /** 직접 요리하고 함께 먹는 생활 (계획 16 작업 25): 배운 요리·하던 요리·식탁에 차린 음식 — 옛 저장은 없음 */
+  cooking?: Cooking
   version: 1
   plans: Plans
   clubs: Club[]
@@ -2206,7 +2209,7 @@ export function haveStock(s: Pick<GameState, 'inv' | 'flags' | 'chest'>, need: P
 }
 
 /** 가방에서 먼저, 모자라면 궤짝에서 꺼내 쓴다 */
-function useStock(s: GameState, need: Partial<Record<ItemId, number>>): GameState | null {
+export function useStock(s: GameState, need: Partial<Record<ItemId, number>>): GameState | null {
   const r = takeStock(s.inv, chestOf(s), need)
   return r ? { ...s, inv: r.inv, chest: r.chest ?? s.chest } : null
 }

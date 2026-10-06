@@ -175,6 +175,8 @@ export type Modal =
   | { kind: 'festSession'; id: string }
   /** 내 작은 장날 좌판 (계획 16 작업 19) */
   | { kind: 'stall' }
+  /** 화덕의 요리하기 (계획 16 작업 25): 요리 고르기·만들기·먹기·식탁 */
+  | { kind: 'cooking' }
   /** 마을 공동 시설 현장 (계획 16 작업 20): 진행 중인 사업의 현장 — 몫·거들기·선택 장식 */
   | { kind: 'village'; id: FacilityId }
   /** letter: 편지 나르는 이웃이 말을 걸자마자 편지를 건넸을 때 대화에 보일 편지 말 한 줄 */

@@ -2,6 +2,7 @@ import { solidTiles } from './room'
 import { isHome } from './world'
 import { expandClubs } from './clubs'
 import { settleFests } from './fest'
+import { settleTable } from './cooking'
 import { noteExperienceTastes } from './notebook'
 import { festivalOf, FESTIVAL_FROM, FESTIVAL_TO, isMarketDay, isWet, weatherOf } from './calendar'
 import { gatheringWindow, INVITE_FROM, INVITE_TO, VISIT_FROM, VISIT_TO, BABY_PARTY_DAY, BABY_PARTY_SPOTS, HILL_SPOTS } from './bonds'
@@ -176,7 +177,7 @@ export function advancePlans(s:GameState,content:Pick<GameContent,'neighbors'>):
     a={...a,state:members.length?'running':'skipped',startedWith:members,reason:members.length?a.reason:'busy'}
     next={...next,plans:{...next.plans,appts:next.plans.appts.map(x=>x.id===a.id?a:x)}}
   }
-  return settleFests(next)
+  return settleTable(settleFests(next))
 }
 export function sanitizePlans(raw:unknown,day:number): Plans {
   if(!raw || typeof raw!=='object') return {appts:[],nextId:1}

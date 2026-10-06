@@ -1,5 +1,6 @@
 import { FIXTURES } from '../engine/home-layout'
 import { SPOUSE_FURNITURE } from '../engine/furniture-defs'
+import './dish-icons'
 // 캔버스 그리기. 엔진 상태를 읽기만 하고 바꾸지 않는다.
 import { barleyRipe, chimneySmoke, festivalOf, FESTIVAL_FROM, FESTIVAL_TO, grapesRipe, icyMorning, isWet, puddlesOut, weatherOf } from '../engine/calendar'
 import { darkness, phaseOf, seasonOf } from '../engine/clock'

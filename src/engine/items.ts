@@ -19,7 +19,16 @@ export const FOODS: readonly [ItemId, number][] = [
   ['honey', 40],
   ['fig', 20],
   ['bean', 15],
+  // 직접 만든 음식 (기획 13): 먼저 있는 재료·빵을 아끼지 않도록 뒤에 둔다. 허브 차는 마시는 것이라 포만과 분리(COOKED_ITEMS)
+  ['honeyBread', 55],
+  ['herbBeanDish', 45],
+  ['beanDish', 35],
+  ['figPlate', 25],
 ]
+/** 화덕에서 직접 만든 완성 음식 (cooking.ts) — 행사 간식·좌판 상품·식탁에 올릴 수 있다. 말씀과 무관한 생활 음식뿐 */
+export const COOKED_ITEMS: readonly ItemId[] = ['beanDish', 'herbBeanDish', 'honeyBread', 'figPlate', 'herbTea']
+/** 한 끼(한 접시)가 덜어 주는 배고픔. 허브 차는 0 — 약효를 붙이지 않는다 */
+export const DISH_HUNGER: Partial<Record<ItemId, number>> = { honeyBread: 55, herbBeanDish: 45, beanDish: 35, figPlate: 25, herbTea: 0 }
 
 export function count(inv: Inventory, id: ItemId): number {
   return inv[id] ?? 0

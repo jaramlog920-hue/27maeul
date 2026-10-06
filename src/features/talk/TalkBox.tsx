@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { WorkDayView, WorkEntry } from '../work/WorkDay'
 import { StallEntry } from '../stall/StallView'
 import { SkillLessonView, SkillEntry } from '../skills/SkillLesson'
+import { CookLearnEntry } from '../cooking/CookingView'
 import { callName, fill, itemList, NEIGHBOR_LINES, T } from '../../content/text'
 import { grapesRipe, isMarketDay } from '../../engine/calendar'
 import { activeRequest, isSuitor, romanceWith, stageWith, type GameState, canHelp, canOrderHome, canOrderWork, GIFTABLE, lessonTime, nextHomeStage } from '../../engine/game'
@@ -112,6 +113,7 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
         </button>
         <WorkEntry npc={def.id} onOpen={() => setFocus('work')} />
         <SkillEntry npc={def.id} onOpen={() => setFocus('skill')} />
+        <CookLearnEntry npc={def.id} />
         <button onClick={closeModal}>{T.ui.close}</button>
       </div>
     </div>

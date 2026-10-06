@@ -4,7 +4,7 @@
 // 말씀 조각·필사본·성경 본문·쓰기 재료·가게 소유 물건은 상품 목록에 없다 (STALL_GOODS만 올릴 수 있다).
 import { availability } from './plans'
 import { notYet, passTime, playerTile, recordExperienceIn, sellPrice, SELL_PRICES, type GameState } from './game'
-import { addGift, count, take } from './items'
+import { addGift, count, COOKED_ITEMS, take } from './items'
 import { isMarketDay, isWet, weatherOf } from './calendar'
 import { personOf } from './people'
 import lifeText from '../content/life-text.json'
@@ -49,9 +49,11 @@ export const STALL_CRAFTED: readonly ItemId[] = ['scentCandle', 'oil', 'blanket'
 export const STALL_PRODUCE: readonly ItemId[] = ['herb', 'grapes', 'honey']
 /** 배운 생활 기술(skill-defs)로 만든 물건 — 그 기술을 배운 뒤에만 올릴 수 있다 */
 export const STALL_SKILLED: Readonly<Record<string, string>> = { cushion: 'clothColor', fruitBowl: 'snackShape', dryFlowers: 'flowerKeep', basket: 'basketCare' }
-export const STALL_GOODS: readonly ItemId[] = [...STALL_CRAFTED, ...STALL_PRODUCE, ...(Object.keys(STALL_SKILLED) as ItemId[])]
+/** 화덕에서 직접 만든 완성 음식 (기획 13) — 값이 작아 하루 판매·닢 한도가 그대로 경제를 지킨다 */
+export const STALL_COOKED: readonly ItemId[] = COOKED_ITEMS
+export const STALL_GOODS: readonly ItemId[] = [...STALL_CRAFTED, ...STALL_PRODUCE, ...(Object.keys(STALL_SKILLED) as ItemId[]), ...STALL_COOKED]
 /** 상인 표에 없는 물건의 좌판 기본값 (들어간 재료를 상인 값으로 셈한 것보다 조금 위) */
-const STALL_EXTRA: Partial<Record<ItemId, number>> = { blanket: 14, cushion: 11, fruitBowl: 10, dryFlowers: 9, basket: 8 }
+const STALL_EXTRA: Partial<Record<ItemId, number>> = { blanket: 14, cushion: 11, fruitBowl: 10, dryFlowers: 9, basket: 8, beanDish: 6, herbBeanDish: 9, honeyBread: 10, figPlate: 6, herbTea: 5 }
 
 /** 좌판 외형: 고른 값은 다음 장날에도 남는다. 꾸밈은 모습일 뿐 매출 조건이 아니다 */
 export interface StallLook { sign: number; cloth: StallCloth; deco: StallDeco }
@@ -92,16 +94,16 @@ export interface Stall {
 interface Buyer { wants: readonly ItemId[]; way: StallWay; browseOnly?: boolean }
 export const BUYERS: Readonly<Record<string, Buyer>> = {
   tilly: { wants: ['dryFlowers', 'basket'], way: 'talk' },
-  wendell: { wants: ['fruitBowl', 'honey'], way: 'explain' },
+  wendell: { wants: ['fruitBowl', 'honey', 'honeyBread'], way: 'explain' },
   smith: { wants: ['scentCandle', 'oil'], way: 'explain' },
-  poppy: { wants: ['cushion', 'dryFlowers'], way: 'talk' },
+  poppy: { wants: ['cushion', 'dryFlowers', 'herbTea'], way: 'talk' },
   postman: { wants: ['blanket', 'basket'], way: 'wait' },
   baker: { wants: ['honey', 'herb', 'fruitBowl'], way: 'explain' },
   cosmo: { wants: ['oil', 'scentCandle'], way: 'wait' },
   rudy: { wants: ['scentCandle', 'dryFlowers'], way: 'wait' },
   dexter: { wants: ['dryFlowers', 'herb'], way: 'wait' },
-  basil: { wants: ['herb', 'honey', 'dryFlowers'], way: 'explain' },
-  marigold: { wants: ['grapes', 'basket', 'fruitBowl'], way: 'talk' },
+  basil: { wants: ['herb', 'honey', 'dryFlowers', 'herbTea'], way: 'explain' },
+  marigold: { wants: ['grapes', 'basket', 'fruitBowl', 'beanDish'], way: 'talk' },
   penelope: { wants: ['cushion', 'blanket'], way: 'talk' },
   juniper: { wants: ['dryFlowers', 'honey'], way: 'talk' },
   fisher: { wants: ['oil', 'blanket'], way: 'wait' },

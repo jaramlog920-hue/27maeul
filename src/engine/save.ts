@@ -1,6 +1,7 @@
 import { CLUB_PLACES, sanitizeClubs, sanitizeClubSessions } from './clubs'
 import { sanitizeVillage } from './projects'
 import { sanitizeFests } from './fest'
+import { sanitizeCooking } from './cooking'
 import { sanitizeSpaces } from './spaces'
 import { sanitizePlans } from './plans'
 import { sanitizeCompanion } from './companion'
@@ -168,6 +169,8 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     clubs: sanitizeClubs(s.clubs),
     clubSessions: sanitizeClubSessions(s.clubSessions),
     fests: sanitizeFests(s.fests),
+    // 직접 요리 (계획 16 작업 25): 옛 저장은 없음 — 처음부터 아는 요리로 시작
+    cooking: sanitizeCooking(s.cooking),
     // 집 안 공간별 쓰임 (계획 16 작업 23): 옛 저장은 빈 목록, 없는 가구는 빼고 방마다 셋까지
     spaces: (setHomeFurniture(room), sanitizeSpaces(s.spaces, room)),
     clubWorks: Object.fromEntries(Object.entries(s.clubWorks ?? {}).filter(([, w]) => w && w.item === 'cushion' && CLUB_PLACES.includes(w.place))),

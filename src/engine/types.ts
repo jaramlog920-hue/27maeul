@@ -204,6 +204,12 @@ export type ItemId =
   // 아이와 함께 보내는 시간 (계획 12): 같이 만든 작은 장난감 — 방에 놓는 꾸미기
   | 'woodToy'
   | 'clothDoll'
+  // 직접 요리 (계획 16 작업 25, 기획 13): 화덕에서 만든 완성 음식 — 먹기·식탁·행사·좌판에 쓴다
+  | 'beanDish'
+  | 'herbBeanDish'
+  | 'honeyBread'
+  | 'figPlate'
+  | 'herbTea'
 
 /** 손일 놀이: 찧기·맞추기·줍기·길게 누르기·번갈아 누르기·순서 기억하기 */
 export type Minigame = 'mash' | 'timing' | 'pick' | 'hold' | 'weave' | 'order'

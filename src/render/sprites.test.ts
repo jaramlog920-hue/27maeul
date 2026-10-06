@@ -1,3 +1,4 @@
+import './dish-icons'
 import { ANIMAL, ANIMAL_PALETTE, animalRows, BABY, ICON_PALETTE, ICONS, NEIGHBOR_SCARF, PALETTE, SHEEP, SMALL_PALETTE, SPRITE_H, SPRITE_W, mirror, spriteRows, writerPalette, type Who } from './sprites'
 import { ACCS, BOTTOMS, HAIR_BACKS, HAIR_FRONTS, SKINS, TOPS, withLookDefaults } from '../engine/avatar'
 import { breathOffset, isBlinking, walkFrame, dozeNod, lookSide } from './anim'

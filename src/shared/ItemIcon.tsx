@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { itemName } from '../content/text'
+import '../render/dish-icons'
 import { ICON_PALETTE, ICONS } from '../render/sprites'
 import type { ItemId } from '../engine/types'
 

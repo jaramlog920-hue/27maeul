@@ -7,7 +7,8 @@ import { clubCandidates, clubVenues, CLUB_SLOTS, type ClubSlot } from './clubs'
 import { passTime, recordExperienceIn, syncHome, type GameState } from './game'
 import { OUTDOOR_PLACES } from './village-sites'
 import { festivalOf, FESTIVAL_FROM, FESTIVAL_TO } from './calendar'
-import { addGift, has, take, type Inventory } from './items'
+import { addGift, COOKED_ITEMS, has, take, type Inventory } from './items'
+import { mealReaction } from './cooking'
 import { isBirthday } from './notebook'
 import { personOf } from './people'
 import { placement } from './room'
@@ -29,7 +30,8 @@ export const FEST_DAYS_AHEAD = 7
 /** 행사 시간: 시작부터 이 분이 지나면 이 단계 (늦게 오면 진행 중인 단계부터) */
 const STEP_AT: readonly [FestStep, number][] = [['tidy',0],['arrive',15],['activity',30],['talk',70],['finish',100]]
 /** 특별 간식: 가방에 있는 것만 (없으면 기본 차와 간식으로 연다) */
-export const FEST_SNACKS: readonly ItemId[] = ['bread','fig','grapes','honey']
+/** (직접 만든 음식도 간식·차로 낼 수 있다 — 기획 13)  */
+export const FEST_SNACKS: readonly ItemId[] = ['bread','fig','grapes','honey',...COOKED_ITEMS]
 /** 장식: 가진 생활 장식(없으면 기본 천) — 행사가 끝나면 그대로 돌아온다 */
 export const FEST_DECOR: readonly ItemId[] = ['vase','dryFlowers','candle','teapot','fruitBowl','cushion','pillows']
 /** 보태기를 부탁할 수 있는 이웃(기획 05 §6) — 부탁해도 손님으로 앉는다. 가방에 물건이 생기지 않는다 */
@@ -263,10 +265,13 @@ export function festFinish(s: GameState, id: string): GameState {
  let next = passTime(s, Math.max(0, a.to - s.clock.minute))
  next = settleAppt(next, a.id)
  const now = fests(next).find(x => x.id === id) ?? f
+ // 직접 만든 음식을 냈다면 함께 먹은 기억 (그 자리에 실제로 앉은 이웃만, 행사 하나에 한 번)
+ const met = apptOf(next, now)?.startedWith ?? []
+ if (now.consumed && now.snack && (COOKED_ITEMS as readonly string[]).includes(now.snack) && met.length) next = recordExperienceIn(next, { id: `meal:${now.id}`, kind: 'meal', with: met, place: 'home', item: now.snack })
  return closeOut(next, now, { step: 'done' })
 }
 
-export interface FestReaction { npc: string; kind: 'birthday'|'help'|'likeItem'|'memory'|'likes'|'quiet'|'new'; item?: string; memory?: string }
+export interface FestReaction { npc: string; kind: 'birthday'|'help'|'likeItem'|'dish'|'memory'|'likes'|'quiet'|'new'; item?: string; memory?: string; taste?: 'like'|'quiet'|'new' }
 /** 참석한 이웃의 반응: 생일 → 보태 준 것 → 좋아하는 물건 → 함께한 기억 → 생활 취향 (무작위 없음) */
 export function festReactions(s: GameState, f: Fest): (FestReaction & { text: string })[] {
  const a = apptOf(s, f)
@@ -279,6 +284,7 @@ export function festReactions(s: GameState, f: Fest): (FestReaction & { text: st
   const shared = Object.values(s.life?.experiences ?? {}).filter(e => e.id !== f.id && e.with.includes(npc) && e.kind !== 'gift').sort((x, y) => (y.last ?? 0) - (x.last ?? 0))[0]
   if (f.birthday === npc) r = { npc, kind: 'birthday' }
   else if (f.help?.includes(npc)) r = { npc, kind: 'help' }
+  else if (item && (COOKED_ITEMS as readonly string[]).includes(item) && mealReaction(npc, item as ItemId).kind !== 'new') r = { npc, kind: 'dish', item, taste: mealReaction(npc, item as ItemId).kind }
   else if (item && likesItem(npc, item)) r = { npc, kind: 'likeItem', item }
   else if (shared) r = { npc, kind: 'memory', memory: shared.kind }
   else if (p?.tastes?.activity?.[activity] === 1) r = { npc, kind: 'likes' }
@@ -293,6 +299,7 @@ const likesItem = (npc: string, item: string) => !!(neighborsRaw as { id: string
 function reactionText(r: FestReaction, f: Fest, npc: string): string {
  const R = lifeText.fest.react
  if (r.kind === 'help') return personOf(npc)?.festLines?.help ?? R.help
+ if (r.kind === 'dish') return (lifeText.cooking.react[r.taste === 'quiet' ? 'quiet' : 'like'] as string).replace('{item}', (lifeText.items as Record<string, { name: string }>)[r.item!]?.name ?? '')
  if (r.kind === 'likeItem') return R.likeItem.replace('{item}', (lifeText.items as Record<string, { name: string }>)[r.item!]?.name ?? '')
  if (r.kind === 'memory') return R.memory.replace('{kind}', (lifeText.taste.kinds as Record<string, string>)[r.memory!] ?? lifeText.taste.kinds.event)
  if (r.kind === 'likes') return R.likes[f.kind === 'showcase' ? 'showcase' : f.kind === 'housewarming' ? 'housewarming' : 'tea']
