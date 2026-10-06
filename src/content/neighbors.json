@@ -2,6 +2,16 @@
   {
     "id": "baker",
     "gender": "f",
+    "look": "f",
+    "avatar": {
+      "skin": 1,
+      "hairFront": 8,
+      "hairBack": 7,
+      "top": 7,
+      "bottom": 0,
+      "acc": 0,
+      "hairColor": [18, 68, 56]
+    },
     "role": "헤이즐",
     "job": "빵 굽는 이웃",
     "sprite": "baker",
