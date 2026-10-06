@@ -107,73 +107,73 @@
 
 ## 작업 2: 구약 본문 데이터 만들기·검증
 **파일:** 새 `scripts/build-ot.mjs`, 새 `scripts/verify-ot.mjs`, 새 `scripts/verify-ot.test.ts`, `package.json`(`build:ot`, `verify`에 `node scripts/verify-ot.mjs` 추가), 새 `src/content/ot/<id>.json` 39개, 새 `src/content/ot-catalog.ts`·`ot-catalog.test.ts`, `src/content/catalog.ts`, 새 `docs/old-testament-data.md`
-- [ ] `build-ot.mjs`: `OT_BOOK_TABLE`(작업 1)을 읽고 `KRV_DIR`(환경 변수, 기본 `../jaramlog-v2/public/bible/krv`)의 `<순번 1..39>/<장>.json`을 읽어 **책별 `string[][]`**(장 → 절 배열, 신약 `bible-subset.json`과 같은 모양)로 `src/content/ot/<id>.json`에 쓴다. 절 번호가 1부터 빠짐없이 이어지지 않거나 장 수가 표와 다르면 **쓰지 않고 실패**. 글자는 한 글자도 고치지 않는다.
-- [ ] `verify-ot.mjs`(`npm run verify` 체인에 추가): 39파일 존재, 장 수가 표와 같음, 한 절도 비어 있지 않음(신약의 `noText` 규칙 — `(없음)`·`(N절에 포함…)` 절은 허용하되 목록으로 보고), 가장 긴 절이 `DRAFT_MAX 600` 아래(`copying.ts`), 이상한 제어 문자·태그 없음, **`KRV_DIR`가 있으면 원본과 글자까지 같음**(없으면 이 비교만 건너뛰고 "원본 비교 생략"을 출력), 창 1:3이 원본 파일의 같은 절과 같음. 실제 절 수·바이트·gzip 크기를 `docs/old-testament-data.md`에 **측정값으로** 적는다(기억으로 쓰지 않는다).
-- [ ] 역방향 픽스처(`verify-ot.test.ts`): 장 하나를 지운 데이터·절 번호가 건너뛴 데이터·글자를 바꾼 데이터가 각각 실제로 걸리는지.
-- [ ] `ot-catalog.ts`: `import.meta.glob('./ot/*.json')`로 책별 **지연 불러오기** — `ensureOtBook(id): Promise<void>`, `otLoaded(id)`, `otChapterText`, `OT_ABBR`·`OT_NAME`. 안 불러온 책을 `versesOf`로 읽으면 **구별되는 오류**(`not loaded: gen`). 테스트에서는 `await ensureOtBook`.
-- [ ] `catalog.ts`: `versesOf`·`chapterText`·`copySourceFor`·`bookOfRef`가 구약 약칭(`창 1:3`)도 알아듣게 위임(`testamentOf`). **신약 경로의 결과는 그대로**(기존 `catalog` 관련 테스트 통과). `quizSourceFor`·`pieces`·`BOOKS_WITH_CONTENT`는 구약을 넣지 않는다.
-- [ ] 테스트: 창세기 31절(1장)·시편 150장·구약 약칭 `versesOf('창 1:3')`가 한 절·불러오기 전 읽기 오류·신약 `versesOf` 결과가 변경 전과 같음, **메인 번들에 구약 본문이 들어가지 않음**(`npm run build` 산출물에서 구약 청크가 별도, 메인 청크 증가 5KB 이하 — 측정값을 문서에 기록).
+- [x] `build-ot.mjs`: `OT_BOOK_TABLE`(작업 1)을 읽고 `KRV_DIR`(환경 변수, 기본 `../jaramlog-v2/public/bible/krv`)의 `<순번 1..39>/<장>.json`을 읽어 **책별 `string[][]`**(장 → 절 배열, 신약 `bible-subset.json`과 같은 모양)로 `src/content/ot/<id>.json`에 쓴다. 절 번호가 1부터 빠짐없이 이어지지 않거나 장 수가 표와 다르면 **쓰지 않고 실패**. 글자는 한 글자도 고치지 않는다.
+- [x] `verify-ot.mjs`(`npm run verify` 체인에 추가): 39파일 존재, 장 수가 표와 같음, 한 절도 비어 있지 않음(신약의 `noText` 규칙 — `(없음)`·`(N절에 포함…)` 절은 허용하되 목록으로 보고), 가장 긴 절이 `DRAFT_MAX 600` 아래(`copying.ts`), 이상한 제어 문자·태그 없음, **`KRV_DIR`가 있으면 원본과 글자까지 같음**(없으면 이 비교만 건너뛰고 "원본 비교 생략"을 출력), 창 1:3이 원본 파일의 같은 절과 같음. 실제 절 수·바이트·gzip 크기를 `docs/old-testament-data.md`에 **측정값으로** 적는다(기억으로 쓰지 않는다).
+- [x] 역방향 픽스처(`verify-ot.test.ts`): 장 하나를 지운 데이터·절 번호가 건너뛴 데이터·글자를 바꾼 데이터가 각각 실제로 걸리는지.
+- [x] `ot-catalog.ts`: `import.meta.glob('./ot/*.json')`로 책별 **지연 불러오기** — `ensureOtBook(id): Promise<void>`, `otLoaded(id)`, `otChapterText`, `OT_ABBR`·`OT_NAME`. 안 불러온 책을 `versesOf`로 읽으면 **구별되는 오류**(`not loaded: gen`). 테스트에서는 `await ensureOtBook`.
+- [x] `catalog.ts`: `versesOf`·`chapterText`·`copySourceFor`·`bookOfRef`가 구약 약칭(`창 1:3`)도 알아듣게 위임(`testamentOf`). **신약 경로의 결과는 그대로**(기존 `catalog` 관련 테스트 통과). `quizSourceFor`·`pieces`·`BOOKS_WITH_CONTENT`는 구약을 넣지 않는다.
+- [x] 테스트: 창세기 31절(1장)·시편 150장·구약 약칭 `versesOf('창 1:3')`가 한 절·불러오기 전 읽기 오류·신약 `versesOf` 결과가 변경 전과 같음, **메인 번들에 구약 본문이 들어가지 않음**(`npm run build` 산출물에서 구약 청크가 별도, 메인 청크 증가 5KB 이하 — 측정값을 문서에 기록).
 - 커밋: `feat: 구약 본문 — 개역한글 39권 929장 책별 파일, 만들기·검증 스크립트, 지연 불러오기`
 
 ## 작업 3: 두 맵 왕래와 저장
 **파일:** 새 `src/engine/maps.ts`, 새 `src/engine/newland.ts`, 새 `src/engine/newland-config.ts`, `src/engine/world.ts`, `src/engine/game.ts`, `src/engine/save.ts`, `src/engine/movement.ts`, `src/render/renderer.ts`, `src/render/decor.ts`, `src/features/play/ModalLayer.tsx`(또는 지도 입구 모달), `src/content/life-text.json`(`travel` 절), 새 `src/engine/maps.test.ts`·`src/engine/newland-travel.test.ts`·`src/engine/save.test.ts`(추가), 마을 타일 스냅샷 테스트
-- [ ] **먼저(리팩터 전):** 지금 코드로 마을의 모든 칸 `tileAt(x, y)`(0 ≤ x < 48, 0 ≤ y < 120)와 `isWalkable`·`isIndoor`·`zoneAt`·`treeKind`의 결과를 스냅샷 테스트로 고정하고 통과시킨다. 이 테스트는 이후 한 줄도 바뀌지 않아야 한다. 집 단계 0–3·열린 서고 문 조합도 포함.
-- [ ] 조사: `WIDTH`·`HEIGHT`·`VILLAGE_H`·`MAP`·`tileAt`·`isWalkable`·`isHome`·`ROOMS`를 쓰는 곳을 목록으로(10파일 57곳 + 렌더러) — 지도 크기를 상수로 읽는 곳은 `mapWidth()`/`mapHeight()`/`mapVisibleHeight()`로 바꾼다. 마을에서의 값은 같다.
-- [ ] `maps.ts`: `type MapId = 'village' | 'newland'`, 전역 `setActiveMap/currentMapId`(집 단계·열린 문과 같은 방식 — `game.ts` `syncHome`에서 상태와 맞춘다), 지도 크기 함수. `world.ts`의 `tileAt`/`isWalkable`/`isIndoor`는 새 터일 때 `newland.ts`의 칸 함수로 위임, 마을일 때는 기존 그대로.
-- [ ] `newland.ts`/`newland-config.ts`(D2): 40×40 지도 문자열(코드로 짓는다 — 폭이 어긋나는 실수를 막는 첫 마을 방식), 가장자리 숲(기존 `T`), 서고 바깥(돌벽 `S`·문 `D`, 북쪽 가운데, **칸 구성은 `manifest.json`의 서고 `archive` footprint·entry를 읽어 엔진 좌표를 따로 정함**), 서고 안 방(아래 10줄, 책상 칸·책장 칸·문깔개 `E`), 건축 가능 구역 `BUILD_RECT`, 새 터 쪽 입구 칸과 첫 마을 쪽 입구 칸(둘 다 걸을 수 있고 서로 겹치지 않음), 개방 전에는 입구가 첫 마을에서 **보이지도 걸을 수도 없음**(`homeLevel`의 `HOME_OVERLAY`처럼 덮어쓰기 + `setNewlandOpen`).
-- [ ] 입구 위치(첫 마을): `MAP`을 읽어 동쪽 테두리(x=47) 근처 y 14–18에서 걸을 수 있는 칸을 후보 세 곳 이상 표로 적고 하나를 고른 이유 한 줄. 조건: `ZONES`·`lockedTiles`·`SITES`·집 문·`PLACES`와 겹치지 않고, 침대에서 길찾기로 닿는다(테스트). 그림은 `OLD_TERRAIN`의 왕래 표식·`OLD_PROPS.archiveSign`(자산 먼저).
-- [ ] `GameState.map?: MapId`·`mapAt?: Partial<Record<MapId, Tile>>`(선택 필드). `canTravel(s, to)`: 개방됨(`flags.newlandGift`), 필사창·장면·약속 진행 중 아님, 마을→새 터는 06:00–21:30(D6) — 막히면 이유 한 가지만. `travel(s, to)`: `advance`로 **30분**(같은 날 안에서, 데이트 산책이 분을 쓰는 방식 재사용), 맵 전환, 플레이어를 그 맵의 입구 칸 앞으로, `path`·`target`·`act`·`idle` 초기화, 마을을 떠날 때 `mapAt.village` 기억. 가까운 약속 진행에 영향 없음(약속은 마을 장소·참석 여부는 기존 규칙).
-- [ ] NPC·동물·아이: 새 터에 있는 동안 NPC 이동 갱신·말 걸기·이벤트 시작·수첩 목격(`noteSeen`)을 모두 건너뛴다(`game.ts`의 `tick`·`placeAllNpcs` 호출 지점을 조사해 `map === 'village'` 가드). 동물·아이·배우자는 마을에 남는다(D6). 돌아오면 한 번 `placeAllNpcs`.
-- [ ] 잠: 새 터에서 `goToSleep`이 불리면(23:00 넘김 등) 침대 위치·`map: 'village'`로 맞춘다(`setActiveMap('village')` 포함).
-- [ ] 저장: `sanitize`에서 `map`이 열리지 않은 새 터거나 모르는 값이면 마을로, `mapAt`의 칸이 그 맵에서 걸을 수 없거나 범위 밖이면 그 맵의 입구 칸으로(**삭제된 건물·잘못된 좌표에서 시작하지 않는다**). `serialize`/`deserialize` 왕복에서 위치·맵 유지.
-- [ ] 화면: 입구 표지를 누르면 모달 "새 터로 가기 · 30분" / 새 터의 입구에서 "첫 마을로 돌아가기 · 30분"(`life-text.json` `travel` 절, 시간 설명 한 줄 외 안내 없음). 렌더러가 새 터 칸을 기존 타일 팔레트·계절·밝기로 그린다. 휴대폰 375×812에서 모달 확인(스크린샷).
-- [ ] 테스트: ① 마을 스냅샷 불변 ② 개방 전 입구 없음·후엔 길찾기로 닿음 ③ 왕복 때 날짜·시간(+30분씩)·소지품·돈·관계·필사 진행·가구가 그대로, 같은 날 두 번 왔다 갔다 해도 날짜가 중복되지 않음 ④ 새 터에서 저장→불러오기→새 터 입구/서고 앞 유효 칸 ⑤ 옛 저장(`map` 없음)은 마을 ⑥ 새 터에서 NPC가 움직이지 않고 보이지 않음, 돌아오면 같은 시각의 자리에 한 번 놓임(같은 NPC 중복 없음) ⑦ 21:31 출발 거절·돌아가기는 허용·23:50 돌아가기가 자정을 안전하게 넘김 ⑧ 새 터에서 잠들면 첫 마을 침대 ⑨ 필사창이 열려 있을 때 입구 상호작용 없음.
+- [x] **먼저(리팩터 전):** 지금 코드로 마을의 모든 칸 `tileAt(x, y)`(0 ≤ x < 48, 0 ≤ y < 120)와 `isWalkable`·`isIndoor`·`zoneAt`·`treeKind`의 결과를 스냅샷 테스트로 고정하고 통과시킨다. 이 테스트는 이후 한 줄도 바뀌지 않아야 한다. 집 단계 0–3·열린 서고 문 조합도 포함.
+- [x] 조사: `WIDTH`·`HEIGHT`·`VILLAGE_H`·`MAP`·`tileAt`·`isWalkable`·`isHome`·`ROOMS`를 쓰는 곳을 목록으로(10파일 57곳 + 렌더러) — 지도 크기를 상수로 읽는 곳은 `mapWidth()`/`mapHeight()`/`mapVisibleHeight()`로 바꾼다. 마을에서의 값은 같다.
+- [x] `maps.ts`: `type MapId = 'village' | 'newland'`, 전역 `setActiveMap/currentMapId`(집 단계·열린 문과 같은 방식 — `game.ts` `syncHome`에서 상태와 맞춘다), 지도 크기 함수. `world.ts`의 `tileAt`/`isWalkable`/`isIndoor`는 새 터일 때 `newland.ts`의 칸 함수로 위임, 마을일 때는 기존 그대로.
+- [x] `newland.ts`/`newland-config.ts`(D2): 40×40 지도 문자열(코드로 짓는다 — 폭이 어긋나는 실수를 막는 첫 마을 방식), 가장자리 숲(기존 `T`), 서고 바깥(돌벽 `S`·문 `D`, 북쪽 가운데, **칸 구성은 `manifest.json`의 서고 `archive` footprint·entry를 읽어 엔진 좌표를 따로 정함**), 서고 안 방(아래 10줄, 책상 칸·책장 칸·문깔개 `E`), 건축 가능 구역 `BUILD_RECT`, 새 터 쪽 입구 칸과 첫 마을 쪽 입구 칸(둘 다 걸을 수 있고 서로 겹치지 않음), 개방 전에는 입구가 첫 마을에서 **보이지도 걸을 수도 없음**(`homeLevel`의 `HOME_OVERLAY`처럼 덮어쓰기 + `setNewlandOpen`).
+- [x] 입구 위치(첫 마을): `MAP`을 읽어 동쪽 테두리(x=47) 근처 y 14–18에서 걸을 수 있는 칸을 후보 세 곳 이상 표로 적고 하나를 고른 이유 한 줄. 조건: `ZONES`·`lockedTiles`·`SITES`·집 문·`PLACES`와 겹치지 않고, 침대에서 길찾기로 닿는다(테스트). 그림은 `OLD_TERRAIN`의 왕래 표식·`OLD_PROPS.archiveSign`(자산 먼저).
+- [x] `GameState.map?: MapId`·`mapAt?: Partial<Record<MapId, Tile>>`(선택 필드). `canTravel(s, to)`: 개방됨(`flags.newlandGift`), 필사창·장면·약속 진행 중 아님, 마을→새 터는 06:00–21:30(D6) — 막히면 이유 한 가지만. `travel(s, to)`: `advance`로 **30분**(같은 날 안에서, 데이트 산책이 분을 쓰는 방식 재사용), 맵 전환, 플레이어를 그 맵의 입구 칸 앞으로, `path`·`target`·`act`·`idle` 초기화, 마을을 떠날 때 `mapAt.village` 기억. 가까운 약속 진행에 영향 없음(약속은 마을 장소·참석 여부는 기존 규칙).
+- [x] NPC·동물·아이: 새 터에 있는 동안 NPC 이동 갱신·말 걸기·이벤트 시작·수첩 목격(`noteSeen`)을 모두 건너뛴다(`game.ts`의 `tick`·`placeAllNpcs` 호출 지점을 조사해 `map === 'village'` 가드). 동물·아이·배우자는 마을에 남는다(D6). 돌아오면 한 번 `placeAllNpcs`.
+- [x] 잠: 새 터에서 `goToSleep`이 불리면(23:00 넘김 등) 침대 위치·`map: 'village'`로 맞춘다(`setActiveMap('village')` 포함).
+- [x] 저장: `sanitize`에서 `map`이 열리지 않은 새 터거나 모르는 값이면 마을로, `mapAt`의 칸이 그 맵에서 걸을 수 없거나 범위 밖이면 그 맵의 입구 칸으로(**삭제된 건물·잘못된 좌표에서 시작하지 않는다**). `serialize`/`deserialize` 왕복에서 위치·맵 유지.
+- [x] 화면: 입구 표지를 누르면 모달 "새 터로 가기 · 30분" / 새 터의 입구에서 "첫 마을로 돌아가기 · 30분"(`life-text.json` `travel` 절, 시간 설명 한 줄 외 안내 없음). 렌더러가 새 터 칸을 기존 타일 팔레트·계절·밝기로 그린다. 휴대폰 375×812에서 모달 확인(스크린샷). (휴대폰 스크린샷은 작업 8 컨트롤러 확인 몫)
+- [x] 테스트: ① 마을 스냅샷 불변 ② 개방 전 입구 없음·후엔 길찾기로 닿음 ③ 왕복 때 날짜·시간(+30분씩)·소지품·돈·관계·필사 진행·가구가 그대로, 같은 날 두 번 왔다 갔다 해도 날짜가 중복되지 않음 ④ 새 터에서 저장→불러오기→새 터 입구/서고 앞 유효 칸 ⑤ 옛 저장(`map` 없음)은 마을 ⑥ 새 터에서 NPC가 움직이지 않고 보이지 않음, 돌아오면 같은 시각의 자리에 한 번 놓임(같은 NPC 중복 없음) ⑦ 21:31 출발 거절·돌아가기는 허용·23:50 돌아가기가 자정을 안전하게 넘김 ⑧ 새 터에서 잠들면 첫 마을 침대 ⑨ 필사창이 열려 있을 때 입구 상호작용 없음.
 - 커밋: `feat: 두 번째 마을 새 터 — 입구 왕래(30분), 맵별 위치 저장, 첫 마을 진행 보존`
 
 ## 작업 4: 완필 보상과 첫 방문
 **파일:** `src/engine/newland.ts`, `src/engine/game.ts`(`goToSleep` 아침 단계 + 불러온 뒤 첫 기회), `src/engine/save.ts`, `src/content/life-text.json`(`newland` 절), `src/engine/text.ts`(장면 `newlandGift`), 새 `src/features/newland/FirstLight.tsx`, `src/render/renderer.ts`(밝기 덮어쓰기), 새 `src/engine/newland-gift.test.ts`
-- [ ] `newlandStatus(s)`: `'locked' | 'gift' | 'open'`. `gift` = 개방 조건(D7: 27권 모두 꽂힘 + `flags.allFeast === 2`)이 맞고 아직 `flags.newlandGift`가 없음. `grantNewland(s)`는 `flags.newlandGift = 1` 한 번 + 장면 `newlandGift` 한 번. `goToSleep`의 `allFeast` 블록 바로 뒤와 불러온 뒤 첫 기회(`settle` 경로를 읽고 한 곳)에서 같은 함수를 부른다(**중복 방지는 플래그 하나**).
-- [ ] 보상 장면(기록자·주민의 해석 대사 없음, 성경 문장 없음, 3줄 이내, 🔎): "받은 것은 땅과 작은 서고 하나. 가고 싶을 때 가면 된다" 뜻의 담담한 문구. 필수 비용·기한 없음. 방문을 미뤄도 입구는 계속 열려 있다.
-- [ ] 첫 방문 흐름(D8): 새 터에 처음 들어가면(`flags.newlandVisited`) 서고와 빈 땅 주변만 보이게 한다 — 드러나기 전에는 바깥 칸을 `T`로 돌려주는 `newlandBounds(revealed)`. 서고 문 `D`를 밟는 첫 순간 `FirstLight`: 어두운 안이 아침빛으로 밝아지는 연출(렌더러 밝기 덮어쓰기, 약 2.5초, **탭·Esc로 건너뛰기**), 이어 `ensureOtBook('gen')` 뒤 `Passage`로 **창 1:3**과 "개역한글 · 창세기 1:3" 출처, 단추 둘 "첫 장을 써 본다"(책상 열기)·"나중에". 이 본문을 `life-text.json`에 옮겨 적지 않는다.
-- [ ] 땅 드러내기: 첫 구약 절 기록(작업 5의 `writeVerse` 구약 가지가 `flags.newlandRevealed = 1`) **또는** 입구 표지·서고 문 앞의 "땅 둘러보기" 선택 중 먼저. 건너뛰기는 연출만 건너뛰고 드러나는 조건은 같다.
-- [ ] 테스트: 27권 + `allFeast 1` → 보상 없음, `allFeast 2` → 한 번, 저장·재접속·두 번째 잠에도 한 번, 옛 완필 저장(`allFeast 2`) 불러오면 받음, 미완필 저장은 받지 않음, 입구가 보상 전에 없음·후에 있음, 건너뛰기 뒤에도 서고 사용 가능, 땅 드러남 두 경로, **`newland` 절의 모든 문장이 `ot/gen.json`의 어느 절과도 8글자 이상 겹치지 않음**, 금지어 통과.
+- [x] `newlandStatus(s)`: `'locked' | 'gift' | 'open'`. `gift` = 개방 조건(D7: 27권 모두 꽂힘 + `flags.allFeast === 2`)이 맞고 아직 `flags.newlandGift`가 없음. `grantNewland(s)`는 `flags.newlandGift = 1` 한 번 + 장면 `newlandGift` 한 번. `goToSleep`의 `allFeast` 블록 바로 뒤와 불러온 뒤 첫 기회(`settle` 경로를 읽고 한 곳)에서 같은 함수를 부른다(**중복 방지는 플래그 하나**).
+- [x] 보상 장면(기록자·주민의 해석 대사 없음, 성경 문장 없음, 3줄 이내, 🔎): "받은 것은 땅과 작은 서고 하나. 가고 싶을 때 가면 된다" 뜻의 담담한 문구. 필수 비용·기한 없음. 방문을 미뤄도 입구는 계속 열려 있다.
+- [x] 첫 방문 흐름(D8): 새 터에 처음 들어가면(`flags.newlandVisited`) 서고와 빈 땅 주변만 보이게 한다 — 드러나기 전에는 바깥 칸을 `T`로 돌려주는 `newlandBounds(revealed)`. 서고 문 `D`를 밟는 첫 순간 `FirstLight`: 어두운 안이 아침빛으로 밝아지는 연출(렌더러 밝기 덮어쓰기, 약 2.5초, **탭·Esc로 건너뛰기**), 이어 `ensureOtBook('gen')` 뒤 `Passage`로 **창 1:3**과 "개역한글 · 창세기 1:3" 출처, 단추 둘 "첫 장을 써 본다"(책상 열기)·"나중에". 이 본문을 `life-text.json`에 옮겨 적지 않는다.
+- [x] 땅 드러내기: 첫 구약 절 기록(작업 5의 `writeVerse` 구약 가지가 `flags.newlandRevealed = 1`) **또는** 입구 표지·서고 문 앞의 "땅 둘러보기" 선택 중 먼저. 건너뛰기는 연출만 건너뛰고 드러나는 조건은 같다.
+- [x] 테스트: 27권 + `allFeast 1` → 보상 없음, `allFeast 2` → 한 번, 저장·재접속·두 번째 잠에도 한 번, 옛 완필 저장(`allFeast 2`) 불러오면 받음, 미완필 저장은 받지 않음, 입구가 보상 전에 없음·후에 있음, 건너뛰기 뒤에도 서고 사용 가능, 땅 드러남 두 경로, **`newland` 절의 모든 문장이 `ot/gen.json`의 어느 절과도 8글자 이상 겹치지 않음**, 금지어 통과.
 - 커밋: `feat: 신약 완필 보상 — 새 터와 작은 서고, 첫 방문 아침빛과 창 1:3`
 
 ## 작업 5: 작은 구약 서고와 필사 (기존 필사 엔진 재사용)
 **파일:** `src/engine/copying.ts`, `src/engine/books.ts`, `src/engine/game.ts`(`startCopy`·`saveCopyDraft`·`writeVerse`), `src/engine/save.ts`, `src/content/catalog.ts`, `src/features/desk/CopyDesk.tsx`, 새 `src/features/newland/OtShelf.tsx`, `src/engine/newland.ts`(서고 실내 책상·책장 칸), `src/render/renderer.ts`(서고 안 그림), 새 `src/engine/ot-copying.test.ts`, `src/features/desk/CopyDesk.test.tsx`(추가)
-- [ ] 키 타입 넓히기: `CopyState`의 `book`·`at`·`legacy`·`days`·`copied`와 `copySpot`·`isCopiedChapter`·`sanitizeCopy`의 `isBook`을 `CopyBook`으로. 진행은 한 입구 `progressOf(s, book)`: 신약은 `s.progress[book]`, 구약은 새 선택 필드 `s.otProgress?.[book]`(없으면 빈 진행). `emptyProgress()`·신약 `Progress`는 그대로(신약 27키 불변). `legacy`는 구약에 없다(옛 저장 호환 없음, 빈 값).
-- [ ] `writeVerse(s, book: CopyBook, …)`: 구약 가지 — **본문 비교·붙여넣기 거절·초안 저장·장 완료 처리는 신약과 같은 코드**, 장 완료 때 `otProgress` 갱신, `needs.work`·시간은 신약과 같음, **경험치·하나님 기록(`chapterFinds`)·판 동기화·`bookBound`·`firstChapter` 장면은 건너뜀**(D9), 기록은 `otCopyStats`(신약 `copyStats`는 건드리지 않음), 첫 구약 절이면 `flags.newlandRevealed = 1`. 책을 다 마치면 `otProgress`로 판정(책장 전시용)만. `chaptersOf`·`copyVerses`는 불러온 구약 본문을 읽고 안 불러왔으면 빈 목록(→ `CopyDesk`가 먼저 `ensureOtBook`).
-- [ ] `CopyDesk`: 신약/구약 두 칸(구약은 `flags.newlandGift` 뒤에만, 집 책상과 새 터 책상 모두), 구약 책 고르기는 D11의 네 범위 방 → 책(진행한 장 수 표시), 불러오는 동안 "책을 펼치는 중" 한 줄, **안내 상자는 `chapterGuide`가 `null`이라 나오지 않는다**(테스트로 고정). 신약 화면·동작은 변경 없음.
-- [ ] 새 터 서고 안: 책상 1(`CopyDesk` 열기, `PLACES`처럼 서는 칸·열림 칸을 기존 방식으로), 작은 책장 1(`OtShelf`: 필사를 끝낸 구약 책의 책등만, 등급·제본·퀴즈 없음, 아무 효과 없음). 그림은 `OLD_PROPS`(`scrollCabinet`·`recordStand`·`archiveSign` 등 자산 먼저). 서고 입구에서 책상까지 길 검사.
-- [ ] 테스트: ① **신약 필사 회귀**: 기존 `copying.test`·`game` 필사 테스트가 수정 없이 통과 ② 구약 한 절 쓰기→다음 절, 틀린 입력·붙여넣기 거절, 초안 저장·복구, 장 완료→`otProgress` 반영·책 완료 표시 ③ **보상 없음**: 구약 장 완료 전후로 `coins`·`inv`·`chest`·`stats`·`godRecords`·`scenes`·`copyStats`(신약)가 변하지 않음, 피로·시간만 신약과 같은 크기 ④ **막힘 없음**: 닢 0·기름 0·재료 0·피로 최대·건물 0채에서도 쓸 수 있음, 새 터에 한 번도 가지 않아도 집 책상에서 쓸 수 있음 ⑤ 구약 개방 전(`newlandGift` 없음)은 구약 탭 없음 ⑥ 저장·불러오기·옛 저장(`otProgress` 없음) ⑦ 모든 구약 책의 장 수가 불러온 데이터와 같음(`ensureOtBook` 전수, 시편 119편 같은 긴 장 포함) ⑧ `chapterGuide(구약, n)`이 전부 `null` ⑨ 책상 앞 한글 입력·휴대폰 입력칸 기존 `CopyDesk.test`·모바일 동작과 같음.
+- [x] 키 타입 넓히기: `CopyState`의 `book`·`at`·`legacy`·`days`·`copied`와 `copySpot`·`isCopiedChapter`·`sanitizeCopy`의 `isBook`을 `CopyBook`으로. 진행은 한 입구 `progressOf(s, book)`: 신약은 `s.progress[book]`, 구약은 새 선택 필드 `s.otProgress?.[book]`(없으면 빈 진행). `emptyProgress()`·신약 `Progress`는 그대로(신약 27키 불변). `legacy`는 구약에 없다(옛 저장 호환 없음, 빈 값).
+- [x] `writeVerse(s, book: CopyBook, …)`: 구약 가지 — **본문 비교·붙여넣기 거절·초안 저장·장 완료 처리는 신약과 같은 코드**, 장 완료 때 `otProgress` 갱신, `needs.work`·시간은 신약과 같음, **경험치·하나님 기록(`chapterFinds`)·판 동기화·`bookBound`·`firstChapter` 장면은 건너뜀**(D9), 기록은 `otCopyStats`(신약 `copyStats`는 건드리지 않음), 첫 구약 절이면 `flags.newlandRevealed = 1`. 책을 다 마치면 `otProgress`로 판정(책장 전시용)만. `chaptersOf`·`copyVerses`는 불러온 구약 본문을 읽고 안 불러왔으면 빈 목록(→ `CopyDesk`가 먼저 `ensureOtBook`).
+- [x] `CopyDesk`: 신약/구약 두 칸(구약은 `flags.newlandGift` 뒤에만, 집 책상과 새 터 책상 모두), 구약 책 고르기는 D11의 네 범위 방 → 책(진행한 장 수 표시), 불러오는 동안 "책을 펼치는 중" 한 줄, **안내 상자는 `chapterGuide`가 `null`이라 나오지 않는다**(테스트로 고정). 신약 화면·동작은 변경 없음.
+- [x] 새 터 서고 안: 책상 1(`CopyDesk` 열기, `PLACES`처럼 서는 칸·열림 칸을 기존 방식으로), 작은 책장 1(`OtShelf`: 필사를 끝낸 구약 책의 책등만, 등급·제본·퀴즈 없음, 아무 효과 없음). 그림은 `OLD_PROPS`(`scrollCabinet`·`recordStand`·`archiveSign` 등 자산 먼저). 서고 입구에서 책상까지 길 검사.
+- [x] 테스트: ① **신약 필사 회귀**: 기존 `copying.test`·`game` 필사 테스트가 수정 없이 통과 ② 구약 한 절 쓰기→다음 절, 틀린 입력·붙여넣기 거절, 초안 저장·복구, 장 완료→`otProgress` 반영·책 완료 표시 ③ **보상 없음**: 구약 장 완료 전후로 `coins`·`inv`·`chest`·`stats`·`godRecords`·`scenes`·`copyStats`(신약)가 변하지 않음, 피로·시간만 신약과 같은 크기 ④ **막힘 없음**: 닢 0·기름 0·재료 0·피로 최대·건물 0채에서도 쓸 수 있음, 새 터에 한 번도 가지 않아도 집 책상에서 쓸 수 있음 ⑤ 구약 개방 전(`newlandGift` 없음)은 구약 탭 없음 ⑥ 저장·불러오기·옛 저장(`otProgress` 없음) ⑦ 모든 구약 책의 장 수가 불러온 데이터와 같음(`ensureOtBook` 전수, 시편 119편 같은 긴 장 포함) ⑧ `chapterGuide(구약, n)`이 전부 `null` ⑨ 책상 앞 한글 입력·휴대폰 입력칸 기존 `CopyDesk.test`·모바일 동작과 같음.
 - 커밋: `feat: 작은 구약 서고와 구약 필사 — 신약과 같은 엔진, 보상·막힘 없음, 책등 전시`
 
 ## 작업 6: 부지 배치와 건축 (바깥)
 **파일:** 새 `src/engine/newland-build.ts`, 새 `src/engine/newland-sites.ts`(건물 종류 표), `src/engine/newland.ts`, `src/engine/game.ts`(`goToSleep` 아침 단계에 `advanceBuilds` 한 줄), `src/engine/save.ts`, `src/render/renderer.ts`(건물·공사·길·정원 그리기), 새 `src/features/newland/BuildMenu.tsx`·`SitePreview.tsx`, `src/content/life-text.json`(`build` 절), 새 `src/engine/newland-build.test.ts`
-- [ ] 건물 종류 표(`newland-sites.ts`) — 첫 제작은 **길·정원 칸·공동 마당·입주 주택** 네 가지: 이름(`BUILDING_LABELS`), 크기(주택 footprint 4×3·그림 4×4, 마당 열린 4×4, 정원·길 1×1/3×3), 방향별 `entry`·문 위치(**`manifest.json`에서 옮긴 값이며 `newland-sites.test`가 manifest와 같은지 비교**해 어긋남을 막는다), 비용(D3), 쓰임 한 줄. 그림: `OLD_BUILDINGS[id][방향]`·`OLD_CONSTRUCTION`(공사 중)·`OLD_TERRAIN`(길·정원 칸) — 공사 그림의 입구는 상호작용 입구로 쓰지 않는다.
-- [ ] 상태: `GameState.newland?: { revealed: boolean; builds: Build[]; tiles: Record<string, 'path'|'garden'>; nextId: number }`, `Build { id: 'b1'…, kind, x, y, facing, state: 'ordered'|'building'|'done', orderedDay, paid: {coins, items}, refunded: boolean }`.
-- [ ] 놓기 검사 `canPlace(s, kind, x, y, facing)`: 드러난 땅 안(`BUILD_RECT`), 다른 건물·서고·길 칸과 겹치지 않음(마당·길·정원은 열린 칸이라 걸을 수 있음), **놓은 뒤에도** 새 터 입구 칸에서 서고 문·모든 건물 `entry`·길 칸에 길찾기로 닿음(집 안에 갇히는 배치·서고를 막는 배치 거절). 막히면 이유 한 가지만(예: "문 앞이 막힌다").
-- [ ] 주문·진행(D3): `orderBuild`는 닢·재료를 내고 `ordered`; 다음 날 아침 `building`; 그다음 날 아침 `done`(`advanceBuilds`, 정산은 날짜 가드로 한 번 — 잠자기·불러오기·맵 이동에 중복 진행 없음). 취소 `cancelBuild`(공사 시작 전 100%, 중 50%), 철거 `demolishBuild`(완공 뒤 닢 50%, 서고 거부), **환불은 기록 삭제와 한 번에 `refunded` 표식**.
-- [ ] 화면: 입구 가까운 "터 표지"에서 건물 목록 → 쓰임·드는 것 확인 → 부지 미리보기(놓을 수 있는 칸 초록/막히는 칸 빨강 없이 **놓을 수 없으면 그 자리에서 이유 한 줄**) → 놓기 확정 → 주문. 이동·철거 전에 확인 한 번. 한 번에 한 건물만 미리보기. 휴대폰 확인.
-- [ ] 완공된 주택은 **빈 집**이다(주민·꿈·방문자 연결은 후속). 이 작업은 바깥 모습과 놓기·취소·철거·저장까지.
-- [ ] 테스트: 겹침·구역 밖·길 막힘·갇힘 거절, 비용 부족 거절, 진행 날짜(주문 → 다음 날 공사 → 그다음 날 완공)와 날짜 중복 정산 없음, 환불 세 경우(100/50/철거 50%)·이중 눌림 환불 한 번·재접속 후 환불 한 번, 서고 철거 거부, 저장·불러오기·옛 저장(`newland` 없음), 필사가 건축 상태와 무관, 건물 0채로도 서고 사용 가능, `newland-sites` ↔ `manifest.json` 일치.
+- [x] 건물 종류 표(`newland-sites.ts`) — 첫 제작은 **길·정원 칸·공동 마당·입주 주택** 네 가지: 이름(`BUILDING_LABELS`), 크기(주택 footprint 4×3·그림 4×4, 마당 열린 4×4, 정원·길 1×1/3×3), 방향별 `entry`·문 위치(**`manifest.json`에서 옮긴 값이며 `newland-sites.test`가 manifest와 같은지 비교**해 어긋남을 막는다), 비용(D3), 쓰임 한 줄. 그림: `OLD_BUILDINGS[id][방향]`·`OLD_CONSTRUCTION`(공사 중)·`OLD_TERRAIN`(길·정원 칸) — 공사 그림의 입구는 상호작용 입구로 쓰지 않는다.
+- [x] 상태: `GameState.newland?: { revealed: boolean; builds: Build[]; tiles: Record<string, 'path'|'garden'>; nextId: number }`, `Build { id: 'b1'…, kind, x, y, facing, state: 'ordered'|'building'|'done', orderedDay, paid: {coins, items}, refunded: boolean }`.
+- [x] 놓기 검사 `canPlace(s, kind, x, y, facing)`: 드러난 땅 안(`BUILD_RECT`), 다른 건물·서고·길 칸과 겹치지 않음(마당·길·정원은 열린 칸이라 걸을 수 있음), **놓은 뒤에도** 새 터 입구 칸에서 서고 문·모든 건물 `entry`·길 칸에 길찾기로 닿음(집 안에 갇히는 배치·서고를 막는 배치 거절). 막히면 이유 한 가지만(예: "문 앞이 막힌다").
+- [x] 주문·진행(D3): `orderBuild`는 닢·재료를 내고 `ordered`; 다음 날 아침 `building`; 그다음 날 아침 `done`(`advanceBuilds`, 정산은 날짜 가드로 한 번 — 잠자기·불러오기·맵 이동에 중복 진행 없음). 취소 `cancelBuild`(공사 시작 전 100%, 중 50%), 철거 `demolishBuild`(완공 뒤 닢 50%, 서고 거부), **환불은 기록 삭제와 한 번에 `refunded` 표식**.
+- [ ] 화면: 입구 가까운 "터 표지"에서 건물 목록 → 쓰임·드는 것 확인 → 부지 미리보기(놓을 수 있는 칸 초록/막히는 칸 빨강 없이 **놓을 수 없으면 그 자리에서 이유 한 줄**) → 놓기 확정 → 주문. 이동·철거 전에 확인 한 번. 한 번에 한 건물만 미리보기. 휴대폰 확인. (뺌: 건물 이동은 첫 제작에서 뺌 — 취소·철거 뒤 다시 놓기로 대신. 나머지 목록·미리보기·놓기·주문 화면은 되어 있음)
+- [x] 완공된 주택은 **빈 집**이다(주민·꿈·방문자 연결은 후속). 이 작업은 바깥 모습과 놓기·취소·철거·저장까지.
+- [x] 테스트: 겹침·구역 밖·길 막힘·갇힘 거절, 비용 부족 거절, 진행 날짜(주문 → 다음 날 공사 → 그다음 날 완공)와 날짜 중복 정산 없음, 환불 세 경우(100/50/철거 50%)·이중 눌림 환불 한 번·재접속 후 환불 한 번, 서고 철거 거부, 저장·불러오기·옛 저장(`newland` 없음), 필사가 건축 상태와 무관, 건물 0채로도 서고 사용 가능, `newland-sites` ↔ `manifest.json` 일치.
 - 커밋: `feat: 새 터 건축 기초 — 길·정원·마당·입주 주택 놓기, 공사 하루, 취소·철거 환불`
 
 ## 작업 7: 건물 안 가구 (기존 가구 시스템 일반화)
 **파일:** `src/engine/room.ts`, `src/engine/spaces.ts`(필요 시), `src/engine/newland.ts`(건물 안 방 칸), `src/engine/game.ts`(방 저장 칸), `src/engine/save.ts`, `src/render/renderer.ts`, 가구 놓기 화면(집 꾸미기 UI, 파일은 조사 뒤), 새 `src/engine/room-ctx.test.ts`, 기존 `room.test`
-- [ ] **먼저:** 지금 `placement`·`removal`·`rotation`·`refitRoom`의 결과를 고정하는 테스트(기존 `room.test`가 이미 덮는 것 외에, 집 단계 0–3의 대표 배치 20가지)를 통과시킨다.
-- [ ] `RoomCtx { isFloor(t); keepClear(): Tile[]; entry: Tile; reach: Tile[]; bedStand?: Tile }`를 도입해 `placement`·`rotation`·`removal`·`refitRoom`에 **선택 인자**(기본 `HOME_CTX`=지금 동작)로 넘긴다. 집 안 동작은 한 글자도 바뀌지 않는다(위 고정 테스트).
-- [ ] 새 터 입주 주택 안: 건물마다 숨은 안 방(아래 10줄 영역에서 한 칸 구획을 할당, 8×6 — `OLD_INTERIORS` 128×96px 크기), 문깔개 `E`, `RoomCtx`는 그 방 기준. 가구 상태는 `GameState.rooms?: Record<string, Furniture[]>`(키 `newland:<건물 id>`)로 **소유 공간별 저장**, 첫 마을 `room`과 섞이지 않음. 놓을 수 있는 가구·돌리기·치우기·가방 환수·길 검사는 기존 `FURNITURE_DEFS`·집 꾸미기 흐름 그대로, 그림도 기존 가구 그림(맞지 않는 크기로 늘리지 않음).
-- [ ] 문 앞에 서면 들어가고 문깔개로 나옴(기존 이웃집·서고 방식), 안에 갇히는 배치 금지(`placement`의 도달 검사가 새 방 기준으로 동작), 철거·취소 때 안의 가구는 모두 가방으로(가방이 가득하면 기존 궤짝 규칙).
-- [ ] 테스트: `HOME_CTX` 불변(위 20가지), 새 방에서 놓기·돌리기·치우기·길 막는 배치 거절·문 앞 배치 거절, 소유 공간별 저장(두 집이 서로의 가구를 모름), 첫 마을 집과 새 터 집이 같은 `room`을 쓰지 않음, 철거 시 가구 환수, 저장·불러오기·옛 저장(`rooms` 없음), 건물 수·가구 수가 늘어도 저장 크기가 관리 가능(건물 8채·가구 80개 JSON 길이 상한).
+- [x] **먼저:** 지금 `placement`·`removal`·`rotation`·`refitRoom`의 결과를 고정하는 테스트(기존 `room.test`가 이미 덮는 것 외에, 집 단계 0–3의 대표 배치 20가지)를 통과시킨다.
+- [x] `RoomCtx { isFloor(t); keepClear(): Tile[]; entry: Tile; reach: Tile[]; bedStand?: Tile }`를 도입해 `placement`·`rotation`·`removal`·`refitRoom`에 **선택 인자**(기본 `HOME_CTX`=지금 동작)로 넘긴다. 집 안 동작은 한 글자도 바뀌지 않는다(위 고정 테스트).
+- [x] 새 터 입주 주택 안: 건물마다 숨은 안 방(아래 10줄 영역에서 한 칸 구획을 할당, 8×6 — `OLD_INTERIORS` 128×96px 크기), 문깔개 `E`, `RoomCtx`는 그 방 기준. 가구 상태는 `GameState.rooms?: Record<string, Furniture[]>`(키 `newland:<건물 id>`)로 **소유 공간별 저장**, 첫 마을 `room`과 섞이지 않음. 놓을 수 있는 가구·돌리기·치우기·가방 환수·길 검사는 기존 `FURNITURE_DEFS`·집 꾸미기 흐름 그대로, 그림도 기존 가구 그림(맞지 않는 크기로 늘리지 않음).
+- [x] 문 앞에 서면 들어가고 문깔개로 나옴(기존 이웃집·서고 방식), 안에 갇히는 배치 금지(`placement`의 도달 검사가 새 방 기준으로 동작), 철거·취소 때 안의 가구는 모두 가방으로(가방이 가득하면 기존 궤짝 규칙).
+- [x] 테스트: `HOME_CTX` 불변(위 20가지), 새 방에서 놓기·돌리기·치우기·길 막는 배치 거절·문 앞 배치 거절, 소유 공간별 저장(두 집이 서로의 가구를 모름), 첫 마을 집과 새 터 집이 같은 `room`을 쓰지 않음, 철거 시 가구 환수, 저장·불러오기·옛 저장(`rooms` 없음), 건물 수·가구 수가 늘어도 저장 크기가 관리 가능(건물 8채·가구 80개 JSON 길이 상한).
 - 커밋: `feat: 건물 안 가구 — 방 기준 일반화(집 동작 불변), 소유 공간별 저장`
 
 ## 작업 8: 1부 마무리 점검과 마일스톤 배포 ①
 **파일:** `docs/old-testament-data.md`(수치 갱신), `docs/content-audit.md`(계획 20 절), `docs/superpowers/plans/NEXT.md`(진행 한 줄) — 코드 변경은 점검에서 나온 수정뿐
-- [ ] 시나리오 점검(저장 파일로): 신약 진행 중 / 27권 완필 / 잔치 직후 / 가족·아이 있음 / 아이 없음 / 구약 개방 전·후 / 새 터에서 저장 / 건물 있는 저장 / 옛 저장. 각각 이어하기 → 왕복 → 필사 → 잠자기가 막힘·중복·소실 없이 이어짐.
-- [ ] 같은 NPC 이중 출현 없음, 약속·거주지 충돌 없음, 구약 필사에 기름·재료·피로·건축 조건이 걸리지 않음(막지 않음 확인), 성경 인용(창 1:3 카드)과 가상 연출·메모가 구분됨, `newland` 문구에 성경 문장 없음.
-- [ ] PC·375×812에서 입구 모달·첫 방문·책상·건물 목록·미리보기 스크린샷.
-- [ ] 네 가지 검사 통과. 사용자에게 "배포 준비됨"(승인이 있으면 배포). **이 시점을 계획 18 전체 완료로 표현하지 않는다**(작업 6–12 미완).
+- [x] 시나리오 점검(저장 파일로): 신약 진행 중 / 27권 완필 / 잔치 직후 / 가족·아이 있음 / 아이 없음 / 구약 개방 전·후 / 새 터에서 저장 / 건물 있는 저장 / 옛 저장. 각각 이어하기 → 왕복 → 필사 → 잠자기가 막힘·중복·소실 없이 이어짐.
+- [x] 같은 NPC 이중 출현 없음, 약속·거주지 충돌 없음, 구약 필사에 기름·재료·피로·건축 조건이 걸리지 않음(막지 않음 확인), 성경 인용(창 1:3 카드)과 가상 연출·메모가 구분됨, `newland` 문구에 성경 문장 없음.
+- [ ] PC·375×812에서 입구 모달·첫 방문·책상·건물 목록·미리보기 스크린샷. (컨트롤러가 찍는다 — 구현자 점검에서는 하지 않음)
+- [ ] 네 가지 검사 통과. 사용자에게 "배포 준비됨"(승인이 있으면 배포). **이 시점을 계획 18 전체 완료로 표현하지 않는다**(작업 6–12 미완). (네 가지 검사는 작업 8 커밋 전에 통과; 배포 준비 알림은 컨트롤러 몫)
 - 커밋: `docs: 계획 20 1부 점검 — 새 터와 구약 필사 첫 제작 확인`
 - **마일스톤 배포 ①**
 

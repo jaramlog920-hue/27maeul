@@ -47,7 +47,8 @@ describe('어떤 조각이 오나', () => {
   })
   it('27권 어느 책에서든 온다 (직업·필사하는 책과 묶지 않는다)', () => {
     const books = new Set<string>()
-    for (let d = 1; d <= 400; d++) books.add(PIECES.find((p) => p.id === pickFragment(PIECES, [], d))!.book)
+    const byId = new Map(PIECES.map((p) => [p.id, p]))
+    for (let d = 1; d <= 400; d++) books.add(byId.get(pickFragment(PIECES, [], d)!)!.book)
     expect(books.size).toBeGreaterThan(15)
     // 400일을 고르느라 5초 안팎이 걸린다 — 전체 테스트가 몰릴 때 기본 시간(5초)에 걸리지 않게
   }, 20_000)
@@ -68,12 +69,14 @@ describe('한 번에 정확히 한 조각 — 27권 전체의 아직 없는 조�
     expect(drawFragment([], [], 1)).toBeNull()
   })
   it('책 제한도 장 순서도 없다 — 복음서·사도행전·편지·요한계시록 조각이 모두 나온다 (장 번호가 뒤죽박죽)', () => {
-    const picked = Array.from({ length: 600 }, (_, i) => PIECES.find((p) => p.id === drawFragment(PIECES, [], fragmentSeed(i + 1, 'night')))!)
+    // 조각이 수천 개라 매번 find 하면 느리다 — 번호표(Map)로 한 번에 찾는다 (전체 실행이 몰릴 때 5초 시간 초과의 원인)
+    const byId = new Map(PIECES.map((p) => [p.id, p]))
+    const picked = Array.from({ length: 600 }, (_, i) => byId.get(drawFragment(PIECES, [], fragmentSeed(i + 1, 'night'))!)!)
     const books = new Set(picked.map((p) => p.book))
     for (const b of ['mt', 'ac', 'rom', 'heb', 'rev'] as const) expect(books.has(b), b).toBe(true)
     // 첫 장부터 차례로가 아니다
     expect(picked.slice(0, 20).every((p, i, a) => i === 0 || p.chapter >= a[i - 1].chapter)).toBe(false)
-  })
+  }, 20_000)
   it('길(source)마다 씨앗이 달라 같은 날 다른 길은 보통 다른 조각이고, 오늘의 조각 씨앗은 예전 그대로', () => {
     expect(fragmentSeed(9, 'day')).toBe(9 * 4441 + 17)
     const same = ['night', 'library', 'scroll', 'stars', 'child', 'trip:harbor'].map((s) => drawFragment(PIECES, [], fragmentSeed(12, s)))
