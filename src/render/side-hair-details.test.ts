@@ -1,4 +1,7 @@
-import before from '../../assets/side-hair/before.json'
+// assets/는 배포에 올리지 않아 정적 import면 배포 빌드의 타입 검사가 멈춘다 — 실행할 때 읽는다 (2026-10-08)
+import { readFileSync } from 'node:fs'
+type Before = { id: string; rows: Record<'down' | 'up' | 'right', string[]> }
+const before = JSON.parse(readFileSync('assets/side-hair/before.json', 'utf8')) as Before[]
 import { HAIR_BACKS,withLookDefaults } from '../engine/avatar'
 import { mirror,spriteRows,writerPalette,PALETTE,type Who } from './sprites'
 import { sideHairDetails } from './side-hair-details'
