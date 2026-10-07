@@ -5,12 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prebuild": "node scripts/verify-pieces.mjs && node scripts/verify-journey.mjs && node scripts/verify-letters.mjs && node scripts/verify-god-records.mjs && node scripts/verify-connections.mjs && node scripts/verify-chapter-guides.mjs && node scripts/verify-ot.mjs && node scripts/build-verse-hashes.mjs --check",
+    "prebuild": "node scripts/verify-pieces.mjs && node scripts/verify-journey.mjs && node scripts/verify-letters.mjs && node scripts/verify-god-records.mjs && node scripts/verify-connections.mjs && node scripts/verify-chapter-guides.mjs && node scripts/verify-ot-guides.mjs --all && node scripts/verify-ot.mjs && node scripts/build-verse-hashes.mjs --check",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "verify": "node scripts/verify-pieces.mjs && node scripts/verify-journey.mjs && node scripts/verify-letters.mjs && node scripts/verify-god-records.mjs && node scripts/verify-connections.mjs && node scripts/verify-chapter-guides.mjs && node scripts/verify-ot.mjs && node scripts/build-verse-hashes.mjs --check",
+    "verify": "node scripts/verify-pieces.mjs && node scripts/verify-journey.mjs && node scripts/verify-letters.mjs && node scripts/verify-god-records.mjs && node scripts/verify-connections.mjs && node scripts/verify-chapter-guides.mjs && node scripts/verify-ot-guides.mjs --all && node scripts/verify-ot.mjs && node scripts/build-verse-hashes.mjs --check",
     "ref": "node scripts/dump-ref.mjs",
     "build:bible": "node scripts/build-bible-subset.mjs",
     "build:pieces": "node scripts/build-pieces.mjs && node scripts/audit-table.mjs",
@@ -20,7 +20,8 @@
     "build:connections": "node scripts/build-connections.mjs",
     "build:ot": "node scripts/build-ot.mjs",
     "build:verse-hashes": "node scripts/build-verse-hashes.mjs",
-    "build:chapter-guides": "node scripts/build-chapter-guides.mjs"
+    "build:chapter-guides": "node scripts/build-chapter-guides.mjs",
+    "build:ot-guides": "node scripts/build-ot-guides.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",

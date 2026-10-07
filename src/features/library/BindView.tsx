@@ -10,6 +10,8 @@ import { haveStock, stockOf } from '../../engine/game'
 import type { ItemId } from '../../engine/types'
 import { useGame, type Modal } from '../../store/game-store'
 import { BookCover, Spine } from './BookArt'
+import { LibraryWork } from './LibraryWork'
+import type { LibraryAction } from '../../render/library-art'
 
 const BOOK_NAME = T.quiz.books as Record<string, string>
 const B = T.binding
@@ -35,6 +37,7 @@ export function BindView({ modal }: { modal: Extract<Modal, { kind: 'bind' }> })
   const game = useGame((s) => s.game)
   const { bindPlain, bindSpecial, closeBind, open } = useGame.getState()
   const [choice, setChoice] = useState<SpecialChoice>(modal.choice ?? DEFAULT_CHOICE)
+  const [work, setWork] = useState<{ action: LibraryAction; revision: number }>({ action: 'wrap', revision: 0 })
   const name = BOOK_NAME[modal.book]
   const enough = haveStock(game, SPECIAL_COST)
   const have = itemList(Object.fromEntries(COST.map(([id]) => [id, stockOf(game, id)])))
@@ -44,6 +47,7 @@ export function BindView({ modal }: { modal: Extract<Modal, { kind: 'bind' }> })
     return (
       <div className="dialog bind" role="dialog" aria-label={B.title}>
         <h2>{B.title}</h2>
+        <LibraryWork book={modal.book} action={modal.redo ? work.action : 'bind'} binding={binding} />
         <div className="bind-made">
           <BookCover book={modal.book} binding={binding} />
           <Spine book={modal.book} binding={binding} grade={game.shelved[modal.book]} />
@@ -62,10 +66,15 @@ export function BindView({ modal }: { modal: Extract<Modal, { kind: 'bind' }> })
   }
 
   if (modal.step === 'decorate') {
-    const set = (part: Partial<SpecialChoice>) => setChoice({ ...choice, ...part })
+    const set = (part: Partial<SpecialChoice>) => {
+      setChoice(current => ({ ...current, ...part }))
+      const action: LibraryAction = part.color ? 'paint' : part.pattern ? 'stamp' : 'wrap'
+      setWork(current => ({ action, revision: current.revision + 1 }))
+    }
     return (
       <div className="dialog bind" role="dialog" aria-label={fill(B.decorateTitle, { book: name })}>
         <h2>{fill(B.decorateTitle, { book: name })}</h2>
+        <LibraryWork key={work.revision} book={modal.book} action={work.action} binding={{ day: 0, special: choice }} grade={game.shelved[modal.book]} />
         <div className="bind-made">
           <BookCover book={modal.book} choice={choice} />
           <Spine book={modal.book} binding={{ day: 0, special: choice }} grade={game.shelved[modal.book]} />

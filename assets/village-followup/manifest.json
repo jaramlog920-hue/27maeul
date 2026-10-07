@@ -1,0 +1,174 @@
+{
+  "emotes": [
+    {
+      "id": "heart",
+      "label": "하트",
+      "file": "emote-heart.png"
+    },
+    {
+      "id": "laugh",
+      "label": "웃음",
+      "file": "emote-laugh.png"
+    },
+    {
+      "id": "talk",
+      "label": "대화",
+      "file": "emote-talk.png"
+    },
+    {
+      "id": "sweat",
+      "label": "머쓱",
+      "file": "emote-sweat.png"
+    },
+    {
+      "id": "angry",
+      "label": "화남",
+      "file": "emote-angry.png"
+    }
+  ],
+  "sequences": [
+    {
+      "label": "요람에서 눈 깜빡이는 아기",
+      "files": [
+        "cradle-awake-0.png",
+        "cradle-awake-1.png",
+        "cradle-awake-2.png",
+        "cradle-awake-3.png"
+      ],
+      "frameMs": 600
+    },
+    {
+      "label": "요람에서 잠든 아기",
+      "files": [
+        "cradle-sleep-0.png",
+        "cradle-sleep-1.png",
+        "cradle-sleep-2.png",
+        "cradle-sleep-3.png"
+      ],
+      "frameMs": 600
+    },
+    {
+      "label": "나그네 · 서 있기",
+      "files": [
+        "visitor-wanderer-stand-0.png",
+        "visitor-wanderer-stand-1.png",
+        "visitor-wanderer-stand-2.png",
+        "visitor-wanderer-stand-3.png"
+      ],
+      "frameMs": 350
+    },
+    {
+      "label": "나그네 · 책 읽기",
+      "files": [
+        "visitor-wanderer-read-0.png",
+        "visitor-wanderer-read-1.png",
+        "visitor-wanderer-read-2.png",
+        "visitor-wanderer-read-3.png"
+      ],
+      "frameMs": 350
+    },
+    {
+      "label": "나그네 · 방명록 쓰기",
+      "files": [
+        "visitor-wanderer-write-0.png",
+        "visitor-wanderer-write-1.png",
+        "visitor-wanderer-write-2.png",
+        "visitor-wanderer-write-3.png"
+      ],
+      "frameMs": 350
+    },
+    {
+      "label": "배우러 온 사람 · 서 있기",
+      "files": [
+        "visitor-learner-stand-0.png",
+        "visitor-learner-stand-1.png",
+        "visitor-learner-stand-2.png",
+        "visitor-learner-stand-3.png"
+      ],
+      "frameMs": 350
+    },
+    {
+      "label": "배우러 온 사람 · 책 읽기",
+      "files": [
+        "visitor-learner-read-0.png",
+        "visitor-learner-read-1.png",
+        "visitor-learner-read-2.png",
+        "visitor-learner-read-3.png"
+      ],
+      "frameMs": 350
+    },
+    {
+      "label": "배우러 온 사람 · 방명록 쓰기",
+      "files": [
+        "visitor-learner-write-0.png",
+        "visitor-learner-write-1.png",
+        "visitor-learner-write-2.png",
+        "visitor-learner-write-3.png"
+      ],
+      "frameMs": 350
+    },
+    {
+      "label": "꼬마 · 서 있기",
+      "files": [
+        "visitor-kid-stand-0.png",
+        "visitor-kid-stand-1.png",
+        "visitor-kid-stand-2.png",
+        "visitor-kid-stand-3.png"
+      ],
+      "frameMs": 350
+    },
+    {
+      "label": "꼬마 · 책 읽기",
+      "files": [
+        "visitor-kid-read-0.png",
+        "visitor-kid-read-1.png",
+        "visitor-kid-read-2.png",
+        "visitor-kid-read-3.png"
+      ],
+      "frameMs": 350
+    },
+    {
+      "label": "꼬마 · 방명록 쓰기",
+      "files": [
+        "visitor-kid-write-0.png",
+        "visitor-kid-write-1.png",
+        "visitor-kid-write-2.png",
+        "visitor-kid-write-3.png"
+      ],
+      "frameMs": 350
+    },
+    {
+      "label": "다른 마을 서기 · 서 있기",
+      "files": [
+        "visitor-scribe-stand-0.png",
+        "visitor-scribe-stand-1.png",
+        "visitor-scribe-stand-2.png",
+        "visitor-scribe-stand-3.png"
+      ],
+      "frameMs": 350
+    },
+    {
+      "label": "다른 마을 서기 · 책 읽기",
+      "files": [
+        "visitor-scribe-read-0.png",
+        "visitor-scribe-read-1.png",
+        "visitor-scribe-read-2.png",
+        "visitor-scribe-read-3.png"
+      ],
+      "frameMs": 350
+    },
+    {
+      "label": "다른 마을 서기 · 방명록 쓰기",
+      "files": [
+        "visitor-scribe-write-0.png",
+        "visitor-scribe-write-1.png",
+        "visitor-scribe-write-2.png",
+        "visitor-scribe-write-3.png"
+      ],
+      "frameMs": 350
+    }
+  ],
+  "connected": true,
+  "visitorHours": "09:00–17:00",
+  "source": "src/render/village-followup-art.ts"
+}

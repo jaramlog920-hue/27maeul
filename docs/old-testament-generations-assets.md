@@ -2,6 +2,14 @@
 
 작성: 2026-10-06. 계획 18·19의 자산 준비이며 게임 기능 연결은 별도다.
 
+## 추가 배경 소재의 용도 — 2026-10-07 사용자 확정
+
+`assets/background-materials-simple.png`는 **유저가 새 터(구약 맵)를 직접 꾸밀 때 선택해서 놓는 추가 요소**의 시안이다. 길 소재는 유저가 길을 꾸미는 선택지로 추가한다. **구약 맵에 원래 깔려 있는 기본 길 자체를 바꾸거나 기존 길 그림을 일괄 교체하는 용도가 아니다.** 나무·바닥 등도 같은 꾸미기 소재 범위다.
+
+현재는 소재 시안만 저장되어 있으며 게임 기능에는 연결되지 않았다. 적용할 때 기본 맵 지형과 유저가 배치한 꾸미기 요소를 구분한다. 자세한 안내: [배경 소재 사용 범위](../assets/background-materials-usage.md).
+
+## 기존 구약 마을·주민 세대 자산
+
 - 원본: `src/render/old-village-art.ts`, `src/render/generation-art.ts`
 - 내보내기: `node scripts/export-old-village-art.mjs`
 - 결과: `assets/old-testament-generations/`

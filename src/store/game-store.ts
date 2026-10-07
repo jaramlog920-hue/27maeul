@@ -8,6 +8,7 @@ import { isOtBook, type CopyBook } from '../engine/ot-books'
 import { ARCHIVE } from '../engine/newland-config'
 import { buildsOf, cancelBuild, clearTile, demolishBuild, orderBuild } from '../engine/newland-build'
 import type { SiteKind } from '../engine/newland-sites'
+import { facilityAt, type FacilityKind } from '../engine/newland-life'
 import { clubWeaveDone } from '../engine/clubs'
 // 엔진 상태 ↔ 화면 연결. 창(모달)이 열려 있으면 시간과 걸음이 멈춘다.
 import type { FullAvatar } from '../engine/avatar'
@@ -73,6 +74,8 @@ import {
   chooseInEvent,
   giveBouquet,
   giveCord,
+  startAct,
+  breakUp,
   goOnDate,
   spouseGift,
   babyRoomTalk,
@@ -156,7 +159,7 @@ import { finishNow, HOLD_UP, isDone, startMini, stepMini, tapMini, type MiniStat
 import { finishLetter, letterPay } from '../engine/requests'
 import { POSTMAN } from '../engine/post'
 import { modeOf, roomOf, shelfRoom, type ShelfRoomId } from '../engine/shelf-rooms'
-import { saveGame } from '../engine/save'
+import { albumPrefix, saveGame } from '../engine/save'
 import { isFinished, toggleHomeBook } from '../engine/finished-books'
 import { moveItem } from '../engine/scroll'
 import type { Book, Facing, ItemId, PlaceId, Rng, Target, Tile } from '../engine/types'
@@ -241,6 +244,10 @@ export type Modal =
   | { kind: 'villageMap' }
   /** 마을별 서고 순위 (계획 21 R8): 업데이트 창, history면 서고에서 다시 보기 */
   | { kind: 'rank'; history?: boolean }
+  /** 이사 간 이웃이 남긴 편지 (아침) */
+  | { kind: 'farewell' }
+  /** 새 터 시설 (손님집·기억 정원·공동 마당·꿈터) */
+  | { kind: 'facility'; id: FacilityKind }
   /** 배움터: 아이 맡기기 */
   | { kind: 'school' }
   | { kind: 'menu'; place: MenuPlace }
@@ -485,6 +492,8 @@ interface Store {
   /** 목수·대장장이에게 기록 설비 부탁 */
   giveBouquet: (id: string) => void
   giveCord: (id: string) => void
+  /** 연인·약혼 사이에서 헤어지기 (부부는 없음) */
+  breakUp: (id: string) => void
   /** 연인과 함께 가기 (계획 10 작업 4): 찻집·정자·언덕 — 짧은 장면 뒤 한 줄 알림 */
   goDate: (place: DatePlace) => void
   drinkTea: () => void
@@ -605,7 +614,8 @@ function pick<X>(arr: readonly X[], rng: Rng): X {
   return arr[Math.min(arr.length - 1, Math.floor(rng() * arr.length))]
 }
 
-const ALBUM_KEY = (id: string) => `twenty-seven/album/${id}`
+// 앨범 그림은 저장 칸마다 따로 (칸 1은 예전 키 그대로)
+const ALBUM_KEY = (id: string) => `${albumPrefix()}${id}`
 export function albumImage(id: string): string | null {
   try {
     return globalThis.localStorage?.getItem(ALBUM_KEY(id)) ?? null
@@ -936,7 +946,8 @@ export const useGame = create<Store>((set, get) => {
         const sup = eatSupper(game)
         if (sup) {
           sfx('talk')
-          return { game: persist(greetNeighbor(sup, target.id)), modal: { kind: 'scene', id: sup.scenes[sup.scenes.length - 1] } }
+          // 장면을 닫으면 둘러앉아 먹는 손동작 (familyFrame familyMeal, 2026-10-07)
+          return { game: persist(startAct(greetNeighbor(sup, target.id), 'meal')), modal: { kind: 'scene', id: sup.scenes[sup.scenes.length - 1] } }
         }
       }
       let g = greetNeighbor(game, target.id)
@@ -1030,6 +1041,11 @@ export const useGame = create<Store>((set, get) => {
       const here = playerTile(game)
       if (here.x === ARCHIVE.front.x && here.y === ARCHIVE.front.y) return { game, modal: { kind: 'lookAround' } }
     }
+    // 새 터 시설 (계획 18 남은 것): 손님집·꿈터 문 앞, 기억 정원·공동 마당 안에 서면 그 창
+    if (target.kind === 'ground' && currentMapId() === 'newland') {
+      const fac = facilityAt(game, playerTile(game))
+      if (fac) return { game, modal: { kind: 'facility', id: fac } }
+    }
     if (target.kind !== 'place') return { game, modal: null }
     switch (target.id) {
       case 'bed': {
@@ -1040,7 +1056,8 @@ export const useGame = create<Store>((set, get) => {
       case 'otDesk':
         return { game, modal: { kind: 'copy', view: isOtBook(game.copy.book) ? 'menu' : 'pick', tab: 'ot' } }
       case 'otShelf':
-        return { game, modal: { kind: 'otShelf' } }
+        // 책장 앞에서 위를 보고 손을 뻗는다 (기존 reach 동작, 2026-10-07 연결) — 창을 닫으면 남은 동작이 마저 보인다
+        return { game: persist(startAct({ ...game, player: { ...game.player, facing: 'up' } }, 'reach')), modal: { kind: 'otShelf' } }
       case 'desk': {
         // 계획 14: 책상은 필사 책상 — 재료·조각·등잔 기름 없이도 쓴다 (예전 엮기·옮겨 적기 창으로 가는 길은 닫았다).
         // 앉기만 해서는 기름을 쓰지 않는다 — 밤에 실제로 한 절을 적을 때 기름이 있으면 등잔을 켠다 (copyType)
@@ -1636,6 +1653,14 @@ export const useGame = create<Store>((set, get) => {
       set({ game: persist(next), modal: null })
       get().say(fill(T.romance.weddingSoon, { day: next.romance.weddingDay ?? 0 }), 4000)
     },
+    breakUp: (id) => {
+      const before = get().game
+      const next = breakUp(before, id)
+      if (next === before) return
+      const who = withSubject(CONTENT.neighbors.find((n) => n.id === id)?.role ?? id)
+      set({ game: persist(next), modal: null })
+      get().say(fill(before.romance.stage === 'engaged' ? T.romance.breakWedding : T.romance.breakDone, { who }), 3600)
+    },
     goDate: (place) => {
       const before = get().game
       const next = goOnDate(before, place, CONTENT)
@@ -2052,7 +2077,7 @@ export const useGame = create<Store>((set, get) => {
       const before = get().game.gen?.settledDay ?? get().game.clock.day
       const next = goToSleep(get().game, CONTENT, { read: pieceId !== null, pieceId: pieceId ?? undefined })
       // 마을 서고 순위 업데이트가 있는 아침이면 그 창부터 (계획 21 R8)
-      set({ game: persist(next), modal: next.rankPopup ? { kind: 'rank' } : null })
+      set({ game: persist(next), modal: next.rankPopup ? { kind: 'rank' } : next.farewellPopup ? { kind: 'farewell' } : null })
       sayChildHelp(next, get().say)
       // 주민 가족 소식 (계획 20 2부 P13): 밤사이 생긴 일을 많아야 세 줄, 아이 소식 뒤에
       const news = freshNews(next, before)

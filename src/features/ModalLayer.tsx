@@ -49,6 +49,8 @@ import { TravelMenu } from './map/TravelMenu'
 import { FirstLight, LookAround } from './newland/FirstLight'
 import { BuildMenu } from './newland/BuildMenu'
 import { OtShelf } from './newland/OtShelf'
+import { FarewellLetter } from './talk/FarewellLetter'
+import { FacilityView } from './newland/FacilityView'
 import { SchoolView } from './child/SchoolView'
 import { GameGuide } from './play/GameGuide'
 import { Settings } from './play/Settings'
@@ -127,6 +129,10 @@ function Body() {
       return <VillageMap />
     case 'rank':
       return <RankView history={modal.history} />
+    case 'farewell':
+      return <FarewellLetter />
+    case 'facility':
+      return <FacilityView id={modal.id} />
     case 'school':
       return <SchoolView />
     case 'letter':

@@ -9,11 +9,14 @@ import type { Book } from '../../engine/types'
 import { useGame, type BindBack } from '../../store/game-store'
 import { Spine } from './BookArt'
 import { SpineMarks } from './SpineMarks'
+import { useState } from 'react'
+import { LibraryWork } from './LibraryWork'
 
 const BOOK_NAME = T.quiz.books as Record<string, string>
 const GRADES = T.library.grades as string[]
 
 export function ShelfRow({ book, back, notYet }: { book: Book; back: BindBack; notYet: string }) {
+  const [justShelved, setJustShelved] = useState(false)
   const g = useGame((s) => s.game.shelved[book])
   const binding = useGame((s) => s.game.bound[book])
   const progress = useGame((s) => s.game.progress)
@@ -34,12 +37,13 @@ export function ShelfRow({ book, back, notYet }: { book: Book; back: BindBack; n
       )}
       {g === undefined && binding !== undefined && (
         <>
-          <button className="primary" onClick={() => shelveNow(book)}>
+          <button className="primary" onClick={() => { shelveNow(book); setJustShelved(useGame.getState().game.shelved[book] !== undefined) }}>
             {T.library.shelveNow}
           </button>
           <button onClick={() => startShelve(book)}>{T.library.shelveGold}</button>
         </>
       )}
+      {justShelved && g !== undefined && <LibraryWork book={book} action="shelve" binding={binding} grade={g} />}
       {g !== undefined && g < 2 && (
         <button disabled={!has(inv, RETRY_COST)} onClick={() => startRetry(book)}>
           {T.library.retry}

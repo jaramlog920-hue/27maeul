@@ -16,14 +16,10 @@ import { basename } from 'node:path'
 import { FORBIDDEN } from '../src/content/forbidden.ts'
 import { GUIDE_JSON, parseGuideText, readGuideRows, toGuideJson } from './chapter-guides-parse.mjs'
 
-/** 길잡이(성경 설명 글)에서만 허용하는 금지어 — 본문에 나오는 인물·지명·절기·직분 이름. 다른 곳(생활 문구)은 그대로 금지 */
-export const GUIDE_ALLOWED = [
-  '예수', '그리스도', '하나님', '주님', '성령', '천사', '사도', '제자', '베드로', '요한', '누가',
-  '마리아', '바울', '데오빌로', '세례', '예루살렘', '갈릴리', '나사렛', '베들레헴', '사마리아',
-  '유월절', '오순절', '초막절', '안식일', '성전', '회당', '제사장', '세리', '바리새', '서기관',
-  // 신약 본문이 인용·언급하는 구약 인물·지명 (계획 20 작업 1: 생활 문구에서는 금지, 신약 길잡이 설명에서만 허용)
-  '아브라함', '모세', '다윗', '솔로몬', '야곱', '이스라엘', '가나안', '애굽', '바벨론', '여호와', '엘리야',
-]
+/** 길잡이(성경 설명 글)에서만 허용하는 금지어 — 목록은 구약 길잡이 검사와 함께 쓴다 */
+import { GUIDE_ALLOWED as ALLOWED } from './verify-chapter-guides-allowed.mjs'
+// 신약 길잡이는 예전처럼 성경 돈 이름(세겔·달란트)은 허용하지 않는다
+export const GUIDE_ALLOWED = ALLOWED.filter((w) => w !== '세겔' && w !== '달란트')
 const GUIDE_FORBIDDEN = FORBIDDEN.filter((re) => !GUIDE_ALLOWED.some((w) => re.source.replace('(?<![가-힣])', '').startsWith(w)))
 
 const books = JSON.parse(await readFile(new URL('../src/content/books.json', import.meta.url), 'utf8'))

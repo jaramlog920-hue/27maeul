@@ -1,0 +1,12 @@
+제작 방식: 내장 이미지 도구
+용도: 27마을 새 터(구약 맵)에서 유저가 길·바닥·나무를 직접 꾸미도록 선택해서 놓는 추가 요소의 시안
+2026-10-07 사용자 확정: 구약 맵의 기본 길 자체를 변경하거나 기존 길 그림을 일괄 교체하는 용도가 아니다.
+현재 상태: 소재 시안만 저장. 게임 기능 연결은 별도.
+사용 범위: background-materials-usage.md 참고.
+
+Use case: style-transfer. Make a radically simpler and much more spacious version of this cozy pixel RPG asset sheet. Main change: REMOVE visual density everywhere.
+Use only THREE tree sprites in the first row, with very large blank gaps (one full tree width) between them. Trees should be drawn as if ONLY 12 pixels wide by 18 pixels tall, enlarged with hard square pixels: one broad asymmetric tree, one tall oval tree, one small sapling. Each canopy consists of only ONE solid medium sage silhouette, ONE large pale sage highlight patch, and ONE dark sage shadow patch. Absolutely NO extra leaf spots, NO overlapping branch layers, NO bark markings, NO grass at the base. Simple narrow 2-color brown trunks. Small humble trees, not sprawling giant trees.
+Second row: ONLY four small simple sprites with wide spacing: one plain bush (3 flat color regions), one 3-blade grass tuft, one tiny three-pixel cream flower on stalk, one small 2-color pebble. No texture.
+Third row: ONLY four spacious FLAT terrain squares: sage grass tile with zero markings; pale cream dirt with only TWO tiny tan speckles; warm taupe paving with FOUR large stones and clean straight seams; brown planting soil with TWO smooth furrows. Zero gradients. Each tile reads at native 16x16 pixels.
+Fourth row: ONLY two separated 3x3 ground modules, one dirt path elbow and one dirt T junction. COMPLETELY PLAIN flat light sage surrounding ground without any grass clumps or speckles; COMPLETELY PLAIN pale beige paths without stones or texture. Sparse simple pixel stepped borders with 1 or 2 steps maximum; no fussy fringes.
+Use cozy muted pastel sage and cream palette, same art style as the supplied map Image 2. WHITE opaque background. Clear evenly sized square pixels with no antialiasing, no gradients, no soft shading. All sprites visibly minimal and low resolution. Large blank space between all objects and rows. No complete village scene, no people, no houses, no text. The user thinks EVERYTHING in the current sheet is too busy; halve the color regions and greatly simplify shapes.

@@ -1,0 +1,630 @@
+{
+  "elderAgeDays": 244,
+  "samples": [
+    {
+      "label": "생성 주민 예시 1",
+      "avatar": {
+        "skin": 0,
+        "hairFront": 0,
+        "hairBack": 0,
+        "top": 0,
+        "bottom": 0,
+        "acc": 0,
+        "eyeColor": [
+          25,
+          45,
+          25
+        ],
+        "hairColor": [
+          25,
+          62,
+          35
+        ],
+        "bottomColor": [
+          30,
+          40,
+          34
+        ],
+        "accColor": null,
+        "look": "m",
+        "name": "생성 주민 예시 1"
+      },
+      "before": "sample-0-adult.png",
+      "directions": {
+        "down": [
+          "sample-0-elder-down-0.png",
+          "sample-0-elder-down-1.png",
+          "sample-0-elder-down-2.png"
+        ],
+        "up": [
+          "sample-0-elder-up-0.png",
+          "sample-0-elder-up-1.png",
+          "sample-0-elder-up-2.png"
+        ],
+        "left": [
+          "sample-0-elder-left-0.png",
+          "sample-0-elder-left-1.png",
+          "sample-0-elder-left-2.png"
+        ],
+        "right": [
+          "sample-0-elder-right-0.png",
+          "sample-0-elder-right-1.png",
+          "sample-0-elder-right-2.png"
+        ]
+      }
+    },
+    {
+      "label": "생성 주민 예시 2",
+      "avatar": {
+        "skin": 1,
+        "hairFront": 1,
+        "hairBack": 1,
+        "top": 3,
+        "bottom": 1,
+        "acc": 0,
+        "eyeColor": [
+          25,
+          45,
+          25
+        ],
+        "hairColor": [
+          25,
+          62,
+          35
+        ],
+        "bottomColor": [
+          30,
+          45,
+          42
+        ],
+        "accColor": null,
+        "look": "f",
+        "name": "생성 주민 예시 2"
+      },
+      "before": "sample-1-adult.png",
+      "directions": {
+        "down": [
+          "sample-1-elder-down-0.png",
+          "sample-1-elder-down-1.png",
+          "sample-1-elder-down-2.png"
+        ],
+        "up": [
+          "sample-1-elder-up-0.png",
+          "sample-1-elder-up-1.png",
+          "sample-1-elder-up-2.png"
+        ],
+        "left": [
+          "sample-1-elder-left-0.png",
+          "sample-1-elder-left-1.png",
+          "sample-1-elder-left-2.png"
+        ],
+        "right": [
+          "sample-1-elder-right-0.png",
+          "sample-1-elder-right-1.png",
+          "sample-1-elder-right-2.png"
+        ]
+      }
+    },
+    {
+      "label": "생성 주민 예시 3",
+      "avatar": {
+        "skin": 2,
+        "hairFront": 2,
+        "hairBack": 2,
+        "top": 6,
+        "bottom": 2,
+        "acc": 0,
+        "eyeColor": [
+          25,
+          45,
+          25
+        ],
+        "hairColor": [
+          25,
+          62,
+          35
+        ],
+        "bottomColor": [
+          30,
+          40,
+          34
+        ],
+        "accColor": null,
+        "look": "m",
+        "name": "생성 주민 예시 3"
+      },
+      "before": "sample-2-adult.png",
+      "directions": {
+        "down": [
+          "sample-2-elder-down-0.png",
+          "sample-2-elder-down-1.png",
+          "sample-2-elder-down-2.png"
+        ],
+        "up": [
+          "sample-2-elder-up-0.png",
+          "sample-2-elder-up-1.png",
+          "sample-2-elder-up-2.png"
+        ],
+        "left": [
+          "sample-2-elder-left-0.png",
+          "sample-2-elder-left-1.png",
+          "sample-2-elder-left-2.png"
+        ],
+        "right": [
+          "sample-2-elder-right-0.png",
+          "sample-2-elder-right-1.png",
+          "sample-2-elder-right-2.png"
+        ]
+      }
+    },
+    {
+      "label": "생성 주민 예시 4",
+      "avatar": {
+        "skin": 3,
+        "hairFront": 3,
+        "hairBack": 3,
+        "top": 9,
+        "bottom": 3,
+        "acc": 0,
+        "eyeColor": [
+          25,
+          45,
+          25
+        ],
+        "hairColor": [
+          25,
+          62,
+          35
+        ],
+        "bottomColor": [
+          30,
+          45,
+          42
+        ],
+        "accColor": null,
+        "look": "f",
+        "name": "생성 주민 예시 4"
+      },
+      "before": "sample-3-adult.png",
+      "directions": {
+        "down": [
+          "sample-3-elder-down-0.png",
+          "sample-3-elder-down-1.png",
+          "sample-3-elder-down-2.png"
+        ],
+        "up": [
+          "sample-3-elder-up-0.png",
+          "sample-3-elder-up-1.png",
+          "sample-3-elder-up-2.png"
+        ],
+        "left": [
+          "sample-3-elder-left-0.png",
+          "sample-3-elder-left-1.png",
+          "sample-3-elder-left-2.png"
+        ],
+        "right": [
+          "sample-3-elder-right-0.png",
+          "sample-3-elder-right-1.png",
+          "sample-3-elder-right-2.png"
+        ]
+      }
+    },
+    {
+      "label": "생성 주민 예시 5",
+      "avatar": {
+        "skin": 4,
+        "hairFront": 4,
+        "hairBack": 4,
+        "top": 12,
+        "bottom": 0,
+        "acc": 0,
+        "eyeColor": [
+          25,
+          45,
+          25
+        ],
+        "hairColor": [
+          25,
+          62,
+          35
+        ],
+        "bottomColor": [
+          30,
+          40,
+          34
+        ],
+        "accColor": null,
+        "look": "m",
+        "name": "생성 주민 예시 5"
+      },
+      "before": "sample-4-adult.png",
+      "directions": {
+        "down": [
+          "sample-4-elder-down-0.png",
+          "sample-4-elder-down-1.png",
+          "sample-4-elder-down-2.png"
+        ],
+        "up": [
+          "sample-4-elder-up-0.png",
+          "sample-4-elder-up-1.png",
+          "sample-4-elder-up-2.png"
+        ],
+        "left": [
+          "sample-4-elder-left-0.png",
+          "sample-4-elder-left-1.png",
+          "sample-4-elder-left-2.png"
+        ],
+        "right": [
+          "sample-4-elder-right-0.png",
+          "sample-4-elder-right-1.png",
+          "sample-4-elder-right-2.png"
+        ]
+      }
+    },
+    {
+      "label": "생성 주민 예시 6",
+      "avatar": {
+        "skin": 5,
+        "hairFront": 5,
+        "hairBack": 5,
+        "top": 1,
+        "bottom": 1,
+        "acc": 0,
+        "eyeColor": [
+          25,
+          45,
+          25
+        ],
+        "hairColor": [
+          25,
+          62,
+          35
+        ],
+        "bottomColor": [
+          30,
+          45,
+          42
+        ],
+        "accColor": null,
+        "look": "f",
+        "name": "생성 주민 예시 6"
+      },
+      "before": "sample-5-adult.png",
+      "directions": {
+        "down": [
+          "sample-5-elder-down-0.png",
+          "sample-5-elder-down-1.png",
+          "sample-5-elder-down-2.png"
+        ],
+        "up": [
+          "sample-5-elder-up-0.png",
+          "sample-5-elder-up-1.png",
+          "sample-5-elder-up-2.png"
+        ],
+        "left": [
+          "sample-5-elder-left-0.png",
+          "sample-5-elder-left-1.png",
+          "sample-5-elder-left-2.png"
+        ],
+        "right": [
+          "sample-5-elder-right-0.png",
+          "sample-5-elder-right-1.png",
+          "sample-5-elder-right-2.png"
+        ]
+      }
+    },
+    {
+      "label": "생성 주민 예시 7",
+      "avatar": {
+        "skin": 6,
+        "hairFront": 6,
+        "hairBack": 6,
+        "top": 4,
+        "bottom": 2,
+        "acc": 0,
+        "eyeColor": [
+          25,
+          45,
+          25
+        ],
+        "hairColor": [
+          25,
+          62,
+          35
+        ],
+        "bottomColor": [
+          30,
+          40,
+          34
+        ],
+        "accColor": null,
+        "look": "m",
+        "name": "생성 주민 예시 7"
+      },
+      "before": "sample-6-adult.png",
+      "directions": {
+        "down": [
+          "sample-6-elder-down-0.png",
+          "sample-6-elder-down-1.png",
+          "sample-6-elder-down-2.png"
+        ],
+        "up": [
+          "sample-6-elder-up-0.png",
+          "sample-6-elder-up-1.png",
+          "sample-6-elder-up-2.png"
+        ],
+        "left": [
+          "sample-6-elder-left-0.png",
+          "sample-6-elder-left-1.png",
+          "sample-6-elder-left-2.png"
+        ],
+        "right": [
+          "sample-6-elder-right-0.png",
+          "sample-6-elder-right-1.png",
+          "sample-6-elder-right-2.png"
+        ]
+      }
+    },
+    {
+      "label": "생성 주민 예시 8",
+      "avatar": {
+        "skin": 7,
+        "hairFront": 7,
+        "hairBack": 7,
+        "top": 7,
+        "bottom": 3,
+        "acc": 0,
+        "eyeColor": [
+          25,
+          45,
+          25
+        ],
+        "hairColor": [
+          25,
+          62,
+          35
+        ],
+        "bottomColor": [
+          30,
+          45,
+          42
+        ],
+        "accColor": null,
+        "look": "f",
+        "name": "생성 주민 예시 8"
+      },
+      "before": "sample-7-adult.png",
+      "directions": {
+        "down": [
+          "sample-7-elder-down-0.png",
+          "sample-7-elder-down-1.png",
+          "sample-7-elder-down-2.png"
+        ],
+        "up": [
+          "sample-7-elder-up-0.png",
+          "sample-7-elder-up-1.png",
+          "sample-7-elder-up-2.png"
+        ],
+        "left": [
+          "sample-7-elder-left-0.png",
+          "sample-7-elder-left-1.png",
+          "sample-7-elder-left-2.png"
+        ],
+        "right": [
+          "sample-7-elder-right-0.png",
+          "sample-7-elder-right-1.png",
+          "sample-7-elder-right-2.png"
+        ]
+      }
+    },
+    {
+      "label": "생성 주민 예시 9",
+      "avatar": {
+        "skin": 0,
+        "hairFront": 8,
+        "hairBack": 0,
+        "top": 10,
+        "bottom": 0,
+        "acc": 0,
+        "eyeColor": [
+          25,
+          45,
+          25
+        ],
+        "hairColor": [
+          25,
+          62,
+          35
+        ],
+        "bottomColor": [
+          30,
+          40,
+          34
+        ],
+        "accColor": null,
+        "look": "m",
+        "name": "생성 주민 예시 9"
+      },
+      "before": "sample-8-adult.png",
+      "directions": {
+        "down": [
+          "sample-8-elder-down-0.png",
+          "sample-8-elder-down-1.png",
+          "sample-8-elder-down-2.png"
+        ],
+        "up": [
+          "sample-8-elder-up-0.png",
+          "sample-8-elder-up-1.png",
+          "sample-8-elder-up-2.png"
+        ],
+        "left": [
+          "sample-8-elder-left-0.png",
+          "sample-8-elder-left-1.png",
+          "sample-8-elder-left-2.png"
+        ],
+        "right": [
+          "sample-8-elder-right-0.png",
+          "sample-8-elder-right-1.png",
+          "sample-8-elder-right-2.png"
+        ]
+      }
+    },
+    {
+      "label": "생성 주민 예시 10",
+      "avatar": {
+        "skin": 1,
+        "hairFront": 9,
+        "hairBack": 1,
+        "top": 13,
+        "bottom": 1,
+        "acc": 0,
+        "eyeColor": [
+          25,
+          45,
+          25
+        ],
+        "hairColor": [
+          25,
+          62,
+          35
+        ],
+        "bottomColor": [
+          30,
+          45,
+          42
+        ],
+        "accColor": null,
+        "look": "f",
+        "name": "생성 주민 예시 10"
+      },
+      "before": "sample-9-adult.png",
+      "directions": {
+        "down": [
+          "sample-9-elder-down-0.png",
+          "sample-9-elder-down-1.png",
+          "sample-9-elder-down-2.png"
+        ],
+        "up": [
+          "sample-9-elder-up-0.png",
+          "sample-9-elder-up-1.png",
+          "sample-9-elder-up-2.png"
+        ],
+        "left": [
+          "sample-9-elder-left-0.png",
+          "sample-9-elder-left-1.png",
+          "sample-9-elder-left-2.png"
+        ],
+        "right": [
+          "sample-9-elder-right-0.png",
+          "sample-9-elder-right-1.png",
+          "sample-9-elder-right-2.png"
+        ]
+      }
+    },
+    {
+      "label": "생성 주민 예시 11",
+      "avatar": {
+        "skin": 2,
+        "hairFront": 10,
+        "hairBack": 2,
+        "top": 2,
+        "bottom": 2,
+        "acc": 0,
+        "eyeColor": [
+          25,
+          45,
+          25
+        ],
+        "hairColor": [
+          25,
+          62,
+          35
+        ],
+        "bottomColor": [
+          30,
+          40,
+          34
+        ],
+        "accColor": null,
+        "look": "m",
+        "name": "생성 주민 예시 11"
+      },
+      "before": "sample-10-adult.png",
+      "directions": {
+        "down": [
+          "sample-10-elder-down-0.png",
+          "sample-10-elder-down-1.png",
+          "sample-10-elder-down-2.png"
+        ],
+        "up": [
+          "sample-10-elder-up-0.png",
+          "sample-10-elder-up-1.png",
+          "sample-10-elder-up-2.png"
+        ],
+        "left": [
+          "sample-10-elder-left-0.png",
+          "sample-10-elder-left-1.png",
+          "sample-10-elder-left-2.png"
+        ],
+        "right": [
+          "sample-10-elder-right-0.png",
+          "sample-10-elder-right-1.png",
+          "sample-10-elder-right-2.png"
+        ]
+      }
+    },
+    {
+      "label": "생성 주민 예시 12",
+      "avatar": {
+        "skin": 3,
+        "hairFront": 11,
+        "hairBack": 3,
+        "top": 5,
+        "bottom": 3,
+        "acc": 0,
+        "eyeColor": [
+          25,
+          45,
+          25
+        ],
+        "hairColor": [
+          25,
+          62,
+          35
+        ],
+        "bottomColor": [
+          30,
+          45,
+          42
+        ],
+        "accColor": null,
+        "look": "f",
+        "name": "생성 주민 예시 12"
+      },
+      "before": "sample-11-adult.png",
+      "directions": {
+        "down": [
+          "sample-11-elder-down-0.png",
+          "sample-11-elder-down-1.png",
+          "sample-11-elder-down-2.png"
+        ],
+        "up": [
+          "sample-11-elder-up-0.png",
+          "sample-11-elder-up-1.png",
+          "sample-11-elder-up-2.png"
+        ],
+        "left": [
+          "sample-11-elder-left-0.png",
+          "sample-11-elder-left-1.png",
+          "sample-11-elder-left-2.png"
+        ],
+        "right": [
+          "sample-11-elder-right-0.png",
+          "sample-11-elder-right-1.png",
+          "sample-11-elder-right-2.png"
+        ]
+      }
+    }
+  ],
+  "note": "대표 외형 예시. 실제 생성 주민은 저장된 아바타로 같은 함수를 사용해 노년을 그린다."
+}

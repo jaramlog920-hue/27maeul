@@ -5,6 +5,36 @@
     "back": "돌아가기",
     "next": "다음"
   },
+  "ot": {
+    "roomCount": "{done}/{all}권"
+  },
+  "saves": {
+    "new": "새로 시작하기",
+    "load": "불러오기",
+    "title": "불러오기",
+    "none": "저장된 기록이 없어요.",
+    "noName": "이름 없음",
+    "line": "{day}일째 · {coins}닢 · 책 {books}권",
+    "delete": "지우기",
+    "deleteAsk": "{name} 기록을 지울까요?",
+    "no": "아니요",
+    "save": "저장하기",
+    "saved": "저장했어요.",
+    "toTitle": "타이틀로"
+  },
+  "decor": {
+    "title": "꾸미기",
+    "sand": "모래 길",
+    "stone": "돌바닥",
+    "soil": "밭 흙",
+    "grassTuft": "풀 한 포기",
+    "flower": "들꽃",
+    "rocks": "돌무더기",
+    "bush": "덤불",
+    "treeSmall": "작은 나무",
+    "treeTall": "키 큰 나무",
+    "treeBig": "큰 나무"
+  },
   "gen": {
     "consult": "이야기 들어 주기",
     "prepHelp": "준비 돕기",
@@ -43,7 +73,8 @@
     "score": "{n}점",
     "pieces": "말씀 조각 {n}개를 받았어요",
     "item": "{item}을 받았어요",
-    "ticket": "구약 서고 확장권을 받았어요",
+    "ticket": "구약 서고 확장권 · {room} 방이 열렸어요",
+    "coins": "후원금 {n}닢을 받았어요",
     "history": "지난 순위",
     "dayPlace": "{day}일째 · {place}위"
   },

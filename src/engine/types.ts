@@ -211,6 +211,10 @@ export type ItemId =
   // 아이와 함께 보내는 시간 (계획 12): 같이 만든 작은 장난감 — 방에 놓는 꾸미기
   | 'woodToy'
   | 'clothDoll'
+  // 손님집 손님이 남기는 고유 선물 (계획 18 B18-9) — 손님마다 한 번
+  | 'willowBasket'
+  | 'starChart'
+  | 'seedPouch'
   // 직접 요리 (계획 16 작업 25, 기획 13): 화덕에서 만든 완성 음식 — 먹기·식탁·행사·좌판에 쓴다
   | 'beanDish'
   | 'herbBeanDish'

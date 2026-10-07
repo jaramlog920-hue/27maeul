@@ -28,7 +28,7 @@ import { EXPANSION_PROPS, EXPANSION_VIEWS } from './expansion-prop-art'
 import { drawClubWorks, drawPetProp, drawStall, drawStoryProps, drawVillage, registerStoryPropArt } from './story-props'
 import { LIFE_GAP_PROPS, LIFE_GAP_STRUCTURES } from './life-gap-art'
 import { drawDecor, lanternLights, sheepCount } from './decor'
-import { FIRE, isNear, npcTile } from '../engine/neighbors'
+import { FIRE, isNear, npcTile, route } from '../engine/neighbors'
 import { babyStage, childGrowth, rainbowVisible } from '../engine/stories'
 import { childMode, childStage } from '../engine/child'
 import { BOARD, stoneTile, TRIP_H, TRIP_W, tripLayout, type Cell as TripCell } from '../engine/trip-board'
@@ -45,6 +45,26 @@ import { inBuildingRoom, roomOf } from '../engine/newland-rooms'
 import { OLD_BUILDINGS, OLD_CONSTRUCTION, OLD_INTERIOR_SHELL, OLD_PROPS, OLD_TERRAIN, OLD_VILLAGE_PALETTE } from './old-village-art'
 import { GOSPELS, type Book, type Facing, type NeighborDef, type GameContent, type Piece, type Season, type Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
+import { quietLifeRows, sheepLifeRows, type QuietAction } from './quiet-life-motion'
+import { MEETING_EMOTES, MEETING_PALETTE, meetingEmoteRows, householdCradleFrame, visitorFrame, type MeetingEmote } from './village-followup-art'
+import { householdBabies, libraryVisitor } from './village-followup-scene'
+import { residentIsElder } from './elder-details'
+import { companionsOf, genAvatar } from '../engine/gen-looks'
+import { familyFrame, type FamilyAction, type GenerationStage } from './generation-art'
+import { cookingFrame, type CookAction } from './cooking-art'
+/** 지금 그리는 기록자 동작의 요리 손동작 순서 (drawPlayerAct가 맞춘다) */
+let cookSteps: string[] = []
+import { movedHeir } from '../engine/gen-growth'
+import { BG_ART, BG_PALETTE } from './bg-materials-art'
+import { blocksWay, isOpenYard, SITES } from '../engine/newland-sites'
+import { DREAMER, guestNow, memoriesOf, type Memory } from '../engine/newland-life'
+import { GUEST_PROP_PALETTE, SETTLEMENT_GUESTS, settlementGuestFrame } from './settlement-guests-art'
+import { ADDITION_PROP_PALETTE, elderMotionFrame, guestArrivalFrame } from './life-additions-motion-art'
+import { MEMORY_PALETTE, memoryMarkerRows, type MemoryKind } from './life-additions-prop-art'
+import { doorOf } from '../engine/newland-build'
+import { ARCHIVE_ROOM_SHELVES, archiveRoomsOpen } from '../engine/newland'
+import { OT_ROOMS } from '../engine/ot-books'
+import { otBookFinished } from '../engine/books'
 import { avatarKey, withLookDefaults, type Avatar, type FullAvatar } from '../engine/avatar'
 import {
   animalRows,
@@ -55,7 +75,6 @@ import {
   ICONS,
   mirror,
   recolor,
-  SHEEP,
   SMALL_PALETTE,
   spriteRows,
   writerPalette,
@@ -1290,6 +1309,10 @@ function bubble(g: Ctx, cx: number, top: number, draw: (x: number, y: number) =>
 type EmoteId = 'z' | 'note' | 'yawn' | 'talk' | 'heart' | 'sweat' | 'hungry' | 'shiver' | 'letter' | 'laugh' | 'angry'
 
 function emote(g: Ctx, id: EmoteId, cx: number, top: number) {
+  if ((MEETING_EMOTES as readonly string[]).includes(id)) {
+    g.drawImage(paint(`meeting/${id}`, meetingEmoteRows(id as MeetingEmote), MEETING_PALETTE), Math.round(cx - 6), Math.round(top - 13))
+    return
+  }
   bubble(g, cx, top, (x, y) => {
     const f = (dx: number, dy: number, w = 1, h = 1, col = '#492c1b') => {
       g.fillStyle = col
@@ -1312,39 +1335,6 @@ function emote(g: Ctx, id: EmoteId, cx: number, top: number) {
         f(3, 5, 4)
         f(2, 3, 1, 2)
         f(7, 3, 1, 2)
-        break
-      case 'talk':
-        f(2, 4)
-        f(4, 4)
-        f(6, 4)
-        break
-      case 'heart':
-        f(2, 2, 2, 1, '#d6677b')
-        f(6, 2, 2, 1, '#d6677b')
-        f(1, 3, 8, 2, '#d6677b')
-        f(2, 5, 6, 1, '#d6677b')
-        f(4, 6, 2, 1, '#d6677b')
-        break
-      case 'sweat':
-        f(5, 1, 1, 1, '#6ca7d7')
-        f(4, 2, 3, 3, '#6ca7d7')
-        f(5, 5, 1, 1, '#6ca7d7')
-        break
-      case 'laugh':
-        // 웃는 눈 둘과 입 (차분한 머스터드) — 이웃끼리 만남 (계획 20 2부)
-        f(2, 2, 2, 1, '#b8892f')
-        f(6, 2, 2, 1, '#b8892f')
-        f(2, 4, 1, 1, '#b8892f')
-        f(7, 4, 1, 1, '#b8892f')
-        f(3, 5, 4, 1, '#b8892f')
-        break
-      case 'angry':
-        // 찡그린 표시 (흐린 벽돌색, 연하게)
-        f(2, 2, 2, 1, '#b9584a')
-        f(6, 2, 2, 1, '#b9584a')
-        f(2, 5, 2, 1, '#b9584a')
-        f(6, 5, 2, 1, '#b9584a')
-        f(4, 3, 2, 2, '#b9584a')
         break
       case 'hungry':
         f(2, 4, 6, 3, '#b17640')
@@ -1371,16 +1361,18 @@ function emote(g: Ctx, id: EmoteId, cx: number, top: number) {
 }
 
 /** 이웃 그림: 연애 후보(계획 6)는 주인공 모양 고르기와 같은 머리·옷으로, 나머지는 이웃마다 정한 옷으로 */
-function neighborLook(def: NeighborDef, growth?: number, dressed?: Avatar): { who: Who; extra: PersonExtra } {
+function neighborLook(def: NeighborDef, growth?: number, dressed?: Avatar, elder = false, heir?: FullAvatar | null): { who: Who; extra: PersonExtra } {
+  // 부모가 이사 간 자리는 이어받은 자녀 모습으로 (2026-10-07 사용자)
+  if (heir) return { who: 'writer', extra: { look: heir.look, avatar: heir, elder } }
   if (def.avatar && def.look) {
     // 옷장에서 바꾼 배우자 모습이 있으면 그것으로
     const avatar = withLookDefaults({ look: def.look, name: def.role, ...def.avatar, ...(dressed ?? {}) })
-    return { who: 'writer', extra: { look: def.look, avatar } }
+    return { who: 'writer', extra: { look: def.look, avatar, elder } }
   }
-  return { who: def.sprite as Who, extra: { growth } }
+  return { who: def.sprite as Who, extra: { growth: elder && def.sprite === 'child' ? 3 : growth, elder } }
 }
-function neighborPerson(def: NeighborDef, facing: Facing, frame: 0 | 1 | 2, blink: boolean, season: Season, growth?: number, dressed?: Avatar) {
-  const { who, extra } = neighborLook(def, growth, dressed)
+function neighborPerson(def: NeighborDef, facing: Facing, frame: 0 | 1 | 2, blink: boolean, season: Season, growth?: number, dressed?: Avatar, elder = false, heir?: FullAvatar | null) {
+  const { who, extra } = neighborLook(def, growth, dressed, elder, heir)
   return person(who, facing, frame, blink, 'stand', season, extra)
 }
 
@@ -1426,8 +1418,8 @@ function coverLocked(g: Ctx, game: GameState, season: Season) {
 }
 
 /** 이웃 수첩에 붙이는 앞모습 한 장 */
-export function neighborPortrait(def: NeighborDef, season: Season) {
-  return neighborPerson(def, 'down', 0, false, season)
+export function neighborPortrait(def: NeighborDef, season: Season, elder = false, heir?: FullAvatar | null) {
+  return neighborPerson(def, 'down', 0, false, season, undefined, undefined, elder, heir)
 }
 
 function drawSprite(g: Ctx, c: HTMLCanvasElement, wx: number, wy: number, dy = 0, shadow = true) {
@@ -1441,10 +1433,10 @@ function drawSprite(g: Ctx, c: HTMLCanvasElement, wx: number, wy: number, dy = 0
   g.drawImage(c, px, py)
 }
 
-type PersonExtra = { inky?: boolean; growth?: number; look?: Look; avatar?: FullAvatar; short?: number }
+type PersonExtra = { inky?: boolean; growth?: number; look?: Look; avatar?: FullAvatar; short?: number; elder?: boolean }
 /** 사람 그림 캐시 키의 외형 부분 (계절·잉크·키·모습) */
 function lookKey(who: Who, season: Season, extra: PersonExtra): string {
-  return `${who === 'writer' ? season : season === 'winter' ? 'w' : ''}/${extra.inky ?? ''}/${extra.growth ?? ''}/${extra.short ?? ''}/${extra.look ?? ''}/${extra.avatar ? avatarKey(extra.avatar) : ''}`
+  return `${who === 'writer' ? season : season === 'winter' ? 'w' : ''}/${extra.inky ?? ''}/${extra.growth ?? ''}/${extra.short ?? ''}/${extra.look ?? ''}/${extra.elder ?? ''}/${extra.avatar ? avatarKey(extra.avatar) : ''}`
 }
 
 function person(who: Who, facing: Facing, frame: 0 | 1 | 2, blink: boolean, pose: Pose, season: Season, extra: PersonExtra = {}) {
@@ -1507,6 +1499,19 @@ function useFrameCanvas(who: Who, facing: Facing, kind: ActKind, elapsed: number
     const action: ExtraAction = 'rise'
     return motionCanvas(`xuse/${who}/${facing}/${action}/${f}/${blink}/${look}`, extraUseFrame(who, facing, action, f, opts), actorPal, FURNI_PALETTE)
   }
+  // 요리 손동작 (cookingFrame): 순서대로 한 동작씩, 한 동작 안에서는 네 박자를 돌린다 — steps는 drawPlayerAct가 넘긴다
+  if (kind === 'cook') {
+    const steps = (cookSteps.length ? cookSteps : ['knead']) as CookAction[]
+    const per = total / steps.length
+    const step = steps[Math.min(steps.length - 1, Math.floor(elapsed / per))]
+    const f = Math.floor((elapsed % per) / (per / 4)) % 4
+    return motionCanvas(`cook/${who}/${facing}/${step}/${f}/${blink}/${look}`, cookingFrame(who, facing, step, f, opts), actorPal, FURNI_PALETTE)
+  }
+  // 배우자와 저녁 (2026-10-07): 둘러앉아 먹는 손동작 (familyFrame familyMeal), 네 박자를 돌린다
+  if (kind === 'meal') {
+    const f = Math.floor(elapsed * 3) % 4
+    return motionCanvas(`fam/${who}/familyMeal/${facing}/${f}/adult/${blink}/${look}`, familyFrame(who, facing, 'familyMeal', f, 'adult', opts), actorPal, FURNI_PALETTE)
+  }
   const action: UseAction = kind === 'rise' ? 'lie' : kind
   const phase = usePhase(action, elapsed * 1000)
   return motionCanvas(`use/${who}/${facing}/${action}/${phase}/${blink}/${look}`, furnitureUseFrame(who, facing, action, phase, opts), actorPal, USE_PROP_PALETTE)
@@ -1541,10 +1546,36 @@ function drawEventMotion(g: Ctx, who: Who, m: EventMotion, wx: number, wy: numbe
   drawUse(g, eventFrameCanvas(who, m, blink, season, extra), stand, wx, wy, true)
 }
 
+/**
+ * 가족 동작 한 장 (generation-art familyFrame — 견습 손일·아기 달래기·함께 읽기·식사 등, 2026-10-07 연결).
+ * 함께 읽기는 가구 쓰는 동작 팔레트, 나머지는 행사·생활 동작 팔레트
+ */
+/** 이사 가는 이웃의 길 (문 앞 → 우물 마당) — 집마다 한 번 셈해 둔다 */
+const leavingWays = new Map<string, Tile[]>()
+function leavingWay(id: string, from: Tile): Tile[] {
+  let w = leavingWays.get(id)
+  if (!w) {
+    const well = PLACES.well.stand!
+    w = [from, ...(route(from, well) ?? [{ x: from.x, y: from.y + 1 }])]
+    leavingWays.set(id, w)
+  }
+  return w
+}
+
+function drawFamily(g: Ctx, action: FamilyAction, facing: Facing, frame: number, stage: Exclude<GenerationStage, 'baby'>, wx: number, wy: number, blink: boolean, season: Season, extra: PersonExtra, who: Who = 'writer') {
+  const opts = { frame: 0 as const, blink, season, ...extra }
+  const actorPal = who === 'writer' ? writerPalette(season, extra.avatar) : PALETTE
+  const keyStr = `fam/${who}/${action}/${facing}/${frame}/${stage}/${blink}/${lookKey(who, season, extra)}`
+  const layers = familyFrame(who, facing, action, frame, stage, opts)
+  const stand = person(who, facing, 0, false, 'stand', season, extra)
+  drawUse(g, motionCanvas(keyStr, layers, actorPal, action === 'readTogether' ? USE_PROP_PALETTE : FURNI_PALETTE), stand, wx, wy, true)
+}
+
 /** 기록자의 지금 동작 (앉는 자리가 있으면 그 칸 위에서) */
 function drawPlayerAct(g: Ctx, act: PlayerAct, p: { x: number; y: number }, blink: boolean, season: Season, extra: PersonExtra) {
   const at = act.at ?? p
   const stand = person('writer', act.facing, 0, false, 'stand', season, extra)
+  cookSteps = act.steps ?? []
   const c = useFrameCanvas('writer', act.facing, act.kind, act.total - act.left, act.total, blink, season, extra)
   drawUse(g, c, stand, at.x, at.y, act.kind !== 'rise')
 }
@@ -2003,18 +2034,27 @@ function newlandMapFor(season: Season): HTMLCanvasElement {
  * over가 false면 기록자 뒤에 그릴 것(길·마당·말뚝, 기록자가 문 앞이거나 더 위인 건물), true면 기록자 앞을 가리는 건물.
  * 공사 그림의 입구는 쓰지 않는다 — 공사 중에는 문이 막혀 있다 (엔진이 정한다)
  */
-function drawNewlandSites(g: Ctx, game: GameState, playerY: number, over: boolean) {
+function drawNewlandSites(g: Ctx, game: GameState, playerY: number, over: boolean, content?: GameContent) {
   const nl = game.newland
   if (!nl || !newlandRevealedOn()) return
-  if (!over) {
-    for (const [k, kind] of Object.entries(nl.tiles)) {
-      const [x, y] = k.split(',').map(Number)
+  for (const [k, kind] of Object.entries(nl.tiles)) {
+    const [x, y] = k.split(',').map(Number)
+    if (kind === 'path' || kind === 'garden') {
+      if (over) continue
       const art = kind === 'path' ? OLD_TERRAIN.path : OLD_TERRAIN.plantingBed
       g.drawImage(paint(`old/terrain/${kind}`, art.rows, OLD_VILLAGE_PALETTE), x * TILE, y * TILE)
+      continue
     }
+    // 꾸미기 소재 (사용자 결정 ⑧): 바닥은 칸 그대로, 나머지는 칸 아래 가운데에 세운다. 나무는 기록자보다 아래 줄이면 앞을 가린다
+    const behind = !blocksWay(kind) || y <= playerY
+    if (behind === over) continue
+    const rows = BG_ART[kind]
+    if (!rows) continue
+    const w = rows[0].length
+    g.drawImage(paint(`bg/${kind}`, rows, BG_PALETTE), x * TILE + Math.floor((TILE - w) / 2), y * TILE + TILE - rows.length)
   }
   for (const b of [...nl.builds].sort((a, c) => a.y - c.y)) {
-    const behind = b.kind === 'courtyard' || b.state === 'ordered' || b.y + 3 <= playerY
+    const behind = isOpenYard(b.kind) || b.state === 'ordered' || b.y + 3 <= playerY
     if (behind === over) continue
     if (b.state === 'ordered') {
       // 주문한 터: 막히는 영역의 네 귀퉁이에 부지 말뚝
@@ -2025,9 +2065,72 @@ function drawNewlandSites(g: Ctx, game: GameState, playerY: number, over: boolea
       continue
     }
     const set = b.state === 'done' ? OLD_BUILDINGS : OLD_CONSTRUCTION
-    const art = set[b.kind][b.facing]
-    g.drawImage(paint(`old/${b.state}/${b.kind}/${b.facing}`, art.rows, OLD_VILLAGE_PALETTE), b.x * TILE, b.y * TILE)
+    // 그림은 자산 id로 (기억 정원 = garden)
+    const asset = SITES[b.kind].assetId ?? b.kind
+    const art = set[asset][b.facing]
+    g.drawImage(paint(`old/${b.state}/${asset}/${b.facing}`, art.rows, OLD_VILLAGE_PALETTE), b.x * TILE, b.y * TILE)
   }
+  // 문을 연 꿈터 (계획 18 B18-8): 낮(9–17시)에는 페넬로피가 문 앞에서 베틀을 짠다 (extraUseFrame weave, 2026-10-07 연결)
+  const shop = game.flags.dreamOpen ? nl.builds.find((b) => b.kind === 'weaver' && b.state === 'done') : undefined
+  const weaverDef = content?.neighbors.find((d) => d.id === DREAMER)
+  const m = game.clock.minute
+  if (shop && weaverDef && m >= 9 * 60 && m < 17 * 60) {
+    const d = doorOf('weaver', shop.x, shop.y, shop.facing)
+    if (d) {
+      const at = { x: d.front.x + 1, y: d.front.y }
+      if ((at.y <= playerY) !== over) {
+        const { who, extra } = neighborLook(weaverDef, undefined, game.looks?.[weaverDef.id])
+        const tt = performance.now() / 1000
+        const f = Math.floor(tt * 3) % 4
+        const blink = isBlinking(tt + 4.2)
+        const opts = { frame: 0 as const, blink, season: seasonOf(game.clock.day), ...extra }
+        const actorPal = who === 'writer' ? writerPalette(opts.season, extra.avatar) : PALETTE
+        const stand = person(who, 'down', 0, false, 'stand', opts.season, extra)
+        drawUse(g, motionCanvas(`xuse/${who}/down/weave/${f}/${blink}/${lookKey(who, opts.season, extra)}`, extraUseFrame(who, 'down', 'weave', f, opts), actorPal, FURNI_PALETTE), stand, at.x, at.y, true)
+      }
+    }
+  }
+  // 손님집의 손님 (2026-10-07, 다른 창 도트 연결): 8–20시 문 옆 — 온 날 오전엔 짐 내려놓기, 낮엔 손일, 그 밖엔 서서 쉬기
+  const inn = nl.builds.find((b) => b.kind === 'guest' && b.state === 'done')
+  const guest = inn ? guestNow(game) : null
+  if (inn && guest && m >= 8 * 60 && m < 20 * 60) {
+    const d = doorOf('guest', inn.x, inn.y, inn.facing)
+    if (d) {
+      const at = { x: d.front.x + 1, y: d.front.y }
+      if ((at.y <= playerY) !== over) {
+        const look = SETTLEMENT_GUESTS[guest]
+        const f = Math.floor((performance.now() / 1000) * 3) % 4
+        const arriving = game.clock.day === (game.flags.guestSince ?? -1) && m < 12 * 60
+        const action = arriving ? 'putLuggage' : m >= 9 * 60 && m < 17 * 60 ? 'work' : 'stand'
+        const layers = arriving ? guestArrivalFrame(guest, 'putLuggage', 'down', f) : settlementGuestFrame(guest, 'down', action as 'work' | 'stand', f)
+        const stand = person('writer', 'down', 0, false, 'stand', 'spring', { avatar: look.avatar, look: look.avatar.look, elder: look.elder })
+        drawUse(g, motionCanvas(`guest/${guest}/${action}/${f}`, layers, layers.palette, arriving ? ADDITION_PROP_PALETTE : GUEST_PROP_PALETTE), stand, at.x, at.y, true)
+      }
+    }
+  }
+  // 기억 정원의 표식 (2026-10-07, 다른 창 도트 연결): 실제로 있었던 일만, 최근 것부터 여덟 — 결혼은 두 고리, 출생은 요람, 이사(독립)는 열쇠
+  const garden = nl.builds.find((b) => b.kind === 'memorial' && b.state === 'done')
+  if (garden) {
+    const marks = memoriesOf(game).slice(0, MEMORY_SPOTS.length)
+    const fr = Math.floor(performance.now() / 600) % 2
+    marks.forEach((mem, i) => {
+      const [dx, dy] = MEMORY_SPOTS[i]
+      const tx = garden.x + dx
+      const ty = garden.y + dy
+      if ((ty <= playerY) !== over) return
+      const kind = memoryMarkerKind(mem)
+      g.drawImage(paint(`memo/${kind}/${fr}`, memoryMarkerRows(kind, fr), MEMORY_PALETTE), tx * TILE, ty * TILE)
+    })
+  }
+}
+
+/** 4×4 기억 정원 안 표식 자리: 정원 그림은 아래 두 줄 반이라, 비어 있는 윗줄 풀밭에 (가운데부터) */
+const MEMORY_SPOTS: readonly [number, number][] = [[1, 1], [2, 1], [1, 0], [2, 0], [0, 0], [3, 0], [0, 1], [3, 1]]
+function memoryMarkerKind(m: Memory): MemoryKind {
+  if (m.kind === 'wedding' || (m.kind === 'gen' && m.log?.kind === 'married')) return 'wedding'
+  if (m.kind === 'childBorn' || m.kind === 'gen') return 'birth'
+  if (m.kind === 'farewell') return 'independence'
+  return m.kind === 'feast' ? 'wreath' : 'flowerPot'
 }
 
 /**
@@ -2071,7 +2174,7 @@ function drawRoomShelfFill(g: Ctx, game: GameState, pieces: readonly Piece[], ro
 }
 
 /** 새 터 한 장면: 땅과 서고, 기록자, 계절 날씨·밤. 첫 마을의 이웃·동물·아이·행사는 이 지도에 없다 */
-function drawNewland(g: Ctx, game: GameState, t: number, W: number, H: number, ox: number, oy: number, selected: readonly Tile[] | null = null) {
+function drawNewland(g: Ctx, game: GameState, t: number, W: number, H: number, ox: number, oy: number, selected: readonly Tile[] | null = null, content?: GameContent) {
   const season = seasonOf(game.clock.day)
   const weather = weatherOf(game.clock.day)
   const p = game.player
@@ -2083,20 +2186,28 @@ function drawNewland(g: Ctx, game: GameState, t: number, W: number, H: number, o
     g.fillRect(0, 0, W, H)
     g.translate(-ox, -oy)
     g.drawImage(newlandMapFor(season), 0, 0)
-    drawNewlandSites(g, game, here.y, false)
+    drawNewlandSites(g, game, here.y, false, content)
     // 입주 주택 안 가구: 깔개 → 길을 막는 가구 → 위에 올린 작은 물건 (집 안과 같은 그림·순서)
     if (inBuildingRoom(game)) {
       for (const f of [...roomOf(game)].sort((a, b) => furnitureOrder(a) - furnitureOrder(b) || a.y - b.y)) drawFurniture(g, f)
       if (selected) drawSelection(g, selected)
     }
     // 서고 안 작은 책장: 모은 구약 조각 ÷ 구약 전체 조각만큼 (한 칸 열두 책등)
-    if (inArchiveRoom(here)) drawShelfFill(g, [INTERIOR_SHELF.tile], shelfFillSteps((game.otCollected ?? []).length, OT_PIECE_COUNT, 1))
+    if (inArchiveRoom(here)) {
+      drawShelfFill(g, [INTERIOR_SHELF.tile], shelfFillSteps((game.otCollected ?? []).length, OT_PIECE_COUNT, 1))
+      // 확장권으로 열린 범위 방 책장 (계획 21 R9·결정 ⑦): 그 범위에서 마친 책만큼 찬다
+      OT_ROOMS.slice(0, archiveRoomsOpen()).forEach((room, i) => {
+        const at = ARCHIVE_ROOM_SHELVES[i]
+        g.drawImage(paint('old/prop/scrollCabinet', OLD_PROPS.scrollCabinet.rows, OLD_VILLAGE_PALETTE), at.x * TILE, at.y * TILE)
+        drawShelfFill(g, [at], shelfFillSteps(room.books.filter((b) => otBookFinished(game, b)).length, room.books.length, 1))
+      })
+    }
     const moving = p.path.length > 0
     const done = totalChapters(game)
     const blink = isBlinking(t)
     const spr = person('writer', p.facing, moving ? walkFrame(p.walkTime) : 0, blink, 'stand', season, { inky: done > 0, look: game.avatar?.look, avatar: game.avatar ? withLookDefaults(game.avatar) : undefined })
     drawSprite(g, spr, p.x, p.y, moving ? 0 : breathOffset(t))
-    drawNewlandSites(g, game, here.y, true)
+    drawNewlandSites(g, game, here.y, true, content)
     // 서고 안은 방 하나만 보이게 둘레를 가린다 (첫 마을의 집 안과 같은 방식)
     const room = viewRoomAt(here)
     if (room) {
@@ -2167,7 +2278,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       const oy = Math.round(cam.y * TILE * sc) / sc
 
       if (currentMapId() === 'newland') {
-        drawNewland(g, game, t, W, H, ox, oy, renderer.selected)
+        drawNewland(g, game, t, W, H, ox, oy, renderer.selected, content)
         return
       }
       const outdoors = !isIndoor(here)
@@ -2358,6 +2469,37 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
 
       type Item = { y: number; paint: () => void }
       const items: Item[] = []
+      // 부모 집에 실제로 태어난 아기만. 통행·저장 상태는 바꾸지 않는 그림이다.
+      for (const { baby, at, sleeping } of householdBabies(game, roomAt(here))) {
+        const f = sleeping ? 2 : Math.floor(t / 0.6) % 4
+        items.push({ y: at.y, paint: () => {
+          const a = householdCradleFrame(baby, f, sleeping)
+          const key = `family-crib/${baby.id}/${f}/${sleeping}/${JSON.stringify(baby.avatar ?? {})}`
+          for (const [layer, rows, palette] of [['back', a.back, a.propPalette], ['baby', a.actor, a.actorPalette], ['front', a.front, a.propPalette]] as const)
+            g.drawImage(paint(`${key}/${layer}`, rows, palette), at.x * TILE, at.y * TILE)
+        } })
+        // 깨어 있는 낮에는 집 주인이 아닌 다른 부모가 요람 곁에서 달랜다 (familyFrame sootheBaby, 2026-10-07 사용자)
+        const room = roomAt(here)
+        const carer = !sleeping && room ? baby.parents.find((id) => id !== room.owner) : undefined
+        if (carer && game.gen) {
+          const cp = game.gen.persons[carer]
+          const fixedDef = cp?.origin === 'fixed' ? content.neighbors.find((d) => d.id === (cp.npc ?? carer)) : undefined
+          const look = fixedDef ? neighborLook(fixedDef, undefined, game.looks?.[fixedDef.id]) : cp ? { who: 'writer' as Who, extra: { look: genAvatar(cp).look, avatar: genAvatar(cp) } as PersonExtra } : null
+          const sx = tileAt(at.x + 1, at.y) === 'f' ? at.x + 1 : at.x - 1
+          if (look) items.push({ y: at.y + 0.01, paint: () => drawFamily(g, 'sootheBaby', sx > at.x ? 'left' : 'right', Math.floor(t / 0.4) % 4, 'adult', sx, at.y, isBlinking(t + 2.1), season, look.extra, look.who) })
+        }
+      }
+      const guest = libraryVisitor(game)
+      if (guest) items.push({ y: guest.at.y, paint: () => {
+        const f = Math.floor(t / 0.35) % 4
+        const a = visitorFrame(guest.kind, guest.action, f)
+        const standing = visitorFrame(guest.kind, 'stand', f)
+        const stand = paint(`visitor-stand/${guest.kind}/${f}`, standing.actor.slice(4, 4 + standing.height).map(r => r.slice(7, 17)), standing.actorPalette)
+        const canvas = motionCanvas(`visitor/${guest.kind}/${guest.action}/${f}`, a, a.actorPalette, a.propPalette)
+        // 걷는 동안은 걸음 박자로 살짝 들썩인다
+        const bob = guest.moving ? (Math.floor(t * 8) % 2) / TILE : 0
+        drawUse(g, canvas, stand, guest.at.x, guest.at.y - bob, true)
+      } })
       for (const ep of eventProps) if (!ep.ground) items.push({ y: eventPropSortY(ep), paint: () => drawEventProp(g, ep) })
 
       // 안 읽은 편지 (2026-09-30 사용자): 문 앞 편지 바구니 위에 봉투 말풍선
@@ -2374,14 +2516,42 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         [4, 29.5],
         [6.5, 27.5],
       ].slice(0, sheepCount(game)).forEach(([sx, sy], i) => {
-        const x = sx + Math.sin(t * 0.3 + i * 2) * 0.6
-        const y = sy + Math.cos(t * 0.23 + i) * 0.5
-        items.push({ y, paint: () => drawSprite(g, paint(`sheep/${Math.sin(t * 0.3 + i * 2) > 0 ? 'r' : 'l'}`, Math.sin(t * 0.3 + i * 2) > 0 ? SHEEP : SHEEP.map((r) => [...r].reverse().join('')), SMALL_PALETTE), x, y) })
+        // 이동 사이에 잠시 멈춰 풀을 먹는다. 멈춘 시간에는 이동 위상도 고정한다.
+        const cycle = t + i * 2.7
+        const resting = cycle % 12 >= 9
+        const travel = Math.floor(cycle / 12) * 9 + Math.min(cycle % 12, 9)
+        const x = sx + Math.sin(travel * 0.3 + i * 2) * 0.6
+        const y = sy + Math.cos(travel * 0.23 + i) * 0.5
+        const side = Math.cos(travel * 0.3 + i * 2) >= 0 ? 'right' : 'left'
+        const action = resting ? 'graze' : 'walk'
+        const f = Math.floor(cycle * (resting ? 3 : 6)) % 4
+        items.push({ y, paint: () => drawSprite(g, paint(`sheep/${side}/${action}/${f}`, sheepLifeRows(side, action, f), SMALL_PALETTE), x, y) })
       })
 
       // 이웃
       for (const def of content.neighbors) {
         const n = game.npcs[def.id]
+        // 이사 간 이웃 자리는 이어받은 자녀가 (나이 든 모습 대신)
+        const heirP = movedHeir(game.gen, def.id)
+        const heirAv = heirP ? genAvatar(heirP) : null
+        const elder = residentIsElder(game.gen, heirP?.id ?? def.id)
+        // 이사 가는 날 (2026-10-07 사용자): 아침 7–9시, 나이 든 이웃이 짐을 들고 제 집 문 앞에서 아래로 걸어 떠난다 (familyFrame moveHouse)
+        const leaving = game.gen?.retired?.[def.id]
+        const homeRoom = ROOMS.find((rm) => rm.owner === def.id)
+        if (leaving?.moved === day && homeRoom && !wet && minute >= 7 * 60 && minute < 9 * 60 && !roomAt(here)) {
+          // 이웃이 다니는 길(route)로 문 앞 → 우물 마당까지, 두 시간에 걸쳐 걷고 마당에 닿으면 떠난다
+          const way = leavingWay(def.id, { x: homeRoom.door.x, y: homeRoom.door.y + 1 })
+          const k = ((minute - 7 * 60) / 120) * (way.length - 1)
+          const i0 = Math.min(way.length - 1, Math.floor(k))
+          const a = way[i0]
+          const b = way[Math.min(way.length - 1, i0 + 1)]
+          const lx = a.x + (b.x - a.x) * (k - i0)
+          const ly = a.y + (b.y - a.y) * (k - i0)
+          const face: Facing = b.x > a.x ? 'right' : b.x < a.x ? 'left' : b.y < a.y ? 'up' : 'down'
+          const { who, extra } = neighborLook(def, undefined, game.looks?.[def.id], true)
+          const ph = t + def.id.length
+          if (i0 < way.length - 1) items.push({ y: ly, paint: () => drawFamily(g, 'moveHouse', face, Math.floor(ph * 5) % 4, 'elder', lx, ly, isBlinking(ph), season, extra, who) })
+        }
         if (!n?.visible) {
           // 집에 들어간 이웃: 내가 그 집 안에 있으면 방 안 자리에 서 있다 (밤 열 시 이후엔 잔다)
           const home = ROOMS.find((rm) => rm.owner === def.id)
@@ -2392,10 +2562,19 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
               y: home.sit.y,
               // 제 집 앉는 자리에서는 앉은 모습 (계획 17 작업 3) — 숨 쉬는 박자는 앉기 동작에 들어 있다
               paint: () => {
-                const { who, extra } = neighborLook(def, growth, game.looks?.[def.id])
+                const { who, extra } = neighborLook(def, growth, game.looks?.[def.id], elder, heirAv)
                 const stand = person(who, 'down', 0, false, 'stand', season, extra)
                 drawUse(g, useFrameCanvas(who, 'down', 'sit', t + def.id.length, 1, isBlinking(t + def.id.length), season, extra), stand, home.sit.x, home.sit.y, true)
               },
+            })
+            // 집 안의 가족 (2026-10-07): 아이·십 대는 곁에서 함께 읽고, 어른 자녀는 이야기를 듣는다 — 비 오는 날·저녁에도 보인다
+            companionsOf(game.gen, def.id).forEach((c, i) => {
+              const av = genAvatar(c.person)
+              const ph = t + c.person.id.length * 0.53
+              const extra: PersonExtra = { look: av.look, avatar: av, elder: residentIsElder(game.gen, c.person.id), short: c.short ? (c.person.stage === 'child' ? 1 : 2) : undefined }
+              const cx = home.sit.x + (i === 0 ? 1 : -1)
+              const stage: Exclude<GenerationStage, 'baby'> = c.person.stage === 'child' ? 'child' : c.person.stage === 'teen' ? 'teen' : c.person.stage === 'elder' ? 'elder' : 'adult'
+              items.push({ y: home.sit.y + 0.01, paint: () => drawFamily(g, c.short ? 'readTogether' : 'listen', i === 0 ? 'left' : 'right', Math.floor(ph * 3) % 4, stage, cx, home.sit.y, isBlinking(ph), season, extra) })
             })
           }
           continue
@@ -2407,12 +2586,19 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         items.push({
           y: n.y,
           paint: () => {
-            const spr = neighborPerson(def, facing, moving ? walkFrame(n.walkTime) : 0, isBlinking(t + offset), season, growth, game.looks?.[def.id])
+            const spr = neighborPerson(def, facing, moving ? walkFrame(n.walkTime) : 0, isBlinking(t + offset), season, growth, game.looks?.[def.id], elder, heirAv)
             // 행사 동작 (계획 17 작업 4·5): 결혼식의 짝, 잔치·모임 자리의 이웃 — 지금 외형으로
             const em = moving ? null : npcEventMotion(game, def.id, t)
             if (em) {
-              const { who, extra } = neighborLook(def, growth, game.looks?.[def.id])
+              const { who, extra } = neighborLook(def, growth, game.looks?.[def.id], elder, heirAv)
               drawEventMotion(g, who, em, n.x, n.y, isBlinking(t + offset), season, extra)
+            } else if (!moving && elder && (t + offset) % 9 < 1.2 && neighborLook(def, growth, game.looks?.[def.id], elder, heirAv).who === 'writer') {
+              // 나이 든 주민은 서 있다가 가끔 허리를 편다 (elderMotionFrame straighten, 다른 창 도트 2026-10-07 연결)
+              const { extra } = neighborLook(def, growth, game.looks?.[def.id], elder, heirAv)
+              const av = extra.avatar!
+              const f = Math.min(3, Math.floor(((t + offset) % 9) / 0.3))
+              const layers = elderMotionFrame('straighten', 'down', f, av)
+              drawUse(g, motionCanvas(`elder/straighten/${f}/${lookKey('writer', season, extra)}`, layers, layers.palette, ADDITION_PROP_PALETTE), spr, n.x, n.y, true)
             } else drawSprite(g, spr, n.x, n.y, moving ? 0 : breathOffset(t + offset))
             // 이야기를 건넬 이웃, 기다리던 이야기(이벤트)를 품은 이웃은 머리 위에 말풍선 — 말을 걸면 열린다
             const bubbleY = n.y * TILE + TILE - spr.height - 2 - Math.round(Math.sin(t * 3))
@@ -2441,6 +2627,31 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
               },
             })
         }
+        // 세대교체: 견습·이어받은 자녀, 걷는 아이·십 대는 부모 곁에 (서 있을 때, 비 오는 날엔 집 안)
+        // 2026-10-07 사용자: 이동 중엔 뒤를 따라 걷고, 서 있으면 곁에서 — 견습 자녀는 손일(apprentice) 동작
+        if (!wet)
+          companionsOf(game.gen, def.id).forEach((c, i) => {
+            const av = genAvatar(c.person)
+            const ph = t + c.person.id.length * 0.53
+            const extra: PersonExtra = { look: av.look, avatar: av, elder: residentIsElder(game.gen, c.person.id), short: c.short ? (c.person.stage === 'child' ? 1 : 2) : undefined }
+            if (moving) {
+              // 부모가 가는 쪽의 반대편으로 한 칸·두 칸 뒤에서 같은 쪽을 보고 걷는다
+              const back = (i + 1) * 0.9
+              const [dx, dy] = facing === 'left' ? [back, 0] : facing === 'right' ? [-back, 0] : facing === 'up' ? [0, back] : [0, -back]
+              const fx = n.x + dx
+              const fy = n.y + dy
+              items.push({ y: fy, paint: () => drawSprite(g, person('writer', facing, walkFrame(n.walkTime + 0.15 * (i + 1)), isBlinking(ph), 'stand', season, extra), fx, fy, 0) })
+              return
+            }
+            const cx = n.x + (i === 0 ? 0.85 : -0.85)
+            const side: Facing = i === 0 ? 'left' : 'right'
+            const apprentice = !c.short && c.person.stage === 'adult' && (game.gen?.heirs?.[def.id]?.heir === c.person.id || game.gen?.retired?.[def.id]?.heir === c.person.id)
+            if (apprentice) {
+              items.push({ y: n.y + 0.02, paint: () => drawFamily(g, 'apprentice', side, Math.floor(ph * 4) % 4, 'adult', cx, n.y, isBlinking(ph), season, extra) })
+              return
+            }
+            items.push({ y: n.y + 0.02, paint: () => drawSprite(g, person('writer', side, 0, isBlinking(ph), 'stand', season, extra), cx, n.y, breathOffset(ph)) })
+          })
       }
 
       // 떠돌이 새끼들
@@ -2455,20 +2666,22 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       if (kid && childMode(kid, day) !== 'away') {
         const st = childStage(kid, day)
         const mode = childMode(kid, day)
-        const kidRows = () => recolor(spriteRows('child', 'down', { frame: 0, blink: isBlinking(t + 1.3), growth: 2 }), kid.look === 'boy' ? { z: 'E', Z: 'M' } : { z: 'V', Z: 'X' })
-        // 걷는 아이는 아기 걸음 그림, 돕는 아이는 물 긷는 아이 그림에 옷 색만 바꿔서
+        const kidBlink = isBlinking(t + 1.3)
+        const kidRows = (facing: Facing, frame: 0 | 1 | 2) => recolor(spriteRows('child', facing, { frame, blink: kidBlink, growth: 2 }), kid.look === 'boy' ? { z: 'E', Z: 'M' } : { z: 'V', Z: 'X' })
+        // 걷는 아이는 키 작은 주인공 그림(방향별 걸음), 돕는 아이는 물 긷는 아이 그림에 옷 색만 바꿔서 — 방향별 걸음 (2026-10-07 사용자)
         // 옷장에서 모습을 입힌 아이는 그 모습 그대로 (돕는 아이는 키가 작게, 어른은 그대로)
         const dressed = game.looks?.child ? withLookDefaults({ ...game.looks.child, skin: game.avatar?.skin ?? game.looks.child.skin }) : null
-        const drawKid = (x: number, y: number, bob: number) =>
-          st === 'toddler'
-            ? drawSprite(g, paint('baby/walk', BABY.walk, SMALL_PALETTE), x, y, bob)
-            : dressed
-              ? drawSprite(g, person('writer', 'down', 0, isBlinking(t + 1.3), 'stand', season, { avatar: dressed, look: dressed.look, short: st === 'adult' ? undefined : 1 }), x, y, bob)
-              : drawSprite(g, paint(`kid/${kid.look}/${isBlinking(t + 1.3)}`, kidRows(), PALETTE), x, y, bob)
+        const kidAvatar = dressed ?? withLookDefaults({ look: kid.look === 'boy' ? 'm' : 'f', name: kid.name, skin: game.avatar?.skin ?? 1 })
+        const kidShort = st === 'toddler' ? 0 : st === 'adult' ? undefined : 1
+        const drawKid = (x: number, y: number, bob: number, facing: Facing = 'down', frame: 0 | 1 | 2 = 0) =>
+          st === 'toddler' || dressed
+            ? drawSprite(g, person('writer', facing, frame, kidBlink, 'stand', season, { avatar: kidAvatar, look: kidAvatar.look, short: kidShort }), x, y, bob)
+            : drawSprite(g, paint(`kid/${kid.look}/${facing}/${frame}/${kidBlink}`, kidRows(facing, frame), PALETTE), x, y, bob)
         if (childAtSchool(game)) {
-          // 배움터에 맡긴 날: 배움 탁자 곁에 앉아 있다
+          // 배움터에 맡긴 날: 배움 탁자 곁에 앉아 읽는다 (함께 읽기 동작, 2026-10-07)
           const at = SCHOOL_SEAT
-          items.push({ y: at.y, paint: () => drawKid(at.x, at.y, 0) })
+          const stage: Exclude<GenerationStage, 'baby'> = st === 'toddler' ? 'toddler' : st === 'adult' ? 'adult' : 'child'
+          items.push({ y: at.y, paint: () => drawFamily(g, 'readTogether', 'down', Math.floor((t + 1.3) * 3) % 4, stage, at.x, at.y, kidBlink, season, { avatar: kidAvatar, look: kidAvatar.look, short: kidShort }) })
         } else if (mode === 'cradle') {
           const c = childTile(game)!
           items.push({
@@ -2482,7 +2695,8 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           const back = { left: [0.7, 0.1], right: [-0.7, 0.1], up: [0, 0.6], down: [-0.6, -0.1] }[p.facing]
           const kx = p.x + back[0]
           const ky = p.y + back[1]
-          items.push({ y: ky, paint: () => drawKid(kx, ky, p.path.length ? Math.floor(t * 8) % 2 : 0) })
+          // 기록자와 같은 쪽을 보고 걸음 그림으로 따라온다 (위아래 흔들기만 하던 것 → 방향별 걸음)
+          items.push({ y: ky, paint: () => drawKid(kx, ky, 0, p.facing, p.path.length ? walkFrame(p.walkTime ?? t) : 0) })
         } else {
           const at = childTile(game)!
           items.push({ y: at.y, paint: () => drawKid(at.x, at.y, st === 'toddler' ? 0 : breathOffset(t + 1.3)) })
@@ -2570,7 +2784,12 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       } else items.push({
         y: p.y,
         paint: () => {
-          const spr = person('writer', facing, frame, blink, pose, season, { inky: done > 0, look: game.avatar?.look, avatar: game.avatar ? withLookDefaults(game.avatar) : undefined })
+          const extra = { inky: done > 0, look: game.avatar?.look, avatar: game.avatar ? withLookDefaults(game.avatar) : undefined }
+          const quiet: QuietAction | null = moving ? null : kind === 'yawn' || kind === 'wrist' || kind === 'stretch' || kind === 'hum' ? kind : pose === 'wave' ? 'wave' : null
+          const f = Math.floor(t * 4) % 4
+          const spr = quiet
+            ? paint(`quiet/${quiet}/${f}/${blink}/${lookKey('writer', season, extra)}`, quietLifeRows('writer', quiet, f, { frame: 0, blink, season, ...extra }), writerPalette(season, extra.avatar))
+            : person('writer', facing, frame, blink, pose, season, extra)
           drawSprite(g, spr, p.x, p.y, lift)
           const top = Math.round(p.y * TILE) + TILE - spr.height - 2
           const cx = Math.round(p.x * TILE) + 8

@@ -1,0 +1,846 @@
+{
+  "items": [
+    {
+      "id": "cream-plain-cream",
+      "color": "cream",
+      "pattern": "plain",
+      "deco": "cream",
+      "spine": "cream-plain-cream-spine.png",
+      "cover": "cream-plain-cream-cover.png"
+    },
+    {
+      "id": "cream-plain-leather",
+      "color": "cream",
+      "pattern": "plain",
+      "deco": "leather",
+      "spine": "cream-plain-leather-spine.png",
+      "cover": "cream-plain-leather-cover.png"
+    },
+    {
+      "id": "cream-plain-navy",
+      "color": "cream",
+      "pattern": "plain",
+      "deco": "navy",
+      "spine": "cream-plain-navy-spine.png",
+      "cover": "cream-plain-navy-cover.png"
+    },
+    {
+      "id": "cream-plain-bronze",
+      "color": "cream",
+      "pattern": "plain",
+      "deco": "bronze",
+      "spine": "cream-plain-bronze-spine.png",
+      "cover": "cream-plain-bronze-cover.png"
+    },
+    {
+      "id": "cream-lines-cream",
+      "color": "cream",
+      "pattern": "lines",
+      "deco": "cream",
+      "spine": "cream-lines-cream-spine.png",
+      "cover": "cream-lines-cream-cover.png"
+    },
+    {
+      "id": "cream-lines-leather",
+      "color": "cream",
+      "pattern": "lines",
+      "deco": "leather",
+      "spine": "cream-lines-leather-spine.png",
+      "cover": "cream-lines-leather-cover.png"
+    },
+    {
+      "id": "cream-lines-navy",
+      "color": "cream",
+      "pattern": "lines",
+      "deco": "navy",
+      "spine": "cream-lines-navy-spine.png",
+      "cover": "cream-lines-navy-cover.png"
+    },
+    {
+      "id": "cream-lines-bronze",
+      "color": "cream",
+      "pattern": "lines",
+      "deco": "bronze",
+      "spine": "cream-lines-bronze-spine.png",
+      "cover": "cream-lines-bronze-cover.png"
+    },
+    {
+      "id": "cream-dots-cream",
+      "color": "cream",
+      "pattern": "dots",
+      "deco": "cream",
+      "spine": "cream-dots-cream-spine.png",
+      "cover": "cream-dots-cream-cover.png"
+    },
+    {
+      "id": "cream-dots-leather",
+      "color": "cream",
+      "pattern": "dots",
+      "deco": "leather",
+      "spine": "cream-dots-leather-spine.png",
+      "cover": "cream-dots-leather-cover.png"
+    },
+    {
+      "id": "cream-dots-navy",
+      "color": "cream",
+      "pattern": "dots",
+      "deco": "navy",
+      "spine": "cream-dots-navy-spine.png",
+      "cover": "cream-dots-navy-cover.png"
+    },
+    {
+      "id": "cream-dots-bronze",
+      "color": "cream",
+      "pattern": "dots",
+      "deco": "bronze",
+      "spine": "cream-dots-bronze-spine.png",
+      "cover": "cream-dots-bronze-cover.png"
+    },
+    {
+      "id": "cream-diamonds-cream",
+      "color": "cream",
+      "pattern": "diamonds",
+      "deco": "cream",
+      "spine": "cream-diamonds-cream-spine.png",
+      "cover": "cream-diamonds-cream-cover.png"
+    },
+    {
+      "id": "cream-diamonds-leather",
+      "color": "cream",
+      "pattern": "diamonds",
+      "deco": "leather",
+      "spine": "cream-diamonds-leather-spine.png",
+      "cover": "cream-diamonds-leather-cover.png"
+    },
+    {
+      "id": "cream-diamonds-navy",
+      "color": "cream",
+      "pattern": "diamonds",
+      "deco": "navy",
+      "spine": "cream-diamonds-navy-spine.png",
+      "cover": "cream-diamonds-navy-cover.png"
+    },
+    {
+      "id": "cream-diamonds-bronze",
+      "color": "cream",
+      "pattern": "diamonds",
+      "deco": "bronze",
+      "spine": "cream-diamonds-bronze-spine.png",
+      "cover": "cream-diamonds-bronze-cover.png"
+    },
+    {
+      "id": "sky-plain-cream",
+      "color": "sky",
+      "pattern": "plain",
+      "deco": "cream",
+      "spine": "sky-plain-cream-spine.png",
+      "cover": "sky-plain-cream-cover.png"
+    },
+    {
+      "id": "sky-plain-leather",
+      "color": "sky",
+      "pattern": "plain",
+      "deco": "leather",
+      "spine": "sky-plain-leather-spine.png",
+      "cover": "sky-plain-leather-cover.png"
+    },
+    {
+      "id": "sky-plain-navy",
+      "color": "sky",
+      "pattern": "plain",
+      "deco": "navy",
+      "spine": "sky-plain-navy-spine.png",
+      "cover": "sky-plain-navy-cover.png"
+    },
+    {
+      "id": "sky-plain-bronze",
+      "color": "sky",
+      "pattern": "plain",
+      "deco": "bronze",
+      "spine": "sky-plain-bronze-spine.png",
+      "cover": "sky-plain-bronze-cover.png"
+    },
+    {
+      "id": "sky-lines-cream",
+      "color": "sky",
+      "pattern": "lines",
+      "deco": "cream",
+      "spine": "sky-lines-cream-spine.png",
+      "cover": "sky-lines-cream-cover.png"
+    },
+    {
+      "id": "sky-lines-leather",
+      "color": "sky",
+      "pattern": "lines",
+      "deco": "leather",
+      "spine": "sky-lines-leather-spine.png",
+      "cover": "sky-lines-leather-cover.png"
+    },
+    {
+      "id": "sky-lines-navy",
+      "color": "sky",
+      "pattern": "lines",
+      "deco": "navy",
+      "spine": "sky-lines-navy-spine.png",
+      "cover": "sky-lines-navy-cover.png"
+    },
+    {
+      "id": "sky-lines-bronze",
+      "color": "sky",
+      "pattern": "lines",
+      "deco": "bronze",
+      "spine": "sky-lines-bronze-spine.png",
+      "cover": "sky-lines-bronze-cover.png"
+    },
+    {
+      "id": "sky-dots-cream",
+      "color": "sky",
+      "pattern": "dots",
+      "deco": "cream",
+      "spine": "sky-dots-cream-spine.png",
+      "cover": "sky-dots-cream-cover.png"
+    },
+    {
+      "id": "sky-dots-leather",
+      "color": "sky",
+      "pattern": "dots",
+      "deco": "leather",
+      "spine": "sky-dots-leather-spine.png",
+      "cover": "sky-dots-leather-cover.png"
+    },
+    {
+      "id": "sky-dots-navy",
+      "color": "sky",
+      "pattern": "dots",
+      "deco": "navy",
+      "spine": "sky-dots-navy-spine.png",
+      "cover": "sky-dots-navy-cover.png"
+    },
+    {
+      "id": "sky-dots-bronze",
+      "color": "sky",
+      "pattern": "dots",
+      "deco": "bronze",
+      "spine": "sky-dots-bronze-spine.png",
+      "cover": "sky-dots-bronze-cover.png"
+    },
+    {
+      "id": "sky-diamonds-cream",
+      "color": "sky",
+      "pattern": "diamonds",
+      "deco": "cream",
+      "spine": "sky-diamonds-cream-spine.png",
+      "cover": "sky-diamonds-cream-cover.png"
+    },
+    {
+      "id": "sky-diamonds-leather",
+      "color": "sky",
+      "pattern": "diamonds",
+      "deco": "leather",
+      "spine": "sky-diamonds-leather-spine.png",
+      "cover": "sky-diamonds-leather-cover.png"
+    },
+    {
+      "id": "sky-diamonds-navy",
+      "color": "sky",
+      "pattern": "diamonds",
+      "deco": "navy",
+      "spine": "sky-diamonds-navy-spine.png",
+      "cover": "sky-diamonds-navy-cover.png"
+    },
+    {
+      "id": "sky-diamonds-bronze",
+      "color": "sky",
+      "pattern": "diamonds",
+      "deco": "bronze",
+      "spine": "sky-diamonds-bronze-spine.png",
+      "cover": "sky-diamonds-bronze-cover.png"
+    },
+    {
+      "id": "sage-plain-cream",
+      "color": "sage",
+      "pattern": "plain",
+      "deco": "cream",
+      "spine": "sage-plain-cream-spine.png",
+      "cover": "sage-plain-cream-cover.png"
+    },
+    {
+      "id": "sage-plain-leather",
+      "color": "sage",
+      "pattern": "plain",
+      "deco": "leather",
+      "spine": "sage-plain-leather-spine.png",
+      "cover": "sage-plain-leather-cover.png"
+    },
+    {
+      "id": "sage-plain-navy",
+      "color": "sage",
+      "pattern": "plain",
+      "deco": "navy",
+      "spine": "sage-plain-navy-spine.png",
+      "cover": "sage-plain-navy-cover.png"
+    },
+    {
+      "id": "sage-plain-bronze",
+      "color": "sage",
+      "pattern": "plain",
+      "deco": "bronze",
+      "spine": "sage-plain-bronze-spine.png",
+      "cover": "sage-plain-bronze-cover.png"
+    },
+    {
+      "id": "sage-lines-cream",
+      "color": "sage",
+      "pattern": "lines",
+      "deco": "cream",
+      "spine": "sage-lines-cream-spine.png",
+      "cover": "sage-lines-cream-cover.png"
+    },
+    {
+      "id": "sage-lines-leather",
+      "color": "sage",
+      "pattern": "lines",
+      "deco": "leather",
+      "spine": "sage-lines-leather-spine.png",
+      "cover": "sage-lines-leather-cover.png"
+    },
+    {
+      "id": "sage-lines-navy",
+      "color": "sage",
+      "pattern": "lines",
+      "deco": "navy",
+      "spine": "sage-lines-navy-spine.png",
+      "cover": "sage-lines-navy-cover.png"
+    },
+    {
+      "id": "sage-lines-bronze",
+      "color": "sage",
+      "pattern": "lines",
+      "deco": "bronze",
+      "spine": "sage-lines-bronze-spine.png",
+      "cover": "sage-lines-bronze-cover.png"
+    },
+    {
+      "id": "sage-dots-cream",
+      "color": "sage",
+      "pattern": "dots",
+      "deco": "cream",
+      "spine": "sage-dots-cream-spine.png",
+      "cover": "sage-dots-cream-cover.png"
+    },
+    {
+      "id": "sage-dots-leather",
+      "color": "sage",
+      "pattern": "dots",
+      "deco": "leather",
+      "spine": "sage-dots-leather-spine.png",
+      "cover": "sage-dots-leather-cover.png"
+    },
+    {
+      "id": "sage-dots-navy",
+      "color": "sage",
+      "pattern": "dots",
+      "deco": "navy",
+      "spine": "sage-dots-navy-spine.png",
+      "cover": "sage-dots-navy-cover.png"
+    },
+    {
+      "id": "sage-dots-bronze",
+      "color": "sage",
+      "pattern": "dots",
+      "deco": "bronze",
+      "spine": "sage-dots-bronze-spine.png",
+      "cover": "sage-dots-bronze-cover.png"
+    },
+    {
+      "id": "sage-diamonds-cream",
+      "color": "sage",
+      "pattern": "diamonds",
+      "deco": "cream",
+      "spine": "sage-diamonds-cream-spine.png",
+      "cover": "sage-diamonds-cream-cover.png"
+    },
+    {
+      "id": "sage-diamonds-leather",
+      "color": "sage",
+      "pattern": "diamonds",
+      "deco": "leather",
+      "spine": "sage-diamonds-leather-spine.png",
+      "cover": "sage-diamonds-leather-cover.png"
+    },
+    {
+      "id": "sage-diamonds-navy",
+      "color": "sage",
+      "pattern": "diamonds",
+      "deco": "navy",
+      "spine": "sage-diamonds-navy-spine.png",
+      "cover": "sage-diamonds-navy-cover.png"
+    },
+    {
+      "id": "sage-diamonds-bronze",
+      "color": "sage",
+      "pattern": "diamonds",
+      "deco": "bronze",
+      "spine": "sage-diamonds-bronze-spine.png",
+      "cover": "sage-diamonds-bronze-cover.png"
+    },
+    {
+      "id": "lavender-plain-cream",
+      "color": "lavender",
+      "pattern": "plain",
+      "deco": "cream",
+      "spine": "lavender-plain-cream-spine.png",
+      "cover": "lavender-plain-cream-cover.png"
+    },
+    {
+      "id": "lavender-plain-leather",
+      "color": "lavender",
+      "pattern": "plain",
+      "deco": "leather",
+      "spine": "lavender-plain-leather-spine.png",
+      "cover": "lavender-plain-leather-cover.png"
+    },
+    {
+      "id": "lavender-plain-navy",
+      "color": "lavender",
+      "pattern": "plain",
+      "deco": "navy",
+      "spine": "lavender-plain-navy-spine.png",
+      "cover": "lavender-plain-navy-cover.png"
+    },
+    {
+      "id": "lavender-plain-bronze",
+      "color": "lavender",
+      "pattern": "plain",
+      "deco": "bronze",
+      "spine": "lavender-plain-bronze-spine.png",
+      "cover": "lavender-plain-bronze-cover.png"
+    },
+    {
+      "id": "lavender-lines-cream",
+      "color": "lavender",
+      "pattern": "lines",
+      "deco": "cream",
+      "spine": "lavender-lines-cream-spine.png",
+      "cover": "lavender-lines-cream-cover.png"
+    },
+    {
+      "id": "lavender-lines-leather",
+      "color": "lavender",
+      "pattern": "lines",
+      "deco": "leather",
+      "spine": "lavender-lines-leather-spine.png",
+      "cover": "lavender-lines-leather-cover.png"
+    },
+    {
+      "id": "lavender-lines-navy",
+      "color": "lavender",
+      "pattern": "lines",
+      "deco": "navy",
+      "spine": "lavender-lines-navy-spine.png",
+      "cover": "lavender-lines-navy-cover.png"
+    },
+    {
+      "id": "lavender-lines-bronze",
+      "color": "lavender",
+      "pattern": "lines",
+      "deco": "bronze",
+      "spine": "lavender-lines-bronze-spine.png",
+      "cover": "lavender-lines-bronze-cover.png"
+    },
+    {
+      "id": "lavender-dots-cream",
+      "color": "lavender",
+      "pattern": "dots",
+      "deco": "cream",
+      "spine": "lavender-dots-cream-spine.png",
+      "cover": "lavender-dots-cream-cover.png"
+    },
+    {
+      "id": "lavender-dots-leather",
+      "color": "lavender",
+      "pattern": "dots",
+      "deco": "leather",
+      "spine": "lavender-dots-leather-spine.png",
+      "cover": "lavender-dots-leather-cover.png"
+    },
+    {
+      "id": "lavender-dots-navy",
+      "color": "lavender",
+      "pattern": "dots",
+      "deco": "navy",
+      "spine": "lavender-dots-navy-spine.png",
+      "cover": "lavender-dots-navy-cover.png"
+    },
+    {
+      "id": "lavender-dots-bronze",
+      "color": "lavender",
+      "pattern": "dots",
+      "deco": "bronze",
+      "spine": "lavender-dots-bronze-spine.png",
+      "cover": "lavender-dots-bronze-cover.png"
+    },
+    {
+      "id": "lavender-diamonds-cream",
+      "color": "lavender",
+      "pattern": "diamonds",
+      "deco": "cream",
+      "spine": "lavender-diamonds-cream-spine.png",
+      "cover": "lavender-diamonds-cream-cover.png"
+    },
+    {
+      "id": "lavender-diamonds-leather",
+      "color": "lavender",
+      "pattern": "diamonds",
+      "deco": "leather",
+      "spine": "lavender-diamonds-leather-spine.png",
+      "cover": "lavender-diamonds-leather-cover.png"
+    },
+    {
+      "id": "lavender-diamonds-navy",
+      "color": "lavender",
+      "pattern": "diamonds",
+      "deco": "navy",
+      "spine": "lavender-diamonds-navy-spine.png",
+      "cover": "lavender-diamonds-navy-cover.png"
+    },
+    {
+      "id": "lavender-diamonds-bronze",
+      "color": "lavender",
+      "pattern": "diamonds",
+      "deco": "bronze",
+      "spine": "lavender-diamonds-bronze-spine.png",
+      "cover": "lavender-diamonds-bronze-cover.png"
+    },
+    {
+      "id": "sand-plain-cream",
+      "color": "sand",
+      "pattern": "plain",
+      "deco": "cream",
+      "spine": "sand-plain-cream-spine.png",
+      "cover": "sand-plain-cream-cover.png"
+    },
+    {
+      "id": "sand-plain-leather",
+      "color": "sand",
+      "pattern": "plain",
+      "deco": "leather",
+      "spine": "sand-plain-leather-spine.png",
+      "cover": "sand-plain-leather-cover.png"
+    },
+    {
+      "id": "sand-plain-navy",
+      "color": "sand",
+      "pattern": "plain",
+      "deco": "navy",
+      "spine": "sand-plain-navy-spine.png",
+      "cover": "sand-plain-navy-cover.png"
+    },
+    {
+      "id": "sand-plain-bronze",
+      "color": "sand",
+      "pattern": "plain",
+      "deco": "bronze",
+      "spine": "sand-plain-bronze-spine.png",
+      "cover": "sand-plain-bronze-cover.png"
+    },
+    {
+      "id": "sand-lines-cream",
+      "color": "sand",
+      "pattern": "lines",
+      "deco": "cream",
+      "spine": "sand-lines-cream-spine.png",
+      "cover": "sand-lines-cream-cover.png"
+    },
+    {
+      "id": "sand-lines-leather",
+      "color": "sand",
+      "pattern": "lines",
+      "deco": "leather",
+      "spine": "sand-lines-leather-spine.png",
+      "cover": "sand-lines-leather-cover.png"
+    },
+    {
+      "id": "sand-lines-navy",
+      "color": "sand",
+      "pattern": "lines",
+      "deco": "navy",
+      "spine": "sand-lines-navy-spine.png",
+      "cover": "sand-lines-navy-cover.png"
+    },
+    {
+      "id": "sand-lines-bronze",
+      "color": "sand",
+      "pattern": "lines",
+      "deco": "bronze",
+      "spine": "sand-lines-bronze-spine.png",
+      "cover": "sand-lines-bronze-cover.png"
+    },
+    {
+      "id": "sand-dots-cream",
+      "color": "sand",
+      "pattern": "dots",
+      "deco": "cream",
+      "spine": "sand-dots-cream-spine.png",
+      "cover": "sand-dots-cream-cover.png"
+    },
+    {
+      "id": "sand-dots-leather",
+      "color": "sand",
+      "pattern": "dots",
+      "deco": "leather",
+      "spine": "sand-dots-leather-spine.png",
+      "cover": "sand-dots-leather-cover.png"
+    },
+    {
+      "id": "sand-dots-navy",
+      "color": "sand",
+      "pattern": "dots",
+      "deco": "navy",
+      "spine": "sand-dots-navy-spine.png",
+      "cover": "sand-dots-navy-cover.png"
+    },
+    {
+      "id": "sand-dots-bronze",
+      "color": "sand",
+      "pattern": "dots",
+      "deco": "bronze",
+      "spine": "sand-dots-bronze-spine.png",
+      "cover": "sand-dots-bronze-cover.png"
+    },
+    {
+      "id": "sand-diamonds-cream",
+      "color": "sand",
+      "pattern": "diamonds",
+      "deco": "cream",
+      "spine": "sand-diamonds-cream-spine.png",
+      "cover": "sand-diamonds-cream-cover.png"
+    },
+    {
+      "id": "sand-diamonds-leather",
+      "color": "sand",
+      "pattern": "diamonds",
+      "deco": "leather",
+      "spine": "sand-diamonds-leather-spine.png",
+      "cover": "sand-diamonds-leather-cover.png"
+    },
+    {
+      "id": "sand-diamonds-navy",
+      "color": "sand",
+      "pattern": "diamonds",
+      "deco": "navy",
+      "spine": "sand-diamonds-navy-spine.png",
+      "cover": "sand-diamonds-navy-cover.png"
+    },
+    {
+      "id": "sand-diamonds-bronze",
+      "color": "sand",
+      "pattern": "diamonds",
+      "deco": "bronze",
+      "spine": "sand-diamonds-bronze-spine.png",
+      "cover": "sand-diamonds-bronze-cover.png"
+    },
+    {
+      "id": "slate-plain-cream",
+      "color": "slate",
+      "pattern": "plain",
+      "deco": "cream",
+      "spine": "slate-plain-cream-spine.png",
+      "cover": "slate-plain-cream-cover.png"
+    },
+    {
+      "id": "slate-plain-leather",
+      "color": "slate",
+      "pattern": "plain",
+      "deco": "leather",
+      "spine": "slate-plain-leather-spine.png",
+      "cover": "slate-plain-leather-cover.png"
+    },
+    {
+      "id": "slate-plain-navy",
+      "color": "slate",
+      "pattern": "plain",
+      "deco": "navy",
+      "spine": "slate-plain-navy-spine.png",
+      "cover": "slate-plain-navy-cover.png"
+    },
+    {
+      "id": "slate-plain-bronze",
+      "color": "slate",
+      "pattern": "plain",
+      "deco": "bronze",
+      "spine": "slate-plain-bronze-spine.png",
+      "cover": "slate-plain-bronze-cover.png"
+    },
+    {
+      "id": "slate-lines-cream",
+      "color": "slate",
+      "pattern": "lines",
+      "deco": "cream",
+      "spine": "slate-lines-cream-spine.png",
+      "cover": "slate-lines-cream-cover.png"
+    },
+    {
+      "id": "slate-lines-leather",
+      "color": "slate",
+      "pattern": "lines",
+      "deco": "leather",
+      "spine": "slate-lines-leather-spine.png",
+      "cover": "slate-lines-leather-cover.png"
+    },
+    {
+      "id": "slate-lines-navy",
+      "color": "slate",
+      "pattern": "lines",
+      "deco": "navy",
+      "spine": "slate-lines-navy-spine.png",
+      "cover": "slate-lines-navy-cover.png"
+    },
+    {
+      "id": "slate-lines-bronze",
+      "color": "slate",
+      "pattern": "lines",
+      "deco": "bronze",
+      "spine": "slate-lines-bronze-spine.png",
+      "cover": "slate-lines-bronze-cover.png"
+    },
+    {
+      "id": "slate-dots-cream",
+      "color": "slate",
+      "pattern": "dots",
+      "deco": "cream",
+      "spine": "slate-dots-cream-spine.png",
+      "cover": "slate-dots-cream-cover.png"
+    },
+    {
+      "id": "slate-dots-leather",
+      "color": "slate",
+      "pattern": "dots",
+      "deco": "leather",
+      "spine": "slate-dots-leather-spine.png",
+      "cover": "slate-dots-leather-cover.png"
+    },
+    {
+      "id": "slate-dots-navy",
+      "color": "slate",
+      "pattern": "dots",
+      "deco": "navy",
+      "spine": "slate-dots-navy-spine.png",
+      "cover": "slate-dots-navy-cover.png"
+    },
+    {
+      "id": "slate-dots-bronze",
+      "color": "slate",
+      "pattern": "dots",
+      "deco": "bronze",
+      "spine": "slate-dots-bronze-spine.png",
+      "cover": "slate-dots-bronze-cover.png"
+    },
+    {
+      "id": "slate-diamonds-cream",
+      "color": "slate",
+      "pattern": "diamonds",
+      "deco": "cream",
+      "spine": "slate-diamonds-cream-spine.png",
+      "cover": "slate-diamonds-cream-cover.png"
+    },
+    {
+      "id": "slate-diamonds-leather",
+      "color": "slate",
+      "pattern": "diamonds",
+      "deco": "leather",
+      "spine": "slate-diamonds-leather-spine.png",
+      "cover": "slate-diamonds-leather-cover.png"
+    },
+    {
+      "id": "slate-diamonds-navy",
+      "color": "slate",
+      "pattern": "diamonds",
+      "deco": "navy",
+      "spine": "slate-diamonds-navy-spine.png",
+      "cover": "slate-diamonds-navy-cover.png"
+    },
+    {
+      "id": "slate-diamonds-bronze",
+      "color": "slate",
+      "pattern": "diamonds",
+      "deco": "bronze",
+      "spine": "slate-diamonds-bronze-spine.png",
+      "cover": "slate-diamonds-bronze-cover.png"
+    }
+  ],
+  "sequences": [
+    {
+      "id": "bind",
+      "label": "종이 모아 제본하기",
+      "files": [
+        "bind-0.png",
+        "bind-1.png",
+        "bind-2.png",
+        "bind-3.png"
+      ],
+      "frameMs": 300,
+      "loop": false
+    },
+    {
+      "id": "shelve",
+      "label": "책 꽂기",
+      "files": [
+        "shelve-0.png",
+        "shelve-1.png",
+        "shelve-2.png",
+        "shelve-3.png"
+      ],
+      "frameMs": 300,
+      "loop": false
+    },
+    {
+      "id": "wax",
+      "label": "봉랍 찍기",
+      "files": [
+        "wax-0.png",
+        "wax-1.png",
+        "wax-2.png",
+        "wax-3.png"
+      ],
+      "frameMs": 300,
+      "loop": false
+    },
+    {
+      "id": "paint",
+      "label": "표지 색칠하기",
+      "files": [
+        "paint-0.png",
+        "paint-1.png",
+        "paint-2.png",
+        "paint-3.png"
+      ],
+      "frameMs": 300,
+      "loop": false
+    },
+    {
+      "id": "wrap",
+      "label": "책등 띠 감기",
+      "files": [
+        "wrap-0.png",
+        "wrap-1.png",
+        "wrap-2.png",
+        "wrap-3.png"
+      ],
+      "frameMs": 300,
+      "loop": false
+    },
+    {
+      "id": "stamp",
+      "label": "책등 무늬 찍기",
+      "files": [
+        "stamp-0.png",
+        "stamp-1.png",
+        "stamp-2.png",
+        "stamp-3.png"
+      ],
+      "frameMs": 300,
+      "loop": false
+    }
+  ]
+}

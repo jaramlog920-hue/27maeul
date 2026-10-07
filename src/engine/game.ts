@@ -48,9 +48,9 @@ import {
 import { COVER_FROM, jobOf, SELL_FROM } from './job'
 import { candleKey, candleToBlow, faceToward, weddingEvening } from './event-scene'
 import { FESTIVAL_SPOTS, FIRE, goalFor, isNear, npcTile, placeNpc, stepNpc, type Npc } from './neighbors'
-import { GAIN, heartsOf, MAX_POINTS } from './hearts'
-import { bookDone, bookRoomOpen, chaptersOf, emptyProgress, openDoorsFor, progressOf, totalChapters, type OtProgress, type Progress } from './books'
-import { isOtBook, type CopyBook } from './ot-books'
+import { GAIN, heartsOf, MAX_POINTS, POINTS_PER_HEART } from './hearts'
+import { bookDone, bookRoomOpen, chaptersOf, emptyProgress, openDoorsFor, otBookFinished, progressOf, totalChapters, type OtProgress, type Progress } from './books'
+import { isOtBook, OT_BOOKS, OT_ROOMS, type CopyBook } from './ot-books'
 import { modeOf } from './shelf-rooms'
 import { currentChapter, mulberry32 } from './offers'
 import { drawFragment, fragmentSeed, fragmentsForDay, logPieces, talkGiftOf, type PieceLog } from './fragments'
@@ -138,8 +138,9 @@ import {
 import { propFootprint, HOUSES, PET_HOME, HOME_FRONT, isHome, isIndoor, isWalkable, key, HOME_ENTRY, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setHomeFurniture, setMailbox, setOpenDoors, setSpouseRoom, START, tileAt, WARPS, warpAt } from './world'
 import { currentMapId, setActiveMap, type MapId } from './maps'
 import { drawOtPiece, OT_PIECE_DAY_FLAG } from './ot-pieces'
-import { claimNewland, entryFront, grantNewland, inArchiveRoom, portalAt, revealNewland, roomSlotAt, setNewlandOpen, setNewlandOverlay, setNewlandRevealed, setNewlandWarps } from './newland'
-import { advanceBuilds, overlayFor, warpsFor, type NewlandState } from './newland-build'
+import { claimNewland, entryFront, grantNewland, inArchiveRoom, portalAt, revealNewland, roomSlotAt, setArchiveRooms, ARCHIVE_ROOM_SHELVES, archiveRoomsOpen, setNewlandOpen, setNewlandOverlay, setNewlandRevealed, setNewlandWarps } from './newland'
+import { advanceBuilds, buildsOf, overlayFor, warpsFor, type NewlandState } from './newland-build'
+import { guestHouseMorning } from './newland-life'
 import { roomOf, roomTarget, withRoomOf } from './newland-rooms'
 import { ARCHIVE, NEWLAND_PORTAL, TRAVEL_FROM_MINUTE, TRAVEL_LAST_MINUTE, TRAVEL_MINUTES, VILLAGE_PORTAL } from './newland-config'
 import { SPOUSE_ROOM_STAND } from './spouse-room'
@@ -148,6 +149,8 @@ import type { GenState } from './gen'
 import { settleGen } from './gen-settle'
 import { freeSpotsFor, freeTimeOpen, isFreeRoutine } from './free-time'
 import { checkMeets, tickEmotes, type Emote } from './meet'
+import { slotPerson } from './gen-growth'
+import { PLAYER_COOLING } from './gen-config'
 import { weddingTodayOf } from './gen-marriage'
 import { canRead, READING_GAIN } from './meetings'
 import { ourScore, rankTable, VILLAGES, villageScores, villageSeed, type RankRow } from './villages'
@@ -348,14 +351,20 @@ export interface GameState {
   rankPopup?: RankPopup
   /** 서고 방명록 (계획 21 R10): 들른 사람과 그 사람이 온 마을 — 많아야 30줄 */
   guestbook?: GuestEntry[]
+  /** 이사 간 이웃이 남긴 편지 (많아야 30장) */
+  farewells?: Farewell[]
+  /** 아직 보여 주지 않은 이사 편지 (일어난 아침에 뜬다) */
+  farewellPopup?: Farewell
   /** 새 터 입주 주택 안 가구 — 소유 공간별 ('newland:<건물 id>', 계획 20 작업 7). 첫 마을 집의 room과 섞이지 않는다 */
   rooms?: Record<string, Furniture[]>
 }
 
 /** 가구를 쓰는 동작 종류 — 그리는 쪽이 furnitureUseFrame/extraUseFrame으로 옮긴다 (blowCandle은 생일 빵 촛불 불기 — eventMotionFrame) */
-export type ActKind = 'sit' | 'read' | 'drink' | 'craft' | 'knead' | 'reach' | 'rise' | 'blowCandle'
+export type ActKind = 'sit' | 'read' | 'drink' | 'craft' | 'knead' | 'reach' | 'rise' | 'blowCandle' | 'cook' | 'meal'
 export interface PlayerAct {
   kind: ActKind
+  /** 요리 손동작 순서 (cook일 때 — cooking-art의 동작 이름: 씻기·썰기·젓기·반죽 등, 2026-10-07 연결) */
+  steps?: string[]
   /** 남은 시간 (실제 초) */
   left: number
   /** 처음 길이 (실제 초) — 단발 동작의 몇째 박자인지 셈한다 */
@@ -366,7 +375,7 @@ export interface PlayerAct {
   at?: Tile
 }
 /** 동작 길이(실제 초): 사용 동작 한두 바퀴 (USE_INFO 프레임 시간 합 1.4~1.9초), 잠에서 깨기는 누운 채 잠깐 + 일어나기 */
-export const ACT_SECONDS: Record<ActKind, number> = { sit: 1.8, read: 1.8, drink: 1.8, craft: 1.9, knead: 1.8, reach: 1.2, rise: 2, blowCandle: 1.4 }
+export const ACT_SECONDS: Record<ActKind, number> = { sit: 1.8, read: 1.8, drink: 1.8, craft: 1.9, knead: 1.8, reach: 1.2, rise: 2, blowCandle: 1.4, cook: 4, meal: 3 }
 /** 그 위에 앉는 자리 — 바라보는 앞 칸이 이것이면 그 칸 위에 앉아 앞을 본다 */
 const SEAT_PLACES: readonly PlaceId[] = ['bench', 'homeBench', 'pavilion', 'hill']
 
@@ -380,6 +389,20 @@ export function startAct(s: GameState, kind: ActKind, at?: Tile): GameState {
   return { ...s, act: { kind, left: ACT_SECONDS[kind], total: ACT_SECONDS[kind], facing: seat ? 'down' : s.player.facing, ...(seat ? { at: seat } : {}) } }
 }
 
+/** 요리 손동작 순서 (음식마다, 2026-10-07 사용자: 씻기·썰기·젓기·반죽하기 연결) — 화덕 쪽을 보고 한 동작씩 */
+export const COOK_STEPS: Record<string, string[]> = {
+  bread: ['knead', 'shapeLong', 'ovenIn', 'ovenOut'],
+  beanDish: ['wash', 'stir', 'ladle'],
+  herbBeanDish: ['wash', 'chop', 'stir', 'garnish'],
+  honeyBread: ['knead', 'shapeRound', 'ovenIn', 'ovenOut'],
+  figPlate: ['wash', 'chop', 'placePlate'],
+  herbTea: ['chop', 'stir', 'pourTea'],
+}
+export function startCookAct(s: GameState, dish: string): GameState {
+  const next = startAct(s, 'cook')
+  return next.act ? { ...next, act: { ...next.act, steps: COOK_STEPS[dish] ?? ['knead'] } } : next
+}
+
 /** 지도(world.tileAt)가 이 게임의 집 단계·열린 서고 방 문(방 표)을 보게 한다. 지도를 읽는 엔진 입구마다 부른다 */
 export function syncHome(s: Pick<GameState, 'homeLevel'> & Partial<Pick<GameState, 'flags' | 'romance' | 'room' | 'village' | 'map' | 'newland'>>): void {
   // 지금 어느 지도에 있는가, 새 터의 입구가 열렸는가 (계획 20 작업 3)
@@ -388,6 +411,7 @@ export function syncHome(s: Pick<GameState, 'homeLevel'> & Partial<Pick<GameStat
   setNewlandRevealed(!!s.flags?.newlandRevealed)
   setNewlandOverlay(overlayFor(s.newland))
   setNewlandWarps(warpsFor(s.newland))
+  setArchiveRooms(s.flags?.otExpand ?? 0)
   setHomeLevel(s.homeLevel ?? 0)
   setHomeFurniture(s.room ?? initialHomeFurniture())
   setSpouseRoom(s.romance?.stage === 'married' ? s.romance.partner : null)
@@ -1021,11 +1045,19 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
   if (gen?.on && (Math.floor(clock.minute) !== Math.floor(s.clock.minute) || clock.day !== s.clock.day)) {
     const free = freeNow({ ...s, clock }, content)
     if (free.size > 1) {
+      // 세대교체: 은퇴한 이웃 자리에서는 이어받은 자녀가 만난다 (취향은 그 집 것)
+      const back: Record<string, string> = {}
       const at: Record<string, Tile> = {}
-      for (const id of free) if (npcs[id]?.visible && npcs[id].path.length === 0) at[id] = npcTile(npcs[id])
-      const met = checkMeets(gen, at, free, clock.day, Math.floor(clock.minute), (id) => defs[id]?.likes ?? [])
+      for (const id of free) {
+        if (!npcs[id]?.visible || npcs[id].path.length > 0) continue
+        const who = slotPerson(gen, id)
+        back[who] = id
+        at[who] = npcTile(npcs[id])
+      }
+      const met = checkMeets(gen, at, new Set(Object.keys(back)), clock.day, Math.floor(clock.minute), (id) => defs[back[id] ?? id]?.likes ?? [])
       gen = met.g
-      if (met.emotes.length) emotes = [...(emotes ?? []).filter((e) => !met.emotes.some((m) => m.npc === e.npc)), ...met.emotes]
+      const shown = met.emotes.map((m) => ({ ...m, npc: back[m.npc] ?? m.npc }))
+      if (shown.length) emotes = [...(emotes ?? []).filter((e) => !shown.some((m) => m.npc === e.npc)), ...shown]
     }
   }
   const base: GameState = { ...s, clock, needs, player, target, idle, act, npcs, companion, trails, gen, emotes }
@@ -1133,6 +1165,15 @@ function tapPortal(s: GameState, tile: Tile, to: MapId): GameState {
 /** 새 터의 땅을 눌렀을 때: 걸어갈 수 있는 곳이면 걸어간다 (이웃·가구는 이 지도에 없고, 장소는 서고 안 책상·책장뿐) */
 function tapNewland(s: GameState, tile: Tile): GameState {
   const from = playerTile(s)
+  // 확장권으로 선 범위 방 책장 (계획 21 R9): 아래 칸으로 걸어가 책장 창 (손 뻗기 동작은 창을 열 때)
+  const roomShelf = ARCHIVE_ROOM_SHELVES.slice(0, archiveRoomsOpen()).find((t) => sameTile(t, tile))
+  if (roomShelf) {
+    const stand = { x: roomShelf.x, y: roomShelf.y + 1 }
+    const path = sameTile(from, stand) ? [] : findPath(from, stand)
+    if (path === null) return { ...s, idle: IDLE_RESET }
+    const snap = s.player.x !== from.x || s.player.y !== from.y ? [from] : []
+    return { ...s, player: { ...s.player, path: [...snap, ...path] }, target: { kind: 'place', id: 'otShelf', tile }, idle: IDLE_RESET }
+  }
   const place = placeAt(tile)
   if (place) {
     const stand = PLACES[place].stand
@@ -2200,8 +2241,20 @@ export interface RankPopup {
   pieces: string[]
   /** 받은 장식 */
   item?: ItemId
+  /** 받은 후원금 (닢) */
+  coins?: number
   /** 구약 서고 확장권을 받았나 (27권 완필 뒤 첫 업데이트에서 한 번) */
   otTicket?: boolean
+}
+
+/**
+ * 첫 확장권 뒤의 확장권 (사용자 결정 ⑦, 컨트롤러): 구약 책을 마친 수가 열린 방 수에 닿으면 다음 순위 업데이트에서 한 장 더.
+ * 방은 넷(OT_ROOMS)까지. 필사는 확장권과 상관없이 처음부터 된다
+ */
+export function otTicketDue(s: Pick<GameState, 'flags' | 'otProgress'>): boolean {
+  const rooms = s.flags.otExpand ?? 0
+  if (!s.flags.otTicket || rooms >= OT_ROOMS.length) return false
+  return OT_BOOKS.filter((b) => otBookFinished(s, b)).length >= rooms
 }
 
 /** 계절 1일·21일 아침이 순위 업데이트 날 */
@@ -2215,9 +2268,10 @@ export function rankMorning(s: GameState, content: GameContent): GameState {
   const day = s.clock.day
   if (day < 2 || !isRankDay(day) || s.flags[`rank:${day}`]) return s
   const seed = villageSeed(s)
-  const ticket = allShelved(s) && !s.flags.otTicket
+  const first = allShelved(s) && !s.flags.otTicket
+  const ticket = first || otTicketDue(s)
   let mine = ourScore(s)
-  if (ticket) mine = Math.max(mine, ...villageScores(seed, day)) + 1
+  if (first) mine = Math.max(mine, ...villageScores(seed, day)) + 1
   const table = rankTable(seed, day, mine)
   const place = table.findIndex((r) => r.name === null) + 1
   let next: GameState = { ...s, flags: { ...s.flags, [`rank:${day}`]: 1 } }
@@ -2230,9 +2284,17 @@ export function rankMorning(s: GameState, content: GameContent): GameState {
   }
   const item: ItemId | undefined = place === 1 ? 'bronzeOrnament' : undefined
   if (item) next = { ...next, inv: addGift(next.inv, { [item]: 1 }) }
+  // 후원금 (2026-10-07 사용자): 순위에 따라 다른 마을·서고를 아끼는 사람들이 보내 주는 닢 — 낮은 순위도 조금은
+  const coins = rankDonation(place)
+  next = { ...next, coins: next.coins + coins }
   if (ticket) next = { ...next, flags: { ...next.flags, otTicket: 1, otExpand: (next.flags.otExpand ?? 0) + 1 } }
   const ranks = [...(next.ranks ?? []), { day, place }].slice(-24)
-  return { ...next, ranks, rankPopup: { day, place, table, pieces, ...(item ? { item } : {}), ...(ticket ? { otTicket: true } : {}) } }
+  return { ...next, ranks, rankPopup: { day, place, table, pieces, coins, ...(item ? { item } : {}), ...(ticket ? { otTicket: true } : {}) } }
+}
+
+/** 순위별 후원금 (닢): 1위 150 · 2위 100 · 3위 80 · 4–10위 40 · 11–20위 15 */
+export function rankDonation(place: number): number {
+  return place === 1 ? 150 : place === 2 ? 100 : place === 3 ? 80 : place <= 10 ? 40 : 15
 }
 
 // ── 서고 방문객과 방명록 (계획 21 R10, 가볍게) ──
@@ -2261,6 +2323,74 @@ export function guestMorning(s: GameState): GameState {
   const village = kind === 'wanderer' || kind === 'scribe' ? VILLAGES[Math.floor(rnd() * VILLAGES.length)] : undefined
   const entry: GuestEntry = { day, kind, ...(village ? { village } : {}) }
   return { ...s, guestbook: [...(s.guestbook ?? []), entry].slice(-GUESTBOOK_CAP) }
+}
+
+// ── 노인이 된 이웃의 이사 (2026-10-07 사용자) ──
+
+export interface Farewell {
+  /** 떠난 이웃 */
+  npc: string
+  day: number
+  /** 편지 글 번호 (life-text gen.farewell.letters) */
+  letter: number
+  /** 함께 넣어 둔 말씀 조각 (다 모았으면 없음) */
+  pieceId?: string
+  /** 남긴 선물 (돕기에서 주던 것 두 배) */
+  gift: Partial<Record<ItemId, number>>
+}
+
+/**
+ * 이사 간 아침: 그동안 고마웠다는 편지·말씀 조각 하나·선물을 남기고 떠난다 (이웃마다 한 번, flags `farewell:<npc>`).
+ * 마음을 나눈 적이 없는 이웃(하트 0)도 편지는 남긴다 — 마을에 함께 살았으니
+ */
+export function farewellMorning(s: GameState, content: GameContent): GameState {
+  const g = s.gen
+  if (!g?.retired) return s
+  let next = s
+  for (const [npc, r] of Object.entries(g.retired)) {
+    if (r.moved == null || next.flags[`farewell:${npc}`]) continue
+    const def = content.neighbors.find((n) => n.id === npc)
+    if (!def) continue
+    const gift = Object.fromEntries(Object.entries(def.help.gives).map(([id, n]) => [id, (n ?? 0) * 2])) as Partial<Record<ItemId, number>>
+    next = { ...next, inv: addGift(next.inv, gift), flags: { ...next.flags, [`farewell:${npc}`]: s.clock.day } }
+    const got = extraPiece(next, content, `farewell:${npc}`)
+    if (got) next = got.state
+    const letter: Farewell = { npc, day: s.clock.day, letter: (npc.length + r.day) % FAREWELL_LETTERS, gift, ...(got ? { pieceId: got.pieceId } : {}) }
+    next = { ...next, farewells: [...(next.farewells ?? []), letter].slice(-30), farewellPopup: letter }
+  }
+  return next
+}
+/** 편지 글 수 (life-text gen.farewell.letters 길이와 같다 — 테스트가 맞춰 본다) */
+export const FAREWELL_LETTERS = 3
+
+// ── 새 터 공동 마당의 작은 모임 (계획 18 B18-10, 컨트롤러) ──
+
+export const YARD_FROM = 15 * 60
+export const YARD_TO = 19 * 60
+/** 모임에 오는 이웃: 마음 30점(하트 3) 이상 */
+export const YARD_HEARTS = 30
+export const YARD_GAIN = 3
+export type YardBlock = 'noYard' | 'time' | 'done' | 'nobody' | null
+
+/** 오늘 마당에 올 이웃 (그날 마을에 나온 이웃 중 가까운 이웃) */
+export function yardFriends(s: GameState, content: GameContent): string[] {
+  const present = new Set(neighborsPresent(s, content))
+  return content.neighbors.filter((n) => present.has(n.id) && (s.hearts[n.id] ?? 0) >= YARD_HEARTS).map((n) => n.id)
+}
+export function canGatherYard(s: GameState, content: GameContent): YardBlock {
+  if (!buildsOf(s).some((b) => b.kind === 'courtyard' && b.state === 'done')) return 'noYard'
+  if (s.flags.yardDay === s.clock.day) return 'done'
+  if (s.clock.minute < YARD_FROM || s.clock.minute >= YARD_TO) return 'time'
+  if (!yardFriends(s, content).length) return 'nobody'
+  return null
+}
+/** 작은 모임: 온 이웃마다 마음, 기억 정원에 남는다 (하루 한 번) */
+export function gatherYard(s: GameState, content: GameContent): GameState {
+  if (canGatherYard(s, content)) return s
+  const friends = yardFriends(s, content)
+  let next: GameState = { ...s, flags: { ...s.flags, yardDay: s.clock.day, [`yardMemo:${s.clock.day}`]: friends.length } }
+  for (const id of friends) next = heartUp(next, id, YARD_GAIN)
+  return next
 }
 
 // ── 마을 소리내어 읽기 모임 (계획 21 R7) ──
@@ -2831,12 +2961,13 @@ export function romanceWith(s: Pick<GameState, 'romance'>, id: string): 'friend'
   return r.partner === id && r.stage ? r.stage : 'friend'
 }
 
-export type BouquetBlock = 'notSuitor' | 'taken' | 'already' | 'hearts' | 'noItem' | null
+export type BouquetBlock = 'notSuitor' | 'taken' | 'already' | 'cooling' | 'hearts' | 'noItem' | null
 export function canGiveBouquet(s: GameState, def: NeighborDef): BouquetBlock {
   if (!isSuitor(s, def)) return 'notSuitor'
   const r = s.romance ?? NO_ROMANCE
   if (r.partner === def.id) return 'already'
   if (r.partner) return 'taken'
+  if (coolingAfterBreakup(s, def.id)) return 'cooling'
   if (heartsOf(s.hearts[def.id]) < BOUQUET_HEARTS) return 'hearts'
   if (count(s.inv, 'bouquet') === 0) return 'noItem'
   return null
@@ -2881,6 +3012,32 @@ export function giveCord(s: GameState, def: NeighborDef): GameState {
     def.id,
     CORD_GAIN,
   )
+}
+
+/**
+ * 헤어지기 (2026-10-07 사용자): 연인·약혼 사이에서만 (부부는 없다). 약혼이면 잔치도 없던 일로.
+ * 마음은 하트 다섯 아래로 내려가고, 14일 동안은 다시 다발을 건네지 못한다.
+ * 그 사람도 14일 동안은 마을의 다른 주민과 사귀지 않는다 (gen 유예, exPartner 표식).
+ */
+export const BREAKUP_COOLING = PLAYER_COOLING
+export const BREAKUP_HEART_CAP = 5 * POINTS_PER_HEART - 1
+export function canBreakUp(s: GameState, id: string): boolean {
+  const r = s.romance ?? NO_ROMANCE
+  return r.partner === id && (r.stage === 'dating' || r.stage === 'engaged')
+}
+export function breakUp(s: GameState, id: string): GameState {
+  if (!canBreakUp(s, id)) return s
+  return {
+    ...s,
+    romance: NO_ROMANCE,
+    hearts: { ...s.hearts, [id]: Math.min(s.hearts[id] ?? 0, BREAKUP_HEART_CAP) },
+    flags: { ...s.flags, [`exPartner:${id}`]: s.clock.day },
+  }
+}
+/** 헤어진 지 14일 안인가 */
+export function coolingAfterBreakup(s: Pick<GameState, 'flags' | 'clock'>, id: string): boolean {
+  const d = s.flags[`exPartner:${id}`]
+  return typeof d === 'number' && s.clock.day - d < BREAKUP_COOLING
 }
 
 /** 오늘이 결혼 잔치 날인가 */
@@ -3521,6 +3678,8 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
   if (flags.allFeast === 1) flags.allFeast = 2
   else if (!flags.allFeast && allFeastReady({ shelved: s.shelved, flags }) && gathering !== 'babyParty' && !festivalOf(day)) {
     flags.allFeast = 1
+    // 기억 정원에 남길 잔치 날 (계획 18 B18-10 — 옛 저장은 날짜 미상)
+    flags.allFeastDay = day
     scenes.push('allFeast')
     if (gathering === 'starNight') gathering = null
   }
@@ -3576,13 +3735,13 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
   const villaged = advanceVillage(familyMorning(childMorning(forgetPromises(morningSupplies(expireStall(expireWorkDay(next)), s.clock.day), day), content)), content)
   // 주민 자율 가족 하루 정산 (계획 20 작업 10): 아침 단계에서 하루에 한 번, 큰 사건이 걸린 주민은 보류
   // 마을 서고 순위 업데이트 (계획 21 R8): 계절 1일·21일 아침에 한 번
-  const morning = guestMorning(rankMorning(advanceBuilds(
+  const morning = guestHouseMorning(farewellMorning(guestMorning(rankMorning(advanceBuilds(
     settleGen(villaged, content, {
       busy: (npc) => !!eventNow(villaged, npc),
       // 주민 결혼식은 장날·마을 잔치·플레이어 결혼 잔치 날을 피한다
       weddingFree: (d) => !festivalOf(d) && !isMarketDay(d) && villaged.romance?.weddingDay !== d,
     }),
-  ), content))
+  ), content)), content))
   // 침대 위에서 눈을 뜨고 일어난다 (그림만)
   return startAct({ ...morning, npcs: placeAllNpcs(morning, content) }, 'rise', PLACES.bed.tiles[0])
 }

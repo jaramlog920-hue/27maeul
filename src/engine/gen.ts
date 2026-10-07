@@ -132,6 +132,10 @@ export interface GenState {
   log: GenLog[]
   nextPerson: number
   nextEvent: number
+  /** 견습 중인 자녀 (부모 npc → 자녀 계보 id, 시작한 날) — 세대교체 */
+  heirs?: Record<string, { heir: string; since: number }>
+  /** 은퇴한 부모 (npc → 자리를 이어받은 자녀, 은퇴한 날) */
+  retired?: Record<string, { heir: string; day: number; moved?: number }>
 }
 
 export const LOG_CAP = 200
@@ -164,6 +168,15 @@ export const genEligible = (id: string): boolean => GEN_ELIGIBLE.includes(id)
 /** 세대 무리: 부모 세대(목수·대장장이)와 젊은 후보는 짝이 되지 않는다 */
 const generationOf = (id: string): number => ((ELDER_PAIR as readonly string[]).includes(id) ? 1 : 0)
 
+/** 지금 연애에 참여하는 사람: 원래 참여 대상, 또는 부모 자리를 이어받아 마을에서 사는 다 자란 주민 아이 (세대교체) */
+export function activeEligible(g: GenState, id: string): boolean {
+  if (genEligible(id)) return !Object.keys(g.retired ?? {}).includes(id) // 은퇴한 부모는 빠진다
+  const p = g.persons[id]
+  return p?.origin === 'born' && p.stage === 'adult' && Object.values(g.retired ?? {}).some((r) => r.heir === id)
+}
+/** 세대 무리: 다음 세대(태어난 주민)는 2, 부모 세대(목수·대장장이)는 1, 젊은 후보는 0 */
+const genOf = (g: GenState, id: string): number => (g.persons[id]?.origin === 'born' ? 2 : generationOf(id))
+
 export const relationOf = (g: GenState, a: string, b: string): Relation | undefined => g.relations[relationId(a, b)]
 export const stageOf = (g: GenState, a: string, b: string): RelationStage => relationOf(g, a, b)?.stage ?? 'neighbor'
 /** 연인 이상(연인·결혼 준비·배우자)인 상대 */
@@ -180,8 +193,10 @@ export function partnerOf(g: GenState, id: string): string | null {
  * 연인이 될 수 있는 쌍인가 (P7): 둘 다 성인 참여 대상·같은 세대, 서로 다른 모습, 가까운 친족 아님,
  * 둘 다 다른 연인·배우자 없음, 플레이어의 연인·약혼자·배우자 아님
  */
-export function canPair(g: GenState, playerPartner: string | null | undefined, a: string, b: string): boolean {
-  if (a === b || !genEligible(a) || !genEligible(b) || generationOf(a) !== generationOf(b)) return false
+export function canPair(g: GenState, playerPartner: string | null | undefined, a: string, b: string, cooling: (id: string) => boolean = () => false): boolean {
+  if (a === b || !activeEligible(g, a) || !activeEligible(g, b) || genOf(g, a) !== genOf(g, b)) return false
+  // 플레이어와 헤어진 지 얼마 안 된 사람은 유예 (14일)
+  if (cooling(a) || cooling(b)) return false
   const pa = g.persons[a], pb = g.persons[b]
   if (!pa || !pb || pa.stage !== 'adult' || pb.stage !== 'adult') return false
   if (!pa.look || !pb.look || pa.look === pb.look) return false
@@ -481,7 +496,31 @@ export function sanitizeGen(raw: unknown, today: number): GenState | undefined {
   const log: GenLog[] = []
   if (Array.isArray(raw.log)) for (const l of raw.log) if (isObj(l) && isNat(l.day) && isStr(l.kind)) log.push({ day: l.day, kind: l.kind, who: strs(l.who) })
   const maxNum = (ids: string[], re: RegExp) => ids.reduce((m, id) => Math.max(m, Number(re.exec(id)?.[1] ?? 0)), 0)
+  // 세대교체: 부모·자녀가 계보에 있고 자녀가 태어난 사람일 때만
+  const heirMap = <K extends 'since' | 'day'>(v: unknown, k: K): Record<string, { heir: string } & Record<K, number>> | undefined => {
+    if (!isObj(v)) return undefined
+    const out: Record<string, { heir: string } & Record<K, number>> = {}
+    for (const [npc, x] of Object.entries(v)) {
+      if (!isObj(x) || !isStr(x.heir) || !isNat(x[k]) || !fixed.persons[npc] || fixed.persons[x.heir]?.origin !== 'born') continue
+      out[npc] = { heir: x.heir, [k]: Math.min(x[k] as number, today) } as { heir: string } & Record<K, number>
+    }
+    return Object.keys(out).length ? out : undefined
+  }
+  const heirs = heirMap(raw.heirs, 'since')
+  let retired: GenState['retired'] = heirMap(raw.retired, 'day')
+  // 이사 간 날 (은퇴한 날 뒤, 오늘까지)
+  if (retired && isObj(raw.retired)) {
+    const src = raw.retired as Record<string, unknown>
+    retired = Object.fromEntries(
+      Object.entries(retired).map(([npc, r]) => {
+        const m = isObj(src[npc]) ? (src[npc] as Record<string, unknown>).moved : undefined
+        return [npc, isNat(m) && m >= r.day ? { ...r, moved: Math.min(m, today) } : r]
+      }),
+    )
+  }
   return {
+    ...(heirs ? { heirs } : {}),
+    ...(retired ? { retired } : {}),
     on: raw.on !== false,
     seed: Number.isInteger(raw.seed) && (raw.seed as number) >= 0 ? (raw.seed as number) : FALLBACK_SEED,
     settledDay: isNat(raw.settledDay) ? Math.min(raw.settledDay, today) : today,

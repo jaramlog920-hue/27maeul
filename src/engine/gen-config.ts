@@ -51,10 +51,13 @@ export const MAX_GENERATED = 8
 export const MIN_GAP = 1
 
 /** 성장 단계가 시작되는 나이(태어난 뒤 날수) — 플레이어 아이와 같은 길이 (child.ts) */
-export const STAGE_AT = { baby: 0, child: 14, teen: 42, adult: 84 } as const
+// 생성 주민도 성인 이후 네 계절(160일)을 지내면 노년으로 이어진다.
+export const STAGE_AT = { baby: 0, child: 14, teen: 42, adult: 84, elder: 244 } as const
 
 /** 밀린 날을 처리하는 최대 일수 (D18) */
 export const MAX_CATCHUP = 7
+/** 플레이어와 헤어진 사람이 다른 주민과 사귀지 않는 날 수 (game.ts BREAKUP_COOLING과 같다) */
+export const PLAYER_COOLING = 14
 
 /** 만남 (P2): 같은 쌍 하루 최대, 두 만남 사이 최소 분 */
 export const MEETS_PER_DAY = 3

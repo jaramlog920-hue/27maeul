@@ -6,9 +6,12 @@ import { StallEntry } from '../stall/StallView'
 import { SkillLessonView, SkillEntry } from '../skills/SkillLesson'
 import { callName, fill, itemList, T } from '../../content/text'
 import { isMarketDay } from '../../engine/calendar'
-import { activeRequest, isSuitor, romanceWith, stageWith, type GameState, canHelp, canOrderHome, canOrderWork, GIFTABLE, lessonTime, nextHomeStage } from '../../engine/game'
+import { activeRequest, canBreakUp, canGiveBouquet, isSuitor, romanceWith, stageWith, type GameState, canHelp, canOrderHome, canOrderWork, GIFTABLE, lessonTime, nextHomeStage } from '../../engine/game'
 import { CARPENTER_WORKS } from '../../engine/easier'
 import { GenTalk } from './GenTalk'
+import { movedHeir } from '../../engine/gen-growth'
+import { canHearDream, hearDream } from '../../engine/newland-life'
+import { saveGame } from '../../engine/save'
 import { requestFor, reqState } from '../../engine/bonds'
 import { has } from '../../engine/items'
 import { MAX_HEART } from '../../engine/neighbors'
@@ -42,6 +45,8 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
   const [focus, setFocus] = useState<'work' | 'skill' | null>(null)
   // 처음 말을 걸었을 때의 특별한 말(레시피 알려 주기 등)은 팝업으로 한 장씩 — 다 보면 대화칸
   const [seenOf, setSeen] = useState({ modal, n: 0 })
+  // 헤어지기는 한 번 더 묻는다
+  const [asking, setAsking] = useState(false)
   const seen = seenOf.modal === modal ? seenOf.n : 0
   const { startHelp, open, closeModal, startTeach, say } = useGame.getState()
   // 이웃마다 있던 사기·팔기·받기 단추(주고받기·약방 약초 팔기)는 2026-10-05에 지웠다 — 사고팔기는 장날 좌판에서
@@ -82,6 +87,19 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
         </div>
       </div>
     )
+  if (asking)
+    return (
+      <div className="dialog talk talk-popup" role="dialog" aria-label={def.role}>
+        <p className="talk-role">{def.role}</p>
+        <p className="talk-popup-line">{T.romance.breakAsk}</p>
+        <div className="actions">
+          <button onClick={() => useGame.getState().breakUp(def.id)}>{T.romance.breakUp}</button>
+          <button className="primary" autoFocus onClick={() => setAsking(false)}>
+            {T.romance.breakNo}
+          </button>
+        </div>
+      </div>
+    )
   if (focus)
     return (
       <div className="dialog talk" role="dialog" aria-label={def.role}>
@@ -94,7 +112,8 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
       {/* 머리는 예전 그대로 한 줄, 닫기만 오른쪽 위 ✕ (2026-10-07 사용자) */}
       <div className="dialog-head talk-head">
         <p className="talk-role">
-          {def.role}{' '}
+          {/* 부모가 이사 간 자리는 이어받은 자녀의 이름으로 */}
+          {movedHeir(game.gen, def.id)?.name ?? def.role}{' '}
           {def.job && <span className="talk-job">{def.job}</span>}{' '}
           {/* 살아 움직이는 사람들 (계획 6b): 숫자 대신 사이의 이름 */}
           {personOf(def.id) && <span className="talk-bond">{bondLabel(game, def.id)}</span>}{' '}
@@ -137,6 +156,24 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
         </button>
         <WorkEntry npc={def.id} onOpen={() => setFocus('work')} />
         <SkillEntry npc={def.id} onOpen={() => setFocus('skill')} />
+        {/* 헤어진 사람에게 다시 마음 전하기 (14일 뒤, 하트 8 + 들꽃 다발) */}
+        {game.flags[`exPartner:${def.id}`] != null && canGiveBouquet(game, def) === null && (
+          <button onClick={() => useGame.getState().giveBouquet(def.id)}>{T.romance.giveBouquet}</button>
+        )}
+        {canBreakUp(game, def.id) && <button onClick={() => setAsking(true)}>{T.romance.breakUp}</button>}
+        {/* 주민의 꿈 (계획 18 B18-8): 새 터가 열리고 마음이 가까우면 한 번 */}
+        {canHearDream(game, def.id) && (
+          <button
+            onClick={() => {
+              const next = hearDream(useGame.getState().game)
+              saveGame(next)
+              useGame.setState({ game: next })
+              say(T.newlandLife.dream.heard, 5200)
+            }}
+          >
+            {T.newlandLife.dream.ask}
+          </button>
+        )}
       </div>
     </div>
   )

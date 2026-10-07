@@ -392,7 +392,7 @@ describe('필사 책상 — 구약 칸', () => {
     expect(screen.getByRole('button', { name: '룻기 · 2/4장' })).toBeInTheDocument()
   })
 
-  it('불러온 책을 고르면 곧바로 쓰기 화면: 헤더·한 절, 안내 상자·곁의 가족 없음', () => {
+  it('불러온 책을 고르면 곧바로 쓰기 화면: 헤더·한 절·안내 상자(2026-10-07 공개), 곁의 가족 없음', () => {
     reset(gifted())
     render(<ModalLayer />)
     act(() => useGame.getState().open({ kind: 'copy', view: 'pick', tab: 'ot' }))
@@ -400,9 +400,8 @@ describe('필사 책상 — 구약 칸', () => {
     expect(screen.getByRole('heading')).toHaveTextContent(`창세기 1장 · 1/${gen1().length}절`)
     expect(screen.getByLabelText('본문 창세기 1:1')).toHaveTextContent('태초에 하나님이 천지를 창조하시니라')
     expect(useGame.getState().game.copy.book).toBe('gen')
-    // 안내 상자(chapterGuide)는 구약에 없다
-    expect(document.querySelector('.copy-guide')).toBeNull()
-    expect(screen.queryByLabelText(T.copyFocus.guideTitle)).toBeNull()
+    // 안내 상자(chapterGuide): 구약 길잡이도 책과 함께 불러와 보인다 (사용자 결정 ④)
+    expect(document.querySelector('.copy-guide')).not.toBeNull()
     expect(document.querySelector('.copy-family')).toBeNull()
   })
 

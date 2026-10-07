@@ -1,6 +1,7 @@
 // 계획 21 R8·R9: 마을별 서고 순위 — 업데이트 창(아침)과 서고에서 다시 보기. 숫자표만, 행사 장면 없음.
 import { itemName } from '../../content/text'
 import { saveGame } from '../../engine/save'
+import { OT_ROOMS } from '../../engine/ot-books'
 import { ourScore, rankTable, villageSeed, type RankRow } from '../../engine/villages'
 import { t } from '../../shared/i18n'
 import { useGame } from '../../store/game-store'
@@ -28,7 +29,8 @@ export function RankView({ history }: { history?: boolean }) {
     if (g.rankPopup && !history) {
       const next = { ...g, rankPopup: undefined }
       saveGame(next)
-      useGame.setState({ game: next, modal: null })
+      // 이사 편지가 같은 아침에 왔으면 이어서
+      useGame.setState({ game: next, modal: next.farewellPopup ? { kind: 'farewell' } : null })
     } else useGame.setState({ modal: null })
   }
   const pop = !history ? game.rankPopup : undefined
@@ -39,9 +41,12 @@ export function RankView({ history }: { history?: boolean }) {
       {pop && (
         <>
           <p className="rank-mine">{t('rank.us')} · {t('rank.place', { n: pop.place })}</p>
+          {(pop.coins ?? 0) > 0 && <p className="hint">{t('rank.coins', { n: pop.coins ?? 0 })}</p>}
           {pop.pieces.length > 0 && <p className="hint">{t('rank.pieces', { n: pop.pieces.length })}</p>}
           {pop.item && <p className="hint">{t('rank.item', { item: itemName(pop.item) })}</p>}
-          {pop.otTicket && <p className="rank-ticket">{t('rank.ticket')}</p>}
+          {pop.otTicket && (
+            <p className="rank-ticket">{t('rank.ticket', { room: OT_ROOMS[Math.max(0, Math.min(OT_ROOMS.length, game.flags.otExpand ?? 1) - 1)].label })}</p>
+          )}
         </>
       )}
       <Table rows={rows} />

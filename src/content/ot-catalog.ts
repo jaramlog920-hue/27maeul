@@ -27,6 +27,17 @@ export const otNoText = (text: string) => text === '(없음)' || /^\(\d+절에 �
 
 const loaders = import.meta.glob<string[][]>('./ot/*.json', { import: 'default' })
 const loaderOf = (id: OtBook) => loaders[`./ot/${id}.json`]
+/** 장별 필사 길잡이 (scripts/ot-guides → ot-guides/<id>.json, 사용자 결정 ④ — 고신 입장에서 검토해 공개). 책 본문과 함께 불러온다 */
+export interface OtGuide {
+  background: string
+  look: string
+}
+const guideLoaders = import.meta.glob<Record<string, OtGuide>>('./ot-guides/*.json', { import: 'default' })
+const guidesOf = new Map<OtBook, Record<string, OtGuide>>()
+/** 그 장의 길잡이 (책을 불러온 뒤, 없으면 null) */
+export function otChapterGuide(id: OtBook, chapter: number): OtGuide | null {
+  return guidesOf.get(id)?.[String(chapter)] ?? null
+}
 
 /**
  * 66권 전체 절의 해시 목록 (scripts/build-verse-hashes.mjs, 약 180KB) — 구약 빈칸 오답 보기가 다른 책(신약 포함)의 실제 본문이 되지 않게
@@ -89,8 +100,11 @@ export function ensureOtBook(id: OtBook): Promise<void> {
     const load = loaderOf(id)
     if (!load) return Promise.reject(new Error(`no ot book file: ${id}`))
     // 해시 목록이 안 와도 책은 연다 (필사는 막지 않는다) — 그땐 책 안 세기만
-    p = Promise.all([load(), ensureHashes().catch(() => undefined)]).then(
-      ([book]) => {
+    // 길잡이는 없어도 책은 연다
+    const guide = guideLoaders[`./ot-guides/${id}.json`]?.().catch(() => undefined)
+    p = Promise.all([load(), ensureHashes().catch(() => undefined), guide]).then(
+      ([book, , g]) => {
+        if (g) guidesOf.set(id, g)
         loaded.set(id, book)
         index(id, book)
         pending.delete(id)

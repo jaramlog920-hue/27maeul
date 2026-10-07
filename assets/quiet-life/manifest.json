@@ -1,0 +1,110 @@
+[
+  {
+    "id": "yawn",
+    "label": "입 가리고 하품",
+    "files": [
+      "yawn-0.png",
+      "yawn-1.png",
+      "yawn-2.png",
+      "yawn-3.png"
+    ],
+    "frameMs": 250,
+    "loop": true
+  },
+  {
+    "id": "wrist",
+    "label": "손목 풀기",
+    "files": [
+      "wrist-0.png",
+      "wrist-1.png",
+      "wrist-2.png",
+      "wrist-3.png"
+    ],
+    "frameMs": 250,
+    "loop": true
+  },
+  {
+    "id": "stretch",
+    "label": "기지개",
+    "files": [
+      "stretch-0.png",
+      "stretch-1.png",
+      "stretch-2.png",
+      "stretch-3.png"
+    ],
+    "frameMs": 250,
+    "loop": true
+  },
+  {
+    "id": "hum",
+    "label": "흥얼거리기",
+    "files": [
+      "hum-0.png",
+      "hum-1.png",
+      "hum-2.png",
+      "hum-3.png"
+    ],
+    "frameMs": 250,
+    "loop": true
+  },
+  {
+    "id": "wave",
+    "label": "손 흔들기",
+    "files": [
+      "wave-0.png",
+      "wave-1.png",
+      "wave-2.png",
+      "wave-3.png"
+    ],
+    "frameMs": 250,
+    "loop": true
+  },
+  {
+    "id": "sheep-walk-left",
+    "label": "양 걷기 · left",
+    "files": [
+      "sheep-walk-left-0.png",
+      "sheep-walk-left-1.png",
+      "sheep-walk-left-2.png",
+      "sheep-walk-left-3.png"
+    ],
+    "frameMs": 250,
+    "loop": true
+  },
+  {
+    "id": "sheep-graze-left",
+    "label": "양 풀 먹기 · left",
+    "files": [
+      "sheep-graze-left-0.png",
+      "sheep-graze-left-1.png",
+      "sheep-graze-left-2.png",
+      "sheep-graze-left-3.png"
+    ],
+    "frameMs": 250,
+    "loop": true
+  },
+  {
+    "id": "sheep-walk-right",
+    "label": "양 걷기 · right",
+    "files": [
+      "sheep-walk-right-0.png",
+      "sheep-walk-right-1.png",
+      "sheep-walk-right-2.png",
+      "sheep-walk-right-3.png"
+    ],
+    "frameMs": 250,
+    "loop": true
+  },
+  {
+    "id": "sheep-graze-right",
+    "label": "양 풀 먹기 · right",
+    "files": [
+      "sheep-graze-right-0.png",
+      "sheep-graze-right-1.png",
+      "sheep-graze-right-2.png",
+      "sheep-graze-right-3.png"
+    ],
+    "frameMs": 250,
+    "loop": true
+  }
+]

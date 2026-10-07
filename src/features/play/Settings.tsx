@@ -266,6 +266,31 @@ export function Settings() {
           <button aria-label="도움말" onClick={() => open({ kind: 'guide' })}>열기</button>
         </div>
       </section>
+      {/* 저장 (자동 저장이 기본 — 이 단추는 지금 바로 한 번 더) · 타이틀로 (2026-10-07 사용자) */}
+      <section className="settings-section">
+        <div className="settings-row">
+          <h3>{t('saves.save')}</h3>
+          <button
+            onClick={() => {
+              const ok = saveGame(useGame.getState().game)
+              useGame.getState().say(ok ? t('saves.saved') : '저장하지 못했어요.')
+            }}
+          >
+            {t('saves.save')}
+          </button>
+        </div>
+        <div className="settings-row">
+          <h3>{t('saves.toTitle')}</h3>
+          <button
+            onClick={() => {
+              saveGame(useGame.getState().game)
+              globalThis.location?.reload()
+            }}
+          >
+            {t('saves.toTitle')}
+          </button>
+        </div>
+      </section>
       <section className="settings-section">
         <div className="settings-row">
           <h3>기록 초기화</h3>

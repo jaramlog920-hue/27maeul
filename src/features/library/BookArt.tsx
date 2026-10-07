@@ -6,6 +6,8 @@ import { COVER_HEX, DECO_HEX, spineLook, type Binding, type Bindings, type Speci
 import type { Grade } from '../../engine/library'
 import { SHELF_ROOMS } from '../../engine/shelf-rooms'
 import { BOOKS, type Book } from '../../engine/types'
+import { libraryBookRows, libraryPalette } from '../../render/library-art'
+import { PixelArt } from './LibraryWork'
 
 const BOOK_NAME = T.quiz.books as Record<string, string>
 
@@ -13,7 +15,7 @@ const BOOK_NAME = T.quiz.books as Record<string, string>
 export function Spine({ book, binding, grade }: { book: Book; binding?: Binding; grade?: Grade }) {
   const look = spineLook(book, binding)
   const style = { '--spine': look.color, '--accent': look.accent } as CSSProperties
-  return <span className={`spine-art mark-${look.mark} spine-grade-${grade ?? 'none'}`} style={style} role="img" aria-label={BOOK_NAME[book]} data-book={book} />
+  return <span className={`spine-art pixel-spine mark-${look.mark} spine-grade-${grade ?? 'none'}`} style={style} role="img" aria-label={BOOK_NAME[book]} data-book={book}><PixelArt rows={libraryBookRows(book, binding, grade)} palette={libraryPalette(book, binding, grade)} /></span>
 }
 
 /** 서고 선반 전경: 방마다 한 줄, 꽂은 책은 책등, 아직 꽂지 않은 자리는 빈 칸 (처음엔 휑하고 권이 늘수록 찬다) */
@@ -47,7 +49,8 @@ export function BookCover({ book, binding, choice }: { book: Book; binding?: Bin
     '--deco': sp ? DECO_HEX[sp.deco] : look.accent,
   } as CSSProperties
   return (
-    <div className={`book-cover pattern-${sp ? sp.pattern : 'plain'}`} style={style} role="img" aria-label={fill(T.binding.cover, { book: BOOK_NAME[book] })}>
+    <div className={`book-cover pixel-cover pattern-${sp ? sp.pattern : 'plain'}`} style={style} role="img" aria-label={fill(T.binding.cover, { book: BOOK_NAME[book] })}>
+      <PixelArt rows={libraryBookRows(book, choice ? { day: 0, special: choice } : binding, undefined, false, true)} palette={libraryPalette(book, choice ? { day: 0, special: choice } : binding)} />
       <span className="book-cover-plate">{BOOK_NAME[book]}</span>
     </div>
   )

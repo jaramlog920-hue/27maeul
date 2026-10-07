@@ -14,6 +14,9 @@ import { saveGame } from '../../engine/save'
 import { NO_LIFE } from '../../engine/people'
 import type { ItemId, NeighborDef, Season } from '../../engine/types'
 import { neighborPortrait } from '../../render/renderer'
+import { residentIsElder } from '../../render/elder-details'
+import { movedHeir } from '../../engine/gen-growth'
+import { genAvatar } from '../../engine/gen-looks'
 import { ItemIcon } from '../../shared/ItemIcon'
 import { albumImage, partnerName, useGame, type JournalTab } from '../../store/game-store'
 import { isFamilyAlbum } from '../../engine/family'
@@ -330,12 +333,14 @@ const FACE = 4
 
 function Portrait({ def, season, shadow }: { def: NeighborDef; season: Season; shadow?: boolean }) {
   const ref = useRef<HTMLCanvasElement>(null)
+  const heir = useGame(s => movedHeir(s.game.gen, def.id))
+  const elder = useGame(s => residentIsElder(s.game.gen, movedHeir(s.game.gen, def.id)?.id ?? def.id))
   useEffect(() => {
     const c = ref.current
     const g = c?.getContext('2d')
     if (!c || !g) return
     try {
-      const src = neighborPortrait(def, season)
+      const src = neighborPortrait(def, season, elder, heir ? genAvatar(heir) : null)
       // 틀은 어른 크기(10×14) 그대로 — 키 작은 아이는 늘이지 않고 발을 바닥에 맞춰 그린다
       const w = Math.max(10, src.width)
       const h = Math.max(14, src.height)
@@ -347,7 +352,7 @@ function Portrait({ def, season, shadow }: { def: NeighborDef; season: Season; s
     } catch {
       /* 그림을 그릴 수 없는 곳(시험 환경)에서는 비워 둔다 */
     }
-  }, [def, season, shadow])
+  }, [def, season, shadow, elder, heir])
   return <canvas ref={ref} className="nb-face" aria-hidden="true" />
 }
 

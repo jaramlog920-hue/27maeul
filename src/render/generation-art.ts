@@ -3,7 +3,7 @@ import { eventMotionFrame } from './event-life-motion'
 import { extraUseFrame } from './expansion-life-motion'
 import { furnitureUseFrame } from './furniture-use-motion'
 import type { Facing } from '../engine/types'
-export const GENERATION_STAGES=['baby','toddler','child','teen','adult'] as const
+export const GENERATION_STAGES=['baby','toddler','child','teen','adult','elder'] as const
 export type GenerationStage=typeof GENERATION_STAGES[number]
 export const FAMILY_ACTIONS=['sootheBaby','holdBaby','readTogether','familyMeal','firstErrand','apprentice','showWork','moveHouse','welcome','listen'] as const
 export type FamilyAction=typeof FAMILY_ACTIONS[number]
@@ -17,12 +17,12 @@ export function generationRows(stage:GenerationStage,facing:Facing,frame:number,
     if(frame%4===2)for(let y=0;y<14;y++)for(let x=0;x<10;x++)if(p[y][x]==='o')p[y][x]='s'
     return facing==='left'?p.map(r=>r.reverse().join('')):p.map(r=>r.join(''))
   }
-  const rows=spriteRows('writer',facing,{...opts,frame:(Math.abs(frame)%3) as 0|1|2,short:stage==='toddler'?0:stage==='child'?1:stage==='teen'?2:undefined})
+  const rows=spriteRows('writer',facing,{...opts,elder:stage==='elder'||opts.elder,frame:(Math.abs(frame)%3) as 0|1|2,short:stage==='toddler'?0:stage==='child'?1:stage==='teen'?2:undefined})
   // 키가 작은 몸체를 늘리지 않고 위쪽을 투명하게 채워 바닥 앵커를 공유한다.
   return [...Array<string>(Math.max(0,14-rows.length)).fill('.'.repeat(10)),...rows]
 }
 export function familyFrame(who:Who,facing:Facing,action:FamilyAction,frame:number,stage:Exclude<GenerationStage,'baby'>,opts:SpriteOpts) {
-  const options={...opts,short:stage==='toddler'?0:stage==='child'?1:stage==='teen'?2:undefined}
+  const options={...opts,elder:stage==='elder'||opts.elder,short:stage==='toddler'?0:stage==='child'?1:stage==='teen'?2:undefined}
   if(action==='readTogether')return {...furnitureUseFrame(who,facing,'read',frame,options),duration:300,loop:true}
   if(action==='apprentice'||action==='showWork')return extraUseFrame(who,facing,action==='apprentice'?'plane':'show',frame,options)
   const actions={sootheBaby:'holdBaby',holdBaby:'holdBaby',familyMeal:'shareFood',firstErrand:'carryParcel',moveHouse:'carryParcel',welcome:'smile',listen:'nod'} as const

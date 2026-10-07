@@ -3,6 +3,7 @@ import type { Facing, Season } from '../engine/types'
 import { hsvToHex, shadeOf, SKINS, TOPS, type FullAvatar, type Look } from '../engine/avatar'
 import { avatarDetails } from './character-details'
 import { FURNI_PALETTE, FURNITURE_ART, ICON_CHAR, iconFromArt } from './furniture-art'
+import { elderDetails, ELDER_COLORS } from './elder-details'
 
 export type { Look }
 
@@ -10,6 +11,7 @@ export const SPRITE_W = 10
 export const SPRITE_H = 14
 
 export const PALETTE: Record<string, string> = {
+  ...ELDER_COLORS,
   k: '#3c2418', // 윤곽 (참고 그림 인물의 짙은 밤색)
   '+': '#f0a890', // 볼 발그레 (귀엽게 — 참고 그림)
   s: '#f8d8a8', // 피부 (참고 그림)
@@ -155,6 +157,8 @@ export interface SpriteOpts {
   avatar?: FullAvatar
   /** 우리 아이처럼 키가 작게 (0~3, 클수록 크다) */
   short?: number
+  /** 계보의 노년 단계 또는 은퇴한 기존 주민 */
+  elder?: boolean
 }
 
 /** 머리 모양 (주인공·이웃 같이 쓴다): 곱슬·삐죽·가운데 가르마·짧게 깎음·옆 가르마 (대머리는 쓰지 않는다). ch는 그 사람의 머리 글자 */
@@ -387,6 +391,7 @@ export function spriteRows(who: Who, facing: Facing, opts: SpriteOpts): string[]
     const scarf = NEIGHBOR_SCARF[who]
     if (opts.season === 'winter' && scarf) for (let x = 2; x <= 7; x++) if (!'k.sL'.includes(rows[7][x])) setPixel(rows, x, 7, scarf)
   }
+  if (opts.elder) rows = elderDetails(rows, who, facing)
   // 모든 인물에 같은 손 윤곽. 머리나 장신구를 입힌 뒤 그려 손이 가려지지 않게 한다.
   if (side) setPixel(rows, 6, 11, '5')
   else {
@@ -579,6 +584,10 @@ export const ICONS: Record<string, SpriteRows> = {
   // 아이와 같이 만든 것 (계획 12): 흔들 받침 위의 작은 나무 말, 분홍 옷의 헝겊 인형
   woodToy: ['........', '.....nN.', '....nnnk', '.nnnnnN.', '.nNnnnn.', '.n.n.n..', 'NNNNNNN.', '........'],
   clothDoll: ['...NN...', '..NssN..', '..sksk..', '..ffff..', '.ffwfff.', '..ffff..', '..s..s..', '........'],
+  // 손님집 손님의 고유 선물 (계획 18 B18-9): 버들 바구니, 별자리 그림판, 씨앗 주머니
+  willowBasket: ['...NN...', '..N..N..', '.NNNNNN.', '.nNnNnN.', '.NnNnNn.', '.nNnNnN.', '..NNNN..', '........'],
+  starChart: ['........', '.kkkkkk.', '.kbbybk.', '.kbybbk.', '.kbbbyk.', '.kybbbk.', '.kkkkkk.', '........'],
+  seedPouch: ['...NN...', '..NkkN..', '.nnnnnn.', 'nnynnnyn', 'nnnnynnn', 'nynnnnnn', '.nnnnnn.', '........'],
 }
 
 /**

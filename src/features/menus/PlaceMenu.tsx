@@ -8,6 +8,7 @@ import { fill, T, withAnd, withSubject } from '../../content/text'
 import { canCraft, canDate, canDrinkTea, canPlayHall, canWatchSunset, hasFood, starsOut } from '../../engine/game'
 import { TEA_PRICE } from '../../engine/places'
 import { canRead, isReadingDay } from '../../engine/meetings'
+import { RowLabel } from '../../shared/RowLabel'
 import { DATE_TEA_PRICE, type DatePlace } from '../../engine/romance'
 import { partnerName, useGame, type MenuPlace } from '../../store/game-store'
 import { isFacilityPlace, facilityOfPlace } from '../../engine/village-sites'
@@ -68,7 +69,7 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
             </button>
             <SkillCraftOptions at="hearth" />
             <button disabled={canCraft(game, 'bread') !== null} onClick={() => startCraft('bread')}>
-              {T.ui.hearthBake}
+              <RowLabel text={T.ui.hearthBake} />
             </button>
             <button onClick={warm}>{T.ui.hearthWarm}</button>
             <button disabled={!hasFood(game.inv)} onClick={eat}>
@@ -80,31 +81,31 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
           <>
             <SkillCraftOptions />
             <button disabled={canCraft(game, 'papyrus') !== null} onClick={() => startCraft('papyrus')}>
-              {T.ui.workPapyrus}
+              <RowLabel text={T.ui.workPapyrus} />
             </button>
             <button disabled={canCraft(game, 'ink') !== null} onClick={() => startCraft('ink')}>
-              {fill(T.ui.workInk, { n: 1 })}
+              <RowLabel text={fill(T.ui.workInk, { n: 1 })} />
             </button>
             <button disabled={canCraft(game, 'blanket') !== null} onClick={() => startCraft('blanket')}>
-              {T.ui.workBlanket}
+              <RowLabel text={T.ui.workBlanket} />
             </button>
             <button disabled={canCraft(game, 'cover') !== null} onClick={() => startCraft('cover')}>
-              {T.ui.workCover}
+              <RowLabel text={T.ui.workCover} />
             </button>
             <button disabled={canCraft(game, 'scentCandle') !== null} onClick={() => startCraft('scentCandle')}>
-              {T.ui.workCandle}
+              <RowLabel text={T.ui.workCandle} />
             </button>
             <button disabled={canCraft(game, 'creamPaper') !== null} onClick={() => startCraft('creamPaper')}>
-              {T.ui.workCream}
+              <RowLabel text={T.ui.workCream} />
             </button>
             <button disabled={canCraft(game, 'fineThread') !== null} onClick={() => startCraft('fineThread')}>
-              {T.ui.workThread}
+              <RowLabel text={T.ui.workThread} />
             </button>
           </>
         )}
         {place === 'press' && (
           <button disabled={canCraft(game, 'oil') !== null} onClick={() => startCraft('oil')}>
-            {T.ui.pressMake}
+            <RowLabel text={T.ui.pressMake} />
           </button>
         )}
         {/* 별 보기는 언덕에만 (stargaze는 자리와 무관 — 다른 별 보는 자리도 이 버튼을 붙이면 된다) */}

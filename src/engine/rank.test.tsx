@@ -1,7 +1,7 @@
 // 계획 21 R8·R9: 마을별 서고 순위 업데이트 — 계절 1·21일 아침 한 번, 상위 보답, 27권 완필 뒤 확장권
 import { fireEvent, render, screen } from '@testing-library/react'
 import { CONTENT } from '../content/catalog'
-import { isRankDay, newGame, rankMorning, type GameState } from './game'
+import { isRankDay, newGame, rankDonation, rankMorning, type GameState } from './game'
 import { BOOKS } from './types'
 import { useGame } from '../store/game-store'
 import { ModalLayer } from '../features/ModalLayer'
@@ -25,8 +25,13 @@ describe('마을 서고 순위', () => {
     expect(top.rankPopup!.place).toBe(1)
     expect(top.rankPopup!.pieces).toHaveLength(2)
     expect(top.inv.bronzeOrnament).toBe(1)
+    // 후원금: 1위가 가장 많고, 낮은 순위도 조금은 (2026-10-07 사용자)
+    expect(top.coins).toBe(at(21, { collected: many }).coins + rankDonation(1))
+    expect(top.rankPopup!.coins).toBe(rankDonation(1))
     const low = rankMorning(at(201), CONTENT)
-    expect(low.coins).toBe(at(201).coins)
+    expect(low.coins).toBe(at(201).coins + rankDonation(low.rankPopup!.place))
+    expect(rankDonation(1)).toBeGreaterThan(rankDonation(3))
+    expect(rankDonation(20)).toBeGreaterThan(0)
   })
   it('27권을 다 꽂은 뒤 처음 업데이트에서 맨 위, 구약 서고 확장권은 한 번', () => {
     const shelved = Object.fromEntries(BOOKS.map((b) => [b, 0])) as GameState['shelved']

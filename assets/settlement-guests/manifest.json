@@ -1,0 +1,6911 @@
+{
+  "guests": [
+    {
+      "id": "hazel",
+      "label": "헤이즐",
+      "elder": false,
+      "anchor": {
+        "x": 12,
+        "y": 18
+      },
+      "actions": {
+        "stand": {
+          "down": [
+            "hazel-stand-down-0.png",
+            "hazel-stand-down-1.png",
+            "hazel-stand-down-2.png",
+            "hazel-stand-down-3.png"
+          ],
+          "up": [
+            "hazel-stand-up-0.png",
+            "hazel-stand-up-1.png",
+            "hazel-stand-up-2.png",
+            "hazel-stand-up-3.png"
+          ],
+          "left": [
+            "hazel-stand-left-0.png",
+            "hazel-stand-left-1.png",
+            "hazel-stand-left-2.png",
+            "hazel-stand-left-3.png"
+          ],
+          "right": [
+            "hazel-stand-right-0.png",
+            "hazel-stand-right-1.png",
+            "hazel-stand-right-2.png",
+            "hazel-stand-right-3.png"
+          ]
+        },
+        "walk": {
+          "down": [
+            "hazel-walk-down-0.png",
+            "hazel-walk-down-1.png",
+            "hazel-walk-down-2.png",
+            "hazel-walk-down-3.png"
+          ],
+          "up": [
+            "hazel-walk-up-0.png",
+            "hazel-walk-up-1.png",
+            "hazel-walk-up-2.png",
+            "hazel-walk-up-3.png"
+          ],
+          "left": [
+            "hazel-walk-left-0.png",
+            "hazel-walk-left-1.png",
+            "hazel-walk-left-2.png",
+            "hazel-walk-left-3.png"
+          ],
+          "right": [
+            "hazel-walk-right-0.png",
+            "hazel-walk-right-1.png",
+            "hazel-walk-right-2.png",
+            "hazel-walk-right-3.png"
+          ]
+        },
+        "work": {
+          "down": [
+            "hazel-work-down-0.png",
+            "hazel-work-down-1.png",
+            "hazel-work-down-2.png",
+            "hazel-work-down-3.png"
+          ],
+          "up": [
+            "hazel-work-up-0.png",
+            "hazel-work-up-1.png",
+            "hazel-work-up-2.png",
+            "hazel-work-up-3.png"
+          ],
+          "left": [
+            "hazel-work-left-0.png",
+            "hazel-work-left-1.png",
+            "hazel-work-left-2.png",
+            "hazel-work-left-3.png"
+          ],
+          "right": [
+            "hazel-work-right-0.png",
+            "hazel-work-right-1.png",
+            "hazel-work-right-2.png",
+            "hazel-work-right-3.png"
+          ]
+        },
+        "greet": {
+          "down": [
+            "hazel-greet-down-0.png",
+            "hazel-greet-down-1.png",
+            "hazel-greet-down-2.png",
+            "hazel-greet-down-3.png"
+          ],
+          "up": [
+            "hazel-greet-up-0.png",
+            "hazel-greet-up-1.png",
+            "hazel-greet-up-2.png",
+            "hazel-greet-up-3.png"
+          ],
+          "left": [
+            "hazel-greet-left-0.png",
+            "hazel-greet-left-1.png",
+            "hazel-greet-left-2.png",
+            "hazel-greet-left-3.png"
+          ],
+          "right": [
+            "hazel-greet-right-0.png",
+            "hazel-greet-right-1.png",
+            "hazel-greet-right-2.png",
+            "hazel-greet-right-3.png"
+          ]
+        },
+        "carry": {
+          "down": [
+            "hazel-carry-down-0.png",
+            "hazel-carry-down-1.png",
+            "hazel-carry-down-2.png",
+            "hazel-carry-down-3.png"
+          ],
+          "up": [
+            "hazel-carry-up-0.png",
+            "hazel-carry-up-1.png",
+            "hazel-carry-up-2.png",
+            "hazel-carry-up-3.png"
+          ],
+          "left": [
+            "hazel-carry-left-0.png",
+            "hazel-carry-left-1.png",
+            "hazel-carry-left-2.png",
+            "hazel-carry-left-3.png"
+          ],
+          "right": [
+            "hazel-carry-right-0.png",
+            "hazel-carry-right-1.png",
+            "hazel-carry-right-2.png",
+            "hazel-carry-right-3.png"
+          ]
+        },
+        "sit": {
+          "down": [
+            "hazel-sit-down-0.png",
+            "hazel-sit-down-1.png",
+            "hazel-sit-down-2.png",
+            "hazel-sit-down-3.png"
+          ],
+          "up": [
+            "hazel-sit-up-0.png",
+            "hazel-sit-up-1.png",
+            "hazel-sit-up-2.png",
+            "hazel-sit-up-3.png"
+          ],
+          "left": [
+            "hazel-sit-left-0.png",
+            "hazel-sit-left-1.png",
+            "hazel-sit-left-2.png",
+            "hazel-sit-left-3.png"
+          ],
+          "right": [
+            "hazel-sit-right-0.png",
+            "hazel-sit-right-1.png",
+            "hazel-sit-right-2.png",
+            "hazel-sit-right-3.png"
+          ]
+        },
+        "read": {
+          "down": [
+            "hazel-read-down-0.png",
+            "hazel-read-down-1.png",
+            "hazel-read-down-2.png",
+            "hazel-read-down-3.png"
+          ],
+          "up": [
+            "hazel-read-up-0.png",
+            "hazel-read-up-1.png",
+            "hazel-read-up-2.png",
+            "hazel-read-up-3.png"
+          ],
+          "left": [
+            "hazel-read-left-0.png",
+            "hazel-read-left-1.png",
+            "hazel-read-left-2.png",
+            "hazel-read-left-3.png"
+          ],
+          "right": [
+            "hazel-read-right-0.png",
+            "hazel-read-right-1.png",
+            "hazel-read-right-2.png",
+            "hazel-read-right-3.png"
+          ]
+        },
+        "sleep": {
+          "down": [
+            "hazel-sleep-down-0.png",
+            "hazel-sleep-down-1.png",
+            "hazel-sleep-down-2.png",
+            "hazel-sleep-down-3.png"
+          ],
+          "up": [
+            "hazel-sleep-up-0.png",
+            "hazel-sleep-up-1.png",
+            "hazel-sleep-up-2.png",
+            "hazel-sleep-up-3.png"
+          ],
+          "left": [
+            "hazel-sleep-left-0.png",
+            "hazel-sleep-left-1.png",
+            "hazel-sleep-left-2.png",
+            "hazel-sleep-left-3.png"
+          ],
+          "right": [
+            "hazel-sleep-right-0.png",
+            "hazel-sleep-right-1.png",
+            "hazel-sleep-right-2.png",
+            "hazel-sleep-right-3.png"
+          ]
+        }
+      },
+      "sequences": [
+        {
+          "action": "stand",
+          "facing": "down",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "hazel-stand-down-0-back.png",
+            "actor": "hazel-stand-down-0-actor.png",
+            "front": "hazel-stand-down-0-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "down",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "hazel-stand-down-1-back.png",
+            "actor": "hazel-stand-down-1-actor.png",
+            "front": "hazel-stand-down-1-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "down",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "hazel-stand-down-2-back.png",
+            "actor": "hazel-stand-down-2-actor.png",
+            "front": "hazel-stand-down-2-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "down",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "hazel-stand-down-3-back.png",
+            "actor": "hazel-stand-down-3-actor.png",
+            "front": "hazel-stand-down-3-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "up",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "hazel-stand-up-0-back.png",
+            "actor": "hazel-stand-up-0-actor.png",
+            "front": "hazel-stand-up-0-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "up",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "hazel-stand-up-1-back.png",
+            "actor": "hazel-stand-up-1-actor.png",
+            "front": "hazel-stand-up-1-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "up",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "hazel-stand-up-2-back.png",
+            "actor": "hazel-stand-up-2-actor.png",
+            "front": "hazel-stand-up-2-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "up",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "hazel-stand-up-3-back.png",
+            "actor": "hazel-stand-up-3-actor.png",
+            "front": "hazel-stand-up-3-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "left",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "hazel-stand-left-0-back.png",
+            "actor": "hazel-stand-left-0-actor.png",
+            "front": "hazel-stand-left-0-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "left",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "hazel-stand-left-1-back.png",
+            "actor": "hazel-stand-left-1-actor.png",
+            "front": "hazel-stand-left-1-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "left",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "hazel-stand-left-2-back.png",
+            "actor": "hazel-stand-left-2-actor.png",
+            "front": "hazel-stand-left-2-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "left",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "hazel-stand-left-3-back.png",
+            "actor": "hazel-stand-left-3-actor.png",
+            "front": "hazel-stand-left-3-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "right",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "hazel-stand-right-0-back.png",
+            "actor": "hazel-stand-right-0-actor.png",
+            "front": "hazel-stand-right-0-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "right",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "hazel-stand-right-1-back.png",
+            "actor": "hazel-stand-right-1-actor.png",
+            "front": "hazel-stand-right-1-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "right",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "hazel-stand-right-2-back.png",
+            "actor": "hazel-stand-right-2-actor.png",
+            "front": "hazel-stand-right-2-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "right",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "hazel-stand-right-3-back.png",
+            "actor": "hazel-stand-right-3-actor.png",
+            "front": "hazel-stand-right-3-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "down",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "hazel-walk-down-0-back.png",
+            "actor": "hazel-walk-down-0-actor.png",
+            "front": "hazel-walk-down-0-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "down",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "hazel-walk-down-1-back.png",
+            "actor": "hazel-walk-down-1-actor.png",
+            "front": "hazel-walk-down-1-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "down",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "hazel-walk-down-2-back.png",
+            "actor": "hazel-walk-down-2-actor.png",
+            "front": "hazel-walk-down-2-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "down",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "hazel-walk-down-3-back.png",
+            "actor": "hazel-walk-down-3-actor.png",
+            "front": "hazel-walk-down-3-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "up",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "hazel-walk-up-0-back.png",
+            "actor": "hazel-walk-up-0-actor.png",
+            "front": "hazel-walk-up-0-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "up",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "hazel-walk-up-1-back.png",
+            "actor": "hazel-walk-up-1-actor.png",
+            "front": "hazel-walk-up-1-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "up",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "hazel-walk-up-2-back.png",
+            "actor": "hazel-walk-up-2-actor.png",
+            "front": "hazel-walk-up-2-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "up",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "hazel-walk-up-3-back.png",
+            "actor": "hazel-walk-up-3-actor.png",
+            "front": "hazel-walk-up-3-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "left",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "hazel-walk-left-0-back.png",
+            "actor": "hazel-walk-left-0-actor.png",
+            "front": "hazel-walk-left-0-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "left",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "hazel-walk-left-1-back.png",
+            "actor": "hazel-walk-left-1-actor.png",
+            "front": "hazel-walk-left-1-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "left",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "hazel-walk-left-2-back.png",
+            "actor": "hazel-walk-left-2-actor.png",
+            "front": "hazel-walk-left-2-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "left",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "hazel-walk-left-3-back.png",
+            "actor": "hazel-walk-left-3-actor.png",
+            "front": "hazel-walk-left-3-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "right",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "hazel-walk-right-0-back.png",
+            "actor": "hazel-walk-right-0-actor.png",
+            "front": "hazel-walk-right-0-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "right",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "hazel-walk-right-1-back.png",
+            "actor": "hazel-walk-right-1-actor.png",
+            "front": "hazel-walk-right-1-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "right",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "hazel-walk-right-2-back.png",
+            "actor": "hazel-walk-right-2-actor.png",
+            "front": "hazel-walk-right-2-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "right",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "hazel-walk-right-3-back.png",
+            "actor": "hazel-walk-right-3-actor.png",
+            "front": "hazel-walk-right-3-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "down",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-work-down-0-back.png",
+            "actor": "hazel-work-down-0-actor.png",
+            "front": "hazel-work-down-0-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "down",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-work-down-1-back.png",
+            "actor": "hazel-work-down-1-actor.png",
+            "front": "hazel-work-down-1-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "down",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-work-down-2-back.png",
+            "actor": "hazel-work-down-2-actor.png",
+            "front": "hazel-work-down-2-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "down",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-work-down-3-back.png",
+            "actor": "hazel-work-down-3-actor.png",
+            "front": "hazel-work-down-3-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "up",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-work-up-0-back.png",
+            "actor": "hazel-work-up-0-actor.png",
+            "front": "hazel-work-up-0-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "up",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-work-up-1-back.png",
+            "actor": "hazel-work-up-1-actor.png",
+            "front": "hazel-work-up-1-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "up",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-work-up-2-back.png",
+            "actor": "hazel-work-up-2-actor.png",
+            "front": "hazel-work-up-2-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "up",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-work-up-3-back.png",
+            "actor": "hazel-work-up-3-actor.png",
+            "front": "hazel-work-up-3-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "left",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-work-left-0-back.png",
+            "actor": "hazel-work-left-0-actor.png",
+            "front": "hazel-work-left-0-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "left",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-work-left-1-back.png",
+            "actor": "hazel-work-left-1-actor.png",
+            "front": "hazel-work-left-1-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "left",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-work-left-2-back.png",
+            "actor": "hazel-work-left-2-actor.png",
+            "front": "hazel-work-left-2-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "left",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-work-left-3-back.png",
+            "actor": "hazel-work-left-3-actor.png",
+            "front": "hazel-work-left-3-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "right",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-work-right-0-back.png",
+            "actor": "hazel-work-right-0-actor.png",
+            "front": "hazel-work-right-0-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "right",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-work-right-1-back.png",
+            "actor": "hazel-work-right-1-actor.png",
+            "front": "hazel-work-right-1-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "right",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-work-right-2-back.png",
+            "actor": "hazel-work-right-2-actor.png",
+            "front": "hazel-work-right-2-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "right",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-work-right-3-back.png",
+            "actor": "hazel-work-right-3-actor.png",
+            "front": "hazel-work-right-3-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "down",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "hazel-greet-down-0-back.png",
+            "actor": "hazel-greet-down-0-actor.png",
+            "front": "hazel-greet-down-0-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "down",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "hazel-greet-down-1-back.png",
+            "actor": "hazel-greet-down-1-actor.png",
+            "front": "hazel-greet-down-1-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "down",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "hazel-greet-down-2-back.png",
+            "actor": "hazel-greet-down-2-actor.png",
+            "front": "hazel-greet-down-2-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "down",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "hazel-greet-down-3-back.png",
+            "actor": "hazel-greet-down-3-actor.png",
+            "front": "hazel-greet-down-3-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "up",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "hazel-greet-up-0-back.png",
+            "actor": "hazel-greet-up-0-actor.png",
+            "front": "hazel-greet-up-0-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "up",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "hazel-greet-up-1-back.png",
+            "actor": "hazel-greet-up-1-actor.png",
+            "front": "hazel-greet-up-1-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "up",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "hazel-greet-up-2-back.png",
+            "actor": "hazel-greet-up-2-actor.png",
+            "front": "hazel-greet-up-2-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "up",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "hazel-greet-up-3-back.png",
+            "actor": "hazel-greet-up-3-actor.png",
+            "front": "hazel-greet-up-3-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "left",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "hazel-greet-left-0-back.png",
+            "actor": "hazel-greet-left-0-actor.png",
+            "front": "hazel-greet-left-0-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "left",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "hazel-greet-left-1-back.png",
+            "actor": "hazel-greet-left-1-actor.png",
+            "front": "hazel-greet-left-1-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "left",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "hazel-greet-left-2-back.png",
+            "actor": "hazel-greet-left-2-actor.png",
+            "front": "hazel-greet-left-2-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "left",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "hazel-greet-left-3-back.png",
+            "actor": "hazel-greet-left-3-actor.png",
+            "front": "hazel-greet-left-3-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "right",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "hazel-greet-right-0-back.png",
+            "actor": "hazel-greet-right-0-actor.png",
+            "front": "hazel-greet-right-0-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "right",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "hazel-greet-right-1-back.png",
+            "actor": "hazel-greet-right-1-actor.png",
+            "front": "hazel-greet-right-1-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "right",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "hazel-greet-right-2-back.png",
+            "actor": "hazel-greet-right-2-actor.png",
+            "front": "hazel-greet-right-2-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "right",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "hazel-greet-right-3-back.png",
+            "actor": "hazel-greet-right-3-actor.png",
+            "front": "hazel-greet-right-3-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "down",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-carry-down-0-back.png",
+            "actor": "hazel-carry-down-0-actor.png",
+            "front": "hazel-carry-down-0-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "down",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-carry-down-1-back.png",
+            "actor": "hazel-carry-down-1-actor.png",
+            "front": "hazel-carry-down-1-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "down",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-carry-down-2-back.png",
+            "actor": "hazel-carry-down-2-actor.png",
+            "front": "hazel-carry-down-2-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "down",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-carry-down-3-back.png",
+            "actor": "hazel-carry-down-3-actor.png",
+            "front": "hazel-carry-down-3-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "up",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-carry-up-0-back.png",
+            "actor": "hazel-carry-up-0-actor.png",
+            "front": "hazel-carry-up-0-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "up",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-carry-up-1-back.png",
+            "actor": "hazel-carry-up-1-actor.png",
+            "front": "hazel-carry-up-1-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "up",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-carry-up-2-back.png",
+            "actor": "hazel-carry-up-2-actor.png",
+            "front": "hazel-carry-up-2-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "up",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-carry-up-3-back.png",
+            "actor": "hazel-carry-up-3-actor.png",
+            "front": "hazel-carry-up-3-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "left",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-carry-left-0-back.png",
+            "actor": "hazel-carry-left-0-actor.png",
+            "front": "hazel-carry-left-0-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "left",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-carry-left-1-back.png",
+            "actor": "hazel-carry-left-1-actor.png",
+            "front": "hazel-carry-left-1-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "left",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-carry-left-2-back.png",
+            "actor": "hazel-carry-left-2-actor.png",
+            "front": "hazel-carry-left-2-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "left",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-carry-left-3-back.png",
+            "actor": "hazel-carry-left-3-actor.png",
+            "front": "hazel-carry-left-3-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "right",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-carry-right-0-back.png",
+            "actor": "hazel-carry-right-0-actor.png",
+            "front": "hazel-carry-right-0-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "right",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-carry-right-1-back.png",
+            "actor": "hazel-carry-right-1-actor.png",
+            "front": "hazel-carry-right-1-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "right",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-carry-right-2-back.png",
+            "actor": "hazel-carry-right-2-actor.png",
+            "front": "hazel-carry-right-2-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "right",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-carry-right-3-back.png",
+            "actor": "hazel-carry-right-3-actor.png",
+            "front": "hazel-carry-right-3-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "down",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sit-down-0-back.png",
+            "actor": "hazel-sit-down-0-actor.png",
+            "front": "hazel-sit-down-0-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "down",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sit-down-1-back.png",
+            "actor": "hazel-sit-down-1-actor.png",
+            "front": "hazel-sit-down-1-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "down",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sit-down-2-back.png",
+            "actor": "hazel-sit-down-2-actor.png",
+            "front": "hazel-sit-down-2-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "down",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sit-down-3-back.png",
+            "actor": "hazel-sit-down-3-actor.png",
+            "front": "hazel-sit-down-3-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "up",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sit-up-0-back.png",
+            "actor": "hazel-sit-up-0-actor.png",
+            "front": "hazel-sit-up-0-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "up",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sit-up-1-back.png",
+            "actor": "hazel-sit-up-1-actor.png",
+            "front": "hazel-sit-up-1-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "up",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sit-up-2-back.png",
+            "actor": "hazel-sit-up-2-actor.png",
+            "front": "hazel-sit-up-2-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "up",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sit-up-3-back.png",
+            "actor": "hazel-sit-up-3-actor.png",
+            "front": "hazel-sit-up-3-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "left",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sit-left-0-back.png",
+            "actor": "hazel-sit-left-0-actor.png",
+            "front": "hazel-sit-left-0-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "left",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sit-left-1-back.png",
+            "actor": "hazel-sit-left-1-actor.png",
+            "front": "hazel-sit-left-1-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "left",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sit-left-2-back.png",
+            "actor": "hazel-sit-left-2-actor.png",
+            "front": "hazel-sit-left-2-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "left",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sit-left-3-back.png",
+            "actor": "hazel-sit-left-3-actor.png",
+            "front": "hazel-sit-left-3-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "right",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sit-right-0-back.png",
+            "actor": "hazel-sit-right-0-actor.png",
+            "front": "hazel-sit-right-0-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "right",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sit-right-1-back.png",
+            "actor": "hazel-sit-right-1-actor.png",
+            "front": "hazel-sit-right-1-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "right",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sit-right-2-back.png",
+            "actor": "hazel-sit-right-2-actor.png",
+            "front": "hazel-sit-right-2-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "right",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sit-right-3-back.png",
+            "actor": "hazel-sit-right-3-actor.png",
+            "front": "hazel-sit-right-3-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "down",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-read-down-0-back.png",
+            "actor": "hazel-read-down-0-actor.png",
+            "front": "hazel-read-down-0-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "down",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-read-down-1-back.png",
+            "actor": "hazel-read-down-1-actor.png",
+            "front": "hazel-read-down-1-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "down",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-read-down-2-back.png",
+            "actor": "hazel-read-down-2-actor.png",
+            "front": "hazel-read-down-2-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "down",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-read-down-3-back.png",
+            "actor": "hazel-read-down-3-actor.png",
+            "front": "hazel-read-down-3-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "up",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-read-up-0-back.png",
+            "actor": "hazel-read-up-0-actor.png",
+            "front": "hazel-read-up-0-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "up",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-read-up-1-back.png",
+            "actor": "hazel-read-up-1-actor.png",
+            "front": "hazel-read-up-1-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "up",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-read-up-2-back.png",
+            "actor": "hazel-read-up-2-actor.png",
+            "front": "hazel-read-up-2-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "up",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-read-up-3-back.png",
+            "actor": "hazel-read-up-3-actor.png",
+            "front": "hazel-read-up-3-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "left",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-read-left-0-back.png",
+            "actor": "hazel-read-left-0-actor.png",
+            "front": "hazel-read-left-0-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "left",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-read-left-1-back.png",
+            "actor": "hazel-read-left-1-actor.png",
+            "front": "hazel-read-left-1-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "left",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-read-left-2-back.png",
+            "actor": "hazel-read-left-2-actor.png",
+            "front": "hazel-read-left-2-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "left",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-read-left-3-back.png",
+            "actor": "hazel-read-left-3-actor.png",
+            "front": "hazel-read-left-3-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "right",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-read-right-0-back.png",
+            "actor": "hazel-read-right-0-actor.png",
+            "front": "hazel-read-right-0-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "right",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-read-right-1-back.png",
+            "actor": "hazel-read-right-1-actor.png",
+            "front": "hazel-read-right-1-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "right",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-read-right-2-back.png",
+            "actor": "hazel-read-right-2-actor.png",
+            "front": "hazel-read-right-2-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "right",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-read-right-3-back.png",
+            "actor": "hazel-read-right-3-actor.png",
+            "front": "hazel-read-right-3-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "down",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sleep-down-0-back.png",
+            "actor": "hazel-sleep-down-0-actor.png",
+            "front": "hazel-sleep-down-0-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "down",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sleep-down-1-back.png",
+            "actor": "hazel-sleep-down-1-actor.png",
+            "front": "hazel-sleep-down-1-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "down",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sleep-down-2-back.png",
+            "actor": "hazel-sleep-down-2-actor.png",
+            "front": "hazel-sleep-down-2-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "down",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sleep-down-3-back.png",
+            "actor": "hazel-sleep-down-3-actor.png",
+            "front": "hazel-sleep-down-3-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "up",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sleep-up-0-back.png",
+            "actor": "hazel-sleep-up-0-actor.png",
+            "front": "hazel-sleep-up-0-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "up",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sleep-up-1-back.png",
+            "actor": "hazel-sleep-up-1-actor.png",
+            "front": "hazel-sleep-up-1-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "up",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sleep-up-2-back.png",
+            "actor": "hazel-sleep-up-2-actor.png",
+            "front": "hazel-sleep-up-2-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "up",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sleep-up-3-back.png",
+            "actor": "hazel-sleep-up-3-actor.png",
+            "front": "hazel-sleep-up-3-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "left",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sleep-left-0-back.png",
+            "actor": "hazel-sleep-left-0-actor.png",
+            "front": "hazel-sleep-left-0-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "left",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sleep-left-1-back.png",
+            "actor": "hazel-sleep-left-1-actor.png",
+            "front": "hazel-sleep-left-1-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "left",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sleep-left-2-back.png",
+            "actor": "hazel-sleep-left-2-actor.png",
+            "front": "hazel-sleep-left-2-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "left",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sleep-left-3-back.png",
+            "actor": "hazel-sleep-left-3-actor.png",
+            "front": "hazel-sleep-left-3-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "right",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sleep-right-0-back.png",
+            "actor": "hazel-sleep-right-0-actor.png",
+            "front": "hazel-sleep-right-0-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "right",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sleep-right-1-back.png",
+            "actor": "hazel-sleep-right-1-actor.png",
+            "front": "hazel-sleep-right-1-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "right",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sleep-right-2-back.png",
+            "actor": "hazel-sleep-right-2-actor.png",
+            "front": "hazel-sleep-right-2-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "right",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "hazel-sleep-right-3-back.png",
+            "actor": "hazel-sleep-right-3-actor.png",
+            "front": "hazel-sleep-right-3-front.png"
+          }
+        }
+      ],
+      "prop": "hazel-prop.png"
+    },
+    {
+      "id": "morris",
+      "label": "모리스",
+      "elder": true,
+      "anchor": {
+        "x": 12,
+        "y": 18
+      },
+      "actions": {
+        "stand": {
+          "down": [
+            "morris-stand-down-0.png",
+            "morris-stand-down-1.png",
+            "morris-stand-down-2.png",
+            "morris-stand-down-3.png"
+          ],
+          "up": [
+            "morris-stand-up-0.png",
+            "morris-stand-up-1.png",
+            "morris-stand-up-2.png",
+            "morris-stand-up-3.png"
+          ],
+          "left": [
+            "morris-stand-left-0.png",
+            "morris-stand-left-1.png",
+            "morris-stand-left-2.png",
+            "morris-stand-left-3.png"
+          ],
+          "right": [
+            "morris-stand-right-0.png",
+            "morris-stand-right-1.png",
+            "morris-stand-right-2.png",
+            "morris-stand-right-3.png"
+          ]
+        },
+        "walk": {
+          "down": [
+            "morris-walk-down-0.png",
+            "morris-walk-down-1.png",
+            "morris-walk-down-2.png",
+            "morris-walk-down-3.png"
+          ],
+          "up": [
+            "morris-walk-up-0.png",
+            "morris-walk-up-1.png",
+            "morris-walk-up-2.png",
+            "morris-walk-up-3.png"
+          ],
+          "left": [
+            "morris-walk-left-0.png",
+            "morris-walk-left-1.png",
+            "morris-walk-left-2.png",
+            "morris-walk-left-3.png"
+          ],
+          "right": [
+            "morris-walk-right-0.png",
+            "morris-walk-right-1.png",
+            "morris-walk-right-2.png",
+            "morris-walk-right-3.png"
+          ]
+        },
+        "work": {
+          "down": [
+            "morris-work-down-0.png",
+            "morris-work-down-1.png",
+            "morris-work-down-2.png",
+            "morris-work-down-3.png"
+          ],
+          "up": [
+            "morris-work-up-0.png",
+            "morris-work-up-1.png",
+            "morris-work-up-2.png",
+            "morris-work-up-3.png"
+          ],
+          "left": [
+            "morris-work-left-0.png",
+            "morris-work-left-1.png",
+            "morris-work-left-2.png",
+            "morris-work-left-3.png"
+          ],
+          "right": [
+            "morris-work-right-0.png",
+            "morris-work-right-1.png",
+            "morris-work-right-2.png",
+            "morris-work-right-3.png"
+          ]
+        },
+        "greet": {
+          "down": [
+            "morris-greet-down-0.png",
+            "morris-greet-down-1.png",
+            "morris-greet-down-2.png",
+            "morris-greet-down-3.png"
+          ],
+          "up": [
+            "morris-greet-up-0.png",
+            "morris-greet-up-1.png",
+            "morris-greet-up-2.png",
+            "morris-greet-up-3.png"
+          ],
+          "left": [
+            "morris-greet-left-0.png",
+            "morris-greet-left-1.png",
+            "morris-greet-left-2.png",
+            "morris-greet-left-3.png"
+          ],
+          "right": [
+            "morris-greet-right-0.png",
+            "morris-greet-right-1.png",
+            "morris-greet-right-2.png",
+            "morris-greet-right-3.png"
+          ]
+        },
+        "carry": {
+          "down": [
+            "morris-carry-down-0.png",
+            "morris-carry-down-1.png",
+            "morris-carry-down-2.png",
+            "morris-carry-down-3.png"
+          ],
+          "up": [
+            "morris-carry-up-0.png",
+            "morris-carry-up-1.png",
+            "morris-carry-up-2.png",
+            "morris-carry-up-3.png"
+          ],
+          "left": [
+            "morris-carry-left-0.png",
+            "morris-carry-left-1.png",
+            "morris-carry-left-2.png",
+            "morris-carry-left-3.png"
+          ],
+          "right": [
+            "morris-carry-right-0.png",
+            "morris-carry-right-1.png",
+            "morris-carry-right-2.png",
+            "morris-carry-right-3.png"
+          ]
+        },
+        "sit": {
+          "down": [
+            "morris-sit-down-0.png",
+            "morris-sit-down-1.png",
+            "morris-sit-down-2.png",
+            "morris-sit-down-3.png"
+          ],
+          "up": [
+            "morris-sit-up-0.png",
+            "morris-sit-up-1.png",
+            "morris-sit-up-2.png",
+            "morris-sit-up-3.png"
+          ],
+          "left": [
+            "morris-sit-left-0.png",
+            "morris-sit-left-1.png",
+            "morris-sit-left-2.png",
+            "morris-sit-left-3.png"
+          ],
+          "right": [
+            "morris-sit-right-0.png",
+            "morris-sit-right-1.png",
+            "morris-sit-right-2.png",
+            "morris-sit-right-3.png"
+          ]
+        },
+        "read": {
+          "down": [
+            "morris-read-down-0.png",
+            "morris-read-down-1.png",
+            "morris-read-down-2.png",
+            "morris-read-down-3.png"
+          ],
+          "up": [
+            "morris-read-up-0.png",
+            "morris-read-up-1.png",
+            "morris-read-up-2.png",
+            "morris-read-up-3.png"
+          ],
+          "left": [
+            "morris-read-left-0.png",
+            "morris-read-left-1.png",
+            "morris-read-left-2.png",
+            "morris-read-left-3.png"
+          ],
+          "right": [
+            "morris-read-right-0.png",
+            "morris-read-right-1.png",
+            "morris-read-right-2.png",
+            "morris-read-right-3.png"
+          ]
+        },
+        "sleep": {
+          "down": [
+            "morris-sleep-down-0.png",
+            "morris-sleep-down-1.png",
+            "morris-sleep-down-2.png",
+            "morris-sleep-down-3.png"
+          ],
+          "up": [
+            "morris-sleep-up-0.png",
+            "morris-sleep-up-1.png",
+            "morris-sleep-up-2.png",
+            "morris-sleep-up-3.png"
+          ],
+          "left": [
+            "morris-sleep-left-0.png",
+            "morris-sleep-left-1.png",
+            "morris-sleep-left-2.png",
+            "morris-sleep-left-3.png"
+          ],
+          "right": [
+            "morris-sleep-right-0.png",
+            "morris-sleep-right-1.png",
+            "morris-sleep-right-2.png",
+            "morris-sleep-right-3.png"
+          ]
+        }
+      },
+      "sequences": [
+        {
+          "action": "stand",
+          "facing": "down",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "morris-stand-down-0-back.png",
+            "actor": "morris-stand-down-0-actor.png",
+            "front": "morris-stand-down-0-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "down",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "morris-stand-down-1-back.png",
+            "actor": "morris-stand-down-1-actor.png",
+            "front": "morris-stand-down-1-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "down",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "morris-stand-down-2-back.png",
+            "actor": "morris-stand-down-2-actor.png",
+            "front": "morris-stand-down-2-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "down",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "morris-stand-down-3-back.png",
+            "actor": "morris-stand-down-3-actor.png",
+            "front": "morris-stand-down-3-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "up",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "morris-stand-up-0-back.png",
+            "actor": "morris-stand-up-0-actor.png",
+            "front": "morris-stand-up-0-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "up",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "morris-stand-up-1-back.png",
+            "actor": "morris-stand-up-1-actor.png",
+            "front": "morris-stand-up-1-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "up",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "morris-stand-up-2-back.png",
+            "actor": "morris-stand-up-2-actor.png",
+            "front": "morris-stand-up-2-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "up",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "morris-stand-up-3-back.png",
+            "actor": "morris-stand-up-3-actor.png",
+            "front": "morris-stand-up-3-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "left",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "morris-stand-left-0-back.png",
+            "actor": "morris-stand-left-0-actor.png",
+            "front": "morris-stand-left-0-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "left",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "morris-stand-left-1-back.png",
+            "actor": "morris-stand-left-1-actor.png",
+            "front": "morris-stand-left-1-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "left",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "morris-stand-left-2-back.png",
+            "actor": "morris-stand-left-2-actor.png",
+            "front": "morris-stand-left-2-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "left",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "morris-stand-left-3-back.png",
+            "actor": "morris-stand-left-3-actor.png",
+            "front": "morris-stand-left-3-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "right",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "morris-stand-right-0-back.png",
+            "actor": "morris-stand-right-0-actor.png",
+            "front": "morris-stand-right-0-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "right",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "morris-stand-right-1-back.png",
+            "actor": "morris-stand-right-1-actor.png",
+            "front": "morris-stand-right-1-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "right",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "morris-stand-right-2-back.png",
+            "actor": "morris-stand-right-2-actor.png",
+            "front": "morris-stand-right-2-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "right",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "morris-stand-right-3-back.png",
+            "actor": "morris-stand-right-3-actor.png",
+            "front": "morris-stand-right-3-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "down",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "morris-walk-down-0-back.png",
+            "actor": "morris-walk-down-0-actor.png",
+            "front": "morris-walk-down-0-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "down",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "morris-walk-down-1-back.png",
+            "actor": "morris-walk-down-1-actor.png",
+            "front": "morris-walk-down-1-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "down",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "morris-walk-down-2-back.png",
+            "actor": "morris-walk-down-2-actor.png",
+            "front": "morris-walk-down-2-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "down",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "morris-walk-down-3-back.png",
+            "actor": "morris-walk-down-3-actor.png",
+            "front": "morris-walk-down-3-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "up",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "morris-walk-up-0-back.png",
+            "actor": "morris-walk-up-0-actor.png",
+            "front": "morris-walk-up-0-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "up",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "morris-walk-up-1-back.png",
+            "actor": "morris-walk-up-1-actor.png",
+            "front": "morris-walk-up-1-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "up",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "morris-walk-up-2-back.png",
+            "actor": "morris-walk-up-2-actor.png",
+            "front": "morris-walk-up-2-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "up",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "morris-walk-up-3-back.png",
+            "actor": "morris-walk-up-3-actor.png",
+            "front": "morris-walk-up-3-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "left",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "morris-walk-left-0-back.png",
+            "actor": "morris-walk-left-0-actor.png",
+            "front": "morris-walk-left-0-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "left",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "morris-walk-left-1-back.png",
+            "actor": "morris-walk-left-1-actor.png",
+            "front": "morris-walk-left-1-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "left",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "morris-walk-left-2-back.png",
+            "actor": "morris-walk-left-2-actor.png",
+            "front": "morris-walk-left-2-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "left",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "morris-walk-left-3-back.png",
+            "actor": "morris-walk-left-3-actor.png",
+            "front": "morris-walk-left-3-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "right",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "morris-walk-right-0-back.png",
+            "actor": "morris-walk-right-0-actor.png",
+            "front": "morris-walk-right-0-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "right",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "morris-walk-right-1-back.png",
+            "actor": "morris-walk-right-1-actor.png",
+            "front": "morris-walk-right-1-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "right",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "morris-walk-right-2-back.png",
+            "actor": "morris-walk-right-2-actor.png",
+            "front": "morris-walk-right-2-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "right",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "morris-walk-right-3-back.png",
+            "actor": "morris-walk-right-3-actor.png",
+            "front": "morris-walk-right-3-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "down",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-work-down-0-back.png",
+            "actor": "morris-work-down-0-actor.png",
+            "front": "morris-work-down-0-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "down",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-work-down-1-back.png",
+            "actor": "morris-work-down-1-actor.png",
+            "front": "morris-work-down-1-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "down",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-work-down-2-back.png",
+            "actor": "morris-work-down-2-actor.png",
+            "front": "morris-work-down-2-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "down",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-work-down-3-back.png",
+            "actor": "morris-work-down-3-actor.png",
+            "front": "morris-work-down-3-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "up",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-work-up-0-back.png",
+            "actor": "morris-work-up-0-actor.png",
+            "front": "morris-work-up-0-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "up",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-work-up-1-back.png",
+            "actor": "morris-work-up-1-actor.png",
+            "front": "morris-work-up-1-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "up",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-work-up-2-back.png",
+            "actor": "morris-work-up-2-actor.png",
+            "front": "morris-work-up-2-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "up",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-work-up-3-back.png",
+            "actor": "morris-work-up-3-actor.png",
+            "front": "morris-work-up-3-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "left",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-work-left-0-back.png",
+            "actor": "morris-work-left-0-actor.png",
+            "front": "morris-work-left-0-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "left",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-work-left-1-back.png",
+            "actor": "morris-work-left-1-actor.png",
+            "front": "morris-work-left-1-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "left",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-work-left-2-back.png",
+            "actor": "morris-work-left-2-actor.png",
+            "front": "morris-work-left-2-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "left",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-work-left-3-back.png",
+            "actor": "morris-work-left-3-actor.png",
+            "front": "morris-work-left-3-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "right",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-work-right-0-back.png",
+            "actor": "morris-work-right-0-actor.png",
+            "front": "morris-work-right-0-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "right",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-work-right-1-back.png",
+            "actor": "morris-work-right-1-actor.png",
+            "front": "morris-work-right-1-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "right",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-work-right-2-back.png",
+            "actor": "morris-work-right-2-actor.png",
+            "front": "morris-work-right-2-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "right",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-work-right-3-back.png",
+            "actor": "morris-work-right-3-actor.png",
+            "front": "morris-work-right-3-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "down",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "morris-greet-down-0-back.png",
+            "actor": "morris-greet-down-0-actor.png",
+            "front": "morris-greet-down-0-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "down",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "morris-greet-down-1-back.png",
+            "actor": "morris-greet-down-1-actor.png",
+            "front": "morris-greet-down-1-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "down",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "morris-greet-down-2-back.png",
+            "actor": "morris-greet-down-2-actor.png",
+            "front": "morris-greet-down-2-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "down",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "morris-greet-down-3-back.png",
+            "actor": "morris-greet-down-3-actor.png",
+            "front": "morris-greet-down-3-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "up",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "morris-greet-up-0-back.png",
+            "actor": "morris-greet-up-0-actor.png",
+            "front": "morris-greet-up-0-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "up",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "morris-greet-up-1-back.png",
+            "actor": "morris-greet-up-1-actor.png",
+            "front": "morris-greet-up-1-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "up",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "morris-greet-up-2-back.png",
+            "actor": "morris-greet-up-2-actor.png",
+            "front": "morris-greet-up-2-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "up",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "morris-greet-up-3-back.png",
+            "actor": "morris-greet-up-3-actor.png",
+            "front": "morris-greet-up-3-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "left",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "morris-greet-left-0-back.png",
+            "actor": "morris-greet-left-0-actor.png",
+            "front": "morris-greet-left-0-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "left",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "morris-greet-left-1-back.png",
+            "actor": "morris-greet-left-1-actor.png",
+            "front": "morris-greet-left-1-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "left",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "morris-greet-left-2-back.png",
+            "actor": "morris-greet-left-2-actor.png",
+            "front": "morris-greet-left-2-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "left",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "morris-greet-left-3-back.png",
+            "actor": "morris-greet-left-3-actor.png",
+            "front": "morris-greet-left-3-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "right",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "morris-greet-right-0-back.png",
+            "actor": "morris-greet-right-0-actor.png",
+            "front": "morris-greet-right-0-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "right",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "morris-greet-right-1-back.png",
+            "actor": "morris-greet-right-1-actor.png",
+            "front": "morris-greet-right-1-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "right",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "morris-greet-right-2-back.png",
+            "actor": "morris-greet-right-2-actor.png",
+            "front": "morris-greet-right-2-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "right",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "morris-greet-right-3-back.png",
+            "actor": "morris-greet-right-3-actor.png",
+            "front": "morris-greet-right-3-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "down",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-carry-down-0-back.png",
+            "actor": "morris-carry-down-0-actor.png",
+            "front": "morris-carry-down-0-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "down",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-carry-down-1-back.png",
+            "actor": "morris-carry-down-1-actor.png",
+            "front": "morris-carry-down-1-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "down",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-carry-down-2-back.png",
+            "actor": "morris-carry-down-2-actor.png",
+            "front": "morris-carry-down-2-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "down",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-carry-down-3-back.png",
+            "actor": "morris-carry-down-3-actor.png",
+            "front": "morris-carry-down-3-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "up",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-carry-up-0-back.png",
+            "actor": "morris-carry-up-0-actor.png",
+            "front": "morris-carry-up-0-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "up",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-carry-up-1-back.png",
+            "actor": "morris-carry-up-1-actor.png",
+            "front": "morris-carry-up-1-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "up",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-carry-up-2-back.png",
+            "actor": "morris-carry-up-2-actor.png",
+            "front": "morris-carry-up-2-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "up",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-carry-up-3-back.png",
+            "actor": "morris-carry-up-3-actor.png",
+            "front": "morris-carry-up-3-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "left",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-carry-left-0-back.png",
+            "actor": "morris-carry-left-0-actor.png",
+            "front": "morris-carry-left-0-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "left",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-carry-left-1-back.png",
+            "actor": "morris-carry-left-1-actor.png",
+            "front": "morris-carry-left-1-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "left",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-carry-left-2-back.png",
+            "actor": "morris-carry-left-2-actor.png",
+            "front": "morris-carry-left-2-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "left",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-carry-left-3-back.png",
+            "actor": "morris-carry-left-3-actor.png",
+            "front": "morris-carry-left-3-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "right",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-carry-right-0-back.png",
+            "actor": "morris-carry-right-0-actor.png",
+            "front": "morris-carry-right-0-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "right",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-carry-right-1-back.png",
+            "actor": "morris-carry-right-1-actor.png",
+            "front": "morris-carry-right-1-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "right",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-carry-right-2-back.png",
+            "actor": "morris-carry-right-2-actor.png",
+            "front": "morris-carry-right-2-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "right",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-carry-right-3-back.png",
+            "actor": "morris-carry-right-3-actor.png",
+            "front": "morris-carry-right-3-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "down",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sit-down-0-back.png",
+            "actor": "morris-sit-down-0-actor.png",
+            "front": "morris-sit-down-0-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "down",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sit-down-1-back.png",
+            "actor": "morris-sit-down-1-actor.png",
+            "front": "morris-sit-down-1-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "down",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sit-down-2-back.png",
+            "actor": "morris-sit-down-2-actor.png",
+            "front": "morris-sit-down-2-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "down",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sit-down-3-back.png",
+            "actor": "morris-sit-down-3-actor.png",
+            "front": "morris-sit-down-3-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "up",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sit-up-0-back.png",
+            "actor": "morris-sit-up-0-actor.png",
+            "front": "morris-sit-up-0-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "up",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sit-up-1-back.png",
+            "actor": "morris-sit-up-1-actor.png",
+            "front": "morris-sit-up-1-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "up",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sit-up-2-back.png",
+            "actor": "morris-sit-up-2-actor.png",
+            "front": "morris-sit-up-2-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "up",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sit-up-3-back.png",
+            "actor": "morris-sit-up-3-actor.png",
+            "front": "morris-sit-up-3-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "left",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sit-left-0-back.png",
+            "actor": "morris-sit-left-0-actor.png",
+            "front": "morris-sit-left-0-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "left",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sit-left-1-back.png",
+            "actor": "morris-sit-left-1-actor.png",
+            "front": "morris-sit-left-1-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "left",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sit-left-2-back.png",
+            "actor": "morris-sit-left-2-actor.png",
+            "front": "morris-sit-left-2-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "left",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sit-left-3-back.png",
+            "actor": "morris-sit-left-3-actor.png",
+            "front": "morris-sit-left-3-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "right",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sit-right-0-back.png",
+            "actor": "morris-sit-right-0-actor.png",
+            "front": "morris-sit-right-0-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "right",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sit-right-1-back.png",
+            "actor": "morris-sit-right-1-actor.png",
+            "front": "morris-sit-right-1-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "right",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sit-right-2-back.png",
+            "actor": "morris-sit-right-2-actor.png",
+            "front": "morris-sit-right-2-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "right",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sit-right-3-back.png",
+            "actor": "morris-sit-right-3-actor.png",
+            "front": "morris-sit-right-3-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "down",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-read-down-0-back.png",
+            "actor": "morris-read-down-0-actor.png",
+            "front": "morris-read-down-0-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "down",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-read-down-1-back.png",
+            "actor": "morris-read-down-1-actor.png",
+            "front": "morris-read-down-1-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "down",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-read-down-2-back.png",
+            "actor": "morris-read-down-2-actor.png",
+            "front": "morris-read-down-2-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "down",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-read-down-3-back.png",
+            "actor": "morris-read-down-3-actor.png",
+            "front": "morris-read-down-3-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "up",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-read-up-0-back.png",
+            "actor": "morris-read-up-0-actor.png",
+            "front": "morris-read-up-0-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "up",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-read-up-1-back.png",
+            "actor": "morris-read-up-1-actor.png",
+            "front": "morris-read-up-1-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "up",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-read-up-2-back.png",
+            "actor": "morris-read-up-2-actor.png",
+            "front": "morris-read-up-2-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "up",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-read-up-3-back.png",
+            "actor": "morris-read-up-3-actor.png",
+            "front": "morris-read-up-3-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "left",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-read-left-0-back.png",
+            "actor": "morris-read-left-0-actor.png",
+            "front": "morris-read-left-0-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "left",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-read-left-1-back.png",
+            "actor": "morris-read-left-1-actor.png",
+            "front": "morris-read-left-1-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "left",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-read-left-2-back.png",
+            "actor": "morris-read-left-2-actor.png",
+            "front": "morris-read-left-2-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "left",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-read-left-3-back.png",
+            "actor": "morris-read-left-3-actor.png",
+            "front": "morris-read-left-3-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "right",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-read-right-0-back.png",
+            "actor": "morris-read-right-0-actor.png",
+            "front": "morris-read-right-0-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "right",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-read-right-1-back.png",
+            "actor": "morris-read-right-1-actor.png",
+            "front": "morris-read-right-1-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "right",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-read-right-2-back.png",
+            "actor": "morris-read-right-2-actor.png",
+            "front": "morris-read-right-2-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "right",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-read-right-3-back.png",
+            "actor": "morris-read-right-3-actor.png",
+            "front": "morris-read-right-3-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "down",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sleep-down-0-back.png",
+            "actor": "morris-sleep-down-0-actor.png",
+            "front": "morris-sleep-down-0-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "down",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sleep-down-1-back.png",
+            "actor": "morris-sleep-down-1-actor.png",
+            "front": "morris-sleep-down-1-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "down",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sleep-down-2-back.png",
+            "actor": "morris-sleep-down-2-actor.png",
+            "front": "morris-sleep-down-2-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "down",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sleep-down-3-back.png",
+            "actor": "morris-sleep-down-3-actor.png",
+            "front": "morris-sleep-down-3-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "up",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sleep-up-0-back.png",
+            "actor": "morris-sleep-up-0-actor.png",
+            "front": "morris-sleep-up-0-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "up",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sleep-up-1-back.png",
+            "actor": "morris-sleep-up-1-actor.png",
+            "front": "morris-sleep-up-1-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "up",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sleep-up-2-back.png",
+            "actor": "morris-sleep-up-2-actor.png",
+            "front": "morris-sleep-up-2-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "up",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sleep-up-3-back.png",
+            "actor": "morris-sleep-up-3-actor.png",
+            "front": "morris-sleep-up-3-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "left",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sleep-left-0-back.png",
+            "actor": "morris-sleep-left-0-actor.png",
+            "front": "morris-sleep-left-0-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "left",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sleep-left-1-back.png",
+            "actor": "morris-sleep-left-1-actor.png",
+            "front": "morris-sleep-left-1-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "left",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sleep-left-2-back.png",
+            "actor": "morris-sleep-left-2-actor.png",
+            "front": "morris-sleep-left-2-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "left",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sleep-left-3-back.png",
+            "actor": "morris-sleep-left-3-actor.png",
+            "front": "morris-sleep-left-3-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "right",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sleep-right-0-back.png",
+            "actor": "morris-sleep-right-0-actor.png",
+            "front": "morris-sleep-right-0-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "right",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sleep-right-1-back.png",
+            "actor": "morris-sleep-right-1-actor.png",
+            "front": "morris-sleep-right-1-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "right",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sleep-right-2-back.png",
+            "actor": "morris-sleep-right-2-actor.png",
+            "front": "morris-sleep-right-2-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "right",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "morris-sleep-right-3-back.png",
+            "actor": "morris-sleep-right-3-actor.png",
+            "front": "morris-sleep-right-3-front.png"
+          }
+        }
+      ],
+      "prop": "morris-prop.png"
+    },
+    {
+      "id": "ivy",
+      "label": "아이비",
+      "elder": false,
+      "anchor": {
+        "x": 12,
+        "y": 18
+      },
+      "actions": {
+        "stand": {
+          "down": [
+            "ivy-stand-down-0.png",
+            "ivy-stand-down-1.png",
+            "ivy-stand-down-2.png",
+            "ivy-stand-down-3.png"
+          ],
+          "up": [
+            "ivy-stand-up-0.png",
+            "ivy-stand-up-1.png",
+            "ivy-stand-up-2.png",
+            "ivy-stand-up-3.png"
+          ],
+          "left": [
+            "ivy-stand-left-0.png",
+            "ivy-stand-left-1.png",
+            "ivy-stand-left-2.png",
+            "ivy-stand-left-3.png"
+          ],
+          "right": [
+            "ivy-stand-right-0.png",
+            "ivy-stand-right-1.png",
+            "ivy-stand-right-2.png",
+            "ivy-stand-right-3.png"
+          ]
+        },
+        "walk": {
+          "down": [
+            "ivy-walk-down-0.png",
+            "ivy-walk-down-1.png",
+            "ivy-walk-down-2.png",
+            "ivy-walk-down-3.png"
+          ],
+          "up": [
+            "ivy-walk-up-0.png",
+            "ivy-walk-up-1.png",
+            "ivy-walk-up-2.png",
+            "ivy-walk-up-3.png"
+          ],
+          "left": [
+            "ivy-walk-left-0.png",
+            "ivy-walk-left-1.png",
+            "ivy-walk-left-2.png",
+            "ivy-walk-left-3.png"
+          ],
+          "right": [
+            "ivy-walk-right-0.png",
+            "ivy-walk-right-1.png",
+            "ivy-walk-right-2.png",
+            "ivy-walk-right-3.png"
+          ]
+        },
+        "work": {
+          "down": [
+            "ivy-work-down-0.png",
+            "ivy-work-down-1.png",
+            "ivy-work-down-2.png",
+            "ivy-work-down-3.png"
+          ],
+          "up": [
+            "ivy-work-up-0.png",
+            "ivy-work-up-1.png",
+            "ivy-work-up-2.png",
+            "ivy-work-up-3.png"
+          ],
+          "left": [
+            "ivy-work-left-0.png",
+            "ivy-work-left-1.png",
+            "ivy-work-left-2.png",
+            "ivy-work-left-3.png"
+          ],
+          "right": [
+            "ivy-work-right-0.png",
+            "ivy-work-right-1.png",
+            "ivy-work-right-2.png",
+            "ivy-work-right-3.png"
+          ]
+        },
+        "greet": {
+          "down": [
+            "ivy-greet-down-0.png",
+            "ivy-greet-down-1.png",
+            "ivy-greet-down-2.png",
+            "ivy-greet-down-3.png"
+          ],
+          "up": [
+            "ivy-greet-up-0.png",
+            "ivy-greet-up-1.png",
+            "ivy-greet-up-2.png",
+            "ivy-greet-up-3.png"
+          ],
+          "left": [
+            "ivy-greet-left-0.png",
+            "ivy-greet-left-1.png",
+            "ivy-greet-left-2.png",
+            "ivy-greet-left-3.png"
+          ],
+          "right": [
+            "ivy-greet-right-0.png",
+            "ivy-greet-right-1.png",
+            "ivy-greet-right-2.png",
+            "ivy-greet-right-3.png"
+          ]
+        },
+        "carry": {
+          "down": [
+            "ivy-carry-down-0.png",
+            "ivy-carry-down-1.png",
+            "ivy-carry-down-2.png",
+            "ivy-carry-down-3.png"
+          ],
+          "up": [
+            "ivy-carry-up-0.png",
+            "ivy-carry-up-1.png",
+            "ivy-carry-up-2.png",
+            "ivy-carry-up-3.png"
+          ],
+          "left": [
+            "ivy-carry-left-0.png",
+            "ivy-carry-left-1.png",
+            "ivy-carry-left-2.png",
+            "ivy-carry-left-3.png"
+          ],
+          "right": [
+            "ivy-carry-right-0.png",
+            "ivy-carry-right-1.png",
+            "ivy-carry-right-2.png",
+            "ivy-carry-right-3.png"
+          ]
+        },
+        "sit": {
+          "down": [
+            "ivy-sit-down-0.png",
+            "ivy-sit-down-1.png",
+            "ivy-sit-down-2.png",
+            "ivy-sit-down-3.png"
+          ],
+          "up": [
+            "ivy-sit-up-0.png",
+            "ivy-sit-up-1.png",
+            "ivy-sit-up-2.png",
+            "ivy-sit-up-3.png"
+          ],
+          "left": [
+            "ivy-sit-left-0.png",
+            "ivy-sit-left-1.png",
+            "ivy-sit-left-2.png",
+            "ivy-sit-left-3.png"
+          ],
+          "right": [
+            "ivy-sit-right-0.png",
+            "ivy-sit-right-1.png",
+            "ivy-sit-right-2.png",
+            "ivy-sit-right-3.png"
+          ]
+        },
+        "read": {
+          "down": [
+            "ivy-read-down-0.png",
+            "ivy-read-down-1.png",
+            "ivy-read-down-2.png",
+            "ivy-read-down-3.png"
+          ],
+          "up": [
+            "ivy-read-up-0.png",
+            "ivy-read-up-1.png",
+            "ivy-read-up-2.png",
+            "ivy-read-up-3.png"
+          ],
+          "left": [
+            "ivy-read-left-0.png",
+            "ivy-read-left-1.png",
+            "ivy-read-left-2.png",
+            "ivy-read-left-3.png"
+          ],
+          "right": [
+            "ivy-read-right-0.png",
+            "ivy-read-right-1.png",
+            "ivy-read-right-2.png",
+            "ivy-read-right-3.png"
+          ]
+        },
+        "sleep": {
+          "down": [
+            "ivy-sleep-down-0.png",
+            "ivy-sleep-down-1.png",
+            "ivy-sleep-down-2.png",
+            "ivy-sleep-down-3.png"
+          ],
+          "up": [
+            "ivy-sleep-up-0.png",
+            "ivy-sleep-up-1.png",
+            "ivy-sleep-up-2.png",
+            "ivy-sleep-up-3.png"
+          ],
+          "left": [
+            "ivy-sleep-left-0.png",
+            "ivy-sleep-left-1.png",
+            "ivy-sleep-left-2.png",
+            "ivy-sleep-left-3.png"
+          ],
+          "right": [
+            "ivy-sleep-right-0.png",
+            "ivy-sleep-right-1.png",
+            "ivy-sleep-right-2.png",
+            "ivy-sleep-right-3.png"
+          ]
+        }
+      },
+      "sequences": [
+        {
+          "action": "stand",
+          "facing": "down",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "ivy-stand-down-0-back.png",
+            "actor": "ivy-stand-down-0-actor.png",
+            "front": "ivy-stand-down-0-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "down",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "ivy-stand-down-1-back.png",
+            "actor": "ivy-stand-down-1-actor.png",
+            "front": "ivy-stand-down-1-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "down",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "ivy-stand-down-2-back.png",
+            "actor": "ivy-stand-down-2-actor.png",
+            "front": "ivy-stand-down-2-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "down",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "ivy-stand-down-3-back.png",
+            "actor": "ivy-stand-down-3-actor.png",
+            "front": "ivy-stand-down-3-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "up",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "ivy-stand-up-0-back.png",
+            "actor": "ivy-stand-up-0-actor.png",
+            "front": "ivy-stand-up-0-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "up",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "ivy-stand-up-1-back.png",
+            "actor": "ivy-stand-up-1-actor.png",
+            "front": "ivy-stand-up-1-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "up",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "ivy-stand-up-2-back.png",
+            "actor": "ivy-stand-up-2-actor.png",
+            "front": "ivy-stand-up-2-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "up",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "ivy-stand-up-3-back.png",
+            "actor": "ivy-stand-up-3-actor.png",
+            "front": "ivy-stand-up-3-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "left",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "ivy-stand-left-0-back.png",
+            "actor": "ivy-stand-left-0-actor.png",
+            "front": "ivy-stand-left-0-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "left",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "ivy-stand-left-1-back.png",
+            "actor": "ivy-stand-left-1-actor.png",
+            "front": "ivy-stand-left-1-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "left",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "ivy-stand-left-2-back.png",
+            "actor": "ivy-stand-left-2-actor.png",
+            "front": "ivy-stand-left-2-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "left",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "ivy-stand-left-3-back.png",
+            "actor": "ivy-stand-left-3-actor.png",
+            "front": "ivy-stand-left-3-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "right",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "ivy-stand-right-0-back.png",
+            "actor": "ivy-stand-right-0-actor.png",
+            "front": "ivy-stand-right-0-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "right",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "ivy-stand-right-1-back.png",
+            "actor": "ivy-stand-right-1-actor.png",
+            "front": "ivy-stand-right-1-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "right",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "ivy-stand-right-2-back.png",
+            "actor": "ivy-stand-right-2-actor.png",
+            "front": "ivy-stand-right-2-front.png"
+          }
+        },
+        {
+          "action": "stand",
+          "facing": "right",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 400,
+          "loop": true,
+          "layers": {
+            "back": "ivy-stand-right-3-back.png",
+            "actor": "ivy-stand-right-3-actor.png",
+            "front": "ivy-stand-right-3-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "down",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "ivy-walk-down-0-back.png",
+            "actor": "ivy-walk-down-0-actor.png",
+            "front": "ivy-walk-down-0-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "down",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "ivy-walk-down-1-back.png",
+            "actor": "ivy-walk-down-1-actor.png",
+            "front": "ivy-walk-down-1-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "down",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "ivy-walk-down-2-back.png",
+            "actor": "ivy-walk-down-2-actor.png",
+            "front": "ivy-walk-down-2-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "down",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "ivy-walk-down-3-back.png",
+            "actor": "ivy-walk-down-3-actor.png",
+            "front": "ivy-walk-down-3-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "up",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "ivy-walk-up-0-back.png",
+            "actor": "ivy-walk-up-0-actor.png",
+            "front": "ivy-walk-up-0-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "up",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "ivy-walk-up-1-back.png",
+            "actor": "ivy-walk-up-1-actor.png",
+            "front": "ivy-walk-up-1-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "up",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "ivy-walk-up-2-back.png",
+            "actor": "ivy-walk-up-2-actor.png",
+            "front": "ivy-walk-up-2-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "up",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "ivy-walk-up-3-back.png",
+            "actor": "ivy-walk-up-3-actor.png",
+            "front": "ivy-walk-up-3-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "left",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "ivy-walk-left-0-back.png",
+            "actor": "ivy-walk-left-0-actor.png",
+            "front": "ivy-walk-left-0-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "left",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "ivy-walk-left-1-back.png",
+            "actor": "ivy-walk-left-1-actor.png",
+            "front": "ivy-walk-left-1-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "left",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "ivy-walk-left-2-back.png",
+            "actor": "ivy-walk-left-2-actor.png",
+            "front": "ivy-walk-left-2-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "left",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "ivy-walk-left-3-back.png",
+            "actor": "ivy-walk-left-3-actor.png",
+            "front": "ivy-walk-left-3-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "right",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "ivy-walk-right-0-back.png",
+            "actor": "ivy-walk-right-0-actor.png",
+            "front": "ivy-walk-right-0-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "right",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "ivy-walk-right-1-back.png",
+            "actor": "ivy-walk-right-1-actor.png",
+            "front": "ivy-walk-right-1-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "right",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "ivy-walk-right-2-back.png",
+            "actor": "ivy-walk-right-2-actor.png",
+            "front": "ivy-walk-right-2-front.png"
+          }
+        },
+        {
+          "action": "walk",
+          "facing": "right",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": true,
+          "layers": {
+            "back": "ivy-walk-right-3-back.png",
+            "actor": "ivy-walk-right-3-actor.png",
+            "front": "ivy-walk-right-3-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "down",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-work-down-0-back.png",
+            "actor": "ivy-work-down-0-actor.png",
+            "front": "ivy-work-down-0-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "down",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-work-down-1-back.png",
+            "actor": "ivy-work-down-1-actor.png",
+            "front": "ivy-work-down-1-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "down",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-work-down-2-back.png",
+            "actor": "ivy-work-down-2-actor.png",
+            "front": "ivy-work-down-2-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "down",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-work-down-3-back.png",
+            "actor": "ivy-work-down-3-actor.png",
+            "front": "ivy-work-down-3-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "up",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-work-up-0-back.png",
+            "actor": "ivy-work-up-0-actor.png",
+            "front": "ivy-work-up-0-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "up",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-work-up-1-back.png",
+            "actor": "ivy-work-up-1-actor.png",
+            "front": "ivy-work-up-1-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "up",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-work-up-2-back.png",
+            "actor": "ivy-work-up-2-actor.png",
+            "front": "ivy-work-up-2-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "up",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-work-up-3-back.png",
+            "actor": "ivy-work-up-3-actor.png",
+            "front": "ivy-work-up-3-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "left",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-work-left-0-back.png",
+            "actor": "ivy-work-left-0-actor.png",
+            "front": "ivy-work-left-0-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "left",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-work-left-1-back.png",
+            "actor": "ivy-work-left-1-actor.png",
+            "front": "ivy-work-left-1-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "left",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-work-left-2-back.png",
+            "actor": "ivy-work-left-2-actor.png",
+            "front": "ivy-work-left-2-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "left",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-work-left-3-back.png",
+            "actor": "ivy-work-left-3-actor.png",
+            "front": "ivy-work-left-3-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "right",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-work-right-0-back.png",
+            "actor": "ivy-work-right-0-actor.png",
+            "front": "ivy-work-right-0-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "right",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-work-right-1-back.png",
+            "actor": "ivy-work-right-1-actor.png",
+            "front": "ivy-work-right-1-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "right",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-work-right-2-back.png",
+            "actor": "ivy-work-right-2-actor.png",
+            "front": "ivy-work-right-2-front.png"
+          }
+        },
+        {
+          "action": "work",
+          "facing": "right",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-work-right-3-back.png",
+            "actor": "ivy-work-right-3-actor.png",
+            "front": "ivy-work-right-3-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "down",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "ivy-greet-down-0-back.png",
+            "actor": "ivy-greet-down-0-actor.png",
+            "front": "ivy-greet-down-0-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "down",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "ivy-greet-down-1-back.png",
+            "actor": "ivy-greet-down-1-actor.png",
+            "front": "ivy-greet-down-1-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "down",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "ivy-greet-down-2-back.png",
+            "actor": "ivy-greet-down-2-actor.png",
+            "front": "ivy-greet-down-2-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "down",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "ivy-greet-down-3-back.png",
+            "actor": "ivy-greet-down-3-actor.png",
+            "front": "ivy-greet-down-3-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "up",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "ivy-greet-up-0-back.png",
+            "actor": "ivy-greet-up-0-actor.png",
+            "front": "ivy-greet-up-0-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "up",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "ivy-greet-up-1-back.png",
+            "actor": "ivy-greet-up-1-actor.png",
+            "front": "ivy-greet-up-1-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "up",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "ivy-greet-up-2-back.png",
+            "actor": "ivy-greet-up-2-actor.png",
+            "front": "ivy-greet-up-2-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "up",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "ivy-greet-up-3-back.png",
+            "actor": "ivy-greet-up-3-actor.png",
+            "front": "ivy-greet-up-3-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "left",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "ivy-greet-left-0-back.png",
+            "actor": "ivy-greet-left-0-actor.png",
+            "front": "ivy-greet-left-0-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "left",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "ivy-greet-left-1-back.png",
+            "actor": "ivy-greet-left-1-actor.png",
+            "front": "ivy-greet-left-1-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "left",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "ivy-greet-left-2-back.png",
+            "actor": "ivy-greet-left-2-actor.png",
+            "front": "ivy-greet-left-2-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "left",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "ivy-greet-left-3-back.png",
+            "actor": "ivy-greet-left-3-actor.png",
+            "front": "ivy-greet-left-3-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "right",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "ivy-greet-right-0-back.png",
+            "actor": "ivy-greet-right-0-actor.png",
+            "front": "ivy-greet-right-0-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "right",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "ivy-greet-right-1-back.png",
+            "actor": "ivy-greet-right-1-actor.png",
+            "front": "ivy-greet-right-1-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "right",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "ivy-greet-right-2-back.png",
+            "actor": "ivy-greet-right-2-actor.png",
+            "front": "ivy-greet-right-2-front.png"
+          }
+        },
+        {
+          "action": "greet",
+          "facing": "right",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 180,
+          "loop": false,
+          "layers": {
+            "back": "ivy-greet-right-3-back.png",
+            "actor": "ivy-greet-right-3-actor.png",
+            "front": "ivy-greet-right-3-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "down",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-carry-down-0-back.png",
+            "actor": "ivy-carry-down-0-actor.png",
+            "front": "ivy-carry-down-0-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "down",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-carry-down-1-back.png",
+            "actor": "ivy-carry-down-1-actor.png",
+            "front": "ivy-carry-down-1-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "down",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-carry-down-2-back.png",
+            "actor": "ivy-carry-down-2-actor.png",
+            "front": "ivy-carry-down-2-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "down",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-carry-down-3-back.png",
+            "actor": "ivy-carry-down-3-actor.png",
+            "front": "ivy-carry-down-3-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "up",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-carry-up-0-back.png",
+            "actor": "ivy-carry-up-0-actor.png",
+            "front": "ivy-carry-up-0-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "up",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-carry-up-1-back.png",
+            "actor": "ivy-carry-up-1-actor.png",
+            "front": "ivy-carry-up-1-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "up",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-carry-up-2-back.png",
+            "actor": "ivy-carry-up-2-actor.png",
+            "front": "ivy-carry-up-2-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "up",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-carry-up-3-back.png",
+            "actor": "ivy-carry-up-3-actor.png",
+            "front": "ivy-carry-up-3-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "left",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-carry-left-0-back.png",
+            "actor": "ivy-carry-left-0-actor.png",
+            "front": "ivy-carry-left-0-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "left",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-carry-left-1-back.png",
+            "actor": "ivy-carry-left-1-actor.png",
+            "front": "ivy-carry-left-1-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "left",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-carry-left-2-back.png",
+            "actor": "ivy-carry-left-2-actor.png",
+            "front": "ivy-carry-left-2-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "left",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-carry-left-3-back.png",
+            "actor": "ivy-carry-left-3-actor.png",
+            "front": "ivy-carry-left-3-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "right",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-carry-right-0-back.png",
+            "actor": "ivy-carry-right-0-actor.png",
+            "front": "ivy-carry-right-0-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "right",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-carry-right-1-back.png",
+            "actor": "ivy-carry-right-1-actor.png",
+            "front": "ivy-carry-right-1-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "right",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-carry-right-2-back.png",
+            "actor": "ivy-carry-right-2-actor.png",
+            "front": "ivy-carry-right-2-front.png"
+          }
+        },
+        {
+          "action": "carry",
+          "facing": "right",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-carry-right-3-back.png",
+            "actor": "ivy-carry-right-3-actor.png",
+            "front": "ivy-carry-right-3-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "down",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sit-down-0-back.png",
+            "actor": "ivy-sit-down-0-actor.png",
+            "front": "ivy-sit-down-0-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "down",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sit-down-1-back.png",
+            "actor": "ivy-sit-down-1-actor.png",
+            "front": "ivy-sit-down-1-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "down",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sit-down-2-back.png",
+            "actor": "ivy-sit-down-2-actor.png",
+            "front": "ivy-sit-down-2-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "down",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sit-down-3-back.png",
+            "actor": "ivy-sit-down-3-actor.png",
+            "front": "ivy-sit-down-3-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "up",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sit-up-0-back.png",
+            "actor": "ivy-sit-up-0-actor.png",
+            "front": "ivy-sit-up-0-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "up",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sit-up-1-back.png",
+            "actor": "ivy-sit-up-1-actor.png",
+            "front": "ivy-sit-up-1-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "up",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sit-up-2-back.png",
+            "actor": "ivy-sit-up-2-actor.png",
+            "front": "ivy-sit-up-2-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "up",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sit-up-3-back.png",
+            "actor": "ivy-sit-up-3-actor.png",
+            "front": "ivy-sit-up-3-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "left",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sit-left-0-back.png",
+            "actor": "ivy-sit-left-0-actor.png",
+            "front": "ivy-sit-left-0-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "left",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sit-left-1-back.png",
+            "actor": "ivy-sit-left-1-actor.png",
+            "front": "ivy-sit-left-1-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "left",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sit-left-2-back.png",
+            "actor": "ivy-sit-left-2-actor.png",
+            "front": "ivy-sit-left-2-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "left",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sit-left-3-back.png",
+            "actor": "ivy-sit-left-3-actor.png",
+            "front": "ivy-sit-left-3-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "right",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sit-right-0-back.png",
+            "actor": "ivy-sit-right-0-actor.png",
+            "front": "ivy-sit-right-0-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "right",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sit-right-1-back.png",
+            "actor": "ivy-sit-right-1-actor.png",
+            "front": "ivy-sit-right-1-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "right",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sit-right-2-back.png",
+            "actor": "ivy-sit-right-2-actor.png",
+            "front": "ivy-sit-right-2-front.png"
+          }
+        },
+        {
+          "action": "sit",
+          "facing": "right",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sit-right-3-back.png",
+            "actor": "ivy-sit-right-3-actor.png",
+            "front": "ivy-sit-right-3-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "down",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-read-down-0-back.png",
+            "actor": "ivy-read-down-0-actor.png",
+            "front": "ivy-read-down-0-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "down",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-read-down-1-back.png",
+            "actor": "ivy-read-down-1-actor.png",
+            "front": "ivy-read-down-1-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "down",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-read-down-2-back.png",
+            "actor": "ivy-read-down-2-actor.png",
+            "front": "ivy-read-down-2-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "down",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-read-down-3-back.png",
+            "actor": "ivy-read-down-3-actor.png",
+            "front": "ivy-read-down-3-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "up",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-read-up-0-back.png",
+            "actor": "ivy-read-up-0-actor.png",
+            "front": "ivy-read-up-0-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "up",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-read-up-1-back.png",
+            "actor": "ivy-read-up-1-actor.png",
+            "front": "ivy-read-up-1-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "up",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-read-up-2-back.png",
+            "actor": "ivy-read-up-2-actor.png",
+            "front": "ivy-read-up-2-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "up",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-read-up-3-back.png",
+            "actor": "ivy-read-up-3-actor.png",
+            "front": "ivy-read-up-3-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "left",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-read-left-0-back.png",
+            "actor": "ivy-read-left-0-actor.png",
+            "front": "ivy-read-left-0-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "left",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-read-left-1-back.png",
+            "actor": "ivy-read-left-1-actor.png",
+            "front": "ivy-read-left-1-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "left",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-read-left-2-back.png",
+            "actor": "ivy-read-left-2-actor.png",
+            "front": "ivy-read-left-2-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "left",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-read-left-3-back.png",
+            "actor": "ivy-read-left-3-actor.png",
+            "front": "ivy-read-left-3-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "right",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-read-right-0-back.png",
+            "actor": "ivy-read-right-0-actor.png",
+            "front": "ivy-read-right-0-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "right",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-read-right-1-back.png",
+            "actor": "ivy-read-right-1-actor.png",
+            "front": "ivy-read-right-1-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "right",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-read-right-2-back.png",
+            "actor": "ivy-read-right-2-actor.png",
+            "front": "ivy-read-right-2-front.png"
+          }
+        },
+        {
+          "action": "read",
+          "facing": "right",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 15
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-read-right-3-back.png",
+            "actor": "ivy-read-right-3-actor.png",
+            "front": "ivy-read-right-3-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "down",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sleep-down-0-back.png",
+            "actor": "ivy-sleep-down-0-actor.png",
+            "front": "ivy-sleep-down-0-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "down",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sleep-down-1-back.png",
+            "actor": "ivy-sleep-down-1-actor.png",
+            "front": "ivy-sleep-down-1-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "down",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sleep-down-2-back.png",
+            "actor": "ivy-sleep-down-2-actor.png",
+            "front": "ivy-sleep-down-2-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "down",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sleep-down-3-back.png",
+            "actor": "ivy-sleep-down-3-actor.png",
+            "front": "ivy-sleep-down-3-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "up",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sleep-up-0-back.png",
+            "actor": "ivy-sleep-up-0-actor.png",
+            "front": "ivy-sleep-up-0-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "up",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sleep-up-1-back.png",
+            "actor": "ivy-sleep-up-1-actor.png",
+            "front": "ivy-sleep-up-1-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "up",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sleep-up-2-back.png",
+            "actor": "ivy-sleep-up-2-actor.png",
+            "front": "ivy-sleep-up-2-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "up",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sleep-up-3-back.png",
+            "actor": "ivy-sleep-up-3-actor.png",
+            "front": "ivy-sleep-up-3-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "left",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sleep-left-0-back.png",
+            "actor": "ivy-sleep-left-0-actor.png",
+            "front": "ivy-sleep-left-0-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "left",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sleep-left-1-back.png",
+            "actor": "ivy-sleep-left-1-actor.png",
+            "front": "ivy-sleep-left-1-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "left",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sleep-left-2-back.png",
+            "actor": "ivy-sleep-left-2-actor.png",
+            "front": "ivy-sleep-left-2-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "left",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sleep-left-3-back.png",
+            "actor": "ivy-sleep-left-3-actor.png",
+            "front": "ivy-sleep-left-3-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "right",
+          "frame": 0,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sleep-right-0-back.png",
+            "actor": "ivy-sleep-right-0-actor.png",
+            "front": "ivy-sleep-right-0-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "right",
+          "frame": 1,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sleep-right-1-back.png",
+            "actor": "ivy-sleep-right-1-actor.png",
+            "front": "ivy-sleep-right-1-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "right",
+          "frame": 2,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sleep-right-2-back.png",
+            "actor": "ivy-sleep-right-2-actor.png",
+            "front": "ivy-sleep-right-2-front.png"
+          }
+        },
+        {
+          "action": "sleep",
+          "facing": "right",
+          "frame": 3,
+          "anchor": {
+            "x": 12,
+            "y": 14
+          },
+          "duration": 300,
+          "loop": true,
+          "layers": {
+            "back": "ivy-sleep-right-3-back.png",
+            "actor": "ivy-sleep-right-3-actor.png",
+            "front": "ivy-sleep-right-3-front.png"
+          }
+        }
+      ],
+      "prop": "ivy-prop.png"
+    }
+  ],
+  "buildings": [
+    {
+      "id": "guest",
+      "label": "손님집",
+      "views": {
+        "down": "building-guest-down.png",
+        "up": "building-guest-up.png",
+        "left": "building-guest-left.png",
+        "right": "building-guest-right.png"
+      },
+      "size": [
+        64,
+        64
+      ],
+      "anchor": [
+        32,
+        64
+      ]
+    },
+    {
+      "id": "home",
+      "label": "입주 주택",
+      "views": {
+        "down": "building-home-down.png",
+        "up": "building-home-up.png",
+        "left": "building-home-left.png",
+        "right": "building-home-right.png"
+      },
+      "size": [
+        64,
+        64
+      ],
+      "anchor": [
+        32,
+        64
+      ]
+    },
+    {
+      "id": "weaver",
+      "label": "직조인의 집 겸 일터",
+      "views": {
+        "down": "building-weaver-down.png",
+        "up": "building-weaver-up.png",
+        "left": "building-weaver-left.png",
+        "right": "building-weaver-right.png"
+      },
+      "size": [
+        64,
+        64
+      ],
+      "anchor": [
+        32,
+        64
+      ]
+    },
+    {
+      "id": "courtyard",
+      "label": "공동 마당",
+      "views": {
+        "down": "building-courtyard-down.png",
+        "up": "building-courtyard-up.png",
+        "left": "building-courtyard-left.png",
+        "right": "building-courtyard-right.png"
+      },
+      "size": [
+        64,
+        64
+      ],
+      "anchor": [
+        32,
+        64
+      ]
+    },
+    {
+      "id": "garden",
+      "label": "기억 정원",
+      "views": {
+        "down": "building-garden-down.png",
+        "up": "building-garden-up.png",
+        "left": "building-garden-left.png",
+        "right": "building-garden-right.png"
+      },
+      "size": [
+        64,
+        64
+      ],
+      "anchor": [
+        32,
+        64
+      ]
+    }
+  ],
+  "actorSource": "src/render/settlement-guests-art.ts",
+  "buildingSource": "src/render/settlement-building-details.ts",
+  "guestGameplayConnected": false,
+  "buildingsConnected": true,
+  "note": "손님 입주·일과는 별도 엔진 연결. 기존 시설 건물은 OLD_BUILDINGS로 바로 적용. 방향별 출입구와 footprint는 기존 그대로."
+}

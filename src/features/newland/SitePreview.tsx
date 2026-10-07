@@ -5,7 +5,10 @@ import { fill, itemList, T } from '../../content/text'
 import { BUILD_RECT, NEWLAND_VISIBLE_H, NEWLAND_W } from '../../engine/newland-config'
 import { NEWLAND_MAP } from '../../engine/newland'
 import { areaOf, boxOf, buildsOf, canOrder, costOf, doorOf, tilesOf, type OrderBlock } from '../../engine/newland-build'
-import { SITES, type SiteKind } from '../../engine/newland-sites'
+import { isBuildKind, isDecorKind, isTileKind, SITES, type SiteKind, type TileKind } from '../../engine/newland-sites'
+import { t } from '../../shared/i18n'
+import { neighborById } from '../../content/catalog'
+import { DREAMER } from '../../engine/newland-life'
 import type { Facing, Tile } from '../../engine/types'
 import { BUILDING_LABELS } from '../../render/old-village-art'
 import { useGame } from '../../store/game-store'
@@ -17,6 +20,8 @@ const H = NEWLAND_VISIBLE_H
 /** 새 터 바탕 글자 → 흐린 색 (T 숲 · S 서고 벽 · D 서고 문 · , 길 · > 표지 · * 꽃) */
 const GROUND_COLOR: Record<string, string> = { '.': '#d6e0bd', T: '#b3c79d', S: '#cbc2b0', D: '#a8957c', ',': '#eadfc0', '>': '#d8c48a', '*': '#e3cfd3' }
 export type SitePick = SiteKind | 'eraser'
+/** 깐 칸의 흐린 색 (길·정원·꾸미기) */
+const TILE_COLOR: Partial<Record<TileKind, string>> = { path: '#eadfc0', garden: '#9db97f', sand: '#f2d9b2', stone: '#c9baa9', soil: '#a97d60', grassTuft: '#b4cc9a', flower: '#f2d9b2', rocks: '#c3b4a4', bush: '#72976d', treeSmall: '#72976d', treeTall: '#608563', treeBig: '#608563' }
 
 const BLOCK_TEXT: Record<OrderBlock, string> = {
   unrevealed: T.build.blockUnrevealed,
@@ -40,7 +45,10 @@ const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v
 /** 건물 이름 (그림 묶음의 이름표 — 자산 쪽 값을 그대로 쓴다). 길·정원 칸은 생활 문구 */
 export function siteName(k: SiteKind): string {
   if (k === 'path' || k === 'garden') return T.build[k]
-  return BUILDING_LABELS[k] ?? ''
+  if (isDecorKind(k)) return t(`decor.${k}`)
+  // 주민의 꿈터는 꿈의 주인 이름으로 (계획 18: '○○의 꿈')
+  if (k === 'weaver') return fill(T.newlandLife.dream.label, { who: neighborById(DREAMER)?.role ?? '' })
+  return BUILDING_LABELS[SITES[k].assetId ?? k] ?? ''
 }
 
 /** "닢 150 · 올리브 4 · 파피루스 3" 꼴의 드는 것 */
@@ -52,7 +60,7 @@ export function costText(kind: SiteKind, size = 1): string {
 /** 놓기 하나가 그림에서 차지하는 가로·세로 칸 */
 function spanOf(pick: SitePick, size: number): number {
   if (pick === 'eraser') return 1
-  return pick === 'path' || pick === 'garden' ? size : 4
+  return isTileKind(pick) ? size : 4
 }
 
 export function SitePreview({ pick, onBack, onPlaced }: { pick: SitePick; onBack: () => void; onPlaced: () => void }) {
@@ -110,7 +118,7 @@ export function SitePreview({ pick, onBack, onPlaced }: { pick: SitePick; onBack
     }
     for (const [k, v] of Object.entries(tilesOf(game))) {
       const [x, y] = k.split(',').map(Number)
-      cell({ x, y }, v === 'path' ? '#eadfc0' : '#9db97f')
+      cell({ x, y }, TILE_COLOR[v] ?? '#9db97f')
     }
     for (const b of buildsOf(game)) {
       const color = b.state === 'done' ? (b.kind === 'home' ? '#a98d74' : '#e2d6b5') : '#d9bf9f'
@@ -119,7 +127,7 @@ export function SitePreview({ pick, onBack, onPlaced }: { pick: SitePick; onBack
       if (d) cell(d.door, '#f4ecd8')
     }
     // 미리 볼 자리: 색을 바꾸지 않고 점선 테두리만
-    const box = kind === 'home' || kind === 'courtyard' ? boxOf(at.x, at.y) : areaOf(kind ?? 'path', at.x, at.y, size)
+    const box = isBuildKind(kind) ? boxOf(at.x, at.y) : areaOf(kind ?? 'path', at.x, at.y, size)
     const x0 = Math.min(...box.map((t) => t.x))
     const y0 = Math.min(...box.map((t) => t.y))
     g.strokeStyle = '#3d4f7a'
@@ -127,8 +135,8 @@ export function SitePreview({ pick, onBack, onPlaced }: { pick: SitePick; onBack
     g.setLineDash([4, 3])
     g.strokeRect(x0 * CELL + 1, y0 * CELL + 1, span * CELL - 2, span * CELL - 2)
     g.setLineDash([])
-    if (kind === 'home') {
-      const d = doorOf('home', at.x, at.y, facing)
+    if (kind && isBuildKind(kind) && SITES[kind].doors) {
+      const d = doorOf(kind, at.x, at.y, facing)
       if (d) {
         g.fillStyle = '#3d4f7a'
         g.fillRect(d.door.x * CELL + 2, d.door.y * CELL + 2, CELL - 4, CELL - 4)
@@ -152,7 +160,7 @@ export function SitePreview({ pick, onBack, onPlaced }: { pick: SitePick; onBack
     if (block !== null) return
     if (kind) {
       const ok = orderSite(kind, at.x, at.y, facing, size)
-      if (ok && (kind === 'home' || kind === 'courtyard')) onPlaced()
+      if (ok && (isBuildKind(kind))) onPlaced()
     } else eraseTile(at.x, at.y)
   }
 
@@ -188,7 +196,7 @@ export function SitePreview({ pick, onBack, onPlaced }: { pick: SitePick; onBack
       {kind && (
         <p className="hint">
           {fill(T.build.cost, { cost: costText(kind, size) })}
-          {(kind === 'home' || kind === 'courtyard') && ` · ${T.build.days}`}
+          {(isBuildKind(kind)) && ` · ${T.build.days}`}
         </p>
       )}
       {reason && (

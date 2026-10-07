@@ -10,6 +10,8 @@ export interface DayCtx {
   partner: string | null
   /** 오늘 큰 사건이 걸린 사람 (계보 id) — 그 사람의 전환은 보류 */
   busy: (id: string) => boolean
+  /** 플레이어와 헤어진 지 14일 안인 사람 — 다른 주민과 사귀지 않는다 */
+  cooling?: (id: string) => boolean
 }
 
 /** 오늘(d) 이미 큰 전환이 있었던 사람 — 같은 사람의 두 전환 사이는 하루 띄운다 (P6) */
@@ -71,7 +73,7 @@ export function settleRelations(g: GenState, d: number, ctx: DayCtx): GenState {
   changed = changedOn(g, d)
   if (loverCount(g) < MAX_LOVERS) {
     const ready = Object.values(g.relations)
-      .filter((r) => r.stage === 'friend' && affinityOf(g, r.a, r.b) >= LOVER_AT && canPair(g, ctx.partner, r.a, r.b) && !quietAfterBreakup(g, r.a, r.b, d))
+      .filter((r) => r.stage === 'friend' && affinityOf(g, r.a, r.b) >= LOVER_AT && canPair(g, ctx.partner, r.a, r.b, ctx.cooling) && !quietAfterBreakup(g, r.a, r.b, d))
       .filter((r) => free(r.a, changed) && free(r.b, changed))
       .sort((x, y) => affinityOf(g, y.a, y.b) - affinityOf(g, x.a, x.b) || (x.id < y.id ? -1 : 1))
     // 짝 조건은 다른 연인이 없어야 하므로, 고른 한 쌍만

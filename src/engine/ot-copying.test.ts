@@ -274,9 +274,16 @@ describe('구약 본문 전수', () => {
     expect(copyVerses('psa', 119, CONTENT)).toHaveLength(176)
   }, 60_000)
 
-  it('chapterGuide(구약, n)은 전부 null — 안내 상자가 나오지 않는다', () => {
-    for (const b of OT_BOOKS) for (let c = 1; c <= otRow(b).chapters; c++) expect(chapterGuide(b, c)).toBeNull()
-  })
+  it('chapterGuide(구약, n): 책을 불러오면 929장 모두 길잡이가 있다 (사용자 결정 ④, 2026-10-07 공개)', async () => {
+    for (const b of OT_BOOKS) {
+      await ensureOtBook(b)
+      for (let c = 1; c <= otRow(b).chapters; c++) {
+        const g = chapterGuide(b, c)
+        expect(g?.background, `${b} ${c}`).toBeTruthy()
+        expect(g?.look, `${b} ${c}`).toBeTruthy()
+      }
+    }
+  }, 60_000)
 })
 
 describe('빈칸 오답 보기: 66권 전체를 본다 (해시 목록)', () => {

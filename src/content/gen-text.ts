@@ -21,7 +21,7 @@ export function newsLine(game: Pick<GameState, 'notebook' | 'gen'>, l: GenLog): 
   if (!tpl) return null
   const [a, b, child] = l.who
   const an = personName(game, a), bn = personName(game, b)
-  return fill(tpl, { aAnd: withAnd(an), bSubj: withSubject(bn), b: bn, child: child ? personName(game, child) : '' })
+  return fill(tpl, { a: an, aAnd: withAnd(an), aSubj: withSubject(an), bSubj: withSubject(bn), b: bn, child: child ? personName(game, child) : '' })
 }
 
 /** 아침에 보여 줄 새 소식 (sinceDay 뒤의 것, 많아야 3건 — P13) */

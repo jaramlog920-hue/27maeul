@@ -1,0 +1,950 @@
+{
+  "residents": [
+    {
+      "id": "baker",
+      "label": "헤이즐",
+      "before": "baker-before.png",
+      "directions": {
+        "down": [
+          "baker-elder-down-0.png",
+          "baker-elder-down-1.png",
+          "baker-elder-down-2.png"
+        ],
+        "up": [
+          "baker-elder-up-0.png",
+          "baker-elder-up-1.png",
+          "baker-elder-up-2.png"
+        ],
+        "left": [
+          "baker-elder-left-0.png",
+          "baker-elder-left-1.png",
+          "baker-elder-left-2.png"
+        ],
+        "right": [
+          "baker-elder-right-0.png",
+          "baker-elder-right-1.png",
+          "baker-elder-right-2.png"
+        ]
+      },
+      "motions": {
+        "sit": [
+          "baker-elder-sit-0.png",
+          "baker-elder-sit-1.png",
+          "baker-elder-sit-2.png",
+          "baker-elder-sit-3.png"
+        ],
+        "read": [
+          "baker-elder-read-0.png",
+          "baker-elder-read-1.png",
+          "baker-elder-read-2.png",
+          "baker-elder-read-3.png"
+        ]
+      }
+    },
+    {
+      "id": "child",
+      "label": "윌로",
+      "before": "child-before.png",
+      "directions": {
+        "down": [
+          "child-elder-down-0.png",
+          "child-elder-down-1.png",
+          "child-elder-down-2.png"
+        ],
+        "up": [
+          "child-elder-up-0.png",
+          "child-elder-up-1.png",
+          "child-elder-up-2.png"
+        ],
+        "left": [
+          "child-elder-left-0.png",
+          "child-elder-left-1.png",
+          "child-elder-left-2.png"
+        ],
+        "right": [
+          "child-elder-right-0.png",
+          "child-elder-right-1.png",
+          "child-elder-right-2.png"
+        ]
+      },
+      "motions": {
+        "sit": [
+          "child-elder-sit-0.png",
+          "child-elder-sit-1.png",
+          "child-elder-sit-2.png",
+          "child-elder-sit-3.png"
+        ],
+        "read": [
+          "child-elder-read-0.png",
+          "child-elder-read-1.png",
+          "child-elder-read-2.png",
+          "child-elder-read-3.png"
+        ]
+      }
+    },
+    {
+      "id": "grandpa",
+      "label": "버나드",
+      "before": "grandpa-before.png",
+      "directions": {
+        "down": [
+          "grandpa-elder-down-0.png",
+          "grandpa-elder-down-1.png",
+          "grandpa-elder-down-2.png"
+        ],
+        "up": [
+          "grandpa-elder-up-0.png",
+          "grandpa-elder-up-1.png",
+          "grandpa-elder-up-2.png"
+        ],
+        "left": [
+          "grandpa-elder-left-0.png",
+          "grandpa-elder-left-1.png",
+          "grandpa-elder-left-2.png"
+        ],
+        "right": [
+          "grandpa-elder-right-0.png",
+          "grandpa-elder-right-1.png",
+          "grandpa-elder-right-2.png"
+        ]
+      },
+      "motions": {
+        "sit": [
+          "grandpa-elder-sit-0.png",
+          "grandpa-elder-sit-1.png",
+          "grandpa-elder-sit-2.png",
+          "grandpa-elder-sit-3.png"
+        ],
+        "read": [
+          "grandpa-elder-read-0.png",
+          "grandpa-elder-read-1.png",
+          "grandpa-elder-read-2.png",
+          "grandpa-elder-read-3.png"
+        ]
+      }
+    },
+    {
+      "id": "merchant",
+      "label": "오스카",
+      "before": "merchant-before.png",
+      "directions": {
+        "down": [
+          "merchant-elder-down-0.png",
+          "merchant-elder-down-1.png",
+          "merchant-elder-down-2.png"
+        ],
+        "up": [
+          "merchant-elder-up-0.png",
+          "merchant-elder-up-1.png",
+          "merchant-elder-up-2.png"
+        ],
+        "left": [
+          "merchant-elder-left-0.png",
+          "merchant-elder-left-1.png",
+          "merchant-elder-left-2.png"
+        ],
+        "right": [
+          "merchant-elder-right-0.png",
+          "merchant-elder-right-1.png",
+          "merchant-elder-right-2.png"
+        ]
+      },
+      "motions": {
+        "sit": [
+          "merchant-elder-sit-0.png",
+          "merchant-elder-sit-1.png",
+          "merchant-elder-sit-2.png",
+          "merchant-elder-sit-3.png"
+        ],
+        "read": [
+          "merchant-elder-read-0.png",
+          "merchant-elder-read-1.png",
+          "merchant-elder-read-2.png",
+          "merchant-elder-read-3.png"
+        ]
+      }
+    },
+    {
+      "id": "smith",
+      "label": "브루노",
+      "before": "smith-before.png",
+      "directions": {
+        "down": [
+          "smith-elder-down-0.png",
+          "smith-elder-down-1.png",
+          "smith-elder-down-2.png"
+        ],
+        "up": [
+          "smith-elder-up-0.png",
+          "smith-elder-up-1.png",
+          "smith-elder-up-2.png"
+        ],
+        "left": [
+          "smith-elder-left-0.png",
+          "smith-elder-left-1.png",
+          "smith-elder-left-2.png"
+        ],
+        "right": [
+          "smith-elder-right-0.png",
+          "smith-elder-right-1.png",
+          "smith-elder-right-2.png"
+        ]
+      },
+      "motions": {
+        "sit": [
+          "smith-elder-sit-0.png",
+          "smith-elder-sit-1.png",
+          "smith-elder-sit-2.png",
+          "smith-elder-sit-3.png"
+        ],
+        "read": [
+          "smith-elder-read-0.png",
+          "smith-elder-read-1.png",
+          "smith-elder-read-2.png",
+          "smith-elder-read-3.png"
+        ]
+      }
+    },
+    {
+      "id": "shepherd",
+      "label": "오웬",
+      "before": "shepherd-before.png",
+      "directions": {
+        "down": [
+          "shepherd-elder-down-0.png",
+          "shepherd-elder-down-1.png",
+          "shepherd-elder-down-2.png"
+        ],
+        "up": [
+          "shepherd-elder-up-0.png",
+          "shepherd-elder-up-1.png",
+          "shepherd-elder-up-2.png"
+        ],
+        "left": [
+          "shepherd-elder-left-0.png",
+          "shepherd-elder-left-1.png",
+          "shepherd-elder-left-2.png"
+        ],
+        "right": [
+          "shepherd-elder-right-0.png",
+          "shepherd-elder-right-1.png",
+          "shepherd-elder-right-2.png"
+        ]
+      },
+      "motions": {
+        "sit": [
+          "shepherd-elder-sit-0.png",
+          "shepherd-elder-sit-1.png",
+          "shepherd-elder-sit-2.png",
+          "shepherd-elder-sit-3.png"
+        ],
+        "read": [
+          "shepherd-elder-read-0.png",
+          "shepherd-elder-read-1.png",
+          "shepherd-elder-read-2.png",
+          "shepherd-elder-read-3.png"
+        ]
+      }
+    },
+    {
+      "id": "presser",
+      "label": "올리버",
+      "before": "presser-before.png",
+      "directions": {
+        "down": [
+          "presser-elder-down-0.png",
+          "presser-elder-down-1.png",
+          "presser-elder-down-2.png"
+        ],
+        "up": [
+          "presser-elder-up-0.png",
+          "presser-elder-up-1.png",
+          "presser-elder-up-2.png"
+        ],
+        "left": [
+          "presser-elder-left-0.png",
+          "presser-elder-left-1.png",
+          "presser-elder-left-2.png"
+        ],
+        "right": [
+          "presser-elder-right-0.png",
+          "presser-elder-right-1.png",
+          "presser-elder-right-2.png"
+        ]
+      },
+      "motions": {
+        "sit": [
+          "presser-elder-sit-0.png",
+          "presser-elder-sit-1.png",
+          "presser-elder-sit-2.png",
+          "presser-elder-sit-3.png"
+        ],
+        "read": [
+          "presser-elder-read-0.png",
+          "presser-elder-read-1.png",
+          "presser-elder-read-2.png",
+          "presser-elder-read-3.png"
+        ]
+      }
+    },
+    {
+      "id": "weaver",
+      "label": "아이리스",
+      "before": "weaver-before.png",
+      "directions": {
+        "down": [
+          "weaver-elder-down-0.png",
+          "weaver-elder-down-1.png",
+          "weaver-elder-down-2.png"
+        ],
+        "up": [
+          "weaver-elder-up-0.png",
+          "weaver-elder-up-1.png",
+          "weaver-elder-up-2.png"
+        ],
+        "left": [
+          "weaver-elder-left-0.png",
+          "weaver-elder-left-1.png",
+          "weaver-elder-left-2.png"
+        ],
+        "right": [
+          "weaver-elder-right-0.png",
+          "weaver-elder-right-1.png",
+          "weaver-elder-right-2.png"
+        ]
+      },
+      "motions": {
+        "sit": [
+          "weaver-elder-sit-0.png",
+          "weaver-elder-sit-1.png",
+          "weaver-elder-sit-2.png",
+          "weaver-elder-sit-3.png"
+        ],
+        "read": [
+          "weaver-elder-read-0.png",
+          "weaver-elder-read-1.png",
+          "weaver-elder-read-2.png",
+          "weaver-elder-read-3.png"
+        ]
+      }
+    },
+    {
+      "id": "beekeeper",
+      "label": "클로버",
+      "before": "beekeeper-before.png",
+      "directions": {
+        "down": [
+          "beekeeper-elder-down-0.png",
+          "beekeeper-elder-down-1.png",
+          "beekeeper-elder-down-2.png"
+        ],
+        "up": [
+          "beekeeper-elder-up-0.png",
+          "beekeeper-elder-up-1.png",
+          "beekeeper-elder-up-2.png"
+        ],
+        "left": [
+          "beekeeper-elder-left-0.png",
+          "beekeeper-elder-left-1.png",
+          "beekeeper-elder-left-2.png"
+        ],
+        "right": [
+          "beekeeper-elder-right-0.png",
+          "beekeeper-elder-right-1.png",
+          "beekeeper-elder-right-2.png"
+        ]
+      },
+      "motions": {
+        "sit": [
+          "beekeeper-elder-sit-0.png",
+          "beekeeper-elder-sit-1.png",
+          "beekeeper-elder-sit-2.png",
+          "beekeeper-elder-sit-3.png"
+        ],
+        "read": [
+          "beekeeper-elder-read-0.png",
+          "beekeeper-elder-read-1.png",
+          "beekeeper-elder-read-2.png",
+          "beekeeper-elder-read-3.png"
+        ]
+      }
+    },
+    {
+      "id": "postman",
+      "label": "마일로",
+      "before": "postman-before.png",
+      "directions": {
+        "down": [
+          "postman-elder-down-0.png",
+          "postman-elder-down-1.png",
+          "postman-elder-down-2.png"
+        ],
+        "up": [
+          "postman-elder-up-0.png",
+          "postman-elder-up-1.png",
+          "postman-elder-up-2.png"
+        ],
+        "left": [
+          "postman-elder-left-0.png",
+          "postman-elder-left-1.png",
+          "postman-elder-left-2.png"
+        ],
+        "right": [
+          "postman-elder-right-0.png",
+          "postman-elder-right-1.png",
+          "postman-elder-right-2.png"
+        ]
+      },
+      "motions": {
+        "sit": [
+          "postman-elder-sit-0.png",
+          "postman-elder-sit-1.png",
+          "postman-elder-sit-2.png",
+          "postman-elder-sit-3.png"
+        ],
+        "read": [
+          "postman-elder-read-0.png",
+          "postman-elder-read-1.png",
+          "postman-elder-read-2.png",
+          "postman-elder-read-3.png"
+        ]
+      }
+    },
+    {
+      "id": "apothecary",
+      "label": "세이지",
+      "before": "apothecary-before.png",
+      "directions": {
+        "down": [
+          "apothecary-elder-down-0.png",
+          "apothecary-elder-down-1.png",
+          "apothecary-elder-down-2.png"
+        ],
+        "up": [
+          "apothecary-elder-up-0.png",
+          "apothecary-elder-up-1.png",
+          "apothecary-elder-up-2.png"
+        ],
+        "left": [
+          "apothecary-elder-left-0.png",
+          "apothecary-elder-left-1.png",
+          "apothecary-elder-left-2.png"
+        ],
+        "right": [
+          "apothecary-elder-right-0.png",
+          "apothecary-elder-right-1.png",
+          "apothecary-elder-right-2.png"
+        ]
+      },
+      "motions": {
+        "sit": [
+          "apothecary-elder-sit-0.png",
+          "apothecary-elder-sit-1.png",
+          "apothecary-elder-sit-2.png",
+          "apothecary-elder-sit-3.png"
+        ],
+        "read": [
+          "apothecary-elder-read-0.png",
+          "apothecary-elder-read-1.png",
+          "apothecary-elder-read-2.png",
+          "apothecary-elder-read-3.png"
+        ]
+      }
+    },
+    {
+      "id": "fisher",
+      "label": "핀",
+      "before": "fisher-before.png",
+      "directions": {
+        "down": [
+          "fisher-elder-down-0.png",
+          "fisher-elder-down-1.png",
+          "fisher-elder-down-2.png"
+        ],
+        "up": [
+          "fisher-elder-up-0.png",
+          "fisher-elder-up-1.png",
+          "fisher-elder-up-2.png"
+        ],
+        "left": [
+          "fisher-elder-left-0.png",
+          "fisher-elder-left-1.png",
+          "fisher-elder-left-2.png"
+        ],
+        "right": [
+          "fisher-elder-right-0.png",
+          "fisher-elder-right-1.png",
+          "fisher-elder-right-2.png"
+        ]
+      },
+      "motions": {
+        "sit": [
+          "fisher-elder-sit-0.png",
+          "fisher-elder-sit-1.png",
+          "fisher-elder-sit-2.png",
+          "fisher-elder-sit-3.png"
+        ],
+        "read": [
+          "fisher-elder-read-0.png",
+          "fisher-elder-read-1.png",
+          "fisher-elder-read-2.png",
+          "fisher-elder-read-3.png"
+        ]
+      }
+    },
+    {
+      "id": "carpenter",
+      "label": "아서",
+      "before": "carpenter-before.png",
+      "directions": {
+        "down": [
+          "carpenter-elder-down-0.png",
+          "carpenter-elder-down-1.png",
+          "carpenter-elder-down-2.png"
+        ],
+        "up": [
+          "carpenter-elder-up-0.png",
+          "carpenter-elder-up-1.png",
+          "carpenter-elder-up-2.png"
+        ],
+        "left": [
+          "carpenter-elder-left-0.png",
+          "carpenter-elder-left-1.png",
+          "carpenter-elder-left-2.png"
+        ],
+        "right": [
+          "carpenter-elder-right-0.png",
+          "carpenter-elder-right-1.png",
+          "carpenter-elder-right-2.png"
+        ]
+      },
+      "motions": {
+        "sit": [
+          "carpenter-elder-sit-0.png",
+          "carpenter-elder-sit-1.png",
+          "carpenter-elder-sit-2.png",
+          "carpenter-elder-sit-3.png"
+        ],
+        "read": [
+          "carpenter-elder-read-0.png",
+          "carpenter-elder-read-1.png",
+          "carpenter-elder-read-2.png",
+          "carpenter-elder-read-3.png"
+        ]
+      }
+    },
+    {
+      "id": "wendell",
+      "label": "웬델",
+      "before": "wendell-before.png",
+      "directions": {
+        "down": [
+          "wendell-elder-down-0.png",
+          "wendell-elder-down-1.png",
+          "wendell-elder-down-2.png"
+        ],
+        "up": [
+          "wendell-elder-up-0.png",
+          "wendell-elder-up-1.png",
+          "wendell-elder-up-2.png"
+        ],
+        "left": [
+          "wendell-elder-left-0.png",
+          "wendell-elder-left-1.png",
+          "wendell-elder-left-2.png"
+        ],
+        "right": [
+          "wendell-elder-right-0.png",
+          "wendell-elder-right-1.png",
+          "wendell-elder-right-2.png"
+        ]
+      },
+      "motions": {
+        "sit": [
+          "wendell-elder-sit-0.png",
+          "wendell-elder-sit-1.png",
+          "wendell-elder-sit-2.png",
+          "wendell-elder-sit-3.png"
+        ],
+        "read": [
+          "wendell-elder-read-0.png",
+          "wendell-elder-read-1.png",
+          "wendell-elder-read-2.png",
+          "wendell-elder-read-3.png"
+        ]
+      }
+    },
+    {
+      "id": "cosmo",
+      "label": "코스모",
+      "before": "cosmo-before.png",
+      "directions": {
+        "down": [
+          "cosmo-elder-down-0.png",
+          "cosmo-elder-down-1.png",
+          "cosmo-elder-down-2.png"
+        ],
+        "up": [
+          "cosmo-elder-up-0.png",
+          "cosmo-elder-up-1.png",
+          "cosmo-elder-up-2.png"
+        ],
+        "left": [
+          "cosmo-elder-left-0.png",
+          "cosmo-elder-left-1.png",
+          "cosmo-elder-left-2.png"
+        ],
+        "right": [
+          "cosmo-elder-right-0.png",
+          "cosmo-elder-right-1.png",
+          "cosmo-elder-right-2.png"
+        ]
+      },
+      "motions": {
+        "sit": [
+          "cosmo-elder-sit-0.png",
+          "cosmo-elder-sit-1.png",
+          "cosmo-elder-sit-2.png",
+          "cosmo-elder-sit-3.png"
+        ],
+        "read": [
+          "cosmo-elder-read-0.png",
+          "cosmo-elder-read-1.png",
+          "cosmo-elder-read-2.png",
+          "cosmo-elder-read-3.png"
+        ]
+      }
+    },
+    {
+      "id": "rudy",
+      "label": "루디",
+      "before": "rudy-before.png",
+      "directions": {
+        "down": [
+          "rudy-elder-down-0.png",
+          "rudy-elder-down-1.png",
+          "rudy-elder-down-2.png"
+        ],
+        "up": [
+          "rudy-elder-up-0.png",
+          "rudy-elder-up-1.png",
+          "rudy-elder-up-2.png"
+        ],
+        "left": [
+          "rudy-elder-left-0.png",
+          "rudy-elder-left-1.png",
+          "rudy-elder-left-2.png"
+        ],
+        "right": [
+          "rudy-elder-right-0.png",
+          "rudy-elder-right-1.png",
+          "rudy-elder-right-2.png"
+        ]
+      },
+      "motions": {
+        "sit": [
+          "rudy-elder-sit-0.png",
+          "rudy-elder-sit-1.png",
+          "rudy-elder-sit-2.png",
+          "rudy-elder-sit-3.png"
+        ],
+        "read": [
+          "rudy-elder-read-0.png",
+          "rudy-elder-read-1.png",
+          "rudy-elder-read-2.png",
+          "rudy-elder-read-3.png"
+        ]
+      }
+    },
+    {
+      "id": "dexter",
+      "label": "덱스터",
+      "before": "dexter-before.png",
+      "directions": {
+        "down": [
+          "dexter-elder-down-0.png",
+          "dexter-elder-down-1.png",
+          "dexter-elder-down-2.png"
+        ],
+        "up": [
+          "dexter-elder-up-0.png",
+          "dexter-elder-up-1.png",
+          "dexter-elder-up-2.png"
+        ],
+        "left": [
+          "dexter-elder-left-0.png",
+          "dexter-elder-left-1.png",
+          "dexter-elder-left-2.png"
+        ],
+        "right": [
+          "dexter-elder-right-0.png",
+          "dexter-elder-right-1.png",
+          "dexter-elder-right-2.png"
+        ]
+      },
+      "motions": {
+        "sit": [
+          "dexter-elder-sit-0.png",
+          "dexter-elder-sit-1.png",
+          "dexter-elder-sit-2.png",
+          "dexter-elder-sit-3.png"
+        ],
+        "read": [
+          "dexter-elder-read-0.png",
+          "dexter-elder-read-1.png",
+          "dexter-elder-read-2.png",
+          "dexter-elder-read-3.png"
+        ]
+      }
+    },
+    {
+      "id": "basil",
+      "label": "바질",
+      "before": "basil-before.png",
+      "directions": {
+        "down": [
+          "basil-elder-down-0.png",
+          "basil-elder-down-1.png",
+          "basil-elder-down-2.png"
+        ],
+        "up": [
+          "basil-elder-up-0.png",
+          "basil-elder-up-1.png",
+          "basil-elder-up-2.png"
+        ],
+        "left": [
+          "basil-elder-left-0.png",
+          "basil-elder-left-1.png",
+          "basil-elder-left-2.png"
+        ],
+        "right": [
+          "basil-elder-right-0.png",
+          "basil-elder-right-1.png",
+          "basil-elder-right-2.png"
+        ]
+      },
+      "motions": {
+        "sit": [
+          "basil-elder-sit-0.png",
+          "basil-elder-sit-1.png",
+          "basil-elder-sit-2.png",
+          "basil-elder-sit-3.png"
+        ],
+        "read": [
+          "basil-elder-read-0.png",
+          "basil-elder-read-1.png",
+          "basil-elder-read-2.png",
+          "basil-elder-read-3.png"
+        ]
+      }
+    },
+    {
+      "id": "marigold",
+      "label": "메리골드",
+      "before": "marigold-before.png",
+      "directions": {
+        "down": [
+          "marigold-elder-down-0.png",
+          "marigold-elder-down-1.png",
+          "marigold-elder-down-2.png"
+        ],
+        "up": [
+          "marigold-elder-up-0.png",
+          "marigold-elder-up-1.png",
+          "marigold-elder-up-2.png"
+        ],
+        "left": [
+          "marigold-elder-left-0.png",
+          "marigold-elder-left-1.png",
+          "marigold-elder-left-2.png"
+        ],
+        "right": [
+          "marigold-elder-right-0.png",
+          "marigold-elder-right-1.png",
+          "marigold-elder-right-2.png"
+        ]
+      },
+      "motions": {
+        "sit": [
+          "marigold-elder-sit-0.png",
+          "marigold-elder-sit-1.png",
+          "marigold-elder-sit-2.png",
+          "marigold-elder-sit-3.png"
+        ],
+        "read": [
+          "marigold-elder-read-0.png",
+          "marigold-elder-read-1.png",
+          "marigold-elder-read-2.png",
+          "marigold-elder-read-3.png"
+        ]
+      }
+    },
+    {
+      "id": "penelope",
+      "label": "페넬로피",
+      "before": "penelope-before.png",
+      "directions": {
+        "down": [
+          "penelope-elder-down-0.png",
+          "penelope-elder-down-1.png",
+          "penelope-elder-down-2.png"
+        ],
+        "up": [
+          "penelope-elder-up-0.png",
+          "penelope-elder-up-1.png",
+          "penelope-elder-up-2.png"
+        ],
+        "left": [
+          "penelope-elder-left-0.png",
+          "penelope-elder-left-1.png",
+          "penelope-elder-left-2.png"
+        ],
+        "right": [
+          "penelope-elder-right-0.png",
+          "penelope-elder-right-1.png",
+          "penelope-elder-right-2.png"
+        ]
+      },
+      "motions": {
+        "sit": [
+          "penelope-elder-sit-0.png",
+          "penelope-elder-sit-1.png",
+          "penelope-elder-sit-2.png",
+          "penelope-elder-sit-3.png"
+        ],
+        "read": [
+          "penelope-elder-read-0.png",
+          "penelope-elder-read-1.png",
+          "penelope-elder-read-2.png",
+          "penelope-elder-read-3.png"
+        ]
+      }
+    },
+    {
+      "id": "tilly",
+      "label": "틸리",
+      "before": "tilly-before.png",
+      "directions": {
+        "down": [
+          "tilly-elder-down-0.png",
+          "tilly-elder-down-1.png",
+          "tilly-elder-down-2.png"
+        ],
+        "up": [
+          "tilly-elder-up-0.png",
+          "tilly-elder-up-1.png",
+          "tilly-elder-up-2.png"
+        ],
+        "left": [
+          "tilly-elder-left-0.png",
+          "tilly-elder-left-1.png",
+          "tilly-elder-left-2.png"
+        ],
+        "right": [
+          "tilly-elder-right-0.png",
+          "tilly-elder-right-1.png",
+          "tilly-elder-right-2.png"
+        ]
+      },
+      "motions": {
+        "sit": [
+          "tilly-elder-sit-0.png",
+          "tilly-elder-sit-1.png",
+          "tilly-elder-sit-2.png",
+          "tilly-elder-sit-3.png"
+        ],
+        "read": [
+          "tilly-elder-read-0.png",
+          "tilly-elder-read-1.png",
+          "tilly-elder-read-2.png",
+          "tilly-elder-read-3.png"
+        ]
+      }
+    },
+    {
+      "id": "juniper",
+      "label": "주니퍼",
+      "before": "juniper-before.png",
+      "directions": {
+        "down": [
+          "juniper-elder-down-0.png",
+          "juniper-elder-down-1.png",
+          "juniper-elder-down-2.png"
+        ],
+        "up": [
+          "juniper-elder-up-0.png",
+          "juniper-elder-up-1.png",
+          "juniper-elder-up-2.png"
+        ],
+        "left": [
+          "juniper-elder-left-0.png",
+          "juniper-elder-left-1.png",
+          "juniper-elder-left-2.png"
+        ],
+        "right": [
+          "juniper-elder-right-0.png",
+          "juniper-elder-right-1.png",
+          "juniper-elder-right-2.png"
+        ]
+      },
+      "motions": {
+        "sit": [
+          "juniper-elder-sit-0.png",
+          "juniper-elder-sit-1.png",
+          "juniper-elder-sit-2.png",
+          "juniper-elder-sit-3.png"
+        ],
+        "read": [
+          "juniper-elder-read-0.png",
+          "juniper-elder-read-1.png",
+          "juniper-elder-read-2.png",
+          "juniper-elder-read-3.png"
+        ]
+      }
+    },
+    {
+      "id": "poppy",
+      "label": "파피",
+      "before": "poppy-before.png",
+      "directions": {
+        "down": [
+          "poppy-elder-down-0.png",
+          "poppy-elder-down-1.png",
+          "poppy-elder-down-2.png"
+        ],
+        "up": [
+          "poppy-elder-up-0.png",
+          "poppy-elder-up-1.png",
+          "poppy-elder-up-2.png"
+        ],
+        "left": [
+          "poppy-elder-left-0.png",
+          "poppy-elder-left-1.png",
+          "poppy-elder-left-2.png"
+        ],
+        "right": [
+          "poppy-elder-right-0.png",
+          "poppy-elder-right-1.png",
+          "poppy-elder-right-2.png"
+        ]
+      },
+      "motions": {
+        "sit": [
+          "poppy-elder-sit-0.png",
+          "poppy-elder-sit-1.png",
+          "poppy-elder-sit-2.png",
+          "poppy-elder-sit-3.png"
+        ],
+        "read": [
+          "poppy-elder-read-0.png",
+          "poppy-elder-read-1.png",
+          "poppy-elder-read-2.png",
+          "poppy-elder-read-3.png"
+        ]
+      }
+    }
+  ],
+  "connected": true,
+  "source": "src/render/elder-details.ts",
+  "note": "계보 elder 또는 은퇴 기록에 적용. 노년 시기를 새로 정하지 않는다."
+}

@@ -10,7 +10,7 @@ const {withLookDefaults}=await import('../src/engine/avatar.ts')
 const {writerPalette}=await import('../src/render/sprites.ts')
 const out='assets/old-testament-generations',facings=['down','up','left','right'],items=[],sequences=[]
 const groupLabels={props:'생활 소품','job-signs':'직업 표식',terrain:'지형·자연',buildings:'완성 건물',construction:'공사 골격',interiors:'실내 배치',growth:'성장 단계',motions:'가족 동작',pairs:'둘이 함께'}
-const stageLabels={baby:'아기',toddler:'유아',child:'어린이',teen:'청소년',adult:'성인'}
+const stageLabels={baby:'아기',toddler:'유아',child:'어린이',teen:'청소년',adult:'성인',elder:'노년'}
 for(const d of ['props','job-signs','terrain','buildings','construction','interiors','growth','motions','pairs'])fs.mkdirSync(`${out}/${d}`,{recursive:true})
 const palette=OLD_VILLAGE_PALETTE
 const avatar=withLookDefaults({look:'f',name:'미리보기',hairBack:0,top:12,bottom:2})

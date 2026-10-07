@@ -83,6 +83,55 @@
 .actions.menu.column button {
   text-align: left;
 }
+/* 세로 메뉴는 서고 목록처럼 한 줄씩 (2026-10-07 사용자 — 네모 단추 대신 줄, 오른쪽 ›, 줄 사이 구분선).
+   강조 단추(primary)는 진한 글씨, 고른 것(aria-pressed·on)은 옅은 바탕, 막힌 것은 흐리게 */
+.actions.menu.column {
+  gap: 0;
+  border-top: 2px solid #e6d9bf;
+}
+.actions.menu.column > button:not([data-close]) {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 50px;
+  margin: 0;
+  padding: 10px 8px;
+  border: 0;
+  border-bottom: 2px solid #e6d9bf;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--ink);
+  font-weight: 400;
+  text-align: left;
+}
+.actions.menu.column > button:not([data-close]):not(:disabled)::after {
+  content: '›';
+  margin-left: auto;
+  padding-left: 8px;
+  font-size: 20px;
+  color: #a88c5e;
+}
+.actions.menu.column > button.primary:not([data-close]) {
+  color: var(--accent);
+  font-weight: 700;
+}
+.actions.menu.column > button[aria-pressed='true'],
+.actions.menu.column > button.on {
+  background: #f6ead0;
+}
+.actions.menu.column > button:disabled {
+  opacity: 0.45;
+}
+.actions.menu.column > button:active:not(:disabled) {
+  background: #efe3c4;
+}
+/* 줄 안의 작은 설명 (재료·값) */
+.actions.menu.column > button small {
+  font-size: 12px;
+  color: var(--ink-soft);
+}
 .item-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
@@ -106,14 +155,17 @@
   grid-template-columns: 1fr auto;
   gap: 2px 8px;
   align-items: center;
-  padding: 6px 0;
-  border-bottom: 1px dashed var(--ink-soft);
+  min-height: 50px;
+  padding: 8px 6px;
+  /* 서고 목록과 같은 구분선 (2026-10-07) */
+  border-bottom: 2px solid #e6d9bf;
 }
 .trade-get {
   font-weight: 700;
+  word-break: keep-all;
 }
 .trade-pay {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--ink-soft);
   grid-row: 2;
 }
@@ -2166,6 +2218,27 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
 .bind-option { display: grid; gap: 2px; }
 .bind-made { display: flex; justify-content: center; align-items: flex-end; gap: 14px; margin: 6px 0 10px; }
 .bind-made-line { text-align: center; font-weight: 700; margin: 4px 0; }
+.spine-art.pixel-spine { border: 0; border-radius: 0; background: none; box-shadow: none; }
+.spine-art.pixel-spine::before, .spine-art.pixel-spine::after { display: none; }
+.pixel-spine svg { display: block; width: 100%; height: 100%; }
+.book-cover.pixel-cover { border: 0; border-radius: 0; background: none; }
+.pixel-cover svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.pixel-cover .book-cover-plate { position: relative; z-index: 1; }
+.library-work { margin: 8px auto; flex-basis: 100%; text-align: center; }
+.library-work-window { width: 128px; height: 128px; overflow: hidden; margin: auto; background: #eee3cb; }
+.library-work-strip { display: flex; width: 400%; animation: library-work-frames 1.2s step-end forwards; }
+.library-work-frame { flex: 0 0 25%; height: 128px; }
+.library-work-frame svg { width: 100%; height: 100%; }
+.library-work figcaption { font-size: 12px; color: var(--ink-soft); margin-top: 4px; }
+@keyframes library-work-frames {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-25%); }
+  50% { transform: translateX(-50%); }
+  75%, 100% { transform: translateX(-75%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .library-work-strip { animation: none; transform: translateX(-75%); }
+}
 .bind-choices { display: flex; flex-wrap: wrap; gap: 4px; margin: 0 0 8px; padding: 6px; border: 2px solid var(--panel-line); border-radius: 4px; }
 .bind-choices legend { font-size: 12px; color: var(--ink-soft); padding: 0 4px; }
 .bind-choices button { min-height: 32px; padding: 2px 8px; font-size: 12px; }
@@ -2320,3 +2393,12 @@ button.row:active:not(:disabled) { background: #efe3c4; }
 .site-facing-label { align-self: center; padding: 0 6px; font-weight: 700; white-space: nowrap; }
 .site-reason { margin: 6px 0; font-weight: 700; color: #6b4e2e; word-break: keep-all; }
 .site-preview .tabs button { min-height: 40px; }
+
+/* 불러오기 칸 (2026-10-07): 줄을 누르면 시작, 오른쪽 작은 지우기 */
+.save-slots { justify-content: center; }
+.save-slots-box { max-width: 520px; width: calc(100% - 32px); margin: 0 auto; }
+.save-row { display: flex; align-items: stretch; gap: 6px; padding: 0; }
+.save-pick { flex: 1; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; text-align: left; background: transparent; border: 0; padding: 8px 10px; }
+.save-del { flex: none; min-width: 40px; }
+.save-confirm { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.save-face { width: 30px; height: auto; image-rendering: pixelated; flex: none; }

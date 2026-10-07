@@ -2,6 +2,7 @@
 import { T } from '../../content/text'
 import type { Avatar } from '../../engine/avatar'
 import { TitleScene } from './TitleScene'
+import { t } from '../../shared/i18n'
 
 export function Intro({
   hasSave,
@@ -23,14 +24,16 @@ export function Intro({
       <div className="title-stage">
         <TitleScene avatar={avatar} />
       </div>
+      {/* 스타듀밸리처럼: 새로 시작하기는 늘 새 칸, 불러오기는 칸 고르기 (2026-10-07 사용자) */}
       <div className="title-menu">
+        {/* 기록이 있으면 불러오기가 먼저 (2026-10-07 사용자) */}
         {hasSave && (
           <button className="primary wood" onClick={onContinue}>
-            {T.ui.continue}
+            {t('saves.load')}
           </button>
         )}
         <button className={hasSave ? 'wood' : 'primary wood'} onClick={onStart}>
-          {hasSave ? T.ui.restart : T.ui.start}
+          {t('saves.new')}
         </button>
       </div>
       <p className="title-notice">{T.ui.notice}</p>

@@ -1,0 +1,6417 @@
+{
+  "version": 1,
+  "connected": false,
+  "sequences": [
+    {
+      "group": "garden",
+      "id": "sow",
+      "label": "씨앗 넣기",
+      "views": {
+        "down": [
+          {
+            "file": "garden/sow-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/sow-down-0-back.png",
+              "actor": "garden/sow-down-0-actor.png",
+              "front": "garden/sow-down-0-front.png"
+            }
+          },
+          {
+            "file": "garden/sow-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/sow-down-1-back.png",
+              "actor": "garden/sow-down-1-actor.png",
+              "front": "garden/sow-down-1-front.png"
+            }
+          },
+          {
+            "file": "garden/sow-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/sow-down-2-back.png",
+              "actor": "garden/sow-down-2-actor.png",
+              "front": "garden/sow-down-2-front.png"
+            }
+          },
+          {
+            "file": "garden/sow-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/sow-down-3-back.png",
+              "actor": "garden/sow-down-3-actor.png",
+              "front": "garden/sow-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "garden/sow-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/sow-up-0-back.png",
+              "actor": "garden/sow-up-0-actor.png",
+              "front": "garden/sow-up-0-front.png"
+            }
+          },
+          {
+            "file": "garden/sow-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/sow-up-1-back.png",
+              "actor": "garden/sow-up-1-actor.png",
+              "front": "garden/sow-up-1-front.png"
+            }
+          },
+          {
+            "file": "garden/sow-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/sow-up-2-back.png",
+              "actor": "garden/sow-up-2-actor.png",
+              "front": "garden/sow-up-2-front.png"
+            }
+          },
+          {
+            "file": "garden/sow-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/sow-up-3-back.png",
+              "actor": "garden/sow-up-3-actor.png",
+              "front": "garden/sow-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "garden/sow-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/sow-left-0-back.png",
+              "actor": "garden/sow-left-0-actor.png",
+              "front": "garden/sow-left-0-front.png"
+            }
+          },
+          {
+            "file": "garden/sow-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/sow-left-1-back.png",
+              "actor": "garden/sow-left-1-actor.png",
+              "front": "garden/sow-left-1-front.png"
+            }
+          },
+          {
+            "file": "garden/sow-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/sow-left-2-back.png",
+              "actor": "garden/sow-left-2-actor.png",
+              "front": "garden/sow-left-2-front.png"
+            }
+          },
+          {
+            "file": "garden/sow-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/sow-left-3-back.png",
+              "actor": "garden/sow-left-3-actor.png",
+              "front": "garden/sow-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "garden/sow-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/sow-right-0-back.png",
+              "actor": "garden/sow-right-0-actor.png",
+              "front": "garden/sow-right-0-front.png"
+            }
+          },
+          {
+            "file": "garden/sow-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/sow-right-1-back.png",
+              "actor": "garden/sow-right-1-actor.png",
+              "front": "garden/sow-right-1-front.png"
+            }
+          },
+          {
+            "file": "garden/sow-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/sow-right-2-back.png",
+              "actor": "garden/sow-right-2-actor.png",
+              "front": "garden/sow-right-2-front.png"
+            }
+          },
+          {
+            "file": "garden/sow-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/sow-right-3-back.png",
+              "actor": "garden/sow-right-3-actor.png",
+              "front": "garden/sow-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "garden",
+      "id": "coverSoil",
+      "label": "흙 덮기",
+      "views": {
+        "down": [
+          {
+            "file": "garden/coverSoil-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/coverSoil-down-0-back.png",
+              "actor": "garden/coverSoil-down-0-actor.png",
+              "front": "garden/coverSoil-down-0-front.png"
+            }
+          },
+          {
+            "file": "garden/coverSoil-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/coverSoil-down-1-back.png",
+              "actor": "garden/coverSoil-down-1-actor.png",
+              "front": "garden/coverSoil-down-1-front.png"
+            }
+          },
+          {
+            "file": "garden/coverSoil-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/coverSoil-down-2-back.png",
+              "actor": "garden/coverSoil-down-2-actor.png",
+              "front": "garden/coverSoil-down-2-front.png"
+            }
+          },
+          {
+            "file": "garden/coverSoil-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/coverSoil-down-3-back.png",
+              "actor": "garden/coverSoil-down-3-actor.png",
+              "front": "garden/coverSoil-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "garden/coverSoil-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/coverSoil-up-0-back.png",
+              "actor": "garden/coverSoil-up-0-actor.png",
+              "front": "garden/coverSoil-up-0-front.png"
+            }
+          },
+          {
+            "file": "garden/coverSoil-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/coverSoil-up-1-back.png",
+              "actor": "garden/coverSoil-up-1-actor.png",
+              "front": "garden/coverSoil-up-1-front.png"
+            }
+          },
+          {
+            "file": "garden/coverSoil-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/coverSoil-up-2-back.png",
+              "actor": "garden/coverSoil-up-2-actor.png",
+              "front": "garden/coverSoil-up-2-front.png"
+            }
+          },
+          {
+            "file": "garden/coverSoil-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/coverSoil-up-3-back.png",
+              "actor": "garden/coverSoil-up-3-actor.png",
+              "front": "garden/coverSoil-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "garden/coverSoil-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/coverSoil-left-0-back.png",
+              "actor": "garden/coverSoil-left-0-actor.png",
+              "front": "garden/coverSoil-left-0-front.png"
+            }
+          },
+          {
+            "file": "garden/coverSoil-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/coverSoil-left-1-back.png",
+              "actor": "garden/coverSoil-left-1-actor.png",
+              "front": "garden/coverSoil-left-1-front.png"
+            }
+          },
+          {
+            "file": "garden/coverSoil-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/coverSoil-left-2-back.png",
+              "actor": "garden/coverSoil-left-2-actor.png",
+              "front": "garden/coverSoil-left-2-front.png"
+            }
+          },
+          {
+            "file": "garden/coverSoil-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/coverSoil-left-3-back.png",
+              "actor": "garden/coverSoil-left-3-actor.png",
+              "front": "garden/coverSoil-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "garden/coverSoil-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/coverSoil-right-0-back.png",
+              "actor": "garden/coverSoil-right-0-actor.png",
+              "front": "garden/coverSoil-right-0-front.png"
+            }
+          },
+          {
+            "file": "garden/coverSoil-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/coverSoil-right-1-back.png",
+              "actor": "garden/coverSoil-right-1-actor.png",
+              "front": "garden/coverSoil-right-1-front.png"
+            }
+          },
+          {
+            "file": "garden/coverSoil-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/coverSoil-right-2-back.png",
+              "actor": "garden/coverSoil-right-2-actor.png",
+              "front": "garden/coverSoil-right-2-front.png"
+            }
+          },
+          {
+            "file": "garden/coverSoil-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/coverSoil-right-3-back.png",
+              "actor": "garden/coverSoil-right-3-actor.png",
+              "front": "garden/coverSoil-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "garden",
+      "id": "pickHerb",
+      "label": "허브 수확",
+      "views": {
+        "down": [
+          {
+            "file": "garden/pickHerb-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickHerb-down-0-back.png",
+              "actor": "garden/pickHerb-down-0-actor.png",
+              "front": "garden/pickHerb-down-0-front.png"
+            }
+          },
+          {
+            "file": "garden/pickHerb-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickHerb-down-1-back.png",
+              "actor": "garden/pickHerb-down-1-actor.png",
+              "front": "garden/pickHerb-down-1-front.png"
+            }
+          },
+          {
+            "file": "garden/pickHerb-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickHerb-down-2-back.png",
+              "actor": "garden/pickHerb-down-2-actor.png",
+              "front": "garden/pickHerb-down-2-front.png"
+            }
+          },
+          {
+            "file": "garden/pickHerb-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickHerb-down-3-back.png",
+              "actor": "garden/pickHerb-down-3-actor.png",
+              "front": "garden/pickHerb-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "garden/pickHerb-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickHerb-up-0-back.png",
+              "actor": "garden/pickHerb-up-0-actor.png",
+              "front": "garden/pickHerb-up-0-front.png"
+            }
+          },
+          {
+            "file": "garden/pickHerb-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickHerb-up-1-back.png",
+              "actor": "garden/pickHerb-up-1-actor.png",
+              "front": "garden/pickHerb-up-1-front.png"
+            }
+          },
+          {
+            "file": "garden/pickHerb-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickHerb-up-2-back.png",
+              "actor": "garden/pickHerb-up-2-actor.png",
+              "front": "garden/pickHerb-up-2-front.png"
+            }
+          },
+          {
+            "file": "garden/pickHerb-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickHerb-up-3-back.png",
+              "actor": "garden/pickHerb-up-3-actor.png",
+              "front": "garden/pickHerb-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "garden/pickHerb-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickHerb-left-0-back.png",
+              "actor": "garden/pickHerb-left-0-actor.png",
+              "front": "garden/pickHerb-left-0-front.png"
+            }
+          },
+          {
+            "file": "garden/pickHerb-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickHerb-left-1-back.png",
+              "actor": "garden/pickHerb-left-1-actor.png",
+              "front": "garden/pickHerb-left-1-front.png"
+            }
+          },
+          {
+            "file": "garden/pickHerb-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickHerb-left-2-back.png",
+              "actor": "garden/pickHerb-left-2-actor.png",
+              "front": "garden/pickHerb-left-2-front.png"
+            }
+          },
+          {
+            "file": "garden/pickHerb-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickHerb-left-3-back.png",
+              "actor": "garden/pickHerb-left-3-actor.png",
+              "front": "garden/pickHerb-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "garden/pickHerb-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickHerb-right-0-back.png",
+              "actor": "garden/pickHerb-right-0-actor.png",
+              "front": "garden/pickHerb-right-0-front.png"
+            }
+          },
+          {
+            "file": "garden/pickHerb-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickHerb-right-1-back.png",
+              "actor": "garden/pickHerb-right-1-actor.png",
+              "front": "garden/pickHerb-right-1-front.png"
+            }
+          },
+          {
+            "file": "garden/pickHerb-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickHerb-right-2-back.png",
+              "actor": "garden/pickHerb-right-2-actor.png",
+              "front": "garden/pickHerb-right-2-front.png"
+            }
+          },
+          {
+            "file": "garden/pickHerb-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickHerb-right-3-back.png",
+              "actor": "garden/pickHerb-right-3-actor.png",
+              "front": "garden/pickHerb-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "garden",
+      "id": "pickBean",
+      "label": "콩 수확",
+      "views": {
+        "down": [
+          {
+            "file": "garden/pickBean-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickBean-down-0-back.png",
+              "actor": "garden/pickBean-down-0-actor.png",
+              "front": "garden/pickBean-down-0-front.png"
+            }
+          },
+          {
+            "file": "garden/pickBean-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickBean-down-1-back.png",
+              "actor": "garden/pickBean-down-1-actor.png",
+              "front": "garden/pickBean-down-1-front.png"
+            }
+          },
+          {
+            "file": "garden/pickBean-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickBean-down-2-back.png",
+              "actor": "garden/pickBean-down-2-actor.png",
+              "front": "garden/pickBean-down-2-front.png"
+            }
+          },
+          {
+            "file": "garden/pickBean-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickBean-down-3-back.png",
+              "actor": "garden/pickBean-down-3-actor.png",
+              "front": "garden/pickBean-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "garden/pickBean-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickBean-up-0-back.png",
+              "actor": "garden/pickBean-up-0-actor.png",
+              "front": "garden/pickBean-up-0-front.png"
+            }
+          },
+          {
+            "file": "garden/pickBean-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickBean-up-1-back.png",
+              "actor": "garden/pickBean-up-1-actor.png",
+              "front": "garden/pickBean-up-1-front.png"
+            }
+          },
+          {
+            "file": "garden/pickBean-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickBean-up-2-back.png",
+              "actor": "garden/pickBean-up-2-actor.png",
+              "front": "garden/pickBean-up-2-front.png"
+            }
+          },
+          {
+            "file": "garden/pickBean-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickBean-up-3-back.png",
+              "actor": "garden/pickBean-up-3-actor.png",
+              "front": "garden/pickBean-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "garden/pickBean-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickBean-left-0-back.png",
+              "actor": "garden/pickBean-left-0-actor.png",
+              "front": "garden/pickBean-left-0-front.png"
+            }
+          },
+          {
+            "file": "garden/pickBean-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickBean-left-1-back.png",
+              "actor": "garden/pickBean-left-1-actor.png",
+              "front": "garden/pickBean-left-1-front.png"
+            }
+          },
+          {
+            "file": "garden/pickBean-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickBean-left-2-back.png",
+              "actor": "garden/pickBean-left-2-actor.png",
+              "front": "garden/pickBean-left-2-front.png"
+            }
+          },
+          {
+            "file": "garden/pickBean-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickBean-left-3-back.png",
+              "actor": "garden/pickBean-left-3-actor.png",
+              "front": "garden/pickBean-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "garden/pickBean-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickBean-right-0-back.png",
+              "actor": "garden/pickBean-right-0-actor.png",
+              "front": "garden/pickBean-right-0-front.png"
+            }
+          },
+          {
+            "file": "garden/pickBean-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickBean-right-1-back.png",
+              "actor": "garden/pickBean-right-1-actor.png",
+              "front": "garden/pickBean-right-1-front.png"
+            }
+          },
+          {
+            "file": "garden/pickBean-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickBean-right-2-back.png",
+              "actor": "garden/pickBean-right-2-actor.png",
+              "front": "garden/pickBean-right-2-front.png"
+            }
+          },
+          {
+            "file": "garden/pickBean-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 19
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "garden/pickBean-right-3-back.png",
+              "actor": "garden/pickBean-right-3-actor.png",
+              "front": "garden/pickBean-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "copy",
+      "id": "dipInk",
+      "label": "펜에 잉크 묻히기",
+      "views": {
+        "down": [
+          {
+            "file": "copy/dipInk-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/dipInk-down-0-back.png",
+              "actor": "copy/dipInk-down-0-actor.png",
+              "front": "copy/dipInk-down-0-front.png"
+            }
+          },
+          {
+            "file": "copy/dipInk-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/dipInk-down-1-back.png",
+              "actor": "copy/dipInk-down-1-actor.png",
+              "front": "copy/dipInk-down-1-front.png"
+            }
+          },
+          {
+            "file": "copy/dipInk-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/dipInk-down-2-back.png",
+              "actor": "copy/dipInk-down-2-actor.png",
+              "front": "copy/dipInk-down-2-front.png"
+            }
+          },
+          {
+            "file": "copy/dipInk-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/dipInk-down-3-back.png",
+              "actor": "copy/dipInk-down-3-actor.png",
+              "front": "copy/dipInk-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "copy/dipInk-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/dipInk-up-0-back.png",
+              "actor": "copy/dipInk-up-0-actor.png",
+              "front": "copy/dipInk-up-0-front.png"
+            }
+          },
+          {
+            "file": "copy/dipInk-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/dipInk-up-1-back.png",
+              "actor": "copy/dipInk-up-1-actor.png",
+              "front": "copy/dipInk-up-1-front.png"
+            }
+          },
+          {
+            "file": "copy/dipInk-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/dipInk-up-2-back.png",
+              "actor": "copy/dipInk-up-2-actor.png",
+              "front": "copy/dipInk-up-2-front.png"
+            }
+          },
+          {
+            "file": "copy/dipInk-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/dipInk-up-3-back.png",
+              "actor": "copy/dipInk-up-3-actor.png",
+              "front": "copy/dipInk-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "copy/dipInk-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/dipInk-left-0-back.png",
+              "actor": "copy/dipInk-left-0-actor.png",
+              "front": "copy/dipInk-left-0-front.png"
+            }
+          },
+          {
+            "file": "copy/dipInk-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/dipInk-left-1-back.png",
+              "actor": "copy/dipInk-left-1-actor.png",
+              "front": "copy/dipInk-left-1-front.png"
+            }
+          },
+          {
+            "file": "copy/dipInk-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/dipInk-left-2-back.png",
+              "actor": "copy/dipInk-left-2-actor.png",
+              "front": "copy/dipInk-left-2-front.png"
+            }
+          },
+          {
+            "file": "copy/dipInk-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/dipInk-left-3-back.png",
+              "actor": "copy/dipInk-left-3-actor.png",
+              "front": "copy/dipInk-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "copy/dipInk-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/dipInk-right-0-back.png",
+              "actor": "copy/dipInk-right-0-actor.png",
+              "front": "copy/dipInk-right-0-front.png"
+            }
+          },
+          {
+            "file": "copy/dipInk-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/dipInk-right-1-back.png",
+              "actor": "copy/dipInk-right-1-actor.png",
+              "front": "copy/dipInk-right-1-front.png"
+            }
+          },
+          {
+            "file": "copy/dipInk-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/dipInk-right-2-back.png",
+              "actor": "copy/dipInk-right-2-actor.png",
+              "front": "copy/dipInk-right-2-front.png"
+            }
+          },
+          {
+            "file": "copy/dipInk-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/dipInk-right-3-back.png",
+              "actor": "copy/dipInk-right-3-actor.png",
+              "front": "copy/dipInk-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "copy",
+      "id": "write",
+      "label": "필사하기",
+      "views": {
+        "down": [
+          {
+            "file": "copy/write-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 280,
+            "loop": true,
+            "layers": {
+              "back": "copy/write-down-0-back.png",
+              "actor": "copy/write-down-0-actor.png",
+              "front": "copy/write-down-0-front.png"
+            }
+          },
+          {
+            "file": "copy/write-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 280,
+            "loop": true,
+            "layers": {
+              "back": "copy/write-down-1-back.png",
+              "actor": "copy/write-down-1-actor.png",
+              "front": "copy/write-down-1-front.png"
+            }
+          },
+          {
+            "file": "copy/write-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 280,
+            "loop": true,
+            "layers": {
+              "back": "copy/write-down-2-back.png",
+              "actor": "copy/write-down-2-actor.png",
+              "front": "copy/write-down-2-front.png"
+            }
+          },
+          {
+            "file": "copy/write-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 280,
+            "loop": true,
+            "layers": {
+              "back": "copy/write-down-3-back.png",
+              "actor": "copy/write-down-3-actor.png",
+              "front": "copy/write-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "copy/write-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 280,
+            "loop": true,
+            "layers": {
+              "back": "copy/write-up-0-back.png",
+              "actor": "copy/write-up-0-actor.png",
+              "front": "copy/write-up-0-front.png"
+            }
+          },
+          {
+            "file": "copy/write-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 280,
+            "loop": true,
+            "layers": {
+              "back": "copy/write-up-1-back.png",
+              "actor": "copy/write-up-1-actor.png",
+              "front": "copy/write-up-1-front.png"
+            }
+          },
+          {
+            "file": "copy/write-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 280,
+            "loop": true,
+            "layers": {
+              "back": "copy/write-up-2-back.png",
+              "actor": "copy/write-up-2-actor.png",
+              "front": "copy/write-up-2-front.png"
+            }
+          },
+          {
+            "file": "copy/write-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 280,
+            "loop": true,
+            "layers": {
+              "back": "copy/write-up-3-back.png",
+              "actor": "copy/write-up-3-actor.png",
+              "front": "copy/write-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "copy/write-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 280,
+            "loop": true,
+            "layers": {
+              "back": "copy/write-left-0-back.png",
+              "actor": "copy/write-left-0-actor.png",
+              "front": "copy/write-left-0-front.png"
+            }
+          },
+          {
+            "file": "copy/write-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 280,
+            "loop": true,
+            "layers": {
+              "back": "copy/write-left-1-back.png",
+              "actor": "copy/write-left-1-actor.png",
+              "front": "copy/write-left-1-front.png"
+            }
+          },
+          {
+            "file": "copy/write-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 280,
+            "loop": true,
+            "layers": {
+              "back": "copy/write-left-2-back.png",
+              "actor": "copy/write-left-2-actor.png",
+              "front": "copy/write-left-2-front.png"
+            }
+          },
+          {
+            "file": "copy/write-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 280,
+            "loop": true,
+            "layers": {
+              "back": "copy/write-left-3-back.png",
+              "actor": "copy/write-left-3-actor.png",
+              "front": "copy/write-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "copy/write-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 280,
+            "loop": true,
+            "layers": {
+              "back": "copy/write-right-0-back.png",
+              "actor": "copy/write-right-0-actor.png",
+              "front": "copy/write-right-0-front.png"
+            }
+          },
+          {
+            "file": "copy/write-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 280,
+            "loop": true,
+            "layers": {
+              "back": "copy/write-right-1-back.png",
+              "actor": "copy/write-right-1-actor.png",
+              "front": "copy/write-right-1-front.png"
+            }
+          },
+          {
+            "file": "copy/write-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 280,
+            "loop": true,
+            "layers": {
+              "back": "copy/write-right-2-back.png",
+              "actor": "copy/write-right-2-actor.png",
+              "front": "copy/write-right-2-front.png"
+            }
+          },
+          {
+            "file": "copy/write-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 280,
+            "loop": true,
+            "layers": {
+              "back": "copy/write-right-3-back.png",
+              "actor": "copy/write-right-3-actor.png",
+              "front": "copy/write-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "copy",
+      "id": "wipePen",
+      "label": "펜촉 닦기",
+      "views": {
+        "down": [
+          {
+            "file": "copy/wipePen-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/wipePen-down-0-back.png",
+              "actor": "copy/wipePen-down-0-actor.png",
+              "front": "copy/wipePen-down-0-front.png"
+            }
+          },
+          {
+            "file": "copy/wipePen-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/wipePen-down-1-back.png",
+              "actor": "copy/wipePen-down-1-actor.png",
+              "front": "copy/wipePen-down-1-front.png"
+            }
+          },
+          {
+            "file": "copy/wipePen-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/wipePen-down-2-back.png",
+              "actor": "copy/wipePen-down-2-actor.png",
+              "front": "copy/wipePen-down-2-front.png"
+            }
+          },
+          {
+            "file": "copy/wipePen-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/wipePen-down-3-back.png",
+              "actor": "copy/wipePen-down-3-actor.png",
+              "front": "copy/wipePen-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "copy/wipePen-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/wipePen-up-0-back.png",
+              "actor": "copy/wipePen-up-0-actor.png",
+              "front": "copy/wipePen-up-0-front.png"
+            }
+          },
+          {
+            "file": "copy/wipePen-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/wipePen-up-1-back.png",
+              "actor": "copy/wipePen-up-1-actor.png",
+              "front": "copy/wipePen-up-1-front.png"
+            }
+          },
+          {
+            "file": "copy/wipePen-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/wipePen-up-2-back.png",
+              "actor": "copy/wipePen-up-2-actor.png",
+              "front": "copy/wipePen-up-2-front.png"
+            }
+          },
+          {
+            "file": "copy/wipePen-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/wipePen-up-3-back.png",
+              "actor": "copy/wipePen-up-3-actor.png",
+              "front": "copy/wipePen-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "copy/wipePen-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/wipePen-left-0-back.png",
+              "actor": "copy/wipePen-left-0-actor.png",
+              "front": "copy/wipePen-left-0-front.png"
+            }
+          },
+          {
+            "file": "copy/wipePen-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/wipePen-left-1-back.png",
+              "actor": "copy/wipePen-left-1-actor.png",
+              "front": "copy/wipePen-left-1-front.png"
+            }
+          },
+          {
+            "file": "copy/wipePen-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/wipePen-left-2-back.png",
+              "actor": "copy/wipePen-left-2-actor.png",
+              "front": "copy/wipePen-left-2-front.png"
+            }
+          },
+          {
+            "file": "copy/wipePen-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/wipePen-left-3-back.png",
+              "actor": "copy/wipePen-left-3-actor.png",
+              "front": "copy/wipePen-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "copy/wipePen-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/wipePen-right-0-back.png",
+              "actor": "copy/wipePen-right-0-actor.png",
+              "front": "copy/wipePen-right-0-front.png"
+            }
+          },
+          {
+            "file": "copy/wipePen-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/wipePen-right-1-back.png",
+              "actor": "copy/wipePen-right-1-actor.png",
+              "front": "copy/wipePen-right-1-front.png"
+            }
+          },
+          {
+            "file": "copy/wipePen-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/wipePen-right-2-back.png",
+              "actor": "copy/wipePen-right-2-actor.png",
+              "front": "copy/wipePen-right-2-front.png"
+            }
+          },
+          {
+            "file": "copy/wipePen-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/wipePen-right-3-back.png",
+              "actor": "copy/wipePen-right-3-actor.png",
+              "front": "copy/wipePen-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "copy",
+      "id": "movePaper",
+      "label": "쓴 종이 옮기기",
+      "views": {
+        "down": [
+          {
+            "file": "copy/movePaper-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/movePaper-down-0-back.png",
+              "actor": "copy/movePaper-down-0-actor.png",
+              "front": "copy/movePaper-down-0-front.png"
+            }
+          },
+          {
+            "file": "copy/movePaper-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/movePaper-down-1-back.png",
+              "actor": "copy/movePaper-down-1-actor.png",
+              "front": "copy/movePaper-down-1-front.png"
+            }
+          },
+          {
+            "file": "copy/movePaper-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/movePaper-down-2-back.png",
+              "actor": "copy/movePaper-down-2-actor.png",
+              "front": "copy/movePaper-down-2-front.png"
+            }
+          },
+          {
+            "file": "copy/movePaper-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/movePaper-down-3-back.png",
+              "actor": "copy/movePaper-down-3-actor.png",
+              "front": "copy/movePaper-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "copy/movePaper-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/movePaper-up-0-back.png",
+              "actor": "copy/movePaper-up-0-actor.png",
+              "front": "copy/movePaper-up-0-front.png"
+            }
+          },
+          {
+            "file": "copy/movePaper-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/movePaper-up-1-back.png",
+              "actor": "copy/movePaper-up-1-actor.png",
+              "front": "copy/movePaper-up-1-front.png"
+            }
+          },
+          {
+            "file": "copy/movePaper-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/movePaper-up-2-back.png",
+              "actor": "copy/movePaper-up-2-actor.png",
+              "front": "copy/movePaper-up-2-front.png"
+            }
+          },
+          {
+            "file": "copy/movePaper-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/movePaper-up-3-back.png",
+              "actor": "copy/movePaper-up-3-actor.png",
+              "front": "copy/movePaper-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "copy/movePaper-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/movePaper-left-0-back.png",
+              "actor": "copy/movePaper-left-0-actor.png",
+              "front": "copy/movePaper-left-0-front.png"
+            }
+          },
+          {
+            "file": "copy/movePaper-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/movePaper-left-1-back.png",
+              "actor": "copy/movePaper-left-1-actor.png",
+              "front": "copy/movePaper-left-1-front.png"
+            }
+          },
+          {
+            "file": "copy/movePaper-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/movePaper-left-2-back.png",
+              "actor": "copy/movePaper-left-2-actor.png",
+              "front": "copy/movePaper-left-2-front.png"
+            }
+          },
+          {
+            "file": "copy/movePaper-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/movePaper-left-3-back.png",
+              "actor": "copy/movePaper-left-3-actor.png",
+              "front": "copy/movePaper-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "copy/movePaper-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/movePaper-right-0-back.png",
+              "actor": "copy/movePaper-right-0-actor.png",
+              "front": "copy/movePaper-right-0-front.png"
+            }
+          },
+          {
+            "file": "copy/movePaper-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/movePaper-right-1-back.png",
+              "actor": "copy/movePaper-right-1-actor.png",
+              "front": "copy/movePaper-right-1-front.png"
+            }
+          },
+          {
+            "file": "copy/movePaper-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/movePaper-right-2-back.png",
+              "actor": "copy/movePaper-right-2-actor.png",
+              "front": "copy/movePaper-right-2-front.png"
+            }
+          },
+          {
+            "file": "copy/movePaper-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "copy/movePaper-right-3-back.png",
+              "actor": "copy/movePaper-right-3-actor.png",
+              "front": "copy/movePaper-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "job",
+      "id": "hammer",
+      "label": "망치질",
+      "views": {
+        "down": [
+          {
+            "file": "job/hammer-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 180,
+            "loop": true,
+            "layers": {
+              "back": "job/hammer-down-0-back.png",
+              "actor": "job/hammer-down-0-actor.png",
+              "front": "job/hammer-down-0-front.png"
+            }
+          },
+          {
+            "file": "job/hammer-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 180,
+            "loop": true,
+            "layers": {
+              "back": "job/hammer-down-1-back.png",
+              "actor": "job/hammer-down-1-actor.png",
+              "front": "job/hammer-down-1-front.png"
+            }
+          },
+          {
+            "file": "job/hammer-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 180,
+            "loop": true,
+            "layers": {
+              "back": "job/hammer-down-2-back.png",
+              "actor": "job/hammer-down-2-actor.png",
+              "front": "job/hammer-down-2-front.png"
+            }
+          },
+          {
+            "file": "job/hammer-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 180,
+            "loop": true,
+            "layers": {
+              "back": "job/hammer-down-3-back.png",
+              "actor": "job/hammer-down-3-actor.png",
+              "front": "job/hammer-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "job/hammer-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 180,
+            "loop": true,
+            "layers": {
+              "back": "job/hammer-up-0-back.png",
+              "actor": "job/hammer-up-0-actor.png",
+              "front": "job/hammer-up-0-front.png"
+            }
+          },
+          {
+            "file": "job/hammer-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 180,
+            "loop": true,
+            "layers": {
+              "back": "job/hammer-up-1-back.png",
+              "actor": "job/hammer-up-1-actor.png",
+              "front": "job/hammer-up-1-front.png"
+            }
+          },
+          {
+            "file": "job/hammer-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 180,
+            "loop": true,
+            "layers": {
+              "back": "job/hammer-up-2-back.png",
+              "actor": "job/hammer-up-2-actor.png",
+              "front": "job/hammer-up-2-front.png"
+            }
+          },
+          {
+            "file": "job/hammer-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 180,
+            "loop": true,
+            "layers": {
+              "back": "job/hammer-up-3-back.png",
+              "actor": "job/hammer-up-3-actor.png",
+              "front": "job/hammer-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "job/hammer-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 180,
+            "loop": true,
+            "layers": {
+              "back": "job/hammer-left-0-back.png",
+              "actor": "job/hammer-left-0-actor.png",
+              "front": "job/hammer-left-0-front.png"
+            }
+          },
+          {
+            "file": "job/hammer-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 180,
+            "loop": true,
+            "layers": {
+              "back": "job/hammer-left-1-back.png",
+              "actor": "job/hammer-left-1-actor.png",
+              "front": "job/hammer-left-1-front.png"
+            }
+          },
+          {
+            "file": "job/hammer-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 180,
+            "loop": true,
+            "layers": {
+              "back": "job/hammer-left-2-back.png",
+              "actor": "job/hammer-left-2-actor.png",
+              "front": "job/hammer-left-2-front.png"
+            }
+          },
+          {
+            "file": "job/hammer-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 180,
+            "loop": true,
+            "layers": {
+              "back": "job/hammer-left-3-back.png",
+              "actor": "job/hammer-left-3-actor.png",
+              "front": "job/hammer-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "job/hammer-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 180,
+            "loop": true,
+            "layers": {
+              "back": "job/hammer-right-0-back.png",
+              "actor": "job/hammer-right-0-actor.png",
+              "front": "job/hammer-right-0-front.png"
+            }
+          },
+          {
+            "file": "job/hammer-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 180,
+            "loop": true,
+            "layers": {
+              "back": "job/hammer-right-1-back.png",
+              "actor": "job/hammer-right-1-actor.png",
+              "front": "job/hammer-right-1-front.png"
+            }
+          },
+          {
+            "file": "job/hammer-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 180,
+            "loop": true,
+            "layers": {
+              "back": "job/hammer-right-2-back.png",
+              "actor": "job/hammer-right-2-actor.png",
+              "front": "job/hammer-right-2-front.png"
+            }
+          },
+          {
+            "file": "job/hammer-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 180,
+            "loop": true,
+            "layers": {
+              "back": "job/hammer-right-3-back.png",
+              "actor": "job/hammer-right-3-actor.png",
+              "front": "job/hammer-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "job",
+      "id": "mendNet",
+      "label": "그물 꿰매기",
+      "views": {
+        "down": [
+          {
+            "file": "job/mendNet-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/mendNet-down-0-back.png",
+              "actor": "job/mendNet-down-0-actor.png",
+              "front": "job/mendNet-down-0-front.png"
+            }
+          },
+          {
+            "file": "job/mendNet-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/mendNet-down-1-back.png",
+              "actor": "job/mendNet-down-1-actor.png",
+              "front": "job/mendNet-down-1-front.png"
+            }
+          },
+          {
+            "file": "job/mendNet-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/mendNet-down-2-back.png",
+              "actor": "job/mendNet-down-2-actor.png",
+              "front": "job/mendNet-down-2-front.png"
+            }
+          },
+          {
+            "file": "job/mendNet-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/mendNet-down-3-back.png",
+              "actor": "job/mendNet-down-3-actor.png",
+              "front": "job/mendNet-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "job/mendNet-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/mendNet-up-0-back.png",
+              "actor": "job/mendNet-up-0-actor.png",
+              "front": "job/mendNet-up-0-front.png"
+            }
+          },
+          {
+            "file": "job/mendNet-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/mendNet-up-1-back.png",
+              "actor": "job/mendNet-up-1-actor.png",
+              "front": "job/mendNet-up-1-front.png"
+            }
+          },
+          {
+            "file": "job/mendNet-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/mendNet-up-2-back.png",
+              "actor": "job/mendNet-up-2-actor.png",
+              "front": "job/mendNet-up-2-front.png"
+            }
+          },
+          {
+            "file": "job/mendNet-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/mendNet-up-3-back.png",
+              "actor": "job/mendNet-up-3-actor.png",
+              "front": "job/mendNet-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "job/mendNet-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/mendNet-left-0-back.png",
+              "actor": "job/mendNet-left-0-actor.png",
+              "front": "job/mendNet-left-0-front.png"
+            }
+          },
+          {
+            "file": "job/mendNet-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/mendNet-left-1-back.png",
+              "actor": "job/mendNet-left-1-actor.png",
+              "front": "job/mendNet-left-1-front.png"
+            }
+          },
+          {
+            "file": "job/mendNet-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/mendNet-left-2-back.png",
+              "actor": "job/mendNet-left-2-actor.png",
+              "front": "job/mendNet-left-2-front.png"
+            }
+          },
+          {
+            "file": "job/mendNet-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/mendNet-left-3-back.png",
+              "actor": "job/mendNet-left-3-actor.png",
+              "front": "job/mendNet-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "job/mendNet-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/mendNet-right-0-back.png",
+              "actor": "job/mendNet-right-0-actor.png",
+              "front": "job/mendNet-right-0-front.png"
+            }
+          },
+          {
+            "file": "job/mendNet-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/mendNet-right-1-back.png",
+              "actor": "job/mendNet-right-1-actor.png",
+              "front": "job/mendNet-right-1-front.png"
+            }
+          },
+          {
+            "file": "job/mendNet-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/mendNet-right-2-back.png",
+              "actor": "job/mendNet-right-2-actor.png",
+              "front": "job/mendNet-right-2-front.png"
+            }
+          },
+          {
+            "file": "job/mendNet-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/mendNet-right-3-back.png",
+              "actor": "job/mendNet-right-3-actor.png",
+              "front": "job/mendNet-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "job",
+      "id": "sortWool",
+      "label": "양털 분류",
+      "views": {
+        "down": [
+          {
+            "file": "job/sortWool-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/sortWool-down-0-back.png",
+              "actor": "job/sortWool-down-0-actor.png",
+              "front": "job/sortWool-down-0-front.png"
+            }
+          },
+          {
+            "file": "job/sortWool-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/sortWool-down-1-back.png",
+              "actor": "job/sortWool-down-1-actor.png",
+              "front": "job/sortWool-down-1-front.png"
+            }
+          },
+          {
+            "file": "job/sortWool-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/sortWool-down-2-back.png",
+              "actor": "job/sortWool-down-2-actor.png",
+              "front": "job/sortWool-down-2-front.png"
+            }
+          },
+          {
+            "file": "job/sortWool-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/sortWool-down-3-back.png",
+              "actor": "job/sortWool-down-3-actor.png",
+              "front": "job/sortWool-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "job/sortWool-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/sortWool-up-0-back.png",
+              "actor": "job/sortWool-up-0-actor.png",
+              "front": "job/sortWool-up-0-front.png"
+            }
+          },
+          {
+            "file": "job/sortWool-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/sortWool-up-1-back.png",
+              "actor": "job/sortWool-up-1-actor.png",
+              "front": "job/sortWool-up-1-front.png"
+            }
+          },
+          {
+            "file": "job/sortWool-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/sortWool-up-2-back.png",
+              "actor": "job/sortWool-up-2-actor.png",
+              "front": "job/sortWool-up-2-front.png"
+            }
+          },
+          {
+            "file": "job/sortWool-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/sortWool-up-3-back.png",
+              "actor": "job/sortWool-up-3-actor.png",
+              "front": "job/sortWool-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "job/sortWool-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/sortWool-left-0-back.png",
+              "actor": "job/sortWool-left-0-actor.png",
+              "front": "job/sortWool-left-0-front.png"
+            }
+          },
+          {
+            "file": "job/sortWool-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/sortWool-left-1-back.png",
+              "actor": "job/sortWool-left-1-actor.png",
+              "front": "job/sortWool-left-1-front.png"
+            }
+          },
+          {
+            "file": "job/sortWool-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/sortWool-left-2-back.png",
+              "actor": "job/sortWool-left-2-actor.png",
+              "front": "job/sortWool-left-2-front.png"
+            }
+          },
+          {
+            "file": "job/sortWool-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/sortWool-left-3-back.png",
+              "actor": "job/sortWool-left-3-actor.png",
+              "front": "job/sortWool-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "job/sortWool-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/sortWool-right-0-back.png",
+              "actor": "job/sortWool-right-0-actor.png",
+              "front": "job/sortWool-right-0-front.png"
+            }
+          },
+          {
+            "file": "job/sortWool-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/sortWool-right-1-back.png",
+              "actor": "job/sortWool-right-1-actor.png",
+              "front": "job/sortWool-right-1-front.png"
+            }
+          },
+          {
+            "file": "job/sortWool-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/sortWool-right-2-back.png",
+              "actor": "job/sortWool-right-2-actor.png",
+              "front": "job/sortWool-right-2-front.png"
+            }
+          },
+          {
+            "file": "job/sortWool-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "job/sortWool-right-3-back.png",
+              "actor": "job/sortWool-right-3-actor.png",
+              "front": "job/sortWool-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "letter",
+      "id": "foldLetter",
+      "label": "편지 접기",
+      "views": {
+        "down": [
+          {
+            "file": "letter/foldLetter-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/foldLetter-down-0-back.png",
+              "actor": "letter/foldLetter-down-0-actor.png",
+              "front": "letter/foldLetter-down-0-front.png"
+            }
+          },
+          {
+            "file": "letter/foldLetter-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/foldLetter-down-1-back.png",
+              "actor": "letter/foldLetter-down-1-actor.png",
+              "front": "letter/foldLetter-down-1-front.png"
+            }
+          },
+          {
+            "file": "letter/foldLetter-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/foldLetter-down-2-back.png",
+              "actor": "letter/foldLetter-down-2-actor.png",
+              "front": "letter/foldLetter-down-2-front.png"
+            }
+          },
+          {
+            "file": "letter/foldLetter-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/foldLetter-down-3-back.png",
+              "actor": "letter/foldLetter-down-3-actor.png",
+              "front": "letter/foldLetter-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "letter/foldLetter-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/foldLetter-up-0-back.png",
+              "actor": "letter/foldLetter-up-0-actor.png",
+              "front": "letter/foldLetter-up-0-front.png"
+            }
+          },
+          {
+            "file": "letter/foldLetter-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/foldLetter-up-1-back.png",
+              "actor": "letter/foldLetter-up-1-actor.png",
+              "front": "letter/foldLetter-up-1-front.png"
+            }
+          },
+          {
+            "file": "letter/foldLetter-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/foldLetter-up-2-back.png",
+              "actor": "letter/foldLetter-up-2-actor.png",
+              "front": "letter/foldLetter-up-2-front.png"
+            }
+          },
+          {
+            "file": "letter/foldLetter-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/foldLetter-up-3-back.png",
+              "actor": "letter/foldLetter-up-3-actor.png",
+              "front": "letter/foldLetter-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "letter/foldLetter-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/foldLetter-left-0-back.png",
+              "actor": "letter/foldLetter-left-0-actor.png",
+              "front": "letter/foldLetter-left-0-front.png"
+            }
+          },
+          {
+            "file": "letter/foldLetter-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/foldLetter-left-1-back.png",
+              "actor": "letter/foldLetter-left-1-actor.png",
+              "front": "letter/foldLetter-left-1-front.png"
+            }
+          },
+          {
+            "file": "letter/foldLetter-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/foldLetter-left-2-back.png",
+              "actor": "letter/foldLetter-left-2-actor.png",
+              "front": "letter/foldLetter-left-2-front.png"
+            }
+          },
+          {
+            "file": "letter/foldLetter-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/foldLetter-left-3-back.png",
+              "actor": "letter/foldLetter-left-3-actor.png",
+              "front": "letter/foldLetter-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "letter/foldLetter-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/foldLetter-right-0-back.png",
+              "actor": "letter/foldLetter-right-0-actor.png",
+              "front": "letter/foldLetter-right-0-front.png"
+            }
+          },
+          {
+            "file": "letter/foldLetter-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/foldLetter-right-1-back.png",
+              "actor": "letter/foldLetter-right-1-actor.png",
+              "front": "letter/foldLetter-right-1-front.png"
+            }
+          },
+          {
+            "file": "letter/foldLetter-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/foldLetter-right-2-back.png",
+              "actor": "letter/foldLetter-right-2-actor.png",
+              "front": "letter/foldLetter-right-2-front.png"
+            }
+          },
+          {
+            "file": "letter/foldLetter-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/foldLetter-right-3-back.png",
+              "actor": "letter/foldLetter-right-3-actor.png",
+              "front": "letter/foldLetter-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "letter",
+      "id": "insertLetter",
+      "label": "봉투에 넣기",
+      "views": {
+        "down": [
+          {
+            "file": "letter/insertLetter-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/insertLetter-down-0-back.png",
+              "actor": "letter/insertLetter-down-0-actor.png",
+              "front": "letter/insertLetter-down-0-front.png"
+            }
+          },
+          {
+            "file": "letter/insertLetter-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/insertLetter-down-1-back.png",
+              "actor": "letter/insertLetter-down-1-actor.png",
+              "front": "letter/insertLetter-down-1-front.png"
+            }
+          },
+          {
+            "file": "letter/insertLetter-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/insertLetter-down-2-back.png",
+              "actor": "letter/insertLetter-down-2-actor.png",
+              "front": "letter/insertLetter-down-2-front.png"
+            }
+          },
+          {
+            "file": "letter/insertLetter-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/insertLetter-down-3-back.png",
+              "actor": "letter/insertLetter-down-3-actor.png",
+              "front": "letter/insertLetter-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "letter/insertLetter-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/insertLetter-up-0-back.png",
+              "actor": "letter/insertLetter-up-0-actor.png",
+              "front": "letter/insertLetter-up-0-front.png"
+            }
+          },
+          {
+            "file": "letter/insertLetter-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/insertLetter-up-1-back.png",
+              "actor": "letter/insertLetter-up-1-actor.png",
+              "front": "letter/insertLetter-up-1-front.png"
+            }
+          },
+          {
+            "file": "letter/insertLetter-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/insertLetter-up-2-back.png",
+              "actor": "letter/insertLetter-up-2-actor.png",
+              "front": "letter/insertLetter-up-2-front.png"
+            }
+          },
+          {
+            "file": "letter/insertLetter-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/insertLetter-up-3-back.png",
+              "actor": "letter/insertLetter-up-3-actor.png",
+              "front": "letter/insertLetter-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "letter/insertLetter-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/insertLetter-left-0-back.png",
+              "actor": "letter/insertLetter-left-0-actor.png",
+              "front": "letter/insertLetter-left-0-front.png"
+            }
+          },
+          {
+            "file": "letter/insertLetter-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/insertLetter-left-1-back.png",
+              "actor": "letter/insertLetter-left-1-actor.png",
+              "front": "letter/insertLetter-left-1-front.png"
+            }
+          },
+          {
+            "file": "letter/insertLetter-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/insertLetter-left-2-back.png",
+              "actor": "letter/insertLetter-left-2-actor.png",
+              "front": "letter/insertLetter-left-2-front.png"
+            }
+          },
+          {
+            "file": "letter/insertLetter-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/insertLetter-left-3-back.png",
+              "actor": "letter/insertLetter-left-3-actor.png",
+              "front": "letter/insertLetter-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "letter/insertLetter-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/insertLetter-right-0-back.png",
+              "actor": "letter/insertLetter-right-0-actor.png",
+              "front": "letter/insertLetter-right-0-front.png"
+            }
+          },
+          {
+            "file": "letter/insertLetter-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/insertLetter-right-1-back.png",
+              "actor": "letter/insertLetter-right-1-actor.png",
+              "front": "letter/insertLetter-right-1-front.png"
+            }
+          },
+          {
+            "file": "letter/insertLetter-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/insertLetter-right-2-back.png",
+              "actor": "letter/insertLetter-right-2-actor.png",
+              "front": "letter/insertLetter-right-2-front.png"
+            }
+          },
+          {
+            "file": "letter/insertLetter-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/insertLetter-right-3-back.png",
+              "actor": "letter/insertLetter-right-3-actor.png",
+              "front": "letter/insertLetter-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "letter",
+      "id": "openLetter",
+      "label": "봉투 열어 펼치기",
+      "views": {
+        "down": [
+          {
+            "file": "letter/openLetter-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/openLetter-down-0-back.png",
+              "actor": "letter/openLetter-down-0-actor.png",
+              "front": "letter/openLetter-down-0-front.png"
+            }
+          },
+          {
+            "file": "letter/openLetter-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/openLetter-down-1-back.png",
+              "actor": "letter/openLetter-down-1-actor.png",
+              "front": "letter/openLetter-down-1-front.png"
+            }
+          },
+          {
+            "file": "letter/openLetter-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/openLetter-down-2-back.png",
+              "actor": "letter/openLetter-down-2-actor.png",
+              "front": "letter/openLetter-down-2-front.png"
+            }
+          },
+          {
+            "file": "letter/openLetter-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/openLetter-down-3-back.png",
+              "actor": "letter/openLetter-down-3-actor.png",
+              "front": "letter/openLetter-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "letter/openLetter-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/openLetter-up-0-back.png",
+              "actor": "letter/openLetter-up-0-actor.png",
+              "front": "letter/openLetter-up-0-front.png"
+            }
+          },
+          {
+            "file": "letter/openLetter-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/openLetter-up-1-back.png",
+              "actor": "letter/openLetter-up-1-actor.png",
+              "front": "letter/openLetter-up-1-front.png"
+            }
+          },
+          {
+            "file": "letter/openLetter-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/openLetter-up-2-back.png",
+              "actor": "letter/openLetter-up-2-actor.png",
+              "front": "letter/openLetter-up-2-front.png"
+            }
+          },
+          {
+            "file": "letter/openLetter-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/openLetter-up-3-back.png",
+              "actor": "letter/openLetter-up-3-actor.png",
+              "front": "letter/openLetter-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "letter/openLetter-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/openLetter-left-0-back.png",
+              "actor": "letter/openLetter-left-0-actor.png",
+              "front": "letter/openLetter-left-0-front.png"
+            }
+          },
+          {
+            "file": "letter/openLetter-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/openLetter-left-1-back.png",
+              "actor": "letter/openLetter-left-1-actor.png",
+              "front": "letter/openLetter-left-1-front.png"
+            }
+          },
+          {
+            "file": "letter/openLetter-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/openLetter-left-2-back.png",
+              "actor": "letter/openLetter-left-2-actor.png",
+              "front": "letter/openLetter-left-2-front.png"
+            }
+          },
+          {
+            "file": "letter/openLetter-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/openLetter-left-3-back.png",
+              "actor": "letter/openLetter-left-3-actor.png",
+              "front": "letter/openLetter-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "letter/openLetter-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/openLetter-right-0-back.png",
+              "actor": "letter/openLetter-right-0-actor.png",
+              "front": "letter/openLetter-right-0-front.png"
+            }
+          },
+          {
+            "file": "letter/openLetter-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/openLetter-right-1-back.png",
+              "actor": "letter/openLetter-right-1-actor.png",
+              "front": "letter/openLetter-right-1-front.png"
+            }
+          },
+          {
+            "file": "letter/openLetter-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/openLetter-right-2-back.png",
+              "actor": "letter/openLetter-right-2-actor.png",
+              "front": "letter/openLetter-right-2-front.png"
+            }
+          },
+          {
+            "file": "letter/openLetter-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 17
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "letter/openLetter-right-3-back.png",
+              "actor": "letter/openLetter-right-3-actor.png",
+              "front": "letter/openLetter-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "doors",
+      "id": "home-open",
+      "label": "입주 주택 · 문 열기",
+      "views": {
+        "down": [
+          {
+            "file": "doors/home-open-down-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/home-open-down-0-back.png",
+              "front": "doors/home-open-down-0-front.png"
+            }
+          },
+          {
+            "file": "doors/home-open-down-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/home-open-down-1-back.png",
+              "front": "doors/home-open-down-1-front.png"
+            }
+          },
+          {
+            "file": "doors/home-open-down-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/home-open-down-2-back.png",
+              "front": "doors/home-open-down-2-front.png"
+            }
+          },
+          {
+            "file": "doors/home-open-down-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/home-open-down-3-back.png",
+              "front": "doors/home-open-down-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "doors/home-open-left-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/home-open-left-0-back.png",
+              "front": "doors/home-open-left-0-front.png"
+            }
+          },
+          {
+            "file": "doors/home-open-left-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/home-open-left-1-back.png",
+              "front": "doors/home-open-left-1-front.png"
+            }
+          },
+          {
+            "file": "doors/home-open-left-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/home-open-left-2-back.png",
+              "front": "doors/home-open-left-2-front.png"
+            }
+          },
+          {
+            "file": "doors/home-open-left-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/home-open-left-3-back.png",
+              "front": "doors/home-open-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "doors/home-open-right-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/home-open-right-0-back.png",
+              "front": "doors/home-open-right-0-front.png"
+            }
+          },
+          {
+            "file": "doors/home-open-right-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/home-open-right-1-back.png",
+              "front": "doors/home-open-right-1-front.png"
+            }
+          },
+          {
+            "file": "doors/home-open-right-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/home-open-right-2-back.png",
+              "front": "doors/home-open-right-2-front.png"
+            }
+          },
+          {
+            "file": "doors/home-open-right-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/home-open-right-3-back.png",
+              "front": "doors/home-open-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "doors",
+      "id": "home-close",
+      "label": "입주 주택 · 문 닫기",
+      "views": {
+        "down": [
+          {
+            "file": "doors/home-close-down-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/home-close-down-0-back.png",
+              "front": "doors/home-close-down-0-front.png"
+            }
+          },
+          {
+            "file": "doors/home-close-down-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/home-close-down-1-back.png",
+              "front": "doors/home-close-down-1-front.png"
+            }
+          },
+          {
+            "file": "doors/home-close-down-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/home-close-down-2-back.png",
+              "front": "doors/home-close-down-2-front.png"
+            }
+          },
+          {
+            "file": "doors/home-close-down-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/home-close-down-3-back.png",
+              "front": "doors/home-close-down-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "doors/home-close-left-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/home-close-left-0-back.png",
+              "front": "doors/home-close-left-0-front.png"
+            }
+          },
+          {
+            "file": "doors/home-close-left-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/home-close-left-1-back.png",
+              "front": "doors/home-close-left-1-front.png"
+            }
+          },
+          {
+            "file": "doors/home-close-left-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/home-close-left-2-back.png",
+              "front": "doors/home-close-left-2-front.png"
+            }
+          },
+          {
+            "file": "doors/home-close-left-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/home-close-left-3-back.png",
+              "front": "doors/home-close-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "doors/home-close-right-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/home-close-right-0-back.png",
+              "front": "doors/home-close-right-0-front.png"
+            }
+          },
+          {
+            "file": "doors/home-close-right-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/home-close-right-1-back.png",
+              "front": "doors/home-close-right-1-front.png"
+            }
+          },
+          {
+            "file": "doors/home-close-right-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/home-close-right-2-back.png",
+              "front": "doors/home-close-right-2-front.png"
+            }
+          },
+          {
+            "file": "doors/home-close-right-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/home-close-right-3-back.png",
+              "front": "doors/home-close-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "doors",
+      "id": "guest-open",
+      "label": "손님집 · 문 열기",
+      "views": {
+        "down": [
+          {
+            "file": "doors/guest-open-down-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/guest-open-down-0-back.png",
+              "front": "doors/guest-open-down-0-front.png"
+            }
+          },
+          {
+            "file": "doors/guest-open-down-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/guest-open-down-1-back.png",
+              "front": "doors/guest-open-down-1-front.png"
+            }
+          },
+          {
+            "file": "doors/guest-open-down-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/guest-open-down-2-back.png",
+              "front": "doors/guest-open-down-2-front.png"
+            }
+          },
+          {
+            "file": "doors/guest-open-down-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/guest-open-down-3-back.png",
+              "front": "doors/guest-open-down-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "doors/guest-open-left-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/guest-open-left-0-back.png",
+              "front": "doors/guest-open-left-0-front.png"
+            }
+          },
+          {
+            "file": "doors/guest-open-left-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/guest-open-left-1-back.png",
+              "front": "doors/guest-open-left-1-front.png"
+            }
+          },
+          {
+            "file": "doors/guest-open-left-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/guest-open-left-2-back.png",
+              "front": "doors/guest-open-left-2-front.png"
+            }
+          },
+          {
+            "file": "doors/guest-open-left-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/guest-open-left-3-back.png",
+              "front": "doors/guest-open-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "doors/guest-open-right-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/guest-open-right-0-back.png",
+              "front": "doors/guest-open-right-0-front.png"
+            }
+          },
+          {
+            "file": "doors/guest-open-right-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/guest-open-right-1-back.png",
+              "front": "doors/guest-open-right-1-front.png"
+            }
+          },
+          {
+            "file": "doors/guest-open-right-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/guest-open-right-2-back.png",
+              "front": "doors/guest-open-right-2-front.png"
+            }
+          },
+          {
+            "file": "doors/guest-open-right-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/guest-open-right-3-back.png",
+              "front": "doors/guest-open-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "doors",
+      "id": "guest-close",
+      "label": "손님집 · 문 닫기",
+      "views": {
+        "down": [
+          {
+            "file": "doors/guest-close-down-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/guest-close-down-0-back.png",
+              "front": "doors/guest-close-down-0-front.png"
+            }
+          },
+          {
+            "file": "doors/guest-close-down-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/guest-close-down-1-back.png",
+              "front": "doors/guest-close-down-1-front.png"
+            }
+          },
+          {
+            "file": "doors/guest-close-down-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/guest-close-down-2-back.png",
+              "front": "doors/guest-close-down-2-front.png"
+            }
+          },
+          {
+            "file": "doors/guest-close-down-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/guest-close-down-3-back.png",
+              "front": "doors/guest-close-down-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "doors/guest-close-left-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/guest-close-left-0-back.png",
+              "front": "doors/guest-close-left-0-front.png"
+            }
+          },
+          {
+            "file": "doors/guest-close-left-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/guest-close-left-1-back.png",
+              "front": "doors/guest-close-left-1-front.png"
+            }
+          },
+          {
+            "file": "doors/guest-close-left-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/guest-close-left-2-back.png",
+              "front": "doors/guest-close-left-2-front.png"
+            }
+          },
+          {
+            "file": "doors/guest-close-left-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/guest-close-left-3-back.png",
+              "front": "doors/guest-close-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "doors/guest-close-right-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/guest-close-right-0-back.png",
+              "front": "doors/guest-close-right-0-front.png"
+            }
+          },
+          {
+            "file": "doors/guest-close-right-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/guest-close-right-1-back.png",
+              "front": "doors/guest-close-right-1-front.png"
+            }
+          },
+          {
+            "file": "doors/guest-close-right-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/guest-close-right-2-back.png",
+              "front": "doors/guest-close-right-2-front.png"
+            }
+          },
+          {
+            "file": "doors/guest-close-right-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/guest-close-right-3-back.png",
+              "front": "doors/guest-close-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "doors",
+      "id": "weaver-open",
+      "label": "직조인의 집 겸 일터 · 문 열기",
+      "views": {
+        "down": [
+          {
+            "file": "doors/weaver-open-down-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/weaver-open-down-0-back.png",
+              "front": "doors/weaver-open-down-0-front.png"
+            }
+          },
+          {
+            "file": "doors/weaver-open-down-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/weaver-open-down-1-back.png",
+              "front": "doors/weaver-open-down-1-front.png"
+            }
+          },
+          {
+            "file": "doors/weaver-open-down-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/weaver-open-down-2-back.png",
+              "front": "doors/weaver-open-down-2-front.png"
+            }
+          },
+          {
+            "file": "doors/weaver-open-down-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/weaver-open-down-3-back.png",
+              "front": "doors/weaver-open-down-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "doors/weaver-open-left-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/weaver-open-left-0-back.png",
+              "front": "doors/weaver-open-left-0-front.png"
+            }
+          },
+          {
+            "file": "doors/weaver-open-left-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/weaver-open-left-1-back.png",
+              "front": "doors/weaver-open-left-1-front.png"
+            }
+          },
+          {
+            "file": "doors/weaver-open-left-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/weaver-open-left-2-back.png",
+              "front": "doors/weaver-open-left-2-front.png"
+            }
+          },
+          {
+            "file": "doors/weaver-open-left-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/weaver-open-left-3-back.png",
+              "front": "doors/weaver-open-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "doors/weaver-open-right-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/weaver-open-right-0-back.png",
+              "front": "doors/weaver-open-right-0-front.png"
+            }
+          },
+          {
+            "file": "doors/weaver-open-right-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/weaver-open-right-1-back.png",
+              "front": "doors/weaver-open-right-1-front.png"
+            }
+          },
+          {
+            "file": "doors/weaver-open-right-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/weaver-open-right-2-back.png",
+              "front": "doors/weaver-open-right-2-front.png"
+            }
+          },
+          {
+            "file": "doors/weaver-open-right-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/weaver-open-right-3-back.png",
+              "front": "doors/weaver-open-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "doors",
+      "id": "weaver-close",
+      "label": "직조인의 집 겸 일터 · 문 닫기",
+      "views": {
+        "down": [
+          {
+            "file": "doors/weaver-close-down-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/weaver-close-down-0-back.png",
+              "front": "doors/weaver-close-down-0-front.png"
+            }
+          },
+          {
+            "file": "doors/weaver-close-down-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/weaver-close-down-1-back.png",
+              "front": "doors/weaver-close-down-1-front.png"
+            }
+          },
+          {
+            "file": "doors/weaver-close-down-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/weaver-close-down-2-back.png",
+              "front": "doors/weaver-close-down-2-front.png"
+            }
+          },
+          {
+            "file": "doors/weaver-close-down-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/weaver-close-down-3-back.png",
+              "front": "doors/weaver-close-down-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "doors/weaver-close-left-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/weaver-close-left-0-back.png",
+              "front": "doors/weaver-close-left-0-front.png"
+            }
+          },
+          {
+            "file": "doors/weaver-close-left-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/weaver-close-left-1-back.png",
+              "front": "doors/weaver-close-left-1-front.png"
+            }
+          },
+          {
+            "file": "doors/weaver-close-left-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/weaver-close-left-2-back.png",
+              "front": "doors/weaver-close-left-2-front.png"
+            }
+          },
+          {
+            "file": "doors/weaver-close-left-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/weaver-close-left-3-back.png",
+              "front": "doors/weaver-close-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "doors/weaver-close-right-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/weaver-close-right-0-back.png",
+              "front": "doors/weaver-close-right-0-front.png"
+            }
+          },
+          {
+            "file": "doors/weaver-close-right-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/weaver-close-right-1-back.png",
+              "front": "doors/weaver-close-right-1-front.png"
+            }
+          },
+          {
+            "file": "doors/weaver-close-right-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/weaver-close-right-2-back.png",
+              "front": "doors/weaver-close-right-2-front.png"
+            }
+          },
+          {
+            "file": "doors/weaver-close-right-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/weaver-close-right-3-back.png",
+              "front": "doors/weaver-close-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "doors",
+      "id": "archive-open",
+      "label": "작은 구약 서고 · 문 열기",
+      "views": {
+        "down": [
+          {
+            "file": "doors/archive-open-down-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/archive-open-down-0-back.png",
+              "front": "doors/archive-open-down-0-front.png"
+            }
+          },
+          {
+            "file": "doors/archive-open-down-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/archive-open-down-1-back.png",
+              "front": "doors/archive-open-down-1-front.png"
+            }
+          },
+          {
+            "file": "doors/archive-open-down-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/archive-open-down-2-back.png",
+              "front": "doors/archive-open-down-2-front.png"
+            }
+          },
+          {
+            "file": "doors/archive-open-down-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/archive-open-down-3-back.png",
+              "front": "doors/archive-open-down-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "doors/archive-open-left-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/archive-open-left-0-back.png",
+              "front": "doors/archive-open-left-0-front.png"
+            }
+          },
+          {
+            "file": "doors/archive-open-left-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/archive-open-left-1-back.png",
+              "front": "doors/archive-open-left-1-front.png"
+            }
+          },
+          {
+            "file": "doors/archive-open-left-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/archive-open-left-2-back.png",
+              "front": "doors/archive-open-left-2-front.png"
+            }
+          },
+          {
+            "file": "doors/archive-open-left-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/archive-open-left-3-back.png",
+              "front": "doors/archive-open-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "doors/archive-open-right-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/archive-open-right-0-back.png",
+              "front": "doors/archive-open-right-0-front.png"
+            }
+          },
+          {
+            "file": "doors/archive-open-right-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/archive-open-right-1-back.png",
+              "front": "doors/archive-open-right-1-front.png"
+            }
+          },
+          {
+            "file": "doors/archive-open-right-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/archive-open-right-2-back.png",
+              "front": "doors/archive-open-right-2-front.png"
+            }
+          },
+          {
+            "file": "doors/archive-open-right-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/archive-open-right-3-back.png",
+              "front": "doors/archive-open-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "doors",
+      "id": "archive-close",
+      "label": "작은 구약 서고 · 문 닫기",
+      "views": {
+        "down": [
+          {
+            "file": "doors/archive-close-down-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/archive-close-down-0-back.png",
+              "front": "doors/archive-close-down-0-front.png"
+            }
+          },
+          {
+            "file": "doors/archive-close-down-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/archive-close-down-1-back.png",
+              "front": "doors/archive-close-down-1-front.png"
+            }
+          },
+          {
+            "file": "doors/archive-close-down-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/archive-close-down-2-back.png",
+              "front": "doors/archive-close-down-2-front.png"
+            }
+          },
+          {
+            "file": "doors/archive-close-down-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/archive-close-down-3-back.png",
+              "front": "doors/archive-close-down-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "doors/archive-close-left-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/archive-close-left-0-back.png",
+              "front": "doors/archive-close-left-0-front.png"
+            }
+          },
+          {
+            "file": "doors/archive-close-left-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/archive-close-left-1-back.png",
+              "front": "doors/archive-close-left-1-front.png"
+            }
+          },
+          {
+            "file": "doors/archive-close-left-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/archive-close-left-2-back.png",
+              "front": "doors/archive-close-left-2-front.png"
+            }
+          },
+          {
+            "file": "doors/archive-close-left-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/archive-close-left-3-back.png",
+              "front": "doors/archive-close-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "doors/archive-close-right-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/archive-close-right-0-back.png",
+              "front": "doors/archive-close-right-0-front.png"
+            }
+          },
+          {
+            "file": "doors/archive-close-right-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/archive-close-right-1-back.png",
+              "front": "doors/archive-close-right-1-front.png"
+            }
+          },
+          {
+            "file": "doors/archive-close-right-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/archive-close-right-2-back.png",
+              "front": "doors/archive-close-right-2-front.png"
+            }
+          },
+          {
+            "file": "doors/archive-close-right-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/archive-close-right-3-back.png",
+              "front": "doors/archive-close-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "doors",
+      "id": "family-open",
+      "label": "가족 주택 · 문 열기",
+      "views": {
+        "down": [
+          {
+            "file": "doors/family-open-down-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/family-open-down-0-back.png",
+              "front": "doors/family-open-down-0-front.png"
+            }
+          },
+          {
+            "file": "doors/family-open-down-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/family-open-down-1-back.png",
+              "front": "doors/family-open-down-1-front.png"
+            }
+          },
+          {
+            "file": "doors/family-open-down-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/family-open-down-2-back.png",
+              "front": "doors/family-open-down-2-front.png"
+            }
+          },
+          {
+            "file": "doors/family-open-down-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/family-open-down-3-back.png",
+              "front": "doors/family-open-down-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "doors/family-open-left-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/family-open-left-0-back.png",
+              "front": "doors/family-open-left-0-front.png"
+            }
+          },
+          {
+            "file": "doors/family-open-left-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/family-open-left-1-back.png",
+              "front": "doors/family-open-left-1-front.png"
+            }
+          },
+          {
+            "file": "doors/family-open-left-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/family-open-left-2-back.png",
+              "front": "doors/family-open-left-2-front.png"
+            }
+          },
+          {
+            "file": "doors/family-open-left-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/family-open-left-3-back.png",
+              "front": "doors/family-open-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "doors/family-open-right-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/family-open-right-0-back.png",
+              "front": "doors/family-open-right-0-front.png"
+            }
+          },
+          {
+            "file": "doors/family-open-right-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/family-open-right-1-back.png",
+              "front": "doors/family-open-right-1-front.png"
+            }
+          },
+          {
+            "file": "doors/family-open-right-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/family-open-right-2-back.png",
+              "front": "doors/family-open-right-2-front.png"
+            }
+          },
+          {
+            "file": "doors/family-open-right-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/family-open-right-3-back.png",
+              "front": "doors/family-open-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "doors",
+      "id": "family-close",
+      "label": "가족 주택 · 문 닫기",
+      "views": {
+        "down": [
+          {
+            "file": "doors/family-close-down-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/family-close-down-0-back.png",
+              "front": "doors/family-close-down-0-front.png"
+            }
+          },
+          {
+            "file": "doors/family-close-down-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/family-close-down-1-back.png",
+              "front": "doors/family-close-down-1-front.png"
+            }
+          },
+          {
+            "file": "doors/family-close-down-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/family-close-down-2-back.png",
+              "front": "doors/family-close-down-2-front.png"
+            }
+          },
+          {
+            "file": "doors/family-close-down-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 32,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/family-close-down-3-back.png",
+              "front": "doors/family-close-down-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "doors/family-close-left-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/family-close-left-0-back.png",
+              "front": "doors/family-close-left-0-front.png"
+            }
+          },
+          {
+            "file": "doors/family-close-left-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/family-close-left-1-back.png",
+              "front": "doors/family-close-left-1-front.png"
+            }
+          },
+          {
+            "file": "doors/family-close-left-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/family-close-left-2-back.png",
+              "front": "doors/family-close-left-2-front.png"
+            }
+          },
+          {
+            "file": "doors/family-close-left-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 15,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/family-close-left-3-back.png",
+              "front": "doors/family-close-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "doors/family-close-right-0.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/family-close-right-0-back.png",
+              "front": "doors/family-close-right-0-front.png"
+            }
+          },
+          {
+            "file": "doors/family-close-right-1.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/family-close-right-1-back.png",
+              "front": "doors/family-close-right-1-front.png"
+            }
+          },
+          {
+            "file": "doors/family-close-right-2.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/family-close-right-2-back.png",
+              "front": "doors/family-close-right-2-front.png"
+            }
+          },
+          {
+            "file": "doors/family-close-right-3.png",
+            "width": 64,
+            "height": 64,
+            "anchor": {
+              "x": 32,
+              "y": 64
+            },
+            "entry": {
+              "x": 47,
+              "y": 60
+            },
+            "duration": 180,
+            "loop": false,
+            "layers": {
+              "back": "doors/family-close-right-3-back.png",
+              "front": "doors/family-close-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "ambient",
+      "id": "lampFlame",
+      "label": "등잔 불꽃",
+      "views": {
+        "down": [
+          {
+            "file": "ambient/lampFlame-0.png",
+            "width": 16,
+            "height": 16,
+            "anchor": {
+              "x": 8,
+              "y": 16
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "ambient/lampFlame-1.png",
+            "width": 16,
+            "height": 16,
+            "anchor": {
+              "x": 8,
+              "y": 16
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "ambient/lampFlame-2.png",
+            "width": 16,
+            "height": 16,
+            "anchor": {
+              "x": 8,
+              "y": 16
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "ambient/lampFlame-3.png",
+            "width": 16,
+            "height": 16,
+            "anchor": {
+              "x": 8,
+              "y": 16
+            },
+            "duration": 180,
+            "loop": true
+          }
+        ]
+      }
+    },
+    {
+      "group": "ambient",
+      "id": "reedSway",
+      "label": "갈대 말리는 틀 흔들림",
+      "views": {
+        "down": [
+          {
+            "file": "ambient/reedSway-0.png",
+            "width": 16,
+            "height": 16,
+            "anchor": {
+              "x": 8,
+              "y": 16
+            },
+            "duration": 500,
+            "loop": true
+          },
+          {
+            "file": "ambient/reedSway-1.png",
+            "width": 16,
+            "height": 16,
+            "anchor": {
+              "x": 8,
+              "y": 16
+            },
+            "duration": 500,
+            "loop": true
+          },
+          {
+            "file": "ambient/reedSway-2.png",
+            "width": 16,
+            "height": 16,
+            "anchor": {
+              "x": 8,
+              "y": 16
+            },
+            "duration": 500,
+            "loop": true
+          },
+          {
+            "file": "ambient/reedSway-3.png",
+            "width": 16,
+            "height": 16,
+            "anchor": {
+              "x": 8,
+              "y": 16
+            },
+            "duration": 500,
+            "loop": true
+          }
+        ]
+      }
+    }
+  ],
+  "sources": [
+    "src/render/work-details-motion-art.ts",
+    "src/render/door-ambient-art.ts"
+  ],
+  "palettes": {
+    "work": {
+      "k": "#b57e4e",
+      "W": "#a96f3f",
+      "w": "#c68b54",
+      "l": "#e8ae74",
+      "c": "#fff0d0",
+      "C": "#f5e0af",
+      "r": "#f48b61",
+      "R": "#d46d46",
+      "g": "#81b158",
+      "G": "#a2cb78",
+      "y": "#ffca70",
+      "Y": "#ffeaba",
+      "b": "#99d7c9",
+      "B": "#78bbac",
+      "s": "#c1b8a6",
+      "S": "#878176",
+      "p": "#cbbb9b",
+      "o": "#ffc2a0",
+      "z": "rgba(90,70,50,0.22)",
+      "v": "#9b65b3",
+      "V": "#bd8fd0",
+      "t": "#e68e4e",
+      "i": "#b89871",
+      "I": "#dfc4a0",
+      "J": "#665043",
+      "j": "#312b28",
+      "P": "#f5e7c9",
+      "N": "#7d979b",
+      "n": "#acc4bd",
+      "Q": "#b1b2a8",
+      "q": "#737c77",
+      "T": "#9ea69a"
+    },
+    "doors": {
+      "k": "#b57e4e",
+      "W": "#a96f3f",
+      "w": "#c68b54",
+      "l": "#e8ae74",
+      "c": "#fff0d0",
+      "C": "#f5e0af",
+      "r": "#f48b61",
+      "R": "#d46d46",
+      "g": "#81b158",
+      "G": "#a2cb78",
+      "y": "#ffca70",
+      "Y": "#ffeaba",
+      "b": "#99d7c9",
+      "B": "#78bbac",
+      "s": "#c1b8a6",
+      "S": "#878176",
+      "p": "#feae88",
+      "o": "#ffc2a0",
+      "z": "#756653",
+      "v": "#9b65b3",
+      "V": "#bd8fd0",
+      "t": "#e68e4e",
+      "H": "#bd8069",
+      "h": "#98644f",
+      "I": "#d5ab82",
+      "i": "#b18a64",
+      "a": "#99aaa5",
+      "A": "#6b8581",
+      "u": "#ebe0c5",
+      "U": "#cbbda1",
+      "@": "#604b3d"
+    },
+    "ambient": {
+      "k": "#b57e4e",
+      "W": "#a96f3f",
+      "w": "#c68b54",
+      "l": "#e8ae74",
+      "c": "#fff0d0",
+      "C": "#f5e0af",
+      "r": "#f48b61",
+      "R": "#d46d46",
+      "g": "#81b158",
+      "G": "#a2cb78",
+      "y": "#ffca70",
+      "Y": "#ffeaba",
+      "b": "#99d7c9",
+      "B": "#78bbac",
+      "s": "#c1b8a6",
+      "S": "#878176",
+      "p": "#feae88",
+      "o": "#ffc2a0",
+      "z": "rgba(90,70,50,0.22)",
+      "v": "#9b65b3",
+      "V": "#bd8fd0",
+      "t": "#ae8060",
+      "a": "#ddd188",
+      "A": "#bfb964",
+      "T": "#816044"
+    }
+  },
+  "note": "자산 전용. 게임 동작·일과·문 충돌·지도·상태 저장은 변경하지 않음. 인물의 실제 외형은 원본 함수 마지막 avatar 인수로 전달."
+}

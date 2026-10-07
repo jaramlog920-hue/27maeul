@@ -4,7 +4,7 @@
 // 가끔 모양이 조금 삐뚤어질 뿐(맛·분량 같음). 완성품이 가방에 안 들어가면 가방을 비울 때까지 그대로 기다린다.
 // 식탁에 차린 음식은 가방에서 식탁으로 옮겨 한 곳에서만 쓴다: 먹기·치우기(남은 것 한 번 돌려받기)·날짜가 바뀌거나 자리가 없어지면 돌려받기.
 // 함께 먹은 기억은 그 자리에 실제로 있던 사람만, 식사 한 번마다 고유 id. 말씀 조각·필사본·성경 장면을 음식 재료·상품으로 쓰지 않는다.
-import { childTile, overflows, passTime, playerTile, putAway, recordExperienceIn, startAct, syncHome, useStock, haveStock, catchSoot, type GameState } from './game'
+import { childTile, overflows, passTime, playerTile, putAway, recordExperienceIn, startAct, startCookAct, syncHome, useStock, haveStock, catchSoot, type GameState } from './game'
 import { childStage } from './child'
 import { addGift, count, COOKED_ITEMS, DISH_HUNGER, take } from './items'
 import { startMini, stepMini, tapMini, isDone, type MiniState } from './minigame'
@@ -159,7 +159,7 @@ export function deliverCook(s: GameState): GameState {
     cooking: { ...c, run: undefined, looks: { ...c.looks, [r.dish]: r.look }, made: { ...c.made, [r.dish]: (c.made[r.dish] ?? 0) + 1 } },
   }
   if (r.kid >= 0) next = kidCookMemory(next, r.kid)
-  return startAct(catchSoot(passTime(next, def.minutes)), 'knead')
+  return startCookAct(catchSoot(passTime(next, def.minutes)), r.dish)
 }
 /** 아이가 접시를 골라 준 날: 가족 기억(그 자리에 있던 아이만), 처음은 가족 앨범 한 장 */
 function kidCookMemory(s: GameState, choice: number): GameState {

@@ -24,13 +24,14 @@ import { sanitizeDayLog } from './daybook'
 import { IDLE_RESET } from './autonomy'
 import { bookDone, bookRoomOpen, emptyProgress, sanitizeOtProgress, type Progress } from './books'
 import { isOtBook } from './ot-books'
-import { newGame, settle, type GameState } from './game'
+import { newGame, settle, type Farewell, type GameState } from './game'
+import type { Avatar } from './avatar'
 import { cardsForChapters, placeNewCards } from './journey'
 import { initialHomeFurniture, isFacing, refitRoom } from './room'
 import { HOME_ENTRY, HOME_FRONT, setHomeLevel, setHomeFurniture, setSpouseRoom, walkableOn } from './world'
 import { MAP_IDS, isMapId, setActiveMap, type MapId } from './maps'
 import { sanitizeOtCollected } from './ot-pieces'
-import { entryFront, roomSlotAt, setNewlandOverlay, setNewlandRevealed, setNewlandWarps } from './newland'
+import { entryFront, roomSlotAt, setArchiveRooms, setNewlandOverlay, setNewlandRevealed, setNewlandWarps } from './newland'
 import { overlayFor, sanitizeNewlandBuild, warpsFor } from './newland-build'
 import { homeAtSlot, sanitizeRooms } from './newland-rooms'
 import { BOOKS, type Book, type GameContent, type ItemId } from './types'
@@ -62,6 +63,7 @@ function sanitizeMaps(s: GameState): Pick<GameState, 'player' | 'map' | 'mapAt'>
   setNewlandRevealed(!!s.flags.newlandRevealed)
   setNewlandOverlay(overlayFor(s.newland))
   setNewlandWarps(warpsFor(s.newland))
+  setArchiveRooms(s.flags.otExpand ?? 0)
   const raw = s as unknown as { map?: unknown; mapAt?: unknown }
   const valid = (id: MapId, t: unknown): t is { x: number; y: number } =>
     isObj(t) && Number.isInteger((t as { x: unknown }).x) && Number.isInteger((t as { y: unknown }).y) && walkableOn(id, t as { x: number; y: number })
@@ -94,6 +96,12 @@ function sanitizeMaps(s: GameState): Pick<GameState, 'player' | 'map' | 'mapAt'>
 
 const isStrArray = (v: unknown) => Array.isArray(v) && v.every((x) => typeof x === 'string')
 const isObj = (v: unknown) => !!v && typeof v === 'object' && !Array.isArray(v)
+/** 이사 편지 모양 (2026-10-07) */
+const okFarewell = (f: unknown): f is Farewell => {
+  if (!isObj(f)) return false
+  const o = f as Record<string, unknown>
+  return typeof o.npc === 'string' && Number.isInteger(o.day) && Number.isInteger(o.letter) && isObj(o.gift) && (o.pieceId === undefined || typeof o.pieceId === 'string')
+}
 
 /**
  * 콘텐츠가 바뀐 뒤의 저장도 안전하게: 없는 조각 id를 걸러 내고, 책상 위 순서를 모은 조각과 맞춘다.
@@ -266,6 +274,9 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     guestbook: Array.isArray(s.guestbook)
       ? s.guestbook.filter((g) => isObj(g) && Number.isInteger(g.day) && ['wanderer', 'learner', 'kid', 'scribe'].includes(g.kind as string)).slice(-30)
       : undefined,
+    // 이사 간 이웃의 편지: 모양이 맞는 것만
+    farewells: Array.isArray(s.farewells) ? s.farewells.filter(okFarewell).slice(-30) : undefined,
+    farewellPopup: okFarewell(s.farewellPopup) ? s.farewellPopup : undefined,
     careDone: isStrArray(s.careDone) ? [...new Set(s.careDone.filter((k) => /^[a-z0-9]+:\d+$/.test(k)))] : undefined,
     ...(fitted.rooms ? { rooms: fitted.rooms } : {}),
     // 구약 말씀 조각: 새 터를 받은 뒤에만 있다 — 모르는 id·중복은 버리고, 옛 저장(없음)은 칸을 만들지 않는다
@@ -359,37 +370,147 @@ export function deserialize(raw: string | null, content: GameContent): GameState
 /** 초기화한 뒤 새로고침되는 사이에 창 닫힘 저장이 옛 기록을 되살리지 않게 막는다 */
 let erased = false
 
+// ── 저장 칸 여러 개 (2026-10-07 사용자: 스타듀밸리처럼 새로 시작·불러오기·저장하기) ──
+// 칸 '1'은 예전 저장 자리(SAVE_KEY) 그대로라 옛 저장은 옮길 것 없이 첫 칸이 된다. 다른 칸은 SAVE_KEY/<칸>.
+// 지금 쓰는 칸은 이 모듈이 기억하고(ACTIVE_KEY에도 남김), saveGame·loadGame·앨범 그림이 그 칸을 쓴다.
+export const ACTIVE_KEY = 'twenty-seven/active-slot'
+const META_KEY = (slot: string) => `twenty-seven/save-meta/${slot}`
+export const slotKey = (slot: string): string => (slot === '1' ? SAVE_KEY : `${SAVE_KEY}/${slot}`)
+let active: string | null = null
+
+export function activeSlot(store: Storage | null | undefined = storage()): string {
+  if (active) return active
+  try {
+    const v = store?.getItem(ACTIVE_KEY)
+    active = v && /^\d{1,4}$/.test(v) ? v : '1'
+  } catch {
+    active = '1'
+  }
+  return active
+}
+export function setActiveSlot(slot: string, store: Storage | null | undefined = storage()): void {
+  active = slot
+  erased = false
+  try {
+    store?.setItem(ACTIVE_KEY, slot)
+  } catch {
+    /* 저장소를 못 쓰는 환경 */
+  }
+}
+
+/** 불러오기 목록에 보일 한 칸 */
+export interface SaveSlot {
+  slot: string
+  name: string
+  look: 'f' | 'm' | null
+  /** 주인공 모습 (칸 그림용, 모양이 맞을 때만) */
+  avatar?: Avatar
+  day: number
+  coins: number
+  books: number
+  /** 마지막으로 저장한 때 (ms, 모르면 0) */
+  savedAt: number
+}
+
+function slotIds(store: Storage): string[] {
+  const out: string[] = []
+  for (let i = 0; i < store.length; i++) {
+    const k = store.key(i)
+    if (k === SAVE_KEY) out.push('1')
+    else if (k?.startsWith(SAVE_KEY + '/')) {
+      const id = k.slice(SAVE_KEY.length + 1)
+      if (/^\d{1,4}$/.test(id)) out.push(id)
+    }
+  }
+  return out
+}
+
+/** 저장 칸 목록 (최근 저장 먼저). 본문 전체를 되살리지 않고 이름·날·닢·꽂은 책 수만 읽는다 */
+export function listSaves(store: Storage | null | undefined = storage()): SaveSlot[] {
+  if (!store) return []
+  const out: SaveSlot[] = []
+  try {
+    for (const slot of slotIds(store)) {
+      try {
+        const o = JSON.parse(store.getItem(slotKey(slot)) ?? 'null') as Record<string, unknown> | null
+        if (!o || !isObj(o) || !isObj(o.clock)) continue
+        const av = isObj(o.avatar) ? (o.avatar as Record<string, unknown>) : {}
+        const meta = JSON.parse(store.getItem(META_KEY(slot)) ?? '{}') as { savedAt?: number }
+        out.push({
+          slot,
+          name: typeof av.name === 'string' && av.name.trim() ? av.name : '',
+          look: av.look === 'f' || av.look === 'm' ? av.look : null,
+          ...(av.look === 'f' || av.look === 'm' ? { avatar: av as unknown as Avatar } : {}),
+          day: Number((o.clock as Record<string, unknown>).day) || 1,
+          coins: Number(o.coins) || 0,
+          books: isObj(o.shelved) ? Object.keys(o.shelved as object).length : 0,
+          savedAt: Number(meta.savedAt) || 0,
+        })
+      } catch {
+        /* 깨진 칸은 목록에서 뺀다 */
+      }
+    }
+  } catch {
+    return out
+  }
+  return out.sort((a, b) => b.savedAt - a.savedAt || Number(a.slot) - Number(b.slot))
+}
+
+/** 새 칸 번호 (쓰지 않은 가장 작은 번호) */
+export function newSlot(store: Storage | null | undefined = storage()): string {
+  const used = new Set(store ? slotIds(store) : [])
+  for (let i = 1; i < 10000; i++) if (!used.has(String(i))) return String(i)
+  return String(Date.now() % 10000)
+}
+
 export function saveGame(s: GameState, store: Storage | null | undefined = storage()): boolean {
   if (erased) return true
   try {
     if (!store) return false
-    store.setItem(SAVE_KEY, serialize(s))
+    const slot = activeSlot(store)
+    store.setItem(slotKey(slot), serialize(s))
+    try {
+      store.setItem(META_KEY(slot), JSON.stringify({ savedAt: Date.now() }))
+    } catch {
+      /* 저장 시각만 못 남김 */
+    }
     return true
   } catch {
     return false
   }
 }
 
-export function loadGame(content: GameContent, store: Storage | null | undefined = storage()): GameState | null {
+export function loadGame(content: GameContent, store: Storage | null | undefined = storage(), slot?: string): GameState | null {
   try {
-    return deserialize(store?.getItem(SAVE_KEY) ?? null, content)
+    return deserialize(store?.getItem(slotKey(slot ?? activeSlot(store))) ?? null, content)
   } catch {
     return null
   }
 }
 
-/** 기록 초기화: 저장된 날들과 일지 그림을 지운다 (소리·화면 크기 같은 설정은 남긴다) */
-export function eraseSave(store: Storage | null | undefined = storage()): void {
-  erased = true
+/** 앨범 그림 키의 앞부분 (칸 1은 예전 그대로) */
+export const albumPrefix = (slot: string = activeSlot()): string => (slot === '1' ? 'twenty-seven/album/' : `twenty-seven/album/${slot}/`)
+
+/** 한 칸을 지운다 (그 칸의 앨범 그림까지). 칸 1의 앨범은 다른 칸 앨범(album/<n>/)과 섞이지 않게 고른다 */
+export function deleteSave(slot: string, store: Storage | null | undefined = storage()): void {
   try {
     if (!store) return
-    const keys: string[] = []
+    const keys: string[] = [slotKey(slot), META_KEY(slot)]
+    const prefix = albumPrefix(slot)
     for (let i = 0; i < store.length; i++) {
       const k = store.key(i)
-      if (k === SAVE_KEY || k?.startsWith('twenty-seven/album/')) keys.push(k)
+      if (!k?.startsWith(prefix)) continue
+      if (slot === '1' && /^twenty-seven\/album\/\d{1,4}\//.test(k)) continue
+      keys.push(k)
     }
     for (const k of keys) store.removeItem(k)
   } catch {
     /* 저장소를 못 쓰는 환경 */
   }
+}
+
+/** 기록 초기화: 지금 칸의 저장된 날들과 일지 그림을 지운다 (다른 칸·소리·화면 크기 같은 설정은 남긴다) */
+export function eraseSave(store: Storage | null | undefined = storage()): void {
+  erased = true
+  deleteSave(activeSlot(store), store)
 }

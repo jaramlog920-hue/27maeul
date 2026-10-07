@@ -11,13 +11,13 @@ describe('App 시작 화면', () => {
     // 주인공은 누가복음을 쓴 사람이 아니므로 시작 화면에 눅 1:1-4를 두지 않는다
     expect(screen.queryByLabelText('성경 본문 눅 1:1-4')).toBeNull()
     expect(screen.getByText(/이 마을과 이웃은 게임을 위해 만든 것입니다/)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: '시작하기' })).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: '이어하기' })).toBeNull()
+    expect(screen.getByRole('button', { name: '새로 시작하기' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '불러오기' })).toBeNull()
   })
 
-  it('시작하기 → 주인공 고르기(모습·이름) → 게임 화면', () => {
+  it('새로 시작하기 → 주인공 고르기(모습·이름) → 게임 화면', () => {
     render(<App />)
-    fireEvent.click(screen.getByRole('button', { name: '시작하기' }))
+    fireEvent.click(screen.getByRole('button', { name: '새로 시작하기' }))
     expect(screen.getByRole('heading', { name: '어떤 사람으로 살까요?' })).toBeInTheDocument()
     fireEvent.change(screen.getByLabelText('이름'), { target: { value: '하늘' } })
     fireEvent.click(screen.getByRole('button', { name: '뒷머리 다음' }))
@@ -27,10 +27,10 @@ describe('App 시작 화면', () => {
     expect(useGame.getState().game.avatar).toMatchObject({ look: 'f', name: '하늘', hairBack: 3 })
   })
 
-  it('저장이 있으면 이어하기가 보인다', () => {
+  it('깨진 저장만 있으면 불러오기가 보이지 않는다 (저장 칸 여러 개)', () => {
     localStorage.setItem('twenty-seven/save', 'broken')
     const { unmount } = render(<App />)
-    expect(screen.queryByRole('button', { name: '이어하기' })).toBeNull() // 깨진 저장은 무시
+    expect(screen.queryByRole('button', { name: '불러오기' })).toBeNull() // 깨진 저장은 무시
     unmount()
   })
 })

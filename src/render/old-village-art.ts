@@ -3,6 +3,7 @@ import { pixels } from './home-space-art'
 import type { FurnitureArt } from './furniture-art'
 import { FURNI_PALETTE } from './furniture-art'
 import type { Facing } from '../engine/types'
+import { settlementBuildingDetails } from './settlement-building-details'
 export const OLD_VILLAGE_PALETTE = { ...FURNI_PALETTE, z:'#756653', H:'#bd8069', h:'#98644f', I:'#d5ab82', i:'#b18a64', a:'#99aaa5', A:'#6b8581', u:'#ebe0c5', U:'#cbbda1' }
 type Rect = readonly [string,number,number,number,number]
 const tile = (r:readonly Rect[]) => pixels(1,1,r)
@@ -93,7 +94,7 @@ function building(id:string,facing:Facing,construction=false):FurnitureArt {
     a=put(a,id==='garden'?OLD_PROPS.memoryMarker:OLD_PROPS.courtyardBench,id==='garden'?25:16,40)
   }
   if(construction){a=pixels(4,4,[['U',6,55,52,6],['W',9,18,3,40],['W',52,18,3,40],['w',9,20,46,3],['w',10,38,44,3],['l',15,16,3,43],['l',45,16,3,43],['w',9,54,46,3],['C',19,24,25,11],['w',18,24,1,17]]);a=put(a,OLD_PROPS.buildStack,24,45)}
-  return a
+  return construction ? a : settlementBuildingDetails(a,id,facing)
 }
 export const OLD_BUILDINGS:Record<string,Record<Facing,FurnitureArt>>={}
 export const OLD_CONSTRUCTION:typeof OLD_BUILDINGS={}

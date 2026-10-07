@@ -20,7 +20,8 @@ describe('요리하기 화면', () => {
   it('화덕 메뉴에서 요리하기가 열리고 기존 빵 굽기도 그대로 있다', () => {
     useGame.setState({ game: start({ barley: 1, water: 1 }), modal: { kind: 'menu', place: 'hearth' } })
     const { getByText } = render(<PlaceMenu place="hearth" />)
-    expect(getByText(T.ui.hearthBake)).toBeTruthy()
+    // 줄 모양: 이름(빵 굽기)과 아래 작은 재료 줄로 나뉜다
+    expect(getByText(T.ui.hearthBake.split(' (')[0])).toBeTruthy()
     act(() => fireEvent.click(getByText(C.open)))
     expect(useGame.getState().modal).toEqual({ kind: 'cooking' })
   })

@@ -1,0 +1,2189 @@
+{
+  "version": 1,
+  "connected": false,
+  "tileSize": 16,
+  "visitors": [
+    {
+      "id": "wanderer",
+      "label": "나그네",
+      "views": {
+        "down": [
+          {
+            "file": "visitors/wanderer-down-0.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/wanderer-down-1.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/wanderer-down-2.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/wanderer-down-3.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          }
+        ],
+        "up": [
+          {
+            "file": "visitors/wanderer-up-0.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/wanderer-up-1.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/wanderer-up-2.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/wanderer-up-3.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          }
+        ],
+        "left": [
+          {
+            "file": "visitors/wanderer-left-0.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/wanderer-left-1.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/wanderer-left-2.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/wanderer-left-3.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          }
+        ],
+        "right": [
+          {
+            "file": "visitors/wanderer-right-0.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/wanderer-right-1.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/wanderer-right-2.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/wanderer-right-3.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "learner",
+      "label": "배우러 온 사람",
+      "views": {
+        "down": [
+          {
+            "file": "visitors/learner-down-0.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/learner-down-1.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/learner-down-2.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/learner-down-3.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          }
+        ],
+        "up": [
+          {
+            "file": "visitors/learner-up-0.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/learner-up-1.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/learner-up-2.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/learner-up-3.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          }
+        ],
+        "left": [
+          {
+            "file": "visitors/learner-left-0.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/learner-left-1.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/learner-left-2.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/learner-left-3.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          }
+        ],
+        "right": [
+          {
+            "file": "visitors/learner-right-0.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/learner-right-1.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/learner-right-2.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/learner-right-3.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "kid",
+      "label": "꼬마",
+      "views": {
+        "down": [
+          {
+            "file": "visitors/kid-down-0.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 16
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/kid-down-1.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 16
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/kid-down-2.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 16
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/kid-down-3.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 16
+            },
+            "duration": 180,
+            "loop": true
+          }
+        ],
+        "up": [
+          {
+            "file": "visitors/kid-up-0.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 16
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/kid-up-1.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 16
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/kid-up-2.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 16
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/kid-up-3.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 16
+            },
+            "duration": 180,
+            "loop": true
+          }
+        ],
+        "left": [
+          {
+            "file": "visitors/kid-left-0.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 16
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/kid-left-1.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 16
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/kid-left-2.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 16
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/kid-left-3.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 16
+            },
+            "duration": 180,
+            "loop": true
+          }
+        ],
+        "right": [
+          {
+            "file": "visitors/kid-right-0.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 16
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/kid-right-1.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 16
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/kid-right-2.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 16
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/kid-right-3.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 16
+            },
+            "duration": 180,
+            "loop": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "scribe",
+      "label": "다른 마을 서기",
+      "views": {
+        "down": [
+          {
+            "file": "visitors/scribe-down-0.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/scribe-down-1.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/scribe-down-2.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/scribe-down-3.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          }
+        ],
+        "up": [
+          {
+            "file": "visitors/scribe-up-0.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/scribe-up-1.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/scribe-up-2.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/scribe-up-3.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          }
+        ],
+        "left": [
+          {
+            "file": "visitors/scribe-left-0.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/scribe-left-1.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/scribe-left-2.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/scribe-left-3.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          }
+        ],
+        "right": [
+          {
+            "file": "visitors/scribe-right-0.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/scribe-right-1.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/scribe-right-2.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          },
+          {
+            "file": "visitors/scribe-right-3.png",
+            "width": 24,
+            "height": 24,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            },
+            "duration": 180,
+            "loop": true
+          }
+        ]
+      }
+    }
+  ],
+  "paths": [
+    {
+      "id": "sand-0",
+      "material": "sand",
+      "mask": 0,
+      "label": "독립 칸",
+      "file": "paths/sand-0.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": false,
+        "east": false,
+        "south": false,
+        "west": false
+      }
+    },
+    {
+      "id": "sand-1",
+      "material": "sand",
+      "mask": 1,
+      "label": "끝 조각",
+      "file": "paths/sand-1.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": true,
+        "east": false,
+        "south": false,
+        "west": false
+      }
+    },
+    {
+      "id": "sand-2",
+      "material": "sand",
+      "mask": 2,
+      "label": "끝 조각",
+      "file": "paths/sand-2.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": false,
+        "east": true,
+        "south": false,
+        "west": false
+      }
+    },
+    {
+      "id": "sand-3",
+      "material": "sand",
+      "mask": 3,
+      "label": "모서리",
+      "file": "paths/sand-3.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": true,
+        "east": true,
+        "south": false,
+        "west": false
+      }
+    },
+    {
+      "id": "sand-4",
+      "material": "sand",
+      "mask": 4,
+      "label": "끝 조각",
+      "file": "paths/sand-4.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": false,
+        "east": false,
+        "south": true,
+        "west": false
+      }
+    },
+    {
+      "id": "sand-5",
+      "material": "sand",
+      "mask": 5,
+      "label": "일자",
+      "file": "paths/sand-5.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": true,
+        "east": false,
+        "south": true,
+        "west": false
+      }
+    },
+    {
+      "id": "sand-6",
+      "material": "sand",
+      "mask": 6,
+      "label": "모서리",
+      "file": "paths/sand-6.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": false,
+        "east": true,
+        "south": true,
+        "west": false
+      }
+    },
+    {
+      "id": "sand-7",
+      "material": "sand",
+      "mask": 7,
+      "label": "T자",
+      "file": "paths/sand-7.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": true,
+        "east": true,
+        "south": true,
+        "west": false
+      }
+    },
+    {
+      "id": "sand-8",
+      "material": "sand",
+      "mask": 8,
+      "label": "끝 조각",
+      "file": "paths/sand-8.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": false,
+        "east": false,
+        "south": false,
+        "west": true
+      }
+    },
+    {
+      "id": "sand-9",
+      "material": "sand",
+      "mask": 9,
+      "label": "모서리",
+      "file": "paths/sand-9.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": true,
+        "east": false,
+        "south": false,
+        "west": true
+      }
+    },
+    {
+      "id": "sand-10",
+      "material": "sand",
+      "mask": 10,
+      "label": "일자",
+      "file": "paths/sand-10.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": false,
+        "east": true,
+        "south": false,
+        "west": true
+      }
+    },
+    {
+      "id": "sand-11",
+      "material": "sand",
+      "mask": 11,
+      "label": "T자",
+      "file": "paths/sand-11.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": true,
+        "east": true,
+        "south": false,
+        "west": true
+      }
+    },
+    {
+      "id": "sand-12",
+      "material": "sand",
+      "mask": 12,
+      "label": "모서리",
+      "file": "paths/sand-12.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": false,
+        "east": false,
+        "south": true,
+        "west": true
+      }
+    },
+    {
+      "id": "sand-13",
+      "material": "sand",
+      "mask": 13,
+      "label": "T자",
+      "file": "paths/sand-13.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": true,
+        "east": false,
+        "south": true,
+        "west": true
+      }
+    },
+    {
+      "id": "sand-14",
+      "material": "sand",
+      "mask": 14,
+      "label": "T자",
+      "file": "paths/sand-14.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": false,
+        "east": true,
+        "south": true,
+        "west": true
+      }
+    },
+    {
+      "id": "sand-15",
+      "material": "sand",
+      "mask": 15,
+      "label": "교차",
+      "file": "paths/sand-15.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": true,
+        "east": true,
+        "south": true,
+        "west": true
+      }
+    },
+    {
+      "id": "stone-0",
+      "material": "stone",
+      "mask": 0,
+      "label": "독립 칸",
+      "file": "paths/stone-0.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": false,
+        "east": false,
+        "south": false,
+        "west": false
+      }
+    },
+    {
+      "id": "stone-1",
+      "material": "stone",
+      "mask": 1,
+      "label": "끝 조각",
+      "file": "paths/stone-1.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": true,
+        "east": false,
+        "south": false,
+        "west": false
+      }
+    },
+    {
+      "id": "stone-2",
+      "material": "stone",
+      "mask": 2,
+      "label": "끝 조각",
+      "file": "paths/stone-2.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": false,
+        "east": true,
+        "south": false,
+        "west": false
+      }
+    },
+    {
+      "id": "stone-3",
+      "material": "stone",
+      "mask": 3,
+      "label": "모서리",
+      "file": "paths/stone-3.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": true,
+        "east": true,
+        "south": false,
+        "west": false
+      }
+    },
+    {
+      "id": "stone-4",
+      "material": "stone",
+      "mask": 4,
+      "label": "끝 조각",
+      "file": "paths/stone-4.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": false,
+        "east": false,
+        "south": true,
+        "west": false
+      }
+    },
+    {
+      "id": "stone-5",
+      "material": "stone",
+      "mask": 5,
+      "label": "일자",
+      "file": "paths/stone-5.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": true,
+        "east": false,
+        "south": true,
+        "west": false
+      }
+    },
+    {
+      "id": "stone-6",
+      "material": "stone",
+      "mask": 6,
+      "label": "모서리",
+      "file": "paths/stone-6.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": false,
+        "east": true,
+        "south": true,
+        "west": false
+      }
+    },
+    {
+      "id": "stone-7",
+      "material": "stone",
+      "mask": 7,
+      "label": "T자",
+      "file": "paths/stone-7.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": true,
+        "east": true,
+        "south": true,
+        "west": false
+      }
+    },
+    {
+      "id": "stone-8",
+      "material": "stone",
+      "mask": 8,
+      "label": "끝 조각",
+      "file": "paths/stone-8.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": false,
+        "east": false,
+        "south": false,
+        "west": true
+      }
+    },
+    {
+      "id": "stone-9",
+      "material": "stone",
+      "mask": 9,
+      "label": "모서리",
+      "file": "paths/stone-9.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": true,
+        "east": false,
+        "south": false,
+        "west": true
+      }
+    },
+    {
+      "id": "stone-10",
+      "material": "stone",
+      "mask": 10,
+      "label": "일자",
+      "file": "paths/stone-10.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": false,
+        "east": true,
+        "south": false,
+        "west": true
+      }
+    },
+    {
+      "id": "stone-11",
+      "material": "stone",
+      "mask": 11,
+      "label": "T자",
+      "file": "paths/stone-11.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": true,
+        "east": true,
+        "south": false,
+        "west": true
+      }
+    },
+    {
+      "id": "stone-12",
+      "material": "stone",
+      "mask": 12,
+      "label": "모서리",
+      "file": "paths/stone-12.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": false,
+        "east": false,
+        "south": true,
+        "west": true
+      }
+    },
+    {
+      "id": "stone-13",
+      "material": "stone",
+      "mask": 13,
+      "label": "T자",
+      "file": "paths/stone-13.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": true,
+        "east": false,
+        "south": true,
+        "west": true
+      }
+    },
+    {
+      "id": "stone-14",
+      "material": "stone",
+      "mask": 14,
+      "label": "T자",
+      "file": "paths/stone-14.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": false,
+        "east": true,
+        "south": true,
+        "west": true
+      }
+    },
+    {
+      "id": "stone-15",
+      "material": "stone",
+      "mask": 15,
+      "label": "교차",
+      "file": "paths/stone-15.png",
+      "width": 16,
+      "height": 16,
+      "edges": {
+        "north": true,
+        "east": true,
+        "south": true,
+        "west": true
+      }
+    }
+  ],
+  "memories": [
+    {
+      "id": "wedding",
+      "label": "결혼",
+      "frames": [
+        {
+          "file": "memories/wedding-0.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          },
+          "duration": 500,
+          "loop": true
+        },
+        {
+          "file": "memories/wedding-1.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          },
+          "duration": 500,
+          "loop": true
+        },
+        {
+          "file": "memories/wedding-2.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          },
+          "duration": 500,
+          "loop": true
+        },
+        {
+          "file": "memories/wedding-3.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          },
+          "duration": 500,
+          "loop": true
+        }
+      ]
+    },
+    {
+      "id": "birth",
+      "label": "아이 출생",
+      "frames": [
+        {
+          "file": "memories/birth-0.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          },
+          "duration": 500,
+          "loop": true
+        },
+        {
+          "file": "memories/birth-1.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          },
+          "duration": 500,
+          "loop": true
+        },
+        {
+          "file": "memories/birth-2.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          },
+          "duration": 500,
+          "loop": true
+        },
+        {
+          "file": "memories/birth-3.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          },
+          "duration": 500,
+          "loop": true
+        }
+      ]
+    },
+    {
+      "id": "feast",
+      "label": "마을 잔치",
+      "frames": [
+        {
+          "file": "memories/feast-0.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          },
+          "duration": 500,
+          "loop": true
+        },
+        {
+          "file": "memories/feast-1.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          },
+          "duration": 500,
+          "loop": true
+        },
+        {
+          "file": "memories/feast-2.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          },
+          "duration": 500,
+          "loop": true
+        },
+        {
+          "file": "memories/feast-3.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          },
+          "duration": 500,
+          "loop": true
+        }
+      ]
+    },
+    {
+      "id": "farewellLetter",
+      "label": "이사 편지",
+      "frames": [
+        {
+          "file": "memories/farewellLetter-0.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          },
+          "duration": 500,
+          "loop": true
+        },
+        {
+          "file": "memories/farewellLetter-1.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          },
+          "duration": 500,
+          "loop": true
+        },
+        {
+          "file": "memories/farewellLetter-2.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          },
+          "duration": 500,
+          "loop": true
+        },
+        {
+          "file": "memories/farewellLetter-3.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          },
+          "duration": 500,
+          "loop": true
+        }
+      ]
+    },
+    {
+      "id": "moving",
+      "label": "새집·독립",
+      "frames": [
+        {
+          "file": "memories/moving-0.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          },
+          "duration": 500,
+          "loop": true
+        },
+        {
+          "file": "memories/moving-1.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          },
+          "duration": 500,
+          "loop": true
+        },
+        {
+          "file": "memories/moving-2.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          },
+          "duration": 500,
+          "loop": true
+        },
+        {
+          "file": "memories/moving-3.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          },
+          "duration": 500,
+          "loop": true
+        }
+      ]
+    },
+    {
+      "id": "allBooks",
+      "label": "스물일곱 권 완필",
+      "frames": [
+        {
+          "file": "memories/allBooks-0.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          },
+          "duration": 500,
+          "loop": true
+        },
+        {
+          "file": "memories/allBooks-1.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          },
+          "duration": 500,
+          "loop": true
+        },
+        {
+          "file": "memories/allBooks-2.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          },
+          "duration": 500,
+          "loop": true
+        },
+        {
+          "file": "memories/allBooks-3.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          },
+          "duration": 500,
+          "loop": true
+        }
+      ]
+    }
+  ],
+  "shelves": [
+    {
+      "id": "law",
+      "label": "창세기–신명기",
+      "capacity": 12,
+      "fills": [
+        {
+          "fill": 0,
+          "file": "shelves/law-0.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 1,
+          "file": "shelves/law-1.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 2,
+          "file": "shelves/law-2.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 3,
+          "file": "shelves/law-3.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 4,
+          "file": "shelves/law-4.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 5,
+          "file": "shelves/law-5.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 6,
+          "file": "shelves/law-6.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 7,
+          "file": "shelves/law-7.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 8,
+          "file": "shelves/law-8.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 9,
+          "file": "shelves/law-9.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 10,
+          "file": "shelves/law-10.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 11,
+          "file": "shelves/law-11.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 12,
+          "file": "shelves/law-12.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        }
+      ]
+    },
+    {
+      "id": "history",
+      "label": "여호수아–에스더",
+      "capacity": 12,
+      "fills": [
+        {
+          "fill": 0,
+          "file": "shelves/history-0.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 1,
+          "file": "shelves/history-1.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 2,
+          "file": "shelves/history-2.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 3,
+          "file": "shelves/history-3.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 4,
+          "file": "shelves/history-4.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 5,
+          "file": "shelves/history-5.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 6,
+          "file": "shelves/history-6.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 7,
+          "file": "shelves/history-7.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 8,
+          "file": "shelves/history-8.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 9,
+          "file": "shelves/history-9.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 10,
+          "file": "shelves/history-10.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 11,
+          "file": "shelves/history-11.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 12,
+          "file": "shelves/history-12.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        }
+      ]
+    },
+    {
+      "id": "poetry",
+      "label": "욥기–아가",
+      "capacity": 12,
+      "fills": [
+        {
+          "fill": 0,
+          "file": "shelves/poetry-0.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 1,
+          "file": "shelves/poetry-1.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 2,
+          "file": "shelves/poetry-2.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 3,
+          "file": "shelves/poetry-3.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 4,
+          "file": "shelves/poetry-4.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 5,
+          "file": "shelves/poetry-5.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 6,
+          "file": "shelves/poetry-6.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 7,
+          "file": "shelves/poetry-7.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 8,
+          "file": "shelves/poetry-8.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 9,
+          "file": "shelves/poetry-9.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 10,
+          "file": "shelves/poetry-10.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 11,
+          "file": "shelves/poetry-11.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 12,
+          "file": "shelves/poetry-12.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        }
+      ]
+    },
+    {
+      "id": "prophets",
+      "label": "이사야–말라기",
+      "capacity": 12,
+      "fills": [
+        {
+          "fill": 0,
+          "file": "shelves/prophets-0.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 1,
+          "file": "shelves/prophets-1.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 2,
+          "file": "shelves/prophets-2.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 3,
+          "file": "shelves/prophets-3.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 4,
+          "file": "shelves/prophets-4.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 5,
+          "file": "shelves/prophets-5.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 6,
+          "file": "shelves/prophets-6.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 7,
+          "file": "shelves/prophets-7.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 8,
+          "file": "shelves/prophets-8.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 9,
+          "file": "shelves/prophets-9.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 10,
+          "file": "shelves/prophets-10.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 11,
+          "file": "shelves/prophets-11.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        },
+        {
+          "fill": 12,
+          "file": "shelves/prophets-12.png",
+          "width": 16,
+          "height": 16,
+          "anchor": {
+            "x": 8,
+            "y": 16
+          }
+        }
+      ]
+    }
+  ],
+  "gifts": [
+    {
+      "id": "willowBasket",
+      "label": "버들 바구니",
+      "sizes": {
+        "8": "gifts/willowBasket-8.png",
+        "16": "gifts/willowBasket-16.png"
+      }
+    },
+    {
+      "id": "starChart",
+      "label": "별자리 그림판",
+      "sizes": {
+        "8": "gifts/starChart-8.png",
+        "16": "gifts/starChart-16.png"
+      }
+    },
+    {
+      "id": "seedPouch",
+      "label": "씨앗 주머니",
+      "sizes": {
+        "8": "gifts/seedPouch-8.png",
+        "16": "gifts/seedPouch-16.png"
+      }
+    }
+  ],
+  "pathMask": {
+    "north": 1,
+    "east": 2,
+    "south": 4,
+    "west": 8
+  },
+  "palettes": {
+    "paths": {
+      "a": "#c9baa9",
+      "b": "#85a978",
+      "c": "#a99e90",
+      "d": "#eae4d7",
+      "e": "#b4cc9a",
+      "f": "#608563",
+      "g": "#72976d",
+      "h": "#8d6652",
+      "i": "#a97d60",
+      "j": "#94ac97",
+      "k": "#f2d9b2",
+      "l": "#a99a8c",
+      "m": "#c3b4a4",
+      "n": "#b4a697",
+      "o": "#ceab89",
+      "p": "#dfc09b",
+      "S": "#d4bd98",
+      "s": "#c7ae87",
+      "C": "#c9c2b4"
+    },
+    "props": {
+      "k": "#b57e4e",
+      "W": "#a96f3f",
+      "w": "#c68b54",
+      "l": "#e8ae74",
+      "c": "#fff0d0",
+      "C": "#f5e0af",
+      "r": "#f48b61",
+      "R": "#d46d46",
+      "g": "#81b158",
+      "G": "#a2cb78",
+      "y": "#ffca70",
+      "Y": "#ffeaba",
+      "b": "#99d7c9",
+      "B": "#78bbac",
+      "s": "#c1b8a6",
+      "S": "#878176",
+      "p": "#feae88",
+      "o": "#ffc2a0",
+      "z": "rgba(90,70,50,0.22)",
+      "v": "#a99a81",
+      "V": "#d2c5ad",
+      "t": "#e68e4e",
+      "H": "#f2dbb9",
+      "h": "#bf9b70",
+      "N": "#657f86",
+      "n": "#a3bdba",
+      "Q": "#dbc07a",
+      "q": "#a78b54"
+    }
+  },
+  "source": "src/render/archive-followup-art.ts",
+  "completedGuestAssets": "../settlement-guests/manifest.json",
+  "note": "자산 전용. 방문객 이동·꾸미기 길·기념물 배치·범위 방 책장·아이콘 연결·입주 일과는 별도."
+}

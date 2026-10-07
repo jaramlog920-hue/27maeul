@@ -1,11 +1,12 @@
 // 계획 20 2부 작업 A: 주민 자율 가족의 하루 정산 (아침 단계에서 하루에 한 번, D18).
 // 순서: 관계(헤어짐·친한 사이·연인·상담 시작) → 결혼(부부 되기·결혼 준비) → 출생(침대 부탁·아이).
 import { closeKin } from './gen-kin'
-import { MAX_CATCHUP } from './gen-config'
+import { MAX_CATCHUP, PLAYER_COOLING } from './gen-config'
 import { ensureFixed, newGenState, relationId, type GenState, type Relation } from './gen'
 import { settleRelations, type DayCtx } from './gen-relations'
 import { settleMarriage, type HomeOf } from './gen-marriage'
 import { settleBirth, type AvatarOf } from './gen-birth'
+import { settleGrowth } from './gen-growth'
 import { peopleData } from './people'
 import type { GameState } from './game'
 import type { GameContent } from './types'
@@ -61,13 +62,20 @@ export function avatarOfFor(content: GameContent): AvatarOf {
 }
 
 /** 한 날의 정산 */
-export function settleOneDay(g: GenState, d: number, s: Partial<Pick<GameState, 'romance'>>, content: GameContent, opts: SettleOpts): GenState {
+export function settleOneDay(g: GenState, d: number, s: Partial<Pick<GameState, 'romance' | 'flags'>>, content: GameContent, opts: SettleOpts): GenState {
   const partner = s.romance?.partner ?? null
   const busy = (id: string) => !!(g.persons[id]?.npc && opts.busy?.(g.persons[id].npc as string))
-  const ctx: DayCtx = { partner, busy }
+  // 플레이어와 헤어진 사람은 14일 동안 다른 주민과 사귀지 않는다 (사용자 결정 ③)
+  const cooling = (id: string) => {
+    const at = s.flags?.[`exPartner:${id}`]
+    return typeof at === 'number' && d - at < PLAYER_COOLING
+  }
+  const ctx: DayCtx = { partner, busy, cooling }
   g = settleRelations(g, d, ctx)
   g = settleMarriage(g, d, { ...ctx, weddingFree: opts.weddingFree ?? (() => true) }, homeOfFor(content))
   g = settleBirth(g, d, ctx, avatarOfFor(content))
+  // 세대교체: 자라기 → 견습 → 은퇴와 이어받기
+  g = settleGrowth(g, d)
   return g
 }
 
