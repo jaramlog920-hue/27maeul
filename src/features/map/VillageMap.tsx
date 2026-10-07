@@ -90,8 +90,9 @@ export function VillageMap() {
           </span>
         ))}
         {locked.map((z) => (
-          <span key={z.id} className="vmap-label locked" style={pct((z.x0 + z.x1) / 2, (z.y0 + z.y1) / 2)}>
-            🔒 {z.books}권
+          // 구역 위쪽(이름 자리)에 이름과 함께 — 가운데에 두면 밭 한복판에 처져 보였다 (2026-10-07 사용자)
+          <span key={z.id} className="vmap-label locked" style={pct((z.x0 + z.x1) / 2 - 0.5, z.y0 - 0.4)}>
+            🔒 {ZONE_NAME[z.id]} {z.books}권
           </span>
         ))}
         {closedHouses.map((h) => {
