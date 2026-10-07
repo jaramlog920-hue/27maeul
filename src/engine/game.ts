@@ -148,6 +148,10 @@ import type { GenState } from './gen'
 import { settleGen } from './gen-settle'
 import { freeSpotsFor, freeTimeOpen, isFreeRoutine } from './free-time'
 import { checkMeets, tickEmotes, type Emote } from './meet'
+import { weddingTodayOf } from './gen-marriage'
+
+/** 주민 결혼 잔치에서 두 번째 사람이 서는 칸 (모닥불 위 칸 오른쪽 옆) */
+export const GEN_WEDDING_SIDE: Tile = { x: 25, y: 19 }
 import { BOOKS, type Book, type Facing, type GameContent, type ItemId, type NeighborDef, type PlaceId, type Rng, type Target, type Tile } from './types'
 import { withLookDefaults, type Avatar, type FullAvatar } from './avatar'
 import { BOARD_GAIN, boardFor, type BoardRequest } from './board'
@@ -506,6 +510,13 @@ function lateSpots(s: GoalState, content: Pick<GameContent, 'neighbors'>, joined
   if (weddingEvening(s)) {
     for (const [id, spot] of Object.entries(FESTIVAL_SPOTS)) if (joined(id)) special[id] = spot
     special[r.partner!] = WEDDING_SPOT
+  }
+  // 주민 결혼 잔치 저녁 (계획 20 2부 D21): 이사 온 이웃은 광장 모닥불 둘레로, 두 사람은 모닥불 바로 위에 나란히 — 비가 와도 연다
+  const genWed = weddingTodayOf(s.gen, s.clock.day)
+  if (genWed && !weddingEvening(s) && m >= FESTIVAL_FROM && m < FESTIVAL_TO) {
+    for (const [id, spot] of Object.entries(FESTIVAL_SPOTS)) if (joined(id)) special[id] = spot
+    special[genWed.a] = WEDDING_SPOT
+    special[genWed.b] = GEN_WEDDING_SIDE
   }
   // 마을 잔치 저녁 (맑은 날): 일과보다 모닥불이 먼저 (계획 16 작업 3 — 예전엔 일과가 있는 이웃이 일과 자리에 남았다).
   // 장날만 오는 상인은 장날 잔치에만, 이미 다른 자리(결혼 잔치·배우자…)가 정해진 이웃은 그대로

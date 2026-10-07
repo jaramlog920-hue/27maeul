@@ -111,7 +111,6 @@ function Copies() {
               </li>
             ))}
           </ul>
-          <p className="hint">{T.library.copiesHint}</p>
         </section>
       )}
       {waiting.length > 0 && (
@@ -247,14 +246,12 @@ function Things() {
           <h3>{T.easy.chest}</h3>
           {boxed.length === 0 ? <p>{T.easy.chestEmpty}</p> : <ItemGrid items={boxed} picked={picked} from="chest" onPick={setPicked} />}
           {boxed.length > 0 && detail('chest')}
-          <p className="hint">{T.easy.chestHint}</p>
         </>
       )}
       <Copies />
       <h3>{T.ui.statusTitle}</h3>
       <NeedsView explain />
       <StatsView stats={game.stats} />
-      <p className="hint">{T.ui.bagExplainHint}</p>
     </>
   )
 }

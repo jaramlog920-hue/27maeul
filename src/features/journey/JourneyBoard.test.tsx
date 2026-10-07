@@ -110,12 +110,12 @@ describe('요한계시록 방 문과 방 안 (계획 9 작업 4)', () => {
 describe('일곱 교회 카드 판 창 (계획 9 작업 4)', () => {
   const orders = CHURCHES.map((c) => c.order)
 
-  it('빈 판: 제목·안내·개수·빈 판 문구', () => {
+  it('빈 판: 제목·개수·빈 판 문구 (사용법 설명 줄은 2026-10-07 뺐다)', () => {
     reset({ flags: opened })
     useGame.setState({ modal: { kind: 'journey', board: 'churches' } })
     render(<ModalLayer />)
     const dialog = screen.getByRole('dialog', { name: '일곱 교회 카드' })
-    expect(dialog).toHaveTextContent('요한계시록을 옮겨 적으며 얻은 교회 이름 카드를 본문에 나오는 순서대로 놓아 보세요.')
+    expect(dialog).not.toHaveTextContent('요한계시록을 옮겨 적으며 얻은 교회 이름 카드를 본문에 나오는 순서대로 놓아 보세요.')
     expect(dialog).toHaveTextContent('카드 0 / 7장')
     expect(dialog).toHaveTextContent('아직 카드가 없어요. 요한계시록 2장과 3장을 옮겨 적으면 카드가 생겨요.')
     expect(screen.queryByRole('button', { name: '차례 확인' })).toBeNull()

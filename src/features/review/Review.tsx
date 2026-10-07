@@ -18,7 +18,6 @@ export function Review({ pieceId }: { pieceId: string | null }) {
       {diary && <DiaryView diary={diary} />}
       {piece ? (
         <>
-          <p className="hint">{T.ui.reviewLead}</p>
           <h3>{piece.title}</h3>
           <Passage refText={piece.ref} />
         </>

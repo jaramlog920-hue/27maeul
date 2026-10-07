@@ -77,7 +77,6 @@ export function LetterCopy({ book, result, onChangeBook }: { book: Book; result:
       ) : (
         pad && (
           <>
-            <p className="hint">{T.copy.hint}</p>
             <div className="copy-jumps">
               {blanks.map((_, i) => (
                 <button key={i} className={pad.picks[i] !== null ? 'ok' : ''} aria-label={fill(T.copy.jump, { n: i + 1 })} onClick={() => jump(i)}>

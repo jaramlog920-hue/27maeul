@@ -10,7 +10,9 @@ import {
   type MusicChoice,
   type VolumeKind,
 } from '../../audio/sound'
-import { eraseSave } from '../../engine/save'
+import { eraseSave, saveGame } from '../../engine/save'
+import { setGenOn } from '../../engine/gen-settle'
+import { t } from '../../shared/i18n'
 import { T } from '../../content/text'
 import { loadTheme, setTheme, THEMES, type ThemeId } from '../../app/theme'
 import { useGame, ZOOMS } from '../../store/game-store'
@@ -18,6 +20,27 @@ import { copySoundOn, copyVibrateOn, setCopySound, setCopyVibrate } from '../des
 import { copyVoiceOn, setCopyVoice, voiceAvailable } from '../desk/copy-voice'
 
 const C = T.controls
+
+/** 주민 자율 생활 켜기/끄기 (계획 20 2부 P14): 끄면 새 만남·전환이 멈추고, 다시 켜도 밀린 기간을 몰아 처리하지 않는다. 설명 줄 없이 이름만 */
+function GenSetting() {
+  const on = useGame((s) => s.game.gen?.on ?? true)
+  const has = useGame((s) => !!s.game.gen)
+  if (!has) return null
+  const pick = (v: boolean) => {
+    const next = setGenOn(useGame.getState().game, v)
+    saveGame(next)
+    useGame.setState({ game: next })
+  }
+  return (
+    <section className="settings-section">
+      <h3>{t('gen.setting')}</h3>
+      <div className="settings-options pair-options" role="group" aria-label={t('gen.setting')}>
+        <button className={on ? 'on' : ''} aria-pressed={on} onClick={() => pick(true)}>{t('gen.on')}</button>
+        <button className={!on ? 'on' : ''} aria-pressed={!on} onClick={() => pick(false)}>{t('gen.off')}</button>
+      </div>
+    </section>
+  )
+}
 
 const TRACKS = MUSIC_CHOICES.map((id) => [id, (C.tracks as Record<MusicChoice, string>)[id]] as const)
 
@@ -227,6 +250,7 @@ export function Settings() {
           </>
         )}
       </section>
+      <GenSetting />
       <section className="settings-section">
         <div className="settings-row">
           <h3>마을 지도</h3>

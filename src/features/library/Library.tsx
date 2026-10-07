@@ -24,7 +24,6 @@ export function Library() {
       </h2>
       <ShelfPicture shelved={shelved} bound={bound} />
       <p className="hint">{T.library.notice}</p>
-      <p className="hint">{T.library.shelveChoice}</p>
       <h3>{T.library.gospelRoom}</h3>
       <ul className="library-shelf">
         {/* 복음서 방 선반은 네 복음서만 — 사도행전은 자기 방에 꽂는다 (계획 5 작업 5) */}

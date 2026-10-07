@@ -204,6 +204,12 @@ export function addAffinity(g: GenState, a: string, b: string, delta: number): G
   const id = relationId(a, b)
   const floor = g.relations[id]?.stage === 'spouse' ? SPOUSE_FLOOR : 0
   const v = Math.max(floor, Math.min(100, (g.affinity[id] ?? 0) + delta))
+  // 0은 적지 않는다 (없으면 0 — 저장에서 불러온 것과 같은 모양)
+  if (!v) {
+    const affinity = { ...g.affinity }
+    delete affinity[id]
+    return { ...g, affinity }
+  }
   return { ...g, affinity: { ...g.affinity, [id]: v } }
 }
 
@@ -213,6 +219,56 @@ export function meetsToday(g: GenState, a: string, b: string, day: number): Meet
   return m && m.day === day ? m : { day, n: 0, last: -9999 }
 }
 export const canMeetMore = (g: GenState, a: string, b: string, day: number): boolean => meetsToday(g, a, b, day).n < MEETS_PER_DAY
+
+// ── 수첩 (P12) ───────────────────────────────────────
+
+/** 이 사람의 호감도 높은 이웃 (0은 숨김, show가 참인 사람만, 많아야 n명) */
+export function topRelations(g: GenState, id: string, show: (other: string) => boolean, n = 5): { other: string; affinity: number; stage: RelationStage }[] {
+  const out: { other: string; affinity: number; stage: RelationStage }[] = []
+  for (const [rid, v] of Object.entries(g.affinity)) {
+    if (!v) continue
+    const [a, b] = rid.split('|')
+    const other = a === id ? b : b === id ? a : null
+    if (!other || !show(other)) continue
+    out.push({ other, affinity: v, stage: stageOf(g, id, other) })
+  }
+  return out.sort((x, y) => y.affinity - x.affinity || (x.other < y.other ? -1 : 1)).slice(0, n)
+}
+
+export interface FamilyGroup {
+  /** 묶음 id (가구 id 또는 어른 id) */
+  id: string
+  /** 어른 (부부면 둘) */
+  heads: string[]
+  /** 자녀 (계보 id) */
+  children: string[]
+  /** 함께 적는 친척 (조부모·종류 모름) */
+  kin: string[]
+}
+
+/** 마을 가계도 (D27): 결혼한 가구, 그리고 고정 주민의 집안(부모·자녀·친척)을 묶음으로 */
+export function familyGroups(g: GenState): FamilyGroup[] {
+  const persons = Object.values(g.persons)
+  const used = new Set<string>()
+  const groups: FamilyGroup[] = []
+  const kidsOf = (ids: string[]) => persons.filter((p) => p.parents.some((q) => ids.includes(q))).map((p) => p.id).sort()
+  const kinOf = (ids: string[]) => persons.filter((p) => p.kin?.some((k) => ids.includes(k.id))).map((p) => p.id).sort()
+  for (const h of Object.values(g.households).sort((x, y) => (x.id < y.id ? -1 : 1))) {
+    const heads = [...h.members]
+    const children = [...new Set([...h.children, ...kidsOf(heads)])]
+    groups.push({ id: h.id, heads, children, kin: kinOf(heads) })
+    for (const x of [...heads, ...children]) used.add(x)
+  }
+  for (const p of persons.sort((x, y) => (x.id < y.id ? -1 : 1))) {
+    if (used.has(p.id)) continue
+    const children = kidsOf([p.id]).filter((c) => !used.has(c))
+    const kin = kinOf([p.id]).filter((c) => !used.has(c))
+    if (!children.length && !kin.length) continue
+    groups.push({ id: p.id, heads: [p.id], children, kin })
+    for (const x of [p.id, ...children, ...kin]) used.add(x)
+  }
+  return groups
+}
 
 // ── 만들기 ───────────────────────────────────────────
 
@@ -351,7 +407,8 @@ export function sanitizeGen(raw: unknown, today: number): GenState | undefined {
       hsRaw[id] = {
         id,
         members,
-        home: isStr(v.home) && members.includes(v.home) ? v.home : members[0] ?? '',
+        // 신혼집은 부부 중 한 사람의 집이거나, 집안 어른(마을 주민)의 집일 수 있다
+        home: isStr(v.home) && (members.includes(v.home) || !!persons[v.home]) ? v.home : members[0] ?? '',
         children: strs(v.children),
         lastBirth: isNat(v.lastBirth) ? Math.min(v.lastBirth, today) : null,
         since: isNat(v.since) ? Math.min(v.since, today) : null,

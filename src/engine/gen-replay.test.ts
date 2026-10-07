@@ -39,6 +39,61 @@ export function playthrough(seed: number, days = 150): { firstLovers: string[]; 
   return { firstLovers, g }
 }
 
+describe('긴 시뮬레이션 (작업 G): 플레이어가 상담마다 응원하고 아기 침대를 건네면', () => {
+  it('200일 안에 결혼과 출생이 일어나고, 상한·가족당 둘·저장 되돌리기가 지켜진다', async () => {
+    const { answerConsult, consultFor } = await import('./gen-marriage')
+    const { giveCrib } = await import('./gen-birth')
+    const { MAX_GENERATED, MAX_CHILDREN } = await import('./gen-config')
+    const { sanitizeGen } = await import('./gen')
+    let married = 0, born = 0
+    for (const seed of [11, 22, 33]) {
+      let { g } = playthrough(seed, 1)
+      for (let day = 2; day <= 200; day++) {
+        // 하루 몫의 만남
+        for (let m = 480; m < 1200; m += 120) {
+          const spots = freeSpotsFor(g, day, m, ids)
+          const by = new Map<number, string[]>()
+          for (const [id, t] of Object.entries(spots)) {
+            const i = FREE_SPOTS.findIndex((p) => p.some((x) => x.x === t.x && x.y === t.y))
+            by.set(i, [...(by.get(i) ?? []), id])
+          }
+          for (const pair of by.values()) {
+            if (pair.length !== 2 || !canMeetMore(g, pair[0], pair[1], day)) continue
+            const n = meetsToday(g, pair[0], pair[1], day).n
+            g = addAffinity(g, pair[0], pair[1], MEET_GAIN[meetResult(g, pair[0], pair[1], day, n, fitOf(pair[0], pair[1], likes))])
+            g = { ...g, meets: { ...g.meets, [relationId(pair[0], pair[1])]: { day, n: n + 1, last: m } } }
+          }
+        }
+        // 플레이어가 상담에 응원하고, 침대를 건넨다
+        for (const id of ids) {
+          const r = consultFor(g, id, {}, day)
+          if (r) g = answerConsult(g, r.id, 'cheer', day).g
+        }
+        for (const h of Object.values(g.households)) if (h.cribAsk && !h.cribAsk.given) g = giveCrib(g, h.id, day) ?? g
+        g = settleOneDay({ ...g, meets: {} }, day, {}, CONTENT, {})
+        // 저장했다 불러와도 같은 상태
+        if (day % 50 === 0) {
+          const back = sanitizeGen(JSON.parse(JSON.stringify(g)), day)! as unknown as Record<string, unknown>
+          const want = { ...g, meets: {} } as unknown as Record<string, unknown>
+          for (const k of Object.keys(want)) expect(back[k], `${seed} ${day} ${k}`).toEqual(want[k])
+        }
+      }
+      married += Object.keys(g.households).length
+      const kids = Object.values(g.persons).filter((p) => p.origin === 'born')
+      born += kids.length
+      expect(kids.length).toBeLessThanOrEqual(MAX_GENERATED)
+      for (const h of Object.values(g.households)) expect(h.children.length).toBeLessThanOrEqual(MAX_CHILDREN)
+      // 배우자는 서로 가리키고, 연인·배우자는 한 사람에 하나
+      for (const p of Object.values(g.persons)) if (p.spouse) expect(g.persons[p.spouse].spouse).toBe(p.id)
+      const partners = new Map<string, number>()
+      for (const r of Object.values(g.relations)) if (r.stage !== 'friend') for (const x of [r.a, r.b]) partners.set(x, (partners.get(x) ?? 0) + 1)
+      for (const n of partners.values()) expect(n).toBe(1)
+    }
+    expect(married).toBeGreaterThan(0)
+    expect(born).toBeGreaterThan(0)
+  }, 60000)
+})
+
 describe('회차마다 다른 짝', () => {
   it('씨앗 40개: 첫 연인 쌍이 한두 쌍에 몰리지 않는다', () => {
     const first = new Map<string, number>()

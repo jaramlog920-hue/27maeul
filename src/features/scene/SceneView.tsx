@@ -75,7 +75,7 @@ export function SceneView({ id, chosen }: { id: string; chosen?: number }) {
         </div>
       ) : (
         <div className="actions">
-          <button data-close className="primary" onClick={nextScene}>
+          <button className="primary" onClick={nextScene}>
             {T.ui.close}
           </button>
         </div>

@@ -18,6 +18,9 @@ import { ItemIcon } from '../../shared/ItemIcon'
 import { albumImage, partnerName, useGame, type JournalTab } from '../../store/game-store'
 import { isFamilyAlbum } from '../../engine/family'
 import { bondLabel, Hearts } from '../talk/TalkBox'
+import { personName, VillagePage } from './VillagePage'
+import { topRelations } from '../../engine/gen'
+import { t } from '../../shared/i18n'
 
 export function journalLine(e: JournalEntry): string {
   const weather = fill(T.journal.weather, { weather: (T.ui.weather as Record<string, string>)[weatherOf(e.day)] })
@@ -40,6 +43,7 @@ export function Journal({ tab: first = 'days' }: { tab?: Tab }) {
           [
             ['days', '하루 기록'],
             ['neighbors', '이웃 수첩'],
+            ['village', '마을'],
             ['album', '앨범'],
             ['awards', '업적'],
           ] as [Tab, string][]
@@ -51,6 +55,7 @@ export function Journal({ tab: first = 'days' }: { tab?: Tab }) {
       </div>
       {tab === 'days' && <Days />}
       {tab === 'neighbors' && <NeighborBook />}
+      {tab === 'village' && <VillageTab />}
       {tab === 'album' && <Album />}
       {tab === 'awards' && <Awards />}
       <div className="actions">
@@ -58,6 +63,12 @@ export function Journal({ tab: first = 'days' }: { tab?: Tab }) {
       </div>
     </div>
   )
+}
+
+/** 마을 칸: 마을 소식과 가계도 (계획 20 2부) */
+function VillageTab() {
+  const game = useGame((s) => s.game)
+  return <VillagePage game={game} />
 }
 
 function Days() {
@@ -209,6 +220,27 @@ function NeighborPage({ game, def }: { game: GameState; def: NeighborDef }) {
       <dd>
         <Hearts n={heartsOf(game.hearts[def.id])} />
       </dd>
+      {/* 이웃끼리의 관계 (계획 20 2부 D33): 호감도 높은 순 다섯, 플레이어가 만난 이웃만 */}
+      {(() => {
+        const met = notebook.met
+        const rels = game.gen ? topRelations(game.gen, def.id, (o) => met.includes(o)) : []
+        if (!rels.length) return null
+        return (
+          <>
+            <dt>{t('gen.relations')}</dt>
+            <dd>
+              <ul className="nb-rel">
+                {rels.map((r) => (
+                  <li key={r.other}>
+                    {personName(game, r.other)} <Hearts n={heartsOf(r.affinity)} />
+                    {r.stage !== 'neighbor' && <span className="talk-bond">{t(`gen.stage.${r.stage}`)}</span>}
+                  </li>
+                ))}
+              </ul>
+            </dd>
+          </>
+        )
+      })()}
       {birthday && (
         <>
           <dt>생일</dt>

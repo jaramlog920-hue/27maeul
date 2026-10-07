@@ -29,11 +29,9 @@ function BookPick({ onDone }: { onDone?: () => void }) {
   return (
     <div className="dialog desk" role="dialog" aria-label={T.ui.bookPickTitle}>
       <h2>{T.ui.bookPickTitle}</h2>
-      <p className="hint">{T.ui.bookPickHint}</p>
       {groups.map(({ room, books }) => (
         <details key={room.id} className="pick-room" open={room.id === openRoom}>
           <summary>{roomTitle(room)}</summary>
-          {room.mode === 'letters' && <p className="hint">{T.copy.pickHint}</p>}
           <div className="book-grid">
             {books.map((b) => {
               const ready = BOOKS_WITH_CONTENT.includes(b)
@@ -136,7 +134,6 @@ export function Desk({ result }: { result: SubmitResult | null; dark: boolean })
         <p>{T.ui.deskEmpty}</p>
       ) : (
         <>
-          <p className="hint">{T.ui.deskHint}</p>
           <ol className="scroll-list">
             {list.map((id, i) => {
               const p = pieceById(id)

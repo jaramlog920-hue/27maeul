@@ -28,6 +28,7 @@ import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine
 import { allShelved, canShelve, payRetry, poolFor, shelve, shelveNow as shelveQuick } from '../engine/library'
 import { DEFAULT_CHOICE, type SpecialChoice } from '../engine/binding'
 import { ALBUM_IDS, fill, itemList, itemName, KID_LETTERS, NEIGHBOR_LINES, roomTitle, SCENES, T, withAnd, withObject, withSubject, callName } from '../content/text'
+import { freshNews } from '../content/gen-text'
 import { grapesRipe, isWet, weatherOf } from '../engine/calendar'
 import { cleanName, favoriteToy, interactPet, petWays, type Animal } from '../engine/companion'
 import { canUseSpace, setSpace, unsetSpace, useSpace } from '../engine/space-life'
@@ -171,7 +172,7 @@ export type Pending =
 export type QuizMode = { kind: 'chapter'; book: Book; chapter: number } | { kind: 'library'; book: Book; retry: boolean }
 
 /** 일지의 칸: 하루 기록 · 이웃 수첩(받은 선물 포함) · 앨범 · 업적 */
-export type JournalTab = 'days' | 'neighbors' | 'album' | 'awards'
+export type JournalTab = 'days' | 'neighbors' | 'village' | 'album' | 'awards'
 /** 가방의 칸: 물건 · 만들기(만들 줄 아는 것) · 물건 도감 */
 export type BagTab = 'items' | 'make' | 'dex'
 
@@ -1984,9 +1985,13 @@ export const useGame = create<Store>((set, get) => {
       const m = get().modal
       const pieceId = m?.kind === 'review' ? m.pieceId : null
       // 집 단계가 바뀌는 곳은 잠뿐: goToSleep이 새 단계로 지도(모듈 전역)를 맞춘다
+      const before = get().game.gen?.settledDay ?? get().game.clock.day
       const next = goToSleep(get().game, CONTENT, { read: pieceId !== null, pieceId: pieceId ?? undefined })
       set({ game: persist(next), modal: null })
       sayChildHelp(next, get().say)
+      // 주민 가족 소식 (계획 20 2부 P13): 밤사이 생긴 일을 많아야 세 줄, 아이 소식 뒤에
+      const news = freshNews(next, before)
+      if (news.length) setTimeout(() => get().say(news.join('\n'), 5200), 3800)
     },
     saveMyLine: (lineKey, text) => set({ game: persist(setMyLine(get().game, lineKey, text)), modal: afterMyLine(get().modal) }),
     saveGuideLine: (lineKey, text) => set({ game: persist(setMyLine(get().game, lineKey, text)) }),

@@ -4,5 +4,28 @@
     "close": "닫기",
     "back": "돌아가기",
     "next": "다음"
+  },
+  "gen": {
+    "consult": "이야기 들어 주기",
+    "prepHelp": "준비 돕기",
+    "reconsider": "다시 생각해 보라고 하기",
+    "reconsiderSure": "그래도 말하기",
+    "reconsiderNo": "아니에요",
+    "giveCrib": "아기 침대 건네기",
+    "relations": "관계",
+    "tree": "가계도",
+    "unknown": "?",
+    "free": "자유롭게",
+    "news": "마을 소식",
+    "setting": "주민 자율 생활",
+    "on": "켬",
+    "off": "끔",
+    "stage": {
+      "friend": "친한 사이",
+      "lover": "연인",
+      "preparing": "결혼 준비",
+      "spouse": "배우자"
+    },
+    "baby": "아기"
   }
 }

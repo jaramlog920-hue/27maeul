@@ -64,7 +64,6 @@ export function JourneyBoard({ board: id = 'acts' }: { board?: CardBoard }) {
   return (
     <div className="dialog desk journey" role="dialog" aria-label={txt.boardTitle}>
       <h2>{txt.boardTitle}</h2>
-      <p className="hint">{txt.boardHint}</p>
       <p className="hint">{fill(txt.boardCount, { got: board.length, all: def.cards.length })}</p>
       {done && (
         <p className="desk-message done" role="status">

@@ -300,7 +300,6 @@ function PieceContext({ piece, onBack }: { piece: Piece; onBack: () => void }) {
         </span>
         <span className="passage-src">{T.ui.bibleSource}</span>
       </header>
-      <p className="hint">{W.context}</p>
       <div className="passage-body">
         {verses.map((v) => (
           <p key={`${v.chapter}:${v.verse}`} className={v.inPiece ? 'in-piece' : 'around'}>

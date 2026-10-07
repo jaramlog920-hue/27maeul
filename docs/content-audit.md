@@ -1,5 +1,12 @@
 # 콘텐츠 감사 기록 — 이야기 조각과 복음서 도장
 
+## 계획 20 2부 — 주민 가족 문구 🔎 (2026-10-07, 컨트롤러 직접 검토)
+
+`life-text.json` `gen` 절(상담 질문 8 · 답 2 · 대답 4 · 준비 부탁·감사 · 아기 침대 부탁 · 소식 8 · 잔치 이름)과 `lang/ko.json` `gen` 단추.
+- 성경 문장·인용·해석 없음, 교파 예식 표현 없음(“결혼 잔치”·“광장 모닥불”만), 사별·이혼 서사 없음 — 헤어짐은 “이웃으로 지내기로 했대요”로 담담하게.
+- 상담은 친구에게 털어놓는 말투(허락을 구하지 않음), 질문 속 상대 이름은 `{partner}`·`{partnerAnd}`·`{partnerSubj}`로 조사를 이름에 맞춘다.
+- 금지어 검사(`npm run verify`) 통과. 선택지 문구 113개 줄임도 같은 검사 통과(‘누가’ 들어간 두 줄은 고쳐 씀).
+
 > 기준: [exclusion-list.md](exclusion-list.md) §3–§4. 원본은 `scripts/build-pieces.mjs`, 결과물은 `src/content/pieces.json`.
 > 수정 절차: `build-pieces.mjs`의 SOURCE를 고친다 → `node scripts/build-pieces.mjs` → `npm run verify` → 이 문서의 표를 다시 만든다.
 

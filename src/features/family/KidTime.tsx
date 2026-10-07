@@ -94,7 +94,7 @@ export function KidTime({ done, spouse }: { done?: KidDone; spouse?: SpouseDone 
     <div className="dialog kid-time" role="dialog" aria-label={K.title}>
       <h2>{K.title}</h2>
       <p className="hint">
-        {K.hint} · {fill(K.today, { n: kidActsToday(game), max: KID_ACTS_PER_DAY })}
+        {fill(K.today, { n: kidActsToday(game), max: KID_ACTS_PER_DAY })}
       </p>
       <p className="kid-close">
         {K.close} {'♥'.repeat(hearts)}
@@ -119,7 +119,6 @@ export function KidTime({ done, spouse }: { done?: KidDone; spouse?: SpouseDone 
       {spouseDef && (
         <section className="kid-spouse">
           <h3>{spouseDef.label}</h3>
-          <p className="hint">{kidFill(W.hint, name)}</p>
           <ul className="kid-acts">
             {spouseDef.choices.map((c, i) => (
               <li key={c}>
@@ -132,7 +131,6 @@ export function KidTime({ done, spouse }: { done?: KidDone; spouse?: SpouseDone 
           {spouseBlock && <p className="hint">{W.blocks[spouseBlock]}</p>}
         </section>
       )}
-      <p className="hint">{kidFill(K.trip, name)}</p>
       <div className="actions">
         <button data-close onClick={closeModal}>{T.ui.close}</button>
       </div>

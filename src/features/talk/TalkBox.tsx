@@ -8,6 +8,7 @@ import { callName, fill, itemList, T } from '../../content/text'
 import { isMarketDay } from '../../engine/calendar'
 import { activeRequest, isSuitor, romanceWith, stageWith, type GameState, canHelp, canOrderHome, canOrderWork, GIFTABLE, lessonTime, nextHomeStage } from '../../engine/game'
 import { CARPENTER_WORKS } from '../../engine/easier'
+import { GenTalk } from './GenTalk'
 import { requestFor, reqState } from '../../engine/bonds'
 import { has } from '../../engine/items'
 import { MAX_HEART } from '../../engine/neighbors'
@@ -103,6 +104,8 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
         <button data-close className="head-x" aria-label={T.ui.close} title={T.ui.close} onClick={closeModal}>✕</button>
       </div>
       {modal.line && <p className="talk-line">{callName(modal.line, game.avatar?.name)}</p>}
+      {/* 주민 가족 이야기 (계획 20 2부): 결혼 상담·준비 돕기·다시 생각·아기 침대 */}
+      <GenTalk npc={def.id} />
       <div className="actions menu">
         {/* 말씀 조각과 편지는 말을 걸 때 그 자리에서 건넨다 (받기 단추 없음) */}
         {teachable && (

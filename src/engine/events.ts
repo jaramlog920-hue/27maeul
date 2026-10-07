@@ -21,11 +21,26 @@ const festivals = { blossom: '봄꽃 잔치', barley: '보리 거둔 날 잔치'
 const gatherings = { babyParty: '아기 잔치', picnic: '언덕 소풍', starNight: '별 보는 밤' }
 
 /** 미래의 친밀도 이벤트는 추측하지 않고, 확정된 날짜와 오늘 정해진 일정만 안내한다. */
-export function scheduledEvents(s: Pick<GameState, 'clock' | 'today' | 'flags'> & Partial<Pick<GameState, 'notebook' | 'plans'>>, content: GameContent): ScheduledEvent[] {
+export function scheduledEvents(s: Pick<GameState, 'clock' | 'today' | 'flags'> & Partial<Pick<GameState, 'notebook' | 'plans' | 'gen'>>, content: GameContent): ScheduledEvent[] {
   const events: ScheduledEvent[] = []
   const day = s.clock.day
   const add = (id: string, title: string, location: string, from: number, to: number, done = false, onDay = day) => {
     events.push({ id: `${onDay}:${id}`, day: onDay, title, location, from, to, done })
+  }
+  // 주민 결혼 잔치 (계획 20 2부 — 달력 초대): 결혼 준비 중인 쌍의 잔치 날, 7일 안이면
+  if (s.gen?.on) {
+    const nm = (id: string) => content.neighbors.find((n) => n.id === id)?.role ?? ''
+    const fill = (t: string, v: Record<string, string>) => t.replace(/\{(\w+)\}/g, (_, k: string) => v[k] ?? '')
+    // 받침이 있으면 '과', 없으면 '와'
+    const withAnd = (w: string) => {
+      const c = w.charCodeAt(w.length - 1) - 0xac00
+      return w + (c >= 0 && c < 11172 && c % 28 !== 0 ? '과' : '와')
+    }
+    for (const r of Object.values(s.gen.relations)) {
+      const w = r.stage === 'preparing' ? r.prep?.wedding : undefined
+      if (w === undefined || w < day || w > day + 7) continue
+      add(`genWedding:${r.id}`, fill(lifeText.gen.wedding, { aAnd: withAnd(nm(r.a)), b: nm(r.b) }), lifeText.gen.weddingPlace, FESTIVAL_FROM, FESTIVAL_TO, false, w)
+    }
   }
   for (let d = day; d <= day + 7; d++) {
     const festival = festivalOf(d)

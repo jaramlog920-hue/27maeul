@@ -211,15 +211,44 @@ button:focus-visible {
 .actions.column {
   flex-direction: column;
 }
-/* 닫기는 어느 창에서나 오른쪽 (2026-10-07 사용자) — 닫기 단추에는 data-close (scripts/mark-close-buttons.mjs) */
+/* 닫기는 어느 창에서나 오른쪽 위 ✕ (2026-10-07 사용자) — 닫기 단추에는 data-close (scripts/mark-close-buttons.mjs).
+   단추가 창 아래쪽 코드에 있어도 창 오른쪽 위로 올려 테두리 없는 ✕로 보인다. 읽는 이름(aria)은 '닫기' 그대로 */
 [data-close] {
   margin-left: auto;
 }
-.actions.column > [data-close],
-.menu.column > [data-close] {
-  align-self: flex-end;
+.dialog {
+  position: relative;
+}
+.dialog [data-close]:not(.head-x) {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 1;
+  min-width: 36px;
+  min-height: 36px;
   width: auto;
-  min-width: 88px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  box-shadow: none;
+  font-size: 0;
+  color: var(--ink-soft);
+}
+.dialog [data-close]:not(.head-x)::before {
+  content: '✕';
+  font-size: 20px;
+  line-height: 1;
+}
+/* 제목이 ✕ 밑으로 들어가지 않게 */
+.dialog:has([data-close]) > h2,
+.dialog:has([data-close]) > :first-child {
+  padding-right: 34px;
+}
+/* 닫기만 있던 아래 단추 줄은 비면 자리를 차지하지 않는다 */
+.dialog .actions:has(> [data-close]:only-child) {
+  margin-top: 0;
 }
 
 /* ── 성경 본문 ── */

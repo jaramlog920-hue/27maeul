@@ -311,7 +311,6 @@ function CopyAsk() {
       <h2>{FD.title}</h2>
       <FamilySprite pose="draw" girl={kid?.look === 'girl'} />
       <p>{fill(FD.ask, { who: withSubject(kid?.name ?? '') })}</p>
-      <p className="hint">{FD.askNote}</p>
       <div className="copy-menu-actions">
         <button className="primary" onClick={() => deskAnswer(true)}>
           {FD.together}

@@ -794,11 +794,11 @@ describe('선반을 나눠 합친 뒤', () => {
     expect(screen.getByText(new RegExp(SCENES.gospelFeast.album!))).toBeInTheDocument()
   })
 
-  it('일지: 하루 기록 · 이웃 수첩 · 앨범 · 업적 — 업적은 마지막 칸', async () => {
+  it('일지: 하루 기록 · 이웃 수첩 · 마을 · 앨범 · 업적 — 업적은 마지막 칸', async () => {
     reset()
     useGame.setState({ modal: { kind: 'journal' } })
     render(<ModalLayer />)
-    expect(screen.getAllByRole('tab').map((t) => t.textContent)).toEqual(['하루 기록', '이웃 수첩', '앨범', '업적'])
+    expect(screen.getAllByRole('tab').map((t) => t.textContent)).toEqual(['하루 기록', '이웃 수첩', '마을', '앨범', '업적'])
     await userEvent.setup().click(screen.getByRole('tab', { name: '업적' }))
     expect(screen.getByText(/이룬 업적 0 \//)).toBeInTheDocument()
   })

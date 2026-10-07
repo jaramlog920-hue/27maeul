@@ -102,7 +102,6 @@ export function AvatarForm({ onDone, onBack }: { onDone: (a: Avatar) => void; on
     <main className="title avatar-form">
       <div className="dialog creator" role="dialog" aria-label={T.avatar.title}>
         <h2>{T.avatar.title}</h2>
-        <p className="hint">{T.avatar.lead}</p>
 
         <div className="creator-top">
           <div className="creator-portrait">

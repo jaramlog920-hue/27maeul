@@ -4,6 +4,9 @@ import { BIRTH_AFTER_CRIB, BIRTH_GAP, CRIB_GAIN, CRIB_HIGH, CRIB_REASK, CRIB_WAI
 import { addLog, affinityOf, genRng, hasRoom, personId, type GenPerson, type GenState, type Household } from './gen'
 import type { DayCtx } from './gen-relations'
 
+/** 아기 침대를 만들어 건네는 데 드는 재료 (부탁을 받으면 가방의 재료로 그 자리에서 짜 준다 — 결정 P10 변형) */
+export const CRIB_NEEDS = { reed: 3, blanket: 1 } as const
+
 /** 주민 아이 이름 (성 없이, 성경 인물 이름·마을 이웃 이름과 겹치지 않는 것) */
 export const GEN_CHILD_NAMES: Record<'f' | 'm', readonly string[]> = {
   m: ['테디', '재스퍼', '오티스', '헨리', '찰리', '레오', '윈스턴', '아치'],
@@ -64,13 +67,13 @@ export function settleBirth(g: GenState, d: number, ctx: DayCtx, avatarOf: Avata
     // 태어날 날이 된 아침
     if (h.birthDue != null && d >= h.birthDue) {
       if (!hasRoom(g) || h.children.length >= MAX_CHILDREN) {
-        h = { ...h, birthDue: null }
+        h = { ...h, birthDue: undefined }
         g = { ...g, households: { ...g.households, [hid]: h } }
         continue
       }
       const baby = babyOf(g, h, d, avatarOf)
       const first = !h.children.length
-      h = { ...h, children: [...h.children, baby.id], lastBirth: d, birthDue: null, ...(first ? { birthAffinity: affinityOf(g, a, b) } : {}) }
+      h = { ...h, children: [...h.children, baby.id], lastBirth: d, birthDue: undefined, ...(first ? { birthAffinity: affinityOf(g, a, b) } : {}) }
       g = { ...g, persons: { ...g.persons, [baby.id]: baby }, households: { ...g.households, [hid]: h }, nextPerson: g.nextPerson + 1 }
       g = addLog(g, d, 'birth', [a, b, baby.id])
       continue
