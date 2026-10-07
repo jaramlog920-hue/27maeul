@@ -54,7 +54,7 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
   { id: 'child', name: '새 식구', desc: '아이가 태어났다.', done: (s) => !!s.child },
   { id: 'companion', name: '작은 식구', desc: '동물 친구를 들였다.', done: (s) => !!s.companion },
   { id: 'coins500', name: '닢 오백', desc: '닢을 오백 모았다.', done: (s) => s.coins >= 500 },
-  { id: 'board10', name: '게시판 단골', desc: '의뢰 게시판의 부탁을 열 번 들어주었다.', done: (s) => flagCount(s, 'board:') >= 10 },
+  { id: 'board10', name: '게시판 단골', desc: '의뢰 게시판의 부탁을 열 번 들어주었다.', done: (s) => flagCount(s, 'board:') + copyRequestsDone(s) >= 10 },
   { id: 'trip', name: '먼 길', desc: '이웃 마을로 여행을 다녀왔다.', done: (s) => flagCount(s, 'trip:') >= 1 },
   { id: 'allTrips', name: '두 마을', desc: '항구 마을과 언덕 너머 마을을 모두 다녀왔다.', done: (s) => flagCount(s, 'trip:') >= 2 },
   { id: 'attic', name: '넓어진 우리 집', desc: '배우자방과 아이방을 지나 생활방까지 지었다.', done: (s) => s.homeLevel >= 3 },
@@ -78,3 +78,8 @@ export function withFound(found: readonly ItemId[], ...invs: Partial<Record<Item
 }
 
 export const NO_ACHIEVE_EXTRA = { notebook: NO_NOTEBOOK, romance: NO_ROMANCE }
+
+/** 지금 게시판의 주민 부탁 필사를 끝낸 수 (req:<날>:<번> · req:gen:… — 이웃 부탁 req:<이웃>:<번>과 구분, 2026-10-08 버그 29-A) */
+function copyRequestsDone(s: { flags: Record<string, number> }): number {
+  return Object.keys(s.flags).filter((k) => /^req:(\d+:\d+|gen:)/.test(k) && s.flags[k]).length
+}

@@ -45,6 +45,10 @@
     "7": "#7e766b",
     "8": "#86a872",
     "9": "#c98a9a",
+    "~": "#a7aaa3",
+    "^": "#d9d8c7",
+    "%": "#747c76",
+    "?": "#aa866e",
     "k": "#3c2418",
     "+": "#f0a890",
     "s": "#f8d0a8",
@@ -111,6 +115,10 @@
     "7": "#7e766b",
     "8": "#86a872",
     "9": "#c98a9a",
+    "~": "#a7aaa3",
+    "^": "#d9d8c7",
+    "%": "#747c76",
+    "?": "#aa866e",
     "k": "#3c2418",
     "+": "#f0a890",
     "s": "#f8d0a8",
@@ -7692,6 +7700,198 @@
         },
         {
           "file": "growth/adult-right-3.png",
+          "width": 10,
+          "height": 14,
+          "duration": 180,
+          "anchor": {
+            "x": 5,
+            "y": 14
+          }
+        }
+      ]
+    },
+    {
+      "id": "elder",
+      "group": "growth",
+      "label": "노년",
+      "facing": "down",
+      "frames": [
+        {
+          "file": "growth/elder-down-0.png",
+          "width": 10,
+          "height": 14,
+          "duration": 180,
+          "anchor": {
+            "x": 5,
+            "y": 14
+          }
+        },
+        {
+          "file": "growth/elder-down-1.png",
+          "width": 10,
+          "height": 14,
+          "duration": 180,
+          "anchor": {
+            "x": 5,
+            "y": 14
+          }
+        },
+        {
+          "file": "growth/elder-down-2.png",
+          "width": 10,
+          "height": 14,
+          "duration": 180,
+          "anchor": {
+            "x": 5,
+            "y": 14
+          }
+        },
+        {
+          "file": "growth/elder-down-3.png",
+          "width": 10,
+          "height": 14,
+          "duration": 180,
+          "anchor": {
+            "x": 5,
+            "y": 14
+          }
+        }
+      ]
+    },
+    {
+      "id": "elder",
+      "group": "growth",
+      "label": "노년",
+      "facing": "up",
+      "frames": [
+        {
+          "file": "growth/elder-up-0.png",
+          "width": 10,
+          "height": 14,
+          "duration": 180,
+          "anchor": {
+            "x": 5,
+            "y": 14
+          }
+        },
+        {
+          "file": "growth/elder-up-1.png",
+          "width": 10,
+          "height": 14,
+          "duration": 180,
+          "anchor": {
+            "x": 5,
+            "y": 14
+          }
+        },
+        {
+          "file": "growth/elder-up-2.png",
+          "width": 10,
+          "height": 14,
+          "duration": 180,
+          "anchor": {
+            "x": 5,
+            "y": 14
+          }
+        },
+        {
+          "file": "growth/elder-up-3.png",
+          "width": 10,
+          "height": 14,
+          "duration": 180,
+          "anchor": {
+            "x": 5,
+            "y": 14
+          }
+        }
+      ]
+    },
+    {
+      "id": "elder",
+      "group": "growth",
+      "label": "노년",
+      "facing": "left",
+      "frames": [
+        {
+          "file": "growth/elder-left-0.png",
+          "width": 10,
+          "height": 14,
+          "duration": 180,
+          "anchor": {
+            "x": 5,
+            "y": 14
+          }
+        },
+        {
+          "file": "growth/elder-left-1.png",
+          "width": 10,
+          "height": 14,
+          "duration": 180,
+          "anchor": {
+            "x": 5,
+            "y": 14
+          }
+        },
+        {
+          "file": "growth/elder-left-2.png",
+          "width": 10,
+          "height": 14,
+          "duration": 180,
+          "anchor": {
+            "x": 5,
+            "y": 14
+          }
+        },
+        {
+          "file": "growth/elder-left-3.png",
+          "width": 10,
+          "height": 14,
+          "duration": 180,
+          "anchor": {
+            "x": 5,
+            "y": 14
+          }
+        }
+      ]
+    },
+    {
+      "id": "elder",
+      "group": "growth",
+      "label": "노년",
+      "facing": "right",
+      "frames": [
+        {
+          "file": "growth/elder-right-0.png",
+          "width": 10,
+          "height": 14,
+          "duration": 180,
+          "anchor": {
+            "x": 5,
+            "y": 14
+          }
+        },
+        {
+          "file": "growth/elder-right-1.png",
+          "width": 10,
+          "height": 14,
+          "duration": 180,
+          "anchor": {
+            "x": 5,
+            "y": 14
+          }
+        },
+        {
+          "file": "growth/elder-right-2.png",
+          "width": 10,
+          "height": 14,
+          "duration": 180,
+          "anchor": {
+            "x": 5,
+            "y": 14
+          }
+        },
+        {
+          "file": "growth/elder-right-3.png",
           "width": 10,
           "height": 14,
           "duration": 180,

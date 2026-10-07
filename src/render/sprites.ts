@@ -4,6 +4,7 @@ import { hsvToHex, shadeOf, SKINS, TOPS, type FullAvatar, type Look } from '../e
 import { avatarDetails } from './character-details'
 import { FURNI_PALETTE, FURNITURE_ART, ICON_CHAR, iconFromArt } from './furniture-art'
 import { elderDetails, ELDER_COLORS } from './elder-details'
+import { sideHairDetails, legacySideHairDetails } from './side-hair-details'
 
 export type { Look }
 
@@ -391,7 +392,14 @@ export function spriteRows(who: Who, facing: Facing, opts: SpriteOpts): string[]
     const scarf = NEIGHBOR_SCARF[who]
     if (opts.season === 'winter' && scarf) for (let x = 2; x <= 7; x++) if (!'k.sL'.includes(rows[7][x])) setPixel(rows, x, 7, scarf)
   }
-  if (opts.elder) rows = elderDetails(rows, who, facing)
+  if (side && !opts.elder && (who !== 'writer' || !opts.avatar)) {
+    if (who === 'writer') sideHairDetails(rows, opts.look === 'f' ? 1 : 0)
+    else legacySideHairDetails(rows, who)
+  }
+  if (opts.elder) {
+    rows = elderDetails(rows, who, facing)
+    if (side) legacySideHairDetails(rows, who, true)
+  }
   // 모든 인물에 같은 손 윤곽. 머리나 장신구를 입힌 뒤 그려 손이 가려지지 않게 한다.
   if (side) setPixel(rows, 6, 11, '5')
   else {

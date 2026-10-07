@@ -1,0 +1,113 @@
+// 이전 6개 버그의 현재 동작 재검증. src/engine/bug-audit-20261008.test.ts로 복사한 뒤 실행.
+import { CONTENT } from '../content/catalog'
+import { newGame, placeFurniture, setMyLine, syncHome, tapTile, tick, type GameState } from './game'
+import { deserialize, serialize } from './save'
+import { advanceBuilds, canPlace, demolishBuild, orderBuild, type Build } from './newland-build'
+import { canInviteGuest, freeHome, guestHouseMorning, inviteGuest, settledGuests, settledSpot, talkGuest } from './newland-life'
+import { NEWLAND_PORTAL_FRONT, ROOM_SLOTS } from './newland-config'
+import { newlandWarp, setNewlandOpen } from './newland'
+import { setActiveMap } from './maps'
+import { roomOf } from './newland-rooms'
+import { solidTiles } from './room'
+
+const done = (id: string, kind: Build['kind'], x: number, y: number, facing: Build['facing'] = 'down', slot?: number): Build => ({
+  id, kind, x, y, facing, state: 'done', orderedDay: 1,
+  paid: { coins: 150, items: {} }, refunded: false,
+  ...(slot !== undefined ? { slot } : {}),
+})
+function land(builds: Build[], flags: Record<string, number> = {}): GameState {
+  const base = newGame(CONTENT)
+  const s: GameState = {
+    ...base, scenes: [], map: 'newland', clock: { day: 40, minute: 660 },
+    coins: 2000, inv: { olive: 20, papyrus: 20, reed: 20, table: 1 },
+    player: { ...base.player, ...NEWLAND_PORTAL_FRONT, path: [] },
+    flags: { ...base.flags, newlandGift: 1, newlandRevealed: 1, ...flags },
+    newland: { builds, tiles: {}, nextId: 10, settledDay: 40 },
+  }
+  syncHome(s)
+  return s
+}
+const house = done('b2', 'home', 16, 12, 'down', 0)
+const inn = done('b1', 'guest', 10, 12)
+const waiting = { guestNow: 1, guestSince: 40, 'guestGift:nelly': 20 }
+
+afterEach(() => { setActiveMap('village'); setNewlandOpen(false) })
+
+describe('2026-10-08 bug audit probes', () => {
+  it('preserves Old Testament guide notes after save and load', () => {
+    let s = land([])
+    s = setMyLine(s, 'guide:mt:1', '신약 메모')
+    s = setMyLine(s, 'guide:gen:1', '구약 메모')
+    const back = deserialize(serialize(s), CONTENT)!
+    expect(back).not.toBeNull()
+    expect(back.myLines['guide:mt:1']).toBe('신약 메모')
+    expect(back.myLines['guide:gen:1']).toBe('구약 메모')
+  })
+
+  it('keeps walking routes clear of placed furniture in newland homes', () => {
+    const slot = ROOM_SLOTS[0]
+    let s = land([house])
+    s = { ...s, player: { ...s.player, ...slot.entry } }
+    s = placeFurniture(s, 'table', { x: slot.entry.x - 1, y: slot.entry.y - 1 })!
+    expect(s).not.toBeNull()
+    const blocked = solidTiles(roomOf(s))
+    expect(blocked.size).toBeGreaterThan(0)
+    const walked = tapTile(s, { x: slot.entry.x, y: slot.entry.y - 2 })
+    expect(walked.player.path.length).toBeGreaterThan(0)
+    expect(walked.player.path.filter(t => blocked.has(`${t.x},${t.y}`))).toEqual([])
+  })
+
+  it('does not place left-facing house residents on a door that warps indoors', () => {
+    const left = { ...house, facing: 'left' as const }
+    const s = inviteGuest(land([inn, left], waiting))
+    syncHome(s)
+    const spot = settledSpot(left)!
+    expect(settledGuests(s)).toHaveLength(1)
+    const tapped = tapTile({ ...s, player: { ...s.player, x: spot.x - 1, y: spot.y } }, spot)
+    const arrived = tick(tapped, 1, () => 0.5, CONTENT)
+    console.log('left-house resident click', { player: { x: arrived.state.player.x, y: arrived.state.player.y }, events: arrived.events })
+    expect(newlandWarp(spot)).toBeUndefined()
+  })
+
+  it('does not permanently orphan a resident after their house is demolished', () => {
+    const s = inviteGuest(land([inn, house], waiting))
+    const gone = demolishBuild(s, house.id)!
+    expect(gone).not.toBeNull()
+    expect(settledGuests(gone)).toHaveLength(0)
+    // 저장 표식이 남아 있어도 집이 없는 손님은 다시 방문할 수 있어야 한다 (건물 id 방식으로 바뀐 뒤의 행동 검증).
+    const returned = guestHouseMorning({ ...gone, clock: { ...gone.clock, day: 42 },
+      flags: { ...gone.flags, guestNow: 0, guestNext: 0, 'guestGift:morris': 20, 'guestGift:ivy': 20 } })
+    expect(returned.flags.guestNow).toBe(1)
+  })
+
+  it('does not silently move an old resident into an unassigned rebuilt house', () => {
+    const s = inviteGuest(land([inn, house], waiting))
+    const gone = demolishBuild(s, house.id)!
+    syncHome(gone)
+    const ordered = orderBuild(gone, 'home', 24, 12)!
+    expect(ordered).not.toBeNull()
+    const ready = advanceBuilds({ ...ordered, clock: { ...ordered.clock, day: 42 } })
+    syncHome(ready)
+    const guests = settledGuests(ready)
+    console.log('rebuilt-house occupants', guests.map(g => ({ guest: g.id, house: g.home.id, movedDay: g.day })))
+    expect(freeHome(ready)).toBeDefined()
+  })
+
+  it('does not allow trees to cover the tile needed to talk to an existing resident', () => {
+    const s = inviteGuest(land([inn, house], waiting))
+    syncHome(s)
+    const at = settledSpot(house)!
+    expect(canPlace(s, 'treeSmall', at.x, at.y)).not.toBeNull()
+  })
+
+  it('requires a return visit before offering a house, even just after the first gift', () => {
+    let s = land([inn, house], { guestNow: 1, guestSince: 40 })
+    for (let d = 40; d <= 42; d++) {
+      s = { ...s, clock: { ...s.clock, day: d } }
+      s = guestHouseMorning(s)
+      s = talkGuest(s)!.state
+    }
+    expect(s.flags['guestGift:nelly']).toBe(42)
+    expect(canInviteGuest(s)).toBeNull()
+  })
+})

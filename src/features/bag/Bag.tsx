@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { fill, ITEM_TEXT, T } from '../../content/text'
-import { canBind, chestOf, playerTile } from '../../engine/game'
+import { canBind, chestOf, PANTRY_FOODS, pantryOf, playerTile } from '../../engine/game'
 import { CONTENT } from '../../content/catalog'
 import { finishedCopies } from '../../engine/binding'
 import { BOOKS } from '../../engine/types'
@@ -67,7 +67,7 @@ function slotsFor(n: number): number {
   return Math.max(COLS * 2, Math.ceil(n / COLS) * COLS)
 }
 
-type Pick = { from: 'bag' | 'chest'; id: ItemId }
+type Pick = { from: 'bag' | 'chest' | 'pantry'; id: ItemId }
 
 /** 아이콘만 늘어놓은 칸들. 누르면 아래에 이름·설명 */
 function ItemGrid({ items, picked, from, onPick }: { items: [ItemId, number][]; picked: Pick | null; from: Pick['from']; onPick: (p: Pick) => void }) {
@@ -209,14 +209,18 @@ export function Bag({ tab: first = 'items' }: { tab?: BagTab }) {
 function Things() {
   const game = useGame((s) => s.game)
   const takeChest = useGame((s) => s.takeChest)
+  const { putPantry, takePantry } = useGame.getState()
   const inv = game.inv
   const items = (Object.entries(inv) as [ItemId, number][]).filter(([, n]) => n > 0)
   // 재료 궤짝 (계획 11): 가진 뒤에만 보인다. 꺼내기는 집 안에서만
   const chest = chestOf(game)
   const boxed = chest ? (Object.entries(chest) as [ItemId, number][]).filter(([, n]) => n > 0) : []
   const atHome = isHome(playerTile(game))
+  // 서늘한 찬장 (2026-10-08): 음식만, 넣고 꺼내기는 집 안에서만
+  const pantry = pantryOf(game)
+  const stored = pantry ? (Object.entries(pantry) as [ItemId, number][]).filter(([, n]) => n > 0) : []
   const [picked, setPicked] = useState<Pick | null>(null)
-  const list = picked?.from === 'chest' ? boxed : items
+  const list = picked?.from === 'chest' ? boxed : picked?.from === 'pantry' ? stored : items
   const pickedN = picked ? (list.find(([id]) => id === picked.id)?.[1] ?? 0) : 0
   const detail = (from: Pick['from']) =>
     picked?.from === from && pickedN > 0 ? (
@@ -233,6 +237,16 @@ function Things() {
             {T.easy.chestTake}
           </button>
         )}
+        {from === 'bag' && pantry && PANTRY_FOODS.includes(picked.id) && (
+          <button disabled={!atHome} onClick={() => putPantry(picked.id)}>
+            {T.easy.pantryPut}
+          </button>
+        )}
+        {from === 'pantry' && (
+          <button disabled={!atHome} onClick={() => takePantry(picked.id)}>
+            {T.easy.pantryTake}
+          </button>
+        )}
       </div>
     ) : (
       <p className="bag-detail hint">{T.ui.bagTapHint}</p>
@@ -246,6 +260,13 @@ function Things() {
           <h3>{T.easy.chest}</h3>
           {boxed.length === 0 ? <p>{T.easy.chestEmpty}</p> : <ItemGrid items={boxed} picked={picked} from="chest" onPick={setPicked} />}
           {boxed.length > 0 && detail('chest')}
+        </>
+      )}
+      {pantry && (
+        <>
+          <h3>{T.easy.pantry}</h3>
+          {stored.length === 0 ? <p>{T.easy.pantryEmpty}</p> : <ItemGrid items={stored} picked={picked} from="pantry" onPick={setPicked} />}
+          {stored.length > 0 && detail('pantry')}
         </>
       )}
       <Copies />

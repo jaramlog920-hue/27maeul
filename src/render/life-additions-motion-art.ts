@@ -20,6 +20,18 @@ function board(){const p=Array.from({length:24},()=>Array<string>(24).fill('.'))
 function actorCanvas(rows:string[],oy=4){const b=board();rows.forEach((r,y)=>[...r].forEach((c,x)=>b.put(7+x,oy+y,c)));return b.rows()}
 function result(actor:string[],avatar:FullAvatar,prop=empty(),facing:Facing='down',duration=300,loop=true,anchor={x:12,y:18}){return {actor,propBack:facing==='up'?prop:empty(),propFront:facing==='up'?empty():prop,palette:writerPalette('spring',avatar),anchor,duration,loop}}
 function opts(avatar:FullAvatar,short?:number,elder=false){return {frame:0 as const,blink:false,avatar,short,elder}}
+/** 아이 몸통 옆에 붙는 짧은 소매와 손. 길게 뻗은 기본 손을 작업물 앞에서 덮어쓴다. */
+function compactChildHands(rows:string[],facing:Facing){
+ const a=rows.map(r=>[...r])
+ for(let y=11;y<17;y++)for(let x=4;x<21;x++)if(['s','5','!','K'].includes(a[y]?.[x]??'.'))a[y][x]='.'
+ const points=facing==='left'?[7]:facing==='right'?[16]:[9,14]
+ for(const x of points){
+  if(a[11]?.[x]!==undefined)a[11][x]='r'
+  if(a[12]?.[x]!==undefined)a[12][x]='s'
+  if(a[13]?.[x]!==undefined)a[13][x]='5'
+ }
+ return a.map(r=>r.join(''))
+}
 
 export function toddlerMotionFrame(action:typeof TODDLER_ACTIONS[number],facing:Facing,frame:number,avatar=ADDITION_AVATAR){
  const f=((frame%4)+4)%4,o=opts(avatar,0),source=spriteRows('writer',facing,{...o,frame:action==='walk'?([0,1,0,2] as const)[f]:0})
@@ -60,9 +72,9 @@ export function childMotionFrame(action:typeof CHILD_ACTIONS[number],facing:Faci
    for(let y=11;y<17;y++)for(let x=0;x<24;x++)if(['s','5'].includes(base.actor[y][x]))walking[y][x]=base.actor[y][x]
    actor=walking.map(r=>r.join(''))
   }
-  return result(actor,avatar,basketProp(facing,f),facing,240,action!=='give',base.anchor)
+  return result(compactChildHands(actor,facing),avatar,basketProp(facing,f),facing,240,action!=='give',base.anchor)
  }
- return {...base,palette:writerPalette('spring',avatar),duration:action==='read'?350:260,loop:true}
+ return {...base,actor:compactChildHands(base.actor,facing),palette:writerPalette('spring',avatar),duration:action==='read'?350:260,loop:true}
 }
 export function elderMotionFrame(action:typeof ELDER_ACTIONS[number],facing:Facing,frame:number,avatar=ADDITION_AVATAR){
  const f=((frame%4)+4)%4,o=opts(avatar,undefined,true)

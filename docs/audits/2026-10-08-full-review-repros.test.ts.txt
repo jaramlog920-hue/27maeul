@@ -1,0 +1,100 @@
+// 재현용: src/engine/bug-audit-20261008.test.ts로 복사한 뒤 실행. 기대 동작을 검사하므로 미수정 버그는 실패한다.
+import { createElement } from 'react'
+import { act, cleanup, fireEvent, render } from '@testing-library/react'
+import { CONTENT } from '../content/catalog'
+import { T, fill, itemName } from '../content/text'
+import { useGame } from '../store/game-store'
+import { CookingView } from '../features/cooking/CookingView'
+import { chapterEffort, careKey } from './copy-ways'
+import { copySpot } from './copying'
+import { serveTable, cookOf } from './cooking'
+import { interactTile, newGame, pressTile, recordProgress, syncHome, tapTile, type GameState } from './game'
+import { INTERIOR_DESK } from './newland-config'
+import { setActiveMap } from './maps'
+import { deserialize, serialize, SAVE_KEY, setActiveSlot } from './save'
+import { placement, type Furniture } from './room'
+import { setSpace } from './space-life'
+
+afterEach(() => { cleanup(); localStorage.clear(); setActiveMap('village'); useGame.setState({ modal: null, trip: null }) })
+
+describe('전체 코드 리뷰: 추가 재현', () => {
+  it('새 터 책상도 스페이스와 조이스틱 앞칸 상호작용 대상으로 잡혀야 한다', () => {
+    const base = newGame(CONTENT)
+    const s: GameState = { ...base, map: 'newland', scenes: [], flags: { ...base.flags, newlandGift: 1 },
+      player: { ...base.player, ...INTERIOR_DESK.stand, facing: 'up', path: [] } }
+    syncHome(s)
+    expect(tapTile(s, INTERIOR_DESK.tile).target).toMatchObject({ kind: 'place', id: 'otDesk' })
+    expect({ space: interactTile(s), joystick: pressTile(s) }).toEqual({ space: INTERIOR_DESK.tile, joystick: INTERIOR_DESK.tile })
+  })
+
+  it('저장을 불러와도 퍼즐로 마친 절 수와 시간·피로 비율이 유지되어야 한다', () => {
+    const base = newGame(CONTENT)
+    const key = careKey('mt', 1)
+    const s = { ...base, copyCare: { at: key, typos: 0, puzzle: true, puzzled: 6 } }
+    const back = deserialize(serialize(s), CONTENT)!
+    expect(back).not.toBeNull()
+    expect(chapterEffort(back.copyCare, key, 25)).toBeCloseTo(chapterEffort(s.copyCare, key, 25))
+    expect(back.copyCare?.puzzled).toBe(6)
+  })
+
+  it('다른 책을 쓰고 돌아와도 이미 퍼즐로 쓴 장에 직접쓰기 정성 도장이 생기지 않아야 한다', () => {
+    useGame.setState({ game: { ...newGame(CONTENT), scenes: [] }, modal: null })
+    useGame.getState().copyBook('mt')
+    expect(useGame.getState().copyPuzzle()).toBe(true)
+    expect(useGame.getState().game.copyCare?.puzzle).toBe(true)
+    useGame.getState().copyBook('mk')
+    expect(useGame.getState().copyPuzzle()).toBe(true)
+    useGame.getState().copyBook('mt')
+    for (let i = 0; i < 30 && !useGame.getState().game.progress.mt.completed.includes(1); i++) {
+      const at = copySpot(useGame.getState().game, 'mt', CONTENT)!
+      expect(useGame.getState().copyType(at.verse.text)).toBe(true)
+    }
+    expect(useGame.getState().game.progress.mt.completed).toContain(1)
+    expect(useGame.getState().game.careDone ?? []).not.toContain('mt:1')
+  })
+
+  it('자동 저장에서 도감·업적을 기록하면 실행 중 상태에도 반영되어야 한다', () => {
+    setActiveSlot('1')
+    const s = { ...newGame(CONTENT), scenes: [], coins: 500, achieved: [] }
+    useGame.setState({ game: s, modal: { kind: 'cooking' }, clockMs: 0, award: null, trip: null })
+    useGame.getState().frame(20)
+    const saved = deserialize(localStorage.getItem(SAVE_KEY), CONTENT)!
+    expect(saved.achieved.some(a => a.id === 'coins500')).toBe(true)
+    expect(useGame.getState().game.achieved.some(a => a.id === 'coins500')).toBe(true)
+    expect(recordProgress(useGame.getState().game).fresh).toEqual([])
+  })
+
+  it('현재 버전 저장의 사용자 메모는 옛 주민 id 마이그레이션으로 바뀌지 않아야 한다', () => {
+    const base = newGame(CONTENT)
+    const text = 'innkeeper, lambFound: 내가 직접 쓴 메모'
+    const s = { ...base, myLines: { [CONTENT.pieces[0].id]: text } }
+    const back = deserialize(serialize(s), CONTENT)!
+    expect(back.myLines[CONTENT.pieces[0].id]).toBe(text)
+  })
+
+  it('식탁을 다 비운 뒤에도 반응에는 실제로 먹은 요리 이름이 남아야 한다', () => {
+    const base = newGame(CONTENT)
+    let s: GameState = { ...base, scenes: [], inv: { figPlate: 2 }, clock: { day: 3, minute: 900 },
+      player: { ...base.player, x: 19, y: 113, path: [] } }
+    syncHome(s)
+    let room: Furniture[] = [...s.room]
+    for (const [item, x, y, facing] of [['table', 19, 112, undefined], ['chair', 19, 113, 'up'], ['chair', 20, 113, 'up']] as const) {
+      const f = placement(room, item, { x, y }, facing)!
+      expect(f).toBeTruthy()
+      room = [...room, f]
+      syncHome({ ...s, room })
+    }
+    s = setSpace({ ...s, room }, room.find(f => f.item === 'table')!, 'tea')!
+    s = { ...s, npcs: { ...s.npcs, poppy: { ...s.npcs.poppy, visible: true, x: 21, y: 112, path: [] } } }
+    s = serveTable(s, 'figPlate', 2)
+    expect(cookOf(s).table?.left).toBe(2)
+    useGame.setState({ game: s, modal: { kind: 'cooking' } })
+    const ui = render(createElement(CookingView))
+    act(() => fireEvent.click(ui.getByText(T.cooking.toTable)))
+    act(() => fireEvent.click(ui.getByRole('checkbox')))
+    act(() => fireEvent.click(ui.getByText(fill(T.cooking.sitWith, { n: 1 }))))
+    expect(cookOf(useGame.getState().game).table).toBeUndefined()
+    expect(ui.container.textContent).toContain(itemName('figPlate'))
+    expect(ui.container.textContent).not.toContain(itemName('honeyBread'))
+  })
+})

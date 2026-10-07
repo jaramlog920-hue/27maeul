@@ -18,6 +18,8 @@ export interface Club {
 export interface ClubSession {
  id:string; mode:'direct'|'beside'|'brief'; step:'choose'|'activity'|'finish'|'done'; picked?:string; note?:string
  woven?:boolean; made?:boolean; result?:'home'|'club'; gardenDone?:string[]
+ /** 차 모임에 나눈 만든 음식 · 근황에 함께한 이웃 (2026-10-08 club-extras) */
+ shared?:string; joinedNews?:string
 }
 export const CLUB_MAX=3
 export const CLUB_SLOTS: Record<ClubSlot,readonly [number,number]>={morning:[600,720],afternoon:[840,960],evening:[1080,1200]}

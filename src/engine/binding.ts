@@ -10,6 +10,9 @@ export type SpineDeco = 'cream' | 'leather' | 'navy' | 'bronze'
 export const COVER_COLORS: readonly CoverColor[] = ['cream', 'sky', 'sage', 'lavender', 'sand', 'slate']
 export const COVER_PATTERNS: readonly CoverPattern[] = ['plain', 'lines', 'dots', 'diamonds']
 export const SPINE_DECOS: readonly SpineDeco[] = ['cream', 'leather', 'navy', 'bronze']
+/** 덧장식 (2026-10-08, 다른 창 책 장식 도트 연결): 없음·모서리 금속·천 책갈피·눌러 찍은 무늬·손때 묻은 표지 */
+export type BookDetailChoice = 'none' | 'metalCorners' | 'ribbonBookmark' | 'embossed' | 'worn'
+export const BOOK_DETAIL_CHOICES: readonly BookDetailChoice[] = ['none', 'metalCorners', 'ribbonBookmark', 'embossed', 'worn']
 
 /** 표지 색 (차분한 파스텔) */
 export const COVER_HEX: Record<CoverColor, string> = {
@@ -38,6 +41,8 @@ export interface SpecialChoice {
   color: CoverColor
   pattern: CoverPattern
   deco: SpineDeco
+  /** 덧장식 — 옛 저장에는 없다 (없으면 'none'과 같다) */
+  detail?: BookDetailChoice
 }
 export const DEFAULT_CHOICE: SpecialChoice = { color: 'cream', pattern: 'lines', deco: 'leather' }
 
@@ -95,7 +100,9 @@ function cleanChoice(v: unknown): SpecialChoice | undefined {
   if (!(COVER_COLORS as readonly unknown[]).includes(color)) return undefined
   if (!(COVER_PATTERNS as readonly unknown[]).includes(pattern)) return undefined
   if (!(SPINE_DECOS as readonly unknown[]).includes(deco)) return undefined
-  return { color: color as CoverColor, pattern: pattern as CoverPattern, deco: deco as SpineDeco }
+  const detail = v.detail
+  const base = { color: color as CoverColor, pattern: pattern as CoverPattern, deco: deco as SpineDeco }
+  return (BOOK_DETAIL_CHOICES as readonly unknown[]).includes(detail) && detail !== 'none' ? { ...base, detail: detail as BookDetailChoice } : base
 }
 
 /**

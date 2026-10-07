@@ -1,0 +1,147 @@
+// 같은 docs/audits 위치에서 .txt 확장자만 제거해 실행. 기존 가족 보고서의 현재 코드 재검증.
+import { cleanup, render, screen } from '@testing-library/react'
+import { afterEach, describe, expect, it } from 'vitest'
+import { CONTENT } from '../../src/content/catalog'
+import { newGame, canGiveBouquet, giveBouquet, tick, GEN_WEDDING_SIDE, type GameState } from '../../src/engine/game'
+import { newGenState, canPair, familyGroups, relationId, type GenState, type Relation } from '../../src/engine/gen'
+import { homeOfFor, settleOneDay, withPairs } from '../../src/engine/gen-settle'
+import { marry, consultFor } from '../../src/engine/gen-marriage'
+import { giveCrib } from '../../src/engine/gen-birth'
+import { settleGrowth, movedHeir } from '../../src/engine/gen-growth'
+import { genAvatar } from '../../src/engine/gen-looks'
+import { ROOMS } from '../../src/engine/world'
+import { householdBabies } from '../../src/render/village-followup-scene'
+import { withLookDefaults } from '../../src/engine/avatar'
+import { deserialize, serialize } from '../../src/engine/save'
+import { useGame } from '../../src/store/game-store'
+import { ModalLayer } from '../../src/features/ModalLayer'
+import { WEDDING_SPOT } from '../../src/engine/romance'
+
+const fresh = (seed = 7) => newGenState(CONTENT, seed, 1, withPairs())
+
+function wedding(g: GenState, x: string, y: string, day = 1): GenState {
+  const id = relationId(x, y)
+  const [a, b] = id.split('|')
+  return marry(g, { id, a, b, stage: 'preparing', since: day - 7, prep: { tasks: ['bread', 'oil'], done: [], wedding: day } }, day, homeOfFor(CONTENT))
+}
+
+function crib(g: GenState, hid: string, day = 2): GenState {
+  return giveCrib({ ...g, households: { ...g.households, [hid]: { ...g.households[hid], cribAsk: { day, given: false } } } }, hid, day)!
+}
+
+function descendants(): GenState {
+  for (let seed = 1; seed <= 50; seed++) {
+    let g = wedding(wedding(fresh(seed), 'rudy', 'poppy'), 'wendell', 'tilly')
+    for (const hid of Object.keys(g.households)) g = crib(g, hid)
+    g = settleOneDay(g, 30, {}, CONTENT, {})
+    for (let day = 31; day <= 180; day++) g = settleGrowth(g, day)
+    if (canPair(g, null, 'g-0001', 'g-0002')) return g
+  }
+  throw new Error('No valid descendant couple in 50 seeds')
+}
+
+function gameWith(g: GenState, day = 180, minute = 600): GameState {
+  const game = newGame(CONTENT, { look: 'f', name: '검사' })
+  return { ...game, scenes: [], gen: g, clock: { day, minute }, notebook: { ...game.notebook, met: CONTENT.neighbors.map(n => n.id) }, flags: { ...game.flags, ...Object.fromEntries(CONTENT.neighbors.map(n => [`movedIn:${n.id}`, 1])) } }
+}
+
+function secondRelation(g: GenState, stage: Relation['stage']): GenState {
+  const id = relationId('g-0001', 'g-0002')
+  const r: Relation = { id, a: 'g-0001', b: 'g-0002', stage, since: 160,
+    ...(stage === 'lover' ? { consult: { asked: [], answers: [], nextAsk: 180 } } : {}),
+    ...(stage === 'preparing' ? { prep: { tasks: ['bread', 'oil'], done: [], wedding: 180 } } : {}),
+  }
+  return { ...g, affinity: { ...g.affinity, [id]: 90 }, relations: { ...g.relations, [id]: r } }
+}
+
+afterEach(() => { cleanup(); localStorage.clear() })
+
+describe('가족 감사: 정상 기대 조건 (수정 전에는 실패해야 하는 재현)', () => {
+  it('F01: 주민 배우자가 있는 사람에게 플레이어가 고백할 수 없어야 한다', () => {
+    let game = gameWith(wedding(fresh(), 'rudy', 'poppy'))
+    game = { ...game, hearts: { rudy: 100 }, inv: { bouquet: 1 } }
+    const rudy = CONTENT.neighbors.find(n => n.id === 'rudy')!
+    expect(game.gen!.persons.rudy.spouse).toBe('poppy')
+    const actual = { blocked: canGiveBouquet(game, rudy), partner: giveBouquet(game, rudy).romance.partner }
+    expect(actual).toEqual({ blocked: 'taken', partner: null })
+  })
+
+  it('F02: 결혼해도 가계도에서 기존 부모-자녀 연결을 볼 수 있어야 한다', () => {
+    expect(familyGroups(fresh()).some(h => h.heads.includes('carpenter') && h.children.includes('rudy'))).toBe(true)
+    const g = wedding(fresh(), 'rudy', 'poppy')
+    expect(g.persons.rudy.parents).toEqual(['carpenter'])
+    expect(familyGroups(g).some(h => h.heads.includes('carpenter') && h.children.includes('rudy'))).toBe(true)
+  })
+
+  it('F03: 주민 신혼집은 실제 방과 연결되어 태어난 아기가 보여야 한다', () => {
+    let g = wedding(fresh(), 'rudy', 'poppy')
+    const hid = Object.keys(g.households)[0]
+    g = settleOneDay(crib(g, hid), 30, {}, CONTENT, {})
+    expect(g.households[hid].children).toHaveLength(1)
+    const game = gameWith(g, 30)
+    expect(ROOMS.flatMap(room => householdBabies(game, room)).map(x => x.baby.id)).toContain('g-0001')
+  })
+
+  it('F04a: 부모 자리를 이어받은 자녀에게 결혼 상담 단추가 보여야 한다', () => {
+    const g = secondRelation(descendants(), 'lover')
+    expect(movedHeir(g, 'poppy')?.id).toBe('g-0001')
+    expect(consultFor(g, 'g-0001', {}, 180)?.id).toBe('g-0001|g-0002')
+    useGame.setState({ game: gameWith(g), modal: { kind: 'talk', neighborId: 'poppy', line: '…' } })
+    render(<ModalLayer />)
+    expect(screen.getByText(g.persons['g-0001'].name!, { exact: false })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: '이야기 들어 주기' })).not.toBeNull()
+  })
+
+  it('F04b: 이어받은 자녀의 결혼식에서 실제 두 NPC가 결혼 자리로 가야 한다', () => {
+    const g = secondRelation(descendants(), 'preparing')
+    const next = tick(gameWith(g, 180, 18 * 60 + 5), 0.01, () => 0.5, CONTENT).state
+    expect({ a: next.npcs.poppy.goal, b: next.npcs.tilly.goal }).toEqual({ a: WEDDING_SPOT, b: GEN_WEDDING_SIDE })
+  })
+
+  it('F04c: 이어받은 자녀 부부에게 아기 침대를 건넬 수 있어야 한다', () => {
+    let g = wedding(descendants(), 'g-0001', 'g-0002', 180)
+    const hid = g.persons['g-0001'].household!
+    g = { ...g, households: { ...g.households, [hid]: { ...g.households[hid], cribAsk: { day: 180, given: false } } } }
+    const game = { ...gameWith(g), inv: { reed: 3, blanket: 1 } }
+    useGame.setState({ game, modal: { kind: 'talk', neighborId: 'tilly', line: '…' } })
+    render(<ModalLayer />)
+    expect(screen.queryByRole('button', { name: '아기 침대 건네기' })).not.toBeNull()
+  })
+
+  it('F05: 손주 외형은 생성된 부모의 실제 외형을 물려받아야 한다', () => {
+    let g = wedding(descendants(), 'g-0001', 'g-0002', 180)
+    const hid = g.persons['g-0001'].household!
+    const parents = ['g-0001', 'g-0002'].map(id => g.persons[id].avatar!)
+    expect(parents.every(p => Object.keys(p).length === 5)).toBe(true)
+    g = settleOneDay(crib(g, hid, 181), 209, {}, CONTENT, {})
+    const child = g.persons[g.households[hid].children[0]]
+    expect(child.parents).toEqual(['g-0001', 'g-0002'])
+    expect(Object.keys(child.avatar ?? {}).sort()).toEqual(['bottom', 'hairBack', 'hairFront', 'skin', 'top'])
+  })
+
+  it('F06: 자녀 머리색은 부모의 머리색 중 하나여야 한다', () => {
+    let g = wedding(fresh(), 'rudy', 'poppy')
+    const hid = Object.keys(g.households)[0]
+    g = settleOneDay(crib(g, hid), 30, {}, CONTENT, {})
+    const colors = ['rudy', 'poppy'].map(id => {
+      const n = CONTENT.neighbors.find(n => n.id === id)!
+      return withLookDefaults({ look: n.look!, name: n.role, ...n.avatar }).hairColor
+    })
+    expect(colors).toContainEqual(genAvatar(g.persons['g-0001']).hairColor)
+  })
+
+  it('F07: 정원이 차도 이미 건넨 침대의 출생 예약은 대기로 보존되어야 한다', () => {
+    let g = wedding(fresh(), 'rudy', 'poppy')
+    const hid = Object.keys(g.households)[0]
+    g = crib(g, hid)
+    for (let i = 1; i <= 8; i++) {
+      const id = `g-${String(i).padStart(4, '0')}`
+      g = { ...g, persons: { ...g.persons, [id]: { id, origin: 'born', born: 1, stage: 'baby', parents: [], spouse: null, household: null } }, nextPerson: i + 1 }
+    }
+    g = settleOneDay(g, 30, {}, CONTENT, {})
+    const back = deserialize(serialize(gameWith(g, 30)), CONTENT)!
+    expect(back.gen!.households[hid].cribAsk?.given).toBe(true)
+    expect(back.gen!.households[hid].birthDue).toBe(30)
+  })
+})
+

@@ -2402,3 +2402,10 @@ button.row:active:not(:disabled) { background: #efe3c4; }
 .save-del { flex: none; min-width: 40px; }
 .save-confirm { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .save-face { width: 30px; height: auto; image-rendering: pixelated; flex: none; }
+
+/* 구약 서고 전시 (2026-10-08): 누르는 책등, 기록대·함께 읽기 */
+.spine-pick { background: none; border: 0; padding: 0; margin: 0; cursor: pointer; line-height: 0; }
+.spine-pick.on { outline: 2px solid var(--accent-ink, #8a6a55); outline-offset: 1px; }
+.ot-study-group { margin-top: 6px; }
+.ot-record, .ot-read { margin-top: 10px; }
+.ot-record h3, .ot-read h3 { margin: 0 0 4px; font-size: 0.95em; }

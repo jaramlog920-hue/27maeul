@@ -50,13 +50,23 @@ function babyOf(g: GenState, h: Household, d: number, avatarOf: AvatarOf): GenPe
   const list = names.length ? names : GEN_CHILD_NAMES[look]
   const name = list[Math.floor(rnd() * list.length)]
   // 외형: 값마다 부모 둘 중 한 사람의 것을 (같은 씨앗이면 같은 아이)
-  const pa = avatarOf(h.members[0]) ?? {}, pb = avatarOf(h.members[1]) ?? {}
+  // 생성된 부모는 저장된 외형을 먼저 (2026-10-08 버그 31-A·F05 — 손주가 기본 외형이 되었다)
+  const ofParent = (pid: string): Record<string, number> => {
+    const p = g.persons[pid]
+    const base = p?.avatar ?? avatarOf(pid) ?? {}
+    return p?.hair ? { ...base, hairH: p.hair[0], hairS: p.hair[1], hairV: p.hair[2] } : base
+  }
+  const pa = ofParent(h.members[0]), pb = ofParent(h.members[1])
   const avatar: Record<string, number> = {}
-  for (const k of [...new Set([...Object.keys(pa), ...Object.keys(pb)])].sort()) {
+  // 머리색은 한 사람의 것을 통째로 (31-B·F06)
+  const HAIR = ['hairH', 'hairS', 'hairV']
+  const hairFrom = rnd() < 0.5 ? (pa.hairH !== undefined ? pa : pb) : pb.hairH !== undefined ? pb : pa
+  const hair: [number, number, number] | undefined = hairFrom.hairH !== undefined ? [hairFrom.hairH, hairFrom.hairS, hairFrom.hairV] : undefined
+  for (const k of [...new Set([...Object.keys(pa), ...Object.keys(pb)])].filter((k) => !HAIR.includes(k)).sort()) {
     const from = rnd() < 0.5 ? pa[k] ?? pb[k] : pb[k] ?? pa[k]
     if (Number.isInteger(from) && from >= 0) avatar[k] = from
   }
-  return { id, origin: 'born', born: d, stage: 'baby', look, name, ...(Object.keys(avatar).length ? { avatar } : {}), parents: [...h.members], spouse: null, household: h.id }
+  return { id, origin: 'born', born: d, stage: 'baby', look, name, ...(Object.keys(avatar).length ? { avatar } : {}), ...(hair ? { hair } : {}), parents: [...h.members], spouse: null, household: h.id }
 }
 
 export function settleBirth(g: GenState, d: number, ctx: DayCtx, avatarOf: AvatarOf = () => undefined): GenState {
@@ -66,7 +76,9 @@ export function settleBirth(g: GenState, d: number, ctx: DayCtx, avatarOf: Avata
     const [a, b] = h.members
     // 태어날 날이 된 아침
     if (h.birthDue != null && d >= h.birthDue) {
-      if (!hasRoom(g) || h.children.length >= MAX_CHILDREN) {
+      // 마을 정원이 찼으면 예약을 지우지 않고 기다린다(D14) — 자리가 나는 아침에 태어난다 (2026-10-08 버그 22-D)
+      if (!hasRoom(g) && h.children.length < MAX_CHILDREN) continue
+      if (h.children.length >= MAX_CHILDREN) {
         h = { ...h, birthDue: undefined }
         g = { ...g, households: { ...g.households, [hid]: h } }
         continue

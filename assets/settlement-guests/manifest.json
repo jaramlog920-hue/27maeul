@@ -1,8 +1,8 @@
 {
   "guests": [
     {
-      "id": "hazel",
-      "label": "헤이즐",
+      "id": "nelly",
+      "label": "넬리",
       "elder": false,
       "anchor": {
         "x": 12,
@@ -11,210 +11,210 @@
       "actions": {
         "stand": {
           "down": [
-            "hazel-stand-down-0.png",
-            "hazel-stand-down-1.png",
-            "hazel-stand-down-2.png",
-            "hazel-stand-down-3.png"
+            "nelly-stand-down-0.png",
+            "nelly-stand-down-1.png",
+            "nelly-stand-down-2.png",
+            "nelly-stand-down-3.png"
           ],
           "up": [
-            "hazel-stand-up-0.png",
-            "hazel-stand-up-1.png",
-            "hazel-stand-up-2.png",
-            "hazel-stand-up-3.png"
+            "nelly-stand-up-0.png",
+            "nelly-stand-up-1.png",
+            "nelly-stand-up-2.png",
+            "nelly-stand-up-3.png"
           ],
           "left": [
-            "hazel-stand-left-0.png",
-            "hazel-stand-left-1.png",
-            "hazel-stand-left-2.png",
-            "hazel-stand-left-3.png"
+            "nelly-stand-left-0.png",
+            "nelly-stand-left-1.png",
+            "nelly-stand-left-2.png",
+            "nelly-stand-left-3.png"
           ],
           "right": [
-            "hazel-stand-right-0.png",
-            "hazel-stand-right-1.png",
-            "hazel-stand-right-2.png",
-            "hazel-stand-right-3.png"
+            "nelly-stand-right-0.png",
+            "nelly-stand-right-1.png",
+            "nelly-stand-right-2.png",
+            "nelly-stand-right-3.png"
           ]
         },
         "walk": {
           "down": [
-            "hazel-walk-down-0.png",
-            "hazel-walk-down-1.png",
-            "hazel-walk-down-2.png",
-            "hazel-walk-down-3.png"
+            "nelly-walk-down-0.png",
+            "nelly-walk-down-1.png",
+            "nelly-walk-down-2.png",
+            "nelly-walk-down-3.png"
           ],
           "up": [
-            "hazel-walk-up-0.png",
-            "hazel-walk-up-1.png",
-            "hazel-walk-up-2.png",
-            "hazel-walk-up-3.png"
+            "nelly-walk-up-0.png",
+            "nelly-walk-up-1.png",
+            "nelly-walk-up-2.png",
+            "nelly-walk-up-3.png"
           ],
           "left": [
-            "hazel-walk-left-0.png",
-            "hazel-walk-left-1.png",
-            "hazel-walk-left-2.png",
-            "hazel-walk-left-3.png"
+            "nelly-walk-left-0.png",
+            "nelly-walk-left-1.png",
+            "nelly-walk-left-2.png",
+            "nelly-walk-left-3.png"
           ],
           "right": [
-            "hazel-walk-right-0.png",
-            "hazel-walk-right-1.png",
-            "hazel-walk-right-2.png",
-            "hazel-walk-right-3.png"
+            "nelly-walk-right-0.png",
+            "nelly-walk-right-1.png",
+            "nelly-walk-right-2.png",
+            "nelly-walk-right-3.png"
           ]
         },
         "work": {
           "down": [
-            "hazel-work-down-0.png",
-            "hazel-work-down-1.png",
-            "hazel-work-down-2.png",
-            "hazel-work-down-3.png"
+            "nelly-work-down-0.png",
+            "nelly-work-down-1.png",
+            "nelly-work-down-2.png",
+            "nelly-work-down-3.png"
           ],
           "up": [
-            "hazel-work-up-0.png",
-            "hazel-work-up-1.png",
-            "hazel-work-up-2.png",
-            "hazel-work-up-3.png"
+            "nelly-work-up-0.png",
+            "nelly-work-up-1.png",
+            "nelly-work-up-2.png",
+            "nelly-work-up-3.png"
           ],
           "left": [
-            "hazel-work-left-0.png",
-            "hazel-work-left-1.png",
-            "hazel-work-left-2.png",
-            "hazel-work-left-3.png"
+            "nelly-work-left-0.png",
+            "nelly-work-left-1.png",
+            "nelly-work-left-2.png",
+            "nelly-work-left-3.png"
           ],
           "right": [
-            "hazel-work-right-0.png",
-            "hazel-work-right-1.png",
-            "hazel-work-right-2.png",
-            "hazel-work-right-3.png"
+            "nelly-work-right-0.png",
+            "nelly-work-right-1.png",
+            "nelly-work-right-2.png",
+            "nelly-work-right-3.png"
           ]
         },
         "greet": {
           "down": [
-            "hazel-greet-down-0.png",
-            "hazel-greet-down-1.png",
-            "hazel-greet-down-2.png",
-            "hazel-greet-down-3.png"
+            "nelly-greet-down-0.png",
+            "nelly-greet-down-1.png",
+            "nelly-greet-down-2.png",
+            "nelly-greet-down-3.png"
           ],
           "up": [
-            "hazel-greet-up-0.png",
-            "hazel-greet-up-1.png",
-            "hazel-greet-up-2.png",
-            "hazel-greet-up-3.png"
+            "nelly-greet-up-0.png",
+            "nelly-greet-up-1.png",
+            "nelly-greet-up-2.png",
+            "nelly-greet-up-3.png"
           ],
           "left": [
-            "hazel-greet-left-0.png",
-            "hazel-greet-left-1.png",
-            "hazel-greet-left-2.png",
-            "hazel-greet-left-3.png"
+            "nelly-greet-left-0.png",
+            "nelly-greet-left-1.png",
+            "nelly-greet-left-2.png",
+            "nelly-greet-left-3.png"
           ],
           "right": [
-            "hazel-greet-right-0.png",
-            "hazel-greet-right-1.png",
-            "hazel-greet-right-2.png",
-            "hazel-greet-right-3.png"
+            "nelly-greet-right-0.png",
+            "nelly-greet-right-1.png",
+            "nelly-greet-right-2.png",
+            "nelly-greet-right-3.png"
           ]
         },
         "carry": {
           "down": [
-            "hazel-carry-down-0.png",
-            "hazel-carry-down-1.png",
-            "hazel-carry-down-2.png",
-            "hazel-carry-down-3.png"
+            "nelly-carry-down-0.png",
+            "nelly-carry-down-1.png",
+            "nelly-carry-down-2.png",
+            "nelly-carry-down-3.png"
           ],
           "up": [
-            "hazel-carry-up-0.png",
-            "hazel-carry-up-1.png",
-            "hazel-carry-up-2.png",
-            "hazel-carry-up-3.png"
+            "nelly-carry-up-0.png",
+            "nelly-carry-up-1.png",
+            "nelly-carry-up-2.png",
+            "nelly-carry-up-3.png"
           ],
           "left": [
-            "hazel-carry-left-0.png",
-            "hazel-carry-left-1.png",
-            "hazel-carry-left-2.png",
-            "hazel-carry-left-3.png"
+            "nelly-carry-left-0.png",
+            "nelly-carry-left-1.png",
+            "nelly-carry-left-2.png",
+            "nelly-carry-left-3.png"
           ],
           "right": [
-            "hazel-carry-right-0.png",
-            "hazel-carry-right-1.png",
-            "hazel-carry-right-2.png",
-            "hazel-carry-right-3.png"
+            "nelly-carry-right-0.png",
+            "nelly-carry-right-1.png",
+            "nelly-carry-right-2.png",
+            "nelly-carry-right-3.png"
           ]
         },
         "sit": {
           "down": [
-            "hazel-sit-down-0.png",
-            "hazel-sit-down-1.png",
-            "hazel-sit-down-2.png",
-            "hazel-sit-down-3.png"
+            "nelly-sit-down-0.png",
+            "nelly-sit-down-1.png",
+            "nelly-sit-down-2.png",
+            "nelly-sit-down-3.png"
           ],
           "up": [
-            "hazel-sit-up-0.png",
-            "hazel-sit-up-1.png",
-            "hazel-sit-up-2.png",
-            "hazel-sit-up-3.png"
+            "nelly-sit-up-0.png",
+            "nelly-sit-up-1.png",
+            "nelly-sit-up-2.png",
+            "nelly-sit-up-3.png"
           ],
           "left": [
-            "hazel-sit-left-0.png",
-            "hazel-sit-left-1.png",
-            "hazel-sit-left-2.png",
-            "hazel-sit-left-3.png"
+            "nelly-sit-left-0.png",
+            "nelly-sit-left-1.png",
+            "nelly-sit-left-2.png",
+            "nelly-sit-left-3.png"
           ],
           "right": [
-            "hazel-sit-right-0.png",
-            "hazel-sit-right-1.png",
-            "hazel-sit-right-2.png",
-            "hazel-sit-right-3.png"
+            "nelly-sit-right-0.png",
+            "nelly-sit-right-1.png",
+            "nelly-sit-right-2.png",
+            "nelly-sit-right-3.png"
           ]
         },
         "read": {
           "down": [
-            "hazel-read-down-0.png",
-            "hazel-read-down-1.png",
-            "hazel-read-down-2.png",
-            "hazel-read-down-3.png"
+            "nelly-read-down-0.png",
+            "nelly-read-down-1.png",
+            "nelly-read-down-2.png",
+            "nelly-read-down-3.png"
           ],
           "up": [
-            "hazel-read-up-0.png",
-            "hazel-read-up-1.png",
-            "hazel-read-up-2.png",
-            "hazel-read-up-3.png"
+            "nelly-read-up-0.png",
+            "nelly-read-up-1.png",
+            "nelly-read-up-2.png",
+            "nelly-read-up-3.png"
           ],
           "left": [
-            "hazel-read-left-0.png",
-            "hazel-read-left-1.png",
-            "hazel-read-left-2.png",
-            "hazel-read-left-3.png"
+            "nelly-read-left-0.png",
+            "nelly-read-left-1.png",
+            "nelly-read-left-2.png",
+            "nelly-read-left-3.png"
           ],
           "right": [
-            "hazel-read-right-0.png",
-            "hazel-read-right-1.png",
-            "hazel-read-right-2.png",
-            "hazel-read-right-3.png"
+            "nelly-read-right-0.png",
+            "nelly-read-right-1.png",
+            "nelly-read-right-2.png",
+            "nelly-read-right-3.png"
           ]
         },
         "sleep": {
           "down": [
-            "hazel-sleep-down-0.png",
-            "hazel-sleep-down-1.png",
-            "hazel-sleep-down-2.png",
-            "hazel-sleep-down-3.png"
+            "nelly-sleep-down-0.png",
+            "nelly-sleep-down-1.png",
+            "nelly-sleep-down-2.png",
+            "nelly-sleep-down-3.png"
           ],
           "up": [
-            "hazel-sleep-up-0.png",
-            "hazel-sleep-up-1.png",
-            "hazel-sleep-up-2.png",
-            "hazel-sleep-up-3.png"
+            "nelly-sleep-up-0.png",
+            "nelly-sleep-up-1.png",
+            "nelly-sleep-up-2.png",
+            "nelly-sleep-up-3.png"
           ],
           "left": [
-            "hazel-sleep-left-0.png",
-            "hazel-sleep-left-1.png",
-            "hazel-sleep-left-2.png",
-            "hazel-sleep-left-3.png"
+            "nelly-sleep-left-0.png",
+            "nelly-sleep-left-1.png",
+            "nelly-sleep-left-2.png",
+            "nelly-sleep-left-3.png"
           ],
           "right": [
-            "hazel-sleep-right-0.png",
-            "hazel-sleep-right-1.png",
-            "hazel-sleep-right-2.png",
-            "hazel-sleep-right-3.png"
+            "nelly-sleep-right-0.png",
+            "nelly-sleep-right-1.png",
+            "nelly-sleep-right-2.png",
+            "nelly-sleep-right-3.png"
           ]
         }
       },
@@ -230,9 +230,9 @@
           "duration": 400,
           "loop": true,
           "layers": {
-            "back": "hazel-stand-down-0-back.png",
-            "actor": "hazel-stand-down-0-actor.png",
-            "front": "hazel-stand-down-0-front.png"
+            "back": "nelly-stand-down-0-back.png",
+            "actor": "nelly-stand-down-0-actor.png",
+            "front": "nelly-stand-down-0-front.png"
           }
         },
         {
@@ -246,9 +246,9 @@
           "duration": 400,
           "loop": true,
           "layers": {
-            "back": "hazel-stand-down-1-back.png",
-            "actor": "hazel-stand-down-1-actor.png",
-            "front": "hazel-stand-down-1-front.png"
+            "back": "nelly-stand-down-1-back.png",
+            "actor": "nelly-stand-down-1-actor.png",
+            "front": "nelly-stand-down-1-front.png"
           }
         },
         {
@@ -262,9 +262,9 @@
           "duration": 400,
           "loop": true,
           "layers": {
-            "back": "hazel-stand-down-2-back.png",
-            "actor": "hazel-stand-down-2-actor.png",
-            "front": "hazel-stand-down-2-front.png"
+            "back": "nelly-stand-down-2-back.png",
+            "actor": "nelly-stand-down-2-actor.png",
+            "front": "nelly-stand-down-2-front.png"
           }
         },
         {
@@ -278,9 +278,9 @@
           "duration": 400,
           "loop": true,
           "layers": {
-            "back": "hazel-stand-down-3-back.png",
-            "actor": "hazel-stand-down-3-actor.png",
-            "front": "hazel-stand-down-3-front.png"
+            "back": "nelly-stand-down-3-back.png",
+            "actor": "nelly-stand-down-3-actor.png",
+            "front": "nelly-stand-down-3-front.png"
           }
         },
         {
@@ -294,9 +294,9 @@
           "duration": 400,
           "loop": true,
           "layers": {
-            "back": "hazel-stand-up-0-back.png",
-            "actor": "hazel-stand-up-0-actor.png",
-            "front": "hazel-stand-up-0-front.png"
+            "back": "nelly-stand-up-0-back.png",
+            "actor": "nelly-stand-up-0-actor.png",
+            "front": "nelly-stand-up-0-front.png"
           }
         },
         {
@@ -310,9 +310,9 @@
           "duration": 400,
           "loop": true,
           "layers": {
-            "back": "hazel-stand-up-1-back.png",
-            "actor": "hazel-stand-up-1-actor.png",
-            "front": "hazel-stand-up-1-front.png"
+            "back": "nelly-stand-up-1-back.png",
+            "actor": "nelly-stand-up-1-actor.png",
+            "front": "nelly-stand-up-1-front.png"
           }
         },
         {
@@ -326,9 +326,9 @@
           "duration": 400,
           "loop": true,
           "layers": {
-            "back": "hazel-stand-up-2-back.png",
-            "actor": "hazel-stand-up-2-actor.png",
-            "front": "hazel-stand-up-2-front.png"
+            "back": "nelly-stand-up-2-back.png",
+            "actor": "nelly-stand-up-2-actor.png",
+            "front": "nelly-stand-up-2-front.png"
           }
         },
         {
@@ -342,9 +342,9 @@
           "duration": 400,
           "loop": true,
           "layers": {
-            "back": "hazel-stand-up-3-back.png",
-            "actor": "hazel-stand-up-3-actor.png",
-            "front": "hazel-stand-up-3-front.png"
+            "back": "nelly-stand-up-3-back.png",
+            "actor": "nelly-stand-up-3-actor.png",
+            "front": "nelly-stand-up-3-front.png"
           }
         },
         {
@@ -358,9 +358,9 @@
           "duration": 400,
           "loop": true,
           "layers": {
-            "back": "hazel-stand-left-0-back.png",
-            "actor": "hazel-stand-left-0-actor.png",
-            "front": "hazel-stand-left-0-front.png"
+            "back": "nelly-stand-left-0-back.png",
+            "actor": "nelly-stand-left-0-actor.png",
+            "front": "nelly-stand-left-0-front.png"
           }
         },
         {
@@ -374,9 +374,9 @@
           "duration": 400,
           "loop": true,
           "layers": {
-            "back": "hazel-stand-left-1-back.png",
-            "actor": "hazel-stand-left-1-actor.png",
-            "front": "hazel-stand-left-1-front.png"
+            "back": "nelly-stand-left-1-back.png",
+            "actor": "nelly-stand-left-1-actor.png",
+            "front": "nelly-stand-left-1-front.png"
           }
         },
         {
@@ -390,9 +390,9 @@
           "duration": 400,
           "loop": true,
           "layers": {
-            "back": "hazel-stand-left-2-back.png",
-            "actor": "hazel-stand-left-2-actor.png",
-            "front": "hazel-stand-left-2-front.png"
+            "back": "nelly-stand-left-2-back.png",
+            "actor": "nelly-stand-left-2-actor.png",
+            "front": "nelly-stand-left-2-front.png"
           }
         },
         {
@@ -406,9 +406,9 @@
           "duration": 400,
           "loop": true,
           "layers": {
-            "back": "hazel-stand-left-3-back.png",
-            "actor": "hazel-stand-left-3-actor.png",
-            "front": "hazel-stand-left-3-front.png"
+            "back": "nelly-stand-left-3-back.png",
+            "actor": "nelly-stand-left-3-actor.png",
+            "front": "nelly-stand-left-3-front.png"
           }
         },
         {
@@ -422,9 +422,9 @@
           "duration": 400,
           "loop": true,
           "layers": {
-            "back": "hazel-stand-right-0-back.png",
-            "actor": "hazel-stand-right-0-actor.png",
-            "front": "hazel-stand-right-0-front.png"
+            "back": "nelly-stand-right-0-back.png",
+            "actor": "nelly-stand-right-0-actor.png",
+            "front": "nelly-stand-right-0-front.png"
           }
         },
         {
@@ -438,9 +438,9 @@
           "duration": 400,
           "loop": true,
           "layers": {
-            "back": "hazel-stand-right-1-back.png",
-            "actor": "hazel-stand-right-1-actor.png",
-            "front": "hazel-stand-right-1-front.png"
+            "back": "nelly-stand-right-1-back.png",
+            "actor": "nelly-stand-right-1-actor.png",
+            "front": "nelly-stand-right-1-front.png"
           }
         },
         {
@@ -454,9 +454,9 @@
           "duration": 400,
           "loop": true,
           "layers": {
-            "back": "hazel-stand-right-2-back.png",
-            "actor": "hazel-stand-right-2-actor.png",
-            "front": "hazel-stand-right-2-front.png"
+            "back": "nelly-stand-right-2-back.png",
+            "actor": "nelly-stand-right-2-actor.png",
+            "front": "nelly-stand-right-2-front.png"
           }
         },
         {
@@ -470,9 +470,9 @@
           "duration": 400,
           "loop": true,
           "layers": {
-            "back": "hazel-stand-right-3-back.png",
-            "actor": "hazel-stand-right-3-actor.png",
-            "front": "hazel-stand-right-3-front.png"
+            "back": "nelly-stand-right-3-back.png",
+            "actor": "nelly-stand-right-3-actor.png",
+            "front": "nelly-stand-right-3-front.png"
           }
         },
         {
@@ -486,9 +486,9 @@
           "duration": 180,
           "loop": true,
           "layers": {
-            "back": "hazel-walk-down-0-back.png",
-            "actor": "hazel-walk-down-0-actor.png",
-            "front": "hazel-walk-down-0-front.png"
+            "back": "nelly-walk-down-0-back.png",
+            "actor": "nelly-walk-down-0-actor.png",
+            "front": "nelly-walk-down-0-front.png"
           }
         },
         {
@@ -502,9 +502,9 @@
           "duration": 180,
           "loop": true,
           "layers": {
-            "back": "hazel-walk-down-1-back.png",
-            "actor": "hazel-walk-down-1-actor.png",
-            "front": "hazel-walk-down-1-front.png"
+            "back": "nelly-walk-down-1-back.png",
+            "actor": "nelly-walk-down-1-actor.png",
+            "front": "nelly-walk-down-1-front.png"
           }
         },
         {
@@ -518,9 +518,9 @@
           "duration": 180,
           "loop": true,
           "layers": {
-            "back": "hazel-walk-down-2-back.png",
-            "actor": "hazel-walk-down-2-actor.png",
-            "front": "hazel-walk-down-2-front.png"
+            "back": "nelly-walk-down-2-back.png",
+            "actor": "nelly-walk-down-2-actor.png",
+            "front": "nelly-walk-down-2-front.png"
           }
         },
         {
@@ -534,9 +534,9 @@
           "duration": 180,
           "loop": true,
           "layers": {
-            "back": "hazel-walk-down-3-back.png",
-            "actor": "hazel-walk-down-3-actor.png",
-            "front": "hazel-walk-down-3-front.png"
+            "back": "nelly-walk-down-3-back.png",
+            "actor": "nelly-walk-down-3-actor.png",
+            "front": "nelly-walk-down-3-front.png"
           }
         },
         {
@@ -550,9 +550,9 @@
           "duration": 180,
           "loop": true,
           "layers": {
-            "back": "hazel-walk-up-0-back.png",
-            "actor": "hazel-walk-up-0-actor.png",
-            "front": "hazel-walk-up-0-front.png"
+            "back": "nelly-walk-up-0-back.png",
+            "actor": "nelly-walk-up-0-actor.png",
+            "front": "nelly-walk-up-0-front.png"
           }
         },
         {
@@ -566,9 +566,9 @@
           "duration": 180,
           "loop": true,
           "layers": {
-            "back": "hazel-walk-up-1-back.png",
-            "actor": "hazel-walk-up-1-actor.png",
-            "front": "hazel-walk-up-1-front.png"
+            "back": "nelly-walk-up-1-back.png",
+            "actor": "nelly-walk-up-1-actor.png",
+            "front": "nelly-walk-up-1-front.png"
           }
         },
         {
@@ -582,9 +582,9 @@
           "duration": 180,
           "loop": true,
           "layers": {
-            "back": "hazel-walk-up-2-back.png",
-            "actor": "hazel-walk-up-2-actor.png",
-            "front": "hazel-walk-up-2-front.png"
+            "back": "nelly-walk-up-2-back.png",
+            "actor": "nelly-walk-up-2-actor.png",
+            "front": "nelly-walk-up-2-front.png"
           }
         },
         {
@@ -598,9 +598,9 @@
           "duration": 180,
           "loop": true,
           "layers": {
-            "back": "hazel-walk-up-3-back.png",
-            "actor": "hazel-walk-up-3-actor.png",
-            "front": "hazel-walk-up-3-front.png"
+            "back": "nelly-walk-up-3-back.png",
+            "actor": "nelly-walk-up-3-actor.png",
+            "front": "nelly-walk-up-3-front.png"
           }
         },
         {
@@ -614,9 +614,9 @@
           "duration": 180,
           "loop": true,
           "layers": {
-            "back": "hazel-walk-left-0-back.png",
-            "actor": "hazel-walk-left-0-actor.png",
-            "front": "hazel-walk-left-0-front.png"
+            "back": "nelly-walk-left-0-back.png",
+            "actor": "nelly-walk-left-0-actor.png",
+            "front": "nelly-walk-left-0-front.png"
           }
         },
         {
@@ -630,9 +630,9 @@
           "duration": 180,
           "loop": true,
           "layers": {
-            "back": "hazel-walk-left-1-back.png",
-            "actor": "hazel-walk-left-1-actor.png",
-            "front": "hazel-walk-left-1-front.png"
+            "back": "nelly-walk-left-1-back.png",
+            "actor": "nelly-walk-left-1-actor.png",
+            "front": "nelly-walk-left-1-front.png"
           }
         },
         {
@@ -646,9 +646,9 @@
           "duration": 180,
           "loop": true,
           "layers": {
-            "back": "hazel-walk-left-2-back.png",
-            "actor": "hazel-walk-left-2-actor.png",
-            "front": "hazel-walk-left-2-front.png"
+            "back": "nelly-walk-left-2-back.png",
+            "actor": "nelly-walk-left-2-actor.png",
+            "front": "nelly-walk-left-2-front.png"
           }
         },
         {
@@ -662,9 +662,9 @@
           "duration": 180,
           "loop": true,
           "layers": {
-            "back": "hazel-walk-left-3-back.png",
-            "actor": "hazel-walk-left-3-actor.png",
-            "front": "hazel-walk-left-3-front.png"
+            "back": "nelly-walk-left-3-back.png",
+            "actor": "nelly-walk-left-3-actor.png",
+            "front": "nelly-walk-left-3-front.png"
           }
         },
         {
@@ -678,9 +678,9 @@
           "duration": 180,
           "loop": true,
           "layers": {
-            "back": "hazel-walk-right-0-back.png",
-            "actor": "hazel-walk-right-0-actor.png",
-            "front": "hazel-walk-right-0-front.png"
+            "back": "nelly-walk-right-0-back.png",
+            "actor": "nelly-walk-right-0-actor.png",
+            "front": "nelly-walk-right-0-front.png"
           }
         },
         {
@@ -694,9 +694,9 @@
           "duration": 180,
           "loop": true,
           "layers": {
-            "back": "hazel-walk-right-1-back.png",
-            "actor": "hazel-walk-right-1-actor.png",
-            "front": "hazel-walk-right-1-front.png"
+            "back": "nelly-walk-right-1-back.png",
+            "actor": "nelly-walk-right-1-actor.png",
+            "front": "nelly-walk-right-1-front.png"
           }
         },
         {
@@ -710,9 +710,9 @@
           "duration": 180,
           "loop": true,
           "layers": {
-            "back": "hazel-walk-right-2-back.png",
-            "actor": "hazel-walk-right-2-actor.png",
-            "front": "hazel-walk-right-2-front.png"
+            "back": "nelly-walk-right-2-back.png",
+            "actor": "nelly-walk-right-2-actor.png",
+            "front": "nelly-walk-right-2-front.png"
           }
         },
         {
@@ -726,9 +726,9 @@
           "duration": 180,
           "loop": true,
           "layers": {
-            "back": "hazel-walk-right-3-back.png",
-            "actor": "hazel-walk-right-3-actor.png",
-            "front": "hazel-walk-right-3-front.png"
+            "back": "nelly-walk-right-3-back.png",
+            "actor": "nelly-walk-right-3-actor.png",
+            "front": "nelly-walk-right-3-front.png"
           }
         },
         {
@@ -742,9 +742,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-work-down-0-back.png",
-            "actor": "hazel-work-down-0-actor.png",
-            "front": "hazel-work-down-0-front.png"
+            "back": "nelly-work-down-0-back.png",
+            "actor": "nelly-work-down-0-actor.png",
+            "front": "nelly-work-down-0-front.png"
           }
         },
         {
@@ -758,9 +758,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-work-down-1-back.png",
-            "actor": "hazel-work-down-1-actor.png",
-            "front": "hazel-work-down-1-front.png"
+            "back": "nelly-work-down-1-back.png",
+            "actor": "nelly-work-down-1-actor.png",
+            "front": "nelly-work-down-1-front.png"
           }
         },
         {
@@ -774,9 +774,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-work-down-2-back.png",
-            "actor": "hazel-work-down-2-actor.png",
-            "front": "hazel-work-down-2-front.png"
+            "back": "nelly-work-down-2-back.png",
+            "actor": "nelly-work-down-2-actor.png",
+            "front": "nelly-work-down-2-front.png"
           }
         },
         {
@@ -790,9 +790,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-work-down-3-back.png",
-            "actor": "hazel-work-down-3-actor.png",
-            "front": "hazel-work-down-3-front.png"
+            "back": "nelly-work-down-3-back.png",
+            "actor": "nelly-work-down-3-actor.png",
+            "front": "nelly-work-down-3-front.png"
           }
         },
         {
@@ -806,9 +806,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-work-up-0-back.png",
-            "actor": "hazel-work-up-0-actor.png",
-            "front": "hazel-work-up-0-front.png"
+            "back": "nelly-work-up-0-back.png",
+            "actor": "nelly-work-up-0-actor.png",
+            "front": "nelly-work-up-0-front.png"
           }
         },
         {
@@ -822,9 +822,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-work-up-1-back.png",
-            "actor": "hazel-work-up-1-actor.png",
-            "front": "hazel-work-up-1-front.png"
+            "back": "nelly-work-up-1-back.png",
+            "actor": "nelly-work-up-1-actor.png",
+            "front": "nelly-work-up-1-front.png"
           }
         },
         {
@@ -838,9 +838,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-work-up-2-back.png",
-            "actor": "hazel-work-up-2-actor.png",
-            "front": "hazel-work-up-2-front.png"
+            "back": "nelly-work-up-2-back.png",
+            "actor": "nelly-work-up-2-actor.png",
+            "front": "nelly-work-up-2-front.png"
           }
         },
         {
@@ -854,9 +854,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-work-up-3-back.png",
-            "actor": "hazel-work-up-3-actor.png",
-            "front": "hazel-work-up-3-front.png"
+            "back": "nelly-work-up-3-back.png",
+            "actor": "nelly-work-up-3-actor.png",
+            "front": "nelly-work-up-3-front.png"
           }
         },
         {
@@ -870,9 +870,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-work-left-0-back.png",
-            "actor": "hazel-work-left-0-actor.png",
-            "front": "hazel-work-left-0-front.png"
+            "back": "nelly-work-left-0-back.png",
+            "actor": "nelly-work-left-0-actor.png",
+            "front": "nelly-work-left-0-front.png"
           }
         },
         {
@@ -886,9 +886,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-work-left-1-back.png",
-            "actor": "hazel-work-left-1-actor.png",
-            "front": "hazel-work-left-1-front.png"
+            "back": "nelly-work-left-1-back.png",
+            "actor": "nelly-work-left-1-actor.png",
+            "front": "nelly-work-left-1-front.png"
           }
         },
         {
@@ -902,9 +902,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-work-left-2-back.png",
-            "actor": "hazel-work-left-2-actor.png",
-            "front": "hazel-work-left-2-front.png"
+            "back": "nelly-work-left-2-back.png",
+            "actor": "nelly-work-left-2-actor.png",
+            "front": "nelly-work-left-2-front.png"
           }
         },
         {
@@ -918,9 +918,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-work-left-3-back.png",
-            "actor": "hazel-work-left-3-actor.png",
-            "front": "hazel-work-left-3-front.png"
+            "back": "nelly-work-left-3-back.png",
+            "actor": "nelly-work-left-3-actor.png",
+            "front": "nelly-work-left-3-front.png"
           }
         },
         {
@@ -934,9 +934,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-work-right-0-back.png",
-            "actor": "hazel-work-right-0-actor.png",
-            "front": "hazel-work-right-0-front.png"
+            "back": "nelly-work-right-0-back.png",
+            "actor": "nelly-work-right-0-actor.png",
+            "front": "nelly-work-right-0-front.png"
           }
         },
         {
@@ -950,9 +950,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-work-right-1-back.png",
-            "actor": "hazel-work-right-1-actor.png",
-            "front": "hazel-work-right-1-front.png"
+            "back": "nelly-work-right-1-back.png",
+            "actor": "nelly-work-right-1-actor.png",
+            "front": "nelly-work-right-1-front.png"
           }
         },
         {
@@ -966,9 +966,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-work-right-2-back.png",
-            "actor": "hazel-work-right-2-actor.png",
-            "front": "hazel-work-right-2-front.png"
+            "back": "nelly-work-right-2-back.png",
+            "actor": "nelly-work-right-2-actor.png",
+            "front": "nelly-work-right-2-front.png"
           }
         },
         {
@@ -982,9 +982,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-work-right-3-back.png",
-            "actor": "hazel-work-right-3-actor.png",
-            "front": "hazel-work-right-3-front.png"
+            "back": "nelly-work-right-3-back.png",
+            "actor": "nelly-work-right-3-actor.png",
+            "front": "nelly-work-right-3-front.png"
           }
         },
         {
@@ -998,9 +998,9 @@
           "duration": 180,
           "loop": false,
           "layers": {
-            "back": "hazel-greet-down-0-back.png",
-            "actor": "hazel-greet-down-0-actor.png",
-            "front": "hazel-greet-down-0-front.png"
+            "back": "nelly-greet-down-0-back.png",
+            "actor": "nelly-greet-down-0-actor.png",
+            "front": "nelly-greet-down-0-front.png"
           }
         },
         {
@@ -1014,9 +1014,9 @@
           "duration": 180,
           "loop": false,
           "layers": {
-            "back": "hazel-greet-down-1-back.png",
-            "actor": "hazel-greet-down-1-actor.png",
-            "front": "hazel-greet-down-1-front.png"
+            "back": "nelly-greet-down-1-back.png",
+            "actor": "nelly-greet-down-1-actor.png",
+            "front": "nelly-greet-down-1-front.png"
           }
         },
         {
@@ -1030,9 +1030,9 @@
           "duration": 180,
           "loop": false,
           "layers": {
-            "back": "hazel-greet-down-2-back.png",
-            "actor": "hazel-greet-down-2-actor.png",
-            "front": "hazel-greet-down-2-front.png"
+            "back": "nelly-greet-down-2-back.png",
+            "actor": "nelly-greet-down-2-actor.png",
+            "front": "nelly-greet-down-2-front.png"
           }
         },
         {
@@ -1046,9 +1046,9 @@
           "duration": 180,
           "loop": false,
           "layers": {
-            "back": "hazel-greet-down-3-back.png",
-            "actor": "hazel-greet-down-3-actor.png",
-            "front": "hazel-greet-down-3-front.png"
+            "back": "nelly-greet-down-3-back.png",
+            "actor": "nelly-greet-down-3-actor.png",
+            "front": "nelly-greet-down-3-front.png"
           }
         },
         {
@@ -1062,9 +1062,9 @@
           "duration": 180,
           "loop": false,
           "layers": {
-            "back": "hazel-greet-up-0-back.png",
-            "actor": "hazel-greet-up-0-actor.png",
-            "front": "hazel-greet-up-0-front.png"
+            "back": "nelly-greet-up-0-back.png",
+            "actor": "nelly-greet-up-0-actor.png",
+            "front": "nelly-greet-up-0-front.png"
           }
         },
         {
@@ -1078,9 +1078,9 @@
           "duration": 180,
           "loop": false,
           "layers": {
-            "back": "hazel-greet-up-1-back.png",
-            "actor": "hazel-greet-up-1-actor.png",
-            "front": "hazel-greet-up-1-front.png"
+            "back": "nelly-greet-up-1-back.png",
+            "actor": "nelly-greet-up-1-actor.png",
+            "front": "nelly-greet-up-1-front.png"
           }
         },
         {
@@ -1094,9 +1094,9 @@
           "duration": 180,
           "loop": false,
           "layers": {
-            "back": "hazel-greet-up-2-back.png",
-            "actor": "hazel-greet-up-2-actor.png",
-            "front": "hazel-greet-up-2-front.png"
+            "back": "nelly-greet-up-2-back.png",
+            "actor": "nelly-greet-up-2-actor.png",
+            "front": "nelly-greet-up-2-front.png"
           }
         },
         {
@@ -1110,9 +1110,9 @@
           "duration": 180,
           "loop": false,
           "layers": {
-            "back": "hazel-greet-up-3-back.png",
-            "actor": "hazel-greet-up-3-actor.png",
-            "front": "hazel-greet-up-3-front.png"
+            "back": "nelly-greet-up-3-back.png",
+            "actor": "nelly-greet-up-3-actor.png",
+            "front": "nelly-greet-up-3-front.png"
           }
         },
         {
@@ -1126,9 +1126,9 @@
           "duration": 180,
           "loop": false,
           "layers": {
-            "back": "hazel-greet-left-0-back.png",
-            "actor": "hazel-greet-left-0-actor.png",
-            "front": "hazel-greet-left-0-front.png"
+            "back": "nelly-greet-left-0-back.png",
+            "actor": "nelly-greet-left-0-actor.png",
+            "front": "nelly-greet-left-0-front.png"
           }
         },
         {
@@ -1142,9 +1142,9 @@
           "duration": 180,
           "loop": false,
           "layers": {
-            "back": "hazel-greet-left-1-back.png",
-            "actor": "hazel-greet-left-1-actor.png",
-            "front": "hazel-greet-left-1-front.png"
+            "back": "nelly-greet-left-1-back.png",
+            "actor": "nelly-greet-left-1-actor.png",
+            "front": "nelly-greet-left-1-front.png"
           }
         },
         {
@@ -1158,9 +1158,9 @@
           "duration": 180,
           "loop": false,
           "layers": {
-            "back": "hazel-greet-left-2-back.png",
-            "actor": "hazel-greet-left-2-actor.png",
-            "front": "hazel-greet-left-2-front.png"
+            "back": "nelly-greet-left-2-back.png",
+            "actor": "nelly-greet-left-2-actor.png",
+            "front": "nelly-greet-left-2-front.png"
           }
         },
         {
@@ -1174,9 +1174,9 @@
           "duration": 180,
           "loop": false,
           "layers": {
-            "back": "hazel-greet-left-3-back.png",
-            "actor": "hazel-greet-left-3-actor.png",
-            "front": "hazel-greet-left-3-front.png"
+            "back": "nelly-greet-left-3-back.png",
+            "actor": "nelly-greet-left-3-actor.png",
+            "front": "nelly-greet-left-3-front.png"
           }
         },
         {
@@ -1190,9 +1190,9 @@
           "duration": 180,
           "loop": false,
           "layers": {
-            "back": "hazel-greet-right-0-back.png",
-            "actor": "hazel-greet-right-0-actor.png",
-            "front": "hazel-greet-right-0-front.png"
+            "back": "nelly-greet-right-0-back.png",
+            "actor": "nelly-greet-right-0-actor.png",
+            "front": "nelly-greet-right-0-front.png"
           }
         },
         {
@@ -1206,9 +1206,9 @@
           "duration": 180,
           "loop": false,
           "layers": {
-            "back": "hazel-greet-right-1-back.png",
-            "actor": "hazel-greet-right-1-actor.png",
-            "front": "hazel-greet-right-1-front.png"
+            "back": "nelly-greet-right-1-back.png",
+            "actor": "nelly-greet-right-1-actor.png",
+            "front": "nelly-greet-right-1-front.png"
           }
         },
         {
@@ -1222,9 +1222,9 @@
           "duration": 180,
           "loop": false,
           "layers": {
-            "back": "hazel-greet-right-2-back.png",
-            "actor": "hazel-greet-right-2-actor.png",
-            "front": "hazel-greet-right-2-front.png"
+            "back": "nelly-greet-right-2-back.png",
+            "actor": "nelly-greet-right-2-actor.png",
+            "front": "nelly-greet-right-2-front.png"
           }
         },
         {
@@ -1238,9 +1238,9 @@
           "duration": 180,
           "loop": false,
           "layers": {
-            "back": "hazel-greet-right-3-back.png",
-            "actor": "hazel-greet-right-3-actor.png",
-            "front": "hazel-greet-right-3-front.png"
+            "back": "nelly-greet-right-3-back.png",
+            "actor": "nelly-greet-right-3-actor.png",
+            "front": "nelly-greet-right-3-front.png"
           }
         },
         {
@@ -1254,9 +1254,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-carry-down-0-back.png",
-            "actor": "hazel-carry-down-0-actor.png",
-            "front": "hazel-carry-down-0-front.png"
+            "back": "nelly-carry-down-0-back.png",
+            "actor": "nelly-carry-down-0-actor.png",
+            "front": "nelly-carry-down-0-front.png"
           }
         },
         {
@@ -1270,9 +1270,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-carry-down-1-back.png",
-            "actor": "hazel-carry-down-1-actor.png",
-            "front": "hazel-carry-down-1-front.png"
+            "back": "nelly-carry-down-1-back.png",
+            "actor": "nelly-carry-down-1-actor.png",
+            "front": "nelly-carry-down-1-front.png"
           }
         },
         {
@@ -1286,9 +1286,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-carry-down-2-back.png",
-            "actor": "hazel-carry-down-2-actor.png",
-            "front": "hazel-carry-down-2-front.png"
+            "back": "nelly-carry-down-2-back.png",
+            "actor": "nelly-carry-down-2-actor.png",
+            "front": "nelly-carry-down-2-front.png"
           }
         },
         {
@@ -1302,9 +1302,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-carry-down-3-back.png",
-            "actor": "hazel-carry-down-3-actor.png",
-            "front": "hazel-carry-down-3-front.png"
+            "back": "nelly-carry-down-3-back.png",
+            "actor": "nelly-carry-down-3-actor.png",
+            "front": "nelly-carry-down-3-front.png"
           }
         },
         {
@@ -1318,9 +1318,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-carry-up-0-back.png",
-            "actor": "hazel-carry-up-0-actor.png",
-            "front": "hazel-carry-up-0-front.png"
+            "back": "nelly-carry-up-0-back.png",
+            "actor": "nelly-carry-up-0-actor.png",
+            "front": "nelly-carry-up-0-front.png"
           }
         },
         {
@@ -1334,9 +1334,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-carry-up-1-back.png",
-            "actor": "hazel-carry-up-1-actor.png",
-            "front": "hazel-carry-up-1-front.png"
+            "back": "nelly-carry-up-1-back.png",
+            "actor": "nelly-carry-up-1-actor.png",
+            "front": "nelly-carry-up-1-front.png"
           }
         },
         {
@@ -1350,9 +1350,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-carry-up-2-back.png",
-            "actor": "hazel-carry-up-2-actor.png",
-            "front": "hazel-carry-up-2-front.png"
+            "back": "nelly-carry-up-2-back.png",
+            "actor": "nelly-carry-up-2-actor.png",
+            "front": "nelly-carry-up-2-front.png"
           }
         },
         {
@@ -1366,9 +1366,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-carry-up-3-back.png",
-            "actor": "hazel-carry-up-3-actor.png",
-            "front": "hazel-carry-up-3-front.png"
+            "back": "nelly-carry-up-3-back.png",
+            "actor": "nelly-carry-up-3-actor.png",
+            "front": "nelly-carry-up-3-front.png"
           }
         },
         {
@@ -1382,9 +1382,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-carry-left-0-back.png",
-            "actor": "hazel-carry-left-0-actor.png",
-            "front": "hazel-carry-left-0-front.png"
+            "back": "nelly-carry-left-0-back.png",
+            "actor": "nelly-carry-left-0-actor.png",
+            "front": "nelly-carry-left-0-front.png"
           }
         },
         {
@@ -1398,9 +1398,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-carry-left-1-back.png",
-            "actor": "hazel-carry-left-1-actor.png",
-            "front": "hazel-carry-left-1-front.png"
+            "back": "nelly-carry-left-1-back.png",
+            "actor": "nelly-carry-left-1-actor.png",
+            "front": "nelly-carry-left-1-front.png"
           }
         },
         {
@@ -1414,9 +1414,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-carry-left-2-back.png",
-            "actor": "hazel-carry-left-2-actor.png",
-            "front": "hazel-carry-left-2-front.png"
+            "back": "nelly-carry-left-2-back.png",
+            "actor": "nelly-carry-left-2-actor.png",
+            "front": "nelly-carry-left-2-front.png"
           }
         },
         {
@@ -1430,9 +1430,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-carry-left-3-back.png",
-            "actor": "hazel-carry-left-3-actor.png",
-            "front": "hazel-carry-left-3-front.png"
+            "back": "nelly-carry-left-3-back.png",
+            "actor": "nelly-carry-left-3-actor.png",
+            "front": "nelly-carry-left-3-front.png"
           }
         },
         {
@@ -1446,9 +1446,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-carry-right-0-back.png",
-            "actor": "hazel-carry-right-0-actor.png",
-            "front": "hazel-carry-right-0-front.png"
+            "back": "nelly-carry-right-0-back.png",
+            "actor": "nelly-carry-right-0-actor.png",
+            "front": "nelly-carry-right-0-front.png"
           }
         },
         {
@@ -1462,9 +1462,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-carry-right-1-back.png",
-            "actor": "hazel-carry-right-1-actor.png",
-            "front": "hazel-carry-right-1-front.png"
+            "back": "nelly-carry-right-1-back.png",
+            "actor": "nelly-carry-right-1-actor.png",
+            "front": "nelly-carry-right-1-front.png"
           }
         },
         {
@@ -1478,9 +1478,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-carry-right-2-back.png",
-            "actor": "hazel-carry-right-2-actor.png",
-            "front": "hazel-carry-right-2-front.png"
+            "back": "nelly-carry-right-2-back.png",
+            "actor": "nelly-carry-right-2-actor.png",
+            "front": "nelly-carry-right-2-front.png"
           }
         },
         {
@@ -1494,9 +1494,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-carry-right-3-back.png",
-            "actor": "hazel-carry-right-3-actor.png",
-            "front": "hazel-carry-right-3-front.png"
+            "back": "nelly-carry-right-3-back.png",
+            "actor": "nelly-carry-right-3-actor.png",
+            "front": "nelly-carry-right-3-front.png"
           }
         },
         {
@@ -1510,9 +1510,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sit-down-0-back.png",
-            "actor": "hazel-sit-down-0-actor.png",
-            "front": "hazel-sit-down-0-front.png"
+            "back": "nelly-sit-down-0-back.png",
+            "actor": "nelly-sit-down-0-actor.png",
+            "front": "nelly-sit-down-0-front.png"
           }
         },
         {
@@ -1526,9 +1526,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sit-down-1-back.png",
-            "actor": "hazel-sit-down-1-actor.png",
-            "front": "hazel-sit-down-1-front.png"
+            "back": "nelly-sit-down-1-back.png",
+            "actor": "nelly-sit-down-1-actor.png",
+            "front": "nelly-sit-down-1-front.png"
           }
         },
         {
@@ -1542,9 +1542,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sit-down-2-back.png",
-            "actor": "hazel-sit-down-2-actor.png",
-            "front": "hazel-sit-down-2-front.png"
+            "back": "nelly-sit-down-2-back.png",
+            "actor": "nelly-sit-down-2-actor.png",
+            "front": "nelly-sit-down-2-front.png"
           }
         },
         {
@@ -1558,9 +1558,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sit-down-3-back.png",
-            "actor": "hazel-sit-down-3-actor.png",
-            "front": "hazel-sit-down-3-front.png"
+            "back": "nelly-sit-down-3-back.png",
+            "actor": "nelly-sit-down-3-actor.png",
+            "front": "nelly-sit-down-3-front.png"
           }
         },
         {
@@ -1574,9 +1574,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sit-up-0-back.png",
-            "actor": "hazel-sit-up-0-actor.png",
-            "front": "hazel-sit-up-0-front.png"
+            "back": "nelly-sit-up-0-back.png",
+            "actor": "nelly-sit-up-0-actor.png",
+            "front": "nelly-sit-up-0-front.png"
           }
         },
         {
@@ -1590,9 +1590,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sit-up-1-back.png",
-            "actor": "hazel-sit-up-1-actor.png",
-            "front": "hazel-sit-up-1-front.png"
+            "back": "nelly-sit-up-1-back.png",
+            "actor": "nelly-sit-up-1-actor.png",
+            "front": "nelly-sit-up-1-front.png"
           }
         },
         {
@@ -1606,9 +1606,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sit-up-2-back.png",
-            "actor": "hazel-sit-up-2-actor.png",
-            "front": "hazel-sit-up-2-front.png"
+            "back": "nelly-sit-up-2-back.png",
+            "actor": "nelly-sit-up-2-actor.png",
+            "front": "nelly-sit-up-2-front.png"
           }
         },
         {
@@ -1622,9 +1622,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sit-up-3-back.png",
-            "actor": "hazel-sit-up-3-actor.png",
-            "front": "hazel-sit-up-3-front.png"
+            "back": "nelly-sit-up-3-back.png",
+            "actor": "nelly-sit-up-3-actor.png",
+            "front": "nelly-sit-up-3-front.png"
           }
         },
         {
@@ -1638,9 +1638,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sit-left-0-back.png",
-            "actor": "hazel-sit-left-0-actor.png",
-            "front": "hazel-sit-left-0-front.png"
+            "back": "nelly-sit-left-0-back.png",
+            "actor": "nelly-sit-left-0-actor.png",
+            "front": "nelly-sit-left-0-front.png"
           }
         },
         {
@@ -1654,9 +1654,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sit-left-1-back.png",
-            "actor": "hazel-sit-left-1-actor.png",
-            "front": "hazel-sit-left-1-front.png"
+            "back": "nelly-sit-left-1-back.png",
+            "actor": "nelly-sit-left-1-actor.png",
+            "front": "nelly-sit-left-1-front.png"
           }
         },
         {
@@ -1670,9 +1670,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sit-left-2-back.png",
-            "actor": "hazel-sit-left-2-actor.png",
-            "front": "hazel-sit-left-2-front.png"
+            "back": "nelly-sit-left-2-back.png",
+            "actor": "nelly-sit-left-2-actor.png",
+            "front": "nelly-sit-left-2-front.png"
           }
         },
         {
@@ -1686,9 +1686,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sit-left-3-back.png",
-            "actor": "hazel-sit-left-3-actor.png",
-            "front": "hazel-sit-left-3-front.png"
+            "back": "nelly-sit-left-3-back.png",
+            "actor": "nelly-sit-left-3-actor.png",
+            "front": "nelly-sit-left-3-front.png"
           }
         },
         {
@@ -1702,9 +1702,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sit-right-0-back.png",
-            "actor": "hazel-sit-right-0-actor.png",
-            "front": "hazel-sit-right-0-front.png"
+            "back": "nelly-sit-right-0-back.png",
+            "actor": "nelly-sit-right-0-actor.png",
+            "front": "nelly-sit-right-0-front.png"
           }
         },
         {
@@ -1718,9 +1718,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sit-right-1-back.png",
-            "actor": "hazel-sit-right-1-actor.png",
-            "front": "hazel-sit-right-1-front.png"
+            "back": "nelly-sit-right-1-back.png",
+            "actor": "nelly-sit-right-1-actor.png",
+            "front": "nelly-sit-right-1-front.png"
           }
         },
         {
@@ -1734,9 +1734,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sit-right-2-back.png",
-            "actor": "hazel-sit-right-2-actor.png",
-            "front": "hazel-sit-right-2-front.png"
+            "back": "nelly-sit-right-2-back.png",
+            "actor": "nelly-sit-right-2-actor.png",
+            "front": "nelly-sit-right-2-front.png"
           }
         },
         {
@@ -1750,9 +1750,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sit-right-3-back.png",
-            "actor": "hazel-sit-right-3-actor.png",
-            "front": "hazel-sit-right-3-front.png"
+            "back": "nelly-sit-right-3-back.png",
+            "actor": "nelly-sit-right-3-actor.png",
+            "front": "nelly-sit-right-3-front.png"
           }
         },
         {
@@ -1766,9 +1766,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-read-down-0-back.png",
-            "actor": "hazel-read-down-0-actor.png",
-            "front": "hazel-read-down-0-front.png"
+            "back": "nelly-read-down-0-back.png",
+            "actor": "nelly-read-down-0-actor.png",
+            "front": "nelly-read-down-0-front.png"
           }
         },
         {
@@ -1782,9 +1782,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-read-down-1-back.png",
-            "actor": "hazel-read-down-1-actor.png",
-            "front": "hazel-read-down-1-front.png"
+            "back": "nelly-read-down-1-back.png",
+            "actor": "nelly-read-down-1-actor.png",
+            "front": "nelly-read-down-1-front.png"
           }
         },
         {
@@ -1798,9 +1798,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-read-down-2-back.png",
-            "actor": "hazel-read-down-2-actor.png",
-            "front": "hazel-read-down-2-front.png"
+            "back": "nelly-read-down-2-back.png",
+            "actor": "nelly-read-down-2-actor.png",
+            "front": "nelly-read-down-2-front.png"
           }
         },
         {
@@ -1814,9 +1814,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-read-down-3-back.png",
-            "actor": "hazel-read-down-3-actor.png",
-            "front": "hazel-read-down-3-front.png"
+            "back": "nelly-read-down-3-back.png",
+            "actor": "nelly-read-down-3-actor.png",
+            "front": "nelly-read-down-3-front.png"
           }
         },
         {
@@ -1830,9 +1830,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-read-up-0-back.png",
-            "actor": "hazel-read-up-0-actor.png",
-            "front": "hazel-read-up-0-front.png"
+            "back": "nelly-read-up-0-back.png",
+            "actor": "nelly-read-up-0-actor.png",
+            "front": "nelly-read-up-0-front.png"
           }
         },
         {
@@ -1846,9 +1846,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-read-up-1-back.png",
-            "actor": "hazel-read-up-1-actor.png",
-            "front": "hazel-read-up-1-front.png"
+            "back": "nelly-read-up-1-back.png",
+            "actor": "nelly-read-up-1-actor.png",
+            "front": "nelly-read-up-1-front.png"
           }
         },
         {
@@ -1862,9 +1862,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-read-up-2-back.png",
-            "actor": "hazel-read-up-2-actor.png",
-            "front": "hazel-read-up-2-front.png"
+            "back": "nelly-read-up-2-back.png",
+            "actor": "nelly-read-up-2-actor.png",
+            "front": "nelly-read-up-2-front.png"
           }
         },
         {
@@ -1878,9 +1878,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-read-up-3-back.png",
-            "actor": "hazel-read-up-3-actor.png",
-            "front": "hazel-read-up-3-front.png"
+            "back": "nelly-read-up-3-back.png",
+            "actor": "nelly-read-up-3-actor.png",
+            "front": "nelly-read-up-3-front.png"
           }
         },
         {
@@ -1894,9 +1894,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-read-left-0-back.png",
-            "actor": "hazel-read-left-0-actor.png",
-            "front": "hazel-read-left-0-front.png"
+            "back": "nelly-read-left-0-back.png",
+            "actor": "nelly-read-left-0-actor.png",
+            "front": "nelly-read-left-0-front.png"
           }
         },
         {
@@ -1910,9 +1910,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-read-left-1-back.png",
-            "actor": "hazel-read-left-1-actor.png",
-            "front": "hazel-read-left-1-front.png"
+            "back": "nelly-read-left-1-back.png",
+            "actor": "nelly-read-left-1-actor.png",
+            "front": "nelly-read-left-1-front.png"
           }
         },
         {
@@ -1926,9 +1926,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-read-left-2-back.png",
-            "actor": "hazel-read-left-2-actor.png",
-            "front": "hazel-read-left-2-front.png"
+            "back": "nelly-read-left-2-back.png",
+            "actor": "nelly-read-left-2-actor.png",
+            "front": "nelly-read-left-2-front.png"
           }
         },
         {
@@ -1942,9 +1942,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-read-left-3-back.png",
-            "actor": "hazel-read-left-3-actor.png",
-            "front": "hazel-read-left-3-front.png"
+            "back": "nelly-read-left-3-back.png",
+            "actor": "nelly-read-left-3-actor.png",
+            "front": "nelly-read-left-3-front.png"
           }
         },
         {
@@ -1958,9 +1958,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-read-right-0-back.png",
-            "actor": "hazel-read-right-0-actor.png",
-            "front": "hazel-read-right-0-front.png"
+            "back": "nelly-read-right-0-back.png",
+            "actor": "nelly-read-right-0-actor.png",
+            "front": "nelly-read-right-0-front.png"
           }
         },
         {
@@ -1974,9 +1974,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-read-right-1-back.png",
-            "actor": "hazel-read-right-1-actor.png",
-            "front": "hazel-read-right-1-front.png"
+            "back": "nelly-read-right-1-back.png",
+            "actor": "nelly-read-right-1-actor.png",
+            "front": "nelly-read-right-1-front.png"
           }
         },
         {
@@ -1990,9 +1990,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-read-right-2-back.png",
-            "actor": "hazel-read-right-2-actor.png",
-            "front": "hazel-read-right-2-front.png"
+            "back": "nelly-read-right-2-back.png",
+            "actor": "nelly-read-right-2-actor.png",
+            "front": "nelly-read-right-2-front.png"
           }
         },
         {
@@ -2006,9 +2006,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-read-right-3-back.png",
-            "actor": "hazel-read-right-3-actor.png",
-            "front": "hazel-read-right-3-front.png"
+            "back": "nelly-read-right-3-back.png",
+            "actor": "nelly-read-right-3-actor.png",
+            "front": "nelly-read-right-3-front.png"
           }
         },
         {
@@ -2022,9 +2022,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sleep-down-0-back.png",
-            "actor": "hazel-sleep-down-0-actor.png",
-            "front": "hazel-sleep-down-0-front.png"
+            "back": "nelly-sleep-down-0-back.png",
+            "actor": "nelly-sleep-down-0-actor.png",
+            "front": "nelly-sleep-down-0-front.png"
           }
         },
         {
@@ -2038,9 +2038,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sleep-down-1-back.png",
-            "actor": "hazel-sleep-down-1-actor.png",
-            "front": "hazel-sleep-down-1-front.png"
+            "back": "nelly-sleep-down-1-back.png",
+            "actor": "nelly-sleep-down-1-actor.png",
+            "front": "nelly-sleep-down-1-front.png"
           }
         },
         {
@@ -2054,9 +2054,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sleep-down-2-back.png",
-            "actor": "hazel-sleep-down-2-actor.png",
-            "front": "hazel-sleep-down-2-front.png"
+            "back": "nelly-sleep-down-2-back.png",
+            "actor": "nelly-sleep-down-2-actor.png",
+            "front": "nelly-sleep-down-2-front.png"
           }
         },
         {
@@ -2070,9 +2070,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sleep-down-3-back.png",
-            "actor": "hazel-sleep-down-3-actor.png",
-            "front": "hazel-sleep-down-3-front.png"
+            "back": "nelly-sleep-down-3-back.png",
+            "actor": "nelly-sleep-down-3-actor.png",
+            "front": "nelly-sleep-down-3-front.png"
           }
         },
         {
@@ -2086,9 +2086,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sleep-up-0-back.png",
-            "actor": "hazel-sleep-up-0-actor.png",
-            "front": "hazel-sleep-up-0-front.png"
+            "back": "nelly-sleep-up-0-back.png",
+            "actor": "nelly-sleep-up-0-actor.png",
+            "front": "nelly-sleep-up-0-front.png"
           }
         },
         {
@@ -2102,9 +2102,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sleep-up-1-back.png",
-            "actor": "hazel-sleep-up-1-actor.png",
-            "front": "hazel-sleep-up-1-front.png"
+            "back": "nelly-sleep-up-1-back.png",
+            "actor": "nelly-sleep-up-1-actor.png",
+            "front": "nelly-sleep-up-1-front.png"
           }
         },
         {
@@ -2118,9 +2118,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sleep-up-2-back.png",
-            "actor": "hazel-sleep-up-2-actor.png",
-            "front": "hazel-sleep-up-2-front.png"
+            "back": "nelly-sleep-up-2-back.png",
+            "actor": "nelly-sleep-up-2-actor.png",
+            "front": "nelly-sleep-up-2-front.png"
           }
         },
         {
@@ -2134,9 +2134,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sleep-up-3-back.png",
-            "actor": "hazel-sleep-up-3-actor.png",
-            "front": "hazel-sleep-up-3-front.png"
+            "back": "nelly-sleep-up-3-back.png",
+            "actor": "nelly-sleep-up-3-actor.png",
+            "front": "nelly-sleep-up-3-front.png"
           }
         },
         {
@@ -2150,9 +2150,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sleep-left-0-back.png",
-            "actor": "hazel-sleep-left-0-actor.png",
-            "front": "hazel-sleep-left-0-front.png"
+            "back": "nelly-sleep-left-0-back.png",
+            "actor": "nelly-sleep-left-0-actor.png",
+            "front": "nelly-sleep-left-0-front.png"
           }
         },
         {
@@ -2166,9 +2166,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sleep-left-1-back.png",
-            "actor": "hazel-sleep-left-1-actor.png",
-            "front": "hazel-sleep-left-1-front.png"
+            "back": "nelly-sleep-left-1-back.png",
+            "actor": "nelly-sleep-left-1-actor.png",
+            "front": "nelly-sleep-left-1-front.png"
           }
         },
         {
@@ -2182,9 +2182,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sleep-left-2-back.png",
-            "actor": "hazel-sleep-left-2-actor.png",
-            "front": "hazel-sleep-left-2-front.png"
+            "back": "nelly-sleep-left-2-back.png",
+            "actor": "nelly-sleep-left-2-actor.png",
+            "front": "nelly-sleep-left-2-front.png"
           }
         },
         {
@@ -2198,9 +2198,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sleep-left-3-back.png",
-            "actor": "hazel-sleep-left-3-actor.png",
-            "front": "hazel-sleep-left-3-front.png"
+            "back": "nelly-sleep-left-3-back.png",
+            "actor": "nelly-sleep-left-3-actor.png",
+            "front": "nelly-sleep-left-3-front.png"
           }
         },
         {
@@ -2214,9 +2214,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sleep-right-0-back.png",
-            "actor": "hazel-sleep-right-0-actor.png",
-            "front": "hazel-sleep-right-0-front.png"
+            "back": "nelly-sleep-right-0-back.png",
+            "actor": "nelly-sleep-right-0-actor.png",
+            "front": "nelly-sleep-right-0-front.png"
           }
         },
         {
@@ -2230,9 +2230,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sleep-right-1-back.png",
-            "actor": "hazel-sleep-right-1-actor.png",
-            "front": "hazel-sleep-right-1-front.png"
+            "back": "nelly-sleep-right-1-back.png",
+            "actor": "nelly-sleep-right-1-actor.png",
+            "front": "nelly-sleep-right-1-front.png"
           }
         },
         {
@@ -2246,9 +2246,9 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sleep-right-2-back.png",
-            "actor": "hazel-sleep-right-2-actor.png",
-            "front": "hazel-sleep-right-2-front.png"
+            "back": "nelly-sleep-right-2-back.png",
+            "actor": "nelly-sleep-right-2-actor.png",
+            "front": "nelly-sleep-right-2-front.png"
           }
         },
         {
@@ -2262,13 +2262,13 @@
           "duration": 300,
           "loop": true,
           "layers": {
-            "back": "hazel-sleep-right-3-back.png",
-            "actor": "hazel-sleep-right-3-actor.png",
-            "front": "hazel-sleep-right-3-front.png"
+            "back": "nelly-sleep-right-3-back.png",
+            "actor": "nelly-sleep-right-3-actor.png",
+            "front": "nelly-sleep-right-3-front.png"
           }
         }
       ],
-      "prop": "hazel-prop.png"
+      "prop": "nelly-prop.png"
     },
     {
       "id": "morris",

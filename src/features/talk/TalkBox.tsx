@@ -6,11 +6,12 @@ import { StallEntry } from '../stall/StallView'
 import { SkillLessonView, SkillEntry } from '../skills/SkillLesson'
 import { callName, fill, itemList, T } from '../../content/text'
 import { isMarketDay } from '../../engine/calendar'
-import { activeRequest, canBreakUp, canGiveBouquet, isSuitor, romanceWith, stageWith, type GameState, canHelp, canOrderHome, canOrderWork, GIFTABLE, lessonTime, nextHomeStage } from '../../engine/game'
+import { activeRequest, canBreakUp, canGiveBouquet, canGiveLoveVerse, isSuitor, romanceWith, stageWith, type GameState, canHelp, canOrderHome, canOrderWork, GIFTABLE, lessonTime, nextHomeStage } from '../../engine/game'
 import { CARPENTER_WORKS } from '../../engine/easier'
 import { GenTalk } from './GenTalk'
-import { movedHeir } from '../../engine/gen-growth'
+import { movedHeir, slotPerson } from '../../engine/gen-growth'
 import { canHearDream, hearDream } from '../../engine/newland-life'
+import { dreamText } from '../newland/FacilityView'
 import { saveGame } from '../../engine/save'
 import { requestFor, reqState } from '../../engine/bonds'
 import { has } from '../../engine/items'
@@ -126,7 +127,7 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
       {/* 다른 마을 서고 소문 (계획 21 R6) */}
       {modal.rumor && <p className="talk-line">{modal.rumor}</p>}
       {/* 주민 가족 이야기 (계획 20 2부): 결혼 상담·준비 돕기·다시 생각·아기 침대 */}
-      <GenTalk npc={def.id} />
+      <GenTalk npc={slotPerson(game.gen, def.id)} />
       <div className="actions menu">
         {/* 말씀 조각과 편지는 말을 걸 때 그 자리에서 건넨다 (받기 단추 없음) */}
         {teachable && (
@@ -160,15 +161,16 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
         {game.flags[`exPartner:${def.id}`] != null && canGiveBouquet(game, def) === null && (
           <button onClick={() => useGame.getState().giveBouquet(def.id)}>{T.romance.giveBouquet}</button>
         )}
-        {canBreakUp(game, def.id) && <button onClick={() => setAsking(true)}>{T.romance.breakUp}</button>}
+        {canGiveLoveVerse(game, def.id) && <button onClick={() => useGame.getState().open({ kind: 'loveVerse' })}>{T.romance.loveVerse}</button>}
+          {canBreakUp(game, def.id) && <button onClick={() => setAsking(true)}>{T.romance.breakUp}</button>}
         {/* 주민의 꿈 (계획 18 B18-8): 새 터가 열리고 마음이 가까우면 한 번 */}
         {canHearDream(game, def.id) && (
           <button
             onClick={() => {
-              const next = hearDream(useGame.getState().game)
+              const next = hearDream(useGame.getState().game, def.id)
               saveGame(next)
               useGame.setState({ game: next })
-              say(T.newlandLife.dream.heard, 5200)
+              say(dreamText(def.id).heard, 5200)
             }}
           >
             {T.newlandLife.dream.ask}

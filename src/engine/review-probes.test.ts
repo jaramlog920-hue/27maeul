@@ -15,20 +15,20 @@ it('reproduces negative coins after extension and shopping', () => {
   expect(returned.coins).toBe(-10)
 })
 
-it('reproduces user text changed by save migration', () => {
+it('keeps user text through save migration (fixed 2026-10-08, 01-B)', () => {
   const game = newGame(CONTENT)
   game.myLines['guide:mt:1'] = 'innkeeper lamb:found lambFound'
   const loaded = deserialize(serialize(game), CONTENT)!
-  expect(loaded.myLines['guide:mt:1']).toBe('apothecary lamb:clover lambClover')
+  expect(loaded.myLines['guide:mt:1']).toBe('innkeeper lamb:found lambFound')
 })
 
-it('reproduces autosave achievement missing from live state and lost on direct save', () => {
+it('keeps autosave achievements in live state (fixed 2026-10-08, 01-A)', () => {
   localStorage.clear()
   const game = { ...newGame(CONTENT), coins: 500, achieved: [] }
   useGame.setState({ game, clockMs: 19999, modal: { kind: 'settings' }, trip: null })
   useGame.getState().frame(0.05)
   expect(JSON.parse(localStorage.getItem(SAVE_KEY)!).achieved.some((a: { id: string }) => a.id === 'coins500')).toBe(true)
-  expect(useGame.getState().game.achieved.some(a => a.id === 'coins500')).toBe(false)
+  expect(useGame.getState().game.achieved.some(a => a.id === 'coins500')).toBe(true)
 })
 
 it('reproduces family trip reward persisted before any trip is paid or recorded', () => {

@@ -30,7 +30,7 @@ import { allShelved, canShelve, payRetry, poolFor, shelve, shelveNow as shelveQu
 import { DEFAULT_CHOICE, type SpecialChoice } from '../engine/binding'
 import { ALBUM_IDS, fill, itemList, itemName, KID_LETTERS, NEIGHBOR_LINES, roomTitle, SCENES, T, withAnd, withObject, withSubject, callName } from '../content/text'
 import { freshNews } from '../content/gen-text'
-import { careKey, finishCare, notePuzzle, noteTypo } from '../engine/copy-ways'
+import { careIn, careKey, finishCare, notePuzzle, noteTypo, switchCare } from '../engine/copy-ways'
 import { rumorNow, villageSeed } from '../engine/villages'
 import { canRead, seasonCopyGift, seasonCopyKey } from '../engine/meetings'
 import { addGift } from '../engine/items'
@@ -140,6 +140,9 @@ import {
   orderHome,
   orderWork,
   takeFromChest,
+  putInPantry,
+  servePantrySupper,
+  takeFromPantry,
   syncHome,
   moveBoardCard,
   type GameState,
@@ -246,6 +249,7 @@ export type Modal =
   | { kind: 'rank'; history?: boolean }
   /** 이사 간 이웃이 남긴 편지 (아침) */
   | { kind: 'farewell' }
+  | { kind: 'loveVerse' }
   /** 새 터 시설 (손님집·기억 정원·공동 마당·꿈터) */
   | { kind: 'facility'; id: FacilityKind }
   /** 배움터: 아이 맡기기 */
@@ -507,6 +511,9 @@ interface Store {
   askWork: (npc: string, id: CarpenterWork['id']) => void
   /** 집 안에서 재료 궤짝의 것을 가방으로 */
   takeChest: (id: ItemId) => void
+  /** 서늘한 찬장에 음식 넣기·꺼내기 (집 안에서) */
+  putPantry: (id: ItemId) => void
+  takePantry: (id: ItemId) => void
   readAt: (pieceId: string) => void
   /** 성경 이야기를 더 모으는 길: 밤 필사·서고 열람석·옛 두루마리 (모으면 원래 본문 창) */
   nightCopy: () => void
@@ -836,8 +843,11 @@ export const useGame = create<Store>((set, get) => {
     let state = written
     if (result.kind === 'chapter' && at) {
       const key = careKey(book, at.chapter)
-      const care = finishCare(written.careDone, written.copyCare, key)
-      state = { ...written, careDone: care.careDone, copyCare: undefined }
+      // 다른 책을 쓰다 돌아온 장이면 넣어 둔 기록으로 판단한다 (08-A)
+      const care = finishCare(written.careDone, careIn(written.copyCare, written.copyCareOther, key), key)
+      const other = { ...(written.copyCareOther ?? {}) }
+      delete other[key]
+      state = { ...written, careDone: care.careDone, copyCare: undefined, copyCareOther: other }
       if (care.earned) setTimeout(() => get().say(T.copyWays.careEarned, 3600), 1200)
       // 계절 필사 (계획 21 R7): 계절 15–21일에 장을 마치면 그 계절에 한 번 계절 장식
       const gift = seasonCopyGift(state.clock.day, state.flags)
@@ -943,7 +953,11 @@ export const useGame = create<Store>((set, get) => {
       }
       // 배우자와 저녁 (계획 12): 저녁에 가끔, 집에서 말을 걸면 같이 먹는 짧은 장면
       if (target.id === game.romance?.partner) {
-        const sup = eatSupper(game)
+        const ate = eatSupper(game)
+        // 서늘한 찬장에 음식이 있으면 하나를 꺼내 함께 차린다 (2026-10-08)
+        const served = ate ? servePantrySupper(ate) : null
+        const sup = served ? served.state : ate
+        if (served?.dish) setTimeout(() => get().say(fill(T.easy.pantrySupper, { item: itemName(served.dish!) }), 3200), 600)
         if (sup) {
           sfx('talk')
           // 장면을 닫으면 둘러앉아 먹는 손동작 (familyFrame familyMeal, 2026-10-07)
@@ -1324,27 +1338,28 @@ export const useGame = create<Store>((set, get) => {
       const s = get()
       const clockMs = s.clockMs + dt * 1000
       // 20초마다 저장 — 창이 열려 있어도, 걷기만 하다 창을 닫아도 시각·위치가 남도록
-      if (Math.floor(clockMs / 20000) !== Math.floor(s.clockMs / 20000)) persist(s.game)
+      // 저장하며 기록한 업적·도감은 실행 중 상태에도 (2026-10-08 버그 01-A — 반환값을 버리면 같은 업적을 또 새로 셌다)
+      const g0 = Math.floor(clockMs / 20000) !== Math.floor(s.clockMs / 20000) ? persist(s.game) : s.game
       // 여행 주사위 판 동안 마을은 멈춘다
       if (s.trip) {
-        set({ clockMs })
+        set({ clockMs, game: g0 })
         return
       }
       if (s.modal) {
         // 손일 중에는 활동만 움직인다
         if (s.modal.kind === 'mini') {
           const ms = stepMini(s.modal.state, dt, s.rng)
-          set({ clockMs, modal: { ...s.modal, state: ms } })
-        } else set({ clockMs })
+          set({ clockMs, game: g0, modal: { ...s.modal, state: ms } })
+        } else set({ clockMs, game: g0 })
         expireToast()
         return
       }
       if (s.decorating) {
-        set({ clockMs })
+        set({ clockMs, game: g0 })
         expireToast()
         return
       }
-      const r = tick(s.game, dt, s.rng, CONTENT)
+      const r = tick(g0, dt, s.rng, CONTENT)
       let game = r.state
       announceRoom(s.game, game)
       let modal: Modal | null = null
@@ -1722,6 +1737,18 @@ export const useGame = create<Store>((set, get) => {
       sfx('gift')
       set({ game: persist(next), modal: { kind: 'talk', neighborId: npc, line: T.easy.ordered } })
     },
+    putPantry: (id) => {
+      const next = putInPantry(get().game, id)
+      if (!next) return get().say(T.easy.pantryFull)
+      sfx('tap')
+      set({ game: persist(next) })
+    },
+    takePantry: (id) => {
+      const next = takeFromPantry(get().game, id)
+      if (!next) return get().say(T.easy.chestFull)
+      sfx('tap')
+      set({ game: persist(next) })
+    },
     takeChest: (id) => {
       const next = takeFromChest(get().game, id)
       if (!next) return get().say(T.easy.chestFull)
@@ -1890,7 +1917,9 @@ export const useGame = create<Store>((set, get) => {
       const book = game.copy.book
       const spot = book ? copySpot(game, book, CONTENT) : null
       if (!book || !spot) return
-      set({ game: { ...game, copyCare: noteTypo(game.copyCare, careKey(book, spot.chapter)) } })
+      const k = careKey(book, spot.chapter)
+      const sw = switchCare(game.copyCare, game.copyCareOther, k)
+      set({ game: { ...game, copyCare: noteTypo(sw.care, k), copyCareOther: sw.other } })
     },
     copyPuzzle: () => {
       const m = get().modal
@@ -1900,7 +1929,9 @@ export const useGame = create<Store>((set, get) => {
       const spot = copySpot(game, book, CONTENT)
       if (!spot) return false
       // 퍼즐로 마친 절도 기록은 본문 그대로 — 소리 내어 읽기와 같은 길. 이 장은 정성 도장을 받지 않는다
-      return commitVerse({ ...game, copyCare: notePuzzle(game.copyCare, careKey(book, spot.chapter)) }, book, spot.verse.text)
+      const k = careKey(book, spot.chapter)
+      const sw = switchCare(game.copyCare, game.copyCareOther, k)
+      return commitVerse({ ...game, copyCare: notePuzzle(sw.care, k), copyCareOther: sw.other }, book, spot.verse.text)
     },
     copyVoice: (transcript) => {
       const m = get().modal

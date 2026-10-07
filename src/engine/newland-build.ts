@@ -82,6 +82,16 @@ export function doorOf(kind: BuildKind, x: number, y: number, facing: Facing): {
   return d ? { door: { x: x + d.door.dx, y: y + d.door.dy }, front: { x: x + d.front.dx, y: y + d.front.dy } } : null
 }
 
+/**
+ * 문 있는 건물 곁에 사람(손님·이웃이 된 손님·아이·꿈터 주인)이 서는 칸 (2026-10-08):
+ * 아래 문이면 문 앞 오른쪽, 옆 문이면 문 앞 아래 — 문 칸과 겹치지 않아 누르면 집이 아니라 사람에게 간다
+ */
+export function standSpotOf(b: Pick<Build, 'kind' | 'x' | 'y' | 'facing'>): Tile | null {
+  const d = doorOf(b.kind, b.x, b.y, b.facing)
+  if (!d) return null
+  return b.facing === 'down' ? { x: d.front.x + 1, y: d.front.y } : { x: d.front.x, y: d.front.y + 1 }
+}
+
 const inRect = (t: Tile) => t.x >= BUILD_RECT.x0 && t.x <= BUILD_RECT.x1 && t.y >= BUILD_RECT.y0 && t.y <= BUILD_RECT.y1
 
 // ── 칸 덧씌우기 (world.tileAt이 읽는다) ──
@@ -236,6 +246,13 @@ export function canPlace(s: Base, kind: SiteKind, x: number, y: number, facing: 
     if (d && !fenced.has(keyOf(d.front)) && (!seen.has(keyOf(d.front)) || !seen.has(keyOf(d.door)))) return 'door'
   }
   if (mustReach(nextBuilds, nextTiles).some((t) => !seen.has(keyOf(t)))) return 'sealed'
+  // 사람이 서는 칸도 비워 둔다 (나무·건물로 막으면 말을 걸 수 없다 — 2026-10-08 버그): 손님집·꿈터·아이 일터, 이웃이 된 손님이 사는 집
+  const lived = new Set(Object.entries((s as { flags?: Record<string, number> }).flags ?? {}).filter(([k, v]) => (k.startsWith('settled:') || k.startsWith('familyHome:')) && v).map(([, v]) => `b${v}`))
+  for (const b of nextBuilds) {
+    if (!(b.kind === 'guest' || b.kind === 'weaver' || b.kind === 'kidWork' || (b.kind === 'home' && lived.has(b.id)))) continue
+    const st = standSpotOf(b)
+    if (st && inRect(st) && !isBlockedChar(tileCharAt(st.x, st.y)) && !seen.has(keyOf(st))) return 'door'
+  }
   return null
 }
 

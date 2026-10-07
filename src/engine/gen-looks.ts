@@ -6,7 +6,7 @@ import type { GenPerson, GenState } from './gen'
 export function genAvatar(p: GenPerson): FullAvatar {
   const a = p.avatar ?? {}
   const pick = (k: string) => (Number.isInteger(a[k]) ? { [k]: a[k] } : {})
-  return withLookDefaults({ look: p.look ?? 'f', name: p.name ?? '', ...pick('skin'), ...pick('hairFront'), ...pick('hairBack'), ...pick('top'), ...pick('bottom') })
+  return withLookDefaults({ look: p.look ?? 'f', name: p.name ?? '', ...pick('skin'), ...pick('hairFront'), ...pick('hairBack'), ...pick('top'), ...pick('bottom'), ...(p.hair ? { hairColor: p.hair } : {}) })
 }
 
 /** 아이를 곁에 데리고 다니는 부모 한 사람 (집 주인 쪽 먼저) — 둘 다 그려 겹치지 않게 */

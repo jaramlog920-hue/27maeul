@@ -89,7 +89,7 @@ describe('장날에 사는 것: 빗물 항아리 닢 40, 잉크 항아리 닢 10
 
 describe('목수 부탁: 재료 궤짝 닢 50, 그을음 받이 닢 60, 갈대 말리는 틀 닢 80', () => {
   it('값', () => {
-    expect(Object.fromEntries(CARPENTER_WORKS.map((w) => [w.id, w.coins]))).toEqual({ supplyChest: 50, sootCatcher: 60, reedRack: 80 })
+    expect(Object.fromEntries(CARPENTER_WORKS.map((w) => [w.id, w.coins]))).toEqual({ supplyChest: 50, sootCatcher: 60, reedRack: 80, homeCoolCupboard: 70 })
   })
   it('목수가 이사 오기 전에는 부탁할 수 없고, 닢이 모자라면 못 한다', () => {
     const s = newGame(CONTENT)

@@ -50,6 +50,8 @@ export function CookingView() {
   const [serving, setServing] = useState<{ item: ItemId; n: number } | null>(null)
   const [guests, setGuests] = useState<string[]>([])
   const [reactions, setReactions] = useState<MealReaction[]>([])
+  // 반응에 쓸 실제로 먹은 음식 (식탁을 다 비우면 식탁 정보가 사라진다 — 2026-10-08 버그 14-A)
+  const [ateItem, setAteItem] = useState<ItemId | null>(null)
   const close = useGame.getState().closeModal
   const c = cookOf(game)
   const run = c.run
@@ -126,8 +128,10 @@ export function CookingView() {
         {sitBlock === 'few' && <p className="hint">{C.few}</p>}
         <div className="actions menu column">
           <button className="primary" disabled={sitBlock !== null} onClick={() => {
+            const before = cookOf(useGame.getState().game).table?.item ?? null
             const r = sitTable(useGame.getState().game, guests)
             if (!r) return
+            setAteItem(before)
             applyLifeState(r.state)
             setReactions(r.reactions)
             setNote(C.sat)
@@ -153,7 +157,7 @@ export function CookingView() {
           })}</div>
         </>}
       </>}
-      {reactions.length > 0 && <><h3>{C.reactTitle}</h3><ul className="event-list">{reactions.map((r) => <li key={r.npc}>{whoName(r.npc)} · {fill((C.react as Record<string, string>)[r.kind], { item: itemName(c.table?.item ?? 'honeyBread') })}</li>)}</ul></>}
+      {reactions.length > 0 && <><h3>{C.reactTitle}</h3><ul className="event-list">{reactions.map((r) => <li key={r.npc}>{whoName(r.npc)} · {fill((C.react as Record<string, string>)[r.kind], { item: itemName(ateItem ?? c.table?.item ?? 'honeyBread') })}</li>)}</ul></>}
       <div className="actions"><button onClick={() => { setView('home'); setNote(''); setReactions([]); setGuests([]) }}>{T.ui.close}</button></div>
     </div>
   }

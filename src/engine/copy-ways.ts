@@ -130,8 +130,22 @@ export const HINT_AFTER = 3
 
 /** 정성 도장: 한 장을 모두 직접 쓰고 틀린 글자가 이만큼 이하 */
 export const CARE_TYPOS = 2
-export type CopyCare = { at: string; typos: number; puzzle: boolean }
+export type CopyCare = { at: string; typos: number; puzzle: boolean; /** 이 장에서 퍼즐로 마친 절 수 */ puzzled?: number }
 export const careKey = (book: string, chapter: number): string => `${book}:${chapter}`
+
+/** 마치지 않은 다른 장들의 기록 (책을 바꿔 쓰다 돌아와도 퍼즐·오타 기록을 잊지 않는다 — 2026-10-08 버그 08-A) */
+export type CopyCares = Record<string, CopyCare>
+/** 이 장의 기록: 지금 기록이 이 장이면 그것, 아니면 넣어 둔 기록, 둘 다 없으면 새로 */
+export const careIn = (care: CopyCare | undefined, other: CopyCares | undefined, key: string): CopyCare =>
+  care?.at === key ? care : other?.[key] ?? { at: key, typos: 0, puzzle: false }
+/** 이 장으로 옮긴다: 지금 기록이 다른 장이면 넣어 두고, 이 장의 넣어 둔 기록을 꺼낸다 */
+export function switchCare(care: CopyCare | undefined, other: CopyCares | undefined, key: string): { care: CopyCare; other: CopyCares } {
+  const next: CopyCares = { ...(other ?? {}) }
+  if (care && care.at !== key) next[care.at] = care
+  const base = careIn(care, other, key)
+  delete next[key]
+  return { care: base, other: next }
+}
 
 /** 지금 장의 기록 (다른 장이면 새로) */
 export const careFor = (care: CopyCare | undefined, key: string): CopyCare => (care?.at === key ? care : { at: key, typos: 0, puzzle: false })
@@ -141,7 +155,19 @@ export const noteTypo = (care: CopyCare | undefined, key: string): CopyCare => {
   return { ...c, typos: c.typos + 1 }
 }
 /** 퍼즐로 마친 절이 있다 — 이 장은 정성 도장을 받지 않는다 */
-export const notePuzzle = (care: CopyCare | undefined, key: string): CopyCare => ({ ...careFor(care, key), puzzle: true })
+export const notePuzzle = (care: CopyCare | undefined, key: string): CopyCare => {
+  const c = careFor(care, key)
+  return { ...c, puzzle: true, puzzled: (c.puzzled ?? 0) + 1 }
+}
+
+/** 퍼즐로 마친 절의 수고: 직접 쓰기의 60% (시간·피로) — 2026-10-08 */
+export const PUZZLE_EFFORT = 0.6
+/** 장을 마칠 때 시간·피로에 곱하는 몫: 퍼즐로 마친 절 비율만큼 60%로 */
+export function chapterEffort(care: CopyCare | undefined, key: string, verses: number): number {
+  const c = careFor(care, key)
+  const share = verses > 0 ? Math.min(1, (c.puzzled ?? (c.puzzle ? 1 : 0)) / verses) : 0
+  return 1 - (1 - PUZZLE_EFFORT) * share
+}
 
 /** 장을 마쳤을 때: 조건을 지켰으면 도장 (이미 있으면 그대로) */
 export function finishCare(done: readonly string[] | undefined, care: CopyCare | undefined, key: string): { careDone: string[]; earned: boolean } {

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { fill, T } from '../../content/text'
 import { buildsOf, type Build } from '../../engine/newland-build'
 import { DECOR_KINDS, EXTRA_BUILDS, SITE_KINDS, type SiteKind } from '../../engine/newland-sites'
-import { dreamHeard } from '../../engine/newland-life'
+import { dreamHeard, kidWorkJob } from '../../engine/newland-life'
 import { t } from '../../shared/i18n'
 import { useGame } from '../../store/game-store'
 import { costText, SitePreview, siteName, type SitePick } from './SitePreview'
@@ -96,7 +96,7 @@ export function BuildMenu() {
           </ul>
           {/* 계획 18 남은 건물: 손님집·기억 정원, 꿈 이야기를 들었으면 꿈터 */}
           <ul className="rows extra-builds">
-            {EXTRA_BUILDS.filter((k) => k !== 'weaver' || dreamHeard(game)).map((k) => (
+            {EXTRA_BUILDS.filter((k) => (k !== 'weaver' || dreamHeard(game)) && (k !== 'gallery' || dreamHeard(game, 'tilly')) && (k !== 'kidWork' || (!!kidWorkJob(game) && !game.newland?.builds.some((b) => b.kind === 'kidWork')))).map((k) => (
               <li key={k}>
                 <button className="row" onClick={() => setPick(k)}>
                   <span className="row-main"><b>{siteName(k)}</b></span>

@@ -31,7 +31,6 @@ export function libraryBookRows(book: Book, binding?: Binding, grade?: Grade, se
       if (pattern === 'dots') r(x, y, 2, 2, 'd')
       if (pattern === 'diamonds') { r(x + 1, y, 1, 3, 'd'); r(x, y + 1, 3, 1, 'd') }
     }
-    r(9, 12, 10, 7, 'k'); r(10, 13, 8, 5, 'p'); r(12, 15, 4, 1, 'W')
   } else {
     r(0, 0, 8, 20, 'k'); r(1, 1, 6, 18, 'c'); r(1, 2, 1, 16, 'h')
     const mark = spineLook(book, binding).mark

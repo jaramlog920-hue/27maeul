@@ -31,7 +31,8 @@ function edit(dir: string, id: string, fn: (b: string[][]) => void) {
 }
 afterAll(() => tmps.forEach((d) => rmSync(d, { recursive: true, force: true })))
 
-vi.setConfig({ testTimeout: 60_000 })
+// 전체 테스트를 함께 돌리면 느려져 한도를 넘는다 (2026-10-08) — 따로 돌리면 몇 초
+vi.setConfig({ testTimeout: 300_000 })
 
 describe('verify-ot.mjs', () => {
   it('현재 데이터는 통과 (39권 929장)', () => {

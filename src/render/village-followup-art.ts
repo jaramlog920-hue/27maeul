@@ -13,7 +13,7 @@ export const MEETING_PALETTE: Record<string, string> = {
 }
 const SYMBOLS: Record<MeetingEmote, string[]> = {
   heart: ['.........', '.rr...rr.', 'rrrr.rrrr', 'rrrrrrrrr', '.rrrrrrr.', '..rrrrr..', '...rrr...', '....r....', '.........'],
-  laugh: ['.........', '..yy.yy..', '.y.....y.', '.........', '.y.....y.', '..yyyyy..', '...yyy...', '.........', '.........'],
+  laugh: ['.........', '..y...y..', '.y.y.y.y.', '.........', '.r.....r.', '..ywwwy..', '..yyyyy..', '...yyy...', '.........'],
   talk: ['.........', '.ggggggg.', 'ggwwwwwgg', 'gwwwwwwwg', 'gwgwgwgwg', 'gwwwwwwwg', '.ggggggg.', '..gg.....', '.g.......'],
   sweat: ['.....b...', '....bbb..', '...bbbbb.', '...bbbbb.', '....bbb..', '.........', '..gg.....', '.g..gg...', '.........'],
   angry: ['.........', '.rr...rr.', '..rr.rr..', '.........', '....r....', '.........', '..rrrrr..', '.r.....r.', '.........'],
@@ -57,6 +57,20 @@ export function visitorFrame(kind: GuestKind, action: VisitorAction, frame: numb
   if (action === 'stand') {
     const rows = spriteRows('writer', 'down', opts)
     return { actor: Array.from({ length: 24 }, (_, y) => y >= 4 && y < 4 + rows.length ? '.'.repeat(7) + rows[y - 4] + '.'.repeat(7) : '.'.repeat(24)), propBack: empty, propFront: empty, actorPalette: writerPalette('spring', avatar), propPalette: USE_PROP_PALETTE, height: rows.length }
+  }
+  if (action === 'write') {
+    const phase=((Math.trunc(frame)%4)+4)%4,layers=furnitureUseFrame('writer','down','sit',frame,opts)
+    const actor=layers.actor.map(r=>[...r]),back=Array.from({length:24},()=>Array<string>(24).fill('.')),front=back.map(r=>[...r])
+    const rect=(p:string[][],x:number,y:number,w:number,h:number,c:string)=>{for(let yy=y;yy<y+h;yy++)for(let xx=x;xx<x+w;xx++)if(p[yy]?.[xx]!==undefined)p[yy][xx]=c}
+    for(let y=11;y<17;y++)for(let x=7;x<17;x++)if(['s','5','!','K'].includes(actor[y][x]))actor[y][x]='.'
+    // 책을 가슴 아래 책상에 두고 종이 → 손 → 펜 레이어로 나눈다.
+    rect(back,4,14,16,2,'g');rect(back,5,14,14,1,'e');rect(back,5,16,2,5,'g');rect(back,17,16,2,5,'g')
+    rect(back,8,11,9,3,'g');rect(back,9,11,7,2,'a');rect(back,12,11,1,3,'b')
+    const hx=[14,15,14,15][phase]
+    rect(actor,8,11,2,2,'r');rect(actor,14,11,2,2,'r');rect(actor,9,12,2,1,'s');rect(actor,9,13,2,1,'5');rect(actor,hx,12,2,1,'s');rect(actor,hx,13,2,1,'5')
+    rect(front,hx+1,10,1,1,'b');rect(front,hx,11,1,1,'d');rect(front,hx-1,12,1,1,'d')
+    rect(front,4,14,16,1,'e');rect(front,4,15,16,1,'g')
+    return {...layers,actor:actor.map(r=>r.join('')),propBack:back.map(r=>r.join('')),propFront:front.map(r=>r.join('')),interaction:{x:hx-1,y:12},actorPalette:writerPalette('spring',avatar),propPalette:USE_PROP_PALETTE,height:spriteRows('writer','down',opts).length}
   }
   const layers = furnitureUseFrame('writer', 'down', action === 'read' ? 'read' : 'craft', frame, opts)
   return { ...layers, actorPalette: writerPalette('spring', avatar), propPalette: USE_PROP_PALETTE, height: spriteRows('writer', 'down', opts).length }

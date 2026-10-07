@@ -176,7 +176,8 @@ export function rotation(room: readonly Furniture[], f: Furniture, ctx: RoomCtx 
     ctx,
   )
   if (!ok || ok.x !== f.x || ok.y !== f.y || !!ok.on !== !!f.on) return null
-  return ok
+  // 돌려도 배운 마감은 그대로 (25-A)
+  return f.finish ? { ...ok, finish: f.finish } : ok
 }
 
 /** 이 칸에서 치울 것: 위에 올린 작은 물건이 먼저, 그다음 가구 (탁자를 치우면 위의 것도 함께) */
@@ -196,7 +197,8 @@ export function refitRoom(room: readonly Furniture[], inv: Inventory, ctx: RoomC
   let bag = inv
   for (const f of room) {
     const ok = placement(kept, f.item, f, f.facing, ctx)
-    if (ok && ok.x === f.x && ok.y === f.y && !!ok.on === !!f.on) kept.push(ok)
+    // 배운 마감(finish)은 자리 검사와 상관없이 이어 붙인다 (2026-10-08 버그 25-A)
+    if (ok && ok.x === f.x && ok.y === f.y && !!ok.on === !!f.on) kept.push(f.finish ? { ...ok, finish: f.finish } : ok)
     else bag = addGift(bag, { [f.item]: 1 })
   }
   return { room: kept, inv: bag }

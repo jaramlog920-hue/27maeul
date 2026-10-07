@@ -1,5 +1,6 @@
 import { TOPS, type FullAvatar } from '../engine/avatar'
 import type { Facing } from '../engine/types'
+import { sideHairDetails } from './side-hair-details'
 
 const dot = (rows: string[], x: number, y: number, c: string) => {
   if (rows[y] && x >= 0 && x < rows[y].length) rows[y] = rows[y].slice(0, x) + c + rows[y].slice(x + 1)
@@ -168,6 +169,8 @@ export function avatarDetails(rows: string[], facing: Facing, a: FullAvatar, bli
   // 두 칸 정도의 빛으로 머리의 방향을 보여준다.
   for (const [x, y] of side ? [[3, 1], [4, 1], [2, 2]] : [[3, 1], [4, 1], [2, 2]])
     if (rows[y][x] === 'h') hair(x, y, '0')
+
+  if (side) sideHairDetails(rows, a.hairBack)
 
   if (a.acc === 1) {
     for (let x = 2; x <= 7; x++) if ('h01'.includes(rows[2][x])) dot(rows, x, 2, 'x')

@@ -9,7 +9,7 @@ import type { ItemId } from './types'
 
 type Items = Partial<Record<ItemId, number>>
 
-export type EasyId = 'rainJar' | 'reedRack' | 'sootCatcher' | 'inkJar' | 'supplyChest' | 'homeMailbox'
+export type EasyId = 'rainJar' | 'reedRack' | 'sootCatcher' | 'inkJar' | 'supplyChest' | 'homeMailbox' | 'homeCoolCupboard'
 
 export function owns(flags: Record<string, number>, id: EasyId): boolean {
   return unlocked(flags, id)
@@ -17,7 +17,7 @@ export function owns(flags: Record<string, number>, id: EasyId): boolean {
 
 /** 목수에게 부탁해 짓는 것 (부탁한 다음 날 아침 지어진다 — 집 넓히기와 같은 흐름) */
 export interface CarpenterWork {
-  id: Extract<EasyId, 'reedRack' | 'sootCatcher' | 'supplyChest'>
+  id: Extract<EasyId, 'reedRack' | 'sootCatcher' | 'supplyChest' | 'homeCoolCupboard'>
   coins: number
   /** 지어지면 가방에 들어오는 가구 (집 안 자리를 고른다) */
   item?: ItemId
@@ -26,6 +26,8 @@ export const CARPENTER_WORKS: readonly CarpenterWork[] = [
   { id: 'supplyChest', coins: 50, item: 'supplyChest' },
   { id: 'sootCatcher', coins: 60 },
   { id: 'reedRack', coins: 80 },
+  // 서늘한 찬장 (2026-10-08): 음식만 넣어 두는 찬장 — 집 안 자리를 고른다
+  { id: 'homeCoolCupboard', coins: 70, item: 'homeCoolCupboard' },
 ]
 
 /** 빗물 항아리: 아침마다 물 1, 비 온 다음 날 아침 물 3 */

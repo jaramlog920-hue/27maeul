@@ -1,0 +1,102 @@
+// 같은 docs/audits 위치에서 .txt 확장자만 제거해 실행. 기존 동물 보고서의 현재 코드 재검증.
+// Assertions describe expected behavior. The current code fails all five cases.
+import { CONTENT } from '../../src/content/catalog'
+import { adopt, companionGoal } from '../../src/engine/companion'
+import { enterDoor, newGame, setCompanionStay, syncHome, tick, travel, type GameState } from '../../src/engine/game'
+import { placement, solidTiles } from '../../src/engine/room'
+import { findPath } from '../../src/engine/movement'
+import { dayOf, weatherOf } from '../../src/engine/calendar'
+import { ARCHIVE, INTERIOR_ENTRY, VILLAGE_PORTAL_FRONT } from '../../src/engine/newland-config'
+import { HOME_ENTRY, HOME_RECT, isIndoor, isWalkable, key, ROOMS } from '../../src/engine/world'
+import { setActiveMap } from '../../src/engine/maps'
+
+const at = (a: { x: number; y: number }) => ({ x: Math.round(a.x), y: Math.round(a.y) })
+const distance = (a: { x: number; y: number }, b: { x: number; y: number }) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y)
+const sunnyDay = Array.from({ length: 30 }, (_, i) => dayOf('spring', i + 1)).find(d => weatherOf(d) === 'sunny')!
+function base(): GameState {
+  const s = newGame(CONTENT)
+  return { ...s, scenes: [], npcs: {}, clock: { day: sunnyDay, minute: 600 }, companion: adopt('dog', '누렁이', 1, HOME_ENTRY) }
+}
+function run(s: GameState, count = 100): GameState {
+  for (let i = 0; i < count; i++) s = tick(s, 0.05, () => 0.5, CONTENT).state
+  return s
+}
+afterEach(() => { setActiveMap('village'); syncHome(newGame(CONTENT)) })
+
+it('follows to a reachable neighboring tile when the preferred tile contains furniture', () => {
+  let s = base()
+  syncHome(s)
+  let fixture: { player: { x: number; y: number }; chair: NonNullable<ReturnType<typeof placement>> } | undefined
+  for (let y = HOME_RECT.y0 + 1; y < HOME_RECT.y1 - 1; y++) {
+    for (let x = HOME_RECT.x0 + 1; x < HOME_RECT.x1; x++) {
+      const player = { x, y }, chair = placement(s.room, 'stool', { x, y: y + 1 })
+      const blocked = chair ? solidTiles([...s.room, chair]) : new Set<string>()
+      const alternatives = [{ x: x - 1, y }, { x: x + 1, y }, { x, y: y - 1 }]
+      if (chair && isWalkable(player, blocked) && distance(player, HOME_ENTRY) > 2 &&
+        companionGoal(player, false)?.x === x && companionGoal(player, false)?.y === y + 1 &&
+        alternatives.some(t => findPath(HOME_ENTRY, t, blocked) !== null)) fixture = { player, chair }
+    }
+  }
+  expect(fixture).toBeDefined()
+  s = { ...s, room: [...s.room, fixture!.chair], player: { ...s.player, ...fixture!.player, path: [] } }
+  syncHome(s)
+  const blocked = solidTiles(s.room), goal = companionGoal(fixture!.player, false)!
+  expect(blocked.has(key(goal))).toBe(true)
+  const result = run(s)
+  console.log('furniture follow', { player: at(result.player), chair: fixture!.chair, pet: at(result.companion!), goal, path: result.companion!.path })
+  expect(distance(result.companion!, result.player)).toBeLessThanOrEqual(2)
+})
+
+it('stops an old path when the player turns back and the new goal is the current tile', () => {
+  const origin = { x: 12, y: 18 }, oldGoal = { x: 12, y: 20 }
+  const c = { ...adopt('dog', '누렁이', 1, origin), path: [{ x: 12, y: 19 }, oldGoal] }
+  const s0 = base()
+  const next = tick({ ...s0, companion: c, player: { ...s0.player, x: 12, y: 17, path: [] } }, 0.25, () => 0.5, CONTENT).state.companion!
+  console.log('old path', { start: origin, currentGoal: origin, end: at(next), path: next.path })
+  expect(at(next)).toEqual(origin)
+  expect(next.path).toEqual([])
+})
+
+it('keeps a pet in the village when follow is selected from the family menu in the newland archive', () => {
+  let s = base()
+  s = { ...s, flags: { ...s.flags, newlandGift: 1 }, player: { ...s.player, ...VILLAGE_PORTAL_FRONT, path: [] } }
+  s = setCompanionStay(s, true)
+  s = travel(s, 'newland', CONTENT)
+  s = { ...s, player: { ...s.player, ...ARCHIVE.front, path: [ARCHIVE.door] } }
+  for (let i = 0; i < 20 && distance(s.player, INTERIOR_ENTRY) > 1; i++) s = tick(s, 0.05, () => 0.5, CONTENT).state
+  expect(at(s.player)).toEqual(INTERIOR_ENTRY)
+  const original = at(s.companion!)
+  s = setCompanionStay(s, false)
+  const changed = at(s.companion!)
+  s = travel(s, 'village', CONTENT)
+  const returned = run(s, 200)
+  console.log('newland command', { original, changed, returnedPlayer: at(returned.player), returnedPet: at(returned.companion!), tileWalkable: isWalkable(changed) })
+  expect(distance(returned.companion!, returned.player)).toBeLessThanOrEqual(2)
+})
+
+it('lets a following pet enter an ordinary village room', () => {
+  let s = base()
+  const room = ROOMS.find(r => r.owner === 'tea') ?? ROOMS.find(r => r.owner === 'library')!
+  s = { ...s, companion: { ...s.companion!, x: room.door.x - 1, y: room.door.y + 1 }, player: { ...s.player, x: room.door.x, y: room.door.y + 1, path: [] } }
+  s = enterDoor(s, room.door)
+  expect(at(s.player)).toEqual(room.entry)
+  const result = run(s)
+  console.log('ordinary room', { room: room.owner, player: at(result.player), pet: at(result.companion!) })
+  expect(isIndoor(at(result.companion!))).toBe(true)
+  expect(distance(result.companion!, result.player)).toBeLessThanOrEqual(2)
+})
+
+it('lets a following pet leave the village library with the player', () => {
+  let s = base()
+  const room = ROOMS.find(r => r.owner === 'library')!
+  s = { ...s, player: { ...s.player, ...room.entry, path: [] } }
+  s = setCompanionStay(s, false)
+  expect(isIndoor(at(s.companion!))).toBe(true)
+  s = { ...s, player: { ...s.player, path: findPath(room.entry, room.exit)! } }
+  const result = run(s, 200)
+  expect(isIndoor(at(result.player))).toBe(false)
+  console.log('leave ordinary room', { player: at(result.player), pet: at(result.companion!) })
+  expect(isIndoor(at(result.companion!))).toBe(false)
+  expect(distance(result.companion!, result.player)).toBeLessThanOrEqual(2)
+})
+

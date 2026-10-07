@@ -1,13 +1,65 @@
 // 마을 서고 안: 서고 선반 전경(신약 n/27 — 처음엔 휑하고 권이 늘수록 찬다), 복음서 방 선반과 잠긴 방들 (설계 §2.1.1, 계획 14 작업 4)
-import { CONTENT } from '../../content/catalog'
+import { useState } from 'react'
+import { CONTENT, neighborById, pieceById } from '../../content/catalog'
 import { fill, T } from '../../content/text'
 import { openDoorsFor } from '../../engine/books'
-import { canLibraryRead, LIBRARY_READ_PRICE } from '../../engine/game'
+import { canLibraryRead, canTeachVisitor, LIBRARY_READ_PRICE, librarianCandidates, librarianId, setLibrarian, teachVisitor, todaysVisitor, type GameState } from '../../engine/game'
+import { saveGame } from '../../engine/save'
 import { GOSPELS } from '../../engine/types'
 import { useGame } from '../../store/game-store'
 import { t } from '../../shared/i18n'
 import { ShelfPicture } from './BookArt'
 import { ShelfRow } from './ShelfRow'
+
+/** 서고 운영 (2026-10-08): 사서 맡기기 · 오늘 온 방문객에게 조각 하나 함께 읽어 주기 */
+function LibraryOps() {
+  const game = useGame((s) => s.game)
+  const [teaching, setTeaching] = useState(false)
+  const current = librarianId(game)
+  const candidates = librarianCandidates(game)
+  const visitor = todaysVisitor(game)
+  const apply = (next: GameState | null) => {
+    if (!next) return
+    saveGame(next)
+    useGame.setState({ game: next })
+  }
+  if (!current && !candidates.length && !visitor) return null
+  return (
+    <section aria-label={t('libraryOps.title')}>
+      <h3 className="rows-title">{t('libraryOps.title')}</h3>
+      <p className="hint">{current ? t('libraryOps.current', { who: neighborById(current)?.role ?? '' }) : t('libraryOps.none')}</p>
+      <div className="actions menu">
+        {candidates.filter((id) => id !== current).map((id) => (
+          <button key={id} onClick={() => apply(setLibrarian(useGame.getState().game, id))}>{t('libraryOps.appoint', { who: neighborById(id)?.role ?? '' })}</button>
+        ))}
+        {current && <button onClick={() => apply(setLibrarian(useGame.getState().game, null))}>{t('libraryOps.release')}</button>}
+      </div>
+      {visitor && canTeachVisitor(game) && !teaching && (
+        <div className="actions menu">
+          <button className="primary" onClick={() => setTeaching(true)}>{t('libraryOps.teach')}</button>
+        </div>
+      )}
+      {teaching && (
+        <ul className="rows">
+          {game.collected.filter((id) => !id.startsWith('ot:')).map((id) => (
+            <li key={id}>
+              <button
+                className="row"
+                onClick={() => {
+                  apply(teachVisitor(useGame.getState().game, id))
+                  setTeaching(false)
+                  useGame.getState().say(t('libraryOps.taught'), 3000)
+                }}
+              >
+                <span className="row-main"><b>{pieceById(id).title}</b><small>{pieceById(id).ref}</small></span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  )
+}
 
 /** 서고 방명록 (계획 21 R10): 들른 사람이 남긴 한 줄, 최근 다섯 */
 function Guestbook() {
@@ -20,7 +72,14 @@ function Guestbook() {
         {[...book].reverse().slice(0, 5).map((g) => (
           <li key={g.day}>
             <div className="row">
-              <span className="row-main"><b>{fill((T.guestbook.lines as Record<string, string>)[g.kind], { village: g.village ?? '' })}</b></span>
+              <span className="row-main">
+                <b>{fill((T.guestbook.lines as Record<string, string>)[g.kind], { village: g.village ?? '' })}</b>
+                {(g.by || g.taught) && (
+                  <small>
+                    {[g.by ? t('libraryOps.byLine', { who: neighborById(g.by)?.role ?? '' }) : '', g.taught ? t('libraryOps.taughtLine', { title: pieceById(g.taught)?.title ?? '' }) : ''].filter(Boolean).join(' · ')}
+                  </small>
+                )}
+              </span>
               <span className="row-meta">{fill(T.ui.day, { day: g.day })}</span>
             </div>
           </li>
@@ -61,6 +120,7 @@ export function Library() {
         )}
       </ul>
       <ReadingSeat />
+      <LibraryOps />
       <Guestbook />
       <div className="actions">
         {/* 마을별 서고 순위 다시 보기 (계획 21 R8) */}

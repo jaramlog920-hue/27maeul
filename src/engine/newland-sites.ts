@@ -19,23 +19,24 @@ export const DECOR_BLOCKING: readonly DecorKind[] = ['bush', 'treeSmall', 'treeT
  * 계획 18 남은 건물 (사용자 결정 ⑥, 컨트롤러): 손님집(guest)·기억 정원(memorial, 자산 garden)·주민의 꿈터(weaver).
  * 손님집·꿈터는 집처럼 막히고 문이 있다(안 방 없음 — 문 앞에 서면 창). 기억 정원은 마당처럼 열린 4×4
  */
-export type ExtraBuildKind = 'guest' | 'memorial' | 'weaver'
+/** kidWork: 자란 우리 아이의 집 겸 일터 (계획 18 B18-7, 2026-10-08) — 그림은 그 아이 직업의 '○○의 집 겸 일터' */
+export type ExtraBuildKind = 'guest' | 'memorial' | 'weaver' | 'kidWork' | 'gallery'
 export type SiteKind = 'path' | 'garden' | 'courtyard' | 'home' | ExtraBuildKind | DecorKind
 /** 건물(기록이 따로 있고 공사 기간이 있다) */
 export type BuildKind = 'courtyard' | 'home' | ExtraBuildKind
 /** 칸 하나씩 깔리는 것(길·정원·꾸미기) — 바로 깔린다 */
 export type TileKind = 'path' | 'garden' | DecorKind
 
-export const BUILD_KINDS: readonly BuildKind[] = ['courtyard', 'home', 'guest', 'memorial', 'weaver']
+export const BUILD_KINDS: readonly BuildKind[] = ['courtyard', 'home', 'guest', 'memorial', 'weaver', 'kidWork', 'gallery']
 export const TILE_KINDS: readonly TileKind[] = ['path', 'garden', ...DECOR_KINDS]
 /** 놓기 목록의 위 칸 (건물·길) — 꾸미기는 DECOR_KINDS로, 계획 18 건물은 EXTRA_BUILDS로 따로 */
 export const SITE_KINDS: readonly SiteKind[] = ['path', 'garden', 'courtyard', 'home']
-export const EXTRA_BUILDS: readonly ExtraBuildKind[] = ['guest', 'memorial', 'weaver']
+export const EXTRA_BUILDS: readonly ExtraBuildKind[] = ['guest', 'memorial', 'weaver', 'gallery', 'kidWork']
 export const isBuildKind = (v: unknown): v is BuildKind => (BUILD_KINDS as readonly unknown[]).includes(v)
 /** 마당처럼 열린 건물 (걸을 수 있다, 공사 중에는 울타리) */
 export const isOpenYard = (k: SiteKind): boolean => k === 'courtyard' || k === 'memorial'
 /** 문이 있어 막히는 건물 */
-export const isWalled = (k: SiteKind): boolean => k === 'home' || k === 'guest' || k === 'weaver'
+export const isWalled = (k: SiteKind): boolean => k === 'home' || k === 'guest' || k === 'weaver' || k === 'kidWork' || k === 'gallery'
 export const isTileKind = (v: unknown): v is TileKind => (TILE_KINDS as readonly unknown[]).includes(v)
 export const isDecorKind = (v: unknown): v is DecorKind => (DECOR_KINDS as readonly unknown[]).includes(v)
 export const blocksWay = (k: TileKind): boolean => (DECOR_BLOCKING as readonly string[]).includes(k)
@@ -56,7 +57,7 @@ export interface DoorSpec {
 export interface SiteDef {
   id: SiteKind
   /** 자산 id (BUILDING_LABELS·OLD_BUILDINGS의 키). 길·정원 칸은 땅 그림(OLD_TERRAIN)이라 없다 */
-  assetId?: 'home' | 'courtyard' | 'guest' | 'garden' | 'weaver'
+  assetId?: 'home' | 'courtyard' | 'guest' | 'garden' | 'weaver' | 'gallery'
   /** 땅 그림 id (OLD_TERRAIN의 키) */
   terrainId?: 'path' | 'plantingBed'
   /** 한 번에 놓는 칸 수 (가로·세로). 길·정원 칸은 1 또는 3 중에서 고른다 */
@@ -87,6 +88,10 @@ export const SITES: Record<SiteKind, SiteDef> = {
   guest: { id: 'guest', assetId: 'guest', sizes: [4], area: { w: 4, h: 3, dy: 1 }, facings: ['down', 'left', 'right'], cost: { coins: 80, items: { reed: 3 } }, doors: HOME_DOORS },
   memorial: { id: 'memorial', assetId: 'garden', sizes: [4], area: { w: 4, h: 4, dy: 0 }, facings: ['down'], cost: { coins: 60, items: { olive: 2 } } },
   weaver: { id: 'weaver', assetId: 'weaver', sizes: [4], area: { w: 4, h: 3, dy: 1 }, facings: ['down', 'left', 'right'], cost: { coins: 120, items: { reed: 4, papyrus: 2 } }, doors: HOME_DOORS },
+  // 틸리의 꿈 (2026-10-08): 그림방 = 주민의 꿈 미술관 그림
+  gallery: { id: 'gallery', assetId: 'gallery', sizes: [4], area: { w: 4, h: 3, dy: 1 }, facings: ['down', 'left', 'right'], cost: { coins: 120, items: { papyrus: 2, olive: 2 } }, doors: HOME_DOORS },
+  // 그림 id는 아이 직업이라 그릴 때 정한다 (assetId 없음)
+  kidWork: { id: 'kidWork', sizes: [4], area: { w: 4, h: 3, dy: 1 }, facings: ['down', 'left', 'right'], cost: { coins: 100, items: { reed: 3, olive: 2 } }, doors: HOME_DOORS },
   sand: decor('sand', 2, [1, 3]),
   stone: decor('stone', 3, [1, 3]),
   soil: decor('soil', 2, [1, 3]),

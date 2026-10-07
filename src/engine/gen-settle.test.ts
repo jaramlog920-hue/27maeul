@@ -188,8 +188,8 @@ describe('결혼 준비·다시 생각·결혼 (D31·P9)', () => {
     expect(h.members.sort()).toEqual(['poppy', 'rudy'])
     expect(h.since).toBe(wed)
     expect(h.wedAffinity).toBe(85)
-    // 파피의 집안(teahouse)은 마을 이웃이 아니라 제 집, 루디는 목수 집 → 파피 쪽
-    expect(h.home).toBe('poppy')
+    // 파피의 집안은 찻집(teahouse — 첫 마을에 방이 있다), 루디는 목수 집 → 둘 다 집안 집이면 id 순으로 파피 쪽 = 찻집 (2026-10-08 22-B)
+    expect(h.home).toBe('teahouse')
     g = run(setAff(g, { [RP]: 10 }), wed + 2, wed + 4)
     expect(g.relations[RP].stage).toBe('spouse')
   })

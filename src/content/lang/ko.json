@@ -8,6 +8,49 @@
   "ot": {
     "roomCount": "{done}/{all}권"
   },
+  "libraryOps": {
+    "title": "서고 운영",
+    "current": "사서: {who}",
+    "none": "아직 사서가 없어요.",
+    "appoint": "{who}에게 사서 맡기기",
+    "release": "사서 내려놓기",
+    "teach": "오늘 온 손님과 한 구절 읽기",
+    "taught": "손님이 구절을 받아 적어 갔어요.",
+    "byLine": "사서 {who}의 안내",
+    "taughtLine": "{title} 함께 읽음"
+  },
+  "familyHome": {
+    "emptyTitle": "빈집",
+    "lead": "집을 찾는 가족이 있어요.",
+    "none": "집을 찾는 가족이 아직 없어요.",
+    "give": "이 집 내어 주기",
+    "moved": "{names} 가족이 새 집에 짐을 풀었어요.",
+    "title": "{names}의 집",
+    "line1": "창을 열어 두면 바람이 집 안을 한 바퀴 돌아요.",
+    "line2": "여기 와서 저녁이 조금 길어졌어요. 같이 앉아 있을 시간이 생겼거든요.",
+    "line3": "마당에 뭘 심을지 아직 둘이서 의논 중이에요."
+  },
+  "otShelf": {
+    "record": "{book} 기록대",
+    "chapters": "{n}장",
+    "endDay": "{day}일째에 마침",
+    "noDate": "마친 날 미상",
+    "noLines": "남긴 한 줄이 아직 없어요.",
+    "chapterLine": "{n}장",
+    "read": "함께 읽기",
+    "readWith": "{who}와 읽기",
+    "readDone": "{who}와 서고에서 한참 함께 읽었다.",
+    "readMemory": "{who}와 함께 읽었다",
+    "day": "{day}일째"
+  },
+  "bindDetail": {
+    "title": "덧장식",
+    "none": "없음",
+    "metalCorners": "모서리 금속",
+    "ribbonBookmark": "천 책갈피",
+    "embossed": "눌러 찍은 무늬",
+    "worn": "손때 묻은 표지"
+  },
   "saves": {
     "new": "새로 시작하기",
     "load": "불러오기",

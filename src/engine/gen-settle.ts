@@ -1,3 +1,5 @@
+import { withLookDefaults } from './avatar'
+import { ROOMS } from './world'
 // 계획 20 2부 작업 A: 주민 자율 가족의 하루 정산 (아침 단계에서 하루에 한 번, D18).
 // 순서: 관계(헤어짐·친한 사이·연인·상담 시작) → 결혼(부부 되기·결혼 준비) → 출생(침대 부탁·아이).
 import { closeKin } from './gen-kin'
@@ -45,9 +47,11 @@ function startFriends(g: GenState, day: number): GenState {
 
 export function homeOfFor(content: GameContent): HomeOf {
   const ids = new Set(content.neighbors.map((n) => n.id))
+  // 집안 어른이 이웃이 아니어도 첫 마을에 방이 있으면(찻집 등) 그 방이 집 (2026-10-08 버그 22-B·F03: 없는 방에 살아 아기가 안 보였다)
+  const rooms = new Set(ROOMS.map((r) => r.owner))
   return (id) => {
     const fam = content.neighbors.find((n) => n.id === id)?.family
-    return fam && ids.has(fam) ? { home: fam, own: false } : { home: id, own: true }
+    return fam && (ids.has(fam) || rooms.has(fam)) ? { home: fam, own: false } : { home: id, own: true }
   }
 }
 
@@ -57,6 +61,10 @@ export function avatarOfFor(content: GameContent): AvatarOf {
     if (!a) return undefined
     const out: Record<string, number> = {}
     for (const k of ['skin', 'hairFront', 'hairBack', 'top', 'bottom'] as const) if (Number.isInteger(a[k])) out[k] = a[k] as number
+    // 머리색은 따로 실어 보낸다 (아기 외형 다섯 값과 섞지 않는다 — babyOf가 hair로 옮긴다)
+    const n = content.neighbors.find((x) => x.id === id)!
+    const hc = withLookDefaults({ look: n.look ?? 'f', name: n.role, ...a }).hairColor
+    if (hc) [out.hairH, out.hairS, out.hairV] = hc
     return out
   }
 }

@@ -50,6 +50,7 @@ import { FirstLight, LookAround } from './newland/FirstLight'
 import { BuildMenu } from './newland/BuildMenu'
 import { OtShelf } from './newland/OtShelf'
 import { FarewellLetter } from './talk/FarewellLetter'
+import { LoveVerseView } from './talk/LoveVerseView'
 import { FacilityView } from './newland/FacilityView'
 import { SchoolView } from './child/SchoolView'
 import { GameGuide } from './play/GameGuide'
@@ -131,6 +132,8 @@ function Body() {
       return <RankView history={modal.history} />
     case 'farewell':
       return <FarewellLetter />
+    case 'loveVerse':
+      return <LoveVerseView />
     case 'facility':
       return <FacilityView id={modal.id} />
     case 'school':

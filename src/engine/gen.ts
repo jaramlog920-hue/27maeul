@@ -26,6 +26,8 @@ export interface GenPerson {
   name?: string
   /** 생성 인물의 외형 (부모의 값 조합, 0 이상 정수들) */
   avatar?: Record<string, number>
+  /** 머리색 HSV (부모 둘 중 한 사람의 것 — 2026-10-08 버그 31-B·F06) */
+  hair?: [number, number, number]
   /** 부모 id (계보 id) */
   parents: string[]
   /** 배우자 id (서로 가리켜야 한다) */
@@ -274,9 +276,11 @@ export function familyGroups(g: GenState): FamilyGroup[] {
     groups.push({ id: h.id, heads, children, kin: kinOf(heads) })
     for (const x of [...heads, ...children]) used.add(x)
   }
+  // 가구의 머리가 아닌 사람: 자녀가 결혼해 제 가구를 꾸렸어도 부모–자녀 연결은 그대로 보인다 (2026-10-08 버그 22-A·F02)
+  const heads = new Set(groups.flatMap((x) => x.heads))
   for (const p of persons.sort((x, y) => (x.id < y.id ? -1 : 1))) {
-    if (used.has(p.id)) continue
-    const children = kidsOf([p.id]).filter((c) => !used.has(c))
+    if (heads.has(p.id)) continue
+    const children = kidsOf([p.id]).filter((c) => !groups.some((x) => x.heads.includes(p.id) && x.children.includes(c)))
     const kin = kinOf([p.id]).filter((c) => !used.has(c))
     if (!children.length && !kin.length) continue
     groups.push({ id: p.id, heads: [p.id], children, kin })
@@ -395,6 +399,7 @@ export function sanitizeGen(raw: unknown, today: number): GenState | undefined {
       ? v.kin.filter((k): k is { id: string; rel: 'grandparent' | 'relative' } => isObj(k) && isStr(k.id) && (k.rel === 'grandparent' || k.rel === 'relative'))
       : []
     const avatar = sanitizeAvatar(v.avatar)
+    const hair = Array.isArray(v.hair) && v.hair.length === 3 && v.hair.every((x: unknown) => typeof x === 'number' && Number.isFinite(x)) ? (v.hair as [number, number, number]) : undefined
     persons[id] = {
       id,
       origin,
@@ -404,6 +409,7 @@ export function sanitizeGen(raw: unknown, today: number): GenState | undefined {
       ...(isLook(v.look) ? { look: v.look } : {}),
       ...(isStr(v.name) ? { name: v.name } : {}),
       ...(avatar ? { avatar } : {}),
+    ...(hair ? { hair } : {}),
       parents: strs(v.parents),
       spouse: isStr(v.spouse) ? v.spouse : null,
       household: isStr(v.household) ? v.household : null,
@@ -423,7 +429,8 @@ export function sanitizeGen(raw: unknown, today: number): GenState | undefined {
         id,
         members,
         // 신혼집은 부부 중 한 사람의 집이거나, 집안 어른(마을 주민)의 집일 수 있다
-        home: isStr(v.home) && (members.includes(v.home) || !!persons[v.home]) ? v.home : members[0] ?? '',
+        // 집은 구성원·사람 id이거나 첫 마을 방 주인(찻집 등 — 2026-10-08 22-B) — 빈 글만 버린다
+      home: isStr(v.home) && v.home.length > 0 && (members.includes(v.home) || !!persons[v.home] || /^[a-z][a-zA-Z0-9]*$/.test(v.home)) ? v.home : members[0] ?? '',
         children: strs(v.children),
         lastBirth: isNat(v.lastBirth) ? Math.min(v.lastBirth, today) : null,
         since: isNat(v.since) ? Math.min(v.since, today) : null,

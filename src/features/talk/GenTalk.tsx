@@ -12,7 +12,8 @@ import { useGame } from '../../store/game-store'
 import { applyLifeState } from '../work/WorkDay'
 
 const G = T.gen
-const nameOf = (id: string) => neighborById(id)?.role ?? ''
+// 생성된 사람(이어받은 자녀 등)은 그 이름으로 (22-C)
+const nameOf = (id: string) => neighborById(id)?.role ?? useGame.getState().game.gen?.persons[id]?.name ?? ''
 
 /** 이웃 말 속 상대 이름 채우기: {partner}·{partnerAnd}(와/과)·{partnerSubj}(이/가) */
 export function partnerVars(id: string): Record<string, string> {

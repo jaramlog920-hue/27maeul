@@ -1,0 +1,4851 @@
+{
+  "version": 1,
+  "connected": false,
+  "sequences": [
+    {
+      "group": "materials",
+      "id": "spreadPapyrus",
+      "label": "파피루스 펴기",
+      "views": {
+        "down": [
+          {
+            "file": "materials/spreadPapyrus-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/spreadPapyrus-down-0-back.png",
+              "actor": "materials/spreadPapyrus-down-0-actor.png",
+              "front": "materials/spreadPapyrus-down-0-front.png"
+            }
+          },
+          {
+            "file": "materials/spreadPapyrus-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/spreadPapyrus-down-1-back.png",
+              "actor": "materials/spreadPapyrus-down-1-actor.png",
+              "front": "materials/spreadPapyrus-down-1-front.png"
+            }
+          },
+          {
+            "file": "materials/spreadPapyrus-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/spreadPapyrus-down-2-back.png",
+              "actor": "materials/spreadPapyrus-down-2-actor.png",
+              "front": "materials/spreadPapyrus-down-2-front.png"
+            }
+          },
+          {
+            "file": "materials/spreadPapyrus-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/spreadPapyrus-down-3-back.png",
+              "actor": "materials/spreadPapyrus-down-3-actor.png",
+              "front": "materials/spreadPapyrus-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "materials/spreadPapyrus-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/spreadPapyrus-up-0-back.png",
+              "actor": "materials/spreadPapyrus-up-0-actor.png",
+              "front": "materials/spreadPapyrus-up-0-front.png"
+            }
+          },
+          {
+            "file": "materials/spreadPapyrus-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/spreadPapyrus-up-1-back.png",
+              "actor": "materials/spreadPapyrus-up-1-actor.png",
+              "front": "materials/spreadPapyrus-up-1-front.png"
+            }
+          },
+          {
+            "file": "materials/spreadPapyrus-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/spreadPapyrus-up-2-back.png",
+              "actor": "materials/spreadPapyrus-up-2-actor.png",
+              "front": "materials/spreadPapyrus-up-2-front.png"
+            }
+          },
+          {
+            "file": "materials/spreadPapyrus-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/spreadPapyrus-up-3-back.png",
+              "actor": "materials/spreadPapyrus-up-3-actor.png",
+              "front": "materials/spreadPapyrus-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "materials/spreadPapyrus-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/spreadPapyrus-left-0-back.png",
+              "actor": "materials/spreadPapyrus-left-0-actor.png",
+              "front": "materials/spreadPapyrus-left-0-front.png"
+            }
+          },
+          {
+            "file": "materials/spreadPapyrus-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/spreadPapyrus-left-1-back.png",
+              "actor": "materials/spreadPapyrus-left-1-actor.png",
+              "front": "materials/spreadPapyrus-left-1-front.png"
+            }
+          },
+          {
+            "file": "materials/spreadPapyrus-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/spreadPapyrus-left-2-back.png",
+              "actor": "materials/spreadPapyrus-left-2-actor.png",
+              "front": "materials/spreadPapyrus-left-2-front.png"
+            }
+          },
+          {
+            "file": "materials/spreadPapyrus-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/spreadPapyrus-left-3-back.png",
+              "actor": "materials/spreadPapyrus-left-3-actor.png",
+              "front": "materials/spreadPapyrus-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "materials/spreadPapyrus-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/spreadPapyrus-right-0-back.png",
+              "actor": "materials/spreadPapyrus-right-0-actor.png",
+              "front": "materials/spreadPapyrus-right-0-front.png"
+            }
+          },
+          {
+            "file": "materials/spreadPapyrus-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/spreadPapyrus-right-1-back.png",
+              "actor": "materials/spreadPapyrus-right-1-actor.png",
+              "front": "materials/spreadPapyrus-right-1-front.png"
+            }
+          },
+          {
+            "file": "materials/spreadPapyrus-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/spreadPapyrus-right-2-back.png",
+              "actor": "materials/spreadPapyrus-right-2-actor.png",
+              "front": "materials/spreadPapyrus-right-2-front.png"
+            }
+          },
+          {
+            "file": "materials/spreadPapyrus-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/spreadPapyrus-right-3-back.png",
+              "actor": "materials/spreadPapyrus-right-3-actor.png",
+              "front": "materials/spreadPapyrus-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "materials",
+      "id": "pressPaper",
+      "label": "종이 누르기",
+      "views": {
+        "down": [
+          {
+            "file": "materials/pressPaper-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/pressPaper-down-0-back.png",
+              "actor": "materials/pressPaper-down-0-actor.png",
+              "front": "materials/pressPaper-down-0-front.png"
+            }
+          },
+          {
+            "file": "materials/pressPaper-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/pressPaper-down-1-back.png",
+              "actor": "materials/pressPaper-down-1-actor.png",
+              "front": "materials/pressPaper-down-1-front.png"
+            }
+          },
+          {
+            "file": "materials/pressPaper-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/pressPaper-down-2-back.png",
+              "actor": "materials/pressPaper-down-2-actor.png",
+              "front": "materials/pressPaper-down-2-front.png"
+            }
+          },
+          {
+            "file": "materials/pressPaper-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/pressPaper-down-3-back.png",
+              "actor": "materials/pressPaper-down-3-actor.png",
+              "front": "materials/pressPaper-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "materials/pressPaper-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/pressPaper-up-0-back.png",
+              "actor": "materials/pressPaper-up-0-actor.png",
+              "front": "materials/pressPaper-up-0-front.png"
+            }
+          },
+          {
+            "file": "materials/pressPaper-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/pressPaper-up-1-back.png",
+              "actor": "materials/pressPaper-up-1-actor.png",
+              "front": "materials/pressPaper-up-1-front.png"
+            }
+          },
+          {
+            "file": "materials/pressPaper-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/pressPaper-up-2-back.png",
+              "actor": "materials/pressPaper-up-2-actor.png",
+              "front": "materials/pressPaper-up-2-front.png"
+            }
+          },
+          {
+            "file": "materials/pressPaper-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/pressPaper-up-3-back.png",
+              "actor": "materials/pressPaper-up-3-actor.png",
+              "front": "materials/pressPaper-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "materials/pressPaper-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/pressPaper-left-0-back.png",
+              "actor": "materials/pressPaper-left-0-actor.png",
+              "front": "materials/pressPaper-left-0-front.png"
+            }
+          },
+          {
+            "file": "materials/pressPaper-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/pressPaper-left-1-back.png",
+              "actor": "materials/pressPaper-left-1-actor.png",
+              "front": "materials/pressPaper-left-1-front.png"
+            }
+          },
+          {
+            "file": "materials/pressPaper-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/pressPaper-left-2-back.png",
+              "actor": "materials/pressPaper-left-2-actor.png",
+              "front": "materials/pressPaper-left-2-front.png"
+            }
+          },
+          {
+            "file": "materials/pressPaper-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/pressPaper-left-3-back.png",
+              "actor": "materials/pressPaper-left-3-actor.png",
+              "front": "materials/pressPaper-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "materials/pressPaper-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/pressPaper-right-0-back.png",
+              "actor": "materials/pressPaper-right-0-actor.png",
+              "front": "materials/pressPaper-right-0-front.png"
+            }
+          },
+          {
+            "file": "materials/pressPaper-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/pressPaper-right-1-back.png",
+              "actor": "materials/pressPaper-right-1-actor.png",
+              "front": "materials/pressPaper-right-1-front.png"
+            }
+          },
+          {
+            "file": "materials/pressPaper-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/pressPaper-right-2-back.png",
+              "actor": "materials/pressPaper-right-2-actor.png",
+              "front": "materials/pressPaper-right-2-front.png"
+            }
+          },
+          {
+            "file": "materials/pressPaper-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "materials/pressPaper-right-3-back.png",
+              "actor": "materials/pressPaper-right-3-actor.png",
+              "front": "materials/pressPaper-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "materials",
+      "id": "spinThread",
+      "label": "실 자아내기",
+      "views": {
+        "down": [
+          {
+            "file": "materials/spinThread-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 260,
+            "loop": true,
+            "layers": {
+              "back": "materials/spinThread-down-0-back.png",
+              "actor": "materials/spinThread-down-0-actor.png",
+              "front": "materials/spinThread-down-0-front.png"
+            }
+          },
+          {
+            "file": "materials/spinThread-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 260,
+            "loop": true,
+            "layers": {
+              "back": "materials/spinThread-down-1-back.png",
+              "actor": "materials/spinThread-down-1-actor.png",
+              "front": "materials/spinThread-down-1-front.png"
+            }
+          },
+          {
+            "file": "materials/spinThread-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 260,
+            "loop": true,
+            "layers": {
+              "back": "materials/spinThread-down-2-back.png",
+              "actor": "materials/spinThread-down-2-actor.png",
+              "front": "materials/spinThread-down-2-front.png"
+            }
+          },
+          {
+            "file": "materials/spinThread-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 260,
+            "loop": true,
+            "layers": {
+              "back": "materials/spinThread-down-3-back.png",
+              "actor": "materials/spinThread-down-3-actor.png",
+              "front": "materials/spinThread-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "materials/spinThread-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 260,
+            "loop": true,
+            "layers": {
+              "back": "materials/spinThread-up-0-back.png",
+              "actor": "materials/spinThread-up-0-actor.png",
+              "front": "materials/spinThread-up-0-front.png"
+            }
+          },
+          {
+            "file": "materials/spinThread-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 260,
+            "loop": true,
+            "layers": {
+              "back": "materials/spinThread-up-1-back.png",
+              "actor": "materials/spinThread-up-1-actor.png",
+              "front": "materials/spinThread-up-1-front.png"
+            }
+          },
+          {
+            "file": "materials/spinThread-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 260,
+            "loop": true,
+            "layers": {
+              "back": "materials/spinThread-up-2-back.png",
+              "actor": "materials/spinThread-up-2-actor.png",
+              "front": "materials/spinThread-up-2-front.png"
+            }
+          },
+          {
+            "file": "materials/spinThread-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 260,
+            "loop": true,
+            "layers": {
+              "back": "materials/spinThread-up-3-back.png",
+              "actor": "materials/spinThread-up-3-actor.png",
+              "front": "materials/spinThread-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "materials/spinThread-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 260,
+            "loop": true,
+            "layers": {
+              "back": "materials/spinThread-left-0-back.png",
+              "actor": "materials/spinThread-left-0-actor.png",
+              "front": "materials/spinThread-left-0-front.png"
+            }
+          },
+          {
+            "file": "materials/spinThread-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 260,
+            "loop": true,
+            "layers": {
+              "back": "materials/spinThread-left-1-back.png",
+              "actor": "materials/spinThread-left-1-actor.png",
+              "front": "materials/spinThread-left-1-front.png"
+            }
+          },
+          {
+            "file": "materials/spinThread-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 260,
+            "loop": true,
+            "layers": {
+              "back": "materials/spinThread-left-2-back.png",
+              "actor": "materials/spinThread-left-2-actor.png",
+              "front": "materials/spinThread-left-2-front.png"
+            }
+          },
+          {
+            "file": "materials/spinThread-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 260,
+            "loop": true,
+            "layers": {
+              "back": "materials/spinThread-left-3-back.png",
+              "actor": "materials/spinThread-left-3-actor.png",
+              "front": "materials/spinThread-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "materials/spinThread-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 260,
+            "loop": true,
+            "layers": {
+              "back": "materials/spinThread-right-0-back.png",
+              "actor": "materials/spinThread-right-0-actor.png",
+              "front": "materials/spinThread-right-0-front.png"
+            }
+          },
+          {
+            "file": "materials/spinThread-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 260,
+            "loop": true,
+            "layers": {
+              "back": "materials/spinThread-right-1-back.png",
+              "actor": "materials/spinThread-right-1-actor.png",
+              "front": "materials/spinThread-right-1-front.png"
+            }
+          },
+          {
+            "file": "materials/spinThread-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 260,
+            "loop": true,
+            "layers": {
+              "back": "materials/spinThread-right-2-back.png",
+              "actor": "materials/spinThread-right-2-actor.png",
+              "front": "materials/spinThread-right-2-front.png"
+            }
+          },
+          {
+            "file": "materials/spinThread-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 260,
+            "loop": true,
+            "layers": {
+              "back": "materials/spinThread-right-3-back.png",
+              "actor": "materials/spinThread-right-3-actor.png",
+              "front": "materials/spinThread-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "materials",
+      "id": "mixInk",
+      "label": "잉크 섞기",
+      "views": {
+        "down": [
+          {
+            "file": "materials/mixInk-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "materials/mixInk-down-0-back.png",
+              "actor": "materials/mixInk-down-0-actor.png",
+              "front": "materials/mixInk-down-0-front.png"
+            }
+          },
+          {
+            "file": "materials/mixInk-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "materials/mixInk-down-1-back.png",
+              "actor": "materials/mixInk-down-1-actor.png",
+              "front": "materials/mixInk-down-1-front.png"
+            }
+          },
+          {
+            "file": "materials/mixInk-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "materials/mixInk-down-2-back.png",
+              "actor": "materials/mixInk-down-2-actor.png",
+              "front": "materials/mixInk-down-2-front.png"
+            }
+          },
+          {
+            "file": "materials/mixInk-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "materials/mixInk-down-3-back.png",
+              "actor": "materials/mixInk-down-3-actor.png",
+              "front": "materials/mixInk-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "materials/mixInk-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "materials/mixInk-up-0-back.png",
+              "actor": "materials/mixInk-up-0-actor.png",
+              "front": "materials/mixInk-up-0-front.png"
+            }
+          },
+          {
+            "file": "materials/mixInk-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "materials/mixInk-up-1-back.png",
+              "actor": "materials/mixInk-up-1-actor.png",
+              "front": "materials/mixInk-up-1-front.png"
+            }
+          },
+          {
+            "file": "materials/mixInk-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "materials/mixInk-up-2-back.png",
+              "actor": "materials/mixInk-up-2-actor.png",
+              "front": "materials/mixInk-up-2-front.png"
+            }
+          },
+          {
+            "file": "materials/mixInk-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "materials/mixInk-up-3-back.png",
+              "actor": "materials/mixInk-up-3-actor.png",
+              "front": "materials/mixInk-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "materials/mixInk-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "materials/mixInk-left-0-back.png",
+              "actor": "materials/mixInk-left-0-actor.png",
+              "front": "materials/mixInk-left-0-front.png"
+            }
+          },
+          {
+            "file": "materials/mixInk-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "materials/mixInk-left-1-back.png",
+              "actor": "materials/mixInk-left-1-actor.png",
+              "front": "materials/mixInk-left-1-front.png"
+            }
+          },
+          {
+            "file": "materials/mixInk-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "materials/mixInk-left-2-back.png",
+              "actor": "materials/mixInk-left-2-actor.png",
+              "front": "materials/mixInk-left-2-front.png"
+            }
+          },
+          {
+            "file": "materials/mixInk-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "materials/mixInk-left-3-back.png",
+              "actor": "materials/mixInk-left-3-actor.png",
+              "front": "materials/mixInk-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "materials/mixInk-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "materials/mixInk-right-0-back.png",
+              "actor": "materials/mixInk-right-0-actor.png",
+              "front": "materials/mixInk-right-0-front.png"
+            }
+          },
+          {
+            "file": "materials/mixInk-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "materials/mixInk-right-1-back.png",
+              "actor": "materials/mixInk-right-1-actor.png",
+              "front": "materials/mixInk-right-1-front.png"
+            }
+          },
+          {
+            "file": "materials/mixInk-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "materials/mixInk-right-2-back.png",
+              "actor": "materials/mixInk-right-2-actor.png",
+              "front": "materials/mixInk-right-2-front.png"
+            }
+          },
+          {
+            "file": "materials/mixInk-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "materials/mixInk-right-3-back.png",
+              "actor": "materials/mixInk-right-3-actor.png",
+              "front": "materials/mixInk-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "pottery",
+      "id": "kneadClay",
+      "label": "진흙 주무르기",
+      "views": {
+        "down": [
+          {
+            "file": "pottery/kneadClay-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "pottery/kneadClay-down-0-back.png",
+              "actor": "pottery/kneadClay-down-0-actor.png",
+              "front": "pottery/kneadClay-down-0-front.png"
+            }
+          },
+          {
+            "file": "pottery/kneadClay-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "pottery/kneadClay-down-1-back.png",
+              "actor": "pottery/kneadClay-down-1-actor.png",
+              "front": "pottery/kneadClay-down-1-front.png"
+            }
+          },
+          {
+            "file": "pottery/kneadClay-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "pottery/kneadClay-down-2-back.png",
+              "actor": "pottery/kneadClay-down-2-actor.png",
+              "front": "pottery/kneadClay-down-2-front.png"
+            }
+          },
+          {
+            "file": "pottery/kneadClay-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "pottery/kneadClay-down-3-back.png",
+              "actor": "pottery/kneadClay-down-3-actor.png",
+              "front": "pottery/kneadClay-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "pottery/kneadClay-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "pottery/kneadClay-up-0-back.png",
+              "actor": "pottery/kneadClay-up-0-actor.png",
+              "front": "pottery/kneadClay-up-0-front.png"
+            }
+          },
+          {
+            "file": "pottery/kneadClay-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "pottery/kneadClay-up-1-back.png",
+              "actor": "pottery/kneadClay-up-1-actor.png",
+              "front": "pottery/kneadClay-up-1-front.png"
+            }
+          },
+          {
+            "file": "pottery/kneadClay-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "pottery/kneadClay-up-2-back.png",
+              "actor": "pottery/kneadClay-up-2-actor.png",
+              "front": "pottery/kneadClay-up-2-front.png"
+            }
+          },
+          {
+            "file": "pottery/kneadClay-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "pottery/kneadClay-up-3-back.png",
+              "actor": "pottery/kneadClay-up-3-actor.png",
+              "front": "pottery/kneadClay-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "pottery/kneadClay-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "pottery/kneadClay-left-0-back.png",
+              "actor": "pottery/kneadClay-left-0-actor.png",
+              "front": "pottery/kneadClay-left-0-front.png"
+            }
+          },
+          {
+            "file": "pottery/kneadClay-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "pottery/kneadClay-left-1-back.png",
+              "actor": "pottery/kneadClay-left-1-actor.png",
+              "front": "pottery/kneadClay-left-1-front.png"
+            }
+          },
+          {
+            "file": "pottery/kneadClay-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "pottery/kneadClay-left-2-back.png",
+              "actor": "pottery/kneadClay-left-2-actor.png",
+              "front": "pottery/kneadClay-left-2-front.png"
+            }
+          },
+          {
+            "file": "pottery/kneadClay-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "pottery/kneadClay-left-3-back.png",
+              "actor": "pottery/kneadClay-left-3-actor.png",
+              "front": "pottery/kneadClay-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "pottery/kneadClay-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "pottery/kneadClay-right-0-back.png",
+              "actor": "pottery/kneadClay-right-0-actor.png",
+              "front": "pottery/kneadClay-right-0-front.png"
+            }
+          },
+          {
+            "file": "pottery/kneadClay-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "pottery/kneadClay-right-1-back.png",
+              "actor": "pottery/kneadClay-right-1-actor.png",
+              "front": "pottery/kneadClay-right-1-front.png"
+            }
+          },
+          {
+            "file": "pottery/kneadClay-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "pottery/kneadClay-right-2-back.png",
+              "actor": "pottery/kneadClay-right-2-actor.png",
+              "front": "pottery/kneadClay-right-2-front.png"
+            }
+          },
+          {
+            "file": "pottery/kneadClay-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "pottery/kneadClay-right-3-back.png",
+              "actor": "pottery/kneadClay-right-3-actor.png",
+              "front": "pottery/kneadClay-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "pottery",
+      "id": "shapePot",
+      "label": "그릇 모양 잡기",
+      "views": {
+        "down": [
+          {
+            "file": "pottery/shapePot-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/shapePot-down-0-back.png",
+              "actor": "pottery/shapePot-down-0-actor.png",
+              "front": "pottery/shapePot-down-0-front.png"
+            }
+          },
+          {
+            "file": "pottery/shapePot-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/shapePot-down-1-back.png",
+              "actor": "pottery/shapePot-down-1-actor.png",
+              "front": "pottery/shapePot-down-1-front.png"
+            }
+          },
+          {
+            "file": "pottery/shapePot-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/shapePot-down-2-back.png",
+              "actor": "pottery/shapePot-down-2-actor.png",
+              "front": "pottery/shapePot-down-2-front.png"
+            }
+          },
+          {
+            "file": "pottery/shapePot-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/shapePot-down-3-back.png",
+              "actor": "pottery/shapePot-down-3-actor.png",
+              "front": "pottery/shapePot-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "pottery/shapePot-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/shapePot-up-0-back.png",
+              "actor": "pottery/shapePot-up-0-actor.png",
+              "front": "pottery/shapePot-up-0-front.png"
+            }
+          },
+          {
+            "file": "pottery/shapePot-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/shapePot-up-1-back.png",
+              "actor": "pottery/shapePot-up-1-actor.png",
+              "front": "pottery/shapePot-up-1-front.png"
+            }
+          },
+          {
+            "file": "pottery/shapePot-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/shapePot-up-2-back.png",
+              "actor": "pottery/shapePot-up-2-actor.png",
+              "front": "pottery/shapePot-up-2-front.png"
+            }
+          },
+          {
+            "file": "pottery/shapePot-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/shapePot-up-3-back.png",
+              "actor": "pottery/shapePot-up-3-actor.png",
+              "front": "pottery/shapePot-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "pottery/shapePot-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/shapePot-left-0-back.png",
+              "actor": "pottery/shapePot-left-0-actor.png",
+              "front": "pottery/shapePot-left-0-front.png"
+            }
+          },
+          {
+            "file": "pottery/shapePot-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/shapePot-left-1-back.png",
+              "actor": "pottery/shapePot-left-1-actor.png",
+              "front": "pottery/shapePot-left-1-front.png"
+            }
+          },
+          {
+            "file": "pottery/shapePot-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/shapePot-left-2-back.png",
+              "actor": "pottery/shapePot-left-2-actor.png",
+              "front": "pottery/shapePot-left-2-front.png"
+            }
+          },
+          {
+            "file": "pottery/shapePot-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/shapePot-left-3-back.png",
+              "actor": "pottery/shapePot-left-3-actor.png",
+              "front": "pottery/shapePot-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "pottery/shapePot-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/shapePot-right-0-back.png",
+              "actor": "pottery/shapePot-right-0-actor.png",
+              "front": "pottery/shapePot-right-0-front.png"
+            }
+          },
+          {
+            "file": "pottery/shapePot-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/shapePot-right-1-back.png",
+              "actor": "pottery/shapePot-right-1-actor.png",
+              "front": "pottery/shapePot-right-1-front.png"
+            }
+          },
+          {
+            "file": "pottery/shapePot-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/shapePot-right-2-back.png",
+              "actor": "pottery/shapePot-right-2-actor.png",
+              "front": "pottery/shapePot-right-2-front.png"
+            }
+          },
+          {
+            "file": "pottery/shapePot-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/shapePot-right-3-back.png",
+              "actor": "pottery/shapePot-right-3-actor.png",
+              "front": "pottery/shapePot-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "pottery",
+      "id": "placePot",
+      "label": "완성 그릇 내려놓기",
+      "views": {
+        "down": [
+          {
+            "file": "pottery/placePot-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/placePot-down-0-back.png",
+              "actor": "pottery/placePot-down-0-actor.png",
+              "front": "pottery/placePot-down-0-front.png"
+            }
+          },
+          {
+            "file": "pottery/placePot-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/placePot-down-1-back.png",
+              "actor": "pottery/placePot-down-1-actor.png",
+              "front": "pottery/placePot-down-1-front.png"
+            }
+          },
+          {
+            "file": "pottery/placePot-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/placePot-down-2-back.png",
+              "actor": "pottery/placePot-down-2-actor.png",
+              "front": "pottery/placePot-down-2-front.png"
+            }
+          },
+          {
+            "file": "pottery/placePot-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/placePot-down-3-back.png",
+              "actor": "pottery/placePot-down-3-actor.png",
+              "front": "pottery/placePot-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "pottery/placePot-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/placePot-up-0-back.png",
+              "actor": "pottery/placePot-up-0-actor.png",
+              "front": "pottery/placePot-up-0-front.png"
+            }
+          },
+          {
+            "file": "pottery/placePot-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/placePot-up-1-back.png",
+              "actor": "pottery/placePot-up-1-actor.png",
+              "front": "pottery/placePot-up-1-front.png"
+            }
+          },
+          {
+            "file": "pottery/placePot-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/placePot-up-2-back.png",
+              "actor": "pottery/placePot-up-2-actor.png",
+              "front": "pottery/placePot-up-2-front.png"
+            }
+          },
+          {
+            "file": "pottery/placePot-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/placePot-up-3-back.png",
+              "actor": "pottery/placePot-up-3-actor.png",
+              "front": "pottery/placePot-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "pottery/placePot-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/placePot-left-0-back.png",
+              "actor": "pottery/placePot-left-0-actor.png",
+              "front": "pottery/placePot-left-0-front.png"
+            }
+          },
+          {
+            "file": "pottery/placePot-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/placePot-left-1-back.png",
+              "actor": "pottery/placePot-left-1-actor.png",
+              "front": "pottery/placePot-left-1-front.png"
+            }
+          },
+          {
+            "file": "pottery/placePot-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/placePot-left-2-back.png",
+              "actor": "pottery/placePot-left-2-actor.png",
+              "front": "pottery/placePot-left-2-front.png"
+            }
+          },
+          {
+            "file": "pottery/placePot-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/placePot-left-3-back.png",
+              "actor": "pottery/placePot-left-3-actor.png",
+              "front": "pottery/placePot-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "pottery/placePot-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/placePot-right-0-back.png",
+              "actor": "pottery/placePot-right-0-actor.png",
+              "front": "pottery/placePot-right-0-front.png"
+            }
+          },
+          {
+            "file": "pottery/placePot-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/placePot-right-1-back.png",
+              "actor": "pottery/placePot-right-1-actor.png",
+              "front": "pottery/placePot-right-1-front.png"
+            }
+          },
+          {
+            "file": "pottery/placePot-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/placePot-right-2-back.png",
+              "actor": "pottery/placePot-right-2-actor.png",
+              "front": "pottery/placePot-right-2-front.png"
+            }
+          },
+          {
+            "file": "pottery/placePot-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "pottery/placePot-right-3-back.png",
+              "actor": "pottery/placePot-right-3-actor.png",
+              "front": "pottery/placePot-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "instrument",
+      "id": "carveBody",
+      "label": "악기 몸통 손질",
+      "views": {
+        "down": [
+          {
+            "file": "instrument/carveBody-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/carveBody-down-0-back.png",
+              "actor": "instrument/carveBody-down-0-actor.png",
+              "front": "instrument/carveBody-down-0-front.png"
+            }
+          },
+          {
+            "file": "instrument/carveBody-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/carveBody-down-1-back.png",
+              "actor": "instrument/carveBody-down-1-actor.png",
+              "front": "instrument/carveBody-down-1-front.png"
+            }
+          },
+          {
+            "file": "instrument/carveBody-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/carveBody-down-2-back.png",
+              "actor": "instrument/carveBody-down-2-actor.png",
+              "front": "instrument/carveBody-down-2-front.png"
+            }
+          },
+          {
+            "file": "instrument/carveBody-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/carveBody-down-3-back.png",
+              "actor": "instrument/carveBody-down-3-actor.png",
+              "front": "instrument/carveBody-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "instrument/carveBody-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/carveBody-up-0-back.png",
+              "actor": "instrument/carveBody-up-0-actor.png",
+              "front": "instrument/carveBody-up-0-front.png"
+            }
+          },
+          {
+            "file": "instrument/carveBody-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/carveBody-up-1-back.png",
+              "actor": "instrument/carveBody-up-1-actor.png",
+              "front": "instrument/carveBody-up-1-front.png"
+            }
+          },
+          {
+            "file": "instrument/carveBody-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/carveBody-up-2-back.png",
+              "actor": "instrument/carveBody-up-2-actor.png",
+              "front": "instrument/carveBody-up-2-front.png"
+            }
+          },
+          {
+            "file": "instrument/carveBody-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/carveBody-up-3-back.png",
+              "actor": "instrument/carveBody-up-3-actor.png",
+              "front": "instrument/carveBody-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "instrument/carveBody-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/carveBody-left-0-back.png",
+              "actor": "instrument/carveBody-left-0-actor.png",
+              "front": "instrument/carveBody-left-0-front.png"
+            }
+          },
+          {
+            "file": "instrument/carveBody-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/carveBody-left-1-back.png",
+              "actor": "instrument/carveBody-left-1-actor.png",
+              "front": "instrument/carveBody-left-1-front.png"
+            }
+          },
+          {
+            "file": "instrument/carveBody-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/carveBody-left-2-back.png",
+              "actor": "instrument/carveBody-left-2-actor.png",
+              "front": "instrument/carveBody-left-2-front.png"
+            }
+          },
+          {
+            "file": "instrument/carveBody-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/carveBody-left-3-back.png",
+              "actor": "instrument/carveBody-left-3-actor.png",
+              "front": "instrument/carveBody-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "instrument/carveBody-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/carveBody-right-0-back.png",
+              "actor": "instrument/carveBody-right-0-actor.png",
+              "front": "instrument/carveBody-right-0-front.png"
+            }
+          },
+          {
+            "file": "instrument/carveBody-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/carveBody-right-1-back.png",
+              "actor": "instrument/carveBody-right-1-actor.png",
+              "front": "instrument/carveBody-right-1-front.png"
+            }
+          },
+          {
+            "file": "instrument/carveBody-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/carveBody-right-2-back.png",
+              "actor": "instrument/carveBody-right-2-actor.png",
+              "front": "instrument/carveBody-right-2-front.png"
+            }
+          },
+          {
+            "file": "instrument/carveBody-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/carveBody-right-3-back.png",
+              "actor": "instrument/carveBody-right-3-actor.png",
+              "front": "instrument/carveBody-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "instrument",
+      "id": "tieStrings",
+      "label": "악기 줄 매기",
+      "views": {
+        "down": [
+          {
+            "file": "instrument/tieStrings-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "instrument/tieStrings-down-0-back.png",
+              "actor": "instrument/tieStrings-down-0-actor.png",
+              "front": "instrument/tieStrings-down-0-front.png"
+            }
+          },
+          {
+            "file": "instrument/tieStrings-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "instrument/tieStrings-down-1-back.png",
+              "actor": "instrument/tieStrings-down-1-actor.png",
+              "front": "instrument/tieStrings-down-1-front.png"
+            }
+          },
+          {
+            "file": "instrument/tieStrings-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "instrument/tieStrings-down-2-back.png",
+              "actor": "instrument/tieStrings-down-2-actor.png",
+              "front": "instrument/tieStrings-down-2-front.png"
+            }
+          },
+          {
+            "file": "instrument/tieStrings-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "instrument/tieStrings-down-3-back.png",
+              "actor": "instrument/tieStrings-down-3-actor.png",
+              "front": "instrument/tieStrings-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "instrument/tieStrings-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "instrument/tieStrings-up-0-back.png",
+              "actor": "instrument/tieStrings-up-0-actor.png",
+              "front": "instrument/tieStrings-up-0-front.png"
+            }
+          },
+          {
+            "file": "instrument/tieStrings-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "instrument/tieStrings-up-1-back.png",
+              "actor": "instrument/tieStrings-up-1-actor.png",
+              "front": "instrument/tieStrings-up-1-front.png"
+            }
+          },
+          {
+            "file": "instrument/tieStrings-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "instrument/tieStrings-up-2-back.png",
+              "actor": "instrument/tieStrings-up-2-actor.png",
+              "front": "instrument/tieStrings-up-2-front.png"
+            }
+          },
+          {
+            "file": "instrument/tieStrings-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "instrument/tieStrings-up-3-back.png",
+              "actor": "instrument/tieStrings-up-3-actor.png",
+              "front": "instrument/tieStrings-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "instrument/tieStrings-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "instrument/tieStrings-left-0-back.png",
+              "actor": "instrument/tieStrings-left-0-actor.png",
+              "front": "instrument/tieStrings-left-0-front.png"
+            }
+          },
+          {
+            "file": "instrument/tieStrings-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "instrument/tieStrings-left-1-back.png",
+              "actor": "instrument/tieStrings-left-1-actor.png",
+              "front": "instrument/tieStrings-left-1-front.png"
+            }
+          },
+          {
+            "file": "instrument/tieStrings-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "instrument/tieStrings-left-2-back.png",
+              "actor": "instrument/tieStrings-left-2-actor.png",
+              "front": "instrument/tieStrings-left-2-front.png"
+            }
+          },
+          {
+            "file": "instrument/tieStrings-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "instrument/tieStrings-left-3-back.png",
+              "actor": "instrument/tieStrings-left-3-actor.png",
+              "front": "instrument/tieStrings-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "instrument/tieStrings-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "instrument/tieStrings-right-0-back.png",
+              "actor": "instrument/tieStrings-right-0-actor.png",
+              "front": "instrument/tieStrings-right-0-front.png"
+            }
+          },
+          {
+            "file": "instrument/tieStrings-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "instrument/tieStrings-right-1-back.png",
+              "actor": "instrument/tieStrings-right-1-actor.png",
+              "front": "instrument/tieStrings-right-1-front.png"
+            }
+          },
+          {
+            "file": "instrument/tieStrings-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "instrument/tieStrings-right-2-back.png",
+              "actor": "instrument/tieStrings-right-2-actor.png",
+              "front": "instrument/tieStrings-right-2-front.png"
+            }
+          },
+          {
+            "file": "instrument/tieStrings-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "instrument/tieStrings-right-3-back.png",
+              "actor": "instrument/tieStrings-right-3-actor.png",
+              "front": "instrument/tieStrings-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "instrument",
+      "id": "pluckStrings",
+      "label": "줄 튕겨 확인하기",
+      "views": {
+        "down": [
+          {
+            "file": "instrument/pluckStrings-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/pluckStrings-down-0-back.png",
+              "actor": "instrument/pluckStrings-down-0-actor.png",
+              "front": "instrument/pluckStrings-down-0-front.png"
+            }
+          },
+          {
+            "file": "instrument/pluckStrings-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/pluckStrings-down-1-back.png",
+              "actor": "instrument/pluckStrings-down-1-actor.png",
+              "front": "instrument/pluckStrings-down-1-front.png"
+            }
+          },
+          {
+            "file": "instrument/pluckStrings-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/pluckStrings-down-2-back.png",
+              "actor": "instrument/pluckStrings-down-2-actor.png",
+              "front": "instrument/pluckStrings-down-2-front.png"
+            }
+          },
+          {
+            "file": "instrument/pluckStrings-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/pluckStrings-down-3-back.png",
+              "actor": "instrument/pluckStrings-down-3-actor.png",
+              "front": "instrument/pluckStrings-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "instrument/pluckStrings-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/pluckStrings-up-0-back.png",
+              "actor": "instrument/pluckStrings-up-0-actor.png",
+              "front": "instrument/pluckStrings-up-0-front.png"
+            }
+          },
+          {
+            "file": "instrument/pluckStrings-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/pluckStrings-up-1-back.png",
+              "actor": "instrument/pluckStrings-up-1-actor.png",
+              "front": "instrument/pluckStrings-up-1-front.png"
+            }
+          },
+          {
+            "file": "instrument/pluckStrings-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/pluckStrings-up-2-back.png",
+              "actor": "instrument/pluckStrings-up-2-actor.png",
+              "front": "instrument/pluckStrings-up-2-front.png"
+            }
+          },
+          {
+            "file": "instrument/pluckStrings-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/pluckStrings-up-3-back.png",
+              "actor": "instrument/pluckStrings-up-3-actor.png",
+              "front": "instrument/pluckStrings-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "instrument/pluckStrings-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/pluckStrings-left-0-back.png",
+              "actor": "instrument/pluckStrings-left-0-actor.png",
+              "front": "instrument/pluckStrings-left-0-front.png"
+            }
+          },
+          {
+            "file": "instrument/pluckStrings-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/pluckStrings-left-1-back.png",
+              "actor": "instrument/pluckStrings-left-1-actor.png",
+              "front": "instrument/pluckStrings-left-1-front.png"
+            }
+          },
+          {
+            "file": "instrument/pluckStrings-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/pluckStrings-left-2-back.png",
+              "actor": "instrument/pluckStrings-left-2-actor.png",
+              "front": "instrument/pluckStrings-left-2-front.png"
+            }
+          },
+          {
+            "file": "instrument/pluckStrings-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/pluckStrings-left-3-back.png",
+              "actor": "instrument/pluckStrings-left-3-actor.png",
+              "front": "instrument/pluckStrings-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "instrument/pluckStrings-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/pluckStrings-right-0-back.png",
+              "actor": "instrument/pluckStrings-right-0-actor.png",
+              "front": "instrument/pluckStrings-right-0-front.png"
+            }
+          },
+          {
+            "file": "instrument/pluckStrings-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/pluckStrings-right-1-back.png",
+              "actor": "instrument/pluckStrings-right-1-actor.png",
+              "front": "instrument/pluckStrings-right-1-front.png"
+            }
+          },
+          {
+            "file": "instrument/pluckStrings-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/pluckStrings-right-2-back.png",
+              "actor": "instrument/pluckStrings-right-2-actor.png",
+              "front": "instrument/pluckStrings-right-2-front.png"
+            }
+          },
+          {
+            "file": "instrument/pluckStrings-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "instrument/pluckStrings-right-3-back.png",
+              "actor": "instrument/pluckStrings-right-3-actor.png",
+              "front": "instrument/pluckStrings-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "herbal",
+      "id": "sortLeaves",
+      "label": "약초 잎 고르기",
+      "views": {
+        "down": [
+          {
+            "file": "herbal/sortLeaves-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/sortLeaves-down-0-back.png",
+              "actor": "herbal/sortLeaves-down-0-actor.png",
+              "front": "herbal/sortLeaves-down-0-front.png"
+            }
+          },
+          {
+            "file": "herbal/sortLeaves-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/sortLeaves-down-1-back.png",
+              "actor": "herbal/sortLeaves-down-1-actor.png",
+              "front": "herbal/sortLeaves-down-1-front.png"
+            }
+          },
+          {
+            "file": "herbal/sortLeaves-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/sortLeaves-down-2-back.png",
+              "actor": "herbal/sortLeaves-down-2-actor.png",
+              "front": "herbal/sortLeaves-down-2-front.png"
+            }
+          },
+          {
+            "file": "herbal/sortLeaves-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/sortLeaves-down-3-back.png",
+              "actor": "herbal/sortLeaves-down-3-actor.png",
+              "front": "herbal/sortLeaves-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "herbal/sortLeaves-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/sortLeaves-up-0-back.png",
+              "actor": "herbal/sortLeaves-up-0-actor.png",
+              "front": "herbal/sortLeaves-up-0-front.png"
+            }
+          },
+          {
+            "file": "herbal/sortLeaves-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/sortLeaves-up-1-back.png",
+              "actor": "herbal/sortLeaves-up-1-actor.png",
+              "front": "herbal/sortLeaves-up-1-front.png"
+            }
+          },
+          {
+            "file": "herbal/sortLeaves-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/sortLeaves-up-2-back.png",
+              "actor": "herbal/sortLeaves-up-2-actor.png",
+              "front": "herbal/sortLeaves-up-2-front.png"
+            }
+          },
+          {
+            "file": "herbal/sortLeaves-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/sortLeaves-up-3-back.png",
+              "actor": "herbal/sortLeaves-up-3-actor.png",
+              "front": "herbal/sortLeaves-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "herbal/sortLeaves-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/sortLeaves-left-0-back.png",
+              "actor": "herbal/sortLeaves-left-0-actor.png",
+              "front": "herbal/sortLeaves-left-0-front.png"
+            }
+          },
+          {
+            "file": "herbal/sortLeaves-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/sortLeaves-left-1-back.png",
+              "actor": "herbal/sortLeaves-left-1-actor.png",
+              "front": "herbal/sortLeaves-left-1-front.png"
+            }
+          },
+          {
+            "file": "herbal/sortLeaves-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/sortLeaves-left-2-back.png",
+              "actor": "herbal/sortLeaves-left-2-actor.png",
+              "front": "herbal/sortLeaves-left-2-front.png"
+            }
+          },
+          {
+            "file": "herbal/sortLeaves-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/sortLeaves-left-3-back.png",
+              "actor": "herbal/sortLeaves-left-3-actor.png",
+              "front": "herbal/sortLeaves-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "herbal/sortLeaves-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/sortLeaves-right-0-back.png",
+              "actor": "herbal/sortLeaves-right-0-actor.png",
+              "front": "herbal/sortLeaves-right-0-front.png"
+            }
+          },
+          {
+            "file": "herbal/sortLeaves-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/sortLeaves-right-1-back.png",
+              "actor": "herbal/sortLeaves-right-1-actor.png",
+              "front": "herbal/sortLeaves-right-1-front.png"
+            }
+          },
+          {
+            "file": "herbal/sortLeaves-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/sortLeaves-right-2-back.png",
+              "actor": "herbal/sortLeaves-right-2-actor.png",
+              "front": "herbal/sortLeaves-right-2-front.png"
+            }
+          },
+          {
+            "file": "herbal/sortLeaves-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/sortLeaves-right-3-back.png",
+              "actor": "herbal/sortLeaves-right-3-actor.png",
+              "front": "herbal/sortLeaves-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "herbal",
+      "id": "grindHerbs",
+      "label": "절구로 빻기",
+      "views": {
+        "down": [
+          {
+            "file": "herbal/grindHerbs-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "herbal/grindHerbs-down-0-back.png",
+              "actor": "herbal/grindHerbs-down-0-actor.png",
+              "front": "herbal/grindHerbs-down-0-front.png"
+            }
+          },
+          {
+            "file": "herbal/grindHerbs-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "herbal/grindHerbs-down-1-back.png",
+              "actor": "herbal/grindHerbs-down-1-actor.png",
+              "front": "herbal/grindHerbs-down-1-front.png"
+            }
+          },
+          {
+            "file": "herbal/grindHerbs-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "herbal/grindHerbs-down-2-back.png",
+              "actor": "herbal/grindHerbs-down-2-actor.png",
+              "front": "herbal/grindHerbs-down-2-front.png"
+            }
+          },
+          {
+            "file": "herbal/grindHerbs-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "herbal/grindHerbs-down-3-back.png",
+              "actor": "herbal/grindHerbs-down-3-actor.png",
+              "front": "herbal/grindHerbs-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "herbal/grindHerbs-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "herbal/grindHerbs-up-0-back.png",
+              "actor": "herbal/grindHerbs-up-0-actor.png",
+              "front": "herbal/grindHerbs-up-0-front.png"
+            }
+          },
+          {
+            "file": "herbal/grindHerbs-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "herbal/grindHerbs-up-1-back.png",
+              "actor": "herbal/grindHerbs-up-1-actor.png",
+              "front": "herbal/grindHerbs-up-1-front.png"
+            }
+          },
+          {
+            "file": "herbal/grindHerbs-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "herbal/grindHerbs-up-2-back.png",
+              "actor": "herbal/grindHerbs-up-2-actor.png",
+              "front": "herbal/grindHerbs-up-2-front.png"
+            }
+          },
+          {
+            "file": "herbal/grindHerbs-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "herbal/grindHerbs-up-3-back.png",
+              "actor": "herbal/grindHerbs-up-3-actor.png",
+              "front": "herbal/grindHerbs-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "herbal/grindHerbs-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "herbal/grindHerbs-left-0-back.png",
+              "actor": "herbal/grindHerbs-left-0-actor.png",
+              "front": "herbal/grindHerbs-left-0-front.png"
+            }
+          },
+          {
+            "file": "herbal/grindHerbs-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "herbal/grindHerbs-left-1-back.png",
+              "actor": "herbal/grindHerbs-left-1-actor.png",
+              "front": "herbal/grindHerbs-left-1-front.png"
+            }
+          },
+          {
+            "file": "herbal/grindHerbs-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "herbal/grindHerbs-left-2-back.png",
+              "actor": "herbal/grindHerbs-left-2-actor.png",
+              "front": "herbal/grindHerbs-left-2-front.png"
+            }
+          },
+          {
+            "file": "herbal/grindHerbs-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "herbal/grindHerbs-left-3-back.png",
+              "actor": "herbal/grindHerbs-left-3-actor.png",
+              "front": "herbal/grindHerbs-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "herbal/grindHerbs-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "herbal/grindHerbs-right-0-back.png",
+              "actor": "herbal/grindHerbs-right-0-actor.png",
+              "front": "herbal/grindHerbs-right-0-front.png"
+            }
+          },
+          {
+            "file": "herbal/grindHerbs-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "herbal/grindHerbs-right-1-back.png",
+              "actor": "herbal/grindHerbs-right-1-actor.png",
+              "front": "herbal/grindHerbs-right-1-front.png"
+            }
+          },
+          {
+            "file": "herbal/grindHerbs-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "herbal/grindHerbs-right-2-back.png",
+              "actor": "herbal/grindHerbs-right-2-actor.png",
+              "front": "herbal/grindHerbs-right-2-front.png"
+            }
+          },
+          {
+            "file": "herbal/grindHerbs-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": true,
+            "layers": {
+              "back": "herbal/grindHerbs-right-3-back.png",
+              "actor": "herbal/grindHerbs-right-3-actor.png",
+              "front": "herbal/grindHerbs-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "herbal",
+      "id": "bottleHerbs",
+      "label": "약초 병에 담기",
+      "views": {
+        "down": [
+          {
+            "file": "herbal/bottleHerbs-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/bottleHerbs-down-0-back.png",
+              "actor": "herbal/bottleHerbs-down-0-actor.png",
+              "front": "herbal/bottleHerbs-down-0-front.png"
+            }
+          },
+          {
+            "file": "herbal/bottleHerbs-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/bottleHerbs-down-1-back.png",
+              "actor": "herbal/bottleHerbs-down-1-actor.png",
+              "front": "herbal/bottleHerbs-down-1-front.png"
+            }
+          },
+          {
+            "file": "herbal/bottleHerbs-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/bottleHerbs-down-2-back.png",
+              "actor": "herbal/bottleHerbs-down-2-actor.png",
+              "front": "herbal/bottleHerbs-down-2-front.png"
+            }
+          },
+          {
+            "file": "herbal/bottleHerbs-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/bottleHerbs-down-3-back.png",
+              "actor": "herbal/bottleHerbs-down-3-actor.png",
+              "front": "herbal/bottleHerbs-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "herbal/bottleHerbs-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/bottleHerbs-up-0-back.png",
+              "actor": "herbal/bottleHerbs-up-0-actor.png",
+              "front": "herbal/bottleHerbs-up-0-front.png"
+            }
+          },
+          {
+            "file": "herbal/bottleHerbs-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/bottleHerbs-up-1-back.png",
+              "actor": "herbal/bottleHerbs-up-1-actor.png",
+              "front": "herbal/bottleHerbs-up-1-front.png"
+            }
+          },
+          {
+            "file": "herbal/bottleHerbs-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/bottleHerbs-up-2-back.png",
+              "actor": "herbal/bottleHerbs-up-2-actor.png",
+              "front": "herbal/bottleHerbs-up-2-front.png"
+            }
+          },
+          {
+            "file": "herbal/bottleHerbs-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/bottleHerbs-up-3-back.png",
+              "actor": "herbal/bottleHerbs-up-3-actor.png",
+              "front": "herbal/bottleHerbs-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "herbal/bottleHerbs-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/bottleHerbs-left-0-back.png",
+              "actor": "herbal/bottleHerbs-left-0-actor.png",
+              "front": "herbal/bottleHerbs-left-0-front.png"
+            }
+          },
+          {
+            "file": "herbal/bottleHerbs-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/bottleHerbs-left-1-back.png",
+              "actor": "herbal/bottleHerbs-left-1-actor.png",
+              "front": "herbal/bottleHerbs-left-1-front.png"
+            }
+          },
+          {
+            "file": "herbal/bottleHerbs-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/bottleHerbs-left-2-back.png",
+              "actor": "herbal/bottleHerbs-left-2-actor.png",
+              "front": "herbal/bottleHerbs-left-2-front.png"
+            }
+          },
+          {
+            "file": "herbal/bottleHerbs-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/bottleHerbs-left-3-back.png",
+              "actor": "herbal/bottleHerbs-left-3-actor.png",
+              "front": "herbal/bottleHerbs-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "herbal/bottleHerbs-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/bottleHerbs-right-0-back.png",
+              "actor": "herbal/bottleHerbs-right-0-actor.png",
+              "front": "herbal/bottleHerbs-right-0-front.png"
+            }
+          },
+          {
+            "file": "herbal/bottleHerbs-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/bottleHerbs-right-1-back.png",
+              "actor": "herbal/bottleHerbs-right-1-actor.png",
+              "front": "herbal/bottleHerbs-right-1-front.png"
+            }
+          },
+          {
+            "file": "herbal/bottleHerbs-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/bottleHerbs-right-2-back.png",
+              "actor": "herbal/bottleHerbs-right-2-actor.png",
+              "front": "herbal/bottleHerbs-right-2-front.png"
+            }
+          },
+          {
+            "file": "herbal/bottleHerbs-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "herbal/bottleHerbs-right-3-back.png",
+              "actor": "herbal/bottleHerbs-right-3-actor.png",
+              "front": "herbal/bottleHerbs-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "scroll",
+      "id": "unroll",
+      "label": "두루마리 펼치기",
+      "views": {
+        "down": [
+          {
+            "file": "scroll/unroll-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/unroll-down-0-back.png",
+              "actor": "scroll/unroll-down-0-actor.png",
+              "front": "scroll/unroll-down-0-front.png"
+            }
+          },
+          {
+            "file": "scroll/unroll-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/unroll-down-1-back.png",
+              "actor": "scroll/unroll-down-1-actor.png",
+              "front": "scroll/unroll-down-1-front.png"
+            }
+          },
+          {
+            "file": "scroll/unroll-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/unroll-down-2-back.png",
+              "actor": "scroll/unroll-down-2-actor.png",
+              "front": "scroll/unroll-down-2-front.png"
+            }
+          },
+          {
+            "file": "scroll/unroll-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/unroll-down-3-back.png",
+              "actor": "scroll/unroll-down-3-actor.png",
+              "front": "scroll/unroll-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "scroll/unroll-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/unroll-up-0-back.png",
+              "actor": "scroll/unroll-up-0-actor.png",
+              "front": "scroll/unroll-up-0-front.png"
+            }
+          },
+          {
+            "file": "scroll/unroll-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/unroll-up-1-back.png",
+              "actor": "scroll/unroll-up-1-actor.png",
+              "front": "scroll/unroll-up-1-front.png"
+            }
+          },
+          {
+            "file": "scroll/unroll-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/unroll-up-2-back.png",
+              "actor": "scroll/unroll-up-2-actor.png",
+              "front": "scroll/unroll-up-2-front.png"
+            }
+          },
+          {
+            "file": "scroll/unroll-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/unroll-up-3-back.png",
+              "actor": "scroll/unroll-up-3-actor.png",
+              "front": "scroll/unroll-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "scroll/unroll-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/unroll-left-0-back.png",
+              "actor": "scroll/unroll-left-0-actor.png",
+              "front": "scroll/unroll-left-0-front.png"
+            }
+          },
+          {
+            "file": "scroll/unroll-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/unroll-left-1-back.png",
+              "actor": "scroll/unroll-left-1-actor.png",
+              "front": "scroll/unroll-left-1-front.png"
+            }
+          },
+          {
+            "file": "scroll/unroll-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/unroll-left-2-back.png",
+              "actor": "scroll/unroll-left-2-actor.png",
+              "front": "scroll/unroll-left-2-front.png"
+            }
+          },
+          {
+            "file": "scroll/unroll-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/unroll-left-3-back.png",
+              "actor": "scroll/unroll-left-3-actor.png",
+              "front": "scroll/unroll-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "scroll/unroll-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/unroll-right-0-back.png",
+              "actor": "scroll/unroll-right-0-actor.png",
+              "front": "scroll/unroll-right-0-front.png"
+            }
+          },
+          {
+            "file": "scroll/unroll-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/unroll-right-1-back.png",
+              "actor": "scroll/unroll-right-1-actor.png",
+              "front": "scroll/unroll-right-1-front.png"
+            }
+          },
+          {
+            "file": "scroll/unroll-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/unroll-right-2-back.png",
+              "actor": "scroll/unroll-right-2-actor.png",
+              "front": "scroll/unroll-right-2-front.png"
+            }
+          },
+          {
+            "file": "scroll/unroll-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/unroll-right-3-back.png",
+              "actor": "scroll/unroll-right-3-actor.png",
+              "front": "scroll/unroll-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "scroll",
+      "id": "roll",
+      "label": "두루마리 말기",
+      "views": {
+        "down": [
+          {
+            "file": "scroll/roll-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/roll-down-0-back.png",
+              "actor": "scroll/roll-down-0-actor.png",
+              "front": "scroll/roll-down-0-front.png"
+            }
+          },
+          {
+            "file": "scroll/roll-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/roll-down-1-back.png",
+              "actor": "scroll/roll-down-1-actor.png",
+              "front": "scroll/roll-down-1-front.png"
+            }
+          },
+          {
+            "file": "scroll/roll-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/roll-down-2-back.png",
+              "actor": "scroll/roll-down-2-actor.png",
+              "front": "scroll/roll-down-2-front.png"
+            }
+          },
+          {
+            "file": "scroll/roll-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/roll-down-3-back.png",
+              "actor": "scroll/roll-down-3-actor.png",
+              "front": "scroll/roll-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "scroll/roll-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/roll-up-0-back.png",
+              "actor": "scroll/roll-up-0-actor.png",
+              "front": "scroll/roll-up-0-front.png"
+            }
+          },
+          {
+            "file": "scroll/roll-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/roll-up-1-back.png",
+              "actor": "scroll/roll-up-1-actor.png",
+              "front": "scroll/roll-up-1-front.png"
+            }
+          },
+          {
+            "file": "scroll/roll-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/roll-up-2-back.png",
+              "actor": "scroll/roll-up-2-actor.png",
+              "front": "scroll/roll-up-2-front.png"
+            }
+          },
+          {
+            "file": "scroll/roll-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/roll-up-3-back.png",
+              "actor": "scroll/roll-up-3-actor.png",
+              "front": "scroll/roll-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "scroll/roll-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/roll-left-0-back.png",
+              "actor": "scroll/roll-left-0-actor.png",
+              "front": "scroll/roll-left-0-front.png"
+            }
+          },
+          {
+            "file": "scroll/roll-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/roll-left-1-back.png",
+              "actor": "scroll/roll-left-1-actor.png",
+              "front": "scroll/roll-left-1-front.png"
+            }
+          },
+          {
+            "file": "scroll/roll-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/roll-left-2-back.png",
+              "actor": "scroll/roll-left-2-actor.png",
+              "front": "scroll/roll-left-2-front.png"
+            }
+          },
+          {
+            "file": "scroll/roll-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/roll-left-3-back.png",
+              "actor": "scroll/roll-left-3-actor.png",
+              "front": "scroll/roll-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "scroll/roll-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/roll-right-0-back.png",
+              "actor": "scroll/roll-right-0-actor.png",
+              "front": "scroll/roll-right-0-front.png"
+            }
+          },
+          {
+            "file": "scroll/roll-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/roll-right-1-back.png",
+              "actor": "scroll/roll-right-1-actor.png",
+              "front": "scroll/roll-right-1-front.png"
+            }
+          },
+          {
+            "file": "scroll/roll-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/roll-right-2-back.png",
+              "actor": "scroll/roll-right-2-actor.png",
+              "front": "scroll/roll-right-2-front.png"
+            }
+          },
+          {
+            "file": "scroll/roll-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/roll-right-3-back.png",
+              "actor": "scroll/roll-right-3-actor.png",
+              "front": "scroll/roll-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "scroll",
+      "id": "tieScroll",
+      "label": "두루마리 끈 묶기",
+      "views": {
+        "down": [
+          {
+            "file": "scroll/tieScroll-down-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/tieScroll-down-0-back.png",
+              "actor": "scroll/tieScroll-down-0-actor.png",
+              "front": "scroll/tieScroll-down-0-front.png"
+            }
+          },
+          {
+            "file": "scroll/tieScroll-down-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/tieScroll-down-1-back.png",
+              "actor": "scroll/tieScroll-down-1-actor.png",
+              "front": "scroll/tieScroll-down-1-front.png"
+            }
+          },
+          {
+            "file": "scroll/tieScroll-down-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/tieScroll-down-2-back.png",
+              "actor": "scroll/tieScroll-down-2-actor.png",
+              "front": "scroll/tieScroll-down-2-front.png"
+            }
+          },
+          {
+            "file": "scroll/tieScroll-down-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/tieScroll-down-3-back.png",
+              "actor": "scroll/tieScroll-down-3-actor.png",
+              "front": "scroll/tieScroll-down-3-front.png"
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "scroll/tieScroll-up-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/tieScroll-up-0-back.png",
+              "actor": "scroll/tieScroll-up-0-actor.png",
+              "front": "scroll/tieScroll-up-0-front.png"
+            }
+          },
+          {
+            "file": "scroll/tieScroll-up-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/tieScroll-up-1-back.png",
+              "actor": "scroll/tieScroll-up-1-actor.png",
+              "front": "scroll/tieScroll-up-1-front.png"
+            }
+          },
+          {
+            "file": "scroll/tieScroll-up-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/tieScroll-up-2-back.png",
+              "actor": "scroll/tieScroll-up-2-actor.png",
+              "front": "scroll/tieScroll-up-2-front.png"
+            }
+          },
+          {
+            "file": "scroll/tieScroll-up-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/tieScroll-up-3-back.png",
+              "actor": "scroll/tieScroll-up-3-actor.png",
+              "front": "scroll/tieScroll-up-3-front.png"
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "scroll/tieScroll-left-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/tieScroll-left-0-back.png",
+              "actor": "scroll/tieScroll-left-0-actor.png",
+              "front": "scroll/tieScroll-left-0-front.png"
+            }
+          },
+          {
+            "file": "scroll/tieScroll-left-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/tieScroll-left-1-back.png",
+              "actor": "scroll/tieScroll-left-1-actor.png",
+              "front": "scroll/tieScroll-left-1-front.png"
+            }
+          },
+          {
+            "file": "scroll/tieScroll-left-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/tieScroll-left-2-back.png",
+              "actor": "scroll/tieScroll-left-2-actor.png",
+              "front": "scroll/tieScroll-left-2-front.png"
+            }
+          },
+          {
+            "file": "scroll/tieScroll-left-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/tieScroll-left-3-back.png",
+              "actor": "scroll/tieScroll-left-3-actor.png",
+              "front": "scroll/tieScroll-left-3-front.png"
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "scroll/tieScroll-right-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/tieScroll-right-0-back.png",
+              "actor": "scroll/tieScroll-right-0-actor.png",
+              "front": "scroll/tieScroll-right-0-front.png"
+            }
+          },
+          {
+            "file": "scroll/tieScroll-right-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/tieScroll-right-1-back.png",
+              "actor": "scroll/tieScroll-right-1-actor.png",
+              "front": "scroll/tieScroll-right-1-front.png"
+            }
+          },
+          {
+            "file": "scroll/tieScroll-right-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/tieScroll-right-2-back.png",
+              "actor": "scroll/tieScroll-right-2-actor.png",
+              "front": "scroll/tieScroll-right-2-front.png"
+            }
+          },
+          {
+            "file": "scroll/tieScroll-right-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 20
+            },
+            "duration": 320,
+            "loop": false,
+            "layers": {
+              "back": "scroll/tieScroll-right-3-back.png",
+              "actor": "scroll/tieScroll-right-3-actor.png",
+              "front": "scroll/tieScroll-right-3-front.png"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "group": "curtains",
+      "id": "sky-open",
+      "label": "하늘빛 커튼 · 열기",
+      "views": {
+        "down": [
+          {
+            "file": "curtains/sky-open-0.png",
+            "width": 32,
+            "height": 16,
+            "anchor": {
+              "x": 16,
+              "y": 16
+            },
+            "duration": 260,
+            "loop": false
+          },
+          {
+            "file": "curtains/sky-open-1.png",
+            "width": 32,
+            "height": 16,
+            "anchor": {
+              "x": 16,
+              "y": 16
+            },
+            "duration": 260,
+            "loop": false
+          },
+          {
+            "file": "curtains/sky-open-2.png",
+            "width": 32,
+            "height": 16,
+            "anchor": {
+              "x": 16,
+              "y": 16
+            },
+            "duration": 260,
+            "loop": false
+          },
+          {
+            "file": "curtains/sky-open-3.png",
+            "width": 32,
+            "height": 16,
+            "anchor": {
+              "x": 16,
+              "y": 16
+            },
+            "duration": 260,
+            "loop": false
+          }
+        ]
+      }
+    },
+    {
+      "group": "curtains",
+      "id": "sky-close",
+      "label": "하늘빛 커튼 · 닫기",
+      "views": {
+        "down": [
+          {
+            "file": "curtains/sky-close-0.png",
+            "width": 32,
+            "height": 16,
+            "anchor": {
+              "x": 16,
+              "y": 16
+            },
+            "duration": 260,
+            "loop": false
+          },
+          {
+            "file": "curtains/sky-close-1.png",
+            "width": 32,
+            "height": 16,
+            "anchor": {
+              "x": 16,
+              "y": 16
+            },
+            "duration": 260,
+            "loop": false
+          },
+          {
+            "file": "curtains/sky-close-2.png",
+            "width": 32,
+            "height": 16,
+            "anchor": {
+              "x": 16,
+              "y": 16
+            },
+            "duration": 260,
+            "loop": false
+          },
+          {
+            "file": "curtains/sky-close-3.png",
+            "width": 32,
+            "height": 16,
+            "anchor": {
+              "x": 16,
+              "y": 16
+            },
+            "duration": 260,
+            "loop": false
+          }
+        ]
+      }
+    },
+    {
+      "group": "curtains",
+      "id": "sage-open",
+      "label": "풀빛 커튼 · 열기",
+      "views": {
+        "down": [
+          {
+            "file": "curtains/sage-open-0.png",
+            "width": 32,
+            "height": 16,
+            "anchor": {
+              "x": 16,
+              "y": 16
+            },
+            "duration": 260,
+            "loop": false
+          },
+          {
+            "file": "curtains/sage-open-1.png",
+            "width": 32,
+            "height": 16,
+            "anchor": {
+              "x": 16,
+              "y": 16
+            },
+            "duration": 260,
+            "loop": false
+          },
+          {
+            "file": "curtains/sage-open-2.png",
+            "width": 32,
+            "height": 16,
+            "anchor": {
+              "x": 16,
+              "y": 16
+            },
+            "duration": 260,
+            "loop": false
+          },
+          {
+            "file": "curtains/sage-open-3.png",
+            "width": 32,
+            "height": 16,
+            "anchor": {
+              "x": 16,
+              "y": 16
+            },
+            "duration": 260,
+            "loop": false
+          }
+        ]
+      }
+    },
+    {
+      "group": "curtains",
+      "id": "sage-close",
+      "label": "풀빛 커튼 · 닫기",
+      "views": {
+        "down": [
+          {
+            "file": "curtains/sage-close-0.png",
+            "width": 32,
+            "height": 16,
+            "anchor": {
+              "x": 16,
+              "y": 16
+            },
+            "duration": 260,
+            "loop": false
+          },
+          {
+            "file": "curtains/sage-close-1.png",
+            "width": 32,
+            "height": 16,
+            "anchor": {
+              "x": 16,
+              "y": 16
+            },
+            "duration": 260,
+            "loop": false
+          },
+          {
+            "file": "curtains/sage-close-2.png",
+            "width": 32,
+            "height": 16,
+            "anchor": {
+              "x": 16,
+              "y": 16
+            },
+            "duration": 260,
+            "loop": false
+          },
+          {
+            "file": "curtains/sage-close-3.png",
+            "width": 32,
+            "height": 16,
+            "anchor": {
+              "x": 16,
+              "y": 16
+            },
+            "duration": 260,
+            "loop": false
+          }
+        ]
+      }
+    },
+    {
+      "group": "curtains",
+      "id": "rose-open",
+      "label": "장밋빛 커튼 · 열기",
+      "views": {
+        "down": [
+          {
+            "file": "curtains/rose-open-0.png",
+            "width": 32,
+            "height": 16,
+            "anchor": {
+              "x": 16,
+              "y": 16
+            },
+            "duration": 260,
+            "loop": false
+          },
+          {
+            "file": "curtains/rose-open-1.png",
+            "width": 32,
+            "height": 16,
+            "anchor": {
+              "x": 16,
+              "y": 16
+            },
+            "duration": 260,
+            "loop": false
+          },
+          {
+            "file": "curtains/rose-open-2.png",
+            "width": 32,
+            "height": 16,
+            "anchor": {
+              "x": 16,
+              "y": 16
+            },
+            "duration": 260,
+            "loop": false
+          },
+          {
+            "file": "curtains/rose-open-3.png",
+            "width": 32,
+            "height": 16,
+            "anchor": {
+              "x": 16,
+              "y": 16
+            },
+            "duration": 260,
+            "loop": false
+          }
+        ]
+      }
+    },
+    {
+      "group": "curtains",
+      "id": "rose-close",
+      "label": "장밋빛 커튼 · 닫기",
+      "views": {
+        "down": [
+          {
+            "file": "curtains/rose-close-0.png",
+            "width": 32,
+            "height": 16,
+            "anchor": {
+              "x": 16,
+              "y": 16
+            },
+            "duration": 260,
+            "loop": false
+          },
+          {
+            "file": "curtains/rose-close-1.png",
+            "width": 32,
+            "height": 16,
+            "anchor": {
+              "x": 16,
+              "y": 16
+            },
+            "duration": 260,
+            "loop": false
+          },
+          {
+            "file": "curtains/rose-close-2.png",
+            "width": 32,
+            "height": 16,
+            "anchor": {
+              "x": 16,
+              "y": 16
+            },
+            "duration": 260,
+            "loop": false
+          },
+          {
+            "file": "curtains/rose-close-3.png",
+            "width": 32,
+            "height": 16,
+            "anchor": {
+              "x": 16,
+              "y": 16
+            },
+            "duration": 260,
+            "loop": false
+          }
+        ]
+      }
+    },
+    {
+      "group": "windows",
+      "id": "open",
+      "label": "창문 · 빗장 풀고 열기",
+      "views": {
+        "down": [
+          {
+            "file": "windows/open-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 32
+            },
+            "duration": 240,
+            "loop": false
+          },
+          {
+            "file": "windows/open-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 32
+            },
+            "duration": 240,
+            "loop": false
+          },
+          {
+            "file": "windows/open-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 32
+            },
+            "duration": 240,
+            "loop": false
+          },
+          {
+            "file": "windows/open-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 32
+            },
+            "duration": 240,
+            "loop": false
+          }
+        ]
+      }
+    },
+    {
+      "group": "windows",
+      "id": "close",
+      "label": "창문 · 닫고 빗장 걸기",
+      "views": {
+        "down": [
+          {
+            "file": "windows/close-0.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 32
+            },
+            "duration": 240,
+            "loop": false
+          },
+          {
+            "file": "windows/close-1.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 32
+            },
+            "duration": 240,
+            "loop": false
+          },
+          {
+            "file": "windows/close-2.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 32
+            },
+            "duration": 240,
+            "loop": false
+          },
+          {
+            "file": "windows/close-3.png",
+            "width": 32,
+            "height": 32,
+            "anchor": {
+              "x": 16,
+              "y": 32
+            },
+            "duration": 240,
+            "loop": false
+          }
+        ]
+      }
+    }
+  ],
+  "source": "src/render/craft-followup-art.ts",
+  "palettes": {
+    "props": {
+      "k": "#b57e4e",
+      "W": "#a96f3f",
+      "w": "#c68b54",
+      "l": "#e8ae74",
+      "c": "#fff0d0",
+      "C": "#f5e0af",
+      "r": "#f48b61",
+      "R": "#d46d46",
+      "g": "#81b158",
+      "G": "#a2cb78",
+      "y": "#ffca70",
+      "Y": "#ffeaba",
+      "b": "#99d7c9",
+      "B": "#78bbac",
+      "s": "#c1b8a6",
+      "S": "#878176",
+      "p": "#cbbb9b",
+      "o": "#ffc2a0",
+      "z": "rgba(90,70,50,0.22)",
+      "v": "#9b65b3",
+      "V": "#bd8fd0",
+      "t": "#e68e4e",
+      "i": "#b89871",
+      "I": "#dfc4a0",
+      "J": "#665043",
+      "j": "#312b28",
+      "P": "#f5e7c9",
+      "N": "#7d979b",
+      "n": "#acc4bd",
+      "Q": "#b1b2a8",
+      "q": "#737c77",
+      "T": "#9ea69a",
+      "E": "#b99176",
+      "e": "#d7b196",
+      "A": "#d8c8a7",
+      "a": "#b5a17a",
+      "F": "#b5c5b1",
+      "f": "#839882"
+    },
+    "fixtures": {
+      "k": "#b57e4e",
+      "W": "#a96f3f",
+      "w": "#c68b54",
+      "l": "#e8ae74",
+      "c": "#fff0d0",
+      "C": "#f5e0af",
+      "r": "#f48b61",
+      "R": "#d46d46",
+      "g": "#b2c49c",
+      "G": "#859f70",
+      "y": "#ffca70",
+      "Y": "#ffeaba",
+      "b": "#a3bfcd",
+      "B": "#728e9f",
+      "s": "#c1b8a6",
+      "S": "#878176",
+      "p": "#cbbb9b",
+      "o": "#ffc2a0",
+      "z": "#a6bdb5",
+      "v": "#d3a5a7",
+      "V": "#a97e83",
+      "t": "#e68e4e",
+      "i": "#b89871",
+      "I": "#dfc4a0",
+      "J": "#665043",
+      "j": "#312b28",
+      "P": "#f5e7c9",
+      "N": "#7d979b",
+      "n": "#acc4bd",
+      "Q": "#b1b2a8",
+      "q": "#737c77",
+      "T": "#9ea69a",
+      "E": "#b99176",
+      "e": "#d7b196",
+      "A": "#d8c8a7",
+      "a": "#b5a17a",
+      "F": "#b5c5b1",
+      "f": "#839882",
+      "Z": "#667c7e"
+    }
+  },
+  "note": "자산 전용. 제작 기능·직업 일과·서고 행동·커튼/창문 상호작용·저장 상태는 변경하지 않았다."
+}

@@ -48,6 +48,10 @@ export function siteName(k: SiteKind): string {
   if (isDecorKind(k)) return t(`decor.${k}`)
   // 주민의 꿈터는 꿈의 주인 이름으로 (계획 18: '○○의 꿈')
   if (k === 'weaver') return fill(T.newlandLife.dream.label, { who: neighborById(DREAMER)?.role ?? '' })
+  // 틸리의 꿈 (2026-10-08): 그림방
+  if (k === 'gallery') return fill((T.newlandLife.dreams as Record<string, { label: string }>).tilly.label, { who: neighborById('tilly')?.role ?? '' })
+  // 자란 아이의 집 겸 일터 (B18-7): 아이 이름으로
+  if (k === 'kidWork') return fill(T.newlandLife.kidWork.label, { name: useGame.getState().game.child?.name ?? '' })
   return BUILDING_LABELS[SITES[k].assetId ?? k] ?? ''
 }
 

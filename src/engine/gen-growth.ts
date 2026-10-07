@@ -26,6 +26,12 @@ export function slotPerson(g: GenState | undefined, npc: string): string {
   return g?.retired?.[npc]?.heir ?? npc
 }
 
+/** 사람 → 그 사람이 서 있는 이웃 자리 (부모 자리를 이어받은 자녀면 부모의 자리, 아니면 자기 id) — 2026-10-08 버그 22-C */
+export function slotOfPerson(g: GenState | undefined, pid: string): string {
+  for (const [npc, r] of Object.entries(g?.retired ?? {})) if (r.heir === pid) return npc
+  return pid
+}
+
 /** 이 이웃이 은퇴했나 */
 export const isRetired = (g: GenState | undefined, npc: string): boolean => !!g?.retired?.[npc]
 

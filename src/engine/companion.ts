@@ -262,12 +262,12 @@ const ADJ: readonly Tile[] = [
 ]
 
 /** 동물이 가고 싶은 칸: 비 오고 기록자가 밖이면 처마 밑, 아니면 기록자 옆 */
-export function companionGoal(player: Tile, playerOutdoorsInRain: boolean): Tile | null {
+export function companionGoal(player: Tile, playerOutdoorsInRain: boolean, blockers?: ReadonlySet<string>): Tile | null {
   if (playerOutdoorsInRain) return EAVES
   for (const d of ADJ) {
     const t = { x: player.x + d.x, y: player.y + d.y }
-    // 문·문깔개 위에는 서지 않는다 — 기록자가 드나드는 길을 막지 않도록
-    if (isWalkable(t) && !WARPS.has(key(t))) return t
+    // 문·문깔개 위에는 서지 않는다 — 기록자가 드나드는 길을 막지 않도록. 가구가 있는 칸도 고르지 않는다 (2026-10-08 버그 23-B)
+    if (isWalkable(t, blockers) && !WARPS.has(key(t))) return t
   }
   return null
 }
@@ -277,8 +277,10 @@ export function stepCompanion(c: Companion, goal: Tile | null, dt: number, block
   const here = { x: Math.round(c.x), y: Math.round(c.y) }
   const dest = c.path.at(-1)
   let path = c.path
+  // 이미 새 목표 칸에 있으면 옛 길을 버린다 (2026-10-08 버그 23-D)
+  if (sameTile(here, goal) && dest && !sameTile(dest, goal)) path = c.x !== here.x || c.y !== here.y ? [here] : []
   // 목표가 바뀌었을 때만 길을 다시 찾는다 — 이미 옆에 있으면 가만히
-  if (!sameTile(here, goal) && (!dest || !sameTile(dest, goal))) {
+  else if (!sameTile(here, goal) && (!dest || !sameTile(dest, goal))) {
     const p = findPath(here, goal, blockers)
     path = p ? (c.x !== here.x || c.y !== here.y ? [here, ...p] : p) : []
   }

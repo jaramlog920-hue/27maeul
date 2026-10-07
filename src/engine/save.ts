@@ -162,7 +162,8 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   // 조각 키(옛 저장 그대로)와 책 키('book:mk')만 남긴다
   const bookKeys = new Set(BOOKS.map((b) => `book:${b}`))
   // 필사 길잡이의 한 줄은 'guide:mt:1' (책·장)
-  const guideKey = (id: string) => { const m = /^guide:([a-z0-9]+):(\d+)$/.exec(id); return !!m && (BOOKS as readonly string[]).includes(m[1]) }
+  // 구약 책 길잡이의 한 줄도 남긴다 (2026-10-08 버그: 불러오면 지워졌다)
+  const guideKey = (id: string) => { const m = /^guide:([a-z0-9]+):(\d+)$/.exec(id); return !!m && ((BOOKS as readonly string[]).includes(m[1]) || isOtBook(m[1])) }
   const myLines = Object.fromEntries(Object.entries(isObj(s.myLines) ? s.myLines : {}).filter(([id, t]) => (known.has(id) || bookKeys.has(id) || guideKey(id)) && typeof t === 'string'))
   // 집 단계 (옛 저장은 0 — 넓히기 전). 부탁해 둔 단계는 바로 다음 단계일 때만 남긴다
   let homeLevel: GameState['homeLevel'] = s.homeLevel === 1 || s.homeLevel === 2 || s.homeLevel === 3 ? s.homeLevel : 0
@@ -220,6 +221,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     inv: fitted.inv,
     // 재료 궤짝 (계획 11): 옛 저장(칸이 없던 때)은 빈 궤짝. 수가 아닌 값은 버린다
     chest: Object.fromEntries(Object.entries(isObj(s.chest) ? s.chest : {}).filter(([, n]) => Number.isInteger(n) && (n as number) > 0)),
+    pantry: Object.fromEntries(Object.entries(isObj(s.pantry) ? (s.pantry as object) : {}).filter(([, n]) => Number.isInteger(n) && (n as number) > 0)),
     // 능력치 (계획 11 작업 4): 옛 저장(칸이 없던 때)은 모두 1단계, 타고난 값 0
     stats: sanitizeStats(s.stats),
     // 연애와 결혼 (계획 6): 옛 저장은 빈 연애
@@ -258,11 +260,23 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     // 주민의 자율 가족 (작업 10): 옛 저장은 없음, 깨진 항목만 버리고 계보는 복구
     ...(gen ? { gen } : {}),
     // 정성 필사 (계획 21 R2): 모양이 맞을 때만, 도장은 '책:장' 글자만
+    // 마치지 않은 다른 장들의 기록 (08-A): 모양이 맞는 것만, 열쇠와 at이 같을 때
+    copyCareOther: isObj(s.copyCareOther)
+      ? Object.fromEntries(Object.entries(s.copyCareOther as Record<string, unknown>).flatMap(([k, v]) => {
+          if (!isObj(v)) return []
+          const c = v as Record<string, unknown>
+          if (c.at !== k || !Number.isInteger(c.typos) || (c.typos as number) < 0) return []
+          const puzzled = Number.isInteger(c.puzzled) && (c.puzzled as number) > 0 ? (c.puzzled as number) : undefined
+          return [[k, { at: k, typos: c.typos as number, puzzle: c.puzzle === true, ...(puzzled ? { puzzled } : {}) }]]
+        }))
+      : undefined,
     copyCare: (() => {
       if (!isObj(s.copyCare)) return undefined
       const c = s.copyCare as unknown as Record<string, unknown>
       if (typeof c.at !== 'string' || !Number.isInteger(c.typos) || (c.typos as number) < 0) return undefined
-      return { at: c.at, typos: c.typos as number, puzzle: c.puzzle === true }
+      // 퍼즐로 마친 절 수도 남긴다 (시간·피로 60% 규칙 — 2026-10-08)
+      const puzzled = Number.isInteger(c.puzzled) && (c.puzzled as number) > 0 ? (c.puzzled as number) : undefined
+      return { at: c.at, typos: c.typos as number, puzzle: c.puzzle === true, ...(puzzled ? { puzzled } : {}) }
     })(),
     // 서고 순위 기록 (계획 21 R8): 날·순위가 정수인 것만. 보여 주지 못한 창은 모양이 맞을 때만 남긴다
     ranks: Array.isArray(s.ranks) ? s.ranks.filter((r) => isObj(r) && Number.isInteger(r.day) && Number.isInteger(r.place) && r.place >= 1 && r.place <= 20).slice(-24) : undefined,
@@ -327,19 +341,31 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   return { ...rest, homeShelf: sanitizeHomeShelf(s.homeShelf, (b) => isFinished(out, b)), ...sanitizeMaps(out) }
 }
 
+/** 옛 id → 새 id (주막→약방 2026-09-30, 양 이야기 2026-10-05) */
+const ID_MOVES: readonly [RegExp, string][] = [
+  [/innkeeper/g, 'apothecary'],
+  [/lamb:found/g, 'lamb:clover'],
+  [/lambFound/g, 'lambClover'],
+  [/lamb:splint/g, 'lamb:firstBite'],
+  [/lambSplint/g, 'lambFirstBite'],
+]
+const moveId = (v: string): string => ID_MOVES.reduce((s, [re, to]) => s.replace(re, to), v)
+/** 저장 안의 열쇠와 식별자 글(띄어쓰기 없음)만 옮긴다 — 띄어쓰기가 있는 글은 사람이 쓴 글로 보고 그대로 */
+function migrateIds(v: unknown): unknown {
+  if (typeof v === 'string') return /\s/.test(v) ? v : moveId(v)
+  if (Array.isArray(v)) return v.map(migrateIds)
+  if (v && typeof v === 'object') return Object.fromEntries(Object.entries(v as Record<string, unknown>).map(([k, x]) => [moveId(k), migrateIds(x)]))
+  return v
+}
+
 export function deserialize(raw: string | null, content: GameContent): GameState | null {
   if (!raw) return null
   try {
     // 주막이 약방으로 바뀌었다 (2026-09-30): 옛 저장의 이웃 id(마음·표식·장면·일지)를 함께 옮긴다
     // 양 이야기가 '잃고 찾기'에서 '토끼풀 첫 입'으로 바뀌었다 (2026-10-05): 옛 목격 id·기억 표식·장면을 새 id로 옮긴다
-    const o = JSON.parse(
-      raw
-        .replace(/innkeeper/g, 'apothecary')
-        .replace(/lamb:found/g, 'lamb:clover')
-        .replace(/lambFound/g, 'lambClover')
-        .replace(/lamb:splint/g, 'lamb:firstBite')
-        .replace(/lambSplint/g, 'lambFirstBite'),
-    )
+    // 바꾸기는 파싱한 뒤 열쇠와 띄어쓰기 없는 식별자 글에만 — 사용자가 쓴 글(메모·이름)은 그대로 둔다 (2026-10-08 버그 01-B)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const o = migrateIds(JSON.parse(raw)) as any
     if (!isObj(o) || o.version !== SAVE_VERSION) return null
     const ok =
       typeof o.clock?.day === 'number' &&
