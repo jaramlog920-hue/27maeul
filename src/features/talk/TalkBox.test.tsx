@@ -78,7 +78,8 @@ describe('이웃 대화 단추 (2026-10-05 정리)', () => {
       const names = screen.getAllByRole('button').map((b) => b.textContent ?? '')
       for (const name of names) expect(name, `${n.id}: ${name}`).not.toMatch(/사기|팔기|받기|짜 받기|엮어 받기|가르쳐 주기/)
       expect(names).toContain(T.ui.talkGift)
-      expect(names).toContain(T.ui.close)
+      // 닫기는 오른쪽 위 ✕ (이름은 '닫기')
+      expect(screen.getByRole('button', { name: T.ui.close })).toHaveTextContent('✕')
       unmount()
     }
   })

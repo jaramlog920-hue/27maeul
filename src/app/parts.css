@@ -1145,21 +1145,22 @@ button.copy-blank.on {
   flex: 1 1 auto;
   min-width: 0;
 }
-.dialog-head .head-close {
-  flex: none;
-  min-height: 34px;
-  padding: 4px 12px;
-  font-size: 14px;
-}
-.talk-who .talk-role {
+.dialog-head .talk-role {
   margin: 0;
 }
-.talk-bond-row {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 4px 0 0;
+/* 오른쪽 위 ✕ 닫기: 테두리 없는 작은 글자 단추, 누르는 자리는 넉넉히 */
+.dialog-head .head-x {
+  flex: none;
+  min-width: 36px;
+  min-height: 36px;
+  margin: -6px -6px 0 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--ink-soft);
 }
 .talk-bond {
   display: inline-block;
