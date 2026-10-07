@@ -44,6 +44,7 @@ import { TravelView } from './talk/TravelView'
 import { ChildName } from './child/ChildName'
 import { FollowMenu } from './companion/FollowMenu'
 import { VillageMap } from './map/VillageMap'
+import { RankView } from './library/RankView'
 import { TravelMenu } from './map/TravelMenu'
 import { FirstLight, LookAround } from './newland/FirstLight'
 import { BuildMenu } from './newland/BuildMenu'
@@ -124,6 +125,8 @@ function Body() {
       return <FollowMenu who={modal.who} />
     case 'villageMap':
       return <VillageMap />
+    case 'rank':
+      return <RankView history={modal.history} />
     case 'school':
       return <SchoolView />
     case 'letter':

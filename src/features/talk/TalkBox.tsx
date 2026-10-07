@@ -104,6 +104,8 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
         <button data-close className="head-x" aria-label={T.ui.close} title={T.ui.close} onClick={closeModal}>✕</button>
       </div>
       {modal.line && <p className="talk-line">{callName(modal.line, game.avatar?.name)}</p>}
+      {/* 다른 마을 서고 소문 (계획 21 R6) */}
+      {modal.rumor && <p className="talk-line">{modal.rumor}</p>}
       {/* 주민 가족 이야기 (계획 20 2부): 결혼 상담·준비 돕기·다시 생각·아기 침대 */}
       <GenTalk npc={def.id} />
       <div className="actions menu">

@@ -7,6 +7,7 @@ import { formatTime, seasonOf } from './clock'
 import { LESSON_FROM, LESSON_TO } from './stories'
 import type { GameContent } from './types'
 import { isBirthday } from './notebook'
+import { isReadingDay, READING_FROM, READING_TO, seasonCopyKey, seasonCopyOpen } from './meetings'
 
 export interface ScheduledEvent {
   id: string
@@ -42,7 +43,11 @@ export function scheduledEvents(s: Pick<GameState, 'clock' | 'today' | 'flags'> 
       add(`genWedding:${r.id}`, fill(lifeText.gen.wedding, { aAnd: withAnd(nm(r.a)), b: nm(r.b) }), lifeText.gen.weddingPlace, FESTIVAL_FROM, FESTIVAL_TO, false, w)
     }
   }
+  // 계절 필사 주간 (계획 21 R7): 아직 받지 않았으면 오늘 하루 종일
+  if (seasonCopyOpen(day) && !s.flags[seasonCopyKey(day)]) add('seasonCopy', lifeText.meetings.seasonCopy, lifeText.meetings.seasonCopyPlace, 6 * 60, 22 * 60)
   for (let d = day; d <= day + 7; d++) {
+    // 마을 소리내어 읽기 모임 (계획 21 R7)
+    if (isReadingDay(d)) add('reading', lifeText.meetings.reading, lifeText.meetings.readingPlace, READING_FROM, READING_TO, s.flags.readDay === d, d)
     const festival = festivalOf(d)
     if (festival) add('festival', festivals[festival], '장터 모닥불', FESTIVAL_FROM, FESTIVAL_TO, false, d)
     if (isMarketDay(d)) {

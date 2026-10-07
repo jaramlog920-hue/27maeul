@@ -29,6 +29,10 @@ import { allShelved, canShelve, payRetry, poolFor, shelve, shelveNow as shelveQu
 import { DEFAULT_CHOICE, type SpecialChoice } from '../engine/binding'
 import { ALBUM_IDS, fill, itemList, itemName, KID_LETTERS, NEIGHBOR_LINES, roomTitle, SCENES, T, withAnd, withObject, withSubject, callName } from '../content/text'
 import { freshNews } from '../content/gen-text'
+import { careKey, finishCare, notePuzzle, noteTypo } from '../engine/copy-ways'
+import { rumorNow, villageSeed } from '../engine/villages'
+import { canRead, seasonCopyGift, seasonCopyKey } from '../engine/meetings'
+import { addGift } from '../engine/items'
 import { grapesRipe, isWet, weatherOf } from '../engine/calendar'
 import { cleanName, favoriteToy, interactPet, petWays, type Animal } from '../engine/companion'
 import { canUseSpace, setSpace, unsetSpace, useSpace } from '../engine/space-life'
@@ -86,6 +90,7 @@ import {
   trade as doTrade,
   buyRare,
   fulfillBoard,
+  finishReading,
   takeTrip,
   nameChild,
   recordProgress,
@@ -166,6 +171,8 @@ export type Pending =
   | { kind: 'help'; neighborId: string }
   | { kind: 'teach' }
   | { kind: 'letter' }
+  /** 마을 소리내어 읽기 모임 (계획 21 R7) — 소리 맞추기 손일 */
+  | { kind: 'reading' }
   /** 이야기 속에서 함께하는 손일 (계획 16 작업 4) — 잘하든 못하든 끝나면 이야기가 다음으로 */
   | { kind: 'story'; event: string; npc: string }
 
@@ -200,7 +207,7 @@ export type Modal =
   | { kind: 'village'; id: FacilityId }
   /** letter: 편지 나르는 이웃이 말을 걸자마자 편지를 건넸을 때 대화에 보일 편지 말 한 줄 */
   // popup: 말을 걸었을 때 처음 하는 특별한 말(레시피 알려 주기·혼잣말·방문 말 등)은 이름 밑이 아니라 팝업으로 (2026-10-07 사용자)
-  | { kind: 'talk'; neighborId: string; line: string; letter?: string; popup?: string[] }
+  | { kind: 'talk'; neighborId: string; line: string; letter?: string; popup?: string[]; rumor?: string }
   | { kind: 'passage'; pieceId: string; askLine: boolean; back?: boolean; said?: string }
   /** lineKey: 조각 id 또는 'book:mk' 같은 책 키. back: 적거나 넘긴 뒤 돌아갈 창 ('word' = 📖 말씀 › 서고) */
   | { kind: 'myLine'; lineKey: string; back?: 'library' | 'word' | `room:${ShelfRoomId}` }
@@ -232,6 +239,8 @@ export type Modal =
   | { kind: 'follow'; who: 'pet' | 'child' }
   /** 마을 지도: 마을 전체를 한 장으로 (설정에서) */
   | { kind: 'villageMap' }
+  /** 마을별 서고 순위 (계획 21 R8): 업데이트 창, history면 서고에서 다시 보기 */
+  | { kind: 'rank'; history?: boolean }
   /** 배움터: 아이 맡기기 */
   | { kind: 'school' }
   | { kind: 'menu'; place: MenuPlace }
@@ -447,6 +456,8 @@ interface Store {
   showAtSchool: (mode: ShowMode) => void
   startTeach: () => void
   startLetter: () => void
+  /** 마을 소리내어 읽기 모임에 함께한다 (계획 21 R7) */
+  startReading: () => void
   // 손일
   startCraft: (recipe: RecipeId) => void
   miniTap: (itemId?: number) => void
@@ -516,6 +527,10 @@ interface Store {
    * 똑같이 기록한다 (통계·장 완료·하나님 기록·소리 모두 같다). 받지 않으면 아무것도 바꾸지 않는다. 쓰는 화면이 아니면 null
    */
   copyVoice: (transcript: string) => VoiceCheck | null
+  /** 필사 중 틀린 글자 하나 (정성 도장 셈 — 계획 21 R2) */
+  copyTypo: () => void
+  /** 낱말 조각·빈칸 퍼즐로 한 절을 마쳤다 — 본문 그대로 기록 (계획 21 R1) */
+  copyPuzzle: () => boolean
   /** 필사 책상의 화면을 바꾼다 (메뉴·책 고르기·쓰기). 'write'로 갈 때 resume이면 "…부터 이어집니다"를 보인다 */
   copyView: (view: CopyView, resume?: boolean) => void
   /** 필사 책상에서 나간다 — 쓰다 만 입력을 저장하고 마을로 */
@@ -805,7 +820,22 @@ export const useGame = create<Store>((set, get) => {
    * 손으로 쓴 것(copyType)과 소리 내어 읽은 것(copyVoice)이 같은 길을 지난다
    */
   const commitVerse = (game: GameState, book: CopyBook, text: string): boolean => {
-    const { state, result } = writeVerse(game, book, text, CONTENT)
+    const at = copySpot(game, book, CONTENT)
+    const { state: written, result } = writeVerse(game, book, text, CONTENT)
+    // 정성 필사 (계획 21 R2): 장을 마치면, 그 장을 모두 직접 쓰고 틀린 글자가 둘 이하였으면 도장
+    let state = written
+    if (result.kind === 'chapter' && at) {
+      const key = careKey(book, at.chapter)
+      const care = finishCare(written.careDone, written.copyCare, key)
+      state = { ...written, careDone: care.careDone, copyCare: undefined }
+      if (care.earned) setTimeout(() => get().say(T.copyWays.careEarned, 3600), 1200)
+      // 계절 필사 (계획 21 R7): 계절 15–21일에 장을 마치면 그 계절에 한 번 계절 장식
+      const gift = seasonCopyGift(state.clock.day, state.flags)
+      if (gift) {
+        state = { ...state, inv: addGift(state.inv, { [gift]: 1 }), flags: { ...state.flags, [seasonCopyKey(state.clock.day)]: 1 } }
+        setTimeout(() => get().say(fill(T.meetings.seasonGift, { item: itemName(gift) }), 3600), 2400)
+      }
+    }
     if (result.kind === 'notYet') {
       // 쓰다 만 입력: 상태에만 (화면이 손을 멈추면 copySave로, 나갈 때·절을 마칠 때 저장된다)
       set({ game: state })
@@ -1140,6 +1170,10 @@ export const useGame = create<Store>((set, get) => {
       }
     } else if (p.kind === 'story') next = finishStoryMini(game)
     else if (p.kind === 'teach') next = teach(game)
+    else if (p.kind === 'reading') {
+      next = finishReading(game, CONTENT)
+      if (next !== game) get().say(T.meetings.readDone, 3400)
+    }
     else if (p.kind === 'letter') {
       const misses = state.kind === 'timing' ? state.misses : 0
       next = finishLetter(game, misses)
@@ -1445,6 +1479,14 @@ export const useGame = create<Store>((set, get) => {
 
     talkTo: (id) => {
       const a = arrive(get().game, { kind: 'neighbor', id, tries: 0, talk: true })
+      // 다른 마을 서고 소문 (계획 21 R6): 하루 한 번, 낮은 확률로 — 대화칸에 한 줄 덧붙는다
+      const rumor = a.modal?.kind === 'talk' ? rumorNow(a.game, id, villageSeed(a.game)) : null
+      if (rumor && a.modal?.kind === 'talk') {
+        const line = fill((T.rumors as Record<string, Record<string, string>>)[id]?.[rumor.kind] ?? '', { village: rumor.village, n: rumor.n })
+        const flags = { ...a.game.flags, rumorDay: a.game.clock.day, ...(rumor.kind === 'overtook' ? { rumorOvertook: 1 } : {}) }
+        set({ game: { ...a.game, flags }, modal: { ...a.modal, rumor: line } })
+        return
+      }
       set({ game: a.game, modal: a.modal })
       if (a.modal?.kind === 'scene') snapAlbum(a.modal.id, get().capture)
     },
@@ -1471,6 +1513,11 @@ export const useGame = create<Store>((set, get) => {
 
     startTeach: () => set({ modal: { kind: 'mini', state: startMini('order', get().rng), pending: { kind: 'teach' } } }),
     startLetter: () => set({ modal: { kind: 'mini', state: startMini('timing', get().rng), pending: { kind: 'letter' } } }),
+    // 마을 소리내어 읽기 모임 (계획 21 R7): 박자에 맞춰 함께 읽는 손일
+    startReading: () => {
+      if (canRead(get().game)) return
+      set({ modal: { kind: 'mini', state: startMini('timing', get().rng), pending: { kind: 'reading' } } })
+    },
 
     startCraft: (recipe) => {
       if (canCraft(get().game, recipe)) return
@@ -1813,6 +1860,23 @@ export const useGame = create<Store>((set, get) => {
       }
       return commitVerse(game, book, text)
     },
+    copyTypo: () => {
+      const game = get().game
+      const book = game.copy.book
+      const spot = book ? copySpot(game, book, CONTENT) : null
+      if (!book || !spot) return
+      set({ game: { ...game, copyCare: noteTypo(game.copyCare, careKey(book, spot.chapter)) } })
+    },
+    copyPuzzle: () => {
+      const m = get().modal
+      const game = get().game
+      const book = game.copy.book
+      if (m?.kind !== 'copy' || m.view !== 'write' || !book) return false
+      const spot = copySpot(game, book, CONTENT)
+      if (!spot) return false
+      // 퍼즐로 마친 절도 기록은 본문 그대로 — 소리 내어 읽기와 같은 길. 이 장은 정성 도장을 받지 않는다
+      return commitVerse({ ...game, copyCare: notePuzzle(game.copyCare, careKey(book, spot.chapter)) }, book, spot.verse.text)
+    },
     copyVoice: (transcript) => {
       const m = get().modal
       const game = get().game
@@ -1987,7 +2051,8 @@ export const useGame = create<Store>((set, get) => {
       // 집 단계가 바뀌는 곳은 잠뿐: goToSleep이 새 단계로 지도(모듈 전역)를 맞춘다
       const before = get().game.gen?.settledDay ?? get().game.clock.day
       const next = goToSleep(get().game, CONTENT, { read: pieceId !== null, pieceId: pieceId ?? undefined })
-      set({ game: persist(next), modal: null })
+      // 마을 서고 순위 업데이트가 있는 아침이면 그 창부터 (계획 21 R8)
+      set({ game: persist(next), modal: next.rankPopup ? { kind: 'rank' } : null })
       sayChildHelp(next, get().say)
       // 주민 가족 소식 (계획 20 2부 P13): 밤사이 생긴 일을 많아야 세 줄, 아이 소식 뒤에
       const news = freshNews(next, before)

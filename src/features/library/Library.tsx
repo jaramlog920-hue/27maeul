@@ -5,8 +5,30 @@ import { openDoorsFor } from '../../engine/books'
 import { canLibraryRead, LIBRARY_READ_PRICE } from '../../engine/game'
 import { GOSPELS } from '../../engine/types'
 import { useGame } from '../../store/game-store'
+import { t } from '../../shared/i18n'
 import { ShelfPicture } from './BookArt'
 import { ShelfRow } from './ShelfRow'
+
+/** 서고 방명록 (계획 21 R10): 들른 사람이 남긴 한 줄, 최근 다섯 */
+function Guestbook() {
+  const book = useGame((s) => s.game.guestbook)
+  if (!book?.length) return null
+  return (
+    <section aria-label={T.guestbook.title}>
+      <h3 className="rows-title">{T.guestbook.title}</h3>
+      <ul className="rows">
+        {[...book].reverse().slice(0, 5).map((g) => (
+          <li key={g.day}>
+            <div className="row">
+              <span className="row-main"><b>{fill((T.guestbook.lines as Record<string, string>)[g.kind], { village: g.village ?? '' })}</b></span>
+              <span className="row-meta">{fill(T.ui.day, { day: g.day })}</span>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
 
 export function Library() {
   const shelved = useGame((s) => s.game.shelved)
@@ -39,7 +61,10 @@ export function Library() {
         )}
       </ul>
       <ReadingSeat />
+      <Guestbook />
       <div className="actions">
+        {/* 마을별 서고 순위 다시 보기 (계획 21 R8) */}
+        <button onClick={() => useGame.getState().open({ kind: 'rank', history: true })}>{t('rank.open')}</button>
         <button data-close onClick={closeModal}>{T.ui.close}</button>
       </div>
     </div>

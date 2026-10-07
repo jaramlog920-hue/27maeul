@@ -249,6 +249,24 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     ...(newland ? { newland } : {}),
     // 주민의 자율 가족 (작업 10): 옛 저장은 없음, 깨진 항목만 버리고 계보는 복구
     ...(gen ? { gen } : {}),
+    // 정성 필사 (계획 21 R2): 모양이 맞을 때만, 도장은 '책:장' 글자만
+    copyCare: (() => {
+      if (!isObj(s.copyCare)) return undefined
+      const c = s.copyCare as unknown as Record<string, unknown>
+      if (typeof c.at !== 'string' || !Number.isInteger(c.typos) || (c.typos as number) < 0) return undefined
+      return { at: c.at, typos: c.typos as number, puzzle: c.puzzle === true }
+    })(),
+    // 서고 순위 기록 (계획 21 R8): 날·순위가 정수인 것만. 보여 주지 못한 창은 모양이 맞을 때만 남긴다
+    ranks: Array.isArray(s.ranks) ? s.ranks.filter((r) => isObj(r) && Number.isInteger(r.day) && Number.isInteger(r.place) && r.place >= 1 && r.place <= 20).slice(-24) : undefined,
+    rankPopup: (() => {
+      const p = s.rankPopup
+      return p && isObj(p) && Number.isInteger(p.day) && Number.isInteger(p.place) && Array.isArray(p.table) && Array.isArray(p.pieces) ? p : undefined
+    })(),
+    // 서고 방명록 (계획 21 R10): 모양이 맞는 줄만
+    guestbook: Array.isArray(s.guestbook)
+      ? s.guestbook.filter((g) => isObj(g) && Number.isInteger(g.day) && ['wanderer', 'learner', 'kid', 'scribe'].includes(g.kind as string)).slice(-30)
+      : undefined,
+    careDone: isStrArray(s.careDone) ? [...new Set(s.careDone.filter((k) => /^[a-z0-9]+:\d+$/.test(k)))] : undefined,
     ...(fitted.rooms ? { rooms: fitted.rooms } : {}),
     // 구약 말씀 조각: 새 터를 받은 뒤에만 있다 — 모르는 id·중복은 버리고, 옛 저장(없음)은 칸을 만들지 않는다
     ...(s.flags?.newlandGift && sanitizeOtCollected(_rawOtCollected).length ? { otCollected: sanitizeOtCollected(_rawOtCollected) } : {}),

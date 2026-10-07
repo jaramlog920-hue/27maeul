@@ -15,6 +15,15 @@ const WORDS: readonly RegExp[] = [
 
 export const FORBIDDEN: readonly RegExp[] = WORDS.map((re) => new RegExp('(?<![가-힣])' + re.source))
 
+/**
+ * 다른 마을 이름·소문 문구에만 거는 지명 (계획 21 R5, exclusion §2-4) — 편지를 받은 도시·성경 지명.
+ * 장별 길잡이(본문 배경 설명)는 지명을 그대로 쓰므로 전체 금지어에는 넣지 않는다. 책 이름(에베소서·로마서…)은 허용
+ */
+export const FORBIDDEN_PLACES: readonly RegExp[] = [
+  /에베소(?!서)/, /고린도(?!전서|후서)/, /빌립보(?!서)/, /갈라디아(?!서)/, /골로새(?!서)/, /데살로니가(?!전서|후서)/, /로마(?!서)/,
+  /안디옥/, /다메섹/, /시온/, /가버나움/, /여리고/, /베다니/, /나인/, /엠마오/, /가나(?!다)/,
+].map((re) => new RegExp('(?<![가-힣])' + re.source))
+
 export function forbiddenIn(text: string): string | null {
   for (const re of FORBIDDEN) if (re.test(text)) return re.source
   return null

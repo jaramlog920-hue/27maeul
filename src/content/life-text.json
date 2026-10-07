@@ -7654,5 +7654,87 @@
     },
     "wedding": "{aAnd} {b} 결혼 잔치",
     "weddingPlace": "광장 모닥불"
+  },
+  "copyWays": {
+    "careEarned": "이 장에 정성 필사 도장이 찍혔어요."
+  },
+  "guestbook": {
+    "title": "방명록",
+    "lines": {
+      "wanderer": "{village}에서 왔어요. 이 마을 서고 소문을 듣고 들렀다 갑니다.",
+      "learner": "글씨를 배우고 싶어 들렀어요. 다음에 또 올게요.",
+      "kid": "책이 엄청 많아요! 또 올래요.",
+      "scribe": "{village} 서기가 다녀갑니다. 서로 힘내요."
+    }
+  },
+  "meetings": {
+    "reading": "마을 소리내어 읽기 모임",
+    "readingPlace": "사랑방",
+    "readDone": "이웃들과 함께 소리 내어 읽었어요.",
+    "seasonCopy": "계절 필사",
+    "seasonCopyPlace": "책상",
+    "seasonGift": "계절 필사 보답으로 {item} 하나를 받았어요."
+  },
+  "rumors": {
+    "merchant": {
+      "behind": "{village} 서고는 벌써 {n}권이 꽂혔다더군요. 거기 손님들이 그 얘기뿐이에요.",
+      "farBehind": "{village} 사람들은 서고 자랑이 대단해요. {n}권이라나요. 천천히 따라가면 되지요.",
+      "ahead": "요즘 다니는 마을마다 여기 서고 얘기를 해요. {village}에서도 부러워하더군요.",
+      "overtook": "들었어요? 이제 이 마을 서고가 {village}보다 앞섰대요!"
+    },
+    "postman": {
+      "behind": "{village}로 가는 편지에 서고 소식이 있더라고요. {n}권째래요.",
+      "farBehind": "{village}는 꽤 앞서 있대요. {n}권. 그래도 여기 서고도 착실히 차고 있어요.",
+      "ahead": "{village}에서 온 편지에 여기 서고 얘기가 있었어요. 잘하고 있다고요.",
+      "overtook": "편지 보따리 사이에 소식이 하나 있어요. 우리 서고가 {village}를 앞섰대요."
+    },
+    "baker": {
+      "behind": "있잖아요, {village} 서고가 {n}권이나 찼대요! 우리도 금방이겠죠?",
+      "farBehind": "{village} 얘기 들었어요? {n}권이래요. 대단하죠. 우리 서고도 응원할게요.",
+      "ahead": "{village} 사람들이 우리 서고 얘기를 하더래요. 어깨가 으쓱해지네요.",
+      "overtook": "세상에, 우리 서고가 {village}보다 앞섰대요! 오늘 빵이 더 잘 부풀겠어요."
+    },
+    "child": {
+      "behind": "{village}에는 책이 {n}권이나 있대요! 우리 서고도 더 채워요!",
+      "farBehind": "{village} 서고는 엄청 크대요. {n}권! 나도 같이 채울래요.",
+      "ahead": "{village} 애들이 우리 서고 부럽대요!",
+      "overtook": "우리 서고가 {village}보다 앞섰대요! 진짜예요!"
+    }
+  },
+  "copyReq": {
+    "kinds": {
+      "bless": "축복",
+      "comfort": "위로",
+      "cheer": "격려",
+      "remember": "기념",
+      "learn": "배움",
+      "work": "생업"
+    },
+    "asks": {
+      "bless": "기쁜 날을 맞아 벽에 걸어 둘 구절을 하나 부탁해요.",
+      "comfort": "요즘 마음이 무거워요. 곁에 둘 구절을 하나 써 줄래요?",
+      "cheer": "새 일을 앞두고 있어요. 힘이 될 구절을 부탁해요.",
+      "remember": "올해를 오래 기억하고 싶어요. 걸어 둘 구절을 하나요.",
+      "learn": "글 공부에 쓸 짧은 구절을 하나 써 주세요.",
+      "work": "가게 문 옆에 걸어 둘 구절을 하나 부탁해요."
+    },
+    "conds": {
+      "short": "짧은 구절로",
+      "care": "정성 필사본으로"
+    },
+    "thanks": [
+      "고마워요. 잘 걸어 둘게요.",
+      "마음에 꼭 들어요. 고마워요.",
+      "딱 이런 구절이 필요했어요. 정말 고마워요."
+    ],
+    "moods": {
+      "joy": "기쁨",
+      "comfort": "위로",
+      "hope": "소망",
+      "courage": "용기",
+      "thanks": "감사",
+      "wisdom": "지혜",
+      "faithful": "성실"
+    }
   }
 }

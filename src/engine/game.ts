@@ -9,7 +9,7 @@ import type { Skills, SkillLesson } from './skills'
 import { placedStyle } from './skill-defs'
 import { advancePlans, appointmentSpots, reservedMembers, NO_PLANS, type Plans } from './plans'
 // 게임 상태와 규칙의 조합. 순수 함수만 — 화면과 저장은 바깥(store)이 맡는다.
-import { festivalOf, FESTIVAL_FROM, FESTIVAL_TO, isMarketDay, isWet, weatherOf, barleyRipe, grapesRipe } from './calendar'
+import { festivalOf, FESTIVAL_FROM, FESTIVAL_TO, isMarketDay, isWet, weatherOf, barleyRipe, grapesRipe, seasonDay } from './calendar'
 import { advance, newClock, phaseOf, seasonOf, sleepClock, type Clock } from './clock'
 import { DURATION, greet, IDLE_GAP, IDLE_RESET, stepIdle, type IdleState } from './autonomy'
 import { adopt, companionGoal, STRAY_DAY, STRAY_SPOTS, stepCompanion, type Animal, type Companion } from './companion'
@@ -122,7 +122,7 @@ import { blanksFor } from './copy'
 import { checkArrangement, moveItem, type ArrangeResult } from './scroll'
 import { cardsForChapters, journeyComplete, placeNewCards, type JourneyCard } from './journey'
 import { growGarden, type Plot } from './garden'
-import { allFeastReady, feastToday, gospelRoomFull, readOff, type Grade } from './library'
+import { allFeastReady, allShelved, feastToday, gospelRoomFull, readOff, type Grade } from './library'
 import {
   BABY_DAY,
   LESSON_FROM,
@@ -149,6 +149,9 @@ import { settleGen } from './gen-settle'
 import { freeSpotsFor, freeTimeOpen, isFreeRoutine } from './free-time'
 import { checkMeets, tickEmotes, type Emote } from './meet'
 import { weddingTodayOf } from './gen-marriage'
+import { canRead, READING_GAIN } from './meetings'
+import { ourScore, rankTable, VILLAGES, villageScores, villageSeed, type RankRow } from './villages'
+import { familyRequests, giftFor, REQ_HEART_BASE, REQ_HEART_PER_STAR, requestsToday, starsFor, type CopyRequest, type PieceFacts } from './copy-requests'
 
 /** 주민 결혼 잔치에서 두 번째 사람이 서는 칸 (모닥불 위 칸 오른쪽 옆) */
 export const GEN_WEDDING_SIDE: Tile = { x: 25, y: 19 }
@@ -335,6 +338,16 @@ export interface GameState {
   gen?: GenState
   /** 머리 위 이모티콘 (계획 20 2부 작업 B) — 화면 상태만, 저장하지 않는다 */
   emotes?: Emote[]
+  /** 정성 필사 (계획 21 R2): 지금 쓰는 장('책:장')에서 틀린 글자 수와 퍼즐로 마친 절이 있었는지 */
+  copyCare?: { at: string; typos: number; puzzle: boolean }
+  /** 정성 도장이 찍힌 장 ('lk:15') — 빼앗기지 않는다 */
+  careDone?: string[]
+  /** 마을 서고 순위 기록 (계획 21 R8) — 날·우리 순위, 많아야 24개 */
+  ranks?: { day: number; place: number }[]
+  /** 아직 보여 주지 않은 순위 업데이트 창 (일어난 아침에 뜬다) */
+  rankPopup?: RankPopup
+  /** 서고 방명록 (계획 21 R10): 들른 사람과 그 사람이 온 마을 — 많아야 30줄 */
+  guestbook?: GuestEntry[]
   /** 새 터 입주 주택 안 가구 — 소유 공간별 ('newland:<건물 id>', 계획 20 작업 7). 첫 마을 집의 room과 섞이지 않는다 */
   rooms?: Record<string, Furniture[]>
 }
@@ -2147,6 +2160,119 @@ export function fulfillBoard(s: GameState, r: BoardRequest): GameState | null {
   return train(heartUp(next, r.npc, BOARD_GAIN), 'charm', XP.gift)
 }
 
+// ── 주민 부탁 필사 (계획 21 R3·R4 — 사랑방 게시판의 닢 의뢰를 바꾼다) ──
+
+/** 오늘 게시판의 부탁: 이사 온 이웃(장날만 오는 이웃 빼고)의 부탁 + 주민 결혼·출생 뒤 축복 부탁 */
+export function copyRequestsToday(s: Pick<GameState, 'clock' | 'flags' | 'gen'>, content: GameContent): CopyRequest[] {
+  const level = s.flags.villageLevel ?? 0
+  const ids = content.neighbors.filter((d) => !d.marketOnly && !notYet(d, level, s.flags)).map((d) => d.id)
+  const fixed = (id: string) => ids.includes(id)
+  return requestsToday(s.clock.day, ids, familyRequests(s.gen?.log ?? [], fixed))
+}
+
+export type CopyRequestBlock = 'done' | 'expired' | 'noPiece' | null
+export function canWriteRequest(s: Pick<GameState, 'clock' | 'flags' | 'collected'>, r: CopyRequest, pieceId?: string): CopyRequestBlock {
+  if (s.flags[`req:${r.id}`]) return 'done'
+  if (r.until < s.clock.day) return 'expired'
+  if (pieceId !== undefined && !s.collected.includes(pieceId)) return 'noPiece'
+  return null
+}
+
+/** 부탁을 들어준다: 고른 조각으로 써 준다 — 별만큼 마음, 좋아하는 물건 (닢 없음). facts는 그 조각의 분위기·길이·정성 도장 */
+export function writeRequest(s: GameState, r: CopyRequest, pieceId: string, facts: PieceFacts, content: GameContent): { state: GameState; stars: number } | null {
+  if (canWriteRequest(s, r, pieceId)) return null
+  const stars = starsFor(r, facts)
+  const likes = content.neighbors.find((d) => d.id === r.npc)?.likes ?? []
+  let next: GameState = { ...s, inv: addGift(s.inv, giftFor(r, stars, likes, RARE_ITEMS)), flags: { ...s.flags, [`req:${r.id}`]: stars } }
+  next = heartUp(next, r.npc, REQ_HEART_BASE + REQ_HEART_PER_STAR * stars)
+  next = recordExperienceIn(next, { id: `req:${r.npc}`, kind: 'make', with: [r.npc] })
+  return { state: train(next, 'charm', XP.gift), stars }
+}
+
+// ── 마을 서고 순위 (계획 21 R8·R9) ──
+
+export interface RankPopup {
+  day: number
+  /** 우리 마을 순위 (1부터) */
+  place: number
+  table: RankRow[]
+  /** 받은 말씀 조각 */
+  pieces: string[]
+  /** 받은 장식 */
+  item?: ItemId
+  /** 구약 서고 확장권을 받았나 (27권 완필 뒤 첫 업데이트에서 한 번) */
+  otTicket?: boolean
+}
+
+/** 계절 1일·21일 아침이 순위 업데이트 날 */
+export const isRankDay = (day: number): boolean => seasonDay(day) === 1 || seasonDay(day) === 21
+
+/**
+ * 순위 업데이트 (일어난 아침에 한 번): 20개 마을 순위표, 상위 보답(1위 장식+조각 둘, 2–3위 조각 하나 — 아직 없는 것 중 무작위),
+ * 27권을 다 꽂은 뒤 처음이면 우리 서고가 맨 위에 오르고 구약 서고 확장권. 순위가 낮아도 불이익 없음, 정확도로 겨루지 않는다
+ */
+export function rankMorning(s: GameState, content: GameContent): GameState {
+  const day = s.clock.day
+  if (day < 2 || !isRankDay(day) || s.flags[`rank:${day}`]) return s
+  const seed = villageSeed(s)
+  const ticket = allShelved(s) && !s.flags.otTicket
+  let mine = ourScore(s)
+  if (ticket) mine = Math.max(mine, ...villageScores(seed, day)) + 1
+  const table = rankTable(seed, day, mine)
+  const place = table.findIndex((r) => r.name === null) + 1
+  let next: GameState = { ...s, flags: { ...s.flags, [`rank:${day}`]: 1 } }
+  const pieces: string[] = []
+  for (let i = 0; i < (place === 1 ? 2 : place <= 3 ? 1 : 0); i++) {
+    const r = extraPiece(next, content, `rank:${i}`)
+    if (!r) break
+    next = r.state
+    pieces.push(r.pieceId)
+  }
+  const item: ItemId | undefined = place === 1 ? 'bronzeOrnament' : undefined
+  if (item) next = { ...next, inv: addGift(next.inv, { [item]: 1 }) }
+  if (ticket) next = { ...next, flags: { ...next.flags, otTicket: 1, otExpand: (next.flags.otExpand ?? 0) + 1 } }
+  const ranks = [...(next.ranks ?? []), { day, place }].slice(-24)
+  return { ...next, ranks, rankPopup: { day, place, table, pieces, ...(item ? { item } : {}), ...(ticket ? { otTicket: true } : {}) } }
+}
+
+// ── 서고 방문객과 방명록 (계획 21 R10, 가볍게) ──
+
+export type GuestKind = 'wanderer' | 'learner' | 'kid' | 'scribe'
+export interface GuestEntry {
+  day: number
+  kind: GuestKind
+  /** 온 마을 (지어낸 이름 — 나그네·서기) */
+  village?: string
+}
+export const GUESTBOOK_CAP = 30
+
+/**
+ * 아침마다: 사흘에 하루꼴로 서고에 누군가 들러 방명록에 한 줄 (날 씨앗), 순위 업데이트 날에는 다른 마을 서기가.
+ * 헌금함·입장료·수입 없음 — 방명록 줄은 서고 점수에만 더해진다
+ */
+export function guestMorning(s: GameState): GameState {
+  const day = s.clock.day
+  if (day < 3 || (s.guestbook ?? []).some((g) => g.day === day)) return s
+  const rnd = mulberry32(day * 5333 + 19)
+  let kind: GuestKind | null = null
+  if (isRankDay(day)) kind = 'scribe'
+  else if (rnd() < 1 / 3) kind = (['wanderer', 'learner', 'kid'] as const)[Math.floor(rnd() * 3)]
+  if (!kind) return s
+  const village = kind === 'wanderer' || kind === 'scribe' ? VILLAGES[Math.floor(rnd() * VILLAGES.length)] : undefined
+  const entry: GuestEntry = { day, kind, ...(village ? { village } : {}) }
+  return { ...s, guestbook: [...(s.guestbook ?? []), entry].slice(-GUESTBOOK_CAP) }
+}
+
+// ── 마을 소리내어 읽기 모임 (계획 21 R7) ──
+
+/** 함께 소리 내어 읽었다: 그날 사랑방에 모인 이웃마다 마음, 지능 경험치 (하루 한 번) */
+export function finishReading(s: GameState, content: GameContent): GameState {
+  if (canRead(s)) return s
+  let next: GameState = { ...s, flags: { ...s.flags, readDay: s.clock.day } }
+  for (const id of hallGuestsToday(s, content)) next = heartUp(next, id, READING_GAIN)
+  return train(next, 'wit', XP.listen)
+}
+
 // ── 이웃 마을 여행 (계획 13 작업 6, 여행지는 travel.ts) ──
 
 export type TripBlock = 'late' | 'tired' | 'coins' | 'food' | 'full' | null
@@ -3449,13 +3575,14 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
   // 가족 생일 아침 (계획 12): 배우자·아이 생일 장면
   const villaged = advanceVillage(familyMorning(childMorning(forgetPromises(morningSupplies(expireStall(expireWorkDay(next)), s.clock.day), day), content)), content)
   // 주민 자율 가족 하루 정산 (계획 20 작업 10): 아침 단계에서 하루에 한 번, 큰 사건이 걸린 주민은 보류
-  const morning = advanceBuilds(
+  // 마을 서고 순위 업데이트 (계획 21 R8): 계절 1일·21일 아침에 한 번
+  const morning = guestMorning(rankMorning(advanceBuilds(
     settleGen(villaged, content, {
       busy: (npc) => !!eventNow(villaged, npc),
       // 주민 결혼식은 장날·마을 잔치·플레이어 결혼 잔치 날을 피한다
       weddingFree: (d) => !festivalOf(d) && !isMarketDay(d) && villaged.romance?.weddingDay !== d,
     }),
-  )
+  ), content))
   // 침대 위에서 눈을 뜨고 일어난다 (그림만)
   return startAct({ ...morning, npcs: placeAllNpcs(morning, content) }, 'rise', PLACES.bed.tiles[0])
 }

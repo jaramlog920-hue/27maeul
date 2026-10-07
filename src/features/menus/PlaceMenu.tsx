@@ -7,6 +7,7 @@ import { CONTENT } from '../../content/catalog'
 import { fill, T, withAnd, withSubject } from '../../content/text'
 import { canCraft, canDate, canDrinkTea, canPlayHall, canWatchSunset, hasFood, starsOut } from '../../engine/game'
 import { TEA_PRICE } from '../../engine/places'
+import { canRead, isReadingDay } from '../../engine/meetings'
 import { DATE_TEA_PRICE, type DatePlace } from '../../engine/romance'
 import { partnerName, useGame, type MenuPlace } from '../../store/game-store'
 import { isFacilityPlace, facilityOfPlace } from '../../engine/village-sites'
@@ -115,6 +116,12 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
         {place === 'hallTable' && (
           <button className="primary" disabled={hall !== null} onClick={playHall}>
             {T.places.hallPlay}
+          </button>
+        )}
+        {/* 마을 소리내어 읽기 모임 (계획 21 R7): 모이는 날 저녁에만 단추가 보인다 */}
+        {place === 'hallTable' && isReadingDay(game.clock.day) && (
+          <button disabled={canRead(game) !== null} onClick={() => useGame.getState().startReading()}>
+            {T.meetings.reading}
           </button>
         )}
         {place === 'teaTable' && (

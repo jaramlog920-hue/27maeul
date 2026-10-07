@@ -27,5 +27,34 @@
       "spouse": "배우자"
     },
     "baby": "아기"
+  },
+  "copyWays": {
+    "write": "직접 쓸게요",
+    "setting": "필사 방식",
+    "auto": "섞어서",
+    "always": "늘 직접 쓰기",
+    "care": "정성"
+  },
+  "rank": {
+    "title": "마을별 서고 순위 업데이트!",
+    "open": "서고 순위",
+    "us": "우리 마을",
+    "place": "{n}위",
+    "score": "{n}점",
+    "pieces": "말씀 조각 {n}개를 받았어요",
+    "item": "{item}을 받았어요",
+    "ticket": "구약 서고 확장권을 받았어요",
+    "history": "지난 순위",
+    "dayPlace": "{day}일째 · {place}위"
+  },
+  "copyReq": {
+    "tab": "부탁 필사",
+    "pick": "구절 고르기",
+    "write": "이 구절로 써 주기",
+    "done": "끝냄",
+    "daysLeft": "{n}일 남음",
+    "none": "오늘은 붙은 부탁이 없어요.",
+    "noPieces": "모은 말씀 조각이 아직 없어요.",
+    "stars": "{stars}"
   }
 }

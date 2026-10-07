@@ -18,6 +18,7 @@ import { loadTheme, setTheme, THEMES, type ThemeId } from '../../app/theme'
 import { useGame, ZOOMS } from '../../store/game-store'
 import { copySoundOn, copyVibrateOn, setCopySound, setCopyVibrate } from '../desk/copy-feel'
 import { copyVoiceOn, setCopyVoice, voiceAvailable } from '../desk/copy-voice'
+import { copyAlwaysWrite, setCopyAlwaysWrite } from '../desk/copy-way-setting'
 
 const C = T.controls
 
@@ -150,6 +151,8 @@ export function Settings() {
         <h3>필사</h3>
         <CopyFeelToggle id="sound" label="펜 긁는 소리" get={copySoundOn} put={setCopySound} />
         <CopyFeelToggle id="vibrate" label="절마다 진동" get={copyVibrateOn} put={setCopyVibrate} />
+        {/* 필사 방식 (계획 21 R1): 켜면 퍼즐 없이 늘 손으로 쓴다 */}
+        <CopyFeelToggle id="way" label={t('copyWays.always')} get={copyAlwaysWrite} put={setCopyAlwaysWrite} />
         {/* 소리 내어 읽기: 음성 인식이 있는 브라우저에서만 (기본은 끔) */}
         {voiceAvailable() && (
           <>

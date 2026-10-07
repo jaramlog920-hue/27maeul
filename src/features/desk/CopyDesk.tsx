@@ -17,6 +17,9 @@ import { partnerName, useGame, type Modal } from '../../store/game-store'
 import { prefersStill, quillScratch, verseBuzz } from './copy-feel'
 import { copyVoiceOn, newRecognizer, transcriptsOf, voiceAvailable, type VoiceRecognizer } from './copy-voice'
 import { useKeyboardFit } from './copy-keyboard'
+import { blanksForVerse, copyLevel, hashKey, tilesFor, wayFor } from '../../engine/copy-ways'
+import { copyAlwaysWrite } from './copy-way-setting'
+import { CopyPuzzle, type PuzzleData } from './CopyPuzzle'
 
 const BOOK_NAME = T.quiz.books as Record<string, string>
 const C = T.copyFocus
@@ -517,6 +520,24 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
   const [voiceMiss, setVoiceMiss] = useState<number[] | null>(null)
   const [voiceNote, setVoiceNote] = useState('')
   const rec = useRef<VoiceRecognizer | null>(null)
+  // 필사 방식 (계획 21 R1): 절마다 직접 쓰기 / 낱말 조각 / 빈칸 — 필사 실력과 저장 씨앗으로 정해진다. "직접 쓸게요"를 누른 절은 손으로
+  const level = useGame((s) => copyLevel(s.game.stats))
+  const seed = useGame((s) => s.game.flags.copySeed ?? hashKey(s.game.avatar?.name ?? ''))
+  const [manualKey, setManualKey] = useState<string | null>(null)
+  const puzzle = useMemo<PuzzleData | null>(() => {
+    const way = wayFor(seed, book, spot.chapter, spot.verse.verse, level, copyAlwaysWrite())
+    if (way === 'tiles') {
+      const tiles = tilesFor(spot.verse.text, level, seed, book, spot.chapter, spot.verse.verse)
+      return tiles ? { kind: 'tiles', tiles } : null
+    }
+    if (way === 'blank') {
+      const texts = copyVerses(book, spot.chapter, CONTENT).map((v) => v.text)
+      const blanks = blanksForVerse(spot.verse.text, texts, level, seed, book, spot.chapter, spot.verse.verse)
+      return blanks ? { kind: 'blank', text: spot.verse.text, blanks } : null
+    }
+    return null
+  }, [seed, book, spot.chapter, spot.verse.verse, spot.verse.text, level])
+  const puzzleOn = puzzle !== null && manualKey !== key
   if (seen !== key) {
     setSeen(key)
     setValue(spot.draft)
@@ -644,6 +665,10 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
   const check = checkCopy(value, spot.verse.text)
   // 조합 중인 마지막 글자는 아직 바뀔 수 있다 — 오타로 표시하지 않는다
   const typo = check.typo && !(ime && check.matched === [...normalizeCopy(value)].length - 1)
+  // 틀린 글자가 새로 생길 때마다 하나씩 센다 (정성 도장 — 계획 21 R2)
+  useEffect(() => {
+    if (typo) useGame.getState().copyTypo()
+  }, [typo])
   // 한글 키보드는 마지막 글자를 조합 중으로 붙잡아 둔다 — 절을 다 맞게 쓰고 잠깐 멈추면 조합을 확정해 절을 마친다
   // (입력칸을 잠깐 떠났다 돌아오면 브라우저가 compositionend를 보낸다. 그래도 안 오면 직접 끝낸다)
   const verseDone = check.done
@@ -735,6 +760,15 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
         {/* 곁에 앉은 아이·배우자는 신약 필사에만 (구약은 새 터 서고에서 혼자 쓴다) */}
         {!isOtBook(book) && <CopyFamily />}
         <div ref={verseWrap} className="copy-verse-wrap">
+          {puzzleOn && puzzle ? (
+            <CopyPuzzle
+              key={key}
+              data={puzzle}
+              label={fill(C.verseLabel, { book: name, chapter: spot.chapter, verse: spot.verse.verse })}
+              onDone={() => useGame.getState().copyPuzzle()}
+              onManual={() => setManualKey(key)}
+            />
+          ) : (
           <VerseLine
             text={spot.verse.text}
             matched={check.matched}
@@ -744,11 +778,13 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
             arriving={ghost !== null}
             miss={voiceMiss}
           />
+          )}
           {ghost && <VerseGhost key={ghost.id} ghost={ghost} still={still} pageRef={pageRef} />}
         </div>
         <textarea
           ref={box}
           className="copy-input"
+          hidden={puzzleOn}
           aria-label={C.input}
           aria-invalid={typo || undefined}
           value={value}
@@ -777,7 +813,7 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
           onPaste={(e) => e.preventDefault()}
           onDrop={(e) => e.preventDefault()}
         />
-        {voiceOk && (
+        {voiceOk && !puzzleOn && (
           <div className="copy-voice">
             <button
               type="button"

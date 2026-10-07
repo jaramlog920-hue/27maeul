@@ -16,6 +16,7 @@ function titleOf(p: Pending): string {
   if (p.kind === 'craft') return (T.recipes as Record<string, string>)[p.recipe]?.split(' — ')[0] ?? ''
   if (p.kind === 'teach') return T.ui.talkTeach
   if (p.kind === 'letter') return T.letters.mini
+  if (p.kind === 'reading') return T.meetings.reading
   // 이야기 속 손일 (계획 16 작업 4): 이웃 이름 · 그 장면 제목
   if (p.kind === 'story') return `${neighborById(p.npc)?.role ?? ''} · ${SCENES[`ev:${p.event}`]?.title ?? ''}`
   const l = NEIGHBOR_LINES[p.neighborId]

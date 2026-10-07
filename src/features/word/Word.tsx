@@ -2,6 +2,7 @@
 // 2026-10-04: 따로 있던 선반의 이야기 도감(책 거르기·한 복음서에만·도장)은 말씀 조각으로, 내가 남긴 한 줄은 서고(책 한 줄)·말씀 조각(조각 한 줄)으로 옮겼다.
 // 가장 큰 단추는 [이어서 필사하기]. 해설 문장은 없다 — 본문은 개역한글 그대로(versesOf), 지어낸 말은 life-text의 word 칸만.
 import { Fragment, useState } from 'react'
+import { t } from '../../shared/i18n'
 import { OT_PIECES, OT_PIECE_COUNT } from '../../engine/ot-pieces'
 import { CONTENT, contextOf, GOD_KEYWORDS, NAMES, neighborById, PIECES, versesOf } from '../../content/catalog'
 import { copyBookName, fill, roomTitle, T } from '../../content/text'
@@ -130,6 +131,8 @@ function CopyRecord() {
     [W.recChapters, String(stats.chapters)],
     [W.recBooks, String(stats.books)],
     [W.recFirst, stats.firstDay === null ? W.firstNone : dayLabel(stats.firstDay)],
+    // 정성 필사 (계획 21 R2): 모두 직접 쓰고 틀린 글자가 둘 이하인 장
+    ...((game.careDone?.length ?? 0) > 0 ? [[t('copyWays.care'), `${game.careDone!.length}장`] as [string, string]] : []),
   ]
   return (
     <section className="word-copy" aria-label={W.tabs.copy}>

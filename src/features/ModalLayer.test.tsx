@@ -1118,7 +1118,8 @@ describe('다음 일정 (상단 한 줄)', () => {
     const user = userEvent.setup()
     render(<><NextEventBar /><ModalLayer /></>)
     const bar = screen.getByRole('button', { name: /다음 일정/ })
-    expect(bar).toHaveTextContent('장날')
+    // 첫 주에는 장날보다 마을 소리내어 읽기 모임(계획 21 R7)이 먼저 올 수 있다
+    expect(bar.textContent).toMatch(/장날|소리내어 읽기/)
     await user.click(bar)
     expect(screen.getByRole('dialog', { name: '일정' })).toBeInTheDocument()
   })
