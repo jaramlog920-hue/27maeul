@@ -14,7 +14,7 @@ describe('돕기 보상의 수첩과 하루 기록', () => {
     expect(done.life.experiences).toEqual(initial.life.experiences)
     expect(storyPropsNow(deserialize(serialize(done), CONTENT)!)).toEqual(props)
   })
-  it('웬델의 빵을 지급하고 기록하며 중복 지급 없이 저장과 다음 날에 보존한다', () => {
+  it('파피의 빵을 지급하고 기록하며 중복 지급 없이 저장과 다음 날에 보존한다', () => {
     const def = CONTENT.neighbors.find(n => n.id === 'wendell')!
     const initial = { ...newGame(CONTENT), scenes: [] }
     const done = finishHelp(initial, def)

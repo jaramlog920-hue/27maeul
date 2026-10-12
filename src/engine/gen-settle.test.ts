@@ -10,7 +10,7 @@ import { cribAskOf, giveCrib } from './gen-birth'
 import { BIRTH_AFTER_CRIB, CONSULT_AFTER, CONSULT_RETRY, MAX_CATCHUP, MAX_LOVERS, WEDDING_DAYS } from './gen-config'
 
 const day = (s: GameState, d: number): GameState => ({ ...s, clock: { ...s.clock, day: d } })
-const RP = relationId('rudy', 'poppy')
+const RP = relationId('rudy', 'wendell')
 const base = (d = 1): GenState => newGenState(CONTENT, 7, d, withPairs())
 const setAff = (g: GenState, pairs: Record<string, number>): GenState => ({ ...g, affinity: { ...g.affinity, ...pairs } })
 const run = (g: GenState, from: number, to: number, s: Partial<Pick<GameState, 'romance'>> = {}): GenState => {
@@ -65,7 +65,7 @@ describe('관계 단계 (D30·P6)', () => {
     expect(g.relations[relationId('tilly', 'smith')]).toBeUndefined()
   })
   it('마을 전체 연인은 4쌍까지', () => {
-    const pairs = { [RP]: 70, [relationId('cosmo', 'juniper')]: 70, [relationId('dexter', 'marigold')]: 70, [relationId('basil', 'penelope')]: 70, [relationId('wendell', 'tilly')]: 70 }
+    const pairs = { [RP]: 70, [relationId('cosmo', 'juniper')]: 70, [relationId('dexter', 'marigold')]: 70, [relationId('basil', 'penelope')]: 70, [relationId('poppy', 'tilly')]: 70 }
     const g = run(setAff(base(), pairs), 2, 12)
     expect(Object.values(g.relations).filter((r) => r.stage === 'lover')).toHaveLength(MAX_LOVERS)
   })
@@ -88,9 +88,9 @@ describe('관계 단계 (D30·P6)', () => {
     g = run(setAff(base(), { [RP]: 70 }), 2, 3)
     expect(g.relations[RP]?.stage).toBe('lover')
     const logLen = g.log.length
-    g = releasePlayerPartner(g, 'poppy')
+    g = releasePlayerPartner(g, 'wendell')
     expect(g.relations[RP]).toBeUndefined()
-    expect(affinityOf(g, 'rudy', 'poppy')).toBe(70)
+    expect(affinityOf(g, 'rudy', 'wendell')).toBe(70)
     expect(g.log).toHaveLength(logLen)
   })
   it('큰 사건이 걸린 날은 전환을 보류한다', () => {
@@ -112,8 +112,8 @@ describe('결혼 상담 (D31·P8)', () => {
     const g = consulting()
     expect(g.relations[RP].consult).toBeTruthy()
     const d = g.relations[RP].consult!.nextAsk
-    expect(consultFor(g, 'poppy', { rudy: 10, poppy: 30 }, d)?.id).toBe(RP)
-    expect(consultFor(g, 'rudy', { rudy: 10, poppy: 30 }, d)).toBeNull()
+    expect(consultFor(g, 'wendell', { rudy: 10, wendell: 30 }, d)?.id).toBe(RP)
+    expect(consultFor(g, 'rudy', { rudy: 10, wendell: 30 }, d)).toBeNull()
   })
   it('하루 한 질문, 세 번 중 응원 둘이면 다음 아침 결혼 준비, 결혼식은 7일 뒤', () => {
     let g = consulting()
@@ -121,11 +121,11 @@ describe('결혼 상담 (D31·P8)', () => {
     const q: number[] = []
     let d = d0
     for (const a of ['cheer', 'wait', 'cheer'] as const) {
-      expect(consultFor(g, 'poppy', { poppy: 30 }, d)).not.toBeNull()
+      expect(consultFor(g, 'wendell', { wendell: 30 }, d)).not.toBeNull()
       q.push(consultQuestion(g, g.relations[RP]))
       const out = answerConsult(g, RP, a, d)
       g = out.g
-      expect(consultFor(g, 'poppy', { poppy: 30 }, d)).toBeNull() // 오늘은 더 묻지 않는다
+      expect(consultFor(g, 'wendell', { wendell: 30 }, d)).toBeNull() // 오늘은 더 묻지 않는다
       d++
       if (out.result !== 'asked') expect(out.result).toBe('cheered')
     }
@@ -184,13 +184,13 @@ describe('결혼 준비·다시 생각·결혼 (D31·P9)', () => {
     expect(g.relations[RP].stage).toBe('preparing')
     g = run(g, wed + 1, wed + 1)
     expect(g.relations[RP].stage).toBe('spouse')
-    expect(g.persons.rudy.spouse).toBe('poppy')
+    expect(g.persons.rudy.spouse).toBe('wendell')
     const h = Object.values(g.households)[0]
-    expect(h.members.sort()).toEqual(['poppy', 'rudy'])
+    expect(h.members.sort()).toEqual(['rudy', 'wendell'])
     expect(h.since).toBe(wed)
     expect(h.wedAffinity).toBe(85)
-    // 파피의 집안은 찻집(teahouse — 첫 마을에 방이 있다), 루디는 목수 집 → 둘 다 집안 집이면 id 순으로 파피 쪽 = 찻집 (2026-10-08 22-B)
-    expect(h.home).toBe('teahouse')
+    // 파피(id wendell)의 집안은 빵집, 루디는 목수 집 → 둘 다 집안 집이면 id 순으로 루디 쪽 = 목수 집 (2026-10-08 22-B, 2026-10-13 웬델·파피 모습 맞바꿈)
+    expect(h.home).toBe('carpenter')
     g = run(setAff(g, { [RP]: 10 }), wed + 2, wed + 4)
     expect(g.relations[RP].stage).toBe('spouse')
   })
@@ -225,7 +225,7 @@ describe('아기 침대와 출생 (D32·P10·P11)', () => {
     expect(kids).toHaveLength(1)
     const baby = g.persons[kids[0]]
     expect(baby).toMatchObject({ origin: 'born', stage: 'baby', born: d + 5 + BIRTH_AFTER_CRIB, household: hid })
-    expect(baby.parents.sort()).toEqual(['poppy', 'rudy'])
+    expect(baby.parents.sort()).toEqual(['rudy', 'wendell'])
     expect(baby.name).toBeTruthy()
     expect(g.log.at(-1)?.kind).toBe('birth')
   })

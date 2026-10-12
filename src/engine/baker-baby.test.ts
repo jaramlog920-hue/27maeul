@@ -39,7 +39,7 @@ describe('헤이즐의 고정 이야기 아기', () => {
     expect(after.gen?.persons[BAKER_BABY_ID].stage).toBe('adult')
   })
 
-  it('7일째에는 없고 8일째 출생 장면과 함께 헤이즐의 자녀·웬델의 동생이 된다', () => {
+  it('7일째에는 없고 8일째 출생 장면과 함께 헤이즐의 자녀·파피의 동생이 된다', () => {
     const base = newGame(CONTENT)
     const before = { ...base, scenes: [], clock: { day: 7, minute: 22 * 60 }, gen: newGenState(CONTENT, 1, 7) }
     expect(before.gen.persons[BAKER_BABY_ID]).toBeUndefined()

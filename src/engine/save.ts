@@ -227,7 +227,15 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   // 새 터 건축 (계획 20 작업 6): 옛 저장은 없음, 깨진 기록은 걸러 낸다
   const newland = sanitizeNewlandBuild(_rawNewland, s.clock.day)
   const savedGen = sanitizeGen(_rawGen, s.clock.day)
-  const gen = savedGen ? repairHouseholdHomes(savedGen, content) : undefined
+  // 고정 주민의 모습(성별)은 늘 지금 내용(neighbors.json)을 따른다 — 2026-10-13 웬델·파피 모습을 맞바꿨다
+  const looked = savedGen && {
+    ...savedGen,
+    persons: Object.fromEntries(Object.entries(savedGen.persons).map(([id, p]) => {
+      const def = p.origin === 'fixed' ? content.neighbors.find((d) => d.id === (p.npc ?? id)) : undefined
+      return [id, def?.look && p.look !== def.look ? { ...p, look: def.look } : p]
+    })),
+  }
+  const gen = looked ? repairHouseholdHomes(looked, content) : undefined
   // 건물 안 가구 (작업 7): 옛 저장은 없음. 주인 없는 방·맞지 않는 가구는 가방으로
   const fitted = sanitizeRooms(_rawRooms, { newland }, inv)
   void _inv

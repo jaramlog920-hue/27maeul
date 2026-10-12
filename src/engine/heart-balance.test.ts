@@ -10,7 +10,7 @@ import { setPeopleData } from './people'
 
 afterEach(() => setPeopleData(PEOPLE))
 const def = (id: string) => CONTENT.neighbors.find(n => n.id === id)!
-function unlocked(s: GameState, id = 'wendell'): GameState {
+function unlocked(s: GameState, id = 'poppy'): GameState {
   return { ...s, life: { ...s.life, seen: PEOPLE.people[id].events?.map(e => e.id) ?? [] } }
 }
 const tomorrow = (s: GameState): GameState => ({ ...s, clock: { ...s.clock, day: s.clock.day + 1 } })
@@ -71,10 +71,10 @@ describe('하루 교류와 매력', () => {
 describe('필사와 관계 단계', () => {
   it.each([[0, 50], [15, 70], [17, 80]] as const)('%i권에서 연애 후보의 상한은%i점이며 이야기 보상도 넘지 않는다', (books, cap) => {
     let s = unlocked(establishedGame(CONTENT, books))
-    s = { ...s, hearts: { wendell: cap - 1 } }
-    expect(relationshipHeartCap(s, 'wendell')).toBe(cap)
-    expect(heartUp(s, 'wendell', 20, Infinity, 'story').hearts.wendell).toBe(cap)
-    expect(heartUp(tomorrow(heartUp(s, 'wendell', 20)), 'wendell', 20).hearts.wendell).toBe(cap)
+    s = { ...s, hearts: { poppy: cap - 1 } }
+    expect(relationshipHeartCap(s, 'poppy')).toBe(cap)
+    expect(heartUp(s, 'poppy', 20, Infinity, 'story').hearts.poppy).toBe(cap)
+    expect(heartUp(tomorrow(heartUp(s, 'poppy', 20)), 'poppy', 20).hearts.poppy).toBe(cap)
   })
 
   it('일반 주민과 같은 모습의 친구는 연애 조건 없이100점까지 간다', () => {
@@ -85,70 +85,70 @@ describe('필사와 관계 단계', () => {
 
   it('친구로 지내기로 정한 후보는100점까지 가고 나중에 다발을 줄 선택도 남는다', () => {
     const s = unlocked(establishedGame(CONTENT, 19))
-    const friends = { ...s, flags: { ...s.flags, 'friendsOnly:wendell': 1 }, hearts: { wendell: 99 } }
-    expect(isSuitor(friends, def('wendell'))).toBe(true)
-    expect(heartUp(friends, 'wendell', 3).hearts.wendell).toBe(100)
-    const dating = giveBouquet({ ...friends, hearts: { wendell: 100 }, inv: { bouquet: 1, promiseCord: 1 } }, def('wendell'))
-    expect(dating.flags['friendsOnly:wendell']).toBe(0)
+    const friends = { ...s, flags: { ...s.flags, 'friendsOnly:poppy': 1 }, hearts: { poppy: 99 } }
+    expect(isSuitor(friends, def('poppy'))).toBe(true)
+    expect(heartUp(friends, 'poppy', 3).hearts.poppy).toBe(100)
+    const dating = giveBouquet({ ...friends, hearts: { poppy: 100 }, inv: { bouquet: 1, promiseCord: 1 } }, def('poppy'))
+    expect(dating.flags['friendsOnly:poppy']).toBe(0)
     const weekLater = { ...dating, clock: { day: dating.clock.day + 7, minute: 840 }, homeLevel: 1 as const }
-    expect(canGiveCord(weekLater, def('wendell'))).toBe('bond')
+    expect(canGiveCord(weekLater, def('poppy'))).toBe('bond')
   })
 
   it('8하트에서 꽃다발을 줄 수 있고 연애 후9하트까지 오른다', () => {
     const s = unlocked(establishedGame(CONTENT, 17))
-    const dating = giveBouquet({ ...s, hearts: { wendell: 80 }, inv: { bouquet: 1 } }, def('wendell'))
+    const dating = giveBouquet({ ...s, hearts: { poppy: 80 }, inv: { bouquet: 1 } }, def('poppy'))
     expect(dating.romance.stage).toBe('dating')
-    expect(relationshipHeartCap(dating, 'wendell')).toBe(90)
-    expect(dating.hearts.wendell).toBeGreaterThan(80)
+    expect(relationshipHeartCap(dating, 'poppy')).toBe(90)
+    expect(dating.hearts.poppy).toBeGreaterThan(80)
   })
 
   it('새 상한 때문에 기존 점수와 이미 결혼한 관계를 낮추지 않는다', () => {
     const s = unlocked(newGame(CONTENT))
-    expect(heartUp({ ...s, hearts: { wendell: 100 } }, 'wendell', 5).hearts.wendell).toBe(100)
-    const married = { ...s, romance: { ...NO_ROMANCE, partner: 'wendell', stage: 'married' as const, marriedDay: 1 }, hearts: { wendell: 99 } }
-    expect(heartUp(married, 'wendell', 5).hearts.wendell).toBe(100)
+    expect(heartUp({ ...s, hearts: { poppy: 100 } }, 'poppy', 5).hearts.poppy).toBe(100)
+    const married = { ...s, romance: { ...NO_ROMANCE, partner: 'poppy', stage: 'married' as const, marriedDay: 1 }, hearts: { poppy: 99 } }
+    expect(heartUp(married, 'poppy', 5).hearts.poppy).toBe(100)
   })
 })
 
 describe('10하트와 이번 연애의 경험', () => {
-  const bond = { ...NO_ROMANCE, partner: 'wendell', stage: 'dating' as const, since: 1, dates: 3, storyRead: true }
+  const bond = { ...NO_ROMANCE, partner: 'poppy', stage: 'dating' as const, since: 1, dates: 3, storyRead: true }
   it('14일·3회·이야기를 모두 충족해야100점 상한이 열린다', () => {
     expect(fullHeartBond(bond, 14)).toBe(false)
     expect(fullHeartBond({ ...bond, dates: 2 }, 15)).toBe(false)
     expect(fullHeartBond({ ...bond, storyRead: false }, 15)).toBe(false)
     expect(fullHeartBond(bond, 15)).toBe(true)
-    const s = { ...unlocked(legacyGame(CONTENT)), clock: { day: 15, minute: 840 }, romance: bond, hearts: { wendell: 90 } }
-    expect(relationshipHeartCap(s, 'wendell')).toBe(100)
-    const gained = heartUp(s, 'wendell', 5)
-    expect(gained.hearts.wendell).toBe(94)
+    const s = { ...unlocked(legacyGame(CONTENT)), clock: { day: 15, minute: 840 }, romance: bond, hearts: { poppy: 90 } }
+    expect(relationshipHeartCap(s, 'poppy')).toBe(100)
+    const gained = heartUp(s, 'poppy', 5)
+    expect(gained.hearts.poppy).toBe(96) // 파피(id poppy)의 마음 빠르기 1.2 — 2026-10-13 웬델·파피 모습을 맞바꿈
   })
 
   it('세 번째 데이트에 이야기 한 번을 예약하고 읽기 전에는 완료로 세지 않는다', () => {
     let s = unlocked(legacyGame(CONTENT))
-    s = { ...s, clock: { day: 15, minute: 840 }, coins: 50, scenes: [], romance: { ...bond, dates: 2, storyRead: false }, hearts: { wendell: 89 } }
+    s = { ...s, clock: { day: 15, minute: 840 }, coins: 50, scenes: [], romance: { ...bond, dates: 2, storyRead: false }, hearts: { poppy: 89 } }
     expect(canDate(s, 'tea', CONTENT)).toBeNull()
     const dated = goOnDate(s, 'tea', CONTENT)
     expect(dated.romance.dates).toBe(3)
     expect(dated.romance.storyRead).toBe(false)
-    expect(dated.scenes).toContain('loverTrust:wendell')
-    expect(SCENES['loverTrust:wendell']?.lines.length).toBeGreaterThan(1)
-    expect(relationshipHeartCap(dated, 'wendell')).toBe(90)
+    expect(dated.scenes).toContain('loverTrust:poppy')
+    expect(SCENES['loverTrust:poppy']?.lines.length).toBeGreaterThan(1)
+    expect(relationshipHeartCap(dated, 'poppy')).toBe(90)
     expect(goOnDate(dated, 'tea', CONTENT)).toBe(dated)
-    const read = sceneSeen(dated, 'loverTrust:wendell', [])
+    const read = sceneSeen(dated, 'loverTrust:poppy', [])
     expect(read.romance.storyRead).toBe(true)
-    expect(relationshipHeartCap(read, 'wendell')).toBe(100)
+    expect(relationshipHeartCap(read, 'poppy')).toBe(100)
     const loaded = deserialize(serialize(read), CONTENT)!
     expect(loaded.romance).toMatchObject({ dates: 3, storyRead: true, storyQueued: false })
     const fourth = goOnDate({ ...loaded, clock: { day: 16, minute: 840 } }, 'tea', CONTENT)
-    expect(fourth.scenes).not.toContain('loverTrust:wendell')
+    expect(fourth.scenes).not.toContain('loverTrust:poppy')
   })
 
   it('예약되지 않은 장면이나 이전 연애의 데이트로 조건을 채우지 못한다', () => {
     const s = { ...unlocked(legacyGame(CONTENT)), romance: { ...bond, dates: 0, storyRead: false }, scenes: [], flags: { dateTeas: 30, dateWalks: 30 } }
-    expect(sceneSeen(s, 'loverTrust:wendell', []).romance.storyRead).toBe(false)
+    expect(sceneSeen(s, 'loverTrust:poppy', []).romance.storyRead).toBe(false)
     expect(fullHeartBond(s.romance, 100)).toBe(false)
-    const ended = breakUp({ ...s, scenes: ['loverTrust:wendell'] }, 'wendell')
-    expect(ended.scenes).not.toContain('loverTrust:wendell')
+    const ended = breakUp({ ...s, scenes: ['loverTrust:poppy'] }, 'poppy')
+    expect(ended.scenes).not.toContain('loverTrust:poppy')
     expect(ended.romance.partner).toBeNull()
   })
 

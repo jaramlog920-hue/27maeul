@@ -72,7 +72,7 @@ export const WALK_TO = 19 * 60 + 30
 export const WALK_MINUTES = 40
 /**
  * 그 사람의 집안 일 (people.json 일과의 doing). 이 일을 하고 있는 동안은 바빠서 함께 가지 못한다.
- * 점심처럼 누구와 함께 있는 때(일과의 with)는 쉬는 때로 본다. 찻집 일을 하는 파피는 찻집에서는 잠깐 마주 앉을 수 있다.
+ * 점심처럼 누구와 함께 있는 때(일과의 with)는 쉬는 때로 본다. 찻집 일을 하는 웬델은 찻집에서는 잠깐 마주 앉을 수 있다.
  */
 export const PARTNER_WORK: Record<CandidateId, string> = {
   wendell: 'bread',

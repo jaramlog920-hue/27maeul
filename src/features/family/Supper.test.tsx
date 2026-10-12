@@ -22,7 +22,7 @@ describe('배우자와 저녁 — 화면', () => {
     act(() => useGame.getState().talkTo('wendell'))
     expect(useGame.getState().modal).toEqual({ kind: 'scene', id: 'fam:supperFirst' })
     const seen = pageThrough()
-    expect(seen).toMatch(/웬델이 따뜻한 국과 빵을/)
+    expect(seen).toMatch(/파피가 따뜻한 국과 빵을/)
     expect(seen).toMatch(/처음 둘이 먹은 저녁/)
     expect(screen.getByRole('button', { name: '닫기' })).toBeInTheDocument()
     expect(useGame.getState().game.flags.supperDay).toBe(d)

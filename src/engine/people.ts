@@ -87,7 +87,7 @@ export interface Routine {
   mutter?: string[]
   /** 이 조건이 맞을 때만 고른다 (계획 16 작업 3 — 이야기 뒤 생긴 일과·사라진 일과) */
   req?: Req
-  /** 이 때는 마을에 없다 — 집 문으로 들어가 보이지 않고, 함께하는 일과의 상대도 기다리지 않는다 (계획 16 작업 10: 웬델이 배우러 가는 아침) */
+  /** 이 때는 마을에 없다 — 집 문으로 들어가 보이지 않고, 함께하는 일과의 상대도 기다리지 않는다 (계획 16 작업 10: 파피가 배우러 가는 아침) */
   away?: boolean
   /** 오늘의 작은 근황에서 온 일과 (계획 16 작업 24 — 근황 id) */
   news?: string
@@ -485,7 +485,7 @@ export function sanitizeLife(raw: unknown): Life {
   }
 }
 
-/** 말 id를 바꾼 경우 (같은 id의 사건과 겹치던 파피의 동생 편지 말 — 2026-10-05): 최근에 한 말 목록도 새 id로 */
+/** 말 id를 바꾼 경우 (같은 id의 사건과 겹치던 웬델의 동생 편지 말 — 2026-10-05): 최근에 한 말 목록도 새 id로 */
 const RENAMED_LINES: Record<string, string> = { 'poppy:sister': 'poppy:sisterLetter' }
 function renameRecent(recent: Record<string, string[]>): Record<string, string[]> {
   return Object.fromEntries(Object.entries(recent).map(([npc, ids]) => [npc, Array.isArray(ids) ? ids.map((id) => RENAMED_LINES[id] ?? id) : ids]))

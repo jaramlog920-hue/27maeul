@@ -73,8 +73,9 @@ describe('연인·부부 사이', () => {
 
 describe('같은 모습의 연애 후보는 친구 말로', () => {
   it('주인공과 같은 모습이면 친구, 다르면 후보', () => {
-    expect(sameLookCandidate(game('m'), def('wendell'))).toBe(true)
-    expect(sameLookCandidate(game('f'), def('wendell'))).toBe(false)
+    // 파피(id wendell)는 2026-10-13부터 여자 모습
+    expect(sameLookCandidate(game('f'), def('wendell'))).toBe(true)
+    expect(sameLookCandidate(game('m'), def('wendell'))).toBe(false)
     expect(sameLookCandidate(game('f'), def('juniper'))).toBe(true)
     // 원래 이웃(연애 후보 아님)은 해당 없음
     expect(sameLookCandidate(game('m'), def('smith'))).toBe(false)

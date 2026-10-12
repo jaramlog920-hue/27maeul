@@ -24,7 +24,7 @@ const state = (minute: number, wedding = 12): GameState => {
 describe('주민 결혼 잔치', () => {
   it('일정 창에 7일 안의 잔치가 뜬다', () => {
     const ev = scheduledEvents(state(600, 15), CONTENT).find((e) => e.id.includes('genWedding'))
-    expect(ev).toMatchObject({ day: 15, title: '파피와 루디 결혼 잔치', location: '광장 모닥불' })
+    expect(ev).toMatchObject({ day: 15, title: '웬델과 루디 결혼 잔치', location: '광장 모닥불' })
     expect(scheduledEvents(state(600, 30), CONTENT).some((e) => e.id.includes('genWedding'))).toBe(false)
   })
   it('잔치 날 저녁, 두 사람은 모닥불 위에 나란히 선다 (두 번째 칸도 걸을 수 있다)', () => {

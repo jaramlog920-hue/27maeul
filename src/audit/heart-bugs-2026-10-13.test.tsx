@@ -17,7 +17,7 @@ beforeEach(() => {
   useGame.setState({ modal: null, toast: null, piecePopups: [], copyResult: null })
 })
 
-function ready(id = 'wendell'): GameState {
+function ready(id = 'poppy'): GameState {
   const s = establishedGame(CONTENT, 19)
   return { ...s, scenes: [], clock: { day: 80, minute: 840 },
     life: { ...s.life, seen: PEOPLE.people[id].events?.map(e => e.id) ?? [] } }
@@ -25,29 +25,29 @@ function ready(id = 'wendell'): GameState {
 
 it('친구로 지낸 뒤에도 조건을 갖추면 다시 고백할 수 있다', () => {
   const s = ready()
-  const game = { ...s, hearts: { wendell: 100 }, inv: { bouquet: 1 }, flags: { ...s.flags, 'friendsOnly:wendell': 1 } }
-  expect(canGiveBouquet(game, def('wendell'))).toBeNull()
-  expect(eventNow(game, 'wendell')).toBeNull()
+  const game = { ...s, hearts: { poppy: 100 }, inv: { bouquet: 1 }, flags: { ...s.flags, 'friendsOnly:poppy': 1 } }
+  expect(canGiveBouquet(game, def('poppy'))).toBeNull()
+  expect(eventNow(game, 'poppy')).toBeNull()
   act(() => useGame.setState({ game }))
-  render(<TalkBox modal={{ kind: 'talk', neighborId: 'wendell', line: '' }} />)
+  render(<TalkBox modal={{ kind: 'talk', neighborId: 'poppy', line: '' }} />)
   expect(screen.getByRole('button', { name: T.romance.giveBouquet })).toBeVisible()
   fireEvent.click(screen.getByRole('button', { name: T.romance.giveBouquet }))
-  expect(useGame.getState().game.romance).toMatchObject({ partner: 'wendell', stage: 'dating', bondRequired: true })
-  expect(useGame.getState().game.flags['friendsOnly:wendell']).toBe(0)
+  expect(useGame.getState().game.romance).toMatchObject({ partner: 'poppy', stage: 'dating', bondRequired: true })
+  expect(useGame.getState().game.flags['friendsOnly:poppy']).toBe(0)
   expect(useGame.getState().game.inv.bouquet ?? 0).toBe(0)
 })
 
 it('14일·데이트3회·이야기·10하트·방·끈이 갖춰지면 화면에서 청혼할 수 있다', () => {
   const s = ready()
-  const game = { ...s, hearts: { wendell: 100 }, homeLevel: 1 as const, inv: { promiseCord: 1 },
-    romance: { ...NO_ROMANCE, partner: 'wendell', stage: 'dating' as const, since: 1, dates: 3, storyRead: true, bondRequired: true } }
-  expect(canGiveCord(game, def('wendell'))).toBeNull()
+  const game = { ...s, hearts: { poppy: 100 }, homeLevel: 1 as const, inv: { promiseCord: 1 },
+    romance: { ...NO_ROMANCE, partner: 'poppy', stage: 'dating' as const, since: 1, dates: 3, storyRead: true, bondRequired: true } }
+  expect(canGiveCord(game, def('poppy'))).toBeNull()
   act(() => useGame.setState({ game }))
-  render(<TalkBox modal={{ kind: 'talk', neighborId: 'wendell', line: '' }} />)
+  render(<TalkBox modal={{ kind: 'talk', neighborId: 'poppy', line: '' }} />)
   expect(screen.getByRole('button', { name: T.romance.giveCord })).toBeVisible()
   fireEvent.click(screen.getByRole('button', { name: T.romance.giveCord }))
   expect(useGame.getState().game.romance.stage).toBe('engaged')
-  expect(useGame.getState().game.scenes).toContain('propose:wendell')
+  expect(useGame.getState().game.scenes).toContain('propose:poppy')
   expect(useGame.getState().game.inv.promiseCord ?? 0).toBe(0)
 })
 
@@ -72,24 +72,24 @@ it('서먹한 상태의 NPC 고백도8하트부터 연애를 시작한다', () =
 
 it('친구로 정한 관계의 이름은 연애를 암시하는5단계로 표시하지 않는다', () => {
   const s = ready()
-  const game = { ...s, hearts: { wendell: 100 }, flags: { ...s.flags, 'friendsOnly:wendell': 1 } }
-  expect(bondLabel(game, 'wendell')).toBe(T.people.stages[4])
+  const game = { ...s, hearts: { poppy: 100 }, flags: { ...s.flags, 'friendsOnly:poppy': 1 } }
+  expect(bondLabel(game, 'poppy')).toBe(T.people.stages[4])
 })
 
 it('다른 연인이 있을 때 다른 후보에게 다발을 줄 수 있다고 안내하지 않는다', () => {
   const s = ready()
-  const game = { ...s, hearts: { wendell: 80 },
+  const game = { ...s, hearts: { poppy: 80 },
     romance: { ...NO_ROMANCE, partner: 'rudy', stage: 'dating' as const, since: 70 } }
-  expect(canGiveBouquet(game, def('wendell'))).toBe('taken')
-  expect(heartProgressBlock(game, 'wendell')).toBe('taken')
+  expect(canGiveBouquet(game, def('poppy'))).toBe('taken')
+  expect(heartProgressBlock(game, 'poppy')).toBe('taken')
 })
 
 it('재고백 유예 중에는 다발을 소비하지 않고 기다릴 기간을 안내한다', () => {
   const s = ready()
-  const game = { ...s, hearts: { wendell: 80 }, inv: { bouquet: 1 }, flags: { ...s.flags, 'exPartner:wendell': 79 } }
-  expect(heartProgressBlock(game, 'wendell')).toBe('cooling')
+  const game = { ...s, hearts: { poppy: 80 }, inv: { bouquet: 1 }, flags: { ...s.flags, 'exPartner:poppy': 79 } }
+  expect(heartProgressBlock(game, 'poppy')).toBe('cooling')
   act(() => useGame.setState({ game }))
-  render(<TalkBox modal={{ kind: 'talk', neighborId: 'wendell', line: '' }} />)
+  render(<TalkBox modal={{ kind: 'talk', neighborId: 'poppy', line: '' }} />)
   fireEvent.click(screen.getByRole('button', { name: T.romance.giveBouquet }))
   expect(useGame.getState().game.romance.partner).toBeNull()
   expect(useGame.getState().game.inv.bouquet).toBe(1)
@@ -100,27 +100,27 @@ it('NPC 고백으로도 재고백14일 유예를 우회하지 못한다', () => 
   const s = ready()
   const e = { id: 'audit:confess', title: '고백', stage: 0 as const, at: { x: 1, y: 1 }, confess: true, lines: [],
     choices: [{ label: '수락', color: 'warm' as const, reply: [] }] }
-  setPeopleData({ ...PEOPLE, people: { ...PEOPLE.people, wendell: { ...PEOPLE.people.wendell, events: [e] } } })
-  const game = { ...s, hearts: { wendell: 80 }, flags: { ...s.flags, 'exPartner:wendell': 79 } }
-  expect(eventNow(game, 'wendell')).toBeNull()
+  setPeopleData({ ...PEOPLE, people: { ...PEOPLE.people, poppy: { ...PEOPLE.people.poppy, events: [e] } } })
+  const game = { ...s, hearts: { poppy: 80 }, flags: { ...s.flags, 'exPartner:poppy': 79 } }
+  expect(eventNow(game, 'poppy')).toBeNull()
   expect(chooseInEvent(game, e.id, 0).romance.partner).toBeNull()
   const later = { ...game, clock: { day: 93, minute: 840 } }
-  expect(eventNow(later, 'wendell')?.id).toBe(e.id)
-  expect(chooseInEvent(later, e.id, 0).romance.partner).toBe('wendell')
+  expect(eventNow(later, 'poppy')?.id).toBe(e.id)
+  expect(chooseInEvent(later, e.id, 0).romance.partner).toBe('poppy')
 })
 
 it.each([
   ['기간', (s: GameState): GameState => ({ ...s, clock: { day: 5, minute: 840 } }), HEART_HINTS.bond],
-  ['마음', (s: GameState): GameState => ({ ...s, hearts: { wendell: 90 } }), T.romance.cordHearts],
+  ['마음', (s: GameState): GameState => ({ ...s, hearts: { poppy: 90 } }), T.romance.cordHearts],
   ['이야기', (s: GameState): GameState => ({ ...s, romance: { ...s.romance, storyRead: false } }), HEART_HINTS.bond],
   ['방', (s: GameState): GameState => ({ ...s, homeLevel: 0 }), T.romance.cordRoom],
   ['끈', (s: GameState): GameState => ({ ...s, inv: {} }), T.romance.cordNoItem],
 ] as const)('청혼에 %s 조건이 부족하면 안내하고 관계·아이템을 유지한다', (_name, change, note) => {
   const s = ready()
-  const game = change({ ...s, hearts: { wendell: 100 }, homeLevel: 1, inv: { promiseCord: 1 },
-    romance: { ...NO_ROMANCE, partner: 'wendell', stage: 'dating', since: 1, dates: 3, storyRead: true, bondRequired: true } })
+  const game = change({ ...s, hearts: { poppy: 100 }, homeLevel: 1, inv: { promiseCord: 1 },
+    romance: { ...NO_ROMANCE, partner: 'poppy', stage: 'dating', since: 1, dates: 3, storyRead: true, bondRequired: true } })
   act(() => useGame.setState({ game }))
-  render(<TalkBox modal={{ kind: 'talk', neighborId: 'wendell', line: '' }} />)
+  render(<TalkBox modal={{ kind: 'talk', neighborId: 'poppy', line: '' }} />)
   fireEvent.click(screen.getByRole('button', { name: T.romance.giveCord }))
   expect(useGame.getState().game).toBe(game)
   expect(useGame.getState().toast?.text).toBe(note)

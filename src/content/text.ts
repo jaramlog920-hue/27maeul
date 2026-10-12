@@ -105,7 +105,7 @@ export function callName(text: string, name: string | undefined | null): string 
   return text.includes('{player}') ? text.replaceAll('{player}', name?.trim() || '필사가') : text
 }
 
-/** 낱말 뒤에 받침에 맞는 '이/가'를 붙인다 (웬델이 / 파피가) */
+/** 낱말 뒤에 받침에 맞는 '이/가'를 붙인다 (파피가 / 웬델이) */
 export function withSubject(word: string): string {
   const code = word.charCodeAt(word.length - 1) - 0xac00
   const hasFinal = code >= 0 && code <= 11171 && code % 28 !== 0

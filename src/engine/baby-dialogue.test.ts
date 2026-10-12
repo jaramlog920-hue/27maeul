@@ -26,7 +26,7 @@ describe('헤이즐 자녀의 성장에 맞는 대화', () => {
     }
   })
 
-  it('웬델의 울음 대사와 달래기 장면은 출생 전·어린이 이후에 나오지 않는다', () => {
+  it('파피의 울음 대사와 달래기 장면은 출생 전·어린이 이후에 나오지 않는다', () => {
     const p = PEOPLE.people.wendell
     const reqs = [p.lines.find(l => l.id === 'wendell8')!.req, p.lines.find(l => l.id === 'wendell15')!.req, p.events!.find(e => e.id === 'wendell:baby')!.req]
     for (const day of [7, 22, 50, 92]) for (const req of reqs) expect(reqMet(req, { ...context(day), npc: 'wendell' })).toBe(false)

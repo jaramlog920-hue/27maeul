@@ -42,7 +42,7 @@ describe('함께 가기 — 누구와, 언제', () => {
 
   it('그 사람이 집안 일을 하는 중이면 바쁘다 — 일이 끝나면 된다', () => {
     const s = withPartner('wendell')
-    // 웬델은 새벽부터 낮 열한 시까지 빵을 굽는다
+    // 파피는 새벽부터 낮 열한 시까지 빵을 굽는다
     expect(partnerFree(at(s, 10 * 60), CONTENT, 'tea')).toBe('busy')
     expect(canDate(at(s, 10 * 60), 'tea', CONTENT)).toBe('busy')
     expect(partnerFree(at(s, 14 * 60), CONTENT, 'tea')).toBeNull()
@@ -53,12 +53,12 @@ describe('함께 가기 — 누구와, 언제', () => {
   })
 
   it('점심을 누구와 같이 먹는 때는 쉬는 때다', () => {
-    // 웬델의 12–13시는 틸리와 빵을 나눠 먹는 자리 (doing은 bread지만 with가 있다)
+    // 파피의 12–13시는 틸리와 빵을 나눠 먹는 자리 (doing은 bread지만 with가 있다)
     const s = withPartner('wendell', 'dating', clearDay(), 12 * 60 + 20)
     expect(partnerFree(s, CONTENT, 'walk')).toBeNull()
   })
 
-  it('찻집이 일터인 파피는 찻집에서는 마주 앉을 수 있지만 언덕길은 일이 끝나야', () => {
+  it('찻집이 일터인 웬델은 찻집에서는 마주 앉을 수 있지만 언덕길은 일이 끝나야', () => {
     const s = withPartner('poppy', 'dating', clearDay(), 14 * 60)
     expect(canDate(s, 'tea', CONTENT)).toBeNull()
     expect(canDate(s, 'walk', CONTENT)).toBe('busy')
@@ -162,9 +162,9 @@ describe('함께 가기 — 문구', () => {
     for (const id of ids)
       for (const t of [SCENES[id].title, SCENES[id].album ?? '', ...SCENES[id].lines.map((l) => l.text)]) {
         expect(forbiddenIn(t), t).toBeNull()
-        expect(partnerFill(t, '웬델')).not.toMatch(/\{partner/)
+        expect(partnerFill(t, '파피')).not.toMatch(/\{partner/)
       }
-    expect(partnerFill('{partnerAnd} 걸었다. {partnerSubj} 웃었다.', '웬델')).toBe('웬델과 걸었다. 웬델이 웃었다.')
+    expect(partnerFill('{partnerAnd} 걸었다. {partnerSubj} 웃었다.', '파피')).toBe('파피와 걸었다. 파피가 웃었다.')
     expect(partnerFill('{partnerAnd} 걸었다.', '틸리')).toBe('틸리와 걸었다.')
   })
 })

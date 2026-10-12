@@ -7,5 +7,5 @@ it('받침 있는 이름은 "과", 없는 이름은 "와"', () => {
   expect(otReadText('otShelf.readWith', '핀')).toBe('핀과 읽기')
   expect(otReadText('otShelf.readWith', '루디')).toBe('루디와 읽기')
   expect(otReadText('otShelf.readDone', '오웬')).toBe('오웬과 서고에서 한참 함께 읽었다.')
-  expect(otReadText('otShelf.readMemory', '웬델')).toBe('웬델과 함께 읽었다')
+  expect(otReadText('otShelf.readMemory', '파피')).toBe('파피와 함께 읽었다')
 })

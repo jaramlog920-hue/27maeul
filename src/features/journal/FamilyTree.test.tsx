@@ -17,15 +17,15 @@ describe('이웃 수첩의 가계도', () => {
     expect(within(child).getByText(`자녀 · ${stage}`)).toBeInTheDocument()
     fireEvent.click(child)
     expect(screen.getByRole('button', { name: '헤이즐 · 부모' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: '웬델 · 형제자매' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '파피 · 형제자매' })).toBeInTheDocument()
   })
-  it('계보가 없는 옛 저장도 8일 이후에는 헤이즐의 아기와 웬델을 함께 보여 준다', () => {
+  it('계보가 없는 옛 저장도 8일 이후에는 헤이즐의 아기와 파피을 함께 보여 준다', () => {
     const base = newGame(CONTENT)
     useGame.getState().load({ ...base, clock: { day: 8, minute: 600 }, notebook: { ...base.notebook, met: ['baker', 'wendell'] } })
     useGame.getState().open({ kind: 'familyTree', personId: 'baker', neighborId: 'baker' })
     render(<ModalLayer />)
     expect(screen.getByRole('button', { name: '아기 · 자녀' })).toBeInTheDocument()
-    const wendell = screen.getByRole('button', { name: '웬델 · 자녀' })
+    const wendell = screen.getByRole('button', { name: '파피 · 자녀' })
     fireEvent.click(wendell)
     expect(screen.getByRole('button', { name: '아기 · 형제자매' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: '헤이즐 · 부모' })).toBeInTheDocument()

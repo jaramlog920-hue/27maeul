@@ -19,7 +19,7 @@ describe('처음 만들기', () => {
     expect(g.persons.marigold.kin).toEqual([{ id: 'grandpa', rel: 'grandparent' }])
     expect(g.persons.carpenter.born).toBeNull()
     expect(g.persons.rudy.look).toBe('m')
-    expect(g.persons.poppy.look).toBe('f')
+    expect(g.persons.poppy.look).toBe('m') // 2026-10-13 웬델·파피 모습 맞바꿈
     expect(g.persons.smith.look).toBe('m')
     expect(g.on).toBe(true)
   })
@@ -28,10 +28,12 @@ describe('처음 만들기', () => {
     expect(affinityOf(g, 'smith', 'carpenter')).toBe(START_CLOSE) // 양쪽 with (같은 모습 — 친구)
     expect(affinityOf(g, 'cosmo', 'rudy')).toBe(START_CLOSE)
     expect(affinityOf(g, 'rudy', 'carpenter')).toBe(START_CLOSE) // 집안
-    // 틸리·웬델은 연인이 될 수 있는 쌍 — 씨앗마다 0–15, 씨앗이 다르면 달라질 수 있다
-    const tw = [1, 2, 3, 4, 5, 6, 7, 8].map((seed) => affinityOf(newGenState(CONTENT, seed, 1, withPairs()), 'tilly', 'wendell'))
-    for (const v of tw) expect(v >= 0 && v <= 15).toBe(true)
-    expect(new Set(tw).size).toBeGreaterThan(1)
+    // 함께하는 일과가 있는 쌍 중 연인이 될 수 있는 쌍(서로 다른 모습)은 씨앗마다 0–15 — 씨앗이 다르면 달라질 수 있다
+    // (예전엔 틸리·웬델이었는데 2026-10-13 웬델·파피 모습을 맞바꿔 둘 다 같은 모습이 되었다 — 이름을 박지 않고 찾는다)
+    const runs = [1, 2, 3, 4, 5, 6, 7, 8].map((seed) => newGenState(CONTENT, seed, 1, withPairs()).affinity)
+    const varying = Object.keys({ ...runs[0], ...runs[1] }).filter((k) => new Set(runs.map((a) => a[k] ?? 0)).size > 1)
+    expect(varying.length).toBeGreaterThan(0)
+    for (const k of varying) for (const a of runs) expect((a[k] ?? 0) >= 0 && (a[k] ?? 0) <= 15).toBe(true)
     expect(affinityOf(g, 'rudy', 'juniper')).toBe(0)
     expect(withPairs().length).toBeGreaterThan(5)
   })
@@ -63,20 +65,20 @@ describe('참여 대상과 짝 조건 (D28·P7)', () => {
   })
   it('서로 다른 모습·같은 세대·남남만, 플레이어의 연인은 빠진다', () => {
     const g = fresh()
-    expect(canPair(g, null, 'rudy', 'poppy')).toBe(true)
+    expect(canPair(g, null, 'rudy', 'wendell')).toBe(true)
     expect(canPair(g, null, 'rudy', 'cosmo')).toBe(false) // 같은 모습
     expect(canPair(g, null, 'tilly', 'smith')).toBe(false) // 부모 세대 · 친족
     expect(canPair(g, null, 'carpenter', 'smith')).toBe(false) // 같은 모습
-    expect(canPair(g, null, 'carpenter', 'poppy')).toBe(false) // 세대가 다르다
-    expect(canPair(g, null, 'grandpa', 'poppy')).toBe(false) // 참여 대상 아님
-    expect(canPair(g, 'rudy', 'rudy', 'poppy')).toBe(false)
+    expect(canPair(g, null, 'carpenter', 'wendell')).toBe(false) // 세대가 다르다
+    expect(canPair(g, null, 'grandpa', 'wendell')).toBe(false) // 참여 대상 아님
+    expect(canPair(g, 'rudy', 'rudy', 'wendell')).toBe(false)
   })
   it('다른 연인이 있으면 짝이 되지 않는다', () => {
     let g = fresh()
-    const id = relationId('rudy', 'poppy')
-    g = { ...g, relations: { [id]: { id, a: 'poppy', b: 'rudy', stage: 'lover', since: 1 } } }
+    const id = relationId('rudy', 'wendell')
+    g = { ...g, relations: { [id]: { id, a: 'rudy', b: 'wendell', stage: 'lover', since: 1 } } }
     expect(canPair(g, null, 'rudy', 'tilly')).toBe(false)
-    expect(canPair(g, null, 'rudy', 'poppy')).toBe(true) // 이미 둘이 연인인 쌍은 그대로
+    expect(canPair(g, null, 'rudy', 'wendell')).toBe(true) // 이미 둘이 연인인 쌍은 그대로
   })
 })
 

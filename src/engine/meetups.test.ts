@@ -23,7 +23,7 @@ const MOVED = { 'movedIn:fisher': 1, 'movedIn:apothecary': 1, 'movedIn:weaver': 
 const base = (flags: Record<string, number> = MOVED): GameState => { const s = newGame(CONTENT); return { ...s, flags: { ...s.flags, ...flags } } }
 
 describe('주민끼리 만나는 시간 (실제 내용)', () => {
-  it('둘 다 있을 때만 함께 자리 — 틸리·웬델 점심', () => {
+  it('둘 다 있을 때만 함께 자리 — 틸리·파피 점심', () => {
     const d = dayWhere(['tilly', 'wendell'], (d) => dry(d) && !isMarketDay(d))
     const s = at(base(), d, 730)
     expect(routineOf(s, 'tilly')?.with).toBe('wendell')
@@ -66,7 +66,7 @@ describe('주민끼리 만나는 시간 (실제 내용)', () => {
     }
   })
 
-  it('바질은 찻집 안 파피 곁에서 (비가 와도)', () => {
+  it('바질은 찻집 안 웬델 곁에서 (비가 와도)', () => {
     for (const w of [dry, wet]) {
       const d = dayWhere(['basil', 'poppy'], (d) => w(d) && !isMarketDay(d))
       const s = at(base(), d, 730)
@@ -145,7 +145,7 @@ describe('일과 조건과 상대 (시험용 내용)', () => {
   it('상대가 이야기(이벤트) 자리에 가 있으면 함께하는 일과를 건너뛴다', () => {
     const s = at(base(), d, 730)
     expect(routineOf(s, 'tilly')?.with).toBe('wendell')
-    // 웬델에게 이벤트가 열리면 웬델은 이벤트 자리로 — 틸리는 혼자 기다리지 않는다
+    // 파피에게 이벤트가 열리면 파피는 이벤트 자리로 — 틸리는 혼자 기다리지 않는다
     const life = { ...s.life, memories: { wendell: [{ tag: 'never', day: 1, weather: 'sunny' as const, season: 'spring' as const }] } }
     const busy = { ...s, life }
     expect(goalOf(busy, 'wendell')).toEqual({ x: 6, y: 18 })

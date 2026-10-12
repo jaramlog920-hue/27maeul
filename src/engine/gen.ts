@@ -13,7 +13,7 @@ export type GenStage = 'baby' | 'child' | 'teen' | 'adult' | 'elder'
 export type GenOrigin = 'fixed' | 'born' | 'arrived'
 export const GEN_STAGES: readonly GenStage[] = ['baby', 'child', 'teen', 'adult', 'elder']
 
-/** 8일째 고정 이야기의 아기. 웬델과는 별개 인물이며 이름·다른 부모는 아직 정해지지 않았다. */
+/** 8일째 고정 이야기의 아기. 파피와는 별개 인물이며 이름·다른 부모는 아직 정해지지 않았다. */
 export const BAKER_BABY_ID = 'baker-baby'
 
 /** 옛 저장과 그림에서도 같은 인물·성장 단계를 쓴다. */

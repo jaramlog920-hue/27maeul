@@ -107,7 +107,7 @@ describe('자리 고르기', () => {
     expect(isFreeRoutine('baker', { at, when, doing: 'bread' })).toBe(false)
     expect(isFreeRoutine('baker', { at, when, doing: 'rest', with: 'postman' })).toBe(false)
     expect(isFreeRoutine('baker', { at, when, doing: 'rest', req: { seen: ['x'] }})).toBe(false)
-    expect(isFreeRoutine('poppy', { at, when, doing: 'tea' })).toBe(false) // 파피에게 찻집은 일
+    expect(isFreeRoutine('poppy', { at, when, doing: 'tea' })).toBe(false) // 웬델에게 찻집은 일
     expect(isFreeRoutine('baker', { at, when, doing: 'tea' })).toBe(true)
   })
 })

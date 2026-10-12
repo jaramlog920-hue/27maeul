@@ -2849,15 +2849,15 @@
   "scenes": {
     "fam:with:wendell": {
       "title": "빵 모양을 고른 저녁",
-      "album": "{child}, 웬델과 빵 모양을 고른 날",
+      "album": "{child}, 파피와 빵 모양을 고른 날",
       "lines": [
         {
           "speaker": "narration",
-          "text": "웬델은 화덕에서 먼 탁자에 반죽 한 덩이를 올려 주었다. 아이 손에 맞게 작게 뗀 것이었다."
+          "text": "파피는 화덕에서 먼 탁자에 반죽 한 덩이를 올려 주었다. 아이 손에 맞게 작게 뗀 것이었다."
         },
         {
           "speaker": "narration",
-          "text": "{childSubj} 모양을 고르고 손바닥으로 꾹 눌렀다. 화덕에 넣는 일은 웬델이 했다."
+          "text": "{childSubj} 모양을 고르고 손바닥으로 꾹 눌렀다. 화덕에 넣는 일은 파피가 했다."
         }
       ]
     },
@@ -2975,11 +2975,11 @@
     },
     "fam:with:poppy": {
       "title": "아이의 찻잔",
-      "album": "{child}, 파피와 찻잔을 고른 날",
+      "album": "{child}, 웬델과 찻잔을 고른 날",
       "lines": [
         {
           "speaker": "narration",
-          "text": "파피는 찻잔 몇 개를 낮은 탁자에 놓고, 아이 손이 닿는 곳에 간식 자리를 마련했다. 뜨거운 차는 어른 쪽에만 두었다."
+          "text": "웬델은 찻잔 몇 개를 낮은 탁자에 놓고, 아이 손이 닿는 곳에 간식 자리를 마련했다. 뜨거운 차는 어른 쪽에만 두었다."
         },
         {
           "speaker": "narration",
@@ -3395,7 +3395,7 @@
         },
         {
           "speaker": "narration",
-          "text": "\"그 호숫가 마을에서 왔소? 웬델이라는 녀석이 여기서 반죽을 배웠지. 너무 오래 치대서 늘 혼났다오.\""
+          "text": "\"그 호숫가 마을에서 왔소? 파피라는 녀석이 여기서 반죽을 배웠지. 너무 오래 치대서 늘 혼났다오.\""
         },
         {
           "speaker": "narration",
@@ -3417,7 +3417,7 @@
         },
         {
           "speaker": "narration",
-          "text": "파피의 동생이었다. 아이는 말린 꽃잎 한 줌을 쥐여 준다. \"언니한테 이거 전해 주세요. 보고 싶다고요.\""
+          "text": "웬델의 동생이었다. 아이는 말린 꽃잎 한 줌을 쥐여 준다. \"오빠한테 이거 전해 주세요. 보고 싶다고요.\""
         }
       ]
     },
@@ -5227,7 +5227,7 @@
       "album": "호숫가 노을"
     },
     "romance1:wendell": {
-      "title": "웬델의 이야기",
+      "title": "파피의 이야기",
       "lines": [
         {
           "speaker": "wendell",
@@ -5240,7 +5240,7 @@
       ]
     },
     "romance2:wendell": {
-      "title": "웬델의 이야기",
+      "title": "파피의 이야기",
       "lines": [
         {
           "speaker": "wendell",
@@ -5264,7 +5264,7 @@
           "text": "저도 오래전부터 {player}님이 좋았어요. 이제 새벽 가마 앞에서 {player}님 생각만 해도 되겠네요."
         }
       ],
-      "album": "웬델에게 건넨 들꽃"
+      "album": "파피에게 건넨 들꽃"
     },
     "propose:wendell": {
       "title": "약속의 끈",
@@ -5866,7 +5866,7 @@
       "album": "결혼 잔치"
     },
     "romance1:poppy": {
-      "title": "파피의 이야기",
+      "title": "웬델의 이야기",
       "lines": [
         {
           "speaker": "poppy",
@@ -5879,7 +5879,7 @@
       ]
     },
     "romance2:poppy": {
-      "title": "파피의 이야기",
+      "title": "웬델의 이야기",
       "lines": [
         {
           "speaker": "poppy",
@@ -5903,7 +5903,7 @@
           "text": "저도 좋아해요. {player}님 찻잔 따로 둔 거, 눈치채셨죠?"
         }
       ],
-      "album": "파피에게 건넨 들꽃"
+      "album": "웬델에게 건넨 들꽃"
     },
     "propose:poppy": {
       "title": "약속의 끈",
@@ -6447,11 +6447,11 @@
       "hallNight": " 저녁에 사랑방에서 이웃들과 놀았다.",
       "teaFirst": " 정원 찻집에서 차를 마셨다.",
       "sunset": " 호숫가 정자에서 노을을 보았다.",
-      "romance1:wendell": " 웬델의 옛이야기를 들었다.",
-      "romance2:wendell": " 웬델과 오래 이야기했다.",
-      "confess:wendell": " 웬델에게 들꽃 다발을 건넸다.",
-      "propose:wendell": " 웬델에게 약속의 끈을 건넸다.",
-      "wedding:wendell": " 웬델과 마을 잔치를 열었다.",
+      "romance1:wendell": " 파피의 옛이야기를 들었다.",
+      "romance2:wendell": " 파피와 오래 이야기했다.",
+      "confess:wendell": " 파피에게 들꽃 다발을 건넸다.",
+      "propose:wendell": " 파피에게 약속의 끈을 건넸다.",
+      "wedding:wendell": " 파피와 마을 잔치를 열었다.",
       "romance1:cosmo": " 코스모의 옛이야기를 들었다.",
       "romance2:cosmo": " 코스모와 오래 이야기했다.",
       "confess:cosmo": " 코스모에게 들꽃 다발을 건넸다.",
@@ -6492,11 +6492,11 @@
       "confess:juniper": " 주니퍼에게 들꽃 다발을 건넸다.",
       "propose:juniper": " 주니퍼에게 약속의 끈을 건넸다.",
       "wedding:juniper": " 주니퍼와 마을 잔치를 열었다.",
-      "romance1:poppy": " 파피의 옛이야기를 들었다.",
-      "romance2:poppy": " 파피와 오래 이야기했다.",
-      "confess:poppy": " 파피에게 들꽃 다발을 건넸다.",
-      "propose:poppy": " 파피에게 약속의 끈을 건넸다.",
-      "wedding:poppy": " 파피와 마을 잔치를 열었다.",
+      "romance1:poppy": " 웬델의 옛이야기를 들었다.",
+      "romance2:poppy": " 웬델과 오래 이야기했다.",
+      "confess:poppy": " 웬델에게 들꽃 다발을 건넸다.",
+      "propose:poppy": " 웬델에게 약속의 끈을 건넸다.",
+      "wedding:poppy": " 웬델과 마을 잔치를 열었다.",
       "romance1:merchant": " 떠돌이 상인의 옛이야기를 들었다.",
       "romance2:merchant": " 떠돌이 상인과 오래 이야기했다.",
       "confess:merchant": " 떠돌이 상인에게 들꽃 다발을 건넸다.",
@@ -7118,7 +7118,7 @@
       "close": "닫기",
       "spouses": {
         "wendell": {
-          "label": "웬델과 빵 모양 만들기",
+          "label": "파피와 빵 모양 만들기",
           "choices": [
             "둥근 빵",
             "별 모양 빵",
@@ -7235,7 +7235,7 @@
           ]
         },
         "poppy": {
-          "label": "파피와 찻잔 고르기",
+          "label": "웬델과 찻잔 고르기",
           "choices": [
             "하늘색 찻잔",
             "노란 찻잔",

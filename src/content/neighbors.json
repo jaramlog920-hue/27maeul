@@ -752,7 +752,7 @@
   },
   {
     "id": "wendell",
-    "role": "웬델",
+    "role": "파피",
     "sprite": "writer",
     "door": {
       "x": 5,
@@ -807,20 +807,20 @@
       }
     },
     "romanceable": true,
-    "look": "m",
+    "look": "f",
     "family": "baker",
     "stat": "hand",
     "avatar": {
       "skin": 1,
-      "hairFront": 7,
-      "hairBack": 0,
-      "top": 7,
-      "bottom": 2,
-      "acc": 0,
+      "hairFront": 1,
+      "hairBack": 2,
+      "top": 4,
+      "bottom": 0,
+      "acc": 2,
       "hairColor": [
-        30,
+        5,
         55,
-        55
+        45
       ]
     }
   },
@@ -1401,7 +1401,7 @@
   },
   {
     "id": "poppy",
-    "role": "파피",
+    "role": "웬델",
     "sprite": "writer",
     "door": {
       "x": 20,
@@ -1434,20 +1434,20 @@
       }
     },
     "romanceable": true,
-    "look": "f",
+    "look": "m",
     "family": "teahouse",
     "stat": "charm",
     "avatar": {
       "skin": 1,
-      "hairFront": 1,
-      "hairBack": 2,
-      "top": 4,
-      "bottom": 0,
-      "acc": 2,
+      "hairFront": 7,
+      "hairBack": 0,
+      "top": 7,
+      "bottom": 2,
+      "acc": 0,
       "hairColor": [
-        5,
+        30,
         55,
-        45
+        55
       ]
     }
   }

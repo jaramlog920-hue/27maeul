@@ -31,7 +31,7 @@ const SHOP: Tile = { x: 6, y: 24 }
 const CHAIR: Tile = { x: 8, y: 84 }
 const BAKERY: Tile = { x: 1, y: 17 }
 
-/** 시험용 이야기 둘: 목수(손일을 함께하는 두 사건 → 완료), 웬델(갈래 둘) */
+/** 시험용 이야기 둘: 목수(손일을 함께하는 두 사건 → 완료), 파피(갈래 둘) */
 const DATA: PeopleData = {
   people: {
     carpenter: {
@@ -690,7 +690,7 @@ describe('일반 주민 3 — 벌 치는 이웃·편지 나르는 이웃·약방
     expect(npcProps(back, 'postman')).toEqual(['postmanBagRepaired'])
   })
 
-  it('약방 주인: 서고 2권 이사 뒤 시든 화분 → 할아버지에게 묻기 → 바질과 물 주는 날 표(손일) → 파피가 고른 창가, 번갈아 쉬는 일과 — 치료·약효 문장 없음', () => {
+  it('약방 주인: 서고 2권 이사 뒤 시든 화분 → 할아버지에게 묻기 → 바질과 물 주는 날 표(손일) → 웬델이 고른 창가, 번갈아 쉬는 일과 — 치료·약효 문장 없음', () => {
     expect(npcProps(ready('apothecary', { 'story:apothecaryPot': 1 }), 'apothecary')).toEqual([])
     let s = ready('apothecary', { 'movedIn:apothecary': 1 })
     const shop = { x: 37, y: 32 }
@@ -780,7 +780,7 @@ describe('일반 주민 3 — 벌 치는 이웃·편지 나르는 이웃·약방
   })
 })
 
-describe('연애 후보 1 — 웬델·틸리·파피의 이후 생활 (실제 내용)', () => {
+describe('연애 후보 1 — 파피·틸리·웬델의 이후 생활 (실제 내용)', () => {
   beforeEach(() => setPeopleData(PEOPLE))
   const NEW = /:(story|small|short):/
   /** 기존 사건·목격은 다 본 것으로 (새 이야기만 시험한다 — 고백·연인 사건은 조건이 아니다) */
@@ -796,7 +796,7 @@ describe('연애 후보 1 — 웬델·틸리·파피의 이후 생활 (실제 �
   const weekday = (d: number) => d % 7 !== 0
   const BAKERY = { x: 1, y: 17 }, TEA = { x: 44, y: 62 }
 
-  it('웬델: 편지와 가마 나눔 뒤 본인이 고른다 — 새 빵 갈래는 진열대·시험 굽는 아침, 다른 갈래 모습은 없다', () => {
+  it('파피: 편지와 가마 나눔 뒤 본인이 고른다 — 새 빵 갈래는 진열대·시험 굽는 아침, 다른 갈래 모습은 없다', () => {
     const seen = [...oldSeen('wendell'), 'baker:story:3']
     // 편지 이야기를 아직 안 들었으면 열리지 않는다
     expect(eventNow(step(ready({ wendell: 60 }, seen.filter((x) => x !== 'wendell:letterTalk')), 'wendell', 70, 1100, BAKERY), 'wendell')?.id).not.toBe('wendell:story:1')
@@ -824,7 +824,7 @@ describe('연애 후보 1 — 웬델·틸리·파피의 이후 생활 (실제 �
     expect(npcProps(back, 'wendell')).toEqual(['wendellBread'])
   })
 
-  it('웬델: 바깥 일 갈래 — 둘째 날 아침 7시 길목까지(배우자도 집을 나선 뒤), 점심 전까지는 마을에 없고 가마는 어머니가, 점심엔 틸리와', () => {
+  it('파피: 바깥 일 갈래 — 둘째 날 아침 7시 길목까지(배우자도 집을 나선 뒤), 점심 전까지는 마을에 없고 가마는 어머니가, 점심엔 틸리와', () => {
     let s = step(ready({ wendell: 60, baker: 40, tilly: 40 }, [...oldSeen('wendell'), ...oldSeen('tilly'), 'baker:story:3', 'wendell:short:lunchSwap']), 'wendell', 70, 1100, BAKERY)
     s = chooseInEvent(openEvent(s, 'wendell')!, 'wendell:story:1', 1)
     expect(s.flags['story:wendellPath']).toBe(2)
@@ -839,7 +839,7 @@ describe('연애 후보 1 — 웬델·틸리·파피의 이후 생활 (실제 �
     const morning = { ...s, clock: { ...s.clock, minute: 460 } }
     expect(routineOf(morning, 'wendell')?.away).toBe(true)
     expect(settle(morning, CONTENT).npcs.wendell.visible).toBe(false)
-    expect(routineOf(morning, 'baker')?.mutter?.[0]).toContain('웬델 이야기')
+    expect(routineOf(morning, 'baker')?.mutter?.[0]).toContain('파피 이야기')
     const lunch = settle({ ...s, clock: { ...s.clock, minute: 730 } }, CONTENT)
     expect(lunch.npcs.wendell.visible).toBe(true)
     expect(routineOf(lunch, 'wendell')?.with).toBe('tilly')
@@ -864,7 +864,7 @@ describe('연애 후보 1 — 웬델·틸리·파피의 이후 생활 (실제 �
     expect(reqMet(lineReq('wendell', 'wendell:path:trip'), ctxOf(noTrip, 'wendell'))).toBe(false)
   })
 
-  it('웬델·틸리 점심: 기존 점심 자리에서 둘이 함께일 때만, 틸리는 함께한 경우에만 뒷말', () => {
+  it('파피·틸리 점심: 기존 점심 자리에서 둘이 함께일 때만, 틸리는 함께한 경우에만 뒷말', () => {
     const lunchDay = dry(70)
     let s = step(ready({ wendell: 40, tilly: 40 }, [...oldSeen('wendell'), ...oldSeen('tilly')]), 'wendell', lunchDay, 730, BAKERY)
     expect(eventNow(stand(s, 'tilly', { x: 20, y: 20 }), 'wendell')?.id).not.toBe('wendell:short:lunchSwap')
@@ -924,7 +924,7 @@ describe('연애 후보 1 — 웬델·틸리·파피의 이후 생활 (실제 �
     expect(npcProps(back, 'tilly')).toEqual(['tillyHook'])
   })
 
-  it('파피: 문 닫은 찻집 뒤 자리 이름 → 웬델과 간식·찻잔 → 제 뜻으로 부르는 자리 (페넬로피 이사 전에도), 차받침은 이사 뒤 작은 이야기로', () => {
+  it('웬델: 문 닫은 찻집 뒤 자리 이름 → 파피와 간식·찻잔 → 제 뜻으로 부르는 자리 (페넬로피 이사 전에도), 차받침은 이사 뒤 작은 이야기로', () => {
     let s = step(ready({ poppy: 60 }, [...oldSeen('poppy'), 'penelope:blue']), 'poppy', 70, 1115, TEA)
     expect(eventNow(s, 'poppy')?.id).toBe('poppy:story:1')
     s = chooseInEvent(openEvent(s, 'poppy')!, 'poppy:story:1', 2)
@@ -936,7 +936,7 @@ describe('연애 후보 1 — 웬델·틸리·파피의 이후 생활 (실제 �
     s = chooseInEvent(openEvent(s, 'poppy')!, 'poppy:story:2', 2)
     expect(s.life.experiences['choice:poppy:story:2'].with.sort()).toEqual(['poppy', 'wendell'])
     expect(npcProps(s, 'poppy')).toEqual([])
-    // 웬델은 간식 날이 지나면 찻집에서 기다리지 않는다
+    // 파피는 간식 날이 지나면 찻집에서 기다리지 않는다
     const nextWait = dry(day + 1, (d) => d % 7 === 1 || d % 7 === 6)
     expect(routineOf(step(s, 'poppy', nextWait, 930, TEA), 'wendell')?.at).not.toEqual({ x: 45, y: 62 })
     const next = Array.from({ length: 3 }, (_, i) => day + 1 + i).find(weekday)!
@@ -981,7 +981,7 @@ describe('연애 후보 1 — 웬델·틸리·파피의 이후 생활 (실제 �
       expect(habit.opens).toBeUndefined()
       expect(habit.confess).toBeUndefined()
     }
-    // 틸리·파피는 차를 좋아한다고 직접 말한다 → 수첩의 차 약속 제안(작업 13)이 열릴 수 있다
+    // 틸리·웬델은 차를 좋아한다고 직접 말한다 → 수첩의 차 약속 제안(작업 13)이 열릴 수 있다
     for (const npc of ['tilly', 'poppy']) expect(PEOPLE.people[npc].lines.some((l) => l.reveals === 'activity.tea'), npc).toBe(true)
     // 새 이야기는 고백·문턱을 만들지 않는다
     for (const npc of ['wendell', 'tilly', 'poppy'])
@@ -990,12 +990,12 @@ describe('연애 후보 1 — 웬델·틸리·파피의 이후 생활 (실제 �
         expect(e.confess, e.id).toBeUndefined()
         expect(e.req?.lover, e.id).toBeUndefined()
       }
-    // 성경 이야기를 떠올리는 소재 없음 (웬델 바깥 갈래: 몫·탕진·잔치 구도, 등불: 됫박·빛)
+    // 성경 이야기를 떠올리는 소재 없음 (파피 바깥 갈래: 몫·탕진·잔치 구도, 등불: 됫박·빛)
     const text = ['wendell', 'tilly', 'poppy'].map((npc) => JSON.stringify(PEOPLE.people[npc].events!.filter((x) => NEW.test(x.id))) + PEOPLE.people[npc].lines.filter((l) => l.id.includes(':')).map((l) => l.text).join()).join()
     for (const w of ['잔치', '탕진', '됫박', '누룩', '효모', '등불', '빛', '필사가님', '치료', '약효']) expect(text, w).not.toContain(w)
     // 언덕·정자에 가자는 연인 말은 맑은 날만
     for (const id of ['wendell:rel:lover', 'tilly:rel:lover']) expect(PEOPLE.people[id.split(':')[0]].lines.find((l) => l.id === id)!.when?.weather, id).toEqual(['dry'])
-    // 말 id가 사건 id와 겹치지 않는다 (파피의 동생 편지 말 → poppy:sisterLetter, 옛 저장의 최근 말 목록도 옮긴다)
+    // 말 id가 사건 id와 겹치지 않는다 (웬델의 동생 편지 말 → poppy:sisterLetter, 옛 저장의 최근 말 목록도 옮긴다)
     for (const npc of ['wendell', 'tilly', 'poppy']) {
       const events = new Set((PEOPLE.people[npc].events ?? []).map((e) => e.id))
       for (const l of PEOPLE.people[npc].lines) expect(events.has(l.id), l.id).toBe(false)
@@ -1365,7 +1365,7 @@ describe('연애 후보 3 — 바질·메리골드·페넬로피의 이후 생�
     expect(eventNow(stand(s, 'apothecary', { x: 20, y: 20 }), 'basil')?.id).not.toBe('basil:story:2')
     s = chooseInEvent(openEvent(stand(s, 'apothecary', MOTHER), 'basil')!, 'basil:story:2', 2)
     expect(s.life.experiences['choice:basil:story:2'].with.sort()).toEqual(['apothecary', 'basil'])
-    // 셋째·여섯째 날 오후에 찻집 안쪽 자리 (파피 곁)
+    // 셋째·여섯째 날 오후에 찻집 안쪽 자리 (웬델 곁)
     const d3 = days(d2 + 1).find((d) => d % 7 === 3 || d % 7 === 6)!
     s = at(s, d3, 930)
     expect(routineOf(s, 'basil')?.at).toEqual(TEA_SEAT)
@@ -1443,7 +1443,7 @@ describe('연애 후보 3 — 바질·메리골드·페넬로피의 이후 생�
   })
 
   it('페넬로피: 한 올·망설임 뒤 두 도안 → 남길 한 줄을 본인이 고르고(손일 실패해도) → 찻집에서 펴 보이기, 실타래가 무늬 천으로 — 망설임은 그대로', () => {
-    // 파피 쪽 사건은 다 본 것으로 (파피가 제 사건 자리에 가 있으면 저녁 차 자리가 비므로)
+    // 웬델 쪽 사건은 다 본 것으로 (웬델이 제 사건 자리에 가 있으면 저녁 차 자리가 비므로)
     const seen = [...oldSeen('penelope'), ...PEOPLE.people.poppy.events!.map((e) => e.id)]
     const d1 = dry(70)
     // 이사 전에는 나오지 않는다
@@ -1458,7 +1458,7 @@ describe('연애 후보 3 — 바질·메리골드·페넬로피의 이후 생�
     s = step(s, 'penelope', d2, 900, LOOM)
     s = finishStoryMini(chooseInEvent(openEvent(s, 'penelope')!, 'penelope:story:2', 1))
     expect(s.life.storyWait).toBeNull()
-    // 다음 날 저녁 찻집 — 파피가 곁에 있을 때
+    // 다음 날 저녁 찻집 — 웬델이 곁에 있을 때
     const d3 = d2 + 1
     s = step(s, 'penelope', d3, 1050, PEN_TEA)
     expect(routineOf(s, 'penelope')?.at).toEqual(PEN_TEA)

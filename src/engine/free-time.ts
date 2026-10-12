@@ -31,7 +31,7 @@ export const FREE_TO = 20 * 60
 /** 갈 곳을 다시 고르는 간격 (분) */
 export const FREE_SLOT = 120
 
-/** 쉬는 일 (일과의 doing) — 그 사람의 일이면(찻집의 파피·배달 길의 마일로) 쉬는 것이 아니다 */
+/** 쉬는 일 (일과의 doing) — 그 사람의 일이면(찻집의 웬델·배달 길의 마일로) 쉬는 것이 아니다 */
 const FREE_DOING = new Set(['rest', 'music', 'cat', 'wait', 'tea'])
 
 /** 이 일과가 자유 시간으로 바꿔도 되는 평범한 쉬는 칸인가 (P4) */
