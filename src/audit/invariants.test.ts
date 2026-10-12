@@ -229,7 +229,8 @@ function simulate(label: string, heart: number, seed: number, play = false, late
   const played: string[] = []
   const waitSince: Record<string, number> = {}
   const ready: Record<string, { npc: string; at: Tile; minutes: number; reached: number; days: Set<number>; seenAt: Record<string, number> }> = {}
-  const report = (f: Finding) => { const k = f.rule.startsWith('9') ? `${f.rule}|${f.level}` : `${f.rule}|${f.where}`; if (!once.has(k)) { once.add(k); add(f) } }
+  // 날마다 되풀이되는 규칙(저장·가계도·연애·아이·약속)은 시뮬레이션마다 처음 한 번만 적는다
+  const report = (f: Finding) => { const k = /^(9|1[3-9]|2\d) /.test(f.rule) ? `${f.rule}|${f.level}` : `${f.rule}|${f.where}`; if (!once.has(k)) { once.add(k); add(f) } }
   const days = late ? LATE_DAYS : DAYS
   for (let day = 1; day <= days; day++) {
     const overlap: Record<string, number> = {}, stuck: Record<string, number> = {}
@@ -306,6 +307,8 @@ function simulate(label: string, heart: number, seed: number, play = false, late
       const c = once2 ? serialize(once2) : 'null'
       const ja = JSON.parse(a), jb = once1 ? JSON.parse(b) : {}, jc = once2 ? JSON.parse(c) : {}
       // 비어 있던 목록·칸을 불러올 때 채우는 것은 정상 (점검기가 만든 시작 상태에 파생 칸이 비어 있다)
+      // 지난 날의 하루 마음 기록(heartDay)은 불러올 때 버리는 것이 맞다
+      if (ja.heartDay && ja.heartDay.day !== ja.clock?.day) delete ja.heartDay
       const empty = (v: unknown) => v === undefined || (Array.isArray(v) && !v.length) || (!!v && typeof v === 'object' && !Object.keys(v).length)
       const lost = Object.keys(ja).filter((k) => (late || k !== 'shelved') && !empty(ja[k]) && canon(ja[k]) !== canon(jb[k]))
       const unstable = Object.keys({ ...jb, ...jc }).filter((k) => canon(jb[k]) !== canon(jc[k]))
