@@ -4,7 +4,12 @@
 import { writeFileSync, mkdirSync } from 'node:fs'
 import { CONTENT } from '../content/catalog'
 import { peopleData, whenMatches, inWindow, type When, type Req, type Moment } from '../engine/people'
-import { chooseInEvent, eventNow, eventWaiting, finishStoryMini, goToSleep, greetNeighbor, heartUp, newGame, openEvent, sightingWaiting, tick, type GameState } from '../engine/game'
+import { canGiveBouquet, canGiveCord, canTravel, chooseInEvent, eventNow, eventWaiting, finishStoryMini, GIFTABLE, giveBouquet, giveCord, giveGift, goToSleep, greetNeighbor, heartUp, newGame, openEvent, putAway, sightingWaiting, tick, travel, weddingToday, WEDDING_GATHER, type GameState } from '../engine/game'
+import { establishedGame } from '../engine/growth-test-support'
+import { FIRE } from '../engine/neighbors'
+import { FESTIVAL_FROM, FESTIVAL_TO, festivalOf } from '../engine/calendar'
+import { CHILD_AFTER_WEDDING } from '../engine/child'
+import { count } from '../engine/items'
 import { npcTile } from '../engine/neighbors'
 import { walkableOn, key } from '../engine/world'
 import { deserialize, serialize } from '../engine/save'
@@ -102,8 +107,9 @@ function staticChecks() {
 }
 
 // ── 시뮬레이션: 실제 엔진으로 며칠을 돌린다 ──
-function unlocked(s: GameState, heart: number): GameState {
+function unlocked(s: GameState, heart: number, late = false): GameState {
   const ids = CONTENT.neighbors.map((n) => n.id)
+  if (late) return { ...s, scenes: [], notebook: { ...s.notebook, met: ids }, flags: { ...s.flags, villageLevel: 10, newlandGift: s.flags.newlandGift ?? 1, ...Object.fromEntries(ids.map((id) => [`movedIn:${id}`, 1])) } }
   return {
     ...s,
     scenes: [],
@@ -133,8 +139,44 @@ function deepDiff(a: any, b: any, path: string, out: string[]): string[] {
 
 const near = (a: Tile, b: Tile, d: number) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y) <= d
 
-function simulate(label: string, heart: number, seed: number, play = false) {
-  let s = unlocked(newGame(CONTENT), heart)
+/** 후반 생활: 신약 27권을 다 마치고(서고 가득·모든 기능 열림) 아이방까지 넓힌 집에서 시작 */
+function lateStart(): GameState {
+  const s = establishedGame(CONTENT, 27)
+  const books = Object.keys(s.progress)
+  return unlocked({ ...s, homeLevel: 2, shelved: Object.fromEntries(books.map((b) => [b, 2])), hearts: Object.fromEntries(CONTENT.neighbors.map((n) => [n.id, 70])) }, 0, true)
+}
+
+const teleport = (s: GameState, t: Tile): GameState => ({ ...s, player: { ...s.player, x: t.x, y: t.y, path: [] }, target: null })
+
+/** 후반 자동 플레이어의 분 단위 행동: 약속 자리·결혼 잔치·계절 잔치에 가 있고, 사흘에 한 번 구약 터에 다녀온다 */
+function lateActions(s: GameState, day: number, label: string, t: string, report: (f: Finding) => void, trip: () => void): GameState {
+  const m = Math.floor(s.clock.minute)
+  const map = s.map ?? 'village'
+  try {
+    if (map === 'village') {
+      const p = s.life?.promises.find((x) => x.day === day && m >= x.from && m < x.to)
+      if (p) return near(s.player, p.at, 1) ? s : teleport(s, p.at)
+      if ((weddingToday(s) && m >= FESTIVAL_FROM + WEDDING_GATHER && m < FESTIVAL_TO) || (festivalOf(day) && m >= FESTIVAL_FROM && m < FESTIVAL_TO)) return near(s.player, FIRE, 2) ? s : teleport(s, { x: FIRE.x, y: FIRE.y + 2 })
+    }
+    // 규칙 17: 구약 터 왕복 — 갈 수 있다는데 못 가거나, 건너간 뒤 서 있는 칸이 그 지도에서 걸을 수 없는 칸
+    const go = day % 3 === 1 && m === 13 * 60 && map === 'village' ? 'newland' : m === 15 * 60 && map === 'newland' ? 'village' : null
+    if (go && canTravel(s, go) === null) {
+      const next = travel(s, go, CONTENT)
+      if ((next.map ?? 'village') !== go) report({ rule: '17 구약 터 왕복', level: '높음', where: `${label} ${t}`, detail: `${go}로 건너갈 수 있다는데 건너가지 않음` })
+      else if (!walkableOn(go, { x: Math.round(next.player.x), y: Math.round(next.player.y) })) report({ rule: '17 구약 터 왕복', level: '높음', where: `${label} ${t}`, detail: `${go} 도착 칸 (${next.player.x},${next.player.y})을 걸을 수 없음` })
+      if (go === 'newland') trip()
+      return next
+    }
+  } catch (err) {
+    report({ rule: '6 멈춤(오류)', level: '높음', where: `${label} ${t} 후반 행동`, detail: String((err as Error)?.stack ?? err).split('\n').slice(0, 3).join(' / ') })
+  }
+  return s
+}
+
+function simulate(label: string, heart: number, seed: number, play = false, late = false) {
+  let s = late ? lateStart() : unlocked(newGame(CONTENT), heart)
+  const timeline: string[] = []
+  let gifts = 0, trips = 0
   const r = rng(seed)
   const once = new Set<string>()
   const played: string[] = []
@@ -172,6 +214,7 @@ function simulate(label: string, heart: number, seed: number, play = false) {
           report({ rule: '6 멈춤(오류)', level: '높음', where: `${label} ${t} ${n.id} 이야기`, detail: String((err as Error)?.stack ?? err).split('\n').slice(0, 4).join(' / ') })
         }
       }
+      if (late) s = lateActions(s, day, label, t, report, () => { trips++ })
       // 규칙 4: 같은 칸에 두 사람 (멈춰 선 채로 10분 넘게)
       const byTile = new Map<string, string[]>()
       for (const n of vis) if (!n.path.length) byTile.set(key(npcTile(n)), [...(byTile.get(key(npcTile(n))) ?? []), n.id])
@@ -214,7 +257,9 @@ function simulate(label: string, heart: number, seed: number, play = false) {
       const once2 = once1 ? deserialize(b, CONTENT) : null
       const c = once2 ? serialize(once2) : 'null'
       const ja = JSON.parse(a), jb = once1 ? JSON.parse(b) : {}, jc = once2 ? JSON.parse(c) : {}
-      const lost = Object.keys(ja).filter((k) => k !== 'shelved' && ja[k] !== undefined && canon(ja[k]) !== canon(jb[k]))
+      // 비어 있던 목록·칸을 불러올 때 채우는 것은 정상 (점검기가 만든 시작 상태에 파생 칸이 비어 있다)
+      const empty = (v: unknown) => v === undefined || (Array.isArray(v) && !v.length) || (!!v && typeof v === 'object' && !Object.keys(v).length)
+      const lost = Object.keys(ja).filter((k) => (late || k !== 'shelved') && !empty(ja[k]) && canon(ja[k]) !== canon(jb[k]))
       const unstable = Object.keys({ ...jb, ...jc }).filter((k) => canon(jb[k]) !== canon(jc[k]))
       const show = (ks: string[], x: any, y: any) => ks.slice(0, 4).flatMap((k) => deepDiff(x[k], y[k], k, [])).join(' | ')
       if (!once1) report({ rule: '9 저장 왕복', level: '높음', where: label, detail: '불러오기 실패(null)' })
@@ -222,6 +267,38 @@ function simulate(label: string, heart: number, seed: number, play = false) {
       if (unstable.length) report({ rule: '9 저장 왕복', level: '높음', where: `${label} ${day}일 밤`, detail: `불러올 때마다 바뀌는 칸: ${show(unstable, jb, jc)}` })
     } catch (e) {
       report({ rule: '9 저장 왕복', level: '높음', where: `${label} ${day}일 밤`, detail: `오류: ${String(e).slice(0, 200)}` })
+    }
+    if (late) {
+      // 규칙 13: 결혼 잔치 날이 지났는데 아직 약혼 (자동 플레이어는 잔치 시각에 모닥불 곁에 서 있었다)
+      const ro = s.romance
+      if (ro?.stage === 'engaged' && ro.weddingDay != null && ro.weddingDay <= day) report({ rule: '13 결혼이 안 됨', level: '높음', where: `${label} ${day}일`, detail: `잔치 날(${ro.weddingDay}일) 밤까지 모닥불 곁에 있었는데 ${ro.partner}와 아직 약혼` })
+      // 규칙 14: 결혼하고 아이방이 있는데 아이가 오지 않음
+      if (ro?.stage === 'married' && ro.marriedDay != null && !s.child && day > ro.marriedDay + CHILD_AFTER_WEDDING + 1) report({ rule: '14 아이가 안 옴', level: '높음', where: `${label} ${day}일`, detail: `${ro.marriedDay}일에 결혼, 아이방(2단계) 있음, ${CHILD_AFTER_WEDDING}일 뒤에도 아이 없음` })
+      // 규칙 15: 약속 자리에 갔는데 잊은 약속으로 남음
+      const forgot = Object.entries(s.life?.memories ?? {}).flatMap(([npc, ms]) => ms.filter((m) => m.tag.startsWith('forgot:')).map((m) => `${npc} ${m.tag}`))
+      if (forgot.length) report({ rule: '15 지킨 약속이 잊은 것으로', level: '높음', where: `${label} ${day}일`, detail: forgot.slice(0, 5).join(', ') })
+      // 날마다 가방을 채우고(선물거리·다발·끈) 이웃 모두에게 선물 하나씩, 연애를 한 걸음씩
+      s = putAway(s, { ...Object.fromEntries(GIFTABLE.filter((i) => count(s.inv, i) < 3).map((i) => [i, 3])), ...(count(s.inv, 'bouquet') ? {} : { bouquet: 1 }), ...(count(s.inv, 'promiseCord') ? {} : { promiseCord: 1 }) })
+      for (const def of CONTENT.neighbors) {
+        try {
+          const item = GIFTABLE[Math.floor(r() * GIFTABLE.length)]
+          const g = count(s.inv, item) ? giveGift(s, def, item, CONTENT) : null
+          if (g) { s = g.state; gifts++ }
+        } catch (err) { report({ rule: '6 멈춤(오류)', level: '높음', where: `${label} ${day}일 ${def.id} 선물`, detail: String((err as Error)?.stack ?? err).split('\n').slice(0, 3).join(' / ') }) }
+      }
+      try {
+        if (!s.romance?.partner) {
+          const def = CONTENT.neighbors.find((d) => canGiveBouquet(s, d) === null)
+          if (def) { s = giveBouquet(s, def); timeline.push(`${day}일 ${def.id}에게 들꽃 다발(연인)`) }
+        } else if (s.romance.stage === 'dating') {
+          const def = CONTENT.neighbors.find((d) => d.id === s.romance.partner)!
+          const why = canGiveCord(s, def)
+          if (why === null) { s = giveCord(s, def); timeline.push(`${day}일 약속의 끈(약혼), 잔치 ${s.romance.weddingDay}일`) }
+          else if (s.romance.since != null && day - s.romance.since > 10) report({ rule: '16 약혼을 못 함', level: '높음', where: `${label} ${day}일`, detail: `${def.id}와 사귄 지 ${day - s.romance.since}일, 끈을 못 건넴: ${why}` })
+        }
+      } catch (err) { report({ rule: '6 멈춤(오류)', level: '높음', where: `${label} ${day}일 연애`, detail: String((err as Error)?.stack ?? err).split('\n').slice(0, 3).join(' / ') }) }
+      if (s.romance?.stage === 'married' && !timeline.some((x) => x.includes('결혼함'))) timeline.push(`${s.romance.marriedDay}일 결혼함`)
+      if (s.child && !timeline.some((x) => x.includes('아이'))) timeline.push(`${day}일 아침 아이 태어남`)
     }
     if (play) {
       // 규칙 11: 이어 갈 이야기(storyWait)가 사흘 넘게 풀리지 않음 — 다른 이야기들이 그 뒤로 다 막힌다
@@ -240,8 +317,10 @@ function simulate(label: string, heart: number, seed: number, play = false) {
         try { s = heartUp(greetNeighbor(s, id), id, 3) } catch (err) { report({ rule: '6 멈춤(오류)', level: '높음', where: `${label} ${day}일 ${id} 인사`, detail: String(err).slice(0, 200) }) }
       }
     }
-    s = unlocked(goToSleep(s, CONTENT), 0)
+    if ((s.map ?? 'village') !== 'village') s = travel(s, 'village', CONTENT)
+    s = unlocked(goToSleep(s, CONTENT), 0, late)
   }
+  if (late) add({ rule: '0 진행 요약', level: '확인', where: label, detail: `선물 ${gifts}번, 구약 터 왕복 ${trips}번. ${timeline.join(' → ') || '연애 진행 없음'}` })
   if (play) {
     const all = Object.values(peopleData().people).flatMap((p) => (p.events ?? []).map((e) => e.id))
     const seen = new Set(s.life?.seen ?? [])
@@ -259,10 +338,11 @@ describe.skipIf(!RUN)('자동 점검기', () => {
   it('처음 사이로 며칠', () => { simulate('처음 사이', 0, 1) }, 600_000)
   it('가까운 사이로 며칠', () => { simulate('가까운 사이', 80, 2) }, 600_000)
   it('자동 플레이어로 며칠', () => { simulate('자동 플레이어', 0, 3, true) }, 1_800_000)
+  it('후반 생활로 며칠', () => { simulate('후반 생활', 0, 4, true, true) }, 1_800_000)
   afterAll(() => {
     const byRule = new Map<string, Finding[]>()
     for (const f of found) byRule.set(f.rule, [...(byRule.get(f.rule) ?? []), f])
-    const lines = [`# 자동 점검 결과`, ``, `돌린 날: 시뮬레이션 ${DAYS}일씩 — 처음 사이(가만히)·가까운 사이(가만히)·자동 플레이어(이야기 열고 고르기, 매일 인사)`, `찾은 것: ${found.length}건`, ``]
+    const lines = [`# 자동 점검 결과`, ``, `돌린 날: 시뮬레이션 ${DAYS}일씩 — 처음 사이(가만히)·가까운 사이(가만히)·자동 플레이어(이야기 열고 고르기, 매일 인사)·후반 생활(27권 뒤: 선물·약속·연애·결혼·아이·잔치·구약 터 왕복)`, `찾은 것: ${found.length}건`, ``]
     for (const [rule, fs] of [...byRule].sort()) {
       lines.push(`## 규칙 ${rule} — ${fs.length}건`, '')
       for (const f of fs) lines.push(`- [${f.level}] ${f.where}: ${f.detail}`)

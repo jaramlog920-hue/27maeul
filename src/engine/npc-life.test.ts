@@ -74,3 +74,18 @@ describe('방 안 산책은 출구 통로를 막지 않는다 (2026-10-13 자동
     expect(picked.size).toBeGreaterThan(2)
   })
 })
+
+describe('마친 장의 조각을 받아도 저장·불러오기가 같다 (2026-10-13 자동 점검)', () => {
+  it('이웃에게서 이미 마친 장의 조각을 들으면 책상 순서에 올리지 않는다', async () => {
+    const { listen } = await import('./game')
+    const { deserialize, serialize } = await import('./save')
+    const piece = CONTENT.pieces.find((p) => p.book === 'mt' && p.chapter === 5)!
+    const base = newGame(CONTENT)
+    const done = { ...base, offers: { baker: piece.id }, progress: { ...base.progress, mt: { ...base.progress.mt, completed: [5] } } }
+    const after = listen(done, 'baker', CONTENT).state
+    expect(after.collected).toContain(piece.id)
+    expect(after.progress.mt.arrangement[5]).toBeUndefined()
+    const back = deserialize(serialize(after), CONTENT)!
+    expect(back.progress.mt.arrangement).toEqual(after.progress.mt.arrangement)
+  })
+})

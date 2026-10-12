@@ -1316,10 +1316,9 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
     if (meeting && n.visible && other?.visible) {
       npcs[id] = { ...n, facing: facingFor(other.x - n.x, other.y - n.y, n.facing) }
     } else if (defs[id]) {
-      const occupied = new Set(Object.values({ ...s.npcs, ...npcs }).filter(o => o.visible && o.id !== id).map(o => key(npcTile(o))))
-      occupied.add(key(now))
+      // 이웃끼리는 서로 지나간다 (2026-10-13 사용자: 스타듀밸리처럼). 멈춰 설 자리는 위에서 겹치지 않게 골랐고, 산책 길은 기록자만 비켜 간다
       const goal = goals[id]
-      npcs[id] = stepNpc(n, doorDef(defs[id]), goal, dt, ambient.has(id) ? new Set([...furnitureBlockers, ...occupied]) : furnitureBlockers)
+      npcs[id] = stepNpc(n, doorDef(defs[id]), goal, dt, ambient.has(id) ? new Set([...furnitureBlockers, key(now)]) : furnitureBlockers)
     } else npcs[id] = n
   }
 
@@ -2322,7 +2321,6 @@ export function listen(s: GameState, neighborId: string, content: GameContent): 
   const offers = { ...s.offers }
   delete offers[neighborId]
   const bp = s.progress[piece.book]
-  const placed = bp.arrangement[piece.chapter] ?? []
   return {
     // 이웃 이야기를 들으면 지능이 오른다 (계획 11 작업 4)
     state: train({
@@ -2335,7 +2333,7 @@ export function listen(s: GameState, neighborId: string, content: GameContent): 
       todayHeard: [...s.todayHeard, pieceId],
       listened: s.listened.includes(neighborId) ? s.listened : [...s.listened, neighborId],
       notebook: noteHeard(s.notebook ?? NO_NOTEBOOK, neighborId, [pieceId]),
-      progress: { ...s.progress, [piece.book]: { ...bp, arrangement: { ...bp.arrangement, [piece.chapter]: [...placed, pieceId] } } },
+      progress: { ...s.progress, [piece.book]: withPiece(bp, piece.chapter, pieceId) },
     }, 'wit', XP.listen),
     pieceId,
     pieceIds: [pieceId],
@@ -2376,14 +2374,22 @@ export function mailboxHasPost(s: Pick<GameState, 'flags' | 'post' | 'collected'
  * 받은 조각을 collected·todayHeard에 넣고 받은 기록(pieceLog)을 남긴다 (편지·언덕 편지함·여행·열람석·두루마리·아이의 편지가 함께 쓴다).
  * from: 어디서 받았나 (fragments.PieceGot)
  */
+/**
+ * 받은 조각을 책상 순서(arrangement)에 더한다. 이미 마친 장은 책상에 올리지 않는다 —
+ * 불러오기(save.ts sanitize)도 마친 장의 순서는 지우므로 둘이 같아야 한다 (2026-10-13 자동 점검: 불러오면 칸이 사라짐)
+ */
+function withPiece(bp: GameState['progress'][Book], chapter: number, id: string): GameState['progress'][Book] {
+  if (bp.completed.includes(chapter)) return bp
+  return { ...bp, arrangement: { ...bp.arrangement, [chapter]: [...(bp.arrangement[chapter] ?? []), id] } }
+}
+
 function takeChapters(s: GameState, ids: readonly string[], content: GameContent, from: string): GameState {
   const known = new Map(content.pieces.map((p) => [p.id, p]))
   // 책상 순서(arrangement)도 조각과 같게 채워 둔다 — 불러오기(sanitize)가 모은 조각으로 다시 채우는 것과 어긋나지 않게
   let progress = s.progress
   for (const id of ids) {
     const p = known.get(id)!
-    const bp = progress[p.book]
-    progress = { ...progress, [p.book]: { ...bp, arrangement: { ...bp.arrangement, [p.chapter]: [...(bp.arrangement[p.chapter] ?? []), id] } } }
+    progress = { ...progress, [p.book]: withPiece(progress[p.book], p.chapter, id) }
   }
   return { ...s, collected: [...s.collected, ...ids], pieceLog: logPieces(s.pieceLog, ids, s.clock.day, from), todayHeard: [...s.todayHeard, ...ids], progress }
 }
