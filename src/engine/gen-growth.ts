@@ -2,7 +2,8 @@
 // 어른이 되면 부모 일터에서 견습을 시작한다. 한 계절(40일) 뒤 부모는 조용히 은퇴해 쉬고(사망 없음),
 // 그 이웃의 자리(일·돕기·함께 일하기·대화·마음)는 자녀가 이어받는다.
 import { stageByAge } from './gen-age'
-import { addLog, BAKER_BABY_ID, type GenPerson, type GenState } from './gen'
+import { addLog, BAKER_BABY_ID, genRng, type GenPerson, type GenState } from './gen'
+import { GEN_CHILD_NAMES } from './gen-birth'
 export { stageByAge } from './gen-age'
 
 /** 은퇴: 견습을 시작하고 이만큼 지나면 (한 계절) */
@@ -58,6 +59,22 @@ export function settleGrowth(g: GenState, d: number, access = { generations: tru
     if (next === p.stage) continue
     g = { ...g, persons: { ...g.persons, [p.id]: { ...g.persons[p.id], stage: next } } }
     g = addLog(g, d, `grew:${next}`, [p.id])
+  }
+  // 빵집 아이는 아기를 벗으면 다른 주민 아이처럼 이름이 저절로 붙는다 (2026-10-12 사용자 결정 6)
+  const bb = g.persons[BAKER_BABY_ID]
+  if (bb && bb.stage !== 'baby' && !bb.name) {
+    const rnd = genRng(g.seed, 'bakerName', ['baker'], 1)
+    const look: 'f' | 'm' = bb.look ?? (rnd() < 0.5 ? 'f' : 'm')
+    const taken = new Set(Object.values(g.persons).map((x) => x.name).filter(Boolean))
+    const free = GEN_CHILD_NAMES[look].filter((n) => !taken.has(n))
+    const list = free.length ? free : GEN_CHILD_NAMES[look]
+    g = { ...g, persons: { ...g.persons, [BAKER_BABY_ID]: { ...bb, look, name: list[Math.floor(rnd() * list.length)], avatar: bb.avatar ?? { hairFront: Math.floor(rnd() * 12) } } } }
+  }
+  // 어른이 된 빵집 아이는 헤이즐의 일터에서 견습을 시작한다 → 한 계절 뒤 헤이즐은 은퇴하고 일을 이어받는다 (사용자 결정 6)
+  const grownBaker = g.persons[BAKER_BABY_ID]
+  if (access.generations && grownBaker?.stage === 'adult' && g.persons.baker && !g.heirs?.baker && !g.retired?.baker) {
+    g = { ...g, heirs: { ...(g.heirs ?? {}), baker: { heir: BAKER_BABY_ID, since: d } } }
+    g = addLog(g, d, 'apprentice', ['baker', BAKER_BABY_ID])
   }
   // 어른이 된 첫 자녀가 부모 일터에서 견습을 시작한다 (부모마다 한 사람)
   for (const h of (access.generations ? Object.values(g.households) : []).sort((a, b) => (a.id < b.id ? -1 : 1))) {

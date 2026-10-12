@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { CONTENT, neighborById } from '../../content/catalog'
 import { personName } from '../../content/gen-text'
 import { seasonOf } from '../../engine/clock'
-import { canRenamePerson, familyTreeLayout, renamePerson, RENAME_MAX, type TreeNode } from '../../engine/family-tree'
+import { canRenamePerson, familyTreeLayout, ME, MY_CHILD, renamePerson, RENAME_MAX, withPlayerFamily, type TreeNode } from '../../engine/family-tree'
 import { saveGame } from '../../engine/save'
 import { BAKER_BABY_ID, ensureBakerBaby, newGenState, type GenPerson } from '../../engine/gen'
 import { babyStage } from '../../engine/stories'
@@ -20,8 +20,9 @@ function Face({ person, known, day, elder }: { person: GenPerson; known: boolean
     const ctx = canvas?.getContext('2d')
     if (!canvas || !ctx) return
     try {
-      if (person.id === BAKER_BABY_ID && person.stage === 'baby') {
-        const stage = babyStage(day)
+      // 아기는 아기 그림으로 (빵집 아기는 자라는 날에 맞춰, 그 밖의 아기는 누운 아기 — 2026-10-12 점검 16)
+      if (person.stage === 'baby') {
+        const stage = person.id === BAKER_BABY_ID ? babyStage(day) : 'baby'
         if (stage === 'none') return
         const rows = BABY[stage]
         canvas.width = 48
@@ -52,7 +53,8 @@ export function FamilyTree({ personId, neighborId }: { personId: string; neighbo
   const close = useGame(s => s.closeModal)
   const [focus, setFocus] = useState(personId)
   const viewport = useRef<HTMLDivElement>(null)
-  const g = useMemo(() => ensureBakerBaby(game.gen ?? newGenState(CONTENT, 0, game.clock.day), game.clock.day), [game.gen, game.clock.day])
+  // 우리 가족(주인공·우리 아이)도 가계도에 (2026-10-12 사용자 결정)
+  const g = useMemo(() => withPlayerFamily(ensureBakerBaby(game.gen ?? newGenState(CONTENT, 0, game.clock.day), game.clock.day), game), [game])
   const layout = familyTreeLayout(g, focus)
   const focusNode = layout?.nodes.find(node => node.id === focus)
   useEffect(() => {
@@ -61,14 +63,22 @@ export function FamilyTree({ personId, neighborId }: { personId: string; neighbo
     el.scrollLeft = Math.max(0, focusNode.x - el.clientWidth / 2)
     el.scrollTop = Math.max(0, focusNode.y - el.clientHeight / 2 + 48)
   }, [focusNode?.x, focusNode?.y])
-  const name = (id: string) => personName({ ...game, gen: g }, id)
+  const name = (id: string) => (id === ME ? game.avatar?.name || '나' : id === MY_CHILD ? game.child?.name ?? '' : personName({ ...game, gen: g }, id))
   // 마을에서 태어난 아이는 이름을 바꿀 수 있다 (2026-10-12 사용자) — 아직 모르는 사람('?')은 빼고
   const [draft, setDraft] = useState<string | null>(null)
   useEffect(() => setDraft(null), [focus])
-  const canRename = canRenamePerson(g, focus) && name(focus) !== t('gen.unknown')
+  const canRename = focus !== ME && canRenamePerson(g, focus) && name(focus) !== t('gen.unknown')
   const rename = () => {
-    const next = renamePerson(g, focus, draft ?? '')
-    if (next !== g) {
+    // 우리 아이 이름은 game.child에 (가계도용 자리는 저장하지 않는다)
+    if (focus === MY_CHILD) {
+      const nm = (draft ?? '').replace(/\s+/g, ' ').trim().slice(0, RENAME_MAX)
+      const cur = useGame.getState().game
+      if (nm && cur.child) { const game2 = { ...cur, child: { ...cur.child, name: nm } }; saveGame(game2); useGame.setState({ game: game2 }) }
+      setDraft(null)
+      return
+    }
+    const next = renamePerson(useGame.getState().game.gen ?? g, focus, draft ?? '')
+    if (next !== (useGame.getState().game.gen ?? g)) {
       const game2 = { ...useGame.getState().game, gen: next }
       saveGame(game2)
       useGame.setState({ game: game2 })
@@ -97,7 +107,7 @@ export function FamilyTree({ personId, neighborId }: { personId: string; neighbo
               const person = g.persons[node.id], label = name(node.id)
               return <button key={node.id} className={`genealogy-person${node.id === focus ? ' selected' : ''}`} style={{ left: node.x - 50, top: node.y }} aria-pressed={node.id === focus} aria-label={t('familyTree.person', { name: label, relation: t(`familyTree.relations.${node.relation}`) })} onClick={() => setFocus(node.id)}>
                 <span className="genealogy-face"><Face person={person} known={label !== t('gen.unknown')} day={game.clock.day} elder={residentIsElder(g, node.id)} /></span>
-                <strong>{label}</strong><small>{t(`familyTree.relations.${node.relation}`)}{node.id === BAKER_BABY_ID ? ` · ${t(`gen.growthStage.${person.stage}`)}` : ''}</small>
+                <strong>{label}</strong><small>{t(`familyTree.relations.${node.relation}`)}{node.id === BAKER_BABY_ID || person.stage === 'baby' ? ` · ${t(`gen.growthStage.${person.stage}`)}` : ''}</small>
               </button>
             })}
           </div>
@@ -109,7 +119,8 @@ export function FamilyTree({ personId, neighborId }: { personId: string; neighbo
         </form>}
       </> : <p>{t('familyTree.empty')}</p>}
       <div className="actions">
-        <button onClick={() => open({ kind: 'journal', tab: 'neighbors', neighbor: neighborId })}>{t('familyTree.back')}</button>
+        {neighborId ? <button onClick={() => open({ kind: 'journal', tab: 'neighbors', neighbor: neighborId })}>{t('familyTree.back')}</button>
+          : <button onClick={() => open({ kind: 'family' })}>가족 창으로</button>}
         <button data-close onClick={close}>{t('common.close')}</button>
       </div>
     </div>

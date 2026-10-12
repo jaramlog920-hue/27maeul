@@ -4,7 +4,7 @@
 // 계획 14부터 틀과 항아리는 파피루스·잉크 대신 꾸미기 재료(크림색 종이·푸른 염료)를 만든다 — 하루 양은 그대로.
 // 잉크 항아리·재료 궤짝은 방 꾸미기 가구로도 받아 집 안 자리를 고를 수 있다(그림일 뿐, 효과는 설치 표식으로).
 import { unlocked } from './bonds'
-import { add, count, MAX_STACK, stackCap, TOOLS, type Inventory } from './items'
+import { add, BAG_SLOTS, count, hasSlotFor, slotsUsed, stackCap, TOOLS, type Inventory } from './items'
 import type { ItemId } from './types'
 
 type Items = Partial<Record<ItemId, number>>
@@ -34,10 +34,10 @@ export const CARPENTER_WORKS: readonly CarpenterWork[] = [
 export const RAIN_WATER = { usual: 1, afterRain: 3 } as const
 /**
  * 갈대 말리는 틀: 밤마다 크림색 종이 1 (계획 14 — 필사에 재료가 들지 않으니 파피루스 대신 특별 제본의 꾸미기 재료).
- * 가방·궤짝에 이만큼 있으면 쉬어 간다 — 가죽 가방이 있어도 9, 과하게 쌓이지 않게
+ * 가방·궤짝에 이만큼 있으면 쉬어 간다 — 한 칸 한도가 99로 늘어도 9, 과하게 쌓이지 않게
  */
 export const RACK_PAPER = 1
-export const RACK_HOLD = MAX_STACK
+export const RACK_HOLD = 9
 /** 그을음 받이: 화덕을 쓸 때마다 그을음 1 — 하루 두 번까지, 가진 그을음이 다섯이면 더 모이지 않는다 */
 export const SOOT_CATCH = { perDay: 2, hold: 5 } as const
 /**
@@ -89,7 +89,8 @@ export function stash(inv: Inventory, chest: Inventory | null, gives: Items): { 
       bag = add(bag, { [id]: n })
       continue
     }
-    const room = Math.max(0, stackCap(bag) - count(bag, id))
+    // 빈칸이 없으면 새 물건은 모두 궤짝으로
+    const room = hasSlotFor(bag, id) ? Math.max(0, stackCap(bag) - count(bag, id)) : 0
     const toBag = Math.min(room, n)
     if (toBag > 0) bag = add(bag, { [id]: toBag })
     const toBox = Math.min(n - toBag, Math.max(0, CHEST_STACK - count(box, id)))
@@ -100,16 +101,22 @@ export function stash(inv: Inventory, chest: Inventory | null, gives: Items): { 
 
 /** 넣으면 넘쳐서 버려지는 것이 있는가 (가방 + 궤짝) */
 export function stashOverflows(inv: Inventory, chest: Inventory | null, gives: Items): boolean {
+  // 새 물건이 차지할 칸: 앞의 물건부터 남은 칸을 차례로 쓴다
+  let free = Math.max(0, BAG_SLOTS - slotsUsed(inv))
   return (Object.entries(gives) as [ItemId, number][]).some(([id, n]) => {
-    if (TOOLS.includes(id)) return false
-    if (!chest) return count(inv, id) + n > stackCap(inv)
-    return Math.max(0, stackCap(inv) - count(inv, id)) + Math.max(0, CHEST_STACK - count(chest, id)) < n
+    if (TOOLS.includes(id) || n <= 0) return false
+    const fresh = count(inv, id) === 0
+    const fits = !fresh || free > 0
+    if (fresh && fits) free--
+    const bagRoom = fits ? Math.max(0, stackCap(inv) - count(inv, id)) : 0
+    if (!chest) return bagRoom < n
+    return bagRoom + Math.max(0, CHEST_STACK - count(chest, id)) < n
   })
 }
 
 /** 궤짝에서 가방으로 꺼낸다 (가방에 들어가는 만큼만). 꺼낼 것이 없으면 null */
 export function fromChest(inv: Inventory, chest: Inventory, id: ItemId): { inv: Inventory; chest: Inventory } | null {
-  const n = Math.min(count(chest, id), Math.max(0, stackCap(inv) - count(inv, id)))
+  const n = hasSlotFor(inv, id) ? Math.min(count(chest, id), Math.max(0, stackCap(inv) - count(inv, id))) : 0
   if (n <= 0) return null
   const box = { ...chest }
   if (count(box, id) - n > 0) box[id] = count(box, id) - n

@@ -753,6 +753,12 @@ button.wood.primary {
 .creator {
   max-height: none;
 }
+/* 옷장은 창(아래 붙는 창) 안에서 열리므로 화면 높이에 맞추고 안에서 스크롤 — 짧은 휴대폰 화면에서 위가 잘렸다 (2026-10-12 MOB-03) */
+.dialog.creator.wardrobe {
+  max-height: 88vh;
+  max-height: 88dvh;
+  overflow-y: auto;
+}
 .creator-top {
   display: flex;
   gap: 12px;

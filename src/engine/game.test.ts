@@ -598,7 +598,7 @@ describe('리뷰 지적 회귀', () => {
     expect(lessonTime({ ...s, clock: { day: dayOf('summer', 24), minute: 18 * 60 + 10 } })).toBe(true)
   })
   it('m3: 가방이 넘치면 모으기·돕기·만들기·바꾸기·가구 거두기를 막는다', () => {
-    const full: GameState = { ...newGame(CONTENT), inv: { reed: 9, water: 9, bread: 9, papyrus: 9, grapes: 9, rug: 9 } }
+    const full: GameState = { ...newGame(CONTENT), inv: { reed: 99, water: 99, bread: 99, papyrus: 99, grapes: 99, rug: 99 } }
     expect(gatherInfo(full, 'reeds')).toEqual({ blocked: 'full' })
     expect(gatherInfo(full, 'well')).toEqual({ blocked: 'full' })
     expect(canHelp(full, def('baker'))).toBe('full')
@@ -735,7 +735,7 @@ describe('QA 수정', () => {
   it('보상이 가방에 안 들어가면 부탁을 아직 건네지 않는다', () => {
     const s = newGame(CONTENT)
     const r = REQUESTS_T.find((x) => x.id === 'merchant:1')!
-    const st = { ...s, hearts: { ...s.hearts, merchant: 90 }, flags: { ...s.flags, 'req:merchant:1': 1 }, inv: { bread: 3, papyrus: 9 } }
+    const st = { ...s, hearts: { ...s.hearts, merchant: 90 }, flags: { ...s.flags, 'req:merchant:1': 1 }, inv: { bread: 3, papyrus: 99 } }
     expect(r.reward.papyrus).toBe(2)
     expect(fulfillRequestT(st, 'merchant')).toBeNull()
     expect(fulfillRequestT({ ...st, inv: { bread: 3 } }, 'merchant')).not.toBeNull()

@@ -1,11 +1,11 @@
 // 연인에게 구절 선물 (2026-10-08): 주민 부탁 필사처럼 모은 말씀 조각 하나를 골라 써 준다 — 이레에 한 번, 정답 없음.
 // 기쁨·감사·소망·위로 분위기의 조각이 위에 온다. 써 주면 고마움 한 줄
 import { useState } from 'react'
-import { neighborById, pieceById } from '../../content/catalog'
+import { pieceById } from '../../content/catalog'
 import { fill, T } from '../../content/text'
 import { pieceFacts } from '../../content/piece-moods'
 import { giveLoveVerse, LOVE_VERSE_MOODS } from '../../engine/game'
-import { useGame } from '../../store/game-store'
+import { partnerName, useGame } from '../../store/game-store'
 import { applyLifeState } from '../work/WorkDay'
 
 const R = T.romance
@@ -15,7 +15,8 @@ export function LoveVerseView() {
   const game = useGame((s) => s.game)
   const { closeModal } = useGame.getState()
   const [said, setSaid] = useState<string | null>(null)
-  const who = neighborById(game.romance?.partner ?? '')?.role ?? ''
+  // 은퇴한 자리면 이어받은 사람 이름 (2026-10-12 점검 MOB-02)
+  const who = partnerName(game)
   const close = <button data-close onClick={closeModal}>{T.ui.close}</button>
   if (said)
     return (

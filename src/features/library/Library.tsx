@@ -9,6 +9,8 @@ import { openDoorsFor } from '../../engine/books'
 import { canLibraryRead, canTeachVisitor, LIBRARY_READ_PRICE, librarianCandidates, librarianId, setLibrarian, teachVisitor, todaysVisitor, type GameState } from '../../engine/game'
 import { saveGame } from '../../engine/save'
 import { GOSPELS } from '../../engine/types'
+import { libraryVisitorTile } from '../../engine/library-visitor'
+import { PiecePicker } from './PiecePicker'
 import { useGame } from '../../store/game-store'
 import { t } from '../../shared/i18n'
 import { ShelfPicture } from './BookArt'
@@ -21,6 +23,8 @@ function LibraryOps() {
   const current = librarianId(game)
   const candidates = librarianCandidates(game)
   const visitor = todaysVisitor(game)
+  // 방문객이 서고에 와 있는 동안만 (9–17시, 대화창과 같은 기준 — 2026-10-12 점검 4)
+  const visitorInLibrary = !!libraryVisitorTile(game)
   const apply = (next: GameState | null) => {
     if (!next) return
     saveGame(next)
@@ -38,28 +42,21 @@ function LibraryOps() {
         ))}
         {current && <button onClick={() => apply(setLibrarian(useGame.getState().game, null))}>{t('libraryOps.release')}</button>}
       </div>
-      {visitor && canTeachVisitor(game) && !teaching && (
+      {visitor && canTeachVisitor(game) && visitorInLibrary && !teaching && (
         <div className="actions menu">
           <button className="primary" onClick={() => setTeaching(true)}>{t('libraryOps.teach')}</button>
         </div>
       )}
       {teaching && (
-        <ul className="rows">
-          {game.collected.filter((id) => !id.startsWith('ot:')).map((id) => (
-            <li key={id}>
-              <button
-                className="row"
-                onClick={() => {
-                  apply(teachVisitor(useGame.getState().game, id))
-                  setTeaching(false)
-                  useGame.getState().say(t('libraryOps.taught'), 3000)
-                }}
-              >
-                <span className="row-main"><b>{pieceById(id).title}</b><small>{pieceById(id).ref}</small></span>
-              </button>
-            </li>
-          ))}
-        </ul>
+        <PiecePicker
+          ids={game.collected}
+          onCancel={() => setTeaching(false)}
+          onPick={(id) => {
+            apply(teachVisitor(useGame.getState().game, id))
+            setTeaching(false)
+            useGame.getState().say(t('libraryOps.taught'), 3000)
+          }}
+        />
       )}
     </section>
   )

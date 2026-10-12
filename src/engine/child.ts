@@ -71,6 +71,19 @@ export const JOB_GIFTS: Record<AdultJob, Partial<Record<ItemId, number>>> = {
   instrumentMaker: { bronzeOrnament: 1 },
 }
 
+/**
+ * 마을 밖(다른 지역)으로 떠나 사는 직업 (2026-10-12 사용자 결정 2): 뱃사람·여행자·상인.
+ * 떠나면 마을에 안 보이고 편지·선물·닢을 보낸다. 그 밖의 직업은 마을 안 — 집에 살거나 공동주택에서 산다
+ */
+export const LEAVING_JOBS: readonly AdultJob[] = ['sailor', 'traveler', 'merchant']
+export const leavesVillage = (job: AdultJob | undefined): boolean => !!job && LEAVING_JOBS.includes(job)
+export type ChildHome = 'home' | 'lodging' | 'away'
+/** 다 자란 아이가 사는 곳: 집 / 공동주택 2층 / 다른 지역 (공동주택 표식이 있으면 공동주택) */
+export function childHome(s: { child?: Pick<Child, 'left'> | null; flags: Record<string, number> }): ChildHome {
+  if (!s.child?.left) return 'home'
+  return s.flags['lodging:playerChild'] ? 'lodging' : 'away'
+}
+
 /** 경험한 관심과 능력치로 직업을 추천하며 기존 거주 선택을 보존한다. */
 export function adultJob(c: Pick<Child, 'stats' | 'lean'> & Partial<Pick<Child,'interests'|'left'>>): { job: AdultJob; left: boolean; stat: StatId } {
   let best: StatId = c.lean ?? 'strength'

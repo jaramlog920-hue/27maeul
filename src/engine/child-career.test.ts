@@ -12,9 +12,9 @@ describe('자식 진로 확정과 독립된 거주 선택',()=>{
   useGame.setState({game:{...base,clock:{...base.clock,day:85},child}})
   useGame.getState().chooseChildCareer('painter')
   expect(useGame.getState().game.child).toMatchObject({job:'painter',jobConfirmed:true,left:false})
-  useGame.getState().setChildResidence(true)
+  useGame.getState().setChildResidence('lodging')
   expect(useGame.getState().game.child).toMatchObject({job:'painter',left:true})
-  useGame.getState().setChildResidence(false)
+  useGame.getState().setChildResidence('home')
   const saved=deserialize(serialize(useGame.getState().game),CONTENT)
   expect(saved?.child).toMatchObject({job:'painter',jobConfirmed:true,left:false})
   useGame.getState().chooseChildCareer('cook')
@@ -23,7 +23,7 @@ describe('자식 진로 확정과 독립된 거주 선택',()=>{
  it('성인 전에는 진로와 거주지를 바꿀 수 없다',()=>{
   const base=newGame(CONTENT),child={...newChild(1,freshStats(),undefined),job:'cook' as const,jobConfirmed:false,left:false}
   useGame.setState({game:{...base,child}})
-  useGame.getState().chooseChildCareer('painter');useGame.getState().setChildResidence(true)
+  useGame.getState().chooseChildCareer('painter');useGame.getState().setChildResidence('lodging')
   expect(useGame.getState().game.child).toEqual(child)
  })
 })

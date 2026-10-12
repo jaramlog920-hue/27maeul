@@ -532,12 +532,12 @@ export function sanitizeGen(raw: unknown, today: number): GenState | undefined {
   const log: GenLog[] = []
   if (Array.isArray(raw.log)) for (const l of raw.log) if (isObj(l) && isNat(l.day) && isStr(l.kind)) log.push({ day: l.day, kind: l.kind, who: strs(l.who) })
   const maxNum = (ids: string[], re: RegExp) => ids.reduce((m, id) => Math.max(m, Number(re.exec(id)?.[1] ?? 0)), 0)
-  // 세대교체: 부모·자녀가 계보에 있고 자녀가 태어난 사람일 때만
+  // 세대교체: 부모·자녀가 계보에 있고 자녀가 태어난 사람일 때만 (빵집 아이가 헤이즐을 잇는 것도 — 2026-10-12)
   const heirMap = <K extends 'since' | 'day'>(v: unknown, k: K): Record<string, { heir: string } & Record<K, number>> | undefined => {
     if (!isObj(v)) return undefined
     const out: Record<string, { heir: string } & Record<K, number>> = {}
     for (const [npc, x] of Object.entries(v)) {
-      if (!isObj(x) || !isStr(x.heir) || !isNat(x[k]) || !fixed.persons[npc] || fixed.persons[x.heir]?.origin !== 'born') continue
+      if (!isObj(x) || !isStr(x.heir) || !isNat(x[k]) || !fixed.persons[npc] || (fixed.persons[x.heir]?.origin !== 'born' && !(npc === 'baker' && x.heir === BAKER_BABY_ID && fixed.persons[x.heir]))) continue
       out[npc] = { heir: x.heir, [k]: Math.min(x[k] as number, today) } as { heir: string } & Record<K, number>
     }
     return Object.keys(out).length ? out : undefined

@@ -1,11 +1,12 @@
 // 메뉴 → 가족 (2026-09-30 사용자): 배우자·아이·동물 친구와 가족 앨범을 한 화면에
 import { neighborById } from '../../content/catalog'
 import { T, withSubject } from '../../content/text'
-import { ADULT_JOBS, childMode, childStage, type AdultJob, type ChildStage } from '../../engine/child'
+import { ADULT_JOBS, childHome, childMode, childStage, leavesVillage, type AdultJob, type ChildStage } from '../../engine/child'
 import { useState } from 'react'
 import { heartsOf } from '../../engine/hearts'
 import { closeHearts } from '../../engine/family'
 import { STAT_IDS, statScore, type StatId } from '../../engine/stats'
+import { ME } from '../../engine/family-tree'
 import { useGame } from '../../store/game-store'
 
 const STAT_NAME = T.stats.names as Record<StatId, string>
@@ -16,7 +17,7 @@ export const JOB_NAME: Record<AdultJob, string> = {
   herbalist: '약초꾼', traveler: '여행자', cook: '요리사', painter: '화가',
   weaver: '직조가', gardener: '원예가', potter: '도예가', instrumentMaker: '악기 제작자',
 }
-const MODE_NAME = { follow: '데리고 다니는 중', home: '집에 있어요', roam: '혼자 마을을 다녀요', cradle: '요람에서 자요', away: '먼 곳에 살아요' } as const
+const MODE_NAME = { follow: '데리고 다니는 중', home: '집에 있어요', roam: '혼자 마을을 다녀요', cradle: '요람에서 자요', away: '먼 곳에 살아요', lodging: '공동 주택 2층에 살아요' } as const
 const STAGE_NAMES_ROMANCE = { dating: '사귀는 중', engaged: '약혼', married: '부부' } as Record<string, string>
 
 export function Family() {
@@ -36,6 +37,8 @@ export function Family() {
         {game.avatar && <button onClick={() => open({ kind: 'wardrobe', who: 'me' })}>내 옷장</button>}
         {game.romance?.stage === 'married' && partner?.avatar && <button onClick={() => open({ kind: 'wardrobe', who: 'spouse' })}>{partner.role} 옷장</button>}
         {kid && <button onClick={() => open({ kind: 'wardrobe', who: 'child' })}>{kid.name} 옷장</button>}
+        {/* 우리 가족 가계도 (2026-10-12 사용자: 가족 창에서도 바로) */}
+        {(game.romance?.stage === 'married' || kid) && <button onClick={() => open({ kind: 'familyTree', personId: ME, neighborId: '' })}>가계도</button>}
       </div>
       {empty && <p className="hint">아직 함께 사는 가족이 없어요. 이웃과 가까워지고, 떠돌이 동물을 거두면 이곳에 적혀요.</p>}
       {partner && r && (
@@ -55,7 +58,7 @@ export function Family() {
             {kid.name} <span className="fam-tag">{STAGE_NAME[childStage(kid, day)]}</span>
           </h3>
           <p>
-            태어난 지 {day - kid.born + 1}일 · {MODE_NAME[childMode(kid, day)]}
+            태어난 지 {day - kid.born + 1}일 · {MODE_NAME[childMode(kid, day) === 'away' && childHome(game) === 'lodging' ? 'lodging' : childMode(kid, day)]}
             {kid.job && ` · ${JOB_NAME[kid.job]}`}
           </p>
           {(kid.close ?? 0) > 0 && (
@@ -77,8 +80,12 @@ export function Family() {
           )}
           {kid.job && kid.jobConfirmed !== false && childStage(kid, day) === 'adult' && (
             <div className="actions">
-              <p>직업과 사는 곳은 따로 정할 수 있어요.</p>
-              <button onClick={() => useGame.getState().setChildResidence(!kid.left)}>{kid.left ? '마을로 돌아와 살기' : '마을 밖에서 살아보기'}</button>
+              {/* 사는 곳은 직업에 따라: 떠나는 직업은 더 넓은 곳으로, 마을 안 직업은 공동주택으로 (2026-10-12 결정 2) */}
+              {kid.left
+                ? <button onClick={() => useGame.getState().setChildResidence('home')}>집으로 돌아와 살기</button>
+                : leavesVillage(kid.job)
+                  ? <button onClick={() => useGame.getState().setChildResidence('away')}>더 넓은 곳으로 떠나기</button>
+                  : <button onClick={() => useGame.getState().setChildResidence('lodging')}>공동 주택에서 살기</button>}
             </div>
           )}
           <ul className="fam-stats">

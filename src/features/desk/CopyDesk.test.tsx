@@ -438,7 +438,7 @@ describe('필사 책상 — 구약 칸', () => {
     expect(useGame.getState().game.otCopyStats?.verses).toBe(1)
   })
 
-  it('장을 마치면 장 완료 화면: 능력치·기록 줄·제본 단추 없이 [책 덮기]', async () => {
+  it('장을 마치면 장 완료 화면: 기록 줄·제본 단추 없이 [책 덮기], 경험치는 신약과 같이', async () => {
     await ensureOtBook('oba')
     reset(gifted({ copy: { book: 'oba', at: { oba: { chapter: 1, verse: 1 } }, legacy: {} } }))
     render(<ModalLayer />)
@@ -447,12 +447,12 @@ describe('필사 책상 — 구약 칸', () => {
     for (const v of versesOf('옵 1:1-21')) fireEvent.change(box(), { target: { value: v.text } })
     expect(screen.getByRole('heading')).toHaveTextContent('오바댜 1장')
     expect(screen.queryByText(T.copyFocus.bind)).toBeNull()
-    expect(document.querySelector('.copy-gains')).toBeNull()
     expect(document.querySelector('.copy-god')).toBeNull()
     expect(screen.getByRole('button', { name: T.copyFocus.closeBook })).toBeInTheDocument()
     const g = useGame.getState().game
     expect(g.otProgress?.oba?.completed).toEqual([1])
-    expect(g.stats).toEqual(newGame(CONTENT).stats)
+    // 2026-10-12 사용자: 구약 필사도 경험치
+    expect(g.stats).not.toEqual(newGame(CONTENT).stats)
     expect(g.godRecords).toEqual([])
   })
 

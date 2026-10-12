@@ -36,6 +36,19 @@ export function familyHomes(s: Pick<GameState, 'gen' | 'flags' | 'newland'>): { 
   return out
 }
 
+/**
+ * 새 터 집으로 이사한 가구의 사람인가 (2026-10-12 사용자 결정 1): 밤에는 새 터 집에서 자고, 첫 마을의 다른 집으로 들어가지 않는다.
+ * npc는 이웃 자리 id나 사람 id
+ */
+export function livesInNewland(s: Pick<GameState, 'gen' | 'flags' | 'newland'>, npc: string): boolean {
+  return familyHomes(s).some((x) => x.household.members.includes(npc))
+}
+
+/** 새 터 집 문 옆에 설 사람: 아기가 아닌 첫 사람 — 원래 이웃끼리 꾸린 가구도 (그림은 그 이웃의 모습으로) */
+export function familyShownMember(s: Pick<GameState, 'gen'>, h: Household): string | null {
+  return h.members.find((id) => { const p = s.gen?.persons[id]; return !!p && p.stage !== 'baby' }) ?? null
+}
+
 /** 아무도 살지 않는 새 터 입주 주택 (이웃이 된 손님·가족이 사는 집 빼고) */
 export function emptyHomes(s: Pick<GameState, 'flags' | 'newland'>): Build[] {
   const used = new Set<string>()

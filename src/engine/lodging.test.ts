@@ -83,7 +83,7 @@ it('grown children without homes occupy four rooms, keep rooms after loading, an
  expect(lodgingChildren(loaded).map(p=>p.seat)).toEqual(lodgingChildren(g).map(p=>p.seat))
  const child={...newChild(1,freshStats(),undefined),job:'cook' as const,jobConfirmed:true,left:false}
  useGame.setState({game:{...g,clock:{...g.clock,day:85},child}})
- useGame.getState().setChildResidence(true)
+ useGame.getState().setChildResidence('lodging')
  expect(useGame.getState().game.child?.left).toBe(false)
 })
 

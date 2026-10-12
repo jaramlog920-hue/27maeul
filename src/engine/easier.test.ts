@@ -302,7 +302,7 @@ describe('재료 궤짝: 가방이 차면 궤짝으로, 책상·작업대는 궤
     expect(r.chest).toEqual({ papyrus: 2, ink: 2 })
   })
   it('궤짝의 것은 집 안에서만 가방으로 꺼낸다', () => {
-    const s = { ...own({ ...ready(), inv: { reed: 8 } }, 'supplyChest'), chest: { reed: 5, fig: 2 } }
+    const s = { ...own({ ...ready(), inv: { reed: MAX_STACK - 1 } }, 'supplyChest'), chest: { reed: 5, fig: 2 } }
     expect(takeFromChest({ ...s, player: { ...s.player, x: HOME_FRONT.x, y: HOME_FRONT.y } }, 'fig')).toBeNull()
     const home = { ...s, player: { ...s.player, x: HOME_ENTRY.x, y: HOME_ENTRY.y } }
     const r = takeFromChest(home, 'reed')!

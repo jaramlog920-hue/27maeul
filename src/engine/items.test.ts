@@ -11,8 +11,8 @@ describe('items', () => {
     expect(inv).toEqual({})
     expect(take(inv, { water: 1 })).toBeNull()
   })
-  it('최대 9개, 도구는 1개', () => {
-    expect(count(add({ reed: 8 }, { reed: 5 }), 'reed')).toBe(MAX_STACK)
+  it('한 칸 최대 99개, 도구는 1개', () => {
+    expect(count(add({ reed: 98 }, { reed: 5 }), 'reed')).toBe(MAX_STACK)
     expect(count(add({ goodPen: 1 }, { goodPen: 1 }), 'goodPen')).toBe(1)
   })
   it('빵: 보리 하나와 물 하나로 두 개', () => {

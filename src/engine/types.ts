@@ -85,7 +85,8 @@ export type Target =
   | { kind: 'space'; id: string; tile: Tile }
   /** 왕래 표식 (계획 20 작업 3): 곁에 서면 건너가는 창 */
   | { kind: 'portal'; to: MapId }
-  | { kind: 'ground' }
+  /** at: 새 터에서 사람 칸을 눌러 그 곁에 선 때, 누른 칸 (그 사람과 이야기 — 2026-10-12) */
+  | { kind: 'ground'; at?: Tile }
 /** 네 복음서 — 도장·복음서 탐정·"어느 복음서"·복음서 방은 이 네 권만 */
 export type Gospel = 'mt' | 'mk' | 'lk' | 'jn'
 /**

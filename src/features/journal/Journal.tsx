@@ -2,6 +2,7 @@
 // 2026-10-04: 따로 있던 선반의 풍경 앨범·받은 선물·업적을 이리로 옮겼다 (가족 창의 [가족 앨범]도 이 앨범 칸을 연다)
 import { useEffect, useRef, useState } from 'react'
 import { CONTENT, neighborById, pieceById } from '../../content/catalog'
+import { childHome } from '../../engine/child'
 import { fill, ITEM_TEXT, itemName, JOB_NAME, JOURNAL_NOTES, kidFill, SCENES, spouseFill, T } from '../../content/text'
 import { ACHIEVEMENTS } from '../../engine/achievements'
 import { weatherOf } from '../../engine/calendar'
@@ -77,12 +78,13 @@ function VillageTab() {
 function Days() {
   const journal = useGame((s) => s.game.journal)
   const kid = useGame((s) => s.game.child)
+  const home = useGame((s) => childHome(s.game))
   if (journal.length === 0) return <p>{T.ui.journalEmpty}</p>
   return (
     <>
     {kid?.job && (
       <p className="hint">
-        {kid.name} · {JOB_NAME[kid.job]} · {kid.left ? '마을을 떠나 산다' : '마을에 남아 산다'}
+        {kid.name} · {JOB_NAME[kid.job]} · {home === 'away' ? '마을을 떠나 산다' : home === 'lodging' ? '공동 주택에 산다' : '마을에 남아 산다'}
       </p>
     )}
     <ul className="journal-list">

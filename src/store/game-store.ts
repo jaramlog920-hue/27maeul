@@ -45,7 +45,7 @@ import { copyStatGains, type CopyStatGain } from '../engine/copy-result'
 import { copiedChapters, copiedReadingVerses } from '../engine/copied-reading'
 import type { BoardRequest } from '../engine/board'
 import { DESTS, type DestId } from '../engine/travel'
-import { JOB_GIFTS, kidCoins, ADULT_JOBS, childStage, type AdultJob, type ChildMode } from '../engine/child'
+import { JOB_GIFTS, kidCoins, ADULT_JOBS, childStage, leavesVillage, type AdultJob, type ChildHome, type ChildMode } from '../engine/child'
 import type { TripReward } from '../engine/trip-board'
 import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
 import { allShelved, canShelve, payRetry, poolFor, shelve, shelveNow as shelveQuick } from '../engine/library'
@@ -58,6 +58,7 @@ import { rumorNow, villageSeed } from '../engine/villages'
 import { canAutoRead, canRead, seasonCopyGift, seasonCopyKey } from '../engine/meetings'
 import { libraryVisitorTile, visitorBeside } from '../engine/library-visitor'
 import { guestLine, innGuestsNow, metGuest } from '../engine/inn-guests'
+import { isNear } from '../engine/neighbors'
 import { expireStall, isStallTile } from '../engine/stall'
 import { rememberTalkPopup } from '../engine/talk-popups'
 import { eventNeighborLine, oldNeighborLine } from '../engine/neighbor-moments'
@@ -182,6 +183,7 @@ import {
   type Trade,
 } from '../engine/game'
 import { isHome, lockedTiles, lockedZones, placeAt, roomAt, sameTile, zoneAt } from '../engine/world'
+import { slotPerson } from '../engine/gen-growth'
 import { footprint, removal, type Furniture } from '../engine/room'
 import { inBuildingRoom, roomOf as furnitureRoomOf } from '../engine/newland-rooms'
 import { heartsOf } from '../engine/hearts'
@@ -289,7 +291,7 @@ export type Modal =
   | { kind: 'farewell' }
   | { kind: 'loveVerse' }
   /** 새 터 시설 (손님집·기억 정원·공동 마당·꿈터) */
-  | { kind: 'facility'; id: FacilityKind }
+  | { kind: 'facility'; id: FacilityKind; at?: Tile }
   /** 배움터: 아이 맡기기 */
   | { kind: 'school' }
   | { kind: 'menu'; place: MenuPlace }
@@ -505,7 +507,7 @@ interface Store {
   petCompanion: () => void
   petActivity: (action: 'play' | 'rest') => void
   chooseChildCareer: (job: AdultJob) => void
-  setChildResidence: (away: boolean) => void
+  setChildResidence: (where: ChildHome) => void
   keepCompanion: (stay: boolean) => void
   keepChild: (mode: ChildMode) => void
   goSchool: (stat: StatId) => void
@@ -859,7 +861,11 @@ function announceRoom(before: GameState, after: GameState, door = true) {
 /** 연인·약혼자·배우자 이름 (없으면 빈 글자) */
 export function partnerName(game: GameState): string {
   const id = game.romance?.partner
-  return (id && CONTENT.neighbors.find((n) => n.id === id)?.role) || ''
+  if (!id) return ''
+  // 은퇴한 이웃 자리면 그 자리를 이어받은 사람 이름 (대화창과 같게 — 2026-10-12 점검 MOB-02)
+  const heir = game.gen?.persons[slotPerson(game.gen, id)]
+  if (heir?.origin === 'born' && heir.name) return heir.name
+  return CONTENT.neighbors.find((n) => n.id === id)?.role || ''
 }
 
 /** 누르면 할 일 창이 뜨는 자리 */
@@ -1163,8 +1169,10 @@ export const useGame = create<Store>((set, get) => {
     }
     // 새 터 시설 (계획 18 남은 것): 손님집·꿈터 문 앞, 기억 정원·공동 마당 안에 서면 그 창
     if (target.kind === 'ground' && currentMapId() === 'newland') {
-      const fac = facilityAt(game, playerTile(game))
-      if (fac) return { game, modal: { kind: 'facility', id: fac } }
+      // 사람 칸을 눌러 곁에 섰으면 그 칸의 사람, 아니면 선 자리
+      const at = target.at && isNear(playerTile(game), target.at) ? target.at : playerTile(game)
+      const fac = facilityAt(game, at)
+      if (fac) return { game, modal: { kind: 'facility', id: fac, at } }
     }
     if (target.kind !== 'place') return { game, modal: null }
     switch (target.id) {
@@ -1646,12 +1654,18 @@ export const useGame = create<Store>((set, get) => {
       if (!c || childStage(c,g.clock.day)!=='adult' || c.jobConfirmed !== false || !ADULT_JOBS.includes(job)) return
       set({ game: persist({ ...g, child: { ...c, job, jobConfirmed: true } }) })
     },
-    setChildResidence: (away) => {
+    setChildResidence: (where) => {
       const g=get().game,c=g.child
       if(!c || childStage(c,g.clock.day)!=='adult' || !c.job || c.jobConfirmed === false) return
-      if(away&&!g.flags['lodging:playerChild']&&lodgingChildren(g).length>=LODGING_CHILD_SEATS.length){get().say('공동 주택에 빈방이 없어요.');return}
-      set({ game:persist({ ...g,flags:{...g.flags,'lodging:playerChild':away?1:0},child:{...c,left:away,mode:away?undefined:'roam'} }) })
-      if(away)get().say(`${c.name} · 대장간 쪽 공동 주택 2층에 입주했어요.`)
+      // 사는 곳은 직업에 따라 (2026-10-12 결정 2): 떠나는 직업은 다른 지역으로만, 마을 안 직업은 공동주택으로만
+      if(where==='away'&&!leavesVillage(c.job))return
+      if(where==='lodging'&&leavesVillage(c.job))return
+      if(where==='lodging'&&!g.flags['lodging:playerChild']&&lodgingChildren(g).length>=LODGING_CHILD_SEATS.length){get().say('공동 주택에 빈방이 없어요.');return}
+      const out=where!=='home'
+      set({ game:persist({ ...g,flags:{...g.flags,'lodging:playerChild':where==='lodging'?1:0},child:{...c,left:out,mode:out?undefined:'roam'} }) })
+      if(where==='lodging')get().say(`${c.name} · 대장간 쪽 공동 주택 2층에 입주했어요.`)
+      else if(where==='away')get().say(`${c.name} · 더 넓은 곳으로 떠났어요. 가끔 편지와 선물을 보내올 거예요.`)
+      else get().say(`${c.name} · 집으로 돌아와 함께 살아요.`)
     },
     keepCompanion: (stay) => {
       const g = setCompanionStay(get().game, stay)
@@ -2354,6 +2368,8 @@ export const useGame = create<Store>((set, get) => {
       // 주민 가족 소식 (계획 20 2부 P13): 밤사이 생긴 일을 많아야 세 줄, 아이 소식 뒤에
       const news = freshNews(next, before)
       if (news.length) setTimeout(() => get().say(news.join('\n'), 5200), 3800)
+      // 떠난 아이가 새 터 손님집에 다니러 온 아침: 재회 편지 한 줄 (2026-10-12 사용자 결정 2)
+      if (next.flags.kidVisitLetter === next.clock.day && next.child) setTimeout(() => get().say(`${withSubject(next.child!.name)} 서른아홉 권의 터 손님집에 다니러 왔어요. 사흘 묵어요.`, 5200), 2600)
     },
     saveMyLine: (lineKey, text) => set({ game: persist(setMyLine(get().game, lineKey, text)), modal: afterMyLine(get().modal) }),
     saveGuideLine: (lineKey, text) => set({ game: persist(setMyLine(get().game, lineKey, text)) }),

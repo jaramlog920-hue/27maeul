@@ -160,7 +160,7 @@ function Body() {
     case 'sellStand':
       return <SellStandView />
     case 'facility':
-      return <FacilityView id={modal.id} />
+      return <FacilityView id={modal.id} at={modal.at} />
     case 'school':
       return <SchoolView />
     case 'letter':

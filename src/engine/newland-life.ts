@@ -14,7 +14,7 @@ import { NO_NOTEBOOK, noteGot } from './notebook'
 import { moveInGift } from './collection-gifts'
 import { areaOf, buildsOf, doneHomes, doorOf, standSpotOf, type Build } from './newland-build'
 import { isOpenYard } from './newland-sites'
-import { childStage, type AdultJob } from './child'
+import { childHome, childStage, JOB_GIFTS, type AdultJob } from './child'
 import { emptyHomeAt, emptyHomes, familyAt, homeWishes } from './gen-homes'
 import { isWalkable, ROOMS } from './world'
 /** 첫 마을에 방이 있는 이웃인가 (주택 희망 목록 — 방이 없는 신혼 가구만) */
@@ -44,6 +44,30 @@ export function guestNow(s: Pick<GameState, 'flags' | 'clock'>): GuestId | null 
   return s.clock.day - (s.flags.guestSince ?? 0) < GUEST_STAY ? GUESTS[i - 1].id : null
 }
 
+// ── 떠난 아이의 다니러 옴 (2026-10-12 사용자 결정 2): 다른 지역으로 떠난 아이가 가끔 손님집에 사흘 묵는다 ──
+/** 다녀간 뒤 다시 오기까지 (사흘 머묾 포함, 대략 세 주에 한 번) */
+export const KID_VISIT_GAP = 21
+type KidS = S & Partial<Pick<GameState, 'child'>>
+/** 떠난 아이가 지금 손님집에 묵고 있나 */
+export function kidVisiting(s: KidS): boolean {
+  const since = s.flags.kidVisitSince
+  return !!since && s.clock.day - since < GUEST_STAY && !!s.child && childHome({ child: s.child, flags: s.flags }) === 'away'
+}
+/** 떠난 아이와 이야기 (하루 한 번): 몇째 날 이야기인지, 사흘째엔 가족 나들이 짐 — 그 아이 직업의 물건 (JOB_GIFTS) */
+export function talkKidVisit<T extends KidS & Pick<GameState, 'inv'>>(s: T): { state: T; line: number; gift?: Partial<Record<ItemId, number>> } | null {
+  if (!kidVisiting(s) || s.flags.kidVisitTalkDay === s.clock.day) return null
+  const n = (s.flags.kidVisitTalks ?? 0) + 1
+  let flags: Flags = { ...s.flags, kidVisitTalkDay: s.clock.day, kidVisitTalks: n }
+  let inv = s.inv
+  let gift: Partial<Record<ItemId, number>> | undefined
+  if (n === GUEST_STAY && s.flags.kidVisitGiftDay !== s.flags.kidVisitSince) {
+    gift = (s.child?.job && JOB_GIFTS[s.child.job]) || { bread: 2 }
+    inv = addGift(inv, gift)
+    flags = { ...flags, kidVisitGiftDay: s.flags.kidVisitSince! }
+  }
+  return { state: { ...s, flags, inv }, line: Math.min(n, GUEST_STAY) - 1, ...(gift ? { gift } : {}) }
+}
+
 /** 아침: 머문 지 사흘이 지난 손님은 떠나고, 빈 손님집에는 때가 되면 새 손님 (선물을 아직 남기지 않은 손님부터) */
 export function guestHouseMorning<T extends S>(s: T): T {
   if (!doneOf(s, 'guest')) return s
@@ -53,14 +77,33 @@ export function guestHouseMorning<T extends S>(s: T): T {
     flags.guestNow = 0
     flags.guestNext = day + GUEST_GAP
   }
+  // 떠난 아이가 사흘 묵고 돌아갔으면 손님집은 다시 손님 차례를 기다린다
+  if (flags.kidVisitSince && day - flags.kidVisitSince >= GUEST_STAY) {
+    flags.kidVisitSince = 0
+    flags.guestNext = Math.max(flags.guestNext ?? 0, day + GUEST_GAP)
+  }
+  // 빈 손님집에 떠난 아이가 다니러 온다 (손님 차례에 끼어서, 세 주에 한 번꼴) — 오는 날 아침 재회 편지(kidVisitLetter)
+  const child = (s as KidS).child
+  if (!flags.guestNow && !flags.kidVisitSince && day >= (flags.guestNext ?? 0) && child && childHome({ child, flags }) === 'away' && day >= (flags.kidVisitNext ?? 0)) {
+    flags.kidVisitSince = day
+    flags.kidVisitNext = day + KID_VISIT_GAP
+    flags.kidVisitTalks = 0
+    flags.kidVisits = (flags.kidVisits ?? 0) + 1
+    flags.kidVisitLetter = day
+    return { ...s, flags }
+  }
+  if (flags.kidVisitSince) return { ...s, flags }
   // 이웃이 된 손님(집이 남아 있는)은 다시 손님으로 오지 않는다 (모두 이웃이 되면 손님집은 빈다). 집이 걷힌 손님은 다시 손님으로 온다
   const living = new Set(settledGuests(s).map((x) => x.id))
   if (!flags.guestNow && day >= (flags.guestNext ?? 0) && GUESTS.some((g) => !living.has(g.id))) {
     const visitors = GUESTS.filter((g) => !living.has(g.id))
     const fresh = visitors.filter((g) => !flags[`guestGift:${g.id}`])
     const pool = fresh.length ? fresh : visitors
-    const g = pool[(day * 7 + 3) % pool.length]
+    // 가장 오래 안 온 손님부터 (온 날 guestSeen:<id>) — 날로 고르면 늘 같은 손님이 왔다 (2026-10-12 점검 2)
+    const seen = (id: string) => flags[`guestSeen:${id}`] ?? -1
+    const g = [...pool].sort((a, b) => seen(a.id) - seen(b.id))[0]
     flags.guestNow = GUESTS.indexOf(g as (typeof GUESTS)[number]) + 1
+    flags[`guestSeen:${g.id}`] = day
     flags.guestSince = day
     flags.guestTalks = 0
   }
@@ -153,10 +196,10 @@ export function settledLine(s: Pick<GameState, 'clock'>, id: GuestId, lines: num
 // 어른이 되어 마을에 남은 우리 아이(직업이 정해진)만 건물 목록에 보인다. 이사(독립)는 사건으로만 — 저절로 옮기지 않는다.
 // 낮(9–17시)엔 문 옆에서 일하고, 하루 한 번 들르면 이야기 한 줄 — 요리사라면 오늘 만든 것 한 접시(요리 표 DISHES 재사용).
 
-/** 일터를 지을 수 있는 아이의 직업 (어른·마을에 남음·직업 있음) */
-export function kidWorkJob(s: Pick<GameState, 'child' | 'clock'>): AdultJob | null {
+/** 일터를 지을 수 있는 아이의 직업 (어른·마을 안에 삶(집이나 공동주택)·직업 있음 — 다른 지역으로 떠난 아이는 빼고, 2026-10-12 결정 2) */
+export function kidWorkJob(s: Pick<GameState, 'child' | 'clock'> & Partial<Pick<GameState, 'flags'>>): AdultJob | null {
   const c = s.child
-  if (!c?.job || c.left) return null
+  if (!c?.job || childHome({ child: c, flags: s.flags ?? {} }) === 'away') return null
   return childStage(c, s.clock.day) === 'adult' ? c.job : null
 }
 /** 요리사 아이가 날마다 돌아가며 싸 주는 것 */
@@ -206,12 +249,7 @@ export const MEND_GAIN = 5
 export function canMendQuarrel(s: Pick<GameState, 'flags' | 'newland'>): boolean {
   return !!doneOf(s, 'courtyard') && !s.flags.loveCase
 }
-export function mendQuarrel<T extends Pick<GameState, 'flags' | 'newland' | 'clock' | 'hearts'>>(s: T, pair: [string, string]): T {
-  if (!canMendQuarrel(s)) return s
-  const hearts = { ...s.hearts }
-  for (const id of pair) hearts[id] = Math.min(100, (hearts[id] ?? 0) + MEND_GAIN)
-  return { ...s, hearts, flags: { ...s.flags, loveCase: s.clock.day } }
-}
+// 화해 동작은 game.ts의 mendQuarrelWith — 마음은 heartUp으로 (2026-10-11·12 점검: 직접 더하던 함수를 없앴다)
 
 // ── 문 앞·마당 안에 서면 여는 창 ──
 

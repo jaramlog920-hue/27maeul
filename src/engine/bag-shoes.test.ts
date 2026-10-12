@@ -1,4 +1,4 @@
-// 계획 11 작업 2: 가방과 신 — 가죽 가방(한 칸 18), 튼튼한 신(×1.2), 가벼운 신(양치기 선물, ×1.4)
+// 계획 11 작업 2: 가방과 신 — 튼튼한 신(×1.2), 가벼운 신(양치기 선물, ×1.4). 가방은 2026-10-12부터 한 칸 99개·50칸 (가죽 가방은 팔지 않음)
 import { CONTENT } from '../content/catalog'
 import { isWet, weatherOf } from './calendar'
 import { ITEM_TEXT, JOURNAL_NOTES, SCENES, T } from '../content/text'
@@ -18,7 +18,8 @@ import {
   type GameState,
 } from './game'
 import { heartsOf } from './hearts'
-import { add, BIG_STACK, MAX_STACK, stackCap, TOOLS } from './items'
+import { add, addGift, BAG_SLOTS, BIG_STACK, hasSlotFor, MAX_STACK, slotsUsed, stackCap, TOOLS } from './items'
+import type { ItemId } from './types'
 import { findPath, SPEED } from './movement'
 import { deserialize, serialize } from './save'
 import { HOME_DOOR, HOME_ENTRY, HOME_FRONT, isHome, PLACES } from './world'
@@ -32,26 +33,21 @@ const at = (s: GameState, day: number, minute = 10 * 60): GameState => ({ ...s, 
 const rich = (): GameState => ({ ...newGame(CONTENT), coins: 1000, scenes: [] })
 const tileOf = (s: GameState) => playerTile(s)
 
-describe('장날에 사는 것: 가죽 가방 닢 120, 튼튼한 신 닢 60', () => {
+describe('장날에 사는 것: 튼튼한 신 닢 60 (가죽 가방은 2026-10-12부터 팔지 않는다)', () => {
   it('값과 물건', () => {
-    expect(byId('leatherBag')).toMatchObject({ coins: 120, get: { leatherBag: 1 } })
+    expect(TRADES.some((t) => t.get.leatherBag)).toBe(false)
     expect(byId('sturdyShoes')).toMatchObject({ coins: 60, get: { sturdyShoes: 1 } })
     // 가벼운 신은 팔지 않는다 (양치기의 선물)
     expect(TRADES.some((t) => t.get.lightShoes)).toBe(false)
   })
   it('장날에만, 닢이 있으면 한 번만 산다', () => {
     const s = rich()
-    expect(trade(at(s, MARKET - 1), byId('leatherBag'))).toBeNull()
-    const a = trade(at(s, MARKET), byId('leatherBag'))!
-    expect(a.inv.leatherBag).toBe(1)
-    expect(a.coins).toBe(1000 - 120)
-    expect(ownsTradeTool(a.inv, byId('leatherBag'), a.flags)).toBe(true)
-    expect(trade(a, byId('leatherBag'))).toBeNull()
+    expect(trade(at(s, MARKET - 1), byId('sturdyShoes'))).toBeNull()
     const b = trade(at(s, MARKET), byId('sturdyShoes'))!
     expect(b.inv.sturdyShoes).toBe(1)
     expect(b.coins).toBe(1000 - 60)
+    expect(ownsTradeTool(b.inv, byId('sturdyShoes'), b.flags)).toBe(true)
     expect(trade(b, byId('sturdyShoes'))).toBeNull()
-    expect(trade({ ...at(s, MARKET), coins: 119 }, byId('leatherBag'))).toBeNull()
     expect(trade({ ...at(s, MARKET), coins: 59 }, byId('sturdyShoes'))).toBeNull()
   })
   it('가방과 신은 한 번 사면 계속 쓰는 도구 (가방 칸에 하나)', () => {
@@ -62,35 +58,54 @@ describe('장날에 사는 것: 가죽 가방 닢 120, 튼튼한 신 닢 60', ()
   })
 })
 
-describe('가죽 가방: 한 칸 최대 9 → 18', () => {
+describe('가방: 한 칸 99개, 50칸 (2026-10-12 사용자 — 가죽 가방과 상관없이)', () => {
   const bag = { leatherBag: 1 }
-  it('가방이 없으면 9, 있으면 18', () => {
-    expect(MAX_STACK).toBe(9)
-    expect(BIG_STACK).toBe(18)
-    expect(stackCap({})).toBe(9)
-    expect(stackCap(bag)).toBe(18)
-    expect(add({}, { reed: 30 }).reed).toBe(9)
-    expect(add(bag, { reed: 30 }).reed).toBe(18)
+  /** 서로 다른 물건 n가지가 하나씩 든 가방 (아이콘이 있는 물건 이름으로) */
+  const kinds = (n: number) => Object.fromEntries(Object.keys(ITEM_TEXT).filter((id) => !TOOLS.includes(id as never)).slice(0, n).map((id) => [id, 1]))
+  it('한 칸 99개, 가죽 가방이 있어도 같다', () => {
+    expect(MAX_STACK).toBe(99)
+    expect(BIG_STACK).toBe(99)
+    expect(BAG_SLOTS).toBe(50)
+    expect(stackCap({})).toBe(99)
+    expect(stackCap(bag)).toBe(99)
+    expect(add({}, { reed: 130 }).reed).toBe(99)
+    // 거절할 수 없는 선물은 99를 넘어도 받는다
+    expect(addGift({ reed: 90 }, { reed: 30 }).reed).toBe(120)
   })
-  it('넘치는지 볼 때도 18까지', () => {
-    expect(wouldOverflow({ reed: 9 }, { reed: 1 })).toBe(true)
-    expect(wouldOverflow({ ...bag, reed: 9 }, { reed: 1 })).toBe(false)
-    expect(wouldOverflow({ ...bag, reed: 18 }, { reed: 1 })).toBe(true)
+  it('넘치는지 볼 때도 99까지', () => {
+    expect(wouldOverflow({ reed: 98 }, { reed: 1 })).toBe(false)
+    expect(wouldOverflow({ reed: 99 }, { reed: 1 })).toBe(true)
     const s = rich()
-    const full = { ...s, clock: { day: 3, minute: 10 * 60 }, inv: { reed: 9 } }
+    const full = { ...s, clock: { day: 3, minute: 10 * 60 }, inv: { reed: 99 } }
     expect(gatherInfo(full, 'reeds')).toEqual({ blocked: 'full' })
-    expect(gatherInfo({ ...full, inv: { ...bag, reed: 9 } }, 'reeds')).not.toEqual({ blocked: 'full' })
+    expect(gatherInfo({ ...full, inv: { reed: 97 } }, 'reeds')).not.toEqual({ blocked: 'full' })
   })
-  it('재료 궤짝: 가방이 18까지 찬 다음에 궤짝으로, 꺼낼 때도 18까지', () => {
-    const r = stash({ ...bag, reed: 15 }, {}, { reed: 5 })
-    expect(r.inv.reed).toBe(18)
+  it('50칸이 차면 새 물건은 못 넣고(가진 물건은 더 넣는다), 궤짝이 있으면 궤짝으로', () => {
+    const inv = kinds(50)
+    expect(slotsUsed(inv)).toBe(50)
+    const have = Object.keys(inv)[0] as ItemId
+    const fresh = Object.keys(ITEM_TEXT).find((id) => !(id in inv) && !TOOLS.includes(id as never)) as ItemId
+    expect(hasSlotFor(inv, have)).toBe(true)
+    expect(hasSlotFor(inv, fresh)).toBe(false)
+    expect(add(inv, { [fresh]: 2 })[fresh]).toBeUndefined()
+    expect(add(inv, { [have]: 2 })[have]).toBe(3)
+    expect(wouldOverflow(inv, { [fresh]: 1 })).toBe(true)
+    expect(wouldOverflow(kinds(49), { [fresh]: 1 })).toBe(false)
+    expect(stashOverflows(inv, null, { [fresh]: 1 })).toBe(true)
+    const r = stash(inv, {}, { [fresh]: 2 })
+    expect(r.inv[fresh]).toBeUndefined()
+    expect(r.chest).toEqual({ [fresh]: 2 })
+    expect(fromChest(inv, { [fresh]: 3 }, fresh)).toBeNull()
+    // 거절할 수 없는 선물은 칸이 차도 받는다
+    expect(addGift(inv, { [fresh]: 1 })[fresh]).toBe(1)
+  })
+  it('재료 궤짝: 가방이 99까지 찬 다음에 궤짝으로, 꺼낼 때도 99까지', () => {
+    const r = stash({ reed: 96 }, {}, { reed: 5 })
+    expect(r.inv.reed).toBe(99)
     expect(r.chest).toEqual({ reed: 2 })
-    expect(stash({ reed: 8 }, {}, { reed: 5 }).chest).toEqual({ reed: 4 })
-    expect(stashOverflows({ ...bag, reed: 17 }, null, { reed: 1 })).toBe(false)
-    expect(stashOverflows({ ...bag, reed: 18 }, null, { reed: 1 })).toBe(true)
-    expect(stashOverflows({ reed: 9 }, null, { reed: 1 })).toBe(true)
-    expect(fromChest({ ...bag, reed: 10 }, { reed: 20 }, 'reed')).toEqual({ inv: { ...bag, reed: 18 }, chest: { reed: 12 } })
-    expect(fromChest({ reed: 5 }, { reed: 20 }, 'reed')).toEqual({ inv: { reed: 9 }, chest: { reed: 16 } })
+    expect(stashOverflows({ reed: 98 }, null, { reed: 1 })).toBe(false)
+    expect(stashOverflows({ reed: 99 }, null, { reed: 1 })).toBe(true)
+    expect(fromChest({ reed: 90 }, { reed: 20 }, 'reed')).toEqual({ inv: { reed: 99 }, chest: { reed: 11 } })
   })
   it('옛 저장의 물건은 그대로, 가방이 있으면 18개 칸도 그대로 남는다', () => {
     const old = { ...newGame(CONTENT), inv: { reed: 9, goodPen: 1, bread: 4 } }
@@ -208,7 +223,7 @@ describe('가벼운 신: 튼튼한 신을 산 뒤, 양치기와 마음이 쌓이
     const back = deserialize(serialize(s), CONTENT)!
     expect(back.inv).toMatchObject({ sturdyShoes: 1, lightShoes: 1, leatherBag: 1 })
     expect(walkMul(back.inv)).toBe(1.4)
-    expect(stackCap(back.inv)).toBe(18)
+    expect(stackCap(back.inv)).toBe(99)
   })
 })
 
@@ -220,7 +235,7 @@ describe('문구와 그림', () => {
       expect(ICONS[id]).toHaveLength(8)
       for (const row of ICONS[id]) expect(row).toHaveLength(8)
     }
-    for (const id of ['leatherBag', 'sturdyShoes']) expect((T.trades as Record<string, string>)[id]).toBeTruthy()
+    expect((T.trades as Record<string, string>).sturdyShoes).toBeTruthy()
     expect(SCENES.lightShoes.lines.every((l) => ['shepherd', 'narration'].includes(l.speaker))).toBe(true)
     expect(JOURNAL_NOTES.lightShoes).toBeTruthy()
   })

@@ -1,10 +1,10 @@
 // 신약 키워드 계승 (계획 18 B18-6, 2026-10-08): 원본 보존·돌아보기·대표 사례(사랑)·못 만나도 고를 수 있음·점수 없음
 import { fireEvent, render, screen } from '@testing-library/react'
 import { CONTENT } from '../content/catalog'
-import { newGame, type GameState } from './game'
+import { heartUp, mendQuarrelWith, newGame, type GameState } from './game'
 import type { Build } from './newland-build'
 import type { GodFind } from './god-records'
-import { canMendQuarrel, keywordRecall, MEND_GAIN, memoriesOf, mendQuarrel, quarrelPair } from './newland-life'
+import { canMendQuarrel, keywordRecall, MEND_GAIN, memoriesOf, quarrelPair } from './newland-life'
 import { useGame } from '../store/game-store'
 import { ModalLayer } from '../features/ModalLayer'
 
@@ -38,10 +38,10 @@ describe('신약 키워드 계승', () => {
     expect(pair).toHaveLength(2)
     const s = land(finds)
     expect(canMendQuarrel(s)).toBe(true)
-    const t = mendQuarrel(s, pair)
-    for (const id of pair) expect(t.hearts[id]).toBe(Math.min(100, (s.hearts[id] ?? 0) + MEND_GAIN))
+    const t = mendQuarrelWith(s, pair)
+    for (const id of pair) expect(t.hearts[id]).toBe(heartUp(s, id, MEND_GAIN).hearts[id])
     expect(canMendQuarrel(t)).toBe(false)
-    expect(mendQuarrel(t, pair)).toBe(t)
+    expect(mendQuarrelWith(t, pair)).toBe(t)
     expect(t.godRecords).toBe(s.godRecords)
     expect(memoriesOf(t).some((m) => m.kind === 'reconcile' && m.day === 50)).toBe(true)
   })

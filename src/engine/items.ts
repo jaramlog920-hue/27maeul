@@ -1,17 +1,29 @@
-// 가방과 만들기. 모든 수는 0 이상 정수, 한 물건은 최대 stackCap(inv)개 (가죽 가방이 있으면 BIG_STACK).
+// 가방과 만들기. 모든 수는 0 이상 정수, 한 칸(물건 한 가지)은 최대 MAX_STACK개, 칸은 BAG_SLOTS개까지 (2026-10-12 사용자: 한 칸 99개·50칸).
 import type { ItemId, Minigame } from './types'
 
 export type Inventory = Partial<Record<ItemId, number>>
-export const MAX_STACK = 9
-/** 가죽 가방이 있을 때 한 칸 최대 (계획 11 작업 2) */
-export const BIG_STACK = 18
+export const MAX_STACK = 99
+/** 예전 가죽 가방의 한 칸 최대 — 이제 한 칸 한도가 하나라 MAX_STACK과 같다 (옛 이름을 쓰는 곳을 위해 남김) */
+export const BIG_STACK = MAX_STACK
+/** 가방 칸 수 — 물건 한 가지가 한 칸 (도구도 한 칸) */
+export const BAG_SLOTS = 50
 
-/** 한 번 사면 계속 쓰는 도구 (가방에 하나). 가죽 가방·신 둘은 계획 11 작업 2 */
+/** 한 번 사면 계속 쓰는 도구 (가방에 하나). 가죽 가방·신 둘은 계획 11 작업 2 (가죽 가방은 2026-10-12부터 팔지 않는다) */
 export const TOOLS: readonly ItemId[] = ['goodPen', 'handyKit', 'brightLamp', 'wideDesk', 'leatherBag', 'sturdyShoes', 'lightShoes']
 
-/** 이 가방의 한 칸 최대 — 가죽 가방이 있으면 18 */
-export function stackCap(inv: Inventory): number {
-  return (inv.leatherBag ?? 0) > 0 ? BIG_STACK : MAX_STACK
+/** 한 칸 최대 */
+export function stackCap(_inv: Inventory): number {
+  return MAX_STACK
+}
+
+/** 쓰고 있는 칸 수 (가진 물건 가짓수) */
+export function slotsUsed(inv: Inventory): number {
+  return Object.values(inv).filter((n) => (n ?? 0) > 0).length
+}
+
+/** 이 물건을 넣을 칸이 있는가 — 이미 가진 물건이면 그 칸에, 새 물건이면 빈칸이 있어야 한다 */
+export function hasSlotFor(inv: Inventory, id: ItemId): boolean {
+  return count(inv, id) > 0 || slotsUsed(inv) < BAG_SLOTS
 }
 /** 먹을 수 있는 것과 배고픔을 덜어 주는 정도 (좋은 것부터) */
 export const FOODS: readonly [ItemId, number][] = [
@@ -43,6 +55,9 @@ export function add(inv: Inventory, gives: Partial<Record<ItemId, number>>): Inv
   const out = { ...inv }
   const stack = stackCap(inv)
   for (const [id, n] of Object.entries(gives) as [ItemId, number][]) {
+    if (n <= 0) continue
+    // 빈칸이 없으면 새 물건은 들어가지 않는다
+    if (!hasSlotFor(out, id)) continue
     const cap = TOOLS.includes(id) ? 1 : stack
     const now = count(out, id)
     // 선물로 이미 한도를 넘은 수는 줄이지 않는다
@@ -51,7 +66,10 @@ export function add(inv: Inventory, gives: Partial<Record<ItemId, number>>): Inv
   return out
 }
 
-/** 이웃의 선물처럼 거절할 수 없는 것: 한도를 넘어도 받는다 (도구는 하나) */
+/**
+ * 이웃의 선물·돌려받는 물건처럼 거절할 수 없는 것: 한 칸 99개·50칸을 넘어도 받는다 (도구는 하나) —
+ * 잃어버리지 않는 쪽 (2026-10-12: 한 칸 99개·50칸은 내가 넣는 것에만)
+ */
 export function addGift(inv: Inventory, gives: Partial<Record<ItemId, number>>): Inventory {
   const out = { ...inv }
   for (const [id, n] of Object.entries(gives) as [ItemId, number][]) out[id] = TOOLS.includes(id) ? 1 : count(out, id) + n

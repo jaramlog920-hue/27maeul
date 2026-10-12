@@ -4,6 +4,7 @@ import { canTeachVisitor, teachVisitor, todaysVisitor, type GuestKind } from '..
 import { saveGame } from '../../engine/save'
 import { useGame } from '../../store/game-store'
 import { Passage } from '../passage/Passage'
+import { PiecePicker } from './PiecePicker'
 
 const GREETINGS: Record<GuestKind, string> = {
   wanderer: '길을 걷다가 들렀어요. 잠시 쉬면서 이 말씀을 읽고 있었어요.',
@@ -26,14 +27,10 @@ export function VisitorTalk({ day }: { day: number }) {
     {present && canTeachVisitor(game) && !choosing && <div className="actions">
       <button onClick={() => setChoosing(true)}>함께 읽어 주기</button>
     </div>}
-    {present && choosing && <ul className="rows">
-      {game.collected.filter(id => !id.startsWith('ot:')).map(id => <li key={id}>
-        <button className="row" onClick={() => {
-          const next = teachVisitor(useGame.getState().game, id)
-          if (next) { saveGame(next); useGame.setState({ game: next }); setChoosing(false) }
-        }}>{pieceById(id).title} · {pieceById(id).ref}</button>
-      </li>)}
-    </ul>}
+    {present && choosing && <PiecePicker ids={game.collected} onCancel={() => setChoosing(false)} onPick={(id) => {
+      const next = teachVisitor(useGame.getState().game, id)
+      if (next) { saveGame(next); useGame.setState({ game: next }); setChoosing(false) }
+    }} />}
     <div className="actions"><button data-close onClick={close}>대화 마치기</button></div>
   </div>
 }

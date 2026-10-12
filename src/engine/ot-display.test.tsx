@@ -1,9 +1,9 @@
 // 구약 서고 전시 (2026-10-08): 책별 기록대 · 범위별 진열 · 함께 읽기
 import { fireEvent, render, screen } from '@testing-library/react'
 import { CONTENT } from '../content/catalog'
-import { newGame, type GameState } from './game'
+import { heartUp, newGame, readOtWith, type GameState } from './game'
 import { otRow } from './ot-books'
-import { canReadOtTogether, OT_READ_HEART, otBookRecord, otGroups, otReadFriends, otReadMemories, readOtTogether } from './ot-display'
+import { canReadOtTogether, OT_READ_HEART, otBookRecord, otGroups, otReadFriends, otReadMemories } from './ot-display'
 import { useGame } from '../store/game-store'
 import { ModalLayer } from '../features/ModalLayer'
 
@@ -38,8 +38,8 @@ describe('구약 서고 전시', () => {
     const s = withRuth({ hearts: { [friend]: 50 } })
     expect(otReadFriends(s, CONTENT.neighbors)).toContain(friend)
     expect(canReadOtTogether(s)).toBe(true)
-    const t = readOtTogether(s, friend, CONTENT.neighbors)
-    expect(t.hearts[friend]).toBe(50 + OT_READ_HEART)
+    const t = readOtWith(s, friend, CONTENT)
+    expect(t.hearts[friend]).toBe(heartUp(s, friend, OT_READ_HEART).hearts[friend])
     expect(canReadOtTogether(t)).toBe(false)
     expect(otReadMemories(t, CONTENT.neighbors)).toEqual([{ day: 80, npc: friend }])
     // 마친 구약 책이 없으면 함께 읽을 것도 없다

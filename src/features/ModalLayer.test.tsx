@@ -575,7 +575,7 @@ describe('리뷰 지적 회귀 (화면)', () => {
     expect(JSON.parse(localStorage.getItem('twenty-seven/save')!).progress.lk.arrangement[1][1]).toBe('lk-001-001')
   })
   it('N1: 도착하며 띄운 알림이 같은 프레임에 지워지지 않는다', () => {
-    reset({ inv: { water: 9, bread: 2 } })
+    reset({ inv: { water: 99, bread: 2 } })
     goOutside()
     render(<ModalLayer />)
     act(() => useGame.getState().tap(PLACES.well.tiles[0]))

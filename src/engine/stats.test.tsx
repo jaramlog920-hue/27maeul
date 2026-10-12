@@ -187,10 +187,10 @@ describe('효과는 작게', () => {
       else expect(got.inv.reed).toBe(2)
     }
     expect(extra).toBeGreaterThan(0)
-    // 가방 8개 + 2 = 10 은 넘친다 → 막히거나 하나 더는 없다
+    // 가방 97개 + 2 = 99 에서 하나 더는 넘친다 → 하나 더는 없다
     for (let minute = 360; minute < 460; minute++) {
-      const full = finishGather({ ...strong, inv: { reed: 7 }, clock: { ...strong.clock, minute } }, 'reeds')
-      expect(full.inv.reed).toBe(9)
+      const full = finishGather({ ...strong, inv: { reed: 97 }, clock: { ...strong.clock, minute } }, 'reeds')
+      expect(full.inv.reed).toBe(99)
     }
   })
 

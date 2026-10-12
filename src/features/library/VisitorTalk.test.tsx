@@ -1,5 +1,6 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import { CONTENT, pieceById } from '../../content/catalog'
+import { copyBookName } from '../../content/text'
 import { newGame } from '../../engine/game'
 import { libraryVisitorTile } from '../../engine/library-visitor'
 import { useGame } from '../../store/game-store'
@@ -38,7 +39,11 @@ it('space interaction opens the same visitor conversation and sharing records th
     useGame.getState().frame(0)
   })
   fireEvent.click(screen.getByRole('button', { name: '함께 읽어 주기' }))
-  fireEvent.click(screen.getByRole('button', { name: `${pieceById(id).title} · ${pieceById(id).ref}` }))
+  // 책 → 장 → 조각 순서로 고른다
+  const p = pieceById(id)
+  fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${copyBookName(p.book)}`) }))
+  fireEvent.click(screen.getByRole('button', { name: new RegExp(`^${p.chapter}장`) }))
+  fireEvent.click(screen.getByRole('button', { name: new RegExp(p.title) }))
   expect(useGame.getState().game.guestbook?.[0].taught).toBe(id)
   expect(useGame.getState().game.stats.charm.xp).toBeGreaterThan(before)
   const rewarded = useGame.getState().game.stats.charm.xp

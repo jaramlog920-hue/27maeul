@@ -7,11 +7,12 @@ import { CONTENT, GOD_KEYWORDS, neighborById } from '../../content/catalog'
 import { fill, itemList, itemName, T, withAnd, withObject, withSubject } from '../../content/text'
 import { newsLine } from '../../content/gen-text'
 import { canGatherYard, gatherYard, mendQuarrelWith, type GameState } from '../../engine/game'
-import { dreamKey, roomOwner, canInviteGuest, markerShown, toggleMarker, canMendQuarrel, keywordRecall, quarrelPair, visitKidWork, DREAMER, GUESTS, guestNow, inviteGuest, memoriesOf, pickDream, settledAt, settledLine, talkGuest, visitDream, type DreamStage, type FacilityKind, type GuestId, type Memory } from '../../engine/newland-life'
+import { kidVisiting, talkKidVisit, dreamKey, roomOwner, canInviteGuest, markerShown, toggleMarker, canMendQuarrel, keywordRecall, quarrelPair, visitKidWork, DREAMER, GUESTS, guestNow, inviteGuest, memoriesOf, pickDream, settledAt, settledLine, talkGuest, visitDream, type DreamStage, type FacilityKind, type GuestId, type Memory } from '../../engine/newland-life'
 import { saveGame } from '../../engine/save'
 import { emptyHomeAt, familyAt, giveFamilyHome, homeWishes } from '../../engine/gen-homes'
 import type { Household } from '../../engine/gen'
 import { t } from '../../shared/i18n'
+import type { Tile } from '../../engine/types'
 import { useGame } from '../../store/game-store'
 
 const L = T.newlandLife
@@ -49,10 +50,39 @@ function memoryText(game: GameState, m: Memory): string {
   }
 }
 
+/** 떠난 아이가 다니러 와 묵는 사흘 (2026-10-12 사용자 결정 2) */
+const KID_VISIT_LINES = [
+  '집 생각이 나서 왔어요. 사흘만 묵다 갈게요.',
+  '먼 길에서 본 것들을 이야기해 드릴게요. 여기 오니 마음이 놓여요.',
+  '내일 아침엔 다시 떠나요. 오는 길에 챙긴 짐이에요.',
+]
+function KidVisit() {
+  const game = useGame((s) => s.game)
+  const [said, setSaid] = useState<string | null>(null)
+  const name = game.child?.name ?? ''
+  const talk = () => {
+    const r = talkKidVisit(useGame.getState().game)
+    if (!r) return useGame.getState().say(L.guestTalked)
+    commit(r.state)
+    setSaid(KID_VISIT_LINES[r.line])
+    if (r.gift) useGame.getState().say(`${withSubject(name)} 가족 나들이 짐을 풀었어요 · ${itemList(r.gift)}`, 3600)
+  }
+  return (
+    <>
+      <p className="talk-role">{name} <span className="talk-job">다니러 왔어요</span></p>
+      {said && <p className="talk-line">{said}</p>}
+      <div className="actions menu column">
+        <button className="primary" onClick={talk}>{L.guestTalk}</button>
+      </div>
+    </>
+  )
+}
+
 function Guest() {
   const game = useGame((s) => s.game)
   const [said, setSaid] = useState<string | null>(null)
   const guest = guestNow(game)
+  if (kidVisiting(game)) return <KidVisit />
   if (!guest) return <p className="hint">{L.guestNone}</p>
   const g = guestText(guest)
   const talk = () => {
@@ -127,9 +157,9 @@ function familyNames(game: GameState, h: Household): string {
 }
 
 /** 빈 입주 주택 앞: 집이 없는 신혼 가구 목록 — 고르면 이 집에 산다 (주택 희망 목록, 2026-10-08) */
-function EmptyHome() {
+function EmptyHome({ at }: { at?: Tile }) {
   const game = useGame((s) => s.game)
-  const here = { x: Math.round(game.player.x), y: Math.round(game.player.y) }
+  const here = at ?? { x: Math.round(game.player.x), y: Math.round(game.player.y) }
   const home = emptyHomeAt(game, here)
   const wishes = homeWishes(game, roomOwner)
   if (!home || !wishes.length) return <p className="hint">{t('familyHome.none')}</p>
@@ -164,9 +194,9 @@ function EmptyHome() {
 }
 
 /** 새 터로 옮긴 주민 가족의 집 앞: 날마다 다른 한 줄 */
-function Family() {
+function Family({ at }: { at?: Tile }) {
   const game = useGame((s) => s.game)
-  const f = familyAt(game, { x: Math.round(game.player.x), y: Math.round(game.player.y) })
+  const f = familyAt(game, at ?? { x: Math.round(game.player.x), y: Math.round(game.player.y) })
   if (!f) return null
   const lines = [t('familyHome.line1'), t('familyHome.line2'), t('familyHome.line3')]
   return <p className="talk-line">{lines[game.clock.day % lines.length]}</p>
@@ -279,12 +309,13 @@ function Workshop({ npc = DREAMER }: { npc?: string }) {
   )
 }
 
-export function FacilityView({ id }: { id: FacilityKind }) {
+export function FacilityView({ id, at }: { id: FacilityKind; at?: Tile }) {
   const { closeModal } = useGame.getState()
   const game = useGame((s) => s.game)
-  const who = id === 'settled' ? settledAt(game, { x: Math.round(game.player.x), y: Math.round(game.player.y) }) : null
+  const here = at ?? { x: Math.round(game.player.x), y: Math.round(game.player.y) }
+  const who = id === 'settled' ? settledAt(game, here) : null
   const title =
-    who ? fill(L.settledTitle, { who: guestText(who).name }) : id === 'family' ? t('familyHome.title', { names: familyHereNames(game) }) : id === 'emptyHome' ? t('familyHome.emptyTitle') : id === 'kidWork' ? fill(L.kidWork.title, { name: game.child?.name ?? '' }) : id === 'guest' ? L.guestTitle : id === 'memorial' ? L.memorialTitle : id === 'courtyard' ? L.yardTitle : id === 'gallery' ? fill(dreamText('tilly').title, { who: neighborById('tilly')?.role ?? '' }) : fill(L.dream.title, { who: neighborById(DREAMER)?.role ?? '' })
+    who ? fill(L.settledTitle, { who: guestText(who).name }) : id === 'family' ? t('familyHome.title', { names: familyHereNames(game, here) }) : id === 'emptyHome' ? t('familyHome.emptyTitle') : id === 'kidWork' ? fill(L.kidWork.title, { name: game.child?.name ?? '' }) : id === 'guest' ? L.guestTitle : id === 'memorial' ? L.memorialTitle : id === 'courtyard' ? L.yardTitle : id === 'gallery' ? fill(dreamText('tilly').title, { who: neighborById('tilly')?.role ?? '' }) : fill(L.dream.title, { who: neighborById(DREAMER)?.role ?? '' })
   return (
     <div className="dialog facility" role="dialog" aria-label={title}>
       <h2>{title}</h2>
@@ -295,8 +326,8 @@ export function FacilityView({ id }: { id: FacilityKind }) {
       {id === 'gallery' && <Workshop npc="tilly" />}
       {who && <Settled id={who} />}
       {id === 'kidWork' && <KidWork />}
-      {id === 'emptyHome' && <EmptyHome />}
-      {id === 'family' && <Family />}
+      {id === 'emptyHome' && <EmptyHome at={here} />}
+      {id === 'family' && <Family at={here} />}
       <div className="actions">
         <button data-close onClick={closeModal}>{T.ui.close}</button>
       </div>
@@ -305,8 +336,8 @@ export function FacilityView({ id }: { id: FacilityKind }) {
 }
 
 /** 지금 선 자리 가족의 이름 */
-function familyHereNames(game: GameState): string {
-  const f = familyAt(game, { x: Math.round(game.player.x), y: Math.round(game.player.y) })
+function familyHereNames(game: GameState, here: Tile): string {
+  const f = familyAt(game, here)
   return f ? familyNames(game, f.household) : ''
 }
 

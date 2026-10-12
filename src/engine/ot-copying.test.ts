@@ -1,3 +1,4 @@
+import { isAddition } from './furniture-additions'
 // 계획 20 작업 5: 구약 필사 — 신약과 같은 엔진, 보상·막힘 없음, 새 터 서고 책상·책장
 import { CONTENT, chapterGuide, copySourceFor } from '../content/catalog'
 import { ensureOtBook } from '../content/ot-catalog'
@@ -99,7 +100,7 @@ describe('구약 필사 — 한 절씩', () => {
     const s = startCopy(gifted(), 'oba', CONTENT)
     expect(otBookFinished(s, 'oba')).toBe(false)
     const r = writeChapter(s, 'oba')
-    expect(r.result).toMatchObject({ kind: 'chapter', chapter: 1, bookDone: true, next: null, finds: [], gains: { wit: 0, hand: 0 } })
+    expect(r.result).toMatchObject({ kind: 'chapter', chapter: 1, bookDone: true, next: null, finds: [] })
     expect(r.state.otProgress?.oba?.completed).toEqual([1])
     expect(progressOf(r.state, 'oba').completed).toEqual([1])
     expect(r.state.progress).toEqual(s.progress) // 신약 27키는 그대로
@@ -132,15 +133,19 @@ describe('구약 필사 — 한 절씩', () => {
   })
 })
 
-describe('구약 필사 — 보상 없음, 시간·피로만 신약과 같다', () => {
-  it('장을 마쳐도 닢·가방·상자·능력치·하나님 기록·장면·신약 기록이 변하지 않는다', () => {
+describe('구약 필사 — 경험치·장 완성 선물은 신약과 같고, 시간·피로도 같다', () => {
+  it('장을 마치면 지능·손재주 경험치와 가끔 생활 가구, 닢·하나님 기록·장면·신약 기록은 그대로', () => {
     const base = startCopy(gifted({ coins: 17, inv: { olive: 2 } }), 'oba', CONTENT)
     const r = writeChapter(base, 'oba')
     const a = r.state
     expect(a.coins).toBe(base.coins)
-    expect(a.inv).toEqual(base.inv)
+    // 2026-10-12 사용자: 구약 필사도 경험치와 선물
+    const gift = r.result.kind === 'chapter' ? r.result.gift : undefined
+    expect(a.inv).toEqual(gift ? { ...base.inv, [gift]: 1 } : base.inv)
+    expect(gift === undefined || isAddition(gift)).toBe(true)
     expect(a.chest).toEqual(base.chest)
-    expect(a.stats).toEqual(base.stats)
+    expect(a.stats.wit).not.toEqual(base.stats.wit)
+    expect(a.stats.hand).not.toEqual(base.stats.hand)
     expect(a.godRecords).toEqual(base.godRecords)
     expect(a.scenes).toEqual(base.scenes)
     expect(a.copyStats).toEqual(base.copyStats)

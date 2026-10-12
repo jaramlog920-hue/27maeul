@@ -284,12 +284,13 @@ describe('소유 공간별 저장', () => {
     s = must(placeFurniture(s, 'stool', { x: r.x0 + 2, y: r.y0 + 3 }))
     s = must(placeFurniture(s, 'stool', { x: r.x0 + 6, y: r.y0 + 3 }))
     s = must(placeFurniture(s, 'table', { x: r.x0 + 1, y: r.y0 + 5 }))
-    return { ...s, inv: { ...s.inv, stool: 7 } }
+    // 가방 한 칸 한도(99)에서 하나 모자라게 — 걸상 셋을 거두면 하나가 넘친다
+    return { ...s, inv: { ...s.inv, stool: 97 } }
   }
 
   it('철거하면 안의 가구가 가방 한도까지 가방으로, 궤짝이 없으면 남는 것도 사라지지 않고 가방에 얹힌다', () => {
     const out = must(demolishBuild(stuffed(), 'b1'))
-    expect(out.inv.stool).toBe(10)
+    expect(out.inv.stool).toBe(100)
     expect(out.inv.table).toBe(1)
     expect(out.rooms).toBeUndefined()
   })
@@ -297,7 +298,7 @@ describe('소유 공간별 저장', () => {
   it('철거하면 가방이 가득 찬 만큼은 궤짝으로 (궤짝이 있을 때)', () => {
     const s = { ...stuffed(), flags: { ...stuffed().flags, 'unlock:supplyChest': 1 }, chest: { stool: 2 } }
     const out = must(demolishBuild(s, 'b1'))
-    expect(out.inv.stool).toBe(9)
+    expect(out.inv.stool).toBe(99)
     expect(out.chest?.stool).toBe(3)
     expect(out.inv.table).toBe(1)
     expect(out.rooms).toBeUndefined()

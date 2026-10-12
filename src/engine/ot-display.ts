@@ -49,17 +49,7 @@ export function canReadOtTogether(s: Pick<GameState, 'otProgress' | 'flags' | 'c
   return OT_BOOKS.some((b) => otBookFinished(s, b)) && s.flags.otReadDay !== s.clock.day
 }
 
-/** 함께 읽는다: 마음 +3, 오늘 한 번, otRead:<날> = 그 이웃 번호(neighbors 순서 + 1) */
-export function readOtTogether<T extends Pick<GameState, 'otProgress' | 'flags' | 'clock' | 'hearts'>>(s: T, npc: string, neighbors: readonly NeighborDef[]): T {
-  const i = neighbors.findIndex((d) => d.id === npc)
-  if (i < 0 || !canReadOtTogether(s)) return s
-  const day = s.clock.day
-  return {
-    ...s,
-    hearts: { ...s.hearts, [npc]: Math.min(100, (s.hearts[npc] ?? 0) + OT_READ_HEART) },
-    flags: { ...s.flags, otReadDay: day, [`otRead:${day}`]: i + 1 },
-  }
-}
+// 함께 읽기 동작은 game.ts의 readOtWith — 마음은 heartUp으로 올려 이야기 문턱에서 멈춘다 (2026-10-11·12 점검: 여기서 직접 더하던 함수를 없앴다)
 
 /** 함께 읽은 기억 (최근 것부터) */
 export function otReadMemories(s: Pick<GameState, 'flags'>, neighbors: readonly NeighborDef[]): { day: number; npc: string }[] {

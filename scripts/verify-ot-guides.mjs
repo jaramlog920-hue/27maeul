@@ -71,6 +71,25 @@ for (const [id, chapters] of Object.entries(json)) {
   if (JSON.stringify(file) !== JSON.stringify(chapters)) fail(`ot-guides/${id}.json`, '원본과 다름 — node scripts/build-ot-guides.mjs')
 }
 
+// 큰따옴표 안은 그 장 개역한글 본문 그대로 (띄어쓰기·문장부호만 무시, 줄임표로 이은 토막은 토막마다) — 2026-10-12 사용자 결정
+const quoteNorm = (s) => s.replace(/[\s.,;:!?·'"‘’“”「」()\-–—]/g, '')
+for (const [id, chapters] of Object.entries(json)) {
+  let text = null
+  try {
+    text = JSON.parse(await readFile(new URL(`../src/content/ot/${id}.json`, import.meta.url), 'utf8'))
+  } catch {
+    continue
+  }
+  for (const [ch, g] of Object.entries(chapters)) {
+    const body = quoteNorm((text[Number(ch) - 1] ?? []).join(''))
+    for (const field of [g.background, g.look])
+      for (const m of field.matchAll(/["“]([^"”]+)["”]/g)) {
+        const parts = m[1].split('…').map(quoteNorm).filter(Boolean)
+        if (!parts.every((p) => body.includes(p))) fail(`${id} ${ch}장`, `인용이 본문과 다름: "${m[1]}"`)
+      }
+  }
+}
+
 if (errors) {
   console.error(`\n✗ verify-ot-guides 실패: 오류 ${errors}개`)
   process.exit(1)
