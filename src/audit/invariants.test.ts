@@ -4,12 +4,21 @@
 import { writeFileSync, mkdirSync } from 'node:fs'
 import { CONTENT } from '../content/catalog'
 import { peopleData, whenMatches, inWindow, type When, type Req, type Moment } from '../engine/people'
-import { canGiveBouquet, canGiveCord, canTravel, chooseInEvent, eventNow, eventWaiting, finishStoryMini, GIFTABLE, giveBouquet, giveCord, giveGift, goToSleep, greetNeighbor, heartUp, newGame, openEvent, putAway, sightingWaiting, tick, travel, weddingToday, WEDDING_GATHER, type GameState } from '../engine/game'
+import { canGiveBouquet, canGiveCord, canTravel, nameChild, startCopy, writeVerse, chooseInEvent, eventNow, eventWaiting, finishStoryMini, GIFTABLE, giveBouquet, giveCord, giveGift, goToSleep, greetNeighbor, heartUp, newGame, openEvent, putAway, sightingWaiting, tick, travel, weddingToday, WEDDING_GATHER, type GameState } from '../engine/game'
 import { establishedGame } from '../engine/growth-test-support'
 import { FIRE } from '../engine/neighbors'
 import { FESTIVAL_FROM, FESTIVAL_TO, festivalOf } from '../engine/calendar'
 import { CHILD_AFTER_WEDDING } from '../engine/child'
-import { count } from '../engine/items'
+import { count, take } from '../engine/items'
+import { answerConsult, consultFor, helpPrep, PREP_GAIN, PREP_TASKS, preparingFor } from '../engine/gen-marriage'
+import { cribAskOf, cribAsker, CRIB_NEEDS, giveCrib } from '../engine/gen-birth'
+import { bakerCribWaiting, makeBakerCrib } from '../engine/baker-baby'
+import { stageByAge } from '../engine/gen-age'
+import { ADULT_AT } from '../engine/child'
+import { canOrder, orderBuild } from '../engine/newland-build'
+import { BUILD_RECT } from '../engine/newland-config'
+import { copySpot } from '../engine/copying'
+import { ensureOtBook } from '../content/ot-catalog'
 import { npcTile } from '../engine/neighbors'
 import { walkableOn, key } from '../engine/world'
 import { deserialize, serialize } from '../engine/save'
@@ -20,6 +29,10 @@ import { FACILITY_IDS } from '../engine/village-sites'
 
 const RUN = !!process.env.AUDIT
 const DAYS = Number(process.env.AUDIT_DAYS ?? 28)
+/** 후반 생활은 한 해(160일)를 통째로 — 아이가 어른이 되고(84일) 주민이 결혼·출생·은퇴하는 데까지 */
+const LATE_DAYS = Number(process.env.AUDIT_LATE_DAYS ?? 160)
+/** 후반 생활이 날마다 옮겨 적는 구약 책 (차례로) */
+const OT_PLAN = ['rut', 'oba', 'jon'] as const
 
 interface Finding { rule: string; level: '높음' | '중간' | '확인'; where: string; detail: string }
 const found: Finding[] = []
@@ -158,6 +171,16 @@ function lateActions(s: GameState, day: number, label: string, t: string, report
       if (p) return near(s.player, p.at, 1) ? s : teleport(s, p.at)
       if ((weddingToday(s) && m >= FESTIVAL_FROM + WEDDING_GATHER && m < FESTIVAL_TO) || (festivalOf(day) && m >= FESTIVAL_FROM && m < FESTIVAL_TO)) return near(s.player, FIRE, 2) ? s : teleport(s, { x: FIRE.x, y: FIRE.y + 2 })
     }
+    // 구약 터에 처음 간 날 집 한 채를 주문한다 (빈 땅을 차례로 찾아서)
+    if (map === 'newland' && m === 14 * 60 && s.flags.newlandRevealed && !(s.newland?.builds ?? []).some((b) => b.kind === 'home')) {
+      const rich = { ...s, coins: Math.max(s.coins, 5000), inv: putAway(s, { reed: 9, papyrus: 9, olive: 9 }).inv }
+      for (let y = BUILD_RECT.y0; y <= BUILD_RECT.y1; y++) for (let x = BUILD_RECT.x0; x <= BUILD_RECT.x1; x++) {
+        if (canOrder(rich, 'home', x, y, 'down') !== null) continue
+        const next = orderBuild(rich, 'home', x, y, 'down')
+        if (next) return next
+      }
+      report({ rule: '19 집 짓기', level: '확인', where: `${label} ${t}`, detail: `구약 터 어디에도 집을 놓을 수 없음 (닢 ${rich.coins})` })
+    }
     // 규칙 17: 구약 터 왕복 — 갈 수 있다는데 못 가거나, 건너간 뒤 서 있는 칸이 그 지도에서 걸을 수 없는 칸
     const go = day % 3 === 1 && m === 13 * 60 && map === 'village' ? 'newland' : m === 15 * 60 && map === 'newland' ? 'village' : null
     if (go && canTravel(s, go) === null) {
@@ -173,17 +196,42 @@ function lateActions(s: GameState, day: number, label: string, t: string, report
   return s
 }
 
+/** 규칙 20: 가계도가 서로 맞는가 — 배우자는 서로 가리키고, 부모·가구·후계자는 있는 사람이고, 나이와 단계가 맞다 */
+function genChecks(s: GameState, day: number, label: string, report: (f: Finding) => void) {
+  const g = s.gen
+  if (!g) return
+  const bad: string[] = []
+  const P = g.persons
+  for (const p of Object.values(P)) {
+    if (p.spouse && P[p.spouse]?.spouse !== p.id) bad.push(`${p.id}의 배우자 ${p.spouse}가 ${p.id}를 가리키지 않음`)
+    for (const par of p.parents) if (!P[par]) bad.push(`${p.id}의 부모 ${par}가 없음`)
+    // 아기·아이는 부모 가구의 자녀(children)로 들어 있다
+    if (p.household && !g.households[p.household]?.members.includes(p.id) && !g.households[p.household]?.children.includes(p.id)) bad.push(`${p.id}의 가구 ${p.household}에 ${p.id}가 없음`)
+    if (p.origin === 'born' && p.born != null && p.stage !== stageByAge(p.born, day)) bad.push(`${p.id}(${p.born}일생) 단계 ${p.stage}, 나이로는 ${stageByAge(p.born, day)}`)
+  }
+  for (const h of Object.values(g.households)) for (const m of [...h.members, ...h.children]) if (!P[m]) bad.push(`가구 ${h.id}의 ${m}이 없음`)
+  for (const r of Object.values(g.relations)) {
+    if (!P[r.a] || !P[r.b]) bad.push(`관계 ${r.id}의 사람이 없음`)
+    else if (r.stage === 'spouse' && (P[r.a].spouse !== r.b || P[r.b].spouse !== r.a)) bad.push(`관계 ${r.id}는 부부인데 배우자 칸이 다름`)
+  }
+  for (const [npc, x] of Object.entries(g.retired ?? {})) if (!P[x.heir]) bad.push(`은퇴한 ${npc}의 후계자 ${x.heir}가 없음`)
+  if (s.romance?.partner && s.gen?.persons[s.romance.partner]?.spouse) bad.push(`내 ${s.romance.stage} ${s.romance.partner}가 주민 배우자 ${s.gen.persons[s.romance.partner].spouse}와도 부부`)
+  if (bad.length) report({ rule: '20 가계도 어긋남', level: '높음', where: `${label} ${day}일`, detail: bad.slice(0, 5).join(' / ') })
+}
+
 function simulate(label: string, heart: number, seed: number, play = false, late = false) {
   let s = late ? lateStart() : unlocked(newGame(CONTENT), heart)
   const timeline: string[] = []
-  let gifts = 0, trips = 0
+  let gifts = 0, trips = 0, otChapters = 0
+  const genActs = { consult: 0, prep: 0, crib: 0 }
   const r = rng(seed)
   const once = new Set<string>()
   const played: string[] = []
   const waitSince: Record<string, number> = {}
   const ready: Record<string, { npc: string; at: Tile; minutes: number; reached: number; days: Set<number>; seenAt: Record<string, number> }> = {}
   const report = (f: Finding) => { const k = f.rule.startsWith('9') ? `${f.rule}|${f.level}` : `${f.rule}|${f.where}`; if (!once.has(k)) { once.add(k); add(f) } }
-  for (let day = 1; day <= DAYS; day++) {
+  const days = late ? LATE_DAYS : DAYS
+  for (let day = 1; day <= days; day++) {
     const overlap: Record<string, number> = {}, stuck: Record<string, number> = {}
     while (s.clock.minute < PLAY_TO - 1) {
       let out
@@ -277,6 +325,60 @@ function simulate(label: string, heart: number, seed: number, play = false, late
       // 규칙 15: 약속 자리에 갔는데 잊은 약속으로 남음
       const forgot = Object.entries(s.life?.memories ?? {}).flatMap(([npc, ms]) => ms.filter((m) => m.tag.startsWith('forgot:')).map((m) => `${npc} ${m.tag}`))
       if (forgot.length) report({ rule: '15 지킨 약속이 잊은 것으로', level: '높음', where: `${label} ${day}일`, detail: forgot.slice(0, 5).join(', ') })
+      // 주민 가족: 결혼 상담은 응원, 결혼 준비는 거들고, 아기 침대 부탁은 들어준다 (화면 GenTalk.tsx와 같은 순서)
+      s = putAway(s, { reed: 6, blanket: 2, ...Object.fromEntries(Object.values(PREP_TASKS).flatMap((x) => Object.entries(x)).map(([k, v]) => [k, (v as number) * 2])) } as never)
+      for (const def of CONTENT.neighbors) {
+        try {
+          const g0 = s.gen
+          if (!g0) break
+          const c = consultFor(g0, def.id, s.hearts, day)
+          if (c) { s = { ...s, gen: answerConsult(g0, c.id, 'cheer', day).g }; genActs.consult++ }
+          const prep = preparingFor(s.gen, def.id)
+          const todo = prep?.prep?.tasks.find((x) => !prep.prep!.done.includes(x))
+          if (prep && todo) {
+            const inv = take(s.inv, PREP_TASKS[todo]), ng = s.gen && helpPrep(s.gen, prep.id, todo)
+            if (inv && ng) { s = heartUp(heartUp({ ...s, inv, gen: ng }, prep.a, PREP_GAIN), prep.b, PREP_GAIN); genActs.prep++ }
+          }
+          const crib = cribAskOf(s.gen, def.id)
+          if (crib && cribAsker(crib) === def.id) {
+            const inv = take(s.inv, CRIB_NEEDS), ng = s.gen && giveCrib(s.gen, crib.id, day)
+            if (inv && ng) { s = heartUp(heartUp({ ...s, inv, gen: ng }, crib.members[0], PREP_GAIN), crib.members[1], PREP_GAIN); genActs.crib++ }
+          }
+          if (bakerCribWaiting(s, def.id)) { const next = makeBakerCrib(s); if (next) { s = next; genActs.crib++ } }
+        } catch (err) { report({ rule: '6 멈춤(오류)', level: '높음', where: `${label} ${day}일 ${def.id} 주민 가족`, detail: String((err as Error)?.stack ?? err).split('\n').slice(0, 3).join(' / ') }) }
+      }
+      // 우리 아이 이름 짓기
+      if (s.flags.childNaming && s.child) s = nameChild(s, '테디')
+      // 규칙 21: 어른이 된 아이에게 일이 정해지지 않음
+      if (s.child?.born != null && day > s.child.born + ADULT_AT + 1 && !s.child.job) report({ rule: '21 아이 일', level: '높음', where: `${label} ${day}일`, detail: `${s.child.born}일생 아이가 어른이 됐는데 일이 없음` })
+      if (s.child?.job && !timeline.some((x) => x.includes('아이 일'))) timeline.push(`${day}일 아이 일 '${s.child.job}'${s.child.left ? '(마을 밖으로)' : ''}`)
+      // 날마다 구약 한 장을 옮겨 적는다 (책을 다 마치면 다음 책)
+      try {
+        const book = OT_PLAN.find((b) => !(s.otProgress?.[b]?.completed.length && copySpot(s, b, CONTENT) === null)) ?? null
+        if (book) {
+          if (s.copy.book !== book) s = startCopy(s, book, CONTENT)
+          const first = copySpot(s, book, CONTENT)
+          if (first) {
+            let kind = 'none'
+            for (let i = 0; i < 300; i++) {
+              const spot = copySpot(s, book, CONTENT)
+              if (!spot || spot.chapter !== first.chapter) break
+              const w = writeVerse(s, book, spot.verse.text, CONTENT)
+              s = w.state
+              kind = w.result.kind
+              if (kind === 'notYet') break
+            }
+            // 규칙 22: 한 장을 다 옮겨 적었는데 마친 장으로 남지 않음
+            if (!(s.otProgress?.[book]?.completed ?? []).includes(first.chapter)) report({ rule: '22 구약 필사', level: '높음', where: `${label} ${day}일 ${book} ${first.chapter}장`, detail: `끝까지 썼는데(마지막 결과 ${kind}) 마친 장에 없음` })
+            else otChapters++
+          }
+        }
+      } catch (err) { report({ rule: '6 멈춤(오류)', level: '높음', where: `${label} ${day}일 구약 필사`, detail: String((err as Error)?.stack ?? err).split('\n').slice(0, 3).join(' / ') }) }
+      // 규칙 19: 주문한 집이 사흘이 지나도 완공되지 않음
+      for (const b of s.newland?.builds ?? []) if (b.state !== 'done' && day - b.orderedDay > 3) report({ rule: '19 집 짓기', level: '높음', where: `${label} ${day}일 ${b.id}`, detail: `${b.orderedDay}일에 주문한 ${b.kind}가 아직 '${b.state}'` })
+      if ((s.newland?.builds ?? []).some((b) => b.kind === 'home' && b.state === 'done') && !timeline.some((x) => x.includes('집 완공'))) timeline.push(`${day}일 구약 터 집 완공`)
+      // 규칙 20: 가계도가 서로 어긋남
+      genChecks(s, day, label, report)
       // 날마다 가방을 채우고(선물거리·다발·끈) 이웃 모두에게 선물 하나씩, 연애를 한 걸음씩
       s = putAway(s, { ...Object.fromEntries(GIFTABLE.filter((i) => count(s.inv, i) < 3).map((i) => [i, 3])), ...(count(s.inv, 'bouquet') ? {} : { bouquet: 1 }), ...(count(s.inv, 'promiseCord') ? {} : { promiseCord: 1 }) })
       for (const def of CONTENT.neighbors) {
@@ -320,11 +422,17 @@ function simulate(label: string, heart: number, seed: number, play = false, late
     if ((s.map ?? 'village') !== 'village') s = travel(s, 'village', CONTENT)
     s = unlocked(goToSleep(s, CONTENT), 0, late)
   }
-  if (late) add({ rule: '0 진행 요약', level: '확인', where: label, detail: `선물 ${gifts}번, 구약 터 왕복 ${trips}번. ${timeline.join(' → ') || '연애 진행 없음'}` })
+  if (late) {
+    const g = s.gen
+    const persons = g ? Object.values(g.persons) : []
+    const logKinds = (g?.log ?? []).reduce<Record<string, number>>((a, l) => ({ ...a, [l.kind]: (a[l.kind] ?? 0) + 1 }), {})
+    add({ rule: '0 진행 요약', level: '확인', where: label, detail: `선물 ${gifts}번, 구약 터 왕복 ${trips}번, 구약 ${otChapters}장, 상담 응원 ${genActs.consult}·결혼 준비 ${genActs.prep}·아기 침대 ${genActs.crib}. ${timeline.join(' → ') || '연애 진행 없음'}` })
+    add({ rule: '0 진행 요약', level: '확인', where: `${label} 마을 사람`, detail: `주민 ${persons.length}명(태어난 사람 ${persons.filter((x) => x.origin === 'born').length}), 부부 ${Object.values(g?.households ?? {}).filter((h) => h.since != null).length}쌍, 은퇴 ${Object.keys(g?.retired ?? {}).length}명. 기록: ${Object.entries(logKinds).map(([k, v]) => `${k} ${v}`).join(', ')}` })
+  }
   if (play) {
     const all = Object.values(peopleData().people).flatMap((p) => (p.events ?? []).map((e) => e.id))
     const seen = new Set(s.life?.seen ?? [])
-    add({ rule: '0 진행 요약', level: '확인', where: label, detail: `${DAYS}일 동안 이야기·목격 ${played.length}개를 봄, 이야기 ${all.length}개 중 ${all.filter((id) => seen.has(id)).length}개 봄. 마지막 사이: ${Object.entries(s.hearts).map(([k, v]) => `${k} ${v}`).join(', ')}` })
+    add({ rule: '0 진행 요약', level: '확인', where: label, detail: `${days}일 동안 이야기·목격 ${played.length}개를 봄, 이야기 ${all.length}개 중 ${all.filter((id) => seen.has(id)).length}개 봄. 마지막 사이: ${Object.entries(s.hearts).map(([k, v]) => `${k} ${v}`).join(', ')}` })
   }
   for (const [id, st] of Object.entries(ready)) {
     if (st.reached > 0) continue
@@ -334,15 +442,16 @@ function simulate(label: string, heart: number, seed: number, play = false, late
 }
 
 describe.skipIf(!RUN)('자동 점검기', () => {
+  beforeAll(async () => { await Promise.all(OT_PLAN.map((b) => ensureOtBook(b))) })
   it('자료 규칙', () => { staticChecks() })
   it('처음 사이로 며칠', () => { simulate('처음 사이', 0, 1) }, 600_000)
   it('가까운 사이로 며칠', () => { simulate('가까운 사이', 80, 2) }, 600_000)
   it('자동 플레이어로 며칠', () => { simulate('자동 플레이어', 0, 3, true) }, 1_800_000)
-  it('후반 생활로 며칠', () => { simulate('후반 생활', 0, 4, true, true) }, 1_800_000)
+  it('후반 생활로 한 해', () => { simulate('후반 생활', 0, 4, true, true) }, 3_600_000)
   afterAll(() => {
     const byRule = new Map<string, Finding[]>()
     for (const f of found) byRule.set(f.rule, [...(byRule.get(f.rule) ?? []), f])
-    const lines = [`# 자동 점검 결과`, ``, `돌린 날: 시뮬레이션 ${DAYS}일씩 — 처음 사이(가만히)·가까운 사이(가만히)·자동 플레이어(이야기 열고 고르기, 매일 인사)·후반 생활(27권 뒤: 선물·약속·연애·결혼·아이·잔치·구약 터 왕복)`, `찾은 것: ${found.length}건`, ``]
+    const lines = [`# 자동 점검 결과`, ``, `돌린 날: 시뮬레이션 ${DAYS}일씩(후반 생활은 ${LATE_DAYS}일) — 처음 사이(가만히)·가까운 사이(가만히)·자동 플레이어(이야기 열고 고르기, 매일 인사)·후반 생활(27권 뒤: 선물·약속·연애·결혼·아이·잔치·구약 터 왕복·집 짓기·구약 필사·주민 결혼 상담·아기 침대)`, `찾은 것: ${found.length}건`, ``]
     for (const [rule, fs] of [...byRule].sort()) {
       lines.push(`## 규칙 ${rule} — ${fs.length}건`, '')
       for (const f of fs) lines.push(`- [${f.level}] ${f.where}: ${f.detail}`)
