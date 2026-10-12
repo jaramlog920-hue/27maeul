@@ -4178,9 +4178,9 @@ export function writeVerse(s: GameState, book: CopyBook, input: string, content:
   return { state, result: { kind: 'chapter', chapter, verse: spot.verse.verse, verses: verses.length, chars, gains, bookDone: finished, next, finds, ...(gift ? { gift } : {}), ...(pay ? { pay } : {}) } }
 }
 
-/** 한 장의 필사 삯: 다섯 닢 + 절마다 한 닢 (마흔 닢까지), 수고(퍼즐 60%)만큼 */
+/** 한 장의 필사 삯: 열 닢 + 절마다 세 닢 (백이십 닢까지), 수고(퍼즐 60%)만큼 — 2026-10-13 사용자: 너무 적다 */
 export function copyPay(verses: number, effort = 1): number {
-  return Math.max(1, Math.round(Math.min(40, 5 + verses) * effort))
+  return Math.max(1, Math.round(Math.min(120, 10 + verses * 3) * effort))
 }
 
 /** 장을 마칠 때 생활 가구가 올 확률 */
