@@ -59,7 +59,7 @@ import { COVER_FROM, jobOf } from './job'
 import { candleKey, candleToBlow, faceToward, weddingEvening } from './event-scene'
 import { FESTIVAL_SPOTS, FIRE, goalFor, isNear, npcTile, placeNpc, stepNpc, type Npc } from './neighbors'
 import { separateNpcGoals } from './npc-spots'
-import { GAIN, heartsOf, MAX_POINTS, POINTS_PER_HEART } from './hearts'
+import { DAILY_HEART_CAP, GAIN, heartsOf, MAX_POINTS, POINTS_PER_HEART, ROMANCE_HEART_CAPS, type HeartDay } from './hearts'
 import { bookDone, bookRoomOpen, chaptersOf, emptyProgress, openDoorsFor, otBookFinished, progressOf, totalChapters, type OtProgress, type Progress } from './books'
 import { isOtBook, OT_BOOKS, OT_ROOMS, type CopyBook } from './ot-books'
 import { baseVillageTileAt, HOME_ROOM as HOME_ROOM_W } from './world'
@@ -88,6 +88,8 @@ import {
   DATE_TEA_PRICE,
   DATE_VARIANTS,
   DATING_DAYS,
+  FULL_HEART_DATES,
+  fullHeartBond,
   isCandidateId,
   nextMarketAfter,
   NO_ROMANCE,
@@ -259,6 +261,7 @@ export interface GameState {
   lampFuel: number
   lampLitDay: number | null
   hearts: Record<string, number>
+  heartDay?: HeartDay
   talked: string[]
   helped: string[]
   gifted: string[]
@@ -1770,7 +1773,7 @@ function eventsReady(s: GoalState, npc: string, needCast: boolean): PersonEvent[
   })
   const spouse = s.gen?.persons[slotPerson(s.gen, npc)]?.spouse
   // 고백은 내가 누구와도 사귀지 않고(들꽃 다발의 'taken'과 같은 기준) 연애가 열렸을 때만 — 헤어지면 다시 열린다 (2026-10-11 점검)
-  const confessOk = ctx.suitor && !spouse && !s.romance?.partner && featureAccess(s, 'dating') === 'full'
+  const confessOk = ctx.suitor && !spouse && !s.romance?.partner && featureAccess(s, 'dating') === 'full' && heartsOf(s.hearts[npc]) >= BOUQUET_HEARTS && !coolingAfterBreakup(s, npc)
   return p.events.filter((e) => !life.seen.includes(e.id) && stage >= e.stage && whenMatches(e.when, m) && reqMet(e.req, ctx) && (!e.confess || confessOk) && !busy(e) && (!needCast || castHere(e)))
 }
 
@@ -1837,7 +1840,7 @@ export function openEvent(s: GameState, npc: string): GameState | null {
   }
   const wait = needsFollowUp(e) ? { event: e.id, npc } : (life.storyWait ?? null)
   let next: GameState = { ...s, life: { ...life, seen: [...life.seen, e.id], storyWait: wait }, scenes: [...s.scenes, `ev:${e.id}`] }
-  if (e.gain) next = heartUp(next, npc, e.gain)
+  if (e.gain) next = heartUp(next, npc, e.gain, Infinity, 'story')
   if (e.cool) next = { ...next, life: { ...next.life, cool: { ...next.life.cool, [npc]: s.clock.day + e.cool } } }
   // 고를 말이 없는 마지막 사건은 보는 것으로 이야기가 끝난다
   if (!needsFollowUp(e)) next = completeStory(next, npc, e)
@@ -2185,9 +2188,10 @@ export function chooseInEvent(s: GameState, eventId: string, index: number): Gam
     else if (waiting) life = { ...life, storyWait: null }
     let next: GameState = { ...s, life }
     if (!c.mini) next = completeStory(next, p.id, e, index)
+    if (e.confess && c.stayFriends) next = { ...next, flags: { ...next.flags, [`friendsOnly:${slotPerson(next.gen, p.id)}`]: 1 } }
     // 친구로 지내겠다는 말(stayFriends)을 고르면 연인이 되지 않는다 — 벌점·서먹함 없이, 고백은 다시 묻지 않는다 (계획 16 작업 12b)
-    if (e.confess && !c.stayFriends && !s.romance?.partner && featureAccess(s, 'dating') === 'full' && reqCtx(s, p.id).suitor && !s.gen?.persons[slotPerson(s.gen, p.id)]?.spouse) {
-      next = { ...next, romance: { ...NO_ROMANCE, partner: p.id, stage: 'dating', since: s.clock.day }, flags: { ...next.flags, 'unlock:dating': 1 } }
+    if (e.confess && !c.stayFriends && !s.romance?.partner && featureAccess(s, 'dating') === 'full' && heartsOf(s.hearts[p.id]) >= BOUQUET_HEARTS && !coolingAfterBreakup(s, p.id) && reqCtx(s, p.id).suitor && !s.gen?.persons[slotPerson(s.gen, p.id)]?.spouse) {
+      next = { ...next, romance: { ...NO_ROMANCE, partner: p.id, stage: 'dating', since: s.clock.day, bondRequired: true }, flags: { ...next.flags, 'unlock:dating': 1, [`friendsOnly:${slotPerson(next.gen, p.id)}`]: 0 } }
     }
     return next
   }
@@ -2229,16 +2233,65 @@ function gateCap(s: GameState, p: Person): number {
   return MAX_POINTS
 }
 
-export function heartUp(s: GameState, id: string, points: number, maxGain = Infinity): GameState {
+/** 기능 해금과 별개로 현재 사람의 모습·배우자·친구 선택으로 연애 후보인지 판단한다. */
+function romanceCandidate(s: GameState, id: string): boolean {
+  const def = CONTENT_DEFS.get(id)
+  if (!def?.romanceable) return false
+  const pid = slotPerson(s.gen, id)
+  const look = pid === id ? def.look : s.gen?.persons[pid]?.look
+  return !!look && look !== playerLook(s) && !s.flags[`friendsOnly:${pid}`] && !s.gen?.persons[pid]?.spouse
+}
+
+/** 친구는 이야기 문턱으로, 연애 후보는 필사 해금과 이번 연애의 경험으로 깊어진다. */
+export function relationshipHeartCap(s: GameState, id: string): number {
+  const r = s.romance ?? NO_ROMANCE
+  if (r.partner === id && r.stage) return fullHeartBond(r, s.clock.day) ? MAX_POINTS : ROMANCE_HEART_CAPS.dating
+  if (!romanceCandidate(s, id)) return MAX_POINTS
+  if (featureAccess(s, 'deepRelation') !== 'full') return ROMANCE_HEART_CAPS.early
+  if (featureAccess(s, 'dating') !== 'full') return ROMANCE_HEART_CAPS.close
+  return ROMANCE_HEART_CAPS.confession
+}
+
+export function dailyHeartGain(s: GameState, id: string): number {
+  return s.heartDay?.day === s.clock.day ? s.heartDay.gains[id] ?? 0 : 0
+}
+
+/** 마음이 멈춘 이유를 대화창에 안내한다. 점수나 선물 사용 규칙을 바꾸지는 않는다. */
+export function heartProgressBlock(s: GameState, id: string): 'deep' | 'dating' | 'confession' | 'taken' | 'cooling' | 'bond' | 'story' | 'daily' | null {
+  const points = s.hearts[id] ?? 0
+  if (s.romance?.partner === id && s.romance.bondRequired && !fullHeartBond(s.romance, s.clock.day) && points >= ROMANCE_HEART_CAPS.dating) return 'bond'
+  if (points >= MAX_POINTS) return null
+  const cap = relationshipHeartCap(s, id)
   const p = personOf(id)
-  if (p && points > 0) {
-    // 사람마다 마음이 열리는 빠르기, 서먹할 땐 반만, 문턱에서 멈춘다
-    const cool = (s.life?.cool[id] ?? 0) >= s.clock.day ? 0.5 : 1
-    const scaled = Math.max(1, Math.round(points * p.pace * cool))
-    const room = Math.max(0, gateCap(s, p) - (s.hearts[id] ?? 0))
-    return heartUpRaw(s, id, Math.min(scaled, room), Math.min(room, maxGain))
+  if (p && gateCap(s, p) < cap && points >= gateCap(s, p)) return 'story'
+  if (points >= cap) {
+    if (cap === 80) {
+      if (s.romance?.partner) return 'taken'
+      if (coolingAfterBreakup(s, id)) return 'cooling'
+      return 'confession'
+    }
+    return cap === 50 ? 'deep' : cap === 70 ? 'dating' : 'bond'
   }
-  return heartUpRaw(s, id, points, maxGain)
+  return dailyHeartGain(s, id) >= DAILY_HEART_CAP ? 'daily' : null
+}
+
+export function heartUp(s: GameState, id: string, points: number, maxGain = Infinity, source: 'daily' | 'story' = 'daily'): GameState {
+  if (points <= 0) return points < 0 ? heartUpRaw(s, id, points) : s
+  const p = personOf(id)
+  const cool = (s.life?.cool[id] ?? 0) >= s.clock.day ? 0.5 : 1
+  const scaled = Math.max(1, Math.round(points * (p?.pace ?? 1) * cool))
+  const room = Math.max(0, Math.min(p ? gateCap(s, p) : MAX_POINTS, relationshipHeartCap(s, id)) - (s.hearts[id] ?? 0))
+  if (source === 'story') return heartUpRaw(s, id, Math.min(scaled, room, maxGain))
+  const today: HeartDay = s.heartDay?.day === s.clock.day ? s.heartDay : { day: s.clock.day, gains: {}, charm: [] }
+  const left = Math.max(0, DAILY_HEART_CAP - (today.gains[id] ?? 0))
+  const bonus = today.charm.includes(id) ? 0 : charmBonus(s.stats)
+  const gain = Math.max(0, Math.min(scaled + bonus, left, room, maxGain))
+  // 마음이 가득 차도 이미 충족한 생활 선물(가벼운 신 등)은 받을 수 있다.
+  if (!gain) return heartUpRaw(s, id, 0)
+  const usedBonus = gain > Math.min(scaled, left, room, maxGain)
+  const next = { ...s, heartDay: { ...today, gains: { ...today.gains, [id]: (today.gains[id] ?? 0) + gain },
+    charm: usedBonus ? [...today.charm, id] : today.charm } }
+  return heartUpRaw(next, id, gain)
 }
 
 /** 이웃에게 받은 것: 오늘의 기록(잠들기 전 일기)과 이웃 수첩(일지 › 이웃 수첩의 받은 선물)에 함께 적는다 */
@@ -2248,10 +2301,10 @@ function logGiftFrom(s: GameState, npc: string, gift: Partial<Record<ItemId, num
   return logGift({ ...s, notebook: noteGot(s.notebook ?? NO_NOTEBOOK, npc, items) }, npc, gift)
 }
 
-function heartUpRaw(s: GameState, id: string, points: number, maxGain = Infinity): GameState {
+function heartUpRaw(s: GameState, id: string, points: number): GameState {
   const beforePts = s.hearts[id] ?? 0
-  // 매력 단계만큼 조금 더 (3단계 +1점, 5단계 +2점)
-  const afterPts = Math.min(MAX_POINTS, beforePts + Math.min(maxGain, points + (points > 0 ? charmBonus(s.stats) : 0)))
+  // 보너스·상한은 heartUp에서 계산한다. 기존 마음은 새 상한 때문에 낮추지 않는다.
+  const afterPts = Math.max(0, Math.min(MAX_POINTS, beforePts + points))
   const before = heartsOf(beforePts)
   const after = heartsOf(afterPts)
   let next: GameState = { ...s, hearts: { ...s.hearts, [id]: afterPts } }
@@ -3621,14 +3674,14 @@ export function giveBouquet(s: GameState, def: NeighborDef): GameState {
   const next: GameState = {
     ...s,
     inv: take(s.inv, { bouquet: 1 })!,
-    romance: { ...NO_ROMANCE, partner: def.id, stage: 'dating', since: s.clock.day },
-    flags: { ...s.flags, 'unlock:dating': 1 },
+    romance: { ...NO_ROMANCE, partner: def.id, stage: 'dating', since: s.clock.day, bondRequired: true },
+    flags: { ...s.flags, 'unlock:dating': 1, [`friendsOnly:${slotPerson(s.gen, def.id)}`]: 0 },
     scenes: [...s.scenes, `confess:${def.id}`],
   }
   return heartUp(next, def.id, BOUQUET_GAIN)
 }
 
-export type CordBlock = 'locked' | 'notPartner' | 'stage' | 'days' | 'hearts' | 'room' | 'noItem' | null
+export type CordBlock = 'locked' | 'notPartner' | 'stage' | 'days' | 'hearts' | 'bond' | 'room' | 'noItem' | null
 export function canGiveCord(s: GameState, def: NeighborDef): CordBlock {
   if (featureAccess(s, 'marriage') !== 'full') return 'locked'
   const r = s.romance ?? NO_ROMANCE
@@ -3636,6 +3689,7 @@ export function canGiveCord(s: GameState, def: NeighborDef): CordBlock {
   if (r.stage !== 'dating') return 'stage'
   if (s.clock.day - (r.since ?? s.clock.day) < DATING_DAYS) return 'days'
   if (heartsOf(s.hearts[def.id]) < CORD_HEARTS) return 'hearts'
+  if (r.bondRequired && !fullHeartBond(r, s.clock.day)) return 'bond'
   // 함께 살 방이 있어야 한다 (집 넓히기 1단계)
   if (s.homeLevel < 1) return 'room'
   if (count(s.inv, 'promiseCord') === 0) return 'noItem'
@@ -3673,6 +3727,7 @@ export function breakUp(s: GameState, id: string): GameState {
   return {
     ...s,
     romance: NO_ROMANCE,
+    scenes: s.scenes.filter(scene => scene !== `loverTrust:${id}`),
     hearts: { ...s.hearts, [id]: Math.min(s.hearts[id] ?? 0, BREAKUP_HEART_CAP) },
     flags: { ...s.flags, [`exPartner:${id}`]: s.clock.day },
   }
@@ -3787,13 +3842,17 @@ export function goOnDate(s: GameState, place: DatePlace, content: GameContent): 
   if (place === 'sunset') flags[sunKey] = 1
   const next: GameState = {
     ...s,
+    romance: { ...s.romance, dates: (s.romance.dates ?? 0) + 1 },
     coins: place === 'tea' ? s.coins - DATE_TEA_PRICE : s.coins,
     needs: rest(s.needs),
     flags,
   }
   // 함께 간 장면을 마음이 오르며 열린 이야기보다 먼저 보인다
   const warmed = heartUp(next, s.romance.partner!, DATE_GAIN)
-  const done = passTime({ ...warmed, scenes: [...s.scenes, scene, ...warmed.scenes.slice(s.scenes.length)] }, DATE_MINUTES[place])
+  let done = passTime({ ...warmed, scenes: [...s.scenes, scene, ...warmed.scenes.slice(s.scenes.length)] }, DATE_MINUTES[place])
+  if (done.romance.stage === 'dating' && (done.romance.dates ?? 0) >= FULL_HEART_DATES && !done.romance.storyRead && !done.romance.storyQueued) {
+    done = { ...done, romance: { ...done.romance, storyQueued: true }, scenes: [...done.scenes, `loverTrust:${done.romance.partner}`] }
+  }
   return lucky ? train(done, 'luck', XP.stars) : done
 }
 
@@ -4576,6 +4635,8 @@ export function sceneSeen(s: GameState, id: string, albumIds: readonly string[])
   const inAlbum = albumIds.includes(id) && !s.album.some((a) => a.id === id)
   return {
     ...s,
+    ...(id === `loverTrust:${s.romance?.partner}` && s.scenes.includes(id) && s.romance.storyQueued && (s.romance.dates ?? 0) >= FULL_HEART_DATES
+      ? { romance: { ...s.romance, storyRead: true, storyQueued: false } } : {}),
     scenes,
     album: inAlbum ? [...s.album, { id, day: s.clock.day }] : s.album,
     todayNotes: s.todayNotes.includes(id) ? s.todayNotes : [...s.todayNotes, id],
@@ -4690,10 +4751,14 @@ export interface HomeStage {
   coins: number
   needs: Partial<Record<ItemId, number>>
 }
+/**
+ * 집 넓히기 값 (2026-10-13 사용자: 필사 수입에 맞게 올림). 배우자방이 열리는 80장 무렵 모은 돈은 1만 3천~1만 5천 닢,
+ * 아이방이 열리는 110장 무렵은 2만 닢 남짓 — 단계마다 모은 돈의 5분의 1쯤, 필사 13·21·31장 분량
+ */
 export const HOME_STAGES: readonly HomeStage[] = [
-  { level: 1, coins: 120, needs: { olive: 5 } },
-  { level: 2, coins: 200, needs: { papyrus: 5 } },
-  { level: 3, coins: 300, needs: { olive: 8, papyrus: 5 } },
+  { level: 1, coins: 2500, needs: { olive: 10 } },
+  { level: 2, coins: 4000, needs: { papyrus: 10 } },
+  { level: 3, coins: 6000, needs: { olive: 15, papyrus: 10 } },
 ]
 
 /** 다음에 부탁할 단계 (다 지었으면 null) */

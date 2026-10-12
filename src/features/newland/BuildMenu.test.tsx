@@ -27,7 +27,7 @@ function reset(revealed: boolean, extra: Partial<GameState> = {}) {
   const game: GameState = {
     ...g,
     scenes: [],
-    coins: 500,
+    coins: 5000,
     inv: { olive: 9, papyrus: 9, reed: 9 },
     map: 'newland',
     flags: { ...g.flags, newlandGift: 1, ...(revealed ? { newlandRevealed: 1 } : {}) },
@@ -77,7 +77,7 @@ describe('터 가꾸기 창', () => {
     for (const name of ['길', '정원 칸', '공동 마당', '입주 주택', T.build.eraser]) expect(screen.getByRole('button', { name })).toBeInTheDocument()
     // 칸을 고르면 쓰임과 드는 것이 자세히 칸에
     fireEvent.click(screen.getByRole('button', { name: '입주 주택' }))
-    expect(screen.getByText(/150닢 · 올리브 4 · 파피루스 3/)).toBeInTheDocument()
+    expect(screen.getByText(/1500닢 · 올리브 4 · 파피루스 3/)).toBeInTheDocument()
     expect(screen.queryByText(/courtyard|home|path|garden|ordered/)).toBeNull()
   })
 
@@ -89,7 +89,7 @@ describe('터 가꾸기 창', () => {
     fireEvent.click(screen.getByRole('button', { name: T.build.place }))
     const g = useGame.getState().game
     expect(buildsOf(g)).toHaveLength(1)
-    expect(g.coins).toBe(350)
+    expect(g.coins).toBe(3500)
     // 놓고 나면 지은 것 칸이 열려 "주문함"이 보인다
     expect(screen.getByText(/입주 주택 · 주문함/)).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: T.build.cancel }))
@@ -99,7 +99,7 @@ describe('터 가꾸기 창', () => {
     fireEvent.click(screen.getByRole('button', { name: T.build.yes }))
     const after = useGame.getState().game
     expect(buildsOf(after)).toHaveLength(0)
-    expect(after.coins).toBe(500)
+    expect(after.coins).toBe(5000)
     expect(after.inv).toEqual({ olive: 9, papyrus: 9, reed: 9 })
   })
 
@@ -131,7 +131,7 @@ describe('터 가꾸기 창', () => {
     choose(/^길/)
     fireEvent.click(screen.getByRole('button', { name: T.build.place }))
     expect(Object.keys(useGame.getState().game.newland!.tiles)).toHaveLength(1)
-    expect(useGame.getState().game.coins).toBe(499)
+    expect(useGame.getState().game.coins).toBe(4999)
     expect(screen.getByRole('status')).toHaveTextContent(T.build.blockSame)
     expect(screen.getByRole('button', { name: T.build.place })).toBeDisabled()
   })

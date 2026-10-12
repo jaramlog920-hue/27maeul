@@ -142,12 +142,12 @@ describe('새 방의 규칙 (같은 가구 규칙, 방 기준)', () => {
 
 function land(extra: Partial<GameState> = {}): GameState {
   const base = newGame(CONTENT)
-  base.progress.phm.completed = [1]
+  base.progress.mt.completed = Array.from({ length: 5 }, (_, i) => i + 1) // 꾸미기 정식 해금 5장
   const g: GameState = {
     ...base,
     scenes: [],
     clock: { day: 10, minute: 10 * 60 },
-    coins: 5000,
+    coins: 50000,
     inv: { olive: 40, papyrus: 40, reed: 40, table: 1, stool: 3, rug: 1, vase: 2, cushion: 9, jar: 9 },
     flags: { ...base.flags, newlandGift: 1, newlandRevealed: 1 },
     map: 'newland',

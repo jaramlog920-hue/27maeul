@@ -13,7 +13,7 @@ import { route } from './neighbors'
 const rich = (): GameState => {
   const s = establishedGame(CONTENT, 21)
   s.progress.phm.completed = [1]
-  return { ...s, coins: 2000, inv: { ...s.inv, olive: 30, papyrus: 20 }, flags: { ...s.flags, 'movedIn:carpenter': 1 } }
+  return { ...s, coins: 20000, inv: { ...s.inv, olive: 40, papyrus: 30 }, flags: { ...s.flags, 'movedIn:carpenter': 1 } }
 }
 const build = (s: GameState) => goToSleep(orderHome(s)!, CONTENT)
 beforeEach(() => newGame(CONTENT))

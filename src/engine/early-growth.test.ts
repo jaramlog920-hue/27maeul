@@ -25,14 +25,17 @@ describe('서고 성장과 초반 생활 해금', () => {
     expect(libraryGrowth(game).completedBooks).toEqual([])
   })
 
-  it('한 장짜리 책을 먼저 완필하면 서고에 꽂기 전에도 정식 해금이 앞선다', () => {
+  it('정식 해금은 어느 책이든 마친 장 수로 열리고, 짧은 책을 골라도 앞서지 않는다 (2026-10-13)', () => {
     const game = newGame(CONTENT)
-    game.progress.phm.completed = [1]
+    for (const b of ['phm', '2jn', '3jn', 'jud'] as const) game.progress[b].completed = [1]
+    expect(featureAccess(game, 'decorate')).toBe('preview')
+    game.progress.mt.completed = [1]
     expect(featureAccess(game, 'decorate')).toBe('full')
     expect(libraryGrowth(game).shelvedBooks).toEqual([])
-    game.progress['2jn'].completed = [1]
+    game.progress.mt.completed = [1, 2, 3, 4]
     expect(featureAccess(game, 'mailbox')).toBe('full')
-    game.progress['3jn'].completed = [1]
+    expect(featureAccess(game, 'board')).toBe('locked')
+    game.progress.mt.completed = [1, 2, 3, 4, 5, 6, 7, 8]
     expect(featureAccess(game, 'board')).toBe('full')
     // 정식 부탁의 수는 그날 입주한 주민에 따라 달라진다. 체험 부탁 대신 날짜별 부탁인지 검사한다.
     const requests = copyRequestsToday(game, CONTENT)
@@ -65,13 +68,18 @@ describe('서고 성장과 초반 생활 해금', () => {
     const result = writeVerse(game, 'phm', verses.at(-1)!.text, CONTENT)
     expect(result.result.kind).toBe('chapter')
     expect(result.state.inv.stool).toBe(1)
-    expect(result.state.scenes).toContain('growth:decorate:full')
+    expect(result.state.scenes).toContain('growth:decorate')
     expect(writeVerse(result.state, 'phm', verses.at(-1)!.text, CONTENT).state.inv.stool).toBe(1)
     const picks = blanksFor('phm', 1, CONTENT.copy!('phm')).map(b => b.answer)
     expect(recordLetter(game, 'phm', 1, picks, CONTENT).inv.stool).toBe(1)
+    // 4장을 마친 뒤 빌레몬서 1장을 마치면 5장 — 꾸미기 정식 해금 안내 (2026-10-13 장 수 기준)
+    const four = chapters(4)
+    four.copy.at.phm = { chapter: 1, verse: verses.at(-1)!.verse }
+    expect(writeVerse(four, 'phm', verses.at(-1)!.text, CONTENT).state.scenes).toContain('growth:decorate:full')
+    expect(recordLetter(four, 'phm', 1, picks, CONTENT).scenes).toContain('growth:decorate:full')
   })
 
-  it('첫 편지는 잠들어도 남고 한 통만 체험하며 2권 완필 뒤 다시 받을 수 있다', () => {
+  it('첫 편지는 잠들어도 남고 한 통만 체험하며 8장을 마친 뒤 다시 받을 수 있다', () => {
     const game = applyEarlyGrowth(chapters(1), chapters(2), CONTENT)
     expect(game.post).toHaveLength(1)
     const morning = goToSleep(game, CONTENT)
@@ -81,8 +89,7 @@ describe('서고 성장과 초반 생활 해금', () => {
     const extra = CONTENT.pieces.find(p => !got.state.collected.includes(p.id))!.id
     const waiting = { ...got.state, post: [extra] }
     expect(openMailbox(waiting, CONTENT).pieceIds).toEqual([])
-    waiting.progress.phm.completed = [1]
-    waiting.progress['2jn'].completed = [1]
+    waiting.progress.mt.completed = [1, 2, 3, 4, 5, 6, 7, 8]
     expect(openMailbox(waiting, CONTENT).pieceIds).toEqual([extra])
   })
 
@@ -120,13 +127,13 @@ describe('서고 성장과 초반 생활 해금', () => {
     expect(canWriteRequest(chapters(0), request)).toBe('notYet')
   })
 
-  it('새 저장은 의자만 체험할 수 있고 완필 이후 다른 가구를 놓을 수 있다', () => {
+  it('새 저장은 의자만 체험할 수 있고 5장을 마친 뒤 다른 가구를 놓을 수 있다', () => {
     const game = applyEarlyGrowth(chapters(0), chapters(1), CONTENT)
     const home = { ...game, player: { ...game.player, ...HOME_ENTRY }, inv: { ...game.inv, vase: 1 } }
     expect(placeFurniture(chapters(0), 'stool', { x: 20, y: 112 })).toBeNull()
     expect(placeFurniture(home, 'vase', { x: 20, y: 112 })).toBeNull()
     expect(placeFurniture(home, 'stool', { x: 20, y: 112 })).not.toBeNull()
-    home.progress.phm.completed = [1]
+    home.progress.mt.completed = [1, 2, 3, 4, 5]
     expect(placeFurniture(home, 'vase', { x: 20, y: 112 })).not.toBeNull()
   })
 

@@ -861,7 +861,7 @@ export const PLACES: Record<PlaceId, Place> = {
   otShelf: { tiles: [{ ...INTERIOR_SHELF.tile }], stand: { ...INTERIOR_SHELF.stand } },
   hearth: { tiles: [home(4, 1)], stand: HEARTH_STAND },
   shelf: { tiles: [home(7, 1)], stand: home(7, 2) },
-  workbench: { tiles: [home(7, 3)], stand: home(6, 3) },
+  workbench: { tiles: [{ x: FIXTURES.homeWorkbench.x, y: FIXTURES.homeWorkbench.y }], stand: { x: FIXTURES.homeWorkbench.x + 1, y: FIXTURES.homeWorkbench.y } },
   // 광장 위쪽 마을 우물
   well: { tiles: [{ x: 24, y: 14 }], stand: { x: 24, y: 15 } },
   hill: { tiles: [{ x: 14, y: 11 }], stand: { x: 14, y: 12 } },

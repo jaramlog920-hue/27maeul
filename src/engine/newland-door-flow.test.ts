@@ -8,7 +8,7 @@ import type { Facing } from './types'
 
 function homes(facing: Facing) {
   const base = newGame(CONTENT)
-  let s: GameState = { ...base, map: 'newland', scenes: [], coins: 1000, inv: { olive: 9, papyrus: 9 },
+  let s: GameState = { ...base, map: 'newland', scenes: [], coins: 10000, inv: { olive: 9, papyrus: 9 },
     clock: { day: 10, minute: 600 }, flags: { ...base.flags, newlandGift: 1, newlandRevealed: 1 },
     player: { ...base.player, ...NEWLAND_PORTAL_FRONT, path: [] } }
   s = orderBuild(s, 'home', 8, 11, facing)!

@@ -79,7 +79,7 @@ describe('건물 종류 표', () => {
   it('비용은 결정 D3 그대로', () => {
     expect(SITES.path.cost).toEqual({ coins: 1, items: {} })
     expect(SITES.garden.cost).toEqual({ coins: 3, items: {} })
-    expect(SITES.courtyard.cost).toEqual({ coins: 40, items: { reed: 4 } })
-    expect(SITES.home.cost).toEqual({ coins: 150, items: { olive: 4, papyrus: 3 } })
+    expect(SITES.courtyard.cost).toEqual({ coins: 400, items: { reed: 4 } })
+    expect(SITES.home.cost).toEqual({ coins: 1500, items: { olive: 4, papyrus: 3 } })
   })
 })

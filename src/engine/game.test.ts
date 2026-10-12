@@ -148,11 +148,11 @@ describe('걷기와 도착', () => {
 })
 
 describe('이웃', () => {
-  it('하루 첫 인사에 마음 2점, 두 번째는 그대로 (하트는 10점마다 하나)', () => {
+  it('하루 첫 인사에 마음 1점, 두 번째는 그대로 (하트는 10점마다 하나)', () => {
     let s = greetNeighbor(newGame(CONTENT), 'baker')
-    expect(s.hearts.baker).toBe(2)
+    expect(s.hearts.baker).toBe(1)
     s = greetNeighbor(s, 'baker')
-    expect(s.hearts.baker).toBe(2)
+    expect(s.hearts.baker).toBe(1)
     expect(heartsOf(s.hearts.baker)).toBe(0)
   })
   it('이야기는 한 번만 받는다', () => {
@@ -178,14 +178,14 @@ describe('이웃', () => {
     expect(finishHelp(s, def('grandpa')).inv.grapes).toBe(2)
     expect(finishHelp(newGame(CONTENT), def('grandpa')).inv.fig).toBe(2)
   })
-  it('선물: 좋아하는 것이면 5점, 아니면 2점, 하루 한 번', () => {
+  it('선물: 좋아하는 것이면 3점, 아니면 1점, 하루 한 번', () => {
     const s = { ...newGame(CONTENT), inv: { grapes: 2, bread: 1 } }
     const liked = giveGift(s, def('baker'), 'grapes')!
     expect(liked.liked).toBe(true)
-    expect(liked.state.hearts.baker).toBe(5)
+    expect(liked.state.hearts.baker).toBe(3)
     expect(giveGift(liked.state, def('baker'), 'grapes')).toBeNull()
     const plain = giveGift(s, def('smith'), 'grapes')!
-    expect(plain.state.hearts.smith).toBe(2)
+    expect(plain.state.hearts.smith).toBe(1)
     expect(giveGift(s, def('smith'), 'wool')).toBeNull()
   })
   it('하트 셋(30점)이 되면 선물과 장면', () => {
@@ -238,7 +238,7 @@ describe('벤치에서 읽기', () => {
 })
 
 describe('마음의 속도', () => {
-  it('매일 인사하고 도와도 하트가 다 차려면 스무 날쯤 걸린다', () => {
+  it('인사와 돕기만으로는 매력 성장까지 포함해 마음10에 약한달이 걸린다', () => {
     let s = newGame(CONTENT)
     let days = 0
     while (heartsOf(s.hearts.baker) < 10 && days < 60) {
@@ -247,8 +247,8 @@ describe('마음의 속도', () => {
       s = goToSleep({ ...s, inv: { water: 1 } }, CONTENT)
       days++
     }
-    expect(days).toBeGreaterThanOrEqual(18)
-    expect(days).toBeLessThanOrEqual(22)
+    expect(days).toBeGreaterThanOrEqual(30)
+    expect(days).toBeLessThanOrEqual(34)
   })
 })
 
@@ -502,7 +502,7 @@ describe('동반 동물·방·나의 한 줄', () => {
   })
   it('깔개는 3×2칸으로 깔리고, 치우면 가방으로', () => {
     const s = { ...newGame(CONTENT), room: [], inv: { rug: 1 } }
-    s.progress.phm.completed = [1]
+    s.progress.mt.completed = Array.from({ length: 5 }, (_, i) => i + 1) // 꾸미기 정식 해금 5장
     const p = placeFurniture(s, 'rug', h(5, 4))!
     expect(p.room).toEqual([{ item: 'rug', ...h(5, 4) }])
     expect(p.inv.rug).toBeUndefined()
@@ -514,7 +514,7 @@ describe('동반 동물·방·나의 한 줄', () => {
   })
   it('식탁 위에 물병을 올리고, 식탁을 치우면 물병도 함께', () => {
     const s = { ...newGame(CONTENT), room: [], inv: { table: 1, jar: 1 } }
-    s.progress.phm.completed = [1]
+    s.progress.mt.completed = Array.from({ length: 5 }, (_, i) => i + 1) // 꾸미기 정식 해금 5장
     // 문깔개 바로 위(들어와 서는 칸)는 막을 수 없다
     expect(placeFurniture(s, 'table', HOME_ENTRY)).toBeNull()
     let p = placeFurniture(s, 'table', h(7, 6))!
@@ -762,8 +762,10 @@ describe('스페이스 상호작용', () => {
     const away = ({ left: 'right', right: 'left', up: 'down', down: 'up' } as const)[facing]
     const at = (f: GameState['player']['facing']) => ({ ...s, player: { ...s.player, x: stand.x, y: stand.y, path: [], facing: f } }) as GameState
     expect(pressTileT(at(facing))).toEqual(desk)
-    // 스페이스와 달리 옆 칸을 찾아가지 않는다 — 화면에서 앞 칸을 누른 것과 같다
-    expect(pressTileT(at(away))).toEqual(stand)
+    // 스페이스와 달리 옆 칸을 찾아가지 않는다 — 화면에서 앞 칸을 누른 것과 같다.
+    // 책상 반대쪽(오른쪽)은 작업대라(2026-10-13) 앞이 빈 위쪽으로 본다
+    void away
+    expect(pressTileT(at('up'))).toEqual(stand)
   })
   it('막힌 쪽으로 걸으려 하면 그쪽을 바라본다', () => {
     const s = newGame(CONTENT)

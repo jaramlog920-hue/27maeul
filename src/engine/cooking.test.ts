@@ -36,7 +36,8 @@ function furnish(s: GameState, pieces: [ItemId, number, number, Facing?][]): Gam
 function base(inv: Partial<Record<ItemId, number>> = {}): GameState {
   const s = newGame(CONTENT)
   // 탁자 자리 좌표는 예전 침대 자리(17,111)를 기준으로 짰다 — 침대만 그 자리로 둔다
-  const room = s.room.map((f) => (f.item === 'homeBed' ? { ...f, x: 17, y: 111 } : f))
+  // 침대·작업대는 예전 자리 — 이 파일의 탁자·의자 좌표는 예전 배치로 짰다 (작업대는 2026-10-13부터 새 게임에서 책상 옆)
+  const room = s.room.map((f) => (f.item === 'homeBed' ? { ...f, x: 17, y: 111 } : f.item === 'homeWorkbench' ? { ...f, x: 23, y: 113 } : f))
   return { ...s, room, scenes: [], clock: { day: 3, minute: 15 * 60 }, inv: { ...inv }, needs: { ...s.needs, hunger: 80, fatigue: 0 } }
 }
 /** 마지막 손 동작까지 끝내고 담는 모습을 고를 수 있는 상태로 */

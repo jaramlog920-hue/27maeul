@@ -15,7 +15,7 @@ afterEach(() => setPeopleData(PEOPLE))
 const confess: PersonEvent = { id: 'test:confess', title: 'Confession', stage: 0, at: { x: 1, y: 1 }, confess: true,
   lines: [], choices: [{ label: 'Accept', color: 'warm' as const, reply: [] }] }
 const withConfess = () => setPeopleData({ people: { rudy: { ...PEOPLE.people.rudy, events: [confess] } }, threads: [] })
-const player = (s: GameState): GameState => ({ ...s, avatar: { ...s.avatar!, name: 'Player', look: 'f' }, clock: { day: 60, minute: 600 } })
+const player = (s: GameState): GameState => ({ ...s, avatar: { ...s.avatar!, name: 'Player', look: 'f' }, hearts: { ...s.hearts, rudy: 80 }, clock: { day: 60, minute: 600 } })
 
 describe('1. 이미 연인·약혼·부부면 다른 후보의 고백 장면이 열리지 않는다', () => {
   it.each(['dating', 'engaged', 'married'] as const)('%s', (stage) => {

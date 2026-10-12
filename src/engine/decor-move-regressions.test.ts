@@ -8,7 +8,7 @@ import { HOME_ENTRY } from './world'
 function setup() {
   const base = newGame(CONTENT)
   // 배치 규칙 검사는 집 꾸미기가 정식으로 열린 상태에서 한다.
-  base.progress.phm.completed = [1]
+  base.progress.mt.completed = Array.from({ length: 5 }, (_, i) => i + 1) // 꾸미기 정식 해금 5장
   const s = { ...base, room: [], flags: { ...base.flags }, inv: {}, player: { ...base.player, ...HOME_ENTRY } }
   syncHome(s)
   const table = placement([], 'table', { x: 19, y: 113 })!

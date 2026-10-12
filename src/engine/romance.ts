@@ -25,6 +25,13 @@ export interface Romance {
   /** 결혼 잔치 날 (약혼한 다음 장날) */
   weddingDay: number | null
   marriedDay: number | null
+  /** 이번 연애에서 마친 데이트 수. 이전 상대의 횟수와 분리한다. */
+  dates?: number
+  /** 세 번째 데이트 뒤의 연인 이야기를 끝까지 읽었는가. */
+  storyRead?: boolean
+  storyQueued?: boolean
+  /** 이번 개편 뒤 시작한 연애: 친구의 기존10하트도 연애 경험 조건을 대신하지 않는다. */
+  bondRequired?: boolean
 }
 export const NO_ROMANCE: Romance = { partner: null, stage: null, since: null, weddingDay: null, marriedDay: null }
 
@@ -34,6 +41,14 @@ export const BOUQUET_HEARTS = 8
 export const CORD_HEARTS = 10
 /** 연인으로 지낸 날 수 (이만큼 지나야 약속의 끈) */
 export const DATING_DAYS = 7
+/** 10하트로 깊어지는 조건. 이미 약혼·결혼한 저장은 다시 잠그지 않는다. */
+export const FULL_HEART_DATING_DAYS = 14
+export const FULL_HEART_DATES = 3
+export function fullHeartBond(r: Romance, day: number): boolean {
+  return r.stage === 'married' || r.stage === 'engaged' ||
+    (r.stage === 'dating' && r.since !== null && day - r.since >= FULL_HEART_DATING_DAYS &&
+      (r.dates ?? 0) >= FULL_HEART_DATES && r.storyRead === true)
+}
 /** 들꽃 다발·약속의 끈을 건네면 오르는 마음 점수 */
 export const BOUQUET_GAIN = 5
 export const CORD_GAIN = 5
@@ -104,5 +119,9 @@ export function sanitizeRomance(raw: unknown): Romance {
   const stage = partner && (o.stage === 'dating' || o.stage === 'engaged' || o.stage === 'married') ? o.stage : null
   if (!partner || !stage) return NO_ROMANCE
   const num = (n: unknown) => (typeof n === 'number' && Number.isFinite(n) ? n : null)
-  return { partner, stage, since: num(o.since), weddingDay: stage === 'engaged' ? num(o.weddingDay) : null, marriedDay: stage === 'married' ? num(o.marriedDay) : null }
+  return { partner, stage, since: num(o.since), weddingDay: stage === 'engaged' ? num(o.weddingDay) : null, marriedDay: stage === 'married' ? num(o.marriedDay) : null,
+    ...(o.dates !== undefined ? { dates: typeof o.dates === 'number' && Number.isInteger(o.dates) && o.dates >= 0 ? Math.min(999, o.dates) : 0 } : {}),
+    ...(o.storyRead !== undefined ? { storyRead: o.storyRead === true } : {}),
+    ...(o.storyQueued !== undefined ? { storyQueued: o.storyQueued === true } : {}),
+    ...(o.bondRequired !== undefined ? { bondRequired: o.bondRequired === true } : {}) }
 }

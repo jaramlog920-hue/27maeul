@@ -201,7 +201,8 @@ describe('내 집 (계획 7-1 작업 5)', () => {
     expect(at('hearth')).toEqual([4, 1])
     expect(at('shelf')).toEqual([7, 1])
     expect(at('desk')).toEqual([1, 4])
-    expect(at('workbench')).toEqual([7, 3])
+    // 작업대는 필사 책상 바로 옆 (2026-10-13 사용자)
+    expect(at('workbench')).toEqual([3, 4])
     for (const id of ['bed', 'hearth', 'shelf', 'desk', 'workbench'] as const) {
       expect(isHome(PLACES[id].stand!), id).toBe(true)
       expect(findPath(HOME_ENTRY, PLACES[id].stand!), id).not.toBeNull()

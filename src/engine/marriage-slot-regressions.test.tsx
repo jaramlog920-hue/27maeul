@@ -50,7 +50,7 @@ describe('marriage slot/person regressions', () => {
     const event: PersonEvent = { id: 'test:confess', title: 'Confession', stage: 0, at: { x: 1, y: 1 }, confess: true,
       lines: [], choices: [{ label: 'Accept', color: 'warm' as const, reply: [] }] }
     setPeopleData({ people: { rudy: { ...PEOPLE.people.rudy, events: [event] } }, threads: [] })
-    const s = { ...base, gen: g, avatar: { ...base.avatar, name: 'Player', look: 'f' as const }, clock: { day, minute: 600 } }
+    const s = { ...base, gen: g, hearts: { ...base.hearts, rudy: 80 }, avatar: { ...base.avatar, name: 'Player', look: 'f' as const }, clock: { day, minute: 600 } }
     expect(eventNow(s, 'rudy')?.id).toBe(event.id)
     expect(chooseInEvent(s, event.id, 0).romance.partner).toBe('rudy')
     const spouse = kind === 'heir' ? b : 'poppy'

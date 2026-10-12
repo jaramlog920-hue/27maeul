@@ -146,7 +146,7 @@ export function tiredScale(stats: Stats | undefined): number {
   return 1 - 0.06 * (levelOf(stats, 'strength') - 1)
 }
 
-/** 매력: 하트가 조금 더 — 3단계 +1점, 5단계 +2점 (하트 하나 = 10점) */
+/** 매력: 주민마다 하루 한 번 +1/+2점. 적용 여부와 하루 총량은 heartUp이 관리한다. */
 export function charmBonus(stats: Stats | undefined): number {
   return Math.floor((levelOf(stats, 'charm') - 1) / 2)
 }

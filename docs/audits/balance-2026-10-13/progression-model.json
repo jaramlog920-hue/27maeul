@@ -1,0 +1,1613 @@
+{
+  "capturedAt": "2026-10-12T15:41:35.172Z",
+  "copyPaySource": "export function copyPay(verses: number, effort = 1): number {\r\n  return Math.max(1, Math.round(Math.min(200, 20 + verses * 5) * effort))\r\n}",
+  "assumptions": "Unique direct-copy chapters; book completion counts; pre-chapter library bonus; no mood or OT bonus; chars use engine NFC normalization excluding whitespace/punctuation/symbols; typing hours exclude reading, UI and mistakes. Shortest-chapter order is not a proven global shortest-real-time path.",
+  "books": [
+    {
+      "id": "mt",
+      "chapters": 28,
+      "verses": 1071,
+      "chars": 39947,
+      "chapterVerses": [
+        25,
+        23,
+        17,
+        25,
+        48,
+        34,
+        29,
+        34,
+        38,
+        42,
+        30,
+        50,
+        58,
+        36,
+        39,
+        28,
+        27,
+        35,
+        30,
+        34,
+        46,
+        46,
+        39,
+        51,
+        46,
+        75,
+        66,
+        20
+      ],
+      "chapterChars": [
+        868,
+        947,
+        681,
+        922,
+        1802,
+        1485,
+        1059,
+        1302,
+        1446,
+        1563,
+        1191,
+        1918,
+        2035,
+        1142,
+        1391,
+        1151,
+        1102,
+        1308,
+        1208,
+        1229,
+        1914,
+        1487,
+        1497,
+        1702,
+        1716,
+        2849,
+        2320,
+        712
+      ]
+    },
+    {
+      "id": "mk",
+      "chapters": 16,
+      "verses": 678,
+      "chars": 25215,
+      "chapterVerses": [
+        45,
+        28,
+        35,
+        41,
+        43,
+        56,
+        37,
+        38,
+        50,
+        52,
+        33,
+        44,
+        37,
+        72,
+        47,
+        20
+      ],
+      "chapterChars": [
+        1518,
+        1211,
+        1140,
+        1387,
+        1526,
+        2031,
+        1345,
+        1405,
+        2043,
+        2064,
+        1312,
+        1827,
+        1364,
+        2718,
+        1550,
+        774
+      ]
+    },
+    {
+      "id": "lk",
+      "chapters": 24,
+      "verses": 1151,
+      "chars": 42781,
+      "chapterVerses": [
+        80,
+        52,
+        38,
+        44,
+        39,
+        49,
+        50,
+        56,
+        62,
+        42,
+        54,
+        59,
+        35,
+        35,
+        32,
+        31,
+        37,
+        43,
+        48,
+        47,
+        38,
+        71,
+        56,
+        53
+      ],
+      "chapterChars": [
+        2459,
+        1663,
+        1566,
+        1691,
+        1583,
+        1985,
+        2106,
+        2246,
+        2465,
+        1708,
+        2172,
+        2336,
+        1451,
+        1358,
+        1183,
+        1333,
+        1283,
+        1618,
+        1673,
+        1658,
+        1272,
+        2356,
+        1878,
+        1738
+      ]
+    },
+    {
+      "id": "jn",
+      "chapters": 21,
+      "verses": 879,
+      "chars": 34625,
+      "chapterVerses": [
+        51,
+        25,
+        36,
+        54,
+        47,
+        71,
+        53,
+        59,
+        41,
+        42,
+        57,
+        50,
+        38,
+        31,
+        27,
+        33,
+        26,
+        40,
+        42,
+        31,
+        25
+      ],
+      "chapterChars": [
+        1879,
+        890,
+        1353,
+        1937,
+        1799,
+        2570,
+        1901,
+        2446,
+        1549,
+        1481,
+        2039,
+        1964,
+        1537,
+        1370,
+        1120,
+        1416,
+        1307,
+        1731,
+        1805,
+        1277,
+        1254
+      ]
+    },
+    {
+      "id": "ac",
+      "chapters": 28,
+      "verses": 1007,
+      "chars": 39844,
+      "chapterVerses": [
+        26,
+        47,
+        26,
+        37,
+        42,
+        15,
+        60,
+        40,
+        43,
+        48,
+        30,
+        25,
+        52,
+        28,
+        41,
+        40,
+        34,
+        28,
+        41,
+        38,
+        40,
+        30,
+        35,
+        27,
+        27,
+        32,
+        44,
+        31
+      ],
+      "chapterChars": [
+        1123,
+        1753,
+        1088,
+        1376,
+        1589,
+        604,
+        2366,
+        1393,
+        1677,
+        1775,
+        1087,
+        993,
+        2087,
+        1044,
+        1548,
+        1550,
+        1501,
+        1166,
+        1632,
+        1476,
+        1680,
+        1249,
+        1497,
+        1071,
+        1272,
+        1390,
+        1600,
+        1257
+      ]
+    },
+    {
+      "id": "rom",
+      "chapters": 16,
+      "verses": 433,
+      "chars": 18112,
+      "chapterVerses": [
+        32,
+        29,
+        31,
+        25,
+        21,
+        23,
+        25,
+        39,
+        33,
+        21,
+        36,
+        21,
+        14,
+        23,
+        33,
+        27
+      ],
+      "chapterChars": [
+        1424,
+        1125,
+        1145,
+        1019,
+        1030,
+        989,
+        1096,
+        1602,
+        1370,
+        902,
+        1543,
+        732,
+        664,
+        962,
+        1432,
+        1077
+      ]
+    },
+    {
+      "id": "1co",
+      "chapters": 16,
+      "verses": 437,
+      "chars": 17592,
+      "chapterVerses": [
+        31,
+        16,
+        23,
+        21,
+        13,
+        20,
+        40,
+        13,
+        27,
+        33,
+        34,
+        31,
+        13,
+        40,
+        58,
+        24
+      ],
+      "chapterChars": [
+        1315,
+        747,
+        901,
+        954,
+        599,
+        838,
+        1742,
+        571,
+        1224,
+        1216,
+        1268,
+        1086,
+        517,
+        1592,
+        2215,
+        807
+      ]
+    },
+    {
+      "id": "2co",
+      "chapters": 13,
+      "verses": 256,
+      "chars": 11731,
+      "chapterVerses": [
+        24,
+        17,
+        18,
+        18,
+        21,
+        18,
+        16,
+        24,
+        15,
+        18,
+        33,
+        21,
+        13
+      ],
+      "chapterChars": [
+        1160,
+        745,
+        712,
+        784,
+        980,
+        709,
+        949,
+        983,
+        707,
+        819,
+        1341,
+        1190,
+        652
+      ]
+    },
+    {
+      "id": "gal",
+      "chapters": 6,
+      "verses": 149,
+      "chars": 5963,
+      "chapterVerses": [
+        24,
+        21,
+        29,
+        31,
+        26,
+        18
+      ],
+      "chapterChars": [
+        889,
+        1092,
+        1263,
+        1172,
+        878,
+        669
+      ]
+    },
+    {
+      "id": "eph",
+      "chapters": 6,
+      "verses": 155,
+      "chars": 5642,
+      "chapterVerses": [
+        23,
+        22,
+        21,
+        32,
+        33,
+        24
+      ],
+      "chapterChars": [
+        908,
+        894,
+        781,
+        1148,
+        1062,
+        849
+      ]
+    },
+    {
+      "id": "php",
+      "chapters": 4,
+      "verses": 104,
+      "chars": 4111,
+      "chapterVerses": [
+        30,
+        30,
+        21,
+        23
+      ],
+      "chapterChars": [
+        1192,
+        1119,
+        885,
+        915
+      ]
+    },
+    {
+      "id": "col",
+      "chapters": 4,
+      "verses": 95,
+      "chars": 3804,
+      "chapterVerses": [
+        29,
+        23,
+        25,
+        18
+      ],
+      "chapterChars": [
+        1245,
+        928,
+        899,
+        732
+      ]
+    },
+    {
+      "id": "1th",
+      "chapters": 5,
+      "verses": 89,
+      "chars": 3565,
+      "chapterVerses": [
+        10,
+        20,
+        13,
+        18,
+        28
+      ],
+      "chapterChars": [
+        494,
+        966,
+        584,
+        713,
+        808
+      ]
+    },
+    {
+      "id": "2th",
+      "chapters": 3,
+      "verses": 47,
+      "chars": 1969,
+      "chapterVerses": [
+        12,
+        17,
+        18
+      ],
+      "chapterChars": [
+        582,
+        705,
+        682
+      ]
+    },
+    {
+      "id": "1ti",
+      "chapters": 6,
+      "verses": 113,
+      "chars": 4414,
+      "chapterVerses": [
+        20,
+        15,
+        16,
+        16,
+        25,
+        21
+      ],
+      "chapterChars": [
+        885,
+        525,
+        629,
+        550,
+        898,
+        927
+      ]
+    },
+    {
+      "id": "2ti",
+      "chapters": 4,
+      "verses": 83,
+      "chars": 3259,
+      "chapterVerses": [
+        18,
+        26,
+        17,
+        22
+      ],
+      "chapterChars": [
+        809,
+        997,
+        656,
+        797
+      ]
+    },
+    {
+      "id": "tit",
+      "chapters": 3,
+      "verses": 46,
+      "chars": 1916,
+      "chapterVerses": [
+        16,
+        15,
+        15
+      ],
+      "chapterChars": [
+        731,
+        541,
+        644
+      ]
+    },
+    {
+      "id": "phm",
+      "chapters": 1,
+      "verses": 25,
+      "chars": 833,
+      "chapterVerses": [
+        25
+      ],
+      "chapterChars": [
+        833
+      ]
+    },
+    {
+      "id": "heb",
+      "chapters": 13,
+      "verses": 303,
+      "chars": 12703,
+      "chapterVerses": [
+        14,
+        18,
+        19,
+        16,
+        14,
+        20,
+        28,
+        13,
+        28,
+        39,
+        40,
+        29,
+        25
+      ],
+      "chapterChars": [
+        620,
+        846,
+        712,
+        757,
+        589,
+        781,
+        1154,
+        647,
+        1167,
+        1411,
+        1745,
+        1250,
+        1024
+      ]
+    },
+    {
+      "id": "jas",
+      "chapters": 5,
+      "verses": 108,
+      "chars": 4206,
+      "chapterVerses": [
+        27,
+        26,
+        18,
+        17,
+        20
+      ],
+      "chapterChars": [
+        996,
+        1022,
+        649,
+        731,
+        808
+      ]
+    },
+    {
+      "id": "1pe",
+      "chapters": 5,
+      "verses": 105,
+      "chars": 4669,
+      "chapterVerses": [
+        25,
+        25,
+        22,
+        19,
+        14
+      ],
+      "chapterChars": [
+        1146,
+        1092,
+        1016,
+        817,
+        598
+      ]
+    },
+    {
+      "id": "2pe",
+      "chapters": 3,
+      "verses": 61,
+      "chars": 2785,
+      "chapterVerses": [
+        21,
+        22,
+        18
+      ],
+      "chapterChars": [
+        885,
+        1058,
+        842
+      ]
+    },
+    {
+      "id": "1jn",
+      "chapters": 5,
+      "verses": 105,
+      "chars": 4829,
+      "chapterVerses": [
+        10,
+        29,
+        24,
+        21,
+        21
+      ],
+      "chapterChars": [
+        463,
+        1377,
+        1076,
+        1004,
+        909
+      ]
+    },
+    {
+      "id": "2jn",
+      "chapters": 1,
+      "verses": 13,
+      "chars": 546,
+      "chapterVerses": [
+        13
+      ],
+      "chapterChars": [
+        546
+      ]
+    },
+    {
+      "id": "3jn",
+      "chapters": 1,
+      "verses": 15,
+      "chars": 596,
+      "chapterVerses": [
+        15
+      ],
+      "chapterChars": [
+        596
+      ]
+    },
+    {
+      "id": "jud",
+      "chapters": 1,
+      "verses": 25,
+      "chars": 1261,
+      "chapterVerses": [
+        25
+      ],
+      "chapterChars": [
+        1261
+      ]
+    },
+    {
+      "id": "rev",
+      "chapters": 22,
+      "verses": 404,
+      "chars": 18736,
+      "chapterVerses": [
+        20,
+        29,
+        22,
+        11,
+        14,
+        17,
+        17,
+        13,
+        21,
+        11,
+        19,
+        17,
+        18,
+        20,
+        8,
+        21,
+        18,
+        24,
+        21,
+        15,
+        27,
+        21
+      ],
+      "chapterChars": [
+        868,
+        1344,
+        1107,
+        560,
+        633,
+        747,
+        779,
+        543,
+        864,
+        501,
+        941,
+        790,
+        795,
+        1046,
+        407,
+        878,
+        859,
+        1265,
+        1003,
+        696,
+        1183,
+        927
+      ]
+    }
+  ],
+  "canonical": [
+    {
+      "books": 1,
+      "lastBook": "mt",
+      "chapters": 28,
+      "chars": 39947,
+      "verses": 1071,
+      "gameHours": 28,
+      "coins": 5035,
+      "typingHoursAt200": 3.33
+    },
+    {
+      "books": 2,
+      "lastBook": "mk",
+      "chapters": 44,
+      "chars": 65162,
+      "verses": 1749,
+      "gameHours": 44,
+      "coins": 8188,
+      "typingHoursAt200": 5.43
+    },
+    {
+      "books": 3,
+      "lastBook": "lk",
+      "chapters": 68,
+      "chars": 107943,
+      "verses": 2900,
+      "gameHours": 68,
+      "coins": 13219,
+      "typingHoursAt200": 9
+    },
+    {
+      "books": 4,
+      "lastBook": "jn",
+      "chapters": 89,
+      "chars": 142568,
+      "verses": 3779,
+      "gameHours": 89,
+      "coins": 17504,
+      "typingHoursAt200": 11.88
+    },
+    {
+      "books": 5,
+      "lastBook": "ac",
+      "chapters": 117,
+      "chars": 182412,
+      "verses": 4786,
+      "gameHours": 117,
+      "coins": 23159,
+      "typingHoursAt200": 15.2
+    },
+    {
+      "books": 6,
+      "lastBook": "rom",
+      "chapters": 133,
+      "chars": 200524,
+      "verses": 5219,
+      "gameHours": 133,
+      "coins": 26000,
+      "typingHoursAt200": 16.71
+    },
+    {
+      "books": 7,
+      "lastBook": "1co",
+      "chapters": 149,
+      "chars": 218116,
+      "verses": 5656,
+      "gameHours": 149,
+      "coins": 28779,
+      "typingHoursAt200": 18.18
+    },
+    {
+      "books": 8,
+      "lastBook": "2co",
+      "chapters": 162,
+      "chars": 229847,
+      "verses": 5912,
+      "gameHours": 162,
+      "coins": 30641,
+      "typingHoursAt200": 19.15
+    },
+    {
+      "books": 9,
+      "lastBook": "gal",
+      "chapters": 168,
+      "chars": 235810,
+      "verses": 6061,
+      "gameHours": 168,
+      "coins": 31714,
+      "typingHoursAt200": 19.65
+    },
+    {
+      "books": 10,
+      "lastBook": "eph",
+      "chapters": 174,
+      "chars": 241452,
+      "verses": 6216,
+      "gameHours": 174,
+      "coins": 32851,
+      "typingHoursAt200": 20.12
+    },
+    {
+      "books": 11,
+      "lastBook": "php",
+      "chapters": 178,
+      "chars": 245563,
+      "verses": 6320,
+      "gameHours": 178,
+      "coins": 33632,
+      "typingHoursAt200": 20.46
+    },
+    {
+      "books": 12,
+      "lastBook": "col",
+      "chapters": 182,
+      "chars": 249367,
+      "verses": 6415,
+      "gameHours": 182,
+      "coins": 34370,
+      "typingHoursAt200": 20.78
+    },
+    {
+      "books": 13,
+      "lastBook": "1th",
+      "chapters": 187,
+      "chars": 252932,
+      "verses": 6504,
+      "gameHours": 187,
+      "coins": 35112,
+      "typingHoursAt200": 21.08
+    },
+    {
+      "books": 14,
+      "lastBook": "2th",
+      "chapters": 190,
+      "chars": 254901,
+      "verses": 6551,
+      "gameHours": 190,
+      "coins": 35522,
+      "typingHoursAt200": 21.24
+    },
+    {
+      "books": 15,
+      "lastBook": "1ti",
+      "chapters": 196,
+      "chars": 259315,
+      "verses": 6664,
+      "gameHours": 196,
+      "coins": 36495,
+      "typingHoursAt200": 21.61
+    },
+    {
+      "books": 16,
+      "lastBook": "2ti",
+      "chapters": 200,
+      "chars": 262574,
+      "verses": 6747,
+      "gameHours": 200,
+      "coins": 37214,
+      "typingHoursAt200": 21.88
+    },
+    {
+      "books": 17,
+      "lastBook": "tit",
+      "chapters": 203,
+      "chars": 264490,
+      "verses": 6793,
+      "gameHours": 203,
+      "coins": 37644,
+      "typingHoursAt200": 22.04
+    },
+    {
+      "books": 18,
+      "lastBook": "phm",
+      "chapters": 204,
+      "chars": 265323,
+      "verses": 6818,
+      "gameHours": 204,
+      "coins": 37863,
+      "typingHoursAt200": 22.11
+    },
+    {
+      "books": 19,
+      "lastBook": "heb",
+      "chapters": 217,
+      "chars": 278026,
+      "verses": 7121,
+      "gameHours": 217,
+      "coins": 40542,
+      "typingHoursAt200": 23.17
+    },
+    {
+      "books": 20,
+      "lastBook": "jas",
+      "chapters": 222,
+      "chars": 282232,
+      "verses": 7229,
+      "gameHours": 222,
+      "coins": 41546,
+      "typingHoursAt200": 23.52
+    },
+    {
+      "books": 21,
+      "lastBook": "1pe",
+      "chapters": 227,
+      "chars": 286901,
+      "verses": 7334,
+      "gameHours": 227,
+      "coins": 42546,
+      "typingHoursAt200": 23.91
+    },
+    {
+      "books": 22,
+      "lastBook": "2pe",
+      "chapters": 230,
+      "chars": 289686,
+      "verses": 7395,
+      "gameHours": 230,
+      "coins": 43141,
+      "typingHoursAt200": 24.14
+    },
+    {
+      "books": 23,
+      "lastBook": "1jn",
+      "chapters": 235,
+      "chars": 294515,
+      "verses": 7500,
+      "gameHours": 235,
+      "coins": 44179,
+      "typingHoursAt200": 24.54
+    },
+    {
+      "books": 24,
+      "lastBook": "2jn",
+      "chapters": 236,
+      "chars": 295061,
+      "verses": 7513,
+      "gameHours": 236,
+      "coins": 44323,
+      "typingHoursAt200": 24.59
+    },
+    {
+      "books": 25,
+      "lastBook": "3jn",
+      "chapters": 237,
+      "chars": 295657,
+      "verses": 7528,
+      "gameHours": 237,
+      "coins": 44486,
+      "typingHoursAt200": 24.64
+    },
+    {
+      "books": 26,
+      "lastBook": "jud",
+      "chapters": 238,
+      "chars": 296918,
+      "verses": 7553,
+      "gameHours": 238,
+      "coins": 44740,
+      "typingHoursAt200": 24.74
+    },
+    {
+      "books": 27,
+      "lastBook": "rev",
+      "chapters": 260,
+      "chars": 315654,
+      "verses": 7957,
+      "gameHours": 260,
+      "coins": 49123,
+      "typingHoursAt200": 26.3
+    }
+  ],
+  "shortestChapters": [
+    {
+      "books": 1,
+      "lastBook": "2jn",
+      "chapters": 1,
+      "chars": 546,
+      "verses": 13,
+      "gameHours": 1,
+      "coins": 85,
+      "typingHoursAt200": 0.05
+    },
+    {
+      "books": 2,
+      "lastBook": "3jn",
+      "chapters": 2,
+      "chars": 1142,
+      "verses": 28,
+      "gameHours": 2,
+      "coins": 183,
+      "typingHoursAt200": 0.1
+    },
+    {
+      "books": 3,
+      "lastBook": "phm",
+      "chapters": 3,
+      "chars": 1975,
+      "verses": 53,
+      "gameHours": 3,
+      "coins": 337,
+      "typingHoursAt200": 0.16
+    },
+    {
+      "books": 4,
+      "lastBook": "jud",
+      "chapters": 4,
+      "chars": 3236,
+      "verses": 78,
+      "gameHours": 4,
+      "coins": 495,
+      "typingHoursAt200": 0.27
+    },
+    {
+      "books": 5,
+      "lastBook": "tit",
+      "chapters": 7,
+      "chars": 5152,
+      "verses": 124,
+      "gameHours": 7,
+      "coins": 819,
+      "typingHoursAt200": 0.43
+    },
+    {
+      "books": 6,
+      "lastBook": "2th",
+      "chapters": 10,
+      "chars": 7121,
+      "verses": 171,
+      "gameHours": 10,
+      "coins": 1158,
+      "typingHoursAt200": 0.59
+    },
+    {
+      "books": 7,
+      "lastBook": "2pe",
+      "chapters": 13,
+      "chars": 9906,
+      "verses": 232,
+      "gameHours": 13,
+      "coins": 1589,
+      "typingHoursAt200": 0.83
+    },
+    {
+      "books": 8,
+      "lastBook": "2ti",
+      "chapters": 17,
+      "chars": 13165,
+      "verses": 315,
+      "gameHours": 17,
+      "coins": 2188,
+      "typingHoursAt200": 1.1
+    },
+    {
+      "books": 9,
+      "lastBook": "col",
+      "chapters": 21,
+      "chars": 16969,
+      "verses": 410,
+      "gameHours": 21,
+      "coins": 2876,
+      "typingHoursAt200": 1.41
+    },
+    {
+      "books": 10,
+      "lastBook": "php",
+      "chapters": 25,
+      "chars": 21080,
+      "verses": 514,
+      "gameHours": 25,
+      "coins": 3638,
+      "typingHoursAt200": 1.76
+    },
+    {
+      "books": 11,
+      "lastBook": "1th",
+      "chapters": 30,
+      "chars": 24645,
+      "verses": 603,
+      "gameHours": 30,
+      "coins": 4347,
+      "typingHoursAt200": 2.05
+    },
+    {
+      "books": 12,
+      "lastBook": "jas",
+      "chapters": 35,
+      "chars": 28851,
+      "verses": 711,
+      "gameHours": 35,
+      "coins": 5199,
+      "typingHoursAt200": 2.4
+    },
+    {
+      "books": 13,
+      "lastBook": "1pe",
+      "chapters": 40,
+      "chars": 33520,
+      "verses": 816,
+      "gameHours": 40,
+      "coins": 6048,
+      "typingHoursAt200": 2.79
+    },
+    {
+      "books": 14,
+      "lastBook": "1jn",
+      "chapters": 45,
+      "chars": 38349,
+      "verses": 921,
+      "gameHours": 45,
+      "coins": 6917,
+      "typingHoursAt200": 3.2
+    },
+    {
+      "books": 15,
+      "lastBook": "1ti",
+      "chapters": 51,
+      "chars": 42763,
+      "verses": 1034,
+      "gameHours": 51,
+      "coins": 7890,
+      "typingHoursAt200": 3.56
+    },
+    {
+      "books": 16,
+      "lastBook": "eph",
+      "chapters": 57,
+      "chars": 48405,
+      "verses": 1189,
+      "gameHours": 57,
+      "coins": 9188,
+      "typingHoursAt200": 4.03
+    },
+    {
+      "books": 17,
+      "lastBook": "gal",
+      "chapters": 63,
+      "chars": 54368,
+      "verses": 1338,
+      "gameHours": 63,
+      "coins": 10468,
+      "typingHoursAt200": 4.53
+    },
+    {
+      "books": 18,
+      "lastBook": "2co",
+      "chapters": 76,
+      "chars": 66099,
+      "verses": 1594,
+      "gameHours": 76,
+      "coins": 12792,
+      "typingHoursAt200": 5.51
+    },
+    {
+      "books": 19,
+      "lastBook": "heb",
+      "chapters": 89,
+      "chars": 78802,
+      "verses": 1897,
+      "gameHours": 89,
+      "coins": 15471,
+      "typingHoursAt200": 6.57
+    },
+    {
+      "books": 20,
+      "lastBook": "1co",
+      "chapters": 105,
+      "chars": 96394,
+      "verses": 2334,
+      "gameHours": 105,
+      "coins": 19166,
+      "typingHoursAt200": 8.03
+    },
+    {
+      "books": 21,
+      "lastBook": "rom",
+      "chapters": 121,
+      "chars": 114506,
+      "verses": 2767,
+      "gameHours": 121,
+      "coins": 23118,
+      "typingHoursAt200": 9.54
+    },
+    {
+      "books": 22,
+      "lastBook": "mk",
+      "chapters": 137,
+      "chars": 139721,
+      "verses": 3445,
+      "gameHours": 137,
+      "coins": 28107,
+      "typingHoursAt200": 11.64
+    },
+    {
+      "books": 23,
+      "lastBook": "jn",
+      "chapters": 158,
+      "chars": 174346,
+      "verses": 4324,
+      "gameHours": 158,
+      "coins": 34632,
+      "typingHoursAt200": 14.53
+    },
+    {
+      "books": 24,
+      "lastBook": "rev",
+      "chapters": 180,
+      "chars": 193082,
+      "verses": 4728,
+      "gameHours": 180,
+      "coins": 38789,
+      "typingHoursAt200": 16.09
+    },
+    {
+      "books": 25,
+      "lastBook": "lk",
+      "chapters": 204,
+      "chars": 235863,
+      "verses": 5879,
+      "gameHours": 204,
+      "coins": 46950,
+      "typingHoursAt200": 19.66
+    },
+    {
+      "books": 26,
+      "lastBook": "ac",
+      "chapters": 232,
+      "chars": 275707,
+      "verses": 6886,
+      "gameHours": 232,
+      "coins": 55789,
+      "typingHoursAt200": 22.98
+    },
+    {
+      "books": 27,
+      "lastBook": "mt",
+      "chapters": 260,
+      "chars": 315654,
+      "verses": 7957,
+      "gameHours": 260,
+      "coins": 64752,
+      "typingHoursAt200": 26.3
+    }
+  ],
+  "shortestChars": [
+    {
+      "books": 1,
+      "lastBook": "2jn",
+      "chapters": 1,
+      "chars": 546,
+      "verses": 13,
+      "gameHours": 1,
+      "coins": 85,
+      "typingHoursAt200": 0.05
+    },
+    {
+      "books": 2,
+      "lastBook": "3jn",
+      "chapters": 2,
+      "chars": 1142,
+      "verses": 28,
+      "gameHours": 2,
+      "coins": 183,
+      "typingHoursAt200": 0.1
+    },
+    {
+      "books": 3,
+      "lastBook": "phm",
+      "chapters": 3,
+      "chars": 1975,
+      "verses": 53,
+      "gameHours": 3,
+      "coins": 337,
+      "typingHoursAt200": 0.16
+    },
+    {
+      "books": 4,
+      "lastBook": "jud",
+      "chapters": 4,
+      "chars": 3236,
+      "verses": 78,
+      "gameHours": 4,
+      "coins": 495,
+      "typingHoursAt200": 0.27
+    },
+    {
+      "books": 5,
+      "lastBook": "tit",
+      "chapters": 7,
+      "chars": 5152,
+      "verses": 124,
+      "gameHours": 7,
+      "coins": 819,
+      "typingHoursAt200": 0.43
+    },
+    {
+      "books": 6,
+      "lastBook": "2th",
+      "chapters": 10,
+      "chars": 7121,
+      "verses": 171,
+      "gameHours": 10,
+      "coins": 1158,
+      "typingHoursAt200": 0.59
+    },
+    {
+      "books": 7,
+      "lastBook": "2pe",
+      "chapters": 13,
+      "chars": 9906,
+      "verses": 232,
+      "gameHours": 13,
+      "coins": 1589,
+      "typingHoursAt200": 0.83
+    },
+    {
+      "books": 8,
+      "lastBook": "2ti",
+      "chapters": 17,
+      "chars": 13165,
+      "verses": 315,
+      "gameHours": 17,
+      "coins": 2188,
+      "typingHoursAt200": 1.1
+    },
+    {
+      "books": 9,
+      "lastBook": "1th",
+      "chapters": 22,
+      "chars": 16730,
+      "verses": 404,
+      "gameHours": 22,
+      "coins": 2863,
+      "typingHoursAt200": 1.39
+    },
+    {
+      "books": 10,
+      "lastBook": "col",
+      "chapters": 26,
+      "chars": 20534,
+      "verses": 499,
+      "gameHours": 26,
+      "coins": 3568,
+      "typingHoursAt200": 1.71
+    },
+    {
+      "books": 11,
+      "lastBook": "php",
+      "chapters": 30,
+      "chars": 24645,
+      "verses": 603,
+      "gameHours": 30,
+      "coins": 4349,
+      "typingHoursAt200": 2.05
+    },
+    {
+      "books": 12,
+      "lastBook": "jas",
+      "chapters": 35,
+      "chars": 28851,
+      "verses": 711,
+      "gameHours": 35,
+      "coins": 5201,
+      "typingHoursAt200": 2.4
+    },
+    {
+      "books": 13,
+      "lastBook": "1ti",
+      "chapters": 41,
+      "chars": 33265,
+      "verses": 824,
+      "gameHours": 41,
+      "coins": 6132,
+      "typingHoursAt200": 2.77
+    },
+    {
+      "books": 14,
+      "lastBook": "1pe",
+      "chapters": 46,
+      "chars": 37934,
+      "verses": 929,
+      "gameHours": 46,
+      "coins": 7002,
+      "typingHoursAt200": 3.16
+    },
+    {
+      "books": 15,
+      "lastBook": "1jn",
+      "chapters": 51,
+      "chars": 42763,
+      "verses": 1034,
+      "gameHours": 51,
+      "coins": 7890,
+      "typingHoursAt200": 3.56
+    },
+    {
+      "books": 16,
+      "lastBook": "eph",
+      "chapters": 57,
+      "chars": 48405,
+      "verses": 1189,
+      "gameHours": 57,
+      "coins": 9188,
+      "typingHoursAt200": 4.03
+    },
+    {
+      "books": 17,
+      "lastBook": "gal",
+      "chapters": 63,
+      "chars": 54368,
+      "verses": 1338,
+      "gameHours": 63,
+      "coins": 10468,
+      "typingHoursAt200": 4.53
+    },
+    {
+      "books": 18,
+      "lastBook": "2co",
+      "chapters": 76,
+      "chars": 66099,
+      "verses": 1594,
+      "gameHours": 76,
+      "coins": 12792,
+      "typingHoursAt200": 5.51
+    },
+    {
+      "books": 19,
+      "lastBook": "heb",
+      "chapters": 89,
+      "chars": 78802,
+      "verses": 1897,
+      "gameHours": 89,
+      "coins": 15471,
+      "typingHoursAt200": 6.57
+    },
+    {
+      "books": 20,
+      "lastBook": "1co",
+      "chapters": 105,
+      "chars": 96394,
+      "verses": 2334,
+      "gameHours": 105,
+      "coins": 19166,
+      "typingHoursAt200": 8.03
+    },
+    {
+      "books": 21,
+      "lastBook": "rom",
+      "chapters": 121,
+      "chars": 114506,
+      "verses": 2767,
+      "gameHours": 121,
+      "coins": 23118,
+      "typingHoursAt200": 9.54
+    },
+    {
+      "books": 22,
+      "lastBook": "rev",
+      "chapters": 143,
+      "chars": 133242,
+      "verses": 3171,
+      "gameHours": 143,
+      "coins": 27129,
+      "typingHoursAt200": 11.1
+    },
+    {
+      "books": 23,
+      "lastBook": "mk",
+      "chapters": 159,
+      "chars": 158457,
+      "verses": 3849,
+      "gameHours": 159,
+      "coins": 32209,
+      "typingHoursAt200": 13.2
+    },
+    {
+      "books": 24,
+      "lastBook": "jn",
+      "chapters": 180,
+      "chars": 193082,
+      "verses": 4728,
+      "gameHours": 180,
+      "coins": 38852,
+      "typingHoursAt200": 16.09
+    },
+    {
+      "books": 25,
+      "lastBook": "ac",
+      "chapters": 208,
+      "chars": 232926,
+      "verses": 5735,
+      "gameHours": 208,
+      "coins": 47537,
+      "typingHoursAt200": 19.41
+    },
+    {
+      "books": 26,
+      "lastBook": "mt",
+      "chapters": 236,
+      "chars": 272873,
+      "verses": 6806,
+      "gameHours": 236,
+      "coins": 56351,
+      "typingHoursAt200": 22.74
+    },
+    {
+      "books": 27,
+      "lastBook": "lk",
+      "chapters": 260,
+      "chars": 315654,
+      "verses": 7957,
+      "gameHours": 260,
+      "coins": 64797,
+      "typingHoursAt200": 26.3
+    }
+  ]
+}

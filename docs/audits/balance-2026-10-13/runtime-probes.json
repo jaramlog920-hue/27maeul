@@ -1,0 +1,169 @@
+{
+  "clockCap": {
+    "clock": {
+      "day": 1,
+      "minute": 1560
+    },
+    "olive": 50,
+    "hunger": 20,
+    "fatigue": 3.8
+  },
+  "adultSchool": {
+    "allowed": true,
+    "age": 99,
+    "fee": 15
+  },
+  "autonomy": {
+    "npcAutonomy": "14 books",
+    "playerDating": "17 books"
+  },
+  "friendship": [
+    {
+      "npc": "baker",
+      "pace": 1,
+      "daysFor100": 10,
+      "theoretical": "Daily talk+help+liked gift; zero charm; all event gates already seen; availability and acquisition excluded."
+    },
+    {
+      "npc": "child",
+      "pace": 1,
+      "daysFor100": 10,
+      "theoretical": "Daily talk+help+liked gift; zero charm; all event gates already seen; availability and acquisition excluded."
+    },
+    {
+      "npc": "grandpa",
+      "pace": 1,
+      "daysFor100": 10,
+      "theoretical": "Daily talk+help+liked gift; zero charm; all event gates already seen; availability and acquisition excluded."
+    },
+    {
+      "npc": "merchant",
+      "pace": 1,
+      "daysFor100": 10,
+      "theoretical": "Daily talk+help+liked gift; zero charm; all event gates already seen; availability and acquisition excluded."
+    },
+    {
+      "npc": "smith",
+      "pace": 1,
+      "daysFor100": 10,
+      "theoretical": "Daily talk+help+liked gift; zero charm; all event gates already seen; availability and acquisition excluded."
+    },
+    {
+      "npc": "shepherd",
+      "pace": 1,
+      "daysFor100": 10,
+      "theoretical": "Daily talk+help+liked gift; zero charm; all event gates already seen; availability and acquisition excluded."
+    },
+    {
+      "npc": "presser",
+      "pace": 1,
+      "daysFor100": 10,
+      "theoretical": "Daily talk+help+liked gift; zero charm; all event gates already seen; availability and acquisition excluded."
+    },
+    {
+      "npc": "weaver",
+      "pace": 1,
+      "daysFor100": 10,
+      "theoretical": "Daily talk+help+liked gift; zero charm; all event gates already seen; availability and acquisition excluded."
+    },
+    {
+      "npc": "beekeeper",
+      "pace": 1,
+      "daysFor100": 10,
+      "theoretical": "Daily talk+help+liked gift; zero charm; all event gates already seen; availability and acquisition excluded."
+    },
+    {
+      "npc": "postman",
+      "pace": 1,
+      "daysFor100": 10,
+      "theoretical": "Daily talk+help+liked gift; zero charm; all event gates already seen; availability and acquisition excluded."
+    },
+    {
+      "npc": "apothecary",
+      "pace": 1,
+      "daysFor100": 10,
+      "theoretical": "Daily talk+help+liked gift; zero charm; all event gates already seen; availability and acquisition excluded."
+    },
+    {
+      "npc": "fisher",
+      "pace": 1,
+      "daysFor100": 10,
+      "theoretical": "Daily talk+help+liked gift; zero charm; all event gates already seen; availability and acquisition excluded."
+    },
+    {
+      "npc": "carpenter",
+      "pace": 1,
+      "daysFor100": 10,
+      "theoretical": "Daily talk+help+liked gift; zero charm; all event gates already seen; availability and acquisition excluded."
+    },
+    {
+      "npc": "wendell",
+      "pace": 0.8,
+      "daysFor100": 13,
+      "theoretical": "Daily talk+help+liked gift; zero charm; all event gates already seen; availability and acquisition excluded."
+    },
+    {
+      "npc": "cosmo",
+      "pace": 1.4,
+      "daysFor100": 8,
+      "theoretical": "Daily talk+help+liked gift; zero charm; all event gates already seen; availability and acquisition excluded."
+    },
+    {
+      "npc": "rudy",
+      "pace": 0.6,
+      "daysFor100": 17,
+      "theoretical": "Daily talk+help+liked gift; zero charm; all event gates already seen; availability and acquisition excluded."
+    },
+    {
+      "npc": "dexter",
+      "pace": 1.1,
+      "daysFor100": 10,
+      "theoretical": "Daily talk+help+liked gift; zero charm; all event gates already seen; availability and acquisition excluded."
+    },
+    {
+      "npc": "basil",
+      "pace": 1,
+      "daysFor100": 10,
+      "theoretical": "Daily talk+help+liked gift; zero charm; all event gates already seen; availability and acquisition excluded."
+    },
+    {
+      "npc": "marigold",
+      "pace": 1.6,
+      "daysFor100": 7,
+      "theoretical": "Daily talk+help+liked gift; zero charm; all event gates already seen; availability and acquisition excluded."
+    },
+    {
+      "npc": "penelope",
+      "pace": 0.7,
+      "daysFor100": 15,
+      "theoretical": "Daily talk+help+liked gift; zero charm; all event gates already seen; availability and acquisition excluded."
+    },
+    {
+      "npc": "tilly",
+      "pace": 1.3,
+      "daysFor100": 8,
+      "theoretical": "Daily talk+help+liked gift; zero charm; all event gates already seen; availability and acquisition excluded."
+    },
+    {
+      "npc": "juniper",
+      "pace": 0.8,
+      "daysFor100": 13,
+      "theoretical": "Daily talk+help+liked gift; zero charm; all event gates already seen; availability and acquisition excluded."
+    },
+    {
+      "npc": "poppy",
+      "pace": 1.5,
+      "daysFor100": 7,
+      "theoretical": "Daily talk+help+liked gift; zero charm; all event gates already seen; availability and acquisition excluded."
+    }
+  ],
+  "sickRecovery": {
+    "wake": 600,
+    "needs": {
+      "hunger": 20,
+      "fatigue": 0,
+      "cold": 0,
+      "heat": 0
+    }
+  }
+}

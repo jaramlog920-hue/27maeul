@@ -1,6 +1,6 @@
 import { CONTENT } from '../content/catalog'
 import { canDate, canOrderWork, guestMorning, isSuitor, newGame, rankMorning, stageWith, trade, TRADES } from './game'
-import { establishedGame, legacyGame } from './growth-test-support'
+import { establishedGame, legacyGame, gameAtChapters } from './growth-test-support'
 import { cancelFest, createFest, type FestInput } from './fest'
 import { answerDesk, canKidAct, spouseReading } from './family'
 import { newGenState } from './gen'
@@ -38,15 +38,16 @@ it('9·11·12·13권에 기존 생활 조건을 다시 검사한다', () => {
   expect(rankMorning(ranked, CONTENT)).toBe(ranked)
   expect(createFest(establishedGame(CONTENT, 13), { kind: 'festival', day: -1, members: [] } as FestInput, CONTENT).error).toBe('date')
 })
-it('깊은 관계와 후보는 점수를 지우지 않고 15·16권에 열린다', () => {
-  const s = establishedGame(CONTENT, 14)
+it('깊은 관계와 후보는 점수를 지우지 않고 45·50장에 열린다', () => {
+  const s = gameAtChapters(CONTENT, 44)
   const candidate = CONTENT.neighbors.find(n => n.romanceable && n.look !== (s.avatar?.look ?? 'f'))!
   s.hearts[candidate.id] = 100
   expect(stageWith(s, candidate.id)).toBe(3)
   expect(isSuitor(s, candidate)).toBe(false)
-  const deep = { ...establishedGame(CONTENT, 15), hearts: s.hearts }
+  const deep = { ...gameAtChapters(CONTENT, 45), hearts: s.hearts }
   expect(stageWith(deep, candidate.id)).toBe(5)
-  expect(isSuitor(establishedGame(CONTENT, 16), candidate)).toBe(true)
+  expect(isSuitor(gameAtChapters(CONTENT, 49), candidate)).toBe(false)
+  expect(isSuitor(gameAtChapters(CONTENT, 50), candidate)).toBe(true)
   expect(s.hearts[candidate.id]).toBe(100)
 })
 it('배우자 활동과 아이 활동은 각각 20·23권에서 기존 조건으로 넘어간다', () => {

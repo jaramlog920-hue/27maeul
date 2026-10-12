@@ -10,6 +10,7 @@ import { canOpenStall } from './stall'
 import { canPick, offeredProjects } from './projects'
 import { FACILITY_IDS } from './village-sites'
 import { DEST_IDS } from './travel'
+import { gameAtChapters } from './growth-test-support'
 
 function chapters(n: number) {
   const s = newGame(CONTENT)
@@ -25,15 +26,29 @@ function books(n: number) {
 }
 const club: ClubInput = { name: '작은 차 모임', place: 'hallTable', members: ['baker'], weekday: 2, slot: 'morning', activity: 'tea' }
 
-it('15·20·25장의 체험과 4·5·7권 정식 해금은 독립적이다', () => {
-  for (const [id, chapter, count] of [['cooking', 15, 4], ['clubs', 20, 5], ['community', 25, 7]] as const) {
+it('15·20·25장의 체험과 정식 해금(마친 장 수)은 독립적이다 — 2026-10-13 권수 대신 장 수', () => {
+  for (const [id, chapter, full] of [['cooking', 15, 18], ['clubs', 20, 25], ['community', 25, 35]] as const) {
     expect(featureAccess(chapters(chapter - 1), id)).toBe('locked')
     expect(featureAccess(chapters(chapter), id)).toBe('preview')
-    expect(featureAccess(books(count), id)).toBe('full')
+    expect(featureAccess(gameAtChapters(CONTENT, full - 1), id)).not.toBe('full')
+    expect(featureAccess(gameAtChapters(CONTENT, full), id)).toBe('full')
   }
-  for (const [id, rule] of Object.entries(FEATURE_RULES)) {
-    if ('full' in rule && rule.full.books) expect(featureAccess(books(rule.full.books), id as keyof typeof FEATURE_RULES)).toBe('full')
+  for (const [id, rule] of Object.entries(FEATURE_RULES) as [keyof typeof FEATURE_RULES, { full?: { chapters?: number; books?: number } }][]) {
+    if (rule.full?.chapters) {
+      expect(featureAccess(gameAtChapters(CONTENT, rule.full.chapters - 1), id), id).not.toBe('full')
+      expect(featureAccess(gameAtChapters(CONTENT, rule.full.chapters), id), id).toBe('full')
+    }
+    if (rule.full?.books) expect(featureAccess(books(rule.full.books), id)).toBe('full')
   }
+})
+it('짧은 책을 먼저 골라도 같은 장 수면 같은 기능만 열린다', () => {
+  // 짧은 책 4권(4장)은 마태복음 4장과 같다 — 예전에는 짧은 책 4권이면 요리가 정식으로 열렸다
+  expect(featureAccess(books(4), 'cooking')).toBe(featureAccess(chapters(4), 'cooking'))
+  expect(featureAccess(books(17), 'dating')).toBe(featureAccess(gameAtChapters(CONTENT, 63), 'dating'))
+  // 플레이어 연애가 주민 자율 생활보다 먼저 열린다
+  expect(FEATURE_RULES.dating.full.chapters).toBeLessThan(FEATURE_RULES.autonomy.full.chapters)
+  // 생활 콘텐츠는 앞 절반 안에
+  expect(FEATURE_RULES.childBirth.full.chapters).toBeLessThanOrEqual(130)
 })
 it('새 게임의 잠긴 생활 행동은 자원이나 진행을 바꾸지 않는다', () => {
   const s = newGame(CONTENT)
@@ -51,7 +66,7 @@ it('완필만으로 지역이 열리며 옛 저장에서 열렸던 지역을 다
   const s = books(8)
   expect(Object.keys(s.shelved)).toHaveLength(0)
   expect(villageBookCount(s)).toBe(8)
-  expect(featureAccess(s, 'travel')).toBe('full')
+  expect(featureAccess(gameAtChapters(CONTENT, 40), 'travel')).toBe('full')
   const old = { ...s, flags: { ...s.flags, growthLegacy: 1 }, shelved: { mt: 0 as const } }
   expect(villageBookCount(old)).toBe(1)
   expect(villageBookCount({ ...newGame(CONTENT), shelved: { mt: 0 as const } })).toBe(1)

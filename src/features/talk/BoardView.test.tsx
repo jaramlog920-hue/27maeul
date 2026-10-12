@@ -8,10 +8,10 @@ import { REQUEST_PRESETS } from '../../engine/request-presets'
 import { useGame } from '../../store/game-store'
 import { BoardView } from './BoardView'
 
-// 게시판 동작 검사는 정식 해금(어떤 책이든 3권 완필) 상태에서 시작한다.
+// 게시판 동작 검사는 정식 해금(마친 장 12장, 2026-10-13 장 수 기준) 상태에서 시작한다.
 function newGame(content: typeof CONTENT) {
   const game = createGame(content)
-  for (const book of ['phm', '2jn', '3jn'] as const) game.progress[book] = { completed: [1], arrangement: {} }
+  game.progress.mt = { completed: Array.from({ length: 12 }, (_, i) => i + 1), arrangement: {} }
   return game
 }
 

@@ -51,7 +51,7 @@ import type { TripReward } from '../engine/trip-board'
 import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
 import { allShelved, canShelve, payRetry, poolFor, shelve, shelveNow as shelveQuick } from '../engine/library'
 import { DEFAULT_CHOICE, type SpecialChoice } from '../engine/binding'
-import { ALBUM_IDS, fill, itemList, itemName, KID_LETTERS, NEIGHBOR_LINES, roomTitle, SCENES, T, withAnd, withObject, withSubject, callName } from '../content/text'
+import { ALBUM_IDS, fill, HEART_HINTS, itemList, itemName, KID_LETTERS, NEIGHBOR_LINES, roomTitle, SCENES, T, withAnd, withObject, withSubject, callName } from '../content/text'
 import { freshNews } from '../content/gen-text'
 import { t } from '../shared/i18n'
 import { careIn, careKey, finishCare, notePuzzle, noteTypo, switchCare } from '../engine/copy-ways'
@@ -102,6 +102,7 @@ import {
   bookLineKey,
   setMyLine,
   stargaze,
+  starsOut,
   openMailbox,
   train,
   hallFriendsHere,
@@ -110,6 +111,7 @@ import {
   chooseInEvent,
   giveBouquet,
   giveCord,
+  canGiveCord,
   startAct,
   breakUp,
   goOnDate,
@@ -688,7 +690,7 @@ export function albumImage(id: string): string | null {
     return null
   }
 }
-function storeAlbumImage(id: string, data: string | null) {
+export function storeAlbumImage(id: string, data: string | null) {
   if (!data) return
   try {
     globalThis.localStorage?.setItem(ALBUM_KEY(id), data)
@@ -1897,6 +1899,7 @@ export const useGame = create<Store>((set, get) => {
     giveCord: (id) => {
       const def = CONTENT.neighbors.find((n) => n.id === id)
       if (!def) return
+      if (canGiveCord(get().game, def) === 'bond') { get().say(HEART_HINTS.bond, 4000); return }
       const next = giveCord(get().game, def)
       if (next === get().game) return
       sfx('gift')
@@ -1938,20 +1941,21 @@ export const useGame = create<Store>((set, get) => {
     watchSunset: () => {
       const next = watchSunset(get().game)
       if (next === get().game) return
-      set({ game: persist(next), modal: null })
-      get().say(T.places.sunsetDone)
+      const game = next.scenes.includes('sunset') ? next : { ...next, scenes: [...next.scenes, 'sunset'] }
+      set({ game: persist(game), modal: { kind: 'scene', id: 'sunset' }, afterScene: T.places.sunsetDone })
+      snapAlbum('sunset', get().capture)
     },
     // 별 보기: 궂은 밤이면 흐림 알림, 편지함에서 꺼냈으면 장면(있으면)을 먼저 보이고 알림
     sitHill: () => {
       const before = get().game
       const { state, pieceIds } = stargaze(before, CONTENT)
-      const game = persist(state)
+      const showStars = clearSky(before.clock.day) && starsOut(before.clock.minute)
+      const game = persist(showStars && !state.scenes.includes('stars') ? { ...state, scenes: [...state.scenes, 'stars'] } : state)
       const line = pieceIds.length ? starsLine(pieceIds) : clearSky(before.clock.day) ? null : T.ui.starsCloudy
       if (pieceIds.length) sfx('scroll')
-      const scene = game.scenes.length > before.scenes.length ? game.scenes[game.scenes.length - 1] : null
-      if (scene && line) {
-        set({ game, modal: { kind: 'scene', id: scene }, afterScene: line })
-        snapAlbum(scene, get().capture)
+      if (showStars) {
+        set({ game, modal: { kind: 'scene', id: 'stars' }, afterScene: line })
+        snapAlbum('stars', get().capture)
         return
       }
       set({ game, modal: null })

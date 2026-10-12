@@ -13,7 +13,7 @@ import { discoveredFinish, canLearnFinish, startFinishLesson, chooseFinish, fini
 
 function working():SkillState {
   const s=newGame(CONTENT)
-  s.progress.phm.completed = [1]
+  s.progress.mt.completed = Array.from({ length: 5 }, (_, i) => i + 1) // 꾸미기 정식 해금 5장
   return {...s,clock:{day:2,minute:480},player:{...s.player,x:5,y:24},flags:{...s.flags,villageLevel:10,...Object.fromEntries(CONTENT.neighbors.map(n=>[`movedIn:${n.id}`,1]))},life:{...s.life,seen:Object.values(PEOPLE.people).flatMap(p=>(p.events??[]).map(e=>e.id))},npcs:{...s.npcs,carpenter:{...s.npcs.carpenter,x:6,y:24,visible:true}}}
 }
 /** 이웃 하나를 플레이어 곁에 세운다 */

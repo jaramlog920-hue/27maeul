@@ -4,9 +4,11 @@ import { useEffect, useState } from 'react'
 import { WorkDayView, WorkEntry } from '../work/WorkDay'
 import { StallEntry } from '../stall/StallEntry'
 import { SkillLessonView, SkillEntry } from '../skills/SkillLesson'
-import { callName, fill, itemList, T } from '../../content/text'
+import { callName, fill, HEART_HINTS, itemList, T } from '../../content/text'
 import { isMarketDay } from '../../engine/calendar'
-import { activeRequest, canBreakUp, canGiveBouquet, canGiveLoveVerse, isSuitor, romanceWith, stageWith, type GameState, canHelp, canOrderHome, canOrderWork, GIFTABLE, lessonTime, nextHomeStage } from '../../engine/game'
+import { activeRequest, canBreakUp, canGiveBouquet, canGiveCord, canGiveLoveVerse, isSuitor, romanceWith, stageWith, type GameState, canHelp, canOrderHome, canOrderWork, GIFTABLE, lessonTime, nextHomeStage } from '../../engine/game'
+import { DATING_DAYS } from '../../engine/romance'
+import heartText from '../../content/heart-balance-text.json'
 import { CARPENTER_WORKS } from '../../engine/easier'
 import { GenTalk } from './GenTalk'
 import { slotPerson } from '../../engine/gen-growth'
@@ -20,12 +22,14 @@ import { heartsOf } from '../../engine/hearts'
 import { personOf } from '../../engine/people'
 import { useGame, type Modal } from '../../store/game-store'
 import { unseenTalkPopups } from '../../engine/talk-popups'
+import { heartProgressBlock } from '../../engine/game'
 
 /** 사이의 이름: 연인·약혼·배우자, 아니면 낯선 사람 … 마음이 가는 사이 (같은 모습이면 특별한 사람까지) */
 export function bondLabel(game: GameState, id: string): string {
   const r = romanceWith(game, id)
   if (r !== 'friend') return (T.romance.stage as Record<string, string>)[r]
-  const st = Math.min(stageWith(game, id), isSuitor(game, neighborById(id)) ? 5 : 4)
+  const friendsOnly = !!game.flags[`friendsOnly:${slotPerson(game.gen, id)}`]
+  const st = Math.min(stageWith(game, id), !friendsOnly && isSuitor(game, neighborById(id)) ? 5 : 4)
   return T.people.stages[st]
 }
 
@@ -74,6 +78,16 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
   const active = activeRequest(game, def.id)
   const { requestAsk, requestGive } = useGame.getState()
   // 목수에게 집 넓히기 부탁 (이사 온 뒤, 다음 단계가 남아 있으면)
+  const heartBlock = heartProgressBlock(game, def.id)
+  const bouquetBlock = canGiveBouquet(game, def)
+  const bouquetVisible = bouquetBlock === null || bouquetBlock === 'noItem' || (bouquetBlock === 'cooling' && heartsOf(game.hearts[def.id]) >= 8)
+  const cordBlock = canGiveCord(game, def)
+  const cordNote = cordBlock === 'locked' ? heartText.proposalLocked
+    : cordBlock === 'days' ? (game.romance.bondRequired ? HEART_HINTS.bond : fill(T.romance.cordDays, { n: DATING_DAYS }))
+    : cordBlock === 'hearts' ? T.romance.cordHearts
+    : cordBlock === 'bond' ? HEART_HINTS.bond
+    : cordBlock === 'room' ? T.romance.cordRoom
+    : cordBlock === 'noItem' ? T.romance.cordNoItem : null
   const homeStage = def.id === 'carpenter' ? nextHomeStage(game) : null
   const homeBlock = homeStage ? canOrderHome(game) : 'done'
   // 목수에게 살림 부탁 (계획 11): 이사 온 뒤, 아직 없는 것만
@@ -129,6 +143,7 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
         <button data-close className="head-x" aria-label={T.ui.close} title={T.ui.close} onClick={closeModal}>✕</button>
       </div>
       {modal.line && <p className="talk-line">{callName(modal.line, game.avatar?.name)}</p>}
+      {heartBlock && <p className="hint">{HEART_HINTS[heartBlock]}</p>}
       {/* 이미 들은 특별 대사·편지도 내용을 지우지 않고 일반 대화에 남긴다. */}
       {extraLines.filter(line => line !== modal.line).map(line => <p key={line} className="talk-line">{callName(line, game.avatar?.name)}</p>)}
       {/* 다른 마을 서고 소문 (계획 21 R6) */}
@@ -164,9 +179,12 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
         </button>
         <WorkEntry npc={def.id} onOpen={() => setFocus('work')} />
         <SkillEntry npc={def.id} onOpen={() => setFocus('skill')} />
-        {/* 헤어진 사람에게 다시 마음 전하기 (14일 뒤, 하트 8 + 들꽃 다발) */}
-        {game.flags[`exPartner:${def.id}`] != null && canGiveBouquet(game, def) === null && (
-          <button onClick={() => useGame.getState().giveBouquet(def.id)}>{T.romance.giveBouquet}</button>
+        {/* 친구로 남았거나 아직 사귀지 않은 후보에게도 마음을 전할 수 있다. */}
+        {bouquetVisible && (
+          <button onClick={() => bouquetBlock === 'noItem' ? say(T.romance.bouquetNoItem) : bouquetBlock === 'cooling' ? say(HEART_HINTS.cooling) : useGame.getState().giveBouquet(def.id)}>{T.romance.giveBouquet}</button>
+        )}
+        {romanceWith(game, def.id) === 'dating' && (
+          <button onClick={() => cordNote ? say(cordNote, 4000) : useGame.getState().giveCord(def.id)}>{T.romance.giveCord}</button>
         )}
         {canGiveLoveVerse(game, def.id) && <button onClick={() => useGame.getState().open({ kind: 'loveVerse' })}>{T.romance.loveVerse}</button>}
           {canBreakUp(game, def.id) && <button onClick={() => setAsking(true)}>{T.romance.breakUp}</button>}

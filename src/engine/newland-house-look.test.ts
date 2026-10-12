@@ -43,7 +43,7 @@ describe('집 색 고르기', () => {
       ...base,
       scenes: [],
       clock: { day: 10, minute: 600 },
-      coins: 1000,
+      coins: 10000,
       inv: { olive: 9, papyrus: 9, reed: 9 },
       flags: { ...base.flags, newlandGift: 1, newlandRevealed: 1 },
       map: 'newland',
@@ -87,7 +87,7 @@ describe('집 단계 (1단계 4칸 · 2단계 6칸 · 3단계 8칸)', () => {
   function land(): GameState {
     const base = newGame(CONTENT)
     const g: GameState = {
-      ...base, scenes: [], clock: { day: 10, minute: 600 }, coins: 5000, inv: { olive: 30, papyrus: 30, reed: 30 },
+      ...base, scenes: [], clock: { day: 10, minute: 600 }, coins: 50000, inv: { olive: 30, papyrus: 30, reed: 30 },
       flags: { ...base.flags, newlandGift: 1, newlandRevealed: 1 }, map: 'newland',
       player: { ...base.player, x: NEWLAND_PORTAL_FRONT.x, y: NEWLAND_PORTAL_FRONT.y, path: [] },
     }
@@ -98,8 +98,8 @@ describe('집 단계 (1단계 4칸 · 2단계 6칸 · 3단계 8칸)', () => {
     expect(areaOf('home', 10, 12, 4)).toHaveLength(12)
     expect(areaOf('home', 10, 12, 6)).toHaveLength(18)
     expect(areaOf('home', 10, 12, 8)).toHaveLength(24)
-    expect(costOf('home', 6).coins).toBe(240)
-    expect(costOf('home', 8).coins).toBe(330)
+    expect(costOf('home', 6).coins).toBe(2400)
+    expect(costOf('home', 8).coins).toBe(3300)
   })
   it('문: 아래 문은 본채 가운데, 오른쪽 문은 오른쪽 끝, 왼쪽 문은 왼쪽 끝', () => {
     expect(doorOf('home', 10, 12, 'down', 4)!.door).toEqual({ x: 12, y: 15 })

@@ -2,6 +2,8 @@ import { FIXTURES } from '../engine/home-layout'
 import { SPOUSE_FURNITURE } from '../engine/furniture-defs'
 // 게임이 지어낸 문장의 단일 입구 (exclusion-list §0). 성경 문장은 여기 두지 않는다.
 import lifeText from './life-text.json'
+import heartBalanceText from './heart-balance-text.json'
+import { CANDIDATE_IDS } from '../engine/romance'
 import { PEOPLE_DATA, PEOPLE_MORE } from './people-all'
 import { ADDITION_FURNITURE, type AdditionUse } from '../engine/furniture-additions'
 /** 생활 가구 설명: 놓고 눌러서 하는 일 */
@@ -47,6 +49,12 @@ export const T = lifeText
 export const copyBookName = (b: CopyBook): string => (isOtBook(b) ? otRow(b).name : (lifeText.quiz.books as Record<string, string>)[b])
 export const NEIGHBOR_LINES = lifeText.neighbors as Record<string, NeighborLines>
 export const SCENES = lifeText.scenes as Record<string, Scene>
+export const HEART_HINTS = heartBalanceText.hints
+for (const id of CANDIDATE_IDS) SCENES[`loverTrust:${id}`] = {
+  title: heartBalanceText.loverStory.title,
+  lines: heartBalanceText.loverStory.lines.map((line, i) => ({ ...line, speaker: line.speaker === 'partner' ? id : line.speaker,
+    text: id === 'merchant' && line.speaker === 'partner' ? heartBalanceText.loverStory.merchantLines[i - 1] : line.text })),
+}
 // 같은 모습의 연애 후보가 대신 하는 장면·가까운 사이 말 (people-more.json)
 Object.assign(SCENES, PEOPLE_MORE.scenes)
 for (const [id, lines] of Object.entries(PEOPLE_MORE.closeFriend)) if (NEIGHBOR_LINES[id]) NEIGHBOR_LINES[id].closeFriend = lines
@@ -74,6 +82,7 @@ for (const [id, p] of Object.entries(SPOUSE_FURNITURE)) {
   ITEM_TEXT[id as ItemId] = { name: `${p.owner}의 ${propNames[base] ?? ITEM_TEXT[p.id as ItemId]?.name ?? '생활 소품'}`, desc: '방 구별 없이 옮길 수 있는 배우자의 가구.' }
 }
 export const JOURNAL_NOTES = lifeText.journal.notes as Record<string, string>
+for (const id of CANDIDATE_IDS) JOURNAL_NOTES[`loverTrust:${id}`] = heartBalanceText.loverStory.journal
 
 /** 앨범에 남는 장면 id */
 export const ALBUM_IDS: readonly string[] = Object.entries(SCENES)

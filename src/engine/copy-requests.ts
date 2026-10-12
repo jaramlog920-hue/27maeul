@@ -36,8 +36,8 @@ export const REQUESTS_PER_DAY = 2
 /** 짧은 구절: 띄어쓰기를 뺀 글자 수 */
 export const SHORT_CHARS = 60
 /** 보답 마음 = 기본 + 별마다 */
-export const REQ_HEART_BASE = 2
-export const REQ_HEART_PER_STAR = 2
+export const REQ_HEART_BASE = 1
+export const REQ_HEART_PER_STAR = 1
 
 /** 그날 붙는 부탁 (날 씨앗) — 아이는 배움 부탁만 */
 export function requestsOn(day: number, npcs: readonly string[]): CopyRequest[] {

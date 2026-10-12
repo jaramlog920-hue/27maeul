@@ -16,6 +16,7 @@ import { sanitizeLife } from './people'
 import { sanitizeNotebook } from './notebook'
 import { repairSpouseInheritance, sanitizeChild } from './child'
 import { sanitizeRomance } from './romance'
+import { sanitizeHeartDay } from './hearts'
 import { sanitizeStats } from './stats'
 import { sanitizeCopy, sanitizeCopyStats } from './copying'
 import { backfillGodRecords, sanitizeGodRecords } from './god-records'
@@ -176,6 +177,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   let homeLevel: GameState['homeLevel'] = s.homeLevel === 1 || s.homeLevel === 2 || s.homeLevel === 3 ? s.homeLevel : 0
   // 지도(모듈 전역 집 단계)를 이 저장에 맞춘 뒤 가구를 맞춘다 — newGame이 0으로 되돌려 둔 상태라서
   const romance = sanitizeRomance(s.romance)
+  if (romance.stage === 'dating' && romance.since === null) romance.since = s.clock.day
   setHomeLevel(homeLevel)
   // 세우거나 허문 집 안 벽 (2026-10-12): 넓힌 집에서만, 가구를 맞추기 전에 지도에 덧씌운다
   const homeWalls = homeLevel >= 1 ? sanitizeHomeWalls(s.homeWalls) : undefined
@@ -247,6 +249,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     stats: sanitizeStats(s.stats),
     // 연애와 결혼 (계획 6): 옛 저장은 빈 연애
     romance,
+    heartDay: sanitizeHeartDay(s.heartDay, s.clock.day, content.neighbors.map(n => n.id)),
     // 가족 옷장: 모습(look이 f·m인 것)만 남긴다 — 옛 저장은 빈 옷장
     looks: Object.fromEntries(Object.entries((isObj(s.looks) ? s.looks : {}) as Record<string, unknown>).filter(([, v]) => isObj(v) && ((v as { look?: unknown }).look === 'f' || (v as { look?: unknown }).look === 'm'))) as GameState['looks'],
     // 살아 움직이는 사람들 (계획 6b): 옛 저장은 빈 기억

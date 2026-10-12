@@ -58,7 +58,7 @@ describe('이웃 수첩', () => {
 
   it('생일에 건넨 선물은 마음이 두 배', () => {
     const s = on({ ...newGame(CONTENT), inv: { grapes: 1 } }, 10)
-    expect(giveGift(s, def('baker'), 'grapes')!.state.hearts.baker).toBe(10)
+    expect(giveGift(s, def('baker'), 'grapes')!.state.hearts.baker).toBe(6)
   })
 
   it('사이가 깊어지면 ? 칸이 열린다', () => {

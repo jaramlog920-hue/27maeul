@@ -218,7 +218,7 @@ describe('절·장·권 완료', () => {
     const s = startCopy(fresh(), 'phm', CONTENT)
     const r = writeChapter(s, 'phm')
     expect(r.result).toMatchObject({ kind: 'chapter', bookDone: true, next: null })
-    expect(r.state.scenes).toEqual(['firstChapter', 'bookBound', 'growth:decorate:full'])
+    expect(r.state.scenes).toEqual(['firstChapter', 'bookBound', 'growth:decorate'])
     expect(r.state.copyStats.books).toBe(1)
     expect(copySpot(r.state, 'phm', CONTENT)).toBeNull()
     expect(writeVerse(r.state, 'phm', '아무 글', CONTENT).result.kind).toBe('none')

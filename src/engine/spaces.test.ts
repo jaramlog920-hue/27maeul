@@ -44,7 +44,8 @@ function base(): GameState {
   return { ...s, room: oldBed(s.room), player:{...s.player,...HOME_ENTRY}, scenes: [], clock: { day: 3, minute: 15 * 60 } }
 }
 function oldBed(room: readonly Furniture[]): Furniture[] {
-  return room.map((f) => (f.item === 'homeBed' ? { ...f, x: 17, y: 111 } : f))
+  // 작업대도 예전 자리(23,113) — 새 게임은 필사 책상 옆(19,114)에 두지만 이 파일의 탁자·의자 좌표는 예전 배치로 짰다 (2026-10-13)
+  return room.map((f) => (f.item === 'homeBed' ? { ...f, x: 17, y: 111 } : f.item === 'homeWorkbench' ? { ...f, x: 23, y: 113 } : f))
 }
 /** 탁자 하나와 의자 둘이 있는 차 자리 */
 function teaRoom(): GameState {

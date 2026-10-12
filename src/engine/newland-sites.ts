@@ -89,19 +89,23 @@ const HOME_DOORS: Partial<Record<Facing, DoorSpec>> = {
   right: { entryPx: { x: 47, y: 60 }, door: { dx: 3, dy: 3 }, front: { dx: 4, dy: 3 } },
 }
 
+/**
+ * 건물 값은 27권을 다 마친 뒤(모은 돈 5만~6만 닢)에 맞춘다 — 2026-10-13 사용자: 돈 쓸 곳. 건물은 예전의 10배,
+ * 여러 칸을 까는 길·정원·꾸미기는 그대로 싸게
+ */
 export const SITES: Record<SiteKind, SiteDef> = {
   path: { id: 'path', terrainId: 'path', sizes: [1, 3], area: { w: 1, h: 1, dy: 0 }, facings: ['down'], cost: { coins: 1, items: {} } },
   garden: { id: 'garden', terrainId: 'plantingBed', sizes: [1, 3], area: { w: 1, h: 1, dy: 0 }, facings: ['down'], cost: { coins: 3, items: {} } },
   // 마당: 열린 4×4 — 건물처럼 막지 않고 걸을 수 있다. 문이 없다
-  courtyard: { id: 'courtyard', assetId: 'courtyard', sizes: [4], area: { w: 4, h: 4, dy: 0 }, facings: ['down'], cost: { coins: 40, items: { reed: 4 } } },
-  home: { id: 'home', assetId: 'home', sizes: HOUSE_SIZES, area: { w: 4, h: 3, dy: 1 }, facings: ['down', 'left', 'right'], cost: { coins: 150, items: { olive: 4, papyrus: 3 } }, doors: HOME_DOORS },
-  guest: { id: 'guest', assetId: 'guest', sizes: HOUSE_SIZES, area: { w: 4, h: 3, dy: 1 }, facings: ['down', 'left', 'right'], cost: { coins: 80, items: { reed: 3 } }, doors: HOME_DOORS },
-  memorial: { id: 'memorial', assetId: 'garden', sizes: [4], area: { w: 4, h: 4, dy: 0 }, facings: ['down'], cost: { coins: 60, items: { olive: 2 } } },
-  weaver: { id: 'weaver', assetId: 'weaver', sizes: [4], area: { w: 4, h: 3, dy: 1 }, facings: ['down', 'left', 'right'], cost: { coins: 120, items: { reed: 4, papyrus: 2 } }, doors: HOME_DOORS },
+  courtyard: { id: 'courtyard', assetId: 'courtyard', sizes: [4], area: { w: 4, h: 4, dy: 0 }, facings: ['down'], cost: { coins: 400, items: { reed: 4 } } },
+  home: { id: 'home', assetId: 'home', sizes: HOUSE_SIZES, area: { w: 4, h: 3, dy: 1 }, facings: ['down', 'left', 'right'], cost: { coins: 1500, items: { olive: 4, papyrus: 3 } }, doors: HOME_DOORS },
+  guest: { id: 'guest', assetId: 'guest', sizes: HOUSE_SIZES, area: { w: 4, h: 3, dy: 1 }, facings: ['down', 'left', 'right'], cost: { coins: 800, items: { reed: 3 } }, doors: HOME_DOORS },
+  memorial: { id: 'memorial', assetId: 'garden', sizes: [4], area: { w: 4, h: 4, dy: 0 }, facings: ['down'], cost: { coins: 600, items: { olive: 2 } } },
+  weaver: { id: 'weaver', assetId: 'weaver', sizes: [4], area: { w: 4, h: 3, dy: 1 }, facings: ['down', 'left', 'right'], cost: { coins: 1200, items: { reed: 4, papyrus: 2 } }, doors: HOME_DOORS },
   // 틸리의 꿈 (2026-10-08): 그림방 = 주민의 꿈 미술관 그림
-  gallery: { id: 'gallery', assetId: 'gallery', sizes: [4], area: { w: 4, h: 3, dy: 1 }, facings: ['down', 'left', 'right'], cost: { coins: 120, items: { papyrus: 2, olive: 2 } }, doors: HOME_DOORS },
+  gallery: { id: 'gallery', assetId: 'gallery', sizes: [4], area: { w: 4, h: 3, dy: 1 }, facings: ['down', 'left', 'right'], cost: { coins: 1200, items: { papyrus: 2, olive: 2 } }, doors: HOME_DOORS },
   // 그림 id는 아이 직업이라 그릴 때 정한다 (assetId 없음)
-  kidWork: { id: 'kidWork', sizes: [4], area: { w: 4, h: 3, dy: 1 }, facings: ['down', 'left', 'right'], cost: { coins: 100, items: { reed: 3, olive: 2 } }, doors: HOME_DOORS },
+  kidWork: { id: 'kidWork', sizes: [4], area: { w: 4, h: 3, dy: 1 }, facings: ['down', 'left', 'right'], cost: { coins: 1000, items: { reed: 3, olive: 2 } }, doors: HOME_DOORS },
   sand: decor('sand', 2, [1, 3]),
   stone: decor('stone', 3, [1, 3]),
   soil: decor('soil', 2, [1, 3]),

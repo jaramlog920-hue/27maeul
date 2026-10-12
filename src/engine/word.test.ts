@@ -20,11 +20,10 @@ import type { NeighborDef } from './types'
 
 /** 하루를 지낸다 (낮 열 시에 잠들어 다음 날 아침) */
 const sleep = (s: GameState) => goToSleep({ ...s, clock: { ...s.clock, minute: 20 * 60 } }, CONTENT)
-// 정기 편지의 분포·수령 검사는 2권 완필 후 상태에서 한다.
+// 정기 편지의 분포·수령 검사는 편지함이 정식으로 열린 8장 뒤에 한다 (2026-10-13 장 수 기준).
 const fresh = (): GameState => {
   const game = newGame(CONTENT)
-  game.progress['2jn'].completed = [1]
-  game.progress['3jn'].completed = [1]
+  game.progress.mt.completed = Array.from({ length: 8 }, (_, i) => i + 1)
   return { ...game, scenes: [] }
 }
 

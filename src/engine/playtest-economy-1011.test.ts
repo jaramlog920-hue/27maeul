@@ -38,10 +38,10 @@ describe('2. 집 넓히기·배운 물건 만들기는 재료 궤짝도 본다',
   const rich = (): GameState => {
     const s = establishedGame(CONTENT, 21)
     s.progress.phm.completed = [1]
-    return { ...s, coins: 2000, flags: { ...s.flags, 'movedIn:carpenter': 1 } }
+    return { ...s, coins: 20000, flags: { ...s.flags, 'movedIn:carpenter': 1 } }
   }
-  it('가방 2 + 궤짝 3 올리브로 1단계를 부탁하고, 가방 것부터 쓴다', () => {
-    const s = withChest({ ...rich(), inv: { olive: 2 } }, { olive: 3 })
+  it('가방 4 + 궤짝 6 올리브로 1단계를 부탁하고, 가방 것부터 쓴다', () => {
+    const s = withChest({ ...rich(), inv: { olive: 4 } }, { olive: 6 })
     expect(canOrderHome(s)).toBeNull()
     const out = orderHome(s)!
     expect(out.inv.olive ?? 0).toBe(0)
@@ -49,7 +49,7 @@ describe('2. 집 넓히기·배운 물건 만들기는 재료 궤짝도 본다',
     expect(out.flags.homeOrder).toBe(1)
   })
   it('궤짝이 없으면 예전처럼 가방만', () => {
-    const s = { ...rich(), inv: { olive: 2 }, chest: { olive: 3 } }
+    const s = { ...rich(), inv: { olive: 4 }, chest: { olive: 6 } }
     expect(canOrderHome(s)).toBe('needs')
   })
   it('배운 물건(의자)을 궤짝의 갈대로 만든다', () => {
@@ -110,7 +110,7 @@ describe('5. 집이 넓어져 가방으로 돌아간 가구를 알려 준다', (
   it('생활방을 지어 새 문 앞이 된 칸의 가구는 가방으로 가고, 그 목록이 나온다', () => {
     let s = establishedGame(CONTENT, 21)
     s.progress.phm.completed = [1]
-    s = { ...s, coins: 2000, inv: { olive: 30, papyrus: 20 }, flags: { ...s.flags, 'movedIn:carpenter': 1 } }
+    s = { ...s, coins: 20000, inv: { olive: 40, papyrus: 30 }, flags: { ...s.flags, 'movedIn:carpenter': 1 } }
     s = goToSleep(orderHome(s)!, CONTENT)
     s = goToSleep(orderHome(s)!, CONTENT)
     expect(homeRefitReturned(s, s)).toEqual([])

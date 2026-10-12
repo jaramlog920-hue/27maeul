@@ -12,7 +12,8 @@ const ids = CONTENT.neighbors.filter((d) => !d.marketOnly).map((d) => d.id)
 // 부탁의 보답·기한 검사는 게시판이 정식으로 열린 상태에서 한다.
 function newGame(content: typeof CONTENT) {
   const game = createGame(content)
-  for (const book of ['phm', '2jn', '3jn'] as const) game.progress[book].completed = [1]
+  // 게시판 정식 해금 12장 (2026-10-13 장 수 기준)
+  game.progress.mt.completed = Array.from({ length: 12 }, (_, i) => i + 1)
   return game
 }
 

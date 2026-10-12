@@ -23,7 +23,7 @@ function land(extra: Partial<GameState> = {}): GameState {
     ...base,
     scenes: [],
     clock: { day: 10, minute: 10 * 60 },
-    coins: 1000,
+    coins: 10000,
     inv: { olive: 9, papyrus: 9, reed: 9 },
     flags: { ...base.flags, newlandGift: 1, newlandRevealed: 1 },
     map: 'newland',
@@ -47,7 +47,7 @@ function place(s: GameState, kind: 'home' | 'courtyard' | 'path' | 'garden', x: 
 }
 
 const house = (id: string, x: number, y: number, facing: Build['facing'] = 'down', state: Build['state'] = 'done'): Build => ({
-  id, kind: 'home', x, y, facing, state, orderedDay: 1, paid: { coins: 150, items: { olive: 4, papyrus: 3 } }, refunded: false,
+  id, kind: 'home', x, y, facing, state, orderedDay: 1, paid: { coins: 1500, items: { olive: 4, papyrus: 3 } }, refunded: false,
 })
 
 describe('놓기 검사', () => {
@@ -137,7 +137,7 @@ describe('놓기 검사', () => {
   it('공사 중 마당도 길을 막는다 — 덧씌움이 S로 막는 이틀 동안 끊기는 길을 놓기 검사가 지킨다', () => {
     // 한 칸(10,15)을 집 셋이 북·서·남으로 에워싸고 동쪽은 마당이다. 마당이 공사 중이면 그 칸은 이틀 동안 닿지 못한다
     const base = land()
-    const court = (state: Build['state']): Build => ({ id: 'b4', kind: 'courtyard', x: 11, y: 12, facing: 'down', state, orderedDay: 1, paid: { coins: 40, items: { reed: 4 } }, refunded: false })
+    const court = (state: Build['state']): Build => ({ id: 'b4', kind: 'courtyard', x: 11, y: 12, facing: 'down', state, orderedDay: 1, paid: { coins: 400, items: { reed: 4 } }, refunded: false })
     const ring = (state: Build['state']): GameState => ({
       ...base,
       newland: { builds: [house('b1', 7, 11, 'left'), house('b2', 6, 14, 'left'), house('b3', 7, 15, 'left'), court(state)], tiles: {}, nextId: 5, settledDay: 0 },
@@ -207,10 +207,10 @@ describe('놓기 검사', () => {
 
 describe('비용과 주문', () => {
   it('닢이 모자라면 거절 — 아무것도 바뀌지 않는다', () => {
-    const s = land({ coins: 149 })
+    const s = land({ coins: 1499 })
     expect(canOrder(s, 'home', 10, 12)).toBe('coins')
     expect(orderBuild(s, 'home', 10, 12)).toBeNull()
-    expect(s.coins).toBe(149)
+    expect(s.coins).toBe(1499)
   })
 
   it('재료가 모자라면 거절', () => {
@@ -222,24 +222,24 @@ describe('비용과 주문', () => {
 
   it('주문하면 닢·재료를 내고 기록이 생긴다 (집 150닢+올리브 4+파피루스 3)', () => {
     const s = must(orderBuild(land(), 'home', 10, 12, 'left'))
-    expect(s.coins).toBe(850)
+    expect(s.coins).toBe(8500)
     expect(s.inv).toEqual({ olive: 5, papyrus: 6, reed: 9 })
     const b = buildsOf(s)[0]
-    expect(b).toMatchObject({ id: 'b1', kind: 'home', x: 10, y: 12, facing: 'left', state: 'ordered', orderedDay: 10, refunded: false, paid: { coins: 150, items: { olive: 4, papyrus: 3 } } })
+    expect(b).toMatchObject({ id: 'b1', kind: 'home', x: 10, y: 12, facing: 'left', state: 'ordered', orderedDay: 10, refunded: false, paid: { coins: 1500, items: { olive: 4, papyrus: 3 } } })
     expect(s.newland!.nextId).toBe(2)
   })
 
   it('마당은 40닢+갈대 4, 길 한 칸 1닢, 정원 한 칸 3닢, 3×3은 아홉 칸값, 깔린 칸은 빼고 센다', () => {
     let s = must(orderBuild(land(), 'courtyard', 10, 12))
-    expect([s.coins, s.inv.reed]).toEqual([960, 5])
+    expect([s.coins, s.inv.reed]).toEqual([9600, 5])
     s = must(orderBuild(s, 'path', 20, 20))
-    expect(s.coins).toBe(959)
+    expect(s.coins).toBe(9599)
     s = must(orderBuild(s, 'garden', 22, 20))
-    expect(s.coins).toBe(956)
+    expect(s.coins).toBe(9596)
     expect(tilesOf(s)).toEqual({ '20,20': 'path', '22,20': 'garden' })
     s = must(orderBuild(s, 'path', 19, 19, 'down', 3))
     // 아홉 칸 중 (20,20)은 이미 길이라 여덟 칸값
-    expect(s.coins).toBe(948)
+    expect(s.coins).toBe(9588)
     expect(Object.keys(tilesOf(s))).toHaveLength(10)
   })
 
@@ -328,7 +328,7 @@ describe('취소·철거·환불', () => {
   it('공사 시작 전 취소는 100% (닢·재료)', () => {
     const s = ordered()
     const c = must(cancelBuild(s, 'b1'))
-    expect(c.coins).toBe(1000)
+    expect(c.coins).toBe(10000)
     expect(c.inv).toEqual({ olive: 9, papyrus: 9, reed: 9 })
     expect(buildsOf(c)).toHaveLength(0)
   })
@@ -339,7 +339,7 @@ describe('취소·철거·환불', () => {
     expect(buildsOf(s)[0].state).toBe('building')
     const c = must(cancelBuild(s, 'b1'))
     // 150→75, 올리브 4→2, 파피루스 3→1 (소수 버림)
-    expect(c.coins).toBe(850 + 75)
+    expect(c.coins).toBe(8500 + 750)
     expect(c.inv).toEqual({ olive: 5 + 2, papyrus: 6 + 1, reed: 9 })
   })
 
@@ -347,7 +347,7 @@ describe('취소·철거·환불', () => {
     let s = place(land(), 'courtyard', 10, 12)
     s = advanceBuilds({ ...s, clock: { ...s.clock, day: 11 } })
     const c = must(cancelBuild(s, 'b1'))
-    expect([c.coins, c.inv.reed]).toEqual([960 + 20, 5 + 2])
+    expect([c.coins, c.inv.reed]).toEqual([9600 + 200, 5 + 2])
   })
 
   it('완공 뒤 철거는 닢 50%, 재료는 돌려주지 않고, 기록이 사라진다', () => {
@@ -355,7 +355,7 @@ describe('취소·철거·환불', () => {
     s = advanceBuilds({ ...s, clock: { ...s.clock, day: 12 } })
     expect(buildsOf(s)[0].state).toBe('done')
     const d = must(demolishBuild(s, 'b1'))
-    expect(d.coins).toBe(850 + 75)
+    expect(d.coins).toBe(8500 + 750)
     expect(d.inv).toEqual({ olive: 5, papyrus: 6, reed: 9 })
     expect(buildsOf(d)).toHaveLength(0)
     syncHome(d)
@@ -388,9 +388,9 @@ describe('취소·철거·환불', () => {
     const s = ordered()
     const c = must(cancelBuild(s, 'b1'))
     const loaded = must(deserialize(serialize(c), CONTENT))
-    expect(loaded.coins).toBe(1000)
+    expect(loaded.coins).toBe(10000)
     expect(cancelBuild(loaded, 'b1')).toBeNull()
-    expect(loaded.coins).toBe(1000)
+    expect(loaded.coins).toBe(10000)
   })
 
   it('환불한 재료는 가방이 가득해도 받는다', () => {
@@ -411,9 +411,9 @@ describe('취소·철거·환불', () => {
 
   it('깐 길·정원 걷어내기: 낸 닢을 돌려받고 칸이 비는 한 번뿐', () => {
     const s = place(land(), 'garden', 20, 20)
-    expect(s.coins).toBe(997)
+    expect(s.coins).toBe(9997)
     const c = must(clearTile(s, 20, 20))
-    expect(c.coins).toBe(1000)
+    expect(c.coins).toBe(10000)
     expect(tilesOf(c)).toEqual({})
     expect(clearTile(c, 20, 20)).toBeNull()
   })
@@ -510,7 +510,7 @@ describe('필사·서고와 무관', () => {
   })
 
   it('건물이 가득 차 있어도 서고·책상 길은 막히지 않는다 (놓기 검사가 지킨다)', () => {
-    let s = land({ coins: 5000, inv: { olive: 99, papyrus: 99, reed: 99 } })
+    let s = land({ coins: 50000, inv: { olive: 99, papyrus: 99, reed: 99 } })
     const spots: [number, number][] = [[6, 11], [11, 11], [16, 11], [21, 11], [26, 11], [6, 17], [11, 17], [16, 17], [21, 17], [26, 17]]
     for (const [x, y] of spots) {
       // 입주 주택은 안 방 칸 수까지만 (작업 7) — 나머지 자리는 마당으로 채운다
