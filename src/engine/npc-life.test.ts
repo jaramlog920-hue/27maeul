@@ -61,3 +61,16 @@ describe('주민의 산책과 마주 보는 대화', () => {
     expect(after.npcs.shepherd.path.length + after.npcs.weaver.path.length).toBeGreaterThan(0)
   })
 })
+
+describe('방 안 산책은 출구 통로를 막지 않는다 (2026-10-13 자동 점검)', () => {
+  // 찻집 방(41~47, 60~66): 탁자 사이 (44,63)과 그 아래 (44,64)·(44,65)를 지나야만 문(44,66)으로 나간다.
+  // 찻집 주인이 그 칸에 서서 쉬면 안에 있던 이웃이 30분 넘게 갇혔다.
+  const choke = ['44,63', '44,64', '44,65']
+  it('찻집 주인은 출구 통로 칸을 쉬는 자리로 고르지 않는다', () => {
+    const picked = new Set<string>()
+    for (let day = 1; day <= 40; day++) for (let minute = 6 * 60; minute < 22 * 60; minute += 16)
+      picked.add(key(wanderGoal('poppy', { x: 44, y: 62 }, 7, day, minute, new Set(), new Set())))
+    expect([...picked].filter((k) => choke.includes(k))).toEqual([])
+    expect(picked.size).toBeGreaterThan(2)
+  })
+})

@@ -7,7 +7,37 @@ export const WANDER_SLOT = 16
 const DIRS = [{ x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: 1 }, { x: 0, y: -1 }]
 const RESERVED = new Set(Object.values(PLACES).flatMap(p => p.stand ? [key(p.stand)] : []))
 
-/** 두 칸 안의 연결된 바닥만 고른다. 문·다른 방·플레이어 작업 칸·이미 점유한 칸은 피한다. */
+/**
+ * 방 안에서 이 칸에 서 있으면 방의 다른 바닥이 문으로 나갈 길을 잃는가 (외길 통로).
+ * 찻집 탁자 사이 한 칸에 주인이 서서 쉬면 안의 이웃이 30분 넘게 갇혔다 (2026-10-13 자동 점검). 이웃 방은 바뀌지 않으므로 칸마다 한 번만 따진다
+ */
+const chokeMemo = new Map<string, boolean>()
+function blocksRoomExit(at: Tile): boolean {
+  const room = roomAt(at)
+  if (!room || isHome(at)) return false
+  const k = key(at)
+  const hit = chokeMemo.get(k)
+  if (hit !== undefined) return hit
+  const floor: Tile[] = [], doors: Tile[] = []
+  for (let y = room.y0; y < room.y0 + room.h; y++) for (let x = room.x0; x < room.x0 + room.w; x++) {
+    const t = { x, y }
+    if (!isWalkable(t) || key(t) === k) continue
+    if (WARPS.has(key(t))) doors.push(t)
+    else floor.push(t)
+  }
+  const seen = new Set(doors.map(key)), queue = [...doors]
+  for (let i = 0; i < queue.length; i++) for (const d of DIRS) {
+    const to = { x: queue[i].x + d.x, y: queue[i].y + d.y }, tk = key(to)
+    if (seen.has(tk) || tk === k || !isWalkable(to) || roomAt(to) !== room) continue
+    seen.add(tk)
+    queue.push(to)
+  }
+  const cut = doors.length > 0 && floor.some((t) => !seen.has(key(t)))
+  chokeMemo.set(k, cut)
+  return cut
+}
+
+/** 두 칸 안의 연결된 바닥만 고른다. 문·다른 방·플레이어 작업 칸·이미 점유한 칸·방의 외길 통로는 피한다. */
 export function wanderGoal(npc: string, anchor: Tile, seed: number, day: number, minute: number, blocked: ReadonlySet<string>, occupied: ReadonlySet<string>): Tile {
   const phase = genRng(seed, 'wanderPhase', [npc], day)()
   const slot = Math.floor((minute + phase * WANDER_SLOT) / WANDER_SLOT)
@@ -16,7 +46,7 @@ export function wanderGoal(npc: string, anchor: Tile, seed: number, day: number,
   const choices: Tile[] = []
   for (let i = 0; i < queue.length; i++) {
     const { at, depth } = queue[i]
-    if (depth > 0 && !RESERVED.has(key(at))) choices.push(at)
+    if (depth > 0 && !RESERVED.has(key(at)) && !blocksRoomExit(at)) choices.push(at)
     if (depth >= 2) continue
     for (const d of DIRS) {
       const to = { x: at.x + d.x, y: at.y + d.y }, k = key(to)

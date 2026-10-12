@@ -24,7 +24,8 @@
     "build:chapter-guides": "node scripts/build-chapter-guides.mjs",
     "build:ot-guides": "node scripts/build-ot-guides.mjs",
     "build:nt": "node scripts/build-nt-content.mjs",
-    "measure:startup": "node scripts/measure-startup.mjs"
+    "measure:startup": "node scripts/measure-startup.mjs",
+    "audit": "node scripts/run-audit.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
