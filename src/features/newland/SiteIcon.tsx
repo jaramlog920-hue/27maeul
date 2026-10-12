@@ -4,11 +4,14 @@ import { OLD_BUILDINGS, OLD_PROPS, OLD_TERRAIN, OLD_VILLAGE_PALETTE } from '../.
 import { isDecorKind, SITES, type SiteKind } from '../../engine/newland-sites'
 import { ArtIcon } from '../../shared/IconGrid'
 import type { SitePick } from './SitePreview'
+import { HouseArt } from './HouseLookPicker'
 
 export function SiteIcon({ kind, size = 28 }: { kind: SitePick; size?: number }) {
   if (kind === 'eraser') return <ArtIcon rows={OLD_PROPS.plotPeg.rows} palette={OLD_VILLAGE_PALETTE} size={size} />
   if (kind === 'path' || kind === 'garden') return <ArtIcon rows={(kind === 'path' ? OLD_TERRAIN.path : OLD_TERRAIN.plantingBed).rows} palette={OLD_VILLAGE_PALETTE} size={size} />
   if (isDecorKind(kind) && BG_ART[kind]) return <ArtIcon rows={BG_ART[kind]} palette={BG_PALETTE} size={size} />
+  // 입주 주택·손님집은 신약 마을 집 생김새 (2026-10-13)
+  if (kind === 'home' || kind === 'guest') return <HouseArt kind={kind} size={size} />
   const asset = kind === 'kidWork' ? 'cook' : (SITES[kind as SiteKind].assetId ?? kind)
   const art = OLD_BUILDINGS[asset]?.down
   return art ? <ArtIcon rows={art.rows} palette={OLD_VILLAGE_PALETTE} size={size} /> : <span aria-hidden="true">?</span>

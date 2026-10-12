@@ -8,11 +8,12 @@ import type { Furniture } from './room'
 import { ARCHIVE, BUILD_RECT, MAX_HOMES, NEWLAND_PORTAL_FRONT, NEWLAND_VISIBLE_H, NEWLAND_W, ROOM_SLOTS } from './newland-config'
 import { NEWLAND_MAP } from './newland'
 import {
-  ART_TILES, blocksWay, isOpenYard, isWalled, DECOR_REFUND, isDecorKind, BUILD_DAYS_TO_DONE, BUILD_DAYS_TO_START, isBuildKind, isTileKind, REFUND_BEFORE, REFUND_DEMOLISH_COINS, REFUND_DURING, SITES,
+  ART_TILES, HOUSE_SIZE_COST, mainOffset, blocksWay, isOpenYard, isWalled, DECOR_REFUND, isDecorKind, BUILD_DAYS_TO_DONE, BUILD_DAYS_TO_START, isBuildKind, isTileKind, REFUND_BEFORE, REFUND_DEMOLISH_COINS, REFUND_DURING, SITES,
   type BuildKind, type Cost, type DoorSpec, type Items, type SiteKind, type TileKind,
 } from './newland-sites'
 import type { Facing, ItemId, Tile } from './types'
 import { isBlockedChar } from './world'
+import { hasHouseLook, sanitizeLook, type HouseLook } from './newland-house-look'
 
 export type BuildState = 'ordered' | 'building' | 'done'
 export interface Build {
@@ -32,6 +33,10 @@ export interface Build {
   slot?: number
   /** 환불을 이미 마쳤다는 표식 — 환불은 기록 삭제와 한 번에 일어나므로 남아 있는 기록에서는 늘 false */
   refunded: boolean
+  /** 집 단계의 가로 칸 수 (입주 주택·손님집 6·8 — 없으면 1단계 4칸) */
+  size?: number
+  /** 집 색 (입주 주택·손님집, 처음 지을 때 고른다 — 없으면 기본 모습) */
+  look?: HouseLook
 }
 export interface NewlandState {
   builds: Build[]
@@ -61,7 +66,8 @@ const keyOf = (t: Tile) => key(t.x, t.y)
 /** 막히는(또는 마당처럼 자리를 차지하는) 영역의 칸들 */
 export function areaOf(kind: SiteKind, x: number, y: number, size = 1): Tile[] {
   const def = SITES[kind]
-  const w = isTileKind(kind) ? size : def.area.w
+  // 건물은 size가 그 건물의 단계 폭(6·8)일 때만 넓어진다 — 그 밖(기본 1)은 표의 폭
+  const w = isTileKind(kind) ? size : def.sizes.includes(size) && size > def.area.w ? size : def.area.w
   const h = isTileKind(kind) ? size : def.area.h
   const dy = isTileKind(kind) ? 0 : def.area.dy
   const out: Tile[] = []
@@ -69,25 +75,35 @@ export function areaOf(kind: SiteKind, x: number, y: number, size = 1): Tile[] {
   return out
 }
 
-/** 그림이 덮는 4×4 칸 */
-export function boxOf(x: number, y: number): Tile[] {
+/** 건물 그림의 가로 칸 수 (집 단계 폭, 그 밖은 4) */
+export function widthOf(kind: SiteKind, size?: number): number {
+  return !isTileKind(kind) && size !== undefined && SITES[kind].sizes.includes(size) && size > ART_TILES ? size : ART_TILES
+}
+
+/** 그림이 덮는 칸 (가로 width × 세로 4) */
+export function boxOf(x: number, y: number, width: number = ART_TILES): Tile[] {
+  const w = width > ART_TILES ? width : ART_TILES
   const out: Tile[] = []
-  for (let j = 0; j < ART_TILES; j++) for (let i = 0; i < ART_TILES; i++) out.push({ x: x + i, y: y + j })
+  for (let j = 0; j < ART_TILES; j++) for (let i = 0; i < w; i++) out.push({ x: x + i, y: y + j })
   return out
 }
 
 /** 건물의 문 칸과 문 앞 칸 (문이 없는 건물은 null) */
-export function doorOf(kind: BuildKind, x: number, y: number, facing: Facing): { door: Tile; front: Tile } | null {
+export function doorOf(kind: BuildKind, x: number, y: number, facing: Facing, size?: number): { door: Tile; front: Tile } | null {
   const d: DoorSpec | undefined = SITES[kind].doors?.[facing]
-  return d ? { door: { x: x + d.door.dx, y: y + d.door.dy }, front: { x: x + d.front.dx, y: y + d.front.dy } } : null
+  if (!d) return null
+  // 넓은 집: 아래 문은 본채 가운데, 오른쪽 문은 오른쪽 끝 벽, 왼쪽 문은 왼쪽 끝 벽 그대로
+  const w = widthOf(kind, size)
+  const shift = facing === 'down' ? mainOffset(w) : facing === 'right' ? w - ART_TILES : 0
+  return { door: { x: x + d.door.dx + shift, y: y + d.door.dy }, front: { x: x + d.front.dx + shift, y: y + d.front.dy } }
 }
 
 /**
  * 문 있는 건물 곁에 사람(손님·이웃이 된 손님·아이·꿈터 주인)이 서는 칸 (2026-10-08):
  * 아래 문이면 문 앞 오른쪽, 옆 문이면 문 앞 아래 — 문 칸과 겹치지 않아 누르면 집이 아니라 사람에게 간다
  */
-export function standSpotOf(b: Pick<Build, 'kind' | 'x' | 'y' | 'facing'>): Tile | null {
-  const d = doorOf(b.kind, b.x, b.y, b.facing)
+export function standSpotOf(b: Pick<Build, 'kind' | 'x' | 'y' | 'facing' | 'size'>): Tile | null {
+  const d = doorOf(b.kind, b.x, b.y, b.facing, b.size)
   if (!d) return null
   return b.facing === 'down' ? { x: d.front.x + 1, y: d.front.y } : { x: d.front.x, y: d.front.y + 1 }
 }
@@ -101,10 +117,10 @@ function blockedOf(builds: readonly Build[], finalState = false): Set<string> {
   const out = new Set<string>()
   for (const b of builds) {
     // 공사 중 마당은 덧씌움에서 S로 막힌다 — 길 검사도 같이 막힌 칸으로 본다 (완공된 마당은 걸을 수 있다)
-    if (isOpenYard(b.kind) && b.state !== 'done') for (const t of areaOf(b.kind, b.x, b.y)) out.add(keyOf(t))
+    if (isOpenYard(b.kind) && b.state !== 'done') for (const t of areaOf(b.kind, b.x, b.y, b.size)) out.add(keyOf(t))
     if (!isWalled(b.kind)) continue
-    const open = finalState || b.state === 'done' ? doorOf(b.kind, b.x, b.y, b.facing)?.door : undefined
-    for (const t of areaOf(b.kind, b.x, b.y)) if (!(open && t.x === open.x && t.y === open.y)) out.add(keyOf(t))
+    const open = finalState || b.state === 'done' ? doorOf(b.kind, b.x, b.y, b.facing, b.size)?.door : undefined
+    for (const t of areaOf(b.kind, b.x, b.y, b.size)) if (!(open && t.x === open.x && t.y === open.y)) out.add(keyOf(t))
   }
   return out
 }
@@ -115,7 +131,7 @@ function buildOverlay(nl: NewlandState): Map<string, string> {
   // 나무·덤불 꾸미기는 막힌 칸, 길·모래·돌바닥은 길, 나머지는 풀
   for (const [k, kind] of Object.entries(nl.tiles)) m.set(k, blocksWay(kind) ? 'S' : kind === 'path' || kind === 'sand' || kind === 'stone' ? ',' : '.')
   for (const b of nl.builds) {
-    if (isOpenYard(b.kind)) for (const t of areaOf(b.kind, b.x, b.y)) m.set(keyOf(t), b.state === 'done' ? '.' : 'S')
+    if (isOpenYard(b.kind)) for (const t of areaOf(b.kind, b.x, b.y, b.size)) m.set(keyOf(t), b.state === 'done' ? '.' : 'S')
   }
   for (const k of blockedOf(nl.builds)) m.set(k, 'S')
   // 문은 완공 뒤에만 걸을 수 있다 (blockedOf가 이미 뺐다) — 바탕이 풀이라 따로 쓰지 않는다
@@ -144,7 +160,7 @@ export type OrderBlock = PlaceBlock | 'coins' | 'items' | 'unknown'
 /** 이 놓기가 차지하는 칸(영역)과 그림 칸(상자) */
 function footprintOf(kind: SiteKind, x: number, y: number, size: number) {
   const area = areaOf(kind, x, y, size)
-  const box = isTileKind(kind) ? area : boxOf(x, y)
+  const box = isTileKind(kind) ? area : boxOf(x, y, widthOf(kind, size))
   return { area, box }
 }
 
@@ -176,7 +192,7 @@ function reachable(builds: readonly Build[], tiles: Readonly<Record<string, Tile
 
 /** 공사 중 마당(울타리가 쳐진 칸) — 덧씌움이 S로 막는 칸들 */
 function fencedOf(builds: readonly Build[]): Set<string> {
-  return new Set(builds.filter((b) => isOpenYard(b.kind) && b.state !== 'done').flatMap((b) => areaOf(b.kind, b.x, b.y).map(keyOf)))
+  return new Set(builds.filter((b) => isOpenYard(b.kind) && b.state !== 'done').flatMap((b) => areaOf(b.kind, b.x, b.y, b.size).map(keyOf)))
 }
 
 /** 서고 문 앞과 문, 모든 건물의 문 앞·문, 길·정원·마당 칸 — 입구에서 닿아야 하는 칸들 (끝 모양 기준) */
@@ -184,11 +200,11 @@ function mustReach(builds: readonly Build[], tiles: Readonly<Record<string, Tile
   const others: Tile[] = [{ ...ARCHIVE.front }, { x: ARCHIVE.door.x, y: ARCHIVE.door.y }]
   const fenced = fencedOf(builds)
   for (const b of builds) {
-    const d = doorOf(b.kind, b.x, b.y, b.facing)
+    const d = doorOf(b.kind, b.x, b.y, b.facing, b.size)
     // 문 앞이 공사 중 마당 울타리 안이면 완공까지 닿지 못하는 것이 맞다 — 세지 않는다
     if (d && !fenced.has(keyOf(d.front))) others.push(d.front, d.door)
     // 공사 중 마당은 막혀 있으니 닿을 칸으로 세지 않는다 (완공되면 걸을 수 있다)
-    if (isOpenYard(b.kind) && b.state === 'done') others.push(...areaOf(b.kind, b.x, b.y))
+    if (isOpenYard(b.kind) && b.state === 'done') others.push(...areaOf(b.kind, b.x, b.y, b.size))
   }
   for (const [k, kind] of Object.entries(tiles)) {
     // 나무·덤불은 막힌 칸이라 닿을 칸으로 세지 않는다
@@ -218,9 +234,9 @@ export function canPlace(s: Base, kind: SiteKind, x: number, y: number, facing: 
   const newArea = new Set(area.map(keyOf))
   const newBox = new Set(box.map(keyOf))
   for (const b of builds) {
-    const eArea = areaOf(b.kind, b.x, b.y)
+    const eArea = areaOf(b.kind, b.x, b.y, b.size)
     if (eArea.some((t) => newArea.has(keyOf(t)) || (!isTile && newBox.has(keyOf(t))))) return 'overlap'
-    if (!isTile && boxOf(b.x, b.y).some((t) => newArea.has(keyOf(t)))) return 'overlap'
+    if (!isTile && boxOf(b.x, b.y, widthOf(b.kind, b.size)).some((t) => newArea.has(keyOf(t)))) return 'overlap'
   }
   for (const t of area) {
     if (isBlockedChar(tileCharAt(t.x, t.y))) return 'overlap'
@@ -235,7 +251,7 @@ export function canPlace(s: Base, kind: SiteKind, x: number, y: number, facing: 
   // 놓은 뒤의 모양으로 길 검사
   const nextBuilds: Build[] = isTile
     ? [...builds]
-    : [...builds, { id: '', kind: kind as BuildKind, x, y, facing, state: 'ordered', orderedDay: 0, paid: { coins: 0, items: {} }, refunded: false }]
+    : [...builds, { id: '', kind: kind as BuildKind, x, y, facing, state: 'ordered', orderedDay: 0, paid: { coins: 0, items: {} }, refunded: false, ...(widthOf(kind, size) > ART_TILES ? { size } : {}) }]
   const nextTiles = isTile ? { ...tiles, ...Object.fromEntries(area.map((t) => [keyOf(t), kind as TileKind])) } : tiles
   const seen = reachable(nextBuilds, nextTiles)
   // 길을 깔지 않은 잔디에서도 현재 기록자가 입구로 빠져나갈 수 있어야 한다.
@@ -245,7 +261,7 @@ export function canPlace(s: Base, kind: SiteKind, x: number, y: number, facing: 
   // (공사 중 마당 울타리 안의 문 앞은 완공될 때까지 닿지 못하는 것이 맞다 — 그 칸은 세지 않는다)
   const fenced = fencedOf(nextBuilds)
   for (const b of nextBuilds) {
-    const d = doorOf(b.kind, b.x, b.y, b.facing)
+    const d = doorOf(b.kind, b.x, b.y, b.facing, b.size)
     if (d && !fenced.has(keyOf(d.front)) && (!seen.has(keyOf(d.front)) || !seen.has(keyOf(d.door)))) return 'door'
   }
   if (mustReach(nextBuilds, nextTiles).some((t) => !seen.has(keyOf(t)))) return 'sealed'
@@ -263,7 +279,8 @@ export function canPlace(s: Base, kind: SiteKind, x: number, y: number, facing: 
 
 export function costOf(kind: SiteKind, size = 1): Cost {
   const c = SITES[kind].cost
-  const n = isTileKind(kind) ? size * size : 1
+  const n = isTileKind(kind) ? size * size : (HOUSE_SIZE_COST[widthOf(kind, size)] ?? 1)
+  if (!isTileKind(kind)) return { coins: Math.round(c.coins * n), items: Object.fromEntries(Object.entries(c.items).map(([id, q]) => [id, Math.round((q as number) * n)])) as Items }
   return { coins: c.coins * n, items: Object.fromEntries(Object.entries(c.items).map(([id, q]) => [id, (q as number) * n])) as Items }
 }
 
@@ -278,7 +295,7 @@ function costFor(s: Pick<GameState, 'newland'>, kind: SiteKind, x: number, y: nu
     const n = newTilesOf(s, kind, x, y, size).length
     return { coins: SITES[kind].cost.coins * n, items: {} }
   }
-  return costOf(kind)
+  return costOf(kind, size)
 }
 
 export function canOrder(s: Base, kind: SiteKind, x: number, y: number, facing: Facing = 'down', size = 1): OrderBlock | null {
@@ -296,7 +313,7 @@ type Ordered = Pick<GameState, 'newland' | 'coins' | 'inv'>
  * 놓는다: 닢·재료를 내고 건물은 'ordered'로 기록한다 (다음 날 아침 공사, 그다음 날 아침 완공).
  * 길·정원 칸은 바로 깔린다. 놓을 수 없거나 모자라면 null (아무것도 바뀌지 않는다)
  */
-export function orderBuild<T extends Base & Ordered>(s: T, kind: SiteKind, x: number, y: number, facing: Facing = 'down', size = 1): T | null {
+export function orderBuild<T extends Base & Ordered>(s: T, kind: SiteKind, x: number, y: number, facing: Facing = 'down', size = 1, look?: HouseLook): T | null {
   if (canOrder(s, kind, x, y, facing, size)) return null
   const cost = costFor(s, kind, x, y, size)
   const inv = take(s.inv, cost.items)
@@ -309,7 +326,9 @@ export function orderBuild<T extends Base & Ordered>(s: T, kind: SiteKind, x: nu
     return { ...s, coins: paid.coins, inv: paid.inv, newland: { ...nl, tiles } }
   }
   const slot = kind === 'home' ? freeSlot(nl.builds) : undefined
-  const b: Build = { id: `b${nl.nextId}`, kind: kind as BuildKind, x, y, facing, state: 'ordered', orderedDay: s.clock.day, paid: cost, refunded: false, ...(slot !== undefined ? { slot } : {}) }
+  const chosen = hasHouseLook(kind as BuildKind) ? sanitizeLook(look) : undefined
+  const wide = widthOf(kind, size) > ART_TILES ? widthOf(kind, size) : undefined
+  const b: Build = { id: `b${nl.nextId}`, kind: kind as BuildKind, x, y, facing, state: 'ordered', orderedDay: s.clock.day, paid: cost, refunded: false, ...(slot !== undefined ? { slot } : {}), ...(chosen ? { look: chosen } : {}), ...(wide ? { size: wide } : {}) }
   return { ...s, coins: paid.coins, inv: paid.inv, newland: { ...nl, builds: [...nl.builds, b], nextId: nl.nextId + 1 } }
 }
 
@@ -327,7 +346,7 @@ function buildWarps(nl: NewlandState): Map<string, Tile> {
   for (const b of nl.builds) {
     if (b.kind !== 'home' || b.state !== 'done' || b.slot === undefined) continue
     const slot = ROOM_SLOTS[b.slot]
-    const d = doorOf(b.kind, b.x, b.y, b.facing)
+    const d = doorOf(b.kind, b.x, b.y, b.facing, b.size)
     if (!slot || !d) continue
     m.set(keyOf(d.door), { ...slot.entry })
     m.set(keyOf(slot.exit), { ...d.front })
@@ -488,8 +507,10 @@ export function sanitizeNewlandBuild(raw: unknown, today: number): NewlandState 
       if (!isBuildKind(kind) || !isInt(x) || !isInt(y) || refunded === true) continue
       if (!FACINGS.includes(facing as Facing) || !SITES[kind].facings.includes(facing as Facing)) continue
       if (state !== 'ordered' && state !== 'building' && state !== 'done') continue
-      const box = boxOf(x, y)
-      const area = areaOf(kind, x, y)
+      const rawSize = (r as { size?: unknown }).size
+      const size = isInt(rawSize) && widthOf(kind, rawSize) > ART_TILES ? rawSize : undefined
+      const box = boxOf(x, y, widthOf(kind, size))
+      const area = areaOf(kind, x, y, size)
       if (!box.every(inRect)) continue
       if (area.some((t) => taken.has(keyOf(t)))) continue
       const p = isObj(paid) ? paid : {}
@@ -501,7 +522,8 @@ export function sanitizeNewlandBuild(raw: unknown, today: number): NewlandState 
       area.forEach((t) => taken.add(keyOf(t)))
       ids.add(id)
       maxN = Math.max(maxN, Number(id.slice(1)))
-      builds.push({ id, kind, x, y, facing: facing as Facing, state, orderedDay: day, paid: { coins, items: sanitizeItems(p.items) }, refunded: false, ...(slot !== undefined ? { slot } : {}) })
+      const look = hasHouseLook(kind) ? sanitizeLook((r as { look?: unknown }).look) : undefined
+      builds.push({ id, kind, x, y, facing: facing as Facing, state, orderedDay: day, paid: { coins, items: sanitizeItems(p.items) }, refunded: false, ...(slot !== undefined ? { slot } : {}), ...(look ? { look } : {}), ...(size ? { size } : {}) })
     }
   }
   // 방 칸이 없는 입주 주택(작업 6 저장 — 칸 번호 이전)은 앞 빈 칸부터 잇는다. 칸이 모자라면 방 없이 둔다 (문은 있으나 들어갈 수 없다)

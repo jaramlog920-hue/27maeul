@@ -72,6 +72,16 @@ export interface SiteDef {
   doors?: Partial<Record<Facing, DoorSpec>>
 }
 
+/**
+ * 집 단계 (2026-10-13 사용자): 신약 내 집이 넓어지는 모습처럼 — 1단계 본채 4칸, 2단계 오른쪽 날개(아이방) 2칸 더해 6칸,
+ * 3단계 왼쪽 날개(생활방) 2칸까지 8칸. 건물의 size는 가로 칸 수다 (세로·문 줄은 그대로)
+ */
+export const HOUSE_SIZES: readonly number[] = [4, 6, 8]
+/** 본채가 그림 왼쪽에서 몇 칸 떨어졌나 (3단계는 왼쪽 날개만큼) */
+export const mainOffset = (width: number): number => (width >= 8 ? 2 : 0)
+/** 단계마다 드는 몫 (1단계 값의 배수) */
+export const HOUSE_SIZE_COST: Readonly<Record<number, number>> = { 4: 1, 6: 1.6, 8: 2.2 }
+
 const HOME_DOORS: Partial<Record<Facing, DoorSpec>> = {
   // 그림 4×4칸. 문은 footprint 맨 아랫줄(그림 3번째 줄 = dy 3), 문 앞은 그 밖 한 칸
   down: { entryPx: { x: 32, y: 60 }, door: { dx: 2, dy: 3 }, front: { dx: 2, dy: 4 } },
@@ -84,8 +94,8 @@ export const SITES: Record<SiteKind, SiteDef> = {
   garden: { id: 'garden', terrainId: 'plantingBed', sizes: [1, 3], area: { w: 1, h: 1, dy: 0 }, facings: ['down'], cost: { coins: 3, items: {} } },
   // 마당: 열린 4×4 — 건물처럼 막지 않고 걸을 수 있다. 문이 없다
   courtyard: { id: 'courtyard', assetId: 'courtyard', sizes: [4], area: { w: 4, h: 4, dy: 0 }, facings: ['down'], cost: { coins: 40, items: { reed: 4 } } },
-  home: { id: 'home', assetId: 'home', sizes: [4], area: { w: 4, h: 3, dy: 1 }, facings: ['down', 'left', 'right'], cost: { coins: 150, items: { olive: 4, papyrus: 3 } }, doors: HOME_DOORS },
-  guest: { id: 'guest', assetId: 'guest', sizes: [4], area: { w: 4, h: 3, dy: 1 }, facings: ['down', 'left', 'right'], cost: { coins: 80, items: { reed: 3 } }, doors: HOME_DOORS },
+  home: { id: 'home', assetId: 'home', sizes: HOUSE_SIZES, area: { w: 4, h: 3, dy: 1 }, facings: ['down', 'left', 'right'], cost: { coins: 150, items: { olive: 4, papyrus: 3 } }, doors: HOME_DOORS },
+  guest: { id: 'guest', assetId: 'guest', sizes: HOUSE_SIZES, area: { w: 4, h: 3, dy: 1 }, facings: ['down', 'left', 'right'], cost: { coins: 80, items: { reed: 3 } }, doors: HOME_DOORS },
   memorial: { id: 'memorial', assetId: 'garden', sizes: [4], area: { w: 4, h: 4, dy: 0 }, facings: ['down'], cost: { coins: 60, items: { olive: 2 } } },
   weaver: { id: 'weaver', assetId: 'weaver', sizes: [4], area: { w: 4, h: 3, dy: 1 }, facings: ['down', 'left', 'right'], cost: { coins: 120, items: { reed: 4, papyrus: 2 } }, doors: HOME_DOORS },
   // 틸리의 꿈 (2026-10-08): 그림방 = 주민의 꿈 미술관 그림

@@ -1,4 +1,5 @@
 import { villageBookCount } from "../engine/progression"
+import type { HouseLook } from '../engine/newland-house-look'
 import { WORKSHOP, PARTNER_ROOM, BABY_ROOM, LIVING_ROOM } from '../engine/home-layout'
 import { lodgingChildren, LODGING_CHILD_SEATS } from '../engine/lodging'
 import { otPieceById } from '../engine/ot-pieces'
@@ -539,7 +540,7 @@ interface Store {
   /** 터 가꾸기 창 열기 (땅이 드러난 새 터에서만) */
   openBuild: () => void
   /** 놓기 확정: 건물은 주문(다음 날 공사), 길·정원은 바로. 놓을 수 없으면 아무 일도 없다 — 창은 그대로 둔다 */
-  orderSite: (kind: SiteKind, x: number, y: number, facing: Facing, size: number) => boolean
+  orderSite: (kind: SiteKind, x: number, y: number, facing: Facing, size: number, look?: HouseLook) => boolean
   /** 주문 취소(공사 전·중) 또는 철거(완공) — 환불과 기록 삭제가 한 번에 */
   removeBuild: (id: string) => void
   /** 깐 길·정원 칸 걷어내기 */
@@ -1845,10 +1846,10 @@ export const useGame = create<Store>((set, get) => {
       const g = get().game
       if (currentMapId() === 'newland' && newlandRevealed(g) && !inBuildingRoom(g)) set({ modal: { kind: 'build' } })
     },
-    orderSite: (kind, x, y, facing, size) => {
+    orderSite: (kind, x, y, facing, size, look) => {
       const g = get().game
       if (currentMapId() !== 'newland') return false
-      const next = orderBuild(g, kind, x, y, facing, size)
+      const next = orderBuild(g, kind, x, y, facing, size, look)
       if (!next) return false
       sfx('gift')
       set({ game: persist(next) })

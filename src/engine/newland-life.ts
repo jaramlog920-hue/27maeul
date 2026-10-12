@@ -259,10 +259,10 @@ export function facilityAt(s: Pick<GameState, 'newland'>, t: Tile): FacilityKind
   for (const b of buildsOf(s)) {
     if (b.state !== 'done') continue
     if (b.kind === 'guest' || b.kind === 'weaver' || b.kind === 'gallery' || b.kind === 'kidWork') {
-      const d = doorOf(b.kind, b.x, b.y, b.facing)
+      const d = doorOf(b.kind, b.x, b.y, b.facing, b.size)
       const st = standSpotOf(b)
       if (d && ((d.door.x === t.x && d.door.y === t.y) || (d.front.x === t.x && d.front.y === t.y) || (st && st.x === t.x && st.y === t.y))) return b.kind
-    } else if (isOpenYard(b.kind) && areaOf(b.kind, b.x, b.y).some((a) => a.x === t.x && a.y === t.y)) return b.kind as 'memorial' | 'courtyard'
+    } else if (isOpenYard(b.kind) && areaOf(b.kind, b.x, b.y, b.size).some((a) => a.x === t.x && a.y === t.y)) return b.kind as 'memorial' | 'courtyard'
   }
   if (!('flags' in s)) return null
   const full = s as Pick<GameState, 'flags' | 'newland' | 'gen'> & Partial<Pick<GameState, 'clock'>>

@@ -55,10 +55,13 @@ import { spineLook } from '../engine/binding'
 import { bookcaseTiles, ACTS_ROOM, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, PAVILION_RECT, HEIGHT, HOUSE_RECT, housesNow, houseAt, lockedTiles, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile, treeKind, type TreeKind } from '../engine/world'
 import { currentMapId, mapVisibleHeight, setActiveMap } from '../engine/maps'
 import { inArchiveRoom, newlandGroundAt, newlandOpen, newlandRevealedOn } from '../engine/newland'
-import { areaOf } from '../engine/newland-build'
+import { areaOf, widthOf } from '../engine/newland-build'
 import { ARCHIVE, INTERIOR_SHELF, NEWLAND_H, NEWLAND_W, ROOM_SLOTS } from '../engine/newland-config'
 import { inBuildingRoom, roomOf } from '../engine/newland-rooms'
 import { OLD_BUILDINGS, OLD_CONSTRUCTION, OLD_INTERIOR_SHELL, OLD_PROPS, OLD_TERRAIN, OLD_VILLAGE_PALETTE } from './old-village-art'
+import { newlandHouseCanvas } from './newland-house-art'
+import { hasHouseLook } from '../engine/newland-house-look'
+import { mainOffset } from '../engine/newland-sites'
 import { GOSPELS, type Book, type Facing, type NeighborDef, type GameContent, type Piece, type Season, type Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { quietLifeRows, sheepLifeRows, type QuietAction } from './quiet-life-motion'
@@ -1047,7 +1050,11 @@ function mapFor(season: Season): HTMLCanvasElement {
       // The inn supplies its complete exterior. Grass remains visible through
       // its transparent margins instead of the generic house wall underneath.
       if(lodging && x>=lodging.x0 && x<=lodging.x1 && y>=lodging.y0 && y<=lodging.y1){
-        drawGround(g,'.',x,y,season)
+        // 여관 그림 윗머리(빈 칸)를 지나는 새 터 길과 표식은 그대로 보인다 (2026-10-13)
+        const lc = tileAt(x, y)
+        const trail = lc === ',' || lc === '>'
+        drawGround(g, trail ? lc : '.', x, y, season)
+        if (lc === '>') drawObject(g, lc, x, y, season)
         continue
       }
       const ch = tileAt(x, y)
@@ -2264,17 +2271,28 @@ function drawNewlandSites(g: Ctx, game: GameState, playerY: number, over: boolea
     if (behind === over) continue
     if (b.state === 'ordered') {
       // 주문한 터: 막히는 영역의 네 귀퉁이에 부지 말뚝
-      const area = areaOf(b.kind, b.x, b.y)
+      const area = areaOf(b.kind, b.x, b.y, b.size)
       const xs = [Math.min(...area.map((t) => t.x)), Math.max(...area.map((t) => t.x))]
       const ys = [Math.min(...area.map((t) => t.y)), Math.max(...area.map((t) => t.y))]
       for (const x of xs) for (const y of ys) g.drawImage(paint('old/prop/plotPeg', OLD_PROPS.plotPeg.rows, OLD_VILLAGE_PALETTE), x * TILE, y * TILE)
+      continue
+    }
+    // 입주 주택·손님집은 신약 마을 집 생김새에 지을 때 고른 색 (2026-10-13 사용자)
+    if (b.state === 'done' && hasHouseLook(b.kind)) {
+      g.drawImage(newlandHouseCanvas(b.kind, b.facing, b.look, seasonOf(game.clock.day) === 'winter', widthOf(b.kind, b.size)), b.x * TILE, b.y * TILE)
       continue
     }
     const set = b.state === 'done' ? OLD_BUILDINGS : OLD_CONSTRUCTION
     // 그림은 자산 id로 (기억 정원 = garden, 아이 일터 = 그 아이 직업의 집 겸 일터)
     const asset = b.kind === 'kidWork' ? (game.child?.job && set[game.child.job] ? game.child.job : 'cook') : (SITES[b.kind].assetId ?? b.kind)
     const art = set[asset][b.facing]
-    g.drawImage(paint(`old/${b.state}/${asset}/${b.facing}`, art.rows, OLD_VILLAGE_PALETTE), b.x * TILE, b.y * TILE)
+    // 넓은 집(2·3단계)의 공사 그림은 본채 자리에 (날개 자리는 말뚝)
+    const off = hasHouseLook(b.kind) ? mainOffset(widthOf(b.kind, b.size)) : 0
+    g.drawImage(paint(`old/${b.state}/${asset}/${b.facing}`, art.rows, OLD_VILLAGE_PALETTE), (b.x + off) * TILE, b.y * TILE)
+    if (off > 0 || widthOf(b.kind, b.size) > 4) {
+      const w = widthOf(b.kind, b.size)
+      for (const x of [b.x, b.x + w - 1]) for (const y of [b.y + 1, b.y + 3]) g.drawImage(paint('old/prop/plotPeg', OLD_PROPS.plotPeg.rows, OLD_VILLAGE_PALETTE), x * TILE, y * TILE)
+    }
   }
   // 문을 연 꿈터 (계획 18 B18-8): 낮(9–17시)에는 페넬로피가 문 앞에서 베틀을 짠다 (extraUseFrame weave, 2026-10-07 연결)
   const shop = game.flags.dreamOpen ? nl.builds.find((b) => b.kind === 'weaver' && b.state === 'done') : undefined

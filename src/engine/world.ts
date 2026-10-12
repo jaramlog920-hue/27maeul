@@ -643,6 +643,9 @@ export function villageTileAt(x: number, y: number): string {
   return baseVillageTileAt(x, y)
 }
 
+/** 새 터 표식 줄에서 큰길이 끝나는 칸 (여기서 표식까지 길을 잇는다) */
+const VILLAGE_TRAIL_FROM = 40
+
 /** 세우거나 허문 벽을 빼고 본 첫 마을의 한 칸 — 어느 벽이 방 사이 벽인지 가릴 때 */
 export function baseVillageTileAt(x: number, y: number): string {
   if (homeLevel >= 1 && y === PARTNER_ROOM.y0 && x === PARTNER_ROOM.x0 + (currentSpouseRoom()?.window.x ?? 5)) return 'N'
@@ -656,6 +659,8 @@ export function baseVillageTileAt(x: number, y: number): string {
   }
   // 새 터가 열린 뒤에만 큰길 끝에 왕래 표식 (닫혀 있는 동안은 그냥 길 — 보이지도 건너가지도 못한다)
   if (x === VILLAGE_PORTAL.x && y === VILLAGE_PORTAL.y && newlandOpen()) return '>'
+  // 열린 뒤에는 큰길 끝에서 표식까지 길이 이어지고, 표식 뒤 나무 한 그루가 걷혀 숲 밖으로 길이 난다 (2026-10-13 사용자)
+  if (y === VILLAGE_PORTAL.y && newlandOpen() && (x === VILLAGE_PORTAL.x + 1 || (x > VILLAGE_TRAIL_FROM && x < VILLAGE_PORTAL.x))) return ','
   return MAP[y]?.[x] ?? 'T'
 }
 

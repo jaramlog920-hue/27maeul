@@ -10,7 +10,7 @@ export function nightDoorLocked(s: GameState, door: Tile, content: Pick<GameCont
   const m = s.clock.minute
   if (m >= 6 * 60 && m < 21 * 60) return false
   if (s.map === 'newland') {
-    const home = buildsOf(s).find(b => b.kind === 'home' && b.state === 'done' && sameTile(doorOf(b.kind, b.x, b.y, b.facing)?.door ?? { x: -1, y: -1 }, door))
+    const home = buildsOf(s).find(b => b.kind === 'home' && b.state === 'done' && sameTile(doorOf(b.kind, b.x, b.y, b.facing, b.size)?.door ?? { x: -1, y: -1 }, door))
     if (!home) return false
     const no = Number(home.id.slice(1))
     return Object.entries(s.flags).some(([key, value]) => (key.startsWith('settled:') || key.startsWith('familyHome:')) && value === no)
@@ -34,6 +34,6 @@ export function nightDoorLocked(s: GameState, door: Tile, content: Pick<GameCont
 }
 
 export function nightDoorKeys(s: GameState, content: Pick<GameContent, 'neighbors'>): string[] {
-  const doors = s.map === 'newland' ? buildsOf(s).flatMap(b => { const d = doorOf(b.kind, b.x, b.y, b.facing); return d ? [d.door] : [] }) : ROOMS.map(r => r.door)
+  const doors = s.map === 'newland' ? buildsOf(s).flatMap(b => { const d = doorOf(b.kind, b.x, b.y, b.facing, b.size); return d ? [d.door] : [] }) : ROOMS.map(r => r.door)
   return doors.filter(d => nightDoorLocked(s, d, content)).map(d => `${d.x},${d.y}`)
 }

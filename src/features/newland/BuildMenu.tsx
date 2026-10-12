@@ -28,7 +28,7 @@ function BuiltRow({ b }: { b: Build }) {
   return (
     <li className="build-row">
       <span className="build-name">
-        {siteName(b.kind)} · {STATE_TEXT[b.state]}
+        {siteName(b.kind)}{b.size ? ` ${b.size >= 8 ? '3단계' : '2단계'}` : ''} · {STATE_TEXT[b.state]}
       </span>
       {sure ? (
         <div className="build-confirm">

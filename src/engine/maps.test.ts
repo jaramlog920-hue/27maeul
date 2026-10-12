@@ -49,7 +49,8 @@ describe('새 터 칸 구성', () => {
       expect(newlandTileAt(x, NEWLAND_VISIBLE_H - 1)).toBe('T')
     }
     for (let y = 0; y < NEWLAND_VISIBLE_H; y++) {
-      expect(newlandTileAt(0, y)).toBe('T')
+      // 왕래 표식 뒤 큰길 두 줄은 숲 밖으로 열려 있다 (2026-10-13 사용자: 넘어가는 길)
+      expect(newlandTileAt(0, y)).toBe(y === 8 || y === 9 ? ',' : 'T')
       expect(newlandTileAt(NEWLAND_W - 1, y)).toBe('T')
     }
     for (let y: number = ARCHIVE.y0 + 1; y <= ARCHIVE.y0 + ARCHIVE.h; y++)
