@@ -31,6 +31,7 @@ import { MyLineForm } from './passage/MyLineForm'
 import { PassageWindow } from './passage/PassageWindow'
 import { Review } from './review/Review'
 import { SceneView } from './scene/SceneView'
+import { LandscapeScene } from './scene/StarsScene'
 import { OrdersView } from './talk/OrdersView'
 import { GiftPicker } from './talk/GiftPicker'
 import { TalkBox } from './talk/TalkBox'
@@ -132,6 +133,7 @@ function Body() {
     case 'familyTree':
       return <FamilyTree personId={modal.personId} neighborId={modal.neighborId} />
     case 'scene':
+      if (modal.id === 'stars' || modal.id === 'sunset') return <LandscapeScene key={modal.id} kind={modal.id} />
       return <SceneView id={modal.id} chosen={modal.chosen} />
     case 'orders':
       return <OrdersView npc={modal.npc} />

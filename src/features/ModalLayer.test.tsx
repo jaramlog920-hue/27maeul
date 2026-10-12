@@ -122,7 +122,7 @@ describe('이웃', () => {
     // 받기 단추 없이, 말을 걸면 그 자리에서 조각을 건네고 그 이웃의 말과 함께 본문이 열린다
     act(() => useGame.getState().talkTo(who))
     expect(screen.queryByRole('button', { name: '말씀 조각 받기' })).toBeNull()
-    expect(useGame.getState().game.hearts[who]).toBe(2)
+    expect(useGame.getState().game.hearts[who]).toBe(1)
     const got = useGame.getState().game.collected.at(-1)!
     expect(got.startsWith('lk-001-')).toBe(true)
     expect(useGame.getState().game.offers[who]).toBeUndefined()
@@ -159,7 +159,7 @@ describe('이웃', () => {
     await user.click(screen.getByRole('button', { name: '선물하기' }))
     await user.click(screen.getByRole('button', { name: /포도 1/ }))
     expect(screen.getByText('어머, 제가 좋아하는 거예요!')).toBeInTheDocument()
-    expect(useGame.getState().game.hearts.baker).toBe(5)
+    expect(useGame.getState().game.hearts.baker).toBe(3)
     expect(screen.getByRole('button', { name: '선물하기' })).toBeDisabled()
   })
 
@@ -695,11 +695,13 @@ describe('언덕 별 보기 (계획 9 작업 2)', () => {
     useGame.setState({ capture: null })
   })
 
-  it('장면을 이미 본 밤에는 바로 알림', () => {
+  it('장면을 이미 본 밤에도 풍경을 다시 보고 닫은 뒤 알림', () => {
     revChosen(clearDay, 22 * 60)
     const g = useGame.getState().game
     useGame.setState({ game: { ...g, flags: { ...g.flags, [onceKey('stars', clearDay)]: 1 } } })
     act(() => useGame.getState().sitHill())
+    expect(useGame.getState().modal).toEqual({ kind: 'scene', id: 'stars' })
+    act(() => useGame.getState().nextScene())
     expect(useGame.getState().modal).toBeNull()
     expect(useGame.getState().toast?.text).toMatch(/^벤치 곁 편지함에서/)
   })
