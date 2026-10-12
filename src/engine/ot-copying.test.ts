@@ -379,3 +379,13 @@ describe('새 터 서고 안 책상·책장', () => {
     expect(copySpot(slept, 'gen', CONTENT)).toMatchObject({ chapter: 1, verse: { verse: 2 } })
   })
 })
+
+describe('필사 삯 (2026-10-13 사용자)', () => {
+  it('짧은 장도 일 돕기·편지 대필·게시판 부탁보다 많이 받는다', async () => {
+    const { copyPay } = await import('./game')
+    const { WORK_PAY } = await import('./work-day')
+    expect(copyPay(8)).toBeGreaterThan(Math.max(WORK_PAY, 45, 56))
+    expect(copyPay(25)).toBe(145)
+    expect(copyPay(100)).toBe(200)
+  })
+})
