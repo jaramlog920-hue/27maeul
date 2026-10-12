@@ -1,0 +1,114 @@
+{
+  "tileSize": 16,
+  "source": "src/render/cozy-furniture-art.ts",
+  "status": "native pixel assets; item acquisition and placement not yet connected",
+  "columns": 4,
+  "cellWidth": 40,
+  "cellHeight": 24,
+  "items": [
+    {
+      "id": "rockingChair",
+      "name": "흔들의자",
+      "file": "rockingChair.png",
+      "width": 16,
+      "height": 16,
+      "x": 12,
+      "y": 4,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      }
+    },
+    {
+      "id": "washstand",
+      "name": "세면대",
+      "file": "washstand.png",
+      "width": 16,
+      "height": 16,
+      "x": 52,
+      "y": 4,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      }
+    },
+    {
+      "id": "teaTrolley",
+      "name": "찻잔 수레",
+      "file": "teaTrolley.png",
+      "width": 16,
+      "height": 16,
+      "x": 92,
+      "y": 4,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      }
+    },
+    {
+      "id": "floralScreen",
+      "name": "꽃무늬 병풍",
+      "file": "floralScreen.png",
+      "width": 32,
+      "height": 16,
+      "x": 124,
+      "y": 4,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      }
+    },
+    {
+      "id": "herbRack",
+      "name": "약초 건조대",
+      "file": "herbRack.png",
+      "width": 32,
+      "height": 16,
+      "x": 4,
+      "y": 28,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      }
+    },
+    {
+      "id": "breadCupboard",
+      "name": "빵 보관장",
+      "file": "breadCupboard.png",
+      "width": 16,
+      "height": 16,
+      "x": 52,
+      "y": 28,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      }
+    },
+    {
+      "id": "standingMirror",
+      "name": "전신거울",
+      "file": "standingMirror.png",
+      "width": 16,
+      "height": 16,
+      "x": 92,
+      "y": 28,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      }
+    },
+    {
+      "id": "dollhouse",
+      "name": "작은 인형집",
+      "file": "dollhouse.png",
+      "width": 16,
+      "height": 16,
+      "x": 132,
+      "y": 28,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      }
+    }
+  ]
+}

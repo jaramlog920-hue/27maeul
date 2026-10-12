@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { CONTENT, PEOPLE } from '../content/catalog'
 import { T } from '../content/text'
 import { newGame, finishHelp, routineOf, storyPropsNow } from './game'
-import { canWorkDay, startWorkDay, prepareWorkDay, finishWorkStep, finishWorkDay, expireWorkDay, sanitizeWorkDay, shopOf, workLine, WORK_SHOPS, type WorkState } from './work-day'
+import { canWorkDay, startWorkDay, prepareWorkDay, workDayHand, finishWorkStep, finishWorkDay, expireWorkDay, sanitizeWorkDay, shopOf, workLine, WORK_SHOPS, type WorkState } from './work-day'
 import { finishNow } from './minigame'
 import { deserialize, serialize } from './save'
 import { grapesRipe, isWet, weatherOf } from './calendar'
@@ -29,6 +29,33 @@ const finishHand=(s:WorkState):WorkState=>finishWorkStep({...s,workDay:{...s.wor
 const NPCS=Object.values(WORK_SHOPS).flatMap(sh=>sh.npcs)
 
 describe('함께 일하는 하루',()=>{
+  it('다른 지도의 같은 좌표에서는 시작·준비·손일 진행을 할 수 없다',()=>{
+    const s=working()
+    const away={...s,map:'newland' as const}
+    expect(canWorkDay(away,'carpenter',CONTENT)).toBe('away')
+    expect(startWorkDay(away,'carpenter','sort',CONTENT)).toBe(away)
+    const started=startWorkDay(s,'carpenter','sort',CONTENT)
+    const remoteStarted={...started,map:'newland' as const}
+    expect(prepareWorkDay(remoteStarted,()=>.5)).toBe(remoteStarted)
+    const prepared=prepareWorkDay(started,()=>.5)
+    const remoteHand={...prepared,map:'newland' as const}
+    expect(workDayHand(remoteHand,'tick',.2,()=>.5)).toBe(remoteHand)
+    const completedHand={...remoteHand,workDay:{...remoteHand.workDay!,mini:finishNow(remoteHand.workDay!.mini!)}}
+    expect(finishWorkStep(completedHand,()=>.5)).toBe(completedHand)
+  })
+  it('다른 지도에서는 보상을 받지 않고 현장 복귀 뒤 한 번만 정산한다',()=>{
+    const s=working()
+    const readyToFinish=finishHand(finishHand(prepareWorkDay(startWorkDay(s,'carpenter','sort',CONTENT),()=>.5)))
+    const away={...readyToFinish,map:'newland' as const}
+    expect(finishWorkDay(away,'dark')).toBe(away)
+    const distant={...readyToFinish,player:{...readyToFinish.player,x:50,y:50}}
+    expect(finishWorkDay(distant,'dark')).toBe(distant)
+    const returned={...away,map:'village' as const}
+    const paid=finishWorkDay(returned,'dark')
+    expect(paid.coins).toBe(s.coins+8)
+    expect(paid.life.experiences['work:carpenter']?.count).toBe(1)
+    expect(finishWorkDay(paid,'dark')).toBe(paid)
+  })
   it('근무·현장·두 시간 여유가 있을 때만 시작한다',()=>{
     const s=working()
     expect(canWorkDay(s,'carpenter',CONTENT)).toBeNull()
@@ -115,7 +142,11 @@ describe('작업장별 함께 일하기',()=>{
     expect(e.item).toBe(sh.art(sh.prep[1],sh.finish[1],sh.hands(s.clock.day)))
     for (const other of NPCS.filter(x=>x!==npc)) expect(n.life.memories[other]?.some(m=>m.tag===`exp:work:${npc}`)??false).toBe(false)
     const traces=storyPropsNow(n).filter(p=>p.id.includes('Work_'))
-    expect(traces.map(p=>[p.npc,p.art])).toEqual([[npc,e.item]])
+    expect(traces.map(p=>[p.npc,p.art])).toEqual(shopOf(npc)==='bakery' ? [] : [[npc,e.item]])
+    const back=deserialize(serialize(n),CONTENT)!
+    expect(back.life.experiences[`work:${npc}`]).toEqual(e)
+    expect(back.coins).toBe(n.coins)
+    expect(storyPropsNow(back).filter(p=>p.id.includes('Work_')).map(p=>[p.npc,p.art])).toEqual(shopOf(npc)==='bakery' ? [] : [[npc,e.item]])
     // 같은 날 다른 작업장도 수고비는 이미 받았다
     const again=NPCS.find(x=>x!==npc)!
     expect(canWorkDay({...n,npcs:{...n.npcs,[again]:{...n.npcs[again],visible:true}}},again,CONTENT)).not.toBeNull()

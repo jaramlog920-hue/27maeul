@@ -1,7 +1,8 @@
+import { legacyGame as newGame } from './growth-test-support'
 // 계획 21 R8·R9: 마을별 서고 순위 업데이트 — 계절 1·21일 아침 한 번, 상위 보답, 27권 완필 뒤 확장권
 import { fireEvent, render, screen } from '@testing-library/react'
 import { CONTENT } from '../content/catalog'
-import { isRankDay, newGame, rankDonation, rankMorning, type GameState } from './game'
+import { isRankDay, rankDonation, rankMorning, type GameState } from './game'
 import { BOOKS } from './types'
 import { useGame } from '../store/game-store'
 import { ModalLayer } from '../features/ModalLayer'

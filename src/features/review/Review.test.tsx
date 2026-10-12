@@ -1,20 +1,85 @@
 // 계획 14 작업 6: 잠들기 전 오늘의 기록
-import { act, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import { CONTENT, neighborById, pieceById } from '../../content/catalog'
 import { itemName, JOURNAL_NOTES, T } from '../../content/text'
-import { newGame, type GameState } from '../../engine/game'
+import { goToSleep, newGame, type GameState } from '../../engine/game'
+import { todayDiary } from '../../engine/daybook'
+import { GUESTS, talkGuest } from '../../engine/newland-life'
 import { useGame } from '../../store/game-store'
+import { deserialize, serialize } from '../../engine/save'
 import { ModalLayer } from '../ModalLayer'
 
 function openBed(game: Partial<GameState> = {}) {
   localStorage.clear()
   const base = newGame(CONTENT)
-  useGame.setState({ game: { ...base, scenes: [], ...game }, modal: null, rng: () => 0, decorating: null, toast: null })
+  useGame.getState().load({ ...base, scenes: [], ...game })
+  useGame.setState({ modal: null, rng: () => 0, decorating: null, toast: null, piecePopups: [], copyResult: null })
   render(<ModalLayer />)
   act(() => useGame.setState({ modal: { kind: 'review', pieceId: null } }))
 }
 
 describe('잠들기 전 오늘의 기록', () => {
+  it.each(GUESTS)('%j 고유 선물은 받은 날의 일기에 이름과 실제 수량으로 남는다', (guest) => {
+    const base = newGame(CONTENT)
+    const state = { ...base, clock: { day: 22, minute: 1320 }, todayNotes: [],
+      flags: { ...base.flags, guestNow: GUESTS.indexOf(guest) + 1, guestSince: 20, guestTalks: 2 },
+      dayLog: { day: 22, chapters: [], gifts: [] },
+    }
+    const result = talkGuest(state)!
+    expect(result.gift).toBe(guest.gift)
+    expect(result.state.inv[guest.gift]).toBe((state.inv[guest.gift] ?? 0) + 1)
+    expect(todayDiary(result.state)?.gifts).toEqual([{ from: guest.id, items: { [guest.gift]: 1 } }])
+    expect(talkGuest(result.state)).toBeNull()
+    const saved = deserialize(serialize(result.state), CONTENT)!
+    expect(todayDiary(saved)?.gifts).toEqual([{ from: guest.id, items: { [guest.gift]: 1 } }])
+    expect(goToSleep(saved, CONTENT).dayLog.gifts).toEqual([])
+    openBed(saved)
+    const diary = screen.getByRole('region', { name: T.diary.title })
+    expect(diary).toHaveTextContent(`${T.newlandLife.guests[guest.id].name} · ${itemName(guest.gift)} 1`)
+    expect(diary).not.toHaveTextContent(guest.id)
+  })
+  it('더 깨어 있기로 나가면 날짜·다시 읽기 목록을 유지하고 늦은 잠들기 입력을 무시한다', () => {
+    openBed({ clock: { day: 9, minute: 1320 }, rereads: ['mk-001-001', 'mk-001-009'] })
+    act(() => useGame.setState({ modal: { kind: 'review', pieceId: 'mk-001-001' } }))
+    const before = useGame.getState().game
+    const lateSleep = useGame.getState().sleep
+    fireEvent.click(screen.getByRole('button', { name: T.ui.stayUp }))
+    expect(useGame.getState().game).toBe(before)
+    act(() => lateSleep())
+    expect(useGame.getState().game).toBe(before)
+    expect(useGame.getState().modal).toBeNull()
+    expect(deserialize(serialize(before), CONTENT)!.rereads).toEqual(['mk-001-001', 'mk-001-009'])
+  })
+
+  it.each([9, 20])('%i일 잠들기는 하루 한 번만 진행하고 읽은 구절만 제거해 저장한다', (day) => {
+    openBed({ clock: { day, minute: 1320 }, rereads: ['mk-001-001', 'mk-001-009'] })
+    act(() => useGame.setState({ modal: { kind: 'review', pieceId: 'mk-001-001' } }))
+    const lateSleep = useGame.getState().sleep
+    fireEvent.click(screen.getByRole('button', { name: T.ui.sleep }))
+    const morning = useGame.getState().game
+    const modal = useGame.getState().modal
+    expect(morning.clock.day).toBe(day + 1)
+    expect(morning.rereads).toEqual(['mk-001-009'])
+    expect(morning.flags.peaceDay).toBe(day + 1)
+    act(() => lateSleep())
+    expect(useGame.getState().game).toBe(morning)
+    expect(useGame.getState().modal).toBe(modal)
+    const back = deserialize(serialize(morning), CONTENT)!
+    expect(back.clock).toEqual(morning.clock)
+    expect(back.rereads).toEqual(['mk-001-009'])
+    expect(back.flags.peaceDay).toBe(day + 1)
+  })
+
+  it('되새길 조각이 없어도 정상적으로 하루를 마치되 읽은 것으로 기록하지 않는다', () => {
+    openBed({ clock: { day: 9, minute: 1320 } })
+    fireEvent.click(screen.getByRole('button', { name: T.ui.sleep }))
+    const morning = useGame.getState().game
+    expect(morning.clock.day).toBe(10)
+    expect(morning.flags.peaceDay).toBeUndefined()
+    expect(morning.rereads).toEqual([])
+    act(() => useGame.getState().sleep())
+    expect(useGame.getState().game).toBe(morning)
+  })
   it('그날 필사한 장·받은 선물·새 말씀 조각·가족 일을 적는다', () => {
     const day = newGame(CONTENT).clock.day
     const p = pieceById('mk-001-001')

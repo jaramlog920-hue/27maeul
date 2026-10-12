@@ -3,7 +3,8 @@ import type { Facing } from '../engine/types'
 import type { FullAvatar } from '../engine/avatar'
 import { ADDITION_AVATAR } from './life-additions-motion-art'
 import { WORK_DETAIL_PALETTE } from './work-details-motion-art'
-import { spriteRows,writerPalette } from './sprites'
+import { writerPalette } from './sprites'
+import { motionBodyRows } from './motion-body'
 
 export const CRAFT_GROUPS={materials:['spreadPapyrus','pressPaper','spinThread','mixInk'],pottery:['kneadClay','shapePot','placePot'],instrument:['carveBody','tieStrings','pluckStrings'],herbal:['sortLeaves','grindHerbs','bottleHerbs'],scroll:['unroll','roll','tieScroll']} as const
 export const CRAFT_ACTIONS=[...CRAFT_GROUPS.materials,...CRAFT_GROUPS.pottery,...CRAFT_GROUPS.instrument,...CRAFT_GROUPS.herbal,...CRAFT_GROUPS.scroll] as const
@@ -14,16 +15,15 @@ function grid(w=32,h=32){const p=Array.from({length:h},()=>Array<string>(w).fill
 
 export function craftFollowupFrame(action:CraftAction,facing:Facing,frame:number,avatar:FullAvatar=ADDITION_AVATAR){
  const f=((Math.trunc(frame)%4)+4)%4,side=facing==='left'||facing==='right',canonical=facing==='left'?'right':facing
- const person=grid(),source=spriteRows('writer',canonical,{frame:0,blink:false,avatar})
+ const person=grid(),source=motionBodyRows('writer',canonical,{frame:0,blink:false,avatar})
  source.forEach((row,y)=>[...row].forEach((c,x)=>{if(c!=='.')person.p[6+y][11+x]=c}))
- const a=person.p,b=grid(),r=(x:number,y:number,w:number,h:number,c:string)=>b.rect(x,y-5,w,h,c),x=side?18:10
- for(let y=13;y<25;y++)for(let xx=0;xx<32;xx++)if(['s','5','!','K'].includes(a[y][xx]))a[y][xx]='.'
+ const b=grid(),r=(x:number,y:number,w:number,h:number,c:string)=>b.rect(x,y-5,w,h,c),x=side?18:10
  const hx=side?23:14,hy=action==='grindHerbs'?[20,18,22,20][f]:20+f%2,handY=hy-5
- const arm=(sx:number,tx:number)=>{
-  person.rect(Math.min(sx,tx),13,Math.abs(sx-tx)+1,2,'r')
-  person.rect(tx,14,2,Math.max(1,handY-13),'r');person.rect(tx,handY,2,1,'s');person.rect(tx,handY+1,2,1,'5')
+ const arm=(tx:number)=>{
+  // 작업물까지 이어지는 긴 팔은 숨기고 작업물 옆의 손만 남긴다.
+  person.rect(tx,handY,2,1,'s');person.rect(tx,handY+1,2,1,'5')
  }
- arm(side?19:13,hx);if(!side)arm(18,20)
+ arm(hx);if(!side)arm(20)
  r(x-2,24,15,2,'w');r(x-1,26,2,4,'W');r(x+9,26,2,4,'W')
  if(action==='spreadPapyrus'){
   const width=[3,6,9,11][f];r(x,19,width,4,'A');r(x+width-1,18,2,6,'a')

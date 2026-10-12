@@ -1,0 +1,537 @@
+{
+  "size": 48,
+  "frameCount": 4,
+  "layerOrder": [
+    "furnitureBack",
+    "babyBack",
+    "actor",
+    "furnitureFront",
+    "babyFront",
+    "blanket"
+  ],
+  "beds": [
+    {
+      "bed": "wood",
+      "facing": "down",
+      "file": "bed-wood-down.png",
+      "label": "나무 아기침대"
+    },
+    {
+      "bed": "wood",
+      "facing": "up",
+      "file": "bed-wood-up.png",
+      "label": "나무 아기침대"
+    },
+    {
+      "bed": "wood",
+      "facing": "left",
+      "file": "bed-wood-left.png",
+      "label": "나무 아기침대"
+    },
+    {
+      "bed": "wood",
+      "facing": "right",
+      "file": "bed-wood-right.png",
+      "label": "나무 아기침대"
+    },
+    {
+      "bed": "basket",
+      "facing": "down",
+      "file": "bed-basket-down.png",
+      "label": "흔들 요람"
+    },
+    {
+      "bed": "basket",
+      "facing": "up",
+      "file": "bed-basket-up.png",
+      "label": "흔들 요람"
+    },
+    {
+      "bed": "basket",
+      "facing": "left",
+      "file": "bed-basket-left.png",
+      "label": "흔들 요람"
+    },
+    {
+      "bed": "basket",
+      "facing": "right",
+      "file": "bed-basket-right.png",
+      "label": "흔들 요람"
+    },
+    {
+      "bed": "canopy",
+      "facing": "down",
+      "file": "bed-canopy-down.png",
+      "label": "천 지붕 아기침대"
+    },
+    {
+      "bed": "canopy",
+      "facing": "up",
+      "file": "bed-canopy-up.png",
+      "label": "천 지붕 아기침대"
+    },
+    {
+      "bed": "canopy",
+      "facing": "left",
+      "file": "bed-canopy-left.png",
+      "label": "천 지붕 아기침대"
+    },
+    {
+      "bed": "canopy",
+      "facing": "right",
+      "file": "bed-canopy-right.png",
+      "label": "천 지붕 아기침대"
+    }
+  ],
+  "items": [
+    {
+      "action": "hold",
+      "bed": "wood",
+      "facing": "down",
+      "file": "hold-wood-down-sheet.png",
+      "label": "아기 안고 눈 맞추기",
+      "bedLabel": "나무 아기침대",
+      "durations": [
+        420,
+        420,
+        420,
+        420
+      ]
+    },
+    {
+      "action": "hold",
+      "bed": "wood",
+      "facing": "up",
+      "file": "hold-wood-up-sheet.png",
+      "label": "아기 안고 눈 맞추기",
+      "bedLabel": "나무 아기침대",
+      "durations": [
+        420,
+        420,
+        420,
+        420
+      ]
+    },
+    {
+      "action": "hold",
+      "bed": "wood",
+      "facing": "left",
+      "file": "hold-wood-left-sheet.png",
+      "label": "아기 안고 눈 맞추기",
+      "bedLabel": "나무 아기침대",
+      "durations": [
+        420,
+        420,
+        420,
+        420
+      ]
+    },
+    {
+      "action": "hold",
+      "bed": "wood",
+      "facing": "right",
+      "file": "hold-wood-right-sheet.png",
+      "label": "아기 안고 눈 맞추기",
+      "bedLabel": "나무 아기침대",
+      "durations": [
+        420,
+        420,
+        420,
+        420
+      ]
+    },
+    {
+      "action": "soothe",
+      "bed": "wood",
+      "facing": "down",
+      "file": "soothe-wood-down-sheet.png",
+      "label": "안아 살살 달래기",
+      "bedLabel": "나무 아기침대",
+      "durations": [
+        420,
+        420,
+        420,
+        420
+      ]
+    },
+    {
+      "action": "soothe",
+      "bed": "wood",
+      "facing": "up",
+      "file": "soothe-wood-up-sheet.png",
+      "label": "안아 살살 달래기",
+      "bedLabel": "나무 아기침대",
+      "durations": [
+        420,
+        420,
+        420,
+        420
+      ]
+    },
+    {
+      "action": "soothe",
+      "bed": "wood",
+      "facing": "left",
+      "file": "soothe-wood-left-sheet.png",
+      "label": "안아 살살 달래기",
+      "bedLabel": "나무 아기침대",
+      "durations": [
+        420,
+        420,
+        420,
+        420
+      ]
+    },
+    {
+      "action": "soothe",
+      "bed": "wood",
+      "facing": "right",
+      "file": "soothe-wood-right-sheet.png",
+      "label": "안아 살살 달래기",
+      "bedLabel": "나무 아기침대",
+      "durations": [
+        420,
+        420,
+        420,
+        420
+      ]
+    },
+    {
+      "action": "lay",
+      "bed": "wood",
+      "facing": "down",
+      "file": "lay-wood-down-sheet.png",
+      "label": "머리 받쳐 침대에 눕히기",
+      "bedLabel": "나무 아기침대",
+      "durations": [
+        420,
+        340,
+        340,
+        800
+      ]
+    },
+    {
+      "action": "lay",
+      "bed": "wood",
+      "facing": "up",
+      "file": "lay-wood-up-sheet.png",
+      "label": "머리 받쳐 침대에 눕히기",
+      "bedLabel": "나무 아기침대",
+      "durations": [
+        420,
+        340,
+        340,
+        800
+      ]
+    },
+    {
+      "action": "lay",
+      "bed": "wood",
+      "facing": "left",
+      "file": "lay-wood-left-sheet.png",
+      "label": "머리 받쳐 침대에 눕히기",
+      "bedLabel": "나무 아기침대",
+      "durations": [
+        420,
+        340,
+        340,
+        800
+      ]
+    },
+    {
+      "action": "lay",
+      "bed": "wood",
+      "facing": "right",
+      "file": "lay-wood-right-sheet.png",
+      "label": "머리 받쳐 침대에 눕히기",
+      "bedLabel": "나무 아기침대",
+      "durations": [
+        420,
+        340,
+        340,
+        800
+      ]
+    },
+    {
+      "action": "lay",
+      "bed": "basket",
+      "facing": "down",
+      "file": "lay-basket-down-sheet.png",
+      "label": "머리 받쳐 침대에 눕히기",
+      "bedLabel": "흔들 요람",
+      "durations": [
+        420,
+        340,
+        340,
+        800
+      ]
+    },
+    {
+      "action": "lay",
+      "bed": "basket",
+      "facing": "up",
+      "file": "lay-basket-up-sheet.png",
+      "label": "머리 받쳐 침대에 눕히기",
+      "bedLabel": "흔들 요람",
+      "durations": [
+        420,
+        340,
+        340,
+        800
+      ]
+    },
+    {
+      "action": "lay",
+      "bed": "basket",
+      "facing": "left",
+      "file": "lay-basket-left-sheet.png",
+      "label": "머리 받쳐 침대에 눕히기",
+      "bedLabel": "흔들 요람",
+      "durations": [
+        420,
+        340,
+        340,
+        800
+      ]
+    },
+    {
+      "action": "lay",
+      "bed": "basket",
+      "facing": "right",
+      "file": "lay-basket-right-sheet.png",
+      "label": "머리 받쳐 침대에 눕히기",
+      "bedLabel": "흔들 요람",
+      "durations": [
+        420,
+        340,
+        340,
+        800
+      ]
+    },
+    {
+      "action": "lay",
+      "bed": "canopy",
+      "facing": "down",
+      "file": "lay-canopy-down-sheet.png",
+      "label": "머리 받쳐 침대에 눕히기",
+      "bedLabel": "천 지붕 아기침대",
+      "durations": [
+        420,
+        340,
+        340,
+        800
+      ]
+    },
+    {
+      "action": "lay",
+      "bed": "canopy",
+      "facing": "up",
+      "file": "lay-canopy-up-sheet.png",
+      "label": "머리 받쳐 침대에 눕히기",
+      "bedLabel": "천 지붕 아기침대",
+      "durations": [
+        420,
+        340,
+        340,
+        800
+      ]
+    },
+    {
+      "action": "lay",
+      "bed": "canopy",
+      "facing": "left",
+      "file": "lay-canopy-left-sheet.png",
+      "label": "머리 받쳐 침대에 눕히기",
+      "bedLabel": "천 지붕 아기침대",
+      "durations": [
+        420,
+        340,
+        340,
+        800
+      ]
+    },
+    {
+      "action": "lay",
+      "bed": "canopy",
+      "facing": "right",
+      "file": "lay-canopy-right-sheet.png",
+      "label": "머리 받쳐 침대에 눕히기",
+      "bedLabel": "천 지붕 아기침대",
+      "durations": [
+        420,
+        340,
+        340,
+        800
+      ]
+    },
+    {
+      "action": "tuck",
+      "bed": "wood",
+      "facing": "down",
+      "file": "tuck-wood-down-sheet.png",
+      "label": "이불 올리고 토닥이기",
+      "bedLabel": "나무 아기침대",
+      "durations": [
+        400,
+        340,
+        420,
+        800
+      ]
+    },
+    {
+      "action": "tuck",
+      "bed": "wood",
+      "facing": "up",
+      "file": "tuck-wood-up-sheet.png",
+      "label": "이불 올리고 토닥이기",
+      "bedLabel": "나무 아기침대",
+      "durations": [
+        400,
+        340,
+        420,
+        800
+      ]
+    },
+    {
+      "action": "tuck",
+      "bed": "wood",
+      "facing": "left",
+      "file": "tuck-wood-left-sheet.png",
+      "label": "이불 올리고 토닥이기",
+      "bedLabel": "나무 아기침대",
+      "durations": [
+        400,
+        340,
+        420,
+        800
+      ]
+    },
+    {
+      "action": "tuck",
+      "bed": "wood",
+      "facing": "right",
+      "file": "tuck-wood-right-sheet.png",
+      "label": "이불 올리고 토닥이기",
+      "bedLabel": "나무 아기침대",
+      "durations": [
+        400,
+        340,
+        420,
+        800
+      ]
+    },
+    {
+      "action": "tuck",
+      "bed": "basket",
+      "facing": "down",
+      "file": "tuck-basket-down-sheet.png",
+      "label": "이불 올리고 토닥이기",
+      "bedLabel": "흔들 요람",
+      "durations": [
+        400,
+        340,
+        420,
+        800
+      ]
+    },
+    {
+      "action": "tuck",
+      "bed": "basket",
+      "facing": "up",
+      "file": "tuck-basket-up-sheet.png",
+      "label": "이불 올리고 토닥이기",
+      "bedLabel": "흔들 요람",
+      "durations": [
+        400,
+        340,
+        420,
+        800
+      ]
+    },
+    {
+      "action": "tuck",
+      "bed": "basket",
+      "facing": "left",
+      "file": "tuck-basket-left-sheet.png",
+      "label": "이불 올리고 토닥이기",
+      "bedLabel": "흔들 요람",
+      "durations": [
+        400,
+        340,
+        420,
+        800
+      ]
+    },
+    {
+      "action": "tuck",
+      "bed": "basket",
+      "facing": "right",
+      "file": "tuck-basket-right-sheet.png",
+      "label": "이불 올리고 토닥이기",
+      "bedLabel": "흔들 요람",
+      "durations": [
+        400,
+        340,
+        420,
+        800
+      ]
+    },
+    {
+      "action": "tuck",
+      "bed": "canopy",
+      "facing": "down",
+      "file": "tuck-canopy-down-sheet.png",
+      "label": "이불 올리고 토닥이기",
+      "bedLabel": "천 지붕 아기침대",
+      "durations": [
+        400,
+        340,
+        420,
+        800
+      ]
+    },
+    {
+      "action": "tuck",
+      "bed": "canopy",
+      "facing": "up",
+      "file": "tuck-canopy-up-sheet.png",
+      "label": "이불 올리고 토닥이기",
+      "bedLabel": "천 지붕 아기침대",
+      "durations": [
+        400,
+        340,
+        420,
+        800
+      ]
+    },
+    {
+      "action": "tuck",
+      "bed": "canopy",
+      "facing": "left",
+      "file": "tuck-canopy-left-sheet.png",
+      "label": "이불 올리고 토닥이기",
+      "bedLabel": "천 지붕 아기침대",
+      "durations": [
+        400,
+        340,
+        420,
+        800
+      ]
+    },
+    {
+      "action": "tuck",
+      "bed": "canopy",
+      "facing": "right",
+      "file": "tuck-canopy-right-sheet.png",
+      "label": "이불 올리고 토닥이기",
+      "bedLabel": "천 지붕 아기침대",
+      "durations": [
+        400,
+        340,
+        420,
+        800
+      ]
+    }
+  ],
+  "status": "motion assets; game integration pending"
+}

@@ -1,7 +1,9 @@
+// 기존 생활 시나리오는 개편 이전 저장의 권한으로 검증한다. 새 해금은 late-growth.test.ts에서 검증한다.
+import { legacyGame as newGame } from './growth-test-support'
 // 서고 운영 (2026-10-08): 사서 맡기기 · 방문객 안내 · 방문객에게 조각 하나 함께 읽어 주기
 import { fireEvent, render, screen } from '@testing-library/react'
 import { CONTENT } from '../content/catalog'
-import { canTeachVisitor, guestMorning, LIBRARIAN_GAIN, librarianCandidates, librarianId, newGame, setLibrarian, teachVisitor, todaysVisitor, type GameState } from './game'
+import { canTeachVisitor, guestMorning, LIBRARIAN_GAIN, librarianCandidates, librarianId, setLibrarian, teachVisitor, todaysVisitor, type GameState } from './game'
 import { useGame } from '../store/game-store'
 import { ModalLayer } from '../features/ModalLayer'
 
@@ -42,7 +44,8 @@ describe('서고 운영', () => {
   })
 
   it('서고 창: 사서 맡기기 단추', () => {
-    useGame.setState({ game: guestMorning(base()), modal: { kind: 'library' } as never })
+    useGame.getState().load(guestMorning(base()))
+    useGame.setState({ modal: { kind: 'library' } })
     render(<ModalLayer />)
     const role = CONTENT.neighbors.find((d) => d.id === friend)!.role
     fireEvent.click(screen.getByRole('button', { name: `${role}에게 사서 맡기기` }))

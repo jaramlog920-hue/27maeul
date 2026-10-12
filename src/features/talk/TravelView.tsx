@@ -1,8 +1,10 @@
 // 나루의 배: 이웃 마을 여행 (계획 13 작업 6). 고르고 → 그 마을에서 사고 → 하룻밤 묵고 돌아온다 (한꺼번에 치른다)
+import { IconGrid, type IconEntry } from '../../shared/IconGrid'
 import { useState } from 'react'
-import { itemList, itemName, SCENES, T } from '../../content/text'
+import { itemList, itemName, SCENES, T, ITEM_TEXT } from '../../content/text'
 import { canTrip } from '../../engine/game'
-import { DEST_IDS, DESTS, tripCost, type DestId } from '../../engine/travel'
+import { featureAccess, featureHint } from '../../engine/feature-rules'
+import { DEST_IDS, DESTS, tripCoinDelta, tripCost, type DestId } from '../../engine/travel'
 import type { ItemId } from '../../engine/types'
 import { useGame } from '../../store/game-store'
 import { childStage } from '../../engine/child'
@@ -23,6 +25,7 @@ export function TravelView({ dest: back, rewards: brought }: { dest?: DestId; re
     return (
       <div className="dialog travel" role="dialog" aria-label="이웃 마을 여행">
         <h2>이웃 마을 여행</h2>
+        {featureAccess(game, 'travel') === 'locked' && <p role="status">{featureHint('travel')}</p>}
         <p className="hint">가진 닢 {game.coins}</p>
         <ul className="trade-list">
           {DEST_IDS.map((id) => {
@@ -62,7 +65,7 @@ export function TravelView({ dest: back, rewards: brought }: { dest?: DestId; re
   if (!rewards) return null
   const first = !game.flags[`trip:${dest}`]
   const story = first ? SCENES[`trip:${dest}`] : null
-  const block = canTrip(game, dest, buys, true)
+  const block = canTrip(game, dest, buys, true, rewards)
   const toggle = (id: ItemId) => setBuys(buys.includes(id) ? buys.filter((b) => b !== id) : [...buys, id])
   return (
     <div className="dialog travel" role="dialog" aria-label={d.name}>
@@ -72,23 +75,17 @@ export function TravelView({ dest: back, rewards: brought }: { dest?: DestId; re
       ) : (
         <p>낯익은 골목과 가게가 반갑게 맞아 준다.</p>
       )}
-      <h3>희귀품 가게</h3>
-      <ul className="trade-list">
-        {(Object.entries(d.shop) as [ItemId, number][]).map(([id, price]) => (
-          <li key={id} className="with-icon">
-            <span className="trade-icon">
-              <ItemIcon id={id} />
-            </span>
-            <span className="trade-get">{itemName(id)}</span>
-            <span className="trade-pay">{price}닢</span>
-            <button className={buys.includes(id) ? 'primary' : ''} aria-pressed={buys.includes(id)} onClick={() => toggle(id)}>
-              {buys.includes(id) ? '담음' : '담기'}
-            </button>
-          </li>
-        ))}
-      </ul>
+      {/* 2026-10-12 사용자: 가방처럼 아이콘 칸 — 칸을 누르면 값·설명, 단추로 담기 */}
+      <IconGrid title="희귀품 가게" entries={(Object.entries(d.shop) as [ItemId, number][]).map(([id, price]): IconEntry => ({
+        key: id,
+        icon: <ItemIcon id={id} size={28} />,
+        label: itemName(id),
+        badge: buys.includes(id) ? '담음' : `${price}`,
+        detail: <>{ITEM_TEXT[id]?.desc && <p>{ITEM_TEXT[id].desc}</p>}<p>{price}닢</p></>,
+        action: { label: buys.includes(id) ? '빼기' : '담기', onClick: () => toggle(id) },
+      }))} />
       <p>
-        모두 {tripCost(d, buys)}닢 (배삯·숙박 포함) · 가진 닢 {game.coins}
+        모두 {tripCost(d, buys)}닢 (배삯·숙박 포함) · 사용 가능한 닢 {game.coins + tripCoinDelta(rewards)} (여행 수확·추가 주사위 반영)
       </p>
       <div className="actions">
         <button className="primary" disabled={block !== null} onClick={() => goTrip(dest, buys, rewards)}>

@@ -1,10 +1,12 @@
+// 기존 생활 시나리오는 개편 이전 저장의 권한으로 검증한다. 새 해금은 late-growth.test.ts에서 검증한다.
+import { legacyGame as newGame } from './growth-test-support'
 import { CONTENT } from '../content/catalog'
 import { forbiddenIn } from '../content/forbidden'
 import { ITEM_TEXT, SCENES, T } from '../content/text'
 import { newChild, sanitizeChild } from './child'
-import { canKidAct, cookBurns, doKidAct, familyTrip, KID_ACTS, KID_ACTS_PER_DAY, KID_MADE, type KidAct } from './family'
+import { canKidAct, cookBurns, deskKidReady, deskKidWith, doKidAct, familyTrip, KID_ACTS, KID_ACTS_PER_DAY, KID_MADE, type KidAct } from './family'
 import { FURNITURE_DEFS } from './furniture-defs'
-import { newGame, sendToSchool, type GameState } from './game'
+import { sendToSchool, type GameState } from './game'
 import { freshStats, totalXp } from './stats'
 import { ICONS } from '../render/sprites'
 
@@ -15,6 +17,23 @@ function kid(day = 60, age = 50, minute = 10 * 60, extra: Partial<GameState> = {
 const run = (s: GameState, act: KidAct) => doKidAct(s, act, CONTENT)!
 
 describe('아이와 함께 보내는 시간 (계획 12)', () => {
+  it('새 터에 남은 가족 활동 입력은 아이 경험치·물건·가족 추억을 만들지 않는다',()=>{
+    const home=kid()
+    const away={...home,map:'newland' as const}
+    for(const act of KID_ACTS) {
+      expect(canKidAct(away,act)).toBe('away')
+      expect(doKidAct(away,act,CONTENT)).toBeNull()
+    }
+    expect(doKidAct({...away,map:'village'},'make',CONTENT)?.state.flags.kidMade).toBe(1)
+  })
+  it('새 터에서 필사할 때 마을에 남은 아이를 책상 동행으로 표시하지 않는다',()=>{
+    const home=kid(60,20)
+    const together={...home,flags:{...home.flags,deskKidDay:60}}
+    expect(deskKidWith(together)).toBe(true)
+    const away={...together,map:'newland' as const}
+    expect(deskKidReady(away)).toBe(false)
+    expect(deskKidWith(away)).toBe(false)
+  })
   it('누르면 아이 능력치가 조금(배움터보다 느리게) 오르고 가까움이 쌓이며 시간이 흐른다 — 닢은 들지 않는다', () => {
     const s = kid()
     const r = run(s, 'read')

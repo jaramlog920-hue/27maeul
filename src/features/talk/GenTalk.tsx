@@ -10,6 +10,7 @@ import { has, take } from '../../engine/items'
 import { t } from '../../shared/i18n'
 import { useGame } from '../../store/game-store'
 import { applyLifeState } from '../work/WorkDay'
+import { bakerCribWaiting, makeBakerCrib } from '../../engine/baker-baby'
 
 const G = T.gen
 // 생성된 사람(이어받은 자녀 등)은 그 이름으로 (22-C)
@@ -22,6 +23,29 @@ export function partnerVars(id: string): Record<string, string> {
 }
 
 export function GenTalk({ npc }: { npc: string }) {
+  return <><BakerBabyTalk npc={npc} /><AutonomousGenTalk npc={npc} /></>
+}
+
+function BakerBabyTalk({ npc }: { npc: string }) {
+  const game = useGame(s => s.game)
+  const [thanks, setThanks] = useState(false)
+  const waiting = bakerCribWaiting(game, npc)
+  if (npc !== 'baker' || (!waiting && !thanks)) return null
+  return <div className="gen-talk">
+    <p className="talk-line">{waiting ? G.bakerCribAsk : G.bakerCribThanks}</p>
+    {waiting && <>
+      <p className="hint">{fill(T.ui.helpNeeds, { items: itemList(CRIB_NEEDS) })}</p>
+      <div className="actions menu"><button className="primary" disabled={!has(game.inv, CRIB_NEEDS)} onClick={() => {
+        const next = makeBakerCrib(useGame.getState().game)
+        if (!next) return
+        applyLifeState(next)
+        setThanks(true)
+      }}>{t('gen.makeCrib')}</button></div>
+    </>}
+  </div>
+}
+
+function AutonomousGenTalk({ npc }: { npc: string }) {
   const game = useGame((s) => s.game)
   const [line, setLine] = useState<string | null>(null)
   const [asking, setAsking] = useState(false)

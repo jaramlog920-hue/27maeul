@@ -1,0 +1,64 @@
+{
+  "mode": "Chrome 모바일 에뮬레이션",
+  "screenshots": [
+    "other-carpenter-chest-delivered.png",
+    "other-carpenter-chest-ordered.png",
+    "other-carpenter-orders.png",
+    "other-cat-home.png",
+    "other-copied-cold-before.png",
+    "other-copied-read-list.png",
+    "other-dog-adopt-form.png",
+    "other-dog-adopted.png",
+    "other-dog-stays.png",
+    "other-garden-empty.png",
+    "other-garden-harvest-success.png",
+    "other-garden-harvested.png",
+    "other-garden-planted.png",
+    "other-garden-ripe.png",
+    "other-garden-watered.png",
+    "other-guest-arrival.png",
+    "other-guest-repeat-block.png",
+    "other-guest-talk-day-20.png",
+    "other-guest-talk-day-21.png",
+    "other-guest-talk-day-22.png",
+    "other-ink-done.png",
+    "other-ink-mini.png",
+    "other-ink-result.png",
+    "other-newland-build-list.png",
+    "other-newland-cancel-confirm.png",
+    "other-newland-home-ordered.png",
+    "other-newland-home-preview.png",
+    "other-newland-refunded.png",
+    "other-workbench.png"
+  ],
+  "viewport": {
+    "flows": [
+      390,
+      664
+    ],
+    "coldError": [
+      320,
+      664
+    ]
+  },
+  "flows": {
+    "garden": "향초 씨앗 2→1; 매일 물주기·3일 성장; 향초 8 수확 시 가득 참 안내; 별도 여유 가방 6→8 수확 성공·밭 비움",
+    "dog": "둘째 날 몽실 입양; 집에 두기→데리고 다니기",
+    "cat": "둘째 날 나비 입양; 집에서 지냄·동행 버튼 없음",
+    "ink": "포인터 반복 입력으로 진행 1; 완료 버튼 후 그을음 4→3, 물 4→3, 잉크 1",
+    "carpenter": "재료 궤짝 50닢; 3000→2950; 다음 날 주문 목록에서 제거·unlock 활성화",
+    "build": "주택 주문 500→350; 올리브9→5·파피루스9→6; 취소 확인 후 원상 환불·주문 비움",
+    "guest": "20~22일 매일 대화; 같은 날 반복 차단; 사흘째 버들 바구니 선물",
+    "copiedRead": "미리 로드하지 않은 에베소서 완성본 클릭 실패 재현; 코드 수정 및 회귀 테스트 통과. 수정 후 브라우저 재검증은 개발 서버 응답 중단으로 미완료"
+  },
+  "validation": {
+    "tests": 30,
+    "files": 6,
+    "build": "passed"
+  },
+  "limitations": [
+    "실제 휴대폰 아님",
+    "이번 추가 동작은 대표 경로이며 모든 분기 미검증",
+    "수정 후 필사본 브라우저 재검증 미완료"
+  ]
+}

@@ -1,0 +1,40 @@
+// 진단 전용: 실행할 때 src/engine/family-audit.test.tsx로 복사한다. 게임 코드는 수정하지 않는다.
+import { render, screen } from '@testing-library/react'
+import { CONTENT } from '../content/catalog'
+import { Family } from '../features/family/Family'
+import { useGame } from '../store/game-store'
+import { newGame, lookOf } from './game'
+import { inheritBorn } from './child'
+import { newGenState, sanitizeGen } from './gen'
+import { settleBirth } from './gen-birth'
+import { avatarOfFor } from './gen-settle'
+import { freshStats } from './stats'
+
+it.each(['merchant', 'presser', 'postman'])('%s 결혼 뒤 배우자 쪽 타고난 능력치를 물려받는지', (id) => {
+  const base = newGame(CONTENT)
+  const game = { ...base, romance: { partner: id, stage: 'married' as const, since: 1, weddingDay: null, marriedDay: 2 } }
+  useGame.getState().load(game)
+  render(<Family />)
+  const def = CONTENT.neighbors.find(n => n.id === id)!
+  const evidence = {
+    wardrobe: !!screen.queryByRole('button', { name: `${def.role} 옷장` }),
+    appearance: !!lookOf(game, 'spouse', CONTENT),
+    inherited: inheritBorn(freshStats(), def.stat),
+  }
+  console.log(id, evidence)
+  expect(Object.keys(evidence.inherited)).toHaveLength(1)
+})
+
+it('주민 아이 32개 씨앗: 부모의 피부·머리색 조합과 저장 복원', () => {
+  const avatarOf = avatarOfFor(CONTENT)
+  const a = avatarOf('rudy')!, b = avatarOf('poppy')!
+  for (let seed = 0; seed < 32; seed++) {
+    const g = newGenState(CONTENT, seed, 30)
+    const household = { id: 'h-0001', members: ['rudy', 'poppy'], home: 'carpenter', children: [], since: 1, lastBirth: null, birthDue: 30 }
+    const out = settleBirth({ ...g, households: { [household.id]: household } }, 30, { partner: null, busy: () => false }, avatarOf)
+    const baby = out.persons['g-0001']
+    expect([a.skin, b.skin]).toContain(baby.avatar?.skin)
+    expect([[a.hairH, a.hairS, a.hairV], [b.hairH, b.hairS, b.hairV]]).toContainEqual(baby.hair)
+    expect(sanitizeGen(JSON.parse(JSON.stringify(out)), 30)!.persons[baby.id]).toEqual(baby)
+  }
+})

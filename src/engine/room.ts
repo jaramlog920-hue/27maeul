@@ -2,10 +2,11 @@
 //   floor  바닥에 깔리는 것(깔개·방석) — 밟고 지나간다, 다른 것 밑에 깔릴 수 있다
 //   solid  길을 막는 것(식탁·협탁·의자) — 놓은 뒤에도 집 안 모든 자리에 갈 수 있어야 한다
 //   small  작은 물건 — 탁자 위(한 칸에 하나) 또는 빈 바닥
+//   wall   벽에 거는 것 — 방 바닥 바로 위 벽 칸(세운 벽 포함), 길을 막지 않는다 (2026-10-12)
 import designs from '../content/spouse-rooms.json'
 import { FIXTURES, LIVING_DOOR, PARTNER_DOOR } from './home-layout'
 import { findPath } from './movement'
-import { BED_STAND, currentHomeLevel, HOME_ENTRY, isHome, key, PLACES, placeActive, sameTile, SIDE_DOOR, tileAt, type Place } from './world'
+import { BED_STAND, currentHomeLevel, setHomeFurniture, HOME_ENTRY, isHome, key, PLACES, placeActive, sameTile, SIDE_DOOR, tileAt, type Place } from './world'
 import { LESSON_SPOT } from './stories'
 import { SPOUSE_ROOM, SPOUSE_ROOM_ENTRY, SPOUSE_ROOM_RETURN } from './spouse-room'
 import { addGift, type Inventory } from './items'
@@ -79,6 +80,11 @@ function isFloor(t: Tile): boolean {
   return isHome(t) && tileAt(t.x, t.y) === 'f'
 }
 
+/** 벽걸이를 걸 수 있는 벽: 벽 칸이고 바로 아래가 집 안 바닥 (집 안에서 보이는 벽 면) */
+export function isHangingWall(t: Tile): boolean {
+  return tileAt(t.x, t.y) === '#' && isFloor({ x: t.x, y: t.y + 1 })
+}
+
 /**
  * 방 하나의 규칙에 필요한 것 (계획 20 작업 7). 집 안은 HOME_CTX(지금 동작 그대로), 새 터 입주 주택 안 방은 그 방 기준 ctx.
  *   isFloor   가구를 놓을 수 있는 바닥인가
@@ -124,6 +130,14 @@ export function placement(room: readonly Furniture[], item: ItemId, t: Tile, fac
   const clear = ctx.keepClear()
   const isFloor = ctx.isFloor
   const turned = facing ? { facing } : {}
+  if (def.layer === 'wall') {
+    // 벽걸이는 앞만 본다. 차지하는 칸이 모두 '바닥 바로 위의 벽'이고 다른 벽걸이와 겹치지 않아야 한다
+    if (facing && facing !== 'down') return null
+    const f: Furniture = { item, x: t.x, y: t.y }
+    if (!footprint(f).every(isHangingWall)) return null
+    if (room.some((o) => layerOf(o) === 'wall' && footprint(o).some((p) => footprint(f).some((q) => sameTile(p, q))))) return null
+    return f
+  }
   if (def.layer === 'small') {
     // 탁자 위에 빈 칸이 있으면 그 위에
     const surf = surfaceAt(room, t)
@@ -206,6 +220,43 @@ export function refitRoom(room: readonly Furniture[], inv: Inventory, ctx: RoomC
 
 export function initialHomeFurniture(): Furniture[] {
   return Object.entries(FIXTURES).map(([item, f]) => ({ item: item as ItemId, x: f.x, y: f.y }))
+}
+
+/** Shift the old default bed right and down so its length clears both doorway approaches. */
+export function upgradeAdultBed(room:readonly Furniture[]):Furniture[]{
+  return moveOldDesk(shiftOldBed(room))
+}
+/** 옛 자리(17,113)의 필사 책상을 맨 아래 벽(17,114)으로 — 그 칸이 비어 있고 다른 가구가 자리를 잃지 않을 때만 */
+function moveOldDesk(room:readonly Furniture[]):Furniture[]{
+  const f=room.find(o=>o.item==='homeDesk'&&o.x===17&&o.y===113)
+  if(!f)return [...room]
+  const next={...f,x:FIXTURES.homeDesk.x,y:FIXTURES.homeDesk.y}
+  const occupied=room.filter(o=>o!==f&&layerOf(o)!=='floor'&&layerOf(o)!=='wall').flatMap(footprint)
+  if(footprint(next).some(t=>occupied.some(p=>sameTile(t,p))))return [...room]
+  const moved=room.map(o=>o===f?next:o)
+  setHomeFurniture(room)
+  const before=refitRoom(room,{}).room.length
+  setHomeFurniture(moved)
+  const after=refitRoom(moved,{}).room.length
+  setHomeFurniture(room)
+  return after<before?[...room]:moved
+}
+function shiftOldBed(room:readonly Furniture[]):Furniture[]{
+  return room.map(f=>{
+    if(f.item!=='homeBed'||f.x!==17||f.y!==111||facingOf(f)!=='down')return f
+    const next={...f,x:18,y:112}
+    const occupied=room.filter(o=>o!==f&&layerOf(o)!=='floor'&&layerOf(o)!=='wall').flatMap(footprint)
+    if(footprint(next).some(t=>occupied.some(p=>sameTile(t,p))))return f
+    // 옮긴 침대 때문에 다른 가구(침대 곁 탁자 등)가 자리를 잃으면 옮기지 않는다 — 가방으로 튕기지 않게
+    const moved=room.map(o=>o===f?next:o)
+    // 서는 칸(침대 곁)은 놓인 가구로 정해지므로 두 배치를 각각 깔아 보고 비교한다 (부른 쪽이 곧 다시 깐다)
+    setHomeFurniture(room)
+    const before=refitRoom(room,{}).room.length
+    setHomeFurniture(moved)
+    const after=refitRoom(moved,{}).room.length
+    setHomeFurniture(room)
+    return after<before?f:next
+  })
 }
 export function spouseFurniture(partner: string): Furniture[] {
   const design = designs.find(d => d.id === partner)

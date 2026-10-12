@@ -1,6 +1,7 @@
+import { legacyGame as newGame } from './growth-test-support'
 // 계획 20 2부 작업 A·C·D·E: 하루 정산 — 밀린 날·켜고 끄기·관계 단계·헤어짐·상담·결혼 준비·결혼·아기 침대·출생
 import { CONTENT } from '../content/catalog'
-import { newGame, type GameState } from './game'
+import { type GameState } from './game'
 import { affinityOf, newGenState, relationId, type GenState } from './gen'
 import { setGenOn, settleGen, settleOneDay, withPairs } from './gen-settle'
 import { releasePlayerPartner } from './gen-relations'

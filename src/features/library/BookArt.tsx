@@ -27,11 +27,20 @@ function withDetail(rows: string[], palette: Record<string, string>, binding: Bi
 
 const BOOK_NAME = T.quiz.books as Record<string, string>
 
+/** 도감에서도 완성본과 같은 표지·덧장식 그림을 쓴다. */
+export function bookCoverArt(book: Book, binding?: Binding) {
+  return withDetail(libraryBookRows(book, binding, undefined, false, true), libraryPalette(book, binding), binding, true)
+}
+
+export function bookSpineArt(book: Book, binding?: Binding, grade?: Grade) {
+  return withDetail(libraryBookRows(book, binding, grade), libraryPalette(book, binding, grade), binding, false)
+}
+
 /** 책등 하나 */
 export function Spine({ book, binding, grade }: { book: Book; binding?: Binding; grade?: Grade }) {
   const look = spineLook(book, binding)
   const style = { '--spine': look.color, '--accent': look.accent } as CSSProperties
-  return <span className={`spine-art pixel-spine mark-${look.mark} spine-grade-${grade ?? 'none'}`} style={style} role="img" aria-label={BOOK_NAME[book]} data-book={book}><PixelArt {...withDetail(libraryBookRows(book, binding, grade), libraryPalette(book, binding, grade), binding, false)} /></span>
+  return <span className={`spine-art pixel-spine mark-${look.mark} spine-grade-${grade ?? 'none'}`} style={style} role="img" aria-label={BOOK_NAME[book]} data-book={book}><PixelArt {...bookSpineArt(book, binding, grade)} /></span>
 }
 
 /** 서고 선반 전경: 방마다 한 줄, 꽂은 책은 책등, 아직 꽂지 않은 자리는 빈 칸 (처음엔 휑하고 권이 늘수록 찬다) */
@@ -66,7 +75,7 @@ export function BookCover({ book, binding, choice }: { book: Book; binding?: Bin
   } as CSSProperties
   return (
     <div className={`book-cover pixel-cover pattern-${sp ? sp.pattern : 'plain'}`} style={style} role="img" aria-label={fill(T.binding.cover, { book: BOOK_NAME[book] })}>
-      <PixelArt {...withDetail(libraryBookRows(book, choice ? { day: 0, special: choice } : binding, undefined, false, true), libraryPalette(book, choice ? { day: 0, special: choice } : binding), choice ? { day: 0, special: choice } : binding, true)} />
+      <PixelArt {...bookCoverArt(book, choice ? { day: 0, special: choice } : binding)} />
       <span className="book-cover-plate">{BOOK_NAME[book]}</span>
     </div>
   )

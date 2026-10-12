@@ -1,6 +1,6 @@
 // 메뉴 → 가족 (2026-09-30 사용자): 배우자·아이·동물 친구와 가족 앨범을 한 화면에
 import { neighborById } from '../../content/catalog'
-import { T } from '../../content/text'
+import { T, withSubject } from '../../content/text'
 import { ADULT_JOBS, childMode, childStage, type AdultJob, type ChildStage } from '../../engine/child'
 import { useState } from 'react'
 import { heartsOf } from '../../engine/hearts'
@@ -44,7 +44,7 @@ export function Family() {
             {partner.role} <span className="fam-tag">{STAGE_NAMES_ROMANCE[r.stage ?? ''] ?? ''}</span>
           </h3>
           <p>
-            마음 {'♥'.repeat(Math.min(10, heartsOf(game.hearts[partner.id])))}
+            호감도 {'♥'.repeat(Math.min(10, heartsOf(game.hearts[partner.id])))}
             {r.marriedDay ? ` · 함께한 지 ${day - r.marriedDay + 1}일 · 결혼한 날 ${r.marriedDay}일째` : r.since ? ` · 사귄 지 ${day - r.since + 1}일` : ''}
           </p>
         </section>
@@ -68,7 +68,7 @@ export function Family() {
           {Object.keys(kid.interests ?? {}).length > 0 && <p>함께 경험한 관심 분야: {ADULT_JOBS.filter(j => (kid.interests?.[j] ?? 0) > 0).map(j => JOB_NAME[j]).join(' · ')}</p>}
           {kid.job && kid.jobConfirmed === false && (
             <div className="actions">
-              <p>{kid.name}이 관심과 잘하는 일을 살펴보고 {JOB_NAME[kid.job]} 일을 제안했어요. 함께 진로를 정해요.</p>
+              <p>{withSubject(kid.name)} {JOB_NAME[kid.job]} 일을 하고 싶어해요. 함께 진로를 정해요.</p>
               <label>진로 <select value={careerChoice ?? kid.job} onChange={e => setCareerChoice(e.target.value as AdultJob)}>
                 {ADULT_JOBS.map(j => <option key={j} value={j}>{JOB_NAME[j]}{(kid.interests?.[j] ?? 0) > 0 ? ' · 함께 경험함' : ''}</option>)}
               </select></label>

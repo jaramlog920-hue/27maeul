@@ -3,7 +3,8 @@ import { withLookDefaults } from '../engine/avatar'
 import type { EventActorLook } from './paired-event-art'
 import { PAIR_EXAMPLE_LOOKS } from './paired-event-art'
 import { eventMotionFrame } from './event-life-motion'
-import { spriteRows,writerPalette } from './sprites'
+import { writerPalette } from './sprites'
+import { motionBodyRows } from './motion-body'
 import { FURNI_PALETTE } from './furniture-art'
 
 export const COMPLETION_PALETTE={...FURNI_PALETTE,J:'#604a3a',P:'#efdfbd',p:'#ba9f79',Q:'#d9bd77',q:'#a4834b',v:'#a78ba6',n:'#8ca7b4'}
@@ -11,6 +12,10 @@ export const COMPLETION_EXAMPLE_LOOKS:readonly EventActorLook[]=[...PAIR_EXAMPLE
 export const COMPLETION_BEATS=['마지막 책 들기','선반으로 손 뻗기','마지막 빈칸 앞','책 꽂기','스물일곱 책등 완성','완성 책 보여주기','함께 박수','축하 인사'] as const
 function grid(){const p=Array.from({length:56},()=>Array<string>(128).fill('.'));return {p,put(x:number,y:number,c:string){if(p[y]?.[x]!==undefined)p[y][x]=c},rect(x:number,y:number,w:number,h:number,c:string){for(let yy=y;yy<y+h;yy++)for(let xx=x;xx<x+w;xx++)if(p[yy]?.[xx]!==undefined)p[yy][xx]=c},rows:()=>p.map(r=>r.join(''))}}
 function paste(b:ReturnType<typeof grid>,rows:string[],x:number,y:number){rows.forEach((r,dy)=>[...r].forEach((c,dx)=>{if(c!=='.')b.put(x+dx,y+dy,c)}))}
+function compactHand(b:ReturnType<typeof grid>,hx:number,hy:number){
+ // 책까지 이어지는 팔·소매는 숨기고 책 옆의 손만 표시한다.
+  b.rect(hx,hy,2,1,'s');b.rect(hx,hy+1,2,1,'5')
+}
 export function completionSceneFrame(frame:number,looks:readonly EventActorLook[]=COMPLETION_EXAMPLE_LOOKS){
  if(looks.length!==3)throw new Error('완필 장면에는 기록자와 축하 이웃 두 명의 외형이 필요합니다')
  const f=Math.max(0,Math.min(7,Math.trunc(frame))),back=grid(),front=grid(),r=back.rect
@@ -29,16 +34,11 @@ export function completionSceneFrame(frame:number,looks:readonly EventActorLook[
  const actors=looks.map((look,i)=>{
   const a=grid(),opts={frame:0 as const,blink:f===7,avatar:look.avatar,short:look.short,elder:look.elder}
   if(i===0){
-   const rows=spriteRows('writer',f<5?'up':'down',opts),y=47-rows.length
+   const rows=motionBodyRows('writer',f<5?'up':'down',opts),y=47-rows.length
    paste(a,rows,57,y)
    if(f<5){
-    for(let yy=y+7;yy<47;yy++)for(let x=57;x<67;x++)if(['s','5','!','K'].includes(a.p[yy][x]))a.p[yy][x]='.'
     const hy=f===4?40:bookY[f]+4,lx=f===4?57:bookX[f]-2,rx=f===4?65:bookX[f]+3
-    for(const [edge,hx]of [[56,lx],[67,rx]]){
-     a.rect(edge,Math.min(40,hy-1),1,Math.abs(40-(hy-1))+1,'r')
-     a.rect(Math.min(edge,hx),hy-1,Math.abs(edge-hx)+1,1,'r')
-     a.rect(hx,hy,2,1,'s');a.rect(hx,hy+1,2,1,'5')
-    }
+    compactHand(a,lx,hy);compactHand(a,rx,hy)
    }else{
     a.rect(57,41,2,1,'s');a.rect(65,41,2,1,'s')
    }

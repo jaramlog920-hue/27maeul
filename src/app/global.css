@@ -637,7 +637,16 @@ button:focus-visible {
   font-size: 15px;
   line-height: 1.6;
   margin: 0;
+  /* 낱말 가운데서 줄이 끊기지 않게 ("안쪽 / 으로요" 같은 끊김 — 2026-10-12) */
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
+/* 이웃에게 손일 배우기: 고르기 줄과 그만두기 줄을 나누고 숨 쉴 틈을 둔다 */
+.skill-lesson h3 { margin: 0 0 6px; }
+.skill-lesson .skill-styles { justify-content: flex-start; margin-top: 12px; }
+.skill-lesson .skill-styles button { display: inline-flex; align-items: center; gap: 6px; }
+.skill-lesson .skill-more { margin-top: 10px; }
+.skill-lesson .skill-more button { font-size: 14px; }
 /* 처음 말을 걸었을 때의 특별한 말 — 이름 밑 한 줄이 아니라 따로 뜨는 말풍선 */
 .talk-popup-line {
   font-size: 15px;

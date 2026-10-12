@@ -245,6 +245,77 @@ describe('소리 내어 읽기 — 받기·안 받기', () => {
     expect(voiceBtn()).toHaveTextContent('소리 내어 읽기')
   })
 
+  it('취소한 인식기의 이미 대기 중인 결과가 새 듣기를 기록하거나 중단하지 않는다', () => {
+    openWrite(writing('lk'))
+    fireEvent.click(voiceBtn()!)
+    const old = rec()
+    const queued = old.onresult!
+    fireEvent.click(voiceBtn()!)
+    fireEvent.click(voiceBtn()!)
+    const active = rec()
+    const before = useGame.getState().game
+    act(() => queued({ resultIndex: 0, results: { length: 1, 0: Object.assign([{ transcript: lk1[0].text }], { isFinal: true }) } }))
+    expect(useGame.getState().game).toBe(before)
+    expect(active.aborted).toBe(false)
+    expect(voiceBtn()).toHaveAttribute('aria-pressed', 'true')
+    active.say(lk1[0].text)
+    expect(useGame.getState().game.copyStats.verses).toBe(1)
+  })
+
+  it('취소한 인식기의 대기 중인 종료·오류 콜백은 새 듣기를 건드리지 않는다', () => {
+    openWrite(writing('lk'))
+    fireEvent.click(voiceBtn()!)
+    const old = rec()
+    old.say(lk1[0].text, false)
+    const ended = old.onend!
+    const errored = old.onerror!
+    fireEvent.click(voiceBtn()!)
+    fireEvent.click(voiceBtn()!)
+    const active = rec()
+    act(() => { ended(); errored({ error: 'not-allowed' }) })
+    expect(useGame.getState().game.copyStats.verses).toBe(0)
+    expect(active.aborted).toBe(false)
+    expect(voiceBtn()).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.queryByText(/마이크를 쓸 수 없어요/)).toBeNull()
+  })
+
+  it('늦은 오류 콜백만 와도 새 듣기를 중단하거나 거부 안내를 표시하지 않는다', () => {
+    openWrite(writing('lk'))
+    fireEvent.click(voiceBtn()!)
+    const errored = rec().onerror!
+    fireEvent.click(voiceBtn()!)
+    fireEvent.click(voiceBtn()!)
+    const active = rec()
+    act(() => errored({ error: 'not-allowed' }))
+    expect(active.aborted).toBe(false)
+    expect(voiceBtn()).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.queryByText(/마이크를 쓸 수 없어요/)).toBeNull()
+  })
+
+  it.each(['book', 'verse', 'load'] as const)('%s 전환 뒤 옛 결과는 새 위치와 저장을 변경하지 않는다', (change) => {
+    openWrite(writing('lk'))
+    fireEvent.click(voiceBtn()!)
+    const old = rec()
+    const queued = old.onresult!
+    act(() => {
+      if (change === 'book') useGame.getState().copyBook('mt')
+      else if (change === 'verse') useGame.getState().copyType(lk1[0].text)
+      else {
+        const saved = useGame.getState().game
+        useGame.getState().load(saved)
+        useGame.getState().open({ kind: 'copy', view: 'write' })
+      }
+    })
+    const before = useGame.getState().game
+    const modal = useGame.getState().modal
+    // 새 절에 맞는 본문을 옛 콜백에 실어도 인식 세션이 다르면 무시한다.
+    const text = change === 'book' ? versesOf('마 1:1')[0].text : change === 'verse' ? lk1[1].text : lk1[0].text
+    act(() => queued({ resultIndex: 0, results: { length: 1, 0: Object.assign([{ transcript: text }], { isFinal: true }) } }))
+    expect(useGame.getState().game).toBe(before)
+    expect(useGame.getState().modal).toBe(modal)
+    expect(old.aborted).toBe(true)
+  })
+
   it('손으로 쓰는 길은 그대로 — 붙여넣기·본문과 맞지 않는 뭉치는 여전히 받지 않는다', () => {
     openWrite(writing('lk'))
     const { copyType } = useGame.getState()

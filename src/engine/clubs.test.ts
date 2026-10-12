@@ -1,11 +1,13 @@
+import { establishedGame as newGame } from "./growth-test-support"
 import { CONTENT, PEOPLE } from '../content/catalog'
-import { newGame, settle, type GameState } from './game'
+import { settle, type GameState } from './game'
 import { createClub, nextClubDay, expandClubs, pauseClub, dissolveClub, joinClub, chooseClub, doClubActivity, clubWeaveDone, finishClub, clubVenues, sanitizeClubs, clubWorkSpots, canLeaveWork, type ClubInput } from './clubs'
 import { clubFollowUp, clubMissed, clubPerson, clubVoice } from './club-life'
 import { T } from '../content/text'
 import { isWalkable, key, lockedTiles, PLACES } from './world'
 import { advancePlans, appointmentSpots, apptSpots } from './plans'
 import { deserialize, serialize } from './save'
+import { advanceGroupTask } from './group-task'
 import { isMarketDay, weatherOf } from './calendar'
 
 function ready(day=2,minute=480):GameState {
@@ -13,6 +15,23 @@ function ready(day=2,minute=480):GameState {
  return {...s,clock:{day,minute},scenes:[],notebook:{...s.notebook,met:CONTENT.neighbors.map(n=>n.id)},flags:{...s.flags,villageLevel:10,...Object.fromEntries(CONTENT.neighbors.map(n=>[`movedIn:${n.id}`,1]))},life:{...s.life,seen:Object.values(PEOPLE.people).flatMap(p=>(p.events??[]).map(e=>e.id))}}
 }
 const config:ClubInput={name:'작은 차 모임',place:'hallTable',members:['baker'],weekday:2,slot:'morning',activity:'tea',alt:'hallTable'}
+
+describe('소모임 현재 자리 확인',()=>{
+ it('cannot choose, do handwork or finish remotely after joining',()=>{
+  const s=joined(),id=s.plans.appts[0].id
+  const away={...s,player:{...s.player,x:1,y:8}}
+  expect(joinClub(away,id,'direct')).toBe(away)
+  expect(chooseClub(away,id,'따뜻한 차')).toBe(away)
+  const working=chooseClub(s,id,'따뜻한 차')
+  const awayWorking={...working,player:away.player}
+  expect(advanceGroupTask(awayWorking,id,0,'tea')).toBe(awayWorking)
+  expect(doClubActivity(awayWorking,id)).toBe(awayWorking)
+  const finishing=doClubActivity(working,id)
+  const awayFinishing={...finishing,player:away.player}
+  expect(finishClub(awayFinishing,id)).toBe(awayFinishing)
+  expect(finishClub(finishing,id).clubSessions[id].step).toBe('done')
+ })
+})
 function created(input:Partial<ClubInput>={},s=ready()):GameState {
  const result=createClub(s,{...config,...input},CONTENT)
  expect(result.error).toBeUndefined()

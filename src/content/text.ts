@@ -2,8 +2,10 @@ import { FIXTURES } from '../engine/home-layout'
 import { SPOUSE_FURNITURE } from '../engine/furniture-defs'
 // 게임이 지어낸 문장의 단일 입구 (exclusion-list §0). 성경 문장은 여기 두지 않는다.
 import lifeText from './life-text.json'
-import peopleRaw from './people.json'
-import type { PeopleData } from '../engine/people'
+import { PEOPLE_DATA, PEOPLE_MORE } from './people-all'
+import { ADDITION_FURNITURE, type AdditionUse } from '../engine/furniture-additions'
+/** 생활 가구 설명: 놓고 눌러서 하는 일 */
+const ADDITION_DESC: Record<AdditionUse, string> = { rock: '앉아서 천천히 흔들며 쉰다.', sew: '바늘과 실로 천을 깁는다.', knead: '반죽을 누르고 접는다.', washFace: '물을 떠서 얼굴을 씻는다.', harp: '현을 번갈아 뜯는다.', paint: '붓으로 꽃을 그린다.', washDishes: '그릇을 문지르고 헹군다.', mill: '손잡이를 돌려 곡식을 간다.', waterPlant: '화분에 물을 주고 잎을 살핀다.', tuckDoll: '인형을 눕히고 이불을 덮는다.', pushCart: '방 안에서 밀며 논다.', open: '문을 열고 닫으며 살림을 정리한다.', sit: '앉아서 쉰다.', drink: '찻잔을 놓고 차를 마신다.', read: '종이를 펼쳐 놓고 살펴본다.', reach: '방에 놓아 두는 살림.' }
 import type { ItemId } from '../engine/types'
 import { isOtBook, otRow, type CopyBook } from '../engine/ot-books'
 
@@ -18,6 +20,8 @@ export interface NeighborLines {
   warm: Line[]
   /** 마음 7 이상 */
   close: Line[]
+  /** 같은 모습의 연애 후보가 대신 하는 가까운 사이 말 (people-more.json) */
+  closeFriend?: Line[]
   wet: Line[]
   /** 아침에 들렀을 때 */
   visit: Line[]
@@ -43,9 +47,12 @@ export const T = lifeText
 export const copyBookName = (b: CopyBook): string => (isOtBook(b) ? otRow(b).name : (lifeText.quiz.books as Record<string, string>)[b])
 export const NEIGHBOR_LINES = lifeText.neighbors as Record<string, NeighborLines>
 export const SCENES = lifeText.scenes as Record<string, Scene>
+// 같은 모습의 연애 후보가 대신 하는 장면·가까운 사이 말 (people-more.json)
+Object.assign(SCENES, PEOPLE_MORE.scenes)
+for (const [id, lines] of Object.entries(PEOPLE_MORE.closeFriend)) if (NEIGHBOR_LINES[id]) NEIGHBOR_LINES[id].closeFriend = lines
 // 살아 움직이는 사람들 (계획 6b): 이벤트는 ev:<id>, 목격은 saw:<id> 장면으로
 {
-  const data = peopleRaw as unknown as PeopleData
+  const data = PEOPLE_DATA
   for (const p of Object.values(data.people)) {
     for (const e of p.events ?? []) SCENES[`ev:${e.id}`] = { title: e.title, lines: e.lines, album: e.album, choices: e.choices?.map((c) => ({ label: c.label, reply: c.reply })) }
     for (const s of p.sightings ?? []) SCENES[`saw:${s.id}`] = { title: s.title, lines: s.lines }
@@ -54,7 +61,13 @@ export const SCENES = lifeText.scenes as Record<string, Scene>
 }
 export const ITEM_TEXT = lifeText.items as Record<ItemId, { name: string; desc: string }>
 for (const [id, f] of Object.entries(FIXTURES)) ITEM_TEXT[id as ItemId] = { name: f.name, desc: '집의 어느 방으로든 옮길 수 있다.' }
+// 생활 가구 48종 (2026-10-12): 장날 생활 가구 줄 이름도 같이
+for (const [id, a] of Object.entries(ADDITION_FURNITURE)) {
+  ITEM_TEXT[id as ItemId] = { name: a.name, desc: ADDITION_DESC[a.use] }
+  ;(lifeText.trades as Record<string, string>)[`add:${id}`] = a.name
+}
 ITEM_TEXT.homeCradle = { name: '아기 요람', desc: '아이방과 다른 방 사이로 자유롭게 옮길 수 있다.' }
+ITEM_TEXT.coupleBed = {name:'부부 침대',desc:'베개 두 개와 넓은 이불이 있는 두 사람용 침대. 2×2칸을 차지한다.'}
 const propNames: Record<string, string> = { signature: '취향 가구', desk: '취향 탁자', keepsake: '기념품', wall: '벽 장식', rug: '깔개', cushion: '방석', curtain: '커튼', personal: '개인 소품', sideboard: '수납장', bookcase: '책장', chair: '의자', stool: '작은 의자', lampStand: '등불' }
 for (const [id, p] of Object.entries(SPOUSE_FURNITURE)) {
   const base = p.id.split('-').at(-1)!

@@ -1,4 +1,4 @@
-// 복음서 도장 — 오늘의 플레이어가 보는 정보 (exclusion-list §4-1). 누르면 그 복음서의 구절이 펼쳐진다.
+// 대한성서공회 개역한글 소제목에 표시된 관련 본문. 누르면 해당 구절이 펼쳐진다.
 import { useState } from 'react'
 import { fill, T } from '../../content/text'
 import { isGospel, type Piece } from '../../engine/types'
@@ -6,8 +6,8 @@ import { Passage } from './Passage'
 
 export function Stamps({ piece }: { piece: Piece }) {
   const [open, setOpen] = useState<string | null>(null)
-  // 도장은 네 복음서끼리의 표시 — 사도행전 조각에는 도장 칸이 없다 (계획 5)
-  if (!isGospel(piece.book)) return null
+  // 복음서 이외에도 원본에 관련 본문이 있을 때는 표시한다.
+  if (!isGospel(piece.book) && piece.stamps.length === 0) return null
   return (
     <div className="stamps">
       {piece.stamps.length === 0 ? (
@@ -21,7 +21,7 @@ export function Stamps({ piece }: { piece: Piece }) {
                 aria-expanded={open === s.ref}
                 onClick={() => setOpen(open === s.ref ? null : s.ref)}
               >
-                {s.kind === 'same' ? T.ui.stampSame : T.ui.stampSimilar} · {s.ref}
+                {s.kind === 'related' ? '관련 본문' : s.kind === 'same' ? T.ui.stampSame : T.ui.stampSimilar} · {s.label ?? s.ref}
                 <span className="stamp-toggle">{open === s.ref ? T.ui.stampClose : T.ui.stampOpen}</span>
               </button>
               {open === s.ref && <Passage refText={s.ref} />}
@@ -29,7 +29,6 @@ export function Stamps({ piece }: { piece: Piece }) {
           ))}
         </ul>
       )}
-      <p className="stamp-note">{T.ui.stampNote}</p>
     </div>
   )
 }

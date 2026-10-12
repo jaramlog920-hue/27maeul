@@ -1,0 +1,24 @@
+.dex-summary { margin: 12px 0 4px; font-weight: 700; }
+.dex-filters { display: flex; flex-wrap: wrap; gap: 5px; margin: 12px 0 8px; }
+.dex-filters button { min-height: 40px; padding: 4px 9px; font-size: 13px; }
+.dex-filters button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent-lo); }
+.dex-known-filter { display: flex; align-items: center; gap: 7px; min-height: 36px; font-size: 13px; }
+.dex-known-filter input { width: 17px; height: 17px; accent-color: var(--accent-lo); }
+.dex-category h3 { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 16px 0 8px; }
+.dex-category h3 small { font-weight: normal; font-size: 13px; color: var(--ink-soft); }
+.dex-book-group h4 { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 14px 0 7px; font-size: 13px; color: var(--ink-soft); }
+.dex-book-group h4 small { font-weight: normal; }
+.dex-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); list-style: none; gap: 6px; margin: 0; padding: 0; }
+.dex-grid li { min-width: 0; }
+.dex-card { display: flex; flex-direction: column; align-items: center; width: 100%; height: 100%; min-height: 122px; padding: 7px 4px; gap: 4px; background: var(--panel-soft); border: 2px solid var(--panel-line); }
+.dex-card.unknown { border-style: dashed; color: var(--ink-soft); }
+.dex-card.on { border-color: var(--accent-lo); box-shadow: inset 0 0 0 1px var(--accent-lo); }
+.dex-picture { display: flex; align-items: center; justify-content: center; width: 64px; height: 64px; }
+.dex-art { display: block; width: auto; height: auto; max-width: 64px; max-height: 64px; image-rendering: pixelated; }
+.dex-name { font-size: 12px; line-height: 1.45; word-break: keep-all; overflow-wrap: anywhere; }
+.dex-state { margin-top: auto; font-size: 10px; color: var(--ink-soft); }
+.dex-card.known .dex-state { color: #477348; }
+.dex-detail { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; gap: 12px; padding: 10px; margin-top: 8px; border: 2px solid var(--panel-line); background: var(--panel-soft); }
+.dex-detail .dex-art { flex: none; }
+.dex-detail p { margin: 4px 0 0; font-size: 13px; }
+@media (max-width: 380px) { .dex-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }

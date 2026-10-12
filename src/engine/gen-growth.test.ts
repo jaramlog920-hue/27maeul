@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { CONTENT } from '../content/catalog'
 import { activeEligible, newGenState, sanitizeGen, type GenState } from './gen'
 import { withPairs } from './gen-settle'
-import { MOVE_AFTER, movedHeir, RETIRE_AFTER, settleGrowth, slotPerson, stageByAge } from './gen-growth'
+import { MOVE_AFTER, movedAway, movedHeir, RETIRE_AFTER, settleGrowth, slotPerson, stageByAge } from './gen-growth'
 import { FAREWELL_LETTERS, farewellMorning, newGame } from './game'
 import { deserialize, serialize } from './save'
 import { T } from '../content/text'
@@ -59,32 +59,67 @@ describe('세대교체', () => {
     expect(companionsOf(g, 'rudy')).toEqual([{ person: g.persons['g-0001'], short: false }])
     expect(genAvatar(g.persons['g-0001'])).toMatchObject({ look: 'm', name: '아론', skin: 2, top: 3 })
   })
-  it('은퇴 14일 뒤 이사 — 자리는 자녀, 곁에 따로 그리지 않는다, 저장해도 남는다', () => {
+  it('retired parents stay in the village beside their heirs indefinitely and after reload', () => {
     const r = 10 + STAGE_AT.adult + RETIRE_AFTER
     let g = run(family(), 10, r + MOVE_AFTER - 1)
     expect(movedHeir(g, 'rudy')).toBeNull()
-    g = run(g, r + MOVE_AFTER, r + MOVE_AFTER)
-    expect(g.retired?.rudy.moved).toBe(r + MOVE_AFTER)
-    expect(movedHeir(g, 'rudy')?.id).toBe('g-0001')
-    expect(g.log.at(-1)?.kind).toBe('movedAway')
-    expect(companionsOf(g, 'rudy')).toEqual([])
-    expect(sanitizeGen(JSON.parse(JSON.stringify(g)), r + MOVE_AFTER)?.retired?.rudy.moved).toBe(r + MOVE_AFTER)
+    g = run(g, r + MOVE_AFTER, r + 1000)
+    expect(g.retired?.rudy).toEqual({ heir: 'g-0001', day: r })
+    expect(movedAway(g, 'rudy')).toBe(false)
+    expect(movedHeir(g, 'rudy')).toBeNull()
+    expect(slotPerson(g, 'rudy')).toBe('g-0001')
+    expect(g.log.some(l => l.kind === 'movedAway')).toBe(false)
+    // 은퇴한 부모가 곁에, 자녀는 자리 주인 (2026-10-11 사용자 결정)
+    expect(companionsOf(g, 'rudy')).toEqual([{ person: g.persons.rudy, short: false, retiredParent: 'rudy' }])
+    const restored = sanitizeGen(JSON.parse(JSON.stringify(g)), r + 1000)!
+    expect(restored.retired).toEqual(g.retired)
+    const base = newGame(CONTENT)
+    expect(farewellMorning({ ...base, gen: restored }, CONTENT).farewellPopup).toBeUndefined()
   })
-  it('이사 간 아침: 편지·말씀 조각·선물 (한 번만)', () => {
+  it('legacy moved-away saves restore parents and preserve farewell history/rewards without duplicate gifts', () => {
     const r = 10 + STAGE_AT.adult + RETIRE_AFTER + MOVE_AFTER
-    const gen = run(family(), 10, r)
+    const grown = run(family(), 10, r)
+    const gen = { ...grown, retired: { ...grown.retired, rudy: { ...grown.retired!.rudy, moved: r } },
+      log: [...grown.log, { day: r, kind: 'movedAway', who: ['rudy', 'g-0001'] }] }
     const base = newGame(CONTENT)
     const s = farewellMorning({ ...base, clock: { ...base.clock, day: r }, gen }, CONTENT)
     const f = s.farewellPopup!
     expect(f.npc).toBe('rudy')
     expect(f.pieceId).toBeTruthy()
     expect(s.collected).toContain(f.pieceId)
-    const def = CONTENT.neighbors.find((n) => n.id === 'rudy')!
-    for (const [id, n] of Object.entries(def.help.gives)) expect(s.inv[id as keyof typeof s.inv]).toBe((base.inv[id as keyof typeof base.inv] ?? 0) + (n ?? 0) * 2)
+    expect(Object.values(f.gift)).toEqual([1])
+    const item = Object.keys(f.gift)[0] as keyof typeof s.inv
+    expect(s.inv[item]).toBe((base.inv[item] ?? 0) + 1)
     expect(farewellMorning({ ...s, farewellPopup: undefined }, CONTENT).farewellPopup).toBeUndefined()
     expect((T.gen.farewell.letters as string[]).length).toBe(FAREWELL_LETTERS)
     const back = deserialize(serialize(s), CONTENT)!
     expect(back.farewells).toEqual(s.farewells)
+    expect(back.gen!.retired?.rudy).toEqual({ heir: 'g-0001', day: gen.retired.rudy.day })
+    expect(back.gen!.log).toEqual(gen.log)
+    expect(back.flags[`farewell:rudy`]).toBe(s.flags[`farewell:rudy`])
+    expect(back.inv).toEqual(s.inv)
+    expect(back.collected).toEqual(s.collected)
+    expect(companionsOf(back.gen, 'rudy')[0].retiredParent).toBe('rudy')
+    const nextGen = settleGrowth(back.gen!, r + 1000)
+    const next = farewellMorning({ ...back, gen: nextGen, farewellPopup: undefined }, CONTENT)
+    expect(next.farewellPopup).toBeUndefined()
+    expect(next.inv).toEqual(back.inv)
+    expect(next.farewells).toEqual(back.farewells)
+    expect(next.gen!.log.filter(l => l.kind === 'movedAway')).toHaveLength(1)
+    expect(gen.retired.rudy.moved).toBe(r)
+    expect(settleGrowth(gen, r + 1).retired?.rudy.moved).toBeUndefined()
+  })
+  it('a legacy departure without claimed rewards returns without issuing a new farewell gift', () => {
+    const day = 10 + STAGE_AT.adult + RETIRE_AFTER + MOVE_AFTER
+    const g = run(family(), 10, day)
+    const legacy = { ...g, retired: { rudy: { ...g.retired!.rudy, moved: day } } }
+    const base = newGame(CONTENT)
+    const restored = deserialize(serialize({ ...base, clock: { ...base.clock, day }, gen: legacy }), CONTENT)!
+    const next = farewellMorning(restored, CONTENT)
+    expect(next.inv).toEqual(restored.inv)
+    expect(next.collected).toEqual(restored.collected)
+    expect(next.farewellPopup).toBeUndefined()
+    expect(movedAway(next.gen, 'rudy')).toBe(false)
   })
   it('자람·견습·은퇴 소식 글', () => {
     const g = run(family(), 10, 10 + STAGE_AT.adult + RETIRE_AFTER)

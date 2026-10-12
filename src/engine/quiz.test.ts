@@ -1,4 +1,4 @@
-import { BOOKS_WITH_CONTENT, CONTENT, inBrackets, pieceById, pieceOfVerse, piecesOf, quizSourceFor } from '../content/catalog'
+import { BOOKS_WITH_CONTENT, CONTENT, PIECES, inBrackets, pieceById, pieceOfVerse, piecesOf, quizSourceFor } from '../content/catalog'
 import { chaptersOf } from './books'
 import { mulberry32 } from './offers'
 import { modeOf } from './shelf-rooms'
@@ -58,7 +58,7 @@ describe('기록 퀴즈', () => {
             expect(quizzable(qv.text, qv.inBrackets), where).toBe(true)
             const [c] = q.ref.split(' ')[1].split(':').map(Number)
             const answer = pieceById(q.answer)
-            expect(answer.chapter).toBe(c)
+            expect(src.versesOf(answer.ref).some(v => v.ref.split(' ')[1].startsWith(`${c}:`))).toBe(true)
             // 절이 정답 조각 안에 있다
             expect(src.versesOf(answer.ref).some((v) => v.ref === q.ref), where).toBe(true)
             for (const o of q.options.filter((x) => x !== q.answer)) expect(src.versesOf(pieceById(o).ref).some((v) => v.ref === q.ref)).toBe(false)
@@ -72,15 +72,8 @@ describe('기록 퀴즈', () => {
     }
   })
 
-  it('탐정: 그 조각의 책은 늘 답에 있고, 같은 이야기 도장의 복음서가 더해진다', () => {
-    expect(detectiveAnswer(pieceById('lk-015-008'))).toEqual(['lk'])
-    expect(detectiveAnswer(pieceById('lk-009-010'))).toEqual(['mt', 'mk', 'lk', 'jn'])
-    // 비슷한 이야기가 있는 조각은 탐정 문제로 쓰지 않는다
-    expect(detectiveAnswer(pieceById('lk-015-001'))).toBeNull()
-    // 막 1:9-11은 요한 쪽이 "비슷한 이야기"(~요 1:29-34)라 탐정 문제에 쓰지 않는다
-    expect(detectiveAnswer(pieceById('mk-001-009'))).toBeNull()
-    // 막 2:1-12는 =마 9:1-8; =눅 5:17-26
-    expect(detectiveAnswer(pieceById('mk-002-001'))).toEqual(['mt', 'mk', 'lk'])
+  it('성서공회 관련 본문을 같은 사건으로 추정하는 탐정 문제를 내지 않는다', () => {
+    for (const p of PIECES.filter(p => p.source)) expect(detectiveAnswer(p)).toBeNull()
   })
 
   it('괄호 절은 문제로 쓰지 않는다', () => {
@@ -130,7 +123,7 @@ describe('기록 퀴즈', () => {
   it('괄호 조각(막 16:9-20)은 문제·보기·정답 어디에도 나오지 않는다', () => {
     const src = quizSourceFor(['mk'])
     const bracket = piecesOf('mk').filter((p) => !quizzablePiece(p, src)).map((p) => p.id)
-    expect(bracket).toEqual(['mk-016-009', 'mk-016-012', 'mk-016-014', 'mk-016-019'])
+    expect(bracket).toEqual(['mk-016-012', 'mk-016-014', 'mk-016-019'])
     expect(quizzablePiece(pieceById('mk-016-001'), src)).toBe(true)
     for (let seed = 1; seed <= 200; seed++) {
       for (const ch of [15, 16]) {

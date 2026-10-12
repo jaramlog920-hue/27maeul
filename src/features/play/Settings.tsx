@@ -1,3 +1,4 @@
+import { featureAccess, featureHint } from '../../engine/feature-rules'
 import { useState } from 'react'
 import {
   currentMusicChoice,
@@ -24,9 +25,11 @@ const C = T.controls
 
 /** 주민 자율 생활 켜기/끄기 (계획 20 2부 P14): 끄면 새 만남·전환이 멈추고, 다시 켜도 밀린 기간을 몰아 처리하지 않는다. 설명 줄 없이 이름만 */
 function GenSetting() {
-  const on = useGame((s) => s.game.gen?.on ?? true)
+  const game = useGame(s => s.game)
+  const locked = featureAccess(game, 'autonomy') !== 'full'
+  const on = !locked && (game.gen?.on ?? true)
   const has = useGame((s) => !!s.game.gen)
-  if (!has) return null
+  if (!has && !locked) return null
   const pick = (v: boolean) => {
     const next = setGenOn(useGame.getState().game, v)
     saveGame(next)
@@ -35,8 +38,9 @@ function GenSetting() {
   return (
     <section className="settings-section">
       <h3>{t('gen.setting')}</h3>
+      {locked && <p className="hint">{featureHint('autonomy')}</p>}
       <div className="settings-options pair-options" role="group" aria-label={t('gen.setting')}>
-        <button className={on ? 'on' : ''} aria-pressed={on} onClick={() => pick(true)}>{t('gen.on')}</button>
+        <button className={on ? 'on' : ''} aria-pressed={on} disabled={locked} onClick={() => pick(true)}>{t('gen.on')}</button>
         <button className={!on ? 'on' : ''} aria-pressed={!on} onClick={() => pick(false)}>{t('gen.off')}</button>
       </div>
     </section>

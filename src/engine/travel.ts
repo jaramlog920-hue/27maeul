@@ -2,6 +2,7 @@
 // 여행지는 가상의 이웃 마을·항구 — 실제 지명·시대를 붙이지 않는다 (exclusion-list).
 // 여행지마다 희귀품 가게와, 처음 갔을 때 한 번뿐인 이야기 (이웃 한 사람과 이어진다).
 import type { ItemId } from './types'
+import type { TripReward } from './trip-board'
 
 export type DestId = 'harbor' | 'hillTown'
 export const DEST_IDS: readonly DestId[] = ['harbor', 'hillTown']
@@ -58,4 +59,9 @@ export const TRIP_FRIEND_GAIN = 5
 /** 여행 전체에 드는 닢: 배삯 + 숙박비 + 산 물건 */
 export function tripCost(dest: Dest, buys: readonly ItemId[]): number {
   return dest.fare + dest.lodging + buys.reduce((n, id) => n + (dest.shop[id] ?? 0), 0)
+}
+
+/** 아직 정산하지 않은 여행 수확과 추가 주사위 비용. */
+export function tripCoinDelta(rewards: readonly TripReward[]): number {
+  return rewards.reduce((n, r) => n + (r.kind === 'coins' ? r.n : 0), 0)
 }

@@ -13,6 +13,7 @@ import { discoveredFinish, canLearnFinish, startFinishLesson, chooseFinish, fini
 
 function working():SkillState {
   const s=newGame(CONTENT)
+  s.progress.phm.completed = [1]
   return {...s,clock:{day:2,minute:480},player:{...s.player,x:5,y:24},flags:{...s.flags,villageLevel:10,...Object.fromEntries(CONTENT.neighbors.map(n=>[`movedIn:${n.id}`,1]))},life:{...s.life,seen:Object.values(PEOPLE.people).flatMap(p=>(p.events??[]).map(e=>e.id))},npcs:{...s.npcs,carpenter:{...s.npcs.carpenter,x:6,y:24,visible:true}}}
 }
 /** 이웃 하나를 플레이어 곁에 세운다 */
@@ -25,6 +26,21 @@ function learn(s:SkillState,npc:string,style:string):SkillState {
   return finishLesson(n)
 }
 describe('배운 생활 기술',()=>{
+  it('다른 지도에서는 좌표가 같아도 주민에게 기술을 배우거나 실습을 끝낼 수 없다',()=>{
+    const s=recordExperienceIn(beside(working(),'baker'),{id:'work:baker',kind:'work',with:['baker']})
+    const away={...s,map:'newland' as const}
+    expect(canLearn(away,'baker',CONTENT)).toBe('away')
+    expect(startLesson(away,'baker',CONTENT)).toBe(away)
+    const demo=startLesson(s,'baker',CONTENT)
+    const remoteDemo={...demo,map:'newland' as const}
+    expect(chooseStyle(remoteDemo,'round',()=>.5)).toBe(remoteDemo)
+    const practice=chooseStyle(demo,'round',()=>.5)
+    const ready={...practice,skillLesson:{...practice.skillLesson!,mini:finishNow(practice.skillLesson!.mini!)}}
+    const remoteReady={...ready,map:'newland' as const}
+    expect(lookAgain(remoteReady)).toBe(remoteReady)
+    expect(finishLesson(remoteReady)).toBe(remoteReady)
+    expect(finishLesson({...remoteReady,map:'village'}).skills?.snackShape).toBeDefined()
+  })
   it('선물·친밀도만으로 발견되지 않고 실제 함께한 작업 뒤 발견된다',()=>{
     const s=working()
     expect(discoveredFinish({...s,hearts:{carpenter:100}})).toBe(false)
@@ -169,6 +185,6 @@ describe('이웃마다 배우는 생활 기술 (기획 11)',()=>{
     expect(sanitizeSkills({teaSetting:{day:3,from:'carpenter',picked:'blue'},nope:{day:1,from:'poppy',picked:'x'}})).toEqual({})
     const old=JSON.parse(serialize(working()));delete old.skills;delete old.skillLesson
     expect((deserialize(JSON.stringify(old),CONTENT) as SkillState).skills).toEqual({})
-    expect(Object.keys(RECIPES).sort()).toEqual(['blanket','bread','cover','creamPaper','fineThread','ink','oil','papyrus','scentCandle'])
+    expect(Object.keys(RECIPES).sort()).toEqual(['blanket','bread','cover','creamPaper','fineThread','homeCradle','ink','oil','papyrus','scentCandle'])
   })
 })

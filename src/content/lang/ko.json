@@ -5,8 +5,50 @@
     "back": "돌아가기",
     "next": "다음"
   },
+  "familyTree": {
+    "title": "{name}의 가계도",
+    "open": "가계도 보기",
+    "lead": "인물을 누르면 그 사람을 중심으로 볼 수 있어요.",
+    "canvas": "가족 관계 연결도",
+    "person": "{name} · {relation}",
+    "back": "이웃 수첩으로",
+    "empty": "아직 남아 있는 가족 기록이 없어요.",
+    "parentLine": "부모·자녀",
+    "spouseLine": "배우자",
+    "kinLine": "친척",
+    "rename": "이름변경",
+    "relations": { "focus": "선택한 인물", "parent": "부모", "grandparent": "조부모", "spouse": "배우자", "sibling": "형제자매", "child": "자녀", "grandchild": "손주", "relative": "친척", "inLaw": "배우자의 가족" }
+  },
+  "groundPiece": {
+    "found": "길에서 말씀 조각을 주웠어요 · {name}",
+    "source": "길에서 주움"
+  },
+  "copiedRead": {
+    "title": "내가 필사한 말씀",
+    "lead": "완성한 장과 작성 중인 장에서 기록한 절을 읽을 수 있어요.",
+    "book": "책",
+    "all": "모든 책",
+    "complete": "장 필사 완료",
+    "inProgress": "기록한 절 읽기",
+    "partial": "기록한 {n}절",
+    "passage": "필사한 본문 · {chapter}",
+    "back": "필사 목록으로",
+    "empty": "아직 필사한 구절이 없어요. 책상에서 한 절을 기록해 보세요.",
+    "failed": "책을 펼치지 못했어요. 잠시 후 다시 골라 주세요."
+  },
+  "moveGifts": {
+    "received": "{who}의 이사 선물 · {item} 1개"
+  },
+  "copyResult": {
+    "title": "필사로 오른 능력치",
+    "lead": "이번 필사로 얻은 변화를 모았어요.",
+    "gain": "+{n}",
+    "xp": "경험치 +{n}",
+    "confirm": "확인"
+  },
   "ot": {
-    "roomCount": "{done}/{all}권"
+    "roomCount": "{done}/{all}권",
+    "bookDone": "{book} 필사를 마쳤습니다. 작은 책장에 꽂혔어요."
   },
   "libraryOps": {
     "title": "서고 운영",
@@ -32,15 +74,15 @@
   },
   "otShelf": {
     "record": "{book} 기록대",
-    "chapters": "{n}장",
+    "chapters": "{n}{unit}",
     "endDay": "{day}일째에 마침",
     "noDate": "마친 날 미상",
     "noLines": "남긴 한 줄이 아직 없어요.",
-    "chapterLine": "{n}장",
+    "chapterLine": "{n}{unit}",
     "read": "함께 읽기",
-    "readWith": "{who}와 읽기",
-    "readDone": "{who}와 서고에서 한참 함께 읽었다.",
-    "readMemory": "{who}와 함께 읽었다",
+    "readWith": "{whoAnd} 읽기",
+    "readDone": "{whoAnd} 서고에서 한참 함께 읽었다.",
+    "readMemory": "{whoAnd} 함께 읽었다",
     "day": "{day}일째"
   },
   "bindDetail": {
@@ -51,7 +93,35 @@
     "embossed": "눌러 찍은 무늬",
     "worn": "손때 묻은 표지"
   },
+  "dex": {
+    "title": "도감",
+    "collected": "모은 것 {n} / {all}",
+    "lead": "가구와 물건을 얻고, 책을 제본하고, 만들기를 배우면 도감에 남아요. 아직 모으지 않은 것은 실루엣으로 보여요.",
+    "categoryLabel": "도감 분류",
+    "categories": { "furniture": "가구", "books": "책 디자인", "recipes": "레시피", "items": "생활 물건" },
+    "all": "전체",
+    "onlyKnown": "획득한 것만 보기",
+    "unknown": "아직 모으지 않은 것",
+    "unknownEntry": "미획득 {category} {n}",
+    "obtained": "획득",
+    "notObtained": "미획득",
+    "notCollected": "얻으면 이름과 설명이 나타나요.",
+    "empty": "이 분류에서 아직 모은 것이 없어요.",
+    "itemHint": "구입하거나 만들기, 선물과 여행으로 물건을 모아 보세요.",
+    "bookCover": "{book} 기본 디자인",
+    "bookGroups": { "book": "기본 표지·책등", "color": "표지 색", "pattern": "책등 무늬", "deco": "책등 장식", "detail": "덧장식" },
+    "designKinds": { "book": "그대로 제본한 책의 기본 표지와 책등", "color": "특별 제본 · 표지 색", "pattern": "특별 제본 · 표지와 책등 무늬", "deco": "특별 제본 · 책등 장식", "detail": "특별 제본 · 덧장식" },
+    "plainHint": "책을 다 필사하고 그대로 제본하면 도감에 남아요.",
+    "designHint": "특별하게 제본하거나 책을 다시 꾸밀 때 이 디자인을 사용해 보세요.",
+    "ingredients": "재료: {items}",
+    "places": { "workbench": "작업대", "hearth": "화덕", "press": "기름틀" },
+    "craftHint": "{place}에서 한 번 만들면 레시피가 도감에 남아요.",
+    "learnHint": "{who}와 함께 배우면 도감에 남아요.",
+    "dishRecipe": "{name} 요리법",
+    "skillDescription": "이웃에게 배워 물건의 모습을 바꾸는 생활 기술"
+  },
   "saves": {
+    "continue": "이어하기",
     "new": "새로 시작하기",
     "load": "불러오기",
     "title": "불러오기",
@@ -85,6 +155,9 @@
     "reconsiderSure": "그래도 말하기",
     "reconsiderNo": "아니에요",
     "giveCrib": "아기 침대 건네기",
+    "makeCrib": "아기 침대 만들어 주기",
+    "bakerChild": "헤이즐의 자녀",
+    "growthStage": { "baby": "아기", "child": "어린이", "teen": "청소년", "adult": "어른", "elder": "노년" },
     "relations": "관계",
     "tree": "가계도",
     "unknown": "?",
@@ -130,5 +203,24 @@
     "none": "오늘은 붙은 부탁이 없어요.",
     "noPieces": "모은 말씀 조각이 아직 없어요.",
     "stars": "{stars}"
+  },
+  "schedule": {
+    "myWedding": "{whoAnd} 결혼 잔치"
+  },
+  "invite": {
+    "notHome": "{who} 아직 집에 오는 길이에요. 조금 뒤에 다시 문을 두드려 봐요."
+  },
+  "reading": {
+    "feast": "오늘은 잔치가 있어 읽기 모임을 쉬어요.",
+    "doneAlone": "{done} · 지능 경험치 +2",
+    "doneWith": "{done} · 이웃 호감도 +2 · 지능 경험치 +2"
+  },
+  "pets": {
+    "otherAdopted": "{other} {who} 데려갔어요.",
+    "dogTopic": "강아지는",
+    "catTopic": "고양이는"
+  },
+  "homeGrow": {
+    "bagged": "자리가 맞지 않은 가구는 가방에 넣어 두었어요 · {items}"
   }
 }

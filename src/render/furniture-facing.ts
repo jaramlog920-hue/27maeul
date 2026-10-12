@@ -5,13 +5,14 @@ import type { FurnitureArt } from './furniture-art'
 import { HOME_SPACE_DIRECTIONS, type DirectionalFurnitureArt } from './home-space-directions'
 import { REMAINING_FIXTURE_DIRECTIONS, REMAINING_FURNITURE_DIRECTIONS } from './remaining-furniture-art'
 import type { Facing } from '../engine/types'
+import { ADDITION_FURNITURE_DIRECTIONS } from './addition-furniture-directions'
 
 function viewsOf(item: string): DirectionalFurnitureArt | undefined {
   const fixture = { homeCradle: 'cradle', homeBed: 'bed', homeDesk: 'desk', homeHearth: 'hearth', homeWorkbench: 'workbench' }[item as 'homeBed']
   if (fixture) return REMAINING_FIXTURE_DIRECTIONS[fixture]
   const p = SPOUSE_FURNITURE[item]
   if (p) return SPOUSE_ROOM_VIEWS[p.id] ?? HOME_SPACE_DIRECTIONS[p.id]
-  return HOME_SPACE_DIRECTIONS[item] ?? REMAINING_FURNITURE_DIRECTIONS[item]
+  return HOME_SPACE_DIRECTIONS[item] ?? REMAINING_FURNITURE_DIRECTIONS[item] ?? ADDITION_FURNITURE_DIRECTIONS[item]
 }
 
 /** 네 방향 그림이 있는 가구인가 (없으면 돌리기 단추를 내지 않는다) */

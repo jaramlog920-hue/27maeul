@@ -1,12 +1,12 @@
 import { useMemo } from 'react'
-import { CONTENT } from '../../content/catalog'
+import { CONTENT, verseNumbers } from '../../content/catalog'
 import { fill, T } from '../../content/text'
 import { isMarketDay, weatherOf } from '../../engine/calendar'
 import { formatTime, phaseOf, seasonOf } from '../../engine/clock'
-import { progressOf, type Progress } from '../../engine/books'
+import { chaptersOf, progressOf } from '../../engine/books'
 import { OT_NAME } from '../../content/ot-catalog'
 import { chapterUnit, isOtBook, otRow, type CopyBook } from '../../engine/ot-books'
-import { copySpot, type CopyAt } from '../../engine/copying'
+import type { CopyAt } from '../../engine/copying'
 import { peaceful } from '../../engine/game'
 import { jobOf } from '../../engine/job'
 import { useGame } from '../../store/game-store'
@@ -86,9 +86,12 @@ function copyNow(book: CopyBook | null, at: CopyAt | undefined, completed: reado
     if (!open.length) return fill(T.ui.hudCopyDone, { book: OT_NAME[book] })
     return fill(T.ot.hudAt, { book: OT_NAME[book], chapter: at && open.includes(at.chapter) ? at.chapter : open[0], unit: chapterUnit(book) })
   }
-  const spot = copySpot({ progress: { [book]: { completed } } as unknown as Progress, copy: { book, at: at ? { [book]: at } : {}, legacy: {} } }, book, CONTENT)
-  if (!spot) return fill(T.ui.hudCopyDone, { book: BOOK_NAME[book] })
-  return fill(T.ui.hudCopyAt, { book: BOOK_NAME[book], chapter: spot.chapter, done: spot.index, all: spot.count })
+  const open = chaptersOf(book, CONTENT).filter(c => !completed.includes(c))
+  if (!open.length) return fill(T.ui.hudCopyDone, { book: BOOK_NAME[book] })
+  const chapter = at && open.includes(at.chapter) ? at.chapter : open[0]
+  const verses = verseNumbers(book, chapter)
+  const found = at?.chapter === chapter ? verses.findIndex(v => v >= at.verse) : 0
+  return fill(T.ui.hudCopyAt, { book: BOOK_NAME[book], chapter, done: Math.max(0, found), all: verses.length })
 }
 
 /** 새로 이룬 업적 (도감·업적) */

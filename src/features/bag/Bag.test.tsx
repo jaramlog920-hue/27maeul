@@ -1,6 +1,9 @@
-import { act, fireEvent, render } from '@testing-library/react'
+import { act, fireEvent, render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { CONTENT } from '../../content/catalog'
-import { ITEM_TEXT } from '../../content/text'
+import { ITEM_TEXT, T } from '../../content/text'
+import { RECIPES, type RecipeId } from '../../engine/items'
+import { ICONS } from '../../render/sprites'
 import { newGame } from '../../engine/game'
 import { useGame } from '../../store/game-store'
 import { Bag } from './Bag'
@@ -21,5 +24,53 @@ describe('가방: 아이콘 칸', () => {
     expect(container.querySelector('.needs .tap-explain')!.textContent).toContain('배고픔')
     act(() => fireEvent.click(container.querySelector('[data-stat="hand"]')!))
     expect(container.querySelector('.stats .tap-explain')).not.toBeNull()
+  })
+})
+
+describe('가방: 만들 줄 아는 것', () => {
+  beforeEach(() => useGame.setState({ game: { ...newGame(CONTENT), recipesKnown: ['bread', 'papyrus'] }, modal: { kind: 'bag' } }))
+  it('가방과 같은 아이콘 칸에서 선택한 제작법의 재료만 보여 준다', async () => {
+    const before = useGame.getState().game
+    const { container } = render(<Bag tab="make" />)
+    expect(container.querySelectorAll('.bag-slot')).toHaveLength(12)
+    expect(container.querySelectorAll('.bag-slot:not(.empty)')).toHaveLength(2)
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
+    const user = userEvent.setup()
+    await user.click(screen.getByRole('button', { name: '빵' }))
+    expect(screen.getByRole('button', { name: '빵' })).toHaveAttribute('aria-pressed', 'true')
+    expect(within(screen.getByRole('status')).getByText('보리 1')).toBeInTheDocument()
+    expect(within(screen.getByRole('status')).getByText('물 1')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: '파피루스' }))
+    expect(within(screen.getByRole('status')).getByText('갈대 1')).toBeInTheDocument()
+    expect(within(screen.getByRole('status')).queryByText('보리 1')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: '빵' })).toHaveAttribute('aria-pressed', 'false')
+    expect(useGame.getState().game).toBe(before)
+  })
+  it('키보드로도 제작법을 고를 수 있고 배우지 않은 제작법은 숨긴다', async () => {
+    render(<Bag tab="make" />)
+    expect(screen.queryByRole('button', { name: '아기 침대' })).not.toBeInTheDocument()
+    const button = screen.getByRole('button', { name: '빵' })
+    button.focus()
+    await userEvent.setup().keyboard('{Enter}')
+    expect(screen.getByRole('status')).toHaveTextContent(T.ui.recipeNeeds)
+  })
+  it('배운 아기 침대는 갈대 3과 담요 1을 안내한다', async () => {
+    useGame.setState({ game: { ...useGame.getState().game, recipesKnown: ['homeCradle'] } })
+    render(<Bag tab="make" />)
+    await userEvent.setup().click(screen.getByRole('button', { name: '아기 침대' }))
+    expect(within(screen.getByRole('status')).getByText('갈대 3')).toBeInTheDocument()
+    expect(within(screen.getByRole('status')).getByText('담요 1')).toBeInTheDocument()
+  })
+  it('모든 제작 결과에 기존 도트 아이콘이 있다', () => {
+    for (const id of Object.keys(RECIPES) as RecipeId[]) {
+      const output = Object.keys(RECIPES[id].gives)[0]
+      expect(ICONS[output], id).toBeDefined()
+    }
+  })
+  it('아직 배운 제작법이 없으면 빈 안내를 보여 준다', () => {
+    useGame.setState({ game: { ...useGame.getState().game, recipesKnown: [] } })
+    const { container } = render(<Bag tab="make" />)
+    expect(screen.getByText(T.ui.recipesEmpty)).toBeInTheDocument()
+    expect(container.querySelector('.bag-grid')).toBeNull()
   })
 })

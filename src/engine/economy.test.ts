@@ -1,3 +1,5 @@
+// 기존 생활 시나리오는 개편 이전 저장의 권한으로 검증한다. 새 해금은 late-growth.test.ts에서 검증한다.
+import { legacyGame as newGame } from './growth-test-support'
 import { describe, expect, it } from 'vitest'
 import { CONTENT } from '../content/catalog'
 import { boardFor, BOARD_GAIN } from './board'
@@ -13,7 +15,6 @@ import {
   finishCraft,
   fulfillBoard,
   giveGift,
-  newGame,
   RARE_PRICES,
   rareStall,
   sell,

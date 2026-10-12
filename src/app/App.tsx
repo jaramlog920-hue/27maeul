@@ -9,25 +9,39 @@ import { Play } from '../features/play/Play'
 import { unlockAudio } from '../audio/sound'
 import { useGame } from '../store/game-store'
 
-// 시작 화면 → 새로 시작하기(새 칸) 또는 불러오기(칸 고르기) → 플레이 (2026-10-07 사용자: 스타듀밸리처럼 저장 여러 개)
+/** 마지막으로 플레이한 칸을 먼저, 그 칸이 없으면 최근의 유효한 저장을 고른다. */
+function titleSaves() {
+  const saves = listSaves()
+  for (const slot of new Set([activeSlot(), ...saves.map((s) => s.slot)])) {
+    const game = loadGame(CONTENT, undefined, slot)
+    if (game) return { hasSaves: true, last: { slot, game } }
+  }
+  return { hasSaves: saves.length > 0, last: null }
+}
+
+// 시작 화면 → 이어하기(하던 칸) · 불러오기(칸 고르기) · 새로 시작하기(새 칸) → 플레이
 export function App() {
   const [screen, setScreen] = useState<'intro' | 'avatar' | 'load' | 'play'>('intro')
   // 제목 그림의 주인공은 마지막으로 하던 칸의 모습
-  const [last] = useState(() => loadGame(CONTENT, undefined, activeSlot()) ?? (listSaves()[0] ? loadGame(CONTENT, undefined, listSaves()[0].slot) : null))
-  const [hasSaves] = useState(() => listSaves().length > 0)
+  const [title, setTitle] = useState(titleSaves)
+  function playSave(slot: string) {
+    // 시작 화면을 연 뒤 저장이 바뀌었어도 최신 상태로 이어 간다.
+    const game = loadGame(CONTENT, undefined, slot)
+    if (!game) { setTitle(titleSaves()); return }
+    unlockAudio()
+    setActiveSlot(slot)
+    useGame.getState().load(game)
+    setScreen('play')
+  }
   if (screen === 'play') return <Play />
   if (screen === 'load')
     return (
       <SaveSlots
-        onBack={() => setScreen('intro')}
-        onPick={(slot) => {
-          const game = loadGame(CONTENT, undefined, slot)
-          if (!game) return
-          unlockAudio()
-          setActiveSlot(slot)
-          useGame.getState().load(game)
-          setScreen('play')
+        onBack={() => {
+          setTitle(titleSaves())
+          setScreen('intro')
         }}
+        onPick={playSave}
       />
     )
   if (screen === 'avatar')
@@ -45,5 +59,14 @@ export function App() {
         }}
       />
     )
-  return <Intro hasSave={hasSaves} avatar={last?.avatar} onContinue={() => setScreen('load')} onStart={() => setScreen('avatar')} />
+  return (
+    <Intro
+      hasSave={title.hasSaves}
+      canContinue={title.last !== null}
+      avatar={title.last?.game.avatar}
+      onContinue={() => { if (title.last) playSave(title.last.slot) }}
+      onLoad={() => setScreen('load')}
+      onStart={() => setScreen('avatar')}
+    />
+  )
 }

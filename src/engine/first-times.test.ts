@@ -1,18 +1,27 @@
+// 기존 생활 시나리오는 개편 이전 저장의 권한으로 검증한다. 새 해금은 late-growth.test.ts에서 검증한다.
+import { legacyGame as newGame } from './growth-test-support'
 import { CONTENT } from '../content/catalog'
 import { forbiddenIn } from '../content/forbidden'
 import { SCENES, T, kidFill } from '../content/text'
 import { HELPER_AT, newChild, TODDLER_AT } from './child'
-import { doKidAct } from './family'
+import { doKidAct, firstTime } from './family'
 import { canShow, canSpouseAct, doSpouseAct, FAMILY_CHOICES, latestWork, showAtSchool, SPOUSE_ACT_MINUTES, spouseActId } from './family-memory'
 import { childBirthday, familyMorning } from './family-days'
-import { newGame, sendToSchool, type GameState } from './game'
+import { sendToSchool, syncHome, type GameState } from './game'
 import { sharedExperience } from './people'
 import { CANDIDATE_IDS, NO_ROMANCE } from './romance'
 import { deserialize, serialize } from './save'
 import { freshStats } from './stats'
-import { HOME_ENTRY } from './world'
+import { HOME_ENTRY, PLACES } from './world'
 
 describe('가족의 실제 첫 경험', () => {
+  it('새 터의 같은 좌표에 있어도 마을에 남은 배우자는 가족 기억에 끼지 않는다',()=>{
+    const base=newGame(CONTENT)
+    const s={...base,map:'newland' as const,romance:{...NO_ROMANCE,partner:'wendell',stage:'married' as const},child:newChild(1,base.stats,undefined),npcs:{...base.npcs,wendell:{...base.npcs.wendell,visible:true,x:base.player.x,y:base.player.y}}}
+    expect(firstTime(s,'fam:test').life.experiences['fam:test'].with).toEqual(['family:child'])
+    const home={...s,map:'village' as const}
+    expect(firstTime(home,'fam:test').life.experiences['fam:test'].with).toEqual(['family:child','wendell'])
+  })
   function ready() {
     const s = newGame(CONTENT)
     return { ...s, scenes: [], clock: { ...s.clock, day: 60, minute: 600 }, child: newChild(10, freshStats(), undefined) }
@@ -121,6 +130,15 @@ describe('배우자별 가족 활동 (기획 08 §4)', () => {
       clock: { ...g.clock, day, minute }, romance: { ...NO_ROMANCE, partner, stage: 'married', marriedDay: 3 },
       child: { ...newChild(toddlerBorn, freshStats(), undefined), born: toddlerBorn } }
   }
+  it('공동 가족 활동은 새 터의 동일 좌표에서 실행되지 않고 지도 조회 순서에 흔들리지 않는다',()=>{
+    const home=family('wendell')
+    const away={...home,map:'newland' as const}
+    syncHome(home)
+    expect(canSpouseAct(away)).toBe('notHome')
+    expect(doSpouseAct(away,0)).toBeNull()
+    syncHome(away)
+    expect(canSpouseAct(home)).toBeNull()
+  })
 
   it('배우자 열세 명 모두 제 활동·세 가지 고르기·앨범 장면이 있고 금지어가 없다', () => {
     const W = T.family.withSpouse as unknown as { spouses: Record<string, { label: string; choices: string[]; picks: string[] }> }
@@ -200,11 +218,23 @@ describe('배우자별 가족 활동 (기획 08 §4)', () => {
 })
 
 describe('배움터에서 작품 보여 주기 (기획 08 §5)', () => {
+  it('아이가 배움터에 있어도 집이나 다른 지도에서는 작품을 보여 주거나 구경하지 않는다',()=>{
+    const s=atSchool()
+    const home={...s,player:{...s.player,...HOME_ENTRY}}
+    const away={...s,map:'newland' as const,player:{...s.player,...PLACES.learnTable.stand!}}
+    for(const state of [home,away]) for(const mode of ['speak','draw','watch'] as const) {
+      expect(canShow(state,mode)).toBe('notAtSchool')
+      expect(showAtSchool(state,mode)).toBeNull()
+    }
+    const here={...s,player:{...s.player,...PLACES.learnTable.stand!}}
+    expect(canShow(here,'speak')).toBeNull()
+    expect(showAtSchool(here,'speak')?.state.life.experiences['fam:show']?.with).toEqual(['family:child'])
+  })
   function atSchool(withWork = true): GameState {
     const g = newGame(CONTENT)
     const day = 100
     const born = day - (HELPER_AT + 3)
-    const base = { ...g, scenes: [], clock: { ...g.clock, day, minute: 10 * 60 }, coins: 100, child: { ...newChild(born, freshStats(), undefined), born } } as GameState
+    const base = { ...g, scenes: [], player:{...g.player,...PLACES.learnTable.stand!}, clock: { ...g.clock, day, minute: 10 * 60 }, coins: 100, child: { ...newChild(born, freshStats(), undefined), born } } as GameState
     const sent = sentTo(base)
     return withWork ? { ...sent, flags: { ...sent.flags, kidMade: 1 } } : sent
   }

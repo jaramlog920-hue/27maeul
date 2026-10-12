@@ -43,7 +43,7 @@ describe('왕래 조건', () => {
     expect(canTravel(closed, 'newland')).toBe('locked')
     expect(travel(closed, 'newland', CONTENT)).toBe(closed)
     expect(portalAt(VILLAGE_PORTAL)).toBeNull()
-    expect(tileAt(VILLAGE_PORTAL.x, VILLAGE_PORTAL.y)).toBe(',')
+    expect(tileAt(VILLAGE_PORTAL.x, VILLAGE_PORTAL.y)).toBe('.')
     // 입구 칸을 눌러도 그냥 길을 걷는다 — 건너가는 표적이 아니다
     const tapped = tapTile(closed, VILLAGE_PORTAL)
     expect(tapped.target?.kind).not.toBe('portal')
@@ -235,6 +235,25 @@ describe('새 터에서 잠들기', () => {
 })
 
 describe('화면 흐름 (store)', () => {
+  it('필사창으로 바뀐 뒤 남은 왕래 확인 입력은 지도·필사창을 바꾸지 않는다', () => {
+    const g=opened()
+    useGame.setState({game:g,modal:{kind:'copy',view:'menu'},rng:zero})
+    useGame.getState().travelTo('newland')
+    expect(useGame.getState().game).toBe(g)
+    expect(useGame.getState().modal).toEqual({kind:'copy',view:'menu'})
+  })
+  it('왕래창의 목적지와 다른 확인 입력 및 중복 확인은 무시한다', () => {
+    const g=opened()
+    useGame.setState({game:g,modal:{kind:'crossing',to:'newland'},rng:zero})
+    useGame.getState().travelTo('village')
+    expect(useGame.getState().game).toBe(g)
+    expect(useGame.getState().modal).toEqual({kind:'crossing',to:'newland'})
+    useGame.getState().travelTo('newland')
+    const arrived=useGame.getState().game
+    expect(arrived.map).toBe('newland')
+    useGame.getState().travelTo('newland')
+    expect(useGame.getState().game).toBe(arrived)
+  })
   it('입구를 눌러 걸어가면 건너가는 창이 열리고, 건너가면 새 터, 새 터 입구에서 다시 돌아온다', () => {
     const g = opened({ player: { ...opened().player, x: VILLAGE_PORTAL_FRONT.x - 3, y: VILLAGE_PORTAL_FRONT.y } })
     syncHome(g)
@@ -300,6 +319,21 @@ function isInside(s: GameState): boolean {
 }
 
 describe('저장·불러오기', () => {
+  it('왕래 직후 저장을 반복해도 시간은 이동할 때만 흐르고 소지품·위치는 유지된다', () => {
+    let g=opened({coins:77,inv:{bread:2,water:3}})
+    const before=g.clock.minute
+    for(const to of ['newland','village','newland','village'] as const) {
+      const next=travel(g,to,CONTENT)
+      const loaded=deserialize(serialize(next),CONTENT)!
+      expect(loaded.clock).toEqual(next.clock)
+      expect(playerTile(loaded)).toEqual(playerTile(next))
+      expect(loaded.mapAt).toEqual(next.mapAt)
+      expect(loaded.coins).toBe(77)
+      expect(loaded.inv).toEqual({bread:2,water:3})
+      g=loaded
+    }
+    expect(g.clock.minute).toBe(before+120)
+  })
   it('새 터에서 저장했다 불러오면 새 터의 같은 칸', () => {
     const there = travel(opened(), 'newland', CONTENT)
     const moved = { ...there, player: { ...there.player, x: 20, y: 9, path: [] } }

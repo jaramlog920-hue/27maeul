@@ -1,3 +1,5 @@
+import { libraryPay } from './progression'
+import { libraryBookCount } from './game'
 import { availability } from './plans'
 import { heartUp, notYet, passTime, playerTile, recordExperienceIn, routineOf, stageWith, type GameState } from './game'
 import { npcTile } from './neighbors'
@@ -57,6 +59,7 @@ const MINIS: readonly Minigame[] = ['mash', 'timing', 'pick', 'hold', 'weave', '
 
 export type WorkBlock = 'away' | 'notWorking' | 'busy' | 'done' | 'late' | 'weather' | null
 function nearby(s: GameState, npc: string): boolean {
+  if ((s.map ?? 'village') !== 'village') return false
   const n = s.npcs[npc]
   const p = playerTile(s), at = n && npcTile(n)
   return !!n?.visible && !!at && Math.abs(p.x-at.x)+Math.abs(p.y-at.y) <= 3
@@ -112,7 +115,8 @@ export function finishWorkDay(s: WorkState, finish?: string): WorkState {
   const sh=WORK_SHOPS[shopOf(w.npc)!]
   const fin=finish && sh.finish.includes(finish) ? finish : sh.finish[0]
   const prep=w.choices[0] ?? sh.prep[0]
-  const pay=s.flags.workPayDay===s.clock.day?0:WORK_PAY
+  // 서고를 채울수록 품삯도 는다 (2026-10-12)
+  const pay=s.flags.workPayDay===s.clock.day?0:libraryPay(WORK_PAY,libraryBookCount(s))
   let next:WorkState={...s,coins:s.coins+pay,flags:{...s.flags,workPayDay:s.clock.day},workDay:{...w,step:4,paid:true,choices:[prep,fin]}}
   // 같은 이웃과 함께 일한 기억은 한 항목 (횟수·최근 날이 쌓인다). 함께한 그 이웃만
   next=recordExperienceIn(next,{id:`work:${w.npc}`,kind:'work',with:[w.npc],choice:sh.finish.indexOf(fin),place:shopOf(w.npc)!,item:sh.art(prep,fin,handsOf(w))})
@@ -124,7 +128,7 @@ export function finishWorkDay(s: WorkState, finish?: string): WorkState {
 export function expireWorkDay(s: WorkState): WorkState {
   const w=s.workDay
   if (!w || w.paid || w.day>=s.clock.day) return s
-  const pay=s.flags.workPayDay===w.day?0:Math.min(WORK_PAY,Math.max(0,w.step-1)*2)
+  const pay=s.flags.workPayDay===w.day?0:libraryPay(Math.min(WORK_PAY,Math.max(0,w.step-1)*2),libraryBookCount(s))
   return {...s,coins:s.coins+pay,flags:{...s.flags,workPayDay:w.day},workDay:{...w,paid:true,mini:undefined}}
 }
 /** 이웃이 하는 말 (작업장 안내·손일·마무리). 연인·배우자에게 다른 첫마디가 있으면 그것 */

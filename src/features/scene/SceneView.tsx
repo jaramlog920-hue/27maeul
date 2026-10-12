@@ -2,8 +2,10 @@
 import { useEffect, useState } from 'react'
 import { t } from '../../shared/i18n'
 import { neighborById } from '../../content/catalog'
-import { callName, kidFill, partnerFill, SCENES, spouseFill, T } from '../../content/text'
+import { callName, itemName, kidFill, partnerFill, SCENES, spouseFill, T } from '../../content/text'
+import { CONTENT } from '../../content/catalog'
 import { partnerName, useGame } from '../../store/game-store'
+import { sameLookCandidate } from '../../engine/game'
 
 export function speakerName(speaker: string): string | null {
   if (speaker === 'narration') return null
@@ -20,9 +22,13 @@ export function SceneView({ id, chosen }: { id: string; chosen?: number }) {
   const partner = useGame((s) => partnerName(s.game))
   // 해마다 다시 나오는 장면(가족 생일)은 앨범에 이미 있으면 앨범 표시를 하지 않는다
   const inAlbum = useGame((s) => s.game.album.some((a) => a.id === id))
+  const moveGifts = useGame(s => s.game.moveInGifts)
+  const arrivals = CONTENT.neighbors.filter(n => id === `movedIn:${n.id}` || (n.joinsWithFamily && id === `movedIn:${n.family}`) || (n.joinsAt !== undefined && id === `village:${n.joinsAt}`))
   // 아이 이름 (계획 12): {child}·{childSubj}·{childAnd}, 배우자 이름: {spouse}·{spouseSubj}·{spouseAnd}
   const say = (text: string) => partnerFill(spouseFill(kidFill(callName(text, me), kid), spouse), partner)
-  const scene = SCENES[id]
+  // 마음 6 옛이야기(romance2:<id>)는 같은 모습이면 친구 말로 (romance2:<id>:friend)
+  const asFriend = useGame((s) => /^romance2:/.test(id) && !!SCENES[`${id}:friend`] && sameLookCandidate(s.game, neighborById(id.slice(9))))
+  const scene = SCENES[asFriend ? `${id}:friend` : id]
   // 고르는 말이 있는 장면 (계획 6b): 고르기 전엔 닫지 않는다, 고르면 대답이 이어진다
   const asking = !!scene?.choices?.length && chosen === undefined
   const reply = chosen !== undefined ? (scene?.choices?.[chosen]?.reply ?? []) : []
@@ -52,6 +58,7 @@ export function SceneView({ id, chosen }: { id: string; chosen?: number }) {
         )}
       </div>
       {scene.album && !asking && !more && !inAlbum && <p className="stamp-note">📷 {T.ui.album}: {say(scene.album)}</p>}
+      {!more && arrivals.map(n => moveGifts?.[n.id] && <p className="hint" key={n.id}>{t('moveGifts.received', { who: n.role, item: itemName(moveGifts[n.id]) })}</p>)}
       {more ? (
         <div className="actions">
           <button className="primary" onClick={() => setPage(at + 1)}>

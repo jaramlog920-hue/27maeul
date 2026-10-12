@@ -21,7 +21,7 @@ vi.mock('../../content/ot-catalog', async (importOriginal) => {
 
 function reset(game: Partial<GameState> = {}) {
   localStorage.clear()
-  useGame.setState({ game: { ...newGame(CONTENT), scenes: [], ...game }, modal: null, rng: () => 0, decorating: null, toast: null })
+  useGame.setState({ game: { ...newGame(CONTENT), scenes: [], ...game }, modal: null, rng: () => 0, decorating: null, toast: null, copyResult: null, copySessionStats: null, piecePopups: [] })
 }
 /** 책상에 걸어가 앉는다 */
 function sit() {
@@ -135,6 +135,13 @@ describe('필사 집중 화면 — 장 완료', () => {
     openWrite(writing('mt', without, vs.at(-1)!.verse))
     const user = userEvent.setup()
     await user.type(box(), vs.at(-1)!.text)
+    expect(useGame.getState().modal).toMatchObject({ kind: 'copy', view: 'done' })
+    // 집에서 필사를 마치면 말씀 조각 팝업이 완료 화면보다 먼저 뜰 수 있다.
+    const acquired = useGame.getState().piecePopups.length
+    for (let i = 0; i < acquired; i++) {
+      const popup = screen.getByRole('dialog', { name: '말씀조각 획득' })
+      await user.click(within(popup).getByRole('button', { name: /닫기|다음 조각/ }))
+    }
     expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(`마태복음 ${without}장을 기록했습니다`)
     expect(screen.queryByText(/하나님에 대한 새로운 기록/)).toBeNull()
     await user.click(screen.getByRole('button', { name: '책 덮기' }))

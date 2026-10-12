@@ -4,7 +4,8 @@ import { callName, fill, itemName, T } from '../../content/text'
 import { builtIds, canPick, canUndoPick, eligible, offeredProjects, PROJECT_SUPPLY, PROJECT_WORK_MAX, pickProject, projectLine, setLook, undoPick, villageOf } from '../../engine/projects'
 import { SITES, type FacilityId } from '../../engine/village-sites'
 import { useGame } from '../../store/game-store'
-import { commitVillage, DecorBox, defText, progressOf } from './VillageSite'
+import { featureAccess, featureHint } from '../../engine/feature-rules'
+import { commitVillage, DecorBox, defText, progressOf } from './VillageSupport'
 
 const V = T.village
 
@@ -27,6 +28,7 @@ export function VillageBoard() {
     const d = site.decor
     return (
       <section aria-label={t.name}>
+        {block === 'locked' && <p role="status">제안 내용을 먼저 둘러볼 수 있어요. {featureHint('community', true)}</p>}
         <h3>{t.name}</h3>
         <p>{t.effect}</p>
         <p className="hint">{V.where} · {t.where}</p>
@@ -58,6 +60,7 @@ export function VillageBoard() {
   return (
     <section aria-label={V.title}>
       <h3>{V.title}</h3>
+      {featureAccess(game, 'community') === 'locked' && <p role="status">{featureHint('community')}</p>}
       {active && act && (
         <div className="village-active">
           <p><strong>{V.activeTitle}</strong> · {defText(active).name}</p>
@@ -73,7 +76,7 @@ export function VillageBoard() {
           {canUndoPick(game) && <div className="actions"><button onClick={() => commitVillage(undoPick(useGame.getState().game))}>{V.undo}</button></div>}
         </div>
       )}
-      {offered.filter((id) => id !== active).length > 0 && <p>{active ? V.queued : V.listHint}</p>}
+      {active && offered.filter((id) => id !== active).length > 0 && <p>{V.queued}</p>}
       <div className="actions menu column">
         {offered.filter((id) => id !== active).map((id) => (
           <button key={id} onClick={() => setSel(id)}>{defText(id).name} · {defText(id).short}</button>

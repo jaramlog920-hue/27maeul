@@ -16,6 +16,12 @@ afterEach(() => {
   setNewlandOpen(false)
 })
 
+// 터 가꾸기 칸은 아이콘 칸 (2026-10-12) — 칸을 고르고 자세히 칸의 "자리 고르기"로 미리보기
+function choose(name: RegExp) {
+  fireEvent.click(screen.getByRole('button', { name }))
+  fireEvent.click(screen.getByRole('button', { name: '자리 고르기' }))
+}
+
 function reset(revealed: boolean, extra: Partial<GameState> = {}) {
   const g = newGame(CONTENT)
   const game: GameState = {
@@ -68,7 +74,9 @@ describe('터 가꾸기 창', () => {
   it('네 가지와 걷어내기가 이름·쓰임·드는 것과 함께 보이고, 내부 이름은 보이지 않는다', () => {
     reset(true)
     render(<BuildMenu />)
-    for (const name of ['길', '정원 칸', '공동 마당', '입주 주택', T.build.eraser]) expect(screen.getByText(name)).toBeInTheDocument()
+    for (const name of ['길', '정원 칸', '공동 마당', '입주 주택', T.build.eraser]) expect(screen.getByRole('button', { name })).toBeInTheDocument()
+    // 칸을 고르면 쓰임과 드는 것이 자세히 칸에
+    fireEvent.click(screen.getByRole('button', { name: '입주 주택' }))
     expect(screen.getByText(/150닢 · 올리브 4 · 파피루스 3/)).toBeInTheDocument()
     expect(screen.queryByText(/courtyard|home|path|garden|ordered/)).toBeNull()
   })
@@ -76,7 +84,7 @@ describe('터 가꾸기 창', () => {
   it('입주 주택: 미리보기에서 놓으면 주문되고, 지은 것 목록에서 확인 한 번 뒤 취소하면 모두 돌아온다', () => {
     reset(true)
     render(<BuildMenu />)
-    fireEvent.click(screen.getByRole('button', { name: /입주 주택/ }))
+    choose(/입주 주택/)
     expect(screen.getByRole('button', { name: T.build.place })).toBeEnabled()
     fireEvent.click(screen.getByRole('button', { name: T.build.place }))
     const g = useGame.getState().game
@@ -98,7 +106,7 @@ describe('터 가꾸기 창', () => {
   it('확인에서 "아니요"를 누르면 아무것도 바뀌지 않는다', () => {
     reset(true)
     render(<BuildMenu />)
-    fireEvent.click(screen.getByRole('button', { name: /입주 주택/ }))
+    choose(/입주 주택/)
     fireEvent.click(screen.getByRole('button', { name: T.build.place }))
     fireEvent.click(screen.getByRole('button', { name: T.build.cancel }))
     fireEvent.click(screen.getByRole('button', { name: T.build.no }))
@@ -109,7 +117,7 @@ describe('터 가꾸기 창', () => {
   it('놓을 수 없으면 그 자리에서 이유 한 줄이 보이고 놓기 단추가 막힌다', () => {
     reset(true, { coins: 10 })
     render(<BuildMenu />)
-    fireEvent.click(screen.getByRole('button', { name: /입주 주택/ }))
+    choose(/입주 주택/)
     expect(screen.getByRole('status')).toHaveTextContent(T.build.blockCoins)
     expect(screen.getByRole('button', { name: T.build.place })).toBeDisabled()
     fireEvent.click(screen.getByRole('button', { name: T.build.place }))
@@ -120,7 +128,7 @@ describe('터 가꾸기 창', () => {
   it('길은 한 칸씩 바로 깔리고 같은 칸에는 "이미 깔려 있어요"', () => {
     reset(true)
     render(<BuildMenu />)
-    fireEvent.click(screen.getByRole('button', { name: /^길/ }))
+    choose(/^길/)
     fireEvent.click(screen.getByRole('button', { name: T.build.place }))
     expect(Object.keys(useGame.getState().game.newland!.tiles)).toHaveLength(1)
     expect(useGame.getState().game.coins).toBe(499)
@@ -131,7 +139,7 @@ describe('터 가꾸기 창', () => {
   it('집은 문 방향을 고를 수 있다 (뒤쪽은 없다)', () => {
     reset(true)
     render(<BuildMenu />)
-    fireEvent.click(screen.getByRole('button', { name: /입주 주택/ }))
+    choose(/입주 주택/)
     const group = screen.getByRole('group', { name: T.build.facing })
     expect(group.querySelectorAll('button')).toHaveLength(3)
     fireEvent.click(screen.getByRole('button', { name: T.build.faceLeft }))

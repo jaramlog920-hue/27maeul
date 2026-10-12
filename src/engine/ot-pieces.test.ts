@@ -43,7 +43,8 @@ describe('구약 조각 목록', () => {
 describe('새 터 서고에서 하루 한 번', () => {
   function atDoor(day: number, extra: Partial<GameState> = {}, gift = true): GameState {
     const base = newGame(CONTENT)
-    const open: GameState = { ...base, scenes: [], clock: { day, minute: 10 * 60 }, flags: { ...base.flags, ...(gift ? { newlandGift: 1 } : {}) }, ...extra }
+    // 첫 빛은 이미 본 상태 (첫 빛 걸음의 조각은 아래 따로 본다)
+    const open: GameState = { ...base, scenes: [], clock: { day, minute: 10 * 60 }, flags: { ...base.flags, newlandLight: 1, ...(gift ? { newlandGift: 1 } : {}) }, ...extra }
     syncHome(open)
     const there = travel(open, 'newland', CONTENT)
     syncHome(there)
@@ -69,6 +70,15 @@ describe('새 터 서고에서 하루 한 번', () => {
     expect(isOtPieceId(s.otCollected![0])).toBe(true)
     expect(s.collected).toEqual(before.collected)
     expect(s.inv).toEqual(before.inv)
+  })
+  it('첫 빛을 보는 걸음에는 조각을 주지 않고, 다음에 들어설 때 준다 (2026-10-11 점검 6 — 조각 알림이 첫 빛보다 먼저 떴다)', () => {
+    const before = atDoor(5)
+    const first = stepIn({ ...before, flags: { ...before.flags, newlandLight: 0 } })
+    expect(first.events.some((e) => e.type === 'firstLight')).toBe(true)
+    expect(got(first.events)).toHaveLength(0)
+    const out = { ...first.s, player: { ...first.s.player, x: ARCHIVE.front.x, y: ARCHIVE.front.y, path: [] } }
+    const again = stepIn(out)
+    expect(got(again.events)).toHaveLength(1)
   })
   it('같은 날 나갔다 다시 들어가도 더 주지 않는다', () => {
     const first = stepIn(atDoor(5)).s

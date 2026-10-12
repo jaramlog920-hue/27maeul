@@ -2,6 +2,7 @@
 import type { Facing } from '../engine/types'
 import { withLookDefaults, type FullAvatar } from '../engine/avatar'
 import { spriteRows, writerPalette } from './sprites'
+import { motionBodyRows } from './motion-body'
 import { furnitureUseFrame, USE_PROP_PALETTE } from './furniture-use-motion'
 import { extraUseFrame } from './expansion-life-motion'
 import { quietLifeRows } from './quiet-life-motion'
@@ -23,7 +24,6 @@ function opts(avatar:FullAvatar,short?:number,elder=false){return {frame:0 as co
 /** 아이 몸통 옆에 붙는 짧은 소매와 손. 길게 뻗은 기본 손을 작업물 앞에서 덮어쓴다. */
 function compactChildHands(rows:string[],facing:Facing){
  const a=rows.map(r=>[...r])
- for(let y=11;y<17;y++)for(let x=4;x<21;x++)if(['s','5','!','K'].includes(a[y]?.[x]??'.'))a[y][x]='.'
  const points=facing==='left'?[7]:facing==='right'?[16]:[9,14]
  for(const x of points){
   if(a[11]?.[x]!==undefined)a[11][x]='r'
@@ -33,14 +33,70 @@ function compactChildHands(rows:string[],facing:Facing){
  return a.map(r=>r.join(''))
 }
 
+function hand(a:string[][],x:number,y:number){
+ if(a[y]?.[x]!==undefined){a[y][x]='s';if(a[y][x+1]!==undefined)a[y][x+1]='s'}
+ if(a[y+1]?.[x]!==undefined){a[y+1][x]='5';if(a[y+1][x+1]!==undefined)a[y+1][x+1]='5'}
+}
+function childWritingProp(facing:Facing,frame:number){
+ const b=board(),side=facing==='left'||facing==='right',x=side?(facing==='left'?7:9):7,y=14
+ // 작은 책상과 종이만 둔다. 큰 상자형 소품은 아이 몸을 가려 공놀이처럼 보였기 때문에 제거한다.
+ for(let dx=0;dx<10;dx++)b.put(x+dx,y,'W')
+ b.put(x+1,y-1,'l');b.put(x+2,y-1,'c');b.put(x+3,y-1,'c');b.put(x+4,y-1,'c');b.put(x+5,y-1,'l')
+ b.put(x+2,y-2,'c');b.put(x+3,y-2,'c');b.put(x+4,y-2,'c')
+ for(const lx of [x+1,x+8])for(let dy=1;dy<5;dy++)b.put(lx,y+dy,'w')
+ b.put(x+3+(frame%2),y-2,'S');b.put(x+4+(frame%2),y-1,'S')
+ return b.rows()
+}
+
+function toddlerCrawlRows(source:string[],facing:Facing,frame:number){
+ const b=board(),side=facing==='left'||facing==='right',bob=frame%2,lead=frame%2
+ const headX=facing==='left'?3:facing==='right'?11:7,headY=(side?7:6)+bob
+ source.slice(0,7).forEach((r,y)=>[...r].forEach((c,x)=>{if(c!=='.')b.put(headX+x,headY+y,c)}))
+ // 몸통은 둥근 낮은 타원, 팔꿈치·무릎·손을 따로 찍어 네 발로 보이게 한다.
+ const by=13+bob
+ if(side){
+  const bx=6
+  for(const [dy,row]of ['..rrrr..','.rRrrRr.','.RRrrRR.'].entries())for(const [dx,c]of [...row].entries())if(c!=='.')b.put(bx+dx,by+dy,c)
+  for(const [dx,c]of [[facing==='left'?5:14,'s'],[facing==='left'?4:15,'5'],[facing==='left'?7:12,'d'],[facing==='left'?12:7,'D']] as const)b.put(dx,by+3,c)
+  const front=facing==='left'?4:15,back=facing==='left'?15:4
+  b.put(front,by+4,'s');b.put(front+(facing==='left'?-1:1),by+4,'5')
+  b.put(back,by+4,'s');b.put(back+(facing==='left'?1:-1),by+4,'5')
+  b.put(facing==='left'?9:10,by+5,'k');b.put(facing==='left'?13:6,by+5,'k')
+ }else{
+  const bx=8
+  for(const [dy,row]of ['.rrrrrr.','rRrrrrRr','.RRrrRR.'].entries())for(const [dx,c]of [...row].entries())if(c!=='.')b.put(bx+dx,by+dy,c)
+  const left=bx+1+lead,right=bx+6-lead
+  // 정면 기어가기는 하체를 그리지 않고 상체와 손끝만 남긴다.
+  b.put(left,by+3,'s');b.put(right,by+3,'s')
+  // 정면에서는 발을 앞으로 내밀지 않고 손과 무릎만 보여 기어가는 자세를 단순하게 읽힌다.
+ }
+ return b.rows()
+}
+
+function toddlerPlopRows(source:string[],facing:Facing,frame:number){
+ const b=board(),side=facing==='left'||facing==='right',drop=[0,1,2,2][frame],headX=facing==='left'?3:facing==='right'?11:7
+ source.slice(0,7).forEach((r,y)=>[...r].forEach((c,x)=>{if(c!=='.')b.put(headX+x,5+y+drop,c)}))
+ const by=12+drop,bx=side?7:8
+ // 상체는 짧고 둥글게, 엉덩이와 무릎을 아래로 펼쳐 앉는 중심을 만든다.
+ const torso=side?['.rrrrr.','rRrrrRr','.RRrrRR.']:['.rrrrr.','rRrrrRr','.RRrrRR.']
+ for(const [dy,row]of torso.entries())for(const [dx,c]of [...row].entries())if(c!=='.')b.put(bx+dx,by+dy,c)
+ if(side){
+  const hx=facing==='left'?bx+6:bx-1;b.put(hx,by+2,'s');b.put(hx,by+3,'5')
+  const knee=facing==='left'?bx+1:bx+4;b.put(knee,by+3,'d');b.put(knee+(facing==='left'?1:-1),by+4,'D')
+  b.put(facing==='left'?bx:bx+6,by+5,'k');b.put(facing==='left'?bx+1:bx+5,by+5,'k')
+ }else{
+  b.put(bx-1,by+2,'s');b.put(bx-1,by+3,'5');b.put(bx+6,by+2,'s');b.put(bx+6,by+3,'5')
+  b.put(bx-2,by+3,'d');b.put(bx-1,by+4,'D');b.put(bx+6,by+4,'D');b.put(bx+7,by+3,'d')
+  // 정면으로 앉은 모습은 발을 감춰 무릎과 엉덩이 중심으로 보이게 한다.
+ }
+ return b.rows()
+}
+
 export function toddlerMotionFrame(action:typeof TODDLER_ACTIONS[number],facing:Facing,frame:number,avatar=ADDITION_AVATAR){
  const f=((frame%4)+4)%4,o=opts(avatar,0),source=spriteRows('writer',facing,{...o,frame:action==='walk'?([0,1,0,2] as const)[f]:0})
  if(action==='walk')return result(actorCanvas(source,f%2?5:4),avatar,empty(),facing,220,true,{x:12,y:4+source.length})
  if(action==='plop'){
-  const b=board(),drop=[0,1,2,2][f]
-  source.forEach((r,y)=>[...r].forEach((c,x)=>{if(c!=='.')b.put(7+x,4+y+drop-(y>=source.length-3?drop+1:0),c)}))
-  if(f>=2){for(let x=8;x<16;x++)b.put(x,4+source.length-1,source[source.length-3][x-7]??'.');b.put(8,4+source.length,'k');b.put(15,4+source.length,'k')}
-  return result(b.rows(),avatar,empty(),facing,260,false,{x:12,y:4+source.length})
+  return result(toddlerPlopRows(source,facing,f),avatar,empty(),facing,300,false,{x:12,y:20})
  }
  if(action==='reach'){
   const a=actorCanvas(source).map(r=>[...r]),y=10+[2,1,0,1][f],x=facing==='left'?5:facing==='right'?17:14
@@ -48,14 +104,8 @@ export function toddlerMotionFrame(action:typeof TODDLER_ACTIONS[number],facing:
   a[y][x]='s';a[y+1][x]='5';a[y+2][x]=source[8]?.[8]??'r'
   return result(a.map(r=>r.join('')),avatar,empty(),facing,260,false,{x:12,y:4+source.length})
  }
- // 기어가는 몸은 머리·상의·하의를 별도로 재배치한다. 얼굴을 회전하지 않는다.
- const b=board(),side=facing==='left'||facing==='right',headX=facing==='left'?3:facing==='right'?11:7,headY=side?7:6
- source.slice(0,7).forEach((r,y)=>[...r].forEach((c,x)=>{if(c!=='.')b.put(headX+x,headY+y+(f%2),c)}))
- const shirt='r',pants='d'
- for(let y=13;y<17;y++)for(let x=side?(facing==='left'?10:5):9;x<(side?(facing==='left'?18:13):15);x++)b.put(x,y,y<15?shirt:pants)
- const hx=facing==='left'?5:facing==='right'?19:8,kx=facing==='left'?17:facing==='right'?5:15
- b.put(hx,17+(f%2),'s');b.put(hx+1,17+(f%2),'5');b.put(kx,17+(1-f%2),pants);b.put(kx+1,18,'k')
- return result(b.rows(),avatar,empty(),facing,240,true,{x:12,y:19})
+ // 기어가는 몸은 머리·상의·하의를 낮고 길게 재배치한다. 얼굴을 회전하지 않는다.
+ return result(toddlerCrawlRows(source,facing,f),avatar,empty(),facing,240,true,{x:12,y:20})
 }
 
 function basketProp(facing:Facing,frame:number){const b=board(),x=facing==='left'?2:facing==='right'?15:8,y=12+frame%2
@@ -63,18 +113,21 @@ function basketProp(facing:Facing,frame:number){const b=board(),x=facing==='left
  return b.rows()}
 export function childMotionFrame(action:typeof CHILD_ACTIONS[number],facing:Facing,frame:number,avatar=ADDITION_AVATAR){
  const f=((frame%4)+4)%4,o=opts(avatar,1),base=action==='read'?furnitureUseFrame('writer',facing,'read',f,o):action==='write'?extraUseFrame('writer',facing,'draw',f,o):extraUseFrame('writer',facing,action==='give'?'give':'carry',f,o)
+ if(action==='write'){
+  const source=motionBodyRows('writer',facing,{...o,frame:0,pose:'crouch'}),a=actorCanvas(source)
+  const hands=a.map(r=>[...r]),side=facing==='left'||facing==='right'
+  if(side)hand(hands,facing==='left'?8:13,12)
+  else {hand(hands,9,12);hand(hands,13,12)}
+  return result(hands.map(r=>r.join('')),avatar,childWritingProp(facing,f),facing,360,true,{x:12,y:19})
+ }
  if(action==='carryBasket'||action==='give'){
-  let actor=base.actor
+  let actor=actorCanvas(motionBodyRows('writer',facing,o))
   if(action==='carryBasket'){
-   const walking=actorCanvas(spriteRows('writer',facing,{...o,frame:([0,1,0,2] as const)[f]})).map(r=>[...r])
-   // 손을 지운 뒤 기존 물건 들기 자세의 손만 옮긴다.
-   for(let y=11;y<18;y++)for(let x=0;x<24;x++)if(['s','5'].includes(walking[y][x]))walking[y][x]='.'
-   for(let y=11;y<17;y++)for(let x=0;x<24;x++)if(['s','5'].includes(base.actor[y][x]))walking[y][x]=base.actor[y][x]
-   actor=walking.map(r=>r.join(''))
+   actor=actorCanvas(motionBodyRows('writer',facing,{...o,frame:([0,1,0,2] as const)[f]}))
   }
   return result(compactChildHands(actor,facing),avatar,basketProp(facing,f),facing,240,action!=='give',base.anchor)
  }
- return {...base,actor:compactChildHands(base.actor,facing),palette:writerPalette('spring',avatar),duration:action==='read'?350:260,loop:true}
+ return {...base,actor:compactChildHands(furnitureUseFrame('writer',facing,'read',f,o,false).actor,facing),palette:writerPalette('spring',avatar),duration:action==='read'?350:260,loop:true}
 }
 export function elderMotionFrame(action:typeof ELDER_ACTIONS[number],facing:Facing,frame:number,avatar=ADDITION_AVATAR){
  const f=((frame%4)+4)%4,o=opts(avatar,undefined,true)
@@ -99,17 +152,25 @@ export function guestArrivalFrame(id:keyof typeof SETTLEMENT_GUESTS,action:typeo
   if(facing==='down')return result(actorCanvas(quietLifeRows('writer','wave',f,o)),def.avatar,empty(),facing,300,false)
   const base=extraUseFrame('writer',facing,'give',f,o);return {...base,propBack:empty(),propFront:empty(),palette:writerPalette('spring',def.avatar),duration:300,loop:false}
  }
- const base=extraUseFrame('writer',facing,action==='receiveKey'?'take':'carry',f,o),p=board(),x=facing==='left'?2:facing==='right'?15:8
- const y=action==='putLuggage'?[11,13,15,16][f]:12+f%2
+ const base=extraUseFrame('writer',facing,action==='receiveKey'?'take':'carry',f,o),p=board()
+ // 열쇠 받기는 기본 받기 포즈가 팔을 길게 뻗어 옷을 긁어내므로, 원래 옷을 보존한 서 있는 몸에 손만 얹는다.
+ let actor=actorCanvas(motionBodyRows('writer',facing,{...o,frame:0})),x=facing==='left'?4:facing==='right'?14:9
  if(action==='receiveKey'){
-  const ky=12-[0,1,2,2][f];for(const [dx,dy]of [[0,0],[1,0],[0,1],[1,1],[2,2],[3,2],[4,2],[3,3]])p.put(x+dx,ky+dy,'Q')
+  const ky=12-[0,1,2,2][f],keyX=facing==='left'?8:facing==='right'?14:12
+  // 옷과 구별되는 황동색 열쇠: 가운데가 빈 고리, 긴 자루, 끝의 두 톱니.
+  for(const [dx,dy]of [[0,0],[1,0],[2,0],[0,1],[2,1],[0,2],[1,2],[2,2]] as const)p.put(keyX+dx,ky+dy,'t')
+  p.put(keyX+1,ky+1,'y');p.put(keyX+3,ky+1,'y');p.put(keyX+4,ky+1,'y');p.put(keyX+5,ky+1,'t');p.put(keyX+5,ky+2,'t');p.put(keyX+6,ky+2,'t')
+  const hands=actor.map(r=>[...r]);hand(hands,facing==='left'?7:facing==='right'?13:11,ky+1);actor=hands.map(r=>r.join(''))
  } else {
-  for(let dy=0;dy<7;dy++)for(let dx=0;dx<7;dx++)p.put(x+dx,y+dy,dy===0||dy===6||dx===0||dx===6?'W':dx===2||dx===4?'l':'w')
-  p.put(x+2,y-2,'W');p.put(x+3,y-2,'W');p.put(x+4,y-2,'W');p.put(x+2,y-1,'W');p.put(x+4,y-1,'W')
+  const y=[13,15,17,18][f]
+  for(let dy=0;dy<5;dy++)for(let dx=0;dx<6;dx++)p.put(x+dx,y+dy,dy===0||dy===4||dx===0||dx===5?'W':dy===1?'l':'w')
+  p.put(x+1,y-2,'W');p.put(x+2,y-2,'W');p.put(x+3,y-2,'W');p.put(x+4,y-2,'W');p.put(x+1,y-1,'l');p.put(x+4,y-1,'l')
+  const hands=actor.map(r=>[...r]);hand(hands,facing==='left'?9:facing==='right'?13:10,Math.max(11,y-1));actor=hands.map(r=>r.join(''))
  }
  if(action==='arrive'){
-  const walking=actorCanvas(spriteRows('writer',facing,{...o,frame:([0,1,0,2] as const)[f]}))
-  return result(walking,def.avatar,p.rows(),facing,240,true,base.anchor)
+  const walking=actorCanvas(motionBodyRows('writer',facing,{...o,frame:([0,1,0,2] as const)[f]})).map(r=>[...r])
+  hand(walking,facing==='left'?9:facing==='right'?13:10,Math.max(11,[13,15,17,18][f]-1))
+  return result(walking.map(r=>r.join('')),def.avatar,p.rows(),facing,240,true,base.anchor)
  }
- return result(base.actor,def.avatar,p.rows(),facing,320,false,base.anchor)
+ return result(actor,def.avatar,p.rows(),facing,320,false,base.anchor)
 }

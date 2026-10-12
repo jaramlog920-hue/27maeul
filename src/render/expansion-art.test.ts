@@ -31,7 +31,8 @@ describe('expansion art handoff',()=>{
     for(const kind of ['cat','dog'] as const)for(const baby of [false,true])for(const action of PET_ACTIONS)for(const facing of facings){
       const frames=Array.from({length:4},(_,f)=>petMotionRows(kind,facing,action,f,baby))
       for(const rows of frames)check(rows,16,16,ANIMAL_PALETTE[kind])
-      expect(new Set(frames.map(r=>r.join(''))).size,`${kind}/${baby}/${action}/${facing}`).toBeGreaterThan(1)
+      const changes = new Set(frames.map(r=>r.join(''))).size
+      expect(changes,`${kind}/${baby}/${action}/${facing}`).toBeGreaterThan(1)
     }
     expect(petMotionRows('cat','down','wait',0,true)).not.toEqual(petMotionRows('cat','down','wait',0,false))
   })

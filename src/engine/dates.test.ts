@@ -1,3 +1,5 @@
+// 기존 생활 시나리오는 개편 이전 저장의 권한으로 검증한다. 새 해금은 late-growth.test.ts에서 검증한다.
+import { legacyGame as newGame } from './growth-test-support'
 // 연인과 함께 가기 (계획 10 작업 4): 찻집·정자·언덕에서 짧은 장면, 하루 한 번, 마음·기분, 곳마다 처음은 앨범
 import { CONTENT } from '../content/catalog'
 import { forbiddenIn } from '../content/forbidden'
@@ -5,7 +7,7 @@ import { ALBUM_IDS, JOURNAL_NOTES, partnerFill, SCENES } from '../content/text'
 import { isWet, weatherOf } from './calendar'
 import { isFamilyNote } from './daybook'
 import { isFamilyAlbum } from './family'
-import { canDate, clearSky, goOnDate, newGame, partnerFree, sceneSeen, type GameState } from './game'
+import { canDate, clearSky, goOnDate, partnerFree, sceneSeen, type GameState } from './game'
 import { DATE_MOOD, moodOf } from './mood'
 import { DATE_FIRST_SCENE, DATE_PLACES, DATE_TEA_PRICE, DATE_VARIANTS, NO_ROMANCE, type DatePlace, type Romance, type RomanceStage } from './romance'
 import { deserialize, serialize } from './save'

@@ -1,20 +1,21 @@
 // 콘텐츠 데이터의 단일 입구. 성경 문장은 versesOf로만 꺼낸다 (exclusion-list §0).
 // 앱은 서고 방 표(shelf-rooms)의 책만 싣는다 (scripts/build-bible-subset.mjs, verify가 원본과 같은지 확인)
-import raw from './bible-subset.json'
+import indexRaw from './nt-index.json'
+import { ntBookData } from './nt-loader'
+import { verseHash } from './verse-hash'
 import books from './books.json'
 import piecesRaw from './pieces.json'
 import neighborsRaw from './neighbors.json'
 import journeyRaw from './journey.json'
 import churchesRaw from './churches.json'
 import lettersRaw from './letters.json'
-import peopleRaw from './people.json'
+import { PEOPLE_DATA } from './people-all'
 import godRecordsRaw from './god-records.json'
 import connectionsRaw from './connections.json'
-import guidesRaw from './chapter-guides.json'
 import type { GodRecordDef } from '../engine/god-records'
 import type { NameDef } from '../engine/connections'
 import { setPeopleData, type PeopleData } from '../engine/people'
-import { expandRef, countsFrom } from './ref'
+import { expandRef } from './ref'
 import { BOOKS, LETTERS, type Book, type GameContent, type NeighborDef, type Piece } from '../engine/types'
 import { bibleIdOf } from '../engine/shelf-rooms'
 import type { LetterOpening, Question, QuizSource } from '../engine/quiz'
@@ -23,9 +24,10 @@ import type { CopySource } from '../engine/copy'
 import { isOtBook, type CopyBook } from '../engine/ot-books'
 import { otBookOfRef, otChapterGuide, otChapterText, otCopySource, otLoaded, otVersesOf } from './ot-catalog'
 
-const bible = raw as Record<string, string[][]>
+const ntIndex = indexRaw as Record<Book, { counts: number[]; missing: string[]; brackets: string[]; texts: Record<string, number> }>
 const byAbbr = Object.fromEntries(books.map((b) => [b.abbr, b.id]))
-const counts = countsFrom(bible)
+const counts = Object.fromEntries(BOOKS.map(b => [bibleIdOf(b), ntIndex[b].counts]))
+const missing = new Set(BOOKS.flatMap(b => ntIndex[b].missing))
 
 // ── 책 id ↔ 본문 책 id·약어 (books.json에서 읽는다) ──
 const bookInfo = (b: Book) => {
@@ -34,7 +36,6 @@ const bookInfo = (b: Book) => {
   return info
 }
 export const BOOK_ABBR = Object.fromEntries(BOOKS.map((b) => [b, bookInfo(b).abbr])) as Record<Book, string>
-const BOOK_IDS = Object.fromEntries(BOOKS.map((b) => [b, bibleIdOf(b)])) as Record<Book, string>
 const ABBR_BOOK: Record<string, Book> = Object.fromEntries(BOOKS.map((b) => [BOOK_ABBR[b], b]))
 
 /**
@@ -44,10 +45,10 @@ const ABBR_BOOK: Record<string, Book> = Object.fromEntries(BOOKS.map((b) => [BOO
  */
 function chapterPieces(bs: readonly Book[]): Piece[] {
   return bs.flatMap((b) =>
-    (bible[BOOK_IDS[b]] ?? []).map((verses, i) => ({
+    ntIndex[b].counts.map((length, i) => ({
       id: `${b}-${String(i + 1).padStart(3, '0')}`,
       book: b,
-      ref: `${BOOK_ABBR[b]} ${i + 1}:1-${verses.length}`,
+      ref: `${BOOK_ABBR[b]} ${i + 1}:1-${length}`,
       chapter: i + 1,
       title: `${bookInfo(b).name} ${i + 1}장`,
       stamps: [],
@@ -133,7 +134,7 @@ export function versesOf(ref: string): Verse[] {
   if (otBookOfRef(ref)) return otVersesOf(ref)
   return expandRef(ref, byAbbr, counts)
     .map((k) => {
-      const text = bible[k.bookId]?.[k.chapter - 1]?.[k.verse - 1]
+      const text = ntBookData(ntBookOfRef(ref)).chapters[k.chapter - 1]?.[k.verse - 1]
       if (text === undefined) throw new Error(`no verse ${ref} ${k.chapter}:${k.verse}`)
       return { chapter: k.chapter, verse: k.verse, text }
     })
@@ -146,7 +147,7 @@ export function versesOf(ref: string): Verse[] {
  */
 export function chapterText(book: CopyBook, chapter: number): Verse[] {
   if (isOtBook(book)) return otChapterText(book, chapter)
-  const n = bible[BOOK_IDS[book]]?.[chapter - 1]?.length ?? 0
+  const n = ntIndex[book].counts[chapter - 1] ?? 0
   return n ? versesOf(`${BOOK_ABBR[book]} ${chapter}:1-${n}`) : []
 }
 
@@ -157,11 +158,10 @@ export interface ChapterGuide {
   /** 필사하며 살펴보기 */
   look: string
 }
-const guides = guidesRaw as Record<string, Record<string, ChapterGuide>>
 /** 그 장의 길잡이 (장 전체에서 같은 길잡이). 없으면 null. 구약은 책을 불러온 뒤 ot-guides에서 (사용자 결정 ④, 2026-10-07 공개) */
 export function chapterGuide(book: CopyBook, chapter: number): ChapterGuide | null {
   if (isOtBook(book)) return otChapterGuide(book, chapter)
-  return guides[BOOK_IDS[book]]?.[String(chapter)] ?? null
+  return ntBookData(book).guides[String(chapter)] ?? null
 }
 
 /** 본문에서 보기의 한 절: 조각에 든 절이면 inPiece */
@@ -205,16 +205,9 @@ export function piecesOf(book: Book): Piece[] {
 export const BOOKS_WITH_CONTENT: readonly Book[] = BOOKS.filter((b) => piecesOf(b).length > 0)
 
 /** 띄어쓰기와 문장부호를 떼고 비교한다 — 띄어쓰기만 다른 같은 문장을 다른 문장으로 세지 않도록 */
-const quizKey = (s: string) => s.replace(/[\s,.!?]+/g, '')
-const verseCounts = new Map<Book, Map<string, number>>()
-for (const b of BOOKS) {
-  const m = new Map<string, number>()
-  for (const ch of bible[BOOK_IDS[b]] ?? []) for (const v of ch) m.set(quizKey(v), (m.get(quizKey(v)) ?? 0) + 1)
-  verseCounts.set(b, m)
-}
 
 /** 신약 책만 (퀴즈·조각은 구약을 넣지 않는다) */
-const ntBookOfRef = (ref: string): Book => {
+export const ntBookOfRef = (ref: string): Book => {
   const b = ABBR_BOOK[ref.trim().split(/\s+/)[0]]
   if (!b) throw new Error(`not a book ref: ${ref}`)
   return b
@@ -228,27 +221,11 @@ const bookOfRef = (ref: string): CopyBook => otBookOfRef(ref) ?? ntBookOfRef(ref
  * 둥근 괄호 ( … ): 마 6:13 송영(사본 차이 표시)과 본문 속 풀이 괄호(막 7:3-4 등). 구별하지 않고 모두 넣는다 — 퀴즈에서 빼는 쪽이 늘 안전하다.
  * 본문이 없는 절 '(없음)'은 괄호로 치지 않는다(versesOf에서 이미 감춤).
  */
-const bracketed = new Set<string>()
-for (const b of BOOKS) {
-  let square = false
-  let round = false
-  ;(bible[BOOK_IDS[b]] ?? []).forEach((ch, ci) =>
-    ch.forEach((text, vi) => {
-      if (noText(text)) return
-      if (square || round || /[[\]()]/.test(text)) bracketed.add(`${BOOK_ABBR[b]} ${ci + 1}:${vi + 1}`)
-      for (const c of text) {
-        if (c === '[') square = true
-        else if (c === ']') square = false
-        else if (c === '(') round = true
-        else if (c === ')') round = false
-      }
-    }),
-  )
-}
+const bracketed = new Set(BOOKS.flatMap(b => ntIndex[b].brackets))
 export const inBrackets = (ref: string) => bracketed.has(ref.trim())
 
 /** 책들 안에서 같은 문장을 가진 절의 수 */
-const countIn = (books: readonly Book[], text: string) => books.reduce((n, b) => n + (verseCounts.get(b)?.get(quizKey(text)) ?? 0), 0)
+const countIn = (books: readonly Book[], text: string) => books.reduce((n, b) => n + (ntIndex[b].texts[verseHash(text)] ?? 0), 0)
 
 /** 퀴즈가 쓰는 본문: 절마다 참조를 붙이고, 고른 책들 안에서(countVerse)·앱 본문 모든 책에서(countAnywhere) 같은 문장이 몇 번 나오는지 센다 */
 export function quizSourceFor(books: readonly Book[]): QuizSource & { countAnywhere: (text: string) => number } {
@@ -277,7 +254,7 @@ export function copySourceFor(book: CopyBook): CopySource {
     src = {
       ...quizSourceFor([book]),
       countAnywhere: allBooks.countVerse,
-      chapters: piecesOf(book).map((p) => ({ chapter: p.chapter, ref: p.ref })),
+      chapters: ntIndex[book].counts.map((length, i) => ({ chapter: i + 1, ref: `${BOOK_ABBR[book]} ${i + 1}:1-${length}` })),
     }
     copySources.set(book, src)
   }
@@ -285,7 +262,19 @@ export function copySourceFor(book: CopyBook): CopySource {
 }
 
 const verseToPiece = new Map<string, Piece>()
-for (const p of ALL_PIECES) for (const v of versesOf(p.ref)) verseToPiece.set(`${BOOK_ABBR[p.book]} ${v.chapter}:${v.verse}`, p)
+for (const p of ALL_PIECES) for (const v of expandRef(p.ref, byAbbr, counts)) {
+  const ref = `${BOOK_ABBR[p.book]} ${v.chapter}:${v.verse}`
+  if (!missing.has(ref)) verseToPiece.set(ref, p)
+}
+/** 목록·진행 표시에는 본문 대신 절 번호 색인만 읽는다. */
+export function verseNumbers(book: Book, chapter: number): number[] {
+  return Array.from({ length: ntIndex[book].counts[chapter - 1] ?? 0 }, (_, i) => i + 1)
+    .filter(v => !missing.has(`${BOOK_ABBR[book]} ${chapter}:${v}`))
+}
+export function verseCountOf(ref: string): number {
+  const abbr = BOOK_ABBR[ntBookOfRef(ref)]
+  return expandRef(ref, byAbbr, counts).filter(v => !missing.has(`${abbr} ${v.chapter}:${v.verse}`)).length
+}
 /** '막 1:10' → 그 절을 담은 조각 (조각은 겹치지 않으므로 하나) */
 export function pieceOfVerse(ref: string): Piece | undefined {
   return verseToPiece.get(ref.trim())
@@ -303,5 +292,5 @@ export function pieceOfQuestion(q: Question): string | null {
 }
 
 // 살아 움직이는 사람들 (계획 6b): 일과·목격·마을 사건·말·이벤트
-export const PEOPLE = peopleRaw as unknown as PeopleData
+export const PEOPLE: PeopleData = PEOPLE_DATA
 setPeopleData(PEOPLE)

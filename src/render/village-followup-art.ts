@@ -1,9 +1,8 @@
 import { withLookDefaults, type FullAvatar } from '../engine/avatar'
 import type { GuestKind } from '../engine/game'
 import type { GenPerson } from '../engine/gen'
-import { generationRows } from './generation-art'
 import { FURNITURE_ART, FURNI_PALETTE } from './furniture-art'
-import { spriteRows, writerPalette } from './sprites'
+import { SMALL_PALETTE, spriteRows, writerPalette } from './sprites'
 import { furnitureUseFrame, USE_PROP_PALETTE } from './furniture-use-motion'
 
 export const MEETING_EMOTES = ['heart', 'laugh', 'talk', 'sweat', 'angry'] as const
@@ -30,14 +29,22 @@ export function meetingEmoteRows(kind: MeetingEmote): string[] {
   return p.map(row => row.join(''))
 }
 
-/** 기존 요람·아기 원본 재사용. 뒤 요람 → 아기 → 앞 난간으로 합성한다. */
-export function householdCradleFrame(baby: Pick<GenPerson, 'look' | 'name' | 'avatar'>, frame: number, sleeping: boolean) {
-  const avatar = withLookDefaults({ look: baby.look ?? 'f', name: baby.name ?? '', ...baby.avatar })
-  const pal = writerPalette('spring', avatar)
+/** 누운 얼굴과 가로 포대기. 뒤 요람 → 아기 → 앞 난간으로 합성한다. */
+export function householdCradleFrame(baby: Pick<GenPerson, 'look' | 'name' | 'avatar' | 'hair'> | null, frame: number, sleeping: boolean) {
+  const avatar = withLookDefaults({ look: baby?.look ?? 'f', name: baby?.name ?? '', ...baby?.avatar, ...(baby?.hair ? { hairColor: baby.hair } : {}) })
+  const pal: Record<string, string> = { ...writerPalette('spring', avatar), w: SMALL_PALETTE.W, W: SMALL_PALETTE.y }
   const crib = FURNITURE_ART.homeCradle.rows.map(r => r.replaceAll('z', '.'))
   const actor = Array.from({ length: 16 }, () => Array<string>(16).fill('.'))
-  const babyRows = generationRows('baby', 'down', sleeping ? 2 : frame, { frame: 0, blink: sleeping, avatar })
-  babyRows.forEach((r, y) => [...r].forEach((c, x) => { if (c !== '.' && y < 14) actor[y][x + 3] = c === 'o' ? 'k' : c }))
+  const blink = sleeping || Math.abs(frame) % 4 === 2
+  // 8×5 silhouette stays between the posts, above the foreground rail.
+  const babyRows = [
+    '.hh.wwww',
+    'hsswwWww',
+    blink ? 'skswWwWw' : 'soswWwWw',
+    's+swwWWw',
+    '.ss.wwww',
+  ]
+  if (baby) babyRows.forEach((r, y) => [...r].forEach((c, x) => { if (c !== '.') actor[y + 5][x + 4] = c }))
   const front = crib.map((r, y) => y >= 10 ? r : '.'.repeat(16))
   return { back: crib, actor: actor.map(r => r.join('')), front, actorPalette: pal, propPalette: FURNI_PALETTE }
 }
@@ -59,10 +66,9 @@ export function visitorFrame(kind: GuestKind, action: VisitorAction, frame: numb
     return { actor: Array.from({ length: 24 }, (_, y) => y >= 4 && y < 4 + rows.length ? '.'.repeat(7) + rows[y - 4] + '.'.repeat(7) : '.'.repeat(24)), propBack: empty, propFront: empty, actorPalette: writerPalette('spring', avatar), propPalette: USE_PROP_PALETTE, height: rows.length }
   }
   if (action === 'write') {
-    const phase=((Math.trunc(frame)%4)+4)%4,layers=furnitureUseFrame('writer','down','sit',frame,opts)
+    const phase=((Math.trunc(frame)%4)+4)%4,layers=furnitureUseFrame('writer','down','sit',frame,opts,false)
     const actor=layers.actor.map(r=>[...r]),back=Array.from({length:24},()=>Array<string>(24).fill('.')),front=back.map(r=>[...r])
     const rect=(p:string[][],x:number,y:number,w:number,h:number,c:string)=>{for(let yy=y;yy<y+h;yy++)for(let xx=x;xx<x+w;xx++)if(p[yy]?.[xx]!==undefined)p[yy][xx]=c}
-    for(let y=11;y<17;y++)for(let x=7;x<17;x++)if(['s','5','!','K'].includes(actor[y][x]))actor[y][x]='.'
     // 책을 가슴 아래 책상에 두고 종이 → 손 → 펜 레이어로 나눈다.
     rect(back,4,14,16,2,'g');rect(back,5,14,14,1,'e');rect(back,5,16,2,5,'g');rect(back,17,16,2,5,'g')
     rect(back,8,11,9,3,'g');rect(back,9,11,7,2,'a');rect(back,12,11,1,3,'b')

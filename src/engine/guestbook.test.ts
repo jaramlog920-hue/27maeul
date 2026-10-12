@@ -1,8 +1,9 @@
+import { legacyGame as newGame } from './growth-test-support'
 // 계획 21 R10: 서고 방명록 — 사흘에 하루꼴, 순위 날엔 다른 마을 서기, 수입 없음, 30줄까지
 import { CONTENT } from '../content/catalog'
 import { T } from '../content/text'
 import { FORBIDDEN, FORBIDDEN_PLACES } from '../content/forbidden'
-import { guestMorning, isRankDay, newGame, type GameState } from './game'
+import { guestMorning, isRankDay, type GameState } from './game'
 import { ourScore } from './villages'
 
 const at = (day: number, g?: GameState['guestbook']): GameState => ({ ...newGame(CONTENT), clock: { day, minute: 360 }, guestbook: g })

@@ -2,6 +2,10 @@
 // 사람마다 내용은 src/content/people.json 한 곳 (게임 문장이 들어 있어 verify가 금지어를 본다).
 // 이 파일은 상태를 바꾸지 않는 판단만 — 상태를 바꾸는 입구는 game.ts.
 import type { ItemId, Minigame, Season, Tile, Weather } from './types'
+import { lodgingNpcSpot, LODGING_WORK_SPOTS } from './lodging'
+import { stageByAge } from './gen-age'
+import { BABY_DAY } from './stories'
+import type { GenStage } from './gen'
 
 // ── 조건 ──
 
@@ -90,6 +94,8 @@ export interface Routine {
 }
 
 export interface Req {
+  /** 헤이즐의 고정 자녀: 옛 저장·정산 전에도 출생일로 판단한다. */
+  bakerChildStage?: GenStage[]
   /** 이미 본 이벤트·목격 */
   seen?: string[]
   notSeen?: string[]
@@ -117,6 +123,8 @@ export interface Req {
   rel?: Rel[]
   /** 이 사이 단계 이상 */
   minStage?: Stage
+  /** 이 사람 마음(하트)이 이 수 이상 — 같은 사이 단계 안에서도 하트가 찰수록 새 말이 열린다 */
+  hearts?: number
   /** 이 사람과 함께한 그 경험이 최근 n일 안 */
   recent?: { exp: string; days: number }
   /** 이 사람과 함께한 그 경험에 남은 결과물이 이것일 때 (계획 16 작업 17: 함께 일한 마무리의 흔적) */
@@ -203,6 +211,8 @@ export interface PersonEvent {
   completes?: string
   /** 끝날 때 플레이어 가방에 남는 물건 하나 (집 꾸미기로 놓는다 — 장식이 아니다) */
   keepsake?: ItemId
+  /** 장면이 떠 있는 동안 하는 동작 (행사 동작 이름 — render/event-life-motion EVENT_ACTIONS). people-more.json이 붙인다 */
+  motion?: { npc: string; player?: string }
 }
 
 export interface Sighting {
@@ -246,7 +256,7 @@ export interface Person {
 }
 
 export interface LifestyleTastes {
-  activity?: Partial<Record<'tea' | 'sew' | 'garden' | 'observe' | 'taste' | 'make' | 'walk' | 'work', -1 | 0 | 1>>
+  activity?: Partial<Record<'tea' | 'sew' | 'garden' | 'observe' | 'read' | 'cook' | 'paint' | 'music' | 'taste' | 'make' | 'walk' | 'work', -1 | 0 | 1>>
   place?: Partial<Record<'indoor' | 'hill' | 'market' | 'shade' | 'lake', -1 | 0 | 1>>
   size?: Partial<Record<'small' | 'many', -1 | 0 | 1>>
   time?: Partial<Record<'early' | 'afternoon' | 'evening', -1 | 0 | 1>>
@@ -523,6 +533,8 @@ export interface ReqCtx {
   placed?: readonly string[]
   /** 이 이웃이 마을에 이사 와 있는가 (없으면 모두 와 있는 것으로) */
   joined?: (id: string) => boolean
+  /** 이 사람 마음 (하트 수 0~10) */
+  hearts?: number
 }
 
 /** 완료 표식 값: 1 = 끝남, 갈래가 있으면 outcome+1 (계획 16 작업 4가 쓴다) */
@@ -537,6 +549,7 @@ export function seenDone(life: Life, id: string): boolean {
 
 export function reqMet(r: Req | undefined, c: ReqCtx): boolean {
   if (!r) return true
+  if (r.bakerChildStage && (c.day < BABY_DAY || !r.bakerChildStage.includes(stageByAge(BABY_DAY, c.day)))) return false
   const seen = (id: string) => seenDone(c.life, id)
   if (r.seen && !r.seen.every(seen)) return false
   if (r.notSeen && r.notSeen.some(seen)) return false
@@ -557,6 +570,7 @@ export function reqMet(r: Req | undefined, c: ReqCtx): boolean {
   }
   if (r.expItem && sharedExperience(c.life, c.npc, r.expItem.exp)?.item !== r.expItem.item) return false
   if (r.minStage !== undefined && (c.stage ?? 0) < r.minStage) return false
+  if (r.hearts !== undefined && (c.hearts ?? 0) < r.hearts) return false
   if (r.rel) {
     const rel = relOf(c.stage ?? 0, c.romance)
     if (!rel || !r.rel.includes(rel)) return false
@@ -626,7 +640,8 @@ export function pickLine(p: Person, c: ReqCtx & { m: Moment; depth: number; cool
       (!l.near || Math.abs(l.near.x - c.here.x) + Math.abs(l.near.y - c.here.y) <= 2),
   )
   if (!ok.length) return null
-  const score = (l: TalkLine) => l.depth * 2 + specificity(l.when) * 2 + (l.req ? Object.keys(l.req).length * 3 : 0) + (l.near ? 2 : 0) + talkBonus(l.req)
+  // 하트 수 조건은 덤을 붙이지 않는다 — 하트가 찼다고 그 말만 되풀이하지 않고 평소 말과 섞인다
+  const score = (l: TalkLine) => l.depth * 2 + specificity(l.when) * 2 + (l.req ? Object.keys(l.req).filter((k) => k !== 'hearts').length * 3 : 0) + (l.near ? 2 : 0) + talkBonus(l.req)
   const fresh = ok.filter((l) => !recent.includes(l.id))
   const pool = fresh.length ? fresh : ok.slice().sort((a, b) => recent.indexOf(a.id) - recent.indexOf(b.id)).slice(0, 1)
   const top = Math.max(...pool.map(score))
@@ -654,13 +669,45 @@ function talkBonus(r: Req | undefined): number {
 
 let DATA: PeopleData = { people: {}, threads: [] }
 export function setPeopleData(d: PeopleData): void {
-  DATA = d
+  // 내용 원본을 건드리지 않고 일과·사건·목격·약속 모두 같은 새 작업장 자리를 사용한다.
+  const spot = <T extends { at: Tile; req?: Req }>(npc: string, value: T): T => {
+    // 목수의 대장간 방문은 같은 옛 좌표를 쓰는 기름틀 방문과 구분한다.
+    const forgeVisit = npc === 'carpenter' && (
+      (value.at.x === 8 && value.at.y === 126) ||
+      (value.at.x === 22 && value.at.y === 125 && (
+        value.req?.seen?.includes('smith:story:1') || value.req?.story?.some(s => s.id === 'smithHook')
+      ))
+    )
+    // 대장간 방문 자리는 대장장이 왼쪽 위 대각선 — 오른쪽 칸(8,125)은 틸리의 일 자리, 아래 대각선(7,126)은 플레이어 모루 자리라 같은 칸이 되면 대장장이 이야기 2가 열리지 않았다 (2026-10-11 점검)
+    const at = forgeVisit ? { x: LODGING_WORK_SPOTS.smith.x - 1, y: LODGING_WORK_SPOTS.smith.y - 1 } : lodgingNpcSpot(npc, value.at)
+    return { ...value, at }
+  }
+  DATA = {
+    people: Object.fromEntries(Object.entries(d.people).map(([id, p]) => [id, {
+      ...p, routines: p.routines.map(r => spot(id, r)),
+      ...(p.offDays ? { offDays: { ...p.offDays, routines: p.offDays.routines.map(r => spot(id, r)) } } : {}),
+      ...(p.sightings ? { sightings: p.sightings.map(s => spot(id, s)) } : {}),
+      ...(p.events ? { events: p.events.map(e => ({ ...spot(id, e),
+        ...(e.choices ? { choices: e.choices.map(c => ({ ...c, ...(c.promise ? { promise: spot(id, c.promise) } : {}) })) } : {}),
+      })) } : {}),
+    }])),
+    threads: d.threads.map(thread => ({ ...thread, phases: thread.phases.map(phase => ({ ...phase,
+      ...(phase.routines ? { routines: Object.fromEntries(Object.entries(phase.routines).map(([id, rs]) => [id, rs.map(r => spot(id, r))])) } : {}),
+      ...(phase.sightings ? { sightings: phase.sightings.map(s => spot(s.npc, s)) } : {}),
+    })) })),
+  }
 }
 export function peopleData(): PeopleData {
   return DATA
 }
 export function personOf(id: string): Person | undefined {
   return DATA.people[id]
+}
+/** 이 사람이 함께 나오는(with) 남의 사건들 */
+export function eventsWith(npc: string): { owner: string; event: PersonEvent }[] {
+  const out: { owner: string; event: PersonEvent }[] = []
+  for (const p of Object.values(DATA.people)) for (const e of p.events ?? []) if (e.with?.includes(npc)) out.push({ owner: p.id, event: e })
+  return out
 }
 /** 사건 id로 그 사건과 주인 (없으면 null) */
 export function eventById(id: string): { owner: string; event: PersonEvent } | null {

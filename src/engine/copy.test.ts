@@ -156,6 +156,9 @@ describe('blanksFor — 121장 전부', () => {
 /** 로마서–빌레몬서·히브리서–유다서 방이 열리고, 재료가 넉넉한 상태 */
 function ready(book: Book): GameState {
   const s = newGame(CONTENT)
+  // 편지 수령이 정식으로 열린 상태. 제본·전시 기록과 완필 기록은 별개다.
+  s.progress.mt.completed = Array.from({ length: 28 }, (_, i) => i + 1)
+  s.progress.mk.completed = Array.from({ length: 16 }, (_, i) => i + 1)
   const open = {
     ...s,
     flags: { ...s.flags, gospelFeast: 2, 'room:romPhm': 1, 'room:hebJud': 1 },
@@ -169,7 +172,7 @@ function ready(book: Book): GameState {
 const answers = (book: Book, chapter: number) => blanksFor(book, chapter, copySourceFor(book)).map((b) => b.answer)
 
 describe('recordLetter', () => {
-  it('맞게 채우면 장이 채워진다 — 재료는 들지 않는다 (계획 14, 첫 장 장면)', () => {
+  it('맞게 채우면 장이 채워진다 — 재료는 들지 않는다 (계획 14)', () => {
     const s = ready('rom')
     expect(s.collected).toContain('rom-001')
     expect(letterReady(s, 'rom', 1, CONTENT)).toEqual({ kind: 'ready' })
@@ -178,7 +181,8 @@ describe('recordLetter', () => {
     expect(r.progress.rom.completed).toEqual([1])
     expect(r.inv.papyrus).toBe(5)
     expect(r.inv.ink).toBe(5)
-    expect(r.scenes).toContain('firstChapter')
+    // 이미 두 권을 완필한 상태이므로 처음 한 장 안내를 다시 띄우지 않는다.
+    expect(r.scenes).not.toContain('firstChapter')
     expect(r.clock.minute).toBeGreaterThan(s.clock.minute)
     expect(r.needs.fatigue).toBeGreaterThan(s.needs.fatigue)
     // 한 번 기록한 장은 다시 기록하지 않는다

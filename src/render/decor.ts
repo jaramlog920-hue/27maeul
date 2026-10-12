@@ -125,7 +125,7 @@ function mailbox(g: Ctx, t: Tile, empty = false) {
  * 집 왼쪽 땅(HOUSE_GROW)은 집 넓히기 자리라 비워 둔다. 그림일 뿐 — 길을 막지 않는다
  */
 export const RAIN_JAR_AT: Tile = { x: 7, y: 8 }
-export const REED_RACK_AT: Tile = { x: 8, y: 6 }
+export const REED_RACK_AT: Tile = { x: 8, y: 8 }
 
 /** 빗물 항아리: 넓은 입의 테라코타 항아리, 입 안에 물빛 (선은 모두 2픽셀 이상) */
 function rainJar(g: Ctx, t: Tile) {

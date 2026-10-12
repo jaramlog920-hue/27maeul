@@ -36,16 +36,22 @@ export function placeNewCards(board: readonly number[], earned: readonly Journey
   return out
 }
 
-/** 판 위의 카드가 본문 순서대로인가 (앞 카드 번호 < 뒤 카드 번호) */
-export function boardInOrder(board: readonly number[]): boolean {
-  return board.every((o, i) => i === 0 || board[i - 1] < o)
+/**
+ * 판 위의 카드가 본문 순서대로인가 (앞 카드 번호 < 뒤 카드 번호).
+ * 카드 목록을 주면 곳 이름 줄로 본다 — 같은 이름 카드(예루살렘 넷 등)끼리 자리가 바뀐 것은 화면에서 구분되지 않으므로 맞은 것으로 친다
+ */
+export function boardInOrder(board: readonly number[], cards?: readonly JourneyCard[]): boolean {
+  if (!cards) return board.every((o, i) => i === 0 || board[i - 1] < o)
+  const name = new Map(cards.map((c) => [c.order, c.place]))
+  const want = [...board].sort((a, b) => a - b)
+  return board.every((o, i) => name.get(o) === name.get(want[i]))
 }
 
 /** 판 완성: 카드가 모두(journey.json·churches.json 전체) 판에 있고 본문 순서대로 */
 export function journeyComplete(board: readonly number[], cards: readonly JourneyCard[]): boolean {
   if (cards.length === 0 || board.length !== cards.length) return false
   const on = new Set(board)
-  return cards.every((c) => on.has(c.order)) && boardInOrder(board)
+  return cards.every((c) => on.has(c.order)) && boardInOrder(board, cards)
 }
 
 /** 카드가 하나라도 있는 장 */

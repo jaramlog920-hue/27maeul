@@ -6,14 +6,18 @@ import { t } from '../../shared/i18n'
 
 export function Intro({
   hasSave,
+  canContinue,
   avatar,
   onStart,
   onContinue,
+  onLoad,
 }: {
   hasSave: boolean
+  canContinue: boolean
   avatar?: Avatar | null
   onStart: () => void
   onContinue: () => void
+  onLoad: () => void
 }) {
   return (
     <main className="title title-island">
@@ -24,11 +28,15 @@ export function Intro({
       <div className="title-stage">
         <TitleScene avatar={avatar} />
       </div>
-      {/* 스타듀밸리처럼: 새로 시작하기는 늘 새 칸, 불러오기는 칸 고르기 (2026-10-07 사용자) */}
+      {/* 이어하기는 하던 기록으로 바로, 불러오기는 칸 고르기, 새로 시작하기는 새 칸 */}
       <div className="title-menu">
-        {/* 기록이 있으면 불러오기가 먼저 (2026-10-07 사용자) */}
-        {hasSave && (
+        {canContinue && (
           <button className="primary wood" onClick={onContinue}>
+            {t('saves.continue')}
+          </button>
+        )}
+        {hasSave && (
+          <button className={canContinue ? 'wood' : 'primary wood'} onClick={onLoad}>
             {t('saves.load')}
           </button>
         )}
@@ -36,7 +44,6 @@ export function Intro({
           {t('saves.new')}
         </button>
       </div>
-      <p className="title-notice">{T.ui.notice}</p>
     </main>
   )
 }

@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
+import { establishedGame } from './growth-test-support'
 import { CONTENT } from '../content/catalog'
 import { canOrderHome, canGiveCord, furnishSpouse, goToSleep, moveFurniture, newGame, nextHomeStage, orderHome, placeFurniture, removeFurniture, settle, syncHome, type GameState } from './game'
 import { BABY_ROOM, FIXTURES, LIVING_ROOM, PARTNER_DOOR, PARTNER_ROOM, WORKSHOP } from './home-layout'
@@ -10,7 +11,8 @@ import designs from '../content/spouse-rooms.json'
 import { route } from './neighbors'
 
 const rich = (): GameState => {
-  const s = newGame(CONTENT)
+  const s = establishedGame(CONTENT, 21)
+  s.progress.phm.completed = [1]
   return { ...s, coins: 2000, inv: { ...s.inv, olive: 30, papyrus: 20 }, flags: { ...s.flags, 'movedIn:carpenter': 1 } }
 }
 const build = (s: GameState) => goToSleep(orderHome(s)!, CONTENT)
@@ -64,13 +66,23 @@ describe('세 차례 집 증축', () => {
 })
 
 describe('모든 방의 가구 재배치', () => {
+  it('긴 성인 침대는 두 칸을 차지하며 옛 기본 자리를 불러와도 생활방 문과 플레이어를 막지 않는다',()=>{
+    const s=build(build(build(rich())))
+    const legacy={...s,room:s.room.map(f=>f.item==='homeBed'?{...f,x:17,y:111}:f),player:{...s.player,x:18,y:112}}
+    const loaded=deserialize(serialize(legacy),CONTENT)!
+    expect(loaded.room.find(f=>f.item==='homeBed')).toMatchObject({x:18,y:112})
+    expect(solidTiles(loaded.room).has('18,112')).toBe(true)
+    expect(solidTiles(loaded.room).has('17,112')).toBe(false)
+    expect(solidTiles(loaded.room).has(`${loaded.player.x},${loaded.player.y}`)).toBe(false)
+    expect(findPath(HOME_ENTRY,{x:10,y:112},solidTiles(loaded.room))).not.toBeNull()
+  })
   it('침대·필사 책상·화덕·선반·작업대를 다른 방으로 옮겨도 기능 위치가 같이 이동한다', () => {
     let s = build(build(build(rich())))
     for (const [index, [item, def]] of Object.entries(FIXTURES).entries()) {
       const f = s.room.find(f => f.item === item)!
-      const at = { x: 8 + index, y: 110 }
+      const at = { x: 8 + index, y: item === 'homeBed' ? 113 : 110 }
       s = moveFurniture(s, f, at)!
-      expect(s).not.toBeNull()
+      expect(s,item).not.toBeNull()
       expect(PLACES[def.place].tiles).toEqual([at])
       expect(findPath(HOME_ENTRY, PLACES[def.place].stand!, solidTiles(s.room))).not.toBeNull()
     }
@@ -90,11 +102,15 @@ describe('모든 방의 가구 재배치', () => {
   })
   it.each(designs)('$id의 고유 가구는 결혼 시 한 번만 지급하고 다른 방으로 옮길 수 있다', d => {
     let s = build(build(build(rich())))
-    s = furnishSpouse({ ...s, romance: { ...s.romance, partner: d.id, stage: 'married' } })
     const all = spouseFurniture(d.id)
     expect(all.length).toBeGreaterThan(0)
-    expect(s.room.filter(f => f.item.startsWith('spouse:')).length + Object.entries(s.inv).filter(([id]) => id.startsWith('spouse:')).reduce((n, [,v]) => n + (v ?? 0), 0)).toBe(all.length)
-    const f = s.room.find(f => f.item.startsWith('spouse:'))!
+    // 입주 선물로 이미 받은 수집 가구를 제외하고 결혼 때 새로 지급된 수를 확인한다.
+    const ids = new Set(all.map(f => f.item))
+    const owned = (g: GameState) => g.room.filter(f => ids.has(f.item)).length + Object.entries(g.inv).filter(([id]) => ids.has(id as typeof all[number]['item'])).reduce((n, [,v]) => n + (v ?? 0), 0)
+    const previous = owned(s)
+    s = furnishSpouse({ ...s, romance: { ...s.romance, partner: d.id, stage: 'married' } })
+    expect(owned(s) - previous).toBe(all.length)
+    const f = s.room.find(f => ids.has(f.item))!
     expect(f).toBeDefined()
     s = moveFurniture(s, f, { x: 8, y: 110 })!
     expect(s).not.toBeNull()

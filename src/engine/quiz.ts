@@ -80,6 +80,8 @@ function pickOne<T>(items: readonly T[], rng: Rng): T | undefined {
 
 /** 탐정 문제로 쓸 수 있는 조각: 복음서 조각이고, 도장이 없거나 모두 "같은 이야기". 답 = 이 조각의 책 + 같은 이야기 도장의 책 */
 export function detectiveAnswer(p: Piece): GospelId[] | null {
+  // 관련 본문 표기는 같은 사건이라는 판정이 아니다. 이를 정답으로 삼는 탐정 문제는 내지 않는다.
+  if (p.source || p.stamps.some(s => s.kind === 'related')) return null
   if (!isGospel(p.book)) return null
   if (p.stamps.some((s) => s.kind === 'similar')) return null
   const books = new Set<Book>([p.book, ...p.stamps.map((s) => s.book)])
@@ -115,35 +117,12 @@ function puzzle(p: Piece, src: QuizSource, rng: Rng): Question | null {
   return { kind: 'puzzle', ref: v.ref, words, answer }
 }
 
+/**
+ * 복음서·사도행전·요한계시록의 빈칸: 편지 빈칸(letterBlank)과 같은 규칙으로 고른다 — 끝말(조사·어미)만 보고 답을 고를 수 없게
+ * (2026-10-11 서고·필사 점검 3). 보기는 같은 장 다른 절의 내용 낱말
+ */
 function blank(p: Piece, chapterPieces: readonly Piece[], src: QuizSource, rng: Rng): Question | null {
-  const verses = shuffle(
-    src.versesOf(p.ref).filter((v) => norm(v.text).length >= MIN_VERSE_CHARS && quizzable(v.text, v.inBrackets) && src.countVerse(v.text) === 1),
-    rng,
-  )
-  // 보기로 쓸 낱말: 같은 장 다른 절의 낱말 (괄호 구절의 낱말은 보기로도 쓰지 않는다)
-  const pool = [
-    ...new Set(chapterPieces.flatMap((cp) => src.versesOf(cp.ref).filter((v) => quizzable(v.text, v.inBrackets)).flatMap((v) => wordsOf(v.text)))),
-  ].filter((w) => norm(w).length >= 2)
-  for (const v of verses) {
-    const ws = wordsOf(v.text)
-    const idxs = shuffle(
-      ws.map((_, i) => i).filter((i) => norm(ws[i]).length >= 2),
-      rng,
-    )
-    for (const i of idxs) {
-      const answer = ws[i]
-      const before = ws.slice(0, i).join(' ')
-      const after = ws.slice(i + 1).join(' ')
-      const fill = (w: string) => [before, w, after].filter(Boolean).join(' ')
-      const distractors = shuffle(
-        pool.filter((w) => norm(w) !== norm(answer) && src.countVerse(fill(w)) === 0),
-        rng,
-      ).slice(0, 3)
-      if (distractors.length < 3) continue
-      return { kind: 'blank', ref: v.ref, before, after, options: shuffle([answer, ...distractors], rng), answer }
-    }
-  }
-  return null
+  return ruledBlank(p, chapterPieces, src, rng, null)
 }
 
 /**
@@ -154,8 +133,15 @@ function blank(p: Piece, chapterPieces: readonly Piece[], src: QuizSource, rng: 
  * before·after는 blank와 같은 모양 (낱말을 한 칸 띄어 잇기)
  */
 function letterBlank(p: Piece, bookPieces: readonly Piece[], src: QuizSource, rng: Rng): Question | null {
+  // 편지 끝인사(마지막 절의 축복 인사)는 다른 편지 끝인사와 거의 같아 빈칸 문제로 쓰지 않는다 (2026-10-11 사용자 결정)
+  const lastPiece = bookPieces.reduce<Piece | null>((m, x) => (!m || x.id > m.id ? x : m), null)
+  const tail = lastPiece ? src.versesOf(lastPiece.ref) : []
+  return ruledBlank(p, bookPieces, src, rng, tail.length ? tail[tail.length - 1].ref : null)
+}
+
+function ruledBlank(p: Piece, bookPieces: readonly Piece[], src: QuizSource, rng: Rng, skipRef: string | null): Question | null {
   const verses = shuffle(
-    src.versesOf(p.ref).filter((v) => norm(v.text).length >= MIN_VERSE_CHARS && quizzable(v.text, v.inBrackets) && src.countVerse(v.text) === 1),
+    src.versesOf(p.ref).filter((v) => v.ref !== skipRef && norm(v.text).length >= MIN_VERSE_CHARS && quizzable(v.text, v.inBrackets) && src.countVerse(v.text) === 1),
     rng,
   )
   if (verses.length === 0) return null
@@ -201,16 +187,28 @@ function whichStory(p: Piece, near: readonly Piece[], src: QuizSource, rng: Rng)
     rng,
   )
   if (!v) return null
+  const titles = new Set([p.title.trim()])
   const others = shuffle(
     near.filter((o) => o.id !== p.id),
     rng,
-  ).slice(0, 2)
+  ).filter((o) => {
+    const title = o.title.trim()
+    if (titles.has(title)) return false
+    titles.add(title)
+    return true
+  }).slice(0, 2)
   if (others.length < 2) return null
   return { kind: 'verse', ref: v.ref, options: shuffle([p.id, ...others.map((o) => o.id)], rng), answer: p.id }
 }
 
 function order(chapterPieces: readonly Piece[], rng: Rng): Extract<Question, { kind: 'order' }> | null {
-  const two = shuffle(chapterPieces, rng).slice(0, 2)
+  const titles = new Set<string>()
+  const two = shuffle(chapterPieces, rng).filter((p) => {
+    const title = p.title.trim()
+    if (titles.has(title)) return false
+    titles.add(title)
+    return true
+  }).slice(0, 2)
   if (two.length < 2) return null
   return { kind: 'order', options: two.map((p) => p.id), answer: [...two].sort((a, b) => (a.id < b.id ? -1 : 1))[0].id }
 }
@@ -511,8 +509,10 @@ export function buildLibraryQuiz(args: {
     out.push(q)
   }
   // 모자란 만큼 순서 문제로 채운다 (책 전체에서 — 조각 id 순서 = 본문 순서)
+  // 이미 낸 순서 문제의 정답 이야기는 다시 정답으로 쓰지 않는다 (같은 이야기가 두 번 — 2026-10-11 점검 4)
   for (let i = 0; out.length < QUIZ_SIZE && i < 20; i++) {
-    const q = order(mine, rng)
+    const usedAnswers = new Set(out.flatMap((o) => (o.kind === 'order' ? [o.answer] : [])))
+    const q = order(mine.filter((p) => !usedAnswers.has(p.id)), rng)
     if (q && !out.some((o) => o.kind === 'order' && o.options.join() === q.options.join())) out.push(q)
   }
   return shuffle(out, rng).slice(0, QUIZ_SIZE)
@@ -536,5 +536,6 @@ export function hintOptions(q: Question, n: number): string[] {
   if (n <= 0 || q.kind === 'puzzle' || q.kind === 'detective') return []
   const options = q.options as readonly string[]
   const wrong = options.filter((o) => o !== q.answer)
-  return wrong.slice(-Math.min(n, Math.max(0, options.length - 2))).reverse()
+  const count = Math.min(n, Math.max(0, options.length - 2))
+  return count > 0 ? wrong.slice(-count).reverse() : []
 }

@@ -11,11 +11,12 @@ import type { Tile } from './types'
 export type EmoteKind = 'heart' | 'laugh' | 'talk' | 'sweat' | 'angry'
 export interface Emote {
   npc: string
+  partner?: string
   kind: EmoteKind
   /** 남은 실제 시간 (초) */
   left: number
 }
-export const EMOTE_SECONDS = 2
+export const EMOTE_SECONDS = 5
 
 /** 결과마다 호감도 (D29) */
 export const MEET_GAIN: Record<EmoteKind, number> = { laugh: 2, talk: 1, heart: 3, sweat: 0, angry: -2 }
@@ -75,12 +76,14 @@ export function checkMeets(
       if (!canMeetMore(g, a, b, day)) continue
       const m = meetsToday(g, a, b, day)
       if (minute - m.last < MEET_GAP_MIN) continue
-      const kind = meetResult(g, a, b, day, m.n, fitOf(a, b, likes))
+      const result = meetResult(g, a, b, day, m.n, fitOf(a, b, likes))
+      // 자유시간에 함께 나누는 대화는 서로 가까워지는 만남이다.
+      const kind = result === 'angry' || result === 'sweat' ? 'talk' : result
       g = addAffinity(g, a, b, MEET_GAIN[kind])
       g = { ...g, meets: { ...g.meets, [relationId(a, b)]: { day, n: m.n + 1, last: minute } } }
       busy.add(a)
       busy.add(b)
-      emotes.push({ npc: a, kind, left: EMOTE_SECONDS }, { npc: b, kind, left: EMOTE_SECONDS })
+      emotes.push({ npc: a, partner: b, kind, left: EMOTE_SECONDS }, { npc: b, partner: a, kind, left: EMOTE_SECONDS })
     }
   }
   return { g, emotes }

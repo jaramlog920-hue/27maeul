@@ -19,9 +19,9 @@ afterEach(() => {
 })
 
 describe('지도 크기', () => {
-  it('첫 마을의 크기는 그대로 (48 × 120, 보이는 40줄)', () => {
-    expect([mapWidth(), mapHeight(), mapVisibleHeight()]).toEqual([48, 120, 40])
-    expect([WIDTH, HEIGHT, VILLAGE_H]).toEqual([48, 120, 40])
+  it('첫 마을의 크기 (48 × 164 — 공동 주택 방까지, 보이는 40줄)', () => {
+    expect([mapWidth(), mapHeight(), mapVisibleHeight()]).toEqual([48, 164, 40])
+    expect([WIDTH, HEIGHT, VILLAGE_H]).toEqual([48, 164, 40])
     expect(MAP).toHaveLength(HEIGHT)
   })
   it('새 터는 40 × 40줄, 보이는 땅 30줄 + 안 방 10줄', () => {
@@ -146,7 +146,8 @@ describe('입구', () => {
 
   it('개방 전에는 입구가 없고(그냥 길), 개방 뒤에는 표식이 선다', () => {
     expect(newlandOpen()).toBe(false)
-    expect(tileAt(VILLAGE_PORTAL.x, VILLAGE_PORTAL.y)).toBe(',')
+    // 공동 주택 지붕 위 여백(잔디)이라 그냥 걷는 칸 — 표식은 없다
+    expect(tileAt(VILLAGE_PORTAL.x, VILLAGE_PORTAL.y)).toBe('.')
     expect(portalAt(VILLAGE_PORTAL)).toBeNull()
     setNewlandOpen(true)
     expect(tileAt(VILLAGE_PORTAL.x, VILLAGE_PORTAL.y)).toBe('>')
@@ -155,7 +156,7 @@ describe('입구', () => {
     // 다른 칸은 입구가 아니다
     expect(portalAt(VILLAGE_PORTAL_FRONT)).toBeNull()
     setNewlandOpen(false)
-    expect(tileAt(VILLAGE_PORTAL.x, VILLAGE_PORTAL.y)).toBe(',')
+    expect(tileAt(VILLAGE_PORTAL.x, VILLAGE_PORTAL.y)).toBe('.')
   })
 
   it('침대에서 집 문 앞을 거쳐 입구까지 길찾기로 닿는다 (집 단계 0)', () => {

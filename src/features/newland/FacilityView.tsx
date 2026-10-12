@@ -1,11 +1,13 @@
+import { dreamText } from './dream-text'
+export { dreamText } from './dream-text'
 // 새 터 시설 창 (계획 18 남은 것, 사용자 결정 ⑥): 손님집 · 기억 정원 · 공동 마당 · 주민의 꿈터.
 // 문 앞(또는 마당 안)에 서면 열린다. 글은 짧게 — 막힌 까닭은 단추를 누를 때 알림 한 줄로.
 import { useState } from 'react'
 import { CONTENT, GOD_KEYWORDS, neighborById } from '../../content/catalog'
 import { fill, itemList, itemName, T, withAnd, withObject, withSubject } from '../../content/text'
 import { newsLine } from '../../content/gen-text'
-import { canGatherYard, gatherYard, type GameState } from '../../engine/game'
-import { dreamKey, roomOwner, canInviteGuest, markerShown, toggleMarker, canMendQuarrel, keywordRecall, mendQuarrel, quarrelPair, visitKidWork, DREAMER, GUESTS, guestNow, inviteGuest, memoriesOf, pickDream, settledAt, settledLine, talkGuest, visitDream, type DreamStage, type FacilityKind, type GuestId, type Memory } from '../../engine/newland-life'
+import { canGatherYard, gatherYard, mendQuarrelWith, type GameState } from '../../engine/game'
+import { dreamKey, roomOwner, canInviteGuest, markerShown, toggleMarker, canMendQuarrel, keywordRecall, quarrelPair, visitKidWork, DREAMER, GUESTS, guestNow, inviteGuest, memoriesOf, pickDream, settledAt, settledLine, talkGuest, visitDream, type DreamStage, type FacilityKind, type GuestId, type Memory } from '../../engine/newland-life'
 import { saveGame } from '../../engine/save'
 import { emptyHomeAt, familyAt, giveFamilyHome, homeWishes } from '../../engine/gen-homes'
 import type { Household } from '../../engine/gen'
@@ -72,8 +74,12 @@ function Guest() {
         {canInviteGuest(game) && (
           <button
             onClick={() => {
-              commit(inviteGuest(useGame.getState().game))
-              useGame.getState().say(fill(L.guestInvited, { whoSubj: withSubject(g.name) }), 3200)
+              const before = useGame.getState().game
+              const next = inviteGuest(before)
+              commit(next)
+              const gift = !before.flags[`moveGift:${guest}`] ? next.moveInGifts?.[guest] : undefined
+              const received = gift ? ` ${t('moveGifts.received', { who: g.name, item: itemName(gift) })}` : ''
+              useGame.getState().say(fill(L.guestInvited, { whoSubj: withSubject(g.name) }) + received, 5000)
               useGame.getState().closeModal()
             }}
           >
@@ -136,8 +142,14 @@ function EmptyHome() {
             <button
               className="row"
               onClick={() => {
-                commit(giveFamilyHome(useGame.getState().game, h.id, home, roomOwner))
-                useGame.getState().say(t('familyHome.moved', { names: familyNames(game, h) }), 3200)
+                const before = useGame.getState().game
+                const next = giveFamilyHome(before, h.id, home, roomOwner)
+                commit(next)
+                const received = h.members.flatMap(id => {
+                  const gift = !before.flags[`moveGift:${id}`] ? next.moveInGifts?.[id] : undefined
+                  return gift ? [t('moveGifts.received', { who: next.gen?.persons[id]?.name ?? neighborById(id)?.role ?? '', item: itemName(gift) })] : []
+                }).join(' · ')
+                useGame.getState().say([t('familyHome.moved', { names: familyNames(game, h) }), received].filter(Boolean).join(' '), 6000)
                 useGame.getState().closeModal()
               }}
             >
@@ -198,7 +210,7 @@ function Yard() {
   const love = keywordRecall(game.godRecords ?? []).find((k) => k.keyword === 'love')
   const mend = () => {
     if (!pair || !names) return
-    commit(mendQuarrel(useGame.getState().game, pair))
+    commit(mendQuarrelWith(useGame.getState().game, pair))
     useGame.getState().say(fill(L.quarrel.done, names), 3600)
   }
   const [recall, setRecall] = useState(false)
@@ -235,10 +247,6 @@ function Yard() {
     </>
   )
 }
-
-/** 꿈마다의 문구 (페넬로피는 예전 L.dream, 틸리부터 L.dreams.<npc>) */
-type DreamText = typeof L.dream
-export const dreamText = (npc: string): DreamText => (npc === DREAMER ? L.dream : ((L.dreams as Record<string, Partial<DreamText>>)[npc] as DreamText) ?? L.dream)
 
 function Workshop({ npc = DREAMER }: { npc?: string }) {
   const game = useGame((s) => s.game)

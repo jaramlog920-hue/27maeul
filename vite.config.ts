@@ -5,12 +5,15 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // 구약 책 본문 청크(src/content/ot/<id>.json, 약 3.3MB)는 assets/ot/ 아래로 모은다 — PWA 사전 캐시에서 빼고 실행 중에 담기 위해
 const isOtBookChunk = (id: string | null | undefined) => !!id && /\/src\/content\/ot\/[^/]+\.json$/.test(id.replaceAll('\\', '/'))
+const isNtBookChunk = (id: string | null | undefined) => !!id && /\/src\/content\/nt\/[^/]+\.json$/.test(id.replaceAll('\\', '/'))
+const isScreenChunk = (id: string | null | undefined) => !!id && /\/src\/features\/(cooking|clubs|fest|stall|village|family|child\/SchoolView|journal\/FamilyTree|newland\/(BuildMenu|FacilityView))/.test(id.replaceAll('\\', '/'))
 
 export default defineConfig({
   build: {
+    manifest: true,
     rollupOptions: {
       output: {
-        chunkFileNames: (chunk) => (isOtBookChunk(chunk.facadeModuleId) ? 'assets/ot/[name]-[hash].js' : 'assets/[name]-[hash].js'),
+        chunkFileNames: (chunk) => (isOtBookChunk(chunk.facadeModuleId) ? 'assets/ot/[name]-[hash].js' : isNtBookChunk(chunk.facadeModuleId) ? 'assets/nt/[name]-[hash].js' : isScreenChunk(chunk.facadeModuleId) ? 'assets/screens/[name]-[hash].js' : 'assets/[name]-[hash].js'),
       },
     },
   },
@@ -39,9 +42,19 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,png,woff2}'],
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
         // 구약 책 청크는 첫 설치에 받지 않는다 — 책을 처음 펼칠 때 받아 실행 중 캐시에 담는다 (아래 runtimeCaching)
-        globIgnores: ['**/assets/ot/**'],
+        globIgnores: ['**/assets/ot/**', '**/assets/nt/**', '**/assets/screens/**'],
         // 바깥 글꼴(Noto Serif KR)은 한 번 받으면 오프라인에서도 쓰도록 실행 중에 담아 둔다
         runtimeCaching: [
+          {
+            urlPattern: ({ url }: { url: URL }) => url.pathname.includes('/assets/screens/'),
+            handler: 'CacheFirst',
+            options: { cacheName: 'life-screens', expiration: { maxEntries: 60 } },
+          },
+          {
+            urlPattern: ({ url }: { url: URL }) => url.pathname.includes('/assets/nt/'),
+            handler: 'CacheFirst',
+            options: { cacheName: 'nt-books', expiration: { maxEntries: 60 } },
+          },
           {
             urlPattern: ({ url }: { url: URL }) => url.pathname.includes('/assets/ot/'),
             handler: 'CacheFirst',

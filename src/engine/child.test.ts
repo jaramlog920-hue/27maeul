@@ -1,8 +1,10 @@
+// 기존 생활 시나리오는 개편 이전 저장의 권한으로 검증한다. 새 해금은 late-growth.test.ts에서 검증한다.
+import { legacyGame as newGame } from './growth-test-support'
 import { describe, expect, it } from 'vitest'
 import { CONTENT } from '../content/catalog'
 import { JOURNAL_NOTES, SCENES } from '../content/text'
 import { CHILD_AFTER_WEDDING, CHILD_NAMES, childStage, helperSpot, HELPER_AT, helpStat, HELPER_SPOTS, CRADLE_SPOT, inheritBorn, newChild, nextName, sanitizeChild, TODDLER_AT } from './child'
-import { goToSleep, nameChild, newGame, type GameState } from './game'
+import { goToSleep, nameChild, type GameState } from './game'
 import { deserialize, serialize } from './save'
 import { freshStats } from './stats'
 import { isWalkable } from './world'

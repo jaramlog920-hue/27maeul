@@ -112,25 +112,14 @@ describe('서고 퀴즈', () => {
     expect(poolFor(shelved, 'jn')).toEqual(['mt', 'mk', 'lk', 'jn'])
   })
 
-  it('네 권이 서고에 있으면 탐정 문제가 네 복음서 모두에서, 네 방향으로 나온다', () => {
+  it('관련 본문 표기로 같은 사건을 추정하는 탐정 문제를 만들지 않는다', () => {
     const pool: Book[] = ['mt', 'mk', 'lk', 'jn']
     const src = quizSourceFor(pool)
-    const partners = new Set<string>()
-    for (const current of pool) {
-      let found = 0
-      for (let seed = 1; seed <= 60; seed++) {
-        for (const q of buildLibraryQuiz({ current, pool, piecesOf, rng: mulberry32(seed), src })) {
-          if (q.kind !== 'detective') continue
-          found++
-          expect(q.answer).toContain(current)
-          expect(q.options).toEqual(['mt', 'mk', 'lk', 'jn'])
-          for (const g of q.answer) if (g !== current) partners.add(`${current}>${g}`)
-        }
-      }
-      expect(found, `${current} 탐정 문제`).toBeGreaterThan(0)
+    for (const current of pool) for (let seed = 1; seed <= 60; seed++) {
+      const questions = buildLibraryQuiz({ current, pool, piecesOf, rng: mulberry32(seed), src })
+      expect(questions.length).toBeGreaterThan(0)
+      expect(questions.some(q => q.kind === 'detective')).toBe(false)
     }
-    // 어느 복음서에서 시작해도 나머지 세 복음서 쪽으로 이어지는 문제가 있다
-    for (const a of pool) for (const b of pool) if (a !== b) expect(partners.has(`${a}>${b}`), `${a}>${b}`).toBe(true)
   })
 
   it('서고에 다른 책이 있으면 "어느 책?" 문제가 나온다', () => {

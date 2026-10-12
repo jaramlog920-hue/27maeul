@@ -47,7 +47,7 @@ export const MAX_BUILDS = 12
 export { MAX_HOMES }
 export const emptyNewland = (): NewlandState => ({ builds: [], tiles: {}, nextId: 1, settledDay: 0 })
 
-type Base = Pick<GameState, 'newland' | 'flags' | 'clock' | 'coins' | 'inv' | 'player'>
+type Base = Pick<GameState, 'newland' | 'flags' | 'clock' | 'coins' | 'inv' | 'player'> & Partial<Pick<GameState, 'map'>>
 
 export const buildsOf = (s: Pick<GameState, 'newland'>): readonly Build[] => s.newland?.builds ?? []
 export const tilesOf = (s: Pick<GameState, 'newland'>): Readonly<Record<string, TileKind>> => s.newland?.tiles ?? {}
@@ -238,6 +238,9 @@ export function canPlace(s: Base, kind: SiteKind, x: number, y: number, facing: 
     : [...builds, { id: '', kind: kind as BuildKind, x, y, facing, state: 'ordered', orderedDay: 0, paid: { coins: 0, items: {} }, refunded: false }]
   const nextTiles = isTile ? { ...tiles, ...Object.fromEntries(area.map((t) => [keyOf(t), kind as TileKind])) } : tiles
   const seen = reachable(nextBuilds, nextTiles)
+  // 길을 깔지 않은 잔디에서도 현재 기록자가 입구로 빠져나갈 수 있어야 한다.
+  // 첫 마을/실내 좌표는 새 터 바깥의 좌표로 해석하지 않는다.
+  if (s.map === 'newland' && px >= 0 && px < NEWLAND_W && py >= 0 && py < NEWLAND_VISIBLE_H && !seen.has(key(px, py))) return 'sealed'
   // 어느 집이든 문 앞·문에 닿지 못하면 "문 앞이 막힌다" (새로 놓는 집이든, 이미 있는 집의 문 앞을 덮는 것이든)
   // (공사 중 마당 울타리 안의 문 앞은 완공될 때까지 닿지 못하는 것이 맞다 — 그 칸은 세지 않는다)
   const fenced = fencedOf(nextBuilds)

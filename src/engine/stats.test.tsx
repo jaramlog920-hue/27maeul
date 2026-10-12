@@ -4,7 +4,7 @@ import { CONTENT } from '../content/catalog'
 import { T } from '../content/text'
 import { StatsView } from '../features/bag/Bag'
 import { finishCraft, finishGather, finishHelp, giveGift, greetNeighbor, listen, newGame, sellPrice, stargaze, train, type GameState } from './game'
-import { harvest, plant, water } from './garden'
+import { GARDEN_TILES, harvest, plant, water } from './garden'
 import { startMini, tapMini } from './minigame'
 import { hintOptions, type Question } from './quiz'
 import { deserialize, serialize } from './save'
@@ -103,11 +103,11 @@ describe('하는 일마다 오르는 능력치', () => {
     const s = finishGather(s0(), 'well')
     expect(s.stats.strength.xp).toBe(XP.gather)
     const garden = { ...s0(), inv: { seedHerb: 1 } }
-    const tile = { x: 14, y: 3 }
+    const tile = GARDEN_TILES[0] // 지도 텃밭 칸 (2026-10-11 점검에서 엔진 칸을 지도에 맞췄다)
     const planted = plant(garden, tile, 'herb')!
     expect(planted.stats.strength.xp).toBe(XP.garden)
     expect(water(planted, tile)!.stats.strength.xp).toBe(XP.garden * 2)
-    const ripe = { ...planted, garden: { '14,3': { crop: 'herb' as const, grown: 9, wateredDay: null } } }
+    const ripe = { ...planted, garden: { [`${tile.x},${tile.y}`]: { crop: 'herb' as const, grown: 9, wateredDay: null } } }
     expect(harvest(ripe, tile)!.stats.strength.xp).toBe(XP.garden * 2)
   })
 

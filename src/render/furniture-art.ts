@@ -9,6 +9,10 @@ import { REMAINING_FIXTURE_DIRECTIONS, REMAINING_FIXTURE_ART } from './remaining
 
 import { HOME_SPACE_ART } from './home-space-art'
 import { REMAINING_FURNITURE_ART } from './remaining-furniture-art'
+import { COZY_FURNITURE_ART } from './cozy-furniture-art'
+import { HOUSEHOLD_FURNITURE_ART } from './household-furniture-art'
+import { ROOM_FURNITURE_ART } from './room-furniture-art'
+import { ADDITION_FURNITURE_DIRECTIONS } from './addition-furniture-directions'
 
 export const FURNI_PALETTE: Record<string, string> = {
   k: '#b57e4e', // 윤곽 — 둘레 나무색 정도로 연하게 (원래 가구처럼 튀지 않게)
@@ -408,6 +412,8 @@ export const FURNITURE_ART: Record<string, FurnitureArt> = {
 // 집 공간용 도트는 기존 배치 가구와 가방 아이콘에 함께 반영한다.
 Object.assign(FURNITURE_ART, HOME_SPACE_ART)
 Object.assign(FURNITURE_ART, REMAINING_FURNITURE_ART)
+// 생활 가구 48종 (2026-10-12 도트) — 앞모습은 네 방향 그림의 것(흔들의자·수레는 앞모습을 다시 그렸다), 다른 방향은 furniture-facing이 고른다
+for (const id of Object.keys({ ...COZY_FURNITURE_ART, ...HOUSEHOLD_FURNITURE_ART, ...ROOM_FURNITURE_ART })) FURNITURE_ART[id] = ADDITION_FURNITURE_DIRECTIONS[id].down
 
 /** 가구 그림 글자 → 가방 아이콘 팔레트(ICON_PALETTE)에 더한 글자 */
 export const ICON_CHAR: Record<string, string> = {

@@ -1556,7 +1556,10 @@ button.menu-word {
 .mini-skip { display: inline-flex; align-items: center; gap: 4px; }
 
 /* ── 가방: 아이콘 칸 (눌러서 이름·설명) ── */
-.bag-grid { display: grid; gap: 4px; margin: 8px 0 6px; }
+.bag-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; margin: 8px 0 6px; }
+@media (max-width: 340px) {
+  .bag-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+}
 .bag-slot {
   position: relative;
   display: flex;
@@ -1598,6 +1601,8 @@ button.menu-word {
 .bag-detail p { margin: 2px 0 0; color: var(--ink-soft); font-size: 11px; line-height: 1.5; }
 .bag-detail > button { min-height: 34px; padding: 2px 10px; font-size: 12px; }
 p.bag-detail { color: var(--ink-soft); }
+.recipe-materials { display: flex; flex-wrap: wrap; gap: 6px 12px; list-style: none; padding: 0; margin: 4px 0; }
+.recipe-materials li { display: flex; align-items: center; gap: 4px; }
 /* 몸 상태·능력치 줄: 누르면 설명 */
 .tap-explain {
   grid-column: 1 / -1;
@@ -2409,3 +2414,19 @@ button.row:active:not(:disabled) { background: #efe3c4; }
 .ot-study-group { margin-top: 6px; }
 .ot-record, .ot-read { margin-top: 10px; }
 .ot-record h3, .ot-read h3 { margin: 0 0 4px; font-size: 0.95em; }
+.library-manuscripts { display: flex; align-items: center; gap: 12px; margin: 8px 0 16px; color: #655b48; }
+.manuscript-stack { position: relative; display: inline-block; width: 44px; height: 32px; }
+.manuscript-stack i { position: absolute; width: 32px; height: 22px; border: 2px solid #85755e; background: #f5edda; box-shadow: inset 0 5px #e4d8bb; }
+.manuscript-stack i:nth-child(1) { left: 8px; top: 8px; }
+.manuscript-stack i:nth-child(2) { left: 4px; top: 4px; }
+.manuscript-stack i:nth-child(3) { left: 0; top: 0; }
+
+/* 아이콘 칸 목록 (2026-10-12, shared/IconGrid): 가방 칸 모양을 그대로, 지금 못 하는 것은 흐리게 */
+.icon-grid h3 { margin: 10px 0 0; }
+.bag-slot.dim { opacity: .5; }
+.art-icon { image-rendering: pixelated; display: block; }
+.bag-detail .actions { margin-top: 6px; }
+.bag-detail .actions button { min-height: 34px; padding: 2px 12px; font-size: 12px; }
+.bag-detail .need-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 0; padding: 0; list-style: none; font-size: 11px; color: var(--ink-soft); }
+.bag-detail .need-list li { display: flex; align-items: center; gap: 2px; }
+.bag-detail .need-list li.short { color: #b0473a; }

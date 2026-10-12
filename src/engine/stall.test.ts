@@ -1,7 +1,9 @@
+import { establishedGame as newGame } from "./growth-test-support"
 import { describe, expect, it } from 'vitest'
 import { CONTENT, PEOPLE } from '../content/catalog'
 import { T } from '../content/text'
-import { canSell, newGame, sell, SELL_CAP, SELL_PRICES, type GameState } from './game'
+import { type GameState } from './game'
+import { canSell, sell, SELL_CAP, SELL_PRICES } from './merchant-selling'
 import { isMarketDay, isWet, weatherOf } from './calendar'
 import { TOOLS } from './items'
 import { deserialize, serialize } from './save'
@@ -9,7 +11,7 @@ import { isWalkable, tileAt, VILLAGE_H, WIDTH, PLACES } from './world'
 import { FESTIVAL_SPOTS } from './neighbors'
 import { EXPERIENCE_KINDS } from './people'
 import {
-  answerGuest, BUYERS, buys, canOpenStall, closeStall, expireStall, guestText, openStall, regularOf, sanitizeStall, stallGoodsAvailable, stallPrice, stallSceneNow, stallStatus, stallVisitors, waitAtStall, welcomeGuest,
+  answerGuest, BUYERS, buys, canOpenStall, closeStall, expireStall, guestText, isStallTile, openStall, regularOf, sanitizeStall, stallGoodsAvailable, stallPrice, stallSceneNow, stallStatus, stallVisitors, waitAtStall, welcomeGuest,
   DEFAULT_LOOK, STALL_COIN_CAP, STALL_FROM, STALL_GOODS, STALL_GOODS_MAX, STALL_GUEST_SPOT, STALL_PER_GOOD, STALL_SALES, STALL_SPOT, STALL_STAND, STALL_TO, STALL_VISITORS,
   type StallWay,
 } from './stall'
@@ -39,6 +41,18 @@ const opened = (s = market(), picks = PICKS) => openStall(s, picks, DEFAULT_LOOK
 const serve = (s: GameState, way: StallWay): GameState => answerGuest(welcomeGuest(s, CONTENT), way)
 
 describe('좌판 자리와 상품 목록', () => {
+  it('recognizes the upper plaza footprint and standing spot on the village map only', () => {
+    const s = market()
+    for (let y = 12; y < 14; y++) for (let x = 26; x < 29; x++) expect(isStallTile(s, { x, y })).toBe(true)
+    expect(isStallTile(s, STALL_STAND)).toBe(true)
+    expect(isStallTile(s, { x: 25, y: 12 })).toBe(false)
+    expect(isStallTile(s, { x: 29, y: 13 })).toBe(false)
+    expect(isStallTile({ map: 'newland' }, STALL_SPOT)).toBe(false)
+    expect(canOpenStall({ ...s, map: 'newland' })).toBe('away')
+    const openedElsewhere = { ...opened(s), map: 'newland' as const }
+    expect(stallStatus(openedElsewhere, CONTENT)).toBe('away')
+    expect(welcomeGuest(openedElsewhere, CONTENT)).toBe(openedElsewhere)
+  })
   it('좌판 자리는 광장 위쪽 빈 칸 — 길·문·상인 좌판·우물·잔치 자리를 막지 않는다', () => {
     const tiles = Array.from({ length: 6 }, (_, i) => ({ x: STALL_SPOT.x + (i % 3), y: STALL_SPOT.y + Math.floor(i / 3) }))
     for (const t of tiles) {
@@ -313,6 +327,14 @@ describe('상인 판매와 이중 판매 없음', () => {
 })
 
 describe('떠나기·날씨·저장', () => {
+  it('마감까지 응대 시간이 부족하면 기다리던 손님에게도 판매를 시작하지 않는다', () => {
+    const waiting = welcomeGuest(only(opened(), ['penelope']), CONTENT)
+    expect(waiting.stall!.guest!.phase).toBe('look')
+    const late = { ...waiting, clock: { ...waiting.clock, minute: STALL_TO - 14 } }
+    expect(stallStatus(late, CONTENT)).toBe('over')
+    expect(answerGuest(late, 'talk')).toBe(late)
+  })
+
   it('좌판 곁을 떠나 있으면 새 손님도 판매도 멈추고 좌판은 그대로', () => {
     const o = opened()
     const w = welcomeGuest(o, CONTENT)

@@ -2,7 +2,7 @@
 import { findPath, stepActor, type Actor } from './movement'
 import { HOME_ENTRY, HOME_ROOM, isHome, isWalkable, key, PET_HOME, PLACES, sameTile, tileAt, WARPS } from './world'
 import { seasonOf } from './clock'
-import type { Season, Tile, Weather } from './types'
+import type { Facing, Season, Tile, Weather } from './types'
 
 export type Animal = 'cat' | 'dog'
 
@@ -52,7 +52,7 @@ export function sanitizeCompanion(c: Companion | null): Companion | null {
   const walked = Object.fromEntries(Object.entries(rawWalked).filter(([k, v]) => WALK_PLACES.includes(k) && Number.isInteger(v) && v >= c.since))
   const rawMet = c.met && typeof c.met === 'object' && !Array.isArray(c.met) ? c.met : {}
   const met = Object.fromEntries(Object.entries(rawMet).filter(([k, v]) => k.length <= 24 && !!v && Number.isInteger(v.n) && v.n >= 1 && v.n <= 999 && Number.isInteger(v.last) && v.last >= c.since).slice(0, 30))
-  return { ...c, ways: petWays(c), found, moments,
+  return { ...c, ...(c.kind === 'cat' ? { stay: true, ...PET_HOME, path: [], walkTime: 0 } : {}), ways: petWays(c), found, moments,
     plays: Number.isInteger(c.plays) && (c.plays as number) >= 0 ? Math.min(c.plays as number, 999) : 0,
     walked, met, lastWalkReact: Number.isFinite(c.lastWalkReact) ? c.lastWalkReact : undefined,
     lastInteraction: Number.isFinite(c.lastInteraction) ? c.lastInteraction : undefined, motion: undefined }
@@ -231,6 +231,8 @@ export function walkPlaceAt(t: Tile): string | null {
 }
 
 export const STRAY_DAY = 2
+/** 입양하지 않은 새끼들은 이틀 머물고 떠난다. */
+export const STRAY_STAY_DAYS = 2
 /** 둘째 날 떠돌이 새끼들이 기다리는 곳 — 내 집 앞 풀밭 (집이 왼쪽으로 넓어질 1·2열의 문 앞 줄) */
 export const STRAY_SPOTS: Record<Animal, Tile> = { cat: { x: 1, y: 8 }, dog: { x: 8, y: 8 } }
 /** 비 오는 날 웅크리는 처마 밑 (집 앞벽 오른쪽 아래) */
@@ -240,7 +242,8 @@ export const COMPANION_SPEED = 4
 export const NAME_MAX = 8
 
 export function adopt(kind: Animal, name: string, day: number, at: Tile): Companion {
-  const c: Companion = { kind, name, since: day, x: at.x, y: at.y, path: [], facing: 'down', walkTime: 0 }
+  const home = kind === 'cat' ? PET_HOME : at
+  const c: Companion = { kind, name, since: day, x: home.x, y: home.y, ...(kind === 'cat' ? { stay: true } : {}), path: [], facing: 'down', walkTime: 0 }
   return { ...c, ways: petWays(c), found: [], moments: {} }
 }
 
@@ -261,10 +264,12 @@ const ADJ: readonly Tile[] = [
   { x: 0, y: -1 },
 ]
 
-/** 동물이 가고 싶은 칸: 비 오고 기록자가 밖이면 처마 밑, 아니면 기록자 옆 */
-export function companionGoal(player: Tile, playerOutdoorsInRain: boolean, blockers?: ReadonlySet<string>): Tile | null {
+/** 비가 오면 처마 밑, 평소에는 기록자가 바라보는 방향의 뒤쪽. 뒤가 막히면 옆에서 기다린다. */
+export function companionGoal(player: Tile, playerOutdoorsInRain: boolean, blockers?: ReadonlySet<string>, facing: Facing = 'down'): Tile | null {
   if (playerOutdoorsInRain) return EAVES
-  for (const d of ADJ) {
+  const rear: Tile = facing === 'down' ? { x: 0, y: -1 } : facing === 'up' ? { x: 0, y: 1 } : facing === 'right' ? { x: -1, y: 0 } : { x: 1, y: 0 }
+  const sides = ADJ.filter(d => d.x * rear.x + d.y * rear.y === 0)
+  for (const d of [rear, ...sides]) {
     const t = { x: player.x + d.x, y: player.y + d.y }
     // 문·문깔개 위에는 서지 않는다 — 기록자가 드나드는 길을 막지 않도록. 가구가 있는 칸도 고르지 않는다 (2026-10-08 버그 23-B)
     if (isWalkable(t, blockers) && !WARPS.has(key(t))) return t

@@ -1,8 +1,10 @@
+// 기존 생활 시나리오는 개편 이전 저장의 권한으로 검증한다. 새 해금은 late-growth.test.ts에서 검증한다.
+import { legacyGame as newGame } from './growth-test-support'
 // 편지 나르는 이웃과 편지 바구니. 계획 14 작업 5부터 편지는 드문 말씀 조각(fragments.ts)이고,
 // 2026-10-06부터 27권 전체의 아직 없는 조각 하나다 (하루 2~3통·장 순서 배달은 없다)
 import { CONTENT } from '../content/catalog'
 import { isWet, weatherOf } from './calendar'
-import { chooseBook, goToSleep, listen, neighborsPresent, newGame, type GameState } from './game'
+import { chooseBook, goToSleep, listen, neighborsPresent, type GameState } from './game'
 import { fragmentWayOf } from './fragments'
 import { POSTMAN } from './post'
 import { deserialize, sanitize, serialize } from './save'

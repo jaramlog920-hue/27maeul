@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { CONTENT, neighborById } from '../../content/catalog'
 import { fill, T } from '../../content/text'
+import { featureHint } from '../../engine/feature-rules'
 import {
   answerGuest, buyerOf, canOpenStall, closeStall, DEFAULT_LOOK, expireStall, guestText, openStall, stallGoodsAvailable, stallPrice, stallStatus, stallSummary, waitAtStall, welcomeGuest,
-  STALL_CLOTHS, STALL_DECOS, STALL_GOODS_MAX, STALL_PER_GOOD, STALL_PRICES, STALL_WAYS, STALL_SIGNS,
+  STALL_CLOTHS, STALL_DECOS, STALL_GOODS_MAX, STALL_PER_GOOD, STALL_PRICES, STALL_WAYS, STALL_SIGNS, STALL_STAND,
   type StallLook, type StallPrice, type StallWay,
 } from '../../engine/stall'
-import { saveGame } from '../../engine/save'
 import type { GameState } from '../../engine/game'
 import type { ItemId } from '../../engine/types'
 import { useGame } from '../../store/game-store'
@@ -15,18 +15,10 @@ const S = T.stall
 const itemName = (id: string) => (T.items as Record<string, { name: string }>)[id]?.name ?? id
 
 export function commitStall(next: GameState) {
-  saveGame(next)
-  useGame.setState({ game: next })
+  useGame.getState().commitStall(next)
 }
 
-/** 장날 상인과 일정 창에서 여는 단추 — 장날이거나 오늘 열어 둔 좌판이 있을 때만 보인다 */
-export function StallEntry({ label }: { label?: string }) {
-  const game = useGame((s) => s.game)
-  const block = canOpenStall(game)
-  const live = !!game.stall && game.stall.day === game.clock.day
-  if (block === 'notMarket' && !live) return null
-  return <button onClick={() => useGame.getState().open({ kind: 'stall' })}>{label ?? (live && block === 'open' ? S.resume : S.entry)}</button>
-}
+export { StallEntry } from './StallEntry'
 
 type Pick = { qty: number; price: StallPrice }
 
@@ -37,12 +29,12 @@ export function StallView() {
   const [step, setStep] = useState<'goods' | 'look'>('goods')
   const [picks, setPicks] = useState<Partial<Record<ItemId, Pick>>>({})
   const [look, setLook] = useState<StallLook>(game.stallLook ?? DEFAULT_LOOK)
-  // 날이 바뀌었거나 영업 시간이 끝났으면 열 때 한 번 마감 (돌려받을 것은 한 번만)
+  // 창을 켠 상태에서 시간이 넘어가도 마감한다. 반환은 closeStall에서 한 번만 처리한다.
   useEffect(() => {
     const g = useGame.getState().game
     const next = expireStall(g)
     if (next !== g) commitStall(next)
-  }, [])
+  }, [game.clock.day, game.clock.minute])
   const st = game.stall && game.stall.day === game.clock.day ? game.stall : undefined
   const block = canOpenStall(game)
   const exit = <button data-close onClick={closeModal}>{T.ui.close}</button>
@@ -66,8 +58,14 @@ export function StallView() {
     return (
       <div className="dialog fest-form stall" role="dialog" aria-label={S.title}>
         <h2>{S.title}</h2>
-        <p>{S.block[block]}</p>
-        <div className="actions">{exit}</div>
+        <p>{block === 'locked' ? featureHint('stall') : S.block[block]}</p>
+        <div className="actions">
+          {block === 'away' && <button onClick={() => {
+            closeModal()
+            useGame.getState().tap(STALL_STAND)
+          }}>좌판 자리로 가기</button>}
+          {exit}
+        </div>
       </div>
     )
   }
@@ -76,12 +74,12 @@ export function StallView() {
   const chosen = (Object.keys(picks) as ItemId[]).filter((id) => (picks[id]?.qty ?? 0) > 0)
   const setQty = (id: ItemId, qty: number, have: number) => {
     const q = Math.max(0, Math.min(qty, have, STALL_PER_GOOD))
-    setPicks({ ...picks, [id]: { qty: q, price: picks[id]?.price ?? 'normal' } })
+    setPicks((prev) => ({ ...prev, [id]: { qty: q, price: prev[id]?.price ?? 'normal' } }))
   }
-  const setPrice = (id: ItemId, price: StallPrice) => setPicks({ ...picks, [id]: { qty: picks[id]?.qty ?? 0, price } })
+  const setPrice = (id: ItemId, price: StallPrice) => setPicks((prev) => ({ ...prev, [id]: { qty: prev[id]?.qty ?? 0, price } }))
   const open = () => {
     const list = chosen.map((item) => ({ item, qty: picks[item]!.qty, price: picks[item]!.price }))
-    commitStall(openStall(game, list, look))
+    commitStall(openStall(useGame.getState().game, list, look))
   }
 
   return (
@@ -180,14 +178,15 @@ function Running() {
               <p>{g.result === 'sold' ? fill(S.result.sold, { good: itemName(g.item), n: g.coins ?? 0 }) : S.result[g.result ?? 'looked']}</p>
               {text.reply && <p>{text.reply}</p>}
             </>
-          ) : (
+          ) : status === 'guest' ? (
             <div className="actions menu column">
               {STALL_WAYS.map((w: StallWay) => <button key={w} onClick={() => act((s) => answerGuest(s, w))}>{S.ways[w]}</button>)}
             </div>
-          )}
+          ) : null}
         </div>
       )}
       {g && !done && status === 'away' && <p className="hint">{S.status.away}</p>}
+      {g && !done && status === 'over' && <p className="hint">{S.status.over}</p>}
       {(!g || done) && <p className="hint">{S.status[status === 'guest' ? 'ready' : status === 'none' ? 'finished' : status]}</p>}
       <div className="actions menu column">
         {(!g || done) && status === 'ready' && <button className="primary" onClick={() => act((s) => welcomeGuest(s, CONTENT))}>{S.welcome}</button>}

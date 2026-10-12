@@ -1,7 +1,7 @@
 // 계획 14 작업 4: 제본(그대로·특별하게)과 완성본, 바로 꽂기, 책마다 다른 책등, 옛 저장
 import { CONTENT, piecesOf } from '../content/catalog'
 import { chaptersOf, roomOpen } from './books'
-import { COVER_HEX, DECO_HEX, finishedCopies, sanitizeBindings, SPECIAL_COST, SPINE_DESIGN, spineLook, type SpecialChoice } from './binding'
+import { COVER_HEX, DECO_HEX, finishedCopies, sanitizeBindings, sanitizeBookDesigns, SPECIAL_COST, SPINE_DESIGN, spineLook, type SpecialChoice } from './binding'
 import { bindBook, canBind, decorateBook, newGame, type GameState } from './game'
 import { canShelve, shelveNow } from './library'
 import { roomOf } from './shelf-rooms'
@@ -13,6 +13,27 @@ function done(book: Book, s: GameState = { ...newGame(CONTENT), scenes: [] }): G
 }
 const choice: SpecialChoice = { color: 'sky', pattern: 'diamonds', deco: 'bronze' }
 const rich = (s: GameState): GameState => ({ ...s, inv: { ...s.inv, creamPaper: 5, blueDye: 2, fineThread: 3 } })
+
+describe('책 디자인 도감 기록', () => {
+  it('실제로 제본해야 디자인이 남고, 다시 꾸며도 앞서 얻은 디자인은 저장 후에 남는다', () => {
+    const failed = bindBook(newGame(CONTENT), 'mt', CONTENT, choice)
+    expect(failed.bookDesigns ?? []).toEqual([])
+    const plain = bindBook(done('mt'), 'mt', CONTENT)
+    const first = decorateBook(rich(plain), 'mt', { ...choice, detail: 'metalCorners' })
+    const second = decorateBook(rich(first), 'mt', { color: 'sage', pattern: 'dots', deco: 'navy', detail: 'ribbonBookmark' })
+    expect(second.bookDesigns).toEqual(expect.arrayContaining(['book:mt', 'color:sky', 'pattern:diamonds', 'deco:bronze', 'detail:metalCorners', 'color:sage', 'detail:ribbonBookmark']))
+    const back = deserialize(serialize(second), CONTENT)!
+    expect(back.bookDesigns).toEqual(second.bookDesigns)
+  })
+
+  it('옛 저장은 현재 표지에서 기록을 복원하고 모르는 디자인·중복은 걸러 낸다', () => {
+    const original = bindBook(rich(done('mk')), 'mk', CONTENT, choice)
+    const { bookDesigns: _history, ...old } = original
+    const back = deserialize(serialize(old), CONTENT)!
+    expect(back.bookDesigns).toEqual(expect.arrayContaining(['color:sky', 'pattern:diamonds', 'deco:bronze']))
+    expect(sanitizeBookDesigns(['color:sky', 'bogus', 'color:sky', 3])).toEqual(['color:sky'])
+  })
+})
 
 describe('책마다 다른 책등', () => {
   it('스물일곱 권 모두 책등이 있고, 같은 모습(색·무늬)이 둘 없다', () => {

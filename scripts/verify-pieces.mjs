@@ -16,6 +16,7 @@ const [
 const bible = await read('src/content/nt-krv.json')
 const books = await read('src/content/books.json')
 const pieces = await read(piecesPath)
+const official = new Map((await read('scripts/data/krv-piece-index.json')).map(p => [p.id, p]))
 const life = await read(lifePath)
 const neighbors = await read(neighborsPath)
 
@@ -77,6 +78,9 @@ const covered = new Map() // book -> Map(chapter -> Map(verse -> id))
 const pieceAt = new Map() // 'mrk:1:9' -> piece
 for (const p of pieces) {
   const w = `piece ${p.id}`
+  const approved = official.get(p.id)
+  const sourced = !!p.source && !!approved && ['title', 'ref', 'source', 'stamps'].every(k => JSON.stringify(p[k]) === JSON.stringify(approved[k]))
+  if (p.source && !sourced) fail(w, '개역한글 소제목 원본과 제목·범위·관련 본문이 다름')
   if (ids.has(p.id)) fail(w, '중복 id')
   ids.add(p.id)
   const bookId = BOOK_IDS[p.book]
@@ -106,13 +110,13 @@ for (const p of pieces) {
 
   const body = normalizeQuote(textOf(p.ref))
   const lastWord = textOf(p.ref).trim().split(/\s+/).at(-1)
-  if (OPEN_ENDINGS.test(lastWord)) fail(w, `문장이 끝나지 않은 채 조각이 끝남 ("…${lastWord}")`)
+  if (!sourced && OPEN_ENDINGS.test(lastWord)) fail(w, `문장이 끝나지 않은 채 조각이 끝남 ("…${lastWord}")`)
   if (typeof p.title !== 'string' || !p.title.trim()) fail(w, '제목 없음')
   else {
     const tk = `${p.book}:${p.title}`
-    if (titles.has(tk)) fail(w, `제목 "${p.title}"이 ${titles.get(tk)}와 같음 — 조각끼리 구분되게`)
+    if (!sourced && titles.has(tk)) fail(w, `제목 "${p.title}"이 ${titles.get(tk)}와 같음 — 조각끼리 구분되게`)
     else titles.set(tk, p.id)
-    for (const t of p.title.split(/\s+/).filter(Boolean)) if (!body.includes(normalizeQuote(t))) fail(w, `제목 낱말 "${t}"가 본문에 없음`)
+    if (!sourced) for (const t of p.title.split(/\s+/).filter(Boolean)) if (!body.includes(normalizeQuote(t))) fail(w, `제목 낱말 "${t}"가 본문에 없음`)
   }
 
   if (!Array.isArray(p.stamps)) {
@@ -122,24 +126,24 @@ for (const p of pieces) {
   const stampRefs = new Set()
   for (const s of p.stamps) {
     const sw = `${w} 도장 ${s.ref}`
-    if (s.kind !== 'same' && s.kind !== 'similar') {
+    if (s.kind !== 'same' && s.kind !== 'similar' && !(sourced && s.kind === 'related')) {
       fail(sw, `알 수 없는 kind ${s.kind}`)
       continue
     }
-    const sBookId = BOOK_IDS[s.book]
+    const sBookId = BOOK_IDS[s.book] ?? (sourced && counts[s.book] ? s.book : null)
     if (!sBookId) {
       fail(sw, `알 수 없는 book ${s.book}`)
       continue
     }
-    if (!GOSPELS.has(p.book)) {
+    if (!sourced && !GOSPELS.has(p.book)) {
       fail(sw, `${BOOK_NAMES[p.book]} 조각에는 도장이 없음 — 도장은 네 복음서끼리만`)
       continue
     }
-    if (!GOSPELS.has(s.book)) {
+    if (!sourced && !GOSPELS.has(s.book)) {
       fail(sw, `${BOOK_NAMES[s.book]}을 가리키는 도장 — 도장은 네 복음서끼리만`)
       continue
     }
-    if (s.book === p.book) {
+    if (!sourced && s.book === p.book) {
       fail(sw, '자기 책을 가리키는 도장')
       continue
     }
@@ -188,6 +192,7 @@ for (const p of pieces) {
   if (!Array.isArray(p.stamps) || !BOOK_IDS[p.book]) continue
   const mine = keysOf(p.ref)
   for (const s of p.stamps) {
+    if (s.kind === 'related') continue // 원본은 방향별 표기가 다를 수 있다. 임의로 역방향 도장을 만들지 않는다.
     if (s.book === p.book) continue
     const targets = new Set([...keysOf(s.ref)].map((k) => pieceAt.get(k)).filter(Boolean))
     for (const t of targets) {
@@ -269,6 +274,8 @@ walk(life, 'life-text')
 walk(neighbors, 'neighbors')
 // 살아 움직이는 사람들 (계획 6b): 혼잣말·말·목격·이벤트 문장
 walk(await read('src/content/people.json'), 'people')
+// 하트 수에 따른 말·연인·부부 사건·친구 말 (2026-10-12)
+walk(await read('src/content/people-more.json'), 'people-more')
 
 if (errors) {
   console.error(`\n✗ verify-pieces 실패: 오류 ${errors}개, 경고 ${warnings}개`)

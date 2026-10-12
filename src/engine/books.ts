@@ -37,7 +37,10 @@ export function totalChapters(s: { progress: Progress }): number {
  */
 export function chaptersOf(book: CopyBook, content: GameContent): number[] {
   if (isOtBook(book)) return content.chapterText?.(book, 1).length ? Array.from({ length: otRow(book).chapters }, (_, i) => i + 1) : []
-  return [...new Set(content.pieces.filter((p) => p.book === book).map((p) => p.chapter))].sort((a, b) => a - b)
+  return [...new Set(content.pieces.filter((p) => p.book === book).flatMap((p) => {
+    const end = Number(p.ref.match(/-(\d+):/)?.[1] ?? p.chapter)
+    return Array.from({ length: end - p.chapter + 1 }, (_, i) => p.chapter + i)
+  }))].sort((a, b) => a - b)
 }
 
 /**

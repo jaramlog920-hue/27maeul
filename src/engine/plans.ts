@@ -1,3 +1,4 @@
+import { villageBookCount } from "./progression"
 import { solidTiles } from './room'
 import { isHome } from './world'
 import { expandClubs } from './clubs'
@@ -6,14 +7,14 @@ import { settleTable } from './cooking'
 import { noteExperienceTastes } from './notebook'
 import { festivalOf, FESTIVAL_FROM, FESTIVAL_TO, isMarketDay, isWet, weatherOf } from './calendar'
 import { gatheringWindow, INVITE_FROM, INVITE_TO, VISIT_FROM, VISIT_TO, BABY_PARTY_DAY, BABY_PARTY_SPOTS, HILL_SPOTS } from './bonds'
-import { heartUp, notYet, recordExperienceIn, shelvedCount, eventNow, routineOf, type GameState } from './game'
+import { heartUp, notYet, recordExperienceIn, eventNow, routineOf, type GameState } from './game'
 import { HALL_SPOTS } from './places'
-import { OUTDOOR_PLACES } from './village-sites'
+import { OUTDOOR_PLACES, SITES } from './village-sites'
 import { personOf } from './people'
 import { lockedTiles, key, PLACES, isWalkable } from './world'
 import type { GameContent, PlaceId, Tile } from './types'
 
-export type Activity = 'tea'|'sew'|'garden'|'observe'|'taste'|'make'|'walk'|'work'
+export type Activity = 'tea'|'sew'|'garden'|'observe'|'read'|'cook'|'paint'|'music'|'taste'|'make'|'walk'|'work'
 export type TastePlace = 'indoor'|'hill'|'market'|'shade'|'lake'
 export type TasteTime = 'early'|'afternoon'|'evening'
 export interface Appt {
@@ -22,6 +23,8 @@ export interface Appt {
   state: 'planned'|'running'|'done'|'skipped'|'moved'; rewarded: boolean; remembered: boolean
   /** Player participation must be an explicit action, never inferred from being nearby. */
   attended?: boolean; activity?: Activity; clubId?: string; festId?: string; title?: string; seats?: Tile[]; requiresPlayer?: boolean; movedFrom?: number; reason?: 'weather'|'closed'|'busy'|'host'
+  /** 마무리 연출 시작 시각. 보상과 별도로, 참석자를 두 명씩 순서대로 놓아 준다. */
+  endedAt?: number
 }
 export interface Plans { appts: Appt[]; nextId: number }
 export const NO_PLANS: Plans = { appts: [], nextId: 1 }
@@ -91,6 +94,7 @@ export function venueFor(appt: Appt, day = appt.day): {place:PlaceId; moved:fals
 }
 export function apptSpots(place: PlaceId): readonly Tile[] {
   if (place === 'hallTable') return HALL_SPOTS
+  if (place === 'commonBench') return SITES.longBench.seats
   const tile=PLACES[place]?.tiles[0]
   return tile ? [{x:tile.x-1,y:tile.y},{x:tile.x+1,y:tile.y},{x:tile.x,y:tile.y-1}].filter(t => isWalkable(t)) : []
 }
@@ -99,7 +103,7 @@ export function spotsForAppt(a: Appt): readonly Tile[] {
   return a.seats && venue.place===a.place ? a.seats : apptSpots(venue.place)
 }
 function openVenue(s: PlanState, place: PlaceId, seats?:readonly Tile[]): boolean {
-  const locked=lockedTiles(shelvedCount(s))
+  const locked=lockedTiles(villageBookCount(s))
   return (seats??apptSpots(place)).length > 0 && (seats??apptSpots(place)).every(t => isWalkable(t,s.room?solidTiles(s.room):undefined) && !locked.has(key(t))) && !(place === 'garden' && !Object.keys(s.garden??{}).length)
 }
 export function scheduleAppt(s: GameState, input: Omit<Appt,'id'|'state'|'rewarded'|'remembered'|'startedWith'|'attended'>, content: GameContent): {state:GameState; appt?:Appt; blocked?:Availability|'venue'|'members'|'past'} {
@@ -119,19 +123,27 @@ export function scheduleAppt(s: GameState, input: Omit<Appt,'id'|'state'|'reward
 export function appointmentSpots(s: Pick<PlanState,'clock'|'plans'>): Record<string,Tile> {
   const out:Record<string,Tile>={}
   for (const a of s.plans?.appts ?? []) {
-    if (!active(a) || a.day !== s.clock.day || s.clock.minute < a.from || s.clock.minute >= a.to) continue
+    const closing = a.state === 'done' && a.day === s.clock.day && a.endedAt !== undefined && s.clock.minute >= a.endedAt && s.clock.minute < a.endedAt + 16
+    if ((!active(a) && !closing) || a.day !== s.clock.day || s.clock.minute < a.from || (!closing && s.clock.minute >= a.to)) continue
     const venue=venueFor(a)
     if (venue.moved) continue
     const spots=spotsForAppt(a)
-    ;(a.startedWith ?? cast(a)).forEach((id,i) => {if(spots[i]) out[id]=spots[i]})
+    ;(a.startedWith ?? cast(a)).forEach((id,i) => {
+      if (closing && s.clock.minute >= a.endedAt! + 8 + Math.floor(i / 2) * 4) return
+      if(spots[i]) out[id]=spots[i]
+    })
   }
   return out
 }
-export function attendAppt(s: GameState,id:string): GameState {
+/** 첫 마을 약속은 그 지도에서 현재 행사 자리 곁에 있을 때만 함께할 수 있다. */
+export function canAttendAppt(s: GameState,id:string): boolean {
   const a=s.plans?.appts.find(a => a.id === id)
-  if (!a || a.state !== 'running' || a.day !== s.clock.day || s.clock.minute < a.from || s.clock.minute >= a.to) return s
+  if ((s.map ?? 'village') !== 'village' || !a || a.state !== 'running' || a.day !== s.clock.day || s.clock.minute < a.from || s.clock.minute >= a.to) return false
   const venue=venueFor(a)
-  if (venue.moved || !spotsForAppt(a).some(t => Math.abs(t.x-s.player.x)+Math.abs(t.y-s.player.y)<=3)) return s
+  return !venue.moved && spotsForAppt(a).some(t => Math.abs(t.x-s.player.x)+Math.abs(t.y-s.player.y)<=3)
+}
+export function attendAppt(s: GameState,id:string): GameState {
+  if (!canAttendAppt(s,id)) return s
   return {...s,plans:{...s.plans,appts:s.plans.appts.map(x => x.id===id?{...x,attended:true}:x)}}
 }
 export function settleAppt(s: GameState,id:string): GameState {
@@ -147,7 +159,7 @@ export function settleAppt(s: GameState,id:string): GameState {
     const reveals=Object.fromEntries(members.filter(id=>a.activity && personOf(id)?.tastes?.activity?.[a.activity]===1).map(id=>[id,`activity.${a.activity}`]))
     next={...recorded,clock:next.clock,notebook:noteExperienceTastes(next.notebook,{with:members},reveals)}
   }
-  return {...next,plans:{...next.plans,appts:next.plans.appts.map(x => x.id===id?{...x,state:'done',rewarded:true,remembered:true}:x)}}
+  return {...next,plans:{...next.plans,appts:next.plans.appts.map(x => x.id===id?{...x,state:'done',rewarded:true,remembered:true,endedAt:x.endedAt ?? (s.clock.day === a.day && s.clock.minute < a.to + 16 ? s.clock.minute : undefined)}:x)}}
 }
 /** Crossing a whole session skips it; proximity never fabricates player participation. */
 export function advancePlans(s:GameState,content:Pick<GameContent,'neighbors'>): GameState {
@@ -164,7 +176,7 @@ export function advancePlans(s:GameState,content:Pick<GameContent,'neighbors'>):
     if(a.state==='running') {if(s.clock.minute>=a.to) next=settleAppt(next,a.id);continue}
     const venue=venueFor(a)
     // 집에서 여는 행사(집들이)는 플레이어가 집에 없거나 자리가 막혔으면 저절로 열지 않는다 — 다시 잡거나 마치는 건 플레이어가 고른다
-    if(a.requiresPlayer && (!isHome(next.player) || !openVenue(next,venue.place,a.seats))) {
+    if(a.requiresPlayer && ((next.map ?? 'village') !== 'village' || !isHome(next.player) || !openVenue(next,venue.place,a.seats))) {
       next={...next,plans:{...next.plans,appts:next.plans.appts.map(x=>x.id===a.id?{...x,state:'skipped',reason:'host'}:x)}}
       continue
     }

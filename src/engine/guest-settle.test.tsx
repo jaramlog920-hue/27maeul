@@ -3,6 +3,8 @@ import { render, screen } from '@testing-library/react'
 import { CONTENT } from '../content/catalog'
 import { newGame, type GameState } from './game'
 import type { Build } from './newland-build'
+import { COLLECTIBLE_ITEMS } from './collection-gifts'
+import { deserialize, serialize } from './save'
 import {
   canInviteGuest, facilityAt, GUEST_GAP, guestHouseMorning, guestNow, inviteGuest, memoriesOf, settledAt, settledGuests, settledSpot,
 } from './newland-life'
@@ -26,6 +28,20 @@ const inn = done('b1', 'guest', 10, 12)
 const house = done('b2', 'home', 16, 12, 0)
 
 describe('손님 입주', () => {
+  it('입주 손님도 미획득 물건 하나를 주고 집을 다시 내어 줘도 중복 지급하지 않는다', () => {
+    const base = land([inn, house], { guestNow: 1, guestSince: 40, 'guestGift:nelly': 20 })
+    const missing = 'bronzeOrnament'
+    const s = { ...base, found: COLLECTIBLE_ITEMS.filter(item => item !== missing) }
+    const moved = inviteGuest(s)
+    expect(moved.moveInGifts?.nelly).toBe(missing)
+    expect(moved.inv[missing]).toBe((s.inv[missing] ?? 0) + 1)
+    const loaded = deserialize(serialize(moved), CONTENT)!
+    expect(loaded.moveInGifts?.nelly).toBe(missing)
+    const rebuilt = { ...loaded, newland: { ...loaded.newland!, builds: [inn, { ...house, id: 'b3' }] }, flags: { ...loaded.flags, guestNow: 1, guestSince: 40 } }
+    expect(canInviteGuest(rebuilt)).toBe('nelly')
+    expect(inviteGuest(rebuilt).inv).toEqual(loaded.inv)
+  })
+
   it('처음 온 손님·빈집 없음이면 내어 줄 수 없다', () => {
     const first = land([inn, house], { guestNow: 1, guestSince: 40 })
     expect(guestNow(first)).toBe('nelly')

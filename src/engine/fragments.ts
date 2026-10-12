@@ -39,7 +39,7 @@ const idSeed = (id: string) => [...id].reduce((n, ch) => (n * 31 + ch.charCodeAt
  * 아이의 편지·언덕 별 보기 — 27권 전체의 아직 없는 조각 중 무작위 하나다. 그날 몫 1~2장이나 장 순서·책 제한은 없다.
  * 씨앗은 날과 길(source)로 정해져서 같은 날 같은 길은 불러와도 같은 조각이다. 다 모았으면 null (오류 없음)
  */
-export function drawFragment(pieces: readonly Piece[], collected: readonly string[], seed: number): string | null {
+export function drawFragment(pieces: readonly Pick<Piece, 'id'>[], collected: readonly string[], seed: number): string | null {
   const got = new Set(collected)
   const left = pieces.filter((p) => !got.has(p.id))
   if (!left.length) return null
@@ -89,10 +89,11 @@ export type PieceLog = Record<string, PieceGot>
 
 export type PieceSource =
   | { kind: 'npc' | 'trip'; who: string }
-  | { kind: 'letter' | 'child' | 'library' | 'scroll' | 'night' | 'stars' | 'pet' | 'unknown' }
+  | { kind: 'letter' | 'child' | 'library' | 'scroll' | 'night' | 'homeCopy' | 'stars' | 'pet' | 'petHome' | 'ground' | 'unknown' }
 
 // 'pet': 데리고 다니는 동물이 길에서 물어 온 조각 (2026-10-07)
-const PLAIN = ['letter', 'child', 'library', 'scroll', 'night', 'stars', 'pet'] as const
+// 'petHome': 집에 머무는 고양이가 집 안에서 찾은 조각 (2026-10-09)
+const PLAIN = ['letter', 'child', 'library', 'scroll', 'night', 'homeCopy', 'stars', 'pet', 'petHome', 'ground'] as const
 
 /** 기록의 from을 읽는다 — 모르는 값·기록 없음(옛 저장)은 unknown */
 export function pieceFrom(from: string | undefined): PieceSource {

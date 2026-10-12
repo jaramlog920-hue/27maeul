@@ -37,11 +37,11 @@
     "A": "#6b8581",
     "u": "#ebe0c5",
     "U": "#cbbda1",
+    "n": "#79989b",
+    "N": "#4f6b75",
     "J": "#6f5140",
     "P": "#ead7b2",
-    "q": "#bda367",
-    "n": "#79989b",
-    "N": "#4f6b75"
+    "q": "#bda367"
   },
   "boundaryPalette": {
     "k": "#b57e4e",
@@ -63,8 +63,8 @@
     "p": "#feae88",
     "o": "#ffc2a0",
     "z": "#756653",
-    "v": "#9b65b3",
-    "V": "#bd8fd0",
+    "v": "#b292a2",
+    "V": "#856f89",
     "t": "#e68e4e",
     "H": "#bd8069",
     "h": "#98644f",
@@ -74,6 +74,8 @@
     "A": "#6b8581",
     "u": "#ebe0c5",
     "U": "#cbbda1",
+    "n": "#79989b",
+    "N": "#4f6b75",
     "J": "#765746",
     "P": "#ead7b2"
   },
@@ -805,12 +807,12 @@
       },
       "style": {
         "roof": "hip",
-        "window": "arch",
+        "window": "square",
         "roofColor": "H",
         "roofShade": "h",
         "wall": "u",
         "chimney": true,
-        "note": "살구빛 사면 지붕·작은 굴뚝·문 옆 요리 솥"
+        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 문 옆 요리 그릇"
       },
       "workProp": "work-props/cook.png",
       "before": "before/cook-down.png"
@@ -908,12 +910,13 @@
         }
       },
       "style": {
-        "roof": "gable",
-        "window": "wide",
+        "roof": "hip",
+        "window": "square",
         "roofColor": "v",
         "roofShade": "V",
         "wall": "u",
-        "note": "높은 박공·큰 채광창·야외 이젤"
+        "chimney": false,
+        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 그림 표식"
       },
       "workProp": "work-props/painter.png",
       "before": "before/painter-down.png"
@@ -1016,8 +1019,8 @@
         "roofColor": "a",
         "roofShade": "A",
         "wall": "u",
-        "awning": "b",
-        "note": "하나로 이어진 청록 지붕·밝은 창틀·작게 걸어 둔 천"
+        "chimney": false,
+        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 작게 걸어 둔 천"
       },
       "workProp": "work-props/weaver.png",
       "before": "before/weaver-down.png"
@@ -1115,12 +1118,13 @@
         }
       },
       "style": {
-        "roof": "shed",
+        "roof": "hip",
         "window": "square",
         "roofColor": "G",
         "roofShade": "g",
         "wall": "u",
-        "note": "완만한 잎빛 비탈 지붕·꽃 화분"
+        "chimney": false,
+        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 정원 표식"
       },
       "workProp": "work-props/gardener.png",
       "before": "before/gardener-down.png"
@@ -1218,13 +1222,13 @@
         }
       },
       "style": {
-        "roof": "flat",
-        "window": "arch",
+        "roof": "hip",
+        "window": "square",
         "roofColor": "H",
         "roofShade": "h",
-        "wall": "I",
-        "chimney": true,
-        "note": "낮은 벽돌 지붕·굴뚝·항아리 건조 선반"
+        "wall": "u",
+        "chimney": false,
+        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 항아리"
       },
       "workProp": "work-props/potter.png",
       "before": "before/potter-down.png"
@@ -1322,12 +1326,13 @@
         }
       },
       "style": {
-        "roof": "gable",
-        "window": "round",
+        "roof": "hip",
+        "window": "square",
         "roofColor": "I",
         "roofShade": "i",
         "wall": "u",
-        "note": "모래빛 박공·둥근 창·작은 현악기"
+        "chimney": false,
+        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 작은 현악기"
       },
       "workProp": "work-props/instrumentMaker.png",
       "before": "before/instrumentMaker-down.png"
@@ -1425,13 +1430,13 @@
         }
       },
       "style": {
-        "roof": "gable",
-        "window": "wide",
+        "roof": "hip",
+        "window": "square",
         "roofColor": "w",
         "roofShade": "W",
-        "wall": "C",
-        "timber": true,
-        "note": "단일 나무 박공·모서리 기둥·작은 목공 받침"
+        "wall": "u",
+        "chimney": false,
+        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 목공 표식"
       },
       "workProp": "work-props/carpenter.png",
       "before": "before/carpenter-down.png"
@@ -1529,13 +1534,13 @@
         }
       },
       "style": {
-        "roof": "round",
-        "window": "arch",
+        "roof": "hip",
+        "window": "square",
         "roofColor": "H",
         "roofShade": "h",
         "wall": "u",
         "chimney": true,
-        "note": "부드러운 둥근 지붕·작은 굴뚝·빵 바구니"
+        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 빵 바구니"
       },
       "workProp": "work-props/baker.png",
       "before": "before/baker-down.png"
@@ -1633,12 +1638,13 @@
         }
       },
       "style": {
-        "roof": "gable",
-        "window": "tall",
+        "roof": "hip",
+        "window": "square",
         "roofColor": "I",
         "roofShade": "i",
         "wall": "u",
-        "note": "단정한 박공·좁고 높은 창·두루마리 책상"
+        "chimney": false,
+        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 기록 공책"
       },
       "workProp": "work-props/scribe.png",
       "before": "before/scribe-down.png"
@@ -1737,11 +1743,12 @@
       },
       "style": {
         "roof": "hip",
-        "window": "wide",
+        "window": "square",
         "roofColor": "a",
         "roofShade": "A",
-        "wall": "C",
-        "note": "넓은 사면 지붕·독서 창·기록 책장"
+        "wall": "u",
+        "chimney": false,
+        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 작은 기록 책장"
       },
       "workProp": "work-props/scholar.png",
       "before": "before/scholar-down.png"
@@ -1839,12 +1846,13 @@
         }
       },
       "style": {
-        "roof": "shed",
-        "window": "wide",
+        "roof": "hip",
+        "window": "square",
         "roofColor": "w",
         "roofShade": "W",
-        "wall": "I",
-        "note": "낮은 나무 지붕·문 옆 통나무 더미"
+        "wall": "u",
+        "chimney": false,
+        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 나무 재료"
       },
       "workProp": "work-props/woodworker.png",
       "before": "before/woodworker-down.png"
@@ -1942,12 +1950,13 @@
         }
       },
       "style": {
-        "roof": "shed",
-        "window": "tall",
+        "roof": "hip",
+        "window": "square",
         "roofColor": "a",
         "roofShade": "A",
         "wall": "u",
-        "note": "차분한 물빛 비탈 지붕·작은 목선"
+        "chimney": false,
+        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 작은 목선"
       },
       "workProp": "work-props/shipwright.png",
       "before": "before/shipwright-down.png"
@@ -2046,12 +2055,12 @@
       },
       "style": {
         "roof": "hip",
-        "window": "round",
+        "window": "square",
         "roofColor": "G",
         "roofShade": "g",
         "wall": "u",
-        "awning": "P",
-        "note": "잎빛 사면 지붕·둥근 창·작은 찻잔 받침"
+        "chimney": false,
+        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 찻잔 받침"
       },
       "workProp": "work-props/teaKeeper.png",
       "before": "before/teaKeeper-down.png"
@@ -2149,13 +2158,13 @@
         }
       },
       "style": {
-        "roof": "flat",
-        "window": "wide",
+        "roof": "hip",
+        "window": "square",
         "roofColor": "I",
         "roofShade": "i",
-        "wall": "C",
-        "awning": "b",
-        "note": "낮은 평지붕·문 위 작은 차양·상품 바구니"
+        "wall": "u",
+        "chimney": false,
+        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 상품 상자"
       },
       "workProp": "work-props/merchant.png",
       "before": "before/merchant-down.png"
@@ -2253,12 +2262,13 @@
         }
       },
       "style": {
-        "roof": "gable",
+        "roof": "hip",
         "window": "square",
         "roofColor": "n",
         "roofShade": "N",
         "wall": "u",
-        "note": "물빛 박공·문 옆 어구 꾸러미"
+        "chimney": false,
+        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 어구 꾸러미"
       },
       "workProp": "work-props/fisher.png",
       "before": "before/fisher-down.png"
@@ -2356,12 +2366,13 @@
         }
       },
       "style": {
-        "roof": "gable",
-        "window": "round",
+        "roof": "hip",
+        "window": "square",
         "roofColor": "n",
         "roofShade": "N",
-        "wall": "I",
-        "note": "물빛 박공·둥근 창·작은 밧줄과 닻"
+        "wall": "u",
+        "chimney": false,
+        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 작은 닻"
       },
       "workProp": "work-props/sailor.png",
       "before": "before/sailor-down.png"
@@ -2459,12 +2470,13 @@
         }
       },
       "style": {
-        "roof": "gable",
-        "window": "tall",
+        "roof": "hip",
+        "window": "square",
         "roofColor": "G",
         "roofShade": "g",
-        "wall": "C",
-        "note": "잎빛 박공·밝은 세로 창·약초 화분"
+        "wall": "u",
+        "chimney": false,
+        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 약초 화분"
       },
       "workProp": "work-props/herbalist.png",
       "before": "before/herbalist-down.png"
@@ -2563,11 +2575,12 @@
       },
       "style": {
         "roof": "hip",
-        "window": "arch",
+        "window": "square",
         "roofColor": "v",
         "roofShade": "V",
         "wall": "u",
-        "note": "보랏빛 사면 지붕·작은 여행 가방"
+        "chimney": false,
+        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 여행 가방"
       },
       "workProp": "work-props/traveler.png",
       "before": "before/traveler-down.png"

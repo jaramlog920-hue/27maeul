@@ -3,14 +3,16 @@ import { CONTENT } from '../content/catalog'
 import { T } from '../content/text'
 import { canJoinNews, canShareClubDish, clubDishes, clubSeason, joinNews, shareClubDish } from './club-extras'
 import { newGame, type GameState } from './game'
+import { HALL_SPOTS } from './places'
 
 const npc = CONTENT.neighbors.find((d) => !d.marketOnly)!.id
 function teaRun(step: 'choose' | 'activity' = 'activity', inv: GameState['inv'] = { beanDish: 2 }): GameState {
   const base = newGame(CONTENT)
-  const appt = { id: 'a1', title: '차 모임', activity: 'tea', day: 10, from: 600, to: 720, state: 'running', members: [npc], startedWith: [npc], clubId: 'c1', attended: true } as unknown as GameState['plans']['appts'][number]
+  const appt = { id: 'a1', title: '차 모임', kind: 'club', place: 'hallTable', activity: 'tea', day: 10, from: 600, to: 720, state: 'running', members: [npc], startedWith: [npc], clubId: 'c1', attended: true, rewarded: false, remembered: false } as GameState['plans']['appts'][number]
   return {
     ...base,
     clock: { day: 10, minute: 630 },
+    player: { ...base.player, ...HALL_SPOTS[0] },
     inv: { ...base.inv, ...inv },
     plans: { ...base.plans, appts: [appt] },
     clubSessions: { a1: { id: 'a1', mode: 'direct', step } },
@@ -18,6 +20,14 @@ function teaRun(step: 'choose' | 'activity' = 'activity', inv: GameState['inv'] 
 }
 
 describe('소모임 덧붙임', () => {
+  it.each(['away','ended','newland'] as const)('cannot share food or join news outside the current session: %s',reason=>{
+    const base=teaRun()
+    const s=reason==='away'?{...base,player:{...base.player,x:1,y:8}}:reason==='newland'?{...base,map:'newland' as const}:{...base,clock:{...base.clock,minute:720},plans:{...base.plans,appts:base.plans.appts.map(a=>({...a,state:'done' as const}))}}
+    expect(canShareClubDish(s,'a1')).toBe(false)
+    expect(shareClubDish(s,'a1','beanDish')).toBe(s)
+    expect(canJoinNews(s,'a1',npc)).toBe(false)
+    expect(joinNews(s,'a1',npc)).toBe(s)
+  })
   it('계절마다 활동별 고르기 문구가 있다', () => {
     for (const a of ['tea', 'sew', 'garden', 'observe'])
       for (const season of ['spring', 'summer', 'autumn', 'winter'])

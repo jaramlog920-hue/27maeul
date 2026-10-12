@@ -28,6 +28,11 @@ function iconOf(p: Pending): ItemId {
   if (p.kind === 'craft') return RECIPE_ICON[p.recipe] ?? 'bread'
   if (p.kind === 'teach') return 'papyrus'
   if (p.kind === 'letter') return 'papyrus'
+  if (p.kind === 'help') {
+    // 이웃마다 손일의 결과물이 다르므로 공통 양털 그림을 쓰지 않는다.
+    const gives = neighborById(p.neighborId)?.help.gives ?? {}
+    return (Object.keys(gives) as ItemId[]).find((id) => (gives[id] ?? 0) > 0) ?? 'wool'
+  }
   return 'wool'
 }
 

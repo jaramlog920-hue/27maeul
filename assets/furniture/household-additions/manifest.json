@@ -1,0 +1,140 @@
+{
+  "tileSize": 16,
+  "source": "src/render/household-furniture-art.ts",
+  "status": "native pixel assets; acquisition and placement not connected",
+  "columns": 5,
+  "cellWidth": 40,
+  "cellHeight": 24,
+  "items": [
+    {
+      "id": "sewingTable",
+      "name": "재봉 탁자",
+      "file": "sewingTable.png",
+      "width": 32,
+      "height": 16,
+      "x": 4,
+      "y": 4,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      }
+    },
+    {
+      "id": "spoolStand",
+      "name": "실패 꽂이",
+      "file": "spoolStand.png",
+      "width": 16,
+      "height": 16,
+      "x": 52,
+      "y": 4,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      }
+    },
+    {
+      "id": "waterJarStand",
+      "name": "물동이 받침",
+      "file": "waterJarStand.png",
+      "width": 16,
+      "height": 16,
+      "x": 92,
+      "y": 4,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      }
+    },
+    {
+      "id": "kneadingTable",
+      "name": "반죽 작업대",
+      "file": "kneadingTable.png",
+      "width": 32,
+      "height": 16,
+      "x": 124,
+      "y": 4,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      }
+    },
+    {
+      "id": "vegetableCrate",
+      "name": "채소 보관함",
+      "file": "vegetableCrate.png",
+      "width": 16,
+      "height": 16,
+      "x": 172,
+      "y": 4,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      }
+    },
+    {
+      "id": "lowTeaTable",
+      "name": "낮은 찻상",
+      "file": "lowTeaTable.png",
+      "width": 32,
+      "height": 16,
+      "x": 4,
+      "y": 28,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      }
+    },
+    {
+      "id": "linenCupboard",
+      "name": "이불장",
+      "file": "linenCupboard.png",
+      "width": 32,
+      "height": 16,
+      "x": 44,
+      "y": 28,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      }
+    },
+    {
+      "id": "towelRack",
+      "name": "수건 걸이",
+      "file": "towelRack.png",
+      "width": 16,
+      "height": 16,
+      "x": 92,
+      "y": 28,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      }
+    },
+    {
+      "id": "plantSteps",
+      "name": "화분 진열대",
+      "file": "plantSteps.png",
+      "width": 32,
+      "height": 16,
+      "x": 124,
+      "y": 28,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      }
+    },
+    {
+      "id": "bootStand",
+      "name": "장화 받침",
+      "file": "bootStand.png",
+      "width": 16,
+      "height": 16,
+      "x": 172,
+      "y": 28,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      }
+    }
+  ]
+}

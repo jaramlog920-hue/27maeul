@@ -4,7 +4,8 @@
 import { Fragment, useState } from 'react'
 import { t } from '../../shared/i18n'
 import { OT_PIECES, OT_PIECE_COUNT } from '../../engine/ot-pieces'
-import { CONTENT, contextOf, GOD_KEYWORDS, NAMES, neighborById, PIECES, versesOf } from '../../content/catalog'
+import { CONTENT, contextOf, GOD_KEYWORDS, NAMES, neighborById, ntBookOfRef, PIECES, versesOf } from '../../content/catalog'
+import { NtContent } from '../passage/NtContent'
 import { copyBookName, fill, roomTitle, T } from '../../content/text'
 import { otLoaded } from '../../content/ot-catalog'
 import { chaptersOf, groupByRoom, progressOf } from '../../engine/books'
@@ -22,6 +23,13 @@ const W = T.word
 const BOOK_NAME = T.quiz.books as Record<string, string>
 const SEASON = T.ui.season as Record<string, string>
 
+function VerseLine({ refText }: { refText: string }) {
+  return <NtContent books={[ntBookOfRef(refText)]}><VerseLineText refText={refText} /></NtContent>
+}
+function VerseLineText({ refText }: { refText: string }) {
+  return <p className="copy-god-verse">{versesOf(refText).map(v => v.text).join(' ')}</p>
+}
+
 /** 날 → "3년째 봄 15일" */
 export function dayLabel(day: number): string {
   const w = whenOf(day)
@@ -35,7 +43,7 @@ export function gotLabel(log: PieceLog, pieceId: string): string {
   if (!got || src.kind === 'unknown') return W.from.unknown
   const w = whenOf(got.day)
   const when = fill(W.when, { year: w.year, season: SEASON[w.season] })
-  const how = src.kind === 'npc' ? fill(W.from.npc, { who: neighborById(src.who)?.role ?? src.who }) : W.from[src.kind]
+  const how = src.kind === 'ground' ? t('groundPiece.source') : src.kind === 'npc' ? fill(W.from.npc, { who: neighborById(src.who)?.role ?? src.who }) : W.from[src.kind]
   return `${when} · ${how}`
 }
 
@@ -104,7 +112,7 @@ export function Word({ tab: first = 'copy' }: { tab?: WordTab }) {
           </button>
         ))}
       </div>
-      {tab === 'copy' && <CopyRecord />}
+      {tab === 'copy' && <NtContent books={book && !isOtBook(book) ? [book] : []}><CopyRecord /></NtContent>}
       {tab === 'pieces' && <PieceDex />}
       {tab === 'god' && <GodRecords />}
       {tab === 'links' && <Links />}
@@ -189,7 +197,7 @@ function PieceDex() {
   const got = all.list.length
   const { books, list } = dexView(collected, book, only)
   const pick = book !== 'all' && books.includes(book) ? book : 'all'
-  const gospels = all.list.some((p) => isGospel(p.book))
+  const gospels = all.list.some((p) => isGospel(p.book) || p.stamps.length > 0)
   const groups = piecesByBook(list.map((p) => p.id))
   const rooms = groupByRoom(books)
   if (view) {
@@ -231,7 +239,6 @@ function PieceDex() {
                 </button>
                 <span className="hint">{fill(T.ui.dexCount, { got: list.length, all: got })}</span>
               </div>
-              <p className="stamp-note">{T.ui.stampNote}</p>
             </>
           )}
           {list.length === 0 && <p className="hint">{W.piecesNone}</p>}
@@ -242,11 +249,11 @@ function PieceDex() {
                 {pieces.map((p) => (
                   <li key={p.id} className={`word-piece${onlyHere(p) ? ' only' : ''}`}>
                     <span className="piece-title">{p.title}</span>
-                    <span className="piece-ref">{p.ref}</span>
+                    <span className="piece-ref">{p.ref}{p.source ? ' · 개역한글 소제목' : ''}</span>
                     {p.stamps.length > 0 && (
                       <span className="dex-stamps">
                         {p.stamps.map((st) => (
-                          <span key={st.ref} className={`mini-stamp ${st.kind}`}>
+                          <span key={st.ref} className={`mini-stamp ${st.kind}`} title={st.label ?? st.ref}>
                             {st.ref.split(' ')[0]}
                             {st.kind === 'similar' ? '≈' : ''}
                           </span>
@@ -293,6 +300,9 @@ function OtPieceDex() {
 
 /** [본문에서 보기]: 조각 구간과 앞뒤 문맥 (조각 부분은 진하게) */
 function PieceContext({ piece, onBack }: { piece: Piece; onBack: () => void }) {
+  return <NtContent books={[piece.book]}><PieceContextText piece={piece} onBack={onBack} /></NtContent>
+}
+function PieceContextText({ piece, onBack }: { piece: Piece; onBack: () => void }) {
   const verses = contextOf(piece.ref)
   const many = new Set(verses.map((v) => v.chapter)).size > 1
   return (
@@ -341,7 +351,7 @@ function GodRecords() {
                   {g.finds.map((f) => (
                     <li key={f.ref}>
                       <p className="copy-god-key">{f.ref}</p>
-                      <p className="copy-god-verse">{versesOf(f.ref).map((v) => v.text).join(' ')}</p>
+                      <VerseLine refText={f.ref} />
                     </li>
                   ))}
                 </ul>
@@ -385,7 +395,7 @@ function Links() {
                     {l.places.map((p) => (
                       <li key={p.ref}>
                         <p className="copy-god-key">{p.ref}</p>
-                        <p className="copy-god-verse">{versesOf(p.ref).map((v) => v.text).join(' ')}</p>
+                        <VerseLine refText={p.ref} />
                       </li>
                     ))}
                   </ul>

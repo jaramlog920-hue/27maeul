@@ -1,5 +1,6 @@
 import type { Facing } from '../engine/types'
 import { spriteRows, type SpriteOpts, type Who } from './sprites'
+import { motionBodyRows } from './motion-body'
 
 /** Native 24×24 poses. Appearance stays supplied by the game's character renderer. */
 export const USE_SIZE = 24
@@ -28,13 +29,13 @@ export interface UseMotionFrame {
   interaction: { x: number; y: number }
   duration: number
 }
-export function furnitureUseFrame(who: Who, facing: Facing, action: UseAction, frame: number, opts: SpriteOpts): UseMotionFrame {
+export function furnitureUseFrame(who: Who, facing: Facing, action: UseAction, frame: number, opts: SpriteOpts, activeHands = true): UseMotionFrame {
   const phase = ((Math.trunc(frame) % 4) + 4) % 4
   const actor = Array.from({ length: USE_SIZE }, () => Array<string>(USE_SIZE).fill('.'))
   const prop = Array.from({ length: USE_SIZE }, () => Array<string>(USE_SIZE).fill('.'))
   // Make the left pose by mirroring a fully dressed right pose exactly once.
   const direction = facing === 'left' ? 'right' : facing
-  const source = spriteRows(who, direction, { ...opts, frame: 0, pose: 'stand', blink: opts.blink || (action === 'lie' && phase !== 2) })
+  const source = (action === 'lie' || (action === 'sit' && activeHands) ? spriteRows : motionBodyRows)(who, direction, { ...opts, frame: 0, pose: 'stand', blink: opts.blink || (action === 'lie' && phase !== 2) })
   const side = direction === 'right'
   const sitting = ['sit', 'drink', 'read', 'craft'].includes(action)
   const bob = (action === 'knead' || action === 'pet') && phase % 2 === 1 ? 1 : 0
@@ -59,17 +60,15 @@ export function furnitureUseFrame(who: Who, facing: Facing, action: UseAction, f
   }))
   let ix = side ? 18 : 12, iy = direction === 'up' ? 12 : 15
   if (action !== 'sit' && action !== 'lie') {
-    // Erase resting hands before drawing the active hands; no extra pair of arms.
-    for (let y = 11; y < 17; y++) for (let x = 7; x < 17; x++) {
-      if (['s', '5', '!','K'].includes(actor[y][x])) actor[y][x] = '.'
-    }
     if (action === 'drink') iy = phase === 1 || phase === 2 ? 10 : 14
     if (action === 'reach') { iy = 14 - [0, 2, 4, 2][phase]; ix += phase === 2 ? 1 : 0 }
     if (action === 'pet') iy = 17 + phase % 2
     if (action === 'craft' || action === 'knead') iy += phase % 2
     const hand = (x: number, y: number) => { rect(actor, x, y, 2, 2, '5'); rect(actor, x, y, 2, 1, 's') }
-    hand(ix - 3, iy)
-    if (!side) hand(ix + 2, iy)
+    if (activeHands) {
+      hand(ix - 3, iy)
+      if (!side) hand(ix + 2, iy)
+    }
     if (action === 'drink') {
       rect(prop, ix - 1, iy - 1, 3, 3, 'c'); rect(prop, ix - 1, iy - 1, 3, 1, 'a'); put(prop, ix + 2, iy, 'c')
     } else if (action === 'read') {

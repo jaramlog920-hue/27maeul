@@ -45,10 +45,13 @@ export const reqState = (flags: Record<string, number>, id: string) => flags[`re
 
 /** 지금 이 이웃에게서 들을 수 있는 부탁 (앞 부탁을 다 들어줘야 다음) */
 export function requestFor(npc: string, points: number | undefined, flags: Record<string, number>): Request | null {
+  // 이미 들은 부탁은 진행 조건이 바뀌어도 마칠 수 있다.
+  if (flags.growthVersion && !flags.growthLegacy && !flags['growth:smallRequest'] &&
+    !REQUESTS.some(r => r.npc === npc && reqState(flags, r.id) === 1)) return null
   for (const r of REQUESTS.filter((x) => x.npc === npc)) {
     const st = reqState(flags, r.id)
     if (st === 2) continue
-    return heartsOf(points) >= r.hearts ? r : null
+    return heartsOf(points) >= r.hearts || (r.id === 'baker:1' && !!flags['growth:smallRequest']) ? r : null
   }
   return null
 }
@@ -147,8 +150,9 @@ export const BABY_PARTY_SPOTS: Record<string, Tile> = {
   carpenter: { x: 2, y: 18 },
 }
 export const HILL_SPOTS: Record<string, Tile> = {
-  baker: { x: 13, y: 12 },
-  child: { x: 15, y: 12 },
+  // 의자 자리(hill.stand 14,12)는 위가 의자·아래가 바위라 양옆을 비워 둔다 — 옆에 서면 별 보는 자리에 갇힌다 (2026-10-11 점검)
+  baker: { x: 18, y: 11 },
+  child: { x: 19, y: 11 },
   grandpa: { x: 17, y: 11 },
   smith: { x: 17, y: 12 },
   shepherd: { x: 12, y: 11 },
@@ -181,9 +185,13 @@ export function planGathering(day: number, level: number, flags: Record<string, 
   if (day === BABY_PARTY_DAY && !isWet(w)) return 'babyParty'
   const s = seasonOf(day)
   if (level >= 2 && !flags['done:picnic'] && clear && (s === 'spring' || s === 'summer')) return 'picnic'
-  if (level >= 3 && !flags['done:starNight'] && clear && Math.abs(day - BABY_PARTY_DAY) > 7) return 'starNight'
+  const gap = flags.starNightPlanned != null && day > flags.starNightPlanned && day - flags.starNightPlanned < STAR_NIGHT_GAP
+  if (level >= 3 && !flags['done:starNight'] && clear && Math.abs(day - BABY_PARTY_DAY) > 7 && !gap) return 'starNight'
   return null
 }
+
+/** 별 보는 밤을 한 번 잡은 뒤, 가지 않았으면 이만큼 지나서 다시 잡는다 */
+export const STAR_NIGHT_GAP = 7
 
 // ── E. 마음 9 ──
 export const BOND_HEARTS = 9

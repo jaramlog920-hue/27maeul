@@ -2,7 +2,9 @@ import { neighborById } from '../../content/catalog'
 import { fill, T } from '../../content/text'
 import { doFestivalRole, festChoices, festFinish, festivalRoleReady, festReactions, festStep, joinFest } from '../../engine/fest'
 import { useGame } from '../../store/game-store'
+import { canAttendAppt } from '../../engine/plans'
 import { commitClub } from '../clubs/club-store'
+import { GroupTask } from '../clubs/GroupTask'
 
 const itemName = (id: string) => (T.items as Record<string, { name: string }>)[id]?.name ?? id
 
@@ -18,10 +20,12 @@ export function FestSession({ id }: { id: string }) {
   const ready = festivalRoleReady(game)?.id === id
   return <div className="dialog" role="dialog" aria-label={title}><h2>{title}{f.role ? ` · ${F.roles[f.role]}` : ''}</h2>
    {done ? <p>{F.done}</p> : <><p>{f.role ? F.roleDo[f.role] : ''}</p>{!ready && <p className="hint">{F.roleNear}</p>}</>}
-   <div className="actions">{!done && <button className="primary" disabled={!ready} onClick={() => commitClub(doFestivalRole(game, id))}>{F.roleButton}</button>}<button data-close onClick={close}>{T.ui.close}</button></div>
+   {!done&&ready&&<GroupTask id={id} kind={f.role==='deco'?'festivalDeco':f.role==='tidy'?'festivalTidy':'festivalFood'} progress={f.task}/>}
+   <div className="actions">{!done && <button className="primary" disabled={!ready||(f.task?.stage??0)<3} onClick={() => commitClub(doFestivalRole(game, id))}>{F.roleButton}</button>}<button data-close onClick={close}>{T.ui.close}</button></div>
   </div>
  }
  const a = game.plans.appts.find(x => x.id === f.apptId)
+ const nearby = !!a && canAttendAppt(game,a.id)
  const label = (c: string) => c === 'basic' ? (f.kind === 'housewarming' ? F.pick.home : F.pick.basic) : c === 'show' || c === 'story' ? F.pick[c] : itemName(c)
  const who = a?.startedWith ?? f.members
  return <div className="dialog" role="dialog" aria-label={title}><h2>{title} · {F.stepTitle[done ? 'done' : f.step]}</h2>
@@ -30,10 +34,11 @@ export function FestSession({ id }: { id: string }) {
    if (next !== game) commitClub(next)
    else useGame.getState().say(F.joinFar)
   }}>{F.join}</button><p className="hint">{F.joinFar}</p></>}
-  {!done && f.joined && <>
+  {!done && f.joined && !nearby && <p className="hint">{F.joinFar}</p>}
+  {!done && f.joined && nearby && <>
    {f.step === 'tidy' && <p>{fill(F.tidy, { deco: f.deco ? itemName(f.deco) : F.basicDeco })}</p>}
    {f.step === 'arrive' && <><p>{F.arrive}</p><p>{who.map(n => neighborById(n)?.role).join(' · ')}</p></>}
-   {f.step === 'activity' && <><p>{F.activity[f.kind]}</p><div className="actions menu column">{festChoices(game, f).map(c => <button key={c} onClick={() => commitClub(festStep(game, id, c))}>{label(c)}</button>)}</div></>}
+   {f.step === 'activity' && <><p>{F.activity[f.kind]}</p><GroupTask id={a!.id} kind={f.kind} progress={f.task}/>{(f.task?.stage??0)>=3&&<div className="actions menu column">{festChoices(game, f).map(c => <button key={c} onClick={() => commitClub(festStep(game, id, c))}>{label(c)}</button>)}</div>}</>}
    {f.step === 'talk' && <ul className="event-list">{festReactions(game, f).map(r => <li key={r.npc}>{neighborById(r.npc)?.role} · {r.text}</li>)}</ul>}
    {f.step === 'finish' && <p>{F.finishText}</p>}
    <div className="actions">
@@ -42,6 +47,6 @@ export function FestSession({ id }: { id: string }) {
    </div>
   </>}
   {done && <p>{F.done}</p>}
-  <div className="actions"><button data-close onClick={close}>{T.ui.close}</button></div>
+  <div className="actions">{!done&&f.joined&&<button onClick={close}>함께하는 모습 보기</button>}<button data-close onClick={close}>{T.ui.close}</button></div>
  </div>
 }

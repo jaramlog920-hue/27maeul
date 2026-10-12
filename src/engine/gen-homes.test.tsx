@@ -11,6 +11,8 @@ import { useGame } from '../store/game-store'
 import { ModalLayer } from '../features/ModalLayer'
 import { setActiveMap } from './maps'
 import { setNewlandOpen } from './newland'
+import { foundItems } from './achievements'
+import { deserialize, serialize } from './save'
 
 afterEach(() => {
   setActiveMap('village')
@@ -47,6 +49,23 @@ function land(): GameState {
 }
 
 describe('주민 가족 생활', () => {
+  it('입주하는 가족 각자 한 개씩 미획득 물건을 주고 재입주·불러오기는 다시 지급하지 않는다', () => {
+    const s = land()
+    const moved = giveFamilyHome(s, 'h-2', house, roomOwner)
+    const gifts = ['g-0001', 'g-0002'].map(id => moved.moveInGifts?.[id])
+    expect(new Set(gifts).size).toBe(2)
+    for (const gift of gifts) {
+      expect(gift).toBeTruthy()
+      expect(foundItems(s)).not.toContain(gift)
+      expect(moved.inv[gift!]).toBe(1)
+    }
+    const loaded = deserialize(serialize(moved), CONTENT)!
+    expect(loaded.moveInGifts).toEqual(moved.moveInGifts)
+    const rebuilt = { ...loaded, newland: { ...loaded.newland!, builds: [{ ...house, id: 'b2' }] } }
+    expect(homeWishes(rebuilt, roomOwner).map(h => h.id)).toContain('h-2')
+    expect(giveFamilyHome(rebuilt, 'h-2', rebuilt.newland.builds[0], roomOwner).inv).toEqual(loaded.inv)
+  })
+
   it('결혼한 이웃은 가구의 집(배우자 집)으로, 집 주인은 제 집 그대로', () => {
     const g = gen()
     expect(sharedHomeOf(g, 'grandpa', roomOwner)).toBe('baker')

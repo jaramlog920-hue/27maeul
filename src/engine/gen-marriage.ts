@@ -5,6 +5,7 @@ import { CONSULT_CHEER, CONSULT_QUESTIONS, CONSULT_RETRY, MAX_PREPARING, WEDDING
 import { addLog, affinityOf, genRng, relationId, type ConsultAnswer, type GenState, type Household, type Relation } from './gen'
 import type { DayCtx } from './gen-relations'
 import type { ItemId } from './types'
+import { slotOfPerson } from './gen-growth'
 
 /** 준비 일 (P9): 잔치 자리에 쓸, 이미 있는 물건들. 두 가지를 날 씨앗으로 고른다 */
 export const PREP_TASKS: Record<string, Partial<Record<ItemId, number>>> = {
@@ -31,7 +32,8 @@ export function consultFor(g: GenState | undefined, npc: string, hearts: Record<
   if (!g?.on) return null
   for (const r of Object.values(g.relations)) {
     if (r.stage !== 'lover' || !r.consult || (r.a !== npc && r.b !== npc)) continue
-    if (consultantOf(r, hearts) !== npc) continue
+    const personHearts = { [r.a]: hearts[slotOfPerson(g, r.a)] ?? 0, [r.b]: hearts[slotOfPerson(g, r.b)] ?? 0 }
+    if (consultantOf(r, personHearts) !== npc) continue
     const c = r.consult
     if (c.nextAsk > day || c.asked.includes(day) || c.answers.length >= CONSULT_QUESTIONS) continue
     return r

@@ -1,3 +1,4 @@
+import { featureAccess } from './feature-rules'
 // 가족과 함께 있는 필사 (계획 14 작업 10, 계획 12 "아이와 함께 보내는 시간").
 // 아이가 어느 정도 자라면 책상에 앉을 때 가끔 "옆에 앉고 싶어 해요" — [같이 있기]면 아이는 곁에서 그림을 그리고, 책장을 넘기다
 // 졸다 잠든다. 아이는 필사하지 않고 능력치도 얻지 않는다 (보상 없음). 배우자는 저녁에 같은 방에서 책을 읽는다.
@@ -21,10 +22,11 @@ export const DESK_DOZE_AT = 6
 /** 옆에 앉고 싶어 하는 날 (날 씨앗, 대략 이틀에 한 번) */
 export const DESK_ASK_CHANCE = 0.5
 
-type DeskState = Pick<GameState, 'child' | 'clock' | 'flags'>
+type DeskState = Pick<GameState, 'child' | 'clock' | 'flags' | 'map'> & Partial<Pick<GameState, 'progress' | 'shelved'>>
 
 /** 아이가 책상 곁에 앉을 수 있는가: 걷는 아이·돕는 아이이고, 배움터에 가 있지 않다 (아기·어른·먼 곳에 사는 아이는 아니다) */
 export function deskKidReady(s: DeskState): boolean {
+  if ((s.map ?? 'village') !== 'village') return false
   const c = s.child
   if (!c) return false
   const st = childStage(c, s.clock.day)
@@ -35,13 +37,14 @@ export function deskKidReady(s: DeskState): boolean {
 
 /** 오늘 책상에 앉으면 아이가 옆에 앉고 싶어 하는가 (하루 한 번만 묻는다, 날 씨앗) */
 export function deskAsks(s: DeskState): boolean {
-  if (!deskKidReady(s)) return false
+  if (!deskKidReady(s) || featureAccess(s, 'childActivities') !== 'full') return false
   if (s.flags.deskAskDay === s.clock.day) return false
   return mulberry32(s.clock.day * 7919 + 41)() < DESK_ASK_CHANCE
 }
 
 /** 물어본 날을 적는다 ([같이 있기]면 오늘은 아이가 곁에 앉는다) */
 export function answerDesk<S extends DeskState>(s: S, together: boolean): S {
+  if (together && featureAccess(s, 'childActivities') !== 'full') return s
   const day = s.clock.day
   const flags: Record<string, number> = { ...s.flags, deskAskDay: day }
   if (together) {
@@ -115,16 +118,18 @@ export function cookBurns(nth: number): boolean {
   return nth % 4 === 2
 }
 
-export type KidBlock = 'noChild' | 'baby' | 'grown' | 'school' | 'done' | 'dark' | 'notYet' | 'storyDone' | null
+export type KidBlock = 'locked' | 'noChild' | 'baby' | 'grown' | 'school' | 'done' | 'dark' | 'notYet' | 'storyDone' | 'away' | null
 
 /** 오늘 함께한 일 수 (잠들기 전 이야기 빼고) */
 export function kidActsToday(s: Pick<GameState, 'flags' | 'clock'>): number {
   return s.flags.kidActDay === s.clock.day ? (s.flags.kidActs ?? 0) : 0
 }
 
-export function canKidAct(s: Pick<GameState, 'child' | 'clock' | 'flags'>, act: KidAct): KidBlock {
+export function canKidAct(s: Pick<GameState, 'child' | 'clock' | 'flags' | 'map'> & Partial<Pick<GameState, 'progress' | 'shelved'>>, act: KidAct): KidBlock {
+  if ((s.map ?? 'village') !== 'village') return 'away'
   const c = s.child
   if (!c) return 'noChild'
+  if (featureAccess(s, 'childActivities') !== 'full') return 'locked'
   const st = childStage(c, s.clock.day)
   if (st === 'baby') return 'baby'
   if (st === 'adult' || childMode(c, s.clock.day) === 'away') return 'grown'
@@ -164,7 +169,7 @@ export function firstTime(s: GameState, id: string, opts: { stages?: readonly Ch
   const partner = s.romance?.stage === 'married' ? s.romance.partner : undefined
   const npc = partner ? s.npcs[partner] : undefined
   const withs = s.child ? ['family:child'] : []
-  if (partner && npc?.visible && Math.abs(npc.x-s.player.x)+Math.abs(npc.y-s.player.y) <= 2) withs.push(partner)
+  if ((s.map ?? 'village') === 'village' && partner && npc?.visible && Math.abs(npc.x-s.player.x)+Math.abs(npc.y-s.player.y) <= 2) withs.push(partner)
   for (const n of opts.extra ?? []) if (!withs.includes(n)) withs.push(n)
   const life = recordExperience(s.life ?? NO_LIFE, { id, kind: 'family', with: withs,
     ...(opts.choice !== undefined ? { choice: opts.choice } : {}), ...(opts.item ? { item: opts.item } : {}), ...(opts.place ? { place: opts.place } : {}) },
@@ -272,11 +277,11 @@ export const SUPPER_HEART = 3
 export const SUPPER_MINUTES = 40
 
 /** 오늘 저녁 배우자와 같이 먹는가: 부부(결혼 잔치 날 빼고), 저녁 때, 오늘 아직 안 먹었고, 차려지는 날 */
-export function supperReady(s: Pick<GameState, 'clock' | 'flags'> & Partial<Pick<GameState, 'romance'>>): boolean {
+export function supperReady(s: Pick<GameState, 'clock' | 'flags'> & Partial<Pick<GameState, 'romance' | 'progress' | 'shelved' | 'flags'>>): boolean {
   const r = s.romance ?? NO_ROMANCE
   const day = s.clock.day
   const m = s.clock.minute
-  if (r.stage !== 'married' || !r.partner || r.marriedDay === day) return false
+  if (featureAccess(s, 'spouseLife') !== 'full' || r.stage !== 'married' || !r.partner || r.marriedDay === day) return false
   if (m < SUPPER_FROM || m >= SUPPER_TO || s.flags.supperDay === day) return false
   return mulberry32(day * 577 + 13)() < SUPPER_CHANCE
 }
@@ -309,8 +314,8 @@ export function isFamilyAlbum(id: string): boolean {
 }
 
 /** 배우자가 같은 방에서 책을 읽는가: 부부이고, 배우자가 집에 있는 저녁·밤 */
-export function spouseReading(s: Pick<GameState, 'clock'> & Partial<Pick<GameState, 'romance'>>): boolean {
+export function spouseReading(s: Pick<GameState, 'clock'> & Partial<Pick<GameState, 'romance' | 'progress' | 'shelved' | 'flags'>>): boolean {
   const r = s.romance ?? NO_ROMANCE
   const m = s.clock.minute
-  return r.stage === 'married' && !!r.partner && (m >= SPOUSE_HOME_FROM || m < SPOUSE_HOME_TO)
+  return r.stage === 'married' && !!r.partner && (m >= SPOUSE_HOME_FROM || m < SPOUSE_HOME_TO) && featureAccess(s, 'spouseLife') === 'full'
 }

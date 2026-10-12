@@ -10,15 +10,16 @@ const playerTileOf = (s: GameState) => ({ x: Math.round(s.player.x), y: Math.rou
 describe('문을 드나드는 동반 동물', () => {
   it('내 집 문을 밟으면 동물도 함께 들어오고, 문깔개로 나가면 함께 나간다', () => {
     const s0 = newGame(CONTENT)
-    const cat = { kind: 'cat' as const, name: '나비', since: 1, x: HOME_FRONT.x - 1, y: HOME_FRONT.y, path: [], facing: 'down' as const, walkTime: 0 }
+    // 고양이는 외출하지 않는다 (집에서만 지낸다) — 데리고 다니는 강아지로
+    const cat = { kind: 'dog' as const, name: '바둑', since: 1, x: HOME_FRONT.x - 1, y: HOME_FRONT.y, path: [], facing: 'down' as const, walkTime: 0 }
     let s: GameState = { ...s0, npcs: {}, companion: cat, player: { ...s0.player, ...HOME_FRONT, path: [HOME_DOOR] } }
     for (let i = 0; i < 40 && !isHome(playerTileOf(s)); i++) s = tick(s, 0.05, zero, CONTENT).state
     expect(playerTileOf(s)).toEqual(HOME_ENTRY)
     const inside = { x: Math.round(s.companion!.x), y: Math.round(s.companion!.y) }
     expect(isHome(inside)).toBe(true)
-    // 문깔개(나가는 문) 위가 아니라 기록자 위쪽 칸에
+    // 문깔개(나가는 문) 위가 아니라 기록자 곁에 — 뒤(문깔개)가 막혀 옆에서 기다린다
     expect(WARPS.has(key(inside))).toBe(false)
-    expect(inside).toEqual({ x: HOME_ENTRY.x, y: HOME_ENTRY.y - 1 })
+    expect(Math.abs(inside.x - HOME_ENTRY.x) + Math.abs(inside.y - HOME_ENTRY.y)).toBe(1)
     s = { ...s, player: { ...s.player, path: [{ x: HOME_ENTRY.x, y: HOME_ENTRY.y + 1 }] } }
     for (let i = 0; i < 40 && isHome(playerTileOf(s)); i++) s = tick(s, 0.05, zero, CONTENT).state
     expect(playerTileOf(s)).toEqual(HOME_FRONT)

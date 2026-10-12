@@ -42,15 +42,16 @@ import { REQUESTS as REQUESTS_T } from './bonds'
 import { fulfillRequest as fulfillRequestT, interactTile as interactTileT, pressTile as pressTileT, walkDirection as walkDirectionT } from './game'
 import { placeAt as placeAtT } from './world'
 import { deserialize, loadGame, saveGame, serialize as serializeForTest, SAVE_KEY } from './save'
-import { HOME_ENTRY, HOME_FRONT, HOME_RECT, PLACES, START } from './world'
+import { HOME_ENTRY, HOME_FRONT, HOME_RECT, PET_HOME, PLACES, START, isHome } from './world'
 
 /** 예전 지도 위 집의 칸 → 지금 집 안 방의 같은 칸 */
 const h = (x: number, y: number) => ({ x: x + HOME_RECT.x0 - 2, y: y + HOME_RECT.y0 - 2 })
 /** 집 문 앞(마을)에 선 새 게임 */
 const outside = (s: GameState = newGame(CONTENT)): GameState => ({ ...s, player: { ...s.player, ...HOME_FRONT, path: [] } })
 import { heartsOf } from './hearts'
-import { STRAY_SPOTS } from './companion'
 import { CONTENT, piecesOf } from '../content/catalog'
+import { goalFor } from './neighbors'
+import { LODGING_SEATS } from './lodging'
 import type { NeighborDef } from './types'
 import { dayOf, FESTIVAL_FROM, FESTIVAL_TO, festivalOf, isWet, weatherOf } from './calendar'
 import { scheduledEvents } from './events'
@@ -114,7 +115,9 @@ describe('걷기와 도착', () => {
     const r = runUntilEvent(s)
     expect(r.events[0]).toEqual({ type: 'arrived', target: { kind: 'place', id: 'desk', tile: PLACES.desk.tiles[0] } })
     expect([r.state.player.x, r.state.player.y]).toEqual([PLACES.desk.stand!.x, PLACES.desk.stand!.y])
-    expect(r.state.player.facing).toBe('left')
+    // 침대 자리가 옮겨지면 책상 서는 칸도 바뀐다 — 어느 칸이든 책상 쪽을 바라본다
+    const [d, st] = [PLACES.desk.tiles[0], PLACES.desk.stand!]
+    expect(r.state.player.facing).toBe(st.x > d.x ? 'left' : st.x < d.x ? 'right' : st.y > d.y ? 'up' : 'down')
   })
   it('갈대처럼 서는 칸이 없는 곳은 옆 칸까지 간다', () => {
     const s = tapTile(outside(), { x: 6, y: 34 })
@@ -310,9 +313,9 @@ describe('책상', () => {
     const ok = submitChapter(s, 'lk', 1, CONTENT)
     expect(ok.result.kind).toBe('done')
     expect(ok.state.progress.lk.completed).toEqual([1])
-    expect(ok.state.inv).toEqual({})
+    expect(ok.state.inv).toEqual({ stool: 1 })
     // 가진 재료도 쓰지 않는다
-    expect(submitChapter({ ...s, inv: { papyrus: 1, ink: 1 } }, 'lk', 1, CONTENT).state.inv).toEqual({ papyrus: 1, ink: 1 })
+    expect(submitChapter({ ...s, inv: { papyrus: 1, ink: 1 } }, 'lk', 1, CONTENT).state.inv).toEqual({ papyrus: 1, ink: 1, stool: 1 })
     expect(ok.state.scenes).toContain('firstChapter')
   })
   it('순서가 틀리면 비용을 쓰지 않는다', () => {
@@ -491,13 +494,15 @@ describe('동반 동물·방·나의 한 줄', () => {
     expect(straysToday(s)).toEqual(['cat', 'dog'])
     const a = adoptStray(s, 'cat', '나비')
     expect(a.companion?.name).toBe('나비')
-    expect([a.companion?.x, a.companion?.y]).toEqual([STRAY_SPOTS.cat.x, STRAY_SPOTS.cat.y])
+    expect([a.companion?.x, a.companion?.y]).toEqual([PET_HOME.x, PET_HOME.y])
+    expect(a.companion?.stay).toBe(true)
     expect(a.flags.childPet).toBe(2)
     expect(straysToday(a)).toEqual([])
     expect(a.scenes).toContain('companionJoined')
   })
   it('깔개는 3×2칸으로 깔리고, 치우면 가방으로', () => {
     const s = { ...newGame(CONTENT), room: [], inv: { rug: 1 } }
+    s.progress.phm.completed = [1]
     const p = placeFurniture(s, 'rug', h(5, 4))!
     expect(p.room).toEqual([{ item: 'rug', ...h(5, 4) }])
     expect(p.inv.rug).toBeUndefined()
@@ -509,6 +514,7 @@ describe('동반 동물·방·나의 한 줄', () => {
   })
   it('식탁 위에 물병을 올리고, 식탁을 치우면 물병도 함께', () => {
     const s = { ...newGame(CONTENT), room: [], inv: { table: 1, jar: 1 } }
+    s.progress.phm.completed = [1]
     // 문깔개 바로 위(들어와 서는 칸)는 막을 수 없다
     expect(placeFurniture(s, 'table', HOME_ENTRY)).toBeNull()
     let p = placeFurniture(s, 'table', h(7, 6))!
@@ -571,13 +577,17 @@ describe('특별한 순간', () => {
 })
 
 describe('리뷰 지적 회귀', () => {
-  it('M3: 궂은 날 집에서 쉬는 이웃(대장장이)에게는 말씀 조각을 배정하지 않는다 — 조각은 그날 나온 이웃만 건넨다', () => {
+  it('M3: 만날 수 있는 이웃만 조각을 건넨다 — 궂은 날 대장장이는 공동주택 실내에서 만난다', () => {
     let talks = 0
     for (let d = 1; d < 120; d++) {
       const s = goToSleep(at(newGame(CONTENT), 22 * 60, d), CONTENT)
       const present = neighborsPresent(s, CONTENT)
       for (const id of Object.keys(s.offers)) expect(present, `day ${s.clock.day}`).toContain(id)
-      if (isWet(weatherOf(s.clock.day))) expect(s.offers.smith, `day ${s.clock.day}`).toBeUndefined()
+      if (isWet(weatherOf(s.clock.day))) {
+        expect(present, `day ${s.clock.day}`).toContain('smith')
+        const smith = CONTENT.neighbors.find(n => n.id === 'smith')!
+        expect(goalFor(smith, { minute: 600, wet: true, market: false, festival: false })).toEqual(LODGING_SEATS.smith)
+      }
       talks += Object.keys(s.offers).length
     }
     expect(talks).toBeGreaterThan(0)
@@ -616,12 +626,13 @@ describe('저장', () => {
     expect(back.hearts).toEqual({ baker: 2 })
     expect(Object.keys(back.npcs)).toHaveLength(CONTENT.neighbors.length)
   })
-  it('옛 저장의 텃밭 작물은 새 텃밭(14~17, 3~4) 같은 자리로 옮긴다', () => {
+  it('옛 저장의 텃밭 작물은 지도 텃밭(11~14, 4~6) 빈 칸으로 옮긴다', () => {
     const s = newGame(CONTENT)
     const plot = { crop: 'herb', grown: 1, wateredDay: null }
     const old = { ...JSON.parse(serializeForTest(s)), garden: { '1,8': plot, '4,9': plot } }
     const back = deserialize(JSON.stringify(old), CONTENT)!
-    expect(Object.keys(back.garden).sort()).toEqual(['14,3', '17,4'])
+    expect(Object.keys(back.garden).sort()).toEqual(['11,4', '12,4'])
+    for (const k of Object.keys(back.garden)) expect(PLACES.garden.tiles.some((t) => `${t.x},${t.y}` === k)).toBe(true)
   })
   it('N2·N4: (필사 전 옛 저장) 끝낸 장의 새 조각은 모은 것으로, 빠진 조각은 본문 순서 자리에', () => {
     const s = newGame(CONTENT)
@@ -800,9 +811,10 @@ describe('옛 저장에서 갇히지 않기', () => {
     const back = load(20, 10)
     expect({ x: back.player.x, y: back.player.y }).toEqual({ x: 20, y: 10 })
   })
-  it('갇힌 동반 동물은 기록자 곁으로 옮긴다', () => {
+  it('갇힌 고양이는 기록자를 따라가지 않고 집으로 옮긴다', () => {
     const c = { kind: 'cat', name: '나비', since: 1, x: 3, y: 13, path: [], facing: 'down', walkTime: 0 }
     const back = load(20, 10, c)
-    expect(Math.abs(back.companion!.x - 20) + Math.abs(back.companion!.y - 10)).toBe(1)
+    expect(isHome(back.companion!)).toBe(true)
+    expect(back.companion!.stay).toBe(true)
   })
 })

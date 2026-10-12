@@ -4,20 +4,20 @@ import { mulberry32 } from './offers'
 import type { Tile } from './types'
 import { PLACES } from './world'
 
-// ── 사랑방: 저녁에 이웃 셋이 모여 논다 (비 오는 날에도 — 집 안이라) ──
+// ── 사랑방: 저녁에 이웃 열이 모여 논다 (비 오는 날에도 — 집 안이라) ──
 
 /** 사랑방에 모이는 때 (18:00–20:30) */
 export const HALL_FROM = 18 * 60
 export const HALL_TO = 20 * 60 + 30
 /** 모이는 이웃 수 */
-export const HALL_GUESTS = 3
+export const HALL_GUESTS = 10
 /** 사랑방 긴 탁자 둘레 방석 자리 (탁자 위·아래, 들어오는 길은 비워 둔다) */
 export const HALL_SPOTS: readonly Tile[] = (() => {
   const [t0] = PLACES.hallTable.tiles
   return [
-    { x: t0.x, y: t0.y - 1 },
-    { x: t0.x + 3, y: t0.y - 1 },
-    { x: t0.x + 4, y: t0.y },
+    ...[0,1,2,3].map(dx=>({x:t0.x+dx,y:t0.y-1})),
+    {x:t0.x-1,y:t0.y}, {x:t0.x+4,y:t0.y},
+    ...[0,1,2,3].map(dx=>({x:t0.x+dx,y:t0.y+1})),
   ]
 })()
 /** 사랑방에 오지 않는 이웃: 상인(장날에만 온다), 아이(저녁엔 글자를 배우러 가거나 집에 있다) */

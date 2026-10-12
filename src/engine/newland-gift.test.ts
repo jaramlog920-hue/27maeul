@@ -31,7 +31,9 @@ function night(day: number, flags: Record<string, number> = {}, shelved = ALL): 
   // 꽂힌 책은 다 쓴 책이어야 저장을 거쳐도 남는다 (save.ts: 끝나지 않은 책의 서고 칸은 없앤다)
   const progress = { ...s.progress }
   for (const b of Object.keys(shelved) as (keyof typeof shelved)[]) progress[b] = { ...progress[b], completed: chaptersOf(b, CONTENT) }
-  return { ...s, scenes: [], clock: { day, minute: 22 * 60 }, shelved, progress, flags: { ...s.flags, ...OPEN, ...flags } }
+  // 이미 완필한 마을: 기존 이웃의 이사 선물을 새 터 보상으로 다시 세지 않는다.
+  const movedIn = Object.fromEntries(CONTENT.neighbors.map(n => [`moveGift:${n.id}`, 1]))
+  return { ...s, scenes: [], clock: { day, minute: 22 * 60 }, shelved, progress, flags: { ...s.flags, ...OPEN, ...movedIn, ...flags } }
 }
 const sleep = (s: GameState) => goToSleep({ ...s, scenes: [], clock: { ...s.clock, minute: 22 * 60 } }, CONTENT)
 const gifts = (s: GameState) => s.scenes.filter((x) => x === 'newlandGift').length
@@ -67,7 +69,7 @@ describe('완필 보상 — 조건과 한 번뿐', () => {
     const before = night(5, { allFeast: 1 })
     syncHome(before)
     expect(portalAt(VILLAGE_PORTAL)).toBeNull()
-    expect(tileAt(VILLAGE_PORTAL.x, VILLAGE_PORTAL.y)).toBe(',')
+    expect(tileAt(VILLAGE_PORTAL.x, VILLAGE_PORTAL.y)).toBe('.')
     const after = sleep(sleep(night(2, { churchesDone: 1 })))
     syncHome(after)
     expect(portalAt(VILLAGE_PORTAL)).toBe('newland')
@@ -223,13 +225,28 @@ describe('서고 문 첫 밟기 — 아침빛 · 창 1:3 · 건너뛰기', () =>
   it('이미 본 표식이 있으면 다시 나오지 않는다', () => {
     expect(lights(stepIn(atDoor({ newlandLight: 1 })).events)).toBe(0)
   })
+  it('첫 빛 걸음에는 구약 조각이 없고, 저장·재접속 뒤 다시 들어서면 그날 조각 하나 — 연출은 다시 없다 (2026-10-12 사용자 결정)', () => {
+    const firstStep=stepIn(atDoor())
+    expect(firstStep.events.filter(e=>e.type==='otPiece')).toEqual([])
+    const first=firstStep.s
+    const restored=deserialize(serialize(first),CONTENT)!
+    expect(restored.flags.newlandLight).toBe(1)
+    const reentered=stepIn({...restored,player:{...restored.player,...ARCHIVE.front,path:[]}})
+    expect(lights(reentered.events)).toBe(0)
+    expect(reentered.events.filter(e=>e.type==='otPiece')).toHaveLength(1)
+    const third=stepIn({...reentered.s,player:{...reentered.s.player,...ARCHIVE.front,path:[]}})
+    expect(third.events.filter(e=>e.type==='otPiece')).toEqual([])
+  })
 
   it('화면: 문을 밟으면 연출 창이 열리고, 건너뛰어도(닫아도) 서고는 그대로 쓸 수 있다', () => {
-    useGame.setState({ game: atDoor(), modal: null, rng: zero, decorating: null, decorSel: null, toast: null })
+    useGame.setState({ game: atDoor(), modal: null, rng: zero, decorating: null, decorSel: null, toast: null, piecePopups:[], copyResult:null })
     useGame.getState().tap({ x: ARCHIVE.door.x, y: ARCHIVE.door.y })
     for (let i = 0; i < 40 && useGame.getState().modal?.kind !== 'firstLight'; i++) useGame.getState().frame(0.1)
     expect(useGame.getState().modal).toEqual({ kind: 'firstLight' })
-    // 건너뛰기 = 연출만 건너뛴다: 위치·진행은 그대로, 서고 안에서 걷고 책상 창도 열 수 있다
+    // 첫 입장에는 구약 조각 알림이 연출보다 먼저 뜨지 않는다 (조각은 다음에 들어설 때 — 2026-10-12 사용자 결정)
+    expect(useGame.getState().piecePopups).toEqual([])
+    expect(useGame.getState().modal).toEqual({kind:'firstLight'})
+    // 이제 연출을 닫는다: 위치·진행은 그대로, 서고 안에서 걷고 책상 창도 열 수 있다.
     useGame.getState().closeModal()
     const g = useGame.getState().game
     expect(g.flags.newlandLight).toBe(1)

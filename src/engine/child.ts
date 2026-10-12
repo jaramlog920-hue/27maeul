@@ -140,6 +140,12 @@ export function inheritBorn(player: Stats, spouseStat: StatId | undefined): Part
   return out
 }
 
+/** 세 추가 후보의 옛 아이에게 빠졌던 배우자 유전 한 칸만 복원한다. lean이 있어 중복 지급하지 않는다. */
+export function repairSpouseInheritance(c: Child | null, partner: string | null, spouseStat: StatId | undefined): Child | null {
+  if (!c || c.lean !== null || !spouseStat || !partner || !['merchant', 'presser', 'postman'].includes(partner)) return c
+  return { ...c, lean: spouseStat, stats: { ...c.stats, [spouseStat]: { ...c.stats[spouseStat], born: Math.min(2, c.stats[spouseStat].born + 1) } } }
+}
+
 /** 날 씨앗으로 아이의 모습과 첫 이름 */
 export function newChild(day: number, player: Stats, spouseStat: StatId | undefined): Child {
   const rnd = mulberry32(day * 613 + 29)

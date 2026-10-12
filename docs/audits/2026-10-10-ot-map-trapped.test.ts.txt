@@ -1,0 +1,24 @@
+import { expect, it } from 'vitest'
+import { CONTENT } from '../content/catalog'
+import { newGame, syncHome, walkDirection, type GameState } from './game'
+import { canPlace, orderBuild } from './newland-build'
+import { deserialize, serialize } from './save'
+
+it('rejects the last tree when it traps the player on unpaved grass', () => {
+  const base = newGame(CONTENT)
+  let s: GameState = { ...base, map: 'newland', scenes: [], coins: 1000,
+    flags: { ...base.flags, newlandGift: 1, newlandRevealed: 1 },
+    player: { ...base.player, x: 20, y: 20, path: [] } }
+  for (const [x, y] of [[19,20], [21,20], [20,19]]) {
+    expect(canPlace(s, 'treeSmall', x, y)).toBeNull()
+    s = orderBuild(s, 'treeSmall', x, y)!
+  }
+  const result = canPlace(s, 'treeSmall', 20, 21)
+  const trapped = orderBuild(s, 'treeSmall', 20, 21)!
+  expect(trapped).not.toBeNull()
+  syncHome(trapped)
+  const paths = [[1,0],[-1,0],[0,1],[0,-1]].map(([dx,dy]) => walkDirection(trapped, dx, dy).player.path.length)
+  const restored = deserialize(serialize(trapped), CONTENT)!
+  expect({ result, paths, savedPosition: [restored.player.x, restored.player.y] })
+    .toEqual({ result: 'sealed', paths: [0,0,0,0], savedPosition: [20,20] })
+})

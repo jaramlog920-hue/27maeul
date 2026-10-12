@@ -11,7 +11,8 @@ import { useGame } from '../store/game-store'
 import { ModalLayer } from '../features/ModalLayer'
 
 const shelved = Object.fromEntries(BOOKS.map((b) => [b, 0])) as GameState['shelved']
-const at = (day: number, extra: Partial<GameState> = {}): GameState => ({ ...newGame(CONTENT), clock: { day, minute: 360 }, shelved, ...extra })
+// 서고 운영이 다 열린 옛 저장으로 (새 게임은 진행에 따라 열린다)
+const at = (day: number, extra: Partial<GameState> = {}): GameState => { const g = newGame(CONTENT); return { ...g, flags: { ...g.flags, growthLegacy: 1 }, clock: { day, minute: 360 }, shelved, ...extra } }
 const finished = (...books: OtBook[]): GameState['otProgress'] =>
   Object.fromEntries(books.map((b) => [b, { completed: Array.from({ length: otRow(b).chapters }, (_, i) => i + 1), arrangement: {} }]))
 

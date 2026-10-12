@@ -1,8 +1,10 @@
 // 가구 크기와 층 (방 꾸미기·이웃집 방이 함께 쓴다 — world가 room을 부르지 않게 따로 둔다)
 import designs from '../content/spouse-rooms.json'
 import type { ItemId } from './types'
+import { ADDITION_FURNITURE } from './furniture-additions'
 
-export type Layer = 'floor' | 'solid' | 'small'
+/** wall = 벽에 거는 것 (방 바닥 바로 위 벽 칸, 2026-10-12) — 길을 막지 않는다 */
+export type Layer = 'floor' | 'solid' | 'small' | 'wall'
 export interface FurnitureDef {
   w: number
   h: number
@@ -13,7 +15,8 @@ export interface FurnitureDef {
 
 export const FURNITURE_DEFS: Partial<Record<ItemId, FurnitureDef>> = {
   homeCradle: { w: 1, h: 1, layer: 'solid' },
-  homeBed: { w: 1, h: 1, layer: 'solid' },
+  homeBed: { w: 1, h: 2, layer: 'solid' },
+  coupleBed: { w: 2, h: 2, layer: 'solid' },
   homeDesk: { w: 1, h: 1, layer: 'solid' },
   homeHearth: { w: 1, h: 1, layer: 'solid' },
   homeShelf: { w: 1, h: 1, layer: 'solid' },
@@ -70,6 +73,9 @@ export const FURNITURE_DEFS: Partial<Record<ItemId, FurnitureDef>> = {
  * 그림 원본(render/home-space-directions.ts의 HOME_SPACE_LEGACY_FACING)과 같은 값 — 엔진이 그림을 부르지 않게 값만 옮겨 둔다.
  * 여기 없는 가구는 앞(down)을 본다.
  */
+// 생활 가구 48종 (2026-10-12): 넓은 것은 2×1, 옆을 보면 1×2 (sizeOf)
+for (const [id, a] of Object.entries(ADDITION_FURNITURE)) FURNITURE_DEFS[id as ItemId] = { w: a.w, h: 1, layer: a.layer as Layer, ...('surface' in a && a.surface ? { surface: true } : {}) }
+
 export const LEGACY_FACING: Partial<Record<ItemId, 'left' | 'right'>> = { chair: 'right', woodToy: 'right', teapot: 'left' }
 
 export const SPOUSE_FURNITURE = Object.fromEntries(designs.flatMap(d => d.placements.map((p, i) => [`spouse:${d.id}:${i}`, { ...p, owner: d.name } ])))

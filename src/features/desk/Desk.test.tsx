@@ -9,6 +9,11 @@ import { POSTMAN } from '../../engine/post'
 import { shelfRoom } from '../../engine/shelf-rooms'
 import { LETTERS } from '../../engine/types'
 import { useGame } from '../../store/game-store'
+
+// 이 파일은 책상 흐름만 본다 — 조각을 받으면 뜨는 "말씀조각 획득" 알림은 바로 넘긴다 (알림은 따로 테스트)
+let stopSkip: (() => void) | null = null
+beforeEach(() => { stopSkip = useGame.subscribe((s) => { if (s.piecePopups.length) useGame.setState({ piecePopups: [] }) }) })
+afterEach(() => stopSkip?.())
 import { ModalLayer } from '../ModalLayer'
 
 const OPEN = { gospelFeast: 2, 'room:romPhm': 1 }
@@ -162,7 +167,7 @@ describe('옮겨 적기', () => {
     }
     await user.click(screen.getByRole('button', { name: '옮겨 적기' }))
     expect(useGame.getState().game.progress.rom.completed).toEqual([1])
-    expect(useGame.getState().game.inv).toEqual({})
+    expect(useGame.getState().game.inv).toEqual({ stool: 1 }) // 첫 장을 마친 보상 의자 (growth decorate)
   })
 
   it('옛 어둠 표식이 있어도 기름 없이 필사할 수 있다', async () => {

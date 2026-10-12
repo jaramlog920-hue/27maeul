@@ -1,5 +1,7 @@
+import { villageBookCount } from "./progression"
 import { nameProblem } from './avatar'
-import { availability, scheduleAppt, attendAppt, settleAppt, apptSpots, venueFor, type Appt } from './plans'
+import { featureAccess } from './feature-rules'
+import { availability, scheduleAppt, attendAppt, canAttendAppt, settleAppt, apptSpots, venueFor, type Appt } from './plans'
 import { notYet, passTime, type GameState } from './game'
 import { key, lockedTiles, PLACES } from './world'
 import { builtIds } from './projects'
@@ -9,8 +11,10 @@ import { weatherOf, isWet } from './calendar'
 import { harvest, water, isRipe } from './garden'
 import { has, take, addGift } from './items'
 import type { GameContent, PlaceId, Tile } from './types'
+import { cleanGroupTask, type GroupTaskProgress } from './group-task'
 
-export type ClubActivity = 'tea'|'sew'|'garden'|'observe'
+export const CLUB_ACTIVITIES = ['tea','sew','garden','observe','read','cook','paint','music'] as const
+export type ClubActivity = typeof CLUB_ACTIVITIES[number]
 export type ClubSlot = 'morning'|'afternoon'|'evening'
 export interface Club {
  id:string; name:string; place:PlaceId; members:string[]; weekday:number; slot:ClubSlot; activity:ClubActivity; alt?:PlaceId; active:boolean; paused:boolean
@@ -20,6 +24,7 @@ export interface ClubSession {
  woven?:boolean; made?:boolean; result?:'home'|'club'; gardenDone?:string[]
  /** 차 모임에 나눈 만든 음식 · 근황에 함께한 이웃 (2026-10-08 club-extras) */
  shared?:string; joinedNews?:string
+ task?:GroupTaskProgress
 }
 export const CLUB_MAX=3
 export const CLUB_SLOTS: Record<ClubSlot,readonly [number,number]>={morning:[600,720],afternoon:[840,960],evening:[1080,1200]}
@@ -33,12 +38,12 @@ export function clubVenues(s:GameState,activity:ClubActivity):PlaceId[] {
  if(activity==='garden' && Object.keys(s.garden).length) venues.push('garden')
  // 주민이 함께 지은 공동 시설 (계획 16 작업 20): 완성된 곳만, 그 시설에서 할 수 있는 모임만 — 꽃밭은 관찰 모임, 그늘막·긴 벤치는 차·바느질
  for(const id of builtIds(s.flags)) {const site=SITES[id]; if((FACILITY_CLUBS[site.place] as readonly string[]).includes(activity)) venues.push(site.place)}
- const locked=lockedTiles(Object.keys(s.shelved).length)
+ const locked=lockedTiles(villageBookCount(s))
  return venues.filter(place=>apptSpots(place).length && apptSpots(place).every(t=>!locked.has(key(t))))
 }
 /** 함께 만든 작품 자리 (계획 16 작업 15): 모임 장소의 탁자·벤치 칸 중 앉는 자리·잠긴 칸이 아닌 곳만 — 길·앉는 자리·서는 칸을 쓰지 않는다. 같은 장소의 작품은 모임 번호 차례로 한 칸씩 */
-export function clubWorkTiles(s:Pick<GameState,'shelved'>,place:PlaceId):Tile[] {
- const seats=new Set(apptSpots(place).map(key)),locked=lockedTiles(Object.keys(s.shelved).length)
+export function clubWorkTiles(s:Pick<GameState,'shelved'|'progress'|'flags'>,place:PlaceId):Tile[] {
+ const seats=new Set(apptSpots(place).map(key)),locked=lockedTiles(villageBookCount(s))
  return (PLACES[place]?.tiles??[]).filter(t=>!seats.has(key(t)) && !locked.has(key(t)))
 }
 /** 이 모임 작품을 모임 자리에 남길 수 있는가 — 다른 모임 작품과 칸을 나눠 쓰고, 칸이 모자라면 집에 두기만 */
@@ -48,7 +53,7 @@ export function canLeaveWork(s:GameState,clubId:string,place:PlaceId):boolean {
 }
 export interface ClubWorkSpot {club:string; art:'cushionPattern'; color:string; place:PlaceId; at:Tile}
 /** 지금 모임 자리에 놓여 있는 작품 — 해산한 모임·아직 짓지 않은 공동 시설의 작품은 보이지 않는다 */
-export function clubWorkSpots(s:Pick<GameState,'clubs'|'clubWorks'|'shelved'|'flags'>):ClubWorkSpot[] {
+export function clubWorkSpots(s:Pick<GameState,'clubs'|'clubWorks'|'shelved'|'flags'|'progress'>):ClubWorkSpot[] {
  const out:ClubWorkSpot[]=[],used:Record<string,number>={}
  const built=new Set(builtIds(s.flags).map(id=>SITES[id].place))
  const ids=Object.keys(s.clubWorks??{}).sort((a,b)=>(Number(a.split(':')[1])||0)-(Number(b.split(':')[1])||0))
@@ -66,6 +71,9 @@ export function clubCandidates(s:GameState,content:GameContent):string[] {
 }
 export function createClub(s:GameState,input:ClubInput,content:GameContent,editId?:string):{state:GameState;error?:string} {
  const clubs=s.clubs??[]
+ const access=featureAccess(s,'clubs')
+ if(access==='locked') return {state:s,error:'locked'}
+ if(access==='preview' && (input.activity!=='tea' || (!editId && clubs.some(c=>c.active)))) return {state:s,error:'preview'}
  if(!editId && clubs.filter(c=>c.active).length>=CLUB_MAX) return {state:s,error:'limit'}
  if(nameProblem(input.name)) return {state:s,error:'name'}
  if(!clubVenues(s,input.activity).includes(input.place) || (input.alt && !clubVenues(s,input.activity).includes(input.alt))) return {state:s,error:'venue'}
@@ -118,6 +126,7 @@ export function clubHere(s:GameState,place:PlaceId):Appt|undefined {
  return s.plans.appts.find(a=>a.clubId && a.state==='running' && a.day===s.clock.day && s.clock.minute>=a.from && s.clock.minute<a.to && venueFor(a).place===place)
 }
 export function joinClub(s:GameState,id:string,mode:ClubSession['mode']):GameState {
+ if(!canAttendAppt(s,id)) return s
  const next=attendAppt(s,id)
  const a=next.plans.appts.find(a=>a.id===id)
  if(!a?.attended || a.state!=='running') return s
@@ -126,17 +135,17 @@ export function joinClub(s:GameState,id:string,mode:ClubSession['mode']):GameSta
 }
 export function chooseClub(s:GameState,id:string,picked:string,note?:string):GameState {
  const run=s.clubSessions?.[id]
- if(!run || run.step!=='choose') return s
+ if(!run || run.step!=='choose' || !canAttendAppt(s,id)) return s
  return {...s,clubSessions:{...s.clubSessions,[id]:{...run,picked,note:note?.trim().slice(0,120),step:'activity'}}}
 }
 export function clubWeaveDone(s:GameState,id:string):GameState {
  const run=s.clubSessions?.[id]
- if(!run || run.step!=='activity') return s
+ if(!run || run.step!=='activity' || !canAttendAppt(s,id)) return s
  return {...s,clubSessions:{...s.clubSessions,[id]:{...run,woven:true,step:'finish'}}}
 }
 export function doClubActivity(s:GameState,id:string,plotKey?:string):GameState {
  const run=s.clubSessions?.[id],a=s.plans.appts.find(a=>a.id===id)
- if(!run || run.step!=='activity' || !a || a.state!=='running') return s
+ if(!run || run.step!=='activity' || !a || !canAttendAppt(s,id)) return s
  let next=s
  if(a.activity==='garden' && venueFor(a).place==='garden' && plotKey && seasonOf(s.clock.day)!=='winter' && !isWet(weatherOf(s.clock.day))) {
   const [x,y]=plotKey.split(',').map(Number)
@@ -147,7 +156,7 @@ export function doClubActivity(s:GameState,id:string,plotKey?:string):GameState 
 }
 export function finishClub(s:GameState,id:string,result:'home'|'club'='home'):GameState {
  const run=s.clubSessions?.[id],a=s.plans.appts.find(a=>a.id===id)
- if(!run || run.step!=='finish' || !a || !a.attended || a.state!=='running') return s
+ if(!run || run.step!=='finish' || !a || !a.attended || !canAttendAppt(s,id)) return s
  let next=s
  // 전용 자리가 없으면(칸이 모자람) 작품은 집으로 — 길을 막지 않는다
  if(result==='club' && !canLeaveWork(s,a.clubId!,venueFor(a).place)) result='home'
@@ -164,9 +173,9 @@ export function finishClub(s:GameState,id:string,result:'home'|'club'='home'):Ga
 export function sanitizeClubs(raw:unknown):Club[] {
  if(!Array.isArray(raw)) return []
  const ids=new Set<string>()
- return raw.filter((c):c is Club=>!!c && typeof c.id==='string' && !ids.has(c.id) && !nameProblem(c.name??'') && ['tea','sew','observe','garden'].includes(c.activity) && CLUB_PLACES.includes(c.place) && Array.isArray(c.members) && c.members.length>0 && c.members.length<=3 && c.members.every((id:unknown)=>typeof id==='string') && Number.isInteger(c.weekday) && c.weekday>=0 && c.weekday<=6 && c.slot in CLUB_SLOTS && !!ids.add(c.id)).slice(0,CLUB_MAX).map(c=>({...c,active:c.active!==false,paused:c.paused===true}))
+ return raw.filter((c):c is Club=>!!c && typeof c.id==='string' && !ids.has(c.id) && !nameProblem(c.name??'') && CLUB_ACTIVITIES.includes(c.activity) && CLUB_PLACES.includes(c.place) && Array.isArray(c.members) && c.members.length>0 && c.members.length<=3 && c.members.every((id:unknown)=>typeof id==='string') && Number.isInteger(c.weekday) && c.weekday>=0 && c.weekday<=6 && c.slot in CLUB_SLOTS && !!ids.add(c.id)).slice(0,CLUB_MAX).map(c=>({...c,active:c.active!==false,paused:c.paused===true}))
 }
 export function sanitizeClubSessions(raw:unknown):Record<string,ClubSession> {
  if(!raw || typeof raw!=='object') return {}
- return Object.fromEntries(Object.entries(raw).filter(([id,r])=>!!r && typeof r==='object' && (r as ClubSession).id===id && ['direct','beside','brief'].includes((r as ClubSession).mode) && ['choose','activity','finish','done'].includes((r as ClubSession).step))) as Record<string,ClubSession>
+ return Object.fromEntries(Object.entries(raw).filter(([id,r])=>!!r && typeof r==='object' && (r as ClubSession).id===id && ['direct','beside','brief'].includes((r as ClubSession).mode) && ['choose','activity','finish','done'].includes((r as ClubSession).step)).map(([id,r])=>[id,{...(r as ClubSession),task:cleanGroupTask((r as ClubSession).task)}])) as Record<string,ClubSession>
 }

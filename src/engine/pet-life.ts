@@ -33,22 +33,25 @@ export const PET_NEIGHBORS: Record<string, { slow?: boolean; motion?: PetMotion 
   fisher: { motion: 'wag' },
 }
 
-/** 데리고 다니는 동물이 길에서 말씀 조각을 찾아오는 날의 몫 (2026-10-07 사용자: 가끔) */
+/** 강아지는 산책길에서, 고양이는 집에서 가끔 말씀 조각을 발견한다. */
 export const PET_PIECE_CHANCE = 0.3
 export const PET_PIECE_FROM = 8 * 60
 export const PET_PIECE_TO = 18 * 60
 
 /**
- * 오늘 동물이 길에서 조각을 찾을 차례인가: 데리고 다니는 동물이 바깥 길(모래 길) 위 기록자 곁에서 가만히 있을 때,
+ * 오늘 동물이 조각을 찾을 차례인가: 강아지는 바깥 길에서 기록자 곁, 고양이는 기록자와 집에 있을 때,
  * 낮에 하루 한 번만 살핀다(flags.petPieceDay). 찾을지는 날 씨앗으로 정해 다시 불러와도 같다.
  * 'roll' = 오늘 살폈고 찾지 못함, 'find' = 찾음, null = 아직 살필 때가 아님
  */
 export function petPieceCheck(s: GameState, now: Tile, onRoad: boolean): 'find' | 'roll' | null {
   const c = s.companion
-  if (!c || c.stay || c.motion || c.path.length) return null
+  if (!c || c.motion || c.path.length || (c.kind === 'dog' && c.stay)) return null
   const day = s.clock.day, m = s.clock.minute
   if (s.flags.petPieceDay === day || m < PET_PIECE_FROM || m >= PET_PIECE_TO || sceneBusy(s)) return null
-  if (isIndoor(now) || !onRoad || dist(tileOf(c), now) > 2) return null
+  if (c.kind === 'cat') {
+    // 고양이는 외출하지 않는다. 기록자가 집에서 함께 지낼 때만 집 안의 조각을 발견한다.
+    if (!isHome(now) || !isHome(tileOf(c))) return null
+  } else if (isIndoor(now) || !onRoad || dist(tileOf(c), now) > 2) return null
   let h = (day * 2654435761) >>> 0
   h ^= h >>> 15
   h = Math.imul(h, 2246822519) >>> 0

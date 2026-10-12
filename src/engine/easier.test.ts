@@ -1,3 +1,4 @@
+import { legacyGame as newGame } from './growth-test-support'
 // 계획 11 작업 1: 아침에 저절로 생기는 재료 — 빗물 항아리·갈대 말리는 틀·그을음 받이·잉크 항아리, 재료 궤짝
 import { CONTENT, copySourceFor, piecesOf } from '../content/catalog'
 import { ITEM_TEXT, JOURNAL_NOTES, SCENES, T } from '../content/text'
@@ -18,7 +19,6 @@ import {
   goToSleep,
   letterReady,
   listen,
-  newGame,
   orderWork,
   ownsTradeTool,
   recordLetter,
@@ -137,10 +137,9 @@ describe('빗물 항아리: 아침마다 물 1, 비 온 다음 날 물 3', () =>
   it('항아리가 없으면 물이 생기지 않는다', () => {
     expect(sleep({ ...at(ready(), rainy), inv: {} }).inv.water).toBeUndefined()
   })
-  it('집 앞 자리에 놓이고, 집 넓히기 땅(집 왼쪽)은 비워 둔다', () => {
+  it('집 앞 자리에 놓이고, 오른쪽 증축 부지는 비워 둔다', () => {
     for (const t of [RAIN_JAR_AT, REED_RACK_AT]) {
       expect(t.x >= HOUSE_GROW.x0 && t.x <= HOUSE_GROW.x1 && t.y >= HOUSE_GROW.y0 && t.y <= HOUSE_GROW.y1).toBe(false)
-      expect(t.x).toBeGreaterThan(HOUSE_GROW.x1)
       expect(Math.abs(t.x - HOME_FRONT.x) + Math.abs(t.y - HOME_FRONT.y)).toBeLessThanOrEqual(5)
     }
   })

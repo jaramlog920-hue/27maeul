@@ -1,3 +1,4 @@
+import type { AdditionItemId } from './furniture-additions'
 import type { MapId } from './maps'
 import type { JourneyCard } from './journey'
 import type { CopySource } from './copy'
@@ -65,8 +66,13 @@ export type PlaceId =
   | 'flowerBed'
   | 'shadeSpot'
   | 'signPost'
+  | 'sellStand'
 export type Target =
   | { kind: 'place'; id: PlaceId; tile: Tile }
+  | { kind: 'libraryVisitor'; day: number }
+  /** 2층 여관에 묵는 손님 (inn-guests) */
+  | { kind: 'innGuest'; id: string; day: number }
+  | { kind: 'stall'; tile: Tile }
   /** talk: 곁에서 누른 것 (닿으면 바로 대화) — 멀리서 누르면 걸어가 곁에 서고, 대화는 '대화하기' 단추로 */
   | { kind: 'neighbor'; id: string; tries: number; talk?: boolean }
   | { kind: 'companion' }
@@ -108,11 +114,12 @@ export function isGospel(b: Book): b is Gospel {
 export function isLetter(b: Book): b is Letter {
   return (LETTERS as readonly Book[]).includes(b)
 }
-/** 도장은 네 복음서끼리만 (사도행전에는 도장이 없다 — verify가 막는다) */
+/** 개역한글 소제목 옆 관련 본문. same/similar는 이전 데이터 검증용이다. */
 export interface Stamp {
-  kind: 'same' | 'similar'
-  book: Gospel
+  kind: 'same' | 'similar' | 'related'
+  book: Book
   ref: string
+  label?: string
 }
 export interface Piece {
   id: string
@@ -120,11 +127,13 @@ export interface Piece {
   ref: string
   chapter: number
   title: string
+  /** 대한성서공회 개역한글 소제목을 확인한 페이지 */
+  source?: string
   stamps: Stamp[]
 }
 
 export type ItemId =
-  | 'homeCradle' | 'homeBed' | 'homeDesk' | 'homeHearth' | 'homeShelf' | 'homeWorkbench'
+  | 'homeCradle' | 'homeBed' | 'coupleBed' | 'homeDesk' | 'homeHearth' | 'homeShelf' | 'homeWorkbench'
   | `spouse:${string}`
   | 'water'
   | 'reed'
@@ -187,6 +196,8 @@ export type ItemId =
   | 'supplyChest'
   // 서늘한 찬장 (2026-10-08): 음식만 넣어 두는 찬장
   | 'homeCoolCupboard'
+  // 생활 가구 48종 (2026-10-12 도트) — engine/furniture-additions.ts
+  | AdditionItemId
   // 가방과 신 (계획 11 작업 2): 한 번 얻으면 계속 쓰는 도구
   | 'leatherBag'
   | 'sturdyShoes'

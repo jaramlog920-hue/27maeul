@@ -1,0 +1,29 @@
+{
+  "description": "마을 집과 같은 평면 지붕과 작은 꽃 상자 창의 2층 공동 여관 · 1층 작업장과 2층 가족 숙소",
+  "assets": [
+    {
+      "id": "shared-house",
+      "label": "소박한 공동 여관 · 2층",
+      "group": "buildings",
+      "file": "shared-house.png",
+      "width": 96,
+      "height": 128
+    },
+    {
+      "id": "stairs",
+      "label": "두 층을 잇는 계단",
+      "group": "interiors",
+      "file": "stairs.png",
+      "width": 16,
+      "height": 16
+    },
+    {
+      "id": "oil-press",
+      "label": "기름 짜는 통 · 나무 압착기",
+      "group": "interiors",
+      "file": "oil-press.png",
+      "width": 16,
+      "height": 16
+    }
+  ]
+}

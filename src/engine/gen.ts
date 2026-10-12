@@ -5,11 +5,40 @@ import { mulberry32 } from './offers'
 import { CANDIDATE_IDS } from './romance'
 import { closeKin, FAMILY_REL, repairKin } from './gen-kin'
 import { ELDER_PAIR, FALLBACK_SEED, MAX_GENERATED, MEETS_PER_DAY, SPOUSE_FLOOR, START_CLOSE } from './gen-config'
+import { BABY_DAY } from './stories'
+import { stageByAge } from './gen-age'
 import type { GameContent, NeighborDef } from './types'
 
 export type GenStage = 'baby' | 'child' | 'teen' | 'adult' | 'elder'
 export type GenOrigin = 'fixed' | 'born' | 'arrived'
 export const GEN_STAGES: readonly GenStage[] = ['baby', 'child', 'teen', 'adult', 'elder']
+
+/** 8일째 고정 이야기의 아기. 웬델과는 별개 인물이며 이름·다른 부모는 아직 정해지지 않았다. */
+export const BAKER_BABY_ID = 'baker-baby'
+
+/** 옛 저장과 그림에서도 같은 인물·성장 단계를 쓴다. */
+export function bakerBabyAt(day: number, old?: GenPerson): GenPerson | null {
+  if (day < BABY_DAY) return null
+  const stage = stageByAge(BABY_DAY, day)
+  if (old?.stage === stage) return old
+  return { ...old, id: BAKER_BABY_ID, origin: 'fixed', born: BABY_DAY, stage,
+    parents: ['baker'], spouse: old?.spouse ?? null, household: old?.household ?? null }
+}
+
+/** 고정 이야기 아기의 계보를 보완한다. 자율 출생 정원·견습 대상에는 넣지 않는다. */
+export function ensureBakerBaby(g: GenState, day: number): GenState {
+  if (day < BABY_DAY || !g.persons.baker) return g
+  const old = g.persons[BAKER_BABY_ID]
+  const person = bakerBabyAt(day, old)!
+  if (person === old) return g
+  return {
+    ...g,
+    persons: {
+      ...g.persons,
+      [BAKER_BABY_ID]: person,
+    },
+  }
+}
 
 export interface GenPerson {
   /** 고정 주민은 neighbors.json id 그대로, 생성 인물은 g-0001부터 */
@@ -345,10 +374,10 @@ export function startAffinity(content: GameContent, withPairs: readonly [string,
 }
 
 export function newGenState(content: GameContent, seed: number, day: number, withPairs: readonly [string, string][] = []): GenState {
-  return ensureFixed(
+  return ensureBakerBaby(ensureFixed(
     { on: true, seed: seed >>> 0, settledDay: day, persons: {}, affinity: startAffinity(content, withPairs, seed >>> 0), meets: {}, breakup: {}, relations: {}, households: {}, events: [], log: [], nextPerson: 1, nextEvent: 1 },
     content,
-  )
+  ), day)
 }
 
 export const addLog = (g: GenState, day: number, kind: string, who: string[]): GenState => ({ ...g, log: [...g.log, { day, kind, who }].slice(-LOG_CAP) })
@@ -514,18 +543,10 @@ export function sanitizeGen(raw: unknown, today: number): GenState | undefined {
     return Object.keys(out).length ? out : undefined
   }
   const heirs = heirMap(raw.heirs, 'since')
-  let retired: GenState['retired'] = heirMap(raw.retired, 'day')
-  // 이사 간 날 (은퇴한 날 뒤, 오늘까지)
-  if (retired && isObj(raw.retired)) {
-    const src = raw.retired as Record<string, unknown>
-    retired = Object.fromEntries(
-      Object.entries(retired).map(([npc, r]) => {
-        const m = isObj(src[npc]) ? (src[npc] as Record<string, unknown>).moved : undefined
-        return [npc, isNat(m) && m >= r.day ? { ...r, moved: Math.min(m, today) } : r]
-      }),
-    )
-  }
-  return {
+  // Ignore legacy move-away markers so retirees return on load. Their retirement,
+  // family history and game-level farewell rewards remain intact.
+  const retired: GenState['retired'] = heirMap(raw.retired, 'day')
+  return ensureBakerBaby({
     ...(heirs ? { heirs } : {}),
     ...(retired ? { retired } : {}),
     on: raw.on !== false,
@@ -541,5 +562,5 @@ export function sanitizeGen(raw: unknown, today: number): GenState | undefined {
     log: log.slice(-LOG_CAP),
     nextPerson: Math.max(isNat(raw.nextPerson) ? raw.nextPerson : 1, maxNum(Object.keys(fixed.persons), /^g-(\d+)$/) + 1),
     nextEvent: Math.max(isNat(raw.nextEvent) ? raw.nextEvent : 1, maxNum(events.map((e) => e.id), /^e-(\d+)$/) + 1),
-  }
+  }, today)
 }

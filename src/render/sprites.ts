@@ -5,6 +5,7 @@ import { avatarDetails } from './character-details'
 import { FURNI_PALETTE, FURNITURE_ART, ICON_CHAR, iconFromArt } from './furniture-art'
 import { elderDetails, ELDER_COLORS } from './elder-details'
 import { sideHairDetails, legacySideHairDetails } from './side-hair-details'
+import { petStillRows } from './pet-art'
 
 export type { Look }
 
@@ -482,20 +483,20 @@ export function writerPalette(season: Season, avatar?: FullAvatar): Record<strin
 
 export const ANIMAL_PALETTE: Record<'cat' | 'dog', Record<string, string>> = {
   cat: { a: '#eeb080', A: '#ac7444', e: '#2a2020', n: '#cc8068', w: '#e8e0d8' },
-  dog: { a: '#ac7444', A: '#ac7444', e: '#2a2020', n: '#583828', w: '#f8e8cc' },
+  dog: { a: '#ac7444', A: '#76513b', e: '#2a2020', n: '#583828', w: '#f8e8cc' },
 }
 
 /** 왼쪽을 본다 (눈 e·코 n이 왼쪽 끝, 꼬리가 오른쪽). 오른쪽을 보게 하려면 animalRows로 뒤집는다 */
 export const ANIMAL: Record<'cat' | 'dog', { adult: SpriteRows; baby: SpriteRows; curl: SpriteRows }> = {
   cat: {
-    adult: ['a.a.....', 'aaa....a', 'eaan...a', '.aaaaaa.', '.aawaaa.', '.a.a.a.a'],
-    baby: ['a.a...', 'eaa..a', '.aaaa.', '.a..a.'],
-    curl: ['..aaa..', '.aaaaaa', 'aaaaaAa', '.aaaaa.'],
+    adult: petStillRows('cat', 'adult'),
+    baby: petStillRows('cat', 'baby'),
+    curl: petStillRows('cat', 'curl'),
   },
   dog: {
-    adult: ['A.......', 'aaA....a', 'eaan...a', 'aaaaaaa.', '.awaaaa.', '.a.a.a.a'],
-    baby: ['A.....', 'eaA..a', '.aaaa.', '.a..a.'],
-    curl: ['..aaa..', '.aaaaAa', 'aaaaaaa', '.aaaaa.'],
+    adult: petStillRows('dog', 'adult'),
+    baby: petStillRows('dog', 'baby'),
+    curl: petStillRows('dog', 'curl'),
   },
 }
 

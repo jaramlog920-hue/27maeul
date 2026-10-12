@@ -3,6 +3,7 @@ import { fill, ITEM_TEXT, T } from '../../content/text'
 import { canBind, chestOf, PANTRY_FOODS, pantryOf, playerTile } from '../../engine/game'
 import { CONTENT } from '../../content/catalog'
 import { finishedCopies } from '../../engine/binding'
+import { RECIPES, type RecipeId } from '../../engine/items'
 import { BOOKS } from '../../engine/types'
 import { BookCover } from '../library/BookArt'
 import { MAX_LEVEL, STAT_IDS, statScore, type StatId, type Stats } from '../../engine/stats'
@@ -11,6 +12,8 @@ import type { ItemId } from '../../engine/types'
 import { ItemIcon } from '../../shared/ItemIcon'
 import { useGame, type BagTab } from '../../store/game-store'
 import { NeedsView } from '../menus/CareMenu'
+import { CollectionDex } from './CollectionDex'
+import { t } from '../../shared/i18n'
 
 const STAT_NAME = T.stats.names as Record<StatId, string>
 const STAT_DESC = T.stats.desc as Record<StatId, string>
@@ -72,7 +75,7 @@ type Pick = { from: 'bag' | 'chest' | 'pantry'; id: ItemId }
 /** 아이콘만 늘어놓은 칸들. 누르면 아래에 이름·설명 */
 function ItemGrid({ items, picked, from, onPick }: { items: [ItemId, number][]; picked: Pick | null; from: Pick['from']; onPick: (p: Pick) => void }) {
   return (
-    <div className="bag-grid" style={{ gridTemplateColumns: `repeat(${COLS}, 1fr)` }}>
+    <div className="bag-grid">
       {Array.from({ length: slotsFor(items.length) }, (_, i) => {
         const it = items[i]
         if (!it) return <span key={i} className="bag-slot empty" />
@@ -133,44 +136,39 @@ function Copies() {
 /** 만들기: 만들 줄 아는 것 (예전 선반의 요리법) */
 function Recipes() {
   const known = useGame((s) => s.game.recipesKnown)
+  const [picked, setPicked] = useState<RecipeId | null>(null)
+  const selected = picked && known.includes(picked) ? RECIPES[picked] : null
   if (!known.length) return <p>{T.ui.recipesEmpty}</p>
   return (
     <>
       <h3>{T.ui.recipes}</h3>
-      <ul className="journal-list">
-        {known.map((r) => (
-          <li key={r}>{(T.recipes as Record<string, string>)[r]}</li>
-        ))}
-      </ul>
-    </>
-  )
-}
-
-/** 물건 도감: 한 번이라도 가져 본 물건 (못 가져 본 것은 ?) */
-function ItemDex() {
-  const found = useGame((s) => s.game.found ?? [])
-  const all = Object.keys(ITEM_TEXT) as ItemId[]
-  return (
-    <>
-      <p className="hint">
-        모은 물건 {found.length} / {all.length}
-      </p>
-      <ul className="bag-list">
-        {all.map((id) =>
-          found.includes(id) ? (
-            <li key={id}>
-              <ItemIcon id={id} />
-              <span className="bag-name">{ITEM_TEXT[id].name}</span>
-              <span className="bag-desc">{ITEM_TEXT[id].desc}</span>
-            </li>
-          ) : (
-            <li key={id} className="unknown">
-              <span className="bag-name">?</span>
-              <span className="bag-desc">아직 가져 본 적 없는 물건</span>
-            </li>
-          ),
-        )}
-      </ul>
+      <div className="bag-grid">
+        {Array.from({ length: slotsFor(known.length) }, (_, i) => {
+          const id = known[i]
+          if (!id) return <span key={i} className="bag-slot empty" />
+          const output = Object.keys(RECIPES[id].gives)[0] as ItemId
+          return (
+            <button key={id} className={`bag-slot${picked === id ? ' on' : ''}`} aria-label={T.recipes[id].split(' — ')[0]} aria-pressed={picked === id} onClick={() => setPicked(id)}>
+              <ItemIcon id={output} size={28} />
+            </button>
+          )
+        })}
+      </div>
+      {selected ? (
+        <div className="bag-detail" role="status" aria-live="polite">
+          <ItemIcon id={Object.keys(selected.gives)[0] as ItemId} size={32} />
+          <div>
+            <strong>{T.recipes[selected.id].split(' — ')[0]}</strong>
+            <p>{T.ui.recipeNeeds}</p>
+            <ul className="recipe-materials">
+              {(Object.entries(selected.needs) as [ItemId, number][]).map(([id, n]) => (
+                <li key={id}><ItemIcon id={id} size={20} /><span>{ITEM_TEXT[id].name} {n}</span></li>
+              ))}
+            </ul>
+            <p>{T.recipes[selected.id]}</p>
+          </div>
+        </div>
+      ) : <p className="bag-detail hint">{T.ui.recipeTapHint}</p>}
     </>
   )
 }
@@ -178,10 +176,10 @@ function ItemDex() {
 const BAG_TABS: [BagTab, string][] = [
   ['items', '물건'],
   ['make', '만들기'],
-  ['dex', '물건 도감'],
+  ['dex', t('dex.title')],
 ]
 
-/** 가방: 물건 · 만들기 · 물건 도감 (2026-10-04: 선반의 요리법·물건 도감을 이리로) */
+/** 가방: 물건 · 만들기 · 도감 */
 export function Bag({ tab: first = 'items' }: { tab?: BagTab }) {
   const [tab, setTab] = useState<BagTab>(first)
   const closeModal = useGame((s) => s.closeModal)
@@ -197,7 +195,7 @@ export function Bag({ tab: first = 'items' }: { tab?: BagTab }) {
       </div>
       {tab === 'items' && <Things />}
       {tab === 'make' && <Recipes />}
-      {tab === 'dex' && <ItemDex />}
+      {tab === 'dex' && <CollectionDex />}
       <div className="actions">
         <button data-close onClick={closeModal}>{T.ui.close}</button>
       </div>

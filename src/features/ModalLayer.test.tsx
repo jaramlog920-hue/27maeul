@@ -21,6 +21,11 @@ import { Hud } from './play/Hud'
 import { DecorateBar } from './play/DecorateBar'
 import { journalLine } from './journal/Journal'
 
+// 이 파일은 조각을 받은 뒤의 옛 흐름(본문·나의 한 줄·퀴즈)을 본다 — 새로 생긴 "말씀조각 획득" 창은 따로 테스트하므로 여기서는 바로 넘긴다
+let stopSkip: (() => void) | null = null
+beforeEach(() => { stopSkip = useGame.subscribe((s) => { if (s.piecePopups.length) useGame.setState({ piecePopups: [] }) }) })
+afterEach(() => stopSkip?.())
+
 /** 예전 지도 위 집의 칸 → 지금 집 안 방의 같은 칸 */
 const h = (x: number, y: number) => ({ x: x + HOME_RECT.x0 - 2, y: y + HOME_RECT.y0 - 2 })
 /** 기록자를 집 문 앞(마을)에 세운다 — 새 게임은 집 안(지도 아래 따로 된 방)에서 시작한다 */
@@ -64,26 +69,26 @@ describe('본문 창', () => {
   it('개역한글 원문과 출처, "누가에만" 도장을 보인다', () => {
     useGame.setState({ modal: { kind: 'passage', pieceId: 'lk-015-008', askLine: false } })
     render(<ModalLayer />)
-    expect(screen.getByRole('heading', { name: '잃은 드라크마' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '되찾은 드라크마의 비유' })).toBeInTheDocument()
     expect(screen.getByLabelText('성경 본문 눅 15:8-10')).toHaveTextContent('어느 여자가 열 드라크마가 있는데 하나를 잃으면 등불을 켜고 집을 쓸며 찾도록 부지런히 찾지 아니하겠느냐')
     expect(screen.getByText('개역한글')).toBeInTheDocument()
-    expect(screen.getByText(/네 복음서 중 누가복음에만 있는 이야기/)).toBeInTheDocument()
-    expect(screen.getByText(/네 복음서를 서로 견주어 붙인 표시입니다/)).toBeInTheDocument()
+    expect(screen.getByText(/이 누가복음 단락에 표시된 관련 본문 없음/)).toBeInTheDocument()
+    expect(screen.getByText(/대한성서공회 개역한글 성경읽기의 표기를 따릅니다/)).toBeInTheDocument()
   })
 
   it('비슷한 이야기 도장에는 따로 단서 문구를 붙이지 않는다', () => {
     useGame.setState({ modal: { kind: 'passage', pieceId: 'lk-015-001', askLine: false } })
     render(<ModalLayer />)
-    expect(screen.getByText(/비슷한 이야기 · 마 18:12-14/)).not.toHaveTextContent('같은 일인지는')
+    expect(screen.getByText(/관련 본문 · 마 18:12-14/)).not.toHaveTextContent('같은 일인지는')
   })
 
   it('도장을 누르면 그 복음서의 구절이 펼쳐지고, 다시 누르면 접힌다', async () => {
     const user = userEvent.setup()
     useGame.setState({ modal: { kind: 'passage', pieceId: 'lk-015-001', askLine: false } })
     render(<ModalLayer />)
-    await user.click(screen.getByRole('button', { name: /비슷한 이야기 · 마 18:12-14/ }))
+    await user.click(screen.getByRole('button', { name: /관련 본문 · 마 18:12-14/ }))
     expect(screen.getByLabelText('성경 본문 마 18:12-14')).toHaveTextContent('양 일백 마리가 있는데')
-    await user.click(screen.getByRole('button', { name: /비슷한 이야기 · 마 18:12-14/ }))
+    await user.click(screen.getByRole('button', { name: /관련 본문 · 마 18:12-14/ }))
     expect(screen.queryByLabelText('성경 본문 마 18:12-14')).toBeNull()
   })
 
@@ -164,8 +169,9 @@ describe('이웃', () => {
     useGame.setState({ modal: { kind: 'talk', neighborId: 'merchant', line: '…' } })
     render(<ModalLayer />)
     await user.click(screen.getByRole('button', { name: '바꾸기' }))
-    const row = screen.getByText('파피루스 두 장').closest('li')!
-    await user.click(row.querySelector('button')!)
+    // 교환 칸은 아이콘 칸 — 칸을 고르면 자세히 칸에 바꾸기 단추 (2026-10-12)
+    await user.click(screen.getByRole('button', { name: '파피루스 두 장' }))
+    await user.click(document.querySelector('.bag-detail .actions button')!)
     expect(useGame.getState().game.inv.papyrus).toBe(2)
   })
 })
@@ -225,7 +231,8 @@ describe('책상', () => {
     await user.click(screen.getByRole('button', { name: '두루마리에 기록하기' }))
     expect(screen.getByRole('status')).toHaveTextContent('1장까지 차례대로 이어 붙였습니다.')
     expect(useGame.getState().game.scenes).toContain('firstChapter')
-    expect(useGame.getState().game.inv).toEqual({})
+    // 첫 장을 마치면 꾸미기 체험용 의자 하나 (growth decorate)
+    expect(useGame.getState().game.inv).toEqual({ stool: 1 })
   })
 
   it('순서 바로잡기', async () => {
@@ -286,7 +293,7 @@ describe('기록 퀴즈 화면', () => {
     await user.click(screen.getByRole('button', { name: '두루마리에 기록하기' }))
     expect(useGame.getState().game.progress.lk.completed).toEqual([1])
     // 재료는 들지 않는다 (계획 14)
-    expect(useGame.getState().game.inv).toEqual({ papyrus: 1, ink: 1 })
+    expect(useGame.getState().game.inv).toEqual({ papyrus: 1, ink: 1, stool: 1 }) // 첫 장 보상 의자
   })
 
   it('말씀 조각 맞추기: 낱말을 차례대로 눌러 맞힌다', async () => {
@@ -468,7 +475,7 @@ describe('나의 한 줄 (책)', () => {
     // 꽂지도 않고 한 줄도 없는 책에는 한 줄 칸이 없다
     expect(document.querySelector('.word-lib-row[data-book="mt"] .word-lib-line')).toBeNull()
     await user.click(screen.getByRole('tab', { name: '말씀 조각' }))
-    const piece = screen.getByText(/잃은 드라크마/).closest('li')!
+    const piece = screen.getByText(/되찾은 드라크마의 비유/).closest('li')!
     expect(piece).toHaveTextContent('나의 한 줄')
     expect(piece).toHaveTextContent('등불을 켜고')
   })
@@ -481,7 +488,7 @@ describe('벤치', () => {
     render(<ModalLayer />)
     const items = screen.getAllByRole('listitem').map((li) => li.textContent ?? '')
     expect(items[0]).toContain('다시 읽을 구절')
-    expect(items[0]).toContain('비둘기 같이')
+    expect(items[0]).toContain('세례를 받으시다')
   })
 })
 
@@ -733,7 +740,7 @@ describe('선반을 나눠 합친 뒤', () => {
     expect(screen.getByRole('tab', { name: '말씀 조각' })).toHaveAttribute('aria-selected', 'true')
   })
 
-  it('말씀 조각 거르기: 받은 조각이 있는 책만 고를 수 있고, "한 복음서에만"(✦)에는 사도행전 조각이 들지 않는다', () => {
+  it('말씀 조각 거르기: 받은 조각이 있는 책만 고를 수 있고, "관련 본문 없는 조각"(✦)에는 사도행전 조각이 들지 않는다', () => {
     const ac: Piece[] = piecesOf('ac')
     expect(ac.length).toBeGreaterThan(0)
     const lk = piecesOf('lk')
@@ -751,7 +758,7 @@ describe('선반을 나눠 합친 뒤', () => {
     expect(pickableBooks({}, withContent).slice(0, 5)).toEqual(['mt', 'mk', 'lk', 'jn', 'ac'])
   })
 
-  it('말씀 조각: 책 거르기·한 복음서에만·도장, 본문을 보고 와도 고른 책이 남는다', async () => {
+  it('말씀 조각: 책 거르기·관련 본문 없는 조각·도장, 본문을 보고 와도 고른 책이 남는다', async () => {
     reset({ collected: ['lk-015-008', 'lk-015-001', 'mk-001-001'] })
     const user = userEvent.setup()
     useGame.setState({ modal: { kind: 'word', tab: 'pieces' } })
@@ -759,12 +766,12 @@ describe('선반을 나눠 합친 뒤', () => {
     const books = screen.getByRole('group', { name: '책 고르기' })
     expect(within(books).getAllByRole('button').map((b) => b.textContent)).toEqual(['전체', '마가복음', '누가복음'])
     expect(within(books).getByRole('button', { name: '전체' })).toHaveAttribute('aria-pressed', 'true')
-    expect(screen.getByText(T.ui.stampNote)).toBeInTheDocument()
+    expect(screen.queryByText(/소제목과 관련 본문은 대한성서공회/)).not.toBeInTheDocument()
     await user.click(within(books).getByRole('button', { name: '누가복음' }))
     expect(screen.queryByText(pieceById('mk-001-001').title)).toBeNull()
     expect(screen.getByText(pieceById('lk-015-008').title)).toBeInTheDocument()
-    // 한 복음서에만: 도장이 없는 복음서 조각만
-    await user.click(screen.getByRole('button', { name: /한 복음서에만/ }))
+    // 관련 본문 없는 조각: 도장이 없는 복음서 조각만
+    await user.click(screen.getByRole('button', { name: /관련 본문 없는 조각/ }))
     for (const id of ['lk-015-008', 'lk-015-001']) {
       const p = pieceById(id)
       if (p.stamps.length === 0) expect(screen.getByText(p.title).closest('li')).toHaveClass('only')
@@ -819,23 +826,26 @@ describe('선반을 나눠 합친 뒤', () => {
     expect(page).toHaveTextContent(ITEM_TEXT.bread.name)
   })
 
-  it('가방: 물건 · 만들기 · 물건 도감', async () => {
+  it('가방: 물건 · 만들기 · 도감', async () => {
     reset({ recipesKnown: newGame(CONTENT).recipesKnown.length ? newGame(CONTENT).recipesKnown : ['papyrus'], found: ['bread'] })
     useGame.setState({ modal: { kind: 'bag' } })
     render(<ModalLayer />)
     const user = userEvent.setup()
-    expect(screen.getAllByRole('tab').map((t) => t.textContent)).toEqual(['물건', '만들기', '물건 도감'])
+    expect(screen.getAllByRole('tab').map((t) => t.textContent)).toEqual(['물건', '만들기', '도감'])
     expect(screen.getByRole('tab', { name: '물건' })).toHaveAttribute('aria-selected', 'true')
     await user.click(screen.getByRole('tab', { name: '만들기' }))
     const r = useGame.getState().game.recipesKnown[0]
+    await user.click(screen.getByRole('button', { name: T.recipes[r].split(' — ')[0] }))
     expect(screen.getByText((T.recipes as Record<string, string>)[r])).toBeInTheDocument()
-    await user.click(screen.getByRole('tab', { name: '물건 도감' }))
-    expect(screen.getByText(`모은 물건 1 / ${Object.keys(ITEM_TEXT).length}`)).toBeInTheDocument()
-    expect(screen.getByText(ITEM_TEXT.bread.desc)).toBeInTheDocument()
+    await user.click(screen.getByRole('tab', { name: '도감' }))
+    expect(screen.getByText(/^모은 것 \d+ \/ \d+$/)).toBeInTheDocument()
+    await user.click(document.querySelector('[data-entry="item:bread"]')!)
+    expect(screen.getByRole('status')).toHaveTextContent(ITEM_TEXT.bread.desc)
   })
 
   it('집 꾸미기: 깔개를 놓고 다시 거둔다', async () => {
-    reset({ room: [], inv: { rug: 1 } })
+    // 꾸미기가 다 열린 옛 저장으로 (새 게임은 첫 장·한 권을 마쳐야 열린다)
+    reset({ room: [], inv: { rug: 1 }, flags: { ...newGame(CONTENT).flags, growthLegacy: 1 } })
     const user = userEvent.setup()
     render(<Hud />)
     await user.click(screen.getByRole('button', { name: '집 꾸미기' }))
@@ -1073,7 +1083,7 @@ describe('히브리서–유다서 방 (계획 8 작업 5)', () => {
 
 describe('방 꾸미기 누르기 (QA)', () => {
   it('물건을 들고 협탁을 누르면 그 위에 올린다', () => {
-    reset({ room: [{ item: 'nightstand', ...h(3, 4) }], inv: { vase: 1 } })
+    reset({ room: [{ item: 'nightstand', ...h(3, 4) }], inv: { vase: 1 }, flags: { ...newGame(CONTENT).flags, growthLegacy: 1 } })
     useGame.setState({ decorating: 'vase' })
     useGame.getState().tap(h(3, 4))
     const g = useGame.getState().game

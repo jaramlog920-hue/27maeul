@@ -1,0 +1,104 @@
+import { CONTENT } from '../content/catalog'
+import { canDate, canOrderWork, guestMorning, isSuitor, newGame, rankMorning, stageWith, trade, TRADES } from './game'
+import { establishedGame, legacyGame } from './growth-test-support'
+import { cancelFest, createFest, type FestInput } from './fest'
+import { answerDesk, canKidAct, spouseReading } from './family'
+import { newGenState } from './gen'
+import { setGenOn, settleOneDay } from './gen-settle'
+import { RETIRE_AFTER } from './gen-growth'
+import { STAGE_AT } from './gen-config'
+import { freshStats } from './stats'
+
+it('잠긴 생활 행동은 재료·닢·일정과 보상을 바꾸지 않는다', () => {
+  const s = newGame(CONTENT)
+  s.coins = 1000
+  s.clock.day = 21
+  s.flags['movedIn:carpenter'] = 1
+  expect(canOrderWork(s, 'reedRack')).toBe('locked')
+  expect(trade(s, TRADES.find(t => t.id === 'rainJar')!)).toBeNull()
+  expect(rankMorning(s, CONTENT)).toBe(s)
+  expect(guestMorning(s)).toBe(s)
+  const input = { kind: 'festival', day: 21, role: 'tidy', members: [] } as FestInput
+  expect(createFest(s, input, CONTENT)).toEqual({ state: s, error: 'locked' })
+})
+it('9·11·12·13권에 기존 생활 조건을 다시 검사한다', () => {
+  const s = establishedGame(CONTENT, 9)
+  s.clock.day = 21
+  s.coins = 1000
+  s.flags['movedIn:carpenter'] = 1
+  expect(canOrderWork(s, 'reedRack')).toBeNull()
+  expect(trade(s, TRADES.find(t => t.id === 'rainJar')!)?.coins).toBe(960)
+  const guest = establishedGame(CONTENT, 11)
+  guest.clock.day = 21
+  expect(guestMorning(guest).guestbook?.at(-1)?.kind).toBe('scribe')
+  const rank = establishedGame(CONTENT, 12)
+  rank.clock.day = 21
+  const ranked = rankMorning(rank, CONTENT)
+  expect(ranked.ranks).toHaveLength(1)
+  expect(rankMorning(ranked, CONTENT)).toBe(ranked)
+  expect(createFest(establishedGame(CONTENT, 13), { kind: 'festival', day: -1, members: [] } as FestInput, CONTENT).error).toBe('date')
+})
+it('깊은 관계와 후보는 점수를 지우지 않고 15·16권에 열린다', () => {
+  const s = establishedGame(CONTENT, 14)
+  const candidate = CONTENT.neighbors.find(n => n.romanceable && n.look !== (s.avatar?.look ?? 'f'))!
+  s.hearts[candidate.id] = 100
+  expect(stageWith(s, candidate.id)).toBe(3)
+  expect(isSuitor(s, candidate)).toBe(false)
+  const deep = { ...establishedGame(CONTENT, 15), hearts: s.hearts }
+  expect(stageWith(deep, candidate.id)).toBe(5)
+  expect(isSuitor(establishedGame(CONTENT, 16), candidate)).toBe(true)
+  expect(s.hearts[candidate.id]).toBe(100)
+})
+it('배우자 활동과 아이 활동은 각각 20·23권에서 기존 조건으로 넘어간다', () => {
+  const s = establishedGame(CONTENT, 19)
+  s.romance = { ...s.romance, stage: 'married', partner: 'rudy' }
+  s.clock.minute = 1200
+  expect(spouseReading(s)).toBe(false)
+  expect(canDate(s, 'tea', CONTENT)).toBe('locked')
+  const unlocked = { ...s, progress: establishedGame(CONTENT, 20).progress }
+  expect(spouseReading(unlocked)).toBe(true)
+  expect(canDate(unlocked, 'tea', CONTENT)).not.toBe('locked')
+  const withChild: typeof s = { ...s, child: { name: '아이', look: 'girl', born: 0, stats: freshStats(), lean: null, close: 0 } }
+  expect(canKidAct(withChild, 'story')).toBe('locked')
+  expect(answerDesk(withChild, true)).toBe(withChild)
+  expect(canKidAct({ ...withChild, progress: establishedGame(CONTENT, 23).progress }, 'story')).not.toBe('locked')
+})
+it('주민은 잠겨 있어도 자라며, 견습 25권·은퇴 26권을 따로 적용한다', () => {
+  const s = newGame(CONTENT)
+  let g = newGenState(CONTENT, 7, 1)
+  g = { ...g, persons: { ...g.persons, child: { id: 'child', origin: 'born', born: 0, stage: 'baby', look: 'm', name: '아론', avatar: {}, parents: ['rudy', 'poppy'], spouse: null, household: 'h' } }, households: { h: { id: 'h', home: 'rudy', members: ['rudy', 'poppy'], children: ['child'], since: 1, lastBirth: 0 } } }
+  g = settleOneDay(g, STAGE_AT.adult, s, CONTENT, {})
+  expect(g.persons.child.stage).toBe('adult')
+  expect(g.heirs?.rudy).toBeUndefined()
+  g = settleOneDay(g, STAGE_AT.adult + 1, establishedGame(CONTENT, 25), CONTENT, {})
+  expect(g.heirs?.rudy?.since).toBe(STAGE_AT.adult + 1)
+  const retirementDay = STAGE_AT.adult + 1 + RETIRE_AFTER
+  g = settleOneDay(g, retirementDay, establishedGame(CONTENT, 25), CONTENT, {})
+  expect(g.retired?.rudy).toBeUndefined()
+  g = settleOneDay(g, retirementDay + 1, establishedGame(CONTENT, 26), CONTENT, {})
+  expect(g.retired?.rudy?.heir).toBe('child')
+})
+it('기존 저장은 원래 권한을 유지하고 잠긴 자율 생활은 켜지지 않는다', () => {
+  const old = legacyGame(CONTENT)
+  old.coins = 1000
+  old.flags['movedIn:carpenter'] = 1
+  expect(canOrderWork(old, 'reedRack')).toBeNull()
+  const s = newGame(CONTENT)
+  s.gen = { ...newGenState(CONTENT, 7, 1), on: false }
+  expect(setGenOn(s, true)).toBe(s)
+  const open = { ...s, progress: establishedGame(CONTENT, 14).progress }
+  expect(setGenOn(open, true).gen?.on).toBe(true)
+})
+
+it('이미 예약한 행사는 잠긴 상태에서도 취소하여 재료를 되찾을 수 있다', () => {
+  const s = establishedGame(CONTENT, 13)
+  s.clock.day = 15
+  s.inv.bread = 2
+  const made = createFest(s, { kind: 'festival', day: 20, role: 'food', snack: 'bread', members: [] }, CONTENT)
+  expect(made.error).toBeUndefined()
+  expect(made.state.inv.bread).toBe(1)
+  const locked = { ...made.state, progress: newGame(CONTENT).progress }
+  const cancelled = cancelFest(locked, made.id!)
+  expect(cancelled.inv.bread).toBe(2)
+  expect(cancelFest(cancelled, made.id!)).toBe(cancelled)
+})

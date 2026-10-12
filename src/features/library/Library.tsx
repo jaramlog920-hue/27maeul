@@ -1,3 +1,6 @@
+import { featureAccess, featureHint } from '../../engine/feature-rules'
+import { libraryGrowth, libraryPayRate } from '../../engine/progression'
+import { libraryBookCount } from '../../engine/game'
 // 마을 서고 안: 서고 선반 전경(신약 n/27 — 처음엔 휑하고 권이 늘수록 찬다), 복음서 방 선반과 잠긴 방들 (설계 §2.1.1, 계획 14 작업 4)
 import { useState } from 'react'
 import { CONTENT, neighborById, pieceById } from '../../content/catalog'
@@ -23,6 +26,7 @@ function LibraryOps() {
     saveGame(next)
     useGame.setState({ game: next })
   }
+  if (featureAccess(game, 'library') !== 'full' && !current && !visitor) return <p className="hint">{featureHint('library')}</p>
   if (!current && !candidates.length && !visitor) return null
   return (
     <section aria-label={t('libraryOps.title')}>
@@ -30,7 +34,7 @@ function LibraryOps() {
       <p className="hint">{current ? t('libraryOps.current', { who: neighborById(current)?.role ?? '' }) : t('libraryOps.none')}</p>
       <div className="actions menu">
         {candidates.filter((id) => id !== current).map((id) => (
-          <button key={id} onClick={() => apply(setLibrarian(useGame.getState().game, id))}>{t('libraryOps.appoint', { who: neighborById(id)?.role ?? '' })}</button>
+          <button key={id} disabled={featureAccess(game, 'library') !== 'full'} onClick={() => apply(setLibrarian(useGame.getState().game, id))}>{t('libraryOps.appoint', { who: neighborById(id)?.role ?? '' })}</button>
         ))}
         {current && <button onClick={() => apply(setLibrarian(useGame.getState().game, null))}>{t('libraryOps.release')}</button>}
       </div>
@@ -63,7 +67,9 @@ function LibraryOps() {
 
 /** 서고 방명록 (계획 21 R10): 들른 사람이 남긴 한 줄, 최근 다섯 */
 function Guestbook() {
-  const book = useGame((s) => s.game.guestbook)
+  const game = useGame(s => s.game)
+  const book = game.guestbook
+  if (featureAccess(game, 'guestbook') !== 'full' && !book?.length) return <p className="hint">{featureHint('guestbook')}</p>
   if (!book?.length) return null
   return (
     <section aria-label={T.guestbook.title}>
@@ -90,6 +96,8 @@ function Guestbook() {
 }
 
 export function Library() {
+  const game = useGame(s => s.game)
+  const chapters = libraryGrowth(game).completedChapters
   const shelved = useGame((s) => s.game.shelved)
   const bound = useGame((s) => s.game.bound)
   const inv = useGame((s) => s.game.inv)
@@ -97,13 +105,17 @@ export function Library() {
   const open = openDoorsFor(flags)
   const { closeModal } = useGame.getState()
   const n = Object.values(shelved).filter((g) => g !== undefined).length
+  const payBooks = useGame((s) => libraryBookCount(s.game))
   const anyRetry = GOSPELS.some((b) => shelved[b] !== undefined && shelved[b]! < 2)
   return (
     <div className="dialog library" role="dialog" aria-label={T.library.title}>
       <h2>
         {T.library.title} <span className="library-count">{fill(T.library.count, { n })}</span>
       </h2>
+      {/* 서고 수입 (2026-10-12): 책이 찰수록 일해서 버는 닢이 는다 */}
+      {payBooks > 0 && <p className="hint">서고 덕분에 일삯 +{Math.round(libraryPayRate(payBooks) * 100)}%</p>}
       <ShelfPicture shelved={shelved} bound={bound} />
+      {chapters >= 7 && <div className="library-manuscripts" role="img" aria-label={`완료한 ${chapters}장의 기록 꾸러미`}><span className="manuscript-stack" aria-hidden="true"><i /><i /><i /></span><small>필사한 기록 {chapters}장</small></div>}
       <p className="hint">{T.library.notice}</p>
       <h3>{T.library.gospelRoom}</h3>
       <ul className="library-shelf">

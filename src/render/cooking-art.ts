@@ -106,7 +106,7 @@ export function cookingFrame(who: Who, facing: Facing, action: CookAction, frame
   const child = !!opts.short
   if (child && !CHILD_COOK_ACTIONS.includes(action)) throw new Error('아이에게 불·칼·뜨거운 그릇 동작을 사용하지 마세요')
   const eating = ['taste', 'eat'].includes(action)
-  const base = furnitureUseFrame(who, facing, eating ? 'drink' : ['knead', 'shapeLong', 'shapeRound', 'score'].includes(action) ? 'knead' : 'reach', f, opts)
+  const base = furnitureUseFrame(who, facing, eating ? 'drink' : ['knead', 'shapeLong', 'shapeRound', 'score'].includes(action) ? 'knead' : 'reach', f, opts, false)
   const direction = facing === 'left' ? 'right' : facing
   const ix = direction === 'right' ? 18 : 12
   let iy = (child ? 16 : 14) + (f % 2)
@@ -131,7 +131,6 @@ export function cookingFrame(who: Who, facing: Facing, action: CookAction, frame
   const overlay = picture(rects, 24, 24)
   overlay.forEach((r,y) => [...r].forEach((c,x) => { if (c !== '.') grid[y][x] = c }))
   const actor = (facing === 'left' ? base.actor.map(r => [...r].reverse().join('')) : base.actor).map(r => [...r])
-  for (let y = 10; y < 20; y++) for (let x = 0; x < 24; x++) if (['s','5','!','K'].includes(actor[y][x])) actor[y][x] = '.'
   for (const hx of direction === 'right' ? [ix - 3] : [ix - 3, ix + 2]) { actor[iy][hx] = 's'; actor[iy + 1][hx] = '5' }
   const orient = (rows: string[]) => facing === 'left' ? rows.map(r => [...r].reverse().join('')) : rows
   const prop = orient(grid.map(r => r.join(''))), empty = picture([], 24, 24)

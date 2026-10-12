@@ -11,7 +11,8 @@ import { godByKeyword, piecesByBook } from './Word'
 
 function reset(game: Partial<GameState> = {}) {
   localStorage.clear()
-  useGame.setState({ game: { ...newGame(CONTENT), scenes: [], ...game }, modal: null, rng: () => 0, decorating: null, toast: null })
+  useGame.getState().load({ ...newGame(CONTENT), scenes: [], ...game })
+  useGame.setState({ rng: () => 0, decorating: null, toast: null })
 }
 function openWord(game: Partial<GameState> = {}) {
   reset(game)

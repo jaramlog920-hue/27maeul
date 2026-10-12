@@ -1,3 +1,4 @@
+import { featureHint } from '../../engine/feature-rules'
 // 아이와 함께 보내는 시간 (계획 12, 2026-10-04 사용자): 누르기 → 짧은 장면 → 결과. 미니게임 없음.
 // 배움터는 빠르고 편한 능력치, 직접 함께하기는 조금 느리지만 가까움과 추억. 하루에 두 번까지 (잠들기 전 이야기는 따로)
 import { neighborById } from '../../content/catalog'
@@ -110,7 +111,7 @@ export function KidTime({ done, spouse }: { done?: KidDone; spouse?: SpouseDone 
                 <span className="kid-act-name">{a.label}</span>
                 {a.grows && <span className="kid-act-grows">{a.grows}</span>}
               </button>
-              {block && block !== 'done' && <span className="kid-act-why">{BLOCKS[block]}</span>}
+              {block && block !== 'done' && <span className="kid-act-why">{block === 'locked' ? featureHint('childActivities') : BLOCKS[block]}</span>}
             </li>
           )
         })}
@@ -128,7 +129,7 @@ export function KidTime({ done, spouse }: { done?: KidDone; spouse?: SpouseDone 
               </li>
             ))}
           </ul>
-          {spouseBlock && <p className="hint">{W.blocks[spouseBlock]}</p>}
+          {spouseBlock && <p className="hint">{spouseBlock === 'locked' ? featureHint('childActivities') : W.blocks[spouseBlock]}</p>}
         </section>
       )}
       <div className="actions">

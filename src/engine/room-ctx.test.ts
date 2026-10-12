@@ -21,7 +21,7 @@ afterEach(() => {
 })
 
 describe('집 안 동작 고정 (HOME_CTX)', () => {
-  it('집 단계 0–3의 대표 배치 20가지가 RoomCtx를 넣기 전과 한 글자도 다르지 않다', () => {
+  it('집 단계 0–3의 대표 배치 20가지가 두 칸 성인 침대를 포함한 기준 배치와 같다', () => {
     expect(expected).toHaveLength(20)
     const api = { placement, rotation, removal, refitRoom }
     for (let i = 0; i < 20; i++) expect(runScenario(api, i), `시나리오 ${i}`).toBe(expected[i])
@@ -142,6 +142,7 @@ describe('새 방의 규칙 (같은 가구 규칙, 방 기준)', () => {
 
 function land(extra: Partial<GameState> = {}): GameState {
   const base = newGame(CONTENT)
+  base.progress.phm.completed = [1]
   const g: GameState = {
     ...base,
     scenes: [],

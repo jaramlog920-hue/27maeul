@@ -3,7 +3,9 @@
 import { useState } from 'react'
 import { fill, T } from '../../content/text'
 import { buildsOf, type Build } from '../../engine/newland-build'
-import { DECOR_KINDS, EXTRA_BUILDS, SITE_KINDS, type SiteKind } from '../../engine/newland-sites'
+import { blocksWay, DECOR_KINDS, EXTRA_BUILDS, isDecorKind, SITE_KINDS, type SiteKind } from '../../engine/newland-sites'
+import { IconGrid, type IconEntry } from '../../shared/IconGrid'
+import { SiteIcon } from './SiteIcon'
 import { dreamHeard, kidWorkJob } from '../../engine/newland-life'
 import { t } from '../../shared/i18n'
 import { useGame } from '../../store/game-store'
@@ -53,6 +55,17 @@ export function BuildMenu() {
   const [tab, setTab] = useState<'place' | 'built'>('place')
   const [pick, setPick] = useState<SitePick | null>(null)
   const builds = buildsOf(game)
+  const siteEntry = (k: SitePick): IconEntry => ({
+    key: k,
+    icon: <SiteIcon kind={k} />,
+    label: k === 'eraser' ? T.build.eraser : siteName(k as SiteKind),
+    detail: <>
+      {USE_TEXT[k] && <p>{USE_TEXT[k]}</p>}
+      {isDecorKind(k) && <p>{blocksWay(k) ? '길을 막는 칸이에요.' : '밟고 지나가는 칸이에요.'}</p>}
+      {k !== 'eraser' && <p>{fill(T.build.cost, { cost: costText(k as SiteKind) })}</p>}
+    </>,
+    action: { label: '자리 고르기', onClick: () => setPick(k) },
+  })
 
   if (pick) {
     return (
@@ -81,42 +94,12 @@ export function BuildMenu() {
       </div>
       {tab === 'place' ? (
         <>
-          <ul className="build-list">
-            {([...SITE_KINDS, 'eraser'] as SitePick[]).map((k) => {
-              return (
-                <li key={k}>
-                  <button className="build-pick" onClick={() => setPick(k)}>
-                    <strong>{k === 'eraser' ? T.build.eraser : siteName(k as SiteKind)}</strong>
-                    <span>{USE_TEXT[k]}</span>
-                    {k !== 'eraser' && <span className="hint">{fill(T.build.cost, { cost: costText(k as SiteKind) })}</span>}
-                  </button>
-                </li>
-              )
-            })}
-          </ul>
+          {/* 2026-10-12 사용자: 줄줄이 늘어놓지 않고 가방처럼 아이콘 칸 — 누르면 값·쓰임, 단추로 자리 고르기 */}
+          <IconGrid title={T.build.pickTitle} entries={([...SITE_KINDS, 'eraser'] as SitePick[]).map((k) => siteEntry(k))} />
           {/* 계획 18 남은 건물: 손님집·기억 정원, 꿈 이야기를 들었으면 꿈터 */}
-          <ul className="rows extra-builds">
-            {EXTRA_BUILDS.filter((k) => (k !== 'weaver' || dreamHeard(game)) && (k !== 'gallery' || dreamHeard(game, 'tilly')) && (k !== 'kidWork' || (!!kidWorkJob(game) && !game.newland?.builds.some((b) => b.kind === 'kidWork')))).map((k) => (
-              <li key={k}>
-                <button className="row" onClick={() => setPick(k)}>
-                  <span className="row-main"><b>{siteName(k)}</b></span>
-                  <span className="row-meta">{costText(k)}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-          {/* 꾸미기 소재 (사용자 결정 ⑧): 이름과 값만, 서고 목록식 줄 */}
-          <h3 className="rows-title">{t('decor.title')}</h3>
-          <ul className="rows decor-list">
-            {DECOR_KINDS.map((k) => (
-              <li key={k}>
-                <button className="row" onClick={() => setPick(k)}>
-                  <span className="row-main"><b>{siteName(k)}</b></span>
-                  <span className="row-meta">{costText(k)}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
+          <IconGrid title="특별한 건물" entries={EXTRA_BUILDS.filter((k) => (k !== 'weaver' || dreamHeard(game)) && (k !== 'gallery' || dreamHeard(game, 'tilly')) && (k !== 'kidWork' || (!!kidWorkJob(game) && !game.newland?.builds.some((b) => b.kind === 'kidWork')))).map((k) => siteEntry(k))} />
+          {/* 꾸미기 소재 (사용자 결정 ⑧) */}
+          <IconGrid title={t('decor.title')} entries={DECOR_KINDS.map((k) => siteEntry(k))} />
         </>
       ) : builds.length === 0 ? (
         <p className="hint">{T.build.none}</p>

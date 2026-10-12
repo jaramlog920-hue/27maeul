@@ -9,13 +9,13 @@ import { pageThrough } from '../../test/scene-pages'
 
 function evening(day: number): GameState {
   const g = newGame(CONTENT)
-  return { ...g, scenes: [], clock: { ...g.clock, day, minute: SUPPER_FROM + 30 }, romance: { ...NO_ROMANCE, partner: 'wendell', stage: 'married', marriedDay: 5 } }
+  return { ...g, flags: { ...g.flags, growthLegacy: 1 }, scenes: [], clock: { ...g.clock, day, minute: SUPPER_FROM + 30 }, romance: { ...NO_ROMANCE, partner: 'wendell', stage: 'married', marriedDay: 5 } }
 }
 
 describe('배우자와 저녁 — 화면', () => {
   it('저녁에 배우자에게 말을 걸면 같이 먹는 장면, 이름에 맞는 조사, 처음이면 앨범 표시', () => {
     let d = 20
-    while (!supperReady(evening(d))) d++
+    while (!supperReady(evening(d)) && d < 400) d++
     localStorage.clear()
     useGame.setState({ game: evening(d), modal: null, rng: () => 0, decorating: null, toast: null })
     render(<ModalLayer />)

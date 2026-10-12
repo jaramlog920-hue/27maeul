@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type PointerEvent } from 'react'
+import { useCallback, useEffect, useRef, useState, type PointerEvent } from 'react'
 import { unlockAudio } from '../../audio/sound'
 import { T } from '../../content/text'
 import { useGame } from '../../store/game-store'
@@ -31,16 +31,27 @@ export function padZone(dx: number, dy: number): PadZone {
 }
 
 /** 누르고 있는 동안 계속 걷는다. 한 칸 걷는 중이면 walk가 무시하므로 끝나는 대로 다음 칸으로 이어진다 */
-function useRepeatWalk(dir: { current: Dir | null }) {
+function useRepeatWalk(dir: { current: Dir | null }, cancel: () => void) {
   useEffect(() => {
+    window.addEventListener('blur', cancel)
+    document.addEventListener('visibilitychange', cancel)
+    // 칸에 도착한 프레임에서 다음 걸음을 연결한다. 타이머를 기다리면 매 칸 잠깐 멈춘다.
+    const unsubscribe = useGame.subscribe((state, previous) => {
+      if (state.modal || state.decorating || state.copyResult?.length || state.piecePopups.length || state.trip || state.loadEpoch !== previous.loadEpoch) cancel()
+      else if (dir.current && !document.hidden && previous.game.player.path.length && !state.game.player.path.length) state.walk(...dir.current)
+    })
     const timer = window.setInterval(() => {
+      if (document.hidden) { cancel(); return }
       if (dir.current) useGame.getState().walk(...dir.current)
     }, REPEAT_MS)
     return () => {
       clearInterval(timer)
+      unsubscribe()
+      window.removeEventListener('blur', cancel)
+      document.removeEventListener('visibilitychange', cancel)
       dir.current = null
     }
-  }, [dir])
+  }, [dir, cancel])
 }
 
 function capture(event: PointerEvent) {
@@ -78,7 +89,12 @@ export function DirectionPad({ className }: { className: string }) {
   // 패드를 잡은 손가락 하나만 따른다 (다른 손가락을 떼도 걸음이 끊기지 않게)
   const finger = useRef<number | null>(null)
   const [zone, setZone] = useState<PadZone | null>(null)
-  useRepeatWalk(dir)
+  const cancel = useCallback(() => {
+    finger.current = null
+    dir.current = null
+    setZone(null)
+  }, [])
+  useRepeatWalk(dir, cancel)
 
   const move = (event: PointerEvent, first: boolean) => {
     const d = offset(pad.current, event)
@@ -98,9 +114,7 @@ export function DirectionPad({ className }: { className: string }) {
   }
   const release = (event: PointerEvent) => {
     if (finger.current !== null && event.pointerId !== finger.current) return
-    finger.current = null
-    dir.current = null
-    setZone(null)
+    cancel()
   }
   const cell = (z: PadZone, label: string, glyph: string) => (
     <span data-zone={z} className={zone === z ? 'pressed' : ''} aria-label={label}>
@@ -139,9 +153,15 @@ export function DirectionPad({ className }: { className: string }) {
 /** 둥근 조이스틱: 손잡이를 끄는 쪽으로 걷는다 */
 function RoundStick({ sideClass }: { sideClass: string }) {
   const pad = useRef<HTMLDivElement>(null)
+  const finger = useRef<number | null>(null)
   const dir = useRef<Dir | null>(null)
   const [knob, setKnob] = useState({ x: 0, y: 0 })
-  useRepeatWalk(dir)
+  const cancel = useCallback(() => {
+    finger.current = null
+    dir.current = null
+    setKnob({ x: 0, y: 0 })
+  }, [])
+  useRepeatWalk(dir, cancel)
 
   const move = (event: PointerEvent) => {
     const d = offset(pad.current, event)
@@ -155,9 +175,9 @@ function RoundStick({ sideClass }: { sideClass: string }) {
     dir.current = next
     if (next && changed) useGame.getState().walk(...next)
   }
-  const release = () => {
-    dir.current = null
-    setKnob({ x: 0, y: 0 })
+  const release = (event: PointerEvent) => {
+    if (finger.current !== null && event.pointerId !== finger.current) return
+    cancel()
   }
   return (
     <div
@@ -166,10 +186,13 @@ function RoundStick({ sideClass }: { sideClass: string }) {
       role="presentation"
       aria-label={T.controls.roundLabel}
       onPointerDown={(event) => {
+        if (finger.current !== null) return
+        finger.current = event.pointerId
         capture(event)
         move(event)
       }}
       onPointerMove={(event) => {
+        if (event.pointerId !== finger.current) return
         if (event.buttons || event.pointerType === 'touch') move(event)
       }}
       onPointerUp={release}

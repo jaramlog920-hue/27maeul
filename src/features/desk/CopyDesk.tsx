@@ -5,12 +5,13 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ChangeEvent, type Ref, type RefObject } from 'react'
 import { chapterGuide, CONTENT, GOD_KEYWORDS, versesOf } from '../../content/catalog'
 import { ensureOtBook, otLoaded } from '../../content/ot-catalog'
-import { copyBookName, fill, roomTitle, T, withAnd, withSubject } from '../../content/text'
+import { copyBookName, fill, itemName, roomTitle, T, withAnd, withObject, withSubject } from '../../content/text'
 import { setQuiet } from '../../audio/sound'
 import { chaptersOf, groupByRoom } from '../../engine/books'
 import { BLOCKED_INPUT_TYPES, checkCopy, checkVoice, copySpot, copyVerses, normalizeCopy, originalEnd, type CopySpot, type CopyVerse } from '../../engine/copying'
 import { deskKidWith, deskPose, spouseReading } from '../../engine/family'
 import { chapterUnit, isOtBook, OT_ROOMS, otRow, type CopyBook, type OtBook } from '../../engine/ot-books'
+import { bookDoneLine } from './copy-text'
 import { BOOKS } from '../../engine/types'
 import { COPY_PEN, FAMILY_DESK, ICON_PALETTE } from '../../render/sprites'
 import { partnerName, useGame, type Modal } from '../../store/game-store'
@@ -520,6 +521,7 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
   const [voiceMiss, setVoiceMiss] = useState<number[] | null>(null)
   const [voiceNote, setVoiceNote] = useState('')
   const rec = useRef<VoiceRecognizer | null>(null)
+  const loadEpoch = useGame(s => s.loadEpoch)
   // 필사 방식 (계획 21 R1): 절마다 직접 쓰기 / 낱말 조각 / 빈칸 — 필사 실력과 저장 씨앗으로 정해진다. "직접 쓸게요"를 누른 절은 손으로
   const level = useGame((s) => copyLevel(s.game.stats))
   const seed = useGame((s) => s.game.flags.copySeed ?? hashKey(s.game.avatar?.name ?? ''))
@@ -578,17 +580,26 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
     setListening(false)
   }
   // 절이 바뀌거나 필사 화면을 나가면 듣기를 멈춘다 (조용한 화면 — 저절로 다시 듣지 않는다)
-  useEffect(() => () => stopVoice(), [key])
+  useEffect(() => () => stopVoice(), [key, loadEpoch])
   /** 단추를 눌렀을 때만 듣는다. 말을 멈추면 끝 — 받아 적은 글 후보 중 본문과 가장 가까운 것으로 견준다 */
   const startVoice = () => {
     stopVoice()
     const r = newRecognizer()
     if (!r) return
     const target = spot.verse.text
+    const epoch = useGame.getState().loadEpoch
+    // 취소 전에 이미 큐에 들어간 콜백도 있다. 새 듣기/다른 절/불러온 저장에 적용하지 않는다.
+    const active = () => {
+      if (rec.current !== r) return false
+      const current = useGame.getState()
+      if (current.loadEpoch !== epoch || current.modal?.kind !== 'copy' || current.modal.view !== 'write' || current.game.copy.book !== book) return false
+      const now = copySpot(current.game, book, CONTENT)
+      return !!now && now.chapter === spot.chapter && now.verse.verse === spot.verse.verse
+    }
     let heard: string[] = []
     let judged = false
     const judge = (texts: string[]) => {
-      if (judged) return
+      if (judged || !active()) return
       judged = true
       stopVoice()
       if (!texts.length) {
@@ -607,11 +618,13 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
       }
     }
     r.onresult = (e) => {
+      if (!active()) return
       const { texts, final } = transcriptsOf(e)
       if (texts.length) heard = texts
       if (final) judge(heard)
     }
     r.onerror = (e) => {
+      if (!active()) return
       if (e.error === 'aborted') return
       judged = true
       setVoiceNote(e.error === 'not-allowed' || e.error === 'service-not-allowed' ? C.voiceDenied : C.voiceSilent)
@@ -871,7 +884,9 @@ function CopyDone({ book, modal, folding }: { book: CopyBook; modal: Extract<Mod
         </section>
       )}
       {gains.length > 0 && <p className="copy-gains">{gains.join(' · ')}</p>}
-      {last.bookDone && <p className="copy-book-done">{fill(C.bookDone, { book: name })}</p>}
+      {last.bookDone && <p className="copy-book-done">{bookDoneLine(book, name)}</p>}
+      {/* 장을 마친 기념 생활 가구 (2026-10-12) */}
+      {last.gift && <p className="hint">장을 마친 기념으로 {withObject(itemName(last.gift))} 받았어요 · 가방에 넣었어요</p>}
       {kidName && <p className="copy-family-quiet">{fill(FD.quiet, { with: withAnd(kidName) })}</p>}
       <div className="copy-menu-actions">
         <button onClick={copyExit}>{C.closeBook}</button>

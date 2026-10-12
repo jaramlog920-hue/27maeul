@@ -1,8 +1,10 @@
+import { sanitizeHomeWalls, setHomeWalls } from './home-walls'
 import { CLUB_PLACES, sanitizeClubs, sanitizeClubSessions } from './clubs'
 import { sanitizeVillage } from './projects'
 import { sanitizeFests } from './fest'
 import { sanitizeCooking } from './cooking'
 import { sanitizeGen } from './gen'
+import { repairHouseholdHomes } from './gen-settle'
 import { sanitizeSpaces } from './spaces'
 import { sanitizePlans } from './plans'
 import { sanitizeCompanion } from './companion'
@@ -12,23 +14,27 @@ import { sanitizeSkills, sanitizeSkillLesson } from './skills'
 // 브라우저 저장. 저장소가 없거나 막혀 있어도 게임은 돌아야 하므로 모든 접근을 try/catch로 감싼다.
 import { sanitizeLife } from './people'
 import { sanitizeNotebook } from './notebook'
-import { sanitizeChild } from './child'
+import { repairSpouseInheritance, sanitizeChild } from './child'
 import { sanitizeRomance } from './romance'
 import { sanitizeStats } from './stats'
 import { sanitizeCopy, sanitizeCopyStats } from './copying'
 import { backfillGodRecords, sanitizeGodRecords } from './god-records'
-import { sanitizeBindings } from './binding'
+import { sanitizeBindings, sanitizeBookDesigns, withBookDesigns } from './binding'
 import { isFinished, sanitizeHomeShelf } from './finished-books'
 import { sanitizePieceLog } from './fragments'
+import { migratePieceLayout } from './piece-migration'
+import { GIFT_ITEMS } from './collection-gifts'
+import { GUESTS } from './newland-life'
 import { sanitizeDayLog } from './daybook'
 import { IDLE_RESET } from './autonomy'
-import { bookDone, bookRoomOpen, emptyProgress, sanitizeOtProgress, type Progress } from './books'
+import { bookDone, bookRoomOpen, chaptersOf, emptyProgress, sanitizeOtProgress, type Progress } from './books'
 import { isOtBook } from './ot-books'
 import { newGame, settle, type Farewell, type GameState } from './game'
+import { GARDEN_TILES } from './garden'
 import type { Avatar } from './avatar'
 import { cardsForChapters, placeNewCards } from './journey'
-import { initialHomeFurniture, isFacing, refitRoom } from './room'
-import { HOME_ENTRY, HOME_FRONT, setHomeLevel, setHomeFurniture, setSpouseRoom, walkableOn } from './world'
+import { initialHomeFurniture, isFacing, refitRoom, upgradeAdultBed, footprint } from './room'
+import { HOME_ENTRY, HOME_FRONT, PLACES, setHomeLevel, setHomeFurniture, setSpouseRoom, walkableOn } from './world'
 import { MAP_IDS, isMapId, setActiveMap, type MapId } from './maps'
 import { sanitizeOtCollected } from './ot-pieces'
 import { entryFront, roomSlotAt, setArchiveRooms, setNewlandOverlay, setNewlandRevealed, setNewlandWarps } from './newland'
@@ -108,6 +114,7 @@ const okFarewell = (f: unknown): f is Farewell => {
  * (없는 id가 남으면 도감·일지에서 오류가 나고, 책상 순서가 영원히 "틀림"이 될 수 있다)
  */
 export function sanitize(s: GameState, content: GameContent): GameState {
+  s = migratePieceLayout(s, content)
   // 아래 정리들은 모두 첫 마을 지도로 한다 (새 터로 맞추는 것은 불러온 뒤 settle의 syncHome)
   setActiveMap('village')
   // 제거한 설비의 주문·장면은 옛 저장에서도 다시 등장하지 않는다.
@@ -127,7 +134,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   const known = new Map(content.pieces.map((p) => [p.id, p]))
   const progress: Progress = emptyProgress()
   for (const b of BOOKS) {
-    const chapters = new Set(content.pieces.filter((p) => p.book === b).map((p) => p.chapter))
+    const chapters = new Set(chaptersOf(b, content))
     progress[b].completed = [...new Set(s.progress?.[b]?.completed ?? [])].filter((c) => chapters.has(c))
   }
   // 필사 (계획 14): 옛 저장(칸이 없던 때 — deserialize가 null로 넘긴다)은 이미 마친 장을 "예전에 엮은 장"으로 남긴다
@@ -170,13 +177,21 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   // 지도(모듈 전역 집 단계)를 이 저장에 맞춘 뒤 가구를 맞춘다 — newGame이 0으로 되돌려 둔 상태라서
   const romance = sanitizeRomance(s.romance)
   setHomeLevel(homeLevel)
+  // 세우거나 허문 집 안 벽 (2026-10-12): 넓힌 집에서만, 가구를 맞추기 전에 지도에 덧씌운다
+  const homeWalls = homeLevel >= 1 ? sanitizeHomeWalls(s.homeWalls) : undefined
+  setHomeWalls(homeWalls)
   setSpouseRoom(romance.stage === 'married' ? romance.partner : null)
   const flags = { ...s.flags }
+  // 기존 저장의 가구·관계·이용 권한은 유지하고 과거 성장 선물은 다시 지급하지 않는다.
+  if (!flags.growthVersion) {
+    flags.growthVersion = 1
+    flags.growthLegacy = 1
+  }
   if (flags.homeOrder !== undefined && (flags.homeOrder !== homeLevel + 1 || flags.homeOrder > 3)) delete flags.homeOrder
   // 지금 집 배치(homeLayout 2) 전 저장: 옮기지 않고 붙박이만 새로 놓고 집 안 문 앞에서 시작한다 (옛 가구는 아래 refitRoom이 가방으로)
   const fresh = !flags.homeLayout
-  const player = fresh ? { ...s.player, ...HOME_ENTRY, path: [] } : s.player
-  const migrated = fresh ? [...initialHomeFurniture(), ...(s.room ?? [])] : (s.room ?? [])
+  let player = fresh ? { ...s.player, ...HOME_ENTRY, path: [] } : s.player
+  const migrated = upgradeAdultBed(fresh ? [...initialHomeFurniture(), ...(s.room ?? [])] : (s.room ?? []))
   flags.homeLayout = 2
   // 가구 규칙이 바뀐 뒤의 저장: 지금 규칙으로 놓을 수 없는 것은 가방으로 (길이 막히지 않게)
   // 가구 방향 (계획 17 작업 2): 옛 저장은 칸이 없다(옛 그림 쪽). 잘못된 값은 버린다
@@ -188,6 +203,10 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     return rest
   })
   const { room, inv } = refitRoom(facedRoom, s.inv)
+  const bedShifted=(s.room??[]).some(f=>f.item==='homeBed'&&f.x===17&&f.y===111)&&migrated.some(f=>f.item==='homeBed'&&f.x===18&&f.y===112)
+  if(bedShifted&&PLACES.bed.stand&&room.some(f=>f.item==='homeBed'&&footprint(f).some(t=>t.x===player.x&&t.y===player.y)))player={...player,...PLACES.bed.stand,path:[]}
+  // 책상을 벽으로 옮긴 저장: 그 칸에 서 있었으면 책상 앞으로
+  if(PLACES.desk.stand&&room.some(f=>f.item==='homeDesk'&&footprint(f).some(t=>t.x===Math.round(player.x)&&t.y===Math.round(player.y))))player={...player,...PLACES.desk.stand,path:[]}
   // 고른 책: 조각이 있어야 하고, 그 책의 서고 방이 열려 있어야 한다 (chooseBook과 같은 규칙 — 사도행전·편지)
   const activeBook =
     s.activeBook && (BOOKS as readonly string[]).includes(s.activeBook) && content.pieces.some((p) => p.book === s.activeBook) && bookRoomOpen(s.activeBook, flags)
@@ -205,7 +224,8 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   const { otProgress: _rawOtProgress, otCopyStats: _rawOtStats, newland: _rawNewland, otCollected: _rawOtCollected, rooms: _rawRooms, gen: _rawGen, inv: _inv, ...sRest } = { ...s, rooms: (s as { rooms?: unknown }).rooms } as typeof s & { rooms?: unknown }
   // 새 터 건축 (계획 20 작업 6): 옛 저장은 없음, 깨진 기록은 걸러 낸다
   const newland = sanitizeNewlandBuild(_rawNewland, s.clock.day)
-  const gen = sanitizeGen(_rawGen, s.clock.day)
+  const savedGen = sanitizeGen(_rawGen, s.clock.day)
+  const gen = savedGen ? repairHouseholdHomes(savedGen, content) : undefined
   // 건물 안 가구 (작업 7): 옛 저장은 없음. 주인 없는 방·맞지 않는 가구는 가방으로
   const fitted = sanitizeRooms(_rawRooms, { newland }, inv)
   void _inv
@@ -214,6 +234,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     player,
     companion: sanitizeCompanion(fresh && s.companion ? { ...s.companion, ...HOME_ENTRY, path: [] } : s.companion),
     homeLevel,
+    homeWalls,
     flags,
     journey,
     churches,
@@ -249,7 +270,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     careful: Object.fromEntries(Object.entries(isObj(s.careful) ? s.careful : {}).filter(([, v]) => Array.isArray(v)).map(([k, v]) => [k, (v as unknown[]).filter((n): n is number => Number.isInteger(n))])),
     sealed: isStrArray(s.sealed) ? s.sealed : [],
     notebook: sanitizeNotebook(s.notebook),
-    child: sanitizeChild(s.child),
+    child: repairSpouseInheritance(sanitizeChild(s.child), romance.partner, content.neighbors.find(n => n.id === romance.partner)?.stat),
     found: isStrArray(s.found) ? (s.found as ItemId[]) : [],
     // 필사 (계획 14): 마친 장(progress)은 그대로 마친 장이고, 글자 수 통계는 0에서 시작한다
     copy,
@@ -291,6 +312,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     // 이사 간 이웃의 편지: 모양이 맞는 것만
     farewells: Array.isArray(s.farewells) ? s.farewells.filter(okFarewell).slice(-30) : undefined,
     farewellPopup: okFarewell(s.farewellPopup) ? s.farewellPopup : undefined,
+    moveInGifts: isObj(s.moveInGifts) ? Object.fromEntries(Object.entries(s.moveInGifts ?? {}).filter(([npc, item]) => (content.neighbors.some(n => n.id === npc) || GUESTS.some(g => g.id === npc) || !!gen?.persons[npc]) && GIFT_ITEMS.includes(item as ItemId))) as Record<string, ItemId> : undefined,
     careDone: isStrArray(s.careDone) ? [...new Set(s.careDone.filter((k) => /^[a-z0-9]+:\d+$/.test(k)))] : undefined,
     ...(fitted.rooms ? { rooms: fitted.rooms } : {}),
     // 구약 말씀 조각: 새 터를 받은 뒤에만 있다 — 모르는 id·중복은 버리고, 옛 저장(없음)은 칸을 만들지 않는다
@@ -305,6 +327,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     ),
     // 제본 (계획 14 작업 4): 옛 저장(칸이 없던 때)은 빈 목록 — 이미 꽂은 책은 아래 shelved에 등급 그대로 남는다
     bound: sanitizeBindings(s.bound, (b) => bookDone({ progress }, b, content)),
+    bookDesigns: sanitizeBookDesigns(s.bookDesigns),
     // 오늘의 기록 (계획 14 작업 6): 옛 저장(칸이 없던 때)은 오늘의 빈 기록
     dayLog: sanitizeDayLog(s.dayLog, s.clock.day),
     achieved: Array.isArray(s.achieved) ? s.achieved.filter((a) => a && typeof a.id === 'string' && typeof a.day === 'number') : [],
@@ -324,13 +347,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
         ([b, g]) => (BOOKS as readonly string[]).includes(b) && (g === 0 || g === 1 || g === 2) && bookDone({ progress }, b as Book, content),
       ),
     ),
-    // 텃밭은 집 앞(1~4, 8~9)에서 집 오른쪽 위(14~17, 3~5)로 옮겼다 — 옛 저장의 작물도 같은 자리 순서로 옮긴다
-    garden: Object.fromEntries(
-      Object.entries(s.garden ?? {}).map(([k, v]) => {
-        const [x, y] = k.split(',').map(Number)
-        return [x >= 1 && x <= 4 && (y === 8 || y === 9) ? `${x + 13},${y - 5}` : k, v]
-      }),
-    ),
+    garden: moveGardenPlots(s.garden ?? {}),
     rereads: (s.rereads ?? []).filter((id) => known.has(id)),
     journal: s.journal.map((e) => ({ ...e, heard: (e.heard ?? []).filter((id) => known.has(id)) })),
   }
@@ -338,7 +355,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   const { map: _map, mapAt: _mapAt, ...rest } = out
   void _map
   void _mapAt
-  return { ...rest, homeShelf: sanitizeHomeShelf(s.homeShelf, (b) => isFinished(out, b)), ...sanitizeMaps(out) }
+  return { ...rest, bookDesigns: withBookDesigns(out.bookDesigns ?? [], out.bound, out.shelved), homeShelf: sanitizeHomeShelf(s.homeShelf, (b) => isFinished(out, b)), ...sanitizeMaps(out) }
 }
 
 /** 옛 id → 새 id (주막→약방 2026-09-30, 양 이야기 2026-10-05) */
@@ -356,6 +373,25 @@ function migrateIds(v: unknown): unknown {
   if (Array.isArray(v)) return v.map(migrateIds)
   if (v && typeof v === 'object') return Object.fromEntries(Object.entries(v as Record<string, unknown>).map(([k, x]) => [moveId(k), migrateIds(x)]))
   return v
+}
+
+/**
+ * 텃밭 칸이 지도 텃밭(GARDEN_TILES)과 어긋나 있던 때의 작물을 지도 텃밭 안으로 옮긴다.
+ * 이미 텃밭 칸에 있는 작물은 그대로, 밖에 있는 것은 빈 텃밭 칸에 순서대로 (빈 칸이 없으면 버린다)
+ */
+function moveGardenPlots(garden: GameState['garden']): GameState['garden'] {
+  const keys = GARDEN_TILES.map((t) => `${t.x},${t.y}`)
+  const out: GameState['garden'] = {}
+  const stray: GameState['garden'][string][] = []
+  for (const [k, v] of Object.entries(garden)) {
+    if (keys.includes(k)) out[k] = v
+    else stray.push(v)
+  }
+  for (const v of stray) {
+    const free = keys.find((k) => !out[k])
+    if (free) out[free] = v
+  }
+  return out
 }
 
 export function deserialize(raw: string | null, content: GameContent): GameState | null {
@@ -387,7 +423,7 @@ export function deserialize(raw: string | null, content: GameContent): GameState
     // 나중에 더한 칸이 빠진 저장도 받아 준다
     const fresh = newGame(content)
     // 필사 칸(계획 14)이 없는 옛 저장은 새 게임 기본값으로 덮지 않고 null로 넘긴다 — sanitize가 옛 저장임을 알아보게
-    return settle(sanitize({ ...fresh, ...o, copy: isObj(o.copy) ? o.copy : null, version: SAVE_VERSION } as GameState, content), content)
+    return settle(sanitize({ ...fresh, ...o, pieceLayout: o.pieceLayout, copy: isObj(o.copy) ? o.copy : null, version: SAVE_VERSION } as GameState, content), content)
   } catch {
     return null
   }

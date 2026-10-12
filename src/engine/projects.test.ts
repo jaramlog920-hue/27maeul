@@ -1,6 +1,7 @@
+import { establishedGame as newGame } from "./growth-test-support"
 // 계획 16 작업 20: 주민이 함께 바꾸는 마을 — 시설 자리·완성·옛 저장
 import { CONTENT, PEOPLE } from '../content/catalog'
-import { newGame, type GameState } from './game'
+import { type GameState } from './game'
 import { PROJECT_NEED, advanceVillage, builtFlag, completeProject, isBuilt, pickProject, sanitizeVillage, villageOf } from './projects'
 import { FACILITY_IDS, SITES } from './village-sites'
 import { MAP, VILLAGE_H, isWalkable, lockedZones, propSpotProblem, roomAt, tileAt, zoneAt } from './world'

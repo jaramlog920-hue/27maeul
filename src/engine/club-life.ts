@@ -10,11 +10,17 @@ import type { ClubActivity } from './clubs'
 type Voice = 'polite' | 'sir' | 'old' | 'casual' | 'child'
 export interface ClubPerson { does: string; start: string; finish: string }
 const VOICES = LINES.voices as Record<string, Voice>
-const PEOPLE = LINES.lines as Record<string, Record<ClubActivity, ClubPerson>>
+const PEOPLE = LINES.lines as Record<string, Partial<Record<ClubActivity, ClubPerson>>>
+const NEW_CLUB_LINES:Partial<Record<ClubActivity,ClubPerson>>={
+ read:{does:'함께 읽고 필사본 살피기',start:'이 부분을 같이 읽어 볼까요?',finish:'서로 쓴 글을 보니 같은 말씀도 새롭게 보이네요.'},
+ cook:{does:'재료 섞고 음식 맛보기',start:'제가 재료를 준비할게요. 함께 만들어 봐요.',finish:'서로 손을 보태니 더 맛있네요.'},
+ paint:{does:'그림 그리고 서로 감상하기',start:'어떤 색을 썼는지 보여 주세요.',finish:'같은 마을을 서로 다르게 그렸네요.'},
+ music:{does:'연주하고 박자 맞추기',start:'천천히 시작해요. 제가 박자를 맞출게요.',finish:'함께 맞춘 마지막 박자가 좋았어요.'},
+}
 
 export const clubVoice = (npc: string): Voice => VOICES[npc] ?? 'polite'
 /** 이 주민이 이 활동에서 하는 일과 말 (없는 주민은 null) */
-export const clubPerson = (npc: string, activity: ClubActivity): ClubPerson | null => PEOPLE[npc]?.[activity] ?? null
+export const clubPerson = (npc: string, activity: ClubActivity): ClubPerson | null => PEOPLE[npc]?.[activity] ?? NEW_CLUB_LINES[activity] ?? null
 
 const fill = (text: string, vars: Record<string, string>) => text.replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '')
 

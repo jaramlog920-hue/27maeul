@@ -3,6 +3,8 @@ import { CONTENT } from '../content/catalog'
 import { ACHIEVEMENTS, withFound } from './achievements'
 import { newGame, recordProgress } from './game'
 import { deserialize, serialize } from './save'
+import { OT_BOOK_TABLE } from './ot-books'
+import { OT_PIECES } from './ot-pieces'
 
 describe('도감·업적', () => {
   it('업적 id는 겹치지 않고 이름·설명이 있다', () => {
@@ -36,5 +38,32 @@ describe('도감·업적', () => {
     const back = deserialize(serialize(state), CONTENT)!
     expect(back.achieved.map((a) => a.id)).toContain('coins500')
     expect(back.found.length).toBeGreaterThan(0)
+  })
+
+  it('구약 한 장·한 권·조각 업적을 기존 진행에서도 발견하고 한 번만 기록한다', () => {
+    const base = newGame(CONTENT)
+    const before = { ...base, flags: { ...base.flags, newlandGift: 1 }, otProgress: { oba: { completed: [1], arrangement: {} } }, otCollected: [OT_PIECES[0].id] }
+    const { state, fresh } = recordProgress(before)
+    expect(fresh.map(a => a.id)).toEqual(expect.arrayContaining(['otFirstChapter', 'otFirstBook', 'otFirstPiece']))
+    expect(recordProgress(state).fresh).toEqual([])
+    expect(deserialize(serialize(state), CONTENT)?.achieved).toEqual(state.achieved)
+  })
+
+  it('39권·929장과 구약 조각 929개를 모두 모으면 구약 업적 열 개가 달성된다', () => {
+    const base = newGame(CONTENT)
+    const otProgress = Object.fromEntries(OT_BOOK_TABLE.map(book => [book.id, { arrangement: {}, completed: Array.from({ length: book.chapters }, (_, i) => i + 1) }]))
+    const next = recordProgress({ ...base, otProgress, otCollected: OT_PIECES.map(piece => piece.id) })
+    expect(next.fresh.filter(a => a.id.startsWith('ot'))).toHaveLength(10)
+    const missingLast = { ...otProgress, mal: { arrangement: {}, completed: [1, 2, 3] } }
+    expect(ACHIEVEMENTS.find(a => a.id === 'otAllBooks')!.done({ ...base, otProgress: missingLast })).toBe(false)
+    expect(ACHIEVEMENTS.find(a => a.id === 'otMinorProphets')!.done({ ...base, otProgress: missingLast })).toBe(false)
+  })
+
+  it('구약 업적은 신약 진도나 중복·잘못된 조각으로 채워지지 않는다', () => {
+    const base = newGame(CONTENT)
+    const repeated = { ...base, otProgress: { gen: { arrangement: {}, completed: Array(50).fill(1) } }, otCollected: Array(100).fill(OT_PIECES[0].id).concat('잘못된 id') }
+    expect(ACHIEVEMENTS.find(a => a.id === 'otFirstBook')!.done(repeated)).toBe(false)
+    expect(ACHIEVEMENTS.find(a => a.id === 'otHundredPieces')!.done(repeated)).toBe(false)
+    expect(recordProgress(base).fresh.filter(a => a.id.startsWith('ot'))).toEqual([])
   })
 })

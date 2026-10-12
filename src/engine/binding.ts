@@ -46,6 +46,48 @@ export interface SpecialChoice {
 }
 export const DEFAULT_CHOICE: SpecialChoice = { color: 'cream', pattern: 'lines', deco: 'leather' }
 
+/** 도감은 기본 표지와 꾸미기 요소를 각각 모은다 (모든 조합을 별도 물건으로 세지 않는다). */
+export interface BookDesign {
+  id: string
+  kind: 'book' | 'color' | 'pattern' | 'deco' | 'detail'
+  value: string
+  book: Book
+  choice?: SpecialChoice
+}
+export const BOOK_DESIGNS: readonly BookDesign[] = [
+  ...BOOKS.map(book => ({ id: `book:${book}`, kind: 'book' as const, value: book, book })),
+  ...COVER_COLORS.map(color => ({ id: `color:${color}`, kind: 'color' as const, value: color, book: 'mt' as const, choice: { ...DEFAULT_CHOICE, color } })),
+  ...COVER_PATTERNS.map(pattern => ({ id: `pattern:${pattern}`, kind: 'pattern' as const, value: pattern, book: 'mt' as const, choice: { ...DEFAULT_CHOICE, pattern } })),
+  ...SPINE_DECOS.map(deco => ({ id: `deco:${deco}`, kind: 'deco' as const, value: deco, book: 'mt' as const, choice: { ...DEFAULT_CHOICE, deco } })),
+  ...BOOK_DETAIL_CHOICES.filter(detail => detail !== 'none').map(detail => ({ id: `detail:${detail}`, kind: 'detail' as const, value: detail, book: 'mt' as const, choice: { ...DEFAULT_CHOICE, detail } })),
+]
+const DESIGN_IDS = new Set(BOOK_DESIGNS.map(d => d.id))
+
+export function sanitizeBookDesigns(raw: unknown): string[] {
+  return Array.isArray(raw) ? [...new Set(raw.filter((id): id is string => typeof id === 'string' && DESIGN_IDS.has(id)))] : []
+}
+
+/** 다시 꾸며도 앞서 쓴 디자인은 남는다. 옛 저장은 현재 제본·서고 기록에서 채운다. */
+export function withBookDesigns(found: readonly string[], bound: Bindings, shelved: Partial<Record<Book, unknown>>): string[] {
+  let out: string[] | undefined
+  const add = (id: string) => {
+    if (DESIGN_IDS.has(id) && !(out ?? found).includes(id)) (out ??= [...found]).push(id)
+  }
+  for (const book of BOOKS) {
+    const binding = bound[book]
+    if (!binding && shelved[book] === undefined) continue
+    if (!binding?.special) add(`book:${book}`)
+    else {
+      const sp = binding.special
+      add(`color:${sp.color}`)
+      add(`pattern:${sp.pattern}`)
+      add(`deco:${sp.deco}`)
+      if (sp.detail && sp.detail !== 'none') add(`detail:${sp.detail}`)
+    }
+  }
+  return out ?? found as string[]
+}
+
 /** 제본한 책 하나: 그대로(special 없음) 또는 특별하게(고른 모습), 제본한 날 */
 export interface Binding {
   day: number

@@ -8,14 +8,14 @@ import { weatherOf } from '../../engine/calendar'
 import { seasonOf } from '../../engine/clock'
 import { dislikesOf, isSuitor, newsRecent, notYet, type GameState, type JournalEntry } from '../../engine/game'
 import { heartsOf } from '../../engine/hearts'
-import { birthdayLabel, isBirthday, knownTastes, knownLifestyleTastes, noteTasteProposal, canProposeTea, sharedMemories, NO_NOTEBOOK, SLOT_LABEL, SLOTS, spotName } from '../../engine/notebook'
+import { birthdayLabel, isBirthday, knownTastes, knownLifestyleTastes, noteTasteProposal, canProposeTea, NO_NOTEBOOK, SLOT_LABEL, SLOTS, spotName } from '../../engine/notebook'
 import { availability, scheduleAppt } from '../../engine/plans'
 import { saveGame } from '../../engine/save'
 import { NO_LIFE } from '../../engine/people'
 import type { ItemId, NeighborDef, Season } from '../../engine/types'
 import { neighborPortrait } from '../../render/renderer'
 import { residentIsElder } from '../../render/elder-details'
-import { movedHeir } from '../../engine/gen-growth'
+import { slotHeir } from '../../engine/gen-growth'
 import { genAvatar } from '../../engine/gen-looks'
 import { ItemIcon } from '../../shared/ItemIcon'
 import { albumImage, partnerName, useGame, type JournalTab } from '../../store/game-store'
@@ -35,7 +35,7 @@ export function journalLine(e: JournalEntry): string {
 
 type Tab = JournalTab
 
-export function Journal({ tab: first = 'days' }: { tab?: Tab }) {
+export function Journal({ tab: first = 'days', neighbor }: { tab?: Tab; neighbor?: string }) {
   const closeModal = useGame((s) => s.closeModal)
   const [tab, setTab] = useState<Tab>(first)
   return (
@@ -57,7 +57,7 @@ export function Journal({ tab: first = 'days' }: { tab?: Tab }) {
         ))}
       </div>
       {tab === 'days' && <Days />}
-      {tab === 'neighbors' && <NeighborBook />}
+      {tab === 'neighbors' && <NeighborBook first={neighbor} />}
       {tab === 'village' && <VillageTab />}
       {tab === 'album' && <Album />}
       {tab === 'awards' && <Awards />}
@@ -68,7 +68,7 @@ export function Journal({ tab: first = 'days' }: { tab?: Tab }) {
   )
 }
 
-/** 마을 칸: 마을 소식과 가계도 (계획 20 2부) */
+/** 마을 칸: 마을 소식. 가계도는 이웃 수첩의 상세 칸에서 연다. */
 function VillageTab() {
   const game = useGame((s) => s.game)
   return <VillagePage game={game} />
@@ -114,9 +114,9 @@ function genderOf(d: NeighborDef): 'f' | 'm' {
   return d.gender ?? d.look ?? 'f'
 }
 
-function NeighborBook() {
+function NeighborBook({ first }: { first?: string }) {
   const game = useGame((s) => s.game)
-  const [open, setOpen] = useState<string | null>(null)
+  const [open, setOpen] = useState<string | null>(first ?? null)
   const notebook = game.notebook ?? NO_NOTEBOOK
   const all = villageNeighbors(game)
   const met = all.filter((d) => notebook.met.includes(d.id))
@@ -210,16 +210,12 @@ function NeighborPage({ game, def }: { game: GameState; def: NeighborDef }) {
   const birthday = birthdayLabel(def.id)
   const got = notebook.got?.[def.id] ?? []
   const lifestyle = knownLifestyleTastes(notebook, def.id)
-  const memories = sharedMemories(game.life ?? NO_LIFE, def.id)
   const recently = newsRecent(game, def.id)
-  const memoryList = (list: typeof memories) => <ul>{list.map((e) => {
-    const scene = SCENES[e.id] ?? (e.kind === 'story' ? SCENES[`ev:${e.id.slice(6)}`] : undefined)
-    const title = scene?.title ?? (T.taste.kinds as Record<string, string>)[e.kind] ?? T.taste.memories
-    return <li key={e.id}>{title} · {e.first === null ? T.taste.unknownDate : fill(T.ui.day, { day: e.first })}{e.count > 1 ? ` · ${e.count}번` : ''}</li>
-  })}</ul>
   return (
     <dl className="nb-page">
-      <dt>마음</dt>
+      <dt>{t('gen.tree')}</dt>
+      <dd><button onClick={() => useGame.getState().open({ kind: 'familyTree', personId: slotHeir(game.gen, def.id)?.id ?? def.id, neighborId: def.id })}>{t('familyTree.open')}</button></dd>
+      <dt>호감도</dt>
       <dd>
         <Hearts n={heartsOf(game.hearts[def.id])} />
       </dd>
@@ -275,10 +271,7 @@ function NeighborPage({ game, def }: { game: GameState; def: NeighborDef }) {
         </>
       )}
       <dt>{T.taste.title}</dt>
-      <dd>{lifestyle.length ? <ul>{lifestyle.map((label) => <li key={label}>{label}</li>)}</ul> : <span className="nb-none">{T.taste.unknown}</span>}</dd>
-      <dt>{T.taste.memories}</dt>
-      <dd>{memories.length ? <>{memoryList(memories.slice(0, 3))}{memories.length > 3 && <details><summary>{T.taste.all} ({memories.length})</summary>{memoryList(memories)}</details>}</> : <span className="nb-none">{T.taste.empty}</span>}</dd>
-      <dd><TasteProposal game={game} npc={def.id} /></dd>
+      <dd>{lifestyle.length ? <ul>{lifestyle.map((label) => <li key={label}>{label}</li>)}</ul> : <span className="nb-none">{T.taste.unknown}</span>}<TasteProposal game={game} npc={def.id} /></dd>
       <dt>{T.ui.gifts}</dt>
       <dd>{got.length ? <Taste items={got} /> : <span className="nb-none">아직 없음</span>}</dd>
       <dt>보여 준 사본</dt>
@@ -333,8 +326,8 @@ const FACE = 4
 
 function Portrait({ def, season, shadow }: { def: NeighborDef; season: Season; shadow?: boolean }) {
   const ref = useRef<HTMLCanvasElement>(null)
-  const heir = useGame(s => movedHeir(s.game.gen, def.id))
-  const elder = useGame(s => residentIsElder(s.game.gen, movedHeir(s.game.gen, def.id)?.id ?? def.id))
+  const heir = useGame(s => slotHeir(s.game.gen, def.id))
+  const elder = useGame(s => residentIsElder(s.game.gen, slotHeir(s.game.gen, def.id)?.id ?? def.id))
   useEffect(() => {
     const c = ref.current
     const g = c?.getContext('2d')

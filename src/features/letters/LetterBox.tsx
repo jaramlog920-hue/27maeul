@@ -1,11 +1,14 @@
 // 문 앞 편지 바구니: 오늘의 필사 의뢰 한 통 (게임이 지어낸 생활 문장)
 import { fill, T } from '../../content/text'
+import { libraryBookCount } from '../../engine/game'
 import { jobOf, LETTER_BASE } from '../../engine/job'
+import { libraryPay } from '../../engine/progression'
 import { useGame } from '../../store/game-store'
 
 export function LetterBox() {
   const day = useGame((s) => s.game.clock.day)
-  const pay = useGame((s) => LETTER_BASE[jobOf(s.game)])
+  // 서고를 채운 만큼 늘어난 실제 수고비
+  const pay = useGame((s) => libraryPay(LETTER_BASE[jobOf(s.game)], libraryBookCount(s.game)))
   const { startLetter, closeModal } = useGame.getState()
   const requests = T.letters.requests as string[]
   return (

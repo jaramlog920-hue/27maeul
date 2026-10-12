@@ -33,7 +33,9 @@ describe('연인에게 구절 선물', () => {
   })
 
   it('창에서 조각을 고르면 고마움 한 줄', () => {
+    // 조각을 가진 상태를 한꺼번에 넣으면 '말씀조각 획득' 알림이 먼저 뜬다 — 이 테스트는 구절 선물 창만 본다
     useGame.setState({ game: dating(), modal: { kind: 'loveVerse' } })
+    useGame.setState({ piecePopups: [] })
     render(<ModalLayer />)
     const rows = screen.getAllByRole('button').filter((b) => b.classList.contains('row'))
     fireEvent.click(rows[0])

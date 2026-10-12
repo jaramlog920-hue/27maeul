@@ -13,6 +13,9 @@ import { solidTiles, type Furniture } from './room'
 import type { Fest } from './fest'
 import type { Npc } from './neighbors'
 import type { Facing, Tile } from './types'
+import { socialEventMotion, type SocialProp } from './social-scene'
+import type { GameState } from './game'
+import { eventById, type PersonEvent } from './people'
 
 /** 행사 소품 한 개. art는 그림 이름(wedding-art·event-art의 이름, 꽃 아치는 'weddingArch') */
 export interface EventProp {
@@ -32,10 +35,13 @@ export interface EventProp {
 
 /** 행사 동작 한 장: 결혼식 동작(weddingActorFrame) 또는 행사 동작(eventMotionFrame) */
 export interface EventMotion {
-  set: 'wedding' | 'event'
+  set: 'wedding' | 'event' | 'social'
   action: string
   frame: number
   facing: Facing
+  prop?: SocialProp
+  label?: string
+  offset?: Tile
 }
 
 type SceneState = {
@@ -47,6 +53,8 @@ type SceneState = {
   /** 오늘 선물한 이웃 */
   gifted?: readonly string[]
   flags?: Record<string, number>
+  /** 볼 장면 (이웃 이야기는 ev:<사건 id>) */
+  scenes?: readonly string[]
   today?: { gathering: Gathering | null } | null
   /** 내가 준비하는 작은 행사 (계획 16 작업 16) */
   plans?: { appts: readonly Appt[] }
@@ -278,8 +286,42 @@ function oneShot(action: string, id: string, t: number): { action: string; frame
   return { action, frame: Math.min(3, f) }
 }
 
+// ── 이웃 이야기 장면 (2026-10-12 사용자): 장면이 떠 있는 동안 그 이웃과 기록자가 마주 보고 사건에 맞는 동작 ──
+
+/** 지금 떠 있는(볼 차례인) 이웃 이야기 사건 */
+function storyNow(s: SceneState): { owner: string; event: PersonEvent } | null {
+  const id = s.scenes?.find((x) => x.startsWith('ev:'))
+  return id ? eventById(id.slice(3)) : null
+}
+
+/** 이야기 장면에 함께 선 사람: 주인은 사건의 동작, 함께 나온 이웃은 웃기·끄덕이기를 번갈아 */
+function storyMotion(s: SceneState, id: string, t: number): EventMotion | null {
+  const story = storyNow(s)
+  if (!story) return null
+  const me = tileOf(s.player)
+  const mine = story.owner === id
+  if (!mine && !story.event.with?.includes(id)) return null
+  const n = s.npcs[id]
+  if (!n?.visible || n.path.length || !isNear(me, tileOf(n), 3)) return null
+  const facing = faceToward(tileOf(n), me)
+  if (!mine) return { set: 'event', ...rotate(['smile', 'nod'], id, t), facing }
+  return { set: 'event', action: story.event.motion?.npc ?? 'smile', frame: Math.floor((t * 1000) / 260) % 4, facing }
+}
+
+/** 기록자 쪽 동작: 사건 주인이 곁에 있을 때만, 그 사람을 보고 */
+function playerStoryMotion(s: SceneState, t: number): EventMotion | null {
+  const story = storyNow(s)
+  const n = story ? s.npcs[story.owner] : undefined
+  if (!story || !n?.visible || !isNear(tileOf(s.player), tileOf(n), 3)) return null
+  return { set: 'event', action: story.event.motion?.player ?? 'nod', frame: Math.floor((t * 1000) / 260 + 2) % 4, facing: faceToward(tileOf(s.player), tileOf(n)) }
+}
+
 /** 이 이웃이 지금 하는 행사 동작 (없으면 null — 평소 그림) */
 export function npcEventMotion(s: SceneState, id: string, t: number): EventMotion | null {
+  const story = storyMotion(s, id, t)
+  if (story) return story
+  const social = socialEventMotion(s as GameState, id, t)
+  if (social) return social
   const n = s.npcs[id]
   const me = tileOf(s.player)
   if (weddingEvening(s)) {
@@ -312,6 +354,10 @@ export function npcEventMotion(s: SceneState, id: string, t: number): EventMotio
 /** 기록자가 지금 하는 행사 동작 (서 있을 때만, 가구 동작 중이면 없음) */
 export function playerEventMotion(s: SceneState, t: number): EventMotion | null {
   if (s.act || s.player.path.length > 0) return null
+  const story = playerStoryMotion(s, t)
+  if (story) return story
+  const social = socialEventMotion(s as GameState, 'player', t)
+  if (social) return social
   const me = tileOf(s.player)
   if (weddingEvening(s) && nearWeddingFire(me)) {
     const partner = s.romance?.partner ? s.npcs[s.romance.partner] : undefined

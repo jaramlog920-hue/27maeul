@@ -1,10 +1,12 @@
+// 기존 생활 시나리오는 개편 이전 저장의 권한으로 검증한다. 새 해금은 late-growth.test.ts에서 검증한다.
+import { legacyGame as newGame } from './growth-test-support'
 import { HOME_ENTRY } from './world'
 import { describe, expect, it } from 'vitest'
 import { CONTENT } from '../content/catalog'
 import { childMode, HELPER_AT, TODDLER_AT } from './child'
-import { childTile, newGame, setChildMode, setCompanionStay, tapTile, tick, type GameState } from './game'
+import { childTile, setChildMode, setCompanionStay, tapTile, tick, type GameState } from './game'
 import { freshStats } from './stats'
-import { PET_HOME } from './world'
+import { isHome, PET_HOME } from './world'
 
 const zero = () => 0
 const withPet = (): GameState => {
@@ -21,7 +23,8 @@ describe('데리고 다니기·집에 두기', () => {
     const home = setCompanionStay(withPet(), true)
     expect(home.companion).toMatchObject({ stay: true, x: PET_HOME.x, y: PET_HOME.y })
     const moved = tick({ ...home, player: { ...home.player, x: 10, y: 9, path: [] } }, 1, zero, CONTENT).state
-    expect(moved.companion).toMatchObject({ x: PET_HOME.x, y: PET_HOME.y })
+    // 집에 둔 동물은 집 안의 좋아하는 자리로 옮겨 다닐 수 있다 — 집 밖으로 따라 나오지만 않으면 된다
+    expect(isHome({ x: Math.round(moved.companion!.x), y: Math.round(moved.companion!.y) })).toBe(true)
     const back = setCompanionStay(moved, false)
     expect(back.companion?.stay).toBe(false)
     expect(Math.abs(back.companion!.x - back.player.x) + Math.abs(back.companion!.y - back.player.y)).toBe(1)

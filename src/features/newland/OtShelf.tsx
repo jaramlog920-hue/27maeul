@@ -2,13 +2,14 @@
 // 등급·제본·퀴즈·용량·효과가 없다 — 꽂는 것이 아니라 마친 책이 저절로 보일 뿐이다.
 // 확장권(계획 21 R9·사용자 결정 ⑦)으로 범위 방이 열리면 열린 방마다 한 줄씩 (서고 목록식), 아직은 서재 한 칸에 모두.
 import { useState, type CSSProperties } from 'react'
-import { fill, T } from '../../content/text'
+import { fill, T, withAnd } from '../../content/text'
 import { otBookFinished } from '../../engine/books'
-import { OT_BOOKS, OT_ROOMS, otIndex, otRow, type OtBook } from '../../engine/ot-books'
+import { chapterUnit, OT_BOOKS, OT_ROOMS, otIndex, otRow, type OtBook } from '../../engine/ot-books'
 import { t } from '../../shared/i18n'
 import { useGame } from '../../store/game-store'
 import { CONTENT, neighborById } from '../../content/catalog'
-import { canReadOtTogether, otBookRecord, otGroups, otReadFriends, otReadMemories, readOtTogether } from '../../engine/ot-display'
+import { canReadOtTogether, otBookRecord, otGroups, otReadFriends, otReadMemories } from '../../engine/ot-display'
+import { readOtWith } from '../../engine/game'
 import { saveGame } from '../../engine/save'
 
 /** 차분한 파스텔 책등 색과 무늬 (책 순서대로 돌아가며 — 좌우 대칭) */
@@ -109,7 +110,7 @@ function BookRecord({ book }: { book: OtBook }) {
     <section className="ot-record" aria-label={t('otShelf.record', { book: otRow(book).name })}>
       <h3>{t('otShelf.record', { book: otRow(book).name })}</h3>
       <p className="row-meta">
-        {t('otShelf.chapters', { n: r.chapters })} · {r.end == null ? t('otShelf.noDate') : t('otShelf.endDay', { day: r.end })}
+        {t('otShelf.chapters', { n: r.chapters, unit: chapterUnit(book) })} · {r.end == null ? t('otShelf.noDate') : t('otShelf.endDay', { day: r.end })}
       </p>
       {r.lines.length === 0 ? (
         <p className="hint">{t('otShelf.noLines')}</p>
@@ -118,7 +119,7 @@ function BookRecord({ book }: { book: OtBook }) {
           {r.lines.map((l) => (
             <li key={l.chapter}>
               <div className="row">
-                <span className="row-meta">{t('otShelf.chapterLine', { n: l.chapter })}</span>
+                <span className="row-meta">{t('otShelf.chapterLine', { n: l.chapter, unit: chapterUnit(book) })}</span>
                 <span className="row-main">{l.text}</span>
               </div>
             </li>
@@ -129,6 +130,9 @@ function BookRecord({ book }: { book: OtBook }) {
   )
 }
 
+/** 함께 읽기 글: 이름 뒤 '와/과'를 받침에 맞춘다 (2026-10-11 점검) */
+export const otReadText = (key: string, who: string) => t(key, { whoAnd: withAnd(who) })
+
 /** 함께 읽기: 하루 한 번, 배우자나 마음이 가까운 이웃과 — 함께 읽은 날이 남는다 */
 function ReadTogether() {
   const game = useGame((s) => s.game)
@@ -136,10 +140,10 @@ function ReadTogether() {
   const memories = otReadMemories(game, CONTENT.neighbors).slice(0, 5)
   const can = canReadOtTogether(game)
   const read = (npc: string) => {
-    const next = readOtTogether(useGame.getState().game, npc, CONTENT.neighbors)
+    const next = readOtWith(useGame.getState().game, npc, CONTENT)
     saveGame(next)
     useGame.setState({ game: next })
-    useGame.getState().say(t('otShelf.readDone', { who: neighborById(npc)?.role ?? '' }), 3200)
+    useGame.getState().say(otReadText('otShelf.readDone', neighborById(npc)?.role ?? ''), 3200)
   }
   if (!friends.length && !memories.length) return null
   return (
@@ -148,7 +152,7 @@ function ReadTogether() {
       {can && friends.length > 0 && (
         <div className="actions menu">
           {friends.map((id) => (
-            <button key={id} onClick={() => read(id)}>{t('otShelf.readWith', { who: neighborById(id)?.role ?? '' })}</button>
+            <button key={id} onClick={() => read(id)}>{otReadText('otShelf.readWith', neighborById(id)?.role ?? '')}</button>
           ))}
         </div>
       )}
@@ -157,7 +161,7 @@ function ReadTogether() {
           {memories.map((m) => (
             <li key={m.day}>
               <div className="row">
-                <span className="row-main">{t('otShelf.readMemory', { who: neighborById(m.npc)?.role ?? '' })}</span>
+                <span className="row-main">{otReadText('otShelf.readMemory', neighborById(m.npc)?.role ?? '')}</span>
                 <span className="row-meta">{t('otShelf.day', { day: m.day })}</span>
               </div>
             </li>

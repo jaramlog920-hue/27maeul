@@ -9,6 +9,7 @@ import {
   clearSky,
   drinkTea,
   hallFriendsHere,
+  heartUp,
   hallGuestsToday,
   newGame,
   playHall,
@@ -27,7 +28,7 @@ const zero = () => 0
 /** 축제 날이 아닌 날 */
 const plainDay = [...Array(40).keys()].map((d) => d + 2).find((d) => !festivalOf(d))!
 
-describe('사랑방: 저녁에 이웃 셋이 모인다', () => {
+describe('사랑방: 저녁에 이웃 열이 모인다', () => {
   it('문은 큰길 쪽, 문을 밟으면 방 안 — 방석 자리는 걸을 수 있고 들어온 자리에서 닿는다', () => {
     expect(tileAt(HALL_DOOR.x, HALL_DOOR.y)).toBe('D')
     expect(tileAt(HALL_DOOR.x, HALL_DOOR.y + 1)).toBe(',')
@@ -39,14 +40,17 @@ describe('사랑방: 저녁에 이웃 셋이 모인다', () => {
     }
     expect(findPath(inside, PLACES.hallTable.stand!)).not.toBeNull()
     expect(hall.w).toBe(12)
+    expect(hall.h).toBe(8)
+    expect(HALL_SPOTS).toHaveLength(10)
+    expect(new Set(HALL_SPOTS.map(key)).size).toBe(10)
   })
 
   it('날마다 같은 셋 — 상인·아이는 오지 않는다', () => {
     const ids = CONTENT.neighbors.map((n) => n.id)
     for (let day = 1; day < 30; day++) {
       const g = hallGuests(day, ids)
-      expect(g).toHaveLength(HALL_GUESTS)
-      expect(new Set(g).size).toBe(HALL_GUESTS)
+      expect(g).toHaveLength(Math.min(HALL_GUESTS,ids.length-2))
+      expect(new Set(g).size).toBe(g.length)
       expect(g).not.toContain('merchant')
       expect(g).not.toContain('child')
       expect(hallGuests(day, ids)).toEqual(g)
@@ -83,7 +87,7 @@ describe('사랑방: 저녁에 이웃 셋이 모인다', () => {
     const s = { ...base, npcs }
     expect(canPlayHall(s, CONTENT)).toBeNull()
     const played = playHall(s, CONTENT)
-    for (const id of guests) expect(played.hearts[id] ?? 0).toBe((s.hearts[id] ?? 0) + HALL_PLAY_GAIN)
+    for (const id of guests) expect(played.hearts[id] ?? 0).toBe(heartUp(s,id,HALL_PLAY_GAIN).hearts[id] ?? 0)
     expect(played.stats.charm.xp).toBe(XP.help)
     expect(played.scenes).toContain('hallNight')
     expect(canPlayHall(played, CONTENT)).toBe('played')

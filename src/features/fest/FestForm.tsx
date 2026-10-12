@@ -1,3 +1,4 @@
+import { festBusyText, festErrorText } from './fest-text'
 import { Fragment, useState } from 'react'
 import { CONTENT, neighborById } from '../../content/catalog'
 import { fill, T } from '../../content/text'
@@ -17,7 +18,6 @@ const STEPS: Record<FestKind, Step[]> = {
  showcase: ['kind','work','place','time','members','prepare','summary'],
  festival: ['kind','role','prepare','summary'],
 }
-const errorText = (e: string) => (T.fest.errors as Record<string, string>)[e] ?? (T.clubs.errors as Record<string, string>)[e] ?? T.fest.errors.time
 const dayLabel = (d: number, today: number) => `${d === today ? '오늘' : `${d}일째`} · ${T.clubs.day[d % 7]}`
 const itemName = (id: string) => (T.items as Record<string, { name: string }>)[id]?.name ?? id
 
@@ -78,7 +78,7 @@ export function FestForm({ onClose }: { onClose: () => void }) {
    const b = busy(id), checked = members.includes(id)
    const reaction = inviteReaction(id, activity, tastePlaceOf(where), time)
    return <Fragment key={id}>
-    <label className="check-row"><input type="checkbox" checked={checked} disabled={!checked && (members.length >= cap || b !== 'ok')} onChange={() => setMembers(checked ? members.filter(m => m !== id) : [...members, id])} />{neighborById(id)?.role} · {b === 'ok' ? T.clubs[reaction] : `${errorText(b.busy)}${b.suggest ? ` · ${dayLabel(b.suggest.day, game.clock.day)}` : ''}`}</label>
+    <label className="check-row"><input type="checkbox" checked={checked} disabled={!checked && (members.length >= cap || b !== 'ok')} onChange={() => setMembers(checked ? members.filter(m => m !== id) : [...members, id])} />{neighborById(id)?.role} · {b === 'ok' ? T.clubs[reaction] : `${festBusyText(b.busy)}${b.suggest ? ` · ${dayLabel(b.suggest.day, game.clock.day)}` : ''}`}</label>
     {checked && FEST_HELP[id] && <label className="check-row sub hint"><input type="checkbox" checked={help.includes(id)} onChange={() => setHelp(help.includes(id) ? help.filter(h => h !== id) : [...help, id])} />{fill(F.askHelp, { who: neighborById(id)?.role ?? '' })} · {F.helpKind[FEST_HELP[id]]}</label>}
    </Fragment>
   })}</div></>}
@@ -98,7 +98,7 @@ export function FestForm({ onClose }: { onClose: () => void }) {
    {help.filter(h => members.includes(h)).map(h => <p key={h} className="hint">{F.helpLabel} · {neighborById(h)?.role} · {F.helpKind[FEST_HELP[h]]}</p>)}
    {birthday && <p className="hint">{fill(F.birthday, { who: neighborById(birthday)?.role ?? '' })}</p>}
   </>}
-  {error && <p role="alert">{errorText(error)}</p>}
+  {error && <p role="alert">{festErrorText(error, kind)}</p>}
   <div className="actions">{at > 0 && <button onClick={() => { setError(''); setAt(at - 1) }}>{F.back}</button>}{at < steps.length - 1 ? <button disabled={!valid} onClick={() => { setError(''); setAt(at + 1) }}>{F.nextButton}</button> : <button className="primary" onClick={save}>{F.save}</button>}<button data-close onClick={onClose}>{T.ui.close}</button></div>
  </div>
 }

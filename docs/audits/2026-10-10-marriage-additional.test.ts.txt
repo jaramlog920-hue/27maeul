@@ -1,0 +1,43 @@
+import { expect, it } from 'vitest'
+import { CONTENT } from '../content/catalog'
+import { breakUp, canGiveBouquet, newGame } from './game'
+import { canPair, newGenState, relationId } from './gen'
+import { settleOneDay } from './gen-settle'
+
+function fixture(look: 'm' | 'f' = 'm') {
+  const base = newGame(CONTENT)
+  const gen = newGenState(CONTENT, 7, 200)
+  const a = 'g-0001', b = 'g-0002', pair = relationId(a, b)
+  return { ...base, clock: { day: 200, minute: 600 }, avatar: { ...base.avatar, look: 'f' as const },
+    hearts: { ...base.hearts, rudy: 100 }, inv: { ...base.inv, bouquet: 1 },
+    gen: { ...gen, log: [], affinity: { [pair]: 85 }, relations: {
+      [pair]: { id: pair, a, b, stage: 'friend' as const, since: 190 },
+    }, persons: { ...gen.persons,
+      [a]: { id: a, origin: 'born' as const, born: 1, stage: 'adult' as const, look, parents: ['rudy'], spouse: null, household: null },
+      [b]: { id: b, origin: 'born' as const, born: 1, stage: 'adult' as const, look: 'f' as const, parents: ['cosmo'], spouse: null, household: null },
+    }, retired: { rudy: { heir: a, day: 125 }, cosmo: { heir: b, day: 125 } } },
+  }
+}
+
+it('uses the current heir appearance rather than the original resident for courtship', () => {
+  const s = fixture('f')
+  expect(s.gen.persons['g-0001'].look).toBe(s.avatar.look)
+  expect(canGiveBouquet(s, CONTENT.neighbors.find(n => n.id === 'rudy')!)).toBe('notSuitor')
+})
+
+it('allows an opposite-appearance heir in a formerly same-appearance resident slot', () => {
+  const s = fixture('m')
+  s.gen.retired = { cosmo: { heir: 'g-0002', day: 125 }, poppy: { heir: 'g-0001', day: 125 } }
+  s.gen.persons['g-0001'].parents = ['poppy']
+  s.hearts = { ...s.hearts, poppy: 100 }
+  expect(canGiveBouquet(s, CONTENT.neighbors.find(n => n.id === 'poppy')!)).toBeNull()
+})
+
+it('honors the 14-day resident dating cooldown after breaking up with an heir', () => {
+  const s = fixture()
+  expect(canPair(s.gen, null, 'g-0001', 'g-0002')).toBe(true)
+  const broken = breakUp({ ...s, romance: { ...s.romance, partner: 'rudy', stage: 'dating', since: 180 } }, 'rudy')
+  expect(broken.flags['exPartner:rudy']).toBe(200)
+  const next = settleOneDay(broken.gen!, 201, broken, CONTENT, {})
+  expect(next.relations[relationId('g-0001', 'g-0002')]?.stage).toBe('friend')
+})

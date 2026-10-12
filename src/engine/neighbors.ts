@@ -1,8 +1,9 @@
 // 이웃의 하루: 시간표대로 걸어가고, 밤·궂은 날에는 집으로 들어가 보이지 않는다.
 import { FESTIVAL_FROM, FESTIVAL_TO } from './calendar'
 import { findPath, stepActor, type Actor } from './movement'
-import { key, sameTile, WARPS } from './world'
+import { isWalkable, key, sameTile, WARPS } from './world'
 import type { NeighborDef, Tile } from './types'
+import { LODGING_SEATS, LODGING_WORK_SPOTS, lodgingNpcSpot } from './lodging'
 
 export interface Npc extends Actor {
   id: string
@@ -10,7 +11,7 @@ export interface Npc extends Actor {
   goal: Tile | null
 }
 
-export const NPC_SPEED = 2.4
+export const NPC_SPEED = 1.7
 export const MAX_HEART = 10
 
 /** 행사 날 저녁, 장터 모닥불 둘레 */
@@ -55,14 +56,21 @@ export interface GoalContext {
 
 /** 지금 이 이웃이 있어야 할 곳. null이면 집 안(보이지 않음) */
 export function goalFor(def: NeighborDef, ctx: GoalContext): Tile | null {
-  if (ctx.special && def.id in ctx.special) return ctx.special[def.id]
+  if (ctx.special && def.id in ctx.special) {
+    const at = ctx.special[def.id]
+    return at ? lodgingNpcSpot(def.id, at) : null
+  }
   if (def.marketOnly && !ctx.market) return null
   if (ctx.minute >= 24 * 60) return null
   if (ctx.festival && ctx.minute >= FESTIVAL_FROM && ctx.minute < FESTIVAL_TO && FESTIVAL_SPOTS[def.id]) return FESTIVAL_SPOTS[def.id]
   let entry = null
   for (const e of def.schedule) if (e.from <= ctx.minute) entry = e
   if (!entry) return null
-  const goal = ctx.wet ? (entry.tile ? (entry.wet ?? null) : null) : (entry.tile ?? null)
+  if (LODGING_SEATS[def.id] && (ctx.wet || ctx.minute>=20*60 || ctx.minute<6*60)) return LODGING_SEATS[def.id]
+  if (def.id==='smith' && entry.tile?.x===42 && entry.tile.y===22) return LODGING_WORK_SPOTS.smith
+  if (def.id==='presser' && entry.tile && entry.tile.x>=44 && entry.tile.y<=24) return LODGING_WORK_SPOTS.presser
+  const raw = ctx.wet ? (entry.tile ? (entry.wet ?? null) : null) : (entry.tile ?? null)
+  const goal = raw ? lodgingNpcSpot(def.id, raw) : null
   if (!goal || !ctx.locked?.has(key(goal))) return goal
   // 가려던 곳이 아직 덤불로 막혀 있으면, 하루 중 열린 다른 자리에서 지낸다 (없으면 집에)
   return def.schedule.map((e) => e.tile).find((t): t is Tile => !!t && !ctx.locked!.has(key(t))) ?? null
@@ -105,6 +113,8 @@ export function stepNpc(npc: Npc, def: NeighborDef, goal: Tile | null, dt: numbe
  * 곧장 가는 길이 있으면 그 길, 없으면 건너편에서 목적지에 닿는 문까지의 길 (문에 닿으면 crossing이 옮긴다)
  */
 export function route(from: Tile, to: Tile, blockers: ReadonlySet<string> = new Set()): Tile[] | null {
+  // 사람이 잠시 목적지를 점유해도 모든 집의 문을 탐색하지 않는다.
+  if (!sameTile(from, to) && !isWalkable(to, blockers)) return null
   const direct = findPath(from, to, blockers)
   if (direct) return direct
   const queue: { at: Tile; first: Tile[] | null }[] = [{ at: from, first: null }]

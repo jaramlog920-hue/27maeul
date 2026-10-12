@@ -1,7 +1,9 @@
 import { adopt, cleanName, companionGoal, EAVES, isGrown, STRAY_SPOTS, stepCompanion } from './companion'
 import { goalFor, placeNpc, route, stepNpc, FESTIVAL_SPOTS } from './neighbors'
 import { findPath } from './movement'
-import { isWalkable, PLACES } from './world'
+import { isWalkable, key, MAP, PLACES, WARPS } from './world'
+import { newGame, tick } from './game'
+import { CONTENT } from '../content/catalog'
 import neighbors from '../content/neighbors.json'
 import type { NeighborDef } from './types'
 
@@ -53,6 +55,30 @@ describe('neighbors', () => {
 })
 
 describe('companion', () => {
+  const open = MAP.flatMap((row, y) => [...row].map((_, x) => ({ x, y }))).find(t =>
+    t.y >= 8 && t.y <= 25 && [{ x: 0, y: 0 }, { x: 0, y: -1 }, { x: 0, y: 1 }, { x: -1, y: 0 }, { x: 1, y: 0 }]
+      .every(d => { const at = { x: t.x + d.x, y: t.y + d.y }; return isWalkable(at) && !WARPS.has(key(at)) }),
+  )!
+  it.each([
+    ['down', 0, -1], ['up', 0, 1], ['right', -1, 0], ['left', 1, 0],
+  ] as const)('%s 방향의 뒤쪽에서 따라온다', (facing, dx, dy) => {
+    expect(companionGoal(open, false, undefined, facing)).toEqual({ x: open.x + dx, y: open.y + dy })
+  })
+  it('뒤가 막히면 옆으로, 옆도 막히면 앞질러 가지 않고 기다린다', () => {
+    const blocked = new Set([key({ x: open.x, y: open.y - 1 })])
+    expect(companionGoal(open, false, blocked, 'down')).toEqual({ x: open.x - 1, y: open.y })
+    blocked.add(key({ x: open.x - 1, y: open.y }))
+    blocked.add(key({ x: open.x + 1, y: open.y }))
+    expect(companionGoal(open, false, blocked, 'down')).toBeNull()
+  })
+  it('게임의 이동 처리에서도 아래로 걷는 기록자의 뒤쪽에 머문다', () => {
+    const base = newGame(CONTENT)
+    const rear = { x: open.x, y: open.y - 1 }
+    const s = { ...base, player: { ...base.player, ...open, facing: 'down' as const, path: [] }, companion: adopt('dog', '누렁이', 1, rear) }
+    const { state } = tick(s, 0.1, () => 0.5, CONTENT)
+    expect({ x: state.companion!.x, y: state.companion!.y }).toEqual(rear)
+    expect(state.companion!.path).toEqual([])
+  })
   it('이름은 8자까지, 비면 기본 이름', () => {
     expect(cleanName('  아주아주아주긴이름입니다 ', 'cat')).toBe('아주아주아주긴이')
     expect(cleanName('   ', 'dog')).toBe('누렁이')

@@ -27,33 +27,34 @@ export interface Site {
   decor: { item: ItemId; n: number }
   /** 선택 장식 도트 (assets/furniture/expansion/props) */
   decorArt: string
-  /** 이웃이 시설을 쓸 때 보이는 자리 (시설 칸 위, 이웃마다 하나씩) */
+  /** 이웃이 시설을 함께 쓰는 자리 (시설 앞 또는 시설 칸, 이웃마다 하나씩) */
   seats: readonly Tile[]
 }
 
 const row = (x: number, y: number, n: number): Tile[] => Array.from({ length: n }, (_, i) => ({ x: x + i, y }))
 
 export const SITES: Readonly<Record<FacilityId, Site>> = {
-  // 긴 벤치: 큰길 북쪽 줄 풀밭, 베 짜는 집 지붕 위 (목수·대장장이·기름 짜는 이웃)
+  // 긴 벤치: 광장 남쪽 출구 곁 풀밭, 남쪽 큰길을 보고 앉는다
+  // (2026-10-12 사용자: 오른쪽 끝(30–32)은 베 짜는 집 덤불에 걸쳐 이상했다 — 세 칸 왼쪽으로, 잔치 자리(27,23)는 비켜서)
   longBench: {
-    id: 'longBench', place: 'commonBench', tiles: row(37, 19, 2), stand: { x: 37, y: 18 },
-    crew: [{ x: 36, y: 19 }, { x: 39, y: 19 }, { x: 38, y: 18 }],
+    id: 'longBench', place: 'commonBench', tiles: row(27, 24, 3), stand: { x: 26, y: 24 },
+    crew: [{ x: 26, y: 25 }, { x: 30, y: 24 }, { x: 30, y: 25 }],
     interested: ['carpenter', 'smith', 'presser'], hand: 'hold', decor: { item: 'cushion', n: 1 }, decorArt: 'cushionPattern',
-    seats: [{ x: 37, y: 19 }, { x: 38, y: 19 }, { x: 36, y: 19 }],
+    seats: row(27, 25, 3),
   },
-  // 꽃밭: 집들 뒤 풀밭 줄 (베 짜는 이웃의 작업 앞 소품 칸을 비켜서, 길·문이 아닌 풀밭) (벌 치는 이웃·주니퍼·물 긷는 아이)
+  // 꽃밭: 텃밭 바로 아래 풀밭 (2026-10-12: 약방 지붕 바로 위라 덤불·지붕에 붙어 보였다) (벌 치는 이웃·주니퍼·물 긷는 아이)
   flowerBed: {
-    id: 'flowerBed', place: 'flowerBed', tiles: row(34, 27, 3), stand: { x: 35, y: 26 },
-    crew: [{ x: 33, y: 27 }, { x: 37, y: 27 }, { x: 34, y: 26 }],
+    id: 'flowerBed', place: 'flowerBed', tiles: row(11, 8, 3), stand: { x: 12, y: 9 },
+    crew: [{ x: 10, y: 8 }, { x: 14, y: 8 }, { x: 13, y: 9 }],
     interested: ['beekeeper', 'juniper', 'child'], hand: 'pick', decor: { item: 'seedHerb', n: 1 }, decorArt: 'wateringCan',
-    seats: [{ x: 34, y: 27 }, { x: 35, y: 27 }, { x: 36, y: 27 }],
+    seats: row(11, 8, 3),
   },
-  // 그늘막: 서고와 포도원 집 사이 북쪽 풀밭 (목수·베 짜는 이웃·할아버지)
+  // 그늘막: 서고와 포도원 집 사이 북쪽 풀밭, 서고 벽에서 한 칸 띄운다 (2026-10-12) (목수·베 짜는 이웃·할아버지)
   shade: {
-    id: 'shade', place: 'shadeSpot', tiles: [...row(28, 6, 3), ...row(28, 7, 3)], stand: { x: 29, y: 8 },
-    crew: [{ x: 28, y: 8 }, { x: 30, y: 8 }, { x: 31, y: 7 }],
+    id: 'shade', place: 'shadeSpot', tiles: [...row(29, 6, 3), ...row(29, 7, 3)], stand: { x: 30, y: 8 },
+    crew: [{ x: 29, y: 8 }, { x: 31, y: 8 }, { x: 32, y: 7 }],
     interested: ['carpenter', 'weaver', 'grandpa'], hand: 'weave', decor: { item: 'wool', n: 2 }, decorArt: 'clothRose',
-    seats: [{ x: 28, y: 7 }, { x: 29, y: 7 }, { x: 30, y: 7 }],
+    seats: row(29, 7, 3),
   },
   // 안내판: 서쪽 골목 갈림길 곁 풀밭, 낮은 표지 하나 (목수·편지 나르는 이웃)
   signPost: {

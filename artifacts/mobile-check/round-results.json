@@ -1,0 +1,646 @@
+{
+  "screens": [
+    {
+      "name": "round-school-320",
+      "width": 320,
+      "height": 568,
+      "text": "91일째 · 가을 · 맑음 · 장날\n아침 10:00\n✒ 서고지기 · 📖 책상에서 책 고르기 · 10닢\n장날 진행 중 · 18:00까지\n▲︎\n◀︎\n●\n▶︎\n▼︎\n메뉴\n확인\n배움터\n\n하루 15닢 · 경험치 +15\n\n지능 배우기\n나리 1/100\n맡기기\n손재주 배우기\n나리 1/100\n맡기기\n매력 배우기\n나리 1/100\n맡기기\n근력 배우기\n나리 1/100\n맡기기\n운 배우기\n나리 1/100\n맡기기\n\n닢이 모자라요.\n\n닫기",
+      "overflow": 0,
+      "dialog": [
+        {
+          "top": 149,
+          "height": 401,
+          "scrollHeight": 401,
+          "overflow": 0
+        }
+      ]
+    },
+    {
+      "name": "round-school-enrolled",
+      "width": 320,
+      "height": 568,
+      "text": "91일째 · 가을 · 맑음 · 장날\n아침 10:00\n✒ 서고지기 · 📖 책상에서 책 고르기 · 0닢\n나리 · 배움터에서 지능을 배워요 (저녁 여섯 시까지)\n★ 업적 5개 · 선반 → 업적\n장날 진행 중 · 18:00까지\n▲︎\n◀︎\n●\n▶︎\n▼︎\n메뉴\n확인",
+      "overflow": 0,
+      "dialog": []
+    },
+    {
+      "name": "round-school-reopen",
+      "width": 320,
+      "height": 568,
+      "text": "91일째 · 가을 · 맑음 · 장날\n아침 10:00\n✒ 서고지기 · 📖 책상에서 책 고르기 · 0닢\n나리 · 배움터에서 지능을 배워요 (저녁 여섯 시까지)\n★ 업적 5개 · 선반 → 업적\n장날 진행 중 · 18:00까지\n▲︎\n◀︎\n●\n▶︎\n▼︎\n메뉴\n확인\n배움터\n\n하루 15닢 · 경험치 +15\n\n지능 배우기\n나리 5/100\n맡기기\n손재주 배우기\n나리 1/100\n맡기기\n매력 배우기\n나리 1/100\n맡기기\n근력 배우기\n나리 1/100\n맡기기\n운 배우기\n나리 1/100\n맡기기\n\n오늘은 이미 맡겼어요.\n\n닫기",
+      "overflow": 0,
+      "dialog": [
+        {
+          "top": 149,
+          "height": 401,
+          "scrollHeight": 401,
+          "overflow": 0
+        }
+      ]
+    },
+    {
+      "name": "round-school-closed-1800",
+      "width": 320,
+      "height": 568,
+      "text": "91일째 · 가을 · 맑음 · 장날\n저녁 18:00\n✒ 서고지기 · 📖 책상에서 책 고르기 · 15닢\n★ 업적 5개 · 선반 → 업적\n5일 뒤 19:00 마을 소리내어 읽기 모임\n▲︎\n◀︎\n●\n▶︎\n▼︎\n메뉴\n확인\n배움터\n\n하루 15닢 · 경험치 +15\n\n지능 배우기\n나리 1/100\n맡기기\n손재주 배우기\n나리 1/100\n맡기기\n매력 배우기\n나리 1/100\n맡기기\n근력 배우기\n나리 1/100\n맡기기\n운 배우기\n나리 1/100\n맡기기\n\n오늘은 끝났어요.\n\n닫기",
+      "overflow": 0,
+      "dialog": [
+        {
+          "top": 149,
+          "height": 401,
+          "scrollHeight": 401,
+          "overflow": 0
+        }
+      ]
+    },
+    {
+      "name": "round-skill-baker-entry",
+      "width": 320,
+      "height": 568,
+      "text": "91일째 · 가을 · 맑음 · 장날\n아침 10:00\n✒ 서고지기 · 📖 책상에서 책 고르기 · 3000닢\n장날 진행 중 · 18:00까지\n▲︎\n◀︎\n●\n▶︎\n▼︎\n메뉴\n확인\n\n헤이즐 빵 굽는 이웃 친구 ♥♥♥♥♥♥♥♥♥♥\n\n✕\n\n오늘 함께 배워요.\n\n돕기\n선물하기\n간식 모양 빚기 함께 배우기",
+      "overflow": 0,
+      "dialog": [
+        {
+          "top": 352,
+          "height": 198,
+          "scrollHeight": 198,
+          "overflow": 0
+        }
+      ]
+    },
+    {
+      "name": "round-skill-style",
+      "width": 320,
+      "height": 568,
+      "text": "91일째 · 가을 · 맑음 · 장날\n아침 10:00\n✒ 서고지기 · 📖 책상에서 책 고르기 · 3000닢\n장날 진행 중 · 18:00까지\n▲︎\n◀︎\n●\n▶︎\n▼︎\n메뉴\n확인\n\n헤이즐\n\n간식 모양 빚기\n\n반죽은 손바닥으로 굴리면 둥글고, 밀면 길쭉해져요. 어느 모양으로 해 볼래요?\n\n 둥근 간식 담기 길쭉한 빵 담기다음에 이어가기",
+      "overflow": 0,
+      "dialog": [
+        {
+          "top": 259,
+          "height": 291,
+          "scrollHeight": 291,
+          "overflow": 0
+        }
+      ]
+    },
+    {
+      "name": "round-skill-practice-start",
+      "width": 320,
+      "height": 568,
+      "text": "91일째 · 가을 · 맑음 · 장날\n아침 10:00\n✒ 서고지기 · 📖 책상에서 책 고르기 · 3000닢\n장날 진행 중 · 18:00까지\n▲︎\n◀︎\n●\n▶︎\n▼︎\n메뉴\n확인\n\n헤이즐\n\n간식 모양 빚기\n\n빠르게 여러 번 누르세요\n\n누르기\n다시 살펴보고 고르기다음에 이어가기",
+      "overflow": 0,
+      "dialog": [
+        {
+          "top": 267,
+          "height": 283,
+          "scrollHeight": 283,
+          "overflow": 0
+        }
+      ]
+    },
+    {
+      "name": "round-skill-resumed",
+      "width": 320,
+      "height": 568,
+      "text": "91일째 · 가을 · 맑음 · 장날\n아침 10:00\n✒ 서고지기 · 📖 책상에서 책 고르기 · 3000닢\n장날 진행 중 · 18:00까지\n▲︎\n◀︎\n●\n▶︎\n▼︎\n메뉴\n확인\n\n헤이즐\n\n간식 모양 빚기\n\n빠르게 여러 번 누르세요\n\n누르기\n다시 살펴보고 고르기다음에 이어가기",
+      "overflow": 0,
+      "dialog": [
+        {
+          "top": 267,
+          "height": 283,
+          "scrollHeight": 283,
+          "overflow": 0
+        }
+      ]
+    },
+    {
+      "name": "round-skill-practice-done",
+      "width": 320,
+      "height": 568,
+      "text": "91일째 · 가을 · 맑음 · 장날\n아침 10:00\n✒ 서고지기 · 📖 책상에서 책 고르기 · 3000닢\n장날 진행 중 · 18:00까지\n▲︎\n◀︎\n●\n▶︎\n▼︎\n메뉴\n확인\n\n헤이즐\n\n간식 모양 빚기\n\n다 했어요!\n\n이 손일 마치기\n다시 살펴보고 고르기다음에 이어가기",
+      "overflow": 0,
+      "dialog": [
+        {
+          "top": 291,
+          "height": 259,
+          "scrollHeight": 259,
+          "overflow": 0
+        }
+      ]
+    },
+    {
+      "name": "round-skill-learned",
+      "width": 320,
+      "height": 568,
+      "text": "91일째 · 가을 · 맑음 · 장날\n아침 10:30\n✒ 서고지기 · 📖 책상에서 책 고르기 · 3000닢\n장날 진행 중 · 18:00까지\n▲︎\n◀︎\n●\n▶︎\n▼︎\n메뉴\n확인\n\n헤이즐\n\n간식 모양 빚기\n\n배웠어요. 화덕에서 과일 접시 모습을 고를 수 있어요.\n\n닫기",
+      "overflow": 0,
+      "dialog": [
+        {
+          "top": 371,
+          "height": 179,
+          "scrollHeight": 179,
+          "overflow": 0
+        }
+      ]
+    },
+    {
+      "name": "round-skill-craft-hearth",
+      "width": 320,
+      "height": 568,
+      "text": "91일째 · 가을 · 맑음 · 장날\n아침 10:30\n✒ 서고지기 · 📖 책상에서 책 고르기 · 3000닢\n장날 진행 중 · 18:00까지\n▲︎\n◀︎\n●\n▶︎\n▼︎\n메뉴\n확인\n벽난로\n요리하기\n배운 생활 기술\n\n간식 모양 빚기 · 헤이즐에게 배움\n\n둥근 간식 담기\n길쭉한 빵 담기\n\n보리 1 · 무화과 1 · 약 30분\n\n과일 접시 만들기\n빵 굽기\n보리 1 · 물 1 → 빵 2\n불 쬐기\n먹기\n닫기",
+      "overflow": 0,
+      "dialog": [
+        {
+          "top": 56.171875,
+          "height": 494,
+          "scrollHeight": 502,
+          "overflow": 0
+        }
+      ]
+    },
+    {
+      "name": "round-skill-crafted",
+      "width": 320,
+      "height": 568,
+      "text": "91일째 · 가을 · 맑음 · 장날\n낮 11:00\n✒ 서고지기 · 📖 책상에서 책 고르기 · 3000닢\n장날 진행 중 · 18:00까지\n▲︎\n◀︎\n●\n▶︎\n▼︎\n메뉴\n확인\n벽난로\n요리하기\n배운 생활 기술\n\n간식 모양 빚기 · 헤이즐에게 배움\n\n둥근 간식 담기\n길쭉한 빵 담기\n\n보리 1 · 무화과 1 · 약 30분\n\n과일 접시 만들기\n빵 굽기\n보리 1 · 물 1 → 빵 2\n불 쬐기\n먹기\n닫기",
+      "overflow": 0,
+      "dialog": [
+        {
+          "top": 56.171875,
+          "height": 494,
+          "scrollHeight": 502,
+          "overflow": 0
+        }
+      ]
+    },
+    {
+      "name": "round-skill-reloaded",
+      "width": 320,
+      "height": 568,
+      "text": "91일째 · 가을 · 맑음 · 장날\n낮 11:10\n✒ 서고지기 · 📖 책상에서 책 고르기 · 3000닢\n장날 진행 중 · 18:00까지\n▲︎\n◀︎\n●\n▶︎\n▼︎\n메뉴\n확인\n벽난로\n요리하기\n배운 생활 기술\n\n간식 모양 빚기 · 헤이즐에게 배움\n\n둥근 간식 담기\n길쭉한 빵 담기\n\n보리 1 · 무화과 1 · 약 30분\n\n과일 접시 만들기\n빵 굽기\n보리 1 · 물 1 → 빵 2\n불 쬐기\n먹기\n닫기",
+      "overflow": 0,
+      "dialog": [
+        {
+          "top": 56.171875,
+          "height": 494,
+          "scrollHeight": 502,
+          "overflow": 0
+        }
+      ]
+    },
+    {
+      "name": "round-care-all",
+      "width": 320,
+      "height": 568,
+      "text": "91일째 · 가을 · 맑음 · 장날\n아침 10:00\n✒ 서고지기 · 📖 책상에서 책 고르기 · 3000닢\n장날 진행 중 · 18:00까지\n▲︎\n◀︎\n●\n▶︎\n▼︎\n메뉴\n확인\n돌보기\n배고픔\n피로\n기분\n먹이기\n담요 덮어 주기\n물 마시기\n닫기",
+      "overflow": 0,
+      "dialog": [
+        {
+          "top": 269,
+          "height": 281,
+          "scrollHeight": 281,
+          "overflow": 0
+        }
+      ]
+    },
+    {
+      "name": "round-care-finished",
+      "width": 320,
+      "height": 568,
+      "text": "91일째 · 가을 · 맑음 · 장날\n아침 10:00\n✒ 서고지기 · 📖 책상에서 책 고르기 · 3000닢\n장날 진행 중 · 18:00까지\n▲︎\n◀︎\n●\n▶︎\n▼︎\n메뉴\n확인\n돌보기\n배고픔\n피로\n기분\n\n지금은 괜찮아 보입니다.\n\n닫기",
+      "overflow": 0,
+      "dialog": [
+        {
+          "top": 373,
+          "height": 177,
+          "scrollHeight": 177,
+          "overflow": 0
+        }
+      ]
+    },
+    {
+      "name": "round-adult-career-320",
+      "width": 320,
+      "height": 568,
+      "text": "91일째 · 가을 · 맑음 · 장날\n아침 10:00\n✒ 서고지기 · 📖 책상에서 책 고르기 · 3000닢\n장날 진행 중 · 18:00까지\n▲︎\n◀︎\n●\n▶︎\n▼︎\n메뉴\n확인\n가족\n루디 옷장나리 옷장\n루디 부부\n\n호감도 ♥♥♥♥ · 함께한 지 62일 · 결혼한 날 30일째\n\n나리 어른\n\n태어난 지 91일 · 집에 있어요 · 서기\n\n가까움 ♥♡♡♡♡\n\n함께 경험한 관심 분야: 배 목수 · 요리사 · 악기 제작자\n\n나리이 관심과 잘하는 일을 살펴보고 서기 일을 제안했어요. 함께 진로를 정해요.\n\n진로 \n서기\n학자\n목수\n배 목수 · 함께 경험함\n찻집 일꾼\n상인\n어부\n뱃사람\n약초꾼\n여행자\n요리사 · 함께 경험함\n화가\n직조가\n원예가\n도예가\n악기 제작자 · 함께 경험함\n이 진로로 함께 결정하기\n지능\n1\n손재주\n1\n매력\n1\n근력\n1\n운\n1\n가족 앨범\n닫기",
+      "overflow": 0,
+      "dialog": [
+        {
+          "top": 56.171875,
+          "height": 494,
+          "scrollHeight": 623,
+          "overflow": 0
+        }
+      ]
+    },
+    {
+      "name": "round-adult-move-away",
+      "width": 320,
+      "height": 568,
+      "text": "91일째 · 가을 · 맑음 · 장날\n아침 10:00\n✒ 서고지기 · 📖 책상에서 책 고르기 · 3000닢\n나리 · 대장간 쪽 공동 주택 2층에 입주했어요.\n★ 업적 8개 · 선반 → 업적\n장날 진행 중 · 18:00까지\n▲︎\n◀︎\n●\n▶︎\n▼︎\n메뉴\n확인\n가족\n루디 옷장나리 옷장\n루디 부부\n\n호감도 ♥♥♥♥ · 함께한 지 62일 · 결혼한 날 30일째\n\n나리 어른\n\n태어난 지 91일 · 먼 곳에 살아요 · 악기 제작자\n\n가까움 ♥♡♡♡♡\n\n함께 경험한 관심 분야: 배 목수 · 요리사 · 악기 제작자\n\n직업과 사는 곳은 따로 정할 수 있어요.\n\n마을로 돌아와 살기\n지능\n1\n손재주\n1\n매력\n1\n근력\n1\n운\n1\n가족 앨범\n닫기",
+      "overflow": 0,
+      "dialog": [
+        {
+          "top": 56.171875,
+          "height": 494,
+          "scrollHeight": 577,
+          "overflow": 0
+        }
+      ]
+    },
+    {
+      "name": "round-adult-return",
+      "width": 320,
+      "height": 568,
+      "text": "91일째 · 가을 · 맑음 · 장날\n아침 10:00\n✒ 서고지기 · 📖 책상에서 책 고르기 · 3000닢\n나리 · 대장간 쪽 공동 주택 2층에 입주했어요.\n★ 업적 8개 · 선반 → 업적\n장날 진행 중 · 18:00까지\n▲︎\n◀︎\n●\n▶︎\n▼︎\n메뉴\n확인\n가족\n루디 옷장나리 옷장\n루디 부부\n\n호감도 ♥♥♥♥ · 함께한 지 62일 · 결혼한 날 30일째\n\n나리 어른\n\n태어난 지 91일 · 혼자 마을을 다녀요 · 악기 제작자\n\n가까움 ♥♡♡♡♡\n\n함께 경험한 관심 분야: 배 목수 · 요리사 · 악기 제작자\n\n직업과 사는 곳은 따로 정할 수 있어요.\n\n마을 밖에서 살아보기\n지능\n1\n손재주\n1\n매력\n1\n근력\n1\n운\n1\n가족 앨범\n닫기",
+      "overflow": 0,
+      "dialog": [
+        {
+          "top": 56.171875,
+          "height": 494,
+          "scrollHeight": 577,
+          "overflow": 0
+        }
+      ]
+    },
+    {
+      "name": "round-bug-adult-outside-label",
+      "width": 320,
+      "height": 568,
+      "text": "91일째 · 가을 · 맑음 · 장날\n아침 10:00\n✒ 서고지기 · 📖 책상에서 책 고르기 · 3000닢\n나리 · 대장간 쪽 공동 주택 2층에 입주했어요.\n장날 진행 중 · 18:00까지\n▲︎\n◀︎\n●\n▶︎\n▼︎\n메뉴\n확인\n가족\n루디 옷장나리 옷장\n루디 부부\n\n호감도 ♥♥♥♥ · 함께한 지 62일 · 결혼한 날 30일째\n\n나리 어른\n\n태어난 지 91일 · 먼 곳에 살아요 · 악기 제작자\n\n가까움 ♥♡♡♡♡\n\n함께 경험한 관심 분야: 배 목수 · 요리사 · 악기 제작자\n\n직업과 사는 곳은 따로 정할 수 있어요.\n\n마을로 돌아와 살기\n지능\n1\n손재주\n1\n매력\n1\n근력\n1\n운\n1\n가족 앨범\n닫기",
+      "overflow": 0,
+      "dialog": [
+        {
+          "top": 56.171875,
+          "height": 494,
+          "scrollHeight": 577,
+          "overflow": 0
+        }
+      ]
+    },
+    {
+      "name": "round-adult-lodging-map",
+      "width": 320,
+      "height": 568,
+      "text": "91일째 · 가을 · 맑음 · 장날\n저녁 19:00\n✒ 서고지기 · 📖 책상에서 책 고르기 · 3000닢\n나리 · 대장간 쪽 공동 주택 2층에 입주했어요.\n5일 뒤 19:00 마을 소리내어 읽기 모임\n▲︎\n◀︎\n●\n▶︎\n▼︎\n메뉴\n확인",
+      "overflow": 0,
+      "dialog": []
+    },
+    {
+      "name": "round-bug-adult-lodging-reloaded",
+      "width": 320,
+      "height": 568,
+      "text": "91일째 · 가을 · 맑음 · 장날\n아침 10:00\n✒ 서고지기 · 📖 책상에서 책 고르기 · 3000닢\n장날 진행 중 · 18:00까지\n▲︎\n◀︎\n●\n▶︎\n▼︎\n메뉴\n확인\n가족\n루디 옷장나리 옷장\n루디 부부\n\n호감도 ♥♥♥♥ · 함께한 지 62일 · 결혼한 날 30일째\n\n나리 어른\n\n태어난 지 91일 · 먼 곳에 살아요 · 악기 제작자\n\n가까움 ♥♡♡♡♡\n\n함께 경험한 관심 분야: 배 목수 · 요리사 · 악기 제작자\n\n직업과 사는 곳은 따로 정할 수 있어요.\n\n마을로 돌아와 살기\n지능\n1\n손재주\n1\n매력\n1\n근력\n1\n운\n1\n가족 앨범\n닫기",
+      "overflow": 0,
+      "dialog": [
+        {
+          "top": 68.171875,
+          "height": 494,
+          "scrollHeight": 577,
+          "overflow": 0
+        }
+      ]
+    },
+    {
+      "name": "round-adult-child-wardrobe",
+      "width": 390,
+      "height": 844,
+      "text": "91일째 · 가을 · 맑음 · 장날\n아침 10:00\n✒ 서고지기 · 📖 책상에서 책 고르기 · 3000닢\n장날 진행 중 · 18:00까지\n▲︎\n◀︎\n●\n▶︎\n▼︎\n메뉴\n확인\n옷장\n◀\n🎲\n▶\n◀\n앞머리\n넘긴 머리\n▶\n◀\n뒷머리\n긴 머리\n▶\n◀\n윗옷\n흙빛 겉옷\n▶\n◀\n아래옷\n긴 치마\n▶\n◀\n장신구\n없음\n▶\n 눈 색\n 머리 색\n 아래옷 색\n 장신구 색\n색조\n채도\n밝기\n뒤로\n이대로 입기",
+      "overflow": 0,
+      "dialog": [
+        {
+          "top": 43,
+          "height": 783,
+          "scrollHeight": 783,
+          "overflow": 0
+        }
+      ]
+    },
+    {
+      "name": "round-adult-child-wardrobe-changed",
+      "width": 390,
+      "height": 844,
+      "text": "91일째 · 가을 · 맑음 · 장날\n아침 10:00\n✒ 서고지기 · 📖 책상에서 책 고르기 · 3000닢\n장날 진행 중 · 18:00까지\n▲︎\n◀︎\n●\n▶︎\n▼︎\n메뉴\n확인\n옷장\n◀\n🎲\n▶\n◀\n앞머리\n옆 가르마\n▶\n◀\n뒷머리\n양갈래\n▶\n◀\n윗옷\n목동 옷\n▶\n◀\n아래옷\n반바지\n▶\n◀\n장신구\n작은 어깨 가방\n▶\n 눈 색\n 머리 색\n 아래옷 색\n 장신구 색\n색조\n채도\n밝기\n뒤로\n이대로 입기",
+      "overflow": 0,
+      "dialog": [
+        {
+          "top": 43,
+          "height": 783,
+          "scrollHeight": 783,
+          "overflow": 0
+        }
+      ]
+    },
+    {
+      "name": "round-lodging-child-dressed-map",
+      "width": 390,
+      "height": 844,
+      "text": "91일째 · 가을 · 맑음 · 장날\n저녁 19:00\n✒ 서고지기 · 📖 책상에서 책 고르기 · 3000닢\n5일 뒤 19:00 마을 소리내어 읽기 모임\n▲︎\n◀︎\n●\n▶︎\n▼︎\n메뉴\n확인",
+      "overflow": 0,
+      "dialog": []
+    },
+    {
+      "name": "round-lodging-child-wardrobe-reopened",
+      "width": 390,
+      "height": 844,
+      "text": "91일째 · 가을 · 맑음 · 장날\n저녁 19:20\n✒ 서고지기 · 📖 책상에서 책 고르기 · 3000닢\n5일 뒤 19:00 마을 소리내어 읽기 모임\n▲︎\n◀︎\n●\n▶︎\n▼︎\n메뉴\n확인\n옷장\n◀\n🎲\n▶\n◀\n앞머리\n옆 가르마\n▶\n◀\n뒷머리\n양갈래\n▶\n◀\n윗옷\n목동 옷\n▶\n◀\n아래옷\n반바지\n▶\n◀\n장신구\n작은 어깨 가방\n▶\n 눈 색\n 머리 색\n 아래옷 색\n 장신구 색\n색조\n채도\n밝기\n뒤로\n이대로 입기",
+      "overflow": 0,
+      "dialog": [
+        {
+          "top": 43,
+          "height": 783,
+          "scrollHeight": 783,
+          "overflow": 0
+        }
+      ]
+    },
+    {
+      "name": "round-child-return-dressed-map",
+      "width": 390,
+      "height": 844,
+      "text": "91일째 · 가을 · 맑음 · 장날\n저녁 19:20\n✒ 서고지기 · 📖 책상에서 책 고르기 · 3000닢\n5일 뒤 19:00 마을 소리내어 읽기 모임\n▲︎\n◀︎\n●\n▶︎\n▼︎\n메뉴\n확인",
+      "overflow": 0,
+      "dialog": []
+    },
+    {
+      "name": "round-bug-lodging-wardrobe-reloaded-map",
+      "width": 390,
+      "height": 844,
+      "text": "91일째 · 가을 · 맑음 · 장날\n저녁 19:20\n✒ 서고지기 · 📖 책상에서 책 고르기 · 3000닢\n5일 뒤 19:00 마을 소리내어 읽기 모임\n▲︎\n◀︎\n●\n▶︎\n▼︎\n메뉴\n확인",
+      "overflow": 0,
+      "dialog": []
+    }
+  ],
+  "checks": [
+    {
+      "name": "school-no-coins",
+      "allDisabled": true
+    },
+    {
+      "name": "school-enroll",
+      "coins": 0,
+      "flag": 91,
+      "stat": {
+        "level": 1,
+        "xp": 15,
+        "born": 0
+      },
+      "block": "done",
+      "minute": 600.5664999999998
+    },
+    {
+      "name": "skill-resume",
+      "step": 1,
+      "picked": "long",
+      "minute": 600
+    },
+    {
+      "name": "skill-finish",
+      "skills": {
+        "snackShape": {
+          "day": 91,
+          "from": "baker",
+          "picked": "long"
+        }
+      },
+      "minute": 630,
+      "experience": {
+        "id": "learn:snackShape",
+        "kind": "learn",
+        "with": [
+          "baker"
+        ],
+        "first": 91,
+        "last": 91,
+        "count": 1,
+        "item": "fruitBowl",
+        "choice": 1
+      }
+    },
+    {
+      "name": "skill-craft",
+      "inv": {
+        "barley": 1,
+        "fig": 1,
+        "fruitBowl": 1
+      },
+      "minute": 660,
+      "style": 2
+    },
+    {
+      "name": "skill-reload",
+      "skill": {
+        "day": 91,
+        "from": "baker",
+        "picked": "long"
+      },
+      "inv": {
+        "barley": 1,
+        "fig": 1,
+        "fruitBowl": 1
+      },
+      "minute": 670.5503000000103,
+      "style": 2
+    },
+    {
+      "name": "care-eat",
+      "needs": {
+        "hunger": 20.005964285714285,
+        "fatigue": 20.00695833333333,
+        "cold": 69.95825000000002,
+        "heat": 69.91650000000004
+      },
+      "inv": {
+        "blanket": 1,
+        "water": 1
+      }
+    },
+    {
+      "name": "care-blanket",
+      "needs": {
+        "hunger": 20.00833571428571,
+        "fatigue": 20.009724999999992,
+        "cold": 0,
+        "heat": 69.88330000000008
+      },
+      "inv": {
+        "blanket": 1,
+        "water": 1
+      }
+    },
+    {
+      "name": "care-drink",
+      "needs": {
+        "hunger": 20.366671428571426,
+        "fatigue": 20.427783333333327,
+        "cold": 0,
+        "heat": 0
+      },
+      "inv": {
+        "blanket": 1
+      }
+    },
+    {
+      "name": "adult-career",
+      "job": "instrumentMaker",
+      "confirmed": true
+    },
+    {
+      "name": "adult-return",
+      "job": "instrumentMaker",
+      "left": false
+    },
+    {
+      "name": "adult-lodging-label-conflict",
+      "left": true,
+      "lodgingFlag": 1,
+      "residents": [
+        {
+          "id": "playerChild",
+          "name": "나리",
+          "seat": {
+            "x": 5,
+            "y": 150
+          }
+        }
+      ]
+    },
+    {
+      "name": "adult-lodging-reloaded",
+      "mode": "away",
+      "lodgers": [
+        {
+          "id": "playerChild",
+          "name": "나리",
+          "seat": {
+            "x": 5,
+            "y": 150
+          }
+        }
+      ],
+      "child": {
+        "name": "나리",
+        "look": "girl",
+        "born": 1,
+        "stats": {
+          "wit": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "hand": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "charm": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "strength": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "luck": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          }
+        },
+        "lean": "wit",
+        "job": "instrumentMaker",
+        "left": true,
+        "jobConfirmed": true,
+        "interests": {
+          "shipwright": 3,
+          "cook": 1,
+          "instrumentMaker": 2
+        },
+        "close": 20
+      }
+    },
+    {
+      "name": "lodging-child-wardrobe",
+      "look": {
+        "look": "f",
+        "name": "나리",
+        "hairFront": 2,
+        "hairBack": 5,
+        "top": 11,
+        "bottom": 3,
+        "acc": 12,
+        "eyeColor": [
+          160,
+          36,
+          35
+        ],
+        "hairColor": [
+          180,
+          56,
+          55
+        ],
+        "bottomColor": [
+          135,
+          37,
+          29
+        ],
+        "accColor": [
+          97,
+          56,
+          85
+        ]
+      },
+      "originalChild": "나리"
+    },
+    {
+      "name": "lodging-wardrobe-mismatch",
+      "savedHairColor": [
+        180,
+        56,
+        55
+      ],
+      "savedTop": 11,
+      "location": "lodgingUpper",
+      "mapStillDefault": true
+    },
+    {
+      "name": "returned-child-uses-same-look",
+      "look": {
+        "look": "f",
+        "name": "나리",
+        "hairFront": 2,
+        "hairBack": 5,
+        "top": 11,
+        "bottom": 3,
+        "acc": 12,
+        "eyeColor": [
+          160,
+          36,
+          35
+        ],
+        "hairColor": [
+          180,
+          56,
+          55
+        ],
+        "bottomColor": [
+          135,
+          37,
+          29
+        ],
+        "accColor": [
+          97,
+          56,
+          85
+        ]
+      },
+      "at": {
+        "x": 4,
+        "y": 8
+      },
+      "left": false
+    }
+  ]
+}

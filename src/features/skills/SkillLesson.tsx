@@ -2,8 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { CONTENT, neighborById } from '../../content/catalog'
 import { fill, itemList, itemName, T } from '../../content/text'
 import { canLearn, canShowSkillItem, chooseSkillStyle, chooseStyle, craftLearned, discoveredSkill, finishLesson, lessonHand, lookAgain, SKILL_DEFS, SKILL_IDS, skillOf, startLesson, styleOf, type SkillState } from '../../engine/skills'
-import { has } from '../../engine/items'
-import { overflows, stageWith } from '../../engine/game'
+import { haveStock, overflows, stageWith } from '../../engine/game'
 import { relOf } from '../../engine/people'
 import { EXPANSION_PROPS } from '../../render/expansion-prop-art'
 import { FURNI_PALETTE } from '../../render/furniture-art'
@@ -71,17 +70,18 @@ export function SkillLessonView({ close }: { close: () => void }) {
   const text = lessonText(l.id)
   const pick = (picked: string) => { const s = useGame.getState(); applyLifeState(chooseStyle(s.game, picked, s.rng)) }
   const learned = !!game.skills?.[l.id]
-  return <section aria-label={text.name}><h3>{text.name}</h3>
+  // 고르는 단추와 그만두는 단추는 줄을 나누고, 줄마다 단추 사이를 띄운다 (2026-10-12 사용자: 빽빽해 보임)
+  return <section className="skill-lesson" aria-label={text.name}><h3>{text.name}</h3>
     {l.step === 0 && <>
       <p className="talk-line">{text.demo[l.npc]}</p>
-      {def.styles.map((st, i) => <button key={st} onClick={() => pick(st)}><PropPreview id={def.art[i]} /> {text.styles[st]}</button>)}
+      <div className="actions skill-styles">{def.styles.map((st, i) => <button key={st} onClick={() => pick(st)}><PropPreview id={def.art[i]} /> {text.styles[st]}</button>)}</div>
     </>}
-    {l.step === 1 && l.mini && <>
-      <HandPractice state={l.mini} tick={tick} tap={tap} finish={() => applyLifeState(finishLesson(useGame.getState().game))} />
-      <button onClick={() => applyLifeState(lookAgain(useGame.getState().game))}>{S.again}</button>
-    </>}
+    {l.step === 1 && l.mini && <HandPractice state={l.mini} tick={tick} tap={tap} finish={() => applyLifeState(finishLesson(useGame.getState().game))} />}
     {learned && <p role="status">{fill(S.learned, { place: placeName(l.id), item: itemName(def.item) })}</p>}
-    <button onClick={close}>{learned ? T.ui.close : S.pause}</button>
+    <div className="actions skill-more">
+      {l.step === 1 && l.mini && <button onClick={() => applyLifeState(lookAgain(useGame.getState().game))}>{S.again}</button>}
+      <button onClick={close}>{learned ? T.ui.close : S.pause}</button>
+    </div>
   </section>
 }
 /** 옛 이름 — 목수 마감법 화면 */
@@ -96,7 +96,7 @@ export function SkillCraftOptions({ at = 'workbench' }: { at?: 'workbench' | 'he
     {ids.map((id) => {
       const def = SKILL_DEFS[id], text = lessonText(id), item = itemName(def.item)
       const selected = styleOf(game, id)
-      const needs = def.needs && !has(game.inv, def.needs)
+      const needs = def.needs && !haveStock(game, def.needs)
       const full = overflows(game, { [def.item]: 1 })
       const from = neighborById(game.skills![id].from)
       return <div key={id} className="skill-option">

@@ -1,3 +1,5 @@
+// 기존 생활 시나리오는 개편 이전 저장의 권한으로 검증한다. 새 해금은 late-growth.test.ts에서 검증한다.
+import { legacyGame as newGame } from './growth-test-support'
 // 계획 16 작업 12b: 추가 연애 후보 셋 (기획 24) — 떠돌이 상인·기름 짜는 이웃·편지 나르는 이웃
 import { CONTENT, PEOPLE } from '../content/catalog'
 import { SCENES } from '../content/text'
@@ -7,14 +9,13 @@ import {
   chooseInEvent,
   eventNow,
   isSuitor,
-  newGame,
   openEvent,
   partnerFree,
   settle,
   spouseGift,
   type GameState,
 } from './game'
-import { NO_LIFE, setPeopleData, type SceneLine } from './people'
+import { NO_LIFE, personOf, setPeopleData, type SceneLine } from './people'
 import { CANDIDATE_IDS, NO_ROMANCE, PARTNER_WORK, sanitizeRomance, type Romance } from './romance'
 import { isWet, weatherOf, isMarketDay } from './calendar'
 import { deserialize, serialize } from './save'
@@ -36,7 +37,10 @@ const allEvents = (id: string) => (PEOPLE.people[id].events ?? []).map((e) => e.
 const dating = (partner: string): Romance => ({ ...NO_ROMANCE, partner, stage: 'dating', since: 1 })
 const engaged = (partner: string): Romance => ({ ...NO_ROMANCE, partner, stage: 'engaged', since: 1, weddingDay: 999 })
 const married = (partner: string): Romance => ({ ...NO_ROMANCE, partner, stage: 'married', since: 1, marriedDay: 2 })
-const CHAIR = { x: 45, y: 17 }, PRESS = { x: 46, y: 21 }, STALL = { x: 21, y: 14 }, TEA = { x: 45, y: 62 }, STEPS = { x: 27, y: 14 }
+// 등록 시 작업장 좌표가 공동주택 위치로 변환되므로 게임이 사용하는 위치를 읽는다.
+const CHAIR = personOf('presser')!.events!.find(e => e.id === 'romance:presser:extraMinutes')!.at
+const PRESS = personOf('presser')!.routines[0].at
+const STALL = { x: 21, y: 14 }, TEA = { x: 45, y: 62 }, STEPS = { x: 27, y: 14 }
 
 describe('후보 목록과 모습', () => {
   it('후보는 기존 열 명 + 세 명, neighbors.json romanceable과 같고 지금 그림 그대로 남자 모습 — 기혼·자녀가 있는 주민은 후보가 아니다', () => {

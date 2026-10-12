@@ -152,13 +152,14 @@ describe('신: 걷는 속도 ×1.2, ×1.4 (그 이상은 없다)', () => {
   })
   it('동반 동물도 같은 배수로 — 가벼운 신으로 멀리 걸어도 곁을 따라온다', () => {
     const s0 = newGame(CONTENT)
-    const cat = { kind: 'cat' as const, name: '나비', since: 1, x: HOME_FRONT.x - 1, y: HOME_FRONT.y, path: [], facing: 'down' as const, walkTime: 0 }
+    // 고양이는 집에 머무르는 규칙이므로, 동행 가능한 강아지로 속도를 검사한다.
+    const dog = { kind: 'dog' as const, name: '보리', since: 1, x: HOME_FRONT.x - 1, y: HOME_FRONT.y, path: [], facing: 'down' as const, walkTime: 0 }
     // 집 앞에서 서고 쪽 장터 벤치까지 (스무 칸 넘는 길)
     const path = findPath(HOME_FRONT, PLACES.bench.stand!)!
     expect(path.length).toBeGreaterThan(20)
     // 비 오는 날은 동물이 처마 밑에 웅크리므로 맑은 날에
     const dry = Array.from({ length: 20 }, (_, i) => i + 2).find((d) => !isWet(weatherOf(d)))!
-    let s: GameState = { ...s0, clock: { day: dry, minute: 10 * 60 }, npcs: {}, companion: cat, inv: { lightShoes: 1 }, player: { ...s0.player, ...HOME_FRONT, path } }
+    let s: GameState = { ...s0, clock: { day: dry, minute: 10 * 60 }, npcs: {}, companion: dog, inv: { lightShoes: 1 }, player: { ...s0.player, ...HOME_FRONT, path } }
     let far = 0
     for (let i = 0; i < 200; i++) {
       s = tick(s, 0.05, zero, CONTENT).state

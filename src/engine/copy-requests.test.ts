@@ -1,10 +1,20 @@
 // 계획 21 R3·R4: 주민 부탁 필사 — 날 씨앗 부탁, 기한, 별, 닢 없는 보답, 주민 가족 축복 부탁
-import { CONTENT, PIECES } from '../content/catalog'
-import { pieceFacts } from '../content/piece-moods'
-import { canWriteRequest, copyRequestsToday, newGame, writeRequest, type GameState } from './game'
+import { CONTENT } from '../content/catalog'
+import { canWriteRequest, copyRequestsToday, goToSleep, newGame as createGame, writePresetRequest, type GameState } from './game'
+import { REQUEST_PRESETS } from './request-presets'
 import { familyRequests, giftFor, requestsOn, requestsToday, starsFor, type CopyRequest } from './copy-requests'
+import { deserialize, serialize } from './save'
+import { todayDiary } from './daybook'
+import { RARE_ITEMS } from './fixtures'
 
 const ids = CONTENT.neighbors.filter((d) => !d.marketOnly).map((d) => d.id)
+
+// 부탁의 보답·기한 검사는 게시판이 정식으로 열린 상태에서 한다.
+function newGame(content: typeof CONTENT) {
+  const game = createGame(content)
+  for (const book of ['phm', '2jn', '3jn'] as const) game.progress[book].completed = [1]
+  return game
+}
 
 describe('부탁이 붙는 법', () => {
   it('날마다 둘, 같은 날은 같다, 3–7일 동안 남는다, 아이는 배움 부탁', () => {
@@ -29,6 +39,37 @@ describe('부탁이 붙는 법', () => {
 
 describe('별과 보답', () => {
   const r: CopyRequest = { id: '5:0', npc: 'baker', kind: 'comfort', day: 5, until: 9 }
+  it('직접 필사 보답은 받은 선물 일기와 이웃 수첩에 실제 지급량으로 남는다', () => {
+    const base = newGame(CONTENT)
+    const s = { ...base, clock: { day: 6, minute: 600 }, scenes: [], notebook: { ...base.notebook, met: ['baker'] } }
+    const preset = REQUEST_PRESETS[r.kind][0]
+    const out = writePresetRequest(s, r, preset.id, preset.text, CONTENT)!
+    const gift = giftFor(r, out.stars, CONTENT.neighbors.find(n => n.id === r.npc)!.likes, RARE_ITEMS)
+    expect(todayDiary(out.state)?.gifts).toEqual([{ from: r.npc, items: gift }])
+    expect(out.state.notebook.got?.[r.npc]).toEqual(Object.keys(gift))
+    const restored = deserialize(serialize(out.state), CONTENT)!
+    expect(todayDiary(restored)?.gifts).toEqual([{ from: r.npc, items: gift }])
+    expect(writePresetRequest(restored, r, preset.id, preset.text, CONTENT)).toBeNull()
+    const morning = deserialize(serialize(goToSleep(restored, CONTENT)), CONTENT)!
+    expect(morning.dayLog.gifts).toEqual([])
+    expect(morning.notebook.got?.[r.npc]).toEqual(Object.keys(gift))
+  })
+  it('게시일부터 마지막 날까지만 전달할 수 있고 저장 복원 후에도 재지급하지 않는다', () => {
+    const base = newGame(CONTENT)
+    const preset = REQUEST_PRESETS[r.kind][0]
+    const at = (day: number) => ({ ...base, clock: { day, minute: 600 } })
+    expect(canWriteRequest(at(4), r)).not.toBeNull()
+    expect(writePresetRequest(at(4), r, preset.id, preset.text, CONTENT)).toBeNull()
+    for (const day of [5, 9]) {
+      const out = writePresetRequest(at(day), r, preset.id, preset.text, CONTENT)!
+      expect(out).not.toBeNull()
+      expect(writePresetRequest(out.state, r, preset.id, preset.text, CONTENT)).toBeNull()
+      const restored = deserialize(serialize(out.state), CONTENT)!
+      expect(restored.flags[`req:${r.id}`]).toBe(out.stars)
+      expect(writePresetRequest(restored, r, preset.id, preset.text, CONTENT)).toBeNull()
+    }
+    expect(writePresetRequest(at(10), r, preset.id, preset.text, CONTENT)).toBeNull()
+  })
   it('분위기가 맞을수록 별이 늘고 (최대 3), 조건을 지키면 하나 더', () => {
     expect(starsFor(r, { moods: [], chars: 200, care: false })).toBe(1)
     expect(starsFor(r, { moods: ['comfort'], chars: 200, care: false })).toBe(2)
@@ -39,10 +80,9 @@ describe('별과 보답', () => {
   it('보답은 좋아하는 물건 — 닢은 없다, 마음이 오르고 끝낸 부탁은 다시 못 쓴다', () => {
     expect(giftFor(r, 1, ['grapes'], ['goldLeaf'])).toEqual({ grapes: 1 })
     const base = newGame(CONTENT)
-    const piece = PIECES[0].id
-    const s: GameState = { ...base, clock: { day: 6, minute: 600 }, collected: [piece] }
-    expect(canWriteRequest(s, r, 'no-such')).toBe('noPiece')
-    const out = writeRequest(s, r, piece, pieceFacts(s.careDone, piece), CONTENT)!
+    const s: GameState = { ...base, clock: { day: 6, minute: 600 }, collected: [] }
+    const preset = REQUEST_PRESETS[r.kind][0]
+    const out = writePresetRequest(s, r, preset.id, preset.text, CONTENT)!
     expect(out.state.coins).toBe(s.coins)
     expect(out.state.hearts.baker).toBeGreaterThan(0)
     expect(out.state.flags['req:5:0']).toBe(out.stars)

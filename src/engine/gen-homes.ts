@@ -3,16 +3,18 @@
 // - 주택 희망: 집 주인이 이웃(방이 있는 사람)이 아닌 가구 = 집이 없는 신혼 가구. 새 터의 빈 입주 주택을 내어 주면
 //   familyHome:<가구 번호> = 그 집 건물 번호(b<n>의 n), 그 집 문 옆에 그 가구의 어른 한 사람이 선다. 집이 걷히면 다시 희망 목록으로.
 import type { GameState } from './game'
+import { moveInGift } from './collection-gifts'
 import type { GenState, Household } from './gen'
 import { doneHomes, standSpotOf, type Build } from './newland-build'
 import type { Tile } from './types'
+import { LODGING_SEATS } from './lodging'
 
 /** 결혼한 이웃이 저녁에 들어가는 집의 주인 (제 집이면 null) */
 export function sharedHomeOf(g: GenState | undefined, id: string, hasRoom: (owner: string) => boolean): string | null {
   const p = g?.persons[id]
   if (!p?.spouse || !p.household) return null
   const home = g!.households[p.household]?.home
-  return home && home !== id && hasRoom(home) ? home : null
+  return home && home !== id && (hasRoom(home)||!!LODGING_SEATS[home]) ? home : null
 }
 
 const householdNo = (h: Household): number => Number(/^h-(\d+)$/.exec(h.id)?.[1] ?? 0)
@@ -20,7 +22,7 @@ const householdNo = (h: Household): number => Number(/^h-(\d+)$/.exec(h.id)?.[1]
 /** 집이 없는 가구 (어른 둘 이상, 집 주인이 방 있는 이웃이 아니다) — 이미 새 터 집에 사는 가구는 뺀다 */
 export function homeWishes(s: Pick<GameState, 'gen' | 'flags' | 'newland'>, hasRoom: (owner: string) => boolean): Household[] {
   const living = new Set(familyHomes(s).map((x) => x.household.id))
-  return Object.values(s.gen?.households ?? {}).filter((h) => householdNo(h) > 0 && h.members.length >= 2 && !hasRoom(h.home) && !living.has(h.id))
+  return Object.values(s.gen?.households ?? {}).filter((h) => householdNo(h) > 0 && h.members.length >= 2 && !hasRoom(h.home) && !LODGING_SEATS[h.home] && !living.has(h.id))
 }
 
 /** 새 터 집에 사는 가구와 그 집 (집이 걷히면 빠진다) */
@@ -50,10 +52,11 @@ export function emptyHomeAt(s: Pick<GameState, 'gen' | 'flags' | 'newland'>, t: 
 }
 
 /** 가구에게 그 집을 내어 준다 */
-export function giveFamilyHome<T extends Pick<GameState, 'gen' | 'flags' | 'newland' | 'clock'>>(s: T, householdId: string, home: Build, hasRoom: (owner: string) => boolean): T {
+export function giveFamilyHome(s: GameState, householdId: string, home: Build, hasRoom: (owner: string) => boolean): GameState {
   const h = homeWishes(s, hasRoom).find((x) => x.id === householdId)
   if (!h || !emptyHomes(s).some((b) => b.id === home.id)) return s
-  return { ...s, flags: { ...s.flags, [`familyHome:${householdNo(h)}`]: Number(home.id.slice(1)), [`familyHomeDay:${householdNo(h)}`]: s.clock.day } }
+  const moved = { ...s, flags: { ...s.flags, [`familyHome:${householdNo(h)}`]: Number(home.id.slice(1)), [`familyHomeDay:${householdNo(h)}`]: s.clock.day } }
+  return h.members.reduce((next, id) => moveInGift(next, id), moved)
 }
 
 /** 새 터 집에 사는 가구의 사람이 서는 자리와 그 사람 */

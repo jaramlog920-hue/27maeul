@@ -5,6 +5,7 @@
 // 기존 이웃 부탁 해금과 같은 자리를 만들지 않고(village-sites.ts), 서고 권수로 잠긴 구역 안에도 놓지 않는다. 말씀 조각·필사본은 재료도 보상도 아니다.
 import { heartUp, notYet, passTime, playerTile, recordExperienceIn, type GameState } from './game'
 import { isWet, weatherOf } from './calendar'
+import { featureAccess } from './feature-rules'
 import { isDone, startMini, stepMini, tapMini, type MiniState } from './minigame'
 import { npcTile } from './neighbors'
 import { has, take } from './items'
@@ -89,12 +90,15 @@ export function eligible(s: Pick<GameState, 'flags'>, content: Content, id: Faci
 }
 
 /** 게시판에 보이는 제안 (아직 짓지 않았고, 관심 이웃이 둘 이상 이사 와 있는 것 — 열리지 않은 곳의 이웃만으로는 제안이 되지 않는다) */
-export function offeredProjects(s: Pick<GameState, 'flags'> & { village?: Village }, content: Content): FacilityId[] {
-  return FACILITY_IDS.filter((id) => !isBuilt(s.flags, id) && eligible(s, content, id).length >= PROJECT_MIN_JOINED).slice(0, PROJECT_OFFER_MAX)
+export function offeredProjects(s: Pick<GameState, 'flags' | 'progress' | 'shelved'> & { village?: Village }, content: Content): FacilityId[] {
+  const access = featureAccess(s, 'community')
+  if (access === 'locked') return []
+  return FACILITY_IDS.filter((id) => !isBuilt(s.flags, id) && eligible(s, content, id).length >= PROJECT_MIN_JOINED).slice(0, access === 'preview' ? 1 : PROJECT_OFFER_MAX)
 }
 
-export type PickBlock = 'active' | 'built' | 'few' | null
-export function canPick(s: Pick<GameState, 'flags'> & { village?: Village }, id: FacilityId, content: Content): PickBlock {
+export type PickBlock = 'locked' | 'active' | 'built' | 'few' | null
+export function canPick(s: Pick<GameState, 'flags' | 'progress' | 'shelved'> & { village?: Village }, id: FacilityId, content: Content): PickBlock {
+  if (featureAccess(s, 'community') !== 'full') return 'locked'
   if (isBuilt(s.flags, id)) return 'built'
   if (villageOf(s).active) return 'active'
   if (eligible(s, content, id).length < PROJECT_MIN_JOINED) return 'few'

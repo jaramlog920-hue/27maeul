@@ -1,0 +1,32 @@
+import { expect, it } from 'vitest'
+import { CONTENT } from '../content/catalog'
+import { moveFurniture, newGame, syncHome } from './game'
+import { placement } from './room'
+import { deserialize, serialize } from './save'
+
+function setup() {
+  const s = { ...newGame(CONTENT), room: [], flags: { homeRoom: 1 }, inv: {} }
+  syncHome(s)
+  const table = placement([], 'table', { x: 19, y: 113 })!
+  expect(table).not.toBeNull()
+  const vase = placement([table], 'vase', table)!
+  return { s, table, vase }
+}
+
+it('moving a tabletop vase to empty floor clears its tabletop flag and survives reload', () => {
+  const { s, table, vase } = setup()
+  const moved = moveFurniture({ ...s, room: [table, vase] }, vase, { x: 22, y: 114 })!
+  expect(moved).not.toBeNull()
+  const back = deserialize(serialize(moved), CONTENT)!
+  expect({ on: !!moved.room.find(f => f.item === 'vase')?.on, afterReload: back.room.some(f => f.item === 'vase') })
+    .toEqual({ on: false, afterReload: true })
+})
+
+it('moving a rug underneath a table leaves tabletop objects on that table', () => {
+  const { s, table, vase } = setup()
+  const rug = placement([table, vase], 'rug', { x: 19, y: 113 })!
+  expect(rug).not.toBeNull()
+  const moved = moveFurniture({ ...s, room: [rug, table, vase] }, rug, { x: 18, y: 112 })!
+  expect(moved).not.toBeNull()
+  expect(moved.room.find(f => f.item === 'vase')).toEqual(vase)
+})

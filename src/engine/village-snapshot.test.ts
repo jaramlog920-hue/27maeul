@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest'
 import { isIndoor, isWalkable, setHomeLevel, setOpenDoors, tileAt, treeKind, zoneAt } from './world'
 
 const W = 48
-const H = 120
+const H = 164 // 공동 주택 방까지 (maps VILLAGE_TOTAL_H)
 const rows = (f: (x: number, y: number) => string): string[] => {
   const out: string[] = []
   for (let y = 0; y < H; y++) {

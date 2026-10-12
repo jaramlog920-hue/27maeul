@@ -32,6 +32,10 @@ export function FirstLight() {
     return () => cancelAnimationFrame(raf)
   }, [phase])
   useEffect(() => () => setDarknessOverride(null), [])
+  // 카드가 열리면 (끝까지 기다렸든 눌러 건너뛰었든) 어둠 덮어쓰기를 푼다 — 건너뛰면 어두운 방 위에 카드가 떴다 (2026-10-11 점검)
+  useEffect(() => {
+    if (phase === 'card') setDarknessOverride(null)
+  }, [phase])
 
   // 본문은 카드가 열리기 전에 미리 불러온다 (연출 중에도 불러오기는 진행)
   useEffect(() => {

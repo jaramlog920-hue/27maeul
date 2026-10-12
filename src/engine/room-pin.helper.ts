@@ -1,5 +1,5 @@
 // 집 안 가구 규칙(room.ts)의 결과를 고정하는 대표 배치 20가지 — 집 단계 0–3 (계획 20 작업 7).
-// 결과 문자열은 RoomCtx를 넣기 전의 room.ts로 기록한 값이다 (room-ctx.test.ts가 지금 room.ts와 비교).
+// 결과 문자열은 성인 침대 1×2칸과 기본 위치를 반영한 값이다 (room-ctx.test.ts가 지금 room.ts와 비교).
 import { initialHomeFurniture, type Furniture } from './room'
 import { homeRect, setHomeFurniture, setHomeLevel } from './world'
 import type { Inventory } from './items'

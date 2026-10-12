@@ -1,5 +1,5 @@
 // 구약 본문 (계획 20 작업 2). 책별 파일(src/content/ot/<id>.json, scripts/build-ot.mjs가 만들고 verify-ot가 원본과 대조)을
-// 필요할 때 불러온다 — 메인 번들에 구약 본문이 들어가지 않는다. 신약 본문 경로(catalog.ts의 bible-subset)는 건드리지 않는다.
+// 필요할 때 불러온다 — 메인 번들에 구약 본문이 들어가지 않는다. 신약은 nt-loader.ts가 별도로 책별 로딩한다.
 // 안 불러온 책을 읽으면 `not loaded: gen` 오류 — 불러오기(ensureOtBook)를 먼저 기다린 뒤에만 읽는다.
 import { expandRef } from './ref'
 import { OT_BOOK_TABLE, isOtBook, otRow, type OtBook } from '../engine/ot-books'

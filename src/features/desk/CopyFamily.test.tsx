@@ -12,7 +12,8 @@ import { ModalLayer } from '../ModalLayer'
 function kidGame(day: number, minute = 10 * 60, extra: Partial<GameState> = {}): GameState {
   const g = newGame(CONTENT)
   const child = { ...newChild(day - 20, freshStats(), undefined), name: '테디', look: 'boy' as const }
-  return { ...g, scenes: [], clock: { ...g.clock, day, minute }, child, ...extra }
+  // 가족 기능이 다 열린 옛 저장으로 (새 게임은 진행에 따라 열린다)
+  return { ...g, scenes: [], flags: { ...g.flags, growthLegacy: 1 }, clock: { ...g.clock, day, minute }, child, ...extra }
 }
 function askDay(): number {
   for (let d = 60; d < 120; d++) if (deskAsks(kidGame(d))) return d
@@ -69,6 +70,8 @@ describe('가족과 함께 있는 필사 — 화면', () => {
     act(() => useGame.getState().open({ kind: 'copy', view: 'write' }))
     for (const v of lk.slice(lk.length - (DESK_DOZE_AT + 1))) act(() => void useGame.getState().copyType(v.text))
     expect(useGame.getState().modal).toMatchObject({ kind: 'copy', view: 'done' })
+    // 장을 마치면 받은 말씀조각 알림이 먼저 뜬다 — 닫으면 끝 화면
+    act(() => useGame.setState({ piecePopups: [] }))
     expect(screen.getByText('테디와 함께 조용한 시간을 보냈어요.')).toBeInTheDocument()
     expect(useGame.getState().game.scenes).toContain('fam:deskNap')
     // 아이는 능력치를 얻지 않는다
@@ -77,7 +80,7 @@ describe('가족과 함께 있는 필사 — 화면', () => {
 
   it('저녁에 부부면 배우자가 같은 방에서 책을 읽는 그림', () => {
     const g = newGame(CONTENT)
-    reset({ ...g, scenes: [], clock: { ...g.clock, minute: 20 * 60 }, romance: { ...NO_ROMANCE, partner: 'wendell', stage: 'married', marriedDay: 1 }, ...writing('lk') })
+    reset({ ...g, scenes: [], flags: { ...g.flags, growthLegacy: 1 }, clock: { ...g.clock, minute: 20 * 60 }, romance: { ...NO_ROMANCE, partner: 'wendell', stage: 'married', marriedDay: 1 }, ...writing('lk') })
     render(<ModalLayer />)
     act(() => useGame.getState().open({ kind: 'copy', view: 'write' }))
     expect(document.querySelector('[data-spouse]')).not.toBeNull()

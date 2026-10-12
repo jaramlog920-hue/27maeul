@@ -10,6 +10,8 @@ import { placeAt, PLACES } from './world'
 /** 네 복음서·사도행전을 꽂고 로마서–빌레몬서 방이 열린 상태 */
 function roomOpenState(): GameState {
   const s = newGame(CONTENT)
+  s.progress.mt.completed = Array.from({ length: 28 }, (_, i) => i + 1)
+  s.progress.mk.completed = Array.from({ length: 16 }, (_, i) => i + 1)
   return { ...s, flags: { ...s.flags, gospelFeast: 2, 'room:romPhm': 1, 'room:hebJud': 1 }, shelved: { mt: 2, mk: 1, lk: 1, jn: 0, ac: 1 } }
 }
 

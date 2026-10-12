@@ -5,7 +5,7 @@ import { formatTime } from '../../engine/clock'
 import { alertsBetween, eventName, eventStatus, eventSummary, nextEvent, scheduledEvents } from '../../engine/events'
 import { festKinds } from '../../engine/fest'
 import { useGame } from '../../store/game-store'
-import { StallEntry } from '../stall/StallView'
+import { StallEntry } from '../stall/StallEntry'
 
 /** 알림 풍선이 떠 있는 시간(ms) — 보통 안내보다 조금 길게 */
 const ALERT_MS = 4200

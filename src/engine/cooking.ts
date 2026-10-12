@@ -6,6 +6,7 @@
 // 함께 먹은 기억은 그 자리에 실제로 있던 사람만, 식사 한 번마다 고유 id. 말씀 조각·필사본·성경 장면을 음식 재료·상품으로 쓰지 않는다.
 import { childTile, overflows, passTime, playerTile, putAway, recordExperienceIn, startAct, startCookAct, syncHome, useStock, haveStock, catchSoot, type GameState } from './game'
 import { childStage } from './child'
+import { featureAccess } from './feature-rules'
 import { addGift, count, COOKED_ITEMS, DISH_HUNGER, take } from './items'
 import { startMini, stepMini, tapMini, isDone, type MiniState } from './minigame'
 import { exhausted } from './needs'
@@ -87,12 +88,14 @@ export const knownDish = (s: Pick<GameState, 'cooking'>, d: DishId): boolean => 
 export const dishTaughtBy = (npc: string): DishId | undefined => NEW_DISHES.find(d => DISHES[d].teachers.includes(npc))
 
 // ── 만들기 ──
-export type CookBlock = 'unknown' | 'busy' | 'tired' | 'needs' | 'full' | null
+export type CookBlock = 'locked' | 'unknown' | 'busy' | 'tired' | 'needs' | 'full' | null
 export function canCook(s: GameState, dish: DishId): CookBlock {
   const def = DISHES[dish]
   if (dish === 'bread') return null
+  const access = featureAccess(s, 'cooking')
+  if (access === 'locked' || (access === 'preview' && dish !== 'herbTea')) return 'locked'
   if (cookOf(s).run) return 'busy'
-  if (!knownDish(s, dish)) return 'unknown'
+  if (!knownDish(s, dish) && !(access === 'preview' && dish === 'herbTea')) return 'unknown'
   if (exhausted(s.needs)) return 'tired'
   if (!haveStock(s, def.needs)) return 'needs'
   if (overflows(useStock(s, def.needs)!, { [def.item]: def.qty })) return 'full'
@@ -191,12 +194,13 @@ export function eatDish(s: GameState, item: ItemId): GameState {
   if (canEatDish(s, item)) return s
   const tea = item === 'herbTea'
   const next = eatEffect({ ...s, inv: take(s.inv, { [item]: 1 })! }, item, false)
-  return startAct(passTime(next, tea ? TEA_MINUTES : EAT_MINUTES), tea ? 'drink' : 'sit')
+  const eating = startAct(passTime(next, tea ? TEA_MINUTES : EAT_MINUTES), tea ? 'drink' : 'eat')
+  return tea ? eating : { ...eating, player: { ...eating.player, path: [] }, act: { ...eating.act!, food: item } }
 }
 
 // ── 식탁 ──
 /** 식탁이 되는 자리: 정해 둔 차 자리(탁자 + 앉을 곳) */
-export function diningSpaces(s: Pick<GameState, 'room' | 'spaces' | 'homeLevel' | 'flags' | 'romance' | 'village'>): HomeSpace[] {
+export function diningSpaces(s: Pick<GameState, 'room' | 'spaces' | 'homeLevel' | 'flags' | 'romance' | 'village' | 'map'>): HomeSpace[] {
   syncHome(s)
   return liveSpaces(s).filter(sp => sp.use === 'tea')
 }
@@ -205,8 +209,10 @@ const seatIds = ['a', 'b', 'c', 'd']
 export function tableCapacity(s: Pick<GameState, 'room'>, sp: HomeSpace): number {
   return Object.keys(reserveSeats(s.room, sp, seatIds)).length
 }
-export type ServeBlock = 'away' | 'noSpace' | 'busy' | 'noFood' | null
+export type ServeBlock = 'locked' | 'away' | 'noSpace' | 'busy' | 'noFood' | null
 export function canServe(s: GameState): ServeBlock {
+  if (featureAccess(s, 'cooking') === 'locked') return 'locked'
+  syncHome(s)
   if (!isHome(playerTile(s))) return 'away'
   if (!diningSpaces(s).length) return 'noSpace'
   if (cookOf(s).table) return 'busy'
@@ -228,7 +234,13 @@ export function serveTable(s: GameState, item: ItemId, n: number): GameState {
 }
 /** 식탁이 아직 쓸 수 있는가 (날이 바뀌었거나 가구가 옮겨져 자리가 없어졌으면 아니다) */
 function tableLive(s: GameState, t: TableMeal): boolean {
-  return t.day === s.clock.day && diningSpaces(s).some(sp => sp.id === t.space)
+  if(t.day !== s.clock.day) return false
+  // 집 식탁은 마을의 가구로 판정한다. 다른 지도에 갔다고 자리가 사라진 것은 아니다.
+  try {
+    return diningSpaces({...s,map:'village'}).some(sp => sp.id === t.space)
+  } finally {
+    syncHome(s)
+  }
 }
 /** 남은 접시 돌려받기 (한 번 — 식탁이 비워진다). 가방이 차도 잃지 않는다 */
 export function clearTable(s: GameState): GameState {
@@ -248,6 +260,7 @@ export interface Diner { id: string; /** 같이 앉을 수 있는가 / 못 앉�
 const near = (a: Tile, b: Tile, d: number) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y) <= d
 /** 식탁에 초대할 수 있는 사람: 지금 집 안 식탁 곁에 실제로 있는 배우자·아이·이웃 (아기는 아니다) */
 export function dinersNear(s: GameState): Diner[] {
+  if((s.map??'village')!=='village') return []
   const t = cookOf(s).table
   const sp = t && diningSpaces(s).find(x => x.id === t.space)
   if (!sp) return []
@@ -276,12 +289,15 @@ export function mealReaction(npc: string, item: ItemId): MealReaction {
   if ((tea ? a.tea : a.taste) === -1) return { npc, kind: 'quiet' }
   return { npc, kind: 'new' }
 }
-export type SitBlock = 'none' | 'few' | 'away' | 'who' | null
+export type SitBlock = 'none' | 'few' | 'seats' | 'away' | 'who' | null
 export function canSit(s: GameState, guests: readonly string[]): SitBlock {
+  syncHome(s)
   const t = cookOf(s).table
   if (!t || t.left < 1) return 'none'
   if (!isHome(playerTile(s)) || !tableLive(s, t)) return 'away'
   if (t.left < 1 + guests.length) return 'few'
+  const space = diningSpaces(s).find(sp => sp.id === t.space)!
+  if (tableCapacity(s, space) < 1 + guests.length) return 'seats'
   const ok = new Map(dinersNear(s).map(d => [d.id, d.block]))
   if (new Set(guests).size !== guests.length || guests.some(g => ok.get(g) !== null)) return 'who'
   return null
@@ -316,9 +332,10 @@ export function sitTable(s: GameState, guests: readonly string[]): SitResult | n
 // ── 이웃에게 요리 배우기 ──
 /** 레시피는 함께한 시간이 아니라 호감도로 연다 (2026-10-07 사용자): 하트가 이만큼 차면 말을 걸 때 알려 준다 */
 export const LEARN_HEARTS = 3
-export type LearnBlock = 'none' | 'known' | 'unknown' | null
+export type LearnBlock = 'locked' | 'none' | 'known' | 'unknown' | null
 /** 가르쳐 줄 이웃이고, 아직 모르는 요리이고, 하트가 LEARN_HEARTS 이상일 때만 */
 export function canLearnDish(s: GameState, npc: string): LearnBlock {
+  if (featureAccess(s, 'cooking') !== 'full') return 'locked'
   const dish = dishTaughtBy(npc)
   if (!dish) return 'none'
   if (cookOf(s).learned[dish]) return 'known'

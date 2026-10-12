@@ -1,8 +1,9 @@
+import { featureAccess } from './feature-rules'
 // 내가 준비하는 작은 행사 (계획 16 작업 16, 기획 05): 차 모임·집들이·함께 만든 것 보여 주기·계절 잔치 준비 역할.
 // 초대·일정·참석·정산은 소모임과 같은 약속 엔진(plans.ts, kind 'event' — 한 번만)을 그대로 쓴다.
 // 준비 점수·등급·불참 불이익 없음. 보관분(간식·장식)은 가방과 따로 두고, 쓴 것만 한 번 빠지고 나머지는 돌려준다.
 // 필사·책상·서고에는 아무 조건도 걸지 않는다.
-import { scheduleAppt, attendAppt, settleAppt, venueFor, type Appt } from './plans'
+import { scheduleAppt, attendAppt, canAttendAppt, settleAppt, venueFor, type Appt } from './plans'
 import { clubCandidates, clubVenues, CLUB_SLOTS, type ClubSlot } from './clubs'
 import { passTime, recordExperienceIn, syncHome, type GameState } from './game'
 import { OUTDOOR_PLACES } from './village-sites'
@@ -20,6 +21,7 @@ import lifeText from '../content/life-text.json'
 import neighborsRaw from '../content/neighbors.json'
 import type { Furniture } from './room'
 import type { GameContent, ItemId, PlaceId, Tile } from './types'
+import { cleanGroupTask, type GroupTaskProgress } from './group-task'
 
 export type FestKind = 'tea'|'housewarming'|'showcase'|'festival'
 export type FestStep = 'tidy'|'arrive'|'activity'|'talk'|'finish'|'done'
@@ -48,6 +50,7 @@ export interface Fest {
  /** 행사 보관분 — 가방과 따로. 끝나거나 취소하면 남은 것을 돌려준다 */
  reserve: Inventory
  step: FestStep; picked?: string; joined: boolean; consumed: boolean; closed: boolean; cancelled: boolean
+ task?:GroupTaskProgress
 }
 export interface FestInput {
  kind: FestKind; day: number; slot?: ClubSlot; place?: PlaceId; alt?: PlaceId; members: string[]
@@ -96,7 +99,7 @@ export function festivalDays(s: GameState): number[] {
  const out: number[] = []
  for (let d = s.clock.day; d <= s.clock.day + FEST_DAYS_AHEAD; d++) {
   if (!festivalOf(d) || (d === s.clock.day && s.clock.minute >= FESTIVAL_TO)) continue
-  if (fests(s).some(f => f.kind === 'festival' && f.day === d && !f.closed)) continue
+  if (fests(s).some(f => f.kind === 'festival' && f.day === d && (!f.closed || f.joined))) continue
   out.push(d)
  }
  return out
@@ -104,6 +107,7 @@ export function festivalDays(s: GameState): number[] {
 
 /** 지금 열 수 있는 행사 종류만 (빈 메뉴를 보이지 않는다) */
 export function festKinds(s: GameState, content: GameContent): FestKind[] {
+ if (featureAccess(s, 'events') !== 'full') return []
  const anyone = clubCandidates(s, content).length > 0
  const out: FestKind[] = []
  if (anyone && clubVenues(s, 'tea').length) out.push('tea')
@@ -124,6 +128,7 @@ export function festCapacity(s: GameState, kind: FestKind): number {
 }
 
 export function createFest(s: GameState, input: FestInput, content: GameContent): { state: GameState; error?: string; id?: string } {
+ if (featureAccess(s, 'events') !== 'full') return { state: s, error: 'locked' }
  if (input.day < s.clock.day || input.day > s.clock.day + FEST_DAYS_AHEAD) return { state: s, error: 'date' }
  const reserve: Inventory = { ...(input.snack ? { [input.snack]: 1 } : {}), ...(input.deco ? { [input.deco]: 1 } : {}) }
  if ((input.snack && !FEST_SNACKS.includes(input.snack)) || (input.deco && !FEST_DECOR.includes(input.deco))) return { state: s, error: 'stock' }
@@ -228,7 +233,7 @@ export function festRunning(s: GameState): Fest | undefined {
 export function joinFest(s: GameState, id: string): GameState {
  const f = fests(s).find(f => f.id === id)
  const a = f && apptOf(s, f)
- if (!f || !a || f.closed) return s
+ if (!f || !a || f.closed || !canAttendAppt(s,a.id)) return s
  const next = attendAppt(s, a.id)
  if (!next.plans.appts.find(x => x.id === a.id)?.attended) return s
  return withFest(next, id, { joined: true, step: later(f.step, stepByTime(a, s.clock.minute)) })
@@ -247,7 +252,7 @@ export function festChoices(s: GameState, f: Fest): string[] {
 export function festStep(s: GameState, id: string, choice?: string): GameState {
  const f = fests(s).find(f => f.id === id)
  const a = f && apptOf(s, f)
- if (!f || !a || f.closed || !f.joined || a.state !== 'running' || f.step === 'finish' || f.step === 'done') return s
+ if (!f || !a || f.closed || !f.joined || !canAttendAppt(s,a.id) || f.step === 'finish' || f.step === 'done') return s
  if (f.step === 'activity') {
   if (!choice || !festChoices(s, f).includes(choice)) return s
   const served = !!f.snack && choice === f.snack && !f.consumed
@@ -261,7 +266,7 @@ export function festStep(s: GameState, id: string, choice?: string): GameState {
 export function festFinish(s: GameState, id: string): GameState {
  const f = fests(s).find(f => f.id === id)
  const a = f && apptOf(s, f)
- if (!f || !a || f.closed || f.step !== 'finish' || a.state !== 'running' || !a.attended) return s
+ if (!f || !a || f.closed || f.step !== 'finish' || !canAttendAppt(s,a.id) || !a.attended) return s
  let next = passTime(s, Math.max(0, a.to - s.clock.minute))
  next = settleAppt(next, a.id)
  const now = fests(next).find(x => x.id === id) ?? f
@@ -308,6 +313,7 @@ function reactionText(r: FestReaction, f: Fest, npc: string): string {
 
 /** 계절 잔치 준비 역할: 잔치 저녁에 모닥불 곁(네 칸 안)에 있으면 맡은 일을 할 수 있다 */
 export function festivalRoleReady(s: GameState): Fest | null {
+ if ((s.map ?? 'village') !== 'village') return null
  const f = fests(s).find(f => f.kind === 'festival' && !f.closed && f.day === s.clock.day)
  if (!f || !festivalOf(s.clock.day) || s.clock.minute < FESTIVAL_FROM || s.clock.minute >= FESTIVAL_TO) return null
  const me = { x: Math.round(s.player.x), y: Math.round(s.player.y) }
@@ -355,12 +361,12 @@ export function sanitizeFests(raw: unknown): Fest[] {
   ids.add(f.id)
   const reserve = Object.fromEntries(Object.entries(f.reserve ?? {}).filter(([id, n]) => keep.includes(id) && Number.isInteger(n) && (n as number) > 0)) as Inventory
   out.push({
-   ...(f as Fest), members: [...new Set(f.members)].slice(0, 3), reserve,
+   ...(f as Fest), members: [...new Set(f.members)].slice(0, f.kind === 'festival' ? Object.keys(FESTIVAL_SPOTS).length : 3), reserve,
    help: Array.isArray(f.help) ? f.help.filter(h => typeof h === 'string' && FEST_HELP[h]) : undefined,
    snack: f.snack && FEST_SNACKS.includes(f.snack) ? f.snack : undefined,
    deco: f.deco && FEST_DECOR.includes(f.deco) ? f.deco : undefined,
    role: f.role && ['food','deco','tidy'].includes(f.role) ? f.role : undefined,
-   joined: f.joined === true, consumed: f.consumed === true, closed: f.closed === true, cancelled: f.cancelled === true,
+   joined: f.joined === true, consumed: f.consumed === true, closed: f.closed === true, cancelled: f.cancelled === true, task:cleanGroupTask(f.task),
   })
  }
  return out

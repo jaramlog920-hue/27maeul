@@ -287,7 +287,7 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 19
+              "y": 20
             },
             "duration": 240,
             "loop": true,
@@ -303,7 +303,7 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 19
+              "y": 20
             },
             "duration": 240,
             "loop": true,
@@ -319,7 +319,7 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 19
+              "y": 20
             },
             "duration": 240,
             "loop": true,
@@ -335,7 +335,7 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 19
+              "y": 20
             },
             "duration": 240,
             "loop": true,
@@ -353,7 +353,7 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 19
+              "y": 20
             },
             "duration": 240,
             "loop": true,
@@ -369,7 +369,7 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 19
+              "y": 20
             },
             "duration": 240,
             "loop": true,
@@ -385,7 +385,7 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 19
+              "y": 20
             },
             "duration": 240,
             "loop": true,
@@ -401,7 +401,7 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 19
+              "y": 20
             },
             "duration": 240,
             "loop": true,
@@ -419,7 +419,7 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 19
+              "y": 20
             },
             "duration": 240,
             "loop": true,
@@ -435,7 +435,7 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 19
+              "y": 20
             },
             "duration": 240,
             "loop": true,
@@ -451,7 +451,7 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 19
+              "y": 20
             },
             "duration": 240,
             "loop": true,
@@ -467,7 +467,7 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 19
+              "y": 20
             },
             "duration": 240,
             "loop": true,
@@ -485,7 +485,7 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 19
+              "y": 20
             },
             "duration": 240,
             "loop": true,
@@ -501,7 +501,7 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 19
+              "y": 20
             },
             "duration": 240,
             "loop": true,
@@ -517,7 +517,7 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 19
+              "y": 20
             },
             "duration": 240,
             "loop": true,
@@ -533,7 +533,7 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 19
+              "y": 20
             },
             "duration": 240,
             "loop": true,
@@ -558,9 +558,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 20
             },
-            "duration": 260,
+            "duration": 300,
             "loop": false,
             "layers": {
               "back": "toddler/plop-down-0-back.png",
@@ -574,9 +574,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 20
             },
-            "duration": 260,
+            "duration": 300,
             "loop": false,
             "layers": {
               "back": "toddler/plop-down-1-back.png",
@@ -590,9 +590,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 20
             },
-            "duration": 260,
+            "duration": 300,
             "loop": false,
             "layers": {
               "back": "toddler/plop-down-2-back.png",
@@ -606,9 +606,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 20
             },
-            "duration": 260,
+            "duration": 300,
             "loop": false,
             "layers": {
               "back": "toddler/plop-down-3-back.png",
@@ -624,9 +624,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 20
             },
-            "duration": 260,
+            "duration": 300,
             "loop": false,
             "layers": {
               "back": "toddler/plop-up-0-back.png",
@@ -640,9 +640,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 20
             },
-            "duration": 260,
+            "duration": 300,
             "loop": false,
             "layers": {
               "back": "toddler/plop-up-1-back.png",
@@ -656,9 +656,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 20
             },
-            "duration": 260,
+            "duration": 300,
             "loop": false,
             "layers": {
               "back": "toddler/plop-up-2-back.png",
@@ -672,9 +672,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 20
             },
-            "duration": 260,
+            "duration": 300,
             "loop": false,
             "layers": {
               "back": "toddler/plop-up-3-back.png",
@@ -690,9 +690,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 20
             },
-            "duration": 260,
+            "duration": 300,
             "loop": false,
             "layers": {
               "back": "toddler/plop-left-0-back.png",
@@ -706,9 +706,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 20
             },
-            "duration": 260,
+            "duration": 300,
             "loop": false,
             "layers": {
               "back": "toddler/plop-left-1-back.png",
@@ -722,9 +722,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 20
             },
-            "duration": 260,
+            "duration": 300,
             "loop": false,
             "layers": {
               "back": "toddler/plop-left-2-back.png",
@@ -738,9 +738,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 20
             },
-            "duration": 260,
+            "duration": 300,
             "loop": false,
             "layers": {
               "back": "toddler/plop-left-3-back.png",
@@ -756,9 +756,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 20
             },
-            "duration": 260,
+            "duration": 300,
             "loop": false,
             "layers": {
               "back": "toddler/plop-right-0-back.png",
@@ -772,9 +772,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 20
             },
-            "duration": 260,
+            "duration": 300,
             "loop": false,
             "layers": {
               "back": "toddler/plop-right-1-back.png",
@@ -788,9 +788,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 20
             },
-            "duration": 260,
+            "duration": 300,
             "loop": false,
             "layers": {
               "back": "toddler/plop-right-2-back.png",
@@ -804,9 +804,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 20
             },
-            "duration": 260,
+            "duration": 300,
             "loop": false,
             "layers": {
               "back": "toddler/plop-right-3-back.png",
@@ -1100,9 +1100,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 19
             },
-            "duration": 260,
+            "duration": 360,
             "loop": true,
             "layers": {
               "back": "child/write-down-0-back.png",
@@ -1116,9 +1116,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 19
             },
-            "duration": 260,
+            "duration": 360,
             "loop": true,
             "layers": {
               "back": "child/write-down-1-back.png",
@@ -1132,9 +1132,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 19
             },
-            "duration": 260,
+            "duration": 360,
             "loop": true,
             "layers": {
               "back": "child/write-down-2-back.png",
@@ -1148,9 +1148,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 19
             },
-            "duration": 260,
+            "duration": 360,
             "loop": true,
             "layers": {
               "back": "child/write-down-3-back.png",
@@ -1166,9 +1166,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 19
             },
-            "duration": 260,
+            "duration": 360,
             "loop": true,
             "layers": {
               "back": "child/write-up-0-back.png",
@@ -1182,9 +1182,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 19
             },
-            "duration": 260,
+            "duration": 360,
             "loop": true,
             "layers": {
               "back": "child/write-up-1-back.png",
@@ -1198,9 +1198,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 19
             },
-            "duration": 260,
+            "duration": 360,
             "loop": true,
             "layers": {
               "back": "child/write-up-2-back.png",
@@ -1214,9 +1214,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 19
             },
-            "duration": 260,
+            "duration": 360,
             "loop": true,
             "layers": {
               "back": "child/write-up-3-back.png",
@@ -1232,9 +1232,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 19
             },
-            "duration": 260,
+            "duration": 360,
             "loop": true,
             "layers": {
               "back": "child/write-left-0-back.png",
@@ -1248,9 +1248,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 19
             },
-            "duration": 260,
+            "duration": 360,
             "loop": true,
             "layers": {
               "back": "child/write-left-1-back.png",
@@ -1264,9 +1264,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 19
             },
-            "duration": 260,
+            "duration": 360,
             "loop": true,
             "layers": {
               "back": "child/write-left-2-back.png",
@@ -1280,9 +1280,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 19
             },
-            "duration": 260,
+            "duration": 360,
             "loop": true,
             "layers": {
               "back": "child/write-left-3-back.png",
@@ -1298,9 +1298,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 19
             },
-            "duration": 260,
+            "duration": 360,
             "loop": true,
             "layers": {
               "back": "child/write-right-0-back.png",
@@ -1314,9 +1314,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 19
             },
-            "duration": 260,
+            "duration": 360,
             "loop": true,
             "layers": {
               "back": "child/write-right-1-back.png",
@@ -1330,9 +1330,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 19
             },
-            "duration": 260,
+            "duration": 360,
             "loop": true,
             "layers": {
               "back": "child/write-right-2-back.png",
@@ -1346,9 +1346,9 @@
             "height": 24,
             "anchor": {
               "x": 12,
-              "y": 15
+              "y": 19
             },
-            "duration": 260,
+            "duration": 360,
             "loop": true,
             "layers": {
               "back": "child/write-right-3-back.png",

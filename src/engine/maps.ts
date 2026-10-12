@@ -9,7 +9,7 @@ export const isMapId = (v: unknown): v is MapId => v === 'village' || v === 'new
 
 /** 첫 마을의 크기 (world.ts의 WIDTH·HEIGHT·VILLAGE_H가 이 값이다) */
 export const VILLAGE_W = 48
-export const VILLAGE_TOTAL_H = 120
+export const VILLAGE_TOTAL_H = 164
 export const VILLAGE_VISIBLE_H = 40
 
 let active: MapId = 'village'

@@ -1,3 +1,5 @@
+// 기존 생활 시나리오는 개편 이전 저장의 권한으로 검증한다. 새 해금은 late-growth.test.ts에서 검증한다.
+import { legacyGame as newGame } from './growth-test-support'
 // 계획 16 작업 4: 이야기 이후의 변화 — 완료 표식 하나(story:<id> + 갈래)로 소품·일과·행동·말이 함께, 손일 함께하기
 import { CONTENT, PEOPLE } from '../content/catalog'
 import {
@@ -5,7 +7,6 @@ import {
   eventNow,
   partnerFree,
   finishStoryMini,
-  newGame,
   openEvent,
   personLine,
   routineOf,
@@ -16,7 +17,7 @@ import {
   type GameState,
 } from './game'
 import { count } from './items'
-import { hasMemory, isOffDay, NO_LIFE, reqMet, sanitizeLife, setPeopleData, type PeopleData, type SceneLine } from './people'
+import { hasMemory, isOffDay, NO_LIFE, personOf, reqMet, sanitizeLife, setPeopleData, type PeopleData, type SceneLine } from './people'
 import type { Tile } from './types'
 import { deserialize, serialize } from './save'
 import { availability } from './plans'
@@ -290,18 +291,27 @@ describe('화면 흐름 (game-store)', () => {
 describe('목수의 자기 의자 (실제 내용)', () => {
   beforeEach(() => setPeopleData(PEOPLE))
   const step = (s: GameState, day: number, minute: number, t: Tile) => stand({ ...s, clock: { ...s.clock, day, minute } }, 'carpenter', t)
-  const ready = (): GameState => ({ ...start(), hearts: { carpenter: 20 }, life: { ...NO_LIFE } })
+  const ready = (): GameState => {
+    const s = start()
+    // 작은 초기 인원만 있으면 사랑방 손님에 두 사람이 매일 뽑힌다.
+    // 이 시험의 '초대가 없는 저녁'은 이사 완료한 마을에서 검사한다.
+    return { ...s, flags: { ...s.flags, villageLevel: 27, ...Object.fromEntries(CONTENT.neighbors.map(n => [`movedIn:${n.id}`, 1])) }, hearts: { carpenter: 20 }, life: { ...NO_LIFE } }
+  }
 
   it('발견부터 손일까지, 다음 날 차와 완료 흔적, 저장 뒤 재방문까지 이어진다', () => {
     let s = ready()
     expect(storyPropsNow(s).some((p) => p.id === 'carpenterChair')).toBe(false)
     s = chooseInEvent(openEvent(step(s, 38, 980, SHOP), 'carpenter')!, 'carpenter:story:1', 0)
     s = chooseInEvent(openEvent(step(s, 39, 800, SHOP), 'carpenter')!, 'carpenter:story:2', 1)
-    const forge = { x: 44, y: 23 }
-    s = step(s, 39, 980, forge) // day % 7 = 4
-    expect(eventNow(stand(stand(s, 'smith', { x: 20, y: 20 }), 'rudy', { x: 44, y: 22 }), 'carpenter')).toBeNull()
-    expect(eventNow(stand(stand(s, 'smith', { x: 43, y: 22 }), 'rudy', { x: 20, y: 20 }), 'carpenter')).toBeNull()
-    s = stand(stand(s, 'smith', { x: 43, y: 22 }), 'rudy', { x: 44, y: 22 })
+    // 대장간 바깥의 옛 좌표 대신 현재 이야기의 실내 작업 자리를 사용한다.
+    const forge = PEOPLE.people.carpenter.events!.find(e => e.id === 'carpenter:story:3')!.at
+    const smithAt = { x: forge.x - 1, y: forge.y }
+    const rudyAt = { x: forge.x, y: forge.y - 1 }
+    // 대장장이 이야기 2(목요일 16시)와 겹치지 않게 17시로 옮겼다 (2026-10-11 점검)
+    s = step(s, 39, 1040, forge) // day % 7 = 4
+    expect(eventNow(stand(stand(s, 'smith', { x: 20, y: 20 }), 'rudy', rudyAt), 'carpenter')).toBeNull()
+    expect(eventNow(stand(stand(s, 'smith', smithAt), 'rudy', { x: 20, y: 20 }), 'carpenter')).toBeNull()
+    s = stand(stand(s, 'smith', smithAt), 'rudy', rudyAt)
     expect(eventNow(s, 'carpenter')?.id).toBe('carpenter:story:3')
     s = chooseInEvent(openEvent(s, 'carpenter')!, 'carpenter:story:3', 0)
     expect(s.life.storyWait?.mini).toBe('hold')
@@ -435,24 +445,31 @@ describe('일반 주민 2 — 대장장이·양치기·기름 짜는 이웃·베
   const ctxOf = (s: GameState, npc: string) => ({ life: s.life, npc, day: s.clock.day, threads: [], lover: false, suitor: false, flags: s.flags, stage: 3 as const })
   /** 함께하는 일과는 상대가 한가한 날에만 — 사랑방 손님·이야기가 없는 날을 찾는다 */
   const freeDay = (s: GameState, npc: string, from: number, minute: number, ok: (d: number) => boolean) =>
-    Array.from({ length: 120 }, (_, i) => from + i).filter(ok).map((d) => ({ ...s, clock: { ...s.clock, day: d, minute } })).find((g) => routineOf(g, npc)?.with)
+    Array.from({ length: 120 }, (_, i) => from + i).filter(ok).map((d) => ({ ...s, clock: { ...s.clock, day: d, minute } })).find((g) => {
+      const partner = routineOf(g, npc)?.with
+      return partner && !eventNow(g, npc) && !eventNow(g, partner) && routineOf(g, partner)?.with === npc
+    })
 
   it('대장장이: 대장간 다툼이 끝난 뒤 도안 → 목수와 고리 시험(손일 실패해도) → 쓸모와 모양, 도안 판·장식 고리와 겨울 저녁 지켜보기', () => {
     let s = ready('smith')
-    const forge = { x: 43, y: 22 }
+    const forge = personOf('smith')!.events!.find(e => e.id === 'smith:story:1')!.at
+    const tillyAt = { x: forge.x - 1, y: forge.y }
+    // 목수의 대장간 방문 자리는 대장장이 왼쪽 위 — 틸리 자리(오른쪽)·플레이어 모루 자리와 겹치지 않게 (2026-10-11 점검)
+    const carpenterAt = { x: forge.x - 1, y: forge.y - 1 }
     // 다툼이 끝나기 전(날 18 전)에는 열리지 않는다 — 새 다툼을 만들지 않는 후속
-    expect(eventNow(stand(step(s, 'smith', 12, 800, forge), 'tilly', { x: 41, y: 22 }), 'smith')?.id).not.toBe('smith:story:1')
+    expect(eventNow(stand(step(s, 'smith', 12, 800, forge), 'tilly', tillyAt), 'smith')?.id).not.toBe('smith:story:1')
     let day = dry(70)
     s = step(s, 'smith', day, 800, forge)
     expect(eventNow(stand(s, 'tilly', { x: 20, y: 20 }), 'smith')?.id).not.toBe('smith:story:1')
-    s = chooseInEvent(openEvent(stand(s, 'tilly', { x: 41, y: 22 }), 'smith')!, 'smith:story:1', 0)
+    expect(eventNow(stand(s, 'tilly', tillyAt), 'smith')?.id).toBe('smith:story:1')
+    s = chooseInEvent(openEvent(stand(s, 'tilly', tillyAt), 'smith')!, 'smith:story:1', 0)
     expect(npcProps(s, 'smith')).toEqual([])
     day = dry(day + 1, 4)
     s = step(s, 'smith', day, 980, forge)
-    // 목수는 함께하는 일과의 상대를 기다리지 않고 제 발로 대장간 앞에 온다
-    expect(routineOf(s, 'carpenter')?.at).toEqual({ x: 44, y: 23 })
-    expect(eventNow(stand(s, 'tilly', { x: 41, y: 22 }), 'smith')?.id).not.toBe('smith:story:2')
-    s = stand(stand(s, 'tilly', { x: 41, y: 22 }), 'carpenter', { x: 44, y: 23 })
+    // 목수는 현재 대장간 실내 작업 자리로 온다.
+    expect(routineOf(s, 'carpenter')?.at).toEqual(carpenterAt)
+    expect(eventNow(stand(s, 'tilly', tillyAt), 'smith')?.id).not.toBe('smith:story:2')
+    s = stand(stand(s, 'tilly', tillyAt), 'carpenter', carpenterAt)
     s = chooseInEvent(openEvent(s, 'smith')!, 'smith:story:2', 0)
     expect(s.life.storyWait?.mini).toBe('hold')
     s = finishStoryMini(s)
@@ -506,31 +523,38 @@ describe('일반 주민 2 — 대장장이·양치기·기름 짜는 이웃·베
 
   it('기름 짜는 이웃: 배치 → 목수와 시험 → 본인이 고른 높이 → 할아버지 손님 의자, 쉬는 시간 자리가 바뀐다', () => {
     let s = ready('presser')
-    const press = { x: 46, y: 21 }
+    const press = personOf('presser')!.events!.find(e => e.id === 'presser:story:1')!.at
+    const carpenterAt = { x: press.x - 1, y: press.y }
+    const grandpaAt = { x: press.x - 1, y: press.y + 1 }
     let day = dry(70)
     // 이야기 전: 할아버지와 쉬는 시간은 할아버지 쪽에서
     const before = freeDay(s, 'presser', day, 860, (d) => !isWet(weatherOf(d)))!
     expect(routineOf(before, 'presser')?.at).toEqual({ x: 43, y: 10 })
-    s = finishStoryMini(chooseInEvent(openEvent(step(s, 'presser', day, 500, press), 'presser')!, 'presser:story:1', 1))
+    s = step(s, 'presser', day, 500, press)
+    expect(eventNow(s, 'presser')?.id).toBe('presser:story:1')
+    expect(openEvent(s, 'presser')).not.toBeNull()
+    s = finishStoryMini(chooseInEvent(openEvent(s, 'presser')!, 'presser:story:1', 1))
     day = dry(day + 1, 2)
     s = step(s, 'presser', day, 930, press)
-    expect(routineOf(s, 'carpenter')?.at).toEqual({ x: 45, y: 22 })
-    s = stand(s, 'carpenter', { x: 45, y: 22 })
+    expect(routineOf(s, 'carpenter')?.at).toEqual(carpenterAt)
+    expect(eventNow(stand(s, 'carpenter', { x: 20, y: 20 }), 'presser')?.id).not.toBe('presser:story:2')
+    s = stand(s, 'carpenter', carpenterAt)
     s = finishStoryMini(chooseInEvent(openEvent(s, 'presser')!, 'presser:story:2', 0))
     expect(s.life.experiences['choice:presser:story:2'].with.sort()).toEqual(['carpenter', 'presser'])
     s = chooseInEvent(openEvent(step(s, 'presser', day + 1, 650, press), 'presser')!, 'presser:story:3', 0)
     expect(npcProps(s, 'presser')).toEqual([])
     day = dry(day + 2)
-    s = step(s, 'presser', day, 860, { x: 45, y: 17 })
-    expect(routineOf(s, 'grandpa')?.at).toEqual({ x: 44, y: 17 })
-    s = stand(s, 'grandpa', { x: 44, y: 17 })
+    s = step(s, 'presser', day, 860, press)
+    expect(routineOf(s, 'grandpa')?.at).toEqual(grandpaAt)
+    expect(eventNow(stand(s, 'grandpa', { x: 20, y: 20 }), 'presser')?.id).not.toBe('presser:story:4')
+    s = stand(s, 'grandpa', grandpaAt)
     s = chooseInEvent(openEvent(s, 'presser')!, 'presser:story:4', 0)
     expect(s.flags['story:presserBench']).toBe(1)
     expect(s.life.experiences['story:presserBench'].with.sort()).toEqual(['grandpa', 'presser'])
     expect(npcProps(s, 'presser')).toEqual(['presserChair', 'presserJar'])
     const after = freeDay(s, 'grandpa', day + 1, 860, (d) => !isWet(weatherOf(d)))!
-    expect(routineOf(after, 'grandpa')).toMatchObject({ with: 'presser', at: { x: 44, y: 17 } })
-    expect(routineOf(after, 'presser')).toMatchObject({ with: 'grandpa', at: { x: 45, y: 17 } })
+    expect(routineOf(after, 'grandpa')).toMatchObject({ with: 'presser', at: grandpaAt })
+    expect(routineOf(after, 'presser')).toMatchObject({ with: 'grandpa', at: press })
     expect(reqMet(lineReq('grandpa', 'grandpa:presserBench'), ctxOf(s, 'grandpa'))).toBe(true)
     // 할아버지의 쉼터 이야기·메리골드 결과는 건드리지 않는다
     expect(s.flags['story:grandpaShelter']).toBeUndefined()
@@ -713,10 +737,11 @@ describe('일반 주민 3 — 벌 치는 이웃·편지 나르는 이웃·약방
     expect(routineOf(s, 'fisher')?.at).toEqual(front)
     s = chooseInEvent(openEvent(s, 'fisher')!, 'fisher:story:1', 2)
     day = dry(day + 1, 2)
-    s = step(s, 'fisher', day, 1040, { x: 24, y: 35 })
-    expect(routineOf(s, 'carpenter')?.at).toEqual({ x: 24, y: 34 })
+    // 나루 끝 한 칸 길을 막지 않게 핀은 입구(24,34), 목수는 곁 넓은 칸(23,33) (2026-10-11 점검)
+    s = step(s, 'fisher', day, 1040, { x: 24, y: 34 })
+    expect(routineOf(s, 'carpenter')?.at).toEqual({ x: 23, y: 33 })
     expect(eventNow(stand(s, 'carpenter', { x: 6, y: 24 }), 'fisher')?.id).not.toBe('fisher:story:2')
-    s = chooseInEvent(openEvent(stand(s, 'carpenter', { x: 24, y: 34 }), 'fisher')!, 'fisher:story:2', 0)
+    s = chooseInEvent(openEvent(stand(s, 'carpenter', { x: 23, y: 33 }), 'fisher')!, 'fisher:story:2', 0)
     s = finishStoryMini(s) // 잘하든 못하든
     expect(s.life.experiences['choice:fisher:story:2'].with.sort()).toEqual(['carpenter', 'fisher'])
     day = dry(day + 1)
@@ -769,7 +794,7 @@ describe('연애 후보 1 — 웬델·틸리·파피의 이후 생활 (실제 �
   const ctxOf = (s: GameState, npc: string, romance: 'dating' | 'married' | null = null) =>
     ({ life: s.life, npc, day: s.clock.day, threads: [], lover: !!romance, suitor: false, flags: s.flags, stage: 4 as const, romance })
   const weekday = (d: number) => d % 7 !== 0
-  const BAKERY = { x: 1, y: 17 }, TEA = { x: 44, y: 62 }, FORGE = { x: 41, y: 22 }
+  const BAKERY = { x: 1, y: 17 }, TEA = { x: 44, y: 62 }
 
   it('웬델: 편지와 가마 나눔 뒤 본인이 고른다 — 새 빵 갈래는 진열대·시험 굽는 아침, 다른 갈래 모습은 없다', () => {
     const seen = [...oldSeen('wendell'), 'baker:story:3']
@@ -850,6 +875,9 @@ describe('연애 후보 1 — 웬델·틸리·파피의 이후 생활 (실제 �
   })
 
   it('틸리: 대장간 고리 뒤 잎 끝을 본인이 정하고 → 아버지와 마을에 건다 (페넬로피 이사 전에도), 색 실은 페넬로피가 이사 온 뒤 작은 이야기로', () => {
+    const FORGE = personOf('tilly')!.events!.find(e => e.id === 'tilly:story:3')!.at
+    const smithAt = { x: 6, y: 125 }
+    const penelopeAt = { x: 9, y: 125 }
     // 대장간 고리 이야기 전에는 열리지 않는다
     const tue = dry(70, (d) => d % 7 === 2)
     expect(eventNow(step(ready({ tilly: 40 }, oldSeen('tilly')), 'tilly', tue, 800, FORGE), 'tilly')?.id).not.toBe('tilly:story:3')
@@ -857,11 +885,15 @@ describe('연애 후보 1 — 웬델·틸리·파피의 이후 생활 (실제 �
     let s = step(ready({ tilly: 40 }, [...oldSeen('tilly'), 'penelope:blue'], { 'story:smithHook': 1 }), 'tilly', tue, 800, FORGE)
     expect(reqMet(lineReq('tilly', 'tilly:hookColorWait'), ctxOf(s, 'tilly'))).toBe(true)
     expect(reqMet(lineReq('tilly', 'tilly:hookColorWait'), ctxOf({ ...s, life: { ...s.life, seen: oldSeen('tilly') } }, 'tilly'))).toBe(false) // 페넬로피를 아직 모르면
+    expect(eventNow(s, 'tilly')?.id).toBe('tilly:story:3')
     s = chooseInEvent(openEvent(s, 'tilly')!, 'tilly:story:3', 1)
     expect(s.life.experiences['choice:tilly:story:3'].with).toEqual(['tilly'])
     expect(npcProps(s, 'tilly')).toEqual([])
-    expect(eventNow(stand(step(s, 'tilly', tue, 1100, FORGE), 'smith', { x: 43, y: 22 }), 'tilly')?.id).not.toBe('tilly:story:4') // 같은 날 이어지지 않는다
-    s = stand(step(s, 'tilly', dry(tue + 1), 1100, FORGE), 'smith', { x: 43, y: 22 })
+    expect(eventNow(stand(step(s, 'tilly', tue, 1100, FORGE), 'smith', smithAt), 'tilly')?.id).not.toBe('tilly:story:4') // 같은 날 이어지지 않는다
+    s = step(s, 'tilly', dry(tue + 1), 1100, FORGE)
+    expect(eventNow(stand(s, 'smith', { x: 20, y: 20 }), 'tilly')?.id).not.toBe('tilly:story:4')
+    s = stand(s, 'smith', smithAt)
+    expect(eventNow(s, 'tilly')?.id).toBe('tilly:story:4')
     s = chooseInEvent(openEvent(s, 'tilly')!, 'tilly:story:4', 1)
     expect(s.flags['story:tillyHook']).toBe(1)
     expect(s.flags['story:smithHook']).toBe(1)
@@ -874,20 +906,20 @@ describe('연애 후보 1 — 웬델·틸리·파피의 이후 생활 (실제 �
     expect(reqMet(lineReq('penelope', 'penelope:tillyHook'), ctxOf(s, 'penelope'))).toBe(false)
     // 색 실: 이사 전에는 없고, 이사 오면 페넬로피가 제 발로 대장간 앞에
     const colorDay = dry(s.clock.day + 1, (d) => d % 7 === 2 || d % 7 === 5)
-    const before = stand(step(s, 'tilly', colorDay, 800, FORGE), 'penelope', { x: 40, y: 22 })
+    const before = stand(step(s, 'tilly', colorDay, 800, FORGE), 'penelope', penelopeAt)
     expect(eventNow(before, 'tilly')?.id).not.toBe('tilly:small:hookColor')
     let m = step({ ...s, flags: { ...s.flags, 'movedIn:weaver': 1 } }, 'tilly', colorDay, 800, FORGE)
-    expect(routineOf(m, 'penelope')?.at).toEqual({ x: 40, y: 22 })
+    expect(routineOf(m, 'penelope')?.at).toEqual(penelopeAt)
     expect(eventNow(stand(m, 'penelope', { x: 20, y: 20 }), 'tilly')?.id).not.toBe('tilly:small:hookColor')
     // 옛 저장: 예전 잎 끝 장면(페넬로피와 색 실, 기억 hookColor)을 이미 본 경우 되풀이되지 않는다
     const old = { ...m, life: { ...m.life, memories: { ...m.life.memories, tilly: [...(m.life.memories.tilly ?? []), { ...m.life.memories.tilly![0], tag: 'hookColor' }] } } }
-    expect(eventNow(stand(old, 'penelope', { x: 40, y: 22 }), 'tilly')?.id).not.toBe('tilly:small:hookColor')
-    m = chooseInEvent(openEvent(stand(m, 'penelope', { x: 40, y: 22 }), 'tilly')!, 'tilly:small:hookColor', 0)
+    expect(eventNow(stand(old, 'penelope', penelopeAt), 'tilly')?.id).not.toBe('tilly:small:hookColor')
+    m = chooseInEvent(openEvent(stand(m, 'penelope', penelopeAt), 'tilly')!, 'tilly:small:hookColor', 0)
     expect(m.life.experiences['choice:tilly:small:hookColor'].with.sort()).toEqual(['penelope', 'tilly'])
     expect(reqMet(lineReq('penelope', 'penelope:hookColor'), ctxOf(m, 'penelope'))).toBe(true)
     expect(reqMet(lineReq('tilly', 'tilly:hookColorWait'), ctxOf(m, 'tilly'))).toBe(false)
     const later = dry(colorDay + 1, (d) => d % 7 === 2 || d % 7 === 5)
-    expect(routineOf(step(m, 'tilly', later, 800, FORGE), 'penelope')?.at).not.toEqual({ x: 40, y: 22 })
+    expect(routineOf(step(m, 'tilly', later, 800, FORGE), 'penelope')?.at).not.toEqual(penelopeAt)
     const back = deserialize(serialize(s), CONTENT)!
     expect(npcProps(back, 'tilly')).toEqual(['tillyHook'])
   })

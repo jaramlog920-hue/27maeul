@@ -1,3 +1,4 @@
+import { featureAccess, featureHint } from '../../engine/feature-rules'
 // 계획 21 R8·R9: 마을별 서고 순위 — 업데이트 창(아침)과 서고에서 다시 보기. 숫자표만, 행사 장면 없음.
 import { itemName } from '../../content/text'
 import { saveGame } from '../../engine/save'
@@ -33,6 +34,7 @@ export function RankView({ history }: { history?: boolean }) {
       useGame.setState({ game: next, modal: next.farewellPopup ? { kind: 'farewell' } : null })
     } else useGame.setState({ modal: null })
   }
+  if (featureAccess(game, 'rank') !== 'full' && !game.rankPopup && !game.ranks?.length) return <div className="dialog" role="dialog" aria-label={t('rank.title')}><h2>{t('rank.title')}</h2><p className="hint">{featureHint('rank')}</p><button onClick={close}>닫기</button></div>
   const pop = !history ? game.rankPopup : undefined
   const rows = pop?.table ?? rankTable(villageSeed(game), game.clock.day, ourScore(game))
   return (

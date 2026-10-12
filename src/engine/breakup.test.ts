@@ -1,6 +1,8 @@
+// 기존 생활 시나리오는 개편 이전 저장의 권한으로 검증한다. 새 해금은 late-growth.test.ts에서 검증한다.
+import { legacyGame as newGame } from './growth-test-support'
 import { describe, expect, it } from 'vitest'
 import { CONTENT } from '../content/catalog'
-import { BREAKUP_COOLING, BREAKUP_HEART_CAP, breakUp, canBreakUp, canGiveBouquet, coolingAfterBreakup, newGame, type GameState } from './game'
+import { BREAKUP_COOLING, BREAKUP_HEART_CAP, breakUp, canBreakUp, canGiveBouquet, coolingAfterBreakup, type GameState } from './game'
 import { NO_ROMANCE } from './romance'
 import { canPair, newGenState, type GenState } from './gen'
 import { settleOneDay, withPairs } from './gen-settle'

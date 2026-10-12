@@ -1,6 +1,8 @@
+// 기존 생활 시나리오는 개편 이전 저장의 권한으로 검증한다. 새 해금은 late-growth.test.ts에서 검증한다.
+import { legacyGame as newGame } from './growth-test-support'
 // 계획 16 작업 23: 집 안 공간별 쓰임 — 차 자리 하나로 끝까지, 이어서 가족·동물·읽는 자리, 충돌·저장
 import { CONTENT } from '../content/catalog'
-import { childTile, homeSeatsNow, moveFurniture, newGame, placeFurniture, removeFurniture, rotateFurniture, syncHome, tapTile, tick, type GameState } from './game'
+import { childTile, homeSeatsNow, moveFurniture, placeFurniture, removeFurniture, rotateFurniture, syncHome, tapTile, tick, type GameState } from './game'
 import { moodOf } from './mood'
 import { petStayGoal } from './pet-life'
 import { adopt } from './companion'
@@ -37,7 +39,12 @@ function furnish(s: GameState, pieces: [ItemId, number, number, Facing?][]): Gam
 const find = (s: GameState, item: ItemId, x?: number) => s.room.find(f => f.item === item && (x === undefined || f.x === x))!
 function base(): GameState {
   const s = newGame(CONTENT)
-  return { ...s, scenes: [], clock: { day: 3, minute: 15 * 60 } }
+  s.progress.phm.completed = [1]
+  // 탁자 자리 좌표는 예전 침대 자리(17,111)를 기준으로 짰다 — 침대만 그 자리로 둔다
+  return { ...s, room: oldBed(s.room), player:{...s.player,...HOME_ENTRY}, scenes: [], clock: { day: 3, minute: 15 * 60 } }
+}
+function oldBed(room: readonly Furniture[]): Furniture[] {
+  return room.map((f) => (f.item === 'homeBed' ? { ...f, x: 17, y: 111 } : f))
 }
 /** 탁자 하나와 의자 둘이 있는 차 자리 */
 function teaRoom(): GameState {
@@ -112,12 +119,12 @@ describe('자리의 쓰임 정하기 — 차 자리 하나로 끝까지', () => 
     expect(s.spaces[0].furniture.some(id => id === 'chair:22:113')).toBe(true)
     // 남은 의자가 탁자 곁이라 계속 쓸 수 있다
     expect(liveSpaces(s)).toHaveLength(1)
-    const far = moveFurniture(s, find(s, 'chair', 19), { x: 17, y: 114 })
+    const far = moveFurniture(s, find(s, 'chair', 19), { x: 23, y: 112 })
     expect(far).not.toBeNull()
     s = far!
     expect(liveSpaces(s)).toHaveLength(0)
     expect(s.spaces).toHaveLength(1)
-    s = moveFurniture(s, find(s, 'chair', 17), { x: 19, y: 113 })!
+    s = moveFurniture(s, find(s, 'chair', 23), { x: 19, y: 113 })!
     expect(liveSpaces(s)).toHaveLength(1)
   })
   it('돌려도 쓸 수 있는지 다시 따지고, 쓰임을 풀 수 있다', () => {
@@ -238,7 +245,7 @@ describe('가족·이웃·동물이 자리를 쓴다', () => {
   it('동물 명령이 먼저: 따라다니는 동안은 쉼터로 가지 않는다', () => {
     let s = furnish(base(), [['cushion', 22, 113]])
     s = setSpace(s, find(s, 'cushion'), 'pet')!
-    s = { ...s, companion: { ...adopt('cat', '나비', 1, { x: 21, y: 113 }), stay: false }, clock: { day: 12, minute: 15 * 60 } }
+    s = { ...s, companion: { ...adopt('dog', '보리', 1, { x: 21, y: 113 }), stay: false }, clock: { day: 12, minute: 15 * 60 } }
     s = { ...s, player: { ...s.player, x: HOME_ENTRY.x, y: HOME_ENTRY.y, path: [] } }
     for (let i = 0; i < 40; i++) s = tick(s, 0.1, () => 0.5, CONTENT).state
     const pet = { x: Math.round(s.companion!.x), y: Math.round(s.companion!.y) }

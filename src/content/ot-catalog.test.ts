@@ -115,7 +115,7 @@ describe('메인 번들에 구약 본문이 없다', () => {
 
   it('PWA: 구약 책 청크는 사전 캐시에서 빼고 실행 중 캐시(CacheFirst)로 둔다 (설정)', () => {
     const cfg = readFileSync(path.resolve(__dirname, '../../vite.config.ts'), 'utf8')
-    expect(cfg).toContain("globIgnores: ['**/assets/ot/**']")
+    for (const path of ['ot', 'nt', 'screens']) expect(cfg).toContain(`'**/assets/${path}/**'`)
     expect(cfg).toContain("handler: 'CacheFirst'")
     expect(cfg).toContain("cacheName: 'ot-books'")
   })

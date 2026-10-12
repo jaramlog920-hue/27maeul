@@ -22,11 +22,11 @@ describe('다섯 번째 책 사도행전', () => {
     expect(Object.keys(emptyProgress()).slice(0, 5)).toEqual(['mt', 'mk', 'lk', 'jn', 'ac'])
   })
 
-  it('사도행전 조각은 1–28장 전부가 있고, 도장이 없다 (작업 2·3)', () => {
+  it('사도행전 조각은 1–28장 전부가 있고, 성서공회에 표시된 관련 본문을 쓴다', () => {
     expect(AC.length).toBeGreaterThan(0)
     expect(BOOKS_WITH_CONTENT).toContain('ac')
     expect(new Set(AC.map((p) => p.chapter))).toEqual(new Set(Array.from({ length: 28 }, (_, i) => i + 1)))
-    expect(AC.every((p) => p.stamps.length === 0)).toBe(true)
+    expect(AC.every((p) => p.stamps.every(st => st.kind === 'related'))).toBe(true)
   })
 
   it('옛 저장(네 권)을 불러와도 progress.ac가 채워진다', () => {

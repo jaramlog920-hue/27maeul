@@ -52,8 +52,9 @@ export const NEWS: readonly NewsDef[] = [
   { id: 'carpenterOwn', kind: 'work', who: [W('carpenter', 6, 24, 'wood')], from: 780, to: 840, req: { notStory: ['carpenterChair'] }, prop: { art: ['planeTool'], at: { x: 3, y: 24 } } },
   { id: 'penelopeCloth', kind: 'work', who: [W('penelope', 39, 24, 'weave')], from: 840, to: 900, dry: true, seasons: ['spring', 'summer', 'autumn'], prop: { art: ['clothRose', 'clothBlue'], at: { x: 38, y: 24 } } },
   // 휴식
-  { id: 'smithBreak', kind: 'rest', who: [W('smith', 43, 22, 'rest')], from: 780, to: 840 },
-  { id: 'presserPause', kind: 'rest', who: [W('presser', 46, 21, 'rest')], from: 960, to: 1020 },
+  // 대장간 마당은 공동 주택이 되었다 — 쉬는 자리는 공동 주택 문 앞 길가 (2026-10-12)
+  { id: 'smithBreak', kind: 'rest', who: [W('smith', 42, 25, 'rest')], from: 780, to: 840 },
+  { id: 'presserPause', kind: 'rest', who: [W('presser', 45, 25, 'rest')], from: 960, to: 1020 },
   { id: 'fisherBreak', kind: 'rest', who: [W('fisher', 24, 36, 'rest')], from: 840, to: 900, dry: true },
   // 만남 (평소 함께하는 사이)
   { id: 'poppyPenelope', kind: 'meet', who: [W('poppy', 44, 62, 'tea'), W('penelope', 43, 62, 'tea')], from: 840, to: 900 },

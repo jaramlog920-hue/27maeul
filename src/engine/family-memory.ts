@@ -1,3 +1,4 @@
+import { featureAccess } from './feature-rules'
 // 아이의 첫 경험과 가족 기억 (계획 16 작업 22, 기획 08): 배우자와 함께하는 가족 활동, 배움터에서 작품 보여 주기.
 // 모두 기존 가족 앨범(`fam:` 장면)·경험 기록(Life.experiences)과 같은 ID를 쓴다. 보상·능력치·신앙 수치 없음,
 // 안 해도 손해 표시 없음, 아이에게 부모의 고민이나 위험한 일을 맡기지 않는다. 아이는 색·모양·놀이 중 제 선택을 한다.
@@ -5,11 +6,11 @@ import { seasonOf } from './clock'
 import { weatherOf } from './calendar'
 import { childMode, childStage } from './child'
 import { CLOSE_MAX, KID_CLOSE_GAIN, KID_MADE, SUPPER_TO, spouseReading } from './family'
-import { childAtSchool, homeSeatsNow, passTime, recordExperienceIn, type GameState } from './game'
+import { childAtSchool, homeSeatsNow, passTime, playerTile, recordExperienceIn, SCHOOL_SEAT, syncHome, type GameState } from './game'
 import { SPACE_TOGETHER_ID } from './space-life'
 import { NO_LIFE, recordExperience } from './people'
 import { SPOUSE_HOME_FROM } from './romance'
-import { isHome } from './world'
+import { isHome, roomAt } from './world'
 
 /** 아이가 고르는 가짓수 */
 export const FAMILY_CHOICES = 3
@@ -19,9 +20,9 @@ export function spouseActId(partner: string): string {
   return `fam:with:${partner}`
 }
 
-export type SpouseActBlock = 'noSpouse' | 'noChild' | 'baby' | 'grown' | 'school' | 'time' | 'notHome' | 'done' | null
+export type SpouseActBlock = 'locked' | 'noSpouse' | 'noChild' | 'baby' | 'grown' | 'school' | 'time' | 'notHome' | 'done' | null
 
-type ActState = Pick<GameState, 'child' | 'clock' | 'flags' | 'romance' | 'player'>
+type ActState = Pick<GameState, 'child' | 'clock' | 'flags' | 'romance' | 'player' | 'map' | 'homeLevel' | 'room' | 'village'> & Partial<Pick<GameState, 'progress' | 'shelved'>>
 
 /**
  * 오늘 배우자와 아이가 함께하는 활동을 할 수 있는가: 부부, 걷는 아이·돕는 아이(집에 있음, 배움터에 안 감),
@@ -32,10 +33,13 @@ export function canSpouseAct(s: ActState): SpouseActBlock {
   if (r?.stage !== 'married' || !r.partner) return 'noSpouse'
   const c = s.child
   if (!c) return 'noChild'
+  if (featureAccess(s, 'childActivities') !== 'full') return 'locked'
   const st = childStage(c, s.clock.day)
   if (st === 'baby') return 'baby'
   if (st === 'adult' || childMode(c, s.clock.day) === 'away') return 'grown'
   if (childAtSchool(s)) return 'school'
+  if ((s.map ?? 'village') !== 'village') return 'notHome'
+  syncHome(s)
   const m = s.clock.minute
   if (m < SPOUSE_HOME_FROM || m >= SUPPER_TO || !spouseReading(s)) return 'time'
   if (!isHome({ x: Math.round(s.player.x), y: Math.round(s.player.y) })) return 'notHome'
@@ -107,11 +111,15 @@ export function latestWork(s: Pick<GameState, 'flags'>): (typeof KID_MADE)[numbe
 }
 
 /** 배움터에 맡긴 날(돕는 아이)에만, 하루 한 번. 조용히 구경하기는 작품이 없어도 된다 */
-export function canShow(s: Pick<GameState, 'child' | 'clock' | 'flags'>, mode: ShowMode): ShowBlock {
+export function canShow(s: GameState, mode: ShowMode): ShowBlock {
   const c = s.child
   if (!c) return 'noChild'
   if (childStage(c, s.clock.day) !== 'helper' || childMode(c, s.clock.day) === 'away') return 'stage'
   if (!childAtSchool(s)) return 'notAtSchool'
+  if ((s.map ?? 'village') !== 'village') return 'notAtSchool'
+  syncHome(s)
+  const classroom = roomAt(SCHOOL_SEAT)
+  if (!classroom || roomAt(playerTile(s)) !== classroom) return 'notAtSchool'
   if (s.flags.showDay === s.clock.day) return 'done'
   if (mode !== 'watch' && !latestWork(s)) return 'nothing'
   return null

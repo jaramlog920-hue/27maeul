@@ -2,7 +2,7 @@
 // 위 가장자리에는 몸 상태 눈금과 다음 일정 한 줄. 설정에서 선택하면 마우스·터치 화면 모두에서 보인다.
 import { useState } from 'react'
 import { unlockAudio } from '../../audio/sound'
-import { CONTENT, neighborById } from '../../content/catalog'
+import { CONTENT } from '../../content/catalog'
 import { fill, T } from '../../content/text'
 import { nextEvent, eventSummary, scheduledEvents } from '../../engine/events'
 import { seasonalNeed } from '../../engine/game'
@@ -76,20 +76,6 @@ function DeckNext() {
   )
 }
 
-/** 오늘 받을 말씀 조각 (드물게 — 특별한 대화의 이웃·문 앞 편지 바구니) — 없으면 보이지 않는다. 누르면 어디서인지 */
-function DeckStories() {
-  const who = useGame((s) => Object.keys(s.game.offers).join(','))
-  const letter = useGame((s) => (s.game.post ?? []).length > 0)
-  if (!who && !letter) return null
-  const ids = who ? who.split(',') : []
-  const names = [...ids.map((id) => neighborById(id)?.role ?? id), ...(letter ? [T.word.basketWho] : [])].join(', ')
-  return (
-    <button className="deck-stories" onClick={() => useGame.getState().say(fill(T.controls.storiesWho, { who: names }), 3600)}>
-      {fill(T.controls.stories, { n: ids.length + (letter ? 1 : 0) })}
-    </button>
-  )
-}
-
 export function ControlDeck() {
   const deck = useGame((s) => s.deck)
   // 메뉴 단추를 누르면 가방·일지·일정·설정이 위로 펼쳐진다
@@ -106,7 +92,6 @@ export function ControlDeck() {
     <section className="deck" aria-label={D.deckLabel}>
       <div className="deck-strip">
         <DeckNeeds />
-        <DeckStories />
         <DeckNext />
       </div>
       <div className="deck-main">

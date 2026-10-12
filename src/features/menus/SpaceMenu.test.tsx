@@ -12,11 +12,11 @@ function tea() {
   const s = { ...newGame(CONTENT), scenes: [] }
   syncHome(s)
   let room: Furniture[] = [...s.room]
-  for (const [item, x, y, f] of [['table', 19, 112], ['chair', 19, 113, 'up']] as const) {
-    room = [...room, placement(room, item, { x, y }, f as 'up' | undefined)!]
+  for (const [item, x, y, f] of [['table', 20, 113], ['chair', 19, 113, 'right']] as const) {
+    room = [...room, placement(room, item, { x, y }, f as 'right' | undefined)!]
     syncHome({ ...s, room })
   }
-  return { ...s, room, player: { ...s.player, x: 20, y: 114, path: [] } }
+  return { ...s, room, player: { ...s.player, x: 19, y: 112, path: [] } }
 }
 
 describe('집 안 자리: 쓰임 정하기와 쓰기 창', () => {

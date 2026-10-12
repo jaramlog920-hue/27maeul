@@ -2,7 +2,7 @@
 // 만난 사람만 이름으로, 아직 모르는 사람은 '?'.
 import { neighborById } from './catalog'
 import { fill, T, withAnd, withSubject } from './text'
-import type { GenLog } from '../engine/gen'
+import { BAKER_BABY_ID, type GenLog } from '../engine/gen'
 import type { GameState } from '../engine/game'
 import { NO_NOTEBOOK } from '../engine/notebook'
 import { t } from '../shared/i18n'
@@ -11,6 +11,8 @@ import { t } from '../shared/i18n'
 export function personName(game: Pick<GameState, 'notebook' | 'gen'>, id: string): string {
   const met = (game.notebook ?? NO_NOTEBOOK).met
   const p = game.gen?.persons[id]
+  if (id === BAKER_BABY_ID && p) return met.includes('baker') || met.includes('wendell')
+    ? p.name ?? (p.stage === 'baby' ? t('gen.baby') : t('gen.bakerChild')) : t('gen.unknown')
   if (p?.origin === 'born') return p.parents.some((q) => met.includes(q)) ? p.name ?? t('gen.baby') : t('gen.unknown')
   return met.includes(id) ? neighborById(id)?.role ?? t('gen.unknown') : t('gen.unknown')
 }

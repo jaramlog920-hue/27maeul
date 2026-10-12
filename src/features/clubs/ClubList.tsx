@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { neighborById } from '../../content/catalog'
-import { T } from '../../content/text'
+import { fill, T } from '../../content/text'
+import { featureAccess, featureHint } from '../../engine/feature-rules'
 import { CLUB_MAX, pauseClub, dissolveClub, clubWorkSpots, type Club } from '../../engine/clubs'
 import { clubLastHomeWork, clubMissed } from '../../engine/club-life'
 import { formatTime } from '../../engine/clock'
@@ -22,8 +23,10 @@ export function ClubList() {
  const [editing,setEditing]=useState<Club|null|undefined>(undefined)
  if(editing!==undefined)return <ClubForm club={editing??undefined} onClose={()=>setEditing(undefined)}/>
  const clubs=game.clubs.filter(c=>c.active)
+ const access=featureAccess(game,'clubs')
  return <div className="dialog" role="dialog" aria-label={C.title}><h2>{C.title}</h2><p className="hint">{C.intro}</p>
+ {access!=='full'&&<p role="status">{access==='preview'?'차 소모임 하나를 체험할 수 있어요. '+featureHint('clubs',true):featureHint('clubs')}</p>}
  {!clubs.length&&<p>{C.none}</p>}
- <ul className="event-list">{clubs.map(c=>{const next=game.plans.appts.find(a=>a.clubId===c.id&&['planned','running','moved'].includes(a.state));return <li key={c.id}><strong>{c.name}</strong><p>{T.plans.activity[c.activity]} · {T.plans.place[c.place as keyof typeof T.plans.place]}</p><p>{c.members.map(id=>neighborById(id)?.role).join(' · ')}</p><ClubNotes club={c}/><p>{c.paused?C.paused:next?`${C.next} · ${next.day}${T.ui.day??''} · ${formatTime(next.from)}`:C.day[c.weekday]}</p>{next?.reason&&<p className="hint">{next.reason==='weather'?T.plans.moved:C.errors[next.reason==='busy'?'appointment':'venue']}</p>}<div className="actions"><button onClick={()=>setEditing(c)}>{C.edit}</button><button onClick={()=>commitClub(pauseClub(game,c.id,!c.paused))}>{c.paused?C.resume:C.pause}</button><button onClick={()=>commitClub(dissolveClub(game,c.id))}>{C.dissolve}</button></div></li>})}</ul>
- <div className="actions"><button disabled={clubs.length>=CLUB_MAX} onClick={()=>setEditing(null)}>{C.create}</button><button data-close onClick={useGame.getState().closeModal}>{T.ui.close}</button></div></div>
+ <ul className="event-list">{clubs.map(c=>{const next=game.plans.appts.find(a=>a.clubId===c.id&&['planned','running','moved'].includes(a.state));return <li key={c.id}><strong>{c.name}</strong><p>{T.plans.activity[c.activity]} · {T.plans.place[c.place as keyof typeof T.plans.place]}</p><p>{c.members.map(id=>neighborById(id)?.role).join(' · ')}</p><ClubNotes club={c}/><p>{c.paused?C.paused:next?`${C.next} · ${fill(T.ui.day, { day: next.day })} · ${formatTime(next.from)}`:C.day[c.weekday]}</p>{next?.reason&&<p className="hint">{next.reason==='weather'?T.plans.moved:C.errors[next.reason==='busy'?'appointment':'venue']}</p>}<div className="actions"><button onClick={()=>setEditing(c)}>{C.edit}</button><button onClick={()=>commitClub(pauseClub(game,c.id,!c.paused))}>{c.paused?C.resume:C.pause}</button><button onClick={()=>commitClub(dissolveClub(game,c.id))}>{C.dissolve}</button></div></li>})}</ul>
+ <div className="actions"><button disabled={access==='locked'||clubs.length>=(access==='preview'?1:CLUB_MAX)} onClick={()=>setEditing(null)}>{C.create}</button><button data-close onClick={useGame.getState().closeModal}>{T.ui.close}</button></div></div>
 }

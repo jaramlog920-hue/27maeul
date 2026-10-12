@@ -4,6 +4,7 @@ import { neighborById } from '../../content/catalog'
 import { fill, itemList, T } from '../../content/text'
 import { CARPENTER_WORKS } from '../../engine/easier'
 import { canOrderHome, canOrderWork, nextHomeStage } from '../../engine/game'
+import { featureHint } from '../../engine/feature-rules'
 import { useGame } from '../../store/game-store'
 
 const EASY = T.easy.names as Record<string, string>
@@ -49,6 +50,7 @@ export function OrdersView({ npc }: { npc: string }) {
                   {r.cost}
                   {why(r.block) && <em> · {why(r.block)}</em>}
                   {r.block === 'needs' && <em> · {T.orders.needsShort}</em>}
+                  {r.block === 'locked' && <em> · {featureHint(r.key === 'home' ? game.homeLevel === 0 ? 'spouseRoom' : 'childRoom' : 'convenience')}</em>}
                 </span>
               </div>
               <button className="primary" disabled={r.block !== null} onClick={r.act}>

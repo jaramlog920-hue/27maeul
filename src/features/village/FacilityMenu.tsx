@@ -4,7 +4,7 @@ import { seasonOf } from '../../engine/clock'
 import { setLook, projectLine, usersAt, villageOf } from '../../engine/projects'
 import { facilityOfPlace, type FacilityPlace } from '../../engine/village-sites'
 import { useGame } from '../../store/game-store'
-import { commitVillage } from './VillageSite'
+import { commitVillage } from './VillageSupport'
 
 const V = T.village
 

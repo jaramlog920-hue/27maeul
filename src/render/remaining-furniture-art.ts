@@ -2,6 +2,7 @@
 import { pixels } from './home-space-art'
 import type { FurnitureArt } from './furniture-art'
 import type { DirectionalFurnitureArt } from './home-space-directions'
+import {COUPLE_BED_DIRECTIONS} from './couple-bed-art'
 
 const mirror = (a: FurnitureArt): FurnitureArt => ({ ...a, rows:a.rows.map(r=>[...r].reverse().join('')) })
 const four = (front: FurnitureArt, back = front, right = front): DirectionalFurnitureArt =>
@@ -123,6 +124,7 @@ const inkJar=pixels(1,1,[
 ])
 
 export const REMAINING_FURNITURE_DIRECTIONS: Record<string,DirectionalFurnitureArt> = {
+  coupleBed:COUPLE_BED_DIRECTIONS,
   rug:floorViews(rug(3,2)), pot:four(pot,mirror(pot)), vase:four(vase,mirror(vase)),
   jar:four(jar), candle:four(candle), bowl:four(bowl), bird:four(birdFront,birdBack,mirror(bird)),
   barrel:four(barrel), wheel:four(wheel,wheelBack,wheelSide), lampStand:four(lampStand),
@@ -135,18 +137,22 @@ export const REMAINING_FURNITURE_ART:Record<string,FurnitureArt> = Object.fromEn
   Object.entries(REMAINING_FURNITURE_DIRECTIONS).map(([id,views])=>[id,views.down]),
 )
 
-// 배치 아이템과 구분되는 고정 가구. 원본 1칸을 유지하며 방향 UI에는 연결하지 않는다.
-const bed=pixels(1,1,[
-  ['z',2,15,12,1], ['k',2,1,12,14], ['l',3,2,10,2], ['c',4,4,8,3],
-  ['b',3,7,10,6], ['B',3,12,10,2], ['w',3,14,10,1],
+// Adult bed keeps the original materials; its mattress now has a two-tile length.
+const bed=pixels(1,2,[
+  ['z',2,31,12,1], ['k',2,1,12,29], ['l',3,2,10,2], ['C',3,4,10,23],
+  ['c',4,5,8,5], ['b',3,11,10,16], ['c',3,11,10,1], ['B',3,24,10,3],
+  ['w',3,28,10,2], ['l',3,28,10,1], ['W',3,30,2,1], ['W',11,30,2,1],
 ])
-const bedBack=pixels(1,1,[
-  ['z',2,15,12,1], ['k',2,1,12,14], ['w',3,2,10,12], ['l',3,2,10,2],
-  ['b',3,5,10,5], ['c',4,10,8,3], ['W',3,13,10,1],
+const bedBack=pixels(1,2,[
+  ['z',2,31,12,1], ['k',2,1,12,29], ['w',3,2,10,27], ['l',3,2,10,2],
+  ['b',3,5,10,16], ['B',3,5,10,3], ['c',4,22,8,5], ['W',3,28,10,2],
+  ['l',3,28,10,1], ['W',3,30,2,1], ['W',11,30,2,1],
 ])
-const bedSide=pixels(1,1,[
-  ['z',1,14,14,2], ['k',1,3,3,11], ['l',2,4,1,7], ['k',3,7,12,7],
-  ['c',4,7,3,3], ['b',7,7,7,3], ['B',4,10,10,2], ['w',4,12,10,1],
+const bedSide=pixels(2,1,[
+  ['z',1,15,30,1], ['k',1,2,3,12], ['l',2,3,1,8], ['k',3,6,28,8],
+  ['C',4,6,25,6], ['c',4,6,5,4], ['b',10,6,19,5], ['c',10,6,1,4],
+  ['B',10,10,19,2], ['w',4,12,26,2], ['l',4,12,26,1],
+  ['k',29,5,2,9], ['l',30,6,1,7], ['W',4,14,2,1], ['W',27,14,2,1],
 ])
 function desk(back=false):FurnitureArt {
   return pixels(1,1,[

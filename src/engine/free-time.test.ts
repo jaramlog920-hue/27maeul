@@ -113,11 +113,12 @@ describe('자리 고르기', () => {
 })
 
 describe('자율 생활이 꺼져 있으면 이웃 하루는 예전 그대로', () => {
-  it('맑은 날 하루를 10분 간격으로 돌려도, gen이 없거나 꺼져 있으면 목적지가 같다', () => {
+  // gen이 없으면 첫 아침 정산에서 켜진 채로 만들어진다 (settleGen) — 그래서 '꺼진 gen'끼리 비교한다: 무엇으로 만들었든 꺼져 있으면 일과 그대로
+  it('맑은 날 하루를 10분 간격으로 돌려도, gen이 꺼져 있으면 (씨앗·짝이 달라도) 목적지가 같다', () => {
     let d = 3
     while (isWet(weatherOf(d))) d++
     const base = newGame(CONTENT)
-    const start: GameState = { ...base, clock: { day: d, minute: 6 * 60 } }
+    const start: GameState = { ...base, clock: { day: d, minute: 6 * 60 }, gen: { ...newGenState(CONTENT, 11, d), on: false } }
     const off: GameState = { ...start, gen: { ...newGenState(CONTENT, 3, d, withPairs()), on: false } }
     let a = start, b = off
     for (let m = 6 * 60; m < 22 * 60; m += 10) {

@@ -85,14 +85,12 @@ describe('주민끼리 만나는 시간 (실제 내용)', () => {
     expect(goalOf(s, 'poppy')).toEqual(FESTIVAL_SPOTS.poppy)
   })
 
-  it('상대가 사랑방 저녁 손님이면 찻집에서 기다리지 않는다 — 페넬로피와 파피', () => {
-    const d = dayWhere(['penelope', 'poppy'], (d) => hallGuestsToday(at(base(), d, 1090), CONTENT).includes('poppy') && !hallGuestsToday(at(base(), d, 1090), CONTENT).includes('penelope'))
+  it('넓어진 사랑방에 둘 다 모이면 찻집에서 기다리지 않는다', () => {
+    const d = dayWhere(['penelope', 'poppy'], (d) => hallGuestsToday(at(base(), d, 1090), CONTENT).includes('poppy') && hallGuestsToday(at(base(), d, 1090), CONTENT).includes('penelope'))
     const s = at(base(), d, 1090)
     expect(routineOf(s, 'penelope')?.with).toBeUndefined()
     expect(goalOf(s, 'penelope')).not.toEqual({ x: 42, y: 62 })
-    // 손님이 아닌 날은 찻집에서 함께
-    const d2 = dayWhere(['penelope', 'poppy'], (d) => { const g = hallGuestsToday(at(base(), d, 1090), CONTENT); return !g.includes('poppy') && !g.includes('penelope') })
-    expect(routineOf(at(base(), d2, 1090), 'penelope')?.with).toBe('poppy')
+    expect(routineOf(at(base(), d, 1070), 'penelope')?.with).toBe('poppy')
   })
 
   it('저장·불러오기 뒤에도 같은 자리', () => {
@@ -152,7 +150,8 @@ describe('일과 조건과 상대 (시험용 내용)', () => {
     const busy = { ...s, life }
     expect(goalOf(busy, 'wendell')).toEqual({ x: 6, y: 18 })
     expect(routineOf(busy, 'tilly')?.with).toBeUndefined()
-    expect(goalOf(busy, 'tilly')).toEqual({ x: 41, y: 22 })
+    // 틸리의 옛 작업 자리(12,127)는 공동 주택 아래층 대장간 곁(8,125)으로 옮겨졌다 (lodgingNpcSpot)
+    expect(goalOf(busy, 'tilly')).toEqual({ x: 8, y: 125 })
   })
 
   it('곁에 상대가 있으면 첫마디는 둘의 한 줄 (상대 이름과 함께)', () => {

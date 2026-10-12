@@ -1,5 +1,6 @@
 // 지도를 고치면 좌표가 흩어진 곳(이웃 하루·잔치·모임·고양이 자리)이 벽이나 물에 박히기 쉽다.
 // 모든 자리가 걸을 수 있고, 이웃은 자기 집 문에서 거기까지 걸어갈 수 있어야 한다.
+import { LODGING_WORK_SPOTS } from './lodging'
 import neighbors from '../content/neighbors.json'
 import people from '../content/people.json'
 import * as bonds from './bonds'
@@ -125,8 +126,8 @@ describe('서고 권수로 열리는 구역', () => {
     const shut = goalFor(grandpa, { ...ctx, locked: lockedTiles(0) })!
     expect(zoneAt(shut)).toBeNull()
     expect(isWalkable(shut)).toBe(true)
-    // 대장장이는 첫날부터 대장간에 나와 있다 (그을음 → 잉크가 있어야 첫 장을 엮는다)
-    expect(goalFor(smith, { ...ctx, locked: lockedTiles(0) })).toEqual({ x: 43, y: 22 })
+    // 대장장이는 첫날부터 대장간에 나와 있다 (그을음 → 잉크가 있어야 첫 장을 엮는다) — 대장간은 공동 주택 아래층 안
+    expect(goalFor(smith, { ...ctx, locked: lockedTiles(0) })).toEqual(LODGING_WORK_SPOTS.smith)
     const nowhere = { ...smith, schedule: [{ from: 420, tile: vine }, { from: 1140 }] }
     expect(goalFor(nowhere, { ...ctx, locked: lockedTiles(0) })).toBeNull()
   })

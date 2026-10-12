@@ -208,8 +208,8 @@ describe('절·장·권 완료', () => {
     expect(r.result.gains.wit).toBeGreaterThanOrEqual(1)
     expect(r.state.needs.fatigue).toBeGreaterThanOrEqual(s.needs.fatigue + 6) // 일 6 + 흐른 시간만큼
     expect(r.state.clock.minute).toBeGreaterThan(s.clock.minute)
-    // 재료도 조각도 받은 편지도 보지 않았다
-    expect(r.state.inv).toEqual({})
+    // 필사 재료는 들지 않고, 첫 장의 생활 보상 의자만 지급된다.
+    expect(r.state.inv).toEqual({ stool: 1 })
     expect(copySpot(r.state, 'mt', CONTENT)).toMatchObject({ chapter: 2, index: 0 })
   })
 
@@ -218,7 +218,7 @@ describe('절·장·권 완료', () => {
     const s = startCopy(fresh(), 'phm', CONTENT)
     const r = writeChapter(s, 'phm')
     expect(r.result).toMatchObject({ kind: 'chapter', bookDone: true, next: null })
-    expect(r.state.scenes).toEqual(['firstChapter', 'bookBound'])
+    expect(r.state.scenes).toEqual(['firstChapter', 'bookBound', 'growth:decorate:full'])
     expect(r.state.copyStats.books).toBe(1)
     expect(copySpot(r.state, 'phm', CONTENT)).toBeNull()
     expect(writeVerse(r.state, 'phm', '아무 글', CONTENT).result.kind).toBe('none')

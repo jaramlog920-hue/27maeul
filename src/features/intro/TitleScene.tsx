@@ -3,7 +3,7 @@
 // 코드로 그린 도트 (160×170). 구름이 흐르고, 굴뚝 연기가 오르고, 물이 반짝인다.
 import { useEffect, useRef } from 'react'
 import { withLookDefaults, type Avatar } from '../../engine/avatar'
-import { PALETTE, spriteRows, writerPalette } from '../../render/sprites'
+import { spriteRows, writerPalette } from '../../render/sprites'
 
 export const SCENE_W = 160
 export const SCENE_H = 170
@@ -218,7 +218,15 @@ export function TitleScene({ avatar }: { avatar?: Avatar | null }) {
     const who = withLookDefaults(avatar ?? { look: 'f', name: '' })
     const hero = spriteRows('writer', 'down', { frame: 0, blink: false, avatar: who })
     const heroPal = writerPalette('spring', who)
-    const friend = spriteRows('baker', 'down', { frame: 0, blink: false })
+    // 개울 옆 안내 인물: 짧은 쪽빛 머리와 푸른 여밈옷, 작은 어깨 가방.
+    const guideLook = withLookDefaults({
+      look: 'f', name: '', skin: 2,
+      hairFront: 7, hairBack: 2, hairColor: [215, 28, 22],
+      top: 15, bottom: 2, bottomColor: [214, 30, 32],
+      eyeColor: [210, 40, 28], acc: 12,
+    })
+    const friend = spriteRows('writer', 'down', { frame: 0, blink: false, avatar: guideLook })
+    const friendPal = writerPalette('spring', guideLook)
     const sprite = (rows: string[], pal: Record<string, string>, x: number, y: number) =>
       rows.forEach((row, yy) =>
         [...row].forEach((ch, xx) => {
@@ -271,7 +279,7 @@ export function TitleScene({ avatar }: { avatar?: Avatar | null }) {
       // 주인공과 이웃 (숨 쉬듯 한 칸)
       const bob = Math.sin(t * 2) > 0.6 ? 1 : 0
       sprite(hero, heroPal, 76, 132 - bob)
-      sprite(friend, PALETTE, 96, 104 + (Math.sin(t * 2 + 1) > 0.6 ? 1 : 0))
+      sprite(friend, friendPal, 96, 104 + (Math.sin(t * 2 + 1) > 0.6 ? 1 : 0))
       raf = requestAnimationFrame(loop)
     }
     raf = requestAnimationFrame(loop)

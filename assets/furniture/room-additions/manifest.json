@@ -1,0 +1,670 @@
+{
+  "tileSize": 16,
+  "source": "src/render/room-furniture-art.ts",
+  "status": "native assets; not connected to game acquisition or placement",
+  "columns": 6,
+  "cellWidth": 40,
+  "cellHeight": 24,
+  "items": [
+    {
+      "id": "windowBench",
+      "name": "창가 벤치",
+      "group": "room-additions",
+      "file": "windowBench.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "visible": {
+        "left": 2,
+        "top": 4,
+        "right": 29,
+        "bottom": 14,
+        "width": 28,
+        "height": 11
+      },
+      "role": "floor-furniture",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "armchair",
+      "name": "둥근 안락의자",
+      "group": "room-additions",
+      "file": "armchair.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "visible": {
+        "left": 2,
+        "top": 2,
+        "right": 13,
+        "bottom": 14,
+        "width": 12,
+        "height": 13
+      },
+      "role": "floor-furniture",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "footstool",
+      "name": "발 받침",
+      "group": "room-additions",
+      "file": "footstool.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "visible": {
+        "left": 3,
+        "top": 8,
+        "right": 12,
+        "bottom": 14,
+        "width": 10,
+        "height": 7
+      },
+      "role": "floor-furniture",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "cornerShelf",
+      "name": "모서리 선반",
+      "group": "room-additions",
+      "file": "cornerShelf.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "visible": {
+        "left": 2,
+        "top": 1,
+        "right": 13,
+        "bottom": 14,
+        "width": 12,
+        "height": 14
+      },
+      "role": "floor-furniture",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "blanketLadder",
+      "name": "담요 사다리",
+      "group": "room-additions",
+      "file": "blanketLadder.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "visible": {
+        "left": 3,
+        "top": 1,
+        "right": 12,
+        "bottom": 14,
+        "width": 10,
+        "height": 14
+      },
+      "role": "floor-furniture",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "longDresser",
+      "name": "긴 서랍장",
+      "group": "room-additions",
+      "file": "longDresser.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "visible": {
+        "left": 2,
+        "top": 4,
+        "right": 29,
+        "bottom": 14,
+        "width": 28,
+        "height": 11
+      },
+      "role": "floor-furniture",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "wardrobe",
+      "name": "옷장",
+      "group": "room-additions",
+      "file": "wardrobe.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "visible": {
+        "left": 3,
+        "top": 1,
+        "right": 28,
+        "bottom": 14,
+        "width": 26,
+        "height": 14
+      },
+      "role": "floor-furniture",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "coatTree",
+      "name": "옷걸이 기둥",
+      "group": "room-additions",
+      "file": "coatTree.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "visible": {
+        "left": 3,
+        "top": 1,
+        "right": 13,
+        "bottom": 14,
+        "width": 11,
+        "height": 14
+      },
+      "role": "floor-furniture",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "vanity",
+      "name": "화장대",
+      "group": "room-additions",
+      "file": "vanity.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "visible": {
+        "left": 2,
+        "top": 1,
+        "right": 29,
+        "bottom": 14,
+        "width": 28,
+        "height": 14
+      },
+      "role": "floor-furniture",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "jewelryBox",
+      "name": "보석함",
+      "group": "room-additions",
+      "file": "jewelryBox.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "visible": {
+        "left": 3,
+        "top": 7,
+        "right": 12,
+        "bottom": 14,
+        "width": 10,
+        "height": 8
+      },
+      "role": "surface-prop",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "spiceShelf",
+      "name": "향신료 선반",
+      "group": "room-additions",
+      "file": "spiceShelf.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "visible": {
+        "left": 3,
+        "top": 3,
+        "right": 28,
+        "bottom": 14,
+        "width": 26,
+        "height": 12
+      },
+      "role": "wall",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "plateRack",
+      "name": "그릇꽂이",
+      "group": "room-additions",
+      "file": "plateRack.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "visible": {
+        "left": 1,
+        "top": 4,
+        "right": 14,
+        "bottom": 14,
+        "width": 14,
+        "height": 11
+      },
+      "role": "floor-furniture",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "potHanger",
+      "name": "냄비 걸이",
+      "group": "room-additions",
+      "file": "potHanger.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "visible": {
+        "left": 2,
+        "top": 2,
+        "right": 29,
+        "bottom": 14,
+        "width": 28,
+        "height": 13
+      },
+      "role": "wall",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "millstoneStand",
+      "name": "맷돌 받침",
+      "group": "room-additions",
+      "file": "millstoneStand.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "visible": {
+        "left": 1,
+        "top": 2,
+        "right": 14,
+        "bottom": 14,
+        "width": 14,
+        "height": 13
+      },
+      "role": "floor-furniture",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "pickleStand",
+      "name": "절임 항아리대",
+      "group": "room-additions",
+      "file": "pickleStand.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "visible": {
+        "left": 2,
+        "top": 2,
+        "right": 29,
+        "bottom": 14,
+        "width": 28,
+        "height": 13
+      },
+      "role": "floor-furniture",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "breadCoolingRack",
+      "name": "빵 식힘 선반",
+      "group": "room-additions",
+      "file": "breadCoolingRack.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "visible": {
+        "left": 2,
+        "top": 3,
+        "right": 29,
+        "bottom": 14,
+        "width": 28,
+        "height": 12
+      },
+      "role": "floor-furniture",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "fruitDisplay",
+      "name": "과일 진열대",
+      "group": "room-additions",
+      "file": "fruitDisplay.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "visible": {
+        "left": 2,
+        "top": 4,
+        "right": 29,
+        "bottom": 14,
+        "width": 28,
+        "height": 11
+      },
+      "role": "floor-furniture",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "dishwashingTable",
+      "name": "설거지 작업대",
+      "group": "room-additions",
+      "file": "dishwashingTable.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "visible": {
+        "left": 2,
+        "top": 5,
+        "right": 29,
+        "bottom": 14,
+        "width": 28,
+        "height": 10
+      },
+      "role": "floor-furniture",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "sewingBox",
+      "name": "작은 바느질함",
+      "group": "room-additions",
+      "file": "sewingBox.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "visible": {
+        "left": 3,
+        "top": 6,
+        "right": 12,
+        "bottom": 14,
+        "width": 10,
+        "height": 9
+      },
+      "role": "surface-prop",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "fabricShelf",
+      "name": "천 보관 선반",
+      "group": "room-additions",
+      "file": "fabricShelf.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "visible": {
+        "left": 2,
+        "top": 1,
+        "right": 29,
+        "bottom": 14,
+        "width": 28,
+        "height": 14
+      },
+      "role": "floor-furniture",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "drawingDesk",
+      "name": "그림 작업대",
+      "group": "room-additions",
+      "file": "drawingDesk.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "visible": {
+        "left": 2,
+        "top": 2,
+        "right": 28,
+        "bottom": 14,
+        "width": 27,
+        "height": 13
+      },
+      "role": "floor-furniture",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "paperDryingRack",
+      "name": "종이 건조대",
+      "group": "room-additions",
+      "file": "paperDryingRack.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "visible": {
+        "left": 2,
+        "top": 1,
+        "right": 29,
+        "bottom": 14,
+        "width": 28,
+        "height": 14
+      },
+      "role": "floor-furniture",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "mapTable",
+      "name": "지도 탁자",
+      "group": "room-additions",
+      "file": "mapTable.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "visible": {
+        "left": 2,
+        "top": 3,
+        "right": 29,
+        "bottom": 14,
+        "width": 28,
+        "height": 12
+      },
+      "role": "floor-furniture",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "letterSorter",
+      "name": "편지 분류장",
+      "group": "room-additions",
+      "file": "letterSorter.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "visible": {
+        "left": 2,
+        "top": 1,
+        "right": 29,
+        "bottom": 14,
+        "width": 28,
+        "height": 14
+      },
+      "role": "floor-furniture",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "musicStand",
+      "name": "악보 받침",
+      "group": "room-additions",
+      "file": "musicStand.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "visible": {
+        "left": 2,
+        "top": 3,
+        "right": 13,
+        "bottom": 14,
+        "width": 12,
+        "height": 12
+      },
+      "role": "floor-furniture",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "smallHarp",
+      "name": "작은 하프",
+      "group": "room-additions",
+      "file": "smallHarp.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "visible": {
+        "left": 2,
+        "top": 1,
+        "right": 13,
+        "bottom": 14,
+        "width": 12,
+        "height": 14
+      },
+      "role": "floor-furniture",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "dollBed",
+      "name": "인형 침대",
+      "group": "room-additions",
+      "file": "dollBed.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "visible": {
+        "left": 2,
+        "top": 7,
+        "right": 13,
+        "bottom": 14,
+        "width": 12,
+        "height": 8
+      },
+      "role": "floor-furniture",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "toyCart",
+      "name": "장난감 수레",
+      "group": "room-additions",
+      "file": "toyCart.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "visible": {
+        "left": 1,
+        "top": 5,
+        "right": 13,
+        "bottom": 14,
+        "width": 13,
+        "height": 10
+      },
+      "role": "floor-furniture",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "umbrellaStand",
+      "name": "우산꽂이",
+      "group": "room-additions",
+      "file": "umbrellaStand.png",
+      "width": 16,
+      "height": 16,
+      "footprint": {
+        "w": 1,
+        "h": 1
+      },
+      "visible": {
+        "left": 3,
+        "top": 1,
+        "right": 12,
+        "bottom": 14,
+        "width": 10,
+        "height": 14
+      },
+      "role": "floor-furniture",
+      "sizeCheck": "pass"
+    },
+    {
+      "id": "seedCabinet",
+      "name": "씨앗 정리장",
+      "group": "room-additions",
+      "file": "seedCabinet.png",
+      "width": 32,
+      "height": 16,
+      "footprint": {
+        "w": 2,
+        "h": 1
+      },
+      "visible": {
+        "left": 2,
+        "top": 0,
+        "right": 29,
+        "bottom": 14,
+        "width": 28,
+        "height": 15
+      },
+      "role": "floor-furniture",
+      "sizeCheck": "pass"
+    }
+  ]
+}

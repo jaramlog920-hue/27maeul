@@ -1,0 +1,21 @@
+.dialog.genealogy { width: min(760px, calc(100vw - 24px)); max-width: 760px; }
+.genealogy-viewport { overflow: auto; max-height: 58vh; border: 1px solid var(--panel-line); border-radius: 8px; background: var(--panel-soft); }
+.genealogy-board { position: relative; margin: 0 auto; }
+.genealogy-board svg { position: absolute; inset: 0; pointer-events: none; }
+.genealogy-line { fill: none; stroke: #acb99d; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.genealogy-line.spouse { stroke: #b59395; }
+.genealogy-line.kin { stroke: #b6aa96; stroke-dasharray: 4 5; }
+.genealogy-person { position: absolute; width: 100px; padding: 0; background: transparent; border: 0; box-shadow: none; display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.genealogy-person:hover { background: transparent; }
+.genealogy-face { display: flex; align-items: flex-end; justify-content: center; width: 58px; height: 58px; border-radius: 50%; overflow: hidden; border: 3px solid #a8b598; background: #dce4d1; box-sizing: border-box; }
+.genealogy-face canvas { image-rendering: pixelated; width: 48px; height: 56px; }
+.genealogy-person.selected .genealogy-face { border-color: #607d47; box-shadow: 0 0 0 4px #91a77a44; background: #e5ecd8; }
+.genealogy-person strong { font-size: 13px; line-height: 1.3; color: var(--ink); }
+.genealogy-person small { font-size: 11px; color: var(--ink-soft); }
+.genealogy-person:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
+.genealogy-legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 11px; color: var(--ink-soft); }
+.genealogy-legend span::before { content: ''; display: inline-block; width: 18px; margin-right: 4px; border-top: 2px solid #acb99d; vertical-align: middle; }
+.genealogy-legend span:nth-child(2)::before { border-color: #b59395; }
+.genealogy-legend span:nth-child(3)::before { border-color: #b6aa96; border-top-style: dashed; }
+.genealogy-rename { display: flex; gap: 8px; align-items: center; margin: 8px 0 0; }
+.genealogy-rename input { flex: 1; min-width: 0; font: inherit; padding: 6px 8px; border: 1px solid #b6aa96; border-radius: 6px; background: #fffdf6; color: var(--ink); }

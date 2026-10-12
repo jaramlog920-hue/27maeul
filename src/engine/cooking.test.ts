@@ -1,9 +1,10 @@
+import { establishedGame as newGame } from "./growth-test-support"
 // 계획 16 작업 25: 직접 요리하고 함께 먹는 생활 — 만들기(재료 한 번)·중단·가방 가득·먹기·식탁·함께 먹은 기억·배우기·행사·좌판·옛 저장
 import { CONTENT } from '../content/catalog'
 import { ITEM_TEXT, T } from '../content/text'
-import { newGame, syncHome, type GameState } from './game'
+import { syncHome, type GameState } from './game'
 import {
-  canCook, canLearnDish, canServe, canSit, chooseLook, clearTable, cookHand, cookOf, DISHES, deliverCook, dinersNear, dishTaughtBy, eatDish, kidCanChoose, knownDish,
+  canCook, canLearnDish, canServe, canSit, chooseLook, clearTable, cookHand, cookOf, DISHES, deliverCook, dinersNear, diningSpaces, dishTaughtBy, eatDish, kidCanChoose, knownDish,
   learnDish, LEARN_HEARTS, mealReaction, missingFor, NEW_DISHES, nextCookStep, readyBlock, sanitizeCooking, serveMax, serveTable, setBreadShape, settleTable, sitTable, startCook, UNEVEN_CHANCE,
 } from './cooking'
 import { FEST_SNACKS, festReactions, type Fest } from './fest'
@@ -34,7 +35,9 @@ function furnish(s: GameState, pieces: [ItemId, number, number, Facing?][]): Gam
 }
 function base(inv: Partial<Record<ItemId, number>> = {}): GameState {
   const s = newGame(CONTENT)
-  return { ...s, scenes: [], clock: { day: 3, minute: 15 * 60 }, inv: { ...inv }, needs: { ...s.needs, hunger: 80, fatigue: 0 } }
+  // 탁자 자리 좌표는 예전 침대 자리(17,111)를 기준으로 짰다 — 침대만 그 자리로 둔다
+  const room = s.room.map((f) => (f.item === 'homeBed' ? { ...f, x: 17, y: 111 } : f))
+  return { ...s, room, scenes: [], clock: { day: 3, minute: 15 * 60 }, inv: { ...inv }, needs: { ...s.needs, hunger: 80, fatigue: 0 } }
 }
 /** 마지막 손 동작까지 끝내고 담는 모습을 고를 수 있는 상태로 */
 function toFinish(s: GameState, dish: (typeof NEW_DISHES)[number]): GameState {
@@ -83,6 +86,43 @@ describe('요리 목록과 처음부터 아는 요리', () => {
 })
 
 describe('만들기 — 재료는 시작할 때 한 번', () => {
+  it.each(NEW_DISHES)('%s: 모든 손일 단계에서 저장·다음 날 재개해도 재료와 완성품은 한 번만 처리된다', (dish) => {
+    const def=DISHES[dish]
+    const s=base({ ...def.needs })
+    const initial={...s,cooking:{...cookOf(s),learned:Object.fromEntries(NEW_DISHES.filter(d=>DISHES[d].teachers.length).map(d=>[d,{day:1,from:DISHES[d].teachers[0]}]))}}
+    let n=startCook(initial,dish,rng)
+    for(let hand=0;hand<def.hands.length;hand++) {
+      n=deserialize(serialize(n),CONTENT)!
+      expect(cookOf(n).run).toMatchObject({dish,phase:'hand',hand})
+      expect(startCook(n,dish,rng)).toBe(n)
+      for(const item of Object.keys(def.needs) as ItemId[]) expect(count(n.inv,item)).toBe(0)
+      n={...n,clock:{day:n.clock.day+1,minute:900},cooking:{...cookOf(n),run:{...cookOf(n).run!,mini:finishNow(cookOf(n).run!.mini!)}}}
+      n=nextCookStep(n,rng)
+    }
+    const finish=deserialize(serialize(n),CONTENT)!
+    expect(cookOf(finish).run?.phase).toBe('finish')
+    const done=chooseLook(finish,1)
+    expect(count(done.inv,def.item)).toBe(def.qty)
+    expect(done.clock.minute-finish.clock.minute).toBe(def.minutes)
+    expect(cookOf(done).made[dish]).toBe(1)
+    expect(deliverCook(done)).toBe(done)
+    const loaded=deserialize(serialize(done),CONTENT)!
+    expect(cookOf(loaded).run).toBeUndefined()
+    expect(count(loaded.inv,def.item)).toBe(def.qty)
+  })
+  it('완성 대기를 저장하고 다음 날 재개해도 음식은 유지되고 받는 시간은 한 번만 흐른다', () => {
+    const finished=toFinish(base({fig:1}),'figPlate')
+    const ready=chooseLook({...finished,inv:{figPlate:MAX_STACK}},1)
+    const restored=deserialize(serialize(ready),CONTENT)!
+    expect(cookOf(restored).run).toMatchObject({phase:'ready',look:1})
+    expect(deliverCook(restored)).toBe(restored)
+    const available={...restored,inv:{},clock:{day:4,minute:900}}
+    const got=deliverCook(available)
+    expect(count(got.inv,'figPlate')).toBe(1)
+    expect(got.clock.minute).toBe(910)
+    expect(got.flags['cook:first:figPlate']).toBe(4)
+    expect(deliverCook(got)).toBe(got)
+  })
   it('재료가 모자라면 시작할 수 없고 모자란 것을 알려 준다', () => {
     const s = base({ bean: 1 })
     expect(canCook(s, 'beanDish')).toBe('needs')
@@ -217,6 +257,45 @@ const guest = (s: GameState, id: string, x = 21, y = 112): GameState => {
 }
 
 describe('식탁 — 차리기·먹기·치우기', () => {
+  it('새 터에 다녀와도 같은 날 집에 차려 둔 음식은 식탁에 남고 멀리서 먹을 수 없다', () => {
+    const served=serveTable(guest(withTea({figPlate:2}),'poppy'),'figPlate',2)
+    const away={...served,map:'newland' as const}
+    expect(diningSpaces(served)).toHaveLength(1)
+    expect(diningSpaces(away)).toEqual([])
+    expect(dinersNear(away)).toEqual([])
+    expect(settleTable(away)).toBe(away)
+    expect(cookOf(away).table?.left).toBe(2)
+    expect(canSit(away,['poppy'])).toBe('away')
+    expect(sitTable(away,['poppy'])).toBeNull()
+    const returned={...away,map:'village' as const}
+    expect(diningSpaces(returned)).toHaveLength(1)
+    expect(canSit(returned,['poppy'])).toBeNull()
+    expect(sitTable(returned,['poppy'])?.state.cooking?.table).toBeUndefined()
+    const nextDay=settleTable({...away,clock:{...away.clock,day:4}})
+    expect(count(nextDay.inv,'figPlate')).toBe(2)
+    expect(settleTable(nextDay)).toBe(nextDay)
+  })
+  it('다른 지도에서 같은 좌표라도 차릴 수 없고 다른 상태 조회 뒤에도 집에서는 차릴 수 있다', () => {
+    const home=withTea({figPlate:2})
+    const away={...home,map:'newland' as const}
+    syncHome(home)
+    expect(canServe(away)).toBe('away')
+    expect(serveTable(away,'figPlate',1)).toBe(away)
+    syncHome(away)
+    expect(canServe(home)).toBeNull()
+  })
+  it('음식을 차린 뒤 의자를 줄이면 현재 좌석 수보다 많은 사람이 함께 먹지 못한다', () => {
+    const served = serveTable(guest(withTea({ figPlate: 2 }), 'poppy'), 'figPlate', 2)
+    const fewerSeats = { ...served, room: served.room.filter(f => !(f.item === 'chair' && f.x === 20 && f.y === 113)) }
+    expect(settleTable(fewerSeats)).toBe(fewerSeats)
+    expect(serveMax(fewerSeats, 'figPlate')).toBe(0)
+    expect(canSit(fewerSeats, ['poppy'])).toBe('seats')
+    expect(sitTable(fewerSeats, ['poppy'])).toBeNull()
+    expect(canSit(fewerSeats, [])).toBeNull()
+    expect(cookOf(clearTable(fewerSeats)).table).toBeUndefined()
+    expect(count(clearTable(fewerSeats).inv, 'figPlate')).toBe(2)
+  })
+
   it('식탁 자리(차 자리)가 없으면 차릴 수 없지만 혼자 먹기는 된다', () => {
     const s = base({ honeyBread: 2 })
     expect(canServe(s)).toBe('noSpace')

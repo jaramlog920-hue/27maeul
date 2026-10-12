@@ -7,7 +7,8 @@ import { formatTime, seasonOf } from './clock'
 import { LESSON_FROM, LESSON_TO } from './stories'
 import type { GameContent } from './types'
 import { isBirthday } from './notebook'
-import { isReadingDay, READING_FROM, READING_TO, seasonCopyKey, seasonCopyOpen } from './meetings'
+import { t } from '../shared/i18n'
+import { isReadingDay, READING_FROM, READING_TO, readingRest, seasonCopyKey, seasonCopyOpen } from './meetings'
 
 export interface ScheduledEvent {
   id: string
@@ -22,11 +23,19 @@ const festivals = { blossom: '봄꽃 잔치', barley: '보리 거둔 날 잔치'
 const gatherings = { babyParty: '아기 잔치', picnic: '언덕 소풍', starNight: '별 보는 밤' }
 
 /** 미래의 친밀도 이벤트는 추측하지 않고, 확정된 날짜와 오늘 정해진 일정만 안내한다. */
-export function scheduledEvents(s: Pick<GameState, 'clock' | 'today' | 'flags'> & Partial<Pick<GameState, 'notebook' | 'plans' | 'gen'>>, content: GameContent): ScheduledEvent[] {
+export function scheduledEvents(s: Pick<GameState, 'clock' | 'today' | 'flags'> & Partial<Pick<GameState, 'notebook' | 'plans' | 'gen' | 'romance'>>, content: GameContent): ScheduledEvent[] {
   const events: ScheduledEvent[] = []
   const day = s.clock.day
   const add = (id: string, title: string, location: string, from: number, to: number, done = false, onDay = day) => {
     events.push({ id: `${onDay}:${id}`, day: onDay, title, location, from, to, done })
+  }
+  // 내 결혼 잔치: 약혼한 다음 장날 저녁, 광장 모닥불 (7일 안이면)
+  const r = s.romance
+  if (r?.stage === 'engaged' && r.partner && r.weddingDay !== null && r.weddingDay >= day && r.weddingDay <= day + 7) {
+    const who = content.neighbors.find((n) => n.id === r.partner)?.role ?? ''
+    const c = who.charCodeAt(who.length - 1) - 0xac00
+    const whoAnd = who + (c >= 0 && c < 11172 && c % 28 !== 0 ? '과' : '와')
+    add('wedding', t('schedule.myWedding', { whoAnd }), lifeText.gen.weddingPlace, FESTIVAL_FROM, FESTIVAL_TO, false, r.weddingDay)
   }
   // 주민 결혼 잔치 (계획 20 2부 — 달력 초대): 결혼 준비 중인 쌍의 잔치 날, 7일 안이면
   if (s.gen?.on) {
@@ -47,7 +56,7 @@ export function scheduledEvents(s: Pick<GameState, 'clock' | 'today' | 'flags'> 
   if (seasonCopyOpen(day) && !s.flags[seasonCopyKey(day)]) add('seasonCopy', lifeText.meetings.seasonCopy, lifeText.meetings.seasonCopyPlace, 6 * 60, 22 * 60)
   for (let d = day; d <= day + 7; d++) {
     // 마을 소리내어 읽기 모임 (계획 21 R7)
-    if (isReadingDay(d)) add('reading', lifeText.meetings.reading, lifeText.meetings.readingPlace, READING_FROM, READING_TO, s.flags.readDay === d, d)
+    if (isReadingDay(d) && !readingRest(s, d)) add('reading', lifeText.meetings.reading, lifeText.meetings.readingPlace, READING_FROM, READING_TO, s.flags.readDay === d, d)
     const festival = festivalOf(d)
     if (festival) add('festival', festivals[festival], '장터 모닥불', FESTIVAL_FROM, FESTIVAL_TO, false, d)
     if (isMarketDay(d)) {

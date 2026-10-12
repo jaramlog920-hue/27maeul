@@ -11,7 +11,7 @@ import { STALL_SPOT, stallSceneNow } from '../engine/stall'
 import { clubWorkSpots } from '../engine/clubs'
 import { villageScenes } from '../engine/projects'
 import { SITES } from '../engine/village-sites'
-import { HOME_SPACE_DIRECTIONS } from './home-space-directions'
+import { VILLAGE_BENCH_ART } from './village-bench-art'
 import type { StoryProp } from '../engine/people'
 import { TILE } from '../engine/world'
 import { FURNI_PALETTE, FURNITURE_ART, type FurnitureArt } from './furniture-art'
@@ -141,7 +141,7 @@ export function drawVillage(g: CanvasRenderingContext2D, game: GameState): void 
     const y0 = site.tiles[0].y * TILE
     const built = sc.stage === 3
     if (sc.id === 'longBench') {
-      if (built) g.drawImage(painted(HOME_SPACE_DIRECTIONS.longBench.down), x0, y0)
+      if (built) g.drawImage(painted(VILLAGE_BENCH_ART), x0, y0)
       else {
         prop('buildMaterials', x0, y0)
         if (sc.stage >= 1) prop('woodParts', x0 + TILE, y0)

@@ -34,7 +34,7 @@ import {
   tradesFor,
   type GameState,
 } from './game'
-import { isWalkable } from './world'
+import { isWalkable, ROOMS } from './world'
 import type { NeighborDef } from './types'
 
 const zero = () => 0
@@ -50,6 +50,8 @@ describe('A. 이웃의 부탁', () => {
   })
   it('마음 4부터 부탁 → 가져다주면 보상·변화·마음, 그다음 마음 7의 부탁', () => {
     let s: GameState = { ...newGame(CONTENT), hearts: { smith: 30 } }
+    s.progress.mt.completed = [1, 2, 3, 4, 5]
+    s.flags['growth:smallRequest'] = 1
     expect(requestFor('smith', 30, s.flags)).toBeNull()
     s = { ...s, hearts: { smith: 40 } }
     s = askRequest(s, 'smith')
@@ -119,6 +121,9 @@ describe('B. 먼저 찾아오기와 저녁 초대', () => {
     let s: GameState = { ...at(newGame(CONTENT), 18 * 60 + 30), needs: { hunger: 80, fatigue: 0, cold: 0, heat: 0 }, today: { visitor: null, visitGot: false, inviter: 'grandpa', dined: false, gathering: null } }
     expect(inviterAtDoor(s, INVITE_DOORS.baker)).toBeNull()
     expect(inviterAtDoor(s, INVITE_DOORS.grandpa)).toBe('grandpa')
+    // 초대한 이웃이 제 집 안에 와 있을 때만 (2026-10-12 사용자 결정)
+    const sit = ROOMS.find((r) => r.owner === 'grandpa')!.sit
+    s = { ...s, npcs: { ...s.npcs, grandpa: { ...s.npcs.grandpa, x: sit.x, y: sit.y, path: [] } } }
     s = dine(s, 'grandpa')!
     expect(s.needs.hunger).toBeLessThanOrEqual(30)
     expect(s.scenes).toContain('dinner:grandpa')

@@ -20,9 +20,9 @@ describe('직업 단계 보상', () => {
     expect(letterPay(0, 2)).toBe(36)
     expect(letterPay(9, 1)).toBe(18)
   })
-  it('마을 필사가부터 장날에 공방 제품을 팔고, 말씀 책은 팔 수 없다', () => {
+  it('초보 필사가도 장날에 가진 공방 제품을 팔고, 말씀 책은 팔 수 없다', () => {
     const s = marketDay({ ...newGame(CONTENT), inv: { ink: 2 } })
-    expect(canSell(s, 'ink')).toBe('job')
+    expect(canSell(s, 'ink')).toBeNull()
     const village = { ...s, lettersDone: 10, shelved: { mk: 1 as const } }
     expect(SELL_FROM).toBe(1)
     expect(canSell(village, 'ink')).toBeNull()

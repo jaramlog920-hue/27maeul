@@ -1,9 +1,10 @@
+import { legacyGame as newGame } from './growth-test-support'
 import { CONTENT, PEOPLE } from '../content/catalog'
-import { newGame, settle, type GameState } from './game'
+import { settle, type GameState } from './game'
 import { advancePlans, appointmentSpots, venueFor } from './plans'
-import { createFest, cancelFest, postponeFest, joinFest, festStep, festFinish, festKinds, festReactions, festivalRoleReady, doFestivalRole, homeSeats, festWorks, sanitizeFests, festWaiting, FEST_STEPS, type FestInput } from './fest'
+import { createFest, cancelFest, postponeFest, joinFest, festStep, festFinish, festKinds, festReactions, festivalRoleReady, doFestivalRole, homeSeats, festWorks, sanitizeFests, festWaiting, settleFests, festivalDays, FEST_STEPS, type FestInput } from './fest'
 import { deserialize, serialize } from './save'
-import { festivalOf, weatherOf, FESTIVAL_FROM } from './calendar'
+import { festivalOf, weatherOf, FESTIVAL_FROM, FESTIVAL_TO } from './calendar'
 import { FESTIVAL_SPOTS } from './neighbors'
 import { eventPropsNow } from './event-scene'
 import { solidTiles } from './room'
@@ -15,6 +16,66 @@ function ready(day=2,minute=480):GameState {
  return {...s,clock:{day,minute},scenes:[],notebook:{...s.notebook,met:CONTENT.neighbors.map(n=>n.id)},flags:{...s.flags,villageLevel:10,...Object.fromEntries(CONTENT.neighbors.map(n=>[`movedIn:${n.id}`,1]))},life:{...s.life,seen:Object.values(PEOPLE.people).flatMap(p=>(p.events??[]).map(e=>e.id))}}
 }
 const tea:FestInput={kind:'tea',day:3,slot:'morning',place:'hallTable',members:['baker','poppy']}
+describe('계절 잔치 간식과 종료/저장 경계', () => {
+ it.each([20, 65, 110, 140])('%i일 잔치 완료 뒤 같은 날 재준비는 막지만 다음 해에는 새로 준비한다', day => {
+  const input: FestInput = { kind: 'festival', day, role: 'food', snack: 'bread', members: [] }
+  const prepared = createFest({ ...ready(day - 5), inv: { bread: 3 } }, input, CONTENT)
+  expect(prepared.error).toBeUndefined()
+  const onsite = { ...prepared.state, clock: { day, minute: FESTIVAL_FROM }, player: { ...prepared.state.player, x: 24, y: 20 } }
+  const done = deserialize(serialize(doFestivalRole(onsite, prepared.id!)), CONTENT)!
+  expect(festivalDays(done)).not.toContain(day)
+  const repeated = createFest(done, input, CONTENT)
+  expect(repeated.error).toBe('festival')
+  expect(repeated.state).toBe(done)
+  const yearLater = { ...done, clock: { day: day + 160 - 5, minute: 600 } }
+  const next = createFest(yearLater, { ...input, day: day + 160 }, CONTENT)
+  expect(next.error).toBeUndefined()
+  expect(next.id).not.toBe(prepared.id)
+  expect(next.state.fests[0]).toEqual(done.fests[0])
+  expect(next.state.fests[1]).toMatchObject({ day: day + 160, joined: false, consumed: false, closed: false, reserve: { bread: 1 } })
+  expect(next.state.inv.bread).toBe(done.inv.bread! - 1)
+ })
+ it('완료하지 않은 준비를 취소하면 같은 잔치에 다시 준비할 수 있다', () => {
+  const input: FestInput = { kind: 'festival', day: 20, role: 'food', snack: 'bread', members: [] }
+  const base = { ...ready(15), inv: { bread: 2 } }
+  const made = createFest(base, input, CONTENT)
+  const cancelled = deserialize(serialize(cancelFest(made.state, made.id!)), CONTENT)!
+  expect(cancelled.inv).toEqual(base.inv)
+  const retry = createFest(cancelled, input, CONTENT)
+  expect(retry.error).toBeUndefined()
+  expect(retry.state.inv.bread).toBe(1)
+ })
+ it('현장 참석자가 셋보다 많아도 역할 완료 후 저장에서 모두 유지된다', () => {
+  const base = { ...ready(15), inv: { bread: 2, candle: 1 } }
+  let s = createFest(base, { kind: 'festival', day: 20, role: 'food', snack: 'bread', deco: 'candle', members: [] }, CONTENT).state
+  const ids = ['baker', 'child', 'grandpa', 'smith', 'shepherd']
+  s = { ...s, clock: { day: 20, minute: FESTIVAL_FROM }, player: { ...s.player, x: 24, y: 20 },
+    npcs: Object.fromEntries(Object.entries(s.npcs).map(([id, n]) => [id, ids.includes(id)
+      ? { ...n, ...FESTIVAL_SPOTS[id], visible: true, path: [] } : { ...n, visible: false }])) }
+  const done = doFestivalRole(s, s.fests[0].id)
+  expect(done.fests[0].members).toHaveLength(5)
+  expect(done.inv.bread).toBe(1)
+  expect(done.inv.candle).toBe(1)
+  expect(done.fests[0].closed).toBe(true)
+  const restored = deserialize(serialize(done), CONTENT)!
+  expect(restored.fests[0].members).toEqual(done.fests[0].members)
+  expect(sanitizeFests([{ ...done.fests[0], kind: 'tea' }])[0].members).toHaveLength(3)
+  expect(doFestivalRole(restored, restored.fests[0].id)).toBe(restored)
+  expect(settleFests(restored).inv).toEqual(done.inv)
+ })
+ it.each([FESTIVAL_TO, FESTIVAL_TO + 1])('%i분에 끝난 준비는 간식과 장식을 한 번 반환한다', minute => {
+  const base = { ...ready(15), inv: { bread: 2, candle: 1 } }
+  const made = createFest(base, { kind: 'festival', day: 20, role: 'food', snack: 'bread', deco: 'candle', members: [] }, CONTENT).state
+  const late = { ...made, clock: { day: 20, minute }, player: { ...made.player, x: 24, y: 20 } }
+  expect(festivalRoleReady(late)).toBeNull()
+  expect(doFestivalRole(late, late.fests[0].id)).toBe(late)
+  const ended = settleFests(late)
+  expect(ended.inv).toEqual(base.inv)
+  expect(ended.fests[0].consumed).toBe(false)
+  const restored = deserialize(serialize(ended), CONTENT)!
+  expect(settleFests(restored).inv).toEqual(base.inv)
+ })
+})
 function made(input:Partial<FestInput>={},s=ready()):GameState {
  const r=createFest(s,{...tea,...input},CONTENT)
  expect(r.error).toBeUndefined()
@@ -38,6 +99,17 @@ function walkThrough(s:GameState,pick?:string):GameState {
 }
 
 describe('내가 준비하는 작은 행사',()=>{
+ it('cannot advance or finish a joined event after leaving its venue',()=>{
+  const at=joined(made())
+  const away={...at,player:{...at.player,x:1,y:8}}
+  expect(festStep(away,away.fests[0].id)).toBe(away)
+  expect(joinFest(away,away.fests[0].id)).toBe(away)
+  let ending=at
+  while(ending.fests[0].step!=='finish') ending=festStep(ending,ending.fests[0].id,ending.fests[0].step==='activity'?'basic':undefined)
+  const left={...ending,player:{...ending.player,x:1,y:8}}
+  expect(festFinish(left,left.fests[0].id)).toBe(left)
+  expect(festFinish(ending,ending.fests[0].id).fests[0].closed).toBe(true)
+ })
  it('차 모임: 예약 → 당일 정돈·도착·함께·대화·마무리 → 정산은 한 번, 참석자만 기억', ()=>{
   let s=made({snack:'bread'},{...ready(),inv:{...ready().inv,bread:2}})
   expect(s.inv.bread).toBe(1)
@@ -173,6 +245,8 @@ describe('내가 준비하는 작은 행사',()=>{
   for(const p of ['bed','desk','hearth','shelf','workbench'] as const) expect(findPath(HOME_ENTRY,PLACES[p].stand!,blocked)).not.toBeNull()
   s=made({kind:'housewarming',place:'hearth',members:['baker','poppy'],deco:'vase'},{...s,inv:{...s.inv,vase:1}})
   expect(s.plans.appts[0]).toMatchObject({requiresPlayer:true})
+  const elsewhere=advancePlans({...s,map:'newland',clock:{day:3,minute:601},player:{...s.player,...HOME_ENTRY}},CONTENT)
+  expect(elsewhere.plans.appts[0]).toMatchObject({state:'skipped',reason:'host'})
   // 집 밖에 있는 동안 시작 시각이 지나간다
   s=advancePlans({...s,clock:{day:3,minute:601},player:{...s.player,...PLACES.well.stand!}},CONTENT)
   expect(s.plans.appts[0].state).toBe('skipped')
@@ -222,6 +296,9 @@ describe('내가 준비하는 작은 행사',()=>{
   s={...s,clock:{day,minute:FESTIVAL_FROM+10},player:{...s.player,x:24,y:21}}
   s={...s,npcs:Object.fromEntries(Object.entries(s.npcs).map(([id,n])=>[id,FESTIVAL_SPOTS[id]&&id==='baker'?{...n,...FESTIVAL_SPOTS[id],path:[],visible:true}:{...n,visible:false}]))}
   expect(festivalRoleReady(s)?.id).toBe(s.fests[0].id)
+  const elsewhere={...s,map:'newland' as const}
+  expect(festivalRoleReady(elsewhere)).toBeNull()
+  expect(doFestivalRole(elsewhere,s.fests[0].id)).toBe(elsewhere)
   s=doFestivalRole(s,s.fests[0].id)
   expect(s.inv.bread??0).toBe(0)
   expect(s.life.experiences['fest:1']).toMatchObject({kind:'event',with:['baker']})

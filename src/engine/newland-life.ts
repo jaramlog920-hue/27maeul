@@ -9,6 +9,9 @@ import type { GameState } from './game'
 import type { ItemId, NeighborDef, Tile } from './types'
 import type { GodFind } from './god-records'
 import { addGift } from './items'
+import { logGift } from './daybook'
+import { NO_NOTEBOOK, noteGot } from './notebook'
+import { moveInGift } from './collection-gifts'
 import { areaOf, buildsOf, doneHomes, doorOf, standSpotOf, type Build } from './newland-build'
 import { isOpenYard } from './newland-sites'
 import { childStage, type AdultJob } from './child'
@@ -79,7 +82,8 @@ export function talkGuest<T extends S & Pick<GameState, 'inv'>>(s: T): { state: 
     inv = addGift(inv, { [gift]: 1 })
     flags = { ...flags, [`guestGift:${guest}`]: s.clock.day }
   }
-  return { state: { ...s, flags, inv }, guest, line: gifted ? 'again' : Math.min(talks, GUEST_STAY) - 1, ...(gift ? { gift } : {}) }
+  const state = { ...s, flags, inv }
+  return { state: gift ? logGift(state, guest, { [gift]: 1 }) : state, guest, line: gifted ? 'again' : Math.min(talks, GUEST_STAY) - 1, ...(gift ? { gift } : {}) }
 }
 
 // ── 손님 입주 (2026-10-08, 다른 창 입주 도트 연결) ──
@@ -117,18 +121,23 @@ export function canInviteGuest(s: S): GuestId | null {
   if (!g || gift === undefined || gift >= (s.flags.guestSince ?? 0) || settledGuests(s).some((x) => x.id === g) || !freeHome(s)) return null
   return g
 }
-export function inviteGuest<T extends S>(s: T): T {
+export function inviteGuest(s: GameState): GameState {
   const g = canInviteGuest(s)
   const home = freeHome(s)
   if (!g || !home) return s
   const day = s.clock.day
-  return { ...s, flags: { ...s.flags, [`settled:${g}`]: Number(home.id.slice(1)), [`settledDay:${g}`]: day, guestNow: 0, guestNext: day + GUEST_GAP } }
+  return moveInGift({ ...s, flags: { ...s.flags, [`settled:${g}`]: Number(home.id.slice(1)), [`settledDay:${g}`]: day, guestNow: 0, guestNext: day + GUEST_GAP } }, g)
 }
 /** 이웃이 된 손님이 서는 자리 (문 칸과 겹치지 않는 곁 칸 — standSpotOf) */
 export function settledSpot(home: Build): Tile | null {
   return standSpotOf(home)
 }
-export function settledAt(s: Pick<GameState, 'flags' | 'newland'>, t: Tile): GuestId | null {
+/** 이웃이 된 손님이 집 문 옆에 나와 있는 시간 (그림과 말 걸기가 같은 시간을 쓴다) */
+export const SETTLED_FROM = 8 * 60
+export const SETTLED_TO = 20 * 60
+export function settledAt(s: Pick<GameState, 'flags' | 'newland'> & Partial<Pick<GameState, 'clock'>>, t: Tile): GuestId | null {
+  // 보이지 않는 시간에는 빈 칸에 말이 걸리지 않는다 (2026-10-11 점검 8)
+  if (s.clock && (s.clock.minute < SETTLED_FROM || s.clock.minute >= SETTLED_TO)) return null
   for (const x of settledGuests(s)) {
     const at = settledSpot(x.home)
     if (at && at.x === t.x && at.y === t.y) return x.id
@@ -218,7 +227,7 @@ export function facilityAt(s: Pick<GameState, 'newland'>, t: Tile): FacilityKind
     } else if (isOpenYard(b.kind) && areaOf(b.kind, b.x, b.y).some((a) => a.x === t.x && a.y === t.y)) return b.kind as 'memorial' | 'courtyard'
   }
   if (!('flags' in s)) return null
-  const full = s as Pick<GameState, 'flags' | 'newland' | 'gen'>
+  const full = s as Pick<GameState, 'flags' | 'newland' | 'gen'> & Partial<Pick<GameState, 'clock'>>
   if (settledAt(full, t)) return 'settled'
   // 새 터로 옮긴 주민 가족 / 빈 입주 주택 앞 (주택 희망 목록) — 2026-10-08
   if (familyAt(full, t)) return 'family'
@@ -300,7 +309,7 @@ export function hearDream<T extends Pick<GameState, 'flags' | 'clock'>>(s: T, np
 
 export type DreamStage = 'open' | 'trouble' | 'after'
 /** 꿈터에 들렀을 때: 처음이면 문 연 날을 적는다. 사흘 뒤엔 어려움(고를 때까지), 고른 뒤엔 그 말 */
-export function visitDream<T extends S & Pick<GameState, 'inv'>>(s: T, gives: Partial<Record<ItemId, number>>, npc: string = DREAMER): { state: T; stage: DreamStage; gift?: Partial<Record<ItemId, number>> } | null {
+export function visitDream<T extends S & Pick<GameState, 'inv'> & Partial<Pick<GameState, 'notebook'>>>(s: T, gives: Partial<Record<ItemId, number>>, npc: string = DREAMER): { state: T; stage: DreamStage; gift?: Partial<Record<ItemId, number>> } | null {
   const d = dreamOf(npc)
   if (!d || !doneOf(s, d.build)) return null
   const open = dreamKey('dreamOpen', npc)
@@ -316,7 +325,9 @@ export function visitDream<T extends S & Pick<GameState, 'inv'>>(s: T, gives: Pa
     inv = addGift(inv, gives)
     flags = { ...flags, [giftKey]: s.clock.day }
   }
-  return { state: { ...s, flags, inv }, stage, ...(gift ? { gift } : {}) }
+  const state = { ...s, flags, inv }
+  const received = gift ? Object.entries(gift).filter(([, n]) => (n ?? 0) > 0).map(([id]) => id as ItemId) : []
+  return { state: gift ? logGift({ ...state, notebook: noteGot(s.notebook ?? NO_NOTEBOOK, npc, received) }, npc, gift) : state, stage, ...(gift ? { gift } : {}) }
 }
 /** 어려움에 함께 고른 방법 (1 · 2) — 정답 없음, 한 번 */
 export function pickDream<T extends Pick<GameState, 'flags'>>(s: T, pick: 1 | 2, npc: string = DREAMER): T {

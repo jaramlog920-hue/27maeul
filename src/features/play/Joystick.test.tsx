@@ -36,7 +36,57 @@ function dpad() {
 
 const C = PAD_SIZE / 2
 
+describe('조이스틱 앱 전환',()=>{
+  it.each(['pad','round'] as const)('clears a held %s on blur and accepts a fresh finger',shape=>{
+    const walk=vi.fn()
+    useGame.setState({walk})
+    const el=shape==='pad'?dpad():roundPad()
+    const point=shape==='pad'?{clientX:PAD_SIZE-8,clientY:C}:{clientX:69,clientY:39}
+    fireEvent.pointerDown(el,{...point,pointerId:1})
+    fireEvent.blur(window)
+    walk.mockClear()
+    act(()=>vi.advanceTimersByTime(300))
+    expect(walk).not.toHaveBeenCalled()
+    fireEvent.pointerDown(el,{...point,pointerId:2})
+    expect(walk).toHaveBeenCalledWith(1,0)
+  })
+  it.each(['pad','round'] as const)('does not resume a held %s after the document becomes visible',shape=>{
+    const walk=vi.fn()
+    useGame.setState({walk})
+    const el=shape==='pad'?dpad():roundPad()
+    const point=shape==='pad'?{clientX:PAD_SIZE-8,clientY:C}:{clientX:69,clientY:39}
+    fireEvent.pointerDown(el,{...point,pointerId:1})
+    const hidden=vi.spyOn(document,'hidden','get').mockReturnValue(true)
+    try {
+      fireEvent(document,new Event('visibilitychange'))
+      walk.mockClear()
+      act(()=>vi.advanceTimersByTime(300))
+      expect(walk).not.toHaveBeenCalled()
+      hidden.mockReturnValue(false)
+      fireEvent(document,new Event('visibilitychange'))
+      act(()=>vi.advanceTimersByTime(300))
+      expect(walk).not.toHaveBeenCalled()
+    } finally {hidden.mockRestore()}
+  })
+})
+
 describe('둥근 조이스틱', () => {
+  it('ignores a second finger until the controlling finger is released', () => {
+    const walk=vi.fn()
+    useGame.setState({walk})
+    const el=roundPad()
+    fireEvent.pointerDown(el,{clientX:69,clientY:39,pointerId:1})
+    fireEvent.pointerDown(el,{clientX:39,clientY:9,pointerId:2})
+    fireEvent.pointerMove(el,{clientX:39,clientY:9,pointerId:2,buttons:1})
+    fireEvent.pointerUp(el,{pointerId:2})
+    walk.mockClear()
+    act(()=>vi.advanceTimersByTime(100))
+    expect(walk).toHaveBeenLastCalledWith(1,0)
+    fireEvent.pointerUp(el,{pointerId:1})
+    walk.mockClear()
+    act(()=>vi.advanceTimersByTime(100))
+    expect(walk).not.toHaveBeenCalled()
+  })
   it('가운데 근처는 멈춤, 벗어나면 네 방향', () => {
     expect(directionOf(5, -5)).toBeNull()
     expect(directionOf(30, 10)).toEqual([1, 0])
@@ -67,6 +117,23 @@ describe('둥근 조이스틱', () => {
 })
 
 describe('네 방향 패드', () => {
+  it('칸에 도착하면 타이머를 기다리지 않고 이어 걷고 손을 떼면 멈춘다', () => {
+    const walk = vi.fn()
+    useGame.setState({ walk })
+    const el = dpad()
+    fireEvent.pointerDown(el, { clientX: PAD_SIZE - 8, clientY: C, pointerId: 1 })
+    const moving = () => act(() => useGame.setState(s => ({ game: { ...s.game, player: { ...s.game.player, path: [{ x: 24, y: 26 }] } } })))
+    const arrived = () => act(() => useGame.setState(s => ({ game: { ...s.game, player: { ...s.game.player, path: [] } } })))
+    moving()
+    walk.mockClear()
+    arrived()
+    expect(walk).toHaveBeenCalledExactlyOnceWith(1, 0)
+    moving()
+    fireEvent.pointerUp(el, { pointerId: 1 })
+    walk.mockClear()
+    arrived()
+    expect(walk).not.toHaveBeenCalled()
+  })
   it('기본 모양이고, 단추는 한 칸 44px 이상', () => {
     const el = dpad()
     expect(el).not.toBeNull()

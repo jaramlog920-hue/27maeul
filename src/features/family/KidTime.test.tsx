@@ -1,7 +1,9 @@
+// 기존 생활 시나리오는 개편 이전 저장의 권한으로 검증한다. 새 해금은 late-growth.test.ts에서 검증한다.
+import { legacyGame as newGame } from '../../engine/growth-test-support'
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import { CONTENT } from '../../content/catalog'
 import { newChild } from '../../engine/child'
-import { newGame, type GameState } from '../../engine/game'
+import { type GameState } from '../../engine/game'
 import { freshStats } from '../../engine/stats'
 import { useGame } from '../../store/game-store'
 import { ModalLayer } from '../ModalLayer'
@@ -16,6 +18,17 @@ function reset(minute = 10 * 60) {
 }
 
 describe('함께하는 시간 — 화면', () => {
+  it('새 터에서는 마을로 돌아가라는 안내와 잠긴 활동 단추를 보인다',()=>{
+    reset()
+    const before={...useGame.getState().game,map:'newland' as const}
+    useGame.setState({game:before,modal:{kind:'kidTime'}})
+    render(<ModalLayer />)
+    expect(screen.getAllByText(/아이는 마을에 있어요/).length).toBeGreaterThan(0)
+    const read=screen.getByRole('button',{name:/같이 책 읽기/})
+    expect(read).toBeDisabled()
+    fireEvent.click(read)
+    expect(useGame.getState().game).toBe(before)
+  })
   it('아이를 누르면 [함께하기] → 고르기 → 짧은 장면과 결과, 처음이면 창을 닫은 뒤 앨범 장면', () => {
     reset()
     render(<ModalLayer />)

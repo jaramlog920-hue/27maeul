@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { itemName, T } from '../../content/text'
-import { FURNITURE } from '../../engine/room'
+import { FURNITURE, FURNITURE_DEFS } from '../../engine/room'
+import { WALL_BUILD_COINS } from '../../engine/home-walls'
 import { inBuildingRoom, roomOf } from '../../engine/newland-rooms'
 import { liveSpaces, spacesOf, usesFor, furnitureId } from '../../engine/spaces'
 import { spaceOfPiece } from '../../engine/space-life'
@@ -31,6 +32,8 @@ export function DecorateBar() {
     <div className="decorate-bar" role="toolbar" aria-label={T.ui.decorate}>
       {/* 설명 줄은 옮기는 중일 때만 짧게 (2026-10-07 사용자 — 가독성) */}
       {moving && <p className="hint">빈 바닥을 누르세요.</p>}
+      {decorating === 'wallBuild' && <p className="hint">벽을 세울 바닥을 누르세요 · 한 칸 {WALL_BUILD_COINS}닢</p>}
+      {decorating === 'wallRemove' && <p className="hint">허물 벽을 누르세요</p>}
       {/* 방이 하나뿐이면 방 고르기 단추를 보이지 않는다 */}
       {!inHouse && level >= 1 && (
         <div className="decorate-items" role="group" aria-label="꾸밀 방 선택">
@@ -46,7 +49,7 @@ export function DecorateBar() {
             <ItemIcon id={sel.item} /> {itemName(sel.item)}
           </span>
           <button onClick={moveSelected}>{moving ? '옮기기 취소' : '옮기기'}</button>
-          {hasFacingArt(sel.item) && <button onClick={turnSelected}>{T.ui.decorateTurn}</button>}
+          {hasFacingArt(sel.item) && FURNITURE_DEFS[sel.item]?.layer !== 'wall' && <button onClick={turnSelected}>{T.ui.decorateTurn}</button>}
           <button onClick={removeSelected}>{T.ui.decorateTake}</button>
           {(uses.length > 0 || belongs.length > 0) && (
             <button aria-expanded={spaceOpen === selId} onClick={() => setSpaceOpen(spaceOpen === selId ? null : selId)}>{T.space.decideButton}</button>
@@ -74,6 +77,13 @@ export function DecorateBar() {
             <ItemIcon id={f} /> {inv[f]}
           </button>
         ))}
+        {/* 집 안 벽 (2026-10-12): 넓힌 집에서 방을 나누고 합친다 */}
+        {!inHouse && level >= 1 && (
+          <>
+            <button className={decorating === 'wallBuild' ? 'on' : ''} aria-pressed={decorating === 'wallBuild'} onClick={() => startDecorate(decorating === 'wallBuild' ? 'pick' : 'wallBuild')}>벽 세우기</button>
+            <button className={decorating === 'wallRemove' ? 'on' : ''} aria-pressed={decorating === 'wallRemove'} onClick={() => startDecorate(decorating === 'wallRemove' ? 'pick' : 'wallRemove')}>벽 허물기</button>
+          </>
+        )}
         <button className="primary" onClick={stopDecorate}>
           {T.ui.decorateDone}
         </button>

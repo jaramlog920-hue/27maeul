@@ -1,7 +1,8 @@
 // 집 오른쪽 위 텃밭 열두 칸 (설계 §2.5). 씨앗을 심고, 날마다 물을 주면 자라고, 다 자라면 거둔다. 겨울엔 쉰다.
 import { seasonOf } from './clock'
 import type { GameState } from './game'
-import { add, has, count, stackCap, take } from './items'
+import { stash, stashOverflows, owns } from './easier'
+import { has, take } from './items'
 import { addXp, XP } from './stats'
 import type { ItemId, Tile } from './types'
 
@@ -17,7 +18,8 @@ export const CROPS: Record<CropId, { seed: ItemId; days: number; gives: Partial<
   bean: { seed: 'seedBean', days: 4, gives: { bean: 3 } },
 }
 
-export const GARDEN_TILES: readonly Tile[] = [14, 15, 16, 17].flatMap((x) => [3, 4, 5].map((y) => ({ x, y }))).sort((a, b) => a.y - b.y || a.x - b.x)
+/** 지도 텃밭('l', world.ts의 rect(11, 4, 14, 6))과 같은 칸 — 두 목록이 같은지는 테스트가 본다 */
+export const GARDEN_TILES: readonly Tile[] = [11, 12, 13, 14].flatMap((x) => [4, 5, 6].map((y) => ({ x, y }))).sort((a, b) => a.y - b.y || a.x - b.x)
 
 const keyOf = (t: Tile) => `${t.x},${t.y}`
 const isPlot = (t: Tile) => GARDEN_TILES.some((g) => g.x === t.x && g.y === t.y)
@@ -51,10 +53,13 @@ export function harvest(s: GameState, at: Tile): GameState | null {
   const p = s.garden[keyOf(at)]
   if (!p || !isRipe(p)) return null
   const gives = CROPS[p.crop].gives
-  if ((Object.entries(gives) as [ItemId, number][]).some(([id, n]) => count(s.inv, id) + n > stackCap(s.inv))) return null
+  // 가방이 차면 재료 궤짝으로 (채집·돕기 보상과 같은 규칙) — 둘 다 차면 거두지 않고 작물을 남긴다
+  const chest = owns(s.flags, 'supplyChest') ? (s.chest ?? {}) : null
+  if (stashOverflows(s.inv, chest, gives)) return null
   const garden = { ...s.garden }
   delete garden[keyOf(at)]
-  return { ...s, stats: addXp(s.stats, 'strength', XP.garden), inv: add(s.inv, gives), garden }
+  const put = stash(s.inv, chest, gives)
+  return { ...s, stats: addXp(s.stats, 'strength', XP.garden), inv: put.inv, chest: put.chest ?? s.chest, garden }
 }
 
 /** 잠들 때: 오늘 물 준 칸만 하루 자란다 */

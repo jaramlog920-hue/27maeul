@@ -20,7 +20,13 @@ import type { NeighborDef } from './types'
 
 /** 하루를 지낸다 (낮 열 시에 잠들어 다음 날 아침) */
 const sleep = (s: GameState) => goToSleep({ ...s, clock: { ...s.clock, minute: 20 * 60 } }, CONTENT)
-const fresh = (): GameState => ({ ...newGame(CONTENT), scenes: [] })
+// 정기 편지의 분포·수령 검사는 2권 완필 후 상태에서 한다.
+const fresh = (): GameState => {
+  const game = newGame(CONTENT)
+  game.progress['2jn'].completed = [1]
+  game.progress['3jn'].completed = [1]
+  return { ...game, scenes: [] }
+}
 
 describe('조각은 드물게', () => {
   it('날마다 이웃 여섯이 건네던 조각이 사라지고, 한 주에 몇 번만 — 편지 또는 특별한 대화 한 명', () => {

@@ -7,8 +7,9 @@ export const PARTNER_DOOR = { x: 21, y: 110 }
 export const BABY_DOOR = { x: 24, y: 112 }
 export const LIVING_DOOR = { x: 16, y: 112 }
 export const FIXTURES = {
-  homeBed: { place: 'bed', ch: 'b', name: '침대', x: 17, y: 111 },
-  homeDesk: { place: 'desk', ch: 'd', name: '필사 책상', x: 17, y: 113 },
+  homeBed: { place: 'bed', ch: 'b', name: '침대', x: 18, y: 112 },
+  // 필사 책상은 맨 아래 벽에 붙인다 (2026-10-12 사용자: 침대가 커져 비좁음)
+  homeDesk: { place: 'desk', ch: 'd', name: '필사 책상', x: 17, y: 114 },
   homeHearth: { place: 'hearth', ch: 'h', name: '화덕', x: 20, y: 111 },
   homeShelf: { place: 'shelf', ch: 's', name: '두루마리 선반', x: 23, y: 111 },
   homeWorkbench: { place: 'workbench', ch: 'k', name: '작업대', x: 23, y: 113 },

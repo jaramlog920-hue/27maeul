@@ -1,5 +1,6 @@
 import { pixels } from './home-space-art'
 import { spriteRows, type SpriteOpts, type Who } from './sprites'
+import { motionBodyRows } from './motion-body'
 import type { Facing } from '../engine/types'
 import type { FurnitureArt } from './furniture-art'
 type R=readonly [string,number,number,number,number]
@@ -34,8 +35,9 @@ export type WeddingAction=typeof WEDDING_ACTIONS[number]
 export const WEDDING_LABELS:Record<WeddingAction,string>={arrive:'식장에 들어오기',bow:'인사하기',offerFlowers:'꽃다발 건네기',exchange:'기념 반지 교환',holdHands:'손잡고 함께 서기',celebrate:'축하 인사'}
 export function weddingActorFrame(who:Who,facing:Facing,action:WeddingAction,frame:number,opts:SpriteOpts){
  const f=((frame%4)+4)%4,rows=Array.from({length:24},()=>Array<string>(24).fill('.'))
- const pose=action==='celebrate'?(f%2?'wave':'handUp'):action==='offerFlowers'||action==='exchange'||action==='holdHands'?'handUp':action==='bow'&&f>0&&f<3?'crouch':'stand'
- const source=spriteRows(who,facing,{...opts,pose,frame:action==='arrive'?(f%2?1:2):0,blink:opts.blink||(action==='bow'&&f===2)})
+ const propAction=action==='offerFlowers'||action==='exchange'
+ const pose=action==='celebrate'?(f%2?'wave':'handUp'):action==='holdHands'?'handUp':action==='bow'&&f>0&&f<3?'crouch':'stand'
+ const source=(propAction?motionBodyRows:spriteRows)(who,facing,{...opts,pose,frame:action==='arrive'?(f%2?1:2):0,blink:opts.blink||(action==='bow'&&f===2)})
  const oy=action==='bow'&&f>0&&f<3?6:4
  source.forEach((r,y)=>[...r].forEach((c,x)=>{rows[oy+y][7+x]=c}))
  const props=Array.from({length:24},()=>Array<string>(24).fill('.'))
@@ -43,6 +45,11 @@ export function weddingActorFrame(who:Who,facing:Facing,action:WeddingAction,fra
   const a=WEDDING_PROPS[action==='offerFlowers'?'bouquet':f>0&&f<3?'ringBoxOpen':'ringBoxClosed']
   const ox=facing==='left'?0:facing==='right'?15:8,py=action==='offerFlowers'?10+(f%2):12
   for(let y=0;y<8;y++)for(let x=0;x<8;x++){const c=a.rows[y*2][x*2];if(c!=='.')props[py+y][ox+x]=c}
+  if(propAction){
+   // 물건을 잡는 장면은 팔 선 없이 손만 물건 가장자리에 보인다.
+   const hx=facing==='left'?6:facing==='right'?15:action==='exchange'?14:9,hy=py+2
+   rows[hy][hx]='s';rows[hy][hx+1]='s';rows[hy+1][hx]='5';rows[hy+1][hx+1]='5'
+  }
  }
  if(action==='holdHands'){
   const hx=facing==='left'?5:facing==='right'?17:16,hy=13+f%2

@@ -69,7 +69,7 @@ export function take(inv: Inventory, need: Partial<Record<ItemId, number>>): Inv
   return out
 }
 
-export type RecipeId = 'bread' | 'papyrus' | 'ink' | 'oil' | 'blanket' | 'cover' | 'scentCandle' | 'creamPaper' | 'fineThread'
+export type RecipeId = 'bread' | 'papyrus' | 'ink' | 'oil' | 'blanket' | 'cover' | 'scentCandle' | 'creamPaper' | 'fineThread' | 'homeCradle'
 
 export interface Recipe {
   id: RecipeId
@@ -92,6 +92,7 @@ export const RECIPES: Record<RecipeId, Recipe> = {
   // 꾸미기 재료 (계획 14): 파피루스 두 장을 곱게 펴 크림색 종이 한 장, 양털 한 뭉치를 자아 좋은 실 한 타래 — 특별 제본에 쓴다
   creamPaper: { id: 'creamPaper', at: 'workbench', needs: { papyrus: 2 }, gives: { creamPaper: 1 }, minutes: 20, minigame: 'weave' },
   fineThread: { id: 'fineThread', at: 'workbench', needs: { wool: 1 }, gives: { fineThread: 1 }, minutes: 20, minigame: 'timing' },
+  homeCradle: { id: 'homeCradle', at: 'workbench', needs: { reed: 3, blanket: 1 }, gives: { homeCradle: 1 }, minutes: 60, minigame: 'weave' },
 }
 
 /** 생활 제작의 결과. */

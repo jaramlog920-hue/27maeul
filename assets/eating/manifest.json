@@ -1,0 +1,2693 @@
+{
+  "description": "먹기 버튼에 연결된 음식 들기·한입·씹기·손 내리기",
+  "sequences": [
+    {
+      "id": "female-bread",
+      "label": "여성 · 빵 먹기",
+      "group": "motions",
+      "width": 24,
+      "height": 24,
+      "loop": false,
+      "views": {
+        "down": [
+          {
+            "file": "frames/female-bread-down-0.png",
+            "layers": {
+              "back": "layers/female-bread-down-back-0.png",
+              "actor": "layers/female-bread-down-actor-0.png",
+              "front": "layers/female-bread-down-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bread-down-1.png",
+            "layers": {
+              "back": "layers/female-bread-down-back-1.png",
+              "actor": "layers/female-bread-down-actor-1.png",
+              "front": "layers/female-bread-down-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bread-down-2.png",
+            "layers": {
+              "back": "layers/female-bread-down-back-2.png",
+              "actor": "layers/female-bread-down-actor-2.png",
+              "front": "layers/female-bread-down-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bread-down-3.png",
+            "layers": {
+              "back": "layers/female-bread-down-back-3.png",
+              "actor": "layers/female-bread-down-actor-3.png",
+              "front": "layers/female-bread-down-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bread-down-4.png",
+            "layers": {
+              "back": "layers/female-bread-down-back-4.png",
+              "actor": "layers/female-bread-down-actor-4.png",
+              "front": "layers/female-bread-down-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bread-down-5.png",
+            "layers": {
+              "back": "layers/female-bread-down-back-5.png",
+              "actor": "layers/female-bread-down-actor-5.png",
+              "front": "layers/female-bread-down-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "frames/female-bread-up-0.png",
+            "layers": {
+              "back": "layers/female-bread-up-back-0.png",
+              "actor": "layers/female-bread-up-actor-0.png",
+              "front": "layers/female-bread-up-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bread-up-1.png",
+            "layers": {
+              "back": "layers/female-bread-up-back-1.png",
+              "actor": "layers/female-bread-up-actor-1.png",
+              "front": "layers/female-bread-up-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bread-up-2.png",
+            "layers": {
+              "back": "layers/female-bread-up-back-2.png",
+              "actor": "layers/female-bread-up-actor-2.png",
+              "front": "layers/female-bread-up-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bread-up-3.png",
+            "layers": {
+              "back": "layers/female-bread-up-back-3.png",
+              "actor": "layers/female-bread-up-actor-3.png",
+              "front": "layers/female-bread-up-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bread-up-4.png",
+            "layers": {
+              "back": "layers/female-bread-up-back-4.png",
+              "actor": "layers/female-bread-up-actor-4.png",
+              "front": "layers/female-bread-up-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bread-up-5.png",
+            "layers": {
+              "back": "layers/female-bread-up-back-5.png",
+              "actor": "layers/female-bread-up-actor-5.png",
+              "front": "layers/female-bread-up-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "frames/female-bread-left-0.png",
+            "layers": {
+              "back": "layers/female-bread-left-back-0.png",
+              "actor": "layers/female-bread-left-actor-0.png",
+              "front": "layers/female-bread-left-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bread-left-1.png",
+            "layers": {
+              "back": "layers/female-bread-left-back-1.png",
+              "actor": "layers/female-bread-left-actor-1.png",
+              "front": "layers/female-bread-left-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bread-left-2.png",
+            "layers": {
+              "back": "layers/female-bread-left-back-2.png",
+              "actor": "layers/female-bread-left-actor-2.png",
+              "front": "layers/female-bread-left-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bread-left-3.png",
+            "layers": {
+              "back": "layers/female-bread-left-back-3.png",
+              "actor": "layers/female-bread-left-actor-3.png",
+              "front": "layers/female-bread-left-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bread-left-4.png",
+            "layers": {
+              "back": "layers/female-bread-left-back-4.png",
+              "actor": "layers/female-bread-left-actor-4.png",
+              "front": "layers/female-bread-left-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bread-left-5.png",
+            "layers": {
+              "back": "layers/female-bread-left-back-5.png",
+              "actor": "layers/female-bread-left-actor-5.png",
+              "front": "layers/female-bread-left-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "frames/female-bread-right-0.png",
+            "layers": {
+              "back": "layers/female-bread-right-back-0.png",
+              "actor": "layers/female-bread-right-actor-0.png",
+              "front": "layers/female-bread-right-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bread-right-1.png",
+            "layers": {
+              "back": "layers/female-bread-right-back-1.png",
+              "actor": "layers/female-bread-right-actor-1.png",
+              "front": "layers/female-bread-right-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bread-right-2.png",
+            "layers": {
+              "back": "layers/female-bread-right-back-2.png",
+              "actor": "layers/female-bread-right-actor-2.png",
+              "front": "layers/female-bread-right-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bread-right-3.png",
+            "layers": {
+              "back": "layers/female-bread-right-back-3.png",
+              "actor": "layers/female-bread-right-actor-3.png",
+              "front": "layers/female-bread-right-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bread-right-4.png",
+            "layers": {
+              "back": "layers/female-bread-right-back-4.png",
+              "actor": "layers/female-bread-right-actor-4.png",
+              "front": "layers/female-bread-right-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bread-right-5.png",
+            "layers": {
+              "back": "layers/female-bread-right-back-5.png",
+              "actor": "layers/female-bread-right-actor-5.png",
+              "front": "layers/female-bread-right-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ]
+      },
+      "sheets": {
+        "down": "sheets/female-bread-down-sheet.png",
+        "up": "sheets/female-bread-up-sheet.png",
+        "left": "sheets/female-bread-left-sheet.png",
+        "right": "sheets/female-bread-right-sheet.png"
+      }
+    },
+    {
+      "id": "female-fruit",
+      "label": "여성 · 무화과 먹기",
+      "group": "motions",
+      "width": 24,
+      "height": 24,
+      "loop": false,
+      "views": {
+        "down": [
+          {
+            "file": "frames/female-fruit-down-0.png",
+            "layers": {
+              "back": "layers/female-fruit-down-back-0.png",
+              "actor": "layers/female-fruit-down-actor-0.png",
+              "front": "layers/female-fruit-down-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-fruit-down-1.png",
+            "layers": {
+              "back": "layers/female-fruit-down-back-1.png",
+              "actor": "layers/female-fruit-down-actor-1.png",
+              "front": "layers/female-fruit-down-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-fruit-down-2.png",
+            "layers": {
+              "back": "layers/female-fruit-down-back-2.png",
+              "actor": "layers/female-fruit-down-actor-2.png",
+              "front": "layers/female-fruit-down-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-fruit-down-3.png",
+            "layers": {
+              "back": "layers/female-fruit-down-back-3.png",
+              "actor": "layers/female-fruit-down-actor-3.png",
+              "front": "layers/female-fruit-down-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-fruit-down-4.png",
+            "layers": {
+              "back": "layers/female-fruit-down-back-4.png",
+              "actor": "layers/female-fruit-down-actor-4.png",
+              "front": "layers/female-fruit-down-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-fruit-down-5.png",
+            "layers": {
+              "back": "layers/female-fruit-down-back-5.png",
+              "actor": "layers/female-fruit-down-actor-5.png",
+              "front": "layers/female-fruit-down-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "frames/female-fruit-up-0.png",
+            "layers": {
+              "back": "layers/female-fruit-up-back-0.png",
+              "actor": "layers/female-fruit-up-actor-0.png",
+              "front": "layers/female-fruit-up-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-fruit-up-1.png",
+            "layers": {
+              "back": "layers/female-fruit-up-back-1.png",
+              "actor": "layers/female-fruit-up-actor-1.png",
+              "front": "layers/female-fruit-up-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-fruit-up-2.png",
+            "layers": {
+              "back": "layers/female-fruit-up-back-2.png",
+              "actor": "layers/female-fruit-up-actor-2.png",
+              "front": "layers/female-fruit-up-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-fruit-up-3.png",
+            "layers": {
+              "back": "layers/female-fruit-up-back-3.png",
+              "actor": "layers/female-fruit-up-actor-3.png",
+              "front": "layers/female-fruit-up-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-fruit-up-4.png",
+            "layers": {
+              "back": "layers/female-fruit-up-back-4.png",
+              "actor": "layers/female-fruit-up-actor-4.png",
+              "front": "layers/female-fruit-up-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-fruit-up-5.png",
+            "layers": {
+              "back": "layers/female-fruit-up-back-5.png",
+              "actor": "layers/female-fruit-up-actor-5.png",
+              "front": "layers/female-fruit-up-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "frames/female-fruit-left-0.png",
+            "layers": {
+              "back": "layers/female-fruit-left-back-0.png",
+              "actor": "layers/female-fruit-left-actor-0.png",
+              "front": "layers/female-fruit-left-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-fruit-left-1.png",
+            "layers": {
+              "back": "layers/female-fruit-left-back-1.png",
+              "actor": "layers/female-fruit-left-actor-1.png",
+              "front": "layers/female-fruit-left-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-fruit-left-2.png",
+            "layers": {
+              "back": "layers/female-fruit-left-back-2.png",
+              "actor": "layers/female-fruit-left-actor-2.png",
+              "front": "layers/female-fruit-left-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-fruit-left-3.png",
+            "layers": {
+              "back": "layers/female-fruit-left-back-3.png",
+              "actor": "layers/female-fruit-left-actor-3.png",
+              "front": "layers/female-fruit-left-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-fruit-left-4.png",
+            "layers": {
+              "back": "layers/female-fruit-left-back-4.png",
+              "actor": "layers/female-fruit-left-actor-4.png",
+              "front": "layers/female-fruit-left-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-fruit-left-5.png",
+            "layers": {
+              "back": "layers/female-fruit-left-back-5.png",
+              "actor": "layers/female-fruit-left-actor-5.png",
+              "front": "layers/female-fruit-left-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "frames/female-fruit-right-0.png",
+            "layers": {
+              "back": "layers/female-fruit-right-back-0.png",
+              "actor": "layers/female-fruit-right-actor-0.png",
+              "front": "layers/female-fruit-right-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-fruit-right-1.png",
+            "layers": {
+              "back": "layers/female-fruit-right-back-1.png",
+              "actor": "layers/female-fruit-right-actor-1.png",
+              "front": "layers/female-fruit-right-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-fruit-right-2.png",
+            "layers": {
+              "back": "layers/female-fruit-right-back-2.png",
+              "actor": "layers/female-fruit-right-actor-2.png",
+              "front": "layers/female-fruit-right-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-fruit-right-3.png",
+            "layers": {
+              "back": "layers/female-fruit-right-back-3.png",
+              "actor": "layers/female-fruit-right-actor-3.png",
+              "front": "layers/female-fruit-right-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-fruit-right-4.png",
+            "layers": {
+              "back": "layers/female-fruit-right-back-4.png",
+              "actor": "layers/female-fruit-right-actor-4.png",
+              "front": "layers/female-fruit-right-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-fruit-right-5.png",
+            "layers": {
+              "back": "layers/female-fruit-right-back-5.png",
+              "actor": "layers/female-fruit-right-actor-5.png",
+              "front": "layers/female-fruit-right-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ]
+      },
+      "sheets": {
+        "down": "sheets/female-fruit-down-sheet.png",
+        "up": "sheets/female-fruit-up-sheet.png",
+        "left": "sheets/female-fruit-left-sheet.png",
+        "right": "sheets/female-fruit-right-sheet.png"
+      }
+    },
+    {
+      "id": "female-bowl",
+      "label": "여성 · 한 숟갈 먹기",
+      "group": "motions",
+      "width": 24,
+      "height": 24,
+      "loop": false,
+      "views": {
+        "down": [
+          {
+            "file": "frames/female-bowl-down-0.png",
+            "layers": {
+              "back": "layers/female-bowl-down-back-0.png",
+              "actor": "layers/female-bowl-down-actor-0.png",
+              "front": "layers/female-bowl-down-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bowl-down-1.png",
+            "layers": {
+              "back": "layers/female-bowl-down-back-1.png",
+              "actor": "layers/female-bowl-down-actor-1.png",
+              "front": "layers/female-bowl-down-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bowl-down-2.png",
+            "layers": {
+              "back": "layers/female-bowl-down-back-2.png",
+              "actor": "layers/female-bowl-down-actor-2.png",
+              "front": "layers/female-bowl-down-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bowl-down-3.png",
+            "layers": {
+              "back": "layers/female-bowl-down-back-3.png",
+              "actor": "layers/female-bowl-down-actor-3.png",
+              "front": "layers/female-bowl-down-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bowl-down-4.png",
+            "layers": {
+              "back": "layers/female-bowl-down-back-4.png",
+              "actor": "layers/female-bowl-down-actor-4.png",
+              "front": "layers/female-bowl-down-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bowl-down-5.png",
+            "layers": {
+              "back": "layers/female-bowl-down-back-5.png",
+              "actor": "layers/female-bowl-down-actor-5.png",
+              "front": "layers/female-bowl-down-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "frames/female-bowl-up-0.png",
+            "layers": {
+              "back": "layers/female-bowl-up-back-0.png",
+              "actor": "layers/female-bowl-up-actor-0.png",
+              "front": "layers/female-bowl-up-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bowl-up-1.png",
+            "layers": {
+              "back": "layers/female-bowl-up-back-1.png",
+              "actor": "layers/female-bowl-up-actor-1.png",
+              "front": "layers/female-bowl-up-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bowl-up-2.png",
+            "layers": {
+              "back": "layers/female-bowl-up-back-2.png",
+              "actor": "layers/female-bowl-up-actor-2.png",
+              "front": "layers/female-bowl-up-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bowl-up-3.png",
+            "layers": {
+              "back": "layers/female-bowl-up-back-3.png",
+              "actor": "layers/female-bowl-up-actor-3.png",
+              "front": "layers/female-bowl-up-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bowl-up-4.png",
+            "layers": {
+              "back": "layers/female-bowl-up-back-4.png",
+              "actor": "layers/female-bowl-up-actor-4.png",
+              "front": "layers/female-bowl-up-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bowl-up-5.png",
+            "layers": {
+              "back": "layers/female-bowl-up-back-5.png",
+              "actor": "layers/female-bowl-up-actor-5.png",
+              "front": "layers/female-bowl-up-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "frames/female-bowl-left-0.png",
+            "layers": {
+              "back": "layers/female-bowl-left-back-0.png",
+              "actor": "layers/female-bowl-left-actor-0.png",
+              "front": "layers/female-bowl-left-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bowl-left-1.png",
+            "layers": {
+              "back": "layers/female-bowl-left-back-1.png",
+              "actor": "layers/female-bowl-left-actor-1.png",
+              "front": "layers/female-bowl-left-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bowl-left-2.png",
+            "layers": {
+              "back": "layers/female-bowl-left-back-2.png",
+              "actor": "layers/female-bowl-left-actor-2.png",
+              "front": "layers/female-bowl-left-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bowl-left-3.png",
+            "layers": {
+              "back": "layers/female-bowl-left-back-3.png",
+              "actor": "layers/female-bowl-left-actor-3.png",
+              "front": "layers/female-bowl-left-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bowl-left-4.png",
+            "layers": {
+              "back": "layers/female-bowl-left-back-4.png",
+              "actor": "layers/female-bowl-left-actor-4.png",
+              "front": "layers/female-bowl-left-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bowl-left-5.png",
+            "layers": {
+              "back": "layers/female-bowl-left-back-5.png",
+              "actor": "layers/female-bowl-left-actor-5.png",
+              "front": "layers/female-bowl-left-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "frames/female-bowl-right-0.png",
+            "layers": {
+              "back": "layers/female-bowl-right-back-0.png",
+              "actor": "layers/female-bowl-right-actor-0.png",
+              "front": "layers/female-bowl-right-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bowl-right-1.png",
+            "layers": {
+              "back": "layers/female-bowl-right-back-1.png",
+              "actor": "layers/female-bowl-right-actor-1.png",
+              "front": "layers/female-bowl-right-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bowl-right-2.png",
+            "layers": {
+              "back": "layers/female-bowl-right-back-2.png",
+              "actor": "layers/female-bowl-right-actor-2.png",
+              "front": "layers/female-bowl-right-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bowl-right-3.png",
+            "layers": {
+              "back": "layers/female-bowl-right-back-3.png",
+              "actor": "layers/female-bowl-right-actor-3.png",
+              "front": "layers/female-bowl-right-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bowl-right-4.png",
+            "layers": {
+              "back": "layers/female-bowl-right-back-4.png",
+              "actor": "layers/female-bowl-right-actor-4.png",
+              "front": "layers/female-bowl-right-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-bowl-right-5.png",
+            "layers": {
+              "back": "layers/female-bowl-right-back-5.png",
+              "actor": "layers/female-bowl-right-actor-5.png",
+              "front": "layers/female-bowl-right-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ]
+      },
+      "sheets": {
+        "down": "sheets/female-bowl-down-sheet.png",
+        "up": "sheets/female-bowl-up-sheet.png",
+        "left": "sheets/female-bowl-left-sheet.png",
+        "right": "sheets/female-bowl-right-sheet.png"
+      }
+    },
+    {
+      "id": "female-honey",
+      "label": "여성 · 꿀 맛보기",
+      "group": "motions",
+      "width": 24,
+      "height": 24,
+      "loop": false,
+      "views": {
+        "down": [
+          {
+            "file": "frames/female-honey-down-0.png",
+            "layers": {
+              "back": "layers/female-honey-down-back-0.png",
+              "actor": "layers/female-honey-down-actor-0.png",
+              "front": "layers/female-honey-down-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-honey-down-1.png",
+            "layers": {
+              "back": "layers/female-honey-down-back-1.png",
+              "actor": "layers/female-honey-down-actor-1.png",
+              "front": "layers/female-honey-down-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-honey-down-2.png",
+            "layers": {
+              "back": "layers/female-honey-down-back-2.png",
+              "actor": "layers/female-honey-down-actor-2.png",
+              "front": "layers/female-honey-down-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-honey-down-3.png",
+            "layers": {
+              "back": "layers/female-honey-down-back-3.png",
+              "actor": "layers/female-honey-down-actor-3.png",
+              "front": "layers/female-honey-down-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-honey-down-4.png",
+            "layers": {
+              "back": "layers/female-honey-down-back-4.png",
+              "actor": "layers/female-honey-down-actor-4.png",
+              "front": "layers/female-honey-down-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-honey-down-5.png",
+            "layers": {
+              "back": "layers/female-honey-down-back-5.png",
+              "actor": "layers/female-honey-down-actor-5.png",
+              "front": "layers/female-honey-down-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "frames/female-honey-up-0.png",
+            "layers": {
+              "back": "layers/female-honey-up-back-0.png",
+              "actor": "layers/female-honey-up-actor-0.png",
+              "front": "layers/female-honey-up-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-honey-up-1.png",
+            "layers": {
+              "back": "layers/female-honey-up-back-1.png",
+              "actor": "layers/female-honey-up-actor-1.png",
+              "front": "layers/female-honey-up-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-honey-up-2.png",
+            "layers": {
+              "back": "layers/female-honey-up-back-2.png",
+              "actor": "layers/female-honey-up-actor-2.png",
+              "front": "layers/female-honey-up-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-honey-up-3.png",
+            "layers": {
+              "back": "layers/female-honey-up-back-3.png",
+              "actor": "layers/female-honey-up-actor-3.png",
+              "front": "layers/female-honey-up-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-honey-up-4.png",
+            "layers": {
+              "back": "layers/female-honey-up-back-4.png",
+              "actor": "layers/female-honey-up-actor-4.png",
+              "front": "layers/female-honey-up-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-honey-up-5.png",
+            "layers": {
+              "back": "layers/female-honey-up-back-5.png",
+              "actor": "layers/female-honey-up-actor-5.png",
+              "front": "layers/female-honey-up-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "frames/female-honey-left-0.png",
+            "layers": {
+              "back": "layers/female-honey-left-back-0.png",
+              "actor": "layers/female-honey-left-actor-0.png",
+              "front": "layers/female-honey-left-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-honey-left-1.png",
+            "layers": {
+              "back": "layers/female-honey-left-back-1.png",
+              "actor": "layers/female-honey-left-actor-1.png",
+              "front": "layers/female-honey-left-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-honey-left-2.png",
+            "layers": {
+              "back": "layers/female-honey-left-back-2.png",
+              "actor": "layers/female-honey-left-actor-2.png",
+              "front": "layers/female-honey-left-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-honey-left-3.png",
+            "layers": {
+              "back": "layers/female-honey-left-back-3.png",
+              "actor": "layers/female-honey-left-actor-3.png",
+              "front": "layers/female-honey-left-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-honey-left-4.png",
+            "layers": {
+              "back": "layers/female-honey-left-back-4.png",
+              "actor": "layers/female-honey-left-actor-4.png",
+              "front": "layers/female-honey-left-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-honey-left-5.png",
+            "layers": {
+              "back": "layers/female-honey-left-back-5.png",
+              "actor": "layers/female-honey-left-actor-5.png",
+              "front": "layers/female-honey-left-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "frames/female-honey-right-0.png",
+            "layers": {
+              "back": "layers/female-honey-right-back-0.png",
+              "actor": "layers/female-honey-right-actor-0.png",
+              "front": "layers/female-honey-right-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-honey-right-1.png",
+            "layers": {
+              "back": "layers/female-honey-right-back-1.png",
+              "actor": "layers/female-honey-right-actor-1.png",
+              "front": "layers/female-honey-right-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-honey-right-2.png",
+            "layers": {
+              "back": "layers/female-honey-right-back-2.png",
+              "actor": "layers/female-honey-right-actor-2.png",
+              "front": "layers/female-honey-right-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-honey-right-3.png",
+            "layers": {
+              "back": "layers/female-honey-right-back-3.png",
+              "actor": "layers/female-honey-right-actor-3.png",
+              "front": "layers/female-honey-right-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-honey-right-4.png",
+            "layers": {
+              "back": "layers/female-honey-right-back-4.png",
+              "actor": "layers/female-honey-right-actor-4.png",
+              "front": "layers/female-honey-right-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/female-honey-right-5.png",
+            "layers": {
+              "back": "layers/female-honey-right-back-5.png",
+              "actor": "layers/female-honey-right-actor-5.png",
+              "front": "layers/female-honey-right-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ]
+      },
+      "sheets": {
+        "down": "sheets/female-honey-down-sheet.png",
+        "up": "sheets/female-honey-up-sheet.png",
+        "left": "sheets/female-honey-left-sheet.png",
+        "right": "sheets/female-honey-right-sheet.png"
+      }
+    },
+    {
+      "id": "male-bread",
+      "label": "남성 · 빵 먹기",
+      "group": "motions",
+      "width": 24,
+      "height": 24,
+      "loop": false,
+      "views": {
+        "down": [
+          {
+            "file": "frames/male-bread-down-0.png",
+            "layers": {
+              "back": "layers/male-bread-down-back-0.png",
+              "actor": "layers/male-bread-down-actor-0.png",
+              "front": "layers/male-bread-down-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bread-down-1.png",
+            "layers": {
+              "back": "layers/male-bread-down-back-1.png",
+              "actor": "layers/male-bread-down-actor-1.png",
+              "front": "layers/male-bread-down-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bread-down-2.png",
+            "layers": {
+              "back": "layers/male-bread-down-back-2.png",
+              "actor": "layers/male-bread-down-actor-2.png",
+              "front": "layers/male-bread-down-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bread-down-3.png",
+            "layers": {
+              "back": "layers/male-bread-down-back-3.png",
+              "actor": "layers/male-bread-down-actor-3.png",
+              "front": "layers/male-bread-down-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bread-down-4.png",
+            "layers": {
+              "back": "layers/male-bread-down-back-4.png",
+              "actor": "layers/male-bread-down-actor-4.png",
+              "front": "layers/male-bread-down-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bread-down-5.png",
+            "layers": {
+              "back": "layers/male-bread-down-back-5.png",
+              "actor": "layers/male-bread-down-actor-5.png",
+              "front": "layers/male-bread-down-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "frames/male-bread-up-0.png",
+            "layers": {
+              "back": "layers/male-bread-up-back-0.png",
+              "actor": "layers/male-bread-up-actor-0.png",
+              "front": "layers/male-bread-up-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bread-up-1.png",
+            "layers": {
+              "back": "layers/male-bread-up-back-1.png",
+              "actor": "layers/male-bread-up-actor-1.png",
+              "front": "layers/male-bread-up-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bread-up-2.png",
+            "layers": {
+              "back": "layers/male-bread-up-back-2.png",
+              "actor": "layers/male-bread-up-actor-2.png",
+              "front": "layers/male-bread-up-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bread-up-3.png",
+            "layers": {
+              "back": "layers/male-bread-up-back-3.png",
+              "actor": "layers/male-bread-up-actor-3.png",
+              "front": "layers/male-bread-up-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bread-up-4.png",
+            "layers": {
+              "back": "layers/male-bread-up-back-4.png",
+              "actor": "layers/male-bread-up-actor-4.png",
+              "front": "layers/male-bread-up-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bread-up-5.png",
+            "layers": {
+              "back": "layers/male-bread-up-back-5.png",
+              "actor": "layers/male-bread-up-actor-5.png",
+              "front": "layers/male-bread-up-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "frames/male-bread-left-0.png",
+            "layers": {
+              "back": "layers/male-bread-left-back-0.png",
+              "actor": "layers/male-bread-left-actor-0.png",
+              "front": "layers/male-bread-left-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bread-left-1.png",
+            "layers": {
+              "back": "layers/male-bread-left-back-1.png",
+              "actor": "layers/male-bread-left-actor-1.png",
+              "front": "layers/male-bread-left-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bread-left-2.png",
+            "layers": {
+              "back": "layers/male-bread-left-back-2.png",
+              "actor": "layers/male-bread-left-actor-2.png",
+              "front": "layers/male-bread-left-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bread-left-3.png",
+            "layers": {
+              "back": "layers/male-bread-left-back-3.png",
+              "actor": "layers/male-bread-left-actor-3.png",
+              "front": "layers/male-bread-left-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bread-left-4.png",
+            "layers": {
+              "back": "layers/male-bread-left-back-4.png",
+              "actor": "layers/male-bread-left-actor-4.png",
+              "front": "layers/male-bread-left-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bread-left-5.png",
+            "layers": {
+              "back": "layers/male-bread-left-back-5.png",
+              "actor": "layers/male-bread-left-actor-5.png",
+              "front": "layers/male-bread-left-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "frames/male-bread-right-0.png",
+            "layers": {
+              "back": "layers/male-bread-right-back-0.png",
+              "actor": "layers/male-bread-right-actor-0.png",
+              "front": "layers/male-bread-right-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bread-right-1.png",
+            "layers": {
+              "back": "layers/male-bread-right-back-1.png",
+              "actor": "layers/male-bread-right-actor-1.png",
+              "front": "layers/male-bread-right-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bread-right-2.png",
+            "layers": {
+              "back": "layers/male-bread-right-back-2.png",
+              "actor": "layers/male-bread-right-actor-2.png",
+              "front": "layers/male-bread-right-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bread-right-3.png",
+            "layers": {
+              "back": "layers/male-bread-right-back-3.png",
+              "actor": "layers/male-bread-right-actor-3.png",
+              "front": "layers/male-bread-right-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bread-right-4.png",
+            "layers": {
+              "back": "layers/male-bread-right-back-4.png",
+              "actor": "layers/male-bread-right-actor-4.png",
+              "front": "layers/male-bread-right-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bread-right-5.png",
+            "layers": {
+              "back": "layers/male-bread-right-back-5.png",
+              "actor": "layers/male-bread-right-actor-5.png",
+              "front": "layers/male-bread-right-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ]
+      },
+      "sheets": {
+        "down": "sheets/male-bread-down-sheet.png",
+        "up": "sheets/male-bread-up-sheet.png",
+        "left": "sheets/male-bread-left-sheet.png",
+        "right": "sheets/male-bread-right-sheet.png"
+      }
+    },
+    {
+      "id": "male-fruit",
+      "label": "남성 · 무화과 먹기",
+      "group": "motions",
+      "width": 24,
+      "height": 24,
+      "loop": false,
+      "views": {
+        "down": [
+          {
+            "file": "frames/male-fruit-down-0.png",
+            "layers": {
+              "back": "layers/male-fruit-down-back-0.png",
+              "actor": "layers/male-fruit-down-actor-0.png",
+              "front": "layers/male-fruit-down-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-fruit-down-1.png",
+            "layers": {
+              "back": "layers/male-fruit-down-back-1.png",
+              "actor": "layers/male-fruit-down-actor-1.png",
+              "front": "layers/male-fruit-down-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-fruit-down-2.png",
+            "layers": {
+              "back": "layers/male-fruit-down-back-2.png",
+              "actor": "layers/male-fruit-down-actor-2.png",
+              "front": "layers/male-fruit-down-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-fruit-down-3.png",
+            "layers": {
+              "back": "layers/male-fruit-down-back-3.png",
+              "actor": "layers/male-fruit-down-actor-3.png",
+              "front": "layers/male-fruit-down-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-fruit-down-4.png",
+            "layers": {
+              "back": "layers/male-fruit-down-back-4.png",
+              "actor": "layers/male-fruit-down-actor-4.png",
+              "front": "layers/male-fruit-down-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-fruit-down-5.png",
+            "layers": {
+              "back": "layers/male-fruit-down-back-5.png",
+              "actor": "layers/male-fruit-down-actor-5.png",
+              "front": "layers/male-fruit-down-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "frames/male-fruit-up-0.png",
+            "layers": {
+              "back": "layers/male-fruit-up-back-0.png",
+              "actor": "layers/male-fruit-up-actor-0.png",
+              "front": "layers/male-fruit-up-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-fruit-up-1.png",
+            "layers": {
+              "back": "layers/male-fruit-up-back-1.png",
+              "actor": "layers/male-fruit-up-actor-1.png",
+              "front": "layers/male-fruit-up-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-fruit-up-2.png",
+            "layers": {
+              "back": "layers/male-fruit-up-back-2.png",
+              "actor": "layers/male-fruit-up-actor-2.png",
+              "front": "layers/male-fruit-up-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-fruit-up-3.png",
+            "layers": {
+              "back": "layers/male-fruit-up-back-3.png",
+              "actor": "layers/male-fruit-up-actor-3.png",
+              "front": "layers/male-fruit-up-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-fruit-up-4.png",
+            "layers": {
+              "back": "layers/male-fruit-up-back-4.png",
+              "actor": "layers/male-fruit-up-actor-4.png",
+              "front": "layers/male-fruit-up-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-fruit-up-5.png",
+            "layers": {
+              "back": "layers/male-fruit-up-back-5.png",
+              "actor": "layers/male-fruit-up-actor-5.png",
+              "front": "layers/male-fruit-up-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "frames/male-fruit-left-0.png",
+            "layers": {
+              "back": "layers/male-fruit-left-back-0.png",
+              "actor": "layers/male-fruit-left-actor-0.png",
+              "front": "layers/male-fruit-left-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-fruit-left-1.png",
+            "layers": {
+              "back": "layers/male-fruit-left-back-1.png",
+              "actor": "layers/male-fruit-left-actor-1.png",
+              "front": "layers/male-fruit-left-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-fruit-left-2.png",
+            "layers": {
+              "back": "layers/male-fruit-left-back-2.png",
+              "actor": "layers/male-fruit-left-actor-2.png",
+              "front": "layers/male-fruit-left-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-fruit-left-3.png",
+            "layers": {
+              "back": "layers/male-fruit-left-back-3.png",
+              "actor": "layers/male-fruit-left-actor-3.png",
+              "front": "layers/male-fruit-left-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-fruit-left-4.png",
+            "layers": {
+              "back": "layers/male-fruit-left-back-4.png",
+              "actor": "layers/male-fruit-left-actor-4.png",
+              "front": "layers/male-fruit-left-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-fruit-left-5.png",
+            "layers": {
+              "back": "layers/male-fruit-left-back-5.png",
+              "actor": "layers/male-fruit-left-actor-5.png",
+              "front": "layers/male-fruit-left-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "frames/male-fruit-right-0.png",
+            "layers": {
+              "back": "layers/male-fruit-right-back-0.png",
+              "actor": "layers/male-fruit-right-actor-0.png",
+              "front": "layers/male-fruit-right-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-fruit-right-1.png",
+            "layers": {
+              "back": "layers/male-fruit-right-back-1.png",
+              "actor": "layers/male-fruit-right-actor-1.png",
+              "front": "layers/male-fruit-right-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-fruit-right-2.png",
+            "layers": {
+              "back": "layers/male-fruit-right-back-2.png",
+              "actor": "layers/male-fruit-right-actor-2.png",
+              "front": "layers/male-fruit-right-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-fruit-right-3.png",
+            "layers": {
+              "back": "layers/male-fruit-right-back-3.png",
+              "actor": "layers/male-fruit-right-actor-3.png",
+              "front": "layers/male-fruit-right-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-fruit-right-4.png",
+            "layers": {
+              "back": "layers/male-fruit-right-back-4.png",
+              "actor": "layers/male-fruit-right-actor-4.png",
+              "front": "layers/male-fruit-right-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-fruit-right-5.png",
+            "layers": {
+              "back": "layers/male-fruit-right-back-5.png",
+              "actor": "layers/male-fruit-right-actor-5.png",
+              "front": "layers/male-fruit-right-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ]
+      },
+      "sheets": {
+        "down": "sheets/male-fruit-down-sheet.png",
+        "up": "sheets/male-fruit-up-sheet.png",
+        "left": "sheets/male-fruit-left-sheet.png",
+        "right": "sheets/male-fruit-right-sheet.png"
+      }
+    },
+    {
+      "id": "male-bowl",
+      "label": "남성 · 한 숟갈 먹기",
+      "group": "motions",
+      "width": 24,
+      "height": 24,
+      "loop": false,
+      "views": {
+        "down": [
+          {
+            "file": "frames/male-bowl-down-0.png",
+            "layers": {
+              "back": "layers/male-bowl-down-back-0.png",
+              "actor": "layers/male-bowl-down-actor-0.png",
+              "front": "layers/male-bowl-down-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bowl-down-1.png",
+            "layers": {
+              "back": "layers/male-bowl-down-back-1.png",
+              "actor": "layers/male-bowl-down-actor-1.png",
+              "front": "layers/male-bowl-down-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bowl-down-2.png",
+            "layers": {
+              "back": "layers/male-bowl-down-back-2.png",
+              "actor": "layers/male-bowl-down-actor-2.png",
+              "front": "layers/male-bowl-down-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bowl-down-3.png",
+            "layers": {
+              "back": "layers/male-bowl-down-back-3.png",
+              "actor": "layers/male-bowl-down-actor-3.png",
+              "front": "layers/male-bowl-down-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bowl-down-4.png",
+            "layers": {
+              "back": "layers/male-bowl-down-back-4.png",
+              "actor": "layers/male-bowl-down-actor-4.png",
+              "front": "layers/male-bowl-down-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bowl-down-5.png",
+            "layers": {
+              "back": "layers/male-bowl-down-back-5.png",
+              "actor": "layers/male-bowl-down-actor-5.png",
+              "front": "layers/male-bowl-down-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "frames/male-bowl-up-0.png",
+            "layers": {
+              "back": "layers/male-bowl-up-back-0.png",
+              "actor": "layers/male-bowl-up-actor-0.png",
+              "front": "layers/male-bowl-up-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bowl-up-1.png",
+            "layers": {
+              "back": "layers/male-bowl-up-back-1.png",
+              "actor": "layers/male-bowl-up-actor-1.png",
+              "front": "layers/male-bowl-up-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bowl-up-2.png",
+            "layers": {
+              "back": "layers/male-bowl-up-back-2.png",
+              "actor": "layers/male-bowl-up-actor-2.png",
+              "front": "layers/male-bowl-up-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bowl-up-3.png",
+            "layers": {
+              "back": "layers/male-bowl-up-back-3.png",
+              "actor": "layers/male-bowl-up-actor-3.png",
+              "front": "layers/male-bowl-up-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bowl-up-4.png",
+            "layers": {
+              "back": "layers/male-bowl-up-back-4.png",
+              "actor": "layers/male-bowl-up-actor-4.png",
+              "front": "layers/male-bowl-up-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bowl-up-5.png",
+            "layers": {
+              "back": "layers/male-bowl-up-back-5.png",
+              "actor": "layers/male-bowl-up-actor-5.png",
+              "front": "layers/male-bowl-up-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "frames/male-bowl-left-0.png",
+            "layers": {
+              "back": "layers/male-bowl-left-back-0.png",
+              "actor": "layers/male-bowl-left-actor-0.png",
+              "front": "layers/male-bowl-left-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bowl-left-1.png",
+            "layers": {
+              "back": "layers/male-bowl-left-back-1.png",
+              "actor": "layers/male-bowl-left-actor-1.png",
+              "front": "layers/male-bowl-left-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bowl-left-2.png",
+            "layers": {
+              "back": "layers/male-bowl-left-back-2.png",
+              "actor": "layers/male-bowl-left-actor-2.png",
+              "front": "layers/male-bowl-left-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bowl-left-3.png",
+            "layers": {
+              "back": "layers/male-bowl-left-back-3.png",
+              "actor": "layers/male-bowl-left-actor-3.png",
+              "front": "layers/male-bowl-left-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bowl-left-4.png",
+            "layers": {
+              "back": "layers/male-bowl-left-back-4.png",
+              "actor": "layers/male-bowl-left-actor-4.png",
+              "front": "layers/male-bowl-left-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bowl-left-5.png",
+            "layers": {
+              "back": "layers/male-bowl-left-back-5.png",
+              "actor": "layers/male-bowl-left-actor-5.png",
+              "front": "layers/male-bowl-left-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "frames/male-bowl-right-0.png",
+            "layers": {
+              "back": "layers/male-bowl-right-back-0.png",
+              "actor": "layers/male-bowl-right-actor-0.png",
+              "front": "layers/male-bowl-right-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bowl-right-1.png",
+            "layers": {
+              "back": "layers/male-bowl-right-back-1.png",
+              "actor": "layers/male-bowl-right-actor-1.png",
+              "front": "layers/male-bowl-right-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bowl-right-2.png",
+            "layers": {
+              "back": "layers/male-bowl-right-back-2.png",
+              "actor": "layers/male-bowl-right-actor-2.png",
+              "front": "layers/male-bowl-right-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bowl-right-3.png",
+            "layers": {
+              "back": "layers/male-bowl-right-back-3.png",
+              "actor": "layers/male-bowl-right-actor-3.png",
+              "front": "layers/male-bowl-right-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bowl-right-4.png",
+            "layers": {
+              "back": "layers/male-bowl-right-back-4.png",
+              "actor": "layers/male-bowl-right-actor-4.png",
+              "front": "layers/male-bowl-right-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-bowl-right-5.png",
+            "layers": {
+              "back": "layers/male-bowl-right-back-5.png",
+              "actor": "layers/male-bowl-right-actor-5.png",
+              "front": "layers/male-bowl-right-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ]
+      },
+      "sheets": {
+        "down": "sheets/male-bowl-down-sheet.png",
+        "up": "sheets/male-bowl-up-sheet.png",
+        "left": "sheets/male-bowl-left-sheet.png",
+        "right": "sheets/male-bowl-right-sheet.png"
+      }
+    },
+    {
+      "id": "male-honey",
+      "label": "남성 · 꿀 맛보기",
+      "group": "motions",
+      "width": 24,
+      "height": 24,
+      "loop": false,
+      "views": {
+        "down": [
+          {
+            "file": "frames/male-honey-down-0.png",
+            "layers": {
+              "back": "layers/male-honey-down-back-0.png",
+              "actor": "layers/male-honey-down-actor-0.png",
+              "front": "layers/male-honey-down-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-honey-down-1.png",
+            "layers": {
+              "back": "layers/male-honey-down-back-1.png",
+              "actor": "layers/male-honey-down-actor-1.png",
+              "front": "layers/male-honey-down-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-honey-down-2.png",
+            "layers": {
+              "back": "layers/male-honey-down-back-2.png",
+              "actor": "layers/male-honey-down-actor-2.png",
+              "front": "layers/male-honey-down-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-honey-down-3.png",
+            "layers": {
+              "back": "layers/male-honey-down-back-3.png",
+              "actor": "layers/male-honey-down-actor-3.png",
+              "front": "layers/male-honey-down-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-honey-down-4.png",
+            "layers": {
+              "back": "layers/male-honey-down-back-4.png",
+              "actor": "layers/male-honey-down-actor-4.png",
+              "front": "layers/male-honey-down-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-honey-down-5.png",
+            "layers": {
+              "back": "layers/male-honey-down-back-5.png",
+              "actor": "layers/male-honey-down-actor-5.png",
+              "front": "layers/male-honey-down-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ],
+        "up": [
+          {
+            "file": "frames/male-honey-up-0.png",
+            "layers": {
+              "back": "layers/male-honey-up-back-0.png",
+              "actor": "layers/male-honey-up-actor-0.png",
+              "front": "layers/male-honey-up-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-honey-up-1.png",
+            "layers": {
+              "back": "layers/male-honey-up-back-1.png",
+              "actor": "layers/male-honey-up-actor-1.png",
+              "front": "layers/male-honey-up-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-honey-up-2.png",
+            "layers": {
+              "back": "layers/male-honey-up-back-2.png",
+              "actor": "layers/male-honey-up-actor-2.png",
+              "front": "layers/male-honey-up-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-honey-up-3.png",
+            "layers": {
+              "back": "layers/male-honey-up-back-3.png",
+              "actor": "layers/male-honey-up-actor-3.png",
+              "front": "layers/male-honey-up-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-honey-up-4.png",
+            "layers": {
+              "back": "layers/male-honey-up-back-4.png",
+              "actor": "layers/male-honey-up-actor-4.png",
+              "front": "layers/male-honey-up-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-honey-up-5.png",
+            "layers": {
+              "back": "layers/male-honey-up-back-5.png",
+              "actor": "layers/male-honey-up-actor-5.png",
+              "front": "layers/male-honey-up-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ],
+        "left": [
+          {
+            "file": "frames/male-honey-left-0.png",
+            "layers": {
+              "back": "layers/male-honey-left-back-0.png",
+              "actor": "layers/male-honey-left-actor-0.png",
+              "front": "layers/male-honey-left-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-honey-left-1.png",
+            "layers": {
+              "back": "layers/male-honey-left-back-1.png",
+              "actor": "layers/male-honey-left-actor-1.png",
+              "front": "layers/male-honey-left-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-honey-left-2.png",
+            "layers": {
+              "back": "layers/male-honey-left-back-2.png",
+              "actor": "layers/male-honey-left-actor-2.png",
+              "front": "layers/male-honey-left-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-honey-left-3.png",
+            "layers": {
+              "back": "layers/male-honey-left-back-3.png",
+              "actor": "layers/male-honey-left-actor-3.png",
+              "front": "layers/male-honey-left-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-honey-left-4.png",
+            "layers": {
+              "back": "layers/male-honey-left-back-4.png",
+              "actor": "layers/male-honey-left-actor-4.png",
+              "front": "layers/male-honey-left-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-honey-left-5.png",
+            "layers": {
+              "back": "layers/male-honey-left-back-5.png",
+              "actor": "layers/male-honey-left-actor-5.png",
+              "front": "layers/male-honey-left-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ],
+        "right": [
+          {
+            "file": "frames/male-honey-right-0.png",
+            "layers": {
+              "back": "layers/male-honey-right-back-0.png",
+              "actor": "layers/male-honey-right-actor-0.png",
+              "front": "layers/male-honey-right-front-0.png"
+            },
+            "duration": 300,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-honey-right-1.png",
+            "layers": {
+              "back": "layers/male-honey-right-back-1.png",
+              "actor": "layers/male-honey-right-actor-1.png",
+              "front": "layers/male-honey-right-front-1.png"
+            },
+            "duration": 220,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-honey-right-2.png",
+            "layers": {
+              "back": "layers/male-honey-right-back-2.png",
+              "actor": "layers/male-honey-right-actor-2.png",
+              "front": "layers/male-honey-right-front-2.png"
+            },
+            "duration": 260,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-honey-right-3.png",
+            "layers": {
+              "back": "layers/male-honey-right-back-3.png",
+              "actor": "layers/male-honey-right-actor-3.png",
+              "front": "layers/male-honey-right-front-3.png"
+            },
+            "duration": 420,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-honey-right-4.png",
+            "layers": {
+              "back": "layers/male-honey-right-back-4.png",
+              "actor": "layers/male-honey-right-actor-4.png",
+              "front": "layers/male-honey-right-front-4.png"
+            },
+            "duration": 380,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          },
+          {
+            "file": "frames/male-honey-right-5.png",
+            "layers": {
+              "back": "layers/male-honey-right-back-5.png",
+              "actor": "layers/male-honey-right-actor-5.png",
+              "front": "layers/male-honey-right-front-5.png"
+            },
+            "duration": 320,
+            "anchor": {
+              "x": 12,
+              "y": 18
+            }
+          }
+        ]
+      },
+      "sheets": {
+        "down": "sheets/male-honey-down-sheet.png",
+        "up": "sheets/male-honey-up-sheet.png",
+        "left": "sheets/male-honey-left-sheet.png",
+        "right": "sheets/male-honey-right-sheet.png"
+      }
+    }
+  ]
+}

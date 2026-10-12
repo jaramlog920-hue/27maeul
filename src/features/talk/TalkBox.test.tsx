@@ -1,17 +1,83 @@
+// 기존 생활 시나리오는 개편 이전 저장의 권한으로 검증한다. 새 해금은 late-growth.test.ts에서 검증한다.
+import { legacyGame as newGame } from '../../engine/growth-test-support'
 // 편지 나르는 이웃: 말을 걸면 편지를 바로 건넨다 (2026-10-05, 편지 받기 단추 없음). 아침 방문 말이 있어도 편지 말이 가려지지 않는다 (계획 7 작업 2 검토 이월, 계획 14 작업 5 드문 편지)
 import { act, render, screen } from '@testing-library/react'
+import { StrictMode } from 'react'
 import { CONTENT } from '../../content/catalog'
 import { fill, itemList, T } from '../../content/text'
-import { newGame } from '../../engine/game'
+
 import { POSTMAN } from '../../engine/post'
+import { deserialize, serialize } from '../../engine/save'
+import { unseenTalkPopups } from '../../engine/talk-popups'
 import { postLine, useGame } from '../../store/game-store'
 import { ModalLayer } from '../ModalLayer'
+
+beforeEach(() => {
+  localStorage.clear()
+  useGame.setState({ piecePopups: [], copyResult: null, toast: null })
+})
 
 /** 오늘 편지(말씀 조각 하나)가 온 날 */
 function withPost() {
   const s = newGame(CONTENT)
   return { ...s, scenes: [], post: ['rom-001'] }
 }
+
+describe('빨간 특별 대화는 같은 대사마다 처음 한 번만', () => {
+  const first = '함께 빵을 구웠던 이야기'
+  const second = '새로 배운 제작법 이야기'
+  const dialogue = (popup = [first]) => ({ kind: 'talk' as const, neighborId: 'baker', line: first, popup })
+  beforeEach(() => {
+    localStorage.clear()
+    useGame.setState({ game: { ...newGame(CONTENT), scenes: [] }, modal: dialogue(), piecePopups: [], copyResult: null })
+  })
+  it('한 번 보여 준 말은 다시 열면 일반 대화에 남는다', () => {
+    const { container } = render(<ModalLayer />)
+    expect(container.querySelector('.talk-popup-line')).toHaveTextContent(first)
+    act(() => useGame.getState().closeModal())
+    act(() => useGame.getState().open(dialogue()))
+    expect(container.querySelector('.talk-popup')).toBeNull()
+    expect(screen.getByText(first)).toHaveClass('talk-line')
+    expect(screen.getByRole('button', { name: T.ui.talkHelp })).toBeInTheDocument()
+  })
+  it('저장 후 불러오거나 날짜가 바뀌어도 다시 강조하지 않는다', () => {
+    const { container } = render(<ModalLayer />)
+    const loaded = deserialize(serialize(useGame.getState().game), CONTENT)!
+    expect(unseenTalkPopups(loaded, 'baker', [first])).toEqual([])
+    act(() => useGame.getState().closeModal())
+    act(() => useGame.setState({ game: { ...loaded, clock: { ...loaded.clock, day: loaded.clock.day + 1 } }, modal: dialogue() }))
+    expect(container.querySelector('.talk-popup-line')).toBeNull()
+    expect(screen.getByText(first)).toHaveClass('talk-line')
+  })
+  it('첫 장만 보고 닫으면 아직 안 본 다음 장은 다음에 강조한다', () => {
+    act(() => useGame.getState().open(dialogue([first, second])))
+    const { container } = render(<ModalLayer />)
+    expect(container.querySelector('.talk-popup-line')).toHaveTextContent(first)
+    expect(unseenTalkPopups(useGame.getState().game, 'baker', [first, second])).toEqual([second])
+    act(() => useGame.getState().closeModal())
+    act(() => useGame.getState().open(dialogue([first, second])))
+    expect(container.querySelector('.talk-popup-line')).toHaveTextContent(second)
+    act(() => screen.getByRole('button', { name: T.ui.next }).click())
+    expect(container.querySelector('.talk-popup')).toBeNull()
+    expect(screen.getByText(first)).toHaveClass('talk-line')
+    expect(screen.getByText(second)).toHaveClass('talk-line')
+  })
+  it('같은 창에서 대사가 바뀌어도 새 대사는 정상적으로 강조한다', () => {
+    const { container } = render(<ModalLayer />)
+    act(() => useGame.getState().open({ ...dialogue([second]), line: second }))
+    expect(container.querySelector('.talk-popup-line')).toHaveTextContent(second)
+    expect(unseenTalkPopups(useGame.getState().game, 'baker', [first, second])).toEqual([])
+  })
+  it('StrictMode에서도 여러 새 대사를 건너뛰지 않고 중복은 한 번만 보여 준다', () => {
+    act(() => useGame.getState().open(dialogue([first, first, second])))
+    const { container } = render(<StrictMode><ModalLayer /></StrictMode>)
+    expect(container.querySelector('.talk-popup-line')).toHaveTextContent(first)
+    act(() => screen.getByRole('button', { name: T.ui.next }).click())
+    expect(container.querySelector('.talk-popup-line')).toHaveTextContent(second)
+    act(() => screen.getByRole('button', { name: T.ui.next }).click())
+    expect(container.querySelector('.talk-popup')).toBeNull()
+  })
+})
 
 describe('편지 나르는 이웃과의 대화', () => {
   it('말을 걸면 편지를 바로 받는다 — 편지 받기 단추 없이, 대화에 편지 말 한 줄', () => {
@@ -24,6 +90,8 @@ describe('편지 나르는 이웃과의 대화', () => {
     expect(g.post).toEqual([])
     expect(g.collected).toContain('rom-001')
     expect(useGame.getState().modal).toMatchObject({ kind: 'talk', neighborId: POSTMAN, letter: T.word.letterBring })
+    // 새 말씀조각 본문을 먼저 보고 닫은 다음, 그 뒤의 편지 대화를 확인한다.
+    act(() => useGame.getState().piecePopups.forEach(() => useGame.getState().dismissPiecePopup()))
     expect(screen.getByText(T.word.letterBring)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /편지 받기/ })).not.toBeInTheDocument()
     expect(useGame.getState().toast?.text).toContain('말씀 탭에 담겼어요')

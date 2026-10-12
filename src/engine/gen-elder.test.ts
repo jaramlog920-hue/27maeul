@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { CONTENT } from '../content/catalog'
 import { newGenState, sanitizeGen, type GenPerson, type GenState } from './gen'
 import { STAGE_AT } from './gen-config'
-import { settleGrowth, stageByAge, movedHeir } from './gen-growth'
+import { settleGrowth, stageByAge, movedHeir, slotPerson } from './gen-growth'
 import { companionsOf, genAvatar } from './gen-looks'
 import { settleGen, withPairs } from './gen-settle'
 import { newGame } from './game'
@@ -27,8 +27,12 @@ describe('태어난 생성 주민의 노년', () => {
     let g = family()
     for (let d = 10; d <= elderDay; d++) g = settleGrowth(g, d)
     expect(g.persons['g-0001'].stage).toBe('elder')
-    expect(movedHeir(g, 'rudy')?.id).toBe('g-0001')
-    expect(residentIsElder(g, movedHeir(g, 'rudy')!.id)).toBe(true)
+    expect(movedHeir(g, 'rudy')).toBeNull()
+    expect(slotPerson(g, 'rudy')).toBe('g-0001')
+    expect(residentIsElder(g, 'rudy')).toBe(true)
+    expect(residentIsElder(g, 'g-0001')).toBe(true)
+    // 은퇴 뒤에는 자녀(g-0001)가 자리 주인, 은퇴한 부모(rudy)가 곁에 (2026-10-11 사용자 결정)
+    expect(companionsOf(g, 'rudy')).toEqual([{ person: g.persons.rudy, short: false, retiredParent: 'rudy' }])
     expect(g.persons['g-0001']).toMatchObject({ name: '루시', look: 'f', avatar: family().persons['g-0001'].avatar, born: 10 })
     const log = g.log.find(l => l.kind === 'grew:elder')!
     expect(log.day).toBe(elderDay)
@@ -42,7 +46,10 @@ describe('태어난 생성 주민의 노년', () => {
     expect(next.gen!.persons['g-0001'].stage).toBe('elder')
     const restored = sanitizeGen(JSON.parse(JSON.stringify(next.gen)), elderDay)!
     expect(restored.persons['g-0001']).toEqual(next.gen!.persons['g-0001'])
-    expect(settleGrowth(restored, elderDay + 3).persons['g-0001'].stage).toBe('elder')
+    const later = settleGrowth(restored, elderDay + 1000)
+    expect(later.persons['g-0001']).toEqual(restored.persons['g-0001'])
+    expect(later.retired?.rudy.heir).toBe('g-0001')
+    expect(later.retired?.rudy.moved).toBeUndefined()
   })
   it('일터를 물려받지 않은 형제도 성인·노년 때 사라지지 않고 어른 크기로 보인다', () => {
     let g = family()
@@ -50,7 +57,10 @@ describe('태어난 생성 주민의 노년', () => {
     g.persons[sibling.id] = sibling; g.households['h-1'].children.push(sibling.id)
     for (let d = 10; d <= elderDay + 5; d++) g = settleGrowth(g, d)
     expect(g.persons['g-0002'].stage).toBe('elder')
-    expect(companionsOf(g, 'rudy')).toEqual([{ person: g.persons['g-0002'], short: false }])
+    expect(companionsOf(g, 'rudy')).toEqual([
+      { person: g.persons.rudy, short: false, retiredParent: 'rudy' },
+      { person: g.persons['g-0002'], short: false },
+    ])
   })
   it('생성 외형 그대로 노년의 네 방향·걷기 도트를 그리고 피부·옷·발을 보존한다', () => {
     const p = family().persons['g-0001'], avatar = genAvatar(p), opts = { frame: 0 as const, blink: false, avatar }

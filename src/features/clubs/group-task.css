@@ -1,0 +1,13 @@
+.group-task{margin:12px 0;padding:12px;border:2px solid var(--panel-edge);border-radius:6px;background:#fff9eb}
+.group-preview{display:block;width:100%;max-width:384px;height:auto;aspect-ratio:16/5;image-rendering:pixelated;margin:0 auto 10px;background:#f5e0c0}
+.group-meter{position:relative;height:22px;overflow:hidden;border:2px solid #ac7444;background:#fff0d0;margin:10px 0}
+.group-meter-target{position:absolute;left:55%;width:30%;height:100%;background:#a2cb78}
+.group-meter-fill{position:absolute;left:0;top:7px;height:8px;background:#c68b54}
+.group-hold{touch-action:none;user-select:none}
+.group-marks{display:flex;justify-content:space-around;gap:10px;padding:12px 0}
+.group-marks button{min-width:42px;min-height:42px;border-radius:50%}
+.group-marks .next{background:#ffca70;animation:group-pulse 1s ease-in-out infinite}
+.group-marks .done{background:#a2cb78}
+@keyframes group-pulse{50%{box-shadow:0 0 0 3px #f5e0af}}
+@media(prefers-reduced-motion:reduce){.group-marks .next{animation:none}}
+

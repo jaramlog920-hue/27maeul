@@ -7,7 +7,7 @@ const motion=await import('../src/render/life-additions-motion-art.ts'),props=aw
 const {SETTLEMENT_GUESTS}=await import('../src/render/settlement-guests-art.ts')
 const out='assets/life-additions',facings=['down','up','left','right'],sequences=[],staticAssets=[],colors=props.DETAIL_COLORS
 // 같은 파일명을 유지하면서도 로컬 미리보기가 이전 PNG를 캐시하지 않도록 버전을 붙인다.
-const assetVersion='2'
+const assetVersion='9'
 for(const folder of ['toddler','child','elder','arrival','memories','books','book-work'])fs.mkdirSync(`${out}/${folder}`,{recursive:true})
 function save(file,w,h,layers){const p=new Uint8Array(w*h*4);for(const [rows,pal]of layers)draw(p,w,rows,pal);png(`${out}/${file}`,w,h,p);return file}
 const sheet=new Uint8Array(768*1100*4)

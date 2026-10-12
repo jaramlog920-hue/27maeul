@@ -1,9 +1,8 @@
 import { canWorkDay, type WorkState } from './work-day'
 import { availability } from './plans'
-import { notYet, passTime, playerTile, overflows, putAway, recordExperienceIn, type GameState } from './game'
+import { haveStock, notYet, passTime, playerTile, overflows, putAway, recordExperienceIn, useStock, type GameState } from './game'
 import { npcTile } from './neighbors'
 import { startMini, stepMini, tapMini, isDone, type MiniState } from './minigame'
-import { has, take } from './items'
 import { FINISH_SKILL, SKILL_DEFS, SKILL_IDS, skillOf } from './skill-defs'
 import type { GameContent, Rng } from './types'
 
@@ -19,6 +18,7 @@ export const LESSON_MINUTES = 30
 const DISCOVER_KINDS = ['work','club','event','story','project'] as const
 
 function nearby(s:GameState,npc:string):boolean {
+  if((s.map??'village')!=='village') return false
   const n=s.npcs[npc]
   const p=playerTile(s),at=n&&npcTile(n)
   return !!n?.visible && !!at && Math.abs(p.x-at.x)+Math.abs(p.y-at.y)<=3
@@ -34,6 +34,7 @@ export function discoveredFinish(s:SkillState):boolean { return discoveredSkill(
 export type LessonBlock = 'unknown'|'known'|'away'|'busy'|'late'|null
 /** 지금 이 이웃에게 배울 수 있는지. 바쁘면 다른 때를 안내할 뿐 불이익은 없다 */
 export function canLearn(s:SkillState,npc:string,content:GameContent):LessonBlock {
+  if((s.map??'village')!=='village') return 'away'
   const id=skillOf(npc)
   if(!id) return 'away'
   if(s.skills?.[id]) return 'known'
@@ -108,9 +109,10 @@ export function styleOf(s:SkillState,id:string):string {
 /** 개인 재료로 배운 물건 하나를 만든다 (재료가 정해진 기술만) */
 export function craftLearned(s:SkillState,id:string):SkillState {
   const def=SKILL_IDS.includes(id) ? SKILL_DEFS[id] : undefined
-  if(!def?.needs || !s.skills?.[id] || !has(s.inv,def.needs) || overflows(s,{[def.item]:1})) return s
+  if(!def?.needs || !s.skills?.[id] || !haveStock(s,def.needs) || overflows(s,{[def.item]:1})) return s
   const key=`skillFinish:${def.item}`
-  const next=putAway({...s,inv:take(s.inv,def.needs)!,flags:{...s.flags,[`skillMade:${def.item}`]:s.clock.day,[key]:s.flags[key]??1}},{[def.item]:1})
+  const paid=useStock(s,def.needs)! as SkillState
+  const next=putAway({...paid,flags:{...s.flags,[`skillMade:${def.item}`]:s.clock.day,[key]:s.flags[key]??1}},{[def.item]:1})
   return passTime(next,30)
 }
 export const STOOL_NEEDS = SKILL_DEFS[FINISH_SKILL].needs!

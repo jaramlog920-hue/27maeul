@@ -4,10 +4,20 @@ import { T } from '../content/text'
 import { FORBIDDEN } from '../content/forbidden'
 import { finishReading, newGame } from './game'
 import { dayOf } from './calendar'
-import { canRead, isReadingDay, READING_FROM, seasonCopyGift, seasonCopyKey } from './meetings'
+import { canAutoRead, canRead, isReadingDay, READING_FROM, READING_TO, seasonCopyGift, seasonCopyKey } from './meetings'
 import { scheduledEvents } from './events'
 
 describe('마을 소리내어 읽기 모임', () => {
+  it('자동 본문 창은 모임 시간에만 하루 한 번 열리고 다음 모임 날 다시 열린다', () => {
+    const s = { clock: { day: 5, minute: READING_FROM }, flags: {} }
+    expect(canAutoRead(s)).toBe(true)
+    expect(canAutoRead({ ...s, clock: { day: 5, minute: READING_FROM - 1 } })).toBe(false)
+    expect(canAutoRead({ ...s, clock: { day: 5, minute: READING_TO } })).toBe(false)
+    expect(canAutoRead({ ...s, clock: { day: 6, minute: READING_FROM } })).toBe(false)
+    expect(canAutoRead({ ...s, flags: { readPromptDay: 5 } })).toBe(false)
+    expect(canAutoRead({ ...s, flags: { readDay: 5 } })).toBe(false)
+    expect(canAutoRead({ clock: { day: 12, minute: READING_FROM }, flags: { readPromptDay: 5, readDay: 5 } })).toBe(true)
+  })
   it('일곱 날에 한 번 저녁, 하루 한 번, 끝나면 경험치', () => {
     const day = [1, 2, 3, 4, 5, 6, 7].find(isReadingDay)!
     const s = { ...newGame(CONTENT), clock: { day, minute: READING_FROM + 10 } }

@@ -1,3 +1,4 @@
+import { featureAccess, featureHint } from '../../engine/feature-rules'
 import { useState } from 'react'
 import { CONTENT, neighborById } from '../../content/catalog'
 import { T } from '../../content/text'
@@ -7,8 +8,8 @@ import { cancelFest, festivalRoleReady, festKinds, festWaiting, postponeFest, FE
 import { useGame } from '../../store/game-store'
 import { commitClub } from '../clubs/club-store'
 import { FestForm } from './FestForm'
+import { festErrorText } from './fest-text'
 
-const errorText = (e: string) => (T.fest.errors as Record<string, string>)[e] ?? (T.clubs.errors as Record<string, string>)[e] ?? T.fest.errors.time
 
 /** 다른 날로 다시 잡기: 날짜와 시간 둘만 고른다 */
 function Postpone({ fest, onDone }: { fest: Fest; onDone: () => void }) {
@@ -19,7 +20,7 @@ function Postpone({ fest, onDone }: { fest: Fest; onDone: () => void }) {
  return <div>
   <label>{F.dayLabel}<select value={day} onChange={e => setDay(Number(e.target.value))}>{days.map(d => <option key={d} value={d}>{d}일째 · {T.clubs.day[d % 7]}</option>)}</select></label>
   <label>{F.slotLabel}<select value={slot} onChange={e => setSlot(e.target.value as ClubSlot)}>{(Object.keys(CLUB_SLOTS) as ClubSlot[]).map(id => <option key={id} value={id}>{T.clubs.slot[id]}</option>)}</select></label>
-  {error && <p role="alert">{errorText(error)}</p>}
+  {error && <p role="alert">{festErrorText(error, fest.kind)}</p>}
   <div className="actions"><button className="primary" onClick={save}>{F.confirm}</button><button onClick={onDone}>{F.back}</button></div>
  </div>
 }
@@ -33,6 +34,7 @@ export function FestList() {
  const list = (game.fests ?? []).filter(f => !f.closed)
  const role = festivalRoleReady(game)
  return <div className="dialog fest-form" role="dialog" aria-label={F.title}><h2>{F.title}</h2>
+  {featureAccess(game, 'events') !== 'full' && <p className="hint">{featureHint('events')}</p>}
   {!list.length && <p>{F.none}</p>}
   <ul className="event-list">{list.map(f => {
    const a = f.apptId ? game.plans.appts.find(x => x.id === f.apptId) : undefined

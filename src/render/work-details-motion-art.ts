@@ -3,7 +3,8 @@ import type { Facing } from '../engine/types'
 import type { FullAvatar } from '../engine/avatar'
 import { ADDITION_AVATAR } from './life-additions-motion-art'
 import { furnitureUseFrame } from './furniture-use-motion'
-import { spriteRows,writerPalette } from './sprites'
+import { writerPalette } from './sprites'
+import { motionBodyRows } from './motion-body'
 import { FURNI_PALETTE } from './furniture-art'
 
 export const WORK_DETAIL_GROUPS={garden:['sow','coverSoil','pickHerb','pickBean'],copy:['dipInk','write','wipePen','movePaper'],job:['hammer','mendNet','sortWool'],letter:['foldLetter','insertLetter','openLetter']} as const
@@ -19,15 +20,14 @@ export function workDetailFrame(action:WorkDetailAction,facing:Facing,frame:numb
  const f=((frame%4)+4)%4,actor=grid(),prop=grid(),r=prop.rect,hand=actor.rect
  const garden=(WORK_DETAIL_GROUPS.garden as readonly string[]).includes(action),side=facing==='left'||facing==='right'
  const canonical=facing==='left'?'right':facing
- const base=furnitureUseFrame('writer',canonical,garden?'reach':'craft',f,{frame:0,blink:false,avatar})
+ const base=furnitureUseFrame('writer',canonical,garden?'reach':'craft',f,{frame:0,blink:false,avatar},false)
  paste(actor,base.actor,4,2)
  if(garden){
   // 심기와 수확은 무릎을 굽힌 몸을 쓰고 손은 작업물 위에 따로 그린다.
   actor.p.forEach(row=>row.fill('.'))
-  const source=spriteRows('writer',canonical,{frame:0,blink:false,avatar,pose:'crouch'})
+  const source=motionBodyRows('writer',canonical,{frame:0,blink:false,avatar,pose:'crouch'})
   paste(actor,source,11,7)
  }
- for(let y=14;y<24;y++)for(let x=0;x<32;x++)if(['s','5','!','K'].includes(actor.p[y][x]))actor.p[y][x]='.'
  const cx=side?24:16,hy=action==='hammer'?[12,9,17,14][f]:garden?21+[0,1,0,-1][f]:17+[0,1,0,1][f]
  hand(cx-3,hy,2,1,'s');hand(cx-3,hy+1,2,1,'5')
  if(!side){hand(cx+2,hy,2,1,'s');hand(cx+2,hy+1,2,1,'5')}

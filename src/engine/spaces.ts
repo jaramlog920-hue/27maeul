@@ -9,6 +9,7 @@ import { petSpotSafe } from './companion'
 import { findPath } from './movement'
 import { personOf } from './people'
 import { currentHomeLevel, HOME_ENTRY, isHome, isWalkable, key, placeActive, PLACES, sameTile } from './world'
+import { currentMapId, type MapId } from './maps'
 import type { Tile } from './types'
 
 export type SpaceUse = 'tea' | 'craft' | 'family' | 'pet' | 'read'
@@ -126,14 +127,15 @@ export function spaceReady(room: readonly Furniture[], s: HomeSpace): boolean {
 }
 
 /** 쓸 수 있는 자리만 (가구 배치가 바뀌어도 늘 지금 방으로 다시 따진다) */
-let liveMemo: { room: readonly Furniture[]; spaces: readonly HomeSpace[]; level: number; out: HomeSpace[] } | null = null
+let liveMemo: { room: readonly Furniture[]; spaces: readonly HomeSpace[]; level: number; map: MapId; out: HomeSpace[] } | null = null
 export function liveSpaces(s: { room: readonly Furniture[]; spaces?: readonly HomeSpace[] }): HomeSpace[] {
   const spaces = s.spaces ?? []
   if (!spaces.length) return []
   const level = currentHomeLevel()
-  if (liveMemo && liveMemo.room === s.room && liveMemo.spaces === spaces && liveMemo.level === level) return liveMemo.out
+  const map = currentMapId()
+  if (liveMemo && liveMemo.room === s.room && liveMemo.spaces === spaces && liveMemo.level === level && liveMemo.map === map) return liveMemo.out
   const out = spaces.filter(sp => spaceReady(s.room, sp))
-  liveMemo = { room: s.room, spaces, level, out }
+  liveMemo = { room: s.room, spaces, level, map, out }
   return out
 }
 

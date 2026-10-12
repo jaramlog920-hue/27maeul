@@ -37,12 +37,13 @@ export function Review({ pieceId }: { pieceId: string | null }) {
 
 const BOOK_NAME = T.quiz.books as Record<string, string>
 const D = T.diary
+const GUEST_NAMES = T.newlandLife.guests as Record<string, { name: string }>
 const pieceKnown = (id: string) => CONTENT.pieces.some((p) => p.id === id)
 
 /** 오늘의 기록 (계획 14 작업 6): 있는 칸만 — 필사한 장·받은 선물·새 말씀 조각·가족 일 */
 function DiaryView({ diary }: { diary: Diary }) {
   const kid = useGame((s) => s.game.child?.name)
-  const who = (id: string) => (id === 'child' && kid ? kid : (neighborById(id)?.role ?? id))
+  const who = (id: string) => (id === 'child' && kid ? kid : (neighborById(id)?.role ?? GUEST_NAMES[id]?.name ?? id))
   const rows: [string, string[]][] = [
     [D.chapters, diary.chapters.map((c) => fill(D.chapterList, { book: BOOK_NAME[c.book], chapters: c.chapters.join('·') }))],
     [D.gifts, diary.gifts.map((g) => fill(D.giftFrom, { who: who(g.from), items: itemList(g.items) }))],

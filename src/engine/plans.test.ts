@@ -16,6 +16,14 @@ function booked(s=ready(),extra:Partial<Appt>={}):GameState {
  return result.state
 }
 describe('shared appointment engine',()=>{
+ it('cannot attend a village appointment from the same coordinates on the newland map',()=>{
+  const running=advancePlans({...booked(ready(),{place:'commonBench'}),clock:{day:2,minute:600}},CONTENT)
+  const spot=appointmentSpots(running).baker
+  const elsewhere={...running,map:'newland' as const,player:{...running.player,...spot}}
+  expect(attendAppt(elsewhere,'appt:1')).toBe(elsewhere)
+  const here={...elsewhere,map:'village' as const}
+  expect(attendAppt(here,'appt:1').plans.appts[0].attended).toBe(true)
+ })
  it('merchant only comes on market day, child cannot attend after 18:00, absent residents cannot be invited',()=>{
   const s=ready()
   expect(availability(s,'merchant',2,600,720,CONTENT)).toMatchObject({busy:'market',suggest:{day:7}})

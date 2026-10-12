@@ -1,9 +1,12 @@
+import { villageBookCount } from "../../engine/progression"
 // 마을 지도 (설정 → 마을 지도): 마을 전체를 한 장으로 펼쳐 보인다. 장소 이름과 지금 내 자리
 import { useEffect, useRef } from 'react'
 import { neighborById } from '../../content/catalog'
 import { T } from '../../content/text'
-import { closedHouseIds, shelvedCount } from '../../engine/game'
-import { housesNow, isHome, lockedZones, roomAt, TILE, VILLAGE_H, WIDTH, type House } from '../../engine/world'
+import { closedHouseIds } from '../../engine/game'
+import { housesNow, isHome, lockedZones, placeActive, roomAt, TILE, VILLAGE_H, WIDTH, type House } from '../../engine/world'
+import { LODGING_ROOF_TOP } from '../../engine/lodging'
+import type { PlaceId } from '../../engine/types'
 import { drawVillageMap } from '../../render/renderer'
 import { useGame } from '../../store/game-store'
 
@@ -22,21 +25,34 @@ const HOUSE_NAME: Record<string, string> = {
   grandpa: '할아버지 집',
   beekeeper: '벌 치는 집',
   fisher: '어부네',
+  // 대장간 마당에 선 2층 공동 주택 (아래층에 대장간·기름틀, 위층에 손님방)
+  lodging: '공동 주택',
 }
 function houseName(h: House): string {
   return HOUSE_NAME[h.id] ?? neighborById(h.id)?.role ?? ''
 }
-/** 집이 아닌 곳 */
+/** 집이 아닌 곳 (2026-10-12 지금 지도에 맞춤: 대장간 마당은 공동 주택이 되었다) */
 const SPOTS: { name: string; x: number; y: number }[] = [
   { name: '광장', x: 24.5, y: 12.4 },
+  { name: '우물', x: 24.5, y: 15.3 },
+  { name: '매대', x: 30, y: 20.3 },
   { name: '텃밭', x: 12.5, y: 3.3 },
+  { name: '언덕', x: 14.5, y: 10.3 },
   { name: '포도원', x: 43.5, y: 0.6 },
-  { name: '올리브 숲', x: 43.5, y: 16.2 },
-  { name: '대장간', x: 43.5, y: 18.2 },
+  { name: '올리브 숲', x: 43.5, y: 10.3 },
   { name: '양 우리', x: 5, y: 25.6 },
   { name: '보리밭', x: 13, y: 26.4 },
+  { name: '정자', x: 13.5, y: 32.3 },
+  { name: '갈대밭', x: 6.5, y: 33.3 },
   { name: '나루', x: 24.5, y: 36 },
   { name: '호수', x: 36, y: 36 },
+]
+/** 주민과 함께 지은 공동 시설 — 진행 중이거나 다 지은 것만 (placeActive) */
+const FACILITY_SPOTS: { place: PlaceId; name: string; x: number; y: number }[] = [
+  { place: 'shadeSpot', name: '그늘막', x: 30.5, y: 5.3 },
+  { place: 'signPost', name: '안내판', x: 12.5, y: 12.6 },
+  { place: 'commonBench', name: '긴 벤치', x: 28.5, y: 23.3 },
+  { place: 'flowerBed', name: '꽃밭', x: 12.5, y: 9.2 },
 ]
 const ZONE_NAME: Record<string, string> = { vineyard: '포도원', dock: '나루', hives: '벌통' }
 
@@ -60,7 +76,7 @@ export function VillageMap() {
   const away = (game.map ?? 'village') !== 'village'
   const at = away ? null : isHome(here) ? { x: housesNow().find((h) => h.id === 'home')!.doorX, y: housesNow().find((h) => h.id === 'home')!.y1 } : inside ? inside.door : here.y < VILLAGE_H ? here : null
   const pct = (x: number, y: number) => ({ left: `${((x + 0.5) / WIDTH) * 100}%`, top: `${((y + 0.5) / VILLAGE_H) * 100}%` })
-  const locked = lockedZones(shelvedCount(game))
+  const locked = lockedZones(villageBookCount(game))
   // 아직 이사 오지 않은 이웃의 집(덤불로 덮인 집)도 언제 열리는지 적는다 — 서고 권수 또는 마을 단계
   // 잠긴 구역 안에 있는 집은 구역 자물쇠 하나로 충분하다 (벌 치는 집 + 벌통 들판이 둘 다 6권으로 겹쳐 보이던 것)
   const inLockedZone = (h: House) => {
@@ -79,13 +95,20 @@ export function VillageMap() {
       <h2>마을 지도</h2>
       <div className="vmap">
         <canvas ref={ref} width={WIDTH * TILE} height={VILLAGE_H * TILE} aria-hidden="true" />
-        {housesNow().map((h) => (
-          <span key={h.id} className="vmap-label" style={pct((h.x0 + h.x1) / 2, h.y0 - 0.1)}>
+        {/* 잠긴 구역 안의 집(덤불에 덮인 집)은 구역 자물쇠 이름표만 — 이름표가 겹치지 않게 */}
+        {housesNow().filter((h) => !inLockedZone(h)).map((h) => (
+          // 공동 주택은 지붕 위가 투명한 여백이라 지붕 꼭대기에 이름을 단다
+          <span key={h.id} className="vmap-label" style={pct((h.x0 + h.x1) / 2, (h.id === 'lodging' ? LODGING_ROOF_TOP : h.y0) - 0.1)}>
             {houseName(h)}
           </span>
         ))}
         {SPOTS.filter((s) => !locked.some((z) => ZONE_NAME[z.id] === s.name)).map((s) => (
           <span key={s.name} className="vmap-label soft" style={pct(s.x - 0.5, s.y)}>
+            {s.name}
+          </span>
+        ))}
+        {FACILITY_SPOTS.filter((s) => placeActive(s.place)).map((s) => (
+          <span key={s.place} className="vmap-label soft" style={pct(s.x - 0.5, s.y)}>
             {s.name}
           </span>
         ))}

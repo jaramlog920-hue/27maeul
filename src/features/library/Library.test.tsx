@@ -20,7 +20,7 @@ function done(s: GameState, ...books: Book[]): GameState {
 }
 function reset(game: GameState, modal: Modal | null = null) {
   localStorage.clear()
-  useGame.setState({ game, modal, rng: mulberry32(5), toast: null, decorating: null })
+  useGame.setState({ game, modal, rng: mulberry32(5), toast: null, decorating: null, piecePopups: [], copyResult: null, copySessionStats: null })
 }
 
 describe('서고의 시각적 성장', () => {
@@ -50,6 +50,39 @@ describe('서고의 시각적 성장', () => {
 })
 
 describe('제본 → 완성본 → 서고에 꽂기', () => {
+  it('서고의 다시 도전을 누르면 한 번만 비용을 내고 남은 시작 입력은 진행 중 퀴즈를 보존한다', async () => {
+    const user = userEvent.setup()
+    reset({ ...done(base(), 'mk'), bound: { mk: { day: 1 } }, shelved: { mk: 0 }, inv: { goldLeaf: 3, oil: 3 } }, { kind: 'library' })
+    render(<ModalLayer />)
+    const lateStart = useGame.getState().startRetry
+    const row = screen.getByText('마가복음', { selector: '.spine-name' }).closest('li')!
+    await user.click(within(row).getByRole('button', { name: '다시 도전' }))
+    const paid = useGame.getState().game
+    const quiz = useGame.getState().modal
+    expect(paid.inv).toEqual({ goldLeaf: 2, oil: 2 })
+    expect(quiz).toMatchObject({ kind: 'quiz', mode: { retry: true }, index: 0 })
+    expect(screen.queryByRole('button', { name: '다시 도전' })).toBeNull()
+    act(() => lateStart('mk'))
+    expect(useGame.getState().game).toBe(paid)
+    expect(useGame.getState().modal).toBe(quiz)
+  })
+  it('표지 꾸미기 확인 후 완료 화면에서 늦은 확인은 추가 재료를 쓰지 않는다', async () => {
+    const user = userEvent.setup()
+    const s = done(base(), 'mk')
+    reset({ ...s, bound: { mk: { day: 1 } }, inv: { creamPaper: 6, blueDye: 2, fineThread: 4 } })
+    act(() => useGame.getState().openBind('mk', 'library'))
+    render(<ModalLayer />)
+    const lateConfirm = useGame.getState().bindSpecial
+    await user.click(screen.getByRole('button', { name: '이대로 꾸미기' }))
+    const doneState = useGame.getState().game
+    expect(doneState.inv).toEqual({ creamPaper: 3, blueDye: 1, fineThread: 2 })
+    expect(useGame.getState().modal).toMatchObject({ step: 'made' })
+    expect(screen.queryByRole('button', { name: '이대로 꾸미기' })).toBeNull()
+    act(() => lateConfirm(doneState.bound.mk!.special!))
+    expect(useGame.getState().game).toBe(doneState)
+    await user.click(screen.getByRole('button', { name: '닫기' }))
+    expect(useGame.getState().modal).toEqual({ kind: 'library' })
+  })
   it('필사를 마친 장 완료 화면에서 [제본하기] → 그대로 제본하기(무료) → 가방에 완성본', async () => {
     const user = userEvent.setup()
     const g = { ...done(base(), 'phm'), inv: {}, copy: { ...base().copy, book: 'phm' as Book } }
@@ -172,6 +205,11 @@ describe('스물일곱 번째 책', () => {
     )
     reset(g, { kind: 'roomShelf', room: 'rev' })
     render(<ModalLayer />)
+    // 시험 상태에 새로 넣은 수집 조각 알림은 선반 창 위에 먼저 표시된다.
+    const acquired = useGame.getState().piecePopups.length
+    for (let i = 0; i < acquired; i++) {
+      await user.click(within(screen.getByRole('dialog', { name: '말씀조각 획득' })).getByRole('button', { name: /닫기|다음 조각/ }))
+    }
     await user.click(screen.getByRole('button', { name: '바로 꽂기' }))
     const dialog = screen.getByRole('dialog', { name: '스물일곱 권의 서고' })
     const [then, now] = within(dialog).getAllByRole('figure')

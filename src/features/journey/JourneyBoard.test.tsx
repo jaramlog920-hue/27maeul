@@ -10,6 +10,11 @@ import { shelfRoom } from '../../engine/shelf-rooms'
 import { key, LOCKED_DOORS, PLACES, REV_ROOM, roomAt, ROOMS, WARPS } from '../../engine/world'
 import { copySourceFor } from '../../content/catalog'
 import { useGame } from '../../store/game-store'
+
+// 조각을 넣으면 뜨는 "말씀조각 획득" 알림은 바로 넘긴다 (알림이 떠 있으면 누르기가 막힌다 — 알림은 따로 테스트)
+let stopSkip: (() => void) | null = null
+beforeEach(() => { stopSkip = useGame.subscribe((s) => { if (s.piecePopups.length) useGame.setState({ piecePopups: [] }) }) })
+afterEach(() => stopSkip?.())
 import { ModalLayer } from '../ModalLayer'
 
 function reset(game: Partial<GameState> = {}) {

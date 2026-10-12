@@ -105,7 +105,7 @@ export function JourneyBoard({ board: id = 'acts' }: { board?: CardBoard }) {
       <div className="actions">
         <button data-close onClick={closeModal}>{T.ui.close}</button>
         {!done && board.length > 1 && (
-          <button className="primary" onClick={() => setChecked(boardInOrder(board) ? 'ok' : 'wrong')}>
+          <button className="primary" onClick={() => setChecked(boardInOrder(board, def.cards) ? 'ok' : 'wrong')}>
             {T.acts.boardCheck}
           </button>
         )}

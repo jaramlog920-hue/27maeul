@@ -5,6 +5,7 @@ import type { ClubSession } from './clubs'
 import { heartUp, recordExperienceIn, type GameState } from './game'
 import { COOKED_ITEMS, count, take } from './items'
 import type { ItemId, Season } from './types'
+import { canAttendAppt } from './plans'
 
 
 const sessionOf = (s: GameState, id: string): ClubSession | undefined => s.clubSessions?.[id]
@@ -20,11 +21,11 @@ export function clubDishes(s: Pick<GameState, 'inv'>): ItemId[] {
 export function canShareClubDish(s: GameState, id: string): boolean {
   const run = sessionOf(s, id)
   const a = appt(s, id)
-  return !!run && !!a && a.activity === 'tea' && run.step === 'activity' && !run.shared && clubDishes(s).length > 0
+  return !!run && !!a && !!a.attended && canAttendAppt(s,id) && a.activity === 'tea' && run.step === 'activity' && !run.shared && clubDishes(s).length > 0
 }
 /** 만든 음식 하나를 차 모임에 나눈다: 가방에서 하나, 함께한 이웃마다 마음 +1, 함께 먹은 기억 */
 export function shareClubDish(s: GameState, id: string, dish: ItemId): GameState {
-  if (!canShareClubDish(s, id) || count(s.inv, dish) < 1) return s
+  if (!canShareClubDish(s, id) || !COOKED_ITEMS.includes(dish) || count(s.inv, dish) < 1) return s
   const a = appt(s, id)!
   const run = sessionOf(s, id)!
   const inv = take(s.inv, { [dish]: 1 })
@@ -39,7 +40,8 @@ export function shareClubDish(s: GameState, id: string, dish: ItemId): GameState
 /** 주민 근황에 함께하기: 그 소식을 꺼낸 이웃과 기억 하나, 마음 +2 — 모임마다 한 번 */
 export function canJoinNews(s: GameState, id: string, npc: string): boolean {
   const run = sessionOf(s, id)
-  return !!run && !run.joinedNews && !!npc
+  const a = appt(s,id)
+  return !!run && !run.joinedNews && !!a?.attended && canAttendAppt(s,id) && (a.startedWith ?? []).includes(npc)
 }
 export function joinNews(s: GameState, id: string, npc: string): GameState {
   if (!canJoinNews(s, id, npc)) return s

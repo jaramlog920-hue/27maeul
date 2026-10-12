@@ -1,7 +1,8 @@
+import { establishedGame as newGame } from "../../engine/growth-test-support"
 import { act, fireEvent, render } from '@testing-library/react'
 import { CONTENT, PEOPLE } from '../../content/catalog'
 import { T } from '../../content/text'
-import { newGame, settle, type GameState } from '../../engine/game'
+import { settle, type GameState } from '../../engine/game'
 import { appointmentSpots } from '../../engine/plans'
 import { chooseClub, clubWeaveDone, createClub, joinClub, type ClubInput } from '../../engine/clubs'
 import { clubPerson } from '../../engine/club-life'
@@ -18,6 +19,14 @@ function ready(): GameState {
 const config: ClubInput = { name: '천 한 올 모임', place: 'hallTable', members: ['baker'], weekday: 2, slot: 'morning', activity: 'sew', alt: 'hallTable' }
 
 describe('소모임 화면', () => {
+  it('다음 회차의 날짜에는 치환되지 않은 문구가 남지 않는다', () => {
+    const s = createClub(ready(), config, CONTENT).state
+    useGame.setState({ game: s })
+    const { container } = render(<ClubList />)
+    expect(container.textContent).toContain('2일째')
+    expect(container.textContent).not.toContain('{day}')
+  })
+
   it('이웃 고르기 칸은 글 앞에 한 줄로 놓인다 (칸이 가로로 늘어나지 않는다)', () => {
     useGame.setState({ game: ready() })
     const { getByText, container } = render(<ClubForm onClose={() => {}} />)

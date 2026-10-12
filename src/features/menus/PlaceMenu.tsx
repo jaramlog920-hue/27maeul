@@ -1,3 +1,4 @@
+import { featureHint } from '../../engine/feature-rules'
 import { clubHere } from '../../engine/clubs'
 import { festHere } from '../../engine/fest'
 import { SkillCraftOptions } from '../skills/SkillLesson'
@@ -7,19 +8,37 @@ import { CONTENT } from '../../content/catalog'
 import { fill, T, withAnd, withSubject } from '../../content/text'
 import { canCraft, canDate, canDrinkTea, canPlayHall, canWatchSunset, hasFood, starsOut } from '../../engine/game'
 import { TEA_PRICE } from '../../engine/places'
-import { canRead, isReadingDay } from '../../engine/meetings'
+import { canRead, nextReadingDay } from '../../engine/meetings'
 import { RowLabel } from '../../shared/RowLabel'
+import { t } from '../../shared/i18n'
 import { DATE_TEA_PRICE, type DatePlace } from '../../engine/romance'
 import { partnerName, useGame, type MenuPlace } from '../../store/game-store'
 import { isFacilityPlace, facilityOfPlace } from '../../engine/village-sites'
 import { FacilityHint, FacilityMenu } from '../village/FacilityMenu'
+import { copiedChapters } from '../../engine/copied-reading'
+import { RECIPES, recipeGives, type RecipeId } from '../../engine/items'
+import { IconGrid, NeedList } from '../../shared/IconGrid'
+import { ItemIcon } from '../../shared/ItemIcon'
+import type { ItemId } from '../../engine/types'
+
+/** 제작대에서 만드는 것 (줄 이름은 예전 단추 글 그대로) */
+const WORKBENCH: { id: RecipeId; text: string }[] = [
+  { id: 'homeCradle', text: T.recipes.homeCradle },
+  { id: 'papyrus', text: T.ui.workPapyrus },
+  { id: 'ink', text: fill(T.ui.workInk, { n: 1 }) },
+  { id: 'blanket', text: T.ui.workBlanket },
+  { id: 'cover', text: T.ui.workCover },
+  { id: 'scentCandle', text: T.ui.workCandle },
+  { id: 'creamPaper', text: T.ui.workCream },
+  { id: 'fineThread', text: T.ui.workThread },
+]
 
 const DATE_AT: Partial<Record<MenuPlace, DatePlace>> = { teaTable: 'tea', pavilion: 'sunset', hill: 'walk' }
 const DATE_LABEL: Record<DatePlace, string> = { tea: T.romance.dateTea, sunset: T.romance.dateSunset, walk: T.romance.dateWalk }
 
 export function PlaceMenu({ place }: { place: MenuPlace }) {
   const game = useGame((s) => s.game)
-  const { startCraft, warm, eat, closeModal, open, sitHill, playHall, drinkTea, watchSunset, rest, goDate } = useGame.getState()
+  const { startCraft, warm, eat, closeModal, open, sitHill, playHall, drinkTea, watchSunset, goDate } = useGame.getState()
   const title = {
     hearth: T.ui.hearthTitle,
     workbench: T.ui.workbenchTitle,
@@ -43,7 +62,7 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
   const partner = partnerName(game)
   const date = datePlace && game.romance?.stage ? canDate(game, datePlace, CONTENT) : 'noPartner'
   const dateHint =
-    date === 'done'
+    date === 'locked' ? featureHint(game.romance?.stage === 'married' ? 'spouseLife' : 'dating') : date === 'done'
       ? T.romance.dateAlready
       : date === 'away'
         ? fill(T.romance.dateAway, { who: withSubject(partner) })
@@ -80,32 +99,25 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
         {place === 'workbench' && (
           <>
             <SkillCraftOptions />
-            <button disabled={canCraft(game, 'papyrus') !== null} onClick={() => startCraft('papyrus')}>
-              <RowLabel text={T.ui.workPapyrus} />
-            </button>
-            <button disabled={canCraft(game, 'ink') !== null} onClick={() => startCraft('ink')}>
-              <RowLabel text={fill(T.ui.workInk, { n: 1 })} />
-            </button>
-            <button disabled={canCraft(game, 'blanket') !== null} onClick={() => startCraft('blanket')}>
-              <RowLabel text={T.ui.workBlanket} />
-            </button>
-            <button disabled={canCraft(game, 'cover') !== null} onClick={() => startCraft('cover')}>
-              <RowLabel text={T.ui.workCover} />
-            </button>
-            <button disabled={canCraft(game, 'scentCandle') !== null} onClick={() => startCraft('scentCandle')}>
-              <RowLabel text={T.ui.workCandle} />
-            </button>
-            <button disabled={canCraft(game, 'creamPaper') !== null} onClick={() => startCraft('creamPaper')}>
-              <RowLabel text={T.ui.workCream} />
-            </button>
-            <button disabled={canCraft(game, 'fineThread') !== null} onClick={() => startCraft('fineThread')}>
-              <RowLabel text={T.ui.workThread} />
-            </button>
+            {/* 2026-10-12 사용자: 줄줄이 늘어놓지 않고 가방처럼 아이콘 칸 — 누르면 재료(가진 수/필요한 수)·설명, 단추로 만들기 */}
+            <IconGrid title={T.ui.workbenchTitle} entries={WORKBENCH.filter((w) => w.id !== 'homeCradle' || game.recipesKnown.includes('homeCradle')).map((w) => {
+              const r = RECIPES[w.id]
+              const out = Object.keys(r.gives)[0] as ItemId
+              const block = canCraft(game, w.id)
+              return {
+                key: w.id,
+                icon: <ItemIcon id={out} size={28} />,
+                label: w.text.split(' (')[0].split(' — ')[0],
+                dim: block !== null,
+                detail: <><NeedList needs={r.needs as Record<string, number>} have={(id) => game.inv[id as ItemId] ?? 0} icon={(id) => <ItemIcon id={id as ItemId} size={16} />} /><p>{w.text}</p></>,
+                action: { label: '만들기', disabled: block !== null, onClick: () => startCraft(w.id) },
+              }
+            })} />
           </>
         )}
         {place === 'press' && (
           <button disabled={canCraft(game, 'oil') !== null} onClick={() => startCraft('oil')}>
-            <RowLabel text={T.ui.pressMake} />
+            <RowLabel text={fill(T.ui.pressMake, { n: recipeGives(RECIPES.oil, game.inv, game.flags).oil ?? 0 })} />
           </button>
         )}
         {/* 별 보기는 언덕에만 (stargaze는 자리와 무관 — 다른 별 보는 자리도 이 버튼을 붙이면 된다) */}
@@ -119,11 +131,13 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
             {T.places.hallPlay}
           </button>
         )}
-        {/* 마을 소리내어 읽기 모임 (계획 21 R7): 모이는 날 저녁에만 단추가 보인다 */}
-        {place === 'hallTable' && isReadingDay(game.clock.day) && (
-          <button disabled={canRead(game) !== null} onClick={() => useGame.getState().startReading()}>
-            {T.meetings.reading}
-          </button>
+        {place === 'hallTable' && (
+          <>
+            <button disabled={canRead(game) !== null} onClick={() => useGame.getState().startReading()}>
+              {T.meetings.reading} · 본문 펼치기
+            </button>
+            <p className="hint">{canRead(game) === 'done' ? '오늘은 이웃들과 함께 읽었어요.' : canRead(game) === 'feast' ? t('reading.feast') : canRead(game) === 'notToday' ? `다음 모임은 ${nextReadingDay(game)}일째 저녁 7~9시예요. 사랑방 탁자를 눌러 참여하세요.` : canRead(game) === 'time' ? '오늘 저녁 7~9시에 사랑방 탁자를 눌러 참여하세요.' : '모임 중이에요. 본문 펼치기를 누르면 이웃들과 함께 읽을 수 있어요.'}</p>
+          </>
         )}
         {place === 'teaTable' && (
           <button className="primary" disabled={tea !== null} onClick={drinkTea}>
@@ -135,7 +149,6 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
             <button className="primary" disabled={sunset !== null} onClick={watchSunset}>
               {T.places.sunsetWatch}
             </button>
-            <button onClick={rest}>{T.places.sit}</button>
           </>
         )}
         {datePlace && date !== 'noPartner' && (
@@ -144,7 +157,7 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
           </button>
         )}
         {(place === 'hill' || place === 'bench' || place === 'homeBench' || place === 'pavilion') && (
-          <button className={place === 'pavilion' ? '' : 'primary'} disabled={game.collected.length === 0} onClick={() => open({ kind: 'readPick' })}>
+          <button className={place === 'pavilion' ? '' : 'primary'} disabled={place === 'pavilion' ? copiedChapters(game, CONTENT).length === 0 : game.collected.length === 0} onClick={() => open(place === 'pavilion' ? { kind: 'readPick', source: 'copied' } : { kind: 'readPick' })}>
             {T.ui.readScripture}
           </button>
         )}
@@ -154,14 +167,14 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
       {isFacilityPlace(place) && facilityOfPlace(place) && <FacilityHint place={place} />}
       {place === 'hill' && !starsOut(game.clock.minute) && <p className="hint">{T.ui.starsNotYet}</p>}
       {hall === 'closed' && <p className="hint">{T.places.hallClosed}</p>}
-      {hall === 'empty' && <p className="hint">{T.places.hallEmpty}</p>}
+      {hall === 'empty' && canRead(game) !== null && <p className="hint">{T.places.hallEmpty}</p>}
       {hall === 'played' && <p className="hint">{T.places.hallPlayed}</p>}
       {tea === 'closed' && <p className="hint">{T.places.teaClosed}</p>}
       {tea === 'coins' && <p className="hint">{T.places.teaCoins}</p>}
       {sunset === 'notYet' && <p className="hint">{T.places.sunsetNotYet}</p>}
       {sunset === 'cloudy' && <p className="hint">{T.places.sunsetCloudy}</p>}
       {game.needs.fatigue >= 100 && !['hill', 'bench', 'homeBench', 'teaTable', 'pavilion', 'commonBench', 'shadeSpot'].includes(place) && <p className="hint">{T.ui.tooTired}</p>}
-      {(['bread', 'papyrus', 'ink', 'oil', 'blanket', 'cover', 'scentCandle', 'creamPaper', 'fineThread'] as const).some((r) => canCraft(game, r) === 'full') && <p className="hint">{T.ui.bagFull}</p>}
+      {(['bread', 'papyrus', 'ink', 'oil', 'blanket', 'cover', 'scentCandle', 'creamPaper', 'fineThread', 'homeCradle'] as const).some((r) => canCraft(game, r) === 'full') && <p className="hint">{T.ui.bagFull}</p>}
     </div>
   )
 }

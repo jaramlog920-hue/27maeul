@@ -60,7 +60,7 @@ describe('들 약초: 마을 가장자리 네 군데, 하루 네 줌까지', () 
   it('겨울엔 캘 것이 없다', () => {
     const s = newGame(CONTENT)
     const winterDay = [...Array(200).keys()].map((d) => d + 1).find((d) => seasonOf(d) === 'winter')!
-    expect(gatherInfo({ ...s, clock: { ...s.clock, day: winterDay } }, 'wildHerb')).toEqual({ blocked: 'notRipe' })
+    expect(gatherInfo({ ...s, clock: { ...s.clock, day: winterDay } }, 'wildHerb')).toEqual({ blocked: 'winter' })
   })
 })
 
