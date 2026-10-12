@@ -132,12 +132,17 @@ export function drawNewlandHouse(g: CanvasRenderingContext2D, kind: BuildKind, f
     for (let i = 0; i < 7; i++) r(roof[0], dc - 13 + i * 4, LOW - 1, 2, 1)
   }
   if (kind === 'guest') {
-    // 손님집: 처마 아래 작은 나무 간판 (열쇠 무늬)
-    const sx = trim === 'awning' ? dc + 10 : dx - 1
-    r('#9a6e45', sx, WALL_TOP + 5, 14, 8)
-    r('#e8c88e', sx + 1, WALL_TOP + 6, 12, 6)
-    r('#9a6e45', sx + 4, WALL_TOP + 8, 3, 2)
-    r('#9a6e45', sx + 7, WALL_TOP + 8, 4, 1)
+    // 손님집 간판 (2026-10-13 사용자 확인안): 벽에 바로 붙인 네모 판(바깥 모래색·안쪽 연한 줄), 안에 연한 다홍 하트. 걸이·사슬 없음.
+    // 문 옆 위 줄 빈 벽에 — 창은 아래 줄이라 겹치지 않고, 차양(문 위)과도 떨어진다
+    const bx = dc + 14 + 13 <= W - 2 ? dc + 14 : dc - 27
+    const top = WALL_TOP + 3
+    r('#dcbf94', bx, top, 13, 12) // 바깥 테두리 모래색
+    r('#ead6b2', bx + 1, top + 1, 11, 10) // 안쪽 한 줄은 연하게 (사용자 고른 '나')
+    r('#f6e6c4', bx + 2, top + 2, 9, 8)
+    r('#fbf1da', bx + 2, top + 2, 9, 1)
+    const HEART = ['.##.##.', '#######', '#######', '.#####.', '..###..', '...#...']
+    HEART.forEach((row, y) => [...row].forEach((c, x) => { if (c === '#') r('#d9707e', bx + 3 + x, top + 3 + y, 1, 1) }))
+    r('#ffffff', bx + 4, top + 4, 1, 1)
   }
 }
 
