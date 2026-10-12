@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { CONTENT } from '../content/catalog'
 import { newGame } from '../engine/game'
 import { activeSlot, listSaves, loadGame, newSlot, saveGame, setActiveSlot } from '../engine/save'
@@ -33,6 +33,19 @@ export function App() {
     useGame.getState().load(game)
     setScreen('play')
   }
+  // 개발용: 주소 뒤 ?test=26 이면 마지막 한 절만 남은 시험 저장을 새 칸에 만들어 바로 시작 (배포 빌드에는 없다)
+  useEffect(() => {
+    if (!import.meta.env.DEV || new URLSearchParams(location.search).get('test') !== '26') return
+    void import('../dev/test-saves').then(async ({ lastVerseGame }) => {
+      const game = await lastVerseGame(CONTENT)
+      setActiveSlot(newSlot())
+      saveGame(game)
+      unlockAudio()
+      useGame.getState().load(game)
+      history.replaceState(null, '', location.pathname)
+      setScreen('play')
+    })
+  }, [])
   if (screen === 'play') return <Play />
   if (screen === 'load')
     return (
