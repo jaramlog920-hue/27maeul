@@ -13,7 +13,7 @@ import { furnitureUseFrame, USE_INFO, USE_PROP_PALETTE, USE_SIZE, type UseAction
 import { extraUseFrame, petMotionRows, type ExtraAction } from './expansion-life-motion'
 import { eatingFrame, eatFoodFor, EAT_DURATIONS } from './eating-art'
 import { lodgingBuildingRows, LODGING_PALETTE, LODGING_STAIRS_ROWS } from './lodging-art'
-import { homeRoofParts, homeAdditionArt, homeAdditionSnowRows, homeRoofJoinRows, homeChimneyPosition, homeChimneyRows, livingRoomFacadeRows, HOME_ADDITION_PALETTE } from './expanded-home-art'
+import { homeRoofParts, homeAdditionArt, homeAdditionSnowRows } from './expanded-home-art'
 import { OIL_PRESS_ART } from './oil-press-art'
 import { isWalkable } from '../engine/world'
 import { LODGING_SEATS, LODGING_STAIRS, lodgingChildren } from '../engine/lodging'
@@ -22,6 +22,7 @@ import { eventMotionFrame, type EventAction } from './event-life-motion'
 import { drawEventProp, eventPropSortY } from './event-props'
 import { eventPropsNow, npcEventMotion, playerEventMotion, weddingEvening, type EventMotion } from '../engine/event-scene'
 import { socialMotionFrame } from './social-motion-art'
+import { gatheringActionFor, gatheringMotionFrame } from './gathering-motion'
 import type { SocialAction } from '../engine/social-scene'
 import { FESTIVAL_SPOTS } from '../engine/neighbors'
 import { deskTraces, type DeskTraces } from '../engine/desk-traces'
@@ -298,8 +299,7 @@ function houseWallTile(g: Ctx, x: number, y: number, ch: string, id: string, h: 
     r('#ffca70', 10, 9, 2, 2)
   }
   if (id === 'home' && h.x1 > HOUSE_RECT.x1) {
-    // 오른쪽 두 칸은 본채와 같은 벽·창 디자인으로 잇는다.
-    if (x === HOUSE_RECT.x1+1) r(st.base, 0, 0, 2, 16)
+    // 오른쪽 두 칸은 본채와 같은 벽·창 디자인으로 잇는다 (본채 모서리 기둥이 이음매가 된다).
     if (!upper && x === HOUSE_RECT.x1+2) {
       // 오른쪽 칸을 그릴 때 왼쪽 칸에 반쯤 걸쳐 그린다 (왼쪽 칸은 이미 그려져 있다)
       window(1, -8)
@@ -1059,12 +1059,10 @@ function mapFor(season: Season): HTMLCanvasElement {
     if(h.id==='lodging')g.drawImage(paint('lodging/exterior',lodgingBuildingRows(),LODGING_PALETTE),h.x0*TILE,h.y0*TILE,96,128)
     else if(h.id==='home'){
       for(const part of homeRoofParts(h)){
-        if(part.chimney)drawRoof(g,part.x0,part.y0,part.x1,part.y1,HOUSE_STYLES.home.roof,currentHomeLevel()===0)
+        // 증축 지붕을 먼저, 본채 지붕과 처음 굴뚝을 맨 앞에 (2026-10-13 사용자 승인안)
+        if(part.chimney)drawRoof(g,part.x0,part.y0,part.x1,part.y1,HOUSE_STYLES.home.roof)
         else{const art=homeAdditionArt(part);g.drawImage(paint(`home/wing/${part.x0}/${part.y0}/${part.y1}`,art.rows,art.palette),part.x0*TILE,part.y0*TILE)}
       }
-      if(currentHomeLevel()>0)g.drawImage(paint(`home/roof-joins/${currentHomeLevel()}`,homeRoofJoinRows(h),HOME_ADDITION_PALETTE),h.x0*TILE,h.y0*TILE)
-      if(currentHomeLevel()>0){const chimney=homeChimneyPosition();g.drawImage(paint('home/expanded-chimney',homeChimneyRows(),HOME_ADDITION_PALETTE),chimney.x,chimney.y)}
-      if(h.x0<HOUSE_RECT.x0)g.drawImage(paint('home/living-facade',livingRoomFacadeRows(),HOME_ADDITION_PALETTE),h.x0*TILE,(HOUSE_RECT.y1-1)*TILE)
     }
     else drawRoof(g, h.x0, h.y0, h.x1, h.y1 - 2, (HOUSE_STYLES[h.id] ?? PLAIN_STYLE).roof)
   }
@@ -1183,7 +1181,7 @@ function snowLayer(): HTMLCanvasElement {
   // 지붕: 용마루를 덮는 윗줄 눈과 처마 쪽으로 늘어진 끝, 굴뚝 머리
   for (const house of housesNow()) for(const h of house.id==='home'?homeRoofParts(house):[{...house,y1:house.y1-2,chimney:true}]) {
     if(house.id==='home'&&!h.chimney){
-      g.drawImage(paint(`home/wing-snow/${h.x0}/${h.y0}/${h.y1}`,homeAdditionSnowRows(h),HOME_ADDITION_PALETTE),h.x0*TILE,h.y0*TILE)
+      g.drawImage(paint(`home/wing-snow/${h.x0}/${h.y0}/${h.y1}`,homeAdditionSnowRows(h),homeAdditionArt(h).palette),h.x0*TILE,h.y0*TILE)
       continue
     }
     const ox = h.x0 * TILE
@@ -1199,10 +1197,7 @@ function snowLayer(): HTMLCanvasElement {
     // 기와 띠마다 얇게 남은 눈
     for (let y = 16; y < rh - 4; y += 8) for (let i = 0; i < w / 8; i++) if (hash(h.x0 + i, h.y0 + y, 100) < 0.4) f('rgba(246,248,250,0.85)', ox + i * 8 + 2, oy + y, 6, 2)
     const cx = ox + chimneyX(h.x0, h.x1)
-    if(h.chimney){
-      if(house.id==='home'&&currentHomeLevel()>0){const chimney=homeChimneyPosition();f(SNOW,chimney.x+2,chimney.y+1,8,2)}
-      else f(SNOW, cx - 2, oy - 10, 12, 2)
-    }
+    if(h.chimney)f(SNOW, cx - 2, oy - 10, 12, 2)
   }
   snowCache.set(cacheKey, c)
   return c
@@ -1307,9 +1302,8 @@ function drawChimneySmoke(g: Ctx, game: GameState, kind: 'meal' | 'winter', wind
     if (kind === 'meal' && hash(h.x0, h.y0, 150) >= 0.5) continue
     const chimneyLeft=h.id==='home'?HOUSE_RECT.x0:h.x0
     const chimneyRight=h.id==='home'?HOUSE_RECT.x1:h.x1
-    const expandedChimney=h.id==='home'&&currentHomeLevel()>0?homeChimneyPosition():null
-    const cx = expandedChimney?expandedChimney.x+6:chimneyLeft * TILE + chimneyX(chimneyLeft, chimneyRight)+3
-    const cy = expandedChimney?expandedChimney.y+1:(h.id==='home'?HOUSE_RECT.y0:h.y0) * TILE - 10
+    const cx = chimneyLeft * TILE + chimneyX(chimneyLeft, chimneyRight)+3
+    const cy = (h.id==='home'?HOUSE_RECT.y0:h.y0) * TILE - 10
     const seed = hash(h.x0, h.y0, 151)
     for (let i = 0; i < n; i++) {
       const ph = (t * 0.32 + seed + i / n) % 1
@@ -1610,7 +1604,8 @@ function eventFrameCanvas(who: Who, m: EventMotion, blink: boolean, season: Seas
   const opts = { frame: 0 as const, blink, season, ...extra }
   const actorPal = who === 'writer' ? writerPalette(season, extra.avatar) : PALETTE
   const keyStr = `ev/${m.set}/${who}/${m.facing}/${m.action}/${m.prop??''}/${m.frame}/${blink}/${lookKey(who, season, extra)}`
-  const layers = m.set === 'social' ? socialMotionFrame(who,m.facing,m.action as SocialAction,m.prop,m.frame,opts) : m.set === 'wedding' ? weddingActorFrame(who, m.facing, m.action as WeddingAction, m.frame, opts) : eventMotionFrame(who, m.facing, m.action as EventAction, m.frame, opts)
+  const gathering = gatheringActionFor(m)
+  const layers = gathering ? gatheringMotionFrame(who,m.facing,gathering,[0,1,2,3,3,2,1,0][m.frame % 8],opts) : m.set === 'social' ? socialMotionFrame(who,m.facing,m.action as SocialAction,m.prop,m.frame,opts) : m.set === 'wedding' ? weddingActorFrame(who, m.facing, m.action as WeddingAction, m.frame, opts) : eventMotionFrame(who, m.facing, m.action as EventAction, m.frame, opts)
   return motionCanvas(keyStr, layers, actorPal, FURNI_PALETTE)
 }
 

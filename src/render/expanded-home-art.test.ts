@@ -6,7 +6,7 @@ it('preserves the original main roof and adds rear, right and deep left wings in
   for(const level of [1,2,3]){
     const parts=homeRoofParts(homeHouse(level)),main=parts.at(-1)!
     expect(main).toEqual(original)
-    expect(parts).toHaveLength(level===3?3:level+1)
+    expect(parts).toHaveLength(level+1)
     expect(parts.slice(0,-1).every(p=>!p.chimney)).toBe(true)
     expect(parts.some(p=>p.y0<main.y0&&p.x1>=main.x0)).toBe(true)
     expect(parts.some(p=>p.x0>main.x1)).toBe(level>=2)

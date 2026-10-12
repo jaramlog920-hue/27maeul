@@ -66,13 +66,14 @@ describe('세 차례 집 증축', () => {
 })
 
 describe('모든 방의 가구 재배치', () => {
-  it('긴 성인 침대는 두 칸을 차지하며 옛 기본 자리를 불러와도 생활방 문과 플레이어를 막지 않는다',()=>{
+  it('긴 성인 침대는 왼쪽 위 두 칸, 잠깐 쓰던 자리를 불러와도 생활방 문과 플레이어를 막지 않는다',()=>{
     const s=build(build(build(rich())))
-    const legacy={...s,room:s.room.map(f=>f.item==='homeBed'?{...f,x:17,y:111}:f),player:{...s.player,x:18,y:112}}
+    // 2026-10-12 사용자: 침대는 왼쪽 위(17,111), 생활방 문은 한 칸 아래(16,113)
+    const legacy={...s,room:s.room.map(f=>f.item==='homeBed'?{...f,x:18,y:112}:f),player:{...s.player,x:17,y:111}}
     const loaded=deserialize(serialize(legacy),CONTENT)!
-    expect(loaded.room.find(f=>f.item==='homeBed')).toMatchObject({x:18,y:112})
-    expect(solidTiles(loaded.room).has('18,112')).toBe(true)
-    expect(solidTiles(loaded.room).has('17,112')).toBe(false)
+    expect(loaded.room.find(f=>f.item==='homeBed')).toMatchObject({x:17,y:111})
+    expect(solidTiles(loaded.room).has('17,112')).toBe(true)
+    expect(solidTiles(loaded.room).has('17,113')).toBe(false)
     expect(solidTiles(loaded.room).has(`${loaded.player.x},${loaded.player.y}`)).toBe(false)
     expect(findPath(HOME_ENTRY,{x:10,y:112},solidTiles(loaded.room))).not.toBeNull()
   })

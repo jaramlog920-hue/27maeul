@@ -222,7 +222,7 @@ export function initialHomeFurniture(): Furniture[] {
   return Object.entries(FIXTURES).map(([item, f]) => ({ item: item as ItemId, x: f.x, y: f.y }))
 }
 
-/** Shift the old default bed right and down so its length clears both doorway approaches. */
+/** 붙박이 침대·책상을 지금 기본 자리로 (옛 저장) — 다른 가구가 자리를 잃지 않을 때만 */
 export function upgradeAdultBed(room:readonly Furniture[]):Furniture[]{
   return moveOldDesk(shiftOldBed(room))
 }
@@ -243,8 +243,9 @@ function moveOldDesk(room:readonly Furniture[]):Furniture[]{
 }
 function shiftOldBed(room:readonly Furniture[]):Furniture[]{
   return room.map(f=>{
-    if(f.item!=='homeBed'||f.x!==17||f.y!==111||facingOf(f)!=='down')return f
-    const next={...f,x:18,y:112}
+    // 2026-10-12 사용자: 침대는 왼쪽 위(17,111)에 붙인다 — 잠깐 쓰던 자리(18,112)의 침대를 옮긴다
+    if(f.item!=='homeBed'||f.x!==18||f.y!==112||facingOf(f)!=='down')return f
+    const next={...f,x:FIXTURES.homeBed.x,y:FIXTURES.homeBed.y}
     const occupied=room.filter(o=>o!==f&&layerOf(o)!=='floor'&&layerOf(o)!=='wall').flatMap(footprint)
     if(footprint(next).some(t=>occupied.some(p=>sameTile(t,p))))return f
     // 옮긴 침대 때문에 다른 가구(침대 곁 탁자 등)가 자리를 잃으면 옮기지 않는다 — 가방으로 튕기지 않게

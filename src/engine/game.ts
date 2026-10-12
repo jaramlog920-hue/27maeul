@@ -4058,6 +4058,8 @@ export type VerseResult =
       finds: GodFind[]
       /** 장을 마친 기념으로 온 생활 가구 (가끔 — chapterGift) */
       gift?: ItemId
+      /** 받은 필사 삯 (처음 마친 장만 — copyPay) */
+      pay?: number
     }
 
 /**
@@ -4169,7 +4171,16 @@ export function writeVerse(s: GameState, book: CopyBook, input: string, content:
   // 구약 장도 가끔 생활 가구 (2026-10-12 사용자: 구약 필사도 경험치와 선물)
   const gift = chapterGift(day, book, chapter)
   if (gift) state = { ...state, inv: addGift(state.inv, { [gift]: 1 }) }
-  return { state, result: { kind: 'chapter', chapter, verse: spot.verse.verse, verses: verses.length, chars, gains, bookDone: finished, next, finds, ...(gift ? { gift } : {}) } }
+  // 필사 삯 (2026-10-13 사용자: 필사하면 돈을 벌 수 있게) — 처음 마친 장만, 절 수만큼 · 퍼즐로 채운 만큼 덜 · 서고를 채운 만큼 더
+  const firstTime = !(s.copy.copied?.[book] ?? []).includes(chapter)
+  const pay = firstTime ? libraryPay(copyPay(verses.length, effort), libraryBookCount(s)) : 0
+  if (pay) state = { ...state, coins: state.coins + pay }
+  return { state, result: { kind: 'chapter', chapter, verse: spot.verse.verse, verses: verses.length, chars, gains, bookDone: finished, next, finds, ...(gift ? { gift } : {}), ...(pay ? { pay } : {}) } }
+}
+
+/** 한 장의 필사 삯: 다섯 닢 + 절마다 한 닢 (마흔 닢까지), 수고(퍼즐 60%)만큼 */
+export function copyPay(verses: number, effort = 1): number {
+  return Math.max(1, Math.round(Math.min(40, 5 + verses) * effort))
 }
 
 /** 장을 마칠 때 생활 가구가 올 확률 */

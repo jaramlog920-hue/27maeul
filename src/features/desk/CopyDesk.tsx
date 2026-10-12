@@ -886,6 +886,8 @@ function CopyDone({ book, modal, folding }: { book: CopyBook; modal: Extract<Mod
       {gains.length > 0 && <p className="copy-gains">{gains.join(' · ')}</p>}
       {last.bookDone && <p className="copy-book-done">{bookDoneLine(book, name)}</p>}
       {/* 장을 마친 기념 생활 가구 (2026-10-12) */}
+      {/* 필사 삯 (2026-10-13) */}
+      {last.pay ? <p className="hint">필사 삯 {last.pay}닢을 받았어요</p> : null}
       {last.gift && <p className="hint">장을 마친 기념으로 {withObject(itemName(last.gift))} 받았어요 · 가방에 넣었어요</p>}
       {kidName && <p className="copy-family-quiet">{fill(FD.quiet, { with: withAnd(kidName) })}</p>}
       <div className="copy-menu-actions">

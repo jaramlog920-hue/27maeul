@@ -114,7 +114,7 @@ describe('5. 집이 넓어져 가방으로 돌아간 가구를 알려 준다', (
     s = goToSleep(orderHome(s)!, CONTENT)
     s = goToSleep(orderHome(s)!, CONTENT)
     expect(homeRefitReturned(s, s)).toEqual([])
-    const placed = placeFurniture({ ...s, inv: { ...s.inv, stool: 1 } }, 'stool', { x: 17, y: 112 })!
+    const placed = placeFurniture({ ...s, inv: { ...s.inv, stool: 1 } }, 'stool', { x: 17, y: 113 })!
     expect(placed.room.some((f) => f.item === 'stool')).toBe(true)
     const built = goToSleep(orderHome(placed)!, CONTENT)
     expect(built.homeLevel).toBe(3)

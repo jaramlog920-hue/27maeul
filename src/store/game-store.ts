@@ -59,6 +59,7 @@ import { canAutoRead, canRead, seasonCopyGift, seasonCopyKey } from '../engine/m
 import { libraryVisitorTile, visitorBeside } from '../engine/library-visitor'
 import { guestLine, innGuestsNow, metGuest } from '../engine/inn-guests'
 import { isNear } from '../engine/neighbors'
+import FIRST_MEET from '../content/first-meet.json'
 import { expireStall, isStallTile } from '../engine/stall'
 import { rememberTalkPopup } from '../engine/talk-popups'
 import { eventNeighborLine, oldNeighborLine } from '../engine/neighbor-moments'
@@ -852,6 +853,11 @@ function announceRoom(before: GameState, after: GameState, door = true) {
             ? T.places.teaRoom
             : room.owner === 'child'
               ? '배움터'
+            // 공동 주택: 1층은 작업장, 2층은 여관 (2026-10-13 사용자: '네 집' 대신 여관)
+            : room.owner === 'lodgingUpper'
+              ? '여관'
+            : room.owner === 'lodging'
+              ? '공동 주택'
         : letterRoom
           ? roomTitle(shelfRoom(letterRoom))
           : fill(T.ui.roomOf, { who: who ?? '' })
@@ -1110,6 +1116,11 @@ export const useGame = create<Store>((set, get) => {
         const popup = special && line ? [...r.popup, line] : r.popup
         return { game: persist(r.game), modal: { kind: 'talk' as const, neighborId: target.id, line, ...(popup.length ? { popup } : {}), ...letter } }
       }
+      // 제일 처음 말을 걸면 그 이웃의 첫인사부터 (2026-10-13 사용자) — 이웃 수첩에 아직 만난 적이 없을 때 한 번.
+      // 건넬 말씀 조각이 있으면 첫인사와 함께 건넨다
+      const helloRaw = (FIRST_MEET as Record<string, string[] | string>)[target.id]
+      const hello = Array.isArray(helloRaw) && !(game.notebook?.met ?? []).includes(target.id) ? helloRaw.map((x) => callName(x, g.avatar?.name)).join(' ') : null
+      if (hello && !g.offers[target.id] && !(target.id === POSTMAN && postLine(g, POSTMAN))) return talk(g, hello, true)
       const v = receiveVisit(g, target.id)
       if (v) {
         g = v.state
@@ -1120,7 +1131,7 @@ export const useGame = create<Store>((set, get) => {
       // 특별한 대화 (2026-10-05): 오늘 말씀 조각을 건넬 이웃은 말을 걸면 그 자리에서 건넨다 — 받기 단추 없이, 그 이웃의 말과 함께 본문으로
       if (g.offers[target.id] && target.id !== POSTMAN) {
         const l = NEIGHBOR_LINES[target.id]
-        const said = l?.offer.length ? `${def?.role ?? ''} · ${callName(pick(l.offer, rng).text, g.avatar?.name)}` : undefined
+        const said = hello ? `${def?.role ?? ''} · ${hello}` : l?.offer.length ? `${def?.role ?? ''} · ${callName(pick(l.offer, rng).text, g.avatar?.name)}` : undefined
         const h = handOver(g, target.id, said)
         if (h) return h
       }

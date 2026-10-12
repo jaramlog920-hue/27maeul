@@ -4319,6 +4319,3282 @@
       ]
     },
     {
+      "action": "pourTea",
+      "facing": "down",
+      "child": false,
+      "label": "차 따르기",
+      "file": "motions/pourTea-down-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 12
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 11
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "pourTea",
+      "facing": "up",
+      "child": false,
+      "label": "차 따르기",
+      "file": "motions/pourTea-up-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 12
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 11
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "pourTea",
+      "facing": "left",
+      "child": false,
+      "label": "차 따르기",
+      "file": "motions/pourTea-left-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 12
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 11
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 13
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "pourTea",
+      "facing": "right",
+      "child": false,
+      "label": "차 따르기",
+      "file": "motions/pourTea-right-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 12
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 11
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 13
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "sipTea",
+      "facing": "down",
+      "child": false,
+      "label": "찻잔 들어 마시기",
+      "file": "motions/sipTea-down-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 10
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 10
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "sipTea",
+      "facing": "up",
+      "child": false,
+      "label": "찻잔 들어 마시기",
+      "file": "motions/sipTea-up-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 10
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 10
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "sipTea",
+      "facing": "left",
+      "child": false,
+      "label": "찻잔 들어 마시기",
+      "file": "motions/sipTea-left-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 10
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 10
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "sipTea",
+      "facing": "right",
+      "child": false,
+      "label": "찻잔 들어 마시기",
+      "file": "motions/sipTea-right-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 10
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 10
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "stitch",
+      "facing": "down",
+      "child": false,
+      "label": "천 바느질하기",
+      "file": "motions/stitch-down-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 12,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 12,
+            "y": 16
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "stitch",
+      "facing": "up",
+      "child": false,
+      "label": "천 바느질하기",
+      "file": "motions/stitch-up-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 12,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 12,
+            "y": 16
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "stitch",
+      "facing": "left",
+      "child": false,
+      "label": "천 바느질하기",
+      "file": "motions/stitch-left-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 5,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 5,
+            "y": 16
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "stitch",
+      "facing": "right",
+      "child": false,
+      "label": "천 바느질하기",
+      "file": "motions/stitch-right-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 18,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 18,
+            "y": 16
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "showWork",
+      "facing": "down",
+      "child": false,
+      "label": "완성한 것 펼쳐 보이기",
+      "file": "motions/showWork-down-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "showWork",
+      "facing": "up",
+      "child": false,
+      "label": "완성한 것 펼쳐 보이기",
+      "file": "motions/showWork-up-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "showWork",
+      "facing": "left",
+      "child": false,
+      "label": "완성한 것 펼쳐 보이기",
+      "file": "motions/showWork-left-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "showWork",
+      "facing": "right",
+      "child": false,
+      "label": "완성한 것 펼쳐 보이기",
+      "file": "motions/showWork-right-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "point",
+      "facing": "down",
+      "child": false,
+      "label": "발견한 것 가리키기",
+      "file": "motions/point-down-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 11
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 10
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 11
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 12
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "point",
+      "facing": "up",
+      "child": false,
+      "label": "발견한 것 가리키기",
+      "file": "motions/point-up-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 11
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 10
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 11
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 12
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "point",
+      "facing": "left",
+      "child": false,
+      "label": "발견한 것 가리키기",
+      "file": "motions/point-left-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 6,
+            "y": 11
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 6,
+            "y": 10
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 6,
+            "y": 11
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 6,
+            "y": 12
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "point",
+      "facing": "right",
+      "child": false,
+      "label": "발견한 것 가리키기",
+      "file": "motions/point-right-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 11
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 10
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 11
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 12
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "takeNote",
+      "facing": "down",
+      "child": false,
+      "label": "관찰 공책에 메모하기",
+      "file": "motions/takeNote-down-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 11,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 11,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "takeNote",
+      "facing": "up",
+      "child": false,
+      "label": "관찰 공책에 메모하기",
+      "file": "motions/takeNote-up-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 11,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 11,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "takeNote",
+      "facing": "left",
+      "child": false,
+      "label": "관찰 공책에 메모하기",
+      "file": "motions/takeNote-left-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 6,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 6,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "takeNote",
+      "facing": "right",
+      "child": false,
+      "label": "관찰 공책에 메모하기",
+      "file": "motions/takeNote-right-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "plant",
+      "facing": "down",
+      "child": false,
+      "label": "씨앗 심기",
+      "file": "motions/plant-down-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 18
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 19
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 18
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 19
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "plant",
+      "facing": "up",
+      "child": false,
+      "label": "씨앗 심기",
+      "file": "motions/plant-up-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 18
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 19
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 18
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 19
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "plant",
+      "facing": "left",
+      "child": false,
+      "label": "씨앗 심기",
+      "file": "motions/plant-left-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 18
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 19
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 18
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 19
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "plant",
+      "facing": "right",
+      "child": false,
+      "label": "씨앗 심기",
+      "file": "motions/plant-right-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 18
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 19
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 18
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 19
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "waterPlants",
+      "facing": "down",
+      "child": false,
+      "label": "물뿌리개로 물주기",
+      "file": "motions/waterPlants-down-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "waterPlants",
+      "facing": "up",
+      "child": false,
+      "label": "물뿌리개로 물주기",
+      "file": "motions/waterPlants-up-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "waterPlants",
+      "facing": "left",
+      "child": false,
+      "label": "물뿌리개로 물주기",
+      "file": "motions/waterPlants-left-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 13
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "waterPlants",
+      "facing": "right",
+      "child": false,
+      "label": "물뿌리개로 물주기",
+      "file": "motions/waterPlants-right-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 13
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "greet",
+      "facing": "down",
+      "child": false,
+      "label": "손 흔들어 맞이하기",
+      "file": "motions/greet-down-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 9
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 18,
+            "y": 8
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 9
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 10
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "greet",
+      "facing": "up",
+      "child": false,
+      "label": "손 흔들어 맞이하기",
+      "file": "motions/greet-up-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 9
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 18,
+            "y": 8
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 9
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 10
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "greet",
+      "facing": "left",
+      "child": false,
+      "label": "손 흔들어 맞이하기",
+      "file": "motions/greet-left-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 6,
+            "y": 9
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 6,
+            "y": 8
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 6,
+            "y": 9
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 6,
+            "y": 10
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "greet",
+      "facing": "right",
+      "child": false,
+      "label": "손 흔들어 맞이하기",
+      "file": "motions/greet-right-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 9
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 8
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 9
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 10
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "offerGift",
+      "facing": "down",
+      "child": false,
+      "label": "선물 건네기",
+      "file": "motions/offerGift-down-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 8,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 9,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 11,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 9,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "offerGift",
+      "facing": "up",
+      "child": false,
+      "label": "선물 건네기",
+      "file": "motions/offerGift-up-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 8,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 9,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 11,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 9,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "offerGift",
+      "facing": "left",
+      "child": false,
+      "label": "선물 건네기",
+      "file": "motions/offerGift-left-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 9,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 8,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 6,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 8,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "offerGift",
+      "facing": "right",
+      "child": false,
+      "label": "선물 건네기",
+      "file": "motions/offerGift-right-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 14,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 15,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 15,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "receiveGift",
+      "facing": "down",
+      "child": false,
+      "label": "선물 받아 살펴보기",
+      "file": "motions/receiveGift-down-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 11,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 8,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 8,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "receiveGift",
+      "facing": "up",
+      "child": false,
+      "label": "선물 받아 살펴보기",
+      "file": "motions/receiveGift-up-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 11,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 8,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 8,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "receiveGift",
+      "facing": "left",
+      "child": false,
+      "label": "선물 받아 살펴보기",
+      "file": "motions/receiveGift-left-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 6,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 9,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 9,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "receiveGift",
+      "facing": "right",
+      "child": false,
+      "label": "선물 받아 살펴보기",
+      "file": "motions/receiveGift-right-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 14,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 14,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "inspectWork",
+      "facing": "down",
+      "child": false,
+      "label": "작품 가까이 살펴보기",
+      "file": "motions/inspectWork-down-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "inspectWork",
+      "facing": "up",
+      "child": false,
+      "label": "작품 가까이 살펴보기",
+      "file": "motions/inspectWork-up-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "inspectWork",
+      "facing": "left",
+      "child": false,
+      "label": "작품 가까이 살펴보기",
+      "file": "motions/inspectWork-left-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 13
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "inspectWork",
+      "facing": "right",
+      "child": false,
+      "label": "작품 가까이 살펴보기",
+      "file": "motions/inspectWork-right-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 13
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "wipeTable",
+      "facing": "down",
+      "child": false,
+      "label": "탁자 닦기",
+      "file": "motions/wipeTable-down-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 17
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 9,
+            "y": 17
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 11,
+            "y": 17
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 13,
+            "y": 17
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "wipeTable",
+      "facing": "up",
+      "child": false,
+      "label": "탁자 닦기",
+      "file": "motions/wipeTable-up-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 17
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 9,
+            "y": 17
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 11,
+            "y": 17
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 13,
+            "y": 17
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "wipeTable",
+      "facing": "left",
+      "child": false,
+      "label": "탁자 닦기",
+      "file": "motions/wipeTable-left-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 17
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 8,
+            "y": 17
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 6,
+            "y": 17
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 4,
+            "y": 17
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "wipeTable",
+      "facing": "right",
+      "child": false,
+      "label": "탁자 닦기",
+      "file": "motions/wipeTable-right-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 13,
+            "y": 17
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 15,
+            "y": 17
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 17
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 18
+          },
+          "handAnchor": {
+            "x": 19,
+            "y": 17
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
       "action": "clap",
       "facing": "down",
       "child": true,
@@ -8599,6 +11875,3282 @@
             "y": 15
           },
           "loop": false
+        }
+      ]
+    },
+    {
+      "action": "pourTea",
+      "facing": "down",
+      "child": true,
+      "label": "차 따르기",
+      "file": "children/pourTea-down-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 12
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 11
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "pourTea",
+      "facing": "up",
+      "child": true,
+      "label": "차 따르기",
+      "file": "children/pourTea-up-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 12
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 11
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "pourTea",
+      "facing": "left",
+      "child": true,
+      "label": "차 따르기",
+      "file": "children/pourTea-left-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 12
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 11
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 13
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "pourTea",
+      "facing": "right",
+      "child": true,
+      "label": "차 따르기",
+      "file": "children/pourTea-right-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 12
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 11
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 13
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "sipTea",
+      "facing": "down",
+      "child": true,
+      "label": "찻잔 들어 마시기",
+      "file": "children/sipTea-down-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 10
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 10
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "sipTea",
+      "facing": "up",
+      "child": true,
+      "label": "찻잔 들어 마시기",
+      "file": "children/sipTea-up-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 10
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 10
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "sipTea",
+      "facing": "left",
+      "child": true,
+      "label": "찻잔 들어 마시기",
+      "file": "children/sipTea-left-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 10
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 10
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "sipTea",
+      "facing": "right",
+      "child": true,
+      "label": "찻잔 들어 마시기",
+      "file": "children/sipTea-right-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 10
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 10
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "stitch",
+      "facing": "down",
+      "child": true,
+      "label": "천 바느질하기",
+      "file": "children/stitch-down-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 12,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 12,
+            "y": 16
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "stitch",
+      "facing": "up",
+      "child": true,
+      "label": "천 바느질하기",
+      "file": "children/stitch-up-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 12,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 12,
+            "y": 16
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "stitch",
+      "facing": "left",
+      "child": true,
+      "label": "천 바느질하기",
+      "file": "children/stitch-left-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 5,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 5,
+            "y": 16
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "stitch",
+      "facing": "right",
+      "child": true,
+      "label": "천 바느질하기",
+      "file": "children/stitch-right-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 18,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 18,
+            "y": 16
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "showWork",
+      "facing": "down",
+      "child": true,
+      "label": "완성한 것 펼쳐 보이기",
+      "file": "children/showWork-down-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "showWork",
+      "facing": "up",
+      "child": true,
+      "label": "완성한 것 펼쳐 보이기",
+      "file": "children/showWork-up-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "showWork",
+      "facing": "left",
+      "child": true,
+      "label": "완성한 것 펼쳐 보이기",
+      "file": "children/showWork-left-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "showWork",
+      "facing": "right",
+      "child": true,
+      "label": "완성한 것 펼쳐 보이기",
+      "file": "children/showWork-right-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 16
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "point",
+      "facing": "down",
+      "child": true,
+      "label": "발견한 것 가리키기",
+      "file": "children/point-down-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 11
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 10
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 11
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 12
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "point",
+      "facing": "up",
+      "child": true,
+      "label": "발견한 것 가리키기",
+      "file": "children/point-up-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 11
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 10
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 11
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 12
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "point",
+      "facing": "left",
+      "child": true,
+      "label": "발견한 것 가리키기",
+      "file": "children/point-left-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 6,
+            "y": 11
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 6,
+            "y": 10
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 6,
+            "y": 11
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 6,
+            "y": 12
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "point",
+      "facing": "right",
+      "child": true,
+      "label": "발견한 것 가리키기",
+      "file": "children/point-right-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 11
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 10
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 11
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 12
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "takeNote",
+      "facing": "down",
+      "child": true,
+      "label": "관찰 공책에 메모하기",
+      "file": "children/takeNote-down-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 11,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 11,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "takeNote",
+      "facing": "up",
+      "child": true,
+      "label": "관찰 공책에 메모하기",
+      "file": "children/takeNote-up-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 11,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 11,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "takeNote",
+      "facing": "left",
+      "child": true,
+      "label": "관찰 공책에 메모하기",
+      "file": "children/takeNote-left-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 6,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 6,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "takeNote",
+      "facing": "right",
+      "child": true,
+      "label": "관찰 공책에 메모하기",
+      "file": "children/takeNote-right-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "plant",
+      "facing": "down",
+      "child": true,
+      "label": "씨앗 심기",
+      "file": "children/plant-down-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 18
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 19
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 18
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 19
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "plant",
+      "facing": "up",
+      "child": true,
+      "label": "씨앗 심기",
+      "file": "children/plant-up-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 18
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 19
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 18
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 19
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "plant",
+      "facing": "left",
+      "child": true,
+      "label": "씨앗 심기",
+      "file": "children/plant-left-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 18
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 19
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 18
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 19
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "plant",
+      "facing": "right",
+      "child": true,
+      "label": "씨앗 심기",
+      "file": "children/plant-right-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 18
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 19
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 18
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 19
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "waterPlants",
+      "facing": "down",
+      "child": true,
+      "label": "물뿌리개로 물주기",
+      "file": "children/waterPlants-down-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "waterPlants",
+      "facing": "up",
+      "child": true,
+      "label": "물뿌리개로 물주기",
+      "file": "children/waterPlants-up-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "waterPlants",
+      "facing": "left",
+      "child": true,
+      "label": "물뿌리개로 물주기",
+      "file": "children/waterPlants-left-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 13
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "waterPlants",
+      "facing": "right",
+      "child": true,
+      "label": "물뿌리개로 물주기",
+      "file": "children/waterPlants-right-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 14
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 13
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "greet",
+      "facing": "down",
+      "child": true,
+      "label": "손 흔들어 맞이하기",
+      "file": "children/greet-down-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 9
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 18,
+            "y": 8
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 9
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 10
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "greet",
+      "facing": "up",
+      "child": true,
+      "label": "손 흔들어 맞이하기",
+      "file": "children/greet-up-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 9
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 18,
+            "y": 8
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 9
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 10
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "greet",
+      "facing": "left",
+      "child": true,
+      "label": "손 흔들어 맞이하기",
+      "file": "children/greet-left-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 6,
+            "y": 9
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 6,
+            "y": 8
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 6,
+            "y": 9
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 6,
+            "y": 10
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "greet",
+      "facing": "right",
+      "child": true,
+      "label": "손 흔들어 맞이하기",
+      "file": "children/greet-right-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 9
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 8
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 9
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 10
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "offerGift",
+      "facing": "down",
+      "child": true,
+      "label": "선물 건네기",
+      "file": "children/offerGift-down-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 8,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 9,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 11,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 9,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "offerGift",
+      "facing": "up",
+      "child": true,
+      "label": "선물 건네기",
+      "file": "children/offerGift-up-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 8,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 9,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 11,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 9,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "offerGift",
+      "facing": "left",
+      "child": true,
+      "label": "선물 건네기",
+      "file": "children/offerGift-left-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 9,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 8,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 6,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 8,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "offerGift",
+      "facing": "right",
+      "child": true,
+      "label": "선물 건네기",
+      "file": "children/offerGift-right-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 14,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 15,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 15,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "receiveGift",
+      "facing": "down",
+      "child": true,
+      "label": "선물 받아 살펴보기",
+      "file": "children/receiveGift-down-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 11,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 8,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 8,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "receiveGift",
+      "facing": "up",
+      "child": true,
+      "label": "선물 받아 살펴보기",
+      "file": "children/receiveGift-up-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 11,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 8,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 8,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "receiveGift",
+      "facing": "left",
+      "child": true,
+      "label": "선물 받아 살펴보기",
+      "file": "children/receiveGift-left-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 6,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 9,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 9,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "receiveGift",
+      "facing": "right",
+      "child": true,
+      "label": "선물 받아 살펴보기",
+      "file": "children/receiveGift-right-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 14,
+            "y": 15
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 14,
+            "y": 15
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "inspectWork",
+      "facing": "down",
+      "child": true,
+      "label": "작품 가까이 살펴보기",
+      "file": "children/inspectWork-down-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "inspectWork",
+      "facing": "up",
+      "child": true,
+      "label": "작품 가까이 살펴보기",
+      "file": "children/inspectWork-up-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 13
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "inspectWork",
+      "facing": "left",
+      "child": true,
+      "label": "작품 가까이 살펴보기",
+      "file": "children/inspectWork-left-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 13
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "inspectWork",
+      "facing": "right",
+      "child": true,
+      "label": "작품 가까이 살펴보기",
+      "file": "children/inspectWork-right-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 13
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 16,
+            "y": 13
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "wipeTable",
+      "facing": "down",
+      "child": true,
+      "label": "탁자 닦기",
+      "file": "children/wipeTable-down-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 17
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 9,
+            "y": 17
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 11,
+            "y": 17
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 13,
+            "y": 17
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "wipeTable",
+      "facing": "up",
+      "child": true,
+      "label": "탁자 닦기",
+      "file": "children/wipeTable-up-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 7,
+            "y": 17
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 9,
+            "y": 17
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 11,
+            "y": 17
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 13,
+            "y": 17
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "wipeTable",
+      "facing": "left",
+      "child": true,
+      "label": "탁자 닦기",
+      "file": "children/wipeTable-left-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 10,
+            "y": 17
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 8,
+            "y": 17
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 6,
+            "y": 17
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 4,
+            "y": 17
+          },
+          "loop": true
+        }
+      ]
+    },
+    {
+      "action": "wipeTable",
+      "facing": "right",
+      "child": true,
+      "label": "탁자 닦기",
+      "file": "children/wipeTable-right-sheet.png",
+      "width": 24,
+      "height": 24,
+      "frames": [
+        {
+          "frame": 0,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 13,
+            "y": 17
+          },
+          "loop": true
+        },
+        {
+          "frame": 1,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 15,
+            "y": 17
+          },
+          "loop": true
+        },
+        {
+          "frame": 2,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 17,
+            "y": 17
+          },
+          "loop": true
+        },
+        {
+          "frame": 3,
+          "duration": 320,
+          "anchor": {
+            "x": 12,
+            "y": 16
+          },
+          "handAnchor": {
+            "x": 19,
+            "y": 17
+          },
+          "loop": true
         }
       ]
     }

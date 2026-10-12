@@ -197,7 +197,7 @@ describe('내 집 (계획 7-1 작업 5)', () => {
       const t = PLACES[id].tiles[0]
       return [t.x - HOME_ROOM.x0, t.y - HOME_ROOM.y0]
     }
-    expect(at('bed')).toEqual([2, 2])
+    expect(at('bed')).toEqual([1, 1])
     expect(at('hearth')).toEqual([4, 1])
     expect(at('shelf')).toEqual([7, 1])
     expect(at('desk')).toEqual([1, 4])

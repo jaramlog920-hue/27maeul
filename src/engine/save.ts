@@ -203,7 +203,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     return rest
   })
   const { room, inv } = refitRoom(facedRoom, s.inv)
-  const bedShifted=(s.room??[]).some(f=>f.item==='homeBed'&&f.x===17&&f.y===111)&&migrated.some(f=>f.item==='homeBed'&&f.x===18&&f.y===112)
+  const bedShifted=(s.room??[]).some(f=>f.item==='homeBed'&&f.x===18&&f.y===112)&&migrated.some(f=>f.item==='homeBed'&&f.x===17&&f.y===111)
   if(bedShifted&&PLACES.bed.stand&&room.some(f=>f.item==='homeBed'&&footprint(f).some(t=>t.x===player.x&&t.y===player.y)))player={...player,...PLACES.bed.stand,path:[]}
   // 책상을 벽으로 옮긴 저장: 그 칸에 서 있었으면 책상 앞으로
   if(PLACES.desk.stand&&room.some(f=>f.item==='homeDesk'&&footprint(f).some(t=>t.x===Math.round(player.x)&&t.y===Math.round(player.y))))player={...player,...PLACES.desk.stand,path:[]}

@@ -103,6 +103,11 @@ export function socialEventMotion(s:GameState,id:string,t:number):EventMotion|nu
    }
    if(task.selection?.includes('필사본')&&id==='player')selected={...selected,action:task.stage===1?'read':'show',prop:'copy',label:task.stage===1?'내 말씀 필사본 함께 읽기':'내 말씀 필사본 보여주기'}
    if(f?.kind==='showcase'&&id==='player'&&!task.selection?.includes('필사본'))selected=beat('show','picture','내 작품 보여주기')
+   if(f?.kind==='housewarming'&&task.selection?.includes('선물')) {
+    const giver=task.choice??cast[0]?.id
+    selected=id==='player'?beat(task.stage===0?'wave':'inspect',task.stage===0?undefined:'gift','손님 선물 받아 살펴보기'):
+     id===giver&&task.stage<3?beat('offer','gift','집들이 선물 건네기'):beat('nod',undefined,'선물 인사 함께 보기')
+   }
    if(!['tea','cook'].includes(activity)&&task.stage===0&&id==='player')selected={...selected,prop:CLUB_BEATS[activity][0].prop}
   }
   let facing=toward(me,focus)

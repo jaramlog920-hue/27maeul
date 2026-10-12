@@ -5,9 +5,10 @@ export const BABY_ROOM = { x0: 24, y0: 110, x1: 31, y1: 115 }
 export const LIVING_ROOM = { x0: 6, y0: 108, x1: 16, y1: 117 }
 export const PARTNER_DOOR = { x: 21, y: 110 }
 export const BABY_DOOR = { x: 24, y: 112 }
-export const LIVING_DOOR = { x: 16, y: 112 }
+// 침대가 왼쪽 위(17,111–112)에 붙어 거실 문은 한 칸 아래 (2026-10-12)
+export const LIVING_DOOR = { x: 16, y: 113 }
 export const FIXTURES = {
-  homeBed: { place: 'bed', ch: 'b', name: '침대', x: 18, y: 112 },
+  homeBed: { place: 'bed', ch: 'b', name: '침대', x: 17, y: 111 },
   // 필사 책상은 맨 아래 벽에 붙인다 (2026-10-12 사용자: 침대가 커져 비좁음)
   homeDesk: { place: 'desk', ch: 'd', name: '필사 책상', x: 17, y: 114 },
   homeHearth: { place: 'hearth', ch: 'h', name: '화덕', x: 20, y: 111 },

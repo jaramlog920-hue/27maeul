@@ -134,11 +134,13 @@ describe('구약 필사 — 한 절씩', () => {
 })
 
 describe('구약 필사 — 경험치·장 완성 선물은 신약과 같고, 시간·피로도 같다', () => {
-  it('장을 마치면 지능·손재주 경험치와 가끔 생활 가구, 닢·하나님 기록·장면·신약 기록은 그대로', () => {
+  it('장을 마치면 지능·손재주 경험치·필사 삯·가끔 생활 가구, 하나님 기록·장면·신약 기록은 그대로', () => {
     const base = startCopy(gifted({ coins: 17, inv: { olive: 2 } }), 'oba', CONTENT)
     const r = writeChapter(base, 'oba')
     const a = r.state
-    expect(a.coins).toBe(base.coins)
+    // 2026-10-13 사용자: 필사 삯 (처음 마친 장)
+    expect(a.coins).toBe(base.coins + (r.result.kind === 'chapter' ? r.result.pay ?? 0 : 0))
+    expect(a.coins).toBeGreaterThan(base.coins)
     // 2026-10-12 사용자: 구약 필사도 경험치와 선물
     const gift = r.result.kind === 'chapter' ? r.result.gift : undefined
     expect(a.inv).toEqual(gift ? { ...base.inv, [gift]: 1 } : base.inv)

@@ -380,8 +380,9 @@ export const ROOMS: readonly Room[] = [
     [...lodgingWorkPartitions,[5,3,'A'],[LODGING_PRESS.x-2,LODGING_PRESS.y-122,'P'],[2,1,'h'],[5,1,'k'],[6,1,'k'],[18,1,'g'],[20,1,'g'],[11,3,'n'],[12,3,'n']],
     [[2,4,'chest'],[6,2,'barrel'],[22,5,'barrel'],[11,3,'teapot'],[10,3,'chair'],[13,3,'chair','flip'],[17,8,'roundRug'],[2,8,'bigPlant']],26,12),
   {...room('lodgingUpper',2,140,LODGING_STAIRS,[22,6],
-    [...lodgingPartitions,[2,2,'b'],[5,2,'b'],[10,2,'b'],[13,2,'b'],[18,2,'b'],
-      ...[2,8,14,20].map(x=>[x,9,'b'] as [number,number,string])],
+    // 침대는 방 모서리 벽에 붙인다 (2026-10-13 사용자)
+    [...lodgingPartitions,[1,1,'b'],[7,1,'b'],[9,1,'b'],[15,1,'b'],[17,1,'b'],
+      ...[1,7,13,19].map(x=>[x,9,'b'] as [number,number,string])],
     [[5,3,'chest'],[13,3,'chest'],[21,3,'chest'],[3,3,'mat'],[11,3,'mat'],[19,3,'mat'],
       ...[4,10,16,22].map(x=>[x,9,'chest'] as Decor)],26,14),
     exit:{x:27,y:146},entry:{x:26,y:146},out:LODGING_DOWNSTAIRS},
