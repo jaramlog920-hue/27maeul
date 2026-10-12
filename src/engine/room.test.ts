@@ -26,8 +26,8 @@ describe('방 꾸미기', () => {
     expect(placement([], 'table', { x: 12, y: 12 })).toBeNull()
   })
   it('길을 막아 버리는 자리는 거절한다', () => {
-    // 문 바로 위 두 칸을 막으면 집 안으로 들어갈 수 없다
-    const room: Furniture[] = [{ item: 'nightstand', ...h(5, 6) }]
+    // 문 바로 위 두 칸을 막으면 집 안으로 들어갈 수 없다 (문 왼쪽 칸은 2026-10-13부터 작업대 앞 자리라 오른쪽 두 칸으로 본다)
+    const room: Furniture[] = [{ item: 'nightstand', ...h(8, 6) }]
     expect(placement(room, 'nightstand', h(7, 6))).not.toBeNull()
     const blocked = placement([{ item: 'table', ...h(5, 6) }], 'stool', h(7, 6))
     if (blocked) {

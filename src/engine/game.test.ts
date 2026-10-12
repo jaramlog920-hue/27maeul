@@ -763,9 +763,9 @@ describe('스페이스 상호작용', () => {
     const at = (f: GameState['player']['facing']) => ({ ...s, player: { ...s.player, x: stand.x, y: stand.y, path: [], facing: f } }) as GameState
     expect(pressTileT(at(facing))).toEqual(desk)
     // 스페이스와 달리 옆 칸을 찾아가지 않는다 — 화면에서 앞 칸을 누른 것과 같다.
-    // 책상 반대쪽(오른쪽)은 작업대라(2026-10-13) 앞이 빈 위쪽으로 본다
+    // 책상 오른쪽에 작업대가 붙어(2026-10-13) 책상 앞 자리는 위 칸 — 앞이 빈 오른쪽으로 본다
     void away
-    expect(pressTileT(at('up'))).toEqual(stand)
+    expect(pressTileT(at('right'))).toEqual(stand)
   })
   it('막힌 쪽으로 걸으려 하면 그쪽을 바라본다', () => {
     const s = newGame(CONTENT)

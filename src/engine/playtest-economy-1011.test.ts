@@ -114,6 +114,8 @@ describe('5. 집이 넓어져 가방으로 돌아간 가구를 알려 준다', (
     s = goToSleep(orderHome(s)!, CONTENT)
     s = goToSleep(orderHome(s)!, CONTENT)
     expect(homeRefitReturned(s, s)).toEqual([])
+    // 생활방 문(16,113) 바로 옆 칸(17,113)에 의자를 둔다 — 새 게임은 작업대가 책상에 붙어 이 칸이 책상 앞 자리가 되므로 작업대만 예전 자리로 (2026-10-13)
+    s = { ...s, room: s.room.map((f) => (f.item === 'homeWorkbench' ? { ...f, x: 23, y: 113 } : f)) }
     const placed = placeFurniture({ ...s, inv: { ...s.inv, stool: 1 } }, 'stool', { x: 17, y: 113 })!
     expect(placed.room.some((f) => f.item === 'stool')).toBe(true)
     const built = goToSleep(orderHome(placed)!, CONTENT)

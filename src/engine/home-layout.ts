@@ -13,6 +13,6 @@ export const FIXTURES = {
   homeDesk: { place: 'desk', ch: 'd', name: '필사 책상', x: 17, y: 114 },
   homeHearth: { place: 'hearth', ch: 'h', name: '화덕', x: 20, y: 111 },
   homeShelf: { place: 'shelf', ch: 's', name: '두루마리 선반', x: 23, y: 111 },
-  // 작업대는 필사 책상 바로 옆 (2026-10-13 사용자: 시작할 때부터 책상에 앉은 자리 오른쪽 — 문 들어오는 칸은 비워 둔다)
-  homeWorkbench: { place: 'workbench', ch: 'k', name: '작업대', x: 19, y: 114 },
+  // 작업대는 필사 책상에 딱 붙여 오른쪽 (2026-10-13 사용자) — 책상 앞 서는 자리는 책상 위 칸이 된다
+  homeWorkbench: { place: 'workbench', ch: 'k', name: '작업대', x: 18, y: 114 },
 } as const
