@@ -25,7 +25,7 @@ export function RoomShelf({ room }: { room: ShelfRoomId }) {
   return (
     <div className="dialog library" role="dialog" aria-label={head.title}>
       <h2>{head.title}</h2>
-      <p className="hint">{head.notice}</p>
+      {head.notice && <p className="hint">{head.notice}</p>}
       <ul className={`library-shelf${books.length > 4 ? ' many' : ''}`}>
         {books.map((b) => (
           <ShelfRow key={b} book={b} back={`room:${room}`} notYet={head.notYet} />
