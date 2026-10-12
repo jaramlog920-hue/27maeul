@@ -380,9 +380,8 @@ export const ROOMS: readonly Room[] = [
     [...lodgingWorkPartitions,[5,3,'A'],[LODGING_PRESS.x-2,LODGING_PRESS.y-122,'P'],[2,1,'h'],[5,1,'k'],[6,1,'k'],[18,1,'g'],[20,1,'g'],[11,3,'n'],[12,3,'n']],
     [[2,4,'chest'],[6,2,'barrel'],[22,5,'barrel'],[11,3,'teapot'],[10,3,'chair'],[13,3,'chair','flip'],[17,8,'roundRug'],[2,8,'bigPlant']],26,12),
   {...room('lodgingUpper',2,140,LODGING_STAIRS,[22,6],
-    // 침대는 방 모서리 벽에 붙인다 (2026-10-13 사용자)
-    [...lodgingPartitions,[1,1,'b'],[7,1,'b'],[9,1,'b'],[15,1,'b'],[17,1,'b'],
-      ...[1,7,13,19].map(x=>[x,9,'b'] as [number,number,string])],
+    // 침대는 방 모서리 벽에 붙인다 (2026-10-13 사용자). 내 집 침대처럼 두 칸 길이 — 'b' 머리, 'U' 발치 (한 칸 그림이 반으로 잘린 듯 보였다)
+    [...lodgingPartitions,...[[1,1],[7,1],[9,1],[15,1],[17,1],[1,9],[7,9],[13,9],[19,9]].flatMap(([x,y])=>[[x,y,'b'],[x,y+1,'U']] as [number,number,string][])],
     [[5,3,'chest'],[13,3,'chest'],[21,3,'chest'],[3,3,'mat'],[11,3,'mat'],[19,3,'mat'],
       ...[4,10,16,22].map(x=>[x,9,'chest'] as Decor)],26,14),
     exit:{x:27,y:146},entry:{x:26,y:146},out:LODGING_DOWNSTAIRS},
@@ -628,7 +627,7 @@ export function treeKind(x: number, y: number): TreeKind {
 
 // 'l'(텃밭)은 'y'(보리밭)처럼 걸을 수 있다 — 두둑 가운데 안쪽 칸은 사방이 막히면 다가갈 수 없어서 (task-3 적응)
 // 'Q' 한 권 선반(사도행전·요한계시록), 'M' 벽의 여정 판, 'C' 벽의 일곱 교회 카드 판. 'Y' 편지 선반, 'V' 벽의 편지꽂이, 'N' 방 벽의 창, 'F' 사랑방 벽의 의뢰 게시판. 'J'(열린 서고 방 문)는 걷는 칸
-const BLOCKED = new Set(['X', 'F', 'j', 'C', 'Y', 'V', 'N', 'H', 'I', '_','Z', 'n', 'g', 'p', 'W', 'G', 'K', 'Q', 'M', 'T', '#', 'R', 'S', 'u', 'b', 'd', 'h', 's', 'k', 'w', 'B', '~', 'r', 'v', 'o', 'P', 'A', 'O', 'm', 'x', 'q'])
+const BLOCKED = new Set(['U', 'X', 'F', 'j', 'C', 'Y', 'V', 'N', 'H', 'I', '_','Z', 'n', 'g', 'p', 'W', 'G', 'K', 'Q', 'M', 'T', '#', 'R', 'S', 'u', 'b', 'd', 'h', 's', 'k', 'w', 'B', '~', 'r', 'v', 'o', 'P', 'A', 'O', 'm', 'x', 'q'])
 
 /** 이 글자의 칸이 막히는 땅인가 (새 터 건축의 길찾기 검사가 쓴다) */
 export const isBlockedChar = (c: string): boolean => BLOCKED.has(c)

@@ -473,6 +473,11 @@ function drawTree(g: Ctx, x: number, y: number, season: Season, kind: TreeKind) 
 function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season, tree: TreeKind = 'deciduous') {
   const px = x * TILE
   const py = y * TILE
+  // 2층 여관 침대는 아래 칸에 발치('U')가 있다 — 한 칸 침대가 반으로 잘린 듯 보여 내 집 침대(두 칸) 그림으로 (2026-10-13)
+  if (ch === 'b' && tileAt(x, y + 1) === 'U') {
+    const bed = facingArt('homeBed', 'down')
+    if (bed) { g.drawImage(paint('lodgingBed', bed.rows, FURNI_PALETTE), px, py); return }
+  }
   const fixture = HOME_FIXTURE_ART[ch] ?? REMAINING_FIXTURE_ART[ch]
   if (fixture) {
     g.drawImage(paint(`fixture/${ch}`, fixture.rows, FURNI_PALETTE), px, py)
@@ -758,6 +763,12 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season, tr
       r(C.reed, 3, 6, 5, 2)
       r('#2f213a', 10, 6, 3, 3)
       break
+    case 'U': {
+      // 침대 발치: 지도는 위 줄부터 그려 이 칸의 바닥이 머리 칸('b')의 두 칸 그림 아래쪽을 덮는다 — 바닥 위에 침대를 다시 얹는다
+      const bed = facingArt('homeBed', 'down')
+      if (bed) g.drawImage(paint('lodgingBed', bed.rows, FURNI_PALETTE), px, py - TILE)
+      break
+    }
     case 'B':
       r(C.shadow, 1, 11, 15, 3)
       r(C.woodDark, 2, 9, 2, 5)
