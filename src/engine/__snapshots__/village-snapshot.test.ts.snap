@@ -334,7 +334,7 @@ exports[`첫 마을 칸 스냅샷 > 구역과 나무 종류 > zones 1`] = `
 ................................................"
 `;
 
-exports[`첫 마을 칸 스냅샷 > 집 0단계 · 열린 문 [] > indoor 1`] = `"93263c8f1b4e8d63ddb750d95b8a2dbf3d466959fc26b06cc33c9990ad6bc16c"`;
+exports[`첫 마을 칸 스냅샷 > 집 0단계 · 열린 문 [] > indoor 1`] = `"ffd4b4a2f5556768fa1ca7d0f42712c5dc83be5c3c24092ebdbb316d4e3a34e9"`;
 
 exports[`첫 마을 칸 스냅샷 > 집 0단계 · 열린 문 [] > tiles 1`] = `
 "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
@@ -380,11 +380,11 @@ TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
 ________________________________________________
 __##########____##########____##########________
 __#OOfZZfZg#____#bbZfhffg#____#bfZZfhfZ#________
-__#Zffffffg#____#fffffffg#____#fffffffZ#________
+__#Zffffffg#____#UUfffffg#____#UffffffZ#________
 __#fZnnZfff#____#ffZnnZfZ#____#ffzzffff#________
 __#ffffzzff#____#ffffffff#____#ZnzzfffZ#________
 __#Zfffzzzb#____#zzzffffZ#____#fffffZZf#________
-__#ffffffff#____#ffffffff#____#Zfffffff#________
+__#fffffffU#____#ffffffff#____#Zfffffff#________
 __####E#####____####E#####____####E#####________
 ______________________________#############_____
 __##########____##########____#sssfGGGfsss#_____
@@ -420,7 +420,7 @@ ________________________________________________
 ________________________________________________
 __##########__##N#VVV###__##########__##########
 __#kkffssZb#__#gffffffb#__#sssffggg#__#bffhffgg#
-__#ffffffff#__#ffffffff#__#fffffffZ#__#ffffffff#
+__#fffffffU#__#fffffffU#__#fffffffZ#__#Ufffffff#
 __#ZffffffZ#__#ZfZnnZfZ#__#ffffffff#__#ZffffffZ#
 __#ffZnffff#__#ffffffff#__#pfZnnZfp#__#fZnffffZ#
 __#fffffzzf#__#fzzffffZ#__#ffffffff#__#ffffffff#
@@ -503,9 +503,9 @@ ________________________________________________
 ________________________________________________"
 `;
 
-exports[`첫 마을 칸 스냅샷 > 집 0단계 · 열린 문 [] > walkable 1`] = `"20f27ca96fd0146530558908f2780cffa99bbd2abc7b5e5c343d951ec1222161"`;
+exports[`첫 마을 칸 스냅샷 > 집 0단계 · 열린 문 [] > walkable 1`] = `"484dedae99eef3c4d61f6e8afa9f07dbbb4046f57b4f35432054a16fda11e46f"`;
 
-exports[`첫 마을 칸 스냅샷 > 집 0단계 · 열린 문 [0,1,2,3] > indoor 1`] = `"9a1137645d88cd027db08d29a520d01e83f81c51395124e2f6b0a57b230dc984"`;
+exports[`첫 마을 칸 스냅샷 > 집 0단계 · 열린 문 [0,1,2,3] > indoor 1`] = `"8a321818eeac06c25e9bd6f384968efa28c09bbac0a5badb1cb96fec2e89afdc"`;
 
 exports[`첫 마을 칸 스냅샷 > 집 0단계 · 열린 문 [0,1,2,3] > tiles 1`] = `
 "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
@@ -551,11 +551,11 @@ TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
 ________________________________________________
 __##########____##########____##########________
 __#OOfZZfZg#____#bbZfhffg#____#bfZZfhfZ#________
-__#Zffffffg#____#fffffffg#____#fffffffZ#________
+__#Zffffffg#____#UUfffffg#____#UffffffZ#________
 __#fZnnZfff#____#ffZnnZfZ#____#ffzzffff#________
 __#ffffzzff#____#ffffffff#____#ZnzzfffZ#________
 __#Zfffzzzb#____#zzzffffZ#____#fffffZZf#________
-__#ffffffff#____#ffffffff#____#Zfffffff#________
+__#fffffffU#____#ffffffff#____#Zfffffff#________
 __####E#####____####E#####____####E#####________
 ______________________________#############_____
 __##########____##########____#sssfGGGfsss#_____
@@ -591,7 +591,7 @@ ________________________________________________
 ________________________________________________
 __##########__##N#VVV###__##########__##########
 __#kkffssZb#__#gffffffb#__#sssffggg#__#bffhffgg#
-__#ffffffff#__#ffffffff#__#fffffffZ#__#ffffffff#
+__#fffffffU#__#fffffffU#__#fffffffZ#__#Ufffffff#
 __#ZffffffZ#__#ZfZnnZfZ#__#ffffffff#__#ZffffffZ#
 __#ffZnffff#__#ffffffff#__#pfZnnZfp#__#fZnffffZ#
 __#fffffzzf#__#fzzffffZ#__#ffffffff#__#ffffffff#
@@ -674,9 +674,9 @@ ________________________________________________
 ________________________________________________"
 `;
 
-exports[`첫 마을 칸 스냅샷 > 집 0단계 · 열린 문 [0,1,2,3] > walkable 1`] = `"6155ff27c8eba25a052c64115f077f18b181443120cf97a5d34ab1f76b6bda6c"`;
+exports[`첫 마을 칸 스냅샷 > 집 0단계 · 열린 문 [0,1,2,3] > walkable 1`] = `"2b3ce7efd1a43299a84e69dd85ac635c160e8fe247952020dcab37a48696e406"`;
 
-exports[`첫 마을 칸 스냅샷 > 집 0단계 · 열린 문 [0] > indoor 1`] = `"5694fa90b2b452b8164bbb02471c84846bdcf3ca3cc44eaaedcf5fa6e22894a9"`;
+exports[`첫 마을 칸 스냅샷 > 집 0단계 · 열린 문 [0] > indoor 1`] = `"fae60d893ec9edde4f9197263dad1cd1d4da1d52ea0c2a40718569b4984b21c9"`;
 
 exports[`첫 마을 칸 스냅샷 > 집 0단계 · 열린 문 [0] > tiles 1`] = `
 "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
@@ -722,11 +722,11 @@ TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
 ________________________________________________
 __##########____##########____##########________
 __#OOfZZfZg#____#bbZfhffg#____#bfZZfhfZ#________
-__#Zffffffg#____#fffffffg#____#fffffffZ#________
+__#Zffffffg#____#UUfffffg#____#UffffffZ#________
 __#fZnnZfff#____#ffZnnZfZ#____#ffzzffff#________
 __#ffffzzff#____#ffffffff#____#ZnzzfffZ#________
 __#Zfffzzzb#____#zzzffffZ#____#fffffZZf#________
-__#ffffffff#____#ffffffff#____#Zfffffff#________
+__#fffffffU#____#ffffffff#____#Zfffffff#________
 __####E#####____####E#####____####E#####________
 ______________________________#############_____
 __##########____##########____#sssfGGGfsss#_____
@@ -762,7 +762,7 @@ ________________________________________________
 ________________________________________________
 __##########__##N#VVV###__##########__##########
 __#kkffssZb#__#gffffffb#__#sssffggg#__#bffhffgg#
-__#ffffffff#__#ffffffff#__#fffffffZ#__#ffffffff#
+__#fffffffU#__#fffffffU#__#fffffffZ#__#Ufffffff#
 __#ZffffffZ#__#ZfZnnZfZ#__#ffffffff#__#ZffffffZ#
 __#ffZnffff#__#ffffffff#__#pfZnnZfp#__#fZnffffZ#
 __#fffffzzf#__#fzzffffZ#__#ffffffff#__#ffffffff#
@@ -845,9 +845,9 @@ ________________________________________________
 ________________________________________________"
 `;
 
-exports[`첫 마을 칸 스냅샷 > 집 0단계 · 열린 문 [0] > walkable 1`] = `"468b969a2eb37f4e841d233c4fa2b96c509c4461d7984b3ef0e554a0d3736801"`;
+exports[`첫 마을 칸 스냅샷 > 집 0단계 · 열린 문 [0] > walkable 1`] = `"32dc7563627e14c079f442dbf1638c27b245f448cab5df193d8e54e342c27e7b"`;
 
-exports[`첫 마을 칸 스냅샷 > 집 1단계 · 열린 문 [] > indoor 1`] = `"4772195d01905611688986ab7acdc19da1ad792f5ac73c7a948b046ba0ea69c9"`;
+exports[`첫 마을 칸 스냅샷 > 집 1단계 · 열린 문 [] > indoor 1`] = `"5bddd0617460ff8d208cf5e6febc150cc3af1efb999b26e4e8bc5ae6be8c1264"`;
 
 exports[`첫 마을 칸 스냅샷 > 집 1단계 · 열린 문 [] > tiles 1`] = `
 "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
@@ -893,11 +893,11 @@ TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
 ________________________________________________
 __##########____##########____##########________
 __#OOfZZfZg#____#bbZfhffg#____#bfZZfhfZ#________
-__#Zffffffg#____#fffffffg#____#fffffffZ#________
+__#Zffffffg#____#UUfffffg#____#UffffffZ#________
 __#fZnnZfff#____#ffZnnZfZ#____#ffzzffff#________
 __#ffffzzff#____#ffffffff#____#ZnzzfffZ#________
 __#Zfffzzzb#____#zzzffffZ#____#fffffZZf#________
-__#ffffffff#____#ffffffff#____#Zfffffff#________
+__#fffffffU#____#ffffffff#____#Zfffffff#________
 __####E#####____####E#####____####E#####________
 ______________________________#############_____
 __##########____##########____#sssfGGGfsss#_____
@@ -933,7 +933,7 @@ ________________________________________________
 ________________________________________________
 __##########__##N#VVV###__##########__##########
 __#kkffssZb#__#gffffffb#__#sssffggg#__#bffhffgg#
-__#ffffffff#__#ffffffff#__#fffffffZ#__#ffffffff#
+__#fffffffU#__#fffffffU#__#fffffffZ#__#Ufffffff#
 __#ZffffffZ#__#ZfZnnZfZ#__#ffffffff#__#ZffffffZ#
 __#ffZnffff#__#ffffffff#__#pfZnnZfp#__#fZnffffZ#
 __#fffffzzf#__#fzzffffZ#__#ffffffff#__#ffffffff#
@@ -1016,9 +1016,9 @@ ________________________________________________
 ________________________________________________"
 `;
 
-exports[`첫 마을 칸 스냅샷 > 집 1단계 · 열린 문 [] > walkable 1`] = `"49b27abd5428fed41fb094705b98f83839a0eb0fb22d9b84092f341f991164fd"`;
+exports[`첫 마을 칸 스냅샷 > 집 1단계 · 열린 문 [] > walkable 1`] = `"950aa97b93883bb2321a8216ae810acd2ef54e022389470c6139b91b2cf960b2"`;
 
-exports[`첫 마을 칸 스냅샷 > 집 1단계 · 열린 문 [0,1,2,3] > indoor 1`] = `"a8a1609de9bda933f96607ecc4e062b57d6310989656a2eaa34ee5d6a4be59b9"`;
+exports[`첫 마을 칸 스냅샷 > 집 1단계 · 열린 문 [0,1,2,3] > indoor 1`] = `"23ba846889d92d006cc3dedddd87c1c9e44d544de6477cbcbf62ac6f0a9b7d7e"`;
 
 exports[`첫 마을 칸 스냅샷 > 집 1단계 · 열린 문 [0,1,2,3] > tiles 1`] = `
 "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
@@ -1064,11 +1064,11 @@ TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
 ________________________________________________
 __##########____##########____##########________
 __#OOfZZfZg#____#bbZfhffg#____#bfZZfhfZ#________
-__#Zffffffg#____#fffffffg#____#fffffffZ#________
+__#Zffffffg#____#UUfffffg#____#UffffffZ#________
 __#fZnnZfff#____#ffZnnZfZ#____#ffzzffff#________
 __#ffffzzff#____#ffffffff#____#ZnzzfffZ#________
 __#Zfffzzzb#____#zzzffffZ#____#fffffZZf#________
-__#ffffffff#____#ffffffff#____#Zfffffff#________
+__#fffffffU#____#ffffffff#____#Zfffffff#________
 __####E#####____####E#####____####E#####________
 ______________________________#############_____
 __##########____##########____#sssfGGGfsss#_____
@@ -1104,7 +1104,7 @@ ________________________________________________
 ________________________________________________
 __##########__##N#VVV###__##########__##########
 __#kkffssZb#__#gffffffb#__#sssffggg#__#bffhffgg#
-__#ffffffff#__#ffffffff#__#fffffffZ#__#ffffffff#
+__#fffffffU#__#fffffffU#__#fffffffZ#__#Ufffffff#
 __#ZffffffZ#__#ZfZnnZfZ#__#ffffffff#__#ZffffffZ#
 __#ffZnffff#__#ffffffff#__#pfZnnZfp#__#fZnffffZ#
 __#fffffzzf#__#fzzffffZ#__#ffffffff#__#ffffffff#
@@ -1187,9 +1187,9 @@ ________________________________________________
 ________________________________________________"
 `;
 
-exports[`첫 마을 칸 스냅샷 > 집 1단계 · 열린 문 [0,1,2,3] > walkable 1`] = `"1af40645960b5c3f9caceedc9e5423a83cf5a6c00ac1d484d8aadb0514c11c7c"`;
+exports[`첫 마을 칸 스냅샷 > 집 1단계 · 열린 문 [0,1,2,3] > walkable 1`] = `"2a29f7df31725f5b78beb8f6e5fdf901a8a1f14b62117fab47fc828af0cbcb27"`;
 
-exports[`첫 마을 칸 스냅샷 > 집 1단계 · 열린 문 [0] > indoor 1`] = `"6996ad674b3151b1c6ac32947b33e58082cac172ee3b615f5f0be9dca9c65b7c"`;
+exports[`첫 마을 칸 스냅샷 > 집 1단계 · 열린 문 [0] > indoor 1`] = `"87830f7aba69c60f6d7d6760fdc1c02453f7a3c0498a7d666145dbe7bfb65a5e"`;
 
 exports[`첫 마을 칸 스냅샷 > 집 1단계 · 열린 문 [0] > tiles 1`] = `
 "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
@@ -1235,11 +1235,11 @@ TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
 ________________________________________________
 __##########____##########____##########________
 __#OOfZZfZg#____#bbZfhffg#____#bfZZfhfZ#________
-__#Zffffffg#____#fffffffg#____#fffffffZ#________
+__#Zffffffg#____#UUfffffg#____#UffffffZ#________
 __#fZnnZfff#____#ffZnnZfZ#____#ffzzffff#________
 __#ffffzzff#____#ffffffff#____#ZnzzfffZ#________
 __#Zfffzzzb#____#zzzffffZ#____#fffffZZf#________
-__#ffffffff#____#ffffffff#____#Zfffffff#________
+__#fffffffU#____#ffffffff#____#Zfffffff#________
 __####E#####____####E#####____####E#####________
 ______________________________#############_____
 __##########____##########____#sssfGGGfsss#_____
@@ -1275,7 +1275,7 @@ ________________________________________________
 ________________________________________________
 __##########__##N#VVV###__##########__##########
 __#kkffssZb#__#gffffffb#__#sssffggg#__#bffhffgg#
-__#ffffffff#__#ffffffff#__#fffffffZ#__#ffffffff#
+__#fffffffU#__#fffffffU#__#fffffffZ#__#Ufffffff#
 __#ZffffffZ#__#ZfZnnZfZ#__#ffffffff#__#ZffffffZ#
 __#ffZnffff#__#ffffffff#__#pfZnnZfp#__#fZnffffZ#
 __#fffffzzf#__#fzzffffZ#__#ffffffff#__#ffffffff#
@@ -1358,9 +1358,9 @@ ________________________________________________
 ________________________________________________"
 `;
 
-exports[`첫 마을 칸 스냅샷 > 집 1단계 · 열린 문 [0] > walkable 1`] = `"a035cbcb1898447880cb08267c930a8eb1cdf4aaf06e9d4520a47c4fb0a7ff89"`;
+exports[`첫 마을 칸 스냅샷 > 집 1단계 · 열린 문 [0] > walkable 1`] = `"60459ed9d75147a9c48793540cfe6e090470453b2a5b86e5447eb81ed54d5a7a"`;
 
-exports[`첫 마을 칸 스냅샷 > 집 2단계 · 열린 문 [] > indoor 1`] = `"e269c3fe793dd016e1a8ceea41254af07307a6140aecf0a4379ac0e232413c0b"`;
+exports[`첫 마을 칸 스냅샷 > 집 2단계 · 열린 문 [] > indoor 1`] = `"5c0dfca877073c4dd7cfcf6bdc0eaa09a852873f89f34d60dd1353f2aa30e879"`;
 
 exports[`첫 마을 칸 스냅샷 > 집 2단계 · 열린 문 [] > tiles 1`] = `
 "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
@@ -1406,11 +1406,11 @@ TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
 ________________________________________________
 __##########____##########____##########________
 __#OOfZZfZg#____#bbZfhffg#____#bfZZfhfZ#________
-__#Zffffffg#____#fffffffg#____#fffffffZ#________
+__#Zffffffg#____#UUfffffg#____#UffffffZ#________
 __#fZnnZfff#____#ffZnnZfZ#____#ffzzffff#________
 __#ffffzzff#____#ffffffff#____#ZnzzfffZ#________
 __#Zfffzzzb#____#zzzffffZ#____#fffffZZf#________
-__#ffffffff#____#ffffffff#____#Zfffffff#________
+__#fffffffU#____#ffffffff#____#Zfffffff#________
 __####E#####____####E#####____####E#####________
 ______________________________#############_____
 __##########____##########____#sssfGGGfsss#_____
@@ -1446,7 +1446,7 @@ ________________________________________________
 ________________________________________________
 __##########__##N#VVV###__##########__##########
 __#kkffssZb#__#gffffffb#__#sssffggg#__#bffhffgg#
-__#ffffffff#__#ffffffff#__#fffffffZ#__#ffffffff#
+__#fffffffU#__#fffffffU#__#fffffffZ#__#Ufffffff#
 __#ZffffffZ#__#ZfZnnZfZ#__#ffffffff#__#ZffffffZ#
 __#ffZnffff#__#ffffffff#__#pfZnnZfp#__#fZnffffZ#
 __#fffffzzf#__#fzzffffZ#__#ffffffff#__#ffffffff#
@@ -1529,9 +1529,9 @@ ________________________________________________
 ________________________________________________"
 `;
 
-exports[`첫 마을 칸 스냅샷 > 집 2단계 · 열린 문 [] > walkable 1`] = `"573c0a358849683c0e3e1a7bdebbb5d66521941671bd3093adfb90f2a8da5f0d"`;
+exports[`첫 마을 칸 스냅샷 > 집 2단계 · 열린 문 [] > walkable 1`] = `"7abf07387399235777223e61d81523f4c4c83186ea64987f52093f0fea48e709"`;
 
-exports[`첫 마을 칸 스냅샷 > 집 2단계 · 열린 문 [0,1,2,3] > indoor 1`] = `"755c8aabe24863dc7f4b0ddd05832497930324bfee2fc32fdefbc4cd7a5bd91a"`;
+exports[`첫 마을 칸 스냅샷 > 집 2단계 · 열린 문 [0,1,2,3] > indoor 1`] = `"7acd0c3adfe071e53521fb541c1647e8390707d37d5f08743742ee95fd7ec44f"`;
 
 exports[`첫 마을 칸 스냅샷 > 집 2단계 · 열린 문 [0,1,2,3] > tiles 1`] = `
 "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
@@ -1577,11 +1577,11 @@ TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
 ________________________________________________
 __##########____##########____##########________
 __#OOfZZfZg#____#bbZfhffg#____#bfZZfhfZ#________
-__#Zffffffg#____#fffffffg#____#fffffffZ#________
+__#Zffffffg#____#UUfffffg#____#UffffffZ#________
 __#fZnnZfff#____#ffZnnZfZ#____#ffzzffff#________
 __#ffffzzff#____#ffffffff#____#ZnzzfffZ#________
 __#Zfffzzzb#____#zzzffffZ#____#fffffZZf#________
-__#ffffffff#____#ffffffff#____#Zfffffff#________
+__#fffffffU#____#ffffffff#____#Zfffffff#________
 __####E#####____####E#####____####E#####________
 ______________________________#############_____
 __##########____##########____#sssfGGGfsss#_____
@@ -1617,7 +1617,7 @@ ________________________________________________
 ________________________________________________
 __##########__##N#VVV###__##########__##########
 __#kkffssZb#__#gffffffb#__#sssffggg#__#bffhffgg#
-__#ffffffff#__#ffffffff#__#fffffffZ#__#ffffffff#
+__#fffffffU#__#fffffffU#__#fffffffZ#__#Ufffffff#
 __#ZffffffZ#__#ZfZnnZfZ#__#ffffffff#__#ZffffffZ#
 __#ffZnffff#__#ffffffff#__#pfZnnZfp#__#fZnffffZ#
 __#fffffzzf#__#fzzffffZ#__#ffffffff#__#ffffffff#
@@ -1700,9 +1700,9 @@ ________________________________________________
 ________________________________________________"
 `;
 
-exports[`첫 마을 칸 스냅샷 > 집 2단계 · 열린 문 [0,1,2,3] > walkable 1`] = `"f6208f66ec776c5fbe16dc5428f3e35a19802478bc11cf728684112c8b0b1d4a"`;
+exports[`첫 마을 칸 스냅샷 > 집 2단계 · 열린 문 [0,1,2,3] > walkable 1`] = `"f53cfdde31b8b10e276e7d69347033b8ad1f3d7bcaff39db8f2b64b422f16c32"`;
 
-exports[`첫 마을 칸 스냅샷 > 집 2단계 · 열린 문 [0] > indoor 1`] = `"16c924c8149bc35925f77fa73cf7d0c2447ac79c65498c3d8e231babfdbebf5d"`;
+exports[`첫 마을 칸 스냅샷 > 집 2단계 · 열린 문 [0] > indoor 1`] = `"62977152e4c3fe3eb09e88e94c6ae53e4fd6163198f59ed57c8dbfb0be96a8a8"`;
 
 exports[`첫 마을 칸 스냅샷 > 집 2단계 · 열린 문 [0] > tiles 1`] = `
 "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
@@ -1748,11 +1748,11 @@ TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
 ________________________________________________
 __##########____##########____##########________
 __#OOfZZfZg#____#bbZfhffg#____#bfZZfhfZ#________
-__#Zffffffg#____#fffffffg#____#fffffffZ#________
+__#Zffffffg#____#UUfffffg#____#UffffffZ#________
 __#fZnnZfff#____#ffZnnZfZ#____#ffzzffff#________
 __#ffffzzff#____#ffffffff#____#ZnzzfffZ#________
 __#Zfffzzzb#____#zzzffffZ#____#fffffZZf#________
-__#ffffffff#____#ffffffff#____#Zfffffff#________
+__#fffffffU#____#ffffffff#____#Zfffffff#________
 __####E#####____####E#####____####E#####________
 ______________________________#############_____
 __##########____##########____#sssfGGGfsss#_____
@@ -1788,7 +1788,7 @@ ________________________________________________
 ________________________________________________
 __##########__##N#VVV###__##########__##########
 __#kkffssZb#__#gffffffb#__#sssffggg#__#bffhffgg#
-__#ffffffff#__#ffffffff#__#fffffffZ#__#ffffffff#
+__#fffffffU#__#fffffffU#__#fffffffZ#__#Ufffffff#
 __#ZffffffZ#__#ZfZnnZfZ#__#ffffffff#__#ZffffffZ#
 __#ffZnffff#__#ffffffff#__#pfZnnZfp#__#fZnffffZ#
 __#fffffzzf#__#fzzffffZ#__#ffffffff#__#ffffffff#
@@ -1871,9 +1871,9 @@ ________________________________________________
 ________________________________________________"
 `;
 
-exports[`첫 마을 칸 스냅샷 > 집 2단계 · 열린 문 [0] > walkable 1`] = `"f81bb8a309d1906e86ea8d82529616d1a689615bd5cd5744ce0918d55fb8b584"`;
+exports[`첫 마을 칸 스냅샷 > 집 2단계 · 열린 문 [0] > walkable 1`] = `"e202f8bf8865dac2cf3f96c3d0e855ec04ab568837d1edd4dfd74b219667226f"`;
 
-exports[`첫 마을 칸 스냅샷 > 집 3단계 · 열린 문 [] > indoor 1`] = `"c9eba6365edfcea989965243c37697fe046d19bfc3ba9ce4e8dbffa792db7f82"`;
+exports[`첫 마을 칸 스냅샷 > 집 3단계 · 열린 문 [] > indoor 1`] = `"f04336eaf4a7b159f1595ef8b124a6e69913f2bf6885ced0632a05c73a38bab9"`;
 
 exports[`첫 마을 칸 스냅샷 > 집 3단계 · 열린 문 [] > tiles 1`] = `
 "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
@@ -1919,11 +1919,11 @@ TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
 ________________________________________________
 __##########____##########____##########________
 __#OOfZZfZg#____#bbZfhffg#____#bfZZfhfZ#________
-__#Zffffffg#____#fffffffg#____#fffffffZ#________
+__#Zffffffg#____#UUfffffg#____#UffffffZ#________
 __#fZnnZfff#____#ffZnnZfZ#____#ffzzffff#________
 __#ffffzzff#____#ffffffff#____#ZnzzfffZ#________
 __#Zfffzzzb#____#zzzffffZ#____#fffffZZf#________
-__#ffffffff#____#ffffffff#____#Zfffffff#________
+__#fffffffU#____#ffffffff#____#Zfffffff#________
 __####E#####____####E#####____####E#####________
 ______________________________#############_____
 __##########____##########____#sssfGGGfsss#_____
@@ -1959,7 +1959,7 @@ ________________________________________________
 ________________________________________________
 __##########__##N#VVV###__##########__##########
 __#kkffssZb#__#gffffffb#__#sssffggg#__#bffhffgg#
-__#ffffffff#__#ffffffff#__#fffffffZ#__#ffffffff#
+__#fffffffU#__#fffffffU#__#fffffffZ#__#Ufffffff#
 __#ZffffffZ#__#ZfZnnZfZ#__#ffffffff#__#ZffffffZ#
 __#ffZnffff#__#ffffffff#__#pfZnnZfp#__#fZnffffZ#
 __#fffffzzf#__#fzzffffZ#__#ffffffff#__#ffffffff#
@@ -2042,9 +2042,9 @@ ________________________________________________
 ________________________________________________"
 `;
 
-exports[`첫 마을 칸 스냅샷 > 집 3단계 · 열린 문 [] > walkable 1`] = `"d60f14c450e20a57f9c51a92d44011a4aeeb625be9ff913b132084576da07247"`;
+exports[`첫 마을 칸 스냅샷 > 집 3단계 · 열린 문 [] > walkable 1`] = `"20e80f497c4c570528e8f72da1d3a547fbc4a0500194ed023df6a4153135a917"`;
 
-exports[`첫 마을 칸 스냅샷 > 집 3단계 · 열린 문 [0,1,2,3] > indoor 1`] = `"b85c15ae86bfd672a6162d3f6b29fe5e41e9d2a4cec7726d6848e64e3ec45250"`;
+exports[`첫 마을 칸 스냅샷 > 집 3단계 · 열린 문 [0,1,2,3] > indoor 1`] = `"b944900fbc140eca564d2483a3babe887c96d016106b7ca1f6a09f6ddfa7a346"`;
 
 exports[`첫 마을 칸 스냅샷 > 집 3단계 · 열린 문 [0,1,2,3] > tiles 1`] = `
 "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
@@ -2090,11 +2090,11 @@ TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
 ________________________________________________
 __##########____##########____##########________
 __#OOfZZfZg#____#bbZfhffg#____#bfZZfhfZ#________
-__#Zffffffg#____#fffffffg#____#fffffffZ#________
+__#Zffffffg#____#UUfffffg#____#UffffffZ#________
 __#fZnnZfff#____#ffZnnZfZ#____#ffzzffff#________
 __#ffffzzff#____#ffffffff#____#ZnzzfffZ#________
 __#Zfffzzzb#____#zzzffffZ#____#fffffZZf#________
-__#ffffffff#____#ffffffff#____#Zfffffff#________
+__#fffffffU#____#ffffffff#____#Zfffffff#________
 __####E#####____####E#####____####E#####________
 ______________________________#############_____
 __##########____##########____#sssfGGGfsss#_____
@@ -2130,7 +2130,7 @@ ________________________________________________
 ________________________________________________
 __##########__##N#VVV###__##########__##########
 __#kkffssZb#__#gffffffb#__#sssffggg#__#bffhffgg#
-__#ffffffff#__#ffffffff#__#fffffffZ#__#ffffffff#
+__#fffffffU#__#fffffffU#__#fffffffZ#__#Ufffffff#
 __#ZffffffZ#__#ZfZnnZfZ#__#ffffffff#__#ZffffffZ#
 __#ffZnffff#__#ffffffff#__#pfZnnZfp#__#fZnffffZ#
 __#fffffzzf#__#fzzffffZ#__#ffffffff#__#ffffffff#
@@ -2213,9 +2213,9 @@ ________________________________________________
 ________________________________________________"
 `;
 
-exports[`첫 마을 칸 스냅샷 > 집 3단계 · 열린 문 [0,1,2,3] > walkable 1`] = `"0df7eec7f97a75951da78bfaae38f6e3963226135d72e83b026801d9892bb170"`;
+exports[`첫 마을 칸 스냅샷 > 집 3단계 · 열린 문 [0,1,2,3] > walkable 1`] = `"021ff0c887d8e5486e76c4da663d5d4ba705bdb4699b8034be48cdb5ece676fb"`;
 
-exports[`첫 마을 칸 스냅샷 > 집 3단계 · 열린 문 [0] > indoor 1`] = `"97c03df9e7bf8a21618d9ec78e5aa2240e3ab572f9d35b15ca44411a79cd90f6"`;
+exports[`첫 마을 칸 스냅샷 > 집 3단계 · 열린 문 [0] > indoor 1`] = `"9ea123bc9ef7af2006c701c11a5cd482088f03f98a7488bb5cf631435f28710a"`;
 
 exports[`첫 마을 칸 스냅샷 > 집 3단계 · 열린 문 [0] > tiles 1`] = `
 "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
@@ -2261,11 +2261,11 @@ TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
 ________________________________________________
 __##########____##########____##########________
 __#OOfZZfZg#____#bbZfhffg#____#bfZZfhfZ#________
-__#Zffffffg#____#fffffffg#____#fffffffZ#________
+__#Zffffffg#____#UUfffffg#____#UffffffZ#________
 __#fZnnZfff#____#ffZnnZfZ#____#ffzzffff#________
 __#ffffzzff#____#ffffffff#____#ZnzzfffZ#________
 __#Zfffzzzb#____#zzzffffZ#____#fffffZZf#________
-__#ffffffff#____#ffffffff#____#Zfffffff#________
+__#fffffffU#____#ffffffff#____#Zfffffff#________
 __####E#####____####E#####____####E#####________
 ______________________________#############_____
 __##########____##########____#sssfGGGfsss#_____
@@ -2301,7 +2301,7 @@ ________________________________________________
 ________________________________________________
 __##########__##N#VVV###__##########__##########
 __#kkffssZb#__#gffffffb#__#sssffggg#__#bffhffgg#
-__#ffffffff#__#ffffffff#__#fffffffZ#__#ffffffff#
+__#fffffffU#__#fffffffU#__#fffffffZ#__#Ufffffff#
 __#ZffffffZ#__#ZfZnnZfZ#__#ffffffff#__#ZffffffZ#
 __#ffZnffff#__#ffffffff#__#pfZnnZfp#__#fZnffffZ#
 __#fffffzzf#__#fzzffffZ#__#ffffffff#__#ffffffff#
@@ -2384,4 +2384,4 @@ ________________________________________________
 ________________________________________________"
 `;
 
-exports[`첫 마을 칸 스냅샷 > 집 3단계 · 열린 문 [0] > walkable 1`] = `"64b6e03c0f231cba9f530e0f2921008c76f7580fa68c3f61093570a9dc33295e"`;
+exports[`첫 마을 칸 스냅샷 > 집 3단계 · 열린 문 [0] > walkable 1`] = `"65b0da7414c62b2c775f27210784da9c09cf8425d8d0ec75a27e082b93a51305"`;

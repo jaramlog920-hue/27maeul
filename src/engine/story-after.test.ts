@@ -260,8 +260,9 @@ describe('소품 자리 검사 (propSpotProblem)', () => {
   })
   it('방을 가로막아 어떤 바닥에 닿지 못하게 하면 안 된다', () => {
     // 목수 방 셋째 줄을 가로로 다 막으면 맨 윗줄 바닥에 닿지 못한다
-    const row = Array.from({ length: room.w - 2 }, (_, i) => ({ x: room.x0 + 1 + i, y: room.y0 + 2 }))
-    expect(row.every((t) => tileAt(t.x, t.y) === 'f')).toBe(true)
+    // (오른쪽 끝은 2026-10-13부터 침대 발치라 이미 막힌 칸 — 나머지 바닥만 막는다)
+    const row = Array.from({ length: room.w - 2 }, (_, i) => ({ x: room.x0 + 1 + i, y: room.y0 + 2 })).filter((t) => tileAt(t.x, t.y) === 'f')
+    expect(row.length).toBeGreaterThanOrEqual(room.w - 3)
     expect(propSpotProblem(row, 'carpenter')).toBe('blocksWay')
   })
   it('바깥: 길·문 곁·누르는 곳은 안 된다', () => {

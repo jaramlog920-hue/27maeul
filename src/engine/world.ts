@@ -168,7 +168,10 @@ function room(
   h = ROOM_H,
 ): Room {
   const exit = { x: x0 + Math.floor((w - 1) / 2), y: y0 + h - 1 }
-  return { owner, x0, y0, w, h, door, entry: { x: exit.x, y: exit.y - 1 }, exit, sit: { x: x0 + sit[0], y: y0 + sit[1] }, things, decor }
+  // 이웃집 침대도 내 집 침대처럼 두 칸 길이 — 바로 아래 칸이 비어 있으면 발치('U')를 둔다 (2026-10-13 사용자: 한 칸처럼 보인다)
+  const taken = new Set([...things.map(([x, y]) => `${x},${y}`), ...decor.map(([x, y]) => `${x},${y}`), `${sit[0]},${sit[1]}`, `${exit.x - x0},${exit.y - 1 - y0}`])
+  const feet = things.filter(([x, y, ch]) => ch === 'b' && y + 1 <= h - 2 && !taken.has(`${x},${y + 1}`)).map(([x, y]) => [x, y + 1, 'U'] as [number, number, string])
+  return { owner, x0, y0, w, h, door, entry: { x: exit.x, y: exit.y - 1 }, exit, sit: { x: x0 + sit[0], y: y0 + sit[1] }, things: [...things, ...feet], decor }
 }
 
 /** 서고 안: 가운데 복음서 선반, 양옆 책장, 좌우 벽의 잠긴 방 문 넷 (13×10) */
