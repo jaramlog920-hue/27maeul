@@ -202,8 +202,10 @@ function SaveFileRows() {
     saveGame(useGame.getState().game)
     const r = importSave(text, CONTENT)
     if ('error' in r) return useGame.getState().say(r.error === 'space' ? '기기 저장 공간이 모자라요. 안 쓰는 저장 칸을 지우고 다시 해 주세요.' : '이 게임의 저장 파일이 아니에요.', 3600)
-    useGame.getState().say('가져왔어요. 새 칸으로 다시 열어요.', 2000)
-    setTimeout(() => globalThis.location?.reload(), 900)
+    // 무엇이 들어왔는지 알려 빠진 것이 있으면 바로 보이게
+    const missed = r.picsMissed ? ` · 공간이 모자라 사진 ${r.picsMissed}장은 빠졌어요` : ''
+    useGame.getState().say(`저장과 사진 ${r.pics}장, 설정 ${r.settings}개를 가져왔어요${missed}. 새 칸으로 다시 열어요.`, 3600)
+    setTimeout(() => globalThis.location?.reload(), 2600)
   }
   const importFile = async (file: File | undefined) => {
     if (!file) return

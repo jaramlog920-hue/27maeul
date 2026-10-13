@@ -575,16 +575,47 @@ export function saveGame(s: GameState, store: Storage | null | undefined = stora
   }
 }
 
-/** 내보내기·가져오기 (2026-10-14 사용자): 저장 하나를 파일로 꺼내고, 그 파일을 새 칸으로 들인다 */
+/**
+ * 내보내기·가져오기 (2026-10-14 사용자): 저장 하나를 파일로 꺼내고, 그 파일을 새 칸으로 들인다.
+ * 빠지는 것이 없게 — 저장 글뿐 아니라 그 칸의 앨범 사진(따로 보관)과 기기 설정(소리·화면·조작)까지 담는다.
+ * 가져온 뒤에는 무엇이 몇 개 들어왔는지 돌려준다 (화면에 알려 빠진 것이 있으면 바로 보이게)
+ */
 const EXPORT_APP = 'twenty-seven'
-export function exportSave(s: GameState): string {
-  return JSON.stringify({ app: EXPORT_APP, v: 1, at: Date.now(), save: serialize(s) })
+const SETTING_SKIP = (k: string) => k === SAVE_KEY || k.startsWith(SAVE_KEY + '/') || k.startsWith('twenty-seven/save-meta/') || k.startsWith('twenty-seven/album/') || k === ACTIVE_KEY
+/** 이 칸의 앨범 사진: 칸 '1'은 다른 칸 사진 칸(album/<번호>/…)을 빼고 */
+function albumPics(store: Storage, slot: string): [string, string][] {
+  const prefix = albumPrefix(slot)
+  const out: [string, string][] = []
+  for (let i = 0; i < store.length; i++) {
+    const k = store.key(i)
+    if (!k?.startsWith(prefix)) continue
+    if (slot === '1' && /^twenty-seven\/album\/\d{1,4}\//.test(k)) continue
+    const v = store.getItem(k)
+    if (v !== null) out.push([k.slice(prefix.length), v])
+  }
+  return out
 }
+function deviceSettings(store: Storage): [string, string][] {
+  const out: [string, string][] = []
+  for (let i = 0; i < store.length; i++) {
+    const k = store.key(i)
+    if (!k?.startsWith('twenty-seven/') || SETTING_SKIP(k)) continue
+    const v = store.getItem(k)
+    if (v !== null) out.push([k, v])
+  }
+  return out
+}
+export function exportSave(s: GameState, store: Storage | null | undefined = storage()): string {
+  const album = store ? Object.fromEntries(albumPics(store, activeSlot(store))) : {}
+  const settings = store ? Object.fromEntries(deviceSettings(store)) : {}
+  return JSON.stringify({ app: EXPORT_APP, v: 2, at: Date.now(), save: serialize(s), album, settings })
+}
+export type ImportResult = { slot: string; pics: number; picsMissed: number; settings: number } | { error: 'format' | 'space' }
 /** 가져온 파일을 새 칸에 넣고 그 칸을 이어 할 칸으로 정한다.
- *  'format' 이 게임 저장이 아님, 'space' 기기 저장 공간이 모자람 (앨범 그림이 많을 때) */
-export function importSave(text: string, content: GameContent, store: Storage | null | undefined = storage()): { slot: string } | { error: 'format' | 'space' } {
+ *  'format' 이 게임 저장이 아님, 'space' 기기 저장 공간이 모자람 (앨범 그림이 많을 때). 사진은 자리가 모자라면 그 장만 빠진다 (picsMissed) */
+export function importSave(text: string, content: GameContent, store: Storage | null | undefined = storage()): ImportResult {
   if (!store) return { error: 'space' }
-  let raw: { app?: unknown; save?: unknown }
+  let raw: { app?: unknown; save?: unknown; album?: unknown; settings?: unknown }
   try {
     // 메모장 등에서 저장하며 붙은 BOM·앞뒤 빈칸은 걷어 낸다
     raw = JSON.parse(text.replace(/^\uFEFF/, '').trim())
@@ -603,8 +634,31 @@ export function importSave(text: string, content: GameContent, store: Storage | 
   } catch {
     /* 저장 시각만 못 남김 */
   }
+  let pics = 0
+  let picsMissed = 0
+  const album = raw.album && typeof raw.album === 'object' ? (raw.album as Record<string, unknown>) : {}
+  for (const [id, v] of Object.entries(album)) {
+    if (typeof v !== 'string' || !id || id.includes('/')) continue
+    try {
+      store.setItem(albumPrefix(slot) + id, v)
+      pics++
+    } catch {
+      picsMissed++
+    }
+  }
+  let settings = 0
+  const set = raw.settings && typeof raw.settings === 'object' ? (raw.settings as Record<string, unknown>) : {}
+  for (const [k, v] of Object.entries(set)) {
+    if (typeof v !== 'string' || !k.startsWith('twenty-seven/') || SETTING_SKIP(k)) continue
+    try {
+      store.setItem(k, v)
+      settings++
+    } catch {
+      /* 설정 하나쯤 못 넣어도 저장은 들어왔다 */
+    }
+  }
   setActiveSlot(slot, store)
-  return { slot }
+  return { slot, pics, picsMissed, settings }
 }
 
 /**

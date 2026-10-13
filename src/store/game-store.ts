@@ -1,3 +1,4 @@
+import { formatTime } from '../engine/clock'
 import {timedGathering,gatheringPhoto} from '../render/timed-gathering-art'
 import {LIVING_KINDS,PROGRESS_KINDS} from '../engine/scenic-kinds'
 import {homeBookMilestone} from '../engine/progress-milestones'
@@ -6,7 +7,7 @@ import type { HouseLook } from '../engine/newland-house-look'
 import { WORKSHOP, PARTNER_ROOM, BABY_ROOM, LIVING_ROOM } from '../engine/home-layout'
 import { lodgingChildren, LODGING_CHILD_SEATS } from '../engine/lodging'
 import { otPieceById } from '../engine/ot-pieces'
-import { canTravel, goHome, moveFurniture, travel, finishLibrary, isStorage, unstick } from '../engine/game'
+import { canTravel, goArchive, moveFurniture, travel, finishLibrary, isStorage, unstick } from '../engine/game'
 import { buildWall, canBuildWall, canRemoveWall, careBaby, homeCopyFragment, removeWall, sameLookCandidate, type BabyCare, type WallBlock } from '../engine/game'
 import { WALL_BUILD_COINS } from '../engine/home-walls'
 import { standPrice, standSell } from '../engine/sell-stand'
@@ -152,6 +153,9 @@ import {
   mutterPartner,
   hearMutter,
   setCompanionStay,
+  timeSpeed,
+  nextTimeSpeed,
+  setClockTo as setClockToEngine,
   setChildMode,
   sendToSchool,
   warmByHearth,
@@ -686,8 +690,12 @@ interface Store {
   decorateAt: (where: 'archive' | number) => void
   /** 비상 탈출: 끼었을 때 안전한 자리로 (설정) */
   escapeStuck: () => void
-  /** 은빛 집 열쇠로 집에 (가방에서) */
-  useHomeKey: () => void
+  /** 구약 서고 열쇠로 새 터의 구약 서고 안으로 (가방에서) */
+  useArchiveKey: () => void
+  /** 빠른 시계: 1배 → 2배 → 3배 → 1배 */
+  cycleTimeSpeed: () => void
+  /** 시각 맞춤 시계: 고른 시각으로 넘긴다 */
+  setClockTo: (minute: number) => void
   /** 새 터 집 가족이 이사를 바랄 때: 말리기(stay)·인사하기(bye) */
   familyMove: (how: 'stay' | 'bye', householdId: string) => void
   stopDecorate: () => void
@@ -1626,7 +1634,8 @@ export const useGame = create<Store>((set, get) => {
         expireToast()
         return
       }
-      const r = tick(g0, dt, s.rng, CONTENT)
+      // 빠른 시계 (2026-10-14): 시간·내 걸음·이웃 걸음이 함께 빨라지도록 흐른 시간 자체를 곱한다
+      const r = tick(g0, dt * timeSpeed(g0), s.rng, CONTENT)
       let game = r.state
       announceRoom(s.game, game)
       let modal: Modal | null = null
@@ -2587,11 +2596,27 @@ export const useGame = create<Store>((set, get) => {
       set({ game: persist(next) })
       get().say(t(how === 'stay' ? 'familyHome.stayed' : 'familyHome.byeSaid'), 3200)
     },
-    useHomeKey: () => {
-      const next = goHome(get().game, CONTENT)
+    cycleTimeSpeed: () => {
+      const next = nextTimeSpeed(get().game)
+      if (next === get().game) return
+      set({ game: persist(next) })
+      get().say(`하루가 ${timeSpeed(next)}배로 흘러요.`, 2000)
+    },
+    setClockTo: (minute) => {
+      const next = setClockToEngine(get().game, minute)
       if (!next) return
+      set({ game: persist(next), modal: null })
+      get().say(`시계를 맞췄어요 · ${formatTime(minute)}`, 2400)
+    },
+    useArchiveKey: () => {
+      const r = goArchive(get().game)
+      if ('block' in r) {
+        const why = { noKey: '', locked: '신약 스물일곱 권을 모두 꽂으면 새 터가 열려요.', late: '새 터는 아침 6시부터 밤 9시 반 사이에 건너갈 수 있어요.', scene: '' }[r.block]
+        if (why) get().say(why, 2800)
+        return
+      }
       sfx('door')
-      set({ game: persist(next), modal: null, decorating: null, decorSel: null, decorMoving: false, yardMoving: null })
+      set({ game: persist(r.state), modal: null, decorating: null, decorSel: null, decorMoving: false, yardMoving: null })
       get().say(T.ui.wentHome, 2800)
     },
     escapeStuck: () => {

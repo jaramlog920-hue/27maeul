@@ -534,6 +534,9 @@ export const ICON_PALETTE: Record<string, string> = {
 }
 
 export const ICONS: Record<string, SpriteRows> = {
+  // 시계 둘 (2026-10-14): 빠른 시계는 놋쇠 테에 바늘 둘과 태엽, 시각 맞춤 시계는 나무 테에 바늘 하나
+  speedClock: ['...ll...', '..NNNN..', '.NaaaaN.', 'NaakaaaN', 'NaakkkaN', 'NaaaaaaN', '.NaaaaN.', '..NNNN..'],
+  setClock: ['........', '..nnnn..', '.naaaan.', 'naaakaan', 'naaakaan', 'naaaaaan', '.naaaan.', '..nnnn..'],
   homeKey: ['..WWW...', '.W...W..', '.W...W..', '..WWW...', '...W....', '...WW...', '...W....', '...WW...'],
   rainJar: ['........', '.NNNNNN.', '..bBbb..', '.NnnnnN.', 'NnnnnnnN', 'NnnnnnnN', '.NnnnnN.', '..NNNN..'],
   reedRack: ['g.g.g.g.', 'NNNNNNNN', 'gNg.gNg.', 'gNgGgNgG', 'GNgGgNgG', '.N.G.N.G', '.N...N..', 'NN...NN.'],

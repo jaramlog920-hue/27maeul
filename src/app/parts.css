@@ -2528,3 +2528,8 @@ button.row:active:not(:disabled) { background: #efe3c4; }
 .guide-book .guide-turn button { min-height: 40px; padding: 4px 12px; }
 .guide-book .guide-page { flex: 1; text-align: center; font-size: 13px; color: var(--ink-soft); }
 .settings-row .pair-buttons { display: flex; gap: 8px; }
+
+/* 시계 둘 (2026-10-14): 시각 옆 빠르기 단추, 가방의 시각 고르기 */
+.hud-speed { margin-left: 6px; min-height: 0; padding: 0 6px; font-size: 11px; line-height: 1.6; border-radius: 3px; }
+.clock-picker { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; width: 100%; }
+.clock-picker button { min-height: 36px; padding: 2px 0; }

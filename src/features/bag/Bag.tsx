@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { fill, ITEM_TEXT, T } from '../../content/text'
-import { canBind, chestOf, PANTRY_FOODS, pantryOf, playerTile } from '../../engine/game'
+import { canBind, chestOf, clockTargets, PANTRY_FOODS, pantryOf, playerTile, timeSpeed } from '../../engine/game'
+import { formatTime } from '../../engine/clock'
 import { CONTENT } from '../../content/catalog'
 import { finishedCopies } from '../../engine/binding'
 import { RECIPES, type RecipeId } from '../../engine/items'
@@ -275,7 +276,11 @@ function Things() {
                 {T.easy.pantryTake}
               </button>
             )}
-            {from === 'bag' && picked.id === 'homeKey' && <button className="primary" onClick={() => useGame.getState().useHomeKey()}>{T.ui.goHome}</button>}
+            {from === 'bag' && picked.id === 'speedClock' && (
+              <button className="primary" onClick={() => useGame.getState().cycleTimeSpeed()}>빠르기 바꾸기 (지금 {timeSpeed(useGame.getState().game)}배)</button>
+            )}
+            {from === 'bag' && picked.id === 'setClock' && <ClockPicker />}
+            {from === 'bag' && picked.id === 'homeKey' && <button className="primary" onClick={() => useGame.getState().useArchiveKey()}>{T.ui.goHome}</button>}
             {from === 'bag' && <button onClick={() => setAsking(true)}>{T.gear.discard}</button>}
           </div>
         )}
@@ -306,5 +311,18 @@ function Things() {
       <NeedsView explain />
       <StatsView stats={game.stats} />
     </>
+  )
+}
+
+/** 시각 맞춤 시계: 다음 정시부터 새벽 2시까지 고른다 (2026-10-14) */
+function ClockPicker() {
+  const targets = useGame((s) => clockTargets(s.game))
+  if (!targets.length) return <p className="hint">더 넘길 시각이 없어요.</p>
+  return (
+    <div className="clock-picker" role="group" aria-label="넘어갈 시각">
+      {targets.map((m) => (
+        <button key={m} onClick={() => useGame.getState().setClockTo(m)}>{formatTime(m)}</button>
+      ))}
+    </div>
   )
 }

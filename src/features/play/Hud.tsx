@@ -7,7 +7,7 @@ import { chaptersOf, progressOf } from '../../engine/books'
 import { OT_NAME } from '../../content/ot-catalog'
 import { chapterUnit, isOtBook, otRow, type CopyBook } from '../../engine/ot-books'
 import type { CopyAt } from '../../engine/copying'
-import { peaceful } from '../../engine/game'
+import { peaceful, timeSpeed } from '../../engine/game'
 import { jobOf } from '../../engine/job'
 import { useGame } from '../../store/game-store'
 import { DecorateButton } from './DecorateButton'
@@ -28,6 +28,8 @@ export function Hud() {
   const copyText = useMemo(() => copyNow(book, at, done), [book, at, done])
   const { open } = useGame.getState()
   const weather = (T.ui.weather as Record<string, string>)[weatherOf(day)]
+  // 빠른 시계가 있으면 시각 옆에 빠르기 단추 (2026-10-14)
+  const speed = useGame((s) => (s.game.inv.speedClock ? timeSpeed(s.game) : 0))
   return (
     <header className="hud">
       <div className="hud-row">
@@ -38,6 +40,11 @@ export function Hud() {
         </span>
         <span className="hud-time">
           {T.ui.phase[phaseOf(minute)]} {formatTime(minute)}
+          {speed > 0 && (
+            <button className="hud-speed" aria-label={`하루 빠르기 ${speed}배, 누르면 바꾸기`} onClick={() => useGame.getState().cycleTimeSpeed()}>
+              {speed}배
+            </button>
+          )}
         </span>
       </div>
       <div className="hud-row hud-toolbar">

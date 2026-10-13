@@ -11,6 +11,8 @@ import { heartUp, notYet, recordExperienceIn, eventNow, routineOf, type GameStat
 import { HALL_SPOTS } from './places'
 import { OUTDOOR_PLACES, SITES } from './village-sites'
 import { personOf } from './people'
+import { addAffinity } from './gen'
+import { slotPerson } from './gen-growth'
 import { lockedTiles, key, PLACES, isWalkable } from './world'
 import type { GameContent, PlaceId, Tile } from './types'
 
@@ -146,11 +148,19 @@ export function attendAppt(s: GameState,id:string): GameState {
   if (!canAttendAppt(s,id)) return s
   return {...s,plans:{...s.plans,appts:s.plans.appts.map(x => x.id===id?{...x,attended:true}:x)}}
 }
+/** 모임 한 번에 함께 나온 회원끼리 오르는 친밀도 (우연한 만남의 웃음 2와 같은 크기) */
+export const CLUB_AFFINITY = 2
 export function settleAppt(s: GameState,id:string): GameState {
   const a=s.plans?.appts.find(a => a.id===id)
   if (!a || (a.state !== 'running' && a.state !== 'done') || a.day>s.clock.day || (a.day===s.clock.day && s.clock.minute<a.to)) return s
   let next=s
   const members=a.startedWith ?? []
+  // 같은 모임에 함께 나온 회원끼리도 가까워진다 (2026-10-14 사용자) — 모임이 열린 날 한 번, 내가 가지 않아도
+  if (a.kind==='club' && a.state==='running' && next.gen && members.length>1) {
+    let g=next.gen
+    for (let i=0;i<members.length;i++) for (let j=i+1;j<members.length;j++) g=addAffinity(g,slotPerson(g,members[i]),slotPerson(g,members[j]),CLUB_AFFINITY)
+    next={...next,gen:g}
+  }
   if (a.attended && !a.rewarded) for (const npc of members) {
     next=heartUp(next,npc,APPT_HEART_CAP,APPT_HEART_CAP)
   }

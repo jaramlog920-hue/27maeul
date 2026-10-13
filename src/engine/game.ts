@@ -19,7 +19,7 @@ import { placedStyle } from './skill-defs'
 import { advancePlans, appointmentSpots, reservedMembers, NO_PLANS, type Plans } from './plans'
 // 게임 상태와 규칙의 조합. 순수 함수만 — 화면과 저장은 바깥(store)이 맡는다.
 import { festivalOf, FESTIVAL_FROM, FESTIVAL_TO, isMarketDay, isWet, weatherOf, barleyRipe, grapesRipe, seasonDay } from './calendar'
-import { advance, newClock, phaseOf, seasonOf, sleepClock, type Clock } from './clock'
+import { advance, MINUTE_CAP, newClock, phaseOf, seasonOf, sleepClock, type Clock } from './clock'
 import { DURATION, greet, IDLE_GAP, IDLE_RESET, stepIdle, type IdleState } from './autonomy'
 import { adopt, companionGoal, STRAY_DAY, STRAY_STAY_DAYS, STRAY_SPOTS, stepCompanion, type Animal, type Companion } from './companion'
 import { wanderGoal } from './npc-life'
@@ -163,7 +163,7 @@ import { advanceBuilds, buildsOf, overlayFor, standSpotOf, warpsFor, type Newlan
 import { canMendQuarrel, dreamKey, guestHouseMorning, guestNow, kidVisiting, kidWorkJob, kidWorkSpot, MEND_GAIN, settledGuests, settledSpot, SETTLED_FROM, SETTLED_TO } from './newland-life'
 import { canReadOtTogether, OT_READ_HEART } from './ot-display'
 import { roomOf, roomTarget, withRoomOf } from './newland-rooms'
-import { ARCHIVE, NEWLAND_PORTAL, TRAVEL_FROM_MINUTE, TRAVEL_LAST_MINUTE, TRAVEL_MINUTES, VILLAGE_PORTAL } from './newland-config'
+import { ARCHIVE, INTERIOR_ENTRY, NEWLAND_PORTAL, TRAVEL_FROM_MINUTE, TRAVEL_LAST_MINUTE, TRAVEL_MINUTES, VILLAGE_PORTAL } from './newland-config'
 import { SPOUSE_ROOM_STAND } from './spouse-room'
 import type { Cooking } from './cooking'
 import type { GenState } from './gen'
@@ -1522,26 +1522,31 @@ export function canTravel(s: GameState, to: MapId, opts: { copyOpen?: boolean } 
  * 떠난 지도의 자리는 mapAt에 적는다. 첫 마을로 돌아오면 이웃을 그 시각의 자리에 한 번 놓는다
  * (새 터에 있는 동안 이웃은 움직이지도 보이지도 않았다). 가구·소지품·돈·관계·필사 진행은 건드리지 않는다
  */
-/** 은빛 집 열쇠: 어디서든(새 터에서도) 첫 마을 내 집 안 들어오는 칸으로 곧장. 열쇠가 없으면 null */
+/**
+ * 구약 서고 열쇠 (2026-10-14 사용자: 집으로는 비상 탈출이 있으니 열쇠는 새 터의 구약 서고 안으로).
+ * 물건 id는 옛 저장 그대로 'homeKey'. 새 터가 열린 뒤, 건너갈 수 있는 때(밤에는 새 터로 건너가지 않는다)에만.
+ * 시간은 흐르지 않는다. 동물 친구는 새 터에 따라가지 않으므로 첫 마을에 남는다 (setCompanionStay와 같게)
+ */
 export const HOME_KEY_PRICE = 8000
-export function goHome(s: GameState, content: GameContent): GameState | null {
-  if (count(s.inv, 'homeKey') <= 0) return null
+export type ArchiveKeyBlock = 'noKey' | 'locked' | 'late' | 'scene'
+export function goArchive(s: GameState): { state: GameState } | { block: ArchiveKeyBlock } {
+  if (count(s.inv, 'homeKey') <= 0) return { block: 'noKey' }
+  if (!s.flags.newlandGift) return { block: 'locked' }
+  if (s.scenes.length > 0) return { block: 'scene' }
   const from = s.map ?? 'village'
+  const m = Math.floor(s.clock.minute)
+  if (from !== 'newland' && (m < TRAVEL_FROM_MINUTE || m > TRAVEL_LAST_MINUTE)) return { block: 'late' }
   const next: GameState = {
     ...s,
-    map: 'village',
-    mapAt: { ...s.mapAt, [from]: playerTile(s) },
-    player: { ...s.player, x: HOME_ENTRY.x, y: HOME_ENTRY.y, path: [], facing: 'up', walkTime: 0 },
+    map: 'newland',
+    mapAt: from === 'newland' ? s.mapAt : { ...s.mapAt, [from]: playerTile(s) },
+    player: { ...s.player, x: INTERIOR_ENTRY.x, y: INTERIOR_ENTRY.y, path: [], facing: 'up', walkTime: 0 },
     target: null,
     act: undefined,
     idle: IDLE_RESET,
   }
   syncHome(next)
-  // 새 터에서 돌아왔으면 첫 마을 이웃을 지금 시각의 자리에 놓는다 (travel과 같게)
-  if (from === 'village') return next
-  const placed: GameState = { ...next, npcs: placeAllNpcs(next, content) }
-  syncHome(placed)
-  return placed
+  return { state: next }
 }
 
 export function travel(s0: GameState, to: MapId, content: GameContent, opts: { copyOpen?: boolean } = {}): GameState {
@@ -1668,6 +1673,31 @@ function tickNewland(s: GameState, dt: number, rng: Rng): { state: GameState; ev
 }
 
 /** 시간을 한 번에 흘려보낸다 (손일·쉬기) */
+/** 빠른 시계 (2026-10-14 사용자): 1·2·3배. 시계가 없으면 1배. 저장마다 flags.timeSpeed */
+export const TIME_SPEEDS = [1, 2, 3] as const
+export function timeSpeed(s: Pick<GameState, 'inv' | 'flags'>): number {
+  if (count(s.inv, 'speedClock') <= 0) return 1
+  const v = s.flags.timeSpeed ?? 1
+  return (TIME_SPEEDS as readonly number[]).includes(v) ? v : 1
+}
+export function nextTimeSpeed(s: GameState): GameState {
+  if (count(s.inv, 'speedClock') <= 0) return s
+  const i = TIME_SPEEDS.indexOf(timeSpeed(s) as 1 | 2 | 3)
+  return { ...s, flags: { ...s.flags, timeSpeed: TIME_SPEEDS[(i + 1) % TIME_SPEEDS.length] } }
+}
+/** 시각 맞춤 시계 (2026-10-14 사용자): 고를 수 있는 시각 — 지금 다음 정시부터 새벽 2시(MINUTE_CAP)까지. 되돌리지는 않는다 */
+export function clockTargets(s: Pick<GameState, 'clock' | 'inv'>): number[] {
+  if (count(s.inv, 'setClock') <= 0) return []
+  const out: number[] = []
+  for (let m = (Math.floor(s.clock.minute / 60) + 1) * 60; m <= MINUTE_CAP; m += 60) out.push(m)
+  return out
+}
+/** 고른 시각으로 넘긴다 (그사이 일은 시간이 흐른 것처럼 처리된다) */
+export function setClockTo(s: GameState, minute: number): GameState | null {
+  if (!clockTargets(s).includes(minute)) return null
+  return passTime(s, minute - s.clock.minute)
+}
+
 export function passTime(s: GameState, minutes: number): GameState {
   const clock = advance(s.clock, minutes)
   const here = playerTile(s)
@@ -2650,8 +2680,11 @@ export const TRADES: readonly Trade[] = [
   // 신 (계획 11 작업 2): 튼튼한 신은 걷는 속도 ×1.2 (가벼운 신은 양치기의 선물).
   // 가죽 가방(한 칸 18)은 2026-10-12 한 칸 99개·50칸으로 바뀌며 팔지 않는다 — 이미 가진 것은 그대로 둔다
   { id: 'sturdyShoes', pay: {}, coins: 60, get: { sturdyShoes: 1 } },
-  // 은빛 집 열쇠 (2026-10-14 사용자): 가방에서 누르면 어디서든 집 안으로 — 집 넓히기 마지막 단계(6000)보다 비싸게
+  // 구약 서고 열쇠 (2026-10-14 사용자, 옛 은빛 집 열쇠): 가방에서 누르면 새 터의 구약 서고 안으로 — 집 넓히기 마지막 단계(6000)보다 비싸게
   { id: 'homeKey', pay: {}, coins: 8000, get: { homeKey: 1 } },
+  // 시계 둘 (2026-10-14 사용자): 빠른 시계 5천, 시각 맞춤 시계 1만
+  { id: 'speedClock', pay: {}, coins: 5000, get: { speedClock: 1 } },
+  { id: 'setClock', pay: {}, coins: 10000, get: { setClock: 1 } },
   // 손에 익은 연장: 손일 놀이를 건너뛸 수 있다 (사용자 요청 — 놀이가 번거로운 날을 위해)
   { id: 'handyKit', pay: {}, coins: 180, get: { handyKit: 1 } },
   // 연애와 결혼 (계획 6): 들꽃 다발은 늘, 약속의 끈은 연인이 생긴 뒤에

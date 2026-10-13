@@ -50,16 +50,24 @@ describe('집 둘레 살림 거두기·다시 놓기 (2026-10-13)', () => {
   })
 })
 
-describe('은빛 집 열쇠 (2026-10-14)', () => {
-  it('장날에 집 넓히기보다 비싸게 팔고, 가지고 있으면 어디서든 집 안으로', async () => {
-    const { goHome, TRADES, HOME_KEY_PRICE } = await import('./game')
-    const { HOME_ENTRY } = await import('./world')
+describe('구약 서고 열쇠 (2026-10-14, 옛 은빛 집 열쇠)', () => {
+  it('장날에 집 넓히기보다 비싸게 팔고, 새 터가 열린 뒤 낮이면 어디서든 구약 서고 안으로 (시간은 흐르지 않는다)', async () => {
+    const { goArchive, TRADES, HOME_KEY_PRICE } = await import('./game')
+    const { INTERIOR_ENTRY } = await import('./newland-config')
     expect(TRADES.find((t) => t.id === 'homeKey')?.coins).toBe(HOME_KEY_PRICE)
     expect(HOME_KEY_PRICE).toBeGreaterThan(6000)
-    const s = { ...base(), player: { ...base().player, x: 30, y: 15, path: [] } }
-    expect(goHome(s, CONTENT)).toBeNull()
-    const home = goHome({ ...s, inv: { homeKey: 1 } }, CONTENT)!
-    expect({ x: home.player.x, y: home.player.y }).toEqual({ x: HOME_ENTRY.x, y: HOME_ENTRY.y })
-    expect(home.inv.homeKey).toBe(1)
+    const s = { ...base(), scenes: [], clock: { day: 9, minute: 10 * 60 }, player: { ...base().player, x: 30, y: 15, path: [] } }
+    expect(goArchive(s)).toEqual({ block: 'noKey' })
+    const keyed = { ...s, inv: { homeKey: 1 } }
+    expect(goArchive(keyed)).toEqual({ block: 'locked' })
+    const open = { ...keyed, flags: { ...keyed.flags, newlandGift: 1 } }
+    expect(goArchive({ ...open, clock: { day: 9, minute: 23 * 60 } })).toEqual({ block: 'late' })
+    const r = goArchive(open)
+    if (!('state' in r)) throw new Error('blocked')
+    expect(r.state.map).toBe('newland')
+    expect({ x: r.state.player.x, y: r.state.player.y }).toEqual({ x: INTERIOR_ENTRY.x, y: INTERIOR_ENTRY.y })
+    expect(r.state.clock).toEqual(open.clock)
+    expect(r.state.mapAt?.village).toEqual({ x: 30, y: 15 })
+    expect(r.state.inv.homeKey).toBe(1)
   })
 })
