@@ -24,6 +24,7 @@ import { CareMenu } from './menus/CareMenu'
 import { SpaceMenu } from './menus/SpaceMenu'
 import { PlaceMenu } from './menus/PlaceMenu'
 import { YardMenu } from './menus/YardMenu'
+import { DecorPick } from './play/DecorPick'
 import { ReadPick } from './menus/ReadPick'
 import { CopiedReadPick } from './menus/CopiedReadPick'
 import { QuizView } from './quiz/QuizView'
@@ -177,6 +178,8 @@ function Body() {
       return <PlaceMenu place={modal.place} />
     case 'yard':
       return <YardMenu item={modal.item} />
+    case 'decorPick':
+      return <DecorPick />
     case 'readPick':
       return modal.source === 'copied' ? <CopiedReadPick /> : <ReadPick />
     case 'quiz':

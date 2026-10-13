@@ -155,7 +155,7 @@ import {
   momentNow,
   onceKey,
 } from './stories'
-import { propFootprint, ROOMS, HOUSES, PET_HOME, HOME_FRONT, isHome, isIndoor, isWalkable, key, HOME_ENTRY, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setHomeFurniture, setMailbox, setOpenDoors, setSpouseRoom, START, tileAt, WARPS, warpAt } from './world'
+import { propFootprint, ROOMS, HOUSES, PET_HOME, HOME_FRONT, isHome, isIndoor, isWalkable, key, walkableOn, HOME_ENTRY, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setHomeFurniture, setMailbox, setOpenDoors, setSpouseRoom, START, tileAt, WARPS, warpAt } from './world'
 import { currentMapId, setActiveMap, type MapId } from './maps'
 import { drawOtPiece, OT_PIECE_DAY_FLAG } from './ot-pieces'
 import { claimNewland, entryFront, grantNewland, inArchiveRoom, portalAt, revealNewland, roomSlotAt, setArchiveRooms, ARCHIVE_ROOM_SHELVES, archiveRoomsOpen, setNewlandOpen, setNewlandOverlay, setNewlandRevealed, setNewlandWarps } from './newland'
@@ -948,6 +948,26 @@ export function playerTile(s: GameState): Tile {
 
 export function outdoors(s: GameState): boolean {
   return !isIndoor(playerTile(s))
+}
+
+/**
+ * 서 있는 칸이 막혔으면(짓기로 건물이 들어섰을 때 등) 가장 가까운 걸을 수 있는 칸으로 비켜 선다 (2026-10-14 사용자: 짓다가 끼었다).
+ * 막히지 않았으면 그대로
+ */
+export function unstick(s: GameState): GameState {
+  const map = currentMapId()
+  const here = playerTile(s)
+  const blocked = blockersOf(s, false)
+  const ok = (t: Tile) => walkableOn(map, t) && !blocked.has(key(t))
+  if (ok(here)) return s
+  for (let r = 1; r <= 12; r++)
+    for (let dy = -r; dy <= r; dy++)
+      for (let dx = -r; dx <= r; dx++) {
+        if (Math.abs(dx) + Math.abs(dy) !== r) continue
+        const t = { x: here.x + dx, y: here.y + dy }
+        if (ok(t)) return { ...s, player: { ...s.player, x: t.x, y: t.y, path: [] } }
+      }
+  return s
 }
 
 function blockersOf(s: GameState, people = true): Set<string> {

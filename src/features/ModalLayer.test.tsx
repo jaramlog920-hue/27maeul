@@ -850,7 +850,7 @@ describe('선반을 나눠 합친 뒤', () => {
     reset({ room: [], inv: { rug: 1 }, flags: { ...newGame(CONTENT).flags, growthLegacy: 1 } })
     const user = userEvent.setup()
     render(<Hud />)
-    await user.click(screen.getByRole('button', { name: '집 꾸미기' }))
+    await user.click(screen.getByRole('button', { name: '가구 배치' }))
     expect(useGame.getState().decorating).toBe('pick')
     act(() => useGame.getState().startDecorate('rug'))
     act(() => useGame.getState().tap(h(5, 5)))
@@ -863,13 +863,13 @@ describe('선반을 나눠 합친 뒤', () => {
   it('집 꾸미기: 놓을 가구가 없으면 한 줄로 알려 주고, 집 밖에서는 단추가 없다', async () => {
     reset({ room: [] })
     render(<Hud />)
-    await userEvent.setup().click(screen.getByRole('button', { name: '집 꾸미기' }))
+    await userEvent.setup().click(screen.getByRole('button', { name: '가구 배치' }))
     expect(useGame.getState().decorating).toBeNull()
     expect(useGame.getState().toast?.text).toBe(T.ui.decorateNone)
     // 위 줄 메뉴에 선반 단추는 없다
     expect(screen.queryByRole('button', { name: /선반/ })).toBeNull()
     act(() => goOutside())
-    expect(screen.queryByRole('button', { name: '집 꾸미기' })).toBeNull()
+    expect(screen.queryByRole('button', { name: '가구 배치' })).toBeNull()
   })
 })
 

@@ -5,7 +5,7 @@ import type { HouseLook } from '../engine/newland-house-look'
 import { WORKSHOP, PARTNER_ROOM, BABY_ROOM, LIVING_ROOM } from '../engine/home-layout'
 import { lodgingChildren, LODGING_CHILD_SEATS } from '../engine/lodging'
 import { otPieceById } from '../engine/ot-pieces'
-import { canTravel, moveFurniture, travel, finishLibrary, isStorage } from '../engine/game'
+import { canTravel, moveFurniture, travel, finishLibrary, isStorage, unstick } from '../engine/game'
 import { buildWall, canBuildWall, canRemoveWall, careBaby, homeCopyFragment, removeWall, sameLookCandidate, type BabyCare, type WallBlock } from '../engine/game'
 import { WALL_BUILD_COINS } from '../engine/home-walls'
 import { standPrice, standSell } from '../engine/sell-stand'
@@ -27,7 +27,7 @@ import { newlandRevealed, revealNewland } from '../engine/newland'
 import { progressOf } from '../engine/books'
 import { featureAccess } from '../engine/feature-rules'
 import { isOtBook, type CopyBook } from '../engine/ot-books'
-import { ARCHIVE, VILLAGE_PORTAL_FRONT } from '../engine/newland-config'
+import { ARCHIVE, INTERIOR_ENTRY, NEWLAND_PORTAL_FRONT, ROOM_SLOTS, VILLAGE_PORTAL_FRONT } from '../engine/newland-config'
 import { buildsOf, cancelBuild, clearTile, demolishBuild, orderBuild } from '../engine/newland-build'
 import type { SiteKind } from '../engine/newland-sites'
 import { facilityAt, type FacilityKind } from '../engine/newland-life'
@@ -189,7 +189,7 @@ import {
   type SubmitResult,
   type Trade,
 } from '../engine/game'
-import { lockedTiles, lockedZones, placeAt, PLACES, roomAt, sameTile, zoneAt } from '../engine/world'
+import { HOME_FRONT, lockedTiles, lockedZones, placeAt, PLACES, roomAt, sameTile, zoneAt } from '../engine/world'
 import { slotPerson } from '../engine/gen-growth'
 import { footprint, removal, type Furniture } from '../engine/room'
 import { inBuildingRoom, roomOf as furnitureRoomOf } from '../engine/newland-rooms'
@@ -305,6 +305,8 @@ export type Modal =
   | { kind: 'menu'; place: MenuPlace }
   /** 집 둘레 살림을 눌렀다: 옮기기 · 가방에 넣기 (2026-10-13) */
   | { kind: 'yard'; item: YardItem }
+  /** 구약 터에서 가구 배치를 누르면: 꾸밀 곳 고르기 (서고 안·입주 주택) */
+  | { kind: 'decorPick' }
   | { kind: 'readPick'; source?: 'copied' }
   | { kind: 'quiz'; mode: QuizMode; questions: Question[]; index: number; wrong: string[]; solved: boolean; misses: number; missed: string[] }
   | { kind: 'care' }
@@ -673,6 +675,10 @@ interface Store {
   // 동물·방
   adopt: (animal: Animal, name: string) => void
   startDecorate: (item: ItemId | 'pick' | 'wallBuild' | 'wallRemove') => void
+  /** 구약 터의 그 방(서고 안 'archive'·입주 주택 방 칸 번호)으로 들어가 가구 배치를 시작한다 */
+  decorateAt: (where: 'archive' | number) => void
+  /** 비상 탈출: 끼었을 때 안전한 자리로 (설정) */
+  escapeStuck: () => void
   stopDecorate: () => void
   /** 고른 가구를 한 번 돌린다 (못 돌리면 한 줄로 알린다) */
   turnSelected: () => void
@@ -1938,8 +1944,11 @@ export const useGame = create<Store>((set, get) => {
     orderSite: (kind, x, y, facing, size, look) => {
       const g = get().game
       if (currentMapId() !== 'newland') return false
-      const next = orderBuild(g, kind, x, y, facing, size, look)
-      if (!next) return false
+      const ordered = orderBuild(g, kind, x, y, facing, size, look)
+      if (!ordered) return false
+      // 서 있던 칸에 지으면 옆으로 비켜 선다 (2026-10-14 사용자: 짓다가 끼었다)
+      syncHome(ordered)
+      const next = unstick(ordered)
       sfx('gift')
       set({ game: persist(next) })
       return true
@@ -2524,6 +2533,25 @@ export const useGame = create<Store>((set, get) => {
       set({ decorating: item, modal: null, decorSel: null, decorMoving: false })
     },
     stopDecorate: () => set({ decorating: null, decorSel: null, decorMoving: false, decorLook: null }),
+    decorateAt: (where) => {
+      const g = get().game
+      if (currentMapId() !== 'newland') return
+      const at = where === 'archive' ? INTERIOR_ENTRY : ROOM_SLOTS[where]?.entry
+      if (!at) return
+      const next = { ...g, player: { ...g.player, x: at.x, y: at.y, path: [], facing: 'up' as const } }
+      syncHome(next)
+      set({ game: persist(next), modal: null })
+      get().startDecorate('pick')
+    },
+    escapeStuck: () => {
+      const g = get().game
+      // 새 터면 왕래 표식 앞, 첫 마을이면 내 집 문 앞 — 걸어서 어디로든 갈 수 있는 칸
+      const at = currentMapId() === 'newland' ? NEWLAND_PORTAL_FRONT : HOME_FRONT
+      const next = { ...g, player: { ...g.player, x: at.x, y: at.y, path: [], facing: 'down' as const } }
+      syncHome(next)
+      set({ game: persist(next), modal: null, decorating: null, decorSel: null, decorMoving: false, yardMoving: null })
+      get().say(T.ui.escaped, 3000)
+    },
     moveSelected: () => set({ decorMoving: !get().decorMoving, decorating: 'pick' }),
     setSpaceUse: (use) => {
       const g = get().game

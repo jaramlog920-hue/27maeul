@@ -3,11 +3,11 @@
 // 가구를 놓고·돌리고·치우는 규칙 자체는 room.ts의 것 그대로다 — 이 파일은 "어느 방의 어느 규칙"만 정한다.
 import type { GameState } from './game'
 import { addGift, type Inventory } from './items'
-import { NEWLAND_MAP, roomSlotAt } from './newland'
+import { ARCHIVE_ROOM_SHELVES, inArchiveRoom, NEWLAND_MAP, roomSlotAt } from './newland'
 import { buildsOf, roomKeyFor, type Build } from './newland-build'
 
 export { roomKeyFor, returnRoom } from './newland-build'
-import { ROOM_SLOTS, type RoomSlot } from './newland-config'
+import { INTERIOR, INTERIOR_DESK, INTERIOR_ENTRY, INTERIOR_EXIT, INTERIOR_SHELF, ROOM_SLOTS, type RoomSlot } from './newland-config'
 import { FURNITURE_DEFS, HOME_CTX, isFacing, refitRoom, type Furniture, type RoomCtx } from './room'
 import { setActiveMap, currentMapId } from './maps'
 import type { ItemId, Tile } from './types'
@@ -28,6 +28,21 @@ export function slotCtx(slot: RoomSlot): RoomCtx {
 }
 const CTXS: readonly RoomCtx[] = ROOM_SLOTS.map(slotCtx)
 
+/**
+ * 구약 서고 안 (2026-10-14 사용자: 구약 건물에 들어가면 가구를 옮길 수 있어야) — 바닥(f)에만 놓고,
+ * 들어와 서는 칸·필사 책상 앞·작은 책장 앞·범위 방 책장(과 그 앞)은 비워 두고, 문깔개에서 책상·책장 앞까지 닿아야 한다
+ */
+export const ARCHIVE_ROOM_KEY = 'newland:archive'
+const inInterior = (t: Tile) => t.x >= INTERIOR.x0 && t.x < INTERIOR.x0 + INTERIOR.w && t.y >= INTERIOR.y0 && t.y < INTERIOR.y0 + INTERIOR.h
+export const ARCHIVE_CTX: RoomCtx = {
+  isFloor: (t) => inInterior(t) && NEWLAND_MAP[t.y]?.[t.x] === 'f',
+  inside: (t) => inInterior(t) && (NEWLAND_MAP[t.y]?.[t.x] === 'f' || NEWLAND_MAP[t.y]?.[t.x] === 'E'),
+  keepClear: () => [{ ...INTERIOR_ENTRY }, { ...INTERIOR_DESK.stand }, { ...INTERIOR_SHELF.stand }, ...ARCHIVE_ROOM_SHELVES.flatMap((t) => [{ ...t }, { x: t.x, y: t.y + 1 }])],
+  entry: { ...INTERIOR_ENTRY },
+  reach: [{ ...INTERIOR_EXIT }, { ...INTERIOR_DESK.stand }, { ...INTERIOR_SHELF.stand }],
+}
+const inArchiveHere = (s: Where): boolean => s.map === 'newland' && inArchiveRoom({ x: Math.round(s.player.x), y: Math.round(s.player.y) })
+
 type Where = Pick<GameState, 'newland' | 'player'> & Partial<Pick<GameState, 'map'>>
 
 /** 이 방 칸을 쓰는 완공된 입주 주택 */
@@ -47,6 +62,7 @@ export function slotHere(s: Where): number {
  */
 export function roomTarget(s: Where & Partial<Pick<GameState, 'rooms' | 'room'>>): { key: string | null; ctx: RoomCtx; room: readonly Furniture[] } | undefined {
   if (s.map !== 'newland') return { key: null, ctx: HOME_CTX, room: s.room ?? [] }
+  if (inArchiveHere(s)) return { key: ARCHIVE_ROOM_KEY, ctx: ARCHIVE_CTX, room: s.rooms?.[ARCHIVE_ROOM_KEY] ?? [] }
   const i = slotHere(s)
   const b = i >= 0 ? homeAtSlot(s, i) : undefined
   return b ? { key: roomKeyFor(b.id), ctx: CTXS[i], room: s.rooms?.[roomKeyFor(b.id)] ?? [] } : undefined
@@ -58,7 +74,7 @@ export function roomOf(s: Where & Partial<Pick<GameState, 'rooms' | 'room'>>): r
 }
 
 /** 기록자가 새 터 건물 방 안에 있는가 (꾸미기 단추·방 고르기 줄이 읽는다) */
-export const inBuildingRoom = (s: Where): boolean => slotHere(s) >= 0
+export const inBuildingRoom = (s: Where): boolean => slotHere(s) >= 0 || inArchiveHere(s)
 
 /** 그 방의 가구를 바꾼 새 상태. 집(key null)은 room, 건물은 rooms[key] — 빈 목록이면 칸을 지운다 */
 export function withRoomOf<T extends Pick<GameState, 'room'> & Partial<Pick<GameState, 'rooms'>>>(s: T, key: string | null, room: Furniture[]): T {
@@ -95,6 +111,7 @@ export function sanitizeRooms(raw: unknown, s: Pick<GameState, 'newland'>, inv: 
     if (!Array.isArray(v)) continue
     const m = KEY_RE.exec(k)
     const b = m ? buildsOf(s).find((x) => x.id === m[1]) : undefined
+    const archive = k === ARCHIVE_ROOM_KEY
     const items: Furniture[] = []
     for (const f of v) {
       if (!isObj(f) || typeof f.item !== 'string' || !FURNITURE_DEFS[f.item as ItemId] || !isInt(f.x) || !isInt(f.y)) continue
@@ -107,6 +124,12 @@ export function sanitizeRooms(raw: unknown, s: Pick<GameState, 'newland'>, inv: 
         ...(typeof f.finish === 'string' && f.finish.length <= 40 ? { finish: f.finish } : {}),
       })
       if (items.length >= 200) break
+    }
+    if (archive) {
+      const fit = onNewlandMap(() => refitRoom(items, bag, ARCHIVE_CTX))
+      bag = fit.inv
+      if (fit.room.length) out[k] = fit.room
+      continue
     }
     if (!b || b.kind !== 'home' || b.state !== 'done' || b.slot === undefined || !CTXS[b.slot]) {
       const back: Partial<Record<ItemId, number>> = {}

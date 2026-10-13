@@ -315,6 +315,34 @@ export function Settings() {
             {t('saves.save')}
           </button>
         </div>
+        {/* 업데이트 받기 (2026-10-14 사용자): 저장하고 → 옛 버전 캐시(앱 설치본)를 비우고 → 새로 연다. 저장 기록(localStorage)은 그대로 */}
+        <div className="settings-row">
+          <h3>{T.ui.update}</h3>
+          <button
+            onClick={async () => {
+              saveGame(useGame.getState().game)
+              useGame.getState().say(T.ui.updating, 4000)
+              try {
+                const regs = (await globalThis.navigator?.serviceWorker?.getRegistrations?.()) ?? []
+                await Promise.all(regs.map((r) => r.unregister()))
+                const keys = (await globalThis.caches?.keys?.()) ?? []
+                await Promise.all(keys.map((k) => caches.delete(k)))
+              } catch {
+                /* 캐시를 못 비워도 다시 열기는 한다 */
+              }
+              globalThis.location?.reload()
+            }}
+          >
+            {T.ui.update}
+          </button>
+        </div>
+        <p className="hint">{T.ui.updateHint}</p>
+        {/* 비상 탈출 (2026-10-14 사용자: 짓다가 건물 사이에 끼었다) */}
+        <div className="settings-row">
+          <h3>{T.ui.escape}</h3>
+          <button onClick={() => useGame.getState().escapeStuck()}>{T.ui.escape}</button>
+        </div>
+        <p className="hint">{T.ui.escapeHint}</p>
         <div className="settings-row">
           <h3>{t('saves.toTitle')}</h3>
           <button
