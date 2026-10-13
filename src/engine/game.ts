@@ -26,7 +26,7 @@ import { wanderGoal } from './npc-life'
 import { add, addGift, BAG_SLOTS, CHAPTER_COST, COOKED_ITEMS, FOODS, count, has, hasSlotFor, RECIPES, recipeGives, slotsUsed, stackCap, take, TOOLS, type Inventory, type RecipeId } from './items'
 import { petLife, petPieceCheck, petStayGoal, type PetEvent } from './pet-life'
 import { facingFor, findPath, pathToward, stepActor, type Actor } from './movement'
-import { careIn, careKey, chapterEffort } from './copy-ways'
+import { careIn, careKey, chapterEffort, PUZZLE_EFFORT } from './copy-ways'
 import { familyHomes, livesInNewland, sharedHomeOf, familyMoveMorning } from './gen-homes'
 import { nightDoorKeys, nightDoorLocked } from './night-doors'
 import { LODGING_DOOR, LODGING_SEATS } from './lodging'
@@ -2332,7 +2332,8 @@ export function heartProgressBlock(s: GameState, id: string): 'deep' | 'dating' 
   return dailyHeartGain(s, id) >= DAILY_HEART_CAP ? 'daily' : null
 }
 
-export function heartUp(s: GameState, id: string, points: number, maxGain = Infinity, source: 'daily' | 'story' = 'daily'): GameState {
+/** source: 'daily' 하루 제한 안에서 / 'story' 이야기 보상(제한·매력 보너스 없음) / 'birthday' 생일 선물(하루 제한 없이, 매력 보너스는 그대로 — 2026-10-14 사용자) */
+export function heartUp(s: GameState, id: string, points: number, maxGain = Infinity, source: 'daily' | 'story' | 'birthday' = 'daily'): GameState {
   if (points <= 0) return points < 0 ? heartUpRaw(s, id, points) : s
   const p = personOf(id)
   const cool = (s.life?.cool[id] ?? 0) >= s.clock.day ? 0.5 : 1
@@ -2340,13 +2341,14 @@ export function heartUp(s: GameState, id: string, points: number, maxGain = Infi
   const room = Math.max(0, Math.min(p ? gateCap(s, p) : MAX_POINTS, relationshipHeartCap(s, id)) - (s.hearts[id] ?? 0))
   if (source === 'story') return heartUpRaw(s, id, Math.min(scaled, room, maxGain))
   const today: HeartDay = s.heartDay?.day === s.clock.day ? s.heartDay : { day: s.clock.day, gains: {}, charm: [] }
-  const left = Math.max(0, DAILY_HEART_CAP - (today.gains[id] ?? 0))
+  const left = source === 'birthday' ? Infinity : Math.max(0, DAILY_HEART_CAP - (today.gains[id] ?? 0))
   const bonus = today.charm.includes(id) ? 0 : charmBonus(s.stats)
   const gain = Math.max(0, Math.min(scaled + bonus, left, room, maxGain))
   // 마음이 가득 차도 이미 충족한 생활 선물(가벼운 신 등)은 받을 수 있다.
   if (!gain) return heartUpRaw(s, id, 0)
   const usedBonus = gain > Math.min(scaled, left, room, maxGain)
-  const next = { ...s, heartDay: { ...today, gains: { ...today.gains, [id]: (today.gains[id] ?? 0) + gain },
+  // 생일 선물로 제한을 넘어도 기록은 상한까지만 (저장 검사가 상한 넘는 값을 버리지 않게)
+  const next = { ...s, heartDay: { ...today, gains: { ...today.gains, [id]: Math.min(DAILY_HEART_CAP, (today.gains[id] ?? 0) + gain) },
     charm: usedBonus ? [...today.charm, id] : today.charm } }
   return heartUpRaw(next, id, gain)
 }
@@ -2563,8 +2565,10 @@ export function giveGift(s: GameState, def: NeighborDef, item: ItemId, content?:
   const base = disliked ? { ...s, life: remember(s.life ?? NO_LIFE, def.id, 'badGift', s) } : s
   const notebook = noteGift(s.notebook ?? NO_NOTEBOOK, def.id, item, liked, disliked)
   // 생일에 건넨 선물은 마음이 두 배로 오른다 (싫어하는 것은 생일에도 그대로)
-  const mul = isBirthday(def.id, s.clock.day) ? BIRTHDAY_MUL : 1
-  const given = heartUp({ ...base, inv: left, gifted: [...s.gifted, def.id], notebook }, def.id, disliked ? 0 : (liked ? GAIN.giftLiked : GAIN.giftPlain) * mul)
+  // 생일 선물은 하루 마음 제한 없이 다 오른다 (2026-10-14 사용자)
+  const birthday = isBirthday(def.id, s.clock.day)
+  const mul = birthday ? BIRTHDAY_MUL : 1
+  const given = heartUp({ ...base, inv: left, gifted: [...s.gifted, def.id], notebook }, def.id, disliked ? 0 : (liked ? GAIN.giftLiked : GAIN.giftPlain) * mul, Infinity, birthday ? 'birthday' : 'daily')
   // 좋아한 선물은 그 이웃에게 첫 번째만 경험으로 남긴다 (계획 16 작업 2)
   const firstLiked = liked && !(given.life ?? NO_LIFE).experiences?.[`gift:${def.id}`]
   const kept = firstLiked ? recordExperienceIn(given, { id: `gift:${def.id}`, kind: 'gift', with: [def.id], item }) : given
@@ -4192,10 +4196,10 @@ export type VerseResult =
 /**
  * 한 절을 적는다: 입력이 그 절 본문과 다 맞으면(띄어쓰기·문장부호 무시) 기록하고 다음 절로.
  * 장의 마지막 절이면 장을 마친다 — progress[book].completed에 더하고(서고·방 흐름 그대로, 첫 장이면 'firstChapter',
- * 한 권의 마지막 장이면 'bookBound' 장면), 지능·손재주 경험치, 시간·피로는 예전 엮기와 같은 크기 (copyMinutes — 넓은 책상 효과 없음, 피로 6).
+ * 한 권의 마지막 장이면 'bookBound' 장면), 지능·손재주 경험치, 피로 6. 시간은 절마다 흐른다 (verseMinutes — 2026-10-14 사용자: 한 절에 5분).
  * 재료·조각·받은 편지는 보지 않는다. 덜 맞으면 입력만 자리에 저장한다 (pasted면 그것도 받지 않는다)
  */
-export function writeVerse(s: GameState, book: CopyBook, input: string, content: GameContent, pasted = false): { state: GameState; result: VerseResult } {
+export function writeVerse(s: GameState, book: CopyBook, input: string, content: GameContent, pasted = false, puzzle = false): { state: GameState; result: VerseResult } {
   const spot = copySpot(s, book, content)
   if (!spot) return { state: s, result: { kind: 'none' } }
   const text = pasted ? spot.draft : input
@@ -4227,13 +4231,14 @@ export function writeVerse(s: GameState, book: CopyBook, input: string, content:
     return r
   }
   const last = spot.index === verses.length - 1
+  const minutes = verseMinutes(puzzle)
   if (!last) {
     const nextVerse = verses[spot.index + 1].verse
-    const state = revealed({
+    const state = revealed(passTime({
       ...s,
       ...(ot ? { otCopyStats: stats } : { copyStats: stats }),
       copy: { ...s.copy, days, at: { ...s.copy.at, [book]: { chapter, verse: nextVerse } } },
-    })
+    }, minutes))
     return { state, result: { kind: 'verse', chapter, verse: spot.verse.verse } }
   }
   // 장을 마쳤다
@@ -4262,7 +4267,7 @@ export function writeVerse(s: GameState, book: CopyBook, input: string, content:
   // 하나님 기록: 그 장의 줄 중 아직 발견하지 않은 것 (장을 마친 날과 함께 남는다 — 쓰는 도중에는 보이지 않는다). 구약에는 없다
   const finds = ot ? [] : chapterFinds(content.godRecords ?? [], s.godRecords, book as Book, chapter, day)
   const chapterStats = { ...stats, chapters: stats.chapters + 1, books: stats.books + (finished ? 1 : 0) }
-  // 퍼즐(낱말 조각·빈칸)로 마친 절은 직접 쓰기의 60% 수고 — 그 비율만큼 시간·피로가 준다 (2026-10-08)
+  // 퍼즐(낱말 조각·빈칸)로 마친 절은 직접 쓰기의 60% 수고 — 그 비율만큼 피로가 준다 (2026-10-08). 시간은 절마다 따로 (verseMinutes)
   const effort = chapterEffort(careIn(s.copyCare, s.copyCareOther, careKey(book, chapter)), careKey(book, chapter), verses.length)
   let state: GameState = passTime(
     {
@@ -4285,7 +4290,7 @@ export function writeVerse(s: GameState, book: CopyBook, input: string, content:
       },
       ...(ot ? { otCopyStats: chapterStats } : { copyStats: chapterStats }),
     },
-    Math.round(copyMinutes(s) * effort),
+    minutes,
   )
   state = revealed(state)
   if (!ot) state = manuscriptFinale(s, state)
@@ -4376,8 +4381,14 @@ export function moveJourneyCard(s: GameState, index: number, delta: number, cont
   return moveBoardCard(s, 'journey', index, delta, content)
 }
 
+/** 필사 한 절에 흐르는 분 (2026-10-14 사용자: 한 절에 5분). 퍼즐로 마친 절은 60% 수고라 3분 */
+export const COPY_MINUTES_PER_VERSE = 5
+export function verseMinutes(puzzle = false): number {
+  return Math.round(COPY_MINUTES_PER_VERSE * (puzzle ? PUZZLE_EFFORT : 1))
+}
+
 /**
- * 필사로 한 장을 마칠 때 흐르는 분 (계획 14): 기분이 좋으면 45, 아니면 60 — 예전 엮기와 같은 크기.
+ * 예전 엮기·옮겨 적기로 한 장을 마칠 때 흐르는 분 (계획 14): 기분이 좋으면 45, 아니면 60 — 예전 엮기와 같은 크기.
  * 넓은 책상·책상 고치기는 필사를 빠르게 하지 않는다 (꾸미기 물건으로 바뀐다)
  */
 export function copyMinutes(s: Pick<GameState, 'needs' | 'clock' | 'room' | 'inv'> & Partial<Pick<GameState, 'flags'>>): number {

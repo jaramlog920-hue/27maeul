@@ -1,10 +1,10 @@
 // 필사 손맛 (2026-10-04): 조용한 필사 화면에 어울리는 작은 반응. 점수·연속 횟수 같은 숫자는 띄우지 않는다.
-// 글자마다 아주 작은 펜 긁는 소리(높이를 조금씩 달리, 빠르게 써도 겹쳐 시끄럽지 않게), 절을 마치면 짧은 진동.
-// 설정에서 펜 소리·진동을 끌 수 있다 (localStorage, 기본은 켬). 움직임 줄이기를 켠 기기에서는 흔들림·날아가기를 뺀다.
+// 글자마다 아주 작은 펜 긁는 소리(높이를 조금씩 달리, 빠르게 써도 겹쳐 시끄럽지 않게).
+// 절마다 진동은 뺐다 (2026-10-14 사용자 — 아이폰 웹에서는 울리지 않음).
+// 설정에서 펜 소리를 끌 수 있다 (localStorage, 기본은 켬). 움직임 줄이기를 켠 기기에서는 흔들림·날아가기를 뺀다.
 import { sfx } from '../../audio/sound'
 
 const SOUND_KEY = 'twenty-seven/copy-sound'
-const VIBRATE_KEY = 'twenty-seven/copy-vibrate'
 
 function readOn(key: string): boolean {
   try {
@@ -20,10 +20,8 @@ function writeOn(key: string, on: boolean) {
     /* 저장할 수 없어도 이번 판에는 적용 */
   }
   if (key === SOUND_KEY) soundOn = on
-  else vibrateOn = on
 }
 let soundOn = readOn(SOUND_KEY)
-let vibrateOn = readOn(VIBRATE_KEY)
 
 /** 글자마다 펜 긁는 소리 */
 export function copySoundOn(): boolean {
@@ -32,17 +30,9 @@ export function copySoundOn(): boolean {
 export function setCopySound(on: boolean) {
   writeOn(SOUND_KEY, on)
 }
-/** 절을 마칠 때 짧은 진동 */
-export function copyVibrateOn(): boolean {
-  return vibrateOn
-}
-export function setCopyVibrate(on: boolean) {
-  writeOn(VIBRATE_KEY, on)
-}
 /** 저장된 설정을 다시 읽는다 (테스트에서 localStorage를 바꾼 뒤) */
 export function reloadCopyFeel() {
   soundOn = readOn(SOUND_KEY)
-  vibrateOn = readOn(VIBRATE_KEY)
   lastQuill = -Infinity
 }
 
@@ -61,15 +51,6 @@ export function quillScratch(at = now(), rand: () => number = Math.random) {
   sfx('quill', 0.88 + rand() * 0.24)
 }
 
-/** 절을 마쳤다 — 휴대폰이면 아주 짧게 (10ms) */
-export function verseBuzz() {
-  if (!vibrateOn) return
-  try {
-    globalThis.navigator?.vibrate?.(10)
-  } catch {
-    /* 진동이 없는 기기 */
-  }
-}
 
 /** 움직임 줄이기 (흔들림·날아가기 대신 살짝 나타나고 사라지게) */
 export function prefersStill(): boolean {

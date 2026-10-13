@@ -984,9 +984,9 @@ export const useGame = create<Store>((set, get) => {
    * 필사 한 절 입력을 적는다 (writeVerse): 덜 맞으면 쓰다 만 입력만, 다 맞으면 기록 — 등잔·아이·소리·화면까지.
    * 손으로 쓴 것(copyType)과 소리 내어 읽은 것(copyVoice)이 같은 길을 지난다
    */
-  const commitVerse = (game: GameState, book: CopyBook, text: string): boolean => {
+  const commitVerse = (game: GameState, book: CopyBook, text: string, puzzle = false): boolean => {
     const at = copySpot(game, book, CONTENT)
-    const { state: written, result } = writeVerse(game, book, text, CONTENT)
+    const { state: written, result } = writeVerse(game, book, text, CONTENT, false, puzzle)
     // 정성 필사 (계획 21 R2): 장을 마치면, 그 장을 모두 직접 쓰고 틀린 글자가 둘 이하였으면 도장
     let state = written
     if (result.kind === 'chapter' && at) {
@@ -2345,7 +2345,7 @@ export const useGame = create<Store>((set, get) => {
       // 퍼즐로 마친 절도 기록은 본문 그대로 — 소리 내어 읽기와 같은 길. 이 장은 정성 도장을 받지 않는다
       const k = careKey(book, spot.chapter)
       const sw = switchCare(game.copyCare, game.copyCareOther, k)
-      return commitVerse({ ...game, copyCare: notePuzzle(sw.care, k), copyCareOther: sw.other }, book, spot.verse.text)
+      return commitVerse({ ...game, copyCare: notePuzzle(sw.care, k), copyCareOther: sw.other }, book, spot.verse.text, true)
     },
     copyVoice: (transcript) => {
       const m = get().modal

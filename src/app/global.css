@@ -805,6 +805,8 @@ button:focus-visible {
   gap: 8px;
 }
 .settings-row h3 { margin: 0; }
+/* 줄이 이어지면 단추 칸이 붙지 않게 (2026-10-14 사용자: 저장·업데이트·타이틀 칸이 너무 가까웠다 — 터치·가독성) */
+.settings-row + .settings-row, .settings-row + .settings-options, .settings-options + .settings-row { margin-top: 12px; }
 .dialog.settings .settings-row h4 { margin: 8px 0 0; font-size: 14px; font-weight: 400; }
 .settings-options.pair-options { grid-template-columns: 1fr 1fr; width: 176px; margin-top: 8px; }
 .settings-row button { min-width: 72px; }

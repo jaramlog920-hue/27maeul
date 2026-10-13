@@ -8,7 +8,7 @@ import { useGame } from '../../store/game-store'
 import { ModalLayer } from '../ModalLayer'
 import { Settings } from '../play/Settings'
 import { BLOOM_MS, FOLD_MS, GHOST_MS } from './CopyDesk'
-import { copySoundOn, copyVibrateOn, quillScratch, QUILL_GAP_MS, reloadCopyFeel, verseBuzz } from './copy-feel'
+import { copySoundOn, quillScratch, QUILL_GAP_MS, reloadCopyFeel } from './copy-feel'
 
 vi.mock('../../audio/sound', async (orig) => ({ ...(await orig<typeof import('../../audio/sound')>()), sfx: vi.fn() }))
 const sfxMock = vi.mocked(sfx)
@@ -112,7 +112,7 @@ describe('필사 손맛 — 글자마다 잉크 번짐과 펜 소리', () => {
 })
 
 describe('필사 손맛 — 한 절을 마치면 도장과 차오르는 쪽', () => {
-  it('절 끝에 도장 "1:1"이 찍히고(누르는 움직임), 짧은 진동, 마친 줄이 날아가 위의 쪽에 한 줄이 생긴다', () => {
+  it('절 끝에 도장 "1:1"이 찍히고(누르는 움직임), 마친 줄이 날아가 위의 쪽에 한 줄이 생긴다', () => {
     openWrite(writing('lk'))
     const page = () => screen.getByRole('img', { name: /이 장에 적은 쪽/ })
     expect(page()).toHaveAttribute('data-lines', '0')
@@ -124,7 +124,7 @@ describe('필사 손맛 — 한 절을 마치면 도장과 차오르는 쪽', ()
     expect(stamp).toHaveClass('copy-stamp-press')
     expect(document.querySelector('.copy-ghost')).toHaveClass('copy-ghost-fly')
     expect(document.querySelector('.copy-ghost')).toHaveAttribute('aria-hidden', 'true')
-    expect(vibrate).toHaveBeenCalledWith(10)
+    expect(vibrate).not.toHaveBeenCalled()
     expect(sfxMock).toHaveBeenCalledWith('stamp')
     // 다음 절은 그대로 읽힌다 (마친 절은 그 위에 잠깐 겹쳐 있을 뿐)
     expect(screen.getByLabelText('본문 누가복음 1:2')).toHaveTextContent(lk1[1].text)
@@ -143,7 +143,7 @@ describe('필사 손맛 — 한 절을 마치면 도장과 차오르는 쪽', ()
     expect(document.querySelector('.copy-stamp')).toHaveTextContent('1:2')
     expect(page()).toHaveAttribute('data-lines', '2')
     expect(inks()[0]).toBe('20%')
-    expect(vibrate).toHaveBeenCalledTimes(2)
+    expect(vibrate).not.toHaveBeenCalled()
   })
 
   it('짧은 장은 절마다 한 줄씩 찬다 (계시록 15장 · 8절)', () => {
@@ -155,7 +155,7 @@ describe('필사 손맛 — 한 절을 마치면 도장과 차오르는 쪽', ()
     expect([...page.querySelectorAll<HTMLElement>('.copy-page-ink')].map((e) => e.style.width).filter((w) => w !== '0%')).toEqual(['100%', '92%'])
   })
 
-  it('이어 쓰는 장이면 이미 마친 절만큼 쪽이 차 있다 (도장·진동 없이)', () => {
+  it('이어 쓰는 장이면 이미 마친 절만큼 쪽이 차 있다 (도장 없이)', () => {
     openWrite(writing('lk', 1, 15))
     const page = screen.getByRole('img', { name: /이 장에 적은 쪽/ })
     expect(page).toHaveAttribute('data-lines', '14')
@@ -175,7 +175,7 @@ describe('필사 손맛 — 장을 마치면 쪽이 접힌다', () => {
     expect(fold).not.toBeNull()
     expect(fold).toHaveAttribute('data-lines', String(mt5.length))
     expect(sfxMock).toHaveBeenCalledWith('page')
-    expect(vibrate).toHaveBeenCalledWith(10)
+    expect(vibrate).not.toHaveBeenCalled()
     const done = document.querySelector('.copy-done')
     expect(done).toHaveClass('copy-after-fold')
     const finds = GOD_RECORDS.filter((r) => r.book === 'mt' && r.chapter === 5)
@@ -187,30 +187,25 @@ describe('필사 손맛 — 장을 마치면 쪽이 접힌다', () => {
 })
 
 describe('필사 손맛 — 설정', () => {
-  it('펜 긁는 소리·절마다 진동은 기본 켬, 끄면 기기에 남고 소리·진동이 멈춘다', () => {
+  it('펜 긁는 소리는 기본 켬, 끄면 기기에 남고 소리가 멈춘다 (절마다 진동은 없다)', () => {
     expect(copySoundOn()).toBe(true)
-    expect(copyVibrateOn()).toBe(true)
     render(<Settings />)
     fireEvent.click(screen.getByRole('tab', { name: '놀이' }))
+    expect(document.querySelector('[data-copy-feel^="vibrate"]')).toBeNull()
     expect(screen.getByRole('group', { name: '펜 긁는 소리' }).querySelector('[aria-pressed="true"]')).toHaveTextContent('켬')
     fireEvent.click(document.querySelector('[data-copy-feel="sound-off"]')!)
-    fireEvent.click(document.querySelector('[data-copy-feel="vibrate-off"]')!)
     expect(localStorage.getItem('twenty-seven/copy-sound')).toBe('0')
-    expect(localStorage.getItem('twenty-seven/copy-vibrate')).toBe('0')
     expect(document.querySelector('[data-copy-feel="sound-off"]')).toHaveAttribute('aria-pressed', 'true')
     // 다시 불러와도 꺼져 있다
     reloadCopyFeel()
     expect(copySoundOn()).toBe(false)
-    expect(copyVibrateOn()).toBe(false)
     quillScratch(5000)
-    verseBuzz()
     expect(quills()).toHaveLength(0)
     expect(vibrate).not.toHaveBeenCalled()
   })
 
-  it('끈 채로 필사하면 글자 펜 소리·진동 없이 쓴다 (도장 그림은 그대로)', () => {
+  it('끈 채로 필사하면 글자 펜 소리 없이 쓴다 (도장 그림은 그대로)', () => {
     localStorage.setItem('twenty-seven/copy-sound', '0')
-    localStorage.setItem('twenty-seven/copy-vibrate', '0')
     reloadCopyFeel()
     openWrite(writing('lk'))
     typeTo(lk1[0].text.slice(0, 3))
@@ -221,10 +216,6 @@ describe('필사 손맛 — 설정', () => {
     expect(document.querySelector('.copy-stamp')).toHaveTextContent('1:1')
   })
 
-  it('진동이 없는 기기에서도 아무 일 없이 지나간다', () => {
-    Object.defineProperty(navigator, 'vibrate', { configurable: true, writable: true, value: undefined })
-    expect(() => verseBuzz()).not.toThrow()
-  })
 })
 
 describe('필사 손맛 — 움직임 줄이기', () => {

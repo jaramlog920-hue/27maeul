@@ -15,7 +15,7 @@ import { bookDoneLine } from './copy-text'
 import { BOOKS } from '../../engine/types'
 import { COPY_PEN, FAMILY_DESK, ICON_PALETTE } from '../../render/sprites'
 import { partnerName, useGame, type Modal } from '../../store/game-store'
-import { prefersStill, quillScratch, verseBuzz } from './copy-feel'
+import { prefersStill, quillScratch } from './copy-feel'
 import { copyVoiceOn, newRecognizer, transcriptsOf, voiceAvailable, type VoiceRecognizer } from './copy-voice'
 import { useKeyboardFit } from './copy-keyboard'
 import { blanksForVerse, copyLevel, hashKey, tilesFor, wayFor } from '../../engine/copy-ways'
@@ -725,7 +725,7 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
     return () => clearTimeout(t)
   }, [bloom])
 
-  // ── 한 절을 마쳤다: 도장 + 진동 + 줄이 쪽으로 ──
+  // ── 한 절을 마쳤다: 도장 + 줄이 쪽으로 ──
   const verses = useMemo(() => copyVerses(book, spot.chapter, CONTENT), [book, spot.chapter])
   const pageRef = useRef<HTMLDivElement>(null)
   const seenLast = useRef(modal.last)
@@ -737,7 +737,6 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
     if (last?.kind !== 'verse') return
     const text = copyVerses(book, last.chapter, CONTENT).find((v) => v.verse === last.verse)?.text ?? ''
     setGhost({ text, chapter: last.chapter, verse: last.verse, id: ++feelSeq })
-    verseBuzz()
   }, [modal.last, book])
   useEffect(() => {
     if (!ghost) return
@@ -764,6 +763,11 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
         ? fill(C.resume, { book: name, chapter: spot.chapter, unit: chapterUnit(book), verse: spot.verse.verse })
         : ''
   const label = fill(C.progress, { book: name, chapter: spot.chapter, unit: chapterUnit(book) })
+  const nextBtn = (
+    <button type="button" className="copy-next primary" onMouseDown={(e) => e.preventDefault()} onClick={() => finish(value)}>
+      {C.enterNext}
+    </button>
+  )
   return (
     <div className="copy-write">
       {/* 쓰는 자리 (머리~입력칸) — 평소엔 그대로 흘러가고, 키보드가 올라오면 키보드 위 높이에 맞춘 한 칸이 된다 */}
@@ -841,11 +845,8 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
           onPaste={(e) => e.preventDefault()}
           onDrop={(e) => e.preventDefault()}
         />
-        {verseDone && !puzzleOn && (
-          <button type="button" className="copy-next primary" onMouseDown={(e) => e.preventDefault()} onClick={() => finish(value)}>
-            {C.enterNext}
-          </button>
-        )}
+        {/* 다음 절 단추는 소리 내어 읽기와 같은 줄에 (2026-10-14 사용자: 새 줄에 생겨 칸이 밀렸다) */}
+        {verseDone && !puzzleOn && !voiceOk && nextBtn}
         {voiceOk && !puzzleOn && (
           <div className="copy-voice">
             <button
@@ -861,6 +862,7 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
               {listening && <span className="copy-voice-dot" aria-hidden="true" />}
               {listening ? C.voiceStop : voiceMiss || voiceNote ? C.voiceAgain : C.voice}
             </button>
+            {verseDone && nextBtn}
             {voiceNote && (
               <p className="copy-voice-note" role="status">
                 {voiceNote}
@@ -990,7 +992,6 @@ export function CopyDesk({ modal }: { modal: Extract<Modal, { kind: 'copy' }> })
     seenLast.current = last
     if (last?.kind !== 'chapter' || modal.view !== 'done') return
     setFold({ chapter: last.chapter, id: ++feelSeq })
-    verseBuzz()
   }, [modal.last, modal.view])
   useEffect(() => {
     if (!fold) return

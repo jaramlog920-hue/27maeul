@@ -7,6 +7,7 @@ import { dislikesOf, giveGift, greetNeighbor, listen, newGame, receiveVisit, typ
 import { deserialize, serialize } from './save'
 import { BIRTHDAYS, isBirthday, knownTastes, nextBirthday, NO_NOTEBOOK, noteGot, sanitizeNotebook, slotOf } from './notebook'
 import type { NeighborDef } from './types'
+import { DAILY_HEART_CAP } from './hearts'
 
 const def = (id: string) => CONTENT.neighbors.find((n) => n.id === id) as NeighborDef
 const on = (s: GameState, day: number, minute = 600): GameState => ({ ...s, clock: { ...s.clock, day, minute } })
@@ -59,6 +60,16 @@ describe('이웃 수첩', () => {
   it('생일에 건넨 선물은 마음이 두 배', () => {
     const s = on({ ...newGame(CONTENT), inv: { grapes: 1 } }, 10)
     expect(giveGift(s, def('baker'), 'grapes')!.state.hearts.baker).toBe(6)
+  })
+
+  it('생일 선물은 하루 마음 제한(6점)을 이미 채운 날에도 다 오른다 (2026-10-14 사용자)', () => {
+    const base = on({ ...newGame(CONTENT), inv: { grapes: 1 }, hearts: { baker: 6 } }, 10)
+    const full = { ...base, heartDay: { day: base.clock.day, gains: { baker: DAILY_HEART_CAP }, charm: ['baker'] } }
+    const r = giveGift(full, def('baker'), 'grapes')!.state
+    expect(r.hearts.baker).toBe(12)
+    // 오늘 기록은 상한까지만 남는다 (저장 검사에 걸리지 않게)
+    expect(r.heartDay?.gains.baker).toBe(DAILY_HEART_CAP)
+    expect(deserialize(serialize(r), CONTENT)!.heartDay?.gains.baker).toBe(DAILY_HEART_CAP)
   })
 
   it('사이가 깊어지면 ? 칸이 열린다', () => {

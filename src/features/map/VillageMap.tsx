@@ -1,6 +1,6 @@
 import { villageBookCount } from "../../engine/progression"
 // 마을 지도 (설정 → 마을 지도): 마을 전체를 한 장으로 펼쳐 보인다. 장소 이름과 지금 내 자리
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { neighborById } from '../../content/catalog'
 import { T } from '../../content/text'
 import { closedHouseIds } from '../../engine/game'
@@ -31,6 +31,20 @@ const HOUSE_NAME: Record<string, string> = {
 function houseName(h: House): string {
   return HOUSE_NAME[h.id] ?? neighborById(h.id)?.role ?? ''
 }
+/** 건물을 누르면 아래에 보이는 설명 (2026-10-14 사용자: 잠긴 건물도) — 이웃 집은 그 이웃과 하는 일로 */
+const HOUSE_DESC: Record<string, string> = {
+  home: '내가 사는 집이에요. 책상에서 말씀을 옮겨 적어요.',
+  library: '다 쓴 책을 꽂아 두는 곳이에요. 스물일곱 칸을 채워 가요.',
+  hall: '이웃이 모이는 방이에요. 벽 게시판에 날마다 이웃 부탁이 붙어요.',
+  teahouse: '차를 마시며 쉬어 가는 곳이에요.',
+  child: '마을 아이들이 배우러 오는 곳이에요.',
+  lodging: '아래층에는 대장간과 기름틀, 위층에는 손님방이 있어요.',
+}
+function houseDesc(h: House): string {
+  if (HOUSE_DESC[h.id]) return HOUSE_DESC[h.id]
+  const d = neighborById(h.id)
+  return d?.job ? `${d.job} ${d.role}의 집이에요.` : ''
+}
 /** 집이 아닌 곳 (2026-10-12 지금 지도에 맞춤: 대장간 마당은 공동 주택이 되었다) */
 const SPOTS: { name: string; x: number; y: number }[] = [
   { name: '광장', x: 24.5, y: 12.4 },
@@ -55,9 +69,15 @@ const FACILITY_SPOTS: { place: PlaceId; name: string; x: number; y: number }[] =
   { place: 'flowerBed', name: '꽃밭', x: 12.5, y: 9.2 },
 ]
 const ZONE_NAME: Record<string, string> = { vineyard: '포도원', dock: '나루', hives: '벌통' }
+const ZONE_DESC: Record<string, string> = {
+  vineyard: '포도나무가 줄지어 선 밭이에요.',
+  dock: '호숫가에 배를 대는 나루예요.',
+  hives: '벌통이 놓인 들판이에요.',
+}
 
 export function VillageMap() {
   const game = useGame((s) => s.game)
+  const [pick, setPick] = useState<{ name: string; desc: string; lock?: string } | null>(null)
   const closeModal = useGame((s) => s.closeModal)
   const ref = useRef<HTMLCanvasElement>(null)
   useEffect(() => {
@@ -126,13 +146,38 @@ export function VillageMap() {
             </span>
           ) : null
         })}
+        {/* 건물 자리를 누르면 설명 (이름표는 작아서 건물 칸 전체를 누르는 자리로) */}
+        {housesNow().map((h) => {
+          const closed = closedHouseIds(game).includes(h.id)
+          const zone = locked.find((z) => { const cx = (h.x0 + h.x1) / 2, cy = (h.y0 + h.y1) / 2; return cx >= z.x0 && cx <= z.x1 && cy >= z.y0 && cy <= z.y1 })
+          const when = zone ? `${zone.books}권` : closed ? opensAt(h.id) : null
+          const name = houseName(h)
+          const box = { left: `${(h.x0 / WIDTH) * 100}%`, top: `${(h.y0 / VILLAGE_H) * 100}%`, width: `${((h.x1 - h.x0 + 1) / WIDTH) * 100}%`, height: `${((h.y1 - h.y0 + 1) / VILLAGE_H) * 100}%` }
+          return (
+            <button key={`hit-${h.id}`} type="button" className="vmap-hit" style={box} aria-label={`${name} 설명`}
+              onClick={() => setPick({ name, desc: houseDesc(h), ...(when ? { lock: when } : closed ? { lock: '' } : {}) })} />
+          )
+        })}
+        {locked.map((z) => (
+          <button key={`hit-${z.id}`} type="button" className="vmap-hit" aria-label={`${ZONE_NAME[z.id]} 설명`}
+            style={{ left: `${(z.x0 / WIDTH) * 100}%`, top: `${(z.y0 / VILLAGE_H) * 100}%`, width: `${((z.x1 - z.x0 + 1) / WIDTH) * 100}%`, height: `${((z.y1 - z.y0 + 1) / VILLAGE_H) * 100}%` }}
+            onClick={() => setPick({ name: ZONE_NAME[z.id], desc: ZONE_DESC[z.id] ?? '', lock: `${z.books}권` })} />
+        ))}
         {at && (
           <span className="vmap-me" style={pct(at.x, at.y)} aria-label="지금 내 자리">
             ●
           </span>
         )}
       </div>
-      <p className="hint">● 내 자리 · 🔒 서고 권수</p>
+      {pick ? (
+        <div className="vmap-info" role="status">
+          <h3>{pick.lock !== undefined && '🔒 '}{pick.name}</h3>
+          {pick.desc && <p>{pick.desc}</p>}
+          {pick.lock !== undefined && <p className="hint">{pick.lock ? `서고에 ${pick.lock}을 꽂으면 열려요.` : '아직 닫혀 있어요.'}</p>}
+        </div>
+      ) : (
+        <p className="hint">● 내 자리 · 🔒 서고 권수 · 건물을 누르면 설명</p>
+      )}
       <div className="actions">
         <button data-close onClick={closeModal}>{T.ui.close}</button>
       </div>

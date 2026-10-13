@@ -17,7 +17,7 @@ import { t } from '../../shared/i18n'
 import { T } from '../../content/text'
 import { loadTheme, setTheme, THEMES, type ThemeId } from '../../app/theme'
 import { useGame, ZOOMS } from '../../store/game-store'
-import { copySoundOn, copyVibrateOn, setCopySound, setCopyVibrate } from '../desk/copy-feel'
+import { copySoundOn, setCopySound } from '../desk/copy-feel'
 import { copyVoiceOn, setCopyVoice, voiceAvailable } from '../desk/copy-voice'
 import { copyAlwaysWrite, setCopyAlwaysWrite } from '../desk/copy-way-setting'
 
@@ -49,7 +49,7 @@ function GenSetting() {
 
 /**
  * 주민이 나이 들지 않게 (2026-10-13 사용자): 켜면 아무도 은퇴하지 않고, 자식은 어른까지만 자란다(노인이 되지 않는다).
- * 설명 줄 없이 이름만
+ * 아이는 그대로여도 자란다는 설명 한 줄 (2026-10-14 사용자)
  */
 function AgeSetting() {
   const ageless = useGame((s) => !!s.game.flags.ageless)
@@ -67,6 +67,7 @@ function AgeSetting() {
   return (
     <section className="settings-section">
       <h3>{t('gen.ageSetting')}</h3>
+      <p className="hint">{t('gen.ageNote')}</p>
       <div className="settings-options pair-options" role="group" aria-label={t('gen.ageSetting')}>
         <button className={!ageless ? 'on' : ''} aria-pressed={!ageless} onClick={() => pick(false)}>{t('gen.ageOn')}</button>
         <button className={ageless ? 'on' : ''} aria-pressed={ageless} onClick={() => pick(true)}>{t('gen.ageOff')}</button>
@@ -103,7 +104,7 @@ function VolumeSlider({ kind, label }: { kind: VolumeKind; label: string }) {
   )
 }
 
-/** 필사 손맛 켜고 끄기 (펜 긁는 소리·절마다 진동) — 기본은 켬, 기기에 저장 */
+/** 필사 손맛 켜고 끄기 (펜 긁는 소리 등) — 기본은 켬, 기기에 저장 */
 function CopyFeelToggle({ label, get, put, id }: { label: string; get: () => boolean; put: (on: boolean) => void; id: string }) {
   const [on, setOn] = useState(get)
   return (
@@ -135,8 +136,9 @@ function CopyFeelToggle({ label, get, put, id }: { label: string; get: () => boo
 }
 
 type SettingsTab = 'look' | 'play' | 'record' | 'help'
+// 탭 이름은 줄마다 한 칸 (2026-10-14 사용자: '소리·화면'의 점을 빼고 두 줄로)
 const SETTINGS_TABS: readonly [SettingsTab, string][] = [
-  ['look', '소리·화면'],
+  ['look', '소리\n화면'],
   ['play', '놀이'],
   ['record', '기록'],
   ['help', '도움'],
@@ -162,8 +164,8 @@ export function Settings() {
       <h2>설정</h2>
       <div className="tabs settings-tabs" role="tablist">
         {SETTINGS_TABS.map(([id, label]) => (
-          <button key={id} role="tab" aria-selected={tab === id} className={tab === id ? 'on' : ''} onClick={() => setTab(id)}>
-            {label}
+          <button key={id} role="tab" aria-selected={tab === id} aria-label={label.replace('\n', ' ')} className={tab === id ? 'on' : ''} onClick={() => setTab(id)}>
+            {label.split('\n').map((line) => <span key={line}>{line}</span>)}
           </button>
         ))}
       </div>
@@ -232,7 +234,6 @@ export function Settings() {
       <section className="settings-section">
         <h3>필사</h3>
         <CopyFeelToggle id="sound" label="펜 긁는 소리" get={copySoundOn} put={setCopySound} />
-        <CopyFeelToggle id="vibrate" label="절마다 진동" get={copyVibrateOn} put={setCopyVibrate} />
         {/* 필사 방식 (계획 21 R1): 켜면 퍼즐 없이 늘 손으로 쓴다 */}
         <CopyFeelToggle id="way" label={t('copyWays.always')} get={copyAlwaysWrite} put={setCopyAlwaysWrite} />
         {/* 소리 내어 읽기: 음성 인식이 있는 브라우저에서만 (기본은 끔) */}

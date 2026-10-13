@@ -6,7 +6,7 @@ import { SCENES } from '../content/text'
 import { useGame } from '../store/game-store'
 import { bookDone, chaptersOf, otBookFinished, progressOf } from './books'
 import { copySpot, copyVerses, isCopiedChapter, sanitizeCopy } from './copying'
-import { goToSleep, newGame, playerTile, saveCopyDraft, startCopy, syncHome, tapTile, tick, travel, writeVerse, type GameEvent, type GameState } from './game'
+import { COPY_MINUTES_PER_VERSE, goToSleep, newGame, playerTile, saveCopyDraft, startCopy, syncHome, tapTile, tick, travel, writeVerse, type GameEvent, type GameState } from './game'
 import { setActiveMap } from './maps'
 import { findPath } from './movement'
 import { newlandRevealedOn, newlandTileAt, setNewlandOpen, setNewlandRevealed } from './newland'
@@ -160,17 +160,31 @@ describe('구약 필사 — 경험치·장 완성 선물은 신약과 같고, �
     expect(Object.keys(SCENES)).toContain('firstChapter')
   })
 
-  it('시간과 피로는 같은 크기의 신약 장과 똑같이 흐른다', () => {
+  it('시간은 신약과 같이 한 절에 5분씩 흐르고, 피로도 붙는다 (2026-10-14 사용자)', () => {
     const start = gifted()
     const ot = writeChapter(startCopy(start, 'oba', CONTENT), 'oba').state
     // 신약 한 장짜리 책: 유다서
     const nt = writeChapter(startCopy(start, 'jud', CONTENT), 'jud').state
-    expect(ot.clock).toEqual(nt.clock)
-    expect(ot.needs).toEqual(nt.needs)
+    const spent = (s: GameState) => (s.clock.day - start.clock.day) * 24 * 60 + s.clock.minute - start.clock.minute
+    expect(spent(ot)).toBe(copyVerses('oba', 1, CONTENT).length * COPY_MINUTES_PER_VERSE)
+    expect(spent(nt)).toBe(copyVerses('jud', 1, CONTENT).length * COPY_MINUTES_PER_VERSE)
     expect(ot.clock.minute).toBeGreaterThan(start.clock.minute)
     expect(ot.needs.fatigue).toBeGreaterThan(start.needs.fatigue)
     // 신약은 경험치·하나님 기록이 변한다 (비교용 확인)
     expect(nt.stats).not.toEqual(start.stats)
+  })
+})
+
+describe('필사 시간 — 한 절에 5분 (2026-10-14 사용자)', () => {
+  it('절을 마칠 때마다 5분, 퍼즐로 마친 절은 3분이 흐른다', () => {
+    const s = startCopy(gifted(), 'mt', CONTENT)
+    const one = writeOne(s, 'mt').state
+    expect(one.clock.minute - s.clock.minute).toBe(COPY_MINUTES_PER_VERSE)
+    const spot = copySpot(one, 'mt', CONTENT)!
+    const puzzled = writeVerse(one, 'mt', spot.verse.text, CONTENT, false, true).state
+    expect(puzzled.clock.minute - one.clock.minute).toBe(3)
+    // 덜 맞게 쓴 입력은 시간을 쓰지 않는다
+    expect(writeVerse(one, 'mt', '아', CONTENT).state.clock).toEqual(one.clock)
   })
 })
 
