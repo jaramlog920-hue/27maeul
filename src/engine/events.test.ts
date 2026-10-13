@@ -1,7 +1,7 @@
 import { dayOf } from './calendar'
 import { CONTENT } from '../content/catalog'
 import { newGame } from './game'
-import { alertsBetween, eventStatus, eventSummary, nextEvent, scheduledEvents } from './events'
+import { alertsBetween, eventStatus, eventSummary, eventsInOrder, nextEvent, scheduledEvents } from './events'
 
 it('장날과 잔치의 날짜, 실제 시작·종료 시각을 안내한다', () => {
   const s = newGame(CONTENT)
@@ -57,5 +57,16 @@ describe('다음 일정 · 알림', () => {
     expect(alertsBetween([party], 12, 1000, 1100)).toEqual(['잔치 시작! · 장터'])
     expect(alertsBetween([party], 12, 1000, 1300)).toEqual([])
     expect(alertsBetween([{ ...party, done: true }], 12, 1079, 1080)).toEqual([])
+  })
+})
+
+describe('하루 종일 일정은 미리보기에서 뒤로 (2026-10-13)', () => {
+  const ev = (id: string, day: number, from: number, to: number) => ({ id, day, from, to, done: false }) as never
+  it('하루 종일 일정이 진행 중이어도 시각이 정해진 가까운 일정을 먼저 보여 준다', () => {
+    const all = ev('seasonCopy', 5, 6 * 60, 22 * 60)
+    const read = ev('reading', 9, 19 * 60, 20 * 60)
+    expect(nextEvent([all, read], 5, 10 * 60)).toBe(read)
+    expect(nextEvent([all], 5, 10 * 60)).toBe(all)
+    expect(eventsInOrder([all, ev('club', 5, 14 * 60, 15 * 60), ev('lunch', 5, 12 * 60, 13 * 60)]).map((e: { id: string }) => e.id)).toEqual(['lunch', 'club', 'seasonCopy'])
   })
 })

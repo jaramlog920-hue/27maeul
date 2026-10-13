@@ -119,8 +119,18 @@ export const ALERT_BEFORE = 30
 export const eventName = (e: ScheduledEvent) => (e.id.endsWith(':market') ? '장날' : e.title)
 
 /** 아직 끝나지 않은 가장 가까운 일정 */
+/** 하루 종일 펼쳐진 일정 (계절 필사처럼 여덟 시간 넘게) — 미리보기·목록에서 시각이 정해진 일정 뒤로 (2026-10-13 사용자) */
+export const isAllDay = (e: Pick<ScheduledEvent, 'from' | 'to'>): boolean => e.to - e.from >= 8 * 60
+
 export function nextEvent(events: readonly ScheduledEvent[], day: number, minute: number): ScheduledEvent | null {
-  return events.find((e) => !e.done && (e.day > day || (e.day === day && e.to > minute))) ?? null
+  const open = events.filter((e) => !e.done && (e.day > day || (e.day === day && e.to > minute)))
+  // 시각이 정해진 가장 가까운 일정을 먼저 — 하루 종일 일정은 그런 일정이 하나도 없을 때만 (전체 일정 창에는 늘 보인다)
+  return open.find((e) => !isAllDay(e)) ?? open[0] ?? null
+}
+
+/** 전체 일정 목록 차례: 날짜순, 같은 날은 시각이 정해진 일정을 시작 시각순으로, 하루 종일 일정은 뒤에 */
+export function eventsInOrder(events: readonly ScheduledEvent[]): ScheduledEvent[] {
+  return [...events].sort((a, b) => a.day - b.day || Number(isAllDay(a)) - Number(isAllDay(b)) || a.from - b.from)
 }
 
 /** 상단 한 줄에 쓰는 짧은 안내 */

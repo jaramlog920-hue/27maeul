@@ -2,7 +2,7 @@ import lifeText from '../../content/life-text.json'
 import { useEffect } from 'react'
 import { CONTENT } from '../../content/catalog'
 import { formatTime } from '../../engine/clock'
-import { alertsBetween, eventName, eventStatus, eventSummary, nextEvent, scheduledEvents } from '../../engine/events'
+import { alertsBetween, eventName, eventStatus, eventSummary, eventsInOrder, nextEvent, scheduledEvents } from '../../engine/events'
 import { festKinds } from '../../engine/fest'
 import { useGame } from '../../store/game-store'
 import { StallEntry } from '../stall/StallEntry'
@@ -51,7 +51,7 @@ export function ScheduleDialog() {
       <h2>일정</h2>
       {!events.some((e) => e.day === day) && <p className="hint">오늘은 예정된 일정이 없어요.</p>}
       <ul className="event-list">
-        {events.map((e) => {
+        {eventsInOrder(events).map((e) => {
           const status = eventStatus(e, day, minute)
           return (
             <li key={e.id} className={status === '진행 중' ? 'event-active' : e.done || status === '종료' ? 'event-past' : ''}>
