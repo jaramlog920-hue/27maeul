@@ -17,6 +17,8 @@ export async function lastVerseGame(content: GameContent): Promise<GameState> {
     ...base,
     scenes: [],
     avatar: { ...(base.avatar ?? { look: 'f' }), name: base.avatar?.name || '시험' },
+    // 이웃은 모두 만난 상태 (이름이 '?'로 가려지지 않게)
+    notebook: { ...base.notebook, met: content.neighbors.map((n) => n.id) },
     clock: { day: 100, minute: 9 * 60 },
     coins: 30000,
     flags: {

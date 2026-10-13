@@ -30,5 +30,8 @@ export function newsLine(game: Pick<GameState, 'notebook' | 'gen'>, l: GenLog): 
 export function freshNews(game: Pick<GameState, 'notebook' | 'gen'>, sinceDay: number): string[] {
   const g = game.gen
   if (!g) return []
-  return g.log.filter((l) => l.day > sinceDay).map((l) => newsLine(game, l)).filter((x): x is string => !!x).slice(-3)
+  // 아침 알림에는 아는 사람 이야기만 (2026-10-14 사용자: '?가 ? 곁에서…'로 떴다) — 수첩 마을 칸에는 그대로 남는다
+  const unknown = t('gen.unknown')
+  const known = (l: GenLog) => l.who.slice(0, 2).every((id) => !id || personName(game, id) !== unknown)
+  return g.log.filter((l) => l.day > sinceDay && known(l)).map((l) => newsLine(game, l)).filter((x): x is string => !!x).slice(-3)
 }

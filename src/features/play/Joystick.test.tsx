@@ -1,4 +1,4 @@
-import { act, fireEvent, render } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import { vi } from 'vitest'
 import { CONTENT } from '../../content/catalog'
 import { newGame } from '../../engine/game'
@@ -227,6 +227,7 @@ describe('조이스틱 설정', () => {
     expect(loadJoystickShape()).toBe('pad')
     expect(loadJoystickSide()).toBe('right')
     render(<Settings />)
+    act(() => screen.getByRole('tab', { name: '놀이' }).click())
     act(() => (document.querySelector('[data-mode="float"]') as HTMLButtonElement).click())
     expect(useGame.getState().deck).toBe(false)
     expect(useGame.getState().joystick).toBe(true)

@@ -52,6 +52,20 @@ export function App() {
       })
       return () => { cancelled = true }
     }
+    // 개발용: ?test=max → 지금 이어 하던 저장의 능력치를 모두 100으로 (2026-10-14 사용자)
+    if (test === 'max') {
+      const game = loadGame(CONTENT)
+      if (game) {
+        const stats = Object.fromEntries(Object.entries(game.stats).map(([k, v]) => [k, { ...v, level: 5, xp: 0 }])) as typeof game.stats
+        const maxed = { ...game, stats }
+        saveGame(maxed)
+        unlockAudio()
+        useGame.getState().load(maxed)
+        history.replaceState(null, '', location.pathname)
+        setScreen('play')
+      }
+      return
+    }
     if (test !== '26') return
     void import('../dev/test-saves').then(async ({ lastVerseGame }) => {
       const game = await lastVerseGame(CONTENT)

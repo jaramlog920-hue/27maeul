@@ -63,6 +63,10 @@ describe('창에 아래로 더 있다는 표시', () => {
     useGame.setState({ modal: { kind: 'settings' } })
     const { container } = render(<ModalLayer />)
     const dialog = container.querySelector('.dialog') as HTMLElement
+    // 기록 초기화는 '기록' 탭에 있다
+    await act(async () => {
+      ;[...dialog.querySelectorAll('[role=tab]')].find((b) => b.textContent === '기록')!.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    })
     size(dialog, 300, 300)
     scrollTo(dialog, 0)
     expect(dialog.classList.contains('more-below')).toBe(false)

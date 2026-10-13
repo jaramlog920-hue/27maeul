@@ -1519,6 +1519,28 @@ export function canTravel(s: GameState, to: MapId, opts: { copyOpen?: boolean } 
  * 떠난 지도의 자리는 mapAt에 적는다. 첫 마을로 돌아오면 이웃을 그 시각의 자리에 한 번 놓는다
  * (새 터에 있는 동안 이웃은 움직이지도 보이지도 않았다). 가구·소지품·돈·관계·필사 진행은 건드리지 않는다
  */
+/** 은빛 집 열쇠: 어디서든(새 터에서도) 첫 마을 내 집 안 들어오는 칸으로 곧장. 열쇠가 없으면 null */
+export const HOME_KEY_PRICE = 8000
+export function goHome(s: GameState, content: GameContent): GameState | null {
+  if (count(s.inv, 'homeKey') <= 0) return null
+  const from = s.map ?? 'village'
+  const next: GameState = {
+    ...s,
+    map: 'village',
+    mapAt: { ...s.mapAt, [from]: playerTile(s) },
+    player: { ...s.player, x: HOME_ENTRY.x, y: HOME_ENTRY.y, path: [], facing: 'up', walkTime: 0 },
+    target: null,
+    act: undefined,
+    idle: IDLE_RESET,
+  }
+  syncHome(next)
+  // 새 터에서 돌아왔으면 첫 마을 이웃을 지금 시각의 자리에 놓는다 (travel과 같게)
+  if (from === 'village') return next
+  const placed: GameState = { ...next, npcs: placeAllNpcs(next, content) }
+  syncHome(placed)
+  return placed
+}
+
 export function travel(s0: GameState, to: MapId, content: GameContent, opts: { copyOpen?: boolean } = {}): GameState {
   syncHome(s0)
   if (canTravel(s0, to, opts)) return s0
@@ -2621,6 +2643,8 @@ export const TRADES: readonly Trade[] = [
   // 신 (계획 11 작업 2): 튼튼한 신은 걷는 속도 ×1.2 (가벼운 신은 양치기의 선물).
   // 가죽 가방(한 칸 18)은 2026-10-12 한 칸 99개·50칸으로 바뀌며 팔지 않는다 — 이미 가진 것은 그대로 둔다
   { id: 'sturdyShoes', pay: {}, coins: 60, get: { sturdyShoes: 1 } },
+  // 은빛 집 열쇠 (2026-10-14 사용자): 가방에서 누르면 어디서든 집 안으로 — 집 넓히기 마지막 단계(6000)보다 비싸게
+  { id: 'homeKey', pay: {}, coins: 8000, get: { homeKey: 1 } },
   // 손에 익은 연장: 손일 놀이를 건너뛸 수 있다 (사용자 요청 — 놀이가 번거로운 날을 위해)
   { id: 'handyKit', pay: {}, coins: 180, get: { handyKit: 1 } },
   // 연애와 결혼 (계획 6): 들꽃 다발은 늘, 약속의 끈은 연인이 생긴 뒤에

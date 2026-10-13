@@ -1,5 +1,8 @@
 import type {Avatar} from '../engine/avatar'
 import type {FinalePerson} from './library-finale-art'
+import {drawTimedGathering,timedGathering,TIMED_GATHERINGS,type TimedGathering} from './timed-gathering-art'
+import {drawSharedCushion} from './shared-cushion-art'
+import {drawBeeNotebook} from './bee-notebook-art'
 import {drawRiverRest} from './river-rest-art'
 import {drawForkSign} from './fork-sign-art'
 import {drawReedRackBuilt} from './reed-rack-built-art'
@@ -12,14 +15,17 @@ import {drawOvenSharing} from './oven-sharing-art'
 import {person} from './milestone-moments-art'
 
 /** 개별 대사와 대조해 완성한 장면만 등록한다. 공통 그림을 완성 장면으로 취급하지 않는다. */
-export const AUTHORED_STORY_IDS=['ev:wendell:home:2','ev:baker:story:3','lightShoes','fam:trip','ev:carpenter:story:3','ev:baker:small:festBasket','ev:poppy:story:2','built:reedRack','ev:rudy:small:signPost','village:3'] as const
+export const AUTHORED_STORY_IDS=['ev:wendell:home:2','ev:baker:story:3','lightShoes','fam:trip','ev:carpenter:story:3','ev:baker:small:festBasket','ev:poppy:story:2','built:reedRack','ev:rudy:small:signPost','village:3','ev:beekeeper:story:1','ev:penelope:lunch',...Object.keys(TIMED_GATHERINGS)] as const
 export function hasAuthoredStory(id:string){return (AUTHORED_STORY_IDS as readonly string[]).includes(id)}
 
-export function authoredStoryPeople(id:string):string[]{return id==='village:3'?['grandpa','fisher','baker']:id==='ev:rudy:small:signPost'?['rudy','postman']:id==='built:reedRack'?['carpenter']:id==='ev:poppy:story:2'?['poppy','wendell']:id==='ev:baker:small:festBasket'?['baker']:id==='ev:carpenter:story:3'?['carpenter','rudy','smith']:id==='ev:baker:story:3'?['baker','wendell']:id==='lightShoes'?['shepherd']:[]}
+export function authoredStoryPeople(id:string):string[]{return timedGathering(id)?.people??(id==='ev:penelope:lunch'?['penelope']:id==='ev:beekeeper:story:1'?['beekeeper']:id==='village:3'?['grandpa','fisher','baker']:id==='ev:rudy:small:signPost'?['rudy','postman']:id==='built:reedRack'?['carpenter']:id==='ev:poppy:story:2'?['poppy','wendell']:id==='ev:baker:small:festBasket'?['baker']:id==='ev:carpenter:story:3'?['carpenter','rudy','smith']:id==='ev:baker:story:3'?['baker','wendell']:id==='lightShoes'?['shepherd']:[])}
 
 export function drawAuthoredStory(g:CanvasRenderingContext2D,id:string,w:number,h:number,t:number,avatar:Avatar|null,npc:FinalePerson,others:FinalePerson[]=[],beat=0,choice?:number|null){
  if(!hasAuthoredStory(id))return
  g.imageSmoothingEnabled=false
+ if(timedGathering(id)){drawTimedGathering(g,id as TimedGathering,w,h,t,avatar,[npc,...others],beat);return}
+ if(id==='ev:penelope:lunch'){drawSharedCushion(g,w,h,t,avatar,npc,beat,choice);return}
+ if(id==='ev:beekeeper:story:1'){drawBeeNotebook(g,w,h,t,avatar,npc,beat,choice);return}
  if(id==='village:3'){drawRiverRest(g,w,h,t,avatar,npc,others[0]??npc,others[1]??npc,beat);return}
  if(id==='ev:rudy:small:signPost'){drawForkSign(g,w,h,t,avatar,npc,others[0]??npc,beat,choice);return}
  if(id==='built:reedRack'){drawReedRackBuilt(g,w,h,t,avatar,npc,beat);return}
@@ -65,6 +71,9 @@ export function drawAuthoredStory(g:CanvasRenderingContext2D,id:string,w:number,
  const leafX=cx+69+(Math.floor(t*2)%15),leafY=ground-34+(Math.floor(t*3)%24)
  p(leafX,leafY,'#99a979',2,1)
 }
+
+
+
 
 
 

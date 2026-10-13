@@ -534,6 +534,7 @@ export const ICON_PALETTE: Record<string, string> = {
 }
 
 export const ICONS: Record<string, SpriteRows> = {
+  homeKey: ['..WWW...', '.W...W..', '.W...W..', '..WWW...', '...W....', '...WW...', '...W....', '...WW...'],
   rainJar: ['........', '.NNNNNN.', '..bBbb..', '.NnnnnN.', 'NnnnnnnN', 'NnnnnnnN', '.NnnnnN.', '..NNNN..'],
   reedRack: ['g.g.g.g.', 'NNNNNNNN', 'gNg.gNg.', 'gNgGgNgG', 'GNgGgNgG', '.N.G.N.G', '.N...N..', 'NN...NN.'],
   water: ['........', '..kkkk..', '.kbbbbk.', '.kbBbbk.', '.kbbbbk.', '.kbbBbk.', '..kkkk..', '........'],

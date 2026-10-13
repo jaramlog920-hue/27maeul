@@ -10,6 +10,7 @@ import { moodOf } from '../../engine/mood'
 import { markMapTap } from '../../shared/ghost'
 import { useGame } from '../../store/game-store'
 import { DecorateButton } from './DecorateButton'
+import { BuildButton } from './BuildButton'
 import { DirectionPad } from './Joystick'
 
 
@@ -108,6 +109,7 @@ export function ControlDeck() {
                 <button role="menuitem" onClick={() => go({ kind: 'journal' })}>{T.ui.journalTitle}</button>
                 <button role="menuitem" onClick={() => go({ kind: 'family' })}>가족</button>
                 <DecorateButton role="menuitem" onPick={() => setMenu(false)} />
+                <BuildButton role="menuitem" onPick={() => setMenu(false)} />
                 <button role="menuitem" onClick={() => go({ kind: 'settings' })}>{D.settings}</button>
               </div>
             )}

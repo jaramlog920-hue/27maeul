@@ -9,7 +9,7 @@ export const BIG_STACK = MAX_STACK
 export const BAG_SLOTS = 50
 
 /** 한 번 사면 계속 쓰는 도구 (가방에 하나). 가죽 가방·신 둘은 계획 11 작업 2 (가죽 가방은 2026-10-12부터 팔지 않는다) */
-export const TOOLS: readonly ItemId[] = ['goodPen', 'handyKit', 'brightLamp', 'wideDesk', 'leatherBag', 'sturdyShoes', 'lightShoes']
+export const TOOLS: readonly ItemId[] = ['goodPen', 'handyKit', 'brightLamp', 'wideDesk', 'leatherBag', 'sturdyShoes', 'lightShoes', 'homeKey']
 
 /** 한 칸 최대 */
 export function stackCap(_inv: Inventory): number {

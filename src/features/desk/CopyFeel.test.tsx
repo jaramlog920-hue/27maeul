@@ -191,6 +191,7 @@ describe('필사 손맛 — 설정', () => {
     expect(copySoundOn()).toBe(true)
     expect(copyVibrateOn()).toBe(true)
     render(<Settings />)
+    fireEvent.click(screen.getByRole('tab', { name: '놀이' }))
     expect(screen.getByRole('group', { name: '펜 긁는 소리' }).querySelector('[aria-pressed="true"]')).toHaveTextContent('켬')
     fireEvent.click(document.querySelector('[data-copy-feel="sound-off"]')!)
     fireEvent.click(document.querySelector('[data-copy-feel="vibrate-off"]')!)

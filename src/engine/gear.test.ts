@@ -49,3 +49,17 @@ describe('집 둘레 살림 거두기·다시 놓기 (2026-10-13)', () => {
     expect(yardItemAt(back, spot)).toBe('rainJar')
   })
 })
+
+describe('은빛 집 열쇠 (2026-10-14)', () => {
+  it('장날에 집 넓히기보다 비싸게 팔고, 가지고 있으면 어디서든 집 안으로', async () => {
+    const { goHome, TRADES, HOME_KEY_PRICE } = await import('./game')
+    const { HOME_ENTRY } = await import('./world')
+    expect(TRADES.find((t) => t.id === 'homeKey')?.coins).toBe(HOME_KEY_PRICE)
+    expect(HOME_KEY_PRICE).toBeGreaterThan(6000)
+    const s = { ...base(), player: { ...base().player, x: 30, y: 15, path: [] } }
+    expect(goHome(s, CONTENT)).toBeNull()
+    const home = goHome({ ...s, inv: { homeKey: 1 } }, CONTENT)!
+    expect({ x: home.player.x, y: home.player.y }).toEqual({ x: HOME_ENTRY.x, y: HOME_ENTRY.y })
+    expect(home.inv.homeKey).toBe(1)
+  })
+})

@@ -11,6 +11,7 @@ import { peaceful } from '../../engine/game'
 import { jobOf } from '../../engine/job'
 import { useGame } from '../../store/game-store'
 import { DecorateButton } from './DecorateButton'
+import { BuildButton } from './BuildButton'
 
 export function Hud() {
   const day = useGame((s) => s.game.clock.day)
@@ -65,6 +66,7 @@ export function Hud() {
             가족
           </button>
           <DecorateButton className="hud-btn hud-decorate" />
+          <BuildButton className="hud-btn hud-decorate" />
         </div>
       </div>
     </header>

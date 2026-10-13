@@ -60,7 +60,11 @@ describe('놓기 검사', () => {
   it('구역 안이면 놓을 수 있다', () => {
     const s = land()
     expect(canPlace(s, 'home', BUILD_RECT.x0, BUILD_RECT.y0)).toBeNull()
-    expect(canPlace(s, 'home', BUILD_RECT.x1 - 3, BUILD_RECT.y1 - 3)).toBeNull()
+    expect(canPlace(s, 'home', 30, BUILD_RECT.y1 - 3)).toBeNull()
+    // 2026-10-14 사용자: 구약 서고 양옆도 쓴다
+    expect(canPlace(s, 'home', 3, 2)).toBeNull()
+    expect(canPlace(s, 'home', 28, 2)).toBeNull()
+    expect(canPlace(s, 'path', ARCHIVE.x0 - 3, ARCHIVE.y0)).toBeNull()
     expect(canPlace(s, 'courtyard', 12, 14)).toBeNull()
     expect(canPlace(s, 'path', 12, 14)).toBeNull()
     expect(canPlace(s, 'garden', 12, 14, 'down', 3)).toBeNull()
@@ -451,7 +455,7 @@ describe('저장', () => {
         { ...house('b7', 24, 12), state: 'weird' },
         'x',
       ],
-      tiles: { '20,20': 'path', '11,13': 'path', '1,1': 'garden', '20,21': 'lava', bad: 'path' },
+      tiles: { '20,20': 'path', '11,13': 'path', '20,8': 'garden', '20,21': 'lava', bad: 'path' },
       nextId: 'x',
     }
     const out = sanitizeNewlandBuild(raw, 30)!

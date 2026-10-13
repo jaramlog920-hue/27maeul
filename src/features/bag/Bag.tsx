@@ -275,6 +275,7 @@ function Things() {
                 {T.easy.pantryTake}
               </button>
             )}
+            {from === 'bag' && picked.id === 'homeKey' && <button className="primary" onClick={() => useGame.getState().useHomeKey()}>{T.ui.goHome}</button>}
             {from === 'bag' && <button onClick={() => setAsking(true)}>{T.gear.discard}</button>}
           </div>
         )}

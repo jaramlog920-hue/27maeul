@@ -3,6 +3,11 @@ import { furnitureUseFrame, USE_ACTIONS, USE_PROP_PALETTE } from './furniture-us
 import { writerPalette } from './sprites'
 
 describe('furniture use pixel motion', () => {
+  it('세로 침대의 양 방향 모두 얼굴이 보이는 바로 누운 자세를 쓴다',()=>{
+    const skins=(facing:'up'|'down')=>furnitureUseFrame('writer',facing,'lie',2,{frame:0,blink:false}).actor.join('').split('s').length-1
+    expect(skins('down')).toBeGreaterThan(6)
+    expect(skins('up')).toBe(skins('down'))
+  })
   it('keeps every layer in a 24px canvas with supported colors', () => {
     const actorPalette = writerPalette('spring')
     for (const action of USE_ACTIONS) for (const facing of ['down', 'up', 'left', 'right'] as const) {

@@ -5,7 +5,7 @@ import type { GameState } from './game'
 import { addGift, count, has, take } from './items'
 import { owns, stash } from './easier'
 import type { Furniture } from './room'
-import { ARCHIVE, BUILD_RECT, MAX_HOMES, NEWLAND_PORTAL_FRONT, NEWLAND_VISIBLE_H, NEWLAND_W, ROOM_SLOTS } from './newland-config'
+import { ARCHIVE, BUILD_KEEP_ARCHIVE, BUILD_KEEP_ROAD_ROWS, BUILD_RECT, MAX_HOMES, NEWLAND_PORTAL_FRONT, NEWLAND_VISIBLE_H, NEWLAND_W, ROOM_SLOTS } from './newland-config'
 import { NEWLAND_MAP } from './newland'
 import {
   ART_TILES, HOUSE_SIZE_COST, mainOffset, blocksWay, isOpenYard, isWalled, DECOR_REFUND, isDecorKind, BUILD_DAYS_TO_DONE, BUILD_DAYS_TO_START, isBuildKind, isTileKind, REFUND_BEFORE, REFUND_DEMOLISH_COINS, REFUND_DURING, SITES,
@@ -108,7 +108,10 @@ export function standSpotOf(b: Pick<Build, 'kind' | 'x' | 'y' | 'facing' | 'size
   return b.facing === 'down' ? { x: d.front.x + 1, y: d.front.y } : { x: d.front.x, y: d.front.y + 1 }
 }
 
-const inRect = (t: Tile) => t.x >= BUILD_RECT.x0 && t.x <= BUILD_RECT.x1 && t.y >= BUILD_RECT.y0 && t.y <= BUILD_RECT.y1
+const inRect = (t: Tile) =>
+  t.x >= BUILD_RECT.x0 && t.x <= BUILD_RECT.x1 && t.y >= BUILD_RECT.y0 && t.y <= BUILD_RECT.y1 &&
+  !BUILD_KEEP_ROAD_ROWS.includes(t.y) &&
+  !(t.x >= BUILD_KEEP_ARCHIVE.x0 && t.x <= BUILD_KEEP_ARCHIVE.x1 && t.y >= BUILD_KEEP_ARCHIVE.y0 && t.y <= BUILD_KEEP_ARCHIVE.y1)
 
 // ── 칸 덧씌우기 (world.tileAt이 읽는다) ──
 
@@ -129,7 +132,7 @@ function blockedOf(builds: readonly Build[], finalState = false): Set<string> {
 function buildOverlay(nl: NewlandState): Map<string, string> {
   const m = new Map<string, string>()
   // 나무·덤불 꾸미기는 막힌 칸, 길·모래·돌바닥은 길, 나머지는 풀
-  for (const [k, kind] of Object.entries(nl.tiles)) m.set(k, blocksWay(kind) ? 'S' : kind === 'path' || kind === 'sand' || kind === 'stone' ? ',' : '.')
+  for (const [k, kind] of Object.entries(nl.tiles)) m.set(k, blocksWay(kind) ? 'S' : kind === 'path' || kind === 'sand' || kind === 'stone' || kind === 'road' ? ',' : '.')
   for (const b of nl.builds) {
     if (isOpenYard(b.kind)) for (const t of areaOf(b.kind, b.x, b.y, b.size)) m.set(keyOf(t), b.state === 'done' ? '.' : 'S')
   }

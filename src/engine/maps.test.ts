@@ -4,7 +4,7 @@ import { findPath } from './movement'
 import { currentMapId, mapHeight, mapVisibleHeight, mapWidth, setActiveMap } from './maps'
 import { NEWLAND_MAP, inArchiveRoom, newlandOpen, newlandTileAt, newlandWarp, portalAt, setNewlandOpen } from './newland'
 import {
-  ARCHIVE, BUILD_RECT, INTERIOR, INTERIOR_DESK, INTERIOR_ENTRY, INTERIOR_EXIT, INTERIOR_SHELF, NEWLAND_H, NEWLAND_PORTAL, NEWLAND_PORTAL_FRONT, NEWLAND_VISIBLE_H, NEWLAND_W,
+  ARCHIVE, BUILD_RECT, BUILD_KEEP_ARCHIVE, BUILD_KEEP_ROAD_ROWS, INTERIOR, INTERIOR_DESK, INTERIOR_ENTRY, INTERIOR_EXIT, INTERIOR_SHELF, NEWLAND_H, NEWLAND_PORTAL, NEWLAND_PORTAL_FRONT, NEWLAND_VISIBLE_H, NEWLAND_W,
   VILLAGE_PORTAL, VILLAGE_PORTAL_FRONT,
 } from './newland-config'
 import {
@@ -67,11 +67,11 @@ describe('새 터 칸 구성', () => {
     expect(ARCHIVE.front).toEqual({x:20,y:7})
   })
 
-  it('건축 가능 구역은 28×18 빈 풀밭이고 서고·길·입구와 겹치지 않는다', () => {
-    expect(BUILD_RECT.x1 - BUILD_RECT.x0 + 1).toBe(28)
-    expect(BUILD_RECT.y1 - BUILD_RECT.y0 + 1).toBe(18)
+  it('건축 가능 구역은 울타리 안쪽 풀밭 — 서고 둘레·큰길 두 줄은 빼고 (2026-10-14 서고 양옆도)', () => {
+    expect(BUILD_RECT.x1 - BUILD_RECT.x0 + 1).toBe(38)
+    const keep = (x: number, y: number) => BUILD_KEEP_ROAD_ROWS.includes(y) || (x >= BUILD_KEEP_ARCHIVE.x0 && x <= BUILD_KEEP_ARCHIVE.x1 && y >= BUILD_KEEP_ARCHIVE.y0 && y <= BUILD_KEEP_ARCHIVE.y1)
     for (let y = BUILD_RECT.y0; y <= BUILD_RECT.y1; y++)
-      for (let x = BUILD_RECT.x0; x <= BUILD_RECT.x1; x++) expect(newlandTileAt(x, y), `${x},${y}`).toBe('.')
+      for (let x = BUILD_RECT.x0; x <= BUILD_RECT.x1; x++) if (!keep(x, y)) expect(['.', 'T'], `${x},${y}`).toContain(newlandTileAt(x, y)) // 가장자리 나무는 짓기에서 막힌 칸으로 거른다
     expect(BUILD_RECT.y1).toBeLessThan(NEWLAND_VISIBLE_H - 1)
   })
 

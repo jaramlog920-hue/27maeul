@@ -1172,6 +1172,7 @@ describe('기록 초기화 (설정)', () => {
     const user = userEvent.setup()
     useGame.setState({ modal: { kind: 'settings' } })
     render(<ModalLayer />)
+    await user.click(screen.getByRole('tab', { name: '기록' }))
     await user.click(screen.getByRole('button', { name: '처음부터' }))
     await user.click(screen.getByRole('button', { name: '취소' }))
     expect(localStorage.getItem('twenty-seven/save')).not.toBeNull()

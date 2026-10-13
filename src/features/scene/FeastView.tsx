@@ -8,6 +8,7 @@ import type { ItemId } from '../../engine/types'
 import { t } from '../../shared/i18n'
 import { useGame } from '../../store/game-store'
 import { speakerName } from './SceneView'
+import {AuthoredStoryScene} from './AuthoredStoryScene'
 
 const F = T.feast
 type Step = 'lines' | 'food' | 'givers' | 'read' | 'end'
@@ -138,9 +139,11 @@ export function FeastView({ id }: { id: 'feastFire' | 'allFeastFire' }) {
     )
   }
   return (
-    <div className="dialog scene" role="dialog" aria-label={scene.title}>
+    <AuthoredStoryScene id={id} title={scene.title} beat={step==='end'&&id==='allFeastFire'?4:step==='lines'?Math.min(page,3):3}>
+    <div className="dialog scene cinematic-scene-dialog">
       <h2>{scene.title}</h2>
       {body}
     </div>
+    </AuthoredStoryScene>
   )
 }

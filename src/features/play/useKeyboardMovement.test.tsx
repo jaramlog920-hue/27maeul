@@ -169,6 +169,7 @@ it('도움말을 열고 Escape로 닫는다', () => {
   render(<><Hud /><ModalLayer /></>)
   // 도움말은 설정 안에 있다
   fireEvent.click(screen.getByRole('button', { name: '설정' }))
+  fireEvent.click(screen.getByRole('tab', { name: '도움' }))
   fireEvent.click(screen.getByRole('button', { name: '도움말' }))
   expect(screen.getByRole('dialog', { name: '도움말' })).toBeInTheDocument()
   expect(screen.getByRole('table', { name: '집 안 장소 안내' })).toHaveTextContent('벽난로')

@@ -1,3 +1,4 @@
+import {timedGathering,gatheringPhoto} from '../render/timed-gathering-art'
 import {LIVING_KINDS,PROGRESS_KINDS} from '../engine/scenic-kinds'
 import {homeBookMilestone} from '../engine/progress-milestones'
 import { villageBookCount } from "../engine/progression"
@@ -5,7 +6,7 @@ import type { HouseLook } from '../engine/newland-house-look'
 import { WORKSHOP, PARTNER_ROOM, BABY_ROOM, LIVING_ROOM } from '../engine/home-layout'
 import { lodgingChildren, LODGING_CHILD_SEATS } from '../engine/lodging'
 import { otPieceById } from '../engine/ot-pieces'
-import { canTravel, moveFurniture, travel, finishLibrary, isStorage, unstick } from '../engine/game'
+import { canTravel, goHome, moveFurniture, travel, finishLibrary, isStorage, unstick } from '../engine/game'
 import { buildWall, canBuildWall, canRemoveWall, careBaby, homeCopyFragment, removeWall, sameLookCandidate, type BabyCare, type WallBlock } from '../engine/game'
 import { WALL_BUILD_COINS } from '../engine/home-walls'
 import { standPrice, standSell } from '../engine/sell-stand'
@@ -679,6 +680,8 @@ interface Store {
   decorateAt: (where: 'archive' | number) => void
   /** 비상 탈출: 끼었을 때 안전한 자리로 (설정) */
   escapeStuck: () => void
+  /** 은빛 집 열쇠로 집에 (가방에서) */
+  useHomeKey: () => void
   stopDecorate: () => void
   /** 고른 가구를 한 번 돌린다 (못 돌리면 한 줄로 알린다) */
   turnSelected: () => void
@@ -736,6 +739,7 @@ export function storeAlbumImage(id: string, data: string | null) {
  * 프레임이 여는 장면과 별 보기가 바로 여는 장면이 함께 쓴다
  */
 function snapAlbum(sceneId: string, capture: ((focus?: Tile) => string | null) | null) {
+  if (timedGathering(sceneId) && albumImage(gatheringPhoto(sceneId))) return
   if ((sceneId === 'fam:trip' || sceneId === 'village:3' || sceneId === 'fullLibrary' || sceneId === 'lastManuscript' || sceneId === 'completeBible' || sceneId === 'bibleLastLetter' || (PROGRESS_KINDS as readonly string[]).includes(sceneId) || (LIVING_KINDS as readonly string[]).includes(sceneId) || sceneId.startsWith('firstDinner:') || sceneId.startsWith('facilityFinished:') || sceneId.startsWith('workSuccession:')) && albumImage(sceneId)) return
   const sc = SCENES[sceneId]
   const photo = sc?.photoFor ?? (sc?.album ? sceneId : null)
@@ -2543,6 +2547,13 @@ export const useGame = create<Store>((set, get) => {
       set({ game: persist(next), modal: null })
       get().startDecorate('pick')
     },
+    useHomeKey: () => {
+      const next = goHome(get().game, CONTENT)
+      if (!next) return
+      sfx('door')
+      set({ game: persist(next), modal: null, decorating: null, decorSel: null, decorMoving: false, yardMoving: null })
+      get().say(T.ui.wentHome, 2800)
+    },
     escapeStuck: () => {
       const g = get().game
       // 새 터면 왕래 표식 앞, 첫 마을이면 내 집 문 앞 — 걸어서 어디로든 갈 수 있는 칸
@@ -2733,4 +2744,6 @@ useGame.subscribe((next, before) => {
 
 // 테스트 준비(setupTests)가 테스트마다 부르는 화면 알림 비우기 — 스토어를 불러온 테스트에서만 걸린다
 if (import.meta.env.MODE === 'test') (globalThis as { __resetGameUi?: () => void }).__resetGameUi = () => useGame.setState({ piecePopups: [], copyResult: null })
+
+
 

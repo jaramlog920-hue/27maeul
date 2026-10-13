@@ -2493,3 +2493,6 @@ button.row:active:not(:disabled) { background: #efe3c4; }
 .fam-kids > button { flex: 1 1 0; min-width: 0; min-height: 34px; font-size: 12px; }
 .fam-kids > button small { color: var(--ink-soft); }
 .fam-kids > button.on { background: #f6ead0; font-weight: 700; }
+/* 설정 탭 (2026-10-14 사용자: 고른 탭 글자가 흰색이라 안 보였다) — 글자는 검정, 고른 탭은 굵게 */
+.dialog.settings .settings-tabs button { color: var(--ink); min-height: 36px; font-size: 13px; flex: 1 1 0; }
+.dialog.settings .settings-tabs button.on { color: var(--ink); background: var(--hover); border-color: var(--accent); font-weight: 700; }

@@ -42,8 +42,15 @@ export const ARCHIVE = {
   front: { x: 20, y: 7 },
 } as const
 
-/** 건축 가능 구역 (계획 20 D2: 가운데 28×18, 서고 자리·길 제외) — 이 직사각형 안은 모두 빈 풀밭이다 */
-export const BUILD_RECT = { x0: 6, y0: 10, x1: 33, y1: 27 } as const
+/**
+ * 건축 가능 구역 (계획 20 D2는 가운데 28×18이었다 — 2026-10-14 사용자: 구약 서고 양옆도 쓰게).
+ * 울타리 나무 안쪽 전부, 다만 서고 둘레(BUILD_KEEP_ARCHIVE)와 큰길 두 줄(BUILD_KEEP_ROAD_ROWS)은 뺀다 (newland-build inRect)
+ */
+export const BUILD_RECT = { x0: 1, y0: 1, x1: 38, y1: 27 } as const
+/** 서고 그림·문 앞·양옆 덤불 둘레 — 짓지 않는다 */
+export const BUILD_KEEP_ARCHIVE = { x0: ARCHIVE.x0 - 1, y0: ARCHIVE.y0 - 1, x1: ARCHIVE.x0 + ARCHIVE.w, y1: ARCHIVE.front.y } as const
+/** 왕래 표식에서 서고로 이어지는 큰길 두 줄 */
+export const BUILD_KEEP_ROAD_ROWS: readonly number[] = [8, 9]
 
 /** 서고 안 방 (벽 포함 13×10, 지도 아래 보이지 않는 곳). 문깔개는 아랫벽 가운데, 들어오면 그 위 칸에 선다 */
 export const INTERIOR = { x0: 13, y0: 30, w: 13, h: 10 } as const

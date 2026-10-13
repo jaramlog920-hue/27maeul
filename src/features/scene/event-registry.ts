@@ -18,9 +18,11 @@ export function eventPreviewEntries():EventPreviewEntry[]{
  const ids=new Set([...Object.keys(SCENES),...Object.keys(moments),'stars','sunset'])
  return [...ids].map(id=>{
   const kind=landscapeKind(id),m=kind&&kind in moments?moments[kind as keyof typeof moments]:null,scene=SCENES[id]
-  const baseTitle=(scene?.title??m?.title??(id==='stars'?'별 보는 밤':'호숫가 노을')).replace(/\{[^}]+\}/g,'기록자')
+  const displayTitle=({feastFire:'복음서 4권 잔치',allFeastFire:'27권 완성 잔치'} as Record<string,string>)[id]
+  const baseTitle=(displayTitle??scene?.title??m?.title??(id==='stars'?'별 보는 밤':'호숫가 노을')).replace(/\{[^}]+\}/g,'기록자')
   const suffix=id.split(':').slice(1).map(part=>neighborById(part)?.role??({longBench:'긴 벤치',flowerBed:'화단',shade:'그늘막',signPost:'표지판'} as Record<string,string>)[part]).filter(Boolean).join(' · ')
   const title=suffix?`${baseTitle} · ${suffix}`:baseTitle
   return {id,title,authored:hasAuthoredStory(id),caption:scene?.lines[0]?.text??m?.caption??'',kind,category:category(id,kind),image:kind&&images[kind]&&!/^(firstDinner|facilityFinished):/.test(id)?`/event-previews/${images[kind]}`:undefined,fresh:['readingFinished','firstDinner','coverFinished','childLetterReceived','facilityFinished'].includes(kind??'')}
  }).sort((a,b)=>Number(b.fresh)-Number(a.fresh)||Number(!!b.kind||!!b.authored)-Number(!!a.kind||!!a.authored)||a.title.localeCompare(b.title,'ko'))
 }
+

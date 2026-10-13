@@ -149,6 +149,7 @@ describe('수첩 마을 칸·관계 줄과 설정 (D27·D33·P14)', () => {
     const game = base((g) => g)
     useGame.setState({ game })
     render(<Settings />)
+    fireEvent.click(screen.getByRole('tab', { name: '놀이' }))
     const group = within(screen.getByRole('group', { name: '주민 자율 생활' }))
     fireEvent.click(group.getByRole('button', { name: '끔' }))
     expect(useGame.getState().game.gen!.on).toBe(false)

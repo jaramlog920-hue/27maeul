@@ -69,7 +69,7 @@ import { mainOffset } from '../engine/newland-sites'
 import { GOSPELS, type Book, type Facing, type NeighborDef, type GameContent, type Piece, type Season, type Tile } from '../engine/types'
 import { breathOffset, dozeNod, isBlinking, lookSide, walkFrame } from './anim'
 import { quietLifeRows, sheepLifeRows, type QuietAction } from './quiet-life-motion'
-import { MEETING_EMOTES, MEETING_PALETTE, meetingEmoteRows, householdCradleFrame, visitorFrame, type MeetingEmote } from './village-followup-art'
+import { MEETING_EMOTES, MEETING_PALETTE, meetingEmoteRows, householdCradleFrame, visitorFrame, VISITOR_LOOKS, type MeetingEmote } from './village-followup-art'
 import { bakerInfantAtHome, householdCradles, libraryVisitor } from './village-followup-scene'
 import { innGuestsNow } from '../engine/inn-guests'
 import { residentIsElder } from './elder-details'
@@ -86,7 +86,7 @@ let pantryFull = false
 let activeSpot: { spot: NonNullable<PlayerAct['spot']>; kind: string; use?: string; elapsed: number } | null = null
 import { slotHeir } from '../engine/gen-growth'
 import { BG_ART, BG_PALETTE } from './bg-materials-art'
-import { blocksWay, isOpenYard, SITES } from '../engine/newland-sites'
+import { blocksWay, isOpenYard, MAP_DECOR_CHAR, SITES, type DecorKind } from '../engine/newland-sites'
 import { familyHomes, familyShownMember, livesInNewland, sharedHomeOf } from '../engine/gen-homes'
 import { JOIN_PATH_PALETTE, joinedPathRows, PATH_BITS } from './archive-followup-art'
 import { kidVisiting, dreamKey, DREAMER, guestNow, kidWorkJob, kidWorkSpot, markerShown, memoriesOf, settledGuests, settledSpot, SETTLED_FROM, SETTLED_TO, type Memory } from '../engine/newland-life'
@@ -338,6 +338,24 @@ function hash(x: number, y: number, i: number): number {
 function speckle(g: Ctx, px: number, py: number, x: number, y: number, color: string, n: number) {
   g.fillStyle = color
   for (let i = 0; i < n; i++) g.fillRect(px + Math.floor(hash(x, y, i) * 15), py + Math.floor(hash(x, y, i + 50) * 15), 1, 1)
+}
+
+/** 터 가꾸기 목록 아이콘: 지도 글자 한 칸 (기본 길·잔디·기본 나무 — 2026-10-14) */
+const mapTileIcons = new Map<string, HTMLCanvasElement>()
+export function mapTileIcon(ch: ',' | '.' | 'T'): HTMLCanvasElement {
+  let c = mapTileIcons.get(ch)
+  if (c) return c
+  c = document.createElement('canvas')
+  c.width = TILE
+  c.height = TILE
+  const g = c.getContext('2d')
+  if (g) {
+    const base = ch === 'T' ? '.' : ch
+    drawGround(g, base, 0, 0, 'summer', () => base)
+    if (ch === 'T') drawObject(g, 'T', 0, 0, 'summer', 'deciduous')
+  }
+  mapTileIcons.set(ch, c)
+  return c
 }
 
 function drawGround(g: Ctx, ch: string, x: number, y: number, season: Season, at: (x: number, y: number) => string = tileAt) {
@@ -2336,8 +2354,24 @@ function newlandMapFor(season: Season): HTMLCanvasElement {
 function drawNewlandSites(g: Ctx, game: GameState, playerY: number, over: boolean, content?: GameContent) {
   const nl = game.newland
   if (!nl || !newlandRevealedOn()) return
+  const season = seasonOf(game.clock.day)
+  // 기본 길·잔디·기본 나무: 원래 지도 그림 그대로 (이웃 칸과 이어지게 — 깐 칸은 그 글자로 본다)
+  const groundAt = (xx: number, yy: number) => {
+    const c = MAP_DECOR_CHAR[nl.tiles[`${xx},${yy}`] as DecorKind]
+    return c === ',' || c === '.' ? c : newlandGroundAt(xx, yy)
+  }
   for (const [k, kind] of Object.entries(nl.tiles)) {
     const [x, y] = k.split(',').map(Number)
+    const mapChar = MAP_DECOR_CHAR[kind as DecorKind]
+    if (mapChar) {
+      if (mapChar === 'T') {
+        const behind = y <= playerY
+        if (behind === over) continue
+        if (!over) drawGround(g, '.', x, y, season, groundAt)
+        drawObject(g, 'T', x, y, season, treeKind(x, y))
+      } else if (!over) drawGround(g, mapChar, x, y, season, groundAt)
+      continue
+    }
     if (kind === 'path' || kind === 'garden') {
       if (over) continue
       const art = kind === 'path' ? OLD_TERRAIN.path : OLD_TERRAIN.plantingBed
@@ -2925,14 +2959,19 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       }
       const guest = libraryVisitor(game)
       if (guest) items.push({ y: guest.at.y, paint: () => {
+        // 걸어가는 동안은 주인공과 같은 사람 그림의 걸음 (가는 쪽을 보고 다리를 움직인다 — 2026-10-14 사용자: 콩콩 뛰는 것처럼 보였다)
+        if (guest.moving) {
+          const av = VISITOR_LOOKS[guest.kind]
+          const spr = person('writer', guest.facing ?? 'down', walkFrame(t * 1.6), isBlinking(t + 0.7), 'stand', season, { avatar: av, look: av.look, short: guest.kind === 'kid' ? 1 : undefined })
+          drawSprite(g, spr, guest.at.x, guest.at.y, 0)
+          return
+        }
         const f = Math.floor(t / 0.35) % 4
         const a = visitorFrame(guest.kind, guest.action, f)
         const standing = visitorFrame(guest.kind, 'stand', f)
         const stand = paint(`visitor-stand/${guest.kind}/${f}`, standing.actor.slice(4, 4 + standing.height).map(r => r.slice(7, 17)), standing.actorPalette)
         const canvas = motionCanvas(`visitor/${guest.kind}/${guest.action}/${f}`, a, a.actorPalette, a.propPalette)
-        // 걷는 동안은 걸음 박자로 살짝 들썩인다
-        const bob = guest.moving ? (Math.floor(t * 8) % 2) / TILE : 0
-        drawUse(g, canvas, stand, guest.at.x, guest.at.y - bob, true)
+        drawUse(g, canvas, stand, guest.at.x, guest.at.y, true)
       } })
       for (const ep of eventProps) if (!ep.ground) items.push({ y: eventPropSortY(ep), paint: () => drawEventProp(g, ep) })
 
@@ -3085,7 +3124,8 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
             const apprenticeOf = !c.short && c.person.stage === 'adult' && (game.gen?.heirs?.[def.id]?.heir === c.person.id || game.gen?.retired?.[def.id]?.heir === c.person.id)
             // 자식들은 부모 곁에 붙어 다니지 않는다 (2026-10-13 사용자: 어른 이웃처럼 돌아다니게) — 30분마다 마을 곳곳(광장·우물·언덕·
             // 벤치·나루·이웃집 앞) 중 한 곳을 골라 길을 따라 걸어가 그 근처에 선다. 견습 자녀·은퇴한 부모(함께 일하는 사이)만 곁에
-            if (!c.retiredParent && !apprenticeOf) {
+            // 2026-10-14 사용자: 견습 자녀·은퇴한 부모도 걸어갈 때 줄줄이 따라다니지 않는다 — 부모가 서서 일할 때만 곁에
+            if ((!c.retiredParent && !apprenticeOf) || moving) {
               const w = kidWalk(c.person.id, def, content.neighbors, game.gen?.seed ?? 1, day, minute)
               const look: Facing = w.moving ? w.facing : (['down', 'left', 'right', 'down'] as const)[(c.person.id.length + Math.floor(minute / 30)) % 4]
               items.push({ y: w.y + 0.02, paint: () => drawSprite(g, person(cWho, look, w.moving ? walkFrame(w.walkTime) : 0, isBlinking(ph), 'stand', season, extra), w.x, w.y, w.moving ? 0 : breathOffset(ph)) })

@@ -8,6 +8,8 @@ export interface LibraryVisitor {
   at: Tile
   action: 'stand' | 'read' | 'write'
   moving?: boolean
+  /** 걸어가는 쪽 (걷는 그림 — 2026-10-14 사용자) */
+  facing?: 'up' | 'down' | 'left' | 'right'
 }
 
 /** 그림과 상호작용이 같은 방문 시간·동선을 사용한다. */
@@ -19,7 +21,9 @@ export function libraryVisitor(game: VisitorGame): LibraryVisitor | null {
   const away = { x: front.x, y: front.y + 3 }
   const seat = { x: room.x0 + 8, y: room.y0 + 5 }
   const lerp = (a: Tile, b: Tile, k: number): Tile => ({ x: a.x + (b.x - a.x) * k, y: a.y + (b.y - a.y) * k })
-  const walk = (from: Tile, to: Tile, start: number, len: number): LibraryVisitor => ({ kind: entry.kind, at: lerp(from, to, Math.min(1, (m - start) / len)), action: 'stand', moving: true })
+  const dirOf = (from: Tile, to: Tile): LibraryVisitor['facing'] =>
+    Math.abs(to.x - from.x) > Math.abs(to.y - from.y) ? (to.x > from.x ? 'right' : 'left') : to.y > from.y ? 'down' : 'up'
+  const walk = (from: Tile, to: Tile, start: number, len: number): LibraryVisitor => ({ kind: entry.kind, at: lerp(from, to, Math.min(1, (m - start) / len)), action: 'stand', moving: true, facing: dirOf(from, to) })
   if (m < 9 * 60 + 20) return walk(away, front, 9 * 60, 20)
   if (m < 10 * 60) return { kind: entry.kind, at: front, action: 'stand' }
   if (m < 10 * 60 + 15) return walk(room.entry, seat, 10 * 60, 15)

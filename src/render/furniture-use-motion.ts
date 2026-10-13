@@ -35,7 +35,9 @@ export function furnitureUseFrame(who: Who, facing: Facing, action: UseAction, f
   const prop = Array.from({ length: USE_SIZE }, () => Array<string>(USE_SIZE).fill('.'))
   // Make the left pose by mirroring a fully dressed right pose exactly once.
   const direction = facing === 'left' ? 'right' : facing
-  const source = (action === 'lie' || (action === 'sit' && activeHands) ? spriteRows : motionBodyRows)(who, direction, { ...opts, frame: 0, pose: 'stand', blink: opts.blink || (action === 'lie' && phase !== 2) })
+  // 침대 방향과 얼굴 방향은 다르다. 세로로 누울 때는 앞모습으로 바로 눕힌다.
+  const face = action === 'lie' && direction === 'up' ? 'down' : direction
+  const source = (action === 'lie' || (action === 'sit' && activeHands) ? spriteRows : motionBodyRows)(who, face, { ...opts, frame: 0, pose: 'stand', blink: opts.blink || (action === 'lie' && phase !== 2) })
   const side = direction === 'right'
   const sitting = ['sit', 'drink', 'read', 'craft'].includes(action)
   const bob = (action === 'knead' || action === 'pet') && phase % 2 === 1 ? 1 : 0

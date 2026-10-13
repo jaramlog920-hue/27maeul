@@ -23,9 +23,8 @@ const ease = (x: number) => { const a = Math.max(0, Math.min(1, x)); return a * 
 export function drawLibraryFinale(g: CanvasRenderingContext2D, w: number, h: number, t: number, avatar: Avatar | null, grades: Partial<Record<typeof BOOKS[number], Grade>>, lastBook: number, cast: LibraryFinaleCast) {
   g.imageSmoothingEnabled = false
   const cx = Math.round(w / 2), floor = Math.round(h * .68), phase = libraryFinalePhase(t)
-  const open = ease((t - 3) / 4), zoom = 1.6 - open * .6
-  const anchorX = cx - 9 + open * 9, anchorY = floor - 15 - open * 15
-  const p: Px = phase === 4 ? (x, y, c, a = 1, b = 1) => { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), Math.ceil(a), Math.ceil(b)) } : (x, y, c, a = 1, b = 1) => { g.fillStyle = c; g.fillRect(Math.round(cx + (x - anchorX) * zoom), Math.round(floor - 30 + (y - anchorY) * zoom), Math.ceil(a * zoom), Math.ceil(b * zoom)) }
+  // 고정된 정수 화소 구도. 개별 도트를 분수 배율로 축소하면 책과 인물이 덜컥거리며 변형된다.
+  const p: Px = (x, y, c, a = 1, b = 1) => { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), Math.ceil(a), Math.ceil(b)) }
   const character = (who: FinalePerson, x: number, foot: number, facing: 'up' | 'right' | 'down' | 'left', walk = false) => person(p, x, foot, who.avatar, facing, who.who, false, walk, t, 1, who.short)
   const baby = (x: number, foot: number) => {
     const av = withLookDefaults(cast.child?.avatar ?? { look: 'f', name: cast.babyName })

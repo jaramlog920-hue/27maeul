@@ -134,6 +134,14 @@ function CopyFeelToggle({ label, get, put, id }: { label: string; get: () => boo
   )
 }
 
+type SettingsTab = 'look' | 'play' | 'record' | 'help'
+const SETTINGS_TABS: readonly [SettingsTab, string][] = [
+  ['look', '소리·화면'],
+  ['play', '놀이'],
+  ['record', '기록'],
+  ['help', '도움'],
+]
+
 export function Settings() {
   const close = useGame((s) => s.closeModal)
   const muted = useGame((s) => s.muted)
@@ -147,9 +155,19 @@ export function Settings() {
   const [music, setMusic] = useState<MusicChoice>(() => currentMusicChoice())
   const [resetting, setResetting] = useState(false)
   const [theme, setThemeState] = useState<ThemeId>(() => loadTheme())
+  // 묶음 탭 (2026-10-14 사용자: 한 줄로 길게 이어져 읽기 어려웠다)
+  const [tab, setTab] = useState<SettingsTab>('look')
   return (
     <div className="dialog settings" role="dialog" aria-label="설정">
       <h2>설정</h2>
+      <div className="tabs settings-tabs" role="tablist">
+        {SETTINGS_TABS.map(([id, label]) => (
+          <button key={id} role="tab" aria-selected={tab === id} className={tab === id ? 'on' : ''} onClick={() => setTab(id)}>
+            {label}
+          </button>
+        ))}
+      </div>
+      {tab === 'look' && (<>
       <section className="settings-section">
         <h3>{C.music}</h3>
         <div className="settings-options" role="group" aria-label={C.music}>
@@ -180,20 +198,6 @@ export function Settings() {
         <VolumeSlider kind="sfx" label="효과음" />
       </section>
       <section className="settings-section">
-        <h3>필사</h3>
-        <CopyFeelToggle id="sound" label="펜 긁는 소리" get={copySoundOn} put={setCopySound} />
-        <CopyFeelToggle id="vibrate" label="절마다 진동" get={copyVibrateOn} put={setCopyVibrate} />
-        {/* 필사 방식 (계획 21 R1): 켜면 퍼즐 없이 늘 손으로 쓴다 */}
-        <CopyFeelToggle id="way" label={t('copyWays.always')} get={copyAlwaysWrite} put={setCopyAlwaysWrite} />
-        {/* 소리 내어 읽기: 음성 인식이 있는 브라우저에서만 (기본은 끔) */}
-        {voiceAvailable() && (
-          <>
-            <CopyFeelToggle id="voice" label={T.copyFocus.voiceSetting} get={copyVoiceOn} put={setCopyVoice} />
-            <p className="hint">{T.copyFocus.voiceSettingNote}</p>
-          </>
-        )}
-      </section>
-      <section className="settings-section">
         <h3>{C.theme}</h3>
         <div className="settings-options theme-options" role="group" aria-label={C.theme}>
           {THEMES.map((id) => (
@@ -222,6 +226,22 @@ export function Settings() {
             </button>
           ))}
         </div>
+      </section>
+      </>)}
+      {tab === 'play' && (<>
+      <section className="settings-section">
+        <h3>필사</h3>
+        <CopyFeelToggle id="sound" label="펜 긁는 소리" get={copySoundOn} put={setCopySound} />
+        <CopyFeelToggle id="vibrate" label="절마다 진동" get={copyVibrateOn} put={setCopyVibrate} />
+        {/* 필사 방식 (계획 21 R1): 켜면 퍼즐 없이 늘 손으로 쓴다 */}
+        <CopyFeelToggle id="way" label={t('copyWays.always')} get={copyAlwaysWrite} put={setCopyAlwaysWrite} />
+        {/* 소리 내어 읽기: 음성 인식이 있는 브라우저에서만 (기본은 끔) */}
+        {voiceAvailable() && (
+          <>
+            <CopyFeelToggle id="voice" label={T.copyFocus.voiceSetting} get={copyVoiceOn} put={setCopyVoice} />
+            <p className="hint">{T.copyFocus.voiceSettingNote}</p>
+          </>
+        )}
       </section>
       <section className="settings-section">
         <h3>{C.mode}</h3>
@@ -287,18 +307,25 @@ export function Settings() {
       </section>
       <GenSetting />
       <AgeSetting />
+      </>)}
+      {tab === 'help' && (
       <section className="settings-section">
         <div className="settings-row">
           <h3>마을 지도</h3>
           <button aria-label="마을 지도" onClick={() => open({ kind: 'villageMap' })}>보기</button>
         </div>
-      </section>
-      <section className="settings-section">
         <div className="settings-row">
           <h3>도움말</h3>
           <button aria-label="도움말" onClick={() => open({ kind: 'guide' })}>열기</button>
         </div>
+        {/* 비상 탈출 (2026-10-14 사용자: 짓다가 건물 사이에 끼었다) */}
+        <div className="settings-row">
+          <h3>{T.ui.escape}</h3>
+          <button onClick={() => useGame.getState().escapeStuck()}>{T.ui.escape}</button>
+        </div>
       </section>
+      )}
+      {tab === 'record' && (<>
       {/* 저장 (자동 저장이 기본 — 이 단추는 지금 바로 한 번 더) · 타이틀로 (2026-10-07 사용자) */}
       <section className="settings-section">
         <div className="settings-row">
@@ -336,13 +363,6 @@ export function Settings() {
             {T.ui.update}
           </button>
         </div>
-        <p className="hint">{T.ui.updateHint}</p>
-        {/* 비상 탈출 (2026-10-14 사용자: 짓다가 건물 사이에 끼었다) */}
-        <div className="settings-row">
-          <h3>{T.ui.escape}</h3>
-          <button onClick={() => useGame.getState().escapeStuck()}>{T.ui.escape}</button>
-        </div>
-        <p className="hint">{T.ui.escapeHint}</p>
         <div className="settings-row">
           <h3>{t('saves.toTitle')}</h3>
           <button
@@ -378,6 +398,7 @@ export function Settings() {
           </div>
         )}
       </section>
+      </>)}
       <div className="actions">
         <button data-close onClick={close}>닫기</button>
       </div>

@@ -8,12 +8,15 @@ import type { Facing, ItemId } from './types'
  * 꾸미기 소재 (사용자 결정 ⑧, assets/background-materials-simple.png): 바닥 셋·작은 것 셋·나무와 덤불 넷.
  * 유저가 놓는 꾸미기일 뿐 — 기본 길·지형은 바꾸지 않는다. 공짜가 아니다(닢), 걷어 내면 반만 돌아온다
  */
-export type DecorKind = 'sand' | 'stone' | 'soil' | 'grassTuft' | 'flower' | 'rocks' | 'bush' | 'treeSmall' | 'treeTall' | 'treeBig'
-export const DECOR_KINDS: readonly DecorKind[] = ['sand', 'stone', 'soil', 'grassTuft', 'flower', 'rocks', 'bush', 'treeSmall', 'treeTall', 'treeBig']
+// 기본 길(road)·잔디(lawn)·기본 나무(hedge): 새 터 지도에 원래 깔린 큰길·풀밭·울타리 나무와 같은 그림 (2026-10-14 사용자)
+export type DecorKind = 'road' | 'lawn' | 'hedge' | 'sand' | 'stone' | 'soil' | 'grassTuft' | 'flower' | 'rocks' | 'bush' | 'treeSmall' | 'treeTall' | 'treeBig'
+export const DECOR_KINDS: readonly DecorKind[] = ['road', 'lawn', 'hedge', 'sand', 'stone', 'soil', 'grassTuft', 'flower', 'rocks', 'bush', 'treeSmall', 'treeTall', 'treeBig']
 /** 바닥 (걸을 수 있고 1·3칸으로 깐다) */
-export const DECOR_FLOORS: readonly DecorKind[] = ['sand', 'stone', 'soil']
+export const DECOR_FLOORS: readonly DecorKind[] = ['road', 'lawn', 'sand', 'stone', 'soil']
 /** 길을 막는 꾸미기 (나무·덤불) */
-export const DECOR_BLOCKING: readonly DecorKind[] = ['bush', 'treeSmall', 'treeTall', 'treeBig']
+export const DECOR_BLOCKING: readonly DecorKind[] = ['hedge', 'bush', 'treeSmall', 'treeTall', 'treeBig']
+/** 지도 글자 그대로 그리는 꾸미기 */
+export const MAP_DECOR_CHAR: Partial<Record<DecorKind, ',' | '.' | 'T'>> = { road: ',', lawn: '.', hedge: 'T' }
 
 /**
  * 계획 18 남은 건물 (사용자 결정 ⑥, 컨트롤러): 손님집(guest)·기억 정원(memorial, 자산 garden)·주민의 꿈터(weaver).
@@ -109,6 +112,9 @@ export const SITES: Record<SiteKind, SiteDef> = {
   sand: decor('sand', 2, [1, 3]),
   stone: decor('stone', 3, [1, 3]),
   soil: decor('soil', 2, [1, 3]),
+  road: decor('road', 1, [1, 3]),
+  lawn: decor('lawn', 1, [1, 3]),
+  hedge: decor('hedge', 8),
   grassTuft: decor('grassTuft', 1),
   flower: decor('flower', 2),
   rocks: decor('rocks', 2),
