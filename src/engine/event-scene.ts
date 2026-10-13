@@ -244,8 +244,9 @@ function festsNow(s: SceneState): { f: Fest; seats: readonly Tile[] }[] {
 function besideSeats(s: SceneState, seats: readonly Tile[], n: number): Tile[] {
   const home = seats.some((t) => isHome(t))
   const solid = home ? solidTiles(s.room ?? []) : undefined
-  // 기록자가 서 있는 칸·깨어 서는 칸에는 놓지 않는다 (사람 그림 밑에 숨지 않게)
-  const taken = new Set([...seats.map(key), key(tileOf(s.player)), key(START)])
+  // 깨어 서는 칸에는 놓지 않는다. 기록자가 서 있는 칸은 피하지 않는다 — 피하면 걸을 때마다 소품이 칸을 옮겨 다녔다
+  // (2026-10-14 사용자: 모임·집들이 표식이 지나갈 때 왔다 갔다 함). 소품은 길을 막지 않으니 그 위를 그냥 지나간다
+  const taken = new Set([...seats.map(key), key(START)])
   const fixed = new Set(Object.values(PLACES).flatMap((p) => [...p.tiles, ...(p.stand ? [p.stand] : [])]).map(key))
   const out: Tile[] = []
   for (const seat of seats) for (const d of [{ x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: 1 }, { x: 0, y: -1 }]) {

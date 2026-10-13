@@ -191,6 +191,13 @@ describe('내가 준비하는 작은 행사',()=>{
   expect(s.inv.bread).toBe(1)
   expect(s.fests[0].closed).toBe(true)
  })
+ it('행사 소품은 기록자가 걸어 다녀도 제자리에 있다 (2026-10-14 사용자: 지나갈 때 왔다 갔다 함)', ()=>{
+  const b=joined(made({day:9,members:['baker']},ready(8)))
+  const spots=(st:typeof b)=>eventPropsNow(st).map(p=>`${p.art}@${p.at.x},${p.at.y}`)
+  const first=spots(b)
+  expect(first.length).toBeGreaterThan(0)
+  for (const p of eventPropsNow(b)) expect(spots({...b,player:{...b.player,x:p.at.x,y:p.at.y}})).toEqual(first)
+ })
  it('생일과 겹치면 장식과 한마디만 — 생일 보상·장면을 새로 만들지 않는다', ()=>{
   // 빵 굽는 이웃 생일: 봄 10일
   let b=made({day:10,members:['baker']},ready(8))
