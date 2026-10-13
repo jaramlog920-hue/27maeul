@@ -20,9 +20,11 @@ export function sharedHomeOf(g: GenState | undefined, id: string, hasRoom: (owne
 const householdNo = (h: Household): number => Number(/^h-(\d+)$/.exec(h.id)?.[1] ?? 0)
 
 /** 집이 없는 가구 (어른 둘 이상, 집 주인이 방 있는 이웃이 아니다) — 이미 새 터 집에 사는 가구는 뺀다 */
-export function homeWishes(s: Pick<GameState, 'gen' | 'flags' | 'newland'>, hasRoom: (owner: string) => boolean): Household[] {
+export function homeWishes(s: Pick<GameState, 'gen' | 'flags' | 'newland'> & Partial<Pick<GameState, 'clock'>>, hasRoom: (owner: string) => boolean): Household[] {
   const living = new Set(familyHomes(s).map((x) => x.household.id))
-  return Object.values(s.gen?.households ?? {}).filter((h) => householdNo(h) > 0 && h.members.length >= 2 && !hasRoom(h.home) && !LODGING_SEATS[h.home] && !living.has(h.id))
+  // 이사 간 지 한 달이 안 된 가구는 다시 바라지 않는다 (2026-10-14)
+  const moved = (h: Household) => s.clock !== undefined && recentlyMoved(s as Pick<GameState, 'flags' | 'clock'>, h)
+  return Object.values(s.gen?.households ?? {}).filter((h) => householdNo(h) > 0 && h.members.length >= 2 && !hasRoom(h.home) && !LODGING_SEATS[h.home] && !living.has(h.id) && !moved(h))
 }
 
 /** 새 터 집에 사는 가구와 그 집 (집이 걷히면 빠진다) */
@@ -79,3 +81,64 @@ export function familyAt(s: Pick<GameState, 'gen' | 'flags' | 'newland'>, t: Til
     return !!st && st.x === t.x && st.y === t.y
   }) ?? null
 }
+
+// ── 이사 가고 싶은 가족 (2026-10-14 사용자: 동물의 숲처럼 낮은 확률로 이사 간다고 — 유저는 말리거나 인사하거나) ──
+// 새 터 집에서 두 이레 넘게 산 가족이 아침에 드물게(MOVE_CHANCE) 이사를 바라게 된다 (flags.moveWish:<가구>).
+// 집 앞에서 말을 걸면: 말리기 → 머물고 한 달은 다시 묻지 않는다 / 인사하기 → 다음 날 아침 떠난다. 그냥 두면 사흘 뒤 떠난다.
+// 떠난 가족은 첫 마을 원래 집으로 돌아가고, 한 달 동안은 새 터 집 희망 목록에 오르지 않는다. 집은 빈집으로 남는다
+export const MOVE_CHANCE = 0.04
+export const MOVE_AFTER_DAYS = 14
+export const MOVE_WAIT_DAYS = 3
+export const MOVE_QUIET_DAYS = 28
+
+const hashDay = (day: number, n: number) => ((day * 2654435761 + n * 40503) >>> 0) / 4294967296
+
+/** 이 가구가 지금 이사를 바라는가 */
+export const wantsToMove = (s: Pick<GameState, 'flags'>, h: Household): boolean => !!s.flags[`moveWish:${householdNo(h)}`]
+
+/** 아침: 이사 마음이 생기거나, 떠날 날이 된 가족은 떠난다. 떠난 가구 번호를 flags.familyLeft에 (알림용) */
+export function familyMoveMorning<S extends Pick<GameState, 'gen' | 'flags' | 'newland' | 'clock'>>(s: S): S {
+  const day = s.clock.day
+  const flags = { ...s.flags }
+  delete flags.familyLeft
+  for (const { household: h } of familyHomes(s)) {
+    const n = householdNo(h)
+    const wish = flags[`moveWish:${n}`]
+    if (wish) {
+      if (flags[`moveBye:${n}`] || day >= wish + MOVE_WAIT_DAYS) {
+        for (const k of [`familyHome:${n}`, `familyHomeDay:${n}`, `moveWish:${n}`, `moveBye:${n}`]) delete flags[k]
+        flags[`movedAway:${n}`] = day
+        flags.familyLeft = n
+      }
+      continue
+    }
+    const since = flags[`familyHomeDay:${n}`] ?? 0
+    const quiet = flags[`moveStay:${n}`]
+    if (day - since < MOVE_AFTER_DAYS || (quiet !== undefined && day < quiet + MOVE_QUIET_DAYS)) continue
+    if (hashDay(day, n) < MOVE_CHANCE) flags[`moveWish:${n}`] = day
+  }
+  return { ...s, flags }
+}
+
+/** 말리기: 이사 마음을 접고 머문다 (한 달은 다시 묻지 않는다) */
+export function askToStay<S extends Pick<GameState, 'flags'>>(s: S, h: Household): S {
+  const n = householdNo(h)
+  if (!s.flags[`moveWish:${n}`]) return s
+  const flags = { ...s.flags, [`moveStay:${n}`]: (s as unknown as Pick<GameState, 'clock'>).clock?.day ?? 0 }
+  delete flags[`moveWish:${n}`]
+  return { ...s, flags }
+}
+
+/** 인사하기: 다음 날 아침 떠난다 */
+export function sayGoodbye<S extends Pick<GameState, 'flags'>>(s: S, h: Household): S {
+  const n = householdNo(h)
+  if (!s.flags[`moveWish:${n}`]) return s
+  return { ...s, flags: { ...s.flags, [`moveBye:${n}`]: 1 } }
+}
+
+/** 떠난 지 한 달이 안 된 가구 (희망 목록에서 뺀다) */
+export const recentlyMoved = (s: Pick<GameState, 'flags' | 'clock'>, h: Household): boolean => {
+  const d = s.flags[`movedAway:${householdNo(h)}`]
+  return d !== undefined && s.clock.day < d + MOVE_QUIET_DAYS
+}
+export const householdById = (s: Pick<GameState, 'gen'>, no: number): Household | undefined => Object.values(s.gen?.households ?? {}).find((h) => householdNo(h) === no)

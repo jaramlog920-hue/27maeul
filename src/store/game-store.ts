@@ -200,6 +200,8 @@ import { add, count, RECIPES, type Inventory, type RecipeId } from '../engine/it
 import type { CarpenterWork } from '../engine/easier'
 import { toggleGear, wearing } from '../engine/gear'
 import { askBaby, nameSibling, selectKid } from '../engine/siblings'
+import { askToStay, householdById, sayGoodbye } from '../engine/gen-homes'
+import { heartUp } from '../engine/game'
 import { work } from '../engine/needs'
 import { plant, water, harvest, type CropId } from '../engine/garden'
 import { finishNow, HOLD_UP, isDone, startMini, stepMini, tapMini, type MiniState } from '../engine/minigame'
@@ -308,6 +310,8 @@ export type Modal =
   | { kind: 'yard'; item: YardItem }
   /** 구약 터에서 가구 배치를 누르면: 꾸밀 곳 고르기 (서고 안·입주 주택) */
   | { kind: 'decorPick' }
+  /** 이웃 꿀팁 편지 (아침에 온 것, 또는 지난 편지 보기) */
+  | { kind: 'tipLetter'; all?: boolean }
   | { kind: 'readPick'; source?: 'copied' }
   | { kind: 'quiz'; mode: QuizMode; questions: Question[]; index: number; wrong: string[]; solved: boolean; misses: number; missed: string[] }
   | { kind: 'care' }
@@ -558,7 +562,7 @@ interface Store {
   /** 터 가꾸기 창 열기 (땅이 드러난 새 터에서만) */
   openBuild: () => void
   /** 놓기 확정: 건물은 주문(다음 날 공사), 길·정원은 바로. 놓을 수 없으면 아무 일도 없다 — 창은 그대로 둔다 */
-  orderSite: (kind: SiteKind, x: number, y: number, facing: Facing, size: number, look?: HouseLook) => boolean
+  orderSite: (kind: SiteKind, x: number, y: number, facing: Facing, size: number, look?: HouseLook, owner?: string) => boolean
   /** 주문 취소(공사 전·중) 또는 철거(완공) — 환불과 기록 삭제가 한 번에 */
   removeBuild: (id: string) => void
   /** 깐 길·정원 칸 걷어내기 */
@@ -682,6 +686,8 @@ interface Store {
   escapeStuck: () => void
   /** 은빛 집 열쇠로 집에 (가방에서) */
   useHomeKey: () => void
+  /** 새 터 집 가족이 이사를 바랄 때: 말리기(stay)·인사하기(bye) */
+  familyMove: (how: 'stay' | 'bye', householdId: string) => void
   stopDecorate: () => void
   /** 고른 가구를 한 번 돌린다 (못 돌리면 한 줄로 알린다) */
   turnSelected: () => void
@@ -740,7 +746,7 @@ export function storeAlbumImage(id: string, data: string | null) {
  */
 function snapAlbum(sceneId: string, capture: ((focus?: Tile) => string | null) | null) {
   if (timedGathering(sceneId) && albumImage(gatheringPhoto(sceneId))) return
-  if ((sceneId === 'fam:trip' || sceneId === 'village:3' || sceneId === 'fullLibrary' || sceneId === 'lastManuscript' || sceneId === 'completeBible' || sceneId === 'bibleLastLetter' || (PROGRESS_KINDS as readonly string[]).includes(sceneId) || (LIVING_KINDS as readonly string[]).includes(sceneId) || sceneId.startsWith('firstDinner:') || sceneId.startsWith('facilityFinished:') || sceneId.startsWith('workSuccession:')) && albumImage(sceneId)) return
+  if ((sceneId === 'fam:trip' || sceneId === 'fam:read' || sceneId === 'village:3' || sceneId === 'fullLibrary' || sceneId === 'lastManuscript' || sceneId === 'completeBible' || sceneId === 'bibleLastLetter' || (PROGRESS_KINDS as readonly string[]).includes(sceneId) || (LIVING_KINDS as readonly string[]).includes(sceneId) || sceneId.startsWith('firstDinner:') || sceneId.startsWith('facilityFinished:') || sceneId.startsWith('workSuccession:')) && albumImage(sceneId)) return
   const sc = SCENES[sceneId]
   const photo = sc?.photoFor ?? (sc?.album ? sceneId : null)
   if (photo) storeAlbumImage(photo, capture?.(photoSpot(photo) ?? undefined) ?? null)
@@ -1639,6 +1645,14 @@ export const useGame = create<Store>((set, get) => {
           get().say(t('groundPiece.found', { name: otPieceById(e.id)?.name ?? pieceById(e.id)?.title ?? '' }), 4200)
         }
       }
+      // 새 터 집 가족이 떠난 아침 (2026-10-14)
+      if (game.flags.familyLeft) {
+        const h = householdById(game, game.flags.familyLeft)
+        const flags = { ...game.flags }
+        delete flags.familyLeft
+        game = persist({ ...game, flags })
+        if (h) get().say(t('familyHome.left', { names: h.members.map((id) => game.gen?.persons[id]?.name ?? neighborById(id)?.role ?? '').filter(Boolean).join('·') }), 4200)
+      }
       if (!modal && game.scenes.length) {
         modal = { kind: 'scene', id: game.scenes[0] }
         sfx('bell')
@@ -1646,6 +1660,14 @@ export const useGame = create<Store>((set, get) => {
       // 아이가 태어난 장면을 본 뒤 이름을 정한다
       if (!modal && game.flags.childNaming && game.child) modal = { kind: 'childName' }
       if (!modal && game.flags.siblingNaming && game.siblings?.length) modal = { kind: 'childName' }
+      // 이웃 꿀팁 편지가 온 아침 (2026-10-14) — 장면·이름 정하기 뒤에
+      if (!modal && game.flags.tipNew && game.tips?.length) {
+        const flags = { ...game.flags }
+        delete flags.tipNew
+        game = persist({ ...game, flags })
+        modal = { kind: 'tipLetter' }
+        sfx('letter')
+      }
       // 탁자를 누르지 않아도 모임 시간에 본문을 연다. 다른 창·장면은 먼저 마치고,
       // 실제로 연 날을 저장해 닫거나 재접속했을 때 같은 날 다시 뜨지 않게 한다.
       if (!modal && canAutoRead(game)) {
@@ -1945,10 +1967,10 @@ export const useGame = create<Store>((set, get) => {
       const g = get().game
       if (currentMapId() === 'newland' && newlandRevealed(g) && !inBuildingRoom(g)) set({ modal: { kind: 'build' } })
     },
-    orderSite: (kind, x, y, facing, size, look) => {
+    orderSite: (kind, x, y, facing, size, look, owner) => {
       const g = get().game
       if (currentMapId() !== 'newland') return false
-      const ordered = orderBuild(g, kind, x, y, facing, size, look)
+      const ordered = orderBuild(g, kind, x, y, facing, size, look, owner)
       if (!ordered) return false
       // 서 있던 칸에 지으면 옆으로 비켜 선다 (2026-10-14 사용자: 짓다가 끼었다)
       syncHome(ordered)
@@ -2547,6 +2569,18 @@ export const useGame = create<Store>((set, get) => {
       set({ game: persist(next), modal: null })
       get().startDecorate('pick')
     },
+    familyMove: (how, householdId) => {
+      const g = get().game
+      const h = g.gen?.households[householdId]
+      if (!h) return
+      let next = how === 'stay' ? askToStay(g, h) : sayGoodbye(g, h)
+      if (next === g) return
+      // 말리면 그 가족의 고정 주민 마음이 조금 오른다 (붙잡아 준 것이 고맙다)
+      if (how === 'stay') for (const id of h.members) if (CONTENT.neighbors.some((n) => n.id === id)) next = heartUp(next, id, 3)
+      sfx('talk')
+      set({ game: persist(next) })
+      get().say(t(how === 'stay' ? 'familyHome.stayed' : 'familyHome.byeSaid'), 3200)
+    },
     useHomeKey: () => {
       const next = goHome(get().game, CONTENT)
       if (!next) return
@@ -2744,6 +2778,7 @@ useGame.subscribe((next, before) => {
 
 // 테스트 준비(setupTests)가 테스트마다 부르는 화면 알림 비우기 — 스토어를 불러온 테스트에서만 걸린다
 if (import.meta.env.MODE === 'test') (globalThis as { __resetGameUi?: () => void }).__resetGameUi = () => useGame.setState({ piecePopups: [], copyResult: null })
+
 
 
 

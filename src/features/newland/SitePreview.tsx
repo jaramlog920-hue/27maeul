@@ -1,5 +1,6 @@
 // 부지 미리보기 (계획 20 작업 6): 건축 가능한 땅을 작은 그림으로 보고, 칸을 눌러 자리를 고른 뒤 놓는다.
 // 놓을 수 없으면 초록·빨강 색 대신 그 자리에서 이유 한 줄만 보인다. 한 번에 한 가지만 미리 본다.
+import { ownerName } from '../../engine/kid-work'
 import { useEffect, useRef, useState } from 'react'
 import { fill, itemList, T } from '../../content/text'
 import { BUILD_RECT, NEWLAND_VISIBLE_H, NEWLAND_W } from '../../engine/newland-config'
@@ -72,7 +73,7 @@ function spanOf(pick: SitePick, size: number): { w: number; h: number } {
 /** 집 단계 이름 (2026-10-13 사용자: 신약 내 집처럼 1·2·3단계) */
 const STAGE_TEXT: Record<number, string> = { 4: '1단계', 6: '2단계', 8: '3단계' }
 
-export function SitePreview({ pick, onBack, onPlaced }: { pick: SitePick; onBack: () => void; onPlaced: () => void }) {
+export function SitePreview({ pick, onBack, onPlaced, owner }: { pick: SitePick; onBack: () => void; onPlaced: () => void; owner?: string }) {
   const game = useGame((s) => s.game)
   const { orderSite, eraseTile } = useGame.getState()
   const kind = pick === 'eraser' ? null : pick
@@ -208,13 +209,14 @@ export function SitePreview({ pick, onBack, onPlaced }: { pick: SitePick; onBack
   }
   const move = (dx: number, dy: number) => setPos({ x: at.x + dx, y: at.y + dy })
 
-  const name = kind ? siteName(kind) : T.build.eraser
+  // 집 겸 일터는 고른 주인 이름으로 (2026-10-14)
+  const name = kind === 'kidWork' && owner ? fill(T.newlandLife.kidWork.label, { name: ownerName(game, owner) }) : kind ? siteName(kind) : T.build.eraser
   const reason = block === null ? null : block === 'nothing' ? T.build.blockNothing : BLOCK_TEXT[block]
 
   const place = () => {
     if (block !== null) return
     if (kind) {
-      const ok = orderSite(kind, at.x, at.y, facing, size, lookKind ? look : undefined)
+      const ok = orderSite(kind, at.x, at.y, facing, size, lookKind ? look : undefined, kind === 'kidWork' ? owner : undefined)
       if (ok && (isBuildKind(kind))) onPlaced()
     } else eraseTile(at.x, at.y)
   }

@@ -20,7 +20,7 @@ export function EventThumbnail({entry}:{entry:EventPreviewEntry}){
    const actor=previewActor(entry.id),w=300,h=170
    if(hasAuthoredStory(entry.id)){
     const people=authoredStoryPeople(entry.id)
-    drawAuthoredStory(g,entry.id,w,h,8,null,entry.id==='fam:trip'?previewFamilyChild():people.length?previewActor(`person:${people[0]}`):actor,people.slice(1).map(id=>previewActor(`person:${id}`)),2)
+    drawAuthoredStory(g,entry.id,w,h,8,null,(entry.id==='fam:trip'||entry.id==='fam:read')?previewFamilyChild():people.length?previewActor(`person:${people[0]}`):actor,people.slice(1).map(id=>previewActor(`person:${id}`)),entry.id==='fam:read'?0:2)
    }
    else if((LIVING_KINDS as readonly string[]).includes(entry.kind??'')){
     const facility=entry.id.split(':')[1]

@@ -1,13 +1,14 @@
 import {act,fireEvent,render,screen} from '@testing-library/react'
 import {freshStats} from '../../engine/stats'
 import {CONTENT} from '../../content/catalog'
-import {SCENES} from '../../content/text'
+import {SCENES,T} from '../../content/text'
 import {legacyGame} from '../../engine/growth-test-support'
 import {useGame} from '../../store/game-store'
 import {ModalLayer} from '../ModalLayer'
 import {AuthoredStoryScene} from './AuthoredStoryScene'
 import {eventPreviewEntries} from './event-registry'
 import {TIMED_GATHERINGS,gatheringPhoto} from '../../render/timed-gathering-art'
+import {drawWorriedApothecary} from '../../render/worried-apothecary-art'
 
 const id='ev:wendell:home:2'
 beforeEach(()=>{
@@ -17,6 +18,19 @@ beforeEach(()=>{
  useGame.setState({game:{...game,scenes:[id],romance:{...game.romance,partner:'wendell',stage:'married'}},modal:{kind:'scene',id},piecePopups:[],copyResult:null,afterScene:null})
 })
 afterEach(()=>vi.restoreAllMocks())
+it('27권 잔치의 새 그림에서도 음식 나누기는 한 번만 소비하고 기존 흐름을 끝낸다',()=>{
+ vi.spyOn(HTMLCanvasElement.prototype,'toDataURL').mockReturnValue('data:image/png;base64,feast')
+ const initial=useGame.getState().game,event='allFeastFire'
+ act(()=>useGame.setState({game:{...initial,inv:{bread:2},scenes:[event],flags:{...initial.flags,allFeast:1}},modal:{kind:'scene',id:event}}))
+ render(<ModalLayer/>)
+ for(let i=0;i<SCENES[event].lines.length;i++)fireEvent.click(screen.getByRole('button',{name:'다음'}))
+ fireEvent.click(screen.getByRole('button',{name:T.items.bread.name}))
+ expect(useGame.getState().game.inv.bread).toBe(1)
+ fireEvent.click(screen.getByRole('button',{name:'다음'}))
+ fireEvent.click(screen.getByRole('button',{name:'다음'}))
+ expect(useGame.getState().game.inv.bread).toBe(1)
+ expect(useGame.getState().game.scenes).not.toContain(event)
+})
 it.each(Object.keys(TIMED_GATHERINGS))('시간에 맞춰 참석하는 %s는 원래 대사·앨범 대상·보상을 유지한다',event=>{
  vi.spyOn(HTMLCanvasElement.prototype,'toDataURL').mockReturnValue('data:image/png;base64,gathering')
  const initial=useGame.getState().game,s=event==='feastFire'||event==='allFeastFire'?{...initial,inv:{}}:initial,scene=SCENES[event],photo=gatheringPhoto(event)
@@ -64,7 +78,27 @@ it('직접 완성한 장면만 도트 모션으로 표시한다',()=>{
  expect(entries.find(e=>e.id==='village:3')?.authored).toBe(true)
  expect(entries.find(e=>e.id==='ev:beekeeper:story:1')?.authored).toBe(true)
  expect(entries.find(e=>e.id==='ev:penelope:lunch')?.authored).toBe(true)
- expect(entries.find(e=>e.title==='같이 읽은 책')?.authored).toBe(false)
+ expect(entries.find(e=>e.id==='fam:read')?.authored).toBe(true)
+ expect(entries.find(e=>e.title.startsWith('거꾸로 새긴 글자'))?.authored).toBe(true)
+})
+
+it('같이 읽은 책은 실제 아이 이름과 가까움을 보존하고 펼친 책 사진을 남긴다',()=>{
+ vi.spyOn(HTMLCanvasElement.prototype,'toDataURL').mockReturnValue('data:image/png;base64,family-reading')
+ const s=useGame.getState().game,child={name:'누리',look:'boy' as const,born:1,stats:freshStats(),lean:null,close:25}
+ act(()=>useGame.setState({game:{...s,child,clock:{day:50,minute:800},scenes:['fam:read']},modal:{kind:'scene',id:'fam:read'}}))
+ render(<ModalLayer/>)
+ expect(screen.getByRole('dialog',{name:'같이 읽은 책'})).toHaveClass('authored-story-scene')
+ expect(screen.getByText('누리가 옆에 바짝 붙어 앉아 그림을 하나하나 손가락으로 짚었다.')).toBeInTheDocument()
+ fireEvent.click(screen.getByRole('button',{name:'다음'}))
+ expect(screen.getByText('책을 덮자 누리가 처음부터 다시 읽어 달라고 했다.')).toBeInTheDocument()
+ fireEvent.click(screen.getByRole('button',{name:'닫기'}))
+ expect(useGame.getState().game.child?.close).toBe(25)
+ expect(useGame.getState().game.child?.stats).toEqual(child.stats)
+ expect(useGame.getState().game.inv).toEqual(s.inv)
+ expect(localStorage.getItem('twenty-seven/album/fam:read')).toBe('data:image/png;base64,family-reading')
+ localStorage.setItem('twenty-seven/album/fam:read','data:image/png;base64,original')
+ act(()=>useGame.setState({modal:{kind:'scene',id:'fam:read'}}))
+ expect(localStorage.getItem('twenty-seven/album/fam:read')).toBe('data:image/png;base64,original')
 })
 
 it.each([0,1])('같은 자리 선택 %s는 원래 답변 수와 상태를 보존한다',index=>{
@@ -130,6 +164,69 @@ it('강가 쉼터 미리보기는 앨범이나 마을 진행을 저장하지 않
  expect(useGame.getState().game).toBe(s)
 })
 
+it('약병은 다섯 개에서 선택에 맞춰 네 개 또는 빈 탁자로 바뀌며 질문 중에는 치우지 않는다',()=>{
+ const fillRect=vi.fn(),g={fillRect} as unknown as CanvasRenderingContext2D
+ const count=(beat:number,choice?:number)=>{
+  fillRect.mockClear()
+  drawWorriedApothecary(g,320,180,8,null,{avatar:null,who:'writer'},beat,choice)
+  return fillRect.mock.calls.filter(c=>c[2]===7&&c[3]===8).length
+ }
+ expect(count(2)).toBe(5)
+ expect(count(3,0)).toBe(4)
+ expect(count(3,1)).toBe(5)
+ expect(count(4,1)).toBe(0)
+})
+it.each([0,1])('걸음 세기 선택 %s는 약속 대사와 기존 관계·소지품·시간을 보존한다',index=>{
+ const event='ev:presser:love:1',s=useGame.getState().game
+ act(()=>useGame.setState({game:{...s,scenes:[event]},modal:{kind:'scene',id:event}}))
+ render(<ModalLayer/>)
+ expect(screen.getByRole('dialog',{name:'걸음 세기'})).toHaveClass('authored-story-scene')
+ fireEvent.click(screen.getByRole('button',{name:'다음'}))
+ const choice=SCENES[event].choices![index]
+ fireEvent.click(screen.getByRole('button',{name:choice.label}))
+ expect(screen.getByText(choice.reply![0].text)).toBeInTheDocument()
+ fireEvent.click(screen.getByRole('button',{name:'닫기'}))
+ expect(useGame.getState().game.scenes).not.toContain(event)
+ expect(useGame.getState().game.inv).toEqual(s.inv)
+ expect(useGame.getState().game.clock).toEqual(s.clock)
+ expect(useGame.getState().game.romance).toEqual(s.romance)
+})
+it.each([0,1])('걱정 많은 날 선택 %s는 모든 답변과 기존 상태를 보존한다',index=>{
+ const event='ev:basil:worry',s=useGame.getState().game
+ act(()=>useGame.setState({game:{...s,scenes:[event]},modal:{kind:'scene',id:event}}))
+ render(<ModalLayer/>)
+ expect(screen.getByRole('dialog',{name:'걱정 많은 날'})).toHaveClass('authored-story-scene')
+ for(let i=1;i<SCENES[event].lines.length;i++)fireEvent.click(screen.getByRole('button',{name:'다음'}))
+ const choice=SCENES[event].choices![index]
+ fireEvent.click(screen.getByRole('button',{name:choice.label}))
+ for(let i=0;i<choice.reply!.length;i++){
+  expect(screen.getByText(choice.reply![i].text)).toBeInTheDocument()
+  if(i+1<choice.reply!.length)fireEvent.click(screen.getByRole('button',{name:'다음'}))
+ }
+ fireEvent.click(screen.getByRole('button',{name:'닫기'}))
+ expect(useGame.getState().game.scenes).not.toContain(event)
+ expect(useGame.getState().game.inv).toEqual(s.inv)
+ expect(useGame.getState().game.clock).toEqual(s.clock)
+ expect(useGame.getState().game.romance).toEqual(s.romance)
+})
+it.each([0,1])('거꾸로 새긴 글자 선택 %s는 원래 답변과 관계 상태를 보존한다',index=>{
+ const event='ev:rudy:love:1',s=useGame.getState().game
+ act(()=>useGame.setState({game:{...s,scenes:[event]},modal:{kind:'scene',id:event}}))
+ render(<ModalLayer/>)
+ expect(screen.getByRole('dialog',{name:'거꾸로 새긴 글자'})).toHaveClass('authored-story-scene')
+ for(let i=1;i<SCENES[event].lines.length;i++)fireEvent.click(screen.getByRole('button',{name:'다음'}))
+ const choice=SCENES[event].choices![index]
+ fireEvent.click(screen.getByRole('button',{name:choice.label}))
+ for(let i=0;i<choice.reply!.length;i++){
+  expect(screen.getByText(choice.reply![i].text)).toBeInTheDocument()
+  if(i+1<choice.reply!.length)fireEvent.click(screen.getByRole('button',{name:'다음'}))
+ }
+ fireEvent.click(screen.getByRole('button',{name:'닫기'}))
+ expect(useGame.getState().game.scenes).not.toContain(event)
+ expect(useGame.getState().game.inv).toEqual(s.inv)
+ expect(useGame.getState().game.clock).toEqual(s.clock)
+ expect(useGame.getState().game.romance).toEqual(s.romance)
+})
 it.each([0,1])('갈림목 표지 선택 %s는 원래 답변 수와 완료 흐름을 보존한다',index=>{
  const signId='ev:rudy:small:signPost',s=useGame.getState().game
  act(()=>useGame.setState({game:{...s,scenes:[signId]},modal:{kind:'scene',id:signId}}))
@@ -279,4 +376,5 @@ it.each([0,1])('간식 바구니 선택 %s와 원래 담기 놀이를 보존한�
   if(modal?.kind==='mini')expect(modal.pending).toMatchObject({kind:'story',event:'baker:small:festBasket',npc:'baker'})
  }else expect(useGame.getState().modal).toBeNull()
 })
+
 

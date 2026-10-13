@@ -27,7 +27,7 @@ import { add, addGift, BAG_SLOTS, CHAPTER_COST, COOKED_ITEMS, FOODS, count, has,
 import { petLife, petPieceCheck, petStayGoal, type PetEvent } from './pet-life'
 import { facingFor, findPath, pathToward, stepActor, type Actor } from './movement'
 import { careIn, careKey, chapterEffort } from './copy-ways'
-import { familyHomes, livesInNewland, sharedHomeOf } from './gen-homes'
+import { familyHomes, livesInNewland, sharedHomeOf, familyMoveMorning } from './gen-homes'
 import { nightDoorKeys, nightDoorLocked } from './night-doors'
 import { LODGING_DOOR, LODGING_SEATS } from './lodging'
 import { coolDown, exhausted, fallsSick, FRESH, rest, sleepNeeds, starving, tickNeeds, warmUp, work, type Needs } from './needs'
@@ -193,6 +193,7 @@ import { BIRTHDAY_MUL, isBirthday, NO_NOTEBOOK, noteGift, noteGot, noteHeard, no
 import { CARPENTER_WORKS, fromChest, hasStock, INK_JAR_HOLD, LIGHT_SHOES, owns, RACK_HOLD, RACK_PAPER, RAIN_WATER, SOOT_CATCH, stash, stashOverflows, stock, takeStock, walkMul, type CarpenterWork, type EasyId } from './easier'
 import { yardPlaced } from './yard'
 import { siblingMorning, swapKid } from './siblings'
+import { tipMorning } from './tip-letters'
 
 export interface JournalEntry {
   day: number
@@ -331,6 +332,8 @@ export interface GameState {
   child: Child | null
   /** 둘째·셋째 (2026-10-13 사용자: 플레이어는 아이 셋까지) — 첫째는 child 그대로, 동생들은 태어난 차례로 */
   siblings?: Child[]
+  /** 받은 이웃 꿀팁 편지 id (받은 차례, 2026-10-14) */
+  tips?: string[]
   /** 물건 도감: 한 번이라도 가져 본 물건 */
   found: ItemId[]
   /** 도감: 사용해 본 기본 표지·표지 색·무늬·책등·덧장식. 다시 꾸며도 남는다. */
@@ -4560,7 +4563,7 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
     farewellPopup: undefined,
   }
   // 가족 생일 아침 (계획 12): 배우자·아이 생일 장면
-  const villaged = advanceVillage(familyMorning(siblingMorning(kidsMorning(forgetPromises(morningSupplies(expireStall(expireWorkDay(next)), s.clock.day), day), content), content)), content)
+  const villaged = advanceVillage(tipMorning(familyMorning(siblingMorning(kidsMorning(forgetPromises(morningSupplies(expireStall(expireWorkDay(next)), s.clock.day), day), content), content))), content)
   // 주민 자율 가족 하루 정산 (계획 20 작업 10): 아침 단계에서 하루에 한 번, 큰 사건이 걸린 주민은 보류
   // 마을 서고 순위 업데이트 (계획 21 R8): 계절 1일·21일 아침에 한 번
   const morning = guestHouseMorning(farewellMorning(guestMorning(rankMorning(advanceBuilds(
@@ -4571,7 +4574,8 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
     }),
   ), content)), content))
   // 침대 위에서 눈을 뜨고 일어난다 (그림만)
-  const welcomed = moveInMorning(s, morning, content)
+  // 새 터 집 가족의 이사 (2026-10-14): 드물게 이사 마음이 생기고, 떠날 날이면 떠난다
+  const welcomed = moveInMorning(s, familyMoveMorning(morning), content)
   const awake = { ...welcomed, npcs: placeAllNpcs(welcomed, content) }
   return startAct(familyScenicEvents(s, awake, childTile(awake)), 'rise', PLACES.bed.tiles[0])
 }

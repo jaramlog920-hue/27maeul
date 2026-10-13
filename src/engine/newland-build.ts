@@ -33,6 +33,8 @@ export interface Build {
   slot?: number
   /** 환불을 이미 마쳤다는 표식 — 환불은 기록 삭제와 한 번에 일어나므로 남아 있는 기록에서는 늘 false */
   refunded: boolean
+  /** 집 겸 일터의 주인 (2026-10-14 사용자: 아이 셋·이웃 자녀도) — 우리 아이 'me:<태어난 날>', 이웃 자녀는 계보 id. 옛 기록은 없음 = 함께하는 아이 */
+  owner?: string
   /** 집 단계의 가로 칸 수 (입주 주택·손님집 6·8 — 없으면 1단계 4칸) */
   size?: number
   /** 집 색 (입주 주택·손님집, 처음 지을 때 고른다 — 없으면 기본 모습) */
@@ -316,7 +318,7 @@ type Ordered = Pick<GameState, 'newland' | 'coins' | 'inv'>
  * 놓는다: 닢·재료를 내고 건물은 'ordered'로 기록한다 (다음 날 아침 공사, 그다음 날 아침 완공).
  * 길·정원 칸은 바로 깔린다. 놓을 수 없거나 모자라면 null (아무것도 바뀌지 않는다)
  */
-export function orderBuild<T extends Base & Ordered>(s: T, kind: SiteKind, x: number, y: number, facing: Facing = 'down', size = 1, look?: HouseLook): T | null {
+export function orderBuild<T extends Base & Ordered>(s: T, kind: SiteKind, x: number, y: number, facing: Facing = 'down', size = 1, look?: HouseLook, owner?: string): T | null {
   if (canOrder(s, kind, x, y, facing, size)) return null
   const cost = costFor(s, kind, x, y, size)
   const inv = take(s.inv, cost.items)
@@ -331,7 +333,7 @@ export function orderBuild<T extends Base & Ordered>(s: T, kind: SiteKind, x: nu
   const slot = kind === 'home' ? freeSlot(nl.builds) : undefined
   const chosen = hasHouseLook(kind as BuildKind) ? sanitizeLook(look) : undefined
   const wide = widthOf(kind, size) > ART_TILES ? widthOf(kind, size) : undefined
-  const b: Build = { id: `b${nl.nextId}`, kind: kind as BuildKind, x, y, facing, state: 'ordered', orderedDay: s.clock.day, paid: cost, refunded: false, ...(slot !== undefined ? { slot } : {}), ...(chosen ? { look: chosen } : {}), ...(wide ? { size: wide } : {}) }
+  const b: Build = { id: `b${nl.nextId}`, kind: kind as BuildKind, x, y, facing, state: 'ordered', orderedDay: s.clock.day, paid: cost, refunded: false, ...(slot !== undefined ? { slot } : {}), ...(chosen ? { look: chosen } : {}), ...(wide ? { size: wide } : {}), ...(owner && kind === 'kidWork' ? { owner } : {}) }
   return { ...s, coins: paid.coins, inv: paid.inv, newland: { ...nl, builds: [...nl.builds, b], nextId: nl.nextId + 1 } }
 }
 
@@ -526,7 +528,9 @@ export function sanitizeNewlandBuild(raw: unknown, today: number): NewlandState 
       ids.add(id)
       maxN = Math.max(maxN, Number(id.slice(1)))
       const look = hasHouseLook(kind) ? sanitizeLook((r as { look?: unknown }).look) : undefined
-      builds.push({ id, kind, x, y, facing: facing as Facing, state, orderedDay: day, paid: { coins, items: sanitizeItems(p.items) }, refunded: false, ...(slot !== undefined ? { slot } : {}), ...(look ? { look } : {}), ...(size ? { size } : {}) })
+      const rawOwner = (r as { owner?: unknown }).owner
+      const owner = kind === 'kidWork' && typeof rawOwner === 'string' && rawOwner.length <= 40 ? rawOwner : undefined
+      builds.push({ id, kind, x, y, facing: facing as Facing, state, orderedDay: day, paid: { coins, items: sanitizeItems(p.items) }, refunded: false, ...(slot !== undefined ? { slot } : {}), ...(look ? { look } : {}), ...(size ? { size } : {}), ...(owner ? { owner } : {}) })
     }
   }
   // 방 칸이 없는 입주 주택(작업 6 저장 — 칸 번호 이전)은 앞 빈 칸부터 잇는다. 칸이 모자라면 방 없이 둔다 (문은 있으나 들어갈 수 없다)

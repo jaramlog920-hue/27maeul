@@ -276,6 +276,8 @@ walk(neighbors, 'neighbors')
 walk(await read('src/content/people.json'), 'people')
 // 하트 수에 따른 말·연인·부부 사건·친구 말 (2026-10-12)
 walk(await read('src/content/people-more.json'), 'people-more')
+// 이웃 꿀팁 편지 (2026-10-14)
+walk(await read('src/content/tip-letters.json'), 'tip-letters')
 
 if (errors) {
   console.error(`\n✗ verify-pieces 실패: 오류 ${errors}개, 경고 ${warnings}개`)

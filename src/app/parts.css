@@ -2496,3 +2496,7 @@ button.row:active:not(:disabled) { background: #efe3c4; }
 /* 설정 탭 (2026-10-14 사용자: 고른 탭 글자가 흰색이라 안 보였다) — 글자는 검정, 고른 탭은 굵게 */
 .dialog.settings .settings-tabs button { color: var(--ink); min-height: 36px; font-size: 13px; flex: 1 1 0; }
 .dialog.settings .settings-tabs button.on { color: var(--ink); background: var(--hover); border-color: var(--accent); font-weight: 700; }
+/* 이웃 꿀팁 편지 (2026-10-14) */
+.tip-letter { margin: 8px 0; padding: 10px 12px; background: #fffaf0; border: 1px solid #e6d9bf; border-radius: 4px; }
+.tip-from { margin: 0 0 4px; font-size: 12px; font-weight: 700; color: var(--accent); }
+.tip-body { margin: 0; font-size: 14px; line-height: 1.7; white-space: pre-line; }

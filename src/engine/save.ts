@@ -1,5 +1,6 @@
 import { sanitizeYard } from './yard'
 import { sanitizeGearOff } from './gear'
+import { sanitizeTips } from './tip-letters'
 import { sanitizeHomeWalls, setHomeWalls } from './home-walls'
 import { CLUB_PLACES, sanitizeClubs, sanitizeClubSessions } from './clubs'
 import { sanitizeVillage } from './projects'
@@ -369,6 +370,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     myLines,
     ...(sanitizeYard(s.yard) ? { yard: sanitizeYard(s.yard) } : {}),
     gearOff: sanitizeGearOff(s.gearOff),
+    tips: sanitizeTips((s as { tips?: unknown }).tips),
     // 서고 잔치에서 낭독한 줄 (2026-10-13): 잔치 id마다 글 한 줄만, 옛 저장은 없음
     ...(isObj(s.feastLines) ? { feastLines: Object.fromEntries(Object.entries(s.feastLines as Record<string, unknown>).filter((e): e is [string, string] => (e[0] === 'gospelFeast' || e[0] === 'allFeast') && typeof e[1] === 'string' && e[1].length <= 400)) } : {}),
     todayHeard: s.todayHeard.filter((id) => known.has(id)),

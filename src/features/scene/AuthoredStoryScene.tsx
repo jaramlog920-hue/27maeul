@@ -16,9 +16,9 @@ export const StoryArtChoice=createContext<(choice:number|null)=>void>(()=>{})
 export function AuthoredStoryScene({id,title,preview=false,children,beat=0,chosen}:{id:string;title:string;preview?:boolean;children:ReactNode;beat?:number;chosen?:number}){
  const [previewBeat,setPreviewBeat]=useState(0),page=preview?previewBeat:beat
  const gathering=timedGathering(id),photoId=gatheringPhoto(id)
- const phase=gathering?Math.min(gathering.last,page):id==='ev:penelope:lunch'?Math.min(3,page):id==='ev:beekeeper:story:1'?Math.min(1,page):id==='village:3'?Math.min(1,page):id==='built:reedRack'?Math.min(1,page):id==='ev:baker:small:festBasket'?Math.min(1,page):id==='fam:trip'?Math.min(1,page):id==='ev:baker:story:3'||id==='lightShoes'||id==='ev:carpenter:story:3'||id==='ev:poppy:story:2'||id==='ev:rudy:small:signPost'?Math.min(2,page):0
+ const phase=id==='ev:juniper:story:2'?Math.min(7,page):id==='ev:poppy:love:1'?Math.min(2,page):id==='romance1:wendell'||id==='romance2:wendell'?Math.min(1,page):id==='ev:merchant:story:1'?Math.min(2,page):id==='ev:poppy:love:1'?Math.min(2,page):id==='ev:presser:love:1'?Math.min(1,page):id==='ev:basil:worry'?Math.min(4,page):id==='ev:rudy:love:1'?Math.min(3,page):id==='fam:read'?Math.min(1,page):gathering?Math.min(gathering.last,page):id==='ev:penelope:lunch'?Math.min(3,page):id==='ev:beekeeper:story:1'?Math.min(1,page):id==='village:3'?Math.min(1,page):id==='built:reedRack'?Math.min(1,page):id==='ev:baker:small:festBasket'?Math.min(1,page):id==='fam:trip'?Math.min(1,page):id==='ev:baker:story:3'||id==='lightShoes'||id==='ev:carpenter:story:3'||id==='ev:poppy:story:2'||id==='ev:rudy:small:signPost'?Math.min(2,page):0
  const [previewChoice,setPreviewChoice]=useState<number|null>(null),choice=preview?previewChoice:chosen
- const artChoice=id==='ev:baker:small:festBasket'||id==='ev:poppy:story:2'||id==='ev:rudy:small:signPost'||id==='ev:beekeeper:story:1'||id==='ev:penelope:lunch'?choice:undefined
+ const artChoice=id==='ev:juniper:story:2'||id==='ev:poppy:love:1'||id==='ev:merchant:story:1'||id==='ev:poppy:love:1'||id==='ev:basil:worry'||id==='ev:rudy:love:1'||id==='ev:baker:small:festBasket'||id==='ev:poppy:story:2'||id==='ev:rudy:small:signPost'||id==='ev:beekeeper:story:1'||id==='ev:penelope:lunch'?choice:undefined
  const ref=useRef<HTMLCanvasElement>(null)
  const child=useGame(s=>s.game.child),day=useGame(s=>s.game.clock.day),remembered=useGame(s=>s.game.album.some(a=>a.id===photoId))
  const avatar=useGame(s=>s.game.avatar),gen=useGame(s=>s.game.gen),looks=useGame(s=>s.game.looks)
@@ -32,12 +32,12 @@ export function AuthoredStoryScene({id,title,preview=false,children,beat=0,chose
   }
   const stage=child?childStage(child,day):'helper'
   const familyChild=preview?previewFamilyChild():{avatar:playerChildAvatar({child,avatar,looks}),...playerChildSprite(stage,!!looks?.child),baby:stage==='baby'}
-  const people=authoredStoryPeople(id),npc=id==='fam:trip'?familyChild:resolve(people[0]??previewPerson(id)??'wendell'),others=people.slice(1).map(resolve)
+  const people=authoredStoryPeople(id),npc=(id==='fam:trip'||id==='fam:read')?familyChild:resolve(people[0]??previewPerson(id)??'wendell'),others=people.slice(1).map(resolve)
   const resize=()=>{canvas.width=320;canvas.height=Math.max(180,Math.round(320*window.innerHeight/window.innerWidth))}
   resize();window.addEventListener('resize',resize)
-  if((id==='fam:trip'||id==='village:3'||gathering)&&!preview&&(!albumImage(photoId)||!gathering&&!remembered)){
+  if((id==='fam:trip'||id==='fam:read'||id==='village:3'||gathering)&&!preview&&(!albumImage(photoId)||!gathering&&!remembered)){
    const photo=document.createElement('canvas');photo.width=canvas.width;photo.height=canvas.height
-   const pg=photo.getContext('2d');if(pg){drawAuthoredStory(pg,id,photo.width,photo.height,8,avatar,npc,others,gathering?Math.min(2,gathering.last):1);storeAlbumImage(photoId,photo.toDataURL('image/png'))}
+   const pg=photo.getContext('2d');if(pg){drawAuthoredStory(pg,id,photo.width,photo.height,8,avatar,npc,others,id==='fam:read'?0:gathering?Math.min(2,gathering.last):1);storeAlbumImage(photoId,photo.toDataURL('image/png'))}
   }
   const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches,start=performance.now()
   let frame=0,last=-1000
@@ -50,6 +50,10 @@ export function AuthoredStoryScene({id,title,preview=false,children,beat=0,chose
  },[id,preview,avatar,gen,looks,phase,child,day,remembered,artChoice,gathering,photoId])
  return <StoryArtBeat.Provider value={setPreviewBeat}><StoryArtChoice.Provider value={setPreviewChoice}><div className="stars-scene authored-story-scene" role="dialog" aria-label={title}><canvas ref={ref} aria-hidden="true"/>{children}</div></StoryArtChoice.Provider></StoryArtBeat.Provider>
 }
+
+
+
+
 
 
 

@@ -318,6 +318,11 @@ export function Settings() {
           <h3>도움말</h3>
           <button aria-label="도움말" onClick={() => open({ kind: 'guide' })}>열기</button>
         </div>
+        {/* 이웃 꿀팁 편지 다시 보기 (2026-10-14) */}
+        <div className="settings-row">
+          <h3>{T.tips.open}</h3>
+          <button onClick={() => open({ kind: 'tipLetter', all: true })}>{T.tips.all}</button>
+        </div>
         {/* 비상 탈출 (2026-10-14 사용자: 짓다가 건물 사이에 끼었다) */}
         <div className="settings-row">
           <h3>{T.ui.escape}</h3>

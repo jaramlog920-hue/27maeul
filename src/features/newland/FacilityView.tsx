@@ -9,7 +9,7 @@ import { newsLine } from '../../content/gen-text'
 import { canGatherYard, gatherYard, mendQuarrelWith, type GameState } from '../../engine/game'
 import { kidVisiting, talkKidVisit, dreamKey, roomOwner, canInviteGuest, markerShown, toggleMarker, canMendQuarrel, keywordRecall, quarrelPair, visitKidWork, DREAMER, GUESTS, guestNow, inviteGuest, memoriesOf, pickDream, settledAt, settledLine, talkGuest, visitDream, type DreamStage, type FacilityKind, type GuestId, type Memory } from '../../engine/newland-life'
 import { saveGame } from '../../engine/save'
-import { emptyHomeAt, familyAt, giveFamilyHome, homeWishes } from '../../engine/gen-homes'
+import { emptyHomeAt, familyAt, giveFamilyHome, homeWishes, wantsToMove } from '../../engine/gen-homes'
 import type { Household } from '../../engine/gen'
 import { t } from '../../shared/i18n'
 import type { Tile } from '../../engine/types'
@@ -198,6 +198,21 @@ function Family({ at }: { at?: Tile }) {
   const game = useGame((s) => s.game)
   const f = familyAt(game, at ?? { x: Math.round(game.player.x), y: Math.round(game.player.y) })
   if (!f) return null
+  // 이사를 바라는 가족 (2026-10-14): 말리거나 인사하거나
+  if (wantsToMove(game, f.household)) {
+    const bye = !!game.flags[`moveBye:${Number(f.household.id.slice(2))}`]
+    return (
+      <>
+        <p className="talk-line">{bye ? t('familyHome.moveByeDone') : t('familyHome.moveWish')}</p>
+        {!bye && (
+          <div className="actions menu column">
+            <button onClick={() => { useGame.getState().familyMove('stay', f.household.id); }}>{t('familyHome.moveStay')}</button>
+            <button onClick={() => { useGame.getState().familyMove('bye', f.household.id); }}>{t('familyHome.moveBye')}</button>
+          </div>
+        )}
+      </>
+    )
+  }
   const lines = [t('familyHome.line1'), t('familyHome.line2'), t('familyHome.line3')]
   return <p className="talk-line">{lines[game.clock.day % lines.length]}</p>
 }

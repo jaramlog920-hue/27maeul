@@ -1,7 +1,18 @@
+import {drawShownToOne} from './shown-to-one-art'
+import {drawPoppyFireMemory} from './poppy-fire-memory-art'
+import {drawPoppyBreadWish} from './poppy-bread-wish-art'
+import {drawMerchantPrivateBox} from './merchant-private-box-art'
+import {drawLastCopiedPage} from './last-copied-page-art'
+import {drawOneMoreBook} from './one-more-book-art'
+import {drawOurBlend} from './our-blend-art'
+import {drawCountingSteps} from './counting-steps-art'
+import {drawWorriedApothecary} from './worried-apothecary-art'
+import {drawReversedName} from './reversed-name-art'
 import type {Avatar} from '../engine/avatar'
 import type {FinalePerson} from './library-finale-art'
 import {drawTimedGathering,timedGathering,TIMED_GATHERINGS,type TimedGathering} from './timed-gathering-art'
 import {drawSharedCushion} from './shared-cushion-art'
+import {drawFamilyReading} from './family-reading-art'
 import {drawBeeNotebook} from './bee-notebook-art'
 import {drawRiverRest} from './river-rest-art'
 import {drawForkSign} from './fork-sign-art'
@@ -15,17 +26,28 @@ import {drawOvenSharing} from './oven-sharing-art'
 import {person} from './milestone-moments-art'
 
 /** 개별 대사와 대조해 완성한 장면만 등록한다. 공통 그림을 완성 장면으로 취급하지 않는다. */
-export const AUTHORED_STORY_IDS=['ev:wendell:home:2','ev:baker:story:3','lightShoes','fam:trip','ev:carpenter:story:3','ev:baker:small:festBasket','ev:poppy:story:2','built:reedRack','ev:rudy:small:signPost','village:3','ev:beekeeper:story:1','ev:penelope:lunch',...Object.keys(TIMED_GATHERINGS)] as const
+export const AUTHORED_STORY_IDS=['ev:juniper:story:2','romance1:wendell','romance2:wendell','ev:merchant:story:1','bookBound','shelved','ev:poppy:love:1','ev:wendell:home:2','ev:baker:story:3','lightShoes','fam:trip','ev:carpenter:story:3','ev:baker:small:festBasket','ev:poppy:story:2','built:reedRack','ev:rudy:small:signPost','village:3','ev:beekeeper:story:1','ev:penelope:lunch','fam:read','ev:rudy:love:1','ev:basil:worry','ev:presser:love:1',...Object.keys(TIMED_GATHERINGS)] as const
 export function hasAuthoredStory(id:string){return (AUTHORED_STORY_IDS as readonly string[]).includes(id)}
 
-export function authoredStoryPeople(id:string):string[]{return timedGathering(id)?.people??(id==='ev:penelope:lunch'?['penelope']:id==='ev:beekeeper:story:1'?['beekeeper']:id==='village:3'?['grandpa','fisher','baker']:id==='ev:rudy:small:signPost'?['rudy','postman']:id==='built:reedRack'?['carpenter']:id==='ev:poppy:story:2'?['poppy','wendell']:id==='ev:baker:small:festBasket'?['baker']:id==='ev:carpenter:story:3'?['carpenter','rudy','smith']:id==='ev:baker:story:3'?['baker','wendell']:id==='lightShoes'?['shepherd']:[])}
+export function authoredStoryPeople(id:string):string[]{return timedGathering(id)?.people??(id==='ev:juniper:story:2'?['juniper']:id==='romance1:wendell'||id==='romance2:wendell'?['wendell']:id==='ev:merchant:story:1'?['merchant']:id==='ev:poppy:love:1'?['poppy']:id==='ev:presser:love:1'?['presser']:id==='ev:basil:worry'?['basil']:id==='ev:rudy:love:1'?['rudy']:id==='ev:penelope:lunch'?['penelope']:id==='ev:beekeeper:story:1'?['beekeeper']:id==='village:3'?['grandpa','fisher','baker']:id==='ev:rudy:small:signPost'?['rudy','postman']:id==='built:reedRack'?['carpenter']:id==='ev:poppy:story:2'?['poppy','wendell']:id==='ev:baker:small:festBasket'?['baker']:id==='ev:carpenter:story:3'?['carpenter','rudy','smith']:id==='ev:baker:story:3'?['baker','wendell']:id==='lightShoes'?['shepherd']:[])}
 
 export function drawAuthoredStory(g:CanvasRenderingContext2D,id:string,w:number,h:number,t:number,avatar:Avatar|null,npc:FinalePerson,others:FinalePerson[]=[],beat=0,choice?:number|null){
  if(!hasAuthoredStory(id))return
+ if(id==='ev:juniper:story:2'){drawShownToOne(g,w,h,t,avatar,npc,beat,choice);return}
+ if(id==='ev:poppy:love:1'){drawOurBlend(g,w,h,t,avatar,npc,beat,choice);return}
+ if(id==='bookBound'){drawLastCopiedPage(g,w,h,t,avatar);return}
+ if(id==='shelved'){drawOneMoreBook(g,w,h,t,avatar);return}
  g.imageSmoothingEnabled=false
+ if(id==='romance1:wendell'){drawPoppyFireMemory(g,w,h,t,avatar,npc,beat);return}
+ if(id==='romance2:wendell'){drawPoppyBreadWish(g,w,h,t,avatar,npc,beat);return}
+ if(id==='ev:merchant:story:1'){drawMerchantPrivateBox(g,w,h,t,avatar,npc,beat,choice);return}
  if(timedGathering(id)){drawTimedGathering(g,id as TimedGathering,w,h,t,avatar,[npc,...others],beat);return}
  if(id==='ev:penelope:lunch'){drawSharedCushion(g,w,h,t,avatar,npc,beat,choice);return}
  if(id==='ev:beekeeper:story:1'){drawBeeNotebook(g,w,h,t,avatar,npc,beat,choice);return}
+ if(id==='ev:presser:love:1'){drawCountingSteps(g,w,h,t,avatar,npc,beat);return}
+ if(id==='ev:basil:worry'){drawWorriedApothecary(g,w,h,t,avatar,npc,beat,choice);return}
+ if(id==='ev:rudy:love:1'){drawReversedName(g,w,h,t,avatar,npc,beat,choice);return}
+ if(id==='fam:read'){drawFamilyReading(g,w,h,t,avatar,npc,beat);return}
  if(id==='village:3'){drawRiverRest(g,w,h,t,avatar,npc,others[0]??npc,others[1]??npc,beat);return}
  if(id==='ev:rudy:small:signPost'){drawForkSign(g,w,h,t,avatar,npc,others[0]??npc,beat,choice);return}
  if(id==='built:reedRack'){drawReedRackBuilt(g,w,h,t,avatar,npc,beat);return}
@@ -71,6 +93,10 @@ export function drawAuthoredStory(g:CanvasRenderingContext2D,id:string,w:number,
  const leafX=cx+69+(Math.floor(t*2)%15),leafY=ground-34+(Math.floor(t*3)%24)
  p(leafX,leafY,'#99a979',2,1)
 }
+
+
+
+
 
 
 

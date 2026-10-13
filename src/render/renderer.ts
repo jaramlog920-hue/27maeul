@@ -49,6 +49,7 @@ import { homeWallsKey } from '../engine/home-walls'
 import { childGrowth, rainbowVisible } from '../engine/stories'
 import { childMode, childStage } from '../engine/child'
 import { siblingsOf, siblingTile } from '../engine/siblings'
+import { ownerJob } from '../engine/kid-work'
 import { playerChildAvatar, playerChildSprite } from './player-child-look'
 import { BOARD, stoneTile, TRIP_H, TRIP_W, tripLayout, type Cell as TripCell } from '../engine/trip-board'
 import { feastToday } from '../engine/library'
@@ -2412,7 +2413,9 @@ function drawNewlandSites(g: Ctx, game: GameState, playerY: number, over: boolea
     }
     const set = b.state === 'done' ? OLD_BUILDINGS : OLD_CONSTRUCTION
     // 그림은 자산 id로 (기억 정원 = garden, 아이 일터 = 그 아이 직업의 집 겸 일터)
-    const asset = b.kind === 'kidWork' ? (game.child?.job && set[game.child.job] ? game.child.job : 'cook') : (SITES[b.kind].assetId ?? b.kind)
+    // 집 겸 일터: 그 주인의 일 그림 (2026-10-14: 아이 셋·이웃 자녀)
+    const ownJob = b.kind === 'kidWork' ? ownerJob(game, b.owner) : null
+    const asset = b.kind === 'kidWork' ? (ownJob && set[ownJob] ? ownJob : 'cook') : (SITES[b.kind].assetId ?? b.kind)
     const art = set[asset][b.facing]
     // 넓은 집(2·3단계)의 공사 그림은 본채 자리에 (날개 자리는 말뚝)
     const off = hasHouseLook(b.kind) ? mainOffset(widthOf(b.kind, b.size)) : 0

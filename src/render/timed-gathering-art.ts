@@ -38,7 +38,7 @@ export function drawTimedGathering(g:CanvasRenderingContext2D,id:TimedGathering,
   for(let x=0;x<w;x++){const y=f-27+Math.round(Math.sin(x/w*8)*4);p(x,y,night?'#4b5f58':'#95ab80',1,23)}
   if(night){
    for(let i=0;i<70;i++){const x=(i*61+7)%w,y=3+(i*29)%Math.max(8,f-34);p(x,y,Math.sin(t+i)>.7?'#e4dec4':'#9ca9ab',1,1)}
-   p(cx+93,12,'#dedbc0',8,10);p(cx+96,11,'#55596b',7,8)
+   for(let y=-6;y<=6;y++)for(let x=-6;x<=6;x++)if(x*x+y*y<=36&&(x-3)**2+(y+2)**2>36)p(cx+98+x,15+y,'#dedbc0')
    const lying=(a:FinalePerson,x:number,y:number)=>{
     p(x-3,y-19,'#a18f78',36,21);p(x-2,y-18,'#c2b49a',34,19)
     const av=a.avatar?withLookDefaults(a.avatar):undefined,pal=a.who==='writer'?writerPalette('spring',av):PALETTE
@@ -54,7 +54,7 @@ export function drawTimedGathering(g:CanvasRenderingContext2D,id:TimedGathering,
    p(cx-44,f+15,'#c29381',88,23);for(let x=cx-40;x<cx+42;x+=9)p(x,f+15,'#ddc5a6',2,23)
    actor(0,cx-63,f+41,'right',true);actor(1,cx+40,f+41,'left',true);actor(2,cx-8,f+13,'down',true)
    person(p,cx-8,f+52,avatar,'up','writer',true)
-   p(cx-14,f+24,'#ad8d5e',23,7);p(cx-12,f+22,'#d1b486',19,3);bread(cx+14,f+28)
+   p(cx-36,f+24,'#ad8d5e',23,7);p(cx-34,f+22,'#d1b486',19,3);bread(cx+14,f+28)
   }
   return
  }
@@ -68,7 +68,7 @@ export function drawTimedGathering(g:CanvasRenderingContext2D,id:TimedGathering,
   actor(0,cx-59,f+34,'right',true);actor(1,cx+42,f+34,'left',beat>=2);actor(2,cx+84,f+35,'left')
   person(p,cx-102,f+35,avatar,'right')
   p(cx-23,f+24,'#d1b4a6',54,14);p(cx-22,f+25,'#e6d0bc',52,12)
-  const bx=cx-7+(beat>=2?34:Math.round(Math.sin(t*.7)*8)),by=f+27
+  const bx=cx-7+(beat>=2?40:Math.round(Math.sin(t*.7)*8)),by=f+(beat>=2?24:27)
   const pal={...SMALL_PALETTE,s:writerPalette('spring',cast[0]?.avatar?withLookDefaults(cast[0].avatar):undefined).s}
   BABY.crawl.forEach((r,y)=>[...r].forEach((c,x)=>{if(c!=='.'&&pal[c as keyof typeof pal])p(bx+x*2,by+y*2,pal[c as keyof typeof pal],2,2)}))
   return
@@ -105,19 +105,22 @@ export function drawTimedGathering(g:CanvasRenderingContext2D,id:TimedGathering,
   const drift=Math.floor(t*4)%47;for(let i=0;i<5;i++)p(cx-33+drift+i*13,f-18+i*6,'#e2b7b8',2,1)
  }else if(id==='festival:barley'){
   // 새 보리 단과 갓 구운 보리빵. 꽃잎이나 포도를 대신 쓰지 않는다.
-  for(let i=0;i<3;i++){const x=cx+74+i*11;p(x,f+1,'#c9b879',2,32);p(x-3,f-3,'#e4d294',7,10);p(x-3,f+19,'#9c7c4c',7,2)}
+  for(let i=0;i<3;i++){const x=cx+74+i*11;p(x,f+1,'#c9b879',2,32);p(x-1,f-6,'#e4d294',2,3);p(x-3,f-3,'#e4d294',6,6);p(x-2,f+3,'#d6c17e',4,3);for(let j=0;j<3;j++)p(x-2+j%2*2,f-2+j*2,'#bea563',1,1);p(x-3,f+19,'#9c7c4c',7,2)}
   p(cx+67,f+36,'#ad946d',46,3);bread(cx+73,f+31);bread(cx+94,f+31)
  }else if(id==='festival:grapes'){
   p(cx+72,f+19,'#aa885b',36,14);p(cx+74,f+18,'#cfb17e',32,3)
-  for(let row=0;row<3;row++)for(let i=0;i<6-row;i++)p(cx+76+i*5+row*2,f+17-row*4,'#9381a0',4,4)
+  for(let row=0;row<3;row++)for(let i=0;i<6-row;i++){p(cx+76+i*5+row*2,f+17-row*4,'#9381a0',3,3);p(cx+76+i*5+row*2,f+17-row*4,'#b8a3bd',1,1)}
   p(cx+82,f+1,'#89946a',17,2);p(cx+88,f-3,'#89946a',2,6)
-  for(let i=0;i<3;i++){p(cx-113+i*12,f+7,'#866b4e',10,22);p(cx-112+i*12,f+12,'#b39972',8,1)}
+  for(let i=0;i<3;i++){p(cx-113+i*12,f-16,'#866b4e',10,22);p(cx-112+i*12,f-11,'#b39972',8,1)}
  }else{
   // 겨울에는 불 곁의 따뜻한 잔, 쌓아 둔 장작과 눈 가장자리를 그린다.
   for(let i=0;i<4;i++){p(cx+72+i*7,f+26-i%2*4,'#896447',6,14);p(cx+73+i*7,f+27-i%2*4,'#b09064',2,12)}
   p(cx+68,f+41,'#d7d7c9',39,3);cup(cx-56,f+16);cup(cx+51,f+17)
  }
 }
+
+
+
 
 
 
