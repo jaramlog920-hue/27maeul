@@ -1,5 +1,4 @@
-import { useEffect, useRef } from 'react'
-import { T } from '../../content/text'
+import { useEffect, useRef, useState } from 'react'
 import { neighborById } from '../../content/catalog'
 import { FEATURE_RULES, type FeatureId } from '../../engine/feature-rules'
 import { ZONES } from '../../engine/world'
@@ -30,68 +29,130 @@ const PLACE_UNLOCKS = [
   }),
 ].sort((a, b) => parseInt(a.when.replace(/\D/g, '')) - parseInt(b.when.replace(/\D/g, '')))
 
+/**
+ * 도움말 책 (2026-10-14 사용자: 뻔한 설명 대신 꿀팁만, 목차와 넘김 단추로 책처럼, 마지막은 열리는 때).
+ * 모든 숫자·규칙은 코드에서 확인한 것만 적는다 — 규칙을 바꾸면 여기도 함께 고친다:
+ * 필사 verseMinutes·CARE_TYPOS·copyPay/libraryPay·SEASON_COPY_FROM/TO, 서고 library.ts, 벤치 READ_REST·READ_MINUTES,
+ * 잠 sleepNeeds·fallsSick(LIMIT), 장날 isMarketDay, 잔치 festivalOf, 마음 GAIN·DAILY_HEART_CAP·BIRTHDAY_MUL·HALL_*,
+ * 능력치 stats.ts, 연애 heart-balance-text.json
+ */
+const CHAPTERS: { title: string; tips: string[] }[] = [
+  {
+    title: '필사',
+    tips: [
+      '한 절을 마칠 때마다 시간이 5분 흘러요. 낱말 조각 퍼즐로 마친 절은 3분이에요.',
+      '피로는 쓰는 동안이 아니라 장을 마칠 때 한 번에 붙어요. 퍼즐로 마친 절이 많을수록 덜 붙어요.',
+      '한 장을 퍼즐 없이 모두 직접 쓰고 틀린 글자가 둘 이하면 그 장에 정성 도장을 받아요.',
+      '처음 마친 장에는 필사 삯을 받아요. 절이 많은 장일수록 많고, 서고에 꽂은 책이 늘수록 더 올라요.',
+      '계절마다 15일부터 21일 사이에 장을 마치면, 그 계절에 한 번 계절 장식을 받아요.',
+    ],
+  },
+  {
+    title: '서고와 다시 읽기',
+    tips: [
+      '퀴즈 없이 바로 꽂아도 불이익은 없어요. 책등이 맨 책으로 남을 뿐이에요.',
+      '퀴즈를 풀고 꽂으면 맞힌 만큼 책등에 은박이나 금박이 입혀져요. 틀린 구절은 다시 읽을 구절로 돌아와요.',
+      '잠들기 전에 읽을 구절을 고르면 다시 읽을 구절이 가장 먼저 나와요. 읽고 자면 목록에서 빠져요.',
+      '벤치와 언덕 쉼터에서 모아 둔 구절을 읽으면 피로가 30 풀려요. 읽는 데 20분이 걸려요.',
+    ],
+  },
+  {
+    title: '하루와 몸',
+    tips: [
+      '새벽 1시가 넘어서 자면 다음 날 피로가 30 남은 채로 일어나요.',
+      '배고픔이나 피로가 가득 찬 채로 잠들면 다음 날 앓아누워 오전 10시에 일어나요.',
+      '장날은 7일마다 돌아와요(7일째, 14일째…).',
+      '계절 잔치: 봄 20일 꽃 잔치, 여름 25일 보리 잔치, 가을 30일 포도 잔치, 겨울 20일 화롯가 잔치.',
+    ],
+  },
+  {
+    title: '이웃과 마음',
+    tips: [
+      '일상 교류로 오르는 마음은 이웃마다 하루 6점까지예요. 한 이웃과 채워도 다른 이웃과는 더 오를 수 있어요.',
+      '한 번에 오르는 기본 크기: 이야기 1, 돕기 2, 함께 일하기 끝까지 3, 좋아하는 선물 3, 그냥 선물 1, 저녁 4, 부탁 6.',
+      '선물은 이웃마다 하루 한 번이에요. 싫어하는 것을 건네면 마음이 오르지 않아요.',
+      '생일에 건넨 선물은 마음이 두 배로 오르고, 하루 6점 제한도 받지 않아요.',
+      '사랑방은 저녁 6시부터 8시 반까지 열려요. 하루 한 번 함께 놀면 같이 논 이웃마다 마음이 3점 올라요.',
+    ],
+  },
+  {
+    title: '능력치',
+    tips: [
+      '근력: 단계마다 일할 때 피로가 6%씩 덜 쌓여요.',
+      '손재주(만들기)·근력(모으기): 단계마다 4%씩 하나 더 생길 수 있어요. 운도 단계마다 3%씩 보태요.',
+      '매력: 3단계부터 이웃마다 하루 한 번 마음이 1점 더, 5단계면 2점 더 올라요. 3단계부터는 장날 파는 값도 1닢 더 받아요.',
+      '지능: 3단계면 장 기록 퀴즈의 틀린 보기 하나가 흐리게, 5단계면 둘이 흐리게 보여요.',
+      '운: 일로는 오르지 않아요. 맑은 밤 별 보기나 마을 잔치 같은 날에 조금씩 올라요.',
+      '운: 단계마다 이웃이 찾아와 선물할 확률이 5%씩 올라요.',
+    ],
+  },
+  {
+    title: '연애',
+    tips: [
+      '마음이 8하트에 닿으면 들꽃 다발로 마음을 전할 수 있어요.',
+      '헤어진 뒤 14일이 지나야 다시 마음을 전할 수 있어요.',
+      '10하트는 연애 14일, 데이트 3회, 연인 이야기를 마친 뒤에 열려요.',
+    ],
+  },
+]
+const UNLOCK_PAGE = CHAPTERS.length + 1
+
 export function GameGuide() {
   const close = useGame(s => s.closeModal)
   const button = useRef<HTMLButtonElement>(null)
+  // 0 목차, 1.. 장, 마지막 열리는 때
+  const [page, setPage] = useState(0)
   useEffect(() => {
     const previous = document.activeElement
     button.current?.focus()
     return () => { if (previous instanceof HTMLElement) previous.focus() }
   }, [])
+  const chapter = page >= 1 && page <= CHAPTERS.length ? CHAPTERS[page - 1] : null
   return (
-    <div className="dialog game-guide" role="dialog" aria-modal="true" aria-label="도움말"
-      onKeyDown={event => {
-        if (event.key === 'Escape') close()
-        if (event.key === 'Tab') { event.preventDefault(); button.current?.focus() }
-      }}>
+    <div className="dialog game-guide guide-book" role="dialog" aria-modal="true" aria-label="도움말"
+      onKeyDown={event => { if (event.key === 'Escape') close() }}>
       <h2>도움말</h2>
-      <h3>이야기 엮기</h3>
-      <ol className="guide-flow">
-        {T.ui.guide.map((line, i) => (
-          <li key={i}>{line}</li>
-        ))}
-      </ol>
-      <h3>움직이기</h3>
-      <p>화면을 누르면 그곳으로 걸어가요. 키보드는 WASD나 방향키로 걷고, <b>스페이스</b>를 누르면 바라보는 쪽의 이웃·물건을 누른 것처럼 상호작용해요. 설정의 화면 조작에서 아래 조작판이나 떠 있는 조이스틱을 고르면 그것으로도 걸을 수 있어요(마우스·터치 모두).</p>
-      <h3>집 안</h3>
-      <table className="guide-places" aria-label="집 안 장소 안내">
-        <thead><tr><th>장소</th><th>할 수 있는 일</th><th>위치</th></tr></thead>
-        <tbody>
-          <tr><th scope="row">침대</th><td>잠자기, 다음 날로 넘어가기</td><td>왼쪽 위</td></tr>
-          <tr><th scope="row">책상</th><td>모은 이야기 정리·기록</td><td>왼쪽 아래</td></tr>
-          <tr><th scope="row">선반</th><td>말씀의 서고 칸 열기 — 꽂은 책과 나의 한 줄 (집 안에서는 메뉴 옆 [가구 배치])</td><td>오른쪽 위</td></tr>
-          <tr><th scope="row">작업대</th><td>파피루스·잉크·담요 만들기</td><td>오른쪽 아래</td></tr>
-          <tr><th scope="row">벽난로</th><td>불 쬐기, 음식 먹기, 빵 굽기</td><td>위쪽 가운데</td></tr>
-        </tbody>
-      </table>
-      <h3>마을</h3>
-      <p className="hint">위치는 전체 지도 기준이에요.</p>
-      <table className="guide-places" aria-label="마을 장소 안내">
-        <thead><tr><th>장소</th><th>할 수 있는 일</th><th>위치</th></tr></thead>
-        <tbody>
-          <tr><th scope="row">우물</th><td>물 긷기</td><td>내 집 오른쪽, 언덕 아래</td></tr>
-          <tr><th scope="row">벤치</th><td>앉아서 성경구절 읽기 — 읽을 때마다 피로 30 회복</td><td>위쪽 언덕 / 장터 오른쪽</td></tr>
-          <tr><th scope="row">갈대</th><td>갈대 채집</td><td>오른쪽 끝 강가, 나루 아래</td></tr>
-          <tr><th scope="row">보리밭</th><td>보리 수확</td><td>아래쪽 가운데</td></tr>
-          <tr><th scope="row">올리브나무</th><td>올리브 채집</td><td>오른쪽 아래, 기름틀 아래</td></tr>
-          <tr><th scope="row">포도나무</th><td>익은 포도 수확</td><td>오른쪽 위, 할아버지 집 아래</td></tr>
-          <tr><th scope="row">기름틀</th><td>올리브로 기름 만들기</td><td>오른쪽 아래</td></tr>
-          <tr><th scope="row">장터</th><td>장날에 상인과 거래</td><td>마을 가운데</td></tr>
-        </tbody>
-      </table>
-      <h3>열리는 때</h3>
-      <table className="guide-places" aria-label="기능이 열리는 때">
-        <thead><tr><th>기능</th><th>마친 만큼</th></tr></thead>
-        <tbody>
-          {UNLOCKS.map((u) => <tr key={u.name}><th scope="row">{u.name}</th><td>{u.when}</td></tr>)}
-        </tbody>
-      </table>
-      <table className="guide-places" aria-label="장소가 열리는 때">
-        <thead><tr><th>장소·이웃</th><th>서고에 꽂은 책</th></tr></thead>
-        <tbody>
-          {PLACE_UNLOCKS.map((u) => <tr key={u.name}><th scope="row">{u.name}</th><td>{u.when}</td></tr>)}
-        </tbody>
-      </table>
+      {page === 0 && (
+        <nav aria-label="목차">
+          <h3>목차</h3>
+          <ol className="guide-toc">
+            {[...CHAPTERS.map(c => c.title), '열리는 때'].map((title, i) => (
+              <li key={title}><button className="row" onClick={() => setPage(i + 1)}><span className="row-main"><b>{title}</b></span></button></li>
+            ))}
+          </ol>
+        </nav>
+      )}
+      {chapter && (
+        <section aria-label={chapter.title}>
+          <h3>{chapter.title}</h3>
+          <ul className="guide-tips">
+            {chapter.tips.map(tip => <li key={tip}>{tip}</li>)}
+          </ul>
+        </section>
+      )}
+      {page === UNLOCK_PAGE && (
+        <section aria-label="열리는 때">
+          <h3>열리는 때</h3>
+          <table className="guide-places" aria-label="기능이 열리는 때">
+            <thead><tr><th>기능</th><th>마친 만큼</th></tr></thead>
+            <tbody>
+              {UNLOCKS.map((u) => <tr key={u.name}><th scope="row">{u.name}</th><td>{u.when}</td></tr>)}
+            </tbody>
+          </table>
+          <table className="guide-places" aria-label="장소가 열리는 때">
+            <thead><tr><th>장소·이웃</th><th>서고에 꽂은 책</th></tr></thead>
+            <tbody>
+              {PLACE_UNLOCKS.map((u) => <tr key={u.name}><th scope="row">{u.name}</th><td>{u.when}</td></tr>)}
+            </tbody>
+          </table>
+        </section>
+      )}
+      <div className="guide-turn">
+        <button disabled={page === 0} onClick={() => setPage(page - 1)}>‹ 앞</button>
+        <button onClick={() => setPage(0)} disabled={page === 0}>목차</button>
+        <span className="guide-page">{page === 0 ? '목차' : `${page} / ${UNLOCK_PAGE}`}</span>
+        <button disabled={page === UNLOCK_PAGE} onClick={() => setPage(page + 1)}>뒤 ›</button>
+      </div>
       <div className="actions"><button data-close ref={button} onClick={close}>닫기</button></div>
     </div>
   )

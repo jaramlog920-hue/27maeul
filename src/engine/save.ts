@@ -575,6 +575,32 @@ export function saveGame(s: GameState, store: Storage | null | undefined = stora
   }
 }
 
+/** 내보내기·가져오기 (2026-10-14 사용자): 저장 하나를 파일로 꺼내고, 그 파일을 새 칸으로 들인다 */
+const EXPORT_APP = 'twenty-seven'
+export function exportSave(s: GameState): string {
+  return JSON.stringify({ app: EXPORT_APP, v: 1, at: Date.now(), save: serialize(s) })
+}
+/** 가져온 파일을 새 칸에 넣고 그 칸을 이어 할 칸으로 정한다. 새 칸 번호, 알맞은 저장이 아니면 null */
+export function importSave(text: string, content: GameContent, store: Storage | null | undefined = storage()): string | null {
+  try {
+    if (!store) return null
+    const raw = JSON.parse(text) as { app?: unknown; save?: unknown }
+    if (raw?.app !== EXPORT_APP || typeof raw.save !== 'string') return null
+    if (!deserialize(raw.save, content)) return null
+    const slot = newSlot(store)
+    store.setItem(slotKey(slot), raw.save)
+    try {
+      store.setItem(META_KEY(slot), JSON.stringify({ savedAt: Date.now() }))
+    } catch {
+      /* 저장 시각만 못 남김 */
+    }
+    setActiveSlot(slot, store)
+    return slot
+  } catch {
+    return null
+  }
+}
+
 /**
  * 새 칸에 따로 저장 (2026-10-13 사용자: 설정의 저장하기는 덮어쓰지 말고 새로) — 불러오기 목록에 한 칸이 늘어난다.
  * 지금 하던 칸은 그대로 이어서 저장된다. 앨범 그림도 새 칸으로 옮겨 적는다 (자리가 모자라면 그림만 빠진다).

@@ -10,7 +10,12 @@ const isOtBookChunk = (id: string | null | undefined) => !!id && /\/src\/content
 const isNtBookChunk = (id: string | null | undefined) => !!id && /\/src\/content\/nt\/[^/]+\.json$/.test(id.replaceAll('\\', '/'))
 const isScreenChunk = (id: string | null | undefined) => !!id && /\/src\/features\/(cooking|clubs|fest|stall|village|family|child\/SchoolView|journal\/FamilyTree|newland\/(BuildMenu|FacilityView))/.test(id.replaceAll('\\', '/'))
 
+// 버전 (2026-10-14 사용자: 설정에 현재 버전·최신 버전을 나란히 — 업데이트 받기를 눌러야 하는지 알 수 있게).
+// 빌드한 때(한국 시각)를 버전으로 쓴다. 같은 값을 화면 코드(__APP_VERSION__)와 version.json에 함께 넣는다
+const APP_VERSION = new Intl.DateTimeFormat('ko-KR', { timeZone: 'Asia/Seoul', year: '2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date()).replace(/\s/g, '')
+
 export default defineConfig({
+  define: { __APP_VERSION__: JSON.stringify(APP_VERSION) },
   build: {
     manifest: true,
     rollupOptions: {
@@ -23,6 +28,7 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    { name: 'app-version', generateBundle() { this.emitFile({ type: 'asset', fileName: 'version.json', source: JSON.stringify({ version: APP_VERSION }) }) } },
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.png', 'apple-touch-icon.png'],

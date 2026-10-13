@@ -9,3 +9,6 @@ import { preloadScreens } from './features/lazy-screen'
 beforeAll(() => preloadScreens())
 // 테스트마다 화면 알림 줄(말씀조각 획득·필사 결과)을 비운다 — 스토어를 불러온 테스트만 (game-store가 걸어 둔 함수)
 beforeEach(() => (globalThis as { __resetGameUi?: () => void }).__resetGameUi?.())
+
+// 버전 상수는 빌드 때 넣는다 — 시험에서는 고정값
+;(globalThis as unknown as { __APP_VERSION__: string }).__APP_VERSION__ = '26.10.14.05:00'

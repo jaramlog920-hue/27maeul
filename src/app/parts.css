@@ -2514,3 +2514,16 @@ button.row:active:not(:disabled) { background: #efe3c4; }
 
 /* 기억 정원 장면 도감 (2026-10-14): 못 본 장면은 흐리게 */
 .memorial-scenes .scene-unseen { opacity: 0.4; filter: grayscale(1); }
+
+/* 설정 › 기록: 현재·최신 버전 (2026-10-14) */
+.version-lines { margin: 6px 0 4px; }
+.version-lines .hint { margin: 2px 0 0; }
+.version-lines + .settings-row { margin-top: 12px; }
+
+/* 도움말 책 (2026-10-14): 목차 · 장마다 꿀팁 · 넘김 단추 */
+.guide-book .guide-toc { list-style: none; margin: 0; padding: 0; }
+.guide-book .guide-tips { margin: 0; padding-left: 18px; }
+.guide-book .guide-tips li { margin: 0 0 10px; line-height: 1.6; word-break: keep-all; }
+.guide-book .guide-turn { display: flex; align-items: center; gap: 8px; margin-top: 14px; }
+.guide-book .guide-turn button { min-height: 40px; padding: 4px 12px; }
+.guide-book .guide-page { flex: 1; text-align: center; font-size: 13px; color: var(--ink-soft); }

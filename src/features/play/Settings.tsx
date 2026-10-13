@@ -1,5 +1,5 @@
 import { featureAccess, featureHint } from '../../engine/feature-rules'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   currentMusicChoice,
   currentVolume,
@@ -11,7 +11,8 @@ import {
   type MusicChoice,
   type VolumeKind,
 } from '../../audio/sound'
-import { eraseSave, saveAsNew, saveGame } from '../../engine/save'
+import { eraseSave, exportSave, importSave, saveAsNew, saveGame } from '../../engine/save'
+import { CONTENT } from '../../content/catalog'
 import { setGenOn } from '../../engine/gen-settle'
 import { t } from '../../shared/i18n'
 import { T } from '../../content/text'
@@ -132,6 +133,67 @@ function CopyFeelToggle({ label, get, put, id }: { label: string; get: () => boo
         ))}
       </div>
     </div>
+  )
+}
+
+/** 현재 버전·최신 버전 (2026-10-14 사용자: 업데이트 받기를 눌러야 하는지 알 수 있게) */
+function VersionLines() {
+  const [latest, setLatest] = useState<string | null | undefined>(undefined)
+  useEffect(() => {
+    let alive = true
+    if (typeof fetch !== 'function') { setLatest(null); return }
+    fetch(`/version.json?t=${Date.now()}`, { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j: { version?: unknown } | null) => { if (alive) setLatest(typeof j?.version === 'string' ? j.version : null) })
+      .catch(() => { if (alive) setLatest(null) })
+    return () => { alive = false }
+  }, [])
+  const same = latest === __APP_VERSION__
+  return (
+    <div className="version-lines">
+      <p className="hint">현재 버전 {__APP_VERSION__}</p>
+      <p className="hint">최신 버전 {latest === undefined ? '확인하는 중…' : latest ?? '확인할 수 없어요'}</p>
+      {latest && <p className="hint"><b>{same ? '최신 버전이에요.' : '업데이트 받기를 눌러 주세요.'}</b></p>}
+    </div>
+  )
+}
+
+/** 내보내기·가져오기 (2026-10-14 사용자): 지금 저장을 파일로 받고, 받은 파일을 새 칸으로 들인다 */
+function SaveFileRows() {
+  const pickRef = useRef<HTMLInputElement>(null)
+  const exportNow = () => {
+    const game = useGame.getState().game
+    saveGame(game)
+    const blob = new Blob([exportSave(game)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `스물일곱권의마을-${game.avatar?.name ?? '저장'}-${game.clock.day}일째.json`
+    a.click()
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
+    useGame.getState().say('저장 파일을 내보냈어요.')
+  }
+  const importFile = async (file: File | undefined) => {
+    if (!file) return
+    const text = await file.text()
+    saveGame(useGame.getState().game)
+    const slot = importSave(text, CONTENT)
+    if (!slot) return useGame.getState().say('이 게임의 저장 파일이 아니에요.')
+    useGame.getState().say('가져왔어요. 새 칸으로 다시 열어요.', 2000)
+    setTimeout(() => globalThis.location?.reload(), 900)
+  }
+  return (
+    <>
+      <div className="settings-row">
+        <h3>내보내기</h3>
+        <button onClick={exportNow}>내보내기</button>
+      </div>
+      <div className="settings-row">
+        <h3>가져오기</h3>
+        <button onClick={() => pickRef.current?.click()}>가져오기</button>
+        <input ref={pickRef} type="file" accept="application/json,.json" hidden aria-label="가져올 저장 파일" onChange={(e) => { void importFile(e.target.files?.[0]); e.target.value = '' }} />
+      </div>
+    </>
   )
 }
 
@@ -369,6 +431,8 @@ export function Settings() {
             {T.ui.update}
           </button>
         </div>
+        <VersionLines />
+        <SaveFileRows />
         <div className="settings-row">
           <h3>{t('saves.toTitle')}</h3>
           <button
