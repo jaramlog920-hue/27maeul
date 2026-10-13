@@ -2,7 +2,7 @@
 import { neighborById } from '../../content/catalog'
 import { NEIGHBOR_LINES, SCENES, T } from '../../content/text'
 import { cursorOf, HOLD_DOWN, HOLD_UP, isDone, litCell, ORDER_CELLS, PICK_COLS, PICK_ROWS, progressOf, showing, type MiniState } from '../../engine/minigame'
-import { count } from '../../engine/items'
+import { wearing } from '../../engine/gear'
 import type { ItemId } from '../../engine/types'
 import { ItemIcon } from '../../shared/ItemIcon'
 import { useGame, type Pending } from '../../store/game-store'
@@ -14,7 +14,6 @@ function titleOf(p: Pending): string {
   if (p.kind === 'club') return T.plans.activity.sew
   if (p.kind === 'gather') return (T.ui.minigame.gather as Record<string, string>)[p.place] ?? (T.places as Record<string, string>)[p.place] ?? ''
   if (p.kind === 'craft') return (T.recipes as Record<string, string>)[p.recipe]?.split(' — ')[0] ?? ''
-  if (p.kind === 'teach') return T.ui.talkTeach
   if (p.kind === 'letter') return T.letters.mini
   if (p.kind === 'reading') return T.meetings.reading
   // 이야기 속 손일 (계획 16 작업 4): 이웃 이름 · 그 장면 제목
@@ -26,7 +25,6 @@ function titleOf(p: Pending): string {
 function iconOf(p: Pending): ItemId {
   if (p.kind === 'gather') return PLACE_ICON[p.place] ?? 'water'
   if (p.kind === 'craft') return RECIPE_ICON[p.recipe] ?? 'bread'
-  if (p.kind === 'teach') return 'papyrus'
   if (p.kind === 'letter') return 'papyrus'
   if (p.kind === 'help') {
     // 이웃마다 손일의 결과물이 다르므로 공통 양털 그림을 쓰지 않는다.
@@ -40,7 +38,7 @@ export function MiniGame({ state, pending }: { state: MiniState; pending: Pendin
   const miniTap = useGame((s) => s.miniTap)
   const quitMini = useGame((s) => s.quitMini)
   const skipMini = useGame((s) => s.skipMini)
-  const kit = useGame((s) => count(s.game.inv, 'handyKit') > 0)
+  const kit = useGame((s) => wearing(s.game, 'handyKit'))
   const done = isDone(state)
   const icon = iconOf(pending)
   const M = T.ui.minigame

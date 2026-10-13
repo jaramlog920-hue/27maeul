@@ -43,7 +43,7 @@ describe('life-text', () => {
   })
   it('엔진이 부르는 장면이 모두 있다', () => {
     for (const id of [
-      'welcome', 'strays', 'companionJoined', 'childAsks', 'firstLetter', 'childLearned', 'babyBorn', 'sick',
+      'welcome', 'strays', 'companionJoined', 'babyBorn', 'sick',
       'festival:barley', 'festival:grapes', 'festival:hearth', 'rainbow', 'firstSnow', 'stars', 'blanket',
       'firstChapter', 'bookBound','gospelFeast', 'feastFire', 'allFeast', 'allFeastFire', 'homeMailbox',
     ])

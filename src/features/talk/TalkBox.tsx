@@ -6,7 +6,7 @@ import { StallEntry } from '../stall/StallEntry'
 import { SkillLessonView, SkillEntry } from '../skills/SkillLesson'
 import { callName, fill, HEART_HINTS, itemList, T } from '../../content/text'
 import { isMarketDay } from '../../engine/calendar'
-import { activeRequest, canBreakUp, canGiveBouquet, canGiveCord, canGiveLoveVerse, isSuitor, romanceWith, stageWith, type GameState, canHelp, canOrderHome, canOrderWork, GIFTABLE, lessonTime, nextHomeStage } from '../../engine/game'
+import { activeRequest, canBreakUp, canGiveBouquet, canGiveCord, canGiveLoveVerse, isSuitor, romanceWith, stageWith, type GameState, canHelp, canOrderHome, canOrderWork, GIFTABLE, nextHomeStage } from '../../engine/game'
 import { DATING_DAYS } from '../../engine/romance'
 import heartText from '../../content/heart-balance-text.json'
 import { CARPENTER_WORKS } from '../../engine/easier'
@@ -61,7 +61,7 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
   }, [modal.neighborId, popup, markTalkPopupSeen])
   // 헤어지기는 한 번 더 묻는다
   const [asking, setAsking] = useState(false)
-  const { startHelp, open, closeModal, startTeach, say } = useGame.getState()
+  const { startHelp, open, closeModal, say } = useGame.getState()
   // 이웃마다 있던 사기·팔기·받기 단추(주고받기·약방 약초 팔기)는 2026-10-05에 지웠다 — 사고팔기는 장날 좌판에서
   const def = neighborById(modal.neighborId)
   if (!def) return null
@@ -72,7 +72,6 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
     block === 'needs' && def.help.needs ? fill(T.ui.helpNeeds, { items: itemList(def.help.needs) }) : block === 'tired' ? T.ui.helpTired : block === 'full' ? T.ui.bagFull : null
   // 단추 이름은 이웃마다 다른 일 이름 대신 그냥 "돕기" (2026-10-07 사용자)
   const canGift = !game.gifted.includes(def.id) && GIFTABLE.some((i) => (game.inv[i] ?? 0) > 0)
-  const teachable = def.id === 'child' && lessonTime(game)
   const req = requestFor(def.id, game.hearts[def.id], game.flags)
   const askable = req && reqState(game.flags, req.id) === 0
   const active = activeRequest(game, def.id)
@@ -152,11 +151,6 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
       <GenTalk npc={slotPerson(game.gen, def.id)} />
       <div className="actions menu">
         {/* 말씀 조각과 편지는 말을 걸 때 그 자리에서 건넨다 (받기 단추 없음) */}
-        {teachable && (
-          <button className="primary" onClick={startTeach}>
-            {T.ui.talkTeach}
-          </button>
-        )}
         {askable && (
           <button className="primary" onClick={() => requestAsk(def.id)}>
             {T.ui.talkRequest}

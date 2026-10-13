@@ -4,7 +4,8 @@ import { nextName } from '../../engine/child'
 import { useGame } from '../../store/game-store'
 
 export function ChildName() {
-  const child = useGame((s) => s.game.child)
+  // 동생 이름을 정하는 중이면 그 동생 (2026-10-13)
+  const child = useGame((s) => (s.game.flags.siblingNaming ? s.game.siblings?.[s.game.flags.siblingNaming - 1] : s.game.child))
   const setChildName = useGame((s) => s.setChildName)
   const [name, setName] = useState(child?.name ?? '')
   if (!child) return null

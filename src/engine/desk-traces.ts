@@ -9,6 +9,8 @@
 // - 덮어 둔 완성본: 한 권을 마치면 한 권, 네 권부터 두 권 포개어 (그 이상은 서고에)
 // - 좋은 펜·넓은 책상(가진 사람): 각자 꾸미기 물건으로 — 좋은 펜은 종이 위에 비스듬히, 넓은 책상은 상판이 넓게(drawWideDesk)
 import { count, type Inventory } from './items'
+import { wearing } from './gear'
+import type { ItemId } from './types'
 import type { CopyStats } from './copying'
 
 export const DESK_RIBBON_CHAPTERS = 1
@@ -39,7 +41,7 @@ export interface DeskTraces {
 export const EMPTY_DESK: DeskTraces = { ribbon: false, penCup: false, pages: 0, lamp: false, books: 0, goodPen: false, wideDesk: false }
 
 /** 지금 필사량과 가진 물건으로 책상에 놓일 것. 통계가 없으면(옛 저장) 빈 책상 */
-export function deskTraces(s: { copyStats?: Partial<CopyStats> | null; inv: Inventory }): DeskTraces {
+export function deskTraces(s: { copyStats?: Partial<CopyStats> | null; inv: Inventory; gearOff?: readonly ItemId[] }): DeskTraces {
   const st = s.copyStats ?? {}
   const chars = Math.max(0, st.chars ?? 0)
   const chapters = Math.max(0, st.chapters ?? 0)
@@ -50,7 +52,7 @@ export function deskTraces(s: { copyStats?: Partial<CopyStats> | null; inv: Inve
     pages: DESK_PAGES_CHARS.filter((n) => chars >= n).length,
     lamp: chars >= DESK_LAMP_CHARS || books >= 1,
     books: books >= DESK_TWO_BOOKS ? 2 : books >= 1 ? 1 : 0,
-    goodPen: count(s.inv, 'goodPen') > 0,
+    goodPen: wearing(s, 'goodPen'),
     wideDesk: count(s.inv, 'wideDesk') > 0,
   }
 }

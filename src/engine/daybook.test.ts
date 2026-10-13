@@ -63,7 +63,7 @@ describe('오늘의 기록 — 그날 있었던 일만', () => {
   it('가족 일만 고른다 (아이·동반 동물·혼인·둘의 나들이) — 무지개·이웃 아이는 가족 일이 아니다', () => {
     const s = fresh({ todayNotes: ['rainbow', 'childBorn', 'kidMail:gift', 'childAsks', 'babyBorn', 'dateTea', 'wedding:basil'] })
     expect(todayDiary(s)!.family).toEqual(['childBorn', 'kidMail:gift', 'dateTea', 'wedding:basil'])
-    expect(isFamilyNote('firstLetter')).toBe(false)
+    expect(isFamilyNote('firstOtBook')).toBe(false)
     expect(todayDiary(fresh({ todayNotes: ['rainbow', 'stars'] }))).toBeNull()
   })
 

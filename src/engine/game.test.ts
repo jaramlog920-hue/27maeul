@@ -13,7 +13,6 @@ import {
   giveGift,
   goToSleep,
   greetNeighbor,
-  lessonTime,
   lightLamp,
   listen,
   newGame,
@@ -29,7 +28,6 @@ import {
   submitChapter,
   tapTile,
   walkDirection,
-  teach,
   tick,
   trade,
   TRADES,
@@ -195,20 +193,7 @@ describe('이웃', () => {
     expect(s.giftsGot).toContain('brightLamp')
     expect(s.scenes).toContain('gift:smith:3')
   })
-  it('아이의 하트가 셋이면 글자를 배우고 싶어 하고, 저녁마다 한 글자', () => {
-    let s: GameState = { ...newGame(CONTENT), hearts: { child: 29 } }
-    s = greetNeighbor(s, 'child')
-    expect(s.flags.childAsked).toBe(1)
-    expect(s.scenes).toContain('childAsks')
-    expect(lessonTime(at(s, 17 * 60))).toBe(false)
-    s = at(s, 18 * 60 + 10)
-    expect(lessonTime(s)).toBe(true)
-    s = teach(s)
-    expect(s.flags.childLetters).toBe(1)
-    expect(s.scenes).toContain('firstLetter')
-    expect(lessonTime(s)).toBe(false)
-    expect(teach(s)).toBe(s)
-  })
+
   it('장날에만 상인과 바꾼다', () => {
     const pen = TRADES.find((t) => t.id === 'pen')!
     const s = { ...newGame(CONTENT), inv: { grapes: 3, wool: 2 } }
@@ -592,11 +577,7 @@ describe('리뷰 지적 회귀', () => {
     }
     expect(talks).toBeGreaterThan(0)
   })
-  it('m2: 잔치 날 저녁에는 글자 수업이 없다', () => {
-    const s: GameState = { ...at(newGame(CONTENT), 18 * 60 + 10, dayOf('summer', 25)), flags: { childAsked: 1 } }
-    expect(lessonTime(s)).toBe(false)
-    expect(lessonTime({ ...s, clock: { day: dayOf('summer', 24), minute: 18 * 60 + 10 } })).toBe(true)
-  })
+
   it('m3: 가방이 넘치면 모으기·돕기·만들기·바꾸기·가구 거두기를 막는다', () => {
     const full: GameState = { ...newGame(CONTENT), inv: { reed: 99, water: 99, bread: 99, papyrus: 99, grapes: 99, rug: 99 } }
     expect(gatherInfo(full, 'reeds')).toEqual({ blocked: 'full' })

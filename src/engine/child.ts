@@ -33,6 +33,10 @@ export interface Child {
   close?: number
   interests?: Partial<Record<AdultJob, number>>
   jobConfirmed?: boolean
+  /** 함께하지 않는 동안 맡아 두는 이 아이의 표식 (2026-10-13 아이 셋 — 함께할 아이를 바꾸면 game.flags와 맞바꾼다) */
+  kidFlags?: Record<string, number>
+  /** 함께하지 않는 동안 맡아 두는 이 아이의 옷장 모습 (game.looks.child와 맞바꾼다) */
+  wardrobe?: Record<string, unknown>
 }
 
 // ── 어른이 된 아이 (2026-09-30 사용자 요청) ──
@@ -224,5 +228,7 @@ export function sanitizeChild(raw: unknown): Child | null {
     ...(job ? { job, left: !!o.left, jobConfirmed: o.jobConfirmed !== false } : {}),
     ...(Object.keys(interests).length ? { interests } : {}),
     ...(close ? { close } : {}),
+    ...(o.kidFlags && typeof o.kidFlags === 'object' ? { kidFlags: Object.fromEntries(Object.entries(o.kidFlags).filter((e): e is [string, number] => typeof e[1] === 'number' && Number.isFinite(e[1]))) } : {}),
+    ...(o.wardrobe && typeof o.wardrobe === 'object' ? { wardrobe: o.wardrobe } : {}),
   }
 }

@@ -126,7 +126,7 @@ describe('B. 먼저 찾아오기와 저녁 초대', () => {
     s = { ...s, npcs: { ...s.npcs, grandpa: { ...s.npcs.grandpa, x: sit.x, y: sit.y, path: [] } } }
     s = dine(s, 'grandpa')!
     expect(s.needs.hunger).toBeLessThanOrEqual(30)
-    expect(s.scenes).toContain('dinner:grandpa')
+    expect(s.scenes).toContain('firstDinner:grandpa')
     expect(dine(s, 'grandpa')).toBeNull()
   })
 })

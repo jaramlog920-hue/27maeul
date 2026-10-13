@@ -2,9 +2,8 @@ import { venueFor } from './plans'
 import lifeText from '../content/life-text.json'
 import { festivalOf, FESTIVAL_FROM, FESTIVAL_TO, isMarketDay, isWet, weatherOf } from './calendar'
 import { BABY_PARTY_DAY, gatheringWindow, VISIT_FROM, VISIT_TO, INVITE_FROM, INVITE_TO, FRIENDS_FROM, FRIENDS_TO } from './bonds'
-import { lessonTime, type GameState } from './game'
-import { formatTime, seasonOf } from './clock'
-import { LESSON_FROM, LESSON_TO } from './stories'
+import type { GameState } from './game'
+import { formatTime } from './clock'
 import type { GameContent } from './types'
 import { isBirthday } from './notebook'
 import { t } from '../shared/i18n'
@@ -88,9 +87,8 @@ export function scheduledEvents(s: Pick<GameState, 'clock' | 'today' | 'flags'> 
     const [from, to] = gatheringWindow(today.gathering)
     add('gathering', gatherings[today.gathering], today.gathering === 'babyParty' ? '빵집 앞' : '언덕', from, to)
   }
-  if (lessonTime({ ...s, clock: { day, minute: LESSON_FROM } })) add('lesson', '아이와 글자 공부', '내 집 안', LESSON_FROM, LESSON_TO)
   if (s.flags['done:friends'] && !isWet(weatherOf(day))) add('friends', '아이와 양치기 친구', '양 우리 근처', FRIENDS_FROM, FRIENDS_TO)
-  if (seasonOf(day) === 'autumn' && weatherOf(day) === 'rain') add('rainbow', '비 오는 날 무지개', '집 밖', 16 * 60, 17.5 * 60)
+  // 무지개는 일정에 넣지 않는다 — 비 갠 날 오후에 그냥 뜬다 (2026-10-13 사용자)
   for (const appt of s.plans?.appts ?? []) {
     if (appt.day < day || appt.day > day + 7 || appt.state === 'skipped') continue
     const venue = venueFor(appt)

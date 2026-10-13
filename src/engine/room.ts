@@ -7,7 +7,6 @@ import designs from '../content/spouse-rooms.json'
 import { FIXTURES, LIVING_DOOR, PARTNER_DOOR } from './home-layout'
 import { findPath } from './movement'
 import { BED_STAND, currentHomeLevel, setHomeFurniture, HOME_ENTRY, isHome, key, PLACES, placeActive, sameTile, SIDE_DOOR, tileAt, type Place } from './world'
-import { LESSON_SPOT } from './stories'
 import { SPOUSE_ROOM, SPOUSE_ROOM_ENTRY, SPOUSE_ROOM_RETURN } from './spouse-room'
 import { addGift, type Inventory } from './items'
 import type { Facing, ItemId, PlaceId, Tile } from './types'
@@ -63,7 +62,7 @@ const layerOf = (f: Furniture): Layer => FURNITURE_DEFS[f.item]?.layer ?? 'small
  */
 export function keepClear(): Tile[] {
   const stands = (Object.entries(PLACES) as [PlaceId, Place][]).flatMap(([id, p]) => (p.stand && placeActive(id) ? [p.stand] : []))
-  const out = [...stands, HOME_ENTRY, LESSON_SPOT, SPOUSE_ROOM_RETURN]
+  const out = [...stands, HOME_ENTRY, SPOUSE_ROOM_RETURN]
   if (currentHomeLevel() >= 1) out.push(SPOUSE_ROOM_ENTRY, PARTNER_DOOR)
   const level = currentHomeLevel()
   if (level >= 2) out.push(SIDE_DOOR, { x: SIDE_DOOR.x + 1, y: SIDE_DOOR.y }, { x: SIDE_DOOR.x - 1, y: SIDE_DOOR.y })
@@ -224,7 +223,23 @@ export function initialHomeFurniture(): Furniture[] {
 
 /** 붙박이 침대·책상을 지금 기본 자리로 (옛 저장) — 다른 가구가 자리를 잃지 않을 때만 */
 export function upgradeAdultBed(room:readonly Furniture[]):Furniture[]{
-  return moveOldDesk(shiftOldBed(room))
+  return moveOldWorkbench(moveOldDesk(shiftOldBed(room)))
+}
+/** 옛 자리(23,113·19,114)의 작업대를 필사 책상 바로 옆으로 — 이어 하는 저장에도 (2026-10-13 사용자: 새로 하기 전엔 안 바뀌었다).
+ *  그 칸이 비어 있고 다른 가구가 자리를 잃지 않을 때만 */
+function moveOldWorkbench(room:readonly Furniture[]):Furniture[]{
+  const f=room.find(o=>o.item==='homeWorkbench'&&((o.x===23&&o.y===113)||(o.x===19&&o.y===114)))
+  if(!f)return [...room]
+  const next={...f,x:FIXTURES.homeWorkbench.x,y:FIXTURES.homeWorkbench.y}
+  const occupied=room.filter(o=>o!==f&&layerOf(o)!=='floor'&&layerOf(o)!=='wall').flatMap(footprint)
+  if(footprint(next).some(t=>occupied.some(p=>sameTile(t,p))))return [...room]
+  const moved=room.map(o=>o===f?next:o)
+  setHomeFurniture(room)
+  const before=refitRoom(room,{}).room.length
+  setHomeFurniture(moved)
+  const after=refitRoom(moved,{}).room.length
+  setHomeFurniture(room)
+  return after<before?[...room]:moved
 }
 /** 옛 자리(17,113)의 필사 책상을 맨 아래 벽(17,114)으로 — 그 칸이 비어 있고 다른 가구가 자리를 잃지 않을 때만 */
 function moveOldDesk(room:readonly Furniture[]):Furniture[]{

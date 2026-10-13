@@ -24,12 +24,12 @@ function build(): string[] {
   rect(NEWLAND_W - 1, 0, NEWLAND_W - 1, NEWLAND_VISIBLE_H - 1, 'T')
   // 가로 길 두 줄 (왕래 표식에서 동쪽 끝까지) — 서고 문 앞 한 칸이 위에서 이어진다
   rect(1, 8, NEWLAND_W - 2, 9, ',')
-  // 서고 바깥: 돌벽, 문은 아랫줄 가운데 (자산 footprint 4×3 — newland-config ARCHIVE)
+  // 서고 바깥: 돌벽, 문은 아랫줄 가운데 (신약과 같은 폭 7칸 — newland-config ARCHIVE)
   rect(ARCHIVE.x0, ARCHIVE.y0 + 1, ARCHIVE.x0 + ARCHIVE.w - 1, ARCHIVE.y0 + ARCHIVE.h, 'S')
   set(ARCHIVE.door.x, ARCHIVE.door.y, 'D')
   set(ARCHIVE.front.x, ARCHIVE.front.y, ',')
   // 서고 둘레 꽃 (걸을 수 있다)
-  for (const [x, y] of [[17, 7], [22, 7], [16, 5], [23, 5]]) set(x, y, '*')
+  for (const [x, y] of [[17, 7], [23, 7], [16, 5], [24, 5]]) set(x, y, '*')
   // 바깥쪽 가장자리의 나무 몇 그루 (건축 가능 구역 밖)
   // 입구 바로 아래 (2,12)의 외딴 나무는 뺐다 (2026-10-13 사용자: 흩어진 나무 싫어함)
   for (const [x, y] of [[3, 18], [2, 24], [37, 13], [36, 19], [37, 25]]) set(x, y, 'T')
@@ -163,8 +163,9 @@ export type NewlandStatus = 'locked' | 'gift' | 'open'
 type GiftBase = Pick<GameState, 'shelved' | 'flags'>
 
 /** 개방 조건 (D7): 27권 모두 꽂힘 + 스물일곱 권 잔치가 지났다(allFeast 2) */
+/** 27권을 모두 꽂으면 바로 (2026-10-13 사용자: 잔치를 기다리다 구약이 안 열리는 줄 알았다 — 잔치는 따로 그대로 열린다) */
 function conditionMet(s: GiftBase): boolean {
-  return BOOKS.every((b) => s.shelved[b] !== undefined) && s.flags.allFeast === 2
+  return BOOKS.every((b) => s.shelved[b] !== undefined)
 }
 
 export function newlandStatus(s: GiftBase): NewlandStatus {

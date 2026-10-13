@@ -213,7 +213,7 @@ describe('책상', () => {
     await user.paste(verses[0].text)
     expect(useGame.getState().game.copyStats.verses).toBe(0)
     // 한 글자씩 따라 적으면 절이 기록되고 다음 절이 올라온다 (재료 없이)
-    await user.type(box, verses[0].text)
+    await user.type(box, verses[0].text + '{Enter}')
     expect(screen.getByRole('status')).toHaveTextContent('✓ 누가복음 1:1 기록')
     expect(screen.getByRole('heading')).toHaveTextContent(`누가복음 1장 · 2/${verses.length}절`)
     expect(useGame.getState().game.copyStats.verses).toBe(1)

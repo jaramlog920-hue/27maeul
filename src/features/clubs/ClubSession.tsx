@@ -4,7 +4,7 @@ import { canAttendAppt, venueFor } from '../../engine/plans'
 import { seasonOf } from '../../engine/clock'
 import { useState } from 'react'
 import { T } from '../../content/text'
-import { joinClub, chooseClub, doClubActivity, finishClub, canLeaveWork, CLUB_ACTIVITIES, type ClubActivity, type ClubSession as Run } from '../../engine/clubs'
+import { joinClub, chooseClub, doClubActivity, finishClub, canLeaveWork, CLUB_ACTIVITIES, type ClubActivity } from '../../engine/clubs'
 import { clubFollowUp, clubPerson } from '../../engine/club-life'
 import { startMini } from '../../engine/minigame'
 import { has } from '../../engine/items'
@@ -12,7 +12,8 @@ import { useGame } from '../../store/game-store'
 import { commitClub } from './club-store'
 import { canJoinNews, canShareClubDish, clubDishes, clubSeason, joinNews, shareClubDish } from '../../engine/club-extras'
 import { fill, itemName, withObject } from '../../content/text'
-import { GroupTask } from './GroupTask'
+import { ClubRound } from './ClubRound'
+import { apptGuests } from '../../engine/club-round'
 
 export function ClubSession({id}:{id:string}) {
  const game=useGame(s=>s.game),C=T.clubs
@@ -26,17 +27,17 @@ export function ClubSession({id}:{id:string}) {
  </div>
  const activity=a.activity as ClubActivity
  const follow=run?.step==='done'?null:clubFollowUp(game,a)
- const join=(mode:Run['mode'])=>commitClub(joinClub(game,id,mode))
  const weave=()=>useGame.setState({modal:{kind:'mini',state:startMini('weave',useGame.getState().rng),pending:{kind:'club',id}}})
  const finish=(where:'home'|'club')=>commitClub(finishClub(game,id,where))
  return <div className="dialog" role="dialog" aria-label={a.title??T.plans.activity[activity]}><h2>{a.title??T.plans.activity[activity]}</h2>
- {!run&&<div className="actions menu column">{Object.entries(C.mode).map(([m,l])=><button key={m} onClick={()=>join(m as Run['mode'])}>{l}</button>)}</div>}
+ {/* 차 모임 (2026-10-13 사용자): 고르기 단계 없이 앉으면 바로 이웃마다 한 잔씩 */}
+ {/* 모임 (2026-10-13 사용자): 고르기 단계 없이 앉으면 바로 이웃마다 한 차례씩 — 끝에 결과 창 */}
+ {!run&&<div className="actions menu column"><button className="primary" onClick={()=>{const j=joinClub(game,id,'direct');commitClub(j.clubSessions[id]?chooseClub(j,id,C.choice[activity][0]):j)}}>{T.round.sit}</button></div>}
+ {activity==='tea'&&run?.step==='activity'&&<ClubRound id={id} kind="tea" guests={apptGuests(game,id)} onFinish={()=>commitClub(finishClub(doClubActivity(useGame.getState().game,id),id,'home'))} extra={canShareClubDish(game,id)?<div className="actions menu column">{clubDishes(game).map(dish=><button key={dish} onClick={()=>{commitClub(shareClubDish(useGame.getState().game,id,dish));useGame.getState().say(fill(C.shared,{itemObj:withObject(itemName(dish))}),3000)}}>{fill(C.shareDish,{item:itemName(dish)})}</button>)}</div>:null}/>}
  {run?.step==='choose'&&<>{activity==='sew'&&<p className="hint">{C.wool}</p>}<div className="actions menu column">{[...C.choice[activity],(C.seasonChoice as Record<string,Record<string,string>>)[activity]?.[clubSeason(game)]].filter(Boolean).map(choice=><button key={choice} onClick={()=>commitClub(chooseClub(game,id,choice,note))}>{choice}</button>)}</div>{activity==='observe'&&<label>{C.memo}<textarea maxLength={120} value={note} onChange={e=>setNote(e.target.value)}/></label>}</>}
- {run?.step==='activity'&&<div className="actions menu column">
- {run.mode==='direct'&&<GroupTask id={id} kind={activity} progress={run.task}/>}
+ {activity!=='tea'&&run?.step==='activity'&&<div className="actions menu column">
+ {run.mode==='direct'&&<ClubRound id={id} kind={activity} guests={apptGuests(game,id)}/>}
  {(run.mode!=='direct'||(run.task?.stage??0)>=3)&&<>
- {activity==='tea'&&<button onClick={()=>commitClub(doClubActivity(game,id))}>{C.snack}</button>}
- {activity==='tea'&&canShareClubDish(game,id)&&clubDishes(game).map(dish=><button key={dish} onClick={()=>{commitClub(shareClubDish(useGame.getState().game,id,dish));useGame.getState().say(fill(C.shared,{itemObj:withObject(itemName(dish))}),3000)}}>{fill(C.shareDish,{item:itemName(dish)})}</button>)}
  {activity==='sew'&&<>{run.mode==='direct'&&has(game.inv,{wool:2})?<button onClick={weave}>{C.weave}</button>:<button onClick={()=>commitClub(doClubActivity(game,id))}>{C.watch}</button>}</>}
  {activity==='observe'&&<button onClick={()=>commitClub(doClubActivity(game,id))}>{C.look}</button>}
  {(['read','cook','paint','music'] as ClubActivity[]).includes(activity)&&<button onClick={()=>commitClub(doClubActivity(game,id))}>{C.activityDo[activity as keyof typeof C.activityDo]}</button>}

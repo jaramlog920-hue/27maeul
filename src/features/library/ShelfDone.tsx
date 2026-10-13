@@ -21,6 +21,7 @@ export function ShelfDone() {
         <ShelfPicture shelved={{}} bound={{}} caption={S.then} />
         <ShelfPicture shelved={game.shelved} bound={game.bound} caption={S.now} />
       </div>
+      {!!game.flags.otTicket && <p className="shelf-done-gift">{S.gift}</p>}
       <ul className="shelf-done-counts">
         <li>{fill(S.god, { n: game.godRecords.length })}</li>
         <li>{fill(S.pieces, { n: game.collected.length })}</li>

@@ -1,4 +1,5 @@
 // 마음이 쌓여 마을에 생긴 것들 (6번 A·C). 모두 그림일 뿐 길을 막지 않는다.
+import { yardPlaced, yardSpot } from '../engine/yard'
 import { unlocked } from '../engine/bonds'
 import type { GameState } from '../engine/game'
 import { GARDEN_TILES, isRipe } from '../engine/garden'
@@ -203,8 +204,9 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
   // 사도행전 여정을 다 이은 다음 날부터 나루 곁의 큰 배 (flags.actsShip 2)
   if ((f.actsShip ?? 0) >= 2) ship(g, t)
   // 편해지는 살림: 빗물 항아리(장날에 산 뒤), 갈대 말리는 틀(목수가 세운 뒤)
-  if (unlocked(f, 'rainJar')) rainJar(g, RAIN_JAR_AT)
-  if (unlocked(f, 'reedRack')) reedRack(g, REED_RACK_AT)
+  // 옮긴 자리가 있으면 그 자리에 (2026-10-13 사용자: 직접 옮기기)
+  if (yardPlaced(f, 'rainJar')) rainJar(g, yardSpot(game, 'rainJar'))
+  if (yardPlaced(f, 'reedRack')) reedRack(g, yardSpot(game, 'reedRack'))
   // 호숫가 정자 (계획 10)
   pavilion(g)
   // 요한계시록 방이 열린 뒤부터 언덕 벤치 곁 편지함

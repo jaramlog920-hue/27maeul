@@ -1,8 +1,9 @@
 import type { Avatar } from '../engine/avatar'
 import { drawScenicBench } from './stargazing-art'
+import type { Who } from './sprites'
 
 /** 호숫가 정자에서 보는 노을. 고정 화소의 하늘과 물결만 느리게 변한다. */
-export function drawSunset(g: CanvasRenderingContext2D, w: number, h: number, seconds: number, avatar: Avatar | null) {
+export function drawSunset(g: CanvasRenderingContext2D, w: number, h: number, seconds: number, avatar: Avatar | null, companion: Avatar | null = null, companionWho: Who = 'writer') {
   g.imageSmoothingEnabled = false
   const px = (x: number, y: number, c: string, a = 1, b = 1) => { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), Math.ceil(a), Math.ceil(b)) }
   const horizon = Math.round(h * .57), shore = Math.round(h * .83)
@@ -48,5 +49,5 @@ export function drawSunset(g: CanvasRenderingContext2D, w: number, h: number, se
     px(x, y, '#4f6253', 7, 8)
     px(x + 2, y + 8, '#435a4c', 2, 10 + i % 3 * 5)
   }
-  drawScenicBench(g, Math.round(w * .5), Math.round(h * .88), avatar)
+  drawScenicBench(g, Math.round(w * .5), Math.round(h * .88), avatar, companion, true, 'writer', companionWho)
 }

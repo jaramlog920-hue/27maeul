@@ -6,6 +6,10 @@ import { callName, itemName, kidFill, partnerFill, SCENES, spouseFill, T } from 
 import { CONTENT } from '../../content/catalog'
 import { partnerName, useGame } from '../../store/game-store'
 import { sameLookCandidate } from '../../engine/game'
+import {AuthoredStoryScene} from './AuthoredStoryScene'
+import {hasAuthoredStory} from '../../render/authored-story-art'
+import { LandscapeScene } from './StarsScene'
+import { landscapeKind } from '../../render/scenic-moments-art'
 
 export function speakerName(speaker: string): string | null {
   if (speaker === 'narration') return null
@@ -46,8 +50,11 @@ export function SceneView({ id, chosen }: { id: string; chosen?: number }) {
   const more = asking ? at < scene.lines.length - 1 : at < all.length - 1
   const l = all[at]
   const who = l ? speakerName(l.speaker) : null
-  return (
-    <div className="dialog scene" role="dialog" aria-label={say(scene.title)}>
+  const cinematicKind=landscapeKind(id)
+  const authored=hasAuthoredStory(id)
+  const cinematic = authored||cinematicKind === 'firstConfession'||cinematicKind==='childLeaves'||cinematicKind==='childStays'
+  const body = (
+    <div className={`dialog scene${cinematic ? ' cinematic-scene-dialog' : ''}`} role={cinematic ? undefined : 'dialog'} aria-label={cinematic ? undefined : say(scene.title)}>
       <h2>{say(scene.title)}</h2>
       <div className="scene-lines">
         {l && (
@@ -89,4 +96,9 @@ export function SceneView({ id, chosen }: { id: string; chosen?: number }) {
       )}
     </div>
   )
+  if(authored)return <AuthoredStoryScene id={id} title={say(scene.title)} beat={at} chosen={chosen}>{body}</AuthoredStoryScene>
+  if (!cinematic) return body
+  const person = scene.lines.find(line => neighborById(line.speaker)?.romanceable)?.speaker
+  const accepted = !scene.choices?.length || (chosen !== undefined && useGame.getState().game.romance.partner === person)
+  return <LandscapeScene kind={cinematicKind!} sceneId={id} personId={person} acceptGift={accepted} titleOverride={say(scene.title)}>{body}</LandscapeScene>
 }

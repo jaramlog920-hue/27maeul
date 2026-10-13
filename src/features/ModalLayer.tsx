@@ -23,6 +23,7 @@ import { LetterBox } from './letters/LetterBox'
 import { CareMenu } from './menus/CareMenu'
 import { SpaceMenu } from './menus/SpaceMenu'
 import { PlaceMenu } from './menus/PlaceMenu'
+import { YardMenu } from './menus/YardMenu'
 import { ReadPick } from './menus/ReadPick'
 import { CopiedReadPick } from './menus/CopiedReadPick'
 import { QuizView } from './quiz/QuizView'
@@ -135,6 +136,7 @@ function Body() {
     case 'familyTree':
       return <FamilyTree personId={modal.personId} neighborId={modal.neighborId} />
     case 'scene':
+      if (['firstConfession','childLeaves','childStays'].includes(landscapeKind(modal.id)??'')) return <SceneView id={modal.id} chosen={modal.chosen} />
       if (landscapeKind(modal.id)) return <LandscapeScene key={modal.id} kind={landscapeKind(modal.id)!} sceneId={modal.id} />
       // 서고 잔치 모닥불: 음식·조각 이야기·내 한 줄 낭독 (2026-10-13)
       if (modal.id === 'feastFire' || modal.id === 'allFeastFire') return <FeastView key={modal.id} id={modal.id} />
@@ -173,6 +175,8 @@ function Body() {
       return <LetterBox />
     case 'menu':
       return <PlaceMenu place={modal.place} />
+    case 'yard':
+      return <YardMenu item={modal.item} />
     case 'readPick':
       return modal.source === 'copied' ? <CopiedReadPick /> : <ReadPick />
     case 'quiz':

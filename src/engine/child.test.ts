@@ -19,6 +19,11 @@ const sleepUntil = (s: GameState, day: number): GameState => {
   while (g.clock.day < day) g = goToSleep({ ...g, clock: { ...g.clock, minute: 22 * 60 } }, CONTENT)
   return g
 }
+/** 2026-10-13 사용자: 아이는 잠자리에서 얘기해야 생긴다 — day 전날 밤에 얘기하고 자면 day 아침에 태어난다 */
+const bornOn = (day: number, s = married(10)): GameState => {
+  const eve = sleepUntil(s, day - 1)
+  return goToSleep({ ...eve, clock: { ...eve.clock, minute: 22 * 60 }, flags: { ...eve.flags, babyWish: day - 1 } }, CONTENT)
+}
 
 describe('아이 (계획 12)', () => {
   it('물려받기: 플레이어 단계 4 이상 +1, 배우자 집안 능력치 +1, 최대 2', () => {
@@ -46,12 +51,12 @@ describe('아이 (계획 12)', () => {
     expect(seen.size).toBe(4)
   })
 
-  it('결혼하고 두 이레 뒤 아침에 태어나고, 이름을 정한다', () => {
+  it('결혼만 해서는 오지 않고, 잠자리에서 얘기한 다음 날 아침에 태어나 이름을 정한다 (2026-10-13)', () => {
     const s = married(10)
-    const before = sleepUntil(s, 10 + CHILD_AFTER_WEDDING - 1)
+    const before = sleepUntil(s, 10 + CHILD_AFTER_WEDDING + 5)
     expect(before.child).toBeNull()
-    const born = sleepUntil(before, 10 + CHILD_AFTER_WEDDING)
-    expect(born.child?.born).toBe(10 + CHILD_AFTER_WEDDING)
+    const born = bornOn(10 + CHILD_AFTER_WEDDING + 6, before)
+    expect(born.child?.born).toBe(10 + CHILD_AFTER_WEDDING + 6)
     expect(born.scenes).toContain('childBorn')
     expect(born.flags.childNaming).toBe(1)
     const named = nameChild(born, '핀')
@@ -66,7 +71,7 @@ describe('아이 (계획 12)', () => {
   })
 
   it('아기 → 걷는 아이 → 돕는 아이, 돕는 아이는 하루 한 번 (틸리네 아이는 근력: 물·갈대)', () => {
-    const born = nameChild(sleepUntil(married(10), 24), '루시')
+    const born = nameChild(bornOn(24), '루시')
     expect(childStage(born.child!, born.clock.day)).toBe('baby')
     const walks = sleepUntil(born, 24 + TODDLER_AT)
     expect(childStage(walks.child!, walks.clock.day)).toBe('toddler')
@@ -92,7 +97,7 @@ describe('아이 (계획 12)', () => {
   })
 
   it('저장했다 불러와도 아이가 이어진다', () => {
-    const born = nameChild(sleepUntil(married(10), 24), '오티스')
+    const born = nameChild(bornOn(24), '오티스')
     const back = deserialize(serialize(born), CONTENT)!
     expect(back.child?.name).toBe('오티스')
     expect(sanitizeChild({ name: 3 })).toBeNull()
@@ -113,7 +118,7 @@ describe('어른이 된 아이', () => {
   it('기존 이주 선택을 유지하고 떠난 성인 자식은 지도에서 보이지 않는다', async () => {
     const { ADULT_AT } = await import('./child')
     const { childTile } = await import('./game')
-    const s0 = nameChild(sleepUntil(married(10), 24), '재스퍼')
+    const s0 = nameChild(bornOn(24), '재스퍼')
     const high = freshStats()
     high.strength = { level: 5, xp: 0, born: 0 }
     const grown = sleepUntil({ ...s0, child: { ...s0.child!, stats: high, left: true } }, 24 + ADULT_AT)

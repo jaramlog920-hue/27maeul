@@ -39,9 +39,9 @@ const sleep = (s: GameState) => goToSleep({ ...s, scenes: [], clock: { ...s.cloc
 const gifts = (s: GameState) => s.scenes.filter((x) => x === 'newlandGift').length
 
 describe('완필 보상 — 조건과 한 번뿐', () => {
-  it('27권 + 잔치 날(allFeast 1)에는 아직 없다 (locked), 잔치가 지난 뒤(allFeast 2)에야 gift', () => {
-    expect(newlandStatus(night(2, { churchesDone: 1 }))).toBe('locked')
-    expect(newlandStatus({ shelved: ALL, flags: { allFeast: 1 } })).toBe('locked')
+  it('27권을 다 꽂으면 잔치와 상관없이 gift (2026-10-13 사용자: 잔치를 기다리다 구약이 안 열리는 줄 알았다)', () => {
+    expect(newlandStatus(night(2, { churchesDone: 1 }))).toBe('gift')
+    expect(newlandStatus({ shelved: ALL, flags: { allFeast: 1 } })).toBe('gift')
     expect(newlandStatus({ shelved: ALL, flags: { allFeast: 2 } })).toBe('gift')
     expect(newlandStatus({ shelved: ALL, flags: { allFeast: 2, newlandGift: 1 } })).toBe('open')
     // 한 권이 빠지면 잔치가 지났어도 gift가 아니다
@@ -50,13 +50,9 @@ describe('완필 보상 — 조건과 한 번뿐', () => {
     expect(newlandStatus({ shelved: missing, flags: { allFeast: 2 } })).toBe('locked')
   })
 
-  it('잔치 날 아침에는 보상이 없고, 그다음 잠에서 한 번 받는다. 세 번째 잠에는 다시 없다', () => {
-    const feast = goToSleep(night(2, { churchesDone: 1 }), CONTENT)
-    expect(feast.flags.allFeast).toBe(1)
-    expect(feast.flags.newlandGift).toBeUndefined()
-    expect(gifts(feast)).toBe(0)
-    const first = sleep(feast)
-    expect(first.flags.allFeast).toBe(2)
+  it('다 꽂고 잠든 아침에 한 번 받는다 (잔치 날 아침과 같이). 다음 잠에는 다시 없다', () => {
+    const first = goToSleep(night(2, { churchesDone: 1 }), CONTENT)
+    expect(first.flags.allFeast).toBe(1)
     expect(first.flags.newlandGift).toBe(1)
     expect(gifts(first)).toBe(1)
     const again = sleep(first)
@@ -66,7 +62,9 @@ describe('완필 보상 — 조건과 한 번뿐', () => {
   })
 
   it('보상이 없는 동안 입구 표식이 없고, 받은 뒤에는 있다', () => {
-    const before = night(5, { allFeast: 1 })
+    const part = { ...ALL }
+    delete part.rev
+    const before = night(5, {}, part)
     syncHome(before)
     expect(portalAt(VILLAGE_PORTAL)).toBeNull()
     expect(tileAt(VILLAGE_PORTAL.x, VILLAGE_PORTAL.y)).toBe('.')
@@ -77,7 +75,7 @@ describe('완필 보상 — 조건과 한 번뿐', () => {
   })
 
   it('저장·재접속에도, 두 번째 잠에도 한 번뿐 (장면이 다시 생기지 않는다)', () => {
-    const got = sleep(sleep(night(2, { churchesDone: 1 })))
+    const got = sleep(night(2, { churchesDone: 1 }))
     expect(gifts(got)).toBe(1)
     const back = deserialize(serialize(got), CONTENT)!
     expect(back.flags.newlandGift).toBe(1)
@@ -100,10 +98,7 @@ describe('완필 보상 — 조건과 한 번뿐', () => {
     expect(gifts(settle(loaded, CONTENT))).toBe(1)
   })
 
-  it('미완필 저장은 받지 않는다 (잔치 전·한 권 부족)', () => {
-    const before = deserialize(serialize(night(9, { churchesDone: 1 })), CONTENT)!
-    expect(before.flags.newlandGift).toBeUndefined()
-    expect(gifts(before)).toBe(0)
+  it('미완필 저장은 받지 않는다 (한 권 부족)', () => {
     const part = { ...ALL }
     delete part.mt
     const partial = deserialize(serialize(night(9, { allFeast: 2 }, part)), CONTENT)!

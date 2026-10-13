@@ -90,7 +90,7 @@ const mtProgress = () => {
 
 const SCENARIOS: Scenario[] = [
   { name: '신약 진행 중 (새 터 받기 전)', open: false, make: () => base(false, { progress: mtProgress() }) },
-  { name: '27권 완필 · 구약 개방 전', open: false, make: () => base(false, { progress: finished(), shelved: ALL }) },
+  { name: '27권 완필 (불러오면 바로 구약 개방 — 2026-10-13)', open: true, make: () => base(false, { progress: finished(), shelved: ALL }) },
   { name: '잔치 직후 (allFeast 2, 새 터 받음)', open: true, make: () => base(true, { progress: finished(), shelved: ALL, flags: { ...base(true).flags, allFeast: 2, churchesDone: 1 } }) },
   { name: '가족·아이 있음 (결혼, 아이)', open: true, make: () => base(true, { romance: MARRIED, child: newChild(10, newGame(CONTENT).stats, undefined) }) },
   { name: '아이 없음 (결혼만)', open: true, make: () => base(true, { romance: MARRIED, child: null }) },
@@ -113,6 +113,8 @@ describe.each(SCENARIOS)('시나리오: $name', ({ make, open }) => {
     expect(sumNt(s)).toBe(sumNt(start))
     expect(s.newland?.builds ?? []).toEqual(start.newland?.builds ?? [])
     expect(!!s.flags.newlandGift).toBe(open)
+    // 불러오며 받은 큰길 끝 표지 장면은 본 것으로 (장면이 떠 있는 동안은 건너가지 않는다)
+    if (s.scenes.includes('newlandGift')) s = { ...s, scenes: s.scenes.filter((x) => x !== 'newlandGift') }
 
     // 왕래 — 열린 저장은 건너가고 돌아오고, 닫힌 저장은 건너갈 수 없다 (제자리)
     if (s.flags.newlandGift) {

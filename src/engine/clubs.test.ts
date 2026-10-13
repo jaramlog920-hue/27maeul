@@ -269,3 +269,33 @@ describe('player-created clubs',()=>{
   expect(sanitizeClubs(undefined)).toEqual([])
  })
 })
+
+describe('모임 한 판 (2026-10-13)', () => {
+ it('함께 온 이웃마다 한 차례 — 바라는 구간에서 놓으면 마음이 오르고, 아니면 그대로 다음 사람, 다 끝나면 손일을 마친 것', async () => {
+  const { playRound, wantOf, apptGuests, roundMarks, roundDone, HOLD_BANDS } = await import('./club-round')
+  const id=joined().plans.appts[0].id
+  let s=chooseClub(joined(),id,'따뜻한 차 따르기')
+  const guests=apptGuests(s,id)
+  expect(guests.length).toBeGreaterThan(0)
+  const npc=guests[0]
+  const [lo,hi]=HOLD_BANDS[wantOf(npc,'tea')]
+  const before=s.hearts[npc]??0
+  const r=playRound(s,id,'tea',guests,(lo+hi)/2)
+  expect(r.good).toBe(true)
+  expect(r.state.hearts[npc]).toBeGreaterThan(before)
+  s=r.state
+  for(const g of guests.slice(1)){const x=playRound(s,id,'tea',guests,0);expect(x.good).toBe(false);expect(x.state.hearts[g]??0).toBe(s.hearts[g]??0);s=x.state}
+  expect(roundMarks(s,id)).toBe('1'+'0'.repeat(guests.length-1))
+  expect(roundDone(s,id)).toBe(true)
+  expect(playRound(s,id,'tea',guests,50).state).toBe(s)
+  expect(finishClub(doClubActivity(s,id),id).clubSessions[id].step).toBe('done')
+ })
+ it('고르는 모임은 셋 중 이웃이 바라는 것을 고르면 맞는다', async () => {
+  const { playRound, wantOf, apptGuests } = await import('./club-round')
+  const id=joined('sew').plans.appts[0].id
+  const s=chooseClub(joined('sew'),id,'작은 꽃무늬')
+  const g=apptGuests(s,id)
+  expect(playRound(s,id,'sew',g,wantOf(g[0],'sew')).good).toBe(true)
+  expect(playRound(s,id,'sew',g,(wantOf(g[0],'sew')+1)%3).good).toBe(false)
+ })
+})

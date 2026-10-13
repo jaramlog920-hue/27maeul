@@ -11,3 +11,17 @@
 @keyframes group-pulse{50%{box-shadow:0 0 0 3px #f5e0af}}
 @media(prefers-reduced-motion:reduce){.group-marks .next{animation:none}}
 
+
+/* 차 모임 한 판 (2026-10-13): 막대 위 입맛 세 구간 — 이웃이 말한 입맛을 보고 맞는 곳에서 놓는다 */
+.tea-meter{height:30px}
+.tea-zone{position:absolute;top:0;height:100%;border-left:1px dashed #c9a57a;font-size:10px;line-height:12px;color:#8a6c48;text-align:center;pointer-events:none}
+.tea-meter .group-meter-fill{top:16px;height:10px}
+/* 한 판의 결과 창 (2026-10-13) */
+.round-picks{display:flex;gap:6px;margin-top:8px}
+.round-picks>button{flex:1 1 0;min-height:38px}
+.round-rows{list-style:none;padding:0;margin:6px 0;display:flex;flex-direction:column;gap:4px}
+.round-rows li{display:grid;grid-template-columns:auto 1fr auto;gap:2px 8px;align-items:center;padding:4px 8px;border:1px solid #e6d9bf;border-radius:4px;background:#fff8ea;font-size:12px}
+.round-rows li.hit{border-color:#a2cb78}
+.round-rows li>span:last-of-type{text-align:right;color:#8a6c48}
+.round-rows li.hit>span:last-of-type{color:#4f7d2b;font-weight:700}
+.round-heart{grid-column:1/-1;color:#c0566b;font-size:11px}

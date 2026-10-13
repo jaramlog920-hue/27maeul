@@ -31,7 +31,7 @@ export function Hud() {
     <header className="hud">
       <div className="hud-row">
         <span className="hud-day">
-          {fill(T.ui.day, { day })} · {T.ui.season[seasonOf(day)]} · {weather}
+          {fill(T.ui.day, { day })} · {T.clubs.day[day % 7]} · {T.ui.season[seasonOf(day)]} · {weather}
           {isMarketDay(day) && <b className="hud-market"> · {T.ui.market}</b>}
           {peace && <b className="hud-peace"> · {T.ui.peace}</b>}
         </span>

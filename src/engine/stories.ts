@@ -1,19 +1,11 @@
 // 이웃 이야기와 특별한 순간 (설계 2.4·2.9). 모두 게임 창작이며 문구는 life-text.json의 scenes에 있다.
-import { festivalOf, FESTIVAL_FROM, FESTIVAL_TO, isWet, weatherOf, yearOf } from './calendar'
+import { festivalOf, FESTIVAL_FROM, FESTIVAL_TO, isMarketDay, isWet, weatherOf, yearOf } from './calendar'
 import { phaseOf, seasonOf } from './clock'
 import type { ItemId, Tile } from './types'
-import { HOME_RECT } from './world'
 
 export const BABY_DAY = 8
 export const BABY_CRAWL = 16
 export const BABY_WALK = 26
-export const CHILD_ASKS_AT = 3
-export const LETTERS_TOTAL = 7
-export const LESSON_FROM = 18 * 60
-export const LESSON_TO = 19 * 60 + 30
-/** 아이가 글자를 배우러 와 서는 곳 — 집 안 화덕과 선반 사이 (예전 지도 위 집의 같은 자리) */
-export const LESSON_SPOT: Tile = { x: HOME_RECT.x0 + 5, y: HOME_RECT.y0 + 2 }
-
 /** 하트가 이만큼 되면 이웃이 선물을 준다 */
 export const MILESTONES = [3, 6, 9] as const
 export const MILESTONE_GIFTS: Record<string, Partial<Record<(typeof MILESTONES)[number], Partial<Record<ItemId, number>>>>> = {
@@ -80,13 +72,30 @@ export function momentNow(ctx: MomentContext): string | null {
     return ALL_FEAST_FIRE
   if (fest && !isWet(w) && minute >= FESTIVAL_FROM + 30 && minute < FESTIVAL_TO && inMarket(ctx.player) && !flags[onceKey(`festival:${fest}`, day)])
     return `festival:${fest}`
-  if (ctx.outdoors && seasonOf(day) === 'autumn' && w === 'rain' && minute >= 16 * 60 && minute < 17.5 * 60 && !flags[onceKey('rainbow', day)])
+  if (ctx.outdoors && rainbowVisible(day, minute) && !flags[onceKey('rainbow', day)])
     return 'rainbow'
   if (ctx.outdoors && w === 'snow' && phaseOf(minute) !== 'night' && !flags[onceKey('firstSnow', day)]) return 'firstSnow'
+  if (ctx.outdoors && !isWet(w) && isMarketDay(day) && minute >= 18 * 60 && minute < 19.5 * 60 && inMarket(ctx.player) && !flags[onceKey('marketEvening', day)]) return 'marketEvening'
+  if (ctx.outdoors && !isWet(w) && minute >= 10 * 60 && minute < 16 * 60) {
+    const nearHill = Math.abs(ctx.player.x - 14) + Math.abs(ctx.player.y - 12) <= 3
+    const atWater = ctx.player.x >= 10 && ctx.player.x <= 16 && ctx.player.y >= 30 && ctx.player.y <= 33
+    const id = seasonOf(day) === 'spring' && nearHill ? 'springWalk' : seasonOf(day) === 'autumn' && nearHill ? 'autumnPath' : seasonOf(day) === 'summer' && atWater ? 'summerCreek' : null
+    if (id && !flags[onceKey(id, day)]) return id
+  }
   return null
 }
 
-/** 무지개가 보이는 때 (그리기용) */
+/**
+ * 무지개가 뜨는 날 (2026-10-13 사용자: 비 올 때가 아니라 비 갠 뒤, 매번은 아니게): 전날 비가 오고 오늘 갠 날 중
+ * 열에 넷쯤 (날로 정해 다시 불러와도 같다)
+ */
+export function rainbowDay(day: number): boolean {
+  if (day < 2 || isWet(weatherOf(day)) || weatherOf(day - 1) !== 'rain') return false
+  const h = Math.imul(day ^ 0x5bd1e995, 0x27d4eb2d) >>> 0
+  return h % 10 < 4
+}
+
+/** 무지개가 보이는 때 (그리기용): 그런 날 오후 네 시부터 다섯 시 반 */
 export function rainbowVisible(day: number, minute: number): boolean {
-  return seasonOf(day) === 'autumn' && weatherOf(day) === 'rain' && minute >= 16 * 60 && minute < 17.5 * 60
+  return rainbowDay(day) && minute >= 16 * 60 && minute < 17.5 * 60
 }

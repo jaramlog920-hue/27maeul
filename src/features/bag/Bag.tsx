@@ -10,6 +10,8 @@ import { MAX_LEVEL, STAT_IDS, statScore, type StatId, type Stats } from '../../e
 import { isHome } from '../../engine/world'
 import type { ItemId } from '../../engine/types'
 import { ItemIcon } from '../../shared/ItemIcon'
+import { isGear, wearing } from '../../engine/gear'
+import { YARD_ITEMS, type YardItem } from '../../engine/yard'
 import { useGame, type BagTab } from '../../store/game-store'
 import { NeedsView } from '../menus/CareMenu'
 import { CollectionDex } from './CollectionDex'
@@ -217,7 +219,14 @@ function Things() {
   // 서늘한 찬장 (2026-10-08): 음식만, 넣고 꺼내기는 집 안에서만
   const pantry = pantryOf(game)
   const stored = pantry ? (Object.entries(pantry) as [ItemId, number][]).filter(([, n]) => n > 0) : []
-  const [picked, setPicked] = useState<Pick | null>(null)
+  const [picked, setPickedRaw] = useState<Pick | null>(null)
+  // 버리기는 한 번 더 묻는다 (되돌릴 수 없다)
+  const [asking, setAsking] = useState(false)
+  const setPicked = (p: Pick | null) => {
+    setAsking(false)
+    setPickedRaw(p)
+  }
+  const { toggleGear, discard, yardMove } = useGame.getState()
   const list = picked?.from === 'chest' ? boxed : picked?.from === 'pantry' ? stored : items
   const pickedN = picked ? (list.find(([id]) => id === picked.id)?.[1] ?? 0) : 0
   const detail = (from: Pick['from']) =>
@@ -227,23 +236,47 @@ function Things() {
         <div>
           <strong>
             {ITEM_TEXT[picked.id].name} <b>{pickedN}</b>
+            {from === 'bag' && isGear(picked.id) && wearing(game, picked.id) && <small className="gear-worn"> · {T.gear.worn}</small>}
           </strong>
           <p>{ITEM_TEXT[picked.id].desc}</p>
         </div>
-        {from === 'chest' && (
-          <button disabled={!atHome} onClick={() => takeChest(picked.id)}>
-            {T.easy.chestTake}
-          </button>
-        )}
-        {from === 'bag' && pantry && PANTRY_FOODS.includes(picked.id) && (
-          <button disabled={!atHome} onClick={() => putPantry(picked.id)}>
-            {T.easy.pantryPut}
-          </button>
-        )}
-        {from === 'pantry' && (
-          <button disabled={!atHome} onClick={() => takePantry(picked.id)}>
-            {T.easy.pantryTake}
-          </button>
+        {/* 단추는 설명 아래 한 줄에 같은 크기로 (2026-10-13 사용자: 끼기·버리기·그만두기가 어수선했다). 버리기를 누르면 그 줄이 확인 줄로 바뀐다 */}
+        {asking && from === 'bag' ? (
+          <div className="bag-actions" role="group" aria-label={T.gear.discard}>
+            <p className="hint">{T.gear.discardAsk}</p>
+            <button className="danger" onClick={() => { discard(picked.id, 1); setAsking(false) }}>{T.gear.discardOne}</button>
+            {pickedN > 1 && <button className="danger" onClick={() => { discard(picked.id, pickedN); setAsking(false) }}>{fill(T.gear.discardAll, { n: pickedN })}</button>}
+            <button onClick={() => setAsking(false)}>{T.gear.cancel}</button>
+          </div>
+        ) : (
+          <div className="bag-actions">
+            {from === 'bag' && isGear(picked.id) && (
+              <button className={wearing(game, picked.id) ? 'on' : ''} aria-pressed={wearing(game, picked.id)} onClick={() => toggleGear(picked.id)}>
+                {wearing(game, picked.id) ? T.gear.remove : T.gear.wear}
+              </button>
+            )}
+            {from === 'bag' && YARD_ITEMS.includes(picked.id as YardItem) && (
+              <button disabled={game.map !== undefined && game.map !== 'village'} onClick={() => yardMove(picked.id as YardItem)}>
+                {T.yard.place}
+              </button>
+            )}
+            {from === 'bag' && pantry && PANTRY_FOODS.includes(picked.id) && (
+              <button disabled={!atHome} onClick={() => putPantry(picked.id)}>
+                {T.easy.pantryPut}
+              </button>
+            )}
+            {from === 'chest' && (
+              <button disabled={!atHome} onClick={() => takeChest(picked.id)}>
+                {T.easy.chestTake}
+              </button>
+            )}
+            {from === 'pantry' && (
+              <button disabled={!atHome} onClick={() => takePantry(picked.id)}>
+                {T.easy.pantryTake}
+              </button>
+            )}
+            {from === 'bag' && <button onClick={() => setAsking(true)}>{T.gear.discard}</button>}
+          </div>
         )}
       </div>
     ) : (

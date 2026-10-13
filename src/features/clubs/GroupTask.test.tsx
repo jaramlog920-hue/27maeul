@@ -27,51 +27,59 @@ describe('유저가 맡는 모임 손일',()=>{
   expect(screen.getByText(T.fest.joinFar)).toBeInTheDocument()
   expect(screen.queryByRole('button',{name:T.fest.next})).not.toBeInTheDocument()
  })
- it('차 따르기는 너무 빨리 놓으면 다시 하고, 적당히 따른 뒤 이웃에게 건넨다',()=>{
+ it('차 모임: 이웃마다 입맛을 듣고 한 잔씩 — 끝에 결과 창(맞았는지·마음)과 남은 이야기, 마치면 모임이 끝난다 (2026-10-13)',async()=>{
+  const { wantOf, HOLD_BANDS, apptGuests } = await import('../../engine/club-round')
   vi.useFakeTimers()
   render(<ClubSession id="appt:1"/>)
-  fireEvent.click(screen.getByRole('button',{name:'따뜻한 차 따르기'}))
-  const hold=screen.getByRole('button',{name:'누르고 있다가 놓기'})
-  fireEvent.keyDown(hold,{key:' '});act(()=>vi.advanceTimersByTime(100));fireEvent.keyUp(hold,{key:' '})
-  expect(screen.getByRole('status')).toHaveTextContent('다시 누르고')
-  expect(useGame.getState().game.clubSessions['appt:1'].task?.stage).toBe(1)
-  fireEvent.keyDown(hold,{key:' '});act(()=>vi.advanceTimersByTime(750));fireEvent.keyUp(hold,{key:' '})
-  expect(useGame.getState().game.clubSessions['appt:1'].task?.stage).toBe(2)
-  fireEvent.click(screen.getByRole('button',{name:/에게$/}))
-  expect(useGame.getState().game.clubSessions['appt:1'].task?.stage).toBe(3)
-  expect(screen.getByRole('status')).toHaveTextContent('고개를 끄덕여요')
-  expect(useGame.getState().game.plans.appts[0].rewarded).toBe(false)
+  const guests=apptGuests(useGame.getState().game,'appt:1')
+  for(const [i,npc] of guests.entries()){
+   expect(screen.getByRole('heading',{name:`${i+1}/${guests.length}번째 차례`})).toBeInTheDocument()
+   const [lo,hi]=HOLD_BANDS[wantOf(npc,'tea')]
+   const before=useGame.getState().game.hearts[npc]??0
+   const hold=screen.getByRole('button',{name:T.round.hold})
+   fireEvent.keyDown(hold,{key:' '});act(()=>vi.advanceTimersByTime(Math.round((lo+hi)/2/2)*40));fireEvent.keyUp(hold,{key:' '})
+   expect(useGame.getState().game.hearts[npc]).toBeGreaterThan(before)
+   fireEvent.click(screen.getByRole('button',{name:'다음'}))
+  }
+  expect(screen.getByRole('heading',{name:T.round.resultTitle})).toBeInTheDocument()
+  expect(screen.getAllByText(T.round.good)).toHaveLength(guests.length)
+  expect(screen.getByRole('heading',{name:T.round.talkTitle})).toBeInTheDocument()
+  fireEvent.click(screen.getByRole('button',{name:T.round.finish}))
+  expect(useGame.getState().game.clubSessions['appt:1'].step).toBe('done')
  })
- it('선 잇기는 순서대로 마쳐야 전달할 수 있고, 모임을 마치는 기존 버튼으로 이어진다',()=>{
+ it('그림 모임: 이웃마다 그리고 싶은 것을 골라 주면, 결과 창 뒤에 모임을 마치는 기존 단추로 이어진다',async()=>{
+  const { wantOf, apptGuests } = await import('../../engine/club-round')
   const b=useGame.getState().game
   useGame.getState().load({...b,plans:{...b.plans,appts:b.plans.appts.map(a=>({...a,activity:'paint'}))}})
   render(<ClubSession id="appt:1"/>)
-  fireEvent.click(screen.getByRole('button',{name:'꽃 그리기'}))
-  expect(screen.getByRole('button',{name:'2번째 선 잇기'})).toBeDisabled()
-  for(let n=1;n<=4;n++)fireEvent.click(screen.getByRole('button',{name:`${n}번째 선 잇기`}))
-  fireEvent.click(screen.getByRole('button',{name:/에게$/}))
+  const opts=(T.round.kinds.paint.opts as string[])
+  for(const npc of apptGuests(useGame.getState().game,'appt:1')){
+   fireEvent.click(screen.getByRole('button',{name:opts[wantOf(npc,'paint')]}))
+   fireEvent.click(screen.getByRole('button',{name:'다음'}))
+  }
+  expect(screen.getByRole('heading',{name:T.round.resultTitle})).toBeInTheDocument()
   fireEvent.click(screen.getByRole('button',{name:'그림 보여주고 감상하기'}))
   expect(useGame.getState().game.clubSessions['appt:1'].step).toBe('finish')
  })
- it('작품 소개는 직접 작업하고 이웃에게 보여준 다음 행사 이야기를 이어간다',()=>{
+ it('작품 소개 행사: 이웃이 궁금한 데를 보여 준 다음 행사 이야기를 이어간다',async()=>{
+  const { wantOf } = await import('../../engine/club-round')
   const b=useGame.getState().game
-  useGame.getState().load({...b,clubSessions:{},plans:{...b.plans,appts:b.plans.appts.map(a=>({...a,clubId:undefined,kind:'event',festId:'fest:1'}))},fests:[{id:'fest:1',apptId:'appt:1',kind:'showcase',day:2,place:'hallTable',members:['baker'],reserve:{},step:'activity',joined:true,consumed:false,closed:false,cancelled:false}]})
+  useGame.getState().load({...b,clubSessions:{},plans:{...b.plans,appts:b.plans.appts.map(a=>({...a,clubId:undefined,kind:'event',festId:'fest:1',startedWith:['baker']}))},fests:[{id:'fest:1',apptId:'appt:1',kind:'showcase',day:2,place:'hallTable',members:['baker'],reserve:{},step:'activity',joined:true,consumed:false,closed:false,cancelled:false}]})
   render(<FestSession id="fest:1"/>)
   expect(screen.queryByRole('button',{name:T.fest.pick.show})).not.toBeInTheDocument()
-  fireEvent.click(screen.getByRole('button',{name:'작품 펼쳐 보이기'}))
-  for(let n=1;n<=4;n++)fireEvent.click(screen.getByRole('button',{name:`${n}번째 선 잇기`}))
-  fireEvent.click(screen.getByRole('button',{name:/에게$/}))
+  fireEvent.click(screen.getByRole('button',{name:(T.round.kinds.showcase.opts as string[])[wantOf('baker','showcase')]}))
+  fireEvent.click(screen.getByRole('button',{name:'다음'}))
   fireEvent.click(screen.getByRole('button',{name:T.fest.pick.show}))
   expect(useGame.getState().game.fests[0].step).toBe('talk')
  })
- it('계절 잔치 장식 역할은 자리에 온 이웃과 마친 뒤 완료할 수 있다',()=>{
+ it('계절 잔치 장식 역할은 모닥불 곁에 온 이웃과 마친 뒤 완료할 수 있다',async()=>{
+  const { wantOf } = await import('../../engine/club-round')
   const b=useGame.getState().game
   useGame.getState().load({...b,clock:{day:20,minute:1090},player:{...b.player,...FIRE},npcs:{...b.npcs,baker:{...b.npcs.baker,...FESTIVAL_SPOTS.baker,visible:true,path:[]}},plans:{appts:[],nextId:1},clubSessions:{},fests:[{id:'fest:1',kind:'festival',day:20,place:'bench',members:[],role:'deco',reserve:{},step:'tidy',joined:false,consumed:false,closed:false,cancelled:false}]})
   render(<FestSession id="fest:1"/>)
   expect(screen.getByRole('button',{name:T.fest.roleButton})).toBeDisabled()
-  fireEvent.click(screen.getByRole('button',{name:'꽃 장식 잇기'}))
-  for(let n=1;n<=4;n++)fireEvent.click(screen.getByRole('button',{name:`${n}번째 선 잇기`}))
-  fireEvent.click(screen.getByRole('button',{name:'헤이즐에게'}))
+  fireEvent.click(screen.getByRole('button',{name:(T.round.kinds.festivalDeco.opts as string[])[wantOf('baker','festivalDeco')]}))
+  fireEvent.click(screen.getByRole('button',{name:'다음'}))
   fireEvent.click(screen.getByRole('button',{name:T.fest.roleButton}))
   expect(useGame.getState().game.fests[0]).toMatchObject({closed:true,step:'done'})
  })

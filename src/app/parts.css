@@ -2476,3 +2476,20 @@ button.row:active:not(:disabled) { background: #efe3c4; }
 .bag-detail .need-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 0; padding: 0; list-style: none; font-size: 11px; color: var(--ink-soft); }
 .bag-detail .need-list li { display: flex; align-items: center; gap: 2px; }
 .bag-detail .need-list li.short { color: #b0473a; }
+/* 아이콘 칸 창(작업대 등)은 크게 — 2026-10-13 사용자: 너무 작아 '아래로 더 있어요'를 계속 눌러야 했다.
+   칸이 줄 단추 묶음 안에서 눌려 잘리지 않게 하고, 고른 칸의 재료·설명까지 한 번에 보이게 창 높이를 넉넉히 */
+.actions.menu.column > .icon-grid { flex-shrink: 0; width: 100%; }
+.dialog:has(.icon-grid) { min-height: min(72vh, 600px); }
+/* 가방 설명 칸의 단추 줄 (2026-10-13): 설명 아래 한 줄, 같은 크기로 나란히. 버리기 확인도 같은 줄 모양 */
+.bag-detail { flex-wrap: wrap; }
+.bag-detail > .bag-actions { flex: 0 0 100%; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.bag-actions:empty { display: none; }
+.bag-actions > p.hint { flex-basis: 100%; margin: 0; font-size: 11px; }
+.bag-actions > button { flex: 1 1 0; min-width: 0; min-height: 34px; padding: 2px 8px; font-size: 12px; white-space: nowrap; }
+.bag-actions > button.danger { color: #a3402f; }
+/* 가족 창: 함께할 아이 고르기 (2026-10-13 아이 셋) */
+.fam-kids { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 6px 0; }
+.fam-kids > span { font-size: 12px; color: var(--ink-soft); }
+.fam-kids > button { flex: 1 1 0; min-width: 0; min-height: 34px; font-size: 12px; }
+.fam-kids > button small { color: var(--ink-soft); }
+.fam-kids > button.on { background: #f6ead0; font-weight: 700; }

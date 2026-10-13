@@ -4,7 +4,8 @@ import type { FurnitureArt } from './furniture-art'
 import { FURNI_PALETTE } from './furniture-art'
 import type { Facing } from '../engine/types'
 import { settlementBuildingDetails } from './settlement-building-details'
-export const OLD_VILLAGE_PALETTE = { ...FURNI_PALETTE, z:'#756653', H:'#bd8069', h:'#98644f', I:'#d5ab82', i:'#b18a64', a:'#99aaa5', A:'#6b8581', u:'#ebe0c5', U:'#cbbda1' }
+import { OT_LIBRARY_ROOF } from './library-roof-palette'
+export const OLD_VILLAGE_PALETTE = { ...FURNI_PALETTE, z:'#756653', H:'#bd8069', h:'#98644f', I:'#d5ab82', i:'#b18a64', a:'#99aaa5', A:'#6b8581', u:'#ebe0c5', U:'#cbbda1', e:OT_LIBRARY_ROOF[0], E:OT_LIBRARY_ROOF[1], d:OT_LIBRARY_ROOF[2] }
 type Rect = readonly [string,number,number,number,number]
 const tile = (r:readonly Rect[]) => pixels(1,1,r)
 export const OLD_PROPS:Record<string,FurnitureArt> = {
@@ -80,8 +81,9 @@ function building(id:string,facing:Facing,construction=false):FurnitureArt {
   const side=facing==='left'||facing==='right',back=facing==='up'
   const r:Rect[]=[['z',5,59,54,3],['W',7,25,50,35],['u',9,27,46,31],['U',9,53,46,5]]
   for(let y=32;y<53;y+=7){r.push(['I',9,y,46,1]);for(let x=12+(y%2?0:5);x<55;x+=13)r.push(['I',x,y-5,1,5])}
-  if(side){r.push(['h',5,22,54,5],['H',7,12,50,10],['I',10,9,44,3]);for(let x=12;x<54;x+=8)r.push(['h',x,12,1,10])}
-  else {for(let y=4;y<25;y++){const inset=Math.floor((25-y)/2);r.push([y%5===0?'h':'H',4+inset,y,56-inset*2,1])}r.push(['h',3,25,58,3])}
+  const roof=id==='archive'?'e':'H',roofShade=id==='archive'?'E':'h',roofLight=id==='archive'?'d':'I'
+  if(side){r.push([roofShade,5,22,54,5],[roof,7,12,50,10],[roofLight,10,9,44,3]);for(let x=12;x<54;x+=8)r.push([roofShade,x,12,1,10])}
+  else {for(let y=4;y<25;y++){const inset=Math.floor((25-y)/2);r.push([y%5===0?roofShade:roof,4+inset,y,56-inset*2,1])}r.push([roofShade,3,25,58,3])}
   const doorX=side?facing==='left'?10:42:27
   if(!back)r.push(['W',doorX,39,10,21],['w',doorX+2,41,6,17],['l',doorX+2,42,1,15],['S',doorX+6,49,1,2],['I',doorX-2,59,14,2])
   for(const x of side?[27]:[14,43]){r.push(['W',x,33,8,11],['a',x+1,34,6,8],['A',x+4,34,2,8],['l',x+1,38,6,1],['I',x-1,44,10,2])}

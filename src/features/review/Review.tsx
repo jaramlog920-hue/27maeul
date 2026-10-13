@@ -4,12 +4,13 @@ import { fill, itemList, JOURNAL_NOTES, T } from '../../content/text'
 import { LATE } from '../../engine/clock'
 import { todayDiary, type Diary } from '../../engine/daybook'
 import { useGame } from '../../store/game-store'
+import { babyBlock } from '../../engine/siblings'
 import { Passage } from '../passage/Passage'
 
 export function Review({ pieceId }: { pieceId: string | null }) {
   const minute = useGame((s) => s.game.clock.minute)
   const game = useGame((s) => s.game)
-  const { sleep, closeModal } = useGame.getState()
+  const { sleep, closeModal, askBaby } = useGame.getState()
   const piece = pieceId ? pieceById(pieceId) : null
   const diary = todayDiary(game)
   return (
@@ -27,6 +28,8 @@ export function Review({ pieceId }: { pieceId: string | null }) {
       {minute >= LATE && <p className="hint">{T.ui.sleepLate}</p>}
       <div className="actions">
         <button onClick={closeModal}>{T.ui.stayUp}</button>
+        {/* 둘째·셋째 (2026-10-13): 결혼했고, 막내가 어린이가 되었으면 */}
+        {babyBlock(game) === null && <button onClick={askBaby}>{T.siblings.ask}</button>}
         <button className="primary" onClick={sleep}>
           {T.ui.sleep}
         </button>

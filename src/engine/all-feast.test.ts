@@ -5,7 +5,7 @@ import { ALBUM_IDS, JOURNAL_NOTES, SCENES } from '../content/text'
 import { planGathering, villageLevel } from './bonds'
 import { FESTIVAL_FROM, FESTIVAL_TO, festivalOf, isWet, weatherOf, dayOf } from './calendar'
 import { scheduledEvents } from './events'
-import { goToSleep, lessonTime, newGame, sceneSeen, tick, type GameState } from './game'
+import { goToSleep, newGame, sceneSeen, tick, type GameState } from './game'
 import { allShelved, feastToday } from './library'
 import { FESTIVAL_SPOTS } from './neighbors'
 import { BOOKS } from './types'
@@ -16,6 +16,8 @@ const eve = (s: GameState, minute: number) => tick(at(s, minute), 0.05, zero, CO
 
 const ALL = Object.fromEntries(BOOKS.map((b) => [b, 1])) as GameState['shelved']
 const OPEN = { gospelFeast: 2, 'room:romPhm': 1, 'room:hebJud': 1, 'room:rev': 1 }
+/** 한 권(빌레몬서)이 아직 안 꽂힌 서고 — 잔치 조건이 안 된 밤 */
+const MISS_ONE = Object.fromEntries(BOOKS.filter((b) => b !== 'phm').map((b) => [b, 1])) as GameState['shelved']
 
 /** day일째 밤 — 요한계시록 방이 열린 뒤, shelved·판 상태를 준다 */
 function night(day: number, shelved: GameState['shelved'], churchesDone: boolean, extra: Partial<GameState> = {}): GameState {
@@ -37,10 +39,11 @@ describe('스물일곱 권 잔치 — 조건과 한 번뿐', () => {
     delete noRev.rev
     expect(allShelved({ shelved: noRev })).toBe(false)
   })
-  it('① 요한계시록만 꽂고 판 미완 → 없음, 판만 완성·안 꽂음 → 없음', () => {
+  it('① 일곱 교회 판을 안 놓아도 스물일곱 권이 다 꽂히면 잔치 (2026-10-13), 한 권이라도 빠지면 없음', () => {
     const a = goToSleep(night(2, ALL, false), CONTENT)
-    expect(a.scenes).not.toContain('allFeast')
-    expect(a.flags.allFeast).toBeUndefined()
+    expect(a.flags.allFeast).toBe(1)
+    const one = goToSleep(night(2, MISS_ONE, true), CONTENT)
+    expect(one.flags.allFeast).toBeUndefined()
     const noRev = { ...ALL }
     delete noRev.rev
     const b = goToSleep(night(2, noRev, true), CONTENT)
@@ -117,18 +120,28 @@ describe('스물일곱 권 잔치 — 저녁 모닥불', () => {
     let d = 2
     while (planGathering(d + 1, level, flags) !== 'starNight') d++
     const extra = { hearts }
-    const plain = goToSleep({ ...night(d, ALL, false, extra), flags: { ...night(d, ALL, false).flags, 'done:picnic': 1 } }, CONTENT)
+    const plain = goToSleep({ ...night(d, MISS_ONE, false, extra), flags: { ...night(d, MISS_ONE, false).flags, 'done:picnic': 1 } }, CONTENT)
     expect(plain.today.gathering).toBe('starNight')
     const feast = goToSleep({ ...night(d, ALL, true, extra), flags: { ...night(d, ALL, true).flags, 'done:picnic': 1 } }, CONTENT)
     expect(feast.flags.allFeast).toBe(1)
     expect(feast.today.gathering).toBeNull()
     expect(feast.scenes).not.toContain('notice:starNight')
   })
+  it('복음서 방 잔치를 아직 안 열었어도, 스물일곱 권이 다 꽂혔으면 그날은 스물일곱 권 잔치 (2026-10-13)', () => {
+    const s = night(2, ALL, false)
+    const { gospelFeast: _g, ...flags } = s.flags
+    void _g
+    const next = goToSleep({ ...s, flags }, CONTENT)
+    expect(next.flags.allFeast).toBe(1)
+    expect(next.flags.gospelFeast).toBe(2)
+    expect(next.scenes).toContain('allFeast')
+    expect(next.scenes).not.toContain('gospelFeast')
+  })
   it('④ 잔치 날에는 저녁 초대가 없다', () => {
     const hearts = Object.fromEntries(CONTENT.neighbors.map((d) => [d.id, 99]))
     let found = false
     for (let d = 2; d < 60 && !found; d++) {
-      const plain = goToSleep(night(d, ALL, false, { hearts }), CONTENT)
+      const plain = goToSleep(night(d, MISS_ONE, false, { hearts }), CONTENT)
       if (!plain.today.inviter || plain.today.gathering || festivalOf(d + 1)) continue
       found = true
       const feast = goToSleep(night(d, ALL, true, { hearts }), CONTENT)
@@ -137,14 +150,7 @@ describe('스물일곱 권 잔치 — 저녁 모닥불', () => {
     }
     expect(found).toBe(true)
   })
-  it('④ 잔치 날에는 아이 글자 공부를 쉰다', () => {
-    const base = { ...night(3, ALL, true), clock: { day: 4, minute: 18 * 60 + 10 } }
-    expect(isWet(weatherOf(4))).toBe(false)
-    const flags = { ...base.flags, childAsked: 1, childLetters: 0 }
-    expect(lessonTime({ ...base, flags })).toBe(true)
-    expect(lessonTime({ ...base, flags: { ...flags, allFeast: 1 } })).toBe(false)
-    expect(lessonTime({ ...base, flags: { ...flags, allFeast: 2 } })).toBe(true)
-  })
+
 })
 
 describe('스물일곱 권 잔치 — 앨범과 그 뒤', () => {

@@ -42,7 +42,7 @@ describe('필사 길잡이 — 필사 화면', () => {
     const g2 = chapterGuide('lk', 2)!
     expect(guideBox()).toHaveTextContent(g2.background)
     const user = userEvent.setup()
-    await user.type(box(), versesOf('눅 2:1')[0].text)
+    await user.type(box(), versesOf('눅 2:1')[0].text + '{Enter}')
     expect(screen.getByLabelText('본문 누가복음 2:2')).toBeInTheDocument()
     expect(guideBox()).toHaveTextContent(g2.background)
     expect(guideBox()).toHaveAttribute('data-guide', 'lk:2')

@@ -1,6 +1,4 @@
 // 계획 20 작업 3: 두 지도의 크기·칸·입구·서고 자리
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
 import { SITES } from './village-sites'
 import { findPath } from './movement'
 import { currentMapId, mapHeight, mapVisibleHeight, mapWidth, setActiveMap } from './maps'
@@ -57,24 +55,16 @@ describe('새 터 칸 구성', () => {
       for (let x: number = ARCHIVE.x0; x < ARCHIVE.x0 + ARCHIVE.w; x++)
         expect(newlandTileAt(x, y), `${x},${y}`).toBe(x === ARCHIVE.door.x && y === ARCHIVE.door.y ? 'D' : 'S')
     // 북쪽 가운데
-    expect(ARCHIVE.x0 + ARCHIVE.w / 2).toBe(NEWLAND_W / 2)
+    expect(ARCHIVE.x0 + Math.floor(ARCHIVE.w / 2)).toBe(NEWLAND_W / 2)
     expect(ARCHIVE.y0).toBeLessThan(NEWLAND_VISIBLE_H / 3)
   })
 
-  it('서고 자리는 자산 manifest의 archive footprint·entry에서 읽은 값과 맞다', () => {
-    const manifest = JSON.parse(readFileSync(resolve(process.cwd(), 'assets/old-testament-generations/manifest.json'), 'utf8')) as {
-      tileSize: number
-      items: { id: string; group: string; facing?: string; visualTiles?: { w: number; h: number }; footprint?: { w: number; h: number }; entry?: { x: number; y: number } | null }[]
-    }
-    const a = manifest.items.find((i) => i.id === 'archive' && i.group === 'buildings' && i.facing === 'down')!
-    expect(a.footprint).toEqual({ w: ARCHIVE.w, h: ARCHIVE.h })
-    expect(a.visualTiles).toEqual({ w: ARCHIVE.w, h: ARCHIVE.h + 1 })
-    // entry 화소 → 그림 안의 칸. 가로는 4칸 폭 가운데 두 칸 중 오른쪽 칸(엔진 문), 세로는 맨 아랫줄
-    const col = Math.floor(a.entry!.x / manifest.tileSize)
-    const row = Math.floor(a.entry!.y / manifest.tileSize)
-    expect(ARCHIVE.door).toEqual({ x: ARCHIVE.x0 + col, y: ARCHIVE.y0 + row })
-    expect(row).toBe(ARCHIVE.h)
-    expect(ARCHIVE.front).toEqual({ x: ARCHIVE.door.x, y: ARCHIVE.door.y + 1 })
+  it('신약과 같은 7×4칸 외관이며 기존 문 앞 길과 실내 입구가 유지된다', () => {
+    expect(ARCHIVE.w).toBe(7)
+    expect(ARCHIVE.h + 1).toBe(4)
+    expect(ARCHIVE.door).toEqual({x: ARCHIVE.x0 + 3, y: ARCHIVE.y0 + ARCHIVE.h})
+    expect(ARCHIVE.door).toEqual({x:20,y:6})
+    expect(ARCHIVE.front).toEqual({x:20,y:7})
   })
 
   it('건축 가능 구역은 28×18 빈 풀밭이고 서고·길·입구와 겹치지 않는다', () => {

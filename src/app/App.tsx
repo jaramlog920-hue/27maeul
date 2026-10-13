@@ -35,9 +35,27 @@ export function App() {
   }
   // 개발용: 주소 뒤 ?test=26 이면 마지막 한 절만 남은 시험 저장을 새 칸에 만들어 바로 시작 (배포 빌드에는 없다)
   useEffect(() => {
-    if (!import.meta.env.DEV || new URLSearchParams(location.search).get('test') !== '26') return
+    if (!import.meta.env.DEV) return
+    const test = new URLSearchParams(location.search).get('test')
+    let cancelled = false
+    if (test && ['tea-hall', 'tea-cafe', 'yard', 'feast', 'copy'].includes(test)) {
+      void import('../dev/controls-playtest').then(async ({ controlsPlaytest }) => {
+        const { game, modal } = await controlsPlaytest(CONTENT, test)
+        if (cancelled) return
+        setActiveSlot(newSlot())
+        saveGame(game)
+        unlockAudio()
+        useGame.getState().load(game)
+        if (modal) useGame.getState().open(modal)
+        history.replaceState(null, '', location.pathname)
+        setScreen('play')
+      })
+      return () => { cancelled = true }
+    }
+    if (test !== '26') return
     void import('../dev/test-saves').then(async ({ lastVerseGame }) => {
       const game = await lastVerseGame(CONTENT)
+      if (cancelled) return
       setActiveSlot(newSlot())
       saveGame(game)
       unlockAudio()
@@ -45,6 +63,7 @@ export function App() {
       history.replaceState(null, '', location.pathname)
       setScreen('play')
     })
+    return () => { cancelled = true }
   }, [])
   if (screen === 'play') return <Play />
   if (screen === 'load')

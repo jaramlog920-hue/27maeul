@@ -90,7 +90,7 @@ function avatarNums(a: Avatar | undefined): Record<string, number> | undefined {
  */
 export function withPlayerFamily(
   g: GenState,
-  s: { romance?: Pick<Romance, 'stage' | 'partner'>; child?: Pick<Child, 'name' | 'look' | 'born'> | null; avatar?: Avatar | null; looks?: Record<string, Avatar>; clock: { day: number } },
+  s: { romance?: Pick<Romance, 'stage' | 'partner'>; child?: Pick<Child, 'name' | 'look' | 'born'> | null; siblings?: Pick<Child, 'name' | 'look' | 'born'>[]; avatar?: Avatar | null; looks?: Record<string, Avatar>; clock: { day: number } },
 ): GenState {
   const married = s.romance?.stage === 'married' && !!s.romance.partner
   if (!married && !s.child) return g
@@ -114,6 +114,16 @@ export function withPlayerFamily(
       avatar: avatarNums(look ? { ...look, skin: av?.skin ?? look.skin } : undefined), ...(look?.hairColor ? { hair: look.hairColor as [number, number, number] } : {}),
       parents: [ME, ...(spouse ? [spouse] : [])], spouse: null, household: null,
     }
+    // 둘째·셋째 (2026-10-13): 같은 부모 아래
+    ;(s.siblings ?? []).forEach((k, i) => {
+      const kst = childStage(k, s.clock.day)
+      persons[`${MY_CHILD}:${i + 2}`] = {
+        id: `${MY_CHILD}:${i + 2}`, origin: 'born', born: k.born,
+        stage: kst === 'baby' || kst === 'toddler' ? 'baby' : kst === 'helper' ? 'child' : 'adult',
+        look: k.look === 'boy' ? 'm' : 'f', name: k.name,
+        parents: [ME, ...(spouse ? [spouse] : [])], spouse: null, household: null,
+      }
+    })
   }
   return { ...g, persons }
 }

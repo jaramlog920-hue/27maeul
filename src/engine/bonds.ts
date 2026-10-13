@@ -94,7 +94,7 @@ export const VISIT_GIFTS: Record<string, Items> = {
 /** bonus: 운 단계만큼 찾아올 확률을 더한다 (계획 11 작업 4) */
 export function pickVisitor(day: number, hearts: Record<string, number>, flags: Record<string, number>, present: readonly string[], bonus = 0): string | null {
   const r = mulberry32(day * 131 + 7)
-  if (r() > 0.6 + bonus) return null
+  if (r() > 0.2 + bonus) return null
   const cand = present.filter((id) => heartsOf(hearts[id]) >= VISIT_HEARTS && day - (flags[`visitDay:${id}`] ?? -99) >= 4 && VISIT_GIFTS[id])
   if (!cand.length) return null
   return cand[Math.min(cand.length - 1, Math.floor(r() * cand.length))]

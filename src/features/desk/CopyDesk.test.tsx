@@ -73,7 +73,7 @@ describe('필사 집중 화면 — 쓰기', () => {
   it('한 절을 다 쓰면 조용히 "✓ 누가복음 1:1 기록", 다음 절이 올라오고 진행 막대가 찬다', async () => {
     openWrite(writing('lk'))
     const user = userEvent.setup()
-    await user.type(box(), lk1[0].text)
+    await user.type(box(), lk1[0].text + '{Enter}')
     expect(screen.getByRole('status')).toHaveTextContent('✓ 누가복음 1:1 기록')
     expect(screen.getByRole('heading')).toHaveTextContent(`누가복음 1장 · 2/${lk1.length}절`)
     expect(screen.getByLabelText('본문 누가복음 1:2')).toHaveTextContent(lk1[1].text)
@@ -84,7 +84,7 @@ describe('필사 집중 화면 — 쓰기', () => {
   it('띄어쓰기·문장부호를 빼고 써도 절이 기록된다', async () => {
     openWrite(writing('lk'))
     const user = userEvent.setup()
-    await user.type(box(), lk1[0].text.replace(/[\s,.]/g, ''))
+    await user.type(box(), lk1[0].text.replace(/[\s,.]/g, '') + '{Enter}')
     expect(useGame.getState().game.copyStats.verses).toBe(1)
   })
 
@@ -103,7 +103,7 @@ describe('필사 집중 화면 — 장 완료', () => {
     const mt5 = versesOf('마 5:1-48')
     openWrite({ ...writing('mt', 5, 48), clock: { day: 9, minute: 9 * 60 } })
     const user = userEvent.setup()
-    await user.type(box(), mt5[47].text)
+    await user.type(box(), mt5[47].text + '{Enter}')
     const g = useGame.getState().game
     const m = useGame.getState().modal
     if (m?.kind !== 'copy' || m.last?.kind !== 'chapter') throw new Error('장 완료가 아님')
@@ -134,7 +134,7 @@ describe('필사 집중 화면 — 장 완료', () => {
     const vs = versesOf(`마 ${without}:1-${CONTENT.chapterText!('mt', without).at(-1)!.verse}`)
     openWrite(writing('mt', without, vs.at(-1)!.verse))
     const user = userEvent.setup()
-    await user.type(box(), vs.at(-1)!.text)
+    await user.type(box(), vs.at(-1)!.text + '{Enter}')
     expect(useGame.getState().modal).toMatchObject({ kind: 'copy', view: 'done' })
     // 집에서 필사를 마치면 말씀 조각 팝업이 완료 화면보다 먼저 뜰 수 있다.
     const acquired = useGame.getState().piecePopups.length
@@ -151,7 +151,7 @@ describe('필사 집중 화면 — 장 완료', () => {
   it('지쳐 있어도 필사할 수 있다', async () => {
     openWrite({ ...writing('lk'), needs: { ...newGame(CONTENT).needs, fatigue: 100 } })
     const user = userEvent.setup()
-    await user.type(box(), lk1[0].text)
+    await user.type(box(), lk1[0].text + '{Enter}')
     expect(useGame.getState().game.copyStats.verses).toBe(1)
   })
 })
@@ -164,7 +164,7 @@ describe('필사 집중 화면 — 책상 메뉴·나가기·이어 쓰기', () 
     sit()
     expect(screen.getByRole('heading')).toHaveTextContent('필사 책상')
     await user.click(screen.getByRole('button', { name: '이어서 필사' }))
-    await user.type(box(), lk1[0].text)
+    await user.type(box(), lk1[0].text + '{Enter}')
     await user.type(box(), lk1[1].text.slice(0, 3))
     await user.click(screen.getByRole('button', { name: '나가기' }))
     expect(useGame.getState().modal).toBeNull()
@@ -254,6 +254,9 @@ describe('필사 집중 화면 — 휴대폰 한글 키보드 (조합)', () => {
     expect(useGame.getState().game.copyStats.verses).toBe(0)
     expect(screen.getByLabelText('본문 누가복음 1:1').querySelector('.copy-done-part')).toHaveTextContent(text)
     fireEvent.compositionEnd(box())
+    // 다 맞게 써도 엔터를 눌러야 다음 절로 (2026-10-13 사용자)
+    expect(useGame.getState().game.copyStats.verses).toBe(0)
+    fireEvent.keyDown(box(), { key: 'Enter' })
     expect(useGame.getState().game.copyStats.verses).toBe(1)
     expect(screen.getByRole('heading')).toHaveTextContent('누가복음 1장 · 2/')
     // 조합이 끝난 뒤 따라오는 같은 입력(사파리)은 다음 절의 입력칸을 덮지 않는다
@@ -281,13 +284,14 @@ describe('필사 집중 화면 — 휴대폰 한글 키보드 (조합)', () => {
     beforeEach(() => vi.useFakeTimers())
     afterEach(() => vi.useRealTimers())
 
-    it('절을 다 맞게 쓰고 조합 중인 채로 잠깐 멈추면 조합을 확정해 절을 마친다 (늦게 온 compositionend는 받지 않는다)', () => {
+    it('절을 다 맞게 쓰고 조합 중인 채로 잠깐 멈추면 조합을 확정하고, 엔터로 절을 마친다 (늦게 온 compositionend는 받지 않는다)', () => {
       openWrite(writing('lk'))
       fireEvent.compositionStart(box())
       fireEvent.change(box(), { target: { value: text } })
-      act(() => void vi.advanceTimersByTime(699))
+      act(() => void vi.advanceTimersByTime(700))
       expect(useGame.getState().game.copyStats.verses).toBe(0)
-      act(() => void vi.advanceTimersByTime(1))
+      expect(screen.getByRole('button', { name: T.copyFocus.enterNext })).toBeInTheDocument()
+      fireEvent.keyDown(box(), { key: 'Enter' })
       expect(useGame.getState().game.copyStats.verses).toBe(1)
       expect(screen.getByRole('heading')).toHaveTextContent('누가복음 1장 · 2/')
       expect(box().value).toBe('')
@@ -335,7 +339,7 @@ describe('재료 없는 필사에 맞춰 — 펜·책상은 꾸미기, 밤에도
   it('좋은 펜이 있어도 한 장에 드는 시간·능력치는 같다 (이미 산 펜은 그대로 가진다)', async () => {
     const user = userEvent.setup()
     openWrite({ ...writing('lk'), inv: { goodPen: 1 } })
-    await user.type(box(), lk1[0].text)
+    await user.type(box(), lk1[0].text + '{Enter}')
     expect(useGame.getState().game.inv.goodPen).toBe(1)
     expect(useGame.getState().game.copyStats.verses).toBe(1)
   })
@@ -347,7 +351,7 @@ describe('재료 없는 필사에 맞춰 — 펜·책상은 꾸미기, 밤에도
     expect(useGame.getState().modal).toMatchObject({ kind: 'copy', view: 'menu' })
     act(() => useGame.getState().copyView('write', true))
     const user = userEvent.setup()
-    await user.type(box(), lk1[0].text)
+    await user.type(box(), lk1[0].text + '{Enter}')
     expect(useGame.getState().game.copyStats.verses).toBe(1)
   })
 
@@ -417,7 +421,7 @@ describe('필사 책상 — 구약 칸', () => {
     render(<ModalLayer />)
     act(() => useGame.getState().open({ kind: 'copy', view: 'write' }))
     const user = userEvent.setup()
-    await user.type(box(), gen1()[0].text)
+    await user.type(box(), gen1()[0].text + '{Enter}')
     expect(screen.getByRole('status')).toHaveTextContent('✓ 창세기 1:1 기록')
     expect(screen.getByRole('heading')).toHaveTextContent(`창세기 1장 · 2/${gen1().length}절`)
     const g = useGame.getState().game
@@ -435,6 +439,7 @@ describe('필사 책상 — 구약 칸', () => {
     fireEvent.change(box(), { target: { value: text } })
     expect(useGame.getState().game.otCopyStats).toBeUndefined()
     fireEvent.compositionEnd(box())
+    fireEvent.keyDown(box(), { key: 'Enter' })
     expect(useGame.getState().game.otCopyStats?.verses).toBe(1)
   })
 
@@ -444,7 +449,10 @@ describe('필사 책상 — 구약 칸', () => {
     render(<ModalLayer />)
     act(() => useGame.getState().open({ kind: 'copy', view: 'write' }))
     // 한 번에 들어오는 입력 (휴대폰 키보드 확정과 같다) — 본문과 맞으면 받는다
-    for (const v of versesOf('옵 1:1-21')) fireEvent.change(box(), { target: { value: v.text } })
+    for (const v of versesOf('옵 1:1-21')) {
+      fireEvent.change(box(), { target: { value: v.text } })
+      fireEvent.keyDown(box(), { key: 'Enter' })
+    }
     expect(screen.getByRole('heading')).toHaveTextContent('오바댜 1장')
     expect(screen.queryByText(T.copyFocus.bind)).toBeNull()
     expect(document.querySelector('.copy-god')).toBeNull()

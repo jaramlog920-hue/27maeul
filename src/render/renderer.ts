@@ -1,3 +1,4 @@
+import { OT_LIBRARY_ROOF } from './library-roof-palette'
 import { villageBookCount } from "../engine/progression"
 import { FIXTURES } from '../engine/home-layout'
 import { SPOUSE_FURNITURE } from '../engine/furniture-defs'
@@ -47,9 +48,10 @@ import { wanderGoal } from '../engine/npc-life'
 import { homeWallsKey } from '../engine/home-walls'
 import { childGrowth, rainbowVisible } from '../engine/stories'
 import { childMode, childStage } from '../engine/child'
+import { siblingsOf, siblingTile } from '../engine/siblings'
 import { playerChildAvatar, playerChildSprite } from './player-child-look'
 import { BOARD, stoneTile, TRIP_H, TRIP_W, tripLayout, type Cell as TripCell } from '../engine/trip-board'
-import { feastToday, sideShelfSpines } from '../engine/library'
+import { feastToday } from '../engine/library'
 import { roomPieceRatio, SHELF_FILL, shelfFillSteps } from '../engine/fragments'
 import { groundFragment } from '../engine/ground-fragments'
 import { OT_PIECE_COUNT } from '../engine/ot-pieces'
@@ -1048,6 +1050,13 @@ function drawRoof(g: Ctx, tx0: number, ty0: number, tx1: number, ty1: number, [c
   }
 }
 
+/** 두 마을 서고가 같은 벽·창·문·지붕 그림을 공유한다. 지붕 색만 다르다. */
+export function drawLibraryExterior(g: Ctx, h: {x0:number;y0:number;x1:number;y1:number;doorX:number}, roof: readonly [string,string,string] = HOUSE_STYLES.library.roof) {
+  for(let y=h.y1-1;y<=h.y1;y++)for(let x=h.x0;x<=h.x1;x++)
+    houseWallTile(g,x,y,x===h.doorX&&y===h.y1?'D':'S','library',h)
+  drawRoof(g,h.x0,h.y0,h.x1,h.y1-2,[...roof])
+}
+
 /** 계절과 집 단계마다 한 장 (집을 넓히면 그 칸들의 그림이 바뀐다) */
 const mapCache = new Map<string, HTMLCanvasElement>()
 function mapFor(season: Season): HTMLCanvasElement {
@@ -1085,6 +1094,7 @@ function mapFor(season: Season): HTMLCanvasElement {
         else{const art=homeAdditionArt(part);g.drawImage(paint(`home/wing/${part.x0}/${part.y0}/${part.y1}`,art.rows,art.palette),part.x0*TILE,part.y0*TILE)}
       }
     }
+    else if(h.id==='library')drawLibraryExterior(g,h)
     else drawRoof(g, h.x0, h.y0, h.x1, h.y1 - 2, (HOUSE_STYLES[h.id] ?? PLAIN_STYLE).roof)
   }
   g.drawImage(paint('lodging/stairs',LODGING_STAIRS_ROWS,LODGING_PALETTE),LODGING_STAIRS.x*TILE,LODGING_STAIRS.y*TILE)
@@ -2312,8 +2322,8 @@ function newlandMapFor(season: Season): HTMLCanvasElement {
     }
   // 입주 주택 안 방 칸 (작업 7): 자산 OLD_INTERIORS의 바닥·벽 (128×96 = 8×6칸) — 간판·소품은 빼고, 가구는 방 주인의 가구를 위에 그린다
   for (const r of ROOM_SLOTS) g.drawImage(paint('old/interior/shell', OLD_INTERIOR_SHELL.rows, OLD_VILLAGE_PALETTE), r.x0 * TILE, r.y0 * TILE)
-  // 작은 서고 (자산 old-village-art의 archive, 앞쪽): 그림 4×4칸, 아랫줄이 문 — 칸 구성은 newland-config가 따로 정했다
-  g.drawImage(paint('old/archive/down', OLD_BUILDINGS.archive.down.rows, OLD_VILLAGE_PALETTE), ARCHIVE.x0 * TILE, ARCHIVE.y0 * TILE)
+  // 신약 서고와 같은 외관을 그리며 구약 지붕 색만 바꾼다.
+  drawLibraryExterior(g,{x0:ARCHIVE.x0,y0:ARCHIVE.y0,x1:ARCHIVE.x0+ARCHIVE.w-1,y1:ARCHIVE.door.y,doorX:ARCHIVE.door.x},OT_LIBRARY_ROOF)
   newlandCache.set(key, c)
   return c
 }
@@ -2826,7 +2836,6 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       // 서고 안 복음서 선반: 네 칸 — 처음엔 빈 칸이 또렷이, 꽂은 책은 책마다 다른 책등(제본 모습)과 등급 띠 (계획 14 작업 4)
       if (roomAt(here)?.owner === 'library') {
         const [first] = PLACES.library.tiles
-        const BAND = GRADE_BAND
         GOSPELS.forEach((b, i) => {
           const sx = first.x * TILE + 4 + i * 11
           const sy = first.y * TILE + 2
@@ -2836,20 +2845,8 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         // 작은 책장 여섯 개: 모은 말씀 조각 ÷ 27권 전체 조각만큼 왼쪽 위 책장부터 한 단씩 차오른다 (왼쪽 셋 → 오른쪽 셋, 책장마다 위 단부터).
         // 아래 양옆 책장의 꽂은 책 책등은 이 위에 겹쳐 그린다. 책등은 2픽셀 너비, 차분한 파스텔·갈색
         drawRoomShelfFill(g, game, content.pieces, 'library')
-        // 양옆 책장: 복음서 다음에 꽂은 책(사도행전·편지·요한계시록)마다 책등 둘씩 (왼쪽·오른쪽 짝) — 처음엔 텅 빈 책장이
-        // 권이 늘수록 찬다. 책마다 다른 색(제본 모습): 왼쪽은 책등 색, 오른쪽 짝은 장식 색. 은박·금박이면 위 2픽셀 띠
-        for (const sp of sideShelfSpines(game.shelved)) {
-          const tx = sp.side === 'left' ? first.x - 4 + sp.tile : first.x + 4 + sp.tile
-          const x = tx * TILE + 2 + sp.col * 3
-          const y = first.y * TILE + (sp.row === 0 ? 5 : 10)
-          const look = spineLook(sp.book, game.bound?.[sp.book])
-          g.fillStyle = sp.side === 'left' || look.mark === 'none' ? look.color : look.accent
-          g.fillRect(x, y, 2, 4)
-          if (sp.grade > 0) {
-            g.fillStyle = BAND[sp.grade]
-            g.fillRect(x, y, 2, 2)
-          }
-        }
+        // 양옆 책장은 말씀 조각을 모은 만큼만 차오른다 (2026-10-13 사용자 확인 — 꽂은 책마다 책등을 덧그리던 것은 뺐다.
+        // 사도행전·편지·요한계시록 책등은 각자 방 선반에 있다)
       }
       // 사도행전 방: 선반의 사도행전 책등, 벽 여정 판의 실과 카드 (모은 만큼, 다 이으면 실이 금빛)
       if (roomAt(here) === ACTS_ROOM) {
@@ -3119,6 +3116,20 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
         const s = STRAY_SPOTS[a]
         items.push({ y: s.y, paint: () => drawSprite(g, animal(a, 'baby', Math.sin(t + (a === 'cat' ? 0 : 2)) > 0 ? 'right' : 'left'), s.x, s.y, Math.floor(t * 2) % 2, false) })
       }
+
+      // 둘째·셋째 (2026-10-13): 아기는 요람, 걷는 아이는 집 안, 돕는 아이·어른은 마을 곳곳에 — 첫째와 같은 그림
+      siblingsOf(game).forEach((sib, i) => {
+        const at = siblingTile(game, sib, i)
+        const sst = childStage(sib, day)
+        const blink = isBlinking(t + 2.1 + i)
+        if (sst === 'baby') {
+          items.push({ y: at.y, paint: () => drawSprite(g, paint('baby/baby', BABY.baby, SMALL_PALETTE), at.x, at.y, 5 + (Math.floor(t * 1.5 + i) % 2)) })
+          return
+        }
+        const facing: Facing = Math.sin(t * 0.3 + i * 2) > 0 ? 'down' : 'left'
+        const rows = recolor(spriteRows('child', facing, { frame: 0, blink, growth: 2 }), sib.look === 'boy' ? { z: 'E', Z: 'M' } : { z: 'V', Z: 'X' })
+        items.push({ y: at.y, paint: () => drawSprite(g, paint(`kid/${sib.look}/${facing}/0/${blink}`, rows, PALETTE), at.x, at.y, Math.floor(t * 2 + i) % 2) })
+      })
 
       // 우리 아이 (계획 12): 아기는 요람, 걷는 아이는 곁을 따라다니고, 돕는 아이는 때마다 마을 곳곳에
       const kid = game.child

@@ -1,7 +1,6 @@
 import { placement, removal, solidTiles, FURNITURE_DEFS, footprint, type Furniture } from './room'
 import { findPath } from './movement'
 import { HOME_DOOR, HOME_ENTRY, HOME_RECT, PLACES } from './world'
-import { LESSON_SPOT } from './stories'
 
 /** 예전 지도 위 집의 칸 → 지금 집 안 방의 같은 칸 */
 const h = (x: number, y: number) => ({ x: x + HOME_RECT.x0 - 2, y: y + HOME_RECT.y0 - 2 })
@@ -12,9 +11,8 @@ describe('방 꾸미기', () => {
     expect(footprint({ item: 'table', ...h(4, 4) })).toHaveLength(2)
     expect(FURNITURE_DEFS.table?.surface).toBe(true)
   })
-  it('서는 자리·문·아이 자리에는 길을 막는 가구를 둘 수 없다', () => {
+  it('서는 자리·문에는 길을 막는 가구를 둘 수 없다', () => {
     expect(placement([], 'nightstand', PLACES.desk.stand!)).toBeNull()
-    expect(placement([], 'nightstand', LESSON_SPOT)).toBeNull()
     expect(placement([], 'stool', HOME_ENTRY)).toBeNull()
     // 밖의 문(마을)은 집 안 바닥이 아니다
     expect(placement([], 'rug', HOME_DOOR)).toBeNull()

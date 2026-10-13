@@ -15,6 +15,7 @@ import { cribAskOf, cribAsker, CRIB_NEEDS, giveCrib } from '../engine/gen-birth'
 import { bakerCribWaiting, makeBakerCrib } from '../engine/baker-baby'
 import { stageByAge } from '../engine/gen-age'
 import { ADULT_AT } from '../engine/child'
+import { askBaby, babyBlock, nameSibling } from '../engine/siblings'
 import { canOrder, orderBuild } from '../engine/newland-build'
 import { BUILD_RECT } from '../engine/newland-config'
 import { copySpot } from '../engine/copying'
@@ -352,6 +353,9 @@ function simulate(label: string, heart: number, seed: number, play = false, late
       }
       // 우리 아이 이름 짓기
       if (s.flags.childNaming && s.child) s = nameChild(s, '테디')
+      if (s.flags.siblingNaming) s = nameSibling(s, `동생${s.flags.siblingNaming}`)
+      // 아이는 잠자리에서 얘기해야 온다 (2026-10-13) — 봇은 할 수 있으면 얘기하고 잔다 (셋까지)
+      if (babyBlock(s) === null) s = askBaby(s)
       // 규칙 21: 어른이 된 아이에게 일이 정해지지 않음
       if (s.child?.born != null && day > s.child.born + ADULT_AT + 1 && !s.child.job) report({ rule: '21 아이 일', level: '높음', where: `${label} ${day}일`, detail: `${s.child.born}일생 아이가 어른이 됐는데 일이 없음` })
       if (s.child?.job && !timeline.some((x) => x.includes('아이 일'))) timeline.push(`${day}일 아이 일 '${s.child.job}'${s.child.left ? '(마을 밖으로)' : ''}`)

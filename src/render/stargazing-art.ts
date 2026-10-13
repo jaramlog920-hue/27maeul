@@ -1,5 +1,5 @@
 import { withLookDefaults, type Avatar } from '../engine/avatar'
-import { spriteRows, writerPalette } from './sprites'
+import { PALETTE, spriteRows, writerPalette, type Who } from './sprites'
 
 /** 마을과 같은 주인공을 사용하는 낮은 해상도의 밤 풍경. 모든 윤곽은 정수 화소다. */
 export function drawStargazing(g: CanvasRenderingContext2D, w: number, h: number, seconds: number, avatar: Avatar | null, day = 1) {
@@ -72,15 +72,27 @@ export function drawStargazing(g: CanvasRenderingContext2D, w: number, h: number
 }
 
 /** 뒷모습: 상체를 좌판 위에 두고 손·골반은 등받이 뒤에, 발은 지면에 둔다. */
-export function drawScenicBench(g: CanvasRenderingContext2D, bx: number, ground: number, avatar: Avatar | null) {
+export function drawScenicBench(g: CanvasRenderingContext2D, bx: number, ground: number, avatar: Avatar | null, companion: Avatar | null = null, structure = true, who: Who = 'writer', companionWho: Who = 'writer') {
   const px = (x: number, y: number, c: string, w = 1, h = 1) => { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), w, h) }
-  px(bx - 22, ground, '#0b1d1e', 45, 3)
-  px(bx - 17, ground - 5, '#594c40', 3, 6)
-  px(bx + 14, ground - 5, '#594c40', 3, 6)
-  px(bx - 22, ground - 7, '#a28662', 44, 2)
+  const half = companion ? 34 : 22
+  if (structure) {
+    px(bx - half, ground, '#0b1d1e', half * 2 + 1, 3)
+    px(bx - half + 5, ground - 5, '#594c40', 3, 6)
+    px(bx + half - 8, ground - 5, '#594c40', 3, 6)
+    px(bx - half, ground - 7, '#a28662', half * 2, 2)
+  }
+  if (companion) {
+    // 각 인물의 비율을 바꾸지 않고 앉는 자리만 좌우로 옮긴다.
+    drawScenicBench(g, bx - 12, ground, avatar, null, false)
+    drawScenicBench(g, bx + 12, ground, companion, null, false, companionWho)
+    px(bx - half, ground - 12, '#695844', half * 2, 5)
+    px(bx - half, ground - 12, '#a08762', half * 2, 1)
+    px(bx - half, ground - 9, '#80694f', half * 2, 1)
+    return
+  }
   const full = avatar ? withLookDefaults(avatar) : undefined
-  const pal = writerPalette('summer', full)
-  const rows = spriteRows('writer', 'up', { frame: 0, blink: false, avatar: full, look: avatar?.look })
+  const pal = who === 'writer' ? writerPalette('summer', full) : PALETTE
+  const rows = spriteRows(who, 'up', { frame: 0, blink: false, avatar: full, look: avatar?.look })
   rows.slice(0, 11).forEach((row, y) => [...row].forEach((ch, x) => {
     if (y >= 10 && (x <= 1 || x >= 8)) return
     if (ch !== '.' && pal[ch]) px(bx - 10 + x * 2, ground - 28 + y * 2, pal[ch], 2, 2)
@@ -91,7 +103,9 @@ export function drawScenicBench(g: CanvasRenderingContext2D, bx: number, ground:
   }
   if (full && [0, 1, 4, 5].includes(full.bottom)) px(bx - 7, ground - 6, pal.d, 14, 4)
   // 등받이 위로 어깨를 보이고, 골반은 좌판 위 등받이 뒤에 둔다.
-  px(bx - 22, ground - 12, '#695844', 44, 5)
-  px(bx - 22, ground - 12, '#a08762', 44, 1)
-  px(bx - 22, ground - 9, '#80694f', 44, 1)
+  if (structure) {
+    px(bx - 22, ground - 12, '#695844', 44, 5)
+    px(bx - 22, ground - 12, '#a08762', 44, 1)
+    px(bx - 22, ground - 9, '#80694f', 44, 1)
+  }
 }

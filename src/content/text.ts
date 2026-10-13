@@ -1,7 +1,12 @@
+import {INVITE_DOORS} from '../engine/bonds'
+import {FACILITY_IDS} from '../engine/village-sites'
+import {LIVING_KINDS,PROGRESS_KINDS} from '../engine/scenic-kinds'
+import { FAMILY_KINDS } from '../engine/scenic-kinds'
 import { FIXTURES } from '../engine/home-layout'
 import { SPOUSE_FURNITURE } from '../engine/furniture-defs'
 // 게임이 지어낸 문장의 단일 입구 (exclusion-list §0). 성경 문장은 여기 두지 않는다.
 import lifeText from './life-text.json'
+import scenicMoments from './scenic-moments.json'
 import heartBalanceText from './heart-balance-text.json'
 import { CANDIDATE_IDS } from '../engine/romance'
 import { PEOPLE_DATA, PEOPLE_MORE } from './people-all'
@@ -29,7 +34,6 @@ export interface NeighborLines {
   visit: Line[]
   help: { label: string; thanks: string }
   helpSeason?: { label: string; thanks: string }
-  lesson?: string
   giftLiked: string
   giftPlain: string
 }
@@ -49,7 +53,25 @@ export const T = lifeText
 export const copyBookName = (b: CopyBook): string => (isOtBook(b) ? otRow(b).name : (lifeText.quiz.books as Record<string, string>)[b])
 export const NEIGHBOR_LINES = lifeText.neighbors as Record<string, NeighborLines>
 export const SCENES = lifeText.scenes as Record<string, Scene>
+for (const id of ['rainCopy', 'babySleep', 'marketEvening', 'lastManuscript', 'bibleLastLetter', 'completeBible', ...FAMILY_KINDS] as const) {
+  const m = scenicMoments[id]
+  SCENES[id] = { title: m.title, lines: [{ speaker: 'narration', text: m.caption }], album: id === 'rainbowRest' ? undefined : m.album }
+}
+for(const id of PROGRESS_KINDS) if(id!=='childLeaves'&&id!=='childStays') {
+  const m=scenicMoments[id]
+  SCENES[id]={title:m.title,lines:[{speaker:'narration',text:m.caption}],album:m.album}
+}
+for(const id of Object.keys(lifeText.neighbors))SCENES[`workSuccession:${id}`]=SCENES.workSuccession
+for(const id of LIVING_KINDS){const m=scenicMoments[id];SCENES[id]={title:m.title,lines:[{speaker:'narration',text:m.caption}],album:m.album}}
+for(const id of Object.keys(INVITE_DOORS))SCENES[`firstDinner:${id}`]=SCENES.firstDinner
+for(const id of FACILITY_IDS)SCENES[`facilityFinished:${id}`]=SCENES.facilityFinished
 export const HEART_HINTS = heartBalanceText.hints
+for (const [i,speaker,text] of [
+  [0,'grandpa','서고에서 한 장을 읽고 돌아왔네. 네가 오래 써 온 책이 내 조용한 오후를 채워 주었어. 내일도 조금 더 읽어 보려네.'],
+  [1,'child','책을 펼쳤는데 혼자 읽기 아까웠어요. 옆자리에 앉은 이웃하고 함께 읽었어요. 다음 이야기도 여기서 읽을래요.'],
+  [2,'baker','일을 마치고 서고에 들렀어요. 읽던 곳에 책갈피를 끼워 두었지요. {player}님이 채운 책장 덕분에 돌아올 자리가 하나 더 생겼어요.'],
+] as const) SCENES[`bibleReadingLetter:${i}`]={title:'서고에서 온 독서 편지',lines:[{speaker,text}],album:'서고에서 온 독서 편지'}
+
 for (const id of CANDIDATE_IDS) SCENES[`loverTrust:${id}`] = {
   title: heartBalanceText.loverStory.title,
   lines: heartBalanceText.loverStory.lines.map((line, i) => ({ ...line, speaker: line.speaker === 'partner' ? id : line.speaker,
@@ -82,6 +104,19 @@ for (const [id, p] of Object.entries(SPOUSE_FURNITURE)) {
   ITEM_TEXT[id as ItemId] = { name: `${p.owner}의 ${propNames[base] ?? ITEM_TEXT[p.id as ItemId]?.name ?? '생활 소품'}`, desc: '방 구별 없이 옮길 수 있는 배우자의 가구.' }
 }
 export const JOURNAL_NOTES = lifeText.journal.notes as Record<string, string>
+for (const id of FAMILY_KINDS) JOURNAL_NOTES[id] = scenicMoments[id].caption
+for (let i=0;i<3;i++) JOURNAL_NOTES[`bibleReadingLetter:${i}`] = '서고에서 책을 읽은 이웃이 짧은 편지를 보내왔다.'
+for(const id of PROGRESS_KINDS)JOURNAL_NOTES[id]=scenicMoments[id].caption
+for(const id of Object.keys(lifeText.neighbors))JOURNAL_NOTES[`workSuccession:${id}`]=scenicMoments.workSuccession.caption
+for(const id of LIVING_KINDS)JOURNAL_NOTES[id]=scenicMoments[id].caption
+for(const id of Object.keys(INVITE_DOORS))JOURNAL_NOTES[`firstDinner:${id}`]=scenicMoments.firstDinner.caption
+for(const id of FACILITY_IDS)JOURNAL_NOTES[`facilityFinished:${id}`]=scenicMoments.facilityFinished.caption
+JOURNAL_NOTES.bibleLastLetter = scenicMoments.bibleLastLetter.caption
+JOURNAL_NOTES.completeBible = scenicMoments.completeBible.caption
+JOURNAL_NOTES.lastManuscript = scenicMoments.lastManuscript.caption
+JOURNAL_NOTES.rainCopy = scenicMoments.rainCopy.caption
+JOURNAL_NOTES.babySleep = scenicMoments.babySleep.caption
+JOURNAL_NOTES.marketEvening = scenicMoments.marketEvening.caption
 for (const id of CANDIDATE_IDS) JOURNAL_NOTES[`loverTrust:${id}`] = heartBalanceText.loverStory.journal
 
 /** 앨범에 남는 장면 id */

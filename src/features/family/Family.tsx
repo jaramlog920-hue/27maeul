@@ -8,6 +8,7 @@ import { closeHearts } from '../../engine/family'
 import { STAT_IDS, statScore, type StatId } from '../../engine/stats'
 import { ME } from '../../engine/family-tree'
 import { useGame } from '../../store/game-store'
+import { allKids } from '../../engine/siblings'
 
 const STAT_NAME = T.stats.names as Record<StatId, string>
 const STAGE_NAME: Record<ChildStage, string> = { baby: '아기', toddler: '걷는 아이', helper: '돕는 아이', adult: '어른' }
@@ -51,6 +52,17 @@ export function Family() {
             {r.marriedDay ? ` · 함께한 지 ${day - r.marriedDay + 1}일 · 결혼한 날 ${r.marriedDay}일째` : r.since ? ` · 사귄 지 ${day - r.since + 1}일` : ''}
           </p>
         </section>
+      )}
+      {/* 아이 셋 (2026-10-13 사용자: 셋 다 활동할 수 있게) — 고른 아이와 함께 보내는 시간·배움터·옷장·진로 */}
+      {kid && (game.siblings?.length ?? 0) > 0 && (
+        <div className="fam-kids" role="group" aria-label={T.siblings.pick}>
+          <span>{T.siblings.pick}</span>
+          {allKids(game).slice().sort((a, b) => a.born - b.born).map((k) => (
+            <button key={k.born} className={k.born === kid.born ? 'on' : ''} aria-pressed={k.born === kid.born} onClick={() => useGame.getState().selectKid(k.born)}>
+              {k.name} <small>{STAGE_NAME[childStage(k, day)]}</small>
+            </button>
+          ))}
+        </div>
       )}
       {kid && (
         <section className="fam-card">

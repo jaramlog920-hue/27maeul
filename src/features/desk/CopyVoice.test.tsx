@@ -141,6 +141,7 @@ describe('소리 내어 읽기 — 받기·안 받기', () => {
     // 손으로 한 글자씩
     openWrite(writing('mt', 5, 48))
     for (let i = 1; i <= text.length; i++) fireEvent.change(box(), { target: { value: text.slice(0, i) } })
+    fireEvent.keyDown(box(), { key: 'Enter' })
     const typed = useGame.getState()
     const typedSfx = sfxMock.mock.calls.filter(([n]) => n !== 'quill').map(([n]) => n)
     cleanup()

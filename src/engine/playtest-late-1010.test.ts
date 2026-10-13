@@ -2,14 +2,13 @@
 import { describe, expect, it } from 'vitest'
 import people from '../content/people.json'
 import { CONTENT } from '../content/catalog'
-import { goToSleep, lessonTime, newGame, tick, WEDDING_GATHER, type GameState } from './game'
+import { goToSleep, newGame, tick, WEDDING_GATHER, type GameState } from './game'
 import { DAY_START } from './clock'
 import { FESTIVAL_FROM } from './calendar'
 import { planGathering } from './bonds'
 import { scheduledEvents } from './events'
 import { FIRE } from './neighbors'
 import { NO_ROMANCE } from './romance'
-import { LESSON_FROM } from './stories'
 
 const zero = () => 0
 
@@ -32,18 +31,14 @@ function weddingDay(day: number, extra: Partial<GameState> = {}): GameState {
     ...g,
     clock: { day, minute: 17 * 60 },
     hearts: { ...g.hearts, tilly: 100, child: 100 },
-    flags: { ...g.flags, childAsked: 1 },
+    flags: { ...g.flags },
     romance: { ...NO_ROMANCE, partner: 'tilly', stage: 'engaged', since: day - 10, weddingDay: day },
     ...extra,
   }
 }
 
 describe('결혼 잔치 날 저녁', () => {
-  it('글자 공부가 잡히지 않는다 (약혼만 한 다른 날은 그대로)', () => {
-    let day = 30
-    while (!lessonTime({ ...weddingDay(day), romance: NO_ROMANCE, clock: { day, minute: LESSON_FROM } })) day++
-    expect(lessonTime({ ...weddingDay(day), clock: { day, minute: LESSON_FROM } })).toBe(false)
-  })
+
 
   it('일정표에 내 결혼 잔치가 나오고, 글자 공부는 없다', () => {
     const s = weddingDay(40)

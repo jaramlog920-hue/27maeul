@@ -1,3 +1,5 @@
+import { sanitizeYard } from './yard'
+import { sanitizeGearOff } from './gear'
 import { sanitizeHomeWalls, setHomeWalls } from './home-walls'
 import { CLUB_PLACES, sanitizeClubs, sanitizeClubSessions } from './clubs'
 import { sanitizeVillage } from './projects'
@@ -15,6 +17,7 @@ import { sanitizeSkills, sanitizeSkillLesson } from './skills'
 import { sanitizeLife } from './people'
 import { sanitizeNotebook } from './notebook'
 import { repairSpouseInheritance, sanitizeChild } from './child'
+import { sanitizeSiblings } from './siblings'
 import { sanitizeRomance } from './romance'
 import { sanitizeHeartDay } from './hearts'
 import { sanitizeStats } from './stats'
@@ -54,7 +57,19 @@ function storage(): Storage | undefined {
   }
 }
 
+/** 제거된 물 긷는 아이 글자 공부의 옛 저장 흔적만 정리한다. */
+function retireWaterChildLessons(s:GameState):GameState {
+  const removed=new Set(['childAsks','firstLetter','childLearned'])
+  const flags={...s.flags}
+  for(const key of ['childAsked','childLetters','taughtDay'])delete flags[key]
+  return {...s,flags,scenes:(Array.isArray(s.scenes)?s.scenes:[]).filter(id=>!removed.has(id)),
+    album:(Array.isArray(s.album)?s.album:[]).filter(a=>!removed.has(a?.id)),
+    todayNotes:(Array.isArray(s.todayNotes)?s.todayNotes:[]).filter(id=>!removed.has(id)),
+    journal:(Array.isArray(s.journal)?s.journal:[]).map(entry=>({...entry,notes:Array.isArray(entry?.notes)?entry.notes.filter(id=>!removed.has(id)):entry?.notes}))}
+}
+
 export function serialize(s: GameState): string {
+  s = retireWaterChildLessons(s)
   // 걷던 길·자율 동작·이웃 위치는 저장하지 않는다 (doze의 Infinity는 JSON이 못 담는다)
   // 가구 쓰는 동작(act)도 그림만이라 저장하지 않는다
   return JSON.stringify({ ...s, player: { ...s.player, path: [] }, target: null, idle: IDLE_RESET, act: undefined, npcs: {}, emotes: undefined })
@@ -115,7 +130,7 @@ const okFarewell = (f: unknown): f is Farewell => {
  * (없는 id가 남으면 도감·일지에서 오류가 나고, 책상 순서가 영원히 "틀림"이 될 수 있다)
  */
 export function sanitize(s: GameState, content: GameContent): GameState {
-  s = migratePieceLayout(s, content)
+  s = retireWaterChildLessons(migratePieceLayout(s, content))
   // 아래 정리들은 모두 첫 마을 지도로 한다 (새 터로 맞추는 것은 불러온 뒤 settle의 syncHome)
   setActiveMap('village')
   // 제거한 설비의 주문·장면은 옛 저장에서도 다시 등장하지 않는다.
@@ -282,6 +297,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     sealed: isStrArray(s.sealed) ? s.sealed : [],
     notebook: sanitizeNotebook(s.notebook),
     child: repairSpouseInheritance(sanitizeChild(s.child), romance.partner, content.neighbors.find(n => n.id === romance.partner)?.stat),
+    siblings: s.child ? sanitizeSiblings((s as { siblings?: unknown }).siblings, sanitizeChild) : undefined,
     found: isStrArray(s.found) ? (s.found as ItemId[]) : [],
     // 필사 (계획 14): 마친 장(progress)은 그대로 마친 장이고, 글자 수 통계는 0에서 시작한다
     copy,
@@ -351,6 +367,8 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     offers,
     post,
     myLines,
+    ...(sanitizeYard(s.yard) ? { yard: sanitizeYard(s.yard) } : {}),
+    gearOff: sanitizeGearOff(s.gearOff),
     // 서고 잔치에서 낭독한 줄 (2026-10-13): 잔치 id마다 글 한 줄만, 옛 저장은 없음
     ...(isObj(s.feastLines) ? { feastLines: Object.fromEntries(Object.entries(s.feastLines as Record<string, unknown>).filter((e): e is [string, string] => (e[0] === 'gospelFeast' || e[0] === 'allFeast') && typeof e[1] === 'string' && e[1].length <= 400)) } : {}),
     todayHeard: s.todayHeard.filter((id) => known.has(id)),
@@ -552,6 +570,45 @@ export function saveGame(s: GameState, store: Storage | null | undefined = stora
     return true
   } catch {
     return false
+  }
+}
+
+/**
+ * 새 칸에 따로 저장 (2026-10-13 사용자: 설정의 저장하기는 덮어쓰지 말고 새로) — 불러오기 목록에 한 칸이 늘어난다.
+ * 지금 하던 칸은 그대로 이어서 저장된다. 앨범 그림도 새 칸으로 옮겨 적는다 (자리가 모자라면 그림만 빠진다).
+ * 새 칸 번호를 돌려준다, 못 했으면 null
+ */
+export function saveAsNew(s: GameState, store: Storage | null | undefined = storage()): string | null {
+  try {
+    if (!store) return null
+    const from = activeSlot(store)
+    const slot = newSlot(store)
+    store.setItem(slotKey(slot), serialize(s))
+    try {
+      store.setItem(META_KEY(slot), JSON.stringify({ savedAt: Date.now() }))
+    } catch {
+      /* 저장 시각만 못 남김 */
+    }
+    const src = albumPrefix(from)
+    const dst = albumPrefix(slot)
+    const pics: [string, string][] = []
+    for (let i = 0; i < store.length; i++) {
+      const k = store.key(i)
+      if (!k?.startsWith(src)) continue
+      if (from === '1' && /^twenty-seven\/album\/\d{1,4}\//.test(k)) continue
+      const v = store.getItem(k)
+      if (v !== null) pics.push([dst + k.slice(src.length), v])
+    }
+    for (const [k, v] of pics) {
+      try {
+        store.setItem(k, v)
+      } catch {
+        break
+      }
+    }
+    return slot
+  } catch {
+    return null
   }
 }
 

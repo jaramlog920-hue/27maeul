@@ -18,3 +18,5 @@
 .copy-result strong { color: var(--accent-lo); }
 .copy-result small { grid-column: 1 / -1; color: var(--ink-soft); font-size: 11px; }
 .copy-result button { display: block; width: 100%; margin-top: 14px; min-height: 40px; }
+/* 다 맞게 쓴 절: 엔터 대신 누를 수 있는 다음 절 단추 (2026-10-13) */
+.copy-next { display: block; margin: 6px 0 0 auto; padding: 4px 12px; font-size: 13px; }

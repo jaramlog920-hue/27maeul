@@ -4,6 +4,7 @@
 // 계획 14부터 틀과 항아리는 파피루스·잉크 대신 꾸미기 재료(크림색 종이·푸른 염료)를 만든다 — 하루 양은 그대로.
 // 잉크 항아리·재료 궤짝은 방 꾸미기 가구로도 받아 집 안 자리를 고를 수 있다(그림일 뿐, 효과는 설치 표식으로).
 import { unlocked } from './bonds'
+import { wearing } from './gear'
 import { add, BAG_SLOTS, count, hasSlotFor, slotsUsed, stackCap, TOOLS, type Inventory } from './items'
 import type { ItemId } from './types'
 
@@ -129,9 +130,10 @@ export function fromChest(inv: Inventory, chest: Inventory, id: ItemId): { inv: 
 /** 걷는 속도 배수: 튼튼한 신(장날) ×1.2, 가벼운 신(양치기 선물) ×1.4 — 이 이상은 없다 (도트가 미끄러져 보이지 않게) */
 export const WALK_MUL = { sturdyShoes: 1.2, lightShoes: 1.4 } as const
 
-export function walkMul(inv: Inventory): number {
-  if (count(inv, 'lightShoes') > 0) return WALK_MUL.lightShoes
-  if (count(inv, 'sturdyShoes') > 0) return WALK_MUL.sturdyShoes
+export function walkMul(inv: Inventory, gearOff?: readonly ItemId[]): number {
+  // 신은 신고 있을 때만 (2026-10-13 장비 빼고 끼기)
+  if (wearing({ inv, gearOff }, 'lightShoes')) return WALK_MUL.lightShoes
+  if (wearing({ inv, gearOff }, 'sturdyShoes')) return WALK_MUL.sturdyShoes
   return 1
 }
 

@@ -17,7 +17,7 @@ export const SELL_STAND_STAND: Tile = { x: 28, y: 21 }
 /** 하루에 매대에 넘길 수 있는 수 (경제를 지키는 한도) */
 export const STAND_CAP = 20
 
-const NOT_FOR_SALE = new Set<ItemId>([...TOOLS, 'bouquet', 'promiseCord'])
+const NOT_FOR_SALE = new Set<ItemId>([...TOOLS, 'bouquet', 'promiseCord', 'rainJar', 'reedRack'])
 
 /** 장터에서 사면 드는 값 (닢이면 그대로, 물건이면 상인 값으로 셈) — 가구·장식의 되파는 값 셈에 */
 function tradeValue(item: ItemId): number | undefined {

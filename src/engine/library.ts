@@ -1,3 +1,4 @@
+import { completeBibleFinale } from './library-finale'
 // 마을 서고: 제본한 완성본을 꽂는다 (설계 §2.4, 계획 14 작업 4). 꽂을 때 [바로 꽂기] 또는 [퀴즈 풀고 금박 책등].
 // 책은 언제나 꽂힌다 — 퀴즈를 고르면 맞힌 만큼 은박·금박, 틀린 구절은 다시 읽을 구절로 돌아온다.
 import { bookDone } from './books'
@@ -42,8 +43,9 @@ export function shelve(s: GameState, book: Book, correct: number, missed: readon
   const shelved = { ...s.shelved, [book]: before === undefined ? grade : (Math.max(before, grade) as Grade) }
   const rereads = [...new Set([...s.rereads, ...missed])]
   const first = Object.keys(s.shelved).length === 0
-  const scenes = before === undefined ? [...s.scenes, first ? 'firstShelved' : 'shelved'] : s.scenes
-  return { ...s, shelved, rereads, scenes }
+  const finale = before === undefined && !allShelved(s) && allShelved({ shelved })
+  const scenes = before === undefined ? [...s.scenes, finale ? 'fullLibrary' : first ? 'firstShelved' : 'shelved'] : s.scenes
+  return completeBibleFinale(s, { ...s, shelved, rereads, scenes, ...(finale ? { flags: { ...s.flags, libraryLastBook: BOOKS.indexOf(book) } } : {}) })
 }
 
 export type RetryBlock = 'notShelved' | 'gold' | 'needs' | null
@@ -77,9 +79,9 @@ export function allShelved(s: Pick<GameState, 'shelved'>): boolean {
 
 // ── 스물일곱 권 잔치 (계획 9 작업 5) ──
 // flags.allFeast: 없음 = 아직, 1 = 잔치 날, 2 = 잔치가 지났다. 결말 화면 없이 하루가 그대로 이어진다.
-/** 스물일곱 권 잔치의 조건: 요한계시록이 꽂혔고 일곱 교회 판을 다 놓았다 (순서 상관없음), 스물일곱 권 모두 꽂힘 */
+/** 스물일곱 권 잔치의 조건: 스물일곱 권 모두 꽂힘 (2026-10-13 사용자: 다 꽂았는데 잔치가 안 열렸다 — 일곱 교회 판 조건은 뺐다) */
 export function allFeastReady(s: Pick<GameState, 'shelved' | 'flags'>): boolean {
-  return s.shelved.rev !== undefined && (s.flags.churchesDone ?? 0) > 0 && allShelved(s)
+  return allShelved(s)
 }
 
 /** 오늘이 잔치 날인가 — 복음서 방 잔치 또는 스물일곱 권 잔치 (저녁 광장 모닥불) */

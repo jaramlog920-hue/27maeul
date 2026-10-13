@@ -4,7 +4,8 @@ import { doFestivalRole, festChoices, festFinish, festivalRoleReady, festReactio
 import { useGame } from '../../store/game-store'
 import { canAttendAppt } from '../../engine/plans'
 import { commitClub } from '../clubs/club-store'
-import { GroupTask } from '../clubs/GroupTask'
+import { ClubRound } from '../clubs/ClubRound'
+import { apptGuests, fireGuests } from '../../engine/club-round'
 
 const itemName = (id: string) => (T.items as Record<string, { name: string }>)[id]?.name ?? id
 
@@ -20,7 +21,7 @@ export function FestSession({ id }: { id: string }) {
   const ready = festivalRoleReady(game)?.id === id
   return <div className="dialog" role="dialog" aria-label={title}><h2>{title}{f.role ? ` · ${F.roles[f.role]}` : ''}</h2>
    {done ? <p>{F.done}</p> : <><p>{f.role ? F.roleDo[f.role] : ''}</p>{!ready && <p className="hint">{F.roleNear}</p>}</>}
-   {!done&&ready&&<GroupTask id={id} kind={f.role==='deco'?'festivalDeco':f.role==='tidy'?'festivalTidy':'festivalFood'} progress={f.task}/>}
+   {!done&&ready&&<ClubRound id={id} kind={f.role==='deco'?'festivalDeco':f.role==='tidy'?'festivalTidy':'festivalFood'} guests={fireGuests(game)}/>}
    <div className="actions">{!done && <button className="primary" disabled={!ready||(f.task?.stage??0)<3} onClick={() => commitClub(doFestivalRole(game, id))}>{F.roleButton}</button>}<button data-close onClick={close}>{T.ui.close}</button></div>
   </div>
  }
@@ -38,7 +39,7 @@ export function FestSession({ id }: { id: string }) {
   {!done && f.joined && nearby && <>
    {f.step === 'tidy' && <p>{fill(F.tidy, { deco: f.deco ? itemName(f.deco) : F.basicDeco })}</p>}
    {f.step === 'arrive' && <><p>{F.arrive}</p><p>{who.map(n => neighborById(n)?.role).join(' · ')}</p></>}
-   {f.step === 'activity' && <><p>{F.activity[f.kind]}</p><GroupTask id={a!.id} kind={f.kind} progress={f.task}/>{(f.task?.stage??0)>=3&&<div className="actions menu column">{festChoices(game, f).map(c => <button key={c} onClick={() => commitClub(festStep(game, id, c))}>{label(c)}</button>)}</div>}</>}
+   {f.step === 'activity' && <><p>{F.activity[f.kind]}</p><ClubRound id={a!.id} kind={f.kind} guests={apptGuests(game,a!.id)}/>{(f.task?.stage??0)>=3&&<div className="actions menu column">{festChoices(game, f).map(c => <button key={c} onClick={() => commitClub(festStep(game, id, c))}>{label(c)}</button>)}</div>}</>}
    {f.step === 'talk' && <ul className="event-list">{festReactions(game, f).map(r => <li key={r.npc}>{neighborById(r.npc)?.role} · {r.text}</li>)}</ul>}
    {f.step === 'finish' && <p>{F.finishText}</p>}
    <div className="actions">

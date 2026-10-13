@@ -1,3 +1,4 @@
+import {facilityMoment} from './living-moments'
 // 주민이 함께 바꾸는 마을 (계획 16 작업 20, 기획 07): 사랑방 게시판의 공동 시설 제안 → 하나 고르기 → 주민별 기여(고정 공급분, 대기 진행)
 // → 선택적인 거들기(손일 재사용)와 선택 장식 → 설치 → 이웃이 쓰기 시작.
 // 규칙: 마감일·미완성 불이익 없음. 주민 공급분만으로도 끝난다(플레이어가 혼자 다 부담하지 않음). 필사·책상·서고에는 조건을 걸지 않는다.
@@ -155,7 +156,7 @@ export function completeProject(s: GameState, id: FacilityId, day: number): Game
   if (who.length) next = onDay(next, day, (x) => recordExperienceIn(x, { id: `project:${id}`, kind: 'project', with: who, place: SITES[id].place }))
   for (const npc of p?.with ?? []) next = heartUp(next, npc, PROJECT_HEART)
   syncVillage(next)
-  return next
+  return facilityMoment(next,id,who)
 }
 
 /**

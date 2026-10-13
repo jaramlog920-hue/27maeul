@@ -29,15 +29,12 @@ export const VILLAGE_PORTAL_FRONT = { x: 45, y: 17 } as const
 export const NEWLAND_PORTAL = { x: 1, y: 8 } as const
 export const NEWLAND_PORTAL_FRONT = { x: 2, y: 8 } as const
 
-/**
- * 서고 바깥. 자산 manifest.json의 archive(down): 그림 4×4칸, footprint 4×3, entry 그림 화소 (32,60) → 4칸 폭의 3번째 칸(0부터 2), 맨 아랫줄.
- * 엔진 좌표는 아래처럼 따로 정했다: footprint = 가로 x0..x0+3, 세로 y0+1..y0+3 (그림의 맨 윗줄은 지붕이 걸치는 줄), 문 = 아랫줄의 2번째 칸 위
- */
+/** 신약 서고와 같은 7×4칸 외관. 기존 문과 문 앞 길의 좌표는 유지한다. */
 export const ARCHIVE = {
   /** 그림 왼쪽 위 칸 */
-  x0: 18,
+  x0: 17,
   y0: 3,
-  w: 4,
+  w: 7,
   /** 막히는 줄 수 (footprint 높이) */
   h: 3,
   door: { x: 20, y: 6 },

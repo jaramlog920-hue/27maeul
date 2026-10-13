@@ -81,6 +81,8 @@ export type Target =
   | { kind: 'stray'; animal: 'cat' | 'dog' }
   /** 집에 놓은 책장 (계획 14 작업 8): 다 쓴 책을 몇 권 둔다 */
   | { kind: 'bookcase'; tile: Tile }
+  /** 기능 있는 가구 (2026-10-13): 수납 가구는 곁에 서면 가방의 궤짝·찬장 칸, 저절로 만드는 가구는 무엇을 만드는지 */
+  | { kind: 'furniture'; item: ItemId; tile: Tile }
   /** 집 안에서 정해 둔 자리의 의자·탁자 (계획 16 작업 23): 곁에 서면 쓰임 메뉴 */
   | { kind: 'space'; id: string; tile: Tile }
   /** 왕래 표식 (계획 20 작업 3): 곁에 서면 건너가는 창 */
@@ -203,6 +205,9 @@ export type ItemId =
   | 'leatherBag'
   | 'sturdyShoes'
   | 'lightShoes'
+  // 집 둘레 살림을 거두면 가방에 (2026-10-13) — 다시 놓으면 가방에서 빠진다
+  | 'rainJar'
+  | 'reedRack'
   // 연애와 결혼 (계획 6): 고백에 건네는 들꽃 다발, 청혼에 건네는 약속의 끈
   | 'bouquet'
   | 'promiseCord'

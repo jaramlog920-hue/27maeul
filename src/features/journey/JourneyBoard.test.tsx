@@ -95,6 +95,8 @@ describe('요한계시록 방 문과 방 안 (계획 9 작업 4)', () => {
     act(() => useGame.getState().nextQuiz())
     expect(useGame.getState().game.shelved.rev).toBeDefined()
     // 앞의 스물여섯 권이 다 꽂혀 있었으니 스물일곱 번째 — 처음과 지금을 나란히 보이는 창 (계획 14 작업 4), 한 줄은 선반에서 나중에
+    expect(useGame.getState().modal).toEqual({ kind: 'scene', id: 'fullLibrary' })
+    act(() => useGame.getState().nextScene())
     expect(useGame.getState().modal).toEqual({ kind: 'shelfDone' })
     act(() => useGame.getState().open({ kind: 'roomShelf', room: 'rev' }))
     // 꽂힌 뒤: 등급 (다 맞혔으니 금박, 다시 도전 없음)

@@ -63,11 +63,11 @@ export function FamilyTree({ personId, neighborId }: { personId: string; neighbo
     el.scrollLeft = Math.max(0, focusNode.x - el.clientWidth / 2)
     el.scrollTop = Math.max(0, focusNode.y - el.clientHeight / 2 + 48)
   }, [focusNode?.x, focusNode?.y])
-  const name = (id: string) => (id === ME ? game.avatar?.name || '나' : id === MY_CHILD ? game.child?.name ?? '' : personName({ ...game, gen: g }, id))
+  const name = (id: string) => (id === ME ? game.avatar?.name || '나' : id === MY_CHILD ? game.child?.name ?? '' : id.startsWith(`${MY_CHILD}:`) ? game.siblings?.[Number(id.split(':').pop()) - 2]?.name ?? '' : personName({ ...game, gen: g }, id))
   // 마을에서 태어난 아이는 이름을 바꿀 수 있다 (2026-10-12 사용자) — 아직 모르는 사람('?')은 빼고
   const [draft, setDraft] = useState<string | null>(null)
   useEffect(() => setDraft(null), [focus])
-  const canRename = focus !== ME && canRenamePerson(g, focus) && name(focus) !== t('gen.unknown')
+  const canRename = focus !== ME && !focus.startsWith(`${MY_CHILD}:`) && canRenamePerson(g, focus) && name(focus) !== t('gen.unknown')
   const rename = () => {
     // 우리 아이 이름은 game.child에 (가계도용 자리는 저장하지 않는다)
     if (focus === MY_CHILD) {

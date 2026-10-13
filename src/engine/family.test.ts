@@ -76,7 +76,7 @@ describe('가족과 함께 있는 필사 (계획 14 작업 10)', () => {
     expect(isFamilyAlbum('fam:deskNap')).toBe(true)
     expect(isFamilyAlbum('childWalks')).toBe(true)
     expect(isFamilyAlbum('wedding:poppy')).toBe(true)
-    expect(isFamilyAlbum('firstLetter')).toBe(false)
+    expect(isFamilyAlbum('firstOtBook')).toBe(false)
     expect(isFamilyAlbum('dinner:child')).toBe(false)
   })
 

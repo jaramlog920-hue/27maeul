@@ -1,3 +1,4 @@
+import {successionMilestone} from './progress-milestones'
 import { featureAccess } from './feature-rules'
 import { withLookDefaults } from './avatar'
 import { ROOMS } from './world'
@@ -143,7 +144,7 @@ export function settleGen(s: GameState, content: GameContent, opts: SettleOpts =
     g = settleOneDay(g, d, s, content, opts)
   }
   // 지난 날의 만남 수는 버린다
-  return { ...s, gen: { ...ensureBakerBaby(g, day), meets: {}, settledDay: day } }
+  return successionMilestone(s,{ ...s, gen: { ...ensureBakerBaby(g, day), meets: {}, settledDay: day } })
 }
 
 /** 자율 진행 켜고 끄기 (D17·P14): 다시 켤 때 settledDay를 오늘로 맞춰 지나간 기간을 한꺼번에 처리하지 않는다 */

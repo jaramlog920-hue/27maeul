@@ -28,7 +28,7 @@ const TASKS:Record<TaskKind,{choices:string[];work:string;finish:string;mode:'ho
  festivalTidy:{choices:['탁자 닦기','빈 접시 정리하기'],work:'반짝이는 자리를 순서대로 눌러 정리해 주세요.',finish:'정리를 함께 마무리할 이웃을 골라 주세요.',mode:'tap'},
 }
 
-function Preview({id}:{id:string}) {
+export function Preview({id}:{id:string}) {
  const canvas=useRef<HTMLCanvasElement>(null)
  useEffect(()=>{
   const ctx=canvas.current?.getContext('2d');if(!ctx)return

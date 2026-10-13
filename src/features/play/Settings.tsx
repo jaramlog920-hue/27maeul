@@ -11,7 +11,7 @@ import {
   type MusicChoice,
   type VolumeKind,
 } from '../../audio/sound'
-import { eraseSave, saveGame } from '../../engine/save'
+import { eraseSave, saveAsNew, saveGame } from '../../engine/save'
 import { setGenOn } from '../../engine/gen-settle'
 import { t } from '../../shared/i18n'
 import { T } from '../../content/text'
@@ -305,7 +305,10 @@ export function Settings() {
           <h3>{t('saves.save')}</h3>
           <button
             onClick={() => {
-              const ok = saveGame(useGame.getState().game)
+              // 덮어쓰지 않고 새 칸에 (불러오기 창에 한 칸 늘어난다). 지금 칸도 함께 저장해 둔다
+              const game = useGame.getState().game
+              saveGame(game)
+              const ok = saveAsNew(game) !== null
               useGame.getState().say(ok ? t('saves.saved') : '저장하지 못했어요.')
             }}
           >

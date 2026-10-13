@@ -1,3 +1,7 @@
+import {readingMoment,coverMoment,childLetterMoment} from './living-moments'
+import {otMilestoneScenes} from './progress-milestones'
+import { manuscriptFinale, completeBibleFinale, bibleEndingEvents } from './library-finale'
+import { familyScenicEvents } from './family-scenes'
 import { villageBookCount } from "./progression"
 import { SPOUSE_FURNITURE } from './furniture-defs'
 import { collectionGift, moveInGift } from './collection-gifts'
@@ -146,11 +150,6 @@ import { growGarden, type Plot } from './garden'
 import { allFeastReady, allShelved, feastToday, gospelRoomFull, readOff, type Grade } from './library'
 import {
   BABY_DAY,
-  LESSON_FROM,
-  LESSON_SPOT,
-  LESSON_TO,
-  LETTERS_TOTAL,
-  CHILD_ASKS_AT,
   MILESTONE_GIFTS,
   MILESTONES,
   momentNow,
@@ -187,11 +186,13 @@ import { BOARD_GAIN, boardFor, type BoardRequest } from './board'
 import type { Minigame } from './types'
 import { foundItems, newlyAchieved, type Achievement } from './achievements'
 import { familyMorning } from './family-days'
-import { adultJob, JOB_GIFTS, kidCoins, kidMailFor, CHILD_AFTER_WEDDING, childMode, childStage, CRADLE_SPOT, helperSpot, helpStat, newChild, type Child, type ChildMode } from './child'
+import { adultJob, JOB_GIFTS, kidCoins, kidMailFor, CHILD_AFTER_WEDDING, childMode, childStage, CRADLE_SPOT, helperSpot, helpStat, type Child, type ChildMode } from './child'
 import { DESTS, TRIP_FRIEND_GAIN, TRIP_LEAVE_BY, tripCoinDelta, tripCost, type DestId } from './travel'
 import type { TripReward } from './trip-board'
 import { BIRTHDAY_MUL, isBirthday, NO_NOTEBOOK, noteGift, noteGot, noteHeard, noteMet, noteNews, noteSeen, noteTaste, noteObservedTaste, seenLabel, type Notebook } from './notebook'
 import { CARPENTER_WORKS, fromChest, hasStock, INK_JAR_HOLD, LIGHT_SHOES, owns, RACK_HOLD, RACK_PAPER, RAIN_WATER, SOOT_CATCH, stash, stashOverflows, stock, takeStock, walkMul, type CarpenterWork, type EasyId } from './easier'
+import { yardPlaced } from './yard'
+import { siblingMorning, swapKid } from './siblings'
 
 export interface JournalEntry {
   day: number
@@ -267,7 +268,7 @@ export interface GameState {
   gifted: string[]
   npcs: Record<string, Npc>
   companion: Companion | null
-  /** 이야기 진행 표식과 수 (childLetters 등) */
+  /** 이야기 진행 표식과 수 */
   flags: Record<string, number>
   /** 보여 줄 장면 (차례대로) */
   scenes: string[]
@@ -277,6 +278,10 @@ export interface GameState {
   myLines: Record<string, string>
   /** 서고 잔치 모닥불에서 낭독한 나의 한 줄 (잔치 id → 줄) — 옛 저장은 없음 */
   feastLines?: Record<string, string>
+  /** 집 둘레 살림(빗물 항아리·갈대 말리는 틀)을 옮긴 자리 — 옛 저장은 없음(처음 자리) */
+  yard?: Partial<Record<'rainJar' | 'reedRack', Tile>>
+  /** 빼 둔 장비 (2026-10-13) — 가방에 있어도 효과가 없다. 없으면 모두 낀 것 */
+  gearOff?: ItemId[]
   /** 풀밭을 밟은 횟수 → 오솔길 */
   trails: Record<string, number>
   room: Furniture[]
@@ -324,6 +329,8 @@ export interface GameState {
   notebook: Notebook
   /** 아이 (계획 12): 결혼 뒤 태어난다 */
   child: Child | null
+  /** 둘째·셋째 (2026-10-13 사용자: 플레이어는 아이 셋까지) — 첫째는 child 그대로, 동생들은 태어난 차례로 */
+  siblings?: Child[]
   /** 물건 도감: 한 번이라도 가져 본 물건 */
   found: ItemId[]
   /** 도감: 사용해 본 기본 표지·표지 색·무늬·책등·덧장식. 다시 꾸며도 남는다. */
@@ -432,6 +439,16 @@ export function startAct(s: GameState, kind: ActKind, at?: Tile): GameState {
 }
 
 /** 생활 가구를 쓴다 (그림만 — 시간·마음은 그대로). 그린 동작이 있는 가구는 가구째, 여닫는 가구는 문이 열리고 닫힌다 */
+/** 수납 가구: 재료 궤짝·서늘한 찬장·여닫는 생활 가구(서랍장·옷장·찬장류) */
+export const STORAGE_ITEMS: readonly ItemId[] = ['supplyChest', 'homeCoolCupboard']
+export const isStorage = (item: ItemId): boolean => STORAGE_ITEMS.includes(item) || (isAddition(item) && ADDITION_FURNITURE[item as AdditionItemId].use === 'open')
+/** 저절로 만드는 가구 (집 안에 놓는 것) */
+export const MAKER_ITEMS: readonly ItemId[] = ['inkJar']
+/** 이 칸의 기능 있는 가구 (수납 가구·저절로 만드는 가구) */
+export function functionalAt(s: Pick<GameState, 'room'>, t: Tile): Furniture | null {
+  return s.room.find((f) => (isStorage(f.item) || MAKER_ITEMS.includes(f.item)) && footprint(f).some((p) => sameTile(p, t))) ?? null
+}
+
 export function useAddition(s: GameState, f: Furniture): GameState {
   const def = ADDITION_FURNITURE[f.item as AdditionItemId]
   const spot = { x: f.x, y: f.y, item: f.item, facing: facingOf(f) }
@@ -687,7 +704,6 @@ function lateSpots(s: GoalState, content: Pick<GameContent, 'neighbors'>, joined
   const special: Record<string, Tile> = {}
   // 단짝이 된 아이는 오후에 양 우리 곁에서 논다
   if (s.flags['done:friends'] && m >= FRIENDS_FROM && m < FRIENDS_TO && !isWet(w)) special.child = FRIENDS_SPOT
-  if (lessonTime(s)) special.child = LESSON_SPOT
   // 아침에 들르는 이웃
   const t = s.today ?? NO_TODAY
   if (t.visitor && !t.visitGot && joined(t.visitor) && m >= VISIT_FROM && m < VISIT_TO) special[t.visitor] = VISIT_SPOT
@@ -752,27 +768,6 @@ export function hallGuestsToday(s: GoalState, content: Pick<GameContent, 'neighb
   // 배우자는 저녁에 집에 있다
   const spouse = s.romance?.stage === 'married' ? s.romance.partner : null
   return hallGuests(s.clock.day, joined.filter((id) => id !== t.inviter && id !== spouse && !reservedMembers(s).includes(id))).slice(0, HALL_GUESTS)
-}
-
-/** 오늘 저녁 아이가 글자를 배우러 오는가 */
-export function lessonTime(s: Pick<GameState, 'clock' | 'flags'> & Partial<Pick<GameState, 'romance'>> & { today?: Today }): boolean {
-  const m = s.clock.minute
-  return (
-    (s.flags.childAsked ?? 0) > 0 &&
-    (s.flags.childLetters ?? 0) < LETTERS_TOTAL &&
-    s.flags.taughtDay !== s.clock.day &&
-    !isWet(weatherOf(s.clock.day)) &&
-    // 잔치 날 저녁에는 아이도 모닥불 곁에 있다 (복음서 방·스물일곱 권 잔치 날도)
-    !festivalOf(s.clock.day) &&
-    !feastToday(s) &&
-    // 내 결혼 잔치 날 저녁에도 (잔치와 같은 때)
-    !weddingToday(s) &&
-    // 아기 잔치 날, 아이네가 저녁 초대한 날도 쉰다
-    s.today?.gathering !== 'babyParty' &&
-    s.today?.inviter !== 'child' &&
-    m >= LESSON_FROM &&
-    m < LESSON_TO
-  )
 }
 
 function placeAllNpcs(s: GoalState, content: GameContent): Record<string, Npc> {
@@ -1101,7 +1096,7 @@ export function tapTile(s: GameState, tile: Tile): GameState {
   const kid = childTile(s)
   const place = placeAt(tile)
   // 생활 가구 48종 (2026-10-12): 곁에서 누르면 그 가구를 쓴다 — 흔들기·재봉 같은 그린 동작, 여닫기, 앉기·마시기·살펴보기
-  const addition = !npc && !place ? s.room.find((f) => isAddition(f.item) && footprint(f).some((p) => sameTile(p, tile))) : undefined
+  const addition = !npc && !place ? s.room.find((f) => isAddition(f.item) && !isStorage(f.item) && footprint(f).some((p) => sameTile(p, tile))) : undefined
   if (addition) {
     if (footprint(addition).some((p) => isNear(from, p)) && !s.player.path.length) return useAddition({ ...s, target: null }, addition)
     // 넓은 가구는 누른 칸 곁이 막혀 있어도 다른 칸 곁으로 간다 (가장 짧은 길)
@@ -1145,6 +1140,13 @@ export function tapTile(s: GameState, tile: Tile): GameState {
     // 정해 둔 자리의 의자·탁자: 곁에 서 있으면 바로, 아니면 곁으로 걸어가 쓰임 메뉴를 연다
     target = { kind: 'space', id: spaceAtTile(s, tile)!.id, tile }
     path = isNear(from, tile) ? [] : pathToward(from, tile, blockers)
+  } else if (!place && functionalAt(s, tile)) {
+    // 기능 있는 가구 (2026-10-13 사용자: 눌러도 아무것도 안 떴다): 곁으로 걸어가 쓴다 — 여닫는 가구는 문 여는 동작도
+    const f = functionalAt(s, tile)!
+    target = { kind: 'furniture', item: f.item, tile }
+    const near = footprint(f).some((p) => isNear(from, p))
+    if (near && isAddition(f.item)) return { ...useAddition({ ...s, target: null }, f), target, player: { ...s.player, path: [] }, idle: IDLE_RESET }
+    path = near ? [] : (footprint(f).map((p) => pathToward(from, p, blockers)).filter((p): p is Tile[] => !!p).sort((a, b) => a.length - b.length)[0] ?? null)
   } else if (!place && bookcaseAt(s, tile)) {
     // 집 책장: 곁에 서 있으면 그 자리에서 바로, 아니면 곁으로 걸어가서 연다
     target = { kind: 'bookcase', tile }
@@ -1185,7 +1187,7 @@ function targetTile(s: GameState, target: Target): Tile | null {
     const n = s.npcs[target.id]
     return n ? npcTile(n) : null
   }
-  if (target.kind === 'place' || target.kind === 'bookcase' || target.kind === 'space' || target.kind === 'stall') return target.tile
+  if (target.kind === 'place' || target.kind === 'bookcase' || target.kind === 'space' || target.kind === 'stall' || target.kind === 'furniture') return target.tile
   if (target.kind === 'stray') return STRAY_SPOTS[target.animal]
   if (target.kind === 'companion' && s.companion) return { x: Math.round(s.companion.x), y: Math.round(s.companion.y) }
   if (target.kind === 'child') return childTile(s)
@@ -1255,7 +1257,7 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
 
   // 기록자 — 신을 신으면 빨리 걷는다(×1.2·×1.4). 걸음 그림(walkTime)도 같은 배수로 흘러 발이 미끄러지지 않는다
   const moving = s.player.path.length > 0
-  const pace = walkMul(s.inv)
+  const pace = walkMul(s.inv, s.gearOff)
   let player = stepActor(s.player, (starving(needs) ? dt * 0.7 : dt) * pace).actor
   const now = { x: Math.round(player.x), y: Math.round(player.y) }
   let trails = s.trails
@@ -1438,7 +1440,7 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
       events.push({ type: 'pet', key: homePiece ? 'homePiece' : 'piece' })
     }
   }
-  const next: GameState = blowCandle(lived)
+  const next: GameState = bibleEndingEvents(familyScenicEvents(s, blowCandle(lived), childTile(lived)))
 
   // 결혼 잔치 (계획 6): 약혼한 다음 장날 저녁, 광장 모닥불 둘레에 오면 잔치가 열리고 부부가 된다
   // 이웃들이 모닥불에 모여든 뒤(시작 30분 뒤, 스물일곱 권 잔치와 같게) 장면이 열린다
@@ -1578,7 +1580,7 @@ function tickNewland(s: GameState, dt: number, rng: Rng): { state: GameState; ev
     hot: weatherOf(clock.day) === 'hot',
   })
   const moving = s.player.path.length > 0
-  let player = stepActor(s.player, (starving(needs) ? dt * 0.7 : dt) * walkMul(s.inv)).actor
+  let player = stepActor(s.player, (starving(needs) ? dt * 0.7 : dt) * walkMul(s.inv, s.gearOff)).actor
   const now = { x: Math.round(player.x), y: Math.round(player.y) }
   let warp = !sameTile(now, here) ? warpAt(now) : undefined
   if (warp && nightDoorLocked({ ...s, clock }, now, { neighbors: [...CONTENT_DEFS.values()] })) {
@@ -1617,7 +1619,7 @@ function tickNewland(s: GameState, dt: number, rng: Rng): { state: GameState; ev
   }
   const idle = moving ? IDLE_RESET : stepIdle(s.idle, dt, clock.minute, rng, totalChapters(s) >= 3)
   const act = !s.act || moving || player.path.length > 0 || s.act.left <= dt ? undefined : { ...s.act, left: s.act.left - dt }
-  return { state: { ...s, clock, needs, player, target, idle, act, flags, ...(otCollected ? { otCollected } : {}) }, events }
+  return { state: bibleEndingEvents({ ...s, clock, needs, player, target, idle, act, flags, ...(otCollected ? { otCollected } : {}) }), events }
 }
 
 /** 시간을 한 번에 흘려보낸다 (손일·쉬기) */
@@ -2009,6 +2011,12 @@ function routineIn(s: GoalState, npc: string, meet: MeetContext, depth: number):
   const base = routineNow(p, momentOf(s), peopleData().threads, (r) => reqMet(r.req, ctx) && (!r.with || partnerHere(s, r, npc, meet, depth)))
   // 작은 근황 (계획 16 작업 24): 평소 일과 위, 조건이 달린 일과(이야기 뒤·함께하는 자리)·벗어나는 날·마을 사건 일과 아래
   if (base && (base.req || base.with || base.away)) return base
+  if (s.flags.bibleEndingSeen && !base?.req && !base?.with && !base?.away && meet.joined(npc) &&
+      !threadBusy(npc,s.clock.day) && s.life?.storyWait?.npc !== npc && s.romance?.partner !== npc &&
+      npc === ['grandpa','baker','child'][s.clock.day % 3] && s.clock.minute >= 14*60 && s.clock.minute < 16*60) {
+    const room=ROOMS.find(r=>r.owner==='library')!
+    return {when:{from:14*60,to:16*60},at:{x:room.x0+3,y:room.y0+5},doing:'book',mutter:['오늘은 서고에 놓인 책을 조금 읽고 가야지.']}
+  }
   const n = newsRoutine(s, npc, meet)
   return n && (!n.with || partnerHere(s, n, npc, meet, depth)) ? n : base
 }
@@ -2340,9 +2348,6 @@ function heartUpRaw(s: GameState, id: string, points: number): GameState {
       const key = `romance${i + 1}:${id}`
       if (after >= h && !next.flags[key]) next = { ...next, flags: { ...next.flags, [key]: 1 }, scenes: [...next.scenes, key] }
     })
-  if (id === 'child' && after >= CHILD_ASKS_AT && !next.flags.childAsked) {
-    next = { ...next, flags: { ...next.flags, childAsked: 1 }, scenes: [...next.scenes, 'childAsks'] }
-  }
   return next
 }
 
@@ -2826,6 +2831,18 @@ export function otTicketDue(s: Pick<GameState, 'flags' | 'otProgress'>): boolean
   return OT_BOOKS.filter((b) => otBookFinished(s, b)).length >= rooms
 }
 
+/**
+ * 마지막(스물일곱 번째) 책을 처음 꽂은 순간 (2026-10-13 사용자): 구약 서고 확장권과 서른아홉 권의 터를 바로 받는다.
+ * 큰길 끝 표지 장면은 서고 완성 창을 닫은 뒤 이어진다. 27권 잔치는 예전처럼 잠든 다음 날
+ */
+export function finishLibrary(s: GameState): GameState {
+  if (!allShelved(s)) return s
+  const withTicket = s.flags.otTicket ? s : { ...s, flags: { ...s.flags, otTicket: 1, otExpand: (s.flags.otExpand ?? 0) + 1 } }
+  const next = grantNewland(withTicket)
+  syncHome(next)
+  return next
+}
+
 /** 계절 1일·21일 아침이 순위 업데이트 날 */
 export const isRankDay = (day: number): boolean => seasonDay(day) === 1 || seasonDay(day) === 21
 
@@ -2838,13 +2855,14 @@ export function rankMorning(s: GameState, content: GameContent): GameState {
   const day = s.clock.day
   if (day < 2 || !isRankDay(day) || s.flags[`rank:${day}`]) return s
   const seed = villageSeed(s)
-  const first = allShelved(s) && !s.flags.otTicket
-  const ticket = first || otTicketDue(s)
+  // 27권을 다 꽂은 뒤 처음 순위: 우리 서고가 맨 위로 (확장권은 마지막 책을 꽂는 순간 이미 받는다 — finishLibrary, 옛 저장은 여기서)
+  const first = allShelved(s) && !s.flags.rankCrowned
+  const ticket = (allShelved(s) && !s.flags.otTicket) || otTicketDue(s)
   let mine = ourScore(s)
   if (first) mine = Math.max(mine, ...villageScores(seed, day)) + 1
   const table = rankTable(seed, day, mine)
   const place = table.findIndex((r) => r.name === null) + 1
-  let next: GameState = { ...s, flags: { ...s.flags, [`rank:${day}`]: 1 } }
+  let next: GameState = { ...s, flags: { ...s.flags, [`rank:${day}`]: 1, ...(first ? { rankCrowned: 1 } : {}) } }
   const pieces: string[] = []
   for (let i = 0; i < (place === 1 ? 2 : place <= 3 ? 1 : 0); i++) {
     const r = extraPiece(next, content, `rank:${i}`)
@@ -3051,7 +3069,7 @@ export function finishReading(s: GameState, content: GameContent): GameState {
   if (canRead(s)) return s
   let next: GameState = { ...s, flags: { ...s.flags, readDay: s.clock.day } }
   for (const id of hallGuestsToday(s, content)) next = heartUp(next, id, READING_GAIN)
-  return train(next, 'wit', XP.listen)
+  return readingMoment(train(next, 'wit', XP.listen),hallGuestsToday(s,content))
 }
 
 /**
@@ -3199,18 +3217,6 @@ export function nextTripPiece(s: Pick<GameState, 'collected' | 'clock'> & Partia
   return drawFragment(content.pieces, skip, fragmentSeed(s.clock.day, from))
 }
 
-/** 아이에게 글자 가르치기 (하루 한 번, 저녁에 집으로 올 때) */
-export function teach(s: GameState): GameState {
-  if (!lessonTime(s)) return s
-  const letters = (s.flags.childLetters ?? 0) + 1
-  const scenes = letters === 1 ? ['firstLetter'] : letters === LETTERS_TOTAL ? ['childLearned'] : []
-  return heartUp(
-    passTime({ ...s, flags: { ...s.flags, childLetters: letters, taughtDay: s.clock.day }, scenes: [...s.scenes, ...scenes] }, 30),
-    'child',
-    GAIN.teach,
-  )
-}
-
 // ── 마음이 쌓인 이웃들 (bonds.ts) ──
 
 /** 부탁을 듣는다 */
@@ -3279,7 +3285,7 @@ export function dine(s: GameState, npc: string): GameState | null {
   if (!inviteOpen(s, npc) || !inviterHome(s, npc)) return null
   const t = s.today ?? NO_TODAY
   const next = passTime(
-    { ...s, today: { ...t, dined: true }, needs: { ...s.needs, hunger: Math.max(0, s.needs.hunger - 60) }, scenes: [...s.scenes, `dinner:${npc}`] },
+    { ...s, today: { ...t, dined: true }, needs: { ...s.needs, hunger: Math.max(0, s.needs.hunger - 60) }, scenes: [...s.scenes, s.flags.dinnerMoment?`dinner:${npc}`:`firstDinner:${npc}`],flags:{...s.flags,dinnerMoment:1} },
     90,
   )
   return heartUp(next, npc, GAIN.dinner)
@@ -3428,8 +3434,10 @@ export function pantryDish(s: Pick<GameState, 'flags' | 'pantry'>): ItemId | nul
 // ── 가방과 재료 궤짝 (계획 11 작업 1, 규칙은 easier.ts) ──
 
 /** 재료 궤짝이 있으면 그 안의 것 (없으면 null — 가방만 쓴다) */
-export function chestOf(s: Pick<GameState, 'flags' | 'chest'>): Inventory | null {
-  return owns(s.flags, 'supplyChest') ? (s.chest ?? {}) : null
+export function chestOf(s: Pick<GameState, 'flags' | 'chest'> & Partial<Pick<GameState, 'room'>>): Inventory | null {
+  // 여닫는 생활 가구(서랍장·옷장·찬장류)도 물건을 넣어 두는 칸이 된다 (2026-10-13 사용자: 수납 가구를 눌러도 아무것도 안 떴다)
+  const storage = owns(s.flags, 'supplyChest') || (s.room ?? []).some((f) => isAddition(f.item) && ADDITION_FURNITURE[f.item as AdditionItemId].use === 'open')
+  return storage ? (s.chest ?? {}) : null
 }
 
 /** 가방 + 궤짝에 있는 수 */
@@ -4023,7 +4031,7 @@ export function decorateBook(s: GameState, book: Book, special: SpecialChoice): 
   if (!paid) return s
   const previousDesigns = withBookDesigns(paid.bookDesigns ?? [], paid.bound, paid.shelved)
   const bound = { ...paid.bound, [book]: { day: before?.day ?? s.clock.day, special } }
-  return { ...paid, bound, bookDesigns: withBookDesigns(previousDesigns, bound, paid.shelved) }
+  return coverMoment({ ...paid, bound, bookDesigns: withBookDesigns(previousDesigns, bound, paid.shelved) },book,special)
 }
 
 /** 퀴즈까지 마친 뒤 실제로 기록한다 (재료 없이 장을 완성 — 계획 14). 한 권의 마지막 장이면 'bookBound' 장면 */
@@ -4035,7 +4043,7 @@ export function submitChapter(s: GameState, book: Book, chapter: number, content
   const scenes = [...s.scenes]
   if (totalChapters(s) === 0) scenes.push('firstChapter')
   if (bookDone({ progress }, book, content)) scenes.push('bookBound')
-  const bound = passTime({ ...s, progress, scenes, needs: work(s.needs, 6) }, bindMinutes(s))
+  const bound = manuscriptFinale(s, passTime({ ...s, progress, scenes, needs: work(s.needs, 6) }, bindMinutes(s)))
   // 사도행전 장을 엮으면 그 장에 나오는 곳 카드가 여정 판에 들어온다
   return { state: applyEarlyGrowth(s, book === 'ac' ? syncJourney(bound, content) : bound, content), result }
 }
@@ -4080,7 +4088,7 @@ export function recordLetter(s: GameState, book: Book, chapter: number, picks: r
   const scenes = [...s.scenes]
   if (totalChapters(s) === 0) scenes.push('firstChapter')
   if (bookDone({ progress }, book, content)) scenes.push('bookBound')
-  const recorded = passTime({ ...s, progress, scenes, needs: work(s.needs, 6) }, bindMinutes(s))
+  const recorded = manuscriptFinale(s, passTime({ ...s, progress, scenes, needs: work(s.needs, 6) }, bindMinutes(s)))
   // 요한계시록 2·3장을 옮겨 적으면 그 장의 교회 카드가 일곱 교회 판에 들어온다
   return applyEarlyGrowth(s, book === 'rev' ? syncBoard(recorded, 'churches', content) : recorded, content)
 }
@@ -4194,6 +4202,8 @@ export function writeVerse(s: GameState, book: CopyBook, input: string, content:
   }
   const rainScene = weatherOf(day) === 'rain' && phaseOf(s.clock.minute) === 'night' && s.flags.rainCopyScene !== day
   if (rainScene && !scenes.includes('rainCopy')) scenes.push('rainCopy')
+  const afterCopyScene = !rainScene && !finished && phaseOf(s.clock.minute) === 'night' && !s.flags[onceKey('afterCopy', day)]
+  if (afterCopyScene) scenes.push('afterCopy')
   const before = s.stats
   // 구약 장도 지능·손재주 경험치를 받는다 (2026-10-12 사용자)
   const after = addXp(addXp(before, 'wit', COPY_CHAPTER_XP), 'hand', COPY_CHAPTER_XP)
@@ -4214,7 +4224,7 @@ export function writeVerse(s: GameState, book: CopyBook, input: string, content:
       ...(ot ? { otProgress } : {}),
       scenes,
       stats: after,
-      flags: rainScene ? { ...s.flags, rainCopyScene: day } : s.flags,
+      flags: { ...s.flags, ...(rainScene ? { rainCopyScene: day } : {}), ...(afterCopyScene ? { [onceKey('afterCopy', day)]: 1 } : {}) },
       // 피로는 장을 마칠 때만 붙는다 (지쳐도 쓸 수는 있다 — 사용자 결정 2026-10-04)
       needs: work(s.needs, 6 * effort),
       godRecords: ot ? s.godRecords : [...s.godRecords, ...finds],
@@ -4231,6 +4241,7 @@ export function writeVerse(s: GameState, book: CopyBook, input: string, content:
     Math.round(copyMinutes(s) * effort),
   )
   state = revealed(state)
+  if (!ot) state = manuscriptFinale(s, state)
   if (!ot) {
     const nt = book as Book
     state = applyEarlyGrowth(s, state, content)
@@ -4250,6 +4261,8 @@ export function writeVerse(s: GameState, book: CopyBook, input: string, content:
   const firstTime = !(s.copy.copied?.[book] ?? []).includes(chapter)
   const pay = firstTime ? libraryPay(copyPay(verses.length, effort), libraryBookCount(s)) : 0
   if (pay) state = { ...state, coins: state.coins + pay }
+  if(ot) state = otMilestoneScenes(s,state)
+  state = completeBibleFinale(s, state)
   return { state, result: { kind: 'chapter', chapter, verse: spot.verse.verse, verses: verses.length, chars, gains, bookDone: finished, next, finds, ...(gift ? { gift } : {}), ...(pay ? { pay } : {}) } }
 }
 
@@ -4428,6 +4441,8 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
   // ── 복음서 방 완성 잔치: 네 권을 다 꽂고 처음 잠든 다음 날 (한 번). 그다음 밤부터는 잔치가 지난 것 ──
   // 아기 잔치 날(정해진 날)이나 마을 행사(수확·모닥불) 저녁과 겹치면 하루 미룬다 — 저녁 모임이 한 저녁에 겹치지 않게
   if (flags.gospelFeast === 1) flags.gospelFeast = 2
+  // 스물일곱 권이 다 꽂혔는데 복음서 방 잔치를 아직 안 열었으면 건너뛴다 — 그날은 스물일곱 권 잔치 (2026-10-13 사용자)
+  else if (!flags.gospelFeast && !flags.allFeast && allFeastReady({ shelved: s.shelved, flags })) flags.gospelFeast = 2
   else if (!flags.gospelFeast && gospelRoomFull(s) && gathering !== 'babyParty' && !festivalOf(day)) {
     flags.gospelFeast = 1
     scenes.push('gospelFeast')
@@ -4501,7 +4516,7 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
     farewellPopup: undefined,
   }
   // 가족 생일 아침 (계획 12): 배우자·아이 생일 장면
-  const villaged = advanceVillage(familyMorning(childMorning(forgetPromises(morningSupplies(expireStall(expireWorkDay(next)), s.clock.day), day), content)), content)
+  const villaged = advanceVillage(familyMorning(siblingMorning(kidsMorning(forgetPromises(morningSupplies(expireStall(expireWorkDay(next)), s.clock.day), day), content), content)), content)
   // 주민 자율 가족 하루 정산 (계획 20 작업 10): 아침 단계에서 하루에 한 번, 큰 사건이 걸린 주민은 보류
   // 마을 서고 순위 업데이트 (계획 21 R8): 계절 1일·21일 아침에 한 번
   const morning = guestHouseMorning(farewellMorning(guestMorning(rankMorning(advanceBuilds(
@@ -4513,7 +4528,8 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
   ), content)), content))
   // 침대 위에서 눈을 뜨고 일어난다 (그림만)
   const welcomed = moveInMorning(s, morning, content)
-  return startAct({ ...welcomed, npcs: placeAllNpcs(welcomed, content) }, 'rise', PLACES.bed.tiles[0])
+  const awake = { ...welcomed, npcs: placeAllNpcs(welcomed, content) }
+  return startAct(familyScenicEvents(s, awake, childTile(awake)), 'rise', PLACES.bed.tiles[0])
 }
 
 /** 아이가 하루 한 번 해 오는 것 (근력·손재주·운 — 한 개씩, 날마다 번갈아) */
@@ -4525,21 +4541,29 @@ export const CHILD_HELP_XP = 10
  * 아이의 아침 (계획 12): 결혼하고 CHILD_AFTER_WEDDING일이 지난 아침에 태어나고(이름을 정한다),
  * 걷기 시작하는 날·돕기 시작하는 날엔 장면, 돕는 아이는 하루 한 번 자기 능력치에 맞는 일을 한다
  */
+/**
+ * 아이 셋의 아침 (2026-10-13): 함께하는 아이부터, 나머지 아이도 한 명씩 함께하는 자리에 앉혀 같은 아침을 보낸다
+ * (자라는 장면·하루 한 번 돕기·어른이 되면 진로·편지). 그 아이에게 장면이 생기면 그 아이를 함께하는 아이로 둔다 —
+ * 장면 속 이름이 그 아이 이름으로 나오게
+ */
+function kidsMorning(s: GameState, content: GameContent): GameState {
+  let next = childMorning(s, content)
+  const count = next.siblings?.length ?? 0
+  for (let i = 0; i < count; i++) {
+    const seen = next.scenes.length
+    const ran = childMorning(swapKid(next, i), content)
+    next = ran.scenes.length > seen ? ran : swapKid(ran, i)
+  }
+  return next
+}
+
 function childMorning(s: GameState, content: GameContent): GameState {
   const day = s.clock.day
   const r = s.romance ?? NO_ROMANCE
   let next = s
-  if (!next.child) {
-    if (featureAccess(s, 'childBirth') !== 'full') return s
-    if (s.homeLevel < 2 || r.stage !== 'married' || r.marriedDay === null || day < r.marriedDay + CHILD_AFTER_WEDDING) return s
-    const spouse = content.neighbors.find((d) => d.id === r.partner)
-    return {
-      ...next,
-      child: newChild(day, next.stats, spouse?.stat),
-      scenes: [...next.scenes, 'childBorn'],
-      flags: { ...next.flags, childNaming: 1 },
-    }
-  }
+  // 아이는 잠자리에서 아이를 갖자고 얘기한 다음 날 아침에 태어난다 (siblingMorning — 2026-10-13 사용자: 첫째부터)
+  if (!next.child) return s
+  void r
   let child = next.child!
   const stage = childStage(child, day)
   if (stage !== 'baby' && !next.flags.childWalked) next = { ...next, scenes: [...next.scenes, 'childWalks'], flags: { ...next.flags, childWalked: 1 } }
@@ -4561,6 +4585,7 @@ function childMorning(s: GameState, content: GameContent): GameState {
         if (story) next = { ...story.state, flags: { ...story.state.flags, kidMailPiece: day } }
       }
       next = { ...next, todayNotes: [...next.todayNotes, `kidMail:${mail}`], flags: { ...next.flags, kidMailDay: day, kidMailKind: ['letter', 'gift', 'coins'].indexOf(mail) } }
+      if(mail==='letter')next=childLetterMoment(next)
     }
     // 떠난 아이는 날마다 돕지 않는다
     if (child.left) return next
@@ -4588,7 +4613,7 @@ function childMorning(s: GameState, content: GameContent): GameState {
     ...next,
     child: { ...child, stats: addXp(child.stats, kind, CHILD_HELP_XP) },
     todayNotes: notes,
-    flags: { ...next.flags, childHelpDay: day, childHelpKind: helped ? STAT_ORDER.indexOf(kind) : -1 },
+    flags: { ...next.flags, childHelpDay: day, childHelpKind: helped ? STAT_ORDER.indexOf(kind) : -1, ...(stage === 'helper' && helped && finds && !next.flags.childFirstHelpScene ? { childFirstHelpPending: day } : {}) },
   }
 }
 const STAT_ORDER: readonly StatId[] = ['wit', 'hand', 'charm', 'strength', 'luck']
@@ -4620,9 +4645,9 @@ export function nameChild(s: GameState, name: string): GameState {
  */
 function morningSupplies(s: GameState, endedDay: number): GameState {
   let next = s
-  if (owns(s.flags, 'rainJar')) next = putAway(next, { water: weatherOf(endedDay) === 'rain' ? RAIN_WATER.afterRain + rainBonus(s.stats) : RAIN_WATER.usual })
+  if (yardPlaced(s.flags, 'rainJar')) next = putAway(next, { water: weatherOf(endedDay) === 'rain' ? RAIN_WATER.afterRain + rainBonus(s.stats) : RAIN_WATER.usual })
   // 계획 14: 틀은 크림색 종이, 항아리는 푸른 염료 (특별 제본의 꾸미기 재료 — 하루 양은 예전 그대로)
-  if (owns(s.flags, 'reedRack')) {
+  if (yardPlaced(s.flags, 'reedRack')) {
     if (stockOf(next, 'creamPaper') < RACK_HOLD) next = putAway(next, { creamPaper: RACK_PAPER })
     if (!next.flags.rackSeen) next = { ...next, scenes: [...next.scenes, 'reedRack'], flags: { ...next.flags, rackSeen: 1 } }
   }
@@ -4648,6 +4673,7 @@ export function sceneSeen(s: GameState, id: string, albumIds: readonly string[])
     ...(id === `loverTrust:${s.romance?.partner}` && s.scenes.includes(id) && s.romance.storyQueued && (s.romance.dates ?? 0) >= FULL_HEART_DATES
       ? { romance: { ...s.romance, storyRead: true, storyQueued: false } } : {}),
     scenes,
+    ...(id === 'bibleLastLetter' && s.scenes.includes(id) ? {flags:{...s.flags,bibleLastLetterSeen:1}} : {}),
     album: inAlbum ? [...s.album, { id, day: s.clock.day }] : s.album,
     todayNotes: s.todayNotes.includes(id) ? s.todayNotes : [...s.todayNotes, id],
   }
@@ -4872,7 +4898,7 @@ export function furnishSpouse(s: GameState): GameState {
   return next
 }
 
-function safeHomeSpot(at: Tile, room: readonly Furniture[]): Tile {
+export function safeHomeSpot(at: Tile, room: readonly Furniture[]): Tile {
   const blockers = solidTiles(room)
   for (let radius = 0; radius < 12; radius++) {
     for (let dy = -radius; dy <= radius; dy++) for (let dx = -radius; dx <= radius; dx++) {

@@ -27,13 +27,7 @@ it('시작 전, 진행 중, 종료, 다음 날짜를 구분한다', () => {
   expect(eventStatus(event, 11, 1200)).toBe('1일 뒤')
 })
 
-it('행사와 겹치는 글자 공부를 잘못 예고하지 않는다', () => {
-  const s = newGame(CONTENT)
-  const flags = { ...s.flags, childAsked: 1 }
-  expect(scheduledEvents({ ...s, flags }, CONTENT).some(e => e.id === '1:lesson')).toBe(true)
-  const B = dayOf('summer', 25)
-  expect(scheduledEvents({ ...s, flags, clock: { day: B, minute: 360 } }, CONTENT).some(e => e.id === `${B}:lesson`)).toBe(false)
-})
+
 
 describe('다음 일정 · 알림', () => {
   const party = { id: '12:festival', title: '잔치', location: '장터', day: 12, from: 1080, to: 1260 }
@@ -68,5 +62,18 @@ describe('하루 종일 일정은 미리보기에서 뒤로 (2026-10-13)', () =>
     expect(nextEvent([all, read], 5, 10 * 60)).toBe(read)
     expect(nextEvent([all], 5, 10 * 60)).toBe(all)
     expect(eventsInOrder([all, ev('club', 5, 14 * 60, 15 * 60), ev('lunch', 5, 12 * 60, 13 * 60)]).map((e: { id: string }) => e.id)).toEqual(['lunch', 'club', 'seasonCopy'])
+  })
+})
+
+describe('무지개 (2026-10-13)', () => {
+  it('비 갠 다음 날 일부에만, 일정에는 없다', async () => {
+    const { rainbowDay } = await import('./stories')
+    const { isWet, weatherOf } = await import('./calendar')
+    const days = Array.from({ length: 320 }, (_, i) => i + 2)
+    const after = days.filter((d) => !isWet(weatherOf(d)) && weatherOf(d - 1) === 'rain')
+    const shown = days.filter(rainbowDay)
+    expect(shown.length).toBeGreaterThan(0)
+    expect(shown.length).toBeLessThan(after.length)
+    for (const d of shown) expect(after).toContain(d)
   })
 })

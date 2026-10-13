@@ -24,7 +24,6 @@ export const GAIN = {
   work: 3,
   giftLiked: 3,
   giftPlain: 1,
-  teach: 3,
   request: 6,
   dinner: 4,
 } as const

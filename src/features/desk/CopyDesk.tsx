@@ -646,7 +646,8 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
 
   const send = (text: string, how: { inputType?: string; composing: boolean }) => {
     if (!how.composing && text === lastSent.current) return
-    const ok = copyType(text, how)
+    // 쓰는 동안은 붙잡아 둔다 — 절은 엔터(또는 다음 단추)를 눌러야 마친다
+    const ok = copyType(text, { ...how, hold: true })
     if (!how.composing) lastSent.current = text
     // 받지 않은 입력(붙여넣기·본문과 맞지 않는 뭉치)은 지운다 — 다만 조합 중인 글자는 절대 되돌리지 않는다.
     // 되돌린 글을 마지막 입력으로 삼는다 — 같은 뭉치가 다시 들어와도 또 지우게 (입력칸과 저장이 어긋나지 않게)
@@ -663,6 +664,17 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
     setIme(false)
     setValue(text)
     send(text, { composing: false })
+    if (wantEnter.current) {
+      wantEnter.current = false
+      finish(text)
+    }
+  }
+  /** 엔터를 누르면 그때 기다리던 절을 마친다 (조합 중이면 조합이 끝난 뒤) */
+  const wantEnter = useRef(false)
+  const finish = (text: string) => {
+    if (!checkCopy(text, spot.verse.text).done) return
+    lastSent.current = null
+    useGame.getState().copyType(text, { composing: false })
   }
   const onChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const native = e.nativeEvent as InputEvent
@@ -820,12 +832,20 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
             endComposition(e.currentTarget.value)
           }}
           onKeyDown={(e) => {
-            // 줄바꿈은 본문에 없다 — 엔터는 아무것도 넣지 않는다 (조합 중이면 조합만 끝난다)
-            if (e.key === 'Enter' && !e.nativeEvent.isComposing) e.preventDefault()
+            // 줄바꿈은 본문에 없다 — 엔터는 줄을 넣지 않고, 다 맞게 썼으면 다음 절로 (조합 중이면 조합이 끝난 뒤)
+            if (e.key !== 'Enter' || e.shiftKey) return
+            e.preventDefault()
+            if (e.nativeEvent.isComposing || composing.current) wantEnter.current = true
+            else finish(e.currentTarget.value)
           }}
           onPaste={(e) => e.preventDefault()}
           onDrop={(e) => e.preventDefault()}
         />
+        {verseDone && !puzzleOn && (
+          <button type="button" className="copy-next primary" onMouseDown={(e) => e.preventDefault()} onClick={() => finish(value)}>
+            {C.enterNext}
+          </button>
+        )}
         {voiceOk && !puzzleOn && (
           <div className="copy-voice">
             <button
