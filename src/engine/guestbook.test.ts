@@ -3,7 +3,7 @@ import { legacyGame as newGame } from './growth-test-support'
 import { CONTENT } from '../content/catalog'
 import { T } from '../content/text'
 import { FORBIDDEN, FORBIDDEN_PLACES } from '../content/forbidden'
-import { guestMorning, isRankDay, type GameState } from './game'
+import { guestMorning, isRankDay, LIBRARIAN_GUEST_COINS, type GameState } from './game'
 import { ourScore } from './villages'
 
 const at = (day: number, g?: GameState['guestbook']): GameState => ({ ...newGame(CONTENT), clock: { day, minute: 360 }, guestbook: g })
@@ -23,6 +23,24 @@ describe('서고 방명록', () => {
     expect(n).toBeLessThan(50)
     expect(s.guestbook!.length).toBeLessThanOrEqual(30)
     expect(s.coins).toBe(at(3).coins)
+  })
+  it('서고지기가 있으면 손님이 더 자주 오고, 안내한 손님은 후원금을 두고 가며 점수가 두 배 (2026-10-14)', () => {
+    const run = (librarian: boolean) => {
+      let s: GameState = { ...at(3), hearts: { ...at(3).hearts, baker: 60 }, flags: { ...at(3).flags, ...(librarian ? { librarian: 1 } : {}) } }
+      let n = 0
+      let paid = 0
+      for (let d = 3; d <= 122; d++) {
+        const coins = s.coins
+        s = guestMorning({ ...s, clock: { day: d, minute: 360 } })
+        if (s.guestbook?.at(-1)?.day === d) { n++; if (librarian) paid += s.coins - coins }
+      }
+      return { s, n, paid }
+    }
+    const plain = run(false), lib = run(true)
+    expect(lib.n).toBeGreaterThan(plain.n)
+    expect(lib.s.guestbook!.every((g) => g.by === 'baker')).toBe(true)
+    expect(lib.paid).toBe(lib.n * LIBRARIAN_GUEST_COINS)
+    expect(ourScore({ ...at(3), guestbook: [{ day: 3, kind: 'kid', by: 'baker' }] })).toBe(ourScore(at(3)) + 2)
   })
   it('방명록 줄은 서고 점수에 더해지고, 문구에 금지어·지명이 없다', () => {
     expect(ourScore({ ...at(3), guestbook: [{ day: 3, kind: 'kid' }] })).toBe(ourScore(at(3)) + 1)

@@ -2988,8 +2988,9 @@ export interface GuestEntry {
 export const GUESTBOOK_CAP = 30
 
 /**
- * 아침마다: 사흘에 하루꼴로 서고에 누군가 들러 방명록에 한 줄 (날 씨앗), 순위 업데이트 날에는 다른 마을 서기가.
- * 헌금함·입장료·수입 없음 — 방명록 줄은 서고 점수에만 더해진다
+ * 아침마다(3일째부터): 사흘에 하루꼴(서고지기가 있으면 이틀에 하루꼴)로 서고에 누군가 들러 방명록에 한 줄 (날 씨앗),
+ * 엿새 넘게 아무도 안 왔으면 꼭 오고, 순위 업데이트 날에는 다른 마을 서기가. 입장료는 없다 — 방명록 줄은 서고 점수에 더해지고,
+ * 서고지기가 안내한 손님은 점수 두 배·후원금(LIBRARIAN_GUEST_COINS)을 두고 간다 (2026-10-14)
  */
 export function guestMorning(s: GameState): GameState {
   if (featureAccess(s, 'guestbook') !== 'full') return s
@@ -3005,7 +3006,7 @@ export function guestMorning(s: GameState): GameState {
   const long = !last || day - last.day > 6
   let kind: GuestKind | null = null
   if (isRankDay(day)) kind = 'scribe'
-  else if (long || rnd() < 1 / 3) {
+  else if (long || rnd() < (librarianId(s) ? GUEST_CHANCE_LIBRARIAN : GUEST_CHANCE)) {
     const kinds = (['wanderer', 'learner', 'kid'] as const).filter((k) => k !== last?.kind)
     kind = kinds[Math.floor(rnd() * kinds.length)]
   }
@@ -3015,7 +3016,7 @@ export function guestMorning(s: GameState): GameState {
   const by = librarianId(s)
   const entry: GuestEntry = { day, kind, ...(village ? { village } : {}), ...(by ? { by } : {}) }
   const next: GameState = { ...s, guestbook: [...(s.guestbook ?? []), entry].slice(-GUESTBOOK_CAP) }
-  return by ? heartUp(next, by, LIBRARIAN_GAIN) : next
+  return by ? heartUp({ ...next, coins: next.coins + LIBRARIAN_GUEST_COINS }, by, LIBRARIAN_GAIN) : next
 }
 
 // ── 서고 운영 (2026-10-08): 배우자·마음이 가까운 이웃을 사서로, 오늘 온 방문객에게 말씀 조각 하나를 함께 읽어 주기 ──
@@ -3024,6 +3025,11 @@ export function guestMorning(s: GameState): GameState {
 export const LIBRARIAN_HEARTS = 40
 /** 사서가 방문객을 안내한 날 오르는 마음 */
 export const LIBRARIAN_GAIN = 1
+/** 서고지기가 있으면 손님이 더 자주 온다 (2026-10-14 사용자: 더 쓸모 있게) — 없으면 1/3, 있으면 1/2 */
+export const GUEST_CHANCE = 1 / 3
+export const GUEST_CHANCE_LIBRARIAN = 1 / 2
+/** 서고지기가 안내한 손님이 두고 가는 후원금 (닢) */
+export const LIBRARIAN_GUEST_COINS = 30
 /** 사서 (flags.librarian = 이웃 번호 + 1, CONTENT_DEFS 순서) */
 export function librarianId(s: Pick<GameState, 'flags'>): string | null {
   const v = s.flags.librarian
@@ -4229,7 +4235,7 @@ export type VerseResult =
 /**
  * 한 절을 적는다: 입력이 그 절 본문과 다 맞으면(띄어쓰기·문장부호 무시) 기록하고 다음 절로.
  * 장의 마지막 절이면 장을 마친다 — progress[book].completed에 더하고(서고·방 흐름 그대로, 첫 장이면 'firstChapter',
- * 한 권의 마지막 장이면 'bookBound' 장면), 지능·손재주 경험치, 피로 6. 시간은 절마다 흐른다 (verseMinutes — 2026-10-14 사용자: 한 절에 5분).
+ * 한 권의 마지막 장이면 'bookBound' 장면), 지능·손재주 경험치, 장 끝 피로 6. 시간은 절마다 흐른다 (verseMinutes — 2026-10-14 사용자: 한 절에 5분).
  * 재료·조각·받은 편지는 보지 않는다. 덜 맞으면 입력만 자리에 저장한다 (pasted면 그것도 받지 않는다)
  */
 export function writeVerse(s: GameState, book: CopyBook, input: string, content: GameContent, pasted = false, puzzle = false): { state: GameState; result: VerseResult } {
@@ -4310,7 +4316,7 @@ export function writeVerse(s: GameState, book: CopyBook, input: string, content:
       scenes,
       stats: after,
       flags: { ...s.flags, ...(rainScene ? { rainCopyScene: day } : {}), ...(afterCopyScene ? { [onceKey('afterCopy', day)]: 1 } : {}) },
-      // 피로는 장을 마칠 때만 붙는다 (지쳐도 쓸 수는 있다 — 사용자 결정 2026-10-04)
+      // 장을 마칠 때 수고 피로 6(퍼즐 몫만큼 덜)이 붙는다. 절마다 흐르는 시간에도 피로는 쌓인다 (지쳐도 쓸 수는 있다 — 2026-10-04·10-14)
       needs: work(s.needs, 6 * effort),
       godRecords: ot ? s.godRecords : [...s.godRecords, ...finds],
       // 이 장으로 한 권을 마쳤으면 마친 날을 남긴다

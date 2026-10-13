@@ -32,11 +32,13 @@ export function villageScores(seed: number, day: number): number[] {
 const COPY_REQ = /^req:(\d+:\d+$|gen:|growth:board)/
 
 /** 우리 마을 서고 점수: 모은 말씀 조각 + 꽂은 권수×10 + 정성 필사×2 + 끝낸 부탁 필사×2 + 방명록 */
-export function ourScore(s: Pick<GameState, 'collected' | 'shelved' | 'careDone' | 'flags'> & { guestbook?: unknown[] }): number {
+export function ourScore(s: Pick<GameState, 'collected' | 'shelved' | 'careDone' | 'flags'> & { guestbook?: readonly object[] }): number {
   const shelved = Object.values(s.shelved).filter((g) => g !== undefined).length
   // 부탁 필사 표식만 (날:번호 · gen: · growth:board) — 이웃 물건 부탁(bonds.ts, req:<이웃>:<번호>)은 세지 않는다 (2026-10-11 점검)
   const reqs = Object.keys(s.flags).filter((k) => COPY_REQ.test(k)).length
-  return s.collected.length + shelved * 10 + (s.careDone?.length ?? 0) * 2 + reqs * 2 + (s.guestbook?.length ?? 0)
+  // 방명록 한 줄 1점, 서고지기가 안내한 손님은 2점 (2026-10-14)
+  const guests = (s.guestbook ?? []).reduce<number>((n, g) => n + ((g as { by?: string }).by ? 2 : 1), 0)
+  return s.collected.length + shelved * 10 + (s.careDone?.length ?? 0) * 2 + reqs * 2 + guests
 }
 
 export interface RankRow {
