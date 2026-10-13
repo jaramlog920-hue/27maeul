@@ -486,6 +486,20 @@ button.big {
   font-size: 11px;
   margin-top: 4px;
 }
+/* 서고 잔치에서 낭독한 한 줄 (2026-10-13) */
+.album-card .album-line {
+  display: block;
+  margin-top: 3px;
+  color: var(--ink-soft, #6b5a48);
+  font-style: normal;
+}
+.feast-line {
+  margin: 8px 0;
+  padding: 8px 10px;
+  border-left: 3px solid var(--panel-edge);
+  background: rgba(255, 248, 230, 0.7);
+  line-height: 1.6;
+}
 .my-lines {
   list-style: none;
   padding: 0;

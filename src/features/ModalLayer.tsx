@@ -32,6 +32,8 @@ import { PassageWindow } from './passage/PassageWindow'
 import { Review } from './review/Review'
 import { SceneView } from './scene/SceneView'
 import { LandscapeScene } from './scene/StarsScene'
+import { landscapeKind } from '../render/scenic-moments-art'
+import { FeastView } from './scene/FeastView'
 import { OrdersView } from './talk/OrdersView'
 import { GiftPicker } from './talk/GiftPicker'
 import { TalkBox } from './talk/TalkBox'
@@ -133,7 +135,9 @@ function Body() {
     case 'familyTree':
       return <FamilyTree personId={modal.personId} neighborId={modal.neighborId} />
     case 'scene':
-      if (modal.id === 'stars' || modal.id === 'sunset') return <LandscapeScene key={modal.id} kind={modal.id} />
+      if (landscapeKind(modal.id)) return <LandscapeScene key={modal.id} kind={landscapeKind(modal.id)!} sceneId={modal.id} />
+      // 서고 잔치 모닥불: 음식·조각 이야기·내 한 줄 낭독 (2026-10-13)
+      if (modal.id === 'feastFire' || modal.id === 'allFeastFire') return <FeastView key={modal.id} id={modal.id} />
       return <SceneView id={modal.id} chosen={modal.chosen} />
     case 'orders':
       return <OrdersView npc={modal.npc} />

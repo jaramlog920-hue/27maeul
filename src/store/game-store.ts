@@ -25,7 +25,7 @@ import { newlandRevealed, revealNewland } from '../engine/newland'
 import { progressOf } from '../engine/books'
 import { featureAccess } from '../engine/feature-rules'
 import { isOtBook, type CopyBook } from '../engine/ot-books'
-import { ARCHIVE } from '../engine/newland-config'
+import { ARCHIVE, VILLAGE_PORTAL_FRONT } from '../engine/newland-config'
 import { buildsOf, cancelBuild, clearTile, demolishBuild, orderBuild } from '../engine/newland-build'
 import type { SiteKind } from '../engine/newland-sites'
 import { facilityAt, type FacilityKind } from '../engine/newland-life'
@@ -34,6 +34,7 @@ import { clubWeaveDone } from '../engine/clubs'
 import type { FullAvatar } from '../engine/avatar'
 import type { DatePlace } from '../engine/romance'
 import { create } from 'zustand'
+import { feastOf, readFeastLine, shareFeastFood } from '../engine/feast'
 import { CONTENT, neighborById, copySourceFor, LETTER_OPENINGS, pieceById, pieceOfQuestion, piecesOf, quizSourceFor } from '../content/catalog'
 import { ensureNtBooks, ntLoaded } from '../content/nt-loader'
 import { blanksFor } from '../engine/copy'
@@ -186,7 +187,7 @@ import {
   type SubmitResult,
   type Trade,
 } from '../engine/game'
-import { isHome, lockedTiles, lockedZones, placeAt, roomAt, sameTile, zoneAt } from '../engine/world'
+import { isHome, lockedTiles, lockedZones, placeAt, PLACES, roomAt, sameTile, zoneAt } from '../engine/world'
 import { slotPerson } from '../engine/gen-growth'
 import { footprint, removal, type Furniture } from '../engine/room'
 import { inBuildingRoom, roomOf as furnitureRoomOf } from '../engine/newland-rooms'
@@ -477,7 +478,8 @@ interface Store {
   /** 테스트에서 난수를 고정하려고 바꿀 수 있다 */
   rng: Rng
   /** 앨범 사진을 찍는 함수 (캔버스가 등록한다) */
-  capture: (() => string | null) | null
+  /** 지금 화면을 사진으로 (focus를 주면 그 칸을 비춘 마을 화면으로) */
+  capture: ((focus?: Tile) => string | null) | null
   clockMs: number
 
   load: (game: GameState) => void
@@ -658,6 +660,10 @@ interface Store {
   /** 고른 가구를 가방으로 */
   removeSelected: () => void
   nextScene: () => void
+  /** 서고 잔치 모닥불: 음식 하나를 내놓는다 — 기뻐한 이웃 id (2026-10-13) */
+  feastShare: (item: ItemId) => string[]
+  /** 서고 잔치 모닥불: 나의 한 줄을 낭독한다 */
+  feastRead: (text: string) => void
   /** 요람의 우리 아기 돌보기 (2026-10-12 도트) */
   careBaby: (action: BabyCare) => void
   chooseScene: (index: number) => void
@@ -702,10 +708,27 @@ export function storeAlbumImage(id: string, data: string | null) {
  * 장면이 열릴 때 앨범 사진: 앨범 장면이면 그 칸에, photoFor가 있으면 그 장면의 칸에 (잔치 아침 → 저녁 모닥불 그림으로 바꾼다).
  * 프레임이 여는 장면과 별 보기가 바로 여는 장면이 함께 쓴다
  */
-function snapAlbum(sceneId: string, capture: (() => string | null) | null) {
+function snapAlbum(sceneId: string, capture: ((focus?: Tile) => string | null) | null) {
   const sc = SCENES[sceneId]
   const photo = sc?.photoFor ?? (sc?.album ? sceneId : null)
-  if (photo) storeAlbumImage(photo, capture?.() ?? null)
+  if (photo) storeAlbumImage(photo, capture?.(photoSpot(photo) ?? undefined) ?? null)
+}
+/**
+ * 앨범 사진을 찍을 자리 (2026-10-13 사용자: 아침에 열리는 장면이 집 안만 찍히고, 여행은 빈 화면이었다).
+ * 정해 둔 장면은 그 장소를 비춘 마을 화면으로 찍는다 — 그 밖은 지금 화면 그대로
+ */
+const SQUARE: Tile = { x: 24, y: 22 }
+function photoSpot(id: string): Tile | null {
+  if (id === 'gospelFeast' || id === 'allFeast' || id.startsWith('roomOpen:')) return PLACES.library.stand ?? null
+  if (id === 'newlandGift') return { x: VILLAGE_PORTAL_FRONT.x - 3, y: VILLAGE_PORTAL_FRONT.y }
+  if (id === 'actsShip' || id === 'trip:harbor') return { x: 21, y: 33 }
+  if (id === 'trip:hillTown') return PLACES.hill.stand ?? null
+  if (id.startsWith('movedIn:')) {
+    const door = CONTENT.neighbors.find((d) => d.id === id.slice(8))?.door
+    return door ? { x: door.x, y: door.y + 1 } : null
+  }
+  if (id === 'firstSnow' || id === 'rainbow' || /^village:\d$/.test(id)) return SQUARE
+  return null
 }
 /** 아침에 아이가 해 온 일 (계획 12): 한 줄 알림 */
 const CHILD_HELP_LINE = ['이웃집 사본을 보고 한 대목 베껴 왔어요', '파피루스나 잉크를 만들어 왔어요', '이웃에게 대신 인사하고 왔어요', '물이나 갈대를 날라 왔어요', '뜻밖의 선물을 들고 왔어요']
@@ -2472,6 +2495,15 @@ export const useGame = create<Store>((set, get) => {
       if (m?.kind !== 'scene' || m.chosen !== undefined) return
       const game = m.id.startsWith('ev:') ? chooseInEvent(get().game, m.id.slice(3), index) : get().game
       set({ game: persist(game), modal: { ...m, chosen: index } })
+    },
+    feastShare: (item) => {
+      const r = shareFeastFood(get().game, item, CONTENT)
+      set({ game: persist(r.state) })
+      return r.glad
+    },
+    feastRead: (text) => {
+      const id = feastOf(get().game)
+      if (id) set({ game: persist(readFeastLine(get().game, id, text)) })
     },
     careBaby: (action) => {
       const next = careBaby(get().game, action)

@@ -275,6 +275,8 @@ export interface GameState {
   giftsGot: ItemId[]
   recipesKnown: RecipeId[]
   myLines: Record<string, string>
+  /** 서고 잔치 모닥불에서 낭독한 나의 한 줄 (잔치 id → 줄) — 옛 저장은 없음 */
+  feastLines?: Record<string, string>
   /** 풀밭을 밟은 횟수 → 오솔길 */
   trails: Record<string, number>
   room: Furniture[]
@@ -459,11 +461,13 @@ export function careBaby(s: GameState, action: BabyCare): GameState | null {
   const here = playerTile(s)
   const facing: Facing = at.x > here.x ? 'right' : at.x < here.x ? 'left' : at.y < here.y ? 'up' : 'down'
   const first = s.flags.babyCare !== s.clock.day
+  const sleepScene = action === 'tuck' && phaseOf(s.clock.minute) === 'night' && s.flags.babySleepScene !== s.clock.day
   return {
     ...s,
     player: { ...s.player, facing },
     child: first ? { ...c, close: Math.min(100, (c.close ?? 0) + BABY_CARE_CLOSE) /* family CLOSE_MAX — family가 game을 부르므로 값만 */ } : c,
-    flags: first ? { ...s.flags, babyCare: s.clock.day } : s.flags,
+    flags: { ...s.flags, ...(first ? { babyCare: s.clock.day } : {}), ...(sleepScene ? { babySleepScene: s.clock.day } : {}) },
+    scenes: sleepScene && !s.scenes.includes('babySleep') ? [...s.scenes, 'babySleep'] : s.scenes,
     act: { kind: 'baby', use: action, spot: { x: crib.x, y: crib.y, item: crib.item, facing }, left: ACT_SECONDS.baby, total: ACT_SECONDS.baby, facing },
   }
 }
@@ -4185,6 +4189,8 @@ export function writeVerse(s: GameState, book: CopyBook, input: string, content:
     if (totalChapters(s) === 0) scenes.push('firstChapter')
     if (finished) scenes.push('bookBound')
   }
+  const rainScene = weatherOf(day) === 'rain' && phaseOf(s.clock.minute) === 'night' && s.flags.rainCopyScene !== day
+  if (rainScene && !scenes.includes('rainCopy')) scenes.push('rainCopy')
   const before = s.stats
   // 구약 장도 지능·손재주 경험치를 받는다 (2026-10-12 사용자)
   const after = addXp(addXp(before, 'wit', COPY_CHAPTER_XP), 'hand', COPY_CHAPTER_XP)
@@ -4205,6 +4211,7 @@ export function writeVerse(s: GameState, book: CopyBook, input: string, content:
       ...(ot ? { otProgress } : {}),
       scenes,
       stats: after,
+      flags: rainScene ? { ...s.flags, rainCopyScene: day } : s.flags,
       // 피로는 장을 마칠 때만 붙는다 (지쳐도 쓸 수는 있다 — 사용자 결정 2026-10-04)
       needs: work(s.needs, 6 * effort),
       godRecords: ot ? s.godRecords : [...s.godRecords, ...finds],

@@ -202,6 +202,18 @@ export function festivalLayout(f: Festival): EventProp[] {
   return [FEAST_BOARD, { art, at: { x: 22, y: 18 }, w: 1, h: 1, foot: [{ x: 22, y: 18 }] }, { art, at: { x: 26, y: 18 }, w: 1, h: 1, foot: [{ x: 26, y: 18 }] }]
 }
 
+/** 서고 잔치 저녁 (복음서 방이 다 찬 날·스물일곱 권이 다 꽂힌 날): 비가 와도 연다 */
+export function feastEvening(s: SceneState): boolean {
+  const m = s.clock.minute
+  return (s.flags?.gospelFeast === 1 || s.flags?.allFeast === 1) && m >= FESTIVAL_FROM && m < FESTIVAL_TO && !weddingEvening(s) && !festivalEvening(s)
+}
+export const FEAST_LAYOUT: EventProp[] = [
+  FEAST_BOARD,
+  { art: 'springGarland', at: FEAST_BOARD.at, w: 2, h: 1, dy: -3, foot: [] },
+  { art: 'winterLantern', at: { x: 22, y: 18 }, w: 1, h: 1, foot: [{ x: 22, y: 18 }] },
+  { art: 'winterLantern', at: { x: 26, y: 18 }, w: 1, h: 1, foot: [{ x: 26, y: 18 }] },
+]
+
 /** 언덕 소풍의 나들이 천 (벤치 아래 빈 풀밭 — 바닥에 깐다) */
 export const PICNIC_CLOTH: EventProp = { art: 'picnicCloth', at: { x: 14, y: 12 }, w: 2, h: 1, ground: true, foot: [{ x: 14, y: 12 }, { x: 15, y: 12 }] }
 /** 아기 잔치의 집들이 바구니 (빵집 앞 모임 자리 옆) */
@@ -268,6 +280,8 @@ export function eventPropsNow(s: SceneState): EventProp[] {
   if (weddingEvening(s)) props.push(...WEDDING_LAYOUT)
   const f = festivalEvening(s)
   if (f) props.push(...festivalLayout(f))
+  // 서고 잔치 저녁 (2026-10-13 사용자: 밋밋했다): 안내판에 꽃 걸개, 모닥불 위쪽 양옆에 등불
+  else if (feastEvening(s)) props.push(...FEAST_LAYOUT)
   const g = gatheringNow(s)
   if (g === 'picnic') props.push(PICNIC_CLOTH)
   if (g === 'babyParty') props.push(WELCOME_BASKET)
@@ -333,7 +347,7 @@ export function npcEventMotion(s: SceneState, id: string, t: number): EventMotio
     if (standingAt(n, FESTIVAL_SPOTS[id])) return { set: 'event', ...rotate(['clap', 'smile'], id, t), facing: faceToward(FESTIVAL_SPOTS[id], WEDDING_SPOT) }
   }
   // 마을 잔치: 모닥불 둘레 이웃이 춤·맛보기·박수를 돌아가며
-  if (festivalEvening(s) && standingAt(n, FESTIVAL_SPOTS[id])) return { set: 'event', ...rotate(['dance', 'taste', 'clap'], id, t), facing: faceToward(FESTIVAL_SPOTS[id], FIRE) }
+  if ((festivalEvening(s) || feastEvening(s)) && standingAt(n, FESTIVAL_SPOTS[id])) return { set: 'event', ...rotate(['dance', 'taste', 'clap'], id, t), facing: faceToward(FESTIVAL_SPOTS[id], FIRE) }
   // 이웃 모임: 소풍은 음식 나누기(천 쪽을 보고), 아기 잔치는 접시 놓기
   const g = gatheringNow(s)
   if (g === 'picnic' && standingAt(n, HILL_SPOTS[id])) return { set: 'event', ...oneShot('shareFood', id, t), facing: faceToward(HILL_SPOTS[id], PICNIC_CLOTH.at) }

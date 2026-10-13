@@ -38,9 +38,13 @@ export function GameCanvas({ zoom = 1 }: { zoom?: number }) {
     if (!canvas || !ctx) return
     const r = createRenderer(ctx, CONTENT)
     renderer.current = r
+    let lastT = 0
     useGame.setState({
-      capture: () => {
+      capture: (focus) => {
         try {
+          // 정해 둔 장소가 있으면 그 칸을 비춘 마을 화면을 한 번 그려 찍는다 (다음 프레임이 원래 화면으로 돌려놓는다)
+          const game = useGame.getState().game
+          if (focus && (game.map ?? 'village') === 'village') r.draw({ ...game, player: { ...game.player, x: focus.x, y: focus.y, path: [] } }, lastT, 0)
           return canvas.toDataURL('image/png')
         } catch {
           return null
@@ -75,7 +79,8 @@ export function GameCanvas({ zoom = 1 }: { zoom?: number }) {
         r.selected = sel ? footprint(sel) : null
         r.look = st.decorating ? st.decorLook : null
         r.decorating = !!st.decorating
-        r.draw(st.game, Math.max(0, (now - t0) / 1000), zoomChanged ? 0 : dt)
+        lastT = Math.max(0, (now - t0) / 1000)
+        r.draw(st.game, lastT, zoomChanged ? 0 : dt)
       } catch (err) {
         const msg = String(err)
         if (msg !== lastError) console.error(err)

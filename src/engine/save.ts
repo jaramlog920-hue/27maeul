@@ -351,6 +351,8 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     offers,
     post,
     myLines,
+    // 서고 잔치에서 낭독한 줄 (2026-10-13): 잔치 id마다 글 한 줄만, 옛 저장은 없음
+    ...(isObj(s.feastLines) ? { feastLines: Object.fromEntries(Object.entries(s.feastLines as Record<string, unknown>).filter((e): e is [string, string] => (e[0] === 'gospelFeast' || e[0] === 'allFeast') && typeof e[1] === 'string' && e[1].length <= 400)) } : {}),
     todayHeard: s.todayHeard.filter((id) => known.has(id)),
     // 끝나지 않은 책의 서고 칸은 없앤다 (시험판 저장이 3장만 읽은 책을 꽂았을 수 있다)
     shelved: Object.fromEntries(
