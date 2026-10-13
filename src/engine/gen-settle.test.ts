@@ -236,7 +236,7 @@ describe('아기 침대와 출생 (D32·P10·P11)', () => {
     expect(g.log.filter((l) => l.kind === 'cribAgain')).toHaveLength(1)
     expect(g.log.filter((l) => l.kind === 'crib')).toHaveLength(1)
   })
-  it('같은 씨앗이면 같은 아이, 둘째는 부탁 없이 56일 뒤부터, 가족당 둘까지', () => {
+  it('같은 씨앗이면 같은 아이, 가족당 한 명까지 — 둘째는 없다 (2026-10-13 사용자)', () => {
     const { g: g0, d, hid } = married()
     let g = run(setAff(g0, { [RP]: 100 }), d + 1, d + 1)
     g = giveCrib(g, hid, d + 2)!
@@ -244,8 +244,8 @@ describe('아기 침대와 출생 (D32·P10·P11)', () => {
     const b = run(g, d + 3, d + 200)
     expect(a.households[hid].children).toEqual(b.households[hid].children)
     expect(a.persons[a.households[hid].children[0]]).toEqual(b.persons[b.households[hid].children[0]])
-    expect(a.households[hid].children).toHaveLength(2)
-    expect(a.log.filter((l) => l.kind === 'expecting')).toHaveLength(1)
+    expect(a.households[hid].children).toHaveLength(1)
+    expect(a.log.filter((l) => l.kind === 'expecting')).toHaveLength(0)
     expect(a.log.filter((l) => l.kind === 'crib')).toHaveLength(1)
   })
 })

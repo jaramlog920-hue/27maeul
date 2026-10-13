@@ -44,7 +44,7 @@ export const BIRTH_GAP = 56
 export const SECOND_GAIN = 10
 
 /** 가족당 자녀 최대, 마을의 생성 주민 최대 — 고정 주민과 플레이어 가족은 세지 않는다 */
-export const MAX_CHILDREN = 2
+export const MAX_CHILDREN = 1 // 2026-10-13 사용자: 주민 가족은 아이 한 명만
 export const MAX_GENERATED = 8
 
 /** 같은 사람의 두 큰 전환 사이 최소 공백(일) */

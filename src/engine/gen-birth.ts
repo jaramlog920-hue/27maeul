@@ -103,7 +103,7 @@ export function settleBirth(g: GenState, d: number, ctx: DayCtx, avatarOf: Avata
       continue
     }
     // 둘째: 같은 침대를 쓰니 부탁 없이 — 첫 아이 뒤 56일, 오늘 호감도 ≥ 첫 출생 날 값 + 10
-    if (h.children.length === 1 && h.birthDue == null && h.lastBirth != null && d - h.lastBirth >= BIRTH_GAP && hasRoom(g)) {
+    if (h.children.length === 1 && h.children.length < MAX_CHILDREN && h.birthDue == null && h.lastBirth != null && d - h.lastBirth >= BIRTH_GAP && hasRoom(g)) {
       // 100에 막혀 더 오를 수 없으면 기간만 본다 (첫 부탁과 같은 생각)
       const need = (h.birthAffinity ?? 50) + SECOND_GAIN
       if (need > 100 || affinityOf(g, a, b) >= need) {
