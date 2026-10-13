@@ -10,7 +10,7 @@ describe('도움말 › 열리는 때 (2026-10-14)', () => {
     act(() => useGame.getState().open({ kind: 'guide' }))
     fireEvent.click(screen.getByRole('button', { name: '필사' }))
     expect(screen.getByRole('region', { name: '필사' })).toHaveTextContent('5분')
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 80; i++) {
       const next = screen.getByRole('button', { name: '뒤 ›' })
       if ((next as HTMLButtonElement).disabled) break
       fireEvent.click(next)
@@ -20,7 +20,7 @@ describe('도움말 › 열리는 때 (2026-10-14)', () => {
   it('모든 기능의 해금 조건과 장소·이웃이 열리는 권수를 보여 준다', () => {
     render(<ModalLayer />)
     act(() => useGame.getState().open({ kind: 'guide' }))
-    fireEvent.click(screen.getByRole('button', { name: '열리는 때' }))
+    fireEvent.click(screen.getByRole('button', { name: /^열리는 때/ }))
     const table = screen.getByRole('table', { name: '기능이 열리는 때' })
     expect(within(table).getAllByRole('row')).toHaveLength(Object.keys(FEATURE_RULES).length + 1)
     expect(within(table).getByRole('row', { name: /주민 자율 생활/ })).toHaveTextContent('신약 75장')
@@ -29,5 +29,17 @@ describe('도움말 › 열리는 때 (2026-10-14)', () => {
     const places = screen.getByRole('table', { name: '장소가 열리는 때' })
     expect(within(places).getByRole('row', { name: /포도원/ })).toHaveTextContent('5권')
     expect(within(places).getByRole('row', { name: /세이지/ })).toHaveTextContent('2권')
+  })
+  it('열리는 때의 기능마다 목차에 장이 하나씩, 장마다 꿀팁이 있다', () => {
+    render(<ModalLayer />)
+    act(() => useGame.getState().open({ kind: 'guide' }))
+    const toc = screen.getByRole('navigation', { name: '목차' })
+    const names = within(toc).getAllByRole('button').map((b) => b.textContent ?? '')
+    const table = Object.keys(FEATURE_RULES).length
+    // 기능 장 + 열리는 때 한 장
+    expect(names.filter((n) => /신약 \d+(장|권)/.test(n))).toHaveLength(table)
+    fireEvent.click(within(toc).getByRole('button', { name: /^결혼/ }))
+    expect(screen.getByRole('region', { name: '결혼' })).toHaveTextContent('약속의 끈')
+    expect(screen.getByRole('region', { name: '결혼' })).toHaveTextContent('신약 90장에 열려요')
   })
 })

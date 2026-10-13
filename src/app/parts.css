@@ -2533,3 +2533,4 @@ button.row:active:not(:disabled) { background: #efe3c4; }
 .hud-speed { margin-left: 6px; min-height: 0; padding: 0 6px; font-size: 11px; line-height: 1.6; border-radius: 3px; }
 .clock-picker { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; width: 100%; }
 .clock-picker button { min-height: 36px; padding: 2px 0; }
+.guide-book .guide-toc-part { margin: 12px 0 4px; font-size: 13px; color: var(--ink-soft); }
