@@ -933,11 +933,10 @@ export function settle(s: GameState, content: GameContent): GameState {
   if (companion?.kind === 'cat' && (!companion.stay || (!away && !isHome({ x: Math.round(companion.x), y: Math.round(companion.y) })))) {
     companion = { ...companion, stay: true, ...PET_HOME, path: [] }
   }
-  // 동물은 첫 마을에 남는다 — 새 터에서는 그 자리를 새 터 지도로 따지지 않는다.
-  // 첫 마을로 돌아올 때 따라다니는 동물은 기록자 곁으로 (새 터에서 따라오기를 고른 경우 — 23-A)
-  if (companion && !away && !companion.stay) {
+  // 따라다니는 동물은 불러온 지도(첫 마을·새 터)의 기록자 곁으로 (2026-10-14: 새 터에도 따라간다)
+  if (companion && !companion.stay) {
     const near = companionGoal({ x: Math.round(player.x), y: Math.round(player.y) }, false, undefined, player.facing) ?? { x: Math.round(player.x), y: Math.round(player.y) }
-    companion = { ...companion, x: near.x, y: near.y, path: [] }
+    companion = { ...companion, map: away ? 'newland' : undefined, x: near.x, y: near.y, path: [] }
   } else if (companion && !away && stuck({ x: Math.round(companion.x), y: Math.round(companion.y) })) {
     const near = companionGoal({ x: Math.round(player.x), y: Math.round(player.y) }, false, undefined, player.facing) ?? { x: Math.round(player.x), y: Math.round(player.y) }
     companion = { ...companion, x: near.x, y: near.y, path: [] }
@@ -1402,6 +1401,11 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
     if (!isHome(here) || occupied.has(key(here))) companion = { ...companion, x: homeGoal.x, y: homeGoal.y, path: [] }
     else companion = stepCompanion(companion, homeGoal, dt * pace, occupied)
   }
+  // 새 터에 있던 동물이 첫 마을에 남아 있으면(잠·불러오기) 곁으로 데려온다
+  if (companion?.map === 'newland') {
+    const near = besideNotDoor(now) ?? now
+    companion = { ...companion, map: undefined, x: near.x, y: near.y, path: [] }
+  }
   // 집에 둔 동물은 집 안 자리에서 기다린다 (따라오지 않는다)
   if (companion && !companion.stay) {
     const rainOut = isWet(weatherOf(clock.day)) && !isIndoor(now)
@@ -1525,7 +1529,7 @@ export function canTravel(s: GameState, to: MapId, opts: { copyOpen?: boolean } 
 /**
  * 구약 서고 열쇠 (2026-10-14 사용자: 집으로는 비상 탈출이 있으니 열쇠는 새 터의 구약 서고 안으로).
  * 물건 id는 옛 저장 그대로 'homeKey'. 새 터가 열린 뒤, 건너갈 수 있는 때(밤에는 새 터로 건너가지 않는다)에만.
- * 시간은 흐르지 않는다. 동물 친구는 새 터에 따라가지 않으므로 첫 마을에 남는다 (setCompanionStay와 같게)
+ * 시간은 흐르지 않는다. 따라다니던 동물 친구도 함께 간다 (bringPet)
  */
 export const HOME_KEY_PRICE = 8000
 export type ArchiveKeyBlock = 'noKey' | 'locked' | 'late' | 'scene'
@@ -1546,7 +1550,7 @@ export function goArchive(s: GameState): { state: GameState } | { block: Archive
     idle: IDLE_RESET,
   }
   syncHome(next)
-  return { state: next }
+  return { state: bringPet(next) }
 }
 
 export function travel(s0: GameState, to: MapId, content: GameContent, opts: { copyOpen?: boolean } = {}): GameState {
@@ -1561,14 +1565,15 @@ export function travel(s0: GameState, to: MapId, content: GameContent, opts: { c
     const timed = passTime(s0, TRAVEL_MINUTES)
     const next: GameState = { ...timed, map: to, mapAt, player, target: null, act: undefined, idle: IDLE_RESET }
     syncHome(next)
-    return next
+    // 따라다니던 동물 친구도 함께 건너간다 (2026-10-14)
+    return bringPet(next)
   }
   const arrived: GameState = { ...s0, map: to, mapAt, player, target: null, act: undefined, idle: IDLE_RESET }
   syncHome(arrived)
   const timed = passTime(arrived, TRAVEL_MINUTES)
   const next: GameState = { ...timed, npcs: placeAllNpcs(timed, content) }
   syncHome(next)
-  return next
+  return bringPet(next)
 }
 
 /** 왕래 표식을 눌렀을 때: 표식 바로 앞까지 걸어가 서고, 닿으면 건너가는 창이 열린다 (store의 arrive) */
@@ -1669,7 +1674,15 @@ function tickNewland(s: GameState, dt: number, rng: Rng): { state: GameState; ev
   }
   const idle = moving ? IDLE_RESET : stepIdle(s.idle, dt, clock.minute, rng, totalChapters(s) >= 3)
   const act = !s.act || moving || player.path.length > 0 || s.act.left <= dt ? undefined : { ...s.act, left: s.act.left - dt }
-  return { state: bibleEndingEvents({ ...s, clock, needs, player, target, idle, act, flags, ...(otCollected ? { otCollected } : {}) }), events }
+  // 새 터에 따라온 동물 친구: 문을 드나들면 곁으로, 아니면 기록자 뒤를 걸어 따라온다 (2026-10-14)
+  let companion = s.companion
+  if (companion?.map === 'newland' && !companion.stay) {
+    if (companion.motion) companion = { ...companion, motion: companion.motion.left > dt ? { ...companion.motion, left: companion.motion.left - dt } : undefined }
+    const goal = companionGoal(now, false, undefined, player.facing)
+    if (warp && goal) companion = { ...companion, x: goal.x, y: goal.y, path: [] }
+    else companion = stepCompanion(companion, goal, dt * walkMul(s.inv, s.gearOff))
+  }
+  return { state: bibleEndingEvents({ ...s, clock, needs, player, target, idle, act, flags, companion, ...(otCollected ? { otCollected } : {}) }), events }
 }
 
 /** 시간을 한 번에 흘려보낸다 (손일·쉬기) */
@@ -1930,15 +1943,25 @@ export function openEvent(s: GameState, npc: string): GameState | null {
 
 // ── 데리고 다니기·집에 두기 (동물 친구·우리 아이) ──
 
-/** 동물 친구를 집에 두거나(집 안 자리로) 다시 데리고 다닌다(기록자 곁으로) */
+/** 동물 친구를 집에 두거나(첫 마을 집 안 자리로) 다시 데리고 다닌다(기록자 곁으로 — 새 터에 있으면 새 터로, 2026-10-14 사용자) */
 export function setCompanionStay(s: GameState, stay: boolean): GameState {
   const c = s.companion
   if (!c) return s
-  if (stay || c.kind === 'cat') return { ...s, companion: { ...c, stay: true, x: PET_HOME.x, y: PET_HOME.y, path: [] } }
-  // 새 터에서는 동물이 첫 마을에 남아 있다 — 첫 마을 좌표를 그대로 두고, 돌아오면 곁으로 온다 (2026-10-08 버그 23-A)
-  if (currentMapId() === 'newland') return { ...s, companion: { ...c, stay: false, path: [] } }
-  const near = besideNotDoor(playerTile(s)) ?? playerTile(s)
-  return { ...s, companion: { ...c, stay: false, x: near.x, y: near.y, path: [] } }
+  if (stay || c.kind === 'cat') return { ...s, companion: { ...c, stay: true, map: undefined, x: PET_HOME.x, y: PET_HOME.y, path: [] } }
+  return bringPet({ ...s, companion: { ...c, stay: false } })
+}
+
+/**
+ * 따라다니는 동물 친구를 지금 지도의 기록자 곁으로 데려온다 — 새 터로 건너가거나 돌아올 때·열쇠·비상 탈출 (2026-10-14 사용자: 새 터에도 따라간다).
+ * 집에 둔 동물·고양이(늘 집)는 그대로. syncHome으로 지도를 맞춘 뒤에 부른다
+ */
+export function bringPet(s: GameState): GameState {
+  const c = s.companion
+  if (!c || c.stay) return s
+  const at = playerTile(s)
+  const onNew = currentMapId() === 'newland'
+  const near = (onNew ? companionGoal(at, false, undefined, s.player.facing) : besideNotDoor(at)) ?? at
+  return { ...s, companion: { ...c, map: onNew ? 'newland' : undefined, x: near.x, y: near.y, path: [] } }
 }
 
 /** 아이를 데리고 다니기·집에 두기·혼자 다니게 두기 */

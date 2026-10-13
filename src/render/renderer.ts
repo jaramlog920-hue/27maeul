@@ -2669,7 +2669,19 @@ function drawNewland(g: Ctx, game: GameState, t: number, W: number, H: number, o
     const done = totalChapters(game)
     const blink = isBlinking(t)
     const spr = person('writer', p.facing, moving ? walkFrame(p.walkTime) : 0, blink, 'stand', season, { inky: done > 0, look: game.avatar?.look, avatar: game.avatar ? withLookDefaults(game.avatar) : undefined })
+    // 새 터에 따라온 동물 친구 (2026-10-14): 걷거나 곁에서 기다린다 — 기록자보다 위에 있으면 먼저, 아래면 나중에 그린다
+    const comp = game.companion?.map === 'newland' && !game.companion.stay ? game.companion : null
+    const drawPet = () => {
+      if (!comp) return
+      const baby = !isGrown(comp, game.clock.day)
+      const walking = comp.path.length > 0
+      const action = comp.motion ? (comp.motion.action === 'rest' ? 'wait' : comp.motion.action) : walking ? 'walk' : 'wait'
+      const frame = walking ? Math.floor(comp.walkTime * (baby ? 4 : 8)) % 4 : comp.motion ? Math.floor(t * 6) % 4 : 0
+      drawSprite(g, paint(`pet/${comp.kind}/${comp.facing}/${action}/${frame}/${!baby}`, petMotionRows(comp.kind, comp.facing, action, frame, baby), ANIMAL_PALETTE[comp.kind]), comp.x, comp.y, 0, false)
+    }
+    if (comp && comp.y <= p.y) drawPet()
     drawSprite(g, spr, p.x, p.y, moving ? 0 : breathOffset(t))
+    if (comp && comp.y > p.y) drawPet()
     drawNewlandSites(g, game, here.y, true, content)
     // 서고 안은 방 하나만 보이게 둘레를 가린다 (첫 마을의 집 안과 같은 방식)
     const room = viewRoomAt(here)

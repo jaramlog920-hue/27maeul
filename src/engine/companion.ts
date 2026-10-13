@@ -12,6 +12,8 @@ export interface Companion extends Actor {
   since: number
   /** 집에 두기: 따라다니지 않고 집 안 자리(PET_HOME)에서 기다린다 */
   stay?: boolean
+  /** 지금 있는 지도 — 'newland'면 새 터에서 기록자를 따라다닌다 (2026-10-14 사용자: 새 터에도 따라간다). 없으면 첫 마을 */
+  map?: 'newland'
   ways?: PetWays
   found?: PetFound[]
   moments?: Partial<Record<PetFound, number>>
@@ -52,7 +54,7 @@ export function sanitizeCompanion(c: Companion | null): Companion | null {
   const walked = Object.fromEntries(Object.entries(rawWalked).filter(([k, v]) => WALK_PLACES.includes(k) && Number.isInteger(v) && v >= c.since))
   const rawMet = c.met && typeof c.met === 'object' && !Array.isArray(c.met) ? c.met : {}
   const met = Object.fromEntries(Object.entries(rawMet).filter(([k, v]) => k.length <= 24 && !!v && Number.isInteger(v.n) && v.n >= 1 && v.n <= 999 && Number.isInteger(v.last) && v.last >= c.since).slice(0, 30))
-  return { ...c, ...(c.kind === 'cat' ? { stay: true, ...PET_HOME, path: [], walkTime: 0 } : {}), ways: petWays(c), found, moments,
+  return { ...c, map: c.map === 'newland' && c.kind !== 'cat' && !c.stay ? 'newland' : undefined, ...(c.kind === 'cat' ? { stay: true, ...PET_HOME, path: [], walkTime: 0 } : {}), ways: petWays(c), found, moments,
     plays: Number.isInteger(c.plays) && (c.plays as number) >= 0 ? Math.min(c.plays as number, 999) : 0,
     walked, met, lastWalkReact: Number.isFinite(c.lastWalkReact) ? c.lastWalkReact : undefined,
     lastInteraction: Number.isFinite(c.lastInteraction) ? c.lastInteraction : undefined, motion: undefined }

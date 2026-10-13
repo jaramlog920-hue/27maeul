@@ -2625,7 +2625,7 @@ export const useGame = create<Store>((set, get) => {
       const at = currentMapId() === 'newland' ? NEWLAND_PORTAL_FRONT : HOME_FRONT
       let next: GameState = { ...g, player: { ...g.player, x: at.x, y: at.y, path: [], facing: 'down' as const } }
       // 따라오던 동물 친구도 곁으로 (2026-10-14 사용자: 비상 탈출하면 펫이 끼인 자리에 남았다). 집에 둔 동물은 그대로
-      if (next.companion && !next.companion.stay && currentMapId() !== 'newland') next = setCompanionStay(next, false)
+      if (next.companion && !next.companion.stay) next = setCompanionStay(next, false)
       syncHome(next)
       set({ game: persist(next), modal: null, decorating: null, decorSel: null, decorMoving: false, yardMoving: null })
       get().say(T.ui.escaped, 3000)
