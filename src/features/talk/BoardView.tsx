@@ -107,7 +107,7 @@ export function BoardView() {
       <h2>의뢰 게시판</h2>
       {tabs}
       {access === 'locked' && <p role="status">서고에 {libraryGrowth(game).completedChapters}장을 기록했어요. 어느 책이든 합쳐 10장을 마치면 첫 부탁이 도착해요. 3권 완필로 정식 이용할 수 있어요.</p>}
-      {access === 'preview' && <p role="status">첫 부탁을 한 번 체험할 수 있어요. 어느 책이든 3권을 완필하면 새로운 부탁이 계속 도착해요.</p>}
+      {access === 'preview' && <p role="status">첫 부탁을 한 번 체험할 수 있어요. 어느 책이든 합쳐 열두 장을 마치면 새로운 부탁이 계속 도착해요.</p>}
       {list.length === 0 ? <p className="hint">{t('copyReq.none')}</p> : (
         <ul className="rows">
           {list.map((r) => {

@@ -44,6 +44,7 @@ import { drawDecor, lanternLights, sheepCount } from './decor'
 import { grassTrails } from './ground-trails'
 import { FIRE, isNear, npcTile, route } from '../engine/neighbors'
 import { wanderGoal } from '../engine/npc-life'
+import { homeWallsKey } from '../engine/home-walls'
 import { childGrowth, rainbowVisible } from '../engine/stories'
 import { childMode, childStage } from '../engine/child'
 import { playerChildAvatar, playerChildSprite } from './player-child-look'
@@ -1050,7 +1051,7 @@ function drawRoof(g: Ctx, tx0: number, ty0: number, tx1: number, ty1: number, [c
 /** 계절과 집 단계마다 한 장 (집을 넓히면 그 칸들의 그림이 바뀐다) */
 const mapCache = new Map<string, HTMLCanvasElement>()
 function mapFor(season: Season): HTMLCanvasElement {
-  const cacheKey = `${season}/${currentHomeLevel()}/${openDoors().join(',')}/${currentSpouseRoom()?.id ?? ''}/${newlandOpen() ? 'nl' : ''}`
+  const cacheKey = `${season}/${currentHomeLevel()}/${openDoors().join(',')}/${currentSpouseRoom()?.id ?? ''}/${newlandOpen() ? 'nl' : ''}/${homeWallsKey()}`
   let c = mapCache.get(cacheKey)
   if (c) return c
   c = document.createElement('canvas')

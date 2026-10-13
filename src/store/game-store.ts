@@ -1289,7 +1289,7 @@ export const useGame = create<Store>((set, get) => {
         const { state, pieceIds } = openMailbox(game, CONTENT)
         if (!pieceIds.length) {
           const access = featureAccess(game, 'mailbox')
-          get().say(access === 'locked' ? '어느 책이든 합쳐 두 장을 마치면 첫 편지가 도착해요.' : access === 'preview' && game.flags['growth:mailboxDone'] ? '첫 편지를 받았어요. 두 권을 완필하면 새로운 편지가 주기적으로 도착해요.' : T.post.mailboxEmpty)
+          get().say(access === 'locked' ? '어느 책이든 합쳐 두 장을 마치면 첫 편지가 도착해요.' : access === 'preview' && game.flags['growth:mailboxDone'] ? '첫 편지를 받았어요. 어느 책이든 합쳐 여덟 장을 마치면 새로운 편지가 주기적으로 도착해요.' : T.post.mailboxEmpty)
           return { game, modal: null }
         }
         sfx('letter')
@@ -1301,7 +1301,7 @@ export const useGame = create<Store>((set, get) => {
         const { state, pieceIds } = openMailbox(game, CONTENT)
         if (!pieceIds.length) {
           const access = featureAccess(game, 'mailbox')
-          get().say(access === 'locked' ? '어느 책이든 합쳐 두 장을 마치면 첫 편지가 도착해요.' : access === 'preview' && game.flags['growth:mailboxDone'] ? '첫 편지를 받았어요. 두 권을 완필하면 새로운 편지가 주기적으로 도착해요.' : T.post.mailboxEmpty)
+          get().say(access === 'locked' ? '어느 책이든 합쳐 두 장을 마치면 첫 편지가 도착해요.' : access === 'preview' && game.flags['growth:mailboxDone'] ? '첫 편지를 받았어요. 어느 책이든 합쳐 여덟 장을 마치면 새로운 편지가 주기적으로 도착해요.' : T.post.mailboxEmpty)
           return { game, modal: null }
         }
         sfx('letter')
@@ -2426,8 +2426,8 @@ export const useGame = create<Store>((set, get) => {
     startDecorate: (item) => {
       const access = featureAccess(get().game, 'decorate')
       if (access === 'locked') { get().say('어느 책이든 첫 장을 마치면 집 꾸미기를 체험할 수 있어요.'); return }
-      if ((item === 'wallBuild' || item === 'wallRemove') && access !== 'full') { get().say('한 권을 완필하면 벽을 세우고 허물 수 있어요.'); return }
-      if (access === 'preview' && item !== 'pick' && item !== 'stool') { get().say('지금은 첫 의자를 놓을 수 있어요. 한 권을 완필하면 모든 가구를 꾸밀 수 있어요.'); return }
+      if ((item === 'wallBuild' || item === 'wallRemove') && access !== 'full') { get().say('어느 책이든 합쳐 다섯 장을 마치면 벽을 세우고 허물 수 있어요.'); return }
+      if (access === 'preview' && item !== 'pick' && item !== 'stool') { get().say('지금은 첫 의자를 놓을 수 있어요. 어느 책이든 합쳐 다섯 장을 마치면 모든 가구를 꾸밀 수 있어요.'); return }
       set({ decorating: item, modal: null, decorSel: null, decorMoving: false })
     },
     stopDecorate: () => set({ decorating: null, decorSel: null, decorMoving: false, decorLook: null }),

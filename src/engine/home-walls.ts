@@ -15,10 +15,12 @@ export const WALL_BUILD_COINS = 8
 
 let built: ReadonlySet<string> = new Set()
 let removed: ReadonlySet<string> = new Set()
+let wallsKey = ''
 
 export function setHomeWalls(w: HomeWalls | undefined): void {
   built = new Set(w?.built ?? [])
   removed = new Set(w?.removed ?? [])
+  wallsKey = `${[...built].sort().join(';')}|${[...removed].sort().join(';')}`
 }
 
 /** 이 칸을 덧씌울 글자 ('#' 세운 벽, 'f' 허문 벽) — 없으면 undefined */
@@ -27,6 +29,11 @@ export function homeWallOverride(x: number, y: number): '#' | 'f' | undefined {
   if (built.has(k)) return '#'
   if (removed.has(k)) return 'f'
   return undefined
+}
+
+/** 지금 세운·허문 벽 목록을 한 줄로 — 지도 그림 캐시가 벽이 바뀌면 다시 그리도록 (2026-10-13: 세운 벽이 안 보이고 닢만 나갔다) */
+export function homeWallsKey(): string {
+  return wallsKey
 }
 
 export function isRemovedWall(x: number, y: number): boolean {
