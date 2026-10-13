@@ -43,6 +43,7 @@ import { LIFE_GAP_PROPS, LIFE_GAP_STRUCTURES } from './life-gap-art'
 import { drawDecor, lanternLights, sheepCount } from './decor'
 import { grassTrails } from './ground-trails'
 import { FIRE, isNear, npcTile, route } from '../engine/neighbors'
+import { wanderGoal } from '../engine/npc-life'
 import { childGrowth, rainbowVisible } from '../engine/stories'
 import { childMode, childStage } from '../engine/child'
 import { playerChildAvatar, playerChildSprite } from './player-child-look'
@@ -52,7 +53,7 @@ import { roomPieceRatio, SHELF_FILL, shelfFillSteps } from '../engine/fragments'
 import { groundFragment } from '../engine/ground-fragments'
 import { OT_PIECE_COUNT } from '../engine/ot-pieces'
 import { spineLook } from '../engine/binding'
-import { bookcaseTiles, ACTS_ROOM, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, PAVILION_RECT, HEIGHT, HOUSE_RECT, housesNow, houseAt, lockedTiles, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile, treeKind, type TreeKind } from '../engine/world'
+import { bookcaseTiles, key, ACTS_ROOM, HEB_JUD_ROOM, REV_ROOM, isRightWallDoor, LETTERS_ROOM, openDoors, cameraFor, currentHomeLevel, PAVILION_RECT, HEIGHT, HOUSE_RECT, housesNow, houseAt, lockedTiles, lockedZones, tileAt, isIndoor, MAP, PLACES, ROOMS, roomAt, SIDE_DOOR, viewRoomAt, TILE, VIEW_H, VIEW_W, VILLAGE_H, WIDTH, sameTile, treeKind, type TreeKind } from '../engine/world'
 import { currentMapId, mapVisibleHeight, setActiveMap } from '../engine/maps'
 import { inArchiveRoom, newlandGroundAt, newlandOpen, newlandRevealedOn } from '../engine/newland'
 import { areaOf, widthOf } from '../engine/newland-build'
@@ -3017,6 +3018,24 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
             if((wet||minute>=18*60||minute<8*60)&&lodgingChildren(game).some(r=>r.id===c.person.id))return
             const ph = t + c.person.id.length * 0.53
             const { who: cWho, extra } = companionLook(c)
+            const apprenticeOf = !c.short && c.person.stage === 'adult' && (game.gen?.heirs?.[def.id]?.heir === c.person.id || game.gen?.retired?.[def.id]?.heir === c.person.id)
+            // 자식들은 부모 곁에 붙어 다니지 않는다 (2026-10-13 사용자): 부모가 가는 곳 근처 두 칸 안에서 저마다 고른 자리에 —
+            // 16분마다 자리를 바꾼다. 견습 자녀·은퇴한 부모(함께 일하는 사이)만 곁에
+            if (!c.retiredParent && !apprenticeOf) {
+              const anchor = n.goal ?? npcTile(n)
+              const taken = new Set([key(npcTile(n)), key({ x: Math.round(p.x), y: Math.round(p.y) })])
+              // 지붕에 가려지는 집 칸(집 뒤 풀밭)은 고르지 않는다 — 고른 칸이 집이면 그 칸을 빼고 다시
+              let at = wanderGoal(c.person.id, anchor, game.gen?.seed ?? 1, day, minute, new Set(), taken)
+              for (let k = 0; k < 6 && houseAt(at.x, at.y); k++) {
+                taken.add(key(at))
+                at = wanderGoal(c.person.id, anchor, game.gen?.seed ?? 1, day, minute, new Set(), taken)
+              }
+              if (houseAt(at.x, at.y)) at = { x: n.x + (i === 0 ? 0.85 : -0.85), y: n.y }
+              const look: Facing = (['down', 'left', 'right', 'down'] as const)[(c.person.id.length + Math.floor(minute / 16)) % 4]
+              const spot = at
+              items.push({ y: spot.y + 0.02, paint: () => drawSprite(g, person(cWho, look, 0, isBlinking(ph), 'stand', season, extra), spot.x, spot.y, breathOffset(ph)) })
+              return
+            }
             if (moving) {
               // 부모가 가는 쪽의 반대편으로 한 칸·두 칸 뒤에서 같은 쪽을 보고 걷는다
               const back = (i + 1) * 0.9
