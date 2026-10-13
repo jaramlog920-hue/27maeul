@@ -1379,9 +1379,30 @@ function bubble(g: Ctx, cx: number, top: number, draw: (x: number, y: number) =>
   draw(x, y)
 }
 
-type EmoteId = 'z' | 'note' | 'yawn' | 'talk' | 'heart' | 'sweat' | 'hungry' | 'shiver' | 'letter' | 'laugh' | 'angry'
+type EmoteId = 'z' | 'note' | 'yawn' | 'talk' | 'heart' | 'sweat' | 'hungry' | 'shiver' | 'letter' | 'laugh' | 'angry' | 'call'
+
+/**
+ * 나에게 할 말이 있는 이웃 (건넬 조각·기다리던 이야기·부탁): 이웃끼리 나누는 회색 말풍선(talk)과 다르게
+ * 주황 테두리·크림 바탕·주황 점 셋 (2026-10-13 사용자: 둘이 같은 모양이었다)
+ */
+const CALL_ROWS = [
+  '.oooooooooo.',
+  'oyyyyyyyyyyo',
+  'oyyyyyyyyyyo',
+  'oyyOyyOyyOyo',
+  'oyyOyyOyyOyo',
+  'oyyyyyyyyyyo',
+  '.oooooooooo.',
+  '...oo.......',
+  '..o.........',
+]
+const CALL_PALETTE: Record<string, string> = { o: '#c8663a', y: '#fff3d6', O: '#d9773f' }
 
 function emote(g: Ctx, id: EmoteId, cx: number, top: number) {
+  if (id === 'call') {
+    g.drawImage(paint('emote/call', CALL_ROWS, CALL_PALETTE), Math.round(cx - 6), Math.round(top - 13))
+    return
+  }
   if ((MEETING_EMOTES as readonly string[]).includes(id)) {
     g.drawImage(paint(`meeting/${id}`, meetingEmoteRows(id as MeetingEmote), MEETING_PALETTE), Math.round(cx - 6), Math.round(top - 13))
     return
@@ -1431,6 +1452,51 @@ function emote(g: Ctx, id: EmoteId, cx: number, top: number) {
         break
     }
   })
+}
+
+// ── 자식들의 나들이 (2026-10-13 사용자): 어른 이웃처럼 마을을 돌아다닌다 — 그림만, 엔진 상태는 바꾸지 않는다 ──
+const KID_SLOT = 30
+/** 걸어가는 빠르기: 게임 1분에 한 칸 */
+const KID_PACE = 1
+const kidRoutes = new Map<string, Tile[] | null>()
+function kidSpots(neighbors: readonly NeighborDef[]): Tile[] {
+  const doors = neighbors.map((d) => ({ x: d.door.x, y: d.door.y + 1 }))
+  return [{ x: 24, y: 22 }, PLACES.well.stand!, PLACES.hill.stand!, PLACES.bench.stand!, { x: 21, y: 33 }, ...doors]
+}
+let kidSpotCache: Tile[] | null = null
+function kidDest(id: string, def: NeighborDef, neighbors: readonly NeighborDef[], seed: number, day: number, slot: number): Tile {
+  if (slot < 0) return { x: def.door.x, y: def.door.y + 1 }
+  const spots = (kidSpotCache ??= kidSpots(neighbors))
+  const h = [...`${id}|${day}|${slot}`].reduce((a, ch) => (a * 31 + ch.charCodeAt(0)) | 0, 7)
+  const anchor = spots[Math.abs(h) % spots.length]
+  const taken = new Set<string>()
+  let at = wanderGoal(id, anchor, seed, day, slot * KID_SLOT, new Set(), taken)
+  for (let k = 0; k < 6 && houseAt(at.x, at.y); k++) {
+    taken.add(key(at))
+    at = wanderGoal(id, anchor, seed, day, slot * KID_SLOT, new Set(), taken)
+  }
+  return houseAt(at.x, at.y) ? anchor : at
+}
+export function kidWalk(id: string, def: NeighborDef, neighbors: readonly NeighborDef[], seed: number, day: number, minute: number): { x: number; y: number; moving: boolean; facing: Facing; walkTime: number } {
+  const slot = Math.floor(minute / KID_SLOT)
+  const from = kidDest(id, def, neighbors, seed, day, slot - 1)
+  const to = kidDest(id, def, neighbors, seed, day, slot)
+  const ck = `${id}|${day}|${slot}`
+  let path = kidRoutes.get(ck)
+  if (path === undefined) {
+    if (kidRoutes.size > 400) kidRoutes.clear()
+    path = route(from, to)
+    kidRoutes.set(ck, path)
+  }
+  const steps = path ?? []
+  const walked = (minute - slot * KID_SLOT) * KID_PACE
+  if (!steps.length || walked >= steps.length) return { ...to, moving: false, facing: 'down', walkTime: 0 }
+  const i = Math.floor(walked)
+  const a = i === 0 ? from : steps[i - 1]
+  const b = steps[i]
+  const f = walked - i
+  const facing: Facing = b.x > a.x ? 'right' : b.x < a.x ? 'left' : b.y < a.y ? 'up' : 'down'
+  return { x: a.x + (b.x - a.x) * f, y: a.y + (b.y - a.y) * f, moving: true, facing, walkTime: walked }
 }
 
 /** 이웃 그림: 연애 후보(계획 6)는 주인공 모양 고르기와 같은 머리·옷으로, 나머지는 이웃마다 정한 옷으로 */
@@ -3007,7 +3073,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
             // 이웃끼리 만난 순간의 표정 (계획 20 2부) — 이야기 말풍선이 먼저
             const met = game.emotes?.find((e) => e.npc === def.id)
             if (met) emote(g, met.kind, n.x * TILE + 8, bubbleY)
-            else if (game.offers[def.id] || storyWaiting(game, def.id) || bakerCribWaiting(game, def.id)) emote(g, 'talk', n.x * TILE + 8, bubbleY)
+            else if (game.offers[def.id] || storyWaiting(game, def.id) || bakerCribWaiting(game, def.id)) emote(g, 'call', n.x * TILE + 8, bubbleY)
           },
         })
         // The other stray is adopted off-screen; it does not follow Willow.
@@ -3019,21 +3085,12 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
             const ph = t + c.person.id.length * 0.53
             const { who: cWho, extra } = companionLook(c)
             const apprenticeOf = !c.short && c.person.stage === 'adult' && (game.gen?.heirs?.[def.id]?.heir === c.person.id || game.gen?.retired?.[def.id]?.heir === c.person.id)
-            // 자식들은 부모 곁에 붙어 다니지 않는다 (2026-10-13 사용자): 부모가 가는 곳 근처 두 칸 안에서 저마다 고른 자리에 —
-            // 16분마다 자리를 바꾼다. 견습 자녀·은퇴한 부모(함께 일하는 사이)만 곁에
+            // 자식들은 부모 곁에 붙어 다니지 않는다 (2026-10-13 사용자: 어른 이웃처럼 돌아다니게) — 30분마다 마을 곳곳(광장·우물·언덕·
+            // 벤치·나루·이웃집 앞) 중 한 곳을 골라 길을 따라 걸어가 그 근처에 선다. 견습 자녀·은퇴한 부모(함께 일하는 사이)만 곁에
             if (!c.retiredParent && !apprenticeOf) {
-              const anchor = n.goal ?? npcTile(n)
-              const taken = new Set([key(npcTile(n)), key({ x: Math.round(p.x), y: Math.round(p.y) })])
-              // 지붕에 가려지는 집 칸(집 뒤 풀밭)은 고르지 않는다 — 고른 칸이 집이면 그 칸을 빼고 다시
-              let at = wanderGoal(c.person.id, anchor, game.gen?.seed ?? 1, day, minute, new Set(), taken)
-              for (let k = 0; k < 6 && houseAt(at.x, at.y); k++) {
-                taken.add(key(at))
-                at = wanderGoal(c.person.id, anchor, game.gen?.seed ?? 1, day, minute, new Set(), taken)
-              }
-              if (houseAt(at.x, at.y)) at = { x: n.x + (i === 0 ? 0.85 : -0.85), y: n.y }
-              const look: Facing = (['down', 'left', 'right', 'down'] as const)[(c.person.id.length + Math.floor(minute / 16)) % 4]
-              const spot = at
-              items.push({ y: spot.y + 0.02, paint: () => drawSprite(g, person(cWho, look, 0, isBlinking(ph), 'stand', season, extra), spot.x, spot.y, breathOffset(ph)) })
+              const w = kidWalk(c.person.id, def, content.neighbors, game.gen?.seed ?? 1, day, minute)
+              const look: Facing = w.moving ? w.facing : (['down', 'left', 'right', 'down'] as const)[(c.person.id.length + Math.floor(minute / 30)) % 4]
+              items.push({ y: w.y + 0.02, paint: () => drawSprite(g, person(cWho, look, w.moving ? walkFrame(w.walkTime) : 0, isBlinking(ph), 'stand', season, extra), w.x, w.y, w.moving ? 0 : breathOffset(ph)) })
               return
             }
             if (moving) {
