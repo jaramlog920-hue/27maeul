@@ -151,6 +151,8 @@ function VersionLines() {
   const same = latest === __APP_VERSION__
   return (
     <div className="version-lines">
+      {/* 2026-10-14 사용자: 주기적으로 최신 버전으로 업데이트하라는 안내 */}
+      <p className="hint">새 내용이 자주 들어와요. 가끔 여기서 최신 버전인지 확인하고, 다르면 업데이트 받기를 눌러 주세요.</p>
       <p className="hint">현재 버전 {__APP_VERSION__}</p>
       <p className="hint">최신 버전 {latest === undefined ? '확인하는 중…' : latest ?? '확인할 수 없어요'}</p>
       {latest && <p className="hint"><b>{same ? '최신 버전이에요.' : '업데이트 받기를 눌러 주세요.'}</b></p>}
