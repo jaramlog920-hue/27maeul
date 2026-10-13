@@ -294,6 +294,11 @@ export interface NeighborDef {
     eyeColor?: [number, number, number]
     bottomColor?: [number, number, number]
   }
+  /**
+   * 그림만 바꾸는 외관 (2026-10-13 사용자): 성별·연애 같은 규칙(look)은 그대로 두고 그리는 모습만 —
+   * sprite면 그 고정 도트로, avatar(+look)면 주인공 모양 고르기와 같은 옷장 모습으로
+   */
+  appearance?: { sprite?: string; look?: 'f' | 'm'; avatar?: NeighborDef['avatar'] }
 }
 
 export interface GameContent {

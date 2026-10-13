@@ -444,7 +444,23 @@
         "wool": 1
       }
     },
-    "joinsAtBooks": 7
+    "joinsAtBooks": 7,
+    "appearance": {
+      "look": "m",
+      "avatar": {
+        "skin": 0,
+        "hairFront": 1,
+        "hairBack": 4,
+        "top": 8,
+        "bottom": 2,
+        "acc": 0,
+        "hairColor": [
+          30,
+          40,
+          35
+        ]
+      }
+    }
   },
   {
     "id": "beekeeper",
@@ -625,6 +641,22 @@
       "minigame": "order",
       "gives": {
         "seedHerb": 2
+      }
+    },
+    "appearance": {
+      "look": "f",
+      "avatar": {
+        "skin": 2,
+        "hairFront": 9,
+        "hairBack": 10,
+        "top": 14,
+        "bottom": 4,
+        "acc": 0,
+        "hairColor": [
+          15,
+          35,
+          40
+        ]
       }
     }
   },
@@ -1099,6 +1131,9 @@
         40,
         35
       ]
+    },
+    "appearance": {
+      "sprite": "weaver"
     }
   },
   {
@@ -1237,11 +1272,11 @@
     "stat": "hand",
     "avatar": {
       "skin": 0,
-      "hairFront": 2,
-      "hairBack": 3,
+      "hairFront": 11,
+      "hairBack": 8,
       "top": 5,
       "bottom": 0,
-      "acc": 1,
+      "acc": 0,
       "hairColor": [
         10,
         45,
