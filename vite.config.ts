@@ -1,6 +1,7 @@
 /// <reference types="vitest/config" />
 import { defineConfig } from 'vite'
 import {fileURLToPath} from 'node:url'
+import {existsSync} from 'node:fs'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
@@ -13,7 +14,8 @@ export default defineConfig({
   build: {
     manifest: true,
     rollupOptions: {
-      input:{game:fileURLToPath(new URL('./index.html',import.meta.url)),events:fileURLToPath(new URL('./assets/events/index.html',import.meta.url)),eventPlayer:fileURLToPath(new URL('./assets/events/play.html',import.meta.url))},
+      // 이벤트 미리보기 쪽(assets/events)은 배포에 올리지 않는 폴더(.vercelignore) — 있을 때만 함께 빌드한다
+      input:{game:fileURLToPath(new URL('./index.html',import.meta.url)),...(existsSync(new URL('./assets/events/index.html',import.meta.url))?{events:fileURLToPath(new URL('./assets/events/index.html',import.meta.url)),eventPlayer:fileURLToPath(new URL('./assets/events/play.html',import.meta.url))}:{})},
       output: {
         chunkFileNames: (chunk) => (isOtBookChunk(chunk.facadeModuleId) ? 'assets/ot/[name]-[hash].js' : isNtBookChunk(chunk.facadeModuleId) ? 'assets/nt/[name]-[hash].js' : isScreenChunk(chunk.facadeModuleId) ? 'assets/screens/[name]-[hash].js' : 'assets/[name]-[hash].js'),
       },
