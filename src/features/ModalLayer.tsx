@@ -1,3 +1,4 @@
+import { SceneReplay } from './scene/SceneReplay'
 import {hasAuthoredStory} from '../render/authored-story-art'
 import { ScreenBoundary } from "./ScreenBoundary"
 import { useCallback, type SyntheticEvent } from 'react'
@@ -138,6 +139,8 @@ function Body() {
       return <Journal tab={modal.tab} neighbor={modal.neighbor} />
     case 'familyTree':
       return <FamilyTree personId={modal.personId} neighborId={modal.neighborId} />
+    case 'sceneReplay':
+      return <SceneReplay key={modal.id} id={modal.id} />
     case 'scene':
       if (hasAuthoredStory(modal.id) && modal.id !== 'feastFire' && modal.id !== 'allFeastFire') return <SceneView id={modal.id} chosen={modal.chosen} />
       if (['firstConfession','childLeaves','childStays'].includes(landscapeKind(modal.id)??'')) return <SceneView id={modal.id} chosen={modal.chosen} />

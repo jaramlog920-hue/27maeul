@@ -139,7 +139,7 @@ type SettingsTab = 'look' | 'play' | 'record' | 'help'
 // 탭 이름은 줄마다 한 칸 (2026-10-14 사용자: '소리·화면'의 점을 빼고 두 줄로)
 const SETTINGS_TABS: readonly [SettingsTab, string][] = [
   ['look', '소리\n화면'],
-  ['play', '놀이'],
+  ['play', '게임'],
   ['record', '기록'],
   ['help', '도움'],
 ]

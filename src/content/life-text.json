@@ -719,7 +719,7 @@
     },
     "places": {
       "well": "우물가",
-      "hill": "언덕",
+      "hill": "언덕 쉼터",
       "bench": "벤치 앞",
       "pavilion": "호숫가 정자",
       "press": "기름틀 곁",
@@ -1029,7 +1029,7 @@
     "workThread": "좋은 실 잣기 (양털 1 → 좋은 실 1)",
     "pressTitle": "기름틀",
     "pressMake": "기름 짜기 (올리브 2 → 기름 {n})",
-    "hillTitle": "언덕 벤치",
+    "hillTitle": "언덕 쉼터",
     "hillSit": "잠시 앉아 쉬기",
     "hillStars": "별 보기",
     "starsNotYet": "별은 저녁 여덟 시가 지나야 보여요.",

@@ -190,7 +190,7 @@ describe('필사 손맛 — 설정', () => {
   it('펜 긁는 소리는 기본 켬, 끄면 기기에 남고 소리가 멈춘다 (절마다 진동은 없다)', () => {
     expect(copySoundOn()).toBe(true)
     render(<Settings />)
-    fireEvent.click(screen.getByRole('tab', { name: '놀이' }))
+    fireEvent.click(screen.getByRole('tab', { name: '게임' }))
     expect(document.querySelector('[data-copy-feel^="vibrate"]')).toBeNull()
     expect(screen.getByRole('group', { name: '펜 긁는 소리' }).querySelector('[aria-pressed="true"]')).toHaveTextContent('켬')
     fireEvent.click(document.querySelector('[data-copy-feel="sound-off"]')!)

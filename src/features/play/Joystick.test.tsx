@@ -227,7 +227,7 @@ describe('조이스틱 설정', () => {
     expect(loadJoystickShape()).toBe('pad')
     expect(loadJoystickSide()).toBe('right')
     render(<Settings />)
-    act(() => screen.getByRole('tab', { name: '놀이' }).click())
+    act(() => screen.getByRole('tab', { name: '게임' }).click())
     act(() => (document.querySelector('[data-mode="float"]') as HTMLButtonElement).click())
     expect(useGame.getState().deck).toBe(false)
     expect(useGame.getState().joystick).toBe(true)

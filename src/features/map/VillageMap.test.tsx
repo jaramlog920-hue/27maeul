@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { ModalLayer } from '../ModalLayer'
 import { useGame } from '../../store/game-store'
@@ -22,9 +22,14 @@ describe('마을 지도', () => {
     render(<ModalLayer />)
     act(() => useGame.getState().open({ kind: 'villageMap' }))
     fireEvent.click(screen.getByRole('button', { name: '서고 설명' }))
-    expect(screen.getByRole('status')).toHaveTextContent('다 쓴 책을 꽂아 두는 곳')
+    expect(screen.getByRole('status')).toHaveTextContent('다 쓴 책을 꽂는 마을 서고')
     fireEvent.click(screen.getByRole('button', { name: '약방 설명' }))
-    expect(screen.getByRole('status')).toHaveTextContent('약방 주인 세이지의 집')
+    expect(screen.getByRole('status')).toHaveTextContent('세이지의 약방')
     expect(screen.getByRole('status')).toHaveTextContent('서고에 2권을 꽂으면 열려요')
+    // 장소도 누르면 팝업, 닫기로 닫힌다
+    fireEvent.click(screen.getByRole('button', { name: '언덕 쉼터 설명' }))
+    expect(screen.getByRole('dialog', { name: '언덕 쉼터 설명' })).toHaveTextContent('피로가 풀려요')
+    fireEvent.click(within(screen.getByRole('dialog', { name: '언덕 쉼터 설명' })).getByRole('button', { name: '닫기' }))
+    expect(screen.queryByRole('dialog', { name: '언덕 쉼터 설명' })).toBeNull()
   })
 })

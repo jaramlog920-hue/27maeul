@@ -23,7 +23,7 @@ it('설정 클릭은 현재 저장 칸에만 남고 꺼 둔 기간의 관계 사
   useGame.getState().load({ ...base, scenes: [], clock: { day: 10, minute: 600 },
     gen: { ...gen, affinity: { ...gen.affinity, [pair]: 85 } } })
   render(<Settings />)
-  fireEvent.click(screen.getByRole('tab', { name: '놀이' }))
+  fireEvent.click(screen.getByRole('tab', { name: '게임' }))
   const group = within(screen.getByRole('group', { name: '주민 자율 생활' }))
   fireEvent.click(group.getByRole('button', { name: '끔' }))
   expect(group.getByRole('button', { name: '끔' })).toHaveAttribute('aria-pressed', 'true')

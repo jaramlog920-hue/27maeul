@@ -14,6 +14,8 @@ import type { Household } from '../../engine/gen'
 import { t } from '../../shared/i18n'
 import type { Tile } from '../../engine/types'
 import { useGame } from '../../store/game-store'
+import { seenStories, storyBook, useSceneSay } from '../scene/SceneReplay'
+import { SCENES } from '../../content/text'
 
 const L = T.newlandLife
 type GuestText = { name: string; from: string; lines: string[]; again: string; home: string[] }
@@ -217,13 +219,47 @@ function Family({ at }: { at?: Tile }) {
   return <p className="talk-line">{lines[game.clock.day % lines.length]}</p>
 }
 
+/** 기억 정원 › 장면 도감 (2026-10-14 사용자: 본 도트 장면을 앨범 말고 여기서, 못 본 것은 흐리게) */
+function MemorialScenes() {
+  const game = useGame((s) => s.game)
+  const say = useSceneSay()
+  const seen = new Map(seenStories(game).map((x) => [x.id, x.day]))
+  const all = storyBook()
+  return (
+    <>
+      <h3>장면 도감 <small className="row-meta">{seen.size}/{all.length}</small></h3>
+      <ul className="rows memorial-scenes">
+        {all.map((id) => {
+          const day = seen.get(id)
+          return (
+            <li key={id}>
+              {day !== undefined ? (
+                <button className="row" onClick={() => useGame.getState().open({ kind: 'sceneReplay', id })}>
+                  <span className="row-main"><b>{say(SCENES[id]?.title ?? '')}</b></span>
+                  <span className="row-meta">{fill(L.dayLine, { day })}</span>
+                </button>
+              ) : (
+                <div className="row scene-unseen" aria-label="아직 못 본 장면">
+                  <span className="row-main"><b>???</b></span>
+                </div>
+              )}
+            </li>
+          )
+        })}
+      </ul>
+    </>
+  )
+}
+
 function Memorial() {
   const game = useGame((s) => s.game)
   const list = memoriesOf(game)
     .map((m) => ({ m, text: memoryText(game, m) }))
     .filter((x) => x.text)
-  if (!list.length) return <p className="hint">{L.memorialNone}</p>
+  if (!list.length) return <><MemorialScenes /><p className="hint">{L.memorialNone}</p></>
   return (
+    <>
+    <MemorialScenes />
     <ul className="rows memorial-list">
       {list.map(({ m, text }, i) => (
         <li key={i}>
@@ -235,6 +271,7 @@ function Memorial() {
         </li>
       ))}
     </ul>
+    </>
   )
 }
 

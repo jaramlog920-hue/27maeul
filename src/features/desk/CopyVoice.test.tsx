@@ -105,13 +105,13 @@ describe('소리 내어 읽기 — 단추가 보이는 때', () => {
     expect(voiceBtn()).toBeNull()
     cleanup()
     render(<Settings />)
-    fireEvent.click(screen.getByRole('tab', { name: '놀이' }))
+    fireEvent.click(screen.getByRole('tab', { name: '게임' }))
     expect(screen.queryByText('소리 내어 읽기(마이크)')).toBeNull()
   })
 
   it('설정 › 필사에서 켜면 기기에 남고, 한 줄 안내가 있다. 필사 화면에 단추가 생기지만 저절로 듣지 않는다', () => {
     render(<Settings />)
-    fireEvent.click(screen.getByRole('tab', { name: '놀이' }))
+    fireEvent.click(screen.getByRole('tab', { name: '게임' }))
     expect(screen.getByText('소리 내어 읽기(마이크)')).toBeInTheDocument()
     expect(screen.getByText(/음성은 브라우저의 음성 인식 서버를 거쳐요\./)).toBeInTheDocument()
     fireEvent.click(document.querySelector('[data-copy-feel="voice-on"]')!)

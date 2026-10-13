@@ -19,6 +19,26 @@ let sfxGain: GainNode | null = null
 let trackGain: GainNode | null = null
 /** 배경음이 함께 쓰는 메아리 (한 번만 만든다) */
 let echoIn: GainNode | null = null
+/** 지금 곡의 음이 모이는 자리 (마른 소리·메아리 보내기). 곡을 바꾸면 새로 만들고 옛것은 바로 줄인다 —
+ *  3번 곡의 긴 바탕(약 10초)이 다른 곡을 고른 뒤에도 겹쳐 울렸다 (2026-10-14 사용자) */
+let noteBus: GainNode | null = null
+let noteEcho: GainNode | null = null
+function freshNoteBus() {
+  if (!ctx || !trackGain || !echoIn) return
+  const old = [noteBus, noteEcho]
+  const now = ctx.currentTime
+  for (const g of old) {
+    if (!g) continue
+    g.gain.cancelScheduledValues(now)
+    g.gain.setValueAtTime(g.gain.value, now)
+    g.gain.linearRampToValueAtTime(0, now + 0.25)
+    setTimeout(() => { try { g.disconnect() } catch { /* 이미 끊김 */ } }, 600)
+  }
+  noteBus = ctx.createGain()
+  noteBus.connect(trackGain)
+  noteEcho = ctx.createGain()
+  noteEcho.connect(echoIn)
+}
 /** 소리 결을 내는 데 함께 쓰는 잡음 (한 번만 만든다 — 무작위는 여기에만) */
 let noiseBuf: AudioBuffer | null = null
 let muted = readMuted()
@@ -43,6 +63,7 @@ function readMusicChoice(): MusicChoice {
   } catch { return 'default' }
 }
 export function setMusicChoice(choice: MusicChoice) {
+  if (choice !== musicChoice) freshNoteBus()
   musicChoice = choice
   if (trackGain && ctx) trackGain.gain.setTargetAtTime(trackLevel(choice), ctx.currentTime, 0.05)
   loopKey = ''
@@ -148,6 +169,7 @@ export function unlockAudio() {
     fb.connect(delay)
     dull.connect(wet)
     wet.connect(trackGain)
+    freshNoteBus()
     sfxGain = ctx.createGain()
     sfxGain.gain.value = volumeGain('sfx', volumes.sfx)
     sfxGain.connect(master)
@@ -192,7 +214,7 @@ function envGain(t: number, vol: number, dur: number, attack: number, out: Audio
   g.gain.linearRampToValueAtTime(vol, t + attack)
   g.gain.exponentialRampToValueAtTime(0.0001, t + dur)
   g.connect(out)
-  sendTo(g, send)
+  sendTo(g, send, out === noteBus ? noteEcho : echoIn)
   return g
 }
 function sustainGain(t: number, vol: number, dur: number, attack: number, release: number, out: AudioNode, send = 0): GainNode {
@@ -202,15 +224,15 @@ function sustainGain(t: number, vol: number, dur: number, attack: number, releas
   g.gain.setValueAtTime(vol, t + Math.max(attack, dur - release))
   g.gain.linearRampToValueAtTime(0, t + dur)
   g.connect(out)
-  sendTo(g, send)
+  sendTo(g, send, out === noteBus ? noteEcho : echoIn)
   return g
 }
-function sendTo(g: GainNode, send: number) {
-  if (send <= 0 || !echoIn || !ctx) return
+function sendTo(g: GainNode, send: number, echo: AudioNode | null = echoIn) {
+  if (send <= 0 || !echo || !ctx) return
   const s = ctx.createGain()
   s.gain.value = send
   g.connect(s)
-  s.connect(echoIn)
+  s.connect(echo)
 }
 function osc(type: OscillatorType, freq: number, t: number, end: number): OscillatorNode {
   const o = ctx!.createOscillator()
@@ -499,7 +521,7 @@ export function trackLevel(choice: MusicChoice): number {
 }
 
 function playNote(ev: NoteEv, t: number, beat: number) {
-  const out = trackGain ?? musicGain
+  const out = noteBus ?? trackGain ?? musicGain
   if (!out) return
   const dur = voiceSeconds(ev.voice, ev.len, beat, ev.midi)
   const f = NOTE(ev.midi)

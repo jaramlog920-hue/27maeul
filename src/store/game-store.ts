@@ -247,6 +247,8 @@ export type Modal =
   /** 새 터 입구 표지의 터 가꾸기: 놓을 것 고르기·부지 미리보기·지은 것 목록 (계획 20 작업 6) */
   | { kind: 'build' }
   | { kind: 'guide' }
+  /** 기억 정원에서 본 장면 다시 보기 (2026-10-14) — 저장하지 않는다 */
+  | { kind: 'sceneReplay'; id: string }
   | { kind: 'schedule' }
   | { kind: 'readingMeeting'; day: number }
   | { kind: 'libraryVisitor'; day: number }

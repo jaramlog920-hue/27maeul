@@ -53,6 +53,6 @@ it('행사와 자율 생활의 잠긴 화면에 필요한 장 수가 보인다',
   expect(screen.getByText('신약 85장을 마치면 열려요.')).toBeInTheDocument()
   view.unmount()
   render(<Settings />)
-  fireEvent.click(screen.getByRole('tab', { name: '놀이' }))
+  fireEvent.click(screen.getByRole('tab', { name: '게임' }))
   expect(screen.getByText('신약 75장을 마치면 열려요.')).toBeInTheDocument()
 })
