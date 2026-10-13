@@ -664,6 +664,8 @@ interface Store {
   feastShare: (item: ItemId) => string[]
   /** 서고 잔치 모닥불: 나의 한 줄을 낭독한다 */
   feastRead: (text: string) => void
+  /** 앨범에서 사진 한 장을 지운다 (사진·낭독 줄까지) — 2026-10-13 */
+  removeAlbum: (id: string) => void
   /** 요람의 우리 아기 돌보기 (2026-10-12 도트) */
   careBaby: (action: BabyCare) => void
   chooseScene: (index: number) => void
@@ -2500,6 +2502,13 @@ export const useGame = create<Store>((set, get) => {
       const r = shareFeastFood(get().game, item, CONTENT)
       set({ game: persist(r.state) })
       return r.glad
+    },
+    removeAlbum: (id) => {
+      const g = get().game
+      const { [id]: _drop, ...feastLines } = g.feastLines ?? {}
+      void _drop
+      try { globalThis.localStorage?.removeItem(ALBUM_KEY(id)) } catch { /* 저장소를 못 쓰면 글만 지운다 */ }
+      set({ game: persist({ ...g, album: g.album.filter((a) => a.id !== id), ...(g.feastLines ? { feastLines } : {}) }) })
     },
     feastRead: (text) => {
       const id = feastOf(get().game)

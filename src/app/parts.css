@@ -486,6 +486,22 @@ button.big {
   font-size: 11px;
   margin-top: 4px;
 }
+/* 앨범 사진 지우기 (2026-10-13) — 작게, 한 번 더 묻는다 */
+.album-card .album-remove-ask {
+  margin-top: 3px;
+  font-size: 10px;
+  padding: 1px 6px;
+  opacity: 0.75;
+}
+.album-card .album-remove {
+  display: flex;
+  gap: 4px;
+  margin-top: 3px;
+}
+.album-card .album-remove button {
+  font-size: 10px;
+  padding: 1px 6px;
+}
 /* 서고 잔치에서 낭독한 한 줄 (2026-10-13) */
 .album-card .album-line {
   display: block;

@@ -362,6 +362,9 @@ export function Album() {
   const kid = useGame((s) => s.game.child?.name)
   const spouse = useGame((s) => (s.game.romance?.stage === 'married' ? partnerName(s.game) : ''))
   const feastLines = useGame((s) => s.game.feastLines)
+  const removeAlbum = useGame((s) => s.removeAlbum)
+  // 지우기는 한 번 더 묻는다 (지운 사진은 되돌릴 수 없다)
+  const [asking, setAsking] = useState<string | null>(null)
   if (!album.length) return <p>{T.ui.albumEmpty}</p>
   // 가족 쪽(우리 아이·배우자·동물 친구, 함께 보낸 시간)과 마을·풍경 쪽으로 나눠 차곡차곡 (계획 12)
   const family = album.filter((a) => isFamilyAlbum(a.id))
@@ -377,6 +380,14 @@ export function Album() {
               {albumTitle(a.id, kid, spouse)} · {fill(T.ui.day, { day: a.day })}
               {feastLines?.[a.id] && <q className="album-line">{feastLines[a.id]}</q>}
             </figcaption>
+            {asking === a.id ? (
+              <div className="album-remove">
+                <button onClick={() => { removeAlbum(a.id); setAsking(null) }}>{T.ui.albumRemoveYes}</button>
+                <button onClick={() => setAsking(null)}>{T.ui.albumRemoveNo}</button>
+              </div>
+            ) : (
+              <button className="album-remove-ask" aria-label={`${albumTitle(a.id, kid, spouse)} ${T.ui.albumRemove}`} onClick={() => setAsking(a.id)}>{T.ui.albumRemove}</button>
+            )}
           </figure>
         )
       })}
