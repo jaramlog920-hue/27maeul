@@ -1105,9 +1105,13 @@ export const useGame = create<Store>((set, get) => {
     }
     const rng = get().rng
     if (target.kind === 'neighbor') {
+      // 아직 만난 적 없는 이웃이면 첫인사부터 (2026-10-14 사용자: 비 오는 날 이야기가 먼저 열리며 만난 것으로 적혀 첫인사가 건너뛰어졌다).
+      // 아래 행사 말·이어 갈 이야기·새 이야기·배우자 저녁을 건너뛰고 첫인사 자리(helloRaw)로 간다 — 다음에 말 걸 때 열린다
+      const helloPending = Array.isArray((FIRST_MEET as Record<string, string[] | string>)[target.id]) && !(game.notebook?.met ?? []).includes(target.id)
+        && !game.offers[target.id] && !(target.id === POSTMAN && postLine(game, POSTMAN))
       // 행사 참석자에게는 행사 이야기부터. 25권의 새 말은 읽음 기록을 기존 빨간 창과 공유한다.
-      const eventLine = eventNeighborLine(game, target.id, CONTENT)
-      const oldLine = eventLine ? null : oldNeighborLine(game, target.id, rng())
+      const eventLine = helloPending ? null : eventNeighborLine(game, target.id, CONTENT)
+      const oldLine = eventLine || helloPending ? null : oldNeighborLine(game, target.id, rng())
       const momentLine = eventLine ?? oldLine
       if (momentLine) {
         sfx('talk')
@@ -1117,7 +1121,7 @@ export const useGame = create<Store>((set, get) => {
         } }
       }
       // 이어 갈 이야기 (계획 16 작업 4): 손일 놀이가 남았으면 그 놀이부터, 고를 말이 남았으면 그 장면부터 — 마음·장면은 다시 오르지 않는다
-      const resume = storyResume(game, target.id)
+      const resume = helloPending ? null : storyResume(game, target.id)
       if (resume) {
         sfx('talk')
         const g = greetNeighbor(game, target.id)
@@ -1126,7 +1130,7 @@ export const useGame = create<Store>((set, get) => {
           : { game: persist(g), modal: { kind: 'scene', id: `ev:${resume.event}` } }
       }
       // 기다리던 이야기(이벤트)가 있으면 그 장면부터 (계획 6b)
-      const ev = openEvent(game, target.id)
+      const ev = helloPending ? null : openEvent(game, target.id)
       if (ev) {
         sfx('talk')
         // 사건 장면부터 연다 — 마음이 문턱을 넘어 뒤에 붙은 옛이야기(romance1/2)는 대기열에서 다음에 (2026-10-11 점검)
@@ -1135,7 +1139,7 @@ export const useGame = create<Store>((set, get) => {
         return { game: persist(greetNeighbor(ev, target.id)), modal: { kind: 'scene', id: first } }
       }
       // 배우자와 저녁 (계획 12): 저녁에 가끔, 집에서 말을 걸면 같이 먹는 짧은 장면
-      if (target.id === game.romance?.partner) {
+      if (target.id === game.romance?.partner && !helloPending) {
         const ate = eatSupper(game)
         // 서늘한 찬장에 음식이 있으면 하나를 꺼내 함께 차린다 (2026-10-08)
         const served = ate ? servePantrySupper(ate) : null
@@ -2594,7 +2598,9 @@ export const useGame = create<Store>((set, get) => {
       const g = get().game
       // 새 터면 왕래 표식 앞, 첫 마을이면 내 집 문 앞 — 걸어서 어디로든 갈 수 있는 칸
       const at = currentMapId() === 'newland' ? NEWLAND_PORTAL_FRONT : HOME_FRONT
-      const next = { ...g, player: { ...g.player, x: at.x, y: at.y, path: [], facing: 'down' as const } }
+      let next: GameState = { ...g, player: { ...g.player, x: at.x, y: at.y, path: [], facing: 'down' as const } }
+      // 따라오던 동물 친구도 곁으로 (2026-10-14 사용자: 비상 탈출하면 펫이 끼인 자리에 남았다). 집에 둔 동물은 그대로
+      if (next.companion && !next.companion.stay && currentMapId() !== 'newland') next = setCompanionStay(next, false)
       syncHome(next)
       set({ game: persist(next), modal: null, decorating: null, decorSel: null, decorMoving: false, yardMoving: null })
       get().say(T.ui.escaped, 3000)

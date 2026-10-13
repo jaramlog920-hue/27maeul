@@ -20,15 +20,20 @@ describe('내보내기·가져오기 (2026-10-14)', () => {
     const store = memStore()
     const s = { ...newGame(CONTENT), coins: 321 }
     store.setItem(slotKey('1'), 'x')
-    const slot = importSave(exportSave(s), CONTENT, store)
-    expect(slot).toBe('2')
+    const r = importSave('\uFEFF' + exportSave(s) + '\n', CONTENT, store)
+    expect(r).toEqual({ slot: '2' })
     expect(activeSlot(store)).toBe('2')
     expect(loadGame(CONTENT, store)?.coins).toBe(321)
   })
   it('다른 파일은 받지 않는다', () => {
     const store = memStore()
-    expect(importSave('{"app":"other","save":"{}"}', CONTENT, store)).toBeNull()
-    expect(importSave('아무 글', CONTENT, store)).toBeNull()
+    expect(importSave('{"app":"other","save":"{}"}', CONTENT, store)).toEqual({ error: 'format' })
+    expect(importSave('아무 글', CONTENT, store)).toEqual({ error: 'format' })
     expect(store.length).toBe(0)
+  })
+  it('기기 공간이 모자라면 형식 오류가 아니라 공간 부족으로 알린다', () => {
+    const store = memStore()
+    const full = { ...store, setItem: () => { throw new Error('QuotaExceededError') } } as Storage
+    expect(importSave(exportSave(newGame(CONTENT)), CONTENT, full)).toEqual({ error: 'space' })
   })
 })

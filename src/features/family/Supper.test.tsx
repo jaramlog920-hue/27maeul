@@ -9,7 +9,8 @@ import { pageThrough } from '../../test/scene-pages'
 
 function evening(day: number): GameState {
   const g = newGame(CONTENT)
-  return { ...g, flags: { ...g.flags, growthLegacy: 1 }, scenes: [], clock: { ...g.clock, day, minute: SUPPER_FROM + 30 }, romance: { ...NO_ROMANCE, partner: 'wendell', stage: 'married', marriedDay: 5 } }
+  // 배우자는 이미 만난 이웃 (처음 만나면 첫인사부터 — 2026-10-14)
+  return { ...g, notebook: { ...g.notebook, met: ['wendell'] }, flags: { ...g.flags, growthLegacy: 1 }, scenes: [], clock: { ...g.clock, day, minute: SUPPER_FROM + 30 }, romance: { ...NO_ROMANCE, partner: 'wendell', stage: 'married', marriedDay: 5 } }
 }
 
 describe('배우자와 저녁 — 화면', () => {

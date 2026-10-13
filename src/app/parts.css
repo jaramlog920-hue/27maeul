@@ -2527,3 +2527,4 @@ button.row:active:not(:disabled) { background: #efe3c4; }
 .guide-book .guide-turn { display: flex; align-items: center; gap: 8px; margin-top: 14px; }
 .guide-book .guide-turn button { min-height: 40px; padding: 4px 12px; }
 .guide-book .guide-page { flex: 1; text-align: center; font-size: 13px; color: var(--ink-soft); }
+.settings-row .pair-buttons { display: flex; gap: 8px; }

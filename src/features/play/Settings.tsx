@@ -161,37 +161,81 @@ function VersionLines() {
 /** 내보내기·가져오기 (2026-10-14 사용자): 지금 저장을 파일로 받고, 받은 파일을 새 칸으로 들인다 */
 function SaveFileRows() {
   const pickRef = useRef<HTMLInputElement>(null)
-  const exportNow = () => {
+  // 휴대폰(특히 홈 화면에 설치한 앱)에서는 내려받기 링크가 막히는 일이 잦다 — 공유 창으로 먼저, 안 되면 내려받기, 그것도 안 되면 글을 복사 (2026-10-14)
+  const exportNow = async () => {
     const game = useGame.getState().game
     saveGame(game)
-    const blob = new Blob([exportSave(game)], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `스물일곱권의마을-${game.avatar?.name ?? '저장'}-${game.clock.day}일째.json`
-    a.click()
-    setTimeout(() => URL.revokeObjectURL(url), 1000)
-    useGame.getState().say('저장 파일을 내보냈어요.')
+    const text = exportSave(game)
+    const name = `27maeul-${game.clock.day}day.json`
+    const say = useGame.getState().say
+    try {
+      const file = new File([text], name, { type: 'application/json' })
+      const nav = globalThis.navigator as Navigator & { canShare?: (d: ShareData) => boolean }
+      if (nav?.share && nav.canShare?.({ files: [file] })) {
+        await nav.share({ files: [file], title: '스물일곱 권의 마을 저장' })
+        return say('저장 파일을 내보냈어요.')
+      }
+    } catch (e) {
+      if ((e as Error)?.name === 'AbortError') return
+    }
+    try {
+      const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }))
+      const a = document.createElement('a')
+      a.href = url
+      a.download = name
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      setTimeout(() => URL.revokeObjectURL(url), 4000)
+      return say('저장 파일을 내보냈어요.')
+    } catch {
+      /* 아래 복사로 */
+    }
+    try {
+      await globalThis.navigator?.clipboard?.writeText(text)
+      say('파일로 못 내보내서 저장 글을 복사해 두었어요.', 3600)
+    } catch {
+      say('내보내지 못했어요.')
+    }
+  }
+  const importText = (text: string) => {
+    saveGame(useGame.getState().game)
+    const r = importSave(text, CONTENT)
+    if ('error' in r) return useGame.getState().say(r.error === 'space' ? '기기 저장 공간이 모자라요. 안 쓰는 저장 칸을 지우고 다시 해 주세요.' : '이 게임의 저장 파일이 아니에요.', 3600)
+    useGame.getState().say('가져왔어요. 새 칸으로 다시 열어요.', 2000)
+    setTimeout(() => globalThis.location?.reload(), 900)
   }
   const importFile = async (file: File | undefined) => {
     if (!file) return
-    const text = await file.text()
-    saveGame(useGame.getState().game)
-    const slot = importSave(text, CONTENT)
-    if (!slot) return useGame.getState().say('이 게임의 저장 파일이 아니에요.')
-    useGame.getState().say('가져왔어요. 새 칸으로 다시 열어요.', 2000)
-    setTimeout(() => globalThis.location?.reload(), 900)
+    try {
+      importText(await file.text())
+    } catch {
+      useGame.getState().say('파일을 읽지 못했어요.')
+    }
+  }
+  const importPaste = async () => {
+    try {
+      const text = await globalThis.navigator?.clipboard?.readText()
+      if (text) return importText(text)
+    } catch {
+      /* 아래 안내 */
+    }
+    useGame.getState().say('복사해 둔 저장 글을 찾지 못했어요.')
   }
   return (
     <>
       <div className="settings-row">
         <h3>내보내기</h3>
-        <button onClick={exportNow}>내보내기</button>
+        <button onClick={() => void exportNow()}>내보내기</button>
       </div>
       <div className="settings-row">
         <h3>가져오기</h3>
-        <button onClick={() => pickRef.current?.click()}>가져오기</button>
-        <input ref={pickRef} type="file" accept="application/json,.json" hidden aria-label="가져올 저장 파일" onChange={(e) => { void importFile(e.target.files?.[0]); e.target.value = '' }} />
+        <div className="pair-buttons">
+          <button onClick={() => pickRef.current?.click()}>파일</button>
+          <button onClick={() => void importPaste()}>붙여넣기</button>
+        </div>
+        {/* 종류를 막지 않는다 — 휴대폰에서 .json 파일이 흐리게 나와 고를 수 없던 문제 */}
+        <input ref={pickRef} type="file" hidden aria-label="가져올 저장 파일" onChange={(e) => { void importFile(e.target.files?.[0]); e.target.value = '' }} />
       </div>
     </>
   )

@@ -9,7 +9,8 @@ import { FESTIVAL_SPOTS } from '../../engine/neighbors'
 
 function ready(): GameState {
   const s = newGame(CONTENT)
-  return { ...s, scenes: [], offers: {}, clock: { day: 3, minute: 600 },
+  // 이미 만난 이웃 (처음 만나면 첫인사부터 — 2026-10-14)
+  return { ...s, notebook: { ...s.notebook, met: ['baker'] }, scenes: [], offers: {}, clock: { day: 3, minute: 600 },
     shelved: Object.fromEntries(BOOKS.slice(0, 25).map(b => [b, 2 as const])),
     player: { ...s.player, x: 4, y: 17, path: [] },
     npcs: { baker: { ...s.npcs.baker, x: 3, y: 17, visible: true, path: [] } },

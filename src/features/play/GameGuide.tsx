@@ -34,7 +34,7 @@ const PLACE_UNLOCKS = [
  * 모든 숫자·규칙은 코드에서 확인한 것만 적는다 — 규칙을 바꾸면 여기도 함께 고친다:
  * 필사 verseMinutes·CARE_TYPOS·copyPay/libraryPay·SEASON_COPY_FROM/TO, 서고 library.ts, 벤치 READ_REST·READ_MINUTES,
  * 잠 sleepNeeds·fallsSick(LIMIT), 장날 isMarketDay, 잔치 festivalOf, 마음 GAIN·DAILY_HEART_CAP·BIRTHDAY_MUL·HALL_*,
- * 능력치 stats.ts, 연애 heart-balance-text.json
+ * 능력치 stats.ts, 새 터 newland.ts·newland-sites.ts(BUILD_DAYS_*·REFUND_*·DECOR_REFUND)·setCompanionStay, 연애 heart-balance-text.json
  */
 const CHAPTERS: { title: string; tips: string[] }[] = [
   {
@@ -87,6 +87,18 @@ const CHAPTERS: { title: string; tips: string[] }[] = [
     ],
   },
   {
+    title: '새 터와 구약',
+    tips: [
+      '신약 스물일곱 권을 모두 서고에 꽂으면 새 터가 열려요. 마을과 새 터는 왕래 표식으로 오가요.',
+      '새 터의 작은 구약 서고 책상에서 구약 서른아홉 권을 신약과 같은 방식으로 이어 써요. 시간과 피로도 신약과 같아요.',
+      '건물은 주문한 다음 날 아침 공사를 시작해 그다음 날 아침에 다 지어져요.',
+      '공사를 시작하기 전에 취소하면 값을 모두, 공사 중이면 절반을 돌려받아요. 다 지은 뒤 허물면 닢만 절반 돌아와요.',
+      '길과 정원 칸은 걷어 내면 값이 모두 돌아오고, 꾸미기는 절반이 돌아와요.',
+      '새 터에는 침대가 없어요. 새 터에서 잠들면 첫 마을 내 집 침대에서 깨요.',
+      '동물 친구는 새 터에 따라가지 않고 첫 마을에서 기다려요.',
+    ],
+  },
+  {
     title: '연애',
     tips: [
       '마음이 8하트에 닿으면 들꽃 다발로 마음을 전할 수 있어요.',
@@ -114,6 +126,7 @@ export function GameGuide() {
       <h2>도움말</h2>
       {page === 0 && (
         <nav aria-label="목차">
+          <p className="hint">게임 내용은 계속 업데이트 중이에요. 새 내용이 들어오면 이 도움말도 함께 바뀌어요.</p>
           <h3>목차</h3>
           <ol className="guide-toc">
             {[...CHAPTERS.map(c => c.title), '열리는 때'].map((title, i) => (

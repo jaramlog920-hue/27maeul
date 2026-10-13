@@ -580,25 +580,31 @@ const EXPORT_APP = 'twenty-seven'
 export function exportSave(s: GameState): string {
   return JSON.stringify({ app: EXPORT_APP, v: 1, at: Date.now(), save: serialize(s) })
 }
-/** 가져온 파일을 새 칸에 넣고 그 칸을 이어 할 칸으로 정한다. 새 칸 번호, 알맞은 저장이 아니면 null */
-export function importSave(text: string, content: GameContent, store: Storage | null | undefined = storage()): string | null {
+/** 가져온 파일을 새 칸에 넣고 그 칸을 이어 할 칸으로 정한다.
+ *  'format' 이 게임 저장이 아님, 'space' 기기 저장 공간이 모자람 (앨범 그림이 많을 때) */
+export function importSave(text: string, content: GameContent, store: Storage | null | undefined = storage()): { slot: string } | { error: 'format' | 'space' } {
+  if (!store) return { error: 'space' }
+  let raw: { app?: unknown; save?: unknown }
   try {
-    if (!store) return null
-    const raw = JSON.parse(text) as { app?: unknown; save?: unknown }
-    if (raw?.app !== EXPORT_APP || typeof raw.save !== 'string') return null
-    if (!deserialize(raw.save, content)) return null
-    const slot = newSlot(store)
-    store.setItem(slotKey(slot), raw.save)
-    try {
-      store.setItem(META_KEY(slot), JSON.stringify({ savedAt: Date.now() }))
-    } catch {
-      /* 저장 시각만 못 남김 */
-    }
-    setActiveSlot(slot, store)
-    return slot
+    // 메모장 등에서 저장하며 붙은 BOM·앞뒤 빈칸은 걷어 낸다
+    raw = JSON.parse(text.replace(/^\uFEFF/, '').trim())
   } catch {
-    return null
+    return { error: 'format' }
   }
+  if (raw?.app !== EXPORT_APP || typeof raw.save !== 'string' || !deserialize(raw.save, content)) return { error: 'format' }
+  const slot = newSlot(store)
+  try {
+    store.setItem(slotKey(slot), raw.save)
+  } catch {
+    return { error: 'space' }
+  }
+  try {
+    store.setItem(META_KEY(slot), JSON.stringify({ savedAt: Date.now() }))
+  } catch {
+    /* 저장 시각만 못 남김 */
+  }
+  setActiveSlot(slot, store)
+  return { slot }
 }
 
 /**

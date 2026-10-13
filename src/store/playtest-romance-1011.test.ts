@@ -16,7 +16,8 @@ it('말을 걸면 사건 장면부터 열리고, 옛이야기는 그 뒤 대기�
   const ev: PersonEvent = { id: 'test:gain', title: 'Gain', stage: 0, at, gain: 2 * POINTS_PER_HEART, lines: [{ speaker: 'rudy', text: '안녕' }] } as PersonEvent
   setPeopleData({ people: { ...PEOPLE.people, rudy: { ...PEOPLE.people.rudy, events: [ev] } }, threads: PEOPLE.threads })
   const before = STORY_HEARTS[0] * POINTS_PER_HEART - 1
-  const s = { ...g, avatar: { ...g.avatar!, look: 'f' as const }, hearts: { ...g.hearts, rudy: before }, scenes: [],
+  // 이미 만난 이웃 (처음 만나면 첫인사부터 — 2026-10-14)
+  const s = { ...g, notebook: { ...g.notebook, met: [...(g.notebook?.met ?? []), 'rudy'] }, avatar: { ...g.avatar!, look: 'f' as const }, hearts: { ...g.hearts, rudy: before }, scenes: [],
     npcs: { ...g.npcs, rudy: { ...g.npcs.rudy, x: at.x, y: at.y, visible: true, path: [] } } }
   useGame.setState({ game: s, modal: null })
   useGame.getState().talkTo('rudy')
