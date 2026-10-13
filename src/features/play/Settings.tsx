@@ -47,6 +47,34 @@ function GenSetting() {
   )
 }
 
+/**
+ * 주민이 나이 들지 않게 (2026-10-13 사용자): 켜면 아무도 은퇴하지 않고, 자식은 어른까지만 자란다(노인이 되지 않는다).
+ * 설명 줄 없이 이름만
+ */
+function AgeSetting() {
+  const ageless = useGame((s) => !!s.game.flags.ageless)
+  const has = useGame((s) => !!s.game.gen)
+  if (!has) return null
+  const pick = (v: boolean) => {
+    const g = useGame.getState().game
+    const flags = { ...g.flags }
+    if (v) flags.ageless = 1
+    else delete flags.ageless
+    const next = { ...g, flags }
+    saveGame(next)
+    useGame.setState({ game: next })
+  }
+  return (
+    <section className="settings-section">
+      <h3>{t('gen.ageSetting')}</h3>
+      <div className="settings-options pair-options" role="group" aria-label={t('gen.ageSetting')}>
+        <button className={!ageless ? 'on' : ''} aria-pressed={!ageless} onClick={() => pick(false)}>{t('gen.ageOn')}</button>
+        <button className={ageless ? 'on' : ''} aria-pressed={ageless} onClick={() => pick(true)}>{t('gen.ageOff')}</button>
+      </div>
+    </section>
+  )
+}
+
 const TRACKS = MUSIC_CHOICES.map((id) => [id, (C.tracks as Record<MusicChoice, string>)[id]] as const)
 
 function VolumeSlider({ kind, label }: { kind: VolumeKind; label: string }) {
@@ -258,6 +286,7 @@ export function Settings() {
         )}
       </section>
       <GenSetting />
+      <AgeSetting />
       <section className="settings-section">
         <div className="settings-row">
           <h3>마을 지도</h3>

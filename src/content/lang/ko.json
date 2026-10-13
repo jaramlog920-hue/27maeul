@@ -166,6 +166,9 @@
     "free": "자유롭게",
     "news": "마을 소식",
     "setting": "주민 자율 생활",
+    "ageSetting": "주민 나이",
+    "ageOn": "나이 듦",
+    "ageOff": "그대로",
     "on": "켬",
     "off": "끔",
     "stage": {

@@ -47,7 +47,8 @@ export function movedHeir(g: GenState | undefined, npc: string): GenPerson | nul
 }
 
 /** 하루 정산: 자라기 → 견습 시작 → 은퇴와 이어받기 */
-export function settleGrowth(g: GenState, d: number, access = { generations: true, retirement: true }): GenState {
+/** ageless (2026-10-13 사용자 설정 '주민이 나이 들지 않음'): 자식은 어른까지만 자라고, 아무도 은퇴하지 않는다 */
+export function settleGrowth(g: GenState, d: number, access: { generations: boolean; retirement: boolean; ageless?: boolean } = { generations: true, retirement: true }): GenState {
   // Restore legacy retirees without changing succession or historical logs/rewards.
   for (const [parent, r] of Object.entries(g.retired ?? {})) {
     if (r.moved == null) continue
@@ -55,7 +56,8 @@ export function settleGrowth(g: GenState, d: number, access = { generations: tru
   }
   for (const p of Object.values(g.persons)) {
     if ((p.origin !== 'born' && p.id !== BAKER_BABY_ID) || p.born == null || p.stage === 'elder') continue
-    const next = stageByAge(p.born, d)
+    const aged = stageByAge(p.born, d)
+    const next = access.ageless && aged === 'elder' ? 'adult' : aged
     if (next === p.stage) continue
     g = { ...g, persons: { ...g.persons, [p.id]: { ...g.persons[p.id], stage: next } } }
     g = addLog(g, d, `grew:${next}`, [p.id])
@@ -89,7 +91,7 @@ export function settleGrowth(g: GenState, d: number, access = { generations: tru
   }
   // 견습 한 계절 뒤: 부모는 은퇴, 자리는 자녀에게
   for (const [parent, a] of Object.entries(g.heirs ?? {})) {
-    if (!access.retirement || g.retired?.[parent] || d - a.since < RETIRE_AFTER) continue
+    if (!access.retirement || access.ageless || g.retired?.[parent] || d - a.since < RETIRE_AFTER) continue
     g = { ...g, retired: { ...(g.retired ?? {}), [parent]: { heir: a.heir, day: d } } }
     g = addLog(g, d, 'retired', [parent, a.heir])
   }

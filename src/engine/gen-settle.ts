@@ -114,7 +114,7 @@ export function settleOneDay(g: GenState, d: number, s: Partial<Pick<GameState, 
     g = settleBirth(g, d, ctx, avatarOfFor(content))
   }
   // 세대교체: 자라기 → 견습 → 은퇴와 이어받기
-  g = settleGrowth(g, d, { generations: featureAccess(s, 'generations') === 'full', retirement: featureAccess(s, 'retirement') === 'full' })
+  g = settleGrowth(g, d, { generations: featureAccess(s, 'generations') === 'full', retirement: featureAccess(s, 'retirement') === 'full', ageless: !!s.flags?.ageless })
   return ensureBakerBaby(g, d)
 }
 
