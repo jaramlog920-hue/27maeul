@@ -2862,9 +2862,12 @@ export function rankMorning(s: GameState, content: GameContent): GameState {
   return { ...next, ranks, rankPopup: { day, place, table, pieces, coins, ...(item ? { item } : {}), ...(ticket ? { otTicket: true } : {}) } }
 }
 
-/** 순위별 후원금 (닢): 1위 150 · 2위 100 · 3위 80 · 4–10위 40 · 11–20위 15 */
+/**
+ * 순위별 후원금 (닢): 1위 1,500 · 2위 1,000 · 3위 800 · 4–10위 400 · 11–20위 150
+ * (2026-10-13 사용자: 필사 한 장이 120~200닢이라 예전 값의 10배로 — 1위는 필사 열 장쯤)
+ */
 export function rankDonation(place: number): number {
-  return place === 1 ? 150 : place === 2 ? 100 : place === 3 ? 80 : place <= 10 ? 40 : 15
+  return place === 1 ? 1500 : place === 2 ? 1000 : place === 3 ? 800 : place <= 10 ? 400 : 150
 }
 
 // ── 서고 방문객과 방명록 (계획 21 R10, 가볍게) ──
