@@ -162,7 +162,7 @@ export function GameGuide() {
       <h2>도움말</h2>
       {page === 0 && (
         <nav aria-label="목차">
-          <p className="hint">게임 내용은 계속 업데이트 중이에요. 새 내용이 들어오면 이 도움말도 함께 바뀌어요.</p>
+          <p className="hint">게임 내용은 계속 업데이트 중이에요. 가끔 설정 › 기록에서 현재 버전과 최신 버전을 비교해 보고, 다르면 업데이트 받기를 눌러 주세요. 새 내용이 들어오면 이 도움말도 함께 바뀌어요.</p>
           <h3>목차</h3>
           <h4 className="guide-toc-part">기본</h4>
           <ol className="guide-toc">
