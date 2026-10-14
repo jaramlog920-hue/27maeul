@@ -65,17 +65,25 @@ export function babyBlock(s: GameState): BabyBlock | null {
   return null
 }
 
-/** 얘기했다 — 오늘 밤 자고 나면 다음 날 아침 아기가 온다 */
+/** 아기를 기다리는 날 수 (2026-10-14 사용자: 자고 나면 바로 생기지 않게 — 나흘쯤 기다렸다가) */
+export const PREGNANCY_DAYS = 4
+/** 얘기했다 — 다음 날 아침 아기 소식(장면 pregnancy), 얘기한 날로부터 PREGNANCY_DAYS째 아침에 태어난다 */
 export function askBaby(s: GameState): GameState {
   if (babyBlock(s)) return s
   return { ...s, flags: { ...s.flags, babyWish: s.clock.day } }
 }
 
-/** 아침: 얘기해 둔 아기가 태어난다 (이름은 정하는 창이 뜬다) */
+/** 아침: 얘기한 다음 날 아기 소식, PREGNANCY_DAYS째 아침에 아기가 태어난다 (이름은 정하는 창이 뜬다) */
 export function siblingMorning(s: GameState, content: Pick<GameContent, 'neighbors'>): GameState {
   if (!s.flags.babyWish) return s
+  // 기다리는 동안: 첫 아침에 아기 소식 한 번 (2026-10-14 사용자: 임신과 출산 장면)
+  if (s.clock.day < s.flags.babyWish + PREGNANCY_DAYS) {
+    if (s.flags.babyNews === s.flags.babyWish || allKids(s).length >= MAX_KIDS || s.romance?.stage !== 'married') return s
+    return { ...s, flags: { ...s.flags, babyNews: s.flags.babyWish }, scenes: [...s.scenes, 'pregnancy'] }
+  }
   const flags = { ...s.flags }
   delete flags.babyWish
+  delete flags.babyNews
   // 얘기한 뒤 사정이 바뀌었으면(아이가 셋 등) 아무 일도 없다
   if (allKids(s).length >= MAX_KIDS || s.romance?.stage !== 'married') return { ...s, flags }
   const day = s.clock.day

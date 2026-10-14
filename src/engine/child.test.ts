@@ -5,6 +5,7 @@ import { CONTENT } from '../content/catalog'
 import { JOURNAL_NOTES, SCENES } from '../content/text'
 import { CHILD_AFTER_WEDDING, CHILD_NAMES, childStage, helperSpot, HELPER_AT, helpStat, HELPER_SPOTS, CRADLE_SPOT, inheritBorn, newChild, nextName, sanitizeChild, TODDLER_AT } from './child'
 import { goToSleep, nameChild, type GameState } from './game'
+import { PREGNANCY_DAYS } from './siblings'
 import { deserialize, serialize } from './save'
 import { freshStats } from './stats'
 import { isWalkable } from './world'
@@ -19,10 +20,12 @@ const sleepUntil = (s: GameState, day: number): GameState => {
   while (g.clock.day < day) g = goToSleep({ ...g, clock: { ...g.clock, minute: 22 * 60 } }, CONTENT)
   return g
 }
-/** 2026-10-13 사용자: 아이는 잠자리에서 얘기해야 생긴다 — day 전날 밤에 얘기하고 자면 day 아침에 태어난다 */
+/** 2026-10-13 사용자: 아이는 잠자리에서 얘기해야 생긴다. 2026-10-14: 얘기한 날로부터 PREGNANCY_DAYS째 아침에 태어난다 —
+ *  day 아침에 태어나게 얘기한 날을 앞당겨 적고(소식 장면은 이미 본 것으로) day 전날 밤에 잔다 */
 const bornOn = (day: number, s = married(10)): GameState => {
   const eve = sleepUntil(s, day - 1)
-  return goToSleep({ ...eve, clock: { ...eve.clock, minute: 22 * 60 }, flags: { ...eve.flags, babyWish: day - 1 } }, CONTENT)
+  const wish = day - PREGNANCY_DAYS
+  return goToSleep({ ...eve, clock: { ...eve.clock, minute: 22 * 60 }, flags: { ...eve.flags, babyWish: wish, babyNews: wish } }, CONTENT)
 }
 
 describe('아이 (계획 12)', () => {

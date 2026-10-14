@@ -30,6 +30,7 @@ export function Review({ pieceId }: { pieceId: string | null }) {
         <button onClick={closeModal}>{T.ui.stayUp}</button>
         {/* 둘째·셋째 (2026-10-13): 결혼했고, 막내가 어린이가 되었으면 */}
         {babyBlock(game) === null && <button onClick={askBaby}>{T.siblings.ask}</button>}
+        {babyBlock(game) === 'waiting' && <p className="hint">{T.siblings.waiting}</p>}
         <button className="primary" onClick={sleep}>
           {T.ui.sleep}
         </button>

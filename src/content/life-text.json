@@ -3372,10 +3372,32 @@
         }
       ]
     },
+    "pregnancy": {
+      "title": "기다리는 아기",
+      "album": "아기 소식을 들은 날",
+      "lines": [
+        {
+          "speaker": "narration",
+          "text": "아침 식탁에서 {spouseSubj} 내 손을 꼭 잡았다. 우리 집에 아기가 찾아왔다."
+        },
+        {
+          "speaker": "narration",
+          "text": "둘이 한참 말없이 웃었다. 요람 곁에 작은 이불을 미리 개어 두었다."
+        },
+        {
+          "speaker": "narration",
+          "text": "며칠 뒤면 만날 수 있다. 그동안 집 안이 조금 더 조용하고 따뜻해졌다."
+        }
+      ]
+    },
     "childBorn": {
       "title": "새 식구",
       "album": "아이가 태어난 날",
       "lines": [
+        {
+          "speaker": "narration",
+          "text": "밤새 집 안에 등불이 꺼지지 않았다. {spouseAnd} 손을 맞잡고 긴 밤을 함께 견뎠다."
+        },
         {
           "speaker": "narration",
           "text": "이른 아침, 작은 울음소리가 집 안을 채웠다."
@@ -3391,7 +3413,7 @@
       "lines": [
         {
           "speaker": "narration",
-          "text": "이른 아침, 집 안에 작은 울음소리가 다시 울렸다."
+          "text": "밤새 {spouseAnd} 손을 맞잡고 기다렸다. 이른 아침, 집 안에 작은 울음소리가 다시 울렸다."
         },
         {
           "speaker": "narration",
@@ -8541,7 +8563,8 @@
     "ask": "아이를 갖자고 얘기해 보기",
     "asked": "{who}: 우리 집에 아이가 있으면… 좋겠어요. 오늘은 같이 일찍 자요.",
     "pick": "함께할 아이",
-    "picked": "오늘은 {nameAnd} 함께해요."
+    "picked": "오늘은 {nameAnd} 함께해요.",
+    "waiting": "아기를 기다리고 있어요. 며칠 뒤 아침이면 만나요."
   },
   "round": {
     "sit": "자리에 앉기",
