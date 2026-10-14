@@ -2534,3 +2534,12 @@ button.row:active:not(:disabled) { background: #efe3c4; }
 .clock-picker { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; width: 100%; }
 .clock-picker button { min-height: 36px; padding: 2px 0; }
 .guide-book .guide-toc-part { margin: 12px 0 4px; font-size: 13px; color: var(--ink-soft); }
+
+/* 빈칸 퀴즈 (2026-10-14) */
+.blank-quiz-verse { font-size: 15px; line-height: 1.8; word-break: keep-all; margin: 6px 0 10px; }
+.blank-quiz-verse b { padding: 0 2px; border-bottom: 2px solid var(--accent); }
+.blank-quiz-verse b.right { color: #3c7a3c; }
+.blank-quiz-verse b.wrong { color: #a33b2b; }
+.blank-quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.blank-quiz-options button { min-height: 44px; }
+.blank-quiz-options button.wrong { border-color: #a33b2b; color: #a33b2b; }

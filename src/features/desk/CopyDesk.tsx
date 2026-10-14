@@ -914,6 +914,8 @@ function CopyDone({ book, modal, folding }: { book: CopyBook; modal: Extract<Mod
       {kidName && <p className="copy-family-quiet">{fill(FD.quiet, { with: withAnd(kidName) })}</p>}
       <div className="copy-menu-actions">
         <button onClick={copyExit}>{C.closeBook}</button>
+        {/* 빈칸 퀴즈 (2026-10-14): 지금까지 필사한 장에서 — 책상을 나가며 퀴즈 창으로 */}
+        <button onClick={() => { copyExit(); useGame.getState().open({ kind: 'blankQuiz' }) }}>빈칸 퀴즈 풀기</button>
         {/* 한 권을 마쳤으면 바로 제본 창으로 (책상에서 나가며 쓰다 만 입력은 저장된다) */}
         {last.bookDone && unbound && (
           <button

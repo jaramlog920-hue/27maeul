@@ -1,3 +1,4 @@
+import { BlankQuizDialog } from './quiz/BlankQuiz'
 import { SceneReplay } from './scene/SceneReplay'
 import {hasAuthoredStory} from '../render/authored-story-art'
 import { ScreenBoundary } from "./ScreenBoundary"
@@ -103,6 +104,8 @@ function Body() {
       return <OtShelf />
     case 'guide':
       return <GameGuide />
+    case 'blankQuiz':
+      return <BlankQuizDialog />
     case 'clubs':
       return <ClubList />
     case 'clubSession':

@@ -32,7 +32,7 @@ const PLACE_UNLOCKS = [
 /**
  * 도움말 책 (2026-10-14 사용자: 뻔한 설명 대신 꿀팁만, 목차와 넘김 단추로 책처럼, 마지막은 열리는 때).
  * 모든 숫자·규칙은 코드에서 확인한 것만 적는다 — 규칙을 바꾸면 여기도 함께 고친다:
- * 필사 verseMinutes·CARE_TYPOS·copyPay/libraryPay·SEASON_COPY_FROM/TO, 서고 library.ts, 벤치 READ_REST·READ_MINUTES,
+ * 필사 verseMinutes·CARE_TYPOS·blank-quiz.ts·copyPay/libraryPay·SEASON_COPY_FROM/TO, 서고 library.ts, 벤치 READ_REST·READ_MINUTES,
  * 잠 sleepNeeds·fallsSick(LIMIT), 장날 isMarketDay, 잔치 festivalOf, 마음 GAIN·DAILY_HEART_CAP·BIRTHDAY_MUL·HALL_*,
  * 능력치 stats.ts, 새 터 newland.ts·newland-myhome.ts·newland-sites.ts(BUILD_DAYS_*·REFUND_*·DECOR_REFUND)·setCompanionStay, 연애 heart-balance-text.json
  */
@@ -45,6 +45,7 @@ const CHAPTERS: { title: string; tips: string[] }[] = [
       '한 장을 퍼즐 없이 모두 직접 쓰고 틀린 글자가 둘 이하면 그 장에 정성 도장을 받아요.',
       '처음 마친 장에는 필사 삯을 받아요. 20닢에 절마다 5닢씩 더하고(최대 200닢), 서고에 꽂은 책 한 권마다 3%씩 더 받아요. 퍼즐로 마친 절이 많으면 조금 줄어요.',
       '계절마다 15일부터 21일 사이에 장을 마치면, 그 계절에 한 번 계절 장식을 받아요.',
+      '말씀 메뉴의 빈칸 퀴즈나 장을 마친 화면의 단추로, 지금까지 필사한 장에서 빈칸 문제 5개를 풀 수 있어요. 맞힌 문제마다 10닢, 다 맞히면 10닢을 더 받고, 몇 판이든 할 수 있어요.',
     ],
   },
   {

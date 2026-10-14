@@ -70,6 +70,7 @@ import FIRST_MEET from '../content/first-meet.json'
 import { claimHome, newBedAt } from '../engine/newland-myhome'
 import { expireStall, isStallTile } from '../engine/stall'
 import { rememberTalkPopup } from '../engine/talk-popups'
+import { finishBlankQuiz as finishBlankQuizEngine } from '../engine/blank-quiz'
 import { eventNeighborLine, oldNeighborLine } from '../engine/neighbor-moments'
 import { addGift } from '../engine/items'
 import { grapesRipe, isWet, weatherOf } from '../engine/calendar'
@@ -254,6 +255,8 @@ export type Modal =
   | { kind: 'guide' }
   /** 기억 정원에서 본 장면 다시 보기 (2026-10-14) — 저장하지 않는다 */
   | { kind: 'sceneReplay'; id: string }
+  /** 빈칸 퀴즈 (2026-10-14): 장을 마친 화면에서 바로 */
+  | { kind: 'blankQuiz' }
   | { kind: 'schedule' }
   | { kind: 'readingMeeting'; day: number }
   | { kind: 'libraryVisitor'; day: number }
@@ -385,7 +388,7 @@ export function bookBackModal(back: BookBack | undefined): Modal | null {
 }
 
 /** 말씀 탭의 칸 */
-export type WordTab = 'copy' | 'pieces' | 'god' | 'links' | 'library'
+export type WordTab = 'copy' | 'quiz' | 'pieces' | 'god' | 'links' | 'library'
 
 /** 필사 책상의 화면 (계획 14 작업 2) */
 export type CopyView = 'menu' | 'pick' | 'write' | 'done' | 'ask'
@@ -697,6 +700,8 @@ interface Store {
   useArchiveKey: () => void
   /** 빠른 시계: 1배 → 2배 → 3배 → 1배 */
   cycleTimeSpeed: () => void
+  /** 빈칸 퀴즈 한 판을 마치고 닢을 받는다 */
+  finishBlankQuiz: (correct: number, total: number) => void
   /** 시각 맞춤 시계: 고른 시각으로 넘긴다 */
   setClockTo: (minute: number) => void
   /** 새 터 집 가족이 이사를 바랄 때: 말리기(stay)·인사하기(bye) */
@@ -2612,6 +2617,9 @@ export const useGame = create<Store>((set, get) => {
     },
     cycleTimeSpeed: () => {
       const next = nextTimeSpeed(get().game)
+    finishBlankQuiz: (correct, total) => {
+      set({ game: persist(finishBlankQuizEngine(get().game, correct, total)) })
+    },
       if (next === get().game) return
       set({ game: persist(next) })
       get().say(`하루가 ${timeSpeed(next)}배로 흘러요.`, 2000)

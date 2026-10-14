@@ -18,6 +18,7 @@ import { bookLineKey } from '../../engine/game'
 import { BOOKS, isGospel, type Book, type Piece } from '../../engine/types'
 import { useGame, type WordTab } from '../../store/game-store'
 import { Spine } from '../library/BookArt'
+import { BlankQuiz } from '../quiz/BlankQuiz'
 
 const W = T.word
 const BOOK_NAME = T.quiz.books as Record<string, string>
@@ -90,6 +91,7 @@ export function Word({ tab: first = 'copy' }: { tab?: WordTab }) {
   const { closeModal, wordContinue } = useGame.getState()
   const tabs: [WordTab, string][] = [
     ['copy', W.tabs.copy],
+    ['quiz', '빈칸 퀴즈'],
     ['pieces', W.tabs.pieces],
     ['god', W.tabs.god],
     ['links', W.tabs.links],
@@ -113,6 +115,7 @@ export function Word({ tab: first = 'copy' }: { tab?: WordTab }) {
         ))}
       </div>
       {tab === 'copy' && <NtContent books={book && !isOtBook(book) ? [book] : []}><CopyRecord /></NtContent>}
+      {tab === 'quiz' && <BlankQuiz />}
       {tab === 'pieces' && <PieceDex />}
       {tab === 'god' && <GodRecords />}
       {tab === 'links' && <Links />}
