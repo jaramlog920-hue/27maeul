@@ -163,6 +163,7 @@ import { advanceBuilds, buildsOf, overlayFor, standSpotOf, warpsFor, type Newlan
 import { canMendQuarrel, dreamKey, guestHouseMorning, guestNow, kidVisiting, kidWorkJob, kidWorkSpot, MEND_GAIN, settledGuests, settledSpot, SETTLED_FROM, SETTLED_TO } from './newland-life'
 import { canReadOtTogether, OT_READ_HEART } from './ot-display'
 import { roomOf, roomTarget, withRoomOf } from './newland-rooms'
+import { inMyNewHome, newBedAt } from './newland-myhome'
 import { ARCHIVE, INTERIOR_ENTRY, NEWLAND_PORTAL, TRAVEL_FROM_MINUTE, TRAVEL_LAST_MINUTE, TRAVEL_MINUTES, VILLAGE_PORTAL } from './newland-config'
 import { SPOUSE_ROOM_STAND } from './spouse-room'
 import type { Cooking } from './cooking'
@@ -1588,6 +1589,15 @@ function tapPortal(s: GameState, tile: Tile, to: MapId): GameState {
 /** 새 터의 땅을 눌렀을 때: 걸어갈 수 있는 곳이면 걸어간다 (이웃·가구는 이 지도에 없고, 장소는 서고 안 책상·책장뿐) */
 function tapNewland(s: GameState, tile: Tile): GameState {
   const from = playerTile(s)
+  // 새 터 내 집의 평상 = 잠자리 (2026-10-14 사용자): 곁으로 걸어가 잠자리 창을 연다 (store arrive가 연다)
+  const bed = newBedAt(s, tile)
+  if (bed) {
+    const target: Target = { kind: 'furniture', item: bed.item, tile }
+    if (footprint(bed).some((p) => isNear(from, p))) return { ...s, player: { ...s.player, path: [] }, target, idle: IDLE_RESET }
+    const blockers = blockersOf(s)
+    const path = footprint(bed).map((p) => pathToward(from, p, blockers)).filter((p): p is Tile[] => !!p).sort((a, b) => a.length - b.length)[0] ?? null
+    return path ? { ...s, player: { ...s.player, path }, target, idle: IDLE_RESET } : { ...s, idle: IDLE_RESET }
+  }
   // 확장권으로 선 범위 방 책장 (계획 21 R9): 아래 칸으로 걸어가 책장 창 (손 뻗기 동작은 창을 열 때)
   const roomShelf = ARCHIVE_ROOM_SHELVES.slice(0, archiveRoomsOpen()).find((t) => sameTile(t, tile))
   if (roomShelf) {
@@ -4495,7 +4505,8 @@ export function drinkWater(s: GameState): GameState | null {
  * 창만 닫고(더 깨어 있기) 자면 read/pieceId가 없어 목록이 그대로 남는다.
  */
 export function goToSleep(s0: GameState, content: GameContent, opts: { read?: boolean; pieceId?: string } = {}): GameState {
-  // 새 터에는 침대가 없다 — 억지로 잠들면 첫 마을 침대에서 깬다 (계획 20 D6)
+  // 새 터 내 집(평상)에서 자면 그 자리에서 깬다 (2026-10-14 사용자). 그 밖의 새 터에서 잠들면 첫 마을 침대에서 깬다 (계획 20 D6)
+  const newBed = s0.map === 'newland' && inMyNewHome(s0) ? playerTile(s0) : null
   if (s0.map && s0.map !== 'village') s0 = { ...s0, map: 'village' }
   syncHome(s0)
   const s = opts.read && opts.pieceId ? readOff(s0, opts.pieceId) : s0
@@ -4650,7 +4661,12 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
   // 새 터 집 가족의 이사 (2026-10-14): 드물게 이사 마음이 생기고, 떠날 날이면 떠난다
   const welcomed = moveInMorning(s, familyMoveMorning(morning), content)
   const awake = { ...welcomed, npcs: placeAllNpcs(welcomed, content) }
-  return startAct(familyScenicEvents(s, awake, childTile(awake)), 'rise', PLACES.bed.tiles[0])
+  const risen = startAct(familyScenicEvents(s, awake, childTile(awake)), 'rise', PLACES.bed.tiles[0])
+  if (!newBed) return risen
+  // 새 터 내 집에서 잤으면 새 터 그 자리에서 깬다 (첫 마을 침대에서 일어나는 동작은 없다)
+  const there: GameState = { ...risen, act: undefined, map: 'newland', player: { ...risen.player, x: newBed.x, y: newBed.y, path: [], facing: 'down' } }
+  syncHome(there)
+  return bringPet(there)
 }
 
 /** 아이가 하루 한 번 해 오는 것 (근력·손재주·운 — 한 개씩, 날마다 번갈아) */

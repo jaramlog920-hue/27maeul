@@ -9,6 +9,7 @@ import { SiteIcon } from './SiteIcon'
 import { dreamHeard } from '../../engine/newland-life'
 import { kidWorkOwners } from '../../engine/kid-work'
 import { t } from '../../shared/i18n'
+import { canClaimHome } from '../../engine/newland-myhome'
 import { useGame } from '../../store/game-store'
 import { costText, SitePreview, siteName, type SitePick } from './SitePreview'
 
@@ -22,15 +23,19 @@ const USE_TEXT: Partial<Record<SitePick, string>> = {
 const STATE_TEXT: Record<Build['state'], string> = { ordered: T.build.ordered, building: T.build.building, done: T.build.done }
 
 function BuiltRow({ b }: { b: Build }) {
-  const { removeBuild } = useGame.getState()
+  const { removeBuild, claimNewHome } = useGame.getState()
+  // 새 터 내 집 (2026-10-14): 다 지은 빈 입주 주택은 내 집으로 정할 수 있다
+  const claim = useGame((s) => (b.kind === 'home' ? canClaimHome(s.game, b) : 'notHome'))
   const [sure, setSure] = useState(false)
   const done = b.state === 'done'
   const refundNote = done ? T.build.refundCoins : b.state === 'ordered' ? T.build.refundAll : T.build.refundHalf
   return (
     <li className="build-row">
       <span className="build-name">
-        {siteName(b.kind)}{b.size ? ` ${b.size >= 8 ? '3단계' : '2단계'}` : ''} · {STATE_TEXT[b.state]}
+        {siteName(b.kind)}{b.size ? ` ${b.size >= 8 ? '3단계' : '2단계'}` : ''} · {STATE_TEXT[b.state]}{claim === 'mine' ? ' · 내 집' : ''}
       </span>
+      {claim === null && <button onClick={() => claimNewHome(b.id)}>내 집으로 쓰기</button>}
+      {claim === 'mine' && <button onClick={() => claimNewHome(null)}>내 집 그만 쓰기</button>}
       {sure ? (
         <div className="build-confirm">
           <p className="hint">

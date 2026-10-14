@@ -34,7 +34,7 @@ const PLACE_UNLOCKS = [
  * 모든 숫자·규칙은 코드에서 확인한 것만 적는다 — 규칙을 바꾸면 여기도 함께 고친다:
  * 필사 verseMinutes·CARE_TYPOS·copyPay/libraryPay·SEASON_COPY_FROM/TO, 서고 library.ts, 벤치 READ_REST·READ_MINUTES,
  * 잠 sleepNeeds·fallsSick(LIMIT), 장날 isMarketDay, 잔치 festivalOf, 마음 GAIN·DAILY_HEART_CAP·BIRTHDAY_MUL·HALL_*,
- * 능력치 stats.ts, 새 터 newland.ts·newland-sites.ts(BUILD_DAYS_*·REFUND_*·DECOR_REFUND)·setCompanionStay, 연애 heart-balance-text.json
+ * 능력치 stats.ts, 새 터 newland.ts·newland-myhome.ts·newland-sites.ts(BUILD_DAYS_*·REFUND_*·DECOR_REFUND)·setCompanionStay, 연애 heart-balance-text.json
  */
 const CHAPTERS: { title: string; tips: string[] }[] = [
   {
@@ -98,7 +98,8 @@ const CHAPTERS: { title: string; tips: string[] }[] = [
       '건물은 주문한 다음 날 아침 공사를 시작해 그다음 날 아침에 다 지어져요.',
       '공사를 시작하기 전에 취소하면 값을 모두, 공사 중이면 절반을 돌려받아요. 다 지은 뒤 허물면 닢만 절반 돌아와요.',
       '길과 정원 칸은 걷어 내면 값이 모두 돌아오고, 꾸미기는 절반이 돌아와요.',
-      '새 터에는 침대가 없어요. 잠은 첫 마을 내 집 침대에서 자요. 새 터에서 첫 마을로 돌아가는 데는 시간 제한이 없어요.',
+      '다 지은 입주 주택 하나를 터 가꾸기 › 지은 것에서 내 집으로 정할 수 있어요. 그 집 안에 평상을 놓고 누르면 잠자리가 되고, 자고 나면 그 자리에서 일어나요.',
+      '새 터에 내 집이 없으면 잠은 첫 마을 내 집 침대에서 자요. 새 터에서 첫 마을로 돌아가는 데는 시간 제한이 없어요.',
       '따라다니는 동물 친구는 새 터에도 함께 건너가요. 집에 둔 동물은 첫 마을 집에서 기다려요.',
       '구약 서고 열쇠(장날 8,000닢)를 가방에서 쓰면 어디서든 곧장 구약 서고 안으로 가요. 새 터가 열린 뒤, 아침 6시부터 밤 9시 반 사이에 쓸 수 있어요.',
     ],

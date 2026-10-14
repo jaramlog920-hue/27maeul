@@ -67,6 +67,7 @@ import { libraryVisitorTile, visitorBeside } from '../engine/library-visitor'
 import { guestLine, innGuestsNow, metGuest } from '../engine/inn-guests'
 import { isNear } from '../engine/neighbors'
 import FIRST_MEET from '../content/first-meet.json'
+import { claimHome, newBedAt } from '../engine/newland-myhome'
 import { expireStall, isStallTile } from '../engine/stall'
 import { rememberTalkPopup } from '../engine/talk-popups'
 import { eventNeighborLine, oldNeighborLine } from '../engine/neighbor-moments'
@@ -571,6 +572,8 @@ interface Store {
   orderSite: (kind: SiteKind, x: number, y: number, facing: Facing, size: number, look?: HouseLook, owner?: string) => boolean
   /** 주문 취소(공사 전·중) 또는 철거(완공) — 환불과 기록 삭제가 한 번에 */
   removeBuild: (id: string) => void
+  /** 새 터 입주 주택 하나를 내 집으로 (id null이면 그만 쓰기) — 2026-10-14 */
+  claimNewHome: (id: string | null) => void
   /** 깐 길·정원 칸 걷어내기 */
   eraseTile: (x: number, y: number) => boolean
   playHall: () => void
@@ -1245,6 +1248,8 @@ export const useGame = create<Store>((set, get) => {
     if (target.kind === 'bookcase') return { game, modal: { kind: 'homeShelf' } }
     // 기능 있는 가구 (2026-10-13): 수납 가구는 가방의 궤짝·찬장 칸, 저절로 만드는 가구는 무엇을 만드는지 한 줄
     if (target.kind === 'furniture') {
+      // 새 터 내 집의 평상: 잠자리 창 (첫 마을 침대와 같다 — 2026-10-14)
+      if (newBedAt(game, target.tile)) return { game, modal: { kind: 'review', pieceId: reviewPick(game, rng) } }
       if (isStorage(target.item)) return { game, modal: { kind: 'bag' } }
       const say = (T.easy.makes as Record<string, string>)[target.item]
       if (say) get().say(say, 4000)
@@ -1993,6 +1998,15 @@ export const useGame = create<Store>((set, get) => {
       sfx('gift')
       set({ game: persist(next) })
       return true
+    },
+    claimNewHome: (id) => {
+      const g = get().game
+      const b = id ? buildsOf(g).find((x) => x.id === id) ?? null : null
+      if (id && !b) return
+      const next = claimHome(g, b)
+      if (next === g) return
+      set({ game: persist(next) })
+      get().say(b ? '이 집을 내 집으로 정했어요. 안에 평상을 놓으면 잠자리가 돼요.' : '내 집을 그만 쓰기로 했어요.', 3200)
     },
     removeBuild: (id) => {
       const g = get().game

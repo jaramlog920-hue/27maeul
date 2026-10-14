@@ -51,10 +51,10 @@ export function familyShownMember(s: Pick<GameState, 'gen'>, h: Household): stri
   return h.members.find((id) => { const p = s.gen?.persons[id]; return !!p && p.stage !== 'baby' }) ?? null
 }
 
-/** 아무도 살지 않는 새 터 입주 주택 (이웃이 된 손님·가족이 사는 집 빼고) */
+/** 아무도 살지 않는 새 터 입주 주택 (이웃이 된 손님·가족이 사는 집, 내 집(flags.myNewHome) 빼고) */
 export function emptyHomes(s: Pick<GameState, 'flags' | 'newland'>): Build[] {
   const used = new Set<string>()
-  for (const [k, v] of Object.entries(s.flags)) if ((k.startsWith('settled:') || k.startsWith('familyHome:')) && v) used.add(`b${v}`)
+  for (const [k, v] of Object.entries(s.flags)) if ((k.startsWith('settled:') || k.startsWith('familyHome:') || k === 'myNewHome') && v) used.add(`b${v}`)
   return doneHomes(s).filter((b) => !used.has(b.id))
 }
 
