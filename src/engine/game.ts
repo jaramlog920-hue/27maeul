@@ -187,7 +187,7 @@ import { BOARD_GAIN, boardFor, type BoardRequest } from './board'
 import type { Minigame } from './types'
 import { foundItems, newlyAchieved, type Achievement } from './achievements'
 import { familyMorning } from './family-days'
-import { adultJob, JOB_GIFTS, kidCoins, kidMailFor, CHILD_AFTER_WEDDING, childMode, childStage, CRADLE_SPOT, helperSpot, helpStat, type Child, type ChildMode } from './child'
+import { adultJob, JOB_GIFTS, kidCoins, kidMailFor, CHILD_AFTER_WEDDING, childMode, childStage, CRADLE_SPOT, helperSpot, helpStat, inheritFromPlayer, type Child, type ChildMode } from './child'
 import { DESTS, TRIP_FRIEND_GAIN, TRIP_LEAVE_BY, tripCoinDelta, tripCost, type DestId } from './travel'
 import type { TripReward } from './trip-board'
 import { BIRTHDAY_MUL, isBirthday, NO_NOTEBOOK, noteGift, noteGot, noteHeard, noteMet, noteNews, noteSeen, noteTaste, noteObservedTaste, seenLabel, type Notebook } from './notebook'
@@ -486,7 +486,8 @@ export function careBaby(s: GameState, action: BabyCare): GameState | null {
   return {
     ...s,
     player: { ...s.player, facing },
-    child: first ? { ...c, close: Math.min(100, (c.close ?? 0) + BABY_CARE_CLOSE) /* family CLOSE_MAX — family가 game을 부르므로 값만 */ } : c,
+    // 하루 처음 돌본 날은 가까움과 함께 '돌본 날'도 센다 — 아기 시기가 끝날 때 물려받는 몫의 확률을 올린다 (2026-10-14)
+    child: first ? { ...c, close: Math.min(100, (c.close ?? 0) + BABY_CARE_CLOSE) /* family CLOSE_MAX — family가 game을 부르므로 값만 */, cared: (c.cared ?? 0) + 1 } : c,
     flags: { ...s.flags, ...(first ? { babyCare: s.clock.day } : {}), ...(sleepScene ? { babySleepScene: s.clock.day } : {}) },
     scenes: sleepScene && !s.scenes.includes('babySleep') ? [...s.scenes, 'babySleep'] : s.scenes,
     act: { kind: 'baby', use: action, spot: { x: crib.x, y: crib.y, item: crib.item, facing }, left: ACT_SECONDS.baby, total: ACT_SECONDS.baby, facing },
@@ -4703,6 +4704,11 @@ function childMorning(s: GameState, content: GameContent): GameState {
   void r
   let child = next.child!
   const stage = childStage(child, day)
+  // 아기 시기가 끝난 아침(걷는 아이가 된 날): 기록자 능력치를 20~50% 물려받는다 — 아기 때 잘 돌볼수록 높은 몫이 나오기 쉽다 (2026-10-14 사용자)
+  if (stage === 'toddler' && child.inherited === undefined) {
+    child = inheritFromPlayer(child, next.stats, mulberry32(day * 271 + child.born * 13 + 7))
+    next = { ...next, child }
+  }
   if (stage !== 'baby' && !next.flags.childWalked) next = { ...next, scenes: [...next.scenes, 'childWalks'], flags: { ...next.flags, childWalked: 1 } }
   if (stage === 'adult') {
     // 어른이 된 아침: 가장 높은 능력치로 일이 정해지고, 남거나 떠난다

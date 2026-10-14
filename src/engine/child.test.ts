@@ -29,12 +29,14 @@ const bornOn = (day: number, s = married(10)): GameState => {
 }
 
 describe('아이 (계획 12)', () => {
-  it('물려받기: 플레이어 단계 4 이상 +1, 배우자 집안 능력치 +1, 최대 2', () => {
+  it('타고나기: 배우자 집안 능력치 +1 (기록자 쪽은 inheritFromPlayer)', () => {
     const player = freshStats()
     player.wit = { level: 4, xp: 0, born: 0 }
     player.strength = { level: 5, xp: 0, born: 0 }
-    expect(inheritBorn(player, 'strength')).toEqual({ wit: 1, strength: 2 })
+    // 2026-10-14 사용자: 태어날 때는 배우자 집안 능력치만 타고나고, 기록자 쪽은 아기 시기가 끝날 때 20~50% 물려받는다
+    expect(inheritBorn(player, 'strength')).toEqual({ strength: 1 })
     expect(inheritBorn(freshStats(), 'luck')).toEqual({ luck: 1 })
+    expect(inheritBorn(freshStats(), undefined)).toEqual({})
   })
 
   it('가장 높은 타고난 값의 일을 하고, 같으면 배우자 쪽을 먼저', () => {
@@ -174,4 +176,15 @@ describe('확장된 자식 진로와 저장 호환',()=>{
   expect(sanitizeChild({...base,job:'potter',left:false,jobConfirmed:false,interests:{potter:3,cook:Infinity,unknown:9}})).toMatchObject({job:'potter',jobConfirmed:false,interests:{potter:3}})
   expect(sanitizeChild({...base,job:'toString'})?.job).toBeUndefined()
  })
+  it('걷기 시작하는 아침에 기록자 능력치를 한 번 물려받는다 (2026-10-14)', () => {
+    const base = married(10)
+    const strong = { ...base, stats: { ...base.stats, wit: { level: 4, xp: 0, born: 0 } } }
+    const s = bornOn(30, strong)
+    expect(s.child!.inherited).toBeUndefined()
+    const walked = sleepUntil(s, 30 + TODDLER_AT)
+    expect(walked.child!.inherited).toBeGreaterThanOrEqual(20)
+    expect(walked.child!.inherited).toBeLessThanOrEqual(50)
+    expect(walked.child!.stats.wit.level).toBeGreaterThan(1)
+  })
 })
+

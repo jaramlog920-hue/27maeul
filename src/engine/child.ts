@@ -3,7 +3,7 @@
 // 자라는 단계: 아기(요람) → 걷는 아이(곁을 따라다님) → 돕는 아이(혼자 마을을 다니며 하루 한 번 돕는다).
 // 모든 도움은 "덜 반복"이지 "공짜"가 아니다 — 하루 한 번, 한 개씩.
 import { mulberry32 } from './offers'
-import { freshStats, sanitizeStats, STAT_IDS, statScore, type StatId, type Stats } from './stats'
+import { addXp, BORN_BONUS, freshStats, sanitizeStats, STAT_IDS, statScore, totalXp, type StatId, type Stats } from './stats'
 import type { ItemId } from './types'
 import type { Tile } from './types'
 import { HOME_FRONT, SIDE_ROOM } from './world'
@@ -31,6 +31,10 @@ export interface Child {
   left?: boolean
   /** 함께 보낸 시간으로 쌓인 가까움 0~100 (계획 12 "아이와 함께 보내는 시간" — 옛 저장은 없다 = 0) */
   close?: number
+  /** 아기 때 하루 처음 돌본 날 수 (물려받는 몫의 확률을 올린다 — 2026-10-14 사용자) */
+  cared?: number
+  /** 기록자 능력치를 물려받은 몫 % (아기 시기가 끝나는 아침에 한 번 정해진다, 20~50) */
+  inherited?: number
   interests?: Partial<Record<AdultJob, number>>
   jobConfirmed?: boolean
   /** 함께하지 않는 동안 맡아 두는 이 아이의 표식 (2026-10-13 아이 셋 — 함께할 아이를 바꾸면 game.flags와 맞바꾼다) */
@@ -149,12 +153,32 @@ export function childStage(c: Pick<Child, 'born'>, day: number): ChildStage {
   return age >= ADULT_AT ? 'adult' : age >= HELPER_AT ? 'helper' : age >= TODDLER_AT ? 'toddler' : 'baby'
 }
 
-/** 물려받는 타고난 값: 플레이어의 단계 4 이상 능력치 +1, 배우자 집안 능력치 +1, 한 능력치 최대 2 */
-export function inheritBorn(player: Stats, spouseStat: StatId | undefined): Partial<Record<StatId, number>> {
-  const out: Partial<Record<StatId, number>> = {}
-  for (const id of STAT_IDS) if ((player[id]?.level ?? 1) >= 4) out[id] = 1
-  if (spouseStat) out[spouseStat] = Math.min(2, (out[spouseStat] ?? 0) + 1)
-  return out
+/** 태어날 때 타고나는 값: 배우자 집안 능력치 +1 (기록자 쪽은 아기 시기가 끝날 때 inheritFromPlayer로 따로 물려받는다 — 2026-10-14 사용자) */
+export function inheritBorn(_player: Stats, spouseStat: StatId | undefined): Partial<Record<StatId, number>> {
+  return spouseStat ? { [spouseStat]: 1 } : {}
+}
+
+/** 기록자 능력치를 물려받는 몫: 20%~50% (2026-10-14 사용자: 단계와 상관없이 부모 능력치를 따라간다) */
+export const INHERIT_MIN = 0.2
+export const INHERIT_MAX = 0.5
+/** 아기 때 돌본 날 3일마다 뽑기를 한 번 더 해 가장 높은 값을 쓴다 — 잘 돌볼수록 높은 몫이 나오기 쉽지만 늘 최대는 아니다 */
+export const CARE_DAYS_PER_DRAW = 3
+export function inheritShare(cared: number, rnd: () => number): number {
+  const draws = 1 + Math.floor(Math.max(0, Math.min(cared, TODDLER_AT)) / CARE_DAYS_PER_DRAW)
+  let best = 0
+  for (let i = 0; i < draws; i++) best = Math.max(best, rnd())
+  return INHERIT_MIN + (INHERIT_MAX - INHERIT_MIN) * best
+}
+/** 아기 시기가 끝나는 아침에 한 번: 기록자의 능력치마다 쌓인 경험치의 몫(20~50%)을 아이에게 (타고난 값 보너스 없이 그대로) */
+export function inheritFromPlayer(c: Child, player: Stats, rnd: () => number): Child {
+  if (c.inherited !== undefined) return c
+  const share = inheritShare(c.cared ?? 0, rnd)
+  let stats = c.stats
+  for (const id of STAT_IDS) {
+    const xp = Math.floor(totalXp(player[id]) * share)
+    if (xp > 0) stats = addXp(stats, id, xp / (1 + BORN_BONUS * (stats[id]?.born ?? 0)))
+  }
+  return { ...c, stats, inherited: Math.round(share * 100) }
 }
 
 /** 세 추가 후보의 옛 아이에게 빠졌던 배우자 유전 한 칸만 복원한다. lean이 있어 중복 지급하지 않는다. */
@@ -228,6 +252,8 @@ export function sanitizeChild(raw: unknown): Child | null {
     ...(job ? { job, left: !!o.left, jobConfirmed: o.jobConfirmed !== false } : {}),
     ...(Object.keys(interests).length ? { interests } : {}),
     ...(close ? { close } : {}),
+    ...(typeof o.cared === 'number' && Number.isFinite(o.cared) && o.cared > 0 ? { cared: Math.min(TODDLER_AT, Math.floor(o.cared)) } : {}),
+    ...(typeof o.inherited === 'number' && Number.isFinite(o.inherited) ? { inherited: Math.max(0, Math.min(100, Math.round(o.inherited))) } : {}),
     ...(o.kidFlags && typeof o.kidFlags === 'object' ? { kidFlags: Object.fromEntries(Object.entries(o.kidFlags).filter((e): e is [string, number] => typeof e[1] === 'number' && Number.isFinite(e[1]))) } : {}),
     ...(o.wardrobe && typeof o.wardrobe === 'object' ? { wardrobe: o.wardrobe } : {}),
   }
