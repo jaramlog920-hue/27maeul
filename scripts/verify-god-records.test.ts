@@ -53,11 +53,17 @@ describe('verify-god-records.mjs', () => {
     expect(r.out).toContain('마태복음 파일에 다른 책(요) 구절')
   })
 
-  it('⑦ 한 장에 네 줄이면 실패', () => {
+  it('⑦ 한 장에서 같은 키워드가 네 줄이면 실패', () => {
     const r = bad('cap')
     expect(r.code).toBe(1)
-    expect(r.out).toContain('마 6장: 한 장에 3줄까지 (4줄)')
+    expect(r.out).toContain('마 6장 아심: 한 장에서 키워드마다 3줄까지 (4줄)')
     expect(r.out).toContain('오류 1개')
+  })
+
+  it('⑦-2 한 장에 키워드 둘이 세 줄씩(6줄)이면 통과 (2026-10-14 사용자)', () => {
+    const r = run('mat', 'scripts/fixtures/good-god-cap-two.txt')
+    expect(r.out).not.toContain('줄까지')
+    expect(r.code).toBe(0)
   })
 
   it('⑧ 여러 절 범위는 실패 — 한 줄에 한 절', () => {

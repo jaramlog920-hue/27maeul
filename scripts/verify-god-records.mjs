@@ -11,7 +11,7 @@
 // - 괄호 구간에 든 절이 아님 (catalog.ts `bracketed`와 같은 규칙 — 대괄호·둥근 괄호 구간과 그 안의 절)
 // - 키워드 이름이 keywords.txt에 있음
 // - 같은 (키워드, 구절) 줄이 두 번 없음
-// - 한 장에 3줄까지
+// - 한 장에서 키워드마다 3줄까지 (2026-10-14 사용자: 한 장에 거룩·인자 둘이면 6줄도 된다)
 // - god-records.json이 줄 파일과 같음 (전체 검사 때만)
 // 내용 판단(그 절이 그 키워드를 말하는지)은 opus 검토 + docs/content-audit.md에 적는다.
 // 사용: node scripts/verify-god-records.mjs [책 id] [픽스처.txt] — 픽스처를 주면 그 책 파일 대신 그 파일만 보고,
@@ -124,7 +124,8 @@ for (const f of files) {
     const key = `${r.name}|${r.ref}`
     if (seen.has(key)) fail(w, '같은 키워드·구절 줄이 두 번 있음')
     seen.add(key)
-    perChapter.set(s.chapter, (perChapter.get(s.chapter) ?? 0) + 1)
+    const ck = `${s.chapter}|${r.name}`
+    perChapter.set(ck, (perChapter.get(ck) ?? 0) + 1)
     const text = bible[book.id]?.[s.chapter - 1]?.[s.verse - 1]
     if (text === undefined) {
       fail(w, `${book.name}에 없는 절`)
@@ -133,7 +134,10 @@ for (const f of files) {
     if (noText(text)) fail(w, `본문이 없는 절 "${text}"`)
     else if (bracketed.has(r.ref)) fail(w, `괄호 구간에 든 절 — 하나님 기록 근거로 쓰지 않음 "${text}"`)
   }
-  for (const [ch, n] of perChapter) if (n > MAX_PER_CHAPTER) fail(`${where} ${book.abbr} ${ch}장`, `한 장에 ${MAX_PER_CHAPTER}줄까지 (${n}줄)`)
+  for (const [ck, n] of perChapter) {
+    const [ch, name] = ck.split('|')
+    if (n > MAX_PER_CHAPTER) fail(`${where} ${book.abbr} ${ch}장 ${name}`, `한 장에서 키워드마다 ${MAX_PER_CHAPTER}줄까지 (${n}줄)`)
+  }
 }
 
 if (!fixture && !bookArg) {
