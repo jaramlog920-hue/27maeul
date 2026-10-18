@@ -29,15 +29,15 @@ export function moodsOfText(text: string): Mood[] {
 export function moodsOf(pieceId: string): Mood[] {
   const hit = memo.get(pieceId)
   if (hit) return hit
-  let out: Mood[] = []
   try {
     const p = pieceById(pieceId)
-    out = moodsOfText(versesOf(p.ref).map((v) => v.text).join(' '))
+    const out = moodsOfText(versesOf(p.ref).map((v) => v.text).join(' '))
+    memo.set(pieceId, out)
+    return out
   } catch {
-    out = []
+    // 책 본문을 아직 불러오지 않았으면 빈 목록을 돌려주되 기억해 두지 않는다 — 불러온 뒤 다시 따진다 (2026-10-18 감사, Codex UI-06)
+    return []
   }
-  memo.set(pieceId, out)
-  return out
 }
 
 /** 부탁 필사에 쓰는 조각의 사실: 분위기·길이·그 장의 정성 도장 (계획 21 R3) */

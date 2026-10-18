@@ -132,6 +132,17 @@ function land(cell: Cell, rnd: () => number, ctx: { withChild: boolean }): Landi
 }
 
 /** 주사위 1–6 */
+/**
+ * 여행 판의 주사위·상자 씨앗: 세계·날·행선지·다녀온 횟수로 정한다. 판은 저장되지 않으므로, 새로 불러와 다시 떠나도
+ * 같은 주사위가 나온다 — 결과가 나쁘면 새로고침해 다시 굴리던 것을 막는다 (2026-10-18 감사 M-4)
+ */
+export function tripSeed(s: { clock: { day: number }; flags: Record<string, number>; gen?: { seed?: number } | null; avatar?: { name?: string } | null }, dest: string): number {
+  const world = s.gen?.seed ?? [...(s.avatar?.name ?? '')].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7)
+  let h = (world * 2654435761 + s.clock.day * 97 + (s.flags[`trip:${dest}`] ?? 0) * 7919) >>> 0
+  for (const c of dest) h = (h * 31 + c.charCodeAt(0)) >>> 0
+  return h
+}
+
 export function rollDie(rnd: () => number): number {
   return 1 + Math.min(5, Math.floor(rnd() * 6))
 }

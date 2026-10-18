@@ -75,6 +75,8 @@ describe('캔 약초는 장날 좌판에서 판다 (2026-10-05: 약방의 따로
     const sold = sell(s, 'herb')!
     expect(sold.inv.herb).toBe(1)
     expect(sold.coins).toBe(SELL_PRICES.herb)
-    expect(sellPrice({ stats: { ...freshStats(), charm: { level: 3, xp: 0, born: 0 } } }, 'herb')).toBe(SELL_PRICES.herb! + 1)
+    // 단계는 점수 20점마다 (2026-10-18 사용자 확인: 능력치 단계 개편은 의도) — 옛 구간 4의 시작(점수 56)이 3단계
+    expect(sellPrice({ stats: { ...freshStats(), charm: { level: 3, xp: 0, born: 0 } } }, 'herb')).toBe(SELL_PRICES.herb!)
+    expect(sellPrice({ stats: { ...freshStats(), charm: { level: 4, xp: 0, born: 0 } } }, 'herb')).toBe(SELL_PRICES.herb! + 1)
   })
 })

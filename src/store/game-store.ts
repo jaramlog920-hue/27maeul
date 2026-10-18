@@ -646,6 +646,8 @@ interface Store {
   submitDesk: (book: Book, chapter: number) => void
   /** 필사: 쓸 책을 고른다 (27권 어느 책이든) */
   copyBook: (book: CopyBook) => void
+  /** 화면 오류 창의 닫기: 장면이면 그 장면을 대기열에서 빼고 닫는다 (같은 장면이 다시 열려 오류가 되풀이되지 않게) */
+  skipBrokenScreen: () => void
   /** 다시 쓰기: 이미 마친 장을 처음부터 다시 옮겨 적는다 (횟수 제한 없음) */
   copyAgain: (book: CopyBook, chapter: number) => void
   /** 다시 쓰기를 그만둔다 */
@@ -777,7 +779,8 @@ export function storeAlbumImage(id: string, data: string | null) {
  * 프레임이 여는 장면과 별 보기가 바로 여는 장면이 함께 쓴다
  */
 function snapAlbum(sceneId: string, capture: ((focus?: Tile) => string | null) | null) {
-  if (timedGathering(sceneId) && albumImage(gatheringPhoto(sceneId))) return
+  // 해마다 오는 행사는 처음 찍은 사진을 남긴다. 잔치 저녁 모닥불처럼 다른 장면(아침 잔치)의 사진을 바꾸는 것은 막지 않는다 (2026-10-18 감사 L-15)
+  if (timedGathering(sceneId) && gatheringPhoto(sceneId) === sceneId && albumImage(sceneId)) return
   if ((isTravelEvent(sceneId) || isLibraryEvent(sceneId) || isTeaEvent(sceneId) || isBakeryEvent(sceneId) || isHomeRoom(sceneId) || sceneId === 'wedding:penelope' || sceneId === 'wedding:wendell' || sceneId === 'wedding:tilly' || sceneId === 'wedding:cosmo' || sceneId === 'wedding:juniper' || sceneId === 'wedding:poppy' || sceneId === 'wedding:presser' || sceneId === 'wedding:merchant' || sceneId === 'wedding:basil' || sceneId === 'wedding:marigold' || sceneId === 'wedding:postman' || sceneId === 'wedding:rudy' || sceneId === 'wedding:dexter' || sceneId === 'childBorn' || sceneId === 'pregnancy' || sceneId === 'fam:trip' || sceneId === 'fam:read' || sceneId === 'village:3' || sceneId === 'fullLibrary' || sceneId === 'lastManuscript' || sceneId === 'completeBible' || sceneId === 'bibleLastLetter' || (PROGRESS_KINDS as readonly string[]).includes(sceneId) || (LIVING_KINDS as readonly string[]).includes(sceneId) || sceneId.startsWith('firstDinner:') || sceneId.startsWith('facilityFinished:') || sceneId.startsWith('workSuccession:')) && albumImage(sceneId)) return
   const sc = SCENES[sceneId]
   const photo = sc?.photoFor ?? (sc?.album ? sceneId : null)
@@ -1018,7 +1021,13 @@ export const useGame = create<Store>((set, get) => {
     const { state: written, result } = writeVerse(game, book, text, CONTENT, false, puzzle)
     // 정성 필사 (계획 21 R2): 장을 마치면, 그 장을 모두 직접 쓰고 틀린 글자가 둘 이하였으면 도장
     let state = written
-    // 다시 쓴 장은 정성 도장·계절 장식·집 필사 조각을 다시 주지 않는다 (다시 쓰기의 몫은 엔진의 20% 조각뿐)
+    // 다시 쓴 장은 정성 도장·계절 장식·집 필사 조각을 다시 주지 않는다 (다시 쓰기의 몫은 엔진의 20% 조각뿐). 그 장의 정성 기록만 비운다
+    if (result.kind === 'chapter' && at && result.again !== undefined) {
+      const key = careKey(book, at.chapter)
+      const other = { ...(written.copyCareOther ?? {}) }
+      delete other[key]
+      state = { ...written, copyCare: written.copyCare?.at === key ? undefined : written.copyCare, copyCareOther: other }
+    }
     if (result.kind === 'chapter' && at && result.again === undefined) {
       const key = careKey(book, at.chapter)
       // 다른 책을 쓰다 돌아온 장이면 넣어 둔 기록으로 판단한다 (08-A)
@@ -1709,6 +1718,9 @@ export const useGame = create<Store>((set, get) => {
       // 아이가 태어난 장면을 본 뒤 이름을 정한다
       if (!modal && game.flags.childNaming && game.child) modal = { kind: 'childName' }
       if (!modal && game.flags.siblingNaming && game.siblings?.length) modal = { kind: 'childName' }
+      // 아침에 온 순위표·이사 편지가 아직 열리지 않았으면 (여행에서 돌아온 아침처럼 잠자리를 거치지 않은 경우) 장면 뒤에 연다 (2026-10-18 감사 M-15)
+      if (!modal && !get().piecePopups.length && game.rankPopup) modal = { kind: 'rank' }
+      else if (!modal && !get().piecePopups.length && game.farewellPopup) modal = { kind: 'farewell' }
       // 이웃 꿀팁 편지가 온 아침 (2026-10-14) — 장면·이름 정하기 뒤에
       if (!modal && game.flags.tipNew && game.tips?.length) {
         const flags = { ...game.flags }
@@ -1736,6 +1748,21 @@ export const useGame = create<Store>((set, get) => {
       const game = get().game
       const next = rememberTalkPopup(game, npc, line)
       if (next !== game) set({ game: persist(next) })
+    },
+    skipBrokenScreen: () => {
+      const m = get().modal
+      // 아침 순위표·이사 편지 창이 그리다 실패했으면 그 알림도 지운다 — 남아 있으면 프레임이 다시 열어 오류가 되풀이된다
+      if (m?.kind === 'rank' || m?.kind === 'farewell') {
+        const g = get().game
+        set({ game: persist({ ...g, ...(m.kind === 'rank' ? { rankPopup: undefined } : { farewellPopup: undefined }) }), modal: null })
+        return
+      }
+      if (m?.kind !== 'scene') return get().closeModal()
+      // 그리다 오류가 난 장면은 대기열에서 하나 뺀다 (본 것으로 치지 않으므로 앨범·보상은 없다)
+      const g = get().game
+      const i = g.scenes.indexOf(m.id)
+      const scenes = i < 0 ? g.scenes : [...g.scenes.slice(0, i), ...g.scenes.slice(i + 1)]
+      set({ game: scenes === g.scenes ? g : persist({ ...g, scenes }), modal: null })
     },
     closeModal: () => {
       if (get().piecePopups.length) { get().dismissPiecePopup(); return }

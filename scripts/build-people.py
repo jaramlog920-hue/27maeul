@@ -337,7 +337,7 @@ people["wendell"] = {
         E("wendell:research", "과자 연구", 2, TEA_FRONT,
           say("wendell", "쉿. 저 창문 너머 과자 보여요? 요즘 저거 사려고 줄을 서요. 제 빵 말고.")
           + say("wendell", "…부탁이 있어요. 하나만 사다 주실래요? 연구용이에요. 연구용."),
-          W(H(11), H(12), weather=DRY), req={"thread": {"id": "bread", "phase": [0, 1, 2, 3]}},
+          W(H(11), H(12), weather=DRY), req={"thread": {"id": "bread", "phase": [0, 1, 2, 3, 4]}},  # 4: 사건이 끝난 뒤에도 (웬델의 3단계 문턱은 이 이야기뿐 — 2026-10-18 감사 H-5)
           choices=[
               C("사다 준다", "warm", nar("웬델은 과자를 반으로 쪼개 한참 들여다보더니 한 입 먹었다.") + say("wendell", "…맛있다. 분하게 맛있어요. 버터를 먼저 녹였네."), "boughtCake"),
               C("“직접 들어가서 사요”", "tease", say("wendell", "그럼 제가 궁금해하는 거 들키잖아요!") + nar("결국 웬델은 모자를 푹 눌러쓰고 들어갔다. 파피가 바로 알아보고 웃었다."), "wentInside"),
@@ -346,7 +346,7 @@ people["wendell"] = {
         E("wendell:stalls", "나란한 좌판", 3, PLAZA_STALL_W,
           nar("장터, 웬델의 빵 좌판과 파피의 과자 좌판이 딱 붙어 있다.", "웬델이 빵을 한 줄씩 파피 쪽으로 슬금슬금 옮기고 있다.")
           + say("wendell", "…그냥, 햇빛 드는 쪽으로 옮기는 거예요."),
-          W(H(9), H(12), days=MARKET), req={"thread": {"id": "bread", "phase": [1]}},
+          W(H(9), H(12), days=MARKET), req={"thread": {"id": "bread", "phase": [1, 2]}},  # 1단계(8~11일)에는 장날이 없어 2단계(14일 장날)까지 (감사 L-55)
           choices=[
               C("“햇빛은 반대쪽이에요”", "tease", say("wendell", "…알아요.") + say("poppy", "알면 그만 옮기시죠, 빵집 아드님?") + nar("둘 다 웃음을 참다가 동시에 터뜨렸다."), "stallJoke"),
               C("빵 하나와 과자 하나를 같이 산다", "warm", say("wendell", "…둘 다요? 누구 게 더 맛있는지 꼭 말해 줘요. 아니, 말하지 마요."), "boughtBoth"),

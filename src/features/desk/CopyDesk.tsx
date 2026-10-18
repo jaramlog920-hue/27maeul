@@ -751,6 +751,10 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
   const wantEnter = useRef(false)
   const finish = (text: string) => {
     if (!checkCopy(text, spot.verse.text).done) return
+    // 절을 마치면 조합 상태도 끝낸다 — 늦게 온 compositionend가 다음 절의 입력으로 들어가지 않게 (2026-10-18 감사 M-8)
+    composing.current = false
+    wantEnter.current = false
+    setIme(false)
     lastSent.current = null
     captureCompletionView()
     useGame.getState().copyType(text, { composing: false })
@@ -843,7 +847,20 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
         : ''
   const label = fill(C.progress, { book: name, chapter: spot.chapter, unit: chapterUnit(book) })
   const nextBtn = (
-    <button type="button" className="copy-next primary" onMouseDown={(e) => e.preventDefault()} onClick={() => finish(value)}>
+    <button type="button" className="copy-next primary" onMouseDown={(e) => e.preventDefault()} onClick={() => {
+      // 조합 중이면 조합을 먼저 끝내고(엔터와 같게) 절을 마친다 (2026-10-18 감사 M-8)
+      if (composing.current) {
+        wantEnter.current = true
+        const el = box.current
+        if (el) {
+          el.blur()
+          el.focus()
+        }
+        if (composing.current) endComposition(el?.value ?? value)
+        return
+      }
+      finish(value)
+    }}>
       {C.enterNext}
     </button>
   )

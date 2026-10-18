@@ -158,7 +158,8 @@ describe('이웃', () => {
     render(<ModalLayer />)
     await user.click(screen.getByRole('button', { name: '선물하기' }))
     await user.click(screen.getByRole('button', { name: /포도 1/ }))
-    expect(screen.getByText('어머, 제가 좋아하는 거예요!')).toBeInTheDocument()
+    // 선물 반응은 공통 문구(giftReplies)로 바뀌었다
+    expect(screen.getByText(T.giftReplies.liked)).toBeInTheDocument()
     expect(useGame.getState().game.hearts.baker).toBe(3)
     expect(screen.getByRole('button', { name: '선물하기' })).toBeDisabled()
   })
@@ -854,7 +855,8 @@ describe('선반을 나눠 합친 뒤', () => {
     expect(useGame.getState().decorating).toBe('pick')
     act(() => useGame.getState().startDecorate('rug'))
     act(() => useGame.getState().tap(h(5, 5)))
-    expect(useGame.getState().game.room).toEqual([{ item: 'rug', ...h(5, 5) }])
+    // 놓을 때 고른 방향(기본 아래)이 함께 남는다 — 가구 방향 기능 (계획 17 작업 2)
+    expect(useGame.getState().game.room).toEqual([{ item: 'rug', ...h(5, 5), facing: 'down' }])
     act(() => useGame.getState().tap(h(5, 5)))
     expect(useGame.getState().game.room).toEqual([])
     expect(useGame.getState().game.inv.rug).toBe(1)
@@ -1089,7 +1091,7 @@ describe('방 꾸미기 누르기 (QA)', () => {
     useGame.setState({ decorating: 'vase' })
     useGame.getState().tap(h(3, 4))
     const g = useGame.getState().game
-    expect(g.room).toEqual([{ item: 'nightstand', ...h(3, 4) }, { item: 'vase', ...h(3, 4), on: true }])
+    expect(g.room).toEqual([{ item: 'nightstand', ...h(3, 4) }, { item: 'vase', ...h(3, 4), on: true, facing: 'down' }])
   })
   it('치우기에서는 깔개가 차지한 어느 칸을 눌러도 고르고, 한 번 더 누르면 치운다', () => {
     reset({ room: [{ item: 'rug', ...h(3, 5) }], inv: {} })

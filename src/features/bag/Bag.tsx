@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { fill, ITEM_TEXT, T } from '../../content/text'
+import { fill, ITEM_TEXT, itemName, T } from '../../content/text'
 import { canBind, chestOf, clockTargets, PANTRY_FOODS, pantryOf, playerTile, timeSpeed } from '../../engine/game'
 import { formatTime } from '../../engine/clock'
 import { CONTENT } from '../../content/catalog'
@@ -90,7 +90,7 @@ function ItemGrid({ items, picked, from, onPick }: { items: [ItemId, number][]; 
         const [id, n] = it
         const on = picked?.from === from && picked.id === id
         return (
-          <button key={id} className={`bag-slot${on ? ' on' : ''}`} aria-label={`${ITEM_TEXT[id].name} ${n}`} aria-pressed={on} onClick={() => onPick({ from, id })}>
+          <button key={id} className={`bag-slot${on ? ' on' : ''}`} aria-label={`${itemName(id)} ${n}`} aria-pressed={on} onClick={() => onPick({ from, id })}>
             <ItemIcon id={id} size={28} />
             {n > 1 && <b className="bag-count">{n}</b>}
           </button>
@@ -170,7 +170,7 @@ function Recipes() {
             <p>{T.ui.recipeNeeds}</p>
             <ul className="recipe-materials">
               {(Object.entries(selected.needs) as [ItemId, number][]).map(([id, n]) => (
-                <li key={id}><ItemIcon id={id} size={20} /><span>{ITEM_TEXT[id].name} {n}</span></li>
+                <li key={id}><ItemIcon id={id} size={20} /><span>{itemName(id)} {n}</span></li>
               ))}
             </ul>
             <p>{T.recipes[selected.id]}</p>
@@ -241,10 +241,10 @@ function Things() {
         <ItemIcon id={picked.id} size={32} />
         <div>
           <strong>
-            {ITEM_TEXT[picked.id].name} <b>{pickedN}</b>
+            {itemName(picked.id)} <b>{pickedN}</b>
             {from === 'bag' && isGear(picked.id) && wearing(game, picked.id) && <small className="gear-worn"> · {T.gear.worn}</small>}
           </strong>
-          <p>{ITEM_TEXT[picked.id].desc}</p>
+          <p>{ITEM_TEXT[picked.id]?.desc}</p>
         </div>
         {/* 단추는 설명 아래 한 줄에 같은 크기로 (2026-10-13 사용자: 끼기·버리기·그만두기가 어수선했다). 버리기를 누르면 그 줄이 확인 줄로 바뀐다 */}
         {asking && from === 'bag' ? (

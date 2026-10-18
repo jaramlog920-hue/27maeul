@@ -80,6 +80,8 @@ export default defineConfig({
     }),
   ],
   test: {
+    // 그림 내보내기 탐색(artifacts/)과 감사 하네스(qa/)는 게임 테스트가 아니다 — 기본 실행에서 빼야 파일을 덮어쓰거나 옛 서명으로 실패하지 않는다 (2026-10-18 감사 L-21)
+    exclude: ['**/node_modules/**', '**/dist/**', '**/.{idea,git,cache,output,temp}/**', 'artifacts/**', 'qa/**'],
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/setupTests.ts'],

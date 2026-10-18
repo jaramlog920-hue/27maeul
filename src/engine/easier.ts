@@ -105,8 +105,15 @@ export function stashOverflows(inv: Inventory, chest: Inventory | null, gives: I
   // 새 물건이 차지할 칸: 앞의 물건부터 남은 칸을 차례로 쓴다
   let free = Math.max(0, BAG_SLOTS - slotsUsed(inv))
   return (Object.entries(gives) as [ItemId, number][]).some(([id, n]) => {
-    if (TOOLS.includes(id) || n <= 0) return false
+    if (n <= 0) return false
     const fresh = count(inv, id) === 0
+    // 도구는 궤짝에 가지 않고 가방에 하나 — 새 도구는 가방 빈칸이 있어야 한다. 빈칸 없이 사면 돈만 나가고 도구가 사라졌다 (2026-10-18 감사, Codex E-08)
+    if (TOOLS.includes(id)) {
+      if (!fresh) return false
+      if (free <= 0) return true
+      free--
+      return false
+    }
     const fits = !fresh || free > 0
     if (fresh && fits) free--
     const bagRoom = fits ? Math.max(0, stackCap(inv) - count(inv, id)) : 0

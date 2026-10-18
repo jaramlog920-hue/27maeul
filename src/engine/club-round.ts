@@ -66,15 +66,23 @@ function setTask(s: GameState, id: string, task: GroupTaskProgress): GameState {
  */
 export function playRound(s: GameState, id: string, kind: RoundKind, guests: readonly string[], value: number): { state: GameState; good: boolean } {
   const marks = roundMarks(s, id)
-  const npc = guests[marks.length]
+  const prev = roundTask(s, id)
+  // 첫 차례에 정한 이웃으로 끝까지 — 도중에 누가 오가도 같은 이웃이 두 번 받거나 건너뛰어지지 않게
+  const cast = roundGuests(s, id, guests)
+  const npc = cast[marks.length]
   if (!npc || roundDone(s, id) || !canPlay(s, id)) return { state: s, good: false }
   const want = wantOf(npc, kind)
   const good = ROUND_MODE[kind] === 'hold' ? holdHit(want, value) : value === want
   const next = marks + (good ? '1' : '0')
-  const prev = roundTask(s, id)
-  let state = setTask(s, id, { stage: next.length >= guests.length ? 3 : 0, choice: prev?.choice ?? npc, selection: next })
+  let state = setTask(s, id, { stage: next.length >= cast.length ? 3 : 0, choice: prev?.choice ?? npc, selection: next, guests: [...cast] })
   if (good) state = heartUp(state, npc, GAIN.help)
   return { state, good }
+}
+
+/** 이 판의 차례 이웃: 이미 시작한 판이면 그때 정한 이웃, 아니면 지금 곁에 있는 이웃 (2026-10-18 감사 L-36) */
+export function roundGuests(s: Pick<GameState, 'plans' | 'clubSessions' | 'fests'>, id: string, now: readonly string[]): readonly string[] {
+  const kept = roundTask(s, id)?.guests
+  return kept?.length ? kept : now
 }
 
 /** 약속(모임·행사)에 함께 온 이웃 — 셋까지, 이 차례대로 */

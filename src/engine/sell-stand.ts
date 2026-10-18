@@ -32,10 +32,11 @@ function tradeValue(item: ItemId): number | undefined {
 export function standPrice(s: Pick<GameState, 'stats'>, item: ItemId): number | undefined {
   if (NOT_FOR_SALE.has(item)) return undefined
   const bonus = sellBonus(s.stats)
-  const furniture = FURNITURE_PRICES[item]
-  if (furniture !== undefined) return Math.floor(furniture * FURNITURE_RESALE_RATE) + bonus
+  // 상인 표·좌판 기본값이 있는 물건은 그 값이 먼저 (2026-10-18 사용자 결정, 감사 M-3)
   const sold = SELL_PRICES[item] ?? STALL_EXTRA[item]
   if (sold !== undefined) return Math.max(1, Math.round(sold * 0.8)) + bonus
+  const furniture = FURNITURE_PRICES[item]
+  if (furniture !== undefined) return Math.floor(furniture * FURNITURE_RESALE_RATE) + bonus
   const rare = RARE_PRICES[item]
   if (rare !== undefined) return Math.max(1, Math.round(rare / 2)) + bonus
   if (FURNITURE_DEFS[item]) {

@@ -23,11 +23,16 @@ export function villageRates(seed: number): number[] {
 /** 그날 다른 마을들의 서고 점수 (날마다 조금씩 들쭉날쭉, 줄지는 않는다) */
 export function villageScores(seed: number, day: number): number[] {
   const rates = villageRates(seed)
+  const raw = (r: number, i: number, d: number) => Math.max(0, Math.floor(r * d + mulberry32((seed + i * 977 + d * 31) >>> 0)() * 2))
+  // 들쭉날쭉(0~2점)이 하루 오름보다 클 수 있어 하루 사이에 점수가 줄기도 했다 — 최근 며칠 중 가장 높은 값을 써서 줄지 않게 (2026-10-18 감사 L-25).
+  // 가장 느린 마을(하루 0.6점)도 다섯 날이면 3점 넘게 올라 들쭉날쭉을 넘으므로, 그 창 안의 최댓값은 줄지 않는다
   return rates.map((r, i) => {
-    const wob = mulberry32((seed + i * 977 + day * 31) >>> 0)() * 2
-    return Math.max(0, Math.floor(r * day + wob))
+    let best = 0
+    for (let d = Math.max(0, day - SCORE_WINDOW); d <= day; d++) best = Math.max(best, raw(r, i, d))
+    return best
   })
 }
+const SCORE_WINDOW = 5
 
 const COPY_REQ = /^req:(\d+:\d+$|gen:|growth:board)/
 

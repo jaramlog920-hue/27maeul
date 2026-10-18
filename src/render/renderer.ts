@@ -684,9 +684,26 @@ function drawBush(g: Ctx, x: number, y: number, season: Season) {
 
 /** 계절과 집 단계마다 한 장 (집을 넓히면 그 칸들의 그림이 바뀐다) */
 const mapCache = new Map<string, HTMLCanvasElement>()
+/**
+ * 지도 그림은 최근 것 몇 장만 남긴다 — 벽을 세우거나 허물 때마다 키가 바뀌어 지도 한 장(약 8MB)씩 쌓이고 지워지지 않았다 (2026-10-18 감사 M-9)
+ */
+const MAP_CACHE_MAX = 12
+function cachedMap(key: string): HTMLCanvasElement | undefined {
+  const c = mapCache.get(key)
+  if (c) {
+    // 최근에 쓴 것으로 뒤에 다시 둔다
+    mapCache.delete(key)
+    mapCache.set(key, c)
+  }
+  return c
+}
+function keepMap(key: string, c: HTMLCanvasElement) {
+  mapCache.set(key, c)
+  while (mapCache.size > MAP_CACHE_MAX) mapCache.delete(mapCache.keys().next().value!)
+}
 function mapFor(season: Season): HTMLCanvasElement {
   const cacheKey = `${season}/${currentHomeLevel()}/${openDoors().join(',')}/${currentSpouseRoom()?.id ?? ''}/${newlandOpen() ? 'nl' : ''}/${homeWallsKey()}`
-  let c = mapCache.get(cacheKey)
+  let c = cachedMap(cacheKey)
   if (c) return c
   c = document.createElement('canvas')
   c.width = WIDTH * TILE
@@ -743,7 +760,7 @@ function mapFor(season: Season): HTMLCanvasElement {
     const wall = ['wendell', 'marigold', 'tilly', 'postman'].includes(spouse.id) ? `${spouse.id}-wall` : spouse.id === 'cosmo' ? 'cosmo-keepsake' : null
     if (wall) g.drawImage(paint(`spouse-wall/${wall}`, SPOUSE_ROOM_ART[wall].rows, FURNI_PALETTE), (SPOUSE_ROOM.x0 + (spouse.id === 'cosmo' || spouse.window.x === 1 ? 4 : 1)) * TILE, SPOUSE_ROOM.y0 * TILE)
   }
-  mapCache.set(cacheKey, c)
+  keepMap(cacheKey, c)
   return c
 }
 
@@ -3116,7 +3133,7 @@ const STONE_TINT: Record<TripCell, string> = {
 
 function tripMapFor(dest: 'harbor' | 'hillTown', season: Season): HTMLCanvasElement {
   const key = `trip/${dest}/${season}`
-  let c = mapCache.get(key)
+  let c = cachedMap(key)
   if (c) return c
   const layout = tripLayout(dest)
   c = document.createElement('canvas')
@@ -3266,7 +3283,7 @@ function tripMapFor(dest: 'harbor' | 'hillTown', season: Season): HTMLCanvasElem
       }),
     )
   })
-  mapCache.set(key, c)
+  keepMap(key, c)
   return c
 }
 

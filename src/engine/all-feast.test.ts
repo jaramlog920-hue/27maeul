@@ -8,6 +8,10 @@ import { scheduledEvents } from './events'
 import { goToSleep, newGame, sceneSeen, tick, type GameState } from './game'
 import { allShelved, feastToday } from './library'
 import { FESTIVAL_SPOTS } from './neighbors'
+import { isMarketDay } from './calendar'
+import { ALL_FEAST_FIRE, onceKey } from './stories'
+/** 그날 저녁 모닥불 곁에 앉았다 (모닥불 장면을 본 표식) */
+const sawFire = (s: GameState): GameState => ({ ...s, flags: { ...s.flags, [onceKey(ALL_FEAST_FIRE, s.clock.day)]: 1 } })
 import { BOOKS } from './types'
 
 const zero = () => 0
@@ -58,13 +62,56 @@ describe('스물일곱 권 잔치 — 조건과 한 번뿐', () => {
     expect(feastToday(s)).toBe(true)
     // 복음서 방 잔치는 그대로 지난 것
     expect(s.flags.gospelFeast).toBe(2)
-    const s2 = sleep(s)
+    const s2 = sleep(sawFire(s))
     expect(s2.scenes).not.toContain('allFeast')
     expect(s2.flags.allFeast).toBe(2)
     expect(feastToday(s2)).toBe(false)
     const s3 = sleep(s2)
     expect(s3.scenes).not.toContain('allFeast')
     expect(s3.flags.allFeast).toBe(2)
+  })
+  it('①-1 잔치 날 저녁 모닥불을 보지 못하고 자면 다음 장날로 미룬다 (2026-10-18 사용자 결정, 감사 L-8)', () => {
+    let s = goToSleep(night(2, ALL, true), CONTENT)
+    expect(s.flags.allFeast).toBe(1)
+    s = sleep(s)
+    expect(s.flags.allFeast).toBe(3)
+    expect(feastToday(s)).toBe(false)
+    const at = s.flags.allFeastAt!
+    expect(isMarketDay(at)).toBe(true)
+    while (s.clock.day < at) {
+      expect(s.scenes).not.toContain('allFeast')
+      s = sleep(s)
+    }
+    expect(s.flags.allFeast).toBe(1)
+    expect(s.scenes).toContain('allFeast')
+    expect(sleep(sawFire(s)).flags.allFeast).toBe(2)
+  })
+  it('①-2 미룬 스물일곱 권 잔치를 다시 열면 기억 정원의 잔치 날도 그날로', () => {
+    let s = sleep(goToSleep(night(2, ALL, true), CONTENT))
+    expect(s.flags.allFeast).toBe(3)
+    const at = s.flags.allFeastAt!
+    while (s.clock.day < at) s = sleep(s)
+    expect(s.flags.allFeast).toBe(1)
+    expect(s.flags.allFeastDay).toBe(s.clock.day)
+  })
+  it('①-3 복음서 방 잔치를 미뤄 둔 사이 스물일곱 권이 다 꽂히면 복음서 방 잔치는 건너뛴다', () => {
+    const s = sleep(night(10, ALL, true, { flags: { ...newGame(CONTENT).flags, ...OPEN, churchesDone: 1, gospelFeast: 3, gospelFeastAt: 14 } }))
+    expect(s.flags.gospelFeast).toBe(2)
+    expect(s.flags.gospelFeastAt).toBeUndefined()
+    let t = s
+    for (let i = 0; i < 10; i++) {
+      t = sleep(t)
+      expect(t.scenes).not.toContain('gospelFeast')
+    }
+  })
+  it('①-4 미룬 잔치는 내 결혼 잔치 날 저녁에 다시 열지 않는다', () => {
+    let s = sleep(goToSleep(night(2, ALL, true), CONTENT))
+    const at = s.flags.allFeastAt!
+    while (s.clock.day < at - 1) s = sleep(s)
+    s = { ...s, romance: { ...s.romance, stage: 'engaged', partner: 'wendell', weddingDay: at } }
+    s = sleep(s)
+    expect(s.clock.day).toBe(at)
+    expect(s.flags.allFeast).toBe(3)
   })
   it('② 아기 잔치 날과 겹치면 하루 미룬다', () => {
     expect(isWet(weatherOf(22))).toBe(false)
@@ -165,7 +212,7 @@ describe('스물일곱 권 잔치 — 앨범과 그 뒤', () => {
     expect(seen.album.filter((a) => a.id === 'allFeast')).toHaveLength(1)
   })
   it('⑥ 잔치 뒤에도 하루가 그대로 이어진다 — 결말 장면 없음, 모닥불 자리로 모이지 않는다', () => {
-    let s = goToSleep(night(2, ALL, true), CONTENT)
+    let s = sawFire(goToSleep(night(2, ALL, true), CONTENT))
     for (let i = 0; i < 4; i++) {
       s = sleep(s)
       expect(s.flags.allFeast).toBe(2)

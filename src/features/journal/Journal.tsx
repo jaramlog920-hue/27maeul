@@ -181,8 +181,8 @@ function OtherGifts({ game }: { game: GameState }) {
         {rest.map((id) => (
           <li key={id}>
             <ItemIcon id={id} />
-            <span className="bag-name">{ITEM_TEXT[id].name}</span>
-            <span className="bag-desc">{ITEM_TEXT[id].desc}</span>
+            <span className="bag-name">{itemName(id)}</span>
+            <span className="bag-desc">{ITEM_TEXT[id]?.desc}</span>
           </li>
         ))}
       </ul>

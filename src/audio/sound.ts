@@ -127,10 +127,22 @@ const ECHO_WET = 0.35
 /** 배경음 전체에 거는 마지막 거름 — 높은 쪽 날카로움을 덜어낸다 */
 const MUSIC_LOWPASS = 3800
 
+let hiddenNow = false
+/**
+ * 창이 가려지면(다른 앱·탭) 소리를 멈추고, 다시 보이면 잇는다 — 숨긴 동안 배경음·빗소리가 계속 울렸다 (2026-10-18 감사 M-10)
+ */
+export function setAudioHidden(hidden: boolean) {
+  hiddenNow = hidden
+  if (!ctx) return
+  if (hidden) void ctx.suspend().catch(() => {})
+  else if (ctx.state !== 'running') void ctx.resume().catch(() => {})
+}
+
 /** 첫 사용자 입력 때 부른다 */
 export function unlockAudio() {
   if (ctx) {
-    if (ctx.state === 'suspended') void ctx.resume()
+    // iOS는 전화·다른 앱 소리가 끼어들면 'interrupted'가 된다 — 멈춰 있으면 무엇이든 다시 켠다 (2026-10-18 감사)
+    if (ctx.state !== 'running' && !hiddenNow) void ctx.resume()
     return
   }
   const AC = (globalThis as unknown as { AudioContext?: typeof AudioContext; webkitAudioContext?: typeof AudioContext }).AudioContext ??

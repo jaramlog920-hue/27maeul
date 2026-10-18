@@ -7,7 +7,8 @@ import { pieceById } from '../../content/catalog'
 import { itemName, T } from '../../content/text'
 import { STAT_IDS, type StatId } from '../../engine/stats'
 import { DESTS, tripCost, type DestId } from '../../engine/travel'
-import { canExtend, extendTurns, EXTRA_PRICE, EXTRA_TURNS, NEW_BOARD, playTurn, rollDie, stoneTile, TRIP_TURNS, walkPath, type BoardState, type TripReward } from '../../engine/trip-board'
+import { canExtend, extendTurns, EXTRA_PRICE, EXTRA_TURNS, NEW_BOARD, playTurn, rollDie, stoneTile, TRIP_TURNS, tripSeed, walkPath, type BoardState, type TripReward } from '../../engine/trip-board'
+import { mulberry32 } from '../../engine/offers'
 import type { Facing, ItemId } from '../../engine/types'
 import { TILE, VIEW_W } from '../../engine/world'
 import { createTripRenderer, type TripActor } from '../../render/renderer'
@@ -71,6 +72,8 @@ function Face() {
 
 export function TripScene({ dest, withChild }: { dest: DestId; withChild: boolean }) {
   const game = useGame((s) => s.game)
+  // 이 판의 주사위 — 떠날 때의 세계·날·행선지로 정해진다 (새로고침해 다시 떠나도 같은 주사위, 감사 M-4)
+  const [dice] = useState(() => mulberry32(tripSeed(useGame.getState().game, dest)))
   const modal = useGame((s) => s.modal)
   const finish = useGame((s) => s.finishTripBoard)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -185,7 +188,7 @@ export function TripScene({ dest, withChild }: { dest: DestId; withChild: boolea
 
   const roll = () => {
     if (walking || board.done || modal) return
-    const rnd = useGame.getState().rng
+    const rnd = dice
     const n = rollDie(rnd)
     const r = playTurn(board, n, rnd, { withChild })
     pending.current = { board: r.board, rewards: r.landing.rewards, lap: r.landing.say === 'lap', say: r.landing.say }

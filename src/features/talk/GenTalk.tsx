@@ -10,6 +10,17 @@ import { has, take } from '../../engine/items'
 import { t } from '../../shared/i18n'
 import { useGame } from '../../store/game-store'
 import { applyLifeState } from '../work/WorkDay'
+import { slotOfPerson } from '../../engine/gen-growth'
+
+/**
+ * 주민 결혼 준비·아기 침대의 마음은 그 사람의 이웃 자리(후계자면 이어받은 자리)에 — 사람 id('g-0001')에 쌓이면 보이지 않았다.
+ * 이웃 자리가 아닌 주민은 마음 칸이 없으므로 건너뛴다 (2026-10-18 감사 L-49)
+ */
+function heartUpPerson(s: GameState, pid: string): GameState {
+  const heir = slotOfPerson(s.gen ?? undefined, pid)
+  const slot = neighborById(heir) ? heir : s.gen?.persons[pid]?.npc
+  return slot && neighborById(slot) ? heartUp(s, slot, PREP_GAIN) : s
+}
 import { bakerCribWaiting, makeBakerCrib } from '../../engine/baker-baby'
 
 const G = T.gen
@@ -111,7 +122,7 @@ function AutonomousGenTalk({ npc }: { npc: string }) {
                 const ng = cur.gen && helpPrep(cur.gen, prep.id, todo)
                 if (!inv || !ng) return
                 let next: GameState = { ...cur, inv, gen: ng }
-                next = heartUp(heartUp(next, prep.a, PREP_GAIN), prep.b, PREP_GAIN)
+                next = heartUpPerson(heartUpPerson(next, prep.a), prep.b)
                 commit(next, G.prepThanks)
               }}
             >
@@ -145,7 +156,7 @@ function AutonomousGenTalk({ npc }: { npc: string }) {
                 if (!inv || !ng) return
                 const [a, b] = cribMine.members
                 let next: GameState = { ...cur, inv, gen: ng }
-                next = heartUp(heartUp(next, a, PREP_GAIN), b, PREP_GAIN)
+                next = heartUpPerson(heartUpPerson(next, a), b)
                 commit(next, G.cribThanks)
               }}
             >

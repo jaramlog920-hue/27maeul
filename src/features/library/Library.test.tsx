@@ -211,6 +211,8 @@ describe('스물일곱 번째 책', () => {
       await user.click(within(screen.getByRole('dialog', { name: '말씀조각 획득' })).getByRole('button', { name: /닫기|다음 조각/ }))
     }
     await user.click(screen.getByRole('button', { name: '바로 꽂기' }))
+    // 마지막 책을 꽂으면 먼저 '스물일곱 권이 모인 날' 장면 — 완성 기록 보기로 서고 완성 창 (2026-10-13 완성 장면)
+    await user.click(within(screen.getByRole('dialog', { name: '스물일곱 권이 모인 날' })).getByRole('button', { name: '완성 기록 보기' }))
     const dialog = screen.getByRole('dialog', { name: '스물일곱 권의 서고' })
     const [then, now] = within(dialog).getAllByRole('figure')
     expect(then.querySelectorAll('.spine-slot')).toHaveLength(27)

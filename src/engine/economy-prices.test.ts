@@ -5,6 +5,8 @@ import { ADDITION_FURNITURE } from './furniture-additions'
 import { TRADES, trade, tradeOnMarket, chapterGift, newGame, startCopy, writeVerse, HOME_STAGES } from './game'
 import { legacyGame } from './growth-test-support'
 import { standPrice, standSell } from './sell-stand'
+import { STALL_EXTRA, stallBase } from './stall'
+import { SELL_PRICES } from './merchant-selling'
 import { copyVerses } from './copying'
 import { TEA_PRICE } from './places'
 import { DATE_TEA_PRICE } from './romance'
@@ -20,6 +22,13 @@ describe('생활 물가 조정', () => {
     expect(HOME_STAGES.map(s => s.coins)).toEqual([2500, 4000, 6000])
     for (const [id, price] of [['homeKey', 8000], ['speedClock', 5000], ['setClock', 10000]] as const) expect(TRADES.find(t => t.id === id)?.coins).toBe(price)
   })
+  it('직접 만든 과일 그릇·말린 꽃은 좌판·매대에서 원래 값으로 (2026-10-18 사용자 결정, 감사 M-3)', () => {
+    const g = legacyGame(CONTENT)
+    expect(stallBase(g, 'fruitBowl')).toBe(STALL_EXTRA.fruitBowl)
+    expect(stallBase(g, 'dryFlowers')).toBe(STALL_EXTRA.dryFlowers)
+    expect(standPrice(g, 'fruitBowl')).toBe(Math.max(1, Math.round(STALL_EXTRA.fruitBowl! * 0.8)))
+    expect(standPrice(g, 'dryFlowers')).toBe(Math.max(1, Math.round(STALL_EXTRA.dryFlowers! * 0.8)))
+  })
   it('모든 가구의 교환 비용이 소매가를 충족하고 사고 바로 팔아 차익을 낼 수 없다', () => {
     const g = legacyGame(CONTENT)
     for (const t of TRADES) {
@@ -28,7 +37,8 @@ describe('생활 물가 조정', () => {
       const retail = FURNITURE_PRICES[item]!
       const cost = (t.coins ?? 0) + barterValue(t.pay)
       expect(cost, t.id).toBeGreaterThanOrEqual(retail)
-      expect(standPrice(g, item), t.id).toBe(Math.floor(retail / 2))
+      // 좌판 기본값이 있는 물건(직접 만드는 과일 그릇·말린 꽃)은 그 값으로 판다 — 가구 소매가의 절반이 아니다 (2026-10-18 사용자 결정, 감사 M-3)
+      if (STALL_EXTRA[item] === undefined && SELL_PRICES[item] === undefined) expect(standPrice(g, item), t.id).toBe(Math.floor(retail / 2))
       expect(standPrice(g, item)!, t.id).toBeLessThan(cost)
       const day = Array.from({length: 10}, (_, i) => (i + 1) * 7).find(d => tradeOnMarket(t, d))!
       const before = { ...g, coins: 2000, flags: { ...g.flags, 'unlock:moreTrades': 1, moreTrades: 1 }, clock: { day, minute: 600 }, inv: { ...t.pay } }

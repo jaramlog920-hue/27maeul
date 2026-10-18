@@ -27,6 +27,8 @@ export interface ClubSession {
  task?:GroupTaskProgress
 }
 export const CLUB_MAX=3
+/** 해산한 모임 기록을 저장에 남기는 수 */
+export const CLUB_HISTORY_MAX=30
 export const CLUB_SLOTS: Record<ClubSlot,readonly [number,number]>={morning:[600,720],afternoon:[840,960],evening:[1080,1200]}
 export type ClubInput=Omit<Club,'id'|'active'|'paused'>
 export const clubApptId=(club:string,day:number)=>`${club}:day:${day}`
@@ -86,7 +88,9 @@ export function createClub(s:GameState,input:ClubInput,content:GameContent,editI
   const check=availability(s,member,day,from,to,content)
   if(check!=='ok') return {state:s,error:check.busy}
  }
- const id=editId??`club:${Math.max(0,...clubs.map(c=>Number(c.id.split(':')[1])||0))+1}`
+ // 해산한 모임이나 남은 약속이 쓰던 번호는 다시 쓰지 않는다 (2026-10-18 감사 H-3)
+ const used=[...clubs.map(c=>c.id),...s.plans.appts.map(a=>a.clubId).filter((x):x is string=>typeof x==='string')]
+ const id=editId??`club:${Math.max(0,...used.map(x=>Number(x.split(':')[1])||0))+1}`
  const club:Club={...input,id,name:input.name.trim(),members:[...new Set(input.members)],active:true,paused:false}
  let next={...s,clubs:editId?clubs.map(c=>c.id===id?club:c):[...clubs,club]}
  // Edits affect the next session; a running session keeps its original cast and venue.
@@ -173,7 +177,11 @@ export function finishClub(s:GameState,id:string,result:'home'|'club'='home'):Ga
 export function sanitizeClubs(raw:unknown):Club[] {
  if(!Array.isArray(raw)) return []
  const ids=new Set<string>()
- return raw.filter((c):c is Club=>!!c && typeof c.id==='string' && !ids.has(c.id) && !nameProblem(c.name??'') && CLUB_ACTIVITIES.includes(c.activity) && CLUB_PLACES.includes(c.place) && Array.isArray(c.members) && c.members.length>0 && c.members.length<=3 && c.members.every((id:unknown)=>typeof id==='string') && Number.isInteger(c.weekday) && c.weekday>=0 && c.weekday<=6 && c.slot in CLUB_SLOTS && !!ids.add(c.id)).slice(0,CLUB_MAX).map(c=>({...c,active:c.active!==false,paused:c.paused===true}))
+ const valid=raw.filter((c):c is Club=>!!c && typeof c.id==='string' && !ids.has(c.id) && typeof c.name==='string' && !nameProblem(c.name) && CLUB_ACTIVITIES.includes(c.activity) && CLUB_PLACES.includes(c.place) && Array.isArray(c.members) && c.members.length>0 && c.members.length<=3 && c.members.every((id:unknown)=>typeof id==='string') && Number.isInteger(c.weekday) && c.weekday>=0 && c.weekday<=6 && c.slot in CLUB_SLOTS && !!ids.add(c.id)).map(c=>({...c,active:c.active!==false,paused:c.paused===true}))
+ // 활성 모임은 앞에서 CLUB_MAX개까지, 해산한 모임은 기록으로 최근 것만 남긴다 — 해산 기록이 앞에 있어도 활성 모임이 잘리지 않게 (2026-10-18 감사 H-3)
+ const history=new Set(valid.filter(c=>!c.active).slice(-CLUB_HISTORY_MAX).map(c=>c.id))
+ let active=0
+ return valid.filter(c=>c.active ? active++<CLUB_MAX : history.has(c.id))
 }
 export function sanitizeClubSessions(raw:unknown):Record<string,ClubSession> {
  if(!raw || typeof raw!=='object') return {}

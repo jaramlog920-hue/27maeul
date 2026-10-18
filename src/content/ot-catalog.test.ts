@@ -101,7 +101,8 @@ describe('메인 번들에 구약 본문이 없다', () => {
   const otDir = path.join(assets, 'ot')
   it.skipIf(!existsSync(otDir))('빌드 산출물: 메인 청크에 구약 본문이 없고, 구약 책 청크는 39권이 assets/ot/에 따로 있다', () => {
     const files = readdirSync(assets).filter((f) => f.endsWith('.js'))
-    const main = files.find((f) => f.startsWith('index-'))!
+    // 메인 청크 이름은 rollup 입력 열쇠를 따른다 (vite.config.ts의 input.game → game-*). 예전 이름 index-*도 받는다 (2026-10-18 감사 L-20)
+    const main = files.find((f) => f.startsWith('game-') || f.startsWith('index-'))!
     const mainText = readFileSync(path.join(assets, main), 'utf8')
     expect(mainText).not.toContain('태초에 하나님이 천지를 창조하시니라')
     expect(mainText).not.toContain('여호와는 나의 목자시니')

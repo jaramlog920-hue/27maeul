@@ -213,7 +213,11 @@ export function kidWorkSpot(b: Build): Tile | null {
 export const KID_WORK_MILESTONES = [3, 10] as const
 export function visitKidWork<T extends S & Pick<GameState, 'inv' | 'child'>>(s: T): { state: T; dish?: ItemId; milestone?: number } | null {
   const job = kidWorkJob(s)
-  if (!job || !doneOf(s, 'kidWork') || s.flags.kidWorkDay === s.clock.day) return null
+  // 함께하는 아이의 일터여야 한다 (주인 없는 옛 기록은 그 아이 몫) — 이웃 자녀·동생의 일터로 들르거나,
+  // 아이를 바꿔 가며 한 채에서 하루 여러 번 접시를 받던 것을 막는다 (2026-10-18 감사 M-5)
+  const mine = s.child ? `me:${s.child.born}` : null
+  const own = buildsOf(s).some((b) => b.kind === 'kidWork' && b.state === 'done' && (b.owner === undefined || b.owner === mine))
+  if (!job || !own || s.flags.kidWorkDay === s.clock.day) return null
   const visits = (s.flags.kidWorkVisits ?? 0) + 1
   const milestone = (KID_WORK_MILESTONES as readonly number[]).includes(visits) ? visits : undefined
   const flags = { ...s.flags, kidWorkDay: s.clock.day, kidWorkVisits: visits, ...(milestone ? { [`kidWorkMile:${milestone}`]: s.clock.day } : {}) }
@@ -255,6 +259,17 @@ export function canMendQuarrel(s: Pick<GameState, 'flags' | 'newland'>): boolean
 
 export type FacilityKind = 'guest' | 'memorial' | 'courtyard' | 'weaver' | 'gallery' | 'settled' | 'kidWork' | 'family' | 'emptyHome'
 /** 이 칸에서 여는 시설 (완공된 것만): 문이 있는 건물은 문·문 앞, 열린 마당은 안쪽 칸 */
+/** 이 칸(문·문 앞·서는 칸)의 완성된 집 겸 일터 건물 — 여러 채일 때 누른 그 건물 (2026-10-18 감사, Codex E-02) */
+export function kidWorkBuildAt(s: Pick<GameState, 'newland'>, t: Tile): Build | null {
+  for (const b of buildsOf(s)) {
+    if (b.state !== 'done' || b.kind !== 'kidWork') continue
+    const d = doorOf(b.kind, b.x, b.y, b.facing, b.size)
+    const st = standSpotOf(b)
+    if (d && ((d.door.x === t.x && d.door.y === t.y) || (d.front.x === t.x && d.front.y === t.y) || (st && st.x === t.x && st.y === t.y))) return b
+  }
+  return null
+}
+
 export function facilityAt(s: Pick<GameState, 'newland'>, t: Tile): FacilityKind | null {
   for (const b of buildsOf(s)) {
     if (b.state !== 'done') continue

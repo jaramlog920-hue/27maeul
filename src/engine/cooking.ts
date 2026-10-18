@@ -65,6 +65,8 @@ export interface CookRun {
   /** 아이가 접시를 골라 줬는가 (-1 아니오, 아니면 고른 모습) */
   kid: number
   uneven: boolean
+  /** 체험 단계에서 배우지 않고 시작한 허브차 (저장을 다시 불러와도 이어 만든다) */
+  preview?: true
 }
 export interface TableMeal { id: string; day: number; item: ItemId; left: number; space: string; ate: string[] }
 export interface Cooking {
@@ -112,7 +114,8 @@ export function startCook(s: GameState, dish: DishId, rng: Rng): GameState {
   const def = DISHES[dish]
   const paid = useStock(s, def.needs)!
   const uneven = mulberry32(s.clock.day * 977 + NEW_DISHES.indexOf(dish) * 31 + (cookOf(s).made[dish] ?? 0))() < UNEVEN_CHANCE
-  return withCooking(paid, { run: { dish, day: s.clock.day, phase: 'hand', hand: 0, mini: startMini(def.hands[0], rng), look: 0, kid: -1, uneven } })
+  const preview = !knownDish(s, dish)
+  return withCooking(paid, { run: { dish, day: s.clock.day, phase: 'hand', hand: 0, mini: startMini(def.hands[0], rng), look: 0, kid: -1, uneven, ...(preview ? { preview: true as const } : {}) } })
 }
 function handRun(s: GameState): CookRun | null {
   const r = cookOf(s).run
@@ -365,15 +368,18 @@ export function sanitizeCooking(raw: unknown): Cooking | undefined {
   for (const d of NEW_DISHES) {
     const lk = (r.looks as Record<string, unknown> | undefined)?.[d], mk = (r.made as Record<string, unknown> | undefined)?.[d]
     if (lk === 0 || lk === 1) looks[d] = lk
-    if (isNat(mk)) made[d] = mk
+    // 많이 만든 횟수는 0으로 되돌리지 않고 상한에서 멈춘다 (2026-10-18 감사 L-29)
+    if (Number.isInteger(mk) && (mk as number) >= 0) made[d] = Math.min(mk as number, 99999)
   }
   const out: Cooking = { learned, looks, made, meals: isNat(r.meals, 99999) ? r.meals : 0, breadShape: r.breadShape === 1 ? 1 : 0 }
   const run = r.run as Partial<CookRun> | undefined
   if (run && typeof run === 'object' && NEW_DISHES.includes(run.dish as DishId) && isNat(run.day, 99999) && ['hand', 'finish', 'ready'].includes(run.phase as string)) {
     const def = DISHES[run.dish as DishId]
     const hand = isNat(run.hand, 9) ? Math.min(run.hand, def.hands.length - 1) : 0
-    if (knownDish({ cooking: { ...out } }, run.dish as DishId)) {
-      out.run = { dish: run.dish as DishId, day: run.day as number, phase: run.phase as CookRun['phase'], hand, look: run.look === 1 ? 1 : 0, kid: run.kid === 0 || run.kid === 1 ? run.kid : -1, uneven: run.uneven === true,
+    // 체험 단계의 허브차는 배우지 않아도 시작할 수 있고 재료도 이미 썼다 — 그렇게 시작한 표식이 있으면 다시 불러와도 이어 만든다 (2026-10-18 감사 M-14)
+    const preview = run.dish === 'herbTea' && run.preview === true
+    if (knownDish({ cooking: { ...out } }, run.dish as DishId) || preview) {
+      out.run = { dish: run.dish as DishId, day: run.day as number, phase: run.phase as CookRun['phase'], hand, look: run.look === 1 ? 1 : 0, kid: run.kid === 0 || run.kid === 1 ? run.kid : -1, uneven: run.uneven === true, ...(preview ? { preview: true as const } : {}),
         mini: run.phase === 'hand' ? startMini(def.hands[hand], () => 0.5) : undefined }
     }
   }

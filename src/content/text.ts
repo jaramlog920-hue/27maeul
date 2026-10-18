@@ -92,6 +92,8 @@ for (const [id, lines] of Object.entries(PEOPLE_MORE.closeFriend)) if (NEIGHBOR_
 }
 export const ITEM_TEXT = lifeText.items as Record<ItemId, { name: string; desc: string }>
 for(const a of WEDDING_ATTIRE)ITEM_TEXT[a.item]={name:a.name,desc:'장날에 산 결혼 예복. 약혼자에게 선물하면 결혼식에 입고 온다. 내 가방에 있으면 결혼식에서 골라 입을 수 있다.'}
+// 장날 거래판의 예복 이름도 같이 (2026-10-18 감사 M-11 — 거래 이름이 비어 아이콘만 보였다)
+for(const a of WEDDING_ATTIRE)(T.trades as Record<string,string>)[a.item]=a.name
 for (const [id, f] of Object.entries(FIXTURES)) ITEM_TEXT[id as ItemId] = { name: f.name, desc: '집의 어느 방으로든 옮길 수 있다.' }
 // 생활 가구 48종 (2026-10-12): 장날 생활 가구 줄 이름도 같이
 for (const [id, a] of Object.entries(ADDITION_FURNITURE)) {

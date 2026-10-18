@@ -3,7 +3,8 @@ import { FIRE } from './neighbors'
 import { FESTIVAL_FROM, FESTIVAL_TO, festivalOf } from './calendar'
 import { canAttendAppt } from './plans'
 
-export interface GroupTaskProgress { stage: number; choice?: string; selection?: string }
+/** guests: 한 판(ClubRound)을 시작할 때 정한 차례 이웃 — 판 도중 모닥불 곁 이웃이 바뀌어도 그대로 (2026-10-18 감사 L-36) */
+export interface GroupTaskProgress { stage: number; choice?: string; selection?: string; guests?: string[] }
 /** 손일 진행만 저장한다. 보상은 원래 회차 정산 한 곳에서 지급한다. */
 export function advanceGroupTask(s:GameState,id:string,stage:number,choice?:string):GameState {
  if((s.map ?? 'village')!=='village') return s
@@ -26,5 +27,5 @@ export function advanceGroupTask(s:GameState,id:string,stage:number,choice?:stri
 export function cleanGroupTask(raw:unknown):GroupTaskProgress|undefined {
  if(!raw||typeof raw!=='object')return undefined
  const r=raw as GroupTaskProgress
- return Number.isInteger(r.stage)&&r.stage>=0&&r.stage<=3?{stage:r.stage,choice:typeof r.choice==='string'?r.choice.slice(0,80):undefined,selection:typeof r.selection==='string'?r.selection.slice(0,80):undefined}:undefined
+ return Number.isInteger(r.stage)&&r.stage>=0&&r.stage<=3?{stage:r.stage,choice:typeof r.choice==='string'?r.choice.slice(0,80):undefined,selection:typeof r.selection==='string'?r.selection.slice(0,80):undefined,...(Array.isArray(r.guests)&&r.guests.every(g=>typeof g==='string')&&r.guests.length?{guests:r.guests.slice(0,3)}:{})}:undefined
 }

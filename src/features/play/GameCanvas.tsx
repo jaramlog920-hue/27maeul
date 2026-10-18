@@ -86,14 +86,21 @@ export function GameCanvas({ zoom = 1 }: { zoom?: number }) {
         if (msg !== lastError) console.error(err)
         lastError = msg
       }
-      const game = useGame.getState().game
-      audioTick += dt
-      if (audioTick > 1) {
-        audioTick = 0
-        playMusic(seasonOf(game.clock.day), phaseOf(game.clock.minute) === 'night')
-        setRain(isWet(weatherOf(game.clock.day)) && weatherOf(game.clock.day) === 'rain' && !isIndoor(playerTile(game)))
-      }
+      // 다음 프레임을 먼저 건다 — 아래 소리 갱신에서 오류가 나도 루프는 멈추지 않는다 (2026-10-18 감사 L-32)
       raf = requestAnimationFrame(loop)
+      try {
+        const game = useGame.getState().game
+        audioTick += dt
+        if (audioTick > 1) {
+          audioTick = 0
+          playMusic(seasonOf(game.clock.day), phaseOf(game.clock.minute) === 'night')
+          setRain(isWet(weatherOf(game.clock.day)) && weatherOf(game.clock.day) === 'rain' && !isIndoor(playerTile(game)))
+        }
+      } catch (err) {
+        const msg = String(err)
+        if (msg !== lastError) console.error(err)
+        lastError = msg
+      }
     }
     raf = requestAnimationFrame(loop)
     // 개발용: 화면 갱신이 멈춘 창(가려진 미리보기)에서도 시간을 흘려 확인할 수 있게 한다. 배포 빌드에는 없다.

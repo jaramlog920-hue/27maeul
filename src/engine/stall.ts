@@ -132,9 +132,12 @@ export const buyerOf = (npc: string): Buyer => BUYERS[npc] ?? DEFAULT_BUYER
 
 /** 좌판 값: 상인 표에 있는 것은 같은 값에서(매력 보너스 포함), 없는 것은 좌판 기본값. 그 위에 작은 범위의 가격 선택 */
 export function stallBase(s: Pick<GameState, 'stats'>, item: ItemId): number {
+  // 상인 표·좌판 기본값이 있는 물건(직접 만든 과일 그릇·말린 꽃 등)은 그 값이 먼저 — 가구 소매가로 비싸게 팔리지 않게 (2026-10-18 사용자 결정, 감사 M-3)
+  if (SELL_PRICES[item] !== undefined) return sellPrice(s, item)!
+  if (STALL_EXTRA[item] !== undefined) return STALL_EXTRA[item]!
   const furniture = FURNITURE_PRICES[item]
   if (furniture !== undefined) return Math.max(1, Math.round(furniture * 0.6))
-  return SELL_PRICES[item] !== undefined ? sellPrice(s, item)! : (STALL_EXTRA[item] ?? 1)
+  return 1
 }
 export function stallPrice(s: Pick<GameState, 'stats'>, item: ItemId, tier: StallPrice): number {
   return Math.max(1, Math.round(stallBase(s, item) * STALL_PRICE_MULT[tier]))

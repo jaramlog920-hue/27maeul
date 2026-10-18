@@ -70,7 +70,11 @@ export function emptyHomeAt(s: Pick<GameState, 'gen' | 'flags' | 'newland'>, t: 
 export function giveFamilyHome(s: GameState, householdId: string, home: Build, hasRoom: (owner: string) => boolean): GameState {
   const h = homeWishes(s, hasRoom).find((x) => x.id === householdId)
   if (!h || !emptyHomes(s).some((b) => b.id === home.id)) return s
-  const moved = { ...s, flags: { ...s.flags, [`familyHome:${householdNo(h)}`]: Number(home.id.slice(1)), [`familyHomeDay:${householdNo(h)}`]: s.clock.day } }
+  const n = householdNo(h)
+  // 예전 집에서 생긴 이사 마음·인사·머물기는 새 집에 들고 가지 않는다 (2026-10-18 감사 M-17)
+  const flags = { ...s.flags, [`familyHome:${n}`]: Number(home.id.slice(1)), [`familyHomeDay:${n}`]: s.clock.day }
+  for (const k of [`moveWish:${n}`, `moveBye:${n}`, `moveStay:${n}`]) delete flags[k]
+  const moved = { ...s, flags }
   return h.members.reduce((next, id) => moveInGift(next, id), moved)
 }
 

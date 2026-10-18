@@ -59,7 +59,8 @@ export function babyBlock(s: GameState): BabyBlock | null {
   if (!s.child) return null
   const kids = allKids(s)
   if (kids.length >= MAX_KIDS) return 'full'
-  const youngest = kids[kids.length - 1]
+  // 막내는 가장 늦게 태어난 아이 — 함께하는 아이를 바꾸면 목록 순서가 바뀌므로 순서로 고르지 않는다 (2026-10-18 감사 M-22)
+  const youngest = kids.reduce((y, k) => (k.born > y.born ? k : y))
   const st = childStage(youngest, s.clock.day)
   if (st !== 'helper' && st !== 'adult') return 'youngest'
   return null

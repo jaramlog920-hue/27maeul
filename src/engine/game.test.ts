@@ -1,3 +1,4 @@
+import { FEAST_FIRE, onceKey } from './stories'
 import {
   adoptStray,
   bookLineKey,
@@ -354,7 +355,9 @@ describe('복음서 방 완성 잔치', () => {
   })
   it('두 번째 밤에는 다시 나오지 않는다', () => {
     const s = goToSleep(night(FOUR), CONTENT)
-    const s2 = goToSleep(at({ ...s, scenes: [] }, 22 * 60), CONTENT)
+    // 잔치 날 저녁 모닥불 곁에 앉은 뒤에 잔다 (보지 못하면 다음 장날로 미룬다 — 2026-10-18 사용자 결정, 감사 L-8)
+    const sat = { ...s, flags: { ...s.flags, [onceKey(FEAST_FIRE, s.clock.day)]: 1 } }
+    const s2 = goToSleep(at({ ...sat, scenes: [] }, 22 * 60), CONTENT)
     expect(s2.scenes).not.toContain('gospelFeast')
     expect(s2.flags.gospelFeast).toBe(2)
     // 잔치 날이 지나면 모닥불 자리로 모이지 않는다 (결말 없이 하루가 이어진다)

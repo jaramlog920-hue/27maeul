@@ -125,8 +125,44 @@ const okFarewell = (f: unknown): f is Farewell => {
  * 콘텐츠가 바뀐 뒤의 저장도 안전하게: 없는 조각 id를 걸러 내고, 책상 위 순서를 모은 조각과 맞춘다.
  * (없는 id가 남으면 도감·일지에서 오류가 나고, 책상 순서가 영원히 "틀림"이 될 수 있다)
  */
+/**
+ * 모양 맞추기 (2026-10-18 감사 M-19·M-20·L-1·L-6·L-59·L-61): 가져온 파일·깨진 저장의 값이 아래 정리와 게임 루프를
+ * 멈추지 않게, 수는 유한한 수로, 목록은 글자 목록으로 먼저 맞춘다. 게임이 쓴 정상 저장은 그대로 지나간다.
+ * 무한대(1e999)는 JSON에 null로 써지므로 남겨 두면 다음 불러오기에서 칸을 못 연다 — 여기서 걸러 낸다
+ */
+function normalizeShapes(s: GameState): GameState {
+  const fin = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v)
+  const strs = <T extends string>(v: unknown): T[] => (Array.isArray(v) ? (v.filter((x) => typeof x === 'string') as T[]) : [])
+  const nums = (v: unknown, lo = -Infinity, hi = Infinity) =>
+    Object.fromEntries(Object.entries(isObj(v) ? (v as Record<string, unknown>) : {}).filter((e): e is [string, number] => fin(e[1])).map(([k, n]) => [k, Math.max(lo, Math.min(hi, n))]))
+  const needs = isObj(s.needs) ? (s.needs as unknown as Record<string, unknown>) : {}
+  const need = (k: string) => (fin(needs[k]) ? Math.max(0, Math.min(100, needs[k] as number)) : 0)
+  return {
+    ...s,
+    coins: fin(s.coins) ? Math.max(0, Math.floor(s.coins)) : 0,
+    clock: { ...s.clock, day: Math.max(1, Math.floor(s.clock.day)), minute: Math.max(0, s.clock.minute) },
+    hearts: nums(s.hearts, 0, 100),
+    flags: nums(s.flags),
+    needs: { ...(needs as object), hunger: need('hunger'), fatigue: need('fatigue'), cold: need('cold'), heat: need('heat') } as GameState['needs'],
+    scenes: strs(s.scenes),
+    achieved: Array.isArray(s.achieved) ? s.achieved.filter((a) => isObj(a) && typeof a.id === 'string' && fin(a.day)) : [],
+    gifted: strs(s.gifted),
+    giftsGot: strs(s.giftsGot),
+    recipesKnown: strs(s.recipesKnown),
+    helped: strs(s.helped),
+    talked: strs(s.talked),
+    listened: strs(s.listened),
+    todayNotes: strs(s.todayNotes),
+    todayHeard: strs(s.todayHeard),
+    rereads: strs(s.rereads),
+    collected: strs(s.collected),
+    journal: Array.isArray(s.journal) ? s.journal.filter(isObj) : [],
+    room: Array.isArray(s.room) ? s.room.filter((f) => isObj(f) && typeof f.item === 'string' && fin(f.x) && fin(f.y)) : [],
+  }
+}
+
 export function sanitize(s: GameState, content: GameContent): GameState {
-  s = retireWaterChildLessons(migratePieceLayout(s, content))
+  s = retireWaterChildLessons(migratePieceLayout(normalizeShapes(s), content))
   // 아래 정리들은 모두 첫 마을 지도로 한다 (새 터로 맞추는 것은 불러온 뒤 settle의 syncHome)
   setActiveMap('village')
   // 제거한 설비의 주문·장면은 옛 저장에서도 다시 등장하지 않는다.
@@ -147,7 +183,8 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   const progress: Progress = emptyProgress()
   for (const b of BOOKS) {
     const chapters = new Set(chaptersOf(b, content))
-    progress[b].completed = [...new Set(s.progress?.[b]?.completed ?? [])].filter((c) => chapters.has(c))
+    const done = s.progress?.[b]?.completed
+    progress[b].completed = [...new Set(Array.isArray(done) ? done : [])].filter((c) => chapters.has(c))
   }
   // 필사 (계획 14): 옛 저장(칸이 없던 때 — deserialize가 null로 넘긴다)은 이미 마친 장을 "예전에 엮은 장"으로 남긴다
   // 구약 (계획 20 작업 5): 옛 저장·구약을 안 쓴 저장은 없다 — 새 칸은 모두 선택 필드, 없으면 빈 진행으로 읽는다
@@ -165,7 +202,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     const mine = collected.filter((id) => known.get(id)!.book === b)
     const chapters = [...new Set(mine.map((id) => known.get(id)!.chapter))].filter((c) => !progress[b].completed.includes(c))
     for (const ch of chapters) {
-      const kept = [...new Set((old[ch] ?? []).filter((id) => mine.includes(id) && known.get(id)!.chapter === ch))]
+      const kept = [...new Set((Array.isArray(old[ch]) ? old[ch] : []).filter((id) => mine.includes(id) && known.get(id)!.chapter === ch))]
       const missing = mine.filter((id) => known.get(id)!.chapter === ch && !kept.includes(id)).sort()
       // 빠진 조각은 끝이 아니라 본문 순서의 자리에 끼운다 (id 순서 = 본문 순서)
       const list = [...kept]
@@ -250,6 +287,14 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   // 건물 안 가구 (작업 7): 옛 저장은 없음. 주인 없는 방·맞지 않는 가구는 가방으로
   const fitted = sanitizeRooms(_rawRooms, { newland }, inv)
   void _inv
+  // 아이: 정리한 첫째를 기준으로 동생을 남긴다. 첫째 기록이 깨졌으면 첫 동생이 첫째 자리로 (2026-10-18 감사 L-58 — 두 번째 불러오기에서 동생이 사라졌다)
+  const kids = (() => {
+    const first = sanitizeChild(s.child)
+    const sibs = s.child ? sanitizeSiblings((s as { siblings?: unknown }).siblings, sanitizeChild) : undefined
+    const child = first ?? sibs?.[0] ?? null
+    const siblings = first ? sibs : sibs?.slice(1)
+    return { child: repairSpouseInheritance(child, romance.partner, content.neighbors.find(n => n.id === romance.partner)?.stat), siblings: siblings?.length ? siblings : undefined }
+  })()
   const out: GameState = {
     ...sRest,
     furnitureAuto: undefined,
@@ -293,8 +338,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     careful: Object.fromEntries(Object.entries(isObj(s.careful) ? s.careful : {}).filter(([, v]) => Array.isArray(v)).map(([k, v]) => [k, (v as unknown[]).filter((n): n is number => Number.isInteger(n))])),
     sealed: isStrArray(s.sealed) ? s.sealed : [],
     notebook: sanitizeNotebook(s.notebook),
-    child: repairSpouseInheritance(sanitizeChild(s.child), romance.partner, content.neighbors.find(n => n.id === romance.partner)?.stat),
-    siblings: s.child ? sanitizeSiblings((s as { siblings?: unknown }).siblings, sanitizeChild) : undefined,
+    ...kids,
     found: isStrArray(s.found) ? (s.found as ItemId[]) : [],
     // 필사 (계획 14): 마친 장(progress)은 그대로 마친 장이고, 글자 수 통계는 0에서 시작한다
     copy,
@@ -354,7 +398,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     bookDesigns: sanitizeBookDesigns(s.bookDesigns),
     // 오늘의 기록 (계획 14 작업 6): 옛 저장(칸이 없던 때)은 오늘의 빈 기록
     dayLog: sanitizeDayLog(s.dayLog, s.clock.day),
-    achieved: Array.isArray(s.achieved) ? s.achieved.filter((a) => a && typeof a.id === 'string' && typeof a.day === 'number') : [],
+    achieved: s.achieved,
     needs: { ...s.needs, heat: s.needs?.heat ?? 0 },
     collected,
     // 받은 말씀 조각의 기록 (계획 14 작업 5): 옛 저장은 빈 기록 — 화면은 "언제 받았는지 남아 있지 않은 조각"
@@ -378,7 +422,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     ),
     garden: moveGardenPlots(s.garden ?? {}),
     rereads: (s.rereads ?? []).filter((id) => known.has(id)),
-    journal: s.journal.map((e) => ({ ...e, heard: (e.heard ?? []).filter((id) => known.has(id)) })),
+    journal: s.journal.map((e) => ({ ...e, heard: (Array.isArray(e.heard) ? e.heard : []).filter((id) => known.has(id)) })),
   }
   // 집 책장 (계획 14 작업 8): 옛 저장(칸이 없던 때)은 빈 책장. 다 쓴 책(제본했거나 꽂은 책)만, 몇 권까지
   const { map: _map, mapAt: _mapAt, ...rest } = out
@@ -433,10 +477,10 @@ export function deserialize(raw: string | null, content: GameContent): GameState
     const o = migrateIds(JSON.parse(raw)) as any
     if (!isObj(o) || o.version !== SAVE_VERSION) return null
     const ok =
-      typeof o.clock?.day === 'number' &&
-      typeof o.clock?.minute === 'number' &&
-      typeof o.player?.x === 'number' &&
-      typeof o.player?.y === 'number' &&
+      Number.isFinite(o.clock?.day) &&
+      Number.isFinite(o.clock?.minute) &&
+      Number.isFinite(o.player?.x) &&
+      Number.isFinite(o.player?.y) &&
       isStrArray(o.collected) &&
       isStrArray(o.todayHeard) &&
       Array.isArray(o.journal) &&

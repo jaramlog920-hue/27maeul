@@ -417,7 +417,19 @@ function settleRefund<T extends Pick<GameState, 'coins' | 'inv' | 'newland'> & P
   const back = rate(b)
   if (!back) return null
   const gone = returnRoom(refund(s, back), id)
-  return { ...gone, newland: { ...nl, builds: nl.builds.filter((x) => x.id !== id) } }
+  return { ...gone, ...(gone.flags ? { flags: leaveHome(gone.flags, Number(id.slice(1))) } : {}), newland: { ...nl, builds: nl.builds.filter((x) => x.id !== id) } }
+}
+
+/**
+ * 헐린 집에 살던 새 터 가족의 표식을 지운다 (사는 집·들어온 날·이사 마음·인사·머물기) — 남아 있으면 새 집을 받아도
+ * 옛 이사 마음으로 곧 떠나고, 공동 주택도 그 가족을 '새 터에 산다'로 본다 (2026-10-18 감사 M-17)
+ */
+function leaveHome(flags: Record<string, number>, buildNo: number): Record<string, number> {
+  const homes = Object.entries(flags).filter(([k, v]) => k.startsWith('familyHome:') && v === buildNo).map(([k]) => k.slice('familyHome:'.length))
+  if (!homes.length) return flags
+  const out = { ...flags }
+  for (const n of homes) for (const k of [`familyHome:${n}`, `familyHomeDay:${n}`, `moveWish:${n}`, `moveBye:${n}`, `moveStay:${n}`]) delete out[k]
+  return out
 }
 
 /** 소유 공간 키: 'newland:<건물 id>' (GameState.rooms) */

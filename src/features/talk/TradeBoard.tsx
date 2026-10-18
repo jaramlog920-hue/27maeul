@@ -79,7 +79,8 @@ export function TradeBoard() {
     return {
       key: t.id,
       icon: icon ? <ItemIcon id={icon} size={28} /> : t.grants && GRANT_ART[t.grants] ? <ArtIcon rows={GRANT_ART[t.grants]} palette={GRANT_PAL} /> : <span aria-hidden="true">·</span>,
-      label: names[t.id],
+      // 거래 이름이 따로 없는 물건(결혼 예복 등)은 물건 이름으로 (2026-10-18 감사 M-11)
+      label: names[t.id] ?? (icon ? itemName(icon) : t.id),
       badge: t.coins !== undefined ? `${t.coins}` : undefined,
       dim: disabled,
       detail: (

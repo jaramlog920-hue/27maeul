@@ -10,6 +10,8 @@ import { findPath } from './movement'
 import { personOf } from './people'
 import { currentHomeLevel, HOME_ENTRY, isHome, isWalkable, key, placeActive, PLACES, sameTile } from './world'
 import { currentMapId, type MapId } from './maps'
+import { homeWallsKey } from './home-walls'
+import { currentSpouseRoom } from './spouse-room'
 import type { Tile } from './types'
 
 export type SpaceUse = 'tea' | 'craft' | 'family' | 'pet' | 'read'
@@ -127,15 +129,18 @@ export function spaceReady(room: readonly Furniture[], s: HomeSpace): boolean {
 }
 
 /** 쓸 수 있는 자리만 (가구 배치가 바뀌어도 늘 지금 방으로 다시 따진다) */
-let liveMemo: { room: readonly Furniture[]; spaces: readonly HomeSpace[]; level: number; map: MapId; out: HomeSpace[] } | null = null
+// 집 안 벽·배우자 방도 걸을 수 있는 칸을 바꾸므로 열쇠에 넣는다 — 벽을 세운 직후 막힌 자리가 살아 있는 자리로 남았다 (2026-10-18 감사 L-52)
+let liveMemo: { room: readonly Furniture[]; spaces: readonly HomeSpace[]; level: number; map: MapId; walls: string; spouse: string; out: HomeSpace[] } | null = null
 export function liveSpaces(s: { room: readonly Furniture[]; spaces?: readonly HomeSpace[] }): HomeSpace[] {
   const spaces = s.spaces ?? []
   if (!spaces.length) return []
   const level = currentHomeLevel()
   const map = currentMapId()
-  if (liveMemo && liveMemo.room === s.room && liveMemo.spaces === spaces && liveMemo.level === level && liveMemo.map === map) return liveMemo.out
+  const walls = homeWallsKey()
+  const spouse = currentSpouseRoom()?.id ?? ''
+  if (liveMemo && liveMemo.room === s.room && liveMemo.spaces === spaces && liveMemo.level === level && liveMemo.map === map && liveMemo.walls === walls && liveMemo.spouse === spouse) return liveMemo.out
   const out = spaces.filter(sp => spaceReady(s.room, sp))
-  liveMemo = { room: s.room, spaces, level, map, out }
+  liveMemo = { room: s.room, spaces, level, map, walls, spouse, out }
   return out
 }
 

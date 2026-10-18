@@ -21,6 +21,8 @@ export function slotCtx(slot: RoomSlot): RoomCtx {
   return {
     isFloor: (t) => inSlot(t) && ch(t) === 'f',
     inside: (t) => inSlot(t) && (ch(t) === 'f' || ch(t) === 'E'),
+    // 벽걸이: 바로 아래가 이 방 바닥인 벽 (2026-10-18 감사 M-23 — 첫 마을 집 기준으로만 판단해 새 터 방에는 못 걸었다)
+    hangingWall: (t) => ch(t) === '#' && inSlot({ x: t.x, y: t.y + 1 }) && ch({ x: t.x, y: t.y + 1 }) === 'f',
     keepClear: () => [{ ...slot.entry }],
     entry: { ...slot.entry },
     reach: [{ ...slot.exit }],
@@ -36,6 +38,7 @@ export const ARCHIVE_ROOM_KEY = 'newland:archive'
 const inInterior = (t: Tile) => t.x >= INTERIOR.x0 && t.x < INTERIOR.x0 + INTERIOR.w && t.y >= INTERIOR.y0 && t.y < INTERIOR.y0 + INTERIOR.h
 export const ARCHIVE_CTX: RoomCtx = {
   isFloor: (t) => inInterior(t) && NEWLAND_MAP[t.y]?.[t.x] === 'f',
+  hangingWall: (t) => NEWLAND_MAP[t.y]?.[t.x] === '#' && inInterior({ x: t.x, y: t.y + 1 }) && NEWLAND_MAP[t.y + 1]?.[t.x] === 'f',
   inside: (t) => inInterior(t) && (NEWLAND_MAP[t.y]?.[t.x] === 'f' || NEWLAND_MAP[t.y]?.[t.x] === 'E'),
   keepClear: () => [{ ...INTERIOR_ENTRY }, { ...INTERIOR_DESK.stand }, { ...INTERIOR_SHELF.stand }, ...ARCHIVE_ROOM_SHELVES.flatMap((t) => [{ ...t }, { x: t.x, y: t.y + 1 }])],
   entry: { ...INTERIOR_ENTRY },

@@ -5,7 +5,7 @@ import { useGame } from '../../store/game-store'
 import { canAttendAppt } from '../../engine/plans'
 import { commitClub } from '../clubs/club-store'
 import { ClubRound } from '../clubs/ClubRound'
-import { apptGuests, fireGuests } from '../../engine/club-round'
+import { apptGuests, fireGuests, roundGuests, roundMarks } from '../../engine/club-round'
 
 const itemName = (id: string) => (T.items as Record<string, { name: string }>)[id]?.name ?? id
 
@@ -19,10 +19,13 @@ export function FestSession({ id }: { id: string }) {
  const done = f.step === 'done' || f.closed
  if (f.kind === 'festival') {
   const ready = festivalRoleReady(game)?.id === id
+  // 한 판의 차례 이웃은 시작할 때 정한 그대로. 모닥불 곁에 아무도 없으면 한 판 없이 바로 맡은 일을 마칠 수 있다 (엔진도 허용 — 2026-10-18 감사 M-13)
+  const guests = roundGuests(game, id, fireGuests(game))
+  const roundOver = (f.task?.stage ?? 0) >= 3 || roundMarks(game, id).length >= guests.length
   return <div className="dialog" role="dialog" aria-label={title}><h2>{title}{f.role ? ` · ${F.roles[f.role]}` : ''}</h2>
    {done ? <p>{F.done}</p> : <><p>{f.role ? F.roleDo[f.role] : ''}</p>{!ready && <p className="hint">{F.roleNear}</p>}</>}
-   {!done&&ready&&<ClubRound id={id} kind={f.role==='deco'?'festivalDeco':f.role==='tidy'?'festivalTidy':'festivalFood'} guests={fireGuests(game)}/>}
-   <div className="actions">{!done && <button className="primary" disabled={!ready||(f.task?.stage??0)<3} onClick={() => commitClub(doFestivalRole(game, id))}>{F.roleButton}</button>}<button data-close onClick={close}>{T.ui.close}</button></div>
+   {!done&&ready&&guests.length>0&&<ClubRound id={id} kind={f.role==='deco'?'festivalDeco':f.role==='tidy'?'festivalTidy':'festivalFood'} guests={guests}/>}
+   <div className="actions">{!done && <button className="primary" disabled={!ready||!roundOver} onClick={() => commitClub(doFestivalRole(game, id))}>{F.roleButton}</button>}<button data-close onClick={close}>{T.ui.close}</button></div>
   </div>
  }
  const a = game.plans.appts.find(x => x.id === f.apptId)

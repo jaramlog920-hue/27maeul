@@ -1,5 +1,5 @@
 // 계획 14 작업 8: 완성본을 누르면 [펼쳐 보기] [이 책에서 발견한 하나님 기록] + 첫 쪽의 나의 필사 기록, 집 책장
-import { render, screen, within } from '@testing-library/react'
+import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { CONTENT } from '../../content/catalog'
 import { chaptersOf } from '../../engine/books'
@@ -106,9 +106,13 @@ describe('집 책장', () => {
     expect(within(d).getAllByRole('img', { name: '빈 자리' })).toHaveLength(3)
     await user.click(within(d).getByRole('button', { name: '빌레몬서 · 책장에 두기' }))
     expect(useGame.getState().game.homeShelf).toEqual(['phm'])
-    expect(d).toHaveTextContent('책장 1/3')
-    expect(within(d).getAllByRole('img', { name: '빈 자리' })).toHaveLength(2)
-    await user.click(within(d).getAllByRole('button', { name: '빌레몬서 · 펼쳐 보기' })[0])
+    // 집 책장에 처음 꽂으면 기념 장면이 먼저 열린다 (진행 장면 firstHomeBook) — 본 뒤 책장으로 돌아온다
+    expect(useGame.getState().modal).toEqual({ kind: 'scene', id: 'firstHomeBook' })
+    act(() => useGame.setState({ modal: { kind: 'homeShelf' }, game: { ...useGame.getState().game, scenes: [] } }))
+    const shelf = screen.getByRole('dialog', { name: '집 책장' })
+    expect(shelf).toHaveTextContent('책장 1/3')
+    expect(within(shelf).getAllByRole('img', { name: '빈 자리' })).toHaveLength(2)
+    await user.click(within(shelf).getAllByRole('button', { name: '빌레몬서 · 펼쳐 보기' })[0])
     expect(screen.getByRole('dialog', { name: '완성본 빌레몬서' })).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: '책 덮기' }))
     expect(screen.getByRole('dialog', { name: '집 책장' })).toBeInTheDocument()

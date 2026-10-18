@@ -23,7 +23,9 @@ const STAGE_NAMES_ROMANCE = { dating: '사귀는 중', engaged: '약혼', marrie
 
 export function Family() {
   const game = useGame((s) => s.game)
-  const [careerChoice, setCareerChoice] = useState<AdultJob | null>(null)
+  // 고른 진로는 그 아이(태어난 날)에게만 — 다른 아이로 바꾸면 버린다 (2026-10-18 감사 L-39)
+  const [careerPick, setCareerPick] = useState<{ born: number; job: AdultJob } | null>(null)
+  const careerChoiceOf = (born: number) => (careerPick?.born === born ? careerPick.job : null)
   const { closeModal, open, keepCompanion } = useGame.getState()
   const day = game.clock.day
   const r = game.romance
@@ -84,10 +86,10 @@ export function Family() {
           {kid.job && kid.jobConfirmed === false && (
             <div className="actions">
               <p>{withSubject(kid.name)} {JOB_NAME[kid.job]} 일을 하고 싶어해요. 함께 진로를 정해요.</p>
-              <label>진로 <select value={careerChoice ?? kid.job} onChange={e => setCareerChoice(e.target.value as AdultJob)}>
+              <label>진로 <select value={careerChoiceOf(kid.born) ?? kid.job} onChange={e => setCareerPick({ born: kid.born, job: e.target.value as AdultJob })}>
                 {ADULT_JOBS.map(j => <option key={j} value={j}>{JOB_NAME[j]}{(kid.interests?.[j] ?? 0) > 0 ? ' · 함께 경험함' : ''}</option>)}
               </select></label>
-              <button onClick={() => useGame.getState().chooseChildCareer(careerChoice ?? kid.job!)}>이 진로로 함께 결정하기</button>
+              <button onClick={() => useGame.getState().chooseChildCareer(careerChoiceOf(kid.born) ?? kid.job!)}>이 진로로 함께 결정하기</button>
             </div>
           )}
           {kid.job && kid.jobConfirmed !== false && childStage(kid, day) === 'adult' && (

@@ -10,6 +10,8 @@ export function CopyPuzzle({ data, label, onDone, onManual }: { data: PuzzleData
   const [step, setStep] = useState(0)
   const [misses, setMisses] = useState(0)
   const [smudge, setSmudge] = useState(false)
+  // 놓은 조각 (조각 번호) — 같은 글자의 조각이 둘 이상이면 어느 것을 눌러도 맞다 (2026-10-18 감사 M-7)
+  const [used, setUsed] = useState<readonly number[]>([])
   const hint = misses >= HINT_AFTER
   const miss = () => {
     setMisses((m) => m + 1)
@@ -26,6 +28,13 @@ export function CopyPuzzle({ data, label, onDone, onManual }: { data: PuzzleData
   if (data.kind === 'tiles') {
     const { fixed, pieces, order } = data.tiles
     const placed = pieces.slice(0, step)
+    const want = pieces[step]
+    const hintAt = order.find((i) => !used.includes(i) && pieces[i] === want)
+    const pick = (i: number) => {
+      if (pieces[i] !== want) return miss()
+      setUsed([...used, i])
+      advance(pieces.length)
+    }
     return (
       <div className={`copy-puzzle${smudge ? ' smudge' : ''}`} aria-label={label}>
         <p className="copy-puzzle-line">
@@ -35,8 +44,8 @@ export function CopyPuzzle({ data, label, onDone, onManual }: { data: PuzzleData
         </p>
         <div className="copy-tiles">
           {order.map((i) =>
-            i < step ? null : (
-              <button key={i} className={`copy-tile${hint && i === step ? ' hint' : ''}`} onClick={() => (i === step ? advance(pieces.length) : miss())}>
+            used.includes(i) ? null : (
+              <button key={i} className={`copy-tile${hint && i === hintAt ? ' hint' : ''}`} onClick={() => pick(i)}>
                 {pieces[i]}
               </button>
             ),

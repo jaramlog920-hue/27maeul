@@ -10,7 +10,8 @@ import { StallEntry } from '../stall/StallEntry'
 /** 알림 풍선이 떠 있는 시간(ms) — 보통 안내보다 조금 길게 */
 const ALERT_MS = 4200
 
-function useEvents() {
+/** 일정 계산에 쓰는 상태를 모두 구독한다 — 위쪽 다음 일정·전체 일정·아래 조작판이 같은 목록을 보도록 (2026-10-18 감사 M-24: 약속·주민 결혼식·내 결혼식이 빠졌다) */
+export function useEvents() {
   const day = useGame((s) => s.game.clock.day)
   const minute = useGame((s) => Math.floor(s.game.clock.minute))
   const today = useGame((s) => s.game.today)
@@ -18,7 +19,8 @@ function useEvents() {
   const notebook = useGame((s) => s.game.notebook)
   const plans = useGame((s) => s.game.plans)
   const gen = useGame((s) => s.game.gen)
-  return { day, minute, events: scheduledEvents({ clock: { day, minute }, today, flags, notebook, plans, gen }, CONTENT) }
+  const romance = useGame((s) => s.game.romance)
+  return { day, minute, events: scheduledEvents({ clock: { day, minute }, today, flags, notebook, plans, gen, romance }, CONTENT) }
 }
 
 /** 상단에 늘 보이는 "다음 일정" 한 줄. 누르면 전체 일정 창 */

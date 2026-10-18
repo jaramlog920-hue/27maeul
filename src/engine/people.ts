@@ -472,13 +472,14 @@ export function sanitizeLife(raw: unknown): Life {
   const strs = (v: unknown) => (Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : [])
   return {
     seen: strs(o.seen),
-    memories: obj(o.memories, {}),
-    colors: obj(o.colors, {}),
-    recent: renameRecent(obj(o.recent, {})),
-    cool: obj(o.cool, {}),
+    // 모양이 틀린 항목은 버린다 — memories가 목록이 아니면 대화 조건 판정이 멈췄다 (2026-10-18 감사 L-26)
+    memories: Object.fromEntries(Object.entries(obj<Record<string, unknown>>(o.memories, {})).map(([npc, list]) => [npc, Array.isArray(list) ? list.filter((m): m is MemoryEntry => !!m && typeof m === 'object' && typeof (m as MemoryEntry).tag === 'string' && Number.isFinite((m as MemoryEntry).day)) : []])),
+    colors: Object.fromEntries(Object.entries(obj<Record<string, unknown>>(o.colors, {})).filter(([, v]) => v && typeof v === 'object' && !Array.isArray(v))) as Life['colors'],
+    recent: renameRecent(Object.fromEntries(Object.entries(obj<Record<string, unknown>>(o.recent, {})).map(([npc, ids]) => [npc, strs(ids)]))),
+    cool: Object.fromEntries(Object.entries(obj<Record<string, unknown>>(o.cool, {})).filter((e): e is [string, number] => Number.isFinite(e[1]))),
     mutterDay: typeof o.mutterDay === 'number' ? o.mutterDay : 0,
     muttered: strs(o.muttered),
-    promises: Array.isArray(o.promises) ? o.promises : [],
+    promises: Array.isArray(o.promises) ? o.promises.filter((p) => !!p && typeof p === 'object' && typeof p.id === 'string' && typeof p.npc === 'string' && Number.isInteger(p.day) && !!p.at && Number.isInteger(p.at.x) && Number.isInteger(p.at.y) && Number.isFinite(p.from) && Number.isFinite(p.to)) : [],
     // 계획 16: 옛 저장은 빈 경험, 모양이 틀린 항목은 버린다
     experiences: sanitizeExperiences(o.experiences),
     storyWait: sanitizeStoryWait(o.storyWait),

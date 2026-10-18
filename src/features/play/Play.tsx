@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { setAudioHidden } from '../../audio/sound'
 import { saveGame } from '../../engine/save'
 import { flushGameStorage, getGameStorageStatus } from '../../engine/game-storage'
 import { useGame } from '../../store/game-store'
@@ -28,7 +29,12 @@ export function Play() {
       saveGame(useGame.getState().game)
       void flushGameStorage().catch(() => {})
     }
-    const onHide = () => document.visibilityState === 'hidden' && save()
+    const onHide = () => {
+      const hidden = document.visibilityState === 'hidden'
+      // 가려진 동안은 소리를 멈춘다 (2026-10-18 감사 M-10)
+      setAudioHidden(hidden)
+      if (hidden) save()
+    }
     const beforeClose = (event: BeforeUnloadEvent) => {
       save()
       const status = getGameStorageStatus()

@@ -155,7 +155,9 @@ import { cardsForChapters, journeyComplete, placeNewCards, type JourneyCard } fr
 import { growGarden, type Plot } from './garden'
 import { allFeastReady, allShelved, feastToday, gospelRoomFull, readOff, type Grade } from './library'
 import {
+  ALL_FEAST_FIRE,
   BABY_DAY,
+  FEAST_FIRE,
   MILESTONE_GIFTS,
   MILESTONES,
   momentNow,
@@ -2463,9 +2465,13 @@ function heartUpRaw(s: GameState, id: string, points: number): GameState {
   let next: GameState = { ...s, hearts: { ...s.hearts, [id]: afterPts } }
   for (const m of MILESTONES) {
     const gift = MILESTONE_GIFTS[id]?.[m]
-    if (gift && before < m && after >= m) {
+    // 이정표 선물은 이웃마다 한 번 — 헤어져 마음이 내려갔다가 다시 넘어도 또 주지 않는다 (2026-10-18 감사 M-2). 옛 저장은 앨범의 선물 장면으로 본다
+    const given = `milestone:${id}:${m}`
+    const already = !!next.flags[given] || next.album.some((a) => a.id === `gift:${id}:${m}`)
+    if (gift && before < m && after >= m && !already) {
       next = {
         ...next,
+        flags: { ...next.flags, [given]: 1 },
         inv: addGift(next.inv, gift),
         giftsGot: [...new Set([...next.giftsGot, ...(Object.keys(gift) as ItemId[])])],
         scenes: [...next.scenes, `gift:${id}:${m}`],
@@ -2605,7 +2611,9 @@ export function homeCopyFragment(s: GameState, book: CopyBook, chapter: number, 
   const seed = fragmentSeed(s.clock.day, flag)
   const next = { ...s, flags: { ...s.flags, [flag]: 1 } }
   if (mulberry32(seed)() >= 0.2) return next
-  const id = drawFragment(content.pieces, s.collected, seed + 31)
+  // 오늘 편지·이웃이 줄 조각은 빼고 뽑는다 — 겹치면 그 편지·대화의 몫이 사라졌다 (2026-10-18 감사 L-28)
+  const skip = new Set([...s.post, ...Object.values(s.offers)])
+  const id = drawFragment(content.pieces.filter((p) => !skip.has(p.id)), s.collected, seed + 31)
   return id ? takeChapters(next, [id], content, 'homeCopy') : next
 }
 
@@ -4672,7 +4680,24 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
   let gathering = planGathering(day, level, flags)
   // ── 복음서 방 완성 잔치: 네 권을 다 꽂고 처음 잠든 다음 날 (한 번). 그다음 밤부터는 잔치가 지난 것 ──
   // 아기 잔치 날(정해진 날)이나 마을 행사(수확·모닥불) 저녁과 겹치면 하루 미룬다 — 저녁 모임이 한 저녁에 겹치지 않게
-  if (flags.gospelFeast === 1) flags.gospelFeast = 2
+  // 잔치 날 저녁 모닥불을 보지 못하고 잤으면 결혼 잔치처럼 다음 장날로 미룬다 (3 = 미룸, *At = 다시 여는 날 — 2026-10-18 사용자 결정, 감사 L-8)
+  const feastMissed = (fire: string) => !flags[onceKey(fire, day - 1)]
+  // 미룬 잔치를 다시 여는 날: 아기 잔치·마을 행사·내 결혼 잔치 저녁과 겹치면 그다음으로 (저녁 모임이 겹치지 않게)
+  const weddingNow = s.romance?.stage === 'engaged' && s.romance.weddingDay === day
+  const eveningFree = gathering !== 'babyParty' && !festivalOf(day) && !weddingNow
+  if (flags.gospelFeast === 1 && feastMissed(FEAST_FIRE)) { flags.gospelFeast = 3; flags.gospelFeastAt = nextMarketAfter(day - 1) }
+  else if (flags.gospelFeast === 1) flags.gospelFeast = 2
+  // 미뤄 둔 사이 스물일곱 권이 다 꽂혔으면 복음서 방 잔치는 건너뛴다 — 스물일곱 권 잔치가 그 자리를 잇는다
+  if (flags.gospelFeast === 3 && allFeastReady({ shelved: s.shelved, flags })) {
+    flags.gospelFeast = 2
+    delete flags.gospelFeastAt
+  }
+  if (flags.gospelFeast === 3 && day >= (flags.gospelFeastAt ?? day) && eveningFree) {
+    flags.gospelFeast = 1
+    delete flags.gospelFeastAt
+    scenes.push('gospelFeast')
+    if (gathering === 'starNight') gathering = null
+  }
   // 스물일곱 권이 다 꽂혔는데 복음서 방 잔치를 아직 안 열었으면 건너뛴다 — 그날은 스물일곱 권 잔치 (2026-10-13 사용자)
   else if (!flags.gospelFeast && !flags.allFeast && allFeastReady({ shelved: s.shelved, flags })) flags.gospelFeast = 2
   else if (!flags.gospelFeast && gospelRoomFull(s) && gathering !== 'babyParty' && !festivalOf(day)) {
@@ -4682,7 +4707,16 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
     if (gathering === 'starNight') gathering = null
   }
   // ── 스물일곱 권 잔치: 요한계시록을 꽂고 일곱 교회 판을 다 놓은 날 밤 → 다음 날 아침 (한 번, 복음서 방 잔치와 같은 짜임) ──
-  if (flags.allFeast === 1) flags.allFeast = 2
+  if (flags.allFeast === 1 && feastMissed(ALL_FEAST_FIRE)) { flags.allFeast = 3; flags.allFeastAt = nextMarketAfter(day - 1) }
+  else if (flags.allFeast === 1) flags.allFeast = 2
+  if (flags.allFeast === 3 && day >= (flags.allFeastAt ?? day) && eveningFree) {
+    flags.allFeast = 1
+    delete flags.allFeastAt
+    // 기억 정원에는 실제로 잔치가 열린 날을 남긴다
+    flags.allFeastDay = day
+    scenes.push('allFeast')
+    if (gathering === 'starNight') gathering = null
+  }
   else if (!flags.allFeast && allFeastReady({ shelved: s.shelved, flags }) && gathering !== 'babyParty' && !festivalOf(day)) {
     flags.allFeast = 1
     // 기억 정원에 남길 잔치 날 (계획 18 B18-10 — 옛 저장은 날짜 미상)

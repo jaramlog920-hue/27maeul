@@ -9,6 +9,9 @@ import { copyFurnitureChildStage, copyFurnitureFacings } from '../engine/copy-fu
 import { hasFacingArt, furnitureFacings } from './furniture-facing'
 import { spriteRows } from './sprites'
 
+// 모든 단계 × 네 방향을 그리는 검사라 혼자 돌려도 50초쯤 걸린다 — 기본 30초 한도를 넘겨 실패하던 것 (2026-10-18 감사 L-70)
+vi.setConfig({ testTimeout: 180_000 })
+
 const directions=['down','up','left','right'] as const
 it('renders every stage in four directions with valid native dimensions and shared source art',()=>{
   const before=JSON.stringify(COPY_FURNITURE_DIRECTIONS),avatar=withLookDefaults({look:'f',name:'검토',skin:3,top:7,hairBack:3})

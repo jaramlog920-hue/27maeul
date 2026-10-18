@@ -1,7 +1,7 @@
 # 전체 프로젝트 종합 버그 감사 — 2026-10-17 ~ 10-18
 
-> 상태: **1~4차 감사 완료 · 사용자 결정 반영 · H-4는 재필사 기능으로 해결(커밋 전)** — 최신 판정은 §4-D (모든 버그를 찾았다는 보장은 아님 — §6과 §4-B 끝의 "검사하지 못한 부분" 참고)
-> 소스 코드는 수정하지 않았다. 재현 테스트는 `docs/audits/2026-10-18-repro/*.test.ts.txt`에 보관했다(확장자 `.txt`를 떼고 임시 vitest 설정으로 실행).
+> 상태: **1~4차 감사 + 수정 완료 (2026-10-19)** — 고친 항목은 §9, 남은 항목은 §9-2. Codex 종합 감사 보고서는 `qa/comprehensive-audit-20261018/REPORT_DRAFT.md` (모든 버그를 찾았다는 보장은 아님 — §6과 §4-B 끝의 "검사하지 못한 부분" 참고)
+> 감사(1~4차) 동안에는 소스를 수정하지 않았고, 그 뒤 사용자 요청으로 §9의 항목을 고쳤다(각각 회귀 테스트 포함). 감사 재현 테스트는 `docs/audits/2026-10-18-repro/*.test.ts.txt`에 보관했다(확장자 `.txt`를 떼고 임시 vitest 설정으로 실행).
 > 기준 코드: `main` = `cf6c0a8` + **커밋되지 않은 작업트리 변경 147파일** (감사 도중에도 `gen.ts` 등이 바뀌고 있었다 — 항목은 읽은 시점 기준).
 
 ---
@@ -539,6 +539,63 @@
   - 행동: 이동·대화·선물·거래·판매·필사·재필사·꽂기·제본·퀴즈·손일·텃밭·여행·연애·헤어짐·집 넓히기·꾸미기·찬장·궤짝·버리기·새 터 오가기·저장 다시 불러오기를 무작위로 섞었다.
   - 위반 0건인 불변식: 예외 없음, 닢 유한·정수·0 이상, 가방·궤짝·찬장 정수·0 이상, 능력치·마음(0~100, 하루 6점)·몸 상태 범위, 날짜 역행 없음, 수집·진행 중복 없음, 연애 상태 일관성, 집 단계·재필사 횟수 범위, 저장 왕복 후 핵심 필드 동일(두 번 왕복도), 장면 대기열 id 정의됨, 창이 열린 채 멈추지 않음, 잠들면 다음 날로 넘어감.
   - 못 본 부분: 결혼 잔치 이후(첫아이에는 아기방 등 다른 조건이 필요해 아이·형제 흐름은 시뮬레이션에서 0건), 소모임·잔치 역할·새 터 건설·벽 꾸미기·사랑방 함께 읽기. 스토어 액션을 직접 불렀기 때문에 화면 단추에만 있는 검사 누락(L-7 같은 것)은 이 방법으로 볼 수 없다.
+
+---
+
+## 9. 수정 결과 (2026-10-18 밤 ~ 10-19)
+
+> 이 절이 가장 최신이다. 아래에 적은 항목은 코드를 고치고, 고친 동작을 확인하는 회귀 테스트를 함께 넣었다. ChatGPT Codex의 종합 감사 보고서(같은 날 01:00, 이 파일을 한때 덮어썼던 것)는 `qa/comprehensive-audit-20261018/REPORT_DRAFT.md`에 그대로 있다. 그 보고서의 새 항목 4건(E-08 도구 구매, E-02 일터 주인, UI-06 구절 분위기, SOC-03 빵집 아이)도 아래에서 함께 고쳤다.
+
+### 9-1. 고친 항목
+
+| 항목 | 내용 | 주요 수정 위치 | 회귀 테스트 |
+|---|---|---|---|
+| C-1 | 원격 `main` 문법 오류 | 작업트리 전체 커밋 `5d4f9eb` | `tsc -b` 통과 |
+| H-3 | 해산 모임 때문에 활성 모임 잘림 | `clubs.ts` sanitizeClubs(활성 우선·해산 기록 30개), createClub(약속이 쓰던 번호 재사용 안 함) | `clubs-save.test.ts` |
+| H-4 | 사본 옮겨 적기 무제한 | 재필사 기능으로 교체(사용자 결정, 20%) | `copy-again.test.ts`, `CopyAgain.test.tsx` |
+| H-5 · L-55 | 웬델 3단계 사건이 24일 뒤 영영 닫힘 · 장날 노점 0일 | `people.json`·`build-people.py` thread phase | `thread-window.test.ts`(모든 사건 창 400일 전수) |
+| M-2 | 헤어진 뒤 이정표 선물 재지급 | `game.ts` heartUpRaw `milestone:<id>:<m>` 표식(옛 저장은 앨범으로) | `milestone-once.test.ts` |
+| M-3 | 과일 그릇·말린 꽃 판매 값 | `stall.ts`·`sell-stand.ts` 좌판 기본값 우선(사용자 결정) | `economy-prices.test.ts` |
+| M-4 | 여행 판 새로고침 재굴림 | `trip-board.ts` tripSeed, `TripScene.tsx` 씨앗 주사위 | `trip-seed.test.ts` |
+| M-5 · E-02 | 집 겸 일터 주인 무시 | `newland-life.ts` visitKidWork 주인 확인·kidWorkBuildAt, `FacilityView.tsx` 누른 일터 주인 이름·남의 일터는 구경만 | `kid-work-owner.test.ts`, `KidWorkOwner.test.tsx` |
+| M-7 | 같은 글자 조각 틀림 | `CopyPuzzle.tsx` 글자로 판정 | `CopyPuzzleDup.test.tsx` |
+| M-8 | 조합 중 다음 절 | `CopyDesk.tsx` 조합을 끝낸 뒤 마침, 마칠 때 조합 상태 정리 | `CopyImeNext.test.tsx` |
+| M-9 | 지도 캐시 무한 증가 | `renderer.ts` 최근 12장 LRU | `map-cache-limit.test.ts` |
+| M-10 · L-32 | 숨긴 창에서 소리 · 루프 오디오 예외 | `sound.ts` setAudioHidden·interrupted 재개, `Play.tsx`, `GameCanvas.tsx` | 코드 확인(jsdom에 오디오 없음) |
+| M-11 | 예복 거래 이름 없음 | `text.ts` T.trades, `TradeBoard.tsx` 대체 이름 | `ScheduleSources.test.tsx`, `catalog.test.ts` |
+| M-13 · L-36 | 잔치 역할을 끝낼 수 없음 · 손님 변동 | `club-round.ts` roundGuests(첫 차례에 고정), `group-task.ts`, `FestSession.tsx` | `FestRole.test.tsx` |
+| M-14 · L-29 | 체험 허브차 사라짐 · 요리 횟수 0 | `cooking.ts` preview 표식, 횟수 clamp | `cooking-save.test.ts` |
+| M-15 | 여행 귀환 아침 순위·편지 창 | `game-store.ts` frame에서 남은 아침 창 열기 | `trip-morning-popup.test.ts` |
+| M-16 | 장면 오류 되풀이 | `ScreenBoundary.tsx`·store skipBrokenScreen | `SceneCrash.test.tsx` |
+| M-17 | 철거 뒤 새 집 가족이 곧 떠남 | `newland-build.ts` leaveHome, `gen-homes.ts` giveFamilyHome | `family-move-demolish.test.ts` |
+| M-19 · M-20 · L-1 · L-6 · L-58 · L-59 · L-60 | 깨진 저장(무한대·목록 아닌 칸·글자 닢/마음·동생 소실·선택 칸·약속 제목) | `save.ts` normalizeShapes·아이 정리, `plans.ts` | `save-robust.test.ts` |
+| M-21 | 모르는 아이템으로 가방 창 오류 | `Bag.tsx`·`Journal.tsx` itemName | `BagUnknownItem.test.tsx` |
+| M-22 | 막내 판정 우회 | `siblings.ts` born 최댓값 | `baby-youngest.test.ts` |
+| M-23 | 새 터 벽걸이 | `room.ts` RoomCtx.hangingWall, `newland-rooms.ts` | `newland-wall-hanging.test.ts` |
+| M-24 | 일정에 약속·결혼식 빠짐 | `EventSchedule.tsx` useEvents(romance), `ControlDeck.tsx` | `ScheduleSources.test.tsx` |
+| E-08 | 가방이 차면 도구 구매 시 돈만 나감 | `easier.ts` stashOverflows 도구 | `tool-full-bag.test.ts` |
+| UI-06 | 구절 분위기 빈 캐시 | `piece-moods.ts` 실패는 기억 안 함, `ModalLayer.tsx` loveVerse 본문 대기 | `piece-moods-cold.test.ts` |
+| L-8 | 잔치 모닥불 놓치면 끝 | `game.ts` 다음 장날로 미룸(사용자 결정, 상태 3) | `all-feast.test.ts` ①-1 |
+| L-15 | 잔치 저녁 사진 | `game-store.ts` snapAlbum | `AllFeastSave.test.tsx` |
+| L-20 · L-21 · L-70 | 테스트 설정 | `ot-catalog.test.ts`, `vite.config.ts` exclude, `copy-furniture.test.ts` 한도 | 전체 실행 |
+| L-25 | 다른 마을 점수 감소 | `villages.ts` 최근 5일 최댓값 | `village-scores-monotone.test.ts` |
+| L-26 | 이웃 기억 모양 | `people.ts` sanitizeLife | `save-robust.test.ts` |
+| L-28 | 집 필사 조각이 편지 조각 가로챔 | `game.ts` homeCopyFragment | `home-copy-fragment.test.ts` |
+| L-37 | 소모임 장소 | `ClubForm.tsx` | `ClubFormVenue.test.tsx` |
+| L-38 | 배움터 잠금 안내 빈칸 | `SchoolView.tsx` | `SchoolLocked.test.tsx` |
+| L-39 | 진로 선택이 다른 아이에게 남음 | `Family.tsx` | `CareerPick.test.tsx` |
+| L-48 · L-49 | 후계자 배우자 이름 · 결혼 준비 마음 | `ShelfDone.tsx`·`FacilityView.tsx` partnerName, `GenTalk.tsx` 자리 id | `ShelfDoneHeir.test.tsx`, `GenTalkHearts.test.tsx` |
+| L-52 | 자리 캐시가 벽을 모름 | `spaces.ts` liveMemo 열쇠 | `spaces-walls-memo.test.ts` |
+| L-53 | 배우자 가구 옛 이름 | `spouse-rooms.json` | `spouse-room-names.test.ts` |
+| L-62 · SOC-03 | 빵집 아이 두 번 그려짐 | `gen-looks.ts` companionsOf | `baker-baby-once.test.ts` |
+| 검토 후속 | 수정 코드 독립 검토에서 나온 5건: 복음서 잔치를 미룬 사이 27권 완성 시 복음서 잔치 건너뜀, 미룬 27권 잔치의 기억 정원 날짜, 미룬 잔치가 내 결혼 잔치 저녁과 겹치지 않게, 순위·편지 창 오류 시 알림도 지움, 재필사 뒤 정성 기록 정리 | `game.ts`, `game-store.ts` | `all-feast.test.ts` ①-2~①-4, `SceneCrash.test.tsx` |
+| 테스트 정리 | 의도된 변경을 따라가지 못한 기존 테스트 14건 | `detail-child-career-switch`(L-39 고침), `game.test` 복음서 잔치(L-8), `apothecary`(H-2 결정), `club-affinity`, `review-probes`, `ot-copying`, `ModalLayer` 3건, `BookView`, `Library` | 전체 실행 |
+
+### 9-2. 아직 고치지 않은 항목 (다음 작업)
+
+- **M-6** 상속자 배우자의 옷장(그림·저장 대상 분리 필요 — 렌더러와 함께 손봐야 해서 이번에 하지 않음), **M-18 · L-30 · L-31** 일꾼·동생·여행 판 아이 그림, **M-1** 여러 탭(새 저장 계층의 대응을 실제 브라우저에서 재확인 필요), **H-1** 저장 공간(새 팝업 실기기 확인 필요)
+- Low: L-2·L-3 일부, L-7, L-13(persist 우회), L-16, L-22, L-23, L-24, L-27, L-33~L-35, L-40~L-47, L-50, L-51, L-54, L-56, L-57, L-61, L-63~L-69(안내·의도 확인)
+- 실기기(iOS/Android) IME·오디오·메모리, 장면 그림 시각 비교는 여전히 검사하지 못했다.
 
 ---
 

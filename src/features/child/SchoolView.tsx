@@ -3,6 +3,7 @@ import { T } from '../../content/text'
 import { canShow, classroomWork, SHOW_MODES, type ShowMode } from '../../engine/family-memory'
 import { itemName } from '../../content/text'
 import { canSchool, SCHOOL_FEE, SCHOOL_XP } from '../../engine/game'
+import { featureHint } from '../../engine/feature-rules'
 import { STAT_IDS, statScore, type StatId } from '../../engine/stats'
 import { useGame } from '../../store/game-store'
 
@@ -56,7 +57,8 @@ export function SchoolView() {
           ))}
         </ul>
       )}
-      {block && <p className="hint">{WHY[block]}</p>}
+      {/* 기능이 아직 잠겨 있으면 열리는 때를 알려 준다 (2026-10-18 감사 L-38 — 안내 줄이 비어 있었다) */}
+      {block && <p className="hint">{block === 'locked' ? featureHint('school') : WHY[block]}</p>}
       {showing && (
         <section className="school-show">
           <h3>교실 한쪽</h3>

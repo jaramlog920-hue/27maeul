@@ -41,16 +41,19 @@ export interface Companion {
  */
 export function companionsOf(g: GenState | undefined, npc: string, day?: number): Companion[] {
   const out: Companion[] = []
+  const heir = g?.retired?.[npc]?.heir ?? g?.heirs?.[npc]?.heir
   const baby = day == null ? g?.persons[BAKER_BABY_ID] : bakerBabyAt(day, g?.persons[BAKER_BABY_ID])
-  if (npc === 'baker' && baby && baby.stage !== 'baby') out.push({ person: baby, short: baby.stage === 'child' || baby.stage === 'teen' })
+  // 빵집 아이가 은퇴한 부모 자리를 이어받았으면 그 아이가 본 그림이라 곁에 또 세우지 않는다.
+  // 견습 중이면 아래 견습 자리로 한 번만 (2026-10-18 감사 L-62 — 같은 아이가 두 번 그려졌다)
+  const babyIsHeir = !!baby && heir === baby.id
+  if (npc === 'baker' && baby && baby.stage !== 'baby' && !babyIsHeir) out.push({ person: baby, short: baby.stage === 'child' || baby.stage === 'teen' })
   if (!g) return out
-  const heir = g.retired?.[npc]?.heir ?? g.heirs?.[npc]?.heir
   // 이사 간 옛 저장은 부모가 떠났으므로 곁에도 없다. 은퇴 전 견습 중이면 견습 자녀가 곁에
   const retired = g.retired?.[npc]
   const parent = g.persons[npc]
   if (retired) {
     if (retired.moved == null && parent) out.push({ person: parent, short: false, retiredParent: npc })
-  } else if (heir && g.persons[heir]) out.push({ person: g.persons[heir], short: false })
+  } else if (heir && g.persons[heir] && !out.some((c) => c.person.id === heir)) out.push({ person: g.persons[heir], short: false })
   for (const p of Object.values(g.persons).sort((a, b) => (a.id < b.id ? -1 : 1))) {
     if (out.length >= 2) break
     if (p.origin !== 'born' || p.id === heir || out.some((c) => c.person.id === p.id) || mainParent(g, p) !== npc) continue

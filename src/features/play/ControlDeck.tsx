@@ -2,9 +2,9 @@
 // 위 가장자리에는 몸 상태 눈금과 다음 일정 한 줄. 설정에서 선택하면 마우스·터치 화면 모두에서 보인다.
 import { useState } from 'react'
 import { unlockAudio } from '../../audio/sound'
-import { CONTENT } from '../../content/catalog'
 import { fill, T } from '../../content/text'
-import { nextEvent, eventSummary, scheduledEvents } from '../../engine/events'
+import { nextEvent, eventSummary } from '../../engine/events'
+import { useEvents } from './EventSchedule'
 import { seasonalNeed } from '../../engine/game'
 import { moodOf } from '../../engine/mood'
 import { markMapTap } from '../../shared/ghost'
@@ -62,12 +62,7 @@ function DeckNeeds() {
 }
 
 function DeckNext() {
-  const day = useGame((s) => s.game.clock.day)
-  const minute = useGame((s) => Math.floor(s.game.clock.minute))
-  const today = useGame((s) => s.game.today)
-  const flags = useGame((s) => s.game.flags)
-  const notebook = useGame((s) => s.game.notebook)
-  const events = scheduledEvents({ clock: { day, minute }, today, flags, notebook }, CONTENT)
+  const { day, minute, events } = useEvents()
   const next = nextEvent(events, day, minute)
   const now = !!next && next.day === day && minute >= next.from
   return (

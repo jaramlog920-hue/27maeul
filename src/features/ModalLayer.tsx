@@ -6,6 +6,7 @@ import { useCallback, type SyntheticEvent } from 'react'
 import { lazyScreen } from './lazy-screen'
 import { isGhostClick } from '../shared/ghost'
 import { useGame } from '../store/game-store'
+import { CONTENT } from '../content/catalog'
 import { Bag } from './bag/Bag'
 import { Wardrobe } from './family/Wardrobe'
 import { KidTime } from './family/KidTime'
@@ -230,12 +231,17 @@ function Body() {
   }
 }
 
+/** 조각 id → 책 (한 번만 만든다) */
+let pieceBooks: Map<string, Book> | null = null
+const pieceBook = (id: string): Book | undefined => (pieceBooks ??= new Map(CONTENT.pieces.map((p) => [p.id, p.book]))).get(id)
+
 export function ModalLayer() {
   const modal = useGame((s) => s.modal)
   const book = useGame(s => s.game.copy.book)
   const deskBook = useGame(s => s.game.activeBook)
   const copyResult = useGame(s => s.copyResult)
   const acquired = useGame(s => s.piecePopups[0])
+  const collected = useGame(s => s.game.collected)
   // 창이 열려 있는 동안 스크롤되는 창에 "아래로 더 있어요"를 붙인다 (창이 바뀌면 MutationObserver가 다시 살핀다)
   const hints = useCallback((el: HTMLDivElement | null) => (el ? watchScrollHints(el) : undefined), [])
   if (!modal && !copyResult?.length && !acquired) return null
@@ -244,6 +250,8 @@ export function ModalLayer() {
   if (modal?.kind === 'desk' && deskBook) needed.push(deskBook)
   if (modal?.kind === 'bookView') needed.push(modal.book)
   if (modal?.kind === 'readingMeeting') needed.push(meetingPassage(modal.day).book)
+  // 연인에게 건넬 구절: 모은 조각의 분위기를 보므로 그 책들의 본문을 먼저 불러온다 (2026-10-18 감사, Codex UI-06)
+  if (modal?.kind === 'loveVerse') for (const b of new Set(collected.map((id) => pieceBook(id)).filter((b): b is Book => !!b))) needed.push(b)
   // 지도를 누른 손가락을 뗄 때의 클릭이 방금 뜬 창의 단추를 누르지 않게 (shared/ghost.ts)
   const eatGhost = (e: SyntheticEvent) => {
     if (isGhostClick()) {

@@ -5,11 +5,15 @@ import { canExtend, extendTurns, NEW_BOARD } from './trip-board'
 import { deserialize, serialize, SAVE_KEY } from './save'
 import { freshStats } from './stats'
 import { useGame } from '../store/game-store'
+import { DESTS, tripCost } from './travel'
+
+// 배삯·숙박비는 바뀔 수 있다 (2026-10 숙박비 인상) — 돌아가는 값을 숫자로 박지 않고 표에서 읽는다
+const HARBOR = tripCost(DESTS.harbor, [])
 
 it('reserves extension costs before shopping and returns without negative coins', () => {
   const base = newGame(CONTENT)
-  const game = { ...base, coins: 50 }
-  expect(canExtend(NEW_BOARD, 50 - 35)).toBe(true)
+  const game = { ...base, coins: HARBOR + 15 }
+  expect(canExtend(NEW_BOARD, 15)).toBe(true)
   const board = extendTurns(NEW_BOARD, 15)
   expect(canTrip(game, 'harbor', ['finePapyrus'], true, board.rewards)).toBe('coins')
   expect(takeTrip(game, CONTENT, 'harbor', ['finePapyrus'], board.rewards)).toBeNull()
@@ -37,7 +41,7 @@ it('keeps autosave achievements in live state (fixed 2026-10-08, 01-A)', () => {
 it('awards and saves the family trip only after a successful return, once', () => {
   const base = newGame(CONTENT)
   // 순위 후원금이 지급되는 21일 아침을 피해 여행 정산만 검사한다.
-  const game = { ...base, coins: 50, clock: { day: 19, minute: 600 }, child: { name: '아이', look: 'girl' as const, born: 14, stats: freshStats(), lean: null, close: 0 } }
+  const game = { ...base, coins: HARBOR + 15, clock: { day: 19, minute: 600 }, child: { name: '아이', look: 'girl' as const, born: 14, stats: freshStats(), lean: null, close: 0 } }
   useGame.getState().load(game)
   const savedBefore = localStorage.getItem(SAVE_KEY)
   useGame.getState().startTripBoard('harbor', true)

@@ -7,13 +7,14 @@ import { CONTENT, GOD_KEYWORDS, neighborById } from '../../content/catalog'
 import { fill, itemList, itemName, T, withAnd, withObject, withSubject } from '../../content/text'
 import { newsLine } from '../../content/gen-text'
 import { canGatherYard, gatherYard, mendQuarrelWith, type GameState } from '../../engine/game'
-import { kidVisiting, talkKidVisit, dreamKey, roomOwner, canInviteGuest, markerShown, toggleMarker, canMendQuarrel, keywordRecall, quarrelPair, visitKidWork, DREAMER, GUESTS, guestNow, inviteGuest, memoriesOf, pickDream, settledAt, settledLine, talkGuest, visitDream, type DreamStage, type FacilityKind, type GuestId, type Memory } from '../../engine/newland-life'
+import { kidVisiting, talkKidVisit, dreamKey, roomOwner, canInviteGuest, markerShown, toggleMarker, canMendQuarrel, keywordRecall, quarrelPair, visitKidWork, DREAMER, GUESTS, guestNow, inviteGuest, memoriesOf, pickDream, settledAt, settledLine, talkGuest, visitDream, kidWorkBuildAt, type DreamStage, type FacilityKind, type GuestId, type Memory } from '../../engine/newland-life'
 import { saveGame } from '../../engine/save'
 import { emptyHomeAt, familyAt, giveFamilyHome, homeWishes, wantsToMove } from '../../engine/gen-homes'
 import type { Household } from '../../engine/gen'
 import { t } from '../../shared/i18n'
 import type { Tile } from '../../engine/types'
-import { useGame } from '../../store/game-store'
+import { partnerName, useGame } from '../../store/game-store'
+import { ownerName } from '../../engine/kid-work'
 import { seenStories, storyBook, useSceneSay } from '../scene/SceneReplay'
 import { SCENES } from '../../content/text'
 
@@ -30,7 +31,8 @@ function memoryText(game: GameState, m: Memory): string {
   const role = (id?: string) => (id ? neighborById(id)?.role ?? '' : '')
   switch (m.kind) {
     case 'wedding':
-      return fill(L.memo.wedding, { whoAnd: withAnd(role(m.who)) })
+      // 지금 배우자 자리면 이어받은 사람 이름으로 (2026-10-18 감사 L-48)
+      return fill(L.memo.wedding, { whoAnd: withAnd(m.who && m.who === game.romance?.partner ? partnerName(game) : role(m.who)) })
     case 'childBorn':
       return L.memo.childBorn
     case 'feast':
@@ -138,10 +140,13 @@ function Settled({ id }: { id: GuestId }) {
 }
 
 /** 자란 아이의 일터 (B18-7): 들른 그 순간 하루 한 번 — 요리사면 한 접시를 싸 준다 */
-function KidWork() {
+function KidWork({ owner }: { owner?: string }) {
   const game = useGame((s) => s.game)
   const name = game.child?.name ?? ''
   const [line] = useState<string>(() => {
+    // 다른 아이·이웃 자녀의 일터는 구경만 — 들르기(접시·횟수)는 함께하는 아이 자기 일터에서만 (2026-10-18 감사, Codex E-02)
+    const mine = !owner || owner === (game.child ? `me:${game.child.born}` : '')
+    if (!mine) return L.kidWork.lines[game.clock.day % L.kidWork.lines.length]
     const r = visitKidWork(useGame.getState().game)
     if (!r) return L.kidWork.again
     commit(r.state)
@@ -366,8 +371,9 @@ export function FacilityView({ id, at }: { id: FacilityKind; at?: Tile }) {
   const game = useGame((s) => s.game)
   const here = at ?? { x: Math.round(game.player.x), y: Math.round(game.player.y) }
   const who = id === 'settled' ? settledAt(game, here) : null
+  const kidBuild = id === 'kidWork' ? kidWorkBuildAt(game, here) : null
   const title =
-    who ? fill(L.settledTitle, { who: guestText(who).name }) : id === 'family' ? t('familyHome.title', { names: familyHereNames(game, here) }) : id === 'emptyHome' ? t('familyHome.emptyTitle') : id === 'kidWork' ? fill(L.kidWork.title, { name: game.child?.name ?? '' }) : id === 'guest' ? L.guestTitle : id === 'memorial' ? L.memorialTitle : id === 'courtyard' ? L.yardTitle : id === 'gallery' ? fill(dreamText('tilly').title, { who: neighborById('tilly')?.role ?? '' }) : fill(L.dream.title, { who: neighborById(DREAMER)?.role ?? '' })
+    who ? fill(L.settledTitle, { who: guestText(who).name }) : id === 'family' ? t('familyHome.title', { names: familyHereNames(game, here) }) : id === 'emptyHome' ? t('familyHome.emptyTitle') : id === 'kidWork' ? fill(L.kidWork.title, { name: ownerName(game, kidBuild?.owner) }) : id === 'guest' ? L.guestTitle : id === 'memorial' ? L.memorialTitle : id === 'courtyard' ? L.yardTitle : id === 'gallery' ? fill(dreamText('tilly').title, { who: neighborById('tilly')?.role ?? '' }) : fill(L.dream.title, { who: neighborById(DREAMER)?.role ?? '' })
   return (
     <div className="dialog facility" role="dialog" aria-label={title}>
       <h2>{title}</h2>
@@ -377,7 +383,7 @@ export function FacilityView({ id, at }: { id: FacilityKind; at?: Tile }) {
       {id === 'weaver' && <Workshop />}
       {id === 'gallery' && <Workshop npc="tilly" />}
       {who && <Settled id={who} />}
-      {id === 'kidWork' && <KidWork />}
+      {id === 'kidWork' && <KidWork owner={kidBuild?.owner} />}
       {id === 'emptyHome' && <EmptyHome at={here} />}
       {id === 'family' && <Family at={here} />}
       <div className="actions">

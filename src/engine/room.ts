@@ -104,6 +104,8 @@ export interface RoomCtx {
   readonly entry: Tile
   readonly reach: Tile[]
   readonly bedStand?: Tile
+  /** 벽걸이를 걸 수 있는 벽인가 (없으면 첫 마을 집 기준 isHangingWall — 새 터 방은 제 지도·바닥으로 판단, 2026-10-18 감사 M-23) */
+  hangingWall?(t: Tile): boolean
 }
 
 /** 첫 마을 내 집 (집 안 동작은 한 글자도 바뀌지 않는다) */
@@ -136,7 +138,7 @@ export function placement(room: readonly Furniture[], item: ItemId, t: Tile, fac
     // 벽걸이는 앞만 본다. 차지하는 칸이 모두 '바닥 바로 위의 벽'이고 다른 벽걸이와 겹치지 않아야 한다
     if (facing && facing !== 'down' && !isCopyFurniture(item)) return null
     const f: Furniture = { item, x: t.x, y: t.y, ...(isCopyFurniture(item) ? turned : {}) }
-    if (!footprint(f).every(isHangingWall)) return null
+    if (!footprint(f).every(ctx.hangingWall ?? isHangingWall)) return null
     if (room.some((o) => layerOf(o) === 'wall' && footprint(o).some((p) => footprint(f).some((q) => sameTile(p, q))))) return null
     return f
   }
