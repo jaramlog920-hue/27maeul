@@ -1,0 +1,1355 @@
+{
+  "status": "12개 전체 구현·시각 확인·검사·빌드 완료",
+  "updated": "2026-10-15",
+  "inventory": {
+    "drawn": 488,
+    "pending": 188
+  },
+  "batch": "편지 집·배달길 미제작 전체12개",
+  "rules": "src/render/AGENTS.md; 그룹 전체 구현·대사/선택·가로/휴대폰/썸네일 시각 확인 및 관련 검사/빌드 후에만 완료 기록 갱신",
+  "entries": [
+    {
+      "id": "ev:postman:story:2",
+      "title": "남길 부분 · 마일로",
+      "group": "postman",
+      "basis": "주인공의 일터 기준 임시 배정; 제작 전 원래 장소 확인",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 3,
+      "originalTier": "illustration",
+      "original": {
+        "title": "남길 부분",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "방 탁자 위에 가방이 뒤집혀 놓여 있다. 덮개, 끈, 안주머니가 하나씩 펼쳐져 있다."
+          },
+          {
+            "speaker": "postman",
+            "text": "다 바꾸면 그냥 새 가방이죠. 그건 싫어요. 남길 데를 하나만 고르려고요."
+          },
+          {
+            "speaker": "postman",
+            "text": "…덮개요. 비 맞은 자국이 길 모양으로 남았거든요. 끈이랑 잠금은 부탁해 볼게요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "고르는 모습을 지켜본다",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "정하고 나니 가볍네요. 가방 말고 제 마음이요."
+              }
+            ]
+          },
+          {
+            "label": "손때 묻은 자리를 묻는다",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "여기 덮개 모서리요. 편지를 꺼낼 때마다 잡는 데라 반들반들해요."
+              }
+            ]
+          },
+          {
+            "label": "말없이 덮개를 쓸어 본다",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "부드럽죠? 그 긴 세월 비랑 햇볕이 만든 거예요."
+              }
+            ]
+          }
+        ]
+      },
+      "trigger": {
+        "id": "postman:story:2",
+        "title": "남길 부분",
+        "stage": 2,
+        "at": {
+          "x": 16,
+          "y": 83
+        },
+        "when": {
+          "from": 1080,
+          "to": 1140
+        },
+        "req": {
+          "seen": [
+            "postman:story:1"
+          ],
+          "after": {
+            "event": "postman:story:1",
+            "days": 1
+          }
+        },
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "방 탁자 위에 가방이 뒤집혀 놓여 있다. 덮개, 끈, 안주머니가 하나씩 펼쳐져 있다."
+          },
+          {
+            "speaker": "postman",
+            "text": "다 바꾸면 그냥 새 가방이죠. 그건 싫어요. 남길 데를 하나만 고르려고요."
+          },
+          {
+            "speaker": "postman",
+            "text": "…덮개요. 비 맞은 자국이 길 모양으로 남았거든요. 끈이랑 잠금은 부탁해 볼게요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "고르는 모습을 지켜본다",
+            "color": "quiet",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "정하고 나니 가볍네요. 가방 말고 제 마음이요."
+              }
+            ],
+            "memory": "bagKeep"
+          },
+          {
+            "label": "손때 묻은 자리를 묻는다",
+            "color": "honest",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "여기 덮개 모서리요. 편지를 꺼낼 때마다 잡는 데라 반들반들해요."
+              }
+            ],
+            "memory": "bagKeep"
+          },
+          {
+            "label": "말없이 덮개를 쓸어 본다",
+            "color": "warm",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "부드럽죠? 그 긴 세월 비랑 햇볕이 만든 거예요."
+              }
+            ],
+            "memory": "bagKeep"
+          }
+        ],
+        "opens": 3,
+        "motion": {
+          "npc": "spreadCloth",
+          "player": "nod"
+        }
+      },
+      "guidance": "실제 방 at16,83. 기존 postman-proposal-art의 실내 편지꽂이·탁자·궤짝을 추출해 재사용. 뒤집힌 가방 덮개/끈/안주머니 분리. 덮개 빗자국과 윤기, 실제 개조는 아직 미래."
+    },
+    {
+      "id": "ev:postman:small:ownAppt",
+      "title": "내 약속 적기 · 마일로",
+      "group": "postman",
+      "basis": "주인공의 일터 기준 임시 배정; 제작 전 원래 장소 확인",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 2,
+      "originalTier": "illustration",
+      "original": {
+        "title": "내 약속 적기",
+        "lines": [
+          {
+            "speaker": "postman",
+            "text": "집집마다 언제 들르는지는 다 외우는데, 제 약속은 자꾸 잊어요. 오늘은 제 것도 수첩에 적어 볼게요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "무엇을 적는지 듣는다",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "\"저녁, 돌계단에서 쉬기.\" 처음 적는 제 약속이에요."
+              }
+            ]
+          },
+          {
+            "label": "다음 쉬는 날도 적자",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "다음 잔칫날은 배달을 쉬니까… 그날도 적어 둘게요. 지킬 수 있겠죠?"
+              }
+            ]
+          }
+        ]
+      },
+      "trigger": {
+        "id": "postman:small:ownAppt",
+        "title": "내 약속 적기",
+        "stage": 3,
+        "at": {
+          "x": 27,
+          "y": 14
+        },
+        "when": {
+          "from": 1020,
+          "to": 1080,
+          "weather": [
+            "dry"
+          ]
+        },
+        "req": {
+          "story": [
+            {
+              "id": "postmanBag"
+            }
+          ]
+        },
+        "lines": [
+          {
+            "speaker": "postman",
+            "text": "집집마다 언제 들르는지는 다 외우는데, 제 약속은 자꾸 잊어요. 오늘은 제 것도 수첩에 적어 볼게요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "무엇을 적는지 듣는다",
+            "color": "quiet",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "\"저녁, 돌계단에서 쉬기.\" 처음 적는 제 약속이에요."
+              }
+            ],
+            "memory": "ownAppt"
+          },
+          {
+            "label": "다음 쉬는 날도 적자",
+            "color": "warm",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "다음 잔칫날은 배달을 쉬니까… 그날도 적어 둘게요. 지킬 수 있겠죠?"
+              }
+            ],
+            "memory": "ownAppt"
+          }
+        ],
+        "motion": {
+          "npc": "showWork",
+          "player": "inspectWork"
+        }
+      },
+      "guidance": "돌계단 at27,14. 배달 시각 수첩에 본인의 쉼 한 줄/다음 잔칫날 추가. 미래 약속을 실제 휴식으로 앞당기지 않기."
+    },
+    {
+      "id": "ev:postman:small:newStrap",
+      "title": "넓은 어깨끈 · 마일로",
+      "group": "postman",
+      "basis": "주인공의 일터 기준 임시 배정; 제작 전 원래 장소 확인",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 2,
+      "originalTier": "illustration",
+      "original": {
+        "title": "넓은 어깨끈",
+        "lines": [
+          {
+            "speaker": "postman",
+            "text": "아이리스, 어깨에 닿는 끈만 넓게 짜 줄 수 있을까요? 길이는 지금 그대로요."
+          },
+          {
+            "speaker": "weaver",
+            "text": "어깨 쪽만 손가락 두 마디 넓게요. 색은 원래 끈이랑 비슷하게 할게요. 본인이 메던 느낌이 남게."
+          }
+        ],
+        "choices": [
+          {
+            "label": "끈 색 고르는 걸 지켜본다",
+            "reply": [
+              {
+                "speaker": "weaver",
+                "text": "이 밤색이 제일 가깝네요. 직접 대 보고 고르세요."
+              }
+            ]
+          },
+          {
+            "label": "실을 같이 감는다",
+            "reply": [
+              {
+                "speaker": "weaver",
+                "text": "천천히 감아 주세요. 고르게 감겨야 짤 때 안 엉켜요."
+              }
+            ]
+          }
+        ]
+      },
+      "trigger": {
+        "id": "postman:small:newStrap",
+        "title": "넓은 어깨끈",
+        "stage": 2,
+        "at": {
+          "x": 36,
+          "y": 24
+        },
+        "when": {
+          "from": 960,
+          "to": 1020
+        },
+        "with": [
+          "weaver"
+        ],
+        "req": {
+          "story": [
+            {
+              "id": "postmanBag"
+            }
+          ]
+        },
+        "lines": [
+          {
+            "speaker": "postman",
+            "text": "아이리스, 어깨에 닿는 끈만 넓게 짜 줄 수 있을까요? 길이는 지금 그대로요."
+          },
+          {
+            "speaker": "weaver",
+            "text": "어깨 쪽만 손가락 두 마디 넓게요. 색은 원래 끈이랑 비슷하게 할게요. 본인이 메던 느낌이 남게."
+          }
+        ],
+        "choices": [
+          {
+            "label": "끈 색 고르는 걸 지켜본다",
+            "color": "quiet",
+            "reply": [
+              {
+                "speaker": "weaver",
+                "text": "이 밤색이 제일 가깝네요. 직접 대 보고 고르세요."
+              }
+            ],
+            "memory": "newStrap"
+          },
+          {
+            "label": "실을 같이 감는다",
+            "color": "warm",
+            "reply": [
+              {
+                "speaker": "weaver",
+                "text": "천천히 감아 주세요. 고르게 감겨야 짤 때 안 엉켜요."
+              }
+            ],
+            "memory": "newStrap",
+            "mini": "weave"
+          }
+        ],
+        "motion": {
+          "npc": "stitch",
+          "player": "inspectWork"
+        }
+      },
+      "guidance": "베틀 집 앞 at36,24. postman와 weaver 실제 두 인물. 같은 길이 끈과 어깨 쪽 넓이, 밤색 실 고르기/같이 감기. 완성 끈을 미리 설치하지 않기."
+    },
+    {
+      "id": "ev:postman:love:2",
+      "title": "네 번째 매듭 · 마일로",
+      "group": "postman",
+      "basis": "주인공의 일터 기준 임시 배정; 제작 전 원래 장소 확인",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 2,
+      "originalTier": "illustration",
+      "original": {
+        "title": "네 번째 매듭",
+        "lines": [
+          {
+            "speaker": "postman",
+            "text": "가방 끈이 또 끊어졌어요. 네 번째예요."
+          },
+          {
+            "speaker": "postman",
+            "text": "기우는 건 제가 할게요. …옆에서 실만 잡아 줄래요?"
+          }
+        ],
+        "choices": [
+          {
+            "label": "실을 잡아 준다",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "고마워요. 이번 매듭은 둘이 묶은 거라 안 끊어질 거예요."
+              }
+            ]
+          },
+          {
+            "label": "새 끈을 하나 만들어 주겠다고 한다",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "새 끈이요? …그럼 이 끈은 기념으로 둘게요. 네 번 기운 끈이요."
+              }
+            ]
+          }
+        ]
+      },
+      "trigger": {
+        "id": "postman:love:2",
+        "title": "네 번째 매듭",
+        "stage": 4,
+        "at": {
+          "x": 27,
+          "y": 14
+        },
+        "when": {
+          "from": 1020,
+          "to": 1080,
+          "weather": [
+            "dry"
+          ]
+        },
+        "req": {
+          "lover": true,
+          "romance": [
+            "dating",
+            "engaged"
+          ],
+          "after": {
+            "event": "postman:love:1",
+            "days": 3
+          }
+        },
+        "gain": 5,
+        "lines": [
+          {
+            "speaker": "postman",
+            "text": "가방 끈이 또 끊어졌어요. 네 번째예요."
+          },
+          {
+            "speaker": "postman",
+            "text": "기우는 건 제가 할게요. …옆에서 실만 잡아 줄래요?"
+          }
+        ],
+        "choices": [
+          {
+            "label": "실을 잡아 준다",
+            "color": "warm",
+            "memory": "bagStrap",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "고마워요. 이번 매듭은 둘이 묶은 거라 안 끊어질 거예요."
+              }
+            ]
+          },
+          {
+            "label": "새 끈을 하나 만들어 주겠다고 한다",
+            "color": "honest",
+            "memory": "bagStrap",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "새 끈이요? …그럼 이 끈은 기념으로 둘게요. 네 번 기운 끈이요."
+              }
+            ]
+          }
+        ],
+        "motion": {
+          "npc": "stitch",
+          "player": "inspectWork"
+        }
+      },
+      "guidance": "돌계단 at27,14. 네 번째 끊어진 끈과 세 번 기운 자리. 같이 잡는 실과 새 네 번째 매듭. 새 끈 약속 선택은 낡은 네 번 기운 끈을 보존하고 제작을 미리 실행하지 않기."
+    },
+    {
+      "id": "ev:postman:story:1",
+      "title": "닳은 끈 · 마일로",
+      "group": "postman",
+      "basis": "주인공의 일터 기준 임시 배정; 제작 전 원래 장소 확인",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 3,
+      "originalTier": "illustration",
+      "original": {
+        "title": "닳은 끈",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "길가. 편지 나르는 이웃이 가방을 내려놓고 끈 매듭을 다시 묶고 있다. 끈 한쪽이 실처럼 가늘어졌다."
+          },
+          {
+            "speaker": "postman",
+            "text": "끈이 또 풀렸어요. 이 가방을 멘 지 열 해가 넘었어요. 바꾸자니 손이 먼저 아까워하네요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "가방 이야기를 듣는다",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "처음 받았을 땐 뻣뻣했어요. 지금은 제 어깨 모양대로 휘었어요. 그래서 못 버려요."
+              }
+            ]
+          },
+          {
+            "label": "매듭을 같이 잡아 준다",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "고마워요. 이렇게 두 번 감으면 오늘은 버틸 거예요. 내일은… 내일 생각할게요."
+              }
+            ]
+          },
+          {
+            "label": "잠깐 쉬어 가자고 한다",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "쉬어 가자고요? …그럼 끈 묶는 동안만요. 앉으면 못 일어날 것 같아서요."
+              }
+            ]
+          }
+        ]
+      },
+      "trigger": {
+        "id": "postman:story:1",
+        "title": "닳은 끈",
+        "stage": 1,
+        "at": {
+          "x": 22,
+          "y": 8
+        },
+        "when": {
+          "from": 900,
+          "to": 960
+        },
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "길가. 편지 나르는 이웃이 가방을 내려놓고 끈 매듭을 다시 묶고 있다. 끈 한쪽이 실처럼 가늘어졌다."
+          },
+          {
+            "speaker": "postman",
+            "text": "끈이 또 풀렸어요. 이 가방을 멘 지 열 해가 넘었어요. 바꾸자니 손이 먼저 아까워하네요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "가방 이야기를 듣는다",
+            "color": "quiet",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "처음 받았을 땐 뻣뻣했어요. 지금은 제 어깨 모양대로 휘었어요. 그래서 못 버려요."
+              }
+            ],
+            "memory": "wornStrap"
+          },
+          {
+            "label": "매듭을 같이 잡아 준다",
+            "color": "warm",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "고마워요. 이렇게 두 번 감으면 오늘은 버틸 거예요. 내일은… 내일 생각할게요."
+              }
+            ],
+            "memory": "wornStrap"
+          },
+          {
+            "label": "잠깐 쉬어 가자고 한다",
+            "color": "honest",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "쉬어 가자고요? …그럼 끈 묶는 동안만요. 앉으면 못 일어날 것 같아서요."
+              }
+            ],
+            "memory": "wornStrap"
+          }
+        ],
+        "opens": 2,
+        "motion": {
+          "npc": "showWork",
+          "player": "inspectWork"
+        }
+      },
+      "guidance": "길가 at22,8. 가방 내려놓기, 가늘어진 끈 한쪽과 매듭. 같이 두 번 감거나 잠깐 쉬며 묶기. 새 가방으로 바꾸지 않기."
+    },
+    {
+      "id": "ev:postman:story:4",
+      "title": "돌계단 그늘에 앉기 · 마일로",
+      "group": "postman",
+      "basis": "첫 서술의 장소 표현",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 3,
+      "originalTier": "illustration",
+      "original": {
+        "title": "돌계단 그늘에 앉기",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "광장 돌계단 그늘에 가방이 놓여 있다. 덮개는 그대로고, 둥근 나무 잠금이 새로 달렸다."
+          },
+          {
+            "speaker": "postman",
+            "text": "고친 가방으로 한 바퀴 돌았어요. 잠금이 한 번에 열리니까 집집마다 서 있는 시간이 줄었어요. 그 시간만큼 여기 앉아 보고 싶었어요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "곁에 앉는다",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "앉으니까 길이 다르게 보이네요. 늘 지나가기만 했거든요."
+              }
+            ]
+          },
+          {
+            "label": "수첩에 적는 걸 본다",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "배달 시각만 적던 수첩인데, 오늘은 한 줄 더 적었어요. \"돌계단, 쉼.\""
+              }
+            ]
+          },
+          {
+            "label": "새 잠금을 열어 본다",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "딸깍. 좋죠? 목수가 손가락 하나로 열리게 해 줬어요."
+              }
+            ]
+          }
+        ]
+      },
+      "trigger": {
+        "id": "postman:story:4",
+        "title": "돌계단 그늘에 앉기",
+        "stage": 3,
+        "at": {
+          "x": 27,
+          "y": 14
+        },
+        "when": {
+          "from": 1020,
+          "to": 1080,
+          "weather": [
+            "dry"
+          ]
+        },
+        "req": {
+          "seen": [
+            "postman:story:3"
+          ],
+          "after": {
+            "event": "postman:story:3",
+            "days": 1
+          }
+        },
+        "completes": "postmanBag",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "광장 돌계단 그늘에 가방이 놓여 있다. 덮개는 그대로고, 둥근 나무 잠금이 새로 달렸다."
+          },
+          {
+            "speaker": "postman",
+            "text": "고친 가방으로 한 바퀴 돌았어요. 잠금이 한 번에 열리니까 집집마다 서 있는 시간이 줄었어요. 그 시간만큼 여기 앉아 보고 싶었어요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "곁에 앉는다",
+            "color": "quiet",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "앉으니까 길이 다르게 보이네요. 늘 지나가기만 했거든요."
+              }
+            ]
+          },
+          {
+            "label": "수첩에 적는 걸 본다",
+            "color": "honest",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "배달 시각만 적던 수첩인데, 오늘은 한 줄 더 적었어요. \"돌계단, 쉼.\""
+              }
+            ]
+          },
+          {
+            "label": "새 잠금을 열어 본다",
+            "color": "warm",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "딸깍. 좋죠? 목수가 손가락 하나로 열리게 해 줬어요."
+              }
+            ]
+          }
+        ],
+        "motion": {
+          "npc": "showWork",
+          "player": "inspectWork"
+        }
+      },
+      "guidance": "실제 광장 돌계단 at27,14. 기존 덮개+새 둥근 나무 잠금. 곁에 앉기/쉼 한 줄/잠금 열기 세 갈래. 통째 새 가방으로 바꾸지 않기."
+    },
+    {
+      "id": "ev:postman:short:spouseHabit",
+      "title": "문 옆 메모 꽂이 · 마일로",
+      "group": "postman",
+      "basis": "주인공의 일터 기준 임시 배정; 제작 전 원래 장소 확인",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 3,
+      "originalTier": "illustration",
+      "original": {
+        "title": "문 옆 메모 꽂이",
+        "lines": [
+          {
+            "speaker": "postman",
+            "text": "집 문 옆에 짧은 메모 꽂이를 하나 달았어요. 서로 한 줄씩 남기면 어때요? 오늘 첫 줄은 뭐로 할까요?"
+          }
+        ],
+        "choices": [
+          {
+            "label": "오늘 저녁 먹을 것",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "\"오늘 저녁, 콩죽.\" 첫 줄부터 맛있네요."
+              }
+            ]
+          },
+          {
+            "label": "“잘 다녀와”",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "\"잘 다녀와.\" …가방 내려놓을 때마다 보이겠네요."
+              }
+            ]
+          },
+          {
+            "label": "내일 쉬는 시간",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "\"내일 저녁, 돌계단.\" 제 수첩에도 똑같이 적을게요."
+              }
+            ]
+          }
+        ]
+      },
+      "trigger": {
+        "id": "postman:short:spouseHabit",
+        "title": "문 옆 메모 꽂이",
+        "stage": 3,
+        "at": {
+          "x": 22,
+          "y": 8
+        },
+        "when": {
+          "from": 900,
+          "to": 1080
+        },
+        "req": {
+          "rel": [
+            "spouse"
+          ]
+        },
+        "gain": 3,
+        "lines": [
+          {
+            "speaker": "postman",
+            "text": "집 문 옆에 짧은 메모 꽂이를 하나 달았어요. 서로 한 줄씩 남기면 어때요? 오늘 첫 줄은 뭐로 할까요?"
+          }
+        ],
+        "choices": [
+          {
+            "label": "오늘 저녁 먹을 것",
+            "color": "warm",
+            "memory": "homeNotes",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "\"오늘 저녁, 콩죽.\" 첫 줄부터 맛있네요."
+              }
+            ]
+          },
+          {
+            "label": "“잘 다녀와”",
+            "color": "quiet",
+            "memory": "homeNotes",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "\"잘 다녀와.\" …가방 내려놓을 때마다 보이겠네요."
+              }
+            ]
+          },
+          {
+            "label": "내일 쉬는 시간",
+            "color": "honest",
+            "memory": "homeNotes",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "\"내일 저녁, 돌계단.\" 제 수첩에도 똑같이 적을게요."
+              }
+            ]
+          }
+        ],
+        "motion": {
+          "npc": "shareFood",
+          "player": "taste"
+        }
+      },
+      "guidance": "발생 at22,8이며 집 문 옆에 설치했다고 이야기하는 회상. 원래 현재 위치와 집의 기설치 메모 꽂이 설명을 구분. 콩죽/잘 다녀와/내일 돌계단 한 줄 메모."
+    },
+    {
+      "id": "ev:postman:love:1",
+      "title": "배달 없는 길 · 마일로",
+      "group": "postman",
+      "basis": "주인공의 일터 기준 임시 배정; 제작 전 원래 장소 확인",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 2,
+      "originalTier": "event",
+      "original": {
+        "title": "배달 없는 길",
+        "lines": [
+          {
+            "speaker": "postman",
+            "text": "배달 길 말고, 저만 아는 길이 하나 있어요."
+          },
+          {
+            "speaker": "postman",
+            "text": "아무 집도 없는 길이에요. 그래서 좋아요. 같이 걸어요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "말없이 함께 걷는다",
+            "reply": [
+              {
+                "speaker": "narration",
+                "text": "한참 걷다가 마일로가 멈췄다. 풀숲 사이로 호수가 조그맣게 보였다."
+              },
+              {
+                "speaker": "postman",
+                "text": "여기예요. 누구한테도 안 알려 준 데."
+              }
+            ]
+          },
+          {
+            "label": "길 이름을 지어 주자고 한다",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "길 이름이요? …그럼 수첩에 적을 수 있겠네요. “둘이 걷는 길”. 너무 그대로예요? 괜찮아요."
+              }
+            ]
+          }
+        ]
+      },
+      "trigger": {
+        "id": "postman:love:1",
+        "title": "배달 없는 길",
+        "stage": 4,
+        "at": {
+          "x": 27,
+          "y": 14
+        },
+        "when": {
+          "from": 1020,
+          "to": 1080,
+          "weather": [
+            "dry"
+          ]
+        },
+        "req": {
+          "lover": true,
+          "romance": [
+            "dating",
+            "engaged"
+          ],
+          "after": {
+            "event": "romance:postman:ownMessage",
+            "days": 2
+          }
+        },
+        "gain": 5,
+        "lines": [
+          {
+            "speaker": "postman",
+            "text": "배달 길 말고, 저만 아는 길이 하나 있어요."
+          },
+          {
+            "speaker": "postman",
+            "text": "아무 집도 없는 길이에요. 그래서 좋아요. 같이 걸어요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "말없이 함께 걷는다",
+            "color": "quiet",
+            "memory": "secretPath",
+            "reply": [
+              {
+                "speaker": "narration",
+                "text": "한참 걷다가 마일로가 멈췄다. 풀숲 사이로 호수가 조그맣게 보였다."
+              },
+              {
+                "speaker": "postman",
+                "text": "여기예요. 누구한테도 안 알려 준 데."
+              }
+            ]
+          },
+          {
+            "label": "길 이름을 지어 주자고 한다",
+            "color": "warm",
+            "memory": "secretPath",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "길 이름이요? …그럼 수첩에 적을 수 있겠네요. “둘이 걷는 길”. 너무 그대로예요? 괜찮아요."
+              }
+            ]
+          }
+        ],
+        "motion": {
+          "npc": "point",
+          "player": "nod"
+        }
+      },
+      "guidance": "돌계단 at27,14에서 아무 집 없는 길로 걷는 이야기. 집 없는 풀숲 길과 답변 뒤 작게 보이는 호수. 다른 선택은 수첩에 둘이 걷는 길 이름 기록."
+    },
+    {
+      "id": "ev:postman:small:rainCover",
+      "title": "비 오는 날 덮개 · 마일로",
+      "group": "postman",
+      "basis": "주인공의 일터 기준 임시 배정; 제작 전 원래 장소 확인",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 2,
+      "originalTier": "illustration",
+      "original": {
+        "title": "비 오는 날 덮개",
+        "lines": [
+          {
+            "speaker": "postman",
+            "text": "비 오는 날엔 가방 위에 기름 먹인 천을 덮어요. 그런데 이 천이 걸을 때마다 미끄러져요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "천 끝을 끈에 묶자고 한다",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "묶으면 꺼낼 때 번거롭지 않을까… 아, 한쪽만 묶으면 되겠네요."
+              }
+            ]
+          },
+          {
+            "label": "천을 같이 접어 본다",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "세 번 접으니 딱 덮개 크기네요. 순서대로 접으면 금방이에요."
+              }
+            ]
+          }
+        ]
+      },
+      "trigger": {
+        "id": "postman:small:rainCover",
+        "title": "비 오는 날 덮개",
+        "stage": 2,
+        "at": {
+          "x": 15,
+          "y": 24
+        },
+        "when": {
+          "from": 390,
+          "to": 900,
+          "weather": [
+            "wet"
+          ]
+        },
+        "lines": [
+          {
+            "speaker": "postman",
+            "text": "비 오는 날엔 가방 위에 기름 먹인 천을 덮어요. 그런데 이 천이 걸을 때마다 미끄러져요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "천 끝을 끈에 묶자고 한다",
+            "color": "honest",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "묶으면 꺼낼 때 번거롭지 않을까… 아, 한쪽만 묶으면 되겠네요."
+              }
+            ],
+            "memory": "rainCover"
+          },
+          {
+            "label": "천을 같이 접어 본다",
+            "color": "warm",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "세 번 접으니 딱 덮개 크기네요. 순서대로 접으면 금방이에요."
+              }
+            ],
+            "memory": "rainCover",
+            "mini": "order"
+          }
+        ],
+        "motion": {
+          "npc": "smile",
+          "player": "nod"
+        }
+      },
+      "guidance": "비 오는 실제 집 앞 at15,24. 기름 먹인 천과 가방. 한쪽만 끈에 묶기/세 번 접은 덮개 크기를 구분. 손/천은 머리·몸통 옆에서만."
+    },
+    {
+      "id": "ev:romance:postman:blankLine",
+      "title": "수첩의 빈 줄 · 마일로",
+      "group": "postman",
+      "basis": "첫 서술의 장소 표현",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 2,
+      "originalTier": "illustration",
+      "original": {
+        "title": "수첩의 빈 줄",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "돌계단 그늘. 이웃이 수첩을 펴 놓았다. \"돌계단, 쉼\" 한 줄 말고는 배달 시간이 빼곡하다."
+          },
+          {
+            "speaker": "postman",
+            "text": "쉬는 시간은 따로 안 적었어요. 남으면 쉬면 된다고 생각해서요."
+          },
+          {
+            "speaker": "postman",
+            "text": "…빈 줄을 하나 남겨 볼까 해요. 무엇으로 채울지는 같이 정하고 싶어요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "가까운 길을 걷자고 한다",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "그럼 빈 줄엔 \"산책\". 배달 없는 길로요."
+              }
+            ]
+          },
+          {
+            "label": "돌계단에 같이 앉자",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "\"돌계단, 둘이.\" …이렇게 적으니까 수첩이 다르게 보여요."
+              }
+            ]
+          }
+        ]
+      },
+      "trigger": {
+        "id": "romance:postman:blankLine",
+        "title": "수첩의 빈 줄",
+        "stage": 3,
+        "at": {
+          "x": 27,
+          "y": 14
+        },
+        "when": {
+          "from": 1020,
+          "to": 1080,
+          "weather": [
+            "dry"
+          ]
+        },
+        "req": {
+          "story": [
+            {
+              "id": "postmanBag"
+            }
+          ],
+          "seen": [
+            "postman:small:ownAppt"
+          ],
+          "after": {
+            "event": "postman:small:ownAppt",
+            "days": 1
+          }
+        },
+        "gain": 6,
+        "opens": 4,
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "돌계단 그늘. 이웃이 수첩을 펴 놓았다. \"돌계단, 쉼\" 한 줄 말고는 배달 시간이 빼곡하다."
+          },
+          {
+            "speaker": "postman",
+            "text": "쉬는 시간은 따로 안 적었어요. 남으면 쉬면 된다고 생각해서요."
+          },
+          {
+            "speaker": "postman",
+            "text": "…빈 줄을 하나 남겨 볼까 해요. 무엇으로 채울지는 같이 정하고 싶어요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "가까운 길을 걷자고 한다",
+            "color": "warm",
+            "memory": "blankWalk",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "그럼 빈 줄엔 \"산책\". 배달 없는 길로요."
+              }
+            ]
+          },
+          {
+            "label": "돌계단에 같이 앉자",
+            "color": "quiet",
+            "memory": "blankRest",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "\"돌계단, 둘이.\" …이렇게 적으니까 수첩이 다르게 보여요."
+              }
+            ]
+          }
+        ],
+        "motion": {
+          "npc": "spreadCloth",
+          "player": "nod"
+        }
+      },
+      "guidance": "돌계단 그늘. 배달 시각과 기존 돌계단 쉼 한 줄, 새 빈 줄. 선택은 앞으로 함께할 산책/휴식 기록. 새 모임을 미리 실행하지 않기."
+    },
+    {
+      "id": "ev:postman:home:2",
+      "title": "쉬는 날의 편지 · 마일로",
+      "group": "postman",
+      "basis": "주인공의 일터 기준 임시 배정; 제작 전 원래 장소 확인",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 2,
+      "originalTier": "dialogue",
+      "original": {
+        "title": "쉬는 날의 편지",
+        "lines": [
+          {
+            "speaker": "postman",
+            "text": "오늘 쉬는 날인데, 급한 편지가 하나 왔대요."
+          },
+          {
+            "speaker": "postman",
+            "text": "…가야 할까요? 수첩엔 “쉼”이라고 적어 놨는데."
+          }
+        ],
+        "choices": [
+          {
+            "label": "같이 다녀와서 쉬자고 한다",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "같이요? 그럼 배달이 산책이 되네요. 금방 다녀와요."
+              }
+            ]
+          },
+          {
+            "label": "다른 사람한테 부탁해 보라고 한다",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "부탁이요… 해 본 적이 없네요. 해 볼게요. 쉬는 날은 지켜야죠."
+              }
+            ]
+          }
+        ]
+      },
+      "trigger": {
+        "id": "postman:home:2",
+        "title": "쉬는 날의 편지",
+        "stage": 3,
+        "at": {
+          "x": 22,
+          "y": 8
+        },
+        "when": {
+          "from": 900,
+          "to": 1080
+        },
+        "req": {
+          "rel": [
+            "spouse"
+          ],
+          "after": {
+            "event": "postman:home:1",
+            "days": 5
+          }
+        },
+        "gain": 3,
+        "lines": [
+          {
+            "speaker": "postman",
+            "text": "오늘 쉬는 날인데, 급한 편지가 하나 왔대요."
+          },
+          {
+            "speaker": "postman",
+            "text": "…가야 할까요? 수첩엔 “쉼”이라고 적어 놨는데."
+          }
+        ],
+        "choices": [
+          {
+            "label": "같이 다녀와서 쉬자고 한다",
+            "color": "warm",
+            "memory": "dayOffLetter",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "같이요? 그럼 배달이 산책이 되네요. 금방 다녀와요."
+              }
+            ]
+          },
+          {
+            "label": "다른 사람한테 부탁해 보라고 한다",
+            "color": "honest",
+            "memory": "dayOffLetter",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "부탁이요… 해 본 적이 없네요. 해 볼게요. 쉬는 날은 지켜야죠."
+              }
+            ]
+          }
+        ],
+        "motion": {
+          "npc": "offerGift",
+          "player": "receiveGift"
+        }
+      },
+      "guidance": "발생 at22,8. 쉬는 날 급한 편지 연락과 쉼 수첩을 상의함. 함께 배달하거나 다른 이웃에게 부탁하는 답변을 배달 완료나 즉석 새 인물 등장으로 바꾸지 않기."
+    },
+    {
+      "id": "ev:postman:home:1",
+      "title": "집 안 편지함 · 마일로",
+      "group": "postman",
+      "basis": "주인공의 일터 기준 임시 배정; 제작 전 원래 장소 확인",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 2,
+      "originalTier": "illustration",
+      "original": {
+        "title": "집 안 편지함",
+        "lines": [
+          {
+            "speaker": "postman",
+            "text": "집 안에 작은 편지함 하나 달까 해요. 우리 둘만 쓰는 거요."
+          },
+          {
+            "speaker": "postman",
+            "text": "할 말 있는데 바쁜 날 쪽지 넣어 두는 데요. 어디 달까요?"
+          }
+        ],
+        "choices": [
+          {
+            "label": "부엌 문 옆",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "부엌 문 옆. 아침마다 보겠네요. 좋아요."
+              }
+            ]
+          },
+          {
+            "label": "침대 머리맡",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "머리맡이요? …그럼 자기 전에 꼭 확인하겠네요. 하루에 하나씩 넣을게요."
+              }
+            ]
+          }
+        ]
+      },
+      "trigger": {
+        "id": "postman:home:1",
+        "title": "집 안 편지함",
+        "stage": 3,
+        "at": {
+          "x": 22,
+          "y": 8
+        },
+        "when": {
+          "from": 900,
+          "to": 1080
+        },
+        "req": {
+          "rel": [
+            "spouse"
+          ],
+          "after": {
+            "event": "postman:short:spouseHabit",
+            "days": 3
+          }
+        },
+        "gain": 3,
+        "lines": [
+          {
+            "speaker": "postman",
+            "text": "집 안에 작은 편지함 하나 달까 해요. 우리 둘만 쓰는 거요."
+          },
+          {
+            "speaker": "postman",
+            "text": "할 말 있는데 바쁜 날 쪽지 넣어 두는 데요. 어디 달까요?"
+          }
+        ],
+        "choices": [
+          {
+            "label": "부엌 문 옆",
+            "color": "honest",
+            "memory": "homeNoteBox",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "부엌 문 옆. 아침마다 보겠네요. 좋아요."
+              }
+            ]
+          },
+          {
+            "label": "침대 머리맡",
+            "color": "warm",
+            "memory": "homeNoteBox",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "머리맡이요? …그럼 자기 전에 꼭 확인하겠네요. 하루에 하나씩 넣을게요."
+              }
+            ]
+          }
+        ],
+        "motion": {
+          "npc": "hangDecor",
+          "player": "nod"
+        }
+      },
+      "guidance": "발생 at22,8. 집 안 편지함을 어디 달지 상의함. 부엌 문/침대 머리맡은 미래 설치 계획. 완성 편지함을 배경에 미리 달지 않기."
+    }
+  ],
+  "verification": "62컷씩 기본/실제 외형, 12개씩 휴대폰 컷, 브라우저 선택·썸네일 확인; 2766 tests, prebuild, tsc, vite build 통과",
+  "next": "서고·필사 책상·시설 미제작 24개 전체"
+}

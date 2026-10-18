@@ -63,6 +63,7 @@ export function checkMeets(
   day: number,
   minute: number,
   likes: (id: string) => readonly string[],
+  gainScale = 1,
 ): { g: GenState; emotes: Emote[] } {
   const ids = Object.keys(at).filter((id) => free.has(id)).sort()
   const busy = new Set<string>()
@@ -79,7 +80,7 @@ export function checkMeets(
       const result = meetResult(g, a, b, day, m.n, fitOf(a, b, likes))
       // 자유시간에 함께 나누는 대화는 서로 가까워지는 만남이다.
       const kind = result === 'angry' || result === 'sweat' ? 'talk' : result
-      g = addAffinity(g, a, b, MEET_GAIN[kind])
+      g = addAffinity(g, a, b, MEET_GAIN[kind] > 0 ? MEET_GAIN[kind] * gainScale : MEET_GAIN[kind])
       g = { ...g, meets: { ...g.meets, [relationId(a, b)]: { day, n: m.n + 1, last: minute } } }
       busy.add(a)
       busy.add(b)

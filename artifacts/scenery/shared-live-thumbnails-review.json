@@ -1,0 +1,3983 @@
+{
+  "batch": "shared-background-remainder",
+  "completed": false,
+  "samples": [
+    {
+      "id": "gift:postman:9",
+      "title": "마음을 나눈 이웃",
+      "sourceLines": [
+        {
+          "speaker": "postman",
+          "text": "편지를 담아 다니던 바구니예요. 새로 하나 엮었으니 이건 드릴게요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-postman-9-live-thumb.png",
+        "sha256": "d7fbf2de9ecb9dd093569491f6e8f850da19b4a6da7887f42fd2e9c716d38ee1",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:grandpa:9",
+      "title": "마음을 나눈 이웃",
+      "sourceLines": [
+        {
+          "speaker": "grandpa",
+          "text": "내가 아끼던 그릇이네. 자네가 쓰면 좋겠네."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-grandpa-9-live-thumb.png",
+        "sha256": "bdc198e491fcf67f7970983e388ee3f26dfcabbd4f64981f0603e40f52dac77f",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:smith:9",
+      "title": "마음을 나눈 이웃",
+      "sourceLines": [
+        {
+          "speaker": "smith",
+          "text": "{player}님 방에 둘 협탁을 짰소. 쇠 장식도 달았소."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-smith-9-live-thumb.png",
+        "sha256": "a256dd11c25743c543d26ed1f57fe1c8a277c7de0cf7cdd23ced3136ed80e4ff",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:apothecary:9",
+      "title": "마음을 나눈 이웃",
+      "sourceLines": [
+        {
+          "speaker": "apothecary",
+          "text": "약차 우릴 때 쓰는 주전자예요. 우리 집에서 제일 아끼는 거예요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-apothecary-9-live-thumb.png",
+        "sha256": "2bcce875494d8a09137541966d74083a17d9cabe7d9fdac73cb40ddd57b258c3",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:carpenter:9",
+      "title": "마음을 나눈 이웃",
+      "sourceLines": [
+        {
+          "speaker": "carpenter",
+          "text": "책 꽂을 책장을 짰어요. 권수가 늘었으니 자리가 필요하죠."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-carpenter-9-live-thumb.png",
+        "sha256": "10173e1d8d6af89a3c4828f69672c9fc46bb13e5f2a4d85735ca354bd30e03f4",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:weaver:9",
+      "title": "마음을 나눈 이웃",
+      "sourceLines": [
+        {
+          "speaker": "weaver",
+          "text": "이 바구니는 제가 이 마을에서 처음 짠 거예요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-weaver-9-live-thumb.png",
+        "sha256": "3e0160283c3294cac40d947fa84455c660ab1cb4a7665dc83f57e450a81c059f",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:merchant:9",
+      "title": "마음을 나눈 이웃",
+      "sourceLines": [
+        {
+          "speaker": "merchant",
+          "text": "먼 길에서 구한 제일 좋은 깔개야. 네 방에 어울릴 거야."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-merchant-9-live-thumb.png",
+        "sha256": "4fb50417607fed5ce73a05441a8755ca93056cf081235f250331d7a0b113d64a",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:shepherd:9",
+      "title": "마음을 나눈 이웃",
+      "sourceLines": [
+        {
+          "speaker": "shepherd",
+          "text": "제일 좋은 털로 방석을 또 만들었어요. 둘이면 손님도 앉겠죠."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-shepherd-9-live-thumb.png",
+        "sha256": "bd25d0445796e8877eec2ffa53e7cd8faa87b2776258e1f32bcc6e910f901376",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:presser:9",
+      "title": "마음을 나눈 이웃",
+      "sourceLines": [
+        {
+          "speaker": "presser",
+          "text": "이 물병엔 올해 첫 기름을 담았었어요. 받아 줘요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-presser-9-live-thumb.png",
+        "sha256": "baaf017cb0f98256e999bb71b19634a7a4df73212860c3ed87bf4c989081668e",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:child:9",
+      "title": "마음을 나눈 이웃",
+      "sourceLines": [
+        {
+          "speaker": "child",
+          "text": "그때보다 훨씬 잘 깎은 나무 새예요. 제일 아끼는 거라 드려요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-child-9-live-thumb.png",
+        "sha256": "ab83df9b9bb507ef317d1d7290616467d75d68f155c625fa2b8d4f4939b5d531",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:beekeeper:9",
+      "title": "마음을 나눈 이웃",
+      "sourceLines": [
+        {
+          "speaker": "beekeeper",
+          "text": "제일 예쁜 물병에 꿀 향이 배었어요. 가져가요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-beekeeper-9-live-thumb.png",
+        "sha256": "c6fedcf14b0a86e675ffd37d62a465193650c45546796572e1556948ee93dc61",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:fisher:9",
+      "title": "마음을 나눈 이웃",
+      "sourceLines": [
+        {
+          "speaker": "fisher",
+          "text": "물가에서 쓰던 그릇이에요. 오래 써서 손에 익었어요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-fisher-9-live-thumb.png",
+        "sha256": "00b77d70d6da9960106c0281aa1b8e023e8aa0daad7087f18de5226753431012",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:baker:9",
+      "title": "마음을 나눈 이웃",
+      "sourceLines": [
+        {
+          "speaker": "baker",
+          "text": "늘 고마워요. 우리 집 식탁에 올려 두던 촛대예요. 이젠 {player}님 거예요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-baker-9-live-thumb.png",
+        "sha256": "25a1d0d7071c649a87615f235e97b7d1f3e8ab812cbde0f106bb412575d6af38",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:postman:3",
+      "title": "선물",
+      "sourceLines": [
+        {
+          "speaker": "postman",
+          "text": "편지 싸는 종이가 남았어요. 글씨 쓰실 때 쓰세요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-postman-3-live-thumb.png",
+        "sha256": "5aa369332911b5528bb6734870c0687a7babaeb672863ec471d466d5090c1c26",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:grandpa:3",
+      "title": "선물",
+      "sourceLines": [
+        {
+          "speaker": "grandpa",
+          "text": "말린 무화과네. 출출할 때 들게."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-grandpa-3-live-thumb.png",
+        "sha256": "265424b5f2850e24b241fdda811df2ac155e91a43d1af3f74838698a4e989d0a",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:grandpa:6",
+      "title": "선물",
+      "sourceLines": [
+        {
+          "speaker": "grandpa",
+          "text": "젊을 때 짠 식탁이라네. 자네 집에 두고 쓰게."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-grandpa-6-live-thumb.png",
+        "sha256": "02d29791c35567e542fa6f3e8e58a39b54ef91adc7df97d47278847c8239d871",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:smith:3",
+      "title": "선물",
+      "sourceLines": [
+        {
+          "speaker": "smith",
+          "text": "밤에 쓰는 걸 보았소. 기름을 덜 먹는 등잔이오."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-smith-3-live-thumb.png",
+        "sha256": "ce69b39054cffb8079442dea44d38095a1e27ac3cc053a082685a66d67cd0469",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:apothecary:3",
+      "title": "선물",
+      "sourceLines": [
+        {
+          "speaker": "apothecary",
+          "text": "텃밭에 심어 보세요. 잘 자라는 약초 씨앗이에요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-apothecary-3-live-thumb.png",
+        "sha256": "a472e6c746c92e433ca01ee0bbd4c44bb8cc05ee2512d33ce2ab7f1f56d9b269",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:apothecary:6",
+      "title": "선물",
+      "sourceLines": [
+        {
+          "speaker": "apothecary",
+          "text": "약초 달이던 작은 냄비예요. 방에서도 쓸 데가 있을 거예요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-apothecary-6-live-thumb.png",
+        "sha256": "06f666ce45853f03b600fbfba8b53cccd231528673e286d9576cb687bdf6e9f9",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:carpenter:3",
+      "title": "선물",
+      "sourceLines": [
+        {
+          "speaker": "carpenter",
+          "text": "자투리로 걸상 하나 만들었어요. 앉아 보세요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        1.49,
+        1.5,
+        1.85,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-carpenter-3-live-thumb.png",
+        "sha256": "38dbcc890424c5bcae4f4a5d71b494bc181028efb2d8c180663cfc50f266a9fb",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:carpenter:6",
+      "title": "선물",
+      "sourceLines": [
+        {
+          "speaker": "carpenter",
+          "text": "등받이 있는 의자예요. 글씨 쓰다 허리 펴세요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-carpenter-6-live-thumb.png",
+        "sha256": "7d193a573bf57de5f24b6cb62f496a2935297f3a66d0dc8a013251de2efb16d8",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:weaver:3",
+      "title": "선물",
+      "sourceLines": [
+        {
+          "speaker": "weaver",
+          "text": "천 조각으로 방석을 지었어요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-weaver-3-live-thumb.png",
+        "sha256": "f1b6d86fbed6818a2d1bdff09d67d1ca7c8e0d28e25b92f6ef1eaf8a6f02c760",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:weaver:6",
+      "title": "선물",
+      "sourceLines": [
+        {
+          "speaker": "weaver",
+          "text": "제가 짠 깔개예요. 바닥에 깔아 보세요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-weaver-6-live-thumb.png",
+        "sha256": "72dc7f3888dff85f40cdbb654b95003e6b19af2c592f530a4287a0f51b37e9a7",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:merchant:3",
+      "title": "선물",
+      "sourceLines": [
+        {
+          "speaker": "merchant",
+          "text": "글 쓰는 사람한테는 이게 제일이지. 파피루스 두 장이야."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-merchant-3-live-thumb.png",
+        "sha256": "49b0a9b65c7b853a1b4fe86c8aa66d87f1f47de780cef23eb6be3426c81a9dc6",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:shepherd:3",
+      "title": "선물",
+      "sourceLines": [
+        {
+          "speaker": "shepherd",
+          "text": "양털로 방석을 만들었어요. 오래 앉아 있어도 편할 거예요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-shepherd-3-live-thumb.png",
+        "sha256": "bd25d0445796e8877eec2ffa53e7cd8faa87b2776258e1f32bcc6e910f901376",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:shepherd:6",
+      "title": "선물",
+      "sourceLines": [
+        {
+          "speaker": "shepherd",
+          "text": "털을 넉넉히 깎았어요. 담요 짜는 데 써요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-shepherd-6-live-thumb.png",
+        "sha256": "d6b153d83a835b1ca76155a4251097b167e4b54c838b08e3a452cb2462cf154a",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:presser:3",
+      "title": "선물",
+      "sourceLines": [
+        {
+          "speaker": "presser",
+          "text": "갓 짠 기름 두 병이에요. 등잔에 써요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-presser-3-live-thumb.png",
+        "sha256": "d558c5368a577d1e62da193e5c4d0422e62da1398a04761bf9bc10ebafa9c0e9",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:child:3",
+      "title": "선물",
+      "sourceLines": [
+        {
+          "speaker": "child",
+          "text": "들꽃 꺾어 왔어요. 꽃병에 꽂아 두세요!"
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-child-3-live-thumb.png",
+        "sha256": "5868a8aed1f77aacd970e889a4a61fda3da0d27834aa8fccfbcf36a1022f178d",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:child:6",
+      "title": "선물",
+      "sourceLines": [
+        {
+          "speaker": "child",
+          "text": "제가 키운 풀이에요. 창가에 두세요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-child-6-live-thumb.png",
+        "sha256": "67498e28cc873adb6c1c11b927b7d6ba5a7863ee40a166bd679ee180be167214",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:beekeeper:3",
+      "title": "선물",
+      "sourceLines": [
+        {
+          "speaker": "beekeeper",
+          "text": "꿀 두 병이에요. 빵에 발라 먹어요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-beekeeper-3-live-thumb.png",
+        "sha256": "092206c495d8ac25113b465da8e3853412a60de51c715e625aa26dcfd9dbc52e",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:beekeeper:6",
+      "title": "선물",
+      "sourceLines": [
+        {
+          "speaker": "beekeeper",
+          "text": "밀랍으로 초를 만들었어요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-beekeeper-6-live-thumb.png",
+        "sha256": "1c2fb185d2af52d8fc32aaf5efefda86e39aab20946fe24c776af51e6ef6bf68",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:fisher:3",
+      "title": "선물",
+      "sourceLines": [
+        {
+          "speaker": "fisher",
+          "text": "갈대를 넉넉히 베어 왔어요. 종이 만드는 데 보태세요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-fisher-3-live-thumb.png",
+        "sha256": "855a4963af4925733446a3bc3baa7f131e46294e0b9db22a049ff7e9d637b98e",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:fisher:6",
+      "title": "선물",
+      "sourceLines": [
+        {
+          "speaker": "fisher",
+          "text": "고기 담던 바구니인데 깨끗이 씻었어요. 열매 담기 좋아요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-fisher-6-live-thumb.png",
+        "sha256": "086f16034926af1ac552e30256fc3407466765b121998fe96537346ba0dd49da",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:baker:3",
+      "title": "선물",
+      "sourceLines": [
+        {
+          "speaker": "baker",
+          "text": "빵 담아 두라고 바구니 하나 짰어요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-baker-3-live-thumb.png",
+        "sha256": "cb8f7fd46b5fda0329d3b51ff5924937561ea1bacb1a52c1d0a89f6c460dc3f9",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "gift:baker:6",
+      "title": "선물",
+      "sourceLines": [
+        {
+          "speaker": "baker",
+          "text": "집에 깔개 하나 깔아요. 발이 따뜻할 거예요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-gift-baker-6-live-thumb.png",
+        "sha256": "fbdf63be8927c8cbd59911693a5c7bdaa7431061b1b0059781c8b021cb78f86f",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "done:baker:1",
+      "title": "부탁을 들어준 날",
+      "sourceLines": [
+        {
+          "speaker": "baker",
+          "text": "고마워요! 빵집 앞에 의자를 놓았어요."
+        },
+        {
+          "speaker": "baker",
+          "text": "이건 답례예요. 곡식 담기 좋은 그릇이에요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-done-baker-1-live-thumb.png",
+        "sha256": "9135301889d1866990e91099e10f5364214ba46bdf2cdd1b8315b3c9812fe3b1",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "done:baker:2",
+      "title": "부탁을 들어준 날",
+      "sourceLines": [
+        {
+          "speaker": "baker",
+          "text": "보세요, 아기가 새 이불을 덮고 잘 자요."
+        },
+        {
+          "speaker": "baker",
+          "text": "방석이랑 촛대, 받아 줘요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-done-baker-2-live-thumb.png",
+        "sha256": "a61365ba23d75030bb14c0ff2f4c909327c8ef76b825ee0f7640e9cd3b037d0a",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "done:child:1",
+      "title": "부탁을 들어준 날",
+      "sourceLines": [
+        {
+          "speaker": "child",
+          "text": "연이 떴어요! 바람 부는 날 언덕에서 날릴게요."
+        },
+        {
+          "speaker": "child",
+          "text": "이건 제가 깎은 나무 새예요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-done-child-1-live-thumb.png",
+        "sha256": "2caa7b3acb5daeb5c064792b6e1ca2cb921516abd40e17958ed6fd9a1cc60eff",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "done:child:2",
+      "title": "부탁을 들어준 날",
+      "sourceLines": [
+        {
+          "speaker": "child",
+          "text": "꽃이 피었어요! 보러 오세요."
+        },
+        {
+          "speaker": "child",
+          "text": "제일 예쁜 꽃은 꽃병에 꽂아 드릴게요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-done-child-2-live-thumb.png",
+        "sha256": "5cd3edae4d6451e2da2eebc54b2019eb47cbe15da9c3a802ee7de418237cfc11",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "done:grandpa:1",
+      "title": "부탁을 들어준 날",
+      "sourceLines": [
+        {
+          "speaker": "grandpa",
+          "text": "덕분에 시렁을 반듯하게 세웠네."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "이 물병은 자네 쓰게."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-done-grandpa-1-live-thumb.png",
+        "sha256": "95844297b1d42e4c9ace137cb14940227601c0fb769babf2cf2028791ff555ee",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "done:grandpa:2",
+      "title": "부탁을 들어준 날",
+      "sourceLines": [
+        {
+          "speaker": "grandpa",
+          "text": "다 됐네. 지나가다 앉아 쉬게."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "남은 나무로 협탁을 하나 짰네. 가져가게."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-done-grandpa-2-live-thumb.png",
+        "sha256": "57558e68172e34d7e589ae6bb1440982e26470f992819ebcb826625f98555305",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "done:merchant:1",
+      "title": "부탁을 들어준 날",
+      "sourceLines": [
+        {
+          "speaker": "merchant",
+          "text": "든든하다! 약속대로 좌판에 새 물건 놓을게."
+        },
+        {
+          "speaker": "merchant",
+          "text": "이건 파피루스야. 글 쓰는 데 써."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-done-merchant-1-live-thumb.png",
+        "sha256": "086c18e52c5c346863c221dbbb7217f6daf87e3557697871e6f6221220ee4067",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "done:merchant:2",
+      "title": "부탁을 들어준 날",
+      "sourceLines": [
+        {
+          "speaker": "merchant",
+          "text": "봐, 알록달록한 가리개야!"
+        },
+        {
+          "speaker": "merchant",
+          "text": "깔개 하나 줄게. 먼 데서 가져온 거야."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-done-merchant-2-live-thumb.png",
+        "sha256": "b60fbadee32329773b1d4dfdb62ab8df21039dc472f10e2de8d30635c325397e",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "done:smith:1",
+      "title": "부탁을 들어준 날",
+      "sourceLines": [
+        {
+          "speaker": "smith",
+          "text": "새 풀무요! 이제 그을음을 넉넉히 나눠 주겠소."
+        },
+        {
+          "speaker": "smith",
+          "text": "우선 이것부터 가져가시오."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-done-smith-1-live-thumb.png",
+        "sha256": "c10671fed1af1bee76fcca7afc27566cd754fcad4327c43cb1be60f8bebf7824",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "done:smith:2",
+      "title": "부탁을 들어준 날",
+      "sourceLines": [
+        {
+          "speaker": "smith",
+          "text": "길가에 등불을 세웠소. 밤에도 환할 거요."
+        },
+        {
+          "speaker": "smith",
+          "text": "남은 쇠로 촛대를 하나 만들었소."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-done-smith-2-live-thumb.png",
+        "sha256": "3dc2bb08b7c7a495a1da688451373d59ef7281a83ff084756871e4ee0f68ad96",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "done:shepherd:1",
+      "title": "부탁을 들어준 날",
+      "sourceLines": [
+        {
+          "speaker": "shepherd",
+          "text": "우리가 넓어졌어요. 양들이 좋아하네요."
+        },
+        {
+          "speaker": "shepherd",
+          "text": "양털 좀 가져가요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-done-shepherd-1-live-thumb.png",
+        "sha256": "be88a5b6b3bdad862b996ca64093f8f48498dc6a91478d54a375d967afb4a830",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "done:shepherd:2",
+      "title": "부탁을 들어준 날",
+      "sourceLines": [
+        {
+          "speaker": "shepherd",
+          "text": "양털 깎는 날, 다 같이 즐거웠어요!"
+        },
+        {
+          "speaker": "shepherd",
+          "text": "제일 부드러운 털로 방석을 만들었어요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-done-shepherd-2-live-thumb.png",
+        "sha256": "d03ecb30ea9a3076979eb434ec0620d2ca88ab8660795bfe8a63f5da61757658",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "done:presser:1",
+      "title": "부탁을 들어준 날",
+      "sourceLines": [
+        {
+          "speaker": "presser",
+          "text": "새 손잡이를 달았어요! 이제 기름이 한 병 더 나와요."
+        },
+        {
+          "speaker": "presser",
+          "text": "기름 두 병 가져가요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-done-presser-1-live-thumb.png",
+        "sha256": "ec3770f228bf89338d729b12cfe24b8de146799c16a58d8640adf295044ff6d2",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "done:presser:2",
+      "title": "부탁을 들어준 날",
+      "sourceLines": [
+        {
+          "speaker": "presser",
+          "text": "나무를 심었어요. 몇 해 뒤엔 열매가 가득할 거예요."
+        },
+        {
+          "speaker": "presser",
+          "text": "물병이랑 기름, 받아요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-done-presser-2-live-thumb.png",
+        "sha256": "37d2d4edd6406265477cfb35d2644500d172813eb880fdb98bbc11f8cc077d88",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "done:weaver:1",
+      "title": "부탁을 들어준 날",
+      "sourceLines": [
+        {
+          "speaker": "weaver",
+          "text": "그늘이 생겼어요! 이제 한낮에도 베를 짤 수 있어요."
+        },
+        {
+          "speaker": "weaver",
+          "text": "제가 짠 깔개예요. 방에 깔아 보세요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-done-weaver-1-live-thumb.png",
+        "sha256": "73e8623d5055113f60d83bfd73fcbd5c0debac41b46f92cfd2d69580a1a8b3e5",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "done:beekeeper:1",
+      "title": "부탁을 들어준 날",
+      "sourceLines": [
+        {
+          "speaker": "beekeeper",
+          "text": "벌통이 늘었어요. 꽃마다 벌이 붕붕해요."
+        },
+        {
+          "speaker": "beekeeper",
+          "text": "새 벌통에서 뜬 꿀이에요. 드셔 보세요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-done-beekeeper-1-live-thumb.png",
+        "sha256": "0cb2de7986378129f50943cc326256d3397394832e47d1c38be60a1699c93d03",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance1:presser",
+      "title": "기름 짜는 이웃의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "presser",
+          "text": "처음 기름틀 앞에 섰을 땐 하루에 항아리 하나 채우는 것도 버거웠어요."
+        },
+        {
+          "speaker": "presser",
+          "text": "그래서 걸음을 세기 시작했어요. 줄일 수 있는 건 다 줄이려고요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance1-presser-live-thumb.png",
+        "sha256": "9adcc833056af050e24b38847b6b425836c020a0b53bf218be94f9f7f49b45fc",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance2:presser",
+      "title": "기름 짜는 이웃의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "presser",
+          "text": "일은 줄일수록 좋은데, 사람 만나는 시간은 줄이고 싶지 않더라고요."
+        },
+        {
+          "speaker": "presser",
+          "text": "당신이랑 얘기하다 보면 항아리 세는 걸 잊어요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance2-presser-live-thumb.png",
+        "sha256": "f86d0a6e7fb653079c9410d12fc0e4e70586dc721b973276cd2579eb3c3d1090",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance2:presser:friend",
+      "title": "기름 짜는 이웃의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "presser",
+          "text": "일은 줄일수록 좋은데, 이웃이랑 얘기하는 시간은 줄이고 싶지 않더라고요."
+        },
+        {
+          "speaker": "presser",
+          "text": "{player}님이 들르면 잠깐 쉬어 갈 핑계가 생겨서 좋아요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance2-presser-friend-live-thumb.png",
+        "sha256": "320500a72d32f570d79e310d036b6cf4bdb1e6c5a8be5486878ea83193e23b3b",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance1:dexter",
+      "title": "덱스터의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "dexter",
+          "text": "길 잃은 어린 양을 밤새 찾은 적이 있어요."
+        },
+        {
+          "speaker": "dexter",
+          "text": "새벽에 바위틈에서 찾았을 때, 그 녀석이 먼저 울면서 달려오더라고요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance1-dexter-live-thumb.png",
+        "sha256": "eb6744ec1d57251d6980ff2a44a2f8916e23bc37c0f4ab1cb2092f4727c32472",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance2:dexter",
+      "title": "덱스터의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "dexter",
+          "text": "언덕 위 별은 마을에서 보는 별보다 조금 더 가까워요."
+        },
+        {
+          "speaker": "dexter",
+          "text": "다음에 맑은 밤이 오면 같이 올라가요. 제일 밝은 별을 알려 드릴게요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance2-dexter-live-thumb.png",
+        "sha256": "00fd470a57425238a8ae49785d96bab8c84675738bc4dc0805646e1e491e9090",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance2:dexter:friend",
+      "title": "덱스터의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "dexter",
+          "text": "언덕 위 별은 마을에서 보는 별보다 조금 더 가까워요."
+        },
+        {
+          "speaker": "dexter",
+          "text": "양치기는 별을 보고 길을 찾아요. 제일 밝은 별 하나만 알아도 길 잃을 일은 없죠. 다음에 알려 드릴게요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance2-dexter-friend-live-thumb.png",
+        "sha256": "4817a3ccde5493067f2369d50e0524b189cd066d94fa92919341cae77f8a6ab2",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance1:merchant",
+      "title": "떠돌이 상인의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "merchant",
+          "text": "처음 장사 나섰을 땐 좌판도 없었어. 보자기 하나 펴고 앉았지."
+        },
+        {
+          "speaker": "merchant",
+          "text": "비 오면 보자기째 들고 처마 밑으로 뛰었어. 그래서 지금도 젖지 않은 것부터 펴는 버릇이 있어."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance1-merchant-live-thumb.png",
+        "sha256": "f43206eb98e882d84af1cc65aea039ba22764fb89f48ee5e212e4dce4df98041",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance2:merchant",
+      "title": "떠돌이 상인의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "merchant",
+          "text": "길에선 다들 내 이름보다 물건 이름을 먼저 불러. 그게 편할 때도 있었어."
+        },
+        {
+          "speaker": "merchant",
+          "text": "근데 이 마을에선… 이상하게 물건 얘기를 덜 하게 되네."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance2-merchant-live-thumb.png",
+        "sha256": "f5b04cda2ca2c6248ab67c022e8f9651ba8b15be9b512a4863cc718392598394",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance1:rudy",
+      "title": "루디의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "rudy",
+          "text": "처음 짠 의자는 다리가 하나 짧았어요."
+        },
+        {
+          "speaker": "rudy",
+          "text": "그래도 할머니가 십 년을 앉으셨죠. 쓰는 사람이 아껴 주면 물건은 오래가요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance1-rudy-live-thumb.png",
+        "sha256": "fe30898d596fab9f58c76be29f1add058da2825e8f3d180eab4fb6656ae7a9e8",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance2:rudy",
+      "title": "루디의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "rudy",
+          "text": "{player}님이 엮는 책을 보면 저도 뭔가 오래 남는 걸 만들고 싶어져요."
+        },
+        {
+          "speaker": "rudy",
+          "text": "언젠가 {player}님 책을 꽂을 책장을 짜 드리고 싶어요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance2-rudy-live-thumb.png",
+        "sha256": "0c88a114fa1479018b5c1d53ea5c8d23f8c9eaac11bcf06b7bc10e2f2164dc34",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance1:marigold",
+      "title": "메리골드의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "marigold",
+          "text": "어렸을 때 할아버지 포도주 통에 들어가 숨었다가 크게 혼났어요."
+        },
+        {
+          "speaker": "marigold",
+          "text": "그래도 할아버지는 그날 밤 제 머리를 오래 쓰다듬어 주셨어요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance1-marigold-live-thumb.png",
+        "sha256": "129b0c3dd859fa8e550b134ccbe3c622bd7f04625081d4d53fd74db3958e13bb",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance2:marigold",
+      "title": "메리골드의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "marigold",
+          "text": "언젠가 제 이름 붙은 포도나무를 한 그루 심고 싶어요."
+        },
+        {
+          "speaker": "marigold",
+          "text": "그 나무 아래서 {player}님이랑 첫 송이를 나눠 먹고 싶어요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance2-marigold-live-thumb.png",
+        "sha256": "129b0c3dd859fa8e550b134ccbe3c622bd7f04625081d4d53fd74db3958e13bb",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance2:marigold:friend",
+      "title": "메리골드의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "marigold",
+          "text": "언젠가 제 이름 붙은 포도나무를 한 그루 심고 싶어요."
+        },
+        {
+          "speaker": "marigold",
+          "text": "첫 송이가 열리면 할아버지랑 {player}님한테 제일 먼저 나눠 드릴게요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance2-marigold-friend-live-thumb.png",
+        "sha256": "cef44cc1e9009fd344269792271a62448f4dc94208230abcae9e56965a7ca3a4",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance1:basil",
+      "title": "바질의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "basil",
+          "text": "어릴 때 독풀을 약초인 줄 알고 캐 온 적이 있어요."
+        },
+        {
+          "speaker": "basil",
+          "text": "어머니가 잎 모양을 하나하나 짚어 주셨죠. 그 뒤로 잎은 꼭 두 번 봐요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance1-basil-live-thumb.png",
+        "sha256": "8d29be582d8e37799045cb4d0570264a5121f55eac39bbdc5700f2e77b33c30f",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance2:basil",
+      "title": "바질의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "basil",
+          "text": "아픈 사람이 차 한 잔 마시고 웃는 걸 보면 이 일이 좋아요."
+        },
+        {
+          "speaker": "basil",
+          "text": "{player}님이 지친 날엔… 제가 제일 먼저 차를 우려 드리고 싶어요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance2-basil-live-thumb.png",
+        "sha256": "3fe4debffc256a261cfc3c4d2caf9c01ad54c1d719ca55661e279a590e94c3e1",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance2:basil:friend",
+      "title": "바질의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "basil",
+          "text": "아픈 사람이 차 한 잔 마시고 웃는 걸 보면 이 일이 좋아요."
+        },
+        {
+          "speaker": "basil",
+          "text": "{player}님도 지친 날엔 약방에 들러요. 차 한 잔은 늘 있어요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance2-basil-friend-live-thumb.png",
+        "sha256": "df2f14d987e4cbc571b795d496aef29bfd3fbe37f744c59259d2f006533bd308",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance1:poppy",
+      "title": "웬델의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "poppy",
+          "text": "처음 찻집에서 일할 땐 찻잔을 세 개나 깼어요."
+        },
+        {
+          "speaker": "poppy",
+          "text": "주인 아주머니는 깨진 조각으로 화분 받침을 만들어 주셨죠. 그 화분, 아직 창가에 있어요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance1-poppy-live-thumb.png",
+        "sha256": "94c7c7732005f9cd6fa41e1bf24d7368374366e99c0426f8fbb822c3fd33cd1a",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance2:poppy",
+      "title": "웬델의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "poppy",
+          "text": "언젠가 제 이름으로 된 차를 만들고 싶어요."
+        },
+        {
+          "speaker": "poppy",
+          "text": "그 차 이름은… {player}님이 지어 주면 좋겠어요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance2-poppy-live-thumb.png",
+        "sha256": "846461618bb21af22f07eaed830cafbdc61351c33c7b591abe6505446a2d361f",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance1:juniper",
+      "title": "주니퍼의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "juniper",
+          "text": "어릴 때 벌에 쏘이고 한참 울었어요."
+        },
+        {
+          "speaker": "juniper",
+          "text": "그래도 다음 날 또 벌통에 갔대요. 무섭지만 궁금한 게 더 컸나 봐요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance1-juniper-live-thumb.png",
+        "sha256": "7e4fe269e173559391218b4c10b7ff2dcf46cc5af98935a37090f9fcf5c51001",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance2:juniper",
+      "title": "주니퍼의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "juniper",
+          "text": "벌은 혼자서는 꿀을 못 만들어요. 다 같이 해야 해요."
+        },
+        {
+          "speaker": "juniper",
+          "text": "저도 누군가랑 같이 무언가를 만들어 보고 싶어요. {player}님이랑이면 좋겠어요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance2-juniper-live-thumb.png",
+        "sha256": "99057a977f767a520edc0524c73544ed4cc074c46b319be5c4ad2e9a58bec013",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance2:juniper:friend",
+      "title": "주니퍼의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "juniper",
+          "text": "벌은 혼자서는 꿀을 못 만들어요. 다 같이 해야 해요."
+        },
+        {
+          "speaker": "juniper",
+          "text": "그래서 이 마을이 좋아요. 다들 조금씩 거들잖아요. {player}님처럼요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance2-juniper-friend-live-thumb.png",
+        "sha256": "ec047d41cc9c991e785350d9896f8c8a0878dca6125d0361878fc5b4478aca9c",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance1:cosmo",
+      "title": "코스모의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "cosmo",
+          "text": "처음 혼자 배를 몰던 날, 안개가 짙게 꼈어요."
+        },
+        {
+          "speaker": "cosmo",
+          "text": "나루 등불만 보고 겨우 돌아왔죠. 그 뒤로 등불을 보면 마음이 놓여요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance1-cosmo-live-thumb.png",
+        "sha256": "f341a1f8f73285cc6653591963fe2c57d1d12d937d3712d69128334de2465079",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance2:cosmo",
+      "title": "코스모의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "cosmo",
+          "text": "호수 한가운데 가면 마을이 한눈에 보여요."
+        },
+        {
+          "speaker": "cosmo",
+          "text": "언제 한번 같이 가요. {player}님 집 지붕도 보일 거예요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance2-cosmo-live-thumb.png",
+        "sha256": "923ab61000f4b554d6b7c610cabea5e89b1f4e5a79c50f2d04966d72b61e6e00",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance1:tilly",
+      "title": "틸리의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "tilly",
+          "text": "처음 망치를 들었을 땐 손바닥에 물집이 잡혔어요."
+        },
+        {
+          "speaker": "tilly",
+          "text": "아버지는 약 대신 튼튼한 장갑을 주셨죠. 그게 우리 집 방식이에요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance1-tilly-live-thumb.png",
+        "sha256": "b2a0241ffc30ee640542a5804a6a7f607d812c8900b70d33513d7434ea8d5304",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance2:tilly",
+      "title": "틸리의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "tilly",
+          "text": "언젠가 제 손으로 마을 등불 고리를 전부 만들고 싶어요."
+        },
+        {
+          "speaker": "tilly",
+          "text": "밤에 등불이 켜지면, {player}님 집 앞 고리가 제일 반짝이게요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance2-tilly-live-thumb.png",
+        "sha256": "c0c2d6786ff6a7b91c47221b1598e6f910d378bbf9b2e3ff1137509fa4dd79bb",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance2:tilly:friend",
+      "title": "틸리의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "tilly",
+          "text": "언젠가 제 손으로 마을 등불 고리를 전부 만들고 싶어요."
+        },
+        {
+          "speaker": "tilly",
+          "text": "밤에 등불이 켜지면 집집마다 제 고리가 걸려 있을 거예요. {player}님 집에도요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance2-tilly-friend-live-thumb.png",
+        "sha256": "501e04300d51a4ea4f2b071dba155554020502367e637c333cfae4e50f87b5e6",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance1:postman",
+      "title": "편지 나르는 이웃의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "postman",
+          "text": "처음 이 길을 돌던 날, 길을 잘못 들어 한 집 앞을 몇 번이나 지나갔어요."
+        },
+        {
+          "speaker": "postman",
+          "text": "그날부터 수첩을 썼어요. 지금은 이 마을 길을 눈 감고도 걸어요. …그러진 않지만요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance1-postman-live-thumb.png",
+        "sha256": "0968844a21a8d67167f0cc70b5fedaf8774b1219cf2a0357873d0bcc3f86d4b7",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance2:postman",
+      "title": "편지 나르는 이웃의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "postman",
+          "text": "남의 약속은 하나도 안 놓치는데, 제 약속은 자꾸 뒤로 미뤄요."
+        },
+        {
+          "speaker": "postman",
+          "text": "당신하고 한 약속은 수첩 맨 위에 적어요. 그건 안 미뤄요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance2-postman-live-thumb.png",
+        "sha256": "320b7cedb7833fa1c32b555b13e9e14bac84b15c001b80040e92e77a4a47d15b",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "romance2:postman:friend",
+      "title": "편지 나르는 이웃의 이야기",
+      "sourceLines": [
+        {
+          "speaker": "postman",
+          "text": "남의 약속은 하나도 안 놓치는데, 제 약속은 자꾸 뒤로 미뤄요."
+        },
+        {
+          "speaker": "postman",
+          "text": "{player}님이 맡긴 편지는 수첩 맨 위에 적어요. 그건 안 미뤄요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-romance2-postman-friend-live-thumb.png",
+        "sha256": "11e9993cddfd145113db4ed64efb119094bc66f22370ba1ba910cc8969442c82",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "ask:baker:1",
+      "title": "이웃의 부탁",
+      "sourceLines": [
+        {
+          "speaker": "baker",
+          "text": "빵집 앞에 손님이 앉을 자리가 있으면 좋겠어요."
+        },
+        {
+          "speaker": "baker",
+          "text": "보리 세 줌만 구해 주면, 그걸로 빵을 구워 팔아 의자를 들일게요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-ask-baker-1-live-thumb.png",
+        "sha256": "479c2f46e1b263f65d103b18a964dad0e30e6a21c6befb7bf0f68fa0e11f15f1",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "ask:baker:2",
+      "title": "이웃의 부탁",
+      "sourceLines": [
+        {
+          "speaker": "baker",
+          "text": "아기가 추워할까 봐 걱정이에요."
+        },
+        {
+          "speaker": "baker",
+          "text": "양털 두 뭉치만 있으면 아기 이불을 지을 수 있어요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-ask-baker-2-live-thumb.png",
+        "sha256": "d30fd06ca744a6da718dec857dc66f526928640888f031d0d71d007b73efbf2d",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "ask:child:1",
+      "title": "이웃의 부탁",
+      "sourceLines": [
+        {
+          "speaker": "child",
+          "text": "연을 날려 보고 싶어요!"
+        },
+        {
+          "speaker": "child",
+          "text": "갈대 두 줄기랑 파피루스 한 장만 있으면 만들 수 있어요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-ask-child-1-live-thumb.png",
+        "sha256": "e1138e3543287e3c7a3521f8c6cf49d68f56dacef60239ba692daed81a8526cd",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "ask:child:2",
+      "title": "이웃의 부탁",
+      "sourceLines": [
+        {
+          "speaker": "child",
+          "text": "우리 집 앞에 작은 꽃밭을 만들래요."
+        },
+        {
+          "speaker": "child",
+          "text": "무화과 두 개랑 바꿔 꽃씨를 얻을 수 있대요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-ask-child-2-live-thumb.png",
+        "sha256": "74c4853602e41b3c0f791ae031e88cfa5d08e77003e5be462591613eacc54961",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "ask:grandpa:1",
+      "title": "이웃의 부탁",
+      "sourceLines": [
+        {
+          "speaker": "grandpa",
+          "text": "포도 시렁이 기울어서 고쳐 세우려 하네."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "혼자 고치다 보면 배가 고프니, 빵 두 개와 물 두 동이만 가져다주겠나."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-ask-grandpa-1-live-thumb.png",
+        "sha256": "5534ff655d1d207d8d9ca6ddb1511c89ed483e463475c37e663add4f7ecbdd1d",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "ask:grandpa:2",
+      "title": "이웃의 부탁",
+      "sourceLines": [
+        {
+          "speaker": "grandpa",
+          "text": "집 앞에 쉬어 갈 의자를 하나 놓고 싶네."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "올리브 두 줌과 기름 한 병이면 나무를 다듬을 수 있지."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-ask-grandpa-2-live-thumb.png",
+        "sha256": "5534ff655d1d207d8d9ca6ddb1511c89ed483e463475c37e663add4f7ecbdd1d",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "ask:merchant:1",
+      "title": "이웃의 부탁",
+      "sourceLines": [
+        {
+          "speaker": "merchant",
+          "text": "먼 길 떠날 때 먹을 게 모자라."
+        },
+        {
+          "speaker": "merchant",
+          "text": "빵 세 개만 챙겨 주면, 다음 장부터 물건을 더 가져올게."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-ask-merchant-1-live-thumb.png",
+        "sha256": "6f214bb7c4ddf52701bc4d8b6c719232d3e575dbddd474c331e21e776b380b43",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "ask:merchant:2",
+      "title": "이웃의 부탁",
+      "sourceLines": [
+        {
+          "speaker": "merchant",
+          "text": "좌판에 햇빛 가리개를 달고 싶어."
+        },
+        {
+          "speaker": "merchant",
+          "text": "그을음 두 줌이랑 기름 한 병이면 천에 물을 들일 수 있어."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-ask-merchant-2-live-thumb.png",
+        "sha256": "9c12350d180894dce266cf121503fc4a388acad693ae235b7810bb91acca734c",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "ask:smith:1",
+      "title": "이웃의 부탁",
+      "sourceLines": [
+        {
+          "speaker": "smith",
+          "text": "풀무가 낡아서 바람이 새오."
+        },
+        {
+          "speaker": "smith",
+          "text": "양털 두 뭉치와 기름 한 병이면 새 가죽을 댈 수 있소."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-ask-smith-1-live-thumb.png",
+        "sha256": "f60f5627e4cec57c5cd6c2db0ec6fd11d29e2613ec8a55fb0dec925ed2eabe17",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "ask:smith:2",
+      "title": "이웃의 부탁",
+      "sourceLines": [
+        {
+          "speaker": "smith",
+          "text": "밤길이 어두워서 등불 기둥을 세우려 하오."
+        },
+        {
+          "speaker": "smith",
+          "text": "올리브 두 줌과 빵 하나만 가져다주시오. 일하며 먹게."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-ask-smith-2-live-thumb.png",
+        "sha256": "7efcfce01147dae09be6b794b366d5df25fc1783b7c0dbbce1304e6f2f0d471f",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "ask:shepherd:1",
+      "title": "이웃의 부탁",
+      "sourceLines": [
+        {
+          "speaker": "shepherd",
+          "text": "양이 늘어서 우리가 좁아요."
+        },
+        {
+          "speaker": "shepherd",
+          "text": "갈대 세 줄기만 있으면 울타리를 넓힐 수 있어요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-ask-shepherd-1-live-thumb.png",
+        "sha256": "685f9ae143746b440c3013aeb6c837e52436d2f11719522784c04da745edbdb0",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "ask:shepherd:2",
+      "title": "이웃의 부탁",
+      "sourceLines": [
+        {
+          "speaker": "shepherd",
+          "text": "곧 양털 깎는 날이에요."
+        },
+        {
+          "speaker": "shepherd",
+          "text": "일 끝나고 나눠 먹을 빵 두 개랑 포도 두 송이만 부탁해요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-ask-shepherd-2-live-thumb.png",
+        "sha256": "130a1927c1a1381c5903f01df7b5f1c8b9adf65746e7032819ea3c582eb26821",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "ask:presser:1",
+      "title": "이웃의 부탁",
+      "sourceLines": [
+        {
+          "speaker": "presser",
+          "text": "기름틀 손잡이가 닳았어요."
+        },
+        {
+          "speaker": "presser",
+          "text": "올리브 네 줌만 짜서 팔면 새 손잡이를 달 수 있어요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-ask-presser-1-live-thumb.png",
+        "sha256": "1b58550ceab1580b4287735a6753ae126126792a08a12b39b529e084fe8c8ba2",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "ask:presser:2",
+      "title": "이웃의 부탁",
+      "sourceLines": [
+        {
+          "speaker": "presser",
+          "text": "올리브나무를 몇 그루 더 심고 싶어요."
+        },
+        {
+          "speaker": "presser",
+          "text": "일하는 날 먹을 빵 두 개만 부탁해요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-ask-presser-2-live-thumb.png",
+        "sha256": "940f65a5fbdf824625b433bee1a21d61415a8c3c8b40c16f8748f9bafc0fb146",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "ask:weaver:1",
+      "title": "이웃의 부탁",
+      "sourceLines": [
+        {
+          "speaker": "weaver",
+          "text": "베틀 위에 햇빛 가리개를 치고 싶어요."
+        },
+        {
+          "speaker": "weaver",
+          "text": "양털 세 뭉치면 천을 짤 수 있어요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-ask-weaver-1-live-thumb.png",
+        "sha256": "6cce4b33ceb1efdc8846eed9e51663ac1a662babee744c6d08cc46ce079e68bf",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "ask:beekeeper:1",
+      "title": "이웃의 부탁",
+      "sourceLines": [
+        {
+          "speaker": "beekeeper",
+          "text": "벌통을 몇 개 더 놓고 싶어요."
+        },
+        {
+          "speaker": "beekeeper",
+          "text": "갈대 두 줄기랑 올리브 두 줌이 있으면 벌통을 엮을 수 있어요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-ask-beekeeper-1-live-thumb.png",
+        "sha256": "b3b1ad6bd844202664039aa91f23cedf38d0d9709bc3a00dfbf99a73de6dc6d2",
+        "width": 900,
+        "height": 680
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "notice:starNight",
+      "title": "별 보는 밤",
+      "sourceLines": [
+        {
+          "speaker": "grandpa",
+          "text": "오늘 밤은 하늘이 맑겠구먼. 언덕에서 다 같이 별을 보세."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-notice-starNight-live-thumb.png",
+        "sha256": "2119bdfb3a2fa9a97eef451eab2588d9f1644e7ab89461501caed0562a42cc03",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "notice:picnic",
+      "title": "소풍",
+      "sourceLines": [
+        {
+          "speaker": "child",
+          "text": "오늘 낮에 언덕에서 소풍해요! 다들 온대요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-notice-picnic-live-thumb.png",
+        "sha256": "dfbee1c89b3b75e47eb6ce48d25bede2b6f4020c1da84cabb4d1de2d2a468c79",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "notice:babyParty",
+      "title": "아기 잔치",
+      "sourceLines": [
+        {
+          "speaker": "baker",
+          "text": "오늘 저녁 빵집 앞에서 아기 잔치를 해요. 꼭 와요!"
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-notice-babyParty-live-thumb.png",
+        "sha256": "5a1fd9adeccbb8d67b2d03b5b7ec29b5afd9868ae3245050ecec3c0985cdb468",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "invite:grandpa",
+      "title": "저녁 초대",
+      "sourceLines": [
+        {
+          "speaker": "grandpa",
+          "text": "오늘 저녁엔 우리 집에 오게. 포도즙을 내 놓았네."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "해 지면 내 집 문을 두드리게."
+        },
+        {
+          "speaker": "narration",
+          "text": "오늘 저녁 여섯 시부터 여덟 시 반 사이, 그 집 문을 눌러 보세요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-invite-grandpa-live-thumb.png",
+        "sha256": "6794b4558b72cd0c2e1154df330d440c1d532fa056abc6eac6c3f18abc587e08",
+        "width": 900,
+        "height": 1020
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "invite:child",
+      "title": "저녁 초대",
+      "sourceLines": [
+        {
+          "speaker": "child",
+          "text": "오늘 저녁 우리 집에서 같이 밥 먹어요! 엄마가 오래요."
+        },
+        {
+          "speaker": "child",
+          "text": "해 지면 우리 집 문 앞으로 와요!"
+        },
+        {
+          "speaker": "narration",
+          "text": "오늘 저녁 여섯 시부터 여덟 시 반 사이, 그 집 문을 눌러 보세요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-invite-child-live-thumb.png",
+        "sha256": "5bd205d67c89023d9391a3ccb2af726f5e472f7707994a8697c282a1ca76630f",
+        "width": 900,
+        "height": 1020
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "invite:baker",
+      "title": "저녁 초대",
+      "sourceLines": [
+        {
+          "speaker": "baker",
+          "text": "오늘 저녁 우리 집에 와요. 따뜻한 수프를 끓일게요."
+        },
+        {
+          "speaker": "baker",
+          "text": "해 질 무렵 빵집 문 앞으로 오세요."
+        },
+        {
+          "speaker": "narration",
+          "text": "오늘 저녁 여섯 시부터 여덟 시 반 사이, 그 집 문을 눌러 보세요."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-invite-baker-live-thumb.png",
+        "sha256": "8857e87c2e81314d7ed22ea25a1869eb2457faa22d67eb6db35eb932e9b06ff1",
+        "width": 900,
+        "height": 1020
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "loverTrust:wendell",
+      "title": "함께 걸어온 날들",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "wendell",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "wendell",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-wendell-live-thumb.png",
+        "sha256": "6232a54dd4417a186b9b3566af658caea132ac8043b72dda47a7df76719c6647",
+        "width": 900,
+        "height": 1360
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "loverTrust:cosmo",
+      "title": "함께 걸어온 날들",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "cosmo",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "cosmo",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-cosmo-live-thumb.png",
+        "sha256": "0430790157f8f7f101339838f4331f29d237275a99cb59da2b2c60262dfccd58",
+        "width": 900,
+        "height": 1360
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "loverTrust:rudy",
+      "title": "함께 걸어온 날들",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "rudy",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "rudy",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-rudy-live-thumb.png",
+        "sha256": "f6f1d4710578f49b4e06905dbfcadee21b9beee2d1adaedfa5982b51a7c2f46e",
+        "width": 900,
+        "height": 1360
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "loverTrust:dexter",
+      "title": "함께 걸어온 날들",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "dexter",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "dexter",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-dexter-live-thumb.png",
+        "sha256": "2021c5168b35cf66f1c44a06bcb2b98dfc8e8c13d913762b78694a15774bcdb2",
+        "width": 900,
+        "height": 1360
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "loverTrust:basil",
+      "title": "함께 걸어온 날들",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "basil",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "basil",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-basil-live-thumb.png",
+        "sha256": "833bc336417471cc59a1c34873dbabd65786be7e5ecbe1b3f564e28ad65db461",
+        "width": 900,
+        "height": 1360
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "loverTrust:marigold",
+      "title": "함께 걸어온 날들",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "marigold",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "marigold",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-marigold-live-thumb.png",
+        "sha256": "f80f5f76b264e914df091e5a8122f13ec214c47ed0c1fd7049afba000cf2b423",
+        "width": 900,
+        "height": 1360
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "loverTrust:penelope",
+      "title": "함께 걸어온 날들",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "penelope",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "penelope",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-penelope-live-thumb.png",
+        "sha256": "207992e22a1763cc1940f281bad00553f151eaf839f885934d4a83760a6064ca",
+        "width": 900,
+        "height": 1360
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "loverTrust:tilly",
+      "title": "함께 걸어온 날들",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "tilly",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "tilly",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-tilly-live-thumb.png",
+        "sha256": "cf981e9cc70324753505dc5ec171591a2a11147ecd8f6899e8a0bc2412ee6a5f",
+        "width": 900,
+        "height": 1360
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "loverTrust:juniper",
+      "title": "함께 걸어온 날들",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "juniper",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "juniper",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-juniper-live-thumb.png",
+        "sha256": "e52127480b975497484da49fc0b5e3cda3965592c25fe769c8e72a1ab0b38379",
+        "width": 900,
+        "height": 1360
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "loverTrust:poppy",
+      "title": "함께 걸어온 날들",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "poppy",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "poppy",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-poppy-live-thumb.png",
+        "sha256": "2e8a2e9e7fdea09d56695d87f9b67334b14cb30f0de47cc48a7e790769c0e995",
+        "width": 900,
+        "height": 1360
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "loverTrust:merchant",
+      "title": "함께 걸어온 날들",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "merchant",
+          "text": "처음엔 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아."
+        },
+        {
+          "speaker": "merchant",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주자. 바쁜 날도, 별일 없는 날도."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-merchant-live-thumb.png",
+        "sha256": "74b14ece8dcdb8f1fb6b90f0204173338c56740211b3327207f9c82d44952df9",
+        "width": 900,
+        "height": 1360
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "loverTrust:presser",
+      "title": "함께 걸어온 날들",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "presser",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "presser",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-presser-live-thumb.png",
+        "sha256": "5ea6d81ddf5af0069036b1386df85e69f079e8ac1eb78a9bad6fb9c09baf3f97",
+        "width": 900,
+        "height": 1360
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "loverTrust:postman",
+      "title": "함께 걸어온 날들",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "postman",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "postman",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-postman-live-thumb.png",
+        "sha256": "8e41dd0cbc2cc9c683e0ea2a1e97361fcd74e8f932bb745a495cc4225117541a",
+        "width": 900,
+        "height": 1360
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "blanket",
+      "title": "담요",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "담요를 덮어 주었다. 꼭 싸매고 있다."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-blanket-live-thumb.png",
+        "sha256": "552a115434c1f018e33b085ee898b822ac09fb94da3fbc99f635841181ea10b8",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "firstChapter",
+      "title": "첫 장",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "첫 장을 차례대로 이어 선반에 올려 두었다."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-firstChapter-live-thumb.png",
+        "sha256": "7b8871b7a04257932ea2f942e84589756ea105507519edd47caf5fe0ed8351a8",
+        "width": 900,
+        "height": 340
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    },
+    {
+      "id": "newlandGift",
+      "title": "큰길 끝의 표지",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "마을 동쪽 큰길이 끝나는 곳에 처음 보는 표지가 서 있다."
+        },
+        {
+          "speaker": "narration",
+          "text": "표지 너머에 아직 아무도 쓰지 않은 땅과 작은 서고 하나가 있다."
+        },
+        {
+          "speaker": "narration",
+          "text": "가고 싶을 때 가면 된다. 오늘 가지 않아도 표지는 그대로 있다."
+        }
+      ],
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "viewport": {
+        "width": 300,
+        "height": 170
+      },
+      "defaultAndActualPlayer": true,
+      "context": "Explicit winter day121 generation/wardrobe example; plaza24,18 except firstChapter home20,112. This is not actual occurrence routing approval.",
+      "image": {
+        "path": "artifacts/scenery/shared-background-drafts/actual-newlandGift-live-thumb.png",
+        "sha256": "c073e246edf1e1addc6899dbbf324986c444b4b40062a54af7b432cc2527b357",
+        "width": 900,
+        "height": 1020
+      },
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual300x170 sheet viewed: every original dialogue stage and recorded action time for default/actual player, explicit winter generation/wardrobe. No new face/body/hand/foot clipping found. This does not approve actual occurrence routing, CSS cropping or browser integration."
+    }
+  ],
+  "remainingIds": [],
+  "updatedAt": "2026-10-16T23:48:23.242Z"
+}

@@ -59,7 +59,7 @@ export const CORD_GAIN = 5
  */
 export type DatePlace = 'tea' | 'sunset' | 'walk'
 export const DATE_PLACES: readonly DatePlace[] = ['tea', 'sunset', 'walk']
-export const DATE_TEA_PRICE = 4
+export const DATE_TEA_PRICE = 6
 export const DATE_GAIN = 5
 /** 곳마다 처음 함께 간 날의 장면 (앨범) — 그다음부터는 date:<곳>:<0~2> 짧은 장면 */
 export const DATE_FIRST_SCENE: Record<DatePlace, string> = { tea: 'dateTea', sunset: 'dateSunset', walk: 'dateWalk' }

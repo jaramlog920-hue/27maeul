@@ -1,0 +1,187 @@
+{
+  "date": "2026-10-17",
+  "weddings": 13,
+  "visuallyReviewed": true,
+  "browserVerified": false,
+  "outfitsAppliedToGame": false,
+  "testsPassed": 1732,
+  "buildPassed": true,
+  "images": [
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/basil-phases.png",
+      "sha256": "328ee5dc05a69afb119281fff960d5b182a5c4cb924c8b2ddbaf870dbc271d6e"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/basil-phone.png",
+      "sha256": "50e2806f19da0dfacdad92c14b90682b30e8bf0bba3a307c5737b34b44155ef5"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/basil-thumb.png",
+      "sha256": "afcdfa066e7a94e1c07491e1772c0117b417d526b4f6437697a6cafb9211de1d"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/cosmo-phases.png",
+      "sha256": "2ab58a29053cfd8185e2c74f500143bb891ac83740f4830e722a8d04c2803603"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/cosmo-phone.png",
+      "sha256": "4348a43ffa6e21e0a41cce965a6e7b0e7f593196c0a7bbf352ac206a4867ae79"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/cosmo-thumb.png",
+      "sha256": "59e32897a28f620a9979b81407f04df3b9c3a871bd86fe9c1de82fb5c8384edf"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/dexter-phases.png",
+      "sha256": "119cb8d78b55de5bee19fa9feb3998c6dd9c879625483948cbee85ef4505118b"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/dexter-phone.png",
+      "sha256": "5f89c448c6efd6ce11dc0ad27a06306464448fd116b6c577be6a84cb4617ea99"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/dexter-thumb.png",
+      "sha256": "7e530a46e2fb7ef9a09c37b4d2b0aeff0b7bd5d8e83f8eefb7eee934a35ad527"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/juniper-phases.png",
+      "sha256": "80ba2944b68c7106059af828a2b721cd6a6a889698fee8e0ce7cf4ae2b2ac08d"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/juniper-phone.png",
+      "sha256": "1a79fd348d90225db38b764d90d100bdaa73b43b00f93af512dde5aa7f310878"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/juniper-thumb.png",
+      "sha256": "5d046bdc92f672dac9a96a25a136c6b5d04af1f8b8689ec4d3c85ddcfe645afc"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/marigold-phases.png",
+      "sha256": "a1905b4e20b9439cdb11e98f40c650798b400a2a788af0b31e783b0b97e0e267"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/marigold-phone.png",
+      "sha256": "67d7258b092ee3691a6248289462c9241254def85990ed4c858d3cbf7fe36968"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/marigold-thumb.png",
+      "sha256": "9ddb369d8c905a9448c0e05d2fc6bc69c6e15520f66ed96a8847586eb1ebb86b"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/merchant-phases.png",
+      "sha256": "7d9453b28ae4fffd865c0ab2412ee79b327adc23d71a38ab1b45865f8d828823"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/merchant-phone.png",
+      "sha256": "f08085713eb415f0304528feeb77e3e40f88970d1cf4a122b6324eff46e6a978"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/merchant-thumb.png",
+      "sha256": "f0404f571065f3380c779c878f4ad29a9553b6620674c862e5b153d4c5e95186"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/penelope-phases.png",
+      "sha256": "2c455c859597bedcbd7b80d29a01d4cef97df0dcf8b2bdc361831bf21e5b83b1"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/penelope-phone.png",
+      "sha256": "48702dd5e927e4e18d314070292b5f42f3508b16e0f6c31d2cd7822f9a9223b8"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/penelope-thumb.png",
+      "sha256": "81eb658829f4322b43bcde0c765345b10e978ecbc6af229fe22917609c3edb0d"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/poppy-phases.png",
+      "sha256": "f9d902aeb91293c71e347f227737b4d0f15722e7025e59da5b308993fc774b1c"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/poppy-phone.png",
+      "sha256": "2c584f2bc5765ed9528deaefd9ae901e006fd7de00cc16313dac1384d0ff1238"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/poppy-thumb.png",
+      "sha256": "d57649da43c40ae67c84d53b5344efd618bf3a3d1297cacad3fc8834ab44f7a4"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/postman-phases.png",
+      "sha256": "9d5f0e41f0b2dd7bde3818da2895f9c317d5a4a9d1fef87594e2c3f95e171965"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/postman-phone.png",
+      "sha256": "f6a6ff20bd9204a85a9ce305395bd2248202197f822498920e8c6f38bb30489d"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/postman-thumb.png",
+      "sha256": "d3c51ec273287d015a7deb8107b19fbecffbdb0716ca1dd7561d48cef0aacfd3"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/presser-phases.png",
+      "sha256": "8bf65c82171c36a760eb6674bd228f66fd473858525798006269e5625c4a77d4"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/presser-phone.png",
+      "sha256": "d97633f639ab4dbcdf85d38fd9ea472d59dc6cf95240df5633a5b8a8732ce1b8"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/presser-thumb.png",
+      "sha256": "1b3577f25f3227cf5f492e50c719db6e6c48c5dcff860b0def1c986681dac9c0"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/rudy-phases.png",
+      "sha256": "12cebd2ffda2325054350c685f114568761e381f64197109342109dede8bccf0"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/rudy-phone.png",
+      "sha256": "8e3335ea50e819746209b687eed7e174bdd022d0cb6457a77efc87f8c8418dca"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/rudy-thumb.png",
+      "sha256": "69081389a7d8048fe7a614656fa5480db74b34e29b1ac4f7127551dd0b1a9f4a"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/tilly-phases.png",
+      "sha256": "9d245a58157811d212103476abfee36b3bc06259b6914b6a2c1adfc7ae168789"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/tilly-phone.png",
+      "sha256": "da151c1b0bab9eeda0b03e384003ef8c8830081c54e7b0f8f408a0aae5c3d159"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/tilly-thumb.png",
+      "sha256": "6d99c7d761cf1ece9717c622141857f64ba0b503e3452baec38266c8d6dce639"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/wendell-phases.png",
+      "sha256": "4b08c5dac3cefa2ff307dbf354a16f095d6665add4f85156c199d128f4da0e3a"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/wendell-phone.png",
+      "sha256": "340ff3d4de22461f8b2795b6bd6a8a3fb51851a529e46eb9f0e5d5117fefa674"
+    },
+    {
+      "path": "artifacts/scenery/wedding-ceremony-review/wendell-thumb.png",
+      "sha256": "678eca841401895ea09fbc6d327dda1870db1afe97a0a4404d220c2275ab3c68"
+    },
+    {
+      "path": "artifacts/scenery/wedding-outfits-four.png",
+      "sha256": "56e6de2a12af7c7bc91db01f9145113b6a72ad23905790313a4b96817a9a7aaf"
+    },
+    {
+      "path": "artifacts/scenery/wedding-outfit-groom-sage.png",
+      "sha256": "e0940346b57d3d283b75033d799849f44c30e55dd1e9c93b5eee9087c9e89393"
+    },
+    {
+      "path": "artifacts/scenery/wedding-outfit-groom-ivory.png",
+      "sha256": "d4c0b7a76ae66c16a383aab945d066ef95bfa251731e54f31f06fb7104dadac0"
+    },
+    {
+      "path": "artifacts/scenery/wedding-outfit-bride-ivory.png",
+      "sha256": "32c3b16a93ea12d694db65b82f85329b32df6462500b21cab9b57eae86a9dd19"
+    },
+    {
+      "path": "artifacts/scenery/wedding-outfit-bride-rose.png",
+      "sha256": "8614d5b0449c72d6b67c7579705697f6bd22ec6f2f1a72f3f28f05d1cb3869a7"
+    }
+  ]
+}

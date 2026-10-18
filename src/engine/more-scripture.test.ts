@@ -1,18 +1,17 @@
-// 성경 이야기를 더 모으는 길 (2026-09-30 사용자): 밤 필사·서고 열람석·옛 두루마리·이웃 선물·어른이 된 아이의 편지
+// 성경 이야기를 더 모으는 길 (2026-09-30 사용자): 서고 열람석·옛 두루마리·이웃 선물·어른이 된 아이의 편지
+// (밤 필사 '사본 옮겨 적기'는 2026-10-18 사용자 결정으로 없앴다 — 다시 쓰기(copy-again.test.ts)가 그 자리를 잇는다)
 import { CONTENT } from '../content/catalog'
 import { dayOf } from './calendar'
 import {
   buyScroll,
   canBuyScroll,
   canLibraryRead,
-  canNightCopy,
   chooseBook,
   giveGift,
   GIFT_STORY_HEARTS,
   LIBRARY_READ_PRICE,
   libraryRead,
   newGame,
-  nightCopy,
   SCROLL_PRICE,
   type GameState,
 } from './game'
@@ -22,19 +21,6 @@ const at = (s: GameState, day: number, minute: number): GameState => ({ ...s, cl
 const base = () => ({ ...chooseBook(newGame(CONTENT), 'lk', CONTENT), coins: 100 })
 
 describe('성경 이야기를 더 모으기', () => {
-  it('사본 옮겨 적기는 낮과 밤 모두 기름 없이 가능하다', () => {
-    const s = { ...at(base(), 3, 21 * 60), inv: { oil: 2 } }
-    expect(canNightCopy(at(s, 3, 10 * 60), CONTENT)).toBeNull()
-    expect(canNightCopy({ ...s, inv: {} }, CONTENT)).toBeNull()
-    const a = nightCopy(s, CONTENT)!
-    expect(a.state.collected).toContain(a.pieceId)
-    expect(a.state.inv.oil ?? 0).toBe(2)
-    const b = nightCopy(a.state, CONTENT)!
-    expect(b.pieceId).not.toBe(a.pieceId)
-    expect(b.state.inv.oil).toBe(2)
-    expect(nightCopy({ ...b.state, inv: {} }, CONTENT)).not.toBeNull()
-  })
-
   it('서고 열람석: 닢 셋, 하루 두 번까지', () => {
     let s: GameState = at(base(), 3, 10 * 60)
     for (let i = 0; i < 2; i++) {
@@ -64,14 +50,14 @@ describe('성경 이야기를 더 모으기', () => {
     expect(r.state.collected).toEqual(s.collected)
   })
 
-  it('어느 책을 골랐든(편지 책·요한계시록 포함) 밤 필사·열람석은 27권 중 아직 없는 조각 하나 — 오늘 편지·이웃 조각은 빼고', () => {
-    const rev = { ...at(chooseBook(newGame(CONTENT), 'rev', CONTENT), 3, 21 * 60), inv: { oil: 1 }, coins: 20 }
-    const r = nightCopy(rev, CONTENT)!
+  it('어느 책을 골랐든(편지 책·요한계시록 포함) 열람석은 27권 중 아직 없는 조각 하나 — 오늘 편지·이웃 조각은 빼고', () => {
+    const rev = { ...at(chooseBook(newGame(CONTENT), 'rev', CONTENT), 3, 10 * 60), coins: 20 }
+    const r = libraryRead(rev, CONTENT)!
     expect(CONTENT.pieces.some((p) => p.id === r.pieceId)).toBe(true)
     expect(r.state.collected).toEqual([r.pieceId])
     // 같은 날 같은 길은 같은 조각 (씨앗), 두 번째는 다른 조각
-    expect(nightCopy(rev, CONTENT)!.pieceId).toBe(r.pieceId)
-    expect(nightCopy(r.state, CONTENT)!.pieceId).not.toBe(r.pieceId)
+    expect(libraryRead(rev, CONTENT)!.pieceId).toBe(r.pieceId)
+    expect(libraryRead(r.state, CONTENT)!.pieceId).not.toBe(r.pieceId)
     const rom = at(chooseBook(newGame(CONTENT), 'rom', CONTENT), 3, 10 * 60)
     const first = libraryRead({ ...rom, coins: 20 }, CONTENT)!.pieceId
     const lib = libraryRead({ ...rom, coins: 20, post: [first], offers: { baker: first } }, CONTENT)!
@@ -80,8 +66,6 @@ describe('성경 이야기를 더 모으기', () => {
 
   it('조각을 다 모았으면 아무것도 받지 않는다 (오류 없이 막힘)', () => {
     const full = { ...at(chooseBook(newGame(CONTENT), 'lk', CONTENT), 3, 10 * 60), coins: 100, collected: CONTENT.pieces.map((p) => p.id) }
-    expect(canNightCopy(full, CONTENT)).toBe('noPiece')
-    expect(nightCopy(full, CONTENT)).toBeNull()
     expect(canLibraryRead(full, CONTENT)).toBe('noPiece')
     expect(libraryRead(full, CONTENT)).toBeNull()
     expect(canBuyScroll({ ...full, clock: { ...full.clock, day: 7 } }, CONTENT)).toBe('noPiece')

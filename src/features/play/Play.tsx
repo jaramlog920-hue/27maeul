@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { saveGame } from '../../engine/save'
+import { flushGameStorage, getGameStorageStatus } from '../../engine/game-storage'
 import { useGame } from '../../store/game-store'
 import { ModalLayer } from '../ModalLayer'
 import { DecorateBar } from './DecorateBar'
@@ -23,12 +24,22 @@ export function Play() {
   const focus = useGame((s) => s.modal?.kind === 'copy')
   // 탭을 닫거나 다른 앱으로 넘어갈 때 저장한다
   useEffect(() => {
-    const save = () => saveGame(useGame.getState().game)
+    const save = () => {
+      saveGame(useGame.getState().game)
+      void flushGameStorage().catch(() => {})
+    }
     const onHide = () => document.visibilityState === 'hidden' && save()
+    const beforeClose = (event: BeforeUnloadEvent) => {
+      save()
+      const status = getGameStorageStatus()
+      if (status.state !== 'saved') { event.preventDefault(); event.returnValue = '' }
+    }
     window.addEventListener('pagehide', save)
+    window.addEventListener('beforeunload', beforeClose)
     document.addEventListener('visibilitychange', onHide)
     return () => {
       window.removeEventListener('pagehide', save)
+      window.removeEventListener('beforeunload', beforeClose)
       document.removeEventListener('visibilitychange', onHide)
     }
   }, [])

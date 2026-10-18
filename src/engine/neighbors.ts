@@ -1,6 +1,6 @@
 // 이웃의 하루: 시간표대로 걸어가고, 밤·궂은 날에는 집으로 들어가 보이지 않는다.
 import { FESTIVAL_FROM, FESTIVAL_TO } from './calendar'
-import { findPath, stepActor, type Actor } from './movement'
+import { findPath, findWarpRoute, stepActor, type Actor } from './movement'
 import { isWalkable, key, sameTile, WARPS } from './world'
 import type { NeighborDef, Tile } from './types'
 import { LODGING_SEATS, LODGING_WORK_SPOTS, lodgingNpcSpot } from './lodging'
@@ -82,7 +82,8 @@ export function placeNpc(def: NeighborDef, goal: Tile | null): Npc {
   return { id: def.id, x: at.x, y: at.y, path: [], facing: 'down', walkTime: 0, visible: goal !== null, goal }
 }
 
-export function stepNpc(npc: Npc, def: NeighborDef, goal: Tile | null, dt: number, blockers: ReadonlySet<string> = new Set()): Npc {
+export function stepNpc(npc: Npc, def: NeighborDef, goal: Tile | null, dt: number, blockers: ReadonlySet<string> = new Set(), occupied?: Tile): Npc {
+  const advance = (n: Npc) => walk(n, dt, occupied)
   const here = { x: Math.round(npc.x), y: Math.round(npc.y) }
   // 걷는 동안 방을 꾸몄다면 기존 경로도 다시 확인한다.
   const blocked = npc.path.some((t) => blockers.has(key(t)))
@@ -91,21 +92,21 @@ export function stepNpc(npc: Npc, def: NeighborDef, goal: Tile | null, dt: numbe
     if (!npc.visible) return npc
     if (sameTile(here, def.door) && npc.path.length === 0) return { ...npc, visible: false, goal: null }
     const across = crossing(npc, here, def.door, blockers)
-    if (across) return walk({ ...across, goal: null }, dt)
+    if (across) return advance({ ...across, goal: null })
     let n = npc
     if (npc.goal !== null || blocked || npc.path.length === 0) n = { ...npc, goal: null, path: pathOrEmpty(here, def.door, npc, blockers) }
-    return walk(n, dt)
+    return advance(n)
   }
   // 집에서 나온다
   if (!npc.visible) {
-    return walk({ ...npc, x: def.door.x, y: def.door.y, visible: true, goal, path: route(def.door, goal, blockers) ?? [] }, dt)
+    return advance({ ...npc, x: def.door.x, y: def.door.y, visible: true, goal, path: route(def.door, goal, blockers) ?? [] })
   }
   // 다른 방으로 건너가려고 문(문깔개)에 닿았다 — 건너편으로 옮겨 가서 이어 걷는다
   const across = crossing(npc, here, goal, blockers)
-  if (across) return walk(across, dt)
+  if (across) return advance(across)
   if (npc.goal === null || !sameTile(npc.goal, goal) || blocked || (npc.path.length === 0 && !sameTile(here, goal)))
-    return walk({ ...npc, goal, path: pathOrEmpty(here, goal, npc, blockers) }, dt)
-  return walk(npc, dt)
+    return advance({ ...npc, goal, path: pathOrEmpty(here, goal, npc, blockers) })
+  return advance(npc)
 }
 
 /**
@@ -117,23 +118,7 @@ export function route(from: Tile, to: Tile, blockers: ReadonlySet<string> = new 
   if (!sameTile(from, to) && !isWalkable(to, blockers)) return null
   const direct = findPath(from, to, blockers)
   if (direct) return direct
-  const queue: { at: Tile; first: Tile[] | null }[] = [{ at: from, first: null }]
-  const visited = new Set<string>([key(from)])
-  while (queue.length) {
-    const leg = queue.shift()!
-    if (findPath(leg.at, to, blockers)) return leg.first
-    for (const [k, dest] of WARPS) {
-    const [x, y] = k.split(',').map(Number)
-    const door = { x, y }
-    if (visited.has(key(dest))) continue
-    const p = findPath(leg.at, door, blockers)
-    if (p) {
-      visited.add(key(dest))
-      queue.push({ at: dest, first: leg.first ?? p })
-    }
-    }
-  }
-  return null
+  return findWarpRoute(from, to, blockers)
 }
 
 /** 문(문깔개)에 서서 길이 끝났는데 목적지가 건너편이면 건너편으로 옮기고 이어 갈 길을 준다 */
@@ -151,9 +136,17 @@ function pathOrEmpty(from: Tile, to: Tile, npc: Actor, blockers: ReadonlySet<str
   return npc.x !== from.x || npc.y !== from.y ? [from, ...p] : p
 }
 
-function walk(npc: Npc, dt: number): Npc {
-  const { actor } = stepActor(npc, dt * (NPC_SPEED / 3.5))
-  return { ...npc, ...actor }
+function walk(npc: Npc, dt: number, occupied?: Tile): Npc {
+  // 플레이어는 일시적인 점유다. 경로를 유지하고 점유된 칸 직전에서 기다린다.
+  const stop = occupied ? npc.path.findIndex(t => sameTile(t, occupied)) : -1
+  if (stop < 0) {
+    const { actor } = stepActor(npc, dt * (NPC_SPEED / 3.5))
+    return { ...npc, ...actor }
+  }
+  const approach = npc.path.slice(0, stop)
+  const { actor } = stepActor({ ...npc, path: approach }, dt * (NPC_SPEED / 3.5))
+  const consumed = approach.length - actor.path.length
+  return { ...npc, ...actor, path: consumed ? npc.path.slice(consumed) : npc.path }
 }
 
 export function npcTile(n: Npc): Tile {

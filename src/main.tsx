@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { Analytics } from '@vercel/analytics/react'
 import { App } from './app/App'
 import { ErrorBoundary } from './app/ErrorBoundary'
+import { StorageGate } from './app/StorageGate'
 import './app/global.css'
 import './app/parts.css'
 import { applyTheme, loadTheme } from './app/theme'
@@ -20,9 +21,11 @@ window.addEventListener('focusout', () => setTimeout(setAppHeight, 300))
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ErrorBoundary>
-      <App />
-    </ErrorBoundary>
+    <StorageGate>
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>
+    </StorageGate>
     {/* Vercel 대시보드의 방문 통계. 쿠키·개인정보 없이 페이지 조회만 센다 */}
     <Analytics />
   </StrictMode>,

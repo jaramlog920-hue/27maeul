@@ -1,0 +1,44 @@
+import { it, vi } from 'vitest'
+vi.mock('C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/audio/sound', async (orig) => ({ ...(await orig() as object), sfx: () => {} }))
+import { useGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/store/game-store'
+import { CONTENT } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import { syncHome, weddingToday, isSuitor } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/game'
+import { serialize, deserialize } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/save'
+import { lastVerseGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/dev/test-saves'
+
+it('diag2 wedding', async () => {
+  if (process.env.DIAG !== '2') return
+  vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+  const base = await lastVerseGame(CONTENT)
+  const partner = CONTENT.neighbors.find((n) => isSuitor(base, n))?.id ?? CONTENT.neighbors.find((n) => (n as { romanceable?: boolean }).romanceable)!.id
+  const day = base.clock.day
+  const g = { ...base, homeLevel: 1 as const, scenes: [], romance: { partner, stage: 'engaged' as const, since: day - 20, weddingDay: day, marriedDay: null }, clock: { day, minute: 18 * 60 + 25 }, player: { ...base.player, x: 24, y: 22, path: [] } }
+  syncHome(g)
+  useGame.getState().load(g)
+  console.log('partner', partner, 'weddingToday', weddingToday(g), 'map', g.map)
+  for (let i = 0; i < 60; i++) {
+    const s = useGame.getState()
+    if (s.modal) { console.log('modal', i, JSON.stringify(s.modal).slice(0, 120)); if (s.modal.kind === 'scene') s.nextScene(); else s.closeModal() }
+    s.frame(1)
+  }
+  const e = useGame.getState().game
+  let born = -1
+  for (let d = 0; d < 120; d++) {
+    const s = useGame.getState()
+    for (let i = 0; i < 20 && useGame.getState().modal; i++) { const m = useGame.getState().modal!; if (m.kind === 'scene') useGame.getState().nextScene(); else if (m.kind === 'childName') useGame.getState().setChildName('하늘'); else useGame.getState().closeModal() }
+    s.askBaby()
+    if (useGame.getState().game.child) { useGame.getState().careBaby('hold'); useGame.getState().open({ kind: 'kidTime' }); useGame.getState().kidAct('read'); useGame.getState().closeModal() }
+    for (let i = 0; i < 20 && useGame.getState().modal; i++) { const m = useGame.getState().modal!; if (m.kind === 'scene') useGame.getState().nextScene(); else if (m.kind === 'childName') useGame.getState().setChildName('하늘'); else useGame.getState().closeModal() }
+    useGame.getState().open({ kind: 'review', pieceId: null }); useGame.getState().sleep()
+    vi.runOnlyPendingTimers()
+    const g2 = useGame.getState().game
+    if (g2.child && born < 0) born = g2.clock.day
+    const back = deserialize(serialize(g2), CONTENT)!
+    syncHome(g2)
+    if (JSON.stringify(back.child) !== JSON.stringify(g2.child)) console.log('CHILD ROUNDTRIP DIFF day', g2.clock.day, JSON.stringify(g2.child).slice(0, 300), '->', JSON.stringify(back.child).slice(0, 300))
+    if (!Number.isInteger(g2.coins) || g2.coins < 0) console.log('coins bad', g2.coins)
+  }
+  const f = useGame.getState().game
+  console.log('childBorn', born, 'childAgeDay', f.clock.day, 'child', JSON.stringify(f.child).slice(0, 200), 'siblings', (f.siblings ?? []).length, 'stage', f.romance.stage)
+  console.log('stage', e.romance.stage, 'minute', e.clock.minute, 'pos', e.player.x, e.player.y, 'scenes', e.scenes.join(','))
+})

@@ -37,7 +37,7 @@ export function roomKeyOf(t: Tile): RoomKey {
 // ── 가구 종류 ──
 const SOLID_SEATS: readonly string[] = ['chair', 'stool', 'longBench', 'daybed']
 const FLOOR_SEATS: readonly string[] = ['cushion', 'pillows', 'mat']
-const SOFT: readonly string[] = ['cushion', 'pillows', 'mat', 'rug', 'roundRug', 'purpleRug']
+const SOFT: readonly string[] = ['wovenPetBed', 'coolingPetMat', 'cushion', 'pillows', 'mat', 'rug', 'roundRug', 'purpleRug']
 const BOOKS: readonly string[] = ['bookcase', 'homeShelf']
 const plain = (f: Furniture) => !f.on && !f.item.startsWith('spouse:')
 const isSeat = (f: Furniture) => plain(f) && (SOLID_SEATS.includes(f.item) || FLOOR_SEATS.includes(f.item))

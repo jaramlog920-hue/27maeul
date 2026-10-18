@@ -1,0 +1,32 @@
+{
+  "ids": [
+    "date:walk:1",
+    "saw:tilly:flower",
+    "ev:dexter:clouds",
+    "ev:dexter:story:2",
+    "ev:dexter:story:2b",
+    "ev:dexter:small:shadowStick",
+    "ev:wendell:notebook",
+    "ev:dexter:story:1",
+    "ev:basil:tree",
+    "ev:dexter:poemFound",
+    "ev:dexter:poemNew",
+    "date:walk:2",
+    "ev:juniper:story:1",
+    "fam:picnic",
+    "saw:basil:treeFall",
+    "date:walk:0",
+    "saw:dexter:poem",
+    "ev:dexter:story:3b",
+    "ev:dexter:story:3",
+    "ev:juniper:story:4",
+    "dateWalk",
+    "ev:juniper:avoid"
+  ],
+  "panels": [
+    "first default",
+    "middle actual",
+    "last first-choice actual"
+  ],
+  "sceneSheets": 4
+}

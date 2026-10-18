@@ -1,0 +1,28 @@
+import { describe, expect, it, vi } from 'vitest'
+import { createElement } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/react'
+import { render, screen, fireEvent, act } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/@testing-library/react'
+vi.mock('C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/features/scene/SceneView', async (orig) => {
+  const m = await orig() as Record<string, unknown>
+  return { ...m, SceneView: () => { throw new Error('boom') } }
+})
+import { CONTENT } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import { newGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/game'
+import { useGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/store/game-store'
+import { ModalLayer } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/features/ModalLayer'
+
+describe('ui2 scene crash', () => {
+  it('장면 화면이 오류로 실패하면 닫기 후 다음 프레임에 같은 장면이 다시 열린다', () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    const g = { ...newGame(CONTENT), scenes: ['welcome'] }
+    useGame.getState().load(g)
+    useGame.setState({ modal: { kind: 'scene', id: 'welcome' } })
+    render(createElement(ModalLayer))
+    expect(screen.getByRole('alert').textContent).toContain('화면을 불러오지 못했어요')
+    fireEvent.click(screen.getByText('닫기'))
+    expect(useGame.getState().modal).toBeNull()
+    act(() => { useGame.getState().frame(0.016) })
+    console.log('after frame modal =', JSON.stringify(useGame.getState().modal), 'scenes', useGame.getState().game.scenes)
+    expect(useGame.getState().modal).toMatchObject({ kind: 'scene', id: 'welcome' })
+    expect(screen.getByRole('alert')).toBeTruthy()
+  })
+})

@@ -1,3 +1,4 @@
+import { npcAffinityScale } from './npc-affinity'
 import { villageBookCount } from "./progression"
 import { solidTiles } from './room'
 import { isHome } from './world'
@@ -158,7 +159,7 @@ export function settleAppt(s: GameState,id:string): GameState {
   // 같은 모임에 함께 나온 회원끼리도 가까워진다 (2026-10-14 사용자) — 모임이 열린 날 한 번, 내가 가지 않아도
   if (a.kind==='club' && a.state==='running' && next.gen && members.length>1) {
     let g=next.gen
-    for (let i=0;i<members.length;i++) for (let j=i+1;j<members.length;j++) g=addAffinity(g,slotPerson(g,members[i]),slotPerson(g,members[j]),CLUB_AFFINITY)
+    for (let i=0;i<members.length;i++) for (let j=i+1;j<members.length;j++) g=addAffinity(g,slotPerson(g,members[i]),slotPerson(g,members[j]),CLUB_AFFINITY * npcAffinityScale(next))
     next={...next,gen:g}
   }
   if (a.attended && !a.rewarded) for (const npc of members) {

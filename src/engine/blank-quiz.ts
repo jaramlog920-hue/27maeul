@@ -1,68 +1,70 @@
-// 빈칸 퀴즈 (2026-10-14 사용자): 지금까지 필사를 마친 장(신약·구약) 가운데 무작위 절의 빈칸 하나를 낱말 보기 넷에서 고른다.
-// 처음부터 열리고, 말씀 메뉴에서 언제든·장을 마친 화면에서 바로 풀 수 있다. 한 판 5문제, 맞힌 문제마다 닢, 다 맞히면 덤.
-// 하루 판수 제한은 없다 (사용자 결정). 시간은 흐르지 않는다. 빈칸은 필사 화면의 빈칸(blanksForVerse)과 같은 방식.
+// 완성한 장마다 10문제. 보상은 장별 첫 완주에만 지급하고 재풀이는 연습으로 허용한다.
 import { blanksForVerse } from './copy-ways'
 import { copyVerses } from './copying'
 import type { GameState } from './game'
-import { mulberry32 } from './offers'
+import { seededShuffle } from './offers'
 import type { CopyBook } from './ot-books'
 import type { GameContent } from './types'
 
-export const BLANK_QUIZ_SIZE = 5
+export const BLANK_QUIZ_SIZE = 10
 export const BLANK_COIN = 10
 export const BLANK_PERFECT = 10
-
-export interface BlankQuestion {
-  book: CopyBook
-  chapter: number
+export interface BlankChapter { book: CopyBook; chapter: number }
+export interface BlankQuestion extends BlankChapter {
   verse: number
-  /** 절 본문 (띄어쓰기로 나눈 낱말 차례 그대로) */
   words: string[]
-  /** 빈칸 낱말 자리 */
   index: number
   answer: string
-  /** 보기 넷 (답 포함, 섞은 차례) */
   options: string[]
 }
 
-/** 지금까지 필사로 마친 장 (책·장) */
-export function copiedChapters(s: Pick<GameState, 'copy'>): { book: CopyBook; chapter: number }[] {
-  const out: { book: CopyBook; chapter: number }[] = []
-  for (const [book, chs] of Object.entries(s.copy.copied ?? {}) as [CopyBook, number[]][]) for (const chapter of chs ?? []) out.push({ book, chapter })
-  return out
-}
+export const blankChapterKey = ({ book, chapter }: BlankChapter): string => `${book}:${chapter}`
+const rewardKey = (target: BlankChapter) => `blankQuizPaid:${blankChapterKey(target)}`
+export const blankQuizRewarded = (s: Pick<GameState, 'flags'>, target: BlankChapter): boolean => !!s.flags[rewardKey(target)]
 
-/** 한 판 문제: 필사한 장에서 무작위 절, 빈칸 하나·보기 넷. 본문을 아직 불러오지 않은 장은 건너뛴다. 만들 수 있는 만큼(최대 5) */
-export function makeBlankQuiz(s: Pick<GameState, 'copy'>, content: GameContent, seed: number): BlankQuestion[] {
-  const pool = copiedChapters(s)
-  const rnd = mulberry32(seed >>> 0)
-  const out: BlankQuestion[] = []
-  const seen = new Set<string>()
-  for (let tries = 0; tries < 80 && out.length < BLANK_QUIZ_SIZE && pool.length; tries++) {
-    const { book, chapter } = pool[Math.floor(rnd() * pool.length)]
-    const verses = copyVerses(book, chapter, content)
-    if (!verses.length) continue
-    const v = verses[Math.floor(rnd() * verses.length)]
-    const key = `${book}:${chapter}:${v.verse}`
-    if (seen.has(key)) continue
-    // 보기 넷이 나오도록 실력 9로 만들고 빈칸은 첫 하나만 쓴다
-    const blanks = blanksForVerse(v.text, verses.map((x) => x.text), 9, Math.floor(rnd() * 1e9), book, chapter, v.verse)
-    const b = blanks?.find((x) => x.options.length >= 3)
-    if (!b) continue
-    seen.add(key)
-    out.push({ book, chapter, verse: v.verse, words: v.text.split(/\s+/).filter(Boolean), index: b.index, answer: b.answer, options: b.options })
+export function copiedChapters(s: Pick<GameState, 'copy'>): BlankChapter[] {
+  const out: BlankChapter[] = []
+  for (const [book, chs] of Object.entries(s.copy.copied ?? {}) as [CopyBook, number[]][]) {
+    for (const chapter of new Set(chs ?? [])) if (Number.isInteger(chapter) && chapter > 0) out.push({ book, chapter })
   }
   return out
 }
 
-/** 한 판에 받는 닢: 맞힌 문제마다 BLANK_COIN, 다 맞히면 BLANK_PERFECT 더 */
-export function blankQuizPay(correct: number, total: number): number {
-  if (total <= 0) return 0
-  return correct * BLANK_COIN + (correct === total && total >= BLANK_QUIZ_SIZE ? BLANK_PERFECT : 0)
+const completed = (s: Pick<GameState, 'copy'>, target: BlankChapter): boolean =>
+  !!s.copy.copied?.[target.book]?.includes(target.chapter)
+
+/** 선택한 완성 장에서만 출제. 짧은 장은 절의 다른 빈칸을 우선 쓰고, 부족하면 같은 장에서 복습한다. */
+export function makeBlankQuiz(s: Pick<GameState, 'copy'>, content: GameContent, seed: number, target: BlankChapter): BlankQuestion[] {
+  if (!completed(s, target)) return []
+  const { book, chapter } = target
+  const verses = copyVerses(book, chapter, content)
+  const texts = verses.map(v => v.text)
+  const candidates = seededShuffle(verses, seed).flatMap(v => {
+    const blanks = blanksForVerse(v.text, texts, 9, seed, book, chapter, v.verse) ?? []
+    return blanks.filter(b => b.options.length >= 3).map(b => ({ ...target, verse: v.verse, words: v.text.split(/\s+/).filter(Boolean), ...b }))
+  })
+  // 같은 절은 한 번씩 먼저 낸다. 열 절 미만이면 서로 다른 빈칸으로 채운다.
+  const seen = new Set<number>()
+  const first: BlankQuestion[] = []
+  const rest: BlankQuestion[] = []
+  for (const q of candidates) {
+    if (seen.has(q.verse)) rest.push(q)
+    else { seen.add(q.verse); first.push(q) }
+  }
+  const pool = [...first, ...rest]
+  if (!pool.length) return []
+  return Array.from({ length: BLANK_QUIZ_SIZE }, (_, i) => pool[i % pool.length])
 }
 
-/** 판을 마치면 닢을 받는다 (기록: 푼 판 수·맞힌 수) */
-export function finishBlankQuiz(s: GameState, correct: number, total: number): GameState {
-  const pay = blankQuizPay(correct, total)
-  return { ...s, coins: s.coins + pay, flags: { ...s.flags, blankQuizRounds: (s.flags.blankQuizRounds ?? 0) + 1, blankQuizRight: (s.flags.blankQuizRight ?? 0) + correct } }
+export function blankQuizPay(correct: number, total: number): number {
+  if (total !== BLANK_QUIZ_SIZE || !Number.isInteger(correct) || correct < 0 || correct > total) return 0
+  return correct * BLANK_COIN + (correct === total ? BLANK_PERFECT : 0)
+}
+
+/** 0점도 첫 완주로 기록한다. 저장·날짜 변경·재필사로 보상 기회가 초기화되지 않는다. */
+export function finishBlankQuiz(s: GameState, target: BlankChapter, correct: number, total: number): GameState {
+  if (!completed(s, target) || total !== BLANK_QUIZ_SIZE || !Number.isInteger(correct) || correct < 0 || correct > total) return s
+  const pay = blankQuizRewarded(s, target) ? 0 : blankQuizPay(correct, total)
+  return { ...s, coins: s.coins + pay, flags: { ...s.flags, [rewardKey(target)]: 1,
+    blankQuizRounds: (s.flags.blankQuizRounds ?? 0) + 1, blankQuizRight: (s.flags.blankQuizRight ?? 0) + correct } }
 }

@@ -58,4 +58,12 @@ describe('주인공', () => {
       expect(a.name).toBe('바다')
     }
   })
+  it.each([18,19,20,21])('새 평상복 %i를 옛 옷 번호와 아래옷을 바꾸지 않고 저장·복원한다',top=>{
+    expect(TOPS[17][0]).toBe('자주빛 주머니 옷')
+    const avatar=withLookDefaults({name:'하늘',look:'f',top,bottom:4,bottomColor:[120,30,50]})
+    const saved=deserialize(serialize(newGame(CONTENT,avatar)),CONTENT)!
+    expect(saved.avatar).toEqual(avatar)
+    expect(TOPS[top][0]).toBe(['세이지 조끼','아이보리 겉옷','아이보리 리본 옷','장밋빛 레이스 옷'][top-18])
+    expect(writerPalette('spring',avatar).r).toBe(TOPS[top][1])
+  })
 })

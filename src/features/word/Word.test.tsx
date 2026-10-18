@@ -215,3 +215,11 @@ describe('말씀 탭 계산', () => {
     expect(whole).toHaveLength(versesOf(pieceById('phm-001').ref).length)
   })
 })
+
+
+it('하나님 기록 화면의 묶음과 개수에는 신약 구절만 포함한다', () => {
+  const good = { keyword: 'good', ref: '막 10:18', book: 'mk' as const, chapter: 10, day: 3 }
+  const groups = godByKeyword([{ ...good, ref: '시 34:8' }, good])
+  expect(groups).toHaveLength(1)
+  expect(groups[0].finds).toEqual([good])
+})

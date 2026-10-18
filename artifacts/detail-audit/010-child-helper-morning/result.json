@@ -1,0 +1,376 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "flow": {
+        "name": "bag-room",
+        "water": 98
+      },
+      "before": {
+        "day": 51,
+        "stage": "toddler",
+        "mode": "home",
+        "water": 98,
+        "chestWater": null,
+        "notes": [],
+        "strength": {
+          "level": 1,
+          "xp": 0,
+          "born": 1
+        },
+        "toast": null,
+        "modal": {
+          "kind": "review",
+          "pieceId": null
+        },
+        "dialog": "잠들기 전에\n\n오늘은 베껴 온 대목이 없습니다.\n\n조금 더 깨어 있기\n잠자리에 들기"
+      },
+      "canceled": {
+        "day": 51,
+        "stage": "toddler",
+        "mode": "home",
+        "water": 98,
+        "chestWater": null,
+        "notes": [],
+        "strength": {
+          "level": 1,
+          "xp": 0,
+          "born": 1
+        },
+        "toast": null,
+        "modal": null,
+        "dialog": null
+      },
+      "morning": {
+        "day": 52,
+        "stage": "helper",
+        "mode": "home",
+        "water": 99,
+        "chestWater": null,
+        "helpDay": 52,
+        "helpKind": 3,
+        "firstHelpPending": 52,
+        "childHelping": 1,
+        "notes": [
+          "childHelp:strength"
+        ],
+        "strength": {
+          "level": 1,
+          "xp": 12.5,
+          "born": 1
+        },
+        "toast": "루시: 물이나 갈대를 날라 왔어요",
+        "modal": {
+          "kind": "scene",
+          "id": "childHelps"
+        },
+        "dialog": "혼자 다니는 아이\n\n아침 일찍 문을 나서며 손을 흔드는 루시. \"다녀올게요!\"\n\n다음"
+      },
+      "restored": {
+        "day": 52,
+        "stage": "helper",
+        "mode": "roam",
+        "water": 99,
+        "chestWater": null,
+        "helpDay": 52,
+        "helpKind": 3,
+        "firstHelpPending": 52,
+        "childHelping": 1,
+        "notes": [
+          "childHelp:strength"
+        ],
+        "strength": {
+          "level": 1,
+          "xp": 12.5,
+          "born": 1
+        },
+        "toast": null,
+        "modal": {
+          "kind": "scene",
+          "id": "childHelps"
+        },
+        "dialog": "혼자 다니는 아이\n\n아침 일찍 문을 나서며 손을 흔드는 루시. \"다녀올게요!\"\n\n다음"
+      },
+      "actualReceived": 1
+    },
+    {
+      "flow": {
+        "name": "bag-full-no-chest",
+        "water": 99
+      },
+      "before": {
+        "day": 51,
+        "stage": "toddler",
+        "mode": "home",
+        "water": 99,
+        "chestWater": null,
+        "notes": [],
+        "strength": {
+          "level": 1,
+          "xp": 0,
+          "born": 1
+        },
+        "toast": null,
+        "modal": {
+          "kind": "review",
+          "pieceId": null
+        },
+        "dialog": "잠들기 전에\n\n오늘은 베껴 온 대목이 없습니다.\n\n조금 더 깨어 있기\n잠자리에 들기"
+      },
+      "canceled": {
+        "day": 51,
+        "stage": "toddler",
+        "mode": "home",
+        "water": 99,
+        "chestWater": null,
+        "notes": [],
+        "strength": {
+          "level": 1,
+          "xp": 0,
+          "born": 1
+        },
+        "toast": null,
+        "modal": null,
+        "dialog": null
+      },
+      "morning": {
+        "day": 52,
+        "stage": "helper",
+        "mode": "home",
+        "water": 99,
+        "chestWater": null,
+        "helpDay": 52,
+        "helpKind": 3,
+        "firstHelpPending": 52,
+        "childHelping": 1,
+        "notes": [
+          "childHelp:strength"
+        ],
+        "strength": {
+          "level": 1,
+          "xp": 12.5,
+          "born": 1
+        },
+        "toast": "루시: 물이나 갈대를 날라 왔어요",
+        "modal": {
+          "kind": "scene",
+          "id": "childHelps"
+        },
+        "dialog": "혼자 다니는 아이\n\n아침 일찍 문을 나서며 손을 흔드는 루시. \"다녀올게요!\"\n\n다음"
+      },
+      "restored": {
+        "day": 52,
+        "stage": "helper",
+        "mode": "roam",
+        "water": 99,
+        "chestWater": null,
+        "helpDay": 52,
+        "helpKind": 3,
+        "firstHelpPending": 52,
+        "childHelping": 1,
+        "notes": [
+          "childHelp:strength"
+        ],
+        "strength": {
+          "level": 1,
+          "xp": 12.5,
+          "born": 1
+        },
+        "toast": null,
+        "modal": {
+          "kind": "scene",
+          "id": "childHelps"
+        },
+        "dialog": "혼자 다니는 아이\n\n아침 일찍 문을 나서며 손을 흔드는 루시. \"다녀올게요!\"\n\n다음"
+      },
+      "actualReceived": 0
+    },
+    {
+      "flow": {
+        "name": "bag-full-chest-room",
+        "water": 99,
+        "chest": 29
+      },
+      "before": {
+        "day": 51,
+        "stage": "toddler",
+        "mode": "home",
+        "water": 99,
+        "chestWater": 29,
+        "notes": [],
+        "strength": {
+          "level": 1,
+          "xp": 0,
+          "born": 1
+        },
+        "toast": null,
+        "modal": {
+          "kind": "review",
+          "pieceId": null
+        },
+        "dialog": "잠들기 전에\n\n오늘은 베껴 온 대목이 없습니다.\n\n조금 더 깨어 있기\n잠자리에 들기"
+      },
+      "canceled": {
+        "day": 51,
+        "stage": "toddler",
+        "mode": "home",
+        "water": 99,
+        "chestWater": 29,
+        "notes": [],
+        "strength": {
+          "level": 1,
+          "xp": 0,
+          "born": 1
+        },
+        "toast": null,
+        "modal": null,
+        "dialog": null
+      },
+      "morning": {
+        "day": 52,
+        "stage": "helper",
+        "mode": "home",
+        "water": 99,
+        "chestWater": 30,
+        "helpDay": 52,
+        "helpKind": 3,
+        "firstHelpPending": 52,
+        "childHelping": 1,
+        "notes": [
+          "childHelp:strength"
+        ],
+        "strength": {
+          "level": 1,
+          "xp": 12.5,
+          "born": 1
+        },
+        "toast": "루시: 물이나 갈대를 날라 왔어요",
+        "modal": {
+          "kind": "scene",
+          "id": "childHelps"
+        },
+        "dialog": "혼자 다니는 아이\n\n아침 일찍 문을 나서며 손을 흔드는 루시. \"다녀올게요!\"\n\n다음"
+      },
+      "restored": {
+        "day": 52,
+        "stage": "helper",
+        "mode": "roam",
+        "water": 99,
+        "chestWater": 30,
+        "helpDay": 52,
+        "helpKind": 3,
+        "firstHelpPending": 52,
+        "childHelping": 1,
+        "notes": [
+          "childHelp:strength"
+        ],
+        "strength": {
+          "level": 1,
+          "xp": 12.5,
+          "born": 1
+        },
+        "toast": null,
+        "modal": {
+          "kind": "scene",
+          "id": "childHelps"
+        },
+        "dialog": "혼자 다니는 아이\n\n아침 일찍 문을 나서며 손을 흔드는 루시. \"다녀올게요!\"\n\n다음"
+      },
+      "actualReceived": 1
+    },
+    {
+      "flow": {
+        "name": "both-full",
+        "water": 99,
+        "chest": 30
+      },
+      "before": {
+        "day": 51,
+        "stage": "toddler",
+        "mode": "home",
+        "water": 99,
+        "chestWater": 30,
+        "notes": [],
+        "strength": {
+          "level": 1,
+          "xp": 0,
+          "born": 1
+        },
+        "toast": null,
+        "modal": {
+          "kind": "review",
+          "pieceId": null
+        },
+        "dialog": "잠들기 전에\n\n오늘은 베껴 온 대목이 없습니다.\n\n조금 더 깨어 있기\n잠자리에 들기"
+      },
+      "canceled": {
+        "day": 51,
+        "stage": "toddler",
+        "mode": "home",
+        "water": 99,
+        "chestWater": 30,
+        "notes": [],
+        "strength": {
+          "level": 1,
+          "xp": 0,
+          "born": 1
+        },
+        "toast": null,
+        "modal": null,
+        "dialog": null
+      },
+      "morning": {
+        "day": 52,
+        "stage": "helper",
+        "mode": "home",
+        "water": 99,
+        "chestWater": 30,
+        "helpDay": 52,
+        "helpKind": 3,
+        "firstHelpPending": 52,
+        "childHelping": 1,
+        "notes": [
+          "childHelp:strength"
+        ],
+        "strength": {
+          "level": 1,
+          "xp": 12.5,
+          "born": 1
+        },
+        "toast": "루시: 물이나 갈대를 날라 왔어요",
+        "modal": {
+          "kind": "scene",
+          "id": "childHelps"
+        },
+        "dialog": "혼자 다니는 아이\n\n아침 일찍 문을 나서며 손을 흔드는 루시. \"다녀올게요!\"\n\n다음"
+      },
+      "restored": {
+        "day": 52,
+        "stage": "helper",
+        "mode": "roam",
+        "water": 99,
+        "chestWater": 30,
+        "helpDay": 52,
+        "helpKind": 3,
+        "firstHelpPending": 52,
+        "childHelping": 1,
+        "notes": [
+          "childHelp:strength"
+        ],
+        "strength": {
+          "level": 1,
+          "xp": 12.5,
+          "born": 1
+        },
+        "toast": null,
+        "modal": {
+          "kind": "scene",
+          "id": "childHelps"
+        },
+        "dialog": "혼자 다니는 아이\n\n아침 일찍 문을 나서며 손을 흔드는 루시. \"다녀올게요!\"\n\n다음"
+      },
+      "actualReceived": 0
+    }
+  ],
+  "pageErrors": []
+}

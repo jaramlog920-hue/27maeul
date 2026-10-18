@@ -244,6 +244,21 @@ export interface CopyState {
   copied?: Partial<Record<CopyBook, number[]>>
   /** 필사 길잡이를 접어 두었다 (플레이어가 고른 것 — 없으면 펼쳐 보인다) */
   guideFolded?: true
+  /**
+   * 다시 쓰기 (2026-10-18 사용자: 이미 마친 장을 횟수 제한 없이 다시 옮겨 적는다 — 신약·구약을 다 적은 뒤에도 이어지는 필사).
+   * 다시 쓰는 중인 장 하나와 그 자리. 이 책을 고른 동안에는 copySpot이 이 장을 낸다
+   */
+  again?: CopyAt & { book: CopyBook }
+  /** 장마다 다시 쓴 횟수 ('책:장' → 횟수) */
+  againDone?: Record<string, number>
+}
+
+/** 다시 쓴 횟수의 열쇠 */
+export const againKey = (book: CopyBook, chapter: number) => `${book}:${chapter}`
+
+/** 이 책에서 다시 쓰는 중인가 */
+export function isCopyingAgain(copy: CopyState, book: CopyBook): boolean {
+  return copy.again?.book === book
 }
 
 /** 필사 길잡이 접기·펼치기 (펼치면 칸을 지운다 — 처음과 같은 모양) */
@@ -301,8 +316,10 @@ function openChapter(book: CopyBook, completed: readonly number[], content: Game
  */
 export function copySpot(s: { progress: Progress; otProgress?: OtProgress; copy: CopyState }, book: CopyBook, content: GameContent): CopySpot | null {
   const done = progressOf(s, book)?.completed ?? []
-  const at = s.copy.at[book]
-  let chapter = at && !done.includes(at.chapter) && copyChapters(book, content).includes(at.chapter) ? at.chapter : null
+  // 다시 쓰는 중이면 그 장 (이미 마친 장이어도)
+  const again = s.copy.again?.book === book && copyChapters(book, content).includes(s.copy.again.chapter) ? s.copy.again : null
+  const at = again ?? s.copy.at[book]
+  let chapter = at && (again || !done.includes(at.chapter)) && copyChapters(book, content).includes(at.chapter) ? at.chapter : null
   const fromVerse = chapter !== null ? at!.verse : 0
   let draft = chapter !== null ? (at!.draft ?? '') : ''
   if (chapter === null) chapter = openChapter(book, done, content)
@@ -372,6 +389,24 @@ export function sanitizeCopy(raw: unknown, progress: Progress, otProgress: OtPro
       ]
       if (kept.length) copied[b] = kept
     }
+  // 다시 쓰는 장은 마친 장일 때만
+  let again: CopyState['again']
+  if (isObj(raw.again) && isBook(raw.again.book)) {
+    const b = raw.again.book
+    const chapter = nat(raw.again.chapter, 1)
+    const verse = nat(raw.again.verse, 0)
+    if (chapter !== null && verse !== null && doneOf(b).includes(chapter)) {
+      const draft = typeof raw.again.draft === 'string' && raw.again.draft !== '' ? raw.again.draft.slice(0, DRAFT_MAX) : undefined
+      again = { book: b, chapter, verse, ...(draft ? { draft } : {}) }
+    }
+  }
+  const againDone: Record<string, number> = {}
+  if (isObj(raw.againDone))
+    for (const [k, v] of Object.entries(raw.againDone)) {
+      const [b, c] = k.split(':')
+      const n = nat(v, 1)
+      if (isBook(b) && nat(Number(c), 1) !== null && n !== null) againDone[k] = n
+    }
   return {
     book: isBook(raw.book) ? raw.book : null,
     at,
@@ -379,6 +414,8 @@ export function sanitizeCopy(raw: unknown, progress: Progress, otProgress: OtPro
     ...(Object.keys(days).length ? { days } : {}),
     ...(Object.keys(copied).length ? { copied } : {}),
     ...(raw.guideFolded === true ? { guideFolded: true as const } : {}),
+    ...(again ? { again } : {}),
+    ...(Object.keys(againDone).length ? { againDone } : {}),
   }
 }
 

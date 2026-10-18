@@ -1,0 +1,111 @@
+{
+  "tiers": [
+    {
+      "books": 0,
+      "multiplier": 1,
+      "first20VerseChapter": 120,
+      "first30VerseChapter": 170,
+      "first36PlusVerseChapter": 200,
+      "perfectSeniorLetter": 45,
+      "workDay": 8
+    },
+    {
+      "books": 10,
+      "multiplier": 1.3,
+      "first20VerseChapter": 156,
+      "first30VerseChapter": 221,
+      "first36PlusVerseChapter": 260,
+      "perfectSeniorLetter": 59,
+      "workDay": 10
+    },
+    {
+      "books": 27,
+      "multiplier": 1.81,
+      "first20VerseChapter": 217,
+      "first30VerseChapter": 308,
+      "first36PlusVerseChapter": 362,
+      "perfectSeniorLetter": 81,
+      "workDay": 14
+    },
+    {
+      "books": 40,
+      "multiplier": 2.2,
+      "first20VerseChapter": 264,
+      "first30VerseChapter": 374,
+      "first36PlusVerseChapter": 440,
+      "perfectSeniorLetter": 99,
+      "workDay": 18
+    },
+    {
+      "books": 65,
+      "multiplier": 2.95,
+      "first20VerseChapter": 354,
+      "first30VerseChapter": 502,
+      "first36PlusVerseChapter": 590,
+      "perfectSeniorLetter": 133,
+      "workDay": 24
+    },
+    {
+      "books": 66,
+      "multiplier": 2.98,
+      "first20VerseChapter": 358,
+      "first30VerseChapter": 507,
+      "first36PlusVerseChapter": 596,
+      "perfectSeniorLetter": 134,
+      "workDay": 24
+    }
+  ],
+  "targets": [
+    {
+      "price": 90,
+      "perfectQuizRounds": 2
+    },
+    {
+      "price": 180,
+      "perfectQuizRounds": 3
+    },
+    {
+      "price": 220,
+      "perfectQuizRounds": 4
+    },
+    {
+      "price": 2500,
+      "perfectQuizRounds": 42
+    },
+    {
+      "price": 4000,
+      "perfectQuizRounds": 67
+    },
+    {
+      "price": 6000,
+      "perfectQuizRounds": 100
+    },
+    {
+      "price": 8000,
+      "perfectQuizRounds": 134
+    },
+    {
+      "price": 5000,
+      "perfectQuizRounds": 84
+    },
+    {
+      "price": 10000,
+      "perfectQuizRounds": 167
+    },
+    {
+      "price": 12500,
+      "perfectQuizRounds": 209
+    }
+  ],
+  "quiz167Rounds": {
+    "coins": 10020,
+    "elapsedGameMinutes": 0
+  },
+  "rankFirstPrize": 1500,
+  "notes": [
+    "필사 금액은 해당 장 최초 완성만 지급. 66권 수치는 새 장이 남지 않아 이론상 배율만 표시.",
+    "퀴즈 167판은 함수 반복 계산이며 사용자 풀이 시간은 측정하지 않음.",
+    "편지는 최고 직업·무오답 기준. 일 돕기와 편지는 각각 하루 한 번.",
+    "현재 게시판 UI는 닢 납품이 아닌 선물 보상의 부탁 필사를 사용한다."
+  ]
+}

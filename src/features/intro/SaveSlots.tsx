@@ -1,7 +1,7 @@
 // 불러오기 (2026-10-07 사용자: 스타듀밸리처럼 저장을 여러 개): 칸마다 이름·날·닢·꽂은 책, 누르면 그 칸으로 시작.
 // 지우기는 그 줄에서 한 번 더 묻는다. 서고 목록식 줄(.rows/.row)
 import { useEffect, useRef, useState } from 'react'
-import { deleteSave, listSaves, type SaveSlot } from '../../engine/save'
+import { deleteSaveAsync, listSaves, type SaveSlot } from '../../engine/save'
 import { withLookDefaults, type Avatar } from '../../engine/avatar'
 import { SPRITE_H, SPRITE_W, spriteRows, writerPalette } from '../../render/sprites'
 import { t } from '../../shared/i18n'
@@ -37,6 +37,7 @@ function when(ms: number): string {
 export function SaveSlots({ onPick, onBack }: { onPick: (slot: string) => void; onBack: () => void }) {
   const [saves, setSaves] = useState<SaveSlot[]>(() => listSaves())
   const [asking, setAsking] = useState<string | null>(null)
+  const [busy, setBusy] = useState(false)
   return (
     <main className="title title-island save-slots">
       <div className="dialog save-slots-box" role="dialog" aria-label={t('saves.title')}>
@@ -53,10 +54,15 @@ export function SaveSlots({ onPick, onBack }: { onPick: (slot: string) => void; 
                     <button onClick={() => setAsking(null)}>{t('saves.no')}</button>
                     <button
                       className="danger"
-                      onClick={() => {
-                        deleteSave(s.slot)
-                        setAsking(null)
-                        setSaves(listSaves())
+                      disabled={busy}
+                      onClick={async () => {
+                        if (busy) return
+                        setBusy(true)
+                        if (await deleteSaveAsync(s.slot)) {
+                          setAsking(null)
+                          setSaves(listSaves())
+                        }
+                        setBusy(false)
                       }}
                     >
                       {t('saves.delete')}
@@ -64,7 +70,7 @@ export function SaveSlots({ onPick, onBack }: { onPick: (slot: string) => void; 
                   </div>
                 ) : (
                   <div className="row save-row">
-                    <button className="save-pick" onClick={() => onPick(s.slot)}>
+                    <button disabled={busy} className="save-pick" onClick={() => onPick(s.slot)}>
                       {s.avatar && <Face avatar={s.avatar} />}
                       <span className="row-main"><b>{s.name || t('saves.noName')}</b></span>
                       <span className="row-meta">{t('saves.line', { day: s.day, coins: s.coins, books: s.books })}</span>
@@ -80,7 +86,7 @@ export function SaveSlots({ onPick, onBack }: { onPick: (slot: string) => void; 
           </ul>
         )}
         <div className="actions">
-          <button data-close onClick={onBack}>{t('common.back')}</button>
+          <button disabled={busy} data-close onClick={onBack}>{t('common.back')}</button>
         </div>
       </div>
     </main>

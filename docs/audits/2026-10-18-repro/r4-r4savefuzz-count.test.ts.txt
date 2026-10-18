@@ -1,0 +1,29 @@
+import { appendFileSync, writeFileSync } from 'node:fs'
+import { it } from 'vitest'
+import { CONTENT } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import { deserialize, serialize } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/save'
+import { allBases } from './bases'
+import { enumerate, mutKinds, playAndRender, OUTDIR, diffPaths } from './fuzzlib'
+
+it('count + timing', async () => {
+  const OUT = `${OUTDIR}/count.txt`
+  writeFileSync(OUT, '')
+  const say = (...a: unknown[]) => appendFileSync(OUT, a.map(x => typeof x === 'string' ? x : JSON.stringify(x)).join(' ') + '\n')
+  const b = await allBases()
+  let total = 0
+  for (const [k, s] of Object.entries(b)) {
+    const o = JSON.parse(serialize(s))
+    const paths = enumerate(o, k === 'played' ? ['flags', 'hearts'] : [])
+    let n = 0
+    for (const p of paths) { let c: unknown = o; for (const x of p) c = (c as Record<string, unknown>)?.[x as string]; n += mutKinds(c).length }
+    total += n
+    say(k, 'paths', paths.length, 'variants', n)
+    const t1 = serialize(deserialize(serialize(s), CONTENT)!)
+    const t2 = serialize(deserialize(t1, CONTENT)!)
+    say(k, 'base diff 1->2', diffPaths(JSON.parse(serialize(s)), JSON.parse(t1), '', [], 30), '| 2->3', diffPaths(JSON.parse(t1), JSON.parse(t2), '', [], 30))
+    const t0 = performance.now()
+    const pr = playAndRender(deserialize(serialize(s), CONTENT)!)
+    say(k, 'play ms', Math.round(performance.now() - t0), pr)
+  }
+  say('total', total)
+})

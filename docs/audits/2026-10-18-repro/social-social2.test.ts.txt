@@ -1,0 +1,29 @@
+import { expect, it } from 'vitest'
+import { CONTENT } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import { newChild } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/child'
+import type { GameState } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/game'
+import { lookOf } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/game'
+import { establishedGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/growth-test-support'
+import { familyMorning, YEAR_DAYS } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/family-days'
+
+it('sibling birthday is skipped', () => {
+  const base = establishedGame(CONTENT, 300)
+  const day = 600
+  const A = { ...newChild(day - 200, base.stats, undefined), born: day - 200, name: 'A' }
+  const B = { ...newChild(day - YEAR_DAYS, base.stats, undefined), born: day - YEAR_DAYS, name: 'B' }
+  const s = { ...base, clock: { day, minute: 360 }, child: A, siblings: [B], scenes: [] } as GameState
+  const out = familyMorning(s)
+  console.log('scenes on sibling birthday:', out.scenes)
+  expect(out.scenes.filter(x => x.startsWith('fam:bday'))).toEqual([])
+})
+
+it('spouse wardrobe uses fixed def look even when slot is heir', () => {
+  const base = establishedGame(CONTENT, 300)
+  const def = CONTENT.neighbors.find(n => n.id === 'rudy')!
+  const heirLook = def.look === 'm' ? 'f' : 'm'
+  const gen = { ...(base.gen ?? {}), persons: { ...(base.gen?.persons ?? {}), 'g-0009': { id: 'g-0009', origin: 'born', born: 1, stage: 'adult', look: heirLook, name: '헤어', parents: ['rudy'], spouse: null, household: null } }, retired: { rudy: { heir: 'g-0009', day: 200 } } } as never
+  const s = { ...base, gen, romance: { partner: 'rudy', stage: 'married', since: 1, weddingDay: null, marriedDay: 250 } } as GameState
+  const l = lookOf(s, 'spouse', CONTENT)
+  console.log('def look', def.look, 'heir look', heirLook, 'wardrobe look', l?.look, l?.name)
+  expect(l?.look).toBe(def.look)
+})

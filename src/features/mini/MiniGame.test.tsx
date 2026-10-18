@@ -15,6 +15,7 @@ beforeEach(() => useGame.getState().load(newGame(CONTENT)))
 it.each([
   ['child', 'water'],
   ['baker', 'bread'],
+  ['poppy', 'herbTea'],
   ['presser', 'oil'],
   ['shepherd', 'wool'],
   ['beekeeper', 'honey'],

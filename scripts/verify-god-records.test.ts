@@ -11,7 +11,7 @@ const bad = (name: string) => run('mat', `scripts/fixtures/bad-god-${name}.txt`)
 describe('verify-god-records.mjs', () => {
   it('현재 콘텐츠는 통과', () => {
     const r = run()
-    expect(r.out).toContain('✓ verify-god-records 통과 (키워드 43개, 기록 134줄, 책 27권)')
+    expect(r.out).toContain('✓ verify-god-records 통과 (키워드 43개, 기록 155줄, 책 27권)')
     expect(r.code).toBe(0)
   })
 
@@ -87,16 +87,22 @@ describe('verify-god-records.mjs', () => {
     expect(r.out).toContain('키워드 light 빛: 무리 "이름"는')
   })
 
+  it('구약 책은 하나님 기록 소스로 허용하지 않는다', () => {
+    const r = run('psa', 'scripts/god-records/mat.txt')
+    expect(r.code).toBe(1)
+    expect(r.out).toContain('알 수 없는 책 psa')
+  })
+
   it('알 수 없는 책 이름은 실패', () => {
     const r = run('xx', 'scripts/god-records/mat.txt')
     expect(r.code).toBe(1)
     expect(r.out).toContain('알 수 없는 책 xx')
   })
 
-  it('책 파일 하나만 검사해도 통과 (마태 9줄)', () => {
+  it('책 파일 하나만 검사해도 통과 (마태 10줄)', () => {
     const r = run('mat', 'scripts/god-records/mat.txt')
     expect(r.code).toBe(0)
-    expect(r.out).toContain('기록 9줄')
+    expect(r.out).toContain('기록 10줄')
   })
 })
 

@@ -1,0 +1,565 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "device": "desktop",
+      "mode": "same-tile",
+      "point": {
+        "x": 596.671875,
+        "y": 424.21875
+      },
+      "secondPoint": {
+        "x": 596.671875,
+        "y": 424.21875
+      },
+      "secondTarget": {
+        "tag": "CANVAS",
+        "class": "world",
+        "text": ""
+      },
+      "before": {
+        "roomStools": 1,
+        "bagStools": 1,
+        "held": "stool",
+        "heldFacing": "down",
+        "stoolFacings": [
+          "down"
+        ],
+        "selected": null,
+        "toast": null,
+        "toolbar": "작은 의자\n아래\n오른쪽\n위\n왼쪽\n1\n1\n1\n다 꾸몄어요",
+        "canvas": {
+          "x": 360.796875,
+          "y": 52,
+          "width": 558.390625,
+          "height": 697.984375,
+          "clientWidth": 552,
+          "clientHeight": 695
+        },
+        "pointers": []
+      },
+      "first": {
+        "roomStools": 1,
+        "bagStools": 1,
+        "held": "stool",
+        "heldFacing": "down",
+        "stoolFacings": [
+          "down"
+        ],
+        "selected": {
+          "item": "stool",
+          "x": 19,
+          "y": 113
+        },
+        "toast": null,
+        "toolbar": "작은 의자\n아래\n오른쪽\n위\n왼쪽\n작은 의자\n옮기기\n돌리기\n치우기\n자리의 쓰임 정하기\n1\n1\n1\n다 꾸몄어요",
+        "canvas": {
+          "x": 360.796875,
+          "y": 52,
+          "width": 558.390625,
+          "height": 697.984375,
+          "clientWidth": 552,
+          "clientHeight": 695
+        },
+        "pointers": [
+          {
+            "pointerType": "mouse",
+            "x": 596.671875,
+            "y": 424.21875,
+            "offsetX": 232.875,
+            "offsetY": 369.21875
+          }
+        ]
+      },
+      "second": {
+        "roomStools": 0,
+        "bagStools": 2,
+        "held": "stool",
+        "heldFacing": "down",
+        "stoolFacings": [],
+        "selected": null,
+        "toast": null,
+        "toolbar": "작은 의자\n아래\n오른쪽\n위\n왼쪽\n1\n2\n1\n다 꾸몄어요",
+        "canvas": {
+          "x": 360.796875,
+          "y": 52,
+          "width": 558.390625,
+          "height": 697.984375,
+          "clientWidth": 552,
+          "clientHeight": 695
+        },
+        "pointers": [
+          {
+            "pointerType": "mouse",
+            "x": 596.671875,
+            "y": 424.21875,
+            "offsetX": 232.875,
+            "offsetY": 369.21875
+          },
+          {
+            "pointerType": "mouse",
+            "x": 596.671875,
+            "y": 424.21875,
+            "offsetX": 232.875,
+            "offsetY": 369.21875
+          }
+        ]
+      }
+    },
+    {
+      "device": "desktop",
+      "mode": "same-screen",
+      "point": {
+        "x": 596.671875,
+        "y": 424.21875
+      },
+      "secondPoint": {
+        "x": 596.671875,
+        "y": 424.21875
+      },
+      "secondTarget": {
+        "tag": "CANVAS",
+        "class": "world",
+        "text": ""
+      },
+      "before": {
+        "roomStools": 1,
+        "bagStools": 1,
+        "held": "stool",
+        "heldFacing": "down",
+        "stoolFacings": [
+          "down"
+        ],
+        "selected": null,
+        "toast": null,
+        "toolbar": "작은 의자\n아래\n오른쪽\n위\n왼쪽\n1\n1\n1\n다 꾸몄어요",
+        "canvas": {
+          "x": 360.796875,
+          "y": 52,
+          "width": 558.390625,
+          "height": 697.984375,
+          "clientWidth": 552,
+          "clientHeight": 695
+        },
+        "pointers": []
+      },
+      "first": {
+        "roomStools": 1,
+        "bagStools": 1,
+        "held": "stool",
+        "heldFacing": "down",
+        "stoolFacings": [
+          "down"
+        ],
+        "selected": {
+          "item": "stool",
+          "x": 19,
+          "y": 113
+        },
+        "toast": null,
+        "toolbar": "작은 의자\n아래\n오른쪽\n위\n왼쪽\n작은 의자\n옮기기\n돌리기\n치우기\n자리의 쓰임 정하기\n1\n1\n1\n다 꾸몄어요",
+        "canvas": {
+          "x": 360.796875,
+          "y": 52,
+          "width": 558.390625,
+          "height": 697.984375,
+          "clientWidth": 552,
+          "clientHeight": 695
+        },
+        "pointers": [
+          {
+            "pointerType": "mouse",
+            "x": 596.671875,
+            "y": 424.21875,
+            "offsetX": 232.875,
+            "offsetY": 369.21875
+          }
+        ]
+      },
+      "second": {
+        "roomStools": 0,
+        "bagStools": 2,
+        "held": "stool",
+        "heldFacing": "down",
+        "stoolFacings": [],
+        "selected": null,
+        "toast": null,
+        "toolbar": "작은 의자\n아래\n오른쪽\n위\n왼쪽\n1\n2\n1\n다 꾸몄어요",
+        "canvas": {
+          "x": 360.796875,
+          "y": 52,
+          "width": 558.390625,
+          "height": 697.984375,
+          "clientWidth": 552,
+          "clientHeight": 695
+        },
+        "pointers": [
+          {
+            "pointerType": "mouse",
+            "x": 596.671875,
+            "y": 424.21875,
+            "offsetX": 232.875,
+            "offsetY": 369.21875
+          },
+          {
+            "pointerType": "mouse",
+            "x": 596.671875,
+            "y": 424.21875,
+            "offsetX": 232.875,
+            "offsetY": 369.21875
+          }
+        ]
+      }
+    },
+    {
+      "device": "desktop",
+      "mode": "separate-direction-controls",
+      "heldDirection": {
+        "roomStools": 1,
+        "bagStools": 1,
+        "held": "stool",
+        "heldFacing": "right",
+        "stoolFacings": [
+          "down"
+        ],
+        "selected": {
+          "item": "stool",
+          "x": 19,
+          "y": 113
+        },
+        "toast": null,
+        "toolbar": "작은 의자\n아래\n오른쪽\n위\n왼쪽\n작은 의자\n옮기기\n돌리기\n치우기\n자리의 쓰임 정하기\n1\n1\n1\n다 꾸몄어요",
+        "canvas": {
+          "x": 360.796875,
+          "y": 52,
+          "width": 558.390625,
+          "height": 697.984375,
+          "clientWidth": 552,
+          "clientHeight": 695
+        },
+        "pointers": [
+          {
+            "pointerType": "mouse",
+            "x": 596.671875,
+            "y": 424.21875,
+            "offsetX": 232.875,
+            "offsetY": 369.21875
+          }
+        ]
+      },
+      "selectedDirection": {
+        "roomStools": 1,
+        "bagStools": 1,
+        "held": "stool",
+        "heldFacing": "right",
+        "stoolFacings": [
+          "up"
+        ],
+        "selected": {
+          "item": "stool",
+          "x": 19,
+          "y": 113
+        },
+        "toast": null,
+        "toolbar": "작은 의자\n아래\n오른쪽\n위\n왼쪽\n작은 의자\n옮기기\n돌리기\n치우기\n자리의 쓰임 정하기\n1\n1\n1\n다 꾸몄어요",
+        "canvas": {
+          "x": 360.796875,
+          "y": 52,
+          "width": 558.390625,
+          "height": 697.984375,
+          "clientWidth": 552,
+          "clientHeight": 695
+        },
+        "pointers": [
+          {
+            "pointerType": "mouse",
+            "x": 596.671875,
+            "y": 424.21875,
+            "offsetX": 232.875,
+            "offsetY": 369.21875
+          }
+        ]
+      }
+    },
+    {
+      "device": "mobile",
+      "mode": "same-tile",
+      "point": {
+        "x": 166.875,
+        "y": 296.71875
+      },
+      "secondPoint": {
+        "x": 166.875,
+        "y": 296.71875
+      },
+      "secondTarget": {
+        "tag": "CANVAS",
+        "class": "world",
+        "text": ""
+      },
+      "before": {
+        "roomStools": 1,
+        "bagStools": 1,
+        "held": "stool",
+        "heldFacing": "down",
+        "stoolFacings": [
+          "down"
+        ],
+        "selected": null,
+        "toast": null,
+        "toolbar": "작은 의자\n아래\n오른쪽\n위\n왼쪽\n1\n1\n1\n다 꾸몄어요",
+        "canvas": {
+          "x": 12,
+          "y": 52,
+          "width": 366,
+          "height": 457.5,
+          "clientWidth": 360,
+          "clientHeight": 455
+        },
+        "pointers": []
+      },
+      "first": {
+        "roomStools": 1,
+        "bagStools": 1,
+        "held": "stool",
+        "heldFacing": "down",
+        "stoolFacings": [
+          "down"
+        ],
+        "selected": {
+          "item": "stool",
+          "x": 19,
+          "y": 113
+        },
+        "toast": null,
+        "toolbar": "작은 의자\n아래\n오른쪽\n위\n왼쪽\n작은 의자\n옮기기\n돌리기\n치우기\n자리의 쓰임 정하기\n1\n1\n1\n다 꾸몄어요",
+        "canvas": {
+          "x": 12,
+          "y": 52,
+          "width": 366,
+          "height": 457.5,
+          "clientWidth": 360,
+          "clientHeight": 455
+        },
+        "pointers": [
+          {
+            "pointerType": "touch",
+            "x": 166.875,
+            "y": 296.71875,
+            "offsetX": 151.875,
+            "offsetY": 241.71875
+          }
+        ]
+      },
+      "second": {
+        "roomStools": 0,
+        "bagStools": 2,
+        "held": "stool",
+        "heldFacing": "down",
+        "stoolFacings": [],
+        "selected": null,
+        "toast": null,
+        "toolbar": "작은 의자\n아래\n오른쪽\n위\n왼쪽\n1\n2\n1\n다 꾸몄어요",
+        "canvas": {
+          "x": 12,
+          "y": 52,
+          "width": 366,
+          "height": 457.5,
+          "clientWidth": 360,
+          "clientHeight": 455
+        },
+        "pointers": [
+          {
+            "pointerType": "touch",
+            "x": 166.875,
+            "y": 296.71875,
+            "offsetX": 151.875,
+            "offsetY": 241.71875
+          },
+          {
+            "pointerType": "touch",
+            "x": 166.875,
+            "y": 296.71875,
+            "offsetX": 151.875,
+            "offsetY": 241.71875
+          }
+        ]
+      }
+    },
+    {
+      "device": "mobile",
+      "mode": "same-screen",
+      "point": {
+        "x": 166.875,
+        "y": 296.71875
+      },
+      "secondPoint": {
+        "x": 166.875,
+        "y": 296.71875
+      },
+      "secondTarget": {
+        "tag": "CANVAS",
+        "class": "world",
+        "text": ""
+      },
+      "before": {
+        "roomStools": 1,
+        "bagStools": 1,
+        "held": "stool",
+        "heldFacing": "down",
+        "stoolFacings": [
+          "down"
+        ],
+        "selected": null,
+        "toast": null,
+        "toolbar": "작은 의자\n아래\n오른쪽\n위\n왼쪽\n1\n1\n1\n다 꾸몄어요",
+        "canvas": {
+          "x": 12,
+          "y": 52,
+          "width": 366,
+          "height": 457.5,
+          "clientWidth": 360,
+          "clientHeight": 455
+        },
+        "pointers": []
+      },
+      "first": {
+        "roomStools": 1,
+        "bagStools": 1,
+        "held": "stool",
+        "heldFacing": "down",
+        "stoolFacings": [
+          "down"
+        ],
+        "selected": {
+          "item": "stool",
+          "x": 19,
+          "y": 113
+        },
+        "toast": null,
+        "toolbar": "작은 의자\n아래\n오른쪽\n위\n왼쪽\n작은 의자\n옮기기\n돌리기\n치우기\n자리의 쓰임 정하기\n1\n1\n1\n다 꾸몄어요",
+        "canvas": {
+          "x": 12,
+          "y": 52,
+          "width": 366,
+          "height": 457.5,
+          "clientWidth": 360,
+          "clientHeight": 455
+        },
+        "pointers": [
+          {
+            "pointerType": "touch",
+            "x": 166.875,
+            "y": 296.71875,
+            "offsetX": 151.875,
+            "offsetY": 241.71875
+          }
+        ]
+      },
+      "second": {
+        "roomStools": 0,
+        "bagStools": 2,
+        "held": "stool",
+        "heldFacing": "down",
+        "stoolFacings": [],
+        "selected": null,
+        "toast": null,
+        "toolbar": "작은 의자\n아래\n오른쪽\n위\n왼쪽\n1\n2\n1\n다 꾸몄어요",
+        "canvas": {
+          "x": 12,
+          "y": 52,
+          "width": 366,
+          "height": 457.5,
+          "clientWidth": 360,
+          "clientHeight": 455
+        },
+        "pointers": [
+          {
+            "pointerType": "touch",
+            "x": 166.875,
+            "y": 296.71875,
+            "offsetX": 151.875,
+            "offsetY": 241.71875
+          },
+          {
+            "pointerType": "touch",
+            "x": 166.875,
+            "y": 296.71875,
+            "offsetX": 151.875,
+            "offsetY": 241.71875
+          }
+        ]
+      }
+    },
+    {
+      "device": "mobile",
+      "mode": "separate-direction-controls",
+      "heldDirection": {
+        "roomStools": 1,
+        "bagStools": 1,
+        "held": "stool",
+        "heldFacing": "right",
+        "stoolFacings": [
+          "down"
+        ],
+        "selected": {
+          "item": "stool",
+          "x": 19,
+          "y": 113
+        },
+        "toast": null,
+        "toolbar": "작은 의자\n아래\n오른쪽\n위\n왼쪽\n작은 의자\n옮기기\n돌리기\n치우기\n자리의 쓰임 정하기\n1\n1\n1\n다 꾸몄어요",
+        "canvas": {
+          "x": 12,
+          "y": 52,
+          "width": 366,
+          "height": 457.5,
+          "clientWidth": 360,
+          "clientHeight": 455
+        },
+        "pointers": [
+          {
+            "pointerType": "touch",
+            "x": 166.875,
+            "y": 296.71875,
+            "offsetX": 151.875,
+            "offsetY": 241.71875
+          }
+        ]
+      },
+      "selectedDirection": {
+        "roomStools": 1,
+        "bagStools": 1,
+        "held": "stool",
+        "heldFacing": "right",
+        "stoolFacings": [
+          "up"
+        ],
+        "selected": {
+          "item": "stool",
+          "x": 19,
+          "y": 113
+        },
+        "toast": null,
+        "toolbar": "작은 의자\n아래\n오른쪽\n위\n왼쪽\n작은 의자\n옮기기\n돌리기\n치우기\n자리의 쓰임 정하기\n1\n1\n1\n다 꾸몄어요",
+        "canvas": {
+          "x": 12,
+          "y": 52,
+          "width": 366,
+          "height": 457.5,
+          "clientWidth": 360,
+          "clientHeight": 455
+        },
+        "pointers": [
+          {
+            "pointerType": "touch",
+            "x": 166.875,
+            "y": 296.71875,
+            "offsetX": 151.875,
+            "offsetY": 241.71875
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,8 +1,8 @@
-// 생활 가구 48종·아기 돌보기 연결 (2026-10-12 도트)
+// 생활 가구 68종·아기 돌보기 연결 (2026-10-12 도트)
 import { legacyGame as newGame } from './growth-test-support'
 import { CONTENT, PEOPLE } from '../content/catalog'
 import { itemName } from '../content/text'
-import { ADDITION_FURNITURE, ADDITION_IDS, additionsOnMarket, ADDITIONS_PER_MARKET } from './furniture-additions'
+import { ADDITION_FURNITURE, ADDITION_IDS, MARKET_ADDITION_IDS, additionsOnMarket, ADDITIONS_PER_MARKET } from './furniture-additions'
 import { FURNITURE_DEFS } from './furniture-defs'
 import { careBaby, settle, TRADES, trade, tradeOnMarket, useAddition, type GameState } from './game'
 import { setPeopleData } from './people'
@@ -17,8 +17,8 @@ beforeEach(() => setPeopleData(PEOPLE))
 
 const game = (): GameState => settle(newGame(CONTENT, { look: 'f', name: '하늘' } as never), CONTENT)
 
-describe('생활 가구 48종', () => {
-  it('도트 48종이 모두 아이템·크기·그림·아이콘·네 방향을 가진다', () => {
+describe('생활 가구 68종', () => {
+  it('도트 68종이 모두 아이템·크기·그림·아이콘·네 방향을 가진다', () => {
     expect(ADDITION_IDS.sort()).toEqual(Object.keys(ADDITION_ART).sort())
     for (const id of ADDITION_IDS) {
       const art = ADDITION_ART[id as keyof typeof ADDITION_ART]
@@ -38,14 +38,14 @@ describe('생활 가구 48종', () => {
     for (const a of ADDITION_USE_ACTIONS) expect(ADDITION_FURNITURE[ADDITION_USE_INFO[a].furniture as keyof typeof ADDITION_FURNITURE].use, a).toBe(a)
     for (const id of OPENING_FURNITURE) expect(ADDITION_FURNITURE[id].use, id).toBe('open')
   })
-  it('장날마다 여덟 가지씩, 여섯 장날이면 48종을 다 본다', () => {
+  it('장날마다 여덟 가지씩, 아홉 장날이면 68종을 다 본다', () => {
     const seen = new Set<string>()
-    for (let w = 0; w < 6; w++) {
+    for (let w = 0; w < Math.ceil(MARKET_ADDITION_IDS.length / ADDITIONS_PER_MARKET); w++) {
       const today = additionsOnMarket(w * 7)
       expect(today.length).toBe(ADDITIONS_PER_MARKET)
       today.forEach((id) => seen.add(id))
     }
-    expect(seen.size).toBe(48)
+    expect(seen.size).toBe(MARKET_ADDITION_IDS.length)
   })
   it('그 장날에 나온 것만 닢으로 산다', () => {
     const s = { ...game(), coins: 500, clock: { ...game().clock, day: 7, minute: 600 } }
@@ -85,4 +85,23 @@ describe('아기 돌보기', () => {
     const s = withBaby()
     expect(careBaby({ ...s, player: { ...s.player, x: s.player.x + 4 } }, 'hold')).toBeNull()
   })
+})
+
+
+it.each([
+  ['down', { x: 20, y: 113 }, 'up'],
+  ['up', { x: 20, y: 111 }, 'down'],
+  ['left', { x: 19, y: 112 }, 'right'],
+  ['right', { x: 22, y: 112 }, 'left'],
+] as const)('가구 %s 방향과 실제 서 있는 위치를 구분해서 읽기·마시기·여닫기를 그린다', (facing, at, expected) => {
+  const s = game()
+  const user = { ...s, player: { ...s.player, ...at, facing: 'down' as const, path: [] } }
+  for (const item of ['mapTable', 'lowTeaTable', 'wardrobe'] as const) {
+    const f = { item, x: 20, y: 112, facing }
+    const action = useAddition(user, f).act!
+    expect(action.standing).toBe(true)
+    expect(action.at).toBeUndefined()
+    expect(action.spot).toMatchObject({ item, facing })
+    expect(action.facing).toBe(expected)
+  }
 })

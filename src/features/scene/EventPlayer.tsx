@@ -5,6 +5,8 @@ import {neighborById} from '../../content/catalog'
 import {previewPerson} from './event-preview-art'
 import {AuthoredStoryScene,StoryArtBeat,StoryArtChoice} from './AuthoredStoryScene'
 import {hasAuthoredStory} from '../../render/authored-story-art'
+import {sceneStateText} from './scene-state-text'
+import {sharedBackgroundPreviewState} from '../../render/shared-background-preview'
 import {LandscapeScene} from './StarsScene'
 import {landscapeKind} from '../../render/scenic-moments-art'
 import './event-gallery.css'
@@ -15,7 +17,7 @@ const next=at>=0&&at<sequence.length-1?sequence[at+1]:null
 function finish(){location.href=next?`play.html?event=${encodeURIComponent(next)}&sequence=${encodeURIComponent(sequence.join(','))}`:'index.html'}
 const fill=(text:string)=>partnerFill(spouseFill(kidFill(callName(text,'기록자'),'아이'),'배우자'),'이웃').replace(/\{[^}]+\}/g,'이웃')
 function StoryPreview({cinematic=false}:{cinematic?:boolean}){
- const scene=SCENES[id], [page,setPage]=useState(0),[choice,setChoice]=useState<number|null>(null)
+ const scene=sceneStateText(id,sharedBackgroundPreviewState(id)), [page,setPage]=useState(0),[choice,setChoice]=useState<number|null>(null)
  const setArtBeat=useContext(StoryArtBeat),setArtChoice=useContext(StoryArtChoice)
  useEffect(()=>setArtBeat(page),[page,setArtBeat])
  useEffect(()=>setArtChoice(choice),[choice,setArtChoice])

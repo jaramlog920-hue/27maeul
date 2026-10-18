@@ -1,0 +1,749 @@
+{
+  "status": "7개 전체 제작·시각 확인·검사·빌드 완료",
+  "entries": [
+    {
+      "id": "ev:child:story:3",
+      "title": "내가 쓴 표지 · 윌로",
+      "group": "current",
+      "basis": "현재 플레이어 위치와 발생 조건 확인 필요",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 3,
+      "originalTier": "illustration",
+      "original": {
+        "title": "내가 쓴 표지",
+        "lines": [
+          {
+            "speaker": "child",
+            "text": "돌을 어디서 주웠는지 제 말로 적었어요. 글 옆에 작은 줄도 그렸고요."
+          },
+          {
+            "speaker": "narration",
+            "text": "아이가 표지를 상자 앞에 세웠다가 조금 옆으로 옮긴다."
+          }
+        ],
+        "choices": [
+          {
+            "label": "표지의 자리를 함께 본다",
+            "reply": [
+              {
+                "speaker": "child",
+                "text": "물건이 가려지지 않는 쪽이 좋겠어요."
+              }
+            ]
+          },
+          {
+            "label": "적은 말을 읽어도 될지 묻는다",
+            "reply": [
+              {
+                "speaker": "child",
+                "text": "네. 제가 한 번 읽어 드릴게요."
+              }
+            ]
+          },
+          {
+            "label": "설명을 천천히 듣는다",
+            "reply": [
+              {
+                "speaker": "child",
+                "text": "돌부터, 그다음은 잎이에요."
+              }
+            ]
+          }
+        ]
+      },
+      "trigger": {
+        "id": "child:story:3",
+        "title": "내가 쓴 표지",
+        "stage": 2,
+        "at": {
+          "x": 19,
+          "y": 46
+        },
+        "when": {
+          "from": 960,
+          "to": 1080
+        },
+        "req": {
+          "seen": [
+            "child:story:2"
+          ]
+        },
+        "lines": [
+          {
+            "speaker": "child",
+            "text": "돌을 어디서 주웠는지 제 말로 적었어요. 글 옆에 작은 줄도 그렸고요."
+          },
+          {
+            "speaker": "narration",
+            "text": "아이가 표지를 상자 앞에 세웠다가 조금 옆으로 옮긴다."
+          }
+        ],
+        "choices": [
+          {
+            "label": "표지의 자리를 함께 본다",
+            "color": "warm",
+            "reply": [
+              {
+                "speaker": "child",
+                "text": "물건이 가려지지 않는 쪽이 좋겠어요."
+              }
+            ],
+            "memory": "boxLabel"
+          },
+          {
+            "label": "적은 말을 읽어도 될지 묻는다",
+            "color": "honest",
+            "reply": [
+              {
+                "speaker": "child",
+                "text": "네. 제가 한 번 읽어 드릴게요."
+              }
+            ],
+            "memory": "boxLabel"
+          },
+          {
+            "label": "설명을 천천히 듣는다",
+            "color": "quiet",
+            "reply": [
+              {
+                "speaker": "child",
+                "text": "돌부터, 그다음은 잎이에요."
+              }
+            ],
+            "memory": "boxLabel"
+          }
+        ],
+        "motion": {
+          "npc": "offerGift",
+          "player": "receiveGift"
+        }
+      }
+    },
+    {
+      "id": "ev:romance:postman:otherDay",
+      "title": "다른 날짜를 말하는 연습 · 마일로",
+      "group": "current",
+      "basis": "현재 플레이어 위치와 발생 조건 확인 필요",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 2,
+      "originalTier": "dialogue",
+      "original": {
+        "title": "다른 날짜를 말하는 연습",
+        "lines": [
+          {
+            "speaker": "postman",
+            "text": "오늘 배달하다 받은 부탁을 다 받아 버렸어요. 그래서 우리 저녁 약속이… 밀렸어요."
+          },
+          {
+            "speaker": "postman",
+            "text": "다른 날짜를 말하는 연습을 해 볼게요. \"오늘은 안 되고, 내일은 돼요.\" …어때요?"
+          }
+        ],
+        "choices": [
+          {
+            "label": "다른 날로 정하자고 한다",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "내일 저녁으로 적을게요. 이번엔 이 줄을 먼저 지킬게요."
+              }
+            ]
+          },
+          {
+            "label": "한 번 더 연습하자",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "\"그건 모레 해 드릴게요.\" …말해 보니까 별일 아니네요."
+              }
+            ]
+          }
+        ]
+      },
+      "trigger": {
+        "id": "romance:postman:otherDay",
+        "title": "다른 날짜를 말하는 연습",
+        "stage": 3,
+        "at": {
+          "x": 22,
+          "y": 8
+        },
+        "when": {
+          "from": 900,
+          "to": 1080
+        },
+        "req": {
+          "rel": [
+            "spouse"
+          ],
+          "seen": [
+            "postman:short:spouseHabit"
+          ]
+        },
+        "gain": 3,
+        "lines": [
+          {
+            "speaker": "postman",
+            "text": "오늘 배달하다 받은 부탁을 다 받아 버렸어요. 그래서 우리 저녁 약속이… 밀렸어요."
+          },
+          {
+            "speaker": "postman",
+            "text": "다른 날짜를 말하는 연습을 해 볼게요. \"오늘은 안 되고, 내일은 돼요.\" …어때요?"
+          }
+        ],
+        "choices": [
+          {
+            "label": "다른 날로 정하자고 한다",
+            "color": "warm",
+            "memory": "otherDay",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "내일 저녁으로 적을게요. 이번엔 이 줄을 먼저 지킬게요."
+              }
+            ]
+          },
+          {
+            "label": "한 번 더 연습하자",
+            "color": "honest",
+            "memory": "otherDay",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "\"그건 모레 해 드릴게요.\" …말해 보니까 별일 아니네요."
+              }
+            ]
+          }
+        ],
+        "motion": {
+          "npc": "offerGift",
+          "player": "receiveGift"
+        }
+      }
+    },
+    {
+      "id": "ev:romance:postman:lastDelivery",
+      "title": "마지막 배달 뒤의 귀가 · 마일로",
+      "group": "current",
+      "basis": "현재 플레이어 위치와 발생 조건 확인 필요",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 2,
+      "originalTier": "dialogue",
+      "original": {
+        "title": "마지막 배달 뒤의 귀가",
+        "lines": [
+          {
+            "speaker": "postman",
+            "text": "장날엔 늦은 배달이 있어요. 그날 저녁은 조금 늦게 들어갈 거예요."
+          },
+          {
+            "speaker": "postman",
+            "text": "집에 돌아오는 시간도 적어 둘게요. 제가 지키고 싶은 약속이니까요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "장날 저녁은 늦게 먹자고 한다",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "늦은 저녁이요. 그럼 그날은 제가 빵을 사 갈게요."
+              }
+            ]
+          },
+          {
+            "label": "늦는 날은 마중 갈게",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "마중이요? …그럼 마지막 집은 서두르지 않고 갈게요. 기다리는 사람이 있으니까요."
+              }
+            ]
+          }
+        ]
+      },
+      "trigger": {
+        "id": "romance:postman:lastDelivery",
+        "title": "마지막 배달 뒤의 귀가",
+        "stage": 4,
+        "at": {
+          "x": 22,
+          "y": 8
+        },
+        "when": {
+          "from": 900,
+          "to": 1080
+        },
+        "req": {
+          "lover": true,
+          "romance": [
+            "engaged"
+          ]
+        },
+        "gain": 5,
+        "lines": [
+          {
+            "speaker": "postman",
+            "text": "장날엔 늦은 배달이 있어요. 그날 저녁은 조금 늦게 들어갈 거예요."
+          },
+          {
+            "speaker": "postman",
+            "text": "집에 돌아오는 시간도 적어 둘게요. 제가 지키고 싶은 약속이니까요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "장날 저녁은 늦게 먹자고 한다",
+            "color": "warm",
+            "memory": "lastDelivery",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "늦은 저녁이요. 그럼 그날은 제가 빵을 사 갈게요."
+              }
+            ]
+          },
+          {
+            "label": "늦는 날은 마중 갈게",
+            "color": "honest",
+            "memory": "lastDelivery",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "마중이요? …그럼 마지막 집은 서두르지 않고 갈게요. 기다리는 사람이 있으니까요."
+              }
+            ]
+          }
+        ],
+        "motion": {
+          "npc": "shareFood",
+          "player": "taste"
+        }
+      }
+    },
+    {
+      "id": "ev:child:story:4",
+      "title": "작은 전시 자리 · 윌로",
+      "group": "current",
+      "basis": "현재 플레이어 위치와 발생 조건 확인 필요",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 3,
+      "originalTier": "illustration",
+      "original": {
+        "title": "작은 전시 자리",
+        "lines": [
+          {
+            "speaker": "child",
+            "text": "선생님, 오늘은 제가 소개할래요. 잎이랑 줄무늬 돌부터요."
+          },
+          {
+            "speaker": "narration",
+            "text": "아이가 물건마다 자기가 쓴 표지를 놓는다. 설명이 끝나자 다음 칸을 가리킨다."
+          }
+        ],
+        "choices": [
+          {
+            "label": "조용히 구경한다",
+            "reply": [
+              {
+                "speaker": "child",
+                "text": "편하게 봐요. 돌은 들어 봐도 돼요."
+              }
+            ]
+          },
+          {
+            "label": "아이가 고른 물건을 묻는다",
+            "reply": [
+              {
+                "speaker": "child",
+                "text": "줄이 있는 돌을 먼저 골랐어요. 돌려 보기가 재미있어서요."
+              }
+            ]
+          },
+          {
+            "label": "소개를 마친 뒤 박수친다",
+            "reply": [
+              {
+                "speaker": "child",
+                "text": "다음엔 다른 잎도 보여 드리고 싶어요."
+              }
+            ]
+          }
+        ]
+      },
+      "trigger": {
+        "id": "child:story:4",
+        "title": "작은 전시 자리",
+        "stage": 3,
+        "at": {
+          "x": 19,
+          "y": 46
+        },
+        "when": {
+          "from": 960,
+          "to": 1080
+        },
+        "req": {
+          "seen": [
+            "child:story:3"
+          ],
+          "after": {
+            "event": "child:story:3",
+            "days": 1
+          }
+        },
+        "completes": "childShelf",
+        "lines": [
+          {
+            "speaker": "child",
+            "text": "선생님, 오늘은 제가 소개할래요. 잎이랑 줄무늬 돌부터요."
+          },
+          {
+            "speaker": "narration",
+            "text": "아이가 물건마다 자기가 쓴 표지를 놓는다. 설명이 끝나자 다음 칸을 가리킨다."
+          }
+        ],
+        "choices": [
+          {
+            "label": "조용히 구경한다",
+            "color": "quiet",
+            "reply": [
+              {
+                "speaker": "child",
+                "text": "편하게 봐요. 돌은 들어 봐도 돼요."
+              }
+            ]
+          },
+          {
+            "label": "아이가 고른 물건을 묻는다",
+            "color": "honest",
+            "reply": [
+              {
+                "speaker": "child",
+                "text": "줄이 있는 돌을 먼저 골랐어요. 돌려 보기가 재미있어서요."
+              }
+            ]
+          },
+          {
+            "label": "소개를 마친 뒤 박수친다",
+            "color": "warm",
+            "reply": [
+              {
+                "speaker": "child",
+                "text": "다음엔 다른 잎도 보여 드리고 싶어요."
+              }
+            ]
+          }
+        ],
+        "motion": {
+          "npc": "showWork",
+          "player": "inspectWork"
+        }
+      }
+    },
+    {
+      "id": "ev:child:small:pocketSort",
+      "title": "주머니 두 칸 · 윌로",
+      "group": "current",
+      "basis": "현재 플레이어 위치와 발생 조건 확인 필요",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 2,
+      "originalTier": "illustration",
+      "original": {
+        "title": "주머니 두 칸",
+        "lines": [
+          {
+            "speaker": "child",
+            "text": "물에 젖은 잎은 마른 돌이랑 나눠 둘래요. 주머니가 두 개면 좋겠어요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "나눠 놓는 모습을 본다",
+            "reply": [
+              {
+                "speaker": "child",
+                "text": "잎은 천 위에서 말릴래요."
+              }
+            ]
+          },
+          {
+            "label": "지금 쓸 천을 함께 펼친다",
+            "reply": [
+              {
+                "speaker": "child",
+                "text": "이 모서리는 제가 잡을게요."
+              }
+            ]
+          }
+        ]
+      },
+      "trigger": {
+        "id": "child:small:pocketSort",
+        "title": "주머니 두 칸",
+        "stage": 1,
+        "at": {
+          "x": 8,
+          "y": 9
+        },
+        "when": {
+          "from": 600,
+          "to": 720,
+          "weather": [
+            "dry"
+          ]
+        },
+        "lines": [
+          {
+            "speaker": "child",
+            "text": "물에 젖은 잎은 마른 돌이랑 나눠 둘래요. 주머니가 두 개면 좋겠어요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "나눠 놓는 모습을 본다",
+            "color": "quiet",
+            "reply": [
+              {
+                "speaker": "child",
+                "text": "잎은 천 위에서 말릴래요."
+              }
+            ],
+            "memory": "pocketSort"
+          },
+          {
+            "label": "지금 쓸 천을 함께 펼친다",
+            "color": "warm",
+            "reply": [
+              {
+                "speaker": "child",
+                "text": "이 모서리는 제가 잡을게요."
+              }
+            ],
+            "memory": "pocketSort"
+          }
+        ],
+        "motion": {
+          "npc": "spreadCloth",
+          "player": "nod"
+        }
+      }
+    },
+    {
+      "id": "ev:child:story:1",
+      "title": "주운 것 펼치기 · 윌로",
+      "group": "current",
+      "basis": "현재 플레이어 위치와 발생 조건 확인 필요",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 3,
+      "originalTier": "illustration",
+      "original": {
+        "title": "주운 것 펼치기",
+        "lines": [
+          {
+            "speaker": "child",
+            "text": "오늘은 매끈한 돌을 주웠어요. 물동이랑 다른 주머니에 넣었어요."
+          },
+          {
+            "speaker": "narration",
+            "text": "아이가 돌과 작은 잎을 천 위에 놓는다."
+          }
+        ],
+        "choices": [
+          {
+            "label": "아이가 설명하는 말을 듣는다",
+            "reply": [
+              {
+                "speaker": "child",
+                "text": "이 돌은 한쪽만 줄이 있어요."
+              }
+            ]
+          },
+          {
+            "label": "곁에서 함께 살핀다",
+            "reply": [
+              {
+                "speaker": "child",
+                "text": "이쪽으로 돌리면 줄이 더 잘 보여요."
+              }
+            ]
+          },
+          {
+            "label": "어떤 이름을 붙일지 묻는다",
+            "reply": [
+              {
+                "speaker": "child",
+                "text": "저는 줄무늬 돌이라고 부를래요."
+              }
+            ]
+          }
+        ]
+      },
+      "trigger": {
+        "id": "child:story:1",
+        "title": "주운 것 펼치기",
+        "stage": 1,
+        "at": {
+          "x": 8,
+          "y": 9
+        },
+        "when": {
+          "from": 600,
+          "to": 720,
+          "weather": [
+            "dry"
+          ]
+        },
+        "lines": [
+          {
+            "speaker": "child",
+            "text": "오늘은 매끈한 돌을 주웠어요. 물동이랑 다른 주머니에 넣었어요."
+          },
+          {
+            "speaker": "narration",
+            "text": "아이가 돌과 작은 잎을 천 위에 놓는다."
+          }
+        ],
+        "choices": [
+          {
+            "label": "아이가 설명하는 말을 듣는다",
+            "color": "quiet",
+            "reply": [
+              {
+                "speaker": "child",
+                "text": "이 돌은 한쪽만 줄이 있어요."
+              }
+            ],
+            "memory": "found:stone"
+          },
+          {
+            "label": "곁에서 함께 살핀다",
+            "color": "warm",
+            "reply": [
+              {
+                "speaker": "child",
+                "text": "이쪽으로 돌리면 줄이 더 잘 보여요."
+              }
+            ],
+            "memory": "found:stone"
+          },
+          {
+            "label": "어떤 이름을 붙일지 묻는다",
+            "color": "honest",
+            "reply": [
+              {
+                "speaker": "child",
+                "text": "저는 줄무늬 돌이라고 부를래요."
+              }
+            ],
+            "memory": "found:stone"
+          }
+        ],
+        "motion": {
+          "npc": "smile",
+          "player": "nod"
+        }
+      }
+    },
+    {
+      "id": "ev:child:small:labelTurn",
+      "title": "표지 돌려 놓기 · 윌로",
+      "group": "current",
+      "basis": "현재 플레이어 위치와 발생 조건 확인 필요",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 2,
+      "originalTier": "illustration",
+      "original": {
+        "title": "표지 돌려 놓기",
+        "lines": [
+          {
+            "speaker": "child",
+            "text": "여기서 보니까 표지가 뒤로 돌아갔네요. 제가 읽는 쪽이랑 손님 쪽은 달라요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "다른 자리에서 함께 본다",
+            "reply": [
+              {
+                "speaker": "child",
+                "text": "네, 이쪽이면 둘 다 볼 수 있겠어요."
+              }
+            ]
+          },
+          {
+            "label": "아이에게 자리를 맡긴다",
+            "reply": [
+              {
+                "speaker": "child",
+                "text": "물건 옆으로 옮길래요."
+              }
+            ]
+          }
+        ]
+      },
+      "trigger": {
+        "id": "child:small:labelTurn",
+        "title": "표지 돌려 놓기",
+        "stage": 2,
+        "at": {
+          "x": 19,
+          "y": 46
+        },
+        "when": {
+          "from": 960,
+          "to": 1080
+        },
+        "req": {
+          "story": [
+            {
+              "id": "childShelf"
+            }
+          ]
+        },
+        "lines": [
+          {
+            "speaker": "child",
+            "text": "여기서 보니까 표지가 뒤로 돌아갔네요. 제가 읽는 쪽이랑 손님 쪽은 달라요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "다른 자리에서 함께 본다",
+            "color": "warm",
+            "reply": [
+              {
+                "speaker": "child",
+                "text": "네, 이쪽이면 둘 다 볼 수 있겠어요."
+              }
+            ],
+            "memory": "labelTurn"
+          },
+          {
+            "label": "아이에게 자리를 맡긴다",
+            "color": "quiet",
+            "reply": [
+              {
+                "speaker": "child",
+                "text": "물건 옆으로 옮길래요."
+              }
+            ],
+            "memory": "labelTurn"
+          }
+        ],
+        "motion": {
+          "npc": "showWork",
+          "player": "inspectWork"
+        }
+      }
+    }
+  ],
+  "verification": "서고 길·배움터 추가 7개 전체 완료. 주머니 두 칸/주운 것 펼치기는 실제 8,9의 서고 길, 젖은 잎과 마른 돌 분리·펼친 천·둘째 대사에서 돌과 잎 내려놓기·선택에 따른 돌 줄무늬 회전. 아직 없는 주머니는 미리 만들지 않는다. 내가 쓴 표지/작은 전시 자리/표지 돌려 놓기는 실제 19,46 배움터의 기존 방 배경·칠판·낮은 두 칸 상자·줄무늬 돌·잎과 직접 쓴 표지를 사용하며, 대사에 맞춰 표지 옆으로 옮기기·두 번째 표지 세우기·짧은 손 박수·뒷면 표지 바로 놓기를 구현했다. 전시물은 가로 대화창 위에서도 보이게 배치하고 표지는 상자에 접지했다. 다른 날짜를 말하는 연습/마지막 배달 뒤의 귀가는 실제 22,8 서고 길에서 수첩의 약속 줄·귀가 시각을 표시한다. 내일 빵·저녁·마중 약속을 현재 수행하지 않는다. 원래 29개 대사·선택 단계를 기본/실제 사용자 외형 각각 29컷, 휴대폰 7컷씩·게임과 같은 미리보기·썸네일에서 확인. 얼굴·몸통·발 접지 검사 포함 관련 검사 3,683개 및 사전 검사·TypeScript·전체 빌드 통과. 원래 선택·보상·시간·호감도·해금·전시 이야기 완료 조건과 미리보기 저장/앨범 보호 유지. 실제 전체 536개 연결/140개 미제작. 남은 140개는 현재 위치·발생 문맥을 확인하여 같은 배경별로 묶어 진행한다. 모음 http://localhost:5173/assets/events/index.html?background=library-new"
+}

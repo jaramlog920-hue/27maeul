@@ -1,3 +1,5 @@
+import { FurnitureFacingPreview } from './FurnitureFacingPreview'
+import type { Facing } from '../../engine/types'
 import { useState } from 'react'
 import { itemName, T } from '../../content/text'
 import { FURNITURE, FURNITURE_DEFS } from '../../engine/room'
@@ -5,13 +7,15 @@ import { WALL_BUILD_COINS } from '../../engine/home-walls'
 import { inBuildingRoom, roomOf } from '../../engine/newland-rooms'
 import { liveSpaces, spacesOf, usesFor, furnitureId } from '../../engine/spaces'
 import { spaceOfPiece } from '../../engine/space-life'
-import { hasFacingArt } from '../../render/furniture-facing'
+import { hasFacingArt, furnitureFacings } from '../../render/furniture-facing'
 import { ItemIcon } from '../../shared/ItemIcon'
 import { selectedPiece, useGame } from '../../store/game-store'
 
 /** 방 꾸미기: 가구를 고르고 집 바닥을 누른다. 놓인 것을 누르면 골라서 돌리거나 치운다 */
 export function DecorateBar() {
   const decorating = useGame((s) => s.decorating)
+  const facing = useGame(s => s.decorFacing)
+  const setFacing = useGame(s => s.setDecorFacing)
   const level = useGame(s => s.game.homeLevel)
   const moving = useGame(s => s.decorMoving)
   const inv = useGame((s) => s.game.inv)
@@ -27,6 +31,8 @@ export function DecorateBar() {
   const live = liveSpaces(game)
   const own = sel && !inHouse ? spaceOfPiece(game, sel) : undefined
   const selId = sel ? furnitureId(sel) : null
+  const held = FURNITURE.find(item => item === decorating)
+  const directionNames: Record<Facing, string> = { down: '아래', right: '오른쪽', up: '위', left: '왼쪽' }
   const items = FURNITURE.filter((f) => (inv[f] ?? 0) > 0)
   return (
     <div className="decorate-bar" role="toolbar" aria-label={T.ui.decorate}>
@@ -43,6 +49,11 @@ export function DecorateBar() {
           {level >= 3 && <button onClick={() => showDecorRoom('living')}>생활방</button>}
         </div>
       )}
+      {held && hasFacingArt(held) && FURNITURE_DEFS[held]?.layer !== 'wall' && <div className="decorate-facing" role="group" aria-label="설치할 가구 방향">
+        <FurnitureFacingPreview item={held} facing={facing} />
+        <span>{itemName(held)}</span>
+        {furnitureFacings(held).map(dir => <button key={dir} aria-pressed={facing === dir} onClick={() => setFacing(dir)}>{directionNames[dir]}</button>)}
+      </div>}
       {sel && (
         <div className="decorate-items decorate-sel">
           <span className="decorate-sel-name">

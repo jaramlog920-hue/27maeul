@@ -1,0 +1,447 @@
+{
+  "passed": true,
+  "before": {
+    "inv": {
+      "barrel": 1
+    },
+    "barrels": [],
+    "style": 1,
+    "skills": {
+      "hookFinish": {
+        "day": 2,
+        "from": "smith",
+        "picked": "copper"
+      }
+    },
+    "modal": {
+      "kind": "menu",
+      "place": "workbench"
+    },
+    "act": null,
+    "stats": {
+      "wit": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "hand": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "charm": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "strength": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "luck": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      }
+    },
+    "coins": 0
+  },
+  "selected": {
+    "inv": {
+      "barrel": 1
+    },
+    "barrels": [],
+    "style": 2,
+    "skills": {
+      "hookFinish": {
+        "day": 2,
+        "from": "smith",
+        "picked": "copper"
+      }
+    },
+    "modal": {
+      "kind": "menu",
+      "place": "workbench"
+    },
+    "act": null,
+    "stats": {
+      "wit": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "hand": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "charm": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "strength": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "luck": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      }
+    },
+    "coins": 0
+  },
+  "copperPlaced": {
+    "inv": {},
+    "barrels": [
+      {
+        "item": "barrel",
+        "x": 20,
+        "y": 112,
+        "facing": "down",
+        "finish": "copper"
+      }
+    ],
+    "style": 2,
+    "skills": {
+      "hookFinish": {
+        "day": 2,
+        "from": "smith",
+        "picked": "copper"
+      }
+    },
+    "modal": null,
+    "act": null,
+    "stats": {
+      "wit": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "hand": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "charm": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "strength": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "luck": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      }
+    },
+    "coins": 0
+  },
+  "actualClick": {
+    "inv": {},
+    "barrels": [
+      {
+        "item": "barrel",
+        "x": 20,
+        "y": 112,
+        "facing": "down",
+        "finish": "copper"
+      }
+    ],
+    "style": 2,
+    "skills": {
+      "hookFinish": {
+        "day": 2,
+        "from": "smith",
+        "picked": "copper"
+      }
+    },
+    "modal": null,
+    "act": null,
+    "stats": {
+      "wit": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "hand": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "charm": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "strength": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "luck": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      }
+    },
+    "coins": 0
+  },
+  "restored": {
+    "inv": {},
+    "barrels": [
+      {
+        "item": "barrel",
+        "x": 20,
+        "y": 112,
+        "facing": "down",
+        "finish": "copper"
+      }
+    ],
+    "style": 2,
+    "skills": {
+      "hookFinish": {
+        "day": 2,
+        "from": "smith",
+        "picked": "copper"
+      }
+    },
+    "modal": null,
+    "act": null,
+    "stats": {
+      "wit": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "hand": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "charm": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "strength": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "luck": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      }
+    },
+    "coins": 0
+  },
+  "turned": {
+    "inv": {},
+    "barrels": [
+      {
+        "item": "barrel",
+        "x": 20,
+        "y": 112,
+        "facing": "right",
+        "finish": "copper"
+      }
+    ],
+    "style": 2,
+    "skills": {
+      "hookFinish": {
+        "day": 2,
+        "from": "smith",
+        "picked": "copper"
+      }
+    },
+    "modal": null,
+    "act": null,
+    "stats": {
+      "wit": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "hand": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "charm": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "strength": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "luck": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      }
+    },
+    "coins": 0
+  },
+  "moved": {
+    "inv": {},
+    "barrels": [
+      {
+        "item": "barrel",
+        "x": 22,
+        "y": 113,
+        "facing": "right",
+        "finish": "copper"
+      }
+    ],
+    "style": 2,
+    "skills": {
+      "hookFinish": {
+        "day": 2,
+        "from": "smith",
+        "picked": "copper"
+      }
+    },
+    "modal": null,
+    "act": null,
+    "stats": {
+      "wit": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "hand": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "charm": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "strength": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "luck": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      }
+    },
+    "coins": 0
+  },
+  "ironPlaced": {
+    "inv": {},
+    "barrels": [
+      {
+        "item": "barrel",
+        "x": 20,
+        "y": 112,
+        "facing": "down"
+      }
+    ],
+    "style": 1,
+    "skills": {
+      "hookFinish": {
+        "day": 2,
+        "from": "smith",
+        "picked": "copper"
+      }
+    },
+    "modal": null,
+    "act": null,
+    "stats": {
+      "wit": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "hand": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "charm": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "strength": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "luck": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      }
+    },
+    "coins": 0
+  },
+  "final": {
+    "inv": {},
+    "barrels": [
+      {
+        "item": "barrel",
+        "x": 20,
+        "y": 112,
+        "facing": "down"
+      }
+    ],
+    "style": 1,
+    "skills": {
+      "hookFinish": {
+        "day": 2,
+        "from": "smith",
+        "picked": "copper"
+      }
+    },
+    "modal": null,
+    "act": null,
+    "stats": {
+      "wit": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "hand": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "charm": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "strength": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      },
+      "luck": {
+        "level": 1,
+        "xp": 0,
+        "born": 0
+      }
+    },
+    "coins": 0
+  },
+  "actualCanvasDifferingPixels": 570,
+  "pageErrors": []
+}

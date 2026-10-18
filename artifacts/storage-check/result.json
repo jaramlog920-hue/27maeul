@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "migration": "2 legacy slots + albums",
+  "ui": "load/copy/export/import/reload",
+  "failure": "real transaction quota + backup + retry + reload",
+  "restored": {
+    "coins": 777,
+    "photo": "data:image/png;base64,newest"
+  },
+  "pageErrors": [],
+  "cleanup": "old slot backup + confirmation + atomic delete and current save + reload (888 coins)",
+  "largePhotoBytes": 6291456
+}

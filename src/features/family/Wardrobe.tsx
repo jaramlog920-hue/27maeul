@@ -7,6 +7,7 @@ import { lookOf, type WardrobeWho } from '../../engine/game'
 import type { Facing } from '../../engine/types'
 import { Preview, SLIDER_MAX, sliderTrack } from '../intro/AvatarForm'
 import { useGame } from '../../store/game-store'
+import {COPY_OUTFITS,wardrobeTopIndices,ownsCopyOutfit} from '../../engine/copy-outfits'
 
 type RowKey = 'hairFront' | 'hairBack' | 'top' | 'bottom' | 'acc'
 type ColorKey = 'eyeColor' | 'hairColor' | 'bottomColor' | 'accColor'
@@ -30,7 +31,9 @@ export function Wardrobe({ who }: { who: WardrobeWho }) {
   if (!a || !start) return null
   const rowLabels = T.avatar.rows as Record<RowKey, string>
   const colorLabels = T.avatar.colors as Record<ColorKey, string>
-  const step = (key: RowKey, n: number, d: number) => setA({ ...a, [key]: cycle(a[key], d, n) })
+  const topIndices=wardrobeTopIndices(game.flags)
+  const collected=COPY_OUTFITS.filter(o=>ownsCopyOutfit(game.flags,o.id)).length
+  const step = (key: RowKey, n: number, d: number) => setA({ ...a, [key]: key==='top'?topIndices[cycle(Math.max(0,topIndices.indexOf(a.top)),d,topIndices.length)]:cycle(a[key], d, n) })
   const slide = (i: number, v: number) => {
     const next = [...(a[colorKey] ?? [10, 55, 70])] as Hsv
     next[i] = v
@@ -43,6 +46,7 @@ export function Wardrobe({ who }: { who: WardrobeWho }) {
     <div className="dialog creator wardrobe" role="dialog" aria-label="옷장">
       {/* 제목은 '옷장'만, 설명 줄 없이 (2026-10-07 사용자) — 누구 옷장인지는 가족 화면에서 고른다 */}
       <h2 aria-label={`옷장 · ${who === 'me' ? '나' : `${WHO_NAME[who]} ${a.name}`}`}>옷장</h2>
+      <p className="hint">필사 수집 의상 {collected}/40 · 장 완성 시 드물게 얻어요</p>
       <div className="creator-top">
         <div className="creator-portrait">
           <div className="creator-frame">

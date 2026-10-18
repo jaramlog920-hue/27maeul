@@ -1,6 +1,7 @@
 // 주인공: 플레이어가 고른 모습과 이름 (가상 인물, exclusion-list §1-1)
 // 스타듀밸리 생성창처럼 ◀ ▶로 고르는 항목과, 색조·채도·밝기 막대로 고르는 색이 있다.
 import { forbiddenIn } from '../content/forbidden'
+import {BASIC_TOP_COUNT,COPY_OUTFITS} from './copy-outfits'
 
 export type Look = 'f' | 'm'
 /** 색조 0~360, 채도 0~100, 밝기 0~100 */
@@ -29,7 +30,7 @@ export const SKINS = ['#f8dcc0', '#f8d0a8', '#e8b890', '#d0a078', '#b88460', '#9
 export const HAIR_FRONTS = ['넘긴 머리', '가벼운 앞머리', '옆 가르마', '짧게 깎음', '부스스', '물결 앞머리', '삐죽 머리', '가운데 가르마', '둥근 앞머리', '비껴 내린 앞머리', '짧은 곱슬 앞머리', '넓게 넘긴 머리'] as const
 export const HAIR_BACKS = ['짧은 머리', '긴 머리', '단발', '올린 머리', '낮게 묶은 머리', '양갈래', '낮게 땋은 머리', '어깨 물결 머리', '높게 묶은 머리', '쌍둥이 쪽머리', '양쪽 땋은 머리'] as const
 /** 윗옷: [이름, 바탕, 그늘, 무늬/띠, 무늬 모양] */
-export const TOPS: readonly (readonly [string, string, string, string, 'plain' | 'stripe' | 'apron' | 'vest' | 'collar' | 'cross' | 'pocket'])[] = [
+export const TOPS: readonly (readonly [string, string, string, string, 'plain' | 'stripe' | 'apron' | 'vest' | 'collar' | 'cross' | 'pocket' | 'sageSet' | 'ivorySet' | 'ribbonSet' | 'roseSet' | 'collectible'])[] = [
   ['흙빛 겉옷', '#ac8967', '#795b44', '#ead3a2', 'plain'],
   ['올리브 겉옷', '#85936a', '#57684d', '#dbc9a4', 'plain'],
   ['포도빛 겉옷', '#a27b89', '#705663', '#d8bc8c', 'plain'],
@@ -48,6 +49,11 @@ export const TOPS: readonly (readonly [string, string, string, string, 'plain' |
   ['쪽빛 여밈옷', '#728b9d', '#495f73', '#e2cda8', 'cross'],
   ['공방 주머니 옷', '#b29473', '#7d624d', '#e9d7b5', 'pocket'],
   ['자주빛 주머니 옷', '#9b7b92', '#685466', '#dfcbb4', 'pocket'],
+  ['세이지 조끼', '#e9dfc9', '#b8ad98', '#526a61', 'sageSet'],
+  ['아이보리 겉옷', '#f1e7d2', '#c1b39c', '#8b6268', 'ivorySet'],
+  ['아이보리 리본 옷', '#f5edda', '#d2c7b0', '#9dac91', 'ribbonSet'],
+  ['장밋빛 레이스 옷', '#dab4b3', '#b58e96', '#f3e7d3', 'roseSet'],
+  ...COPY_OUTFITS.map(o=>[o.name,o.main,o.shade,o.trim,'collectible'] as const),
 ]
 export const BOTTOMS = ['긴 치마', '짧은 치마', '바지', '반바지', '주름 치마', '단이 있는 치마', '넓은 바지', '접어 올린 바지'] as const
 export const ACCS = ['없음', '머리띠', '꽃 핀', '목걸이', '귀걸이', '머릿수건', '리본 핀', '나뭇잎 핀', '구슬 머리띠', '둥근 브로치', '목수건', '허리 주머니', '작은 어깨 가방', '꽃 화관'] as const
@@ -102,7 +108,7 @@ export function randomAvatar(look: Look, name: string, rand: () => number = Math
     skin: pick(SKINS.length),
     hairFront: pick(HAIR_FRONTS.length),
     hairBack: pick(HAIR_BACKS.length),
-    top: pick(TOPS.length),
+    top: pick(BASIC_TOP_COUNT),
     bottom: pick(BOTTOMS.length),
     acc: pick(ACCS.length),
     eyeColor: hsv(30, 80, 20, 60),

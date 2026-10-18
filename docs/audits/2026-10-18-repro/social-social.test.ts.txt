@@ -1,0 +1,76 @@
+import { describe, expect, it } from 'vitest'
+import { CONTENT } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import { ADULT_AT, newChild, inheritShare, inheritFromPlayer } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/child'
+import type { GameState } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/game'
+import { establishedGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/growth-test-support'
+import { swapKid } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/siblings'
+import { visitKidWork } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/newland-life'
+import { kidWorkOwners } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/kid-work'
+import { newGenState, BAKER_BABY_ID } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/gen'
+import { settleOneDay } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/gen-settle'
+
+const adult = (born: number, name: string, job: 'cook' | 'painter' | 'potter') => ({ ...newChild(born, establishedGame(CONTENT, 10).stats, undefined), born, name, job, jobConfirmed: true })
+const build = (owner?: string) => ({ id: 'b1', kind: 'kidWork', x: 10, y: 12, facing: 'down', state: 'done', orderedDay: 1, paid: { coins: 0, items: {} }, refunded: false, ...(owner ? { owner } : {}) })
+
+describe('social repro', () => {
+  it('kidWork visit: one building, swap kids -> second visit same day', () => {
+    const base = establishedGame(CONTENT, 300)
+    const day = 400
+    const A = adult(day - ADULT_AT - 30, 'A', 'cook'), B = adult(day - ADULT_AT - 10, 'B', 'cook')
+    const s: GameState = { ...base, clock: { day, minute: 600 }, child: A, siblings: [B], newland: { builds: [build('me:' + A.born)], tiles: {}, nextId: 2 } as never }
+    const r1 = visitKidWork(s)!
+    expect(r1.dish).toBeTruthy()
+    expect(visitKidWork(r1.state)).toBeNull()
+    const swapped = swapKid(r1.state, 0)
+    expect(swapped.child!.name).toBe('B')
+    const r2 = visitKidWork(swapped)
+    console.log('second visit same day after swap:', !!r2, r2?.dish)
+    expect(r2).not.toBeNull()
+  })
+  it('kidWork visit with only neighbor child building', () => {
+    const base = establishedGame(CONTENT, 300)
+    const day = 400
+    const A = adult(day - ADULT_AT - 30, 'A', 'cook')
+    const s: GameState = { ...base, clock: { day, minute: 600 }, child: A, newland: { builds: [build('g-0001')], tiles: {}, nextId: 2 } as never }
+    const r = visitKidWork(s)
+    console.log('visit via neighbor building:', !!r, r?.dish)
+    expect(r).not.toBeNull()
+  })
+  it('legacy ownerless building ownership moves with active kid', () => {
+    const base = establishedGame(CONTENT, 300)
+    const day = 400
+    const A = adult(day - ADULT_AT - 30, 'A', 'cook'), B = adult(day - ADULT_AT - 10, 'B', 'painter')
+    const s: GameState = { ...base, clock: { day, minute: 600 }, child: A, siblings: [B], newland: { builds: [build()], tiles: {}, nextId: 2 } as never }
+    const before = kidWorkOwners(s).map(o => o.name)
+    const after = kidWorkOwners(swapKid(s, 0)).map(o => o.name)
+    console.log('owners before', before, 'after swap', after)
+    expect(before).toEqual(['B'])
+    expect(after).toEqual(['A'])
+  })
+  it('childPet flag moves away on swap', () => {
+    const base = establishedGame(CONTENT, 300)
+    const day = 400
+    const A = adult(day - ADULT_AT - 30, 'A', 'cook'), B = adult(day - ADULT_AT - 10, 'B', 'painter')
+    const s: GameState = { ...base, clock: { day, minute: 600 }, child: A, siblings: [B], flags: { ...base.flags, childPet: 2, 'kidWorkMile:3': 390 } }
+    const sw = swapKid(s, 0)
+    console.log('childPet after swap', sw.flags.childPet, 'mile', sw.flags['kidWorkMile:3'])
+    expect(sw.flags.childPet).toBeUndefined()
+    expect(sw.flags['kidWorkMile:3']).toBeUndefined()
+  })
+  it('baker baby ages to elder even when ageless', () => {
+    const d = 8 + 244 + 1
+    let g = newGenState(CONTENT, 1, d - 3)
+    g = { ...g, persons: { ...g.persons, [BAKER_BABY_ID]: { ...g.persons[BAKER_BABY_ID], stage: 'adult' } } }
+    const out = settleOneDay(g, d, { flags: { ageless: 1 } } as never, CONTENT, {})
+    console.log('baker baby stage under ageless:', out.persons[BAKER_BABY_ID].stage)
+    expect(out.persons[BAKER_BABY_ID].stage).toBe('elder')
+  })
+  it('inherit share bounds', () => {
+    expect(inheritShare(0, () => 0)).toBeCloseTo(0.2)
+    expect(inheritShare(14, () => 0.999999)).toBeLessThan(0.5)
+    const base = establishedGame(CONTENT, 300)
+    const c = newChild(10, base.stats, undefined)
+    const r = inheritFromPlayer(c, base.stats, () => 0.999999)
+    expect(r.inherited).toBe(50)
+  })
+})

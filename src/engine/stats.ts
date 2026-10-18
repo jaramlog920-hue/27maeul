@@ -9,9 +9,9 @@ export type StatId = 'wit' | 'hand' | 'charm' | 'strength' | 'luck'
 export const STAT_IDS: readonly StatId[] = ['wit', 'hand', 'charm', 'strength', 'luck']
 
 export interface Stat {
-  /** 단계 1–5 */
+  /** 기존 저장의 경험치 구간 1–5. 표시·효과 단계는 levelOf로 계산한다. */
   level: number
-  /** 지금 단계에서 쌓인 경험치 */
+  /** 기존 저장의 경험치 구간 안에 쌓인 값 */
   xp: number
   /** 타고난 값 0–2 (물려받는 값) */
   born: number
@@ -20,7 +20,7 @@ export type Stats = Record<StatId, Stat>
 
 export const MAX_LEVEL = 5
 export const MAX_BORN = 2
-/** 다음 단계까지 필요한 경험치 (1→2, 2→3, 3→4, 4→5) */
+/** 기존 저장의 경험치 인코딩. 점수·성장량을 보존하며 게임 단계로 사용하지 않는다. */
 export const XP_TO_NEXT: readonly number[] = [30, 60, 100, 150]
 /** 타고난 값 한 칸마다 경험치가 이만큼 더 쌓인다 */
 export const BORN_BONUS = 0.25
@@ -69,10 +69,10 @@ export function sanitizeStats(raw: unknown): Stats {
 
 /** 지금 단계 (저장에 칸이 없어도 1) */
 export function levelOf(stats: Stats | undefined, id: StatId): number {
-  return stats?.[id]?.level ?? 1
+  return Math.ceil(statScore(stats?.[id]) / 20)
 }
 
-/** 경험치를 더한다 (타고난 값만큼 더 빨리). 5단계면 더 쌓이지 않는다 */
+/** 경험치를 더한다 (타고난 값만큼 더 빨리). 기존 저장의 마지막 구간까지 채우면 멈춘다. */
 export function addXp(stats: Stats | undefined, id: StatId, xp: number): Stats {
   const base = stats ?? freshStats()
   const cur = base[id] ?? { level: 1, xp: 0, born: 0 }
@@ -93,12 +93,12 @@ export function totalXp(stat: Stat | undefined): number {
   return XP_TO_NEXT.slice(0, stat.level - 1).reduce((a, b) => a + b, 0) + stat.xp
 }
 
-/** 5단계까지 쌓는 경험치 모두 */
+/** 기존 저장 인코딩의 경험치 총량 (사용자에게 보이는 점수 상한은 100) */
 export const MAX_TOTAL_XP = XP_TO_NEXT.reduce((a, b) => a + b, 0)
 
 /**
  * 능력치 점수 1–100 (화면에 보이는 값, 2026-09-30 사용자 요청): 쌓은 경험치를 1–100으로 편다.
- * 효과(단계별)는 그대로 — 1단계 1점, 5단계 100점, 사이는 경험치만큼
+ * 기존 점수와 성장 속도를 보존한다. 게임 단계는 이 점수를 20점씩 나눈다.
  */
 export function statScore(stat: Stat | undefined): number {
   return Math.max(1, Math.min(100, 1 + Math.round((99 * totalXp(stat)) / MAX_TOTAL_XP)))
@@ -118,10 +118,10 @@ export function leveledUp(before: Stats | undefined, after: Stats | undefined): 
   })
 }
 
-/** 다음 단계까지 얼마나 찼는가 0–1 (5단계면 1) */
+/** 현재 20점 구간에서 찬 정도 0–1. 5단계도 100점까지 계속 자란다. */
 export function progressOf(stat: Stat): number {
-  if (stat.level >= MAX_LEVEL) return 1
-  return Math.min(1, stat.xp / XP_TO_NEXT[stat.level - 1])
+  const score = statScore(stat)
+  return (score - (Math.ceil(score / 20) - 1) * 20) / 20
 }
 
 // ── 효과 (작게) ──
@@ -154,12 +154,6 @@ export function charmBonus(stats: Stats | undefined): number {
 /** 매력: 장날 파는 값 +1닢 (3단계부터) */
 export function sellBonus(stats: Stats | undefined): number {
   return levelOf(stats, 'charm') >= 3 ? 1 : 0
-}
-
-/** 지능: 장 기록 퀴즈에서 흐리게 보이는 틀린 보기 수 — 3단계 하나, 5단계 둘 */
-export function quizDims(stats: Stats | undefined): number {
-  const l = levelOf(stats, 'wit')
-  return l >= 5 ? 2 : l >= 3 ? 1 : 0
 }
 
 /** 손재주: 작업대 손놀림이 너그럽게 — 단계마다 5% (찧기 한 번에 더 차고, 타이밍 구간이 넓어진다) */

@@ -1,0 +1,82 @@
+[
+  {
+    "weather": "sunny",
+    "player": {
+      "x": 5,
+      "y": 27
+    },
+    "meanMs": 3.39984333333338,
+    "maxMs": 9.582000000000335,
+    "canvasCalls": 46086
+  },
+  {
+    "weather": "sunny",
+    "player": {
+      "x": 5,
+      "y": 29
+    },
+    "meanMs": 2.9243733333333695,
+    "maxMs": 30.208999999999833,
+    "canvasCalls": 45580
+  },
+  {
+    "weather": "sunny",
+    "player": {
+      "x": 10,
+      "y": 30
+    },
+    "meanMs": 2.2041233333333365,
+    "maxMs": 8.94000000000051,
+    "canvasCalls": 45450
+  },
+  {
+    "weather": "sunny",
+    "player": {
+      "x": 20,
+      "y": 20
+    },
+    "meanMs": 2.005590000000029,
+    "maxMs": 5.052699999999277,
+    "canvasCalls": 45450
+  },
+  {
+    "weather": "rain",
+    "player": {
+      "x": 5,
+      "y": 27
+    },
+    "meanMs": 2.163866666666672,
+    "maxMs": 4.347899999999754,
+    "canvasCalls": 47640
+  },
+  {
+    "weather": "rain",
+    "player": {
+      "x": 5,
+      "y": 29
+    },
+    "meanMs": 1.8157633333333858,
+    "maxMs": 3.899199999999837,
+    "canvasCalls": 47769
+  },
+  {
+    "weather": "rain",
+    "player": {
+      "x": 10,
+      "y": 30
+    },
+    "meanMs": 2.0060966666667204,
+    "maxMs": 7.464600000000246,
+    "canvasCalls": 47692
+  },
+  {
+    "weather": "rain",
+    "player": {
+      "x": 20,
+      "y": 20
+    },
+    "meanMs": 1.8107566666665964,
+    "maxMs": 3.7489999999997963,
+    "canvasCalls": 47730
+  }
+]

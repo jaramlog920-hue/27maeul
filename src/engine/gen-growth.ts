@@ -4,6 +4,7 @@
 import { stageByAge } from './gen-age'
 import { addLog, BAKER_BABY_ID, genRng, type GenPerson, type GenState } from './gen'
 import { GEN_CHILD_NAMES } from './gen-birth'
+import { STAGE_AT } from './gen-config'
 export { stageByAge } from './gen-age'
 
 /** 은퇴: 견습을 시작하고 이만큼 지나면 (한 계절) */
@@ -33,6 +34,22 @@ export const isRetired = (g: GenState | undefined, npc: string): boolean => !!g?
 
 /** Legacy move-away delay, retained for old-save fixtures. Retirement no longer removes residents. */
 export const MOVE_AFTER = 14
+/** Exclude only adult aging; children keep their existing growth schedule. */
+export function pauseResidentAging(g: GenState, day: number, starting = false): GenState {
+  for (const p of Object.values(g.persons)) {
+    if ((p.origin !== 'born' && p.id !== BAKER_BABY_ID) || p.born == null || p.stage === 'elder') continue
+    const adultDay = p.born + STAGE_AT.adult
+    if (day < adultDay || (p.agePause && day <= p.agePause.at)) continue
+    const days = (p.agePause?.days ?? 0) + (starting ? 0 : Math.max(0, day - Math.max(adultDay, p.agePause?.at ?? adultDay)))
+    g = { ...g, persons: { ...g.persons, [p.id]: { ...p, agePause: { days, at: day } } } }
+    if (!starting) for (const [parent, heir] of Object.entries(g.heirs ?? {})) {
+      if (heir.heir !== p.id || g.retired?.[parent]) continue
+      const elapsed = Math.max(0, day - Math.max(heir.since, adultDay, p.agePause?.at ?? adultDay))
+      if (elapsed) g = { ...g, heirs: { ...g.heirs, [parent]: { ...heir, paused: (heir.paused ?? 0) + elapsed } } }
+    }
+  }
+  return g
+}
 /** 이사 갔나 */
 export const movedAway = (g: GenState | undefined, npc: string): boolean => g?.retired?.[npc]?.moved != null
 /** 은퇴한 이웃 자리의 주인으로 보이는 사람 (이어받은 자녀) — 이사 여부와 상관없이. 은퇴 전이면 null (2026-10-11 사용자 결정) */
@@ -49,6 +66,7 @@ export function movedHeir(g: GenState | undefined, npc: string): GenPerson | nul
 /** 하루 정산: 자라기 → 견습 시작 → 은퇴와 이어받기 */
 /** ageless (2026-10-13 사용자 설정 '주민이 나이 들지 않음'): 자식은 어른까지만 자라고, 아무도 은퇴하지 않는다 */
 export function settleGrowth(g: GenState, d: number, access: { generations: boolean; retirement: boolean; ageless?: boolean } = { generations: true, retirement: true }): GenState {
+  if (access.ageless) g = pauseResidentAging(g, d)
   // Restore legacy retirees without changing succession or historical logs/rewards.
   for (const [parent, r] of Object.entries(g.retired ?? {})) {
     if (r.moved == null) continue
@@ -56,11 +74,13 @@ export function settleGrowth(g: GenState, d: number, access: { generations: bool
   }
   for (const p of Object.values(g.persons)) {
     if ((p.origin !== 'born' && p.id !== BAKER_BABY_ID) || p.born == null || p.stage === 'elder') continue
-    const aged = stageByAge(p.born, d)
+    const aged = stageByAge(p.born, d - (p.agePause?.days ?? 0))
     const next = access.ageless && aged === 'elder' ? 'adult' : aged
-    if (next === p.stage) continue
-    g = { ...g, persons: { ...g.persons, [p.id]: { ...g.persons[p.id], stage: next } } }
-    g = addLog(g, d, `grew:${next}`, [p.id])
+    const agePause = p.agePause && d > p.agePause.at ? { ...p.agePause, at: d } : p.agePause
+    if (next !== p.stage || agePause !== p.agePause) {
+      g = { ...g, persons: { ...g.persons, [p.id]: { ...g.persons[p.id], stage: next, ...(agePause ? { agePause } : {}) } } }
+    }
+    if (next !== p.stage) g = addLog(g, d, `grew:${next}`, [p.id])
   }
   // 빵집 아이는 아기를 벗으면 다른 주민 아이처럼 이름이 저절로 붙는다 (2026-10-12 사용자 결정 6)
   const bb = g.persons[BAKER_BABY_ID]
@@ -91,7 +111,7 @@ export function settleGrowth(g: GenState, d: number, access: { generations: bool
   }
   // 견습 한 계절 뒤: 부모는 은퇴, 자리는 자녀에게
   for (const [parent, a] of Object.entries(g.heirs ?? {})) {
-    if (!access.retirement || access.ageless || g.retired?.[parent] || d - a.since < RETIRE_AFTER) continue
+    if (!access.retirement || access.ageless || g.retired?.[parent] || d - a.since - (a.paused ?? 0) < RETIRE_AFTER) continue
     g = { ...g, retired: { ...(g.retired ?? {}), [parent]: { heir: a.heir, day: d } } }
     g = addLog(g, d, 'retired', [parent, a.heir])
   }

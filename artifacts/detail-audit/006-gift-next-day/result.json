@@ -1,0 +1,454 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "flow": {
+        "name": "regular-night",
+        "day": 20,
+        "minute": 1320
+      },
+      "first": {
+        "clock": {
+          "day": 20,
+          "minute": 1320
+        },
+        "grapes": 2,
+        "basket": 0,
+        "gifted": [
+          "baker"
+        ],
+        "hearts": 29,
+        "charm": {
+          "level": 1,
+          "xp": 2,
+          "born": 0
+        },
+        "dailyGain": 6,
+        "giftDisabled": true,
+        "modal": {
+          "kind": "talk",
+          "neighborId": "baker",
+          "line": "정말 기뻐요! 제 마음에 꼭 들어요. 고마워요."
+        }
+      },
+      "beforeBed": {
+        "clock": {
+          "day": 20,
+          "minute": 1320.05
+        },
+        "grapes": 2,
+        "basket": 0,
+        "gifted": [
+          "baker"
+        ],
+        "hearts": 29,
+        "charm": {
+          "level": 1,
+          "xp": 2,
+          "born": 0
+        },
+        "dailyGain": 6,
+        "giftDisabled": true,
+        "modal": {
+          "kind": "talk",
+          "neighborId": "baker",
+          "line": "검사용 대화"
+        }
+      },
+      "canceled": {
+        "clock": {
+          "day": 20,
+          "minute": 1320.05
+        },
+        "grapes": 2,
+        "basket": 0,
+        "gifted": [
+          "baker"
+        ],
+        "hearts": 29,
+        "charm": {
+          "level": 1,
+          "xp": 2,
+          "born": 0
+        },
+        "dailyGain": 6,
+        "giftDisabled": true,
+        "modal": {
+          "kind": "talk",
+          "neighborId": "baker",
+          "line": "검사용 대화"
+        }
+      },
+      "morning": {
+        "clock": {
+          "day": 21,
+          "minute": 360
+        },
+        "grapes": 2,
+        "basket": 0,
+        "gifted": [],
+        "hearts": 29,
+        "charm": {
+          "level": 1,
+          "xp": 2,
+          "born": 0
+        },
+        "dailyGain": 0,
+        "giftDisabled": false,
+        "modal": {
+          "kind": "talk",
+          "neighborId": "baker",
+          "line": "검사용 대화"
+        }
+      },
+      "second": {
+        "clock": {
+          "day": 21,
+          "minute": 360.06669999999997
+        },
+        "grapes": 1,
+        "basket": 1,
+        "gifted": [
+          "baker"
+        ],
+        "hearts": 32,
+        "charm": {
+          "level": 1,
+          "xp": 4,
+          "born": 0
+        },
+        "dailyGain": 3,
+        "giftDisabled": true,
+        "modal": {
+          "kind": "talk",
+          "neighborId": "baker",
+          "line": "정말 기뻐요! 제 마음에 꼭 들어요. 고마워요."
+        }
+      },
+      "restored": {
+        "clock": {
+          "day": 21,
+          "minute": 360.06669999999997
+        },
+        "grapes": 1,
+        "basket": 1,
+        "gifted": [
+          "baker"
+        ],
+        "hearts": 32,
+        "charm": {
+          "level": 1,
+          "xp": 4,
+          "born": 0
+        },
+        "dailyGain": 3,
+        "giftDisabled": true,
+        "modal": {
+          "kind": "talk",
+          "neighborId": "baker",
+          "line": "검사용 대화"
+        }
+      }
+    },
+    {
+      "flow": {
+        "name": "season-end-late-night",
+        "day": 40,
+        "minute": 1560
+      },
+      "first": {
+        "clock": {
+          "day": 40,
+          "minute": 1560
+        },
+        "grapes": 2,
+        "basket": 0,
+        "gifted": [
+          "baker"
+        ],
+        "hearts": 29,
+        "charm": {
+          "level": 1,
+          "xp": 2,
+          "born": 0
+        },
+        "dailyGain": 6,
+        "giftDisabled": true,
+        "modal": {
+          "kind": "talk",
+          "neighborId": "baker",
+          "line": "정말 기뻐요! 제 마음에 꼭 들어요. 고마워요."
+        }
+      },
+      "beforeBed": {
+        "clock": {
+          "day": 40,
+          "minute": 1560
+        },
+        "grapes": 2,
+        "basket": 0,
+        "gifted": [
+          "baker"
+        ],
+        "hearts": 29,
+        "charm": {
+          "level": 1,
+          "xp": 2,
+          "born": 0
+        },
+        "dailyGain": 6,
+        "giftDisabled": true,
+        "modal": {
+          "kind": "talk",
+          "neighborId": "baker",
+          "line": "검사용 대화"
+        }
+      },
+      "canceled": {
+        "clock": {
+          "day": 40,
+          "minute": 1560
+        },
+        "grapes": 2,
+        "basket": 0,
+        "gifted": [
+          "baker"
+        ],
+        "hearts": 29,
+        "charm": {
+          "level": 1,
+          "xp": 2,
+          "born": 0
+        },
+        "dailyGain": 6,
+        "giftDisabled": true,
+        "modal": {
+          "kind": "talk",
+          "neighborId": "baker",
+          "line": "검사용 대화"
+        }
+      },
+      "morning": {
+        "clock": {
+          "day": 41,
+          "minute": 480
+        },
+        "grapes": 2,
+        "basket": 0,
+        "gifted": [],
+        "hearts": 29,
+        "charm": {
+          "level": 1,
+          "xp": 2,
+          "born": 0
+        },
+        "dailyGain": 0,
+        "giftDisabled": false,
+        "modal": {
+          "kind": "talk",
+          "neighborId": "baker",
+          "line": "검사용 대화"
+        }
+      },
+      "second": {
+        "clock": {
+          "day": 41,
+          "minute": 480.0667
+        },
+        "grapes": 1,
+        "basket": 1,
+        "gifted": [
+          "baker"
+        ],
+        "hearts": 32,
+        "charm": {
+          "level": 1,
+          "xp": 4,
+          "born": 0
+        },
+        "dailyGain": 3,
+        "giftDisabled": true,
+        "modal": {
+          "kind": "talk",
+          "neighborId": "baker",
+          "line": "정말 기뻐요! 제 마음에 꼭 들어요. 고마워요."
+        }
+      },
+      "restored": {
+        "clock": {
+          "day": 41,
+          "minute": 480.0667
+        },
+        "grapes": 1,
+        "basket": 1,
+        "gifted": [
+          "baker"
+        ],
+        "hearts": 32,
+        "charm": {
+          "level": 1,
+          "xp": 4,
+          "born": 0
+        },
+        "dailyGain": 3,
+        "giftDisabled": true,
+        "modal": {
+          "kind": "talk",
+          "neighborId": "baker",
+          "line": "검사용 대화"
+        }
+      }
+    },
+    {
+      "flow": {
+        "name": "sick-morning",
+        "day": 20,
+        "minute": 1320,
+        "sick": true
+      },
+      "first": {
+        "clock": {
+          "day": 20,
+          "minute": 1320
+        },
+        "grapes": 2,
+        "basket": 0,
+        "gifted": [
+          "baker"
+        ],
+        "hearts": 29,
+        "charm": {
+          "level": 1,
+          "xp": 2,
+          "born": 0
+        },
+        "dailyGain": 6,
+        "giftDisabled": true,
+        "modal": {
+          "kind": "talk",
+          "neighborId": "baker",
+          "line": "정말 기뻐요! 제 마음에 꼭 들어요. 고마워요."
+        }
+      },
+      "beforeBed": {
+        "clock": {
+          "day": 20,
+          "minute": 1320.0666
+        },
+        "grapes": 2,
+        "basket": 0,
+        "gifted": [
+          "baker"
+        ],
+        "hearts": 29,
+        "charm": {
+          "level": 1,
+          "xp": 2,
+          "born": 0
+        },
+        "dailyGain": 6,
+        "giftDisabled": true,
+        "modal": {
+          "kind": "talk",
+          "neighborId": "baker",
+          "line": "검사용 대화"
+        }
+      },
+      "canceled": {
+        "clock": {
+          "day": 20,
+          "minute": 1320.0666
+        },
+        "grapes": 2,
+        "basket": 0,
+        "gifted": [
+          "baker"
+        ],
+        "hearts": 29,
+        "charm": {
+          "level": 1,
+          "xp": 2,
+          "born": 0
+        },
+        "dailyGain": 6,
+        "giftDisabled": true,
+        "modal": {
+          "kind": "talk",
+          "neighborId": "baker",
+          "line": "검사용 대화"
+        }
+      },
+      "morning": {
+        "clock": {
+          "day": 21,
+          "minute": 600
+        },
+        "grapes": 2,
+        "basket": 0,
+        "gifted": [],
+        "hearts": 29,
+        "charm": {
+          "level": 1,
+          "xp": 2,
+          "born": 0
+        },
+        "dailyGain": 0,
+        "giftDisabled": false,
+        "modal": {
+          "kind": "talk",
+          "neighborId": "baker",
+          "line": "검사용 대화"
+        }
+      },
+      "second": {
+        "clock": {
+          "day": 21,
+          "minute": 600
+        },
+        "grapes": 1,
+        "basket": 1,
+        "gifted": [
+          "baker"
+        ],
+        "hearts": 32,
+        "charm": {
+          "level": 1,
+          "xp": 4,
+          "born": 0
+        },
+        "dailyGain": 3,
+        "giftDisabled": true,
+        "modal": {
+          "kind": "talk",
+          "neighborId": "baker",
+          "line": "정말 기뻐요! 제 마음에 꼭 들어요. 고마워요."
+        }
+      },
+      "restored": {
+        "clock": {
+          "day": 21,
+          "minute": 600
+        },
+        "grapes": 1,
+        "basket": 1,
+        "gifted": [
+          "baker"
+        ],
+        "hearts": 32,
+        "charm": {
+          "level": 1,
+          "xp": 4,
+          "born": 0
+        },
+        "dailyGain": 3,
+        "giftDisabled": true,
+        "modal": {
+          "kind": "talk",
+          "neighborId": "baker",
+          "line": "검사용 대화"
+        }
+      }
+    }
+  ],
+  "pageErrors": []
+}

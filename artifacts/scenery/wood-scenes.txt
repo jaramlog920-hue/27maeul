@@ -1,0 +1,57 @@
+
+ev:rudy:small:winterSigns 겨울 표지
+{"title":"겨울 표지","lines":[{"speaker":"narration","text":"겨울 공방. 루디가 작은 표지 여러 개에 이름을 하나씩 새기고 있다. 손이 시린지 가끔 입김을 분다."},{"speaker":"rudy","text":"…겨울엔 큰 나무가 잘 안 말라요. 그래서 작은 거. 아버지 거, 코스모 거."}],"choices":[{"label":"누구 것부터 새기는지 본다","reply":[{"speaker":"rudy","text":"아버지 거. …틀리면 아버지는 웃으니까. 코스모는 놀리고요."}]},{"label":"손부터 녹이자고 한다","reply":[{"speaker":"narration","text":"루디가 끌을 내려놓고 두 손을 겨드랑이에 끼웠다."},{"speaker":"rudy","text":"…따뜻한 차 있으면 좋겠다. 말해 봤어요."}]}]}
+
+ev:rudy:short:spouseHabit 말 안 하는 한 시간
+{"title":"말 안 하는 한 시간","lines":[{"speaker":"rudy","text":"…집에도 그런 시간 하나 둘까요. 저녁에 한 시간. 말 안 해도 되는 시간. 우리 집 거로."}],"choices":[{"label":"그 시간을 정하자고 한다","reply":[{"speaker":"rudy","text":"…해 진 다음. 차 한 잔 식을 때까지."}]},{"label":"자리를 같이 고른다","reply":[{"speaker":"rudy","text":"창가. 의자 둘 놓을 만큼만 비워 둘게요."}]},{"label":"고개만 끄덕인다","reply":[{"speaker":"narration","text":"루디도 고개만 끄덕였다. 그걸로 정해졌다."}]}]}
+
+ev:rudy:silence 말 없는 사흘
+{"title":"말 없는 사흘","lines":[{"speaker":"narration","text":"루디가 사흘째 말이 없다. 평소보다도 더."},{"speaker":"rudy","text":"…아버지가 제본 골목 일을 맡으래요. 표지만이 아니라 속까지. 읽어야 하는 일이요."},{"speaker":"rudy","text":"못 한다고 말 못 했어요."}],"choices":[{"label":"“같이 아버지께 말씀드려요”","reply":[{"speaker":"rudy","text":"…같이요. 네."},{"speaker":"narration","text":"그날 저녁, 목수 집에서 오래 이야기 소리가 들렸다. 다음 날 루디는 표지 일만 하기로 했다. 대신 속은 천천히 배우기로."}]},{"label":"“읽는 건 제가 할게요”","reply":[{"speaker":"rudy","text":"…둘이 하는 제본. 좋다."},{"speaker":"narration","text":"루디가 사흘 만에 처음으로 웃었다."}]}]}
+
+ev:carpenter:story:2 목수가 고른 모서리
+{"title":"목수가 고른 모서리","lines":[{"speaker":"carpenter","text":"등받이는 낮게, 모서리는 둥글게 하겠소. 차 마실 때 팔이 편한 쪽으로."},{"speaker":"narration","text":"목수가 손바닥으로 모서리를 따라 작은 곡선을 그린다."}],"choices":[{"label":"손짓을 따라 듣는다","reply":[{"speaker":"carpenter","text":"이만큼만 둥글리면 되겠소."}]},{"label":"함께 만들고 싶다고 한다","reply":[{"speaker":"carpenter","text":"좋소. 부품 맞추는 날에 차가운 받침을 같이 잡읍시다."}]},{"label":"내가 좋아하는 모양을 말한다","reply":[{"speaker":"carpenter","text":"그 모양도 좋군. 내 것은 낮은 등받이로 해 보겠소."}]}]}
+
+ev:carpenter:story:1 미완성 의자
+{"title":"미완성 의자","lines":[{"speaker":"narration","text":"목수가 작은 의자를 바닥에 놓는다. 한쪽 다리가 살짝 뜬다."},{"speaker":"carpenter","text":"남의 것부터 맡다 보니 이건 오래 두었소. 내 집에서 쓸 의자요."}],"choices":[{"label":"이야기를 듣는다","reply":[{"speaker":"carpenter","text":"오늘은 이 의자부터 살펴보겠소."}]},{"label":"흔들리는 다리를 살핀다","reply":[{"speaker":"carpenter","text":"그쪽 다리요. 무거운 건 내가 들겠소."}]},{"label":"어디에 놓을지 묻는다","reply":[{"speaker":"carpenter","text":"집 안에 두고 루디와 나란히 쉬고 싶소."}]}]}
+
+ev:rudy:carvingTalk 밤마다 새긴 글자
+{"title":"밤마다 새긴 글자","lines":[{"speaker":"narration","text":"루디의 작업대 위에 글자 새긴 나무판이 여러 장 있다. 뒤로 갈수록 글자가 반듯해진다."},{"speaker":"rudy","text":"…연습해요. 밤마다. 끌로 새기면 줄이 안 춤춰요. 손으로 기억하니까."}],"choices":[{"label":"옆에 맞는 글자를 써 준다","reply":[{"speaker":"narration","text":"루디가 손가락 끝을 따라 끌을 움직였다. 이번엔 맞았다."},{"speaker":"rudy","text":"…또 해 줘요. 내일도."}]},{"label":"“거의 다 맞았어요”","reply":[{"speaker":"rudy","text":"거의는… 책에선 안 돼요. 그래도 좋은 말이에요."}]}]}
+
+saw:rudy:carving 밤의 끌 소리
+{"title":"밤의 끌 소리","lines":[{"speaker":"narration","text":"밤늦은 목수 집 앞. 등불 하나 아래서 루디가 나무판에 끌로 글자를 새기고 있다."},{"speaker":"narration","text":"한 글자 새기고, 한참 들여다보고, 대패로 밀어 버린다. 다시 새긴다."},{"speaker":"rudy","text":"…ㄹ이 아니라 ㄷ. 또."},{"speaker":"narration","text":"나무판 옆에 대패로 밀어낸 얇은 나무 부스러기가 산처럼 쌓여 있다."}]}
+
+ev:rudy:home:2 세 줄 편지
+{"title":"세 줄 편지","lines":[{"speaker":"rudy","text":"…이거, 편지예요. 세 줄이에요."},{"speaker":"rudy","text":"열흘 걸렸어요. 지금 읽지 말고, 나중에요."}],"choices":[{"label":"지금 소리 내서 읽어도 되냐고 묻는다","reply":[{"speaker":"rudy","text":"…안 돼요. 아니, 돼요. 천천히요. 제 앞에서요."}]},{"label":"답장을 쓰겠다고 한다","reply":[{"speaker":"rudy","text":"답장이요? …그럼 짧게 써 줘요. 세 줄. 저도 열흘 걸려서 읽을 거예요."}]}]}
+
+ev:rudy:level 수평
+{"title":"수평","lines":[{"speaker":"narration","text":"루디가 선반 하나를 들고 한쪽 눈을 감고 있다."},{"speaker":"rudy","text":"…저기서 봐 줄래요. 기울었어요?"}],"choices":[{"label":"“왼쪽이 조금 높아요”","reply":[{"speaker":"narration","text":"루디가 대패를 두 번 밀었다. 다시 보라는 듯 고개를 까딱했다."},{"speaker":"rudy","text":"…고마워요. 눈이 좋네요."}]},{"label":"“완벽해요”","reply":[{"speaker":"narration","text":"루디가 수평자를 대 보더니 작게 웃었다."},{"speaker":"rudy","text":"…왼쪽이 높아요. 그래도 고마워요."}]}]}
+
+ev:rudy:love:2 의자 높이
+{"title":"의자 높이","lines":[{"speaker":"rudy","text":"…의자 높이 재도 돼요?"},{"speaker":"rudy","text":"앉아 봐요. 무릎이 이쯤이면… 됐어요. 이건 {player}님 의자예요."}],"choices":[{"label":"공방에 두고 같이 쓰자고 한다","reply":[{"speaker":"rudy","text":"…공방에요. 그럼 매일 와야겠네요. 의자가 기다리니까."}]},{"label":"루디 의자도 옆에 하나 만들자고 한다","reply":[{"speaker":"rudy","text":"둘이요. 나란히. …치수는 벌써 재 놨어요. 제 거."}]}]}
+
+ev:carpenter:small:benchTidy 작업대 정돈
+{"title":"작업대 정돈","lines":[{"speaker":"carpenter","text":"내 의자를 끝내고 보니 작업대가 엉망이오. 연장을 쓰는 순서대로 걸어 두겠소."}],"choices":[{"label":"연장을 같이 건다","reply":[{"speaker":"carpenter","text":"대패, 끌, 망치. 오른손에서 멀어지는 순서요. 그대로 걸어 주시오."}]},{"label":"걸어 두는 순서를 묻는다","reply":[{"speaker":"carpenter","text":"가장 자주 쓰는 것이 손에 가깝게. 그것뿐이오."}]}]}
+
+ev:postman:story:3 잠금 부탁
+{"title":"잠금 부탁","lines":[{"speaker":"narration","text":"목수 공방 앞. 편지 나르는 이웃이 가방을 작업대에 올려놓고 잠시 숨을 고른다."},{"speaker":"postman","text":"아서, 잠금이 자꾸 헐거워져요. 덮개는 그대로 두고, 잠금만 새로 해 줄 수 있을까요? 끈 고리도요."},{"speaker":"carpenter","text":"잠금은 나무로 깎겠소. 손가락 하나로 열리게. 비 오는 날 손이 젖어도 미끄러지지 않게 하겠소."}],"choices":[{"label":"부탁하는 동안 곁에 서 있는다","reply":[{"speaker":"postman","text":"곁에 있어 줘서 말이 덜 떨렸어요. 부탁은 받는 것보다 하는 게 어렵네요."}]},{"label":"잠금 모양을 같이 고른다","reply":[{"speaker":"carpenter","text":"둥근 모양이면 옷에 걸리지 않겠소. 그렇게 하지."}]},{"label":"끈 고리를 잡아 준다","reply":[{"speaker":"carpenter","text":"그대로 들고 계시오. 고리 구멍을 맞춰 보겠소."}]}]}
+
+ev:rudy:story:2 책 받침
+{"title":"책 받침","lines":[{"speaker":"narration","text":"저녁 무렵 공방. 루디가 비스듬한 나무판 하나를 작업대에 세운다. 책을 펼쳐 기대 놓는 받침이다. 목수가 대패를 내려놓고 곁에 선다."},{"speaker":"rudy","text":"…표지 꽂을 책을 올려놓을 데요. 손으로 들고 있으면 줄을 짚을 손이 없어서."},{"speaker":"carpenter","text":"기울기는 앉는 사람 눈에 맞추시오. 의자도 그렇고 받침도 그렇소. 남의 눈에 맞추면 오래 못 앉소."},{"speaker":"rudy","text":"…내 눈. 응."}],"choices":[{"label":"받침 다리를 같이 붙잡는다","reply":[{"speaker":"carpenter","text":"그대로 두시오. 루디, 못은 네가 박아라."},{"speaker":"narration","text":"루디가 못 세 개를 천천히 박았다. 받침이 흔들리지 않았다."}]},{"label":"기울기 맞추는 걸 본다","reply":[{"speaker":"narration","text":"루디가 받침 앞에 앉아 고개를 기울였다가, 대패로 한 번 밀고, 다시 앉았다. 세 번째에 고개를 끄덕였다."},{"speaker":"rudy","text":"…이 정도면 목이 안 아파요."}]},{"label":"어디에 둘 건지 묻는다","reply":[{"speaker":"rudy","text":"…집 안이요. 아버지 의자 곁."},{"speaker":"carpenter","text":"내 의자 곁이면 저녁마다 둘이 앉겠군. 나쁘지 않소."}]}]}
+
+ev:rudy:shelf 책장
+{"title":"책장","lines":[{"speaker":"narration","text":"루디의 작업대에 작은 책장 하나가 서 있다. 모서리가 둥글게 다듬어져 있다."},{"speaker":"rudy","text":"…{player}님 책상 옆 자리. 일곱 뼘 반. 재 봤어요. 몰래."}],"choices":[{"label":"“몰래 재러 왔었어요?”","reply":[{"speaker":"rudy","text":"…창문으로. 손 뼘은 멀리서도 돼요."},{"speaker":"narration","text":"루디의 귀가 새빨개졌다."}]},{"label":"책장을 쓰다듬는다","reply":[{"speaker":"rudy","text":"…좋아요? 다행이다."},{"speaker":"narration","text":"루디는 그 말만 하고 한참 대패를 만지작거렸다."}]}]}
+
+ev:rudy:readTogether 천천히 읽기
+{"title":"천천히 읽기","lines":[{"speaker":"rudy","text":"…서고 안에 같이 가요. 오늘은 한 줄만 읽어 볼래요. {player}님이 옆에 있으면."},{"speaker":"narration","text":"서고 긴 탁자에서, 루디가 손가락으로 줄을 짚으며 한 글자씩 소리 낸다. 느리지만 틀리지 않는다."}],"choices":[{"label":"다 읽을 때까지 기다린다","reply":[{"speaker":"rudy","text":"…다 읽었어요. 한 줄. 처음으로."},{"speaker":"narration","text":"루디가 책 모서리를 손 뼘으로 쟀다. 기쁠 때 하는 버릇인 것 같다."}]},{"label":"줄마다 박수를 친다","reply":[{"speaker":"rudy","text":"…서고에서 박수 치면 안 돼요."},{"speaker":"narration","text":"그래도 루디는 다음 줄을 더 빨리 읽었다."}]}]}
+
+ev:rudy:story:1 표지 모양
+{"title":"표지 모양","lines":[{"speaker":"narration","text":"공방 작업대 위에 손바닥만 한 나무 조각이 여러 개 놓여 있다. 둥근 것, 네모난 것, 끝이 뾰족한 것."},{"speaker":"rudy","text":"…책 사이에 끼울 표지요. 읽다 멈춘 데 꽂아 두는 거."},{"speaker":"rudy","text":"어디까지 읽었는지 잊어도 괜찮게. …모양은 제가 정할 거예요. 오래 걸려도."}],"choices":[{"label":"하나씩 손에 쥐어 보게 한다","reply":[{"speaker":"narration","text":"루디가 조각을 하나씩 손바닥에 올려 보았다. 끝이 수평자처럼 반듯한 조각에서 손이 멈췄다."},{"speaker":"rudy","text":"…이거. 손이 먼저 알아요."}]},{"label":"고를 때까지 말없이 기다린다","reply":[{"speaker":"rudy","text":"…네모. 끝 한쪽만 비스듬하게. 책 밖으로 조금 나오게."},{"speaker":"narration","text":"루디는 그 조각에 연필로 선을 하나 그었다."}]},{"label":"그림으로 그려 보자고 한다","reply":[{"speaker":"narration","text":"루디가 판자 귀퉁이에 모양 셋을 그렸다. 그리고 가운데 것에 동그라미를 쳤다."},{"speaker":"rudy","text":"그림으로 하니까 쉬워요. 말보다."}]}]}
+
+ev:rudy:label 표지의 글자
+{"title":"표지의 글자","lines":[{"speaker":"rudy","text":"…이거, 뭐라고 쓰여 있어요?"},{"speaker":"narration","text":"루디가 제본 골목에서 온 책 표지 나무판을 내민다. 위에 적힌 책 제목이 또렷하다. 루디는 판을 쥔 채 눈을 피한다."}],"choices":[{"label":"천천히 소리 내어 읽어 준다","reply":[{"speaker":"narration","text":"루디가 입 모양으로 따라 읽었다. 두 번."},{"speaker":"rudy","text":"…고마워요. 이거 비밀이에요."}]},{"label":"“혹시 읽기 어려워요?”","reply":[{"speaker":"rudy","text":"…줄이 춤춰요. 어릴 때부터."},{"speaker":"narration","text":"루디는 판을 내려놓고 오래 손을 털었다."},{"speaker":"rudy","text":"처음 말해요."}]}]}
+
+ev:rudy:home:1 현관 선반
+{"title":"현관 선반","lines":[{"speaker":"rudy","text":"…집 현관에 선반 하나 달려고요."},{"speaker":"rudy","text":"신발 놓을 거요, 책 놓을 거요?"}],"choices":[{"label":"책 놓는 선반","reply":[{"speaker":"rudy","text":"…책이요. 그럼 눈높이로요. 지나갈 때마다 등이 보이게."}]},{"label":"반은 신발, 반은 책","reply":[{"speaker":"rudy","text":"반반이요. …책이 신발 쪽으로 넘어가면 제가 다시 옮겨 놓을게요."}]}]}
+
+ev:carpenter:story:4 의자 곁의 차
+{"title":"의자 곁의 차","lines":[{"speaker":"narration","text":"목수가 완성한 의자를 집 안에 둔다. 루디가 차 두 잔을 가져온다."},{"speaker":"carpenter","text":"오늘 새 부탁은 내일 살펴보겠소. 내 집에도 앉을 자리가 있어야지."},{"speaker":"rudy","text":"그럼 오늘은 손 쉬자. 나도 여기 있을게."}],"choices":[{"label":"의자 곁에 앉는다","reply":[{"speaker":"carpenter","text":"여기 자리를 비워 두었소."}]},{"label":"함께 차를 마신다","reply":[{"speaker":"carpenter","text":"차가 식기 전에 마십시다."}]},{"label":"말없이 함께 쉰다","reply":[{"speaker":"carpenter","text":"…좋소. 잠깐 이대로 있읍시다."}]}]}

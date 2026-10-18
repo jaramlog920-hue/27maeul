@@ -1,3 +1,4 @@
+import {drawTeaRoomBackground} from './tea-room-background'
 import type {Avatar} from '../engine/avatar'
 import type {FinalePerson} from './library-finale-art'
 import {person} from './milestone-moments-art'
@@ -5,18 +6,7 @@ import {person} from './milestone-moments-art'
 export function drawSnacksAndCups(g:CanvasRenderingContext2D,w:number,h:number,t:number,avatar:Avatar|null,host:FinalePerson,baker:FinalePerson,beat:number,choice?:number|null){
  const p=(x:number,y:number,c:string,a=1,b=1)=>{g.fillStyle=c;g.fillRect(Math.round(x),Math.round(y),Math.ceil(a),Math.ceil(b))}
  const cx=Math.round(w/2),f=Math.round(h*(h<=170?.48:.42)),a=Math.min(1,t/1.6),chosen=beat>=2&&choice!=null
- p(0,0,'#e0d6b5',w,h);p(0,f,'#b49b78',w,h-f)
- for(let y=f+5;y<h;y+=10){p(0,y,'#a58b6a',w,1);for(let x=(y%3)*33;x<w;x+=65)p(x,y,'#a58b6a',1,10)}
- p(0,f-3,'#92795b',w,3)
- // 찻집의 넓은 격자창과 차통 선반. 창 아래 작은 잎 그림자가 흔들린다.
- p(cx-105,f-66,'#9c8160',62,49);p(cx-102,f-63,'#c9d9bf',56,43)
- p(cx-102,f-43,'#97b28d',56,23)
- for(let i=0;i<4;i++){p(cx-101+i*14,f-34-(i%2)*5,'#789871',14,9);p(cx-100+i*14,f-27,'#b3c39b',12,5)}
- p(cx-77,f-63,'#a18a64',3,43);p(cx-102,f-44,'#a18a64',56,3)
- p(cx-110,f-69,'#8c765b',72,3);p(cx-108,f-66,'#ddd0aa',6,45);p(cx-47,f-66,'#ddd0aa',6,45)
- p(cx+53,f-56,'#947859',55,4)
- for(let i=0;i<3;i++){p(cx+59+i*15,f-72,'#748579',9,16);p(cx+58+i*15,f-74,'#576e65',11,3);p(cx+61+i*15,f-65,'#ddd3ad',5,5)}
- p(cx+67,f-25,'#b69770',44,5);p(cx+70,f-20,'#8f7051',3,27);p(cx+105,f-20,'#8f7051',3,27)
+ drawTeaRoomBackground(p,w,h,f)
  // 보조 탁자에 작은 찻주전자. 시음 탁자에는 찻잔을 정확히 세 개만 그린다.
  const kettle=(x:number,y:number,tilt=false)=>{p(x,y,'#7c9187',10,8);p(x+2,y-2,'#9caf9b',6,3);p(x+4,y-4,'#677e74',2,2);p(x-3,y+1,'#7c9187',4,3);p(x+10,y,'#657e74',3,6);p(x+11,y+2,'#e0d6b5',1,2);if(tilt)p(x-3,y+4,'#bd9367',1,6)}
  const pour=chosen&&choice===1

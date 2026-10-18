@@ -1,0 +1,40 @@
+{
+  "id": "tilly:flower",
+  "title": "정자의 저녁",
+  "at": {
+    "x": 12,
+    "y": 32
+  },
+  "lines": [
+    {
+      "speaker": "narration",
+      "text": "정자 곁에 틸리가 서 있다. 손가락 사이로 무언가를 굴리고 있다."
+    },
+    {
+      "speaker": "narration",
+      "text": "손톱만 한 쇠꽃이다. 꽃잎 하나하나에 줄 자국이 곱다."
+    },
+    {
+      "speaker": "tilly",
+      "text": "…쓸모없는 거. 그래도 예쁘잖아."
+    },
+    {
+      "speaker": "narration",
+      "text": "틸리는 쇠꽃을 주머니 깊숙이 넣고 호숫가 쪽으로 걸어갔다."
+    }
+  ],
+  "memory": "saw:ironFlower",
+  "when": {
+    "from": 1140,
+    "to": 1200,
+    "weather": [
+      "dry"
+    ],
+    "season": [
+      "autumn",
+      "summer"
+    ]
+  },
+  "stage": 3,
+  "npc": "tilly"
+}

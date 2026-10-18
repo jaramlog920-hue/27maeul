@@ -1,0 +1,12 @@
+import { CONTENT } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import { newGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/game'
+import { completeBibleFinale } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/library-finale'
+import { BOOKS } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/types'
+import { OT_BOOKS, otRow } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/ot-books'
+it('ending verses', () => {
+  const g = newGame(CONTENT)
+  const otProgress = Object.fromEntries(OT_BOOKS.map(b => [b, { completed: Array.from({ length: otRow(b).chapters }, (_, i) => i + 1), arrangement: {} }]))
+  const before = { ...g, otProgress, shelved: Object.fromEntries(BOOKS.slice(1).map(b => [b, 0])) } as any
+  const next = { ...before, shelved: Object.fromEntries(BOOKS.map(b => [b, 0])), copyStats: { ...g.copyStats, verses: 7957 }, otCopyStats: { ...g.copyStats, verses: 23145 } }
+  console.log('ENDING', completeBibleFinale(before, next).flags.bibleEndingVerses)
+})

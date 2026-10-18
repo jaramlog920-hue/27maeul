@@ -1,8 +1,9 @@
+import {newbornArt} from './newborn-art'
 import { withLookDefaults, type FullAvatar } from '../engine/avatar'
 import type { GuestKind } from '../engine/game'
 import type { GenPerson } from '../engine/gen'
 import { FURNITURE_ART, FURNI_PALETTE } from './furniture-art'
-import { SMALL_PALETTE, spriteRows, writerPalette } from './sprites'
+import { spriteRows, writerPalette } from './sprites'
 import { furnitureUseFrame, USE_PROP_PALETTE } from './furniture-use-motion'
 
 export const MEETING_EMOTES = ['heart', 'laugh', 'talk', 'sweat', 'angry'] as const
@@ -32,19 +33,11 @@ export function meetingEmoteRows(kind: MeetingEmote): string[] {
 /** 누운 얼굴과 가로 포대기. 뒤 요람 → 아기 → 앞 난간으로 합성한다. */
 export function householdCradleFrame(baby: Pick<GenPerson, 'look' | 'name' | 'avatar' | 'hair'> | null, frame: number, sleeping: boolean) {
   const avatar = withLookDefaults({ look: baby?.look ?? 'f', name: baby?.name ?? '', ...baby?.avatar, ...(baby?.hair ? { hairColor: baby.hair } : {}) })
-  const pal: Record<string, string> = { ...writerPalette('spring', avatar), w: SMALL_PALETTE.W, W: SMALL_PALETTE.y }
+  const newborn=newbornArt(avatar,frame,sleeping),pal:Record<string,string>=newborn.palette
   const crib = FURNITURE_ART.homeCradle.rows.map(r => r.replaceAll('z', '.'))
   const actor = Array.from({ length: 16 }, () => Array<string>(16).fill('.'))
-  const blink = sleeping || Math.abs(frame) % 4 === 2
-  // 8×5 silhouette stays between the posts, above the foreground rail.
-  const babyRows = [
-    '.hh.wwww',
-    'hsswwWww',
-    blink ? 'skswWwWw' : 'soswWwWw',
-    's+swwWWw',
-    '.ss.wwww',
-  ]
-  if (baby) babyRows.forEach((r, y) => [...r].forEach((c, x) => { if (c !== '.') actor[y + 5][x + 4] = c }))
+  // 유저 돌보기의 원본 몸체를 난간 위의 같은 자리 안에 놓는다.
+  if(baby)newborn.rows.forEach((r,y)=>[...r].forEach((c,x)=>{if(c!=='.')actor[y+4][x+4]=c}))
   const front = crib.map((r, y) => y >= 10 ? r : '.'.repeat(16))
   return { back: crib, actor: actor.map(r => r.join('')), front, actorPalette: pal, propPalette: FURNI_PALETTE }
 }

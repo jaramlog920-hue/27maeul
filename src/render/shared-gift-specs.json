@@ -1,0 +1,317 @@
+{
+  "gift:postman:9": {
+    "npc": "postman",
+    "items": {
+      "basket": 1
+    },
+    "original": [
+      "편지를 담아 다니던 바구니예요. 새로 하나 엮었으니 이건 드릴게요."
+    ]
+  },
+  "gift:grandpa:9": {
+    "npc": "grandpa",
+    "items": {
+      "bowl": 1
+    },
+    "original": [
+      "내가 아끼던 그릇이네. 자네가 쓰면 좋겠네."
+    ]
+  },
+  "gift:smith:9": {
+    "npc": "smith",
+    "items": {
+      "nightstand": 1
+    },
+    "original": [
+      "{player}님 방에 둘 협탁을 짰소. 쇠 장식도 달았소."
+    ]
+  },
+  "gift:apothecary:9": {
+    "npc": "apothecary",
+    "items": {
+      "teapot": 1
+    },
+    "original": [
+      "약차 우릴 때 쓰는 주전자예요. 우리 집에서 제일 아끼는 거예요."
+    ]
+  },
+  "gift:carpenter:9": {
+    "npc": "carpenter",
+    "items": {
+      "bookcase": 1
+    },
+    "original": [
+      "책 꽂을 책장을 짰어요. 권수가 늘었으니 자리가 필요하죠."
+    ]
+  },
+  "gift:weaver:9": {
+    "npc": "weaver",
+    "items": {
+      "basket": 1
+    },
+    "original": [
+      "이 바구니는 제가 이 마을에서 처음 짠 거예요."
+    ]
+  },
+  "gift:merchant:9": {
+    "npc": "merchant",
+    "items": {
+      "rug": 1
+    },
+    "original": [
+      "먼 길에서 구한 제일 좋은 깔개야. 네 방에 어울릴 거야."
+    ]
+  },
+  "gift:shepherd:9": {
+    "npc": "shepherd",
+    "items": {
+      "cushion": 1
+    },
+    "original": [
+      "제일 좋은 털로 방석을 또 만들었어요. 둘이면 손님도 앉겠죠."
+    ]
+  },
+  "gift:presser:9": {
+    "npc": "presser",
+    "items": {
+      "jar": 1
+    },
+    "original": [
+      "이 물병엔 올해 첫 기름을 담았었어요. 받아 줘요."
+    ]
+  },
+  "gift:child:9": {
+    "npc": "child",
+    "items": {
+      "bird": 1
+    },
+    "original": [
+      "그때보다 훨씬 잘 깎은 나무 새예요. 제일 아끼는 거라 드려요."
+    ]
+  },
+  "gift:beekeeper:9": {
+    "npc": "beekeeper",
+    "items": {
+      "jar": 1
+    },
+    "original": [
+      "제일 예쁜 물병에 꿀 향이 배었어요. 가져가요."
+    ]
+  },
+  "gift:fisher:9": {
+    "npc": "fisher",
+    "items": {
+      "bowl": 1
+    },
+    "original": [
+      "물가에서 쓰던 그릇이에요. 오래 써서 손에 익었어요."
+    ]
+  },
+  "gift:baker:9": {
+    "npc": "baker",
+    "items": {
+      "candle": 1
+    },
+    "original": [
+      "늘 고마워요. 우리 집 식탁에 올려 두던 촛대예요. 이젠 {player}님 거예요."
+    ]
+  },
+  "gift:postman:3": {
+    "npc": "postman",
+    "items": {
+      "papyrus": 2
+    },
+    "original": [
+      "편지 싸는 종이가 남았어요. 글씨 쓰실 때 쓰세요."
+    ]
+  },
+  "gift:grandpa:3": {
+    "npc": "grandpa",
+    "items": {
+      "fig": 3
+    },
+    "original": [
+      "말린 무화과네. 출출할 때 들게."
+    ]
+  },
+  "gift:grandpa:6": {
+    "npc": "grandpa",
+    "items": {
+      "table": 1
+    },
+    "original": [
+      "젊을 때 짠 식탁이라네. 자네 집에 두고 쓰게."
+    ]
+  },
+  "gift:smith:3": {
+    "npc": "smith",
+    "items": {
+      "brightLamp": 1
+    },
+    "original": [
+      "밤에 쓰는 걸 보았소. 기름을 덜 먹는 등잔이오."
+    ]
+  },
+  "gift:apothecary:3": {
+    "npc": "apothecary",
+    "items": {
+      "seedHerb": 3
+    },
+    "original": [
+      "텃밭에 심어 보세요. 잘 자라는 약초 씨앗이에요."
+    ]
+  },
+  "gift:apothecary:6": {
+    "npc": "apothecary",
+    "items": {
+      "pot": 1
+    },
+    "original": [
+      "약초 달이던 작은 냄비예요. 방에서도 쓸 데가 있을 거예요."
+    ]
+  },
+  "gift:carpenter:3": {
+    "npc": "carpenter",
+    "items": {
+      "stool": 1
+    },
+    "original": [
+      "자투리로 걸상 하나 만들었어요. 앉아 보세요."
+    ]
+  },
+  "gift:carpenter:6": {
+    "npc": "carpenter",
+    "items": {
+      "chair": 1
+    },
+    "original": [
+      "등받이 있는 의자예요. 글씨 쓰다 허리 펴세요."
+    ]
+  },
+  "gift:weaver:3": {
+    "npc": "weaver",
+    "items": {
+      "cushion": 1
+    },
+    "original": [
+      "천 조각으로 방석을 지었어요."
+    ]
+  },
+  "gift:weaver:6": {
+    "npc": "weaver",
+    "items": {
+      "rug": 1
+    },
+    "original": [
+      "제가 짠 깔개예요. 바닥에 깔아 보세요."
+    ]
+  },
+  "gift:merchant:3": {
+    "npc": "merchant",
+    "items": {
+      "papyrus": 2
+    },
+    "original": [
+      "글 쓰는 사람한테는 이게 제일이지. 파피루스 두 장이야."
+    ]
+  },
+  "gift:shepherd:3": {
+    "npc": "shepherd",
+    "items": {
+      "cushion": 1
+    },
+    "original": [
+      "양털로 방석을 만들었어요. 오래 앉아 있어도 편할 거예요."
+    ]
+  },
+  "gift:shepherd:6": {
+    "npc": "shepherd",
+    "items": {
+      "wool": 3
+    },
+    "original": [
+      "털을 넉넉히 깎았어요. 담요 짜는 데 써요."
+    ]
+  },
+  "gift:presser:3": {
+    "npc": "presser",
+    "items": {
+      "oil": 2
+    },
+    "original": [
+      "갓 짠 기름 두 병이에요. 등잔에 써요."
+    ]
+  },
+  "gift:child:3": {
+    "npc": "child",
+    "items": {
+      "vase": 1
+    },
+    "original": [
+      "들꽃 꺾어 왔어요. 꽃병에 꽂아 두세요!"
+    ]
+  },
+  "gift:child:6": {
+    "npc": "child",
+    "items": {
+      "pot": 1
+    },
+    "original": [
+      "제가 키운 풀이에요. 창가에 두세요."
+    ]
+  },
+  "gift:beekeeper:3": {
+    "npc": "beekeeper",
+    "items": {
+      "honey": 2
+    },
+    "original": [
+      "꿀 두 병이에요. 빵에 발라 먹어요."
+    ]
+  },
+  "gift:beekeeper:6": {
+    "npc": "beekeeper",
+    "items": {
+      "candle": 1
+    },
+    "original": [
+      "밀랍으로 초를 만들었어요."
+    ]
+  },
+  "gift:fisher:3": {
+    "npc": "fisher",
+    "items": {
+      "reed": 3
+    },
+    "original": [
+      "갈대를 넉넉히 베어 왔어요. 종이 만드는 데 보태세요."
+    ]
+  },
+  "gift:fisher:6": {
+    "npc": "fisher",
+    "items": {
+      "basket": 1
+    },
+    "original": [
+      "고기 담던 바구니인데 깨끗이 씻었어요. 열매 담기 좋아요."
+    ]
+  },
+  "gift:baker:3": {
+    "npc": "baker",
+    "items": {
+      "basket": 1
+    },
+    "original": [
+      "빵 담아 두라고 바구니 하나 짰어요."
+    ]
+  },
+  "gift:baker:6": {
+    "npc": "baker",
+    "items": {
+      "rug": 1
+    },
+    "original": [
+      "집에 깔개 하나 깔아요. 발이 따뜻할 거예요."
+    ]
+  }
+}

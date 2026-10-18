@@ -24,9 +24,9 @@ it('한 권 더는 게임에서도 새 렌더러를 사용하며 닫기로 보�
  for(const key of ['clock','inv','hearts','flags','shelved','bound','album'] as const)expect(after[key]).toEqual(before[key])
  expect(after.scenes).not.toContain('shelved')
 })
-it('한 권 더 미리보기는 게임과 앨범 저장을 변경하지 않는다',()=>{
+it.each(['shelved','bookBound','ev:poppy:love:1','ev:juniper:story:2','ev:penelope:unpickTalk','ev:beekeeper:story:4'])('%s 미리보기는 게임과 앨범 저장을 변경하지 않는다',id=>{
  const before=useGame.getState().game
- render(<AuthoredStoryScene id="shelved" title="한 권 더" preview><p>미리보기</p></AuthoredStoryScene>)
+ render(<AuthoredStoryScene id={id} title={SCENES[id].title} preview><p>미리보기</p></AuthoredStoryScene>)
  expect(useGame.getState().game).toBe(before)
  expect(localStorage.length).toBe(0)
 })
@@ -68,6 +68,37 @@ it.each([0,1,2])('한 사람 앞에서의 선택 %s는 여섯 줄과 두 답변�
  expect(useGame.getState().game.clock).toEqual(before.clock)
  expect(useGame.getState().game.inv).toEqual(before.inv)
  expect(useGame.getState().game.hearts).toEqual(before.hearts)
+})
+it.each([0,1])('한 올 선택 %s는 원래 대사·두 답변과 시간·소지품을 보존한다',choice=>{
+ const id='ev:penelope:unpickTalk',before=useGame.getState().game
+ act(()=>useGame.setState({game:{...before,scenes:[id]},modal:{kind:'scene',id}}))
+ render(<ModalLayer/>)
+ expect(screen.getByRole('dialog',{name:SCENES[id].title})).toHaveClass('authored-story-scene')
+ expect(screen.getByText(SCENES[id].lines[0].text)).toBeInTheDocument()
+ fireEvent.click(screen.getByRole('button',{name:'다음'}))
+ fireEvent.click(screen.getByRole('button',{name:SCENES[id].choices![choice].label}))
+ for(const [i,line] of SCENES[id].choices![choice].reply.entries()){
+  if(i)fireEvent.click(screen.getByRole('button',{name:'다음'}))
+  expect(screen.getByText(line.text)).toBeInTheDocument()
+ }
+ fireEvent.click(screen.getByRole('button',{name:'닫기'}))
+ expect(useGame.getState().game.clock).toEqual(before.clock)
+ expect(useGame.getState().game.inv).toEqual(before.inv)
+ expect(useGame.getState().game.hearts).toEqual(before.hearts)
+})
+it.each([0,1,2])('한 장의 관찰 선택 %s는 네 줄과 각 한 답변을 보존한다',choice=>{
+ const id='ev:beekeeper:story:4',before=useGame.getState().game
+ act(()=>useGame.setState({game:{...before,scenes:[id]},modal:{kind:'scene',id}}))
+ render(<ModalLayer/>)
+ expect(screen.getByRole('dialog',{name:SCENES[id].title})).toHaveClass('authored-story-scene')
+ for(let i=1;i<SCENES[id].lines.length;i++)fireEvent.click(screen.getByRole('button',{name:'다음'}))
+ fireEvent.click(screen.getByRole('button',{name:SCENES[id].choices![choice].label}))
+ expect(screen.getByText(SCENES[id].choices![choice].reply[0].text)).toBeInTheDocument()
+ fireEvent.click(screen.getByRole('button',{name:'닫기'}))
+ expect(useGame.getState().game.clock).toEqual(before.clock)
+ expect(useGame.getState().game.inv).toEqual(before.inv)
+ expect(useGame.getState().game.hearts).toEqual(before.hearts)
+ expect(useGame.getState().game.scenes).not.toContain(id)
 })
 it('실제 등록 목록에서 ㅎ 담당 범위를 읽는다',()=>{
  const entries=eventPreviewEntries().filter(e=>/^[하-힣]/.test(e.title)).sort((a,b)=>a.title.localeCompare(b.title,'ko'))

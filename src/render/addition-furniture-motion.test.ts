@@ -1,3 +1,5 @@
+import { PET_FURNITURE } from '../engine/family-furniture'
+import { petFurnitureArtRows } from './family-furniture-art'
 import { describe, expect, it } from 'vitest'
 import { ADDITION_ART, ADDITION_FACINGS, ADDITION_FURNITURE_DIRECTIONS } from './addition-furniture-directions'
 import { ADDITION_USE_ACTIONS, ANIMATED_ADDITION_FURNITURE, additionObjectFrame, additionUseFrame } from './addition-furniture-motion'
@@ -5,15 +7,18 @@ import { FURNI_PALETTE } from './furniture-art'
 import { writerPalette } from './sprites'
 import { withLookDefaults } from '../engine/avatar'
 import { motionBodyRows } from './motion-body'
+import { isCopyFurniture } from '../engine/copy-furniture'
+import { sizeOf } from '../engine/room'
 
 describe('additional furniture views and use motion', () => {
   it('keeps furniture dimensions, palettes and separately drawn directions valid', () => {
-    expect(Object.keys(ADDITION_FURNITURE_DIRECTIONS)).toHaveLength(48)
+    expect(Object.keys(ADDITION_FURNITURE_DIRECTIONS)).toHaveLength(108)
     for (const [id, views] of Object.entries(ADDITION_FURNITURE_DIRECTIONS)) {
       if (!['rockingChair', 'toyCart'].includes(id)) expect(views.down).toEqual(ADDITION_ART[id])
-      expect(views.right.w).toBe(views.down.h)
-      expect(views.right.h).toBe(views.down.w)
-      expect(views.left.rows).toEqual(views.right.rows.map(row => [...row].reverse().join('')))
+      if(isCopyFurniture(id))expect({w:views.right.w,h:views.right.h}).toEqual(sizeOf(id,'right'))
+      else {expect(views.right.w).toBe(views.down.h);expect(views.right.h).toBe(views.down.w)}
+      if ((PET_FURNITURE as readonly string[]).includes(id)) expect(views.left.rows).toEqual(petFurnitureArtRows(id, 'left'))
+      else if(!isCopyFurniture(id)) expect(views.left.rows).toEqual(views.right.rows.map(row => [...row].reverse().join('')))
       for (const facing of ADDITION_FACINGS) {
         const art = views[facing]
         expect(art.rows).toHaveLength(art.h * 16)

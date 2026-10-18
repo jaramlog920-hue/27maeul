@@ -46,17 +46,12 @@ import { entryFront, roomSlotAt, setArchiveRooms, setNewlandOverlay, setNewlandR
 import { overlayFor, sanitizeNewlandBuild, warpsFor } from './newland-build'
 import { homeAtSlot, sanitizeRooms } from './newland-rooms'
 import { BOOKS, type Book, type GameContent, type ItemId } from './types'
+import { commitStorageBatch, flushGameStorage, gameStorage, reportGameStorageError, withStorageBatch } from './game-storage'
 
 export const SAVE_KEY = 'twenty-seven/save'
 export const SAVE_VERSION = 1
 
-function storage(): Storage | undefined {
-  try {
-    return globalThis.localStorage
-  } catch {
-    return undefined
-  }
-}
+function storage(): Storage | null { return gameStorage() }
 
 /** 제거된 물 긷는 아이 글자 공부의 옛 저장 흔적만 정리한다. */
 function retireWaterChildLessons(s:GameState):GameState {
@@ -73,7 +68,7 @@ export function serialize(s: GameState): string {
   s = retireWaterChildLessons(s)
   // 걷던 길·자율 동작·이웃 위치는 저장하지 않는다 (doze의 Infinity는 JSON이 못 담는다)
   // 가구 쓰는 동작(act)도 그림만이라 저장하지 않는다
-  return JSON.stringify({ ...s, player: { ...s.player, path: [] }, target: null, idle: IDLE_RESET, act: undefined, npcs: {}, emotes: undefined })
+  return JSON.stringify({ ...s, player: { ...s.player, path: [] }, target: null, idle: IDLE_RESET, act: undefined, furnitureAuto: undefined, npcs: {}, emotes: undefined })
 }
 
 /**
@@ -257,6 +252,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   void _inv
   const out: GameState = {
     ...sRest,
+    furnitureAuto: undefined,
     player,
     companion: sanitizeCompanion(fresh && s.companion ? { ...s.companion, ...HOME_ENTRY, path: [] } : s.companion),
     homeLevel,
@@ -456,7 +452,7 @@ export function deserialize(raw: string | null, content: GameContent): GameState
     // 나중에 더한 칸이 빠진 저장도 받아 준다
     const fresh = newGame(content)
     // 필사 칸(계획 14)이 없는 옛 저장은 새 게임 기본값으로 덮지 않고 null로 넘긴다 — sanitize가 옛 저장임을 알아보게
-    return settle(sanitize({ ...fresh, ...o, pieceLayout: o.pieceLayout, copy: isObj(o.copy) ? o.copy : null, version: SAVE_VERSION } as GameState, content), content)
+    return settle(sanitize({ ...fresh, ...o, furnitureAuto: undefined, pieceLayout: o.pieceLayout, copy: isObj(o.copy) ? o.copy : null, version: SAVE_VERSION } as GameState, content), content)
   } catch {
     return null
   }
@@ -488,9 +484,20 @@ export function setActiveSlot(slot: string, store: Storage | null | undefined = 
   erased = false
   try {
     store?.setItem(ACTIVE_KEY, slot)
-  } catch {
-    /* 저장소를 못 쓰는 환경 */
+  } catch (error) {
+    reportGameStorageError(error)
   }
+}
+
+export async function selectSaveAsync(slot: string): Promise<boolean> {
+  const store = storage()
+  if (!store) return false
+  try {
+    await commitStorageBatch(store, () => store.setItem(ACTIVE_KEY, slot))
+    active = slot
+    erased = false
+    return true
+  } catch (error) { reportGameStorageError(error); return false }
 }
 
 /** 불러오기 목록에 보일 한 칸 */
@@ -555,24 +562,31 @@ export function listSaves(store: Storage | null | undefined = storage()): SaveSl
 export function newSlot(store: Storage | null | undefined = storage()): string {
   const used = new Set(store ? slotIds(store) : [])
   for (let i = 1; i < 10000; i++) if (!used.has(String(i))) return String(i)
-  return String(Date.now() % 10000)
+  throw new Error('저장 칸이 모두 찼어요. 오래된 저장을 백업한 뒤 지워 주세요.')
 }
 
-export function saveGame(s: GameState, store: Storage | null | undefined = storage()): boolean {
+export function saveGame(s: GameState, store: Storage | null | undefined = storage(), sourceSlot?: string): boolean {
   if (erased) return true
   try {
     if (!store) return false
-    const slot = activeSlot(store)
-    store.setItem(slotKey(slot), serialize(s))
-    try {
+    const slot = sourceSlot ?? activeSlot(store)
+    const text = serialize(s)
+    if (store.getItem(slotKey(slot)) === text) return true
+    withStorageBatch(store, () => {
+      store.setItem(slotKey(slot), text)
       store.setItem(META_KEY(slot), JSON.stringify({ savedAt: Date.now() }))
-    } catch {
-      /* 저장 시각만 못 남김 */
-    }
+    })
     return true
-  } catch {
+  } catch (error) {
+    reportGameStorageError(error)
     return false
   }
+}
+
+/** 화면 이동은 메모리 반영이 아니라 실제 저장 완료를 기다린다. */
+export async function saveGameAsync(s: GameState): Promise<boolean> {
+  if (!saveGame(s)) return false
+  try { await flushGameStorage(); return true } catch { return false }
 }
 
 /**
@@ -597,107 +611,120 @@ function albumPics(store: Storage, slot: string): [string, string][] {
 }
 function deviceSettings(store: Storage): [string, string][] {
   const out: [string, string][] = []
+  try {
   for (let i = 0; i < store.length; i++) {
     const k = store.key(i)
-    if (!k?.startsWith('twenty-seven/') || SETTING_SKIP(k)) continue
+    if (!k || !isDeviceSetting(k)) continue
     const v = store.getItem(k)
     if (v !== null) out.push([k, v])
   }
+  } catch { /* 기기 설정을 읽지 못해도 진행·사진 백업은 가능해야 한다. */ }
   return out
 }
-export function exportSave(s: GameState, store: Storage | null | undefined = storage()): string {
-  const album = store ? Object.fromEntries(albumPics(store, activeSlot(store))) : {}
-  const settings = store ? Object.fromEntries(deviceSettings(store)) : {}
+export function exportSave(s: GameState, store: Storage | null | undefined = storage(), slot?: string): string {
+  const album = store ? Object.fromEntries(albumPics(store, slot ?? activeSlot(store))) : {}
+  // 진행·사진은 IndexedDB, 작은 기기 설정은 원래 localStorage에 둔다.
+  const settings = Object.fromEntries(deviceSettings(settingsStorage(store)))
   return JSON.stringify({ app: EXPORT_APP, v: 2, at: Date.now(), save: serialize(s), album, settings })
 }
-export type ImportResult = { slot: string; pics: number; picsMissed: number; settings: number } | { error: 'format' | 'space' }
-/** 가져온 파일을 새 칸에 넣고 그 칸을 이어 할 칸으로 정한다.
- *  'format' 이 게임 저장이 아님, 'space' 기기 저장 공간이 모자람 (앨범 그림이 많을 때). 사진은 자리가 모자라면 그 장만 빠진다 (picsMissed) */
-export function importSave(text: string, content: GameContent, store: Storage | null | undefined = storage()): ImportResult {
-  if (!store) return { error: 'space' }
-  let raw: { app?: unknown; save?: unknown; album?: unknown; settings?: unknown }
+const isDeviceSetting = (k: string) => k === 'twenty-seven-zoom' || (k.startsWith('twenty-seven/') && !SETTING_SKIP(k))
+function settingsStorage(store: Storage | null | undefined): Storage {
+  // 명시적으로 넘긴 메모리 저장소는 테스트·기존 도구와 호환한다.
+  try { if (store === gameStorage()) return globalThis.localStorage } catch { /* 설정 읽기 불가 */ }
+  return store ?? { length: 0, key: () => null, getItem: () => null, setItem: () => {}, removeItem: () => {}, clear: () => {} }
+}
+export type ImportResult = { slot: string; pics: number; picsMissed: number; settings: number; settingsMissed?: number } | { error: 'format' | 'space' }
+/** 파일 형식은 기존 v1·v2와 호환한다. 잘못된 사진을 조용히 빼지 않는다. */
+function readImport(text: string, content: GameContent) {
   try {
-    // 메모장 등에서 저장하며 붙은 BOM·앞뒤 빈칸은 걷어 낸다
-    raw = JSON.parse(text.replace(/^\uFEFF/, '').trim())
-  } catch {
-    return { error: 'format' }
-  }
-  if (raw?.app !== EXPORT_APP || typeof raw.save !== 'string' || !deserialize(raw.save, content)) return { error: 'format' }
-  const slot = newSlot(store)
-  try {
-    store.setItem(slotKey(slot), raw.save)
-  } catch {
-    return { error: 'space' }
-  }
-  try {
-    store.setItem(META_KEY(slot), JSON.stringify({ savedAt: Date.now() }))
-  } catch {
-    /* 저장 시각만 못 남김 */
-  }
-  let pics = 0
-  let picsMissed = 0
-  const album = raw.album && typeof raw.album === 'object' ? (raw.album as Record<string, unknown>) : {}
-  for (const [id, v] of Object.entries(album)) {
-    if (typeof v !== 'string' || !id || id.includes('/')) continue
-    try {
-      store.setItem(albumPrefix(slot) + id, v)
-      pics++
-    } catch {
-      picsMissed++
-    }
-  }
+    const raw = JSON.parse(text.replace(/^\uFEFF/, '').trim())
+    if (!isObj(raw) || raw.app !== EXPORT_APP || typeof raw.save !== 'string' || !deserialize(raw.save, content)) return null
+    if (raw.album !== undefined && (!isObj(raw.album) || Object.entries(raw.album).some(([id, value]) => !id || id.includes('/') || typeof value !== 'string'))) return null
+    return { save: raw.save as string, album: Object.entries(raw.album ?? {}) as [string, string][],
+      settings: Object.entries(isObj(raw.settings) ? raw.settings : {}).filter(([k, v]) => isDeviceSetting(k) && typeof v === 'string') as [string, string][] }
+  } catch { return null }
+}
+function putImported(store: Storage, slot: string, raw: NonNullable<ReturnType<typeof readImport>>) {
+  store.setItem(slotKey(slot), raw.save)
+  store.setItem(META_KEY(slot), JSON.stringify({ savedAt: Date.now() }))
+  for (const [id, value] of raw.album) store.setItem(albumPrefix(slot) + id, value)
+  store.setItem(ACTIVE_KEY, slot)
+}
+function applyImportedSettings(store: Storage, entries: [string, string][]) {
   let settings = 0
-  const set = raw.settings && typeof raw.settings === 'object' ? (raw.settings as Record<string, unknown>) : {}
-  for (const [k, v] of Object.entries(set)) {
-    if (typeof v !== 'string' || !k.startsWith('twenty-seven/') || SETTING_SKIP(k)) continue
-    try {
-      store.setItem(k, v)
-      settings++
-    } catch {
-      /* 설정 하나쯤 못 넣어도 저장은 들어왔다 */
-    }
+  for (const [key, value] of entries) {
+    try { store.setItem(key, value); settings++ } catch { /* 적용하지 못한 설정은 개수로 알린다 */ }
   }
-  setActiveSlot(slot, store)
-  return { slot, pics, picsMissed, settings }
+  const settingsMissed = entries.length - settings
+  return { settings, ...(settingsMissed ? { settingsMissed } : {}) }
+}
+/** 동기 도구와 예전 검사 호환용. 실제 화면은 importSaveAsync로 완료를 확인한다. */
+export function importSave(text: string, content: GameContent, store: Storage | null | undefined = storage()): ImportResult {
+  const raw = readImport(text, content)
+  if (!raw) return { error: 'format' }
+  if (!store) return { error: 'space' }
+  try {
+    const slot = newSlot(store)
+    withStorageBatch(store, () => putImported(store, slot, raw))
+    active = slot
+    erased = false
+    return { slot, pics: raw.album.length, picsMissed: 0, ...applyImportedSettings(settingsStorage(store), raw.settings) }
+  } catch (error) { reportGameStorageError(error); return { error: 'space' } }
+}
+/** 진행·사진·시각·이어 할 칸을 하나의 트랜잭션으로 저장한다. 실패 시 전부 원복한다. */
+export async function importSaveAsync(text: string, content: GameContent): Promise<ImportResult> {
+  const raw = readImport(text, content)
+  if (!raw) return { error: 'format' }
+  const store = storage()
+  if (!store) return { error: 'space' }
+  try {
+    const slot = await commitStorageBatch(store, () => {
+      const id = newSlot(store)
+      putImported(store, id, raw)
+      return id
+    })
+    active = slot
+    erased = false
+    return { slot, pics: raw.album.length, picsMissed: 0, ...applyImportedSettings(settingsStorage(store), raw.settings) }
+  } catch (error) { reportGameStorageError(error); return { error: 'space' } }
 }
 
-/**
- * 새 칸에 따로 저장 (2026-10-13 사용자: 설정의 저장하기는 덮어쓰지 말고 새로) — 불러오기 목록에 한 칸이 늘어난다.
- * 지금 하던 칸은 그대로 이어서 저장된다. 앨범 그림도 새 칸으로 옮겨 적는다 (자리가 모자라면 그림만 빠진다).
- * 새 칸 번호를 돌려준다, 못 했으면 null
- */
+function copyToNewSlot(s: GameState, store: Storage): string {
+  const from = activeSlot(store)
+  const slot = newSlot(store)
+  store.setItem(slotKey(slot), serialize(s))
+  store.setItem(META_KEY(slot), JSON.stringify({ savedAt: Date.now() }))
+  for (const [id, value] of albumPics(store, from)) store.setItem(albumPrefix(slot) + id, value)
+  return slot
+}
+/** 사진까지 모두 복사한다. 공간이 모자라면 일부만 남기지 않는다. */
 export function saveAsNew(s: GameState, store: Storage | null | undefined = storage()): string | null {
+  if (!store) return null
+  try { return withStorageBatch(store, () => copyToNewSlot(s, store)) }
+  catch (error) { reportGameStorageError(error); return null }
+}
+export async function saveAsNewAsync(s: GameState): Promise<string | null> {
+  const store = storage()
+  if (!store) return null
+  try { return await commitStorageBatch(store, () => copyToNewSlot(s, store)) }
+  catch (error) { reportGameStorageError(error); return null }
+}
+/** 새 게임의 칸과 이어 할 칸도 저장이 끝난 뒤에만 바꾼다. */
+export async function createSaveAsync(s: GameState): Promise<string | null> {
+  const store = storage()
+  if (!store) return null
   try {
-    if (!store) return null
-    const from = activeSlot(store)
-    const slot = newSlot(store)
-    store.setItem(slotKey(slot), serialize(s))
-    try {
-      store.setItem(META_KEY(slot), JSON.stringify({ savedAt: Date.now() }))
-    } catch {
-      /* 저장 시각만 못 남김 */
-    }
-    const src = albumPrefix(from)
-    const dst = albumPrefix(slot)
-    const pics: [string, string][] = []
-    for (let i = 0; i < store.length; i++) {
-      const k = store.key(i)
-      if (!k?.startsWith(src)) continue
-      if (from === '1' && /^twenty-seven\/album\/\d{1,4}\//.test(k)) continue
-      const v = store.getItem(k)
-      if (v !== null) pics.push([dst + k.slice(src.length), v])
-    }
-    for (const [k, v] of pics) {
-      try {
-        store.setItem(k, v)
-      } catch {
-        break
-      }
-    }
+    const slot = await commitStorageBatch(store, () => {
+      const id = newSlot(store)
+      store.setItem(slotKey(id), serialize(s))
+      store.setItem(META_KEY(id), JSON.stringify({ savedAt: Date.now() }))
+      store.setItem(ACTIVE_KEY, id)
+      return id
+    })
+    active = slot
+    erased = false
     return slot
-  } catch {
-    return null
-  }
+  } catch (error) { reportGameStorageError(error); return null }
 }
 
 export function loadGame(content: GameContent, store: Storage | null | undefined = storage(), slot?: string): GameState | null {
@@ -712,9 +739,7 @@ export function loadGame(content: GameContent, store: Storage | null | undefined
 export const albumPrefix = (slot: string = activeSlot()): string => (slot === '1' ? 'twenty-seven/album/' : `twenty-seven/album/${slot}/`)
 
 /** 한 칸을 지운다 (그 칸의 앨범 그림까지). 칸 1의 앨범은 다른 칸 앨범(album/<n>/)과 섞이지 않게 고른다 */
-export function deleteSave(slot: string, store: Storage | null | undefined = storage()): void {
-  try {
-    if (!store) return
+function removeSave(slot: string, store: Storage): void {
     const keys: string[] = [slotKey(slot), META_KEY(slot)]
     const prefix = albumPrefix(slot)
     for (let i = 0; i < store.length; i++) {
@@ -723,14 +748,34 @@ export function deleteSave(slot: string, store: Storage | null | undefined = sto
       if (slot === '1' && /^twenty-seven\/album\/\d{1,4}\//.test(k)) continue
       keys.push(k)
     }
-    for (const k of keys) store.removeItem(k)
-  } catch {
-    /* 저장소를 못 쓰는 환경 */
+    withStorageBatch(store, () => { for (const k of keys) store.removeItem(k) })
+}
+export function deleteSave(slot: string, store: Storage | null | undefined = storage()): void {
+  try {
+    if (store) removeSave(slot, store)
+  } catch (error) {
+    reportGameStorageError(error)
   }
+}
+
+export async function deleteSaveAsync(slot: string): Promise<boolean> {
+  const store = storage()
+  if (!store) return false
+  try {
+    await commitStorageBatch(store, () => removeSave(slot, store))
+    return true
+  } catch (error) { reportGameStorageError(error); return false }
 }
 
 /** 기록 초기화: 지금 칸의 저장된 날들과 일지 그림을 지운다 (다른 칸·소리·화면 크기 같은 설정은 남긴다) */
 export function eraseSave(store: Storage | null | undefined = storage()): void {
   erased = true
   deleteSave(activeSlot(store), store)
+}
+
+export async function eraseSaveAsync(): Promise<boolean> {
+  erased = true
+  if (await deleteSaveAsync(activeSlot())) return true
+  erased = false
+  return false
 }

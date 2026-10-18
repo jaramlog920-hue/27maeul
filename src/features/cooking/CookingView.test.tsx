@@ -20,15 +20,16 @@ function start(inv: Record<string, number>) {
 // 요리 목록은 아이콘 칸 — 요리 칸을 고르고 "만들러 가기" (2026-10-12)
 function pickDish(name: string) {
   act(() => fireEvent.click(screen.getByRole('button', { name })))
-  act(() => fireEvent.click(screen.getByRole('button', { name: '만들러 가기' })))
+  act(() => fireEvent.click(screen.getByRole('button', { name: '만들기' })))
 }
 
 describe('요리하기 화면', () => {
-  it('화덕 메뉴에서 요리하기가 열리고 기존 빵 굽기도 그대로 있다', () => {
+  it('화덕 메뉴는 세 가지 행동만 보여주고 요리 화면에서 빵을 만든다', () => {
     useGame.setState({ game: start({ barley: 1, water: 1 }), modal: { kind: 'menu', place: 'hearth' } })
     const { getByText } = render(<PlaceMenu place="hearth" />)
     // 줄 모양: 이름(빵 굽기)과 아래 작은 재료 줄로 나뉜다
-    expect(getByText(T.ui.hearthBake.split(' (')[0])).toBeTruthy()
+    expect(screen.queryByText(T.ui.hearthBake.split(' (')[0])).toBeNull()
+    expect(screen.getAllByRole('button')).toHaveLength(4)
     act(() => fireEvent.click(getByText(C.open)))
     expect(useGame.getState().modal).toEqual({ kind: 'cooking' })
   })
@@ -53,12 +54,17 @@ describe('요리하기 화면', () => {
     expect(container.textContent).toContain(C.dishes.beanDish.hands[0])
     expect(container.textContent).toContain(C.later)
   })
-  it('재료가 모자라면 모자란 것을 보이고 시작 단추가 막힌다', () => {
+  it('재료가 모자라면 필요한 수를 보이고 만들기 단추를 막는다', () => {
     useGame.setState({ game: start({ bean: 1 }), modal: { kind: 'cooking' } })
-    const { getByText, container } = render(<CookingView />)
-    pickDish(C.dishes.beanDish.name)
-    expect(container.textContent).toContain('모자라는 것')
-    expect((getByText(C.start) as HTMLButtonElement).disabled).toBe(true)
+    const { container } = render(<CookingView />)
+    fireEvent.click(screen.getByRole('button', { name: C.dishes.beanDish.name }))
+    const before = useGame.getState().game
+    const button = screen.getByRole('button', { name: '재료 부족' })
+    expect(button).toBeDisabled()
+    expect(container.textContent).toContain('0/1')
+    fireEvent.click(button)
+    expect(useGame.getState().game).toBe(before)
+    expect(cookOf(before).run).toBeUndefined()
   })
   it('가방의 음식은 혼자 먹을 수 있고, 식탁은 자리가 없으면 안내한다', () => {
     useGame.setState({ game: start({ honeyBread: 1 }), modal: { kind: 'cooking' } })

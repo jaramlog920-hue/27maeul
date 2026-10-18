@@ -1,0 +1,137 @@
+{
+  "passed": true,
+  "before": {
+    "tables": [
+      {
+        "item": "table",
+        "x": 21,
+        "y": 114,
+        "facing": "down"
+      }
+    ],
+    "inv": {
+      "table": 1,
+      "vase": 3
+    },
+    "selected": {
+      "item": "table",
+      "x": 21,
+      "y": 114
+    },
+    "held": "table",
+    "heldFacing": "left",
+    "toast": null,
+    "status": "saved",
+    "serializedBytes": 3070
+  },
+  "failed": {
+    "tables": [
+      {
+        "item": "table",
+        "x": 21,
+        "y": 114,
+        "facing": "down"
+      }
+    ],
+    "inv": {
+      "table": 1,
+      "vase": 3
+    },
+    "selected": {
+      "item": "table",
+      "x": 21,
+      "y": 114
+    },
+    "held": "table",
+    "heldFacing": "left",
+    "toast": "그쪽으로 돌리면 자리가 모자라거나 길이 막혀요. 위에 올린 것이 있으면 먼저 치워 주세요.",
+    "status": "saved",
+    "serializedBytes": 3070
+  },
+  "repeated": {
+    "tables": [
+      {
+        "item": "table",
+        "x": 21,
+        "y": 114,
+        "facing": "down"
+      }
+    ],
+    "inv": {
+      "table": 1,
+      "vase": 3
+    },
+    "selected": {
+      "item": "table",
+      "x": 21,
+      "y": 114
+    },
+    "held": "table",
+    "heldFacing": "left",
+    "toast": "그쪽으로 돌리면 자리가 모자라거나 길이 막혀요. 위에 올린 것이 있으면 먼저 치워 주세요.",
+    "status": "saved",
+    "serializedBytes": 3070
+  },
+  "restoredFailure": {
+    "tables": [
+      {
+        "item": "table",
+        "x": 21,
+        "y": 114,
+        "facing": "down"
+      }
+    ],
+    "inv": {
+      "table": 1,
+      "vase": 3
+    },
+    "selected": {
+      "item": "table",
+      "x": 21,
+      "y": 114
+    },
+    "held": "pick",
+    "heldFacing": "down",
+    "toast": "그쪽으로 돌리면 자리가 모자라거나 길이 막혀요. 위에 올린 것이 있으면 먼저 치워 주세요.",
+    "status": "saved",
+    "serializedBytes": 3070
+  },
+  "collected": {
+    "tables": [],
+    "inv": {
+      "table": 2,
+      "vase": 3
+    },
+    "selected": null,
+    "held": "pick",
+    "heldFacing": "down",
+    "toast": "그쪽으로 돌리면 자리가 모자라거나 길이 막혀요. 위에 올린 것이 있으면 먼저 치워 주세요.",
+    "status": "saved",
+    "serializedBytes": 7982
+  },
+  "reinstalled": {
+    "tables": [
+      {
+        "item": "table",
+        "x": 21,
+        "y": 114,
+        "facing": "up"
+      }
+    ],
+    "inv": {
+      "table": 1,
+      "vase": 3
+    },
+    "selected": {
+      "item": "table",
+      "x": 21,
+      "y": 114
+    },
+    "held": "table",
+    "heldFacing": "up",
+    "toast": "그쪽으로 돌리면 자리가 모자라거나 길이 막혀요. 위에 올린 것이 있으면 먼저 치워 주세요.",
+    "status": "saved",
+    "serializedBytes": 8028
+  },
+  "pageErrors": []
+}

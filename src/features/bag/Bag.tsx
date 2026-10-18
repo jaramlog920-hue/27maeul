@@ -7,7 +7,7 @@ import { finishedCopies } from '../../engine/binding'
 import { RECIPES, type RecipeId } from '../../engine/items'
 import { BOOKS } from '../../engine/types'
 import { BookCover } from '../library/BookArt'
-import { MAX_LEVEL, STAT_IDS, statScore, type StatId, type Stats } from '../../engine/stats'
+import { MAX_LEVEL, levelOf, STAT_IDS, statScore, type StatId, type Stats } from '../../engine/stats'
 import { isHome } from '../../engine/world'
 import type { ItemId } from '../../engine/types'
 import { ItemIcon } from '../../shared/ItemIcon'
@@ -33,6 +33,7 @@ export function StatsView({ stats }: { stats: Stats }) {
           const st = stats[id]
           // 칸 색칠은 1~100 수치 그대로 (칸 하나 = 100/MAX_LEVEL)
           const score = statScore(st)
+          const level = levelOf(stats, id)
           const per = 100 / MAX_LEVEL
           return (
             <li key={id} data-stat={id} className={open === id ? 'on' : ''} onClick={() => setOpen(open === id ? null : id)} aria-expanded={open === id}>
@@ -44,7 +45,7 @@ export function StatsView({ stats }: { stats: Stats }) {
                   </span>
                 )}
               </span>
-              <span className="stat-bars" aria-label={fill(T.stats.level, { n: st.level })}>
+              <span className="stat-bars" aria-label={fill(T.stats.level, { n: level })}>
                 {Array.from({ length: MAX_LEVEL }, (_, i) => {
                   const fillPct = Math.round(Math.max(0, Math.min(1, (score - i * per) / per)) * 100)
                   return (
@@ -54,11 +55,15 @@ export function StatsView({ stats }: { stats: Stats }) {
                   )
                 })}
               </span>
-              <span className="stat-level" title={fill(T.stats.level, { n: st.level })}>
+              <span className="stat-level" title={fill(T.stats.level, { n: level })}>
                 {score}
                 <small>/100</small>
               </span>
-              {open === id && <p className="tap-explain">{STAT_DESC[id]}</p>}
+              {open === id && <div className="tap-explain">
+                <p>{fill(T.stats.progress, { n: level, score })}</p>
+                <p>{STAT_DESC[id]}</p>
+                <p>{T.stats.thresholds}</p>
+              </div>}
             </li>
           )
         })}

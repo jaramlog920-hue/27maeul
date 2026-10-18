@@ -1,0 +1,10 @@
+import { it } from 'vitest'
+import { appendFileSync } from 'node:fs'
+import { CONTENT } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import { homeOfFor } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/gen-settle'
+import { roomOwner } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/newland-life'
+const OUT = 'C:/Users/wn410/AppData/Local/Temp/claude/C--Users-wn410-OneDrive-Desktop-cloooo-twenty-seven/d753a49f-e844-4b46-a32f-19ff3982a548/scratchpad/repro/r3verify/out.txt'
+it('homes', () => {
+  const ho = homeOfFor(CONTENT, { persons: {}, households: {}, relations: {}, retired: {} } as never)
+  for (const d of CONTENT.neighbors) { const r = ho(d.id); appendFileSync(OUT, `[heir] ${d.id} family=${(d as {family?:string}).family ?? '-'} home=${r.home} own=${r.own} room=${roomOwner(r.home)}\n`) }
+})

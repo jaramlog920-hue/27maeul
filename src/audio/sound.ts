@@ -621,7 +621,7 @@ export function sfx(name: Sfx, pitch = 1) {
       rustle(0.16, 0.03, 2400, 0.07, { q: 0.8, attack: 0.04 })
       break
     case 'step': // 흙길 발소리
-      rustle(0.06, 0.12, 500, 0, { type: 'lowpass' })
+      rustle(0.06, 0.07, 500, 0, { type: 'lowpass' })
       break
     case 'talk': // 나무 딸깍 두 번
       tone(587, 0.07, { vol: 0.05, slide: -40 })

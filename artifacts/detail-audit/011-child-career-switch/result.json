@@ -1,0 +1,118 @@
+{
+  "reproduced": true,
+  "morning": {
+    "day": 136,
+    "child": {
+      "name": "작은아이",
+      "born": 52,
+      "job": "woodworker",
+      "confirmed": false
+    },
+    "siblings": [
+      {
+        "name": "큰아이",
+        "born": 10,
+        "job": "cook",
+        "confirmed": false
+      }
+    ],
+    "choice": "woodworker",
+    "text": "가족\n작은아이 옷장가계도\n함께할 아이\n큰아이 어른\n작은아이 어른\n작은아이 어른\n\n태어난 지 85일 · 집에 있어요 · 목수\n\n작은아이가 목수 일을 하고 싶어해요. 함께 진로를 정해요.\n\n진로 \n서기\n학자\n목수\n배 목수\n찻집 일꾼\n상인\n어부\n뱃사람\n약초꾼\n여행자\n요리사\n화가\n직조가\n원예가\n도예가\n악기 제작자\n이 진로로 함께 결정하기\n지능\n1\n손재주\n5\n매력\n1\n근력\n1\n운\n1\n가족 앨범\n닫기"
+  },
+  "canceled": {
+    "day": 136,
+    "child": {
+      "name": "작은아이",
+      "born": 52,
+      "job": "woodworker",
+      "confirmed": false
+    },
+    "siblings": [
+      {
+        "name": "큰아이",
+        "born": 10,
+        "job": "cook",
+        "confirmed": false
+      }
+    ],
+    "choice": "woodworker",
+    "text": "가족\n작은아이 옷장가계도\n함께할 아이\n큰아이 어른\n작은아이 어른\n작은아이 어른\n\n태어난 지 85일 · 집에 있어요 · 목수\n\n작은아이가 목수 일을 하고 싶어해요. 함께 진로를 정해요.\n\n진로 \n서기\n학자\n목수\n배 목수\n찻집 일꾼\n상인\n어부\n뱃사람\n약초꾼\n여행자\n요리사\n화가\n직조가\n원예가\n도예가\n악기 제작자\n이 진로로 함께 결정하기\n지능\n1\n손재주\n5\n매력\n1\n근력\n1\n운\n1\n가족 앨범\n닫기"
+  },
+  "draft": {
+    "day": 136,
+    "child": {
+      "name": "작은아이",
+      "born": 52,
+      "job": "woodworker",
+      "confirmed": false
+    },
+    "siblings": [
+      {
+        "name": "큰아이",
+        "born": 10,
+        "job": "cook",
+        "confirmed": false
+      }
+    ],
+    "choice": "sailor",
+    "text": "가족\n작은아이 옷장가계도\n함께할 아이\n큰아이 어른\n작은아이 어른\n작은아이 어른\n\n태어난 지 85일 · 집에 있어요 · 목수\n\n작은아이가 목수 일을 하고 싶어해요. 함께 진로를 정해요.\n\n진로 \n서기\n학자\n목수\n배 목수\n찻집 일꾼\n상인\n어부\n뱃사람\n약초꾼\n여행자\n요리사\n화가\n직조가\n원예가\n도예가\n악기 제작자\n이 진로로 함께 결정하기\n지능\n1\n손재주\n5\n매력\n1\n근력\n1\n운\n1\n가족 앨범\n닫기"
+  },
+  "switched": {
+    "day": 136,
+    "child": {
+      "name": "큰아이",
+      "born": 10,
+      "job": "cook",
+      "confirmed": false
+    },
+    "siblings": [
+      {
+        "name": "작은아이",
+        "born": 52,
+        "job": "woodworker",
+        "confirmed": false
+      }
+    ],
+    "choice": "sailor",
+    "text": "가족\n큰아이 옷장가계도\n함께할 아이\n큰아이 어른\n작은아이 어른\n큰아이 어른\n\n태어난 지 127일 · 집에 있어요 · 요리사\n\n큰아이가 요리사 일을 하고 싶어해요. 함께 진로를 정해요.\n\n진로 \n서기\n학자\n목수\n배 목수\n찻집 일꾼\n상인\n어부\n뱃사람\n약초꾼\n여행자\n요리사\n화가\n직조가\n원예가\n도예가\n악기 제작자\n이 진로로 함께 결정하기\n지능\n1\n손재주\n5\n매력\n1\n근력\n1\n운\n1\n가족 앨범\n닫기"
+  },
+  "confirmed": {
+    "day": 136,
+    "child": {
+      "name": "큰아이",
+      "born": 10,
+      "job": "sailor",
+      "confirmed": true
+    },
+    "siblings": [
+      {
+        "name": "작은아이",
+        "born": 52,
+        "job": "woodworker",
+        "confirmed": false
+      }
+    ],
+    "choice": null,
+    "text": "가족\n큰아이 옷장가계도\n함께할 아이\n큰아이 어른\n작은아이 어른\n큰아이 어른\n\n태어난 지 127일 · 집에 있어요 · 뱃사람\n\n더 넓은 곳으로 떠나기\n지능\n1\n손재주\n5\n매력\n1\n근력\n1\n운\n1\n가족 앨범\n닫기"
+  },
+  "restored": {
+    "day": 136,
+    "child": {
+      "name": "큰아이",
+      "born": 10,
+      "job": "sailor",
+      "confirmed": true
+    },
+    "siblings": [
+      {
+        "name": "작은아이",
+        "born": 52,
+        "job": "woodworker",
+        "confirmed": false
+      }
+    ],
+    "choice": null,
+    "text": "가족\n큰아이 옷장가계도\n함께할 아이\n큰아이 어른\n작은아이 어른\n큰아이 어른\n\n태어난 지 127일 · 집에 있어요 · 뱃사람\n\n더 넓은 곳으로 떠나기\n지능\n1\n손재주\n5\n매력\n1\n근력\n1\n운\n1\n가족 앨범\n닫기"
+  },
+  "pageErrors": []
+}

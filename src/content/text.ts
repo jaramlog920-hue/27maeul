@@ -6,13 +6,14 @@ import { FIXTURES } from '../engine/home-layout'
 import { SPOUSE_FURNITURE } from '../engine/furniture-defs'
 // 게임이 지어낸 문장의 단일 입구 (exclusion-list §0). 성경 문장은 여기 두지 않는다.
 import lifeText from './life-text.json'
+import {WEDDING_ATTIRE} from '../engine/wedding-attire'
 import scenicMoments from './scenic-moments.json'
 import heartBalanceText from './heart-balance-text.json'
 import { CANDIDATE_IDS } from '../engine/romance'
 import { PEOPLE_DATA, PEOPLE_MORE } from './people-all'
 import { ADDITION_FURNITURE, type AdditionUse } from '../engine/furniture-additions'
 /** 생활 가구 설명: 놓고 눌러서 하는 일 */
-const ADDITION_DESC: Record<AdditionUse, string> = { rock: '앉아서 천천히 흔들며 쉰다.', sew: '바늘과 실로 천을 깁는다.', knead: '반죽을 누르고 접는다.', washFace: '물을 떠서 얼굴을 씻는다.', harp: '현을 번갈아 뜯는다.', paint: '붓으로 꽃을 그린다.', washDishes: '그릇을 문지르고 헹군다.', mill: '손잡이를 돌려 곡식을 간다.', waterPlant: '화분에 물을 주고 잎을 살핀다.', tuckDoll: '인형을 눕히고 이불을 덮는다.', pushCart: '방 안에서 밀며 논다.', open: '문을 열고 닫으며 살림을 정리한다.', sit: '앉아서 쉰다.', drink: '찻잔을 놓고 차를 마신다.', read: '종이를 펼쳐 놓고 살펴본다.', reach: '방에 놓아 두는 살림.' }
+const ADDITION_DESC: Record<AdditionUse, string> = { copyFurniture: '가구의 쓰임에 맞춰 사용한다.', rock: '앉아서 천천히 흔들며 쉰다.', sew: '바늘과 실로 천을 깁는다.', knead: '반죽을 누르고 접는다.', washFace: '물을 떠서 얼굴을 씻는다.', harp: '현을 번갈아 뜯는다.', paint: '붓으로 꽃을 그린다.', washDishes: '그릇을 문지르고 헹군다.', mill: '손잡이를 돌려 곡식을 간다.', waterPlant: '화분에 물을 주고 잎을 살핀다.', tuckDoll: '인형을 눕히고 이불을 덮는다.', pushCart: '방 안에서 밀며 논다.', open: '문을 열고 닫으며 살림을 정리한다.', sit: '앉아서 쉰다.', drink: '찻잔을 놓고 차를 마신다.', read: '종이를 펼쳐 놓고 살펴본다.', reach: '방에 놓아 두는 살림.' }
 import type { ItemId } from '../engine/types'
 import { isOtBook, otRow, type CopyBook } from '../engine/ot-books'
 
@@ -90,10 +91,11 @@ for (const [id, lines] of Object.entries(PEOPLE_MORE.closeFriend)) if (NEIGHBOR_
   for (const th of data.threads) for (const ph of th.phases) for (const s of ph.sightings ?? []) SCENES[`saw:${s.id}`] = { title: s.title, lines: s.lines }
 }
 export const ITEM_TEXT = lifeText.items as Record<ItemId, { name: string; desc: string }>
+for(const a of WEDDING_ATTIRE)ITEM_TEXT[a.item]={name:a.name,desc:'장날에 산 결혼 예복. 약혼자에게 선물하면 결혼식에 입고 온다. 내 가방에 있으면 결혼식에서 골라 입을 수 있다.'}
 for (const [id, f] of Object.entries(FIXTURES)) ITEM_TEXT[id as ItemId] = { name: f.name, desc: '집의 어느 방으로든 옮길 수 있다.' }
 // 생활 가구 48종 (2026-10-12): 장날 생활 가구 줄 이름도 같이
 for (const [id, a] of Object.entries(ADDITION_FURNITURE)) {
-  ITEM_TEXT[id as ItemId] = { name: a.name, desc: ADDITION_DESC[a.use] }
+  ITEM_TEXT[id as ItemId] = { name: a.name, desc: a.desc ?? ADDITION_DESC[a.use] }
   ;(lifeText.trades as Record<string, string>)[`add:${id}`] = a.name
 }
 ITEM_TEXT.homeCradle = { name: '아기 요람', desc: '아이방과 다른 방 사이로 자유롭게 옮길 수 있다.' }

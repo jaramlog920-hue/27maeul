@@ -1,0 +1,2845 @@
+[
+  {
+    "label": "child",
+    "location": {
+      "mode": "game",
+      "map": "village",
+      "at": {
+        "x": 19,
+        "y": 45
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "rain",
+      "indoors": true,
+      "room": {
+        "kind": "neighbor",
+        "owner": "child"
+      },
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": {
+          "x0": 16,
+          "y0": 41,
+          "w": 10,
+          "h": 8
+        },
+        "furniture": [
+          {
+            "item": "chest",
+            "x": 19,
+            "y": 42
+          },
+          {
+            "item": "chair",
+            "x": 19,
+            "y": 44
+          },
+          {
+            "item": "chair",
+            "x": 22,
+            "y": 44,
+            "mirrorX": true
+          },
+          {
+            "item": "teapot",
+            "x": 20,
+            "y": 44
+          },
+          {
+            "item": "fruitBowl",
+            "x": 21,
+            "y": 44
+          },
+          {
+            "item": "mat",
+            "x": 18,
+            "y": 46
+          },
+          {
+            "item": "pillows",
+            "x": 17,
+            "y": 46
+          },
+          {
+            "item": "bigPlant",
+            "x": 24,
+            "y": 46
+          },
+          {
+            "item": "lampStand",
+            "x": 24,
+            "y": 44
+          }
+        ],
+        "fixed": [
+          {
+            "x": 17,
+            "y": 42,
+            "ch": "b"
+          },
+          {
+            "x": 18,
+            "y": 42,
+            "ch": "b"
+          },
+          {
+            "x": 21,
+            "y": 42,
+            "ch": "h"
+          },
+          {
+            "x": 24,
+            "y": 42,
+            "ch": "g"
+          },
+          {
+            "x": 24,
+            "y": 43,
+            "ch": "g"
+          },
+          {
+            "x": 20,
+            "y": 44,
+            "ch": "n"
+          },
+          {
+            "x": 21,
+            "y": 44,
+            "ch": "n"
+          },
+          {
+            "x": 17,
+            "y": 43,
+            "ch": "U"
+          },
+          {
+            "x": 18,
+            "y": 43,
+            "ch": "U"
+          }
+        ],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {}
+      }
+    }
+  },
+  {
+    "label": "beekeeper",
+    "location": {
+      "mode": "game",
+      "map": "village",
+      "at": {
+        "x": 20,
+        "y": 53
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "rain",
+      "indoors": true,
+      "room": {
+        "kind": "neighbor",
+        "owner": "beekeeper"
+      },
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": {
+          "x0": 16,
+          "y0": 50,
+          "w": 10,
+          "h": 8
+        },
+        "furniture": [
+          {
+            "item": "cupboard",
+            "x": 22,
+            "y": 51
+          },
+          {
+            "item": "chair",
+            "x": 22,
+            "y": 54,
+            "mirrorX": true
+          },
+          {
+            "item": "teapot",
+            "x": 21,
+            "y": 54
+          },
+          {
+            "item": "lampStand",
+            "x": 24,
+            "y": 53
+          },
+          {
+            "item": "bigPlant",
+            "x": 17,
+            "y": 55
+          },
+          {
+            "item": "mat",
+            "x": 19,
+            "y": 56
+          },
+          {
+            "item": "pillows",
+            "x": 24,
+            "y": 52
+          }
+        ],
+        "fixed": [
+          {
+            "x": 17,
+            "y": 51,
+            "ch": "s"
+          },
+          {
+            "x": 18,
+            "y": 51,
+            "ch": "g"
+          },
+          {
+            "x": 19,
+            "y": 51,
+            "ch": "g"
+          },
+          {
+            "x": 20,
+            "y": 51,
+            "ch": "g"
+          },
+          {
+            "x": 24,
+            "y": 51,
+            "ch": "b"
+          },
+          {
+            "x": 21,
+            "y": 54,
+            "ch": "n"
+          },
+          {
+            "x": 17,
+            "y": 54,
+            "ch": "p"
+          },
+          {
+            "x": 24,
+            "y": 55,
+            "ch": "p"
+          }
+        ],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {}
+      }
+    }
+  },
+  {
+    "label": "acts",
+    "location": {
+      "mode": "game",
+      "map": "village",
+      "at": {
+        "x": 7,
+        "y": 63
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "rain",
+      "indoors": true,
+      "room": {
+        "kind": "neighbor",
+        "owner": "acts"
+      },
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": {
+          "x0": 2,
+          "y0": 60,
+          "w": 11,
+          "h": 8
+        },
+        "furniture": [],
+        "fixed": [
+          {
+            "x": 6,
+            "y": 60,
+            "ch": "M"
+          },
+          {
+            "x": 7,
+            "y": 60,
+            "ch": "M"
+          },
+          {
+            "x": 8,
+            "y": 60,
+            "ch": "M"
+          },
+          {
+            "x": 3,
+            "y": 61,
+            "ch": "Q"
+          },
+          {
+            "x": 4,
+            "y": 61,
+            "ch": "Q"
+          },
+          {
+            "x": 5,
+            "y": 61,
+            "ch": "Q"
+          },
+          {
+            "x": 9,
+            "y": 61,
+            "ch": "s"
+          },
+          {
+            "x": 10,
+            "y": 61,
+            "ch": "s"
+          },
+          {
+            "x": 11,
+            "y": 61,
+            "ch": "s"
+          },
+          {
+            "x": 7,
+            "y": 64,
+            "ch": "n"
+          },
+          {
+            "x": 7,
+            "y": 65,
+            "ch": "e"
+          },
+          {
+            "x": 7,
+            "y": 66,
+            "ch": "e"
+          },
+          {
+            "x": 3,
+            "y": 66,
+            "ch": "p"
+          },
+          {
+            "x": 11,
+            "y": 66,
+            "ch": "p"
+          }
+        ],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {}
+      }
+    }
+  },
+  {
+    "label": "letters",
+    "location": {
+      "mode": "game",
+      "map": "village",
+      "at": {
+        "x": 35,
+        "y": 63
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "rain",
+      "indoors": true,
+      "room": {
+        "kind": "neighbor",
+        "owner": "letters"
+      },
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": {
+          "x0": 30,
+          "y0": 60,
+          "w": 11,
+          "h": 8
+        },
+        "furniture": [],
+        "fixed": [
+          {
+            "x": 32,
+            "y": 60,
+            "ch": "N"
+          },
+          {
+            "x": 34,
+            "y": 60,
+            "ch": "V"
+          },
+          {
+            "x": 35,
+            "y": 60,
+            "ch": "V"
+          },
+          {
+            "x": 36,
+            "y": 60,
+            "ch": "V"
+          },
+          {
+            "x": 38,
+            "y": 60,
+            "ch": "N"
+          },
+          {
+            "x": 31,
+            "y": 61,
+            "ch": "Y"
+          },
+          {
+            "x": 32,
+            "y": 61,
+            "ch": "Y"
+          },
+          {
+            "x": 33,
+            "y": 61,
+            "ch": "Y"
+          },
+          {
+            "x": 37,
+            "y": 61,
+            "ch": "s"
+          },
+          {
+            "x": 38,
+            "y": 61,
+            "ch": "s"
+          },
+          {
+            "x": 39,
+            "y": 61,
+            "ch": "s"
+          },
+          {
+            "x": 35,
+            "y": 64,
+            "ch": "n"
+          },
+          {
+            "x": 35,
+            "y": 65,
+            "ch": "e"
+          },
+          {
+            "x": 35,
+            "y": 66,
+            "ch": "e"
+          },
+          {
+            "x": 31,
+            "y": 66,
+            "ch": "p"
+          },
+          {
+            "x": 39,
+            "y": 66,
+            "ch": "p"
+          }
+        ],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {}
+      }
+    }
+  },
+  {
+    "label": "hebJud",
+    "location": {
+      "mode": "game",
+      "map": "village",
+      "at": {
+        "x": 35,
+        "y": 73
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "rain",
+      "indoors": true,
+      "room": {
+        "kind": "neighbor",
+        "owner": "hebJud"
+      },
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": {
+          "x0": 30,
+          "y0": 70,
+          "w": 11,
+          "h": 8
+        },
+        "furniture": [
+          {
+            "item": "lampStand",
+            "x": 31,
+            "y": 76
+          },
+          {
+            "item": "lampStand",
+            "x": 39,
+            "y": 76,
+            "mirrorX": true
+          },
+          {
+            "item": "rug",
+            "x": 34,
+            "y": 75
+          }
+        ],
+        "fixed": [
+          {
+            "x": 32,
+            "y": 70,
+            "ch": "N"
+          },
+          {
+            "x": 34,
+            "y": 70,
+            "ch": "V"
+          },
+          {
+            "x": 35,
+            "y": 70,
+            "ch": "V"
+          },
+          {
+            "x": 36,
+            "y": 70,
+            "ch": "V"
+          },
+          {
+            "x": 38,
+            "y": 70,
+            "ch": "N"
+          },
+          {
+            "x": 31,
+            "y": 71,
+            "ch": "Y"
+          },
+          {
+            "x": 32,
+            "y": 71,
+            "ch": "Y"
+          },
+          {
+            "x": 33,
+            "y": 71,
+            "ch": "Y"
+          },
+          {
+            "x": 37,
+            "y": 71,
+            "ch": "s"
+          },
+          {
+            "x": 38,
+            "y": 71,
+            "ch": "s"
+          },
+          {
+            "x": 39,
+            "y": 71,
+            "ch": "s"
+          },
+          {
+            "x": 35,
+            "y": 74,
+            "ch": "n"
+          }
+        ],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {}
+      }
+    }
+  },
+  {
+    "label": "rev",
+    "location": {
+      "mode": "game",
+      "map": "village",
+      "at": {
+        "x": 21,
+        "y": 73
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "rain",
+      "indoors": true,
+      "room": {
+        "kind": "neighbor",
+        "owner": "rev"
+      },
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": {
+          "x0": 16,
+          "y0": 70,
+          "w": 11,
+          "h": 8
+        },
+        "furniture": [
+          {
+            "item": "roundRug",
+            "x": 20.5,
+            "y": 75
+          }
+        ],
+        "fixed": [
+          {
+            "x": 18,
+            "y": 70,
+            "ch": "N"
+          },
+          {
+            "x": 20,
+            "y": 70,
+            "ch": "C"
+          },
+          {
+            "x": 21,
+            "y": 70,
+            "ch": "C"
+          },
+          {
+            "x": 22,
+            "y": 70,
+            "ch": "C"
+          },
+          {
+            "x": 24,
+            "y": 70,
+            "ch": "N"
+          },
+          {
+            "x": 17,
+            "y": 71,
+            "ch": "Q"
+          },
+          {
+            "x": 18,
+            "y": 71,
+            "ch": "Q"
+          },
+          {
+            "x": 19,
+            "y": 71,
+            "ch": "Q"
+          },
+          {
+            "x": 23,
+            "y": 71,
+            "ch": "s"
+          },
+          {
+            "x": 24,
+            "y": 71,
+            "ch": "s"
+          },
+          {
+            "x": 25,
+            "y": 71,
+            "ch": "s"
+          },
+          {
+            "x": 21,
+            "y": 74,
+            "ch": "n"
+          },
+          {
+            "x": 17,
+            "y": 76,
+            "ch": "p"
+          },
+          {
+            "x": 25,
+            "y": 76,
+            "ch": "p"
+          }
+        ],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {}
+      }
+    }
+  },
+  {
+    "label": "apothecary",
+    "location": {
+      "mode": "game",
+      "map": "village",
+      "at": {
+        "x": 31,
+        "y": 83
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "rain",
+      "indoors": true,
+      "room": {
+        "kind": "neighbor",
+        "owner": "apothecary"
+      },
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": {
+          "x0": 26,
+          "y0": 81,
+          "w": 10,
+          "h": 8
+        },
+        "furniture": [
+          {
+            "item": "dryFlowers",
+            "x": 30,
+            "y": 85
+          },
+          {
+            "item": "teapot",
+            "x": 31,
+            "y": 85
+          },
+          {
+            "item": "chair",
+            "x": 29,
+            "y": 85
+          },
+          {
+            "item": "chair",
+            "x": 32,
+            "y": 85,
+            "mirrorX": true
+          },
+          {
+            "item": "bigPlant",
+            "x": 27,
+            "y": 87
+          },
+          {
+            "item": "mat",
+            "x": 33,
+            "y": 87
+          },
+          {
+            "item": "lampStand",
+            "x": 34,
+            "y": 83
+          }
+        ],
+        "fixed": [
+          {
+            "x": 27,
+            "y": 82,
+            "ch": "s"
+          },
+          {
+            "x": 28,
+            "y": 82,
+            "ch": "s"
+          },
+          {
+            "x": 29,
+            "y": 82,
+            "ch": "s"
+          },
+          {
+            "x": 32,
+            "y": 82,
+            "ch": "g"
+          },
+          {
+            "x": 33,
+            "y": 82,
+            "ch": "g"
+          },
+          {
+            "x": 34,
+            "y": 82,
+            "ch": "g"
+          },
+          {
+            "x": 27,
+            "y": 85,
+            "ch": "p"
+          },
+          {
+            "x": 34,
+            "y": 85,
+            "ch": "p"
+          },
+          {
+            "x": 30,
+            "y": 85,
+            "ch": "n"
+          },
+          {
+            "x": 31,
+            "y": 85,
+            "ch": "n"
+          }
+        ],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {}
+      }
+    }
+  },
+  {
+    "label": "fisher",
+    "location": {
+      "mode": "game",
+      "map": "village",
+      "at": {
+        "x": 41,
+        "y": 84
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "rain",
+      "indoors": true,
+      "room": {
+        "kind": "neighbor",
+        "owner": "fisher"
+      },
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": {
+          "x0": 38,
+          "y0": 81,
+          "w": 10,
+          "h": 8
+        },
+        "furniture": [
+          {
+            "item": "barrel",
+            "x": 46,
+            "y": 84
+          },
+          {
+            "item": "barrel",
+            "x": 46,
+            "y": 85
+          },
+          {
+            "item": "fruitBowl",
+            "x": 41,
+            "y": 85
+          },
+          {
+            "item": "chair",
+            "x": 40,
+            "y": 85
+          },
+          {
+            "item": "mat",
+            "x": 44,
+            "y": 87
+          },
+          {
+            "item": "pillows",
+            "x": 39,
+            "y": 87
+          },
+          {
+            "item": "lampStand",
+            "x": 39,
+            "y": 84
+          }
+        ],
+        "fixed": [
+          {
+            "x": 39,
+            "y": 82,
+            "ch": "b"
+          },
+          {
+            "x": 42,
+            "y": 82,
+            "ch": "h"
+          },
+          {
+            "x": 45,
+            "y": 82,
+            "ch": "g"
+          },
+          {
+            "x": 46,
+            "y": 82,
+            "ch": "g"
+          },
+          {
+            "x": 41,
+            "y": 85,
+            "ch": "n"
+          },
+          {
+            "x": 39,
+            "y": 83,
+            "ch": "U"
+          }
+        ],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {}
+      }
+    }
+  },
+  {
+    "label": "집 가구를 모두 치운 상태",
+    "location": {
+      "mode": "game",
+      "map": "village",
+      "at": {
+        "x": 20,
+        "y": 112
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "rain",
+      "indoors": true,
+      "room": {
+        "kind": "home",
+        "owner": "player"
+      },
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": {
+          "x0": 16,
+          "y0": 110,
+          "w": 9,
+          "h": 6
+        },
+        "furniture": [],
+        "fixed": [],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {},
+        "roomTiles": {
+          "15,109": "_",
+          "16,109": "_",
+          "17,109": "_",
+          "18,109": "_",
+          "19,109": "_",
+          "20,109": "_",
+          "21,109": "_",
+          "22,109": "_",
+          "23,109": "_",
+          "24,109": "_",
+          "25,109": "_",
+          "15,110": "_",
+          "16,110": "#",
+          "17,110": "#",
+          "18,110": "#",
+          "19,110": "#",
+          "20,110": "#",
+          "21,110": "#",
+          "22,110": "#",
+          "23,110": "#",
+          "24,110": "#",
+          "25,110": "_",
+          "15,111": "_",
+          "16,111": "#",
+          "17,111": "f",
+          "18,111": "f",
+          "19,111": "f",
+          "20,111": "f",
+          "21,111": "f",
+          "22,111": "f",
+          "23,111": "f",
+          "24,111": "#",
+          "25,111": "_",
+          "15,112": "_",
+          "16,112": "#",
+          "17,112": "f",
+          "18,112": "f",
+          "19,112": "f",
+          "20,112": "f",
+          "21,112": "f",
+          "22,112": "f",
+          "23,112": "f",
+          "24,112": "#",
+          "25,112": "_",
+          "15,113": "_",
+          "16,113": "#",
+          "17,113": "f",
+          "18,113": "f",
+          "19,113": "f",
+          "20,113": "f",
+          "21,113": "f",
+          "22,113": "f",
+          "23,113": "f",
+          "24,113": "#",
+          "25,113": "_",
+          "15,114": "_",
+          "16,114": "#",
+          "17,114": "f",
+          "18,114": "f",
+          "19,114": "f",
+          "20,114": "f",
+          "21,114": "f",
+          "22,114": "f",
+          "23,114": "f",
+          "24,114": "#",
+          "25,114": "_",
+          "15,115": "_",
+          "16,115": "#",
+          "17,115": "#",
+          "18,115": "#",
+          "19,115": "#",
+          "20,115": "E",
+          "21,115": "#",
+          "22,115": "#",
+          "23,115": "#",
+          "24,115": "#",
+          "25,115": "_",
+          "15,116": "_",
+          "16,116": "_",
+          "17,116": "_",
+          "18,116": "_",
+          "19,116": "_",
+          "20,116": "_",
+          "21,116": "_",
+          "22,116": "_",
+          "23,116": "_",
+          "24,116": "_",
+          "25,116": "_"
+        },
+        "homeWalls": {
+          "built": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "label": "실제 옮긴 책상과 장미색 방석",
+    "location": {
+      "mode": "game",
+      "map": "village",
+      "at": {
+        "x": 20,
+        "y": 112
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "rain",
+      "indoors": true,
+      "room": {
+        "kind": "home",
+        "owner": "player"
+      },
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": {
+          "x0": 16,
+          "y0": 110,
+          "w": 9,
+          "h": 6
+        },
+        "furniture": [
+          {
+            "item": "homeDesk",
+            "x": 21,
+            "y": 113,
+            "facing": "left"
+          },
+          {
+            "item": "cushion",
+            "x": 19,
+            "y": 112,
+            "finish": "rose"
+          }
+        ],
+        "fixed": [],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {},
+        "roomTiles": {
+          "15,109": "_",
+          "16,109": "_",
+          "17,109": "_",
+          "18,109": "_",
+          "19,109": "_",
+          "20,109": "_",
+          "21,109": "_",
+          "22,109": "_",
+          "23,109": "_",
+          "24,109": "_",
+          "25,109": "_",
+          "15,110": "_",
+          "16,110": "#",
+          "17,110": "#",
+          "18,110": "#",
+          "19,110": "#",
+          "20,110": "#",
+          "21,110": "#",
+          "22,110": "#",
+          "23,110": "#",
+          "24,110": "#",
+          "25,110": "_",
+          "15,111": "_",
+          "16,111": "#",
+          "17,111": "f",
+          "18,111": "f",
+          "19,111": "f",
+          "20,111": "f",
+          "21,111": "f",
+          "22,111": "f",
+          "23,111": "f",
+          "24,111": "#",
+          "25,111": "_",
+          "15,112": "_",
+          "16,112": "#",
+          "17,112": "f",
+          "18,112": "f",
+          "19,112": "f",
+          "20,112": "f",
+          "21,112": "f",
+          "22,112": "f",
+          "23,112": "f",
+          "24,112": "#",
+          "25,112": "_",
+          "15,113": "_",
+          "16,113": "#",
+          "17,113": "f",
+          "18,113": "f",
+          "19,113": "f",
+          "20,113": "f",
+          "21,113": "f",
+          "22,113": "f",
+          "23,113": "f",
+          "24,113": "#",
+          "25,113": "_",
+          "15,114": "_",
+          "16,114": "#",
+          "17,114": "f",
+          "18,114": "f",
+          "19,114": "f",
+          "20,114": "f",
+          "21,114": "f",
+          "22,114": "f",
+          "23,114": "f",
+          "24,114": "#",
+          "25,114": "_",
+          "15,115": "_",
+          "16,115": "#",
+          "17,115": "#",
+          "18,115": "#",
+          "19,115": "#",
+          "20,115": "E",
+          "21,115": "#",
+          "22,115": "#",
+          "23,115": "#",
+          "24,115": "#",
+          "25,115": "_",
+          "15,116": "_",
+          "16,116": "_",
+          "17,116": "_",
+          "18,116": "_",
+          "19,116": "_",
+          "20,116": "_",
+          "21,116": "_",
+          "22,116": "_",
+          "23,116": "_",
+          "24,116": "_",
+          "25,116": "_"
+        },
+        "homeWalls": {
+          "built": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "label": "새 터 서고 실제 가구",
+    "location": {
+      "mode": "game",
+      "map": "newland",
+      "at": {
+        "x": 19,
+        "y": 38
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "rain",
+      "indoors": true,
+      "room": {
+        "kind": "newland-archive",
+        "owner": "library"
+      },
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": {
+          "x0": 13,
+          "y0": 30,
+          "w": 13,
+          "h": 10
+        },
+        "furniture": [
+          {
+            "item": "jar",
+            "x": 18,
+            "y": 33
+          }
+        ],
+        "fixed": [
+          {
+            "x": 16,
+            "y": 32,
+            "ch": "d"
+          },
+          {
+            "x": 22,
+            "y": 32,
+            "ch": "s"
+          }
+        ],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {},
+        "tiles": {},
+        "newlandRevealed": true
+      }
+    }
+  },
+  {
+    "label": "새 터 건물 ordered",
+    "location": {
+      "mode": "game",
+      "map": "newland",
+      "at": {
+        "x": 7,
+        "y": 14
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "rain",
+      "indoors": false,
+      "room": null,
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": null,
+        "furniture": [],
+        "fixed": [],
+        "builds": [
+          {
+            "id": "b3",
+            "kind": "home",
+            "x": 5,
+            "y": 10,
+            "facing": "left",
+            "state": "ordered",
+            "owner": "g-0042"
+          }
+        ],
+        "villageLevel": 0,
+        "unlocks": {},
+        "tiles": {},
+        "newlandRevealed": true
+      }
+    }
+  },
+  {
+    "label": "새 터 건물 building",
+    "location": {
+      "mode": "game",
+      "map": "newland",
+      "at": {
+        "x": 7,
+        "y": 14
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "rain",
+      "indoors": false,
+      "room": null,
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": null,
+        "furniture": [],
+        "fixed": [],
+        "builds": [
+          {
+            "id": "b3",
+            "kind": "home",
+            "x": 5,
+            "y": 10,
+            "facing": "left",
+            "state": "building",
+            "owner": "g-0042"
+          }
+        ],
+        "villageLevel": 0,
+        "unlocks": {},
+        "tiles": {},
+        "newlandRevealed": true
+      }
+    }
+  },
+  {
+    "label": "새 터 건물 done",
+    "location": {
+      "mode": "game",
+      "map": "newland",
+      "at": {
+        "x": 7,
+        "y": 14
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "rain",
+      "indoors": false,
+      "room": null,
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": null,
+        "furniture": [],
+        "fixed": [],
+        "builds": [
+          {
+            "id": "b3",
+            "kind": "home",
+            "x": 5,
+            "y": 10,
+            "facing": "left",
+            "state": "done",
+            "owner": "g-0042"
+          }
+        ],
+        "villageLevel": 0,
+        "unlocks": {},
+        "tiles": {},
+        "newlandRevealed": true
+      }
+    }
+  },
+  {
+    "label": "새 터 주택 저장된 가구",
+    "location": {
+      "mode": "game",
+      "map": "newland",
+      "at": {
+        "x": 6,
+        "y": 36
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "rain",
+      "indoors": true,
+      "room": {
+        "kind": "newland-home",
+        "owner": "g-0042",
+        "buildingId": "b3",
+        "slot": 0
+      },
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": {
+          "x0": 2,
+          "y0": 32,
+          "w": 8,
+          "h": 6
+        },
+        "furniture": [
+          {
+            "item": "jar",
+            "x": 4,
+            "y": 35
+          }
+        ],
+        "fixed": [],
+        "builds": [
+          {
+            "id": "b3",
+            "kind": "home",
+            "x": 5,
+            "y": 10,
+            "facing": "left",
+            "state": "done",
+            "owner": "g-0042"
+          }
+        ],
+        "villageLevel": 0,
+        "unlocks": {},
+        "tiles": {},
+        "newlandRevealed": true
+      }
+    }
+  },
+  {
+    "label": "집에 세운 벽과 허문 벽",
+    "location": {
+      "mode": "game",
+      "map": "village",
+      "at": {
+        "x": 20,
+        "y": 112
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "rain",
+      "indoors": true,
+      "room": {
+        "kind": "home",
+        "owner": "player"
+      },
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": {
+          "x0": 16,
+          "y0": 110,
+          "w": 9,
+          "h": 6
+        },
+        "furniture": [],
+        "fixed": [],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {},
+        "roomTiles": {
+          "15,109": "_",
+          "16,109": "_",
+          "17,109": "_",
+          "18,109": "#",
+          "19,109": "f",
+          "20,109": "f",
+          "21,109": "f",
+          "22,109": "f",
+          "23,109": "f",
+          "24,109": "#",
+          "25,109": "_",
+          "15,110": "_",
+          "16,110": "#",
+          "17,110": "#",
+          "18,110": "#",
+          "19,110": "#",
+          "20,110": "#",
+          "21,110": "f",
+          "22,110": "#",
+          "23,110": "#",
+          "24,110": "#",
+          "25,110": "_",
+          "15,111": "_",
+          "16,111": "#",
+          "17,111": "f",
+          "18,111": "f",
+          "19,111": "f",
+          "20,111": "f",
+          "21,111": "f",
+          "22,111": "f",
+          "23,111": "f",
+          "24,111": "#",
+          "25,111": "_",
+          "15,112": "_",
+          "16,112": "#",
+          "17,112": "f",
+          "18,112": "f",
+          "19,112": "f",
+          "20,112": "#",
+          "21,112": "f",
+          "22,112": "f",
+          "23,112": "f",
+          "24,112": "#",
+          "25,112": "_",
+          "15,113": "_",
+          "16,113": "#",
+          "17,113": "f",
+          "18,113": "f",
+          "19,113": "f",
+          "20,113": "f",
+          "21,113": "f",
+          "22,113": "f",
+          "23,113": "f",
+          "24,113": "#",
+          "25,113": "_",
+          "15,114": "_",
+          "16,114": "#",
+          "17,114": "f",
+          "18,114": "f",
+          "19,114": "f",
+          "20,114": "f",
+          "21,114": "f",
+          "22,114": "f",
+          "23,114": "f",
+          "24,114": "#",
+          "25,114": "_",
+          "15,115": "_",
+          "16,115": "#",
+          "17,115": "#",
+          "18,115": "#",
+          "19,115": "#",
+          "20,115": "E",
+          "21,115": "#",
+          "22,115": "#",
+          "23,115": "#",
+          "24,115": "#",
+          "25,115": "_",
+          "15,116": "_",
+          "16,116": "_",
+          "17,116": "_",
+          "18,116": "_",
+          "19,116": "_",
+          "20,116": "_",
+          "21,116": "_",
+          "22,116": "_",
+          "23,116": "_",
+          "24,116": "_",
+          "25,116": "_"
+        },
+        "homeWalls": {
+          "built": [
+            "20,112"
+          ],
+          "removed": [
+            "21,110"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "label": "배우자 방 창 · 치운 가구 유지",
+    "location": {
+      "mode": "game",
+      "map": "village",
+      "at": {
+        "x": 21,
+        "y": 107
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "rain",
+      "indoors": true,
+      "room": {
+        "kind": "home",
+        "owner": "player"
+      },
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": {
+          "x0": 18,
+          "y0": 104,
+          "w": 7,
+          "h": 7
+        },
+        "furniture": [],
+        "fixed": [
+          {
+            "x": 23,
+            "y": 104,
+            "ch": "N"
+          }
+        ],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {},
+        "roomTiles": {
+          "17,103": "_",
+          "18,103": "_",
+          "19,103": "_",
+          "20,103": "_",
+          "21,103": "_",
+          "22,103": "_",
+          "23,103": "_",
+          "24,103": "_",
+          "25,103": "_",
+          "17,104": "_",
+          "18,104": "#",
+          "19,104": "#",
+          "20,104": "#",
+          "21,104": "#",
+          "22,104": "#",
+          "23,104": "N",
+          "24,104": "#",
+          "25,104": "_",
+          "17,105": "_",
+          "18,105": "#",
+          "19,105": "f",
+          "20,105": "f",
+          "21,105": "f",
+          "22,105": "f",
+          "23,105": "f",
+          "24,105": "#",
+          "25,105": "_",
+          "17,106": "_",
+          "18,106": "#",
+          "19,106": "f",
+          "20,106": "f",
+          "21,106": "f",
+          "22,106": "f",
+          "23,106": "f",
+          "24,106": "#",
+          "25,106": "_",
+          "17,107": "_",
+          "18,107": "#",
+          "19,107": "f",
+          "20,107": "f",
+          "21,107": "f",
+          "22,107": "f",
+          "23,107": "f",
+          "24,107": "#",
+          "25,107": "_",
+          "17,108": "_",
+          "18,108": "#",
+          "19,108": "f",
+          "20,108": "f",
+          "21,108": "f",
+          "22,108": "f",
+          "23,108": "f",
+          "24,108": "#",
+          "25,108": "_",
+          "17,109": "_",
+          "18,109": "#",
+          "19,109": "f",
+          "20,109": "f",
+          "21,109": "f",
+          "22,109": "f",
+          "23,109": "f",
+          "24,109": "#",
+          "25,109": "_",
+          "17,110": "#",
+          "18,110": "#",
+          "19,110": "#",
+          "20,110": "#",
+          "21,110": "D",
+          "22,110": "#",
+          "23,110": "#",
+          "24,110": "#",
+          "25,110": "_",
+          "17,111": "f",
+          "18,111": "f",
+          "19,111": "f",
+          "20,111": "f",
+          "21,111": "f",
+          "22,111": "f",
+          "23,111": "f",
+          "24,111": "#",
+          "25,111": "_"
+        },
+        "homeWalls": {
+          "built": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "label": "자녀의 실제 약초 연구 일터",
+    "location": {
+      "mode": "game",
+      "map": "newland",
+      "at": {
+        "x": 7,
+        "y": 14
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "rain",
+      "indoors": false,
+      "room": null,
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": null,
+        "furniture": [],
+        "fixed": [],
+        "builds": [
+          {
+            "id": "b3",
+            "kind": "kidWork",
+            "x": 5,
+            "y": 10,
+            "facing": "left",
+            "state": "done",
+            "owner": "me:1",
+            "job": "herbalist"
+          }
+        ],
+        "villageLevel": 0,
+        "unlocks": {},
+        "tiles": {},
+        "newlandRevealed": true
+      }
+    }
+  },
+  {
+    "label": "실제 놓은 연결 돌길 · 정원 · 덤불",
+    "location": {
+      "mode": "game",
+      "map": "newland",
+      "at": {
+        "x": 7,
+        "y": 14
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "rain",
+      "indoors": false,
+      "room": null,
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": null,
+        "furniture": [],
+        "fixed": [],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {},
+        "tiles": {
+          "6,14": "stone",
+          "7,14": "stone",
+          "8,14": "stone",
+          "6,15": "garden",
+          "8,15": "flower",
+          "9,14": "bush"
+        },
+        "newlandRevealed": true
+      }
+    }
+  },
+  {
+    "label": "원래 빵집 벤치 해금",
+    "location": {
+      "mode": "game",
+      "map": "village",
+      "at": {
+        "x": 1,
+        "y": 13
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "sunny",
+      "indoors": false,
+      "room": null,
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": null,
+        "furniture": [],
+        "fixed": [],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {
+          "unlock:bakeryBench": 1
+        }
+      }
+    }
+  },
+  {
+    "label": "원래 포도 시렁 해금",
+    "location": {
+      "mode": "game",
+      "map": "village",
+      "at": {
+        "x": 42,
+        "y": 9
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "sunny",
+      "indoors": false,
+      "room": null,
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": null,
+        "furniture": [],
+        "fixed": [],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {
+          "unlock:grapeTrellis": 1
+        }
+      }
+    }
+  },
+  {
+    "label": "베틀 차양 · 원래 마을2단계",
+    "location": {
+      "mode": "game",
+      "map": "village",
+      "at": {
+        "x": 38,
+        "y": 24
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "sunny",
+      "indoors": false,
+      "room": null,
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": null,
+        "furniture": [],
+        "fixed": [],
+        "builds": [],
+        "villageLevel": 2,
+        "unlocks": {
+          "unlock:loomAwning": 1
+        }
+      }
+    }
+  },
+  {
+    "label": "늘어난 벌통 · 원래 마을4단계",
+    "location": {
+      "mode": "game",
+      "map": "village",
+      "at": {
+        "x": 44,
+        "y": 27
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "sunny",
+      "indoors": false,
+      "room": null,
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": null,
+        "furniture": [],
+        "fixed": [],
+        "builds": [],
+        "villageLevel": 4,
+        "unlocks": {
+          "unlock:moreHives": 1
+        }
+      }
+    }
+  },
+  {
+    "label": "실제 밤 등불",
+    "location": {
+      "mode": "game",
+      "map": "village",
+      "at": {
+        "x": 23,
+        "y": 11
+      },
+      "day": 3,
+      "minute": 1300,
+      "weather": "sunny",
+      "indoors": false,
+      "room": null,
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": null,
+        "furniture": [],
+        "fixed": [],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {
+          "unlock:lanterns": 1
+        }
+      }
+    }
+  },
+  {
+    "label": "맑은 낮 언덕 연",
+    "location": {
+      "mode": "game",
+      "map": "village",
+      "at": {
+        "x": 15,
+        "y": 12
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "sunny",
+      "indoors": false,
+      "room": null,
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": null,
+        "furniture": [],
+        "fixed": [],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {
+          "unlock:kite": 1
+        }
+      }
+    }
+  },
+  {
+    "label": "빗속 언덕 연 없음",
+    "location": {
+      "mode": "game",
+      "map": "village",
+      "at": {
+        "x": 15,
+        "y": 12
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "rain",
+      "indoors": false,
+      "room": null,
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": null,
+        "furniture": [],
+        "fixed": [],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {
+          "unlock:kite": 1
+        }
+      }
+    }
+  },
+  {
+    "label": "실제 기름틀 손잡이 해금",
+    "location": {
+      "mode": "game",
+      "map": "village",
+      "at": {
+        "x": 45,
+        "y": 21
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "sunny",
+      "indoors": false,
+      "room": null,
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": null,
+        "furniture": [],
+        "fixed": [],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {
+          "unlock:pressHandle": 1
+        }
+      }
+    }
+  },
+  {
+    "label": "실제 대장간 지붕 해금",
+    "location": {
+      "mode": "game",
+      "map": "village",
+      "at": {
+        "x": 42,
+        "y": 20
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "sunny",
+      "indoors": false,
+      "room": null,
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": null,
+        "furniture": [],
+        "fixed": [],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {
+          "unlock:bigBellows": 1
+        }
+      }
+    }
+  },
+  {
+    "label": "원본 흙길과 이어지는 잔디",
+    "location": {
+      "mode": "game",
+      "map": "newland",
+      "at": {
+        "x": 7,
+        "y": 14
+      },
+      "day": 1,
+      "minute": 900,
+      "weather": "sunny",
+      "indoors": false,
+      "room": null,
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": null,
+        "furniture": [],
+        "fixed": [],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {},
+        "tiles": {
+          "6,14": "road",
+          "7,14": "road",
+          "8,14": "lawn",
+          "7,15": "lawn"
+        },
+        "newlandRevealed": true
+      }
+    }
+  },
+  {
+    "label": "겨울 원본 잎 진 생울타리",
+    "location": {
+      "mode": "game",
+      "map": "newland",
+      "at": {
+        "x": 7,
+        "y": 14
+      },
+      "day": 121,
+      "minute": 900,
+      "weather": "sunny",
+      "indoors": false,
+      "room": null,
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": null,
+        "furniture": [],
+        "fixed": [],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {},
+        "tiles": {
+          "7,14": "lawn",
+          "8,14": "hedge",
+          "9,14": "hedge"
+        },
+        "newlandRevealed": true
+      }
+    }
+  },
+  {
+    "label": "겨울 새 터 가장자리 늘푸른나무",
+    "location": {
+      "mode": "game",
+      "map": "newland",
+      "at": {
+        "x": 3,
+        "y": 14
+      },
+      "day": 121,
+      "minute": 900,
+      "weather": "sunny",
+      "indoors": false,
+      "room": null,
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": null,
+        "furniture": [],
+        "fixed": [],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {},
+        "tiles": {
+          "0,14": "hedge",
+          "1,14": "hedge",
+          "2,14": "road"
+        },
+        "newlandRevealed": true
+      }
+    }
+  },
+  {
+    "label": "땅 해금 전 배치한 그림 숨김",
+    "location": {
+      "mode": "game",
+      "map": "newland",
+      "at": {
+        "x": 7,
+        "y": 14
+      },
+      "day": 1,
+      "minute": 900,
+      "weather": "sunny",
+      "indoors": false,
+      "room": null,
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": null,
+        "furniture": [],
+        "fixed": [],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {},
+        "tiles": {
+          "6,14": "road",
+          "8,14": "hedge"
+        },
+        "newlandRevealed": false
+      }
+    }
+  },
+  {
+    "label": "실제 칸막이 문맥 · 지도 테두리는 바닥에 중복 표시하지 않음",
+    "location": {
+      "mode": "game",
+      "map": "village",
+      "at": {
+        "x": 21,
+        "y": 112
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "rain",
+      "indoors": true,
+      "room": {
+        "kind": "home",
+        "owner": "player"
+      },
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": {
+          "x0": 16,
+          "y0": 110,
+          "w": 9,
+          "h": 6
+        },
+        "furniture": [],
+        "fixed": [],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {},
+        "roomTiles": {
+          "15,109": "_",
+          "16,109": "_",
+          "17,109": "_",
+          "18,109": "#",
+          "19,109": "f",
+          "20,109": "f",
+          "21,109": "f",
+          "22,109": "f",
+          "23,109": "f",
+          "24,109": "#",
+          "25,109": "_",
+          "15,110": "_",
+          "16,110": "#",
+          "17,110": "#",
+          "18,110": "#",
+          "19,110": "#",
+          "20,110": "#",
+          "21,110": "D",
+          "22,110": "#",
+          "23,110": "#",
+          "24,110": "#",
+          "25,110": "_",
+          "15,111": "_",
+          "16,111": "#",
+          "17,111": "f",
+          "18,111": "f",
+          "19,111": "f",
+          "20,111": "#",
+          "21,111": "f",
+          "22,111": "f",
+          "23,111": "f",
+          "24,111": "#",
+          "25,111": "_",
+          "15,112": "_",
+          "16,112": "#",
+          "17,112": "f",
+          "18,112": "f",
+          "19,112": "f",
+          "20,112": "#",
+          "21,112": "f",
+          "22,112": "f",
+          "23,112": "f",
+          "24,112": "#",
+          "25,112": "_",
+          "15,113": "_",
+          "16,113": "#",
+          "17,113": "f",
+          "18,113": "f",
+          "19,113": "f",
+          "20,113": "#",
+          "21,113": "f",
+          "22,113": "f",
+          "23,113": "f",
+          "24,113": "#",
+          "25,113": "_",
+          "15,114": "_",
+          "16,114": "#",
+          "17,114": "f",
+          "18,114": "f",
+          "19,114": "f",
+          "20,114": "f",
+          "21,114": "f",
+          "22,114": "f",
+          "23,114": "f",
+          "24,114": "#",
+          "25,114": "_",
+          "15,115": "_",
+          "16,115": "#",
+          "17,115": "#",
+          "18,115": "#",
+          "19,115": "#",
+          "20,115": "E",
+          "21,115": "#",
+          "22,115": "#",
+          "23,115": "#",
+          "24,115": "#",
+          "25,115": "_",
+          "15,116": "_",
+          "16,116": "_",
+          "17,116": "_",
+          "18,116": "_",
+          "19,116": "_",
+          "20,116": "_",
+          "21,116": "_",
+          "22,116": "_",
+          "23,116": "_",
+          "24,116": "_",
+          "25,116": "_"
+        },
+        "homeWalls": {
+          "built": [
+            "20,111",
+            "20,112",
+            "20,113"
+          ],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "label": "허문 방 사이 벽 · 바닥 연결",
+    "location": {
+      "mode": "game",
+      "map": "village",
+      "at": {
+        "x": 21,
+        "y": 112
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "rain",
+      "indoors": true,
+      "room": {
+        "kind": "home",
+        "owner": "player"
+      },
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": {
+          "x0": 16,
+          "y0": 110,
+          "w": 9,
+          "h": 6
+        },
+        "furniture": [],
+        "fixed": [],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {},
+        "roomTiles": {
+          "15,109": "_",
+          "16,109": "_",
+          "17,109": "_",
+          "18,109": "#",
+          "19,109": "f",
+          "20,109": "f",
+          "21,109": "f",
+          "22,109": "f",
+          "23,109": "f",
+          "24,109": "#",
+          "25,109": "_",
+          "15,110": "_",
+          "16,110": "#",
+          "17,110": "#",
+          "18,110": "#",
+          "19,110": "#",
+          "20,110": "f",
+          "21,110": "D",
+          "22,110": "f",
+          "23,110": "#",
+          "24,110": "#",
+          "25,110": "_",
+          "15,111": "_",
+          "16,111": "#",
+          "17,111": "f",
+          "18,111": "f",
+          "19,111": "f",
+          "20,111": "f",
+          "21,111": "f",
+          "22,111": "f",
+          "23,111": "f",
+          "24,111": "#",
+          "25,111": "_",
+          "15,112": "_",
+          "16,112": "#",
+          "17,112": "f",
+          "18,112": "f",
+          "19,112": "f",
+          "20,112": "f",
+          "21,112": "f",
+          "22,112": "f",
+          "23,112": "f",
+          "24,112": "#",
+          "25,112": "_",
+          "15,113": "_",
+          "16,113": "#",
+          "17,113": "f",
+          "18,113": "f",
+          "19,113": "f",
+          "20,113": "f",
+          "21,113": "f",
+          "22,113": "f",
+          "23,113": "f",
+          "24,113": "#",
+          "25,113": "_",
+          "15,114": "_",
+          "16,114": "#",
+          "17,114": "f",
+          "18,114": "f",
+          "19,114": "f",
+          "20,114": "f",
+          "21,114": "f",
+          "22,114": "f",
+          "23,114": "f",
+          "24,114": "#",
+          "25,114": "_",
+          "15,115": "_",
+          "16,115": "#",
+          "17,115": "#",
+          "18,115": "#",
+          "19,115": "#",
+          "20,115": "E",
+          "21,115": "#",
+          "22,115": "#",
+          "23,115": "#",
+          "24,115": "#",
+          "25,115": "_",
+          "15,116": "_",
+          "16,116": "_",
+          "17,116": "_",
+          "18,116": "_",
+          "19,116": "_",
+          "20,116": "_",
+          "21,116": "_",
+          "22,116": "_",
+          "23,116": "_",
+          "24,116": "_",
+          "25,116": "_"
+        },
+        "homeWalls": {
+          "built": [],
+          "removed": [
+            "20,110",
+            "22,110"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "label": "생활방의 뒤쪽 벽면과 실제 옮긴 가구",
+    "location": {
+      "mode": "game",
+      "map": "village",
+      "at": {
+        "x": 10,
+        "y": 112
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "rain",
+      "indoors": true,
+      "room": {
+        "kind": "home",
+        "owner": "player"
+      },
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": {
+          "x0": 6,
+          "y0": 108,
+          "w": 11,
+          "h": 10
+        },
+        "furniture": [
+          {
+            "item": "jar",
+            "x": 11,
+            "y": 111
+          },
+          {
+            "item": "table",
+            "x": 12,
+            "y": 113
+          }
+        ],
+        "fixed": [],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {},
+        "roomTiles": {
+          "5,107": "_",
+          "6,107": "_",
+          "7,107": "_",
+          "8,107": "_",
+          "9,107": "_",
+          "10,107": "_",
+          "11,107": "_",
+          "12,107": "_",
+          "13,107": "_",
+          "14,107": "_",
+          "15,107": "_",
+          "16,107": "_",
+          "17,107": "_",
+          "5,108": "_",
+          "6,108": "#",
+          "7,108": "#",
+          "8,108": "#",
+          "9,108": "#",
+          "10,108": "#",
+          "11,108": "#",
+          "12,108": "#",
+          "13,108": "#",
+          "14,108": "#",
+          "15,108": "#",
+          "16,108": "#",
+          "17,108": "_",
+          "5,109": "_",
+          "6,109": "#",
+          "7,109": "f",
+          "8,109": "f",
+          "9,109": "f",
+          "10,109": "f",
+          "11,109": "f",
+          "12,109": "f",
+          "13,109": "f",
+          "14,109": "f",
+          "15,109": "f",
+          "16,109": "#",
+          "17,109": "_",
+          "5,110": "_",
+          "6,110": "#",
+          "7,110": "f",
+          "8,110": "f",
+          "9,110": "f",
+          "10,110": "f",
+          "11,110": "f",
+          "12,110": "f",
+          "13,110": "f",
+          "14,110": "f",
+          "15,110": "f",
+          "16,110": "#",
+          "17,110": "#",
+          "5,111": "_",
+          "6,111": "#",
+          "7,111": "f",
+          "8,111": "f",
+          "9,111": "f",
+          "10,111": "f",
+          "11,111": "f",
+          "12,111": "f",
+          "13,111": "f",
+          "14,111": "f",
+          "15,111": "f",
+          "16,111": "#",
+          "17,111": "f",
+          "5,112": "_",
+          "6,112": "#",
+          "7,112": "f",
+          "8,112": "f",
+          "9,112": "f",
+          "10,112": "f",
+          "11,112": "f",
+          "12,112": "f",
+          "13,112": "f",
+          "14,112": "f",
+          "15,112": "f",
+          "16,112": "#",
+          "17,112": "f",
+          "5,113": "_",
+          "6,113": "#",
+          "7,113": "f",
+          "8,113": "f",
+          "9,113": "f",
+          "10,113": "f",
+          "11,113": "f",
+          "12,113": "f",
+          "13,113": "f",
+          "14,113": "f",
+          "15,113": "f",
+          "16,113": "D",
+          "17,113": "f",
+          "5,114": "_",
+          "6,114": "#",
+          "7,114": "f",
+          "8,114": "f",
+          "9,114": "f",
+          "10,114": "f",
+          "11,114": "f",
+          "12,114": "f",
+          "13,114": "f",
+          "14,114": "f",
+          "15,114": "f",
+          "16,114": "#",
+          "17,114": "f",
+          "5,115": "_",
+          "6,115": "#",
+          "7,115": "f",
+          "8,115": "f",
+          "9,115": "f",
+          "10,115": "f",
+          "11,115": "f",
+          "12,115": "f",
+          "13,115": "f",
+          "14,115": "f",
+          "15,115": "f",
+          "16,115": "#",
+          "17,115": "#",
+          "5,116": "_",
+          "6,116": "#",
+          "7,116": "f",
+          "8,116": "f",
+          "9,116": "f",
+          "10,116": "f",
+          "11,116": "f",
+          "12,116": "f",
+          "13,116": "f",
+          "14,116": "f",
+          "15,116": "f",
+          "16,116": "#",
+          "17,116": "_",
+          "5,117": "_",
+          "6,117": "#",
+          "7,117": "#",
+          "8,117": "#",
+          "9,117": "#",
+          "10,117": "#",
+          "11,117": "#",
+          "12,117": "#",
+          "13,117": "#",
+          "14,117": "#",
+          "15,117": "#",
+          "16,117": "#",
+          "17,117": "_",
+          "5,118": "_",
+          "6,118": "_",
+          "7,118": "_",
+          "8,118": "_",
+          "9,118": "_",
+          "10,118": "_",
+          "11,118": "_",
+          "12,118": "_",
+          "13,118": "_",
+          "14,118": "_",
+          "15,118": "_",
+          "16,118": "_",
+          "17,118": "_"
+        },
+        "homeWalls": {
+          "built": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "label": "창문 앞에 가까이 서도 창은 바닥 뒤쪽 벽면에 유지",
+    "location": {
+      "mode": "game",
+      "map": "village",
+      "at": {
+        "x": 21,
+        "y": 105
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "rain",
+      "indoors": true,
+      "room": {
+        "kind": "home",
+        "owner": "player"
+      },
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": {
+          "x0": 18,
+          "y0": 104,
+          "w": 7,
+          "h": 7
+        },
+        "furniture": [],
+        "fixed": [
+          {
+            "x": 23,
+            "y": 104,
+            "ch": "N"
+          }
+        ],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {},
+        "roomTiles": {
+          "17,103": "_",
+          "18,103": "_",
+          "19,103": "_",
+          "20,103": "_",
+          "21,103": "_",
+          "22,103": "_",
+          "23,103": "_",
+          "24,103": "_",
+          "25,103": "_",
+          "17,104": "_",
+          "18,104": "#",
+          "19,104": "#",
+          "20,104": "#",
+          "21,104": "#",
+          "22,104": "#",
+          "23,104": "N",
+          "24,104": "#",
+          "25,104": "_",
+          "17,105": "_",
+          "18,105": "#",
+          "19,105": "f",
+          "20,105": "f",
+          "21,105": "f",
+          "22,105": "f",
+          "23,105": "f",
+          "24,105": "#",
+          "25,105": "_",
+          "17,106": "_",
+          "18,106": "#",
+          "19,106": "f",
+          "20,106": "f",
+          "21,106": "f",
+          "22,106": "f",
+          "23,106": "f",
+          "24,106": "#",
+          "25,106": "_",
+          "17,107": "_",
+          "18,107": "#",
+          "19,107": "f",
+          "20,107": "f",
+          "21,107": "f",
+          "22,107": "f",
+          "23,107": "f",
+          "24,107": "#",
+          "25,107": "_",
+          "17,108": "_",
+          "18,108": "#",
+          "19,108": "f",
+          "20,108": "f",
+          "21,108": "f",
+          "22,108": "f",
+          "23,108": "f",
+          "24,108": "#",
+          "25,108": "_",
+          "17,109": "_",
+          "18,109": "#",
+          "19,109": "f",
+          "20,109": "f",
+          "21,109": "f",
+          "22,109": "f",
+          "23,109": "f",
+          "24,109": "#",
+          "25,109": "_",
+          "17,110": "#",
+          "18,110": "#",
+          "19,110": "#",
+          "20,110": "#",
+          "21,110": "D",
+          "22,110": "#",
+          "23,110": "#",
+          "24,110": "#",
+          "25,110": "_",
+          "17,111": "f",
+          "18,111": "f",
+          "19,111": "f",
+          "20,111": "f",
+          "21,111": "f",
+          "22,111": "f",
+          "23,111": "f",
+          "24,111": "#",
+          "25,111": "_"
+        },
+        "homeWalls": {
+          "built": [],
+          "removed": []
+        }
+      }
+    }
+  },
+  {
+    "label": "실제 양 우리 · 원래 세 마리",
+    "location": {
+      "mode": "game",
+      "map": "village",
+      "at": {
+        "x": 9,
+        "y": 28
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "sunny",
+      "indoors": false,
+      "room": null,
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": null,
+        "furniture": [],
+        "fixed": [],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {}
+      }
+    }
+  },
+  {
+    "label": "실제 양 우리 · 해금 뒤 다섯 마리",
+    "location": {
+      "mode": "game",
+      "map": "village",
+      "at": {
+        "x": 9,
+        "y": 28
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "sunny",
+      "indoors": false,
+      "room": null,
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": null,
+        "furniture": [],
+        "fixed": [],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {
+          "unlock:penBig": 1
+        }
+      }
+    }
+  },
+  {
+    "label": "원본 일곱 칸 새 터 서고 외관",
+    "location": {
+      "mode": "game",
+      "map": "newland",
+      "at": {
+        "x": 20,
+        "y": 8
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "sunny",
+      "indoors": false,
+      "room": null,
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": null,
+        "furniture": [],
+        "fixed": [],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {},
+        "tiles": {},
+        "newlandRevealed": true
+      }
+    }
+  },
+  {
+    "label": "해금 전에도 서 있는 원본 새 터 서고",
+    "location": {
+      "mode": "game",
+      "map": "newland",
+      "at": {
+        "x": 20,
+        "y": 8
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "sunny",
+      "indoors": false,
+      "room": null,
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": null,
+        "furniture": [],
+        "fixed": [],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {},
+        "tiles": {},
+        "newlandRevealed": false
+      }
+    }
+  },
+  {
+    "label": "원본 새 터 왕래 표식",
+    "location": {
+      "mode": "game",
+      "map": "newland",
+      "at": {
+        "x": 1,
+        "y": 8
+      },
+      "day": 3,
+      "minute": 900,
+      "weather": "sunny",
+      "indoors": false,
+      "room": null,
+      "datePlace": null,
+      "dateSource": "unavailable",
+      "layout": {
+        "bounds": null,
+        "furniture": [],
+        "fixed": [],
+        "builds": [],
+        "villageLevel": 0,
+        "unlocks": {},
+        "tiles": {},
+        "newlandRevealed": true
+      }
+    }
+  }
+]

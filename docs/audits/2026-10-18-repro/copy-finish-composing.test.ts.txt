@@ -1,0 +1,29 @@
+import React from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/react'
+import { act, fireEvent, render, screen } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/@testing-library/react'
+import { CONTENT, versesOf } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import { newGame, type GameState } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/game'
+import { copySpot } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/copying'
+import { useGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/store/game-store'
+import { ModalLayer } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/features/ModalLayer'
+import { T } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/text'
+import { preloadScreens } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/features/lazy-screen'
+beforeAll(() => preloadScreens())
+it('다음 절 단추는 조합 중에도 절을 마친다', async () => {
+  localStorage.clear()
+  const g: Partial<GameState> = { copy: { book: 'lk', at: { lk: { chapter: 1, verse: 1 } }, legacy: {} } }
+  useGame.setState({ game: { ...newGame(CONTENT), scenes: [], ...g }, modal: null, rng: () => 0, decorating: null, toast: null, copyResult: null, copySessionStats: null, piecePopups: [] })
+  render(React.createElement(ModalLayer))
+  act(() => useGame.getState().open({ kind: 'copy', view: 'write' }))
+  const box = await screen.findByLabelText('따라 적기') as HTMLTextAreaElement
+  const text = versesOf('눅 1:1')[0].text
+  fireEvent.compositionStart(box)
+  fireEvent.change(box, { target: { value: text } })
+  const btn = screen.getByRole('button', { name: (T.copyFocus as any).enterNext })
+  fireEvent.click(btn)
+  const spot = copySpot(useGame.getState().game, 'lk', CONTENT)!
+  console.log('AFTER CLICK verse', spot.verse.verse, 'modal.last', JSON.stringify((useGame.getState().modal as any)?.last))
+  // 늦게 온 compositionend: 마지막 글자(조합 중이던)가 남아 있는 경우
+  box.value = text.slice(-1)
+  fireEvent.compositionEnd(box)
+  console.log('AFTER COMPOSITIONEND draft', JSON.stringify(copySpot(useGame.getState().game, 'lk', CONTENT)!.draft))
+})

@@ -1,5 +1,6 @@
 // 이웃과의 생활 대화 — 게임이 지어낸 말. 성경 본문은 이웃이 건넨 말씀 조각·편지의 본문 창으로만 본다.
 import { neighborById } from '../../content/catalog'
+import {weddingGiftsFor} from '../../engine/wedding-attire'
 import { useEffect, useState } from 'react'
 import { WorkDayView, WorkEntry } from '../work/WorkDay'
 import { StallEntry } from '../stall/StallEntry'
@@ -71,7 +72,7 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
   const blockNote =
     block === 'needs' && def.help.needs ? fill(T.ui.helpNeeds, { items: itemList(def.help.needs) }) : block === 'tired' ? T.ui.helpTired : block === 'full' ? T.ui.bagFull : null
   // 단추 이름은 이웃마다 다른 일 이름 대신 그냥 "돕기" (2026-10-07 사용자)
-  const canGift = !game.gifted.includes(def.id) && GIFTABLE.some((i) => (game.inv[i] ?? 0) > 0)
+  const canGift = (!game.gifted.includes(def.id) && GIFTABLE.some((i) => (game.inv[i] ?? 0) > 0))||weddingGiftsFor(game,def.id).length>0
   const req = requestFor(def.id, game.hearts[def.id], game.flags)
   const askable = req && reqState(game.flags, req.id) === 0
   const active = activeRequest(game, def.id)

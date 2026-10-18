@@ -105,7 +105,7 @@ function Body() {
     case 'guide':
       return <GameGuide />
     case 'blankQuiz':
-      return <BlankQuizDialog />
+      return <BlankQuizDialog initialTarget={modal.target} />
     case 'clubs':
       return <ClubList />
     case 'clubSession':

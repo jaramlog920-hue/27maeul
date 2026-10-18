@@ -6,6 +6,7 @@ import { availability } from './plans'
 import { featureAccess } from './feature-rules'
 import { notYet, passTime, playerTile, recordExperienceIn, type GameState } from './game'
 import { sellPrice, SELL_PRICES } from './merchant-selling'
+import { FURNITURE_PRICES } from './economy-prices'
 import { addGift, count, COOKED_ITEMS, take } from './items'
 import { isMarketDay, isWet, weatherOf } from './calendar'
 import { personOf } from './people'
@@ -131,6 +132,8 @@ export const buyerOf = (npc: string): Buyer => BUYERS[npc] ?? DEFAULT_BUYER
 
 /** 좌판 값: 상인 표에 있는 것은 같은 값에서(매력 보너스 포함), 없는 것은 좌판 기본값. 그 위에 작은 범위의 가격 선택 */
 export function stallBase(s: Pick<GameState, 'stats'>, item: ItemId): number {
+  const furniture = FURNITURE_PRICES[item]
+  if (furniture !== undefined) return Math.max(1, Math.round(furniture * 0.6))
   return SELL_PRICES[item] !== undefined ? sellPrice(s, item)! : (STALL_EXTRA[item] ?? 1)
 }
 export function stallPrice(s: Pick<GameState, 'stats'>, item: ItemId, tier: StallPrice): number {

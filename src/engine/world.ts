@@ -112,6 +112,12 @@ const HOME_OVERLAY: readonly ReadonlyMap<string, string>[] = (() => {
   return stages
 })()
 
+/** Read-only home geometry for detached previews; does not select a map or room. */
+export function homeLayoutOverrideAt(x:number,y:number,level:number,windowX=5):string|undefined {
+  if(level>=1&&y===PARTNER_ROOM.y0&&x===PARTNER_ROOM.x0+windowX)return 'N'
+  return level>0?HOME_OVERLAY[level]?.get(`${x},${y}`):undefined
+}
+
 export function homeRect(level = homeLevel): { x0: number; y0: number; x1: number; y1: number } {
   return { x0: level >= 3 ? LIVING_ROOM.x0 : HOME_RECT.x0,
     y0: level >= 1 ? PARTNER_ROOM.y0 : HOME_RECT.y0,
@@ -650,11 +656,8 @@ const VILLAGE_TRAIL_FROM = 40
 
 /** 세우거나 허문 벽을 빼고 본 첫 마을의 한 칸 — 어느 벽이 방 사이 벽인지 가릴 때 */
 export function baseVillageTileAt(x: number, y: number): string {
-  if (homeLevel >= 1 && y === PARTNER_ROOM.y0 && x === PARTNER_ROOM.x0 + (currentSpouseRoom()?.window.x ?? 5)) return 'N'
-  if (homeLevel > 0) {
-    const o = HOME_OVERLAY[homeLevel].get(`${x},${y}`)
-    if (o) return o
-  }
+  const home=homeLayoutOverrideAt(x,y,homeLevel,currentSpouseRoom()?.window.x??5)
+  if(home)return home
   if (openDoorSet.size > 0 && (x === LIBRARY_X0 || x === LIBRARY_X0 + LIBRARY_W - 1)) {
     const i = LOCKED_DOORS.findIndex((d) => d.x === x && d.y === y)
     if (i >= 0 && openDoorSet.has(i)) return 'J'

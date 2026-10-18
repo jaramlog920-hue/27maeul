@@ -1,0 +1,1669 @@
+{
+  "batch": "shared-background-remainder",
+  "completed": false,
+  "scope": "Native-site fixtures supplement the 118-scene sample ledger; this is not final event-location or browser approval.",
+  "samples": [
+    {
+      "id": "done:child:1",
+      "key": "done-child-1-site",
+      "fixture": "native-facility-coordinate",
+      "at": {
+        "x": 15,
+        "y": 12
+      },
+      "day": 1,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "kite",
+      "background": "hill",
+      "sourceLines": [
+        {
+          "speaker": "child",
+          "text": "연이 떴어요! 바람 부는 날 언덕에서 날릴게요."
+        },
+        {
+          "speaker": "child",
+          "text": "이건 제가 깎은 나무 새예요."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-child-1-site-phases.png",
+          "sha256": "d7e9ef87d3ac937b7a23cd9f9227cac1dc304f047a72ccd06e14848f636f56a8"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-child-1-site-phone.png",
+          "sha256": "c28f369819fa0a559b0906078fc4d5745a61a47ec59a03c49570ebe3b1b96efa"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-child-1-site-thumb.png",
+          "sha256": "f12520009e35c0ef04db584106c5e95a8bbd553436173763551475e6c56d91f6"
+        }
+      ],
+      "visuallyReviewed": true,
+      "notes": "After hill resolver fix: both original stages/default and actual players/three times/three viewports inspected. Native hill pasture and map-anchored bench replace the unrelated square stall; kite remains weather gated."
+    },
+    {
+      "id": "done:presser:1",
+      "key": "done-presser-1-site",
+      "fixture": "native-facility-coordinate",
+      "at": {
+        "x": 45,
+        "y": 21
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "pressHandle",
+      "background": "pasture",
+      "sourceLines": [
+        {
+          "speaker": "presser",
+          "text": "새 손잡이를 달았어요! 이제 기름이 한 병 더 나와요."
+        },
+        {
+          "speaker": "presser",
+          "text": "기름 두 병 가져가요."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-presser-1-site-phases.png",
+          "sha256": "94913252dfc5fdbd0572de2df34416b3d2aeb3d216bf356110c6e77604ddb8d7"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-presser-1-site-phone.png",
+          "sha256": "6c366354608b66cddf878c1be045aeac387aeaef600a61b3c283567918510cb7"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-presser-1-site-thumb.png",
+          "sha256": "0c63abbe289526704fa67f278f6fc58f3732867145ffe7342459dee66bdd5334"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original phases and both players at all three times/viewports inspected. Native unlocked handle is present but its base/facility context is not established by this exterior coordinate; actual relocated indoor oil station must be checked before final approval. After event-camera footprint correction, all three changed viewport sheets were inspected again; distant loom/kite no longer appears in unrelated floor/sky."
+    },
+    {
+      "id": "done:presser:1",
+      "key": "done-presser-1-away",
+      "fixture": "explicit-away-meeting",
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 900,
+      "weather": "sunny",
+      "unlock": "pressHandle",
+      "background": "square",
+      "sourceLines": [
+        {
+          "speaker": "presser",
+          "text": "새 손잡이를 달았어요! 이제 기름이 한 병 더 나와요."
+        },
+        {
+          "speaker": "presser",
+          "text": "기름 두 병 가져가요."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-presser-1-away-phases.png",
+          "sha256": "9041d3464d1e138f91bdc00fc963d18ed9a652277f0424365bb293991c7768ba"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-presser-1-away-phone.png",
+          "sha256": "8b8d2948785a2c24c8773ad39a2e215ff8cd1fc5d03e27b73548baa395678ef1"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-presser-1-away-thumb.png",
+          "sha256": "c61ff7b435c04c1518a2233a4d33ed39f895a2e5e5b17e414b140d7832ee9175"
+        }
+      ],
+      "visuallyReviewed": true,
+      "notes": "Both original phases, default/actual player, three times and viewports inspected. Away location remains square; no oil station is invented at the meeting."
+    },
+    {
+      "id": "done:presser:1",
+      "key": "done-presser-1-workplace",
+      "fixture": "actual-relocated-workstation",
+      "at": {
+        "x": 25,
+        "y": 125
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": {
+        "kind": "neighbor",
+        "owner": "lodging"
+      },
+      "unlock": "pressHandle",
+      "background": "oil",
+      "sourceLines": [
+        {
+          "speaker": "presser",
+          "text": "새 손잡이를 달았어요! 이제 기름이 한 병 더 나와요."
+        },
+        {
+          "speaker": "presser",
+          "text": "기름 두 병 가져가요."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-presser-1-workplace-phases.png",
+          "sha256": "f63d29c7389838c30fd6ddcbf66103574981dce18a810771216031e5784dd3ba"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-presser-1-workplace-phone.png",
+          "sha256": "2e3a6536b7bdfbacddbd675369956012f7e622586af7105827ce672a06008cfa"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-presser-1-workplace-thumb.png",
+          "sha256": "74b62e0f1c2aaa308ea00473f40f73e159936e6f37181aa2f1c8d9f225226765"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual PLACES.press stand in lodging: all original stages, both players, 0/.6/8 seconds and three viewports inspected after attaching the original unlocked grip to the real press frame. Heads, bodies, hands and feet remain clear. No grip is left at the former outdoor station. Final event routing and browser approval remain pending."
+    },
+    {
+      "id": "done:smith:1",
+      "key": "done-smith-1-workplace",
+      "fixture": "actual-relocated-workstation",
+      "at": {
+        "x": 7,
+        "y": 126
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": {
+        "kind": "neighbor",
+        "owner": "lodging"
+      },
+      "unlock": "bigBellows",
+      "background": "forge",
+      "sourceLines": [
+        {
+          "speaker": "smith",
+          "text": "새 풀무요! 이제 그을음을 넉넉히 나눠 주겠소."
+        },
+        {
+          "speaker": "smith",
+          "text": "우선 이것부터 가져가시오."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-smith-1-workplace-phases.png",
+          "sha256": "0d3916eb7dc08ac2250421cdb06d9165fedcf7bc4931e8485d36403fec80c10c"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-smith-1-workplace-phone.png",
+          "sha256": "b4d3302083066326ef825de7ec4b9af86f874ab8a479c23d57f77718b7a35a03"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-smith-1-workplace-thumb.png",
+          "sha256": "a2e260fece438f0448be0a54e1e3e0724d9759480be956e6b57a3ec734148125"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Actual PLACES.anvil stand in lodging: all original stages, both players, 0/.6/8 seconds and three viewports inspected after the bellows fix. The unlocked bellows sits beside the hearth with clear heads, bodies, hands and feet; no overhead roof strip is projected onto grass. Final event routing and browser approval remain pending."
+    },
+    {
+      "id": "done:baker:1",
+      "key": "done-baker-1-site",
+      "fixture": "native-facility-coordinate",
+      "at": {
+        "x": 1,
+        "y": 13
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "bakeryBench",
+      "background": "pasture",
+      "sourceLines": [
+        {
+          "speaker": "baker",
+          "text": "고마워요! 빵집 앞에 의자를 놓았어요."
+        },
+        {
+          "speaker": "baker",
+          "text": "이건 답례예요. 곡식 담기 좋은 그릇이에요."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-baker-1-site-phases.png",
+          "sha256": "d217b1b021fd8ac7be098df5ea3c151cf4b65b72e5263b1744e704a3108c7582"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-baker-1-site-phone.png",
+          "sha256": "bcff352c5134d524ce8f61129f424ea58d80647b3073a26f755e115532514230"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-baker-1-site-thumb.png",
+          "sha256": "cedf006f82d61478af35357ca9fddaf535a69394d1e8c03c7919946cfa1f15ad"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks."
+    },
+    {
+      "id": "done:baker:1",
+      "key": "done-baker-1-away",
+      "fixture": "explicit-away-meeting",
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "bakeryBench",
+      "background": "square",
+      "sourceLines": [
+        {
+          "speaker": "baker",
+          "text": "고마워요! 빵집 앞에 의자를 놓았어요."
+        },
+        {
+          "speaker": "baker",
+          "text": "이건 답례예요. 곡식 담기 좋은 그릇이에요."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-baker-1-away-phases.png",
+          "sha256": "354e5e6fb91f2bdf67d52938c02ae70f1c41e62316c00cf29fded764f368db4d"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-baker-1-away-phone.png",
+          "sha256": "82b5954567e7c84800a8e9c594dcc1bd309dc5b4ae02d193d73d8317a525bef9"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-baker-1-away-thumb.png",
+          "sha256": "ce0c3112dc5080d5ad2ee9f4a655437e9221c45d671074a3dd8622396562b64b"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks."
+    },
+    {
+      "id": "done:baker:2",
+      "key": "done-baker-2-site",
+      "fixture": "native-facility-coordinate",
+      "at": {
+        "x": 5,
+        "y": 17
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "babyBlanket",
+      "background": "path",
+      "sourceLines": [
+        {
+          "speaker": "baker",
+          "text": "보세요, 아기가 새 이불을 덮고 잘 자요."
+        },
+        {
+          "speaker": "baker",
+          "text": "방석이랑 촛대, 받아 줘요."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-baker-2-site-phases.png",
+          "sha256": "0a73bc4b0651ee99336b901b1062b51d85cd18677c118f4f0c59d6fae4ac1481"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-baker-2-site-phone.png",
+          "sha256": "8c25dcce4abe5adddda0ec49091cd9f7a49168f353c2793d519d060f05ba67c6"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-baker-2-site-thumb.png",
+          "sha256": "14551654185b16a4bc3b931c11aadfccd4d2f993c56301c97855401743b3e6f2"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks.",
+      "openIssue": "User approved preparation wording on 2026-10-17 when no actual infant exists. No infant is invented. Live/replay text selection is implemented; final visual UI/common-route approval remains pending."
+    },
+    {
+      "id": "done:baker:2",
+      "key": "done-baker-2-away",
+      "fixture": "explicit-away-meeting",
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "babyBlanket",
+      "background": "square",
+      "sourceLines": [
+        {
+          "speaker": "baker",
+          "text": "보세요, 아기가 새 이불을 덮고 잘 자요."
+        },
+        {
+          "speaker": "baker",
+          "text": "방석이랑 촛대, 받아 줘요."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-baker-2-away-phases.png",
+          "sha256": "7cd0e9431742ffeb8e14f50e48c8cf472513b5167be3d217b5f7543077959614"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-baker-2-away-phone.png",
+          "sha256": "62351a23552786e331011ebbca7d087a64873d9434244d0c539b4c2f4acc85bb"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-baker-2-away-thumb.png",
+          "sha256": "948624cb0daf4a82b1afa012c1ba1f240ac0b40e376985158697bde08b0db893"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks.",
+      "openIssue": "User approved preparation wording on 2026-10-17 when no actual infant exists. No infant is invented. Live/replay text selection is implemented; final visual UI/common-route approval remains pending."
+    },
+    {
+      "id": "done:baker:2",
+      "key": "done-baker-2-baby-present-site",
+      "fixture": "birth-day-site",
+      "at": {
+        "x": 5,
+        "y": 17
+      },
+      "day": 8,
+      "babyPresent": true,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "babyBlanket",
+      "background": "path",
+      "sourceLines": [
+        {
+          "speaker": "baker",
+          "text": "보세요, 아기가 새 이불을 덮고 잘 자요."
+        },
+        {
+          "speaker": "baker",
+          "text": "방석이랑 촛대, 받아 줘요."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-baker-2-baby-present-site-phases.png",
+          "sha256": "1dae3d06da6ba8e03963c91cd744aec2f28b8f7134f7d95646a449924bad5d1c"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-baker-2-baby-present-site-phone.png",
+          "sha256": "db84d10398186d655fc77afdebf9752be44dc49f418a5db79153702aff9481c1"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-baker-2-baby-present-site-thumb.png",
+          "sha256": "5777eaf7726f39fa0e171a2c89fc25f7a4fa8e45136c488b98f643c0a0e01c7f"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks."
+    },
+    {
+      "id": "done:baker:2",
+      "key": "done-baker-2-baby-present-away",
+      "fixture": "birth-day-away",
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 8,
+      "babyPresent": true,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "babyBlanket",
+      "background": "square",
+      "sourceLines": [
+        {
+          "speaker": "baker",
+          "text": "보세요, 아기가 새 이불을 덮고 잘 자요."
+        },
+        {
+          "speaker": "baker",
+          "text": "방석이랑 촛대, 받아 줘요."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-baker-2-baby-present-away-phases.png",
+          "sha256": "afac247c32729e8ce4b20b75551cce39af0fd97881e45693e961fa3bbca8d661"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-baker-2-baby-present-away-phone.png",
+          "sha256": "5432517efadcae1d7e80480ed6a224c7b275a61d42e1bf85d8f7ae514dca11ff"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-baker-2-baby-present-away-thumb.png",
+          "sha256": "062b4f9bfdd178d5107aec6d897d9a9f8dbf705772478efc6764145c3fe2fd7e"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks."
+    },
+    {
+      "id": "done:child:1",
+      "key": "done-child-1-away",
+      "fixture": "explicit-away-meeting",
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "kite",
+      "background": "square",
+      "sourceLines": [
+        {
+          "speaker": "child",
+          "text": "연이 떴어요! 바람 부는 날 언덕에서 날릴게요."
+        },
+        {
+          "speaker": "child",
+          "text": "이건 제가 깎은 나무 새예요."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-child-1-away-phases.png",
+          "sha256": "faffb9881bb4fc8b500397ecc9a43b6239eee61bb2876ee329eb44fe8e894ecd"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-child-1-away-phone.png",
+          "sha256": "9e17dc782db0892c4b42a2bc72158ef6e731482d3f16deceb50d85eefbbe0180"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-child-1-away-thumb.png",
+          "sha256": "5603682a8929c03eda6a900b55d7d93d57600506e9a4ce22008092a84b5fd090"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks. After event-camera footprint correction, all three changed viewport sheets were inspected again; distant loom/kite no longer appears in unrelated floor/sky."
+    },
+    {
+      "id": "done:child:2",
+      "key": "done-child-2-site",
+      "fixture": "native-facility-coordinate",
+      "at": {
+        "x": 32,
+        "y": 14
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "childGarden",
+      "background": "pasture",
+      "sourceLines": [
+        {
+          "speaker": "child",
+          "text": "꽃이 피었어요! 보러 오세요."
+        },
+        {
+          "speaker": "child",
+          "text": "제일 예쁜 꽃은 꽃병에 꽂아 드릴게요."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-child-2-site-phases.png",
+          "sha256": "3051cd89b3f7771f53c201323360d96a060be471c2100d4d84a92715fe7e212c"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-child-2-site-phone.png",
+          "sha256": "323c963a99b4ba654cb5628810526c7a638c79be63cecfc05f82f4518187364b"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-child-2-site-thumb.png",
+          "sha256": "78dae19603429607c5b4fa11cbc2fe6539b900418d2bd9314fb8968faeb16349"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks. Near garden flowers retain native anchors; the away fixture no longer floats the garden in the sky. Distant loom/hive artifacts are excluded by the camera footprint."
+    },
+    {
+      "id": "done:child:2",
+      "key": "done-child-2-away",
+      "fixture": "explicit-away-meeting",
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "childGarden",
+      "background": "square",
+      "sourceLines": [
+        {
+          "speaker": "child",
+          "text": "꽃이 피었어요! 보러 오세요."
+        },
+        {
+          "speaker": "child",
+          "text": "제일 예쁜 꽃은 꽃병에 꽂아 드릴게요."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-child-2-away-phases.png",
+          "sha256": "0b321edc4e8840f1b4ab8cb445bde925c6e22f6a62837338c71a97b4a5281990"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-child-2-away-phone.png",
+          "sha256": "a8269b2ef8b31e9a345685fd1585b23f74c22d57ebd4f606df86afd87eb3a116"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-child-2-away-thumb.png",
+          "sha256": "3a7046baf47c873468543a2bdbcea3e85be0d514477cfd549935b00a3a0e8b5d"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks. Near garden flowers retain native anchors; the away fixture no longer floats the garden in the sky. Distant loom/hive artifacts are excluded by the camera footprint."
+    },
+    {
+      "id": "done:grandpa:1",
+      "key": "done-grandpa-1-site",
+      "fixture": "native-facility-coordinate",
+      "at": {
+        "x": 42,
+        "y": 9
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "grapeTrellis",
+      "background": "pasture",
+      "sourceLines": [
+        {
+          "speaker": "grandpa",
+          "text": "덕분에 시렁을 반듯하게 세웠네."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "이 물병은 자네 쓰게."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-grandpa-1-site-phases.png",
+          "sha256": "6eeb3f472f5231ea565b02db0cdb1687f1f9d7ce2b33986dadefb845db030225"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-grandpa-1-site-phone.png",
+          "sha256": "935baf3bc004faba87ac6b3472a0dd52fd89b7b8fa352a008b84131cc7b8e7d9"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-grandpa-1-site-thumb.png",
+          "sha256": "06f7b7b8eca039ff14190a9a41e3c8193d7e49f3fe324f3943aaafa3b15ad62a"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks."
+    },
+    {
+      "id": "done:grandpa:1",
+      "key": "done-grandpa-1-away",
+      "fixture": "explicit-away-meeting",
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "grapeTrellis",
+      "background": "square",
+      "sourceLines": [
+        {
+          "speaker": "grandpa",
+          "text": "덕분에 시렁을 반듯하게 세웠네."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "이 물병은 자네 쓰게."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-grandpa-1-away-phases.png",
+          "sha256": "6b83f5351246142fd7561163d6f22fad99156830da62677ad0ec9a4427fb517f"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-grandpa-1-away-phone.png",
+          "sha256": "01c6372625b630280c9e93de72190f4547ddf8db26351245d10c66173311ae18"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-grandpa-1-away-thumb.png",
+          "sha256": "0482369e2a9dc789ff471d52367761765cfff2a75e58b2ac129e58eb3f21e37f"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks."
+    },
+    {
+      "id": "done:grandpa:2",
+      "key": "done-grandpa-2-site",
+      "fixture": "native-facility-coordinate",
+      "at": {
+        "x": 31,
+        "y": 8
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "grandpaBench",
+      "background": "pasture",
+      "sourceLines": [
+        {
+          "speaker": "grandpa",
+          "text": "다 됐네. 지나가다 앉아 쉬게."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "남은 나무로 협탁을 하나 짰네. 가져가게."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-grandpa-2-site-phases.png",
+          "sha256": "c61429eb7d0c262072f8bedd2672d3532e8d907518f85412f1c3895c773ea3fe"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-grandpa-2-site-phone.png",
+          "sha256": "e57c92daf868b3c4ca74dce13c034f4e4f202e230e4d13171ba21158d6929b53"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-grandpa-2-site-thumb.png",
+          "sha256": "0f8d8b6cca0b66f122bb8cf55f40cb6542d46ae88d0fe1725bf53a742e35907a"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks."
+    },
+    {
+      "id": "done:grandpa:2",
+      "key": "done-grandpa-2-away",
+      "fixture": "explicit-away-meeting",
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "grandpaBench",
+      "background": "square",
+      "sourceLines": [
+        {
+          "speaker": "grandpa",
+          "text": "다 됐네. 지나가다 앉아 쉬게."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "남은 나무로 협탁을 하나 짰네. 가져가게."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-grandpa-2-away-phases.png",
+          "sha256": "c488e5f7efd399b4b29fb009985a131b4febb8a6c77adbd057ceb9e95b5a6bed"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-grandpa-2-away-phone.png",
+          "sha256": "804774d232a42d1044f0d924808938ca44d57ce68a7d7d3b35f8536a4b347d1e"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-grandpa-2-away-thumb.png",
+          "sha256": "5cfc09e0935c9e5b661fea4ddf51ae1fbac7500f011095e33a476595da9836cc"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks."
+    },
+    {
+      "id": "done:merchant:1",
+      "key": "done-merchant-1-site",
+      "fixture": "native-facility-coordinate",
+      "at": {
+        "x": 21,
+        "y": 14
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "moreTrades",
+      "background": "square",
+      "sourceLines": [
+        {
+          "speaker": "merchant",
+          "text": "든든하다! 약속대로 좌판에 새 물건 놓을게."
+        },
+        {
+          "speaker": "merchant",
+          "text": "이건 파피루스야. 글 쓰는 데 써."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-merchant-1-site-phases.png",
+          "sha256": "e04fba530e09b581869fe0bee757d0a0de0ff97d037ac3f765de813e2e86be99"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-merchant-1-site-phone.png",
+          "sha256": "45d2e756d5554d65556a8daefa041a1c43f6a0b1907656bfeb47bc2a0eb798cd"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-merchant-1-site-thumb.png",
+          "sha256": "9aacd8664dfe275bd34eeee0ed43453e54b5e535b84b58873323b3e28a9ebb4c"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks."
+    },
+    {
+      "id": "done:merchant:1",
+      "key": "done-merchant-1-away",
+      "fixture": "explicit-away-meeting",
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "moreTrades",
+      "background": "square",
+      "sourceLines": [
+        {
+          "speaker": "merchant",
+          "text": "든든하다! 약속대로 좌판에 새 물건 놓을게."
+        },
+        {
+          "speaker": "merchant",
+          "text": "이건 파피루스야. 글 쓰는 데 써."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-merchant-1-away-phases.png",
+          "sha256": "e04fba530e09b581869fe0bee757d0a0de0ff97d037ac3f765de813e2e86be99"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-merchant-1-away-phone.png",
+          "sha256": "45d2e756d5554d65556a8daefa041a1c43f6a0b1907656bfeb47bc2a0eb798cd"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-merchant-1-away-thumb.png",
+          "sha256": "9aacd8664dfe275bd34eeee0ed43453e54b5e535b84b58873323b3e28a9ebb4c"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks."
+    },
+    {
+      "id": "done:merchant:2",
+      "key": "done-merchant-2-site",
+      "fixture": "native-facility-coordinate",
+      "at": {
+        "x": 20,
+        "y": 13
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "stallAwning",
+      "background": "square",
+      "sourceLines": [
+        {
+          "speaker": "merchant",
+          "text": "봐, 알록달록한 가리개야!"
+        },
+        {
+          "speaker": "merchant",
+          "text": "깔개 하나 줄게. 먼 데서 가져온 거야."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-merchant-2-site-phases.png",
+          "sha256": "ee6bef7c7f908fc887ca5ab9f0b35cc059a9d5bfde3ec4ee7f9dbb17addb99d3"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-merchant-2-site-phone.png",
+          "sha256": "1f1ab90115b8d7a39c97e104460091dc634b646b16ccb6602300e4b66db5beaa"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-merchant-2-site-thumb.png",
+          "sha256": "93a85d6b1765cb88e5341c9afb1034ea1a6edac94de7f1a878ef84a4f3c62bf5"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks."
+    },
+    {
+      "id": "done:merchant:2",
+      "key": "done-merchant-2-away",
+      "fixture": "explicit-away-meeting",
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "stallAwning",
+      "background": "square",
+      "sourceLines": [
+        {
+          "speaker": "merchant",
+          "text": "봐, 알록달록한 가리개야!"
+        },
+        {
+          "speaker": "merchant",
+          "text": "깔개 하나 줄게. 먼 데서 가져온 거야."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-merchant-2-away-phases.png",
+          "sha256": "845f1c59b987b32b4b5857db85c6058287240e6179239ddc8a8dfb5fc5423558"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-merchant-2-away-phone.png",
+          "sha256": "64d69b09ae53857ff2a9459ab457e9fef2dbb483b8b649ad5ac8688ff959b4b1"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-merchant-2-away-thumb.png",
+          "sha256": "af8a6be473b718d933caa616f1dc1fec56caf1d0c816b15f4fb520b13c22ed9f"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks."
+    },
+    {
+      "id": "done:smith:2",
+      "key": "done-smith-2-site",
+      "fixture": "native-facility-coordinate",
+      "at": {
+        "x": 23,
+        "y": 11
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 1300,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "lanterns",
+      "background": "pasture",
+      "sourceLines": [
+        {
+          "speaker": "smith",
+          "text": "길가에 등불을 세웠소. 밤에도 환할 거요."
+        },
+        {
+          "speaker": "smith",
+          "text": "남은 쇠로 촛대를 하나 만들었소."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-smith-2-site-phases.png",
+          "sha256": "24800991188e88cc5a431ca7155414ec452a0c6cc1ffacfc8141d84bdc1dfe3e"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-smith-2-site-phone.png",
+          "sha256": "b8a6ec2b68a54c22baa1d17c40eff840f2b185cc8b87f90ce43e5925f10daa60"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-smith-2-site-thumb.png",
+          "sha256": "4fa459654930c07b20429945c6364bf893b032a67bad68ac1ee1d08a1c8c1fcc"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks."
+    },
+    {
+      "id": "done:smith:2",
+      "key": "done-smith-2-away",
+      "fixture": "explicit-away-meeting",
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 1300,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "lanterns",
+      "background": "square",
+      "sourceLines": [
+        {
+          "speaker": "smith",
+          "text": "길가에 등불을 세웠소. 밤에도 환할 거요."
+        },
+        {
+          "speaker": "smith",
+          "text": "남은 쇠로 촛대를 하나 만들었소."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-smith-2-away-phases.png",
+          "sha256": "c72416e4d1bf93f008b3e7163c2f234ff6505c11fa0fb6d624f766e551cbf884"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-smith-2-away-phone.png",
+          "sha256": "e289b9a2a5cdbea4fe2b95f7dd299e2b43109bd4116436ac3255aeccfb5355cf"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-smith-2-away-thumb.png",
+          "sha256": "85c0a8fcfe87ee0d50d9c61a2b90c8a4f05c668acaa05c1e65c6992398b0b3e9"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks."
+    },
+    {
+      "id": "done:smith:1",
+      "key": "done-smith-1-site",
+      "fixture": "native-facility-coordinate",
+      "at": {
+        "x": 42,
+        "y": 20
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "bigBellows",
+      "background": "pasture",
+      "sourceLines": [
+        {
+          "speaker": "smith",
+          "text": "새 풀무요! 이제 그을음을 넉넉히 나눠 주겠소."
+        },
+        {
+          "speaker": "smith",
+          "text": "우선 이것부터 가져가시오."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-smith-1-site-phases.png",
+          "sha256": "8f2ef44cbcc9f5f3388b376ce1b27303d1a1a527942d7fd4bc09b590d151e8f4"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-smith-1-site-phone.png",
+          "sha256": "4b77e43c6d1f607f33dd0eefb7360c3a517c1bf72c4578115422c9691b823e78"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-smith-1-site-thumb.png",
+          "sha256": "7552ddcbfd80dfd92676f0ec8a4a70d7e54d7055516d10132c7c001dbb935e01"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks."
+    },
+    {
+      "id": "done:smith:1",
+      "key": "done-smith-1-away",
+      "fixture": "explicit-away-meeting",
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "bigBellows",
+      "background": "square",
+      "sourceLines": [
+        {
+          "speaker": "smith",
+          "text": "새 풀무요! 이제 그을음을 넉넉히 나눠 주겠소."
+        },
+        {
+          "speaker": "smith",
+          "text": "우선 이것부터 가져가시오."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-smith-1-away-phases.png",
+          "sha256": "3df58951da3bd6e47bb09878e17973c088154f36e8a6d7fcfb2cb8128cf8da2b"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-smith-1-away-phone.png",
+          "sha256": "30929e2e962ad269517a71286168a757041a62c0d7da24915ebe1550a5806ba5"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-smith-1-away-thumb.png",
+          "sha256": "72c50264b0b1cf6f40d428cf3bf89664369b65ee7f87c69b6cee9e52b34b6d64"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks."
+    },
+    {
+      "id": "done:shepherd:1",
+      "key": "done-shepherd-1-site",
+      "fixture": "native-facility-coordinate",
+      "at": {
+        "x": 9,
+        "y": 28
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "penBig",
+      "background": "sheep-pasture",
+      "sourceLines": [
+        {
+          "speaker": "shepherd",
+          "text": "우리가 넓어졌어요. 양들이 좋아하네요."
+        },
+        {
+          "speaker": "shepherd",
+          "text": "양털 좀 가져가요."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-shepherd-1-site-phases.png",
+          "sha256": "cdae2df898f7a373540f40808a4c099d9560500038bd56c999bd897c2facb92b"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-shepherd-1-site-phone.png",
+          "sha256": "7a638cae53440eba69420b2ea1ad9a7cca18c447040d7eaa58ff0abced383a04"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-shepherd-1-site-thumb.png",
+          "sha256": "f46a82ac40fe6096dc187c3aba34e3bad2d076e3f17492b9dd48662d149e9150"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks."
+    },
+    {
+      "id": "done:shepherd:1",
+      "key": "done-shepherd-1-away",
+      "fixture": "explicit-away-meeting",
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "penBig",
+      "background": "square",
+      "sourceLines": [
+        {
+          "speaker": "shepherd",
+          "text": "우리가 넓어졌어요. 양들이 좋아하네요."
+        },
+        {
+          "speaker": "shepherd",
+          "text": "양털 좀 가져가요."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-shepherd-1-away-phases.png",
+          "sha256": "0cd4354d24d35b76b5feaa1bb0c79188b2934a1ee1790808c960526ada217743"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-shepherd-1-away-phone.png",
+          "sha256": "e40590bdd2466e79402a14f15c606c97fdcba487131ca00dfca67ab43e6feca9"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-shepherd-1-away-thumb.png",
+          "sha256": "00bde1d4574947365283b7b9c59e353c46fff99f8f38c5c17303a5d0e9ac6a29"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks."
+    },
+    {
+      "id": "done:shepherd:2",
+      "key": "done-shepherd-2-site",
+      "fixture": "native-facility-coordinate",
+      "at": {
+        "x": 9,
+        "y": 28
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "shearing",
+      "background": "sheep-pasture",
+      "sourceLines": [
+        {
+          "speaker": "shepherd",
+          "text": "양털 깎는 날, 다 같이 즐거웠어요!"
+        },
+        {
+          "speaker": "shepherd",
+          "text": "제일 부드러운 털로 방석을 만들었어요."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-shepherd-2-site-phases.png",
+          "sha256": "3d08825b96c4e88005e81c05bbb985a5ec52603412824c57ff73bfb03cb1590e"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-shepherd-2-site-phone.png",
+          "sha256": "192e5855874d216f42ea7b4f4b3e80341e69d42ee5f3e2e9aea51cdacb38cc0c"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-shepherd-2-site-thumb.png",
+          "sha256": "e738e143f0c425b9ff099b3a7efbd8e7f1e5a9b962762c2394a3c29ec8f4105b"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks."
+    },
+    {
+      "id": "done:shepherd:2",
+      "key": "done-shepherd-2-away",
+      "fixture": "explicit-away-meeting",
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "shearing",
+      "background": "square",
+      "sourceLines": [
+        {
+          "speaker": "shepherd",
+          "text": "양털 깎는 날, 다 같이 즐거웠어요!"
+        },
+        {
+          "speaker": "shepherd",
+          "text": "제일 부드러운 털로 방석을 만들었어요."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-shepherd-2-away-phases.png",
+          "sha256": "4398f34221c98e27c5c4712b33b86441ade9f642d66586c1489c65ac94fad6dd"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-shepherd-2-away-phone.png",
+          "sha256": "7a0724f9c00f83d59665f12e86863ca6af00dc323f4bce9cb11a2c1143425019"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-shepherd-2-away-thumb.png",
+          "sha256": "cd1b86c8d6ef177da66cd4c088f422912fa3246cd965deb13996644fa36688ea"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks."
+    },
+    {
+      "id": "done:presser:2",
+      "key": "done-presser-2-site",
+      "fixture": "native-facility-coordinate",
+      "at": {
+        "x": 41,
+        "y": 11
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "oliveGrove",
+      "background": "pasture",
+      "sourceLines": [
+        {
+          "speaker": "presser",
+          "text": "나무를 심었어요. 몇 해 뒤엔 열매가 가득할 거예요."
+        },
+        {
+          "speaker": "presser",
+          "text": "물병이랑 기름, 받아요."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-presser-2-site-phases.png",
+          "sha256": "b532942dbc19168bca57c6e8660c29a0f1aa951fb09ce4e67ad444a51c060059"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-presser-2-site-phone.png",
+          "sha256": "44fec79e76bfe1186ba4667b2511d4b014d836e31362adefd36c6f831a9cb71c"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-presser-2-site-thumb.png",
+          "sha256": "8a414e147da06865832451368443a28604753e530ed794d4848233bc34baef58"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks."
+    },
+    {
+      "id": "done:presser:2",
+      "key": "done-presser-2-away",
+      "fixture": "explicit-away-meeting",
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "oliveGrove",
+      "background": "square",
+      "sourceLines": [
+        {
+          "speaker": "presser",
+          "text": "나무를 심었어요. 몇 해 뒤엔 열매가 가득할 거예요."
+        },
+        {
+          "speaker": "presser",
+          "text": "물병이랑 기름, 받아요."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-presser-2-away-phases.png",
+          "sha256": "79445e2d8972d07cbbba76b15335e950c060cc421a59e49c1b56242a41136c90"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-presser-2-away-phone.png",
+          "sha256": "1449948922580a72602c1277d8cccf0fbc2df40f99f5f8c26cb22f4eb984d306"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-presser-2-away-thumb.png",
+          "sha256": "580e174a4af4c6e62cdf63766fec029af8ae22145c5c23f23fc0528015dead4a"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks."
+    },
+    {
+      "id": "done:weaver:1",
+      "key": "done-weaver-1-site",
+      "fixture": "native-facility-coordinate",
+      "at": {
+        "x": 38,
+        "y": 24
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "loomAwning",
+      "background": "pasture",
+      "sourceLines": [
+        {
+          "speaker": "weaver",
+          "text": "그늘이 생겼어요! 이제 한낮에도 베를 짤 수 있어요."
+        },
+        {
+          "speaker": "weaver",
+          "text": "제가 짠 깔개예요. 방에 깔아 보세요."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-weaver-1-site-phases.png",
+          "sha256": "86913cb198caad5bc25b330d32454872eafc1e20e2cfbc332f6654cdb9dce628"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-weaver-1-site-phone.png",
+          "sha256": "29cb13a973e99f987ae908c936eade4e78e75f6ae961efcc2bc8492a4e9af5e9"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-weaver-1-site-thumb.png",
+          "sha256": "cc8e10bf7ff9709f2a2f5de6fec3e82890412d5e93ae4d51f71a88c56ae59be9"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks."
+    },
+    {
+      "id": "done:weaver:1",
+      "key": "done-weaver-1-away",
+      "fixture": "explicit-away-meeting",
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "loomAwning",
+      "background": "square",
+      "sourceLines": [
+        {
+          "speaker": "weaver",
+          "text": "그늘이 생겼어요! 이제 한낮에도 베를 짤 수 있어요."
+        },
+        {
+          "speaker": "weaver",
+          "text": "제가 짠 깔개예요. 방에 깔아 보세요."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-weaver-1-away-phases.png",
+          "sha256": "d3fb8dc58c02eaa093d2d4796592ac4f5565fdbc9a72c6f2fff6f84a0f110ac4"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-weaver-1-away-phone.png",
+          "sha256": "636b0760f408b3cc0e0e59d07d7e351be06e276b815ac6192ae9c5a0b4f82381"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-weaver-1-away-thumb.png",
+          "sha256": "3832771b12363b5abb0aace7a32f73916529a20f578ffae85452ecbd26357b96"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks."
+    },
+    {
+      "id": "done:beekeeper:1",
+      "key": "done-beekeeper-1-site",
+      "fixture": "native-facility-coordinate",
+      "at": {
+        "x": 44,
+        "y": 27
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "moreHives",
+      "background": "bees",
+      "sourceLines": [
+        {
+          "speaker": "beekeeper",
+          "text": "벌통이 늘었어요. 꽃마다 벌이 붕붕해요."
+        },
+        {
+          "speaker": "beekeeper",
+          "text": "새 벌통에서 뜬 꿀이에요. 드셔 보세요."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-beekeeper-1-site-phases.png",
+          "sha256": "2aba5de1f6cd6b27a1f2a654c69c9629cd8d65fdeff97dad771c3dc5f35876f8"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-beekeeper-1-site-phone.png",
+          "sha256": "b91d80f49c83e72df793acc89aade1c033a3c8bc15a29c142c5aa729aa45e3fc"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-beekeeper-1-site-thumb.png",
+          "sha256": "629de8a48330ef7eac526a1a8b3927db304188f9a3768b2abd73dfeeaece6479"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks."
+    },
+    {
+      "id": "done:beekeeper:1",
+      "key": "done-beekeeper-1-away",
+      "fixture": "explicit-away-meeting",
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "babyPresent": false,
+      "minute": 900,
+      "weather": "sunny",
+      "room": null,
+      "unlock": "moreHives",
+      "background": "square",
+      "sourceLines": [
+        {
+          "speaker": "beekeeper",
+          "text": "벌통이 늘었어요. 꽃마다 벌이 붕붕해요."
+        },
+        {
+          "speaker": "beekeeper",
+          "text": "새 벌통에서 뜬 꿀이에요. 드셔 보세요."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-sites/done-beekeeper-1-away-phases.png",
+          "sha256": "44767ad7226564dcee8ee62c2dc2716f07dec98b876c9d6f6919811ae0a85bb2"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-sites/done-beekeeper-1-away-phone.png",
+          "sha256": "7125731e13bf55bfdaf70b7b2ea447d7545e9dcaa39f75edcd076d96855046c1"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-sites/done-beekeeper-1-away-thumb.png",
+          "sha256": "8ed41729d68fcde4c2beb9f0f628381c88f3e846b5bc0d710b2fa276227014c4"
+        }
+      ],
+      "visuallyReviewed": true,
+      "finalApproved": false,
+      "notes": "Both original dialogue stages, default/actual player, 0/.6/8 seconds and landscape/phone/thumbnail sheets inspected. Explicit fixture only; actual occurrence routing, additional states and browser integration remain separate checks."
+    }
+  ],
+  "updatedAt": "2026-10-16T18:28:02.426Z",
+  "fixtureCount": 36,
+  "remainingFixtureKeys": []
+}

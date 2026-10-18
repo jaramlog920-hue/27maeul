@@ -244,3 +244,28 @@ describe('필사 손맛 — 움직임 줄이기', () => {
     expect(document.querySelector('.copy-page-fold')).toHaveClass('copy-page-fold-still')
   })
 })
+
+
+describe('긴 본문 완료 표시의 위치', () => {
+  it.each([0, 240])('완료 직전 스크롤 %dpx과 본문 칸 높이를 유지하며 도장이 줄바꿈에 끼지 않는다', (scrollTop) => {
+    const verse = scrollTop ? lk1.slice(0, -1).reduce((a, b) => a.text.length > b.text.length ? a : b) : lk1[0]
+    openWrite(writing('lk', 1, verse.verse))
+    const wrap = document.querySelector<HTMLElement>('.copy-verse-wrap')!
+    const line = screen.getByLabelText(`본문 누가복음 1:${verse.verse}`)
+    fireEvent.change(box(), { target: { value: verse.text } })
+    Object.defineProperty(wrap, 'clientHeight', { configurable: true, value: 144 })
+    wrap.scrollTop = scrollTop
+    const rect = (top: number) => ({ top, bottom: top + 144, left: 0, right: 300, width: 300, height: 144, x: 0, y: top, toJSON() {} })
+    vi.spyOn(wrap, 'getBoundingClientRect').mockReturnValue(rect(140))
+    vi.spyOn(line, 'getBoundingClientRect').mockReturnValue(rect(140 - scrollTop))
+    fireEvent.keyDown(box(), { key: 'Enter' })
+    const ghost = wrap.querySelector<HTMLElement>('.copy-ghost')!
+    expect(wrap.style.height).toBe('144px')
+    expect(ghost.querySelector<HTMLElement>('.copy-focus-verse')!.style.transform).toBe(`translateY(${-scrollTop}px)`)
+    expect(ghost.querySelector('.copy-focus-verse')).not.toContainElement(ghost.querySelector('.copy-stamp') as HTMLElement)
+    expect(ghost.querySelector('.copy-stamp')).toHaveTextContent(`1:${verse.verse}`)
+    expect(screen.getByLabelText(`본문 누가복음 1:${verse.verse + 1}`)).toHaveTextContent(lk1[verse.verse].text)
+    act(() => void vi.advanceTimersByTime(GHOST_MS))
+    expect(wrap.style.height).toBe('')
+  })
+})

@@ -54,17 +54,17 @@ it.each([
   ['familyWinter', '가족의 겨울밤'], ['springWalk', '봄날 꽃길 산책'],
   ['summerCreek', '여름날 물가에서 쉬기'], ['autumnPath', '가을 낙엽길'],
   ['rainbowRest', '비 사이로 뜬 무지개'], ['rainbow', '비 사이로 뜬 무지개'], ['afterCopy', '필사를 마친 늦은 밤'],
-  ['rainCopy', '비 오는 밤 필사'], ['bookBound', '한 권을 마친 순간'],
+  ['rainCopy', '비 오는 밤 필사'], ['bookBound', SCENES.bookBound.title],
   ['dateSunset', '둘이 보는 노을'], ['date:sunset:0', '둘이 보는 노을'],
   ['babySleep', '아기가 잠든 밤'], ['firstSnow', '첫눈 오는 마을'],
-  ['firstShelved', '서고에 책 한 권'], ['shelved', '서고에 책 한 권'],
+  ['firstShelved', '서고에 책 한 권'], ['shelved', SCENES.shelved.title],
   ['marketEvening', '장날의 저녁 등불'], ['childWalks', '아기의 첫걸음'], ['home:1', '집을 넓힌 첫날'],
 ] as const)('%s은 도트 장면으로 열리고 기존 완료 기록을 이어간다', (id, title) => {
   const s = useGame.getState().game
   act(() => useGame.setState({ game: { ...s, scenes: [id] }, modal: { kind: 'scene', id } }))
   render(<ModalLayer />)
   expect(screen.getByRole('dialog')).toHaveAccessibleName(title)
-  fireEvent.click(screen.getByRole('button', { name: /마을로 돌아가기|완성 기록 보기/ }))
+  fireEvent.click(screen.getByRole('button', { name: id==='bookBound'||id==='shelved'?'닫기':/마을로 돌아가기|완성 기록 보기/ }))
   expect(useGame.getState().modal).toEqual(id === 'fullLibrary' ? { kind: 'shelfDone' } : null)
   expect(useGame.getState().game.scenes).not.toContain(id)
   if (SCENES[id].album) expect(useGame.getState().game.album.some(a => a.id === id)).toBe(true)

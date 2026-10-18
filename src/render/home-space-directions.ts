@@ -1,6 +1,6 @@
 // 方向 UI・배치・저장에는 아직 연결하지 않는, Claude 인계용 4방향 원본.
 // 이미지를 90도 회전하지 않는다. 세워진 가구의 측면/뒷면은 별도로 그린다.
-import { HOME_SPACE_ART, pixels } from './home-space-art'
+import { HOME_FIXTURE_ART, HOME_SPACE_ART, pixels } from './home-space-art'
 import type { FurnitureArt } from './furniture-art'
 
 export type FurnitureFacing = 'down' | 'up' | 'left' | 'right'
@@ -131,10 +131,21 @@ const supplySide=pixels(1,1,[
   ['w',4,8,8,6], ['l',4,8,8,2], ['s',4,11,2,2], ['s',10,11,2,2],
 ])
 
+// 첫 장 완성 보상(stool): 회전은 저장됐지만 네 방향이 같은 도트였다.
+// 앞모습은 기존 의자 그대로, 뒤의 가로 받침과 옆 다리 깊이는 각각 그린다.
+const stoolBack = pixels(1, 1, [
+  ['z',3,14,10,2], ['W',4,10,2,5], ['W',10,10,2,5],
+  ['W',5,12,6,1], ['k',2,5,12,6], ['l',3,6,10,2], ['w',3,8,10,2],
+])
+const stoolRight = pixels(1, 1, [
+  ['z',3,14,10,2], ['W',5,10,2,5], ['W',10,9,2,6], ['W',6,12,5,1],
+  ['k',3,5,10,6], ['l',4,6,8,3], ['w',4,9,8,1], ['W',11,6,1,4],
+])
+
 export const HOME_SPACE_DIRECTIONS: Record<string, DirectionalFurnitureArt> = {
   table: views(HOME_SPACE_ART.table, HOME_SPACE_ART.table, tableSide),
   chair: views(chairFront, chairBack, HOME_SPACE_ART.chair),
-  stool: symmetric(HOME_SPACE_ART.stool),
+  stool: views(HOME_SPACE_ART.stool, stoolBack, stoolRight),
   teapot: views(potFront,potBack,flip(HOME_SPACE_ART.teapot)),
   cupboard: views(HOME_SPACE_ART.cupboard,cabinetFront(2,false,true),cabinetSide(2)),
   fruitBowl: views(HOME_SPACE_ART.fruitBowl,bowlUp,HOME_SPACE_ART.fruitBowl),
@@ -158,3 +169,6 @@ export const HOME_SPACE_DIRECTIONS: Record<string, DirectionalFurnitureArt> = {
 export const HOME_SPACE_LEGACY_FACING: Record<string, FurnitureFacing> = Object.fromEntries(
   Object.keys(HOME_SPACE_DIRECTIONS).map(id => [id, id === 'chair' || id === 'woodToy' ? 'right' : id === 'teapot' ? 'left' : 'down']),
 )
+
+/** 집의 이동식 선반도 원래 앞모습을 유지하며 뒷면·측면을 고른다. */
+export const HOME_SHELF_DIRECTIONS = views(HOME_FIXTURE_ART.s, cabinetFront(1, true, true), cabinetSide(1))

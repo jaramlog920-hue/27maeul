@@ -10,6 +10,7 @@ import {AuthoredStoryScene} from './AuthoredStoryScene'
 import {hasAuthoredStory} from '../../render/authored-story-art'
 import { LandscapeScene } from './StarsScene'
 import { landscapeKind } from '../../render/scenic-moments-art'
+import {sceneStateText} from './scene-state-text'
 
 export function speakerName(speaker: string): string | null {
   if (speaker === 'narration') return null
@@ -32,7 +33,8 @@ export function SceneView({ id, chosen }: { id: string; chosen?: number }) {
   const say = (text: string) => partnerFill(spouseFill(kidFill(callName(text, me), kid), spouse), partner)
   // 마음 6 옛이야기(romance2:<id>)는 같은 모습이면 친구 말로 (romance2:<id>:friend)
   const asFriend = useGame((s) => /^romance2:/.test(id) && !!SCENES[`${id}:friend`] && sameLookCandidate(s.game, neighborById(id.slice(9))))
-  const scene = SCENES[asFriend ? `${id}:friend` : id]
+  const textState = useGame(s => id==='firstChapter'||id==='done:baker:2'?s.game:null)
+  const scene = sceneStateText(asFriend ? `${id}:friend` : id,textState)
   // 고르는 말이 있는 장면 (계획 6b): 고르기 전엔 닫지 않는다, 고르면 대답이 이어진다
   const asking = !!scene?.choices?.length && chosen === undefined
   const reply = chosen !== undefined ? (scene?.choices?.[chosen]?.reply ?? []) : []
@@ -51,7 +53,9 @@ export function SceneView({ id, chosen }: { id: string; chosen?: number }) {
   const l = all[at]
   const who = l ? speakerName(l.speaker) : null
   const cinematicKind=landscapeKind(id)
-  const authored=hasAuthoredStory(id)
+  const artId=asFriend&&hasAuthoredStory(id+':friend')?id+':friend':id
+  // 첫 안내는 마을 화면 아래의 원래 설명 칸으로 읽는다.
+  const authored=id!=='welcome'&&hasAuthoredStory(artId)
   const cinematic = authored||cinematicKind === 'firstConfession'||cinematicKind==='childLeaves'||cinematicKind==='childStays'
   const body = (
     <div className={`dialog scene${cinematic ? ' cinematic-scene-dialog' : ''}`} role={cinematic ? undefined : 'dialog'} aria-label={cinematic ? undefined : say(scene.title)}>
@@ -96,7 +100,7 @@ export function SceneView({ id, chosen }: { id: string; chosen?: number }) {
       )}
     </div>
   )
-  if(authored)return <AuthoredStoryScene id={id} title={say(scene.title)} beat={at} chosen={chosen}>{body}</AuthoredStoryScene>
+  if(authored)return <AuthoredStoryScene id={artId} title={say(scene.title)} beat={at} chosen={chosen}>{body}</AuthoredStoryScene>
   if (!cinematic) return body
   const person = scene.lines.find(line => neighborById(line.speaker)?.romanceable)?.speaker
   const accepted = !scene.choices?.length || (chosen !== undefined && useGame.getState().game.romance.partner === person)

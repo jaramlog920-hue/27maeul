@@ -11,9 +11,10 @@ import {
   type MusicChoice,
   type VolumeKind,
 } from '../../audio/sound'
-import { eraseSave, exportSave, importSave, saveAsNew, saveGame } from '../../engine/save'
+import { eraseSaveAsync, exportSave, importSaveAsync, loadGame, saveAsNewAsync, saveGame, saveGameAsync } from '../../engine/save'
 import { CONTENT } from '../../content/catalog'
-import { setGenOn } from '../../engine/gen-settle'
+import { setGenOn, setResidentAging } from '../../engine/gen-settle'
+import { syncHome } from '../../engine/game'
 import { t } from '../../shared/i18n'
 import { T } from '../../content/text'
 import { loadTheme, setTheme, THEMES, type ThemeId } from '../../app/theme'
@@ -21,6 +22,7 @@ import { useGame, ZOOMS } from '../../store/game-store'
 import { copySoundOn, setCopySound } from '../desk/copy-feel'
 import { copyVoiceOn, setCopyVoice, voiceAvailable } from '../desk/copy-voice'
 import { copyAlwaysWrite, setCopyAlwaysWrite } from '../desk/copy-way-setting'
+import { downloadSaveFile } from '../../shared/save-file-download'
 
 const C = T.controls
 
@@ -53,15 +55,13 @@ function GenSetting() {
  * 아이는 그대로여도 자란다는 설명 한 줄 (2026-10-14 사용자)
  */
 function AgeSetting() {
-  const ageless = useGame((s) => !!s.game.flags.ageless)
+  const game = useGame((s) => s.game)
+  const locked = featureAccess(game, 'autonomy') !== 'full'
+  const ageless = locked || !!game.flags.ageless
   const has = useGame((s) => !!s.game.gen)
   if (!has) return null
   const pick = (v: boolean) => {
-    const g = useGame.getState().game
-    const flags = { ...g.flags }
-    if (v) flags.ageless = 1
-    else delete flags.ageless
-    const next = { ...g, flags }
+    const next = setResidentAging(useGame.getState().game, !v)
     saveGame(next)
     useGame.setState({ game: next })
   }
@@ -69,8 +69,9 @@ function AgeSetting() {
     <section className="settings-section">
       <h3>{t('gen.ageSetting')}</h3>
       <p className="hint">{t('gen.ageNote')}</p>
+      {locked && <p className="hint">{featureHint('autonomy')}</p>}
       <div className="settings-options pair-options" role="group" aria-label={t('gen.ageSetting')}>
-        <button className={!ageless ? 'on' : ''} aria-pressed={!ageless} onClick={() => pick(false)}>{t('gen.ageOn')}</button>
+        <button className={!ageless ? 'on' : ''} aria-pressed={!ageless} disabled={locked} onClick={() => pick(false)}>{t('gen.ageOn')}</button>
         <button className={ageless ? 'on' : ''} aria-pressed={ageless} onClick={() => pick(true)}>{t('gen.ageOff')}</button>
       </div>
     </section>
@@ -159,58 +160,45 @@ function VersionLines() {
 }
 
 /** 내보내기·가져오기 (2026-10-14 사용자): 지금 저장을 파일로 받고, 받은 파일을 새 칸으로 들인다 */
-function SaveFileRows() {
+function SaveFileRows({ busy, run }: { busy: boolean; run: (action: () => Promise<void>) => Promise<void> }) {
   const pickRef = useRef<HTMLInputElement>(null)
   // 휴대폰(특히 홈 화면에 설치한 앱)에서는 내려받기 링크가 막히는 일이 잦다 — 공유 창으로 먼저, 안 되면 내려받기, 그것도 안 되면 글을 복사 (2026-10-14)
   const exportNow = async () => {
     const game = useGame.getState().game
-    saveGame(game)
     const text = exportSave(game)
-    const name = `27maeul-${game.clock.day}day.json`
     const say = useGame.getState().say
     try {
-      const file = new File([text], name, { type: 'application/json' })
-      const nav = globalThis.navigator as Navigator & { canShare?: (d: ShareData) => boolean }
-      if (nav?.share && nav.canShare?.({ files: [file] })) {
-        await nav.share({ files: [file], title: '스물일곱 권의 마을 저장' })
-        return say('저장 파일을 내보냈어요.')
-      }
-    } catch (e) {
-      if ((e as Error)?.name === 'AbortError') return
-    }
-    try {
-      const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }))
-      const a = document.createElement('a')
-      a.href = url
-      a.download = name
-      document.body.appendChild(a)
-      a.click()
-      a.remove()
-      setTimeout(() => URL.revokeObjectURL(url), 4000)
-      return say('저장 파일을 내보냈어요.')
-    } catch {
-      /* 아래 복사로 */
-    }
-    try {
-      await globalThis.navigator?.clipboard?.writeText(text)
-      say('파일로 못 내보내서 저장 글을 복사해 두었어요.', 3600)
-    } catch {
-      say('내보내지 못했어요.')
-    }
+      const result = await downloadSaveFile(text, `27maeul-${game.clock.day}day.json`)
+      if (result === 'shared') say('저장 파일을 내보냈어요.')
+      if (result === 'downloaded') say('저장 파일 다운로드를 시작했어요. 다운로드 목록에서 확인해 주세요.', 4500)
+      if (result === 'copied') say('파일로 못 내보내서 저장 글을 복사해 두었어요.', 4500)
+    } catch { say('내보내지 못했어요. 파일 저장 권한을 확인하고 다시 시도해 주세요.', 4500) }
   }
-  const importText = (text: string) => {
-    saveGame(useGame.getState().game)
-    const r = importSave(text, CONTENT)
-    if ('error' in r) return useGame.getState().say(r.error === 'space' ? '기기 저장 공간이 모자라요. 안 쓰는 저장 칸을 지우고 다시 해 주세요.' : '이 게임의 저장 파일이 아니에요.', 3600)
-    // 무엇이 들어왔는지 알려 빠진 것이 있으면 바로 보이게
-    const missed = r.picsMissed ? ` · 공간이 모자라 사진 ${r.picsMissed}장은 빠졌어요` : ''
+  const importText = async (text: string) => {
+    if (!await saveGameAsync(useGame.getState().game)) return
+    const current = useGame.getState().game
+    const importing = importSaveAsync(text, CONTENT)
+    // 파일 검증의 sanitize가 바꾸는 지도 전역은 현재 플레이의 것으로 돌려 둔다.
+    syncHome(current)
+    const r = await importing
+    if ('error' in r) {
+      if (r.error === 'format') useGame.getState().say('이 게임의 저장 파일이 아니거나 파일 내용이 손상되었어요.', 4500)
+      return
+    }
+    // 이어 할 칸이 바뀌었으므로 창 닫힘 저장도 가져온 게임을 쓰게 한다.
+    const imported = loadGame(CONTENT, undefined, r.slot)
+    if (!imported) return
+    useGame.getState().load(imported)
+    useGame.getState().open({ kind: 'settings' })
+    const missed = r.settingsMissed ? ` · 설정 ${r.settingsMissed}개는 적용하지 못했어요` : ''
     useGame.getState().say(`저장과 사진 ${r.pics}장, 설정 ${r.settings}개를 가져왔어요${missed}. 새 칸으로 다시 열어요.`, 3600)
-    setTimeout(() => globalThis.location?.reload(), 2600)
+    await new Promise(resolve => setTimeout(resolve, 1800))
+    if (await saveGameAsync(useGame.getState().game)) globalThis.location?.reload()
   }
   const importFile = async (file: File | undefined) => {
     if (!file) return
     try {
-      importText(await file.text())
+      await importText(await file.text())
     } catch {
       useGame.getState().say('파일을 읽지 못했어요.')
     }
@@ -218,7 +206,7 @@ function SaveFileRows() {
   const importPaste = async () => {
     try {
       const text = await globalThis.navigator?.clipboard?.readText()
-      if (text) return importText(text)
+      if (text) return await importText(text)
     } catch {
       /* 아래 안내 */
     }
@@ -228,16 +216,16 @@ function SaveFileRows() {
     <>
       <div className="settings-row">
         <h3>내보내기</h3>
-        <button onClick={() => void exportNow()}>내보내기</button>
+        <button disabled={busy} onClick={() => void run(exportNow)}>내보내기</button>
       </div>
       <div className="settings-row">
         <h3>가져오기</h3>
         <div className="pair-buttons">
-          <button onClick={() => pickRef.current?.click()}>파일</button>
-          <button onClick={() => void importPaste()}>붙여넣기</button>
+          <button disabled={busy} onClick={() => pickRef.current?.click()}>파일</button>
+          <button disabled={busy} onClick={() => void run(importPaste)}>붙여넣기</button>
         </div>
         {/* 종류를 막지 않는다 — 휴대폰에서 .json 파일이 흐리게 나와 고를 수 없던 문제 */}
-        <input ref={pickRef} type="file" hidden aria-label="가져올 저장 파일" onChange={(e) => { void importFile(e.target.files?.[0]); e.target.value = '' }} />
+        <input ref={pickRef} type="file" hidden aria-label="가져올 저장 파일" onChange={(e) => { const file = e.target.files?.[0]; e.target.value = ''; void run(() => importFile(file)) }} />
       </div>
     </>
   )
@@ -264,11 +252,19 @@ export function Settings() {
   const { setDeck, setMuted, setJoystick, setJoystickShape, setJoystickSide, setZoom, open } = useGame.getState()
   const [music, setMusic] = useState<MusicChoice>(() => currentMusicChoice())
   const [resetting, setResetting] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const busyRef = useRef(false)
+  const run = async (action: () => Promise<void>) => {
+    if (busyRef.current) return
+    busyRef.current = true
+    setBusy(true)
+    try { await action() } finally { busyRef.current = false; setBusy(false) }
+  }
   const [theme, setThemeState] = useState<ThemeId>(() => loadTheme())
   // 묶음 탭 (2026-10-14 사용자: 한 줄로 길게 이어져 읽기 어려웠다)
   const [tab, setTab] = useState<SettingsTab>('look')
   return (
-    <div className="dialog settings" role="dialog" aria-label="설정">
+    <div className="dialog settings" role="dialog" aria-label="설정" aria-busy={busy}>
       <h2>설정</h2>
       <div className="tabs settings-tabs" role="tablist">
         {SETTINGS_TABS.map(([id, label]) => (
@@ -445,23 +441,23 @@ export function Settings() {
         <div className="settings-row">
           <h3>{t('saves.save')}</h3>
           <button
-            onClick={() => {
-              // 덮어쓰지 않고 새 칸에 (불러오기 창에 한 칸 늘어난다). 지금 칸도 함께 저장해 둔다
+            disabled={busy}
+            onClick={() => void run(async () => {
               const game = useGame.getState().game
-              saveGame(game)
-              const ok = saveAsNew(game) !== null
-              useGame.getState().say(ok ? t('saves.saved') : '저장하지 못했어요.')
-            }}
+              if (!await saveGameAsync(game)) return
+              if (await saveAsNewAsync(game) !== null) useGame.getState().say(t('saves.saved'))
+            })}
           >
             {t('saves.save')}
           </button>
         </div>
-        {/* 업데이트 받기 (2026-10-14 사용자): 저장하고 → 옛 버전 캐시(앱 설치본)를 비우고 → 새로 연다. 저장 기록(localStorage)은 그대로 */}
+        {/* 업데이트 받기 (2026-10-14 사용자): 저장하고 → 옛 버전 캐시(앱 설치본)를 비우고 → 새로 연다. 저장 기록(IndexedDB)은 그대로 */}
         <div className="settings-row">
           <h3>{T.ui.update}</h3>
           <button
-            onClick={async () => {
-              saveGame(useGame.getState().game)
+            disabled={busy}
+            onClick={() => void run(async () => {
+              if (!await saveGameAsync(useGame.getState().game)) return
               useGame.getState().say(T.ui.updating, 4000)
               try {
                 const regs = (await globalThis.navigator?.serviceWorker?.getRegistrations?.()) ?? []
@@ -472,20 +468,20 @@ export function Settings() {
                 /* 캐시를 못 비워도 다시 열기는 한다 */
               }
               globalThis.location?.reload()
-            }}
+            })}
           >
             {T.ui.update}
           </button>
         </div>
         <VersionLines />
-        <SaveFileRows />
+        <SaveFileRows busy={busy} run={run} />
         <div className="settings-row">
           <h3>{t('saves.toTitle')}</h3>
           <button
-            onClick={() => {
-              saveGame(useGame.getState().game)
-              globalThis.location?.reload()
-            }}
+            disabled={busy}
+            onClick={() => void run(async () => {
+              if (await saveGameAsync(useGame.getState().game)) globalThis.location?.reload()
+            })}
           >
             {t('saves.toTitle')}
           </button>
@@ -503,10 +499,10 @@ export function Settings() {
               <button onClick={() => setResetting(false)}>취소</button>
               <button
                 className="danger"
-                onClick={() => {
-                  eraseSave()
-                  globalThis.location?.reload()
-                }}
+                disabled={busy}
+                onClick={() => void run(async () => {
+                  if (await eraseSaveAsync()) globalThis.location?.reload()
+                })}
               >
                 모두 지우기
               </button>
@@ -515,8 +511,9 @@ export function Settings() {
         )}
       </section>
       </>)}
+      {busy && <p role="status">저장을 처리하는 중이에요. 잠시 기다려 주세요.</p>}
       <div className="actions">
-        <button data-close onClick={close}>닫기</button>
+        <button data-close disabled={busy} onClick={close}>닫기</button>
       </div>
     </div>
   )

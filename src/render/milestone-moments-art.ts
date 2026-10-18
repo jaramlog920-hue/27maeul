@@ -1,12 +1,12 @@
 import { withLookDefaults, type Avatar } from '../engine/avatar'
 import { PALETTE, SMALL_PALETTE, BABY, spriteRows, writerPalette, type Who } from './sprites'
-import type { Facing } from '../engine/types'
+import type { Facing,Season } from '../engine/types'
 
 export type MilestoneKind = 'shelfBook' | 'firstConfession' | 'marketEvening' | 'childWalks' | 'homeExpanded'
 type Px = (x: number, y: number, c: string, w?: number, h?: number) => void
-export function person(px: Px, x: number, floor: number, av: Avatar | null, facing: Facing = 'up', who: Who = 'writer', crouch = false, walk = false, t = 0, growth = 1, short?: number) {
-  const full = av ? withLookDefaults(av) : undefined, pal = who === 'writer' ? writerPalette('spring', full) : PALETTE
-  const rows = spriteRows(who, facing, { frame: walk ? (Math.floor(t * 3) % 2 ? 1 : 2) : 0, blink: false, avatar: full, pose: crouch ? 'crouch' : 'stand', growth, short })
+export function person(px: Px, x: number, floor: number, av: Avatar | null, facing: Facing = 'up', who: Who = 'writer', crouch = false, walk = false, t = 0, growth = 1, short?: number,elder?:boolean,season:Season='spring') {
+  const full = av ? withLookDefaults(av) : undefined, pal = who === 'writer' ? writerPalette(season, full) : PALETTE
+  const rows = spriteRows(who, facing, { frame: walk ? (Math.floor(t * 3) % 2 ? 1 : 2) : 0, blink: false, avatar: full, pose: crouch ? 'crouch' : 'stand', growth, short,elder,season })
   rows.forEach((r, y) => [...r].forEach((c, xx) => { if (c !== '.' && pal[c]) px(x + xx * 2, floor - rows.length * 2 + y * 2, pal[c], 2, 2) }))
 }
 function interior(px: Px, w: number, h: number) {

@@ -1,0 +1,317 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "mode": "last-unit-only",
+      "canceled": {
+        "inv": {
+          "grapes": 1
+        },
+        "gifted": [],
+        "hearts": {
+          "baker": 29
+        },
+        "stats": {
+          "wit": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "hand": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "charm": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "strength": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "luck": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          }
+        },
+        "giftsGot": [],
+        "rewardScenes": [],
+        "modal": null,
+        "giftButton": null,
+        "dialogText": null
+      },
+      "once": {
+        "inv": {
+          "basket": 1
+        },
+        "gifted": [
+          "baker"
+        ],
+        "hearts": {
+          "baker": 32
+        },
+        "stats": {
+          "wit": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "hand": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "charm": {
+            "level": 1,
+            "xp": 2,
+            "born": 0
+          },
+          "strength": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "luck": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          }
+        },
+        "giftsGot": [
+          "basket"
+        ],
+        "rewardScenes": [
+          "gift:baker:3"
+        ],
+        "modal": {
+          "kind": "talk",
+          "neighborId": "baker",
+          "line": "정말 기뻐요! 제 마음에 꼭 들어요. 고마워요."
+        },
+        "giftButton": {
+          "disabled": true,
+          "title": null,
+          "describedBy": null
+        },
+        "dialogText": "헤이즐 빵 굽는 이웃 친구 ♥♥♥♥♥♥♥♥♥♥\n\n✕\n\n정말 기뻐요! 제 마음에 꼭 들어요. 고마워요.\n\n돕기\n선물하기"
+      },
+      "restored": {
+        "inv": {
+          "basket": 1
+        },
+        "gifted": [
+          "baker"
+        ],
+        "hearts": {
+          "baker": 32
+        },
+        "stats": {
+          "wit": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "hand": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "charm": {
+            "level": 1,
+            "xp": 2,
+            "born": 0
+          },
+          "strength": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "luck": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          }
+        },
+        "giftsGot": [
+          "basket"
+        ],
+        "rewardScenes": [
+          "gift:baker:3"
+        ],
+        "modal": {
+          "kind": "talk",
+          "neighborId": "baker",
+          "line": "검사용 대화"
+        },
+        "giftButton": {
+          "disabled": true,
+          "title": null,
+          "describedBy": null
+        },
+        "dialogText": "헤이즐 빵 굽는 이웃 친구 ♥♥♥♥♥♥♥♥♥♥\n\n✕\n\n검사용 대화\n\n돕기\n선물하기"
+      }
+    },
+    {
+      "mode": "other-gift-remains",
+      "canceled": {
+        "inv": {
+          "grapes": 1,
+          "bread": 2
+        },
+        "gifted": [],
+        "hearts": {
+          "baker": 29
+        },
+        "stats": {
+          "wit": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "hand": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "charm": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "strength": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "luck": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          }
+        },
+        "giftsGot": [],
+        "rewardScenes": [],
+        "modal": null,
+        "giftButton": null,
+        "dialogText": null
+      },
+      "once": {
+        "inv": {
+          "bread": 2,
+          "basket": 1
+        },
+        "gifted": [
+          "baker"
+        ],
+        "hearts": {
+          "baker": 32
+        },
+        "stats": {
+          "wit": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "hand": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "charm": {
+            "level": 1,
+            "xp": 2,
+            "born": 0
+          },
+          "strength": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "luck": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          }
+        },
+        "giftsGot": [
+          "basket"
+        ],
+        "rewardScenes": [
+          "gift:baker:3"
+        ],
+        "modal": {
+          "kind": "talk",
+          "neighborId": "baker",
+          "line": "정말 기뻐요! 제 마음에 꼭 들어요. 고마워요."
+        },
+        "giftButton": {
+          "disabled": true,
+          "title": null,
+          "describedBy": null
+        },
+        "dialogText": "헤이즐 빵 굽는 이웃 친구 ♥♥♥♥♥♥♥♥♥♥\n\n✕\n\n정말 기뻐요! 제 마음에 꼭 들어요. 고마워요.\n\n돕기\n선물하기"
+      },
+      "restored": {
+        "inv": {
+          "bread": 2,
+          "basket": 1
+        },
+        "gifted": [
+          "baker"
+        ],
+        "hearts": {
+          "baker": 32
+        },
+        "stats": {
+          "wit": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "hand": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "charm": {
+            "level": 1,
+            "xp": 2,
+            "born": 0
+          },
+          "strength": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "luck": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          }
+        },
+        "giftsGot": [
+          "basket"
+        ],
+        "rewardScenes": [
+          "gift:baker:3"
+        ],
+        "modal": {
+          "kind": "talk",
+          "neighborId": "baker",
+          "line": "검사용 대화"
+        },
+        "giftButton": {
+          "disabled": true,
+          "title": null,
+          "describedBy": null
+        },
+        "dialogText": "헤이즐 빵 굽는 이웃 친구 ♥♥♥♥♥♥♥♥♥♥\n\n✕\n\n검사용 대화\n\n돕기\n선물하기"
+      }
+    }
+  ],
+  "pageErrors": []
+}

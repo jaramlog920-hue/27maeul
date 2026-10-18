@@ -1,6 +1,6 @@
 import { Component, Suspense, type ReactNode } from 'react'
 import { useGame } from '../store/game-store'
-import { saveGame } from '../engine/save'
+import { saveGameAsync } from '../engine/save'
 
 function LoadingScreen() {
   return <div className="dialog" role="dialog" aria-label="화면 불러오기">
@@ -16,9 +16,9 @@ export class ScreenBoundary extends Component<{ children: ReactNode }, { failed:
   render() {
     if (this.state.failed) return <div className="dialog" role="dialog" aria-label="화면 불러오기 실패">
       <p role="alert">화면을 불러오지 못했어요. 연결을 확인하고 다시 접속해 주세요.</p>
-      <button onClick={() => {
+      <button onClick={async () => {
         const store = useGame.getState()
-        if (saveGame(store.game)) window.location.reload()
+        if (await saveGameAsync(store.game)) window.location.reload()
         else store.say('저장하지 못했어요. 저장 공간을 확인해 주세요.', 5000)
       }}>저장하고 다시 접속</button>
       <button onClick={() => useGame.getState().closeModal()}>닫기</button>

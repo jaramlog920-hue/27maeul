@@ -1,0 +1,250 @@
+import { writeFileSync } from 'node:fs'
+import { CONTENT } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import { peopleData, eventCast, STAGE_POINTS, whenMatches, inWindow, type Req, type PersonEvent, type When, type Routine } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/engine/people'
+import { ROMANCE_HEART_CAPS } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/engine/hearts'
+import { seasonOf } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/engine/clock'
+import { weatherOf } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/engine/calendar'
+
+const OUT = 'C:/Users/wn410/AppData/Local/Temp/claude/C--Users-wn410-OneDrive-Desktop-cloooo-twenty-seven/d753a49f-e844-4b46-a32f-19ff3982a548/scratchpad/repro/r4reach/static-out.txt'
+const out: string[] = []
+const say = (s: string) => out.push(s)
+
+type Node = { kind: 'ev' | 'si'; id: string; npc: string; stage: number; req?: Req; when?: When; e?: PersonEvent; thread?: string; phase?: number }
+
+describe('r4reach static', () => {
+  it('scan', () => {
+    const d = peopleData()
+    const defs = new Map(CONTENT.neighbors.map((n) => [n.id, n]))
+    const nodes = new Map<string, Node>()
+    for (const p of Object.values(d.people)) {
+      for (const e of p.events ?? []) nodes.set(e.id, { kind: 'ev', id: e.id, npc: p.id, stage: e.stage, req: e.req, when: e.when, e })
+      for (const s of p.sightings ?? []) nodes.set(s.id, { kind: 'si', id: s.id, npc: p.id, stage: s.stage ?? 0, req: s.req, when: s.when })
+    }
+    d.threads.forEach((t) => t.phases.forEach((ph, i) => (ph.sightings ?? []).forEach((s) => nodes.set(s.id, { kind: 'si', id: s.id, npc: s.npc, stage: s.stage ?? 0, req: s.req, when: s.when, thread: t.id, phase: i }))))
+    // story completer
+    const completers = new Map<string, { owner: string; e: PersonEvent }[]>()
+    for (const p of Object.values(d.people)) for (const e of p.events ?? []) if (e.completes) {
+      if (!completers.has(e.completes)) completers.set(e.completes, [])
+      completers.get(e.completes)!.push({ owner: p.id, e })
+    }
+    // gates
+    const gates = (npc: string, st: number) => (d.people[npc].events ?? []).filter((e) => e.opens === st).map((e) => e.id)
+
+    // stage implied by req
+    const romanceable = (npc: string) => !!defs.get(npc)?.romanceable
+    function needStage(n: Node): number {
+      let st = n.stage
+      const r = n.req
+      if (!r) return st
+      if (r.minStage !== undefined) st = Math.max(st, r.minStage)
+      if (r.hearts !== undefined) {
+        const pts = r.hearts * 10
+        let s2 = 0
+        STAGE_POINTS.forEach((p, i) => { if (pts >= p) s2 = i })
+        // need points >= pts; gates st where STAGE_POINTS[st]-1 < pts must be passed
+        let g = 0
+        for (let k = 1; k <= 5; k++) if (STAGE_POINTS[k] - 1 < pts) g = k
+        st = Math.max(st, g)
+      }
+      if (r.rel && !r.rel.some((x) => x === 'lover' || x === 'spouse')) st = Math.max(st, Math.min(...r.rel.map((x) => (x === 'close' ? 4 : 3))))
+      return st
+    }
+
+    // ── 1. contradictions ──
+    for (const n of nodes.values()) {
+      const r = n.req
+      if (!r) continue
+      const w = `${n.kind} ${n.id} (${n.npc})`
+      for (const id of r.seen ?? []) if (r.notSeen?.includes(id)) say(`[모순 seen/notSeen] ${w}: ${id}`)
+      if (r.after && r.notSeen?.includes(r.after.event)) say(`[모순 after/notSeen] ${w}`)
+      for (const s of r.story ?? []) if (r.notStory?.includes(s.id)) say(`[모순 story/notStory] ${w}: ${s.id}`)
+      for (const id of r.exp ?? []) if (r.notExp?.includes(id)) say(`[모순 exp/notExp] ${w}`)
+      for (const id of r.memory ?? []) if (r.notMemory?.includes(id)) say(`[모순 memory] ${w}`)
+      if (r.lover === true && r.rel && !r.rel.some((x) => x === 'lover' || x === 'spouse')) say(`[모순 lover/rel] ${w}: ${r.rel}`)
+      if (r.lover === false && r.rel && r.rel.every((x) => x === 'lover' || x === 'spouse')) say(`[모순 notLover/rel] ${w}: ${r.rel}`)
+      if (r.lover === false && r.romance) say(`[모순 notLover/romance] ${w}`)
+      if (r.romance && r.rel && !r.rel.some((x) => (x === 'spouse' ? r.romance!.includes('married') : x === 'lover' ? r.romance!.some((y) => y !== 'married') : false))) say(`[모순 romance/rel] ${w}: ${r.romance} vs ${r.rel}`)
+      if (r.suitor === false && (r.lover === true || r.romance)) say(`[모순 notSuitor/lover] ${w}`)
+      if (r.hearts !== undefined && r.hearts > 10) say(`[하트 상한 초과] ${w}: ${r.hearts}`)
+      if (r.minStage !== undefined && r.minStage > 5) say(`[단계 상한 초과] ${w}`)
+      // notSeen of own prerequisite chain
+      for (const id of r.notSeen ?? []) {
+        const pre = nodes.get(id)
+        if (pre && pre.req?.seen?.includes(n.id)) {/* mutual exclusion ok */}
+      }
+      if (r.thread) {
+        const t = d.threads.find((x) => x.id === r.thread!.id)
+        if (t) for (const ph of r.thread.phase) if (ph < 0 || ph > t.phases.length) say(`[없는 단계] ${w}: ${t.id} ${ph}`)
+      }
+    }
+
+    // ── 2. gate self-block / hearts cap ──
+    for (const n of nodes.values()) {
+      if (n.kind !== 'ev' || !n.e!.opens) continue
+      const st = n.e!.opens
+      const ns = needStage(n)
+      if (ns >= st) say(`[문턱 자기막힘] ${n.id} (${n.npc}) opens=${st} 인데 필요 단계 ${ns} (stage ${n.stage}, req ${JSON.stringify(n.req)})`)
+      const g = gates(n.npc, st)
+      if (g.length > 1) say(`[info 문턱 갈래] ${n.npc} opens=${st}: ${g.join(',')}`)
+    }
+
+    // romance caps: non-lover events demanding hearts > cap for romanceable npcs
+    for (const n of nodes.values()) {
+      const r = n.req
+      if (!romanceable(n.npc)) continue
+      const loverOnly = r?.lover === true || !!r?.romance || (r?.rel && r.rel.every((x) => x === 'lover' || x === 'spouse'))
+      const nonLover = r?.lover === false || (r?.rel && r.rel.every((x) => x === 'friend' || x === 'close'))
+      const h = r?.hearts ?? 0
+      const st = needStage(n)
+      if (!loverOnly && nonLover && (h * 10 > ROMANCE_HEART_CAPS.confession)) say(`[연애후보 상한] ${n.kind} ${n.id} (${n.npc}) 연인 아님 조건 + hearts ${h} > 8 (다른 모습 플레이어는 친구로 지내기 선택 전엔 불가)`)
+      if (loverOnly && h * 10 > ROMANCE_HEART_CAPS.dating) say(`[info 연인 하트9 초과] ${n.kind} ${n.id} (${n.npc}) hearts ${h} — fullHeartBond 필요`)
+      if (n.kind === 'ev' && n.e!.confess && st > 5) say(`[고백 단계] ${n.id}`)
+    }
+
+    // ── 3. fixpoint reachability (ignores time/calendar; assumes all non-seen conditions satisfiable) ──
+    const R = new Set<string>()
+    const flagVals = (e: PersonEvent) => (e.choices?.length ? e.choices.map((c) => (c.outcome !== undefined ? c.outcome + 1 : 1)) : [1])
+    const storyOk = (sid: string, outcome?: number) => (completers.get(sid) ?? []).some(({ e }) => R.has(e.id) && (outcome === undefined || flagVals(e).includes(outcome + 1)))
+    // village facilities are flags
+    const isVillage = (sid: string) => sid.startsWith('village:')
+    let changed = true
+    while (changed) {
+      changed = false
+      for (const n of nodes.values()) {
+        if (R.has(n.id)) continue
+        const r = n.req ?? {}
+        if (r.seen && !r.seen.every((x) => R.has(x))) continue
+        if (r.seenAny && !r.seenAny.some((x) => R.has(x))) continue
+        if (r.after && !R.has(r.after.event)) continue
+        if (r.story && !r.story.every((x) => isVillage(x.id) || storyOk(x.id, x.outcome))) continue
+        const ns = needStage(n)
+        let ok = true
+        for (let st = 1; st <= ns; st++) {
+          const g = gates(n.npc, st)
+          if (g.length && !g.some((x) => R.has(x))) { ok = false; break }
+        }
+        if (!ok) continue
+        R.add(n.id); changed = true
+      }
+    }
+    const unreach = [...nodes.values()].filter((n) => !R.has(n.id))
+    say(`\n== 도달 불가(조건 그래프) ${unreach.length}/${nodes.size} ==`)
+    for (const n of unreach) {
+      const r = n.req ?? {}
+      const why: string[] = []
+      for (const x of r.seen ?? []) if (!R.has(x)) why.push(`seen ${x}`)
+      if (r.seenAny && !r.seenAny.some((x) => R.has(x))) why.push(`seenAny ${r.seenAny}`)
+      if (r.after && !R.has(r.after.event)) why.push(`after ${r.after.event}`)
+      for (const x of r.story ?? []) if (!isVillage(x.id) && !storyOk(x.id, x.outcome)) why.push(`story ${x.id}${x.outcome !== undefined ? '#' + x.outcome : ''}`)
+      const ns = needStage(n)
+      for (let st = 1; st <= ns; st++) { const g = gates(n.npc, st); if (g.length && !g.some((x) => R.has(x))) why.push(`gate${st} ${g}`) }
+      say(`[도달불가] ${n.kind} ${n.id} (${n.npc}) stage ${n.stage} need ${ns}: ${why.join('; ')}`)
+    }
+
+    // story outcome check
+    for (const n of nodes.values()) for (const s of n.req?.story ?? []) {
+      if (isVillage(s.id)) continue
+      const cs = completers.get(s.id) ?? []
+      if (s.outcome !== undefined && !cs.some(({ e }) => flagVals(e).includes(s.outcome! + 1))) say(`[없는 갈래] ${n.id}: story ${s.id} outcome ${s.outcome} — 그런 갈래 선택 없음 (완료 사건: ${cs.map((c) => c.e.id)})`)
+      if (s.outcome === undefined && cs.length && cs.every(({ e }) => e.choices?.length && e.choices.every((c) => c.mini) && false)) say('x')
+    }
+    // completes on events with choices without outcome or with completes but no choices
+    for (const p of Object.values(d.people)) for (const e of p.events ?? []) if (e.completes && e.choices?.length) {
+      const outs = e.choices.map((c) => c.outcome)
+      if (outs.some((o) => o !== undefined) && outs.some((o) => o === undefined)) say(`[갈래 일부만] ${e.id}: outcomes ${JSON.stringify(outs)}`)
+    }
+
+    // ── 4. exp / memory producibility ──
+    const memProd = new Map<string, Set<string>>() // npc -> tags
+    const addM = (npc: string, t: string) => { if (!memProd.has(npc)) memProd.set(npc, new Set()); memProd.get(npc)!.add(t) }
+    for (const p of Object.values(d.people)) {
+      for (const e of p.events ?? []) for (const c of e.choices ?? []) { if (c.memory) addM(p.id, c.memory); if (c.promise) { addM(p.id, `kept:${c.promise.id}`); addM(p.id, `forgot:${c.promise.id}`) } }
+      for (const s of p.sightings ?? []) addM(p.id, s.memory)
+    }
+    d.threads.forEach((t) => t.phases.forEach((ph) => (ph.sightings ?? []).forEach((s) => addM(s.npc, s.memory))))
+    const expWith = new Map<string, Set<string>>() // exp id -> npcs that may be in with
+    const addE = (id: string, npcs: string[]) => { if (!expWith.has(id)) expWith.set(id, new Set()); for (const n of npcs) expWith.get(id)!.add(n) }
+    for (const p of Object.values(d.people)) for (const e of p.events ?? []) {
+      if (e.choices?.length) e.choices.forEach((_, i) => addE(`choice:${e.id}`, eventCast(p.id, e, i)))
+      if (e.completes) { if (e.choices?.length) e.choices.forEach((_, i) => addE(`story:${e.completes}`, eventCast(p.id, e, i))); else addE(`story:${e.completes}`, eventCast(p.id, e)) }
+    }
+    const dyn = /^(work|learn|fam|gift|project|req|loveVerse|stall|stallBuy|meal|clubMeal|clubNews|promise|trip|visit|invite|date)/
+    for (const n of nodes.values()) {
+      const r = n.req
+      if (!r) continue
+      const w = `${n.kind} ${n.id} (${n.npc})`
+      for (const id of [...(r.exp ?? []), ...(r.recent ? [r.recent.exp] : []), ...(r.expItem ? [r.expItem.exp] : [])]) {
+        if (dyn.test(id)) continue
+        const ws = expWith.get(id)
+        if (!ws) say(`[경험 생성 없음] ${w}: exp ${id}`)
+        else if (!ws.has(n.npc)) say(`[경험에 이 이웃 없음] ${w}: exp ${id} — 함께 기록되는 이웃: ${[...ws]}`)
+      }
+      for (const t of r.memory ?? []) {
+        if (t === 'rain' || t === 'badGift') continue
+        if (t.startsWith('exp:')) { const ws = expWith.get(t.slice(4)); if (!dyn.test(t.slice(4)) && (!ws || !ws.has(n.npc))) say(`[기억 exp 없음] ${w}: ${t}`); continue }
+        if (!memProd.get(n.npc)?.has(t)) say(`[기억 생성 없음] ${w}: memory ${t}${[...memProd].filter(([, s]) => s.has(t)).map(([k]) => ' (다른 이웃 ' + k + '에게는 생김)').join('')}`)
+      }
+    }
+    // also lines and props/routines
+    for (const p of Object.values(d.people)) {
+      const items: { id: string; req?: Req }[] = [...p.lines, ...(p.props ?? []), ...p.routines.map((r, i) => ({ id: `routine#${i}`, req: r.req }))]
+      for (const it of items) {
+        const r = it.req
+        if (!r) continue
+        const w = `line/prop ${it.id} (${p.id})`
+        for (const id of [...(r.exp ?? []), ...(r.recent ? [r.recent.exp] : []), ...(r.expItem ? [r.expItem.exp] : [])]) {
+          if (dyn.test(id)) continue
+          const ws = expWith.get(id)
+          if (!ws) say(`[경험 생성 없음] ${w}: exp ${id}`)
+          else if (!ws.has(p.id)) say(`[경험에 이 이웃 없음] ${w}: exp ${id} — ${[...ws]}`)
+        }
+        for (const t of r.memory ?? []) {
+          if (t === 'rain' || t === 'badGift' || t.startsWith('exp:')) continue
+          if (!memProd.get(p.id)?.has(t)) say(`[기억 생성 없음] ${w}: memory ${t}${[...memProd].filter(([, s]) => s.has(t)).map(([k]) => ' (다른 이웃 ' + k + ')').join('')}`)
+        }
+        for (const id of [...(r.seen ?? []), ...(r.seenAny ?? []), ...(r.after ? [r.after.event] : [])]) if (nodes.has(id) && !R.has(id)) say(`[말/소품이 도달불가 사건에 매달림] ${w}: ${id}`)
+        if (r.hearts !== undefined && r.hearts > 10) say(`[하트 상한 초과] ${w}`)
+        for (const s of r.story ?? []) if (!s.id.startsWith('village:') && !(completers.get(s.id) ?? []).some(({ e }) => R.has(e.id))) say(`[말/소품의 이야기 도달불가] ${w}: ${s.id}`)
+        // line depth vs rel
+        const l = it as { depth?: number }
+        if (l.depth !== undefined && r.rel) {
+          if (l.depth === 3 && !r.rel.some((x) => x === 'lover' || x === 'spouse')) say(`[깊이3인데 연인 아님] ${w}: rel ${r.rel}`)
+          if (l.depth === 2 && r.rel.every((x) => x === 'friend')) say(`[깊이2(단계4+) 인데 rel friend(단계3)만] ${w}`)
+        }
+        if (l.depth !== undefined && r.lover === false && l.depth === 3) say(`[깊이3인데 lover false] ${w}`)
+        if (l.depth === 2 && r.hearts !== undefined && r.hearts * 10 < 55) {/* depth2 needs stage4 (55pts) anyway */}
+        if (l.depth !== undefined && r.lover === true && l.depth < 3) {/* fine */}
+      }
+    }
+
+    // ── 5. cast proximity: with-members' routines near e.at during event window ──
+    const PLAY = (m: number) => m >= 360 && m < 1560
+    function routinesOf(npc: string): Routine[] {
+      const p = d.people[npc]
+      const rs = [...p.routines, ...(p.offDays?.routines ?? [])]
+      for (const t of d.threads) for (const ph of t.phases) rs.push(...(ph.routines?.[npc] ?? []))
+      return rs
+    }
+    const moments: { day: number; season: any; weather: any }[] = []
+    const seenM = new Set<string>()
+    for (let day = 1; day <= 320; day++) { const k = `${day % 7}|${seasonOf(day)}|${weatherOf(day)}`; if (!seenM.has(k)) { seenM.add(k); moments.push({ day, season: seasonOf(day), weather: weatherOf(day) }) } }
+    const near = (a: { x: number; y: number }, b: { x: number; y: number }, r: number) => Math.abs(a.x - b.x) <= r && Math.abs(a.y - b.y) <= r
+    for (const p of Object.values(d.people)) for (const e of p.events ?? []) {
+      if (!e.with?.length) continue
+      for (const w of e.with) {
+        if (!d.people[w]) continue
+        let ok = false
+        const rs = routinesOf(w)
+        outer: for (const m of moments) for (let min = 360; min < 1560; min += 5) {
+          const mm = { day: m.day, minute: min % 1440, season: m.season, weather: m.weather }
+          if (!whenMatches(e.when, mm)) continue
+          // the routine actually chosen (approx: best specificity among matching) — check any matching routine near
+          for (const r of rs) if (!r.away && whenMatches(r.when, mm) && near(r.at, e.at, 2)) { ok = true; break outer }
+        }
+        if (!ok) say(`[함께할 이웃 자리 없음] ${e.id} (${p.id}) at (${e.at.x},${e.at.y}) when ${JSON.stringify(e.when)}: ${w}의 일과 중 그때 2칸 안이 없음`)
+      }
+    }
+
+    writeFileSync(OUT, out.join('\n'))
+  })
+})

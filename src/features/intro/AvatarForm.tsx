@@ -1,6 +1,7 @@
 // 주인공 만들기: 스타듀밸리 생성창처럼 미리보기(돌리기·무작위), 이름, 모습, ◀ ▶ 항목, 색 막대
 import { useEffect, useRef, useState } from 'react'
 import { T } from '../../content/text'
+import {BASIC_TOP_COUNT} from '../../engine/copy-outfits'
 import {
   ACCS,
   BOTTOMS,
@@ -51,7 +52,7 @@ const ROWS: { key: RowKey; names: readonly string[] }[] = [
   { key: 'skin', names: SKINS.map((_, i) => `${i + 1}`) },
   { key: 'hairFront', names: HAIR_FRONTS },
   { key: 'hairBack', names: HAIR_BACKS },
-  { key: 'top', names: TOPS.map((t) => t[0]) },
+  { key: 'top', names: TOPS.slice(0,BASIC_TOP_COUNT).map((t) => t[0]) },
   { key: 'bottom', names: BOTTOMS },
   { key: 'acc', names: ACCS },
 ]

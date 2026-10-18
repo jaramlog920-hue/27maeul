@@ -1,0 +1,366 @@
+[
+  {
+    "path": "scripts/all-assets-preview-static.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/audit-balance-2026-10-13.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/audit-table.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/build-bible-subset.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/build-chapter-guides.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/build-connections.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/build-god-records.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/build-journey.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/build-krv-pieces.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/build-letters.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/build-love-commands.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/build-nt-content.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/build-ot-guides.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/build-ot.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/build-pieces.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/build-verse-hashes.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/chapter-guides-parse.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/classify-event-art.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/connections-parse.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/dump-ref.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-addition-furniture-motion.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-adult-bed.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-all-assets-preview.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-archive-followup.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-baby-care-motion.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-bg-materials.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-book-reopen.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-cooking-art.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-couple-bed.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-cozy-furniture.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-craft-followup.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-eating-art.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-elder-art.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-event-art.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-event-life-motion.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-expanded-home.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-expansion-art.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-furniture-use-motion.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-generated-elders.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-home-space-art.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-household-furniture.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-kitchen-pets.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-library-art.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-life-additions.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-lodging-art.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-newland-building-upgrades.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-old-village-art.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-paired-events.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-pet-size-review.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-quiet-life.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-room-furniture.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-settlement-guests.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-side-hair.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-spouse-rooms.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-village-followup.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/export-work-details.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/fetch-krv-headings.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/god-records-parse.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/journey-parse.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/letters-parse.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/list-long-choices.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/make-icons.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/mark-close-buttons.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/measure-startup.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/nt-guides-honorific-past.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/ot-chapter-anchors.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/ot-guides-honorific-past.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/ot-guides-parse.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/people-more/build-more.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/people-more/hearts-lines.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/people-more/motions.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/people-more/romance-more.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/pixel-png.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/pixel-ts-loader.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/png-read.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/preview-cradle-baby.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/probe-bg-materials.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/probe-building-entries.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/run-audit.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/serve-baby-care-preview.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/shorten-choices.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/verify-chapter-guides-allowed.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/verify-chapter-guides.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/verify-connections.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/verify-god-records.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/verify-journey.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/verify-kitchen-pets.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/verify-letters.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/verify-ot-guides.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/verify-ot.mjs",
+    "exit": null
+  },
+  {
+    "path": "scripts/verify-pieces.mjs",
+    "exit": null
+  }
+]

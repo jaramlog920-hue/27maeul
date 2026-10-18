@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-16",
+  "connected": 558,
+  "pending": 118,
+  "batch": "shared-background-remainder",
+  "coverage": {
+    "uniqueIds": 118,
+    "missingInventoryIds": [],
+    "alreadyDrawnIds": [],
+    "sceneFamilies": [
+      {
+        "id": "east-road",
+        "count": 1
+      },
+      {
+        "id": "current",
+        "count": 103
+      },
+      {
+        "id": "date-return",
+        "count": 13
+      },
+      {
+        "id": "writing",
+        "count": 1
+      }
+    ],
+    "assetCount": 18
+  },
+  "artCompletionChanged": false
+}

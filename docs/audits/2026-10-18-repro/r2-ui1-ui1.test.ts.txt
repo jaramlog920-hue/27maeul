@@ -1,0 +1,103 @@
+import { act, fireEvent, render, screen, cleanup } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/@testing-library/react/dist/@testing-library/react.esm.js'
+import { createElement as h } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/react/index.js'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { CONTENT, PEOPLE } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import { T } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/text'
+import { newGame, type GameState } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/game'
+import { establishedGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/growth-test-support'
+import { useGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/store/game-store'
+import { FestSession } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/features/fest/FestSession'
+import { ClubForm } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/features/clubs/ClubForm'
+import { SchoolView } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/features/child/SchoolView'
+import { Family } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/features/family/Family'
+import { FIRE, FESTIVAL_SPOTS } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/neighbors'
+import { clubVenues, createClub } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/clubs'
+import { featureAccess } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/feature-rules'
+
+vi.mock('C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/render/renderer', () => ({ drawGroupPreview: vi.fn() }))
+beforeEach(() => { vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null); localStorage.clear() })
+afterEach(() => { cleanup(); vi.restoreAllMocks() })
+
+function fest(b: GameState, task?: { stage: number; selection: string; choice: string }, present: string[] = []): GameState {
+  const npcs = Object.fromEntries(Object.entries(b.npcs).map(([id, n]) => [id, { ...n, visible: false }]))
+  for (const id of present) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const spot = FESTIVAL_SPOTS[id as keyof typeof FESTIVAL_SPOTS]
+    npcs[id] = { ...b.npcs[id], ...spot, visible: true, path: [] }
+  }
+  return { ...b, clock: { day: 20, minute: 1090 }, player: { ...b.player, ...FIRE }, npcs, plans: { appts: [], nextId: 1 }, clubSessions: {},
+    fests: [{ id: 'fest:1', kind: 'festival', day: 20, place: 'bench', members: [], role: 'deco', reserve: {}, step: 'tidy', joined: false, consumed: false, closed: false, cancelled: false, ...(task ? { task } : {}) } as never] }
+}
+
+describe('ui1 재현', () => {
+  it('A1 잔치 역할: 모닥불 곁에 이웃이 없으면 한 판을 못 하고 역할 단추가 영영 꺼져 있다', () => {
+    useGame.getState().load(fest(newGame(CONTENT)))
+    render(h(FestSession, { id: 'fest:1' }))
+    expect(screen.getByRole('button', { name: T.fest.roleButton })).toBeDisabled()
+    expect(screen.queryAllByRole('button', { name: (T.round.kinds.festivalDeco.opts as string[])[0] })).toHaveLength(0)
+    expect(document.body.textContent).toContain(T.round.resultTitle)
+  })
+  it('A2 잔치 역할: 한 판을 하다 닫고 다시 열었을 때 곁의 이웃 수가 줄면 결과 창만 남고 끝낼 수 없다', () => {
+    useGame.getState().load(fest(newGame(CONTENT), { stage: 0, selection: '1', choice: 'baker' }, ['baker']))
+    render(h(FestSession, { id: 'fest:1' }))
+    expect(document.body.textContent).toContain(T.round.resultTitle)
+    expect(screen.getByRole('button', { name: T.fest.roleButton })).toBeDisabled()
+  })
+
+  it('B ClubForm: 활동을 바꿔도 장소가 남아 단계 통과 뒤 저장에서 venue 오류', () => {
+    const s0 = establishedGame(CONTENT)
+    const s: GameState = { ...s0, clock: { day: 2, minute: 480 }, scenes: [], garden: { '14,3': { crop: 'herb', grown: 0, wateredDay: null } } as never,
+      notebook: { ...s0.notebook, met: CONTENT.neighbors.map((n) => n.id) },
+      flags: { ...s0.flags, villageLevel: 10, ...Object.fromEntries(CONTENT.neighbors.map((n) => [`movedIn:${n.id}`, 1])) },
+      life: { ...s0.life, seen: Object.values(PEOPLE.people).flatMap((p) => (p.events ?? []).map((e) => e.id)) } }
+    expect(featureAccess(s, 'clubs')).toBe('full')
+    expect(clubVenues(s, 'garden')).toContain('garden')
+    expect(clubVenues(s, 'tea')).not.toContain('garden')
+    useGame.setState({ game: s })
+    const C = T.clubs
+    render(h(ClubForm, { onClose: () => {} }))
+    fireEvent.click(screen.getByText(T.plans.activity.garden))
+    fireEvent.click(screen.getByText(C.nextButton))
+    fireEvent.click(screen.getByText(T.plans.place.garden))
+    fireEvent.click(screen.getByText(C.back))
+    fireEvent.click(screen.getByText(T.plans.activity.tea))
+    fireEvent.click(screen.getByText(C.nextButton)) // step1: no place highlighted, but next is enabled
+    const next = screen.getByText(C.nextButton) as HTMLButtonElement
+    expect(next.disabled).toBe(false)
+    expect(document.querySelectorAll('.actions.menu.column button.primary').length).toBe(0)
+    fireEvent.click(next)
+    // members
+    const box = document.querySelector('input[type="checkbox"]:not([disabled])') as HTMLInputElement
+    fireEvent.click(box)
+    fireEvent.click(screen.getByText(C.nextButton))
+    fireEvent.click(screen.getByText(C.nextButton))
+    fireEvent.click(screen.getByText(C.save))
+    expect(screen.getByRole('alert').textContent).toBe(C.errors.venue)
+  })
+
+  it('C SchoolView: 잠긴 상태면 안내 문구가 비어 있다', () => {
+    const b = newGame(CONTENT)
+    const g: GameState = { ...b, child: { name: '아이', look: 'boy', born: 1, stats: b.stats } as never, clock: { day: 40, minute: 600 } }
+    useGame.setState({ game: g })
+    render(h(SchoolView))
+    const hint = [...document.querySelectorAll('p.hint')].map((p) => p.textContent)
+    // 잠김(locked)일 때 WHY에 키가 없어 빈 줄
+    expect(hint).toContain('')
+  })
+
+  it('D Family: 진로 고르기 선택이 아이를 바꿔도 남아 다른 아이 진로로 확정된다', () => {
+    const b = newGame(CONTENT)
+    const kid = (name: string, born: number, job: string) => ({ name, look: 'boy', born, stats: b.stats, job, jobConfirmed: false, left: false })
+    const g: GameState = { ...b, clock: { day: 300, minute: 600 }, child: kid('가', 10, 'scribe') as never, siblings: [kid('나', 20, 'fisher')] as never }
+    useGame.setState({ game: g, modal: { kind: 'family' } as never })
+    render(h(Family))
+    const sel = document.querySelector('select') as HTMLSelectElement
+    fireEvent.change(sel, { target: { value: 'merchant' } })
+    fireEvent.click(screen.getByRole('button', { name: /나/ }))
+    expect(useGame.getState().game.child?.name).toBe('나')
+    expect((document.querySelector('select') as HTMLSelectElement).value).toBe('merchant')
+    fireEvent.click(screen.getByText('이 진로로 함께 결정하기'))
+    expect(useGame.getState().game.child).toMatchObject({ name: '나', job: 'merchant', jobConfirmed: true })
+  })
+})
+void act; void createClub

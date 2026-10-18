@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>루디 결혼잔치 · 구도 시안</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eae2d0;color:#403c31;font:16px/1.6 system-ui}main{max-width:800px;margin:24px auto;padding:0 16px}h1{font-size:23px;margin-bottom:4px}p{margin:6px 0 16px}.stage{background:#56586b;border:2px solid #9c8869}canvas{width:100%;height:auto;display:block;image-rendering:pixelated}nav{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}button{font:inherit;border:1px solid #96866b;background:#f8f1e4;color:#403c31;padding:9px 13px;cursor:pointer}button[aria-pressed=true]{background:#536b55;color:#fff}button:focus-visible{outline:3px solid #536b55;outline-offset:3px}.line{background:#f8f1e4;padding:16px;min-height:90px}label{display:inline-flex;gap:6px;align-items:center;margin-right:14px}small{display:block;margin-top:16px}
+</style>
+<main><h1>루디 결혼잔치 · 먼저 보는 한 장면</h1><p>손님을 둥글게 모으고, 두 사람 앞을 비운 구도예요.</p>
+<div class="stage"><canvas width="320" height="220" aria-label="루디 결혼잔치 모션 시안"></canvas></div>
+<nav aria-label="원래 대사 단계"><button data-beat="0" aria-pressed="true">① 서로 바라보기</button><button data-beat="1" aria-pressed="false">② 잔치 탁자 소개</button><button data-beat="2" aria-pressed="false">③ 함께 인사</button></nav>
+<p class="line" aria-live="polite"></p>
+<label><input id="actual" type="checkbox">실제 외형 예시</label><label><input id="pause" type="checkbox">모션 멈추기</label>
+<small>검토용 시안이에요. 게임과 다른 배우자의 결혼식에는 아직 적용하지 않았어요. 저장·앨범을 변경하지 않아요.</small>
+</main>
+<script type="module">
+import {drawRudyWeddingProposal} from '/src/render/rudy-wedding-proposal.ts';
+import {withLookDefaults} from '/src/engine/avatar.ts';
+import neighbors from '/src/content/neighbors.json';
+import text from '/src/content/life-text.json';
+const actor=n=>({avatar:n.avatar?withLookDefaults({name:n.role,look:n.look??'m',...n.avatar}):null,who:n.avatar?'writer':n.sprite});
+const spouse=actor(neighbors.find(n=>n.id==='rudy')),guests=neighbors.filter(n=>n.id!=='rudy').map(actor),scene=text.scenes['wedding:rudy'];
+const canvas=document.querySelector('canvas'),g=canvas.getContext('2d'),actual=document.querySelector('#actual'),pause=document.querySelector('#pause');
+const av=withLookDefaults({name:'기록자',look:'f',skin:2,top:6});let beat=0,time=0,last=performance.now();
+function label(){document.querySelector('.line').textContent=scene.lines[beat].text;document.querySelectorAll('[data-beat]').forEach(button=>button.setAttribute('aria-pressed',String(Number(button.dataset.beat)===beat)))}
+document.querySelectorAll('[data-beat]').forEach(button=>button.addEventListener('click',()=>{beat=Number(button.dataset.beat);time=0;label()}));label();
+function frame(now){if(!pause.checked)time+=(now-last)/1000;last=now;drawRudyWeddingProposal(g,320,220,time,actual.checked?av:null,spouse,guests,beat);requestAnimationFrame(frame)}requestAnimationFrame(frame);
+</script></html>

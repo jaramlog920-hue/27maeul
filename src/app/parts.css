@@ -2146,12 +2146,15 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
   top: 0;
   left: 0;
   right: 0;
-  min-height: 100%;
+  height: 100%;
   box-sizing: border-box;
   margin: 0;
   pointer-events: none;
   z-index: 2;
 }
+.copy-verse-wrap:has(.copy-ghost) > :not(.copy-ghost) { visibility: hidden; }
+.copy-ghost-viewport { height: 100%; overflow: hidden; background: var(--scripture-bg); border-radius: 4px; }
+.copy-ghost .copy-stamp { position: absolute; right: 10px; bottom: 8px; margin: 0; background: var(--scripture-bg); white-space: nowrap; }
 .copy-ghost-fly { animation: copy-ghost-fly 0.95s ease-in both; }
 @keyframes copy-ghost-fly {
   0% { transform: none; opacity: 1; }
@@ -2543,3 +2546,18 @@ button.row:active:not(:disabled) { background: #efe3c4; }
 .blank-quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .blank-quiz-options button { min-height: 44px; }
 .blank-quiz-options button.wrong { border-color: #a33b2b; color: #a33b2b; }
+
+/* 사랑의 계명 (2026-10-14): 가운데 크고 첫째 되는 계명, 하나님 사랑·이웃 사랑 두 가지 */
+.love-commands .love-branch { margin: 10px 0; padding: 8px 10px; border: 1px solid #e6d9bf; border-radius: 6px; background: #fffaf0; }
+.love-commands .love-0 { border-color: var(--accent); }
+.love-commands .love-branch h3 { margin: 0 0 6px; font-size: 14px; }
+.love-commands .love-cards { list-style: none; margin: 0; padding: 0; }
+.love-commands .love-card.unfound { padding: 8px 6px; color: var(--ink-soft); opacity: 0.45; border-bottom: 2px solid #e6d9bf; }
+.love-commands .love-verse { margin: 4px 6px 10px; line-height: 1.7; word-break: keep-all; }
+
+/* 설치 전 방향 고르기: 게임의 방향별 도트를 그대로 미리 본다. */
+.decorate-facing { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 8px; }
+.decorate-facing > span { flex: 1 1 120px; }
+.decorate-facing button { min-height: 36px; padding: 4px 10px; }
+.decorate-facing button[aria-pressed='true'] { background: var(--panel-soft); border-color: var(--accent); font-weight: 700; }
+.furniture-facing-preview { display: block; image-rendering: pixelated; flex: none; }

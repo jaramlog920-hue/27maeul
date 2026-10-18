@@ -1,14 +1,15 @@
+import {COPY_OUTFITS} from '../../engine/copy-outfits'
 // 필사 집중 화면 (계획 14 작업 2). 책상에 앉으면 마을·위 줄·조작판·마을 소리가 사라지고 조용한 필사 화면이 된다.
 // 개역한글 본문 한 절을 보고 그대로 따라 적는다 — 맞게 쓴 부분만 은은하게 진해지고, 틀린 글자는 그 자리에 아주 살짝 표시.
 // 붙여넣기·끌어 놓기·자동완성은 받지 않는다. 휴대폰 한글 키보드: 조합 중인 글자는 되돌리지 않고, 조합 중인 마지막 글자를
 // 오타로 깜빡이지 않으며(compositionstart/end + InputEvent.inputType), 조합이 끝난 뒤에 절을 마친다.
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ChangeEvent, type Ref, type RefObject } from 'react'
-import { chapterGuide, CONTENT, GOD_KEYWORDS, versesOf } from '../../content/catalog'
+import { chapterGuide, CONTENT, GOD_KEYWORDS, pieceById, versesOf } from '../../content/catalog'
 import { ensureOtBook, otLoaded } from '../../content/ot-catalog'
 import { copyBookName, fill, itemName, roomTitle, T, withAnd, withObject, withSubject } from '../../content/text'
 import { setQuiet } from '../../audio/sound'
-import { chaptersOf, groupByRoom } from '../../engine/books'
-import { BLOCKED_INPUT_TYPES, checkCopy, checkVoice, copySpot, copyVerses, normalizeCopy, originalEnd, type CopySpot, type CopyVerse } from '../../engine/copying'
+import { chaptersOf, groupByRoom, progressOf } from '../../engine/books'
+import { againKey, BLOCKED_INPUT_TYPES, checkCopy, checkVoice, copySpot, copyVerses, isCopyingAgain, normalizeCopy, originalEnd, type CopySpot, type CopyVerse } from '../../engine/copying'
 import { deskKidWith, deskPose, spouseReading } from '../../engine/family'
 import { chapterUnit, isOtBook, OT_ROOMS, otRow, type CopyBook, type OtBook } from '../../engine/ot-books'
 import { bookDoneLine } from './copy-text'
@@ -16,6 +17,7 @@ import { BOOKS } from '../../engine/types'
 import { COPY_PEN, FAMILY_DESK, ICON_PALETTE } from '../../render/sprites'
 import { partnerName, useGame, type Modal } from '../../store/game-store'
 import { prefersStill, quillScratch } from './copy-feel'
+import { loveInChapter } from '../../engine/love-commands'
 import { copyVoiceOn, newRecognizer, transcriptsOf, voiceAvailable, type VoiceRecognizer } from './copy-voice'
 import { useKeyboardFit } from './copy-keyboard'
 import { blanksForVerse, copyLevel, hashKey, tilesFor, wayFor } from '../../engine/copy-ways'
@@ -146,22 +148,81 @@ function CopyBookPick({ tab: first }: { tab?: 'nt' | 'ot' }) {
   )
 }
 
-/** 책상 메뉴: [이어서 필사] [다른 책 선택] */
+/** 다시 쓰기 (2026-10-18 사용자: 마친 장을 횟수 제한 없이 다시 옮겨 적기 — 신약·구약을 다 적은 뒤에도 이어지는 필사) */
+const AGAIN = {
+  open: '마친 장 다시 쓰기',
+  title: '{book} · 다시 쓸 장',
+  hint: '마친 장을 처음부터 다시 옮겨 적어요. 몇 번이든 다시 쓸 수 있고, 한 장을 마칠 때마다 20% 확률로 아직 없는 말씀 조각이 와요.',
+  allPieces: '말씀 조각은 모두 모았어요. 다시 쓴 횟수와 경험치는 계속 쌓여요.',
+  count: '{n}번 다시 씀',
+  first: '아직 다시 쓰지 않음',
+  doing: '다시 쓰는 중',
+  resume: '이어서 다시 쓰기',
+  stop: '다시 쓰기 그만두기',
+  done: '이 {unit}을 {n}번 다시 썼어요',
+  piece: '다시 쓰다가 말씀 조각 ‘{title}’을 찾았어요 · 도감에 담겼어요',
+  more: '이 {unit} 한 번 더',
+  other: '다른 {unit} 다시 쓰기',
+}
+
+/** 다시 쓸 장 고르기: 이 책에서 마친 장마다 다시 쓴 횟수 */
+function CopyAgainPick({ book }: { book: CopyBook }) {
+  const completed = useGame((s) => progressOf(s.game, book).completed)
+  const againDone = useGame((s) => s.game.copy.againDone)
+  const collected = useGame((s) => s.game.collected)
+  const allPieces = useMemo(() => {
+    const got = new Set(collected)
+    return CONTENT.pieces.every((p) => got.has(p.id))
+  }, [collected])
+  const { copyAgain, copyView } = useGame.getState()
+  const unit = chapterUnit(book)
+  const chapters = [...completed].sort((a, b) => a - b)
+  return (
+    <div className="copy-panel copy-again">
+      <h2>{fill(AGAIN.title, { book: copyBookName(book) })}</h2>
+      <p className="hint">{allPieces ? AGAIN.allPieces : AGAIN.hint}</p>
+      <div className="book-grid">
+        {chapters.map((c) => {
+          const n = againDone?.[againKey(book, c)] ?? 0
+          const status = n ? fill(AGAIN.count, { n }) : AGAIN.first
+          return (
+            <button key={c} aria-label={`${c}${unit} · ${status}`} onClick={() => copyAgain(book, c)}>
+              <span className="pick-name">
+                {c}
+                {unit}
+              </span>
+              <span className="pick-status">{status}</span>
+            </button>
+          )
+        })}
+      </div>
+      <div className="actions">
+        <button onClick={() => copyView('menu')}>{C.back}</button>
+      </div>
+    </div>
+  )
+}
+
+/** 책상 메뉴: [이어서 필사] [마친 장 다시 쓰기] [다른 책 선택] */
 function CopyMenu({ book }: { book: CopyBook }) {
   const game = useGame((s) => s.game)
-  const { copyView, copyExit } = useGame.getState()
+  const { copyView, copyExit, copyAgainStop } = useGame.getState()
   const spot = copySpot(game, book, CONTENT)
   const name = copyBookName(book)
+  const again = isCopyingAgain(game.copy, book)
+  const anyDone = progressOf(game, book).completed.length > 0
+  const at = spot ? fill(C.menuAt, { book: name, chapter: spot.chapter, unit: chapterUnit(book), verse: spot.verse.verse }) : fill(C.menuDone, { book: name })
   return (
     <div className="copy-panel copy-menu">
       <h2>{C.deskTitle}</h2>
-      <p className="copy-menu-at">{spot ? fill(C.menuAt, { book: name, chapter: spot.chapter, unit: chapterUnit(book), verse: spot.verse.verse }) : fill(C.menuDone, { book: name })}</p>
+      <p className="copy-menu-at">{again ? `${AGAIN.doing} · ${at}` : at}</p>
       <div className="copy-menu-actions">
         {spot && (
           <button className="primary" onClick={() => copyView('write', true)}>
-            {C.continue}
+            {again ? AGAIN.resume : C.continue}
           </button>
         )}
+        {again ? <button onClick={copyAgainStop}>{AGAIN.stop}</button> : anyDone && <button onClick={() => copyView('again')}>{AGAIN.open}</button>}
         <button onClick={() => copyView('pick')}>{C.pickOther}</button>
         <button onClick={copyExit}>{C.exit}</button>
       </div>
@@ -390,24 +451,24 @@ function CopyPage({
 }
 
 /** 마친 절: 그 자리에 도장 "장:절"이 꾹 찍히고(살짝 흔들림), 줄이 위의 쪽으로 날아가 들어간다 */
+interface CompletionView { height: number; scrollTop: number; textTop: number }
 interface Ghost {
+  view: CompletionView | null
   text: string
   chapter: number
   verse: number
   id: number
 }
 function VerseGhost({ ghost, still, pageRef }: { ghost: Ghost; still: boolean; pageRef: RefObject<HTMLDivElement | null> }) {
-  const ref = useRef<HTMLParagraphElement>(null)
-  // 마친 절이 다음 절보다 길면 그동안 본문 칸 높이를 그대로 둔다 — 입력칸을 가리거나 밀어 올리지 않게
+  const ref = useRef<HTMLDivElement>(null)
+  // 다음 절 길이와 무관하게 완료 직전 보던 칸을 유지한다. 키보드가 열려 있어도 입력칸을 밀지 않는다.
   useLayoutEffect(() => {
-    const el = ref.current
-    const wrap = el?.parentElement
-    if (!el || !wrap) return
-    wrap.style.minHeight = `${el.offsetHeight}px`
-    return () => {
-      wrap.style.minHeight = ''
-    }
-  }, [ghost.id])
+    const wrap = ref.current?.parentElement
+    if (!wrap || !ghost.view) return
+    const height = wrap.style.height
+    wrap.style.height = `${ghost.view.height}px`
+    return () => { wrap.style.height = height }
+  }, [ghost.id, ghost.view])
   // 날아갈 곳: 쪽의 가운데 (움직임 줄이기면 제자리에서 사라진다)
   useLayoutEffect(() => {
     const el = ref.current
@@ -419,10 +480,14 @@ function VerseGhost({ ghost, still, pageRef }: { ghost: Ghost; still: boolean; p
     el.style.setProperty('--fly-y', `${Math.round(b.top + b.height / 2 - (a.top + a.height / 2))}px`)
   }, [ghost.id, still, pageRef])
   return (
-    <p ref={ref} className={`copy-focus-verse copy-ghost ${still ? 'copy-ghost-fade' : 'copy-ghost-fly'}`} aria-hidden="true" data-ghost={ghost.verse}>
-      <span className="copy-done-part">{ghost.text}</span>
+    <div ref={ref} className={`copy-ghost ${still ? 'copy-ghost-fade' : 'copy-ghost-fly'}`} aria-hidden="true" data-ghost={ghost.verse}>
+      <div className="copy-ghost-viewport">
+        <p className="copy-focus-verse" style={{ margin: 0, transform: `translateY(${(ghost.view?.textTop ?? 0) - (ghost.view?.scrollTop ?? 0)}px)` }}>
+          <span className="copy-done-part">{ghost.text}</span>
+        </p>
+      </div>
       <span className={`copy-stamp ${still ? 'copy-stamp-fade' : 'copy-stamp-press'}`}>{`${ghost.chapter}:${ghost.verse}`}</span>
-    </p>
+    </div>
   )
 }
 
@@ -506,6 +571,18 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
   const { copyType, copySave, copyExit } = useGame.getState()
   const name = copyBookName(book)
   const box = useRef<HTMLTextAreaElement>(null)
+  const verseWrap = useRef<HTMLDivElement>(null)
+  const completionView = useRef<CompletionView | null>(null)
+  const captureCompletionView = () => {
+    const wrap = verseWrap.current
+    const text = wrap?.querySelector<HTMLElement>('.copy-focus-verse:not(.copy-ghost)')
+    if (!wrap || !text) { completionView.current = null; return }
+    completionView.current = {
+      height: wrap.clientHeight,
+      scrollTop: wrap.scrollTop,
+      textTop: text.getBoundingClientRect().top - wrap.getBoundingClientRect().top + wrap.scrollTop,
+    }
+  }
   /** 한글을 조합하는 중 (compositionstart ~ compositionend) */
   const composing = useRef(false)
   /** 마지막으로 처리한 입력 — 조합이 끝날 때 한 번, 뒤따르는 input 이벤트로 또 한 번 오는 같은 글을 두 번 받지 않게 */
@@ -607,6 +684,7 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
         return
       }
       const best = texts.reduce((a, b) => (checkVoice(b, target).similarity > checkVoice(a, target).similarity ? b : a))
+      captureCompletionView()
       const res = useGame.getState().copyVoice(best)
       if (!res) return
       if (res.ok) {
@@ -674,6 +752,7 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
   const finish = (text: string) => {
     if (!checkCopy(text, spot.verse.text).done) return
     lastSent.current = null
+    captureCompletionView()
     useGame.getState().copyType(text, { composing: false })
   }
   const onChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -699,7 +778,7 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
   const verseDone = check.done
   // 휴대폰 키보드가 올라오면 [머리 · 본문 칸 · 입력칸]을 키보드 위 보이는 자리에 맞춘다 (본문이 입력칸 바로 위에)
   const work = useRef<HTMLDivElement>(null)
-  const verseWrap = useRef<HTMLDivElement>(null)
+
   useKeyboardFit({ input: box, work, verse: verseWrap }, key, check.matched)
 
   // ── 잉크 번짐: 이 절에서 처음으로 더 멀리 맞게 쓴 글자만 (조합 중에 마지막 글자가 바뀌며 오르내려도 다시 번지지 않게) ──
@@ -730,13 +809,13 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
   const pageRef = useRef<HTMLDivElement>(null)
   const seenLast = useRef(modal.last)
   const [ghost, setGhost] = useState<Ghost | null>(null)
-  useEffect(() => {
+  useLayoutEffect(() => {
     const last = modal.last
     if (last === seenLast.current) return
     seenLast.current = last
     if (last?.kind !== 'verse') return
     const text = copyVerses(book, last.chapter, CONTENT).find((v) => v.verse === last.verse)?.text ?? ''
-    setGhost({ text, chapter: last.chapter, verse: last.verse, id: ++feelSeq })
+    setGhost({ text, chapter: last.chapter, verse: last.verse, id: ++feelSeq, view: completionView.current })
   }, [modal.last, book])
   useEffect(() => {
     if (!ghost) return
@@ -794,7 +873,7 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
               key={key}
               data={puzzle}
               label={fill(C.verseLabel, { book: name, chapter: spot.chapter, verse: spot.verse.verse })}
-              onDone={() => useGame.getState().copyPuzzle()}
+              onDone={() => { captureCompletionView(); useGame.getState().copyPuzzle() }}
               onManual={() => setManualKey(key)}
             />
           ) : (
@@ -887,6 +966,29 @@ function CopyDone({ book, modal, folding }: { book: CopyBook; modal: Extract<Mod
   if (last?.kind !== 'chapter') return null
   const name = copyBookName(book)
   const gains = (['wit', 'hand'] as const).filter((k) => last.gains[k] > 0).map((k) => fill(C.gain, { name: T.stats.names[k], n: last.gains[k] }))
+  if (last.again !== undefined) {
+    const unit = chapterUnit(book)
+    const { copyAgain } = useGame.getState()
+    return (
+      <div className={folding ? 'copy-panel copy-done copy-after-fold' : 'copy-panel copy-done'}>
+        <h2>{fill(C.chapterDone, { book: name, chapter: last.chapter, unit, verses: last.verses, chars: last.chars })}</h2>
+        <p className="copy-book-done">{fill(AGAIN.done, { unit, n: last.again })}</p>
+        {gains.length > 0 && <p className="copy-gains">{gains.join(' · ')}</p>}
+        {last.pieceId && (
+          <p className="hint" role="status">
+            {fill(AGAIN.piece, { title: pieceById(last.pieceId).title })}
+          </p>
+        )}
+        <div className="copy-menu-actions">
+          <button onClick={copyExit}>{C.closeBook}</button>
+          <button onClick={() => copyView('again')}>{fill(AGAIN.other, { unit })}</button>
+          <button className="primary" onClick={() => copyAgain(book, last.chapter)}>
+            {fill(AGAIN.more, { unit })}
+          </button>
+        </div>
+      </div>
+    )
+  }
   return (
     <div className={folding ? 'copy-panel copy-done copy-after-fold' : 'copy-panel copy-done'}>
       <h2>{fill(C.chapterDone, { book: name, chapter: last.chapter, unit: chapterUnit(book), verses: last.verses, chars: last.chars })}</h2>
@@ -906,16 +1008,20 @@ function CopyDone({ book, modal, folding }: { book: CopyBook; modal: Extract<Mod
         </section>
       )}
       {gains.length > 0 && <p className="copy-gains">{gains.join(' · ')}</p>}
+      {/* 사랑의 계명 (2026-10-14): 이 장에 든 계명을 발견했다 — 말씀 › 사랑의 계명에서 본다 */}
+      {loveInChapter(book, last.chapter).length > 0 && <p className="hint">사랑의 계명 {loveInChapter(book, last.chapter).length}개를 발견했어요 · 말씀 › 사랑의 계명</p>}
       {last.bookDone && <p className="copy-book-done">{bookDoneLine(book, name)}</p>}
       {/* 장을 마친 기념 생활 가구 (2026-10-12) */}
       {/* 필사 삯 (2026-10-13) */}
+      {last.outfit && <p className="hint" role="status">특별한 옷 ‘{COPY_OUTFITS.find(o=>o.id===last.outfit)?.name}’을 얻었어요 · 옷장에 넣었어요</p>}
+      {last.collectibleFurniture && <p className="hint" role="status">필사 수집 가구 ‘{itemName(last.collectibleFurniture)}’을 얻었어요 · 가방에 넣었어요</p>}
       {last.pay ? <p className="hint">필사 삯 {last.pay}닢을 받았어요</p> : null}
       {last.gift && <p className="hint">장을 마친 기념으로 {withObject(itemName(last.gift))} 받았어요 · 가방에 넣었어요</p>}
       {kidName && <p className="copy-family-quiet">{fill(FD.quiet, { with: withAnd(kidName) })}</p>}
       <div className="copy-menu-actions">
         <button onClick={copyExit}>{C.closeBook}</button>
-        {/* 빈칸 퀴즈 (2026-10-14): 지금까지 필사한 장에서 — 책상을 나가며 퀴즈 창으로 */}
-        <button onClick={() => { copyExit(); useGame.getState().open({ kind: 'blankQuiz' }) }}>빈칸 퀴즈 풀기</button>
+        {/* 빈칸 퀴즈 (2026-10-14): 방금 완성한 장에서 10문제 — 책상을 나가며 퀴즈 창으로 */}
+        <button onClick={() => { copyExit(); useGame.getState().open({ kind: 'blankQuiz', target: { book, chapter: last.chapter } }) }}>빈칸 퀴즈 풀기</button>
         {/* 한 권을 마쳤으면 바로 제본 창으로 (책상에서 나가며 쓰다 만 입력은 저장된다) */}
         {last.bookDone && unbound && (
           <button
@@ -988,7 +1094,7 @@ export function CopyDesk({ modal }: { modal: Extract<Modal, { kind: 'copy' }> })
   // 장을 마쳤다: 꽉 찬 쪽이 접히고(책장 넘기는 소리는 가게가 낸다), 그 뒤로 장 완료 화면이 떠오른다
   const seenLast = useRef(modal.last)
   const [fold, setFold] = useState<{ chapter: number; id: number } | null>(null)
-  useEffect(() => {
+  useLayoutEffect(() => {
     const last = modal.last
     if (last === seenLast.current) return
     seenLast.current = last
@@ -1006,6 +1112,7 @@ export function CopyDesk({ modal }: { modal: Extract<Modal, { kind: 'copy' }> })
   else if (!book || modal.view === 'pick') body = <CopyBookPick tab={modal.tab} />
   else if (otReady !== 'ready') body = <OtOpening failed={otReady === 'failed'} />
   else if (modal.view === 'menu') body = <CopyMenu book={book} />
+  else if (modal.view === 'again') body = <CopyAgainPick book={book} />
   else if (modal.view === 'done')
     body =
       modal.last?.kind === 'chapter' ? (

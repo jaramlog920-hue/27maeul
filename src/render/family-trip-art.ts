@@ -1,15 +1,16 @@
+import {newbornArt} from './newborn-art'
 import type {Avatar} from '../engine/avatar'
 import {withLookDefaults} from '../engine/avatar'
 import type {FinalePerson} from './library-finale-art'
 import {person} from './milestone-moments-art'
-import {BABY,SMALL_PALETTE,PALETTE,spriteRows,writerPalette} from './sprites'
+import {PALETTE,spriteRows,writerPalette} from './sprites'
 
 export type TripChild=FinalePerson&{baby?:boolean}
 export function drawFamilyTrip(g:CanvasRenderingContext2D,w:number,h:number,t:number,avatar:Avatar|null,child:TripChild,beat:number){
  const p=(x:number,y:number,c:string,a=1,b=1)=>{g.fillStyle=c;g.fillRect(Math.round(x),Math.round(y),Math.ceil(a),Math.ceil(b))}
  const cx=Math.round(w/2),floor=Math.round(h*(h<=170?.65:.52))
  const childAt=(x:number,foot:number,facing:'left'|'right',walk:boolean,point=false)=>{
-  if(child.baby){BABY.baby.forEach((r,y)=>[...r].forEach((c,xx)=>{if(c!=='.'&&SMALL_PALETTE[c])p(x+xx*2,foot-20+y*2,SMALL_PALETTE[c],2,2)}));return}
+  if(child.baby){const newborn=newbornArt(child.avatar);newborn.rows.forEach((r,y)=>[...r].forEach((c,xx)=>{if(c!=='.'&&newborn.palette[c])p(x+xx*2,foot-20+y*2,newborn.palette[c],2,2)}));return}
   const av=child.avatar?withLookDefaults(child.avatar):undefined,pal=child.who==='writer'?writerPalette('spring',av):PALETTE
   const rows=spriteRows(child.who,facing,{avatar:av,look:av?.look,short:child.short,frame:walk?(Math.floor(t*3)%2?1:2):0,blink:false,pose:point?'handUp':'stand'})
   rows.forEach((r,y)=>[...r].forEach((c,xx)=>{if(c!=='.'&&pal[c])p(x+xx*2,foot-rows.length*2+y*2,pal[c],2,2)}))

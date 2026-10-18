@@ -1,0 +1,72 @@
+import { appendFileSync, writeFileSync } from 'node:fs'
+import { it } from 'vitest'
+import { createElement } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/react'
+import { render, cleanup, act } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/@testing-library/react'
+import { CONTENT } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import { newGame, type GameState } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/game'
+import { deserialize, serialize, exportSave, importSave, loadGame, saveGame, setActiveSlot } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/save'
+import { newChild } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/child'
+import { useGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/store/game-store'
+import { ModalLayer } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/features/ModalLayer'
+import { OUTDIR } from './fuzzlib'
+
+const OUT = `${OUTDIR}/confirm.txt`
+const say = (...a: unknown[]) => appendFileSync(OUT, a.map(x => typeof x === 'string' ? x : JSON.stringify(x)).join(' ') + '\n')
+function memStore(): Storage {
+  const m = new Map<string, string>()
+  return { get length() { return m.size }, key: (i: number) => [...m.keys()][i] ?? null, getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => void m.set(k, v), removeItem: (k: string) => void m.delete(k), clear: () => m.clear() }
+}
+const mut = (f: (o: Record<string, any>) => void, base: GameState = newGame(CONTENT)) => { const o = JSON.parse(serialize(base)); f(o); return JSON.stringify(o) }
+const wrapFile = (saveText: string) => JSON.stringify({ app: 'twenty-seven', v: 2, at: 0, save: saveText, album: {}, settings: {} })
+
+it('confirm', () => {
+  writeFileSync(OUT, '')
+  // C1: 비유한 수가 든 저장 가져오기 → 한 번은 열리지만 저장 뒤 영영 못 연다
+  for (const [field, val] of [['clock.day', '-1e999'], ['clock.minute', '1e999']] as const) {
+    const store = memStore(); setActiveSlot('1', store)
+    const text = mut(o => { const [a, b] = field.split('.'); o[a][b] = `__X__` }).replace('"__X__"', val)
+    const r = importSave(wrapFile(text), CONTENT, store)
+    const s1 = loadGame(CONTENT, store)
+    say('C1', field, val, 'import=', r, 'loaded1=', !!s1, s1 && field === 'clock.day' ? s1.clock.day : s1?.clock.minute)
+    if (s1) { saveGame(s1, store); say('C1', field, 'after autosave stored clock=', JSON.parse(store.getItem('twenty-seven/save/' + (r as { slot: string }).slot) ?? store.getItem('twenty-seven/save') ?? '{}').clock, 'reload=', loadGame(CONTENT, store) ? 'ok' : 'NULL (slot unreadable)') }
+  }
+  // C2: 모르는 아이템 id가 가방에 → 정리 통과, 가방 창 오류
+  {
+    const s = deserialize(mut(o => { o.inv['nonexistent-xyz'] = 2 }), CONTENT)
+    say('C2 loaded', !!s, 'inv has unknown =', s ? 'nonexistent-xyz' in s.inv : '-')
+    if (s) {
+      useGame.getState().load(s)
+      const errs: string[] = []; const orig = console.error; console.error = (...a: unknown[]) => { errs.push(String(a[0]).slice(0, 120)) }
+      act(() => { useGame.setState({ modal: { kind: 'bag' } as never }) })
+      const r = render(createElement(ModalLayer))
+      say('C2 bag boundary =', r.container.textContent?.includes('화면을 불러오지 못했어요'), errs.find(e => /Cannot read|TypeError/.test(e)))
+      console.error = orig; cleanup()
+    }
+  }
+  // C3: 첫째 아이 기록이 깨지면 동생들이 두 번째 불러오기에서 사라짐
+  {
+    const b = newGame(CONTENT)
+    const base = { ...b, child: { ...newChild(1, b.stats, undefined), name: '하람' }, siblings: [{ ...newChild(1, b.stats, undefined), name: '다온' }] } as GameState
+    const t = mut(o => { delete o.child.look }, base)
+    const s1 = deserialize(t, CONTENT)!
+    const s2 = deserialize(serialize(s1), CONTENT)!
+    say('C3 1st load child=', s1.child, 'siblings=', s1.siblings?.map(k => k.name), '| 2nd load siblings=', s2.siblings)
+  }
+  // C4: 선택 칸 하나가 깨지면 저장 전체를 못 읽음 (가져오기 'format')
+  const cases: [string, (o: Record<string, any>) => void][] = [
+    ['rereads:"x"', o => { o.rereads = 'x' }], ['achieved:[null]', o => { o.achieved = [null] }], ['achieved:{}', o => { o.achieved = {} }],
+    ['scenes:[1]', o => { o.scenes = [1] }], ['scenes:[null]', o => { o.scenes = [null] }], ['progress.mt.completed:5', o => { o.progress.mt.completed = 5 }],
+    ['journal[0].heard:"x"', o => { o.journal = [{ day: 1, heard: 'x', notes: [] }] }], ['journal:[null]', o => { o.journal = [null] }], ['room:[...,null]', o => { o.room.push(null) }],
+    ['clock.day:1e999', o => { o.clock.day = '__X__' }], ['todayHeard ok but offers{a:1}', o => { o.offers = { a: 1 } }],
+  ]
+  for (const [name, f] of cases) {
+    const t = mut(f).replace('"__X__"', '1e999')
+    const store = memStore()
+    say('C4', name, 'deserialize=', deserialize(t, CONTENT) ? 'ok' : 'null', 'import=', JSON.stringify(importSave(wrapFile(t), CONTENT, store)))
+  }
+  // C5: 숫자 칸(needs·flags·hearts·coins) 비정상 값이 그대로 남는지
+  {
+    const s = deserialize(mut(o => { o.needs.hunger = null; o.flags.villageLevel = 'zz'; o.hearts.baker = '50'; o.lampFuel = 'x'; o.gifted = 'zz'; o.today = 7 }), CONTENT)!
+    say('C5 needs.hunger=', s.needs.hunger, 'flags.villageLevel=', s.flags.villageLevel, 'hearts.baker=', s.hearts.baker, 'lampFuel=', s.lampFuel, 'gifted=', s.gifted, 'today=', s.today)
+  }
+})

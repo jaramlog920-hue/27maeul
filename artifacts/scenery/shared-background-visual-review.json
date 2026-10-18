@@ -1,0 +1,4592 @@
+{
+  "batch": "shared-background-remainder",
+  "completed": false,
+  "samples": [
+    {
+      "id": "gift:postman:9",
+      "title": "마음을 나눈 이웃",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "postman",
+          "text": "편지를 담아 다니던 바구니예요. 새로 하나 엮었으니 이건 드릴게요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-postman-9-phases.png",
+          "sha256": "6db5a9ad0e6ccbf2df05f1e2dc666428c07205457744539adf20ea91c1b2fd3f"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-postman-9-phone.png",
+          "sha256": "0d2943590bafc85490dae8863b457100876ad1118004a0891150e0bec5612b79"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-postman-9-thumb.png",
+          "sha256": "96a4f1520c9444c473df9dce71c9d67b4b8a5632697179a12c62306d03c47525"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:grandpa:9",
+      "title": "마음을 나눈 이웃",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "grandpa",
+          "text": "내가 아끼던 그릇이네. 자네가 쓰면 좋겠네."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-grandpa-9-phases.png",
+          "sha256": "6997ec816cb5312aacc187da4b7a8537142438dad210388ceb64a318359948ba"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-grandpa-9-phone.png",
+          "sha256": "e7d9e37fcf110b0deac2ae5112fc15cde19d353586818821fb4bea796a234f19"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-grandpa-9-thumb.png",
+          "sha256": "59b58afb1949480702e8ac4b00518abbc6c1b59ab1ce14715f8d42d5b7445b25"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:smith:9",
+      "title": "마음을 나눈 이웃",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "smith",
+          "text": "{player}님 방에 둘 협탁을 짰소. 쇠 장식도 달았소."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-smith-9-phases.png",
+          "sha256": "6242d2034887086d2d42e784fda6220c152d4d3ea585a84487dfad0ca00ccbdf"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-smith-9-phone.png",
+          "sha256": "8ddfdfd2f8930de4ec37fa28e0728da2d71dfec18b54252f6d87cc1d09a7a9dc"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-smith-9-thumb.png",
+          "sha256": "4fe68e0fe1026b21bf5f1bf78c0ee060f48de7054361a1affa765de84462f644"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:apothecary:9",
+      "title": "마음을 나눈 이웃",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "apothecary",
+          "text": "약차 우릴 때 쓰는 주전자예요. 우리 집에서 제일 아끼는 거예요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-apothecary-9-phases.png",
+          "sha256": "4c45a77ab8db809bf0b783cf1d1117efea5f11ce9a695e30f3f925fc3d345b2a"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-apothecary-9-phone.png",
+          "sha256": "2626557ea24ec58323b86770f1757df2e36aac70ae5a20c1e100eb79b2997f3f"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-apothecary-9-thumb.png",
+          "sha256": "a17d8a0a86107a928493c03b1477298061e845694275f52b4206615593abef18"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:carpenter:9",
+      "title": "마음을 나눈 이웃",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "carpenter",
+          "text": "책 꽂을 책장을 짰어요. 권수가 늘었으니 자리가 필요하죠."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-carpenter-9-phases.png",
+          "sha256": "2c401aa6d9208658e36216c3ddcad57c4129bcb044160fc5cc50d0fbea4ff778"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-carpenter-9-phone.png",
+          "sha256": "5334a71dcf55ef1babac1a6000e03fa83c5fd0a54b220777f0b9990d410f7169"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-carpenter-9-thumb.png",
+          "sha256": "c38b3b1bcf7f0074a9b8dbe3290b87b606d804e091337224fcf99c7b0aed5e4b"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:weaver:9",
+      "title": "마음을 나눈 이웃",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "weaver",
+          "text": "이 바구니는 제가 이 마을에서 처음 짠 거예요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-weaver-9-phases.png",
+          "sha256": "7b88a35f5a923549f2fcd39f6cafa998629521ec1d2c55f9fd426f0fb4f5e353"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-weaver-9-phone.png",
+          "sha256": "f4c9ec3bb5221cb3c0006bae73e974160c5ea33da71abdf0d59abbf314f973d3"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-weaver-9-thumb.png",
+          "sha256": "47016d7bca41f197d55d8102e17384611ff095555895cec6e3708cbdb3917a2d"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:merchant:9",
+      "title": "마음을 나눈 이웃",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "merchant",
+          "text": "먼 길에서 구한 제일 좋은 깔개야. 네 방에 어울릴 거야."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-merchant-9-phases.png",
+          "sha256": "4ae3456c1a942b8917ea0b6a69d8df93719958a6a6f54d7f7b1818b8e9ada7bf"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-merchant-9-phone.png",
+          "sha256": "f1541eb33e203a0c505c3988a723ec07bba21821caa26fcabb8190ff9c40e604"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-merchant-9-thumb.png",
+          "sha256": "9bbcbbcdc3883688b484dc3098a2d2c83c16eb4ca481cdd1aa53fcc28da0c29a"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:shepherd:9",
+      "title": "마음을 나눈 이웃",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "shepherd",
+          "text": "제일 좋은 털로 방석을 또 만들었어요. 둘이면 손님도 앉겠죠."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-shepherd-9-phases.png",
+          "sha256": "3df01995ea28255bab47ef47e71e071c53ffc8c5b06819307a0bbe2fa265cd23"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-shepherd-9-phone.png",
+          "sha256": "eb35bf9521f6a1eac84f3c10244e9cd05f7c9461c952739cfa9986ef8710970c"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-shepherd-9-thumb.png",
+          "sha256": "b93f45b3485c2c26816688baecd4eebeb5045527b813046605181fec7738ae30"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:presser:9",
+      "title": "마음을 나눈 이웃",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "presser",
+          "text": "이 물병엔 올해 첫 기름을 담았었어요. 받아 줘요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-presser-9-phases.png",
+          "sha256": "3ccafa2111b1e0db707120e0e09e7d3517622c500aa48bb3ffe9414a1c2c4469"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-presser-9-phone.png",
+          "sha256": "00a4d8d9d9c727fe18995029bfe8566b1e39998fd3de010bd7d3df140b0bbdd6"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-presser-9-thumb.png",
+          "sha256": "2b7464e0470fd567c726e9568c3ca312124416c413859399c98f7aafc6411e4a"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:child:9",
+      "title": "마음을 나눈 이웃",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "child",
+          "text": "그때보다 훨씬 잘 깎은 나무 새예요. 제일 아끼는 거라 드려요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-child-9-phases.png",
+          "sha256": "9b5ee57894403544fd95e36a656c5b256aa1ea2eb264115f602b9bea10414702"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-child-9-phone.png",
+          "sha256": "0bb6b3a85cfede2a25a11460a3fb597254fc1094f2351a3b9ff01ff3cf2da044"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-child-9-thumb.png",
+          "sha256": "4fbeb3a15dd3a7e8f93eb0ac42485dddeb653220abcea5a5230acde55778f6ca"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:beekeeper:9",
+      "title": "마음을 나눈 이웃",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "beekeeper",
+          "text": "제일 예쁜 물병에 꿀 향이 배었어요. 가져가요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-beekeeper-9-phases.png",
+          "sha256": "81afe51fe7de6d6aa65d730016e567b968b3af4976235f81d211fab02148f006"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-beekeeper-9-phone.png",
+          "sha256": "a4b030ef7ec9925506ba367da7747205e76f4f4b9a7fa6dd5923af98ca0f323e"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-beekeeper-9-thumb.png",
+          "sha256": "0fc155074f945a34cd7039e3bcab2375094eb6bf032bf504e2fc972fd42dcca0"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:fisher:9",
+      "title": "마음을 나눈 이웃",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "fisher",
+          "text": "물가에서 쓰던 그릇이에요. 오래 써서 손에 익었어요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-fisher-9-phases.png",
+          "sha256": "f31fd29afb4f0b579cbe04cbb5fbcb60862ff3f0e28526fc04bfde3b725336cc"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-fisher-9-phone.png",
+          "sha256": "92de2e31ac645f4fbf35a31f03a261934586718e75922c70cc1edbfa3d3a51cc"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-fisher-9-thumb.png",
+          "sha256": "226b90fd16182f625507937a4c6573d0d98097553f122385177f32f65403a0e7"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:carpenter:3",
+      "title": "선물",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "carpenter",
+          "text": "자투리로 걸상 하나 만들었어요. 앉아 보세요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        1.49,
+        1.5,
+        1.85,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-carpenter-3-phases.png",
+          "sha256": "5dddae3718ffa41e25abbcce2fda9a19436f583960d03144e35f3e04b83a5bcf"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-carpenter-3-phone.png",
+          "sha256": "7e0fb28f323b4ce2120f05d6db2421633c020b99106ef71df59e5c1d1b7f0f4c"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-carpenter-3-thumb.png",
+          "sha256": "6bb13ef5ac6ffc365c66925b6cc8e18a2675229d00c7fbf27c32003fa5b2ca9d"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:baker:9",
+      "title": "마음을 나눈 이웃",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "baker",
+          "text": "늘 고마워요. 우리 집 식탁에 올려 두던 촛대예요. 이젠 {player}님 거예요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-baker-9-phases.png",
+          "sha256": "faefcc745c059687df5f72d319b7e01381ca5c180cee2f41a0ebba13dd6f39ea"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-baker-9-phone.png",
+          "sha256": "67167ae5e459f6eb5ea898fe2a057405ee1348009fdecd227bef16c71391b5f0"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-baker-9-thumb.png",
+          "sha256": "1de513ed24ec193da2c8c6aa666a4976edceb4b2b4ecff3d106605ccd3414fd1"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:postman:3",
+      "title": "선물",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "postman",
+          "text": "편지 싸는 종이가 남았어요. 글씨 쓰실 때 쓰세요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-postman-3-phases.png",
+          "sha256": "5f0d029f501c8c888358d7af47ab34d60ec014458e85a8d7dc192c98a9e36f39"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-postman-3-phone.png",
+          "sha256": "05eb2a97de9722914405d63b06fd629b16694e99795ad3d13ff27f613ead0152"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-postman-3-thumb.png",
+          "sha256": "8839af5d808a57a22d3fb54e5bf71d471e66b37657d2890395258030754e43e3"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:grandpa:3",
+      "title": "선물",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "grandpa",
+          "text": "말린 무화과네. 출출할 때 들게."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-grandpa-3-phases.png",
+          "sha256": "0bb314a4f661ef7d9477787c47786c73adb42fc28b9393072af9a99c4cea713e"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-grandpa-3-phone.png",
+          "sha256": "18ca3b67a5c085c546faaf0f9c58d4842f543aca9e375fb46dc34b488a2eaa7c"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-grandpa-3-thumb.png",
+          "sha256": "72ec69f551edf71d6762fb83335d27e692036286a62c5cf17911cfa98ab936a5"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:grandpa:6",
+      "title": "선물",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "grandpa",
+          "text": "젊을 때 짠 식탁이라네. 자네 집에 두고 쓰게."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-grandpa-6-phases.png",
+          "sha256": "32d407d5645ab3fd9a12ea808b95d1647d2bf5a1a860323ade7aae3a80735317"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-grandpa-6-phone.png",
+          "sha256": "8bfd7124fae29698fbe71aa8bbb6d5e9e99e389539ae378d911ab5d55ebd4e6f"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-grandpa-6-thumb.png",
+          "sha256": "56d86f7148ae48ded7ec7509c4f27d98efefb64ed3a97a2cc3b7764e0ec7c0a5"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:smith:3",
+      "title": "선물",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "smith",
+          "text": "밤에 쓰는 걸 보았소. 기름을 덜 먹는 등잔이오."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-smith-3-phases.png",
+          "sha256": "0c68f81bca7aa461928c9de8dc9b0a5512175b727cf38b97e243defd4547b7d6"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-smith-3-phone.png",
+          "sha256": "a7982aef0c34d0e7e90669ae354e077d79fea4c386adfcd961b78328a4380ae9"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-smith-3-thumb.png",
+          "sha256": "a7a574064d46d83708fd1cc2de8f37834206c2569bb0d0ffd98c99e10525c3f7"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:apothecary:3",
+      "title": "선물",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "apothecary",
+          "text": "텃밭에 심어 보세요. 잘 자라는 약초 씨앗이에요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-apothecary-3-phases.png",
+          "sha256": "0e27a7e0f3061ef6c12c92e92a13a8860ab11e9e6b684c11c2f303baaa8dad41"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-apothecary-3-phone.png",
+          "sha256": "25f23867d3f65f061ed6f922a686b923b54c7d2ef6c443738f65175ee26d7e05"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-apothecary-3-thumb.png",
+          "sha256": "44472d6b7b08cfe1773b92a2923f78c23619027d58c5f2c9a0c5af684859d013"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:apothecary:6",
+      "title": "선물",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "apothecary",
+          "text": "약초 달이던 작은 냄비예요. 방에서도 쓸 데가 있을 거예요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-apothecary-6-phases.png",
+          "sha256": "92464d8f16e6b489424e57f12ce04033a2d6e660bf86ebef9de26516fb46f163"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-apothecary-6-phone.png",
+          "sha256": "6f722df8b979e5843461add3c1370edbd99eca189026e735fa1963804e7c0326"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-apothecary-6-thumb.png",
+          "sha256": "61916758cff6fc8171724f07a37e3fbda3887c27c48d4c52562e5776d8b8201a"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:carpenter:6",
+      "title": "선물",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "carpenter",
+          "text": "등받이 있는 의자예요. 글씨 쓰다 허리 펴세요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-carpenter-6-phases.png",
+          "sha256": "1bed860dddc4321bc8a9a551d57b86c3bbef6a8e9757305b5150df2eb241925b"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-carpenter-6-phone.png",
+          "sha256": "5e167d527002371e772be17abb1b4d4be0dcb52fb73fe040be32b13a456be420"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-carpenter-6-thumb.png",
+          "sha256": "5f84f58bf233cf7b990bd234a3b86f90f73388d9abe079c89ab2d97187dcad48"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:weaver:3",
+      "title": "선물",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "weaver",
+          "text": "천 조각으로 방석을 지었어요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-weaver-3-phases.png",
+          "sha256": "d7d20e48cf174a2543e6ba3e32b33f333c50def544b4d0e0eaf0bbc963128d3b"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-weaver-3-phone.png",
+          "sha256": "c3bbdaffa20237bc02acdc0a05512c63834761155fa3f25e76a2039ec7ec2896"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-weaver-3-thumb.png",
+          "sha256": "9a90562ad46114791fee26770f30ab67b65381a7955705612b578f0fd49764af"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:weaver:6",
+      "title": "선물",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "weaver",
+          "text": "제가 짠 깔개예요. 바닥에 깔아 보세요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-weaver-6-phases.png",
+          "sha256": "7d1cf16555499b8c165bc6676b02f6c995b9abe52facf0ac9fe6e07f9cf07c78"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-weaver-6-phone.png",
+          "sha256": "227385a6ad8d5e034f033b202b299ecd0e78ff00a420caad9b62791e8810f111"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-weaver-6-thumb.png",
+          "sha256": "35d8e05ae970d83f69a3c1536e55187ac7d94b1e0d09e829b421e8d80027bbcc"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:merchant:3",
+      "title": "선물",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "merchant",
+          "text": "글 쓰는 사람한테는 이게 제일이지. 파피루스 두 장이야."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-merchant-3-phases.png",
+          "sha256": "658ea801e67e81dba6071148cb7a74c117d4a8fbf4e39627b6f07e9db72b3df4"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-merchant-3-phone.png",
+          "sha256": "b410c9ecde8ce65ec2b6d3b268fb23e66553ab112556317248d354cedb759d8a"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-merchant-3-thumb.png",
+          "sha256": "b51dadfc36dfb3ecb34546b44b15ac43deb735f59fab1d6b5f07d6279705f06d"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:shepherd:3",
+      "title": "선물",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "shepherd",
+          "text": "양털로 방석을 만들었어요. 오래 앉아 있어도 편할 거예요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-shepherd-3-phases.png",
+          "sha256": "3df01995ea28255bab47ef47e71e071c53ffc8c5b06819307a0bbe2fa265cd23"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-shepherd-3-phone.png",
+          "sha256": "eb35bf9521f6a1eac84f3c10244e9cd05f7c9461c952739cfa9986ef8710970c"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-shepherd-3-thumb.png",
+          "sha256": "b93f45b3485c2c26816688baecd4eebeb5045527b813046605181fec7738ae30"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:shepherd:6",
+      "title": "선물",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "shepherd",
+          "text": "털을 넉넉히 깎았어요. 담요 짜는 데 써요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-shepherd-6-phases.png",
+          "sha256": "4f867e7fa9f765b0c5c6b1131ba7fb405190dd08a307d62eecd057af99cc46f2"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-shepherd-6-phone.png",
+          "sha256": "001c22b72824cbc89db2135aec2531a1d8b45d9140ff97dd0ff54cc9506e9fb2"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-shepherd-6-thumb.png",
+          "sha256": "2fd35f4a7040eec454b75151b945390836d7274d2b951c2a667210878eea29ac"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:presser:3",
+      "title": "선물",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "presser",
+          "text": "갓 짠 기름 두 병이에요. 등잔에 써요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-presser-3-phases.png",
+          "sha256": "bcda127a5a446f868f07d5056fad7e22482615eecf37bc9c51c79edf12b28760"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-presser-3-phone.png",
+          "sha256": "2e4eb972ea827d8fee6c532f0e697cad45dfc3c4ef8c94fd4e11e326bad1cd9a"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-presser-3-thumb.png",
+          "sha256": "29a00e708fcb2a118fa467c0203abdaa15ff69fe4ba30a33073ce259d1f30c7c"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:child:3",
+      "title": "선물",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "child",
+          "text": "들꽃 꺾어 왔어요. 꽃병에 꽂아 두세요!"
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-child-3-phases.png",
+          "sha256": "fcb6aec43eb2b7b61156613190f06eeb9e9be7e82d4d999191e9d09ba4c6563e"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-child-3-phone.png",
+          "sha256": "5071421f2145e5c7f363602f6e5f50ef468908cf31421c958d80429fd388a5c9"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-child-3-thumb.png",
+          "sha256": "83af6e89206126ac4c006f82ac255891c24eef9ed8a7034e9ef8c7a1d52bed17"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:child:6",
+      "title": "선물",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "child",
+          "text": "제가 키운 풀이에요. 창가에 두세요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-child-6-phases.png",
+          "sha256": "0b559069bd2d68dac672e35e771bce3da2db13ccbe575dac43281c9c152fd3c0"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-child-6-phone.png",
+          "sha256": "8ae20fafc0cb8f2e9880c3f72f5f537cc1ac86c72bf44ca21614867ccae972f4"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-child-6-thumb.png",
+          "sha256": "19bc3105124ad0fceb8e08bd15c9ce8ae49724121c274a8461514ae65be51ee5"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:beekeeper:3",
+      "title": "선물",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "beekeeper",
+          "text": "꿀 두 병이에요. 빵에 발라 먹어요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-beekeeper-3-phases.png",
+          "sha256": "b745dada9594021e7d31eb7871d2524320a77c2719bb5aecbea7900a39c24217"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-beekeeper-3-phone.png",
+          "sha256": "ae138ea7151bbb889d596875bb460a92c459b304217468a95d4d595dd255a4a9"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-beekeeper-3-thumb.png",
+          "sha256": "c176d6e736828357df1caa98f2daf4ab23f98992ce650308c3d94c2d74169e18"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:beekeeper:6",
+      "title": "선물",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "beekeeper",
+          "text": "밀랍으로 초를 만들었어요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-beekeeper-6-phases.png",
+          "sha256": "02d7aaf6c212da96b14ba49a9c285f0ab38840102d309d01973f5bfa74023723"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-beekeeper-6-phone.png",
+          "sha256": "2c3082266747591e2809fbbffb2098395e8b3036723690e339dc37f0f00af8a3"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-beekeeper-6-thumb.png",
+          "sha256": "4de7b319a6c85106a6b5c103864f559c346c87dc0eefece666af72ad79dc5f30"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:fisher:3",
+      "title": "선물",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "fisher",
+          "text": "갈대를 넉넉히 베어 왔어요. 종이 만드는 데 보태세요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-fisher-3-phases.png",
+          "sha256": "5bd2804a21dcf95dea2b9769653402168733dc7d58533057f6152cf662f8899f"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-fisher-3-phone.png",
+          "sha256": "eaf85255b47897a004f2cdcdc0ca9b2edbe6cee7ed32bbbf9b19cf38258a3a5e"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-fisher-3-thumb.png",
+          "sha256": "ba4da55aeaabdd41401377f93b194396584d4dc70be4887ee22a42a353fc9e97"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:fisher:6",
+      "title": "선물",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "fisher",
+          "text": "고기 담던 바구니인데 깨끗이 씻었어요. 열매 담기 좋아요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-fisher-6-phases.png",
+          "sha256": "ca19135eeaa6c2b1b503a50baef5c23c221dd3602e5fa2874fa4fe46281d6251"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-fisher-6-phone.png",
+          "sha256": "c7b778dff1389bdcc7564a462fe69f4e82108f872ecf51584979e2c0eac8d726"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-fisher-6-thumb.png",
+          "sha256": "7ab6dec7d009929127ebb2fd6ea973b58350fac05f2dc95f12a3d2e514369906"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:baker:3",
+      "title": "선물",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "baker",
+          "text": "빵 담아 두라고 바구니 하나 짰어요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-baker-3-phases.png",
+          "sha256": "e6cec145d6b5561e9e2f0d1b64173d9fdd9bb25979bc1915c8866615b442f5a3"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-baker-3-phone.png",
+          "sha256": "467bb207000fdbdbb2a38d038f1949cbfc9c3d4aa0d4bfd83b8078ad456743cc"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-baker-3-thumb.png",
+          "sha256": "41a1e04bcfa4de7736087fd10255e594f8b7508abddd6c1973084ecba03239ab"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "gift:baker:6",
+      "title": "선물",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "baker",
+          "text": "집에 깔개 하나 깔아요. 발이 따뜻할 거예요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-baker-6-phases.png",
+          "sha256": "7fd05837c7f21f58ffae956049de0cd759228b23df17c14a2325d09541b4adaa"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-baker-6-phone.png",
+          "sha256": "5d53d02a5c404ef394d3c80df715414a8c4b420a6f007c2ea4e98c1d1b943db9"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-gift-baker-6-thumb.png",
+          "sha256": "cc262b679027ac6d1aa0f18b35ea74d8cd3ea1247739e06304a8b9817c1d71e7"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "done:baker:1",
+      "title": "부탁을 들어준 날",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "baker",
+          "text": "고마워요! 빵집 앞에 의자를 놓았어요."
+        },
+        {
+          "speaker": "baker",
+          "text": "이건 답례예요. 곡식 담기 좋은 그릇이에요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-baker-1-phases.png",
+          "sha256": "a1a4e1350690b73fef44acf09622b93882e1fb5c07934fc6cfb102e9ed83d774"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-baker-1-phone.png",
+          "sha256": "0351ec3abcf458edb39fc21ed6ceedca8a4c23c8d0ffcd6b2117050904eefdbe"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-baker-1-thumb.png",
+          "sha256": "2da185ed008c9d1e4c29ad4ae8202fc806cb0af600b89fe97198f4f3de0e622b"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks.",
+      "locationChecksPending": "Square sample does not verify actual occurrence site, original unlocked facility or furniture state; verify those against real event context before final registration."
+    },
+    {
+      "id": "done:baker:2",
+      "title": "부탁을 들어준 날",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "baker",
+          "text": "보세요, 아기가 새 이불을 덮고 잘 자요."
+        },
+        {
+          "speaker": "baker",
+          "text": "방석이랑 촛대, 받아 줘요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-baker-2-phases.png",
+          "sha256": "d7af49df5564ca6ff1c8d9617f2a73611474c42200e9684f4d0e33f50de86de0"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-baker-2-phone.png",
+          "sha256": "6873b2ea82781330b953226332fcdf8c8b21da05c33dd17c6d42008a1f58dc6a"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-baker-2-thumb.png",
+          "sha256": "c7007ccdfc29773c05dc724635ebc09eac891506fde780d07612c77332b1e6fa"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks.",
+      "locationChecksPending": "Square sample does not verify actual occurrence site, original unlocked facility or furniture state; verify those against real event context before final registration."
+    },
+    {
+      "id": "done:child:1",
+      "title": "부탁을 들어준 날",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "child",
+          "text": "연이 떴어요! 바람 부는 날 언덕에서 날릴게요."
+        },
+        {
+          "speaker": "child",
+          "text": "이건 제가 깎은 나무 새예요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-child-1-phases.png",
+          "sha256": "ebafa3ca408c141beaad04e05f542678a19d894b77d58fe3751fbcbd217d6950"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-child-1-phone.png",
+          "sha256": "b3d05827f478ae725c6f18423e8589ea4463a4a018bb42d9a68391f25d0ce837"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-child-1-thumb.png",
+          "sha256": "628756329d64c629bee1238672562de006b647f973af3733e0dca9fd99fc0a1e"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks.",
+      "locationChecksPending": "Square sample does not verify actual occurrence site, original unlocked facility or furniture state; verify those against real event context before final registration."
+    },
+    {
+      "id": "done:child:2",
+      "title": "부탁을 들어준 날",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "child",
+          "text": "꽃이 피었어요! 보러 오세요."
+        },
+        {
+          "speaker": "child",
+          "text": "제일 예쁜 꽃은 꽃병에 꽂아 드릴게요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-child-2-phases.png",
+          "sha256": "afeca0134c3d1d8500f6e39af2a48b077bbac1028bf4dd08f77e13d1dd1fd34f"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-child-2-phone.png",
+          "sha256": "5b9dafa6dcea33a748570d47fb9848a1912f9f8a6c9ce5a334208ff14652a104"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-child-2-thumb.png",
+          "sha256": "0cd28ec3238cb126e3ca35f049843e20542c5e9f1b2e16faa2d36b84e6ee276f"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks.",
+      "locationChecksPending": "Square sample does not verify actual occurrence site, original unlocked facility or furniture state; verify those against real event context before final registration."
+    },
+    {
+      "id": "done:grandpa:1",
+      "title": "부탁을 들어준 날",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "grandpa",
+          "text": "덕분에 시렁을 반듯하게 세웠네."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "이 물병은 자네 쓰게."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-grandpa-1-phases.png",
+          "sha256": "29af531f6cb05892b43818db154d31df331e4b68f2d7a62ec1d189402ba85437"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-grandpa-1-phone.png",
+          "sha256": "2284a5195cbb3906f5940bc9412ad5cd08dc2b5ca4b35d936da031be749f39f5"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-grandpa-1-thumb.png",
+          "sha256": "976fa48913b7886e92fd05fb6a7a110e1d2a3cedf8f1e47420fd8c022ae6b0d7"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks.",
+      "locationChecksPending": "Square sample does not verify actual occurrence site, original unlocked facility or furniture state; verify those against real event context before final registration."
+    },
+    {
+      "id": "done:grandpa:2",
+      "title": "부탁을 들어준 날",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "grandpa",
+          "text": "다 됐네. 지나가다 앉아 쉬게."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "남은 나무로 협탁을 하나 짰네. 가져가게."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-grandpa-2-phases.png",
+          "sha256": "ec9bf30aba2694547766310d3fd4ed9149c9e4e84f95ce305d98181c4e968ca3"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-grandpa-2-phone.png",
+          "sha256": "3d195c586fc7b48ecfdead3557e4b7899fd3728c4afa5aacd44a3e65112829b8"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-grandpa-2-thumb.png",
+          "sha256": "d96ec3868b31bd836400585f4fe12603b035abbed991d6bbdbd2f1469bad1ebc"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks.",
+      "locationChecksPending": "Square sample does not verify actual occurrence site, original unlocked facility or furniture state; verify those against real event context before final registration."
+    },
+    {
+      "id": "done:merchant:1",
+      "title": "부탁을 들어준 날",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "merchant",
+          "text": "든든하다! 약속대로 좌판에 새 물건 놓을게."
+        },
+        {
+          "speaker": "merchant",
+          "text": "이건 파피루스야. 글 쓰는 데 써."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-merchant-1-phases.png",
+          "sha256": "8aa1cfe9b5cf89573219ae6c78cb6d9b8129672c2abb4de88d3b7cf1efa49f17"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-merchant-1-phone.png",
+          "sha256": "cd58c364564e8c4a57e94f04a07e410bf9b52bc9e8e63c4a4aa654e7c76004ee"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-merchant-1-thumb.png",
+          "sha256": "a6f3ddab57578ceaff39376ad98f74660e12df12d6463b2afa089354d0411995"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks.",
+      "locationChecksPending": "Square sample does not verify actual occurrence site, original unlocked facility or furniture state; verify those against real event context before final registration."
+    },
+    {
+      "id": "done:merchant:2",
+      "title": "부탁을 들어준 날",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "merchant",
+          "text": "봐, 알록달록한 가리개야!"
+        },
+        {
+          "speaker": "merchant",
+          "text": "깔개 하나 줄게. 먼 데서 가져온 거야."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-merchant-2-phases.png",
+          "sha256": "25b86eaab2ed4bb6177e48576b81db1bfa4c7b0170b2ad38a06c36d4b230c079"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-merchant-2-phone.png",
+          "sha256": "b2e92bbd988492c01c35b518d74d812a9ba8b84a81232f5d7f2ba93c94838977"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-merchant-2-thumb.png",
+          "sha256": "9ed6a4655ab82d5928dff0eadba8169162262809b76dfe7c280bc427948ae381"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks.",
+      "locationChecksPending": "Square sample does not verify actual occurrence site, original unlocked facility or furniture state; verify those against real event context before final registration."
+    },
+    {
+      "id": "done:smith:1",
+      "title": "부탁을 들어준 날",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "smith",
+          "text": "새 풀무요! 이제 그을음을 넉넉히 나눠 주겠소."
+        },
+        {
+          "speaker": "smith",
+          "text": "우선 이것부터 가져가시오."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-smith-1-phases.png",
+          "sha256": "5bf454e0af4193ac157abfc6f1c1b6a91d6f8d106a47bb82d49e65d551dfa5a1"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-smith-1-phone.png",
+          "sha256": "aa2408bd939a4da2dee2d34dc79ea563655438bd5b82436935b0ecd6d0904d8c"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-smith-1-thumb.png",
+          "sha256": "fefd0690d885539142c937f41105d1ae255a274009861707fdb2d09d2f8eaf4c"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks.",
+      "locationChecksPending": "Square sample does not verify actual occurrence site, original unlocked facility or furniture state; verify those against real event context before final registration."
+    },
+    {
+      "id": "done:smith:2",
+      "title": "부탁을 들어준 날",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "smith",
+          "text": "길가에 등불을 세웠소. 밤에도 환할 거요."
+        },
+        {
+          "speaker": "smith",
+          "text": "남은 쇠로 촛대를 하나 만들었소."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-smith-2-phases.png",
+          "sha256": "329ad60e8bf6d32dacbf5051e7ed448c6f0f27f29551d6d6641cebfcc763ed2d"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-smith-2-phone.png",
+          "sha256": "76088b9bf1f09c95906821b2e97a013b7c3a68d0f044d3ef7c999ea47292471f"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-smith-2-thumb.png",
+          "sha256": "2a1bc40f4648f86e8158ce9204c387363f53e44376e9a52dd4eca48b7d2197a3"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks.",
+      "locationChecksPending": "Square sample does not verify actual occurrence site, original unlocked facility or furniture state; verify those against real event context before final registration."
+    },
+    {
+      "id": "done:shepherd:1",
+      "title": "부탁을 들어준 날",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "shepherd",
+          "text": "우리가 넓어졌어요. 양들이 좋아하네요."
+        },
+        {
+          "speaker": "shepherd",
+          "text": "양털 좀 가져가요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-shepherd-1-phases.png",
+          "sha256": "d6f5ad62098c660901e271d234c0f4bea194978505cc0daebfb169e0ce2f337a"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-shepherd-1-phone.png",
+          "sha256": "c02396643332a01e6174b9dbef074c247231225d9cf135c814269f8e1817138c"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-shepherd-1-thumb.png",
+          "sha256": "a59279ca417eaa2f4148724852c06302a70d7428ea04d712ed21bf2cab0bea46"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks.",
+      "locationChecksPending": "Square sample does not verify actual occurrence site, original unlocked facility or furniture state; verify those against real event context before final registration."
+    },
+    {
+      "id": "done:shepherd:2",
+      "title": "부탁을 들어준 날",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "shepherd",
+          "text": "양털 깎는 날, 다 같이 즐거웠어요!"
+        },
+        {
+          "speaker": "shepherd",
+          "text": "제일 부드러운 털로 방석을 만들었어요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-shepherd-2-phases.png",
+          "sha256": "1d98067851705522a092a70be0a251b26adb18f30951358e475bb58edf262fe0"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-shepherd-2-phone.png",
+          "sha256": "5b54ad9c3eefba6a730773baf70fa6e1bc3d20999e8ce5f2301e07add2eabcaa"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-shepherd-2-thumb.png",
+          "sha256": "d74a85f70a1244eefed8e17b339e3702929d29721a9f54fc2c9f5af3920cd862"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks.",
+      "locationChecksPending": "Square sample does not verify actual occurrence site, original unlocked facility or furniture state; verify those against real event context before final registration."
+    },
+    {
+      "id": "done:presser:1",
+      "title": "부탁을 들어준 날",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "presser",
+          "text": "새 손잡이를 달았어요! 이제 기름이 한 병 더 나와요."
+        },
+        {
+          "speaker": "presser",
+          "text": "기름 두 병 가져가요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-presser-1-phases.png",
+          "sha256": "62a2e80fb206a65fc7c5e55cb9aa3b38c2850daef8bf5875717f243410eed2d5"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-presser-1-phone.png",
+          "sha256": "cf5321d6c7a251a09303bceb6c372af2f11081f991142331c77cb0fcc9ee1fc6"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-presser-1-thumb.png",
+          "sha256": "5542c5f1e59e970ed4be37a0a459d36853f9a506049505e361cee4a5e8199e89"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks.",
+      "locationChecksPending": "Square sample does not verify actual occurrence site, original unlocked facility or furniture state; verify those against real event context before final registration."
+    },
+    {
+      "id": "done:presser:2",
+      "title": "부탁을 들어준 날",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "presser",
+          "text": "나무를 심었어요. 몇 해 뒤엔 열매가 가득할 거예요."
+        },
+        {
+          "speaker": "presser",
+          "text": "물병이랑 기름, 받아요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-presser-2-phases.png",
+          "sha256": "33ad292e83a9640f021895db10f970da2524ecbdad160e4e65bd33c46098c8be"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-presser-2-phone.png",
+          "sha256": "7a02df20ce89dd52ee1916373be89234a4e2a9b20f278277430700c595b63ce1"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-presser-2-thumb.png",
+          "sha256": "b9128423dde63a4a9c5ff20d93cdbcaee68af387d9e32bef26a86ea08565c54b"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks.",
+      "locationChecksPending": "Square sample does not verify actual occurrence site, original unlocked facility or furniture state; verify those against real event context before final registration."
+    },
+    {
+      "id": "done:weaver:1",
+      "title": "부탁을 들어준 날",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "weaver",
+          "text": "그늘이 생겼어요! 이제 한낮에도 베를 짤 수 있어요."
+        },
+        {
+          "speaker": "weaver",
+          "text": "제가 짠 깔개예요. 방에 깔아 보세요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-weaver-1-phases.png",
+          "sha256": "445eb78dd67dfe6292b0bb4e749f739bd7dc8a78ebe2e284a560358ae126a604"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-weaver-1-phone.png",
+          "sha256": "08c4722a70577c8ef483903a59e794d7afa13c7ba8ae43936630b455d1f46cc9"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-weaver-1-thumb.png",
+          "sha256": "7f17460a1b51c768f66a4406a54c87c1cb9fd7f6cb2e261190327d0fe40a4ead"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks.",
+      "locationChecksPending": "Square sample does not verify actual occurrence site, original unlocked facility or furniture state; verify those against real event context before final registration."
+    },
+    {
+      "id": "done:beekeeper:1",
+      "title": "부탁을 들어준 날",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "beekeeper",
+          "text": "벌통이 늘었어요. 꽃마다 벌이 붕붕해요."
+        },
+        {
+          "speaker": "beekeeper",
+          "text": "새 벌통에서 뜬 꿀이에요. 드셔 보세요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-beekeeper-1-phases.png",
+          "sha256": "454572beb4cc70028b6fc3e7190fec6bf37314e2d294fcb814294428a3af8f53"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-beekeeper-1-phone.png",
+          "sha256": "224eada46ca139de59ce6cdf1f27c9a644a9b687d2930db5401025185710b863"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-done-beekeeper-1-thumb.png",
+          "sha256": "f34068a19959445d349837d6a41fdb0ec79acc39d15dbe0c7b8cdc4c37ed156a"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks.",
+      "locationChecksPending": "Square sample does not verify actual occurrence site, original unlocked facility or furniture state; verify those against real event context before final registration."
+    },
+    {
+      "id": "romance1:presser",
+      "title": "기름 짜는 이웃의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "presser",
+          "text": "처음 기름틀 앞에 섰을 땐 하루에 항아리 하나 채우는 것도 버거웠어요."
+        },
+        {
+          "speaker": "presser",
+          "text": "그래서 걸음을 세기 시작했어요. 줄일 수 있는 건 다 줄이려고요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-presser-phases.png",
+          "sha256": "0f5d2a09e2f9a1f771eb28ecc7c21ce2830c89a00e36cc05979360ab41a2be53"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-presser-phone.png",
+          "sha256": "f76592907dd4c0bb6646b05272ffb4f885cd77472d269cb1e66863629066241b"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-presser-thumb.png",
+          "sha256": "dbeb6c40929f87057004a5df495c91f6db1a8ecdc611468dc5d8df43b28451c3"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance2:presser",
+      "title": "기름 짜는 이웃의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "presser",
+          "text": "일은 줄일수록 좋은데, 사람 만나는 시간은 줄이고 싶지 않더라고요."
+        },
+        {
+          "speaker": "presser",
+          "text": "당신이랑 얘기하다 보면 항아리 세는 걸 잊어요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-presser-phases.png",
+          "sha256": "e2239aa951639782ed6a7f8bde996c44096a9e9c99221f5eb1782a207b65495f"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-presser-phone.png",
+          "sha256": "49acaeb3f197a4e26d723875ee820478869a92fd163dcaf19f18f0ea17b41c8d"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-presser-thumb.png",
+          "sha256": "a541dd7995ed83f2cdec09ed771e252e13e6f7fad6b21557fb6e52882aaf87aa"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance2:presser:friend",
+      "title": "기름 짜는 이웃의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "presser",
+          "text": "일은 줄일수록 좋은데, 이웃이랑 얘기하는 시간은 줄이고 싶지 않더라고요."
+        },
+        {
+          "speaker": "presser",
+          "text": "{player}님이 들르면 잠깐 쉬어 갈 핑계가 생겨서 좋아요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-presser-friend-phases.png",
+          "sha256": "d07989c4bb226911fbf323cbd64f38785ea7c739050c2fed342bf40607bd2522"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-presser-friend-phone.png",
+          "sha256": "8e94c1c9caf85d7cdee536288e0799fc02795d04a1d3ac7be7b03150d0e4ac81"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-presser-friend-thumb.png",
+          "sha256": "d56dead7473020d3bed7bd7792ac39cec3df8c71d389da562e014034059b395b"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance1:dexter",
+      "title": "덱스터의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "dexter",
+          "text": "길 잃은 어린 양을 밤새 찾은 적이 있어요."
+        },
+        {
+          "speaker": "dexter",
+          "text": "새벽에 바위틈에서 찾았을 때, 그 녀석이 먼저 울면서 달려오더라고요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-dexter-phases.png",
+          "sha256": "5b2fcba81c135caf57b73f9a2f2fc6f101969eda9e17707e73a181245c1e4180"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-dexter-phone.png",
+          "sha256": "bc8a9af3daea86029324e9222ef4e81cd717dff2e8a24418505d63261a3b241f"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-dexter-thumb.png",
+          "sha256": "a5e9013df5c8f230797d1021ca54e1b119bb68103c7ecde1903cbc21c52a5ed0"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance2:dexter",
+      "title": "덱스터의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "dexter",
+          "text": "언덕 위 별은 마을에서 보는 별보다 조금 더 가까워요."
+        },
+        {
+          "speaker": "dexter",
+          "text": "다음에 맑은 밤이 오면 같이 올라가요. 제일 밝은 별을 알려 드릴게요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-dexter-phases.png",
+          "sha256": "86e709a57e114c97f632caa35fea4b496077835382cc49e33af67a66b7e2b38d"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-dexter-phone.png",
+          "sha256": "44fa55ddc5af4b4d48ac5e0ccef95f55297b6767010509de97b67e3b3efdf859"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-dexter-thumb.png",
+          "sha256": "994816655c729174260e4c041077a4965a217b46953985b9f1ba1b6b0d598913"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance2:dexter:friend",
+      "title": "덱스터의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "dexter",
+          "text": "언덕 위 별은 마을에서 보는 별보다 조금 더 가까워요."
+        },
+        {
+          "speaker": "dexter",
+          "text": "양치기는 별을 보고 길을 찾아요. 제일 밝은 별 하나만 알아도 길 잃을 일은 없죠. 다음에 알려 드릴게요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-dexter-friend-phases.png",
+          "sha256": "bb6aa2312f00af220703bacbc5e6a3e2e2691609c113357817016b31e86e7ad5"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-dexter-friend-phone.png",
+          "sha256": "498e479294456bf57f9c71c44a03542b30962e2301b0362b65c8efc716715b65"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-dexter-friend-thumb.png",
+          "sha256": "539f3c4938d354542482f5de912f91bd8c87abdf33e0fa4cbab0faad53bb227f"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance1:merchant",
+      "title": "떠돌이 상인의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "merchant",
+          "text": "처음 장사 나섰을 땐 좌판도 없었어. 보자기 하나 펴고 앉았지."
+        },
+        {
+          "speaker": "merchant",
+          "text": "비 오면 보자기째 들고 처마 밑으로 뛰었어. 그래서 지금도 젖지 않은 것부터 펴는 버릇이 있어."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-merchant-phases.png",
+          "sha256": "d8fe533ac98165eb24ca293528c1841f99050b50fa924e50cc41066775332936"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-merchant-phone.png",
+          "sha256": "56435cac9c56d70d9e3ec8929113d2d53837ce8ef771a7046e5ff335c3658bd6"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-merchant-thumb.png",
+          "sha256": "10f5dbdd375235d4a1750d5d76a9c7cf8cbd9a9b485b5335ef21b38948a3db8f"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance2:merchant",
+      "title": "떠돌이 상인의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "merchant",
+          "text": "길에선 다들 내 이름보다 물건 이름을 먼저 불러. 그게 편할 때도 있었어."
+        },
+        {
+          "speaker": "merchant",
+          "text": "근데 이 마을에선… 이상하게 물건 얘기를 덜 하게 되네."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-merchant-phases.png",
+          "sha256": "8fce69d476935a894b87e908991eb7f10b1381a351fa9b7d9cfaf16b6493f26b"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-merchant-phone.png",
+          "sha256": "c20766a0122c836df7a46484ff9e5b223d796451e97ba3107252bc0a849eb162"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-merchant-thumb.png",
+          "sha256": "27f7bb0a4258ff45a5ed575e860b54701758b545beb76ff62380608afd714efd"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance1:rudy",
+      "title": "루디의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "rudy",
+          "text": "처음 짠 의자는 다리가 하나 짧았어요."
+        },
+        {
+          "speaker": "rudy",
+          "text": "그래도 할머니가 십 년을 앉으셨죠. 쓰는 사람이 아껴 주면 물건은 오래가요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-rudy-phases.png",
+          "sha256": "62d55d27f80e862d591825332947b6c5f06b79adbcc71e602b04c4045c65d8c6"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-rudy-phone.png",
+          "sha256": "46b90c8a4a449652a6bea6fe3d56bf5eb736408a359859d3bf420c8fb7ef52d1"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-rudy-thumb.png",
+          "sha256": "2ee7f5946f72ee13186ae0c5cd253e434daea62bfc37694ff27cfc64c8a3d1f7"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance2:rudy",
+      "title": "루디의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "rudy",
+          "text": "{player}님이 엮는 책을 보면 저도 뭔가 오래 남는 걸 만들고 싶어져요."
+        },
+        {
+          "speaker": "rudy",
+          "text": "언젠가 {player}님 책을 꽂을 책장을 짜 드리고 싶어요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-rudy-phases.png",
+          "sha256": "07135b64255973f91b8b7241bf4065917270becaa2196771395a85e19575bf87"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-rudy-phone.png",
+          "sha256": "fc14c40c6e5f373ff99bcdb18c18a0dcee7550d4962068dc78d66b6c5daf0534"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-rudy-thumb.png",
+          "sha256": "895f44f4f314e5d842beaa53ee378904525d78435d91876215704acfcd92c2c8"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance1:marigold",
+      "title": "메리골드의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "marigold",
+          "text": "어렸을 때 할아버지 포도주 통에 들어가 숨었다가 크게 혼났어요."
+        },
+        {
+          "speaker": "marigold",
+          "text": "그래도 할아버지는 그날 밤 제 머리를 오래 쓰다듬어 주셨어요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-marigold-phases.png",
+          "sha256": "cd5706effae9e836987ceac87ba2f23f9fb69f43bd83fe7e43d003a5e5715d2d"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-marigold-phone.png",
+          "sha256": "cd1ec49d150423f39a829e05a553748033a92d6f85ad362077f1ed88a86e8ef8"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-marigold-thumb.png",
+          "sha256": "6b03521a9a0bc50f13f023d27adb77a76b2c65ea6e22e1b3351c150ebd1fb020"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance2:marigold",
+      "title": "메리골드의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "marigold",
+          "text": "언젠가 제 이름 붙은 포도나무를 한 그루 심고 싶어요."
+        },
+        {
+          "speaker": "marigold",
+          "text": "그 나무 아래서 {player}님이랑 첫 송이를 나눠 먹고 싶어요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-marigold-phases.png",
+          "sha256": "cd5706effae9e836987ceac87ba2f23f9fb69f43bd83fe7e43d003a5e5715d2d"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-marigold-phone.png",
+          "sha256": "cd1ec49d150423f39a829e05a553748033a92d6f85ad362077f1ed88a86e8ef8"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-marigold-thumb.png",
+          "sha256": "6b03521a9a0bc50f13f023d27adb77a76b2c65ea6e22e1b3351c150ebd1fb020"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance2:marigold:friend",
+      "title": "메리골드의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "marigold",
+          "text": "언젠가 제 이름 붙은 포도나무를 한 그루 심고 싶어요."
+        },
+        {
+          "speaker": "marigold",
+          "text": "첫 송이가 열리면 할아버지랑 {player}님한테 제일 먼저 나눠 드릴게요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-marigold-friend-phases.png",
+          "sha256": "db509863a3d11b838aabb72ce40dce5afdf6d4694d2e345d99af8a846a297f4a"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-marigold-friend-phone.png",
+          "sha256": "36c0390efa7c9bd89b876e1d01b65a34e18c4a01f3e0415071cc4abd259bb5c9"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-marigold-friend-thumb.png",
+          "sha256": "827ef28bb48b3b43ac7d35f8ffb436b0721f4b140e32e8e96d2128d364d356f7"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance1:basil",
+      "title": "바질의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "basil",
+          "text": "어릴 때 독풀을 약초인 줄 알고 캐 온 적이 있어요."
+        },
+        {
+          "speaker": "basil",
+          "text": "어머니가 잎 모양을 하나하나 짚어 주셨죠. 그 뒤로 잎은 꼭 두 번 봐요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-basil-phases.png",
+          "sha256": "c14c4ab4f53f6109df6b01bca22b7589f097a9b211cb39549355b098c9338009"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-basil-phone.png",
+          "sha256": "3375c0e58abc910d51ba369ff6ba9b77a03de96447ed99b27d8d6749f01b3ff0"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-basil-thumb.png",
+          "sha256": "d4ba911a0a00e228a60982943374d743ffa67756674d4215dbb26880530bcef0"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance2:basil",
+      "title": "바질의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "basil",
+          "text": "아픈 사람이 차 한 잔 마시고 웃는 걸 보면 이 일이 좋아요."
+        },
+        {
+          "speaker": "basil",
+          "text": "{player}님이 지친 날엔… 제가 제일 먼저 차를 우려 드리고 싶어요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-basil-phases.png",
+          "sha256": "ec88bb647d3bc67b21850e0a6fe7712e3139987faa28f6bf57472cb8098ffcc5"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-basil-phone.png",
+          "sha256": "b0e68a0aca675bac9641c4a36e0994659830557c13c577e6814ac6538a216182"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-basil-thumb.png",
+          "sha256": "379c66ba161cfd64762702ed82b45c82e27e9d60ed44b94a840de89983c32d34"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance2:basil:friend",
+      "title": "바질의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "basil",
+          "text": "아픈 사람이 차 한 잔 마시고 웃는 걸 보면 이 일이 좋아요."
+        },
+        {
+          "speaker": "basil",
+          "text": "{player}님도 지친 날엔 약방에 들러요. 차 한 잔은 늘 있어요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-basil-friend-phases.png",
+          "sha256": "44315bd16a0594e99e8701d7261981ef9def44190da425b3a253556cc1b696fe"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-basil-friend-phone.png",
+          "sha256": "8762c3586b8eefc678e98eade31fd5f3c1d84306864e237986a011735952f076"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-basil-friend-thumb.png",
+          "sha256": "54c72728619d3cae73e07919c24c9116c2fa9bdb950c73ef31d0212ce3b57d60"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance1:poppy",
+      "title": "웬델의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "poppy",
+          "text": "처음 찻집에서 일할 땐 찻잔을 세 개나 깼어요."
+        },
+        {
+          "speaker": "poppy",
+          "text": "주인 아주머니는 깨진 조각으로 화분 받침을 만들어 주셨죠. 그 화분, 아직 창가에 있어요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-poppy-phases.png",
+          "sha256": "362dc280dffccd35c7fe7a33ad4e75db0094c6f0a004d9c8b68680f1ad6a91cb"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-poppy-phone.png",
+          "sha256": "fee418e6821c5f5378ba300df65d92950088f10aa757278f49dcef9241d6c059"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-poppy-thumb.png",
+          "sha256": "be3dae255c7a0584526af6c34e27eb5c9d2cc10a5d9e0478469ce8324b923392"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance2:poppy",
+      "title": "웬델의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "poppy",
+          "text": "언젠가 제 이름으로 된 차를 만들고 싶어요."
+        },
+        {
+          "speaker": "poppy",
+          "text": "그 차 이름은… {player}님이 지어 주면 좋겠어요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-poppy-phases.png",
+          "sha256": "e8b4d088fcd9ff3c0d469477ed61855e420e1a190d4d26f9791524166e6d89a9"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-poppy-phone.png",
+          "sha256": "28ccfd9ede00c34aaa76be8f032181e9310552d0c1e5671601a42ce8d0af8815"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-poppy-thumb.png",
+          "sha256": "4ca96af2b9e7e86c7224e83cadcd07bc4b07a4e0293d991ddd8a8d4b0fa416d5"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance1:juniper",
+      "title": "주니퍼의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "juniper",
+          "text": "어릴 때 벌에 쏘이고 한참 울었어요."
+        },
+        {
+          "speaker": "juniper",
+          "text": "그래도 다음 날 또 벌통에 갔대요. 무섭지만 궁금한 게 더 컸나 봐요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-juniper-phases.png",
+          "sha256": "155a2216e31e481195d1a6858c204acea4ad0ff829922171fb9b9be680a0aaa5"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-juniper-phone.png",
+          "sha256": "2262d5a1103821ae6216caf430093cb7073ca3ea691084037b016c0c96a58881"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-juniper-thumb.png",
+          "sha256": "0f6439a2c9d82fdea2e1f7deb4dcb48ceaffbfb979c900d1e0a96886d7075f08"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance2:juniper",
+      "title": "주니퍼의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "juniper",
+          "text": "벌은 혼자서는 꿀을 못 만들어요. 다 같이 해야 해요."
+        },
+        {
+          "speaker": "juniper",
+          "text": "저도 누군가랑 같이 무언가를 만들어 보고 싶어요. {player}님이랑이면 좋겠어요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-juniper-phases.png",
+          "sha256": "4a746a0d1f1d24fd222df8ef689bea28fe1da3eb522a849fc85094af310fb05c"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-juniper-phone.png",
+          "sha256": "1049c37d26798eeb573f6401f00a21b3e5a5d9ca8131a1e2f7fa42b03717b22b"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-juniper-thumb.png",
+          "sha256": "cca7172373efaefcfcdb0a41c1e22ec306dc830decb65ab54cf085b2130e7da0"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance2:juniper:friend",
+      "title": "주니퍼의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "juniper",
+          "text": "벌은 혼자서는 꿀을 못 만들어요. 다 같이 해야 해요."
+        },
+        {
+          "speaker": "juniper",
+          "text": "그래서 이 마을이 좋아요. 다들 조금씩 거들잖아요. {player}님처럼요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-juniper-friend-phases.png",
+          "sha256": "535a21059e58b05a759f56dd31a4a9dd1b6e94e97bec2ed64dae193722aeee44"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-juniper-friend-phone.png",
+          "sha256": "cd0e5a86b99cec6183cbc99cb09eba5baf76a6c8ffa4cff39cfd8fb590e68a8e"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-juniper-friend-thumb.png",
+          "sha256": "ba8acbdd315c67f3d46677dacb5f26b5495a109b7f70bddf160a0da81bf4ede8"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance1:cosmo",
+      "title": "코스모의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "cosmo",
+          "text": "처음 혼자 배를 몰던 날, 안개가 짙게 꼈어요."
+        },
+        {
+          "speaker": "cosmo",
+          "text": "나루 등불만 보고 겨우 돌아왔죠. 그 뒤로 등불을 보면 마음이 놓여요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-cosmo-phases.png",
+          "sha256": "673db5539e12e99363c745384f377f820d4ba0461ae292efa4385a0a1ce7ba41"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-cosmo-phone.png",
+          "sha256": "60590e1f41854978e63fa8ecf7843c2091b710977c5377c6d7dba06ae7fd2a9f"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-cosmo-thumb.png",
+          "sha256": "e0930db31a66b3040c2ee42c41409d5d52e9b08fc2ba13f7767e3417354f116b"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance2:cosmo",
+      "title": "코스모의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "cosmo",
+          "text": "호수 한가운데 가면 마을이 한눈에 보여요."
+        },
+        {
+          "speaker": "cosmo",
+          "text": "언제 한번 같이 가요. {player}님 집 지붕도 보일 거예요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-cosmo-phases.png",
+          "sha256": "859176d468fd61404bbab5deeeb8fe82bf39dc420c1c031c6c457ff1034ab146"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-cosmo-phone.png",
+          "sha256": "e891166a043dcff932c039449ac9cc8d8daf67ef4eeab4d9c6202ea00b7cb14c"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-cosmo-thumb.png",
+          "sha256": "85f1e4c0f6c94dfb4fd41fd45d6acfc1b258abe797ef782958aa03be97674c9a"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance1:tilly",
+      "title": "틸리의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "tilly",
+          "text": "처음 망치를 들었을 땐 손바닥에 물집이 잡혔어요."
+        },
+        {
+          "speaker": "tilly",
+          "text": "아버지는 약 대신 튼튼한 장갑을 주셨죠. 그게 우리 집 방식이에요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-tilly-phases.png",
+          "sha256": "d07fc166d23a18e88ef0b11631a6530a169b6ecb40a2d6c710f55f98ffcc63f8"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-tilly-phone.png",
+          "sha256": "be56abbe8ee96a37352baf787c8a85cdbc083b03519e4ffa21915b03080e9674"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-tilly-thumb.png",
+          "sha256": "6820791edfd76f3c34dbb6dd06cdd9a32294093b53448d63dea8cfc6266a9c6a"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance2:tilly",
+      "title": "틸리의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "tilly",
+          "text": "언젠가 제 손으로 마을 등불 고리를 전부 만들고 싶어요."
+        },
+        {
+          "speaker": "tilly",
+          "text": "밤에 등불이 켜지면, {player}님 집 앞 고리가 제일 반짝이게요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-tilly-phases.png",
+          "sha256": "5fe5d58508d8b225643be092d7771d4369d9b1555d9d02c00506636995c5238e"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-tilly-phone.png",
+          "sha256": "4ccc14b078f9d54bf1e29165455aed04520cc9124659c175a45b32b4ad925812"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-tilly-thumb.png",
+          "sha256": "291bc8f3355e562bd3a957fb959440502505e95fc2e82288d261e9b2cda4c87e"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance2:tilly:friend",
+      "title": "틸리의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "tilly",
+          "text": "언젠가 제 손으로 마을 등불 고리를 전부 만들고 싶어요."
+        },
+        {
+          "speaker": "tilly",
+          "text": "밤에 등불이 켜지면 집집마다 제 고리가 걸려 있을 거예요. {player}님 집에도요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-tilly-friend-phases.png",
+          "sha256": "6da48d5ca4021d40062cdcb2686b79b9cf04d3e3cff583d78acad159c45f308d"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-tilly-friend-phone.png",
+          "sha256": "00f720971d067d362a5c49ac8dcee596e55d70633941e54df20052fb80d4314c"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-tilly-friend-thumb.png",
+          "sha256": "87d065c4bc948a2755f683477b1cc33e77d6fae34527fb19ef856ac83a8445d5"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance1:postman",
+      "title": "편지 나르는 이웃의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "postman",
+          "text": "처음 이 길을 돌던 날, 길을 잘못 들어 한 집 앞을 몇 번이나 지나갔어요."
+        },
+        {
+          "speaker": "postman",
+          "text": "그날부터 수첩을 썼어요. 지금은 이 마을 길을 눈 감고도 걸어요. …그러진 않지만요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-postman-phases.png",
+          "sha256": "1fbe02ce47c70d375455f7aeaff31cbbc40cbaffca84c258d6def3730cc8f7b3"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-postman-phone.png",
+          "sha256": "391c1dcd18abc6fe4324ddafe57ba2588b3a6010a8d531d59628c66f5252c7e9"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance1-postman-thumb.png",
+          "sha256": "9ef956b80946e11593f2ec6f1b17ffbe210c92cee4dfd6b1bed768c26801b26e"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance2:postman",
+      "title": "편지 나르는 이웃의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "postman",
+          "text": "남의 약속은 하나도 안 놓치는데, 제 약속은 자꾸 뒤로 미뤄요."
+        },
+        {
+          "speaker": "postman",
+          "text": "당신하고 한 약속은 수첩 맨 위에 적어요. 그건 안 미뤄요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-postman-phases.png",
+          "sha256": "4d4748000faa3398dba3f0ac2e4bc50d35383ebfd936b3e4954c4edd0af9d46f"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-postman-phone.png",
+          "sha256": "53ca0d9316d6023064263c629caa197ae9e3bf8b3835ee5e340ff8c9bedd28dc"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-postman-thumb.png",
+          "sha256": "e453c1b62664c37c3497b59b1a3cea12ae659444543b3558cd7e84d1a58e8b72"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "romance2:postman:friend",
+      "title": "편지 나르는 이웃의 이야기",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "postman",
+          "text": "남의 약속은 하나도 안 놓치는데, 제 약속은 자꾸 뒤로 미뤄요."
+        },
+        {
+          "speaker": "postman",
+          "text": "{player}님이 맡긴 편지는 수첩 맨 위에 적어요. 그건 안 미뤄요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-postman-friend-phases.png",
+          "sha256": "0bb229dc3b598aa90b87c706e9c59ede2638af9e3901f3e46bc925bdc70fa648"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-postman-friend-phone.png",
+          "sha256": "b943baa3924b6c0c8469ccbb1347ca6719250487e588d3c294ea855b6c99a124"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-romance2-postman-friend-thumb.png",
+          "sha256": "6c75160f15da30356dca9138d0ff273f2e8fff010f479852325427dd0245f6eb"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "ask:baker:1",
+      "title": "이웃의 부탁",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "baker",
+          "text": "빵집 앞에 손님이 앉을 자리가 있으면 좋겠어요."
+        },
+        {
+          "speaker": "baker",
+          "text": "보리 세 줌만 구해 주면, 그걸로 빵을 구워 팔아 의자를 들일게요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-baker-1-phases.png",
+          "sha256": "25d6fe663f4d7663b2be020a9e593bf91034d70e10be844c93de3f0890260e69"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-baker-1-phone.png",
+          "sha256": "b484a675cbec0d3a3da87a4e6167b0543a61963a584155f3738b15b0f9caad35"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-baker-1-thumb.png",
+          "sha256": "68e05b21619306af8b2e9e49aceb6f0a67c5ad3ca544d74b4fb2dd4c671ca703"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "ask:baker:2",
+      "title": "이웃의 부탁",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "baker",
+          "text": "아기가 추워할까 봐 걱정이에요."
+        },
+        {
+          "speaker": "baker",
+          "text": "양털 두 뭉치만 있으면 아기 이불을 지을 수 있어요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-baker-2-phases.png",
+          "sha256": "fb3729991d5210cbca07bb52a13a02586717e9ff10f84d843f6a31a869219a99"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-baker-2-phone.png",
+          "sha256": "7b78c265bdd852877b0c7342aedc85a9ea4cfd7caed3fc65e716700cc0608ee5"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-baker-2-thumb.png",
+          "sha256": "68eee90315500072ea179d9f7973c09f528e98627f898e941cd7d5d1ae78c079"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "ask:child:1",
+      "title": "이웃의 부탁",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "child",
+          "text": "연을 날려 보고 싶어요!"
+        },
+        {
+          "speaker": "child",
+          "text": "갈대 두 줄기랑 파피루스 한 장만 있으면 만들 수 있어요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-child-1-phases.png",
+          "sha256": "c8f021e55804310058ce61747eb3e91c0e4a5a21afcdd5cb368bb1987e875e9f"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-child-1-phone.png",
+          "sha256": "691992faa26b55a9bd92f76b014cf2710d414af84443debbf7336098cf97f725"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-child-1-thumb.png",
+          "sha256": "386f20611470a812104f693f1d81cd67737c71c465b8d3ec6e73c85177d84989"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "ask:child:2",
+      "title": "이웃의 부탁",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "child",
+          "text": "우리 집 앞에 작은 꽃밭을 만들래요."
+        },
+        {
+          "speaker": "child",
+          "text": "무화과 두 개랑 바꿔 꽃씨를 얻을 수 있대요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-child-2-phases.png",
+          "sha256": "7c5f6430d5421d1e7eda99ee318064d1580826b9a57c290b7c4be47b9870ea2e"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-child-2-phone.png",
+          "sha256": "3cac4b712762e016d66dfffd16182ae4afdb4146f1827a1dd4f22b21b0ec3a6b"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-child-2-thumb.png",
+          "sha256": "b1188185a45091704fe7a576e40d6c8f91c246e054c53a53c4dc4e3c3e350902"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "ask:grandpa:1",
+      "title": "이웃의 부탁",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "grandpa",
+          "text": "포도 시렁이 기울어서 고쳐 세우려 하네."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "혼자 고치다 보면 배가 고프니, 빵 두 개와 물 두 동이만 가져다주겠나."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-grandpa-1-phases.png",
+          "sha256": "0e985119a71934c84edd2cd16933da370f03d783c74e9bb25e140568246a4be4"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-grandpa-1-phone.png",
+          "sha256": "b5a12cedccb2e26a123ca7394e40aa5ac1a9305e860c5c900da3896ad35c23e0"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-grandpa-1-thumb.png",
+          "sha256": "0c3e5a87e0a2fac46fbea88b418a9f6330709025a68c08e779543bd2cafc9fae"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "ask:grandpa:2",
+      "title": "이웃의 부탁",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "grandpa",
+          "text": "집 앞에 쉬어 갈 의자를 하나 놓고 싶네."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "올리브 두 줌과 기름 한 병이면 나무를 다듬을 수 있지."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-grandpa-2-phases.png",
+          "sha256": "0e985119a71934c84edd2cd16933da370f03d783c74e9bb25e140568246a4be4"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-grandpa-2-phone.png",
+          "sha256": "b5a12cedccb2e26a123ca7394e40aa5ac1a9305e860c5c900da3896ad35c23e0"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-grandpa-2-thumb.png",
+          "sha256": "0c3e5a87e0a2fac46fbea88b418a9f6330709025a68c08e779543bd2cafc9fae"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "ask:merchant:1",
+      "title": "이웃의 부탁",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "merchant",
+          "text": "먼 길 떠날 때 먹을 게 모자라."
+        },
+        {
+          "speaker": "merchant",
+          "text": "빵 세 개만 챙겨 주면, 다음 장부터 물건을 더 가져올게."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-merchant-1-phases.png",
+          "sha256": "f04a112c64dd1260cd54d2cd5da4cc1e47c0aaed6de2e7b3947f4e25d74e1804"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-merchant-1-phone.png",
+          "sha256": "e11cc4ae930865ef92fb7d87244cb6b998a2b133ac57685aeab65114e936152d"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-merchant-1-thumb.png",
+          "sha256": "d0c3c65245751af5790f4aac4ea13db768f274277a4c4f29ad2570ac36c91531"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "ask:merchant:2",
+      "title": "이웃의 부탁",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "merchant",
+          "text": "좌판에 햇빛 가리개를 달고 싶어."
+        },
+        {
+          "speaker": "merchant",
+          "text": "그을음 두 줌이랑 기름 한 병이면 천에 물을 들일 수 있어."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-merchant-2-phases.png",
+          "sha256": "bd03e6d694d183881fc9e91f8d4c6310c9630383c3f796854bf13b75853da19a"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-merchant-2-phone.png",
+          "sha256": "5491c883ad1ad35b5831a8d92dc29f1ac9428e9505b165c25b36839c5a60f843"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-merchant-2-thumb.png",
+          "sha256": "cce46e6a8ff7cabc9baa8f8374b4fa93515b04e87183d923e6abd7c5c5fe6ebc"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "ask:smith:1",
+      "title": "이웃의 부탁",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "smith",
+          "text": "풀무가 낡아서 바람이 새오."
+        },
+        {
+          "speaker": "smith",
+          "text": "양털 두 뭉치와 기름 한 병이면 새 가죽을 댈 수 있소."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-smith-1-phases.png",
+          "sha256": "2f767595aebe4977f145ce51a825b72b31c224058a28bef8170e0c811d107488"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-smith-1-phone.png",
+          "sha256": "d005af8db4e38a9cee5730390efed9b4f9205350890b6800c4ebb9e652bd2a14"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-smith-1-thumb.png",
+          "sha256": "76dacd5f20b1ac298136f8135a9a9b7bb347efb756629bfeda3fc94f3f71dc1c"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "ask:smith:2",
+      "title": "이웃의 부탁",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "smith",
+          "text": "밤길이 어두워서 등불 기둥을 세우려 하오."
+        },
+        {
+          "speaker": "smith",
+          "text": "올리브 두 줌과 빵 하나만 가져다주시오. 일하며 먹게."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-smith-2-phases.png",
+          "sha256": "e853d3322a2d785af873ddd965338ac914c6ac0f7c5fe7d3616478eccddcb395"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-smith-2-phone.png",
+          "sha256": "2f304e8eceb6f9adca851245f2fea7300bc4c6bde00fb74df142c93617908b1f"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-smith-2-thumb.png",
+          "sha256": "722c48f19e7a20a5d3a2c3de038f34ebfe829282a37258578a331a82ae939fd0"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "ask:shepherd:1",
+      "title": "이웃의 부탁",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "shepherd",
+          "text": "양이 늘어서 우리가 좁아요."
+        },
+        {
+          "speaker": "shepherd",
+          "text": "갈대 세 줄기만 있으면 울타리를 넓힐 수 있어요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-shepherd-1-phases.png",
+          "sha256": "e07ca9c8d79a3f147731d1ef3db14d776e6f35735edbd2ff809b64709359c10c"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-shepherd-1-phone.png",
+          "sha256": "78515dfd9e1b8a71f96551182967a65eac51bed017e27801989bf4a84027d167"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-shepherd-1-thumb.png",
+          "sha256": "547d0134416e72f29f6011ef8e040c1ee3c6dd95cf334bdcbc79731c832c4726"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "ask:shepherd:2",
+      "title": "이웃의 부탁",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "shepherd",
+          "text": "곧 양털 깎는 날이에요."
+        },
+        {
+          "speaker": "shepherd",
+          "text": "일 끝나고 나눠 먹을 빵 두 개랑 포도 두 송이만 부탁해요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-shepherd-2-phases.png",
+          "sha256": "2621fa1ae97bc1de946437d38f459a867b0c985904d2406d866abfedc1551292"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-shepherd-2-phone.png",
+          "sha256": "562c3a7f8285d4aa50cf7d7b0cb536f9bf97d0731553968eca257a405b17935c"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-shepherd-2-thumb.png",
+          "sha256": "c7a499c7262d3dfd3df7f496b4ffb3093e02a823b804219f869fadd7705fde7e"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "ask:presser:1",
+      "title": "이웃의 부탁",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "presser",
+          "text": "기름틀 손잡이가 닳았어요."
+        },
+        {
+          "speaker": "presser",
+          "text": "올리브 네 줌만 짜서 팔면 새 손잡이를 달 수 있어요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-presser-1-phases.png",
+          "sha256": "7f5f9225d36a7a72863ebec376280ec2575776ddb6e11e81fc7c120e21224c6b"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-presser-1-phone.png",
+          "sha256": "e37f0b61fc136841857eee13d0aa3e3b7945f222fc6607f727e745803b279ac4"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-presser-1-thumb.png",
+          "sha256": "b4fa05ee5391daa205fb7b33ac64011ef070835a2c19924ba126b35f117331c2"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "ask:presser:2",
+      "title": "이웃의 부탁",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "presser",
+          "text": "올리브나무를 몇 그루 더 심고 싶어요."
+        },
+        {
+          "speaker": "presser",
+          "text": "일하는 날 먹을 빵 두 개만 부탁해요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-presser-2-phases.png",
+          "sha256": "aa89c69e03bdcacbcd3b0c0402ef5e6ef4505fe2a956dba4db48b413f1aff86e"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-presser-2-phone.png",
+          "sha256": "c5ae24ba58ecde90fff13b9817318b6ebd6b5a696affd711978d25c228a046fd"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-presser-2-thumb.png",
+          "sha256": "61239d56b045419c80d6b0af6c0687f17931a15599370f872ed18e6e6ff8ae2e"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "ask:weaver:1",
+      "title": "이웃의 부탁",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "weaver",
+          "text": "베틀 위에 햇빛 가리개를 치고 싶어요."
+        },
+        {
+          "speaker": "weaver",
+          "text": "양털 세 뭉치면 천을 짤 수 있어요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-weaver-1-phases.png",
+          "sha256": "301872a85b9d85f94c577f902a2649b7b785e1c17dbaa32a48e3749ea423c63f"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-weaver-1-phone.png",
+          "sha256": "7dc9ec40842fb81cf958ea22df8fa32813a737c46a64c040961c3de6b9c979de"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-weaver-1-thumb.png",
+          "sha256": "eab14c3d8c2525ca3f384a767becf578f2aa35ff41e50f28b2dd9e8dbbcea2e0"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "ask:beekeeper:1",
+      "title": "이웃의 부탁",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "beekeeper",
+          "text": "벌통을 몇 개 더 놓고 싶어요."
+        },
+        {
+          "speaker": "beekeeper",
+          "text": "갈대 두 줄기랑 올리브 두 줌이 있으면 벌통을 엮을 수 있어요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-beekeeper-1-phases.png",
+          "sha256": "77028a9c481459e04ae6a7494f038c7cf8d7a87c2859d26757c51631db9ae97c"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-beekeeper-1-phone.png",
+          "sha256": "91aef36a964e39c7f429c82fc628024037df5ba31e5bb1764e6c64e5e70a88c7"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-ask-beekeeper-1-thumb.png",
+          "sha256": "4af27373c8e43a182e43e422aa07994e7c1cb15576ac3cdea7821fdeb86a9b3d"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "notice:starNight",
+      "title": "별 보는 밤",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "grandpa",
+          "text": "오늘 밤은 하늘이 맑겠구먼. 언덕에서 다 같이 별을 보세."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-notice-starNight-phases.png",
+          "sha256": "33646c2c18688c5fbe7fcbd4fbb145e37757a489ca0c972d9c38a066615dfec3"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-notice-starNight-phone.png",
+          "sha256": "1971fada65189e4f95e9eb7616689b7acc1c1826f4c6cc288685f3eb85fabcbb"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-notice-starNight-thumb.png",
+          "sha256": "27c9db123cd87f8f0b65605b0e5fa95d473c014d843fd9de3d85f47166441b43"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "notice:picnic",
+      "title": "소풍",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "child",
+          "text": "오늘 낮에 언덕에서 소풍해요! 다들 온대요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-notice-picnic-phases.png",
+          "sha256": "af94ffc6e4c8570e6e1035d9c82e19d0ca6d11a54a2f5780d9f6d435a0d286f1"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-notice-picnic-phone.png",
+          "sha256": "83da13bcbcfd50841d3a0cf32552af342e7cd93f57cbf4a65c4026dd55f2588c"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-notice-picnic-thumb.png",
+          "sha256": "ac2fd75fab6577c95f89dbe2b953171a2c4c4bc02e52495b11ba2f4cd48e2c2d"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "notice:babyParty",
+      "title": "아기 잔치",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "baker",
+          "text": "오늘 저녁 빵집 앞에서 아기 잔치를 해요. 꼭 와요!"
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-notice-babyParty-phases.png",
+          "sha256": "280f44a7417e1edf4a725313017a83bdc76eba4607add0e6fd1b2d23b329f8e6"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-notice-babyParty-phone.png",
+          "sha256": "e4de26354ed8613cbcd55819660709ba61bb2f3bc6ce4e7b4b8add43b29c27ed"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-notice-babyParty-thumb.png",
+          "sha256": "b95dc52b7e7f65fb18bf6d9468a2f78c0622d6bcdd8ddb62d321e010d08d4cdf"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "invite:grandpa",
+      "title": "저녁 초대",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "grandpa",
+          "text": "오늘 저녁엔 우리 집에 오게. 포도즙을 내 놓았네."
+        },
+        {
+          "speaker": "grandpa",
+          "text": "해 지면 내 집 문을 두드리게."
+        },
+        {
+          "speaker": "narration",
+          "text": "오늘 저녁 여섯 시부터 여덟 시 반 사이, 그 집 문을 눌러 보세요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-invite-grandpa-phases.png",
+          "sha256": "bd18df6d46a6fc05d499c38af4ad745134e8393258bd819f95a563b68b9cfba7"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-invite-grandpa-phone.png",
+          "sha256": "9cc9626314152f6dbdf9429c8942dc9fe6e6ad61a5ea073007f591f0b2f294ca"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-invite-grandpa-thumb.png",
+          "sha256": "a97b3ad2d83e4badbd8df4c9876d033a41736a1a8a61a2fba9d9481dc24afa4c"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "invite:child",
+      "title": "저녁 초대",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "child",
+          "text": "오늘 저녁 우리 집에서 같이 밥 먹어요! 엄마가 오래요."
+        },
+        {
+          "speaker": "child",
+          "text": "해 지면 우리 집 문 앞으로 와요!"
+        },
+        {
+          "speaker": "narration",
+          "text": "오늘 저녁 여섯 시부터 여덟 시 반 사이, 그 집 문을 눌러 보세요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-invite-child-phases.png",
+          "sha256": "579aa9ed8977857dcf3c49b4669c5f3ee379dcc81e255cbb473f106c2e238fa3"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-invite-child-phone.png",
+          "sha256": "0fb3af2ad6a57870c240edce36542d580bf950d4b58b54c047f048ca8de8b841"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-invite-child-thumb.png",
+          "sha256": "0bf9f5e0feaea0c3eb83797a6bdc9cb03dfd0d67924713240ee96cf4e4da4d16"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "invite:baker",
+      "title": "저녁 초대",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "baker",
+          "text": "오늘 저녁 우리 집에 와요. 따뜻한 수프를 끓일게요."
+        },
+        {
+          "speaker": "baker",
+          "text": "해 질 무렵 빵집 문 앞으로 오세요."
+        },
+        {
+          "speaker": "narration",
+          "text": "오늘 저녁 여섯 시부터 여덟 시 반 사이, 그 집 문을 눌러 보세요."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-invite-baker-phases.png",
+          "sha256": "36e8e76315666508e083e3d9d02ecacf04655bf5d0dc93c705bb244bd26cdb83"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-invite-baker-phone.png",
+          "sha256": "ab0a9691a95bc78a48bc14297e889cac090cfb4a74cfb87c3c6dd4adedec54fe"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-invite-baker-thumb.png",
+          "sha256": "96a2cd5e00115105ec30bbcc94b01a239c44775a2aebcbf2c8027438b8cfb81b"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "loverTrust:wendell",
+      "title": "함께 걸어온 날들",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "wendell",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "wendell",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-wendell-phases.png",
+          "sha256": "fe1cbe9f59b5b67a5376e575b702871f94685c176d962c522b61f0c381968b43"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-wendell-phone.png",
+          "sha256": "1dd7f3ed84f466360d7cf8f53a81eb39bd14662560ace27f9d19d8379bde00d6"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-wendell-thumb.png",
+          "sha256": "bba890bd09b0941e342f7d38707d4fa3fe61e04a2b9d26c45844707480a20faf"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "loverTrust:cosmo",
+      "title": "함께 걸어온 날들",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "cosmo",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "cosmo",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-cosmo-phases.png",
+          "sha256": "45eec546780250f0dd3007909fbf2d2d3ce1186736b02c917bbceeca32ca3e27"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-cosmo-phone.png",
+          "sha256": "38f00b882b998efe68091c093925c508091df4f3ea7c2db6c0ced9a7236de4e7"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-cosmo-thumb.png",
+          "sha256": "65b77fcdec6b901a387f19be2baa0aea0d4fe91d69f21e6219da56aad2415a24"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "loverTrust:rudy",
+      "title": "함께 걸어온 날들",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "rudy",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "rudy",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-rudy-phases.png",
+          "sha256": "86ff0faf2e7e8049b100aa2c3e7b8ab9d01ba3c45df1a1e1357610691150c227"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-rudy-phone.png",
+          "sha256": "43f250d4e3027cc51b918377b56b53d358365fe4285f5c9379daf8334e630595"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-rudy-thumb.png",
+          "sha256": "28d1d1292cc23c4978619eb53b2f7071a6f9aee15156389d18c488eea7c5bb13"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "loverTrust:dexter",
+      "title": "함께 걸어온 날들",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "dexter",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "dexter",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-dexter-phases.png",
+          "sha256": "652e69cebe7f04af25405a11203931820d59440e0d179d42d799e836099452aa"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-dexter-phone.png",
+          "sha256": "0d19f1d2ffb9f62104591453a45d46b4ec8cbc3a3260c9361b34ac915a2d42d1"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-dexter-thumb.png",
+          "sha256": "3dd2ca6653e46b1e95ed8be1a85b3d9a882ad371b17de3bec7a45b361ea69b98"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "loverTrust:basil",
+      "title": "함께 걸어온 날들",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "basil",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "basil",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-basil-phases.png",
+          "sha256": "ee254e02426ab554426b2c9f0fd58cfef10dff757b4eb0c4da4f0886e987d457"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-basil-phone.png",
+          "sha256": "f3aabd3e1e6ac676d4f43114b2b92da3feb2b1684acb975e62fc65408ae548f8"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-basil-thumb.png",
+          "sha256": "dd2cfd1e76f641c92c2e869df7ce8706deb2d3430c6e6ad317b9272501e26560"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "loverTrust:marigold",
+      "title": "함께 걸어온 날들",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "marigold",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "marigold",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-marigold-phases.png",
+          "sha256": "f4db3d0701cef241dd67a710e802f0a751fc85f29aa49e7a3421b60b33b96040"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-marigold-phone.png",
+          "sha256": "c4cd2d58766e18f540ab9090e6a47cefd1770e0024dde3ed3fa91665e26ae023"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-marigold-thumb.png",
+          "sha256": "b4da837dd58e6a216dad23690a66e42fea38923a26d9e8f639a90b6aab0b0bf0"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "loverTrust:penelope",
+      "title": "함께 걸어온 날들",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "penelope",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "penelope",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-penelope-phases.png",
+          "sha256": "e55004b7bf7e98e5b42ad4bf684a69ebb8690d4665f03359f10efd63dcd9bb07"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-penelope-phone.png",
+          "sha256": "a4a1cc82e49fc91b95d92327cf17e90bc0dc7d10050c8b399cbe29b0f06acdcf"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-penelope-thumb.png",
+          "sha256": "ef542f4375891a3fac5b4855e14e5eb7d18beb4c9314828b92d0920a5cbc4b1f"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "loverTrust:tilly",
+      "title": "함께 걸어온 날들",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "tilly",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "tilly",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-tilly-phases.png",
+          "sha256": "285f00196d561aa0e9e338a2437514552e666c517ef96868634be98df39e24aa"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-tilly-phone.png",
+          "sha256": "46cc4e9420f4ee1b7ebf5aaba9e46aac264dcc381342401ddc5568e7a992dd6a"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-tilly-thumb.png",
+          "sha256": "6646deb11ab7b152607a1e4f42ff2dd9bddf14e581ca05ab838058bd70561297"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "loverTrust:juniper",
+      "title": "함께 걸어온 날들",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "juniper",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "juniper",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-juniper-phases.png",
+          "sha256": "d41984ba8279e8ce9b4b35960278662ba7f8e91cb21ee0a12512664f43d0b2b4"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-juniper-phone.png",
+          "sha256": "320621526e84bc35efcf35ed5ca17db797a8dcae86f5aeffd68f30cb98ca9181"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-juniper-thumb.png",
+          "sha256": "d04888da76ab1df3cc95cd1e0523f0ab80d48af5f97dd4a83125607a6dc77421"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "loverTrust:poppy",
+      "title": "함께 걸어온 날들",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "poppy",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "poppy",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-poppy-phases.png",
+          "sha256": "94f3276aee56e56170b0af563d6ed50934ce4df2e43aa93d6bae6d930743ae45"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-poppy-phone.png",
+          "sha256": "9ca6d8471bda9c34f6c8f4fce5f828f50baa82cbaed3c499aff61572a8e69a6c"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-poppy-thumb.png",
+          "sha256": "9e95d3680d92fad7657df25820a0c0764efa32a24c736446832445f86762d651"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "loverTrust:merchant",
+      "title": "함께 걸어온 날들",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "merchant",
+          "text": "처음엔 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아."
+        },
+        {
+          "speaker": "merchant",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주자. 바쁜 날도, 별일 없는 날도."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-merchant-phases.png",
+          "sha256": "0090e6d8c2b288564f9e131f5623707af0f1ce9b032b522a9a4da24b3e416432"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-merchant-phone.png",
+          "sha256": "a19f796e4d63bcb36c090fb97b3d0806558ec620b8423826958d8fdf2165d14c"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-merchant-thumb.png",
+          "sha256": "33799e0138b1ddce5e2aa6705cebdea9dccaef930f27dbb3811f9975523a7c3e"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "loverTrust:presser",
+      "title": "함께 걸어온 날들",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "presser",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "presser",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-presser-phases.png",
+          "sha256": "fe72938453f89f461ca8343490c6beec4555b13da72d55bcc5861229feb43a36"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-presser-phone.png",
+          "sha256": "4c2eff6fd6f5a4574f25220b062ca51b536164b34cc4042ffbd65e443384fe74"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-presser-thumb.png",
+          "sha256": "6e778c35f01097720f16e8c8757867895f0fa3d1f3565779d0c8a26f181d663c"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "loverTrust:postman",
+      "title": "함께 걸어온 날들",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "postman",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "postman",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-postman-phases.png",
+          "sha256": "9c97f54fb1cec3e052d08b64801d606afb2f83e1e33f2eee6f9bb8c51e3fccab"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-postman-phone.png",
+          "sha256": "35424431607ae03422a4f093be4d60c185ca9f46a7a6f95c06adf1b7c1e48bfc"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-loverTrust-postman-thumb.png",
+          "sha256": "d2e43081b9ff4a3140da4e8e790a977a457334ace666cb447bed894ea8c86e46"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "blanket",
+      "title": "담요",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "담요를 덮어 주었다. 꼭 싸매고 있다."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-blanket-phases.png",
+          "sha256": "ec2d0682e222183add46bd3e47e9da325ad0d7516d273aae31da88e7d6baac03"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-blanket-phone.png",
+          "sha256": "a62c6c05423eceffad428b5d14d67116582cd6422da69a732c3f95dbdf4ff07a"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-blanket-thumb.png",
+          "sha256": "4e4e8ef6f3345603b499ec2de6b8c18edce34e54884a6dfcdbcc3e12864b8cb2"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    },
+    {
+      "id": "firstChapter",
+      "title": "첫 장",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "첫 장을 차례대로 이어 선반에 올려 두었다."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-firstChapter-phases.png",
+          "sha256": "0abbc9925f4c8ed1f88cd1e1fa1614e7c0142d4219624b538c7726e7646406a2"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-firstChapter-phone.png",
+          "sha256": "3ccc4107cbe0a339b0dae268f90100e1f63485f4cc5c5433876ed9967df369bc"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-firstChapter-thumb.png",
+          "sha256": "fcc84302e74cc2713f722d34122341a3c6609383915fe1b3b75f0125c73655ba"
+        }
+      ],
+      "scope": "All original stages in the three actual sheets re-inspected after wall/furniture contact correction. Default physical shelf action at 0/1.6/3.6/4.5/8 re-inspected in all three viewports. Other moved/directional layouts still need renewed visual QA; missing real shelf remains unresolved. No final location or browser approval.",
+      "openIssue": "Actual removed/missing shelf remains unresolved. This default-furniture sample does not establish placement completion when no physical shelf exists."
+    },
+    {
+      "id": "newlandGift",
+      "title": "큰길 끝의 표지",
+      "status": "reviewed-sample",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "마을 동쪽 큰길이 끝나는 곳에 처음 보는 표지가 서 있다."
+        },
+        {
+          "speaker": "narration",
+          "text": "표지 너머에 아직 아무도 쓰지 않은 땅과 작은 서고 하나가 있다."
+        },
+        {
+          "speaker": "narration",
+          "text": "가고 싶을 때 가면 된다. 오늘 가지 않아도 표지는 그대로 있다."
+        }
+      ],
+      "context": "Explicit winter day121 review example; actual generation/wardrobe cast, default and actual player. Square coordinates24,18 except firstChapter home20,112.",
+      "times": [
+        0,
+        0.6,
+        8
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/actual-newlandGift-phases.png",
+          "sha256": "23555207fe775a18c34f008888957fa8b3afd788848d7071703e950fa6a944f4"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/actual-newlandGift-phone.png",
+          "sha256": "6bf1667f1c9d2ff9f894333328b4af57b85985955429ee07ef963870f83664c4"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/actual-newlandGift-thumb.png",
+          "sha256": "192c779289511bdc087e080b367072e8ce41d1d7c2a435f21360e6496217187c"
+        }
+      ],
+      "scope": "All original dialogue stages in these three sheets. Actual occurrence locations and browser integration remain separate checks."
+    }
+  ],
+  "updatedAt": "2026-10-16T17:26:20.096Z",
+  "sceneCount": 118,
+  "reviewedSampleCount": 118,
+  "remainingSampleIds": []
+}

@@ -1,0 +1,21 @@
+import { writeFileSync } from 'node:fs'
+import '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import { peopleData, allSightings } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/engine/people'
+import { lockedTiles } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/engine/world'
+
+const OUT = 'C:/Users/wn410/AppData/Local/Temp/claude/C--Users-wn410-OneDrive-Desktop-cloooo-twenty-seven/d753a49f-e844-4b46-a32f-19ff3982a548/scratchpad/repro/r4reach/locked-out.txt'
+describe('locked', () => {
+  it('scan', () => {
+    const d = peopleData()
+    const out: string[] = []
+    const minBooks = (t: { x: number; y: number }) => { for (let b = 0; b <= 27; b++) if (!lockedTiles(b).has(`${t.x},${t.y}`)) return b; return 99 }
+    for (const p of Object.values(d.people)) {
+      for (const e of p.events ?? []) { const b = minBooks(e.at); if (b > 0) out.push(`ev ${e.id} (${p.id}) at ${e.at.x},${e.at.y} needs books ${b}${e.req?.thread ? ' THREAD ' + JSON.stringify(e.req.thread) : ''}${e.opens ? ' GATE ' + e.opens : ''}`)
+        for (const w of e.with ?? []) {/* cast held at routine */}
+      }
+      for (const r of p.routines) { const b = minBooks(r.at); if (b === 99) out.push(`routine ${p.id} at ${r.at.x},${r.at.y} never unlocked`) }
+    }
+    for (const s of allSightings()) { const b = minBooks(s.at); if (b > 0) out.push(`si ${s.id} (${s.npc}) at ${s.at.x},${s.at.y} needs books ${b}${s.thread ? ' THREAD ' + s.thread + '/' + s.phase : ''}${s.req?.thread ? ' THREADREQ' : ''}`) }
+    writeFileSync(OUT, out.join('\n') || 'none')
+  })
+})

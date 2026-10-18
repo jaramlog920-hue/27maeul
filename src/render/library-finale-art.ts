@@ -1,12 +1,12 @@
 import type { Avatar } from '../engine/avatar'
-import { BOOKS } from '../engine/types'
+import { BOOKS,type Season } from '../engine/types'
 import type { Grade } from '../engine/library'
 import type { Who } from './sprites'
 import { person } from './milestone-moments-art'
 import { householdCradleFrame } from './village-followup-art'
 import { withLookDefaults } from '../engine/avatar'
 
-export interface FinalePerson { avatar: Avatar | null; who: Who; short?: number }
+export interface FinalePerson { avatar: Avatar | null; who: Who; short?: number; growth?:number; elder?:boolean; season?:Season }
 export interface LibraryFinaleCast { guests: FinalePerson[]; spouse: FinalePerson | null; child: FinalePerson | null; baby: boolean; babyName: string }
 export const LIBRARY_PHOTO_TIME = 14
 export function libraryFinalePhase(t: number): number { return t < 3 ? 0 : t < 7 ? 1 : t < 12 ? 2 : t < 16 ? 3 : 4 }

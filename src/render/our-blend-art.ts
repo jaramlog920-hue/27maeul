@@ -1,3 +1,4 @@
+import {drawTeaFrontBackground} from './tea-front-background'
 import {withLookDefaults,type Avatar} from '../engine/avatar'
 import type {FinalePerson} from './library-finale-art'
 import {person} from './milestone-moments-art'
@@ -7,13 +8,7 @@ import {PALETTE,writerPalette} from './sprites'
 export function drawOurBlend(g:CanvasRenderingContext2D,w:number,h:number,t:number,avatar:Avatar|null,host:FinalePerson,beat:number,choice?:number|null){
  const p=(x:number,y:number,c:string,a=1,b=1)=>{g.fillStyle=c;g.fillRect(Math.round(x),Math.round(y),a,b)}
  const cx=Math.round(w/2),f=Math.round(h<=170?h*.64:Math.min(h*.51,h-98)),sip=choice===1&&beat>=2
- p(0,0,'#817f91',w,h);p(0,f-14,'#799077',w,h-f+14);p(0,f+4,'#b6a382',w,h-f-4)
- // 저녁 찻집 처마와 따뜻한 창. 메뉴판은 비워 둔 채 벽에 남긴다.
- p(cx-117,f-91,'#c4b291',101,95);p(cx-121,f-100,'#74604d',109,12)
- p(cx-100,f-71,'#806547',50,43);p(cx-97,f-68,'#e8c793',44,37)
- p(cx-77,f-68,'#a18a64',3,37);p(cx-97,f-49,'#a18a64',44,2)
- p(cx-103,f-28,'#ad8d62',56,3);p(cx-37,f-62,'#806547',15,27);p(cx-35,f-60,'#584f43',11,23)
- p(cx+97,f-36,'#77674e',4,41);p(cx+80,f-68,'#647761',34,13);p(cx+75,f-55,'#536c59',43,19)
+ drawTeaFrontBackground(p,w,h,f)
  // 인물의 손 바로 앞 낮은 작은 탁자. 실제 찻집 가족의 외형을 사용한다.
  p(cx-5,f-1,'#8d6b4d',3,16);p(cx+26,f-1,'#8d6b4d',3,16)
  p(cx-10,f-6,'#b69770',43,6);p(cx-9,f-6,'#d9c6a4',41,2)

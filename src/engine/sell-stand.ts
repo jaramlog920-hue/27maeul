@@ -3,12 +3,12 @@
 // 엮은 말씀 책·말씀 조각은 물건이 아니라 팔 수 없고(§3-3), 도구·들꽃 다발·약속의 끈도 받지 않는다.
 import type { GameState } from './game'
 import { RARE_PRICES, TRADES } from './game'
-import { ADDITION_FURNITURE, isAddition } from './furniture-additions'
 import { FURNITURE_DEFS } from './furniture-defs'
 import { count, take, TOOLS } from './items'
 import { SELL_PRICES } from './merchant-selling'
 import { STALL_EXTRA } from './stall'
 import { sellBonus } from './stats'
+import { FURNITURE_PRICES, FURNITURE_RESALE_RATE } from './economy-prices'
 import type { ItemId, Tile } from './types'
 
 /** 매대 두 칸 (지도 글자 'X' — 광장 동쪽 벤치 자리)과 그 곁 서는 칸 */
@@ -23,8 +23,7 @@ const NOT_FOR_SALE = new Set<ItemId>([...TOOLS, 'bouquet', 'promiseCord', 'rainJ
 function tradeValue(item: ItemId): number | undefined {
   const t = TRADES.find((x) => Object.keys(x.get).length === 1 && x.get[item] === 1 && !x.grants)
   if (!t) return undefined
-  if (t.coins !== undefined) return t.coins
-  let sum = 0
+  let sum = t.coins ?? 0
   for (const [id, n] of Object.entries(t.pay) as [ItemId, number][]) sum += (SELL_PRICES[id] ?? 2) * n
   return sum
 }
@@ -33,9 +32,10 @@ function tradeValue(item: ItemId): number | undefined {
 export function standPrice(s: Pick<GameState, 'stats'>, item: ItemId): number | undefined {
   if (NOT_FOR_SALE.has(item)) return undefined
   const bonus = sellBonus(s.stats)
+  const furniture = FURNITURE_PRICES[item]
+  if (furniture !== undefined) return Math.floor(furniture * FURNITURE_RESALE_RATE) + bonus
   const sold = SELL_PRICES[item] ?? STALL_EXTRA[item]
   if (sold !== undefined) return Math.max(1, Math.round(sold * 0.8)) + bonus
-  if (isAddition(item)) return Math.max(1, Math.round(ADDITION_FURNITURE[item].coins / 2)) + bonus
   const rare = RARE_PRICES[item]
   if (rare !== undefined) return Math.max(1, Math.round(rare / 2)) + bonus
   if (FURNITURE_DEFS[item]) {

@@ -1,3 +1,6 @@
+import { FAMILY_FURNITURE_ART, FAMILY_FURNITURE_DIRECTIONS } from './family-furniture-art'
+import { COPY_FURNITURE_ART, COPY_FURNITURE_DIRECTIONS } from './copy-furniture-art'
+import { isCopyFurniture } from '../engine/copy-furniture'
 import { pixels } from './home-space-art'
 import { COZY_FURNITURE_ART } from './cozy-furniture-art'
 import { HOUSEHOLD_FURNITURE_ART } from './household-furniture-art'
@@ -6,7 +9,7 @@ import type { FurnitureArt } from './furniture-art'
 import type { DirectionalFurnitureArt } from './home-space-directions'
 
 type Rect = readonly [string, number, number, number, number]
-export const ADDITION_ART = { ...COZY_FURNITURE_ART, ...HOUSEHOLD_FURNITURE_ART, ...ROOM_FURNITURE_ART }
+export const ADDITION_ART: Record<string, FurnitureArt> = { ...COZY_FURNITURE_ART, ...HOUSEHOLD_FURNITURE_ART, ...ROOM_FURNITURE_ART, ...FAMILY_FURNITURE_ART, ...COPY_FURNITURE_ART }
 export const ADDITION_FACINGS = ['down', 'up', 'left', 'right'] as const
 export const mirrorAddition = (art: FurnitureArt): FurnitureArt => ({ ...art, rows: art.rows.map(r => [...r].reverse().join('')) })
 const rects = (art: FurnitureArt, marks: readonly Rect[]): FurnitureArt => {
@@ -164,6 +167,8 @@ sides.pickleStand=rects(table(2,true,true),[['r',5,10,6,6],['C',6,8,4,3],['W',6,
 
 export const ADDITION_FURNITURE_DIRECTIONS: Record<string,DirectionalFurnitureArt> = {}
 for(const [id,front] of Object.entries(ADDITION_ART)) {
+  if (isCopyFurniture(id)) { ADDITION_FURNITURE_DIRECTIONS[id] = COPY_FURNITURE_DIRECTIONS[id]; continue }
+  if (FAMILY_FURNITURE_DIRECTIONS[id]) { ADDITION_FURNITURE_DIRECTIONS[id] = FAMILY_FURNITURE_DIRECTIONS[id]; continue }
   if(!backs[id] || !sides[id]) throw new Error(`Missing separately drawn furniture view: ${id}`)
   const view= id==='rockingChair' ? pixels(1,1,[['z',1,15,14,1],['k',3,1,10,10],['l',4,2,8,1],['w',4,3,8,5],['k',2,7,2,5],['k',12,7,2,5],['l',2,7,2,1],['l',12,7,2,1],['b',4,9,8,2],['B',4,11,8,1],['W',4,12,2,2],['W',10,12,2,2],['k',1,14,14,1],['l',2,14,12,1]])
     : id==='toyCart' ? pixels(1,1,[['z',2,15,12,1],['W',1,5,1,7],['W',14,5,1,7],['W',1,5,14,1],['k',2,8,12,5],['w',3,9,10,3],['l',3,8,10,1],['r',4,6,3,2],['b',9,6,3,2],['k',3,13,3,2],['k',10,13,3,2]]) : front

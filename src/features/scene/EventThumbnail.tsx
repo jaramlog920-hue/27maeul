@@ -1,6 +1,10 @@
+import {storyLocationContext,type StoryLocationContext} from '../../render/story-location-context'
+import {isHillFamilyKid} from '../../render/hill-events-art'
+import {isSquareFamilyKid} from '../../render/square-events-art'
+import {isHomeRoomKid,isHomeRoomActivity} from '../../render/home-family-art'
 import {useEffect,useRef} from 'react'
 import type {EventPreviewEntry} from './event-registry'
-import {previewActor,previewFamilyChild} from './event-preview-art'
+import {previewActor,previewFamilyChild,previewBirthFamily} from './event-preview-art'
 import {drawMoment,type MomentKind} from '../../render/scenic-moments-art'
 import {drawStargazing} from '../../render/stargazing-art'
 import {drawSunset} from '../../render/sunset-scene-art'
@@ -9,8 +13,14 @@ import {LIVING_KINDS,type LivingKind} from '../../engine/scenic-kinds'
 import {FACILITY_IDS,type FacilityId} from '../../engine/village-sites'
 import {drawAuthoredStory,hasAuthoredStory,authoredStoryPeople} from '../../render/authored-story-art'
 import {person} from '../../render/milestone-moments-art'
+import {drawSharedBackgroundScene,type SharedBackgroundSceneSnapshot} from '../../render/shared-background-scene'
+import {SCENES} from '../../content/text'
+import {isSharedBackgroundStory} from '../../render/shared-background-draft-art'
+import {sharedBackgroundSceneSnapshot} from '../../render/shared-background-scene'
+import {sharedBackgroundPreviewState} from '../../render/shared-background-preview'
 
-export function EventThumbnail({entry}:{entry:EventPreviewEntry}){
+export function EventThumbnail({entry,location,sharedScene}:{entry:EventPreviewEntry;location?:StoryLocationContext;sharedScene?:SharedBackgroundSceneSnapshot}){
+ if(sharedScene&&sharedScene.id!==entry.id)throw new Error('Shared thumbnail snapshot does not match the entry ID')
  const ref=useRef<HTMLCanvasElement>(null)
  useEffect(()=>{
   const canvas=ref.current
@@ -18,9 +28,11 @@ export function EventThumbnail({entry}:{entry:EventPreviewEntry}){
   const paint=()=>{
    const g=canvas.getContext('2d');if(!g)return
    const actor=previewActor(entry.id),w=300,h=170
+   const shared=sharedScene??(isSharedBackgroundStory(entry.id)?sharedBackgroundSceneSnapshot(sharedBackgroundPreviewState(entry.id),entry.id,{preview:true}):null)
+   if(shared){drawSharedBackgroundScene(g,location?{...shared,location}:shared,w,h,8,Math.max(0,(SCENES[entry.id]?.lines.length??1)-1));return}
    if(hasAuthoredStory(entry.id)){
-    const people=authoredStoryPeople(entry.id)
-    drawAuthoredStory(g,entry.id,w,h,8,null,(entry.id==='fam:trip'||entry.id==='fam:read')?previewFamilyChild():people.length?previewActor(`person:${people[0]}`):actor,people.slice(1).map(id=>previewActor(`person:${id}`)),entry.id==='fam:read'?0:2)
+    const people=authoredStoryPeople(entry.id),family=previewBirthFamily()
+    drawAuthoredStory(g,entry.id,w,h,8,null,(entry.id==='siblingBorn'||entry.id==='childBorn')?previewActor('person:wendell'):(entry.id==='fam:trip'||entry.id==='fam:read'||isHomeRoomKid(entry.id)||isSquareFamilyKid(entry.id)||isHillFamilyKid(entry.id))?previewFamilyChild():people.length?previewActor(`person:${people[0]}`):actor,(isHomeRoomActivity(entry.id)||['fam:supperAll','fam:meal','fam:bdayChild'].includes(entry.id))?[previewFamilyChild()]:entry.id==='childBorn'?[family.newborn]:entry.id==='siblingBorn'?[family.older,family.newborn]:people.slice(1).map(id=>previewActor(`person:${id}`)),entry.id==='fam:read'?0:entry.id==='saw:forge:handle'?1:2,undefined,undefined,undefined,undefined,undefined,location??storyLocationContext())
    }
    else if((LIVING_KINDS as readonly string[]).includes(entry.kind??'')){
     const facility=entry.id.split(':')[1]
@@ -41,6 +53,6 @@ export function EventThumbnail({entry}:{entry:EventPreviewEntry}){
   if(typeof IntersectionObserver==='undefined'){paint();return}
   const observer=new IntersectionObserver(items=>{if(items.some(i=>i.isIntersecting)){paint();observer.disconnect()}},{rootMargin:'300px'})
   observer.observe(canvas);return()=>observer.disconnect()
- },[entry])
+ },[entry,location,sharedScene])
  return <canvas ref={ref} width={300} height={170} className="event-thumbnail" aria-label={`${entry.title} 미리보기 그림`} role="img"/>
 }

@@ -1,0 +1,113 @@
+import { act, fireEvent, render, screen, cleanup, within } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/@testing-library/react/dist/@testing-library/react.esm.js'
+import { createElement as h } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/react/index.js'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { appendFileSync } from 'node:fs'
+import { CONTENT, versesOf } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import { newGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/game'
+import { establishedGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/growth-test-support'
+import { makeBlankQuiz } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/blank-quiz'
+import { useGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/store/game-store'
+import { ModalLayer } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/features/ModalLayer'
+import { meetingPassage } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/features/meetings/ReadingMeeting'
+import { App } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/app/App'
+import { setActiveSlot } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/save'
+import { homeOfFor } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/gen-settle'
+import { roomOwner } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/newland-life'
+
+const OUT = 'C:/Users/wn410/AppData/Local/Temp/claude/C--Users-wn410-OneDrive-Desktop-cloooo-twenty-seven/d753a49f-e844-4b46-a32f-19ff3982a548/scratchpad/repro/r3verify/out.txt'
+const log = (...a: unknown[]) => appendFileSync(OUT, '[ui] ' + a.map((x) => (typeof x === 'string' ? x : JSON.stringify(x))).join(' ') + String.fromCharCode(10))
+
+beforeEach(() => { vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null); localStorage.clear() })
+afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals() })
+
+describe('r3verify ui', () => {
+  it('L-11 blank quiz: wrong answer, close, reopen, perfect first-time reward', async () => {
+    const seed = 7788
+    vi.spyOn(Date, 'now').mockReturnValue(seed)
+    const g = newGame(CONTENT)
+    useGame.setState({ game: { ...g, scenes: [], progress: { ...g.progress, lk: { completed: [1, 2], arrangement: {} } }, copy: { ...g.copy, copied: { lk: [1, 2] } } } as never, modal: null })
+    render(h(ModalLayer))
+    const target = { book: 'lk', chapter: 1 } as const
+    act(() => useGame.getState().open({ kind: 'blankQuiz', target } as never))
+    const qs = makeBlankQuiz(useGame.getState().game, CONTENT, seed, target as never)
+    let group = await screen.findByRole('group', { name: '보기' })
+    const wrong = within(group).getAllByRole('button').find((b: HTMLElement) => b.textContent !== qs[0].answer)!
+    fireEvent.click(wrong)
+    act(() => useGame.getState().closeModal())
+    log('L-11 after wrong+close coins', useGame.getState().game.coins, 'paid flag', useGame.getState().game.flags['blankQuizPaid:lk:1'])
+    act(() => useGame.getState().open({ kind: 'blankQuiz', target } as never))
+    for (let i = 0; i < qs.length; i++) {
+      group = await screen.findByRole('group', { name: '보기' })
+      fireEvent.click(within(group).getByRole('button', { name: qs[i].answer }))
+      fireEvent.click(screen.getByRole('button', { name: i < 9 ? '다음 문제' : '마치기' }))
+    }
+    log('L-11 after reopen perfect run coins', useGame.getState().game.coins)
+    expect(useGame.getState().game.coins).toBe(110)
+  })
+
+  it('L-40 reading meeting: narrate after reaching the end reads only the last verse', () => {
+    const speak = vi.fn()
+    vi.stubGlobal('speechSynthesis', { speak, cancel: vi.fn(), getVoices: () => [] })
+    vi.stubGlobal('SpeechSynthesisUtterance', class { constructor(public text: string) {} })
+    useGame.setState({ game: { ...newGame(CONTENT), scenes: [], clock: { day: 5, minute: 19 * 60 } }, modal: { kind: 'readingMeeting', day: 5 } as never, toast: null, piecePopups: [], copyResult: null, trip: null })
+    render(h(ModalLayer))
+    const verses = versesOf(meetingPassage(5).ref)
+    for (let i = 0; i < verses.length; i++) fireEvent.click(screen.getByRole('button', { name: i + 1 < verses.length ? '읽었어요 · 다음 절' : '마지막 절 읽었어요' }))
+    fireEvent.click(screen.getByRole('button', { name: '음성으로 낭독하기' }))
+    const first = speak.mock.calls[0]?.[0]?.text
+    log('L-40 verses', verses.length, 'first narrated text is last verse?', first === verses[verses.length - 1].text, 'is first verse?', first === verses[0].text)
+    expect(first).toBe(verses[verses.length - 1].text)
+  })
+
+  it('L-42 rank history opened from library closes to the village, not back to the library', () => {
+    const s = establishedGame(CONTENT, 12)
+    useGame.setState({ game: { ...s, scenes: [] }, modal: { kind: 'library' } as never, piecePopups: [], copyResult: null })
+    render(h(ModalLayer))
+    const btn = screen.queryByRole('button', { name: /순위/ })
+    log('L-42 rank button in library', !!btn, btn?.textContent)
+    if (btn) fireEvent.click(btn)
+    log('L-42 modal after open', useGame.getState().modal)
+    const close = screen.getAllByRole('button', { name: '닫기' })
+    fireEvent.click(close[close.length - 1])
+    log('L-42 modal after closing rank', useGame.getState().modal)
+    expect(useGame.getState().modal).toBeNull()
+    // scene replay: close is closeModal
+    useGame.setState({ modal: { kind: 'facility', id: 'memorial' } as never })
+    act(() => useGame.getState().open({ kind: 'sceneReplay', id: 'firstChapter' } as never))
+    act(() => useGame.getState().closeModal())
+    log('L-42 modal after closing sceneReplay (via closeModal)', useGame.getState().modal)
+  })
+
+  it('L-43 farewell modal without popup renders nothing and has no way out', () => {
+    useGame.setState({ game: { ...newGame(CONTENT), scenes: [], farewellPopup: undefined } as never, modal: { kind: 'farewell' } as never, piecePopups: [], copyResult: null })
+    render(h(ModalLayer))
+    const back = document.querySelector('.modal-backdrop')
+    log('L-43 backdrop present', !!back, 'buttons inside', back?.querySelectorAll('button').length, 'text', JSON.stringify(back?.textContent))
+    fireEvent.keyDown(document, { key: 'Escape' })
+    if (back) fireEvent.click(back)
+    log('L-43 modal after Esc/backdrop click', useGame.getState().modal)
+    useGame.setState({ modal: { kind: 'space', id: 'nope' } as never })
+    const back2 = document.querySelector('.modal-backdrop')
+    log('L-43 space(nope) backdrop buttons', back2?.querySelectorAll('button').length)
+  })
+
+  it('L-3 picking an unloadable listed slot gives no message', async () => {
+    setActiveSlot('1')
+    localStorage.setItem('twenty-seven/save/5', JSON.stringify({ version: 1, clock: { day: 9, minute: 0 }, avatar: { name: '옛기록', look: 'f' } }))
+    localStorage.setItem('twenty-seven/save', 'broken')
+    render(h(App))
+    const load = screen.queryByRole('button', { name: '불러오기' })
+    log('L-3 load button visible', !!load)
+    if (!load) return
+    fireEvent.click(load)
+    const pick = screen.getByRole('button', { name: /옛기록/ })
+    await act(async () => { fireEvent.click(pick) })
+    log('L-3 after pick: still on list?', !!screen.queryByRole('dialog', { name: '불러오기' }), 'alerts', screen.queryAllByRole('alert').map((a: HTMLElement) => a.textContent), 'status', screen.queryAllByRole('status').map((a: HTMLElement) => a.textContent))
+  })
+
+  it('L-27 heir of a room-less neighbor gets a non-room home', () => {
+    const gen = { persons: { 'g-9': { id: 'g-9' } }, households: {}, relations: {}, retired: { wendell: { heir: 'g-9', day: 1 } } } as never
+    const ho = homeOfFor(CONTENT, gen)
+    log('L-27 homeOf(heir of wendell)', ho('g-9'), 'roomOwner(home)=', roomOwner(ho('g-9').home), '; homeOf(heir of baker)', homeOfFor(CONTENT, { persons: {}, households: {}, relations: {}, retired: { baker: { heir: 'g-7', day: 1 } } } as never)('g-7'))
+  })
+})

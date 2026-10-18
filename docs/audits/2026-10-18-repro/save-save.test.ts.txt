@@ -1,0 +1,69 @@
+import { describe, expect, it } from 'vitest'
+import { CONTENT } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import { newGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/game'
+import { activeSlot, deserialize, exportSave, importSave, loadGame, saveGame, saveAsNew, serialize, setActiveSlot, slotKey } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/save'
+
+function memStore(quota = Infinity): Storage & { used(): number } {
+  const m = new Map<string, string>()
+  const used = () => [...m].reduce((n, [k, v]) => n + k.length + v.length, 0)
+  return {
+    get length() { return m.size },
+    key: (i: number) => [...m.keys()][i] ?? null,
+    getItem: (k: string) => m.get(k) ?? null,
+    setItem: (k: string, v: string) => {
+      const before = (m.get(k)?.length ?? 0) + (m.has(k) ? k.length : 0)
+      if (used() - before + k.length + v.length > quota) { const e = new Error('QuotaExceededError'); e.name = 'QuotaExceededError'; throw e }
+      m.set(k, v)
+    },
+    removeItem: (k: string) => void m.delete(k),
+    clear: () => m.clear(),
+    used,
+  }
+}
+
+describe('save audit', () => {
+  it('T1 가져오기 직후 현재 게임 저장(자동 저장/pagehide)이 가져온 칸을 덮어쓴다', () => {
+    const store = memStore()
+    setActiveSlot('1', store)
+    const current = { ...newGame(CONTENT), coins: 1 }
+    saveGame(current, store)
+    const imported = { ...newGame(CONTENT), coins: 999 }
+    const r = importSave(exportSave(imported), CONTENT, store)
+    expect(r).toMatchObject({ slot: '2' })
+    expect(loadGame(CONTENT, store)?.coins).toBe(999)
+    // Settings.importText: 2.6초 뒤 reload — 그 사이 frame()의 20초 자동 저장 / reload 시 Play의 pagehide가 saveGame(useGame.getState().game)
+    saveGame(current, store)
+    const after = loadGame(CONTENT, store)?.coins
+    console.log('T1 imported slot coins after pagehide save =', after, 'activeSlot=', activeSlot(store))
+    expect(after).toBe(1)
+  })
+  it('T2 저장 크기 / saveAsNew가 사진까지 복제해 자리를 두 배로', () => {
+    const store = memStore(600_000)
+    setActiveSlot('1', store)
+    const g = newGame(CONTENT)
+    const size = serialize(g).length
+    console.log('T2 newGame serialized chars =', size)
+    for (let i = 0; i < 4; i++) store.setItem(`twenty-seven/album/p${i}`, 'x'.repeat(100_000))
+    expect(saveGame(g, store)).toBe(true)
+    const slot = saveAsNew(g, store)
+    console.log('T2 saveAsNew slot =', slot, 'used=', store.used())
+    // 사진 복사가 공간을 다 써 버린 뒤 원래 칸 자동 저장이 실패하는가
+    const bigger = { ...g, journal: Array.from({ length: 200 }, (_, i) => ({ day: i, heard: [], notes: [] })) } as never
+    const ok = saveGame(bigger, store)
+    console.log('T2 autosave after saveAsNew ok =', ok, 'used=', store.used())
+  })
+  it('T3 journal 한 줄이 깨지면 저장 전체를 못 읽는다', () => {
+    const g = newGame(CONTENT)
+    const o = JSON.parse(serialize(g))
+    o.journal = [null]
+    const r = deserialize(JSON.stringify(o), CONTENT)
+    console.log('T3 deserialize with journal [null] =', r === null ? 'null' : 'ok')
+  })
+  it('T4 coins가 글자면 그대로 통과', () => {
+    const g = newGame(CONTENT)
+    const o = JSON.parse(serialize(g))
+    o.coins = '50'
+    const r = deserialize(JSON.stringify(o), CONTENT)
+    console.log('T4 coins type =', typeof r?.coins, r?.coins)
+  })
+})

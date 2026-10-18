@@ -1,4 +1,4 @@
-// 계획 17: 집에 둔 동물 곁의 담요·장난감 소품 (그림만 — 길·충돌·보상 없음)
+// 집에 둔 동물의 놀이 소품. 수면용 깔개는 설치하지 않으면 나타나지 않는다.
 import { adopt, petCornerProp, petHabit, petHomeGoal, petSpotSafe, type Companion } from './companion'
 import { dayOf } from './calendar'
 import { isHome, PET_HOME } from './world'
@@ -11,17 +11,19 @@ const placed = (c: Companion, spot: 'blanket' | 'toy' | 'door'): Companion => {
 const day = dayOf('spring', 4)
 
 describe('집에 둔 동물 곁 소품', () => {
-  it('담요 자리 낮잠이면 깔개, 활발한 낮 놀이면 장난감', () => {
-    const calm = placed(base('cat', { curious: 0, distance: 1, energy: 0 }), 'blanket')
-    expect(petHabit(calm, day, 10 * 60, 'rain').spot).toBe('blanket')
-    expect(petCornerProp(calm, day, 10 * 60, 'rain')?.art).toBe('petBlanket')
+  it('낮잠일 때는 깔개를 자동 생성하지 않고, 활발한 낮 놀이에는 장난감만 둔다', () => {
+    for (const kind of ['dog','cat'] as const) {
+      const calm = placed(base(kind, { curious: 0, distance: 1, energy: 0 }), 'blanket')
+      expect(petHabit(calm, day, 10 * 60, 'rain').spot).toBe('blanket')
+      expect(petCornerProp(calm, day, 10 * 60, 'rain')).toBeNull()
+    }
     const lively = placed(base('cat', { curious: 2, distance: 1, energy: 2 }), 'toy')
     expect(petHabit(lively, day, 10 * 60, 'sunny').spot).toBe('toy')
     expect(petCornerProp(lively, day, 10 * 60, 'sunny')?.art).toBe('petToy')
   })
 
   it('동물이 서 있는 안전한 집 안 칸에만 놓이고, 그 칸이 길·문을 막지 않는다', () => {
-    for (const [ways, minute, weather] of [[{ curious: 0, distance: 0, energy: 0 }, 10 * 60, 'rain'], [{ curious: 2, distance: 2, energy: 2 }, 10 * 60, 'sunny']] as const) {
+    for (const [ways, minute, weather] of [[{ curious: 2, distance: 0, energy: 2 }, 10 * 60, 'rain'], [{ curious: 2, distance: 2, energy: 2 }, 10 * 60, 'sunny']] as const) {
       const c = placed(base('dog', ways), ways.energy === 2 ? 'toy' : 'blanket')
       const p = petCornerProp(c, day, minute, weather)
       expect(p).not.toBeNull()

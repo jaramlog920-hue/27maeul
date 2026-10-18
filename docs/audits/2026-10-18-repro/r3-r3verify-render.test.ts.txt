@@ -1,0 +1,80 @@
+import { describe, expect, it, vi } from 'vitest'
+import { appendFileSync } from 'node:fs'
+
+vi.mock('C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/newland-life', async (orig) => {
+  const m = await orig() as Record<string, unknown>
+  return { ...m, kidWorkSpot: vi.fn(m.kidWorkSpot as (...a: unknown[]) => unknown), kidWorkJob: vi.fn(m.kidWorkJob as (...a: unknown[]) => unknown) }
+})
+vi.mock('C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/render/sprites', async (orig) => {
+  const m = await orig() as Record<string, unknown>
+  return { ...m, spriteRows: vi.fn(m.spriteRows as (...a: unknown[]) => unknown) }
+})
+
+import { CONTENT } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import * as NL from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/newland-life'
+import * as SP from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/render/sprites'
+import { createRenderer, createTripRenderer } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/render/renderer'
+import { establishedGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/growth-test-support'
+import { ADULT_AT, newChild } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/child'
+import { ownerJob } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/kid-work'
+import { syncHome, type GameState } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/game'
+
+const OUT = 'C:/Users/wn410/AppData/Local/Temp/claude/C--Users-wn410-OneDrive-Desktop-cloooo-twenty-seven/d753a49f-e844-4b46-a32f-19ff3982a548/scratchpad/repro/r3verify/out.txt'
+const log = (...a: unknown[]) => appendFileSync(OUT, '[render] ' + a.map((x) => (typeof x === 'string' ? x : JSON.stringify(x))).join(' ') + String.fromCharCode(10))
+
+function fakeCtx(): CanvasRenderingContext2D {
+  const store: Record<string | symbol, unknown> = {}
+  const img = () => ({ data: new Uint8ClampedArray(4 * 4096), width: 64, height: 64 })
+  const obj = { addColorStop() {} }
+  return new Proxy(store, {
+    get(t, p) {
+      if (p in t) return t[p]
+      if (p === 'getImageData' || p === 'createImageData') return (_a?: number, _b?: number, w = 64, h2 = 64) => ({ data: new Uint8ClampedArray(4 * Math.max(1, w * h2)), width: w, height: h2 })
+      if (p === 'measureText') return () => ({ width: 0 })
+      if (p === 'createLinearGradient' || p === 'createRadialGradient' || p === 'createPattern') return () => obj
+      if (p === 'canvas') return { width: 300, height: 300 }
+      if (p === 'getTransform') return () => ({ a: 1, d: 1, e: 0, f: 0 })
+      void img
+      return () => undefined
+    },
+    set(t, p, v) { t[p] = v; return true },
+  }) as unknown as CanvasRenderingContext2D
+}
+
+describe('r3verify render', () => {
+  it('M-18 kidWork worker: drawn only at first kidWork, with active child job', () => {
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockImplementation(() => fakeCtx() as never)
+    vi.spyOn(HTMLCanvasElement.prototype, 'toDataURL').mockReturnValue('data:,')
+    const base = establishedGame(CONTENT, 26)
+    const day = 400
+    const kid = { ...newChild(day - ADULT_AT - 30, base.stats, undefined), born: day - ADULT_AT - 30, name: 'A', job: 'painter', jobConfirmed: true }
+    const b = (id: string, x: number, owner: string) => ({ id, kind: 'kidWork', x, y: 12, facing: 'down', state: 'done', orderedDay: 1, paid: { coins: 0, items: {} }, refunded: false, owner })
+    const s: GameState = { ...base, clock: { day, minute: 600 }, child: kid as never, map: 'newland' as never, scenes: [],
+      flags: { ...base.flags, newlandRevealed: 1, newlandGift: 1 },
+      newland: { builds: [b('b1', 10, 'g-0001'), b('b2', 20, 'me:' + kid.born)], tiles: {}, nextId: 3 } as never,
+      player: { ...base.player, x: 12, y: 16, path: [] } }
+    syncHome(s)
+    const r = createRenderer(fakeCtx(), CONTENT)
+    let err = ''
+    try { r.draw(s, 1, 0.016) } catch (e) { err = String(e) }
+    const spotCalls = (NL.kidWorkSpot as unknown as { mock: { calls: unknown[][] } }).mock.calls.map((c) => (c[0] as { id: string }).id)
+    const jobCalls = (NL.kidWorkJob as unknown as { mock: { calls: unknown[][] } }).mock.calls.length
+    log('M-18 draw error:', err || 'none', '| kidWorkSpot called for builds', spotCalls, '| kidWorkJob calls', jobCalls,
+      '| ownerJob(b1 g-0001)=', ownerJob(s, 'g-0001'), 'ownerJob(b2 me)=', ownerJob(s, 'me:' + kid.born), '| kidWorkJob(game)=', NL.kidWorkJob(s))
+  })
+
+  it('L-31 trip board kid sprite ignores wardrobe look and age', () => {
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockImplementation(() => fakeCtx() as never)
+    const base = establishedGame(CONTENT, 26)
+    const day = 400
+    const kid = { ...newChild(day - ADULT_AT - 30, base.stats, undefined), born: day - ADULT_AT - 30, name: 'A', job: 'painter', jobConfirmed: true }
+    const s: GameState = { ...base, clock: { day, minute: 600 }, child: kid as never, looks: { ...(base.looks ?? {}), child: { look: 'f', name: 'A', skin: 2, hair: 3 } } as never }
+    ;(SP.spriteRows as unknown as { mockClear: () => void }).mockClear()
+    const r = createTripRenderer(fakeCtx())
+    let err = ''
+    try { r.draw('harbor', s, { x: 3, y: 3, facing: 'down', walking: false }, { x: 2, y: 3, facing: 'down', walking: false }, 1, 0.016) } catch (e) { err = String(e) }
+    const calls = (SP.spriteRows as unknown as { mock: { calls: unknown[][] } }).mock.calls.map((c) => [c[0], (c[2] as { growth?: number; avatar?: unknown })?.growth, !!(c[2] as { avatar?: unknown })?.avatar])
+    log('L-31 draw error:', err || 'none', '| spriteRows calls [kind, growth, hasAvatar]:', calls)
+    expect(calls.some((c) => c[0] === 'child' && c[1] === 2)).toBe(true)
+  })
+})

@@ -85,3 +85,23 @@ describe('하나님 기록 데이터를 게임이 읽는 모양', () => {
     expect(GOD_RECORDS.some((r) => r.book === 'ac')).toBe(true)
   })
 })
+
+
+describe('하나님 기록 신약 전용 및 보충', () => {
+  it('구약 구절을 신약 책으로 잘못 저장했어도 걸러내고 정상 발견 날짜는 보존한다', () => {
+    const good: GodFind = { keyword: 'good', ref: '막 10:18', book: 'mk', chapter: 10, day: 7 }
+    const wrong: GodFind = { ...good, ref: '시 34:8' }
+    expect(sanitizeGodRecords([wrong, good, { ...good, chapter: 9 }])).toEqual([good])
+    const completed = Object.fromEntries(BOOKS.map(b => [b, [] as number[]])) as Record<Book, number[]>
+    expect(backfillGodRecords([], [wrong, good], completed, 20)).toEqual([good])
+    expect(chapterFinds([wrong], [], 'mk', 10, 20)).toEqual([])
+  })
+  it('추가한 구절도 예전에 마친 장에서 한 번만 채워진다', () => {
+    const fresh = newGame(CONTENT)
+    const saved = { ...fresh, progress: { ...fresh.progress, '2co': { ...fresh.progress['2co'], completed: [1] } } }
+    const loaded = deserialize(serialize(saved), CONTENT)!
+    const comfort = loaded.godRecords.filter(f => f.keyword === 'comfort')
+    expect(comfort.map(f => f.ref)).toEqual(['고후 1:3', '고후 1:4'])
+    expect(deserialize(serialize(loaded), CONTENT)!.godRecords).toEqual(loaded.godRecords)
+  })
+})

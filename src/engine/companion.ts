@@ -118,17 +118,16 @@ export function petHabit(c: Pick<Companion, 'name' | 'since' | 'kind' | 'ways'>,
 }
 
 /**
- * 집에 둔 동물 곁에 놓이는 작은 소품(계획 17): 담요 자리에 있으면 깔개, 장난감 자리에 있으면 장난감.
+ * 집에 둔 동물의 놀이 소품. 잠자리의 깔개는 자동으로 만들지 않고 실제 설치 가구만 쓴다.
  * 그림만 — 동물이 이미 선 안전한 칸(문·길을 막지 않는 칸)에만 얹고 지도·길·충돌은 건드리지 않는다.
  * 움직이는 중이거나 명령(motion)이 있으면 없다. 장난감은 바라보는 쪽 옆으로 반 칸 비켜 놓는다.
  */
-export function petCornerProp(c: Companion, day: number, minute: number, weather: Weather): { art: 'petBlanket' | 'petToy'; at: Tile; side: 'left' | 'right' } | null {
+export function petCornerProp(c: Companion, day: number, minute: number, weather: Weather): { art: 'petToy'; at: Tile; side: 'left' | 'right' } | null {
   if (!c.stay || c.path.length > 0 || c.motion) return null
   const at = { x: Math.round(c.x), y: Math.round(c.y) }
   if (!isHome(at) || !petSpotSafe(at)) return null
   const spot = petHabit(c, day, minute, weather).spot
   const side = c.facing === 'left' ? 'left' : 'right'
-  if (spot === 'blanket') return { art: 'petBlanket', at, side }
   if (spot === 'toy') return { art: 'petToy', at, side }
   return null
 }

@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-17",
+  "localPngReviewed": true,
+  "browserVerified": false,
+  "marketGiftWearImplemented": true,
+  "testLog": "artifacts/scenery/wedding-attire-final-tests.log",
+  "buildLog": "artifacts/scenery/wedding-attire-build.log",
+  "images": [
+    {
+      "path": "artifacts/scenery/wedding-attire-all-partners.png",
+      "sha256": "a73d44536f3e1f5527dde820ab65273912b63d88e635d7e853b12765af096d71"
+    },
+    {
+      "path": "artifacts/scenery/wedding-attire-legacy-actions.png",
+      "sha256": "a1da733a30393f32c306eae2fb1f3269c8de102d0e9746736028f32a038ecccd"
+    },
+    {
+      "path": "artifacts/scenery/wedding-attire-thumbs.png",
+      "sha256": "6ec86714435fd9580a15ac344190546428dc5bae0134ea9ba973caa2027da8f4"
+    },
+    {
+      "path": "artifacts/scenery/wedding-attire-rudy-final.png",
+      "sha256": "2c1d3982bca36a41398b56b7c2f0db117e27ba6b8171f8f26256e3f87727dcd5"
+    },
+    {
+      "path": "artifacts/scenery/wedding-formal-outfits-four.png",
+      "sha256": "77ec20f26d1071f30f2ca18d51aa08c1b05e1353535134523f8eab939ed15040"
+    },
+    {
+      "path": "artifacts/scenery/everyday-outfits-four.png",
+      "sha256": "e849be4b6ffba95375b4f77987e07f471a2ce02f59da6bfb380e06fc485a38d7"
+    },
+    {
+      "path": "artifacts/scenery/wedding-outfit-groom-midnight.png",
+      "sha256": "79e785fee86a0919673054ec4168b40bef391986b64a2b95847848a1ec994e47"
+    },
+    {
+      "path": "artifacts/scenery/wedding-outfit-groom-white.png",
+      "sha256": "58036cd2f0c4db32690b558422a554c2f214009b4d588b47472ea90f13ed9471"
+    },
+    {
+      "path": "artifacts/scenery/wedding-outfit-bride-ball.png",
+      "sha256": "2cfa205f331c884f3cbbc0fe48edbad80902e75b0f54808f5c5306deb26c88e8"
+    },
+    {
+      "path": "artifacts/scenery/wedding-outfit-bride-lace.png",
+      "sha256": "4504162e44bd160da2135d5a26104bb69986b116e6238f7c2798a15988fd1171"
+    }
+  ]
+}

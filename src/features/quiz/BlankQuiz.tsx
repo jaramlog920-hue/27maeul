@@ -1,71 +1,88 @@
-// 빈칸 퀴즈 (2026-10-14 사용자): 말씀 메뉴의 탭과 장을 마친 화면의 단추가 같은 퀴즈를 연다.
-// 지금까지 필사를 마친 장에서 무작위 절의 빈칸 하나를 낱말 보기 넷에서 고른다. 한 판 5문제, 맞힌 만큼 닢, 판수 제한 없음.
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+// 완성한 장을 골라 10문제를 풀고, 장별 첫 완주에만 보상을 받는다.
+import { useEffect, useState, type ReactNode } from 'react'
 import { CONTENT } from '../../content/catalog'
 import { copyBookName } from '../../content/text'
 import { ensureOtBook, otLoaded } from '../../content/ot-catalog'
-import { BLANK_COIN, BLANK_PERFECT, BLANK_QUIZ_SIZE, blankQuizPay, copiedChapters, makeBlankQuiz } from '../../engine/blank-quiz'
-import { isOtBook, type OtBook } from '../../engine/ot-books'
-import type { Book } from '../../engine/types'
+import { BLANK_COIN, BLANK_PERFECT, blankChapterKey, blankQuizRewarded, copiedChapters, makeBlankQuiz, type BlankChapter } from '../../engine/blank-quiz'
+import { isOtBook } from '../../engine/ot-books'
 import { useGame } from '../../store/game-store'
 import { NtContent } from '../passage/NtContent'
 
-/** 필사한 책의 본문을 불러온 뒤 퀴즈를 연다 (신약은 NtContent, 구약은 책마다 불러오기) */
-export function BlankQuiz() {
-  const copy = useGame((s) => s.game.copy)
-  const chapters = copiedChapters({ copy })
-  const nt = [...new Set(chapters.map((c) => c.book).filter((b): b is Book => !isOtBook(b)))]
-  const ot = [...new Set(chapters.map((c) => c.book).filter((b): b is OtBook => isOtBook(b)))]
-  const otKey = ot.join(',')
-  const [otReady, setOtReady] = useState(() => ot.every(otLoaded))
-  useEffect(() => {
-    let alive = true
-    const list = otKey ? (otKey.split(',') as OtBook[]) : []
-    if (!list.every(otLoaded)) void Promise.allSettled(list.map(ensureOtBook)).then(() => { if (alive) setOtReady(true) })
-    else setOtReady(true)
-    return () => { alive = false }
-  }, [otKey])
-  if (!chapters.length) return <p className="hint">필사를 한 장 마치면 그 장에서 빈칸 퀴즈가 나와요.</p>
-  if (!otReady) return <p className="hint" role="status">본문을 불러오는 중이에요.</p>
-  return <NtContent books={nt}><Round /></NtContent>
+export function BlankQuiz({ initialTarget }: { initialTarget?: BlankChapter }) {
+  const game = useGame(s => s.game)
+  const chapters = copiedChapters(game)
+  const validInitial = initialTarget && chapters.find(c => blankChapterKey(c) === blankChapterKey(initialTarget))
+  const [selected, setSelected] = useState(() => blankChapterKey(validInitial || chapters.find(c => !blankQuizRewarded(game, c)) || chapters[0] || { book: 'mt', chapter: 1 }))
+  const [active, setActive] = useState<BlankChapter | null>(() => validInitial || null)
+  if (!chapters.length) return <p className="hint">필사를 한 장 마치면 그 장에서 빈칸 퀴즈 10문제가 나와요.</p>
+  if (active) return <>
+    <button onClick={() => setActive(null)}>다른 장 고르기</button>
+    <ChapterContent key={blankChapterKey(active)} target={active} />
+  </>
+  const target = chapters.find(c => blankChapterKey(c) === selected) ?? chapters[0]
+  return <div className="blank-quiz">
+    <p className="hint">완성한 장마다 10문제를 풀 수 있어요. 보상은 각 장의 첫 풀이에만 받고, 다시 풀기는 보상이 없어요.</p>
+    <label>퀴즈를 풀 장
+      <select value={blankChapterKey(target)} onChange={e => setSelected(e.target.value)}>
+        {chapters.map(c => <option key={blankChapterKey(c)} value={blankChapterKey(c)}>
+          {copyBookName(c.book)} {c.chapter}장 · {blankQuizRewarded(game, c) ? '다시 풀기 · 보상 없음' : '첫 풀이 보상'}
+        </option>)}
+      </select>
+    </label>
+    <div className="actions"><button className="primary" onClick={() => setActive(target)}>10문제 풀기</button></div>
+  </div>
 }
 
-function Round() {
-  const game = useGame((s) => s.game)
-  const [seed, setSeed] = useState(() => Date.now())
-  // 판을 시작할 때 한 번만 문제를 만든다 (풀면서 닢이 바뀌어도 문제는 그대로)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const questions = useMemo(() => makeBlankQuiz(game, CONTENT, seed), [seed])
+/** 선택한 책만 로드한다. 구약 로드 실패 때 퀴즈를 생성하지 않고 재시도를 제공한다. */
+function ChapterContent({ target }: { target: BlankChapter }) {
+  const { book } = target
+  const [ready, setReady] = useState(() => !isOtBook(book) || otLoaded(book))
+  const [error, setError] = useState(false)
+  const [attempt, setAttempt] = useState(0)
+  useEffect(() => {
+    let alive = true
+    if (isOtBook(book)) void ensureOtBook(book).then(
+      () => { if (alive) setReady(true) },
+      () => { if (alive) setError(true) },
+    )
+    return () => { alive = false }
+  }, [book, attempt])
+  if (!isOtBook(book)) return <NtContent books={[book]}><Round target={target} /></NtContent>
+  if (!ready) return <div>
+    <p role={error ? 'alert' : 'status'}>{error ? '본문을 불러오지 못했어요.' : '본문을 불러오는 중이에요.'}</p>
+    {error && <button onClick={() => { setError(false); setAttempt(n => n + 1) }}>다시 불러오기</button>}
+  </div>
+  return <Round target={target} />
+}
+
+function Round({ target }: { target: BlankChapter }) {
+  const game = useGame(s => s.game)
+  const [questions, setQuestions] = useState(() => makeBlankQuiz(useGame.getState().game, CONTENT, Date.now(), target))
   const [at, setAt] = useState(0)
   const [picked, setPicked] = useState<string | null>(null)
   const [right, setRight] = useState(0)
-  const [paid, setPaid] = useState<number | null>(null)
-  if (!questions.length) return <p className="hint">문제를 만들 수 있는 절이 아직 없어요. 필사를 조금 더 해 주세요.</p>
+  const [paid, setPaid] = useState<{ amount: number; first: boolean } | null>(null)
+  const rewarded = blankQuizRewarded(game, target)
+  if (!questions.length) return <p className="hint">이 장에서 문제를 만들 수 없어요. 다른 장을 골라 주세요.</p>
   const again = () => {
-    setSeed(Date.now())
+    setQuestions(makeBlankQuiz(useGame.getState().game, CONTENT, Date.now(), target))
     setAt(0)
     setPicked(null)
     setRight(0)
     setPaid(null)
   }
-  if (paid !== null) {
-    return (
-      <div className="blank-quiz">
-        <p className="talk-line">{questions.length}문제 가운데 {right}문제를 맞혔어요. {paid}닢을 받았어요.</p>
-        <div className="actions"><button className="primary" onClick={again}>한 판 더</button></div>
-      </div>
-    )
-  }
+  if (paid !== null) return <div className="blank-quiz">
+    <p className="talk-line">{questions.length}문제 가운데 {right}문제를 맞혔어요. {paid.first ? `${paid.amount}닢을 받았어요.` : '다시 풀기는 보상이 없어요.'}</p>
+    <div className="actions"><button className="primary" onClick={again}>다시 풀기</button></div>
+  </div>
   const q = questions[at]
   const done = picked !== null
   const next = () => {
-    if (at + 1 < questions.length) {
-      setAt(at + 1)
-      setPicked(null)
-      return
-    }
-    useGame.getState().finishBlankQuiz(right, questions.length)
-    setPaid(blankQuizPay(right, questions.length))
+    if (picked === null) return
+    if (at + 1 < questions.length) { setAt(at + 1); setPicked(null); return }
+    const first = !blankQuizRewarded(useGame.getState().game, target)
+    const amount = useGame.getState().finishBlankQuiz(target, right, questions.length)
+    setPaid({ amount, first })
   }
   const verse: ReactNode[] = []
   q.words.forEach((w, i) => {
@@ -76,7 +93,7 @@ function Round() {
   })
   return (
     <div className="blank-quiz">
-      <p className="hint">{at + 1} / {questions.length} · 맞히면 {BLANK_COIN}닢{questions.length >= BLANK_QUIZ_SIZE ? `, 다 맞히면 ${BLANK_PERFECT}닢 더` : ''}</p>
+      <p className="hint">{at + 1} / {questions.length} · {rewarded ? '다시 풀기 · 보상 없음' : `첫 풀이 · 맞히면 ${BLANK_COIN}닢, 다 맞히면 ${BLANK_PERFECT}닢 더`}</p>
       <h3>{copyBookName(q.book)} {q.chapter}:{q.verse}</h3>
       <p className="blank-quiz-verse">{verse}</p>
       <div className="blank-quiz-options" role="group" aria-label="보기">
@@ -104,14 +121,12 @@ function Round() {
   )
 }
 
-/** 장을 마친 화면에서 여는 창 */
-export function BlankQuizDialog() {
-  const close = useGame((s) => s.closeModal)
-  return (
-    <div className="dialog blank-quiz-dialog" role="dialog" aria-label="빈칸 퀴즈">
-      <h2>빈칸 퀴즈</h2>
-      <BlankQuiz />
-      <div className="actions"><button data-close onClick={close}>닫기</button></div>
-    </div>
-  )
+/** 장 완료 화면과 말씀 메뉴에서 같은 장별 보상 규칙을 쓴다. */
+export function BlankQuizDialog({ initialTarget }: { initialTarget?: BlankChapter }) {
+  const close = useGame(s => s.closeModal)
+  return <div className="dialog blank-quiz-dialog" role="dialog" aria-label="빈칸 퀴즈">
+    <h2>빈칸 퀴즈</h2>
+    <BlankQuiz initialTarget={initialTarget} />
+    <div className="actions"><button data-close onClick={close}>닫기</button></div>
+  </div>
 }

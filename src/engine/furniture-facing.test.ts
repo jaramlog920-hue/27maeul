@@ -97,3 +97,18 @@ describe('가구 방향 저장', () => {
     expect(back.room[0].facing).toBeUndefined()
   })
 })
+
+
+it('처음 집의 필사 책상도 원래 자리에서 네 방향으로 돌릴 수 있다', () => {
+  let game = newGame(CONTENT)
+  const seen: string[] = []
+  for (let i = 0; i < 4; i++) {
+    const desk = game.room.find(f => f.item === 'homeDesk')!
+    expect(desk).toBeDefined()
+    const next = rotateFurniture(game, desk)
+    expect(next, `step ${i}, ${JSON.stringify(desk)}`).not.toBeNull()
+    game = next!
+    seen.push(game.room.find(f => f.item === 'homeDesk')!.facing!)
+  }
+  expect(seen).toEqual(['right', 'up', 'left', 'down'])
+})

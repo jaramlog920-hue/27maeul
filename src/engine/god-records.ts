@@ -1,6 +1,8 @@
 // 하나님 기록 (계획 14): 키워드 | 근거 구절. 그 절이 든 장을 다 필사했을 때 발견한다 (쓰는 도중에는 보이지 않는다).
 // 이 파일은 순수 계산 — 장을 마쳤을 때 새로 발견한 줄 고르기와 저장 정리. 데이터는 content/god-records.json (작업 3).
 import { BOOKS, type Book } from './types'
+import books from '../content/books.json'
+import { bibleIdOf } from './shelf-rooms'
 
 /** 데이터 한 줄: 키워드 id와 근거 구절 (catalog가 구절에서 책·장을 읽어 붙인다) */
 export interface GodRecordDef {
@@ -21,6 +23,14 @@ export interface GodFind {
   day: number
 }
 
+/** 하나님 기록은 신약의 한 절만 사용하며, 저장된 책·장과 구절이 일치해야 한다. */
+export function isNtGodRecord(r: { ref: string; book: Book; chapter: number }): boolean {
+  const b = books.find((b) => b.id === bibleIdOf(r.book))
+  const match = /^(\S+)\s+(\d+):(\d+)$/.exec(r.ref.trim())
+  return !!b && !!match && match[1] === b.abbr && Number(match[2]) === r.chapter
+    && r.chapter >= 1 && r.chapter <= b.chapters && Number(match[3]) >= 1
+}
+
 const same = (a: { keyword: string; ref: string }, b: { keyword: string; ref: string }) => a.keyword === b.keyword && a.ref === b.ref
 
 /**
@@ -30,7 +40,7 @@ const same = (a: { keyword: string; ref: string }, b: { keyword: string; ref: st
 export function chapterFinds(defs: readonly GodRecordDef[], known: readonly GodFind[], book: Book, chapter: number, day: number): GodFind[] {
   const out: GodFind[] = []
   for (const d of defs) {
-    if (d.book !== book || d.chapter !== chapter) continue
+    if (d.book !== book || d.chapter !== chapter || !isNtGodRecord(d)) continue
     if (known.some((k) => same(k, d)) || out.some((k) => same(k, d))) continue
     out.push({ keyword: d.keyword, ref: d.ref, book, chapter, day })
   }
@@ -47,7 +57,7 @@ export function backfillGodRecords(
   completed: Readonly<Record<Book, readonly number[]>>,
   day: number,
 ): GodFind[] {
-  let out: GodFind[] = [...known]
+  let out: GodFind[] = sanitizeGodRecords(known)
   for (const b of BOOKS) {
     for (const ch of [...(completed[b] ?? [])].sort((x, y) => x - y)) out = [...out, ...chapterFinds(defs, out, b, ch, day)]
   }
@@ -67,7 +77,7 @@ export function sanitizeGodRecords(raw: unknown): GodFind[] {
     if (typeof book !== 'string' || !(BOOKS as readonly string[]).includes(book)) continue
     if (!Number.isInteger(chapter) || (chapter as number) < 1 || !Number.isInteger(day) || (day as number) < 0) continue
     const find = { keyword, ref, book: book as Book, chapter: chapter as number, day: day as number }
-    if (!out.some((k) => same(k, find))) out.push(find)
+    if (isNtGodRecord(find) && !out.some((k) => same(k, find))) out.push(find)
   }
   return out
 }

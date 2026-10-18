@@ -1,0 +1,30 @@
+{
+  "id": "forge:handle",
+  "title": "새벽의 망치 자루",
+  "at": {
+    "x": 6,
+    "y": 125
+  },
+  "lines": [
+    {
+      "speaker": "narration",
+      "text": "해 뜨기 전, 대장장이가 새로 깎은 망치 자루를 틸리 방 창문 아래 조용히 세워 둔다."
+    },
+    {
+      "speaker": "narration",
+      "text": "손잡이에 작은 잎사귀 무늬가 서툴게 새겨져 있다."
+    },
+    {
+      "speaker": "narration",
+      "text": "대장장이는 헛기침을 한 번 하고 대장간으로 들어갔다."
+    }
+  ],
+  "memory": "saw:handle",
+  "when": {
+    "from": 300,
+    "to": 390
+  },
+  "npc": "smith",
+  "thread": "forge",
+  "phase": 1
+}

@@ -1,3 +1,4 @@
+import {newbornArt} from './newborn-art'
 import { spriteRows, type SpriteOpts, type Who } from './sprites'
 import { eventMotionFrame } from './event-life-motion'
 import { extraUseFrame } from './expansion-life-motion'
@@ -10,11 +11,9 @@ export type FamilyAction=typeof FAMILY_ACTIONS[number]
 export const FAMILY_ACTION_LABELS:Record<FamilyAction,string>={sootheBaby:'아기 달래기',holdBaby:'아기 안기',readTogether:'함께 읽기',familyMeal:'가족 식사',firstErrand:'첫 심부름',apprentice:'견습 손일',showWork:'작품 보여주기',moveHouse:'독립 짐 들기',welcome:'가족 맞이하기',listen:'이야기 듣기'}
 export function generationRows(stage:GenerationStage,facing:Facing,frame:number,opts:SpriteOpts):string[] {
   if(stage==='baby') {
-    // 보호자와 별도 그리는 8px 아기. 장식이나 성인 머리를 얹지 않는다.
     const p=Array.from({length:14},()=>Array<string>(10).fill('.'))
-    const source=facing==='up'?['.hhhh.','hh11hh','.rrrr.','rrllrr','.rrrr.','..RR..']:facing==='right'||facing==='left'?['.hh...','hssso.','.rrrr.','rrllrr','.rrrr.','..RR..']:['.hhhh.','hsosoh','.ssss.','rrllrr','.rrrr.','..RR..']
-    source.forEach((r,y)=>[...r].forEach((c,x)=>{if(y+3<14&&x+2<10)p[y+3][x+2]=c}))
-    if(frame%4===2)for(let y=0;y<14;y++)for(let x=0;x<10;x++)if(p[y][x]==='o')p[y][x]='s'
+    const source=newbornArt(opts.avatar,frame,opts.blink).rows.map(r=>r.replaceAll('w','r').replaceAll('W','R').replaceAll('n','s').replaceAll('e','s'))
+    source.forEach((r,y)=>[...r].forEach((c,x)=>{p[y+3][x+1]=c}))
     return facing==='left'?p.map(r=>r.reverse().join('')):p.map(r=>r.join(''))
   }
   const rows=spriteRows('writer',facing,{...opts,elder:stage==='elder'||opts.elder,frame:(Math.abs(frame)%3) as 0|1|2,short:stage==='toddler'?0:stage==='child'?1:stage==='teen'?2:undefined})

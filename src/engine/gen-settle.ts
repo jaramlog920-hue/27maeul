@@ -10,7 +10,7 @@ import { ensureBakerBaby, ensureFixed, newGenState, relationId, type GenState, t
 import { settleRelations, type DayCtx } from './gen-relations'
 import { settleMarriage, type HomeOf } from './gen-marriage'
 import { settleBirth, type AvatarOf } from './gen-birth'
-import { settleGrowth, slotOfPerson, slotPerson } from './gen-growth'
+import { pauseResidentAging, settleGrowth, slotOfPerson, slotPerson } from './gen-growth'
 import { peopleData } from './people'
 import type { GameState } from './game'
 import type { GameContent } from './types'
@@ -115,7 +115,7 @@ export function settleOneDay(g: GenState, d: number, s: Partial<Pick<GameState, 
     g = settleBirth(g, d, ctx, avatarOfFor(content))
   }
   // 세대교체: 자라기 → 견습 → 은퇴와 이어받기
-  g = settleGrowth(g, d, { generations: featureAccess(s, 'generations') === 'full', retirement: featureAccess(s, 'retirement') === 'full', ageless: !!s.flags?.ageless })
+  g = settleGrowth(g, d, { generations: featureAccess(s, 'generations') === 'full', retirement: featureAccess(s, 'retirement') === 'full', ageless: featureAccess(s, 'autonomy') !== 'full' || !!s.flags?.ageless })
   return ensureBakerBaby(g, d)
 }
 
@@ -130,27 +130,44 @@ export function settleGen(s: GameState, content: GameContent, opts: SettleOpts =
   const old = s.gen
   if (!old) {
     const seed = opts.seed ?? Math.floor(Math.random() * 0x7fffffff)
-    return { ...s, gen: startFriends(newGenState(content, seed, day, withPairs()), day) }
+    let gen = startFriends(newGenState(content, seed, day, withPairs()), day)
+    if (featureAccess(s, 'autonomy') !== 'full' || s.flags.ageless) gen = pauseResidentAging(gen, day)
+    return { ...s, gen }
   }
   let g = repairHouseholdHomes(ensureFixed(old, content), content)
   if (old.settledDay >= day) {
     g = ensureBakerBaby(g, day)
+    if (!g.on || featureAccess(s, 'autonomy') !== 'full' || s.flags.ageless) g = pauseResidentAging(g, day)
     return g === old ? s : { ...s, gen: g }
   }
-  if (!g.on) return { ...s, gen: { ...ensureBakerBaby(g, day), settledDay: day } }
+  if (!g.on) return { ...s, gen: { ...pauseResidentAging(ensureBakerBaby(g, day), day), settledDay: day } }
   g = ensureBakerBaby(g, g.settledDay)
   const last = Math.min(day, g.settledDay + MAX_CATCHUP)
   for (let d = g.settledDay + 1; d <= last; d++) {
     g = settleOneDay(g, d, s, content, opts)
   }
   // 지난 날의 만남 수는 버린다
-  return successionMilestone(s,{ ...s, gen: { ...ensureBakerBaby(g, day), meets: {}, settledDay: day } })
+  g = ensureBakerBaby(g, day)
+  if (featureAccess(s, 'autonomy') !== 'full' || s.flags.ageless) g = pauseResidentAging(g, day)
+  return successionMilestone(s,{ ...s, gen: { ...g, meets: {}, settledDay: day } })
 }
 
 /** 자율 진행 켜고 끄기 (D17·P14): 다시 켤 때 settledDay를 오늘로 맞춰 지나간 기간을 한꺼번에 처리하지 않는다 */
 export function setGenOn(s: GameState, on: boolean): GameState {
   if (!s.gen || (on && featureAccess(s, 'autonomy') !== 'full')) return s
-  return { ...s, gen: { ...s.gen, on, settledDay: s.clock.day } }
+  const gen = pauseResidentAging(s.gen, s.clock.day, s.gen.on)
+  return { ...s, gen: { ...gen, on, settledDay: s.clock.day } }
+}
+
+/** Apply the same unlock rule to UI and direct callers, preserving elapsed paused days. */
+export function setResidentAging(s: GameState, on: boolean): GameState {
+  if (on && featureAccess(s, 'autonomy') !== 'full') return s
+  const flags = { ...s.flags }
+  if (on) delete flags.ageless
+  else flags.ageless = 1
+  const wasPaused = !!s.flags.ageless || featureAccess(s, 'autonomy') !== 'full' || s.gen?.on === false
+  const gen = s.gen && (wasPaused || !on) ? pauseResidentAging(s.gen, s.clock.day, !wasPaused) : s.gen
+  return { ...s, flags, ...(gen ? { gen } : {}) }
 }
 
 export { relationId }

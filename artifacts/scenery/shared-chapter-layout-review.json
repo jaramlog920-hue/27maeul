@@ -1,0 +1,226 @@
+{
+  "batch": "shared-background-remainder",
+  "completed": false,
+  "scope": "Supplemental first-chapter furniture checks within the single 118-event batch. Image inspection is not final action, facing, event routing or browser approval.",
+  "times": [
+    0,
+    1.6,
+    3.6,
+    4.5,
+    8
+  ],
+  "defaultAndActualPlayer": true,
+  "samples": [
+    {
+      "index": 0,
+      "id": "firstChapter",
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/chapter-layout-0-phases.png",
+          "sha256": "a67cbec7e3f251bb0df274993ca6f812417244f80dcc645a90243d6f68f9c133"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/chapter-layout-0-phone.png",
+          "sha256": "2348634addf32ab3d7ca15841801a6180d4e64ba744a40066595edc87f9fae55"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/chapter-layout-0-thumb.png",
+          "sha256": "b4508db357442d58d4b7f8323aded728780e8d5341a66628dbdda93872398c36"
+        }
+      ],
+      "directlyViewed": true,
+      "visualEvidence": true,
+      "finalApproved": false,
+      "openIssues": []
+    },
+    {
+      "index": 1,
+      "id": "firstChapter",
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/chapter-layout-1-phases.png",
+          "sha256": "b77f84df36aece914d045f7b1b9add982aea5a6c99392abbd8bd433cef81f62e"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/chapter-layout-1-phone.png",
+          "sha256": "74e235c9b882c99808263643ef4a3f21504f1fd8db669ad7eabf1f1caf4aea9f"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/chapter-layout-1-thumb.png",
+          "sha256": "b0067c2960c252f7a4a24c7d05a18c08d9d746e4aea5feb7a675b1fcfb7fa285"
+        }
+      ],
+      "directlyViewed": true,
+      "visualEvidence": true,
+      "finalApproved": false,
+      "openIssues": []
+    },
+    {
+      "index": 2,
+      "id": "firstChapter",
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/chapter-layout-2-phases.png",
+          "sha256": "aa13de3e548abfd27990681e4d79dd916cefa0678dc6bebfe997ff2bf71ed585"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/chapter-layout-2-phone.png",
+          "sha256": "14a2fbc34c396e83c09b6509f169cc64e544780f5f2f27626854d65022d38749"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/chapter-layout-2-thumb.png",
+          "sha256": "3cdd451ab35978044bdc6a43cd3f6c43131afa07b6b00d6f5c43a7152f0b55cf"
+        }
+      ],
+      "directlyViewed": true,
+      "visualEvidence": true,
+      "finalApproved": false,
+      "openIssues": [
+        "User approved conditional organizing wording on 2026-10-17 when no actual shelf exists. Live/replay DOM assertions pass; final visual UI/common-route approval remains pending. This is not completed shelf placement."
+      ],
+      "actionEvidence": "Approved no-shelf organizing action: sheets converge in the original hand at 0/1.6/3/8 seconds. The 0/1.6/3.6/4.5/8 sheets were viewed at landscape/native phone/thumbnail sizes for default and actual avatar; placed remains false."
+    },
+    {
+      "index": 3,
+      "id": "firstChapter",
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/chapter-layout-3-phases.png",
+          "sha256": "d03bf54b33913bb9fb8f1de3937fd5bf428fe7a774b65e3ed296660e4e3c9bb4"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/chapter-layout-3-phone.png",
+          "sha256": "bbe26a3f79c77224b5eb5f15b44cbaf107b20d144f0e37c95c218175dee80e52"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/chapter-layout-3-thumb.png",
+          "sha256": "fddb8588bdaa21cf6b8dbc037e7d9b93b944a40fcc28c53a43625bd018df5b5c"
+        }
+      ],
+      "directlyViewed": true,
+      "visualEvidence": true,
+      "finalApproved": false,
+      "openIssues": []
+    },
+    {
+      "index": 4,
+      "id": "firstChapter",
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/chapter-layout-4-phases.png",
+          "sha256": "fcfdacce0cd6022e32fd4789096b47d61e32148be1ce7f6a48494c872771b088"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/chapter-layout-4-phone.png",
+          "sha256": "dab0471c9bb5ed40a64240095f998b27475f5110ce20a67662098ae095ccf5d6"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/chapter-layout-4-thumb.png",
+          "sha256": "233463033a4ca4a00e9f7e706d2f491bc226d69a66312974a70faf00b31181ca"
+        }
+      ],
+      "directlyViewed": true,
+      "visualEvidence": true,
+      "finalApproved": false,
+      "openIssues": []
+    },
+    {
+      "index": 5,
+      "id": "firstChapter",
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/chapter-layout-5-phases.png",
+          "sha256": "b8293a954a9e874fe587830d5190f32dd54fe4addce2c9fc08a848ceff4e32c2"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/chapter-layout-5-phone.png",
+          "sha256": "19cae520527b335894365f9f05fbe70cf1520c82bb246a117d842ecb8630708b"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/chapter-layout-5-thumb.png",
+          "sha256": "f07ef2a38b459e04992550c7b5e90a20d50c9e8a1f2d4eac77dc9cb9e6ce08f6"
+        }
+      ],
+      "directlyViewed": true,
+      "visualEvidence": true,
+      "finalApproved": false,
+      "openIssues": [
+        "Saved world facing is preserved. A fixed event camera faces the existing shelf opening; its cabinet stands at the wall/floor seam and the original loose sheets are placed on the real board. Landscape/native phone/thumbnail stages were viewed after the wall-anchor correction. Actual browser/UI validation remains pending."
+      ]
+    },
+    {
+      "index": 6,
+      "id": "firstChapter",
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/chapter-layout-6-phases.png",
+          "sha256": "052cfc31af98d7c23d4de07fa48c98945ac82172134214b2de6d88df398fac52"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/chapter-layout-6-phone.png",
+          "sha256": "b45c6d4ffac117c35842116ec81cb3c2795cbf006cf383db307882972c5b5297"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/chapter-layout-6-thumb.png",
+          "sha256": "280a07bb842e6a56137f48f9e10a86a609aa552572d55c3eff43c2ad5bdaa146"
+        }
+      ],
+      "directlyViewed": true,
+      "visualEvidence": true,
+      "finalApproved": false,
+      "openIssues": [
+        "Saved world facing is preserved. A fixed event camera faces the existing shelf opening; its cabinet stands at the wall/floor seam and the original loose sheets are placed on the real board. Landscape/native phone/thumbnail stages were viewed after the wall-anchor correction. Actual browser/UI validation remains pending."
+      ]
+    },
+    {
+      "index": 7,
+      "id": "firstChapter",
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-background-drafts/chapter-layout-7-phases.png",
+          "sha256": "f2485abaf63fb7e9f7ca32ffd0ab63f725b60db1365e9d2021200d52c9ebd4a7"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-background-drafts/chapter-layout-7-phone.png",
+          "sha256": "9bc5b1f9e6b72eed7e27d0e28faa56cfa4ee88de45b3a6909db71097a17a9cd2"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-background-drafts/chapter-layout-7-thumb.png",
+          "sha256": "602bade967068454123dae22fe22ea01aac9bc7f30119f9e16ca51a667c800e1"
+        }
+      ],
+      "directlyViewed": true,
+      "visualEvidence": true,
+      "finalApproved": false,
+      "openIssues": [
+        "Saved world facing is preserved. A fixed event camera faces the existing shelf opening; its cabinet stands at the wall/floor seam and the original loose sheets are placed on the real board. Landscape/native phone/thumbnail stages were viewed after the wall-anchor correction. Actual browser/UI validation remains pending."
+      ]
+    }
+  ],
+  "uniqueImageSetCount": 8,
+  "updatedAt": "2026-10-16T19:01:14.753Z"
+}

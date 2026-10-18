@@ -1,0 +1,13 @@
+import { blanksForVerse } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/copy-ways'
+import { chapterText } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import { BOOKS } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/types'
+it('punct options', () => {
+  let total = 0, withP = 0; const ex: string[] = []
+  for (const b of BOOKS) for (let c = 1; c < 200; c++) {
+    const vs = chapterText(b, c); if (!vs.length) break
+    const texts = vs.map(v => v.text)
+    for (const v of vs) { const bl = blanksForVerse(v.text, texts, 6, 1, b, c, v.verse); if (!bl) continue
+      for (const x of bl) { total++; if (x.options.some(o => /[\p{P}]/u.test(o))) { withP++; if (ex.length < 4) ex.push(b + ' ' + c + ':' + v.verse + ' ans=' + x.answer + ' opts=' + x.options.join('/')) } } }
+  }
+  console.log('PUNCT', total, withP, ex)
+})

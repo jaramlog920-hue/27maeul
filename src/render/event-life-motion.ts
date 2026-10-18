@@ -1,3 +1,4 @@
+import {NEWBORN_ROWS} from './sprites'
 import { spriteRows, type Who, type SpriteOpts } from './sprites'
 import { motionBodyRows } from './motion-body'
 import { pixels } from './home-space-art'
@@ -46,7 +47,7 @@ export function eventMotionFrame(who:Who,facing:Facing,action:EventAction,frame:
   if(phase===1){const x=left?5:side?18:12;p[11][x]='c';p[12][x]='C'}
  }
  // Baby is a separate layer, not an adult recolor. Palette is the furniture skin/blanket palette.
- if(action==='holdBaby'){attach(['.kkkk.','kppppk','kpSkpk','.CppC.','..CC..'],side?(left?3:14):9,11+phase%2);hand(left?5:side?16:9,15+phase%2)}
+ if(action==='holdBaby'){attach(NEWBORN_ROWS.map(r=>r.replaceAll('h','k').replaceAll('n','S').replaceAll('s','S').replaceAll('o','k').replaceAll('+','p').replaceAll('w','C').replaceAll('W','c')),side?(left?3:14):9,11+phase%2);hand(left?5:side?16:9,15+phase%2)}
  const empty=Array<string>(24).fill('.'.repeat(24)),rows=p.map(r=>r.join(''))
  return {actor:a.map(r=>r.join('')),propBack:facing==='up'?rows:empty,propFront:facing==='up'?empty:rows,anchor:{x:12,y:4+source.length+bob},handAnchor:{x:left?5:side?17:16,y:14+phase%2},duration:action==='blowCandle'?350:260,loop:['clap','carryParcel','dance','smile','nod','taste','holdBaby','walkHand'].includes(action)}
 }

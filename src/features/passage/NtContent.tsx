@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { ensureNtBooks, ntLoaded } from '../../content/nt-loader'
 import type { Book } from '../../engine/types'
-import { saveGame } from '../../engine/save'
+import { saveGameAsync } from '../../engine/save'
 import { useGame } from '../../store/game-store'
 
 /** 본문을 쓰는 화면만 기다린다. 창을 닫거나 책을 바꾸면 이전 요청의 UI 갱신을 취소한다. */
@@ -25,10 +25,10 @@ export function NtContent({ books, children, onCancel }: { books: readonly Book[
     <p role={error ? 'alert' : 'status'}>{error || '본문을 불러오는 중이에요.'}</p>
     {error && <>
       <button onClick={() => setAttempt(n => n + 1)}>다시 불러오기</button>
-      <button onClick={() => {
+      <button onClick={async () => {
         // 브라우저가 실패한 import를 기억하면 같은 페이지의 재시도로 복구되지 않는다.
         const store = useGame.getState()
-        if (saveGame(store.game)) window.location.reload()
+        if (await saveGameAsync(store.game)) window.location.reload()
         else store.say('저장하지 못했어요. 저장 공간을 확인해 주세요.', 5000)
       }}>저장하고 다시 접속</button>
     </>}

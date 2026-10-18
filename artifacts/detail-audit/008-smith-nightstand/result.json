@@ -1,0 +1,219 @@
+{
+  "passed": true,
+  "earned": {
+    "inv": {
+      "vase": 1,
+      "nightstand": 1
+    },
+    "furniture": [],
+    "hearts": 92,
+    "gifted": [
+      "smith"
+    ],
+    "giftsGot": [
+      "nightstand"
+    ],
+    "selection": null,
+    "moving": false,
+    "selectionText": null
+  },
+  "installed": {
+    "inv": {
+      "vase": 1
+    },
+    "furniture": [
+      {
+        "item": "nightstand",
+        "x": 20,
+        "y": 112,
+        "facing": "down"
+      }
+    ],
+    "hearts": 92,
+    "gifted": [
+      "smith"
+    ],
+    "giftsGot": [
+      "nightstand"
+    ],
+    "selection": {
+      "item": "nightstand",
+      "x": 20,
+      "y": 112
+    },
+    "moving": false,
+    "selectionText": "협탁"
+  },
+  "used": {
+    "inv": {},
+    "furniture": [
+      {
+        "item": "nightstand",
+        "x": 20,
+        "y": 112,
+        "facing": "down"
+      },
+      {
+        "item": "vase",
+        "x": 20,
+        "y": 112,
+        "on": true,
+        "facing": "down"
+      }
+    ],
+    "hearts": 92,
+    "gifted": [
+      "smith"
+    ],
+    "giftsGot": [
+      "nightstand"
+    ],
+    "selection": {
+      "item": "vase",
+      "x": 20,
+      "y": 112,
+      "on": true
+    },
+    "moving": false,
+    "selectionText": "꽃병"
+  },
+  "restored": {
+    "inv": {},
+    "furniture": [
+      {
+        "item": "nightstand",
+        "x": 20,
+        "y": 112,
+        "facing": "down"
+      },
+      {
+        "item": "vase",
+        "x": 20,
+        "y": 112,
+        "on": true,
+        "facing": "down"
+      }
+    ],
+    "hearts": 92,
+    "gifted": [
+      "smith"
+    ],
+    "giftsGot": [
+      "nightstand"
+    ],
+    "selection": null,
+    "moving": false,
+    "selectionText": null
+  },
+  "selected": {
+    "inv": {},
+    "furniture": [
+      {
+        "item": "nightstand",
+        "x": 20,
+        "y": 112,
+        "facing": "down"
+      },
+      {
+        "item": "vase",
+        "x": 20,
+        "y": 112,
+        "on": true,
+        "facing": "down"
+      }
+    ],
+    "hearts": 92,
+    "gifted": [
+      "smith"
+    ],
+    "giftsGot": [
+      "nightstand"
+    ],
+    "selection": {
+      "item": "vase",
+      "x": 20,
+      "y": 112,
+      "on": true
+    },
+    "moving": false,
+    "selectionText": "꽃병"
+  },
+  "movedTop": {
+    "inv": {},
+    "furniture": [
+      {
+        "item": "nightstand",
+        "x": 20,
+        "y": 112,
+        "facing": "down"
+      },
+      {
+        "item": "vase",
+        "x": 22,
+        "y": 113,
+        "facing": "down"
+      }
+    ],
+    "hearts": 92,
+    "gifted": [
+      "smith"
+    ],
+    "giftsGot": [
+      "nightstand"
+    ],
+    "selection": {
+      "item": "vase",
+      "x": 22,
+      "y": 113,
+      "facing": "down"
+    },
+    "moving": false,
+    "selectionText": "꽃병"
+  },
+  "collected": {
+    "inv": {
+      "vase": 1,
+      "nightstand": 1
+    },
+    "furniture": [],
+    "hearts": 92,
+    "gifted": [
+      "smith"
+    ],
+    "giftsGot": [
+      "nightstand"
+    ],
+    "selection": null,
+    "moving": false,
+    "selectionText": null
+  },
+  "reused": {
+    "inv": {},
+    "furniture": [
+      {
+        "item": "nightstand",
+        "x": 22,
+        "y": 113,
+        "facing": "down"
+      },
+      {
+        "item": "vase",
+        "x": 22,
+        "y": 113,
+        "on": true,
+        "facing": "down"
+      }
+    ],
+    "hearts": 92,
+    "gifted": [
+      "smith"
+    ],
+    "giftsGot": [
+      "nightstand"
+    ],
+    "selection": null,
+    "moving": false,
+    "selectionText": null
+  },
+  "pageErrors": []
+}

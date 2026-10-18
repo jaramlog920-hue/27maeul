@@ -1,0 +1,25 @@
+{
+  "rows": [
+    {
+      "blocked": false,
+      "ms": 1.794699999999466,
+      "searches": 1,
+      "path": 12
+    },
+    {
+      "blocked": true,
+      "ms": 13.230099999999766,
+      "searches": 1,
+      "path": null
+    }
+  ],
+  "map": [
+    "T,,,,,,,,,,,,,",
+    "T,,,,,,,,,,,,,",
+    "T.xxx,xxx,,yyy",
+    "T.x.....x,,yyy",
+    "T.x.....x,,yyy",
+    "T.x.....x,,...",
+    "Tjxxxxxxx,,..B"
+  ]
+}

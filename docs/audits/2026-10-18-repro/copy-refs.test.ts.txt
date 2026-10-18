@@ -1,0 +1,16 @@
+import { GOD_RECORDS, NAMES, JOURNEY, CHURCHES, versesOf, PIECES, CONTENT } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import { chaptersOf } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/books'
+import { BOOKS } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/types'
+import { NT_CHAPTER_COUNTS } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/progression'
+it('refs', () => {
+  const bad: string[] = []
+  const tryRef = (r: string, tag: string) => { try { if (!versesOf(r).length) bad.push(tag + ' empty ' + r) } catch (e) { bad.push(tag + ' ' + r + ' ' + (e as Error).message) } }
+  for (const g of GOD_RECORDS) tryRef(g.ref, 'god')
+  for (const n of NAMES) for (const p of n.places) tryRef(p.ref, 'name:' + n.name)
+  for (const c of [...JOURNEY, ...CHURCHES]) tryRef(c.ref, 'card')
+  for (const p of PIECES) tryRef(p.ref, 'piece')
+  for (const g of GOD_RECORDS) { const ch = Number(g.ref.match(/ (\d+):/)?.[1]); if (ch !== g.chapter) bad.push('god chapter mismatch ' + g.ref + ' ' + g.chapter) }
+  for (const c of [...JOURNEY, ...CHURCHES]) { const ch = Number(c.ref.match(/ (\d+):/)?.[1]); if (ch !== c.chapter) bad.push('card chapter mismatch ' + c.ref) }
+  for (const b of BOOKS) { const n = chaptersOf(b, CONTENT).length; if (n !== NT_CHAPTER_COUNTS[b]) bad.push('chapters ' + b + ' ' + n + ' vs ' + NT_CHAPTER_COUNTS[b]) }
+  console.log('BAD', bad.length, bad.slice(0, 20))
+})

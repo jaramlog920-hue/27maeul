@@ -1,0 +1,205 @@
+import { readFileSync, writeFileSync } from 'node:fs'
+import { CONTENT, PEOPLE } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import { PEOPLE_MORE } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/content/people-all'
+import { SCENES, ITEM_TEXT } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/content/text'
+import { isWalkable, walkableOn } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/engine/world'
+import { CANDIDATE_IDS } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/engine/romance'
+import { WORK_SHOPS } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/engine/work-day'
+import { EVENT_ACTIONS } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/render/event-life-motion'
+import { EXPANSION_PROPS, EXPANSION_VIEWS } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/render/expansion-prop-art'
+import { FURNITURE_ART } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/render/furniture-art'
+import type { Req, When, Routine } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/engine/people'
+
+const ROOT = 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/'
+const OUT = 'C:/Users/wn410/AppData/Local/Temp/claude/C--Users-wn410-OneDrive-Desktop-cloooo-twenty-seven/d753a49f-e844-4b46-a32f-19ff3982a548/scratchpad/repro/r3data/people-out.txt'
+const out: string[] = []
+const bad = (s: string) => out.push(s)
+
+// ItemId 유니언 리터럴
+const typesSrc = readFileSync(ROOT + 'src/engine/types.ts', 'utf8')
+const itemBlock = typesSrc.slice(typesSrc.indexOf('export type ItemId ='), typesSrc.indexOf('export type Minigame'))
+const ITEM_LITERALS = new Set([...itemBlock.matchAll(/'([A-Za-z]+)'/g)].map((m) => m[1]))
+const isItem = (id: string) => ITEM_LITERALS.has(id) || id in ITEM_TEXT || id.startsWith('spouse:')
+
+const NIDS = CONTENT.neighbors.map((n) => n.id)
+const NSET = new Set(NIDS)
+const MINIS = ['mash', 'timing', 'pick', 'hold', 'weave', 'order']
+const COLORS = ['warm', 'tease', 'honest', 'quiet']
+const ACTS = ['hammer', 'net', 'tea', 'book', 'bread', 'sheep', 'herb', 'weave', 'bee', 'grape', 'music', 'rest', 'wait', 'wood', 'cat', 'press', 'sort']
+const SEASONS = ['spring', 'summer', 'autumn', 'winter']
+const WEATHERS = ['sunny', 'rain', 'wind', 'fog', 'hot', 'snow', 'wet', 'dry']
+const STAGES = ['baby', 'child', 'teen', 'adult', 'elder']
+
+// work outputs
+const OUTPUTS = new Set<string>()
+for (const sh of Object.values(WORK_SHOPS))
+  for (const p of sh.prep) for (const f of sh.finish) for (const h of [['pick'], ['order']] as any) OUTPUTS.add(sh.art(p, f, h))
+
+describe('r3data people', () => {
+  it('scan', () => {
+    const data = PEOPLE
+    const evOwner = new Map<string, string>()
+    const sightIds = new Map<string, string>()
+    const propIds = new Set<string>()
+    for (const p of Object.values(data.people)) {
+      for (const e of p.events ?? []) {
+        if (evOwner.has(e.id)) bad(`[dupEvent] ${e.id} in ${evOwner.get(e.id)} and ${p.id}`)
+        evOwner.set(e.id, p.id)
+      }
+      for (const s of p.sightings ?? []) {
+        if (sightIds.has(s.id)) bad(`[dupSight] ${s.id}`)
+        sightIds.set(s.id, p.id)
+      }
+      for (const pr of p.props ?? []) {
+        if (propIds.has(pr.id)) bad(`[dupProp] ${pr.id}`)
+        propIds.add(pr.id)
+      }
+    }
+    for (const t of data.threads) for (const ph of t.phases) for (const s of ph.sightings ?? []) {
+      if (sightIds.has(s.id)) bad(`[dupSight] thread ${s.id}`)
+      sightIds.set(s.id, s.npc)
+      if (!NSET.has(s.npc)) bad(`[threadSightNpc] ${s.id} npc=${s.npc}`)
+    }
+    for (const id of evOwner.keys()) if (sightIds.has(id)) bad(`[evSightSameId] ${id}`)
+    // thread sanity
+    const threads = new Map(data.threads.map((t) => [t.id, t]))
+    for (const t of data.threads) {
+      let last = -Infinity
+      for (const ph of t.phases) { if (ph.day <= last) bad(`[threadOrder] ${t.id} day ${ph.day}`); last = ph.day }
+      if (t.end <= last) bad(`[threadEnd] ${t.id} end ${t.end} <= last phase ${last}`)
+      for (const id of Object.keys(t.phases.flatMap((ph) => Object.keys(ph.routines ?? {})).reduce((a, k) => ({ ...a, [k]: 1 }), {}))) if (!NSET.has(id)) bad(`[threadRoutineNpc] ${t.id} ${id}`)
+    }
+    const known = (id: string) => evOwner.has(id) || sightIds.has(id)
+
+    const checkWhen = (w: When | undefined, where: string) => {
+      if (!w) return
+      for (const d of w.days ?? []) if (!(Number.isInteger(d) && d >= 0 && d <= 6)) bad(`[whenDays] ${where} ${d}`)
+      for (const s of w.season ?? []) if (!SEASONS.includes(s)) bad(`[whenSeason] ${where} ${s}`)
+      for (const s of w.weather ?? []) if (!WEATHERS.includes(s)) bad(`[whenWeather] ${where} ${s}`)
+      if (w.from !== undefined && w.to !== undefined && w.from === w.to) bad(`[whenEmpty] ${where} from=to=${w.from}`)
+    }
+    const checkReq = (r: Req | undefined, owner: string, where: string) => {
+      if (!r) return
+      for (const id of [...(r.seen ?? []), ...(r.notSeen ?? []), ...(r.seenAny ?? []), ...(r.after ? [r.after.event] : [])]) if (!known(id)) bad(`[reqSeen] ${where}: ${id}`)
+      if (r.thread) {
+        const t = threads.get(r.thread.id)
+        if (!t) bad(`[reqThread] ${where}: ${r.thread.id}`)
+        else for (const ph of r.thread.phase) if (!(ph >= -1 && ph <= t.phases.length)) bad(`[reqThreadPhase] ${where}: ${r.thread.id} phase ${ph} (phases ${t.phases.length})`)
+      }
+      for (const id of r.notJoined ?? []) if (!NSET.has(id)) bad(`[reqNotJoined] ${where}: ${id}`)
+      if (r.placed && !propIds.has(r.placed)) bad(`[reqPlaced] ${where}: ${r.placed}`)
+      if (r.expItem && !OUTPUTS.has(r.expItem.item)) bad(`[reqExpItem] ${where}: ${r.expItem.item}`)
+      for (const s of r.bakerChildStage ?? []) if (!STAGES.includes(s)) bad(`[reqStage] ${where}: ${s}`)
+      for (const x of r.rel ?? []) if (!['friend', 'close', 'lover', 'spouse'].includes(x)) bad(`[reqRel] ${where}: ${x}`)
+      for (const x of r.romance ?? []) if (!['dating', 'engaged', 'married'].includes(x)) bad(`[reqRomance] ${where}: ${x}`)
+      if (r.color && !COLORS.includes(r.color)) bad(`[reqColor] ${where}: ${r.color}`)
+      const cand = (CANDIDATE_IDS as readonly string[]).includes(owner)
+      if (!cand && (r.lover || r.suitor || r.romance?.length || (r.rel && r.rel.every((x) => x === 'lover' || x === 'spouse')))) bad(`[reqLoverNonCandidate] ${where}: owner ${owner} req ${JSON.stringify({ lover: r.lover, suitor: r.suitor, romance: r.romance, rel: r.rel })}`)
+      if (r.after && !(r.after.days >= 0)) bad(`[reqAfterDays] ${where}`)
+      if (r.hearts !== undefined && !(r.hearts >= 0 && r.hearts <= 10)) bad(`[reqHearts] ${where}: ${r.hearts}`)
+    }
+    const checkRoutine = (r: Routine, owner: string, where: string) => {
+      if (r.doing && !ACTS.includes(r.doing)) bad(`[routineDoing] ${where}: ${r.doing}`)
+      if (r.with && !NSET.has(r.with)) bad(`[routineWith] ${where}: ${r.with}`)
+      if (r.with === owner) bad(`[routineWithSelf] ${where}`)
+      if (!walkableOn('village', r.at)) bad(`[routineAt] ${where}: ${r.at.x},${r.at.y}`)
+      for (const m of r.mutter ?? []) if (!m || /undefined/.test(m)) bad(`[mutterEmpty] ${where}`)
+      checkWhen(r.when, where)
+      checkReq(r.req, owner, where)
+    }
+
+    for (const p of Object.values(data.people)) {
+      if (!NSET.has(p.id)) bad(`[personNotNeighbor] ${p.id}`)
+      for (const d of p.dislikes ?? []) if (!isItem(d)) bad(`[dislikeItem] ${p.id}: ${d}`)
+      p.routines.forEach((r, i) => checkRoutine(r, p.id, `${p.id} routine#${i}`))
+      p.offDays?.routines.forEach((r, i) => checkRoutine(r, p.id, `${p.id} off#${i}`))
+      for (const l of p.lines) {
+        checkWhen(l.when, `${p.id} line ${l.id}`)
+        checkReq(l.req, p.id, `${p.id} line ${l.id}`)
+        if (l.near && !walkableOn('village', l.near)) bad(`[lineNear] ${p.id} ${l.id}`)
+        if (!l.text?.trim()) bad(`[lineEmpty] ${p.id} ${l.id}`)
+        if (![0, 1, 2, 3].includes(l.depth)) bad(`[lineDepth] ${p.id} ${l.id} ${l.depth}`)
+      }
+      for (const s of p.sightings ?? []) { checkWhen(s.when, `${p.id} saw ${s.id}`); checkReq(s.req, p.id, `${p.id} saw ${s.id}`) }
+      for (const e of p.events ?? []) {
+        const where = `${p.id} ev ${e.id}`
+        checkWhen(e.when, where)
+        checkReq(e.req, p.id, where)
+        if (e.opens !== undefined && !(e.stage < e.opens)) bad(`[evOpens] ${where}: stage ${e.stage} opens ${e.opens}`)
+        if (e.confess && !(CANDIDATE_IDS as readonly string[]).includes(p.id)) bad(`[evConfessNonCand] ${where}`)
+        for (const w of e.with ?? []) { if (!NSET.has(w)) bad(`[evWith] ${where}: ${w}`); if (w === p.id) bad(`[evWithSelf] ${where}`) }
+        if (e.keepsake && !isItem(e.keepsake)) bad(`[evKeepsake] ${where}: ${e.keepsake}`)
+        if (!walkableOn('village', e.at)) bad(`[evAt] ${where}`)
+        const outcomes = (e.choices ?? []).map((c) => c.outcome)
+        if (!e.completes && outcomes.some((o) => o !== undefined)) bad(`[evOutcomeNoCompletes] ${where}`)
+        for (const c of e.choices ?? []) {
+          if (!COLORS.includes(c.color)) bad(`[choiceColor] ${where}: ${c.color}`)
+          if (c.mini && !MINIS.includes(c.mini)) bad(`[choiceMini] ${where}: ${c.mini}`)
+          if (c.promise) {
+            if (!walkableOn('village', c.promise.at)) bad(`[promiseAt] ${where}`)
+            if (!(c.promise.from < c.promise.to)) bad(`[promiseWindow] ${where}`)
+          }
+          if (c.stayFriends && !e.confess) bad(`[stayFriendsNoConfess] ${where}`)
+          if (!c.reply?.length) bad(`[choiceNoReply] ${where} '${c.label}'`)
+          for (const l of c.reply ?? []) if (!l.text?.trim()) bad(`[replyEmpty] ${where}`)
+        }
+        for (const l of e.lines) if (!l.text?.trim()) bad(`[evLineEmpty] ${where}`)
+        if (!e.lines.length) bad(`[evNoLines] ${where}`)
+      }
+      for (const pr of p.props ?? []) {
+        const where = `${p.id} prop ${pr.id}`
+        checkReq(pr.req, p.id, where)
+        checkWhen(pr.when, where)
+        if (pr.item && !isItem(pr.item)) bad(`[propItem] ${where}: ${pr.item}`)
+        if (pr.art && !EXPANSION_PROPS[pr.art] && !EXPANSION_VIEWS[pr.art] && !(pr.item && FURNITURE_ART[pr.item])) bad(`[propArt] ${where}: ${pr.art}`)
+        if (!pr.art && pr.item && !FURNITURE_ART[pr.item]) bad(`[propItemArt] ${where}: ${pr.item}`)
+      }
+    }
+    for (const t of data.threads) t.phases.forEach((ph, pi) => {
+      for (const [id, rs] of Object.entries(ph.routines ?? {})) rs.forEach((r, i) => checkRoutine(r, id, `thread ${t.id}/${pi}/${id}#${i}`))
+      for (const s of ph.sightings ?? []) { checkWhen(s.when, `thread saw ${s.id}`); checkReq(s.req, s.npc, `thread saw ${s.id}`) }
+    })
+
+    // people-more
+    for (const id of Object.keys(PEOPLE_MORE.lines)) if (!data.people[id]) bad(`[moreLinesOwner] ${id}`)
+    for (const id of Object.keys(PEOPLE_MORE.events)) if (!data.people[id]) bad(`[moreEventsOwner] ${id}`)
+    for (const [eid, m] of Object.entries(PEOPLE_MORE.motions)) {
+      if (!evOwner.has(eid)) bad(`[motionNoEvent] ${eid}`)
+      if (!(EVENT_ACTIONS as readonly string[]).includes(m.npc)) bad(`[motionNpcAction] ${eid}: ${m.npc}`)
+      if (m.player && !(EVENT_ACTIONS as readonly string[]).includes(m.player)) bad(`[motionPlayerAction] ${eid}: ${m.player}`)
+    }
+    for (const [sid, sc] of Object.entries(PEOPLE_MORE.scenes)) {
+      const base = sid.replace(/:friend$/, '')
+      if (!SCENES[base]) bad(`[moreSceneNoBase] ${sid}`)
+      for (const l of sc.lines) if (l.speaker !== 'narration' && !NSET.has(l.speaker)) bad(`[moreSceneSpeaker] ${sid}: ${l.speaker}`)
+    }
+    for (const [id, ls] of Object.entries(PEOPLE_MORE.closeFriend)) {
+      if (!NSET.has(id)) bad(`[closeFriendOwner] ${id}`)
+      for (const l of ls) if (l.speaker !== 'narration' && !NSET.has(l.speaker)) bad(`[closeFriendSpeaker] ${id}: ${l.speaker}`)
+    }
+
+    // neighbors.json
+    const seen = new Set<string>()
+    const pdis = (id: string) => data.people[id]?.dislikes ?? []
+    for (const n of CONTENT.neighbors) {
+      if (seen.has(n.id)) bad(`[dupNeighbor] ${n.id}`)
+      seen.add(n.id)
+      for (const it of [...n.likes, ...(n.dislikes ?? []), ...Object.keys(n.help.needs ?? {}), ...Object.keys(n.help.gives)]) {
+        if (!isItem(it)) bad(`[nbItem] ${n.id}: ${it}`)
+        else if (!ITEM_TEXT[it as never]) bad(`[nbItemNoText] ${n.id}: ${it}`)
+      }
+      for (const l of n.likes) if ((n.dislikes ?? []).includes(l) || pdis(n.id).includes(l)) bad(`[likeAndDislike] ${n.id}: ${l}`)
+      if (!MINIS.includes(n.help.minigame)) bad(`[nbMini] ${n.id}`)
+      let last = -1
+      for (const s of n.schedule) {
+        if (s.from <= last) bad(`[nbSchedOrder] ${n.id} ${s.from}`)
+        last = s.from
+        if (s.tile && !walkableOn('village', s.tile)) bad(`[nbSchedTile] ${n.id} ${s.from} ${s.tile.x},${s.tile.y}`)
+        if (s.wet && !walkableOn('village', s.wet)) bad(`[nbSchedWet] ${n.id} ${s.from} ${s.wet.x},${s.wet.y}`)
+      }
+      if (n.family && !NSET.has(n.family)) out.push(`[info nbFamily not neighbor] ${n.id}: ${n.family}`)
+      if (!isWalkable(n.door)) out.push(`[info nbDoorNotWalkable] ${n.id} ${n.door.x},${n.door.y}`)
+    }
+    writeFileSync(OUT, out.join('\n') + `\n-- ${out.length} lines; items ${ITEM_LITERALS.size}; outputs ${[...OUTPUTS].join(',')}\n`)
+  })
+})

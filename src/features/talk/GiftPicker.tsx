@@ -1,14 +1,15 @@
 import { neighborById } from '../../content/catalog'
 import { itemName, T } from '../../content/text'
 import { GIFTABLE } from '../../engine/game'
+import {weddingGiftsFor} from '../../engine/wedding-attire'
 import { ItemIcon } from '../../shared/ItemIcon'
 import { useGame } from '../../store/game-store'
 
 export function GiftPicker({ neighborId }: { neighborId: string }) {
-  const inv = useGame((s) => s.game.inv)
+  const game = useGame((s) => s.game),inv=game.inv
   const { gift, closeModal } = useGame.getState()
   const def = neighborById(neighborId)
-  const items = GIFTABLE.filter((i) => (inv[i] ?? 0) > 0)
+  const items = [...(game.gifted.includes(neighborId)?[]:GIFTABLE.filter((i) => (inv[i] ?? 0) > 0)),...weddingGiftsFor(game,neighborId)]
   return (
     <div className="dialog" role="dialog" aria-label={T.ui.giftPick}>
       <h2>{T.ui.giftPick}</h2>

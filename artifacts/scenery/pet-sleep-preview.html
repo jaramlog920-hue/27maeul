@@ -1,0 +1,24 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><title>강아지 잠자리 확인</title>
+<style>body{margin:24px;background:#eee4cc;color:#44352a;font:16px system-ui}main{display:flex;gap:20px;flex-wrap:wrap}canvas{width:512px;max-width:100%;image-rendering:pixelated;border:1px solid #987b55}section{max-width:512px}h1{font-size:23px}</style>
+<h1>강아지 잠자리 — 게임 렌더러 확인</h1><p>검증용 임시 상태이며 게임 저장을 읽거나 쓰지 않습니다.</p><main></main>
+<script type="module">
+import {CONTENT} from '/src/content/catalog.ts';
+import {legacyGame} from '/src/engine/growth-test-support.ts';
+import {syncHome} from '/src/engine/game.ts';
+import {adopt,petHomeGoal} from '/src/engine/companion.ts';
+import {petStayGoal} from '/src/engine/pet-life.ts';
+import {setSpace} from '/src/engine/space-life.ts';
+import {HOME_ENTRY,PET_HOME} from '/src/engine/world.ts';
+import {createRenderer} from '/src/render/renderer.ts';
+const initial=legacyGame(CONTENT);
+const dog={...adopt('dog','보리',1,PET_HOME),stay:true,ways:{curious:0,distance:1,energy:0}};
+for(const furnished of [false,true]){
+ let game={...initial,scenes:[],npcs:{},clock:{day:12,minute:13*60+5},companion:dog,player:{...initial.player,...HOME_ENTRY,path:[]},idle:{...initial.idle,seconds:0},spaces:[],room:initial.room.filter(f=>!['cushion','pillows','mat','rug','roundRug','purpleRug'].includes(f.item))};
+ if(furnished){game={...game,room:[...game.room,{item:'cushion',x:22,y:113}]};syncHome(game);game=setSpace(game,game.room.at(-1),'pet');if(!game)throw Error('쉼터 지정 실패');}
+ syncHome(game);const at=petStayGoal(game,dog,new Set(),HOME_ENTRY);game={...game,companion:{...dog,...at,path:[]}};
+ const section=document.createElement('section'),title=document.createElement('h2'),canvas=document.createElement('canvas');
+ title.textContent=furnished?'설치한 동물 쉼터 사용':'가구 없음 — 바닥에서 잠';canvas.width=512;canvas.height=640;
+ const renderer=createRenderer(canvas.getContext('2d'),CONTENT);renderer.scale=2;renderer.zoom=2;renderer.look={x:21,y:112};renderer.draw(game,8,0);
+ section.append(title,canvas);document.querySelector('main').append(section);
+}
+</script></html>

@@ -1,0 +1,63 @@
+{
+  "date": "2026-10-16T23:48:23.802Z",
+  "batch": "shared-background-remainder",
+  "connected": 676,
+  "registrationPending": 0,
+  "ledgers": [
+    {
+      "ledger": "shared-background-visual-review.json",
+      "images": 354,
+      "invalidImages": [],
+      "samples": 118,
+      "visuallyReviewed": 0,
+      "remainingIds": null
+    },
+    {
+      "ledger": "shared-background-sites-review.json",
+      "images": 108,
+      "invalidImages": [],
+      "samples": 36,
+      "visuallyReviewed": 36,
+      "remainingIds": null
+    },
+    {
+      "ledger": "shared-return-locations-review.json",
+      "images": 208,
+      "invalidImages": [],
+      "samples": 52,
+      "visuallyReviewed": 52,
+      "remainingIds": null
+    },
+    {
+      "ledger": "shared-chapter-layout-review.json",
+      "images": 24,
+      "invalidImages": [],
+      "samples": 8,
+      "visuallyReviewed": 0,
+      "remainingIds": null
+    },
+    {
+      "ledger": "shared-live-thumbnails-review.json",
+      "images": 118,
+      "invalidImages": [],
+      "samples": 118,
+      "visuallyReviewed": 118,
+      "remainingIds": []
+    }
+  ],
+  "liveThumbnailReviewComplete": true,
+  "locationIntegration": {
+    "tests": 417,
+    "passed": true,
+    "log": "artifacts/scenery/shared-final-location-matrix-tests.log",
+    "scope": "All 118 IDs retain real village room owners, newland archive/furniture and completed-only housing; every returning partner uses matching same-day tea/walk/sunset provenance. Local DOM/canvas tests, not browser approval."
+  },
+  "build": {
+    "passed": true,
+    "log": "artifacts/scenery/shared-final-review-build.log"
+  },
+  "finalApproved": false,
+  "remaining": [
+    "Actual browser/UI validation remains blocked by the saved permission/managed policy gate. No new browser retry or alternate route was attempted."
+  ]
+}

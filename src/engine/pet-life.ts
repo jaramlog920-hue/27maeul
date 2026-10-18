@@ -1,3 +1,4 @@
+import { petFurniturePlace } from './family-furniture'
 // 반려동물이 마을에서 사는 모습 (계획 16 작업 21): 집에서의 습관, 함께 걸은 곳의 기억, 이웃·아이와 마주침.
 // 모든 것은 자세·이동·작은 소리로만 그린다(속마음 설명 없음). 보상·재료·관계 점수·벌이 없고, 돌보지 않아도 달라지는 것이 없다.
 // 필사·책상·서고와 아무 관계도 없다 — 이 파일은 필사 쪽 어떤 상태도 읽지 않는다.
@@ -66,15 +67,23 @@ function sceneBusy(s: GameState): boolean {
 /** 집에 둔 동물이 지금 가고 싶은 칸 — 저녁에 친숙해진 동물은 기록자 곁, 아니면 습관 자리. 갈 수 없는 자리는 안전한 다른 칸 */
 export function petStayGoal(s: GameState, c: Companion, occupied: ReadonlySet<string>, now: Tile): Tile {
   const m = s.clock.minute
+  const habit = petHabit(c, s.clock.day, m, weatherOf(s.clock.day))
+  const installed = petFurniturePlace(s.room, m, habit.pose, occupied)
+  if (installed) return { x: installed.x, y: installed.y }
+  // 잠은 이용자가 실제로 설치하고 동물 쉼터로 정한 가구에서. 없거나 막혔으면 안전한 바닥으로 간다.
+  if (habit.pose === 'nap') {
+    const bed = petSpaceTile(s, occupied)
+    if (bed) return bed
+  }
   if (isHome(now) && m >= 18 * 60 && m < 22 * 60 && comesToPlayer(c, s.clock.day) && s.player.path.length === 0 && s.idle.seconds > 3) {
     for (const d of ADJ) {
       const t = { x: now.x + d.x, y: now.y + d.y }
       if (petSpotSafe(t, occupied)) return t
     }
   }
-  const spot = petHabit(c, s.clock.day, m, weatherOf(s.clock.day)).spot
-  // 동물 쉼터를 정해 뒀으면 낮잠·놀이 자리는 거기로 (작업 23) — 쉼터가 쉬고 있거나 막히면 기존 자리
-  if (spot === 'blanket' || spot === 'toy') {
+  const spot = habit.spot
+  // 놀이도 동물 쉼터가 있으면 그곳으로 — 쉼터가 쉬고 있거나 막히면 기존 자리
+  if (spot === 'toy') {
     const corner = petSpaceTile(s, occupied)
     if (corner) return corner
   }

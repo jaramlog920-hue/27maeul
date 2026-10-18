@@ -1,6 +1,8 @@
 import { TOPS, type FullAvatar } from '../engine/avatar'
 import type { Facing } from '../engine/types'
 import { sideHairDetails } from './side-hair-details'
+import {copyOutfitAt} from '../engine/copy-outfits'
+import {copyOutfitDetails} from './copy-outfit-details'
 
 const dot = (rows: string[], x: number, y: number, c: string) => {
   if (rows[y] && x >= 0 && x < rows[y].length) rows[y] = rows[y].slice(0, x) + c + rows[y].slice(x + 1)
@@ -53,6 +55,20 @@ export function avatarDetails(rows: string[], facing: Facing, a: FullAvatar, bli
   ][a.bottom] ?? ['..kDddDk..', '.kDddddDk.']
   rows[11] = bottoms[0]
   rows[12] = bottoms[1]
+  // Newly added everyday tops keep the old option indices and the separately
+  // selected trousers/skirt. Hair, accessories and native hands are applied normally.
+  if(['sageSet','ivorySet','ribbonSet','roseSet'].includes(pattern)){
+    for(let y=7;y<=10;y++)for(let x=0;x<10;x++){
+      const ch=rows[y][x]
+      if(!'rRlb'.includes(ch))continue
+      let ink=ch==='R'?'R':'r'
+      if(y===10)ink='l'
+      else if(pattern==='sageSet'&&x>=3&&x<=6)ink='l'
+      else if(pattern==='ivorySet'&&(x===4||x===5))ink='l'
+      else if((pattern==='ribbonSet'||pattern==='roseSet')&&y===8&&x>=3&&x<=6)ink='y'
+      dot(rows,x,y,ink)
+    }
+  }
   if (pattern === 'apron') {
     if (!back) {
       for (const y of [7, 8]) for (const x of side ? [4] : [4, 5]) cloth(x, y)
@@ -62,6 +78,8 @@ export function avatarDetails(rows: string[], facing: Facing, a: FullAvatar, bli
     } else { dot(rows, 4, 9, 'l'); dot(rows, 5, 9, 'l') }
   }
 
+  const collectible=copyOutfitAt(a.top)
+  if(collectible)copyOutfitDetails(rows,facing,collectible)
   // 뒷머리. 끝선과 묶는 위치가 서로 달라 색 없이도 구분된다.
   const sides = side ? [[0, 1]] : [[0, 1], [9, 8]]
   const hair = (x: number, y: number, c = 'h') => dot(rows, x, y, c)

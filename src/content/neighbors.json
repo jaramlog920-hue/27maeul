@@ -1463,9 +1463,9 @@
       "honey"
     ],
     "help": {
-      "minigame": "mash",
+      "minigame": "order",
       "gives": {
-        "bread": 1
+        "herbTea": 1
       }
     },
     "romanceable": true,

@@ -8,9 +8,27 @@ import { settleGen, withPairs } from '../../engine/gen-settle'
 import { loadGame, saveGame, setActiveSlot } from '../../engine/save'
 import { useGame } from '../../store/game-store'
 import { Settings } from './Settings'
+import { newGame as freshGame } from '../../engine/game'
+import { gameAtChapters } from '../../engine/growth-test-support'
 
 beforeEach(() => { localStorage.clear(); setActiveSlot('1') })
 afterEach(() => setActiveSlot('1'))
+
+it('주민 나이는 자율생활 해금 전 그대로이며 해금 후 설정과 저장이 함께 바뀐다', () => {
+  const base = freshGame(CONTENT)
+  useGame.getState().load({ ...base, gen: newGenState(CONTENT, 7, 1) })
+  render(<Settings />)
+  fireEvent.click(screen.getByRole('tab', { name: '게임' }))
+  const group = within(screen.getByRole('group', { name: '주민 나이' }))
+  expect(group.getByRole('button', { name: '나이 듦' })).toBeDisabled()
+  expect(group.getByRole('button', { name: '그대로' })).toHaveAttribute('aria-pressed', 'true')
+  act(() => useGame.getState().load({ ...useGame.getState().game, progress: gameAtChapters(CONTENT, 75).progress }))
+  expect(group.getByRole('button', { name: '나이 듦' })).toBeEnabled()
+  fireEvent.click(group.getByRole('button', { name: '그대로' }))
+  expect(loadGame(CONTENT)!.flags.ageless).toBe(1)
+  fireEvent.click(group.getByRole('button', { name: '나이 듦' }))
+  expect(loadGame(CONTENT)!.flags.ageless).toBeUndefined()
+})
 
 it('설정 클릭은 현재 저장 칸에만 남고 꺼 둔 기간의 관계 사건을 재개 때 몰아 처리하지 않는다', () => {
   const base = newGame(CONTENT)

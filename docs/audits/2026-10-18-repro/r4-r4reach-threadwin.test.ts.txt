@@ -1,0 +1,36 @@
+import { writeFileSync } from 'node:fs'
+import '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import { peopleData, whenMatches, threadPhase, type When, type Req } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/engine/people'
+import { weatherOf } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/engine/calendar'
+import { seasonOf } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/engine/clock'
+
+const OUT = 'C:/Users/wn410/AppData/Local/Temp/claude/C--Users-wn410-OneDrive-Desktop-cloooo-twenty-seven/d753a49f-e844-4b46-a32f-19ff3982a548/scratchpad/repro/r4reach/threadwin-out.txt'
+describe('thread windows', () => {
+  it('scan', () => {
+    const d = peopleData()
+    const out: string[] = []
+    out.push('weather d1..40: ' + Array.from({ length: 40 }, (_, i) => `${i + 1}:${weatherOf(i + 1)}`).join(' '))
+    const check = (id: string, when: When | undefined, thread: string, phases: number[], stage?: number) => {
+      const t = d.threads.find((x) => x.id === thread)!
+      const days: number[] = []
+      for (let day = 1; day <= 400; day++) {
+        if (!phases.includes(threadPhase(t, day))) continue
+        let ok = false
+        for (let m = 360; m < 1560 && !ok; m += 5) if (whenMatches(when, { day, minute: m % 1440, weather: weatherOf(day), season: seasonOf(day) })) ok = true
+        if (ok) days.push(day)
+      }
+      out.push(`${id} stage ${stage ?? '-'} thread ${thread} phases ${phases}: possible days ${days.length > 12 ? days.slice(0, 6).join(',') + ',…(' + days.length + ')' : days.join(',') || 'NONE'}`)
+    }
+    for (const p of Object.values(d.people)) {
+      for (const e of p.events ?? []) if (e.req?.thread) check(e.id, e.when, e.req.thread.id, e.req.thread.phase, e.stage)
+      for (const s of p.sightings ?? []) if (s.req?.thread) check(s.id, s.when, s.req.thread.id, s.req.thread.phase, s.stage)
+      for (const l of p.lines) if (l.req?.thread) check('line ' + l.id, l.when, l.req.thread.id, l.req.thread.phase)
+      p.routines.forEach((r, i) => { if (r.req?.thread) check(`routine ${p.id}#${i}`, r.when, r.req.thread.id, r.req.thread.phase) })
+    }
+    d.threads.forEach((t) => t.phases.forEach((ph, i) => {
+      for (const s of ph.sightings ?? []) check(`thread-sighting ${s.id} (${s.npc})`, s.when, t.id, [i], s.stage)
+      for (const [npc, rs] of Object.entries(ph.routines ?? {})) rs.forEach((r, k) => check(`thread-routine ${t.id}/${i}/${npc}#${k}`, r.when, t.id, [i]))
+    }))
+    writeFileSync(OUT, out.join('\n'))
+  })
+})

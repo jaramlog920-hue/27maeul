@@ -1,0 +1,453 @@
+{
+  "status": "4개 전체 제작·시각 확인·검사·빌드 완료",
+  "entries": [
+    {
+      "id": "ev:romance:merchant:lateReturn",
+      "title": "밀린 귀가 · 오스카",
+      "group": "current",
+      "basis": "현재 플레이어 위치와 발생 조건 확인 필요",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 2,
+      "originalTier": "dialogue",
+      "original": {
+        "title": "밀린 귀가",
+        "lines": [
+          {
+            "speaker": "merchant",
+            "text": "다음 길에 큰 주문이 붙었어. 돌아오는 날이 한 장날 밀릴 것 같아."
+          },
+          {
+            "speaker": "merchant",
+            "text": "…먼저 말하는 거야. 그래서, 돌아오는 날 저녁은 뭐 할까?"
+          }
+        ],
+        "choices": [
+          {
+            "label": "저녁 약속을 새로 정한다",
+            "reply": [
+              {
+                "speaker": "merchant",
+                "text": "그날 저녁은 내가 찻집 자리 잡아 둘게. 일정표에도 고쳐 적고."
+              }
+            ]
+          },
+          {
+            "label": "귀가 날을 먼저 적자",
+            "reply": [
+              {
+                "speaker": "merchant",
+                "text": "…그게 맞다. 이번 건 받고, 다음부턴 돌아올 날 먼저 적고 주문 받을게."
+              }
+            ]
+          }
+        ]
+      },
+      "trigger": {
+        "id": "romance:merchant:lateReturn",
+        "title": "밀린 귀가",
+        "stage": 3,
+        "at": {
+          "x": 21,
+          "y": 14
+        },
+        "when": {
+          "from": 600,
+          "to": 900,
+          "days": [
+            0
+          ]
+        },
+        "req": {
+          "rel": [
+            "spouse"
+          ],
+          "seen": [
+            "merchant:short:spouseHabit"
+          ]
+        },
+        "gain": 3,
+        "lines": [
+          {
+            "speaker": "merchant",
+            "text": "다음 길에 큰 주문이 붙었어. 돌아오는 날이 한 장날 밀릴 것 같아."
+          },
+          {
+            "speaker": "merchant",
+            "text": "…먼저 말하는 거야. 그래서, 돌아오는 날 저녁은 뭐 할까?"
+          }
+        ],
+        "choices": [
+          {
+            "label": "저녁 약속을 새로 정한다",
+            "color": "warm",
+            "memory": "lateReturn",
+            "reply": [
+              {
+                "speaker": "merchant",
+                "text": "그날 저녁은 내가 찻집 자리 잡아 둘게. 일정표에도 고쳐 적고."
+              }
+            ]
+          },
+          {
+            "label": "귀가 날을 먼저 적자",
+            "color": "honest",
+            "memory": "lateReturn",
+            "reply": [
+              {
+                "speaker": "merchant",
+                "text": "…그게 맞다. 이번 건 받고, 다음부턴 돌아올 날 먼저 적고 주문 받을게."
+              }
+            ]
+          }
+        ],
+        "motion": {
+          "npc": "inspectWork",
+          "player": "nod"
+        }
+      }
+    },
+    {
+      "id": "ev:romance:postman:noParcel",
+      "title": "오늘은 빈손이에요 · 마일로",
+      "group": "current",
+      "basis": "현재 플레이어 위치와 발생 조건 확인 필요",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 2,
+      "originalTier": "illustration",
+      "original": {
+        "title": "오늘은 빈손이에요",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "저녁. 편지 나르는 이웃이 가방 덮개를 열지도 않고 곧장 이쪽으로 걸어온다."
+          },
+          {
+            "speaker": "postman",
+            "text": "전할 건 없어요. 그냥 인사하러 왔어요. 이상하게 더 긴장되네요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "오늘 하루를 이야기한다",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "그 얘기, 수첩에 안 적어도 기억할게요. 다음에 이어서 물어봐도 되죠?"
+              }
+            ]
+          },
+          {
+            "label": "길에서 본 게 있는지 묻는다",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "언덕 길가에 노란 꽃이 피었어요. 배달할 땐 못 보는데, 오늘은 보였어요."
+              }
+            ]
+          }
+        ]
+      },
+      "trigger": {
+        "id": "romance:postman:noParcel",
+        "title": "오늘은 빈손이에요",
+        "stage": 4,
+        "at": {
+          "x": 27,
+          "y": 14
+        },
+        "when": {
+          "from": 1020,
+          "to": 1080,
+          "weather": [
+            "dry"
+          ]
+        },
+        "req": {
+          "seen": [
+            "romance:postman:blankLine"
+          ],
+          "after": {
+            "event": "romance:postman:blankLine",
+            "days": 3
+          }
+        },
+        "gain": 6,
+        "opens": 5,
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "저녁. 편지 나르는 이웃이 가방 덮개를 열지도 않고 곧장 이쪽으로 걸어온다."
+          },
+          {
+            "speaker": "postman",
+            "text": "전할 건 없어요. 그냥 인사하러 왔어요. 이상하게 더 긴장되네요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "오늘 하루를 이야기한다",
+            "color": "warm",
+            "memory": "noParcel",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "그 얘기, 수첩에 안 적어도 기억할게요. 다음에 이어서 물어봐도 되죠?"
+              }
+            ]
+          },
+          {
+            "label": "길에서 본 게 있는지 묻는다",
+            "color": "honest",
+            "memory": "noParcel",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "언덕 길가에 노란 꽃이 피었어요. 배달할 땐 못 보는데, 오늘은 보였어요."
+              }
+            ]
+          }
+        ],
+        "motion": {
+          "npc": "showWork",
+          "player": "inspectWork"
+        }
+      }
+    },
+    {
+      "id": "ev:romance:merchant:noSale",
+      "title": "오늘은 파는 물건이 없어 · 오스카",
+      "group": "current",
+      "basis": "현재 플레이어 위치와 발생 조건 확인 필요",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 3,
+      "originalTier": "illustration",
+      "original": {
+        "title": "오늘은 파는 물건이 없어",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "장 마감 무렵. 상인이 좌판 위 물건을 하나씩 들어 설명하다가, 들고 있던 공책을 덮는다."
+          },
+          {
+            "speaker": "merchant",
+            "text": "이 천은 남쪽 마을에서 짠 건데… 아, 나 또 물건 얘기만 했네."
+          },
+          {
+            "speaker": "merchant",
+            "text": "오늘 오는 길에 있었던 얘기, 들어 볼래?"
+          }
+        ],
+        "choices": [
+          {
+            "label": "길 이야기를 청한다",
+            "reply": [
+              {
+                "speaker": "merchant",
+                "text": "강 건너는 다리 위에서 해 뜨는 걸 봤어. 짐 내려놓고 한참 서 있었지. 오늘 제일 좋았던 게 그거야."
+              }
+            ]
+          },
+          {
+            "label": "내 하루를 이야기한다",
+            "reply": [
+              {
+                "speaker": "merchant",
+                "text": "그래서 그다음엔? …아, 벌써 문 닫을 시간이네. 다음 장날에 이어서 들려줘. 내가 먼저 물어볼게."
+              }
+            ]
+          },
+          {
+            "label": "물건 얘기도 괜찮다고 한다",
+            "reply": [
+              {
+                "speaker": "merchant",
+                "text": "괜찮다고? …그래도 오늘은 길 얘기 할래. 물건 얘기는 장날마다 하니까."
+              }
+            ]
+          }
+        ]
+      },
+      "trigger": {
+        "id": "romance:merchant:noSale",
+        "title": "오늘은 파는 물건이 없어",
+        "stage": 3,
+        "at": {
+          "x": 21,
+          "y": 14
+        },
+        "when": {
+          "from": 1050,
+          "to": 1080,
+          "days": [
+            0
+          ]
+        },
+        "req": {
+          "seen": [
+            "merchant:story:2"
+          ]
+        },
+        "gain": 6,
+        "opens": 4,
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "장 마감 무렵. 상인이 좌판 위 물건을 하나씩 들어 설명하다가, 들고 있던 공책을 덮는다."
+          },
+          {
+            "speaker": "merchant",
+            "text": "이 천은 남쪽 마을에서 짠 건데… 아, 나 또 물건 얘기만 했네."
+          },
+          {
+            "speaker": "merchant",
+            "text": "오늘 오는 길에 있었던 얘기, 들어 볼래?"
+          }
+        ],
+        "choices": [
+          {
+            "label": "길 이야기를 청한다",
+            "color": "quiet",
+            "memory": "roadTale",
+            "reply": [
+              {
+                "speaker": "merchant",
+                "text": "강 건너는 다리 위에서 해 뜨는 걸 봤어. 짐 내려놓고 한참 서 있었지. 오늘 제일 좋았던 게 그거야."
+              }
+            ]
+          },
+          {
+            "label": "내 하루를 이야기한다",
+            "color": "warm",
+            "memory": "myDay",
+            "reply": [
+              {
+                "speaker": "merchant",
+                "text": "그래서 그다음엔? …아, 벌써 문 닫을 시간이네. 다음 장날에 이어서 들려줘. 내가 먼저 물어볼게."
+              }
+            ]
+          },
+          {
+            "label": "물건 얘기도 괜찮다고 한다",
+            "color": "honest",
+            "memory": "roadTale",
+            "reply": [
+              {
+                "speaker": "merchant",
+                "text": "괜찮다고? …그래도 오늘은 길 얘기 할래. 물건 얘기는 장날마다 하니까."
+              }
+            ]
+          }
+        ],
+        "motion": {
+          "npc": "showWork",
+          "player": "inspectWork"
+        }
+      }
+    },
+    {
+      "id": "ev:romance:postman:ownMessage",
+      "title": "직접 전할 말 · 마일로",
+      "group": "current",
+      "basis": "현재 플레이어 위치와 발생 조건 확인 필요",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 2,
+      "originalTier": "illustration",
+      "original": {
+        "title": "직접 전할 말",
+        "lines": [
+          {
+            "speaker": "postman",
+            "text": "이 말은 다른 사람에게 부탁하면 안 될 것 같아서요. 당신과 보내는 시간을 기다렸어요."
+          },
+          {
+            "speaker": "postman",
+            "text": "적어 온 게 있는데… 앉아서 들어도 되고, 걸으면서 들어도 돼요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "끝까지 듣는다",
+            "reply": [
+              {
+                "speaker": "narration",
+                "text": "이웃은 종이를 보지 않고 말했다. 몇 번 멈췄지만, 끝까지 말했다."
+              }
+            ]
+          },
+          {
+            "label": "걸으면서 듣는다",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "걸으면 말이 덜 막혀요. 배달할 때처럼요. …이건 배달이 아니지만요."
+              }
+            ]
+          }
+        ]
+      },
+      "trigger": {
+        "id": "romance:postman:ownMessage",
+        "title": "직접 전할 말",
+        "stage": 4,
+        "at": {
+          "x": 27,
+          "y": 14
+        },
+        "when": {
+          "from": 1020,
+          "to": 1080,
+          "weather": [
+            "dry"
+          ]
+        },
+        "req": {
+          "lover": true
+        },
+        "gain": 5,
+        "lines": [
+          {
+            "speaker": "postman",
+            "text": "이 말은 다른 사람에게 부탁하면 안 될 것 같아서요. 당신과 보내는 시간을 기다렸어요."
+          },
+          {
+            "speaker": "postman",
+            "text": "적어 온 게 있는데… 앉아서 들어도 되고, 걸으면서 들어도 돼요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "끝까지 듣는다",
+            "color": "quiet",
+            "memory": "ownMessage",
+            "reply": [
+              {
+                "speaker": "narration",
+                "text": "이웃은 종이를 보지 않고 말했다. 몇 번 멈췄지만, 끝까지 말했다."
+              }
+            ]
+          },
+          {
+            "label": "걸으면서 듣는다",
+            "color": "warm",
+            "memory": "ownMessage",
+            "reply": [
+              {
+                "speaker": "postman",
+                "text": "걸으면 말이 덜 막혀요. 배달할 때처럼요. …이건 배달이 아니지만요."
+              }
+            ]
+          }
+        ],
+        "motion": {
+          "npc": "showWork",
+          "player": "inspectWork"
+        }
+      }
+    }
+  ],
+  "verification": "광장 추가 배정 4개 전체 완료. 밀린 귀가는 낮 장터의 귀가 일정표와 원래 선택에 맞춘 저녁 약속/귀가 날 표기이며 미래 찻집 만남은 미리 그리지 않는다. 오늘은 파는 물건이 없어는 장 마감 빛·접힌 천·원래 첫 서술에서 이미 덮은 공책, 세 선택 모두 지금 광장에서 길 이야기를 나누며 과거 다리 일출을 현재 장소로 바꾸지 않는다. 오늘은 빈손이에요는 저녁 광장으로 다가오는 마일로, 끝까지 닫힌 가방과 빈손, 실제 전달물 없음. 직접 전할 말은 둘째 대사에서 낮게 든 개인 쪽지, 끝까지 듣기는 상대를 보며 말하기, 걸으며 듣기는 두 사람의 기본 걷기 자세·얼굴 방향으로 표시. 실제 상인 21,14 / 배달부 27,14와 시간 조건 대조. 원래 18단계와 걷기 시작·중간·끝 6컷을 기본/실제 사용자 외형 각각 24컷, 휴대폰 4컷씩·통합 미리보기·썸네일에서 확인. 얼굴·몸통·발 접지와 가림 포함 관련 검사 3,652개, 사전 검사·TypeScript·전체 빌드 통과. 게임·미리보기·썸네일 같은 렌더러, 원래 선택·보상·시간·호감도·해금과 미리보기 저장/앨범 보호 유지. 전체 529개 연결/147개 미제작. 다음 서고·배움터 추가 7개 전체→현재 위치 확인 대기 140개. 모음 http://localhost:5173/assets/events/index.html?background=square-new"
+}

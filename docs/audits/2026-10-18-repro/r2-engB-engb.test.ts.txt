@@ -1,0 +1,53 @@
+import { establishedGame as newGame, gameAtChapters } from '/src/engine/growth-test-support'
+import { CONTENT, PEOPLE } from '/src/content/catalog'
+import type { GameState } from '/src/engine/game'
+import { createClub, dissolveClub, type ClubInput } from '/src/engine/clubs'
+import { deserialize, serialize } from '/src/engine/save'
+import { canCook, startCook, cookOf, knownDish } from '/src/engine/cooking'
+import { featureAccess } from '/src/engine/feature-rules'
+import { count } from '/src/engine/items'
+
+function ready(day = 2, minute = 480): GameState {
+  const s = newGame(CONTENT)
+  return { ...s, clock: { day, minute }, scenes: [], notebook: { ...s.notebook, met: CONTENT.neighbors.map((n) => n.id) }, flags: { ...s.flags, villageLevel: 10, ...Object.fromEntries(CONTENT.neighbors.map((n) => [`movedIn:${n.id}`, 1])) }, life: { ...s.life, seen: Object.values(PEOPLE.people).flatMap((p) => (p.events ?? []).map((e) => e.id)) } }
+}
+
+describe('clubs: dissolved club pushes newest active club out on reload', () => {
+  it('4th club lost after save/load', () => {
+    let s = ready()
+    const mk = (name: string, weekday: number, members: string[]) => {
+      const r = createClub(s, { name, place: 'hallTable', members, weekday, slot: 'morning', activity: 'tea', alt: 'hallTable' } as ClubInput, CONTENT)
+      expect(r.error).toBeUndefined()
+      s = r.state
+    }
+    mk('하나', 2, ['baker'])
+    mk('둘', 3, ['smith'])
+    mk('셋', 4, ['weaver'])
+    s = dissolveClub(s, 'club:1')
+    mk('넷', 5, ['fisher'])
+    const activeBefore = s.clubs.filter((c) => c.active).map((c) => c.id)
+    expect(activeBefore).toEqual(['club:2', 'club:3', 'club:4'])
+    const loaded = deserialize(serialize(s), CONTENT)!
+    const activeAfter = loaded.clubs.filter((c) => c.active).map((c) => c.id)
+    console.log('before', activeBefore, 'after', activeAfter, 'all after', loaded.clubs.map((c) => c.id + ':' + c.active))
+    expect(activeAfter).toEqual(['club:2', 'club:3'])
+    // the planned appointment for club:4 remains but club is gone
+    console.log('appts for club:4 after load', loaded.plans.appts.filter((a) => a.clubId === 'club:4').map((a) => a.id + ':' + a.state))
+  })
+})
+
+describe('cooking: preview herbTea run is dropped on reload', () => {
+  it('ingredients spent, run gone', () => {
+    let s = gameAtChapters(CONTENT, 15)
+    expect(featureAccess(s, 'cooking')).toBe('preview')
+    s = { ...s, needs: { ...s.needs, energy: 100 } as GameState['needs'], inv: { ...s.inv, herb: 1, water: 1 } }
+    expect(knownDish(s, 'herbTea')).toBe(false)
+    expect(canCook(s, 'herbTea')).toBeNull()
+    const started = startCook(s, 'herbTea', () => 0.5)
+    expect(cookOf(started).run?.dish).toBe('herbTea')
+    expect(count(started.inv, 'herb')).toBe(0)
+    const loaded = deserialize(serialize(started), CONTENT)!
+    console.log('run after load', cookOf(loaded).run, 'herb', count(loaded.inv, 'herb'), 'water', count(loaded.inv, 'water'))
+    expect(cookOf(loaded).run).toBeUndefined()
+  })
+})

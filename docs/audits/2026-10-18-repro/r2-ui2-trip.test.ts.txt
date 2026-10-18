@@ -1,0 +1,37 @@
+import { describe, expect, it } from 'vitest'
+import { CONTENT } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import { newGame, goToSleep } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/game'
+import { useGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/store/game-store'
+
+function withFarewell() {
+  const g = newGame(CONTENT)
+  const gen = g.gen ?? (goToSleep(g, CONTENT).gen)
+  return { ...g, coins: 1000, gen: { ...gen!, retired: { baker: { heir: 'x', day: 1, moved: 1 } } } } as typeof g
+}
+
+describe('ui2 trip return', () => {
+  it('잠자리로 자면 이사 편지 창이 뜬다 (대조)', () => {
+    const g = withFarewell()
+    useGame.getState().load(g)
+    useGame.setState({ modal: { kind: 'review', pieceId: null } })
+    useGame.getState().sleep()
+    const s = useGame.getState()
+    console.log('sleep: farewellPopup=', !!s.game.farewellPopup, 'modal=', s.modal?.kind)
+    expect(s.modal?.kind).toBe('farewell')
+  })
+  it('여행에서 돌아온 아침에는 이사 편지 창이 뜨지 않는다', () => {
+    const g = withFarewell()
+    useGame.getState().load(g)
+    useGame.setState({ modal: { kind: 'travel', dest: 'harbor', rewards: [], withChild: false } as never })
+    useGame.getState().goTrip('harbor', [], [])
+    const s = useGame.getState()
+    console.log('trip: farewellPopup=', !!s.game.farewellPopup, 'modal=', s.modal?.kind, 'day', g.clock.day, '->', s.game.clock.day)
+    expect(s.game.farewellPopup).toBeTruthy()
+    expect(s.modal?.kind).not.toBe('farewell')
+    // 다음 잠에서 지워진다
+    useGame.setState({ modal: { kind: 'review', pieceId: null } })
+    useGame.getState().sleep()
+    const after = useGame.getState().game
+    console.log('next sleep farewells kept', after.farewells?.length, 'popup npc', after.farewellPopup?.npc)
+  })
+})

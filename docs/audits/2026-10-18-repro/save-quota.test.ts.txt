@@ -1,0 +1,21 @@
+import { it } from 'vitest'
+import { CONTENT } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import { newGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/game'
+import { saveGame, saveAsNew, setActiveSlot, loadGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/save'
+function memStore(quota: number) {
+  const m = new Map<string, string>()
+  const used = () => [...m].reduce((n, [k, v]) => n + k.length + v.length, 0)
+  return { get length() { return m.size }, key: (i: number) => [...m.keys()][i] ?? null, getItem: (k: string) => m.get(k) ?? null,
+    setItem: (k: string, v: string) => { const b = m.has(k) ? k.length + m.get(k)!.length : 0; if (used() - b + k.length + v.length > quota) throw new Error('Quota'); m.set(k, v) },
+    removeItem: (k: string) => void m.delete(k), clear: () => m.clear(), used } as Storage & { used(): number }
+}
+it('Q saveAsNew 사진 복제가 공간을 채워 이후 자동 저장 실패', () => {
+  const store = memStore(600_000)
+  setActiveSlot('1', store)
+  const g = newGame(CONTENT)
+  for (let i = 0; i < 4; i++) store.setItem('twenty-seven/album/p' + i, 'x'.repeat(100_000))
+  console.log('Q before saveAsNew save ok', saveGame(g, store), 'used', store.used())
+  console.log('Q saveAsNew ->', saveAsNew(g, store), 'used', store.used())
+  const later = { ...g, coins: 4242, myLines: { 'book:mk': 'y'.repeat(120_000) } }
+  console.log('Q later autosave ok =', saveGame(later, store), 'slot1 coins =', loadGame(CONTENT, store, '1')?.coins)
+})

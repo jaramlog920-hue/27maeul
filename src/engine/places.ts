@@ -46,7 +46,7 @@ export const HALL_PLAY_MINUTES = 40
 /** 찻집이 여는 때 (08:00–19:00) */
 export const TEA_FROM = 8 * 60
 export const TEA_TO = 19 * 60
-export const TEA_PRICE = 2
+export const TEA_PRICE = 3
 export const TEA_MINUTES = 30
 
 export function teaOpen(minute: number): boolean {

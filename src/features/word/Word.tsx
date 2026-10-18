@@ -13,12 +13,13 @@ import { chapterUnit, isOtBook, otRow } from '../../engine/ot-books'
 import { connectionsOf, type Connection } from '../../engine/connections'
 import { copySpot } from '../../engine/copying'
 import { pieceFrom, whenOf, type PieceLog } from '../../engine/fragments'
-import type { GodFind } from '../../engine/god-records'
+import { sanitizeGodRecords, type GodFind } from '../../engine/god-records'
 import { bookLineKey } from '../../engine/game'
 import { BOOKS, isGospel, type Book, type Piece } from '../../engine/types'
 import { useGame, type WordTab } from '../../store/game-store'
 import { Spine } from '../library/BookArt'
 import { BlankQuiz } from '../quiz/BlankQuiz'
+import { LoveCommands } from './LoveCommands'
 
 const W = T.word
 const BOOK_NAME = T.quiz.books as Record<string, string>
@@ -57,7 +58,8 @@ export function piecesByBook(collected: readonly string[]): { book: Book; pieces
 }
 
 /** 하나님 기록을 키워드별로 (키워드 목록 순서), 같은 키워드의 구절은 발견한 차례대로 쌓인다 */
-export function godByKeyword(finds: readonly GodFind[]): { keyword: string; name: string; finds: GodFind[] }[] {
+export function godByKeyword(raw: readonly GodFind[]): { keyword: string; name: string; finds: GodFind[] }[] {
+  const finds = sanitizeGodRecords(raw)
   const order = Object.keys(GOD_KEYWORDS)
   const known = [...order, ...finds.map((f) => f.keyword).filter((k) => !order.includes(k))]
   return [...new Set(known)]
@@ -94,6 +96,7 @@ export function Word({ tab: first = 'copy' }: { tab?: WordTab }) {
     ['quiz', '빈칸 퀴즈'],
     ['pieces', W.tabs.pieces],
     ['god', W.tabs.god],
+    ['love', '사랑의 계명'],
     ['links', W.tabs.links],
     ['library', W.tabs.library],
   ]
@@ -118,6 +121,7 @@ export function Word({ tab: first = 'copy' }: { tab?: WordTab }) {
       {tab === 'quiz' && <BlankQuiz />}
       {tab === 'pieces' && <PieceDex />}
       {tab === 'god' && <GodRecords />}
+      {tab === 'love' && <LoveCommands />}
       {tab === 'links' && <Links />}
       {tab === 'library' && <LibraryStatus />}
     </div>
@@ -339,7 +343,7 @@ function GodRecords() {
   if (!groups.length) return <p className="word-god-empty">{W.godEmpty}</p>
   return (
     <section className="word-god" aria-label={W.tabs.god}>
-      <p className="hint">{fill(W.godTotal, { k: groups.length, n: finds.length })}</p>
+      <p className="hint">{fill(W.godTotal, { k: groups.length, n: groups.reduce((n, g) => n + g.finds.length, 0) })}</p>
       <ul className="word-god-list">
         {groups.map((g) => {
           const on = open === g.keyword

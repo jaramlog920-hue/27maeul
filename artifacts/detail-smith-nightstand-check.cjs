@@ -1,0 +1,123 @@
+const { chromium } = require('C:/Users/wn410/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright')
+const fs = require('node:fs/promises')
+const path = require('node:path')
+const assert = require('node:assert/strict')
+const out = path.resolve('artifacts/detail-audit/008-smith-nightstand')
+;(async () => {
+  await fs.mkdir(out, { recursive: true })
+  const browser = await chromium.launch({ channel: 'msedge', headless: true })
+  try {
+    const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 })
+    const page = await context.newPage()
+    page.setDefaultTimeout(15000)
+    const errors = []
+    page.on('pageerror', e => errors.push(e.message))
+    page.on('dialog', d => void d.accept())
+    await page.goto('http://127.0.0.1:4188', { waitUntil: 'domcontentloaded' })
+    await page.getByRole('button', { name: '새로 시작하기' }).click()
+    await page.getByLabel('이름', { exact: true }).fill('대장장이협탁검사')
+    await page.getByRole('button', { name: '이대로 시작', exact: true }).click()
+    await page.waitForFunction(() => !!window.__gd?.store)
+    await page.evaluate(async () => {
+      const { CONTENT, PEOPLE } = await import('/src/content/catalog.ts')
+      const { legacyGame } = await import('/src/engine/growth-test-support.ts')
+      const base = legacyGame(CONTENT)
+      const game = { ...base, clock: { day: 20, minute: 600 }, hearts: { ...base.hearts, smith: 89 }, inv: { bread: 1, vase: 1 }, gifted: [], scenes: [],
+        life: { ...base.life, seen: [...base.life.seen, ...(PEOPLE.people.smith.events?.map(e => e.id) ?? [])] },
+        player: { ...base.player, x: 20, y: 114, path: [] } }
+      window.__gd.store.getState().load(game)
+      window.__gd.store.getState().setDeck(false)
+      window.__gd.store.getState().setJoystick(false)
+      window.__gd.store.setState({ zoom: 1.25, clockMs: 0, toast: null, piecePopups: [], copyResult: null })
+      window.__gd.store.getState().open({ kind: 'talk', neighborId: 'smith', line: '검사용 대화' })
+    })
+    const snapshot = () => page.evaluate(() => {
+      const s = window.__gd.store.getState(), g = s.game
+      return { inv: g.inv, furniture: g.room.filter(f => ['nightstand', 'vase'].includes(f.item)), hearts: g.hearts.smith,
+        gifted: g.gifted, giftsGot: g.giftsGot, selection: s.decorSel, moving: s.decorMoving,
+        selectionText: document.querySelector('.decorate-sel-name')?.textContent?.trim() ?? null }
+    })
+    const touch = async t => {
+      const p = await page.evaluate(async t => {
+        const { cameraFor, VIEW_W, VIEW_H } = await import('/src/engine/world.ts')
+        const s = window.__gd.store.getState()
+        window.__gd.step(0)
+        const cam = cameraFor(s.game.player.x, s.game.player.y, s.zoom)
+        const c = document.querySelector('canvas.world'), r = c.getBoundingClientRect()
+        return { x: r.left + c.clientLeft + (t.x + .5 - cam.x) * s.zoom / VIEW_W * c.clientWidth,
+          y: r.top + c.clientTop + (t.y + .5 - cam.y) * s.zoom / VIEW_H * c.clientHeight }
+      }, t)
+      await page.touchscreen.tap(p.x, p.y)
+    }
+    const shot = name => page.screenshot({ path: path.join(out, name + '.png'), fullPage: true, animations: 'disabled' })
+    const reload = async () => {
+      await page.evaluate(async () => {
+        const { saveGameAsync } = await import('/src/engine/save.ts')
+        if (!await saveGameAsync(window.__gd.store.getState().game)) throw new Error('save failed')
+      })
+      await page.reload({ waitUntil: 'domcontentloaded' })
+      await page.getByRole('button', { name: '이어하기', exact: true }).click()
+      await page.waitForFunction(() => !!window.__gd?.store)
+    }
+    await page.getByRole('button', { name: '선물하기', exact: true }).tap()
+    await page.getByRole('button', { name: /빵.* 1$/ }).tap()
+    const earned = await snapshot()
+    assert.equal(earned.inv.nightstand, 1)
+    assert.equal(earned.hearts, 92)
+    await page.evaluate(() => window.__gd.store.getState().startDecorate('pick'))
+    // The pending gift scene is not part of placing and using its inventory reward.
+    await page.evaluate(() => window.__gd.store.setState({ modal: null }))
+    await page.getByRole('button', { name: '협탁', exact: true }).tap()
+    await touch({ x: 20, y: 112 })
+    const installed = await snapshot()
+    assert.equal(installed.inv.nightstand ?? 0, 0)
+    assert.equal(installed.furniture.filter(f => f.item === 'nightstand').length, 1)
+    await page.getByRole('button', { name: '꽃병', exact: true }).tap()
+    await touch({ x: 20, y: 112 })
+    const used = await snapshot()
+    assert.equal(used.furniture.find(f => f.item === 'vase').on, true)
+    assert.equal(used.inv.vase ?? 0, 0)
+    await shot('used-as-surface')
+    await reload()
+    await page.evaluate(() => window.__gd.store.getState().startDecorate('pick'))
+    const restored = await snapshot()
+    assert.deepEqual(restored.furniture, used.furniture)
+    assert.deepEqual(restored.inv, used.inv)
+    await touch({ x: 20, y: 112 })
+    const selected = await snapshot()
+    assert.equal(selected.selection.item, 'vase')
+    assert.ok(selected.selectionText.includes('꽃병'))
+    await shot('occupied-nightstand-selects-vase')
+    await page.getByRole('button', { name: '옮기기', exact: true }).tap()
+    await touch({ x: 22, y: 113 })
+    const movedTop = await snapshot()
+    assert.equal(movedTop.furniture.find(f => f.item === 'nightstand').x, 20)
+    assert.equal(movedTop.furniture.find(f => f.item === 'vase').x, 22)
+    assert.equal(movedTop.furniture.find(f => f.item === 'vase').on, undefined)
+    // Recover both separately, then use the same reward as a surface again after reload.
+    await page.getByRole('button', { name: '치우기', exact: true }).tap()
+    await touch({ x: 20, y: 112 })
+    await page.getByRole('button', { name: '치우기', exact: true }).tap()
+    const collected = await snapshot()
+    assert.equal(collected.inv.nightstand, 1)
+    assert.equal(collected.inv.vase, 1)
+    assert.equal(collected.furniture.length, 0)
+    await reload()
+    await page.evaluate(() => window.__gd.store.getState().startDecorate('pick'))
+    await page.getByRole('button', { name: '협탁', exact: true }).tap()
+    await touch({ x: 22, y: 113 })
+    await page.getByRole('button', { name: '꽃병', exact: true }).tap()
+    await touch({ x: 22, y: 113 })
+    await reload()
+    const reused = await snapshot()
+    assert.equal(reused.furniture.length, 2)
+    assert.equal(reused.furniture.find(f => f.item === 'vase').on, true)
+    assert.equal(reused.inv.nightstand ?? 0, 0)
+    assert.equal(reused.inv.vase ?? 0, 0)
+    await shot('reused-after-reload')
+    assert.deepEqual(errors, [])
+    await fs.writeFile(path.join(out, 'result.json'), JSON.stringify({ passed: true, earned, installed, used, restored, selected, movedTop, collected, reused, pageErrors: errors }, null, 2))
+    console.log('PASS: smith reward, pointer installation, surface use, reload, top selection, move, collect, reuse, reload')
+    await context.close()
+  } finally { await browser.close() }
+})().catch(e => { console.error(e); process.exitCode = 1 })

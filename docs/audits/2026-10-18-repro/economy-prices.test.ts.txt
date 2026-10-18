@@ -1,0 +1,26 @@
+import { it, expect } from 'vitest'
+import { stallBase, stallPrice, STALL_EXTRA } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/stall'
+import { standPrice, STAND_CAP } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/sell-stand'
+import { barterValue } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/economy-prices'
+import { SKILL_DEFS as SKILLS } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/skill-defs'
+import { finishBlankQuiz, blankQuizPay } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/blank-quiz'
+import { newGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/game'
+import { CONTENT } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+it('stall/stand prices for skill-crafted goods', () => {
+  const s = { stats: undefined } as any
+  const out: any = {}
+  for (const id of ['fruitBowl','dryFlowers','cushion','basket'] as const) {
+    out[id] = { extra: STALL_EXTRA[id], stallBase: stallBase(s, id), high: stallPrice(s, id, 'high'), stand: standPrice(s, id) }
+  }
+  const sk: any = (SKILLS as any)
+  out.costs = { snack: barterValue(sk.snackShape.needs), flower: barterValue(sk.flowerKeep.needs) }
+  console.log(JSON.stringify(out), 'cap', STAND_CAP)
+  expect(stallBase(s, 'fruitBowl')).not.toBe(STALL_EXTRA.fruitBowl)
+})
+it('blank quiz zero first run consumes reward', () => {
+  const g0 = newGame(CONTENT) as any
+  const g = { ...g0, copy: { ...g0.copy, copied: { mt: [1] } } }
+  const a = finishBlankQuiz(g, { book: 'mt', chapter: 1 } as any, 0, 10)
+  const b = finishBlankQuiz(a, { book: 'mt', chapter: 1 } as any, 10, 10)
+  console.log('coins', g.coins, a.coins, b.coins, blankQuizPay(10,10))
+})

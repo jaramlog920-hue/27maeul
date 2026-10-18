@@ -1,0 +1,114 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { createElement } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/react'
+import { render, screen, fireEvent, act, cleanup } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/@testing-library/react'
+import { CONTENT } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import { T } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/text'
+import { newGame, heartUp, syncHome, YARD_FROM, type GameState } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/game'
+import { newChild, ADULT_AT } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/child'
+import { visitKidWork } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/newland-life'
+import { newGenState } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/gen'
+import { NO_ROMANCE } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/romance'
+import { setActiveMap } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/maps'
+import { setNewlandOpen } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/newland'
+import { useGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/store/game-store'
+import { FacilityView } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/features/newland/FacilityView'
+import { ShelfDone } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/features/library/ShelfDone'
+import { copyAlwaysWrite, setCopyAlwaysWrite } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/features/desk/copy-way-setting'
+import { copyVoiceOn, setCopyVoice } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/features/desk/copy-voice'
+import { copySoundOn, setCopySound } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/features/desk/copy-feel'
+
+beforeEach(() => localStorage.clear())
+afterEach(() => { cleanup(); setActiveMap('village'); setNewlandOpen(false); vi.restoreAllMocks() })
+
+function kidWorkState(visits: number): GameState {
+  const base = newGame(CONTENT)
+  const day = 200
+  const child = { ...newChild(day - ADULT_AT - 5, base.stats, undefined), job: 'cook' as const }
+  return { ...base, clock: { day, minute: 10 * 60 }, scenes: [], map: 'newland', child,
+    flags: { ...base.flags, newlandGift: 1, newlandRevealed: 1, kidWorkVisits: visits },
+    newland: { builds: [{ id: 'b1', kind: 'kidWork', x: 10, y: 12, facing: 'down', state: 'done', orderedDay: 1, paid: { coins: 0, items: {} }, refunded: false } as never], tiles: {}, nextId: 2, settledDay: 20 } } as GameState
+}
+
+describe('r3screens', () => {
+  it('A: 요리사 아이 일터 3번째 방문 — 접시는 가방에 들어가는데 알림이 없다', () => {
+    vi.useFakeTimers()
+    const s = kidWorkState(2)
+    const r = visitKidWork(s)!
+    console.log('engine result', { milestone: r.milestone, dish: r.dish })
+    expect(r.milestone).toBe(3)
+    expect(r.dish).toBeTruthy()
+    useGame.getState().load(s)
+    useGame.setState({ modal: { kind: 'facility', id: 'kidWork' } as never, toast: null, piecePopups: [] })
+    syncHome(s)
+    const sayed: string[] = []
+    const orig = useGame.getState().say
+    useGame.setState({ say: ((m: string, ms?: number) => { sayed.push(m); orig(m, ms) }) as never })
+    render(createElement(FacilityView, { id: 'kidWork' }))
+    act(() => { vi.runAllTimers() })
+    const after = useGame.getState().game
+    const inv = (x: GameState) => (x.inv as Record<string, number>)[r.dish!] ?? 0
+    console.log('dish in inv before/after', inv(s), inv(after), 'say calls', sayed, 'line', document.querySelector('.talk-line')?.textContent)
+    expect(inv(after)).toBeGreaterThan(inv(s))
+    expect(sayed.length).toBe(0)
+    vi.useRealTimers()
+  })
+
+  it('B: 마당 모임 — 이웃 마음이 오르지 않으면(하루 한도) 알림의 이름 자리가 빈다', () => {
+    const base = newGame(CONTENT)
+    let s: GameState = { ...base, clock: { day: 20, minute: YARD_FROM }, scenes: [], map: 'newland',
+      hearts: Object.fromEntries(CONTENT.neighbors.map(n => [n.id, 40])),
+      flags: { ...base.flags, newlandGift: 1, newlandRevealed: 1 },
+      newland: { builds: [{ id: 'b1', kind: 'courtyard', x: 10, y: 12, facing: 'down', state: 'done', orderedDay: 1, paid: { coins: 0, items: {} }, refunded: false } as never], tiles: {}, nextId: 2, settledDay: 20 } } as GameState
+    s = { ...s, heartDay: { day: 20, gains: Object.fromEntries(CONTENT.neighbors.map(n => [n.id, 6])), charm: CONTENT.neighbors.map(n => n.id) } } as GameState
+    useGame.getState().load(s)
+    useGame.setState({ modal: { kind: 'facility', id: 'courtyard' } as never, toast: null, piecePopups: [] })
+    syncHome(s)
+    render(createElement(FacilityView, { id: 'courtyard' }))
+    fireEvent.click(screen.getByRole('button', { name: T.newlandLife.yardGather }))
+    const toast = JSON.stringify(useGame.getState().toast)
+    console.log('toast', toast, 'yardMemo', useGame.getState().game.flags['yardMemo:20'])
+    expect(useGame.getState().game.flags['yardMemo:20']).toBeGreaterThan(0)
+    expect(toast).toContain('"text":"와 마당에서')
+  })
+
+  it('C: 은퇴한 이웃의 후계자와 결혼 — 27권 화면 가족 줄이 부모 이름', () => {
+    const base = newGame(CONTENT)
+    const gen = newGenState(CONTENT, 7, 134)
+    gen.persons['g-0001'] = { id: 'g-0001', origin: 'born', born: 10, stage: 'adult', look: 'm', name: '아론', parents: ['rudy'], spouse: null, household: null } as never
+    gen.retired = { rudy: { heir: 'g-0001', day: 120 } } as never
+    const s = { ...base, gen, scenes: [], romance: { ...NO_ROMANCE, partner: 'rudy', stage: 'married' as const, since: 130, marriedDay: 140 } } as GameState
+    useGame.getState().load(s)
+    useGame.setState({ modal: { kind: 'shelfDone' } as never, piecePopups: [] })
+    render(createElement(ShelfDone))
+    const txt = document.body.textContent ?? ''
+    const rudy = CONTENT.neighbors.find(n => n.id === 'rudy')!.role
+    console.log('has 아론', txt.includes('아론'), 'has parent role', rudy, txt.includes(rudy))
+    expect(txt.includes('아론')).toBe(false)
+    expect(txt.includes(rudy)).toBe(true)
+  })
+
+  it('D: 저장소 쓰기가 막히면 필사 방식/음성 끄기가 이번 실행에도 적용되지 않는다(펜 소리는 적용됨)', () => {
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('QuotaExceeded') })
+    setCopyAlwaysWrite(true)
+    setCopyVoice(false)
+    setCopySound(false)
+    console.log('alwaysWrite', copyAlwaysWrite(), 'voiceOn', copyVoiceOn(), 'soundOn', copySoundOn())
+    expect(copyAlwaysWrite()).toBe(false)
+    expect(copyVoiceOn()).toBe(true)
+    expect(copySoundOn()).toBe(false)
+    vi.restoreAllMocks()
+    setCopySound(true)
+  })
+
+  it('E: heartUp에 후계자 person id를 넘기면 자리(slot) 대신 person id 열쇠에 마음이 쌓인다', () => {
+    const base = newGame(CONTENT)
+    const gen = newGenState(CONTENT, 7, 134)
+    gen.persons['g-0001'] = { id: 'g-0001', origin: 'born', born: 10, stage: 'adult', look: 'm', name: '아론', parents: ['rudy'], spouse: null, household: null } as never
+    gen.retired = { rudy: { heir: 'g-0001', day: 120 } } as never
+    const s = { ...base, gen, hearts: { ...base.hearts, rudy: 20 } } as GameState
+    const next = heartUp(s, 'g-0001', 3)
+    console.log('hearts rudy', next.hearts.rudy, 'g-0001', next.hearts['g-0001'])
+    expect(next.hearts['g-0001']).toBeGreaterThan(0)
+    expect(next.hearts.rudy).toBe(20)
+  })
+})

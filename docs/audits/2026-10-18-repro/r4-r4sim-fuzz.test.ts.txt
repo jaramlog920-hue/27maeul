@@ -1,0 +1,484 @@
+// r4sim: 엔진·스토어 무작위 시뮬레이션(퍼징). 소스는 건드리지 않는다.
+// 환경변수: SEEDS(기본 8), DAYS(기본 300), START(new|late|mix), STEPS_PER_DAY(기본 60), REPLAY(시드:단계까지 재생 + 행동 로그 출력)
+import { it, vi, expect } from 'vitest'
+const P = 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src'
+vi.mock('C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/audio/sound', async (orig) => ({ ...(await orig() as object), sfx: () => {}, setAudioMuted: () => {}, playMusic: () => {}, setRain: () => {} }))
+import { useGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/store/game-store'
+import { CONTENT } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import { newGame, syncHome, TRADES, canGiveCord, weddingToday, type GameState } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/game'
+import { serialize, deserialize } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/save'
+import { PLACES } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/world'
+import { BOOKS } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/types'
+import { OT_BOOKS } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/ot-books'
+import { DESTS } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/travel'
+import { RECIPES } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/items'
+import { copySpot } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/copying'
+import { sceneStateText } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/features/scene/scene-state-text'
+import { hasAuthoredStory } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/render/authored-story-art'
+import { landscapeKind } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/render/scenic-moments-art'
+import { lastVerseGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/dev/test-saves'
+import { MINUTE_CAP } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/clock'
+import { writeFileSync, appendFileSync } from 'node:fs'
+void P
+
+const OUT = 'C:/Users/wn410/AppData/Local/Temp/claude/C--Users-wn410-OneDrive-Desktop-cloooo-twenty-seven/d753a49f-e844-4b46-a32f-19ff3982a548/scratchpad/repro/r4sim/out'
+
+function mulberry32(a: number) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0
+    let t = Math.imul(a ^ (a >>> 15), 1 | a)
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+type V = { seed: number; step: number; day: number; kind: string; detail: string; recent: string[] }
+
+const NB = CONTENT.neighbors.map((n) => n.id)
+const PLACE_IDS = Object.keys(PLACES) as (keyof typeof PLACES)[]
+const DEST_IDS = Object.keys(DESTS) as (keyof typeof DESTS)[]
+const RECIPE_IDS = Object.keys(RECIPES) as (keyof typeof RECIPES)[]
+
+function sceneDefined(id: string, g: GameState): boolean {
+  if (hasAuthoredStory(id) || landscapeKind(id) || id === 'feastFire' || id === 'allFeastFire') return true
+  try { return !!sceneStateText(id, g as never) } catch { return false }
+}
+
+const isNonNegInt = (n: unknown) => typeof n === 'number' && Number.isInteger(n) && n >= 0
+const dupes = (a: readonly unknown[] | undefined) => {
+  if (!Array.isArray(a)) return []
+  const seen = new Set<string>(); const d: string[] = []
+  for (const x of a) { const k = typeof x === 'string' ? x : JSON.stringify(x); if (seen.has(k)) d.push(k); seen.add(k) }
+  return d
+}
+
+function summarize(g: GameState) {
+  const gen = g.gen as unknown as { persons?: Record<string, unknown>; households?: unknown[] } | undefined
+  return {
+    coins: g.coins, inv: g.inv, chest: g.chest, pantry: g.pantry ?? {}, progress: Object.fromEntries(Object.entries(g.progress).map(([b, p]) => [b, { completed: p.completed, arrangement: Object.fromEntries(Object.entries(p.arrangement ?? {}).filter(([c]) => !p.completed.includes(Number(c)))) }])), collected: g.collected,
+    flags: g.flags, hearts: g.hearts, child: g.child ?? null, shelved: g.shelved, clockDay: g.clock.day,
+    stats: g.stats, romance: g.romance, copyAgain: { again: (g.copy as unknown as { again?: unknown }).again ?? null, againDone: (g.copy as unknown as { againDone?: unknown }).againDone ?? {} }, homeLevel: g.homeLevel, album: (g.album ?? []).length,
+    gen: gen ? { persons: Object.keys(gen.persons ?? {}).length } : null,
+  }
+}
+
+function canon(x: unknown): unknown {
+  if (Array.isArray(x)) return x.map(canon)
+  if (x && typeof x === 'object') {
+    const o: Record<string, unknown> = {}
+    for (const k of Object.keys(x as object).sort()) {
+      const v = (x as Record<string, unknown>)[k]
+      if (v === undefined) continue
+      o[k] = canon(v)
+    }
+    return o
+  }
+  return x
+}
+
+function diffKeys(a: Record<string, unknown>, b: Record<string, unknown>): string[] {
+  const out: string[] = []
+  for (const k of Object.keys(a)) {
+    const ja = JSON.stringify(canon(a[k])), jb = JSON.stringify(canon(b[k]))
+    if (ja !== jb) {
+      // 하위 키까지
+      const av = a[k], bv = b[k]
+      if (av && bv && typeof av === 'object' && typeof bv === 'object' && !Array.isArray(av)) {
+        const sub = new Set([...Object.keys(av as object), ...Object.keys(bv as object)])
+        const subs: string[] = []
+        for (const s of sub) {
+          const x = JSON.stringify(canon((av as Record<string, unknown>)[s])), y = JSON.stringify(canon((bv as Record<string, unknown>)[s]))
+          if (x !== y) subs.push(`${s}: ${x?.slice(0, 120)} -> ${y?.slice(0, 120)}`)
+        }
+        out.push(`${k}{${subs.slice(0, 6).join(' | ')}}`)
+      } else out.push(`${k}: ${ja?.slice(0, 200)} -> ${jb?.slice(0, 200)}`)
+    }
+  }
+  return out
+}
+
+function checkInvariants(g: GameState, prevDay: number): string[] {
+  const v: string[] = []
+  if (!isNonNegInt(g.coins)) v.push(`coins=${g.coins}`)
+  for (const [bag, inv] of [['inv', g.inv], ['chest', g.chest], ['pantry', g.pantry ?? {}]] as const) {
+    for (const [k, n] of Object.entries(inv ?? {})) if (!isNonNegInt(n)) v.push(`${bag}.${k}=${n}`)
+  }
+  for (const [id, s] of Object.entries(g.stats ?? {})) {
+    const st = s as { level: number; xp: number; born: number }
+    if (!Number.isFinite(st.level) || st.level < 1 || st.level > 5) v.push(`stats.${id}.level=${st.level}`)
+    if (!Number.isFinite(st.xp) || st.xp < 0) v.push(`stats.${id}.xp=${st.xp}`)
+    if (!Number.isFinite(st.born) || st.born < 0 || st.born > 2) v.push(`stats.${id}.born=${st.born}`)
+  }
+  const cs = (g.child as unknown as { stats?: Record<string, { level: number; xp: number; born: number }> } | null)?.stats
+  for (const [id, st] of Object.entries(cs ?? {})) {
+    if (!Number.isFinite(st.level) || st.level < 1 || st.level > 5 || !Number.isFinite(st.xp) || st.xp < 0) v.push(`child.stats.${id}=${JSON.stringify(st)}`)
+  }
+  for (const [id, h] of Object.entries(g.hearts ?? {})) if (typeof h !== 'number' || !Number.isFinite(h) || h < 0 || h > 100) v.push(`hearts.${id}=${h}`)
+  const hd = g.heartDay
+  if (hd) for (const [id, n] of Object.entries(hd.gains ?? {})) if (!Number.isInteger(n) || n < 0 || n > 6) v.push(`heartDay.${id}=${n}`)
+  for (const [k, n] of Object.entries(g.needs)) if (typeof n !== 'number' || !Number.isFinite(n) || n < 0 || n > 100) v.push(`needs.${k}=${n}`)
+  if (!Number.isInteger(g.clock.day) || g.clock.day < prevDay) v.push(`clock.day ${prevDay}->${g.clock.day}`)
+  if (!Number.isFinite(g.clock.minute) || g.clock.minute < 0 || g.clock.minute > MINUTE_CAP) v.push(`clock.minute=${g.clock.minute}`)
+  for (const [name, arr] of [['collected', g.collected], ['recipesKnown', g.recipesKnown], ['sealed', g.sealed], ['journey', g.journey], ['churches', g.churches], ['listened', g.listened], ['talked', g.talked], ['album.id', (g.album ?? []).map((a) => (a as { id: string }).id)]] as const) {
+    const d = dupes(arr as unknown[]); if (d.length) v.push(`dup ${name}: ${d.slice(0, 5).join(',')}`)
+  }
+  for (const b of BOOKS) {
+    const c = g.progress[b]?.completed ?? []
+    const d = dupes(c); if (d.length) v.push(`dup progress.${b}: ${d.join(',')}`)
+  }
+  for (const id of g.scenes) if (typeof id !== 'string') v.push(`scene id not string ${id}`)
+  if (!Number.isFinite(g.lampFuel) || g.lampFuel < 0) v.push(`lampFuel=${g.lampFuel}`)
+  const rm = g.romance as unknown as { partner?: string | null; stage?: string | null; weddingDay?: number }
+  if (rm?.partner && !NB.includes(rm.partner)) v.push(`romance.partner unknown ${rm.partner}`)
+  if (rm?.partner && !['dating', 'engaged', 'married'].includes(rm.stage ?? '')) v.push(`romance.stage=${rm.stage} partner=${rm.partner}`)
+  if (!rm?.partner && rm?.stage) v.push(`romance.stage without partner ${rm.stage}`)
+  if (g.child && !rm?.partner) v.push(`child without partner`)
+  if (g.child && rm?.stage !== 'married') v.push(`child but stage=${rm?.stage}`)
+  for (const [k, n] of Object.entries((g.copy as unknown as { againDone?: Record<string, number> }).againDone ?? {})) if (!isNonNegInt(n)) v.push(`againDone.${k}=${n}`)
+  if (g.homeLevel < 0 || g.homeLevel > 3) v.push(`homeLevel=${g.homeLevel}`)
+  return v
+}
+
+function roundTrip(g: GameState): string[] {
+  const raw = serialize(g)
+  const back = deserialize(raw, CONTENT)
+  syncHome(g) // deserialize가 지도 전역을 바꾼다 (기존 L-2)
+  if (!back) return ['deserialize null']
+  const d = diffKeys(summarize(g) as never, summarize(back) as never)
+  // 두 번째 왕복: 불러온 것을 다시 저장해도 같아야 한다 (안정성)
+  const back2 = deserialize(serialize(back), CONTENT)
+  syncHome(g)
+  const d2 = back2 ? diffKeys(summarize(back) as never, summarize(back2) as never).map((x) => `2nd:${x}`) : ['2nd deserialize null']
+  return [...d, ...d2]
+}
+
+async function runSeed(seed: number, days: number, start: 'new' | 'late' | 'social', stepsPerDay: number, log: (v: V) => void, stopAt?: number) {
+  const rnd = mulberry32(seed * 7919 + 13)
+  const origRandom = Math.random
+  Math.random = mulberry32(seed * 104729 + 7)
+  const R = (n: number) => Math.floor(rnd() * n)
+  const pick = <X,>(a: readonly X[]): X => a[R(a.length)]
+  let base: GameState
+  if (start === 'late' || start === 'social') {
+    base = await lastVerseGame(CONTENT)
+    base = { ...base, clock: { day: 1, minute: 6 * 60 } }
+    if (start === 'social') base = { ...base, hearts: Object.fromEntries(NB.map((id) => [id, 100])), coins: 30000, inv: { ...base.inv, bouquet: 30, promiseCord: 60, bread: 10, wool: 5, olive: 40 } as never }
+  } else {
+    base = newGame(CONTENT)
+    base = { ...base, avatar: { ...(base.avatar ?? { look: 'f' }), name: '시험' } as never, scenes: [] }
+  }
+  syncHome(base)
+  useGame.getState().load(base)
+  useGame.setState({ rng: Math.random, toast: null, modal: null, trip: null, clockMs: 0 })
+  const recent: string[] = []
+  const fullLog: string[] = []
+  let step = 0
+  let prevDay = base.clock.day
+  let modalSince = 0
+  let modalKey = ''
+  const stats = { actions: 0, exceptions: 0, sleeps: 0, roundTrips: 0, modalsSeen: new Map<string, number>(), actionsSeen: new Map<string, number>() }
+  const undefinedScenes = new Set<string>()
+  const reached = new Set<string>()
+  const whyCord = new Map<string, number>()
+  const seenViol = new Set<string>()
+  const report = (kind: string, detail: string) => {
+    const key = kind + ':' + detail.replace(/\d+/g, '#').slice(0, 160)
+    if (seenViol.has(key)) return
+    seenViol.add(key)
+    log({ seed, step, day: useGame.getState().game.clock.day, kind, detail, recent: [...recent] })
+  }
+  const S = () => useGame.getState()
+  const act = (name: string, fn: () => unknown) => {
+    step++
+    stats.actions++
+    stats.actionsSeen.set(name.split('(')[0], (stats.actionsSeen.get(name.split('(')[0]) ?? 0) + 1)
+    const entry = `${step}@d${S().game.clock.day}m${Math.floor(S().game.clock.minute)} ${S().modal?.kind ?? '-'}> ${name}`
+    recent.push(entry); if (recent.length > 25) recent.shift()
+    if (stopAt !== undefined) fullLog.push(entry)
+    try { fn() } catch (e) {
+      stats.exceptions++
+      report('exception', `${name}: ${(e as Error)?.stack?.split('\n').slice(0, 4).join(' / ')}`)
+    }
+  }
+  const randomInvItem = () => {
+    const ks = Object.entries(S().game.inv).filter(([, n]) => (n ?? 0) > 0).map(([k]) => k)
+    return ks.length ? pick(ks) : 'bread'
+  }
+  const npcTile = (id: string) => { const n = S().game.npcs[id]; return n ? { x: Math.round(n.x), y: Math.round(n.y) } : null }
+  const frames = (k: number, dt: number) => act(`frame(${k}x${dt})`, () => { for (let i = 0; i < k; i++) S().frame(dt) })
+  const randomBook = () => (rnd() < 0.85 ? pick(BOOKS) : pick(OT_BOOKS)) as never
+
+  const modalAction = () => {
+    const m = S().modal!
+    const g = S().game
+    switch (m.kind) {
+      case 'scene': {
+        if (!sceneDefined(m.id, g)) undefinedScenes.add(m.id)
+        if (rnd() < 0.3) return act(`chooseScene`, () => S().chooseScene(R(3)))
+        return act(`nextScene(${m.id})`, () => S().nextScene())
+      }
+      case 'talk': {
+        const r = rnd()
+        if (r < 0.3) return act(`listenTo(${m.neighborId})`, () => S().listenTo(m.neighborId))
+        if (r < 0.5) { const it = randomInvItem(); return act(`gift(${m.neighborId},${it})`, () => S().gift(m.neighborId, it as never)) }
+        if (r < 0.6) return act(`startHelp(${m.neighborId})`, () => S().startHelp(m.neighborId))
+        if (r < 0.65) return act(`giveBouquet(${m.neighborId})`, () => S().giveBouquet(m.neighborId))
+        if (r < 0.7) return act(`giveCord(${m.neighborId})`, () => S().giveCord(m.neighborId))
+        if (r < 0.73) return act(`requestAsk(${m.neighborId})`, () => S().requestAsk(m.neighborId))
+        if (r < 0.76) return act(`requestGive(${m.neighborId})`, () => S().requestGive(m.neighborId))
+        if (r < 0.78) return act(`breakUp(${m.neighborId})`, () => S().breakUp(m.neighborId))
+        return act('closeModal', () => S().closeModal())
+      }
+      case 'gift': { const it = randomInvItem(); return rnd() < 0.7 ? act(`gift(${m.neighborId},${it})`, () => S().gift(m.neighborId, it as never)) : act('closeModal', () => S().closeModal()) }
+      case 'review': return rnd() < 0.85 ? act('sleep', () => { S().sleep(); stats.sleeps++ }) : act('closeModal', () => S().closeModal())
+      case 'mini': {
+        const r = rnd()
+        if (r < 0.5) return act('miniTap', () => S().miniTap(R(6)))
+        if (r < 0.75) return frames(5, 0.5)
+        if (r < 0.92) return act('skipMini', () => S().skipMini())
+        return act('quitMini', () => S().quitMini())
+      }
+      case 'copy': {
+        const r = rnd()
+        if (m.view === 'write') {
+          if (r < 0.6) return act('copyPuzzle', () => S().copyPuzzle())
+          if (r < 0.8) {
+            const b = g.copy.book; const sp = b ? copySpot(g, b, CONTENT) : null
+            const text = sp ? (rnd() < 0.8 ? sp.verse.text : sp.verse.text.slice(0, Math.max(1, R(sp.verse.text.length)))) : '가'
+            return act(`copyType(${text.length})`, () => S().copyType(text, rnd() < 0.2 ? { hold: true } : {}))
+          }
+          if (r < 0.83) return act('copyTypo', () => S().copyTypo())
+          if (r < 0.85) return act('copyAgainStop', () => (S() as unknown as { copyAgainStop: () => void }).copyAgainStop())
+          if (r < 0.9) { const b = randomBook(); return act(`copyBook(${b})`, () => S().copyBook(b)) }
+          return act('copyExit', () => S().copyExit())
+        }
+        if (m.view === 'ask') return act('deskAnswer', () => S().deskAnswer(rnd() < 0.5))
+        if (m.view === 'pick' || m.view === 'menu') {
+          if (r < 0.6) { const b = randomBook(); return act(`copyBook(${b})`, () => S().copyBook(b)) }
+          if (r < 0.8) return act('wordContinue', () => S().wordContinue())
+          return act('copyExit', () => S().copyExit())
+        }
+        if (r < 0.6) return act('copyView(write)', () => S().copyView('write'))
+        return act('copyExit', () => S().copyExit())
+      }
+      case 'quiz': {
+        const q = m.questions[m.index]
+        if (m.solved || !q) return act('nextQuiz', () => S().nextQuiz())
+        return act('answerQuiz', () => S().answerQuiz(rnd() < 0.8 ? (q as { answer: string | string[] }).answer : 'x'))
+      }
+      case 'bind': {
+        const r = rnd()
+        if (m.step === 'choose') return r < 0.7 ? act('bindPlain', () => S().bindPlain()) : act('openBindSpecial', () => S().bindSpecial((m.choice ?? {}) as never))
+        return act('closeBind', () => S().closeBind())
+      }
+      case 'travel': {
+        if (!m.dest) {
+          if (rnd() < 0.7) { const d = pick(DEST_IDS); return act(`startTripBoard(${d})`, () => S().startTripBoard(d, rnd() < 0.3)) }
+          return act('closeModal', () => S().closeModal())
+        }
+        const buys = rnd() < 0.5 ? [] : [pick(['wool', 'olive', 'bread', 'reed', 'papyrus'])]
+        return act(`goTrip(${m.dest})`, () => S().goTrip(m.dest!, buys as never, m.rewards ?? []))
+      }
+      case 'childName': return act('setChildName', () => S().setChildName(rnd() < 0.9 ? '하늘' : ''))
+      case 'myLine': return rnd() < 0.5 ? act('saveMyLine', () => S().saveMyLine(m.lineKey, '한 줄')) : act('skipMyLine', () => S().skipMyLine())
+      case 'readingMeeting' as never: return act('completeReadingMeeting', () => S().completeReadingMeeting())
+      case 'kidTime': return rnd() < 0.6 ? act('kidAct', () => S().kidAct(pick(['read', 'puzzle', 'make', 'cook', 'walk', 'ball', 'tour', 'errand', 'story'] as const))) : act('closeModal', () => S().closeModal())
+      case 'trade': {
+        if (rnd() < 0.6) { const t = pick(TRADES); return act(`doTrade(${t.id})`, () => S().doTrade(t)) }
+        if (rnd() < 0.5) { const it = randomInvItem(); return act(`sellItem(${it})`, () => S().sellItem(it as never)) }
+        return act('closeModal', () => S().closeModal())
+      }
+      case 'library': case 'roomShelf': {
+        const b = pick(BOOKS); const r = rnd()
+        if (r < 0.3) return act(`startShelve(${b})`, () => S().startShelve(b))
+        if (r < 0.5) return act(`shelveNow(${b})`, () => S().shelveNow(b))
+        if (r < 0.7) return act(`openBind(${b})`, () => S().openBind(b))
+        return act('closeModal', () => S().closeModal())
+      }
+      case 'family': case 'school': {
+        const r = rnd()
+        if (r < 0.3) return act('goSchool', () => S().goSchool(pick(['wit', 'hand', 'charm', 'strength', 'luck'] as const)))
+        if (r < 0.5) return act('careBaby', () => S().careBaby(pick(['hold', 'soothe', 'lay', 'tuck'] as const)))
+        return act('closeModal', () => S().closeModal())
+      }
+      case 'care': return rnd() < 0.6 ? act('careBaby', () => S().careBaby(pick(['hold', 'soothe', 'lay', 'tuck'] as const))) : act('closeModal', () => S().closeModal())
+      case 'menu': {
+        const r = rnd()
+        const opts: [string, () => void][] = [
+          ['warm', () => S().warm()], ['eat', () => S().eat()], ['rest', () => S().rest()], ['sitHill', () => S().sitHill()],
+          ['drinkTea', () => S().drinkTea()], ['watchSunset', () => S().watchSunset()], ['playHall', () => S().playHall()],
+          ['libraryRead', () => S().libraryRead()],           [`startCraft`, () => S().startCraft(pick(RECIPE_IDS))],
+        ]
+        if (r < 0.7) { const [n, f] = pick(opts); return act(`${n}@menu(${m.place})`, f) }
+        return act('closeModal', () => S().closeModal())
+      }
+      default:
+        return act(`closeModal(${m.kind})`, () => S().closeModal())
+    }
+  }
+
+  const ROM = CONTENT.neighbors.filter((n) => (n as { romanceable?: boolean }).romanceable).map((n) => n.id)
+  const extraAction = () => {
+    const r = rnd()
+    const g = S().game
+    const partner = g.romance?.partner
+    const who = partner && rnd() < 0.7 ? partner : pick(ROM.length ? ROM : NB)
+    if (r < 0.15) return act(`giveBouquet(${who})`, () => S().giveBouquet(who))
+    if (r < 0.25) return act(`giveCord(${who})`, () => S().giveCord(who))
+    if (r < 0.35) { const pl = pick(['tea', 'sunset', 'walk'] as const); return act(`goDate(${pl})`, () => S().goDate(pl)) }
+    if (r < 0.40 && partner) return act(`whyCord`, () => { const def = CONTENT.neighbors.find((n) => n.id === partner)!; whyCord.set(String(canGiveCord(S().game, def)), (whyCord.get(String(canGiveCord(S().game, def))) ?? 0) + 1) })
+    if (r < 0.42) { const it = randomInvItem(); return act(`gift(${who},${it})`, () => S().gift(who, it as never)) }
+    if (r < 0.50) return act('askHome', () => S().askHome('carpenter'))
+    if (r < 0.55) return act('askWork', () => S().askWork('carpenter', pick(['supplyChest', 'sootCatcher', 'reedRack', 'homeCoolCupboard'] as never[])))
+    if (r < 0.62) return act('askBaby', () => S().askBaby())
+    if (r < 0.68) return act('careBaby', () => S().careBaby(pick(['hold', 'soothe', 'lay', 'tuck'] as const)))
+    if (r < 0.72) return act('kidAct', () => { S().open({ kind: 'kidTime' }); S().kidAct(pick(['read', 'puzzle', 'make', 'cook', 'walk', 'ball', 'tour', 'errand', 'story'] as const)) })
+    if (r < 0.75) return act('goSchool', () => S().goSchool(pick(['wit', 'hand', 'charm', 'strength', 'luck'] as const)))
+    if (r < 0.78) return act('breakUp', () => { if (rnd() < 0.02) S().breakUp(who) })
+    if (r < 0.82) return act('decorate', () => { S().startDecorate('pick'); S().stopDecorate() })
+    if (r < 0.86) return act('takeChest/putPantry', () => { const it = randomInvItem(); S().putPantry(it as never); S().takePantry(it as never); S().takeChest(it as never) })
+    if (r < 0.90) return act('discard', () => { const it = randomInvItem(); S().discard(it as never, 1) })
+    if (r < 0.94) return act('feastShare', () => { const it = randomInvItem(); S().feastShare(it as never) })
+    return act('heartsBoost(cheat-off)', () => {})
+  }
+  const freeAction = () => {
+    if (rnd() < (start === 'social' ? 0.25 : 0.08)) return extraAction()
+    const r = rnd()
+    const g = S().game
+    if (r < 0.22) { const p = pick(PLACE_IDS); const t = PLACES[p].tiles[0]; if (t) return act(`tap(${p})`, () => S().tap(t)) }
+    if (r < 0.34) { const id = pick(NB); const t = npcTile(id); if (t) return act(`tapNpc(${id})`, () => S().tap(t)) }
+    if (r < 0.38) { const t = { x: Math.round(g.player.x) + R(9) - 4, y: Math.round(g.player.y) + R(9) - 4 }; return act(`tapNear`, () => S().tap(t)) }
+    if (r < 0.42) return act('walk', () => S().walk(R(3) - 1, R(3) - 1))
+    if (r < 0.45) return act('interact', () => S().interact())
+    if (r < 0.57) return frames(5 + R(20), pick([0.25, 1, 3]))
+    if (r < 0.62) { const b = randomBook(); return act(`copyBook(${b})`, () => S().copyBook(b)) }
+    if (r < 0.65) { const done = BOOKS.filter((b) => (g.progress[b]?.completed?.length ?? 0) > 0); if (done.length) { const b = pick(done); const c = pick(g.progress[b].completed); return act(`copyAgain(${b},${c})`, () => (S() as unknown as { copyAgain: (b: string, c: number) => void }).copyAgain(b, c)) } }
+    if (r < 0.67) return act('openTrade', () => S().open({ kind: 'trade' }))
+    if (r < 0.69) { const it = randomInvItem(); return act(`sellItem(${it})`, () => S().sellItem(it as never)) }
+    if (r < 0.70) return act('startReading', () => S().startReading())
+    if (r < 0.71) return act('openTravel', () => S().open({ kind: 'travel' }))
+    if (r < 0.72) return act('eat', () => S().eat())
+    if (r < 0.73) return act('lookAround', () => S().lookAround())
+    if (r < 0.74) { const id = pick(NB); return act(`talkTo(${id})`, () => S().talkTo(id)) }
+    if (r < 0.75) { const pl = pick(['tea', 'sunset', 'walk'] as const); return act(`goDate(${pl})`, () => S().goDate(pl)) }
+    if (r < 0.76) return act('askBaby', () => S().askBaby())
+    if (r < 0.77) return act('openLibrary', () => S().open({ kind: 'library' }))
+    if (r < 0.78) { const b = pick(BOOKS); return act(`seal(${b})`, () => S().seal(b)) }
+    if (r < 0.79) { const it = randomInvItem(); return act(`buyRareItem`, () => S().buyRareItem(it as never)) }
+    if (r < 0.80) return act('drink', () => S().drink())
+    if (r < 0.81) return act('blanket', () => S().blanket())
+    if (r < 0.82) { const t = { x: Math.round(g.player.x), y: Math.round(g.player.y) }; const c = pick(['herb', 'bean'] as const); return act(`plantAt`, () => { S().plantAt(t, c); S().waterAt(t); S().harvestAt(t) }) }
+    if (r < 0.83) return act('kidTime', () => S().open({ kind: 'kidTime' }))
+    if (r < 0.84) return act('travelTo', () => S().travelTo(rnd() < 0.5 ? 'newland' : 'village'))
+    if (r < 0.85) return act('cycleTimeSpeed', () => S().cycleTimeSpeed())
+    if (r < 0.86) return act('reload', () => { const g2 = deserialize(serialize(S().game), CONTENT); if (g2) S().load(g2) })
+    if (r < 0.87) return act('family', () => S().open({ kind: 'family' }))
+    return frames(3, 1)
+  }
+
+  const endOfDay = () => {
+    if (weddingToday(S().game) && rnd() < 0.9) {
+      act('goWedding', () => {
+        for (let i = 0; i < 30 && S().modal; i++) S().closeModal()
+        if (S().game.map === 'newland') S().travelTo('village')
+        S().tap({ x: 25, y: 21 })
+        for (let i = 0; i < 1400 && S().game.romance?.stage === 'engaged'; i++) { if (S().modal) { if (S().modal!.kind === 'scene') S().nextScene(); else S().closeModal() } S().frame(1) }
+      })
+    }
+    // 잠: 침대로 가서 창을 열거나, 바로 창을 열어 잔다
+    act('goBed', () => { if (S().modal) S().closeModal(); S().open({ kind: 'review', pieceId: null }) })
+    if (S().modal?.kind === 'review') act('sleep', () => { S().sleep(); stats.sleeps++ })
+  }
+
+  for (let d = 0; d < days; d++) {
+    const dayAt = S().game.clock.day
+    for (let k = 0; k < stepsPerDay; k++) {
+      if (stopAt !== undefined && step >= stopAt) break
+      const s = S()
+      if (s.trip) { act('finishTripBoard', () => S().finishTripBoard(rnd() < 0.5 ? [] : [{ kind: 'coins', n: 3 } as never])); continue }
+      if (s.copyResult?.length) { act('dismissCopyResult', () => S().dismissCopyResult()); continue }
+      if (s.piecePopups?.length) { act('dismissPiecePopup', () => S().dismissPiecePopup()); continue }
+      if (s.decorating) { act('stopDecorate', () => S().stopDecorate()); continue }
+      if (s.modal) modalAction(); else freeAction()
+      // 창이 오래 열린 채 고정되는지
+      const mk = S().modal ? JSON.stringify(S().modal).slice(0, 200) : ''
+      if (mk && mk === modalKey) { modalSince++ } else { modalKey = mk; modalSince = 0 }
+      if (modalSince === 40) {
+        // 닫기를 여러 번 눌러 본다
+        for (let i = 0; i < 5; i++) act('closeModal(stuck?)', () => { S().closeModal(); S().frame(0.1) })
+        if (S().modal && JSON.stringify(S().modal).slice(0, 200) === modalKey) report('stuckModal', `${S().modal!.kind}: ${modalKey}`)
+      }
+      if (S().modal) stats.modalsSeen.set(S().modal!.kind, (stats.modalsSeen.get(S().modal!.kind) ?? 0) + 1)
+      { const gg = S().game; if (gg.romance?.stage) reached.add('romance:' + gg.romance.stage); if (gg.child) reached.add('child'); if ((gg.siblings ?? []).length) reached.add('siblings'); if (gg.homeLevel) reached.add('home' + gg.homeLevel); if (gg.companion) reached.add('pet'); if (gg.flags.newlandGift) reached.add('newland'); if ((gg.clubs ?? []).length) reached.add('club') }
+      if (step % 25 === 0) {
+        const g = S().game
+        for (const x of checkInvariants(g, prevDay)) report('invariant', x)
+        prevDay = Math.max(prevDay, g.clock.day)
+        if (step % 100 === 0) {
+          stats.roundTrips++
+          try { for (const x of roundTrip(g)) report('roundtrip', x) } catch (e) { report('roundtripException', String((e as Error).stack).slice(0, 400)) }
+        }
+      }
+      vi.runOnlyPendingTimers()
+    }
+    if (stopAt !== undefined && step >= stopAt) break
+    // 하루 끝: 늦게까지 시간을 흘리고 잔다
+    if (rnd() < 0.5) frames(10, 30)
+    endOfDay()
+    vi.runOnlyPendingTimers()
+    const g = S().game
+    for (const x of checkInvariants(g, prevDay)) report('invariant', x)
+    if (g.clock.day === dayAt) {
+      // 잠이 날짜를 넘기지 못했다
+      report('noDayAdvance', `day ${dayAt} modal=${S().modal?.kind} trip=${!!S().trip}`)
+      // 강제로 진행: 창 모두 닫기 반복 후 다시
+      for (let i = 0; i < 10 && S().modal; i++) act('closeModal(force)', () => S().closeModal())
+      endOfDay()
+    }
+    prevDay = Math.max(prevDay, S().game.clock.day)
+    stats.roundTrips++
+    try { for (const x of roundTrip(S().game)) report('roundtrip', x) } catch (e) { report('roundtripException', String((e as Error).stack).slice(0, 400)) }
+  }
+  Math.random = origRandom
+  const g = S().game
+  return {
+    seed, start, steps: step, day: g.clock.day, ...stats,
+    modalsSeen: Object.fromEntries(stats.modalsSeen), actionsSeen: Object.fromEntries(stats.actionsSeen),
+    undefinedScenes: [...undefinedScenes], reached: [...reached], whyCord: Object.fromEntries(whyCord),
+    end: { coins: g.coins, books: BOOKS.filter((b) => (g.progress[b]?.completed?.length ?? 0) > 0).length, shelved: Object.keys(g.shelved).length, collected: g.collected.length, child: !!g.child, romance: g.romance?.stage ?? null, homeLevel: g.homeLevel, persons: Object.keys((g.gen as unknown as { persons?: object })?.persons ?? {}).length },
+    fullLog,
+  }
+}
+
+it('r4sim fuzz', async () => {
+  vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval'] })
+  const seeds = Number(process.env.SEEDS ?? 8)
+  const days = Number(process.env.DAYS ?? 300)
+  const spd = Number(process.env.STEPS_PER_DAY ?? 60)
+  const startMode = process.env.START ?? 'mix'
+  const seedBase = Number(process.env.SEED_BASE ?? 1)
+  const replay = process.env.REPLAY // "seed:step:start"
+  const tag = process.env.TAG ?? 'run'
+  const vf = `${OUT}/${tag}-violations.jsonl`
+  writeFileSync(vf, '')
+  const results: unknown[] = []
+  const t0 = Date.now()
+  if (replay) {
+    const [s, st, sm] = replay.split(':')
+    const r = await runSeed(Number(s), days, (sm as 'new' | 'late' | 'social') ?? 'new', spd, (v) => appendFileSync(vf, JSON.stringify(v) + '\n'), Number(st))
+    writeFileSync(`${OUT}/${tag}-replay-log.txt`, r.fullLog.join('\n'))
+    results.push({ ...r, fullLog: undefined })
+  } else {
+    for (let i = 0; i < seeds; i++) {
+      const seed = seedBase + i
+      const start = startMode === 'mix' ? (['new', 'late', 'social'] as const)[i % 3] : (startMode as 'new' | 'late' | 'social')
+      const ts = Date.now()
+      const r = await runSeed(seed, days, start, spd, (v) => appendFileSync(vf, JSON.stringify(v) + '\n'))
+      results.push({ ...r, fullLog: undefined, ms: Date.now() - ts })
+      writeFileSync(`${OUT}/${tag}-results.json`, JSON.stringify(results, null, 1))
+    }
+  }
+  writeFileSync(`${OUT}/${tag}-results.json`, JSON.stringify({ totalMs: Date.now() - t0, results }, null, 1))
+  vi.useRealTimers()
+  expect(true).toBe(true)
+})

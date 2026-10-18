@@ -1,0 +1,559 @@
+romance1:presser 기름 짜는 이웃의 이야기 · 올리버
+{"title":"기름 짜는 이웃의 이야기","lines":[{"speaker":"presser","text":"처음 기름틀 앞에 섰을 땐 하루에 항아리 하나 채우는 것도 버거웠어요."},{"speaker":"presser","text":"그래서 걸음을 세기 시작했어요. 줄일 수 있는 건 다 줄이려고요."}]}
+undefined
+
+romance2:presser 기름 짜는 이웃의 이야기 · 올리버
+{"title":"기름 짜는 이웃의 이야기","lines":[{"speaker":"presser","text":"일은 줄일수록 좋은데, 사람 만나는 시간은 줄이고 싶지 않더라고요."},{"speaker":"presser","text":"당신이랑 얘기하다 보면 항아리 세는 걸 잊어요."}]}
+undefined
+
+romance2:presser:friend 기름 짜는 이웃의 이야기 · 올리버
+{"title":"기름 짜는 이웃의 이야기","lines":[{"speaker":"presser","text":"일은 줄일수록 좋은데, 이웃이랑 얘기하는 시간은 줄이고 싶지 않더라고요."},{"speaker":"presser","text":"{player}님이 들르면 잠깐 쉬어 갈 핑계가 생겨서 좋아요."}]}
+undefined
+
+village:1 꽃길
+{"title":"꽃길","lines":[{"speaker":"narration","text":"어느새 큰길가에 꽃이 피기 시작했다."},{"speaker":"narration","text":"마을이 조금씩 환해진다."}],"album":"꽃길이 난 날"}
+undefined
+
+saw:boat:argue 나루의 말다툼
+{"title":"나루의 말다툼","lines":[{"speaker":"cosmo","text":"뱃머리는 뾰족해야 물을 가르지!"},{"speaker":"rudy","text":"…둥글어야 안 부서져."},{"speaker":"cosmo","text":"형이 만든 건 뾰족했다고!"},{"speaker":"narration","text":"루디가 대패를 내려놓고 한참 코스모를 보았다. 그리고 뾰족한 선을 조금 남긴 둥근 뱃머리를 그려 보였다. 코스모가 입을 다물었다."}]}
+undefined
+
+blanket 담요
+{"title":"담요","lines":[{"speaker":"narration","text":"담요를 덮어 주었다. 꼭 싸매고 있다."}],"album":"담요를 덮어 준 날"}
+undefined
+
+romance1:dexter 덱스터의 이야기 · 덱스터
+{"title":"덱스터의 이야기","lines":[{"speaker":"dexter","text":"길 잃은 어린 양을 밤새 찾은 적이 있어요."},{"speaker":"dexter","text":"새벽에 바위틈에서 찾았을 때, 그 녀석이 먼저 울면서 달려오더라고요."}]}
+undefined
+
+romance2:dexter 덱스터의 이야기 · 덱스터
+{"title":"덱스터의 이야기","lines":[{"speaker":"dexter","text":"언덕 위 별은 마을에서 보는 별보다 조금 더 가까워요."},{"speaker":"dexter","text":"다음에 맑은 밤이 오면 같이 올라가요. 제일 밝은 별을 알려 드릴게요."}]}
+undefined
+
+romance2:dexter:friend 덱스터의 이야기 · 덱스터
+{"title":"덱스터의 이야기","lines":[{"speaker":"dexter","text":"언덕 위 별은 마을에서 보는 별보다 조금 더 가까워요."},{"speaker":"dexter","text":"양치기는 별을 보고 길을 찾아요. 제일 밝은 별 하나만 알아도 길 잃을 일은 없죠. 다음에 알려 드릴게요."}]}
+undefined
+
+date:walk:1 들꽃 한 송이
+{"title":"들꽃 한 송이","lines":[{"speaker":"narration","text":"{partnerSubj} 길가에서 작은 들꽃 하나를 꺾어 내밀었다."},{"speaker":"narration","text":"\"이 길엔 늘 뭔가 피어 있네요.\""}]}
+undefined
+
+romance1:merchant 떠돌이 상인의 이야기 · 오스카
+{"title":"떠돌이 상인의 이야기","lines":[{"speaker":"merchant","text":"처음 장사 나섰을 땐 좌판도 없었어. 보자기 하나 펴고 앉았지."},{"speaker":"merchant","text":"비 오면 보자기째 들고 처마 밑으로 뛰었어. 그래서 지금도 젖지 않은 것부터 펴는 버릇이 있어."}]}
+undefined
+
+romance2:merchant 떠돌이 상인의 이야기 · 오스카
+{"title":"떠돌이 상인의 이야기","lines":[{"speaker":"merchant","text":"길에선 다들 내 이름보다 물건 이름을 먼저 불러. 그게 편할 때도 있었어."},{"speaker":"merchant","text":"근데 이 마을에선… 이상하게 물건 얘기를 덜 하게 되네."}]}
+undefined
+
+romance1:rudy 루디의 이야기 · 루디
+{"title":"루디의 이야기","lines":[{"speaker":"rudy","text":"처음 짠 의자는 다리가 하나 짧았어요."},{"speaker":"rudy","text":"그래도 할머니가 십 년을 앉으셨죠. 쓰는 사람이 아껴 주면 물건은 오래가요."}]}
+undefined
+
+romance2:rudy 루디의 이야기 · 루디
+{"title":"루디의 이야기","lines":[{"speaker":"rudy","text":"{player}님이 엮는 책을 보면 저도 뭔가 오래 남는 걸 만들고 싶어져요."},{"speaker":"rudy","text":"언젠가 {player}님 책을 꽂을 책장을 짜 드리고 싶어요."}]}
+undefined
+
+gift:postman:9 마음을 나눈 이웃 · 마일로
+{"title":"마음을 나눈 이웃","lines":[{"speaker":"postman","text":"편지를 담아 다니던 바구니예요. 새로 하나 엮었으니 이건 드릴게요."}],"album":"편지 나르는 이웃과 나눈 날들"}
+undefined
+
+gift:grandpa:9 마음을 나눈 이웃 · 버나드
+{"title":"마음을 나눈 이웃","lines":[{"speaker":"grandpa","text":"내가 아끼던 그릇이네. 자네가 쓰면 좋겠네."}],"album":"포도원 할아버지와 나눈 날들"}
+undefined
+
+gift:smith:9 마음을 나눈 이웃 · 브루노
+{"title":"마음을 나눈 이웃","lines":[{"speaker":"smith","text":"{player}님 방에 둘 협탁을 짰소. 쇠 장식도 달았소."}],"album":"대장장이와 나눈 날들"}
+undefined
+
+gift:apothecary:9 마음을 나눈 이웃 · 세이지
+{"title":"마음을 나눈 이웃","lines":[{"speaker":"apothecary","text":"약차 우릴 때 쓰는 주전자예요. 우리 집에서 제일 아끼는 거예요."}],"album":"약방 주인과 나눈 날들"}
+undefined
+
+gift:carpenter:9 마음을 나눈 이웃 · 아서
+{"title":"마음을 나눈 이웃","lines":[{"speaker":"carpenter","text":"책 꽂을 책장을 짰어요. 권수가 늘었으니 자리가 필요하죠."}],"album":"목수와 나눈 날들"}
+undefined
+
+gift:weaver:9 마음을 나눈 이웃 · 아이리스
+{"title":"마음을 나눈 이웃","lines":[{"speaker":"weaver","text":"이 바구니는 제가 이 마을에서 처음 짠 거예요."}],"album":"베 짜는 이웃과 나눈 날들"}
+undefined
+
+gift:merchant:9 마음을 나눈 이웃 · 오스카
+{"title":"마음을 나눈 이웃","lines":[{"speaker":"merchant","text":"먼 길에서 구한 제일 좋은 깔개야. 네 방에 어울릴 거야."}],"album":"떠돌이 상인과 나눈 날들"}
+undefined
+
+gift:shepherd:9 마음을 나눈 이웃 · 오웬
+{"title":"마음을 나눈 이웃","lines":[{"speaker":"shepherd","text":"제일 좋은 털로 방석을 또 만들었어요. 둘이면 손님도 앉겠죠."}],"album":"양치기와 나눈 날들"}
+undefined
+
+gift:presser:9 마음을 나눈 이웃 · 올리버
+{"title":"마음을 나눈 이웃","lines":[{"speaker":"presser","text":"이 물병엔 올해 첫 기름을 담았었어요. 받아 줘요."}],"album":"기름 짜는 이웃과 나눈 날들"}
+undefined
+
+gift:child:9 마음을 나눈 이웃 · 윌로
+{"title":"마음을 나눈 이웃","lines":[{"speaker":"child","text":"그때보다 훨씬 잘 깎은 나무 새예요. 제일 아끼는 거라 드려요."}],"album":"물 긷는 아이와 나눈 날들"}
+undefined
+
+gift:beekeeper:9 마음을 나눈 이웃 · 클로버
+{"title":"마음을 나눈 이웃","lines":[{"speaker":"beekeeper","text":"제일 예쁜 물병에 꿀 향이 배었어요. 가져가요."}],"album":"벌 치는 이웃과 나눈 날들"}
+undefined
+
+gift:fisher:9 마음을 나눈 이웃 · 핀
+{"title":"마음을 나눈 이웃","lines":[{"speaker":"fisher","text":"물가에서 쓰던 그릇이에요. 오래 써서 손에 익었어요."}],"album":"어부와 나눈 날들"}
+undefined
+
+gift:baker:9 마음을 나눈 이웃 · 헤이즐
+{"title":"마음을 나눈 이웃","lines":[{"speaker":"baker","text":"늘 고마워요. 우리 집 식탁에 올려 두던 촛대예요. 이젠 {player}님 거예요."}],"album":"빵 굽는 이웃과 나눈 날들"}
+undefined
+
+romance1:marigold 메리골드의 이야기 · 메리골드
+{"title":"메리골드의 이야기","lines":[{"speaker":"marigold","text":"어렸을 때 할아버지 포도주 통에 들어가 숨었다가 크게 혼났어요."},{"speaker":"marigold","text":"그래도 할아버지는 그날 밤 제 머리를 오래 쓰다듬어 주셨어요."}]}
+undefined
+
+romance2:marigold 메리골드의 이야기 · 메리골드
+{"title":"메리골드의 이야기","lines":[{"speaker":"marigold","text":"언젠가 제 이름 붙은 포도나무를 한 그루 심고 싶어요."},{"speaker":"marigold","text":"그 나무 아래서 {player}님이랑 첫 송이를 나눠 먹고 싶어요."}]}
+undefined
+
+romance2:marigold:friend 메리골드의 이야기 · 메리골드
+{"title":"메리골드의 이야기","lines":[{"speaker":"marigold","text":"언젠가 제 이름 붙은 포도나무를 한 그루 심고 싶어요."},{"speaker":"marigold","text":"첫 송이가 열리면 할아버지랑 {player}님한테 제일 먼저 나눠 드릴게요."}]}
+undefined
+
+trip:harbor 바닷가 항구 마을
+{"title":"바닷가 항구 마을","album":"배를 타고 항구 마을에 다녀온 날","lines":[{"speaker":"narration","text":"배가 한나절을 꼬박 달려 큰 항구에 닿았다. 짠 바람, 돛대 사이로 우는 갈매기, 좌판마다 쌓인 물건."},{"speaker":"narration","text":"골목 끝 작은 빵집 주인이 봇짐을 보더니 반가운 얼굴로 묻는다."},{"speaker":"narration","text":"\"그 호숫가 마을에서 왔소? 파피라는 녀석이 여기서 반죽을 배웠지. 너무 오래 치대서 늘 혼났다오.\""},{"speaker":"narration","text":"주인은 웃으며 빵 하나를 싸 준다. \"돌아가거든 안부 전해 주오. 지금도 그렇게 치대느냐고.\""}]}
+undefined
+
+romance1:basil 바질의 이야기 · 바질
+{"title":"바질의 이야기","lines":[{"speaker":"basil","text":"어릴 때 독풀을 약초인 줄 알고 캐 온 적이 있어요."},{"speaker":"basil","text":"어머니가 잎 모양을 하나하나 짚어 주셨죠. 그 뒤로 잎은 꼭 두 번 봐요."}]}
+undefined
+
+romance2:basil 바질의 이야기 · 바질
+{"title":"바질의 이야기","lines":[{"speaker":"basil","text":"아픈 사람이 차 한 잔 마시고 웃는 걸 보면 이 일이 좋아요."},{"speaker":"basil","text":"{player}님이 지친 날엔… 제가 제일 먼저 차를 우려 드리고 싶어요."}]}
+undefined
+
+romance2:basil:friend 바질의 이야기 · 바질
+{"title":"바질의 이야기","lines":[{"speaker":"basil","text":"아픈 사람이 차 한 잔 마시고 웃는 걸 보면 이 일이 좋아요."},{"speaker":"basil","text":"{player}님도 지친 날엔 약방에 들러요. 차 한 잔은 늘 있어요."}]}
+undefined
+
+notice:starNight 별 보는 밤
+{"title":"별 보는 밤","lines":[{"speaker":"grandpa","text":"오늘 밤은 하늘이 맑겠구먼. 언덕에서 다 같이 별을 보세."}]}
+undefined
+
+done:grandpa:1 부탁을 들어준 날 · 버나드
+{"title":"부탁을 들어준 날","lines":[{"speaker":"grandpa","text":"덕분에 시렁을 반듯하게 세웠네."},{"speaker":"grandpa","text":"이 물병은 자네 쓰게."}],"album":"포도 시렁"}
+undefined
+
+done:grandpa:2 부탁을 들어준 날 · 버나드
+{"title":"부탁을 들어준 날","lines":[{"speaker":"grandpa","text":"다 됐네. 지나가다 앉아 쉬게."},{"speaker":"grandpa","text":"남은 나무로 협탁을 하나 짰네. 가져가게."}],"album":"할아버지 집 앞 의자"}
+undefined
+
+done:smith:1 부탁을 들어준 날 · 브루노
+{"title":"부탁을 들어준 날","lines":[{"speaker":"smith","text":"새 풀무요! 이제 그을음을 넉넉히 나눠 주겠소."},{"speaker":"smith","text":"우선 이것부터 가져가시오."}],"album":"대장간 새 풀무"}
+undefined
+
+done:smith:2 부탁을 들어준 날 · 브루노
+{"title":"부탁을 들어준 날","lines":[{"speaker":"smith","text":"길가에 등불을 세웠소. 밤에도 환할 거요."},{"speaker":"smith","text":"남은 쇠로 촛대를 하나 만들었소."}],"album":"길가의 등불"}
+undefined
+
+done:weaver:1 부탁을 들어준 날 · 아이리스
+{"title":"부탁을 들어준 날","lines":[{"speaker":"weaver","text":"그늘이 생겼어요! 이제 한낮에도 베를 짤 수 있어요."},{"speaker":"weaver","text":"제가 짠 깔개예요. 방에 깔아 보세요."}],"album":"베틀 가리개"}
+undefined
+
+done:merchant:1 부탁을 들어준 날 · 오스카
+{"title":"부탁을 들어준 날","lines":[{"speaker":"merchant","text":"든든하다! 약속대로 좌판에 새 물건 놓을게."},{"speaker":"merchant","text":"이건 파피루스야. 글 쓰는 데 써."}],"album":"넓어진 좌판"}
+undefined
+
+done:merchant:2 부탁을 들어준 날 · 오스카
+{"title":"부탁을 들어준 날","lines":[{"speaker":"merchant","text":"봐, 알록달록한 가리개야!"},{"speaker":"merchant","text":"깔개 하나 줄게. 먼 데서 가져온 거야."}],"album":"좌판 가리개"}
+undefined
+
+done:shepherd:1 부탁을 들어준 날 · 오웬
+{"title":"부탁을 들어준 날","lines":[{"speaker":"shepherd","text":"우리가 넓어졌어요. 양들이 좋아하네요."},{"speaker":"shepherd","text":"양털 좀 가져가요."}],"album":"넓어진 양 우리"}
+undefined
+
+done:shepherd:2 부탁을 들어준 날 · 오웬
+{"title":"부탁을 들어준 날","lines":[{"speaker":"shepherd","text":"양털 깎는 날, 다 같이 즐거웠어요!"},{"speaker":"shepherd","text":"제일 부드러운 털로 방석을 만들었어요."}],"album":"양털 깎는 날"}
+undefined
+
+done:presser:1 부탁을 들어준 날 · 올리버
+{"title":"부탁을 들어준 날","lines":[{"speaker":"presser","text":"새 손잡이를 달았어요! 이제 기름이 한 병 더 나와요."},{"speaker":"presser","text":"기름 두 병 가져가요."}],"album":"기름틀 새 손잡이"}
+undefined
+
+done:presser:2 부탁을 들어준 날 · 올리버
+{"title":"부탁을 들어준 날","lines":[{"speaker":"presser","text":"나무를 심었어요. 몇 해 뒤엔 열매가 가득할 거예요."},{"speaker":"presser","text":"물병이랑 기름, 받아요."}],"album":"새로 심은 올리브나무"}
+undefined
+
+done:child:1 부탁을 들어준 날 · 윌로
+{"title":"부탁을 들어준 날","lines":[{"speaker":"child","text":"연이 떴어요! 바람 부는 날 언덕에서 날릴게요."},{"speaker":"child","text":"이건 제가 깎은 나무 새예요."}],"album":"언덕의 연"}
+undefined
+
+done:child:2 부탁을 들어준 날 · 윌로
+{"title":"부탁을 들어준 날","lines":[{"speaker":"child","text":"꽃이 피었어요! 보러 오세요."},{"speaker":"child","text":"제일 예쁜 꽃은 꽃병에 꽂아 드릴게요."}],"album":"배움터 꽃밭"}
+undefined
+
+done:beekeeper:1 부탁을 들어준 날 · 클로버
+{"title":"부탁을 들어준 날","lines":[{"speaker":"beekeeper","text":"벌통이 늘었어요. 꽃마다 벌이 붕붕해요."},{"speaker":"beekeeper","text":"새 벌통에서 뜬 꿀이에요. 드셔 보세요."}],"album":"늘어난 벌통"}
+undefined
+
+done:baker:1 부탁을 들어준 날 · 헤이즐
+{"title":"부탁을 들어준 날","lines":[{"speaker":"baker","text":"고마워요! 빵집 앞에 의자를 놓았어요."},{"speaker":"baker","text":"이건 답례예요. 곡식 담기 좋은 그릇이에요."}],"album":"빵집 앞 의자"}
+undefined
+
+done:baker:2 부탁을 들어준 날 · 헤이즐
+{"title":"부탁을 들어준 날","lines":[{"speaker":"baker","text":"보세요, 아기가 새 이불을 덮고 잘 자요."},{"speaker":"baker","text":"방석이랑 촛대, 받아 줘요."}],"album":"아기 이불"}
+undefined
+
+companionJoined 새 식구
+{"title":"새 식구","lines":[{"speaker":"narration","text":"오늘부터 함께 산다."},{"speaker":"narration","text":"다른 한 마리는 물 긷는 아이가 데려갔다."}],"album":"새 식구가 온 날"}
+undefined
+
+movedIn:apothecary 새 이웃 · 세이지
+{"title":"새 이웃","lines":[{"speaker":"apothecary","text":"장터 아래에 약방을 열었어요. 풀밭에 약초가 나면 캐 두세요. 장날 좌판에서 값을 쳐 줄 거예요."}]}
+undefined
+
+movedIn:carpenter 새 이웃 · 아서
+{"title":"새 이웃","lines":[{"speaker":"carpenter","text":"큰길가에 공방을 냈어요. 책 표지 판자는 제게 맡겨요."}]}
+undefined
+
+movedIn:weaver 새 이웃 · 아이리스
+{"title":"새 이웃","lines":[{"speaker":"narration","text":"베틀을 가진 이웃이 이사 왔다."},{"speaker":"weaver","text":"반가워요. 베 짜는 일을 해요. 앞으로 잘 부탁해요."}],"album":"베 짜는 이웃이 온 날"}
+undefined
+
+movedIn:fisher 새 이웃 · 핀
+{"title":"새 이웃","lines":[{"speaker":"fisher","text":"나루가 열려서 호숫가에 자리를 잡았어요. 잘 부탁해요."}]}
+undefined
+
+saw:forge:handle 새벽의 망치 자루
+{"title":"새벽의 망치 자루","lines":[{"speaker":"narration","text":"해 뜨기 전, 대장장이가 새로 깎은 망치 자루를 틸리 방 창문 아래 조용히 세워 둔다."},{"speaker":"narration","text":"손잡이에 작은 잎사귀 무늬가 서툴게 새겨져 있다."},{"speaker":"narration","text":"대장장이는 헛기침을 한 번 하고 대장간으로 들어갔다."}]}
+undefined
+
+gift:postman:3 선물 · 마일로
+{"title":"선물","lines":[{"speaker":"postman","text":"편지 싸는 종이가 남았어요. 글씨 쓰실 때 쓰세요."}]}
+undefined
+
+gift:grandpa:3 선물 · 버나드
+{"title":"선물","lines":[{"speaker":"grandpa","text":"말린 무화과네. 출출할 때 들게."}]}
+undefined
+
+gift:grandpa:6 선물 · 버나드
+{"title":"선물","lines":[{"speaker":"grandpa","text":"젊을 때 짠 식탁이라네. 자네 집에 두고 쓰게."}]}
+undefined
+
+gift:smith:3 선물 · 브루노
+{"title":"선물","lines":[{"speaker":"smith","text":"밤에 쓰는 걸 보았소. 기름을 덜 먹는 등잔이오."}]}
+undefined
+
+gift:apothecary:3 선물 · 세이지
+{"title":"선물","lines":[{"speaker":"apothecary","text":"텃밭에 심어 보세요. 잘 자라는 약초 씨앗이에요."}]}
+undefined
+
+gift:apothecary:6 선물 · 세이지
+{"title":"선물","lines":[{"speaker":"apothecary","text":"약초 달이던 작은 냄비예요. 방에서도 쓸 데가 있을 거예요."}]}
+undefined
+
+gift:carpenter:3 선물 · 아서
+{"title":"선물","lines":[{"speaker":"carpenter","text":"자투리로 걸상 하나 만들었어요. 앉아 보세요."}]}
+undefined
+
+gift:carpenter:6 선물 · 아서
+{"title":"선물","lines":[{"speaker":"carpenter","text":"등받이 있는 의자예요. 글씨 쓰다 허리 펴세요."}]}
+undefined
+
+gift:weaver:3 선물 · 아이리스
+{"title":"선물","lines":[{"speaker":"weaver","text":"천 조각으로 방석을 지었어요."}]}
+undefined
+
+gift:weaver:6 선물 · 아이리스
+{"title":"선물","lines":[{"speaker":"weaver","text":"제가 짠 깔개예요. 바닥에 깔아 보세요."}]}
+undefined
+
+gift:merchant:3 선물 · 오스카
+{"title":"선물","lines":[{"speaker":"merchant","text":"글 쓰는 사람한테는 이게 제일이지. 파피루스 두 장이야."}]}
+undefined
+
+gift:shepherd:3 선물 · 오웬
+{"title":"선물","lines":[{"speaker":"shepherd","text":"양털로 방석을 만들었어요. 오래 앉아 있어도 편할 거예요."}]}
+undefined
+
+gift:shepherd:6 선물 · 오웬
+{"title":"선물","lines":[{"speaker":"shepherd","text":"털을 넉넉히 깎았어요. 담요 짜는 데 써요."}]}
+undefined
+
+gift:presser:3 선물 · 올리버
+{"title":"선물","lines":[{"speaker":"presser","text":"갓 짠 기름 두 병이에요. 등잔에 써요."}]}
+undefined
+
+gift:child:3 선물 · 윌로
+{"title":"선물","lines":[{"speaker":"child","text":"들꽃 꺾어 왔어요. 꽃병에 꽂아 두세요!"}]}
+undefined
+
+gift:child:6 선물 · 윌로
+{"title":"선물","lines":[{"speaker":"child","text":"제가 키운 풀이에요. 창가에 두세요."}]}
+undefined
+
+gift:beekeeper:3 선물 · 클로버
+{"title":"선물","lines":[{"speaker":"beekeeper","text":"꿀 두 병이에요. 빵에 발라 먹어요."}]}
+undefined
+
+gift:beekeeper:6 선물 · 클로버
+{"title":"선물","lines":[{"speaker":"beekeeper","text":"밀랍으로 초를 만들었어요."}]}
+undefined
+
+gift:fisher:3 선물 · 핀
+{"title":"선물","lines":[{"speaker":"fisher","text":"갈대를 넉넉히 베어 왔어요. 종이 만드는 데 보태세요."}]}
+undefined
+
+gift:fisher:6 선물 · 핀
+{"title":"선물","lines":[{"speaker":"fisher","text":"고기 담던 바구니인데 깨끗이 씻었어요. 열매 담기 좋아요."}]}
+undefined
+
+gift:baker:3 선물 · 헤이즐
+{"title":"선물","lines":[{"speaker":"baker","text":"빵 담아 두라고 바구니 하나 짰어요."}]}
+undefined
+
+gift:baker:6 선물 · 헤이즐
+{"title":"선물","lines":[{"speaker":"baker","text":"집에 깔개 하나 깔아요. 발이 따뜻할 거예요."}]}
+undefined
+
+notice:picnic 소풍
+{"title":"소풍","lines":[{"speaker":"child","text":"오늘 낮에 언덕에서 소풍해요! 다들 온대요."}]}
+undefined
+
+notice:babyParty 아기 잔치
+{"title":"아기 잔치","lines":[{"speaker":"baker","text":"오늘 저녁 빵집 앞에서 아기 잔치를 해요. 꼭 와요!"}]}
+undefined
+
+sick 앓아누운 날
+{"title":"앓아누운 날","lines":[{"speaker":"narration","text":"몸이 무거워 늦게까지 누워 있었다."},{"speaker":"baker","text":"안 보여서 와 봤어요. 수프 끓여 왔으니 천천히 드세요."},{"speaker":"narration","text":"너무 늦게까지 깨어 있거나 굶으면 앓아눕습니다."}],"album":"병문안 온 날"}
+undefined
+
+date:tea:2 어릴 적 이야기
+{"title":"어릴 적 이야기","lines":[{"speaker":"narration","text":"{partnerSubj} 목소리를 낮추더니 어릴 적 장난 이야기를 꺼냈다."},{"speaker":"narration","text":"웃음을 참느라 찻잔이 달그락거렸다."}]}
+undefined
+
+village:2 오가는 발길
+{"title":"오가는 발길","lines":[{"speaker":"narration","text":"이웃집 문을 두드리는 일이 잦아졌다."},{"speaker":"narration","text":"길에서 마주치면 먼저 손을 흔드는 사람이 늘었다."}],"album":"발길이 잦아진 날"}
+undefined
+
+romance1:poppy 웬델의 이야기 · 웬델
+{"title":"웬델의 이야기","lines":[{"speaker":"poppy","text":"처음 찻집에서 일할 땐 찻잔을 세 개나 깼어요."},{"speaker":"poppy","text":"주인 아주머니는 깨진 조각으로 화분 받침을 만들어 주셨죠. 그 화분, 아직 창가에 있어요."}]}
+undefined
+
+romance2:poppy 웬델의 이야기 · 웬델
+{"title":"웬델의 이야기","lines":[{"speaker":"poppy","text":"언젠가 제 이름으로 된 차를 만들고 싶어요."},{"speaker":"poppy","text":"그 차 이름은… {player}님이 지어 주면 좋겠어요."}]}
+undefined
+
+ask:grandpa:1 이웃의 부탁 · 버나드
+{"title":"이웃의 부탁","lines":[{"speaker":"grandpa","text":"포도 시렁이 기울어서 고쳐 세우려 하네."},{"speaker":"grandpa","text":"혼자 고치다 보면 배가 고프니, 빵 두 개와 물 두 동이만 가져다주겠나."}]}
+undefined
+
+ask:grandpa:2 이웃의 부탁 · 버나드
+{"title":"이웃의 부탁","lines":[{"speaker":"grandpa","text":"집 앞에 쉬어 갈 의자를 하나 놓고 싶네."},{"speaker":"grandpa","text":"올리브 두 줌과 기름 한 병이면 나무를 다듬을 수 있지."}]}
+undefined
+
+ask:smith:1 이웃의 부탁 · 브루노
+{"title":"이웃의 부탁","lines":[{"speaker":"smith","text":"풀무가 낡아서 바람이 새오."},{"speaker":"smith","text":"양털 두 뭉치와 기름 한 병이면 새 가죽을 댈 수 있소."}]}
+undefined
+
+ask:smith:2 이웃의 부탁 · 브루노
+{"title":"이웃의 부탁","lines":[{"speaker":"smith","text":"밤길이 어두워서 등불 기둥을 세우려 하오."},{"speaker":"smith","text":"올리브 두 줌과 빵 하나만 가져다주시오. 일하며 먹게."}]}
+undefined
+
+ask:weaver:1 이웃의 부탁 · 아이리스
+{"title":"이웃의 부탁","lines":[{"speaker":"weaver","text":"베틀 위에 햇빛 가리개를 치고 싶어요."},{"speaker":"weaver","text":"양털 세 뭉치면 천을 짤 수 있어요."}]}
+undefined
+
+ask:merchant:1 이웃의 부탁 · 오스카
+{"title":"이웃의 부탁","lines":[{"speaker":"merchant","text":"먼 길 떠날 때 먹을 게 모자라."},{"speaker":"merchant","text":"빵 세 개만 챙겨 주면, 다음 장부터 물건을 더 가져올게."}]}
+undefined
+
+ask:merchant:2 이웃의 부탁 · 오스카
+{"title":"이웃의 부탁","lines":[{"speaker":"merchant","text":"좌판에 햇빛 가리개를 달고 싶어."},{"speaker":"merchant","text":"그을음 두 줌이랑 기름 한 병이면 천에 물을 들일 수 있어."}]}
+undefined
+
+ask:shepherd:1 이웃의 부탁 · 오웬
+{"title":"이웃의 부탁","lines":[{"speaker":"shepherd","text":"양이 늘어서 우리가 좁아요."},{"speaker":"shepherd","text":"갈대 세 줄기만 있으면 울타리를 넓힐 수 있어요."}]}
+undefined
+
+ask:shepherd:2 이웃의 부탁 · 오웬
+{"title":"이웃의 부탁","lines":[{"speaker":"shepherd","text":"곧 양털 깎는 날이에요."},{"speaker":"shepherd","text":"일 끝나고 나눠 먹을 빵 두 개랑 포도 두 송이만 부탁해요."}]}
+undefined
+
+ask:presser:1 이웃의 부탁 · 올리버
+{"title":"이웃의 부탁","lines":[{"speaker":"presser","text":"기름틀 손잡이가 닳았어요."},{"speaker":"presser","text":"올리브 네 줌만 짜서 팔면 새 손잡이를 달 수 있어요."}]}
+undefined
+
+ask:presser:2 이웃의 부탁 · 올리버
+{"title":"이웃의 부탁","lines":[{"speaker":"presser","text":"올리브나무를 몇 그루 더 심고 싶어요."},{"speaker":"presser","text":"일하는 날 먹을 빵 두 개만 부탁해요."}]}
+undefined
+
+ask:child:1 이웃의 부탁 · 윌로
+{"title":"이웃의 부탁","lines":[{"speaker":"child","text":"연을 날려 보고 싶어요!"},{"speaker":"child","text":"갈대 두 줄기랑 파피루스 한 장만 있으면 만들 수 있어요."}]}
+undefined
+
+ask:child:2 이웃의 부탁 · 윌로
+{"title":"이웃의 부탁","lines":[{"speaker":"child","text":"우리 집 앞에 작은 꽃밭을 만들래요."},{"speaker":"child","text":"무화과 두 개랑 바꿔 꽃씨를 얻을 수 있대요."}]}
+undefined
+
+ask:beekeeper:1 이웃의 부탁 · 클로버
+{"title":"이웃의 부탁","lines":[{"speaker":"beekeeper","text":"벌통을 몇 개 더 놓고 싶어요."},{"speaker":"beekeeper","text":"갈대 두 줄기랑 올리브 두 줌이 있으면 벌통을 엮을 수 있어요."}]}
+undefined
+
+ask:baker:1 이웃의 부탁 · 헤이즐
+{"title":"이웃의 부탁","lines":[{"speaker":"baker","text":"빵집 앞에 손님이 앉을 자리가 있으면 좋겠어요."},{"speaker":"baker","text":"보리 세 줌만 구해 주면, 그걸로 빵을 구워 팔아 의자를 들일게요."}]}
+undefined
+
+ask:baker:2 이웃의 부탁 · 헤이즐
+{"title":"이웃의 부탁","lines":[{"speaker":"baker","text":"아기가 추워할까 봐 걱정이에요."},{"speaker":"baker","text":"양털 두 뭉치만 있으면 아기 이불을 지을 수 있어요."}]}
+undefined
+
+strays 작은 손님
+{"title":"작은 손님","lines":[{"speaker":"narration","text":"마당에 새끼 고양이와 강아지가 찾아왔다."},{"speaker":"narration","text":"먼저 밥을 주는 쪽이 식구가 됩니다."}]}
+undefined
+
+saw:bread:swap 장터의 비밀
+{"title":"장터의 비밀","lines":[{"speaker":"narration","text":"장이 파할 무렵, 웬델이 파피의 좌판에서 빵 하나를 몰래 산다. 모자를 눌러쓴 채로."},{"speaker":"narration","text":"조금 뒤, 파피도 웬델의 좌판에서 과자 하나를 몰래 산다. 역시 모자를 눌러쓴 채로."},{"speaker":"narration","text":"둘은 서로 모르는 척 광장 양 끝에서 각자 산 것을 한 입씩 먹었다. 표정이 똑같았다."}]}
+undefined
+
+invite:grandpa 저녁 초대 · 버나드
+{"title":"저녁 초대","lines":[{"speaker":"grandpa","text":"오늘 저녁엔 우리 집에 오게. 포도즙을 내 놓았네."},{"speaker":"grandpa","text":"해 지면 내 집 문을 두드리게."},{"speaker":"narration","text":"오늘 저녁 여섯 시부터 여덟 시 반 사이, 그 집 문을 눌러 보세요."}]}
+undefined
+
+invite:child 저녁 초대 · 윌로
+{"title":"저녁 초대","lines":[{"speaker":"child","text":"오늘 저녁 우리 집에서 같이 밥 먹어요! 엄마가 오래요."},{"speaker":"child","text":"해 지면 우리 집 문 앞으로 와요!"},{"speaker":"narration","text":"오늘 저녁 여섯 시부터 여덟 시 반 사이, 그 집 문을 눌러 보세요."}]}
+undefined
+
+dinner:child 저녁 초대 · 윌로
+{"title":"저녁 초대","lines":[{"speaker":"narration","text":"아이가 오늘 배운 글자를 자랑한다."},{"speaker":"child","text":"다음에 또 와요! 약속!"}],"album":"이웃집 저녁"}
+undefined
+
+invite:baker 저녁 초대 · 헤이즐
+{"title":"저녁 초대","lines":[{"speaker":"baker","text":"오늘 저녁 우리 집에 와요. 따뜻한 수프를 끓일게요."},{"speaker":"baker","text":"해 질 무렵 빵집 문 앞으로 오세요."},{"speaker":"narration","text":"오늘 저녁 여섯 시부터 여덟 시 반 사이, 그 집 문을 눌러 보세요."}]}
+undefined
+
+dinner:baker 저녁 초대 · 헤이즐
+{"title":"저녁 초대","lines":[{"speaker":"narration","text":"수프가 따뜻하다. 아기가 식탁 밑에서 논다."},{"speaker":"baker","text":"또 오세요. 언제든 자리 있어요."}],"album":"이웃집 저녁"}
+undefined
+
+village:4 정든 마을
+{"title":"정든 마을","lines":[{"speaker":"narration","text":"마을 어디를 가도 이름을 불러 주는 사람이 있다."},{"speaker":"narration","text":"이곳이 이제 정말 내 마을 같다."}],"album":"정든 마을"}
+undefined
+
+teaFirst 정원 찻집
+{"title":"정원 찻집","lines":[{"speaker":"narration","text":"창가 탁자에 앉자 말린 꽃 냄새가 은은하게 났다."},{"speaker":"narration","text":"따뜻한 찻잔을 두 손으로 감싸니 하루가 조금 느려졌다."}]}
+undefined
+
+saw:tilly:flower 정자의 저녁 · 틸리
+{"title":"정자의 저녁","lines":[{"speaker":"narration","text":"정자 곁에 틸리가 서 있다. 손가락 사이로 무언가를 굴리고 있다."},{"speaker":"narration","text":"손톱만 한 쇠꽃이다. 꽃잎 하나하나에 줄 자국이 곱다."},{"speaker":"tilly","text":"…쓸모없는 거. 그래도 예쁘잖아."},{"speaker":"narration","text":"틸리는 쇠꽃을 주머니 깊숙이 넣고 호숫가 쪽으로 걸어갔다."}]}
+undefined
+
+romance1:juniper 주니퍼의 이야기 · 주니퍼
+{"title":"주니퍼의 이야기","lines":[{"speaker":"juniper","text":"어릴 때 벌에 쏘이고 한참 울었어요."},{"speaker":"juniper","text":"그래도 다음 날 또 벌통에 갔대요. 무섭지만 궁금한 게 더 컸나 봐요."}]}
+undefined
+
+romance2:juniper 주니퍼의 이야기 · 주니퍼
+{"title":"주니퍼의 이야기","lines":[{"speaker":"juniper","text":"벌은 혼자서는 꿀을 못 만들어요. 다 같이 해야 해요."},{"speaker":"juniper","text":"저도 누군가랑 같이 무언가를 만들어 보고 싶어요. {player}님이랑이면 좋겠어요."}]}
+undefined
+
+romance2:juniper:friend 주니퍼의 이야기 · 주니퍼
+{"title":"주니퍼의 이야기","lines":[{"speaker":"juniper","text":"벌은 혼자서는 꿀을 못 만들어요. 다 같이 해야 해요."},{"speaker":"juniper","text":"그래서 이 마을이 좋아요. 다들 조금씩 거들잖아요. {player}님처럼요."}]}
+undefined
+
+homeMailbox 집 앞 편지함
+{"title":"집 앞 편지함","lines":[{"speaker":"postman","text":"날마다 찾아다니게 해서 미안했어요."},{"speaker":"narration","text":"편지 나르는 이웃이 문 왼쪽에 작은 나무 편지함을 세웠다."},{"speaker":"postman","text":"이제 편지는 여기 넣어 둘게요. 비 오는 날에도요."}]}
+undefined
+
+firstChapter 첫 장
+{"title":"첫 장","lines":[{"speaker":"narration","text":"첫 장을 차례대로 이어 선반에 올려 두었다."}],"album":"첫 장을 이은 날"}
+undefined
+
+romance1:cosmo 코스모의 이야기 · 코스모
+{"title":"코스모의 이야기","lines":[{"speaker":"cosmo","text":"처음 혼자 배를 몰던 날, 안개가 짙게 꼈어요."},{"speaker":"cosmo","text":"나루 등불만 보고 겨우 돌아왔죠. 그 뒤로 등불을 보면 마음이 놓여요."}]}
+undefined
+
+romance2:cosmo 코스모의 이야기 · 코스모
+{"title":"코스모의 이야기","lines":[{"speaker":"cosmo","text":"호수 한가운데 가면 마을이 한눈에 보여요."},{"speaker":"cosmo","text":"언제 한번 같이 가요. {player}님 집 지붕도 보일 거예요."}]}
+undefined
+
+newlandGift 큰길 끝의 표지
+{"title":"큰길 끝의 표지","lines":[{"speaker":"narration","text":"마을 동쪽 큰길이 끝나는 곳에 처음 보는 표지가 서 있다."},{"speaker":"narration","text":"표지 너머에 아직 아무도 쓰지 않은 땅과 작은 서고 하나가 있다."},{"speaker":"narration","text":"가고 싶을 때 가면 된다. 오늘 가지 않아도 표지는 그대로 있다."}],"album":"큰길 끝에 표지가 선 날"}
+undefined
+
+reedRack 틀에 걸린 갈대
+{"title":"틀에 걸린 갈대","lines":[{"speaker":"narration","text":"아침에 나가 보니 틀에 갈대가 가지런히 걸려 있고, 곁에 잘 마른 크림색 종이 한 장이 놓여 있었다."},{"speaker":"fisher","text":"아, 들켰네요. 호숫가에서 갈대를 꺾다 보면 늘 조금씩 남아서요."},{"speaker":"fisher","text":"밤에 지나가는 길에 걸어 두고 갈게요. 신경 쓰지 말아요."},{"speaker":"narration","text":"어부는 손을 한 번 흔들고 호숫가 쪽으로 걸어갔다."}],"album":"틀에 갈대가 걸린 아침"}
+undefined
+
+romance1:tilly 틸리의 이야기 · 틸리
+{"title":"틸리의 이야기","lines":[{"speaker":"tilly","text":"처음 망치를 들었을 땐 손바닥에 물집이 잡혔어요."},{"speaker":"tilly","text":"아버지는 약 대신 튼튼한 장갑을 주셨죠. 그게 우리 집 방식이에요."}]}
+undefined
+
+romance2:tilly 틸리의 이야기 · 틸리
+{"title":"틸리의 이야기","lines":[{"speaker":"tilly","text":"언젠가 제 손으로 마을 등불 고리를 전부 만들고 싶어요."},{"speaker":"tilly","text":"밤에 등불이 켜지면, {player}님 집 앞 고리가 제일 반짝이게요."}]}
+undefined
+
+romance2:tilly:friend 틸리의 이야기 · 틸리
+{"title":"틸리의 이야기","lines":[{"speaker":"tilly","text":"언젠가 제 손으로 마을 등불 고리를 전부 만들고 싶어요."},{"speaker":"tilly","text":"밤에 등불이 켜지면 집집마다 제 고리가 걸려 있을 거예요. {player}님 집에도요."}]}
+undefined
+
+romance1:postman 편지 나르는 이웃의 이야기 · 마일로
+{"title":"편지 나르는 이웃의 이야기","lines":[{"speaker":"postman","text":"처음 이 길을 돌던 날, 길을 잘못 들어 한 집 앞을 몇 번이나 지나갔어요."},{"speaker":"postman","text":"그날부터 수첩을 썼어요. 지금은 이 마을 길을 눈 감고도 걸어요. …그러진 않지만요."}]}
+undefined
+
+romance2:postman 편지 나르는 이웃의 이야기 · 마일로
+{"title":"편지 나르는 이웃의 이야기","lines":[{"speaker":"postman","text":"남의 약속은 하나도 안 놓치는데, 제 약속은 자꾸 뒤로 미뤄요."},{"speaker":"postman","text":"당신하고 한 약속은 수첩 맨 위에 적어요. 그건 안 미뤄요."}]}
+undefined
+
+romance2:postman:friend 편지 나르는 이웃의 이야기 · 마일로
+{"title":"편지 나르는 이웃의 이야기","lines":[{"speaker":"postman","text":"남의 약속은 하나도 안 놓치는데, 제 약속은 자꾸 뒤로 미뤄요."},{"speaker":"postman","text":"{player}님이 맡긴 편지는 수첩 맨 위에 적어요. 그건 안 미뤄요."}]}
+undefined
+
+loverTrust:dexter 함께 걸어온 날들 · 덱스터
+{"title":"함께 걸어온 날들","lines":[{"speaker":"narration","text":"나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."},{"speaker":"dexter","text":"처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."},{"speaker":"dexter","text":"앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."},{"speaker":"narration","text":"서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."}]}
+undefined
+
+loverTrust:rudy 함께 걸어온 날들 · 루디
+{"title":"함께 걸어온 날들","lines":[{"speaker":"narration","text":"나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."},{"speaker":"rudy","text":"처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."},{"speaker":"rudy","text":"앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."},{"speaker":"narration","text":"서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."}]}
+undefined
+
+loverTrust:postman 함께 걸어온 날들 · 마일로
+{"title":"함께 걸어온 날들","lines":[{"speaker":"narration","text":"나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."},{"speaker":"postman","text":"처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."},{"speaker":"postman","text":"앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."},{"speaker":"narration","text":"서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."}]}
+undefined
+
+loverTrust:marigold 함께 걸어온 날들 · 메리골드
+{"title":"함께 걸어온 날들","lines":[{"speaker":"narration","text":"나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."},{"speaker":"marigold","text":"처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."},{"speaker":"marigold","text":"앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."},{"speaker":"narration","text":"서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."}]}
+undefined
+
+loverTrust:basil 함께 걸어온 날들 · 바질
+{"title":"함께 걸어온 날들","lines":[{"speaker":"narration","text":"나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."},{"speaker":"basil","text":"처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."},{"speaker":"basil","text":"앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."},{"speaker":"narration","text":"서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."}]}
+undefined
+
+loverTrust:merchant 함께 걸어온 날들 · 오스카
+{"title":"함께 걸어온 날들","lines":[{"speaker":"narration","text":"나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."},{"speaker":"merchant","text":"처음엔 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아."},{"speaker":"merchant","text":"앞으로도 이렇게 서로의 하루를 들려주자. 바쁜 날도, 별일 없는 날도."},{"speaker":"narration","text":"서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."}]}
+undefined
+
+loverTrust:presser 함께 걸어온 날들 · 올리버
+{"title":"함께 걸어온 날들","lines":[{"speaker":"narration","text":"나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."},{"speaker":"presser","text":"처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."},{"speaker":"presser","text":"앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."},{"speaker":"narration","text":"서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."}]}
+undefined
+
+loverTrust:poppy 함께 걸어온 날들 · 웬델
+{"title":"함께 걸어온 날들","lines":[{"speaker":"narration","text":"나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."},{"speaker":"poppy","text":"처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."},{"speaker":"poppy","text":"앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."},{"speaker":"narration","text":"서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."}]}
+undefined
+
+loverTrust:juniper 함께 걸어온 날들 · 주니퍼
+{"title":"함께 걸어온 날들","lines":[{"speaker":"narration","text":"나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."},{"speaker":"juniper","text":"처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."},{"speaker":"juniper","text":"앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."},{"speaker":"narration","text":"서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."}]}
+undefined
+
+loverTrust:cosmo 함께 걸어온 날들 · 코스모
+{"title":"함께 걸어온 날들","lines":[{"speaker":"narration","text":"나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."},{"speaker":"cosmo","text":"처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."},{"speaker":"cosmo","text":"앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."},{"speaker":"narration","text":"서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."}]}
+undefined
+
+loverTrust:tilly 함께 걸어온 날들 · 틸리
+{"title":"함께 걸어온 날들","lines":[{"speaker":"narration","text":"나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."},{"speaker":"tilly","text":"처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."},{"speaker":"tilly","text":"앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."},{"speaker":"narration","text":"서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."}]}
+undefined
+
+loverTrust:wendell 함께 걸어온 날들 · 파피
+{"title":"함께 걸어온 날들","lines":[{"speaker":"narration","text":"나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."},{"speaker":"wendell","text":"처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."},{"speaker":"wendell","text":"앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."},{"speaker":"narration","text":"서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."}]}
+undefined
+
+loverTrust:penelope 함께 걸어온 날들 · 페넬로피
+{"title":"함께 걸어온 날들","lines":[{"speaker":"narration","text":"나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."},{"speaker":"penelope","text":"처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."},{"speaker":"penelope","text":"앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."},{"speaker":"narration","text":"서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."}]}
+undefined

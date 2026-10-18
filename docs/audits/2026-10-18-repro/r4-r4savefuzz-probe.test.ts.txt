@@ -1,0 +1,23 @@
+import { appendFileSync } from 'node:fs'
+import { it } from 'vitest'
+import { CONTENT } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import { deserialize, serialize } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/save'
+import { allBases, log } from './bases'
+const OUT = 'C:/Users/wn410/AppData/Local/Temp/claude/C--Users-wn410-OneDrive-Desktop-cloooo-twenty-seven/d753a49f-e844-4b46-a32f-19ff3982a548/scratchpad/repro/r4savefuzz/out/probe.txt'
+const say = (...a: unknown[]) => appendFileSync(OUT, a.map(String).join(' ') + '\n')
+
+it('probe bases', async () => {
+  const b = await allBases()
+  say(log.join('\n'))
+  for (const [k, s] of Object.entries(b)) {
+    const t = serialize(s)
+    const t0 = performance.now()
+    const s2 = deserialize(t, CONTENT)!
+    const ms = performance.now() - t0
+    const t2 = serialize(s2)
+    const s3 = deserialize(t2, CONTENT)!
+    say(k, 'len', t.length, 'deser ms', ms.toFixed(1), 'stable12', t === t2, 'stable23', t2 === serialize(s3),
+      'clubs', s.clubs.length, 'fests', s.fests.length, 'cook', JSON.stringify(s.cooking)?.slice(0, 120), 'child', !!s.child, 'sib', s.siblings?.length,
+      'gen', Object.keys(s.gen?.persons ?? {}).length, 'builds', s.newland?.builds.length, 'romance', s.romance.stage, 'pet', !!s.companion, 'day', s.clock.day, 'map', s.map, 'run', JSON.stringify(s.cooking?.run)?.slice(0,60), 'buildStates', s.newland?.builds.map(b=>b.kind+':'+b.state).join(','))
+  }
+})

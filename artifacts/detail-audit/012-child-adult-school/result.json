@@ -1,0 +1,114 @@
+{
+  "passed": true,
+  "knownIssueOnly": true,
+  "before": {
+    "day": 93,
+    "stage": "helper",
+    "job": null,
+    "confirmed": null,
+    "schoolDay": null,
+    "atSchool": false,
+    "childAt": {
+      "x": 20,
+      "y": 114
+    },
+    "coins": 100,
+    "wit": {
+      "level": 1,
+      "xp": 0,
+      "born": 0
+    },
+    "canSchool": null,
+    "canRead": null,
+    "modal": null
+  },
+  "helperEnrolled": {
+    "day": 93,
+    "stage": "helper",
+    "job": null,
+    "confirmed": null,
+    "schoolDay": 93,
+    "atSchool": true,
+    "childAt": {
+      "x": 21,
+      "y": 45
+    },
+    "coins": 85,
+    "wit": {
+      "level": 1,
+      "xp": 15,
+      "born": 0
+    },
+    "canSchool": "done",
+    "canRead": "school",
+    "modal": null
+  },
+  "grown": {
+    "day": 94,
+    "stage": "adult",
+    "job": "scribe",
+    "confirmed": false,
+    "schoolDay": 93,
+    "atSchool": false,
+    "childAt": {
+      "x": 20,
+      "y": 114
+    },
+    "coins": 85,
+    "wit": {
+      "level": 1,
+      "xp": 15,
+      "born": 0
+    },
+    "canSchool": null,
+    "canRead": "grown",
+    "modal": {
+      "kind": "scene",
+      "id": "childStays"
+    }
+  },
+  "adultButtonsEnabled": true,
+  "adultEnrolled": {
+    "day": 94,
+    "stage": "adult",
+    "job": "scribe",
+    "confirmed": false,
+    "schoolDay": 94,
+    "atSchool": true,
+    "childAt": {
+      "x": 21,
+      "y": 45
+    },
+    "coins": 70,
+    "wit": {
+      "level": 2,
+      "xp": 0,
+      "born": 0
+    },
+    "canSchool": "done",
+    "canRead": "grown",
+    "modal": null
+  },
+  "restored": {
+    "day": 94,
+    "stage": "adult",
+    "job": "scribe",
+    "confirmed": false,
+    "schoolDay": 94,
+    "atSchool": true,
+    "childAt": {
+      "x": 21,
+      "y": 45
+    },
+    "coins": 70,
+    "wit": {
+      "level": 2,
+      "xp": 0,
+      "born": 0
+    },
+    "canSchool": "done",
+    "canRead": "grown",
+    "modal": null
+  },
+  "pageErrors": []
+}

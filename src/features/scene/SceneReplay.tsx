@@ -8,6 +8,7 @@ import type { GameState } from '../../engine/game'
 import { partnerName, useGame } from '../../store/game-store'
 import { AuthoredStoryScene } from './AuthoredStoryScene'
 import { speakerName } from './SceneView'
+import {sceneStateText} from './scene-state-text'
 
 /** 기억 정원 도감에 올리는 모든 도트 장면 (문구가 있는 것만, 정해진 순서) */
 export function storyBook(): string[] {
@@ -39,7 +40,8 @@ export function SceneReplay({ id }: { id: string }) {
   const say = useSceneSay()
   const [page, setPage] = useState(0)
   const [chosen, setChosen] = useState<number | undefined>(undefined)
-  const scene = SCENES[id]
+  const textState = useGame(s => id==='firstChapter'||id==='done:baker:2'?s.game:null)
+  const scene = sceneStateText(id,textState)
   if (!scene) return null
   const asking = !!scene.choices?.length && chosen === undefined
   const all = [...scene.lines, ...(chosen !== undefined ? scene.choices?.[chosen]?.reply ?? [] : [])]
@@ -48,7 +50,7 @@ export function SceneReplay({ id }: { id: string }) {
   const l = all[at]
   const who = l ? speakerName(l.speaker) : null
   return (
-    <AuthoredStoryScene id={id} title={say(scene.title)} beat={at} chosen={chosen}>
+    <AuthoredStoryScene id={id} title={say(scene.title)} beat={at} chosen={chosen} readOnly>
       <div className="dialog scene cinematic-scene-dialog">
         <h2>{say(scene.title)}</h2>
         <div className="scene-lines">

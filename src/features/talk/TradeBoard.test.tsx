@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { CONTENT } from '../../content/catalog'
 import { itemName, T } from '../../content/text'
@@ -49,4 +49,21 @@ describe('merchant selling tab', () => {
     expect(action()).toBeDisabled()
     expect(screen.getByRole('status')).toHaveTextContent(block === 'cap' ? '다음 장날' : '장날에 팔 수')
   })
+})
+
+
+it('가구를 살 때 차액과 필요한 재료를 모두 안내하고 함께 지불한다', () => {
+  const game = useGame.getState().game
+  useGame.setState({ game: { ...game, coins: 500, inv: { olive: 1, wool: 1 } } })
+  const { container } = render(<TradeBoard />)
+  fireEvent.click(screen.getByRole('button', { name: T.trades.chair }))
+  const detail = container.querySelector('.bag-detail')!
+  expect(detail).toHaveTextContent('145')
+  expect(within(detail as HTMLElement).getByRole('img', { name: itemName('olive') })).toBeInTheDocument()
+  expect(within(detail as HTMLElement).getByRole('img', { name: itemName('wool') })).toBeInTheDocument()
+  fireEvent.click(detail.querySelector('.actions button')!)
+  expect(useGame.getState().game.coins).toBe(355)
+  expect(useGame.getState().game.inv.chair).toBe(1)
+  expect(useGame.getState().game.inv.olive ?? 0).toBe(0)
+  expect(useGame.getState().game.inv.wool ?? 0).toBe(0)
 })

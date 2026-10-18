@@ -6,7 +6,6 @@ import { StatsView } from '../features/bag/Bag'
 import { finishCraft, finishGather, finishHelp, giveGift, greetNeighbor, listen, newGame, sellPrice, stargaze, train, type GameState } from './game'
 import { GARDEN_TILES, harvest, plant, water } from './garden'
 import { startMini, tapMini } from './minigame'
-import { hintOptions, type Question } from './quiz'
 import { deserialize, serialize } from './save'
 import {
   addXp,
@@ -19,7 +18,8 @@ import {
   luckyExtra,
   MAX_LEVEL,
   progressOf,
-  quizDims,
+  levelOf,
+  MAX_TOTAL_XP,
   rainBonus,
   sanitizeStats,
   sellBonus,
@@ -34,17 +34,32 @@ import {
 const def = (id: string) => CONTENT.neighbors.find((n) => n.id === id)!
 /** 이 능력치를 이 단계로 */
 function at(level: number, id: StatId, base: Stats = freshStats()): Stats {
-  return { ...base, [id]: { ...base[id], level, xp: 0 } }
+  const trained = addXp(freshStats(), id, (level - 1) * 20 * MAX_TOTAL_XP / 99)
+  return { ...base, [id]: { ...trained[id], born: base[id].born } }
 }
 
 describe('단계와 경험치', () => {
+  it('1~100점 전체에서 20점씩 단계를 나누고 저장 후에도 유지한다', () => {
+    for (let score = 1; score <= 100; score++) {
+      const stats = addXp(freshStats(), 'charm', (score - 1) * MAX_TOTAL_XP / 99)
+      expect(statScore(stats.charm)).toBe(score)
+      expect(levelOf(stats, 'charm')).toBe(Math.ceil(score / 20))
+      expect(levelOf(sanitizeStats(stats), 'charm')).toBe(Math.ceil(score / 20))
+    }
+    expect(levelOf(undefined, 'charm')).toBe(1)
+    const stageFive = at(5, 'charm')
+    expect(statScore(stageFive.charm)).toBe(81)
+    expect(statScore(addXp(stageFive, 'charm', 1000).charm)).toBe(100)
+    expect(levelOf(addXp(freshStats(), 'charm', 34), 'charm')).toBe(1)
+  })
+
   it('새 게임은 다섯 모두 1단계, 경험치 0, 타고난 값 0', () => {
     const s = newGame(CONTENT)
     expect(STAT_IDS).toEqual(['wit', 'hand', 'charm', 'strength', 'luck'])
     for (const id of STAT_IDS) expect(s.stats[id]).toEqual({ level: 1, xp: 0, born: 0 })
   })
 
-  it('다음 단계까지 30·60·100·150 — 넘친 경험치는 다음 단계로 이어진다', () => {
+  it('기존 저장의 경험치 인코딩과 점수·성장량을 보존한다', () => {
     expect(XP_TO_NEXT).toEqual([30, 60, 100, 150])
     let st = addXp(freshStats(), 'hand', 29)
     expect(st.hand).toMatchObject({ level: 1, xp: 29 })
@@ -69,14 +84,14 @@ describe('단계와 경험치', () => {
   })
 
   it('오른 능력치를 알려 주고, 찬 정도를 0–1로', () => {
-    const before = addXp(freshStats(), 'charm', 28)
+    const before = addXp(freshStats(), 'charm', 66)
     const after = addXp(before, 'charm', 3)
     expect(leveledUp(before, after)).toEqual(['charm'])
     expect(leveledUp(after, after)).toEqual([])
     // 저장을 불러와 한꺼번에 크게 바뀐 것은 알리지 않는다
     expect(leveledUp(before, addXp(before, 'charm', 100))).toEqual([])
     expect(leveledUp(addXp(before, 'charm', 100), before)).toEqual([])
-    expect(progressOf(after.charm)).toBeCloseTo(1 / 60)
+    expect(progressOf(after.charm)).toBeCloseTo(1 / 20)
     expect(progressOf({ level: MAX_LEVEL, xp: 0, born: 0 })).toBe(1)
   })
 
@@ -230,22 +245,11 @@ describe('효과는 작게', () => {
     expect(startMini('mash', rng, 0)).toEqual({ kind: 'mash', progress: 0 })
   })
 
-  it('지능: 장 기록 퀴즈에서 틀린 보기를 흐리게 — 3단계 하나, 5단계 둘, 답은 흐리지 않고 둘은 남긴다', () => {
-    expect(quizDims(at(2, 'wit'))).toBe(0)
-    expect(quizDims(at(3, 'wit'))).toBe(1)
-    expect(quizDims(at(5, 'wit'))).toBe(2)
-    const q: Question = { kind: 'verse', ref: '막 1:1', options: ['a', 'b', 'c', 'd'], answer: 'b' }
-    expect(hintOptions(q, 0)).toEqual([])
-    expect(hintOptions(q, 1)).toEqual(['d'])
-    expect(hintOptions(q, 2)).toEqual(['d', 'c'])
-    expect(hintOptions({ ...q, options: ['a', 'b', 'c'] }, 2)).toEqual(['c'])
-    expect(hintOptions({ ...q, answer: 'd' }, 2)).toEqual(['c', 'b'])
-    expect(hintOptions({ kind: 'puzzle', ref: 'x', words: ['a'], answer: ['a'] }, 2)).toEqual([])
-  })
+
 })
 
 describe('가방의 능력치', () => {
-  it('점수는 1단계 1점, 5단계 100점', () => {
+  it('기존 저장을 불러와도 점수는 유지한다', () => {
     expect(statScore({ level: 1, xp: 0, born: 0 })).toBe(1)
     expect(statScore({ level: 5, xp: 0, born: 0 })).toBe(100)
     expect(statScore({ level: 3, xp: 0, born: 0 })).toBe(27)

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { neighborById } from '../../content/catalog'
 import { T } from '../../content/text'
 import { closedHouseIds } from '../../engine/game'
-import { housesNow, isHome, lockedZones, placeActive, roomAt, TILE, VILLAGE_H, WIDTH, type House } from '../../engine/world'
+import { housesNow, isHome, lockedZones, placeActive, roomAt, ZONES, TILE, VILLAGE_H, WIDTH, type House } from '../../engine/world'
 import { LODGING_ROOF_TOP } from '../../engine/lodging'
 import type { PlaceId } from '../../engine/types'
 import { drawVillageMap } from '../../render/renderer'
@@ -65,7 +65,8 @@ const SPOT_DESC: Record<string, string> = {
   보리밭: '보리를 거둬요. 보리와 물이 있으면 빵을 구울 수 있어요.',
   정자: '호숫가 정자예요. 노을 지는 맑은 날, 연인과 함께 시간을 보내요. 모임 장소로도 쓸 수 있어요.',
   갈대밭: '갈대를 꺾어요. 갈대는 파피루스 재료가 돼요.',
-  나루: '핀이 일하는 나루예요. 사도행전 여정 카드를 다 이으면 다음 날 아침 큰 배가 들어와요.',
+  나루: `신약 ${ZONES.find(z => z.id === 'dock')!.books}권을 마치면 열리는 나루예요. 사도행전 완필 여부와 관계없이 이용할 수 있어요. 핀이 이곳에서 일해요.`,
+  벌통: `신약 ${ZONES.find(z => z.id === 'hives')!.books}권을 마치면 열리는 벌통 들판이에요. 클로버가 벌을 돌보는 곳이에요.`,
   호수: '비 온 다음 날 아침엔 가끔 호수 위로 무지개가 떠요.',
   그늘막: '이웃과 함께 지은 그늘막이에요. 더운 날 쉬어 가요.',
   안내판: '이웃과 함께 세운 안내판이에요.',
@@ -86,6 +87,7 @@ const SPOTS: { name: string; x: number; y: number }[] = [
   { name: '정자', x: 13.5, y: 32.3 },
   { name: '갈대밭', x: 6.5, y: 33.3 },
   { name: '나루', x: 24.5, y: 36 },
+  { name: '벌통', x: 43.5, y: 26.1 },
   { name: '호수', x: 36, y: 36 },
 ]
 /** 주민과 함께 지은 공동 시설 — 진행 중이거나 다 지은 것만 (placeActive) */
@@ -99,7 +101,7 @@ const ZONE_NAME: Record<string, string> = { vineyard: '포도원', dock: '나루
 const ZONE_DESC: Record<string, string> = {
   vineyard: SPOT_DESC['포도원'],
   dock: SPOT_DESC['나루'],
-  hives: '벌통이 놓인 들판이에요.',
+  hives: SPOT_DESC['벌통'],
 }
 
 export function VillageMap() {
@@ -201,7 +203,7 @@ export function VillageMap() {
           </span>
         )}
       </div>
-      <p className="hint">● 내 자리 · 🔒 서고 권수 · 건물·장소를 누르면 설명</p>
+      <p className="hint">● 내 자리 · 🔒 서고 권수</p>
       {pick && (
         <div className="vmap-pop" role="dialog" aria-label={`${pick.name} 설명`} onClick={() => setPick(null)}>
           <div className="vmap-info" role="status" onClick={(e) => e.stopPropagation()}>

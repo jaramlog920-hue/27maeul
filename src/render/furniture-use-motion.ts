@@ -29,7 +29,7 @@ export interface UseMotionFrame {
   interaction: { x: number; y: number }
   duration: number
 }
-export function furnitureUseFrame(who: Who, facing: Facing, action: UseAction, frame: number, opts: SpriteOpts, activeHands = true): UseMotionFrame {
+export function furnitureUseFrame(who: Who, facing: Facing, action: UseAction, frame: number, opts: SpriteOpts, activeHands = true, standing = false): UseMotionFrame {
   const phase = ((Math.trunc(frame) % 4) + 4) % 4
   const actor = Array.from({ length: USE_SIZE }, () => Array<string>(USE_SIZE).fill('.'))
   const prop = Array.from({ length: USE_SIZE }, () => Array<string>(USE_SIZE).fill('.'))
@@ -39,7 +39,7 @@ export function furnitureUseFrame(who: Who, facing: Facing, action: UseAction, f
   const face = action === 'lie' && direction === 'up' ? 'down' : direction
   const source = (action === 'lie' || (action === 'sit' && activeHands) ? spriteRows : motionBodyRows)(who, face, { ...opts, frame: 0, pose: 'stand', blink: opts.blink || (action === 'lie' && phase !== 2) })
   const side = direction === 'right'
-  const sitting = ['sit', 'drink', 'read', 'craft'].includes(action)
+  const sitting = !standing && ['sit', 'drink', 'read', 'craft'].includes(action)
   const bob = (action === 'knead' || action === 'pet') && phase % 2 === 1 ? 1 : 0
   const put = (layer: string[][], x: number, y: number, c: string) => {
     if (x >= 0 && x < USE_SIZE && y >= 0 && y < USE_SIZE) layer[y][x] = c
@@ -64,6 +64,9 @@ export function furnitureUseFrame(who: Who, facing: Facing, action: UseAction, f
   if (action !== 'sit' && action !== 'lie') {
     if (action === 'drink') iy = phase === 1 || phase === 2 ? 10 : 14
     if (action === 'reach') { iy = 14 - [0, 2, 4, 2][phase]; ix += phase === 2 ? 1 : 0 }
+    // Autonomous standing uses keep cups and retrieved objects below the face.
+    if (standing && action === 'drink') iy = [14, 13, 13, 14][phase]
+    if (standing && action === 'reach') iy = [15, 14, 13, 14][phase]
     if (action === 'pet') iy = 17 + phase % 2
     if (action === 'craft' || action === 'knead') iy += phase % 2
     const hand = (x: number, y: number) => { rect(actor, x, y, 2, 2, '5'); rect(actor, x, y, 2, 1, 's') }

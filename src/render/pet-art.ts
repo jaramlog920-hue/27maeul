@@ -1,22 +1,19 @@
 import type { Facing } from '../engine/types'
 
 type Kind = 'cat' | 'dog'
-// Keep the animation canvas and ground anchor, but give pets a much smaller
-// silhouette than the 14-pixel-tall villagers. Preserve facial dots explicitly.
+// The authored animals are already only 7–11 pixels tall. Resampling the whole
+// padded canvas was deleting their one-pixel legs, ears and connecting outlines.
+// Preserve those pixels and align the lowest paw with the shared ground anchor.
 export function compactPetRows(kind: Kind, rows: string[]): string[] {
-  const size = kind === 'dog' ? 12 : 11
-  const offsetX = Math.floor((16 - size) / 2), offsetY = 16 - size
-  const out = Array.from({length:16},()=>Array<string>(16).fill('.'))
-  for(let y=0;y<size;y++) for(let x=0;x<size;x++)
-    out[offsetY+y][offsetX+x] = rows[Math.floor((y+.5)*16/size)]?.[Math.floor((x+.5)*16/size)] ?? '.'
-  rows.forEach((row,y)=>[...row].forEach((c,x)=>{
-    if(c==='e'||c==='n') out[offsetY+Math.floor(y*size/16)][offsetX+Math.floor(x*size/16)] = c
-  }))
-  return out.map(row=>row.join(''))
+  void kind
+  const bottom=rows.findLastIndex(row=>/[^.]/.test(row))
+  if(bottom<0)return Array<string>(16).fill('.'.repeat(16))
+  const shift=15-bottom
+  return Array.from({length:16},(_,y)=>(rows[y-shift]??'').padEnd(16,'.').slice(0,16))
 }
 
-export function petStillRows(kind: Kind, form: 'adult'|'baby'|'curl'): string[] {
-  const rows = [...PET_SIDE[kind][form]]
+export function petStillRows(kind: Kind, form: 'adult'|'baby'|'curl', baby = false): string[] {
+  const rows = [...PET_SIDE[kind][form==='curl'&&baby?'babyCurl':form]]
   return compactPetRows(kind, tile(rows, Math.floor((16-rows[0].length)/2), 14-rows.length))
 }
 function tile(rows: string[], x: number, y: number): string[] {
@@ -32,11 +29,13 @@ export const PET_SIDE = {
     adult: ['..A...A.......', '..Aa.Aa......A', '..AaaaA.....aA', 'nwaeaaA.....aA', '.AwwaaA.....aA', '...AaaaaaaaAa.', '...AawaaaaaA..', '....AaAaaAaA..', '....wA...wA...'],
     baby: ['.A..A......', '.AaAa.....A', '.AaaaA...aA', 'nwaeaA...aA', '.AwwaaaaaA.', '..AwaaaaA..', '..wA..wA...'],
     curl: ['..A..A.......', '.AaaaaA......', 'nwaeaaAAAA...', '.AwwaaaaaaA..', '..AaaaaaaAaA.', '...AAAAAAaaA.', '......AAAAA..'],
+    babyCurl: ['.A..A.....', '.AaAa.....', 'nwaeaAAAA.', '.AwwaaaaaA', '..AAAAAAA.'],
   },
   dog: {
     adult: ['...AAAA.......', '..AaaaaA......', '..AeaaaAA.....', 'AAwwaAAAaA....', 'nwwwwAAaaA...A', '.AAAAAAaaaAAAa', '....AawaaaaaaA', '....AwwaaaaaaA', '....AwAAaaAwA.', '....wA....wA..'],
     baby: ['..AAAA.....', '.AeaaaA....', 'AwwaAAaA...', 'nwwwAAaaAAA', '.AAAAwaaaaA', '...AwwaaaA.', '...wA..wA..'],
     curl: ['...AAAA......', '..AeaaaA.....', '.nwwwAAaAAA..', '..AAAAwaaaaA.', '...AwwaaaaaA.', '....AAAAAAA..'],
+    babyCurl: ['..AAAA....', '.AeaaaA...', 'nwwwAAaAAA', '.AAAAwaaaA', '...AAAAAA.'],
   },
 } as const
 
@@ -127,7 +126,8 @@ export function petMotionRows(kind: Kind, facing: Facing, action: typeof PET_ACT
     for (const row of p) for (let x = 0; x < 16; x++) if (row[x] === 'e') row[x] = 'A'
     if (facing === 'up') put(5, baby ? 5 : 2, 'a')
   }
-  if (action === 'play') { put(3 + f, 14, 'n'); put(4 + f, 14, 'w'); put(4 + f, 15, 'A') }
+  // Toys belong to the furniture/prop layer. Do not paint a detached nose-colored
+  // blob below the paws: it also changes the ground bound and makes the pet jump.
   if (action === 'fetch') {
     const x = facing === 'left' ? 0 : facing === 'right' ? 12 : facing === 'up' ? 11 : 6
     const y = facing === 'up' ? 5 : baby ? 10 : 8

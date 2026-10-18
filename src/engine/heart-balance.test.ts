@@ -120,7 +120,7 @@ describe('10하트와 이번 연애의 경험', () => {
     const s = { ...unlocked(legacyGame(CONTENT)), clock: { day: 15, minute: 840 }, romance: bond, hearts: { poppy: 90 } }
     expect(relationshipHeartCap(s, 'poppy')).toBe(100)
     const gained = heartUp(s, 'poppy', 5)
-    expect(gained.hearts.poppy).toBe(96) // 파피(id poppy)의 마음 빠르기 1.2 — 2026-10-13 웬델·파피 모습을 맞바꿈
+    expect(gained.hearts.poppy).toBe(95) // 모든 주민에게 같은 증가량
   })
 
   it('세 번째 데이트에 이야기 한 번을 예약하고 읽기 전에는 완료로 세지 않는다', () => {
@@ -155,4 +155,12 @@ describe('10하트와 이번 연애의 경험', () => {
   it('연애 저장의 잘못된 횟수·진행 표식을 정리한다', () => {
     expect(sanitizeRomance({ ...bond, dates: -5, storyRead: 'true' })).toMatchObject({ dates: 0, storyRead: false })
   })
+})
+
+
+it('주민별 pace 값에 관계없이 같은 행동의 호감도가 같은 양으로 오른다', () => {
+  const s = newGame(CONTENT)
+  for (const npc of CONTENT.neighbors) {
+    expect(heartUp(s, npc.id, 2).hearts[npc.id] - (s.hearts[npc.id] ?? 0), npc.id).toBe(2)
+  }
 })

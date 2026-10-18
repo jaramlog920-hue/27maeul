@@ -1,0 +1,28 @@
+import { legacyGame as newGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/growth-test-support'
+import { describe, expect, it } from 'vitest'
+import { CONTENT } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import { breakUp, heartUp, giveBouquet, type GameState } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/game'
+import { personOf } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/people'
+import { NO_ROMANCE } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/romance'
+import { addXp, freshStats, sanitizeStats } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/stats'
+
+describe('milestone dup', () => {
+  it('merchant 9-heart gift twice after breakup', () => {
+    const g = newGame(CONTENT)
+    const seen = (personOf('merchant')?.events ?? []).map(e => e.id)
+    let s: GameState = { ...g, life: { ...g.life, seen }, clock: { ...g.clock, day: 30 }, hearts: { ...g.hearts, merchant: 89 }, romance: { ...NO_ROMANCE, partner: 'merchant', stage: 'dating', since: 1 } }
+    s = heartUp(s, 'merchant', 1, Infinity, 'story')
+    const rug1 = s.inv.rug ?? 0
+    const sc1 = s.scenes.filter(x => x === 'gift:merchant:9').length
+    s = breakUp(s, 'merchant')
+    expect(s.hearts.merchant).toBe(49)
+    s = { ...s, clock: { ...s.clock, day: 60 }, romance: { ...NO_ROMANCE, partner: 'merchant', stage: 'dating', since: 60 } }
+    for (let i = 0; i < 41; i++) s = heartUp(s, 'merchant', 1, Infinity, 'story')
+    console.log('hearts', s.hearts.merchant, 'rug', rug1, '->', s.inv.rug, 'scenes', sc1, '->', s.scenes.filter(x => x === 'gift:merchant:9').length)
+    expect((s.inv.rug ?? 0)).toBeGreaterThan(rug1)
+  })
+  it('addXp NaN', () => {
+    const st = addXp(freshStats(), 'wit', NaN)
+    console.log('NaN xp ->', JSON.stringify(st.wit))
+  })
+})

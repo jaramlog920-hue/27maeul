@@ -10,12 +10,14 @@ import { useGame } from '../../store/game-store'
 import { childStage } from '../../engine/child'
 import type { TripReward } from '../../engine/trip-board'
 import { ItemIcon } from '../../shared/ItemIcon'
+import { AuthoredStoryScene } from '../scene/AuthoredStoryScene'
 
 export function TravelView({ dest: back, rewards: brought }: { dest?: DestId; rewards?: TripReward[] } = {}) {
   const game = useGame((s) => s.game)
   const { goTrip, closeModal } = useGame.getState()
   const dest = back ?? null
   const [buys, setBuys] = useState<ItemId[]>([])
+  const [storyPages, setStoryPages] = useState<Partial<Record<DestId, number>>>({})
   // 아이와 함께 (아기는 집에), 여행 판에서 얻은 것 (판을 마치기 전엔 null)
   const canBring = !!game.child && childStage(game.child, game.clock.day) !== 'baby'
   const [withChild, setWithChild] = useState(canBring)
@@ -65,6 +67,18 @@ export function TravelView({ dest: back, rewards: brought }: { dest?: DestId; re
   if (!rewards) return null
   const first = !game.flags[`trip:${dest}`]
   const story = first ? SCENES[`trip:${dest}`] : null
+  const page = storyPages[dest] ?? 0
+  if (story && page < story.lines.length) return (
+    <AuthoredStoryScene id={`trip:${dest}`} title={d.name} beat={page}>
+      <div className="dialog scene cinematic-scene-dialog">
+        <h2>{d.name}</h2>
+        <p className="scene-line narration" aria-live="polite">{story.lines[page].text}</p>
+        <div className="actions"><button className="primary" onClick={() => setStoryPages(pages => ({...pages, [dest]: (pages[dest] ?? 0) + 1}))}>
+          {page < story.lines.length - 1 ? T.ui.next : '가게 보기'}
+        </button></div>
+      </div>
+    </AuthoredStoryScene>
+  )
   const block = canTrip(game, dest, buys, true, rewards)
   const toggle = (id: ItemId) => setBuys(buys.includes(id) ? buys.filter((b) => b !== id) : [...buys, id])
   return (

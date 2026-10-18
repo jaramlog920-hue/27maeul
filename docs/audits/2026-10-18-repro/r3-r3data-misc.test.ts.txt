@@ -1,0 +1,18 @@
+import { writeFileSync } from 'node:fs'
+import { SCENES, ITEM_TEXT } from '/src/content/text'
+import { landscapeKind } from '/src/render/scenic-moments-art'
+import dialogueOnly from '/src/content/event-art-dialogue-only.json'
+import { SPOUSE_FURNITURE } from '/src/engine/furniture-defs'
+import { spouseFurniture } from '/src/engine/room'
+import tips from '/src/content/tip-letters.json'
+import { CONTENT } from '/src/content/catalog'
+const out: string[] = []
+describe('misc', () => { it('scan', () => {
+  for (const id of dialogueOnly as string[]) if (!SCENES[id] && !landscapeKind(id)) out.push(`[dialogueOnly stale] ${id}`)
+  const dup = (dialogueOnly as string[]).filter((x, i, a) => a.indexOf(x) !== i); if (dup.length) out.push(`[dialogueOnly dup] ${dup}`)
+  for (const id of Object.keys(SPOUSE_FURNITURE)) if (/^spouse:(merchant|presser|postman|wendell):0$/.test(id)) out.push(`[spouseName] ${id} = ${ITEM_TEXT[id as never]?.name}`)
+  for (const p of ['poppy']) out.push(`[spouseFurniture facing] ${JSON.stringify(spouseFurniture(p).map(f => f.facing))}`)
+  const nids = new Set(CONTENT.neighbors.map(n => n.id))
+  for (const t of tips as any[]) if (t.from && !nids.has(t.from)) out.push(`[tip from] ${t.id} ${t.from}`)
+  writeFileSync('C:/Users/wn410/AppData/Local/Temp/claude/C--Users-wn410-OneDrive-Desktop-cloooo-twenty-seven/d753a49f-e844-4b46-a32f-19ff3982a548/scratchpad/repro/r3data/misc-out.txt', out.join('\n') + '\n')
+}) })

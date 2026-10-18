@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react'
 import { CONTENT } from '../content/catalog'
 import { newGame } from '../engine/game'
-import { activeSlot, listSaves, loadGame, newSlot, saveGame, setActiveSlot } from '../engine/save'
+import { activeSlot, createSaveAsync, listSaves, loadGame, newSlot, saveGame, selectSaveAsync, setActiveSlot } from '../engine/save'
 import { AvatarForm } from '../features/intro/AvatarForm'
 import { Intro } from '../features/intro/Intro'
 import { SaveSlots } from '../features/intro/SaveSlots'
 import { Play } from '../features/play/Play'
 import { unlockAudio } from '../audio/sound'
 import { useGame } from '../store/game-store'
+import { StorageNotice } from './StorageNotice'
 
 /** 마지막으로 플레이한 칸을 먼저, 그 칸이 없으면 최근의 유효한 저장을 고른다. */
 function titleSaves() {
@@ -24,14 +25,18 @@ export function App() {
   const [screen, setScreen] = useState<'intro' | 'avatar' | 'load' | 'play'>('intro')
   // 제목 그림의 주인공은 마지막으로 하던 칸의 모습
   const [title, setTitle] = useState(titleSaves)
-  function playSave(slot: string) {
+  const [busy, setBusy] = useState(false)
+  async function playSave(slot: string) {
+    if (busy) return
+    setBusy(true)
     // 시작 화면을 연 뒤 저장이 바뀌었어도 최신 상태로 이어 간다.
     const game = loadGame(CONTENT, undefined, slot)
-    if (!game) { setTitle(titleSaves()); return }
+    if (!game) { setTitle(titleSaves()); setBusy(false); return }
     unlockAudio()
-    setActiveSlot(slot)
+    if (!await selectSaveAsync(slot)) { setBusy(false); return }
     useGame.getState().load(game)
     setScreen('play')
+    setBusy(false)
   }
   // 개발용: 주소 뒤 ?test=26 이면 마지막 한 절만 남은 시험 저장을 새 칸에 만들어 바로 시작 (배포 빌드에는 없다)
   useEffect(() => {
@@ -79,40 +84,52 @@ export function App() {
     })
     return () => { cancelled = true }
   }, [])
-  if (screen === 'play') return <Play />
-  if (screen === 'load')
-    return (
+  let content
+  if (screen === 'play') content = <Play />
+  else if (screen === 'load')
+    content = (
       <SaveSlots
         onBack={() => {
           setTitle(titleSaves())
           setScreen('intro')
         }}
-        onPick={playSave}
+        onPick={(slot) => { void playSave(slot) }}
       />
     )
-  if (screen === 'avatar')
-    return (
+  else if (screen === 'avatar')
+    content = (
       <AvatarForm
         onBack={() => setScreen('intro')}
-        onDone={(avatar) => {
+        onDone={async (avatar) => {
+          if (busy) return
+          setBusy(true)
           unlockAudio()
-          // 새 게임은 늘 새 칸에 — 다른 저장을 덮어쓰지 않는다
-          setActiveSlot(newSlot())
           const game = newGame(CONTENT, avatar)
-          saveGame(game)
-          useGame.getState().load(game)
-          setScreen('play')
+          const slot = await createSaveAsync(game)
+          if (slot) {
+            useGame.getState().load(game)
+            setScreen('play')
+          }
+          setBusy(false)
         }}
       />
     )
-  return (
+  else content = (
     <Intro
       hasSave={title.hasSaves}
       canContinue={title.last !== null}
       avatar={title.last?.game.avatar}
-      onContinue={() => { if (title.last) playSave(title.last.slot) }}
+      onContinue={() => { if (title.last) void playSave(title.last.slot) }}
       onLoad={() => setScreen('load')}
       onStart={() => setScreen('avatar')}
     />
   )
+  return <>
+    <div style={{ display: 'contents' }} inert={busy}>{content}</div>
+    {busy && <p className="storage-busy" role="status">저장을 확인하는 중이에요.</p>}
+    <StorageNotice
+      getCurrentGame={() => screen === 'play' ? useGame.getState().game : titleSaves().last?.game ?? useGame.getState().game}
+      getCurrentSlot={() => screen === 'play' ? activeSlot() : titleSaves().last?.slot ?? activeSlot()}
+    />
+  </>
 }

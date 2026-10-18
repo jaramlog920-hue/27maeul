@@ -1,3 +1,4 @@
+import {newbornArt} from './newborn-art'
 import type { Facing } from '../engine/types'
 import { motionBodyRows } from './motion-body'
 import { writerPalette, type SpriteOpts, type Who } from './sprites'
@@ -67,7 +68,7 @@ export function babyCareFrame(who:Who,facing:Facing,action:BabyCareAction,kind:B
   if(facing==='left'){
     const r=babyCareFrame(who,'right',action,kind,p,opts)
     const flip=(a:string[])=>a.map(row=>[...row].reverse().join(''))
-    return {...r,actor:flip(r.actor),babyBack:flip(r.babyBack),babyFront:flip(r.babyFront),furnitureBack:flip(r.furnitureBack),furnitureFront:flip(r.furnitureFront),blanket:flip(r.blanket),feet:{x:47-r.feet.x,y:r.feet.y},babyPosition:{x:47-r.babyPosition.x-8,y:r.babyPosition.y}}
+    return {...r,actor:flip(r.actor),babyBack:flip(r.babyBack),babyFront:flip(r.babyFront),furnitureBack:flip(r.furnitureBack),furnitureFront:flip(r.furnitureFront),blanket:flip(r.blanket),feet:{x:47-r.feet.x,y:r.feet.y},babyPosition:{x:47-r.babyPosition.x-9,y:r.babyPosition.y}}
   }
   const side=facing==='right',rear=facing==='up',caring=action==='lay'||action==='tuck'
   const actor=grid(),baby=grid(),blanket=grid()
@@ -84,14 +85,7 @@ export function babyCareFrame(who:Who,facing:Facing,action:BabyCareAction,kind:B
   const bx=Math.round(heldX+(restingX-heldX)*progress)+sway
   const by=Math.round(heldY+(restingY-heldY)*progress)+(action==='hold'&&p===2?1:0)
   const sleeping=action==='tuck'||action==='lay'&&p===3||action==='soothe'&&p>=2||action==='hold'&&p===1
-  const babyRows=[
-    '.hss.ww..',
-    'nsssswwww',
-    sleeping?'nseswwWww':'nsoswwWww',
-    '.s+sswWww',
-    '..ss.wWww',
-    '......ww.',
-  ]
+  const newborn=newbornArt(opts.avatar,p,sleeping),babyRows=newborn.rows
   babyRows.forEach((row,y)=>[...row].forEach((c,x)=>{if(c!=='.')dot(baby,bx+x,by+y,c)}))
   const sleeve=body[8]?.[side?4:2]||'r'
   const arm=(sx:number,sy:number,hx:number,hy:number)=>{
@@ -118,6 +112,6 @@ export function babyCareFrame(who:Who,facing:Facing,action:BabyCareAction,kind:B
     // The far-side parent stands behind the cot; legs must not cover the mattress or baby.
     for(let y=bedY+3;y<48;y++)for(let x=bedX+2;x<=bedX+19;x++)if(silhouette[y][x]!=='.'&&actor[y][x]===silhouette[y][x])actor[y][x]='.'
   }
-  const babyPalette={h:'#c9a477',s:'#f7cba9',n:'#e3af8e',o:'#845f4d',e:'#bb866b','+':'#e9918b',w:'#dcece3',W:'#abcfc0'}
+  const babyPalette=newborn.palette
   return {actor:rows(actor),babyBack:resting?rows(baby):empty,babyFront:resting?empty:rows(baby),furnitureBack:caring?bed.back:empty,furnitureFront:caring?bed.front:empty,blanket:rows(blanket),actorPalette:writerPalette(opts.season??'spring',opts.avatar),babyPalette,furniturePalette:{...FURNI_PALETTE,z:'#d1c4ae'},duration:action==='lay'?[420,340,340,800][p]:action==='tuck'?[400,340,420,800][p]:[420,420,420,420][p],feet:{x:ax+5,y:floor},babyPosition:{x:bx,y:by}}
 }

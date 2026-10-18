@@ -1,0 +1,11 @@
+import { it } from 'vitest'
+import { CONTENT } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import { canOrderHome, nextHomeStage } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/game'
+import { featureAccess } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/feature-rules'
+import { lastVerseGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/dev/test-saves'
+
+it('diag', async () => {
+  if (process.env.DIAG !== '1') return
+  const g = await lastVerseGame(CONTENT)
+  console.log('canOrderHome', canOrderHome(g), JSON.stringify(nextHomeStage(g)), featureAccess(g, 'spouseRoom'), featureAccess(g, 'dating'), featureAccess(g, 'marriage'), featureAccess(g, 'suitors'))
+})

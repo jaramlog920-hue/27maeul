@@ -1,0 +1,333 @@
+{
+  "passed": true,
+  "before": {
+    "inv": {
+      "olive": 2,
+      "bread": 1,
+      "candle": 99
+    },
+    "candles": [],
+    "request": 1,
+    "lanternUnlock": 0,
+    "lanterns": [],
+    "toast": null,
+    "modal": {
+      "kind": "talk",
+      "neighborId": "smith",
+      "line": "검사용 대화"
+    },
+    "act": null
+  },
+  "blocked": {
+    "inv": {
+      "olive": 2,
+      "bread": 1,
+      "candle": 99
+    },
+    "candles": [],
+    "request": 1,
+    "lanternUnlock": 0,
+    "lanterns": [],
+    "toast": "더 담을 수 없습니다.",
+    "modal": {
+      "kind": "talk",
+      "neighborId": "smith",
+      "line": "검사용 대화"
+    },
+    "act": null
+  },
+  "earned": {
+    "inv": {
+      "candle": 1
+    },
+    "candles": [],
+    "request": 2,
+    "lanternUnlock": 1,
+    "lanterns": [
+      {
+        "x": 3,
+        "y": 8
+      },
+      {
+        "x": 12,
+        "y": 8
+      },
+      {
+        "x": 23,
+        "y": 11
+      },
+      {
+        "x": 19,
+        "y": 12
+      },
+      {
+        "x": 30,
+        "y": 12
+      },
+      {
+        "x": 19,
+        "y": 23
+      },
+      {
+        "x": 30,
+        "y": 23
+      },
+      {
+        "x": 23,
+        "y": 31
+      }
+    ],
+    "toast": "얻은 것: 촛대 1",
+    "modal": {
+      "kind": "scene",
+      "id": "done:smith:2"
+    },
+    "act": null
+  },
+  "installed": {
+    "inv": {},
+    "candles": [
+      {
+        "item": "candle",
+        "x": 22,
+        "y": 112,
+        "facing": "down"
+      }
+    ],
+    "request": 2,
+    "lanternUnlock": 1,
+    "lanterns": [
+      {
+        "x": 3,
+        "y": 8
+      },
+      {
+        "x": 12,
+        "y": 8
+      },
+      {
+        "x": 23,
+        "y": 11
+      },
+      {
+        "x": 19,
+        "y": 12
+      },
+      {
+        "x": 30,
+        "y": 12
+      },
+      {
+        "x": 19,
+        "y": 23
+      },
+      {
+        "x": 30,
+        "y": 23
+      },
+      {
+        "x": 23,
+        "y": 31
+      }
+    ],
+    "toast": "얻은 것: 촛대 1",
+    "modal": null,
+    "act": null
+  },
+  "clicked": {
+    "inv": {},
+    "candles": [
+      {
+        "item": "candle",
+        "x": 22,
+        "y": 112,
+        "facing": "down"
+      }
+    ],
+    "request": 2,
+    "lanternUnlock": 1,
+    "lanterns": [
+      {
+        "x": 3,
+        "y": 8
+      },
+      {
+        "x": 12,
+        "y": 8
+      },
+      {
+        "x": 23,
+        "y": 11
+      },
+      {
+        "x": 19,
+        "y": 12
+      },
+      {
+        "x": 30,
+        "y": 12
+      },
+      {
+        "x": 19,
+        "y": 23
+      },
+      {
+        "x": 30,
+        "y": 23
+      },
+      {
+        "x": 23,
+        "y": 31
+      }
+    ],
+    "toast": "얻은 것: 촛대 1",
+    "modal": null,
+    "act": null
+  },
+  "restored": {
+    "inv": {},
+    "candles": [
+      {
+        "item": "candle",
+        "x": 22,
+        "y": 112,
+        "facing": "down"
+      }
+    ],
+    "request": 2,
+    "lanternUnlock": 1,
+    "lanterns": [
+      {
+        "x": 3,
+        "y": 8
+      },
+      {
+        "x": 12,
+        "y": 8
+      },
+      {
+        "x": 23,
+        "y": 11
+      },
+      {
+        "x": 19,
+        "y": 12
+      },
+      {
+        "x": 30,
+        "y": 12
+      },
+      {
+        "x": 19,
+        "y": 23
+      },
+      {
+        "x": 30,
+        "y": 23
+      },
+      {
+        "x": 23,
+        "y": 31
+      }
+    ],
+    "toast": null,
+    "modal": null,
+    "act": null
+  },
+  "collected": {
+    "inv": {
+      "candle": 1
+    },
+    "candles": [],
+    "request": 2,
+    "lanternUnlock": 1,
+    "lanterns": [
+      {
+        "x": 3,
+        "y": 8
+      },
+      {
+        "x": 12,
+        "y": 8
+      },
+      {
+        "x": 23,
+        "y": 11
+      },
+      {
+        "x": 19,
+        "y": 12
+      },
+      {
+        "x": 30,
+        "y": 12
+      },
+      {
+        "x": 19,
+        "y": 23
+      },
+      {
+        "x": 30,
+        "y": 23
+      },
+      {
+        "x": 23,
+        "y": 31
+      }
+    ],
+    "toast": null,
+    "modal": null,
+    "act": null
+  },
+  "reused": {
+    "inv": {},
+    "candles": [
+      {
+        "item": "candle",
+        "x": 22,
+        "y": 113,
+        "facing": "down"
+      }
+    ],
+    "request": 2,
+    "lanternUnlock": 1,
+    "lanterns": [
+      {
+        "x": 3,
+        "y": 8
+      },
+      {
+        "x": 12,
+        "y": 8
+      },
+      {
+        "x": 23,
+        "y": 11
+      },
+      {
+        "x": 19,
+        "y": 12
+      },
+      {
+        "x": 30,
+        "y": 12
+      },
+      {
+        "x": 19,
+        "y": 23
+      },
+      {
+        "x": 30,
+        "y": 23
+      },
+      {
+        "x": 23,
+        "y": 31
+      }
+    ],
+    "toast": null,
+    "modal": null,
+    "act": null
+  },
+  "pageErrors": []
+}

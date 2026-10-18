@@ -1,0 +1,20 @@
+import { it, vi } from 'vitest'
+import { appendFileSync } from 'node:fs'
+// control: no mock
+import { render, screen, cleanup } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/@testing-library/react/dist/@testing-library/react.esm.js'
+import { createElement as h } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/react/index.js'
+import { CONTENT } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import { newGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/game'
+import { useGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/store/game-store'
+import { ModalLayer } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/features/ModalLayer'
+const OUT = 'C:/Users/wn410/AppData/Local/Temp/claude/C--Users-wn410-OneDrive-Desktop-cloooo-twenty-seven/d753a49f-e844-4b46-a32f-19ff3982a548/scratchpad/repro/r3verify/out.txt'
+it('L-33 sync first draw throws inside scene effect', () => {
+  const ctx = new Proxy({} as Record<string|symbol, unknown>, { get: (t, p) => p in t ? t[p] : () => undefined, set: (t, p, v) => { t[p] = v; return true } })
+  vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(ctx as never)
+  const ce = vi.spyOn(console, 'error').mockImplementation(() => {}); const errs: string[] = []; window.addEventListener('error', (e) => errs.push(String(e.error ?? e.message)))
+  useGame.setState({ game: { ...newGame(CONTENT), scenes: [] }, modal: { kind: 'scene', id: 'sunset' } as never, piecePopups: [], copyResult: null })
+  let thrown = ''
+  try { render(h('div', null, h('p', null, 'outside'), h(ModalLayer))) } catch (e) { thrown = String(e) }
+  appendFileSync(OUT, `[control] render threw: ${thrown || 'no'} | ScreenBoundary alert: ${screen.queryAllByRole('alert').map((a: HTMLElement) => a.textContent).join('|')} | outside still rendered: ${!!screen.queryByText('outside')} | boom seen: ${JSON.stringify(ce.mock.calls).includes('boom') || errs.join().includes('boom')} | first console.error: ${String(ce.mock.calls[0]?.[0]).slice(0,200)}\n`)
+  cleanup()
+})

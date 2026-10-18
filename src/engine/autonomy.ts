@@ -70,3 +70,10 @@ export function stepIdle(idle: IdleState, dt: number, minute: number, rng: Rng, 
 export function greet(): IdleState {
   return { seconds: 0, action: { kind: 'greet', left: DURATION.greet }, cooldown: IDLE_GAP }
 }
+
+/** Player actions are explicit input only. Keep the idle timer for pets, but never choose an action. */
+export function stepControlledIdle(idle: IdleState, dt: number): IdleState {
+  const action = idle.action && Number.isFinite(idle.action.left) && idle.action.left > dt
+    ? { ...idle.action, left: idle.action.left - dt } : null
+  return { seconds: idle.seconds + dt, action, cooldown: 0 }
+}

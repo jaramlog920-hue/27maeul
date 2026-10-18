@@ -1,0 +1,462 @@
+{
+  "legacy": [
+    {
+      "id": "rug",
+      "coins": 180
+    },
+    {
+      "id": "table",
+      "coins": 220
+    },
+    {
+      "id": "nightstand",
+      "coins": 150
+    },
+    {
+      "id": "vase",
+      "coins": 30
+    },
+    {
+      "id": "jar",
+      "coins": 25
+    },
+    {
+      "id": "candle",
+      "coins": 12
+    },
+    {
+      "id": "bowl",
+      "coins": 15
+    },
+    {
+      "id": "bird",
+      "coins": 20
+    },
+    {
+      "id": "chair",
+      "coins": 150
+    },
+    {
+      "id": "bookcase",
+      "coins": 350
+    },
+    {
+      "id": "chest",
+      "coins": 220
+    },
+    {
+      "id": "barrel",
+      "coins": 150
+    },
+    {
+      "id": "wheel",
+      "coins": 300
+    },
+    {
+      "id": "lectern",
+      "coins": 250
+    },
+    {
+      "id": "lampStand",
+      "coins": 180
+    },
+    {
+      "id": "bigPlant",
+      "coins": 90
+    },
+    {
+      "id": "longBench",
+      "coins": 280
+    },
+    {
+      "id": "daybed",
+      "coins": 800
+    },
+    {
+      "id": "cupboard",
+      "coins": 650
+    },
+    {
+      "id": "roundRug",
+      "coins": 180
+    },
+    {
+      "id": "mat",
+      "coins": 40
+    },
+    {
+      "id": "pillows",
+      "coins": 30
+    },
+    {
+      "id": "teapot",
+      "coins": 30
+    },
+    {
+      "id": "fruitBowl",
+      "coins": 30
+    },
+    {
+      "id": "scrolls",
+      "coins": 25
+    },
+    {
+      "id": "inkpot",
+      "coins": 20
+    },
+    {
+      "id": "dryFlowers",
+      "coins": 20
+    },
+    {
+      "id": "hourglass",
+      "coins": 70
+    },
+    {
+      "id": "purpleRug",
+      "coins": 600
+    }
+  ],
+  "additions": [
+    {
+      "id": "rockingChair",
+      "name": "흔들의자",
+      "coins": 180
+    },
+    {
+      "id": "washstand",
+      "name": "세면대",
+      "coins": 180
+    },
+    {
+      "id": "teaTrolley",
+      "name": "찻잔 수레",
+      "coins": 200
+    },
+    {
+      "id": "floralScreen",
+      "name": "꽃무늬 병풍",
+      "coins": 600
+    },
+    {
+      "id": "herbRack",
+      "name": "약초 건조대",
+      "coins": 150
+    },
+    {
+      "id": "breadCupboard",
+      "name": "빵 보관장",
+      "coins": 240
+    },
+    {
+      "id": "standingMirror",
+      "name": "전신거울",
+      "coins": 180
+    },
+    {
+      "id": "dollhouse",
+      "name": "작은 인형집",
+      "coins": 120
+    },
+    {
+      "id": "sewingTable",
+      "name": "재봉 탁자",
+      "coins": 350
+    },
+    {
+      "id": "spoolStand",
+      "name": "실패 꽂이",
+      "coins": 30
+    },
+    {
+      "id": "waterJarStand",
+      "name": "물동이 받침",
+      "coins": 50
+    },
+    {
+      "id": "kneadingTable",
+      "name": "반죽 작업대",
+      "coins": 300
+    },
+    {
+      "id": "vegetableCrate",
+      "name": "채소 보관함",
+      "coins": 60
+    },
+    {
+      "id": "lowTeaTable",
+      "name": "낮은 찻상",
+      "coins": 180
+    },
+    {
+      "id": "linenCupboard",
+      "name": "이불장",
+      "coins": 650
+    },
+    {
+      "id": "towelRack",
+      "name": "수건 걸이",
+      "coins": 25
+    },
+    {
+      "id": "plantSteps",
+      "name": "화분 진열대",
+      "coins": 160
+    },
+    {
+      "id": "bootStand",
+      "name": "장화 받침",
+      "coins": 35
+    },
+    {
+      "id": "windowBench",
+      "name": "창가 벤치",
+      "coins": 280
+    },
+    {
+      "id": "armchair",
+      "name": "둥근 안락의자",
+      "coins": 240
+    },
+    {
+      "id": "footstool",
+      "name": "발 받침",
+      "coins": 60
+    },
+    {
+      "id": "cornerShelf",
+      "name": "모서리 선반",
+      "coins": 150
+    },
+    {
+      "id": "blanketLadder",
+      "name": "담요 사다리",
+      "coins": 80
+    },
+    {
+      "id": "longDresser",
+      "name": "긴 서랍장",
+      "coins": 700
+    },
+    {
+      "id": "wardrobe",
+      "name": "옷장",
+      "coins": 650
+    },
+    {
+      "id": "coatTree",
+      "name": "옷걸이 기둥",
+      "coins": 70
+    },
+    {
+      "id": "vanity",
+      "name": "화장대",
+      "coins": 650
+    },
+    {
+      "id": "jewelryBox",
+      "name": "보석함",
+      "coins": 60
+    },
+    {
+      "id": "spiceShelf",
+      "name": "향신료 선반",
+      "coins": 60
+    },
+    {
+      "id": "plateRack",
+      "name": "그릇꽂이",
+      "coins": 50
+    },
+    {
+      "id": "potHanger",
+      "name": "냄비 걸이",
+      "coins": 60
+    },
+    {
+      "id": "millstoneStand",
+      "name": "맷돌 받침",
+      "coins": 220
+    },
+    {
+      "id": "pickleStand",
+      "name": "절임 항아리대",
+      "coins": 180
+    },
+    {
+      "id": "breadCoolingRack",
+      "name": "빵 식힘 선반",
+      "coins": 180
+    },
+    {
+      "id": "fruitDisplay",
+      "name": "과일 진열대",
+      "coins": 180
+    },
+    {
+      "id": "dishwashingTable",
+      "name": "설거지 작업대",
+      "coins": 300
+    },
+    {
+      "id": "sewingBox",
+      "name": "작은 바느질함",
+      "coins": 40
+    },
+    {
+      "id": "fabricShelf",
+      "name": "천 보관 선반",
+      "coins": 220
+    },
+    {
+      "id": "drawingDesk",
+      "name": "그림 작업대",
+      "coins": 300
+    },
+    {
+      "id": "paperDryingRack",
+      "name": "종이 건조대",
+      "coins": 150
+    },
+    {
+      "id": "mapTable",
+      "name": "지도 탁자",
+      "coins": 350
+    },
+    {
+      "id": "letterSorter",
+      "name": "편지 분류장",
+      "coins": 220
+    },
+    {
+      "id": "musicStand",
+      "name": "악보 받침",
+      "coins": 100
+    },
+    {
+      "id": "smallHarp",
+      "name": "작은 하프",
+      "coins": 900
+    },
+    {
+      "id": "dollBed",
+      "name": "인형 침대",
+      "coins": 60
+    },
+    {
+      "id": "toyCart",
+      "name": "장난감 수레",
+      "coins": 60
+    },
+    {
+      "id": "umbrellaStand",
+      "name": "우산꽂이",
+      "coins": 40
+    },
+    {
+      "id": "seedCabinet",
+      "name": "씨앗 정리장",
+      "coins": 240
+    },
+    {
+      "id": "wallCuckooClock",
+      "name": "새집 벽시계",
+      "coins": 80
+    },
+    {
+      "id": "wallMoonMobile",
+      "name": "달과 별 모빌",
+      "coins": 40
+    },
+    {
+      "id": "wallFernBasket",
+      "name": "고사리 벽바구니",
+      "coins": 35
+    },
+    {
+      "id": "wallSeaPainting",
+      "name": "돛단배 액자",
+      "coins": 60
+    },
+    {
+      "id": "wallPatchwork",
+      "name": "조각보 벽걸이",
+      "coins": 60
+    },
+    {
+      "id": "wallKeyHooks",
+      "name": "열쇠 걸이판",
+      "coins": 25
+    },
+    {
+      "id": "wallFlowerWreath",
+      "name": "들꽃 화환",
+      "coins": 30
+    },
+    {
+      "id": "wallLetterPocket",
+      "name": "편지 주머니",
+      "coins": 25
+    },
+    {
+      "id": "wallBirdShelf",
+      "name": "새 장식 벽선반",
+      "coins": 45
+    },
+    {
+      "id": "wallBrassSconce",
+      "name": "황동 벽등",
+      "coins": 80
+    },
+    {
+      "id": "wovenPetBed",
+      "name": "반려동물 바구니 침대",
+      "coins": 60
+    },
+    {
+      "id": "coolingPetMat",
+      "name": "반려동물 대나무 깔개",
+      "coins": 30
+    },
+    {
+      "id": "petBowlStation",
+      "name": "반려동물 물그릇 받침",
+      "coins": 25
+    },
+    {
+      "id": "petTugMat",
+      "name": "매듭줄 놀이 깔개",
+      "coins": 35
+    },
+    {
+      "id": "petPuzzleTray",
+      "name": "반려동물 탐색판",
+      "coins": 50
+    },
+    {
+      "id": "toddlerRockingHorse",
+      "name": "유아 목마",
+      "coins": 100
+    },
+    {
+      "id": "childBlockMat",
+      "name": "어린이 쌓기 놀이 매트",
+      "coins": 50
+    },
+    {
+      "id": "childDrawingTable",
+      "name": "어린이 낮은 그림상",
+      "coins": 100
+    },
+    {
+      "id": "childBookSeat",
+      "name": "어린이 그림책 자리",
+      "coins": 80
+    },
+    {
+      "id": "toddlerDrumMat",
+      "name": "유아 작은 북 자리",
+      "coins": 60
+    }
+  ]
+}

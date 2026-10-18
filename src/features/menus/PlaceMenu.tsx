@@ -86,10 +86,6 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
             <button className="primary" onClick={() => open({ kind: 'cooking' })}>
               {game.cooking?.run ? fill(T.cooking.resume, { dish: T.cooking.dishes[game.cooking.run.dish].name }) : T.cooking.open}
             </button>
-            <SkillCraftOptions at="hearth" />
-            <button disabled={canCraft(game, 'bread') !== null} onClick={() => startCraft('bread')}>
-              <RowLabel text={T.ui.hearthBake} />
-            </button>
             <button onClick={warm}>{T.ui.hearthWarm}</button>
             <button disabled={!hasFood(game.inv)} onClick={eat}>
               {T.ui.hearthEat}

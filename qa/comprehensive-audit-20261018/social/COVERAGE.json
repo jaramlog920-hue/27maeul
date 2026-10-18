@@ -1,0 +1,492 @@
+{
+  "date": "2026-10-18",
+  "scope": "social_lifecycle",
+  "engineFiles": 59,
+  "featureFiles": 24,
+  "engine": [
+    {
+      "path": "src/engine/autonomy.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/avatar.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": true
+    },
+    {
+      "path": "src/engine/baker-baby.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/bonds.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/calendar.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/child.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": true
+    },
+    {
+      "path": "src/engine/clock.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/club-extras.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/club-life.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/club-round.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/clubs.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": true
+    },
+    {
+      "path": "src/engine/companion.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/event-scene.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/events.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/family-days.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/family-furniture.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/family-memory.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/family-scenes.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/family-tree.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/family.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/gen-age.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/gen-birth.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/gen-config.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/gen-growth.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": true
+    },
+    {
+      "path": "src/engine/gen-homes.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": true
+    },
+    {
+      "path": "src/engine/gen-kin.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/gen-looks.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": true
+    },
+    {
+      "path": "src/engine/gen-marriage.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/gen-relations.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/gen-settle.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/gen.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": true
+    },
+    {
+      "path": "src/engine/hearts.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": true
+    },
+    {
+      "path": "src/engine/inn-guests.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/living-moments.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/meet.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/movement.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/neighbor-moments.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/neighbors.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/news.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/night-doors.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/npc-affinity.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/npc-life.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/npc-spots.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/people.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/pet-life.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/places.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/romance.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": true
+    },
+    {
+      "path": "src/engine/scenic-kinds.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/siblings.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": true
+    },
+    {
+      "path": "src/engine/social-scene.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/space-life.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/spaces.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/stories.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/talk-popups.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/tip-letters.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/wedding-attire.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/work-day.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/world.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    },
+    {
+      "path": "src/engine/yard.ts",
+      "depth": "complete static source read and integration review",
+      "dynamic": false
+    }
+  ],
+  "features": [
+    {
+      "path": "src/features/child/ChildName.tsx",
+      "depth": "complete static source read",
+      "dynamic": false
+    },
+    {
+      "path": "src/features/child/SchoolView.tsx",
+      "depth": "complete static source read",
+      "dynamic": false
+    },
+    {
+      "path": "src/features/family/Family.tsx",
+      "depth": "complete static source read",
+      "dynamic": false
+    },
+    {
+      "path": "src/features/family/KidTime.tsx",
+      "depth": "complete static source read",
+      "dynamic": false
+    },
+    {
+      "path": "src/features/family/Wardrobe.tsx",
+      "depth": "complete static source read",
+      "dynamic": false
+    },
+    {
+      "path": "src/features/clubs/club-store.ts",
+      "depth": "complete static source read",
+      "dynamic": false
+    },
+    {
+      "path": "src/features/clubs/ClubForm.tsx",
+      "depth": "complete static source read",
+      "dynamic": false
+    },
+    {
+      "path": "src/features/clubs/ClubList.tsx",
+      "depth": "complete static source read",
+      "dynamic": false
+    },
+    {
+      "path": "src/features/clubs/ClubRound.tsx",
+      "depth": "complete static source read",
+      "dynamic": false
+    },
+    {
+      "path": "src/features/clubs/ClubSession.tsx",
+      "depth": "complete static source read",
+      "dynamic": false
+    },
+    {
+      "path": "src/features/clubs/GroupTask.tsx",
+      "depth": "complete static source read",
+      "dynamic": false
+    },
+    {
+      "path": "src/features/companion/AdoptForm.tsx",
+      "depth": "complete static source read",
+      "dynamic": false
+    },
+    {
+      "path": "src/features/companion/FollowMenu.tsx",
+      "depth": "complete static source read",
+      "dynamic": false
+    },
+    {
+      "path": "src/features/talk/BoardView.tsx",
+      "depth": "complete static source read",
+      "dynamic": false
+    },
+    {
+      "path": "src/features/talk/FarewellLetter.tsx",
+      "depth": "complete static source read",
+      "dynamic": false
+    },
+    {
+      "path": "src/features/talk/GenTalk.tsx",
+      "depth": "complete static source read",
+      "dynamic": true
+    },
+    {
+      "path": "src/features/talk/GiftPicker.tsx",
+      "depth": "complete static source read",
+      "dynamic": false
+    },
+    {
+      "path": "src/features/talk/InnGuestTalk.tsx",
+      "depth": "complete static source read",
+      "dynamic": false
+    },
+    {
+      "path": "src/features/talk/LoveVerseView.tsx",
+      "depth": "complete static source read",
+      "dynamic": false
+    },
+    {
+      "path": "src/features/talk/OrdersView.tsx",
+      "depth": "complete static source read",
+      "dynamic": false
+    },
+    {
+      "path": "src/features/talk/TalkBox.tsx",
+      "depth": "complete static source read",
+      "dynamic": false
+    },
+    {
+      "path": "src/features/talk/TradeBoard.tsx",
+      "depth": "complete static source read",
+      "dynamic": false
+    },
+    {
+      "path": "src/features/talk/TravelView.tsx",
+      "depth": "complete static source read",
+      "dynamic": false
+    },
+    {
+      "path": "src/features/trip/TripScene.tsx",
+      "depth": "complete static source read",
+      "dynamic": false
+    }
+  ],
+  "scene": [
+    {
+      "path": "src/features/scene/SceneView.tsx",
+      "depth": "complete static source read; story/choice/state handlers; art dependencies delegated to UI auditor",
+      "dynamic": false
+    },
+    {
+      "path": "src/features/scene/AuthoredStoryScene.tsx",
+      "depth": "complete static source read; story/choice/state handlers; art dependencies delegated to UI auditor",
+      "dynamic": false
+    },
+    {
+      "path": "src/features/scene/scene-state-text.ts",
+      "depth": "complete static source read; story/choice/state handlers; art dependencies delegated to UI auditor",
+      "dynamic": false
+    },
+    {
+      "path": "src/features/scene/WeddingAttirePicker.tsx",
+      "depth": "complete static source read; story/choice/state handlers; art dependencies delegated to UI auditor",
+      "dynamic": false
+    }
+  ],
+  "focusedFiles": [
+    {
+      "path": "src/engine/game.ts",
+      "depth": "focused social/family/story sections",
+      "sections": [
+        "493-512",
+        "697-790",
+        "1769-2520",
+        "2940-2967",
+        "3370-3490",
+        "3796-4040",
+        "4723-4869",
+        "5053-5092"
+      ]
+    },
+    {
+      "path": "src/store/game-store.ts",
+      "depth": "focused social/family/story/trip actions",
+      "sections": [
+        "1466-1478",
+        "1752-1923",
+        "2072-2110",
+        "2218-2224",
+        "2754-2805"
+      ]
+    }
+  ],
+  "supportingRead": [
+    "src/engine/feature-rules.ts",
+    "src/engine/growth-test-support.ts",
+    "src/engine/items.ts:43-81",
+    "src/engine/newland-build.ts:395-468",
+    "src/render/renderer.ts:2662-2800",
+    "vite.config.ts",
+    "package.json",
+    "tsconfig.json",
+    "src/setupTests.ts"
+  ],
+  "confirmedBugs": 7,
+  "dynamicReproductions": 7,
+  "limitations": [
+    "Only GenTalk preparation button was clicked under jsdom; no browser pixel rendering by this agent",
+    "Other dynamic coverage entries indicate import/function exercise as part of isolated harness, not exhaustive module coverage",
+    "No live player saves or remote services modified"
+  ]
+}

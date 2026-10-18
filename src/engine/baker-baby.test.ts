@@ -11,7 +11,7 @@ import { householdCradleFrame } from '../render/village-followup-art'
 import { ROOMS } from './world'
 
 describe('헤이즐의 고정 이야기 아기', () => {
-  it.each([[21, 'baby'], [22, 'child'], [49, 'child'], [50, 'teen'], [91, 'teen'], [92, 'adult'], [252, 'elder']] as const)('%i일째에는 %s 단계이고 헤이즐의 같은 자녀다', (day, stage) => {
+  it.each([[21, 'baby'], [22, 'child'], [49, 'child'], [50, 'teen'], [91, 'teen'], [92, 'adult'], [252, 'adult']] as const)('%i일째에는 %s 단계이고 헤이즐의 같은 자녀다', (day, stage) => {
     const base = newGame(CONTENT)
     const gen = { ...newGenState(CONTENT, 1, 8), on: false }
     const after = settleGen({ ...base, gen, clock: { day, minute: 600 } }, CONTENT)
@@ -20,7 +20,10 @@ describe('헤이즐의 고정 이야기 아기', () => {
     const followers = companionsOf(after.gen, 'baker', day)
     expect(followers.filter(c => c.person.id === BAKER_BABY_ID)).toHaveLength(stage === 'baby' ? 0 : 1)
     expect(companionsOf(after.gen, 'wendell', day).some(c => c.person.id === BAKER_BABY_ID)).toBe(false)
-    expect(companionsOf(undefined, 'baker', day)).toEqual(followers)
+    expect(companionsOf(undefined, 'baker', day)).toMatchObject(followers.map(c => {
+      const { agePause: _agePause, ...person } = c.person
+      return { ...c, person }
+    }))
     expect(deserialize(serialize(after), CONTENT)!.gen?.persons[BAKER_BABY_ID].stage).toBe(stage)
   })
 

@@ -10,7 +10,7 @@ import { seenStories } from './SceneReplay'
 describe('기억 정원 › 다시 보는 장면 (2026-10-14)', () => {
   it('본 도트 장면만 처음 본 날 순으로 모은다 (일지·오늘·앨범)', () => {
     const s = { ...newGame(CONTENT), journal: [{ day: 3, heard: [], notes: ['ev:baker:story:3', 'firstChapter'] }], todayNotes: ['village:3'], album: [{ id: 'ev:baker:story:3', day: 3 }], clock: { day: 5, minute: 600 } }
-    expect(seenStories(s)).toEqual([{ id: 'ev:baker:story:3', day: 3 }, { id: 'village:3', day: 5 }])
+    expect(seenStories(s)).toEqual([{ id: 'ev:baker:story:3', day: 3 }, { id: 'firstChapter', day: 3 }, { id: 'village:3', day: 5 }])
   })
   it('다시 봐도 고르는 말·마음·기록은 그대로다', () => {
     const id = Object.keys(SCENES).find((k) => k === 'ev:poppy:love:1')!

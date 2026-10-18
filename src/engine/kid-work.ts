@@ -32,7 +32,7 @@ function ownedKeys(s: GameState): Set<string> {
 }
 
 /** 이웃 자녀의 부모 고정 주민 id */
-function fixedParentOf(s: GameState, id: string): string | null {
+function fixedParentOf(s: Pick<GameState,'gen'>, id: string): string | null {
   const p = s.gen?.persons[id]
   for (const q of p?.parents ?? []) {
     const parent = s.gen?.persons[q]
@@ -61,7 +61,7 @@ export function kidWorkOwners(s: GameState): KidWorkOwner[] {
 }
 
 /** 그 일터 주인의 일 (그림·이름표) — 모르면 null */
-export function ownerJob(s: GameState, owner: string | undefined): AdultJob | null {
+export function ownerJob(s: Pick<GameState,'child'|'siblings'|'gen'>, owner: string | undefined): AdultJob | null {
   if (!owner) return s.child?.job ?? null
   if (owner.startsWith('me:')) return allKids(s).find((k) => myKey(k.born) === owner)?.job ?? null
   const parent = fixedParentOf(s, owner)

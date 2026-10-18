@@ -1,0 +1,277 @@
+import { describe, expect, it } from 'vitest'
+const P = 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src'
+import { CONTENT } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import * as G from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/game'
+import { establishedGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/growth-test-support'
+import { useGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/store/game-store'
+import { serialize, deserialize, importSave, exportSave, listSaves, loadGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/save'
+import { featureAccess } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/feature-rules'
+import { TRIP_LEAVE_BY } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/travel'
+import { NEW_BOARD, playTurn } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/trip-board'
+import { mulberry32 } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/offers'
+import { weddingTodayOf } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/gen-marriage'
+import { readingRest, isReadingDay } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/meetings'
+import { isMarketDay } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/calendar'
+import { FESTIVAL_SPOTS, FIRE } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/neighbors'
+import { sanitizeLife, hasMemory } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/people'
+import { drawFragment, fragmentSeed } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/fragments'
+import { playRound, wantOf, ROUND_MODE, HOLD_BANDS } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/club-round'
+import { currentHomeLevel } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/world'
+import { homeWallsKey } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/home-walls'
+import { acceptInput } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/copying'
+import { familyHomes, livesInNewland, homeWishes } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/gen-homes'
+import { LODGING_SEATS } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/lodging'
+import { ROOMS } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/world'
+void P
+
+type S = G.GameState
+import { appendFileSync } from 'node:fs'
+const log = (...a: unknown[]) => appendFileSync('C:/Users/wn410/AppData/Local/Temp/claude/C--Users-wn410-OneDrive-Desktop-cloooo-twenty-seven/d753a49f-e844-4b46-a32f-19ff3982a548/scratchpad/repro/r3verify/out.txt', '[r3] ' + a.map((x) => typeof x === 'string' ? x : JSON.stringify(x)).join(' ') + String.fromCharCode(10))
+
+describe('r3verify engine/store', () => {
+  it('M-4 trip board: start costs nothing, is not saved, reload gives same state for a fresh roll', () => {
+    const base = establishedGame(CONTENT, 10)
+    const g: S = { ...base, coins: 500, clock: { day: base.clock.day, minute: 600 }, scenes: [] }
+    log('M-4 travel access', featureAccess(g, 'travel'), 'canTrip', G.canTrip(g, 'harbor'))
+    useGame.getState().load(g)
+    useGame.setState({ modal: { kind: 'travel' } as never })
+    const before = useGame.getState().game
+    useGame.getState().startTripBoard('harbor', false)
+    const st = useGame.getState()
+    expect(st.trip).toEqual({ dest: 'harbor', withChild: false })
+    expect(st.game.coins).toBe(500)
+    // what the pagehide/autosave writes is the unchanged game; trip is store-only
+    const saved = serialize(st.game)
+    expect(saved.includes('"trip"')).toBe(false)
+    const reloaded = deserialize(saved, CONTENT)!
+    expect(reloaded.coins).toBe(before.coins)
+    expect(reloaded.clock).toEqual(before.clock)
+    useGame.getState().load(reloaded)
+    expect(useGame.getState().trip).toBeNull()
+    expect(G.canTrip(reloaded, 'harbor')).toBeNull()
+    // board rolls use store rng = Math.random, so re-rolls differ
+    const outcomes = new Set<string>()
+    for (let i = 0; i < 30; i++) {
+      const r = mulberry32(i * 977 + 1)
+      outcomes.add(JSON.stringify(playTurn(NEW_BOARD, 1 + Math.floor(r() * 6), r, { withChild: false }).landing.rewards))
+    }
+    log('M-4 rng is Math.random:', useGame.getState().rng === Math.random, 'distinct first-turn outcomes over 30 seeds', outcomes.size)
+    expect(useGame.getState().rng).toBe(Math.random)
+  })
+
+  it('L-7 startTripBoard/goTrip accept locked/late/tired states', () => {
+    const base = establishedGame(CONTENT, 10)
+    const ok: S = { ...base, coins: 500, clock: { day: base.clock.day, minute: 600 }, scenes: [] }
+    const cases: [string, S][] = [
+      ['late', { ...ok, clock: { ...ok.clock, minute: TRIP_LEAVE_BY + 60 } }],
+      ['tired', { ...ok, needs: { ...ok.needs, energy: 0, fatigue: 100 } as never }],
+      ['locked', { ...G.newGame(CONTENT), coins: 500, scenes: [] }],
+    ]
+    for (const [name, s] of cases) {
+      useGame.getState().load(s)
+      const block = G.canTrip(useGame.getState().game, 'harbor')
+      useGame.setState({ modal: null })
+      useGame.getState().startTripBoard('harbor', false)
+      const started = useGame.getState().trip !== null
+      useGame.getState().finishTripBoard([])
+      const dayBefore = useGame.getState().game.clock.day
+      useGame.getState().goTrip('harbor', [], [])
+      const after = useGame.getState().game
+      log('L-7', name, 'canTrip=', block, 'started=', started, 'returned next day=', after.clock.day === dayBefore + 1, 'trip flag', after.flags['trip:harbor'])
+    }
+  })
+
+  it('L-8 feast day: sleeping before evening ends the feast flag (no bonfire)', () => {
+    const base = establishedGame(CONTENT, 10)
+    const s: S = { ...base, clock: { day: 30, minute: 600 }, flags: { ...base.flags, gospelFeast: 1 }, scenes: [] }
+    const next = G.goToSleep(s, CONTENT)
+    log('L-8 gospelFeast before=1, after morning sleep =', next.flags.gospelFeast)
+    expect(next.flags.gospelFeast).toBe(2)
+    const s2: S = { ...base, clock: { day: 30, minute: 600 }, flags: { ...base.flags, allFeast: 1, gospelFeast: 2 }, scenes: [] }
+    expect(G.goToSleep(s2, CONTENT).flags.allFeast).toBe(2)
+  })
+
+  it('L-9 librarian index mapping', () => {
+    const base = establishedGame(CONTENT, 10)
+    const ids = CONTENT.neighbors.map((d) => d.id)
+    const s = { ...base, flags: { ...base.flags, librarian: ids.indexOf('weaver') + 1 } }
+    expect(G.librarianId(s)).toBe('weaver')
+    log('L-9 librarian stored as index', s.flags.librarian, '->', G.librarianId(s))
+  })
+
+  it('L-10 own wedding evening after marriage re-opens hall guests', () => {
+    const base = establishedGame(CONTENT, 20)
+    const day = 35
+    const partner = 'merchant'
+    const engaged: S = { ...base, clock: { day, minute: 19 * 60 + 10 }, romance: { partner, stage: 'engaged', since: 1, weddingDay: day, marriedDay: null } as never, flags: { ...base.flags, villageLevel: 10 } }
+    const married: S = { ...engaged, romance: { partner, stage: 'married', since: 1, weddingDay: null, marriedDay: day } as never }
+    const ge = G.hallGuestsToday(engaged, CONTENT)
+    const gm = G.hallGuestsToday(married, CONTENT)
+    log('L-10 engaged guests', ge, 'married-same-evening guests', gm, 'readingRest(married)=', readingRest(married))
+    log('L-10 guests without FESTIVAL_SPOTS:', gm.filter((id) => !FESTIVAL_SPOTS[id]))
+    let both = 0
+    for (let d = 1; d < 400; d++) if (isMarketDay(d) && isReadingDay(d)) both++
+    log('L-10 days that are both market(wedding) & reading day:', both)
+    expect(ge).toEqual([])
+    expect(gm.length).toBeGreaterThan(0)
+  })
+
+  it('L-12 letter: quit after misses, restart fresh with 0 misses', () => {
+    const g = G.newGame(CONTENT)
+    useGame.getState().load({ ...g, scenes: [] })
+    useGame.setState({ modal: { kind: 'letter' } })
+    useGame.getState().startLetter()
+    const m = useGame.getState().modal as { kind: 'mini'; state: { misses: number; hits: number } }
+    useGame.setState({ modal: { ...m, state: { ...m.state, misses: 3 } } as never })
+    useGame.getState().quitMini()
+    useGame.setState({ modal: { kind: 'letter' } })
+    useGame.getState().startLetter()
+    const m2 = useGame.getState().modal as { kind: string; state: { misses: number; hits: number } }
+    log('L-12 after quit+restart misses =', m2.state.misses, 'letterDay', useGame.getState().game.letterDay)
+    expect(m2.kind).toBe('mini')
+    expect(m2.state.misses).toBe(0)
+    // finish with 0 misses
+    const coins0 = useGame.getState().game.coins
+    useGame.setState({ modal: { ...m2, state: { ...m2.state, hits: 99, misses: 0 } } as never })
+    useGame.getState().miniTap()
+    log('L-12 paid', useGame.getState().game.coins - coins0)
+  })
+
+  it('L-22 bouquet to a resident preparing a wedding today: wedding stays today', () => {
+    const base = establishedGame(CONTENT, 18)
+    const gen = base.gen ?? G.goToSleep(base, CONTENT).gen!
+    const day = 40
+    let found: string | null = null
+    let after: S | null = null
+    for (const d of CONTENT.neighbors) {
+      const rel = { id: [d.id, 'g-x'].sort().join('|'), a: d.id, b: 'g-x', stage: 'preparing' as const, since: 30, prep: { tasks: [], done: [], wedding: day } }
+      const s: S = { ...base, clock: { day, minute: 600 }, scenes: [], inv: { ...base.inv, bouquet: 1 }, hearts: { ...base.hearts, [d.id]: 100 },
+        gen: { ...gen, relations: { [rel.id]: rel } } as never, flags: { ...base.flags, villageLevel: 10, 'unlock:dating': 1 } }
+      if (G.canGiveBouquet(s, d) !== null) continue
+      found = d.id
+      after = G.giveBouquet(s, d)
+      break
+    }
+    log('L-22 bouquet target', found)
+    expect(found).not.toBeNull()
+    const w = weddingTodayOf(after!.gen, day)
+    log('L-22 after bouquet: romance', after!.romance.stage, after!.romance.partner, 'resident wedding today still', !!w, w?.a, w?.b, 'readingRest', readingRest(after!))
+    expect(w).not.toBeNull()
+    const slept = G.goToSleep({ ...after!, clock: { day, minute: 23 * 60 } }, CONTENT)
+    const p = slept.gen?.persons[found!]
+    log('L-22 next morning: relation kept?', Object.keys(slept.gen?.relations ?? {}).length, 'spouse', p?.spouse, 'player partner', slept.romance.partner)
+  })
+
+  it('L-26 life.memories value not an array -> hasMemory throws', () => {
+    const life = sanitizeLife({ memories: { baker: 'oops' } })
+    let err = ''
+    try { hasMemory(life, 'baker', 'x') } catch (e) { err = String(e) }
+    log('L-26 sanitizeLife keeps', JSON.stringify(life.memories), 'hasMemory error:', err)
+    expect(err).toMatch(/TypeError/)
+    const g = G.newGame(CONTENT)
+    const back = deserialize(serialize({ ...g, life: { ...g.life, memories: { baker: 'oops' } } } as never), CONTENT)
+    log('L-26 through deserialize: loaded=', !!back, 'memories.baker=', JSON.stringify(back?.life.memories.baker))
+  })
+
+  it('L-28 home copy fragment can take today\'s pending post piece', () => {
+    const base = establishedGame(CONTENT, 10)
+    G.syncHome(base)
+    const home = { x: 0, y: 0 }
+    // find a home tile
+    let tile: { x: number; y: number } | null = null
+    for (let y = 100; y < 130 && !tile; y++) for (let x = 0; x < 40 && !tile; x++) if ((G as unknown as { isHomeTile?: unknown }).isHomeTile === undefined) { /* noop */ }
+    void home; void tile
+    const s0: S = { ...base, scenes: [] }
+    let hit: { book: string; ch: number; day: number; id: string } | null = null
+    for (let day = 5; day < 60 && !hit; day++) for (const book of ['mk', 'lk', 'jn', 'ac'] as const) for (let ch = 1; ch <= 20 && !hit; ch++) {
+      const flag = `copyFragment:${book}:${ch}`
+      const seed = fragmentSeed(day, flag)
+      if (mulberry32(seed)() >= 0.2) continue
+      const id = drawFragment(CONTENT.pieces, s0.collected, seed + 31)
+      if (id) hit = { book, ch, day, id }
+    }
+    expect(hit).not.toBeNull()
+    // put the player at the home entry and the same id in today's post
+    const entry = (await_import_world()).HOME_ENTRY
+    const s: S = { ...s0, clock: { day: hit!.day, minute: 600 }, player: { ...s0.player, x: entry.x, y: entry.y, path: [] }, post: [hit!.id] }
+    const next = G.homeCopyFragment(s, hit!.book as never, hit!.ch, CONTENT)
+    const tookIt = next.collected.includes(hit!.id)
+    log('L-28 home copy drew', hit!.id, 'which is today\'s post; collected now:', tookIt, 'post still pending?', G.postWaiting ? (G as never as { postWaiting: (x: S) => boolean }).postWaiting(next) : (next.post ?? []).some((id) => !next.collected.includes(id)))
+    expect(tookIt).toBe(true)
+    expect((next.post ?? []).filter((id) => !next.collected.includes(id))).toEqual([])
+  })
+
+  it('L-36 changing guest list makes the same neighbor score twice', () => {
+    const b = G.newGame(CONTENT)
+    const ids = Object.keys(FESTIVAL_SPOTS)
+    const [A, B, C] = ids
+    const fest = (s: S): S => ({ ...s, player: { ...s.player, ...FIRE, path: [] }, clock: { day: 20, minute: 1090 }, plans: { appts: [], nextId: 1 } as never, clubSessions: {},
+      fests: [{ id: 'fest:1', kind: 'festival', day: 20, place: 'bench', members: [], role: 'deco', reserve: {}, step: 'tidy', joined: false, consumed: false, closed: false, cancelled: false } as never] })
+    const s = fest(b)
+    const val = (npc: string) => ROUND_MODE.festivalDeco === 'hold' ? (HOLD_BANDS[wantOf(npc, 'festivalDeco')][0] + 1) : wantOf(npc, 'festivalDeco')
+    const r1 = playRound(s, 'fest:1', 'festivalDeco', [B, C], val(B))
+    const h1 = r1.state.hearts[B] ?? 0
+    const r2 = playRound(r1.state, 'fest:1', 'festivalDeco', [A, B, C], val(B))
+    const h2 = r2.state.hearts[B] ?? 0
+    log('L-36 round1 good', r1.good, 'B hearts', s.hearts[B] ?? 0, '->', h1, '; round2 (A arrived) good', r2.good, 'B hearts ->', h2, 'A hearts', r2.state.hearts[A] ?? 0)
+    expect(h2).toBeGreaterThan(h1)
+  })
+
+  it('L-2 import validation changes global map state even when import is rejected', () => {
+    const a = G.newGame(CONTENT)
+    G.syncHome(a)
+    const lv0 = currentHomeLevel(), wk0 = homeWallsKey()
+    const other: S = { ...a, homeLevel: 2 as never, homeWalls: { built: ['20,112'], removed: [] } as never }
+    const text = JSON.stringify({ ...JSON.parse(exportSave(other, null)), album: { 'bad/id': 'x' } })
+    const store = new Map<string, string>()
+    const mem = { get length() { return store.size }, key: (i: number) => [...store.keys()][i] ?? null, getItem: (k: string) => store.get(k) ?? null, setItem: (k: string, v: string) => void store.set(k, v), removeItem: (k: string) => void store.delete(k), clear: () => store.clear() } as Storage
+    const r = importSave(text, CONTENT, mem)
+    log('L-2 import result', r, 'homeLevel', lv0, '->', currentHomeLevel(), 'walls', JSON.stringify(wk0), '->', JSON.stringify(homeWallsKey()))
+    expect(r).toEqual({ error: 'format' })
+    expect(currentHomeLevel()).not.toBe(lv0)
+  })
+
+  it('L-3 a listed slot can fail to load (version mismatch)', () => {
+    localStorage.clear()
+    localStorage.setItem('twenty-seven/save/5', JSON.stringify({ version: 1, clock: { day: 9, minute: 0 }, avatar: { name: '옛', look: 'f' } }))
+    const saves = listSaves(localStorage)
+    log('L-3 listSaves', saves.map((x) => x.slot), 'loadGame(5)=', loadGame(CONTENT, localStorage, '5'))
+  })
+
+  it('L-6 hearts string value concatenates on heartUp', () => {
+    const g = G.newGame(CONTENT)
+    const back = deserialize(serialize({ ...g, hearts: { ...g.hearts, baker: '20' as never } }), CONTENT)!
+    log('L-6 loaded hearts.baker', JSON.stringify(back.hearts.baker))
+    const up = G.heartUp(back, 'baker', 1)
+    log('L-6 after heartUp +1:', JSON.stringify(up.hearts.baker), typeof up.hearts.baker)
+  })
+
+  it('L-16 a whole verse in one insertText is accepted when it matches the verse', () => {
+    const verse = '태초에 말씀이 계시니라 이 말씀이 하나님과 함께 계셨으니'
+    const got = acceptInput('', verse, { inputType: 'insertText', target: verse })
+    const pasted = acceptInput('', verse, { inputType: 'insertFromPaste', target: verse })
+    log('L-16 insertText whole verse accepted:', got === verse, '; insertFromPaste accepted:', pasted === verse)
+    expect(got).toBe(verse)
+  })
+
+  it('L-27 heir household in newland: livesInNewland(slot) false', () => {
+    const noRoom = CONTENT.neighbors.filter((d) => !ROOMS.some((r) => r.owner === d.id) && !LODGING_SEATS[d.id] && !d.marketOnly).map((d) => d.id)
+    log('L-27 neighbors without a village room or lodging seat:', noRoom)
+    const slot = 'baker'
+    const h1 = { id: 'b1', kind: 'home', x: 10, y: 12, facing: 'down', state: 'done', orderedDay: 1, paid: { coins: 1500, items: {} }, refunded: false, slot: 0 }
+    const s = { clock: { day: 40, minute: 360 }, newland: { builds: [h1], tiles: {}, nextId: 2 },
+      gen: { households: { 'h-1': { id: 'h-1', members: ['g-9', 'g-8'], home: 'g-9' } }, persons: {}, retired: { [slot]: { heir: 'g-9', day: 1 } } },
+      flags: { 'familyHome:1': 1 } } as never
+    log('L-27 familyHomes', familyHomes(s).length, 'livesInNewland(heir g-9)=', livesInNewland(s, 'g-9'), 'livesInNewland(slot baker)=', livesInNewland(s, slot))
+    const real = (o: string) => ROOMS.some((r) => r.owner === o) || !!LODGING_SEATS[o]
+    const s2 = { ...(s as object), flags: {} } as never
+    log('L-27 homeWishes with heir home=g-9 (no room):', homeWishes(s2, real).map((h) => h.id))
+    expect(livesInNewland(s, slot)).toBe(false)
+  })
+})
+
+function await_import_world() {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  return W
+}
+import * as W from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/world'

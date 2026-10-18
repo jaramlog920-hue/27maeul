@@ -1,4 +1,5 @@
 import { featureAccess, featureHint } from '../../engine/feature-rules'
+import {isWeddingAttire} from '../../engine/wedding-attire'
 import { useState } from 'react'
 import { FURNITURE_DEFS } from '../../engine/furniture-defs'
 import { ICONS } from '../../render/sprites'
@@ -15,11 +16,12 @@ import type { ItemId } from '../../engine/types'
 import { useGame } from '../../store/game-store'
 
 /** 사기 목록을 넷으로 묶는다: 재료, 도구·살림, 가구·장식, 이번 장날의 생활 가구 */
-type Group = 'stuff' | 'tools' | 'decor' | 'home'
-const GROUP_LABEL: Record<Group, string> = { stuff: '재료', tools: '도구 · 살림', decor: '가구 · 장식', home: '이번 장날 생활 가구' }
+type Group = 'stuff' | 'tools' | 'decor' | 'home' | 'clothes'
+const GROUP_LABEL: Record<Group, string> = { stuff: '재료', tools: '도구 · 살림', decor: '가구 · 장식', home: '이번 장날 생활 가구',clothes:'결혼 예복' }
 function groupOf(t: Trade): Group {
   if (t.id.startsWith('add:')) return 'home'
   const got = Object.keys(t.get) as ItemId[]
+  if(got.some(isWeddingAttire))return 'clothes'
   if (got.some((id) => FURNITURE_DEFS[id])) return 'decor'
   if (t.grants || t.coins !== undefined) return 'tools'
   return 'stuff'
@@ -83,7 +85,8 @@ export function TradeBoard() {
       detail: (
         <>
           {descOf(icon) && <p>{descOf(icon)}</p>}
-          {t.coins !== undefined ? <p>{fill(T.ui.coins, { n: t.coins })} · 가진 닢 {coins}</p> : <NeedList needs={t.pay as Record<string, number>} have={(id) => inv[id as ItemId] ?? 0} icon={(id) => <ItemIcon id={id as ItemId} size={16} />} />}
+          {t.coins !== undefined && <p>{fill(T.ui.coins, { n: t.coins })} · 가진 닢 {coins}</p>}
+          {Object.keys(t.pay).length > 0 && <NeedList needs={t.pay as Record<string, number>} have={(id) => inv[id as ItemId] ?? 0} icon={(id) => <ItemIcon id={id as ItemId} size={16} />} />}
           {locked && <p>{featureHint('convenience')}</p>}
         </>
       ),
@@ -107,7 +110,7 @@ export function TradeBoard() {
       {tab === 'buy' && (
         <>
           <p className="hint">가진 닢 {coins}</p>
-          {(['stuff', 'tools', 'decor', 'home'] as Group[]).map((g) => (
+          {(['stuff', 'tools', 'decor', 'home','clothes'] as Group[]).map((g) => (
             <IconGrid key={g} title={GROUP_LABEL[g]} entries={tradesFor(flags).filter((t) => groupOf(t) === g && tradeOnMarket(t, game.clock.day)).map(buyEntry)} />
           ))}
         </>

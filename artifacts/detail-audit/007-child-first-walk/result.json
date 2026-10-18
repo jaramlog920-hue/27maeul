@@ -1,0 +1,462 @@
+{
+  "passed": true,
+  "baby": {
+    "clock": {
+      "day": 23,
+      "minute": 1320.1165999999998
+    },
+    "child": {
+      "name": "루시",
+      "look": "girl",
+      "born": 10,
+      "stats": {
+        "wit": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "hand": {
+          "level": 1,
+          "xp": 0,
+          "born": 1
+        },
+        "charm": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "strength": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "luck": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        }
+      },
+      "lean": "hand",
+      "close": 10
+    },
+    "mode": "cradle",
+    "stage": "baby",
+    "at": {
+      "x": 26,
+      "y": 114
+    },
+    "player": {
+      "x": 27,
+      "y": 114,
+      "path": [],
+      "facing": "left",
+      "walkTime": 0
+    },
+    "modal": {
+      "kind": "follow",
+      "who": "child"
+    },
+    "walksQueued": 0,
+    "walksAlbum": 0,
+    "kidActs": 0,
+    "text": "루시\n\n요람에서 새근새근 자고 있어요.\n\n안아 주기\n살살 달래기\n요람에 눕히기\n이불 덮어 주기\n닫기"
+  },
+  "cared": {
+    "clock": {
+      "day": 23,
+      "minute": 1320.1332999999997
+    },
+    "child": {
+      "name": "루시",
+      "look": "girl",
+      "born": 10,
+      "stats": {
+        "wit": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "hand": {
+          "level": 1,
+          "xp": 0,
+          "born": 1
+        },
+        "charm": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "strength": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "luck": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        }
+      },
+      "lean": "hand",
+      "close": 12,
+      "cared": 1
+    },
+    "mode": "cradle",
+    "stage": "baby",
+    "at": {
+      "x": 26,
+      "y": 114
+    },
+    "player": {
+      "x": 27,
+      "y": 114,
+      "path": [],
+      "facing": "left",
+      "walkTime": 0
+    },
+    "modal": null,
+    "walksQueued": 0,
+    "walksAlbum": 0,
+    "kidActs": 0,
+    "text": ""
+  },
+  "morning": {
+    "clock": {
+      "day": 24,
+      "minute": 360.0167
+    },
+    "child": {
+      "name": "루시",
+      "look": "girl",
+      "born": 10,
+      "stats": {
+        "wit": {
+          "level": 2,
+          "xp": 3,
+          "born": 0
+        },
+        "hand": {
+          "level": 1,
+          "xp": 0,
+          "born": 1
+        },
+        "charm": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "strength": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "luck": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        }
+      },
+      "lean": "hand",
+      "close": 12,
+      "cared": 1,
+      "inherited": 33
+    },
+    "mode": "follow",
+    "stage": "toddler",
+    "at": {
+      "x": 18,
+      "y": 110
+    },
+    "player": {
+      "x": 18,
+      "y": 111,
+      "path": [],
+      "facing": "down",
+      "walkTime": 0
+    },
+    "modal": {
+      "kind": "scene",
+      "id": "childWalks"
+    },
+    "childWalked": 1,
+    "walksQueued": 1,
+    "walksAlbum": 0,
+    "kidActs": 0,
+    "text": ""
+  },
+  "grown": {
+    "clock": {
+      "day": 24,
+      "minute": 360.0167
+    },
+    "child": {
+      "name": "루시",
+      "look": "girl",
+      "born": 10,
+      "stats": {
+        "wit": {
+          "level": 2,
+          "xp": 3,
+          "born": 0
+        },
+        "hand": {
+          "level": 1,
+          "xp": 0,
+          "born": 1
+        },
+        "charm": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "strength": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "luck": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        }
+      },
+      "lean": "hand",
+      "close": 12,
+      "cared": 1,
+      "inherited": 33
+    },
+    "mode": "follow",
+    "stage": "toddler",
+    "at": {
+      "x": 20,
+      "y": 112
+    },
+    "player": {
+      "x": 20,
+      "y": 113,
+      "path": [],
+      "facing": "down",
+      "walkTime": 0
+    },
+    "modal": {
+      "kind": "follow",
+      "who": "child"
+    },
+    "childWalked": 1,
+    "walksQueued": 0,
+    "walksAlbum": 1,
+    "kidActs": 0,
+    "text": "루시\n\n지금은 곁을 따라다녀요.\n\n함께하기\n데리고 다니기\n집에 두기\n닫기"
+  },
+  "home": {
+    "clock": {
+      "day": 24,
+      "minute": 360.0999
+    },
+    "child": {
+      "name": "루시",
+      "look": "girl",
+      "born": 10,
+      "stats": {
+        "wit": {
+          "level": 2,
+          "xp": 3,
+          "born": 0
+        },
+        "hand": {
+          "level": 1,
+          "xp": 0,
+          "born": 1
+        },
+        "charm": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "strength": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "luck": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        }
+      },
+      "lean": "hand",
+      "mode": "home",
+      "close": 12,
+      "cared": 1,
+      "inherited": 33
+    },
+    "mode": "home",
+    "stage": "toddler",
+    "at": {
+      "x": 25,
+      "y": 113
+    },
+    "player": {
+      "x": 20,
+      "y": 113,
+      "path": [],
+      "facing": "down",
+      "walkTime": 0
+    },
+    "modal": null,
+    "childWalked": 1,
+    "walksQueued": 0,
+    "walksAlbum": 1,
+    "kidActs": 0,
+    "text": ""
+  },
+  "played": {
+    "clock": {
+      "day": 24,
+      "minute": 390.1833
+    },
+    "child": {
+      "name": "루시",
+      "look": "girl",
+      "born": 10,
+      "stats": {
+        "wit": {
+          "level": 2,
+          "xp": 11,
+          "born": 0
+        },
+        "hand": {
+          "level": 1,
+          "xp": 0,
+          "born": 1
+        },
+        "charm": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "strength": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "luck": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        }
+      },
+      "lean": "hand",
+      "mode": "follow",
+      "close": 15,
+      "cared": 1,
+      "inherited": 33,
+      "interests": {
+        "scribe": 1,
+        "scholar": 1
+      }
+    },
+    "mode": "follow",
+    "stage": "toddler",
+    "at": {
+      "x": 20,
+      "y": 114
+    },
+    "player": {
+      "x": 20,
+      "y": 113,
+      "path": [],
+      "facing": "up",
+      "walkTime": 0
+    },
+    "modal": {
+      "kind": "kidTime",
+      "done": {
+        "act": "read",
+        "variant": 2,
+        "gains": {
+          "wit": 8
+        },
+        "got": {},
+        "who": null,
+        "burnt": false,
+        "album": true
+      }
+    },
+    "childWalked": 1,
+    "walksQueued": 0,
+    "walksAlbum": 1,
+    "kidActs": 1,
+    "text": "📖 같이 책 읽기\n\n루시가 아는 낱말을 손가락으로 짚으며 소리 내어 읽었다.\n\n루시의 지능이 조금 자랐어요\n루시와 조금 더 가까워졌어요\n가족 앨범에 한 장이 남아요\n다른 것도 하기\n닫기"
+  },
+  "restored": {
+    "clock": {
+      "day": 24,
+      "minute": 390.1833
+    },
+    "child": {
+      "name": "루시",
+      "look": "girl",
+      "born": 10,
+      "stats": {
+        "wit": {
+          "level": 2,
+          "xp": 11,
+          "born": 0
+        },
+        "hand": {
+          "level": 1,
+          "xp": 0,
+          "born": 1
+        },
+        "charm": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "strength": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "luck": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        }
+      },
+      "lean": "hand",
+      "mode": "follow",
+      "interests": {
+        "scribe": 1,
+        "scholar": 1
+      },
+      "close": 15,
+      "cared": 1,
+      "inherited": 33
+    },
+    "mode": "follow",
+    "stage": "toddler",
+    "at": {
+      "x": 20,
+      "y": 114
+    },
+    "player": {
+      "x": 20,
+      "y": 113,
+      "path": [],
+      "facing": "up",
+      "walkTime": 0
+    },
+    "modal": {
+      "kind": "scene",
+      "id": "fam:read"
+    },
+    "childWalked": 1,
+    "walksQueued": 0,
+    "walksAlbum": 1,
+    "kidActs": 1,
+    "text": "같이 읽은 책\n\n루시가 옆에 바짝 붙어 앉아 그림을 하나하나 손가락으로 짚었다.\n\n다음"
+  },
+  "pageErrors": []
+}

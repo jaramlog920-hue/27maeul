@@ -2,8 +2,12 @@ import {hasAuthoredStory} from '../../render/authored-story-art'
 import {SCENES} from '../../content/text'
 import {neighborById} from '../../content/catalog'
 import moments from '../../content/scenic-moments.json'
+import dialogueOnly from '../../content/event-art-dialogue-only.json'
 import {landscapeKind,type LandscapeKind} from '../../render/scenic-moments-art'
 export interface EventPreviewEntry {id:string;title:string;caption:string;kind:LandscapeKind|null;category:string;image?:string;fresh:boolean;authored?:boolean}
+const dialogueOnlyIds=new Set<string>(dialogueOnly)
+/** 그림을 제작하지 않는 항목은 홈페이지와 목록 순서 재생에서만 제외한다. */
+export function eventGalleryEntries(){return eventPreviewEntries().filter(e=>!dialogueOnlyIds.has(e.id)||e.authored)}
 const images:Record<string,string>={firstOtBook:'progress-0.jpg',psalmRest:'progress-1.jpg',firstHomeBook:'progress-2.jpg',childLeaves:'progress-3.jpg',childStays:'progress-4.jpg',workSuccession:'progress-5.jpg',bibleLastLetter:'ending-0.jpg',completeBible:'ending-3.jpg',lastManuscript:'21-last-manuscript.jpg',fullLibrary:'25-library-photo.jpg',readingFinished:'living-0.jpg',firstDinner:'living-1.jpg',coverFinished:'living-2.jpg',childLetterReceived:'living-3.jpg',facilityFinished:'living-4.jpg'}
 function category(id:string,kind:LandscapeKind|null){
  if(['completeBible','bibleLastLetter','fullLibrary','lastManuscript'].includes(kind??''))return '완성과 엔딩'
@@ -18,7 +22,7 @@ export function eventPreviewEntries():EventPreviewEntry[]{
  const ids=new Set([...Object.keys(SCENES),...Object.keys(moments),'stars','sunset'])
  return [...ids].map(id=>{
   const kind=landscapeKind(id),m=kind&&kind in moments?moments[kind as keyof typeof moments]:null,scene=SCENES[id]
-  const displayTitle=({feastFire:'복음서 4권 잔치',allFeastFire:'27권 완성 잔치'} as Record<string,string>)[id]
+  const displayTitle=id.startsWith('wedding:')?'결혼식 (마을 잔치)':({feastFire:'복음서 4권 잔치',allFeastFire:'27권 완성 잔치'} as Record<string,string>)[id]
   const baseTitle=(displayTitle??scene?.title??m?.title??(id==='stars'?'별 보는 밤':'호숫가 노을')).replace(/\{[^}]+\}/g,'기록자')
   const suffix=id.split(':').slice(1).map(part=>neighborById(part)?.role??({longBench:'긴 벤치',flowerBed:'화단',shade:'그늘막',signPost:'표지판'} as Record<string,string>)[part]).filter(Boolean).join(' · ')
   const title=suffix?`${baseTitle} · ${suffix}`:baseTitle

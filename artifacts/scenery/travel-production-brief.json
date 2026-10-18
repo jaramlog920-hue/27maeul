@@ -1,0 +1,59 @@
+{
+  "status": "2개 전체 제작·시각 확인·검사·빌드 완료",
+  "entries": [
+    {
+      "id": "growth:travel:full",
+      "title": "이웃 마을로 떠나는 길",
+      "group": "travel",
+      "basis": "첫 서술의 장소 표현",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 0,
+      "originalTier": "illustration",
+      "original": {
+        "title": "이웃 마을로 떠나는 길",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "마흔 장을 기록했다. 나루에서 이웃 마을 여행을 떠날 수 있다."
+          }
+        ]
+      },
+      "trigger": null
+    },
+    {
+      "id": "trip:hillTown",
+      "title": "언덕 너머 마을",
+      "group": "travel",
+      "basis": "원래 발생 좌표와 대사 확인: 대장간이 아닌 실제 장소 배경으로 이동.",
+      "status": "계획",
+      "needsLocationCheck": false,
+      "choices": 0,
+      "originalTier": "event",
+      "original": {
+        "title": "언덕 너머 마을",
+        "album": "걸어서 언덕 너머 마을에 다녀온 날",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "언덕을 둘 넘자 붉은 지붕이 옹기종기 모인 마을이 나왔다. 대장간 망치 소리가 골짜기에 울린다."
+          },
+          {
+            "speaker": "narration",
+            "text": "찻잎을 말리던 여자아이가 달려와 묻는다. \"혹시 호숫가 마을 찻집 알아요? 우리 오빠가 거기 있어요!\""
+          },
+          {
+            "speaker": "narration",
+            "text": "웬델의 동생이었다. 아이는 말린 꽃잎 한 줌을 쥐여 준다. \"오빠한테 이거 전해 주세요. 보고 싶다고요.\""
+          }
+        ]
+      },
+      "trigger": null
+    }
+  ],
+  "verification": "원래 4대사+걷기 시작/중간/끝 포함 13컷씩 기본/실제 외형, 휴대폰/썸네일, 1700 tests, prebuild/tsc/vite build 통과",
+  "inventory": {
+    "drawn": 514,
+    "pending": 162
+  }
+}

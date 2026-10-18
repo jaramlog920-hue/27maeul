@@ -2,6 +2,7 @@
 import type { Facing, Season } from '../engine/types'
 import { hsvToHex, shadeOf, SKINS, TOPS, type FullAvatar, type Look } from '../engine/avatar'
 import { avatarDetails } from './character-details'
+import {copyOutfitAt} from '../engine/copy-outfits'
 import { FURNI_PALETTE, FURNITURE_ART, ICON_CHAR, iconFromArt } from './furniture-art'
 import { elderDetails, ELDER_COLORS } from './elder-details'
 import { sideHairDetails, legacySideHairDetails } from './side-hair-details'
@@ -476,6 +477,7 @@ export function writerPalette(season: Season, avatar?: FullAvatar): Record<strin
       P: hsvToHex(shadeOf(avatar.accColor)),
       y: hsvToHex([avatar.accColor[0], Math.max(0, avatar.accColor[1] - 15), Math.min(100, avatar.accColor[2] + 18)]),
     } : {}),
+    ...(copyOutfitAt(avatar.top)?{'α':copyOutfitAt(avatar.top)!.main,'β':copyOutfitAt(avatar.top)!.shade,'γ':copyOutfitAt(avatar.top)!.trim,'ζ':copyOutfitAt(avatar.top)!.accent}:{}),
   }
 }
 
@@ -507,13 +509,15 @@ export function animalRows(kind: 'cat' | 'dog', form: 'adult' | 'baby' | 'curl',
 }
 
 export const SMALL_PALETTE: Record<string, string> = {
-  w: '#ffffff', W: '#f8e8cc', k: '#583828', s: '#f8c094', a: '#f8e8cc', y: '#e0c898', z: '#5c94c4',
+  h:'#c9a477',n:'#e3af8e',e:'#bb866b','+':'#e9918b',w: '#ffffff', W: '#f8e8cc', k: '#583828', s: '#f8c094', a: '#f8e8cc', y: '#e0c898', z: '#5c94c4',
   o: '#cc8468', O: '#d4b060', b: '#5c94c4', B: '#5c94c4',
 }
 
 export const SHEEP: SpriteRows = ['.wwwww..', 'wwwwwwkk', 'wWwwwwks', '.wwwwww.', '.k.k.k..']
+export const NEWBORN_ROWS: SpriteRows = ['.hss.ww..','nsssswwww','nsoswwWww','.s+sswWww','..ss.wWww','......ww.']
+export const NEWBORN_PALETTE: Record<string,string> = {h:'#c9a477',s:'#f7cba9',n:'#e3af8e',o:'#845f4d',e:'#bb866b','+':'#e9918b',w:'#dcece3',W:'#abcfc0'}
 export const BABY: Record<'baby' | 'crawl' | 'walk', SpriteRows> = {
-  baby: ['.aa.', 'asaa', 'aaaa', '.aa.'],
+  baby: NEWBORN_ROWS,
   crawl: ['..kk..', '.kssk.', 'zzzzzs', 'z.z..z'],
   walk: ['.kk.', 'kssk', '.ss.', 'zzzz', 'zzzz', '.z.z'],
 }
@@ -534,6 +538,10 @@ export const ICON_PALETTE: Record<string, string> = {
 }
 
 export const ICONS: Record<string, SpriteRows> = {
+  weddingTuxedo:['..wwww..','.ddwwdd.','dddwdddd','dddydddd','dddwdddd','.dddddd.','..dd.dd.','..dd.dd.'],
+  weddingWhiteSuit:['..wwww..','.wwddww.','wwwddwww','wwwywwww','wwwdwwww','.wwwwww.','..dd.dd.','..dd.dd.'],
+  weddingBallDress:['..w..w..','..wwww..','...yy...','..wwww..','.wwWWww.','wwWWWWww','wWWwwWWw','wwwwwwww'],
+  weddingLaceDress:['..w..w..','..ffff..','...PP...','..ffff..','.wfppfw.','wfppppfw','wpffffpw','wwwwwwww'],
   // 시계 둘 (2026-10-14): 빠른 시계는 놋쇠 테에 바늘 둘과 태엽, 시각 맞춤 시계는 나무 테에 바늘 하나
   speedClock: ['...ll...', '..NNNN..', '.NaaaaN.', 'NaakaaaN', 'NaakkkaN', 'NaaaaaaN', '.NaaaaN.', '..NNNN..'],
   setClock: ['........', '..nnnn..', '.naaaan.', 'naaakaan', 'naaakaan', 'naaaaaan', '.naaaan.', '..nnnn..'],

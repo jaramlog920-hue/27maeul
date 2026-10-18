@@ -4,6 +4,8 @@
 //   small  작은 물건 — 탁자 위(한 칸에 하나) 또는 빈 바닥
 //   wall   벽에 거는 것 — 방 바닥 바로 위 벽 칸(세운 벽 포함), 길을 막지 않는다 (2026-10-12)
 import designs from '../content/spouse-rooms.json'
+import { isCopyFurniture } from './copy-furniture'
+import { copyFurnitureFacing, copyFurnitureFacings } from './copy-furniture-views'
 import { FIXTURES, LIVING_DOOR, PARTNER_DOOR } from './home-layout'
 import { findPath } from './movement'
 import { BED_STAND, currentHomeLevel, setHomeFurniture, HOME_ENTRY, isHome, key, PLACES, placeActive, sameTile, SIDE_DOOR, tileAt, type Place } from './world'
@@ -43,6 +45,7 @@ export function facingOf(f: Pick<Furniture, 'item' | 'facing'>): Facing {
 
 /** 방향에 따른 크기: 옆을 보면 가로·세로가 바뀐다 (탁자 2×1 → 1×2) */
 export function sizeOf(item: ItemId, facing: Facing = 'down'): { w: number; h: number } {
+  if (isCopyFurniture(item)) facing = copyFurnitureFacing(item, facing)
   const d = FURNITURE_DEFS[item] ?? { w: 1, h: 1 }
   return facing === 'left' || facing === 'right' ? { w: d.h, h: d.w } : { w: d.w, h: d.h }
 }
@@ -128,11 +131,11 @@ export function placement(room: readonly Furniture[], item: ItemId, t: Tile, fac
   if (!def) return null
   const clear = ctx.keepClear()
   const isFloor = ctx.isFloor
-  const turned = facing ? { facing } : {}
+  const turned = facing ? { facing: isCopyFurniture(item) ? copyFurnitureFacing(item,facing) : facing } : {}
   if (def.layer === 'wall') {
     // 벽걸이는 앞만 본다. 차지하는 칸이 모두 '바닥 바로 위의 벽'이고 다른 벽걸이와 겹치지 않아야 한다
-    if (facing && facing !== 'down') return null
-    const f: Furniture = { item, x: t.x, y: t.y }
+    if (facing && facing !== 'down' && !isCopyFurniture(item)) return null
+    const f: Furniture = { item, x: t.x, y: t.y, ...(isCopyFurniture(item) ? turned : {}) }
     if (!footprint(f).every(isHangingWall)) return null
     if (room.some((o) => layerOf(o) === 'wall' && footprint(o).some((p) => footprint(f).some((q) => sameTile(p, q))))) return null
     return f
@@ -174,13 +177,14 @@ export function placement(room: readonly Furniture[], item: ItemId, t: Tile, fac
  */
 export function rotation(room: readonly Furniture[], f: Furniture, ctx: RoomCtx = HOME_CTX): Furniture | null {
   if (!room.includes(f)) return null
+  if (isCopyFurniture(f.item) && copyFurnitureFacings(f.item).length === 1) return null
   const def = FURNITURE_DEFS[f.item]
   if (!def) return null
   if (def.surface && !f.on) {
     const tiles = footprint(f)
     if (room.some((o) => o.on && tiles.some((p) => sameTile(p, o)))) return null
   }
-  const next = TURN[facingOf(f)]
+  const next = isCopyFurniture(f.item) ? copyFurnitureFacings(f.item)[copyFurnitureFacing(f.item,facingOf(f)) === 'down' ? 1 : 0] : TURN[facingOf(f)]
   const ok = placement(
     room.filter((o) => o !== f),
     f.item,

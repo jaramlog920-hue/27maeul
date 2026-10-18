@@ -5,7 +5,8 @@ import { CONTENT } from '../content/catalog'
 import { childTile, homeSeatsNow, moveFurniture, placeFurniture, removeFurniture, rotateFurniture, syncHome, tapTile, tick, type GameState } from './game'
 import { moodOf } from './mood'
 import { petStayGoal } from './pet-life'
-import { adopt } from './companion'
+import { adopt, comesToPlayer, favoriteSpot, petCornerProp, petHabit, petSpotSafe } from './companion'
+import { weatherOf } from './calendar'
 import { findPath } from './movement'
 import { footprint, placement, solidTiles, type Furniture } from './room'
 import { deserialize, serialize } from './save'
@@ -251,6 +252,38 @@ describe('가족·이웃·동물이 자리를 쓴다', () => {
     for (let i = 0; i < 40; i++) s = tick(s, 0.1, () => 0.5, CONTENT).state
     const pet = { x: Math.round(s.companion!.x), y: Math.round(s.companion!.y) }
     expect(Math.abs(pet.x - Math.round(s.player.x)) + Math.abs(pet.y - Math.round(s.player.y))).toBeLessThanOrEqual(3)
+  })
+  it('강아지가 설치한 쉼터 가구로 걸어가 낮잠을 자며 자동 깔개는 더하지 않는다', () => {
+    let s = furnish(base(), [['cushion', 22, 113]])
+    s = setSpace(s, find(s, 'cushion'), 'pet')!
+    const c = { ...adopt('dog', '보리', 1, PET_HOME), stay: true, ways: { curious: 0, distance: 1, energy: 0 } }
+    s = { ...s, scenes: [], npcs: {}, clock: { day: 12, minute: 13 * 60 + 5 }, companion: c,
+      player: { ...s.player, ...HOME_ENTRY, path: [] } }
+    expect(petStayGoal(s, c, new Set(), HOME_ENTRY)).toEqual({ x: 22, y: 113 })
+    for (let i = 0; i < 200; i++) s = tick(s, 0.05, () => 0.5, CONTENT).state
+    expect({ x: Math.round(s.companion!.x), y: Math.round(s.companion!.y) }).toEqual({ x: 22, y: 113 })
+    expect(petHabit(s.companion!, s.clock.day, s.clock.minute, weatherOf(s.clock.day)).pose).toBe('nap')
+    expect(petCornerProp(s.companion!, s.clock.day, s.clock.minute, weatherOf(s.clock.day))).toBeNull()
+    expect(petStayGoal(s, c, new Set(['22,113']), HOME_ENTRY)).not.toEqual({ x: 22, y: 113 })
+    const without = { ...s, room: s.room.filter(f => f.item !== 'cushion') }
+    expect(petSpaceTile(without)).toBeNull()
+    expect(petSpotSafe(petStayGoal(without, c, new Set(), HOME_ENTRY))).toBe(true)
+  })
+  it('밤에 다른 낮잠 자리를 좋아해도 설치한 잠자리를 쓰고, 깨어 있을 때의 친근한 반응은 유지한다', () => {
+    let s = furnish(base(), [['cushion', 22, 113]])
+    s = setSpace(s, find(s, 'cushion'), 'pet')!
+    const dog = ['보리','콩이','누렁이','초코'].map(name => adopt('dog', name, 1, PET_HOME)).find(c => favoriteSpot(c) !== 'blanket')!
+    expect(dog).toBeDefined()
+    const c = { ...dog, stay: true, ways: { curious: 0, distance: 0, energy: 1 }, found: ['rest' as const] }
+    const day = Array.from({ length: 30 }, (_, i) => i + 12).find(d => weatherOf(d) === 'sunny')!
+    s = { ...s, clock: { day, minute: 21 * 60 + 30 }, idle: { ...s.idle, seconds: 10 }, player: { ...s.player, ...HOME_ENTRY, path: [] } }
+    expect(comesToPlayer(c, day)).toBe(true)
+    expect(petHabit(c, day, s.clock.minute, weatherOf(day)).spot).not.toBe('blanket')
+    expect(petStayGoal(s, c, new Set(), HOME_ENTRY)).toEqual({ x: 22, y: 113 })
+    const awake = { ...s, clock: { day, minute: 20 * 60 + 30 } }
+    expect(petHabit(c, day, awake.clock.minute, weatherOf(day)).pose).toBe('wait')
+    const beside = petStayGoal(awake, c, new Set(), HOME_ENTRY)
+    expect(Math.abs(beside.x - HOME_ENTRY.x) + Math.abs(beside.y - HOME_ENTRY.y)).toBe(1)
   })
 })
 

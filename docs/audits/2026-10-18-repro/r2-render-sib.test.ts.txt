@@ -1,0 +1,12 @@
+import { siblingTile } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/siblings'
+import { isWalkable, tileAt, houseAt } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/world'
+import { newGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/game'
+import { CONTENT } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+test('sibling tiles', () => {
+  const g = newGame(CONTENT)
+  const kid = { name: 'a', look: 'boy', born: 0 } as any
+  for (const m of [6*60, 8*60, 12*60, 17*60, 21*60]) for (const i of [0,1]) {
+    const t = siblingTile({ ...g, clock: { day: 200, minute: m } } as any, kid, i)
+    console.log(m/60, i, JSON.stringify(t), tileAt(t.x,t.y), isWalkable(t), houseAt(t.x,t.y)?.id)
+  }
+})

@@ -1,0 +1,199 @@
+{
+  "status": "원문·장소 대조, 구현 전",
+  "entries": [
+    {
+      "id": "saw:boat:argue",
+      "title": "나루의 말다툼",
+      "group": "current",
+      "basis": "현재 플레이어 위치와 발생 조건 확인 필요",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 0,
+      "originalTier": "illustration",
+      "original": {
+        "title": "나루의 말다툼",
+        "lines": [
+          {
+            "speaker": "cosmo",
+            "text": "뱃머리는 뾰족해야 물을 가르지!"
+          },
+          {
+            "speaker": "rudy",
+            "text": "…둥글어야 안 부서져."
+          },
+          {
+            "speaker": "cosmo",
+            "text": "형이 만든 건 뾰족했다고!"
+          },
+          {
+            "speaker": "narration",
+            "text": "루디가 대패를 내려놓고 한참 코스모를 보았다. 그리고 뾰족한 선을 조금 남긴 둥근 뱃머리를 그려 보였다. 코스모가 입을 다물었다."
+          }
+        ]
+      },
+      "trigger": null,
+      "confirmedGroup": "shore",
+      "sighting": {
+        "id": "boat:argue",
+        "title": "나루의 말다툼",
+        "at": {
+          "x": 25,
+          "y": 33
+        },
+        "lines": [
+          {
+            "speaker": "cosmo",
+            "text": "뱃머리는 뾰족해야 물을 가르지!"
+          },
+          {
+            "speaker": "rudy",
+            "text": "…둥글어야 안 부서져."
+          },
+          {
+            "speaker": "cosmo",
+            "text": "형이 만든 건 뾰족했다고!"
+          },
+          {
+            "speaker": "narration",
+            "text": "루디가 대패를 내려놓고 한참 코스모를 보았다. 그리고 뾰족한 선을 조금 남긴 둥근 뱃머리를 그려 보였다. 코스모가 입을 다물었다."
+          }
+        ],
+        "memory": "saw:boatArgue",
+        "when": {
+          "from": 780,
+          "to": 900
+        },
+        "npc": "rudy",
+        "thread": "boat",
+        "phaseDay": 23
+      },
+      "verificationStatus": "원문·발생 장소 대조 완료, 렌더러 미제작"
+    },
+    {
+      "id": "saw:bread:swap",
+      "title": "장터의 비밀",
+      "group": "current",
+      "basis": "현재 플레이어 위치와 발생 조건 확인 필요",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 0,
+      "originalTier": "illustration",
+      "original": {
+        "title": "장터의 비밀",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "장이 파할 무렵, 웬델이 파피의 좌판에서 빵 하나를 몰래 산다. 모자를 눌러쓴 채로."
+          },
+          {
+            "speaker": "narration",
+            "text": "조금 뒤, 파피도 웬델의 좌판에서 과자 하나를 몰래 산다. 역시 모자를 눌러쓴 채로."
+          },
+          {
+            "speaker": "narration",
+            "text": "둘은 서로 모르는 척 광장 양 끝에서 각자 산 것을 한 입씩 먹었다. 표정이 똑같았다."
+          }
+        ]
+      },
+      "trigger": null,
+      "confirmedGroup": "square",
+      "sighting": {
+        "id": "bread:swap",
+        "title": "장터의 비밀",
+        "at": {
+          "x": 25,
+          "y": 20
+        },
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "장이 파할 무렵, 웬델이 파피의 좌판에서 빵 하나를 몰래 산다. 모자를 눌러쓴 채로."
+          },
+          {
+            "speaker": "narration",
+            "text": "조금 뒤, 파피도 웬델의 좌판에서 과자 하나를 몰래 산다. 역시 모자를 눌러쓴 채로."
+          },
+          {
+            "speaker": "narration",
+            "text": "둘은 서로 모르는 척 광장 양 끝에서 각자 산 것을 한 입씩 먹었다. 표정이 똑같았다."
+          }
+        ],
+        "memory": "saw:swap",
+        "when": {
+          "from": 720,
+          "to": 780
+        },
+        "npc": "poppy",
+        "thread": "bread",
+        "phaseDay": 8
+      },
+      "verificationStatus": "원문·발생 장소 대조 완료, 렌더러 미제작"
+    },
+    {
+      "id": "trip:harbor",
+      "title": "바닷가 항구 마을",
+      "group": "current",
+      "basis": "현재 플레이어 위치와 발생 조건 확인 필요",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 0,
+      "originalTier": "event",
+      "original": {
+        "title": "바닷가 항구 마을",
+        "album": "배를 타고 항구 마을에 다녀온 날",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "배가 한나절을 꼬박 달려 큰 항구에 닿았다. 짠 바람, 돛대 사이로 우는 갈매기, 좌판마다 쌓인 물건."
+          },
+          {
+            "speaker": "narration",
+            "text": "골목 끝 작은 빵집 주인이 봇짐을 보더니 반가운 얼굴로 묻는다."
+          },
+          {
+            "speaker": "narration",
+            "text": "\"그 호숫가 마을에서 왔소? 파피라는 녀석이 여기서 반죽을 배웠지. 너무 오래 치대서 늘 혼났다오.\""
+          },
+          {
+            "speaker": "narration",
+            "text": "주인은 웃으며 빵 하나를 싸 준다. \"돌아가거든 안부 전해 주오. 지금도 그렇게 치대느냐고.\""
+          }
+        ]
+      },
+      "trigger": null,
+      "confirmedGroup": "travel",
+      "sighting": null,
+      "verificationStatus": "원문·발생 장소 대조 완료, 렌더러 미제작"
+    }
+  ],
+  "unresolvedForge": {
+    "id": "forge:handle",
+    "title": "새벽의 망치 자루",
+    "at": {
+      "x": 22,
+      "y": 125
+    },
+    "lines": [
+      {
+        "speaker": "narration",
+        "text": "해 뜨기 전, 대장장이가 새로 깎은 망치 자루를 틸리 방 창문 아래 조용히 세워 둔다."
+      },
+      {
+        "speaker": "narration",
+        "text": "손잡이에 작은 잎사귀 무늬가 서툴게 새겨져 있다."
+      },
+      {
+        "speaker": "narration",
+        "text": "대장장이는 헛기침을 한 번 하고 대장간으로 들어갔다."
+      }
+    ],
+    "memory": "saw:handle",
+    "when": {
+      "from": 300,
+      "to": 390
+    },
+    "npc": "smith",
+    "thread": "forge",
+    "phaseDay": 12
+  }
+}

@@ -1,0 +1,3205 @@
+{
+  "batch": "shared-background-remainder",
+  "completed": false,
+  "scope": "Explicit captured-origin and restored-queue examples. No event routing, save or browser approval.",
+  "entries": [
+    {
+      "id": "loverTrust:wendell",
+      "key": "loverTrust-wendell-tea",
+      "fixture": "tea",
+      "origin": {
+        "place": "tea",
+        "day": 1,
+        "partner": "wendell",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 1080
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 1080,
+      "background": "tea-front",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "wendell",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "wendell",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-wendell-tea-phases.png",
+          "sha256": "9734a1aae4fdcf824a7b74a5a8e8dcd35308bbe1dff0756e27b126aa8f036071"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-wendell-tea-phone.png",
+          "sha256": "5441d80509adca2f5edf7037590450a73b7236c69156200c3b2f4b3cbe5c862e"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-wendell-tea-thumb.png",
+          "sha256": "6a1815d3a74e90642091a5776d51cbc7a0d8d1d16fda9823be8a943284374d0b"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-wendell-tea-phone-focus.png",
+          "sha256": "6031bcfd6742c4222cd54806fa07b5751bc08347690afc5a2b351b48fcf70a0f"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:wendell",
+      "key": "loverTrust-wendell-sunset",
+      "fixture": "sunset",
+      "origin": {
+        "place": "sunset",
+        "day": 1,
+        "partner": "wendell",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 1110
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 1110,
+      "background": "sunset",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "wendell",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "wendell",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-wendell-sunset-phases.png",
+          "sha256": "1e311bbb72e8c4c8e7188b7be82d1e182afe49b1b445228cc56db49c72bdbb4f"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-wendell-sunset-phone.png",
+          "sha256": "f15b8f7d633cc8ba7e7e44fafb64454fe58da8c4937cec6cfb35bd691a8b7c4c"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-wendell-sunset-thumb.png",
+          "sha256": "41ee4feff50052a122b85b2fef730fbf805c0ab348d6b4126286d92da15bd183"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-wendell-sunset-phone-focus.png",
+          "sha256": "f1ec19acb5cecb0ba48d7e60b9208a2bab3a74aaaf848e439002cf9821c57688"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:wendell",
+      "key": "loverTrust-wendell-walk",
+      "fixture": "walk",
+      "origin": {
+        "place": "walk",
+        "day": 1,
+        "partner": "wendell",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 940
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 940,
+      "background": "pasture",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "wendell",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "wendell",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-wendell-walk-phases.png",
+          "sha256": "c3ed2d3f7a3bcf1f61a0f25252c76a6d54e68c989f71d3719d83b8dcd31971b6"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-wendell-walk-phone.png",
+          "sha256": "615a356e568504af4f8722fa70b4fdd03d77d567d22f3a42b2ab81b0cd6785a4"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-wendell-walk-thumb.png",
+          "sha256": "55f0be9d261f9970e94f93cc51e7052cae2e696b667bf2316d37d71e6939c842"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-wendell-walk-phone-focus.png",
+          "sha256": "c837d16e59063efba7def0578ef60b8f6a01f1a5ca474869dcffee426eec2448"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:wendell",
+      "key": "loverTrust-wendell-restored-home",
+      "fixture": "restored-home",
+      "origin": null,
+      "at": {
+        "x": 20,
+        "y": 112
+      },
+      "day": 1,
+      "minute": 900,
+      "background": "home",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "wendell",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "wendell",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-wendell-restored-home-phases.png",
+          "sha256": "3f455555276ce958547ccf118616b97d331a09f305da9e9efa0e95ad00b595ae"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-wendell-restored-home-phone.png",
+          "sha256": "a01aad431f9e676ef79b3b320c0fe90e69e1b11ec50a52276570c5fb100ed862"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-wendell-restored-home-thumb.png",
+          "sha256": "2b4486a5bbddbacf283cbc1c4b8f861a45abe8a162c315e3ed1ffbf190944bde"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-wendell-restored-home-phone-focus.png",
+          "sha256": "5fde9298ac366aef87d3f2953bf3c306df0d6bf30c2c79cf59d0a7dbbd40df2b"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:cosmo",
+      "key": "loverTrust-cosmo-tea",
+      "fixture": "tea",
+      "origin": {
+        "place": "tea",
+        "day": 1,
+        "partner": "cosmo",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 1080
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 1080,
+      "background": "tea-front",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "cosmo",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "cosmo",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-cosmo-tea-phases.png",
+          "sha256": "38bd7528f19293af95652a44549dd8dc5f259bb21b39eabb1c060b6926df8d9a"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-cosmo-tea-phone.png",
+          "sha256": "cd851744345c6f7e8278ef105b4bfd9bb20e0aebaba6f18d74dee6b0fe45288d"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-cosmo-tea-thumb.png",
+          "sha256": "ef847deb37361f4463b14502d3f931dccf8420ffb18158222a4f50394333956a"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-cosmo-tea-phone-focus.png",
+          "sha256": "a252b9c7c49ab8bb10734dbe65599772a9eb7962f68a5acf6272ee4c8f7db5c0"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:cosmo",
+      "key": "loverTrust-cosmo-sunset",
+      "fixture": "sunset",
+      "origin": {
+        "place": "sunset",
+        "day": 1,
+        "partner": "cosmo",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 1110
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 1110,
+      "background": "sunset",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "cosmo",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "cosmo",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-cosmo-sunset-phases.png",
+          "sha256": "b6023a993ed39fa85a311460358bcd2d13f562f6d8ba273b65ce43205907ebee"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-cosmo-sunset-phone.png",
+          "sha256": "ce3afc5b0d00d63950fe0752caaf11e705591fa102a9c95edf9cf29d00b65c2d"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-cosmo-sunset-thumb.png",
+          "sha256": "c627356b5ad794c2d5994664ed3619818059ca79256cae26e552cbf3ddd6d657"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-cosmo-sunset-phone-focus.png",
+          "sha256": "7901b2b6e6d9c25033ab2cf572a99c0aa972aece1cd05177eaee33707741cab5"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:cosmo",
+      "key": "loverTrust-cosmo-walk",
+      "fixture": "walk",
+      "origin": {
+        "place": "walk",
+        "day": 1,
+        "partner": "cosmo",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 940
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 940,
+      "background": "pasture",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "cosmo",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "cosmo",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-cosmo-walk-phases.png",
+          "sha256": "932ccd723d411a29b4a3e60c545cad0bf885f5788f2689b942cd93cc8b70e8a1"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-cosmo-walk-phone.png",
+          "sha256": "196153e143e82ac85757310e80bf556333369b83291d12a1fcca76c9f57ca1a2"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-cosmo-walk-thumb.png",
+          "sha256": "6c1beefd34810b0bf592944dba7da55734a9df9b37d6060987557c3551041640"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-cosmo-walk-phone-focus.png",
+          "sha256": "ccb71e302345f14887b4893bcce195f40fabd89dceca862df4d0cb351425fd8b"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:cosmo",
+      "key": "loverTrust-cosmo-restored-home",
+      "fixture": "restored-home",
+      "origin": null,
+      "at": {
+        "x": 20,
+        "y": 112
+      },
+      "day": 1,
+      "minute": 900,
+      "background": "home",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "cosmo",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "cosmo",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-cosmo-restored-home-phases.png",
+          "sha256": "d413eb495a886a74a14105a7dadeb2406298085b401ac3722d7c27bed9e7842e"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-cosmo-restored-home-phone.png",
+          "sha256": "aad6dd7a69f011025cf991f83931ba0cce119c0de156bc7cf1ca7491330d9362"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-cosmo-restored-home-thumb.png",
+          "sha256": "e639a1f92bc7ee126cc2808e2bc83f0b9a41cc2feeef75cdfd3983e2e20c7c97"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-cosmo-restored-home-phone-focus.png",
+          "sha256": "d549c1203395095e71812f6c2658c7401f2a094df55cc7ceee299f98cbec3764"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:rudy",
+      "key": "loverTrust-rudy-tea",
+      "fixture": "tea",
+      "origin": {
+        "place": "tea",
+        "day": 1,
+        "partner": "rudy",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 1080
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 1080,
+      "background": "tea-front",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "rudy",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "rudy",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-rudy-tea-phases.png",
+          "sha256": "991a059a9d801e1f791f459fac66baf93d35dca880560e619dd981baec567ddd"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-rudy-tea-phone.png",
+          "sha256": "f75ebea237d604cb49118e6e46ce375867c02b6d757e43366b6a0c6bde4266c6"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-rudy-tea-thumb.png",
+          "sha256": "9dd927ceee83027d3894d7c0bf22eeeb861fc7579dea8bc7ab457e3cbe0d77af"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-rudy-tea-phone-focus.png",
+          "sha256": "494fd58268e9f7acfb5dd132fa58c085a5fd203a46fbfbaff55d14e97598f2a6"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:rudy",
+      "key": "loverTrust-rudy-sunset",
+      "fixture": "sunset",
+      "origin": {
+        "place": "sunset",
+        "day": 1,
+        "partner": "rudy",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 1110
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 1110,
+      "background": "sunset",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "rudy",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "rudy",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-rudy-sunset-phases.png",
+          "sha256": "4ce83565889eeb1589ba5636ba25108502897f7649e7bf1baba728a04a73fb4b"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-rudy-sunset-phone.png",
+          "sha256": "60cc4f8da004862a9f9e2c0325be468edfb4c482c000a8218489fed6c24fd96a"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-rudy-sunset-thumb.png",
+          "sha256": "a4231dd8c25065e9db9f4f21c458ef8a23783f05065031eb98afa87c92b42f83"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-rudy-sunset-phone-focus.png",
+          "sha256": "3071c6838f35fba2bf8a198ff7ed09eefbb6cd58877c5b12c1fe107070282bd4"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:rudy",
+      "key": "loverTrust-rudy-walk",
+      "fixture": "walk",
+      "origin": {
+        "place": "walk",
+        "day": 1,
+        "partner": "rudy",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 940
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 940,
+      "background": "pasture",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "rudy",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "rudy",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-rudy-walk-phases.png",
+          "sha256": "c4735fb6feb980cbe4f107cb8826998620db36cca7f6928de3992f1c26e20abf"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-rudy-walk-phone.png",
+          "sha256": "98f19b34ee77ba12989bf974e0d4d5914186ffb89f7a4cc43a4f3cb464813b8d"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-rudy-walk-thumb.png",
+          "sha256": "50ed611da3df82618a49e635e33d7c9791f85350d88c5f1924f8b0ac97fe39b1"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-rudy-walk-phone-focus.png",
+          "sha256": "3a5bf27455782579f637f879028754de808983c6a12a3e107ef8dfa8ff9ca482"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:rudy",
+      "key": "loverTrust-rudy-restored-home",
+      "fixture": "restored-home",
+      "origin": null,
+      "at": {
+        "x": 20,
+        "y": 112
+      },
+      "day": 1,
+      "minute": 900,
+      "background": "home",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "rudy",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "rudy",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-rudy-restored-home-phases.png",
+          "sha256": "ee24ce3a7c3aba3bc79dda9510ea5eeaa7ad48420a4f842386d7b6e538caa13f"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-rudy-restored-home-phone.png",
+          "sha256": "e80d9a3560d208d108c6400171c1f25a9f2d387d6f02c95ceb5d32a04fccd5c5"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-rudy-restored-home-thumb.png",
+          "sha256": "1cdf4d5c1205291da8c4f5d5ef63ed21c481d8955c4233845bcc11cdb51956a1"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-rudy-restored-home-phone-focus.png",
+          "sha256": "020f279c0e9db352f937b7d7c42ff99b7df9307e9650bc52207fda56ded7b23b"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:dexter",
+      "key": "loverTrust-dexter-tea",
+      "fixture": "tea",
+      "origin": {
+        "place": "tea",
+        "day": 1,
+        "partner": "dexter",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 1080
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 1080,
+      "background": "tea-front",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "dexter",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "dexter",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-dexter-tea-phases.png",
+          "sha256": "9e4263158d03dbecad3cc839d6eb5a105fe0ad598e47221d8ecf36edf58330d8"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-dexter-tea-phone.png",
+          "sha256": "7e35484fbeef2a42b9357ad716e32e05ac8ed773feb86ae93d9259709f1ea3bb"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-dexter-tea-thumb.png",
+          "sha256": "0ddb623f73a2bb823b89446ab0bbee98046d778cbd05e3201ee0703c97ece76a"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-dexter-tea-phone-focus.png",
+          "sha256": "a5275f843ee5dbdda3f99e5988137a99a6b60fd44b3564826f1e3e9509edf65c"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:dexter",
+      "key": "loverTrust-dexter-sunset",
+      "fixture": "sunset",
+      "origin": {
+        "place": "sunset",
+        "day": 1,
+        "partner": "dexter",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 1110
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 1110,
+      "background": "sunset",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "dexter",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "dexter",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-dexter-sunset-phases.png",
+          "sha256": "48feb9b3020a81ebb3f9d33785c4044786150fbc7c9cae020c5796d38760d0fb"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-dexter-sunset-phone.png",
+          "sha256": "6bb2fb9370e40b4b4440a3bb6c76313eae5fa425e36d3cffb9c5c538fea136ab"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-dexter-sunset-thumb.png",
+          "sha256": "cc699206dcc309f1a7f216af780b940d67904fcbf03532c871b335ed87c3394d"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-dexter-sunset-phone-focus.png",
+          "sha256": "f651ec90fc1051dfb5c1a4708cead0dbdaebcbfc9b00b591d9d7312a4ea9ec4b"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:dexter",
+      "key": "loverTrust-dexter-walk",
+      "fixture": "walk",
+      "origin": {
+        "place": "walk",
+        "day": 1,
+        "partner": "dexter",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 940
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 940,
+      "background": "pasture",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "dexter",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "dexter",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-dexter-walk-phases.png",
+          "sha256": "62c024e31f27f81c210008fb1a2f974342f7286df3e1a7da9ac811c8f01a47a0"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-dexter-walk-phone.png",
+          "sha256": "e61dd186ea6b87152a0cd04998e2da342c98ba0bf98c1f6ea670c1bf2e7bad5d"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-dexter-walk-thumb.png",
+          "sha256": "929f49ff8e19785f0bc0e7b1d0aca30c8cd695bb652f24b6341786bf77b6b49c"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-dexter-walk-phone-focus.png",
+          "sha256": "3a5c2d2cc0a233814644839b25f80a75ed7069a125fcdd6e55254a8f63a46cd8"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:dexter",
+      "key": "loverTrust-dexter-restored-home",
+      "fixture": "restored-home",
+      "origin": null,
+      "at": {
+        "x": 20,
+        "y": 112
+      },
+      "day": 1,
+      "minute": 900,
+      "background": "home",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "dexter",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "dexter",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-dexter-restored-home-phases.png",
+          "sha256": "04e0b44be2070adbf2fbc7d5dfd5cfb8f88efafc96c6f49ece06eaabfdd3c6f3"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-dexter-restored-home-phone.png",
+          "sha256": "748e2e4acf09c8298302f94559f0f7300fc1bdf33ec125e57ba3cb0d797868f7"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-dexter-restored-home-thumb.png",
+          "sha256": "755e2ffd6042876b900ef6dff3f3612138da988736530c959a801ac3c4133249"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-dexter-restored-home-phone-focus.png",
+          "sha256": "095e496d70ee1f02c4096ae0049aec492c94f1262f96d8f6dfbabf9f04b022ae"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:basil",
+      "key": "loverTrust-basil-tea",
+      "fixture": "tea",
+      "origin": {
+        "place": "tea",
+        "day": 1,
+        "partner": "basil",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 1080
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 1080,
+      "background": "tea-front",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "basil",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "basil",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-basil-tea-phases.png",
+          "sha256": "15f10cbc714b68bc9f555f3b1c419df564835fa8d7aa04071861850009b7c73b"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-basil-tea-phone.png",
+          "sha256": "5092d254fe40937fe85b686af179d246cb598aea82285372697e4c69694719be"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-basil-tea-thumb.png",
+          "sha256": "9cbc9cfb02ce7d135c8a944d5e60fc6de01b4d0eede93467f4ed1720b1e10b8b"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-basil-tea-phone-focus.png",
+          "sha256": "328d2526c96b51a406c1421e596e88161fc45e63f63cef6ede37d5aa0c1d3dbd"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:basil",
+      "key": "loverTrust-basil-sunset",
+      "fixture": "sunset",
+      "origin": {
+        "place": "sunset",
+        "day": 1,
+        "partner": "basil",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 1110
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 1110,
+      "background": "sunset",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "basil",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "basil",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-basil-sunset-phases.png",
+          "sha256": "645552ccca1956a06634b464eb33bba65dfd6b6ff3b2c6ffe747618fbdbcb6fd"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-basil-sunset-phone.png",
+          "sha256": "34701e19b492eac6fd1552ff2dcabe3fcb4a69c236dbc102ad8be62bd24f601d"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-basil-sunset-thumb.png",
+          "sha256": "3dfe26dcf252fd9d9a7b74cda206c1c004d4e77ff54575c78318b1835f08505c"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-basil-sunset-phone-focus.png",
+          "sha256": "c78e9ae956ba3d3a9eee5c62ccb523680536966aae1cc94ec41cd8d64ba18f66"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:basil",
+      "key": "loverTrust-basil-walk",
+      "fixture": "walk",
+      "origin": {
+        "place": "walk",
+        "day": 1,
+        "partner": "basil",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 940
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 940,
+      "background": "pasture",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "basil",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "basil",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-basil-walk-phases.png",
+          "sha256": "e021cc7088b18e156abc60822d001ce6c7c8a9810bc3855daf80675586acb066"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-basil-walk-phone.png",
+          "sha256": "ae4ecdac8535abd9db128cd1f9366846b7cd0f6bae34f175a3aa704b235dc8f5"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-basil-walk-thumb.png",
+          "sha256": "60582aa513a5e1dcc3c46a26b1459633a7dfd564f7b6ecc87a795e0f83ecf53c"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-basil-walk-phone-focus.png",
+          "sha256": "7132211567471521fd95b2bf9af3dce8a0f6c7ca91c908d427051e2fa8eba4ca"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:basil",
+      "key": "loverTrust-basil-restored-home",
+      "fixture": "restored-home",
+      "origin": null,
+      "at": {
+        "x": 20,
+        "y": 112
+      },
+      "day": 1,
+      "minute": 900,
+      "background": "home",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "basil",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "basil",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-basil-restored-home-phases.png",
+          "sha256": "2a0045e3b777cfdb28a7711042dc95dd7ceb5245a867cb87f746c07d05ffb0aa"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-basil-restored-home-phone.png",
+          "sha256": "64fafce675e6b909c58454983b034683e412f23ca1483f89727b2da9ac156357"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-basil-restored-home-thumb.png",
+          "sha256": "9781bcb7484aa21bca0fae58866e5c19d9e9124c0fcaf816002c8f684be28eac"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-basil-restored-home-phone-focus.png",
+          "sha256": "b3a1170f132e0ec66be1b6e25051bac4d68334f191397dc107cb88410c147e05"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:marigold",
+      "key": "loverTrust-marigold-tea",
+      "fixture": "tea",
+      "origin": {
+        "place": "tea",
+        "day": 1,
+        "partner": "marigold",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 1080
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 1080,
+      "background": "tea-front",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "marigold",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "marigold",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-marigold-tea-phases.png",
+          "sha256": "9786fd13f79ebbe4554c8bbf93669a526a56203beac34bf6088d1fdd7dd114f6"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-marigold-tea-phone.png",
+          "sha256": "d7829bc2fddf80ba76f6ba96b4da5b9664c721f531efed7371648f71092329d9"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-marigold-tea-thumb.png",
+          "sha256": "6c0d7ecf40b3913d102763f785e1127807497d8b67c9516463674cbf3a9ac682"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-marigold-tea-phone-focus.png",
+          "sha256": "0feab68a4180532ed3c85a34fcb7edd2b3b8480999eb64e1e462d8c14a688884"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:marigold",
+      "key": "loverTrust-marigold-sunset",
+      "fixture": "sunset",
+      "origin": {
+        "place": "sunset",
+        "day": 1,
+        "partner": "marigold",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 1110
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 1110,
+      "background": "sunset",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "marigold",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "marigold",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-marigold-sunset-phases.png",
+          "sha256": "e36b10e2877d8a87e8e3791d671a96a93cf05c16ab1cc7648b2e9c15c44c9fe1"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-marigold-sunset-phone.png",
+          "sha256": "bb466f27c16e73b854522cb52d0c48da2c13ee40be14709f63990015ac01872a"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-marigold-sunset-thumb.png",
+          "sha256": "2ef6e77b29ca0f9e8b2456ba29667e182b842918cf459d5b632dd050ce9a9519"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-marigold-sunset-phone-focus.png",
+          "sha256": "2fc2c69a1e1846a373c72e25da71f92507bb9cde943bea91f425bd050c405806"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:marigold",
+      "key": "loverTrust-marigold-walk",
+      "fixture": "walk",
+      "origin": {
+        "place": "walk",
+        "day": 1,
+        "partner": "marigold",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 940
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 940,
+      "background": "pasture",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "marigold",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "marigold",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-marigold-walk-phases.png",
+          "sha256": "a2b91687752bade29498d6592316a50e3f1cb05a11e7fbcd42184b3885f36534"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-marigold-walk-phone.png",
+          "sha256": "fe2cb346951f587bcd85944d5cce2c337ef8a07d60500b3237b627278e0b7b71"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-marigold-walk-thumb.png",
+          "sha256": "38fa0f31fef8220bd154c1fabd8f2b3452305b91f68b06564117b6f0b3e17ef8"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-marigold-walk-phone-focus.png",
+          "sha256": "b3b48f5a3cc240775ee4cfd9e418f8447dc7612edb5400b0220da03a1a6df8ea"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:marigold",
+      "key": "loverTrust-marigold-restored-home",
+      "fixture": "restored-home",
+      "origin": null,
+      "at": {
+        "x": 20,
+        "y": 112
+      },
+      "day": 1,
+      "minute": 900,
+      "background": "home",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "marigold",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "marigold",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-marigold-restored-home-phases.png",
+          "sha256": "a76357d417f91b13be84ced40c2cff9c930247e9c1cc8f4f9796ef1ce607ccc8"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-marigold-restored-home-phone.png",
+          "sha256": "079ddb3b0d94b9da1b2a481999dc65a300df2c2804e78d545169e947dd2a3576"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-marigold-restored-home-thumb.png",
+          "sha256": "f4764934496f7621972488186fb61b8d27e6bef790ff68ffebd2e09245042684"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-marigold-restored-home-phone-focus.png",
+          "sha256": "ece8fce06a497be542617e0d280fff642e04ae0fc4787fc9695d83801fd0721e"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:penelope",
+      "key": "loverTrust-penelope-tea",
+      "fixture": "tea",
+      "origin": {
+        "place": "tea",
+        "day": 1,
+        "partner": "penelope",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 1080
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 1080,
+      "background": "tea-front",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "penelope",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "penelope",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-penelope-tea-phases.png",
+          "sha256": "64a5f5936879eb77c23ab07855dc3f0e310ec5a7fbc12805bbe3c5a1e685b38f"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-penelope-tea-phone.png",
+          "sha256": "670bb7cf8468f20633dbcd22fae42df52b0c8dc04ef24718bb78b6388bc4e4be"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-penelope-tea-thumb.png",
+          "sha256": "7f2c53dce6b7cd11cc80a2c80d3f517b337a200c993c2100a77b2f977fd283eb"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-penelope-tea-phone-focus.png",
+          "sha256": "855d5a3e954aee85b3f974058f8a351a89e93547c859536be831a73f327168ba"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:penelope",
+      "key": "loverTrust-penelope-sunset",
+      "fixture": "sunset",
+      "origin": {
+        "place": "sunset",
+        "day": 1,
+        "partner": "penelope",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 1110
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 1110,
+      "background": "sunset",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "penelope",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "penelope",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-penelope-sunset-phases.png",
+          "sha256": "63f0a716d6f16937c2333e490aba1abb995759aeff107de47770490d0551cd6e"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-penelope-sunset-phone.png",
+          "sha256": "0d9a36f67785540c45e44de93ae85fb4744662215707517878606a6eb518153e"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-penelope-sunset-thumb.png",
+          "sha256": "77d9e856099e087f385d99f123071cd8c3f033e9252365d7303652285fded284"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-penelope-sunset-phone-focus.png",
+          "sha256": "6dffd7eb9af3212f6dc3ad93e1cb35339101ff49f856849d35ae376b56966274"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:penelope",
+      "key": "loverTrust-penelope-walk",
+      "fixture": "walk",
+      "origin": {
+        "place": "walk",
+        "day": 1,
+        "partner": "penelope",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 940
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 940,
+      "background": "pasture",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "penelope",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "penelope",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-penelope-walk-phases.png",
+          "sha256": "5369900ed79c2a56271f2d74cc7900461920c46061f2d18383f59b0e93ba561b"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-penelope-walk-phone.png",
+          "sha256": "fbd02f236b6bcfd0846c7206b7f354c95181f22ae2139c67cff230b1402c73d0"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-penelope-walk-thumb.png",
+          "sha256": "041e0994094da751d47f5ce7141c06b8691d8ee8908a52af1231ebd0249860b0"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-penelope-walk-phone-focus.png",
+          "sha256": "64c1882edebdea865e59dfa59c309fa7b528f4d75b06eaf06ba822567c27b7fd"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:penelope",
+      "key": "loverTrust-penelope-restored-home",
+      "fixture": "restored-home",
+      "origin": null,
+      "at": {
+        "x": 20,
+        "y": 112
+      },
+      "day": 1,
+      "minute": 900,
+      "background": "home",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "penelope",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "penelope",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-penelope-restored-home-phases.png",
+          "sha256": "886cbb274d3aff8281e62c0c119a79af7a55e1e259c517f3a60a18d797f6e129"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-penelope-restored-home-phone.png",
+          "sha256": "1354e0bc0b1cffca76fe5eac4b8da9359e6b9ce8b87e65ab16f7bab84db53b36"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-penelope-restored-home-thumb.png",
+          "sha256": "d2299a51a2489c5a7cf5d1b8dc0f8339ff775a4da7ab14f63efa5276d5f52de6"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-penelope-restored-home-phone-focus.png",
+          "sha256": "a2d56ae2bc19656040cd7d52a10fb2efa3dc41798f81fc3ed5333d46a5a78bff"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:tilly",
+      "key": "loverTrust-tilly-tea",
+      "fixture": "tea",
+      "origin": {
+        "place": "tea",
+        "day": 1,
+        "partner": "tilly",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 1080
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 1080,
+      "background": "tea-front",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "tilly",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "tilly",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-tilly-tea-phases.png",
+          "sha256": "e809777844a3ed744cf1da88ef2f90ab7683180752b5f6336f599bde9d3fb3e8"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-tilly-tea-phone.png",
+          "sha256": "84d15f271a0921d91c3f54745601e6bb5c059aa8e17687d39af6384b6a3df6be"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-tilly-tea-thumb.png",
+          "sha256": "da927a1ab1a4d651c2eb9bafd3f1d8a29249b7f514840b8f8c2fe0fd7571bdc8"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-tilly-tea-phone-focus.png",
+          "sha256": "65b976f892817f7ed5f12b2c75caff89efa2557ee443d7bae6ab22ea6b46dd1c"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:tilly",
+      "key": "loverTrust-tilly-sunset",
+      "fixture": "sunset",
+      "origin": {
+        "place": "sunset",
+        "day": 1,
+        "partner": "tilly",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 1110
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 1110,
+      "background": "sunset",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "tilly",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "tilly",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-tilly-sunset-phases.png",
+          "sha256": "f61916af9bd4a1a83382401c436d54a6f5656caf96a7a0c6cdc016cce28300f5"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-tilly-sunset-phone.png",
+          "sha256": "cc42a40bc42a681f05473753b9ef1eeb7e83c43900d62b2983030290851cb646"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-tilly-sunset-thumb.png",
+          "sha256": "9435f5356d1748bb84aa44d4bc21682c6848d5fa14aa2dce7bf1c3f137ec1c16"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-tilly-sunset-phone-focus.png",
+          "sha256": "226347ba0337ab7c8c7c430bd74e166e70ac822c511a08c794702b74863c69b8"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:tilly",
+      "key": "loverTrust-tilly-walk",
+      "fixture": "walk",
+      "origin": {
+        "place": "walk",
+        "day": 1,
+        "partner": "tilly",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 940
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 940,
+      "background": "pasture",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "tilly",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "tilly",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-tilly-walk-phases.png",
+          "sha256": "19e6c323e7bca2c1b35b6098cef2f339649c89cdd344bda38e20872b2e133c45"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-tilly-walk-phone.png",
+          "sha256": "7512d4d9182f3d570cd6d12576fe028ef6b0dc672ef6c2bee5aa2a9dada8d8c1"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-tilly-walk-thumb.png",
+          "sha256": "9e071938076f208f64625e2d5d736a7b82e69530f65bb6652f9d5cfbd996ac46"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-tilly-walk-phone-focus.png",
+          "sha256": "95a7bf59b1dbe7f561948947a59aa6af01aa335d80b1fcf9255e6aed9f788d89"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:tilly",
+      "key": "loverTrust-tilly-restored-home",
+      "fixture": "restored-home",
+      "origin": null,
+      "at": {
+        "x": 20,
+        "y": 112
+      },
+      "day": 1,
+      "minute": 900,
+      "background": "home",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "tilly",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "tilly",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-tilly-restored-home-phases.png",
+          "sha256": "d56c42f6e3abdb196f4716276a488bfc5f4b67eb2d1644367f008646ebc228c9"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-tilly-restored-home-phone.png",
+          "sha256": "7fda49b6d6763397096bda123e9bca0100ffbab72753a6bec57df43f2526d2ab"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-tilly-restored-home-thumb.png",
+          "sha256": "1e4afcfb71b898d88c9707e29e941df4d07b42684d36ff8c3b24bea036c09210"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-tilly-restored-home-phone-focus.png",
+          "sha256": "710621d7ae1b7dbe3969ce3e3c90de2cbc09db2151b042efead9a667a74ec3ca"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:juniper",
+      "key": "loverTrust-juniper-tea",
+      "fixture": "tea",
+      "origin": {
+        "place": "tea",
+        "day": 1,
+        "partner": "juniper",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 1080
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 1080,
+      "background": "tea-front",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "juniper",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "juniper",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-juniper-tea-phases.png",
+          "sha256": "b9ad9f3f7d5ad2781f6d2da89cca1a059d0d6f0407ba1a153b74e50f26d898a6"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-juniper-tea-phone.png",
+          "sha256": "15fc19c350f973934049f8c70f56320a9c7347688deaadfab9a697b5f8f65d8c"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-juniper-tea-thumb.png",
+          "sha256": "17b4b95d98ce4e6497dcb2fb87d115c3305246cd488ac5e673203b12e63b4ea4"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-juniper-tea-phone-focus.png",
+          "sha256": "44996c06b6b8f43ca54bed06fdea108e892931b3a97c16463958d7f5d1666ede"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:juniper",
+      "key": "loverTrust-juniper-sunset",
+      "fixture": "sunset",
+      "origin": {
+        "place": "sunset",
+        "day": 1,
+        "partner": "juniper",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 1110
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 1110,
+      "background": "sunset",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "juniper",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "juniper",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-juniper-sunset-phases.png",
+          "sha256": "67f6ac4af305c1338d7817febbfef96d512bf926a866745661925b4c91e84f00"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-juniper-sunset-phone.png",
+          "sha256": "b069e41e292b79b753a3ff9b57c58d0b057d0c8c5299535d909e938fc6b080ea"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-juniper-sunset-thumb.png",
+          "sha256": "1b6d40c03cfe9c28765c73528533001d15998d56cd00f668c2e26fcc983d1bb4"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-juniper-sunset-phone-focus.png",
+          "sha256": "cb9d717c424cc59d25bf594ffeab4bef4a1caa5c350937b0d721bba80688ef17"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:juniper",
+      "key": "loverTrust-juniper-walk",
+      "fixture": "walk",
+      "origin": {
+        "place": "walk",
+        "day": 1,
+        "partner": "juniper",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 940
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 940,
+      "background": "pasture",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "juniper",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "juniper",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-juniper-walk-phases.png",
+          "sha256": "a2984845746577aea37385304032db465e3bdeae46b88464b7a7feaa7a403fea"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-juniper-walk-phone.png",
+          "sha256": "05ffeb05608443081ef8b74326db2bcb7a8a684670262eaf2be9c5b4b9b30550"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-juniper-walk-thumb.png",
+          "sha256": "143066d0b03c5bd3d0eda7f0b5956ad0af3fb91cc603e118bbdff2ac7c22f385"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-juniper-walk-phone-focus.png",
+          "sha256": "3fe8d2bdf751b8f60616b20e08c93f12cd3320929276054dceab26e2c2f0c407"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:juniper",
+      "key": "loverTrust-juniper-restored-home",
+      "fixture": "restored-home",
+      "origin": null,
+      "at": {
+        "x": 20,
+        "y": 112
+      },
+      "day": 1,
+      "minute": 900,
+      "background": "home",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "juniper",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "juniper",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-juniper-restored-home-phases.png",
+          "sha256": "5411ba009effa9b1241659cfd11aaab3796857e1ba51ecc2345b4cc5f3abdc74"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-juniper-restored-home-phone.png",
+          "sha256": "b1b1295459256bd0a24df194156a904f2a420bbd4b37a580667c5b24a46f4611"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-juniper-restored-home-thumb.png",
+          "sha256": "bd194bcc411e212fb62443d31fe2a5fd6e20c66f25391ec4d147da8445214d00"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-juniper-restored-home-phone-focus.png",
+          "sha256": "18a2b2185df71648d6d3c1981c351da251238efd862fb2eecba64c867b5dcb50"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:poppy",
+      "key": "loverTrust-poppy-tea",
+      "fixture": "tea",
+      "origin": {
+        "place": "tea",
+        "day": 1,
+        "partner": "poppy",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 1080
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 1080,
+      "background": "tea-front",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "poppy",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "poppy",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-poppy-tea-phases.png",
+          "sha256": "c4507ed86366a937088ed6db9cc91900f2cd180bad4c084d90d88cfc8b093881"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-poppy-tea-phone.png",
+          "sha256": "76a6f144f4cecd22690ff05d794b3eb43ec264ee22e3b09fc77bdd0b9c6c99da"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-poppy-tea-thumb.png",
+          "sha256": "cad5e956a441f38e4c23153d3ccbbb187408bb822120a7fe2350a1a407d18731"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-poppy-tea-phone-focus.png",
+          "sha256": "f49f76e2513f7d70517ac5fd897c9cb546fec86d3487b0837f07451f07d60c94"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:poppy",
+      "key": "loverTrust-poppy-sunset",
+      "fixture": "sunset",
+      "origin": {
+        "place": "sunset",
+        "day": 1,
+        "partner": "poppy",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 1110
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 1110,
+      "background": "sunset",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "poppy",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "poppy",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-poppy-sunset-phases.png",
+          "sha256": "bb6e2824b47c91946cae8261bfc0d9431b34bc67326ff29dcb7e91233f003e2d"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-poppy-sunset-phone.png",
+          "sha256": "547067d7695d9380b7eb667298b9a281a77fac8044a4ccea07585039dda64792"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-poppy-sunset-thumb.png",
+          "sha256": "597971ca2c2df45f9e0b6062e32fc1d0c3f6c5c861d1ff6e875a34e35990f9df"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-poppy-sunset-phone-focus.png",
+          "sha256": "502e3924f6d917f7920bc75ff8cb2bfbbeb640f730846f62e0ef8a3c36bc8e3b"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:poppy",
+      "key": "loverTrust-poppy-walk",
+      "fixture": "walk",
+      "origin": {
+        "place": "walk",
+        "day": 1,
+        "partner": "poppy",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 940
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 940,
+      "background": "pasture",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "poppy",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "poppy",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-poppy-walk-phases.png",
+          "sha256": "3b41a187e5bc29ffa168007012a926fdc5157cf6d55341a9f87774fb65bd9eda"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-poppy-walk-phone.png",
+          "sha256": "2e77e5d717a8ff59b41a004c05f41a13b13cde3d4d3186c79ed838f34958715a"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-poppy-walk-thumb.png",
+          "sha256": "4764c8290d0f97b855cd7b89edf702412d8a3a952d880e2d07ffc4a9865cdbe1"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-poppy-walk-phone-focus.png",
+          "sha256": "5ebe92f90553b7a49be68bfc103619734ba36b498702ed130a3e6831d1b441df"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:poppy",
+      "key": "loverTrust-poppy-restored-home",
+      "fixture": "restored-home",
+      "origin": null,
+      "at": {
+        "x": 20,
+        "y": 112
+      },
+      "day": 1,
+      "minute": 900,
+      "background": "home",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "poppy",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "poppy",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-poppy-restored-home-phases.png",
+          "sha256": "e2d1e2435bd35b250698bf18fe9fd1b5dd9bc580e479f725730a2cb729d26234"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-poppy-restored-home-phone.png",
+          "sha256": "a8e25fbfe20f381edaf833e7a9146418ff2538478ac00e210411e9aa9ab1da96"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-poppy-restored-home-thumb.png",
+          "sha256": "c769ba947d1fc5cf9baaad5f3c48420faa266700fc8ad8755ca019eed0bb6e45"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-poppy-restored-home-phone-focus.png",
+          "sha256": "7c233cd46782961157833602b3e6e24528f1283d73dd890569618c37878035c8"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:merchant",
+      "key": "loverTrust-merchant-tea",
+      "fixture": "tea",
+      "origin": {
+        "place": "tea",
+        "day": 1,
+        "partner": "merchant",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 1080
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 1080,
+      "background": "tea-front",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "merchant",
+          "text": "처음엔 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아."
+        },
+        {
+          "speaker": "merchant",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주자. 바쁜 날도, 별일 없는 날도."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-merchant-tea-phases.png",
+          "sha256": "a3d77ccf59030097a77f9fdbab7438f0f1053652c28f23b6970998629f5f6386"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-merchant-tea-phone.png",
+          "sha256": "e65b2e64709855a65f7551b69d245710eecf39f14630fbf2a0a0a1de54708065"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-merchant-tea-thumb.png",
+          "sha256": "4a501b338878c7f7713101feea2e1b83138bc9bbd76fde2f40a69a88ddff71b9"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-merchant-tea-phone-focus.png",
+          "sha256": "711886d64266c5a98bacb04c3cb4fd0147c26bbace67d50c857023b5a9cf86d4"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:merchant",
+      "key": "loverTrust-merchant-sunset",
+      "fixture": "sunset",
+      "origin": {
+        "place": "sunset",
+        "day": 1,
+        "partner": "merchant",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 1110
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 1110,
+      "background": "sunset",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "merchant",
+          "text": "처음엔 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아."
+        },
+        {
+          "speaker": "merchant",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주자. 바쁜 날도, 별일 없는 날도."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-merchant-sunset-phases.png",
+          "sha256": "485d64683e4861fb3b3a13332417987a3451a29c7a8030fad75f8b41e6602b5f"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-merchant-sunset-phone.png",
+          "sha256": "077c961790b0226dc0818a12161dc4b867732342083b58f1f6d5f1c3bf5d0b26"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-merchant-sunset-thumb.png",
+          "sha256": "a30c47bbf4eb23ea34fadcc38da55a3390646207de8b0a9b2d46a5611a78553e"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-merchant-sunset-phone-focus.png",
+          "sha256": "17535fc2395de4eb5b676c83ce04aea6049102d3a978a10656a91cf039c547e4"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:merchant",
+      "key": "loverTrust-merchant-walk",
+      "fixture": "walk",
+      "origin": {
+        "place": "walk",
+        "day": 1,
+        "partner": "merchant",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 940
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 940,
+      "background": "pasture",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "merchant",
+          "text": "처음엔 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아."
+        },
+        {
+          "speaker": "merchant",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주자. 바쁜 날도, 별일 없는 날도."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-merchant-walk-phases.png",
+          "sha256": "c21a66fc993e54739adeab05c19e5d64bb9c9d35db79178db285afaf76b5951e"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-merchant-walk-phone.png",
+          "sha256": "8f6417a0bccdbe68287e009621461c00151036e969044c355b8eaa6d9380ad89"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-merchant-walk-thumb.png",
+          "sha256": "171261dfabe44c24915b1e3d04abd038a81f873b9a70bcf4fc70723ce6352b0b"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-merchant-walk-phone-focus.png",
+          "sha256": "47dd3412ee380dd4a6806cb3154f314024af98f986700459099fba739621b982"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:merchant",
+      "key": "loverTrust-merchant-restored-home",
+      "fixture": "restored-home",
+      "origin": null,
+      "at": {
+        "x": 20,
+        "y": 112
+      },
+      "day": 1,
+      "minute": 900,
+      "background": "home",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "merchant",
+          "text": "처음엔 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아."
+        },
+        {
+          "speaker": "merchant",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주자. 바쁜 날도, 별일 없는 날도."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-merchant-restored-home-phases.png",
+          "sha256": "5bb76ed24cc16d9640789888702db98883caf28017c7311daf4e633b4bc8793b"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-merchant-restored-home-phone.png",
+          "sha256": "922fe3d3cb66ee20be0c394989772d305310977bbd2cba1670d6162c42017b6d"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-merchant-restored-home-thumb.png",
+          "sha256": "938bdc2efc8a373dbe4b5bb09c752c53c4063f2a2fee3cfb93889fdcd3efc7d2"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-merchant-restored-home-phone-focus.png",
+          "sha256": "358a2a20bba418ceee6bb8cf55c1595abb56acc9dba06dd1b830ea5f5ade461a"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:presser",
+      "key": "loverTrust-presser-tea",
+      "fixture": "tea",
+      "origin": {
+        "place": "tea",
+        "day": 1,
+        "partner": "presser",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 1080
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 1080,
+      "background": "tea-front",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "presser",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "presser",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-presser-tea-phases.png",
+          "sha256": "4d1fd5addc2eb1ec21420896fd94710ea85433613f33847fe5f0fc8de51aa54c"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-presser-tea-phone.png",
+          "sha256": "485eae0057356cc751e98cc7abead2188ee37dfc3a0e1a89aa114da17bc65779"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-presser-tea-thumb.png",
+          "sha256": "53474b026a1259269695e4e449e72a87de4075b16c1f62916a6dedf55d1d7ace"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-presser-tea-phone-focus.png",
+          "sha256": "5813facd8e037662ef47a25b22c34a526c44ef1901e4df24ad2ad3b4e34fb961"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:presser",
+      "key": "loverTrust-presser-sunset",
+      "fixture": "sunset",
+      "origin": {
+        "place": "sunset",
+        "day": 1,
+        "partner": "presser",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 1110
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 1110,
+      "background": "sunset",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "presser",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "presser",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-presser-sunset-phases.png",
+          "sha256": "d66f844f83c7e519104f0bf65201a6ea36cae09cd5853b9a53b4932a148fdc91"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-presser-sunset-phone.png",
+          "sha256": "eea62e8a9924ce4513f40a0530ad0fc813cd7d31655d16ac3d59fd7b3faa0118"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-presser-sunset-thumb.png",
+          "sha256": "0d2461141a99c8d1b5aa8c62399716080c4dd7c7c672dcf2f06fb5f97e1f1451"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-presser-sunset-phone-focus.png",
+          "sha256": "7d8557f8b3f016f2c64503f77d6103ec8f019ecce8970a515407533a56e78131"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:presser",
+      "key": "loverTrust-presser-walk",
+      "fixture": "walk",
+      "origin": {
+        "place": "walk",
+        "day": 1,
+        "partner": "presser",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 940
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 940,
+      "background": "pasture",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "presser",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "presser",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-presser-walk-phases.png",
+          "sha256": "6b75904f0b79cd01a4336967fd73c3e7790eaed371a7adf46cea55e23e1bb48c"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-presser-walk-phone.png",
+          "sha256": "b44f17a6b8434657e59f7313089037513dc978bb67da99f40e031bf073d9edf5"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-presser-walk-thumb.png",
+          "sha256": "879dda321ba73c2ed89c3a314f6d3082ec08318d00e7a7e61d64041e2f7a141e"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-presser-walk-phone-focus.png",
+          "sha256": "a34640d6d6732f20152c0adb518f304930f08731a7004c93cb221add7d6bf629"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:presser",
+      "key": "loverTrust-presser-restored-home",
+      "fixture": "restored-home",
+      "origin": null,
+      "at": {
+        "x": 20,
+        "y": 112
+      },
+      "day": 1,
+      "minute": 900,
+      "background": "home",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "presser",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "presser",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-presser-restored-home-phases.png",
+          "sha256": "ac351785e4467a3463904b8216a3f7db143fcd9838d53710dad1e2856f883f73"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-presser-restored-home-phone.png",
+          "sha256": "dc83bdc1a852ea413f447b2fdcedf296f6440fd873a0120b2855fedf329950c0"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-presser-restored-home-thumb.png",
+          "sha256": "140a83d3d4846736af96eca5fb4ce20c1e57e217f9b8b92fe7b1f6960a0033a9"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-presser-restored-home-phone-focus.png",
+          "sha256": "9002787e3339a9d4f853475161cd6733cc5bd5e089a9eda73b1201341113d926"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:postman",
+      "key": "loverTrust-postman-tea",
+      "fixture": "tea",
+      "origin": {
+        "place": "tea",
+        "day": 1,
+        "partner": "postman",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 1080
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 1080,
+      "background": "tea-front",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "postman",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "postman",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-postman-tea-phases.png",
+          "sha256": "a0ddc649e63cdfe64252150cb6111a882de8350241dc66ec3c20cddec48693ac"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-postman-tea-phone.png",
+          "sha256": "09a291b4ba7a35ac8e02d6f434469970cb43a8eb2188d28066f36646f4b91c10"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-postman-tea-thumb.png",
+          "sha256": "2cebb25064de38291d2dfe4871870db1221da77aa154907b695c829d5eb67e5a"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-postman-tea-phone-focus.png",
+          "sha256": "c90c159eae5e9ad49854fc5bde48c4a500f223770a90577fe05016fdaf2f0493"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:postman",
+      "key": "loverTrust-postman-sunset",
+      "fixture": "sunset",
+      "origin": {
+        "place": "sunset",
+        "day": 1,
+        "partner": "postman",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 1110
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 1110,
+      "background": "sunset",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "postman",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "postman",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-postman-sunset-phases.png",
+          "sha256": "7b46009984b10fa92be7cc0ef7b09d423b4b1120bfb2a1a1e1df11fd7d09e87f"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-postman-sunset-phone.png",
+          "sha256": "46ccd8121bf005db948eb9878c4c31f6057065d8cb78b2a5c01c7b60c05b9890"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-postman-sunset-thumb.png",
+          "sha256": "cd22f00fdaf10441b38f80c0b5a3ca7cefbbaa4e4b052667ab12a6c2af4e2835"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-postman-sunset-phone-focus.png",
+          "sha256": "3395897f7ca66cca5c481b24f8596336db7458306c9c2ae9d37a1de1b62958ac"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:postman",
+      "key": "loverTrust-postman-walk",
+      "fixture": "walk",
+      "origin": {
+        "place": "walk",
+        "day": 1,
+        "partner": "postman",
+        "map": "village",
+        "at": {
+          "x": 24,
+          "y": 18
+        },
+        "minute": 940
+      },
+      "at": {
+        "x": 24,
+        "y": 18
+      },
+      "day": 1,
+      "minute": 940,
+      "background": "pasture",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "postman",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "postman",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-postman-walk-phases.png",
+          "sha256": "e999a7accc3572d1c741417d0136ed3cc6f7ad95f32c2b0c7f1e5c41e5299ee4"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-postman-walk-phone.png",
+          "sha256": "57d62c518db9c7109860717ed29beb18611e25dc725d0f583fe4a39fa96a90b8"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-postman-walk-thumb.png",
+          "sha256": "4bd95ee4b531ab696503e71247f8c205d8fc1f87789281b39c86b073a95d36f3"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-postman-walk-phone-focus.png",
+          "sha256": "03864f8b2a67904f16e3f879384b66ea6f4c1a476867f0c93c9ac7f37bd3171d"
+        }
+      ],
+      "visuallyReviewed": false
+    },
+    {
+      "id": "loverTrust:postman",
+      "key": "loverTrust-postman-restored-home",
+      "fixture": "restored-home",
+      "origin": null,
+      "at": {
+        "x": 20,
+        "y": 112
+      },
+      "day": 1,
+      "minute": 900,
+      "background": "home",
+      "sourceLines": [
+        {
+          "speaker": "narration",
+          "text": "나들이를 마치고 돌아오는 길, {partnerSubj} 걸음을 조금 늦췄다."
+        },
+        {
+          "speaker": "postman",
+          "text": "처음에는 무슨 말을 해야 할지 생각했는데, 이제는 말없이 같이 걸어도 좋아요."
+        },
+        {
+          "speaker": "postman",
+          "text": "앞으로도 이렇게 서로의 하루를 들려주면 좋겠어요. 바쁜 날도, 별일 없는 날도요."
+        },
+        {
+          "speaker": "narration",
+          "text": "서둘러 대답하지 않고 곁에서 걸었다. 함께 보낸 날들이 조금 더 가까운 기억이 되었다."
+        }
+      ],
+      "images": [
+        {
+          "kind": "phases",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-postman-restored-home-phases.png",
+          "sha256": "7dc6385fe03c292f7b6663211f4054d9b9ae24186a368812863c1e0f43392a2b"
+        },
+        {
+          "kind": "phone",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-postman-restored-home-phone.png",
+          "sha256": "2e7a87111fcd960fa572e7e9534abf7a9475441bed6d284d2a5f8e7761388117"
+        },
+        {
+          "kind": "thumb",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-postman-restored-home-thumb.png",
+          "sha256": "e2f1394033b559cbb74ac1b6cb55e8a16cfa71a7df7278d90d1a29217c187412"
+        },
+        {
+          "kind": "phone-focus",
+          "path": "artifacts/scenery/shared-return-locations/loverTrust-postman-restored-home-phone-focus.png",
+          "sha256": "963e8c1385a65028491a70cfde9a0c236ac0565eea119ebd0de749b7c6e16888"
+        }
+      ],
+      "visuallyReviewed": false
+    }
+  ]
+}

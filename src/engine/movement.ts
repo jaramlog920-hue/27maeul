@@ -1,5 +1,5 @@
 // 격자 위 이동. 가중치가 없는 4방향 격자라 BFS가 최단 경로를 준다.
-import { isWalkable, key, sameTile } from './world'
+import { isWalkable, key, sameTile, WARPS } from './world'
 import type { Facing, Tile } from './types'
 
 const DIRS: readonly Tile[] = [
@@ -32,6 +32,33 @@ export function findPath(from: Tile, to: Tile, blockers: ReadonlySet<string> = n
         return out
       }
       queue.push(n)
+    }
+  }
+  return null
+}
+
+/** 문 이동까지 연결해 한 번만 탐색하고 첫 번째 문까지 걸을 구간을 반환한다. */
+export function findWarpRoute(from: Tile, to: Tile, blockers: ReadonlySet<string> = new Set()): Tile[] | null {
+  const prev = new Map<string, Tile | null>([[key(from), null]])
+  const jumped = new Set<string>()
+  const queue: Tile[] = [from]
+  for (let i = 0; i < queue.length; i++) {
+    const cur = queue[i]
+    if (sameTile(cur, to)) {
+      const full: Tile[] = []
+      let at = cur
+      while (!sameTile(at, from)) { full.push(at); at = prev.get(key(at))! }
+      full.reverse()
+      const firstJump = full.findIndex(t => jumped.has(key(t)))
+      return firstJump < 0 ? full : full.slice(0, firstJump)
+    }
+    const dest = WARPS.get(key(cur))
+    for (const next of [...DIRS.map(d => ({ x: cur.x + d.x, y: cur.y + d.y })), ...(dest ? [dest] : [])]) {
+      const nk = key(next)
+      if (prev.has(nk) || !isWalkable(next, blockers)) continue
+      prev.set(nk, cur)
+      if (next === dest) jumped.add(nk)
+      queue.push(next)
     }
   }
   return null

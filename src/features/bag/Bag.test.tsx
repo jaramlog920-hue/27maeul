@@ -74,3 +74,16 @@ describe('가방: 만들 줄 아는 것', () => {
     expect(container.querySelector('.bag-grid')).toBeNull()
   })
 })
+
+
+it('매력 11점은 1단계이고 점수별 단계 기준을 설명한다', () => {
+  const game = newGame(CONTENT)
+  useGame.setState({ game: { ...game, stats: { ...game.stats, charm: { level: 2, xp: 4, born: 0 } } }, modal: { kind: 'bag' } })
+  const { container } = render(<Bag />)
+  const charm = container.querySelector('[data-stat="charm"]')!
+  expect(charm.querySelector('.stat-level')).toHaveTextContent('11/100')
+  fireEvent.click(charm)
+  expect(charm).toHaveTextContent('1단계 · 11/100점')
+  expect(charm).toHaveTextContent('3단계 41~60점')
+  expect(charm).not.toHaveTextContent('누적 경험치')
+})

@@ -6,7 +6,7 @@ import { copyBookName, T } from '../../content/text'
 import { copiedChapters, copiedReadingVerses, type CopiedChapter } from '../../engine/copied-reading'
 import { chapterUnit, isOtBook } from '../../engine/ot-books'
 import { t } from '../../shared/i18n'
-import { saveGame } from '../../engine/save'
+import { saveGameAsync } from '../../engine/save'
 import { useGame } from '../../store/game-store'
 
 export function CopiedReadPick() {
@@ -72,9 +72,9 @@ export function CopiedReadPick() {
       {failed && <>
         <p role="status">{t('copiedRead.failed')}</p>
         {/* 브라우저가 실패한 본문 받기를 기억하면 다시 골라도 안 열린다 — 다른 본문 화면처럼 저장하고 다시 접속 (2026-10-12 MOB-01) */}
-        <div className="actions"><button onClick={() => {
+        <div className="actions"><button onClick={async () => {
           const store = useGame.getState()
-          if (saveGame(store.game)) window.location.reload()
+          if (await saveGameAsync(store.game)) window.location.reload()
           else store.say(t('copiedRead.saveFailed'), 5000)
         }}>{t('copiedRead.reload')}</button></div>
       </>}

@@ -1,0 +1,3 @@
+import { it } from 'vitest'
+import { runShard } from './fuzzlib'
+it('shard 10', async () => { await runShard(10, 12, { frames: 200, budgetMs: Number(process.env.FUZZ_BUDGET ?? 1500000) }) })

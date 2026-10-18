@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-17",
+  "localPngReviewed": true,
+  "browserVerified": false,
+  "images": [
+    {
+      "path": "artifacts/scenery/event-rain-proposals.png",
+      "sha256": "5c59ef5b80395fef0f1ba66f74012ce4e6ed3bb65260929244b13decac131036"
+    },
+    {
+      "path": "artifacts/scenery/event-rain-proposals-additional.png",
+      "sha256": "48c7d56f3b1fcd7ba7c2424392b24b954306b5a7b0c39b18dcfc02ffbad975c6"
+    },
+    {
+      "path": "artifacts/scenery/event-rain-backgrounds.png",
+      "sha256": "706747d327a68fb6933945711e07473afdc2041696a468ac7c19b90188452cb4"
+    },
+    {
+      "path": "artifacts/scenery/event-rain-mobile.png",
+      "sha256": "df178d35383bef1447254d71596aef727f89fbaa133c99c1cfbb3fa0e78a310c"
+    },
+    {
+      "path": "artifacts/scenery/event-rain-thumbnails.png",
+      "sha256": "f71ffa3ae245ff6111e26c25397084d5ee17644ed30ab7e5a3862564ceac25c4"
+    },
+    {
+      "path": "artifacts/scenery/fisher-village-house-review.png",
+      "sha256": "388fab48cbc564c9e6a11cc6ef6a15fae9c9dd78bc2d3d5ec6caed9074941794"
+    },
+    {
+      "path": "artifacts/scenery/fisher-village-house-mobile.png",
+      "sha256": "dd8686bb2c5272f8c83451c40938ecc179e6fae964eacc29b95c08cec5e4b20c"
+    },
+    {
+      "path": "artifacts/scenery/fisher-village-house-thumbnails.png",
+      "sha256": "d1a3f016c477695228210357e3cc568d866affc61dfdd6e7408960c7d0ee7d1a"
+    }
+  ],
+  "tests": "event-weather-house-tests.log",
+  "build": "event-weather-house-build.log"
+}

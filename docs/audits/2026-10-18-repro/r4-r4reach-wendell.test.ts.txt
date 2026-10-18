@@ -1,0 +1,39 @@
+import { CONTENT } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/content/catalog'
+import { newGame, eventNow, heartUp, stageWith, heartProgressBlock, type GameState } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/engine/game'
+import { weatherOf } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/engine/calendar'
+
+const dryDay = (from: number) => { let d = from; while (['rain', 'snow'].includes(weatherOf(d))) d++; return d }
+
+function at(day: number, minute: number, pts: number): GameState {
+  const s = newGame(CONTENT)
+  return {
+    ...s,
+    clock: { ...s.clock, day, minute },
+    hearts: { ...s.hearts, wendell: pts },
+    life: { ...s.life, seen: [...s.life.seen, 'wendell:first'] },
+  }
+}
+
+describe('r4reach wendell:research gate', () => {
+  it('stage-3 gate only during bread thread (day 5-23)', () => {
+    const inside = dryDay(10)
+    const s1 = at(inside, 690, 20)
+    console.log('day', inside, 'eventNow =', eventNow(s1, 'wendell')?.id)
+    expect(eventNow(s1, 'wendell')?.id).toBe('wendell:research')
+    const after = dryDay(30)
+    const s2 = at(after, 690, 29)
+    const ev = eventNow(s2, 'wendell')?.id
+    console.log('day', after, 'eventNow =', ev)
+    expect(ev).not.toBe('wendell:research')
+    // 하트는 29에서 멈춘다 (gateCap) — 며칠을 더해도
+    let s: GameState = s2
+    for (let d = 0; d < 400; d++) {
+      s = { ...s, clock: { ...s.clock, day: after + d } }
+      s = heartUp(s, 'wendell', 6, Infinity, 'story')
+      if (eventNow(s, 'wendell')?.id === 'wendell:research') throw new Error('opened on ' + (after + d))
+    }
+    console.log('after 400 days: points', s.hearts.wendell, 'stage', stageWith(s, 'wendell'), 'block', heartProgressBlock(s, 'wendell'))
+    expect(s.hearts.wendell).toBe(29)
+    expect(stageWith(s, 'wendell')).toBe(2)
+  })
+})

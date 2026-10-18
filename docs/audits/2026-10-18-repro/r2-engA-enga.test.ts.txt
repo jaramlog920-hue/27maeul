@@ -1,0 +1,57 @@
+import { appendFileSync } from 'node:fs'
+const log = (...a: unknown[]) => appendFileSync('C:/Users/wn410/AppData/Local/Temp/claude/C--Users-wn410-OneDrive-Desktop-cloooo-twenty-seven/d753a49f-e844-4b46-a32f-19ff3982a548/scratchpad/repro/engA/out.txt', a.map(x => typeof x === 'string' ? x : JSON.stringify(x)).join(' ') + String.fromCharCode(10))
+import { legacyGame as newGame } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/growth-test-support'
+import { CONTENT } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/../content/catalog'
+import { moveFurniture, syncHome, type GameState } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/game'
+import { placement, type Furniture } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/room'
+import { setSpace, spaceOfPiece } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/space-life'
+import { liveSpaces } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/spaces'
+import { HOME_ENTRY } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/world'
+import { familyHomes, familyMoveMorning, wantsToMove, homeWishes } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/gen-homes'
+import { demolishBuild } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/newland-build'
+import { villageScores } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/villages'
+import type { ItemId } from 'C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/types'
+
+function furnish(s: GameState, pieces: [ItemId, number, number, any?][]): GameState {
+  syncHome(s)
+  let room: Furniture[] = [...s.room]
+  for (const [item, x, y, facing] of pieces) { const f = placement(room, item, { x, y }, facing); expect(f).not.toBeNull(); room = [...room, f!]; syncHome({ ...s, room }) }
+  return { ...s, room }
+}
+describe('engA', () => {
+  it('spaces: anchor moved -> duplicate space', () => {
+    const s0 = newGame(CONTENT); s0.progress.phm.completed = [1]
+    const room = s0.room.map((f) => (f.item === 'homeBed' ? { ...f, x: 17, y: 111 } : f.item === 'homeWorkbench' ? { ...f, x: 23, y: 113 } : f))
+    let s = furnish({ ...s0, room, player: { ...s0.player, ...HOME_ENTRY }, scenes: [], clock: { day: 3, minute: 900 } } as GameState, [['table', 19, 112], ['chair', 19, 113, 'up'], ['chair', 20, 113, 'up']])
+    s = setSpace(s, s.room.find(f => f.item === 'table')!, 'tea')!
+    const ids0 = s.spaces.map(x => x.id)
+    const moved = moveFurniture(s, s.room.find(f => f.item === 'table')!, { x: 20, y: 112 })
+    log('moved?', !!moved)
+    if (!moved) return
+    const t = moved.room.find(f => f.item === 'table')!
+    log('table now', t.x, t.y, 'space ids', moved.spaces.map(x => x.id + ' ' + x.furniture.join(',')), 'live', liveSpaces(moved).length)
+    log('spaceOfPiece(new table)=', spaceOfPiece(moved, t))
+    const again = setSpace(moved, t, 'tea')
+    log('re-designate ->', again?.spaces.map(x => x.id + ' ' + x.furniture.join(',')))
+    log('ids0', ids0)
+  })
+  it('family: demolished home keeps moveWish -> re-given family leaves next morning', () => {
+    const h1 = { id: 'b1', kind: 'home', x: 10, y: 12, facing: 'down', state: 'done', orderedDay: 1, paid: { coins: 1500, items: {} }, refunded: false, slot: 0 }
+    const h2 = { ...h1, id: 'b2', x: 20, slot: 1 }
+    let s: any = { coins: 0, inv: {}, clock: { day: 40, minute: 360 }, newland: { builds: [h1, h2], tiles: {}, nextId: 3 },
+      gen: { households: { 'h-1': { id: 'h-1', members: ['g-1', 'g-2'], home: 'g-1' } }, persons: {} },
+      flags: { 'familyHome:1': 1, 'familyHomeDay:1': 1, 'moveWish:1': 40, 'moveGift:g-1': 1, 'moveGift:g-2': 1 } }
+    s = demolishBuild(s, 'b1')
+    log('after demolish flags', s.flags, 'familyHomes', familyHomes(s).length, 'wishes', homeWishes(s, () => false).length)
+    // what giveFamilyHome writes
+    s = { ...s, clock: { day: 41, minute: 600 }, flags: { ...s.flags, 'familyHome:1': 2, 'familyHomeDay:1': 41 } }
+    log('wantsToMove right after moving in:', wantsToMove(s, { id: 'h-1' } as any))
+    const next = familyMoveMorning({ ...s, clock: { day: 43, minute: 360 } })
+    log('day43 familyHomes', familyHomes(next).length, 'left', next.flags.familyLeft)
+  })
+  it('villageScores decrease?', () => {
+    let dec = 0, worst = 0
+    for (const seed of [20261007, 1, 2, 3]) for (let d = 1; d < 400; d++) { const a = villageScores(seed, d - 1), b = villageScores(seed, d); a.forEach((v, i) => { if (b[i] < v) { dec++; worst = Math.max(worst, v - b[i]) } }) }
+    log('decreases', dec, 'worst', worst)
+  })
+})

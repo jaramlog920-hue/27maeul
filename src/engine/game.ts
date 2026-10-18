@@ -1,3 +1,8 @@
+import {copyOutfitReward,copyOutfitAt,ownsCopyOutfit} from './copy-outfits'
+import { copyFurnitureReward, copyFurnitureFlag, isCopyFurniture, type CopyFurnitureId } from './copy-furniture'
+import { npcAffinityScale } from './npc-affinity'
+import {WEDDING_ATTIRE,recordWeddingAttire} from './wedding-attire'
+import { isFurnitureActive, stepFurnitureAutonomy, type FurnitureAutonomy } from './furniture-autonomy'
 import {readingMoment,coverMoment,childLetterMoment} from './living-moments'
 import {otMilestoneScenes} from './progress-milestones'
 import { manuscriptFinale, completeBibleFinale, bibleEndingEvents } from './library-finale'
@@ -20,7 +25,7 @@ import { advancePlans, appointmentSpots, reservedMembers, NO_PLANS, type Plans }
 // 게임 상태와 규칙의 조합. 순수 함수만 — 화면과 저장은 바깥(store)이 맡는다.
 import { festivalOf, FESTIVAL_FROM, FESTIVAL_TO, isMarketDay, isWet, weatherOf, barleyRipe, grapesRipe, seasonDay } from './calendar'
 import { advance, MINUTE_CAP, newClock, phaseOf, seasonOf, sleepClock, type Clock } from './clock'
-import { DURATION, greet, IDLE_GAP, IDLE_RESET, stepIdle, type IdleState } from './autonomy'
+import { DURATION, greet, IDLE_GAP, IDLE_RESET, stepControlledIdle, type IdleState } from './autonomy'
 import { adopt, companionGoal, STRAY_DAY, STRAY_STAY_DAYS, STRAY_SPOTS, stepCompanion, type Animal, type Companion } from './companion'
 import { wanderGoal } from './npc-life'
 import { add, addGift, BAG_SLOTS, CHAPTER_COST, COOKED_ITEMS, FOODS, count, has, hasSlotFor, RECIPES, recipeGives, slotsUsed, stackCap, take, TOOLS, type Inventory, type RecipeId } from './items'
@@ -70,11 +75,12 @@ import { baseVillageTileAt, HOME_ROOM as HOME_ROOM_W } from './world'
 import { keepClear } from './room'
 import { isBuiltWall, isRemovedWall, NO_HOME_WALLS, setHomeWalls, WALL_BUILD_COINS, type HomeWalls } from './home-walls'
 import { libraryBooks, libraryPay } from './progression'
-import { ADDITION_FURNITURE, ADDITION_IDS, additionsOnMarket, isAddition, type AdditionItemId } from './furniture-additions'
+import { barterValue, FURNITURE_PRICES } from './economy-prices'
+import { ADDITION_FURNITURE, MARKET_ADDITION_IDS, additionsOnMarket, isAddition, type AdditionItemId } from './furniture-additions'
 import { modeOf } from './shelf-rooms'
 import { currentChapter, mulberry32 } from './offers'
 import { drawFragment, fragmentSeed, fragmentsForDay, logPieces, talkGiftOf, type PieceLog } from './fragments'
-import { checkCopy, COPY_CHAPTER_XP, copySpot, copyVerses, nextOpenChapter, NO_COPY, NO_COPY_STATS, type CopyCheck, type CopyState, type CopyStats } from './copying'
+import { againKey, checkCopy, COPY_CHAPTER_XP, copySpot, copyVerses, isCopyingAgain, nextOpenChapter, NO_COPY, NO_COPY_STATS, type CopyCheck, type CopySpot, type CopyState, type CopyStats } from './copying'
 import { chapterFinds, type GodFind } from './god-records'
 import { SPECIAL_COST, withBookDesigns, type Bindings, type SpecialChoice } from './binding'
 import { emptyDayLog, logChapter, logGift, type DayLog } from './daybook'
@@ -211,6 +217,8 @@ export interface AlbumEntry {
 export type { Furniture }
 
 export interface GameState {
+  /** 가구 자율행동: 이동·사용·쉬는 시간. 저장하지 않는 시각 동작. */
+  furnitureAuto?: FurnitureAutonomy
   workDay?: WorkDay
   /** 내 작은 장날 좌판 (계획 16 작업 19) — 옛 저장은 없음. stallLook: 고른 외형(다음 장날에도 유지) */
   stall?: Stall
@@ -412,6 +420,8 @@ export type ActKind = 'sit' | 'read' | 'drink' | 'craft' | 'knead' | 'reach' | '
 export interface PlayerAct {
   kind: ActKind
   food?: ItemId
+  /** 의자 없이 가구 앞에서 쓰는 동작 */
+  standing?: boolean
   /** 요리 손동작 순서 (cook일 때 — cooking-art의 동작 이름: 씻기·썰기·젓기·반죽 등, 2026-10-07 연결) */
   steps?: string[]
   /** 남은 시간 (실제 초) */
@@ -439,7 +449,9 @@ export function startAct(s: GameState, kind: ActKind, at?: Tile): GameState {
   const front = { x: here.x + f.x, y: here.y + f.y }
   const place = placeAt(front)
   const seat = at ?? (place && SEAT_PLACES.includes(place) ? front : undefined)
-  return { ...s, act: { kind, left: ACT_SECONDS[kind], total: ACT_SECONDS[kind], facing: seat ? 'down' : s.player.facing, ...(seat ? { at: seat } : {}) } }
+  const pieces = seat && ['sit', 'read', 'drink', 'craft'].includes(kind) ? s.room.filter(f => !f.on && footprint(f).some(t => sameTile(t, seat))) : []
+  const furniture = pieces.find(f => FURNITURE_DEFS[f.item]?.layer === 'solid') ?? pieces[0]
+  return { ...s, act: { kind, left: ACT_SECONDS[kind], total: ACT_SECONDS[kind], facing: furniture ? facingOf(furniture) : seat ? 'down' : s.player.facing, ...(seat ? { at: seat } : {}) } }
 }
 
 /** 생활 가구를 쓴다 (그림만 — 시간·마음은 그대로). 그린 동작이 있는 가구는 가구째, 여닫는 가구는 문이 열리고 닫힌다 */
@@ -456,12 +468,17 @@ export function functionalAt(s: Pick<GameState, 'room'>, t: Tile): Furniture | n
 export function useAddition(s: GameState, f: Furniture): GameState {
   const def = ADDITION_FURNITURE[f.item as AdditionItemId]
   const spot = { x: f.x, y: f.y, item: f.item, facing: facingOf(f) }
-  if (def.use === 'sit') return startAct(s, 'sit', { x: f.x, y: f.y })
-  if (def.use === 'drink' || def.use === 'read') return startAct(s, def.use)
-  if (def.use === 'reach') return startAct(s, 'reach')
-  if (def.use === 'open') {
-    const reach = startAct(s, 'reach')
-    return { ...reach, act: { ...reach.act!, left: ACT_SECONDS.use, total: ACT_SECONDS.use, spot } }
+  if (isCopyFurniture(f.item)) return { ...s, act: { kind: 'use', use: 'copyFurniture', spot, left: 2.6, total: 2.6, facing: spot.facing } }
+  if (def.use === 'sit') {
+    const seated = startAct(s, 'sit', { x: f.x, y: f.y })
+    return { ...seated, act: { ...seated.act!, facing: spot.facing } }
+  }
+  if (['drink', 'read', 'reach', 'open'].includes(def.use)) {
+    const kind = def.use === 'open' ? 'reach' : def.use as 'drink' | 'read' | 'reach'
+    const here = playerTile(s)
+    const near = footprint(f).reduce((a, b) => Math.abs(a.x - here.x) + Math.abs(a.y - here.y) <= Math.abs(b.x - here.x) + Math.abs(b.y - here.y) ? a : b)
+    const started = startAct(s, kind)
+    return { ...started, act: { ...started.act!, at: undefined, standing: true, facing: faceToward(here, near, s.player.facing), spot, ...(def.use === 'open' ? { left: ACT_SECONDS.use, total: ACT_SECONDS.use } : {}) } }
   }
   return { ...s, act: { kind: 'use', use: def.use, spot, left: ACT_SECONDS.use, total: ACT_SECONDS.use, facing: spot.facing } }
 }
@@ -1326,7 +1343,7 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
       back[who] = id
       at[who] = npcTile(n)
     }
-    const met = checkMeets(s.gen, at, new Set(Object.keys(back)), clock.day, Math.floor(clock.minute), id => defs[back[id] ?? id]?.likes ?? [])
+    const met = checkMeets(s.gen, at, new Set(Object.keys(back)), clock.day, Math.floor(clock.minute), id => defs[back[id] ?? id]?.likes ?? [], npcAffinityScale(s))
     const shown = met.emotes.map(e => ({ ...e, npc: back[e.npc] ?? e.npc, partner: e.partner ? back[e.partner] ?? e.partner : undefined }))
     s = { ...s, gen: met.g, emotes: shown.length ? [...(s.emotes ?? []).filter(e => !shown.some(m => m.npc === e.npc)), ...shown] : s.emotes }
   }
@@ -1348,10 +1365,12 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
     const other = meeting?.partner ? s.npcs[meeting.partner] : undefined
     if (meeting && n.visible && other?.visible) {
       npcs[id] = { ...n, facing: facingFor(other.x - n.x, other.y - n.y, n.facing) }
+    } else if (isFurnitureActive(s.furnitureAuto?.[`npc:${id}`])) {
+      npcs[id] = n
     } else if (defs[id]) {
-      // 이웃끼리는 서로 지나간다 (2026-10-13 사용자: 스타듀밸리처럼). 멈춰 설 자리는 위에서 겹치지 않게 골랐고, 산책 길은 기록자만 비켜 간다
+      // 이웃끼리는 서로 지나간다 (2026-10-13 사용자: 스타듀밸리처럼). 멈춰 설 자리는 위에서 겹치지 않게 골랐고, 산책 길은 고정 장애물로 찾고 기록자 앞에서는 경로를 유지한 채 기다린다
       const goal = goals[id]
-      npcs[id] = stepNpc(n, doorDef(defs[id]), goal, dt, ambient.has(id) ? new Set([...furnitureBlockers, key(now)]) : furnitureBlockers)
+      npcs[id] = stepNpc(n, doorDef(defs[id]), goal, dt, furnitureBlockers, ambient.has(id) ? now : undefined)
     } else npcs[id] = n
   }
 
@@ -1396,7 +1415,8 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
   if (companion?.kind === 'cat' && !companion.stay) companion = { ...companion, stay: true, ...PET_HOME, path: [] }
   if (companion?.motion) companion = { ...companion, motion: companion.motion.left > dt ? { ...companion.motion, left: companion.motion.left - dt } : undefined }
   if (companion?.stay) {
-    const occupied = new Set([...furnitureBlockers, ...Object.values(npcs).filter(n=>n.visible).map(n=>key(npcTile(n))), key(now)])
+    // 기록자와 동물은 겹쳐 지나갈 수 있다. 접촉만으로 동물을 다른 칸에 옮기지 않는다.
+    const occupied = new Set([...furnitureBlockers, ...Object.values(npcs).filter(n=>n.visible).map(n=>key(npcTile(n)))])
     // 집에 두기가 습관보다 먼저: 좋아하는 자리·낮잠·놀이 자리를 시각·날씨·계절·성향에서 고르고, 꾸미기로 자리가 사라지면 안전한 다른 칸으로 옮긴다
     const homeGoal = petStayGoal({ ...s, clock, player, idle: s.idle }, companion, occupied, now)
     const here = { x: Math.round(companion.x), y: Math.round(companion.y) }
@@ -1420,7 +1440,7 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
     else companion = stepCompanion(companion, companionGoal(now, rainOut, furnitureBlockers, player.facing), dt * pace, furnitureBlockers)
   }
 
-  const idle = moving ? IDLE_RESET : stepIdle(s.idle, dt, clock.minute, rng, totalChapters(s) >= 3)
+  const idle = moving ? IDLE_RESET : stepControlledIdle(s.idle, dt)
   // 가구 쓰는 동작: 걷기 시작하면(길이 생기면) 끝, 아니면 실제 시간만큼 줄어 다 되면 끝
   const act = !s.act || moving || player.path.length > 0 || s.act.left <= dt ? undefined : { ...s.act, left: s.act.left - dt }
   // 쉬는 이웃끼리 만남 (계획 20 2부 작업 B): 게임 시간 1분마다, 자리에 닿아 서 있는 이웃끼리만
@@ -1438,7 +1458,7 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
         back[who] = id
         at[who] = npcTile(npcs[id])
       }
-      const met = checkMeets(gen, at, new Set(Object.keys(back)), clock.day, Math.floor(clock.minute), (id) => defs[back[id] ?? id]?.likes ?? [])
+      const met = checkMeets(gen, at, new Set(Object.keys(back)), clock.day, Math.floor(clock.minute), (id) => defs[back[id] ?? id]?.likes ?? [], npcAffinityScale(s))
       gen = met.g
       const shown = met.emotes.map((m) => ({ ...m, npc: back[m.npc] ?? m.npc, partner: m.partner ? back[m.partner] ?? m.partner : undefined }))
       for (const m of shown) {
@@ -1448,7 +1468,14 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
       if (shown.length) emotes = [...(emotes ?? []).filter((e) => !shown.some((m) => m.npc === e.npc)), ...shown]
     }
   }
-  const base: GameState = { ...s, clock, needs, player, target, idle, act, npcs, companion, trails, gen, emotes }
+  const beforeFurniture: GameState = { ...s, clock, needs, player, target, idle, act, npcs, companion, trails, gen, emotes }
+  const furnitureNpcs = new Set(Object.entries(npcs).filter(([id, n]) => n.visible && (ambient.has(id) || isHome(npcTile(n)))
+    && !apptAt[id] && !gctx.festival && !(target?.kind === 'neighbor' && target.id === id)
+    && !eventNow(beforeFurniture, id) && !sightingNow(beforeFurniture, id)
+    && (!fixedSpots[id] || (isHome(npcTile(n)) && s.romance?.partner === id && s.romance.stage === 'married'))
+    && !heldForCast(beforeFurniture, id)
+    && !routineOf(beforeFurniture, id)?.req && !routineOf(beforeFurniture, id)?.with && !routineOf(beforeFurniture, id)?.away && !routineOf(beforeFurniture, id)?.news).map(([id]) => id))
+  const base = stepFurnitureAutonomy(beforeFurniture, dt, { npcs: furnitureNpcs, child: childAtSchool(beforeFurniture) ? null : childTile(beforeFurniture) })
   let lived = liveNearby(petLife(base, now, events, childTile(base)), now, events)
   if (moving) {
     const found = pickupGroundFragment(lived, content)
@@ -1632,7 +1659,7 @@ function tapNewland(s: GameState, tile: Tile): GameState {
  * 새 터에서의 한 걸음: 시간·몸 상태·걷기·서고 문 드나들기·도착 알림만. 첫 마을의 이웃·동물·아이·약속·행사·목격·말 걸기는 모두 건너뛴다
  * (그들은 첫 마을에 그대로 있고, 돌아오면 travel이 한 번 다시 놓는다)
  */
-function tickNewland(s: GameState, dt: number, rng: Rng): { state: GameState; events: GameEvent[] } {
+function tickNewland(s: GameState, dt: number, _rng: Rng): { state: GameState; events: GameEvent[] } {
   const events: GameEvent[] = []
   const clock = advance(s.clock, dt)
   const here = playerTile(s)
@@ -1683,7 +1710,7 @@ function tickNewland(s: GameState, dt: number, rng: Rng): { state: GameState; ev
     if (tt) player = { ...player, facing: facingFor(tt.x - now.x, tt.y - now.y, player.facing) }
     target = null
   }
-  const idle = moving ? IDLE_RESET : stepIdle(s.idle, dt, clock.minute, rng, totalChapters(s) >= 3)
+  const idle = moving ? IDLE_RESET : stepControlledIdle(s.idle, dt)
   const act = !s.act || moving || player.path.length > 0 || s.act.left <= dt ? undefined : { ...s.act, left: s.act.left - dt }
   // 새 터에 따라온 동물 친구: 문을 드나들면 곁으로, 아니면 기록자 뒤를 걸어 따라온다 (2026-10-14)
   let companion = s.companion
@@ -1693,7 +1720,8 @@ function tickNewland(s: GameState, dt: number, rng: Rng): { state: GameState; ev
     if (warp && goal) companion = { ...companion, x: goal.x, y: goal.y, path: [] }
     else companion = stepCompanion(companion, goal, dt * walkMul(s.inv, s.gearOff))
   }
-  return { state: bibleEndingEvents({ ...s, clock, needs, player, target, idle, act, flags, companion, ...(otCollected ? { otCollected } : {}) }), events }
+  const next = { ...s, clock, needs, player, target, idle, act, flags, companion, ...(otCollected ? { otCollected } : {}) }
+  return { state: bibleEndingEvents({ ...next, furnitureAuto: undefined }), events }
 }
 
 /** 시간을 한 번에 흘려보낸다 (손일·쉬기) */
@@ -2047,7 +2075,7 @@ export function homeSeatsNow(s: SeatState): { spouse?: Tile; child?: Tile } {
   return familySeats({ room: s.room, spaces: s.spaces }, want, occupied)
 }
 
-export function childTile(s: Pick<GameState, 'child' | 'clock' | 'player'> & Partial<Pick<GameState, 'flags' | 'room' | 'spaces' | 'romance' | 'act' | 'companion'>>): Tile | null {
+export function childTile(s: Pick<GameState, 'child' | 'clock' | 'player'> & Partial<Pick<GameState, 'flags' | 'room' | 'spaces' | 'romance' | 'act' | 'companion' | 'furnitureAuto'>>): Tile | null {
   const c = s.child
   if (!c) return null
   const mode = childMode(c, s.clock.day)
@@ -2057,6 +2085,8 @@ export function childTile(s: Pick<GameState, 'child' | 'clock' | 'player'> & Par
     const crib = s.room?.find(f => f.item === 'homeCradle')
     const at = crib ? { x: crib.x, y: crib.y } : HOME_ENTRY
     if (mode === 'cradle') return at
+    const play = s.furnitureAuto?.child
+    if (play) return { x: Math.round(play.actor.x), y: Math.round(play.actor.y) }
     // 놀이·탁자 자리가 있으면 그 곁 (작업 23) — 없으면 요람 곁
     return homeSeatsNow(s).child ?? safeHomeSpot(at, s.room ?? [])
   }
@@ -2401,7 +2431,7 @@ export function heartUp(s: GameState, id: string, points: number, maxGain = Infi
   if (points <= 0) return points < 0 ? heartUpRaw(s, id, points) : s
   const p = personOf(id)
   const cool = (s.life?.cool[id] ?? 0) >= s.clock.day ? 0.5 : 1
-  const scaled = Math.max(1, Math.round(points * (p?.pace ?? 1) * cool))
+  const scaled = Math.max(1, Math.round(points * cool))
   const room = Math.max(0, Math.min(p ? gateCap(s, p) : MAX_POINTS, relationshipHeartCap(s, id)) - (s.hearts[id] ?? 0))
   if (source === 'story') return heartUpRaw(s, id, Math.min(scaled, room, maxGain))
   const today: HeartDay = s.heartDay?.day === s.clock.day ? s.heartDay : { day: s.clock.day, gains: {}, charm: [] }
@@ -2664,7 +2694,7 @@ export interface Trade {
   grants?: EasyId
 }
 /** 장날 상인과 바꾸기 (돈 대신 물건) */
-export const TRADES: readonly Trade[] = [
+const BASE_TRADES: readonly Trade[] = [
   { id: 'pen', pay: { grapes: 3, wool: 2 }, get: { goodPen: 1 } },
   { id: 'papyrus', pay: { grapes: 2 }, get: { papyrus: 2 } },
   { id: 'soot', pay: { bread: 2 }, get: { soot: 2 } },
@@ -2724,9 +2754,19 @@ export const TRADES: readonly Trade[] = [
   // 연애와 결혼 (계획 6): 들꽃 다발은 늘, 약속의 끈은 연인이 생긴 뒤에
   { id: 'bouquet', pay: {}, coins: 30, get: { bouquet: 1 } },
   { id: 'promiseCord', pay: {}, coins: 150, get: { promiseCord: 1 }, requires: 'dating' },
+  ...WEDDING_ATTIRE.map(a=>({id:a.item,pay:{},coins:a.coins,get:{[a.item]:1}})),
   // 생활 가구 48종 (2026-10-12 도트): 닢으로, 장날마다 여덟 가지씩 돌아가며 (additionsOnMarket)
-  ...ADDITION_IDS.map((id): Trade => ({ id: `add:${id}`, pay: {}, coins: ADDITION_FURNITURE[id].coins, get: { [id]: 1 } })),
+  ...MARKET_ADDITION_IDS.map((id): Trade => ({ id: `add:${id}`, pay: {}, coins: ADDITION_FURNITURE[id].coins, get: { [id]: 1 } })),
 ]
+
+export const TRADES: readonly Trade[] = BASE_TRADES.map(t => {
+  if (t.coins !== undefined || t.grants || Object.keys(t.get).length !== 1) return t
+  const [item, amount] = Object.entries(t.get)[0]
+  const retail = FURNITURE_PRICES[item as ItemId]
+  if (retail === undefined) return t
+  const coins = Math.max(0, Math.ceil((retail * amount! - barterValue(t.pay)) / 5) * 5)
+  return { ...t, coins }
+})
 
 /** 생활 가구 거래는 그 장날 나온 여덟 가지만 */
 export function tradeOnMarket(t: Trade, day: number): boolean {
@@ -3269,7 +3309,8 @@ export function applyTripRewards(s: GameState, rewards: readonly TripReward[], c
   return next
 }
 
-// ── 성경 이야기를 더 모으는 길 (2026-09-30 사용자): 밤 필사·이웃 선물·서고 열람석·떠돌이 상인의 두루마리·어른이 된 아이의 편지 ──
+// ── 성경 이야기를 더 모으는 길 (2026-09-30 사용자): 이웃 선물·서고 열람석·떠돌이 상인의 두루마리·어른이 된 아이의 편지 ──
+// (밤 필사 '사본 옮겨 적기'는 2026-10-18 사용자 결정으로 없앴다 — 대신 마친 장 다시 쓰기에서 20%로 조각: startCopyAgain)
 
 /**
  * 말씀 조각 하나를 모은다 (2026-10-06 사용자 결정): 어느 길(from)로든 27권 전체의 아직 없는 조각 중 무작위 하나 —
@@ -3281,18 +3322,7 @@ export function extraPiece(s: GameState, content: GameContent, from: string): { 
   return { state: train(takeChapters(s, [id], content, from), 'wit', XP.listen), pieceId: id }
 }
 
-/** 사본 옮겨 적기: 시간이나 생활 재료를 요구하지 않는다. */
-export const NIGHT_COPY_MINUTES = 40
 export type ExtraBlock = 'noPiece' | 'coins' | 'done' | 'notMarket' | null
-export function canNightCopy(s: GameState, content: GameContent): ExtraBlock {
-  if (!nextTripPiece(s, content)) return 'noPiece'
-  return null
-}
-export function nightCopy(s: GameState, content: GameContent): { state: GameState; pieceId: string } | null {
-  if (canNightCopy(s, content)) return null
-  const r = extraPiece(s, content, 'night')!
-  return { state: passTime({ ...r.state, needs: work(r.state.needs, 4) }, NIGHT_COPY_MINUTES), pieceId: r.pieceId }
-}
 
 /** 서고 열람석: 닢 셋을 내고 한 조각을 옮겨 적어 온다 (하루 두 번까지) */
 export const LIBRARY_READ_PRICE = 3
@@ -3333,7 +3363,7 @@ export function buyScroll(s: GameState, content: GameContent): { state: GameStat
 export const GIFT_STORY_HEARTS = 10
 
 /**
- * 아직 모으지 않은 조각 중 무작위 하나 (밤 필사·열람석·두루마리·여행·아이의 편지·별 보기가 쓴다) — 27권 전체, 한 번에 한 조각.
+ * 아직 모으지 않은 조각 중 무작위 하나 (열람석·두루마리·여행·아이의 편지·별 보기가 쓴다) — 27권 전체, 한 번에 한 조각.
  * 오늘 편지 바구니(post)·이웃(offers)에 이미 든 조각과 taken은 빼서 겹치지 않게 한다. 모두 모았으면 null
  */
 export function nextTripPiece(s: Pick<GameState, 'collected' | 'clock'> & Partial<Pick<GameState, 'post' | 'offers'>>, content: GameContent, taken: readonly string[] = [], from = 'trip'): string | null {
@@ -3894,12 +3924,12 @@ function atWeddingFire(p: Tile): boolean {
 /** 결혼 (잔치 장면이 열릴 때): 부부가 되고, 그날 밤부터 배우자가 내 집에서 지낸다 */
 function marry(s: GameState): GameState {
   const id = s.romance.partner!
-  return furnishSpouse({
+  return furnishSpouse(recordWeddingAttire({
     ...s,
     romance: { ...s.romance, stage: 'married', weddingDay: null, marriedDay: s.clock.day },
     scenes: [...s.scenes, `wedding:${id}`],
     flags: { ...s.flags, [onceKey('wedding', s.clock.day)]: 1 },
-  })
+  },id))
 }
 
 /** 배우자의 아침 선물 (하루 한 번, 처음 말 걸 때): 배우자 집안 일에서 나는 것 하나 */
@@ -4235,7 +4265,65 @@ export function saveCopyDraft(s: GameState, book: CopyBook, input: string, conte
   const spot = copySpot(s, book, content)
   if (!spot) return s
   const draft = pasted ? spot.draft : input
-  return { ...s, copy: { ...s.copy, at: { ...s.copy.at, [book]: { chapter: spot.chapter, verse: spot.verse.verse, ...(draft ? { draft } : {}) } } } }
+  const place = { chapter: spot.chapter, verse: spot.verse.verse, ...(draft ? { draft } : {}) }
+  if (isCopyingAgain(s.copy, book)) return { ...s, copy: { ...s.copy, again: { book, ...place } } }
+  return { ...s, copy: { ...s.copy, at: { ...s.copy.at, [book]: place } } }
+}
+
+/** 다시 쓰기를 마칠 때 아직 없는 조각이 올 확률 (2026-10-18 사용자: 한 장마다 20%, 같은 장도 다시 쓸 때마다 새로 뽑는다) */
+export const COPY_AGAIN_PIECE_CHANCE = 0.2
+
+/**
+ * 다시 쓰기를 시작한다: 이미 마친 장만. 그 책을 책상의 책으로 고르고 그 장 첫 절부터 (쓰던 다시 쓰기는 버린다).
+ * 횟수 제한은 없다 — 신약·구약을 다 적은 뒤에도 이어지는 필사
+ */
+export function startCopyAgain(s: GameState, book: CopyBook, chapter: number, content: GameContent): GameState {
+  if (isOtBook(book) ? !s.flags.newlandGift : !(BOOKS as readonly Book[]).includes(book)) return s
+  if (!progressOf(s, book).completed.includes(chapter)) return s
+  const first = copyVerses(book, chapter, content)[0]
+  if (!first) return s
+  return { ...s, copy: { ...s.copy, book, again: { book, chapter, verse: first.verse } } }
+}
+
+/** 다시 쓰기를 그만둔다 (쓰던 자리는 버린다 — 보상 없음) */
+export function stopCopyAgain(s: GameState): GameState {
+  if (!s.copy.again) return s
+  const { again: _drop, ...copy } = s.copy
+  return { ...s, copy }
+}
+
+/** 다시 쓴 장을 마칠 때의 조각: 20%로 아직 없는 조각 하나 (오늘 편지·이웃이 줄 조각은 빼고). 씨앗은 날·장·횟수 */
+function againPiece(s: GameState, book: CopyBook, chapter: number, count: number, content: GameContent): string | null {
+  const seed = fragmentSeed(s.clock.day, `again:${book}:${chapter}:${count}`)
+  if (mulberry32(seed)() >= COPY_AGAIN_PIECE_CHANCE) return null
+  const skip = new Set([...s.post, ...Object.values(s.offers)])
+  return drawFragment(content.pieces.filter((p) => !skip.has(p.id)), s.collected, seed + 31)
+}
+
+/**
+ * 다시 쓰는 장의 한 절 (writeVerse가 다 맞은 입력만 넘긴다). 시간·피로·장 끝 경험치는 처음 쓸 때와 같다.
+ * 진행·필사 기록·삯·장 완성 선물·장면·하나님 기록은 처음 쓸 때만 — 다시 쓰기는 횟수와 20% 조각뿐이다
+ */
+function writeAgainVerse(s: GameState, book: CopyBook, spot: CopySpot, puzzle: boolean, content: GameContent): { state: GameState; result: VerseResult } {
+  const { chapter } = spot
+  const verses = copyVerses(book, chapter, content)
+  const minutes = verseMinutes(puzzle)
+  if (spot.index < verses.length - 1) {
+    const state = passTime({ ...s, copy: { ...s.copy, again: { book, chapter, verse: verses[spot.index + 1].verse } } }, minutes)
+    return { state, result: { kind: 'verse', chapter, verse: spot.verse.verse } }
+  }
+  const key = againKey(book, chapter)
+  const count = (s.copy.againDone?.[key] ?? 0) + 1
+  const { again: _drop, ...copy } = s.copy
+  const before = s.stats
+  const after = addXp(addXp(before, 'wit', COPY_CHAPTER_XP), 'hand', COPY_CHAPTER_XP)
+  const effort = chapterEffort(careIn(s.copyCare, s.copyCareOther, careKey(book, chapter)), careKey(book, chapter), verses.length)
+  let state: GameState = passTime({ ...s, stats: after, needs: work(s.needs, 6 * effort), copy: { ...copy, againDone: { ...s.copy.againDone, [key]: count } } }, minutes)
+  const pieceId = againPiece(s, book, chapter, count, content)
+  if (pieceId) state = takeChapters(state, [pieceId], content, 'recopy')
+  const gains = { wit: statScore(after.wit) - statScore(before.wit), hand: statScore(after.hand) - statScore(before.hand) }
+  const chars = verses.reduce((n, v) => n + v.chars, 0)
+  return { state, result: { kind: 'chapter', chapter, verse: spot.verse.verse, verses: verses.length, chars, gains, bookDone: false, next: null, finds: [], again: count, ...(pieceId ? { pieceId } : {}) } }
 }
 
 export type VerseResult =
@@ -4262,8 +4350,15 @@ export type VerseResult =
       finds: GodFind[]
       /** 장을 마친 기념으로 온 생활 가구 (가끔 — chapterGift) */
       gift?: ItemId
+      /** Rare outfit unlocked directly in the wardrobe, not an inventory item. */
+      outfit?: string
+      collectibleFurniture?: CopyFurnitureId
       /** 받은 필사 삯 (처음 마친 장만 — copyPay) */
       pay?: number
+      /** 다시 쓰기로 마친 장이면 이 장을 다시 쓴 횟수 */
+      again?: number
+      /** 다시 쓰기를 마치며 받은 조각 (20%) */
+      pieceId?: string
     }
 
 /**
@@ -4278,6 +4373,7 @@ export function writeVerse(s: GameState, book: CopyBook, input: string, content:
   const text = pasted ? spot.draft : input
   const check = checkCopy(text, spot.verse.text)
   if (!check.done) return { state: saveCopyDraft(s, book, text, content), result: { kind: 'notYet', check } }
+  if (isCopyingAgain(s.copy, book)) return writeAgainVerse(s, book, spot, puzzle, content)
   const { chapter } = spot
   const verses = copyVerses(book, chapter, content)
   const day = s.clock.day
@@ -4384,11 +4480,15 @@ export function writeVerse(s: GameState, book: CopyBook, input: string, content:
   if (gift) state = { ...state, inv: addGift(state.inv, { [gift]: 1 }) }
   // 필사 삯 (2026-10-13 사용자: 필사하면 돈을 벌 수 있게) — 처음 마친 장만, 절 수만큼 · 퍼즐로 채운 만큼 덜 · 서고를 채운 만큼 더
   const firstTime = !(s.copy.copied?.[book] ?? []).includes(chapter)
+  const collectibleFurniture = firstTime ? copyFurnitureReward(s.flags, book, chapter, s.gen?.seed ?? 0) : null
+  if (collectibleFurniture) state = { ...state, flags: { ...state.flags, [copyFurnitureFlag(collectibleFurniture)]: 1 }, inv: addGift(state.inv, { [collectibleFurniture]: 1 }) }
+  const outfit=firstTime?copyOutfitReward(s.flags,book,chapter,s.gen?.seed??0,s.avatar?.look??'f'):null
+  if(outfit)state={...state,flags:{...state.flags,[`copyOutfit:${outfit.id}`]:1}}
   const pay = firstTime ? libraryPay(copyPay(verses.length, effort), libraryBookCount(s)) : 0
   if (pay) state = { ...state, coins: state.coins + pay }
   if(ot) state = otMilestoneScenes(s,state)
   state = completeBibleFinale(s, state)
-  return { state, result: { kind: 'chapter', chapter, verse: spot.verse.verse, verses: verses.length, chars, gains, bookDone: finished, next, finds, ...(gift ? { gift } : {}), ...(pay ? { pay } : {}) } }
+  return { state, result: { kind: 'chapter', chapter, verse: spot.verse.verse, verses: verses.length, chars, gains, bookDone: finished, next, finds, ...(gift ? { gift } : {}), ...(pay ? { pay } : {}),...(outfit?{outfit:outfit.id}:{}), ...(collectibleFurniture ? { collectibleFurniture } : {}) } }
 }
 
 /**
@@ -4408,7 +4508,7 @@ export function chapterGift(day: number, book: string, chapter: number): Additio
   for (const c of book) h = (h * 31 + c.charCodeAt(0)) % 2147483647
   const rnd = mulberry32(h)
   if (rnd() >= CHAPTER_GIFT_CHANCE) return null
-  return ADDITION_IDS[Math.floor(rnd() * ADDITION_IDS.length)]
+  return MARKET_ADDITION_IDS[Math.floor(rnd() * MARKET_ADDITION_IDS.length)]
 }
 
 // ── 카드 판: 사도행전 방의 여정 판 (계획 5 작업 5), 요한계시록 방의 일곱 교회 판 (계획 9 작업 3) ──
@@ -4845,14 +4945,14 @@ function keepsDecorPlayerAccess(s: GameState, room: readonly Furniture[], ctx: R
   return findPath(ctx.entry, here, solidTiles(room)) !== null
 }
 
-export function placeFurniture(s: GameState, item: ItemId, t: Tile): GameState | null {
+export function placeFurniture(s: GameState, item: ItemId, t: Tile, facing?: Facing): GameState | null {
   const access = featureAccess(s, 'decorate')
   if (access === 'locked' || (access === 'preview' && item !== 'stool')) return null
   syncHome(s)
   // 꾸밀 방: 첫 마을은 내 집, 새 터는 지금 들어와 있는 입주 주택 방 (방 밖이면 없음)
   const at = roomTarget(s)
   if (!at) return null
-  const f = placement(at.room, item, t, undefined, at.ctx)
+  const f = placement(at.room, item, t, facing, at.ctx)
   if (!f) return null
   const left = take(s.inv, { [item]: 1 })
   if (!left) return null
@@ -5017,6 +5117,8 @@ export function lookOf(s: Pick<GameState, 'avatar' | 'looks' | 'romance' | 'chil
 }
 /** 옷장에서 고른 모습을 입힌다 — 피부는 원래 것을 지킨다 */
 export function dressUp(s: GameState, who: WardrobeWho, a: FullAvatar, content: GameContent): GameState {
+  const collectible=copyOutfitAt(a.top)
+  if(collectible&&!ownsCopyOutfit(s.flags,collectible.id))return s
   const cur = lookOf(s, who, content)
   if (!cur) return s
   const next: FullAvatar = { ...a, skin: cur.skin, look: cur.look, name: cur.name }

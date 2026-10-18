@@ -19,7 +19,9 @@ export const BAKER_BABY_ID = 'baker-baby'
 /** 옛 저장과 그림에서도 같은 인물·성장 단계를 쓴다. */
 export function bakerBabyAt(day: number, old?: GenPerson): GenPerson | null {
   if (day < BABY_DAY) return null
-  const stage = stageByAge(BABY_DAY, day)
+  // Adult aging belongs to daily settlement; rendering/loading must not bypass its settings.
+  const calendarStage = stageByAge(BABY_DAY, day)
+  const stage = old?.stage === 'elder' ? 'elder' : calendarStage === 'elder' ? 'adult' : calendarStage
   if (old?.stage === stage) return old
   return { ...old, id: BAKER_BABY_ID, origin: 'fixed', born: BABY_DAY, stage,
     parents: ['baker'], spouse: old?.spouse ?? null, household: old?.household ?? null }
@@ -49,6 +51,8 @@ export interface GenPerson {
   /** 태어난 날. 날짜 미상은 null — 지어내지 않는다 */
   born: number | null
   stage: GenStage
+  /** Adult days excluded while aging is locked/paused; birth dates remain historical. */
+  agePause?: { days: number; at: number }
   /** 모습 (여자/남자) — 짝 조건(서로 다른 모습)에 쓴다 */
   look?: 'f' | 'm'
   /** 생성 인물의 이름 */
@@ -164,7 +168,7 @@ export interface GenState {
   nextPerson: number
   nextEvent: number
   /** 견습 중인 자녀 (부모 npc → 자녀 계보 id, 시작한 날) — 세대교체 */
-  heirs?: Record<string, { heir: string; since: number }>
+  heirs?: Record<string, { heir: string; since: number; paused?: number }>
   /** 은퇴한 부모 (npc → 자리를 이어받은 자녀, 은퇴한 날) */
   retired?: Record<string, { heir: string; day: number; moved?: number }>
 }
@@ -249,7 +253,7 @@ export function addAffinity(g: GenState, a: string, b: string, delta: number): G
   if (a === b || !delta) return g
   const id = relationId(a, b)
   const floor = g.relations[id]?.stage === 'spouse' ? SPOUSE_FLOOR : 0
-  const v = Math.max(floor, Math.min(100, (g.affinity[id] ?? 0) + delta))
+  const v = Math.round(Math.max(floor, Math.min(100, (g.affinity[id] ?? 0) + delta)) * 100) / 100
   // 0은 적지 않는다 (없으면 0 — 저장에서 불러온 것과 같은 모양)
   if (!v) {
     const affinity = { ...g.affinity }
@@ -435,6 +439,8 @@ export function sanitizeGen(raw: unknown, today: number): GenState | undefined {
       ...(origin === 'fixed' && isStr(v.npc) ? { npc: v.npc } : {}),
       born: isNat(v.born) ? Math.min(v.born, today) : null,
       stage: GEN_STAGES.includes(v.stage as GenStage) ? (v.stage as GenStage) : 'adult',
+      ...(isObj(v.agePause) && isNat(v.agePause.days) && isNat(v.agePause.at)
+        ? { agePause: { days: v.agePause.days, at: Math.min(v.agePause.at, today) } } : {}),
       ...(isLook(v.look) ? { look: v.look } : {}),
       ...(isStr(v.name) ? { name: v.name } : {}),
       ...(avatar ? { avatar } : {}),
@@ -505,7 +511,7 @@ export function sanitizeGen(raw: unknown, today: number): GenState | undefined {
   const affinity: Record<string, number> = {}
   if (isObj(raw.affinity)) {
     for (const [id, v] of Object.entries(raw.affinity)) {
-      const n = score(v)
+      const n = typeof v === 'number' && Number.isFinite(v) && v >= 0 && v <= 100 ? Math.round(v * 100) / 100 : undefined
       const [a, b] = id.split('|')
       if (n == null || !n || !a || !b || a === b || relationId(a, b) !== id || !fixed.persons[a] || !fixed.persons[b]) continue
       affinity[id] = relations[id]?.stage === 'spouse' ? Math.max(n, 50) : n
@@ -538,7 +544,8 @@ export function sanitizeGen(raw: unknown, today: number): GenState | undefined {
     const out: Record<string, { heir: string } & Record<K, number>> = {}
     for (const [npc, x] of Object.entries(v)) {
       if (!isObj(x) || !isStr(x.heir) || !isNat(x[k]) || !fixed.persons[npc] || (fixed.persons[x.heir]?.origin !== 'born' && !(npc === 'baker' && x.heir === BAKER_BABY_ID && fixed.persons[x.heir]))) continue
-      out[npc] = { heir: x.heir, [k]: Math.min(x[k] as number, today) } as { heir: string } & Record<K, number>
+      out[npc] = { heir: x.heir, [k]: Math.min(x[k] as number, today),
+        ...(k === 'since' && isNat(x.paused) ? { paused: x.paused } : {}) } as { heir: string } & Record<K, number>
     }
     return Object.keys(out).length ? out : undefined
   }

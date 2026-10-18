@@ -1,0 +1,93 @@
+const { chromium } = require('C:/Users/wn410/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright')
+const fs = require('node:fs/promises')
+const path = require('node:path')
+const assert = require('node:assert/strict')
+const out = path.resolve('artifacts/detail-audit/011-child-career-switch')
+;(async () => {
+  await fs.mkdir(out, { recursive: true })
+  const browser = await chromium.launch({ channel: 'msedge', headless: true })
+  try {
+    const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 })
+    const page = await context.newPage()
+    page.setDefaultTimeout(15000)
+    const errors = []
+    page.on('pageerror', e => errors.push(e.message))
+    page.on('dialog', d => void d.accept())
+    await page.goto('http://127.0.0.1:4191', { waitUntil: 'domcontentloaded', timeout: 30000 })
+    await page.getByRole('button', { name: '새로 시작하기' }).click()
+    await page.getByLabel('이름', { exact: true }).fill('진로검사')
+    await page.getByRole('button', { name: '이대로 시작', exact: true }).click()
+    await page.waitForFunction(() => !!window.__gd?.store)
+    await page.evaluate(async () => {
+      const { CONTENT } = await import('/src/content/catalog.ts')
+      const { legacyGame } = await import('/src/engine/growth-test-support.ts')
+      const { newChild } = await import('/src/engine/child.ts')
+      const base = legacyGame(CONTENT)
+      const older = { ...newChild(10, base.stats, 'hand'), name: '큰아이', inherited: 30, job: 'cook', jobConfirmed: false, left: false, mode: 'home' }
+      const younger = { ...newChild(52, base.stats, 'hand'), name: '작은아이', inherited: 30, mode: 'home', kidFlags: { childWalked: 1, childHelping: 1 } }
+      const game = { ...base, homeLevel: 2, clock: { day: 135, minute: 1320 }, child: older, siblings: [younger], scenes: [],
+        flags: { ...base.flags, childWalked: 1, childHelping: 1 } }
+      window.__gd.store.getState().load(game)
+      window.__gd.store.getState().setDeck(false)
+      window.__gd.store.getState().setJoystick(false)
+      window.__gd.store.setState({ modal: { kind: 'review', pieceId: null }, toast: null, piecePopups: [], copyResult: null })
+    })
+    const sleep = await page.evaluate(async () => (await import('/src/content/text.ts')).T.ui.sleep)
+    await page.getByRole('button', { name: sleep, exact: true }).tap()
+    await page.waitForFunction(() => window.__gd.store.getState().game.clock.day === 136)
+    await page.evaluate(() => window.__gd.store.getState().open({ kind: 'family' }))
+    const snapshot = () => page.evaluate(() => {
+      const s = window.__gd.store.getState(), g = s.game
+      return { day: g.clock.day, child: { name: g.child.name, born: g.child.born, job: g.child.job, confirmed: g.child.jobConfirmed },
+        siblings: g.siblings.map(k => ({ name: k.name, born: k.born, job: k.job, confirmed: k.jobConfirmed })),
+        choice: document.querySelector('.family select')?.value ?? null,
+        text: document.querySelector('.family')?.innerText ?? null }
+    })
+    await page.getByRole('combobox', { name: '진로', exact: true }).waitFor()
+    const morning = await snapshot()
+    assert.equal(morning.child.name, '작은아이')
+    assert.equal(morning.choice, 'woodworker')
+    assert.equal(morning.child.confirmed, false)
+    // Control: cancel the draft by closing and reopening the actual family modal.
+    await page.getByRole('combobox', { name: '진로', exact: true }).selectOption('sailor')
+    await page.getByRole('button', { name: /닫기/ }).tap()
+    await page.evaluate(() => window.__gd.store.getState().open({ kind: 'family' }))
+    const canceled = await snapshot()
+    assert.equal(canceled.choice, 'woodworker')
+    assert.equal(canceled.child.confirmed, false)
+    await page.getByRole('combobox', { name: '진로', exact: true }).selectOption('sailor')
+    const draft = await snapshot()
+    assert.equal(draft.child.job, 'woodworker')
+    await page.getByRole('button', { name: /큰아이 어른/ }).tap()
+    const switched = await snapshot()
+    assert.equal(switched.child.name, '큰아이')
+    assert.equal(switched.child.job, 'cook')
+    assert.equal(switched.choice, 'sailor')
+    assert.ok(switched.text.includes('큰아이가 요리사 일을 하고 싶어해요'))
+    await page.getByRole('combobox', { name: '진로', exact: true }).scrollIntoViewIfNeeded()
+    await page.screenshot({ path: path.join(out, 'wrong-child-draft-before-confirm.png'), fullPage: true, animations: 'disabled' })
+    await page.getByRole('button', { name: '이 진로로 함께 결정하기', exact: true }).tap()
+    const confirmed = await snapshot()
+    assert.equal(confirmed.child.job, 'sailor')
+    assert.equal(confirmed.child.confirmed, true)
+    assert.deepEqual(confirmed.siblings.find(k => k.name === '작은아이'), { name: '작은아이', born: 52, job: 'woodworker', confirmed: false })
+    await page.evaluate(async () => {
+      const { saveGameAsync } = await import('/src/engine/save.ts')
+      if (!await saveGameAsync(window.__gd.store.getState().game)) throw new Error('save failed')
+    })
+    await page.reload({ waitUntil: 'domcontentloaded' })
+    await page.getByRole('button', { name: '이어하기', exact: true }).click()
+    await page.waitForFunction(() => !!window.__gd?.store)
+    await page.evaluate(() => window.__gd.store.getState().open({ kind: 'family' }))
+    await page.getByRole('button', { name: '더 넓은 곳으로 떠나기', exact: true }).waitFor()
+    const restored = await snapshot()
+    assert.deepEqual(restored.child, confirmed.child)
+    assert.equal(restored.choice, null)
+    assert.equal(await page.getByRole('button', { name: '이 진로로 함께 결정하기', exact: true }).count(), 0)
+    await page.screenshot({ path: path.join(out, 'wrong-child-career-restored.png'), fullPage: true, animations: 'disabled' })
+    assert.deepEqual(errors, [])
+    await fs.writeFile(path.join(out, 'result.json'), JSON.stringify({ reproduced: true, morning, canceled, draft, switched, confirmed, restored, pageErrors: errors }, null, 2))
+    console.log('REPRODUCED: unconfirmed draft transfers across child selection, commits to other child, survives reload; close/reopen control resets draft')
+    await context.close()
+  } finally { await browser.close() }
+})().catch(e => { console.error(e); process.exitCode = 1 })

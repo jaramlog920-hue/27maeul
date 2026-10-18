@@ -1,0 +1,464 @@
+{
+  "status": "4개 전체 제작·시각 확인·검사·빌드 완료",
+  "entries": [
+    {
+      "id": "ev:romance:presser:askFirst",
+      "title": "물어보고 짜는 하루 · 올리버",
+      "group": "current",
+      "basis": "현재 플레이어 위치와 발생 조건 확인 필요",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 2,
+      "originalTier": "dialogue",
+      "original": {
+        "title": "물어보고 짜는 하루",
+        "lines": [
+          {
+            "speaker": "presser",
+            "text": "내일 일정, 당신 것까지 제가 다 짜 놨어요. 빨리 가는 순서로… 아, 또 그랬네요."
+          },
+          {
+            "speaker": "presser",
+            "text": "물어보고 정했어야 했는데. 지금부터 같이 고칠래요?"
+          }
+        ],
+        "choices": [
+          {
+            "label": "같이 고친다",
+            "reply": [
+              {
+                "speaker": "presser",
+                "text": "당신 칸은 당신이 적어요. 저는 옆에서 걸음 수만 셀게요."
+              }
+            ]
+          },
+          {
+            "label": "하나만 바꾸자고 한다",
+            "reply": [
+              {
+                "speaker": "presser",
+                "text": "하나만요? …고마워요. 다음엔 짜기 전에 물어볼게요."
+              }
+            ]
+          }
+        ]
+      },
+      "trigger": {
+        "id": "romance:presser:askFirst",
+        "title": "물어보고 짜는 하루",
+        "stage": 3,
+        "at": {
+          "x": 22,
+          "y": 125
+        },
+        "when": {
+          "from": 900,
+          "to": 1140
+        },
+        "req": {
+          "rel": [
+            "spouse"
+          ],
+          "seen": [
+            "presser:short:spouseHabit"
+          ]
+        },
+        "gain": 3,
+        "lines": [
+          {
+            "speaker": "presser",
+            "text": "내일 일정, 당신 것까지 제가 다 짜 놨어요. 빨리 가는 순서로… 아, 또 그랬네요."
+          },
+          {
+            "speaker": "presser",
+            "text": "물어보고 정했어야 했는데. 지금부터 같이 고칠래요?"
+          }
+        ],
+        "choices": [
+          {
+            "label": "같이 고친다",
+            "color": "warm",
+            "memory": "askFirst",
+            "reply": [
+              {
+                "speaker": "presser",
+                "text": "당신 칸은 당신이 적어요. 저는 옆에서 걸음 수만 셀게요."
+              }
+            ]
+          },
+          {
+            "label": "하나만 바꾸자고 한다",
+            "color": "honest",
+            "memory": "askFirst",
+            "reply": [
+              {
+                "speaker": "presser",
+                "text": "하나만요? …고마워요. 다음엔 짜기 전에 물어볼게요."
+              }
+            ]
+          }
+        ],
+        "motion": {
+          "npc": "showWork",
+          "player": "inspectWork"
+        }
+      }
+    },
+    {
+      "id": "ev:romance:presser:invitation",
+      "title": "손님 말고 당신 · 올리버",
+      "group": "current",
+      "basis": "현재 플레이어 위치와 발생 조건 확인 필요",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 3,
+      "originalTier": "illustration",
+      "original": {
+        "title": "손님 말고 당신",
+        "lines": [
+          {
+            "speaker": "presser",
+            "text": "손님 의자는 누구나 앉아도 돼요. 오늘 같이 있고 싶은 사람은 당신이에요."
+          },
+          {
+            "speaker": "presser",
+            "text": "오늘 저녁엔 어디 가 보고 싶어요? 당신이 고른 데로 가요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "정자에서 노을을 보자고 한다",
+            "reply": [
+              {
+                "speaker": "presser",
+                "text": "정자요. 그럼 오늘은 항아리 수 안 세고 갈게요."
+              }
+            ]
+          },
+          {
+            "label": "찻집에 가자고 한다",
+            "reply": [
+              {
+                "speaker": "presser",
+                "text": "찻집이요. 잔은 당신이 골라요. 저는 고르면 또 크기부터 재니까요."
+              }
+            ]
+          },
+          {
+            "label": "그냥 여기 앉아 있자고 한다",
+            "reply": [
+              {
+                "speaker": "presser",
+                "text": "여기요? …좋아요. 손님 의자 곁에 우리 자리를 하나 더 놓을게요."
+              }
+            ]
+          }
+        ]
+      },
+      "trigger": {
+        "id": "romance:presser:invitation",
+        "title": "손님 말고 당신",
+        "stage": 4,
+        "at": {
+          "x": 22,
+          "y": 125
+        },
+        "when": {
+          "from": 900,
+          "to": 1140
+        },
+        "req": {
+          "lover": true
+        },
+        "gain": 5,
+        "lines": [
+          {
+            "speaker": "presser",
+            "text": "손님 의자는 누구나 앉아도 돼요. 오늘 같이 있고 싶은 사람은 당신이에요."
+          },
+          {
+            "speaker": "presser",
+            "text": "오늘 저녁엔 어디 가 보고 싶어요? 당신이 고른 데로 가요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "정자에서 노을을 보자고 한다",
+            "color": "warm",
+            "memory": "invitation",
+            "reply": [
+              {
+                "speaker": "presser",
+                "text": "정자요. 그럼 오늘은 항아리 수 안 세고 갈게요."
+              }
+            ]
+          },
+          {
+            "label": "찻집에 가자고 한다",
+            "color": "honest",
+            "memory": "invitation",
+            "reply": [
+              {
+                "speaker": "presser",
+                "text": "찻집이요. 잔은 당신이 골라요. 저는 고르면 또 크기부터 재니까요."
+              }
+            ]
+          },
+          {
+            "label": "그냥 여기 앉아 있자고 한다",
+            "color": "quiet",
+            "memory": "invitation",
+            "reply": [
+              {
+                "speaker": "presser",
+                "text": "여기요? …좋아요. 손님 의자 곁에 우리 자리를 하나 더 놓을게요."
+              }
+            ]
+          }
+        ],
+        "motion": {
+          "npc": "inspectWork",
+          "player": "nod"
+        }
+      }
+    },
+    {
+      "id": "ev:romance:presser:untimedTea",
+      "title": "시간을 재지 않은 차 · 올리버",
+      "group": "current",
+      "basis": "현재 플레이어 위치와 발생 조건 확인 필요",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 2,
+      "originalTier": "event",
+      "original": {
+        "title": "시간을 재지 않은 차",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "손님 의자 곁 상자 위에 찻잔 둘. 작업장 벽 시간표의 휴식 칸 하나가 비어 있다."
+          },
+          {
+            "speaker": "presser",
+            "text": "아무것도 안 하는 시간이라고 적으려다 말았어요. 꼭 이름을 붙여야 하나 싶어서요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "차를 마신다",
+            "reply": [
+              {
+                "speaker": "narration",
+                "text": "차가 식을 때까지 둘은 별말이 없었다. 이웃은 한 번도 해를 보지 않았다."
+              }
+            ]
+          },
+          {
+            "label": "그늘 밖을 내다본다",
+            "reply": [
+              {
+                "speaker": "presser",
+                "text": "올리브 잎이 뒤집힐 때마다 색이 바뀌네요. 늘 보던 건데 처음 보는 것 같아요."
+              }
+            ]
+          }
+        ]
+      },
+      "trigger": {
+        "id": "romance:presser:untimedTea",
+        "title": "시간을 재지 않은 차",
+        "stage": 4,
+        "at": {
+          "x": 22,
+          "y": 125
+        },
+        "when": {
+          "from": 1080,
+          "to": 1140,
+          "weather": [
+            "dry"
+          ]
+        },
+        "req": {
+          "seen": [
+            "romance:presser:extraMinutes"
+          ],
+          "after": {
+            "event": "romance:presser:extraMinutes",
+            "days": 3
+          }
+        },
+        "gain": 6,
+        "opens": 5,
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "손님 의자 곁 상자 위에 찻잔 둘. 작업장 벽 시간표의 휴식 칸 하나가 비어 있다."
+          },
+          {
+            "speaker": "presser",
+            "text": "아무것도 안 하는 시간이라고 적으려다 말았어요. 꼭 이름을 붙여야 하나 싶어서요."
+          }
+        ],
+        "choices": [
+          {
+            "label": "차를 마신다",
+            "color": "warm",
+            "memory": "untimedTea",
+            "reply": [
+              {
+                "speaker": "narration",
+                "text": "차가 식을 때까지 둘은 별말이 없었다. 이웃은 한 번도 해를 보지 않았다."
+              }
+            ]
+          },
+          {
+            "label": "그늘 밖을 내다본다",
+            "color": "quiet",
+            "memory": "untimedTea",
+            "reply": [
+              {
+                "speaker": "presser",
+                "text": "올리브 잎이 뒤집힐 때마다 색이 바뀌네요. 늘 보던 건데 처음 보는 것 같아요."
+              }
+            ]
+          }
+        ],
+        "motion": {
+          "npc": "pourTea",
+          "player": "sipTea"
+        }
+      }
+    },
+    {
+      "id": "ev:romance:presser:imperfectHouse",
+      "title": "조금 덜 반듯한 집 · 올리버",
+      "group": "current",
+      "basis": "현재 플레이어 위치와 발생 조건 확인 필요",
+      "status": "계획",
+      "needsLocationCheck": true,
+      "choices": 3,
+      "originalTier": "event",
+      "original": {
+        "title": "조금 덜 반듯한 집",
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "작업장 바닥에 집 그림 한 장. 이웃이 물건마다 작은 돌을 놓아 자리를 표시해 두었다."
+          },
+          {
+            "speaker": "presser",
+            "text": "내 방식대로 놓으면 빨라요. 우리 둘이 쓰기 좋은지는 따로 봐야겠네요."
+          },
+          {
+            "speaker": "presser",
+            "text": "그래서 반으로 나눴어요. 이쪽은 정돈 구역, 저쪽은 아무렇게나 둬도 되는 구역."
+          }
+        ],
+        "choices": [
+          {
+            "label": "아무렇게나 둘 곳 고르기",
+            "reply": [
+              {
+                "speaker": "presser",
+                "text": "창가요? 좋아요. 거긴 제가 줄 안 맞출게요. …노력할게요."
+              }
+            ]
+          },
+          {
+            "label": "정돈 구역 규칙을 묻는다",
+            "reply": [
+              {
+                "speaker": "presser",
+                "text": "항아리랑 잔은 입이 한쪽으로. 그거 하나예요. 나머진 같이 정해요."
+              }
+            ]
+          },
+          {
+            "label": "돌 놓는 걸 거든다",
+            "reply": [
+              {
+                "speaker": "presser",
+                "text": "그 돌은 그 자리 그대로 둬요. 당신이 놓은 거니까."
+              }
+            ]
+          }
+        ]
+      },
+      "trigger": {
+        "id": "romance:presser:imperfectHouse",
+        "title": "조금 덜 반듯한 집",
+        "stage": 4,
+        "at": {
+          "x": 22,
+          "y": 125
+        },
+        "when": {
+          "from": 480,
+          "to": 840
+        },
+        "req": {
+          "lover": true,
+          "romance": [
+            "engaged"
+          ]
+        },
+        "gain": 5,
+        "lines": [
+          {
+            "speaker": "narration",
+            "text": "작업장 바닥에 집 그림 한 장. 이웃이 물건마다 작은 돌을 놓아 자리를 표시해 두었다."
+          },
+          {
+            "speaker": "presser",
+            "text": "내 방식대로 놓으면 빨라요. 우리 둘이 쓰기 좋은지는 따로 봐야겠네요."
+          },
+          {
+            "speaker": "presser",
+            "text": "그래서 반으로 나눴어요. 이쪽은 정돈 구역, 저쪽은 아무렇게나 둬도 되는 구역."
+          }
+        ],
+        "choices": [
+          {
+            "label": "아무렇게나 둘 곳 고르기",
+            "color": "warm",
+            "memory": "imperfectHouse",
+            "reply": [
+              {
+                "speaker": "presser",
+                "text": "창가요? 좋아요. 거긴 제가 줄 안 맞출게요. …노력할게요."
+              }
+            ]
+          },
+          {
+            "label": "정돈 구역 규칙을 묻는다",
+            "color": "honest",
+            "memory": "imperfectHouse",
+            "reply": [
+              {
+                "speaker": "presser",
+                "text": "항아리랑 잔은 입이 한쪽으로. 그거 하나예요. 나머진 같이 정해요."
+              }
+            ]
+          },
+          {
+            "label": "돌 놓는 걸 거든다",
+            "color": "quiet",
+            "memory": "imperfectHouse",
+            "reply": [
+              {
+                "speaker": "presser",
+                "text": "그 돌은 그 자리 그대로 둬요. 당신이 놓은 거니까."
+              }
+            ]
+          }
+        ],
+        "motion": {
+          "npc": "showWork",
+          "player": "inspectWork"
+        }
+      }
+    }
+  ],
+  "verification": "기름 작업장 추가 배정 4개 전체 완료. 물어보고 짜는 하루는 내일 일정의 두 칸과 원래 선택에 맞춘 자기 칸 비우기/하나만 수정. 손님 말고 당신은 빈 손님 의자 곁에서 오늘 저녁을 상의하며 미래 정자·찻집 이동이나 약속한 의자를 미리 추가하지 않는다. 시간을 재지 않은 차는 기존 작업장 배경·비어 있는 휴식 칸 시간표·의자 곁 상자 위 두 잔, 마시는 선택에서 기존 짧은 손에 닿는 두 잔과 식은 차, 다른 선택에서 출입구 너머 올리브 잎의 고정 크기 색 변화. 조금 덜 반듯한 집은 바닥의 반으로 나눈 집 그림·물건 자리의 돌 네 개, 창가 표시/정돈 방향/기존 돌 자리 이동을 각 선택에 반영. 실제 22,125 발생 장소와 기본 올리버 및 실제 사용자 외형을 유지했다. 원래 대사·선택 19단계를 기본/실제 외형 각각 19컷, 휴대폰 4컷씩과 통합 미리보기·썸네일 확인. 얼굴·몸통 가림 검사와 기존 11개 장면 포함 관련 검사 2,167개, 사전 검사·TypeScript·전체 빌드 통과. 선택·보상·시간·호감도·해금과 미리보기 저장/앨범 보호 유지. 전체 525개 연결/151개 미제작. 다음 광장 추가 4개 전체→서고·배움터 추가 7개 전체→현재 위치 확인 대기 140개. 모음 http://localhost:5173/assets/events/index.html?background=oil-new"
+}

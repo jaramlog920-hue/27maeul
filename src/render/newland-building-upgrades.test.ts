@@ -23,7 +23,7 @@ describe('구약맵 건물·경계·공사 자산',()=>{
   }
   expect(silhouettes.size).toBeGreaterThanOrEqual(7);expect(pictures.size).toBe(18);expect(props.size).toBe(18)
  })
- it('4방향 건물의 문·발 기준점·분리 레이어가 기존 위치를 유지한다',()=>{
+ it('4방향 건물의 아치 문과 문턱·발 기준점·분리 레이어가 기존 출입 위치를 유지한다',()=>{
   for(const job of PROFESSION_BUILDINGS)for(const d of BUILDING_FACINGS){
    const a=professionBuildingArt(job,d)
    valid(a.rows,64,BUILDING_ART_PALETTE);recompose(a)
@@ -31,8 +31,17 @@ describe('구약맵 건물·경계·공사 자산',()=>{
    expect(a.footprint).toEqual({w:4,h:3,dy:1})
    if(d!=='up'){
     const x=d==='left'?10:d==='right'?42:27
-    for(let y=39;y<59;y++)expect(a.rows[y].slice(x,x+10)).toBe(OLD_BUILDINGS[job][d].rows[y].slice(x,x+10))
-    for(const y of [59,60])expect(a.rows[y].slice(x-2,x+12)).toBe('I'.repeat(14))
+    // The upgraded artwork has an arched door and a shaded upper step. Its pixels
+    // intentionally differ from the old rectangular door; the entry stays put.
+    const oldThreshold=OLD_BUILDINGS[job][d].rows[60].indexOf('I'.repeat(14))
+    expect(oldThreshold).toBe(x-2)
+    expect(a.entry).toEqual({x:oldThreshold+7,y:60})
+    expect(a.rows[60].slice(oldThreshold,oldThreshold+14)).toBe('I'.repeat(14))
+    const openingWidth=(y:number)=>[...a.rows[y].slice(x,x+10)].filter(ch=>'WwlAaS'.includes(ch)).length
+    expect(openingWidth(39)).toBeLessThan(openingWidth(41))
+    expect(openingWidth(41)).toBe(10)
+    for(let y=39;y<59;y++)expect('WwlAa'.includes(a.rows[y][x+5])).toBe(true)
+    expect(a.rows[41][x]).toBe('W');expect(a.rows[41][x+9]).toBe('W')
    }
   }
  })

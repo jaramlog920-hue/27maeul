@@ -1,0 +1,20 @@
+      // 양 우리의 양 (우리를 넓히면 둘 더)
+      ;[
+        [4, 28],
+        [6, 29],
+        [5, 27.5],
+        [4, 29.5],
+        [6.5, 27.5],
+      ].slice(0, sheepCount(game)).forEach(([sx, sy], i) => {
+        // 이동 사이에 잠시 멈춰 풀을 먹는다. 멈춘 시간에는 이동 위상도 고정한다.
+        const cycle = t + i * 2.7
+        const resting = cycle % 12 >= 9
+        const travel = Math.floor(cycle / 12) * 9 + Math.min(cycle % 12, 9)
+        const x = sx + Math.sin(travel * 0.3 + i * 2) * 0.6
+        const y = sy + Math.cos(travel * 0.23 + i) * 0.5
+        const side = Math.cos(travel * 0.3 + i * 2) >= 0 ? 'right' : 'left'
+        const action = resting ? 'graze' : 'walk'
+        const f = Math.floor(cycle * (resting ? 3 : 6)) % 4
+        items.push({ y, paint: () => drawSprite(g, paint(`sheep/${side}/${action}/${f}`, sheepLifeRows(side, action, f), SMALL_PALETTE), x, y) })
+      })
+

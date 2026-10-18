@@ -1,0 +1,17 @@
+import { OT_BOOK_TABLE, OT_ROOMS } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/engine/ot-books'
+import { OT_PIECE_COUNT } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/engine/ot-pieces'
+import { levelOf, statScore } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/engine/stats'
+import { FEATURE_RULES } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/engine/feature-rules'
+import { NT_CHAPTER_COUNTS } from '../../../../../../../../../OneDrive/Desktop/cloooo/twenty-seven/src/engine/progression'
+
+describe('ach', () => {
+  it('ot tables', () => {
+    console.log('rooms', OT_ROOMS.map((r) => r.id + ':' + r.books.join(',')).join(' | '))
+    console.log('last12', OT_BOOK_TABLE.slice(-12).map((b) => b.id).join(','))
+    console.log('ot books', OT_BOOK_TABLE.length, 'chapters', OT_BOOK_TABLE.reduce((n, b) => n + b.chapters, 0), 'pieces', OT_PIECE_COUNT)
+    console.log('NT chapters', Object.values(NT_CHAPTER_COUNTS).reduce((a, b) => a + b, 0))
+    const maxCh = Math.max(...Object.values(FEATURE_RULES).flatMap((r: any) => [r.full?.chapters ?? 0, r.preview?.chapters ?? 0]))
+    console.log('max feature chapters', maxCh)
+    console.log('lvl max', levelOf({ wit: { level: 5, xp: 0, born: 0 } } as any, 'wit'), statScore({ level: 5, xp: 0, born: 0 } as any))
+  })
+})

@@ -1,0 +1,241 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "mode": "move-to-floor",
+      "before": {
+        "table": {
+          "item": "table",
+          "x": 20,
+          "y": 112,
+          "facing": "down"
+        },
+        "vases": [
+          {
+            "item": "vase",
+            "x": 20,
+            "y": 112,
+            "on": true
+          }
+        ],
+        "inv": {
+          "table": 1
+        },
+        "selected": {
+          "item": "table",
+          "x": 20,
+          "y": 112
+        },
+        "moving": false,
+        "toast": null
+      },
+      "blocked": {
+        "table": {
+          "item": "table",
+          "x": 20,
+          "y": 112,
+          "facing": "down"
+        },
+        "vases": [
+          {
+            "item": "vase",
+            "x": 20,
+            "y": 112,
+            "on": true
+          }
+        ],
+        "inv": {
+          "table": 1
+        },
+        "selected": {
+          "item": "table",
+          "x": 20,
+          "y": 112
+        },
+        "moving": false,
+        "toast": "그쪽으로 돌리면 자리가 모자라거나 길이 막혀요. 위에 올린 것이 있으면 먼저 치워 주세요."
+      },
+      "cleared": {
+        "table": {
+          "item": "table",
+          "x": 20,
+          "y": 112,
+          "facing": "down"
+        },
+        "vases": [
+          {
+            "item": "vase",
+            "x": 22,
+            "y": 113
+          }
+        ],
+        "inv": {
+          "table": 1
+        },
+        "selected": {
+          "item": "vase",
+          "x": 22,
+          "y": 113
+        },
+        "moving": false,
+        "toast": "그쪽으로 돌리면 자리가 모자라거나 길이 막혀요. 위에 올린 것이 있으면 먼저 치워 주세요."
+      },
+      "turned": {
+        "table": {
+          "item": "table",
+          "x": 20,
+          "y": 112,
+          "facing": "right"
+        },
+        "vases": [
+          {
+            "item": "vase",
+            "x": 22,
+            "y": 113
+          }
+        ],
+        "inv": {
+          "table": 1
+        },
+        "selected": {
+          "item": "table",
+          "x": 20,
+          "y": 112
+        },
+        "moving": false,
+        "toast": "그쪽으로 돌리면 자리가 모자라거나 길이 막혀요. 위에 올린 것이 있으면 먼저 치워 주세요."
+      },
+      "restored": {
+        "table": {
+          "item": "table",
+          "x": 20,
+          "y": 112,
+          "facing": "right"
+        },
+        "vases": [
+          {
+            "item": "vase",
+            "x": 22,
+            "y": 113
+          }
+        ],
+        "inv": {
+          "table": 1
+        },
+        "selected": null,
+        "moving": false,
+        "toast": null
+      },
+      "previousFailureToastExpired": true
+    },
+    {
+      "mode": "collect-to-bag",
+      "before": {
+        "table": {
+          "item": "table",
+          "x": 20,
+          "y": 112,
+          "facing": "down"
+        },
+        "vases": [
+          {
+            "item": "vase",
+            "x": 20,
+            "y": 112,
+            "on": true
+          }
+        ],
+        "inv": {
+          "table": 1
+        },
+        "selected": {
+          "item": "table",
+          "x": 20,
+          "y": 112
+        },
+        "moving": false,
+        "toast": null
+      },
+      "blocked": {
+        "table": {
+          "item": "table",
+          "x": 20,
+          "y": 112,
+          "facing": "down"
+        },
+        "vases": [
+          {
+            "item": "vase",
+            "x": 20,
+            "y": 112,
+            "on": true
+          }
+        ],
+        "inv": {
+          "table": 1
+        },
+        "selected": {
+          "item": "table",
+          "x": 20,
+          "y": 112
+        },
+        "moving": false,
+        "toast": "그쪽으로 돌리면 자리가 모자라거나 길이 막혀요. 위에 올린 것이 있으면 먼저 치워 주세요."
+      },
+      "cleared": {
+        "table": {
+          "item": "table",
+          "x": 20,
+          "y": 112,
+          "facing": "down"
+        },
+        "vases": [],
+        "inv": {
+          "table": 1,
+          "vase": 1
+        },
+        "selected": null,
+        "moving": false,
+        "toast": "그쪽으로 돌리면 자리가 모자라거나 길이 막혀요. 위에 올린 것이 있으면 먼저 치워 주세요."
+      },
+      "turned": {
+        "table": {
+          "item": "table",
+          "x": 20,
+          "y": 112,
+          "facing": "right"
+        },
+        "vases": [],
+        "inv": {
+          "table": 1,
+          "vase": 1
+        },
+        "selected": {
+          "item": "table",
+          "x": 20,
+          "y": 112
+        },
+        "moving": false,
+        "toast": "그쪽으로 돌리면 자리가 모자라거나 길이 막혀요. 위에 올린 것이 있으면 먼저 치워 주세요."
+      },
+      "restored": {
+        "table": {
+          "item": "table",
+          "x": 20,
+          "y": 112,
+          "facing": "right"
+        },
+        "vases": [],
+        "inv": {
+          "table": 1,
+          "vase": 1
+        },
+        "selected": null,
+        "moving": false,
+        "toast": null
+      },
+      "previousFailureToastExpired": true
+    }
+  ],
+  "pageErrors": []
+}

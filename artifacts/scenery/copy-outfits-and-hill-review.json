@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-17",
+  "style": "modern jackets, hoodies, suits, mini/slip dresses and two-piece sets; no wrap robes",
+  "counts": {
+    "m": 20,
+    "f": 20
+  },
+  "chance": 0.05,
+  "duplicates": false,
+  "storage": "persistent copyOutfit:<id> flags, no inventory use",
+  "browserVerified": false,
+  "localPngReviewed": [
+    "copy-outfits-m.png",
+    "copy-outfits-f.png",
+    "hill-background-scenes-1.png"
+  ],
+  "images": [
+    {
+      "file": "copy-outfits-m.png",
+      "sha256": "fcf20bef0a9ae3ad3ded289d9f55cd901923b965ef529d515c24e5a8556b9728"
+    },
+    {
+      "file": "copy-outfits-f.png",
+      "sha256": "820278fb78d8e334a84a23174581b4ecd7aea6a44634b6addf989b55e59f8260"
+    },
+    {
+      "file": "hill-background-scenes-1.png",
+      "sha256": "1825c212ddd0a517a73fa151eac1fdaa486f40daeec7df5e3a56a4761a392d7c"
+    }
+  ],
+  "tests": "copy-outfits-modern-tests.log",
+  "build": "copy-outfits-modern-build.log",
+  "hill": "Event backgrounds restored to pre-map-change renderers; map stone rise unchanged."
+}

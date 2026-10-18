@@ -1,0 +1,64 @@
+import { readFileSync, writeFileSync } from 'node:fs'
+import { CONTENT } from '/src/content/catalog'
+import { SCENES } from '/src/content/text'
+import { landscapeKind } from '/src/render/scenic-moments-art'
+import { MILESTONE_GIFTS, MILESTONES } from '/src/engine/stories'
+import { CANDIDATE_IDS, STORY_HEARTS } from '/src/engine/romance'
+import { EARLY_MILESTONES } from '/src/engine/feature-rules'
+import { INVITE_DOORS, VILLAGE_STEPS, REQUESTS } from '/src/engine/bonds'
+import { CARPENTER_WORKS } from '/src/engine/easier'
+
+const DIR = 'C:/Users/wn410/AppData/Local/Temp/claude/C--Users-wn410-OneDrive-Desktop-cloooo-twenty-seven/d753a49f-e844-4b46-a32f-19ff3982a548/scratchpad/repro/r3data/'
+const out: string[] = []
+const shown = (id: string) => !!SCENES[id] || !!landscapeKind(id) || id === 'feastFire' || id === 'allFeastFire'
+const NIDS = CONTENT.neighbors.map((n) => n.id)
+const NSET = new Set(NIDS)
+
+describe('r3data scenes', () => {
+  it('scan', () => {
+    const IGNORE = new Set(['childFirstHelpScene', 'firstMorningScene', 'toddler', 'helper'])
+    const lits: [string, string][] = JSON.parse(readFileSync(DIR + 'literals.json', 'utf8'))
+    for (const [id, where] of lits) {
+      if (IGNORE.has(id) || id.includes('${')) continue
+      if (!shown(id)) out.push(`[noScene literal] ${id} @${where}`)
+    }
+    const want: [string, string][] = []
+    for (const [npc, ms] of Object.entries(MILESTONE_GIFTS)) for (const m of MILESTONES) if (ms[m]) want.push([`gift:${npc}:${m}`, 'heartUpRaw'])
+    for (const id of CANDIDATE_IDS) STORY_HEARTS.forEach((_, i) => want.push([`romance${i + 1}:${id}`, 'heartUpRaw']))
+    for (const id of CANDIDATE_IDS) for (const p of ['confess', 'propose', 'wedding', 'loverTrust']) want.push([`${p}:${id}`, 'romance'])
+    for (const m of EARLY_MILESTONES) want.push([`growth:${m.id}`, 'applyEarlyGrowth'])
+    for (const f of ['decorate', 'mailbox', 'board', 'cooking', 'clubs', 'community', 'stall', 'travel']) want.push([`growth:${f}:full`, 'applyEarlyGrowth'])
+    for (const i of [1, 2, 3]) want.push([`home:${i}`, 'sleep'])
+    for (let l = 1; l <= VILLAGE_STEPS.length; l++) want.push([`village:${l}`, 'sleep'])
+    for (const n of CONTENT.neighbors) if (n.joinsAtBooks !== undefined) want.push([`movedIn:${n.id}`, 'sleep'])
+    for (const g of ['babyParty', 'picnic', 'starNight']) { want.push([`notice:${g}`, 'sleep']); want.push([g, 'gathering']) }
+    for (const id of Object.keys(INVITE_DOORS)) { want.push([`invite:${id}`, 'sleep']); want.push([`dinner:${id}`, 'dine']); want.push([`firstDinner:${id}`, 'dine']) }
+    for (const w of CARPENTER_WORKS) want.push([`built:${w.id}`, 'carpenter'])
+    for (const r of REQUESTS) { want.push([`ask:${r.id}`, 'askRequest']); want.push([`done:${r.id}`, 'doneRequest']) }
+    for (const f of ['blossom', 'barley', 'grapes', 'hearth']) want.push([`festival:${f}`, 'momentNow'])
+    for (const id of ['rainbow', 'autumnPath', 'springWalk', 'summerCreek', 'firstSnow', 'marketEvening']) want.push([id, 'momentNow'])
+    for (const id of ['fam:bdaySpouse', 'fam:bdayChild', 'fam:bdayChildFar', 'fam:supperFirst', 'fam:supperAll', 'fam:supper', 'fam:show']) want.push([id, 'family'])
+    for (const id of CANDIDATE_IDS) want.push([`fam:with:${id}`, 'spouseAct'])
+    for (const id of NIDS) want.push([`workSuccession:${id}`, 'progress'])
+    for (const i of [0, 1, 2]) want.push([`bibleReadingLetter:${i}`, 'finale'])
+    for (const [id, where] of want) if (!shown(id)) out.push(`[noScene enumerated] ${id} (${where})`)
+
+    // speakers in every scene
+    const sp = new Map<string, number>()
+    for (const [id, sc] of Object.entries(SCENES)) {
+      if (!sc) { out.push(`[sceneUndefined] ${id}`); continue }
+      if (!sc.title) out.push(`[sceneNoTitle] ${id}`)
+      if (!sc.lines?.length) out.push(`[sceneNoLines] ${id}`)
+      for (const l of [...(sc.lines ?? []), ...(sc.choices ?? []).flatMap((c) => c.reply)]) {
+        if (!l.text?.trim()) out.push(`[sceneEmptyLine] ${id}`)
+        if (/undefined|\bnull\b/.test(l.text ?? '')) out.push(`[sceneUndefinedText] ${id}: ${l.text}`)
+        if (l.speaker !== 'narration' && !NSET.has(l.speaker)) sp.set(`${l.speaker}`, (sp.get(l.speaker) ?? 0) + 1)
+      }
+      for (const m of JSON.stringify(sc).matchAll(/\{(\w+)\}/g)) sp.set(`{var}${m[1]}`, (sp.get(`{var}${m[1]}`) ?? 0) + 1)
+    }
+    for (const [k, v] of sp) out.push(`[speaker/var] ${k} x${v}`)
+    // which scenes use non-neighbor speakers
+    for (const [id, sc] of Object.entries(SCENES)) for (const l of sc?.lines ?? []) if (l.speaker !== 'narration' && !NSET.has(l.speaker)) out.push(`[badSpeakerAt] ${id}: ${l.speaker}`)
+    writeFileSync(DIR + 'scenes-out.txt', out.join('\n') + `\n-- scenes ${Object.keys(SCENES).length}\n`)
+  })
+})

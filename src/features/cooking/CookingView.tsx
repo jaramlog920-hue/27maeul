@@ -1,3 +1,5 @@
+import { SKILL_DEFS } from '../../engine/skill-defs'
+import { SkillCraftOptions } from '../skills/SkillLesson'
 import { ItemIcon } from '../../shared/ItemIcon'
 import { IconGrid, NeedList, type IconEntry } from '../../shared/IconGrid'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -7,7 +9,7 @@ import {
   canCook, canServe, canSit, chooseLook, clearTable, cookHand, cookOf, DISHES, deliverCook, dinersNear, eatDish, kidCanChoose, knownDish,
   missingFor, NEW_DISHES, nextCookStep, readyBlock, serveMax, serveTable, setBreadShape, sitTable, startCook, type DishId, type MealReaction,
 } from '../../engine/cooking'
-import { canCraft } from '../../engine/game'
+import { canCraft, stockOf } from '../../engine/game'
 import { featureAccess, featureHint } from '../../engine/feature-rules'
 import { COOKED_ITEMS, count } from '../../engine/items'
 import type { ItemId } from '../../engine/types'
@@ -170,11 +172,11 @@ export function CookingView() {
   // ── 요리 하나 ──
   if (view !== 'home') {
     const dish = view, def = DISHES[dish], text = dishText(dish)
-    const have = (id: ItemId) => count(game.inv, id) + count(game.chest ?? {}, id)
+    const have = (id: ItemId) => stockOf(game, id)
     const miss = missingFor(game, dish)
     const block = dish === 'bread' ? canCraft(game, 'bread') : canCook(game, dish)
     return <div className="dialog" role="dialog" aria-label={text.name}><h2>{text.name}</h2>
-      <p><DishArt id={def.art[dish === 'bread' ? c.breadShape : c.looks[dish] ?? 0]} /> {text.note}</p>
+      <DishArt id={def.art[dish === 'bread' ? c.breadShape : c.looks[dish] ?? 0]} />
       {/* 필요한 것·시간을 한 줄로 (2026-10-07 사용자 — 설명이 너무 많았다) */}
       <p className="hint">{fill(C.needLine, { items: itemLine(def.needs, have) })} · {fill(C.timeLine, { n: def.minutes })}</p>
       {miss.length > 0 && <p>{fill(C.missing, { items: itemLine(Object.fromEntries(miss.map((m) => [m.item, m.need - m.have]))) })}</p>}
@@ -201,23 +203,25 @@ export function CookingView() {
     {/* 2026-10-12 사용자: 줄줄이 늘어놓지 않고 가방처럼 아이콘 칸 — 누르면 재료(가진 수/필요한 수)·시간, 단추로 만들러 가기 */}
     <IconGrid title={C.list} entries={known.map((d): IconEntry => {
       const def = DISHES[d]
-      const ok = (d === 'bread' ? canCraft(game, 'bread') : canCook(game, d)) === null
+      const block = d === 'bread' ? canCraft(game, 'bread') : canCook(game, d)
+      const ok = block === null
       return {
         key: d,
         icon: <DishArt id={def.art[0]} size={28} />,
         label: dishText(d).name,
         dim: !ok,
-        detail: <><NeedList needs={def.needs as Record<string, number>} have={(id) => count(game.inv, id as ItemId) + count(game.chest ?? {}, id as ItemId)} icon={(id) => <ItemIcon id={id as ItemId} size={16} />} /><p>{ok ? fill(C.timeLine, { n: def.minutes }) : C.blocks.needs}</p></>,
-        action: { label: '만들러 가기', onClick: () => setView(d) },
+        detail: <><NeedList needs={def.needs as Record<string, number>} have={(id) => stockOf(game, id as ItemId)} icon={(id) => <ItemIcon id={id as ItemId} size={16} />} /><p>{ok ? fill(C.timeLine, { n: def.minutes }) : block === 'locked' ? featureHint('cooking', true) : (C.blocks as Record<string, string>)[block!] ?? C.blocks.needs}</p></>,
+        action: { label: block === 'needs' ? '재료 부족' : '만들기', disabled: !ok, onClick: () => setView(d) },
       }
     })} />
-    {unknown.length > 0 && <IconGrid title={C.unknownTitle} entries={unknown.map((d): IconEntry => ({
+    {unknown.length > 0 && <details><summary>아직 배우지 않은 요리</summary><IconGrid title={C.unknownTitle} entries={unknown.map((d): IconEntry => ({
       key: d,
       icon: <DishArt id={DISHES[d].art[0]} size={28} />,
       label: dishText(d).name,
       dim: true,
       detail: <p>{fill(C.teachers, { who: DISHES[d].teachers.map(whoName).join(' · ') })}</p>,
-    }))} />}
+    }))} /></details>}
+    {Object.keys(game.skills ?? {}).some(id => SKILL_DEFS[id]?.at === 'hearth') && <details><summary>배운 요리의 모양 고르기</summary><SkillCraftOptions at="hearth" /></details>}
     {have.length > 0 && <IconGrid title={C.bagFoods} entries={have.map((i): IconEntry => ({
       key: i,
       icon: <ItemIcon id={i} size={28} />,

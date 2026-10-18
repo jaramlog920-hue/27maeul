@@ -6,7 +6,7 @@ import { fill, roomTitle, T } from '../../content/text'
 import { bookDone, chaptersOf, groupByRoom, pickableBooks } from '../../engine/books'
 import { modeOf, roomOf } from '../../engine/shelf-rooms'
 import { LetterCopy } from './LetterCopy'
-import { canNightCopy, stockOf, type SubmitResult } from '../../engine/game'
+import { stockOf, type SubmitResult } from '../../engine/game'
 import { currentChapter } from '../../engine/offers'
 import { useGame } from '../../store/game-store'
 
@@ -120,7 +120,6 @@ export function Desk({ result }: { result: SubmitResult | null; dark: boolean })
         {chapter !== null && <> · {fill(T.ui.deskCollected, { got: list.length, all })}</>}
       </p>
       <p className="hint">{T.ui.chapterNote}</p>
-      <NightCopy />
       {message && (
         <p className={`desk-message ${result?.kind}`} role="status">
           {message}
@@ -160,22 +159,6 @@ export function Desk({ result }: { result: SubmitResult | null; dark: boolean })
           </button>
         )}
       </div>
-    </div>
-  )
-}
-
-/** 옛 조각 화면에서도 필사에 시간·재료 조건을 붙이지 않는다. */
-function NightCopy() {
-  const game = useGame((s) => s.game)
-  const nightCopy = useGame((s) => s.nightCopy)
-  const block = canNightCopy(game, CONTENT)
-  const hint = block === 'noPiece' ? '지금 책에서 더 옮겨 적을 사본이 없어요.' : '빌려 온 사본의 다음 대목을 옮겨 적어요.'
-  return (
-    <div className="night-copy">
-      <button disabled={block !== null} onClick={nightCopy}>
-        사본 옮겨 적기
-      </button>
-      <span className="hint"> {hint}</span>
     </div>
   )
 }

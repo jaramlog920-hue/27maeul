@@ -14,3 +14,5 @@ export function previewActor(id:string){
 }
 
 export function previewFamilyChild(){return {avatar:withLookDefaults({name:'아이',look:'f',skin:1}),who:'child' as const,short:1}}
+
+export function previewBirthFamily(){return {older:previewFamilyChild(),newborn:{avatar:withLookDefaults({name:'아기',look:'m',skin:1}),who:'writer' as const}}}
