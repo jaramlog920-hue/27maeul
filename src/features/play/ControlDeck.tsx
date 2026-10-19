@@ -101,6 +101,8 @@ export function ControlDeck() {
               <div className="deck-menu-pop" role="menu">
                 <button role="menuitem" className="menu-word" onClick={() => go({ kind: 'word' })}>{T.word.open}</button>
                 <button role="menuitem" onClick={() => go({ kind: 'bag' })}>{T.ui.bag}</button>
+                {/* 마을 지도는 설정 안에만 있어 서고를 찾기 어려웠다 (2026-10-19 플레이 점검 P1) */}
+                <button role="menuitem" onClick={() => go({ kind: 'villageMap' })}>{T.ui.map}</button>
                 <button role="menuitem" onClick={() => go({ kind: 'journal' })}>{T.ui.journalTitle}</button>
                 <button role="menuitem" onClick={() => go({ kind: 'family' })}>가족</button>
                 <DecorateButton role="menuitem" onPick={() => setMenu(false)} />

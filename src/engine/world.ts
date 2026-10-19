@@ -526,7 +526,7 @@ function build(): string[] {
   set(HOME_DOOR.x + 1, HOME_DOOR.y + 1, 'q') // 문 앞 편지 바구니
   set(HOME_BENCH.x, HOME_BENCH.y, 'B') // 내 집 앞 벤치 (집을 넓히면 왼쪽 두 칸이 벽이 되므로 그 아래 앞마당에)
   yard(HOUSE_RECT.x1 + 1, HOUSE_RECT.x1 + 1, 8)
-  rect(11, 4, 14, 6, 'l') // 텃밭 열두 칸 (집 오른쪽 볕 드는 곳)
+  rect(11, 4, 12, 5, 'l') // 작은 텃밭 네 칸. 옛 작물은 수확할 때까지 동적으로 보존한다.
   roofed('library', 21, 4, 27, 7, 24, 'S') // 마을 서고
   set(24, 8, ',')
   yard(21, 27, 8)

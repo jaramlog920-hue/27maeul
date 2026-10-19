@@ -169,6 +169,10 @@ export function drawDecor(g: Ctx, game: GameState, weather: Weather, t: number, 
   // 텃밭 작물: 자란 만큼 키가 크고, 다 자라면 열매 색
   for (const [k, p] of Object.entries(game.garden ?? {})) {
     const [x, y] = k.split(',').map(Number)
+    if(tileAt(x,y)!=='l'){
+      px(g,x,y,1,3,14,12,'#a7794e')
+      px(g,x,y,1,6,14,1,'#805a3c');px(g,x,y,1,11,14,1,'#805a3c')
+    }
     const ripe = isRipe(p)
     const hgt = 3 + Math.min(p.grown, 4) * 2
     px(g, x, y, 7, 13 - hgt, 2, hgt, '#77a23a')

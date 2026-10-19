@@ -74,8 +74,8 @@ describe('world', () => {
     const c = cameraFor(15, 14)
     expect(c.x).toBeCloseTo(15.5 - VIEW_W / 2)
   })
-  it('텃밭은 집 오른쪽 위 열두 칸', () => {
-    expect(PLACES.garden.tiles).toHaveLength(12)
+  it('텃밭은 집 오른쪽 위 네 칸', () => {
+    expect(PLACES.garden.tiles).toHaveLength(4)
   })
 
   it('새 이웃 집 넷은 문 앞이 걸을 수 있는 길과 이어진다', () => {
@@ -160,7 +160,7 @@ describe('내 집 (계획 7-1 작업 5)', () => {
     expect(placeAt({ x: HOME_FRONT.x + 1, y: HOME_FRONT.y })).toBe('basket')
   })
   it('텃밭은 그대로, 집 옆 가까이에 있다', () => {
-    expect(PLACES.garden.tiles).toHaveLength(12)
+    expect(PLACES.garden.tiles).toHaveLength(4)
     for (const t of PLACES.garden.tiles) expect(t.x >= 11 && t.x <= 14 && t.y >= 4 && t.y <= 6).toBe(true)
     // 증축 뒤 집(9열)과 텃밭(11열) 사이 10열을 통해 드나든다.
     expect(Math.min(...PLACES.garden.tiles.map((t) => t.x))).toBe(HOUSE_RECT.x1 + 4)

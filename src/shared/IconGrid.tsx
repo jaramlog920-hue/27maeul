@@ -16,12 +16,13 @@ export interface IconEntry {
   action?: { label: string; disabled?: boolean; onClick: () => void }
 }
 
-export function IconGrid({ entries, title, emptyText }: { entries: readonly IconEntry[]; title?: string; emptyText?: string }) {
+/** named: 칸 아래에 이름을 보인다 (장터 — 2026-10-19 플레이 점검 P20: 하나씩 눌러 봐야 무엇인지 알았다) */
+export function IconGrid({ entries, title, emptyText, named = false }: { entries: readonly IconEntry[]; title?: string; emptyText?: string; named?: boolean }) {
   const [picked, setPicked] = useState<string | null>(null)
   const sel = entries.find((e) => e.key === picked) ?? null
   if (!entries.length) return emptyText ? <p className="hint">{emptyText}</p> : null
   return (
-    <section className="icon-grid" aria-label={title}>
+    <section className={`icon-grid${named ? ' named' : ''}`} aria-label={title}>
       {title && <h3>{title}</h3>}
       <div className="bag-grid">
         {entries.map((e) => (
@@ -33,6 +34,7 @@ export function IconGrid({ entries, title, emptyText }: { entries: readonly Icon
             onClick={() => setPicked(picked === e.key ? null : e.key)}
           >
             {e.icon}
+            {named && <span className="bag-name" aria-hidden="true">{e.label}</span>}
             {e.badge && <span className="bag-count">{e.badge}</span>}
           </button>
         ))}

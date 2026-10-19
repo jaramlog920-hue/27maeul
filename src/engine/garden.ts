@@ -1,10 +1,11 @@
-// 집 오른쪽 위 텃밭 열두 칸 (설계 §2.5). 씨앗을 심고, 날마다 물을 주면 자라고, 다 자라면 거둔다. 겨울엔 쉰다.
+// 집 오른쪽 위 텃밭 네 칸. 옛 저장의 추가 작물은 수확할 때까지 원래 좌표에서 보존한다.
 import { seasonOf } from './clock'
 import type { GameState } from './game'
 import { stash, stashOverflows, owns } from './easier'
 import { has, take } from './items'
 import { addXp, XP } from './stats'
 import type { ItemId, Tile } from './types'
+import { PERMANENT_GARDEN } from './outdoor-layout'
 
 export type CropId = 'herb' | 'bean'
 export interface Plot {
@@ -18,8 +19,8 @@ export const CROPS: Record<CropId, { seed: ItemId; days: number; gives: Partial<
   bean: { seed: 'seedBean', days: 4, gives: { bean: 3 } },
 }
 
-/** 지도 텃밭('l', world.ts의 rect(11, 4, 14, 6))과 같은 칸 — 두 목록이 같은지는 테스트가 본다 */
-export const GARDEN_TILES: readonly Tile[] = [11, 12, 13, 14].flatMap((x) => [4, 5, 6].map((y) => ({ x, y }))).sort((a, b) => a.y - b.y || a.x - b.x)
+/** 새로 심을 수 있는 2×2 밭. 지도와 같은지는 테스트가 확인한다. */
+export const GARDEN_TILES: readonly Tile[] = PERMANENT_GARDEN
 
 const keyOf = (t: Tile) => `${t.x},${t.y}`
 const isPlot = (t: Tile) => GARDEN_TILES.some((g) => g.x === t.x && g.y === t.y)

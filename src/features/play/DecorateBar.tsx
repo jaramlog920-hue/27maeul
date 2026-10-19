@@ -10,6 +10,8 @@ import { spaceOfPiece } from '../../engine/space-life'
 import { hasFacingArt, furnitureFacings } from '../../render/furniture-facing'
 import { ItemIcon } from '../../shared/ItemIcon'
 import { selectedPiece, useGame } from '../../store/game-store'
+import { isOutdoorEditing, isOutdoorItem } from '../../engine/outdoor'
+import { YARD_ITEMS, yardPlaced } from '../../engine/yard'
 
 /** 방 꾸미기: 가구를 고르고 집 바닥을 누른다. 놓인 것을 누르면 골라서 돌리거나 치운다 */
 export function DecorateBar() {
@@ -22,26 +24,28 @@ export function DecorateBar() {
   const sel = useGame((s) => selectedPiece(roomOf(s.game), s.decorSel))
   const inHouse = useGame((s) => inBuildingRoom(s.game))
   const game = useGame((s) => s.game)
+  const outdoor=isOutdoorEditing(game)
   const [spaceOpen, setSpaceOpen] = useState<string | null>(null)
   const { startDecorate, stopDecorate, turnSelected, removeSelected, moveSelected, selectBelow, showDecorRoom, setSpaceUse, clearSpaceUse } = useGame.getState()
   if (!decorating) return null
   // 자리의 쓰임 (계획 16 작업 23): 고른 가구로 되는 쓰임만 보인다 — 없으면 단추도 없다
-  const uses = sel && !inHouse ? usesFor(game.room, sel) : []
-  const belongs = sel && !inHouse ? spacesOf(game.spaces ?? [], sel) : []
+  const uses = sel && !inHouse && !outdoor ? usesFor(game.room, sel) : []
+  const belongs = sel && !inHouse && !outdoor ? spacesOf(game.spaces ?? [], sel) : []
   const live = liveSpaces(game)
   const own = sel && !inHouse ? spaceOfPiece(game, sel) : undefined
   const selId = sel ? furnitureId(sel) : null
   const held = FURNITURE.find(item => item === decorating)
   const directionNames: Record<Facing, string> = { down: '아래', right: '오른쪽', up: '위', left: '왼쪽' }
-  const items = FURNITURE.filter((f) => (inv[f] ?? 0) > 0)
+  const items = FURNITURE.filter((f) => (inv[f] ?? 0) > 0 && (!outdoor||isOutdoorItem(f)))
   return (
-    <div className="decorate-bar" role="toolbar" aria-label={T.ui.decorate}>
+    <div className="decorate-bar" role="toolbar" aria-label={outdoor?'마당 꾸미기':T.ui.decorate}>
+      {outdoor&&<p className="hint">집 옆과 뒤의 빈 땅에 놓아 주세요. 밭과 집으로 가는 길은 비워 둬요.</p>}
       {/* 설명 줄은 옮기는 중일 때만 짧게 (2026-10-07 사용자 — 가독성) */}
       {moving && <p className="hint">빈 바닥을 누르거나, 조이스틱으로 옮긴 뒤 확인을 누르세요.</p>}
       {decorating === 'wallBuild' && <p className="hint">벽을 세울 바닥을 누르세요 · 한 칸 {WALL_BUILD_COINS}닢</p>}
       {decorating === 'wallRemove' && <p className="hint">허물 벽을 누르세요</p>}
       {/* 방이 하나뿐이면 방 고르기 단추를 보이지 않는다 */}
-      {!inHouse && level >= 1 && (
+      {!inHouse && !outdoor && level >= 1 && (
         <div className="decorate-items" role="group" aria-label="꾸밀 방 선택">
           <button onClick={() => showDecorRoom('workshop')}>작업실</button>
           {level >= 1 && <button onClick={() => showDecorRoom('partner')}>배우자방</button>}
@@ -92,7 +96,8 @@ export function DecorateBar() {
           </button>
         ))}
         {/* 집 안 벽 (2026-10-12): 넓힌 집에서 방을 나누고 합친다 */}
-        {!inHouse && level >= 1 && (
+        {outdoor&&YARD_ITEMS.filter(i=>yardPlaced(game.flags,i)||(inv[i]??0)>0).map(i=><button key={i} onClick={()=>{useGame.getState().stopDecorate();useGame.getState().yardMove(i)}}>{itemName(i)} 옮기기</button>)}
+        {!inHouse && !outdoor && level >= 1 && (
           <>
             <button className={decorating === 'wallBuild' ? 'on' : ''} aria-pressed={decorating === 'wallBuild'} onClick={() => startDecorate(decorating === 'wallBuild' ? 'pick' : 'wallBuild')}>벽 세우기</button>
             <button className={decorating === 'wallRemove' ? 'on' : ''} aria-pressed={decorating === 'wallRemove'} onClick={() => startDecorate(decorating === 'wallRemove' ? 'pick' : 'wallRemove')}>벽 허물기</button>

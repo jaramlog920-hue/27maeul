@@ -122,8 +122,13 @@ export const isAllDay = (e: Pick<ScheduledEvent, 'from' | 'to'>): boolean => e.t
 
 export function nextEvent(events: readonly ScheduledEvent[], day: number, minute: number): ScheduledEvent | null {
   const open = events.filter((e) => !e.done && (e.day > day || (e.day === day && e.to > minute)))
-  // 시각이 정해진 가장 가까운 일정을 먼저 — 하루 종일 일정은 그런 일정이 하나도 없을 때만 (전체 일정 창에는 늘 보인다)
-  return open.find((e) => !isAllDay(e)) ?? open[0] ?? null
+  // 시각이 정해진 가장 가까운 일정을 먼저 — 하루 종일 일정은 그런 일정이 하나도 없을 때만 (전체 일정 창에는 늘 보인다).
+  // 다만 오늘 아직 시작 전인 긴 일정(장날 아침의 07:30~18:00 등)은 다른 날 일정보다 앞에 (2026-10-19 플레이 점검 P14).
+  // 이미 진행 중이면 예전처럼 시각이 정해진 일정을 먼저 (2026-10-13)
+  const timed = open.find((e) => !isAllDay(e))
+  const today = open.find((e) => isAllDay(e) && e.day === day && e.from > minute)
+  if (today && (!timed || timed.day > day)) return today
+  return timed ?? open[0] ?? null
 }
 
 /** 전체 일정 목록 차례: 날짜순, 같은 날은 시각이 정해진 일정을 시작 시각순으로, 하루 종일 일정은 뒤에 */

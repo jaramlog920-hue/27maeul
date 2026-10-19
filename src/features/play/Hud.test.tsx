@@ -33,9 +33,10 @@ describe('위 줄: 지금 필사 자리', () => {
     expect(container.querySelector('.hud-chapter.hint')).toBeNull()
   })
 
-  it('다 쓴 책이면 마쳤다고만', () => {
+  // 2026-10-19 플레이 점검 P5: 다 쓴 책이면 다음 할 일로
+  it('다 쓴 책이면 책상에서 다음 책 고르기', () => {
     show({ progress: { ...newGame(CONTENT).progress, phm: { completed: [1], arrangement: {} } }, copy: { book: 'phm', at: {}, legacy: {} } })
-    expect(screen.getByText('📖 빌레몬서 필사를 마침')).toBeInTheDocument()
+    expect(screen.getByText('📖 책상에서 다음 책 고르기')).toBeInTheDocument()
   })
 
   it('능력치는 위 줄에 보이지 않는다 (가방 안에만)', () => {

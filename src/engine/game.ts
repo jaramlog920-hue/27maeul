@@ -3,7 +3,7 @@ import { releasePlayerPartner } from './gen-relations'
 import { copyFurnitureReward, copyFurnitureFlag, isCopyFurniture, type CopyFurnitureId } from './copy-furniture'
 import { npcAffinityScale } from './npc-affinity'
 import {WEDDING_ATTIRE,recordWeddingAttire} from './wedding-attire'
-import { isFurnitureActive, stepFurnitureAutonomy, type FurnitureAutonomy } from './furniture-autonomy'
+import { furnitureUseSpec, furnitureUseStands, isFurnitureActive, stepFurnitureAutonomy, type FurnitureAutonomy } from './furniture-autonomy'
 import {readingMoment,coverMoment,childLetterMoment} from './living-moments'
 import {otMilestoneScenes} from './progress-milestones'
 import { manuscriptFinale, completeBibleFinale, bibleEndingEvents } from './library-finale'
@@ -201,7 +201,9 @@ import { DESTS, TRIP_FRIEND_GAIN, TRIP_LEAVE_BY, tripCoinDelta, tripCost, type D
 import type { TripReward } from './trip-board'
 import { BIRTHDAY_MUL, isBirthday, NO_NOTEBOOK, noteGift, noteGot, noteHeard, noteMet, noteNews, noteSeen, noteTaste, noteObservedTaste, seenLabel, type Notebook } from './notebook'
 import { CARPENTER_WORKS, fromChest, toChest, hasStock, INK_JAR_HOLD, LIGHT_SHOES, owns, RACK_HOLD, RACK_PAPER, RAIN_WATER, SOOT_CATCH, stash, stashOverflows, stock, takeStock, walkMul, type CarpenterWork, type EasyId } from './easier'
-import { yardPlaced } from './yard'
+import { yardPlaced, yardItemAt } from './yard'
+import { isOutdoorEditing, isOutdoorItem, outdoorFurniture, outdoorBlockers, outdoorInUse, OUTDOOR_KEY, type OutdoorState } from './outdoor'
+import { outdoorGround } from './outdoor-layout'
 import { siblingMorning, swapKid } from './siblings'
 import { tipMorning } from './tip-letters'
 
@@ -293,6 +295,7 @@ export interface GameState {
   feastLines?: Record<string, string>
   /** 집 둘레 살림(빗물 항아리·갈대 말리는 틀)을 옮긴 자리 — 옛 저장은 없음(처음 자리) */
   yard?: Partial<Record<'rainJar' | 'reedRack', Tile>>
+  outdoor?: OutdoorState
   /** 빼 둔 장비 (2026-10-13) — 가방에 있어도 효과가 없다. 없으면 모두 낀 것 */
   gearOff?: ItemId[]
   /** 풀밭을 밟은 횟수 → 오솔길 */
@@ -484,6 +487,15 @@ export function useAddition(s: GameState, f: Furniture): GameState {
     return { ...started, act: { ...started.act!, at: undefined, standing: true, facing: faceToward(here, near, s.player.facing), spot, ...(def.use === 'open' ? { left: ACT_SECONDS.use, total: ACT_SECONDS.use } : {}) } }
   }
   return { ...s, act: { kind: 'use', use: def.use, spot, left: ACT_SECONDS.use, total: ACT_SECONDS.use, facing: spot.facing } }
+}
+
+/** Use a player-selected outdoor piece through the same directional actor motion as autonomous users. */
+export function useOutdoorFurniture(s:GameState,f:Furniture):GameState {
+  const spec=furnitureUseSpec(f.item,'adult')
+  if(s.map==='newland'||!outdoorFurniture(s).some(o=>o===f)||!spec||spec.kind!=='base'||outdoorInUse(s,f))return s
+  if(!furnitureUseStands(f,spec).some(p=>sameTile(p,playerTile(s))))return s
+  const kind=spec.action as 'sit'|'read'|'drink'|'craft'|'reach'
+  return {...s,target:null,idle:IDLE_RESET,player:{...s.player,path:[]},act:{kind,use:'outdoor',spot:{...f,facing:facingOf(f)},at:kind==='sit'?f:undefined,left:4.8,total:4.8,facing:facingOf(f)}}
 }
 
 // ── 아기 돌보기 (2026-10-12 도트: baby-care-motion — 안아 주기·달래기·눕히기·이불 덮기) ──
@@ -1008,7 +1020,7 @@ function blockersOf(s: GameState, people = true): Set<string> {
   if (currentMapId() === 'newland') return new Set([...solidTiles(roomOf(s)), ...asleep, ...(people ? newlandPeopleTiles(s).map(key) : [])])
   const visitor = libraryVisitorTile(s)
   const folk = people ? [...(visitor ? [key(visitor)] : []), ...innGuestsNow(s).map((g) => key(g.at)), ...Object.values(s.npcs).filter((n) => n.visible).map((n) => key(npcTile(n)))] : []
-  return new Set([...folk, ...solidTiles(s.room), ...lockedTiles(villageBookCount(s)), ...closedDoors(s), ...asleep, ...storyPropBlockers(s)])
+  return new Set([...folk, ...solidTiles(s.room), ...outdoorBlockers(s), ...lockedTiles(villageBookCount(s)), ...closedDoors(s), ...asleep, ...storyPropBlockers(s)])
 }
 
 /**
@@ -1083,6 +1095,7 @@ function interactableAt(s: GameState, t: Tile): boolean {
     (!!visitor && sameTile(visitor, t)) ||
     !!innGuestAt(s, t) ||
     isStallTile(s, t) ||
+    !!s.garden[key(t)] || !!yardItemAt(s,t) || outdoorFurniture(s).some(f=>!!furnitureUseSpec(f.item,'adult')&&footprint(f).some(p=>sameTile(p,t))) ||
     Object.values(s.npcs).some((n) => n.visible && sameTile(npcTile(n), t)) ||
     straysToday(s).some((a) => sameTile(STRAY_SPOTS[a], t)) ||
     (!!s.companion && sameTile({ x: Math.round(s.companion.x), y: Math.round(s.companion.y) }, t)) ||
@@ -1135,7 +1148,7 @@ export function tapTile(s: GameState, tile: Tile): GameState {
   if (currentMapId() === 'newland') return tapNewland(s, tile)
   const visitor = libraryVisitorTile(s)
   // 걸을 수 있는 장소 칸(텃밭)에 서서 그 칸을 누르면 인사 대신 그 장소 창으로 (아래 place 갈래)
-  if (sameTile(tile, from) && s.player.path.length === 0 && !isStallTile(s, tile) && !(visitor && sameTile(visitor, tile)) && !placeAt(tile)) {
+  if (sameTile(tile, from) && s.player.path.length === 0 && !isStallTile(s, tile) && !(visitor && sameTile(visitor, tile)) && !placeAt(tile) && !s.garden[key(tile)] && !outdoorFurniture(s).some(f=>footprint(f).some(p=>sameTile(p,tile)))) {
     return { ...s, player: { ...s.player, facing: 'down' }, idle: greet(), target: null }
   }
   const blockers = blockersOf(s)
@@ -1145,8 +1158,19 @@ export function tapTile(s: GameState, tile: Tile): GameState {
   const stray = straysToday(s).find((a) => sameTile(STRAY_SPOTS[a], tile))
   const pet = s.companion && sameTile({ x: Math.round(s.companion.x), y: Math.round(s.companion.y) }, tile)
   const kid = childTile(s)
-  const place = placeAt(tile)
+  const place = s.garden[key(tile)] && currentMapId() === 'village' ? 'garden' : placeAt(tile)
   // 생활 가구 48종 (2026-10-12): 곁에서 누르면 그 가구를 쓴다 — 흔들기·재봉 같은 그린 동작, 여닫기, 앉기·마시기·살펴보기
+  const outside = currentMapId() === 'village' && outdoorFurniture(s).find(f=>footprint(f).some(p=>sameTile(p,tile)))
+  if (!npc && !place && outside) {
+    if(outdoorInUse(s,outside))return s
+    const spec = furnitureUseSpec(outside.item,'adult')
+    if (!spec) return s
+    const options=furnitureUseStands(outside,spec).filter(outdoorGround).map(stand=>({stand,path:findPath(from,stand,blockers)})).filter((o):o is {stand:Tile;path:Tile[]}=>o.path!==null).sort((a,b)=>a.path.length-b.path.length)
+    const best=options[0]
+    if(!best)return s
+    if(!best.path.length)return useOutdoorFurniture(s,outside)
+    return {...s,player:{...s.player,path:best.path},target:{kind:'furniture',item:outside.item,tile},idle:IDLE_RESET}
+  }
   const addition = !npc && !place ? s.room.find((f) => isAddition(f.item) && !isStorage(f.item) && footprint(f).some((p) => sameTile(p, tile))) : undefined
   if (addition) {
     if (footprint(addition).some((p) => isNear(from, p)) && !s.player.path.length) return useAddition({ ...s, target: null }, addition)
@@ -1328,7 +1352,7 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
   const apptAt = appointmentSpots(s)
   const gctx = goalContext({ ...s, clock }, content)
   const npcs: Record<string, Npc> = {}
-  const furnitureBlockers = new Set([...solidTiles(s.room), ...lockedTiles(villageBookCount(s)), ...storyPropBlockers(s)])
+  const furnitureBlockers = new Set([...solidTiles(s.room), ...outdoorBlockers(s), ...lockedTiles(villageBookCount(s)), ...storyPropBlockers(s)])
   const ambient = new Set<string>()
   const wandering = !!s.gen?.on && clock.minute >= 6 * 60 && clock.minute < 21 * 60 && !s.scenes.length
   const current = { ...s, clock }
@@ -1485,7 +1509,13 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
     && (!fixedSpots[id] || (isHome(npcTile(n)) && s.romance?.partner === id && s.romance.stage === 'married'))
     && !heldForCast(beforeFurniture, id)
     && !routineOf(beforeFurniture, id)?.req && !routineOf(beforeFurniture, id)?.with && !routineOf(beforeFurniture, id)?.away && !routineOf(beforeFurniture, id)?.news).map(([id]) => id))
-  const base = stepFurnitureAutonomy(beforeFurniture, dt, { npcs: furnitureNpcs, child: childAtSchool(beforeFurniture) ? null : childTile(beforeFurniture) })
+  const outdoorAuto = featureAccess(s,'autonomy')==='full'&&!!s.gen?.on
+  const base = stepFurnitureAutonomy(beforeFurniture, dt, {
+    npcs:furnitureNpcs, child:childAtSchool(beforeFurniture)?null:childTile(beforeFurniture),
+    roamingChild:outdoorAuto,
+    room:[...s.room,...(outdoorAuto?outdoorFurniture(s):[])],
+    inside:t=>isHome(t)||(outdoorAuto&&outdoorGround(t)),
+  })
   let lived = liveNearby(petLife(base, now, events, childTile(base)), now, events)
   if (moving) {
     const found = pickupGroundFragment(lived, content)
@@ -5022,11 +5052,12 @@ function keepsDecorPlayerAccess(s: GameState, room: readonly Furniture[], ctx: R
 
 export function placeFurniture(s: GameState, item: ItemId, t: Tile, facing?: Facing): GameState | null {
   const access = featureAccess(s, 'decorate')
-  if (access === 'locked' || (access === 'preview' && item !== 'stool')) return null
+  if (!isOutdoorEditing(s) && (access === 'locked' || (access === 'preview' && item !== 'stool'))) return null
   syncHome(s)
   // 꾸밀 방: 첫 마을은 내 집, 새 터는 지금 들어와 있는 입주 주택 방 (방 밖이면 없음)
   const at = roomTarget(s)
   if (!at) return null
+  if (at.key === OUTDOOR_KEY && !isOutdoorItem(item)) return null
   const f = placement(at.room, item, t, facing, at.ctx)
   if (!f) return null
   const left = take(s.inv, { [item]: 1 })
@@ -5046,7 +5077,7 @@ export function rotateFurniture(s: GameState, f: Furniture): GameState | null {
   if (!at) return null
   // 막힌 방향은 건너뛰고 다음 방향으로 (2026-10-19 감사 L-68)
   for (const turned of rotations(at.room, f, at.ctx)) {
-    const room = at.room.map((o) => (o === f ? turned : o))
+    const room = at.room.map((o) => (o === f ? { ...f, ...turned } : o))
     if (keepsDecorPlayerAccess(s, room, at.ctx)) return withRoomOf(s, at.key, room)
   }
   return null

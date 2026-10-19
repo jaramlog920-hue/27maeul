@@ -22,10 +22,20 @@ function finishChapter(book: 'jud' | 'phm') {
 }
 
 describe('책을 덮은 뒤 필사 결과', () => {
-  it('장 완료 보상을 모았다가 책을 덮으면 이전 → 현재 점수와 경험치를 보여 주고 확인으로 닫는다', () => {
+  // 2026-10-19 플레이 점검 P11: 장 하나만 마친 날은 완료 화면이 이미 보여 줬으니 창을 다시 띄우지 않는다
+  it('장 하나만 마치고 완료 화면에서 책을 덮으면 능력치 창을 다시 띄우지 않는다', () => {
+    render(<CopyResult />)
+    act(() => finishChapter('jud'))
+    act(() => useGame.getState().copyExit())
+    expect(useGame.getState().copyResult).toBeNull()
+    expect(screen.queryByRole('status')).toBeNull()
+  })
+
+  it('여러 장을 마쳤으면 책을 덮을 때 이전 → 현재 점수와 경험치를 보여 주고 확인으로 닫는다', () => {
     render(<CopyResult />)
     const before = useGame.getState().game.stats
     act(() => finishChapter('jud'))
+    act(() => finishChapter('phm'))
     expect(screen.queryByRole('status')).toBeNull()
     act(() => useGame.getState().copyExit())
     expect(useGame.getState().modal).toBeNull()

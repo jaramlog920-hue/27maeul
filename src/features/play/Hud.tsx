@@ -34,7 +34,8 @@ export function Hud() {
     <header className="hud">
       <div className="hud-row">
         <span className="hud-day">
-          {fill(T.ui.day, { day })} · {T.clubs.day[day % 7]} · {T.ui.season[seasonOf(day)]} · {weather}
+          {/* 장날 요일 이름이 '장날'이면 뒤의 장날 표시와 겹친다 (2026-10-19 플레이 점검 P13) — 장날 표시만 남긴다 */}
+          {fill(T.ui.day, { day })}{isMarketDay(day) && T.clubs.day[day % 7] === T.ui.market ? '' : ` · ${T.clubs.day[day % 7]}`} · {T.ui.season[seasonOf(day)]} · {weather}
           {isMarketDay(day) && <b className="hud-market"> · {T.ui.market}</b>}
           {peace && <b className="hud-peace"> · {T.ui.peace}</b>}
         </span>
@@ -66,6 +67,9 @@ export function Hud() {
           <button className="hud-btn" onClick={() => open({ kind: 'bag' })}>
             {T.ui.bag}
           </button>
+          <button className="hud-btn" onClick={() => open({ kind: 'villageMap' })}>
+            {T.ui.map}
+          </button>
           <button className="hud-btn" onClick={() => open({ kind: 'journal' })}>
             {T.ui.journalTitle}
           </button>
@@ -92,11 +96,12 @@ function copyNow(book: CopyBook | null, at: CopyAt | undefined, completed: reado
   // 구약: 본문을 안 불러왔을 수 있으니 장만 보인다 (절 수는 책상에서)
   if (isOtBook(book)) {
     const open = Array.from({ length: otRow(book).chapters }, (_, i) => i + 1).filter((c) => !completed.includes(c))
-    if (!open.length) return fill(T.ui.hudCopyDone, { book: OT_NAME[book] })
+    // 다 쓴 책이면 다음 할 일로 (2026-10-19 플레이 점검 P5: 꽂은 뒤에도 '필사를 마침'에 멈춰 있었다)
+    if (!open.length) return T.ui.hudCopyNext
     return fill(T.ot.hudAt, { book: OT_NAME[book], chapter: at && open.includes(at.chapter) ? at.chapter : open[0], unit: chapterUnit(book) })
   }
   const open = chaptersOf(book, CONTENT).filter(c => !completed.includes(c))
-  if (!open.length) return fill(T.ui.hudCopyDone, { book: BOOK_NAME[book] })
+  if (!open.length) return T.ui.hudCopyNext
   const chapter = at && open.includes(at.chapter) ? at.chapter : open[0]
   const verses = verseNumbers(book, chapter)
   const found = at?.chapter === chapter ? verses.findIndex(v => v >= at.verse) : 0

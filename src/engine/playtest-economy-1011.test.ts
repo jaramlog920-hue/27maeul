@@ -21,16 +21,17 @@ describe('1. 텃밭 칸', () => {
     const s = { ...newGame(CONTENT), inv: { seedHerb: 1 } }
     for (const t of PLACES.garden.tiles) expect(canPlant(s, t, 'herb'), key(t)).toBeNull()
   })
-  it('옛 저장의 텃밭 밖 작물은 빈 텃밭 칸으로 옮긴다', () => {
+  it('옛 저장의 텃밭 밖 작물은 원래 좌표에 남는다', () => {
     const s = newGame(CONTENT)
     const keep = PLACES.garden.tiles[0]
     const plot = { crop: 'herb' as const, grown: 1, wateredDay: null }
     const old = { ...s, garden: { [key(keep)]: plot, '17,3': { ...plot, crop: 'bean' as const } } }
     const back = deserialize(serialize(old), CONTENT)!
+    // 2026-10-19 집 옆 자유 마당: 텃밭 밖 옛 작물도 원래 좌표에 남는다 (거두면 잔디로)
     const keys = Object.keys(back.garden)
     expect(keys).toHaveLength(2)
     expect(back.garden[key(keep)]).toEqual(plot)
-    for (const k of keys) expect(PLACES.garden.tiles.map(key)).toContain(k)
+    expect(back.garden['17,3']).toEqual({ ...plot, crop: 'bean' })
   })
 })
 
@@ -77,7 +78,7 @@ const standAt = (s: GameState, t: { x: number; y: number }): GameState => ({ ...
 
 describe('4. 서 있는 텃밭 칸을 다시 누르면 텃밭 창', () => {
   it('제자리 텃밭 칸을 누르면 그 칸의 텃밭으로 도착한다', () => {
-    const at = PLACES.garden.tiles[5]
+    const at = PLACES.garden.tiles[PLACES.garden.tiles.length - 1]
     const out = tapTile(standAt(newGame(CONTENT), at), at)
     expect(out.target).toEqual({ kind: 'place', id: 'garden', tile: at })
     expect(out.player.path).toEqual([])

@@ -2565,3 +2565,14 @@ button.row:active:not(:disabled) { background: #efe3c4; }
 .decorate-facing button { min-height: 36px; padding: 4px 10px; }
 .decorate-facing button[aria-pressed='true'] { background: var(--panel-soft); border-color: var(--accent); font-weight: 700; }
 .furniture-facing-preview { display: block; image-rendering: pixelated; flex: none; }
+/* 특별 제본 재료 구하는 곳·아직 쓸 수 없는 열쇠 (2026-10-19 플레이 점검 P9·P22): 누르면 화면 아래에 작은 창 */
+.bind-short { color: #a0452e; }
+.bind-where { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); width: min(480px, calc(100% - 32px)); z-index: 50; padding: 12px; background: var(--panel); border: 2px solid var(--panel-edge); border-radius: 6px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25); }
+.bind-where h3 { margin: 0 0 6px; font-size: 15px; }
+.bind-where p { margin: 4px 0; font-size: 13px; line-height: 1.5; }
+/* 장터 칸 이름 (2026-10-19 플레이 점검 P20): 그림 아래 두 줄까지, 값은 오른쪽 위 */
+.icon-grid.named .bag-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.icon-grid.named .bag-slot { flex-direction: column; justify-content: flex-start; aspect-ratio: auto; min-height: 64px; padding: 4px 2px 3px; gap: 2px; }
+.icon-grid.named .bag-name { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 10px; line-height: 1.2; word-break: keep-all; text-align: center; color: var(--ink); }
+.icon-grid.named .bag-count { top: 0; bottom: auto; }
+.icon-grid.named .bag-slot.dim .bag-name { opacity: .7; }

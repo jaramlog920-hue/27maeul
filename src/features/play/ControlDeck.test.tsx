@@ -29,12 +29,12 @@ describe('아래 조작판', () => {
   it('메뉴는 말씀·가방·일지·가족·설정 (+집 안이면 집 꾸미기) — 선반은 없다', () => {
     const { getByText, getAllByRole } = render(<ControlDeck />)
     act(() => getByText('메뉴').click())
-    expect(getAllByRole('menuitem').map((b) => b.textContent)).toEqual(['말씀', '가방', '일지', '가족', '가구 배치', '설정'])
+    expect(getAllByRole('menuitem').map((b) => b.textContent)).toEqual(['말씀', '가방', '지도', '일지', '가족', '가구 배치', '설정'])
     act(() => getByText('메뉴').click())
     act(() => useGame.setState((s) => ({ game: { ...s.game, player: { ...s.game.player, ...HOME_FRONT, path: [] } } })))
     act(() => getByText('메뉴').click())
     const items = getAllByRole('menuitem').map((b) => b.textContent)
-    expect(items).toEqual(['말씀', '가방', '일지', '가족', '설정'])
+    expect(items).toEqual(['말씀', '가방', '지도', '일지', '가족', '마당 꾸미기', '설정'])
     expect(items.join()).not.toContain('선반')
   })
   it('메뉴의 말씀만 아이콘 없이 진한 색 단추 (다른 메뉴는 보통 색)', () => {

@@ -15,6 +15,10 @@ import { useGame } from '../../store/game-store'
 import { t } from '../../shared/i18n'
 import { ShelfPicture } from './BookArt'
 import { ShelfRow } from './ShelfRow'
+import { finishedCopies } from '../../engine/binding'
+import { roomOf } from '../../engine/shelf-rooms'
+
+const BOOK_NAME = T.quiz.books as Record<string, string>
 
 /** 서고 운영 (2026-10-08): 사서 맡기기 · 오늘 온 방문객에게 조각 하나 함께 읽어 주기 */
 function LibraryOps() {
@@ -104,6 +108,7 @@ export function Library() {
   const n = Object.values(shelved).filter((g) => g !== undefined).length
   const payBooks = useGame((s) => libraryBookCount(s.game))
   const anyRetry = GOSPELS.some((b) => shelved[b] !== undefined && shelved[b]! < 2)
+  const carried = finishedCopies({ bound, shelved })
   return (
     <div className="dialog library" role="dialog" aria-label={T.library.title}>
       <h2>
@@ -122,10 +127,19 @@ export function Library() {
         ))}
       </ul>
       {anyRetry && <p className="hint">{fill(T.library.retryCost, { gold: inv.goldLeaf ?? 0, oil: inv.oil ?? 0 })}</p>}
+      {/* 들고 온 완성본은 어느 방 어느 문으로 가는지 (2026-10-19 플레이 점검 P2·P3) — 복음서는 위 선반에서 바로 꽂는다 */}
+      {carried.map((b) => {
+        const door = roomOf(b).door
+        return door === null ? null : (
+          <p key={b} className="hint library-carry">
+            {fill(T.library.carryTo, { book: BOOK_NAME[b], room: (T.library.lockedRooms as string[])[door], where: (T.library.doorWhere as string[])[door] })}
+          </p>
+        )
+      })}
       <ul className="library-locked">
         {(T.library.lockedRooms as string[]).map((r, i) =>
           // 열린 방(방 표로 판정 — 잔치 다음 날 사도행전 방, 사도행전을 꽂은 다음 날 로마서–빌레몬서 방, 그 방 책을 제본한 날 …)
-          open.includes(i) ? <li key={r}>{fill(T.library.roomOpen, { room: r })}</li> : <li key={r}>🔒 {r}</li>,
+          open.includes(i) ? <li key={r}>{fill(T.library.roomOpen, { room: r, where: (T.library.doorWhere as string[])[i] })}</li> : <li key={r}>🔒 {r}</li>,
         )}
       </ul>
       <ReadingSeat />

@@ -5,6 +5,8 @@ import { add, count, hasSlotFor, take } from './items'
 import type { GameState } from './game'
 import type { Tile } from './types'
 import { HOME_FRONT, houseAt, isIndoor, sameTile, walkableOn } from './world'
+import { outdoorGround, isPermanentGarden } from './outdoor-layout'
+import { footprint } from './room'
 
 export type YardItem = 'rainJar' | 'reedRack'
 export const YARD_ITEMS: readonly YardItem[] = ['rainJar', 'reedRack']
@@ -35,9 +37,10 @@ export function stowYard(s: GameState, item: YardItem): GameState | null {
   return { ...s, inv: add(s.inv, { [item]: 1 }), flags: { ...s.flags, [offKey(item)]: 1 } }
 }
 
-export function canPlaceYard(s: Pick<GameState, 'flags'> & Partial<Pick<GameState, 'yard' | 'map'>>, item: YardItem, t: Tile): boolean {
+export function canPlaceYard(s: Pick<GameState, 'flags'> & Partial<Pick<GameState, 'yard' | 'map' | 'garden' | 'outdoor'>>, item: YardItem, t: Tile): boolean {
   if ((s.map ?? 'village') !== 'village') return false
-  if (Math.abs(t.x - HOME_FRONT.x) + Math.abs(t.y - HOME_FRONT.y) > YARD_REACH) return false
+  if (!outdoorGround(t)) return false
+  if (isPermanentGarden(t) || s.garden?.[`${t.x},${t.y}`] || s.outdoor?.placements.some(f=>footprint(f).some(p=>sameTile(p,t)))) return false
   if (sameTile(t, HOME_FRONT) || !walkableOn('village', t) || isIndoor(t) || houseAt(t.x, t.y)) return false
   return !YARD_ITEMS.some((o) => o !== item && yardPlaced(s.flags, o) && sameTile(yardSpot(s, o), t))
 }
@@ -59,7 +62,7 @@ export function sanitizeYard(raw: unknown): Partial<Record<YardItem, Tile>> | un
   const out: Partial<Record<YardItem, Tile>> = {}
   for (const i of YARD_ITEMS) {
     const t = (raw as Record<string, unknown>)[i] as Tile | undefined
-    if (t && Number.isInteger(t.x) && Number.isInteger(t.y) && Math.abs(t.x - HOME_FRONT.x) + Math.abs(t.y - HOME_FRONT.y) <= YARD_REACH) out[i] = { x: t.x, y: t.y }
+    if (t && Number.isInteger(t.x) && Number.isInteger(t.y) && (outdoorGround(t) || Math.abs(t.x - HOME_FRONT.x) + Math.abs(t.y - HOME_FRONT.y) <= YARD_REACH)) out[i] = { x: t.x, y: t.y }
   }
   return Object.keys(out).length ? out : undefined
 }

@@ -73,6 +73,9 @@ import { inArchiveRoom, newlandGroundAt, newlandOpen, newlandRevealedOn } from '
 import { areaOf, widthOf } from '../engine/newland-build'
 import { ARCHIVE, INTERIOR_SHELF, NEWLAND_H, NEWLAND_W, ROOM_SLOTS } from '../engine/newland-config'
 import { inBuildingRoom, roomOf } from '../engine/newland-rooms'
+import { outdoorFurniture } from '../engine/outdoor'
+import { furnitureUseSpec } from '../engine/furniture-autonomy'
+import { outdoorGround } from '../engine/outdoor-layout'
 import { OLD_BUILDINGS, OLD_CONSTRUCTION, OLD_INTERIOR_SHELL, OLD_PROPS, OLD_TERRAIN, OLD_VILLAGE_PALETTE } from './old-village-art'
 import { newlandHouseCanvas } from './newland-house-art'
 import { hasHouseLook } from '../engine/newland-house-look'
@@ -1396,6 +1399,10 @@ function drawFamily(g: Ctx, action: FamilyAction, facing: Facing, frame: number,
 
 /** 기록자의 지금 동작 (앉는 자리가 있으면 그 칸 위에서) */
 function drawPlayerAct(g: Ctx, act: PlayerAct, p: { x: number; y: number }, blink: boolean, season: Season, extra: PersonExtra) {
+  if(act.use==='outdoor'&&act.spot){
+    const spec=furnitureUseSpec(act.spot.item,'adult')
+    if(spec){drawAutonomousFurniture(g,{furniture:act.spot,spec,stand:p,facing:act.facing,phase:'use',actor:{...p,path:[],facing:act.facing,walkTime:0},left:act.left,elapsed:act.total-act.left,turn:0},'writer',blink,season,extra);return}
+  }
   const at = act.at ?? p
   const stand = person('writer', act.facing, 0, false, 'stand', season, extra)
   if (act.kind === 'eat') {
@@ -1913,6 +1920,7 @@ export interface Renderer {
   look: Tile | null
   /** 방 꾸미기 중이면 정해 둔 자리의 테두리도 보인다 (계획 16 작업 23) */
   decorating: boolean
+  preview?: { furniture: Furniture; valid: boolean } | null
   draw(game: GameState, t: number, dt: number): void
 }
 
@@ -2345,7 +2353,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       const minute = game.clock.minute
       pantryFull = Object.values(game.pantry ?? {}).some((n) => (n ?? 0) > 0)
       autoFurnitureUses = Object.entries(game.furnitureAuto ?? {}).filter(([id, a]) => id !== 'player' && a.phase === 'use' && !a.actor.path.length &&
-        roomOf(game).some(f => f.item === a.furniture.item && f.x === a.furniture.x && f.y === a.furniture.y && facingOf(f) === facingOf(a.furniture)) &&
+        (game.map==='newland'?roomOf(game):[...game.room,...outdoorFurniture(game)]).some(f => f.item === a.furniture.item && f.x === a.furniture.x && f.y === a.furniture.y && facingOf(f) === facingOf(a.furniture)) &&
         (!id.startsWith('npc:') || !npcEventMotion(game, id.slice(4), t)) && (id !== 'child' || !childAtSchool(game))).map(([, a]) => a)
       activeSpot = game.act?.spot ? { spot: game.act.spot, kind: game.act.kind, use: game.act.use, elapsed: game.act.total - game.act.left } : null
       activeCopyCast = game.act?.use==='copyFurniture'&&game.act.spot ? copyFurnitureCast(game,game.act.spot) : {}
@@ -2572,6 +2580,15 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
 
       type Item = { y: number; paint: () => void }
       const items: Item[] = []
+      for(const f of [...outdoorFurniture(game)].sort((a,b)=>furnitureOrder(a)-furnitureOrder(b))){
+        if(FURNITURE_DEFS[f.item]?.layer==='floor')drawFurniture(g,f)
+        else items.push({y:f.y+sizeOf(f.item,facingOf(f)).h-1+(f.on?.valueOf()?0.001:0),paint:()=>drawFurniture(g,f)})
+      }
+      if(renderer.decorating&&outdoorGround(here)){
+        g.save();g.strokeStyle='rgba(102,137,79,.35)';g.lineWidth=1
+        for(let y=1;y<=8;y++)for(let x=1;x<=17;x++)if(outdoorGround({x,y}))g.strokeRect(x*TILE+.5,y*TILE+.5,TILE-1,TILE-1)
+        g.restore()
+      }
       // 아기는 부모 집 안에만. 받은 침대는 성장 후에도 남는다.
       const infant = bakerInfantAtHome(game, roomAt(here))
       if (infant) items.push({ y: infant.at.y, paint: () => drawSprite(g, paint(`baby/home/${JSON.stringify(infant.baby.avatar??{})}`, BABY.baby, newbornArt(genAvatar(infant.baby)).palette), infant.at.x, infant.at.y, 6) })
@@ -2984,6 +3001,13 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       for (const b of flies) items.push({ y: b.y + 0.5, paint: () => g.drawImage(paint(`bf/${b.frame}/${b.hue}`, BUTTERFLY[b.frame], { ...SMALL_PALETTE, o: b.hue ? '#99c2ea' : '#e79b77', O: b.hue ? '#719ece' : '#eed584' }), Math.round(b.x * TILE), Math.round(b.y * TILE)) })
 
       items.sort((a, b) => a.y - b.y).forEach((i) => i.paint())
+      if(renderer.decorating&&renderer.preview){
+        const {furniture,valid}=renderer.preview
+        g.save();g.globalAlpha=.5;drawFurniture(g,furniture);g.globalAlpha=1
+        g.strokeStyle=valid?'#527b43':'#c94d49';g.lineWidth=1
+        for(const p of footprint(furniture))g.strokeRect(p.x*TILE+.5,p.y*TILE+.5,TILE-1,TILE-1)
+        g.restore()
+      }
       const room = viewRoomAt(here)
       if (room) {
         const rx = room.x0 * TILE

@@ -61,7 +61,7 @@ const hash = (id: string) => [...id].reduce((n, c) => (n * 31 + c.charCodeAt(0))
 const sameRoom = (a: Tile, b: Tile) => isHome(a) ? isHome(b) : !!roomAt(a) && roomAt(a) === roomAt(b)
 export const isFurnitureActive = (a: FurnitureActivity | undefined) => !!a && a.phase !== 'cooldown'
 
-function stands(f: Furniture, spec: FurnitureUseSpec): Tile[] {
+export function furnitureUseStands(f: Furniture, spec: FurnitureUseSpec): Tile[] {
   const own = footprint(f)
   if (spec.kind === 'child' || ['cushion', 'mat', 'pillows'].includes(f.item)) return own
   const front = { down: [0, 1], up: [0, -1], left: [-1, 0], right: [1, 0] }[facingOf(f)]
@@ -73,6 +73,7 @@ function stands(f: Furniture, spec: FurnitureUseSpec): Tile[] {
 export interface FurnitureAutonomyContext {
   npcs: ReadonlySet<string>
   child: Tile | null
+  roamingChild?: boolean
   room?: readonly Furniture[]
   inside?: (t: Tile) => boolean
   clear?: readonly Tile[]
@@ -87,7 +88,7 @@ export function stepFurnitureAutonomy(s: GameState, dt: number, ctx: FurnitureAu
   const reserved = new Set<string>()
   const actors: { id: string; actor: Actor; age: FurnitureUserAge; eligible: boolean }[] = []
   for (const [id, n] of Object.entries(s.npcs)) if (n.visible) actors.push({ id: `npc:${id}`, actor: n, age: id === 'child' ? 'helper' : 'adult', eligible: ctx.npcs.has(id) && !s.emotes?.some(e => e.npc === id && e.partner) })
-  if (s.child && ctx.child && childMode(s.child, s.clock.day) === 'home') {
+  if (s.child && ctx.child && (childMode(s.child, s.clock.day) === 'home' || (ctx.roamingChild && childMode(s.child,s.clock.day)==='roam'))) {
     const stage = childStage(s.child, s.clock.day)
     if (stage !== 'baby') actors.push({ id: 'child', actor: before.child?.actor ?? { ...ctx.child, path: [], facing: 'down', walkTime: 0 }, age: stage === 'helper' ? 'helper' : stage === 'toddler' ? 'toddler' : 'adult', eligible: s.clock.minute >= 7 * 60 && s.clock.minute < 21 * 60 && !s.act })
   }
@@ -129,7 +130,7 @@ export function stepFurnitureAutonomy(s: GameState, dt: number, ctx: FurnitureAu
         const spec = furnitureUseSpec(f.item, user.age)
         if (!spec || f.on || (s.act?.spot && sameTile(f, s.act.spot)) || !area(at(user.actor), f) || Math.abs(f.x - user.actor.x) + Math.abs(f.y - user.actor.y) > 6 ||
           footprint(f).some(p => occupied.has(key(p)) || reserved.has(key(p)))) continue
-        for (const stand of stands(f, spec)) {
+        for (const stand of furnitureUseStands(f, spec)) {
           if (barriers.has(key(stand)) || protectedStands.has(key(stand)) || !area(stand, f)) continue
           const path = findPath(at(user.actor), stand, barriers)
           if (path && path.length <= 8 && path.every(p => area(p, f))) { choices.push({ furniture: { ...f }, spec, stand, path }); break }

@@ -29,8 +29,8 @@ describe('텃밭', () => {
       expect(harvest(out, spot)).toBeNull()
     }
   })
-  it('열두 칸', () => {
-    expect(GARDEN_TILES).toHaveLength(12)
+  it('네 칸', () => {
+    expect(GARDEN_TILES).toHaveLength(4)
   })
   it('씨앗이 있어야 심고, 한 칸에 하나, 겨울엔 못 심는다', () => {
     const s = withSeeds()

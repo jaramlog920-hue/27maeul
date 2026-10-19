@@ -12,6 +12,8 @@ import { markMapTap } from '../../shared/ghost'
 import { selectedPiece, useGame } from '../../store/game-store'
 import { footprint } from '../../engine/room'
 import { roomOf } from '../../engine/newland-rooms'
+import { placeFurniture, moveFurniture } from '../../engine/game'
+import { isOutdoorEditing } from '../../engine/outdoor'
 
 /** 탭한 화면 좌표 → 마을 칸 (카메라 반영) */
 export function tileFromPoint(
@@ -29,6 +31,7 @@ export function tileFromPoint(
 export function GameCanvas({ zoom = 1 }: { zoom?: number }) {
   const ref = useRef<HTMLCanvasElement>(null)
   const renderer = useRef<Renderer | null>(null)
+  const hover = useRef<{x:number;y:number}|null>(null)
   const zoomRef = useRef(zoom)
   useEffect(() => { zoomRef.current = zoom }, [zoom])
 
@@ -38,6 +41,8 @@ export function GameCanvas({ zoom = 1 }: { zoom?: number }) {
     if (!canvas || !ctx) return
     const r = createRenderer(ctx, CONTENT)
     renderer.current = r
+    let previewGame:unknown, previewKey=''
+    let preview:Renderer['preview']=null
     let lastT = 0
     useGame.setState({
       capture: (focus) => {
@@ -81,6 +86,19 @@ export function GameCanvas({ zoom = 1 }: { zoom?: number }) {
         r.selected = sel ? footprint(ghost ? { ...sel, x: ghost.x, y: ghost.y } : sel) : null
         r.look = st.decorating ? st.decorLook : null
         r.decorating = !!st.decorating
+        const cursor=ghost??hover.current
+        const held=st.decorating&&st.decorating!=='pick'&&st.decorating!=='wallBuild'&&st.decorating!=='wallRemove'?st.decorating:undefined
+        const item=st.decorMoving?sel?.item:held
+        if(st.decorating&&isOutdoorEditing(st.game)&&cursor&&item){
+          const key=`${item}:${cursor.x}:${cursor.y}:${st.decorFacing}:${st.decorMoving}:${sel?.x}:${sel?.y}`
+          if(previewGame!==st.game||previewKey!==key){
+            const next=st.decorMoving&&sel?moveFurniture(st.game,sel,cursor):placeFurniture(st.game,item,cursor,st.decorFacing)
+            const piece=next&&roomOf(next).find(f=>f.item===item&&f.x===cursor.x&&f.y===cursor.y)
+            preview={furniture:piece??{...sel,item,...cursor,facing:st.decorMoving&&sel?sel.facing:st.decorFacing},valid:!!next}
+            previewGame=st.game;previewKey=key
+          }
+          r.preview=preview
+        }else r.preview=null
         lastT = Math.max(0, (now - t0) / 1000)
         r.draw(st.game, lastT, zoomChanged ? 0 : dt)
       } catch (err) {
@@ -141,6 +159,12 @@ export function GameCanvas({ zoom = 1 }: { zoom?: number }) {
       width={VIEW_W * TILE}
       height={VIEW_H * TILE}
       aria-label="마을"
+      onPointerMove={e=>{
+        const c=e.currentTarget,r=renderer.current
+        if(!r||!useGame.getState().decorating)return
+        hover.current=tileFromPoint(e.nativeEvent.offsetX,e.nativeEvent.offsetY,{left:0,top:0,width:c.clientWidth,height:c.clientHeight},r.camera,r.zoom)
+      }}
+      onPointerLeave={()=>{hover.current=null}}
       onPointerDown={(e) => {
         e.preventDefault()
         unlockAudio()

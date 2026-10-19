@@ -59,6 +59,7 @@ function tradeIcon(t: Trade): ItemId | null {
 
 export function TradeBoard() {
   const [tab, setTab] = useState<'buy' | 'rare' | 'sell'>('buy')
+  const [keyAsk, setKeyAsk] = useState<string | null>(null)
   const game = useGame((s) => s.game)
   const inv = game.inv
   const flags = game.flags
@@ -76,6 +77,11 @@ export function TradeBoard() {
     const full = !!paid && overflows({ ...game, inv: paid }, t.get)
     const icon = tradeIcon(t)
     const disabled = locked || owned || full || !has(inv, t.pay) || (t.coins !== undefined && coins < t.coins)
+    // 흐린 칸을 누르면 왜 못 사는지 (2026-10-19 플레이 점검 P21)
+    const why = !disabled ? null : locked ? featureHint('convenience') : owned ? T.ui.tradeWhyOwned : full ? T.ui.tradeWhyFull
+      : t.coins !== undefined && coins < t.coins ? fill(T.ui.tradeWhyCoins, { n: t.coins - coins }) : T.ui.tradeWhyPay
+    // 구약 서고 열쇠는 새 터가 열리기 전에는 쓸 수 없다 — 사기 전에 한 번 알린다 (2026-10-19 플레이 점검 P22)
+    const keyEarly = t.id === 'homeKey' && !flags.newlandGift
     return {
       key: t.id,
       icon: icon ? <ItemIcon id={icon} size={28} /> : t.grants && GRANT_ART[t.grants] ? <ArtIcon rows={GRANT_ART[t.grants]} palette={GRANT_PAL} /> : <span aria-hidden="true">·</span>,
@@ -88,10 +94,10 @@ export function TradeBoard() {
           {descOf(icon) && <p>{descOf(icon)}</p>}
           {t.coins !== undefined && <p>{fill(T.ui.coins, { n: t.coins })} · 가진 닢 {coins}</p>}
           {Object.keys(t.pay).length > 0 && <NeedList needs={t.pay as Record<string, number>} have={(id) => inv[id as ItemId] ?? 0} icon={(id) => <ItemIcon id={id as ItemId} size={16} />} />}
-          {locked && <p>{featureHint('convenience')}</p>}
+          {why && <p className="hint trade-why">{why}</p>}
         </>
       ),
-      action: { label: owned ? T.ui.tradeOwned : full ? T.ui.bagFullShort : t.coins !== undefined ? T.ui.tradeBuy : T.ui.talkTrade, disabled, onClick: () => doTrade(t) },
+      action: { label: owned ? T.ui.tradeOwned : full ? T.ui.bagFullShort : t.coins !== undefined ? T.ui.tradeBuy : T.ui.talkTrade, disabled, onClick: () => (keyEarly && keyAsk !== t.id ? setKeyAsk(t.id) : doTrade(t)) },
     }
   }
   return (
@@ -112,7 +118,7 @@ export function TradeBoard() {
         <>
           <p className="hint">가진 닢 {coins}</p>
           {(['stuff', 'tools', 'decor', 'home','clothes'] as Group[]).map((g) => (
-            <IconGrid key={g} title={GROUP_LABEL[g]} entries={tradesFor(flags).filter((t) => groupOf(t) === g && tradeOnMarket(t, game.clock.day)).map(buyEntry)} />
+            <IconGrid key={g} named title={GROUP_LABEL[g]} entries={tradesFor(flags).filter((t) => groupOf(t) === g && tradeOnMarket(t, game.clock.day)).map(buyEntry)} />
           ))}
         </>
       )}
@@ -120,6 +126,7 @@ export function TradeBoard() {
         <>
           <p className="hint">가진 닢 {coins}</p>
           <IconGrid
+            named
             entries={[
               ...scrollEntry(game, buyScroll),
               ...rareStall(game.clock.day).map((id): IconEntry => {
@@ -144,6 +151,7 @@ export function TradeBoard() {
             {!isMarketDay(game.clock.day) ? '상인에게는 장날에 팔 수 있어요.' : soldToday(game) >= SELL_CAP ? `오늘은 ${SELL_CAP}개를 모두 팔았어요. 다음 장날에 다시 팔 수 있어요.` : `오늘 팔 수 있는 물건 ${SELL_CAP - soldToday(game)}개 · 가진 닢 ${coins}`}
           </p>
           <IconGrid
+            named
             emptyText={T.ui.sellNone}
             entries={(Object.keys(SELL_PRICES) as ItemId[]).filter((id) => (inv[id] ?? 0) > 0).map((id): IconEntry => {
               const block = canSell(game, id)
@@ -163,6 +171,16 @@ export function TradeBoard() {
       <div className="actions">
         <button data-close onClick={closeModal}>{T.ui.close}</button>
       </div>
+      {keyAsk && (
+        <div className="bind-where" role="alertdialog" aria-label={T.ui.keyEarlyTitle}>
+          <h3>{T.ui.keyEarlyTitle}</h3>
+          <p>{T.ui.keyEarlyBody}</p>
+          <div className="actions">
+            <button onClick={() => setKeyAsk(null)}>{T.ui.keyEarlyCancel}</button>
+            <button onClick={() => { const t = tradesFor(flags).find((x) => x.id === keyAsk); setKeyAsk(null); if (t) doTrade(t) }}>{T.ui.keyEarlyBuy}</button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

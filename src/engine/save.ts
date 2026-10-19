@@ -1,4 +1,5 @@
 import { sanitizeYard } from './yard'
+import { sanitizeOutdoor } from './outdoor'
 import { sanitizeGearOff } from './gear'
 import { sanitizeTips } from './tip-letters'
 import { sanitizeHomeWalls, setHomeWalls } from './home-walls'
@@ -35,7 +36,6 @@ import { IDLE_RESET } from './autonomy'
 import { bookDone, bookRoomOpen, chaptersOf, emptyProgress, sanitizeOtProgress, type Progress } from './books'
 import { isOtBook } from './ot-books'
 import { newGame, settle, type Farewell, type GameState } from './game'
-import { GARDEN_TILES } from './garden'
 import type { Avatar } from './avatar'
 import { cardsForChapters, placeNewCards } from './journey'
 import { initialHomeFurniture, isFacing, refitRoom, upgradeAdultBed, footprint } from './room'
@@ -424,6 +424,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     post,
     myLines,
     ...(sanitizeYard(s.yard) ? { yard: sanitizeYard(s.yard) } : {}),
+    outdoor: sanitizeOutdoor(s.outdoor),
     gearOff: sanitizeGearOff(s.gearOff),
     tips: sanitizeTips((s as { tips?: unknown }).tips),
     // 서고 잔치에서 낭독한 줄 (2026-10-13): 잔치 id마다 글 한 줄만, 옛 저장은 없음
@@ -464,20 +465,14 @@ function migrateIds(v: unknown): unknown {
 }
 
 /**
- * 텃밭 칸이 지도 텃밭(GARDEN_TILES)과 어긋나 있던 때의 작물을 지도 텃밭 안으로 옮긴다.
- * 이미 텃밭 칸에 있는 작물은 그대로, 밖에 있는 것은 빈 텃밭 칸에 순서대로 (빈 칸이 없으면 버린다)
+ * 영구 밭 외에 심겨 있던 작물도 원래 자리에서 보존한다.
+ * 새 심기는 garden.ts의 네 칸에서만 허용하고, 나머지는 성공적으로 수확한 뒤 잔디로 돌아간다.
  */
 function moveGardenPlots(garden: GameState['garden']): GameState['garden'] {
-  const keys = GARDEN_TILES.map((t) => `${t.x},${t.y}`)
   const out: GameState['garden'] = {}
-  const stray: GameState['garden'][string][] = []
   for (const [k, v] of Object.entries(garden)) {
-    if (keys.includes(k)) out[k] = v
-    else stray.push(v)
-  }
-  for (const v of stray) {
-    const free = keys.find((k) => !out[k])
-    if (free) out[free] = v
+    // Preserve planted legacy/older plots in place until a successful harvest. Never compact into four slots.
+    if (/^\d+,\d+$/.test(k) && v && (v.crop === 'herb' || v.crop === 'bean') && Number.isFinite(v.grown)) out[k] = v
   }
   return out
 }

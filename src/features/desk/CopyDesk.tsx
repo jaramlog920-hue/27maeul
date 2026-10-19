@@ -9,7 +9,7 @@ import { ensureOtBook, otLoaded } from '../../content/ot-catalog'
 import { copyBookName, fill, itemName, roomTitle, T, withAnd, withObject, withSubject } from '../../content/text'
 import { setQuiet } from '../../audio/sound'
 import { chaptersOf, groupByRoom, progressOf } from '../../engine/books'
-import { againKey, BLOCKED_INPUT_TYPES, checkCopy, checkVoice, copySpot, copyVerses, isCopyingAgain, normalizeCopy, originalEnd, type CopySpot, type CopyVerse } from '../../engine/copying'
+import { againKey, BLOCKED_INPUT_TYPES, checkCopy, COPY_MAX_STEP, checkVoice, copySpot, copyVerses, isCopyingAgain, normalizeCopy, originalEnd, type CopySpot, type CopyVerse } from '../../engine/copying'
 import { deskKidWith, deskPose, spouseReading } from '../../engine/family'
 import { chapterUnit, isOtBook, OT_ROOMS, otRow, type CopyBook, type OtBook } from '../../engine/ot-books'
 import { bookDoneLine } from './copy-text'
@@ -725,6 +725,7 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
     setVoiceNote(C.voiceListening)
   }
 
+  const pasteNote = () => useGame.getState().say(C.pasteBlocked, 3200)
   const send = (text: string, how: { inputType?: string; composing: boolean }) => {
     if (!how.composing && text === lastSent.current) return
     // 쓰는 동안은 붙잡아 둔다 — 절은 엔터(또는 다음 단추)를 눌러야 마친다
@@ -735,6 +736,8 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
     if (!ok && !how.composing) {
       const g = useGame.getState().game
       const restored = copySpot(g, book, CONTENT)?.draft ?? ''
+      // 한꺼번에 여러 글자가 들어와 막혔으면(붙여넣기·클립보드 제안) 까닭을 알린다 (2026-10-19 플레이 점검 P23)
+      if ([...normalizeCopy(text)].length - [...normalizeCopy(restored)].length > COPY_MAX_STEP) pasteNote()
       lastSent.current = restored
       setValue(restored)
     }
@@ -765,7 +768,7 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
   const onChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const native = e.nativeEvent as InputEvent
     const inputType = typeof native.inputType === 'string' ? native.inputType : undefined
-    if (inputType && BLOCKED_INPUT_TYPES.includes(inputType)) return
+    if (inputType && BLOCKED_INPUT_TYPES.includes(inputType)) return pasteNote()
     const text = e.target.value
     const now = composing.current || native.isComposing === true || inputType === 'insertCompositionText'
     if (voiceMiss) setVoiceMiss(null)
@@ -941,8 +944,8 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
             if (e.nativeEvent.isComposing || composing.current) wantEnter.current = true
             else finish(e.currentTarget.value)
           }}
-          onPaste={(e) => e.preventDefault()}
-          onDrop={(e) => e.preventDefault()}
+          onPaste={(e) => { e.preventDefault(); pasteNote() }}
+          onDrop={(e) => { e.preventDefault(); pasteNote() }}
         />
         {/* 다음 절 단추는 소리 내어 읽기와 같은 줄에 (2026-10-14 사용자: 새 줄에 생겨 칸이 밀렸다) */}
         {verseDone && !puzzleOn && !voiceOk && nextBtn}

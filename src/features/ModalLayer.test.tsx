@@ -330,7 +330,7 @@ describe('마을 서고', () => {
     const user = userEvent.setup()
     const base = chooseBook(newGame(CONTENT), 'mk', CONTENT)
     useGame.setState({
-      game: { ...base, bound: { mk: { day: 1 } }, collected: piecesOf('mk').map((p) => p.id), progress: { ...base.progress, mk: { completed: chaptersOf('mk', CONTENT), arrangement: {} } } },
+      game: { ...base, shelved: { phm: 0 }, bound: { mk: { day: 1 } }, collected: piecesOf('mk').map((p) => p.id), progress: { ...base.progress, mk: { completed: chaptersOf('mk', CONTENT), arrangement: {} } } },
       modal: { kind: 'library' },
       rng: mulberry32(5),
     })
@@ -405,7 +405,8 @@ describe('나의 한 줄 (책)', () => {
     const base = chooseBook(newGame(CONTENT), 'mk', CONTENT)
     localStorage.clear()
     useGame.setState({
-      game: { ...base, scenes: [], bound: { mk: { day: 1 } }, collected: piecesOf('mk').map((p) => p.id), progress: { ...base.progress, mk: { completed: chaptersOf('mk', CONTENT), arrangement: {} } }, inv: { goldLeaf: 1, oil: 1 } },
+      // 맨 처음 꽂는 책은 장면이 이어져 한 줄을 묻지 않는다(2026-10-19 P12) — 다른 책 한 권을 먼저 꽂아 둔다
+      game: { ...base, scenes: [], shelved: { phm: 0 }, bound: { mk: { day: 1 } }, collected: piecesOf('mk').map((p) => p.id), progress: { ...base.progress, mk: { completed: chaptersOf('mk', CONTENT), arrangement: {} } }, inv: { goldLeaf: 1, oil: 1 } },
       modal: { kind: 'library' },
       rng: mulberry32(5),
     })
@@ -1008,7 +1009,8 @@ describe('로마서–빌레몬서 방 (계획 7 작업 7)', () => {
     useGame.setState({ modal: { kind: 'library' } })
     const { container } = render(<ModalLayer />)
     const items = [...container.querySelectorAll('.library-locked li')].map((li) => li.textContent)
-    expect(items).toEqual(['사도행전 방', '로마서–빌레몬서 방', '히브리서–유다서 방', '요한계시록 방'].map((r) => `${r} · 열려 있어요`))
+    // 2026-10-19 플레이 점검 P3: 방마다 서고 안 문 위치
+    expect(items).toEqual(['사도행전 방 · 왼쪽 위', '로마서–빌레몬서 방 · 왼쪽 아래', '히브리서–유다서 방 · 오른쪽 위', '요한계시록 방 · 오른쪽 아래'].map((r) => `${r} 문 · 열려 있어요`))
   })
   it('방이 열린 아침 장면: 성경 본문 없이, 닫으면 앨범에 한 장', async () => {
     reset({ scenes: ['roomOpen:romPhm'], flags: opened, shelved: shelvedAll })

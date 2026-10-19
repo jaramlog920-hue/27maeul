@@ -262,7 +262,7 @@ describe('소유 공간별 저장', () => {
 
   it('첫 마을 집(room)과 새 터 집(rooms)은 같은 칸을 쓰지 않는다', () => {
     const s = twoHomes()
-    const village: GameState = { ...s }
+    const village: GameState = { ...s, player:{...s.player,x:18,y:112,path:[]} }
     delete village.map
     syncHome(village)
     expect(roomTarget(village)?.key).toBeNull()

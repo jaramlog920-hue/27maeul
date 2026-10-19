@@ -610,13 +610,13 @@ describe('저장', () => {
     expect(back.hearts).toEqual({ baker: 2 })
     expect(Object.keys(back.npcs)).toHaveLength(CONTENT.neighbors.length)
   })
-  it('옛 저장의 텃밭 작물은 지도 텃밭(11~14, 4~6) 빈 칸으로 옮긴다', () => {
+  // 2026-10-19 집 옆 자유 마당: 옛 작물은 옮기거나 지우지 않고 원래 좌표에 남긴다 (거두면 잔디로) — docs/home-yard-free-space-plan-20261019.md §11
+  it('옛 저장의 텃밭 작물은 원래 좌표에 그대로 남는다', () => {
     const s = newGame(CONTENT)
     const plot = { crop: 'herb', grown: 1, wateredDay: null }
     const old = { ...JSON.parse(serializeForTest(s)), garden: { '1,8': plot, '4,9': plot } }
     const back = deserialize(JSON.stringify(old), CONTENT)!
-    expect(Object.keys(back.garden).sort()).toEqual(['11,4', '12,4'])
-    for (const k of Object.keys(back.garden)) expect(PLACES.garden.tiles.some((t) => `${t.x},${t.y}` === k)).toBe(true)
+    expect(Object.keys(back.garden).sort()).toEqual(['1,8', '4,9'])
   })
   it('N2·N4: (필사 전 옛 저장) 끝낸 장의 새 조각은 모은 것으로, 빠진 조각은 본문 순서 자리에', () => {
     const s = newGame(CONTENT)

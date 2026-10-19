@@ -6,12 +6,14 @@ import { FURNITURE } from '../../engine/room'
 import { inBuildingRoom, roomOf } from '../../engine/newland-rooms'
 import { isHome } from '../../engine/world'
 import { useGame } from '../../store/game-store'
+import { isOutdoorEditing } from '../../engine/outdoor'
 
 export function DecorateButton({ className, role, onPick }: { className?: string; role?: string; onPick?: () => void }) {
   // 구약 터에서는 어디서든 (2026-10-14 사용자) — 방 밖이면 꾸밀 곳을 고른다
   const onNewland = useGame((s) => s.game.map === 'newland')
+  const outdoor=useGame(s=>isOutdoorEditing(s.game))
   const atHome = useGame((s) => isHome(playerTile(s.game)) || inBuildingRoom(s.game)) || onNewland
-  if (!atHome) return null
+  if (!atHome&&!outdoor) return null
   const click = () => {
     const { game, startDecorate, say } = useGame.getState()
     onPick?.()
@@ -20,12 +22,12 @@ export function DecorateButton({ className, role, onPick }: { className?: string
       return
     }
     const has = FURNITURE.some((f) => (game.inv[f] ?? 0) > 0) || roomOf(game).length > 0
-    if (has) startDecorate('pick')
+    if (has||outdoor) startDecorate('pick')
     else say(T.ui.decorateNone, 3200)
   }
   return (
     <button className={className} role={role} onClick={click}>
-      {T.ui.decorate}
+      {outdoor?'마당 꾸미기':T.ui.decorate}
     </button>
   )
 }

@@ -47,6 +47,8 @@ import type { DatePlace } from '../engine/romance'
 import { create } from 'zustand'
 import { feastOf, readFeastLine, shareFeastFood } from '../engine/feast'
 import { moveYard, stowYard, yardItemAt, yardSpot, type YardItem } from '../engine/yard'
+import { isOutdoorEditing, isOutdoorItem, outdoorFurniture, outdoorInUse } from '../engine/outdoor'
+import { useOutdoorFurniture } from '../engine/game'
 import { CONTENT, neighborById, copySourceFor, LETTER_OPENINGS, pieceById, pieceOfQuestion, piecesOf, quizSourceFor } from '../content/catalog'
 import { ensureNtBooks, ntLoaded } from '../content/nt-loader'
 import { blanksFor } from '../engine/copy'
@@ -206,7 +208,7 @@ import {
   type SubmitResult,
   type Trade,
 } from '../engine/game'
-import { HOME_FRONT, lockedTiles, lockedZones, placeAt, PLACES, roomAt, sameTile, zoneAt } from '../engine/world'
+import { HOME_FRONT, lockedTiles, lockedZones, placeAt, PLACES, roomAt, sameTile, warpAt, zoneAt } from '../engine/world'
 import { slotPerson } from '../engine/gen-growth'
 import { facingOf, FURNITURE_DEFS, footprint, removal, type Furniture } from '../engine/room'
 import { inBuildingRoom, roomOf as furnitureRoomOf } from '../engine/newland-rooms'
@@ -481,7 +483,7 @@ interface Store {
   /** 새로 이룬 업적 (알림과 따로, 위쪽 작은 띠) */
   award: { text: string; until: number } | null
   /** 이번에 책상에서 받은 능력치. 책을 덮으면 결과 카드로 옮긴다. 저장하지 않는다. */
-  copySessionStats: { before: Stats; after: Stats } | null
+  copySessionStats: { before: Stats; after: Stats; chapters?: number } | null
   copyResult: CopyStatGain[] | null
   dismissCopyResult: () => void
   /** 여행 주사위 판 (새 장면) — 저장하지 않는다. 있는 동안 마을 시간은 멈춘다 */
@@ -1074,7 +1076,7 @@ export const useGame = create<Store>((set, get) => {
       sfx('page')
       sfx('done')
       if (copyStatGains(game.stats, written.stats).length) {
-        set({ copySessionStats: { before: get().copySessionStats?.before ?? game.stats, after: written.stats }, copyResult: null })
+        set({ copySessionStats: { before: get().copySessionStats?.before ?? game.stats, after: written.stats, chapters: (get().copySessionStats?.chapters ?? 0) + 1 }, copyResult: null })
       }
     } else sfx('stamp')
     set({ game: persist(lit), modal: { kind: 'copy', view: result.kind === 'chapter' ? 'done' : 'write', last: result, resume: false } })
@@ -1110,7 +1112,9 @@ export const useGame = create<Store>((set, get) => {
     }
     // 처음 꽂은 책이면 그 책에 대한 나의 한 줄을 물어본다 (넘겨도 된다). 사도행전·편지는 자기 방 선반으로 돌아간다 (방 표)
     const myLine: Modal = { kind: 'myLine', lineKey: bookLineKey(book), back: shelfBackOf(book) }
-    set({ game: persist(next), modal: firstTime ? myLine : afterMyLine(myLine) })
+    // 맨 처음 꽂는 책이면 '빈 책칸 앞에서' 장면이 이어지니 한 줄은 묻지 않는다 — 말씀 탭에서 언제든 적는다 (2026-10-19 플레이 점검 P12)
+    const firstBook = next.scenes.includes('firstShelved') && !prev.scenes.includes('firstShelved')
+    set({ game: persist(next), modal: firstTime && !firstBook ? myLine : afterMyLine(myLine) })
   }
 
   /**
@@ -1290,6 +1294,8 @@ export const useGame = create<Store>((set, get) => {
     if (target.kind === 'bookcase') return { game, modal: { kind: 'homeShelf' } }
     // 기능 있는 가구 (2026-10-13): 수납 가구는 가방의 궤짝·찬장 칸, 저절로 만드는 가구는 무엇을 만드는지 한 줄
     if (target.kind === 'furniture') {
+      const outdoor=game.map!=='newland'&&outdoorFurniture(game).find(f=>f.item===target.item&&footprint(f).some(p=>sameTile(p,target.tile)))
+      if(outdoor)return {game:useOutdoorFurniture(game,outdoor),modal:null}
       // 새 터 내 집의 평상: 잠자리 창 (첫 마을 침대와 같다 — 2026-10-14)
       if (newBedAt(game, target.tile)) return { game, modal: { kind: 'review', pieceId: reviewPick(game, rng) } }
       if (isStorage(target.item)) return { game, modal: { kind: 'storage', item: target.item } }
@@ -1564,7 +1570,17 @@ export const useGame = create<Store>((set, get) => {
       if (modal || decorating || get().copyResult?.length || get().piecePopups.length) return
       const at = playerTile(game)
       if (nightDoorLocked(game, { x: at.x + dx, y: at.y + dy }, CONTENT)) { get().say('주민들이 잠들어 문이 잠겨 있어요. 아침에 다시 와 주세요.'); return }
-      const next = walkDirection(game, dx, dy)
+      let next = walkDirection(game, dx, dy)
+      // 막혔는데 바로 옆 칸이 문이면 그쪽으로 한 칸 비켜 준다 — 집 문이 침대 줄에서 한 칸 비켜 있어 아래만 누르면 벽에 막혔다 (2026-10-19 플레이 점검 P4)
+      if (!next.player.path.length && (dx === 0) !== (dy === 0)) {
+        const ahead = { x: at.x + dx, y: at.y + dy }
+        if (!warpAt(ahead)) for (const side of [-1, 1]) {
+          const door = dx === 0 ? { x: ahead.x + side, y: ahead.y } : { x: ahead.x, y: ahead.y + side }
+          if (!warpAt(door)) continue
+          const slid = dx === 0 ? walkDirection(game, side, 0) : walkDirection(game, 0, side)
+          if (slid.player.path.length) { next = slid; break }
+        }
+      }
       if (next !== game) set({ game: next })
     },
 
@@ -1599,6 +1615,8 @@ export const useGame = create<Store>((set, get) => {
         return
       }
       const yardItem = !decorating ? yardItemAt(game, tile) : null
+      const outsidePiece = !decorating&&game.map!=='newland'&&outdoorFurniture(game).find(f=>footprint(f).some(p=>sameTile(p,tile)))
+      if(outsidePiece&&outdoorInUse(game,outsidePiece)){get().say('지금은 이웃이 사용하고 있어요.');return}
       if (yardItem && Math.abs(tile.x - game.player.x) + Math.abs(tile.y - game.player.y) <= 3) {
         set({ modal: { kind: 'yard', item: yardItem } })
         return
@@ -1662,7 +1680,7 @@ export const useGame = create<Store>((set, get) => {
         return
       }
       const visitorAt = libraryVisitorTile(game)
-      const selfTap = sameTile(tile, playerTile(game)) && game.player.path.length === 0 && !isStallTile(game, tile) && !(visitorAt && sameTile(visitorAt, tile)) && !placeAt(tile)
+      const selfTap = sameTile(tile, playerTile(game)) && game.player.path.length === 0 && !isStallTile(game, tile) && !(visitorAt && sameTile(visitorAt, tile)) && !placeAt(tile) && !game.garden[`${tile.x},${tile.y}`] && !outdoorFurniture(game).some(f=>footprint(f).some(p=>sameTile(p,tile)))
       const next = tapTile(game, tile)
       if (selfTap) {
         const n = game.needs
@@ -2433,7 +2451,11 @@ export const useGame = create<Store>((set, get) => {
     copyExit: () => {
       if (get().modal?.kind !== 'copy') return
       const session = get().copySessionStats
-      const gains = session ? copyStatGains(session.before, session.after) : []
+      // 장 하나만 마쳤고 그 완료 화면이 오른 능력치를 이미 보여 줬으면 같은 창을 다시 띄우지 않는다 (2026-10-19 플레이 점검 P11).
+      // 여러 장을 쓴 날은 합계를 보여 준다
+      const m = get().modal
+      const shown = m?.kind === 'copy' && m.view === 'done' && (session?.chapters ?? 0) <= 1
+      const gains = session && !shown ? copyStatGains(session.before, session.after) : []
       set({ game: persist(get().game), modal: null, copySessionStats: null, copyResult: gains.length ? gains : null })
     },
     copySave: () => {
@@ -2702,6 +2724,12 @@ export const useGame = create<Store>((set, get) => {
       if (!before.companion && next.companion) get().say(t('pets.otherAdopted', { other: t(animal === 'dog' ? 'pets.catTopic' : 'pets.dogTopic'), who: withSubject(neighborById('child')?.role ?? '물 긷는 아이') }))
     },
     startDecorate: (item) => {
+      if(isOutdoorEditing(get().game)){
+        if(item==='wallBuild'||item==='wallRemove'||(item!=='pick'&&!isOutdoorItem(item))){get().say('마당에 놓을 수 없는 물건이에요.');return}
+        const game=get().game
+        set({game:{...game,player:{...game.player,path:[]},target:null},decorating:item,decorFacing:item==='pick'?'down':facingOf({item}),modal:null,decorSel:null,decorMoving:false,decorLook:null,yardMoving:null})
+        return
+      }
       const access = featureAccess(get().game, 'decorate')
       if (access === 'locked') { get().say('어느 책이든 첫 장을 마치면 집 꾸미기를 체험할 수 있어요.'); return }
       if ((item === 'wallBuild' || item === 'wallRemove') && access !== 'full') { get().say('어느 책이든 합쳐 다섯 장을 마치면 벽을 세우고 허물 수 있어요.'); return }
@@ -2880,7 +2908,15 @@ export const useGame = create<Store>((set, get) => {
       if(id==='completeBible' && current.scenes.includes(id) && !current.flags.bibleEndingSeen) {
         seen=goToSleep({...seen,map:'village',clock:{...seen.clock,minute:23*60},flags:{...seen.flags,bibleEndingSeen:seen.clock.day}},CONTENT)
       }
+      // 이어서 기다리는 '새로 열림' 장면(growth:*)은 또 하나의 창 대신 짧은 알림으로 (2026-10-19 플레이 점검 P10)
+      const opened: string[] = []
+      if (!id.startsWith('growth:')) while (seen.scenes[0]?.startsWith('growth:')) {
+        const gid = seen.scenes[0]
+        opened.push((SCENES[gid]?.lines ?? []).map((l) => l.text).join(' '))
+        seen = sceneSeen(seen, gid, ALBUM_IDS)
+      }
       const game = persist(seen)
+      if (opened.length) setTimeout(() => get().say(opened.join(' '), 6500), 0)
       const after = get().afterScene
       // 고른 말이 손일을 함께하는 것이면 장면을 닫자마자 그 놀이로 (계획 16 작업 4)
       const w = game.life?.storyWait

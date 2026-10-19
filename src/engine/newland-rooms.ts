@@ -11,6 +11,7 @@ import { INTERIOR, INTERIOR_DESK, INTERIOR_ENTRY, INTERIOR_EXIT, INTERIOR_SHELF,
 import { FURNITURE_DEFS, HOME_CTX, isFacing, refitRoom, type Furniture, type RoomCtx } from './room'
 import { setActiveMap, currentMapId } from './maps'
 import type { ItemId, Tile } from './types'
+import { isOutdoorEditing, outdoorContext, outdoorFurniture, OUTDOOR_KEY, withOutdoor } from './outdoor'
 
 const KEY_RE = /^newland:(b[1-9]\d{0,6})$/
 
@@ -63,7 +64,8 @@ export function slotHere(s: Where): number {
  * 가구를 꾸미는 방: 첫 마을(map이 첫 마을)이면 집(key null — 지금 동작 그대로), 새 터에서 건물 방 안이면 그 건물의 소유 공간,
  * 새 터에서 방 밖이면 꾸밀 방이 없다(undefined)
  */
-export function roomTarget(s: Where & Partial<Pick<GameState, 'rooms' | 'room'>>): { key: string | null; ctx: RoomCtx; room: readonly Furniture[] } | undefined {
+export function roomTarget(s: Where & Partial<Pick<GameState, 'rooms' | 'room' | 'outdoor' | 'garden' | 'flags' | 'yard' | 'npcs'>>): { key: string | null; ctx: RoomCtx; room: readonly Furniture[] } | undefined {
+  if (isOutdoorEditing(s)) return {key:OUTDOOR_KEY,ctx:outdoorContext(s),room:outdoorFurniture(s)}
   if (s.map !== 'newland') return { key: null, ctx: HOME_CTX, room: s.room ?? [] }
   if (inArchiveHere(s)) return { key: ARCHIVE_ROOM_KEY, ctx: ARCHIVE_CTX, room: s.rooms?.[ARCHIVE_ROOM_KEY] ?? [] }
   const i = slotHere(s)
@@ -72,7 +74,7 @@ export function roomTarget(s: Where & Partial<Pick<GameState, 'rooms' | 'room'>>
 }
 
 /** 지금 꾸미는 방의 가구 (화면·길 막힘이 읽는다). 꾸밀 방이 없는 곳은 빈 목록 */
-export function roomOf(s: Where & Partial<Pick<GameState, 'rooms' | 'room'>>): readonly Furniture[] {
+export function roomOf(s: Where & Partial<Pick<GameState, 'rooms' | 'room' | 'outdoor' | 'garden' | 'flags' | 'yard' | 'npcs'>>): readonly Furniture[] {
   return roomTarget(s)?.room ?? []
 }
 
@@ -80,7 +82,8 @@ export function roomOf(s: Where & Partial<Pick<GameState, 'rooms' | 'room'>>): r
 export const inBuildingRoom = (s: Where): boolean => slotHere(s) >= 0 || inArchiveHere(s)
 
 /** 그 방의 가구를 바꾼 새 상태. 집(key null)은 room, 건물은 rooms[key] — 빈 목록이면 칸을 지운다 */
-export function withRoomOf<T extends Pick<GameState, 'room'> & Partial<Pick<GameState, 'rooms'>>>(s: T, key: string | null, room: Furniture[]): T {
+export function withRoomOf<T extends Pick<GameState, 'room'> & Partial<Pick<GameState, 'rooms' | 'outdoor'>>>(s: T, key: string | null, room: Furniture[]): T {
+  if (key === OUTDOOR_KEY) return withOutdoor(s,room)
   if (key === null) return { ...s, room }
   const rooms = { ...(s.rooms ?? {}) }
   if (room.length) rooms[key] = room

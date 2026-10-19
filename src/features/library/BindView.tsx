@@ -43,6 +43,8 @@ export function BindView({ modal }: { modal: Extract<Modal, { kind: 'bind' }> })
   const name = BOOK_NAME[modal.book]
   const enough = haveStock(game, SPECIAL_COST)
   const have = itemList(Object.fromEntries(COST.map(([id]) => [id, stockOf(game, id)])))
+  // 재료를 어디서 구하는지는 누르면 팝업으로 — 창에 늘 적으면 너무 길다 (2026-10-19 플레이 점검 P9)
+  const [where, setWhere] = useState(false)
 
   if (modal.step === 'made') {
     const binding = game.bound[modal.book]
@@ -115,9 +117,18 @@ export function BindView({ modal }: { modal: Extract<Modal, { kind: 'bind' }> })
         </div>
       </div>
       <p className="hint">{fill(B.have, { items: have })}</p>
+      {!enough && <p className="hint bind-short">{B.shortInline}</p>}
       <div className="actions">
+        <button onClick={() => setWhere(true)}>{B.whereButton}</button>
         <button data-close onClick={closeBind}>{T.ui.close}</button>
       </div>
+      {where && (
+        <div className="bind-where" role="dialog" aria-label={B.whereTitle}>
+          <h3>{B.whereTitle}</h3>
+          {(B.whereLines as string[]).map((l) => <p key={l}>{l}</p>)}
+          <div className="actions"><button onClick={() => setWhere(false)}>{T.ui.close}</button></div>
+        </div>
+      )}
     </div>
   )
 }

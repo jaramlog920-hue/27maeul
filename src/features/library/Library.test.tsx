@@ -143,12 +143,12 @@ describe('제본 → 완성본 → 서고에 꽂기', () => {
     expect(row()).toHaveTextContent('완성본 · 꽂을 수 있어요')
     expect(within(row()).getByRole('button', { name: '퀴즈 풀고 금박 책등' })).toBeInTheDocument()
     await user.click(within(row()).getByRole('button', { name: '바로 꽂기' }))
-    // 퀴즈 없이 맨 책으로 — 불이익 없음, 처음 꽂은 책이면 나의 한 줄
+    // 퀴즈 없이 맨 책으로 — 불이익 없음. 맨 처음 꽂은 책이면 '빈 책칸 앞에서' 장면이 이어지니 한 줄은 묻지 않는다 (2026-10-19 P12)
     expect(useGame.getState().game.shelved.mk).toBe(0)
     expect(useGame.getState().game.rereads).toEqual([])
     expect(useGame.getState().toast?.text).toMatch(/^마가복음을 서고에 꽂았습니다\. 책등: 맨 책/)
-    expect(useGame.getState().modal).toEqual({ kind: 'myLine', lineKey: 'book:mk', back: 'library' })
-    act(() => useGame.getState().skipMyLine())
+    expect(useGame.getState().modal).toEqual({ kind: 'library' })
+    expect(useGame.getState().game.scenes).toContain('firstShelved')
     expect(screen.getByRole('figure', { name: '서고 선반 · 신약 1/27' })).toBeInTheDocument()
     // 꽂은 뒤에도 표지를 다시 꾸밀 수 있다
     expect(within(row()).getByRole('button', { name: '표지 꾸미기' })).toBeInTheDocument()
