@@ -1,6 +1,8 @@
 import { TOPS, type FullAvatar } from '../engine/avatar'
 import type { Facing } from '../engine/types'
 import { sideHairDetails } from './side-hair-details'
+import { frontHairAdditions } from './front-hair-additions'
+import { backHairAdditions } from './back-hair-additions'
 import {copyOutfitAt} from '../engine/copy-outfits'
 import {copyOutfitDetails} from './copy-outfit-details'
 
@@ -189,6 +191,8 @@ export function avatarDetails(rows: string[], facing: Facing, a: FullAvatar, bli
     if (rows[y][x] === 'h') hair(x, y, '0')
 
   if (side) sideHairDetails(rows, a.hairBack)
+  backHairAdditions(rows, facing, a.hairBack)
+  frontHairAdditions(rows, facing, a.hairFront)
 
   if (a.acc === 1) {
     for (let x = 2; x <= 7; x++) if ('h01'.includes(rows[2][x])) dot(rows, x, 2, 'x')

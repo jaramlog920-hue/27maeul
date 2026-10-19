@@ -401,6 +401,9 @@ export function spriteRows(who: Who, facing: Facing, opts: SpriteOpts): string[]
   if (opts.elder) {
     rows = elderDetails(rows, who, facing)
     if (side) legacySideHairDetails(rows, who, true)
+    // 새 긴 머리의 안쪽 가닥·매듭 아래도 같은 은회색으로 잇는다.
+    if (who === 'writer' && opts.avatar && opts.avatar.hairBack >= 11)
+      rows = recolor(rows, { h: '~', '0': '^', '1': '%' })
   }
   // 모든 인물에 같은 손 윤곽. 머리나 장신구를 입힌 뒤 그려 손이 가려지지 않게 한다.
   if (side) setPixel(rows, 6, 11, '5')

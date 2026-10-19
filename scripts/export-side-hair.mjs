@@ -5,8 +5,10 @@ import { draw,png } from './pixel-png.mjs'
 registerHooks({resolve(s,c,n){return n(s.startsWith('.')&&!path.extname(s)?`${s}.ts`:s,c)},load(url,c,n){if(url.endsWith('.json'))return {format:'module',source:`export default ${fs.readFileSync(new URL(url),'utf8')}`,shortCircuit:true};return n(url,c)}})
 const {withLookDefaults,HAIR_BACKS}=await import('../src/engine/avatar.ts'),{spriteRows,writerPalette,PALETTE}=await import('../src/render/sprites.ts'),{VISITOR_LOOKS,VISITOR_LABELS}=await import('../src/render/village-followup-art.ts'),{SETTLEMENT_GUESTS}=await import('../src/render/settlement-guests-art.ts')
 const out='assets/side-hair',neighbors=JSON.parse(fs.readFileSync('src/content/neighbors.json','utf8')),samples=[]
+// before.json은 기존 11종의 옆머리 보강 비교 원본이다. 새 스타일을 옛 원본과 비교하지 않는다.
+const snapshotHairBacks=HAIR_BACKS.slice(0,11)
 fs.mkdirSync(out,{recursive:true})
-for(const [hairBack,label]of HAIR_BACKS.entries())for(const stage of ['adult','child','elder'])samples.push({id:`style-${hairBack}-${stage}`,group:'styles',label,stage,who:'writer',avatar:withLookDefaults({look:'f',name:'옆머리 예시',hairFront:0,hairBack,top:13,bottom:2,acc:0}),short:stage==='child'?0:undefined,elder:stage==='elder'})
+for(const [hairBack,label]of snapshotHairBacks.entries())for(const stage of ['adult','child','elder'])samples.push({id:`style-${hairBack}-${stage}`,group:'styles',label,stage,who:'writer',avatar:withLookDefaults({look:'f',name:'옆머리 예시',hairFront:0,hairBack,top:13,bottom:2,acc:0}),short:stage==='child'?0:undefined,elder:stage==='elder'})
 for(const def of neighbors)for(const stage of ['adult','elder']){
  const avatar=def.avatar&&def.look?withLookDefaults({look:def.look,name:def.role,...def.avatar}):undefined
  samples.push({id:`resident-${def.id}-${stage}`,group:'residents',label:def.role,stage,who:avatar?'writer':def.sprite,avatar,growth:3,elder:stage==='elder'})
@@ -27,13 +29,13 @@ if(process.argv.includes('--before')){
   const old=byId.get(s.id);if(!old)throw Error(`비교 원본 없음: ${s.id}`)
   sequences.push({...s,views,before:save(`${s.id}-before.png`,old.rows.right,old.palette),palette:palette(s)})
  }
- const styles=sheet(550,HAIR_BACKS.length*92)
- for(let i=0;i<HAIR_BACKS.length;i++){
+ const styles=sheet(550,snapshotHairBacks.length*92)
+ for(let i=0;i<snapshotHairBacks.length;i++){
   const adult=samples.find(s=>s.id===`style-${i}-adult`),old=byId.get(adult.id),y=i*92+14
   draw(styles,550,old.rows.right,old.palette,20,y,5);draw(styles,550,make(adult,'right'),palette(adult),130,y,5);draw(styles,550,make(adult,'left'),palette(adult),240,y,5)
   for(const [j,stage]of ['child','elder'].entries()){const s=samples.find(s=>s.id===`style-${i}-${stage}`),rows=make(s,'right');draw(styles,550,rows,palette(s),350+j*110,y+(14-rows.length)*5,5)}
  }
- png(`${out}/styles-before-after.png`,550,HAIR_BACKS.length*92,styles)
+ png(`${out}/styles-before-after.png`,550,snapshotHairBacks.length*92,styles)
  const actual=samples.filter(s=>s.group!=='styles'&&(s.group!=='residents'||s.stage==='adult')),people=sheet(768,Math.ceil(actual.length/4)*92)
  for(const [i,s]of actual.entries()){const old=byId.get(s.id),x=(i%4)*192,y=Math.floor(i/4)*92+14,rows=make(s,'right');draw(people,768,old.rows.right,old.palette,x+20,y+(14-old.rows.right.length)*5,5);draw(people,768,rows,palette(s),x+110,y+(14-rows.length)*5,5)}
  png(`${out}/residents-before-after.png`,768,Math.ceil(actual.length/4)*92,people)

@@ -1,0 +1,5984 @@
+{
+  "version": 1,
+  "sources": [
+    "src/engine/avatar.ts",
+    "src/render/front-hair-additions.ts",
+    "src/render/back-hair-additions.ts",
+    "src/render/sprites.ts"
+  ],
+  "note": "새 앞머리 12~21번과 뒷머리 11~20번. 각 분류의 0번은 기존 스타일 비교 기준. 동일 머리색·옷·피부로 서기와 걷기 0,1,0,2를 비교한다. 아이는 발 기준을 맞추고 노년에는 실제 은회색 머리 처리를 사용한다.",
+  "contacts": [
+    {
+      "category": "front",
+      "stage": "adult",
+      "file": "front-adult-contact.png"
+    },
+    {
+      "category": "front",
+      "stage": "child",
+      "file": "front-child-contact.png"
+    },
+    {
+      "category": "front",
+      "stage": "elder",
+      "file": "front-elder-contact.png"
+    },
+    {
+      "category": "back",
+      "stage": "adult",
+      "file": "back-adult-contact.png"
+    },
+    {
+      "category": "back",
+      "stage": "child",
+      "file": "back-child-contact.png"
+    },
+    {
+      "category": "back",
+      "stage": "elder",
+      "file": "back-elder-contact.png"
+    }
+  ],
+  "sequences": [
+    {
+      "id": "front-0-adult",
+      "category": "front",
+      "kind": 0,
+      "label": "넘긴 머리",
+      "stage": "adult",
+      "baseline": true,
+      "views": {
+        "down": [
+          {
+            "file": "front-0-adult-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-0-adult-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-0-adult-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-0-adult-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-0-adult-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-0-adult-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-0-adult-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-0-adult-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-0-adult-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-0-adult-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-0-adult-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-0-adult-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-0-child",
+      "category": "front",
+      "kind": 0,
+      "label": "넘긴 머리",
+      "stage": "child",
+      "baseline": true,
+      "views": {
+        "down": [
+          {
+            "file": "front-0-child-down-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-0-child-down-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-0-child-down-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-0-child-right-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-0-child-right-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-0-child-right-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-0-child-up-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-0-child-up-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-0-child-up-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-0-child-left-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-0-child-left-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-0-child-left-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-0-elder",
+      "category": "front",
+      "kind": 0,
+      "label": "넘긴 머리",
+      "stage": "elder",
+      "baseline": true,
+      "views": {
+        "down": [
+          {
+            "file": "front-0-elder-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-0-elder-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-0-elder-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-0-elder-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-0-elder-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-0-elder-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-0-elder-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-0-elder-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-0-elder-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-0-elder-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-0-elder-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-0-elder-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-12-adult",
+      "category": "front",
+      "kind": 12,
+      "label": "시스루 앞머리",
+      "stage": "adult",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-12-adult-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-12-adult-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-12-adult-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-12-adult-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-12-adult-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-12-adult-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-12-adult-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-12-adult-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-12-adult-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-12-adult-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-12-adult-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-12-adult-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-12-child",
+      "category": "front",
+      "kind": 12,
+      "label": "시스루 앞머리",
+      "stage": "child",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-12-child-down-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-12-child-down-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-12-child-down-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-12-child-right-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-12-child-right-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-12-child-right-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-12-child-up-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-12-child-up-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-12-child-up-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-12-child-left-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-12-child-left-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-12-child-left-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-12-elder",
+      "category": "front",
+      "kind": 12,
+      "label": "시스루 앞머리",
+      "stage": "elder",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-12-elder-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-12-elder-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-12-elder-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-12-elder-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-12-elder-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-12-elder-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-12-elder-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-12-elder-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-12-elder-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-12-elder-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-12-elder-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-12-elder-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-13-adult",
+      "category": "front",
+      "kind": 13,
+      "label": "일자 앞머리",
+      "stage": "adult",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-13-adult-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-13-adult-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-13-adult-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-13-adult-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-13-adult-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-13-adult-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-13-adult-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-13-adult-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-13-adult-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-13-adult-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-13-adult-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-13-adult-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-13-child",
+      "category": "front",
+      "kind": 13,
+      "label": "일자 앞머리",
+      "stage": "child",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-13-child-down-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-13-child-down-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-13-child-down-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-13-child-right-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-13-child-right-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-13-child-right-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-13-child-up-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-13-child-up-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-13-child-up-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-13-child-left-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-13-child-left-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-13-child-left-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-13-elder",
+      "category": "front",
+      "kind": 13,
+      "label": "일자 앞머리",
+      "stage": "elder",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-13-elder-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-13-elder-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-13-elder-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-13-elder-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-13-elder-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-13-elder-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-13-elder-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-13-elder-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-13-elder-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-13-elder-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-13-elder-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-13-elder-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-14-adult",
+      "category": "front",
+      "kind": 14,
+      "label": "짧은 일자 앞머리",
+      "stage": "adult",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-14-adult-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-14-adult-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-14-adult-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-14-adult-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-14-adult-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-14-adult-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-14-adult-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-14-adult-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-14-adult-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-14-adult-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-14-adult-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-14-adult-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-14-child",
+      "category": "front",
+      "kind": 14,
+      "label": "짧은 일자 앞머리",
+      "stage": "child",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-14-child-down-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-14-child-down-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-14-child-down-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-14-child-right-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-14-child-right-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-14-child-right-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-14-child-up-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-14-child-up-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-14-child-up-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-14-child-left-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-14-child-left-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-14-child-left-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-14-elder",
+      "category": "front",
+      "kind": 14,
+      "label": "짧은 일자 앞머리",
+      "stage": "elder",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-14-elder-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-14-elder-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-14-elder-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-14-elder-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-14-elder-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-14-elder-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-14-elder-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-14-elder-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-14-elder-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-14-elder-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-14-elder-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-14-elder-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-15-adult",
+      "category": "front",
+      "kind": 15,
+      "label": "사선 가르마",
+      "stage": "adult",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-15-adult-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-15-adult-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-15-adult-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-15-adult-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-15-adult-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-15-adult-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-15-adult-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-15-adult-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-15-adult-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-15-adult-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-15-adult-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-15-adult-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-15-child",
+      "category": "front",
+      "kind": 15,
+      "label": "사선 가르마",
+      "stage": "child",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-15-child-down-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-15-child-down-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-15-child-down-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-15-child-right-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-15-child-right-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-15-child-right-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-15-child-up-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-15-child-up-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-15-child-up-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-15-child-left-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-15-child-left-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-15-child-left-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-15-elder",
+      "category": "front",
+      "kind": 15,
+      "label": "사선 가르마",
+      "stage": "elder",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-15-elder-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-15-elder-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-15-elder-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-15-elder-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-15-elder-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-15-elder-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-15-elder-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-15-elder-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-15-elder-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-15-elder-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-15-elder-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-15-elder-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-16-adult",
+      "category": "front",
+      "kind": 16,
+      "label": "긴 옆가르마",
+      "stage": "adult",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-16-adult-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-16-adult-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-16-adult-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-16-adult-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-16-adult-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-16-adult-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-16-adult-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-16-adult-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-16-adult-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-16-adult-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-16-adult-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-16-adult-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-16-child",
+      "category": "front",
+      "kind": 16,
+      "label": "긴 옆가르마",
+      "stage": "child",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-16-child-down-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-16-child-down-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-16-child-down-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-16-child-right-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-16-child-right-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-16-child-right-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-16-child-up-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-16-child-up-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-16-child-up-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-16-child-left-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-16-child-left-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-16-child-left-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-16-elder",
+      "category": "front",
+      "kind": 16,
+      "label": "긴 옆가르마",
+      "stage": "elder",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-16-elder-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-16-elder-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-16-elder-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-16-elder-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-16-elder-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-16-elder-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-16-elder-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-16-elder-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-16-elder-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-16-elder-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-16-elder-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-16-elder-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-17-adult",
+      "category": "front",
+      "kind": 17,
+      "label": "하트 가르마",
+      "stage": "adult",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-17-adult-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-17-adult-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-17-adult-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-17-adult-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-17-adult-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-17-adult-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-17-adult-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-17-adult-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-17-adult-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-17-adult-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-17-adult-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-17-adult-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-17-child",
+      "category": "front",
+      "kind": 17,
+      "label": "하트 가르마",
+      "stage": "child",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-17-child-down-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-17-child-down-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-17-child-down-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-17-child-right-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-17-child-right-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-17-child-right-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-17-child-up-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-17-child-up-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-17-child-up-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-17-child-left-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-17-child-left-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-17-child-left-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-17-elder",
+      "category": "front",
+      "kind": 17,
+      "label": "하트 가르마",
+      "stage": "elder",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-17-elder-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-17-elder-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-17-elder-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-17-elder-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-17-elder-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-17-elder-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-17-elder-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-17-elder-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-17-elder-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-17-elder-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-17-elder-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-17-elder-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-18-adult",
+      "category": "front",
+      "kind": 18,
+      "label": "한쪽 땋은 앞머리",
+      "stage": "adult",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-18-adult-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-18-adult-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-18-adult-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-18-adult-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-18-adult-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-18-adult-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-18-adult-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-18-adult-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-18-adult-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-18-adult-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-18-adult-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-18-adult-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-18-child",
+      "category": "front",
+      "kind": 18,
+      "label": "한쪽 땋은 앞머리",
+      "stage": "child",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-18-child-down-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-18-child-down-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-18-child-down-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-18-child-right-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-18-child-right-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-18-child-right-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-18-child-up-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-18-child-up-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-18-child-up-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-18-child-left-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-18-child-left-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-18-child-left-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-18-elder",
+      "category": "front",
+      "kind": 18,
+      "label": "한쪽 땋은 앞머리",
+      "stage": "elder",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-18-elder-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-18-elder-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-18-elder-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-18-elder-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-18-elder-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-18-elder-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-18-elder-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-18-elder-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-18-elder-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-18-elder-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-18-elder-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-18-elder-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-19-adult",
+      "category": "front",
+      "kind": 19,
+      "label": "잔물결 앞머리",
+      "stage": "adult",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-19-adult-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-19-adult-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-19-adult-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-19-adult-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-19-adult-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-19-adult-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-19-adult-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-19-adult-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-19-adult-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-19-adult-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-19-adult-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-19-adult-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-19-child",
+      "category": "front",
+      "kind": 19,
+      "label": "잔물결 앞머리",
+      "stage": "child",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-19-child-down-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-19-child-down-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-19-child-down-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-19-child-right-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-19-child-right-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-19-child-right-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-19-child-up-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-19-child-up-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-19-child-up-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-19-child-left-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-19-child-left-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-19-child-left-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-19-elder",
+      "category": "front",
+      "kind": 19,
+      "label": "잔물결 앞머리",
+      "stage": "elder",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-19-elder-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-19-elder-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-19-elder-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-19-elder-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-19-elder-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-19-elder-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-19-elder-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-19-elder-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-19-elder-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-19-elder-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-19-elder-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-19-elder-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-20-adult",
+      "category": "front",
+      "kind": 20,
+      "label": "솟은 앞머리",
+      "stage": "adult",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-20-adult-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-20-adult-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-20-adult-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-20-adult-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-20-adult-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-20-adult-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-20-adult-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-20-adult-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-20-adult-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-20-adult-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-20-adult-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-20-adult-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-20-child",
+      "category": "front",
+      "kind": 20,
+      "label": "솟은 앞머리",
+      "stage": "child",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-20-child-down-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-20-child-down-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-20-child-down-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-20-child-right-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-20-child-right-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-20-child-right-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-20-child-up-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-20-child-up-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-20-child-up-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-20-child-left-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-20-child-left-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-20-child-left-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-20-elder",
+      "category": "front",
+      "kind": 20,
+      "label": "솟은 앞머리",
+      "stage": "elder",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-20-elder-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-20-elder-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-20-elder-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-20-elder-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-20-elder-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-20-elder-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-20-elder-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-20-elder-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-20-elder-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-20-elder-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-20-elder-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-20-elder-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-21-adult",
+      "category": "front",
+      "kind": 21,
+      "label": "두 갈래 앞머리",
+      "stage": "adult",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-21-adult-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-21-adult-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-21-adult-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-21-adult-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-21-adult-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-21-adult-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-21-adult-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-21-adult-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-21-adult-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-21-adult-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-21-adult-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-21-adult-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-21-child",
+      "category": "front",
+      "kind": 21,
+      "label": "두 갈래 앞머리",
+      "stage": "child",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-21-child-down-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-21-child-down-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-21-child-down-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-21-child-right-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-21-child-right-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-21-child-right-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-21-child-up-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-21-child-up-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-21-child-up-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-21-child-left-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-21-child-left-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "front-21-child-left-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "front-21-elder",
+      "category": "front",
+      "kind": 21,
+      "label": "두 갈래 앞머리",
+      "stage": "elder",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "front-21-elder-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-21-elder-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-21-elder-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "front-21-elder-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-21-elder-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-21-elder-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "front-21-elder-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-21-elder-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-21-elder-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "front-21-elder-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-21-elder-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "front-21-elder-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-0-adult",
+      "category": "back",
+      "kind": 0,
+      "label": "짧은 머리",
+      "stage": "adult",
+      "baseline": true,
+      "views": {
+        "down": [
+          {
+            "file": "back-0-adult-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-0-adult-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-0-adult-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-0-adult-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-0-adult-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-0-adult-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-0-adult-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-0-adult-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-0-adult-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-0-adult-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-0-adult-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-0-adult-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-0-child",
+      "category": "back",
+      "kind": 0,
+      "label": "짧은 머리",
+      "stage": "child",
+      "baseline": true,
+      "views": {
+        "down": [
+          {
+            "file": "back-0-child-down-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-0-child-down-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-0-child-down-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-0-child-right-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-0-child-right-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-0-child-right-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-0-child-up-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-0-child-up-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-0-child-up-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-0-child-left-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-0-child-left-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-0-child-left-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-0-elder",
+      "category": "back",
+      "kind": 0,
+      "label": "짧은 머리",
+      "stage": "elder",
+      "baseline": true,
+      "views": {
+        "down": [
+          {
+            "file": "back-0-elder-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-0-elder-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-0-elder-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-0-elder-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-0-elder-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-0-elder-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-0-elder-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-0-elder-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-0-elder-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-0-elder-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-0-elder-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-0-elder-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-11-adult",
+      "category": "back",
+      "kind": 11,
+      "label": "짧은 층머리",
+      "stage": "adult",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-11-adult-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-11-adult-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-11-adult-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-11-adult-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-11-adult-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-11-adult-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-11-adult-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-11-adult-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-11-adult-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-11-adult-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-11-adult-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-11-adult-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-11-child",
+      "category": "back",
+      "kind": 11,
+      "label": "짧은 층머리",
+      "stage": "child",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-11-child-down-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-11-child-down-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-11-child-down-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-11-child-right-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-11-child-right-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-11-child-right-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-11-child-up-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-11-child-up-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-11-child-up-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-11-child-left-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-11-child-left-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-11-child-left-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-11-elder",
+      "category": "back",
+      "kind": 11,
+      "label": "짧은 층머리",
+      "stage": "elder",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-11-elder-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-11-elder-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-11-elder-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-11-elder-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-11-elder-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-11-elder-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-11-elder-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-11-elder-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-11-elder-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-11-elder-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-11-elder-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-11-elder-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-12-adult",
+      "category": "back",
+      "kind": 12,
+      "label": "둥근 단발",
+      "stage": "adult",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-12-adult-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-12-adult-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-12-adult-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-12-adult-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-12-adult-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-12-adult-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-12-adult-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-12-adult-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-12-adult-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-12-adult-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-12-adult-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-12-adult-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-12-child",
+      "category": "back",
+      "kind": 12,
+      "label": "둥근 단발",
+      "stage": "child",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-12-child-down-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-12-child-down-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-12-child-down-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-12-child-right-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-12-child-right-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-12-child-right-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-12-child-up-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-12-child-up-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-12-child-up-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-12-child-left-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-12-child-left-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-12-child-left-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-12-elder",
+      "category": "back",
+      "kind": 12,
+      "label": "둥근 단발",
+      "stage": "elder",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-12-elder-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-12-elder-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-12-elder-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-12-elder-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-12-elder-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-12-elder-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-12-elder-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-12-elder-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-12-elder-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-12-elder-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-12-elder-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-12-elder-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-13-adult",
+      "category": "back",
+      "kind": 13,
+      "label": "바깥 뻗친 단발",
+      "stage": "adult",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-13-adult-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-13-adult-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-13-adult-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-13-adult-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-13-adult-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-13-adult-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-13-adult-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-13-adult-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-13-adult-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-13-adult-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-13-adult-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-13-adult-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-13-child",
+      "category": "back",
+      "kind": 13,
+      "label": "바깥 뻗친 단발",
+      "stage": "child",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-13-child-down-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-13-child-down-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-13-child-down-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-13-child-right-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-13-child-right-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-13-child-right-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-13-child-up-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-13-child-up-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-13-child-up-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-13-child-left-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-13-child-left-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-13-child-left-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-13-elder",
+      "category": "back",
+      "kind": 13,
+      "label": "바깥 뻗친 단발",
+      "stage": "elder",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-13-elder-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-13-elder-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-13-elder-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-13-elder-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-13-elder-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-13-elder-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-13-elder-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-13-elder-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-13-elder-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-13-elder-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-13-elder-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-13-elder-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-14-adult",
+      "category": "back",
+      "kind": 14,
+      "label": "긴 생머리",
+      "stage": "adult",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-14-adult-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-14-adult-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-14-adult-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-14-adult-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-14-adult-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-14-adult-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-14-adult-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-14-adult-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-14-adult-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-14-adult-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-14-adult-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-14-adult-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-14-child",
+      "category": "back",
+      "kind": 14,
+      "label": "긴 생머리",
+      "stage": "child",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-14-child-down-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-14-child-down-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-14-child-down-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-14-child-right-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-14-child-right-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-14-child-right-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-14-child-up-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-14-child-up-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-14-child-up-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-14-child-left-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-14-child-left-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-14-child-left-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-14-elder",
+      "category": "back",
+      "kind": 14,
+      "label": "긴 생머리",
+      "stage": "elder",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-14-elder-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-14-elder-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-14-elder-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-14-elder-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-14-elder-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-14-elder-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-14-elder-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-14-elder-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-14-elder-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-14-elder-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-14-elder-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-14-elder-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-15-adult",
+      "category": "back",
+      "kind": 15,
+      "label": "긴 물결 머리",
+      "stage": "adult",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-15-adult-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-15-adult-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-15-adult-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-15-adult-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-15-adult-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-15-adult-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-15-adult-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-15-adult-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-15-adult-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-15-adult-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-15-adult-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-15-adult-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-15-child",
+      "category": "back",
+      "kind": 15,
+      "label": "긴 물결 머리",
+      "stage": "child",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-15-child-down-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-15-child-down-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-15-child-down-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-15-child-right-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-15-child-right-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-15-child-right-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-15-child-up-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-15-child-up-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-15-child-up-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-15-child-left-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-15-child-left-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-15-child-left-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-15-elder",
+      "category": "back",
+      "kind": 15,
+      "label": "긴 물결 머리",
+      "stage": "elder",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-15-elder-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-15-elder-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-15-elder-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-15-elder-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-15-elder-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-15-elder-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-15-elder-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-15-elder-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-15-elder-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-15-elder-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-15-elder-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-15-elder-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-16-adult",
+      "category": "back",
+      "kind": 16,
+      "label": "반묶음",
+      "stage": "adult",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-16-adult-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-16-adult-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-16-adult-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-16-adult-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-16-adult-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-16-adult-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-16-adult-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-16-adult-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-16-adult-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-16-adult-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-16-adult-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-16-adult-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-16-child",
+      "category": "back",
+      "kind": 16,
+      "label": "반묶음",
+      "stage": "child",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-16-child-down-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-16-child-down-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-16-child-down-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-16-child-right-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-16-child-right-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-16-child-right-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-16-child-up-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-16-child-up-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-16-child-up-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-16-child-left-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-16-child-left-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-16-child-left-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-16-elder",
+      "category": "back",
+      "kind": 16,
+      "label": "반묶음",
+      "stage": "elder",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-16-elder-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-16-elder-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-16-elder-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-16-elder-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-16-elder-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-16-elder-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-16-elder-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-16-elder-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-16-elder-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-16-elder-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-16-elder-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-16-elder-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-17-adult",
+      "category": "back",
+      "kind": 17,
+      "label": "옆으로 묶은 머리",
+      "stage": "adult",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-17-adult-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-17-adult-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-17-adult-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-17-adult-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-17-adult-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-17-adult-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-17-adult-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-17-adult-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-17-adult-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-17-adult-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-17-adult-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-17-adult-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-17-child",
+      "category": "back",
+      "kind": 17,
+      "label": "옆으로 묶은 머리",
+      "stage": "child",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-17-child-down-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-17-child-down-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-17-child-down-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-17-child-right-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-17-child-right-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-17-child-right-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-17-child-up-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-17-child-up-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-17-child-up-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-17-child-left-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-17-child-left-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-17-child-left-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-17-elder",
+      "category": "back",
+      "kind": 17,
+      "label": "옆으로 묶은 머리",
+      "stage": "elder",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-17-elder-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-17-elder-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-17-elder-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-17-elder-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-17-elder-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-17-elder-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-17-elder-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-17-elder-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-17-elder-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-17-elder-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-17-elder-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-17-elder-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-18-adult",
+      "category": "back",
+      "kind": 18,
+      "label": "높게 땋은 머리",
+      "stage": "adult",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-18-adult-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-18-adult-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-18-adult-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-18-adult-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-18-adult-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-18-adult-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-18-adult-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-18-adult-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-18-adult-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-18-adult-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-18-adult-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-18-adult-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-18-child",
+      "category": "back",
+      "kind": 18,
+      "label": "높게 땋은 머리",
+      "stage": "child",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-18-child-down-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-18-child-down-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-18-child-down-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-18-child-right-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-18-child-right-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-18-child-right-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-18-child-up-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-18-child-up-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-18-child-up-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-18-child-left-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-18-child-left-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-18-child-left-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-18-elder",
+      "category": "back",
+      "kind": 18,
+      "label": "높게 땋은 머리",
+      "stage": "elder",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-18-elder-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-18-elder-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-18-elder-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-18-elder-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-18-elder-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-18-elder-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-18-elder-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-18-elder-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-18-elder-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-18-elder-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-18-elder-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-18-elder-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-19-adult",
+      "category": "back",
+      "kind": 19,
+      "label": "낮은 쪽머리",
+      "stage": "adult",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-19-adult-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-19-adult-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-19-adult-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-19-adult-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-19-adult-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-19-adult-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-19-adult-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-19-adult-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-19-adult-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-19-adult-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-19-adult-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-19-adult-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-19-child",
+      "category": "back",
+      "kind": 19,
+      "label": "낮은 쪽머리",
+      "stage": "child",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-19-child-down-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-19-child-down-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-19-child-down-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-19-child-right-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-19-child-right-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-19-child-right-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-19-child-up-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-19-child-up-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-19-child-up-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-19-child-left-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-19-child-left-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-19-child-left-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-19-elder",
+      "category": "back",
+      "kind": 19,
+      "label": "낮은 쪽머리",
+      "stage": "elder",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-19-elder-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-19-elder-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-19-elder-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-19-elder-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-19-elder-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-19-elder-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-19-elder-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-19-elder-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-19-elder-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-19-elder-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-19-elder-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-19-elder-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-20-adult",
+      "category": "back",
+      "kind": 20,
+      "label": "땋아 올린 머리",
+      "stage": "adult",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-20-adult-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-20-adult-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-20-adult-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-20-adult-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-20-adult-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-20-adult-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-20-adult-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-20-adult-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-20-adult-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-20-adult-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-20-adult-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-20-adult-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-20-child",
+      "category": "back",
+      "kind": 20,
+      "label": "땋아 올린 머리",
+      "stage": "child",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-20-child-down-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-20-child-down-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-20-child-down-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-20-child-right-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-20-child-right-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-20-child-right-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-20-child-up-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-20-child-up-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-20-child-up-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-20-child-left-0.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-20-child-left-1.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          },
+          {
+            "file": "back-20-child-left-2.png",
+            "width": 10,
+            "height": 11,
+            "duration": 200
+          }
+        ]
+      }
+    },
+    {
+      "id": "back-20-elder",
+      "category": "back",
+      "kind": 20,
+      "label": "땋아 올린 머리",
+      "stage": "elder",
+      "baseline": false,
+      "views": {
+        "down": [
+          {
+            "file": "back-20-elder-down-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-20-elder-down-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-20-elder-down-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "right": [
+          {
+            "file": "back-20-elder-right-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-20-elder-right-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-20-elder-right-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "up": [
+          {
+            "file": "back-20-elder-up-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-20-elder-up-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-20-elder-up-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ],
+        "left": [
+          {
+            "file": "back-20-elder-left-0.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-20-elder-left-1.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          },
+          {
+            "file": "back-20-elder-left-2.png",
+            "width": 10,
+            "height": 14,
+            "duration": 200
+          }
+        ]
+      }
+    }
+  ]
+}

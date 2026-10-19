@@ -7,9 +7,11 @@ import { mirror,spriteRows,writerPalette,PALETTE,type Who } from './sprites'
 import { sideHairDetails } from './side-hair-details'
 
 const previous=new Map(before.map(a=>[a.id,a]))
+// 이 비교 원본은 기존 11종을 저장한 것이므로 이후 추가된 스타일은 새 검증에서 다룬다.
+const SNAPSHOT_HAIR_BACK_COUNT=11
 describe('옆모습 뒷머리 보강',()=>{
  it('11종은 앞·뒤 모습, 얼굴과 몸통을 유지하면서 좌우에 같은 머리를 그린다',()=>{
-  for(let hairBack=0;hairBack<HAIR_BACKS.length;hairBack++)for(const stage of ['adult','child','elder']){
+  for(let hairBack=0;hairBack<SNAPSHOT_HAIR_BACK_COUNT;hairBack++)for(const stage of ['adult','child','elder']){
    const avatar=withLookDefaults({look:'f',name:'옆머리 예시',hairFront:0,hairBack,top:13,bottom:2,acc:0}),opts={frame:0 as const,blink:false,avatar,short:stage==='child'?0:undefined,elder:stage==='elder'},old=previous.get(`style-${hairBack}-${stage}`)!,right=spriteRows('writer','right',opts),pal=writerPalette('spring',avatar)
    for(const d of ['down','up'] as const)expect(spriteRows('writer',d,opts)).toEqual(old.rows[d])
    expect(right.map(r=>r.slice(4))).toEqual(old.rows.right.map(r=>r.slice(4)))
