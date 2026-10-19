@@ -200,7 +200,7 @@ import { adultJob, JOB_GIFTS, kidCoins, kidMailFor, CHILD_AFTER_WEDDING, childMo
 import { DESTS, TRIP_FRIEND_GAIN, TRIP_LEAVE_BY, tripCoinDelta, tripCost, type DestId } from './travel'
 import type { TripReward } from './trip-board'
 import { BIRTHDAY_MUL, isBirthday, NO_NOTEBOOK, noteGift, noteGot, noteHeard, noteMet, noteNews, noteSeen, noteTaste, noteObservedTaste, seenLabel, type Notebook } from './notebook'
-import { CARPENTER_WORKS, fromChest, hasStock, INK_JAR_HOLD, LIGHT_SHOES, owns, RACK_HOLD, RACK_PAPER, RAIN_WATER, SOOT_CATCH, stash, stashOverflows, stock, takeStock, walkMul, type CarpenterWork, type EasyId } from './easier'
+import { CARPENTER_WORKS, fromChest, toChest, hasStock, INK_JAR_HOLD, LIGHT_SHOES, owns, RACK_HOLD, RACK_PAPER, RAIN_WATER, SOOT_CATCH, stash, stashOverflows, stock, takeStock, walkMul, type CarpenterWork, type EasyId } from './easier'
 import { yardPlaced } from './yard'
 import { siblingMorning, swapKid } from './siblings'
 import { tipMorning } from './tip-letters'
@@ -3644,6 +3644,16 @@ export function takeFromChest(s: GameState, id: ItemId): GameState | null {
   syncHome(s)
   if (!isHome(playerTile(s))) return null
   const r = fromChest(s.inv, box, id)
+  return r ? { ...s, inv: r.inv, chest: r.chest } : null
+}
+
+/** 집 안에서 가방의 것을 보관함(궤짝·수납 가구)에 넣는다 (2026-10-19 사용자: 수납 가구는 창고처럼) */
+export function putInChest(s: GameState, id: ItemId, n = 1): GameState | null {
+  const box = chestOf(s)
+  if (!box) return null
+  syncHome(s)
+  if (!isHome(playerTile(s))) return null
+  const r = toChest(s.inv, box, id, n)
   return r ? { ...s, inv: r.inv, chest: r.chest } : null
 }
 

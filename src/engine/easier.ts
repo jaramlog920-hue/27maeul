@@ -132,6 +132,17 @@ export function fromChest(inv: Inventory, chest: Inventory, id: ItemId): { inv: 
   return { inv: { ...inv, [id]: count(inv, id) + n }, chest: box }
 }
 
+/** 가방의 것을 보관함에 넣는다 (보관함 한 칸 CHEST_STACK까지, 도구는 늘 가방에) — 넣을 수 없으면 null */
+export function toChest(inv: Inventory, chest: Inventory, id: ItemId, n: number): { inv: Inventory; chest: Inventory } | null {
+  if (TOOLS.includes(id)) return null
+  const k = Math.min(n, count(inv, id), Math.max(0, CHEST_STACK - count(chest, id)))
+  if (k <= 0) return null
+  const bag = { ...inv }
+  if (count(bag, id) - k > 0) bag[id] = count(bag, id) - k
+  else delete bag[id]
+  return { inv: bag, chest: { ...chest, [id]: count(chest, id) + k } }
+}
+
 // ── 신 (계획 11 작업 2) ──
 
 /** 걷는 속도 배수: 튼튼한 신(장날) ×1.2, 가벼운 신(양치기 선물) ×1.4 — 이 이상은 없다 (도트가 미끄러져 보이지 않게) */

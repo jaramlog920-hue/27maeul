@@ -7,6 +7,7 @@ import { lazyScreen } from './lazy-screen'
 import { isGhostClick } from '../shared/ghost'
 import { useGame } from '../store/game-store'
 import { CONTENT } from '../content/catalog'
+import { StorageView } from './bag/StorageView'
 import { Bag } from './bag/Bag'
 import { Wardrobe } from './family/Wardrobe'
 import { KidTime } from './family/KidTime'
@@ -203,7 +204,9 @@ function Body() {
     case 'wardrobe':
       return <Wardrobe who={modal.who} />
     case 'bag':
-      return <Bag tab={modal.tab} storage={modal.storage} />
+      return <Bag tab={modal.tab} />
+    case 'storage':
+      return <StorageView item={modal.item} />
     case 'companion':
       return <AdoptForm animal={modal.animal} />
     case 'library':

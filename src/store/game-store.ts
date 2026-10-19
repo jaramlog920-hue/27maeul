@@ -196,6 +196,7 @@ import {
   orderHome,
   orderWork,
   takeFromChest,
+  putInChest,
   putInPantry,
   servePantrySupper,
   takeFromPantry,
@@ -337,8 +338,9 @@ export type Modal =
   | { kind: 'readPick'; source?: 'copied' }
   | { kind: 'quiz'; mode: QuizMode; questions: Question[]; index: number; wrong: string[]; solved: boolean; misses: number; missed: string[] }
   | { kind: 'care' }
-  /** storage: 수납 가구를 눌러 연 가방 — 그 가구 이름과 보관함 칸을 먼저 보인다 (2026-10-19 사용자: 이불장을 눌렀는데 가방이 떴다) */
-  | { kind: 'bag'; tab?: BagTab; storage?: ItemId }
+  | { kind: 'bag'; tab?: BagTab }
+  /** 수납 가구(궤짝·이불장·찬장류)를 눌러 연 보관함 창 — 넣고 꺼내기 (2026-10-19 사용자: 가방이 아니라 창고처럼) */
+  | { kind: 'storage'; item: ItemId }
   | { kind: 'family' }
   | { kind: 'wardrobe'; who: WardrobeWho }
   | { kind: 'companion'; animal: Animal }
@@ -621,6 +623,8 @@ interface Store {
   askWork: (npc: string, id: CarpenterWork['id']) => void
   /** 집 안에서 재료 궤짝의 것을 가방으로 */
   takeChest: (id: ItemId) => void
+  /** 집 안에서 가방의 것을 보관함에 (n개까지) */
+  putChest: (id: ItemId, n?: number) => void
   /** 서늘한 찬장에 음식 넣기·꺼내기 (집 안에서) */
   putPantry: (id: ItemId) => void
   /** 장비 끼기·빼기 (2026-10-13) */
@@ -1283,7 +1287,7 @@ export const useGame = create<Store>((set, get) => {
     if (target.kind === 'furniture') {
       // 새 터 내 집의 평상: 잠자리 창 (첫 마을 침대와 같다 — 2026-10-14)
       if (newBedAt(game, target.tile)) return { game, modal: { kind: 'review', pieceId: reviewPick(game, rng) } }
-      if (isStorage(target.item)) return { game, modal: { kind: 'bag', storage: target.item } }
+      if (isStorage(target.item)) return { game, modal: { kind: 'storage', item: target.item } }
       const say = (T.easy.makes as Record<string, string>)[target.item]
       if (say) get().say(say, 4000)
       return { game, modal: null }
@@ -2254,6 +2258,12 @@ export const useGame = create<Store>((set, get) => {
     takeChest: (id) => {
       const next = takeFromChest(get().game, id)
       if (!next) return get().say(T.easy.chestFull)
+      sfx('tap')
+      set({ game: persist(next) })
+    },
+    putChest: (id, n = 1) => {
+      const next = putInChest(get().game, id, n)
+      if (!next) return get().say(T.easy.storageFull)
       sfx('tap')
       set({ game: persist(next) })
     },
