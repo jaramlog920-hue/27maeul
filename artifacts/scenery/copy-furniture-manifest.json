@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-17T10:23:23.871Z",
-  "version": "00b3ec512aea",
+  "generatedAt": "2026-10-19T01:02:02.364Z",
+  "version": "4202de950987",
   "note": "Only supported furniture views. Generated, not automatically visually reviewed. Examples are not user saves.",
   "sourceHashes": {
     "src/render/copy-furniture-art.ts": "10fc5afb21577cd2b5e9d49665f8155dde90fd0c8d03eeaa1eeba46653caa9f3",
     "src/render/copy-furniture-motion.ts": "03303c782a052436fab671265f65b6185fb67c0ef4c60ec90197b24e16dddf0a",
     "src/render/pet-art.ts": "11702e44fabc79ac36c0b297623cdb5ff3a1437aaa3485742a209c1c3baaa437",
     "src/render/newborn-art.ts": "c6a411ab437ab3b68f79206d1bbb034e24a882c2d939337bcef0b82d1fb176f1",
-    "src/render/sprites.ts": "80d53d396791c0c4564b5983ed8a2740d57cadc0d8f78457e2da53a3ddad1a0e",
+    "src/render/sprites.ts": "e4ebdffeebedc61df7b6e06d05414ae60e6ba15640f66fdeec8bd818be6ad542",
     "src/engine/copy-furniture.ts": "4d5f2c306aa01552223e4b3e6b45cfb0ab7f3854b74c6f465b655c767e710174",
     "src/engine/copy-furniture-views.ts": "284fb6074e5b31abe1464ad1006ee0db917a670ce2e0e617cc8537e9b90b5451",
     "src/engine/copy-furniture-defs.ts": "41ef39f4d902f1a57004860486918de71b8f119e96828a5232ba1bab675b477b"

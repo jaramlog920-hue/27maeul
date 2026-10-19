@@ -57,9 +57,11 @@ describe('3. 닫지 않은 순위 창은 다음 날 아침 다시 뜨지 않는�
     expect(next.clock.day).toBe(22)
     expect(next.rankPopup).toBeUndefined()
   })
-  it('이사 편지 창도 같다', () => {
+  // 2026-10-19 사용자: 이사 편지는 창이 아니라 집 앞 편지함에 — 읽을 때까지 다음 날에도 남는다
+  it('이사 편지는 읽기 전까지 편지함에 남는다', () => {
     const g = newGame(CONTENT)
-    const s = { ...g, clock: { day: 30, minute: 22 * 60 }, farewellPopup: { npc: 'baker', day: 29, letter: 0, gift: {} } } as GameState
-    expect(goToSleep(s, CONTENT).farewellPopup).toBeUndefined()
+    const letter = { npc: 'baker', day: 29, letter: 0, gift: {} }
+    const s = { ...g, clock: { day: 30, minute: 22 * 60 }, farewellPopup: letter } as GameState
+    expect(goToSleep(s, CONTENT).farewellPopup).toEqual(letter)
   })
 })

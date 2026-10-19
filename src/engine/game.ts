@@ -1917,7 +1917,21 @@ function eventsReady(s: GoalState, npc: string, needCast: boolean): PersonEvent[
   const spouse = s.gen?.persons[slotPerson(s.gen, npc)]?.spouse
   // 고백은 내가 누구와도 사귀지 않고(들꽃 다발의 'taken'과 같은 기준) 연애가 열렸을 때만 — 헤어지면 다시 열린다 (2026-10-11 점검)
   const confessOk = ctx.suitor && !spouse && !s.romance?.partner && featureAccess(s, 'dating') === 'full' && heartsOf(s.hearts[npc]) >= BOUQUET_HEARTS && !coolingAfterBreakup(s, npc)
-  return p.events.filter((e) => !life.seen.includes(e.id) && stage >= e.stage && whenMatches(e.when, m) && reqMet(e.req, ctx) && (!e.confess || confessOk) && !busy(e) && (!needCast || castHere(e)))
+  // 이야기가 한꺼번에 쏟아지지 않게: 같은 이웃은 하루 하나, 마을 전체 하루 STORIES_PER_DAY개 — 남은 것은 다음 날로 (2026-10-19 사용자).
+  // 진행 단계(thread)에 묶인 사건은 며칠 안에 닫히므로 미루지 않는다
+  const paced = (e: PersonEvent) => !!e.req?.thread || (!storyToday(s, npc) && storiesToday(s) < STORIES_PER_DAY)
+  return p.events.filter((e) => !life.seen.includes(e.id) && stage >= e.stage && whenMatches(e.when, m) && reqMet(e.req, ctx) && (!e.confess || confessOk) && !busy(e) && (!needCast || castHere(e)) && paced(e))
+}
+
+/** 하루에 볼 수 있는 이웃 이야기 수 (진행 단계 사건은 따로) */
+export const STORIES_PER_DAY = 2
+/** 오늘 본 이웃 이야기 수 */
+export function storiesToday(s: Pick<GameState, 'clock' | 'flags'>): number {
+  return s.flags.storyDay === s.clock.day ? (s.flags.storyCount ?? 0) : 0
+}
+/** 이 이웃의 이야기를 오늘 이미 보았나 */
+function storyToday(s: Pick<GameState, 'clock' | 'flags'>, npc: string): boolean {
+  return s.flags[`storyNpc:${npc}`] === s.clock.day
 }
 
 /** 이 사람이 지금 이야기(이벤트)를 품고 제자리에 와 있는가 — 머리 위에 말풍선, 말을 걸면 열린다 */
@@ -1982,7 +1996,9 @@ export function openEvent(s: GameState, npc: string): GameState | null {
     return { ...s, life: remember({ ...life, seen: [...life.seen, w.id] }, npc, w.memory, s), scenes: [...s.scenes, `saw:${w.id}`] }
   }
   const wait = needsFollowUp(e) ? { event: e.id, npc } : (life.storyWait ?? null)
-  let next: GameState = { ...s, life: { ...life, seen: [...life.seen, e.id], storyWait: wait }, scenes: [...s.scenes, `ev:${e.id}`] }
+  // 진행 단계 사건은 하루 수에 세지 않는다 (위 eventsReady의 paced와 같은 기준)
+  const counted: Record<string, number> = e.req?.thread ? {} : { storyDay: s.clock.day, storyCount: storiesToday(s) + 1, [`storyNpc:${npc}`]: s.clock.day }
+  let next: GameState = { ...s, flags: { ...s.flags, ...counted }, life: { ...life, seen: [...life.seen, e.id], storyWait: wait }, scenes: [...s.scenes, `ev:${e.id}`] }
   if (e.gain) next = heartUp(next, npc, e.gain, Infinity, 'story')
   if (e.cool) next = { ...next, life: { ...next.life, cool: { ...next.life.cool, [npc]: s.clock.day + e.cool } } }
   // 고를 말이 없는 마지막 사건은 보는 것으로 이야기가 끝난다
@@ -4799,10 +4815,9 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
     room,
     spaces: pruneSpaces(s.spaces ?? [], room),
     inv,
-    // 지난 아침의 순위·이사 편지 창은 닫지 않았어도 새 날로 넘기지 않는다 (새로고침하면 남던 것 — 2026-10-11 점검 3).
-    // 오늘 아침 것은 아래 rankMorning·farewellMorning이 새로 채운다
+    // 지난 아침의 순위 창은 닫지 않았어도 새 날로 넘기지 않는다 (새로고침하면 남던 것 — 2026-10-11 점검 3). 오늘 아침 것은 아래 rankMorning이 새로 채운다.
+    // 이사 편지는 집 앞 편지함에서 읽을 때까지 남긴다 (2026-10-19 사용자)
     rankPopup: undefined,
-    farewellPopup: undefined,
   }
   // 가족 생일 아침 (계획 12): 배우자·아이 생일 장면
   const villaged = advanceVillage(tipMorning(familyMorning(siblingMorning(kidsMorning(forgetPromises(morningSupplies(expireStall(expireWorkDay(next)), s.clock.day), day), content), content))), content)

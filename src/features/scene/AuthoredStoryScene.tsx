@@ -41,6 +41,7 @@ import {createContext,useEffect,useMemo,useRef,useState,type ReactNode,type Comp
 import {isSharedBackgroundStory} from '../../render/shared-background-draft-art'
 import {sharedBackgroundSceneSnapshot,drawSharedBackgroundScene} from '../../render/shared-background-scene'
 import {sharedBackgroundPreviewState} from '../../render/shared-background-preview'
+import {appearanceSprite,shownDef} from '../../render/neighbor-look'
 import {neighborById,CONTENT} from '../../content/catalog'
 import {withLookDefaults} from '../../engine/avatar'
 import {slotPerson} from '../../engine/gen-growth'
@@ -101,10 +102,10 @@ function AuthoredStorySceneBody({id,title,preview=false,readOnly=false,children,
   if(sharedScene)return
   const canvas=ref.current,g=canvas?.getContext('2d');if(!canvas||!g)return
   const resolve=(npcId:string):FinalePerson&{id?:string}=>{
-   const def=neighborById(npcId),current=gen?.persons[slotPerson(gen,npcId)],custom=looks?.[npcId]
+   const def=shownDef(neighborById(npcId)),current=gen?.persons[slotPerson(gen,npcId)],custom=looks?.[npcId],forced=custom?undefined:appearanceSprite(neighborById(npcId),!!gen?.retired?.[npcId])
    return preview?previewActor(`person:${npcId}`):{id:npcId,
     avatar:withLookDefaults({name:current?.name??def?.role??'이웃',look:current?.look??def?.look??'m',...def?.avatar,...current?.avatar,...custom,...(current?.hair?{hairColor:current.hair}:{})}),
-    who:(!def?.avatar&&!current?.avatar&&!custom&&!gen?.retired?.[npcId]?def?.sprite??'writer':'writer') as Who}
+    who:(forced??(!def?.avatar&&!current?.avatar&&!custom&&!gen?.retired?.[npcId]?def?.sprite??'writer':'writer')) as Who}
   }
   const stage=child?childStage(child,day):'helper'
   const attire=id.startsWith('wedding:')&&!preview?weddingOutfitsFor(useGame.getState().game,id.slice('wedding:'.length)):null

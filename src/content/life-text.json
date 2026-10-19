@@ -1707,6 +1707,7 @@
     "received": "편지 한 통을 받았어요.",
     "starsGot": "벤치 곁 편지함에서 말씀 조각 하나를 꺼냈어요 · {title} — 말씀 탭에 담겼어요",
     "mailboxTook": "편지 바구니에서 편지 한 통을 꺼냈어요.",
+    "farewellArrived": "집 앞 편지함에 이웃의 편지가 와 있어요.",
     "mailboxEmpty": "편지함이 비어 있다."
   },
   "copy": {

@@ -30,8 +30,8 @@ export function RankView({ history }: { history?: boolean }) {
     if (g.rankPopup && !history) {
       const next = { ...g, rankPopup: undefined }
       saveGame(next)
-      // 이사 편지가 같은 아침에 왔으면 이어서
-      useGame.setState({ game: next, modal: next.farewellPopup ? { kind: 'farewell' } : null })
+      // 이사 편지는 집 앞 편지함에 있다 (2026-10-19 사용자) — 창을 이어 열지 않는다
+      useGame.setState({ game: next, modal: null })
     } else {
       // 서고에서 연 순위는 닫으면 서고로 (2026-10-19 감사 L-42)
       const m = useGame.getState().modal

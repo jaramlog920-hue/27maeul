@@ -23,6 +23,7 @@ import { drawStargazing } from '../../render/stargazing-art'
 import { drawSunset } from '../../render/sunset-scene-art'
 import { drawMoment, type MomentKind, type LandscapeKind } from '../../render/scenic-moments-art'
 import moments from '../../content/scenic-moments.json'
+import { appearanceSprite, shownDef } from '../../render/neighbor-look'
 import { CONTENT, neighborById } from '../../content/catalog'
 import { withLookDefaults } from '../../engine/avatar'
 import { slotPerson } from '../../engine/gen-growth'
@@ -68,10 +69,11 @@ export function LandscapeScene({ kind = 'stars', sceneId = kind, onFinish, previ
     if (!canvas || !g) return
     const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
     const start = performance.now()
-    const def = neighborById(partnerId ?? (preview ? 'wendell' : ''))
+    const def = shownDef(neighborById(partnerId ?? (preview ? 'wendell' : '')))
+    const partnerForced = looks?.[partnerId ?? ''] ? undefined : appearanceSprite(neighborById(partnerId ?? ''), !!gen?.retired?.[partnerId ?? ''])
     const person = partnerId ? gen?.persons[slotPerson(gen, partnerId)] : null
     const partner = def?.look ? withLookDefaults({ name: def.role, look: person?.look ?? def.look, ...def.avatar, ...person?.avatar, ...looks?.[partnerId ?? ''], ...(person?.hair ? { hairColor: person.hair } : {}) }) : null
-    const partnerWho: Who = def && ['merchant', 'presser', 'postman'].includes(def.id) && !def.avatar && !person?.avatar && !looks?.[partnerId ?? ''] && !gen?.retired?.[def.id] ? def.id as Who : 'writer'
+    const partnerWho: Who = partnerForced ?? (def && ['merchant', 'presser', 'postman'].includes(def.id) && !def.avatar && !person?.avatar && !looks?.[partnerId ?? ''] && !gen?.retired?.[def.id] ? def.id as Who : 'writer')
     const stage = child ? childStage(child, day) : 'helper'
     const childSprite = playerChildSprite(stage, !!looks?.child)
     const family = { baby: !preview && !!child && stage === 'baby', helpKind,
@@ -83,8 +85,9 @@ export function LandscapeScene({ kind = 'stars', sceneId = kind, onFinish, previ
       .slice(0, 3).map(def => {
         const current = gen?.persons[slotPerson(gen, def.id)]
         const custom = looks?.[def.id]
-        const avatar = withLookDefaults({ look: current?.look ?? def.look ?? 'm', name: current?.name ?? def.role, ...def.avatar, ...current?.avatar, ...custom, ...(current?.hair ? { hairColor: current.hair } : {}) })
-        return { avatar, who: !def.avatar && !current?.avatar && !custom && !gen?.retired?.[def.id] ? def.sprite as Who : 'writer' as const }
+        const shown = shownDef(def), forced = custom ? undefined : appearanceSprite(def, !!gen?.retired?.[def.id])
+        const avatar = withLookDefaults({ look: current?.look ?? shown.look ?? 'm', name: current?.name ?? def.role, ...shown.avatar, ...current?.avatar, ...custom, ...(current?.hair ? { hairColor: current.hair } : {}) })
+        return { avatar, who: forced ?? (!shown.avatar && !current?.avatar && !custom && !gen?.retired?.[def.id] ? shown.sprite as Who : 'writer' as const) }
       })
     const cast: LibraryFinaleCast = { guests, spouse: married || preview ? { avatar: partner, who: partnerWho } : null,
       child: (child && !child.left) || preview ? { avatar: family.childAvatar, who: family.childWho, short: family.childShort } : null,
@@ -97,10 +100,11 @@ export function LandscapeScene({ kind = 'stars', sceneId = kind, onFinish, previ
       childAvatar:family.childAvatar,parentAvatar,
       heirAvatar:heir?withLookDefaults({...genAvatar(heir),...looks?.[parentId]}):preview?withLookDefaults({look:'f',name:'이웃의 자녀',skin:1,hairFront:3,hairBack:3,top:4,bottom:1}):null}
     const resolvePerson=(id:string)=>{
-      const def=neighborById(id)
-      if(!def)return null
+      const raw=neighborById(id)
+      if(!raw)return null
       const p=gen?.persons[slotPerson(gen,id)],custom=looks?.[id]
-      return {avatar:withLookDefaults({name:p?.name??def.role,look:p?.look??def.look??'m',...def.avatar,...p?.avatar,...custom,...(p?.hair?{hairColor:p.hair}:{})}),who:!def.avatar&&!p?.avatar&&!custom&&!gen?.retired?.[id]?def.sprite as Who:'writer' as const}
+      const def=shownDef(raw),forced=custom?undefined:appearanceSprite(raw,!!gen?.retired?.[id])
+      return {avatar:withLookDefaults({name:p?.name??def.role,look:p?.look??def.look??'m',...def.avatar,...p?.avatar,...custom,...(p?.hair?{hairColor:p.hair}:{})}),who:forced??(!def.avatar&&!p?.avatar&&!custom&&!gen?.retired?.[id]?def.sprite as Who:'writer' as const)}
     }
     const participants=preview?['grandpa','baker','wendell']:livingGuests({flags},CONTENT,kind==='facilityFinished'?`facilityMomentCrew:${facility}:`:'readingMomentGuest:')
     const special:Binding={day:day,special:flags.coverMoment?{color:COVER_COLORS[flags.coverMomentColor]??'cream',pattern:COVER_PATTERNS[flags.coverMomentPattern]??'plain',deco:SPINE_DECOS[flags.coverMomentDeco]??'cream',detail:BOOK_DETAIL_CHOICES[flags.coverMomentDetail]??'none'}:{color:'sky',pattern:'diamonds',deco:'bronze',detail:'metalCorners'}}

@@ -4,10 +4,10 @@ import { legacyGame as newGame } from './growth-test-support'
 import { CONTENT, PEOPLE } from '../content/catalog'
 import {
   chooseInEvent,
-  eventNow,
+  eventNow as pacedEventNow,
   partnerFree,
   finishStoryMini,
-  openEvent,
+  openEvent as pacedOpenEvent,
   personLine,
   routineOf,
   settle,
@@ -16,6 +16,10 @@ import {
   storyWaiting,
   type GameState,
 } from './game'
+// 이 파일은 줄거리를 본다 — 하루 이야기 수 제한(2026-10-19)은 비우고 연다 (제한 자체는 story-pacing.test.ts)
+const unpaced = (s: GameState): GameState => ({ ...s, flags: Object.fromEntries(Object.entries(s.flags).filter(([k]) => k !== 'storyDay' && k !== 'storyCount' && !k.startsWith('storyNpc:'))) })
+const openEvent = (s: GameState, npc: string) => pacedOpenEvent(unpaced(s), npc)
+const eventNow = (s: GameState, npc: string) => pacedEventNow(unpaced(s), npc)
 import { count } from './items'
 import { hasMemory, isOffDay, NO_LIFE, personOf, reqMet, sanitizeLife, setPeopleData, type PeopleData, type SceneLine } from './people'
 import type { Tile } from './types'
@@ -222,7 +226,8 @@ describe('갈래와 덮어쓰기', () => {
     const done = finishChair(s)
     for (const [k, v] of Object.entries(before)) expect(done.flags[k], k).toBe(v)
     expect(done.life.seen).toEqual(expect.arrayContaining(['wendell:story:1', 'tilly:quarrel']))
-    const changed = Object.keys(done.flags).filter((k) => done.flags[k] !== s.flags[k])
+    // 하루 이야기 수 기록(storyDay·storyCount·storyNpc:*)은 결과 표식이 아니다
+    const changed = Object.keys(done.flags).filter((k) => done.flags[k] !== s.flags[k] && k !== 'storyDay' && k !== 'storyCount' && !k.startsWith('storyNpc:'))
     expect(changed).toEqual(['story:tChair'])
   })
 })

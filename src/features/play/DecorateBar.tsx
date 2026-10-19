@@ -37,7 +37,7 @@ export function DecorateBar() {
   return (
     <div className="decorate-bar" role="toolbar" aria-label={T.ui.decorate}>
       {/* 설명 줄은 옮기는 중일 때만 짧게 (2026-10-07 사용자 — 가독성) */}
-      {moving && <p className="hint">빈 바닥을 누르세요.</p>}
+      {moving && <p className="hint">빈 바닥을 누르거나, 조이스틱으로 옮긴 뒤 확인을 누르세요.</p>}
       {decorating === 'wallBuild' && <p className="hint">벽을 세울 바닥을 누르세요 · 한 칸 {WALL_BUILD_COINS}닢</p>}
       {decorating === 'wallRemove' && <p className="hint">허물 벽을 누르세요</p>}
       {/* 방이 하나뿐이면 방 고르기 단추를 보이지 않는다 */}

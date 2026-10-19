@@ -16,3 +16,20 @@ export function neighborLook(def: NeighborDef, growth?: number, dressed?: Avatar
   }
   return { who: def.sprite as Who, extra: { growth: elder && def.sprite === 'child' ? 3 : growth, elder } }
 }
+
+/**
+ * 그림만 바꾼 외관(appearance)을 반영한 이웃 정의 — 장면·미리보기도 마을에서 보이는 모습과 같게 (2026-10-19 사용자: 바질 장면에 다른 사람이 나왔다).
+ * 고정 도트로 바꾼 이웃은 avatar를 비우고 sprite를, 다른 옷장 모습으로 바꾼 이웃은 그 avatar·look을 쓴다
+ */
+export function shownDef(def: NeighborDef): NeighborDef
+export function shownDef(def: NeighborDef | undefined): NeighborDef | undefined
+export function shownDef(def: NeighborDef | undefined): NeighborDef | undefined {
+  const ap = def?.appearance
+  if (!def || !ap) return def
+  if (ap.sprite) return { ...def, avatar: undefined, sprite: ap.sprite as NeighborDef['sprite'] }
+  return { ...def, avatar: ap.avatar ?? def.avatar, look: ap.look ?? def.look }
+}
+/** 고정 도트로 그리는 외관이면 그 도트 (자리를 이어받은 자녀는 제 모습이라 없음) */
+export function appearanceSprite(def: NeighborDef | undefined, retired = false): Who | undefined {
+  return !retired && def?.appearance?.sprite ? (def.appearance.sprite as Who) : undefined
+}

@@ -76,7 +76,9 @@ export function GameCanvas({ zoom = 1 }: { zoom?: number }) {
         r.zoom = zoomRef.current
         const st = useGame.getState()
         const sel = st.decorating ? selectedPiece(roomOf(st.game), st.decorSel) : undefined
-        r.selected = sel ? footprint(sel) : null
+        // 옮기는 중 조이스틱으로 고른 자리가 있으면 그 자리에 테두리를 그린다
+        const ghost = st.decorMoving ? st.decorGhost : null
+        r.selected = sel ? footprint(ghost ? { ...sel, x: ghost.x, y: ghost.y } : sel) : null
         r.look = st.decorating ? st.decorLook : null
         r.decorating = !!st.decorating
         lastT = Math.max(0, (now - t0) / 1000)

@@ -499,6 +499,9 @@ interface Store {
   /** 방 꾸미기에서 고른 놓인 가구 (왼쪽 위 칸·탁자 위인지) — 돌리기·치우기 (계획 17 작업 2). 저장하지 않는다 */
   decorSel: Pick<Furniture, 'item' | 'x' | 'y' | 'on'> | null
   decorMoving: boolean
+  /** 옮기는 중 조이스틱·방향키로 고른 놓을 자리 (2026-10-19 사용자) — 움직이는 동안은 겹쳐도 되고, 놓을 때만 검사한다 */
+  decorGhost: Tile | null
+  decorGhostAt: number
   /** 옮기려고 집어 든 집 둘레 살림 (2026-10-13) */
   yardMoving: YardItem | null
   /** 방 꾸미기에서 화면에 비출 방의 칸 (기록자는 그대로 두고 카메라만 옮긴다). 저장하지 않는다 */
@@ -831,6 +834,8 @@ function sayChildHelp(g: GameState, say: (text: string, ms?: number) => void) {
   say(`${g.child.name}: ${CHILD_HELP_LINE[k]}`, 3400)
 }
 
+/** 조이스틱을 누르고 있을 때 놓을 자리가 한 칸 움직이는 간격 */
+export const DECOR_GHOST_STEP_MS = 160
 const MUTE_KEY = 'twenty-seven/muted'
 const JOYSTICK_KEY = 'twenty-seven/joystick'
 const JOYSTICK_SHAPE_KEY = 'twenty-seven/joystick-shape'
@@ -1395,6 +1400,8 @@ export const useGame = create<Store>((set, get) => {
         return { game: persist(state), modal: null }
       }
       case 'mailbox': {
+        // 이사 간 이웃의 편지가 와 있으면 먼저 그것을 읽는다 (2026-10-19 사용자: 아침 편지는 집 앞 편지함에)
+        if (game.farewellPopup) { sfx('letter'); return { game, modal: { kind: 'farewell' } } }
         // 집 앞 편지함: 편지 나르는 이웃을 찾아가지 않아도 오늘 편지를 꺼낸다 (본문은 책상에서)
         const { state, pieceIds } = openMailbox(game, CONTENT)
         if (!pieceIds.length) {
@@ -1506,6 +1513,8 @@ export const useGame = create<Store>((set, get) => {
     decorFacing: 'down',
     decorSel: null,
     decorMoving: false,
+    decorGhost: null,
+    decorGhostAt: 0,
     yardMoving: null,
     decorLook: null,
     muted: loadMuted(),
@@ -1543,6 +1552,15 @@ export const useGame = create<Store>((set, get) => {
 
     walk: (dx, dy) => {
       const { game, modal, decorating } = get()
+      // 가구를 옮기는 중이면 조이스틱·방향키가 놓을 자리를 한 칸씩 옮긴다 (2026-10-19 사용자)
+      if (!modal && decorating && get().decorMoving) {
+        const f = selectedPiece(furnitureRoomOf(game), get().decorSel)
+        if (!f || (dx === 0 && dy === 0) || get().clockMs - get().decorGhostAt < DECOR_GHOST_STEP_MS) return
+        const from = get().decorGhost ?? { x: f.x, y: f.y }
+        const ghost = { x: from.x + Math.sign(dx), y: from.y + Math.sign(dy) }
+        set({ decorGhost: ghost, decorGhostAt: get().clockMs, decorLook: ghost })
+        return
+      }
       if (modal || decorating || get().copyResult?.length || get().piecePopups.length) return
       const at = playerTile(game)
       if (nightDoorLocked(game, { x: at.x + dx, y: at.y + dy }, CONTENT)) { get().say('주민들이 잠들어 문이 잠겨 있어요. 아침에 다시 와 주세요.'); return }
@@ -1561,6 +1579,8 @@ export const useGame = create<Store>((set, get) => {
 
     press: () => {
       const { game, modal, decorating } = get()
+      // 옮기는 중에 확인을 누르면 고른 자리에 놓는다 — 겹치거나 길을 막으면 그 자리에서 알린다
+      if (!modal && decorating && get().decorMoving && get().decorGhost) return get().tap(get().decorGhost!)
       if (modal || decorating || get().copyResult?.length) return
       get().tap(pressTile(game))
     },
@@ -1589,7 +1609,7 @@ export const useGame = create<Store>((set, get) => {
           const next = f && moveFurniture(game, f, tile)
           if (!next) { get().say('그 자리는 가구가 겹치거나 통로가 막혀요.'); return }
           const moved = furnitureRoomOf(next).find(o => o.item === f!.item && o.x === tile.x && o.y === tile.y)!
-          set({ game: persist(next), decorMoving: false, decorSel: moved })
+          set({ game: persist(next), decorMoving: false, decorSel: moved, decorGhost: null })
           sfx('place')
           return
         }
@@ -1738,9 +1758,9 @@ export const useGame = create<Store>((set, get) => {
       // 아이가 태어난 장면을 본 뒤 이름을 정한다
       if (!modal && game.flags.childNaming && game.child) modal = { kind: 'childName' }
       if (!modal && game.flags.siblingNaming && game.siblings?.length) modal = { kind: 'childName' }
-      // 아침에 온 순위표·이사 편지가 아직 열리지 않았으면 (여행에서 돌아온 아침처럼 잠자리를 거치지 않은 경우) 장면 뒤에 연다 (2026-10-18 감사 M-15)
+      // 아침에 온 순위표가 아직 열리지 않았으면 (여행에서 돌아온 아침처럼 잠자리를 거치지 않은 경우) 장면 뒤에 연다 (2026-10-18 감사 M-15).
+      // 이사 편지는 저절로 열지 않고 집 앞 편지함에 둔다 (2026-10-19 사용자)
       if (!modal && !get().piecePopups.length && game.rankPopup) modal = { kind: 'rank' }
-      else if (!modal && !get().piecePopups.length && game.farewellPopup) modal = { kind: 'farewell' }
       // 이웃 꿀팁 편지가 온 아침 (2026-10-14) — 장면·이름 정하기 뒤에
       if (!modal && game.flags.tipNew && game.tips?.length) {
         const flags = { ...game.flags }
@@ -2657,8 +2677,10 @@ export const useGame = create<Store>((set, get) => {
       const slept = get().game
       const next = goToSleep(slept, CONTENT, { read: pieceId !== null, pieceId: pieceId ?? undefined })
       // 마을 서고 순위 업데이트가 있는 아침이면 그 창부터 (계획 21 R8)
-      set({ game: persist(next), modal: next.rankPopup ? { kind: 'rank' } : next.farewellPopup ? { kind: 'farewell' } : null })
-      sayChildHelp(next, get().say)
+      set({ game: persist(next), modal: next.rankPopup ? { kind: 'rank' } : null })
+      // 이웃의 이사 편지는 집 앞 편지함으로 — 아침에 창을 띄우지 않고 알리기만 한다 (2026-10-19 사용자)
+      if (next.farewellPopup && next.farewellPopup !== slept.farewellPopup) get().say(T.post.farewellArrived, 4000)
+      else sayChildHelp(next, get().say)
       // 집이 넓어지며 가방으로 돌아간 가구 (살림 점검 2026-10-11 버그 5)
       const bagged = homeRefitReturned(slept, next)
       if (bagged.length) setTimeout(() => get().say(t('homeGrow.bagged', { items: bagged.map(itemName).join(' · ') }), 4200), 1200)
@@ -2692,7 +2714,7 @@ export const useGame = create<Store>((set, get) => {
       if (!(['down', 'right', 'up', 'left'] as const).includes(facing)) return
       set({ decorFacing: facing })
     },
-    stopDecorate: () => set({ decorating: null, decorSel: null, decorMoving: false, decorLook: null }),
+    stopDecorate: () => set({ decorating: null, decorSel: null, decorMoving: false, decorLook: null, decorGhost: null }),
     decorateAt: (where) => {
       const g = get().game
       if (currentMapId() !== 'newland') return
@@ -2755,7 +2777,7 @@ export const useGame = create<Store>((set, get) => {
       set({ game: persist(next), modal: null, decorating: null, decorSel: null, decorMoving: false, yardMoving: null })
       get().say(T.ui.escaped, 3000)
     },
-    moveSelected: () => set({ decorMoving: !get().decorMoving, decorating: 'pick' }),
+    moveSelected: () => set({ decorMoving: !get().decorMoving, decorating: 'pick', decorGhost: null }),
     setSpaceUse: (use) => {
       const g = get().game
       const f = selectedPiece(g.room, get().decorSel)
@@ -2867,7 +2889,7 @@ export const useGame = create<Store>((set, get) => {
         if (after) get().say(after)
         return
       }
-      set({ game, modal: libraryCompletion ? { kind: 'shelfDone' } : id==='completeBible'&&current.scenes.includes(id)&&!current.flags.bibleEndingSeen ? game.rankPopup ? {kind:'rank'} : game.farewellPopup ? {kind:'farewell'} : null : null, afterScene: null })
+      set({ game, modal: libraryCompletion ? { kind: 'shelfDone' } : id==='completeBible'&&current.scenes.includes(id)&&!current.flags.bibleEndingSeen ? game.rankPopup ? {kind:'rank'} : null : null, afterScene: null })
       if (after) get().say(after)
     },
 
