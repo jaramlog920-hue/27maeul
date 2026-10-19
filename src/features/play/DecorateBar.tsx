@@ -23,7 +23,7 @@ export function DecorateBar() {
   const inHouse = useGame((s) => inBuildingRoom(s.game))
   const game = useGame((s) => s.game)
   const [spaceOpen, setSpaceOpen] = useState<string | null>(null)
-  const { startDecorate, stopDecorate, turnSelected, removeSelected, moveSelected, showDecorRoom, setSpaceUse, clearSpaceUse } = useGame.getState()
+  const { startDecorate, stopDecorate, turnSelected, removeSelected, moveSelected, selectBelow, showDecorRoom, setSpaceUse, clearSpaceUse } = useGame.getState()
   if (!decorating) return null
   // 자리의 쓰임 (계획 16 작업 23): 고른 가구로 되는 쓰임만 보인다 — 없으면 단추도 없다
   const uses = sel && !inHouse ? usesFor(game.room, sel) : []
@@ -51,14 +51,17 @@ export function DecorateBar() {
       )}
       {held && hasFacingArt(held) && FURNITURE_DEFS[held]?.layer !== 'wall' && <div className="decorate-facing" role="group" aria-label="설치할 가구 방향">
         <FurnitureFacingPreview item={held} facing={facing} />
-        <span>{itemName(held)}</span>
+        {/* 놓을 가구와 고른 가구를 이름 앞에서 구분한다 (2026-10-19 감사 L-64) */}
+        <span>{T.ui.decorateHeld} · {itemName(held)}</span>
         {furnitureFacings(held).map(dir => <button key={dir} aria-pressed={facing === dir} onClick={() => setFacing(dir)}>{directionNames[dir]}</button>)}
       </div>}
       {sel && (
         <div className="decorate-items decorate-sel">
           <span className="decorate-sel-name">
-            <ItemIcon id={sel.item} /> {itemName(sel.item)}
+            <ItemIcon id={sel.item} /> {held ? `${T.ui.decorateSelected} · ` : ''}{itemName(sel.item)}
           </span>
+          {/* 위에 올린 물건을 고른 때 받침(탁자·협탁)째 고를 수 있게 (2026-10-19 감사 L-69) */}
+          {sel.on && <button onClick={selectBelow}>{T.ui.decorateBelow}</button>}
           <button onClick={moveSelected}>{moving ? '옮기기 취소' : '옮기기'}</button>
           {hasFacingArt(sel.item) && FURNITURE_DEFS[sel.item]?.layer !== 'wall' && <button onClick={turnSelected}>{T.ui.decorateTurn}</button>}
           <button onClick={removeSelected}>{T.ui.decorateTake}</button>

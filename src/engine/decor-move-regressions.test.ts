@@ -29,8 +29,10 @@ it('cannot move or rotate a table into the player',()=>{
   const {s,table}=setup()
   const moving={...s,room:[table],player:{...s.player,x:19,y:112}}
   expect(moveFurniture(moving,table,{x:19,y:112})).toBeNull()
+  // 기록자 쪽(세로)으로는 돌지 않고, 같은 자리를 차지하는 반대 방향으로 건너뛴다 (2026-10-19 감사 L-68)
   const turning={...s,room:[table],player:{...s.player,x:19,y:114}}
-  expect(rotateFurniture(turning,table)).toBeNull()
+  const turned=rotateFurniture(turning,table)!
+  expect(turned.room).toEqual([{...table,facing:'up'}])
   expect(turning.room).toEqual([table])
 })
 

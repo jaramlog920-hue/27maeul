@@ -135,7 +135,7 @@ import {
 // 생활 확장 도트를 이야기 뒤 소품 그림으로 한 번 등록한다
 registerStoryPropArt({ ...EXPANSION_PROPS, ...LIFE_GAP_PROPS }, { ...EXPANSION_VIEWS, ...LIFE_GAP_STRUCTURES })
 
-import {C,hash,drawNativeGround,drawTree,drawNativeRoomWall} from './world-ground-art'
+import {C,hash,drawNativeGround,drawTree,drawNativeRoomWall,wildflowerColor} from './world-ground-art'
 
 type Ctx = CanvasRenderingContext2D
 
@@ -644,10 +644,12 @@ function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season, tr
       g.drawImage(paint('old/terrain/mapWaySign', OLD_TERRAIN.mapWaySign.rows, OLD_VILLAGE_PALETTE), px, py)
       break
     case '*':
-      if (season !== 'winter')
+      if (season !== 'winter') {
+        // 풀밭 들꽃 점의 투명도는 봄 들꽃·이벤트컷과 함께 맞춘다.
         for (let i = 0; i < 3; i++) {
-          r(C.flower[(x + y + i) % 4], 2 + Math.floor(hash(x, y, i + 7) * 11), 3 + Math.floor(hash(x, y, i + 9) * 10), 2, 2)
+          r(wildflowerColor((x + y + i) % 4), 2 + Math.floor(hash(x, y, i + 7) * 11), 3 + Math.floor(hash(x, y, i + 9) * 10), 2, 2)
         }
+      }
       break
     case '=':
       r(C.wood, 0, 3, 16, 10)
@@ -2236,7 +2238,15 @@ function drawNewlandSites(g: Ctx, game: GameState, playerY: number, over: boolea
  * 켜진 순간부터 frames 장을 ms 간격으로 한 번 — 다 돌면 null(평소 동작으로). 꺼지면 잊어서 다음에 켜질 때 다시 한 번
  */
 const onceStart = new Map<string, number>()
+/** 날짜가 붙은 열쇠(…/<날>)는 날이 바뀌면 다시 불리지 않는다 — 지난 날 것은 비운다 (2026-10-19 감사 L-35: 조금씩 쌓였다) */
+let onceDay = -1
+const DAY_KEY = /^[^/]+\/[^/]+\/(\d+)$/
 function onceFrame(key: string, on: boolean, frames = 4, ms = 320): number | null {
+  const dayOf = DAY_KEY.exec(key)
+  if (dayOf && Number(dayOf[1]) > onceDay) {
+    onceDay = Number(dayOf[1])
+    for (const k of onceStart.keys()) { const d = DAY_KEY.exec(k); if (d && Number(d[1]) < onceDay) onceStart.delete(k) }
+  }
   if (!on) { onceStart.delete(key); return null }
   const now = performance.now()
   let start = onceStart.get(key)

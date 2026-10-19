@@ -136,6 +136,7 @@
     "title": "불러오기",
     "none": "저장된 기록이 없어요.",
     "noName": "이름 없음",
+    "cannotOpen": "이 칸은 열 수 없어요. 저장이 손상됐거나 다른 판의 게임에서 만든 기록이에요.",
     "line": "{day}일째 · {coins}닢 · 책 {books}권",
     "delete": "지우기",
     "deleteAsk": "{name} 기록을 지울까요?",

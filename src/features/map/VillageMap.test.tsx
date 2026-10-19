@@ -46,7 +46,7 @@ describe('마을 지도', () => {
     expect(screen.getByRole('status')).toHaveTextContent('다 쓴 책을 꽂는 마을 서고')
     fireEvent.click(screen.getByRole('button', { name: '약방 설명' }))
     expect(screen.getByRole('status')).toHaveTextContent('세이지의 약방')
-    expect(screen.getByRole('status')).toHaveTextContent('서고에 2권을 꽂으면 열려요')
+    expect(screen.getByRole('status')).toHaveTextContent('신약을 2권 끝까지 마치면 열려요')
     // 장소도 누르면 팝업, 닫기로 닫힌다
     fireEvent.click(screen.getByRole('button', { name: '언덕 쉼터 설명' }))
     expect(screen.getByRole('dialog', { name: '언덕 쉼터 설명' })).toHaveTextContent('피로가 풀려요')

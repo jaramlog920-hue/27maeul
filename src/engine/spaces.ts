@@ -168,11 +168,19 @@ export function spacesOf(spaces: readonly HomeSpace[], f: Pick<Furniture, 'item'
   return spaces.filter(s => s.furniture.includes(furnitureId(f)))
 }
 
-/** 가구를 옮겼을 때 자리가 그 가구를 따라가게 한다 (id만 바꾼다 — 쓸 수 있는지는 다시 따진다) */
+/**
+ * 가구를 옮겼을 때 자리가 그 가구를 따라가게 한다 (id만 바꾼다 — 쓸 수 있는지는 다시 따진다).
+ * 앵커 가구면 자리 이름표(space:<가구>)도 새 자리로 — 옛 이름표가 남으면 같은 가구로 자리가 하나 더 생겼다 (2026-10-19 감사 L-24)
+ */
 export function moveInSpaces(spaces: readonly HomeSpace[], from: Pick<Furniture, 'item' | 'x' | 'y'>, to: Pick<Furniture, 'item' | 'x' | 'y'>): HomeSpace[] {
   const a = furnitureId(from), b = furnitureId(to)
   if (a === b) return [...spaces]
-  return spaces.map(s => s.furniture.includes(a) ? { ...s, furniture: s.furniture.map(id => id === a ? b : id) } : s)
+  const free = !spaces.some(s => s.id === `space:${b}`)
+  return spaces.map(s => {
+    if (!s.furniture.includes(a)) return s
+    const moved = { ...s, furniture: s.furniture.map(id => id === a ? b : id) }
+    return free && s.id === `space:${a}` ? { ...moved, id: `space:${b}` } : moved
+  })
 }
 /** 방에 없는 가구는 자리에서 빼고, 가구가 하나도 없으면 자리를 없앤다. 대표 칸은 남은 가구로 */
 export function pruneSpaces(spaces: readonly HomeSpace[], room: readonly Furniture[]): HomeSpace[] {

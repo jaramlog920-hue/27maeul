@@ -591,10 +591,45 @@
 | 검토 후속 | 수정 코드 독립 검토에서 나온 5건: 복음서 잔치를 미룬 사이 27권 완성 시 복음서 잔치 건너뜀, 미룬 27권 잔치의 기억 정원 날짜, 미룬 잔치가 내 결혼 잔치 저녁과 겹치지 않게, 순위·편지 창 오류 시 알림도 지움, 재필사 뒤 정성 기록 정리 | `game.ts`, `game-store.ts` | `all-feast.test.ts` ①-2~①-4, `SceneCrash.test.tsx` |
 | 테스트 정리 | 의도된 변경을 따라가지 못한 기존 테스트 14건 | `detail-child-career-switch`(L-39 고침), `game.test` 복음서 잔치(L-8), `apothecary`(H-2 결정), `club-affinity`, `review-probes`, `ot-copying`, `ModalLayer` 3건, `BookView`, `Library` | 전체 실행 |
 
-### 9-2. 아직 고치지 않은 항목 (다음 작업)
+### 9-2. 남은 Low 항목 수정 (2026-10-19 새벽, 사용자 결정: 안내는 팝업으로, 의도 확인 3건은 의도가 아니므로 고침)
+
+| 항목 | 내용 | 주요 수정 위치 | 회귀 테스트 |
+|---|---|---|---|
+| L-63 | 놓을 수 없는 빈 자리에 이유 안내 | `game-store.ts` tap, `life-text.json` decorateCannotPlace | `detail-furniture-placement.test.tsx` |
+| L-64 | 새 가구 방향과 고른 가구 구분 | `DecorateBar.tsx` "놓을 가구 · / 고른 가구 ·" | 화면 확인 |
+| L-67 | 가구를 든 채 두 번 누르면 있던 가구 회수 | `game-store.ts` tap: 들고 있을 때는 치우지 않고 안내 | `detail-furniture-placement.test.tsx` |
+| L-68 | 벽 끝에서 90도 막히면 180도로 못 돌림 | `room.ts` rotations(막힌 방향 건너뛰기), `game.ts` rotateFurniture | `detail-furniture-wall-rotation.test.tsx`, `furniture-facing.test.ts`, `room-pin.expected.json` |
+| L-69 | 물건 올린 협탁 통째 이동 | `DecorateBar.tsx` '받침째 고르기', store selectBelow, `game.ts` removePiece | `DecorBelow.test.tsx` |
+| L-65 | 선물 못 할 때 까닭 | `TalkBox.tsx` 단추를 누르면 '오늘은 이미 선물했어요…'/'선물할 물건이 없어요' | `guidance-20261019.test.tsx`, gift 세부 검사 2건 |
+| L-66 | 아이 도움을 못 받았는데 성공 알림 | `game.ts` 가방·궤짝이 차면 childHelpFull·'childHelp:full' 기록, store 알림 | `detail-child-helper-morning.test.tsx` |
+| L-46 · L-44 | 요리사 아이 일터 이정표 날 접시 알림 · 그리는 도중 저장 | `FacilityView.tsx` KidWork·Workshop을 useEffect로 | `guidance-20261019.test.tsx` |
+| L-47 | 공동 마당 모임 알림 이름 빈칸 | `FacilityView.tsx` 함께한 이웃 모두 | 코드 확인 |
+| L-51 | 음성 인식 시작 실패 무반응 · 주석 | `CopyDesk.tsx` voiceStartFail, `copy-voice.ts` 주석 | 코드 확인 |
+| L-50 | 저장소 막힘 시 필사 설정 미적용 | `copy-way-setting.ts`·`copy-voice.ts` 이번 실행 값 | `guidance-20261019.test.tsx` |
+| L-3 | 열 수 없는 저장 칸 안내 | `App.tsx`·`SaveSlots.tsx` notice, `ko.json` saves.cannotOpen | `guidance-20261019.test.tsx` |
+| L-54 | 찻집 후보 직업 줄 빈칸 | `Journal.tsx` FAMILY_PLACE | `guidance-20261019.test.tsx` |
+| L-41 | 지도 '서고에 꽂으면' 문구 | `VillageMap.tsx`, `life-text.json` zoneLocked: '신약을 N권 끝까지 마치면' | `VillageMap.test.tsx` |
+| L-22 | 결혼 준비 주민에게 다발 | `game.ts` releaseNow(사귀는 그 자리에서 풀기) | `rare-20261019.test.ts` |
+| L-23 | 벽걸이 아래 벽 세우기 | `game.ts` buildWall 벽걸이만 다시 맞춤 | `rare-20261019.test.ts` |
+| L-24 | 앵커 가구 옮기면 자리 중복 | `spaces.ts` moveInSpaces 이름표 이동, 차려 둔 식탁도 따라감 | `spaces.test.ts` |
+| L-27 | 이어받은 자녀 가족 새 터 판정 | `gen-homes.ts` slotPerson | `rare-20261019.test.ts` |
+| L-40 | 끝까지 읽은 뒤 낭독이 마지막 절만 | `ReadingMeeting.tsx` 처음 절부터 | 코드 확인 |
+| L-42 | 하위 창 닫으면 마을로 | `RankView.tsx`·`SceneReplay.tsx` back | 코드 확인 |
+| L-45 | 320×568 9px 스크롤 | `parts.css` 낮은 화면 여백·폭 | 브라우저 측정(568 = 568, 375×667도 그대로) |
+| L-16 | 클립보드 제안으로 한 절 통째 입력 | `copying.ts` COPY_BURST_MAX 12 | `copying.test.ts` |
+| L-7 | 여행 출발 검사가 버튼에만 | `game-store.ts` startTripBoard에서 canTrip | 코드 확인 |
+| L-13 | 일부 화면이 공통 저장 경로 우회 | store commitGame, `WorkDay.tsx` applyLifeState, `FacilityView.tsx` commit | 전체 실행 |
+| L-33 | 장면 캔버스 그리기 예외 | `StarsScene`·`AuthoredStoryScene`·`SharedBackgroundStoryScene` try/catch | 전체 실행 |
+| L-35 | 한 번 동작 기록 누적 | `renderer.ts` 날이 바뀌면 지난 날 열쇠 비우기 | 코드 확인 |
+| L-43 | 빈 화면의 닫을 수 없는 배경 | `ModalLayer.tsx` 빈 창은 닫기 | 전체 실행 |
+| L-56 · L-57 | 죽은 대사 2줄 · 안 쓰는 표식 | `people.json`, `cooking.ts` cookDay, `game.ts` schoolStat | `story-after.test.ts` |
+| L-61 | 검사하지 않던 저장 칸 | `save.ts` lampFuel·today 모양 | `save-robust.test.ts` |
+
+L-2는 이전에 이미 고쳐졌고(§7), L-34는 영향이 없다고 확인됐다(§7).
+
+### 9-3. 아직 고치지 않은 항목 (다음 작업)
 
 - **M-6** 상속자 배우자의 옷장(그림·저장 대상 분리 필요 — 렌더러와 함께 손봐야 해서 이번에 하지 않음), **M-18 · L-30 · L-31** 일꾼·동생·여행 판 아이 그림, **M-1** 여러 탭(새 저장 계층의 대응을 실제 브라우저에서 재확인 필요), **H-1** 저장 공간(새 팝업 실기기 확인 필요)
-- Low: L-2·L-3 일부, L-7, L-13(persist 우회), L-16, L-22, L-23, L-24, L-27, L-33~L-35, L-40~L-47, L-50, L-51, L-54, L-56, L-57, L-61, L-63~L-69(안내·의도 확인)
 - 실기기(iOS/Android) IME·오디오·메모리, 장면 그림 시각 비교는 여전히 검사하지 못했다.
 
 ---

@@ -86,6 +86,8 @@ export function checkCopy(input: string, target: string): CopyCheck {
 
 /** 한 번의 입력으로 늘어날 수 있는 글자 수 (정규화). 이보다 많이 한꺼번에 들어오면서 본문과 맞지 않으면 받지 않는다 */
 export const COPY_MAX_STEP = 3
+/** 본문과 맞는 뭉치라도 한 번에 이만큼까지만 받는다 — 키보드의 클립보드 제안이 한 절을 통째로 넣지 못하게 (2026-10-19 감사 L-16) */
+export const COPY_BURST_MAX = 12
 
 /**
  * 붙여넣기·끌어 놓기·자동완성(고쳐 쓰기 제안)으로 들어오는 입력 종류 (InputEvent.inputType).
@@ -113,12 +115,14 @@ export interface InputHow {
  * - 붙여넣기 표식이 있거나 붙여넣기·끌어 놓기·자동완성 입력 종류면 앞 입력 그대로 (BLOCKED_INPUT_TYPES)
  * - 한 번에 COPY_MAX_STEP 글자까지 늘면 받는다. 지우기·고치기는 언제나 받는다
  * - 그보다 많이 늘었으면, 본문(target)의 앞부분과 맞을 때만 받는다 — 휴대폰 한글 키보드가 몇 글자를 한꺼번에 확정하는 경우.
- *   본문과 맞지 않는 뭉치(자동완성 낱말 등)는 받지 않는다
+ *   본문과 맞지 않는 뭉치(자동완성 낱말 등)와 COPY_BURST_MAX를 넘는 뭉치(클립보드 제안)는 받지 않는다
  */
 export function acceptInput(prev: string, next: string, how: InputHow = {}): string {
   if (how.pasted || (how.inputType && BLOCKED_INPUT_TYPES.includes(how.inputType))) return prev
   const grew = [...normalizeCopy(next)].length - [...normalizeCopy(prev)].length
   if (grew <= COPY_MAX_STEP) return next
+  // 클립보드 제안은 조합이 아닌 insertText로 온다 — 조합 확정 뭉치는 그대로 본문과 견준다
+  if (grew > COPY_BURST_MAX && how.inputType === 'insertText') return prev
   return how.target !== undefined && !checkCopy(next, how.target).typo ? next : prev
 }
 

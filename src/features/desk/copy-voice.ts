@@ -1,5 +1,5 @@
 // 필사 소리 내어 읽기 (사용자 결정 2026-10-05): 브라우저 음성 인식(SpeechRecognition / webkitSpeechRecognition)으로
-// 한 절을 받아 적는다. 기본은 끔 — 설정 › 필사에서 켠다 (기기에 저장). 음성 인식이 없는 브라우저(일부 iOS 사파리 등)에서는
+// 한 절을 받아 적는다. 기본은 켬 — 설정 › 필사에서 끌 수 있다 (기기에 저장). 음성 인식이 없는 브라우저(일부 iOS 사파리 등)에서는
 // 단추도 설정도 보이지 않는다. 받아 적은 글은 본문과 견주기만 하고, 기록하는 것은 언제나 본문 그대로다 (copying.checkVoice).
 
 const VOICE_KEY = 'twenty-seven/copy-voice'
@@ -41,7 +41,10 @@ export function voiceAvailable(): boolean {
 }
 
 /** 설정: 소리 내어 읽기(마이크) — 기본은 켬 (2026-10-07 사용자), 끈 사람만 '0' */
+// 저장소에 쓸 수 없는 곳에서는 이번 실행 동안 이 값을 쓴다 (2026-10-19 감사 L-50)
+let voiceMemory: boolean | null = null
 export function copyVoiceOn(): boolean {
+  if (voiceMemory !== null) return voiceMemory
   try {
     return globalThis.localStorage?.getItem(VOICE_KEY) !== '0'
   } catch {
@@ -51,8 +54,10 @@ export function copyVoiceOn(): boolean {
 export function setCopyVoice(on: boolean) {
   try {
     globalThis.localStorage?.setItem(VOICE_KEY, on ? '1' : '0')
+    voiceMemory = null
   } catch {
-    /* 저장할 수 없으면 기본(켬) 그대로 */
+    /* 저장할 수 없으면 이번 실행에만 */
+    voiceMemory = on
   }
 }
 

@@ -158,6 +158,21 @@ function normalizeShapes(s: GameState): GameState {
     collected: strs(s.collected),
     journal: Array.isArray(s.journal) ? s.journal.filter(isObj) : [],
     room: Array.isArray(s.room) ? s.room.filter((f) => isObj(f) && typeof f.item === 'string' && fin(f.x) && fin(f.y)) : [],
+    // 등잔 기름·오늘 기록도 모양을 맞춘다 (2026-10-19 감사 L-61)
+    lampFuel: fin(s.lampFuel) ? Math.max(0, s.lampFuel) : 0,
+    today: todayShape(s.today),
+  }
+}
+
+function todayShape(v: unknown): GameState['today'] {
+  const t = isObj(v) ? (v as Record<string, unknown>) : {}
+  const strOrNull = (x: unknown) => (typeof x === 'string' ? x : null)
+  return {
+    visitor: strOrNull(t.visitor),
+    visitGot: t.visitGot === true,
+    inviter: strOrNull(t.inviter),
+    dined: t.dined === true,
+    gathering: isObj(t.gathering) ? (t.gathering as unknown as GameState['today']['gathering']) : null,
   }
 }
 

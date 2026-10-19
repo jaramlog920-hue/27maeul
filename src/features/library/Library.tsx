@@ -133,7 +133,7 @@ export function Library() {
       <Guestbook />
       <div className="actions">
         {/* 마을별 서고 순위 다시 보기 (계획 21 R8) */}
-        <button onClick={() => useGame.getState().open({ kind: 'rank', history: true })}>{t('rank.open')}</button>
+        <button onClick={() => useGame.getState().open({ kind: 'rank', history: true, back: useGame.getState().modal ?? undefined })}>{t('rank.open')}</button>
         <button data-close onClick={closeModal}>{T.ui.close}</button>
       </div>
     </div>

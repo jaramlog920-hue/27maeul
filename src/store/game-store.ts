@@ -14,7 +14,7 @@ import type { HouseLook } from '../engine/newland-house-look'
 import { WORKSHOP, PARTNER_ROOM, BABY_ROOM, LIVING_ROOM } from '../engine/home-layout'
 import { lodgingChildren, LODGING_CHILD_SEATS } from '../engine/lodging'
 import { otPieceById } from '../engine/ot-pieces'
-import { canTravel, goArchive, moveFurniture, travel, finishLibrary, isStorage, unstick } from '../engine/game'
+import { canTravel, canTrip, goArchive, moveFurniture, travel, finishLibrary, isStorage, unstick } from '../engine/game'
 import { buildWall, canBuildWall, canRemoveWall, careBaby, homeCopyFragment, removeWall, sameLookCandidate, type BabyCare, type WallBlock } from '../engine/game'
 import { WALL_BUILD_COINS } from '../engine/home-walls'
 import { standPrice, standSell } from '../engine/sell-stand'
@@ -108,7 +108,7 @@ import {
   chooseBook,
   placeFurniture,
   rotateFurniture,
-  removeFurniture,
+  removePiece,
   restAt,
   READ_REST,
   READ_MINUTES,
@@ -267,7 +267,8 @@ export type Modal =
   /** 빈칸 퀴즈 (2026-10-14): 장을 마친 화면에서 바로 */
   | { kind: 'blankQuiz'; target?: BlankChapter }
   /** 기억 정원에서 본 장면 다시 보기 (2026-10-14) — 저장하지 않는다 */
-  | { kind: 'sceneReplay'; id: string }
+  /** back: 닫으면 돌아갈 창 (2026-10-19 감사 L-42) */
+  | { kind: 'sceneReplay'; id: string; back?: Modal }
   | { kind: 'schedule' }
   | { kind: 'readingMeeting'; day: number }
   | { kind: 'libraryVisitor'; day: number }
@@ -318,7 +319,7 @@ export type Modal =
   /** 마을 지도: 마을 전체를 한 장으로 (설정에서) */
   | { kind: 'villageMap' }
   /** 마을별 서고 순위 (계획 21 R8): 업데이트 창, history면 서고에서 다시 보기 */
-  | { kind: 'rank'; history?: boolean }
+  | { kind: 'rank'; history?: boolean; back?: Modal }
   /** 이사 간 이웃이 남긴 편지 (아침) */
   | { kind: 'farewell' }
   | { kind: 'loveVerse' }
@@ -336,7 +337,8 @@ export type Modal =
   | { kind: 'readPick'; source?: 'copied' }
   | { kind: 'quiz'; mode: QuizMode; questions: Question[]; index: number; wrong: string[]; solved: boolean; misses: number; missed: string[] }
   | { kind: 'care' }
-  | { kind: 'bag'; tab?: BagTab }
+  /** storage: 수납 가구를 눌러 연 가방 — 그 가구 이름과 보관함 칸을 먼저 보인다 (2026-10-19 사용자: 이불장을 눌렀는데 가방이 떴다) */
+  | { kind: 'bag'; tab?: BagTab; storage?: ItemId }
   | { kind: 'family' }
   | { kind: 'wardrobe'; who: WardrobeWho }
   | { kind: 'companion'; animal: Animal }
@@ -525,6 +527,8 @@ interface Store {
 
   load: (game: GameState) => void
   commitStall: (game: GameState) => void
+  /** 화면이 엔진으로 바꾼 상태를 적는다 — 도감·업적·저장 실패 안내까지 같은 길로 (2026-10-19 감사 L-13) */
+  commitGame: (game: GameState) => void
   /** 마을 매대에 한 개 판다 (2026-10-12) */
   standSellItem: (item: ItemId) => void
   tap: (tile: Tile) => void
@@ -733,6 +737,8 @@ interface Store {
   turnSelected: () => void
   /** 고른 가구를 가방으로 */
   removeSelected: () => void
+  /** 고른 물건 아래의 탁자·협탁을 고른다 (2026-10-19 감사 L-69) */
+  selectBelow: () => void
   nextScene: () => void
   /** 서고 잔치 모닥불: 음식 하나를 내놓는다 — 기뻐한 이웃 id (2026-10-13) */
   feastShare: (item: ItemId) => string[]
@@ -816,6 +822,7 @@ function sayChildHelp(g: GameState, say: (text: string, ms?: number) => void) {
     return
   }
   const k = g.flags.childHelpKind
+  if (g.child && g.flags.childHelpDay === g.clock.day && g.flags.childHelpFull === g.clock.day) { say(`${g.child.name}: ${T.ui.childHelpFull}`, 4000); return }
   if (!g.child || g.flags.childHelpDay !== g.clock.day || k === undefined || k < 0) return
   say(`${g.child.name}: ${CHILD_HELP_LINE[k]}`, 3400)
 }
@@ -1276,7 +1283,7 @@ export const useGame = create<Store>((set, get) => {
     if (target.kind === 'furniture') {
       // 새 터 내 집의 평상: 잠자리 창 (첫 마을 침대와 같다 — 2026-10-14)
       if (newBedAt(game, target.tile)) return { game, modal: { kind: 'review', pieceId: reviewPick(game, rng) } }
-      if (isStorage(target.item)) return { game, modal: { kind: 'bag' } }
+      if (isStorage(target.item)) return { game, modal: { kind: 'bag', storage: target.item } }
       const say = (T.easy.makes as Record<string, string>)[target.item]
       if (say) get().say(say, 4000)
       return { game, modal: null }
@@ -1478,6 +1485,8 @@ export const useGame = create<Store>((set, get) => {
     dismissCopyResult: () => set({ copyResult: null }),
     trip: null,
     startTripBoard: (dest, withChild) => {
+      // 화면 단추와 같은 검사 — 열리지 않았거나 늦었거나 지쳤으면 떠나지 않는다 (2026-10-19 감사 L-7)
+      if (canTrip(get().game, dest)) return
       sfx('splash')
       set({ trip: { dest, withChild }, modal: null })
     },
@@ -1507,6 +1516,7 @@ export const useGame = create<Store>((set, get) => {
 
     // 좌판도 도감·업적·저장 실패 안내를 포함한 공통 저장 경로를 지난다.
     commitStall: (game) => set({ game: persist(expireStall(game)) }),
+    commitGame: (game) => set({ game: persist(game) }),
     standSellItem: (item) => {
       const g = get().game
       const price = standPrice(g, item)
@@ -1590,7 +1600,7 @@ export const useGame = create<Store>((set, get) => {
           }
           sfx('place')
           set({ game: persist(next) })
-          if (!build && next.inv !== game.inv) get().say('걸 벽이 없어진 벽걸이는 가방에 넣었어요.')
+          if (next.room.length < game.room.length) get().say('걸 벽이 없어진 벽걸이는 가방에 넣었어요.')
           return
         }
         // 물건을 들고 있으면 먼저 놓아 본다 (탁자·협탁 위에 올리기)
@@ -1607,12 +1617,18 @@ export const useGame = create<Store>((set, get) => {
         }
         // 놓을 수 없는 자리에 가구가 있으면 고른다 — 가구가 차지한 칸 어디를 눌러도. 고른 것을 한 번 더 누르면 치운다
         const hit = removal(furnitureRoomOf(game), tile)[0]
+        const holding = decorating !== 'pick'
         if (!hit) {
           set({ decorSel: null })
+          // 놓을 수 없는 빈 자리에는 이유를 알린다 (2026-10-19 감사 L-63)
+          if (holding) get().say(T.ui.decorateCannotPlace)
           return
         }
-        if (selectedPiece(furnitureRoomOf(game), get().decorSel) === hit) get().removeSelected()
-        else set({ decorSel: { item: hit.item, x: hit.x, y: hit.y, on: hit.on } })
+        // 고른 것을 한 번 더 누르면 치운다 — 가구를 들고 있을 때는 치우지 않는다 (2026-10-19 감사 L-67: 놓으려다 있던 가구가 가방으로 들어갔다)
+        if (selectedPiece(furnitureRoomOf(game), get().decorSel) === hit) {
+          if (holding) get().say(T.ui.decorateOccupied)
+          else get().removeSelected()
+        } else set({ decorSel: { item: hit.item, x: hit.x, y: hit.y, on: hit.on } })
         return
       }
       // 서고의 방 문은 모두 처음부터 열려 있다 (걸어 들어가는 문 — 아래 tapTile로)
@@ -2774,14 +2790,20 @@ export const useGame = create<Store>((set, get) => {
       sfx('place')
       set({ game: persist(next) })
     },
+    selectBelow: () => {
+      const { game, decorSel } = get()
+      const room = furnitureRoomOf(game)
+      const f = selectedPiece(room, decorSel)
+      if (!f?.on) return
+      const under = room.find((o) => !o.on && FURNITURE_DEFS[o.item]?.surface && footprint(o).some((t) => sameTile(t, f)))
+      if (under) set({ decorSel: { item: under.item, x: under.x, y: under.y, on: under.on }, decorMoving: false })
+    },
     removeSelected: () => {
       const { game, decorSel } = get()
       const f = selectedPiece(furnitureRoomOf(game), decorSel)
       if (!f) return
-      // 이 가구가 맨 위에 있는 칸에서 치운다 (탁자 위 물건이 아니라 탁자를 고른 때)
-      const at = footprint(f).find((t) => removal(furnitureRoomOf(game), t)[0] === f)
-      if (!at) return
-      const next = removeFurniture(game, at)
+      // 탁자·협탁을 고른 때는 위에 올린 물건도 함께 가방으로
+      const next = removePiece(game, f)
       if (next === game) get().say(T.ui.bagFull)
       else {
         set({ game: persist(next), decorSel: null, decorMoving: false })

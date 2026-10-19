@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { neighborById } from '../../content/catalog'
 import { T } from '../../content/text'
 import { closedHouseIds } from '../../engine/game'
-import { housesNow, isHome, lockedZones, placeActive, roomAt, ZONES, TILE, VILLAGE_H, WIDTH, type House } from '../../engine/world'
+import { housesNow, isHome, lockedZones, placeActive, roomAt, ZONES, TILE, VILLAGE_H, WIDTH, WILD_HERBS, type House } from '../../engine/world'
 import { LODGING_ROOF_TOP } from '../../engine/lodging'
 import type { PlaceId } from '../../engine/types'
 import { drawVillageMap } from '../../render/renderer'
@@ -156,6 +156,12 @@ export function VillageMap() {
             {s.name}
           </span>
         ))}
+        {/* 들 약초 자리 네 곳 — 가장자리에 숨어 있어 찾기 어려웠다 (2026-10-19 사용자) */}
+        {WILD_HERBS.map((t) => (
+          <span key={`herb:${t.x},${t.y}`} className="vmap-label soft" style={pct(t.x, t.y)}>
+            🌿약초
+          </span>
+        ))}
         {FACILITY_SPOTS.filter((s) => placeActive(s.place)).map((s) => (
           <span key={s.place} className="vmap-label soft" style={pct(s.x - 0.5, s.y)}>
             {s.name}
@@ -203,13 +209,13 @@ export function VillageMap() {
           </span>
         )}
       </div>
-      <p className="hint">● 내 자리 · 🔒 서고 권수</p>
+      <p className="hint">● 내 자리 · 🔒 마친 신약 권수</p>
       {pick && (
         <div className="vmap-pop" role="dialog" aria-label={`${pick.name} 설명`} onClick={() => setPick(null)}>
           <div className="vmap-info" role="status" onClick={(e) => e.stopPropagation()}>
             <h3>{pick.lock !== undefined && '🔒 '}{pick.name}</h3>
             {pick.desc && <p>{pick.desc}</p>}
-            {pick.lock !== undefined && <p className="hint">{pick.lock ? `서고에 ${pick.lock}을 꽂으면 열려요.` : '아직 닫혀 있어요.'}</p>}
+            {pick.lock !== undefined && <p className="hint">{/* 실제 기준은 끝까지 마친 신약 권수 (2026-10-19 감사 L-41) */}{pick.lock ? `신약을 ${pick.lock} 끝까지 마치면 열려요.` : '아직 닫혀 있어요.'}</p>}
             <div className="actions"><button onClick={() => setPick(null)}>{T.ui.close}</button></div>
           </div>
         </div>

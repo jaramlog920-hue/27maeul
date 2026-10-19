@@ -32,7 +32,11 @@ export function RankView({ history }: { history?: boolean }) {
       saveGame(next)
       // 이사 편지가 같은 아침에 왔으면 이어서
       useGame.setState({ game: next, modal: next.farewellPopup ? { kind: 'farewell' } : null })
-    } else useGame.setState({ modal: null })
+    } else {
+      // 서고에서 연 순위는 닫으면 서고로 (2026-10-19 감사 L-42)
+      const m = useGame.getState().modal
+      useGame.setState({ modal: m?.kind === 'rank' && m.back ? m.back : null })
+    }
   }
   if (featureAccess(game, 'rank') !== 'full' && !game.rankPopup && !game.ranks?.length) return <div className="dialog" role="dialog" aria-label={t('rank.title')}><h2>{t('rank.title')}</h2><p className="hint">{featureHint('rank')}</p><button onClick={close}>닫기</button></div>
   const pop = !history ? game.rankPopup : undefined

@@ -47,25 +47,38 @@ describe('001 가구 설치 실패·취소 세부 검사 (게임 동작 수정 �
     expect(localStorage.getItem('twenty-seven/save')).toBeNull()
   })
 
-  it('관찰 D001: 빈 잘못된 자리에서 실패 이유 안내도 새 반응도 없다', () => {
+  // 2026-10-19 감사 L-63(D001)을 고친 뒤: 놓을 수 없는 빈 자리에는 이유를 알린다
+  it('D001 수정: 빈 잘못된 자리를 누르면 놓을 수 없는 이유를 알린다', () => {
     fixture()
     useGame.getState().startDecorate('stool')
     useGame.getState().tap({ x: 0, y: 0 })
-    expect(useGame.getState().toast).toBeNull()
+    expect(useGame.getState().toast?.text).toBe(T.ui.decorateCannotPlace)
     expect(useGame.getState().decorSel).toBeNull()
   })
 
-  it('관찰 D002: 가구를 든 채 기존 가구와 겹쳐 두 번 누르면 들고 있는 가구 대신 기존 가구가 회수된다', () => {
+  // 2026-10-19 감사 L-67(D002)을 고친 뒤: 가구를 든 채 두 번 눌러도 있던 가구를 치우지 않는다
+  it('D002 수정: 가구를 든 채 기존 가구를 두 번 눌러도 기존 가구는 그대로이고 안내만 한다', () => {
     const placed: Furniture = { item: 'stool', ...h(5, 5) }
     fixture([placed])
     useGame.getState().startDecorate('stool')
     useGame.getState().tap(h(5, 5))
     expect(useGame.getState().game.room).toEqual([placed])
+    useGame.getState().tap(h(5, 5))
+    expect(useGame.getState().game.room).toEqual([placed])
+    expect(useGame.getState().game.inv.stool).toBe(1)
     expect(useGame.getState().decorating).toBe('stool')
+    expect(useGame.getState().decorSel).toMatchObject({ item: 'stool', ...h(5, 5) })
+    expect(useGame.getState().toast?.text).toBe(T.ui.decorateOccupied)
+  })
+
+  it('고르기 모드에서는 고른 가구를 한 번 더 누르면 지금처럼 치운다', () => {
+    const placed: Furniture = { item: 'stool', ...h(5, 5) }
+    fixture([placed])
+    useGame.getState().startDecorate('pick')
+    useGame.getState().tap(h(5, 5))
     useGame.getState().tap(h(5, 5))
     expect(useGame.getState().game.room).toEqual([])
     expect(useGame.getState().game.inv.stool).toBe(2)
-    expect(useGame.getState().decorating).toBe('stool')
   })
 
   it('옮기기 취소는 배치·가방을 바꾸지 않고, 완료는 선택·이동·시점 상태를 비운다', () => {

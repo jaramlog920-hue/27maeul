@@ -178,25 +178,34 @@ export function placement(room: readonly Furniture[], item: ItemId, t: Tile, fac
  * 위에 물건이 올려진 탁자·협탁은 돌리지 않는다 — 물건을 먼저 치운다.
  */
 export function rotation(room: readonly Furniture[], f: Furniture, ctx: RoomCtx = HOME_CTX): Furniture | null {
-  if (!room.includes(f)) return null
-  if (isCopyFurniture(f.item) && copyFurnitureFacings(f.item).length === 1) return null
+  return rotations(room, f, ctx)[0] ?? null
+}
+
+/**
+ * 돌릴 수 있는 모습을 시계 방향 차례로 (2026-10-19 감사 L-68: 다음 90도가 벽에 막혀도 그다음 방향으로 바로 돌린다).
+ * 맨 앞이 한 번 누를 때 돌아갈 모습이다.
+ */
+export function rotations(room: readonly Furniture[], f: Furniture, ctx: RoomCtx = HOME_CTX): Furniture[] {
+  if (!room.includes(f)) return []
+  if (isCopyFurniture(f.item) && copyFurnitureFacings(f.item).length === 1) return []
   const def = FURNITURE_DEFS[f.item]
-  if (!def) return null
+  if (!def) return []
   if (def.surface && !f.on) {
     const tiles = footprint(f)
-    if (room.some((o) => o.on && tiles.some((p) => sameTile(p, o)))) return null
+    if (room.some((o) => o.on && tiles.some((p) => sameTile(p, o)))) return []
   }
-  const next = isCopyFurniture(f.item) ? copyFurnitureFacings(f.item)[copyFurnitureFacing(f.item,facingOf(f)) === 'down' ? 1 : 0] : TURN[facingOf(f)]
-  const ok = placement(
-    room.filter((o) => o !== f),
-    f.item,
-    f,
-    next,
-    ctx,
-  )
-  if (!ok || ok.x !== f.x || ok.y !== f.y || !!ok.on !== !!f.on) return null
-  // 돌려도 배운 마감은 그대로 (25-A)
-  return f.finish ? { ...ok, finish: f.finish } : ok
+  const order: Facing[] = []
+  if (isCopyFurniture(f.item)) order.push(copyFurnitureFacings(f.item)[copyFurnitureFacing(f.item, facingOf(f)) === 'down' ? 1 : 0])
+  else for (let d = TURN[facingOf(f)]; d !== facingOf(f); d = TURN[d]) order.push(d)
+  const rest = room.filter((o) => o !== f)
+  const out: Furniture[] = []
+  for (const next of order) {
+    const ok = placement(rest, f.item, f, next, ctx)
+    if (!ok || ok.x !== f.x || ok.y !== f.y || !!ok.on !== !!f.on) continue
+    // 돌려도 배운 마감은 그대로 (25-A)
+    out.push(f.finish ? { ...ok, finish: f.finish } : ok)
+  }
+  return out
 }
 
 /** 이 칸에서 치울 것: 위에 올린 작은 물건이 먼저, 그다음 가구 (탁자를 치우면 위의 것도 함께) */

@@ -106,10 +106,12 @@ export function villageNeighbors(game: Pick<GameState, 'flags'>): NeighborDef[] 
 export function jobOf(def: NeighborDef): string {
   if (def.family) {
     const fam = neighborById(def.family)
-    return fam ? `${fam.role}네` : ''
+    return fam ? `${fam.role}네` : (FAMILY_PLACE[def.family] ?? '')
   }
   return ''
 }
+/** 집안이 이웃이 아니라 가게인 후보 (2026-10-19 감사 L-54: 찻집 후보의 직업 줄이 비었다) */
+const FAMILY_PLACE: Record<string, string> = { teahouse: '찻집' }
 
 /** 성별: 연애 후보는 look, 원래 이웃은 gender */
 function genderOf(d: NeighborDef): 'f' | 'm' {

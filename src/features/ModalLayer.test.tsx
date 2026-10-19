@@ -161,7 +161,7 @@ describe('이웃', () => {
     // 선물 반응은 공통 문구(giftReplies)로 바뀌었다
     expect(screen.getByText(T.giftReplies.liked)).toBeInTheDocument()
     expect(useGame.getState().game.hearts.baker).toBe(3)
-    expect(screen.getByRole('button', { name: '선물하기' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: '선물하기' })).toHaveAttribute('aria-disabled', 'true')
   })
 
   it('장날에만 상인과 바꾸기', async () => {

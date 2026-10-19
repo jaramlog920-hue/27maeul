@@ -349,9 +349,10 @@ export function npcEventMotion(s: SceneState, id: string, t: number): EventMotio
   }
   // 마을 잔치: 모닥불 둘레 이웃이 춤·맛보기·박수를 돌아가며
   if ((festivalEvening(s) || feastEvening(s)) && standingAt(n, FESTIVAL_SPOTS[id])) return { set: 'event', ...rotate(['dance', 'taste', 'clap'], id, t), facing: faceToward(FESTIVAL_SPOTS[id], FIRE) }
-  // 이웃 모임: 소풍은 음식 나누기(천 쪽을 보고), 아기 잔치는 접시 놓기
+  // 이웃 모임: 소풍은 천 쪽을 보고 여러 동작, 아기 잔치는 접시 놓기
   const g = gatheringNow(s)
-  if (g === 'picnic' && standingAt(n, HILL_SPOTS[id])) return { set: 'event', ...oneShot('shareFood', id, t), facing: faceToward(HILL_SPOTS[id], PICNIC_CLOTH.at) }
+  // 소풍은 한 동작만 되풀이하면 어색하다 — 음식 나누기·맛보기·차 마시기·웃기·끄덕이기를 이웃마다 다른 박자로 (2026-10-19 사용자)
+  if (g === 'picnic' && standingAt(n, HILL_SPOTS[id])) return { set: 'event', ...rotate(['shareFood', 'taste', 'sipTea', 'smile', 'nod'], id, t), facing: faceToward(HILL_SPOTS[id], PICNIC_CLOTH.at) }
   if (g === 'babyParty' && standingAt(n, BABY_PARTY_SPOTS[id])) return { set: 'event', ...oneShot('placePlate', id, t), facing: 'down' }
   // 작은 행사: 앉은 자리에서 차 모임은 맛보기·웃음, 작품 소개는 박수·웃음 (이웃마다 박자가 다르다)
   for (const { f, seats } of festsNow(s)) {

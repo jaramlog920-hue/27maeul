@@ -1,4 +1,5 @@
 import {copyOutfitReward,copyOutfitAt,ownsCopyOutfit} from './copy-outfits'
+import { releasePlayerPartner } from './gen-relations'
 import { copyFurnitureReward, copyFurnitureFlag, isCopyFurniture, type CopyFurnitureId } from './copy-furniture'
 import { npcAffinityScale } from './npc-affinity'
 import {WEDDING_ATTIRE,recordWeddingAttire} from './wedding-attire'
@@ -37,7 +38,7 @@ import { nightDoorKeys, nightDoorLocked } from './night-doors'
 import { LODGING_DOOR, LODGING_SEATS } from './lodging'
 import { coolDown, exhausted, fallsSick, FRESH, rest, sleepNeeds, starving, tickNeeds, warmUp, work, type Needs } from './needs'
 import { inGoodMood } from './mood'
-import { facingOf, footprint, FURNITURE_DEFS, placement, refitRoom, removal, rotation, solidTiles, type Furniture, type RoomCtx } from './room'
+import { facingOf, footprint, FURNITURE_DEFS, placement, refitRoom, removal, rotations, solidTiles, type Furniture, type RoomCtx } from './room'
 import { familySeats, type FamilyWants, moveInSpaces, pruneSpaces, SPACE_FROM, SPACE_TO, KID_SPACE_FROM, spaceAtTile, type HomeSpace } from './spaces'
 import {
   BABY_PARTY_SPOTS,
@@ -568,7 +569,14 @@ export function buildWall(s: GameState, t: Tile): GameState | null {
   const next: HomeWalls = isRemovedWall(t.x, t.y) ? { ...walls, removed: walls.removed.filter((k) => k !== key(t)) } : { ...walls, built: [...walls.built, key(t)] }
   const out = { ...s, coins: s.coins - WALL_BUILD_COINS, homeWalls: next }
   syncHome(out)
-  return out
+  // 바로 위 벽걸이는 아래가 바닥이 아니게 되면 가방으로 (2026-10-19 감사 L-23) — 벽걸이만 다시 본다
+  const hangs = out.room.filter((f) => FURNITURE_DEFS[f.item]?.layer === 'wall')
+  const kept = refitRoom(hangs, {}).room
+  const dropped = hangs.filter((f) => !kept.some((k) => k.item === f.item && k.x === f.x && k.y === f.y))
+  if (!dropped.length) return out
+  const back: Partial<Record<ItemId, number>> = {}
+  for (const f of dropped) back[f.item] = (back[f.item] ?? 0) + 1
+  return { ...out, room: out.room.filter((f) => !dropped.includes(f)), inv: addGift(out.inv, back) }
 }
 
 /** 이 벽을 허물 수 있는가: 방 사이 원래 벽이나 세운 벽만, 벽걸이가 걸려 있으면 먼저 내린다 */
@@ -2016,7 +2024,6 @@ export const SCHOOL_XP = 15
 /** 맡긴 아이가 앉는 자리 (배움 탁자 곁) */
 export const SCHOOL_SEAT: Tile = { x: 21, y: 45 }
 export const SCHOOL_UNTIL = 18 * 60
-const SCHOOL_STATS: readonly StatId[] = ['wit', 'hand', 'charm', 'strength', 'luck']
 
 export type SchoolBlock = 'locked' | 'noChild' | 'baby' | 'away' | 'done' | 'late' | 'coins' | null
 export function canSchool(s: GameState): SchoolBlock {
@@ -2038,7 +2045,7 @@ export function sendToSchool(s: GameState, stat: StatId): GameState | null {
     ...s,
     coins: s.coins - SCHOOL_FEE,
     child: { ...c, stats: addXp(c.stats, stat, SCHOOL_XP) },
-    flags: { ...s.flags, schoolDay: s.clock.day, schoolStat: SCHOOL_STATS.indexOf(stat) },
+    flags: { ...s.flags, schoolDay: s.clock.day },
   }
 }
 
@@ -2345,6 +2352,7 @@ export function chooseInEvent(s: GameState, eventId: string, index: number): Gam
     // 친구로 지내겠다는 말(stayFriends)을 고르면 연인이 되지 않는다 — 벌점·서먹함 없이, 고백은 다시 묻지 않는다 (계획 16 작업 12b)
     if (e.confess && !c.stayFriends && !s.romance?.partner && featureAccess(s, 'dating') === 'full' && heartsOf(s.hearts[p.id]) >= BOUQUET_HEARTS && !coolingAfterBreakup(s, p.id) && reqCtx(s, p.id).suitor && !s.gen?.persons[slotPerson(s.gen, p.id)]?.spouse) {
       next = { ...next, romance: { ...NO_ROMANCE, partner: p.id, stage: 'dating', since: s.clock.day, bondRequired: true }, flags: { ...next.flags, 'unlock:dating': 1, [`friendsOnly:${slotPerson(next.gen, p.id)}`]: 0 } }
+      next = releaseNow(next, p.id)
     }
     return next
   }
@@ -2652,7 +2660,7 @@ export function finishHelp(s: GameState, def: NeighborDef): GameState {
   const reward = helpReward(def, s.clock.day, s.flags)
   const next = { ...logGiftFrom(putAway({ ...s, inv: paid }, reward), def.id, reward), helped: [...s.helped, def.id], needs: toil(s, 8) }
   // 돕기는 마음(매력)과 몸(근력)을 함께 쓴다
-  return train(train(heartUp(passTime(next, 30), def.id, GAIN.help), 'charm', XP.help), 'strength', XP.help)
+  return train(train(heartUp(passTime(next, 30), def.id, GAIN.help), 'charm', XP.charmHelp), 'strength', XP.help)
 }
 
 /** 선물은 하루에 한 이웃에게 한 번. 좋아하는 것이면 마음이 더 오른다 */
@@ -3756,7 +3764,7 @@ export function playHall(s: GameState, content: GameContent): GameState {
   let next: GameState = { ...s, flags: { ...s.flags, hallDay: s.clock.day, hallPlays: (s.flags.hallPlays ?? 0) + 1 } }
   for (const id of hallFriendsHere(s, content)) next = heartUp(next, id, HALL_PLAY_GAIN)
   if (!s.flags.hallPlays) next = { ...next, scenes: [...next.scenes, 'hallNight'] }
-  return train(passTime(next, HALL_PLAY_MINUTES), 'charm', XP.help)
+  return train(passTime(next, HALL_PLAY_MINUTES), 'charm', XP.charmHelp)
 }
 
 export type TeaBlock = 'closed' | 'coins' | null
@@ -3855,7 +3863,12 @@ export function giveBouquet(s: GameState, def: NeighborDef): GameState {
     flags: { ...s.flags, 'unlock:dating': 1, [`friendsOnly:${slotPerson(s.gen, def.id)}`]: 0 },
     scenes: [...s.scenes, `confess:${def.id}`],
   }
-  return heartUp(next, def.id, BOUQUET_GAIN)
+  return heartUp(releaseNow(next, def.id), def.id, BOUQUET_GAIN)
+}
+
+/** 사귀기 시작한 그 자리에서 그 사람의 주민 연인·결혼 준비를 푼다 — 다음 날까지 기다리면 그날 저녁 주민 결혼식에 선다 (2026-10-19 감사 L-22) */
+function releaseNow(s: GameState, id: string): GameState {
+  return s.gen ? { ...s, gen: releasePlayerPartner(s.gen, slotPerson(s.gen, id)) } : s
 }
 
 export type CordBlock = 'locked' | 'notPartner' | 'stage' | 'days' | 'hearts' | 'bond' | 'room' | 'noItem' | null
@@ -4871,9 +4884,12 @@ function childMorning(s: GameState, content: GameContent): GameState {
   const kind = helpStat(child)
   const finds = CHILD_FINDS[kind]
   let helped = true
+  let full = false
   if (finds) {
     // 운은 이틀에 한 번꼴 뜻밖의 선물
     if (kind === 'luck' && day % 2) helped = false
+    // 가방·궤짝이 가득해 못 받으면 받았다고 하지 않는다 (2026-10-19 감사 L-66)
+    else if (overflows(next, { [finds[day % 2]]: 1 })) { helped = false; full = true }
     else next = putAway(next, { [finds[day % 2]]: 1 })
   } else if (kind === 'charm') {
     // 대신 인사하러 간다: 오늘 마을에 나온 이웃 한 명 (배우자는 빼고)
@@ -4885,12 +4901,12 @@ function childMorning(s: GameState, content: GameContent): GameState {
     const [teller] = Object.keys(next.offers)
     if (teller && day % 3 === 0) next = listen(next, teller, content).state
   }
-  const notes = helped ? [...next.todayNotes, `childHelp:${kind}`] : next.todayNotes
+  const notes = helped ? [...next.todayNotes, `childHelp:${kind}`] : full ? [...next.todayNotes, 'childHelp:full'] : next.todayNotes
   return {
     ...next,
     child: { ...child, stats: addXp(child.stats, kind, CHILD_HELP_XP) },
     todayNotes: notes,
-    flags: { ...next.flags, childHelpDay: day, childHelpKind: helped ? STAT_ORDER.indexOf(kind) : -1, ...(stage === 'helper' && helped && finds && !next.flags.childFirstHelpScene ? { childFirstHelpPending: day } : {}) },
+    flags: { ...next.flags, childHelpDay: day, childHelpKind: helped ? STAT_ORDER.indexOf(kind) : -1, childHelpFull: full ? day : 0, ...(stage === 'helper' && helped && finds && !next.flags.childFirstHelpScene ? { childFirstHelpPending: day } : {}) },
   }
 }
 const STAT_ORDER: readonly StatId[] = ['wit', 'hand', 'charm', 'strength', 'luck']
@@ -5003,11 +5019,12 @@ export function rotateFurniture(s: GameState, f: Furniture): GameState | null {
   syncHome(s)
   const at = roomTarget(s)
   if (!at) return null
-  const turned = rotation(at.room, f, at.ctx)
-  if (!turned) return null
-  const room = at.room.map((o) => (o === f ? turned : o))
-  if (!keepsDecorPlayerAccess(s, room, at.ctx)) return null
-  return withRoomOf(s, at.key, room)
+  // 막힌 방향은 건너뛰고 다음 방향으로 (2026-10-19 감사 L-68)
+  for (const turned of rotations(at.room, f, at.ctx)) {
+    const room = at.room.map((o) => (o === f ? turned : o))
+    if (keepsDecorPlayerAccess(s, room, at.ctx)) return withRoomOf(s, at.key, room)
+  }
+  return null
 }
 
 /** 가방을 거치지 않고 탁자 위 물건까지 한 번에 옮긴다. 실패하면 원래 배치를 보존한다. */
@@ -5038,7 +5055,10 @@ export function moveFurniture(s: GameState, f: Furniture, to: Tile): GameState |
   // 옮긴 가구를 따라 정해 둔 자리도 함께 옮겨 간다 (쓸 수 있는지는 새 자리에서 다시 따진다)
   let spaces = s.spaces ?? []
   for (const piece of carried) spaces = moveInSpaces(spaces, piece, { item: piece.item, x: to.x + piece.x - f.x, y: to.y + piece.y - f.y })
-  const next = { ...s, room, spaces }
+  // 자리 이름표가 바뀌었으면 그 자리에 차려 둔 식탁도 따라간다
+  const table = s.cooking?.table
+  const renamed = table && !spaces.some((sp) => sp.id === table.space) ? spaces[(s.spaces ?? []).findIndex((sp) => sp.id === table.space)]?.id : undefined
+  const next = { ...s, room, spaces, ...(renamed && s.cooking && table ? { cooking: { ...s.cooking, table: { ...table, space: renamed } } } : {}) }
   syncHome(next)
   return next
 }
@@ -5047,7 +5067,19 @@ export function moveFurniture(s: GameState, f: Furniture, to: Tile): GameState |
 export function removeFurniture(s: GameState, t: Tile): GameState {
   const at = roomTarget(s)
   if (!at) return s
-  const gone = removal(at.room, t)
+  return takeAway(s, at, removal(at.room, t))
+}
+
+/** 고른 가구 하나를 치운다 — 탁자·협탁이면 위에 올린 물건도 함께 (2026-10-19 감사 L-69: 칸마다 물건이 올려진 협탁도 치울 수 있게) */
+export function removePiece(s: GameState, f: Furniture): GameState {
+  const at = roomTarget(s)
+  if (!at || !at.room.includes(f)) return s
+  const tiles = footprint(f)
+  const onTop = FURNITURE_DEFS[f.item]?.surface && !f.on ? at.room.filter((o) => o !== f && o.on && tiles.some((t) => sameTile(t, o))) : []
+  return takeAway(s, at, [f, ...onTop])
+}
+
+function takeAway(s: GameState, at: NonNullable<ReturnType<typeof roomTarget>>, gone: readonly Furniture[]): GameState {
   if (!gone.length) return s
   const back: Partial<Record<ItemId, number>> = {}
   for (const f of gone) back[f.item] = (back[f.item] ?? 0) + 1

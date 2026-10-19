@@ -2,13 +2,12 @@ import { dreamText } from './dream-text'
 export { dreamText } from './dream-text'
 // 새 터 시설 창 (계획 18 남은 것, 사용자 결정 ⑥): 손님집 · 기억 정원 · 공동 마당 · 주민의 꿈터.
 // 문 앞(또는 마당 안)에 서면 열린다. 글은 짧게 — 막힌 까닭은 단추를 누를 때 알림 한 줄로.
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { CONTENT, GOD_KEYWORDS, neighborById } from '../../content/catalog'
 import { fill, itemList, itemName, T, withAnd, withObject, withSubject } from '../../content/text'
 import { newsLine } from '../../content/gen-text'
-import { canGatherYard, gatherYard, mendQuarrelWith, type GameState } from '../../engine/game'
+import { canGatherYard, gatherYard, mendQuarrelWith, yardFriends, type GameState } from '../../engine/game'
 import { kidVisiting, talkKidVisit, dreamKey, roomOwner, canInviteGuest, markerShown, toggleMarker, canMendQuarrel, keywordRecall, quarrelPair, visitKidWork, DREAMER, GUESTS, guestNow, inviteGuest, memoriesOf, pickDream, settledAt, settledLine, talkGuest, visitDream, kidWorkBuildAt, type DreamStage, type FacilityKind, type GuestId, type Memory } from '../../engine/newland-life'
-import { saveGame } from '../../engine/save'
 import { emptyHomeAt, familyAt, giveFamilyHome, homeWishes, wantsToMove } from '../../engine/gen-homes'
 import type { Household } from '../../engine/gen'
 import { t } from '../../shared/i18n'
@@ -23,8 +22,8 @@ type GuestText = { name: string; from: string; lines: string[]; again: string; h
 const guestText = (id: string): GuestText => (L.guests as Record<string, GuestText>)[id]
 
 function commit(next: GameState) {
-  saveGame(next)
-  useGame.setState({ game: next })
+  // 저장은 스토어의 같은 길로 (2026-10-19 감사 L-13)
+  useGame.getState().commitGame(next)
 }
 
 function memoryText(game: GameState, m: Memory): string {
@@ -143,18 +142,25 @@ function Settled({ id }: { id: GuestId }) {
 function KidWork({ owner }: { owner?: string }) {
   const game = useGame((s) => s.game)
   const name = game.child?.name ?? ''
-  const [line] = useState<string>(() => {
+  const [line, setLine] = useState('')
+  // 들른 그 순간 한 번 — 저장은 그린 뒤에 (2026-10-19 감사 L-44: 그리는 도중에 저장하지 않는다)
+  const visited = useRef(false)
+  useEffect(() => {
+    if (visited.current) return
+    visited.current = true
+    const g = useGame.getState().game
+    const daily = L.kidWork.lines[g.clock.day % L.kidWork.lines.length]
     // 다른 아이·이웃 자녀의 일터는 구경만 — 들르기(접시·횟수)는 함께하는 아이 자기 일터에서만 (2026-10-18 감사, Codex E-02)
-    const mine = !owner || owner === (game.child ? `me:${game.child.born}` : '')
-    if (!mine) return L.kidWork.lines[game.clock.day % L.kidWork.lines.length]
-    const r = visitKidWork(useGame.getState().game)
-    if (!r) return L.kidWork.again
+    const mine = !owner || owner === (g.child ? `me:${g.child.born}` : '')
+    if (!mine) return setLine(daily)
+    const r = visitKidWork(g)
+    if (!r) return setLine(L.kidWork.again)
     commit(r.state)
+    // 접시는 이정표 날에도 알린다 (2026-10-19 감사 L-46)
+    if (r.dish) useGame.getState().say(fill(L.kidWork.dish, { whoSubj: withSubject(name), item: itemName(r.dish) }), 3600)
     // 일터 후속 (2026-10-08): 세 번째·열 번째 들른 날은 그날의 특별한 말
-    if (r.milestone) return r.milestone === 3 ? L.kidWork.mile3 : L.kidWork.mile10
-    if (r.dish) setTimeout(() => useGame.getState().say(fill(L.kidWork.dish, { whoSubj: withSubject(name), item: itemName(r.dish!) }), 3600), 0)
-    return L.kidWork.lines[game.clock.day % L.kidWork.lines.length]
-  })
+    setLine(r.milestone ? (r.milestone === 3 ? L.kidWork.mile3 : L.kidWork.mile10) : daily)
+  }, [owner, name])
   return <p className="talk-line">{line}</p>
 }
 
@@ -239,7 +245,7 @@ function MemorialScenes() {
           return (
             <li key={id}>
               {day !== undefined ? (
-                <button className="row" onClick={() => useGame.getState().open({ kind: 'sceneReplay', id })}>
+                <button className="row" onClick={() => useGame.getState().open({ kind: 'sceneReplay', id, back: useGame.getState().modal ?? undefined })}>
                   <span className="row-main"><b>{say(SCENES[id]?.title ?? '')}</b></span>
                   <span className="row-meta">{fill(L.dayLine, { day })}</span>
                 </button>
@@ -285,10 +291,10 @@ function Yard() {
   const gather = () => {
     const block = canGatherYard(game, CONTENT)
     if (block) return useGame.getState().say(block === 'time' ? L.yardTime : block === 'done' ? L.yardAgain : L.yardNobody)
-    const before = game
     const next = gatherYard(game, CONTENT)
     commit(next)
-    const names = Object.keys(next.hearts).filter((id) => (next.hearts[id] ?? 0) > (before.hearts[id] ?? 0)).map((id) => neighborById(id)?.role ?? id)
+    // 이름은 함께한 이웃 모두에서 — 마음이 가득해 오르지 않은 이웃도 (2026-10-19 감사 L-47)
+    const names = yardFriends(game, CONTENT).map((id) => neighborById(id)?.role ?? id)
     useGame.getState().say(fill(L.yardDone, { with: withAnd(names.join('·')) }), 3200)
   }
   // 신약 키워드 계승 (B18-6): 다툰 이웃에게 함께 쓰는 자리 — '사랑'을 만났으면 그 구절이 곁에 보인다(못 만나도 고를 수 있다)
@@ -338,15 +344,19 @@ function Yard() {
 function Workshop({ npc = DREAMER }: { npc?: string }) {
   const game = useGame((s) => s.game)
   const D = dreamText(npc)
-  // 들른 그 순간 한 번 계산한다 (문 연 날·짠 것 챙기기)
-  const [stage, setStage] = useState<DreamStage | null>(() => {
+  // 들른 그 순간 한 번 계산한다 (문 연 날·짠 것 챙기기) — 저장은 그린 뒤에 (2026-10-19 감사 L-44)
+  const [stage, setStage] = useState<DreamStage | null>(null)
+  const visited = useRef(false)
+  useEffect(() => {
+    if (visited.current) return
+    visited.current = true
     const def = neighborById(npc)
     const r = visitDream(useGame.getState().game, def?.help.gives ?? {}, npc)
-    if (!r) return null
+    if (!r) return
     commit(r.state)
-    if (r.gift) setTimeout(() => useGame.getState().say(fill(D.gift, { whoSubj: withSubject(def?.role ?? ''), items: itemList(r.gift!) }), 3600), 0)
-    return r.stage
-  })
+    if (r.gift) useGame.getState().say(fill(D.gift, { whoSubj: withSubject(def?.role ?? ''), items: itemList(r.gift) }), 3600)
+    setStage(r.stage)
+  }, [npc, D])
   if (!stage) return null
   const line = stage === 'open' ? D.open : stage === 'trouble' ? D.trouble : game.flags[dreamKey('dreamPick', npc)] === 1 ? D.afterSlow : D.afterTwo
   const pick = (n: 1 | 2) => {

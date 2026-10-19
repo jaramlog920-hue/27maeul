@@ -1342,6 +1342,10 @@ button.copy-blank.on {
 .play.has-deck { width: min(calc(100% - 24px), calc((var(--app-h, 100dvh) - 262px) * 0.8)); max-width: none; }
 .play.has-deck .deck { max-height: 340px; }
 .play.has-deck .world { width: var(--deck-w); margin: 0 auto; border-radius: 4px 4px 0 0; border-bottom-width: 0; }
+/* 아주 낮은 화면(320×568 등): 아래 여백 8px과 머리줄 1px 때문에 페이지가 9px 길어 살짝 스크롤됐다 (2026-10-19 감사 L-45) */
+@media (max-height: 600px) {
+  .play.has-deck { padding-bottom: env(safe-area-inset-bottom, 0px); --deck-w: min(100%, calc((var(--app-h, 100dvh) - 264px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) * 0.8)); }
+}
 
 /* 몸체: 지도 액자와 이어지는 같은 테두리 */
 .deck {

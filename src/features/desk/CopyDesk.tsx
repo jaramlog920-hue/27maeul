@@ -601,6 +601,7 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
   const loadEpoch = useGame(s => s.loadEpoch)
   // 필사 방식 (계획 21 R1): 절마다 직접 쓰기 / 낱말 조각 / 빈칸 — 필사 실력과 저장 씨앗으로 정해진다. "직접 쓸게요"를 누른 절은 손으로
   const level = useGame((s) => copyLevel(s.game.stats))
+  // copySeed는 검사에서 섞는 차례를 고정할 때만 쓴다 — 게임은 적지 않는다 (2026-10-19 감사 L-57)
   const seed = useGame((s) => s.game.flags.copySeed ?? hashKey(s.game.avatar?.name ?? ''))
   const [manualKey, setManualKey] = useState<string | null>(null)
   const puzzle = useMemo<PuzzleData | null>(() => {
@@ -662,7 +663,7 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
   const startVoice = () => {
     stopVoice()
     const r = newRecognizer()
-    if (!r) return
+    if (!r) return setVoiceNote(C.voiceStartFail)
     const target = spot.verse.text
     const epoch = useGame.getState().loadEpoch
     // 취소 전에 이미 큐에 들어간 콜백도 있다. 새 듣기/다른 절/불러온 저장에 적용하지 않는다.
@@ -715,6 +716,8 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
       r.start()
     } catch {
       rec.current = null
+      // 시작하지 못했으면 알린다 — 단추가 아무 반응 없어 보이지 않게 (2026-10-19 감사 L-51)
+      setVoiceNote(C.voiceStartFail)
       return
     }
     setListening(true)

@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { fill, ITEM_TEXT, itemName, T } from '../../content/text'
+import { useEffect, useRef, useState } from 'react'
+import { fill, ITEM_TEXT, itemName, T, withObject } from '../../content/text'
 import { canBind, chestOf, clockTargets, PANTRY_FOODS, pantryOf, playerTile, timeSpeed } from '../../engine/game'
 import { formatTime } from '../../engine/clock'
 import { CONTENT } from '../../content/catalog'
@@ -188,12 +188,15 @@ const BAG_TABS: [BagTab, string][] = [
 ]
 
 /** 가방: 물건 · 만들기 · 도감 */
-export function Bag({ tab: first = 'items' }: { tab?: BagTab }) {
+export function Bag({ tab: first = 'items', storage }: { tab?: BagTab; storage?: ItemId }) {
   const [tab, setTab] = useState<BagTab>(first)
   const closeModal = useGame((s) => s.closeModal)
+  // 수납 가구를 눌러 열었으면 그 가구 이름으로 — 보관함 칸이 먼저 보이게 (2026-10-19 사용자)
+  const title = storage ? itemName(storage) : T.ui.bag
   return (
-    <div className="dialog bag" role="dialog" aria-label={T.ui.bag}>
-      <h2>{T.ui.bag}</h2>
+    <div className="dialog bag" role="dialog" aria-label={title}>
+      <h2>{title}</h2>
+      {storage && <p className="hint">{fill(T.easy.storageOpened, { obj: withObject(itemName(storage)) })}</p>}
       <div className="tabs" role="tablist">
         {BAG_TABS.map(([id, label]) => (
           <button key={id} role="tab" aria-selected={tab === id} className={tab === id ? 'on' : ''} onClick={() => setTab(id)}>
@@ -201,7 +204,7 @@ export function Bag({ tab: first = 'items' }: { tab?: BagTab }) {
           </button>
         ))}
       </div>
-      {tab === 'items' && <Things />}
+      {tab === 'items' && <Things toStorage={!!storage} />}
       {tab === 'make' && <Recipes />}
       {tab === 'dex' && <CollectionDex />}
       <div className="actions">
@@ -212,8 +215,12 @@ export function Bag({ tab: first = 'items' }: { tab?: BagTab }) {
 }
 
 /** 물건 칸: 가진 것·재료 궤짝·완성본·몸 상태·능력치 */
-function Things() {
+function Things({ toStorage = false }: { toStorage?: boolean }) {
   const game = useGame((s) => s.game)
+  const storageRef = useRef<HTMLHeadingElement | null>(null)
+  useEffect(() => {
+    if (toStorage) storageRef.current?.scrollIntoView?.({ block: 'start' })
+  }, [toStorage])
   const takeChest = useGame((s) => s.takeChest)
   const { putPantry, takePantry } = useGame.getState()
   const inv = game.inv
@@ -299,7 +306,7 @@ function Things() {
       {items.length > 0 && detail('bag')}
       {chest && (
         <>
-          <h3>{T.easy.chest}</h3>
+          <h3 ref={storageRef}>{T.easy.chest}</h3>
           {boxed.length === 0 ? <p>{T.easy.chestEmpty}</p> : <ItemGrid items={boxed} picked={picked} from="chest" onPick={setPicked} />}
           {boxed.length > 0 && detail('chest')}
         </>

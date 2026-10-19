@@ -2,7 +2,7 @@ import type {StoryLocationContext} from './story-location-context'
 import {NEWLAND_MAP,newlandBounds} from '../engine/newland'
 import {ARCHIVE,NEWLAND_VISIBLE_H,NEWLAND_W} from '../engine/newland-config'
 import {seasonOf} from '../engine/clock'
-import {C,SEASON_GRASS,hash,drawNativeGround,drawTree} from './world-ground-art'
+import {SEASON_GRASS,hash,drawNativeGround,drawTree,wildflowerColor} from './world-ground-art'
 import {OLD_TERRAIN,OLD_VILLAGE_PALETTE} from './old-village-art'
 
 export const storyNewlandBaseAt=(c:StoryLocationContext,x:number,y:number)=>newlandBounds(c.layout?.newlandRevealed!==false,y,NEWLAND_MAP[y]?.[x]??'T')
@@ -38,7 +38,7 @@ export function drawStoryNewlandBase(p:(x:number,y:number,color:string,w?:number
   if(a.ch==='T')drawTree(g,a.worldX,a.worldY,season,a.tree)
   if(a.ch==='>')OLD_TERRAIN.mapWaySign.rows.forEach((r,y)=>[...r].forEach((ch,x)=>{const color=(OLD_VILLAGE_PALETTE as Record<string,string>)[ch];if(ch!=='.'&&color)p(a.x+x,a.y+y,color)}))
   if(a.ch==='*'&&season!=='winter')for(let i=0;i<3;i++){
-   g.fillStyle=C.flower[(a.worldX+a.worldY+i)%4]
+   g.fillStyle=wildflowerColor((a.worldX+a.worldY+i)%4)
    g.fillRect(a.worldX*16+2+Math.floor(hash(a.worldX,a.worldY,i+7)*11),a.worldY*16+3+Math.floor(hash(a.worldX,a.worldY,i+9)*10),2,2)
   }
  }

@@ -1,6 +1,7 @@
 import { expect, it } from 'vitest'
 import { CONTENT } from '../content/catalog'
 import { canTrip, newGame, takeTrip } from './game'
+import { legacyGame } from './growth-test-support'
 import { canExtend, extendTurns, NEW_BOARD } from './trip-board'
 import { deserialize, serialize, SAVE_KEY } from './save'
 import { freshStats } from './stats'
@@ -39,7 +40,8 @@ it('keeps autosave achievements in live state (fixed 2026-10-08, 01-A)', () => {
 })
 
 it('awards and saves the family trip only after a successful return, once', () => {
-  const base = newGame(CONTENT)
+  // 여행이 열린 기록에서 (출발 검사는 스토어에서도 한다 — 2026-10-19 감사 L-7)
+  const base = legacyGame(CONTENT)
   // 순위 후원금이 지급되는 21일 아침을 피해 여행 정산만 검사한다.
   const game = { ...base, coins: HARBOR + 15, clock: { day: 19, minute: 600 }, child: { name: '아이', look: 'girl' as const, born: 14, stats: freshStats(), lean: null, close: 0 } }
   useGame.getState().load(game)

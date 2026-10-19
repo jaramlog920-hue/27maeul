@@ -1,9 +1,9 @@
-import { act, fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { CONTENT } from '../content/catalog'
 import { legacyGame } from '../engine/growth-test-support'
 import { rotateFurniture, syncHome } from '../engine/game'
 import { footprint, placement, type Furniture } from '../engine/room'
-import { deserialize, saveGame, serialize, setActiveSlot, slotKey } from '../engine/save'
+import { deserialize, serialize, setActiveSlot } from '../engine/save'
 import { HOME_RECT } from '../engine/world'
 import { T } from '../content/text'
 import { DecorateBar } from '../features/play/DecorateBar'
@@ -34,63 +34,50 @@ beforeEach(() => {
 })
 afterEach(() => vi.restoreAllMocks())
 
-describe('003 벽 끝 2칸 가구 회전 실패 상태', () => {
-  it('실패한 UI 회전은 배치·가방·선택·설치 대기 방향·저장 값을 보존하고 안내한다', () => {
-    const { game } = fixture()
-    saveGame(game)
-    const stored = localStorage.getItem(slotKey('1'))
+// 2026-10-19 감사 L-68(D004)을 고친 뒤: 다음 90도가 벽에 막히면 같은 자리를 차지하는 180도로 바로 돈다
+describe('003 벽 끝 2칸 가구 회전', () => {
+  it('UI 돌리기는 막힌 90도를 건너뛰어 180도로 돌리고, 가방·선택·설치 대기 방향은 그대로다', () => {
+    const { game, table, at } = fixture()
     const before = useGame.getState()
     render(<DecorateBar />)
     fireEvent.click(screen.getByRole('button', { name: /^돌리기$/ }))
     const after = useGame.getState()
-    expect(after.game).toBe(game)
-    expect(after.game.room).toBe(game.room)
-    expect(after.game.inv).toBe(game.inv)
-    expect(after.decorSel).toBe(before.decorSel)
+    const turned = after.game.room.find(f => f.item === 'table' && f.x === at.x && f.y === at.y)!
+    expect(turned.facing).toBe('up')
+    expect(footprint(turned)).toEqual(footprint(table))
+    expect(after.game.inv).toEqual(game.inv)
+    expect(after.decorSel).toEqual(before.decorSel)
     expect(after.decorating).toBe('table')
     expect(after.decorFacing).toBe('left')
-    expect(after.toast?.text).toBe(T.ui.decorateTurnBlocked)
-    expect(localStorage.getItem(slotKey('1'))).toBe(stored)
+    expect(after.toast?.text).not.toBe(T.ui.decorateTurnBlocked)
   })
 
-  it('반복 거절 뒤 취소해도 배치와 수량은 그대로다', () => {
-    const { game, table } = fixture()
-    for (let i = 0; i < 5; i++) useGame.getState().turnSelected()
-    expect(useGame.getState().game).toBe(game)
-    expect(useGame.getState().game.room.find(f => f === table)).toBe(table)
+  it('한 번 더 돌리면 막힌 방향을 다시 건너뛰어 처음 방향으로 돌아온다', () => {
+    const { game, at } = fixture()
+    useGame.getState().turnSelected()
+    useGame.getState().turnSelected()
+    const room = useGame.getState().game.room
+    expect(room.filter(f => f.item === 'table')).toHaveLength(game.room.filter(f => f.item === 'table').length)
+    expect(room.find(f => f.item === 'table' && f.x === at.x && f.y === at.y)?.facing ?? 'down').toBe('down')
     useGame.getState().stopDecorate()
     expect(useGame.getState()).toMatchObject({ decorating: null, decorSel: null, decorMoving: false, decorLook: null })
-    expect(useGame.getState().game).toBe(game)
   })
 
-  it.each([true, false])('명시 방향 여부 %s: 저장 복원 후 다시 선택해도 거절과 배치가 동일하다', explicit => {
-    const { game, table, at } = fixture(explicit)
+  it.each([true, false])('명시 방향 여부 %s: 돌린 방향은 저장 복원 뒤에도 그대로다', explicit => {
+    const { game, at } = fixture(explicit)
     useGame.getState().turnSelected()
     const restored = deserialize(serialize(useGame.getState().game), CONTENT)!
     expect(restored).not.toBeNull()
-    const back = restored.room.find(f => f.item === 'table')!
-    expect(back).toEqual(table)
+    expect(restored.room.find(f => f.item === 'table' && f.x === at.x && f.y === at.y)?.facing).toBe('up')
     expect(restored.inv).toEqual(game.inv)
-    act(() => useGame.getState().load(restored))
-    expect(useGame.getState().decorSel).toBeNull()
-    useGame.getState().startDecorate('pick')
-    useGame.getState().tap(at)
-    useGame.getState().turnSelected()
-    expect(useGame.getState().game).toBe(restored)
-    expect(useGame.getState().toast?.text).toBe(T.ui.decorateTurnBlocked)
-    expect(useGame.getState().decorSel).toMatchObject({ item: 'table', ...at })
   })
 
-  it('경계 확인: 다음 90도는 벽과 겹쳐 거절되고, 180도 후보는 같은 자리에서 놓을 수 있다', () => {
+  it('경계: 다음 90도는 벽과 겹쳐 못 놓고, 엔진은 180도 모습을 돌려준다', () => {
     const { game, table, at } = fixture()
     const without = game.room.filter(f => f !== table)
     expect(placement(without, 'table', at, 'right')).toBeNull()
-    const reverse = placement(without, 'table', at, 'up')
-    expect(reverse).not.toBeNull()
-    expect(footprint(reverse as Furniture)).toEqual(footprint(table))
-    expect(rotateFurniture(game, table)).toBeNull()
-    useGame.getState().turnSelected()
-    useGame.getState().turnSelected()
-    expect(useGame.getState().game.room.find(f => f.item === 'table')?.facing).toBe('down')
+    const reverse = placement(without, 'table', at, 'up') as Furniture
+    expect(footprint(reverse)).toEqual(footprint(table))
+    expect(rotateFurniture(game, table)!.room.find(f => f.item === 'table' && f.x === at.x && f.y === at.y)?.facing).toBe('up')
   })
 })

@@ -88,7 +88,7 @@ describe('사랑방: 저녁에 이웃 열이 모인다', () => {
     expect(canPlayHall(s, CONTENT)).toBeNull()
     const played = playHall(s, CONTENT)
     for (const id of guests) expect(played.hearts[id] ?? 0).toBe(heartUp(s,id,HALL_PLAY_GAIN).hearts[id] ?? 0)
-    expect(played.stats.charm.xp).toBe(XP.help)
+    expect(played.stats.charm.xp).toBe(XP.charmHelp)
     expect(played.scenes).toContain('hallNight')
     expect(canPlayHall(played, CONTENT)).toBe('played')
     expect(playHall(played, CONTENT)).toBe(played)

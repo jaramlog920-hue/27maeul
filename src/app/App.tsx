@@ -1,3 +1,4 @@
+import { t } from '../shared/i18n'
 import { useEffect, useState } from 'react'
 import { CONTENT } from '../content/catalog'
 import { newGame } from '../engine/game'
@@ -26,12 +27,15 @@ export function App() {
   // 제목 그림의 주인공은 마지막으로 하던 칸의 모습
   const [title, setTitle] = useState(titleSaves)
   const [busy, setBusy] = useState(false)
+  const [loadNotice, setLoadNotice] = useState<string | null>(null)
   async function playSave(slot: string) {
     if (busy) return
     setBusy(true)
     // 시작 화면을 연 뒤 저장이 바뀌었어도 최신 상태로 이어 간다.
     const game = loadGame(CONTENT, undefined, slot)
-    if (!game) { setTitle(titleSaves()); setBusy(false); return }
+    // 열 수 없는 칸이면 까닭을 알린다 (2026-10-19 감사 L-3)
+    if (!game) { setTitle(titleSaves()); setLoadNotice(t('saves.cannotOpen')); setBusy(false); return }
+    setLoadNotice(null)
     unlockAudio()
     if (!await selectSaveAsync(slot)) { setBusy(false); return }
     useGame.getState().load(game)
@@ -89,8 +93,10 @@ export function App() {
   else if (screen === 'load')
     content = (
       <SaveSlots
+        notice={loadNotice}
         onBack={() => {
           setTitle(titleSaves())
+          setLoadNotice(null)
           setScreen('intro')
         }}
         onPick={(slot) => { void playSave(slot) }}

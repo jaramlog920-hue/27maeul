@@ -40,7 +40,7 @@ describe('005 마지막 선물·같은 날 재시도·관계 보상', () => {
     expect(after.scenes.filter(s => s === 'gift:baker:3')).toHaveLength(1)
     expect(screen.queryByRole('dialog', { name: T.ui.giftPick })).not.toBeInTheDocument()
     expect(screen.getByText(T.giftReplies.liked)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: T.ui.talkGift })).toBeDisabled()
+    expect(screen.getByRole('button', { name: T.ui.talkGift })).toHaveAttribute('aria-disabled', 'true')
   })
 
   it('연속 호출·다른 물건 재시도는 수량·관계·경험치·보상·저장을 전부 보존한다', () => {
@@ -91,7 +91,7 @@ describe('005 마지막 선물·같은 날 재시도·관계 보상', () => {
     useGame.getState().load(restocked)
     useGame.setState({ modal: { kind: 'talk', neighborId: 'baker', line: T.giftReplies.liked } })
     render(<GiftFlow />)
-    expect(screen.getByRole('button', { name: T.ui.talkGift })).toBeDisabled()
+    expect(screen.getByRole('button', { name: T.ui.talkGift })).toHaveAttribute('aria-disabled', 'true')
     useGame.getState().gift('baker', 'grapes')
     expect(useGame.getState().game).toBe(restocked)
   })

@@ -2,7 +2,7 @@ import { BlankQuizDialog } from './quiz/BlankQuiz'
 import { SceneReplay } from './scene/SceneReplay'
 import {hasAuthoredStory} from '../render/authored-story-art'
 import { ScreenBoundary } from "./ScreenBoundary"
-import { useCallback, type SyntheticEvent } from 'react'
+import { useCallback, useEffect, useRef, type SyntheticEvent } from 'react'
 import { lazyScreen } from './lazy-screen'
 import { isGhostClick } from '../shared/ghost'
 import { useGame } from '../store/game-store'
@@ -203,7 +203,7 @@ function Body() {
     case 'wardrobe':
       return <Wardrobe who={modal.who} />
     case 'bag':
-      return <Bag tab={modal.tab} />
+      return <Bag tab={modal.tab} storage={modal.storage} />
     case 'companion':
       return <AdoptForm animal={modal.animal} />
     case 'library':
@@ -243,7 +243,18 @@ export function ModalLayer() {
   const acquired = useGame(s => s.piecePopups[0])
   const collected = useGame(s => s.game.collected)
   // 창이 열려 있는 동안 스크롤되는 창에 "아래로 더 있어요"를 붙인다 (창이 바뀌면 MutationObserver가 다시 살핀다)
-  const hints = useCallback((el: HTMLDivElement | null) => (el ? watchScrollHints(el) : undefined), [])
+  const layer = useRef<HTMLDivElement | null>(null)
+  const hints = useCallback((el: HTMLDivElement | null) => {
+    layer.current = el
+    return el ? watchScrollHints(el) : undefined
+  }, [])
+  // 화면이 아무것도 그리지 않으면 닫을 수 없는 투명한 배경만 남았다 — 빈 창은 닫는다 (2026-10-19 감사 L-43)
+  useEffect(() => {
+    if (!modal || acquired || copyResult?.length) return
+    // 그린 뒤(이펙트)에 바로 본다 — 창 안에 요소가 하나도 없으면 닫는다
+    const el = layer.current
+    if (el && !el.querySelector('*') && useGame.getState().modal === modal) useGame.getState().closeModal()
+  })
   if (!modal && !copyResult?.length && !acquired) return null
   const needed: Book[] = []
   if (modal?.kind === 'copy' && modal.view !== 'pick' && book && !isOtBook(book)) needed.push(book)

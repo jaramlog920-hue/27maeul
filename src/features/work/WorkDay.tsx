@@ -3,6 +3,7 @@ import { CONTENT } from '../../content/catalog'
 import { callName, T } from '../../content/text'
 import { canWorkDay, finishWorkDay, finishWorkStep, prepareWorkDay, shopOf, startWorkDay, WORK_SHOPS, workDayHand, workLine, type WorkState } from '../../engine/work-day'
 import { saveGame } from '../../engine/save'
+import type { GameState } from '../../engine/game'
 import { useGame } from '../../store/game-store'
 import { HandPractice } from './HandPractice'
 
@@ -11,8 +12,9 @@ const SHOP_TEXT = T.work.shops as Record<string, ShopText>
 const fill = (t: string, v: Record<string, string | number>) => t.replace(/\{(\w+)\}/g, (_, k) => String(v[k] ?? ''))
 
 export function applyLifeState(next:WorkState,save=true) {
-  if(save) saveGame(next)
-  useGame.setState({game:next})
+  // 저장은 스토어의 같은 길로 — 업적·도감이 바로 적힌다 (2026-10-19 감사 L-13)
+  if(save) useGame.getState().commitGame(next as GameState)
+  else useGame.setState({game:next})
 }
 /** onOpen을 주면 여는 일을 부르는 쪽(말 걸기 창)에 맡긴다 — 함께 일하는 동안 다른 단추를 가리려고 */
 export function WorkEntry({ npc = 'carpenter', onOpen }: {npc?:string; onOpen?:()=>void}) {

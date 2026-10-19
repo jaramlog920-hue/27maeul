@@ -161,7 +161,7 @@ export function deliverCook(s: GameState): GameState {
   let next = putAway(s, { [def.item]: def.qty })
   next = {
     ...next,
-    flags: { ...next.flags, [`cook:first:${r.dish}`]: next.flags[`cook:first:${r.dish}`] ?? next.clock.day, cookDay: next.clock.day },
+    flags: { ...next.flags, [`cook:first:${r.dish}`]: next.flags[`cook:first:${r.dish}`] ?? next.clock.day },
     cooking: { ...c, run: undefined, looks: { ...c.looks, [r.dish]: r.look }, made: { ...c.made, [r.dish]: (c.made[r.dish] ?? 0) + 1 } },
   }
   if (r.kid >= 0) next = kidCookMemory(next, r.kid)

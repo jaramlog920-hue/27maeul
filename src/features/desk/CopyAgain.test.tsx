@@ -40,7 +40,7 @@ describe('다시 쓰기 화면', () => {
     act(() => {
       for (let i = 0; i < 40 && useGame.getState().modal?.kind === 'copy' && (useGame.getState().modal as { view: string }).view === 'write'; i++) {
         const g = useGame.getState().game
-        useGame.getState().copyType(copySpot(g, 'phm', CONTENT)!.verse.text, { inputType: 'insertText' })
+        useGame.getState().copyType(copySpot(g, 'phm', CONTENT)!.verse.text)
       }
     })
     expect(useGame.getState().modal).toMatchObject({ kind: 'copy', view: 'done' })

@@ -10,6 +10,14 @@ const load = (o: Record<string, unknown>) => deserialize(JSON.stringify(o), CONT
 const twice = (g: GameState) => deserialize(serialize(deserialize(serialize(g), CONTENT)!), CONTENT)!
 
 describe('깨진 저장 불러오기', () => {
+  it('등잔 기름·오늘 기록의 모양이 깨져도 기본값으로 맞춘다 (2026-10-19 감사 L-61)', () => {
+    const g = load({ ...base(), lampFuel: '많이', today: { visitor: 3, visitGot: 'yes', inviter: 'baker', dined: true, gathering: 'x' } })!
+    expect(g).not.toBeNull()
+    expect(g.lampFuel).toBe(0)
+    expect(g.today).toEqual({ visitor: null, visitGot: false, inviter: 'baker', dined: true, gathering: null })
+    expect(load({ ...base(), today: null })!.today).toEqual({ visitor: null, visitGot: false, inviter: null, dined: false, gathering: null })
+  })
+
   it('무한대 시각은 처음부터 받지 않는다 (열렸다가 다음에 못 여는 칸이 생기지 않게)', () => {
     const o = base()
     expect(deserialize(JSON.stringify(o).replace('"minute":360', '"minute":1e999'), CONTENT)).toBeNull()

@@ -139,7 +139,7 @@ describe('하는 일마다 오르는 능력치', () => {
     expect(gifted.stats.charm.xp).toBe(XP.gift)
     const helped = finishHelp({ ...s0(), inv: { water: 1 } }, def('baker'))
     expect(helped.helped).toContain('baker')
-    expect(helped.stats.charm.xp).toBe(XP.help)
+    expect(helped.stats.charm.xp).toBe(XP.charmHelp)
     expect(helped.stats.strength.xp).toBe(XP.help)
   })
 

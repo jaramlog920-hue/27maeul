@@ -73,6 +73,8 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
     block === 'needs' && def.help.needs ? fill(T.ui.helpNeeds, { items: itemList(def.help.needs) }) : block === 'tired' ? T.ui.helpTired : block === 'full' ? T.ui.bagFull : null
   // 단추 이름은 이웃마다 다른 일 이름 대신 그냥 "돕기" (2026-10-07 사용자)
   const canGift = (!game.gifted.includes(def.id) && GIFTABLE.some((i) => (game.inv[i] ?? 0) > 0))||weddingGiftsFor(game,def.id).length>0
+  // 선물할 수 없을 때는 단추를 끄지 않고 까닭을 알린다 (2026-10-19 감사 L-65)
+  const giftNote = canGift ? null : game.gifted.includes(def.id) ? T.ui.giftedToday : T.ui.giftNothing
   const req = requestFor(def.id, game.hearts[def.id], game.flags)
   const askable = req && reqState(game.flags, req.id) === 0
   const active = activeRequest(game, def.id)
@@ -169,7 +171,7 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
         <button disabled={block !== null && !blockNote} onClick={() => (blockNote ? say(blockNote) : startHelp(def.id))}>
           {T.ui.talkHelp}
         </button>
-        <button disabled={!canGift} onClick={() => open({ kind: 'gift', neighborId: def.id })}>
+        <button aria-disabled={!canGift} onClick={() => (giftNote ? say(giftNote, 3500) : open({ kind: 'gift', neighborId: def.id }))}>
           {T.ui.talkGift}
         </button>
         <WorkEntry npc={def.id} onOpen={() => setFocus('work')} />

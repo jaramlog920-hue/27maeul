@@ -904,7 +904,8 @@ describe('연애 후보 1 — 파피·틸리·웬델의 이후 생활 (실제 �
     expect(routineOf(work, 'tilly')?.mutter?.[0]).toContain('고리 시간')
     for (const [npc, id] of [['tilly', 'tilly:after'], ['tilly', 'tilly:fireStill'], ['smith', 'smith:tillyHook']])
       expect(reqMet(lineReq(npc, id), ctxOf(s, npc)), id).toBe(true)
-    expect(reqMet(lineReq('penelope', 'penelope:tillyHook'), ctxOf(s, 'penelope'))).toBe(false)
+    // 조건상 나올 수 없던 줄은 지웠다 — 같은 말은 작은 이야기 쪽 줄이 맡는다 (2026-10-19 감사 L-56)
+    expect(PEOPLE.people.penelope.lines?.some((l) => l.id === 'penelope:tillyHook')).toBe(false)
     // 색 실: 이사 전에는 없고, 이사 오면 페넬로피가 제 발로 대장간 앞에
     const colorDay = dry(s.clock.day + 1, (d) => d % 7 === 2 || d % 7 === 5)
     const before = stand(step(s, 'tilly', colorDay, 800, FORGE), 'penelope', penelopeAt)
@@ -951,7 +952,8 @@ describe('연애 후보 1 — 파피·틸리·웬델의 이후 생활 (실제 �
     expect(routineOf(evening, 'poppy')?.mutter?.[0]).toContain('제 자리')
     for (const [npc, id] of [['poppy', 'poppy:after'], ['poppy', 'poppy:fearStill'], ['wendell', 'wendell:poppyCorner']])
       expect(reqMet(lineReq(npc, id), ctxOf(s, npc)), id).toBe(true)
-    expect(reqMet(lineReq('penelope', 'penelope:poppyCorner'), ctxOf(s, 'penelope'))).toBe(false)
+    // 조건상 나올 수 없던 줄은 지웠다 — 같은 말은 작은 이야기 쪽 줄이 맡는다 (2026-10-19 감사 L-56)
+    expect(PEOPLE.people.penelope.lines?.some((l) => l.id === 'penelope:poppyCorner')).toBe(false)
     // 차받침: 페넬로피가 이사 온 뒤, 제 발로 찻집에
     const moved = { ...s, flags: { ...s.flags, 'movedIn:weaver': 1 } }
     // 페넬로피가 쉬는 날(offDays)이 아닌 첫째·여섯째 날

@@ -50,11 +50,11 @@ describe('010 걷는 아이에서 돕는 아이가 되는 첫 아침', () => {
     expect(childStage(before.child, 51)).toBe('toddler')
   })
 
-  it.each([98, 99])('가방 물 %i에서 첫 도움: 한도 초과 때도 성공 알림과 기록은 동일하게 생성된다', water => {
-    seed('home', water)
+  it('가방 물 98에서 첫 도움: 받은 대로 성공 알림과 기록이 생긴다', () => {
+    seed('home', 98)
     useGame.getState().sleep()
     const morning = useGame.getState().game
-    expect(morning.inv.water).toBe(Math.min(99, water + 1))
+    expect(morning.inv.water).toBe(99)
     expect(morning.flags.childHelpKind).toBe(3)
     expect(morning.flags.childFirstHelpPending).toBe(52)
     expect(morning.todayNotes).toContain('childHelp:strength')
@@ -65,6 +65,20 @@ describe('010 걷는 아이에서 돕는 아이가 되는 첫 아침', () => {
     expect(restored.flags.childHelpDay).toBe(52)
   })
 
+  // 2026-10-19 감사 L-66(D007)을 고친 뒤: 못 받았으면 받았다고 하지 않고 자리가 없다고 알린다
+  it('가방 물 99에서 첫 도움: 못 받았으면 성공 대신 자리가 없다는 알림과 기록', () => {
+    seed('home', 99)
+    useGame.getState().sleep()
+    const morning = useGame.getState().game
+    expect(morning.inv.water).toBe(99)
+    expect(morning.flags.childHelpKind).toBe(-1)
+    expect(morning.flags.childHelpFull).toBe(52)
+    expect(morning.flags.childFirstHelpPending).toBeUndefined()
+    expect(morning.todayNotes).toContain('childHelp:full')
+    expect(morning.todayNotes).not.toContain('childHelp:strength')
+    expect(useGame.getState().toast?.text).toBe(`루시: ${T.ui.childHelpFull}`)
+  })
+
   it('가방이 찼어도 궤짝에 한 칸의 여유가 있으면 도움 물건을 실제로 받는다', () => {
     const morning = goToSleep(seed('follow', 99, 29), CONTENT)
     expect(morning.inv.water).toBe(99)
@@ -72,11 +86,11 @@ describe('010 걷는 아이에서 돕는 아이가 되는 첫 아침', () => {
     expect(morning.flags.childHelpKind).toBe(3)
   })
 
-  it('가방과 궤짝이 모두 차면 물건은 늘지 않지만 첫 도움 성공 표식은 저장된다', () => {
+  it('가방과 궤짝이 모두 차면 물건은 늘지 않고 성공 표식 대신 못 받은 기록이 저장된다', () => {
     const morning = deserialize(serialize(goToSleep(seed('home', 99, 30), CONTENT)), CONTENT)!
     expect(morning.inv.water).toBe(99)
     expect(morning.chest?.water).toBe(30)
-    expect(morning.todayNotes).toContain('childHelp:strength')
-    expect(morning.flags.childHelpKind).toBe(3)
+    expect(morning.todayNotes).toContain('childHelp:full')
+    expect(morning.flags.childHelpKind).toBe(-1)
   })
 })

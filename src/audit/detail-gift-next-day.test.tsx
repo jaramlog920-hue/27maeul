@@ -37,7 +37,7 @@ describe('006 선물 제한의 밤 넘김과 다음 날 초기화', () => {
     expect(awake.gifted).toEqual(['baker'])
     useGame.getState().load(awake)
     render(<TalkBox modal={talk} />)
-    expect(screen.getByRole('button', { name: T.ui.talkGift })).toBeDisabled()
+    expect(screen.getByRole('button', { name: T.ui.talkGift })).toHaveAttribute('aria-disabled', 'true')
     useGame.getState().gift('baker', 'grapes')
     expect(useGame.getState().game).toBe(awake)
   })
@@ -77,9 +77,9 @@ describe('006 선물 제한의 밤 넘김과 다음 날 초기화', () => {
     useGame.getState().sleep()
     expect(useGame.getState().game).toBe(morning)
     view.rerender(<TalkBox modal={talk} />)
-    expect(screen.getByRole('button', { name: T.ui.talkGift })).toBeEnabled()
+    expect(screen.getByRole('button', { name: T.ui.talkGift })).toHaveAttribute('aria-disabled', 'false')
     act(() => useGame.getState().gift('baker', 'grapes'))
-    expect(screen.getByRole('button', { name: T.ui.talkGift })).toBeDisabled()
+    expect(screen.getByRole('button', { name: T.ui.talkGift })).toHaveAttribute('aria-disabled', 'true')
   })
 
   it('다음 날 제한이 풀려도 물건이 없으면 비활성, 재획득하면 활성화된다', () => {
@@ -88,9 +88,9 @@ describe('006 선물 제한의 밤 넘김과 다음 날 초기화', () => {
     expect(morning.inv.grapes ?? 0).toBe(0)
     useGame.getState().load({ ...morning, inv: { basket: 1 } })
     render(<TalkBox modal={talk} />)
-    expect(screen.getByRole('button', { name: T.ui.talkGift })).toBeDisabled()
+    expect(screen.getByRole('button', { name: T.ui.talkGift })).toHaveAttribute('aria-disabled', 'true')
     act(() => useGame.setState({ game: { ...useGame.getState().game, inv: { basket: 1, grapes: 1 } } }))
-    expect(screen.getByRole('button', { name: T.ui.talkGift })).toBeEnabled()
+    expect(screen.getByRole('button', { name: T.ui.talkGift })).toHaveAttribute('aria-disabled', 'false')
   })
 
   it('계절 마지막 날을 저장 복원한 뒤 자도 다음 날의 제한과 보상이 일치한다', () => {

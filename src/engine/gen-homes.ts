@@ -8,6 +8,7 @@ import type { GenState, Household } from './gen'
 import { doneHomes, standSpotOf, type Build } from './newland-build'
 import type { Tile } from './types'
 import { LODGING_SEATS } from './lodging'
+import { slotPerson } from './gen-growth'
 
 /** 결혼한 이웃이 저녁에 들어가는 집의 주인 (제 집이면 null) */
 export function sharedHomeOf(g: GenState | undefined, id: string, hasRoom: (owner: string) => boolean): string | null {
@@ -43,7 +44,9 @@ export function familyHomes(s: Pick<GameState, 'gen' | 'flags' | 'newland'>): { 
  * npc는 이웃 자리 id나 사람 id
  */
 export function livesInNewland(s: Pick<GameState, 'gen' | 'flags' | 'newland'>, npc: string): boolean {
-  return familyHomes(s).some((x) => x.household.members.includes(npc))
+  // 이웃 자리 id면 지금 그 자리에 선 사람으로 (자리를 이어받은 자녀 — 2026-10-19 감사 L-27)
+  const who = slotPerson(s.gen, npc)
+  return familyHomes(s).some((x) => x.household.members.includes(who))
 }
 
 /** 새 터 집 문 옆에 설 사람: 아기가 아닌 첫 사람 — 원래 이웃끼리 꾸린 가구도 (그림은 그 이웃의 모습으로) */

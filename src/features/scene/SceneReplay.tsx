@@ -36,7 +36,12 @@ export function useSceneSay(): (text: string) => string {
 }
 
 export function SceneReplay({ id }: { id: string }) {
-  const close = useGame((s) => s.closeModal)
+  // 장면 도감에서 연 장면은 닫으면 도감으로 (2026-10-19 감사 L-42)
+  const close = () => {
+    const m = useGame.getState().modal
+    if (m?.kind === 'sceneReplay' && m.back) useGame.setState({ modal: m.back })
+    else useGame.getState().closeModal()
+  }
   const say = useSceneSay()
   const [page, setPage] = useState(0)
   const [chosen, setChosen] = useState<number | undefined>(undefined)

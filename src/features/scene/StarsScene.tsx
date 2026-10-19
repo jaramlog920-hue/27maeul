@@ -107,7 +107,7 @@ export function LandscapeScene({ kind = 'stars', sceneId = kind, onFinish, previ
     const living:LivingDetails={guests:participants.map(resolvePerson).filter((p):p is NonNullable<typeof p>=>!!p),host:resolvePerson(sceneId.startsWith('firstDinner:')?sceneId.split(':')[1]:'grandpa'),book:coverBook,binding:special,facility,decor:!!village?.projects[facility]?.look}
     const finaleGrades = preview ? Object.fromEntries(BOOKS.map((book, i) => [book, i % 3 as Grade])) : grades
     let frame = 0, last = -1000, captured = remembered && (kind === 'fullLibrary' || kind === 'lastManuscript' || kind === 'completeBible' || kind === 'bibleLastLetter' || progressKind || livingKind) && !!albumImage(sceneId), previousPhase = -1
-    const draw = (now: number) => {
+    const step = (now: number) => {
       if (now - last >= 80) {
         last = now
         const bounds = canvas.getBoundingClientRect()
@@ -147,6 +147,11 @@ export function LandscapeScene({ kind = 'stars', sceneId = kind, onFinish, previ
         }
         if (!captured && !preview && (!['bookBound', 'spouseReturn', 'childFirstHelp', 'afterCopy'].includes(kind) || time >= 4)) { storeAlbumImage(sceneId, canvas.toDataURL('image/png')); captured = true }
       }
+    }
+    // 그리다 한 번 실패해도 장면 창은 남고 다음 틀에서 다시 그린다 (2026-10-19 감사 L-33)
+    let failed = false
+    const draw = (now: number) => {
+      try { step(now) } catch (e) { if (!failed) { failed = true; console.error(e) } }
       if (!reduced) frame = requestAnimationFrame(draw)
     }
     draw(start)

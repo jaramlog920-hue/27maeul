@@ -2,7 +2,7 @@
 import type {Season} from '../engine/types'
 import type {TreeKind} from '../engine/world'
 const TILE=16
-type Ctx=Pick<CanvasRenderingContext2D,'fillStyle'|'fillRect'>
+type Ctx=Pick<CanvasRenderingContext2D,'fillStyle'|'fillRect'> & Partial<Pick<CanvasRenderingContext2D,'globalAlpha'>>
 export const C = {
   // 참고 그림(2026-09-30 사용자)에 맞춘 밝고 선명한 색: 연두 풀밭, 모래빛 흙길, 맑은 하늘빛 호수, 또렷한 지붕
   // 풀은 부드러운 세이지·연두 (2026-10-04 사용자)
@@ -66,9 +66,22 @@ export function hash(x: number, y: number, i: number): number {
   return ((h ^ (h >>> 16)) >>> 0) / 4294967296
 }
 
+/** 풀밭·흙길의 점은 바탕보다 20% 옅게 (2026-10-19 사용자) */
+const DOT_ALPHA = 0.8
+
+/** 들꽃 점은 기존 불투명도 80%보다 20% 진하게. 지도·이벤트컷에 같은 색을 쓴다. */
+export function wildflowerColor(index: number): string {
+  const hex = C.flower[index]
+  const rgb = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16))
+  return `rgba(${rgb.join(',')},0.96)`
+}
+
 function speckle(g: Ctx, px: number, py: number, x: number, y: number, color: string, n: number) {
+  const alpha = g.globalAlpha ?? 1
+  g.globalAlpha = alpha * DOT_ALPHA
   g.fillStyle = color
   for (let i = 0; i < n; i++) g.fillRect(px + Math.floor(hash(x, y, i) * 15), py + Math.floor(hash(x, y, i + 50) * 15), 1, 1)
+  g.globalAlpha = alpha
 }
 
 export function drawNativeGround(g: Ctx, ch: string, x: number, y: number, season: Season, at: (x: number, y: number) => string, visibleHeight: number) {
@@ -116,9 +129,9 @@ export function drawNativeGround(g: Ctx, ch: string, x: number, y: number, seaso
       if (ch === '.' && season === 'spring' && hash(x, y, 71) < 0.12) {
         const fx = 3 + Math.floor(hash(x, y, 72) * 8)
         const fy = 3 + Math.floor(hash(x, y, 73) * 8)
-        g.fillStyle = C.flower[Math.floor(hash(x, y, 74) * 4)]
+        g.fillStyle = wildflowerColor(Math.floor(hash(x, y, 74) * 4))
         g.fillRect(px + fx, py + fy, 2, 2)
-        g.fillStyle = C.flower[Math.floor(hash(x, y, 75) * 4)]
+        g.fillStyle = wildflowerColor(Math.floor(hash(x, y, 75) * 4))
         g.fillRect(px + fx + 3, py + fy + 2, 2, 2)
       }
       if (ch === '.' && season === 'summer' && hash(x, y, 76) < 0.1) {

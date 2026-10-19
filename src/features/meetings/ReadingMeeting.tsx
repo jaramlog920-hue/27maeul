@@ -60,7 +60,8 @@ export function ReadingMeeting({ day }: { day: number }) {
       }
       window.speechSynthesis.speak(speech)
     }
-    read(index)
+    // 끝까지 읽은 뒤 낭독하면 처음 절부터 (2026-10-19 감사 L-40: 마지막 절만 읽었다)
+    read(done ? 0 : index)
   }
   const verse = verses[index]
   const guests = hallGuestsToday(game, CONTENT).map(id => neighborById(id)?.role).filter(Boolean).join(' · ')
@@ -69,7 +70,8 @@ export function ReadingMeeting({ day }: { day: number }) {
     <p>{guests ? `${guests}와 함께 읽어요.` : '사랑방에서 함께 말씀을 읽어요.'}</p>
     <h3>{piece.title}</h3>
     <p className="hint">오늘의 본문 · {piece.ref}</p>
-    <p>본문을 소리 내어 읽고 다음 절로 넘겨 주세요. 음성 낭독을 들으며 따라 읽어도 좋아요.</p>
+    {/* 마이크는 쓰지 않는다 — 직접 읽고 넘기거나 음성 낭독을 듣는다 (2026-10-19 사용자: 마이크로 말해야 하는 줄 알았다) */}
+    <p>마이크는 쓰지 않아요. 본문을 읽고 다음 절로 넘기거나, '음성으로 낭독하기'를 눌러 들어 보세요.</p>
     <p role="status">{done ? '본문을 끝까지 읽었어요.' : `${index + 1} / ${verses.length}절${speaking ? ' · 낭독 중' : ''}`}</p>
     <Passage refText={`${piece.ref.split(' ')[0]} ${verse.chapter}:${verse.verse}`} />
     {error && <p role="alert">{error}</p>}

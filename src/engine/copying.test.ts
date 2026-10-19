@@ -124,6 +124,11 @@ describe('자동완성·붙여넣기 막기', () => {
     // 본문과 맞지 않는 뭉치는 받지 않는다
     expect(acceptInput('', '태초에 말씀은 계', { inputType: 'insertCompositionText', target })).toBe('')
   })
+  it('본문과 맞아도 한 절을 통째로 넣는 뭉치(키보드 클립보드 제안)는 받지 않는다 (2026-10-19 감사 L-16)', () => {
+    const target = '태초에 하나님이 천지를 창조하시니라'
+    expect(acceptInput('', target, { inputType: 'insertText', target })).toBe('')
+    expect(acceptInput('태초에', target, { inputType: 'insertText', target })).toBe('태초에')
+  })
   it('한 번에 여러 글자가 늘면 받지 않고, 한두 글자·지우기는 받는다', () => {
     expect(acceptInput('', '태초에 말씀이')).toBe('')
     expect(acceptInput('태초', '태초에')).toBe('태초에')

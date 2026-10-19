@@ -34,7 +34,7 @@ function when(ms: number): string {
   return `${d.getMonth() + 1}/${d.getDate()} ${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
 
-export function SaveSlots({ onPick, onBack }: { onPick: (slot: string) => void; onBack: () => void }) {
+export function SaveSlots({ onPick, onBack, notice }: { onPick: (slot: string) => void; onBack: () => void; notice?: string | null }) {
   const [saves, setSaves] = useState<SaveSlot[]>(() => listSaves())
   const [asking, setAsking] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
@@ -42,6 +42,8 @@ export function SaveSlots({ onPick, onBack }: { onPick: (slot: string) => void; 
     <main className="title title-island save-slots">
       <div className="dialog save-slots-box" role="dialog" aria-label={t('saves.title')}>
         <h2>{t('saves.title')}</h2>
+        {/* 열 수 없는 칸을 눌렀을 때 (2026-10-19 감사 L-3) */}
+        {notice && <p className="hint" role="alert">{notice}</p>}
         {saves.length === 0 ? (
           <p className="hint">{t('saves.none')}</p>
         ) : (

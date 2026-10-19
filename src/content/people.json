@@ -19937,21 +19937,6 @@
           }
         },
         {
-          "id": "penelope:tillyHook",
-          "text": "틸리가 고른 초록, 비 맞고도 그대로예요. …다행이에요. 제가 가져간 실이라서.",
-          "depth": 0,
-          "req": {
-            "story": [
-              {
-                "id": "tillyHook"
-              }
-            ],
-            "exp": [
-              "choice:tilly:story:3"
-            ]
-          }
-        },
-        {
           "id": "penelope:hookColor",
           "text": "틸리가 고른 초록, 비 맞고도 그대로예요. …다행이에요. 제가 가져간 실이라서.",
           "depth": 0,
@@ -19963,21 +19948,6 @@
             ],
             "exp": [
               "choice:tilly:small:hookColor"
-            ]
-          }
-        },
-        {
-          "id": "penelope:poppyCorner",
-          "text": "웬델 자리 받침은 제가 짠 거예요. 색은 웬델이 골랐어요. 안 바꾸고요.",
-          "depth": 0,
-          "req": {
-            "story": [
-              {
-                "id": "poppyCorner"
-              }
-            ],
-            "exp": [
-              "choice:poppy:story:2"
             ]
           }
         },

@@ -113,6 +113,17 @@ describe('자리의 쓰임 정하기 — 차 자리 하나로 끝까지', () => 
     s = removeFurniture(s, { x: t.x, y: t.y })
     expect(s.spaces).toEqual([])
   })
+  it('앵커 탁자를 옮겨도 자리 이름표가 따라가 같은 탁자로 자리가 하나 더 생기지 않는다 (2026-10-19 감사 L-24)', () => {
+    const s = withTea()
+    const table = find(s, 'table')
+    const moved = moveFurniture(s, table, { x: table.x + 1, y: table.y })
+    expect(moved).not.toBeNull()
+    const t2 = find(moved!, 'table')
+    expect(moved!.spaces).toHaveLength(1)
+    expect(spaceOfPiece(moved!, t2)?.id).toBe(`space:${furnitureId(t2)}`)
+    const again = setSpace(moved!, t2, 'tea')
+    expect(again?.spaces ?? moved!.spaces).toHaveLength(1)
+  })
   it('가구를 옮기면 자리가 따라가고, 너무 멀어지면 쉬었다가 가까이 오면 되살아난다', () => {
     let s = withTea()
     const moved = moveFurniture(s, find(s, 'chair', 20), { x: 22, y: 113 })
