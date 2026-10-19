@@ -1,3 +1,4 @@
+import { XP } from '../engine/stats'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { CONTENT } from '../content/catalog'
 import { T } from '../content/text'
@@ -35,7 +36,7 @@ describe('005 마지막 선물·같은 날 재시도·관계 보상', () => {
     expect(after.inv.bread).toBe(2)
     expect(after.gifted).toEqual(['baker'])
     expect(after.hearts.baker).toBe(32)
-    expect(after.stats.charm.xp).toBe(before.stats.charm.xp + 2)
+    expect(after.stats.charm.xp).toBe(before.stats.charm.xp + XP.gift)
     expect(after.inv.basket).toBe(1)
     expect(after.scenes.filter(s => s === 'gift:baker:3')).toHaveLength(1)
     expect(screen.queryByRole('dialog', { name: T.ui.giftPick })).not.toBeInTheDocument()

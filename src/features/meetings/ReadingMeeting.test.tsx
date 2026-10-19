@@ -111,37 +111,42 @@ it('leaving partway gives no reward, and unavailable meetings show their next da
   expect(screen.getByText(/다음 모임은 12일째/)).toBeInTheDocument()
 })
 
-it('cancels narration on close and ignores callbacks from canceled speech', () => {
-  const speak = vi.fn()
-  const cancel = vi.fn()
-  vi.stubGlobal('speechSynthesis', { speak, cancel, getVoices: () => [] })
-  vi.stubGlobal('SpeechSynthesisUtterance', class { constructor(public text: string) {} })
-  act(() => useGame.getState().startReading())
-  const view = render(<ModalLayer />)
-  fireEvent.click(screen.getByRole('button', { name: '음성으로 낭독하기' }))
-  expect(speak).toHaveBeenCalledOnce()
-  const speech = speak.mock.calls[0][0]
-  fireEvent.click(screen.getByRole('button', { name: '그만 읽기' }))
-  act(() => speech.onend())
-  expect(speak).toHaveBeenCalledOnce()
-  expect(cancel).toHaveBeenCalled()
-  expect(useGame.getState().game.flags.readDay).not.toBe(5)
-  view.unmount()
-  vi.unstubAllGlobals()
-})
+// 마이크로 내가 읽는다 (2026-10-19 사용자) — 음성 인식이 맞게 들으면 다음 절, 다르게 들리면 그 절에 머문다
+class FakeRecognizer {
+  static last: FakeRecognizer | null = null
+  lang = ''; interimResults = false; continuous = false; maxAlternatives = 1
+  onresult: ((e: unknown) => void) | null = null
+  onerror: ((e: { error: string }) => void) | null = null
+  onend: (() => void) | null = null
+  start = vi.fn(() => { FakeRecognizer.last = this })
+  stop = vi.fn()
+  abort = vi.fn()
+  say(text: string) {
+    this.onresult?.({ resultIndex: 0, results: { length: 1, 0: Object.assign([{ transcript: text }], { isFinal: true }) } })
+  }
+}
 
-it('advances the displayed verse as narration ends, then allows completion', () => {
-  const speak = vi.fn()
-  vi.stubGlobal('speechSynthesis', { speak, cancel: vi.fn(), getVoices: () => [] })
-  vi.stubGlobal('SpeechSynthesisUtterance', class { constructor(public text: string) {} })
+it('reads each verse aloud through the microphone and moves on only when it is heard right', () => {
+  vi.stubGlobal('SpeechRecognition', FakeRecognizer)
   act(() => useGame.getState().startReading())
   render(<ModalLayer />)
-  fireEvent.click(screen.getByRole('button', { name: '음성으로 낭독하기' }))
   const verses = versesOf(meetingPassage(5).ref)
+  expect(screen.queryByRole('button', { name: '읽었어요 · 다음 절' })).toBeNull()
+  fireEvent.click(screen.getByRole('button', { name: '🎙 소리 내어 읽기' }))
+  act(() => FakeRecognizer.last!.say('전혀 다른 말'))
+  expect(screen.getByRole('status')).toHaveTextContent(`1 / ${verses.length}절`)
   for (let i = 0; i < verses.length; i++) {
-    const speech = speak.mock.calls[i][0]
-    expect(speech.text).toBe(verses[i].text)
-    act(() => speech.onend())
+    fireEvent.click(screen.getByRole('button', { name: '🎙 소리 내어 읽기' }))
+    act(() => FakeRecognizer.last!.say(verses[i].text))
   }
   expect(screen.getByRole('button', { name: '함께 읽기 마치기' })).toBeEnabled()
+})
+
+it('falls back to reading by hand when the microphone is denied', () => {
+  vi.stubGlobal('SpeechRecognition', FakeRecognizer)
+  act(() => useGame.getState().startReading())
+  render(<ModalLayer />)
+  fireEvent.click(screen.getByRole('button', { name: '🎙 소리 내어 읽기' }))
+  act(() => FakeRecognizer.last!.onerror?.({ error: 'not-allowed' }))
+  expect(screen.getByRole('button', { name: /읽었어요 · 다음 절|마지막 절 읽었어요/ })).toBeInTheDocument()
 })

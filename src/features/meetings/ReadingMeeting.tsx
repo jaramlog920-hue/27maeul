@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
+import { checkVoice, VOICE_ACCEPT } from '../../engine/copying'
+import { newRecognizer, transcriptsOf, voiceAvailable, type VoiceRecognizer } from '../desk/copy-voice'
 import { CONTENT, neighborById, verseCountOf, versesOf } from '../../content/catalog'
 import { T } from '../../content/text'
 import { hallGuestsToday } from '../../engine/game'
@@ -17,51 +19,61 @@ export function ReadingMeeting({ day }: { day: number }) {
   const verses = versesOf(piece.ref)
   const [index, setIndex] = useState(0)
   const [done, setDone] = useState(false)
-  const [speaking, setSpeaking] = useState(false)
-  const [error, setError] = useState('')
-  const generation = useRef(0)
-  const utterance = useRef<SpeechSynthesisUtterance | null>(null)
-  const supported = typeof window.speechSynthesis !== 'undefined' && typeof SpeechSynthesisUtterance !== 'undefined'
-  useEffect(() => () => {
-    generation.current++
-    if (utterance.current) window.speechSynthesis?.cancel()
-  }, [])
-  function stop() {
-    generation.current++
-    if (utterance.current) window.speechSynthesis?.cancel()
-    utterance.current = null
-    setSpeaking(false)
-  }
-  function narrate() {
-    stop()
-    setError('')
-    setDone(false)
-    setSpeaking(true)
-    const token = generation.current
-    function read(at: number) {
-      if (generation.current !== token) return
-      setIndex(at)
-      const speech = new SpeechSynthesisUtterance(verses[at].text)
-      utterance.current = speech
-      speech.lang = 'ko-KR'
-      speech.rate = 0.85
-      const voice = window.speechSynthesis.getVoices().find(v => v.lang.startsWith('ko'))
-      if (voice) speech.voice = voice
-      speech.onend = () => {
-        if (generation.current !== token) return
-        if (at + 1 < verses.length) read(at + 1)
-        else { utterance.current = null; setSpeaking(false); setDone(true) }
-      }
-      speech.onerror = () => {
-        if (generation.current !== token) return
-        utterance.current = null
-        setSpeaking(false)
-        setError('음성 낭독을 시작하지 못했어요. 본문을 직접 읽고 다음 절로 넘겨 주세요.')
-      }
-      window.speechSynthesis.speak(speech)
+  const [listening, setListening] = useState(false)
+  const [note, setNote] = useState('')
+  // 마이크로 내가 읽는다 (2026-10-19 사용자: 들려주는 낭독이 아니라 내가 소리 내어 읽기) — 음성 인식이 없거나 막히면 직접 넘기기
+  const [manual, setManual] = useState(() => !voiceAvailable())
+  const rec = useRef<VoiceRecognizer | null>(null)
+  function stopListening() {
+    const r = rec.current
+    rec.current = null
+    if (r) {
+      r.onresult = null
+      r.onerror = null
+      r.onend = null
+      try { r.abort() } catch { /* 이미 끝났다 */ }
     }
-    // 끝까지 읽은 뒤 낭독하면 처음 절부터 (2026-10-19 감사 L-40: 마지막 절만 읽었다)
-    read(done ? 0 : index)
+    setListening(false)
+  }
+  useEffect(() => () => stopListening(), [])
+  function next() {
+    if (index + 1 < verses.length) setIndex(index + 1)
+    else setDone(true)
+  }
+  function listen() {
+    stopListening()
+    const r = newRecognizer()
+    if (!r) { setManual(true); setNote(R.unsupported); return }
+    const target = verses[index].text
+    let heard: string[] = []
+    let judged = false
+    const judge = (texts: string[]) => {
+      if (judged || rec.current !== r) return
+      judged = true
+      stopListening()
+      if (!texts.length) return setNote(R.silent)
+      const best = Math.max(...texts.map(t => checkVoice(t, target).similarity))
+      if (best >= VOICE_ACCEPT) { setNote(''); next() }
+      else setNote(R.miss)
+    }
+    r.onresult = (e) => {
+      const { texts, final } = transcriptsOf(e)
+      if (texts.length) heard = texts
+      if (final) judge(heard)
+    }
+    r.onerror = (e) => {
+      if (rec.current !== r || e.error === 'aborted') return
+      judged = true
+      stopListening()
+      const denied = e.error === 'not-allowed' || e.error === 'service-not-allowed'
+      if (denied) setManual(true)
+      setNote(denied ? R.denied : R.silent)
+    }
+    r.onend = () => judge(heard)
+    rec.current = r
+    try { r.start() } catch { rec.current = null; setManual(true); setNote(R.startFail); return }
+    setNote(R.listening)
+    setListening(true)
   }
   const verse = verses[index]
   const guests = hallGuestsToday(game, CONTENT).map(id => neighborById(id)?.role).filter(Boolean).join(' · ')
@@ -70,18 +82,29 @@ export function ReadingMeeting({ day }: { day: number }) {
     <p>{guests ? `${guests}와 함께 읽어요.` : '사랑방에서 함께 말씀을 읽어요.'}</p>
     <h3>{piece.title}</h3>
     <p className="hint">오늘의 본문 · {piece.ref}</p>
-    {/* 마이크는 쓰지 않는다 — 직접 읽고 넘기거나 음성 낭독을 듣는다 (2026-10-19 사용자: 마이크로 말해야 하는 줄 알았다) */}
-    <p>마이크는 쓰지 않아요. 본문을 읽고 다음 절로 넘기거나, '음성으로 낭독하기'를 눌러 들어 보세요.</p>
-    <p role="status">{done ? '본문을 끝까지 읽었어요.' : `${index + 1} / ${verses.length}절${speaking ? ' · 낭독 중' : ''}`}</p>
+    <p>{manual ? R.leadManual : R.lead}</p>
+    <p role="status">{done ? '본문을 끝까지 읽었어요.' : `${index + 1} / ${verses.length}절${listening ? ' · 듣는 중' : ''}`}</p>
     <Passage refText={`${piece.ref.split(' ')[0]} ${verse.chapter}:${verse.verse}`} />
-    {error && <p role="alert">{error}</p>}
-    {!supported && <p className="hint">이 브라우저에서는 음성 낭독을 지원하지 않아요. 본문을 직접 읽고 넘길 수 있어요.</p>}
+    {note && <p role="alert">{note}</p>}
     <div className="actions">
-      {supported && <button onClick={speaking ? stop : narrate}>{speaking ? '낭독 멈추기' : '음성으로 낭독하기'}</button>}
-      <button disabled={done || speaking} onClick={() => { if (index + 1 < verses.length) setIndex(index + 1); else setDone(true) }}>{index + 1 < verses.length ? '읽었어요 · 다음 절' : '마지막 절 읽었어요'}</button>
-      <button className="primary" disabled={!done} onClick={() => { stop(); useGame.getState().completeReadingMeeting() }}>함께 읽기 마치기</button>
-      <button onClick={() => { stop(); useGame.getState().closeModal() }}>그만 읽기</button>
+      {!manual && !done && <button className="primary" onClick={listening ? stopListening : listen}>{listening ? R.stop : R.read}</button>}
+      {manual && <button disabled={done} onClick={next}>{index + 1 < verses.length ? '읽었어요 · 다음 절' : '마지막 절 읽었어요'}</button>}
+      <button className={done ? 'primary' : undefined} disabled={!done} onClick={() => { stopListening(); useGame.getState().completeReadingMeeting() }}>함께 읽기 마치기</button>
+      <button onClick={() => { stopListening(); useGame.getState().closeModal() }}>그만 읽기</button>
     </div>
     <p className="hint">끝까지 읽고 마치면 모인 이웃의 호감도 +2 · 지능 경험치 +2. 오늘 한 번 받을 수 있어요.</p>
   </div>
+}
+
+const R = {
+  lead: '🎙 소리 내어 읽기를 누르고 이 절을 천천히 읽어 주세요. 맞게 들리면 다음 절로 넘어가요.',
+  leadManual: '이 기기에서는 마이크로 읽을 수 없어요. 본문을 소리 내어 읽고 다음 절로 넘겨 주세요.',
+  read: '🎙 소리 내어 읽기',
+  stop: '듣기 멈추기',
+  listening: '듣고 있어요. 이 절을 천천히 읽어 주세요.',
+  miss: '조금 다르게 들렸어요. 다시 읽어 보세요.',
+  silent: '소리가 들리지 않았어요. 다시 읽어 보세요.',
+  denied: '마이크를 쓸 수 없어요. 브라우저에서 마이크를 허락하거나, 직접 읽고 넘겨 주세요.',
+  startFail: '듣기를 시작하지 못했어요. 직접 읽고 넘겨 주세요.',
+  unsupported: '이 기기에서는 음성 인식을 쓸 수 없어요. 직접 읽고 넘겨 주세요.',
 }
