@@ -30,7 +30,11 @@ it('9·11·12·13권에 기존 생활 조건을 다시 검사한다', () => {
   expect(trade(s, TRADES.find(t => t.id === 'rainJar')!)?.coins).toBe(960)
   const guest = establishedGame(CONTENT, 11)
   guest.clock.day = 21
-  expect(guestMorning(guest).guestbook?.at(-1)?.kind).toBe('scribe')
+  // 순위(95장)가 열리기 전엔 순위 날에도 다른 마을 서기가 오지 않는다 (2026-10-22), 열린 뒤엔 온다
+  expect(guestMorning(guest).guestbook?.at(-1)?.kind).not.toBe('scribe')
+  const rankOpen = establishedGame(CONTENT, 12)
+  rankOpen.clock.day = 21
+  expect(guestMorning(rankOpen).guestbook?.at(-1)?.kind).toBe('scribe')
   const rank = establishedGame(CONTENT, 12)
   rank.clock.day = 21
   const ranked = rankMorning(rank, CONTENT)

@@ -11,6 +11,7 @@ import { setQuiet } from '../../audio/sound'
 import { chaptersOf, groupByRoom, progressOf } from '../../engine/books'
 import { againKey, BLOCKED_INPUT_TYPES, checkCopy, COPY_MAX_STEP, checkVoice, copySpot, copyVerses, isCopyingAgain, normalizeCopy, originalEnd, type CopySpot, type CopyVerse } from '../../engine/copying'
 import { deskKidWith, deskPose, spouseReading } from '../../engine/family'
+import { t } from '../../shared/i18n'
 import { chapterUnit, isOtBook, OT_ROOMS, otRow, type CopyBook, type OtBook } from '../../engine/ot-books'
 import { bookDoneLine } from './copy-text'
 import { BOOKS } from '../../engine/types'
@@ -1046,6 +1047,10 @@ function CopyDone({ book, modal, folding }: { book: CopyBook; modal: Extract<Mod
         {/* 빈칸 퀴즈 (2026-10-14): 방금 완성한 장에서 10문제 — 책상을 나가며 퀴즈 창으로 */}
         <button onClick={() => { copyExit(); useGame.getState().open({ kind: 'blankQuiz', target: { book, chapter: last.chapter } }) }}>빈칸 퀴즈 풀기</button>
         {/* 한 권을 마쳤으면 바로 제본 창으로 (책상에서 나가며 쓰다 만 입력은 저장된다) */}
+        {/* 구약 책을 다 쓰면 바로 책 꾸미기로 (2026-10-22 사용자: 신약처럼) */}
+        {last.bookDone && isOtBook(book) && (
+          <button className="primary" onClick={() => { copyExit(); useGame.getState().open({ kind: 'otDecorate', book: book as OtBook }) }}>{t('otShelf.decorate')}</button>
+        )}
         {last.bookDone && unbound && (
           <button
             className="primary"

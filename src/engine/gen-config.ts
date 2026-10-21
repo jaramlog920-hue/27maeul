@@ -17,6 +17,12 @@ export const BREAKUP_QUIET = 7
 /** 결혼 뒤 호감도는 이 아래로 내려가지 않는다 */
 export const SPOUSE_FLOOR = 50
 
+/**
+ * 짝이 될 수 있는 친한 사이와 연인은 날마다 이만큼 저절로 가까워진다 (2026-10-22 중후반 점검: 만남은 쉬는 이웃이 맞닿을 때만이라
+ * 40일에 가장 가까운 쌍도 30 남짓 — 자율 생활이 열려도 70일 넘게 주민 연인이 하나도 없었다)
+ */
+export const FRIEND_DRIFT = 1
+
 /** 마을 전체 동시 연인 쌍 상한, 결혼 준비 동시 상한 (P6) */
 export const MAX_LOVERS = 4
 export const MAX_PREPARING = 1

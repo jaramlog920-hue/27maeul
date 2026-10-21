@@ -4,7 +4,7 @@
 // 단계: 인사·선물로 마음 → 4·6에 그 사람의 이야기 → 8 + 들꽃 다발이면 연인 → 연인 7일 + 마음 10 + 약속의 끈이면 약혼
 // → 다음 장날 저녁 광장 마을 잔치(교파 예식이 아니다)에서 결혼 → 배우자가 내 집(넓힌 방)에서 함께 산다.
 // 연애 대화·장면에 성경 구절을 넣지 않는다 (설계 §8).
-import { isMarketDay } from './calendar'
+import { festivalOf, isMarketDay, isWet, weatherOf } from './calendar'
 import type { Tile } from './types'
 
 /** 연애 후보 (neighbors.json의 romanceable과 같다 — 테스트가 맞춰 본다) */
@@ -114,6 +114,15 @@ export const SPOUSE_HOME_TO = 7 * 60
 export function nextMarketAfter(day: number): number {
   let d = day + 1
   while (!isMarketDay(d)) d++
+  return d
+}
+/**
+ * 결혼 잔치 날: 다음 장날 가운데 계절 잔치 날과 비 오는 날을 비킨 날 (2026-10-22 중반 점검: 장날이 잔치 날과 겹치면 같은 모닥불에서
+ * 결혼과 계절 잔치가 겹쳤고, 비 오는 날에도 바깥 모닥불에서 열렸다 — 계절 잔치는 비 오면 열리지 않는다). 날씨는 날마다 정해져 있다
+ */
+export function nextWeddingDay(day: number): number {
+  let d = nextMarketAfter(day)
+  for (let i = 0; i < 60 && (festivalOf(d) || isWet(weatherOf(d))); i++) d = nextMarketAfter(d)
   return d
 }
 

@@ -1,9 +1,9 @@
 // 계획 20 2부 작업 C: 관계 단계와 헤어짐 (D30·P6·P7).
-// 하루 정산에서 한 날씩 부른다: 플레이어 연인 떼어 내기 → 헤어짐(하루 한 쌍) → 친한 사이 → 연인(하루 한 쌍) → 상담 시작.
+// 하루 정산에서 한 날씩 부른다: 플레이어 연인 떼어 내기 → 헤어짐(하루 한 쌍) → 짝이 될 친한 사이·연인이 조금씩 가까워짐 → 친한 사이 → 연인(하루 한 쌍) → 상담 시작.
 // 소식은 gen.log에 쌓고, 화면 글은 news 쪽이 만든다. 극적인 장면은 없다.
 import { closeKin } from './gen-kin'
-import { BREAKUP_BELOW, BREAKUP_QUIET, CONSULT_AFTER, CONSULT_AT, FRIEND_AT, LOVER_AT, MAX_LOVERS, MIN_GAP } from './gen-config'
-import { addLog, affinityOf, canPair, relationId, type GenState, type Relation } from './gen'
+import { BREAKUP_BELOW, BREAKUP_QUIET, CONSULT_AFTER, CONSULT_AT, CONSULT_NUDGE, CONSULT_QUESTIONS, FRIEND_AT, FRIEND_DRIFT, LOVER_AT, MAX_LOVERS, MIN_GAP } from './gen-config'
+import { addAffinity, addLog, affinityOf, canPair, relationId, type GenState, type Relation } from './gen'
 
 export interface DayCtx {
   /** 플레이어의 연인·약혼자·배우자 */
@@ -59,6 +59,14 @@ export function settleRelations(g: GenState, d: number, ctx: DayCtx): GenState {
     g = addLog(g, d, 'breakup', [r.a, r.b])
   }
 
+  // 짝이 될 수 있는 친한 사이는 연인 문턱(LOVER_AT)까지, 연인은 상담 문턱(CONSULT_AT)까지 날마다 조금씩 저절로 가까워진다 (FRIEND_DRIFT).
+  // 그 위는 만남으로만 — 결혼한 날 호감도보다 더 올라야 아기를 바라므로(gen-birth) 결혼 전에 가득 차지 않게. 오늘 다른 일이 걸린 사람은 빼고
+  changed = changedOn(g, d)
+  for (const r of Object.values(g.relations).sort((x, y) => (x.id < y.id ? -1 : 1))) {
+    const cap = r.stage === 'lover' ? CONSULT_AT : r.stage === 'friend' && canPair(g, ctx.partner, r.a, r.b, ctx.cooling) && !quietAfterBreakup(g, r.a, r.b, d) ? LOVER_AT : 0
+    if (affinityOf(g, r.a, r.b) < cap && free(r.a, changed) && free(r.b, changed)) g = addAffinity(g, r.a, r.b, Math.min(FRIEND_DRIFT, cap - affinityOf(g, r.a, r.b)))
+  }
+
   // 친한 사이: 호감도 30 이상인 남(가까운 친족 아님)은 친한 사이로. 수가 많아도 모두 (가벼운 소식)
   changed = changedOn(g, d)
   for (const [id, v] of Object.entries(g.affinity).sort(([x], [y]) => (x < y ? -1 : 1))) {
@@ -81,6 +89,15 @@ export function settleRelations(g: GenState, d: number, ctx: DayCtx): GenState {
       const r = ready[0]
       g = addLog({ ...g, relations: { ...g.relations, [r.id]: { ...r, stage: 'lover', since: d } } }, d, 'lover', [r.a, r.b])
     }
+  }
+
+  // 상담을 기다리는 쌍: 플레이어가 들어 주지 않으면 진행은 없고, CONSULT_NUDGE일마다 마을 소식으로 다시 알린다 (P8 — 2026-10-22 중후반 점검: 재촉이 빠져 있어 모르고 지나갔다)
+  for (const r of Object.values(g.relations).sort((x, y) => (x.id < y.id ? -1 : 1))) {
+    if (r.stage !== 'lover' || !r.consult || r.consult.answers.length >= CONSULT_QUESTIONS || d < r.consult.nextAsk) continue
+    const mine = (l: { kind: string; who: string[] }) => l.kind === 'consult' && l.who.includes(r.a) && l.who.includes(r.b)
+    const last = [...g.log].reverse().find(mine)
+    // 같은 쌍의 상담 소식은 하나만 남긴다 — 기록 한도(LOG_CAP) 안에서 결혼·출생 같은 옛 기록이 밀려나지 않게
+    if (!last || d - last.day >= CONSULT_NUDGE) g = addLog({ ...g, log: g.log.filter((l) => !mine(l)) }, d, 'consult', [r.a, r.b])
   }
 
   // 상담 시작: 연인 된 지 14일 이상 + 80 이상, 아직 상담이 없으면 (오늘부터 물을 수 있다)

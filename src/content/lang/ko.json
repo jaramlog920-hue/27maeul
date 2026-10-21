@@ -96,7 +96,7 @@
     "seekNote": "새 터에 살 집을 찾는 가족이 있어요. 빈 집 문 앞에 서 보세요."
   },
   "otShelf": {
-    "record": "{book} 기록대",
+    "decorate": "책 꾸미기", "decorateWhere": "구약 서고 책장에서 다 쓴 책을 골라 언제든 꾸밀 수 있어요.", "record": "{book} 기록대",
     "chapters": "{n}{unit}",
     "endDay": "{day}일째에 마침",
     "noDate": "마친 날 미상",

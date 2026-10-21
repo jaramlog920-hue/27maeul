@@ -58,6 +58,7 @@ import { RankView } from './library/RankView'
 import { TravelMenu } from './map/TravelMenu'
 import { FirstLight, LookAround } from './newland/FirstLight'
 import { OtShelf } from './newland/OtShelf'
+import { OtDecorate } from './newland/OtDecorate'
 import { FarewellLetter } from './talk/FarewellLetter'
 import { LoveVerseView } from './talk/LoveVerseView'
 import { SellStandView } from './stall/SellStandView'
@@ -107,6 +108,8 @@ function Body() {
       return <BuildMenu />
     case 'otShelf':
       return <OtShelf />
+    case 'otDecorate':
+      return <OtDecorate key={modal.book} book={modal.book} />
     case 'guide':
       return <GameGuide />
     case 'blankQuiz':

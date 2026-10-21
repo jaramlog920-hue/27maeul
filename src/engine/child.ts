@@ -141,7 +141,7 @@ export function childMode(c: Pick<Child, 'born' | 'mode' | 'left'>, day: number)
   return c.mode ?? (grown ? 'roam' : 'follow')
 }
 
-/** 결혼하고 이만큼 지난 아침에 태어난다 */
+/** 결혼하고 이만큼 지나도 아이방이 없으면 배우자가 아이방 이야기를 꺼낸다 (babyRoomTalk) — 아이는 잠자리에서 얘기해야 온다 */
 export const CHILD_AFTER_WEDDING = 14
 /** 아기 → 걷는 아이 → 돕는 아이 (태어난 날부터 센 날) */
 export const TODDLER_AT = 14

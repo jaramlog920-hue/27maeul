@@ -2,6 +2,7 @@
 // 그대로 제본하기는 늘 무료다 — 재료가 없어 말씀을 못 남기는 일은 없다. 특별하게 제본하기는 생활에서 모은 재료로
 // 표지 색·무늬·책등 장식을 고른다. 고른 모습은 서고 책등과 완성본 그림에 그대로 보인다. 이 파일은 순수 계산과 데이터.
 import { BOOKS, type Book, type ItemId } from './types'
+import { OT_BOOKS, type OtBook } from './ot-books'
 
 export type CoverColor = 'cream' | 'sky' | 'sage' | 'lavender' | 'sand' | 'slate'
 export type CoverPattern = 'plain' | 'lines' | 'dots' | 'diamonds'
@@ -161,4 +162,32 @@ export function sanitizeBindings(raw: unknown, done: (b: Book) => boolean): Bind
     out[b] = special ? { day: v.day as number, special } : { day: v.day as number }
   }
   return out
+}
+
+/**
+ * 구약 책 꾸미기 (2026-10-22 사용자: 신약처럼 책 꾸미기) — 구약은 제본·꽂기 없이 다 쓰면 작은 책장에 저절로 꽂히므로,
+ * 꾸민 책만 고른 모습을 남긴다 (특별 제본과 같은 재료·같은 고르기). 꾸미지 않은 책은 예전 책등 그대로
+ */
+export type OtBindings = Partial<Record<OtBook, Binding & { special: SpecialChoice }>>
+export function sanitizeOtBindings(raw: unknown, done: (b: OtBook) => boolean): OtBindings {
+  if (!isObj(raw)) return {}
+  const out: OtBindings = {}
+  for (const b of OT_BOOKS) {
+    const v = raw[b]
+    if (!isObj(v) || !Number.isInteger(v.day) || (v.day as number) < 0 || !done(b)) continue
+    const special = cleanChoice(v.special)
+    if (special) out[b] = { day: v.day as number, special }
+  }
+  return out
+}
+/** 구약 책을 꾸미며 처음 쓴 색·무늬·장식도 도감(신약과 같은 칸)에 모인다 */
+export function withOtDesigns(found: readonly string[], ot: OtBindings): string[] {
+  const out = [...found]
+  for (const b of Object.values(ot)) {
+    if (!b) continue
+    const sp = b.special
+    for (const id of [`color:${sp.color}`, `pattern:${sp.pattern}`, `deco:${sp.deco}`, ...(sp.detail && sp.detail !== 'none' ? [`detail:${sp.detail}`] : [])])
+      if (DESIGN_IDS.has(id) && !out.includes(id)) out.push(id)
+  }
+  return out.length === found.length ? (found as string[]) : out
 }

@@ -75,7 +75,7 @@ import { FESTIVAL_SPOTS, FIRE, goalFor, isNear, npcTile, placeNpc, stepNpc, type
 import { separateNpcGoals } from './npc-spots'
 import { DAILY_HEART_CAP, GAIN, heartsOf, MAX_POINTS, POINTS_PER_HEART, ROMANCE_HEART_CAPS, type HeartDay } from './hearts'
 import { bookDone, bookRoomOpen, chaptersOf, emptyProgress, openDoorsFor, otBookFinished, progressOf, totalChapters, type OtProgress, type Progress } from './books'
-import { isOtBook, OT_BOOKS, OT_ROOMS, type CopyBook } from './ot-books'
+import { isOtBook, OT_BOOKS, OT_ROOMS, type CopyBook, type OtBook } from './ot-books'
 import { baseVillageTileAt, HOME_ROOM as HOME_ROOM_W } from './world'
 import { keepClear } from './room'
 import { isBuiltWall, isRemovedWall, NO_HOME_WALLS, setHomeWalls, WALL_BUILD_COINS, type HomeWalls } from './home-walls'
@@ -87,7 +87,7 @@ import { currentChapter, mulberry32 } from './offers'
 import { drawFragment, fragmentSeed, fragmentsForDay, logPieces, talkGiftOf, type PieceLog } from './fragments'
 import { againKey, checkCopy, COPY_CHAPTER_XP, copySpot, copyVerses, isCopyingAgain, nextOpenChapter, NO_COPY, NO_COPY_STATS, type CopyCheck, type CopySpot, type CopyState, type CopyStats } from './copying'
 import { chapterFinds, type GodFind } from './god-records'
-import { SPECIAL_COST, withBookDesigns, type Bindings, type SpecialChoice } from './binding'
+import { SPECIAL_COST, withBookDesigns, withOtDesigns, type Bindings, type OtBindings, type SpecialChoice } from './binding'
 import { emptyDayLog, logChapter, logGift, type DayLog } from './daybook'
 import { addXp, charmBonus, statScore, freshStats, luckyExtra, rainBonus, tiredScale, visitBonus, XP, type StatId, type Stats } from './stats'
 export { canSell, sell, sellPrice, SELL_CAP, SELL_PRICES, type SellBlock } from './merchant-selling'
@@ -107,6 +107,7 @@ import {
   fullHeartBond,
   isCandidateId,
   nextMarketAfter,
+  nextWeddingDay,
   NO_ROMANCE,
   NO_SPOUSE_GIFT,
   SPOUSE_HOME_FROM,
@@ -372,6 +373,8 @@ export interface GameState {
   otCollected?: string[]
   /** 구약 필사 기록 — 신약 copyStats와 섞이지 않는다. 없으면 빈 기록 */
   otCopyStats?: CopyStats
+  /** 꾸민 구약 책 (2026-10-22) — 꾸민 책만, 고른 표지 색·무늬·책등 장식 (binding.ts OtBindings) */
+  otBound?: OtBindings
   /** 하나님 기록 (계획 14): 장을 다 필사해 발견한 줄 — 키워드·근거 구절·발견한 날 */
   godRecords: GodFind[]
   /**
@@ -3161,7 +3164,7 @@ export const GUESTBOOK_CAP = 30
 
 /**
  * 아침마다(3일째부터): 사흘에 하루꼴(서고지기가 있으면 이틀에 하루꼴)로 서고에 누군가 들러 방명록에 한 줄 (날 씨앗),
- * 엿새 넘게 아무도 안 왔으면 꼭 오고, 순위 업데이트 날에는 다른 마을 서기가. 입장료는 없다 — 방명록 줄은 서고 점수에 더해지고,
+ * 엿새 넘게 아무도 안 왔으면 꼭 오고, 순위가 열린 뒤 순위 업데이트 날에는 다른 마을 서기가. 입장료는 없다 — 방명록 줄은 서고 점수에 더해지고,
  * 서고지기가 안내한 손님은 점수 두 배·후원금(LIBRARIAN_GUEST_COINS)을 두고 간다 (2026-10-14)
  */
 export function guestMorning(s: GameState): GameState {
@@ -3177,7 +3180,8 @@ export function guestMorning(s: GameState): GameState {
   const last = past[past.length - 1]
   const long = !last || day - last.day > 6
   let kind: GuestKind | null = null
-  if (isRankDay(day)) kind = 'scribe'
+  // 다른 마을 서기는 순위(95장)가 열린 뒤 순위 날에만 — 그 전엔 모르는 순위 이야기를 남겼다 (2026-10-22 초중반 점검)
+  if (isRankDay(day) && featureAccess(s, 'rank') === 'full') kind = 'scribe'
   else if (long || rnd() < (librarianId(s) ? GUEST_CHANCE_LIBRARIAN : GUEST_CHANCE)) {
     const kinds = (['wanderer', 'learner', 'kid'] as const).filter((k) => k !== last?.kind)
     kind = kinds[Math.floor(rnd() * kinds.length)]
@@ -3985,14 +3989,14 @@ export function canGiveCord(s: GameState, def: NeighborDef): CordBlock {
   return null
 }
 
-/** 약속의 끈을 건네면 약혼 — 다음 장날 저녁 광장에서 마을 잔치로 결혼한다. 장면 propose:<id> */
+/** 약속의 끈을 건네면 약혼 — 다음 장날(계절 잔치·비 오는 날은 비킨다, nextWeddingDay) 저녁 광장에서 마을 잔치로 결혼한다. 장면 propose:<id> */
 export function giveCord(s: GameState, def: NeighborDef): GameState {
   if (canGiveCord(s, def)) return s
   return heartUp(
     {
       ...s,
       inv: take(s.inv, { promiseCord: 1 })!,
-      romance: { ...s.romance, stage: 'engaged', weddingDay: nextMarketAfter(s.clock.day) },
+      romance: { ...s.romance, stage: 'engaged', weddingDay: nextWeddingDay(s.clock.day) },
       scenes: [...s.scenes, `propose:${def.id}`],
     },
     def.id,
@@ -4316,6 +4320,23 @@ export function decorateBook(s: GameState, book: Book, special: SpecialChoice): 
   const previousDesigns = withBookDesigns(paid.bookDesigns ?? [], paid.bound, paid.shelved)
   const bound = { ...paid.bound, [book]: { day: before?.day ?? s.clock.day, special } }
   return coverMoment({ ...paid, bound, bookDesigns: withBookDesigns(previousDesigns, bound, paid.shelved) },book,special)
+}
+
+/**
+ * 다 옮겨 적은 구약 책의 표지를 꾸민다 (2026-10-22 사용자: 신약처럼 책 꾸미기) — 특별 제본과 같은 재료(SPECIAL_COST, 가방 먼저 그다음 궤짝).
+ * 다시 꾸밀 수 있고, 처음 꾸민 날은 그대로 둔다. 구약 책장 책등과 표지에 고른 모습이 보인다
+ */
+export function canDecorateOtBook(s: GameState, book: OtBook): 'notDone' | 'stock' | null {
+  if (!otBookFinished(s, book)) return 'notDone'
+  if (!haveStock(s, SPECIAL_COST)) return 'stock'
+  return null
+}
+export function decorateOtBook(s: GameState, book: OtBook, special: SpecialChoice): GameState {
+  if (canDecorateOtBook(s, book)) return s
+  const paid = useStock(s, SPECIAL_COST)
+  if (!paid) return s
+  const otBound: OtBindings = { ...paid.otBound, [book]: { day: paid.otBound?.[book]?.day ?? s.clock.day, special } }
+  return { ...paid, otBound, bookDesigns: withOtDesigns(paid.bookDesigns ?? [], otBound) }
 }
 
 /** 퀴즈까지 마친 뒤 실제로 기록한다 (재료 없이 장을 완성 — 계획 14). 한 권의 마지막 장이면 'bookBound' 장면 */
@@ -4806,7 +4827,7 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
   const feastMissed = (fire: string) => !flags[onceKey(fire, day - 1)]
   // 미룬 잔치를 다시 여는 날: 아기 잔치·마을 행사·내 결혼 잔치 저녁과 겹치면 그다음으로 (저녁 모임이 겹치지 않게)
   // 놓쳐서 오늘(장날)로 미뤄지는 결혼 잔치도 오늘 저녁으로 본다 (아래에서 미루기 전 날짜로만 보면 서고 잔치와 겹쳤다)
-  const weddingNow = s.romance?.stage === 'engaged' && s.romance.weddingDay !== null && (s.romance.weddingDay === day || (s.romance.weddingDay < day && nextMarketAfter(day - 1) === day))
+  const weddingNow = s.romance?.stage === 'engaged' && s.romance.weddingDay !== null && (s.romance.weddingDay === day || (s.romance.weddingDay < day && nextWeddingDay(day - 1) === day))
   const eveningFree = gathering !== 'babyParty' && !festivalOf(day) && !weddingNow
   if (flags.gospelFeast === 1 && feastMissed(FEAST_FIRE)) { flags.gospelFeast = 3; flags.gospelFeastAt = nextMarketAfter(day - 1) }
   else if (flags.gospelFeast === 1) flags.gospelFeast = 2
@@ -4864,8 +4885,8 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
   // (서고의 방은 모두 처음부터 열려 있다 — 예전의 "앞 방이 차면 다음 방" 열림 장면은 없앴다)
   if (gathering) scenes.push(`notice:${gathering}`)
   // 저녁 모임(아기 잔치·별 보는 밤·복음서 방 잔치·스물일곱 권 잔치)이 있는 날은 저녁 초대를 하지 않는다
-  // 결혼 잔치 날 저녁을 놓쳤으면 다음 장날로 미룬다
-  const romance = s.romance?.stage === 'engaged' && s.romance.weddingDay !== null && s.romance.weddingDay < day ? { ...s.romance, weddingDay: nextMarketAfter(day - 1) } : (s.romance ?? NO_ROMANCE)
+  // 결혼 잔치 날 저녁을 놓쳤으면 다음 결혼 잔치 날(계절 잔치·비 오는 날을 비킨 장날)로 미룬다
+  const romance = s.romance?.stage === 'engaged' && s.romance.weddingDay !== null && s.romance.weddingDay < day ? { ...s.romance, weddingDay: nextWeddingDay(day - 1) } : (s.romance ?? NO_ROMANCE)
   // 미뤄졌으면 아침에 한 줄 (말없이 밀렸다 — 2026-10-21 점검)
   if (romance !== s.romance && romance.weddingDay !== null && s.romance?.weddingDay !== romance.weddingDay) flags.weddingMoved = romance.weddingDay
   // 내 결혼 잔치 저녁에는 별 보는 밤·저녁 초대를 잡지 않는다 (잔치 날과 같게 — 다른 맑은 날에 다시 잡힌다)
@@ -4941,8 +4962,8 @@ const CHILD_FINDS: Partial<Record<StatId, [ItemId, ItemId]>> = { strength: ['wat
 export const CHILD_HELP_XP = 10
 
 /**
- * 아이의 아침 (계획 12): 결혼하고 CHILD_AFTER_WEDDING일이 지난 아침에 태어나고(이름을 정한다),
- * 걷기 시작하는 날·돕기 시작하는 날엔 장면, 돕는 아이는 하루 한 번 자기 능력치에 맞는 일을 한다
+ * 아이의 아침 (계획 12): 아이는 잠자리에서 아이를 갖자고 얘기한 날로부터 나흘째 아침에 태어나고(siblings.ts siblingMorning, 이름을 정한다),
+ * 여기서는 걷기 시작하는 날·돕기 시작하는 날의 장면, 돕는 아이의 하루 한 번 돕기, 어른이 된 뒤의 진로·편지를 맡는다
  */
 /**
  * 아이 셋의 아침 (2026-10-13): 함께하는 아이부터, 나머지 아이도 한 명씩 함께하는 자리에 앉혀 같은 아침을 보낸다
@@ -5062,11 +5083,9 @@ function backToPickedKid(s: GameState): GameState {
 
 function childMorning(s: GameState, content: GameContent): GameState {
   const day = s.clock.day
-  const r = s.romance ?? NO_ROMANCE
   let next = s
-  // 아이는 잠자리에서 아이를 갖자고 얘기한 다음 날 아침에 태어난다 (siblingMorning — 2026-10-13 사용자: 첫째부터)
+  // 아이는 잠자리에서 얘기한 날로부터 PREGNANCY_DAYS째 아침에 태어난다 (siblingMorning — 2026-10-13·14 사용자: 첫째부터, 나흘 기다려)
   if (!next.child) return s
-  void r
   let child = next.child!
   const stage = childStage(child, day)
   // 아기 시기가 끝난 아침(걷는 아이가 된 날): 기록자 능력치를 20~50% 물려받는다 — 아기 때 잘 돌볼수록 높은 몫이 나오기 쉽다 (2026-10-14 사용자)
@@ -5081,7 +5100,7 @@ function childMorning(s: GameState, content: GameContent): GameState {
   }
   if (stage !== 'baby' && !next.flags.childWalked) next = { ...next, scenes: [...next.scenes, 'childWalks'], flags: { ...next.flags, childWalked: 1 } }
   if (stage === 'adult') {
-    // 어른이 된 아침: 가장 높은 능력치로 일이 정해지고, 남거나 떠난다
+    // 어른이 된 아침: 함께한 활동·배움터로 생긴 관심이 큰 일로(관심이 없으면 가장 높은 능력치로) 일이 정해지고, 남거나 떠난다 (adultJob)
     if (!child.job) {
       const j = adultJob(child)
       child = { ...child, job: j.job, jobConfirmed: false, left: j.left, ...(j.left ? { mode: undefined } : {}) }
@@ -5121,7 +5140,7 @@ function childMorning(s: GameState, content: GameContent): GameState {
   } else if (kind === 'charm') {
     // 대신 인사하러 간다: 오늘 마을에 나온 이웃 한 명 (배우자는 빼고)
     const level = next.flags.villageLevel ?? 0
-    const who = content.neighbors.filter((d) => !d.marketOnly && d.id !== r.partner && !notYet(d, level, next.flags))
+    const who = content.neighbors.filter((d) => !d.marketOnly && d.id !== s.romance?.partner && !notYet(d, level, next.flags))
     if (who.length) next = heartUp(next, who[day % who.length].id, GAIN.talk)
   } else if (kind === 'wit') {
     // 이웃 이야기를 사흘에 한 번 먼저 들어 온다 (다른 날엔 일지에 이웃 이야기 한 줄)

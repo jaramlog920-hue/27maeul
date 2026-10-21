@@ -11,6 +11,7 @@ import { CONTENT, neighborById } from '../../content/catalog'
 import { canReadOtTogether, otBookRecord, otGroups, otReadFriends, otReadMemories } from '../../engine/ot-display'
 import { readOtWith } from '../../engine/game'
 import { saveGame } from '../../engine/save'
+import { OtSpine } from './OtDecorate'
 
 /** 차분한 파스텔 책등 색과 무늬 (책 순서대로 돌아가며 — 좌우 대칭) */
 const COLORS: readonly [string, string][] = [
@@ -23,6 +24,7 @@ const COLORS: readonly [string, string][] = [
 const MARKS = ['band', 'stripe', 'dot', 'diamond'] as const
 
 function Spines({ books, onPick, picked }: { books: OtBook[]; onPick?: (b: OtBook) => void; picked?: OtBook | null }) {
+  const otBound = useGame((st) => st.game.otBound)
   return (
     <figure className="shelf-picture" aria-label={T.ot.shelfTitle}>
       <div className="shelf-picture-row">
@@ -30,7 +32,9 @@ function Spines({ books, onPick, picked }: { books: OtBook[]; onPick?: (b: OtBoo
           const i = otIndex(b)
           const [spine, accent] = COLORS[i % COLORS.length]
           const style = { '--spine': spine, '--accent': accent } as CSSProperties
-          const art = (
+          // 꾸민 책은 고른 모습으로 (2026-10-22)
+          const decorated = otBound?.[b]
+          const art = decorated ? <OtSpine key={b} book={b} binding={decorated} /> : (
             <span
               key={b}
               className={`spine-art mark-${MARKS[i % MARKS.length]} spine-grade-none`}
@@ -94,6 +98,7 @@ export function OtShelf() {
         ))
       )}
       {picked && <BookRecord book={picked} />}
+      {picked && <div className="actions"><button onClick={() => useGame.getState().open({ kind: 'otDecorate', book: picked })}>{t('otShelf.decorate')}</button></div>}
       <ReadTogether />
       <div className="actions">
         <button data-close onClick={closeModal}>{T.ui.close}</button>

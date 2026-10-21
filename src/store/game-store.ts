@@ -38,7 +38,7 @@ import { currentMapId, type MapId } from '../engine/maps'
 import { newlandRevealed, revealNewland } from '../engine/newland'
 import { progressOf } from '../engine/books'
 import { featureAccess, featureHint } from '../engine/feature-rules'
-import { isOtBook, type CopyBook } from '../engine/ot-books'
+import { isOtBook, type CopyBook, type OtBook } from '../engine/ot-books'
 import { ARCHIVE, INTERIOR_ENTRY, NEWLAND_PORTAL_FRONT, ROOM_SLOTS, VILLAGE_PORTAL_FRONT } from '../engine/newland-config'
 import { buildsOf, cancelBuild, clearTile, demolishBuild, moveBuild, orderBuild, toggleBuildSign } from '../engine/newland-build'
 import type { SiteKind } from '../engine/newland-sites'
@@ -311,6 +311,8 @@ export type Modal =
   | { kind: 'copy'; view: CopyView; last?: VerseResult | null; resume?: boolean; tab?: 'nt' | 'ot' }
   /** 새 터 서고 안 작은 책장: 필사를 끝낸 구약 책의 책등 전시 (계획 20 작업 5) */
   | { kind: 'otShelf' }
+  /** 다 옮겨 적은 구약 책 꾸미기 (2026-10-22) */
+  | { kind: 'otDecorate'; book: OtBook }
   | { kind: 'review'; pieceId: string | null }
   | { kind: 'journal'; tab?: JournalTab; neighbor?: string }
   | { kind: 'familyTree'; personId: string; neighborId: string }

@@ -25,7 +25,7 @@ import { sanitizeHeartDay } from './hearts'
 import { sanitizeStats } from './stats'
 import { sanitizeCopy, sanitizeCopyStats } from './copying'
 import { backfillGodRecords, sanitizeGodRecords } from './god-records'
-import { sanitizeBindings, sanitizeBookDesigns, withBookDesigns } from './binding'
+import { sanitizeBindings, sanitizeBookDesigns, sanitizeOtBindings, withBookDesigns } from './binding'
 import { isFinished, sanitizeHomeShelf } from './finished-books'
 import { sanitizePieceLog } from './fragments'
 import { migratePieceLayout } from './piece-migration'
@@ -33,7 +33,7 @@ import { GIFT_ITEMS } from './collection-gifts'
 import { GUESTS } from './newland-life'
 import { sanitizeDayLog } from './daybook'
 import { IDLE_RESET } from './autonomy'
-import { bookDone, bookRoomOpen, chaptersOf, emptyProgress, sanitizeOtProgress, type Progress } from './books'
+import { bookDone, bookRoomOpen, chaptersOf, emptyProgress, otBookFinished, sanitizeOtProgress, type Progress } from './books'
 import { isOtBook } from './ot-books'
 import { newGame, settle, type Farewell, type GameState } from './game'
 import type { Avatar } from './avatar'
@@ -288,7 +288,7 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   const churchBoard = Array.isArray(s.churches) ? s.churches.filter((n) => Number.isInteger(n)) : []
   const churches = placeNewCards(churchBoard, cardsForChapters(content.churches ?? [], progress.rev.completed))
   // 구약 칸은 원본을 펼치지 않는다 — 정리한 결과가 있을 때만 아래에서 넣는다 (깨진 값이 남지 않게)
-  const { otProgress: _rawOtProgress, otCopyStats: _rawOtStats, newland: _rawNewland, otCollected: _rawOtCollected, rooms: _rawRooms, gen: _rawGen, inv: _inv, ...sRest } = { ...s, rooms: (s as { rooms?: unknown }).rooms } as typeof s & { rooms?: unknown }
+  const { otProgress: _rawOtProgress, otCopyStats: _rawOtStats, otBound: _rawOtBound, newland: _rawNewland, otCollected: _rawOtCollected, rooms: _rawRooms, gen: _rawGen, inv: _inv, ...sRest } = { ...s, rooms: (s as { rooms?: unknown }).rooms } as typeof s & { rooms?: unknown }
   // 새 터 건축 (계획 20 작업 6): 옛 저장은 없음, 깨진 기록은 걸러 낸다
   const newland = sanitizeNewlandBuild(_rawNewland, s.clock.day)
   const savedGen = sanitizeGen(_rawGen, s.clock.day)
@@ -375,6 +375,8 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     copyStats: sanitizeCopyStats(s.copyStats),
     ...(Object.keys(otProgress).length ? { otProgress } : {}),
     ...(isObj(s.otCopyStats) ? { otCopyStats: sanitizeCopyStats(s.otCopyStats) } : {}),
+    // 꾸민 구약 책: 다 마친 책만, 모양이 맞는 것만 (2026-10-22)
+    ...((() => { const ob = sanitizeOtBindings(_rawOtBound, (b) => otBookFinished({ otProgress }, b)); return Object.keys(ob).length ? { otBound: ob } : {} })()),
     ...(newland ? { newland } : {}),
     // 주민의 자율 가족 (작업 10): 옛 저장은 없음, 깨진 항목만 버리고 계보는 복구
     ...(gen ? { gen } : {}),
