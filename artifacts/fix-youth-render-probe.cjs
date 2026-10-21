@@ -1,0 +1,1 @@
+const fs=require('fs');let p='artifacts/youth-location-fixes-browser.cjs',s=fs.readFileSync(p,'utf8').replace('r.view.w=16;r.view.h=20;r.view.scale=1.5;r.view.camera.x=13;r.view.camera.y=38','r.scale=1.5;r.look={x:22,y:45}').replace('r.draw(state,8,0)','r.draw(state,phase/3,0)');fs.writeFileSync(p,s);

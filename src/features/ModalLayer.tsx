@@ -1,4 +1,7 @@
 import { BlankQuizDialog } from './quiz/BlankQuiz'
+import { VillageBook } from './library/VillageBook'
+import { NtRecap } from './library/NtRecap'
+import { GenBabyName } from './talk/GenBabyName'
 import { SceneReplay } from './scene/SceneReplay'
 import {hasAuthoredStory} from '../render/authored-story-art'
 import { ScreenBoundary } from "./ScreenBoundary"
@@ -10,7 +13,7 @@ import { CONTENT } from '../content/catalog'
 import { StorageView } from './bag/StorageView'
 import { Bag } from './bag/Bag'
 import { Wardrobe } from './family/Wardrobe'
-import { KidTime } from './family/KidTime'
+import { KidTime, KidCapacity } from './family/KidTime'
 import { AdoptForm } from './companion/AdoptForm'
 import { Desk } from './desk/Desk'
 import { CopyDesk } from './desk/CopyDesk'
@@ -167,6 +170,12 @@ function Body() {
       return <TravelView dest={modal.dest} rewards={modal.rewards} />
     case 'childName':
       return <ChildName />
+    case 'villageBook':
+      return <VillageBook />
+    case 'ntRecap':
+      return <NtRecap />
+    case 'genName':
+      return <GenBabyName id={modal.id} />
     case 'follow':
       return <FollowMenu who={modal.who} />
     case 'villageMap':
@@ -231,6 +240,8 @@ function Body() {
       return <SpaceMenu id={modal.id} />
     case 'kidTime':
       return <KidTime done={modal.done} spouse={modal.spouse} />
+    case 'kidCapacity':
+      return <KidCapacity />
   }
 }
 

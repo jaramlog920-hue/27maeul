@@ -1,0 +1,1 @@
+import{$i as e}from"./expansion-prop-art-CkbjVJrK.js";import{d as t,gt as n}from"./player-child-look-BDow0FXh.js";function r(r){let i=e(r).state;n(i),t.setState({game:i})}export{r as t};

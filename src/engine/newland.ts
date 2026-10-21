@@ -162,7 +162,6 @@ export function newlandRevealedOn(): boolean {
 export type NewlandStatus = 'locked' | 'gift' | 'open'
 type GiftBase = Pick<GameState, 'shelved' | 'flags'>
 
-/** 개방 조건 (D7): 27권 모두 꽂힘 + 스물일곱 권 잔치가 지났다(allFeast 2) */
 /** 27권을 모두 꽂으면 바로 (2026-10-13 사용자: 잔치를 기다리다 구약이 안 열리는 줄 알았다 — 잔치는 따로 그대로 열린다) */
 function conditionMet(s: GiftBase): boolean {
   return BOOKS.every((b) => s.shelved[b] !== undefined)

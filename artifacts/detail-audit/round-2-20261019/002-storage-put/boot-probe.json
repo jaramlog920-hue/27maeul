@@ -1,0 +1,194 @@
+{
+  "boot": {
+    "readyState": "interactive",
+    "text": "",
+    "html": "\n    <div id=\"root\"></div>\n    <script type=\"module\" src=\"/src/main.tsx\"></script>\n  \n\n"
+  },
+  "network": [
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/"
+    },
+    {
+      "event": "response",
+      "status": 200,
+      "url": "http://127.0.0.1:4197/"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/@vite/client"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/src/main.tsx"
+    },
+    {
+      "event": "request",
+      "url": "https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600&display=swap"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/@react-refresh"
+    },
+    {
+      "event": "console-error",
+      "text": "Failed to load resource: net::ERR_FAILED"
+    },
+    {
+      "event": "response",
+      "status": 200,
+      "url": "http://127.0.0.1:4197/src/main.tsx"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/node_modules/.vite/deps/react.js?v=3deee07b"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/node_modules/.vite/deps/react-dom_client.js?v=3deee07b"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/node_modules/.vite/deps/@vercel_analytics_react.js?v=3deee07b"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/src/app/App.tsx"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/src/app/ErrorBoundary.tsx"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/src/app/StorageGate.tsx"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/src/app/global.css"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/src/app/parts.css"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/src/app/theme.ts"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=3deee07b"
+    },
+    {
+      "event": "response",
+      "status": 200,
+      "url": "http://127.0.0.1:4197/node_modules/.vite/deps/react.js?v=3deee07b"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/node_modules/.vite/deps/rolldown-runtime-BPOCksWG.js?v=3deee07b"
+    },
+    {
+      "event": "response",
+      "status": 200,
+      "url": "http://127.0.0.1:4197/node_modules/.vite/deps/@vercel_analytics_react.js?v=3deee07b"
+    },
+    {
+      "event": "response",
+      "status": 200,
+      "url": "http://127.0.0.1:4197/src/app/ErrorBoundary.tsx"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/src/content/text.ts"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/src/engine/game-storage.ts"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/src/app/StorageNotice.tsx"
+    },
+    {
+      "event": "response",
+      "status": 200,
+      "url": "http://127.0.0.1:4197/src/app/App.tsx"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/src/shared/i18n.ts"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/src/content/catalog.ts"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/src/engine/game.ts"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/src/engine/save.ts"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/src/features/intro/AvatarForm.tsx"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/src/features/intro/Intro.tsx"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/src/features/intro/SaveSlots.tsx"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/src/features/play/Play.tsx"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/src/audio/sound.ts"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/src/store/game-store.ts"
+    },
+    {
+      "event": "response",
+      "status": 200,
+      "url": "http://127.0.0.1:4197/node_modules/.vite/deps/react-dom_client.js?v=3deee07b"
+    },
+    {
+      "event": "request",
+      "url": "http://127.0.0.1:4197/node_modules/.vite/deps/react-dom.js?v=3deee07b"
+    },
+    {
+      "event": "response",
+      "status": 200,
+      "url": "http://127.0.0.1:4197/src/app/StorageGate.tsx"
+    },
+    {
+      "event": "response",
+      "status": 200,
+      "url": "http://127.0.0.1:4197/src/app/theme.ts"
+    },
+    {
+      "event": "response",
+      "status": 200,
+      "url": "http://127.0.0.1:4197/node_modules/.vite/deps/react_jsx-dev-runtime.js?v=3deee07b"
+    },
+    {
+      "event": "response",
+      "status": 200,
+      "url": "http://127.0.0.1:4197/node_modules/.vite/deps/rolldown-runtime-BPOCksWG.js?v=3deee07b"
+    },
+    {
+      "event": "response",
+      "status": 200,
+      "url": "http://127.0.0.1:4197/@react-refresh"
+    }
+  ],
+  "errors": []
+}

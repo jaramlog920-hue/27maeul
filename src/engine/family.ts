@@ -1,3 +1,6 @@
+import { isHome } from './world'
+import { FULL_HEART_DATES } from './romance'
+import { kidPersona, likedActs } from './persona'
 import { featureAccess } from './feature-rules'
 // 가족과 함께 있는 필사 (계획 14 작업 10, 계획 12 "아이와 함께 보내는 시간").
 // 아이가 어느 정도 자라면 책상에 앉을 때 가끔 "옆에 앉고 싶어 해요" — [같이 있기]면 아이는 곁에서 그림을 그리고, 책장을 넘기다
@@ -8,7 +11,7 @@ import { isMarketDay, weatherOf } from './calendar'
 import { NO_LIFE, recordExperience } from './people'
 import { addCareerInterest, childMode, childStage, type AdultJob, type ChildStage } from './child'
 import { seasonOf } from './clock'
-import { childAtSchool, heartUp, neighborsPresent, passTime, putAway, type GameState } from './game'
+import { childAtSchool, heartUp, neighborsPresent, overflows, passTime, putAway, type GameState } from './game'
 import { NO_ROMANCE, SPOUSE_HOME_FROM, SPOUSE_HOME_TO } from './romance'
 import { addXp, type StatId } from './stats'
 import type { GameContent } from './types'
@@ -83,6 +86,8 @@ export function deskKidVerse(s: GameState): GameState {
 // 아이의 신앙을 수치로 키우는 것·매일 해야 하는 아이 퀘스트는 넣지 않는다.
 
 export type KidAct = 'read' | 'puzzle' | 'make' | 'cook' | 'walk' | 'ball' | 'tour' | 'errand' | 'story'
+/** 좋아하는 함께하기를 하면 더 가까워지는 만큼 */
+export const LIKED_CLOSE_BONUS = 1
 export const KID_ACTS: readonly KidAct[] = ['read', 'puzzle', 'make', 'cook', 'walk', 'ball', 'tour', 'errand', 'story']
 interface KidActDef {
   /** 아이 능력치 경험치 */
@@ -193,7 +198,9 @@ export function doKidAct(s: GameState, act: KidAct, content: GameContent): KidRe
   const c = s.child!
   let stats = c.stats
   for (const [id, xp] of Object.entries(def.gains) as [StatId, number][]) stats = addXp(stats, id, xp)
-  const close = Math.min(CLOSE_MAX, (c.close ?? 0) + (act === 'story' ? STORY_CLOSE_GAIN : KID_CLOSE_GAIN))
+  // 그 아이가 좋아하는 일이면 한 칸 더 가까워진다 (persona likedActs)
+  const liked = likedActs(kidPersona(c, day)).has(act) ? LIKED_CLOSE_BONUS : 0
+  const close = Math.min(CLOSE_MAX, (c.close ?? 0) + (act === 'story' ? STORY_CLOSE_GAIN : KID_CLOSE_GAIN) + liked)
   const flags = { ...s.flags }
   if (act === 'story') flags.kidStoryDay = day
   else {
@@ -203,7 +210,8 @@ export function doKidAct(s: GameState, act: KidAct, content: GameContent): KidRe
   const careerActivities: Partial<Record<KidAct, readonly AdultJob[]>> = { read: ['scribe','scholar'], puzzle: ['painter','potter'], make: ['woodworker','weaver','instrumentMaker'], cook: ['cook','teaKeeper'], walk: ['gardener','herbalist'], ball: ['fisher','sailor'], tour: ['traveler','shipwright'], errand: ['merchant'] }
   const interested = addCareerInterest({ ...c, stats, close }, careerActivities[act] ?? [])
   let next: GameState = passTime({ ...s, child: interested, flags }, def.minutes)
-  const variant = Math.floor(mulberry32(day * 31 + KID_ACTS.indexOf(act) * 7 + 3)() * 3)
+  // 아이마다 다른 줄 (같은 날 다른 아이와 같은 활동이면 같은 글이었다 — 2026-10-21 점검)
+  const variant = Math.floor(mulberry32(day * 31 + KID_ACTS.indexOf(act) * 7 + 3 + c.born * 13)() * 3)
   let got: Partial<Record<ItemId, number>> = {}
   let who: string | null = null
   let burnt = false
@@ -255,7 +263,11 @@ export function doKidAct(s: GameState, act: KidAct, content: GameContent): KidRe
       next = firstTime(next, 'fam:story')
       break
   }
-  if (Object.keys(got).length) next = putAway(next, got)
+  // 전량 받을 수 있을 때만 확정한다. 실패하면 시간·횟수·작품 순번도 그대로 둔다.
+  if (Object.keys(got).length) {
+    if (overflows(next, got)) return null
+    next = putAway(next, got)
+  }
   return { state: next, act, variant, gains: def.gains, got, who, burnt }
 }
 
@@ -264,6 +276,22 @@ export function familyTrip(s: GameState): GameState {
   const c = s.child
   if (!c) return s
   return firstTime({ ...s, child: { ...c, close: Math.min(CLOSE_MAX, (c.close ?? 0) + STORY_CLOSE_GAIN) } }, 'fam:trip')
+}
+
+/**
+ * 연인·배우자와 함께 다녀온 여행 (2026-10-21 사용자): 데이트 한 번으로 치고(10하트 조건의 데이트 수), 마음이 조금 오르고,
+ * 부부면 '함께한 날'. 처음이면 짧은 장면 (fam:tripPartner)
+ */
+export const TRIP_PARTNER_HEART = 5
+export function partnerTrip(s: GameState): GameState {
+  const r = s.romance
+  if (!r?.partner || (r.stage !== 'dating' && r.stage !== 'engaged' && r.stage !== 'married')) return s
+  const dated: GameState = { ...s, romance: { ...r, dates: (r.dates ?? 0) + 1 }, flags: { ...s.flags, dateDay: s.clock.day } }
+  let warmed = heartUp(markTogether(dated), r.partner, TRIP_PARTNER_HEART)
+  // 데이트 수가 찼으면 연인 이야기를 잇는다 (보통 데이트 goOnDate와 같게 — 2026-10-21 검토)
+  if (warmed.romance.stage === 'dating' && (warmed.romance.dates ?? 0) >= FULL_HEART_DATES && !warmed.romance.storyRead && !warmed.romance.storyQueued)
+    warmed = { ...warmed, romance: { ...warmed.romance, storyQueued: true }, scenes: [...warmed.scenes, `loverTrust:${warmed.romance.partner}`] }
+  return warmed.flags['fam:tripPartner'] ? warmed : { ...warmed, flags: { ...warmed.flags, 'fam:tripPartner': 1 }, scenes: [...warmed.scenes, 'fam:tripPartner'] }
 }
 
 // ── 배우자와 저녁 (계획 12, 2026-10-04 사용자): 결혼 뒤 저녁에 가끔 집에서 배우자에게 말을 걸면 같이 먹는 짧은 장면 ──
@@ -277,14 +305,18 @@ export const SUPPER_HEART = 3
 export const SUPPER_MINUTES = 40
 
 /** 오늘 저녁 배우자와 같이 먹는가: 부부(결혼 잔치 날 빼고), 저녁 때, 오늘 아직 안 먹었고, 차려지는 날 */
-export function supperReady(s: Pick<GameState, 'clock' | 'flags'> & Partial<Pick<GameState, 'romance' | 'progress' | 'shelved' | 'flags'>>): boolean {
+export function supperReady(s: Pick<GameState, 'clock' | 'flags'> & Partial<Pick<GameState, 'romance' | 'progress' | 'shelved' | 'flags' | 'player' | 'map'>>): boolean {
   const r = s.romance ?? NO_ROMANCE
+  // 첫 마을에서는 집 안에서만 (잔치 저녁에 광장 모닥불 곁의 배우자에게 말 걸면 집 저녁이 열렸다 — 2026-10-21 점검)
+  if (s.player && (s.map ?? 'village') === 'village' && !isHome({ x: Math.round(s.player.x), y: Math.round(s.player.y) })) return false
   const day = s.clock.day
   const m = s.clock.minute
   if (featureAccess(s, 'spouseLife') !== 'full' || r.stage !== 'married' || !r.partner || r.marriedDay === day) return false
   if (m < SUPPER_FROM || m >= SUPPER_TO || s.flags.supperDay === day) return false
-  return mulberry32(day * 577 + 13)() < SUPPER_CHANCE
+  return supperToday(day)
 }
+/** 오늘이 저녁이 차려지는 날인가 (날로만 — 아침 알림용) */
+export const supperToday = (day: number): boolean => mulberry32(day * 577 + 13)() < SUPPER_CHANCE
 
 /** 배우자와 저녁을 먹는다: 배고픔이 가시고 마음이 조금, 처음은 가족 앨범 (아이가 집에 있으면 셋이 둘러앉는 장면) */
 export function eatSupper(s: GameState): GameState | null {
@@ -293,13 +325,22 @@ export function eatSupper(s: GameState): GameState | null {
   const n = (s.flags.suppers ?? 0) + 1
   const kidHome = !!s.child && deskKidReady(s)
   const scene = n === 1 ? 'fam:supperFirst' : kidHome ? 'fam:supperAll' : 'fam:supper'
-  const fed: GameState = {
+  // 결혼 뒤엔 마음이 이미 가득해서 (10하트) 오르는 게 없었다 — 함께 먹은 날은 기분이 오르고 피로가 풀리며 '함께한 날'이 쌓인다 (2026-10-21 점검)
+  const fed: GameState = markTogether({
     ...s,
-    needs: { ...s.needs, hunger: Math.max(0, s.needs.hunger - SUPPER_HUNGER) },
-    flags: { ...s.flags, supperDay: s.clock.day, suppers: n },
+    needs: { ...s.needs, hunger: Math.max(0, s.needs.hunger - SUPPER_HUNGER), fatigue: Math.max(0, s.needs.fatigue - SUPPER_REST) },
+    flags: { ...s.flags, supperDay: s.clock.day, suppers: n, sharedMealDay: s.clock.day },
     scenes: [...s.scenes, scene],
-  }
+  })
   return passTime(heartUp(fed, partner, SUPPER_HEART), SUPPER_MINUTES)
+}
+
+/** 함께 먹은 저녁이 풀어 주는 피로 */
+export const SUPPER_REST = 15
+/** 부부가 함께한 날 (저녁·데이트, 하루 한 번) — 가족 창에 쌓인다 */
+export function markTogether<T extends Pick<GameState, 'flags' | 'clock'> & Partial<Pick<GameState, 'romance'>>>(s: T): T {
+  if (s.romance?.stage !== 'married' || s.flags.togetherDay === s.clock.day) return s
+  return { ...s, flags: { ...s.flags, togetherDay: s.clock.day, togetherDays: (s.flags.togetherDays ?? 0) + 1 } }
 }
 
 /** 가까움을 다섯 칸으로 */

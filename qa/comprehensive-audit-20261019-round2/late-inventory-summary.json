@@ -1,0 +1,24 @@
+{
+  "allFiles": 36704,
+  "source": 3342,
+  "src": 1268,
+  "tests": 544,
+  "productionModules": 578,
+  "top": {
+    ".gitignore": 1,
+    ".vercelignore": 1,
+    "artifacts": 4173,
+    "assets": 30577,
+    "docs": 280,
+    "index.html": 1,
+    "package-lock.json": 1,
+    "package.json": 1,
+    "public": 163,
+    "qa-tests.json": 1,
+    "scripts": 234,
+    "src": 1268,
+    "tsconfig.json": 1,
+    "vercel.json": 1,
+    "vite.config.ts": 1
+  }
+}

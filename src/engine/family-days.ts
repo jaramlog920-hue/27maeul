@@ -8,6 +8,8 @@ import { NO_LIFE, recordExperience, type Life } from './people'
 import { weatherOf } from './calendar'
 import { seasonOf } from './clock'
 import type { Romance } from './romance'
+import type { GameState } from './game'
+import { selectKid } from './siblings'
 
 /** 한 해 = 네 철 */
 export const YEAR_DAYS = SEASON_DAYS * 4
@@ -23,7 +25,7 @@ export function spouseBirthday(r: Romance | null | undefined, day: number): bool
   return r?.stage === 'married' && !!r.partner && isBirthday(r.partner, day)
 }
 
-type MorningState = { clock: { day: number }; child: Child | null; romance: Romance; scenes: string[]; life?: Life }
+type MorningState = { clock: { day: number }; child: Child | null; siblings?: Child[]; flags?: Record<string,number>; romance: Romance; scenes: string[]; life?: Life }
 
 /** 새 날 아침: 생일 장면 (배우자 fam:bdaySpouse, 아이 fam:bdayChild — 먼 곳에 사는 아이는 fam:bdayChildFar 편지) */
 export function familyMorning<S extends MorningState>(s: S): S {
@@ -36,8 +38,9 @@ export function familyMorning<S extends MorningState>(s: S): S {
     add.push('fam:bdaySpouse')
     marks.push({ id: 'fam:bday:spouse', with: [partner!, ...(s.child && childMode(s.child, day) !== 'away' ? ['family:child'] : [])] })
   }
-  const c = s.child
-  if (c && childBirthday(c, day)) {
+  const birthdays = [...(s.child?[s.child]:[]),...(s.siblings??[])].filter(c => childBirthday(c,day) && s.flags?.[`familyBirthdayDone:${c.born}`] !== day)
+  const c = birthdays[0]
+  if (c) {
     const far = childMode(c, day) === 'away'
     add.push(far ? 'fam:bdayChildFar' : 'fam:bdayChild')
     // 떠나 사는 아이의 생일은 편지로만 — 같은 자리의 참여 기록이 아니다
@@ -48,5 +51,31 @@ export function familyMorning<S extends MorningState>(s: S): S {
   for (const m of marks) {
     life = recordExperience(life, { id: m.id, kind: 'family', with: m.with }, { day, minute: 6 * 60, season: seasonOf(day), weather: weatherOf(day) })
   }
-  return { ...s, scenes: [...s.scenes, ...add], ...(marks.length ? { life } : {}) }
+  return { ...s, scenes: [...s.scenes, ...add], ...(marks.length ? { life } : {}),
+    ...(c ? { flags: { ...s.flags, ...Object.fromEntries(birthdays.map(k => [`familyBirthdayPending:${k.born}`,day])), familyBirthdayTarget:c.born } } : {}) }
+}
+
+/** Select only when the birthday scene opens, preserving actors of earlier queued scenes. */
+export function prepareFamilyBirthday(s:GameState,id:string):GameState {
+  if(id!=='fam:bdayChild'&&id!=='fam:bdayChildFar')return s
+  const born=s.flags.familyBirthdayTarget
+  if(born===undefined||s.child?.born===born)return s
+  // 생일 장면이 끝나면 고르던 아이로 돌아온다 (game.ts sceneSeen → pickedKid)
+  const keep=s.flags.pickedKid===undefined&&s.child?{...s,flags:{...s.flags,pickedKid:s.child.born}}:s
+  return selectKid(keep,born)
+}
+
+/** Queue the next birthday with its own target, including siblings born in the same season/day. */
+export function finishFamilyBirthday(s:GameState,id:string):GameState {
+  if(id!=='fam:bdayChild'&&id!=='fam:bdayChildFar')return s
+  const born=s.flags.familyBirthdayTarget
+  if(born===undefined)return s
+  const flags={...s.flags}, day=flags[`familyBirthdayPending:${born}`]??s.clock.day
+  delete flags[`familyBirthdayPending:${born}`]
+  flags[`familyBirthdayDone:${born}`]=day
+  const next=[...(s.child?[s.child]:[]),...(s.siblings??[])].find(k=>flags[`familyBirthdayPending:${k.born}`]===day)
+  if(!next){delete flags.familyBirthdayTarget;return {...s,flags}}
+  flags.familyBirthdayTarget=next.born
+  const scene=childMode(next,s.clock.day)==='away'?'fam:bdayChildFar':'fam:bdayChild'
+  return {...s,flags,scenes:[...s.scenes,scene]}
 }

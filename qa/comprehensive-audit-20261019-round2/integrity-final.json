@@ -1,0 +1,11 @@
+{
+  "checkedAt": "2026-10-19T10:01:39.825Z",
+  "baseline": "source-closing.json",
+  "baselineFiles": 3342,
+  "changedSinceClosing": [
+    "src/engine/garden.ts",
+    "src/engine/save.ts",
+    "src/store/game-store.ts"
+  ],
+  "notes": "External changes across earlier phases are in source-drift-at-resume/late-drift/closing-drift. The auditor changed only qa artifacts and BUG_AUDIT.md."
+}

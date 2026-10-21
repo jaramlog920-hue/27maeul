@@ -1,7 +1,8 @@
 // 집 오른쪽 위 텃밭 네 칸. 옛 저장의 추가 작물은 수확할 때까지 원래 좌표에서 보존한다.
 import { seasonOf } from './clock'
 import type { GameState } from './game'
-import { stash, stashOverflows, owns } from './easier'
+import { stash, stashOverflows } from './easier'
+import { storageChest } from './storage-access'
 import { has, take } from './items'
 import { addXp, XP } from './stats'
 import type { ItemId, Tile } from './types'
@@ -55,7 +56,7 @@ export function harvest(s: GameState, at: Tile): GameState | null {
   if (!p || !isRipe(p)) return null
   const gives = CROPS[p.crop].gives
   // 가방이 차면 재료 궤짝으로 (채집·돕기 보상과 같은 규칙) — 둘 다 차면 거두지 않고 작물을 남긴다
-  const chest = owns(s.flags, 'supplyChest') ? (s.chest ?? {}) : null
+  const chest = storageChest(s)
   if (stashOverflows(s.inv, chest, gives)) return null
   const garden = { ...s.garden }
   delete garden[keyOf(at)]

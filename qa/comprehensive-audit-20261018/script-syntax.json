@@ -1,366 +1,366 @@
 [
   {
     "path": "scripts/all-assets-preview-static.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/audit-balance-2026-10-13.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/audit-table.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/build-bible-subset.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/build-chapter-guides.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/build-connections.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/build-god-records.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/build-journey.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/build-krv-pieces.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/build-letters.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/build-love-commands.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/build-nt-content.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/build-ot-guides.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/build-ot.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/build-pieces.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/build-verse-hashes.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/chapter-guides-parse.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/classify-event-art.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/connections-parse.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/dump-ref.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-addition-furniture-motion.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-adult-bed.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-all-assets-preview.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-archive-followup.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-baby-care-motion.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-bg-materials.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-book-reopen.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-cooking-art.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-couple-bed.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-cozy-furniture.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-craft-followup.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-eating-art.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-elder-art.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-event-art.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-event-life-motion.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-expanded-home.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-expansion-art.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-furniture-use-motion.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-generated-elders.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-home-space-art.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-household-furniture.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-kitchen-pets.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-library-art.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-life-additions.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-lodging-art.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-newland-building-upgrades.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-old-village-art.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-paired-events.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-pet-size-review.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-quiet-life.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-room-furniture.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-settlement-guests.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-side-hair.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-spouse-rooms.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-village-followup.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/export-work-details.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/fetch-krv-headings.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/god-records-parse.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/journey-parse.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/letters-parse.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/list-long-choices.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/make-icons.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/mark-close-buttons.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/measure-startup.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/nt-guides-honorific-past.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/ot-chapter-anchors.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/ot-guides-honorific-past.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/ot-guides-parse.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/people-more/build-more.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/people-more/hearts-lines.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/people-more/motions.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/people-more/romance-more.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/pixel-png.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/pixel-ts-loader.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/png-read.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/preview-cradle-baby.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/probe-bg-materials.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/probe-building-entries.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/run-audit.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/serve-baby-care-preview.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/shorten-choices.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/verify-chapter-guides-allowed.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/verify-chapter-guides.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/verify-connections.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/verify-god-records.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/verify-journey.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/verify-kitchen-pets.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/verify-letters.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/verify-ot-guides.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/verify-ot.mjs",
-    "exit": null
+    "exit": 0
   },
   {
     "path": "scripts/verify-pieces.mjs",
-    "exit": null
+    "exit": 0
   }
 ]

@@ -1,4 +1,6 @@
 import type {DateArtOrigin} from '../render/story-location-context'
+import { supperToday } from '../engine/family'
+import { zoneBooks } from '../engine/feature-rules'
 import {chooseWeddingAttire as selectWeddingAttire,giveWeddingAttire,isWeddingAttire,type WeddingAttireItem} from '../engine/wedding-attire'
 import {isTravelEvent} from '../render/travel-events-art'
 import {isLibraryEvent} from '../render/library-events-art'
@@ -13,6 +15,7 @@ import { villageBookCount } from "../engine/progression"
 import type { HouseLook } from '../engine/newland-house-look'
 import { WORKSHOP, PARTNER_ROOM, BABY_ROOM, LIVING_ROOM } from '../engine/home-layout'
 import { lodgingChildren, LODGING_CHILD_SEATS } from '../engine/lodging'
+import { prepareFamilyBirthday } from '../engine/family-days'
 import { otPieceById } from '../engine/ot-pieces'
 import { canTravel, canTrip, goArchive, moveFurniture, travel, finishLibrary, isStorage, unstick } from '../engine/game'
 import { buildWall, canBuildWall, canRemoveWall, careBaby, homeCopyFragment, removeWall, sameLookCandidate, type BabyCare, type WallBlock } from '../engine/game'
@@ -34,12 +37,12 @@ import { nightDoorLocked } from '../engine/night-doors'
 import { currentMapId, type MapId } from '../engine/maps'
 import { newlandRevealed, revealNewland } from '../engine/newland'
 import { progressOf } from '../engine/books'
-import { featureAccess } from '../engine/feature-rules'
+import { featureAccess, featureHint } from '../engine/feature-rules'
 import { isOtBook, type CopyBook } from '../engine/ot-books'
 import { ARCHIVE, INTERIOR_ENTRY, NEWLAND_PORTAL_FRONT, ROOM_SLOTS, VILLAGE_PORTAL_FRONT } from '../engine/newland-config'
-import { buildsOf, cancelBuild, clearTile, demolishBuild, orderBuild } from '../engine/newland-build'
+import { buildsOf, cancelBuild, clearTile, demolishBuild, moveBuild, orderBuild, toggleBuildSign } from '../engine/newland-build'
 import type { SiteKind } from '../engine/newland-sites'
-import { facilityAt, type FacilityKind } from '../engine/newland-life'
+import { facilityAt, kidVisiting, roomOwner, type FacilityKind } from '../engine/newland-life'
 import { clubWeaveDone } from '../engine/clubs'
 // 엔진 상태 ↔ 화면 연결. 창(모달)이 열려 있으면 시간과 걸음이 멈춘다.
 import type { FullAvatar } from '../engine/avatar'
@@ -54,14 +57,14 @@ import { ensureNtBooks, ntLoaded } from '../content/nt-loader'
 import { blanksFor } from '../engine/copy'
 import { acceptInput, checkVoice, copySpot, withGuideFolded, type InputHow, type VoiceCheck } from '../engine/copying'
 import { doSpouseAct, showAtSchool, type ShowMode } from '../engine/family-memory'
-import { answerDesk, deskAsks, deskKidVerse, doKidAct, eatSupper, familyTrip, type KidAct } from '../engine/family'
+import { answerDesk, canKidAct, deskAsks, deskKidVerse, doKidAct, eatSupper, familyTrip, partnerTrip, type KidAct } from '../engine/family'
 import { currentChapter } from '../engine/offers'
 import { handEase, leveledUp, levelOf, XP, type StatId, type Stats } from '../engine/stats'
 import { copyStatGains, type CopyStatGain } from '../engine/copy-result'
 import { copiedChapters, copiedReadingVerses } from '../engine/copied-reading'
 import type { BoardRequest } from '../engine/board'
 import { DESTS, type DestId } from '../engine/travel'
-import { JOB_GIFTS, kidCoins, ADULT_JOBS, childStage, leavesVillage, type AdultJob, type ChildHome, type ChildMode } from '../engine/child'
+import { JOB_GIFTS, kidCoins, ADULT_JOBS, childMode, childStage, leavesVillage, type AdultJob, type Child, type ChildHome, type ChildMode } from '../engine/child'
 import type { TripReward } from '../engine/trip-board'
 import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
 import { allShelved, canShelve, payRetry, poolFor, shelve, shelveNow as shelveQuick } from '../engine/library'
@@ -218,7 +221,13 @@ import { add, count, RECIPES, type Inventory, type RecipeId } from '../engine/it
 import type { CarpenterWork } from '../engine/easier'
 import { toggleGear, wearing } from '../engine/gear'
 import { askBaby, nameSibling, selectKid } from '../engine/siblings'
-import { askToStay, householdById, sayGoodbye } from '../engine/gen-homes'
+import { personId } from '../engine/gen'
+import { cleanCatch, genPersona, personaLine } from '../engine/persona'
+import { slotJob } from '../engine/kid-work'
+import { JOB_NAME } from '../content/text'
+/** 이웃 자리의 일 이름 (없으면 비움) */
+const slotJobName = (slot: string): string => { const j = slotJob(slot); return j ? JOB_NAME[j] ?? '' : '' }
+import { askToStay, emptyHomes, homeWishes, householdById, sayGoodbye } from '../engine/gen-homes'
 import { heartUp } from '../engine/game'
 import { work } from '../engine/needs'
 import { plant, water, harvest, type CropId } from '../engine/garden'
@@ -314,9 +323,15 @@ export type Modal =
   /** 사랑방 벽의 의뢰 게시판 (계획 13 작업 5) */
   | { kind: 'board' }
   /** 나루의 배: 이웃 마을 여행 (계획 13 작업 6). 주사위 판을 마치고 돌아오면 dest·rewards를 들고 가게로 */
-  | { kind: 'travel'; dest?: DestId; rewards?: TripReward[]; withChild?: boolean }
+  | { kind: 'travel'; dest?: DestId; rewards?: TripReward[]; withChild?: boolean; withPartner?: boolean }
   /** 아이 이름 정하기 (계획 12) */
   | { kind: 'childName' }
+  /** 마을 기록 책 (230장) */
+  | { kind: 'villageBook' }
+  /** 신약을 마친 뒤 돌아보기 (스물일곱 권 잔치 뒤 한 번) */
+  | { kind: 'ntRecap' }
+  /** 손주 맞이: 주민 손주 이름 함께 짓기 (240장) */
+  | { kind: 'genName'; id: string }
   /** 동물 친구·우리 아이: 데리고 다니기·집에 두기 */
   | { kind: 'follow'; who: 'pet' | 'child' }
   /** 마을 지도: 마을 전체를 한 장으로 (설정에서) */
@@ -340,7 +355,8 @@ export type Modal =
   | { kind: 'readPick'; source?: 'copied' }
   | { kind: 'quiz'; mode: QuizMode; questions: Question[]; index: number; wrong: string[]; solved: boolean; misses: number; missed: string[] }
   | { kind: 'care' }
-  | { kind: 'bag'; tab?: BagTab }
+  | { kind: 'bag'; tab?: BagTab; resumeKid?: KidRetry }
+  | { kind: 'kidCapacity'; retry: KidRetry }
   /** 수납 가구(궤짝·이불장·찬장류)를 눌러 연 보관함 창 — 넣고 꺼내기 (2026-10-19 사용자: 가방이 아니라 창고처럼) */
   | { kind: 'storage'; item: ItemId }
   | { kind: 'family' }
@@ -391,6 +407,9 @@ export interface KidDone {
   /** 처음 있는 일이라 가족 앨범에 한 장 (창을 닫으면 장면이 열린다) */
   album: boolean
 }
+
+/** 공간을 확보한 뒤 다시 시작할 활동. 아직 시간·횟수·보상은 확정하지 않았다. */
+export interface KidRetry { born: number; act: KidAct }
 
 /** 완성본 창을 닫은 뒤 돌아갈 곳 */
 export type BookBack = 'word' | 'library' | 'homeShelf' | `room:${ShelfRoomId}`
@@ -487,8 +506,8 @@ interface Store {
   copyResult: CopyStatGain[] | null
   dismissCopyResult: () => void
   /** 여행 주사위 판 (새 장면) — 저장하지 않는다. 있는 동안 마을 시간은 멈춘다 */
-  trip: { dest: DestId; withChild: boolean } | null
-  startTripBoard: (dest: DestId, withChild: boolean) => void
+  trip: { dest: DestId; withChild: boolean; withPartner?: boolean } | null
+  startTripBoard: (dest: DestId, withChild: boolean, withPartner?: boolean) => void
   finishTripBoard: (rewards: TripReward[]) => void
   /** 지금 장면 창을 닫은 뒤 띄울 알림 (별 보는 밤: 장면을 먼저 보이고 편지함 알림) */
   afterScene: string | null
@@ -564,6 +583,9 @@ interface Store {
   askBaby: () => void
   /** 함께할 아이를 고른다 (아이 셋 — 태어난 날로) */
   selectKid: (born: number) => void
+  /** 우리 아이·주민 자녀의 말버릇 (2026-10-21) — 빈 글이면 없앤다 */
+  setKidCatch: (born: number, word: string) => void
+  setGenCatch: (id: string, word: string) => void
   /** 곁에 선 이웃에게 말 걸기 ('대화하기' 단추) */
   talkTo: (id: string) => void
   petCompanion: () => void
@@ -575,6 +597,7 @@ interface Store {
   goSchool: (stat: StatId) => void
   /** 아이와 함께하기 (계획 12): 짧은 장면과 결과를 보인다 */
   kidAct: (act: KidAct) => void
+  retryKidAct: () => void
   /** 배우자와 아이가 함께하는 가족 활동 (아이가 고른 것) */
   spouseKidAct: (choice: number) => void
   /** 배움터에서 작품 보여 주기·구경하기 */
@@ -602,6 +625,10 @@ interface Store {
   orderSite: (kind: SiteKind, x: number, y: number, facing: Facing, size: number, look?: HouseLook, owner?: string) => boolean
   /** 주문 취소(공사 전·중) 또는 철거(완공) — 환불과 기록 삭제가 한 번에 */
   removeBuild: (id: string) => void
+  /** 꿈터 간판 달기·떼기 (2026-10-21) */
+  toggleSign: (id: string) => void
+  /** 다 지은 건물 옮기기 (2026-10-21) — 처음 낸 닢의 10% */
+  relocateBuild: (id: string, x: number, y: number, facing: Facing) => boolean
   /** 새 터 입주 주택 하나를 내 집으로 (id null이면 그만 쓰기) — 2026-10-14 */
   claimNewHome: (id: string | null) => void
   /** 깐 길·정원 칸 걷어내기 */
@@ -821,19 +848,24 @@ function photoSpot(id: string): Tile | null {
 /** 아침에 아이가 해 온 일 (계획 12): 한 줄 알림 */
 const CHILD_HELP_LINE = ['이웃집 사본을 보고 한 대목 베껴 왔어요', '파피루스나 잉크를 만들어 왔어요', '이웃에게 대신 인사하고 왔어요', '물이나 갈대를 날라 왔어요', '뜻밖의 선물을 들고 왔어요']
 function sayChildHelp(g: GameState, say: (text: string, ms?: number) => void) {
-  // 어른이 된 아이의 편지·선물·닢이 먼저
-  if (g.child && g.flags.kidMailDay === g.clock.day) {
-    const n = g.child.name
-    const mk = g.flags.kidMailKind
-    if (mk === 0) say(`${n}의 편지: “${KID_LETTERS[(g.clock.day * 7) % KID_LETTERS.length]}”${g.flags.kidMailPiece === g.clock.day ? ' · 편지에 사본 한 장이 들어 있었어요' : ''}`, 5000)
-    else if (mk === 1) say(`${n}에게서 선물이 왔어요 · ${itemList(JOB_GIFTS[g.child.job!])}`, 4000)
-    else if (mk === 2) say(`${n}에게서 닢 ${kidCoins(g.clock.day)}이 왔어요`, 4000)
-    return
+  // 아이마다 (함께하지 않는 아이는 제 표식 kidFlags로) — 어른이 된 아이의 편지·선물·닢, 같은 아침 돕기도 함께
+  const day = g.clock.day
+  const lines: string[] = []
+  for (const kid of [...(g.child ? [g.child] : []), ...(g.siblings ?? [])]) {
+    const f = kid === g.child ? g.flags : kid.kidFlags ?? {}
+    const n = kid.name
+    if (f.kidMailDay === day) {
+      const mk = f.kidMailKind
+      if (mk === 0) lines.push(`${n}의 편지: “${KID_LETTERS[(day * 7) % KID_LETTERS.length]}”${f.kidMailPiece === day ? ' · 편지에 사본 한 장이 들어 있었어요' : ''}`)
+      else if (mk === 1 && kid.job) lines.push(`${n}에게서 선물이 왔어요 · ${itemList(JOB_GIFTS[kid.job])}`)
+      else if (mk === 2) lines.push(`${n}에게서 닢 ${kidCoins(day)}이 왔어요`)
+    }
+    const k = f.childHelpKind
+    if (f.childHelpDay !== day) continue
+    if (f.childHelpFull === day) lines.push(`${n}: ${T.ui.childHelpFull}`)
+    else if (k !== undefined && k >= 0) lines.push(`${n}: ${CHILD_HELP_LINE[k]}`)
   }
-  const k = g.flags.childHelpKind
-  if (g.child && g.flags.childHelpDay === g.clock.day && g.flags.childHelpFull === g.clock.day) { say(`${g.child.name}: ${T.ui.childHelpFull}`, 4000); return }
-  if (!g.child || g.flags.childHelpDay !== g.clock.day || k === undefined || k < 0) return
-  say(`${g.child.name}: ${CHILD_HELP_LINE[k]}`, 3400)
+  if (lines.length) say(lines.join(' / '), lines.length > 1 ? 6000 : lines[0].includes('편지') ? 5000 : 3600)
 }
 
 /** 조이스틱을 누르고 있을 때 놓을 자리가 한 칸 움직이는 간격 */
@@ -931,6 +963,11 @@ function lineFor(game: GameState, neighborId: string, rng: Rng): string {
   const post = postLine(game, neighborId)
   if (post) return post
   if (game.offers[neighborId]) return pick(l.offer, rng).text
+  // 부모 자리를 이어받은 자녀는 부모 말 대신 자기 성격대로 (persona.ts — 2026-10-21 사용자)
+  const heir = slotPerson(game.gen, neighborId)
+  // 연인·배우자는 가까운 사이 말 그대로 (남을 대하는 존댓말이 되지 않게)
+  const persona = heir !== neighborId && game.romance?.partner !== neighborId ? genPersona(game.gen, heir) : null
+  if (persona) return personaLine(persona, 'villager', { day: game.clock.day, minute: game.clock.minute, weather: weatherOf(game.clock.day), player: game.avatar?.name?.trim() || '필사가', job: slotJobName(neighborId), salt: heir })
   if (isWet(weatherOf(game.clock.day)) && rng() < 0.6) return pick(l.wet, rng).text
   // 같은 모습의 연애 후보는 가까운 사이 말을 친구 말로
   const close = l.closeFriend && sameLookCandidate(game, neighborById(neighborId)) ? l.closeFriend : l.close
@@ -1079,6 +1116,11 @@ export const useGame = create<Store>((set, get) => {
         set({ copySessionStats: { before: get().copySessionStats?.before ?? game.stats, after: written.stats, chapters: (get().copySessionStats?.chapters ?? 0) + 1 }, copyResult: null })
       }
     } else sfx('stamp')
+    // 사도행전 곳 카드·요한계시록 교회 카드가 생겼으면 한 줄 (한 절씩 쓰는 길에도 — 2026-10-21 점검)
+    const journeyGot = lit.journey.length - game.journey.length
+    const churchGot = lit.churches.length - game.churches.length
+    if (journeyGot > 0) setTimeout(() => get().say(fill(T.acts.cardsGot, { n: journeyGot }), 3200), 600)
+    if (churchGot > 0) setTimeout(() => get().say(fill(T.revRoom.cardsGot, { n: churchGot }), 3200), 600)
     set({ game: persist(lit), modal: { kind: 'copy', view: result.kind === 'chapter' ? 'done' : 'write', last: result, resume: false } })
     return true
   }
@@ -1104,7 +1146,7 @@ export const useGame = create<Store>((set, get) => {
     const grades = T.library.grades as string[]
     get().say(fill(T.library.shelvedToast, { bookObj: withObject((T.quiz.books as Record<string, string>)[book]), grade: grades[next.shelved[book]!] }) + (missed.length ? ' ' + T.library.rereadNote : ''), 4000)
     // 새로 열린 구역
-    const opened = lockedZones(villageBookCount(prev)).filter((z) => villageBookCount(next) >= z.books)
+    const opened = lockedZones(zoneBooks(prev)).filter((z) => villageBookCount(next) >= z.books)
     if (opened.length) setTimeout(() => get().say(fill(T.ui.zoneOpened, { name: (T.ui.zones as Record<string, string>)[opened[0].id] }), 4000), 4200)
     if (firstTime && allShelved(next) && !allShelved(prev)) {
       set({ game: persist(finishLibrary(next)), modal: { kind: 'scene', id: 'fullLibrary' } })
@@ -1167,6 +1209,11 @@ export const useGame = create<Store>((set, get) => {
       const helloPending = Array.isArray((FIRST_MEET as Record<string, string[] | string>)[target.id]) && !(game.notebook?.met ?? []).includes(target.id)
         && !game.offers[target.id] && !(target.id === POSTMAN && postLine(game, POSTMAN))
       // 행사 참석자에게는 행사 이야기부터. 25권의 새 말은 읽음 기록을 기존 빨간 창과 공유한다.
+      // 버나드의 벤치 약속 (응원 편지 t202 "다 쓰면 내 벤치에 와서 이야기해 주게") — 신약을 다 쓴 뒤 한 번 (2026-10-21 점검)
+      if (target.id === 'grandpa' && game.flags.lastManuscriptScene && !game.flags.grandpaBench && !helloPending) {
+        sfx('talk')
+        return { game: persist(greetNeighbor({ ...game, flags: { ...game.flags, grandpaBench: game.clock.day } }, target.id)), modal: { kind: 'talk', neighborId: target.id, line: t('finale.grandpaBench'), popup: [t('finale.grandpaBench')] } }
+      }
       const eventLine = helloPending ? null : eventNeighborLine(game, target.id, CONTENT)
       const oldLine = eventLine || helloPending ? null : oldNeighborLine(game, target.id, rng())
       const momentLine = eventLine ?? oldLine
@@ -1307,7 +1354,10 @@ export const useGame = create<Store>((set, get) => {
     // 왕래 표식 (계획 20 작업 3): 건널 수 있으면 건너가는 창, 날이 저물었으면 한 줄만, 그 밖(장면·약속)이면 아무 일도 없다
     if (target.kind === 'portal') {
       const why = canTravel(game, target.to)
+      // 막힌 까닭을 한 줄로 (약속 중·장면이 남음에도 아무 반응이 없었다 — 2026-10-21 점검)
       if (why === 'late') get().say(T.travel.late)
+      else if (why === 'appt') get().say(T.travel.appt, 2800)
+      else if (why === 'scene' || why === 'copy') get().say(T.travel.busy, 2400)
       return { game, modal: why ? null : { kind: 'crossing', to: target.to } }
     }
     // 새 터 서고 문 앞을 눌러 선 자리: 땅이 아직 드러나지 않았으면 둘러볼지 묻는다 (계획 20 D8)
@@ -1501,17 +1551,17 @@ export const useGame = create<Store>((set, get) => {
     copyResult: null,
     dismissCopyResult: () => set({ copyResult: null }),
     trip: null,
-    startTripBoard: (dest, withChild) => {
+    startTripBoard: (dest, withChild, withPartner = false) => {
       // 화면 단추와 같은 검사 — 열리지 않았거나 늦었거나 지쳤으면 떠나지 않는다 (2026-10-19 감사 L-7)
       if (canTrip(get().game, dest)) return
       sfx('splash')
-      set({ trip: { dest, withChild }, modal: null })
+      set({ trip: { dest, withChild, withPartner }, modal: null })
     },
     finishTripBoard: (rewards) => {
       const t = get().trip
       if (!t) return
       // 보상은 귀환 정산이 성공할 때까지 저장하지 않고 동행 여부만 이어 둔다.
-      set({ trip: null, modal: { kind: 'travel', dest: t.dest, rewards, withChild: t.withChild } })
+      set({ trip: null, modal: { kind: 'travel', dest: t.dest, rewards, withChild: t.withChild, withPartner: t.withPartner } })
     },
     dateArtOrigin: null,
     afterScene: null,
@@ -1565,6 +1615,18 @@ export const useGame = create<Store>((set, get) => {
         const from = get().decorGhost ?? { x: f.x, y: f.y }
         const ghost = { x: from.x + Math.sign(dx), y: from.y + Math.sign(dy) }
         set({ decorGhost: ghost, decorGhostAt: get().clockMs, decorLook: ghost })
+        return
+      }
+      // 꾸미는 중에는 걸어 다니며 놓을 자리를 찾는다 (문 칸으로는 가지 않는다 — 꾸미는 방을 벗어나지 않게)
+      if (!modal && decorating && !get().copyResult?.length && !get().piecePopups.length) {
+        if (dx === 0 && dy === 0) return
+        const here = playerTile(game)
+        const ahead = { x: here.x + Math.sign(dx), y: here.y + Math.sign(dy) }
+        if (warpAt(ahead)) return
+        // 마당을 꾸미다 마당 밖으로(또는 집 안에서 마당으로) 나가면 꾸미는 곳이 바뀌므로 막는다 (2026-10-21 검토)
+        if (isOutdoorEditing(game) !== isOutdoorEditing({ ...game, player: { ...game.player, x: ahead.x, y: ahead.y } })) return
+        const stepped = walkDirection(game, dx, dy)
+        if (stepped !== game) set({ game: stepped, decorLook: null })
         return
       }
       if (modal || decorating || get().copyResult?.length || get().piecePopups.length) return
@@ -1675,8 +1737,9 @@ export const useGame = create<Store>((set, get) => {
       }
       // 서고의 방 문은 모두 처음부터 열려 있다 (걸어 들어가는 문 — 아래 tapTile로)
       const zone = zoneAt(tile)
-      if (zone && lockedTiles(villageBookCount(game)).has(`${tile.x},${tile.y}`)) {
-        get().say(fill(T.ui.zoneLocked, { n: zone.books }))
+      if (zone && lockedTiles(zoneBooks(game)).has(`${tile.x},${tile.y}`)) {
+        // 나루는 여행(40장)과 함께 열린다 — 그 장 수로 안내
+        get().say(zone.id === 'dock' ? featureHint('travel', true) : fill(T.ui.zoneLocked, { n: zone.books }))
         return
       }
       const visitorAt = libraryVisitorTile(game)
@@ -1722,7 +1785,22 @@ export const useGame = create<Store>((set, get) => {
         return
       }
       if (s.decorating) {
-        set({ clockMs, game: g0 })
+        // 꾸미는 동안에도 조이스틱·방향키로 걸어 다닐 수 있다 — 시점이 기록자를 따라간다 (2026-10-21 사용자: 멈춰 서서 설치하지 않게).
+        // 걷는 중일 때만 시간을 흘리고, 문을 지나 다른 곳으로 옮겨지면(지도·방 바뀜) 되돌린다
+        if (s.game.player.path.length) {
+          const beforeMap = currentMapId()
+          const r = tick(g0, dt * timeSpeed(g0), s.rng, CONTENT)
+          const jumped = currentMapId() !== beforeMap || Math.abs(r.state.player.x - g0.player.x) + Math.abs(r.state.player.y - g0.player.y) > 1.5
+          if (jumped) { if (currentMapId() !== beforeMap) syncHome(g0); set({ clockMs, game: { ...g0, player: { ...g0.player, path: [] } } }) }
+          else {
+            // 걷다 생긴 일 가운데 알림이 필요한 것 (땅 조각·동물 친구가 찾은 것)
+            for (const e of r.events) {
+              if (e.type === 'groundPiece') { sfx('scroll'); get().say(t('groundPiece.found', { name: otPieceById(e.id)?.name ?? pieceById(e.id)?.title ?? '' }), 4200) }
+              if (e.type === 'pet' && r.state.companion) get().say(petEventText(e, r.state.companion), 3600)
+            }
+            set({ clockMs, game: r.events.some((e) => e.type === 'groundPiece') ? persist(r.state) : r.state })
+          }
+        } else set({ clockMs, game: g0 })
         expireToast()
         return
       }
@@ -1761,21 +1839,81 @@ export const useGame = create<Store>((set, get) => {
           get().say(t('groundPiece.found', { name: otPieceById(e.id)?.name ?? pieceById(e.id)?.title ?? '' }), 4200)
         }
       }
-      // 새 터 집 가족이 떠난 아침 (2026-10-14)
-      if (game.flags.familyLeft) {
-        const h = householdById(game, game.flags.familyLeft)
-        const flags = { ...game.flags }
-        delete flags.familyLeft
-        game = persist({ ...game, flags })
-        if (h) get().say(t('familyHome.left', { names: h.members.map((id) => game.gen?.persons[id]?.name ?? neighborById(id)?.role ?? '').filter(Boolean).join('·') }), 4200)
+      // 아침 소식은 장면·이름 짓기 창이 다 끝난 뒤에 (장면을 보는 동안 알림이 지나가 버렸다 — 2026-10-21 검토)
+      if (!modal && !game.scenes.length && !game.flags.childNaming && !game.flags.siblingNaming && !game.flags.grandNaming && !get().modal) {
+        const newlandNotes: string[] = []
+        // 저녁이 차려지는 날 아침, 배우자의 한마디 (2026-10-21 점검: 어느 날인지 알 수 없어 말을 걸어 봐야 했다)
+        if (game.romance?.stage === 'married' && game.romance.marriedDay !== game.clock.day && game.flags.supperNoteDay !== game.clock.day && featureAccess(game, 'spouseLife') === 'full') {
+          game = persist({ ...game, flags: { ...game.flags, supperNoteDay: game.clock.day } })
+          if (supperToday(game.clock.day)) newlandNotes.push(t('wedding.supper', { who: partnerName(game) }))
+        }
+        // 내 결혼 잔치 날 아침 · 미뤄진 아침 (2026-10-21 점검: 4초 알림 한 번뿐이라 놓쳤다)
+        if (game.romance?.stage === 'engaged' && game.flags.weddingNoteDay !== game.clock.day) {
+          const moved = game.flags.weddingMoved
+          const flags: GameState['flags'] = { ...game.flags, weddingNoteDay: game.clock.day }
+          delete flags.weddingMoved
+          game = persist({ ...game, flags })
+          if (moved !== undefined) newlandNotes.push(t('wedding.moved', { day: moved }))
+          else if (game.romance.weddingDay === game.clock.day) newlandNotes.push(t('wedding.today', { whoAnd: withAnd(partnerName(game)) }))
+        }
+        // 새 터 집 가족이 떠난 아침 (2026-10-14)
+        if (game.flags.familyLeft) {
+          const nos = [game.flags.familyLeft, ...Object.keys(game.flags).filter((k) => k.startsWith('familyLeft:')).map((k) => Number(k.slice('familyLeft:'.length)))]
+          const flags = { ...game.flags }
+          for (const k of Object.keys(flags)) if (k === 'familyLeft' || k.startsWith('familyLeft:')) delete flags[k]
+          game = persist({ ...game, flags })
+          const names = nos.map((no) => householdById(game, no)).filter((h) => !!h)
+            .map((h) => h!.members.map((id) => game.gen?.persons[id]?.name ?? neighborById(id)?.role ?? '').filter(Boolean).join('·')).filter(Boolean)
+          if (names.length) newlandNotes.push(t('familyHome.left', { names: names.join(', ') }))
+        }
+        // 새 터 아침 소식 (2026-10-21 사용자): 이사를 생각하는 가족, 새 손님, 살 집을 찾는 가족 — 한 줄로 모아.
+        // 이 자리는 창이 없을 때 매 장면 돌므로 하루 한 번만 (newlandNoteDay — 같은 알림이 하루 종일 다른 알림을 덮었다)
+        if (game.flags.newlandGift && game.flags.newlandNoteDay !== game.clock.day) {
+          game = persist({ ...game, flags: { ...game.flags, newlandNoteDay: game.clock.day } })
+          const wish = game.flags.familyWishNew
+          if (wish) {
+            const nos = [wish, ...Object.keys(game.flags).filter((k) => k.startsWith('familyWishNew:')).map((k) => Number(k.slice('familyWishNew:'.length)))]
+            const flags = { ...game.flags }
+            for (const k of Object.keys(flags)) if (k === 'familyWishNew' || k.startsWith('familyWishNew:')) delete flags[k]
+            game = persist({ ...game, flags })
+            const names = nos.map((no) => householdById(game, no)).filter((h) => !!h)
+              .map((h) => h!.members.map((id) => game.gen?.persons[id]?.name ?? neighborById(id)?.role ?? '').filter(Boolean).join('·')).filter(Boolean)
+            if (names.length) newlandNotes.push(t('familyHome.wishNote', { names: names.join(', ') }))
+          }
+          if (game.flags.guestNow && game.flags.guestSince === game.clock.day) newlandNotes.push(t('familyHome.guestNote'))
+          const seekers = emptyHomes(game).length ? homeWishes(game, roomOwner).length : 0
+          if (seekers !== (game.flags.homeSeekers ?? 0)) {
+            if (seekers > (game.flags.homeSeekers ?? 0)) newlandNotes.push(t('familyHome.seekNote'))
+            game = persist({ ...game, flags: { ...game.flags, homeSeekers: seekers } })
+          }
+        }
+        // 아이 편지·돕기 알림과 겹치지 않게 조금 뒤에
+        if (newlandNotes.length) { const line = newlandNotes.join(' / '); setTimeout(() => get().say(line, 5200), 2600) }
       }
       if (!modal && game.scenes.length) {
+        game = prepareFamilyBirthday(game,game.scenes[0])
         modal = { kind: 'scene', id: game.scenes[0] }
         sfx('bell')
       }
       // 아이가 태어난 장면을 본 뒤 이름을 정한다
       if (!modal && game.flags.childNaming && game.child) modal = { kind: 'childName' }
       if (!modal && game.flags.siblingNaming && game.siblings?.length) modal = { kind: 'childName' }
+      // 마을의 손주가 태어난 아침 (240장): 소식 한 줄과 이름 함께 짓기
+      if (!modal && game.flags.grandNaming) {
+        const id = personId(game.flags.grandNaming)
+        if (game.gen?.persons[id]) {
+          modal = { kind: 'genName', id }
+          // 소식은 그 아기 처음 한 번만 (창을 다른 길로 닫아 다시 떠도 되풀이하지 않게)
+          if (game.flags.grandNews !== game.flags.grandNaming) { game = persist({ ...game, flags: { ...game.flags, grandNews: game.flags.grandNaming } }); get().say(t('grandBirth.news'), 3600) }
+        } else {
+          // 아기를 못 찾으면 기다리는 다음 손주로 (멈추지 않게)
+          const flags: GameState['flags'] = { ...game.flags }
+          delete flags.grandNaming
+          const waiting = Object.keys(flags).filter((k) => k.startsWith('grandNext:')).map((k) => Number(k.slice('grandNext:'.length))).sort((a, b) => a - b)
+          if (waiting.length) { flags.grandNaming = waiting[0]; delete flags[`grandNext:${waiting[0]}`] }
+          game = persist({ ...game, flags })
+        }
+      }
       // 아침에 온 순위표가 아직 열리지 않았으면 (여행에서 돌아온 아침처럼 잠자리를 거치지 않은 경우) 장면 뒤에 연다 (2026-10-18 감사 M-15).
       // 이사 편지는 저절로 열지 않고 집 앞 편지함에 둔다 (2026-10-19 사용자)
       if (!modal && !get().piecePopups.length && game.rankPopup) modal = { kind: 'rank' }
@@ -1824,6 +1962,8 @@ export const useGame = create<Store>((set, get) => {
     },
     closeModal: () => {
       if (get().piecePopups.length) { get().dismissPiecePopup(); return }
+      const modal=get().modal
+      if(modal?.kind==='bag'&&modal.resumeKid){set({modal:{kind:'kidCapacity',retry:modal.resumeKid}});return}
       if (get().modal?.kind === 'copy') get().copyExit()
       else set({ modal: null })
     },
@@ -1935,10 +2075,22 @@ export const useGame = create<Store>((set, get) => {
     kidAct: (act) => {
       const before = get().game
       const r = doKidAct(before, act, CONTENT)
-      if (!r) return
+      if (!r) {
+        if(before.child&&!canKidAct(before,act))set({modal:{kind:'kidCapacity',retry:{act,born:before.child.born}}})
+        return
+      }
       sfx('gift')
       const album = r.state.scenes.length > before.scenes.length
       set({ game: persist(r.state), modal: { kind: 'kidTime', done: { act, variant: r.variant, gains: r.gains, got: r.got, who: r.who, burnt: r.burnt, album } } })
+    },
+    retryKidAct: () => {
+      const m=get().modal
+      const retry=m?.kind==='kidCapacity'?m.retry:m?.kind==='bag'?m.resumeKid:undefined
+      if(!retry)return
+      const game=get().game
+      if(game.child?.born!==retry.born){set({modal:{kind:'kidTime'}});get().say('함께할 아이가 바뀌었어요. 활동을 다시 골라 주세요.');return}
+      if(canKidAct(game,retry.act)){set({modal:{kind:'kidTime'}});return}
+      get().kidAct(retry.act)
     },
     spouseKidAct: (choice) => {
       const r = doSpouseAct(get().game, choice)
@@ -1979,8 +2131,26 @@ export const useGame = create<Store>((set, get) => {
       // 동생 이름을 정하는 중이면 동생에게 (2026-10-13)
       set({ game: persist(g.flags.siblingNaming ? nameSibling(g, name) : nameChild(g, name)), modal: null })
     },
+    setKidCatch: (born, word) => {
+      const g = get().game
+      const c = cleanCatch(word)
+      const fix = (k: Child): Child => { if (k.born !== born) return k; const { catch: _c, ...rest } = k; void _c; return c ? { ...rest, catch: c } : rest }
+      const next = { ...g, child: g.child ? fix(g.child) : g.child, siblings: g.siblings?.map(fix) }
+      set({ game: persist(next) })
+    },
+    setGenCatch: (id, word) => {
+      const g = get().game
+      const p = g.gen?.persons[id]
+      if (!g.gen || !p || p.origin !== 'born') return
+      const c = cleanCatch(word)
+      const { catch: _c, ...rest } = p
+      void _c
+      set({ game: persist({ ...g, gen: { ...g.gen, persons: { ...g.gen.persons, [id]: c ? { ...rest, catch: c } : rest } } }) })
+    },
     selectKid: (born) => {
       const g = get().game
+      // 떠난 아이가 손님집에 묵는 사흘은 그 아이가 함께하는 아이여야 손님집에 보인다
+      if (kidVisiting(g) && g.child?.born !== born) { get().say(T.siblings.visitBusy, 2800); return }
       const next = selectKid(g, born)
       if (next === g) return
       sfx('place')
@@ -2006,6 +2176,7 @@ export const useGame = create<Store>((set, get) => {
       let next = takeTrip(game, CONTENT, dest, buys, piece ? [...rewards, { kind: 'piece', id: piece }] : rewards)
       if (!next) return
       if (modal.withChild && next.child) next = familyTrip(next)
+      if (modal.withPartner) next = partnerTrip(next)
       set({ game: persist(next), modal: piece ? { kind: 'passage', pieceId: piece, askLine: false } : null })
       get().say(piece ? `${DESTS[dest].name} 회당에서 베껴 온 사본을 펼쳐요` : `${DESTS[dest].name}에서 하룻밤 묵고 집으로 돌아왔어요`, 3400)
       sayChildHelp(next, get().say)
@@ -2127,6 +2298,20 @@ export const useGame = create<Store>((set, get) => {
       if (next === g) return
       set({ game: persist(next) })
       get().say(b ? '이 집을 내 집으로 정했어요. 안에 평상을 놓으면 잠자리가 돼요.' : '내 집을 그만 쓰기로 했어요.', 3200)
+    },
+    relocateBuild: (id, x, y, facing) => {
+      const g = get().game
+      if (currentMapId() !== 'newland') return false
+      const moved = moveBuild(g, id, x, y, facing)
+      if (!moved) return false
+      syncHome(moved)
+      sfx('gift')
+      set({ game: persist(unstick(moved)) })
+      return true
+    },
+    toggleSign: (id) => {
+      const next = toggleBuildSign(get().game, id)
+      if (next) set({ game: persist(next) })
     },
     removeBuild: (id) => {
       const g = get().game
@@ -2793,6 +2978,8 @@ export const useGame = create<Store>((set, get) => {
       sfx('door')
       set({ game: persist(r.state), modal: null, decorating: null, decorSel: null, decorMoving: false, yardMoving: null })
       get().say(T.ui.wentHome, 2800)
+      const piece = r.otPiece
+      if (piece) setTimeout(() => get().say(fill(T.word.otGot, { name: otPieceById(piece)?.name ?? '' }), 3400), 2900)
     },
     escapeStuck: () => {
       const g = get().game
@@ -2895,8 +3082,13 @@ export const useGame = create<Store>((set, get) => {
       if (id) set({ game: persist(readFeastLine(get().game, id, text)) })
     },
     careBaby: (action) => {
-      const next = careBaby(get().game, action)
-      if (next) set({ game: persist(next), modal: null })
+      const g = get().game
+      const next = careBaby(g, action)
+      if (next) { set({ game: persist(next), modal: null }); return }
+      // 요람이 방에 없으면 (가방·궤짝에) 돌볼 수 없다 — 말없이 멈추지 않게 (2026-10-21 점검)
+      const baby = !!g.child && childMode(g.child, g.clock.day) === 'cradle'
+      if (baby && !g.room.some((f) => f.item === 'homeCradle')) get().say(T.ui.cradleMissing, 3200)
+      else if (baby) get().say(T.ui.cradleNear, 2400)
     },
     nextScene: () => {
       const m = get().modal
@@ -2915,7 +3107,7 @@ export const useGame = create<Store>((set, get) => {
         opened.push((SCENES[gid]?.lines ?? []).map((l) => l.text).join(' '))
         seen = sceneSeen(seen, gid, ALBUM_IDS)
       }
-      const game = persist(seen)
+      let game = persist(seen)
       if (opened.length) setTimeout(() => get().say(opened.join(' '), 6500), 0)
       const after = get().afterScene
       // 고른 말이 손일을 함께하는 것이면 장면을 닫자마자 그 놀이로 (계획 16 작업 4)
@@ -2925,7 +3117,13 @@ export const useGame = create<Store>((set, get) => {
         if (after) get().say(after)
         return
       }
-      set({ game, modal: libraryCompletion ? { kind: 'shelfDone' } : id==='completeBible'&&current.scenes.includes(id)&&!current.flags.bibleEndingSeen ? game.rankPopup ? {kind:'rank'} : null : null, afterScene: null })
+      // 스물일곱 권 잔치를 본 뒤 한 번: 지나온 날 돌아보기 (2026-10-21 점검: 신약을 다 마쳐도 정리해 주는 순간이 없었다)
+      // 뒤에 장면이 남아 있으면(잔치 모닥불 등) 기다렸다가 마지막 장면 뒤에 연다 (ntRecapPending)
+      const recapDue = !game.flags.ntRecap && current.scenes.includes(id) && (id === 'allFeast' || !!game.flags.ntRecapPending)
+      const recap = recapDue && !game.scenes.length
+      if (recap) { const flags: GameState['flags'] = { ...game.flags, ntRecap: game.clock.day }; delete flags.ntRecapPending; game = persist({ ...game, flags }) }
+      else if (recapDue && !game.flags.ntRecapPending) game = persist({ ...game, flags: { ...game.flags, ntRecapPending: 1 } })
+      set({ game, modal: recap ? { kind: 'ntRecap' } : libraryCompletion ? { kind: 'shelfDone' } : id==='completeBible'&&current.scenes.includes(id)&&!current.flags.bibleEndingSeen ? game.rankPopup ? {kind:'rank'} : null : null, afterScene: null })
       if (after) get().say(after)
     },
 

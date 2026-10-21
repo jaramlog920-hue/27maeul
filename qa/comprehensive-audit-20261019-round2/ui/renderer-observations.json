@@ -1,0 +1,39 @@
+[
+  {
+    "finding": "UI-R2-01",
+    "stage": "adult",
+    "drawnHeight": 13,
+    "adultHeight": 14,
+    "changingWardrobeReusesSameCanvas": true
+  },
+  {
+    "finding": "UI-R2-02",
+    "storedWardrobe": true,
+    "stage": "adult",
+    "changingWardrobeReusesSameCanvas": true,
+    "departedStillDrawn": true,
+    "at": {
+      "x": 24,
+      "y": 15
+    }
+  },
+  {
+    "finding": "UI-R2-03",
+    "firstOwner": "me:2",
+    "firstOwnerJob": "cook",
+    "actualWorker": "선택아이",
+    "actualJob": "craft",
+    "workplaces": 2,
+    "selectedChildWorkerCalls": 1,
+    "spots": [
+      {
+        "x": 7,
+        "y": 18
+      },
+      {
+        "x": 15,
+        "y": 18
+      }
+    ]
+  }
+]

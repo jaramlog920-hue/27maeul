@@ -1,5 +1,48 @@
 # UI · 렌더 · 콘텐츠 · 가구 배치 감사
 
+## 현재 상태 (2026-10-19 재확인)
+
+**현재 남은 확인 문제: Medium 1개(UI-06).** 아래 10월 18일의 UI-01~UI-05는 감사 도중 외부에서 소스가 변경되어 모두 해소됐으며, 현재 소스의 실제 대조 검사까지 통과했다. 기존 문제 5개를 현재 오류 수에 넣지 않는다. 이 에이전트는 기존 소스·테스트·설정·데이터를 수정하지 않았다.
+
+당시 결과 원문은 `FINDINGS-snapshot-20261018.md`, 당시 파일 목록은 `inventory-snapshot-20261018.json`에도 별도로 보존했다.
+
+### UI-06 · Medium · 새 접속 후 연인 구절 선물의 분위기가 빈 목록으로 영구 캐시됨
+
+- 유형: 비동기 본문 로딩과 캐시 충돌 / 화면 정보·분기 오류.
+- 위치: `src/content/piece-moods.ts:29`–`:39` (특히 예외를 삼킨 뒤 memo.set하는 36~39행), `src/features/talk/LoveVerseView.tsx:31`, `:48`; 본문 대기 누락은 `src/features/ModalLayer.tsx:242`–`:246`. 결과는 `src/engine/game.ts`의 giveLoveVerse가 사용한다.
+- 원인: NT 본문은 책별 지연 로딩인데, moodsOf가 아직 로드되지 않은 책의 versesOf 오류를 받으면 빈 배열로 바꾸고 조각 ID에 캐시한다. 빈 배열도 truthy라서 이후 같은 조각은 바로 캐시 반환된다. 본문 로딩이 나중에 성공해도 재계산하지 않는다. LoveVerseView는 저장된 모든 collected ID에 pieceFacts를 호출하지만 ModalLayer의 본문 대기 목록에 loveVerse가 없다.
+- 발생 조건/재현: 이전 저장에 모은 조각과 연인이 있는 상태로 새 접속 → 해당 책을 먼저 읽거나 필사하지 않고 연인 구절 선물 목록 진입. 예: php-004를 가진 상태에서 빌립보서를 아직 받지 않았으면 분위기 표식/추천 순서가 빠진다. 이후 본문을 정상 로드해도 그 조각은 같은 실행에서 빈 분위기로 남는다. 그 조각을 선물하면 실제 본문과 다른 hit=false 분기로 처리된다.
+- 실제 검증: **캐시와 엔진 분기는 실행 확인, UI 도달 경로는 코드 분석 확인.** cold-moods.test.ts에서 setupTests의 전체 본문 선로딩을 피하도록 vi.resetModules로 새 production 모듈 그래프를 구성했다. 실제 php-004 ID와 ensureNtBook('php')를 사용했으며 네트워크 오류는 주입하지 않았다. ntLoaded=false → pieceFacts.moods=[] → ensureNtBook 성공 → 실제 분위기는 선물 조건 충족 → cached moods=[] 순서를 확인했다. 같은 game에서 캐시 사용 시 giveLoveVerse.hit=false, 실제 분위기 사용 시 hit=true다. 사용자 브라우저에서 재접속·대화 클릭 전체 흐름을 재생한 것은 아니다.
+- 영향: 연인 구절 선물 목록의 분위기 표식과 추천 순서, 선물 후 고마움 대사 분기. 잘못 분류한 선물도 선물 기록으로 처리되어 7일 대기 시간이 소비된다. 모든 상황에서 호감도가 정확히 2점 손해라고 확대하지 않는다(별도 하루 한도 등에 좌우됨).
+- 권장: 이 목록 진입 전에 수집 조각의 관련 NT 책을 대기한다. moodsOf는 로딩 오류와 정상 계산을 구분하고 실패 결과를 memo에 저장하지 않도록 한다. 새 접속·여러 책 조각·로딩 후 재조회 회귀 검사를 추가한다.
+
+### 기존 5개 문제의 현재 재확인
+
+| 이전 ID | 당시 문제 | 현재 수정과 실제 대조 검증 | 현재 집계 |
+|---|---|---|---|
+| UI-01 | 새 터 벽걸이 설치 불가 | RoomCtx.hangingWall와 새 터별 판정 추가. 4종을 실제 서고/두 주택 context에 설치 성공 | 해소 |
+| UI-02 | 전체 지도 캐시 무한 누적 | renderer의 MAP_CACHE_MAX=12 LRU 추가. 13개 합법 배치 후 첫 배치가 퇴출/재생성됨 | 해소 |
+| UI-03 | 아래 조작판의 약속·주민 결혼식 누락 | DeckNext가 공용 useEvents 사용. 직접 만든 약속이 deck DOM에 표시됨 | 해소 |
+| UI-04 | 전체 일정의 내 결혼식 누락 | 공용 hook에서 romance 구독/전달. 실제 예식 제목이 ScheduleDialog DOM에 표시됨 | 해소 |
+| UI-05 | 예복 거래 이름/제목 비어 있음 | T.trades 등록과 fallback 추가. 네 상품 aria-label과 상세 제목에 상품명이 표시됨 | 해소 |
+
+현재 검증 `current-results.json`: **6/6 통과, 실패0** (수정 대조4개 + 남은 버그 재현1개 + 최신 장면 smoke1개). `cold-moods-results.json` 단독 실행도 **1/1 통과**. 첫 과부하 실행의 30초 제한 초과는 환경/검사 시간 문제였고 최종 실행은 약1.9초에 재현됐다. 수정 전 버그 존재를 assert하던 probes/schedule-trades 파일은 역사적 근거로 남기고, 현재 동작 대조는 current-state.test.tsx로 분리했다.
+
+최신 `current-story-smoke.test.ts`는 고유 authored 장면577개에 대해 **기본 대사의 모든 페이지와 모든 선택의 답변 페이지**를 열거하고, 기본/사용자 avatar와 300×170/320×180/320×693으로 그렸다. 시작 또는8초 시점을 번갈아 사용했으며 예외/NaN/Infinity 좌표나 빈 그리기를 발견하지 못했다. 모든 시간 프레임의 연속성·픽셀 가림·모든 실제 인물/방/날씨 상태를 확인했다는 뜻은 아니다.
+
+현재 기본 vite 설정은 외부에서 qa 제외가 추가됐다. 기존 설정을 바꾸지 않고 own QA 설정으로 실행했다:
+
+```powershell
+node node_modules/vitest/vitest.mjs run --config qa/comprehensive-audit-20261018/ui/audit.config.mts --reporter=json --outputFile=qa/comprehensive-audit-20261018/ui/current-results.json
+node qa/comprehensive-audit-20261018/ui/inventory.mjs
+```
+
+최신 `inventory.json`: **462개(코드325/JSON133/CSS4), 104,597줄, 구문 오류0, 집중 검토100개**. 파일별 SHA256·최종 수정 시각·coverage 깊이를 보존했다. supporting 교차검토 4개(newland-rooms, LoveVerseView, TradeBoard, ModalLayer)는 별도 ownership 값으로 구분했다. 집중 검토는 큰 파일 모든 줄의 수동 검사를 뜻하지 않는다. 나머지 TS는 전체 구문 파싱/심볼 목록, JSON은 구문 파싱, CSS는 byte read/목록 수준을 그대로 표시한다.
+
+아래 내용은 **10월 18일 원본 snapshot의 역사적 기록**이다. 그때의 577장면/6,924회 smoke 횟수는 위 최신 smoke와 구분한다. 최신 코드에서 숨긴 탭 오디오 중단(setAudioHidden/Play 연동)과 iOS resume 조건도 외부에서 보완된 것을 확인했다. 아래 역사적 “visibility 처리 없음” 진술은 현재 소스에 적용하지 않는다. 실제 오디오 정책/실기기 동작은 미검증이다. 얼굴·몸·소품 픽셀과 모바일 실기기, 실제 브라우저 OOM, 모든 상태 조합은 여전히 미검증이다.
+
+---
+
 감사일: 2026-10-18 (Asia/Seoul). 기존 소스·기존 테스트·설정·데이터는 수정하지 않았다. 아래의 재현은 새 감사 파일의 메모리 상태/로컬 jsdom에서 실행했으며 사용자 저장·운영 서버·결제·삭제를 실행하지 않았다.
 
 ## 검증 결과
@@ -20,7 +63,7 @@ node node_modules/vitest/vitest.mjs run qa/comprehensive-audit-20261018/ui/sched
 node qa/comprehensive-audit-20261018/ui/inventory.mjs
 ```
 
-## 확인된 문제 (5개: Medium 4, Low 1)
+## 10월 18일 발견 기록 (당시 5개: Medium 4, Low 1; 현재 모두 해소)
 
 ### UI-01 · Medium · 새 터 서고와 주택에서 벽걸이 가구를 설치할 수 없음
 

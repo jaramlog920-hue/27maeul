@@ -1,0 +1,17 @@
+{
+  "full": {
+    "files": 529,
+    "total": 30666,
+    "passed": 30653,
+    "failed": 8,
+    "skip": 5
+  },
+  "rerun": {
+    "files": 6,
+    "total": 197,
+    "passed": 189,
+    "failed": 8,
+    "skip": 0
+  },
+  "sameFailingAssertions": true
+}

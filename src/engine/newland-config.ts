@@ -1,9 +1,9 @@
 // 새 터 (두 번째 마을)의 정한 값들 (계획 20 결정 D2·D6). 바꿀 때는 이 파일의 상수만 고친다.
 // 이 파일은 아무것도 부르지 않는 숫자 모음이다 (maps.ts·newland.ts·world.ts가 읽는다).
 
-/** 지도 크기: 가로 40 × 세로 40줄 — 위 30줄은 보이는 땅, 아래 10줄은 보이지 않는 서고 안 방 */
+/** 지도 크기: 가로 40 × 세로 50줄 — 위 30줄은 보이는 땅, 아래 20줄은 보이지 않는 서고 안 방과 입주 주택 안 방 */
 export const NEWLAND_W = 40
-export const NEWLAND_H = 40
+export const NEWLAND_H = 50
 export const NEWLAND_VISIBLE_H = 30
 
 /** 한 번 건너가는 데 흐르는 게임 시간 (분) — 같은 날 안에서 */
@@ -58,10 +58,12 @@ export const INTERIOR_EXIT = { x: INTERIOR.x0 + 6, y: INTERIOR.y0 + INTERIOR.h -
 export const INTERIOR_ENTRY = { x: INTERIOR_EXIT.x, y: INTERIOR_EXIT.y - 1 } as const
 
 /**
- * 입주 주택 안 방 칸 (계획 20 작업 7): 지도 아래 보이지 않는 줄에서 서고 안 방(INTERIOR)을 뺀 가로 구간마다
- * 8×6 방(자산 OLD_INTERIORS 128×96px)이 몇 개 들어가는지 세어 미리 나눈 칸이다. 윗 두 줄은 벽, 아래 네 줄은 바닥,
- * 문깔개는 맨 아랫줄 가운데(exit), 들어오면 그 위 칸(entry)에 선다.
- * 이 지도(40×10 숨은 줄, 서고 방 13칸 가로)에서는 왼쪽 구간 13칸에 1개, 오른쪽 구간 14칸에 1개, 세로는 10줄에 한 줄뿐이라 모두 2개다.
+ * 입주 주택 안 방 칸 (계획 20 작업 7): 지도 아래 보이지 않는 줄에 8×6 방(자산 OLD_INTERIORS 128×96px)을 미리 나눈 칸이다.
+ * 윗 두 줄은 벽, 아래 네 줄은 바닥, 문깔개는 맨 아랫줄 가운데(exit), 들어오면 그 위 칸(entry)에 선다.
+ * 2026-10-21 사용자: 새 터에 집이 두 채뿐이라 사람이 못 산다 → 숨은 줄을 늘려 여덟 채.
+ * 처음 두 칸(0·1번, 32–37줄)은 옛 저장의 가구 자리가 그대로이도록 예전 좌표 그대로 두고, 그 아래에 더한다:
+ *   38–43줄: 서고 안 방(13–25칸)을 피해 왼쪽·오른쪽에 하나씩 (2·3번)
+ *   44–49줄: 가로로 넷 (4–7번) — 방 옆줄은 바닥이라 이웃 방과 맞닿으면 걸어 넘어가므로 두 칸씩 띄운다
  */
 export const ROOM_W = 8
 export const ROOM_H = 6
@@ -74,24 +76,25 @@ export interface RoomSlot {
   exit: { x: number; y: number }
 }
 function makeRoomSlots(): RoomSlot[] {
-  const hidden = NEWLAND_H - NEWLAND_VISIBLE_H
-  const bands = Math.floor(hidden / ROOM_H)
-  const top = NEWLAND_VISIBLE_H + Math.floor((hidden - bands * ROOM_H) / 2)
-  const spans = [
-    [0, INTERIOR.x0],
-    [INTERIOR.x0 + INTERIOR.w, NEWLAND_W],
-  ]
   const out: RoomSlot[] = []
-  for (let b = 0; b < bands; b++)
-    for (const [from, to] of spans) {
+  const add = (x0: number, y0: number) => out.push({ x0, y0, w: ROOM_W, h: ROOM_H, exit: { x: x0 + 4, y: y0 + ROOM_H - 1 }, entry: { x: x0 + 4, y: y0 + ROOM_H - 2 } })
+  // 서고 안 방 옆 두 구간에 들어가는 만큼 (가운데 맞춤) — 예전과 같은 계산
+  const besideArchive = (y0: number) => {
+    for (const [from, to] of [[0, INTERIOR.x0], [INTERIOR.x0 + INTERIOR.w, NEWLAND_W]]) {
       const n = Math.floor((to - from) / ROOM_W)
       const left = from + Math.floor((to - from - n * ROOM_W) / 2)
-      for (let i = 0; i < n; i++) {
-        const x0 = left + i * ROOM_W
-        const y0 = top + b * ROOM_H
-        out.push({ x0, y0, w: ROOM_W, h: ROOM_H, exit: { x: x0 + 4, y: y0 + ROOM_H - 1 }, entry: { x: x0 + 4, y: y0 + ROOM_H - 2 } })
-      }
+      for (let i = 0; i < n; i++) add(left + i * ROOM_W, y0)
     }
+  }
+  const first = NEWLAND_VISIBLE_H + 2
+  besideArchive(first)
+  besideArchive(first + ROOM_H)
+  // 서고 안 방 아래로는 가로로 넷, 사이를 두 칸씩
+  const below = first + ROOM_H * 2
+  const GAP = 2
+  const n = Math.floor((NEWLAND_W + GAP) / (ROOM_W + GAP))
+  const left = Math.floor((NEWLAND_W - (n * ROOM_W + (n - 1) * GAP)) / 2)
+  for (let i = 0; i < n; i++) add(left + i * (ROOM_W + GAP), below)
   return out
 }
 export const ROOM_SLOTS: readonly RoomSlot[] = makeRoomSlots()

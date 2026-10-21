@@ -1,4 +1,4 @@
-import { villageBookCount } from "./progression"
+import { zoneBooks } from './feature-rules'
 import { nameProblem } from './avatar'
 import { featureAccess } from './feature-rules'
 import { availability, scheduleAppt, attendAppt, canAttendAppt, settleAppt, apptSpots, venueFor, type Appt } from './plans'
@@ -40,12 +40,12 @@ export function clubVenues(s:GameState,activity:ClubActivity):PlaceId[] {
  if(activity==='garden' && Object.keys(s.garden).length) venues.push('garden')
  // 주민이 함께 지은 공동 시설 (계획 16 작업 20): 완성된 곳만, 그 시설에서 할 수 있는 모임만 — 꽃밭은 관찰 모임, 그늘막·긴 벤치는 차·바느질
  for(const id of builtIds(s.flags)) {const site=SITES[id]; if((FACILITY_CLUBS[site.place] as readonly string[]).includes(activity)) venues.push(site.place)}
- const locked=lockedTiles(villageBookCount(s))
+ const locked=lockedTiles(zoneBooks(s))
  return venues.filter(place=>apptSpots(place).length && apptSpots(place).every(t=>!locked.has(key(t))))
 }
 /** 함께 만든 작품 자리 (계획 16 작업 15): 모임 장소의 탁자·벤치 칸 중 앉는 자리·잠긴 칸이 아닌 곳만 — 길·앉는 자리·서는 칸을 쓰지 않는다. 같은 장소의 작품은 모임 번호 차례로 한 칸씩 */
 export function clubWorkTiles(s:Pick<GameState,'shelved'|'progress'|'flags'>,place:PlaceId):Tile[] {
- const seats=new Set(apptSpots(place).map(key)),locked=lockedTiles(villageBookCount(s))
+ const seats=new Set(apptSpots(place).map(key)),locked=lockedTiles(zoneBooks(s))
  return (PLACES[place]?.tiles??[]).filter(t=>!seats.has(key(t)) && !locked.has(key(t)))
 }
 /** 이 모임 작품을 모임 자리에 남길 수 있는가 — 다른 모임 작품과 칸을 나눠 쓰고, 칸이 모자라면 집에 두기만 */

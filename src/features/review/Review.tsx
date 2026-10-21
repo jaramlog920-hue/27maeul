@@ -5,6 +5,7 @@ import { LATE } from '../../engine/clock'
 import { todayDiary, type Diary } from '../../engine/daybook'
 import { useGame } from '../../store/game-store'
 import { babyBlock } from '../../engine/siblings'
+import { featureHint } from '../../engine/feature-rules'
 import { Passage } from '../passage/Passage'
 
 export function Review({ pieceId }: { pieceId: string | null }) {
@@ -30,6 +31,10 @@ export function Review({ pieceId }: { pieceId: string | null }) {
         <button onClick={closeModal}>{T.ui.stayUp}</button>
         {/* 둘째·셋째 (2026-10-13): 결혼했고, 막내가 어린이가 되었으면 */}
         {babyBlock(game) === null && <button onClick={askBaby}>{T.siblings.ask}</button>}
+        {/* 결혼했는데 아직 못 하면 흐린 단추로 남기고, 누르면 까닭 한 줄 (2026-10-21 사용자) */}
+        {game.romance?.stage === 'married' && (babyBlock(game) === 'home' || babyBlock(game) === 'youngest' || babyBlock(game) === 'locked') && (
+          <button aria-disabled onClick={() => useGame.getState().say(babyBlock(game) === 'locked' ? featureHint('childBirth', true) : babyBlock(game) === 'home' ? T.siblings.needRoom : T.siblings.needYoungest, 3000)}>{T.siblings.ask}</button>
+        )}
         {babyBlock(game) === 'waiting' && <p className="hint">{T.siblings.waiting}</p>}
         <button className="primary" onClick={sleep}>
           {T.ui.sleep}

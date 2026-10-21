@@ -7,6 +7,7 @@ import { formatTime } from './clock'
 import type { GameContent } from './types'
 import { isBirthday } from './notebook'
 import { t } from '../shared/i18n'
+import { slotPerson } from './gen-growth'
 import { isReadingDay, READING_FROM, READING_TO, readingRest, seasonCopyKey, seasonCopyOpen } from './meetings'
 
 export interface ScheduledEvent {
@@ -31,14 +32,14 @@ export function scheduledEvents(s: Pick<GameState, 'clock' | 'today' | 'flags'> 
   // 내 결혼 잔치: 약혼한 다음 장날 저녁, 광장 모닥불 (7일 안이면)
   const r = s.romance
   if (r?.stage === 'engaged' && r.partner && r.weddingDay !== null && r.weddingDay >= day && r.weddingDay <= day + 7) {
-    const who = content.neighbors.find((n) => n.id === r.partner)?.role ?? ''
+    const who = s.gen?.persons[slotPerson(s.gen, r.partner)]?.name ?? content.neighbors.find((n) => n.id === r.partner)?.role ?? ''
     const c = who.charCodeAt(who.length - 1) - 0xac00
     const whoAnd = who + (c >= 0 && c < 11172 && c % 28 !== 0 ? '과' : '와')
     add('wedding', t('schedule.myWedding', { whoAnd }), lifeText.gen.weddingPlace, FESTIVAL_FROM, FESTIVAL_TO, false, r.weddingDay)
   }
   // 주민 결혼 잔치 (계획 20 2부 — 달력 초대): 결혼 준비 중인 쌍의 잔치 날, 7일 안이면
   if (s.gen?.on) {
-    const nm = (id: string) => content.neighbors.find((n) => n.id === id)?.role ?? ''
+    const nm = (id: string) => s.gen?.persons[id]?.name ?? content.neighbors.find((n) => n.id === id)?.role ?? ''
     const fill = (t: string, v: Record<string, string>) => t.replace(/\{(\w+)\}/g, (_, k: string) => v[k] ?? '')
     // 받침이 있으면 '과', 없으면 '와'
     const withAnd = (w: string) => {

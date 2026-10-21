@@ -1,4 +1,5 @@
 // 이웃과의 생활 대화 — 게임이 지어낸 말. 성경 본문은 이웃이 건넨 말씀 조각·편지의 본문 창으로만 본다.
+import { bondProgress } from '../../engine/romance'
 import { neighborById } from '../../content/catalog'
 import {weddingGiftsFor} from '../../engine/wedding-attire'
 import { useEffect, useState } from 'react'
@@ -81,13 +82,16 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
   const { requestAsk, requestGive } = useGame.getState()
   // 목수에게 집 넓히기 부탁 (이사 온 뒤, 다음 단계가 남아 있으면)
   const heartBlock = heartProgressBlock(game, def.id)
+  // 10하트 조건이 얼마나 찼는지 함께 (연애 n/14일 · 데이트 n/3번 · 연인 이야기)
+  const bondNow = game.romance.partner === def.id ? bondProgress(game.romance, game.clock.day) : null
+  const bondHint = bondNow ? `${HEART_HINTS.bond} (${bondNow})` : HEART_HINTS.bond
   const bouquetBlock = canGiveBouquet(game, def)
   const bouquetVisible = bouquetBlock === null || bouquetBlock === 'noItem' || (bouquetBlock === 'cooling' && heartsOf(game.hearts[def.id]) >= 8)
   const cordBlock = canGiveCord(game, def)
   const cordNote = cordBlock === 'locked' ? heartText.proposalLocked
-    : cordBlock === 'days' ? (game.romance.bondRequired ? HEART_HINTS.bond : fill(T.romance.cordDays, { n: DATING_DAYS }))
+    : cordBlock === 'days' ? (game.romance.bondRequired ? bondHint : fill(T.romance.cordDays, { n: DATING_DAYS }))
     : cordBlock === 'hearts' ? T.romance.cordHearts
-    : cordBlock === 'bond' ? HEART_HINTS.bond
+    : cordBlock === 'bond' ? bondHint
     : cordBlock === 'room' ? T.romance.cordRoom
     : cordBlock === 'noItem' ? T.romance.cordNoItem : null
   const homeStage = def.id === 'carpenter' ? nextHomeStage(game) : null
@@ -145,7 +149,7 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
         <button data-close className="head-x" aria-label={T.ui.close} title={T.ui.close} onClick={closeModal}>✕</button>
       </div>
       {modal.line && <p className="talk-line">{callName(modal.line, game.avatar?.name)}</p>}
-      {heartBlock && <p className="hint">{HEART_HINTS[heartBlock]}</p>}
+      {heartBlock && <p className="hint">{heartBlock === 'bond' ? bondHint : HEART_HINTS[heartBlock]}</p>}
       {/* 이미 들은 특별 대사·편지도 내용을 지우지 않고 일반 대화에 남긴다. */}
       {extraLines.filter(line => line !== modal.line).map(line => <p key={line} className="talk-line">{callName(line, game.avatar?.name)}</p>)}
       {/* 다른 마을 서고 소문 (계획 21 R6) */}
@@ -191,8 +195,8 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
             onClick={() => {
               const next = hearDream(useGame.getState().game, def.id)
               saveGame(next)
-              useGame.setState({ game: next })
-              say(dreamText(def.id).heard, 5200)
+              // 꿈 이야기는 대화창에 그대로 남긴다 (5초 알림으로 지나가 버렸다 — 2026-10-21 점검)
+              useGame.setState({ game: next, modal: { kind: 'talk', neighborId: def.id, line: dreamText(def.id).heard } })
             }}
           >
             {T.newlandLife.dream.ask}

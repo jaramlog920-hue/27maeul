@@ -1,0 +1,10 @@
+import './detail-r2-storage-bridge'
+import { createRenderer, createTripRenderer } from '../src/render/renderer'
+import { setActiveMap } from '../src/engine/maps'
+import { newGenState } from '../src/engine/gen'
+import { syncHome, lookOf, dressUp } from '../src/engine/game'
+import { withLookDefaults } from '../src/engine/avatar'
+import { siblingTile } from '../src/engine/siblings'
+import { initializeGameStorage, gameStorage, flushGameStorage, getGameStorageStatus } from '../src/engine/game-storage'
+import { serialize } from '../src/engine/save'
+;(window as unknown as { __fix:unknown }).__fix={createRenderer,createTripRenderer,setActiveMap,newGenState,syncHome,lookOf,dressUp,withLookDefaults,siblingTile,initializeGameStorage,gameStorage,flushGameStorage,getGameStorageStatus,serialize}

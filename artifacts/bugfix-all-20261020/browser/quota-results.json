@@ -1,0 +1,30 @@
+{
+  "quota": {
+    "status": {
+      "state": "error",
+      "error": {
+        "name": "QuotaExceededError"
+      },
+      "quota": true,
+      "errorId": 1
+    },
+    "coins": 322
+  },
+  "backupKeys": [
+    "app",
+    "v",
+    "at",
+    "save",
+    "album",
+    "settings"
+  ],
+  "recovered": {
+    "status": {
+      "state": "saved",
+      "error": null,
+      "quota": false,
+      "errorId": 0
+    },
+    "coins": 322
+  }
+}

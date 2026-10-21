@@ -1,8 +1,8 @@
 import { drawFragment, fragmentSeed } from './fragments'
+import { zoneBooks } from './feature-rules'
 import { mulberry32 } from './offers'
 import { OT_PIECES } from './ot-pieces'
 import { lockedTiles, MAP } from './world'
-import { villageBookCount } from './progression'
 import type { GameState } from './game'
 import type { Piece, Tile } from './types'
 
@@ -16,7 +16,7 @@ export function groundFragment(s: Pick<GameState, 'clock' | 'flags' | 'collected
   const rng = mulberry32(seed)
   if (rng() >= GROUND_FRAGMENT_CHANCE) return null
   // 구역 해금은 다른 곳(지도·덤불·누르기)과 같은 기준 (2026-10-12)
-  const locked = lockedTiles(villageBookCount(s))
+  const locked = lockedTiles(zoneBooks(s))
   const spots = ROAD_SPOTS.filter(at => !locked.has(`${at.x},${at.y}`))
   if (!spots.length) return null
   const at = spots[Math.floor(rng() * spots.length)]

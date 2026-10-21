@@ -1,0 +1,1 @@
+import{ea as e}from"./expansion-prop-art-DplXk8eb.js";import{h as t,vt as n}from"./global-ROVJJEoZ.js";function r(r){let i=e(r).state;n(i),t.setState({game:i})}export{r as t};

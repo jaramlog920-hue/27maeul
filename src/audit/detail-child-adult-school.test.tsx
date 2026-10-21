@@ -55,24 +55,18 @@ describe('012 성인 성장 전날 배움터 상태와 지연 입력', () => {
     expect(useGame.getState().game).toBe(next)
   })
 
-  it('이미 알려진 성인 배움터 동작을 새 발견으로 세지 않고 실제 버튼·차감·제한을 대조한다', () => {
+  // 2026-10-21 점검: 다 자란 아이는 배움터에 맡기지 않는다 — 맡기기 단추 없이 까닭 한 줄, 돈·표식은 그대로
+  it('성인 아침에는 배움터 맡기기가 막히고 돈·등원 표식이 바뀌지 않는다', () => {
     const next = morning()
     useGame.getState().load(next)
     useGame.setState({ modal: { kind: 'school' }, toast: null })
-    expect(canSchool(next)).toBeNull()
+    expect(canSchool(next)).toBe('grown')
     render(<SchoolView />)
-    expect(screen.getAllByRole('button', { name: '맡기기' })).toHaveLength(5)
-    fireEvent.click(screen.getAllByRole('button', { name: '맡기기' })[0])
-    const after = useGame.getState().game
-    expect(after.coins).toBe(70)
-    expect(childAtSchool(after)).toBe(true)
-    expect(childTile(after)).toEqual(SCHOOL_SEAT)
-    expect(after.child!.job).toBe(next.child!.job)
+    expect(screen.queryAllByRole('button', { name: '맡기기' })).toHaveLength(0)
+    expect(screen.getByText('다 자란 아이는 제 일을 하며 지내요.')).toBeTruthy()
     useGame.getState().goSchool('wit')
-    expect(useGame.getState().game).toBe(after)
-    const restored = reload(after)
-    expect(restored.flags.schoolDay).toBe(94)
-    expect(restored.coins).toBe(70)
+    expect(useGame.getState().game).toBe(next)
+    expect(childAtSchool(next)).toBe(false)
   })
 
   it('성인 배움터 창을 취소하거나 예전 발표 입력을 보내도 추가 경험치·기록을 만들지 않는다', () => {

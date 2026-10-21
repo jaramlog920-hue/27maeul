@@ -1,0 +1,21 @@
+{
+  "atUtc": "2026-10-18T21:36:20.693Z",
+  "files": 97,
+  "groups": {
+    "engine": 59,
+    "features": 24,
+    "scene": 4,
+    "focusedFiles": 2,
+    "supporting": 8
+  },
+  "completeBodyReread": 74,
+  "focusedBodyReread": 7,
+  "priorCompleteWithRefreshedIndex": 16,
+  "syntaxVerification": "root tsc/build; no separate compiler API available",
+  "sourceChangesSinceRound2Inventory": [],
+  "limits": [
+    "Full body reread is not claimed for index-only carried entries.",
+    "Root owns whole-suite/type/build/save/security.",
+    "No native browser UI was executed by this subagent."
+  ]
+}

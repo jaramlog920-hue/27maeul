@@ -17,7 +17,7 @@ export function sharedBackgroundActor(s:CastState,role:string):(FinalePerson&{id
  const def=neighborById(role)
  if(!def)return null
  const id=slotPerson(s.gen,role),person=s.gen?.persons[id],heir=id!==role&&person?genAvatar(person):null
- const elder=residentIsElder(s.gen,id),look=neighborLook(def,role==='child'?childGrowth(s.clock.day):undefined,s.looks?.[role],elder,heir)
+ const elder=residentIsElder(s.gen,id),look=neighborLook(def,role==='child'?childGrowth(s.clock.day):undefined,s.looks?.[id],elder,heir)
  return {id,role,who:look.who,avatar:look.extra.avatar?storyAvatarSnapshot(look.extra.avatar):null,growth:look.extra.growth,elder:look.extra.elder,season:seasonOf(s.clock.day)}
 }
 /** Original speakers only. No fallback stranger, extra parent or hypothetical baby. */

@@ -1,11 +1,11 @@
 // 부지 미리보기 (계획 20 작업 6): 건축 가능한 땅을 작은 그림으로 보고, 칸을 눌러 자리를 고른 뒤 놓는다.
 // 놓을 수 없으면 초록·빨강 색 대신 그 자리에서 이유 한 줄만 보인다. 한 번에 한 가지만 미리 본다.
-import { ownerName } from '../../engine/kid-work'
+import { ownerJob, ownerName } from '../../engine/kid-work'
 import { useEffect, useRef, useState } from 'react'
 import { fill, itemList, T } from '../../content/text'
 import { BUILD_RECT, NEWLAND_VISIBLE_H, NEWLAND_W } from '../../engine/newland-config'
 import { NEWLAND_MAP } from '../../engine/newland'
-import { areaOf, boxOf, widthOf, buildsOf, canOrder, costOf, doorOf, tilesOf, type OrderBlock } from '../../engine/newland-build'
+import { areaOf, boxOf, widthOf, buildsOf, canMoveBuild, canOrder, costOf, doorOf, moveCost, tilesOf, type Build, type OrderBlock } from '../../engine/newland-build'
 import { isBuildKind, isDecorKind, isTileKind, SITES, type SiteKind, type TileKind } from '../../engine/newland-sites'
 import { t } from '../../shared/i18n'
 import { neighborById } from '../../content/catalog'
@@ -24,7 +24,7 @@ const H = NEWLAND_VISIBLE_H
 const GROUND_COLOR: Record<string, string> = { '.': '#d6e0bd', T: '#b3c79d', S: '#cbc2b0', D: '#a8957c', ',': '#eadfc0', '>': '#d8c48a', '*': '#e3cfd3' }
 export type SitePick = SiteKind | 'eraser'
 /** 깐 칸의 흐린 색 (길·정원·꾸미기) */
-const TILE_COLOR: Partial<Record<TileKind, string>> = { path: '#eadfc0', garden: '#9db97f', sand: '#f2d9b2', stone: '#c9baa9', soil: '#a97d60', grassTuft: '#b4cc9a', flower: '#f2d9b2', rocks: '#c3b4a4', bush: '#72976d', treeSmall: '#72976d', treeTall: '#608563', treeBig: '#608563' }
+const TILE_COLOR: Partial<Record<TileKind, string>> = { path: '#eadfc0', garden: '#9db97f', sand: '#f2d9b2', stone: '#c9baa9', soil: '#a97d60', grassTuft: '#b4cc9a', flower: '#f2d9b2', rocks: '#c3b4a4', bush: '#72976d', treeSmall: '#72976d', treeTall: '#608563', treeBig: '#608563', road: '#eadfc0', lawn: '#c9d8a8', hedge: '#608563' }
 
 const BLOCK_TEXT: Record<OrderBlock, string> = {
   unrevealed: T.build.blockUnrevealed,
@@ -73,21 +73,23 @@ function spanOf(pick: SitePick, size: number): { w: number; h: number } {
 /** 집 단계 이름 (2026-10-13 사용자: 신약 내 집처럼 1·2·3단계) */
 const STAGE_TEXT: Record<number, string> = { 4: '1단계', 6: '2단계', 8: '3단계' }
 
-export function SitePreview({ pick, onBack, onPlaced, owner }: { pick: SitePick; onBack: () => void; onPlaced: () => void; owner?: string }) {
+export function SitePreview({ pick, onBack, onPlaced, owner, moving }: { pick: SitePick; onBack: () => void; onPlaced: () => void; owner?: string; moving?: Build }) {
   const game = useGame((s) => s.game)
-  const { orderSite, eraseTile } = useGame.getState()
+  const { orderSite, eraseTile, relocateBuild } = useGame.getState()
   const kind = pick === 'eraser' ? null : pick
   const def = kind ? SITES[kind] : null
-  const [facing, setFacing] = useState<Facing>('down')
-  const [size, setSize] = useState<number>(def?.sizes[0] ?? 1)
+  // 다 지은 건물 옮기기 (2026-10-21): 지금 자리·방향·크기에서 시작해 새 자리를 고른다 (모습·주인은 그대로)
+  const [facing, setFacing] = useState<Facing>(moving?.facing ?? 'down')
+  const [size, setSize] = useState<number>(moving?.size ?? def?.sizes[0] ?? 1)
   const [look, setLook] = useState<HouseLook>(DEFAULT_LOOK)
-  const lookKind = kind && isBuildKind(kind) && hasHouseLook(kind) ? kind : null
-  const [pos, setPos] = useState<Tile>({ x: BUILD_RECT.x0 + Math.floor((BUILD_RECT.x1 - BUILD_RECT.x0 + 1) / 2) - 1, y: BUILD_RECT.y0 + Math.floor((BUILD_RECT.y1 - BUILD_RECT.y0 + 1) / 2) - 1 })
+  const lookKind = !moving && kind && isBuildKind(kind) && hasHouseLook(kind) ? kind : null
+  const [pos, setPos] = useState<Tile>(moving ? { x: moving.x, y: moving.y } : { x: BUILD_RECT.x0 + Math.floor((BUILD_RECT.x1 - BUILD_RECT.x0 + 1) / 2) - 1, y: BUILD_RECT.y0 + Math.floor((BUILD_RECT.y1 - BUILD_RECT.y0 + 1) / 2) - 1 })
   const ref = useRef<HTMLCanvasElement>(null)
   const span = spanOf(pick, size)
   const at = { x: clamp(pos.x, BUILD_RECT.x0, BUILD_RECT.x1 - span.w + 1), y: clamp(pos.y, BUILD_RECT.y0, BUILD_RECT.y1 - span.h + 1) }
 
-  const block: OrderBlock | 'nothing' | null = kind ? canOrder(game, kind, at.x, at.y, facing, size) : tilesOf(game)[`${at.x},${at.y}`] ? null : 'nothing'
+  const moveBlock = moving ? canMoveBuild(game, moving.id, at.x, at.y, facing) : null
+  const block: OrderBlock | 'nothing' | null = moving ? (moveBlock === 'notDone' ? 'facing' : moveBlock) : kind ? canOrder(game, kind, at.x, at.y, facing, size) : tilesOf(game)[`${at.x},${at.y}`] ? null : 'nothing'
 
   useEffect(() => {
     const c = ref.current
@@ -210,11 +212,15 @@ export function SitePreview({ pick, onBack, onPlaced, owner }: { pick: SitePick;
   const move = (dx: number, dy: number) => setPos({ x: at.x + dx, y: at.y + dy })
 
   // 집 겸 일터는 고른 주인 이름으로 (2026-10-14)
-  const name = kind === 'kidWork' && owner ? fill(T.newlandLife.kidWork.label, { name: ownerName(game, owner) }) : kind ? siteName(kind) : T.build.eraser
-  const reason = block === null ? null : block === 'nothing' ? T.build.blockNothing : BLOCK_TEXT[block]
+  const name = kind === 'kidWork' && owner ? fill(owner.startsWith('npc:') ? T.newlandLife.kidWork.dreamLabel : T.newlandLife.kidWork.label, { name: ownerName(game, owner) }) : kind ? siteName(kind) : T.build.eraser
+  const reason = block === null ? null : moving && block === 'same' ? '지금 있는 자리예요.' : block === 'nothing' ? T.build.blockNothing : BLOCK_TEXT[block]
 
   const place = () => {
     if (block !== null) return
+    if (moving) {
+      if (relocateBuild(moving.id, at.x, at.y, facing)) onPlaced()
+      return
+    }
     if (kind) {
       const ok = orderSite(kind, at.x, at.y, facing, size, lookKind ? look : undefined, kind === 'kidWork' ? owner : undefined)
       if (ok && (isBuildKind(kind))) onPlaced()
@@ -232,7 +238,7 @@ export function SitePreview({ pick, onBack, onPlaced, owner }: { pick: SitePick;
         <button aria-label={T.build.downMove} onClick={() => move(0, 1)}>{T.build.markDown}</button>
         <button aria-label={T.build.right} onClick={() => move(1, 0)}>{T.build.markRight}</button>
       </div>
-      {def && def.sizes.length > 1 && (
+      {def && def.sizes.length > 1 && !moving && (
         <div className="tabs" role="group" aria-label={T.build.size}>
           {def.sizes.map((n) => (
             <button key={n} className={size === n ? 'on' : ''} aria-pressed={size === n} onClick={() => setSize(n)}>
@@ -251,8 +257,10 @@ export function SitePreview({ pick, onBack, onPlaced, owner }: { pick: SitePick;
           ))}
         </div>
       )}
-      {lookKind && <HouseLookPicker kind={lookKind} facing={facing} look={look} width={span.w} onChange={setLook} />}
-      {kind && (
+      {lookKind && <HouseLookPicker kind={lookKind} facing={facing} look={look} width={span.w} onChange={setLook} job={lookKind === 'kidWork' ? ownerJob(game, owner) : null} />}
+      {moving ? (
+        <p className="hint">옮기는 값 {moveCost(moving)}닢 · 바로 옮겨져요. 사는 사람·방 안 가구·간판은 그대로예요.</p>
+      ) : kind && (
         <p className="hint">
           {fill(T.build.cost, { cost: costText(kind, size) })}
           {(isBuildKind(kind)) && ` · ${T.build.days}`}

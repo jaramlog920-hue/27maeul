@@ -17,7 +17,17 @@
     "spouseLine": "배우자",
     "kinLine": "친척",
     "rename": "이름변경",
-    "relations": { "focus": "선택한 인물", "parent": "부모", "grandparent": "조부모", "spouse": "배우자", "sibling": "형제자매", "child": "자녀", "grandchild": "손주", "relative": "친척", "inLaw": "배우자의 가족" }
+    "relations": {
+      "focus": "선택한 인물",
+      "parent": "부모",
+      "grandparent": "조부모",
+      "spouse": "배우자",
+      "sibling": "형제자매",
+      "child": "자녀",
+      "grandchild": "손주",
+      "relative": "친척",
+      "inLaw": "배우자의 가족"
+    }
   },
   "groundPiece": {
     "found": "길에서 말씀 조각을 주웠어요 · {name}",
@@ -59,6 +69,7 @@
     "appoint": "{who}에게 사서 맡기기",
     "release": "사서 내려놓기",
     "teach": "오늘 온 손님과 한 구절 읽기",
+    "teachHours": "손님은 아침 9시부터 오후 5시까지 서고에 있어요.",
     "taught": "손님이 구절을 받아 적어 갔어요.",
     "byLine": "사서 {who}의 안내",
     "taughtLine": "{title} 함께 읽음"
@@ -79,7 +90,10 @@
     "moveByeDone": "짐은 거의 다 쌌어요. 내일 아침 떠나요. 여기서 지낸 날들 잊지 않을게요.",
     "stayed": "붙잡아 줘서 고마워요. 조금 더 지내 볼게요.",
     "byeSaid": "내일 아침 떠난대요. 집은 빈집으로 남아요.",
-    "left": "{names} 가족이 새 터 집을 떠나 첫 마을로 돌아갔어요. 집은 빈집으로 남았어요."
+    "left": "{names} 가족이 새 터 집을 떠나 첫 마을로 돌아갔어요. 집은 빈집으로 남았어요.",
+    "wishNote": "{names} 가족이 이사를 생각하고 있대요. 사흘 안에 새 터 집 앞에서 이야기해 보세요.",
+    "guestNote": "새 터 손님집에 손님이 왔어요. 사흘 머물러요.",
+    "seekNote": "새 터에 살 집을 찾는 가족이 있어요. 빈 집 문 앞에 서 보세요."
   },
   "otShelf": {
     "record": "{book} 기록대",
@@ -107,7 +121,12 @@
     "collected": "모은 것 {n} / {all}",
     "lead": "가구와 물건을 얻고, 책을 제본하고, 만들기를 배우면 도감에 남아요. 아직 모으지 않은 것은 실루엣으로 보여요.",
     "categoryLabel": "도감 분류",
-    "categories": { "furniture": "가구", "books": "책 디자인", "recipes": "레시피", "items": "생활 물건" },
+    "categories": {
+      "furniture": "가구",
+      "books": "책 디자인",
+      "recipes": "레시피",
+      "items": "생활 물건"
+    },
     "all": "전체",
     "onlyKnown": "획득한 것만 보기",
     "unknown": "아직 모으지 않은 것",
@@ -118,12 +137,28 @@
     "empty": "이 분류에서 아직 모은 것이 없어요.",
     "itemHint": "구입하거나 만들기, 선물과 여행으로 물건을 모아 보세요.",
     "bookCover": "{book} 기본 디자인",
-    "bookGroups": { "book": "기본 표지·책등", "color": "표지 색", "pattern": "책등 무늬", "deco": "책등 장식", "detail": "덧장식" },
-    "designKinds": { "book": "그대로 제본한 책의 기본 표지와 책등", "color": "특별 제본 · 표지 색", "pattern": "특별 제본 · 표지와 책등 무늬", "deco": "특별 제본 · 책등 장식", "detail": "특별 제본 · 덧장식" },
+    "bookGroups": {
+      "book": "기본 표지·책등",
+      "color": "표지 색",
+      "pattern": "책등 무늬",
+      "deco": "책등 장식",
+      "detail": "덧장식"
+    },
+    "designKinds": {
+      "book": "그대로 제본한 책의 기본 표지와 책등",
+      "color": "특별 제본 · 표지 색",
+      "pattern": "특별 제본 · 표지와 책등 무늬",
+      "deco": "특별 제본 · 책등 장식",
+      "detail": "특별 제본 · 덧장식"
+    },
     "plainHint": "책을 다 필사하고 그대로 제본하면 도감에 남아요.",
     "designHint": "특별하게 제본하거나 책을 다시 꾸밀 때 이 디자인을 사용해 보세요.",
     "ingredients": "재료: {items}",
-    "places": { "workbench": "작업대", "hearth": "화덕", "press": "기름틀" },
+    "places": {
+      "workbench": "작업대",
+      "hearth": "화덕",
+      "press": "기름틀"
+    },
     "craftHint": "{place}에서 한 번 만들면 레시피가 도감에 남아요.",
     "learnHint": "{who}와 함께 배우면 도감에 남아요.",
     "dishRecipe": "{name} 요리법",
@@ -170,7 +205,13 @@
     "giveCrib": "아기 침대 건네기",
     "makeCrib": "아기 침대 만들어 주기",
     "bakerChild": "헤이즐의 자녀",
-    "growthStage": { "baby": "아기", "child": "어린이", "teen": "청소년", "adult": "어른", "elder": "노년" },
+    "growthStage": {
+      "baby": "아기",
+      "child": "어린이",
+      "teen": "청소년",
+      "adult": "어른",
+      "elder": "노년"
+    },
     "relations": "관계",
     "tree": "가계도",
     "unknown": "?",
@@ -180,7 +221,7 @@
     "ageSetting": "주민 나이",
     "ageOn": "나이 듦",
     "ageOff": "그대로",
-    "ageNote": "주민은 자율 생활 해금 후부터 나이가 들어요. 그대로로 둬도 아이는 어른까지 자라요.",
+    "ageNote": "주민은 자율 생활 해금 후부터 나이가 들어요. 그대로로 둬도 아이는 어른까지 자라요. 은퇴하는 이웃은 없어요.",
     "on": "켬",
     "off": "끔",
     "stage": {
@@ -239,5 +280,41 @@
   },
   "homeGrow": {
     "bagged": "자리가 맞지 않은 가구는 가방에 넣어 두었어요 · {items}"
+  },
+  "villageBook": {
+    "title": "마을 기록 책",
+    "none": "아직 적힌 일이 없어요.",
+    "day": "{day}일째",
+    "close": "덮기",
+    "open": "마을 기록 책 펴기",
+    "myWedding": "나와 {who}의 결혼 잔치가 광장에서 열렸다.",
+    "myKid": "우리 집 아이 {name}, 태어난 날.",
+    "allFeast": "스물일곱 권 잔치가 장터 모닥불 곁에서 열렸다.",
+    "left": "신약 남은 장 {n}장",
+    "gospelFeast": "복음서 방이 다 차서 장터 모닥불 곁에서 잔치가 열렸다."
+  },
+  "grandBirth": {
+    "title": "손주를 맞는 날",
+    "lead": "{parents}의 아기, 마을의 손주가 태어났어요. {kind}예요. 이름을 함께 지어 줄까요?",
+    "news": "마을에 손주가 태어났어요. 축하 소식이 돌아요."
+  },
+  "finale": {
+    "grandpaBench": "다 썼다지? 여기 앉게. 첫 장 쓰던 날 손이 떨리던 게 엊그제 같은데… 이 마을이 자네 덕에 한 권 한 권 채워졌네. 고맙네."
+  },
+  "library": {
+    "nextUnlock": "다음에 열리는 것: {name} · {n}장 남음"
+  },
+  "wedding": {
+    "today": "오늘 저녁 6시 반, 광장 모닥불에서 {whoAnd} 결혼 잔치가 열려요.",
+    "moved": "결혼 잔치 저녁을 놓쳐서 다음 장날({day}일째)로 미뤘어요.",
+    "supper": "{who}: 오늘 저녁엔 같이 먹어요. 일곱 시쯤 집에서 기다릴게요."
+  },
+  "ntRecap": {
+    "title": "스물일곱 권을 엮기까지",
+    "days": "마을에 온 지 {day}일째. 신약 260장을 모두 옮겨 적고 스물일곱 권을 서고에 꽂았어요.",
+    "pieces": "이웃들이 건네준 말씀 조각 {n}개가 모였어요.",
+    "friends": "가장 가까워진 이웃: {names}",
+    "next": "큰길 끝 표지 너머, 서른아홉 권의 터가 기다려요.",
+    "close": "고마워요"
   }
 }

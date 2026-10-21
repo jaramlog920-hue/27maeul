@@ -1,10 +1,11 @@
 // 세대교체 그림용 (순수 함수): 은퇴한 이웃 자리의 자녀 모습, 이웃 곁에 함께 있는 가족.
 import { withLookDefaults, type FullAvatar } from './avatar'
 import { bakerBabyAt, BAKER_BABY_ID, type GenPerson, type GenState } from './gen'
+import { fitGenderLook } from './gen-birth'
 
 /** 태어난 주민의 외형 — 부모 조합값 + 모습 + 이름 */
 export function genAvatar(p: GenPerson): FullAvatar {
-  const a = p.avatar ?? {}
+  const a = fitGenderLook(p.look ?? 'f', p.avatar ?? {})
   const pick = (k: string) => (Number.isInteger(a[k]) ? { [k]: a[k] } : {})
   return withLookDefaults({ look: p.look ?? 'f', name: p.name ?? '', ...pick('skin'), ...pick('hairFront'), ...pick('hairBack'), ...pick('top'), ...pick('bottom'), ...(p.hair ? { hairColor: p.hair } : {}) })
 }

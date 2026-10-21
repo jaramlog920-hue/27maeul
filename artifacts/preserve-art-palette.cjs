@@ -1,0 +1,2 @@
+const fs=require('fs');let p='scripts/export-newland-building-upgrades.mjs',s=fs.readFileSync(p,'utf8').replace('const rows=old.OLD_BUILDINGS[id][d].rows', 'const rows=buildings.completeBuildingArt(id,d).rows');fs.writeFileSync(p,s);
+p='src/render/newland-building-upgrades.test.ts';s=fs.readFileSync(p,'utf8').replace(/import \{ OLD_BUILDINGS \} from '.\/old-village-art'\r?\n/,'');fs.writeFileSync(p,s);

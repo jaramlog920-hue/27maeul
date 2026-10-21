@@ -2,9 +2,9 @@
 // 막내가 어린이(돕는 아이)가 되면 다음 아이를 가질 수 있다. 셋 다 배움터·함께 보내는 시간·진로·편지를 할 수 있어야 한다).
 // game.child = 지금 '함께하는 아이' (모든 아이 활동이 이 아이와), game.siblings = 나머지 아이들.
 // 함께할 아이를 바꾸면 아이별 표식(kidFlags)과 옷장 모습(wardrobe)을 맞바꾼다. 아침에 생기는 일(자라기·돕기·진로·편지)은 아이마다.
-import { childStage, newChild, type Child } from './child'
+import { childStage, newChild, nextName, type Child } from './child'
 import { featureAccess } from './feature-rules'
-import { safeHomeSpot, type GameState } from './game'
+import { childTile, safeHomeSpot, SCHOOL_SEAT, SCHOOL_UNTIL, type GameState } from './game'
 import { helperSpot } from './child'
 import type { GameContent, Tile } from './types'
 import { HOME_ENTRY } from './world'
@@ -19,7 +19,7 @@ export const allKids = (s: Pick<GameState, 'child' | 'siblings'>): Child[] => (s
 export type BabyBlock = 'married' | 'home' | 'full' | 'youngest' | 'waiting' | 'locked'
 
 /** 아이마다 따로인 표식 (자라는 장면·돕기·배움터·심부름·편지·방문 등) — 아이 이름 정하기·아이 갖기 표식은 집안 것 */
-export const isKidFlag = (key: string): boolean => /^(child(?!Naming)|kid|school|deskKid|babyCare|babySleepScene|lodging:playerChild)/.test(key)
+export const isKidFlag = (key: string): boolean => /^(child(?!Naming|Pet)|kid|school|deskKid|babyCare|babySleepScene|lodging:playerChild)/.test(key)
 
 /**
  * 함께하는 아이를 siblings[i]와 맞바꾼다 (아이별 표식·옷장 모습도 함께). 같은 i로 다시 부르면 원래대로 돌아온다
@@ -40,7 +40,11 @@ export function swapKid(s: GameState, i: number): GameState {
   void _f
   void _w
   const outKid: Child = { ...s.child, kidFlags: outFlags, ...(outLook ? { wardrobe: outLook as unknown as Record<string, unknown> } : {}) }
-  return { ...s, child: inKid, siblings: list.map((k, j) => (j === i ? outKid : k)), flags, looks }
+  // 주인 표시가 없는 옛 집 겸 일터는 '함께하는 아이' 몫으로 읽힌다 — 바꾸기 전에 지금 아이 이름으로 못 박는다 (2026-10-20 점검)
+  const builds = s.newland?.builds
+  const ownerless = builds?.some((b) => b.kind === 'kidWork' && !b.owner)
+  const newland = ownerless && s.newland ? { ...s.newland, builds: s.newland.builds.map((b) => (b.kind === 'kidWork' && !b.owner ? { ...b, owner: `me:${s.child!.born}` } : b)) } : s.newland
+  return { ...s, child: inKid, siblings: list.map((k, j) => (j === i ? outKid : k)), flags, looks, newland }
 }
 
 /** 함께할 아이를 고른다 (태어난 날로) */
@@ -95,7 +99,12 @@ export function siblingMorning(s: GameState, content: Pick<GameContent, 'neighbo
   baby = { ...baby, born: day }
   // 형제끼리 같은 이름은 피한다
   const taken = new Set(allKids(s).map((k) => k.name))
-  if (taken.has(baby.name)) baby = { ...baby, name: `${baby.name}${siblingsOf(s).length + 2}` }
+  // 겹치면 목록에서 아직 쓰지 않은 이름으로 ("루시3" 같은 이름이 나왔다 — 2026-10-21 점검), 다 쓰였으면 번호
+  if (taken.has(baby.name)) {
+    let n = baby.name
+    for (let i = 0; i < 40 && taken.has(n); i++) n = nextName({ name: n, look: baby.look })
+    baby = { ...baby, name: taken.has(n) ? `${baby.name}${siblingsOf(s).length + 2}` : n }
+  }
   const siblings = [...siblingsOf(s), baby]
   return { ...s, siblings, flags: { ...flags, siblingNaming: siblings.length }, scenes: [...s.scenes, 'siblingBorn'] }
 }
@@ -107,15 +116,39 @@ export function nameSibling(s: GameState, name: string): GameState {
   if (i < 0 || !list[i]) return s
   const flags = { ...s.flags }
   delete flags.siblingNaming
-  return { ...s, siblings: list.map((k, j) => (j === i ? { ...k, name: name.trim().slice(0, 8) || k.name } : k)), flags }
+  // 형제와 같은 이름이면 처음 정해 둔 이름 그대로 (집 안에서 두 아이를 구별할 수 있게)
+  const picked = name.trim().slice(0, 8)
+  const taken = new Set(allKids(s).filter((_, j) => j !== i + 1).map((k) => k.name))
+  const final = picked && !taken.has(picked) ? picked : list[i].name
+  return { ...s, siblings: list.map((k, j) => (j === i ? { ...k, name: final } : k)), flags }
 }
 
-/** 동생이 지금 있는 칸: 아기는 요람, 걷는 아이는 집 안, 돕는 아이·어른은 첫째처럼 마을을 다닌다 (한 칸씩 비켜서) */
-export function siblingTile(s: Pick<GameState, 'clock' | 'room'>, kid: Child, index: number): Tile {
+/** 비선택 아이도 자신의 등원 기록을 사용한다. */
+export function siblingAtSchool(s: Pick<GameState, 'clock'>, kid: Child): boolean {
+  return childStage(kid,s.clock.day) !== 'baby' && kid.kidFlags?.schoolDay === s.clock.day && s.clock.minute < SCHOOL_UNTIL
+}
+
+/** 비선택 아이의 등원·집 대기를 유지하고, 학교 자리는 선택 아이 옆으로 비킨다. */
+// 그림마다 불리고 길 찾기까지 하므로, 같은 분·같은 방이면 다시 세지 않는다
+let tileCache: { room: unknown; spaces: unknown; key: string; at: Tile }[] = []
+export function siblingTile(s: Pick<GameState, 'clock' | 'room'> & Partial<Pick<GameState,'player'|'spaces'|'romance'|'companion'>>, kid: Child, index: number): Tile {
+  const key = `${kid.born}|${index}|${kid.mode ?? ''}|${kid.left ? 1 : 0}|${s.clock.day}|${Math.floor(s.clock.minute)}|${kid.kidFlags?.schoolDay ?? ''}|${Math.round(s.player?.x ?? 0)},${Math.round(s.player?.y ?? 0)}|${Math.round(s.companion?.x ?? 0)},${Math.round(s.companion?.y ?? 0)}|${s.romance?.stage ?? ''}`
+  const hit = tileCache.find((c) => c.room === s.room && c.key === key)
+  if (hit && hit.spaces === s.spaces) return hit.at
+  const at = siblingTileNow(s, kid, index)
+  tileCache = [{ room: s.room, spaces: s.spaces, key, at }, ...tileCache.filter((c) => c.key !== key || c.room !== s.room).slice(0, 5)]
+  return at
+}
+function siblingTileNow(s: Pick<GameState, 'clock' | 'room'> & Partial<Pick<GameState,'player'|'spaces'|'romance'|'companion'>>, kid: Child, index: number): Tile {
   const st = childStage(kid, s.clock.day)
   const crib = s.room?.find((f) => f.item === 'homeCradle')
   const home = crib ? { x: crib.x, y: crib.y } : HOME_ENTRY
   if (st === 'baby') return home
+  if (siblingAtSchool(s,kid)) return { x:SCHOOL_SEAT.x+index+1, y:SCHOOL_SEAT.y }
+  if (kid.mode === 'home') {
+    const at=childTile({...s,child:kid,flags:kid.kidFlags??{},furnitureAuto:undefined,act:undefined,player:s.player??{...HOME_ENTRY,facing:'down',path:[],walkTime:0}})??home
+    return safeHomeSpot({x:at.x+index+1,y:at.y},s.room??[])
+  }
   if (st === 'toddler') {
     const hour = Math.floor(s.clock.minute / 60)
     const near = { x: home.x + ((hour + index) % 3) - 1, y: home.y - ((hour + index) % 2) }

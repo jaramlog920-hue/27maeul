@@ -1,4 +1,237 @@
 {
   "baselineFiles": 1486,
-  "changed": []
+  "changed": [
+    {
+      "path": "scripts/build-people.py",
+      "change": "modified"
+    },
+    {
+      "path": "src/audio/sound.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/content/life-text.json",
+      "change": "modified"
+    },
+    {
+      "path": "src/content/ot-catalog.test.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/content/people.json",
+      "change": "modified"
+    },
+    {
+      "path": "src/content/spouse-rooms.json",
+      "change": "modified"
+    },
+    {
+      "path": "src/content/text.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/all-feast.test.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/apothecary.test.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/club-affinity.test.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/club-round.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/clubs.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/cooking.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/copying.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/economy-prices.test.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/fragments.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/game.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/gen-homes.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/group-task.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/home-copy-fragment.test.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/more-scripture.test.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/newland-build.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/newland-life.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/newland-rooms.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/people.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/plans.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/review-probes.test.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/room.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/save.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/sell-stand.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/siblings.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/spaces.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/stall.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/trip-board.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/engine/villages.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/features/bag/Bag.tsx",
+      "change": "modified"
+    },
+    {
+      "path": "src/features/child/SchoolView.tsx",
+      "change": "modified"
+    },
+    {
+      "path": "src/features/clubs/ClubForm.tsx",
+      "change": "modified"
+    },
+    {
+      "path": "src/features/desk/CopyDesk.tsx",
+      "change": "modified"
+    },
+    {
+      "path": "src/features/desk/CopyPuzzle.tsx",
+      "change": "modified"
+    },
+    {
+      "path": "src/features/desk/Desk.tsx",
+      "change": "modified"
+    },
+    {
+      "path": "src/features/family/Family.tsx",
+      "change": "modified"
+    },
+    {
+      "path": "src/features/fest/FestSession.tsx",
+      "change": "modified"
+    },
+    {
+      "path": "src/features/journal/Journal.tsx",
+      "change": "modified"
+    },
+    {
+      "path": "src/features/library/ShelfDone.tsx",
+      "change": "modified"
+    },
+    {
+      "path": "src/features/newland/FacilityView.tsx",
+      "change": "modified"
+    },
+    {
+      "path": "src/features/play/ControlDeck.tsx",
+      "change": "modified"
+    },
+    {
+      "path": "src/features/play/EventSchedule.tsx",
+      "change": "modified"
+    },
+    {
+      "path": "src/features/play/GameCanvas.tsx",
+      "change": "modified"
+    },
+    {
+      "path": "src/features/play/Play.tsx",
+      "change": "modified"
+    },
+    {
+      "path": "src/features/ScreenBoundary.tsx",
+      "change": "modified"
+    },
+    {
+      "path": "src/features/talk/GenTalk.tsx",
+      "change": "modified"
+    },
+    {
+      "path": "src/features/talk/TradeBoard.tsx",
+      "change": "modified"
+    },
+    {
+      "path": "src/features/trip/TripScene.tsx",
+      "change": "modified"
+    },
+    {
+      "path": "src/render/copy-furniture.test.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/render/renderer.ts",
+      "change": "modified"
+    },
+    {
+      "path": "src/store/game-store.ts",
+      "change": "modified"
+    },
+    {
+      "path": "vite.config.ts",
+      "change": "modified"
+    }
+  ]
 }

@@ -1,10 +1,12 @@
-import { dreamText } from './dream-text'
+import { dreamText, npcDream } from './dream-text'
 export { dreamText } from './dream-text'
 // 새 터 시설 창 (계획 18 남은 것, 사용자 결정 ⑥): 손님집 · 기억 정원 · 공동 마당 · 주민의 꿈터.
 // 문 앞(또는 마당 안)에 서면 열린다. 글은 짧게 — 막힌 까닭은 단추를 누를 때 알림 한 줄로.
+import { weatherOf } from '../../engine/calendar'
+import { genPersona, kidPersona, personaLine, residentJob } from '../../engine/persona'
 import { useEffect, useRef, useState } from 'react'
 import { CONTENT, GOD_KEYWORDS, neighborById } from '../../content/catalog'
-import { fill, itemList, itemName, T, withAnd, withObject, withSubject } from '../../content/text'
+import { callName, fill, itemList, itemName, JOB_NAME, T, withAnd, withObject, withSubject } from '../../content/text'
 import { newsLine } from '../../content/gen-text'
 import { canGatherYard, gatherYard, mendQuarrelWith, yardFriends, type GameState } from '../../engine/game'
 import { kidVisiting, talkKidVisit, dreamKey, roomOwner, canInviteGuest, markerShown, toggleMarker, canMendQuarrel, keywordRecall, quarrelPair, visitKidWork, DREAMER, GUESTS, guestNow, inviteGuest, memoriesOf, pickDream, settledAt, settledLine, talkGuest, visitDream, kidWorkBuildAt, type DreamStage, type FacilityKind, type GuestId, type Memory } from '../../engine/newland-life'
@@ -13,7 +15,7 @@ import type { Household } from '../../engine/gen'
 import { t } from '../../shared/i18n'
 import type { Tile } from '../../engine/types'
 import { partnerName, useGame } from '../../store/game-store'
-import { ownerName } from '../../engine/kid-work'
+import { ownerJob, ownerName, visitNpcDream } from '../../engine/kid-work'
 import { seenStories, storyBook, useSceneSay } from '../scene/SceneReplay'
 import { SCENES } from '../../content/text'
 
@@ -152,7 +154,25 @@ function KidWork({ owner }: { owner?: string }) {
     const daily = L.kidWork.lines[g.clock.day % L.kidWork.lines.length]
     // 다른 아이·이웃 자녀의 일터는 구경만 — 들르기(접시·횟수)는 함께하는 아이 자기 일터에서만 (2026-10-18 감사, Codex E-02)
     const mine = !owner || owner === (g.child ? `me:${g.child.born}` : '')
-    if (!mine) return setLine(daily)
+    if (!mine) {
+      // 남의 일터는 그 사람 말로 (2026-10-21): 이웃의 꿈터는 꿈터 말, 주민 자녀는 성격대로, 다른 우리 아이도 성격대로
+      const j = ownerJob(g, owner)
+      const ctx = { day: g.clock.day, minute: g.clock.minute, weather: weatherOf(g.clock.day), player: g.avatar?.name?.trim() || '필사가', parent: g.avatar?.look === 'm' ? '아빠' : '엄마', job: j ? JOB_NAME[j] : undefined, salt: owner ?? '' }
+      // 이웃의 꿈터: 그 이웃만의 말 (처음 들른 날은 문 연 날의 말), 이레마다 그 이웃이 늘 건네던 것 하나 (2026-10-21 점검)
+      if (owner?.startsWith('npc:')) {
+        const npc = owner.slice(4)
+        const r = visitNpcDream(g, npc)
+        if (r.state !== g) commit(r.state)
+        const mine = npcDream(npc)
+        if (r.gift) useGame.getState().say(fill(L.kidWork.dreamGift, { whoSubj: withSubject(neighborById(npc)?.role ?? ''), itemsObj: withObject(itemList(r.gift)) }), 3600)
+        const pool = mine?.lines ?? L.kidWork.dreamLines
+        return setLine(callName(r.first && mine ? mine.open : pool[(g.clock.day + [...owner].reduce((n, ch) => n + ch.charCodeAt(0), 0)) % pool.length], g.avatar?.name))
+      }
+      const kid = owner?.startsWith('me:') ? [...(g.siblings ?? [])].find((k) => `me:${k.born}` === owner) : undefined
+      if (kid) return setLine(personaLine(kidPersona(kid, g.clock.day), 'grown', ctx))
+      const resident = owner ? genPersona(g.gen, owner) : null
+      return setLine(resident ? personaLine(resident, 'villager', ctx) : daily)
+    }
     const r = visitKidWork(g)
     if (!r) return setLine(L.kidWork.again)
     commit(r.state)
@@ -165,7 +185,7 @@ function KidWork({ owner }: { owner?: string }) {
 }
 
 /** 가구 사람들의 이름 (생성 인물은 이름, 이웃은 역할 이름) */
-function familyNames(game: GameState, h: Household): string {
+export function familyNames(game: GameState, h: Household): string {
   return h.members.map((id) => game.gen?.persons[id]?.name ?? neighborById(id)?.role ?? '').filter(Boolean).join('·')
 }
 
@@ -187,6 +207,7 @@ function EmptyHome({ at }: { at?: Tile }) {
               onClick={() => {
                 const before = useGame.getState().game
                 const next = giveFamilyHome(before, h.id, home, roomOwner)
+                if (next === before) { useGame.getState().closeModal(); return }
                 commit(next)
                 const received = h.members.flatMap(id => {
                   const gift = !before.flags[`moveGift:${id}`] ? next.moveInGifts?.[id] : undefined
@@ -226,8 +247,16 @@ function Family({ at }: { at?: Tile }) {
       </>
     )
   }
+  // 마을에서 태어난 가족이면 그 사람 성격대로, 아니면 가구마다 어긋나게 (여덟 집이 같은 날 같은 말을 했다 — 2026-10-21 점검)
+  const born = f.household.members.find((id) => game.gen?.persons[id]?.origin === 'born')
+  const persona = born ? genPersona(game.gen, born) : null
+  if (persona && born) {
+    const j = residentJob(game.gen, born)
+    return <p className="talk-line">{personaLine(persona, 'villager', { day: game.clock.day, minute: game.clock.minute, weather: weatherOf(game.clock.day), player: game.avatar?.name?.trim() || '필사가', job: j ? JOB_NAME[j] : undefined, salt: born })}</p>
+  }
   const lines = [t('familyHome.line1'), t('familyHome.line2'), t('familyHome.line3')]
-  return <p className="talk-line">{lines[game.clock.day % lines.length]}</p>
+  const no = Number(/^h-(\d+)$/.exec(f.household.id)?.[1] ?? 0)
+  return <p className="talk-line">{lines[(game.clock.day + no) % lines.length]}</p>
 }
 
 /** 기억 정원 › 장면 도감 (2026-10-14 사용자: 본 도트 장면을 앨범 말고 여기서, 못 본 것은 흐리게) */
@@ -383,7 +412,7 @@ export function FacilityView({ id, at }: { id: FacilityKind; at?: Tile }) {
   const who = id === 'settled' ? settledAt(game, here) : null
   const kidBuild = id === 'kidWork' ? kidWorkBuildAt(game, here) : null
   const title =
-    who ? fill(L.settledTitle, { who: guestText(who).name }) : id === 'family' ? t('familyHome.title', { names: familyHereNames(game, here) }) : id === 'emptyHome' ? t('familyHome.emptyTitle') : id === 'kidWork' ? fill(L.kidWork.title, { name: ownerName(game, kidBuild?.owner) }) : id === 'guest' ? L.guestTitle : id === 'memorial' ? L.memorialTitle : id === 'courtyard' ? L.yardTitle : id === 'gallery' ? fill(dreamText('tilly').title, { who: neighborById('tilly')?.role ?? '' }) : fill(L.dream.title, { who: neighborById(DREAMER)?.role ?? '' })
+    who ? fill(L.settledTitle, { who: guestText(who).name }) : id === 'family' ? t('familyHome.title', { names: familyHereNames(game, here) }) : id === 'emptyHome' ? t('familyHome.emptyTitle') : id === 'kidWork' ? fill(kidBuild?.owner?.startsWith('npc:') ? L.kidWork.dreamLabel : L.kidWork.title, { name: ownerName(game, kidBuild?.owner) }) : id === 'guest' ? L.guestTitle : id === 'memorial' ? L.memorialTitle : id === 'courtyard' ? L.yardTitle : id === 'gallery' ? fill(dreamText('tilly').title, { who: neighborById('tilly')?.role ?? '' }) : fill(L.dream.title, { who: neighborById(DREAMER)?.role ?? '' })
   return (
     <div className="dialog facility" role="dialog" aria-label={title}>
       <h2>{title}</h2>

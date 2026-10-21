@@ -1,0 +1,22 @@
+{
+  "trace": [
+    {
+      "values": [
+        "php",
+        "jn"
+      ],
+      "yields": [
+        "php",
+        "jn"
+      ],
+      "stack": "Error: \n    at new TraceSet (C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/qa/comprehensive-audit-20261019-round2/root/modal-books.audit.test.tsx:14:71)\n    at ModalLayer (C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/features/ModalLayer.tsx:268:52)\n    at Object.react_stack_bottom_frame (C:\\Users\\wn410\\OneDrive\\Desktop\\cloooo\\twenty-seven\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:28571:20)\n    at renderWithHooks (C:\\Users\\wn410\\OneDrive\\Desktop\\cloooo\\twenty-seven\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:8030:22)\n    at updateFunctionComponent (C:\\Users\\wn410\\OneDrive\\Desktop\\cloooo\\twenty-seven\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:10569:19)\n    at beginWork (C:\\Users\\wn410\\OneDrive\\Desktop\\cloooo\\twenty-seven\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:12205:18)\n    at runWithFiberInDEV (C:\\Users\\wn410\\OneDrive\\Desktop\\cloooo\\twenty-seven\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:1048:13)\n    at performUnitOfWork (C:\\Users\\wn410\\OneDrive\\Desktop\\cloooo\\twenty-seven\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:19176:22)\n    at workLoopSync (C:\\Users\\wn410\\OneDrive\\Desktop\\cloooo\\twenty-seven\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:19004:41)\n    at renderRootSync (C:\\Users\\wn410\\OneDrive\\Desktop\\cloooo\\twenty-seven\\node_modules\\react-dom\\cjs\\react-dom-client.development.js:18985:11)"
+    }
+  ],
+  "observed": [
+    "php"
+  ],
+  "collected": [
+    "php-004",
+    "jn-001-001"
+  ]
+}

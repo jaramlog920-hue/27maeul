@@ -49,6 +49,12 @@ export function fullHeartBond(r: Romance, day: number): boolean {
     (r.stage === 'dating' && r.since !== null && day - r.since >= FULL_HEART_DATING_DAYS &&
       (r.dates ?? 0) >= FULL_HEART_DATES && r.storyRead === true)
 }
+/** 10하트까지 얼마나 왔는지 한 줄 (2026-10-21 점검: 같은 안내만 되풀이돼 진행이 안 보였다) */
+export function bondProgress(r: Romance, day: number): string | null {
+  if (r.stage !== 'dating' || r.since === null) return null
+  const days = Math.min(FULL_HEART_DATING_DAYS, Math.max(0, day - r.since))
+  return `연애 ${days}/${FULL_HEART_DATING_DAYS}일 · 데이트 ${Math.min(r.dates ?? 0, FULL_HEART_DATES)}/${FULL_HEART_DATES}번 · 연인 이야기 ${r.storyRead ? '마침' : '아직'}`
+}
 /** 들꽃 다발·약속의 끈을 건네면 오르는 마음 점수 */
 export const BOUQUET_GAIN = 5
 export const CORD_GAIN = 5

@@ -1,4 +1,5 @@
 import { CONTENT } from '../content/catalog'
+import { residentJob } from './persona'
 import { ADULT_AT, newChild } from './child'
 import type { GameState } from './game'
 import { establishedGame } from './growth-test-support'
@@ -18,7 +19,8 @@ describe('집 겸 일터 주인 (2026-10-14)', () => {
     expect(ownerJob(built, `me:${s.siblings![0].born}`)).toBe('painter')
     expect(ownerName(built, `me:${s.siblings![0].born}`)).toBe('두리')
   })
-  it('이웃이 낳은 아이도 어른이 되었고 부모와 마음이 다섯 이상이면 — 부모의 일을 잇는다', () => {
+  // 2026-10-21: 부모 일을 잇지 않고 스스로 찾은 일 (persona residentJob)
+  it('이웃이 낳은 아이도 어른이 되었고 부모와 마음이 다섯 이상이면 — 스스로 찾은 일로', () => {
     const base = establishedGame(CONTENT, 300)
     const gen = { persons: { baker: { id: 'baker', origin: 'fixed', npc: 'baker', born: null, stage: 'adult', parents: [], spouse: null, household: null }, 'g-0001': { id: 'g-0001', origin: 'born', born: 10, stage: 'adult', name: '로완', parents: ['baker'], spouse: null, household: null } } } as never
     const far: GameState = { ...base, gen, hearts: { ...base.hearts, baker: 0 } }
@@ -26,6 +28,7 @@ describe('집 겸 일터 주인 (2026-10-14)', () => {
     const close: GameState = { ...far, hearts: { ...far.hearts, baker: POINTS_PER_HEART * 5 } }
     const o = kidWorkOwners(close).find((x) => x.owner === 'g-0001')!
     expect(o.name).toBe('로완')
-    expect(o.job).toBe('cook')
+    expect(o.job).toBe(residentJob(close.gen, 'g-0001'))
+    expect(o.job).not.toBeNull()
   })
 })

@@ -33,10 +33,15 @@ export const OT_PIECE_DAY_FLAG = 'otPieceDay'
 /** 날 씨앗: 같은 날·같은 모은 조각이면 늘 같은 조각 (불러와도 같다) */
 export const otPieceSeed = (day: number): number => day * 6151 + 29
 
-/** 아직 없는 구약 조각 중 무작위 하나 (날 씨앗). 다 모았으면 null */
-export function drawOtPiece(collected: readonly string[], day: number): string | null {
+/**
+ * 아직 없는 구약 조각 중 무작위 하나 (날 씨앗). 다 모았으면 null.
+ * prefer: 이미 옮겨 적은 장의 조각 id — 있으면 그 가운데서 먼저 (2026-10-21 점검: 쓰고 있는 책과 상관없이 와서 따로 놀았다)
+ */
+export function drawOtPiece(collected: readonly string[], day: number, prefer: readonly string[] = []): string | null {
   const got = new Set(collected)
-  const left = OT_PIECES.filter((p) => !got.has(p.id))
+  const want = new Set(prefer)
+  const near = OT_PIECES.filter((p) => !got.has(p.id) && want.has(p.id))
+  const left = near.length ? near : OT_PIECES.filter((p) => !got.has(p.id))
   if (!left.length) return null
   return left[Math.min(left.length - 1, Math.floor(mulberry32(otPieceSeed(day))() * left.length))].id
 }

@@ -62,8 +62,7 @@ it('나이 그대로인 동안 견습 은퇴 시계도 멈추고 다시 켜자�
   s = setResidentAging(s, false)
   for (let d = 101; d <= 400; d++) s = morning(s, d)
   s = setResidentAging(restore(s), true)
-  for (let d = 401; d <= 431; d++) s = morning(s, d)
+  for (let d = 401; d <= 440; d++) s = morning(s, d)
+  // 2026-10-21: 은퇴를 없앴다 — 다시 켜도 헤이즐은 은퇴하지 않는다
   expect(s.gen!.retired?.baker).toBeUndefined()
-  s = morning(s, 432)
-  expect(s.gen!.retired?.baker?.heir).toBe(BAKER_BABY_ID)
 })

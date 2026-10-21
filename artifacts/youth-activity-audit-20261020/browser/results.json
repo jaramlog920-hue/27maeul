@@ -1,0 +1,172 @@
+{
+  "results": [
+    {
+      "age": 41,
+      "act": "make",
+      "mode": "full",
+      "got": {
+        "woodToy": 1
+      },
+      "id": "woodToy",
+      "claimed": 1,
+      "bag": 0,
+      "chest": 0,
+      "minute": 640,
+      "acts": 1,
+      "kidMade": 1,
+      "restoredBag": 0,
+      "restoredChest": 0,
+      "text": "🧵 같이 만들기\n\n다 만든 것을 들고 검사아이가 어디에 둘지 방을 둘러보았다.\n\n검사아이의 손재주가 조금 자랐어요\n함께 만든 것 · 나무 말 1 (방 꾸미기에 놓을 수 있어요)\n검사아이와 조금 더 가까워졌어요\n가족 앨범에 한 장이 남아요\n다른 것도 하기\n닫기",
+      "file": "41-make-full.png"
+    },
+    {
+      "age": 41,
+      "act": "cook",
+      "mode": "full",
+      "got": {
+        "bread": 1
+      },
+      "id": "bread",
+      "claimed": 1,
+      "bag": 0,
+      "chest": 0,
+      "minute": 640,
+      "acts": 1,
+      "restoredBag": 0,
+      "restoredChest": 0,
+      "text": "🥖 같이 요리하기\n\n검사아이가 다 구운 빵을 호호 불며 제일 먼저 한 입 먹었다.\n\n검사아이의 손재주가 조금 자랐어요\n구운 빵 · 빵 1\n검사아이와 조금 더 가까워졌어요\n다른 것도 하기\n닫기",
+      "file": "41-cook-full.png"
+    },
+    {
+      "age": 41,
+      "act": "walk",
+      "mode": "full",
+      "got": {
+        "herb": 1
+      },
+      "id": "herb",
+      "claimed": 1,
+      "bag": 0,
+      "chest": 0,
+      "minute": 640,
+      "acts": 1,
+      "restoredBag": 0,
+      "restoredChest": 0,
+      "text": "🌿 산책하기\n\n검사아이와 손을 잡고 마을 길을 천천히 걸었다.\n\n검사아이의 근력이 조금 자랐어요\n길에서 주운 것 · 향초 1\n검사아이와 조금 더 가까워졌어요\n가족 앨범에 한 장이 남아요\n다른 것도 하기\n닫기",
+      "file": "41-walk-full.png"
+    },
+    {
+      "age": 42,
+      "act": "make",
+      "mode": "full",
+      "got": {
+        "woodToy": 1
+      },
+      "id": "woodToy",
+      "claimed": 1,
+      "bag": 0,
+      "chest": 0,
+      "minute": 640,
+      "acts": 1,
+      "kidMade": 1,
+      "restoredBag": 0,
+      "restoredChest": 0,
+      "text": "🧵 같이 만들기\n\n다 만든 것을 들고 검사아이가 어디에 둘지 방을 둘러보았다.\n\n검사아이의 손재주가 조금 자랐어요\n함께 만든 것 · 나무 말 1 (방 꾸미기에 놓을 수 있어요)\n검사아이와 조금 더 가까워졌어요\n가족 앨범에 한 장이 남아요\n다른 것도 하기\n닫기",
+      "file": "42-make-full.png"
+    },
+    {
+      "age": 42,
+      "act": "cook",
+      "mode": "full",
+      "got": {
+        "bread": 1
+      },
+      "id": "bread",
+      "claimed": 1,
+      "bag": 0,
+      "chest": 0,
+      "minute": 640,
+      "acts": 1,
+      "restoredBag": 0,
+      "restoredChest": 0,
+      "text": "🥖 같이 요리하기\n\n검사아이가 다 구운 빵을 호호 불며 제일 먼저 한 입 먹었다.\n\n검사아이의 손재주가 조금 자랐어요\n구운 빵 · 빵 1\n검사아이와 조금 더 가까워졌어요\n다른 것도 하기\n닫기",
+      "file": "42-cook-full.png"
+    },
+    {
+      "age": 42,
+      "act": "walk",
+      "mode": "full",
+      "got": {
+        "herb": 1
+      },
+      "id": "herb",
+      "claimed": 1,
+      "bag": 0,
+      "chest": 0,
+      "minute": 640,
+      "acts": 1,
+      "restoredBag": 0,
+      "restoredChest": 0,
+      "text": "🌿 산책하기\n\n검사아이와 손을 잡고 마을 길을 천천히 걸었다.\n\n검사아이의 근력이 조금 자랐어요\n길에서 주운 것 · 향초 1\n검사아이와 조금 더 가까워졌어요\n가족 앨범에 한 장이 남아요\n다른 것도 하기\n닫기",
+      "file": "42-walk-full.png"
+    },
+    {
+      "age": 41,
+      "act": "make",
+      "mode": "free",
+      "got": {
+        "woodToy": 1
+      },
+      "id": "woodToy",
+      "claimed": 1,
+      "bag": 1,
+      "chest": 0,
+      "minute": 640,
+      "acts": 1,
+      "kidMade": 1,
+      "restoredBag": 1,
+      "restoredChest": 0,
+      "text": "🧵 같이 만들기\n\n다 만든 것을 들고 검사아이가 어디에 둘지 방을 둘러보았다.\n\n검사아이의 손재주가 조금 자랐어요\n함께 만든 것 · 나무 말 1 (방 꾸미기에 놓을 수 있어요)\n검사아이와 조금 더 가까워졌어요\n가족 앨범에 한 장이 남아요\n다른 것도 하기\n닫기",
+      "file": "41-make-free.png"
+    },
+    {
+      "age": 42,
+      "act": "make",
+      "mode": "chest",
+      "got": {
+        "woodToy": 1
+      },
+      "id": "woodToy",
+      "claimed": 1,
+      "bag": 0,
+      "chest": 1,
+      "minute": 640,
+      "acts": 1,
+      "kidMade": 1,
+      "restoredBag": 0,
+      "restoredChest": 1,
+      "text": "🧵 같이 만들기\n\n다 만든 것을 들고 검사아이가 어디에 둘지 방을 둘러보았다.\n\n검사아이의 손재주가 조금 자랐어요\n함께 만든 것 · 나무 말 1 (방 꾸미기에 놓을 수 있어요)\n검사아이와 조금 더 가까워졌어요\n가족 앨범에 한 장이 남아요\n다른 것도 하기\n닫기",
+      "file": "42-make-chest.png"
+    },
+    {
+      "age": 42,
+      "act": "make",
+      "mode": "fullChest",
+      "got": {
+        "woodToy": 1
+      },
+      "id": "woodToy",
+      "claimed": 1,
+      "bag": 0,
+      "chest": 30,
+      "minute": 640,
+      "acts": 1,
+      "kidMade": 1,
+      "restoredBag": 0,
+      "restoredChest": 30,
+      "text": "🧵 같이 만들기\n\n다 만든 것을 들고 검사아이가 어디에 둘지 방을 둘러보았다.\n\n검사아이의 손재주가 조금 자랐어요\n함께 만든 것 · 나무 말 1 (방 꾸미기에 놓을 수 있어요)\n검사아이와 조금 더 가까워졌어요\n가족 앨범에 한 장이 남아요\n다른 것도 하기\n닫기",
+      "file": "42-make-fullChest.png"
+    }
+  ],
+  "errors": []
+}

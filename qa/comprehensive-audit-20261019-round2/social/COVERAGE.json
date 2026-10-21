@@ -1,0 +1,1441 @@
+[
+  {
+    "path": "src/engine/autonomy.ts",
+    "group": "engine",
+    "lines": 80,
+    "sha256": "37FA5122487B64F3C5205FF6BA4438CEA278CBEA24E3D76679512C8EF6B091DD",
+    "mtimeUtc": "2026-10-15T11:21:23.934Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/avatar.ts",
+    "group": "engine",
+    "lines": 146,
+    "sha256": "41B9E3AE4F8AB00375AF75A0976672AEA6E3C98324913FB3D111E6525AB58865",
+    "mtimeUtc": "2026-10-18T17:25:21.386Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "targeted production function/store path in boundaries.audit.ts; not exhaustive",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/baker-baby.ts",
+    "group": "engine",
+    "lines": 21,
+    "sha256": "F2E1D27C3EFF7AA1E721E978450201EEF452AEC0FFC9F582587D944CF1670000",
+    "mtimeUtc": "2026-10-10T08:23:54.592Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/bonds.ts",
+    "group": "engine",
+    "lines": 198,
+    "sha256": "1235F019A0E210EBF97B500344FD58E2CC5E328B6DC877B752921B38D1DC3041",
+    "mtimeUtc": "2026-10-13T06:07:11.216Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/calendar.ts",
+    "group": "engine",
+    "lines": 95,
+    "sha256": "C0A2172EFBFE7B962281FB76675378D74D12F35FAE917465FD99B2F5A3C820D7",
+    "mtimeUtc": "2026-10-04T13:15:09.015Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/child.ts",
+    "group": "engine",
+    "lines": 261,
+    "sha256": "F129473C931BFE4D6899DC207A9612A6EDAAFE52C283D838FB4659A350C9CC0D",
+    "mtimeUtc": "2026-10-14T13:04:18.357Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "targeted production function/store path in boundaries.audit.ts; not exhaustive",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/clock.ts",
+    "group": "engine",
+    "lines": 64,
+    "sha256": "769B08174C5349F7E64D2EB353BAE01D07B9E64D79F335F1188485B13ACFD95B",
+    "mtimeUtc": "2026-10-04T06:29:13.329Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/club-extras.ts",
+    "group": "engine",
+    "lines": 53,
+    "sha256": "C71C235DE06455EE72274F6494B7FECBB3B9AFC8DF12D48C4046DC8A4C7D70F2",
+    "mtimeUtc": "2026-10-10T04:37:56.766Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/club-life.ts",
+    "group": "engine",
+    "lines": 85,
+    "sha256": "E02A8B9B3983F9C3C9DA31D60FD0974EB723AFE27DAD2A2E0F5C942ECD2F068E",
+    "mtimeUtc": "2026-10-09T09:28:49.385Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/club-round.ts",
+    "group": "engine",
+    "lines": 108,
+    "sha256": "2CC750B8927C84F5440F9A6F6C0F51F9FBE3B72D361ABF2AC8919E75E9CB5407",
+    "mtimeUtc": "2026-10-18T13:48:45.972Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "targeted production function/store path in boundaries.audit.ts; not exhaustive",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/clubs.ts",
+    "group": "engine",
+    "lines": 190,
+    "sha256": "28B890E24001F984A1904A8AA9257FC40A6FC8FA94F0D463D8843D5E31C4AA57",
+    "mtimeUtc": "2026-10-18T13:35:47.207Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/companion.ts",
+    "group": "engine",
+    "lines": 296,
+    "sha256": "0FD69B7497DBB937289B94F4126BB3AEE3671AE414650B54545B8F5F8E32570B",
+    "mtimeUtc": "2026-10-14T14:45:25.119Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/event-scene.ts",
+    "group": "engine",
+    "lines": 385,
+    "sha256": "4375508258B75220D763837AEF5FA81ACDBE758FA490739B5ABBB41F99FDDFDB",
+    "mtimeUtc": "2026-10-13T21:42:41.049Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/events.ts",
+    "group": "engine",
+    "lines": 157,
+    "sha256": "23EE28452EAD7F54BAB9EE88C332187938F5E1651778FE6C678A8B53AA91CC7A",
+    "mtimeUtc": "2026-10-13T06:51:55.859Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "targeted production function/store path in boundaries.audit.ts; not exhaustive",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/family-days.ts",
+    "group": "engine",
+    "lines": 53,
+    "sha256": "6A3EA1F0D311FF4077C90459971EC16D097EBB8AD41AB51D5577F76C2AFFE566",
+    "mtimeUtc": "2026-10-05T23:39:04.378Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "targeted production function/store path in boundaries.audit.ts; not exhaustive",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/family-furniture.ts",
+    "group": "engine",
+    "lines": 38,
+    "sha256": "88EA6E42636C56E9FB31C4F95756781DE90D27B244F3E4F0944D3F14813747BA",
+    "mtimeUtc": "2026-10-14T22:11:14.376Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/family-memory.ts",
+    "group": "engine",
+    "lines": 173,
+    "sha256": "A6733D8CABAC18D92D0268F7C873FF4346A08EBB0F3CD3F7B5288B5B5703B5A8",
+    "mtimeUtc": "2026-10-11T13:25:45.278Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/family-scenes.ts",
+    "group": "engine",
+    "lines": 26,
+    "sha256": "7BB83002C58BD4A8C6408C2E4CBCC2167C969CDA64C3650082EC2EAECD8FCDE4",
+    "mtimeUtc": "2026-10-13T02:22:33.911Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/family-tree.ts",
+    "group": "engine",
+    "lines": 130,
+    "sha256": "39426897E87458EEF95B5C4EA9385E168713CA5C04EC0AFF51A0F65F5603D828",
+    "mtimeUtc": "2026-10-13T12:13:12.630Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/family.ts",
+    "group": "engine",
+    "lines": 322,
+    "sha256": "170851E103A081B63ABB9853DFF36723B92604575D10E65A90F4B3564E369FC9",
+    "mtimeUtc": "2026-10-13T02:39:31.985Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/gen-age.ts",
+    "group": "engine",
+    "lines": 9,
+    "sha256": "698936C60162626442910E3B013EC15091267323039D284A98ED2985F2D33BB0",
+    "mtimeUtc": "2026-10-08T19:11:24.190Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/gen-birth.ts",
+    "group": "engine",
+    "lines": 117,
+    "sha256": "097A0ADF08238489D509E3994D7896AF3FBF6196B6716E8712BC01C5D3CA66A8",
+    "mtimeUtc": "2026-10-13T02:09:50.543Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "targeted production function/store path in boundaries.audit.ts; not exhaustive",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/gen-config.ts",
+    "group": "engine",
+    "lines": 71,
+    "sha256": "8D971EFF5ACE498BDB31DE816876D9A2FE0D835ABC0428695014A8C5C85F99FE",
+    "mtimeUtc": "2026-10-13T02:09:50.541Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/gen-growth.ts",
+    "group": "engine",
+    "lines": 121,
+    "sha256": "FA4645F07B53EC3AFCED7FA4A82E72EE18B80F97CE6EDA5538FB66F9734C5B84",
+    "mtimeUtc": "2026-10-17T19:57:17.526Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "targeted production function/store path in boundaries.audit.ts; not exhaustive",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/gen-homes.ts",
+    "group": "engine",
+    "lines": 152,
+    "sha256": "0A51D7A2D1B1BBB44E9B87AD1B63FEBD8376322B5D7295B6224D2D1DDD675C83",
+    "mtimeUtc": "2026-10-18T18:15:54.512Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "targeted production function/store path in boundaries.audit.ts; not exhaustive",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/gen-kin.ts",
+    "group": "engine",
+    "lines": 111,
+    "sha256": "4794B4690EB992688A606474DE66F38FC89618770AA2A1AC45B892D17659B844",
+    "mtimeUtc": "2026-10-06T19:26:10.355Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/gen-looks.ts",
+    "group": "engine",
+    "lines": 65,
+    "sha256": "AACF3072C22BC770103FE2CFA3580BA0DDD224D80C9730E07F2A9666C636FD43",
+    "mtimeUtc": "2026-10-18T17:06:32.198Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "targeted production function/store path in boundaries.audit.ts; not exhaustive",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/gen-marriage.ts",
+    "group": "engine",
+    "lines": 174,
+    "sha256": "C5DCB48E91A04EF55ACA1BCD78962A6010C0D8C768A5F633C20EB41C91193975",
+    "mtimeUtc": "2026-10-10T02:28:43.399Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "targeted production function/store path in boundaries.audit.ts; not exhaustive",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/gen-relations.ts",
+    "group": "engine",
+    "lines": 94,
+    "sha256": "8D704A9C14AC9997245B2D1B220B9FBBA311A2A7D31E8BF48F1E94B3A46BEFE9",
+    "mtimeUtc": "2026-10-07T07:34:01.436Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/gen-settle.ts",
+    "group": "engine",
+    "lines": 174,
+    "sha256": "D755BDE5F479CCD0F1FDA30BEA4CF7A96414FE115B742CCD6EBA5F1E4159B232",
+    "mtimeUtc": "2026-10-17T19:55:34.753Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "targeted production function/store path in boundaries.audit.ts; not exhaustive",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/gen.ts",
+    "group": "engine",
+    "lines": 574,
+    "sha256": "0A8ADA2917441B1F39F76F46F1EB1FC93F41D46DC2BC856B9F3928C67FB27FA9",
+    "mtimeUtc": "2026-10-17T19:57:17.525Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "targeted production function/store path in boundaries.audit.ts; not exhaustive",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/hearts.ts",
+    "group": "engine",
+    "lines": 34,
+    "sha256": "C412C195F3B3D7DC723FC54B9F70310C8CFC3CC31C5AD016DB72B81F8E311B6F",
+    "mtimeUtc": "2026-10-13T06:51:55.859Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/inn-guests.ts",
+    "group": "engine",
+    "lines": 251,
+    "sha256": "BC77E1F097C15AF49A113E144657186DF51AAA2ADD2E45BAA4989B5F7241ACE3",
+    "mtimeUtc": "2026-10-12T10:25:26.871Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/living-moments.ts",
+    "group": "engine",
+    "lines": 27,
+    "sha256": "4312CE0798CC925C70881F65195C4CD774636AB79BFEA45D714FEF3882E5A6AE",
+    "mtimeUtc": "2026-10-13T07:00:24.802Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/meet.ts",
+    "group": "engine",
+    "lines": 99,
+    "sha256": "BACA62D73B28BBC5BCD8E097611C2112BCCEE61100E26BCE72E61BBC400D75C1",
+    "mtimeUtc": "2026-10-15T11:25:09.988Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/movement.ts",
+    "group": "engine",
+    "lines": 124,
+    "sha256": "488088E13EA13AE21C874B0627F2DC1E2820F82E71D484B4D7CD6919B3791067",
+    "mtimeUtc": "2026-10-16T23:52:28.047Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/neighbor-moments.ts",
+    "group": "engine",
+    "lines": 74,
+    "sha256": "72AA3A8D622F7393D0D7BDC09DBCBDDC4F435A696E07C8E3168B47BE1823939A",
+    "mtimeUtc": "2026-10-11T16:04:28.367Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/neighbors.ts",
+    "group": "engine",
+    "lines": 159,
+    "sha256": "4EC698A2E797A7DE8F0917035401A04EE79DE1BE2EE8AB24F4A7C4CAB94EF1B2",
+    "mtimeUtc": "2026-10-17T00:46:22.290Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/news.ts",
+    "group": "engine",
+    "lines": 154,
+    "sha256": "47D0615CB28A94A17A7385DD625AB55E794644590B3774ABEC82E7AA73FF34A6",
+    "mtimeUtc": "2026-10-11T21:01:32.343Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/night-doors.ts",
+    "group": "engine",
+    "lines": 40,
+    "sha256": "0F3142B89440C55950A10A38527F8AD09907ECA47E22E019E02C7962952AB240",
+    "mtimeUtc": "2026-10-12T15:40:15.424Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/npc-affinity.ts",
+    "group": "engine",
+    "lines": 8,
+    "sha256": "96F16DD32EBC537B5E7C3CD2C21CAEBF459ACB27F5DF27D93EA483980300690B",
+    "mtimeUtc": "2026-10-15T11:25:09.302Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/npc-life.ts",
+    "group": "engine",
+    "lines": 68,
+    "sha256": "7FDD9E7DD631C3253042272E764346CF45644C94ADC64A164FFBF29D1879A681",
+    "mtimeUtc": "2026-10-12T16:01:55.523Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/npc-spots.ts",
+    "group": "engine",
+    "lines": 31,
+    "sha256": "8C3B1452B8FEF26221BA08C12F8D0F7F696D03393D8257864A2C18EF1AF87E1C",
+    "mtimeUtc": "2026-10-09T13:46:14.135Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/people.ts",
+    "group": "engine",
+    "lines": 737,
+    "sha256": "CDCDEA18ED78406B830AAB4C8A5E15F80F14CA7780131E010409237FA79C5DE0",
+    "mtimeUtc": "2026-10-18T14:10:54.474Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "focused current source body reread; prior full source review retained",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "32-77",
+      "311-340",
+      "411-736"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/pet-life.ts",
+    "group": "engine",
+    "lines": 181,
+    "sha256": "37BAB43E5AB1D53C410E821FAA2094084DF4B489ED687D18E6907CA26B2449E8",
+    "mtimeUtc": "2026-10-14T22:11:15.031Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/places.ts",
+    "group": "engine",
+    "lines": 66,
+    "sha256": "6A64209E3A8FDD5227F694EFAFFB5EDA47DD4D675A83260DD1CB4DB8095ACE49",
+    "mtimeUtc": "2026-10-16T23:35:46.316Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/romance.ts",
+    "group": "engine",
+    "lines": 128,
+    "sha256": "F69CE8BB4E269E8A854BEE877A3D5ECE4086B26D3F013253FFA1F98BD26ED420",
+    "mtimeUtc": "2026-10-16T23:35:46.316Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/scenic-kinds.ts",
+    "group": "engine",
+    "lines": 9,
+    "sha256": "9C72BF0E89B32E8F995CCA50B57BDA90BE38B4EC75EFB139A5CAD677129A850E",
+    "mtimeUtc": "2026-10-13T07:00:24.810Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/siblings.ts",
+    "group": "engine",
+    "lines": 134,
+    "sha256": "EC46A969A9C52ABA5C8A439A9A2CEC291D21C8DDB820882E180002280B3333F0",
+    "mtimeUtc": "2026-10-18T13:52:10.659Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "targeted production function/store path in boundaries.audit.ts; not exhaustive",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/social-scene.ts",
+    "group": "engine",
+    "lines": 122,
+    "sha256": "2805DAFB4CA3B0062443C22F813AD8615CC09631EB640E3189A62F4B784A2081",
+    "mtimeUtc": "2026-10-12T14:53:11.971Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/space-life.ts",
+    "group": "engine",
+    "lines": 99,
+    "sha256": "E84B4BB214AC8FFC53662FD6FD9A44C8CECFA619AD582E9F76BFDBA8730BFA01",
+    "mtimeUtc": "2026-10-06T04:48:34.788Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/spaces.ts",
+    "group": "engine",
+    "lines": 318,
+    "sha256": "DD43F9BE6FF3BA81DC14023530E504E8E2ACEC559E9FF6DA098BCF42B400B5E8",
+    "mtimeUtc": "2026-10-18T18:15:21.722Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/stories.ts",
+    "group": "engine",
+    "lines": 102,
+    "sha256": "513C36992B22B2CDDA0E93715932A010842B5EB380638D24CFF77B0A25EEAB8E",
+    "mtimeUtc": "2026-10-13T06:51:55.853Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/talk-popups.ts",
+    "group": "engine",
+    "lines": 16,
+    "sha256": "621A9360829BB70AE283C783E910FE7D6AE0029616127A891356545A0BEF50A6",
+    "mtimeUtc": "2026-10-08T20:11:19.886Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/tip-letters.ts",
+    "group": "engine",
+    "lines": 92,
+    "sha256": "E10529A0183CDB9E0AF9EA920BA2EF92AC656B2DB16327F5D0031653BF435E40",
+    "mtimeUtc": "2026-10-13T17:48:30.991Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/wedding-attire.ts",
+    "group": "engine",
+    "lines": 46,
+    "sha256": "707F465E67FE8F047C508CFDDE28640F9083E088FEF238D0E44B83259750AC7A",
+    "mtimeUtc": "2026-10-17T01:26:36.994Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/work-day.ts",
+    "group": "engine",
+    "lines": 160,
+    "sha256": "177C3CCDB4B32B1C7BB107D93C5AFD41D1974F6A9CF6266CC1B2979A7C3E4F71",
+    "mtimeUtc": "2026-10-11T23:38:31.758Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/world.ts",
+    "group": "engine",
+    "lines": 1001,
+    "sha256": "290E5BA5C6906679C314DF1F0A950C61F410E0E88ACA6903105F0EF107013F79",
+    "mtimeUtc": "2026-10-16T07:43:46.216Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "focused current source body reread; prior full source review retained",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "70-137",
+      "642-699",
+      "718-838",
+      "923-1000"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/yard.ts",
+    "group": "engine",
+    "lines": 66,
+    "sha256": "224A154065567F6FDC009F0935180A007F91F9F80272B3004400B07EB2142148",
+    "mtimeUtc": "2026-10-13T07:01:37.520Z",
+    "priorDepth": "complete static source read and integration review",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/child/ChildName.tsx",
+    "group": "features",
+    "lines": 28,
+    "sha256": "9DB35D96ADEC65DC96E6DCE73DD2EEC93B0F04FF2CB70BF3FD3CE919CA51C1D0",
+    "mtimeUtc": "2026-10-13T12:12:11.093Z",
+    "priorDepth": "complete static source read",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/child/SchoolView.tsx",
+    "group": "features",
+    "lines": 85,
+    "sha256": "5509A317E4C88F838AA98AD05DC0BC08AD99A18F4507C724424DDC3926A14D04",
+    "mtimeUtc": "2026-10-18T14:07:20.931Z",
+    "priorDepth": "complete static source read",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/family/Family.tsx",
+    "group": "features",
+    "lines": 134,
+    "sha256": "B478DA596C9EB8E74DC7A5421B79A08025565CD29FAA8978140FEA5339280023",
+    "mtimeUtc": "2026-10-18T14:06:24.566Z",
+    "priorDepth": "complete static source read",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/family/KidTime.tsx",
+    "group": "features",
+    "lines": 141,
+    "sha256": "342628E3F7FBF2ACA8B08D9694184402FEDDC76045156CBDC9095423FF28467D",
+    "mtimeUtc": "2026-10-11T13:25:45.281Z",
+    "priorDepth": "complete static source read",
+    "round2Depth": "current SHA/function inventory refreshed; prior complete source read retained; UI/render execution delegated",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/family/Wardrobe.tsx",
+    "group": "features",
+    "lines": 96,
+    "sha256": "A71BCEBAD0EB8F1F33B87E34C9C07D6063D645CA4B346AAD7FE109A72F1941DD",
+    "mtimeUtc": "2026-10-17T09:12:49.085Z",
+    "priorDepth": "complete static source read",
+    "round2Depth": "current SHA/function inventory refreshed; prior complete source read retained; UI/render execution delegated",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/clubs/club-store.ts",
+    "group": "features",
+    "lines": 10,
+    "sha256": "954678E82438B23BCB51EB8DE674906932C2844DA47A6BF9104076AA9890F4B7",
+    "mtimeUtc": "2026-10-05T03:27:00.364Z",
+    "priorDepth": "complete static source read",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/clubs/ClubForm.tsx",
+    "group": "features",
+    "lines": 36,
+    "sha256": "1CFBEB0BB1B73BCAA4C1949C218C7F5D7AF7B2AB63D20A3D8023EC307584427B",
+    "mtimeUtc": "2026-10-18T14:07:45.507Z",
+    "priorDepth": "complete static source read",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/clubs/ClubList.tsx",
+    "group": "features",
+    "lines": 33,
+    "sha256": "14546C171166FBCB6345A15EEB69B031F6BADFE1DE5313660955B1A45F8B98E3",
+    "mtimeUtc": "2026-10-11T14:15:31.496Z",
+    "priorDepth": "complete static source read",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/clubs/ClubRound.tsx",
+    "group": "features",
+    "lines": 148,
+    "sha256": "07A38064671A32C276B80F5BB52E169932E971702E44BDA79A954BF03214C81F",
+    "mtimeUtc": "2026-10-13T12:27:04.088Z",
+    "priorDepth": "complete static source read",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/clubs/ClubSession.tsx",
+    "group": "features",
+    "lines": 55,
+    "sha256": "3BF728BA54959AB75CFBBBB6F1AF4D0DA56BF69EBF51162F47343DCC765422F7",
+    "mtimeUtc": "2026-10-13T12:28:38.165Z",
+    "priorDepth": "complete static source read",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/clubs/GroupTask.tsx",
+    "group": "features",
+    "lines": 75,
+    "sha256": "3347DA75C246B8FC5210748C6907653024721869649483417E4D457AD2CA110D",
+    "mtimeUtc": "2026-10-13T07:05:11.131Z",
+    "priorDepth": "complete static source read",
+    "round2Depth": "current SHA/function inventory refreshed; prior complete source read retained; UI/render execution delegated",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/companion/AdoptForm.tsx",
+    "group": "features",
+    "lines": 24,
+    "sha256": "7F7B6DA7893E92A675E6B9A4715B41BA9A18BA512BAEA0D8853A78383C781E90",
+    "mtimeUtc": "2026-10-01T10:53:33.145Z",
+    "priorDepth": "complete static source read",
+    "round2Depth": "current SHA/function inventory refreshed; prior complete source read retained; UI/render execution delegated",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/companion/FollowMenu.tsx",
+    "group": "features",
+    "lines": 100,
+    "sha256": "EB21BC2D3DAB239C90B0E59B7DB44D97779BC7D2249907DD7825C07215060E88",
+    "mtimeUtc": "2026-10-11T20:09:22.955Z",
+    "priorDepth": "complete static source read",
+    "round2Depth": "current SHA/function inventory refreshed; prior complete source read retained; UI/render execution delegated",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/talk/BoardView.tsx",
+    "group": "features",
+    "lines": 134,
+    "sha256": "E081458E80CCF7AE03DA2AF79B72CF07E46A65868C444C535069B664FD129E71",
+    "mtimeUtc": "2026-10-13T02:16:54.751Z",
+    "priorDepth": "complete static source read",
+    "round2Depth": "current SHA/function inventory refreshed; prior complete source read retained; UI/render execution delegated",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/talk/FarewellLetter.tsx",
+    "group": "features",
+    "lines": 41,
+    "sha256": "3437E162DA6E3F87EAD633E97FC1BAB8CD579756D1B206DE8CCE86D9C848E4F2",
+    "mtimeUtc": "2026-10-07T09:49:04.677Z",
+    "priorDepth": "complete static source read",
+    "round2Depth": "current SHA/function inventory refreshed; prior complete source read retained; UI/render execution delegated",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/talk/GenTalk.tsx",
+    "group": "features",
+    "lines": 171,
+    "sha256": "87BBC9DD978068D23F73C6B735E92AD929EEE593D52220A12123B813655451FF",
+    "mtimeUtc": "2026-10-18T14:08:32.734Z",
+    "priorDepth": "complete static source read",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/talk/GiftPicker.tsx",
+    "group": "features",
+    "lines": 37,
+    "sha256": "415C5F2C625D1A76BEA389E9D74149079B98F1A20D617FACE8E8ADD504A9B058",
+    "mtimeUtc": "2026-10-17T01:27:12.766Z",
+    "priorDepth": "complete static source read",
+    "round2Depth": "current SHA/function inventory refreshed; prior complete source read retained; UI/render execution delegated",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/talk/InnGuestTalk.tsx",
+    "group": "features",
+    "lines": 35,
+    "sha256": "0AD01B2C6A88220950B210048C854376077F6A97FD24B54D7341D0143CCF227D",
+    "mtimeUtc": "2026-10-12T10:13:41.900Z",
+    "priorDepth": "complete static source read",
+    "round2Depth": "current SHA/function inventory refreshed; prior complete source read retained; UI/render execution delegated",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/talk/LoveVerseView.tsx",
+    "group": "features",
+    "lines": 68,
+    "sha256": "6B2E6F974FA24B7B7083D7ED10BE3F5D016ED2C96893504264E612735D0A6F54",
+    "mtimeUtc": "2026-10-12T11:44:20.374Z",
+    "priorDepth": "complete static source read",
+    "round2Depth": "current SHA/function inventory refreshed; prior complete source read retained; UI/render execution delegated",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/talk/OrdersView.tsx",
+    "group": "features",
+    "lines": 70,
+    "sha256": "B03B943491D7C43CCF27850655CD4DFB126BDF1638C49A1D274BF1D16DDEB0D7",
+    "mtimeUtc": "2026-10-11T13:25:45.280Z",
+    "priorDepth": "complete static source read",
+    "round2Depth": "current SHA/function inventory refreshed; prior complete source read retained; UI/render execution delegated",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/talk/TalkBox.tsx",
+    "group": "features",
+    "lines": 205,
+    "sha256": "329CDF743D7CCE7C6B811B76F312211FF1661E04D944366B708E27C13983A822",
+    "mtimeUtc": "2026-10-18T18:07:49.051Z",
+    "priorDepth": "complete static source read",
+    "round2Depth": "current SHA/function inventory refreshed; prior complete source read retained; UI/render execution delegated",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/talk/TradeBoard.tsx",
+    "group": "features",
+    "lines": 184,
+    "sha256": "0551513EFFEB7126FCFA10AC3B42F195974F39CEA26E90957A1C1B0B52EA3572",
+    "mtimeUtc": "2026-10-18T13:50:56.722Z",
+    "priorDepth": "complete static source read",
+    "round2Depth": "current SHA/function inventory refreshed; prior complete source read retained; UI/render execution delegated",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/talk/TravelView.tsx",
+    "group": "features",
+    "lines": 114,
+    "sha256": "F0E9A122201069D097C9D53EF8A5E8F7CB0ED317F3982A9DA2E72F0EC54E7E48",
+    "mtimeUtc": "2026-10-15T11:58:27.496Z",
+    "priorDepth": "complete static source read",
+    "round2Depth": "current SHA/function inventory refreshed; prior complete source read retained; UI/render execution delegated",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/trip/TripScene.tsx",
+    "group": "features",
+    "lines": 312,
+    "sha256": "0D9231B386999CF39208BE5B36F56FE4874D69C5A250ECCD5D89F36985AE3F10",
+    "mtimeUtc": "2026-10-18T14:03:11.174Z",
+    "priorDepth": "complete static source read",
+    "round2Depth": "current SHA/function inventory refreshed; prior complete source read retained; UI/render execution delegated",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/scene/SceneView.tsx",
+    "group": "scene",
+    "lines": 109,
+    "sha256": "CCDF6F9AD09F6F3B71CDF23E00AF16B7498032E1C50BF4CC5727421340A3725F",
+    "mtimeUtc": "2026-10-16T18:22:15.177Z",
+    "priorDepth": "complete static source read; story/choice/state handlers; art dependencies delegated to UI auditor",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/scene/AuthoredStoryScene.tsx",
+    "group": "scene",
+    "lines": 158,
+    "sha256": "10F9A2A5CF9F55E7F5E680E5649AAD9608FD96DBD82B41032A2B990FBC3B9639",
+    "mtimeUtc": "2026-10-18T18:22:42.344Z",
+    "priorDepth": "complete static source read; story/choice/state handlers; art dependencies delegated to UI auditor",
+    "round2Depth": "current SHA/function inventory refreshed; prior complete source read retained; UI/render execution delegated",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/scene/scene-state-text.ts",
+    "group": "scene",
+    "lines": 20,
+    "sha256": "32CFE46DE6F20B6124DDA0411EDCB4A9D70379C4952A804AA3C063949F8D38BA",
+    "mtimeUtc": "2026-10-16T18:27:05.709Z",
+    "priorDepth": "complete static source read; story/choice/state handlers; art dependencies delegated to UI auditor",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/scene/WeddingAttirePicker.tsx",
+    "group": "scene",
+    "lines": 13,
+    "sha256": "DC8273A82F725866CDA28AEEDF1952595A92A65A5208CDCEE326D155D063250F",
+    "mtimeUtc": "2026-10-17T01:31:57.720Z",
+    "priorDepth": "complete static source read; story/choice/state handlers; art dependencies delegated to UI auditor",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "dynamic": "not directly executed by this subagent in round2",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/game.ts",
+    "group": "focusedFiles",
+    "lines": 5222,
+    "sha256": "905F05BE783F0F63F8BF030970803EA183428FD8A22AD9A66ECC969A834EEBE8",
+    "mtimeUtc": "2026-10-18T18:25:12.619Z",
+    "priorDepth": "focused social/family/story sections",
+    "round2Depth": "focused current source body reread; prior full source review retained",
+    "dynamic": "targeted production function/store path in boundaries.audit.ts; not exhaustive",
+    "round2Ranges": [
+      "687-788",
+      "1271-1285",
+      "1350-1384",
+      "1880-2045",
+      "2250-2410",
+      "3275-3325",
+      "3808-3910",
+      "4670-4910",
+      "5172-5194"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/store/game-store.ts",
+    "group": "focusedFiles",
+    "lines": 2938,
+    "sha256": "C61F9B8EF4A14E675C9712DE3B1FCF35B22EB3681EDE3E1D985B0D31266A63DA",
+    "mtimeUtc": "2026-10-18T18:21:58.473Z",
+    "priorDepth": "focused social/family/story/trip actions",
+    "round2Depth": "focused current source body reread; prior full source review retained",
+    "dynamic": "targeted production function/store path in boundaries.audit.ts; not exhaustive",
+    "round2Ranges": [
+      "1861-1879"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/lodging.ts",
+    "group": "supporting",
+    "priorDepth": "supporting/integration; see earlier report where applicable",
+    "sha256": "652024CAB7DF105F9384A992DF90E3428863D9D7295CB797ACDD5B0ECDCA5360",
+    "lines": 43,
+    "mtimeUtc": "2026-10-10T11:57:08.020Z",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "dynamic": "targeted production function/store path in boundaries.audit.ts; not exhaustive",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/plans.ts",
+    "group": "supporting",
+    "priorDepth": "supporting/integration; see earlier report where applicable",
+    "sha256": "0E15119EA67986CBC83E4BFE688FF0D4713468CD9ACCA0AC72F43DFFA5F69D49",
+    "lines": 219,
+    "mtimeUtc": "2026-10-18T13:42:29.022Z",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "dynamic": "targeted production function/store path in boundaries.audit.ts; not exhaustive",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/fest.ts",
+    "group": "supporting",
+    "priorDepth": "supporting/integration; see earlier report where applicable",
+    "sha256": "77E02F7A2B2B6634BB3DEA0CEB659E8051EF05E3A6081CEC6125630CB2FB0BE8",
+    "lines": 374,
+    "mtimeUtc": "2026-10-11T13:24:34.920Z",
+    "round2Depth": "focused current source body reread; prior full source review retained",
+    "round2Ranges": [
+      "1-350"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "dynamic": "targeted production function/store path in boundaries.audit.ts; not exhaustive",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/group-task.ts",
+    "group": "supporting",
+    "priorDepth": "supporting/integration; see earlier report where applicable",
+    "sha256": "087ED56CFD9A69ECEE99B75B5213D6A80113F3383D79297D1C7AE36EE80E5019",
+    "lines": 32,
+    "mtimeUtc": "2026-10-18T13:48:45.971Z",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "dynamic": "not directly executed by this subagent in round2",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/engine/newland-build.ts",
+    "group": "supporting",
+    "priorDepth": "supporting/integration; see earlier report where applicable",
+    "sha256": "E508E9415E93343B16A49E54F4C76FB5D131674DFE3D7F6F332B226AEA76A9C7",
+    "lines": 570,
+    "mtimeUtc": "2026-10-18T13:38:25.344Z",
+    "round2Depth": "focused current source body reread; prior full source review retained",
+    "round2Ranges": [
+      "395-468"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "dynamic": "targeted production function/store path in boundaries.audit.ts; not exhaustive",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/render/neighbor-look.ts",
+    "group": "supporting",
+    "priorDepth": "supporting/integration; see earlier report where applicable",
+    "sha256": "8165BDAC6BD65F08F532538BD985147727E16D7E7518B9774CA8439B83512FFC",
+    "lines": 19,
+    "mtimeUtc": "2026-10-16T08:24:02.429Z",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "dynamic": "not directly executed by this subagent in round2",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/render/renderer.ts",
+    "group": "supporting",
+    "priorDepth": "supporting/integration; see earlier report where applicable",
+    "sha256": "6086E4C2394B496DCE4CA9FAE70670756AC76794C23C06CA059B7B2C14B06E26",
+    "lines": 3389,
+    "mtimeUtc": "2026-10-18T20:59:56.371Z",
+    "round2Depth": "focused current source body reread; prior full source review retained",
+    "round2Ranges": [
+      "2679-2680",
+      "2720",
+      "2736-2747",
+      "2794-2817"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "dynamic": "not directly executed by this subagent in round2",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  },
+  {
+    "path": "src/features/fest/FestSession.tsx",
+    "group": "supporting",
+    "priorDepth": "supporting/integration; see earlier report where applicable",
+    "sha256": "36C4BACBB0E660E0D390089A6816C3FB9815D0810A3B1FBA7299B8E07EB81518",
+    "lines": 57,
+    "mtimeUtc": "2026-10-18T13:49:25.774Z",
+    "round2Depth": "complete production body reread and contract/integration check",
+    "round2Ranges": [
+      "full file"
+    ],
+    "round2Status": "reviewed; depth explicitly recorded",
+    "dynamic": "not directly executed by this subagent in round2",
+    "syntaxDiagnostics": "not independently parsed: installed TypeScript package lacks compiler API; root tsc/build owns syntax verification"
+  }
+]

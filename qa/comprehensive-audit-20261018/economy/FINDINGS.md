@@ -1,4 +1,6 @@
-# Economy / progression independent audit — 2026-10-18
+# Historical economy / progression independent audit — 2026-10-18
+
+> Historical snapshot only. Production files changed externally on 2026-10-19. Use `CURRENT_FINDINGS.md` for current findings; do not count the old reproduced failures below as current defects.
 
 Scope: production engine modules listed in `coverage.csv`; desk, passage, library, cooking, garden, work, quiz, review, newland, village, stall, mini, skills, journey, word, meetings and fest UI. Existing production source, tests, configuration and data were not modified. Only this audit directory was created. No production data, outgoing service call, payment or deletion was tested.
 

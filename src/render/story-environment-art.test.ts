@@ -1,4 +1,5 @@
 import {storyLocationContext,type StoryLocationState} from './story-location-context'
+import { residentJob } from '../engine/persona'
 import {storyNewlandTerrain} from './story-terrain-art'
 import {storyHomeWallObjects,storyLayoutObjects,storyNewlandBuildings} from './story-layout-art'
 import {joinedPathRows,PATH_BITS} from './archive-followup-art'
@@ -22,12 +23,14 @@ it('selects each player child workplace from its own original job rather than al
   expect(JSON.stringify(s)).toBe(before)
  }
 })
-it('uses the resident child actual fixed-parent job through the original ownerJob resolver',()=>{
+// 2026-10-21: 마을 아이는 부모 일을 잇지 않고 스스로 찾은 일 (residentJob)
+it('uses the resident child own job through the ownerJob resolver',()=>{
  const gen=newGenState(CONTENT,7,100)
  gen.persons['g-0001']={id:'g-0001',origin:'born',born:1,stage:'adult',parents:['postman'],household:null,spouse:null}
  const c=storyLocationContext(state(7,14,{map:'newland',gen,newland:{builds:[{...building,owner:'g-0001'}],tiles:{},nextId:5,settledDay:99}}))
- expect(c.layout?.builds[0].job).toBe('scribe')
- expect(storyNewlandBuildings(c,320,108).find(o=>o.id==='b4')?.rows).toEqual(OLD_BUILDINGS.scribe.left.rows)
+ const job=residentJob(gen,'g-0001')!
+ expect(c.layout?.builds[0].job).toBe(job)
+ expect(storyNewlandBuildings(c,320,108).find(o=>o.id==='b4')?.rows).toEqual(OLD_BUILDINGS[job].left.rows)
 })
 it('copies built and removed home walls without invoking global wall or map setters',()=>{
  const walls={built:['20,112','99,99'],removed:['21,110']},s=state(20,112,{homeWalls:walls,room:[]}),before=JSON.stringify(s),c=storyLocationContext(s)

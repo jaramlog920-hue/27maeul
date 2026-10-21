@@ -10,7 +10,9 @@ import { FEATURE_RULES, type FeatureId } from './feature-rules'
  */
 const OLD_BOOK_ORDER: readonly FeatureId[] = ['decorate', 'mailbox', 'board', 'cooking', 'clubs', 'stall', 'community', 'travel', 'convenience', 'library',
   'guestbook', 'rank', 'events', 'autonomy', 'deepRelation', 'suitors', 'dating', 'spouseRoom', 'marriage', 'spouseLife', 'childRoom', 'childBirth',
-  'childActivities', 'school', 'generations', 'retirement', 'ending']
+  'childActivities', 'school', 'generations',
+  // 은퇴는 없앴다 (2026-10-21) — 차례 번호를 지키려고 그 자리는 다음 세대와 같은 장 수로
+  'generations', 'ending']
 
 const TOTAL = BOOKS.reduce((n, b) => n + NT_CHAPTER_COUNTS[b], 0)
 

@@ -12,7 +12,12 @@ export interface HouseLook {
   window?: number
   /** HOUSE_TRIMS 번호 — 신약 집의 나무 기둥·차양 (없으면 없음) */
   trim?: number
+  /** 꿈터 간판을 단다 (1) — 원할 때만 (2026-10-21 사용자). 공방·그림방·집 겸 일터만 */
+  sign?: number
 }
+
+/** 간판을 달 수 있는 집 (꿈터) */
+export const hasSign = (k: BuildKind): boolean => k === 'weaver' || k === 'gallery' || k === 'kidWork'
 
 export interface RoofColor {
   name: string
@@ -57,15 +62,18 @@ export const HOUSE_TRIMS = [
 
 export const DEFAULT_LOOK: HouseLook = { roof: 0, wall: 0, window: 0, trim: 0 }
 
-/** 색을 고르는 집 (입주 주택·손님집). 일터·꿈터·그림방은 저마다의 그림을 그대로 쓴다 */
-export const hasHouseLook = (k: BuildKind): boolean => k === 'home' || k === 'guest'
+/**
+ * 색을 고르는 집 (입주 주택·손님집, 2026-10-21 사용자: 꿈터도 — 직조인의 공방·그림방·집 겸 일터).
+ * 예전엔 꿈터마다 따로 그림을 썼지만 모두 같은 집 그림이라, 집처럼 지붕·벽·창·장식을 고르게 했다
+ */
+export const hasHouseLook = (k: BuildKind): boolean => k === 'home' || k === 'guest' || k === 'weaver' || k === 'gallery' || k === 'kidWork'
 
 /** 저장에서 읽은 값 → 맞는 번호만 (아니면 undefined — 기본 모습) */
 export function sanitizeLook(raw: unknown): HouseLook | undefined {
   if (!raw || typeof raw !== 'object') return undefined
-  const { roof, wall, window, trim } = raw as { roof?: unknown; wall?: unknown; window?: unknown; trim?: unknown }
+  const { roof, wall, window, trim, sign } = raw as { roof?: unknown; wall?: unknown; window?: unknown; trim?: unknown; sign?: unknown }
   const ok = (v: unknown, n: number): v is number => typeof v === 'number' && Number.isInteger(v) && v >= 0 && v < n
   if (!ok(roof, HOUSE_ROOFS.length) || !ok(wall, HOUSE_WALLS.length)) return undefined
   // 창·장식은 나중에 더한 칸 — 없거나 틀리면 기본(네모·없음)
-  return { roof, wall, window: ok(window, HOUSE_WINDOWS.length) ? window : 0, trim: ok(trim, HOUSE_TRIMS.length) ? trim : 0 }
+  return { roof, wall, window: ok(window, HOUSE_WINDOWS.length) ? window : 0, trim: ok(trim, HOUSE_TRIMS.length) ? trim : 0, ...(sign === 1 ? { sign: 1 } : {}) }
 }

@@ -1,0 +1,397 @@
+{
+  "status": "passed",
+  "switched": {
+    "coins": 100,
+    "child": {
+      "name": "나래",
+      "look": "girl",
+      "born": 50,
+      "stats": {
+        "wit": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "hand": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "charm": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "strength": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "luck": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        }
+      },
+      "lean": null
+    },
+    "siblings": [
+      {
+        "name": "가람",
+        "look": "girl",
+        "born": 40,
+        "stats": {
+          "wit": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "hand": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "charm": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "strength": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "luck": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          }
+        },
+        "lean": null,
+        "kidFlags": {
+          "schoolDay": 100
+        }
+      }
+    ],
+    "schoolDay": null,
+    "modal": {
+      "kind": "school"
+    },
+    "day": 100
+  },
+  "paid": {
+    "coins": 85,
+    "child": {
+      "name": "나래",
+      "look": "girl",
+      "born": 50,
+      "stats": {
+        "wit": {
+          "level": 1,
+          "xp": 15,
+          "born": 0
+        },
+        "hand": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "charm": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "strength": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "luck": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        }
+      },
+      "lean": null
+    },
+    "siblings": [
+      {
+        "name": "가람",
+        "look": "girl",
+        "born": 40,
+        "stats": {
+          "wit": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "hand": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "charm": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "strength": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "luck": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          }
+        },
+        "lean": null,
+        "kidFlags": {
+          "schoolDay": 100
+        }
+      }
+    ],
+    "schoolDay": 100,
+    "modal": null,
+    "day": 100
+  },
+  "firstAgain": {
+    "coins": 85,
+    "child": {
+      "name": "가람",
+      "look": "girl",
+      "born": 40,
+      "stats": {
+        "wit": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "hand": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "charm": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "strength": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "luck": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        }
+      },
+      "lean": null
+    },
+    "siblings": [
+      {
+        "name": "나래",
+        "look": "girl",
+        "born": 50,
+        "stats": {
+          "wit": {
+            "level": 1,
+            "xp": 15,
+            "born": 0
+          },
+          "hand": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "charm": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "strength": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "luck": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          }
+        },
+        "lean": null,
+        "kidFlags": {
+          "schoolDay": 100
+        }
+      }
+    ],
+    "schoolDay": 100,
+    "modal": {
+      "kind": "school"
+    },
+    "day": 100
+  },
+  "restored": {
+    "coins": 85,
+    "child": {
+      "name": "가람",
+      "look": "girl",
+      "born": 40,
+      "stats": {
+        "wit": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "hand": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "charm": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "strength": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "luck": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        }
+      },
+      "lean": null
+    },
+    "siblings": [
+      {
+        "name": "나래",
+        "look": "girl",
+        "born": 50,
+        "stats": {
+          "wit": {
+            "level": 1,
+            "xp": 15,
+            "born": 0
+          },
+          "hand": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "charm": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "strength": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "luck": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          }
+        },
+        "lean": null,
+        "kidFlags": {
+          "schoolDay": 100
+        }
+      }
+    ],
+    "schoolDay": 100,
+    "modal": {
+      "kind": "school"
+    },
+    "day": 100
+  },
+  "restoredSecond": {
+    "coins": 85,
+    "child": {
+      "name": "나래",
+      "look": "girl",
+      "born": 50,
+      "stats": {
+        "wit": {
+          "level": 1,
+          "xp": 15,
+          "born": 0
+        },
+        "hand": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "charm": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "strength": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        },
+        "luck": {
+          "level": 1,
+          "xp": 0,
+          "born": 0
+        }
+      },
+      "lean": null
+    },
+    "siblings": [
+      {
+        "name": "가람",
+        "look": "girl",
+        "born": 40,
+        "stats": {
+          "wit": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "hand": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "charm": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "strength": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          },
+          "luck": {
+            "level": 1,
+            "xp": 0,
+            "born": 0
+          }
+        },
+        "lean": null,
+        "kidFlags": {
+          "schoolDay": 100
+        }
+      }
+    ],
+    "schoolDay": 100,
+    "modal": {
+      "kind": "school"
+    },
+    "day": 100
+  },
+  "errors": []
+}

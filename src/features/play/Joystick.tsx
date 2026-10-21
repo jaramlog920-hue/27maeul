@@ -37,7 +37,8 @@ function useRepeatWalk(dir: { current: Dir | null }, cancel: () => void) {
     document.addEventListener('visibilitychange', cancel)
     // 칸에 도착한 프레임에서 다음 걸음을 연결한다. 타이머를 기다리면 매 칸 잠깐 멈춘다.
     const unsubscribe = useGame.subscribe((state, previous) => {
-      if (state.modal || state.decorating || state.copyResult?.length || state.piecePopups.length || state.trip || state.loadEpoch !== previous.loadEpoch) cancel()
+      // 꾸미는 중에도 누르고 있으면 계속 걷는다 (2026-10-21 사용자: 시점이 따라오며 설치)
+      if (state.modal || state.copyResult?.length || state.piecePopups.length || state.trip || state.loadEpoch !== previous.loadEpoch) cancel()
       else if (dir.current && !document.hidden && previous.game.player.path.length && !state.game.player.path.length) state.walk(...dir.current)
     })
     const timer = window.setInterval(() => {

@@ -26,14 +26,24 @@ beforeEach(() => { localStorage.clear(); setActiveSlot('1') })
 afterEach(cleanup)
 
 describe('R2 craft mixed bag and furniture storage', () => {
-  it('reproduces misleading 1/3 requirement despite stock 3 and enabled make', () => {
+  it('does not count inaccessible chest contents after storage furniture is removed', () => {
+    const game = ready()
+    useGame.setState({ game: { ...game, room: game.room.filter(f => f.item !== 'linenCupboard') } })
+    render(<PlaceMenu place="workbench" />)
+    fireEvent.click(screen.getByRole('button', { name: /담요/ }))
+    expect(document.querySelector('.bag-detail')).toHaveTextContent('1/3')
+    expect(document.querySelector('.need-list li')).toHaveClass('short')
+    expect(screen.getByRole('button', { name: '만들기' })).toBeDisabled()
+  })
+
+  it('shows accessible bag and storage stock consistently with enabled make', () => {
     const game = ready()
     expect(stockOf(game, 'wool')).toBe(3)
     expect(canCraft(game, 'blanket')).toBeNull()
     render(<PlaceMenu place="workbench" />)
     fireEvent.click(screen.getByRole('button', { name: /담요/ }))
-    expect(document.querySelector('.bag-detail')).toHaveTextContent('1/3')
-    expect(document.querySelector('.need-list li')).toHaveClass('short')
+    expect(document.querySelector('.bag-detail')).toHaveTextContent('3/3')
+    expect(document.querySelector('.need-list li')).not.toHaveClass('short')
     expect(screen.getByRole('button', { name: '만들기' })).toBeEnabled()
     fireEvent.click(screen.getByRole('button', { name: '만들기' }))
     expect(useGame.getState().modal).toMatchObject({ kind: 'mini', pending: { kind: 'craft', recipe: 'blanket' } })

@@ -2,6 +2,7 @@
 // 아이는 부모의 능력치 '타고난 값'을 물려받는다 — 플레이어 쪽: 단계 4 이상인 능력치 +1, 배우자 쪽: 집안의 잘하는 능력치 +1 (최대 2).
 // 자라는 단계: 아기(요람) → 걷는 아이(곁을 따라다님) → 돕는 아이(혼자 마을을 다니며 하루 한 번 돕는다).
 // 모든 도움은 "덜 반복"이지 "공짜"가 아니다 — 하루 한 번, 한 개씩.
+import { cleanCatch, TEMPERS, type Temper } from './persona'
 import { mulberry32 } from './offers'
 import { addXp, BORN_BONUS, freshStats, sanitizeStats, STAT_IDS, statScore, totalXp, type StatId, type Stats } from './stats'
 import type { ItemId } from './types'
@@ -41,6 +42,10 @@ export interface Child {
   kidFlags?: Record<string, number>
   /** 함께하지 않는 동안 맡아 두는 이 아이의 옷장 모습 (game.looks.child와 맞바꾼다) */
   wardrobe?: Record<string, unknown>
+  /** 성격 (persona.ts — 돕는 아이가 되는 아침, 함께한 일로 정해진다) */
+  temper?: Temper
+  /** 기록자가 정해 준 말버릇 */
+  catch?: string
 }
 
 // ── 어른이 된 아이 (2026-09-30 사용자 요청) ──
@@ -201,6 +206,11 @@ export function nextName(c: Pick<Child, 'name' | 'look'>): string {
   return names[(names.indexOf(c.name) + 1) % names.length]
 }
 
+/**
+ * 성격마다 돕는 일 (2026-10-21 점검: 같은 부모의 아이 셋이 아침마다 똑같이 도왔다) — 둘째·셋째는 성격대로 돕는다 (game.ts childMorning).
+ * 첫째는 지금처럼 타고난 값으로
+ */
+export const TEMPER_HELP: Record<Temper, StatId> = { warm: 'charm', bold: 'strength', shy: 'hand', playful: 'luck', sharp: 'wit', easy: 'luck' }
 /** 아이가 하루 한 번 하는 일: 타고난 값이 가장 높은 능력치 (같으면 배우자 쪽 능력치를 먼저) */
 export function helpStat(c: Pick<Child, 'stats' | 'lean'>): StatId {
   let best: StatId = c.lean ?? 'strength'
@@ -232,7 +242,7 @@ export function helperSpot(minute: number): Tile {
 export function sanitizeChild(raw: unknown): Child | null {
   if (!raw || typeof raw !== 'object') return null
   const o = raw as Partial<Child>
-  if (typeof o.name !== 'string' || (o.look !== 'boy' && o.look !== 'girl') || typeof o.born !== 'number') return null
+  if (typeof o.name !== 'string' || (o.look !== 'boy' && o.look !== 'girl') || typeof o.born !== 'number' || !Number.isInteger(o.born)) return null
   const lean = typeof o.lean === 'string' && (STAT_IDS as readonly string[]).includes(o.lean) ? (o.lean as StatId) : null
   const mode = o.mode === 'follow' || o.mode === 'home' || o.mode === 'roam' ? o.mode : undefined
   const job = typeof o.job === 'string' && ADULT_JOBS.includes(o.job as AdultJob) ? (o.job as AdultJob) : undefined
@@ -256,5 +266,7 @@ export function sanitizeChild(raw: unknown): Child | null {
     ...(typeof o.inherited === 'number' && Number.isFinite(o.inherited) ? { inherited: Math.max(0, Math.min(100, Math.round(o.inherited))) } : {}),
     ...(o.kidFlags && typeof o.kidFlags === 'object' ? { kidFlags: Object.fromEntries(Object.entries(o.kidFlags).filter((e): e is [string, number] => typeof e[1] === 'number' && Number.isFinite(e[1]))) } : {}),
     ...(o.wardrobe && typeof o.wardrobe === 'object' ? { wardrobe: o.wardrobe } : {}),
+    ...(typeof o.temper === 'string' && (TEMPERS as readonly string[]).includes(o.temper) ? { temper: o.temper as Temper } : {}),
+    ...(typeof o.catch === 'string' && cleanCatch(o.catch) ? { catch: cleanCatch(o.catch) } : {}),
   }
 }

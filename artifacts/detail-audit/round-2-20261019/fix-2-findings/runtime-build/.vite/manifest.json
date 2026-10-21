@@ -1,0 +1,1054 @@
+{
+  "_ClubRound-DgvZ5x45.css": {
+    "file": "assets/ClubRound-DgvZ5x45.css",
+    "src": "_ClubRound-DgvZ5x45.css"
+  },
+  "_ClubRound-DrvOddD7.js": {
+    "file": "assets/ClubRound-DrvOddD7.js",
+    "name": "ClubRound",
+    "imports": [
+      "_timed-gathering-art-CwozkLAV.js",
+      "_scenic-moments-art-DmDSeves.js",
+      "_game-store-ClIlxGDH.js",
+      "index.html",
+      "_club-store-BUzXlp7f.js"
+    ],
+    "css": [
+      "assets/ClubRound-DgvZ5x45.css"
+    ]
+  },
+  "_club-life-BMQa3zbp.js": {
+    "file": "assets/club-life-BMQa3zbp.js",
+    "name": "club-life",
+    "imports": [
+      "_timed-gathering-art-CwozkLAV.js"
+    ]
+  },
+  "_club-store-BUzXlp7f.js": {
+    "file": "assets/club-store-BUzXlp7f.js",
+    "name": "club-store",
+    "imports": [
+      "_timed-gathering-art-CwozkLAV.js",
+      "_game-store-ClIlxGDH.js"
+    ]
+  },
+  "_event-gallery-CaTtMLkx.css": {
+    "file": "assets/event-gallery-CaTtMLkx.css",
+    "src": "_event-gallery-CaTtMLkx.css"
+  },
+  "_family-tree-CKetTXs6.js": {
+    "file": "assets/family-tree-CKetTXs6.js",
+    "name": "family-tree",
+    "imports": [
+      "_timed-gathering-art-CwozkLAV.js"
+    ]
+  },
+  "_game-store-ClIlxGDH.js": {
+    "file": "assets/game-store-ClIlxGDH.js",
+    "name": "game-store",
+    "imports": [
+      "_timed-gathering-art-CwozkLAV.js"
+    ]
+  },
+  "_global-Bw8GuD4_.js": {
+    "file": "assets/global-Bw8GuD4_.js",
+    "name": "global",
+    "imports": [
+      "_timed-gathering-art-CwozkLAV.js",
+      "_scenic-moments-art-DmDSeves.js",
+      "_game-store-ClIlxGDH.js"
+    ],
+    "css": [
+      "assets/global-DsVYKy10.css"
+    ],
+    "assets": [
+      "assets/Galmuri11-DfQIlyDK.woff2",
+      "assets/Galmuri11-Bold-QdFGsJ3v.woff2"
+    ]
+  },
+  "_global-DsVYKy10.css": {
+    "file": "assets/global-DsVYKy10.css",
+    "src": "_global-DsVYKy10.css"
+  },
+  "_scenic-moments-art-DmDSeves.js": {
+    "file": "assets/scenic-moments-art-DmDSeves.js",
+    "name": "scenic-moments-art",
+    "imports": [
+      "_timed-gathering-art-CwozkLAV.js"
+    ]
+  },
+  "_timed-gathering-art-CwozkLAV.js": {
+    "file": "assets/timed-gathering-art-CwozkLAV.js",
+    "name": "timed-gathering-art",
+    "dynamicImports": [
+      "src/content/nt/1co.json",
+      "src/content/nt/1jn.json",
+      "src/content/nt/1pe.json",
+      "src/content/nt/1th.json",
+      "src/content/nt/1ti.json",
+      "src/content/nt/2co.json",
+      "src/content/nt/2jn.json",
+      "src/content/nt/2pe.json",
+      "src/content/nt/2th.json",
+      "src/content/nt/2ti.json",
+      "src/content/nt/3jn.json",
+      "src/content/nt/ac.json",
+      "src/content/nt/col.json",
+      "src/content/nt/eph.json",
+      "src/content/nt/gal.json",
+      "src/content/nt/heb.json",
+      "src/content/nt/jas.json",
+      "src/content/nt/jn.json",
+      "src/content/nt/jud.json",
+      "src/content/nt/lk.json",
+      "src/content/nt/mk.json",
+      "src/content/nt/mt.json",
+      "src/content/nt/phm.json",
+      "src/content/nt/php.json",
+      "src/content/nt/rev.json",
+      "src/content/nt/rom.json",
+      "src/content/nt/tit.json",
+      "src/content/ot/1ch.json",
+      "src/content/ot/1ki.json",
+      "src/content/ot/1sa.json",
+      "src/content/ot/2ch.json",
+      "src/content/ot/2ki.json",
+      "src/content/ot/2sa.json",
+      "src/content/ot/amo.json",
+      "src/content/ot/dan.json",
+      "src/content/ot/deu.json",
+      "src/content/ot/ecc.json",
+      "src/content/ot/est.json",
+      "src/content/ot/exo.json",
+      "src/content/ot/ezk.json",
+      "src/content/ot/ezr.json",
+      "src/content/ot/gen.json",
+      "src/content/ot/hab.json",
+      "src/content/ot/hag.json",
+      "src/content/ot/hos.json",
+      "src/content/ot/isa.json",
+      "src/content/ot/jdg.json",
+      "src/content/ot/jer.json",
+      "src/content/ot/job.json",
+      "src/content/ot/jol.json",
+      "src/content/ot/jon.json",
+      "src/content/ot/jos.json",
+      "src/content/ot/lam.json",
+      "src/content/ot/lev.json",
+      "src/content/ot/mal.json",
+      "src/content/ot/mic.json",
+      "src/content/ot/nam.json",
+      "src/content/ot/neh.json",
+      "src/content/ot/num.json",
+      "src/content/ot/oba.json",
+      "src/content/ot/pro.json",
+      "src/content/ot/psa.json",
+      "src/content/ot/rut.json",
+      "src/content/ot/sng.json",
+      "src/content/ot/zec.json",
+      "src/content/ot/zep.json",
+      "src/content/ot-guides/1ch.json",
+      "src/content/ot-guides/1ki.json",
+      "src/content/ot-guides/1sa.json",
+      "src/content/ot-guides/2ch.json",
+      "src/content/ot-guides/2ki.json",
+      "src/content/ot-guides/2sa.json",
+      "src/content/ot-guides/amo.json",
+      "src/content/ot-guides/dan.json",
+      "src/content/ot-guides/deu.json",
+      "src/content/ot-guides/ecc.json",
+      "src/content/ot-guides/est.json",
+      "src/content/ot-guides/exo.json",
+      "src/content/ot-guides/ezk.json",
+      "src/content/ot-guides/ezr.json",
+      "src/content/ot-guides/gen.json",
+      "src/content/ot-guides/hab.json",
+      "src/content/ot-guides/hag.json",
+      "src/content/ot-guides/hos.json",
+      "src/content/ot-guides/isa.json",
+      "src/content/ot-guides/jdg.json",
+      "src/content/ot-guides/jer.json",
+      "src/content/ot-guides/job.json",
+      "src/content/ot-guides/jol.json",
+      "src/content/ot-guides/jon.json",
+      "src/content/ot-guides/jos.json",
+      "src/content/ot-guides/lam.json",
+      "src/content/ot-guides/lev.json",
+      "src/content/ot-guides/mal.json",
+      "src/content/ot-guides/mic.json",
+      "src/content/ot-guides/nam.json",
+      "src/content/ot-guides/neh.json",
+      "src/content/ot-guides/num.json",
+      "src/content/ot-guides/oba.json",
+      "src/content/ot-guides/pro.json",
+      "src/content/ot-guides/psa.json",
+      "src/content/ot-guides/rut.json",
+      "src/content/ot-guides/sng.json",
+      "src/content/ot-guides/zec.json",
+      "src/content/ot-guides/zep.json",
+      "src/content/verse-hashes.json"
+    ]
+  },
+  "artifacts/detail-r2-storage-bridge.ts": {
+    "file": "assets/auditBridge-R3qUEe6o.js",
+    "name": "auditBridge",
+    "src": "artifacts/detail-r2-storage-bridge.ts",
+    "isEntry": true,
+    "imports": [
+      "_timed-gathering-art-CwozkLAV.js",
+      "_game-store-ClIlxGDH.js"
+    ]
+  },
+  "assets/events/index.html": {
+    "file": "assets/events-Cjh9ZfVP.js",
+    "name": "events",
+    "src": "assets/events/index.html",
+    "isEntry": true,
+    "imports": [
+      "_timed-gathering-art-CwozkLAV.js",
+      "_scenic-moments-art-DmDSeves.js"
+    ],
+    "css": [
+      "assets/event-gallery-CaTtMLkx.css"
+    ]
+  },
+  "assets/events/play.html": {
+    "file": "assets/eventPlayer-FRQ9BpXn.js",
+    "name": "eventPlayer",
+    "src": "assets/events/play.html",
+    "isEntry": true,
+    "imports": [
+      "_timed-gathering-art-CwozkLAV.js",
+      "_scenic-moments-art-DmDSeves.js",
+      "_global-Bw8GuD4_.js"
+    ],
+    "css": [
+      "assets/event-gallery-CaTtMLkx.css"
+    ]
+  },
+  "index.html": {
+    "file": "assets/game-W_gPeYb3.js",
+    "name": "game",
+    "src": "index.html",
+    "isEntry": true,
+    "imports": [
+      "_timed-gathering-art-CwozkLAV.js",
+      "_scenic-moments-art-DmDSeves.js",
+      "_game-store-ClIlxGDH.js",
+      "_global-Bw8GuD4_.js"
+    ],
+    "dynamicImports": [
+      "src/features/cooking/CookingView.tsx",
+      "src/features/clubs/ClubList.tsx",
+      "src/features/clubs/ClubSession.tsx",
+      "src/features/fest/FestList.tsx",
+      "src/features/fest/FestSession.tsx",
+      "src/features/stall/StallView.tsx",
+      "src/features/village/VillageSite.tsx",
+      "src/features/family/Family.tsx",
+      "src/features/journal/FamilyTree.tsx",
+      "src/features/child/SchoolView.tsx",
+      "src/features/newland/BuildMenu.tsx",
+      "src/features/newland/FacilityView.tsx"
+    ],
+    "css": [
+      "assets/game-BxFe5IZI.css"
+    ]
+  },
+  "src/app/fonts/Galmuri11-Bold.woff2": {
+    "file": "assets/Galmuri11-Bold-QdFGsJ3v.woff2",
+    "src": "src/app/fonts/Galmuri11-Bold.woff2"
+  },
+  "src/app/fonts/Galmuri11.woff2": {
+    "file": "assets/Galmuri11-DfQIlyDK.woff2",
+    "src": "src/app/fonts/Galmuri11.woff2"
+  },
+  "src/content/nt/1co.json": {
+    "file": "assets/nt/1co-D8SCCzEr.js",
+    "name": "1co",
+    "src": "src/content/nt/1co.json",
+    "isDynamicEntry": true
+  },
+  "src/content/nt/1jn.json": {
+    "file": "assets/nt/1jn-VeMPQFLv.js",
+    "name": "1jn",
+    "src": "src/content/nt/1jn.json",
+    "isDynamicEntry": true
+  },
+  "src/content/nt/1pe.json": {
+    "file": "assets/nt/1pe-Dfzzfl_T.js",
+    "name": "1pe",
+    "src": "src/content/nt/1pe.json",
+    "isDynamicEntry": true
+  },
+  "src/content/nt/1th.json": {
+    "file": "assets/nt/1th-CobpAKFC.js",
+    "name": "1th",
+    "src": "src/content/nt/1th.json",
+    "isDynamicEntry": true
+  },
+  "src/content/nt/1ti.json": {
+    "file": "assets/nt/1ti-CRvae_7e.js",
+    "name": "1ti",
+    "src": "src/content/nt/1ti.json",
+    "isDynamicEntry": true
+  },
+  "src/content/nt/2co.json": {
+    "file": "assets/nt/2co-GTvQiLbd.js",
+    "name": "2co",
+    "src": "src/content/nt/2co.json",
+    "isDynamicEntry": true
+  },
+  "src/content/nt/2jn.json": {
+    "file": "assets/nt/2jn-b-L9bUtO.js",
+    "name": "2jn",
+    "src": "src/content/nt/2jn.json",
+    "isDynamicEntry": true
+  },
+  "src/content/nt/2pe.json": {
+    "file": "assets/nt/2pe-BhO5jPj3.js",
+    "name": "2pe",
+    "src": "src/content/nt/2pe.json",
+    "isDynamicEntry": true
+  },
+  "src/content/nt/2th.json": {
+    "file": "assets/nt/2th-DDzYuwGz.js",
+    "name": "2th",
+    "src": "src/content/nt/2th.json",
+    "isDynamicEntry": true
+  },
+  "src/content/nt/2ti.json": {
+    "file": "assets/nt/2ti-YKr_YfQU.js",
+    "name": "2ti",
+    "src": "src/content/nt/2ti.json",
+    "isDynamicEntry": true
+  },
+  "src/content/nt/3jn.json": {
+    "file": "assets/nt/3jn-CVoCPxnL.js",
+    "name": "3jn",
+    "src": "src/content/nt/3jn.json",
+    "isDynamicEntry": true
+  },
+  "src/content/nt/ac.json": {
+    "file": "assets/nt/ac-DOk7GUGa.js",
+    "name": "ac",
+    "src": "src/content/nt/ac.json",
+    "isDynamicEntry": true
+  },
+  "src/content/nt/col.json": {
+    "file": "assets/nt/col-ClVjCPF2.js",
+    "name": "col",
+    "src": "src/content/nt/col.json",
+    "isDynamicEntry": true
+  },
+  "src/content/nt/eph.json": {
+    "file": "assets/nt/eph-ChcHgZKK.js",
+    "name": "eph",
+    "src": "src/content/nt/eph.json",
+    "isDynamicEntry": true
+  },
+  "src/content/nt/gal.json": {
+    "file": "assets/nt/gal-0vga-X8N.js",
+    "name": "gal",
+    "src": "src/content/nt/gal.json",
+    "isDynamicEntry": true
+  },
+  "src/content/nt/heb.json": {
+    "file": "assets/nt/heb-BimxOLEq.js",
+    "name": "heb",
+    "src": "src/content/nt/heb.json",
+    "isDynamicEntry": true
+  },
+  "src/content/nt/jas.json": {
+    "file": "assets/nt/jas-DPbeLRqY.js",
+    "name": "jas",
+    "src": "src/content/nt/jas.json",
+    "isDynamicEntry": true
+  },
+  "src/content/nt/jn.json": {
+    "file": "assets/nt/jn-CyrgNXz6.js",
+    "name": "jn",
+    "src": "src/content/nt/jn.json",
+    "isDynamicEntry": true
+  },
+  "src/content/nt/jud.json": {
+    "file": "assets/nt/jud-DKMNqfRO.js",
+    "name": "jud",
+    "src": "src/content/nt/jud.json",
+    "isDynamicEntry": true
+  },
+  "src/content/nt/lk.json": {
+    "file": "assets/nt/lk-BEXJudVh.js",
+    "name": "lk",
+    "src": "src/content/nt/lk.json",
+    "isDynamicEntry": true
+  },
+  "src/content/nt/mk.json": {
+    "file": "assets/nt/mk-x_h7FKd3.js",
+    "name": "mk",
+    "src": "src/content/nt/mk.json",
+    "isDynamicEntry": true
+  },
+  "src/content/nt/mt.json": {
+    "file": "assets/nt/mt-eYpGPa-h.js",
+    "name": "mt",
+    "src": "src/content/nt/mt.json",
+    "isDynamicEntry": true
+  },
+  "src/content/nt/phm.json": {
+    "file": "assets/nt/phm-BaK3DAmL.js",
+    "name": "phm",
+    "src": "src/content/nt/phm.json",
+    "isDynamicEntry": true
+  },
+  "src/content/nt/php.json": {
+    "file": "assets/nt/php-iEMu7t57.js",
+    "name": "php",
+    "src": "src/content/nt/php.json",
+    "isDynamicEntry": true
+  },
+  "src/content/nt/rev.json": {
+    "file": "assets/nt/rev-DquHOmme.js",
+    "name": "rev",
+    "src": "src/content/nt/rev.json",
+    "isDynamicEntry": true
+  },
+  "src/content/nt/rom.json": {
+    "file": "assets/nt/rom-Spt5WTwG.js",
+    "name": "rom",
+    "src": "src/content/nt/rom.json",
+    "isDynamicEntry": true
+  },
+  "src/content/nt/tit.json": {
+    "file": "assets/nt/tit-CdTxUzgV.js",
+    "name": "tit",
+    "src": "src/content/nt/tit.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/1ch.json": {
+    "file": "assets/1ch-DI68KKrP.js",
+    "name": "1ch",
+    "src": "src/content/ot-guides/1ch.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/1ki.json": {
+    "file": "assets/1ki-C6jqHwSd.js",
+    "name": "1ki",
+    "src": "src/content/ot-guides/1ki.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/1sa.json": {
+    "file": "assets/1sa-Cp3R7a8U.js",
+    "name": "1sa",
+    "src": "src/content/ot-guides/1sa.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/2ch.json": {
+    "file": "assets/2ch-B87PTdFS.js",
+    "name": "2ch",
+    "src": "src/content/ot-guides/2ch.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/2ki.json": {
+    "file": "assets/2ki-CeyQmE-x.js",
+    "name": "2ki",
+    "src": "src/content/ot-guides/2ki.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/2sa.json": {
+    "file": "assets/2sa-DHC1_HxG.js",
+    "name": "2sa",
+    "src": "src/content/ot-guides/2sa.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/amo.json": {
+    "file": "assets/amo-en_t_Mue.js",
+    "name": "amo",
+    "src": "src/content/ot-guides/amo.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/dan.json": {
+    "file": "assets/dan-QAQV-VrS.js",
+    "name": "dan",
+    "src": "src/content/ot-guides/dan.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/deu.json": {
+    "file": "assets/deu-DJYkfCoB.js",
+    "name": "deu",
+    "src": "src/content/ot-guides/deu.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/ecc.json": {
+    "file": "assets/ecc-CE3LtqJ1.js",
+    "name": "ecc",
+    "src": "src/content/ot-guides/ecc.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/est.json": {
+    "file": "assets/est-Cr6BAMXC.js",
+    "name": "est",
+    "src": "src/content/ot-guides/est.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/exo.json": {
+    "file": "assets/exo-d9sS8pgb.js",
+    "name": "exo",
+    "src": "src/content/ot-guides/exo.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/ezk.json": {
+    "file": "assets/ezk-Byt40OA4.js",
+    "name": "ezk",
+    "src": "src/content/ot-guides/ezk.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/ezr.json": {
+    "file": "assets/ezr-Dyfqexay.js",
+    "name": "ezr",
+    "src": "src/content/ot-guides/ezr.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/gen.json": {
+    "file": "assets/gen-1nFBNXob.js",
+    "name": "gen",
+    "src": "src/content/ot-guides/gen.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/hab.json": {
+    "file": "assets/hab-B4hbbD21.js",
+    "name": "hab",
+    "src": "src/content/ot-guides/hab.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/hag.json": {
+    "file": "assets/hag-Dt9OcjXX.js",
+    "name": "hag",
+    "src": "src/content/ot-guides/hag.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/hos.json": {
+    "file": "assets/hos-BVgNVQKe.js",
+    "name": "hos",
+    "src": "src/content/ot-guides/hos.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/isa.json": {
+    "file": "assets/isa-D9hRiJvD.js",
+    "name": "isa",
+    "src": "src/content/ot-guides/isa.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/jdg.json": {
+    "file": "assets/jdg-DtScOo7t.js",
+    "name": "jdg",
+    "src": "src/content/ot-guides/jdg.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/jer.json": {
+    "file": "assets/jer-BmBdftky.js",
+    "name": "jer",
+    "src": "src/content/ot-guides/jer.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/job.json": {
+    "file": "assets/job-CR-Bz5cN.js",
+    "name": "job",
+    "src": "src/content/ot-guides/job.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/jol.json": {
+    "file": "assets/jol-DR7YiglH.js",
+    "name": "jol",
+    "src": "src/content/ot-guides/jol.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/jon.json": {
+    "file": "assets/jon-B6vVxIK4.js",
+    "name": "jon",
+    "src": "src/content/ot-guides/jon.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/jos.json": {
+    "file": "assets/jos-gGZpsh8M.js",
+    "name": "jos",
+    "src": "src/content/ot-guides/jos.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/lam.json": {
+    "file": "assets/lam-BHytPdfW.js",
+    "name": "lam",
+    "src": "src/content/ot-guides/lam.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/lev.json": {
+    "file": "assets/lev-D9oY3aOX.js",
+    "name": "lev",
+    "src": "src/content/ot-guides/lev.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/mal.json": {
+    "file": "assets/mal-B_RL7xSS.js",
+    "name": "mal",
+    "src": "src/content/ot-guides/mal.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/mic.json": {
+    "file": "assets/mic-CEsLlrEr.js",
+    "name": "mic",
+    "src": "src/content/ot-guides/mic.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/nam.json": {
+    "file": "assets/nam-DT_TG4MK.js",
+    "name": "nam",
+    "src": "src/content/ot-guides/nam.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/neh.json": {
+    "file": "assets/neh-CGNRHYh0.js",
+    "name": "neh",
+    "src": "src/content/ot-guides/neh.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/num.json": {
+    "file": "assets/num-CplO3Mwc.js",
+    "name": "num",
+    "src": "src/content/ot-guides/num.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/oba.json": {
+    "file": "assets/oba-De8_4F9j.js",
+    "name": "oba",
+    "src": "src/content/ot-guides/oba.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/pro.json": {
+    "file": "assets/pro-BHp06r6U.js",
+    "name": "pro",
+    "src": "src/content/ot-guides/pro.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/psa.json": {
+    "file": "assets/psa-DGws8pvW.js",
+    "name": "psa",
+    "src": "src/content/ot-guides/psa.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/rut.json": {
+    "file": "assets/rut-C0OoxMNK.js",
+    "name": "rut",
+    "src": "src/content/ot-guides/rut.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/sng.json": {
+    "file": "assets/sng-D7jGj5dz.js",
+    "name": "sng",
+    "src": "src/content/ot-guides/sng.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/zec.json": {
+    "file": "assets/zec-BHKMgn5f.js",
+    "name": "zec",
+    "src": "src/content/ot-guides/zec.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot-guides/zep.json": {
+    "file": "assets/zep-ARMk5WvO.js",
+    "name": "zep",
+    "src": "src/content/ot-guides/zep.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/1ch.json": {
+    "file": "assets/ot/1ch-CCaGCAl3.js",
+    "name": "1ch",
+    "src": "src/content/ot/1ch.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/1ki.json": {
+    "file": "assets/ot/1ki-BLTT7YQ2.js",
+    "name": "1ki",
+    "src": "src/content/ot/1ki.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/1sa.json": {
+    "file": "assets/ot/1sa-Cfxyi376.js",
+    "name": "1sa",
+    "src": "src/content/ot/1sa.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/2ch.json": {
+    "file": "assets/ot/2ch-CKV2POks.js",
+    "name": "2ch",
+    "src": "src/content/ot/2ch.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/2ki.json": {
+    "file": "assets/ot/2ki-BEPEJmq0.js",
+    "name": "2ki",
+    "src": "src/content/ot/2ki.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/2sa.json": {
+    "file": "assets/ot/2sa-Sg3AX1QV.js",
+    "name": "2sa",
+    "src": "src/content/ot/2sa.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/amo.json": {
+    "file": "assets/ot/amo-BCQU5b7J.js",
+    "name": "amo",
+    "src": "src/content/ot/amo.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/dan.json": {
+    "file": "assets/ot/dan-DpoAivHT.js",
+    "name": "dan",
+    "src": "src/content/ot/dan.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/deu.json": {
+    "file": "assets/ot/deu-BqKE53I0.js",
+    "name": "deu",
+    "src": "src/content/ot/deu.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/ecc.json": {
+    "file": "assets/ot/ecc-BGzSlRMj.js",
+    "name": "ecc",
+    "src": "src/content/ot/ecc.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/est.json": {
+    "file": "assets/ot/est-CQ24jgx-.js",
+    "name": "est",
+    "src": "src/content/ot/est.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/exo.json": {
+    "file": "assets/ot/exo-CoZm62L_.js",
+    "name": "exo",
+    "src": "src/content/ot/exo.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/ezk.json": {
+    "file": "assets/ot/ezk-DJutkrlD.js",
+    "name": "ezk",
+    "src": "src/content/ot/ezk.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/ezr.json": {
+    "file": "assets/ot/ezr-CobC4gyW.js",
+    "name": "ezr",
+    "src": "src/content/ot/ezr.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/gen.json": {
+    "file": "assets/ot/gen-2leMpGoO.js",
+    "name": "gen",
+    "src": "src/content/ot/gen.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/hab.json": {
+    "file": "assets/ot/hab-COxTM5WU.js",
+    "name": "hab",
+    "src": "src/content/ot/hab.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/hag.json": {
+    "file": "assets/ot/hag-HvDsf5gu.js",
+    "name": "hag",
+    "src": "src/content/ot/hag.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/hos.json": {
+    "file": "assets/ot/hos-QkwOIzh4.js",
+    "name": "hos",
+    "src": "src/content/ot/hos.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/isa.json": {
+    "file": "assets/ot/isa-FQBjwB3t.js",
+    "name": "isa",
+    "src": "src/content/ot/isa.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/jdg.json": {
+    "file": "assets/ot/jdg-CYQiXXcl.js",
+    "name": "jdg",
+    "src": "src/content/ot/jdg.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/jer.json": {
+    "file": "assets/ot/jer-y2KZ2pVJ.js",
+    "name": "jer",
+    "src": "src/content/ot/jer.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/job.json": {
+    "file": "assets/ot/job-DpzCA1FT.js",
+    "name": "job",
+    "src": "src/content/ot/job.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/jol.json": {
+    "file": "assets/ot/jol-B6KIWtvR.js",
+    "name": "jol",
+    "src": "src/content/ot/jol.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/jon.json": {
+    "file": "assets/ot/jon-Cka89y7D.js",
+    "name": "jon",
+    "src": "src/content/ot/jon.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/jos.json": {
+    "file": "assets/ot/jos-409WpXuV.js",
+    "name": "jos",
+    "src": "src/content/ot/jos.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/lam.json": {
+    "file": "assets/ot/lam-DDcBCzMc.js",
+    "name": "lam",
+    "src": "src/content/ot/lam.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/lev.json": {
+    "file": "assets/ot/lev-6-nfSCy8.js",
+    "name": "lev",
+    "src": "src/content/ot/lev.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/mal.json": {
+    "file": "assets/ot/mal-B6GmFIG1.js",
+    "name": "mal",
+    "src": "src/content/ot/mal.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/mic.json": {
+    "file": "assets/ot/mic-SRfSmVx8.js",
+    "name": "mic",
+    "src": "src/content/ot/mic.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/nam.json": {
+    "file": "assets/ot/nam-CJs7vPbo.js",
+    "name": "nam",
+    "src": "src/content/ot/nam.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/neh.json": {
+    "file": "assets/ot/neh-E62Qw5H0.js",
+    "name": "neh",
+    "src": "src/content/ot/neh.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/num.json": {
+    "file": "assets/ot/num-zvHkVFYf.js",
+    "name": "num",
+    "src": "src/content/ot/num.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/oba.json": {
+    "file": "assets/ot/oba-oFR_UsUH.js",
+    "name": "oba",
+    "src": "src/content/ot/oba.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/pro.json": {
+    "file": "assets/ot/pro-CsiM57Se.js",
+    "name": "pro",
+    "src": "src/content/ot/pro.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/psa.json": {
+    "file": "assets/ot/psa-BEH9vnfZ.js",
+    "name": "psa",
+    "src": "src/content/ot/psa.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/rut.json": {
+    "file": "assets/ot/rut-BNey3Ia5.js",
+    "name": "rut",
+    "src": "src/content/ot/rut.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/sng.json": {
+    "file": "assets/ot/sng-Dszc4AiH.js",
+    "name": "sng",
+    "src": "src/content/ot/sng.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/zec.json": {
+    "file": "assets/ot/zec-tvMI4oEO.js",
+    "name": "zec",
+    "src": "src/content/ot/zec.json",
+    "isDynamicEntry": true
+  },
+  "src/content/ot/zep.json": {
+    "file": "assets/ot/zep-jvlkzlPb.js",
+    "name": "zep",
+    "src": "src/content/ot/zep.json",
+    "isDynamicEntry": true
+  },
+  "src/content/verse-hashes.json": {
+    "file": "assets/verse-hashes-CKmScHqo.js",
+    "name": "verse-hashes",
+    "src": "src/content/verse-hashes.json",
+    "isDynamicEntry": true
+  },
+  "src/features/child/SchoolView.tsx": {
+    "file": "assets/screens/SchoolView-BJ0K6sfx.js",
+    "name": "SchoolView",
+    "src": "src/features/child/SchoolView.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_timed-gathering-art-CwozkLAV.js",
+      "_scenic-moments-art-DmDSeves.js",
+      "_game-store-ClIlxGDH.js"
+    ]
+  },
+  "src/features/clubs/ClubList.tsx": {
+    "file": "assets/screens/ClubList-BReGzd8w.js",
+    "name": "ClubList",
+    "src": "src/features/clubs/ClubList.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_timed-gathering-art-CwozkLAV.js",
+      "_scenic-moments-art-DmDSeves.js",
+      "_game-store-ClIlxGDH.js",
+      "_club-life-BMQa3zbp.js",
+      "_club-store-BUzXlp7f.js"
+    ]
+  },
+  "src/features/clubs/ClubSession.tsx": {
+    "file": "assets/screens/ClubSession-CwpIHI6w.js",
+    "name": "ClubSession",
+    "src": "src/features/clubs/ClubSession.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_timed-gathering-art-CwozkLAV.js",
+      "_scenic-moments-art-DmDSeves.js",
+      "_game-store-ClIlxGDH.js",
+      "_club-life-BMQa3zbp.js",
+      "_club-store-BUzXlp7f.js",
+      "_ClubRound-DrvOddD7.js"
+    ]
+  },
+  "src/features/cooking/CookingView.tsx": {
+    "file": "assets/screens/CookingView-Q5Zg4cOz.js",
+    "name": "CookingView",
+    "src": "src/features/cooking/CookingView.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_timed-gathering-art-CwozkLAV.js",
+      "_scenic-moments-art-DmDSeves.js",
+      "_game-store-ClIlxGDH.js",
+      "_global-Bw8GuD4_.js",
+      "index.html"
+    ]
+  },
+  "src/features/family/Family.tsx": {
+    "file": "assets/screens/Family-D5N8ymsd.js",
+    "name": "Family",
+    "src": "src/features/family/Family.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_timed-gathering-art-CwozkLAV.js",
+      "_scenic-moments-art-DmDSeves.js",
+      "_game-store-ClIlxGDH.js",
+      "_family-tree-CKetTXs6.js"
+    ]
+  },
+  "src/features/fest/FestList.tsx": {
+    "file": "assets/screens/FestList-QnDZJpMh.js",
+    "name": "FestList",
+    "src": "src/features/fest/FestList.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_timed-gathering-art-CwozkLAV.js",
+      "_scenic-moments-art-DmDSeves.js",
+      "_game-store-ClIlxGDH.js",
+      "_club-store-BUzXlp7f.js"
+    ]
+  },
+  "src/features/fest/FestSession.tsx": {
+    "file": "assets/screens/FestSession-BUimdi4h.js",
+    "name": "FestSession",
+    "src": "src/features/fest/FestSession.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_timed-gathering-art-CwozkLAV.js",
+      "_scenic-moments-art-DmDSeves.js",
+      "_game-store-ClIlxGDH.js",
+      "_club-store-BUzXlp7f.js",
+      "_ClubRound-DrvOddD7.js"
+    ]
+  },
+  "src/features/journal/FamilyTree.tsx": {
+    "file": "assets/screens/FamilyTree-whTKWrHb.js",
+    "name": "FamilyTree",
+    "src": "src/features/journal/FamilyTree.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_timed-gathering-art-CwozkLAV.js",
+      "_scenic-moments-art-DmDSeves.js",
+      "_game-store-ClIlxGDH.js",
+      "index.html",
+      "_family-tree-CKetTXs6.js"
+    ],
+    "css": [
+      "assets/FamilyTree-BfP49Osn.css"
+    ]
+  },
+  "src/features/newland/BuildMenu.tsx": {
+    "file": "assets/screens/BuildMenu-t5P1R6wZ.js",
+    "name": "BuildMenu",
+    "src": "src/features/newland/BuildMenu.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_timed-gathering-art-CwozkLAV.js",
+      "_scenic-moments-art-DmDSeves.js",
+      "_game-store-ClIlxGDH.js",
+      "index.html"
+    ]
+  },
+  "src/features/newland/FacilityView.tsx": {
+    "file": "assets/screens/FacilityView-BgX-FAZ1.js",
+    "name": "FacilityView",
+    "src": "src/features/newland/FacilityView.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_timed-gathering-art-CwozkLAV.js",
+      "_scenic-moments-art-DmDSeves.js",
+      "_game-store-ClIlxGDH.js",
+      "index.html"
+    ]
+  },
+  "src/features/stall/StallView.tsx": {
+    "file": "assets/screens/StallView-DIjAXgg2.js",
+    "name": "StallView",
+    "src": "src/features/stall/StallView.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_timed-gathering-art-CwozkLAV.js",
+      "_scenic-moments-art-DmDSeves.js",
+      "_game-store-ClIlxGDH.js",
+      "index.html"
+    ]
+  },
+  "src/features/village/VillageSite.tsx": {
+    "file": "assets/screens/VillageSite-JNq6JGC-.js",
+    "name": "VillageSite",
+    "src": "src/features/village/VillageSite.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_timed-gathering-art-CwozkLAV.js",
+      "_scenic-moments-art-DmDSeves.js",
+      "_game-store-ClIlxGDH.js",
+      "index.html"
+    ]
+  }
+}

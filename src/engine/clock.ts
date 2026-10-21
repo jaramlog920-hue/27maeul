@@ -47,6 +47,14 @@ export function formatTime(minute: number): string {
   return `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`
 }
 
+/** 말로 읽는 시각: 아침 8시 · 낮 12시 · 저녁 5시 반 (안내 글용) */
+export function sayTime(minute: number): string {
+  const m = Math.floor(minute) % 1440
+  const h = Math.floor(m / 60)
+  const part = h < 12 ? '아침' : h === 12 ? '낮' : h < 17 ? '오후' : '저녁'
+  return `${part} ${h > 12 ? h - 12 : h}시${m % 60 ? ' 반' : ''}`
+}
+
 const lerp = (a: number, b: number, t: number) => a + (b - a) * Math.min(1, Math.max(0, t))
 export const NIGHT_DARK = 0.58
 

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { CONTENT, neighborById } from '../../content/catalog'
 import { fill, itemList, itemName, T } from '../../content/text'
 import { canLearn, canShowSkillItem, chooseSkillStyle, chooseStyle, craftLearned, discoveredSkill, finishLesson, lessonHand, lookAgain, SKILL_DEFS, SKILL_IDS, skillOf, startLesson, styleOf, type SkillState } from '../../engine/skills'
-import { haveStock, overflows, stageWith } from '../../engine/game'
+import { haveStock, overflows, stageWith, useStock } from '../../engine/game'
 import { relOf } from '../../engine/people'
 import { EXPANSION_PROPS } from '../../render/expansion-prop-art'
 import { FURNI_PALETTE } from '../../render/furniture-art'
@@ -97,7 +97,8 @@ export function SkillCraftOptions({ at = 'workbench' }: { at?: 'workbench' | 'he
       const def = SKILL_DEFS[id], text = lessonText(id), item = itemName(def.item)
       const selected = styleOf(game, id)
       const needs = def.needs && !haveStock(game, def.needs)
-      const full = overflows(game, { [def.item]: 1 })
+      const paid = def.needs ? useStock(game, def.needs) : game
+      const full = !!paid && overflows(paid, { [def.item]: 1 })
       const from = neighborById(game.skills![id].from)
       return <div key={id} className="skill-option">
         <p><b>{text.name}</b>{from && ` · ${fill(S.teacher, { name: from.role })}`}</p>

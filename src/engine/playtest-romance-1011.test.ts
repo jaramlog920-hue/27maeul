@@ -32,8 +32,8 @@ describe('1. 이미 연인·약혼·부부면 다른 후보의 고백 장면이 
 describe('결정 2. 성장 개편의 연애 잠금이 고백 장면에도 걸린다', () => {
   it('연애가 잠긴 새 저장은 고백이 열리지 않고, 골라도 연인이 되지 않는다', () => {
     withConfess()
-    const s = player(establishedGame(CONTENT, 16))
-    expect(featureAccess(s, 'suitors')).toBe('full')
+    // 2026-10-21: 연애 후보도 연애와 함께 열려, 그 전에는 둘 다 잠겨 있다
+    const s = player(establishedGame(CONTENT, 15))
     expect(featureAccess(s, 'dating')).not.toBe('full')
     expect(eventNow(s, 'rudy')).toBeNull()
     expect(chooseInEvent(s, confess.id, 0).romance.partner).toBeNull()

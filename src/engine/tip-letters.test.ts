@@ -8,9 +8,10 @@ import { nextTip, TIP_LETTERS, TIP_WHEN, tipDay, tipMorning } from './tip-letter
 const base = (): GameState => ({ ...establishedGame(CONTENT, 20), scenes: [], clock: { day: 9, minute: 22 * 60 } })
 
 describe('이웃 꿀팁 편지 (2026-10-14)', () => {
-  it('200통 — 보내는 이웃·조건이 다 있고, 금지어·"당신" 없이', () => {
-    expect(TIP_LETTERS).toHaveLength(200)
-    expect(new Set(TIP_LETTERS.map((t) => t.id)).size).toBe(200)
+  // 2026-10-21: 마지막 열 장 응원 편지 셋을 더해 203통
+  it('203통 — 보내는 이웃·조건이 다 있고, 금지어·"당신" 없이', () => {
+    expect(TIP_LETTERS).toHaveLength(203)
+    expect(new Set(TIP_LETTERS.map((t) => t.id)).size).toBe(203)
     const ids = new Set(CONTENT.neighbors.map((n) => n.id))
     for (const t of TIP_LETTERS) {
       expect(ids.has(t.from), t.id).toBe(true)

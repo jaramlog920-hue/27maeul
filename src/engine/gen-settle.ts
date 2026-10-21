@@ -102,7 +102,8 @@ export function avatarOfFor(content: GameContent): AvatarOf {
 /** 한 날의 정산 */
 export function settleOneDay(g: GenState, d: number, s: Partial<Pick<GameState, 'romance' | 'flags' | 'progress' | 'shelved'>>, content: GameContent, opts: SettleOpts): GenState {
   const partner = s.romance?.partner ? slotPerson(g, s.romance.partner) : null
-  const busy = (id: string) => !!(g.persons[id]?.npc && opts.busy?.(g.persons[id].npc as string))
+  // 자리를 이어받은 자녀는 npc가 없으니 그 자리 id로 (그 자리 이야기 날엔 큰일을 미룬다)
+  const busy = (id: string) => { const p = g.persons[id]; return !!p && !!opts.busy?.(p.npc ?? slotOfPerson(g, id)) }
   // 플레이어와 헤어진 사람은 14일 동안 다른 주민과 사귀지 않는다 (사용자 결정 ③)
   const cooling = (id: string) => {
     const at = s.flags?.[`exPartner:${slotOfPerson(g, id)}`]
@@ -115,7 +116,9 @@ export function settleOneDay(g: GenState, d: number, s: Partial<Pick<GameState, 
     g = settleBirth(g, d, ctx, avatarOfFor(content))
   }
   // 세대교체: 자라기 → 견습 → 은퇴와 이어받기
-  g = settleGrowth(g, d, { generations: featureAccess(s, 'generations') === 'full', retirement: featureAccess(s, 'retirement') === 'full', ageless: featureAccess(s, 'autonomy') !== 'full' || !!s.flags?.ageless })
+  // 은퇴는 없다 (2026-10-21 사용자: 이웃은 계속 그 자리에서 지내고, 다 자란 자녀는 스스로 일을 찾는다) — 견습·은퇴는 끄고,
+  // 180장(다음 세대)부터는 어른이 된 자녀가 자기 일을 찾은 소식이 남는다 (ownJob)
+  g = settleGrowth(g, d, { generations: false, retirement: false, ownJobs: featureAccess(s, 'generations') === 'full', ageless: featureAccess(s, 'autonomy') !== 'full' || !!s.flags?.ageless, keep: s.romance?.partner ?? null })
   return ensureBakerBaby(g, d)
 }
 

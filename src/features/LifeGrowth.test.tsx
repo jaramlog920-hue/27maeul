@@ -34,7 +34,8 @@ it('아직 열리지 않은 여행은 필요한 장 수를 알려 준다', () =>
   load(0)
   render(<TravelView />)
   expect(screen.getByRole('status')).toHaveTextContent('40장')
-  expect(screen.getAllByRole('button', { name: '떠나기' }).every(b => b.hasAttribute('disabled'))).toBe(true)
+  // 2026-10-21: 막힌 단추는 흐린 채(aria-disabled)로 두고, 누르면 까닭 한 줄
+  expect(screen.getAllByRole('button', { name: '떠나기' }).every(b => b.getAttribute('aria-disabled') === 'true')).toBe(true)
 })
 
 it('7장 기록 꾸러미는 제본·서고 전시와 별개로 보인다', () => {

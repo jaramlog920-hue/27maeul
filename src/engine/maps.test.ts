@@ -22,13 +22,14 @@ describe('지도 크기', () => {
     expect([WIDTH, HEIGHT, VILLAGE_H]).toEqual([48, 164, 40])
     expect(MAP).toHaveLength(HEIGHT)
   })
-  it('새 터는 40 × 40줄, 보이는 땅 30줄 + 안 방 10줄', () => {
+  // 2026-10-21: 입주 주택 방을 늘리려고 숨은 줄 10 → 20
+  it('새 터는 40 × 50줄, 보이는 땅 30줄 + 숨은 방 줄 20', () => {
     setActiveMap('newland')
     expect(currentMapId()).toBe('newland')
-    expect([mapWidth(), mapHeight(), mapVisibleHeight()]).toEqual([40, 40, 30])
+    expect([mapWidth(), mapHeight(), mapVisibleHeight()]).toEqual([40, 50, 30])
     expect(NEWLAND_MAP).toHaveLength(NEWLAND_H)
     for (const row of NEWLAND_MAP) expect(row).toHaveLength(NEWLAND_W)
-    expect(NEWLAND_VISIBLE_H + INTERIOR.h).toBe(NEWLAND_H)
+    expect(NEWLAND_VISIBLE_H + INTERIOR.h).toBeLessThanOrEqual(NEWLAND_H)
   })
   it('새 터에 있으면 tileAt이 새 터 칸을 돌려주고, 나가면 첫 마을 칸', () => {
     const village = tileAt(0, 0)

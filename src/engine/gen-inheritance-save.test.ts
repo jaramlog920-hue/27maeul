@@ -1,7 +1,7 @@
 import { CONTENT } from '../content/catalog'
 import { newGame } from './game'
 import { newGenState, type GenState } from './gen'
-import { settleBirth } from './gen-birth'
+import { fitGenderLook, settleBirth } from './gen-birth'
 import { settleGrowth, stageByAge } from './gen-growth'
 import { STAGE_AT } from './gen-config'
 import { deserialize, serialize } from './save'
@@ -37,7 +37,10 @@ describe('생성 주민의 유전과 성장 저장 경계', () => {
     expect(baby.parents).toEqual(['g-0001', 'g-0002'])
     expect([fatherHair, motherHair]).toContainEqual(baby.hair)
     for (const k of Object.keys(fatherAvatar) as (keyof typeof fatherAvatar)[]) {
-      expect([fatherAvatar[k], motherAvatar[k]]).toContain(baby.avatar?.[k])
+      // 옷·머리 모양은 아이 성별에 어울리는 부모 것, 둘 다 안 어울리면 그 성별의 기본값 (2026-10-20 사용자)
+      const look = baby.look ?? 'f'
+      const fit = [fatherAvatar[k], motherAvatar[k]].map((v) => fitGenderLook(look, { [k]: v })[k])
+      expect(fit).toContain(baby.avatar?.[k])
     }
     expect(settleBirth(g, 100, ctx).households['h-2'].children).toEqual(['g-0003'])
     const rendered = genAvatar(baby)

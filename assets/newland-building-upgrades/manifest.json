@@ -37,11 +37,37 @@
     "A": "#6b8581",
     "u": "#ebe0c5",
     "U": "#cbbda1",
-    "n": "#79989b",
-    "N": "#4f6b75",
+    "e": "#6f8f9a",
+    "E": "#526f7e",
+    "d": "#91acb5",
     "J": "#6f5140",
     "P": "#ead7b2",
-    "q": "#bda367"
+    "q": "#bda367",
+    "n": "#79989b",
+    "N": "#4f6b75",
+    "Ħ": "#f4e0c0",
+    "ħ": "rgba(90,60,70,0.22)",
+    "Ĩ": "#f0d8b0",
+    "ĩ": "#c59a61",
+    "Ī": "#906040",
+    "ī": "#764f34",
+    "Ĭ": "#688793",
+    "ĭ": "#465e6b",
+    "Į": "#e0a974",
+    "į": "#9a6e45",
+    "İ": "#c49161",
+    "ı": "#c07058",
+    "Ĳ": "#ba6c54",
+    "ĳ": "#a86048",
+    "Ĵ": "#cc8468",
+    "ĵ": "#8f523d",
+    "Ķ": "#fefdf8",
+    "ķ": "#dcbf94",
+    "ĸ": "#ead6b2",
+    "Ĺ": "#f6e6c4",
+    "ĺ": "#fbf1da",
+    "Ļ": "#d9707e",
+    "ļ": "#ffffff"
   },
   "boundaryPalette": {
     "k": "#b57e4e",
@@ -63,8 +89,8 @@
     "p": "#feae88",
     "o": "#ffc2a0",
     "z": "#756653",
-    "v": "#b292a2",
-    "V": "#856f89",
+    "v": "#9b65b3",
+    "V": "#bd8fd0",
     "t": "#e68e4e",
     "H": "#bd8069",
     "h": "#98644f",
@@ -74,8 +100,32 @@
     "A": "#6b8581",
     "u": "#ebe0c5",
     "U": "#cbbda1",
-    "n": "#79989b",
-    "N": "#4f6b75",
+    "e": "#6f8f9a",
+    "E": "#526f7e",
+    "d": "#91acb5",
+    "С": "#e0a974",
+    "Т": "#c49161",
+    "У": "#688793",
+    "Ф": "#465e6b",
+    "Х": "#f0d8b0",
+    "Ц": "rgba(90,60,70,0.22)",
+    "Ч": "#c59a61",
+    "Ш": "#f4e0c0",
+    "Щ": "#906040",
+    "Ъ": "#764f34",
+    "Ы": "#9a6e45",
+    "Ь": "#a86048",
+    "Э": "#cc8468",
+    "Ю": "#c07058",
+    "Я": "#ba6c54",
+    "а": "#8f523d",
+    "б": "#fefdf8",
+    "в": "#dcbf94",
+    "г": "#ead6b2",
+    "д": "#fbf1da",
+    "е": "#f6e6c4",
+    "ж": "#d9707e",
+    "з": "#ffffff",
     "J": "#765746",
     "P": "#ead7b2"
   },
@@ -806,16 +856,9 @@
         }
       },
       "style": {
-        "roof": "hip",
-        "window": "square",
-        "roofColor": "H",
-        "roofShade": "h",
-        "wall": "u",
-        "chimney": true,
-        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 문 옆 요리 그릇"
+        "note": "요리사의 집 겸 일터 · 신약 마을 주택 외관"
       },
-      "workProp": "work-props/cook.png",
-      "before": "before/cook-down.png"
+      "workProp": "work-props/cook.png"
     },
     {
       "id": "painter",
@@ -910,16 +953,9 @@
         }
       },
       "style": {
-        "roof": "hip",
-        "window": "square",
-        "roofColor": "v",
-        "roofShade": "V",
-        "wall": "u",
-        "chimney": false,
-        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 그림 표식"
+        "note": "화가의 집 겸 일터 · 신약 마을 주택 외관"
       },
-      "workProp": "work-props/painter.png",
-      "before": "before/painter-down.png"
+      "workProp": "work-props/painter.png"
     },
     {
       "id": "weaver",
@@ -1014,16 +1050,9 @@
         }
       },
       "style": {
-        "roof": "hip",
-        "window": "square",
-        "roofColor": "a",
-        "roofShade": "A",
-        "wall": "u",
-        "chimney": false,
-        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 작게 걸어 둔 천"
+        "note": "직조인의 집 겸 일터 · 신약 마을 주택 외관"
       },
-      "workProp": "work-props/weaver.png",
-      "before": "before/weaver-down.png"
+      "workProp": "work-props/weaver.png"
     },
     {
       "id": "gardener",
@@ -1118,16 +1147,9 @@
         }
       },
       "style": {
-        "roof": "hip",
-        "window": "square",
-        "roofColor": "G",
-        "roofShade": "g",
-        "wall": "u",
-        "chimney": false,
-        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 정원 표식"
+        "note": "정원사의 집 겸 일터 · 신약 마을 주택 외관"
       },
-      "workProp": "work-props/gardener.png",
-      "before": "before/gardener-down.png"
+      "workProp": "work-props/gardener.png"
     },
     {
       "id": "potter",
@@ -1222,16 +1244,9 @@
         }
       },
       "style": {
-        "roof": "hip",
-        "window": "square",
-        "roofColor": "H",
-        "roofShade": "h",
-        "wall": "u",
-        "chimney": false,
-        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 항아리"
+        "note": "도예가의 집 겸 일터 · 신약 마을 주택 외관"
       },
-      "workProp": "work-props/potter.png",
-      "before": "before/potter-down.png"
+      "workProp": "work-props/potter.png"
     },
     {
       "id": "instrumentMaker",
@@ -1326,16 +1341,9 @@
         }
       },
       "style": {
-        "roof": "hip",
-        "window": "square",
-        "roofColor": "I",
-        "roofShade": "i",
-        "wall": "u",
-        "chimney": false,
-        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 작은 현악기"
+        "note": "악기 제작자의 집 겸 일터 · 신약 마을 주택 외관"
       },
-      "workProp": "work-props/instrumentMaker.png",
-      "before": "before/instrumentMaker-down.png"
+      "workProp": "work-props/instrumentMaker.png"
     },
     {
       "id": "carpenter",
@@ -1430,16 +1438,9 @@
         }
       },
       "style": {
-        "roof": "hip",
-        "window": "square",
-        "roofColor": "w",
-        "roofShade": "W",
-        "wall": "u",
-        "chimney": false,
-        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 목공 표식"
+        "note": "목수의 집 겸 일터 · 신약 마을 주택 외관"
       },
-      "workProp": "work-props/carpenter.png",
-      "before": "before/carpenter-down.png"
+      "workProp": "work-props/carpenter.png"
     },
     {
       "id": "baker",
@@ -1534,16 +1535,9 @@
         }
       },
       "style": {
-        "roof": "hip",
-        "window": "square",
-        "roofColor": "H",
-        "roofShade": "h",
-        "wall": "u",
-        "chimney": true,
-        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 빵 바구니"
+        "note": "빵 굽는 집 겸 일터 · 신약 마을 주택 외관"
       },
-      "workProp": "work-props/baker.png",
-      "before": "before/baker-down.png"
+      "workProp": "work-props/baker.png"
     },
     {
       "id": "scribe",
@@ -1638,16 +1632,9 @@
         }
       },
       "style": {
-        "roof": "hip",
-        "window": "square",
-        "roofColor": "I",
-        "roofShade": "i",
-        "wall": "u",
-        "chimney": false,
-        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 기록 공책"
+        "note": "필사가의 기록집 · 신약 마을 주택 외관"
       },
-      "workProp": "work-props/scribe.png",
-      "before": "before/scribe-down.png"
+      "workProp": "work-props/scribe.png"
     },
     {
       "id": "scholar",
@@ -1742,16 +1729,9 @@
         }
       },
       "style": {
-        "roof": "hip",
-        "window": "square",
-        "roofColor": "a",
-        "roofShade": "A",
-        "wall": "u",
-        "chimney": false,
-        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 작은 기록 책장"
+        "note": "학자의 공부집 · 신약 마을 주택 외관"
       },
-      "workProp": "work-props/scholar.png",
-      "before": "before/scholar-down.png"
+      "workProp": "work-props/scholar.png"
     },
     {
       "id": "woodworker",
@@ -1846,16 +1826,9 @@
         }
       },
       "style": {
-        "roof": "hip",
-        "window": "square",
-        "roofColor": "w",
-        "roofShade": "W",
-        "wall": "u",
-        "chimney": false,
-        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 나무 재료"
+        "note": "나무 작업자의 일터 · 신약 마을 주택 외관"
       },
-      "workProp": "work-props/woodworker.png",
-      "before": "before/woodworker-down.png"
+      "workProp": "work-props/woodworker.png"
     },
     {
       "id": "shipwright",
@@ -1950,16 +1923,9 @@
         }
       },
       "style": {
-        "roof": "hip",
-        "window": "square",
-        "roofColor": "a",
-        "roofShade": "A",
-        "wall": "u",
-        "chimney": false,
-        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 작은 목선"
+        "note": "배 제작자의 작업집 · 신약 마을 주택 외관"
       },
-      "workProp": "work-props/shipwright.png",
-      "before": "before/shipwright-down.png"
+      "workProp": "work-props/shipwright.png"
     },
     {
       "id": "teaKeeper",
@@ -2054,16 +2020,9 @@
         }
       },
       "style": {
-        "roof": "hip",
-        "window": "square",
-        "roofColor": "G",
-        "roofShade": "g",
-        "wall": "u",
-        "chimney": false,
-        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 찻잔 받침"
+        "note": "차지기의 쉼집 · 신약 마을 주택 외관"
       },
-      "workProp": "work-props/teaKeeper.png",
-      "before": "before/teaKeeper-down.png"
+      "workProp": "work-props/teaKeeper.png"
     },
     {
       "id": "merchant",
@@ -2158,16 +2117,9 @@
         }
       },
       "style": {
-        "roof": "hip",
-        "window": "square",
-        "roofColor": "I",
-        "roofShade": "i",
-        "wall": "u",
-        "chimney": false,
-        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 상품 상자"
+        "note": "상인의 귀가집 · 신약 마을 주택 외관"
       },
-      "workProp": "work-props/merchant.png",
-      "before": "before/merchant-down.png"
+      "workProp": "work-props/merchant.png"
     },
     {
       "id": "fisher",
@@ -2262,16 +2214,9 @@
         }
       },
       "style": {
-        "roof": "hip",
-        "window": "square",
-        "roofColor": "n",
-        "roofShade": "N",
-        "wall": "u",
-        "chimney": false,
-        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 어구 꾸러미"
+        "note": "어부의 집 · 신약 마을 주택 외관"
       },
-      "workProp": "work-props/fisher.png",
-      "before": "before/fisher-down.png"
+      "workProp": "work-props/fisher.png"
     },
     {
       "id": "sailor",
@@ -2366,16 +2311,9 @@
         }
       },
       "style": {
-        "roof": "hip",
-        "window": "square",
-        "roofColor": "n",
-        "roofShade": "N",
-        "wall": "u",
-        "chimney": false,
-        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 작은 닻"
+        "note": "선원의 귀가집 · 신약 마을 주택 외관"
       },
-      "workProp": "work-props/sailor.png",
-      "before": "before/sailor-down.png"
+      "workProp": "work-props/sailor.png"
     },
     {
       "id": "herbalist",
@@ -2470,16 +2408,9 @@
         }
       },
       "style": {
-        "roof": "hip",
-        "window": "square",
-        "roofColor": "G",
-        "roofShade": "g",
-        "wall": "u",
-        "chimney": false,
-        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 약초 화분"
+        "note": "약초 연구자의 집 · 신약 마을 주택 외관"
       },
-      "workProp": "work-props/herbalist.png",
-      "before": "before/herbalist-down.png"
+      "workProp": "work-props/herbalist.png"
     },
     {
       "id": "traveler",
@@ -2574,16 +2505,9 @@
         }
       },
       "style": {
-        "roof": "hip",
-        "window": "square",
-        "roofColor": "v",
-        "roofShade": "V",
-        "wall": "u",
-        "chimney": false,
-        "note": "같은 경사지붕·벽돌줄·네모 창틀 · 여행 가방"
+        "note": "여행자의 귀가집 · 신약 마을 주택 외관"
       },
-      "workProp": "work-props/traveler.png",
-      "before": "before/traveler-down.png"
+      "workProp": "work-props/traveler.png"
     },
     {
       "id": "wood-0",

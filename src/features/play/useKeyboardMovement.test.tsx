@@ -94,13 +94,26 @@ it('releasing the newest direction resumes the earlier held direction', () => {
   expect(walk).not.toHaveBeenCalled()
 })
 
-it.each(['modal', 'decorating', 'piecePopups', 'copyResult', 'trip'] as const)('%s discards held movement until a fresh press', kind => {
+// 2026-10-21 사용자: 꾸미는 중에도 걸으며 시점이 따라오게 — decorating은 걷기를 막지 않는다 (아래 따로)
+it('decorating keeps walking but never interacts', () => {
+  const walk = vi.spyOn(useGame.getState(), 'walk').mockImplementation(() => {})
+  const interact = vi.spyOn(useGame.getState(), 'interact').mockImplementation(() => false)
+  renderHook(() => useKeyboardMovement())
+  act(() => useGame.setState({ decorating: 'pick' }))
+  fireEvent.keyDown(window, { code: 'KeyD' })
+  expect(walk).toHaveBeenCalled()
+  fireEvent.keyDown(window, { code: 'Space' })
+  expect(interact).not.toHaveBeenCalled()
+  act(() => useGame.setState({ decorating: null }))
+})
+
+it.each(['modal', 'piecePopups', 'copyResult', 'trip'] as const)('%s discards held movement until a fresh press', kind => {
   const walk = vi.spyOn(useGame.getState(), 'walk').mockImplementation(() => {})
   const interact = vi.spyOn(useGame.getState(), 'interact').mockImplementation(() => false)
   renderHook(() => useKeyboardMovement())
   fireEvent.keyDown(window, { code: 'KeyD' })
   const blockers = {
-    modal: { kind: 'guide' }, decorating: 'pick',
+    modal: { kind: 'guide' },
     piecePopups: ['test'], copyResult: [{ id: 'strength', before: 1, after: 2, xp: 1 }],
     trip: { dest: 'harbor', withChild: false },
   } satisfies Partial<ReturnType<typeof useGame.getState>>

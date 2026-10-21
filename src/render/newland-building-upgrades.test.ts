@@ -13,36 +13,24 @@ function recompose(a:{rows:string[];back:string[];front:string[]}){
  expect(a.back.every((r,y)=>[...r].every((c,x)=>c==='.'||a.front[y][x]==='.'))).toBe(true)
 }
 describe('구약맵 건물·경계·공사 자산',()=>{
- it('직업마다 그림이 다르고 색을 제외한 건물 외곽도 7종 이상이다',()=>{
+ it('직업 18종 모두 소품 없는 신약 주택 외관을 공유한다',()=>{
   for(const job of ADULT_JOBS)expect(PROFESSION_BUILDINGS).toContain(job)
-  const silhouettes=new Set<string>(),pictures=new Set<string>(),props=new Set<string>()
+  const pictures=new Set<string>(),props=new Set<string>()
   for(const job of PROFESSION_BUILDINGS){
    const a=professionBuildingArt(job,'down'),p=professionWorkPropRows(job)
-   silhouettes.add(a.rows.join('').replace(/[^.]/g,'#'));pictures.add(a.rows.join(''));props.add(p.join(''))
+   pictures.add(a.rows.join(''));props.add(p.join(''))
    valid(p,16,BUILDING_ART_PALETTE)
   }
-  expect(silhouettes.size).toBeGreaterThanOrEqual(7);expect(pictures.size).toBe(18);expect(props.size).toBe(18)
+  expect(pictures.size).toBe(1);expect(props.size).toBe(18)
  })
- it('4방향 건물의 아치 문과 문턱·발 기준점·분리 레이어가 기존 출입 위치를 유지한다',()=>{
+ it('4방향 건물의 발 기준점·분리 레이어가 기존 출입 위치를 유지한다',()=>{
   for(const job of PROFESSION_BUILDINGS)for(const d of BUILDING_FACINGS){
    const a=professionBuildingArt(job,d)
    valid(a.rows,64,BUILDING_ART_PALETTE);recompose(a)
    expect(a.anchor).toEqual({x:32,y:60});expect(a.entry).toEqual(buildingEntry(d))
    expect(a.footprint).toEqual({w:4,h:3,dy:1})
-   if(d!=='up'){
-    const x=d==='left'?10:d==='right'?42:27
-    // The upgraded artwork has an arched door and a shaded upper step. Its pixels
-    // intentionally differ from the old rectangular door; the entry stays put.
-    const oldThreshold=OLD_BUILDINGS[job][d].rows[60].indexOf('I'.repeat(14))
-    expect(oldThreshold).toBe(x-2)
-    expect(a.entry).toEqual({x:oldThreshold+7,y:60})
-    expect(a.rows[60].slice(oldThreshold,oldThreshold+14)).toBe('I'.repeat(14))
-    const openingWidth=(y:number)=>[...a.rows[y].slice(x,x+10)].filter(ch=>'WwlAaS'.includes(ch)).length
-    expect(openingWidth(39)).toBeLessThan(openingWidth(41))
-    expect(openingWidth(41)).toBe(10)
-    for(let y=39;y<59;y++)expect('WwlAa'.includes(a.rows[y][x+5])).toBe(true)
-    expect(a.rows[41][x]).toBe('W');expect(a.rows[41][x+9]).toBe('W')
-   }
+   // 문·막힘 위치는 기존 저장 규격을 보존하고 외관은 승인된 신약 주택을 사용한다.
+   if(d!=='up')expect(a.entry).toEqual({x:d==='left'?15:d==='right'?47:32,y:60})
   }
  })
  it('25건물 공사는 3단계가 다르고 실제 입구는 완공 전 만들지 않는다',()=>{

@@ -1,0 +1,1 @@
+const fs=require('fs');let p='artifacts/youth-browser.cjs',s=fs.readFileSync(p,'utf8').replace('g.player={...g.player,...window.__auditModules.HOME_ENTRY}', 'g.player={...g.player,...window.__auditModules.HOME_ENTRY,x:window.__auditModules.HOME_ENTRY.x+2}');fs.writeFileSync(p,s);

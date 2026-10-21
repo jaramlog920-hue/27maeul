@@ -1,0 +1,70 @@
+{
+  "calls": [
+    [
+      [
+        "php"
+      ]
+    ]
+  ],
+  "inputs": [
+    [
+      "php"
+    ]
+  ],
+  "maps": [
+    {
+      "input": [
+        "php-004",
+        "jn-001-001"
+      ],
+      "out": [
+        "php",
+        "jn"
+      ],
+      "fn": "(id) => pieceBook(id)"
+    }
+  ],
+  "filters": [
+    {
+      "input": [
+        "php",
+        "jn"
+      ],
+      "out": [
+        "php",
+        "jn"
+      ],
+      "fn": "(b) => !!b"
+    }
+  ],
+  "direct": [
+    "php",
+    "jn"
+  ],
+  "loadedCalls": [
+    [
+      "php",
+      0,
+      [
+        "php"
+      ]
+    ]
+  ],
+  "mapped": "jn",
+  "johnPiece": {
+    "id": "jn-001-001",
+    "book": "jn",
+    "ref": "요 1:1-18",
+    "chapter": 1,
+    "title": "말씀이 육신이 되시다",
+    "stamps": [],
+    "source": "https://www.bskorea.or.kr/bible/korbibReadpage.php?linkBible=BHANjhn001001"
+  },
+  "collected": [
+    "php-004",
+    "jn-001-001"
+  ],
+  "modal": {
+    "kind": "loveVerse"
+  }
+}

@@ -1,32 +1,34 @@
 // 집 모습 고르기 (2026-10-13 사용자): 처음 지을 때 지붕·벽 색, 창 모양, 장식(나무 기둥·차양)을 고르고, 고른 모습을 바로 본다.
 // 줄마다 이름 칸 폭을 같게 해 색 칸이 세로로 줄이 맞는다.
 import { useEffect, useRef } from 'react'
-import { HOUSE_ROOFS, HOUSE_TRIMS, HOUSE_WALLS, HOUSE_WINDOWS, type HouseLook } from '../../engine/newland-house-look'
+import { hasSign, HOUSE_ROOFS, HOUSE_TRIMS, HOUSE_WALLS, HOUSE_WINDOWS, type HouseLook } from '../../engine/newland-house-look'
 import type { BuildKind } from '../../engine/newland-sites'
 import type { Facing } from '../../engine/types'
-import { drawNewlandHouse, HOUSE_ART } from '../../render/newland-house-art'
+import { drawNewlandHouse, HOUSE_ART, signFor } from '../../render/newland-house-art'
 
 /** 새 터 집 그림 (아이콘·미리보기). width는 집 단계의 가로 칸 수 */
-export function HouseArt({ kind, facing = 'down', look, size = 28, width = 4 }: { kind: BuildKind; facing?: Facing; look?: HouseLook; size?: number; width?: number }) {
+export function HouseArt({ kind, facing = 'down', look, size = 28, width = 4, sign }: { kind: BuildKind; facing?: Facing; look?: HouseLook; size?: number; width?: number; sign?: string }) {
   const ref = useRef<HTMLCanvasElement>(null)
   const w = width * 16
   useEffect(() => {
     const g = ref.current?.getContext('2d')
     if (!g) return
     g.clearRect(0, 0, w, HOUSE_ART)
-    drawNewlandHouse(g, kind, facing, look, false, width)
-  }, [kind, facing, look, width, w])
+    drawNewlandHouse(g, kind, facing, look, false, width, sign)
+  }, [kind, facing, look, width, w, sign])
   return <canvas ref={ref} width={w} height={HOUSE_ART} className="art-icon" style={{ width: (size * w) / HOUSE_ART, height: size, imageRendering: 'pixelated' }} aria-hidden="true" />
 }
 
 const WINDOW_SHORT = ['네모', '아치', '둥근']
 const TRIM_SHORT = ['없음', '기둥', '차양']
 
-export function HouseLookPicker({ kind, facing, look, width, onChange }: { kind: BuildKind; facing: Facing; look: HouseLook; width: number; onChange: (l: HouseLook) => void }) {
+export function HouseLookPicker({ kind, facing, look, width, onChange, job }: { kind: BuildKind; facing: Facing; look: HouseLook; width: number; onChange: (l: HouseLook) => void; job?: string | null }) {
+  // 꿈터 간판: 원할 때만 (2026-10-21 사용자) — 기본은 안 달기
+  const canSign = hasSign(kind) && !!signFor(kind, { ...look, sign: 1 }, job)
   return (
     <div className="house-look">
       <div className="house-look-art">
-        <HouseArt kind={kind} facing={facing} look={look} size={72} width={width} />
+        <HouseArt kind={kind} facing={facing} look={look} size={72} width={width} sign={signFor(kind, look, job)} />
       </div>
       <div className="house-look-rows">
         <span className="house-look-label">지붕</span>
@@ -57,6 +59,16 @@ export function HouseLookPicker({ kind, facing, look, width, onChange }: { kind:
             </button>
           ))}
         </div>
+        {canSign && <>
+          <span className="house-look-label">간판</span>
+          <div className="house-swatches" role="group" aria-label="꿈터 간판">
+            {['안 달기', '달기'].map((name, i) => (
+              <button key={name} className={`word${(look.sign ?? 0) === i ? ' on' : ''}`} aria-pressed={(look.sign ?? 0) === i} onClick={() => onChange(i ? { ...look, sign: 1 } : (({ sign: _s, ...rest }) => { void _s; return rest })(look))}>
+                {name}
+              </button>
+            ))}
+          </div>
+        </>}
       </div>
     </div>
   )

@@ -1,0 +1,58 @@
+{
+  "status": "passed",
+  "shown": "1/3",
+  "before": {
+    "inv": {
+      "wool": 1,
+      "handyKit": 1
+    },
+    "chest": {
+      "wool": 2
+    },
+    "clock": {
+      "day": 1,
+      "minute": 360.15
+    },
+    "modal": "menu",
+    "toast": null
+  },
+  "cancelled": {
+    "inv": {
+      "wool": 1,
+      "handyKit": 1
+    },
+    "chest": {
+      "wool": 2
+    },
+    "clock": {
+      "day": 1,
+      "minute": 360.15
+    },
+    "toast": null
+  },
+  "made": {
+    "inv": {
+      "handyKit": 1,
+      "blanket": 1
+    },
+    "chest": {},
+    "clock": {
+      "day": 1,
+      "minute": 420.4668
+    },
+    "toast": "얻은 것: 담요 1"
+  },
+  "restored": {
+    "inv": {
+      "handyKit": 1,
+      "blanket": 1
+    },
+    "chest": {},
+    "clock": {
+      "day": 1,
+      "minute": 420.5836
+    },
+    "toast": null
+  },
+  "errors": []
+}

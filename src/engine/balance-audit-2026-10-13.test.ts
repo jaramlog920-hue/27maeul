@@ -22,13 +22,13 @@ it('audit: clock cap permits repeated gathering and recovery without another day
   results.clockCap = { clock: s.clock, olive: s.inv.olive, hunger: s.needs.hunger, fatigue: s.needs.fatigue }
 })
 
-it('audit: an adult child living at home can still be sent to school', () => {
+// 2026-10-21 점검: 함께하기처럼 배움터도 다 자란 아이는 맡기지 않는다 ('grown')
+it('audit: an adult child living at home is no longer sent to school', () => {
   let s = complete(newGame(CONTENT), 24)
   s = { ...s, coins: 100, clock: { day: 100, minute: 600 }, child: { ...newChild(1, freshStats(), 'wit'), name: 'audit', job: 'scribe', left: false } }
-  expect(canSchool(s)).toBeNull()
-  const next = sendToSchool(s, 'wit')!
-  expect(next.coins).toBe(85)
-  results.adultSchool = { allowed: true, age: 99, fee: s.coins - next.coins }
+  expect(canSchool(s)).toBe('grown')
+  expect(sendToSchool(s, 'wit')).toBeNull()
+  results.adultSchool = { allowed: false, age: 99, fee: 0 }
 })
 
 // 2026-10-13 해금을 장 수로 바꾸며 고침: 플레이어 연애(60장)가 주민 자율 생활(75장)보다 먼저 열린다

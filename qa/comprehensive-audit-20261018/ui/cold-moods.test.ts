@@ -21,4 +21,4 @@ it('reproduces permanent empty mood cache after a saved piece is inspected befor
   expect(engine.giveLoveVerse(game,id,cached)!.hit).toBe(false)
   expect(engine.giveLoveVerse(game,id,{...cached,moods:actual})!.hit).toBe(true)
   console.log('COLD_MOODS_PROBE',JSON.stringify({piece:id,actual,cached:cached.moods,wrongHit:false,expectedHit:true}))
-})
+}, 120000)

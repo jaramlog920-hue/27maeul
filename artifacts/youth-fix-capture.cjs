@@ -1,0 +1,1 @@
+const fs=require('fs');for(const p of ['artifacts/youth-capacity-fixes-browser.cjs','artifacts/youth-location-fixes-browser.cjs']){let s=fs.readFileSync(p,'utf8').replaceAll('fullPage:true','fullPage:true,animations:\'disabled\'').replace('// 再試行しても空きがない間は資源を使わない。','// 공간 확보 전의 재시도는 자원을 소모하지 않는다.');fs.writeFileSync(p,s)}

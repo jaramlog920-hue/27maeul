@@ -44,7 +44,7 @@ function GenSetting() {
       {locked && <p className="hint">{featureHint('autonomy')}</p>}
       <div className="settings-options pair-options" role="group" aria-label={t('gen.setting')}>
         <button className={on ? 'on' : ''} aria-pressed={on} disabled={locked} onClick={() => pick(true)}>{t('gen.on')}</button>
-        <button className={!on ? 'on' : ''} aria-pressed={!on} onClick={() => pick(false)}>{t('gen.off')}</button>
+        <button className={!on ? 'on' : ''} aria-pressed={!on} disabled={locked} onClick={() => pick(false)}>{t('gen.off')}</button>
       </div>
     </section>
   )
@@ -72,7 +72,7 @@ function AgeSetting() {
       {locked && <p className="hint">{featureHint('autonomy')}</p>}
       <div className="settings-options pair-options" role="group" aria-label={t('gen.ageSetting')}>
         <button className={!ageless ? 'on' : ''} aria-pressed={!ageless} disabled={locked} onClick={() => pick(false)}>{t('gen.ageOn')}</button>
-        <button className={ageless ? 'on' : ''} aria-pressed={ageless} onClick={() => pick(true)}>{t('gen.ageOff')}</button>
+        <button className={ageless ? 'on' : ''} aria-pressed={ageless} disabled={locked} onClick={() => pick(true)}>{t('gen.ageOff')}</button>
       </div>
     </section>
   )

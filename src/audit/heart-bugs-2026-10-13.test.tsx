@@ -123,5 +123,6 @@ it.each([
   render(<TalkBox modal={{ kind: 'talk', neighborId: 'poppy', line: '' }} />)
   fireEvent.click(screen.getByRole('button', { name: T.romance.giveCord }))
   expect(useGame.getState().game).toBe(game)
-  expect(useGame.getState().toast?.text).toBe(note)
+  // 10하트 안내에는 진행 숫자가 덧붙는다 (2026-10-21) — 안내 글로 시작하면 된다
+  expect(useGame.getState().toast?.text?.startsWith(note)).toBe(true)
 })

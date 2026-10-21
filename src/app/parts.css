@@ -15,6 +15,11 @@
   animation: rise 0.18s ease-out;
   z-index: 2;
 }
+.toast-over-modal {
+  position: fixed;
+  top: max(12px, env(safe-area-inset-top));
+  z-index: 70;
+}
 .decorate-bar {
   position: fixed;
   left: 0;

@@ -1,0 +1,1 @@
+import{Zi as e}from"./timed-gathering-art-DqeEs5k1.js";import{c as t,ft as n}from"./game-store-BL-CbS-8.js";function r(r){let i=e(r).state;n(i),t.setState({game:i})}export{r as t};

@@ -18,6 +18,7 @@ const SHOW_WHY: Record<string, string> = {
 const WHY: Record<string, string> = {
   noChild: '맡길 아이가 없어요.',
   baby: '아직 아기예요.',
+  grown: '다 자란 아이는 제 일을 하며 지내요.',
   away: '아이가 마을을 떠났어요.',
   done: '오늘은 이미 맡겼어요.',
   late: '오늘은 끝났어요.',
@@ -40,7 +41,7 @@ export function SchoolView() {
       <p className="hint">
         하루 {SCHOOL_FEE}닢 · 경험치 +{SCHOOL_XP}
       </p>
-      {kid && block !== 'noChild' && block !== 'away' && (
+      {kid && block !== 'noChild' && block !== 'away' && block !== 'grown' && (
         <ul className="trade-list">
           {STAT_IDS.map((id) => (
             <li key={id}>

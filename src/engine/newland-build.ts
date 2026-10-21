@@ -13,7 +13,7 @@ import {
 } from './newland-sites'
 import type { Facing, ItemId, Tile } from './types'
 import { isBlockedChar } from './world'
-import { hasHouseLook, sanitizeLook, type HouseLook } from './newland-house-look'
+import { DEFAULT_LOOK, hasHouseLook, hasSign, sanitizeLook, type HouseLook } from './newland-house-look'
 
 export type BuildState = 'ordered' | 'building' | 'done'
 export interface Build {
@@ -49,7 +49,8 @@ export interface NewlandState {
   settledDay: number
 }
 
-export const MAX_BUILDS = 12
+// 입주 주택 여덟 채·이웃 꿈터(2026-10-21)까지 함께 지을 수 있게 서른두 채로
+export const MAX_BUILDS = 32
 /** 입주 주택(안 방이 필요한 건물)의 최대 수 — 방 칸 수가 상한이다 (newland-config) */
 export { MAX_HOMES }
 export const emptyNewland = (): NewlandState => ({ builds: [], tiles: {}, nextId: 1, settledDay: 0 })
@@ -224,7 +225,8 @@ function mustReach(builds: readonly Build[], tiles: Readonly<Record<string, Tile
  * 놓을 수 있는가 (없으면 null): 땅이 드러났고, 구역 안이고, 다른 것과 겹치지 않고, 서 있는 자리가 아니고,
  * 놓은 뒤에도 새 터 입구에서 서고 문·모든 건물의 문 앞·길 칸에 길찾기로 닿는다 (집 안에 갇히는 배치·서고를 막는 배치는 거절)
  */
-export function canPlace(s: Base, kind: SiteKind, x: number, y: number, facing: Facing = 'down', size = 1): PlaceBlock | null {
+/** self: 옮기는 건물(그 id로 검사 — 사는 사람의 설 칸 검사가 그 집으로 걸리게, 2026-10-21 검토) */
+export function canPlace(s: Base, kind: SiteKind, x: number, y: number, facing: Facing = 'down', size = 1, self?: { id: string }): PlaceBlock | null {
   if (!revealedLand(s)) return 'unrevealed'
   const def = SITES[kind]
   if (!def.facings.includes(facing) || ((isTileKind(kind)) && !def.sizes.includes(size)) || !Number.isInteger(x) || !Number.isInteger(y)) return 'facing'
@@ -256,7 +258,7 @@ export function canPlace(s: Base, kind: SiteKind, x: number, y: number, facing: 
   // 놓은 뒤의 모양으로 길 검사
   const nextBuilds: Build[] = isTile
     ? [...builds]
-    : [...builds, { id: '', kind: kind as BuildKind, x, y, facing, state: 'ordered', orderedDay: 0, paid: { coins: 0, items: {} }, refunded: false, ...(widthOf(kind, size) > ART_TILES ? { size } : {}) }]
+    : [...builds, { id: self?.id ?? '', kind: kind as BuildKind, x, y, facing, state: self ? 'done' : 'ordered', orderedDay: 0, paid: { coins: 0, items: {} }, refunded: false, ...(widthOf(kind, size) > ART_TILES ? { size } : {}) }]
   const nextTiles = isTile ? { ...tiles, ...Object.fromEntries(area.map((t) => [keyOf(t), kind as TileKind])) } : tiles
   const seen = reachable(nextBuilds, nextTiles)
   // 길을 깔지 않은 잔디에서도 현재 기록자가 입구로 빠져나갈 수 있어야 한다.
@@ -417,19 +419,56 @@ function settleRefund<T extends Pick<GameState, 'coins' | 'inv' | 'newland'> & P
   const back = rate(b)
   if (!back) return null
   const gone = returnRoom(refund(s, back), id)
-  return { ...gone, ...(gone.flags ? { flags: leaveHome(gone.flags, Number(id.slice(1))) } : {}), newland: { ...nl, builds: nl.builds.filter((x) => x.id !== id) } }
+  const day = (s as Partial<Pick<GameState, 'clock'>>).clock?.day
+  return { ...gone, ...(gone.flags ? { flags: leaveHome(gone.flags, Number(id.slice(1)), day) } : {}), newland: { ...nl, builds: nl.builds.filter((x) => x.id !== id) } }
 }
 
 /**
  * 헐린 집에 살던 새 터 가족의 표식을 지운다 (사는 집·들어온 날·이사 마음·인사·머물기) — 남아 있으면 새 집을 받아도
  * 옛 이사 마음으로 곧 떠나고, 공동 주택도 그 가족을 '새 터에 산다'로 본다 (2026-10-18 감사 M-17)
  */
-function leaveHome(flags: Record<string, number>, buildNo: number): Record<string, number> {
+function leaveHome(flags: Record<string, number>, buildNo: number, day?: number): Record<string, number> {
   const homes = Object.entries(flags).filter(([k, v]) => k.startsWith('familyHome:') && v === buildNo).map(([k]) => k.slice('familyHome:'.length))
   if (!homes.length) return flags
   const out = { ...flags }
-  for (const n of homes) for (const k of [`familyHome:${n}`, `familyHomeDay:${n}`, `moveWish:${n}`, `moveBye:${n}`, `moveStay:${n}`]) delete out[k]
+  for (const n of homes) {
+    for (const k of [`familyHome:${n}`, `familyHomeDay:${n}`, `moveWish:${n}`, `moveBye:${n}`, `moveStay:${n}`]) delete out[k]
+    // 집이 헐린 가족도 이사 간 가족처럼 한 달은 새 집을 바라지 않는다 (2026-10-20 사용자: 허물기 확인 창)
+    if (day !== undefined) out[`movedAway:${n}`] = day
+  }
   return out
+}
+
+/** 다 지은 건물 옮기기 값: 처음 낸 닢의 10% (2026-10-21 점검: 옮기려면 허물어 절반을 잃고 사흘을 기다려야 했다) */
+export const MOVE_RATE = 0.1
+export const moveCost = (b: Pick<Build, 'paid'>): number => Math.ceil(b.paid.coins * MOVE_RATE)
+export type MoveBlock = PlaceBlock | 'notDone' | 'coins'
+/** 옮길 수 있는가 — 자기 자신은 빼고 새 자리를 검사한다 (사는 사람·방 안 가구·간판·주인은 그대로) */
+export function canMoveBuild<T extends Base & Pick<GameState, 'coins'>>(s: T, id: string, x: number, y: number, facing: Facing): MoveBlock | null {
+  const nl = s.newland
+  const b = nl?.builds.find((v) => v.id === id)
+  if (!nl || !b || b.state !== 'done') return 'notDone'
+  if (b.x === x && b.y === y && b.facing === facing) return 'same'
+  const without = { ...s, newland: { ...nl, builds: nl.builds.filter((v) => v.id !== id) } }
+  const block = canPlace(without, b.kind, x, y, facing, b.size ?? SITES[b.kind].sizes[0], { id })
+  if (block) return block
+  return s.coins < moveCost(b) ? 'coins' : null
+}
+export function moveBuild<T extends Base & Pick<GameState, 'coins'>>(s: T, id: string, x: number, y: number, facing: Facing): T | null {
+  if (canMoveBuild(s, id, x, y, facing)) return null
+  const nl = s.newland!
+  const b = nl.builds.find((v) => v.id === id)!
+  return { ...s, coins: s.coins - moveCost(b), newland: { ...nl, builds: nl.builds.map((v) => (v.id === id ? { ...v, x, y, facing } : v)) } }
+}
+
+/** 다 지은 꿈터의 간판을 달거나 뗀다 (2026-10-21 사용자: 원할 때만). 꿈터가 아니거나 다 짓지 않았으면 null */
+export function toggleBuildSign<T extends Pick<GameState, 'newland'>>(s: T, id: string): T | null {
+  const nl = s.newland
+  const b = nl?.builds.find((x) => x.id === id)
+  if (!nl || !b || b.state !== 'done' || !hasSign(b.kind as BuildKind)) return null
+  const base = b.look ?? DEFAULT_LOOK
+  const look: HouseLook = base.sign ? (({ sign: _s, ...rest }) => { void _s; return rest })(base) : { ...base, sign: 1 }
+  return { ...s, newland: { ...nl, builds: nl.builds.map((x) => (x.id === id ? { ...x, look } : x)) } }
 }
 
 /** 소유 공간 키: 'newland:<건물 id>' (GameState.rooms) */

@@ -1,0 +1,82 @@
+{
+  "results": [
+    {
+      "age": 20,
+      "stage": "toddler",
+      "before": {
+        "coins": 185,
+        "at": {
+          "x": 21,
+          "y": 45
+        },
+        "day": 100,
+        "school": 100
+      },
+      "after": {
+        "name": "검사아이",
+        "school": 100,
+        "at": {
+          "x": 20,
+          "y": 114
+        },
+        "coins": 185
+      },
+      "restored": {
+        "at": {
+          "x": 20,
+          "y": 114
+        },
+        "school": 100,
+        "coins": 185
+      }
+    },
+    {
+      "age": 50,
+      "stage": "helper",
+      "before": {
+        "coins": 185,
+        "at": {
+          "x": 21,
+          "y": 45
+        },
+        "day": 100,
+        "school": 100
+      },
+      "after": {
+        "name": "검사아이",
+        "school": 100,
+        "at": {
+          "x": 24,
+          "y": 15
+        },
+        "coins": 185
+      },
+      "restored": {
+        "at": {
+          "x": 24,
+          "y": 15
+        },
+        "school": 100,
+        "coins": 185
+      }
+    },
+    {
+      "case": "home",
+      "before": {
+        "at": {
+          "x": 20,
+          "y": 114
+        },
+        "mode": "home"
+      },
+      "after": {
+        "at": {
+          "x": 24,
+          "y": 15
+        },
+        "mode": "home"
+      }
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,1 @@
+import{Oh as e,Wh as t,bi as n,wv as r}from"./timed-gathering-art-DqeEs5k1.js";import{c as i,pt as a}from"./game-store-BL-CbS-8.js";window.__auditModules={CONTENT:r,newGame:n,HOME_ENTRY:e,cameraFor:t,VIEW_W:16,VIEW_H:20,saveGameAsync:a},window.__gd={store:i,step:()=>{}};

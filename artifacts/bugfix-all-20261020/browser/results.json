@@ -1,0 +1,24 @@
+{
+  "observations": {
+    "siblingClothesDiffer": true,
+    "tripClothesDiffer": true,
+    "spouseClothesDiffer": true,
+    "spouseName": "후계 배우자",
+    "spouseTop": 8,
+    "originalLookUnchanged": true,
+    "canvases": 9
+  },
+  "conflict": {
+    "rejected": true,
+    "status": {
+      "state": "error",
+      "error": {
+        "name": "GameStorageConflictError"
+      },
+      "quota": false,
+      "errorId": 1
+    }
+  },
+  "savedCoins": 123,
+  "errors": []
+}

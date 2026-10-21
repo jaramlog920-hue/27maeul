@@ -1,4 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { JOB_NAME } from '../../content/text'
+import { genPersona, residentJob } from '../../engine/persona'
+import { PersonaCard } from '../companion/PersonaCard'
 import { CONTENT, neighborById } from '../../content/catalog'
 import { personName } from '../../content/gen-text'
 import { seasonOf } from '../../engine/clock'
@@ -113,6 +116,11 @@ export function FamilyTree({ personId, neighborId }: { personId: string; neighbo
           </div>
         </div>
         <p className="genealogy-legend"><span>{t('familyTree.parentLine')}</span><span>{t('familyTree.spouseLine')}</span><span>{t('familyTree.kinLine')}</span></p>
+        {/* 마을에서 태어난 사람의 성격과 말버릇 (2026-10-21 사용자) */}
+        {canRename && g.persons[focus]?.origin === 'born' && genPersona(g, focus) && (
+          <PersonaCard key={focus} persona={genPersona(g, focus)!} who="villager" salt={focus} player={game.avatar?.name?.trim() || '필사가'}
+            job={(() => { const j = residentJob(g, focus); return j ? JOB_NAME[j] : undefined })()} onCatch={(w) => useGame.getState().setGenCatch(focus, w)} />
+        )}
         {canRename && <form className="genealogy-rename" onSubmit={e => { e.preventDefault(); rename() }}>
           {draft !== null && <input aria-label={t('familyTree.rename')} value={draft} maxLength={RENAME_MAX} autoFocus onChange={e => setDraft(e.target.value)} />}
           <button type={draft === null ? 'button' : 'submit'} onClick={draft === null ? () => setDraft(g.persons[focus]?.name ?? '') : undefined}>{t('familyTree.rename')}</button>

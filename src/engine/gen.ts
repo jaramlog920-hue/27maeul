@@ -1,6 +1,7 @@
 // 계획 20 2부 작업 A: 주민의 자율 가족 — 상태(인물·쌍 호감도·관계·가구·사건·기록)와 저장.
 // 하루 정산은 gen-settle.ts, 단계 전환은 gen-relations.ts·gen-marriage.ts·gen-birth.ts가 이 상태를 채워 간다.
 // 필사·능력치·닢·말씀 진도는 읽지도 쓰지도 않는다 (말씀은 보상이 아니다).
+import { cleanCatch } from './persona'
 import { mulberry32 } from './offers'
 import { CANDIDATE_IDS } from './romance'
 import { closeKin, FAMILY_REL, repairKin } from './gen-kin'
@@ -69,6 +70,8 @@ export interface GenPerson {
   household: string | null
   /** 알려진 친척 중 부모·자녀로 적을 수 없는 것 (조부모·종류 모름) */
   kin?: { id: string; rel: 'grandparent' | 'relative' }[]
+  /** 기록자가 정해 준 말버릇 (태어난 주민 — 성격은 persona.ts가 씨앗으로) */
+  catch?: string
 }
 
 /** 이웃은 따로 적지 않는다 — 관계 기록이 없으면 이웃 */
@@ -443,6 +446,7 @@ export function sanitizeGen(raw: unknown, today: number): GenState | undefined {
         ? { agePause: { days: v.agePause.days, at: Math.min(v.agePause.at, today) } } : {}),
       ...(isLook(v.look) ? { look: v.look } : {}),
       ...(isStr(v.name) ? { name: v.name } : {}),
+      ...(isStr(v.catch) && cleanCatch(v.catch) ? { catch: cleanCatch(v.catch) } : {}),
       ...(avatar ? { avatar } : {}),
     ...(hair ? { hair } : {}),
       parents: strs(v.parents),

@@ -28,11 +28,10 @@ describe('태어난 생성 주민의 노년', () => {
     for (let d = 10; d <= elderDay; d++) g = settleGrowth(g, d)
     expect(g.persons['g-0001'].stage).toBe('elder')
     expect(movedHeir(g, 'rudy')).toBeNull()
-    expect(slotPerson(g, 'rudy')).toBe('g-0001')
-    expect(residentIsElder(g, 'rudy')).toBe(true)
+    // 2026-10-21 사용자: 은퇴를 없앴다 — 자녀가 노년이 되어도 부모 이웃이 자리 주인, 자녀는 곁에 어른 크기로
+    expect(slotPerson(g, 'rudy')).toBe('rudy')
     expect(residentIsElder(g, 'g-0001')).toBe(true)
-    // 은퇴 뒤에는 자녀(g-0001)가 자리 주인, 은퇴한 부모(rudy)가 곁에 (2026-10-11 사용자 결정)
-    expect(companionsOf(g, 'rudy')).toEqual([{ person: g.persons.rudy, short: false, retiredParent: 'rudy' }])
+    expect(companionsOf(g, 'rudy')).toEqual([{ person: g.persons['g-0001'], short: false }])
     expect(g.persons['g-0001']).toMatchObject({ name: '루시', look: 'f', avatar: family().persons['g-0001'].avatar, born: 10 })
     const log = g.log.find(l => l.kind === 'grew:elder')!
     expect(log.day).toBe(elderDay)
@@ -48,17 +47,16 @@ describe('태어난 생성 주민의 노년', () => {
     expect(restored.persons['g-0001']).toEqual(next.gen!.persons['g-0001'])
     const later = settleGrowth(restored, elderDay + 1000)
     expect(later.persons['g-0001']).toEqual(restored.persons['g-0001'])
-    expect(later.retired?.rudy.heir).toBe('g-0001')
-    expect(later.retired?.rudy.moved).toBeUndefined()
+    expect(later.retired?.rudy).toBeUndefined()
   })
-  it('일터를 물려받지 않은 형제도 성인·노년 때 사라지지 않고 어른 크기로 보인다', () => {
+  it('형제도 성인·노년 때 사라지지 않고 어른 크기로 보인다 (은퇴 없음)', () => {
     let g = family()
     const sibling = { ...g.persons['g-0001'], id: 'g-0002', name: '노라', born: 15 }
     g.persons[sibling.id] = sibling; g.households['h-1'].children.push(sibling.id)
     for (let d = 10; d <= elderDay + 5; d++) g = settleGrowth(g, d)
     expect(g.persons['g-0002'].stage).toBe('elder')
     expect(companionsOf(g, 'rudy')).toEqual([
-      { person: g.persons.rudy, short: false, retiredParent: 'rudy' },
+      { person: g.persons['g-0001'], short: false },
       { person: g.persons['g-0002'], short: false },
     ])
   })

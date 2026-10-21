@@ -1,0 +1,13 @@
+{
+  "items": 40,
+  "images": 136,
+  "imageMismatches": [],
+  "sourceFiles": 8,
+  "sourceMismatches": [
+    {
+      "file": "src/render/sprites.ts",
+      "expected": "80d53d396791c0c4564b5983ed8a2740d57cadc0d8f78457e2da53a3ddad1a0e",
+      "actual": "e4ebdffeebedc61df7b6e06d05414ae60e6ba15640f66fdeec8bd818be6ad542"
+    }
+  ]
+}

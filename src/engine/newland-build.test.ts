@@ -194,18 +194,25 @@ describe('놓기 검사', () => {
     }
   })
 
-  it('건물은 열두 채까지', () => {
-    let s = land({ coins: 99999, inv: { olive: 9, papyrus: 9, reed: 9 } })
+  // 2026-10-21: 입주 주택 아홉 채와 함께 지을 수 있게 MAX_BUILDS(스무 채)까지 — 빈자리를 찾아 놓는다
+  it('건물은 MAX_BUILDS채까지', () => {
+    let s = land({ coins: 999999, inv: { olive: 9, papyrus: 9, reed: 9 } })
+    let last: { x: number; y: number } | null = null
     for (let i = 0; i < MAX_BUILDS; i++) {
-      const col = i % 6
-      const row = Math.floor(i / 6)
-      const next = orderBuild({ ...s, inv: { olive: 9, papyrus: 9, reed: 9 } }, 'courtyard', 6 + col * 4, 11 + row * 5, 'down', 1)
+      let spot: { x: number; y: number } | null = null
+      for (let y = 1; y <= 27 && !spot; y++) for (let x = 1; x <= 38 && !spot; x++) if (canPlace(s, 'courtyard', x, y, 'down', 1) === null) spot = { x, y }
+      expect(spot).not.toBeNull()
+      const next = orderBuild({ ...s, inv: { olive: 9, papyrus: 9, reed: 9 } }, 'courtyard', spot!.x, spot!.y, 'down', 1)
       expect(next).not.toBeNull()
       s = next!
       syncHome(s)
+      last = spot
     }
     expect(buildsOf(s)).toHaveLength(MAX_BUILDS)
-    expect(canPlace(s, 'courtyard', 6, 22)).toBe('many')
+    void last
+    let refused = false
+    for (let y = 1; y <= 27 && !refused; y++) for (let x = 1; x <= 38 && !refused; x++) if (canPlace(s, 'courtyard', x, y, 'down', 1) === 'many') refused = true
+    expect(refused).toBe(true)
   })
 })
 

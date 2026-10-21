@@ -3,11 +3,16 @@
 import { useState } from 'react'
 import { fill, T } from '../../content/text'
 import { buildsOf, type Build } from '../../engine/newland-build'
-import { blocksWay, DECOR_KINDS, EXTRA_BUILDS, isDecorKind, SITE_KINDS, type SiteKind } from '../../engine/newland-sites'
+import { DEFAULT_LOOK, hasSign } from '../../engine/newland-house-look'
+import { signFor } from '../../render/newland-house-art'
+import type { BuildKind } from '../../engine/newland-sites'
+import { blocksWay, DECOR_KINDS, EXTRA_BUILDS, isBuildKind, isDecorKind, SITE_KINDS, type SiteKind } from '../../engine/newland-sites'
 import { IconGrid, type IconEntry } from '../../shared/IconGrid'
 import { SiteIcon } from './SiteIcon'
-import { dreamHeard } from '../../engine/newland-life'
-import { kidWorkOwners } from '../../engine/kid-work'
+import { dreamHeard, settledGuests } from '../../engine/newland-life'
+import { familyHomes } from '../../engine/gen-homes'
+import { familyNames } from './FacilityView'
+import { kidWorkOwners, ownerJob, ownerName } from '../../engine/kid-work'
 import { t } from '../../shared/i18n'
 import { canClaimHome } from '../../engine/newland-myhome'
 import { useGame } from '../../store/game-store'
@@ -22,24 +27,35 @@ const USE_TEXT: Partial<Record<SitePick, string>> = {
 }
 const STATE_TEXT: Record<Build['state'], string> = { ordered: T.build.ordered, building: T.build.building, done: T.build.done }
 
-function BuiltRow({ b }: { b: Build }) {
-  const { removeBuild, claimNewHome } = useGame.getState()
+function BuiltRow({ b, no, onMove }: { b: Build; no?: number; onMove?: (b: Build) => void }) {
+  const { removeBuild, claimNewHome, toggleSign } = useGame.getState()
   // 새 터 내 집 (2026-10-14): 다 지은 빈 입주 주택은 내 집으로 정할 수 있다
   const claim = useGame((s) => (b.kind === 'home' ? canClaimHome(s.game, b) : 'notHome'))
   const [sure, setSure] = useState(false)
   const done = b.state === 'done'
+  // 사는 사람이 있는 집을 허물면 그 사람들은 첫 마을로 돌아간다 — 확인 창에 누가 사는지 (2026-10-20 사용자)
+  const living = useGame((s) => {
+    if (b.kind !== 'home' || !done) return ''
+    const fam = familyHomes(s.game).filter((x) => x.home.id === b.id).map((x) => familyNames(s.game, x.household))
+    const guests = settledGuests(s.game).filter((x) => x.home.id === b.id).map((x) => (T.newlandLife.guests as Record<string, { name: string }>)[x.id]?.name ?? '')
+    return [...fam, ...guests].filter(Boolean).join(', ')
+  })
   const refundNote = done ? T.build.refundCoins : b.state === 'ordered' ? T.build.refundAll : T.build.refundHalf
   return (
     <li className="build-row">
       <span className="build-name">
-        {siteName(b.kind)}{b.size ? ` ${b.size >= 8 ? '3단계' : '2단계'}` : ''} · {STATE_TEXT[b.state]}{claim === 'mine' ? ' · 내 집' : ''}
+        {siteName(b.kind)}{no ? ` ${no}` : ''}{b.size ? ` ${b.size >= 8 ? '3단계' : '2단계'}` : ''} · {STATE_TEXT[b.state]}{claim === 'mine' ? ' · 내 집' : living ? ` · ${living}` : b.kind === 'kidWork' ? ` · ${ownerName(useGame.getState().game, b.owner)}` : ''}
       </span>
       {claim === null && <button onClick={() => claimNewHome(b.id)}>내 집으로 쓰기</button>}
       {claim === 'mine' && <button onClick={() => claimNewHome(null)}>내 집 그만 쓰기</button>}
+      {/* 다 지은 건물 옮기기 (2026-10-21) — 허물지 않고 처음 낸 닢의 10%로 */}
+      {done && isBuildKind(b.kind) && onMove && <button onClick={() => onMove(b)}>옮기기</button>}
+      {/* 꿈터 간판은 원할 때만 (2026-10-21 사용자) — 다 지은 뒤에도 달거나 뗀다 */}
+      {done && hasSign(b.kind as BuildKind) && signFor(b.kind as BuildKind, { ...(b.look ?? DEFAULT_LOOK), sign: 1 }, b.kind === 'kidWork' ? ownerJob(useGame.getState().game, b.owner) : null) && <button onClick={() => toggleSign(b.id)}>{b.look?.sign ? '간판 떼기' : '간판 달기'}</button>}
       {sure ? (
         <div className="build-confirm">
           <p className="hint">
-            {T.build.sure} {refundNote}
+            {living ? fill(T.build.sureLiving, { names: living }) : T.build.sure} {refundNote}
           </p>
           <div className="actions">
             <button className="primary" onClick={() => removeBuild(b.id)}>
@@ -60,6 +76,7 @@ export function BuildMenu() {
   const { closeModal } = useGame.getState()
   const [tab, setTab] = useState<'place' | 'built'>('place')
   const [pick, setPick] = useState<SitePick | null>(null)
+  const [moving, setMoving] = useState<Build | null>(null)
   // 집 겸 일터의 주인 (2026-10-14: 우리 아이 셋·이웃 자녀)
   const [owner, setOwner] = useState<string | undefined>(undefined)
   const owners = kidWorkOwners(game)
@@ -85,7 +102,7 @@ export function BuildMenu() {
       <div className="actions menu column">
         {owners.map((o) => (
           <button key={o.owner} onClick={() => { setOwner(o.owner); setPick('kidWork') }}>
-            {fill(T.newlandLife.kidWork.label, { name: o.name })}
+            {fill(o.owner.startsWith('npc:') ? T.newlandLife.kidWork.dreamLabel : T.newlandLife.kidWork.label, { name: o.name })}
           </button>
         ))}
       </div>
@@ -93,6 +110,13 @@ export function BuildMenu() {
     action: undefined,
   })
 
+  if (moving) {
+    return (
+      <div className="dialog build-menu" role="dialog" aria-label={T.build.title}>
+        <SitePreview pick={moving.kind} owner={moving.owner} moving={moving} onBack={() => setMoving(null)} onPlaced={() => setMoving(null)} />
+      </div>
+    )
+  }
   if (pick) {
     return (
       <div className="dialog build-menu" role="dialog" aria-label={T.build.title}>
@@ -132,9 +156,11 @@ export function BuildMenu() {
         <p className="hint">{T.build.none}</p>
       ) : (
         <ul className="build-built">
-          {builds.map((b) => (
-            <BuiltRow key={b.id} b={b} />
-          ))}
+          {builds.map((b) => {
+            // 같은 종류가 여럿이면 번호를 붙여 구별한다 (2026-10-21 점검: 「입주 주택 · 완성」 두 줄이 똑같았다)
+            const same = builds.filter((x) => x.kind === b.kind)
+            return <BuiltRow key={b.id} b={b} no={same.length > 1 ? same.indexOf(b) + 1 : undefined} onMove={(x) => setMoving(x)} />
+          })}
         </ul>
       )}
       <div className="actions">

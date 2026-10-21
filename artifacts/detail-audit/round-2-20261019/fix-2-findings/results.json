@@ -1,0 +1,82 @@
+{
+  "status": "passed",
+  "toastChecks": [
+    {
+      "width": 390,
+      "height": 844,
+      "text": "가방에 더 들어가지 않는다.",
+      "parentBody": true,
+      "front": true,
+      "position": "fixed",
+      "zIndex": "70",
+      "bag": 0,
+      "box": 1
+    },
+    {
+      "width": 1280,
+      "height": 900,
+      "text": "가방에 더 들어가지 않는다.",
+      "parentBody": true,
+      "front": true,
+      "position": "fixed",
+      "zIndex": "70",
+      "bag": 0,
+      "box": 1
+    }
+  ],
+  "shown": "3/3",
+  "before": {
+    "inv": {
+      "wool": 1,
+      "handyKit": 1
+    },
+    "chest": {
+      "wool": 2
+    },
+    "clock": {
+      "day": 1,
+      "minute": 360.31680000000006
+    },
+    "modal": "menu",
+    "toast": null
+  },
+  "cancelled": {
+    "inv": {
+      "wool": 1,
+      "handyKit": 1
+    },
+    "chest": {
+      "wool": 2
+    },
+    "clock": {
+      "day": 1,
+      "minute": 360.31680000000006
+    },
+    "toast": null
+  },
+  "made": {
+    "inv": {
+      "handyKit": 1,
+      "blanket": 1
+    },
+    "chest": {},
+    "clock": {
+      "day": 1,
+      "minute": 420.6002000000001
+    },
+    "toast": "얻은 것: 담요 1"
+  },
+  "restored": {
+    "inv": {
+      "handyKit": 1,
+      "blanket": 1
+    },
+    "chest": {},
+    "clock": {
+      "day": 1,
+      "minute": 420.70020000000005
+    },
+    "toast": null
+  },
+  "errors": []
+}

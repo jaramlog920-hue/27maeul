@@ -1,6 +1,6 @@
 import type {GameState} from './game'
 import {otBookFinished} from './books'
-import {OT_BOOKS} from './ot-books'
+import {OT_BOOKS, OT_ROOMS} from './ot-books'
 import {BOOKS} from './types'
 
 /** 실제 완료 전환에서만 예약한다. 이미 완성한 옛 저장에는 소급하지 않는다. */
@@ -16,6 +16,12 @@ export function otMilestoneScenes(before:GameState,next:GameState):GameState {
     state={...state,scenes:enqueue('firstOtBook'),flags:{...state.flags,firstOtBookScene:1,firstOtBookIndex:OT_BOOKS.indexOf(first)}}
   if(!before.flags.psalmRestScene&&!otBookFinished(before,'psa')&&otBookFinished(next,'psa'))
     state={...state,scenes:enqueue('psalmRest'),flags:{...state.flags,psalmRestScene:1}}
+  // 구약 서고 방 하나(범위)를 다 채운 날 (2026-10-21 점검: 929장 동안 중간에 돌려받는 게 거의 없었다)
+  for(const room of OT_ROOMS){
+    const key=`otRoomScene:${room.id}`
+    if(before.flags[key]||room.books.every(b=>otBookFinished(before,b))||!room.books.every(b=>otBookFinished(next,b)))continue
+    state={...state,scenes:enqueue(`otRoom:${room.id}`),flags:{...state.flags,[key]:1}}
+  }
   return state
 }
 

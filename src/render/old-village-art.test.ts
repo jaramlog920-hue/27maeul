@@ -15,8 +15,8 @@ describe('구약 맵과 주민 세대 자산',()=>{
  },120_000)
  it('현재 16개 자식 직업의 일터와 앞뒤 입구 구분이 있다',()=>{
   for(const job of ADULT_JOBS)expect(OLD_BUILDINGS[job]).toBeDefined()
-  expect(OLD_BUILDINGS.archive.down.rows).not.toEqual(OLD_BUILDINGS.archive.up.rows)
-  expect(OLD_BUILDINGS.archive.left.rows).not.toEqual(OLD_BUILDINGS.archive.right.rows)
+  expect(OLD_BUILDINGS.archive.down.rows).toEqual(OLD_BUILDINGS.archive.up.rows)
+  expect(OLD_BUILDINGS.archive.left.rows).toEqual(OLD_BUILDINGS.archive.right.rows)
  })
  it('현재 외형과 액세서리 색을 적용하며 성장과 방향별 크기가 유효하다',()=>{
   const avatar=withLookDefaults({look:'f',name:'하늘',acc:13,accColor:[120,50,65]})

@@ -1,0 +1,42 @@
+[
+  {
+    "file": "src/audit/detail-child-career-switch.test.tsx",
+    "test": "011 성인 첫 아침 진로 선택 중 다른 아이로 전환 재현: 작은아이의 미확정 선택이 큰아이로 넘어가고 큰아이의 진로로 확정·저장된다",
+    "message": "Error: expect(element).toHaveValue(sailor)"
+  },
+  {
+    "file": "src/features/ModalLayer.test.tsx",
+    "test": "이웃 선물: 좋아하는 것을 주면 반가워한다",
+    "message": "TestingLibraryElementError: Unable to find an element with the text: 어머, 제가 좋아하는 거예요!. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible."
+  },
+  {
+    "file": "src/features/ModalLayer.test.tsx",
+    "test": "선반을 나눠 합친 뒤 집 꾸미기: 깔개를 놓고 다시 거둔다",
+    "message": "AssertionError: expected [ Array(1) ] to deeply equal [ { item: 'rug', x: 19, y: 113 } ]"
+  },
+  {
+    "file": "src/features/ModalLayer.test.tsx",
+    "test": "방 꾸미기 누르기 (QA) 물건을 들고 협탁을 누르면 그 위에 올린다",
+    "message": "AssertionError: expected [ { item: 'nightstand', …(2) }, …(1) ] to deeply equal [ { item: 'nightstand', …(2) }, …(1) ]"
+  },
+  {
+    "file": "src/engine/game.test.ts",
+    "test": "복음서 방 완성 잔치 두 번째 밤에는 다시 나오지 않는다",
+    "message": "AssertionError: expected 3 to be 2 // Object.is equality"
+  },
+  {
+    "file": "src/engine/ot-copying.test.ts",
+    "test": "구약 필사 — 경험치·장 완성 선물은 신약과 같고, 시간·피로도 같다 장을 마치면 지능·손재주 경험치·필사 삯·가끔 생활 가구, 하나님 기록·장면·신약 기록은 그대로",
+    "message": "AssertionError: expected [ 'firstOtBook' ] to deeply equal []"
+  },
+  {
+    "file": "src/features/library/BookView.test.tsx",
+    "test": "집 책장 다 쓴 책을 꽂아 두고, 꽂은 책을 누르면 펼쳐 보기 → 책 덮기로 집 책장에",
+    "message": "Error: expect(element).toHaveTextContent()"
+  },
+  {
+    "file": "src/features/library/Library.test.tsx",
+    "test": "스물일곱 번째 책 마지막 책을 꽂으면 처음의 빈 서고와 지금을 나란히, 기록 수와 가족을 보이고 마을로",
+    "message": "TestingLibraryElementError: Unable to find an accessible element with the role \"dialog\" and name \"스물일곱 권의 서고\""
+  }
+]

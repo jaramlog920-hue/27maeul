@@ -8,14 +8,18 @@ import type { GenState, Household } from './gen'
 import { doneHomes, standSpotOf, type Build } from './newland-build'
 import type { Tile } from './types'
 import { LODGING_SEATS } from './lodging'
-import { slotPerson } from './gen-growth'
+import { slotOfPerson, slotPerson } from './gen-growth'
 
 /** 결혼한 이웃이 저녁에 들어가는 집의 주인 (제 집이면 null) */
 export function sharedHomeOf(g: GenState | undefined, id: string, hasRoom: (owner: string) => boolean): string | null {
+  const slot = id
+  id = slotPerson(g, id)
   const p = g?.persons[id]
   if (!p?.spouse || !p.household) return null
   const home = g!.households[p.household]?.home
-  return home && home !== id && (hasRoom(home)||!!LODGING_SEATS[home]) ? home : null
+  // 집은 이웃 자리 id로 적힌다 — 자리를 이어받은 자녀에게 그 자리 집은 제 집 (2026-10-20 점검)
+  const own = home === id || home === slot || home === slotOfPerson(g, id)
+  return home && !own && (hasRoom(home)||!!LODGING_SEATS[home]) ? home : null
 }
 
 const householdNo = (h: Household): number => Number(/^h-(\d+)$/.exec(h.id)?.[1] ?? 0)
@@ -29,13 +33,19 @@ export function homeWishes(s: Pick<GameState, 'gen' | 'flags' | 'newland'> & Par
 }
 
 /** 새 터 집에 사는 가구와 그 집 (집이 걷히면 빠진다) */
+// 걸음마다·그림마다 불리므로 같은 상태(flags·gen·newland가 그대로)면 다시 세지 않는다
+const familyHomesCache = new WeakMap<object, { gen: unknown; newland: unknown; out: { household: Household; home: Build }[] }>()
 export function familyHomes(s: Pick<GameState, 'gen' | 'flags' | 'newland'>): { household: Household; home: Build }[] {
+  const hit = familyHomesCache.get(s.flags)
+  if (hit && hit.gen === s.gen && hit.newland === s.newland) return hit.out
   const out: { household: Household; home: Build }[] = []
+  const homes = new Map(doneHomes(s).map((b) => [b.id, b]))
   for (const h of Object.values(s.gen?.households ?? {})) {
     const v = s.flags[`familyHome:${householdNo(h)}`]
-    const home = v ? doneHomes(s).find((b) => b.id === `b${v}`) : undefined
+    const home = v ? homes.get(`b${v}`) : undefined
     if (home) out.push({ household: h, home })
   }
+  familyHomesCache.set(s.flags, { gen: s.gen, newland: s.newland, out })
   return out
 }
 
@@ -93,7 +103,8 @@ export function familyAt(s: Pick<GameState, 'gen' | 'flags' | 'newland'>, t: Til
 // 새 터 집에서 두 이레 넘게 산 가족이 아침에 드물게(MOVE_CHANCE) 이사를 바라게 된다 (flags.moveWish:<가구>).
 // 집 앞에서 말을 걸면: 말리기 → 머물고 한 달은 다시 묻지 않는다 / 인사하기 → 다음 날 아침 떠난다. 그냥 두면 사흘 뒤 떠난다.
 // 떠난 가족은 첫 마을 원래 집으로 돌아가고, 한 달 동안은 새 터 집 희망 목록에 오르지 않는다. 집은 빈집으로 남는다
-export const MOVE_CHANCE = 0.04
+// 하루 4%였는데 여덟 가족이면 사흘에 한 번꼴 말리러 가야 했다 (2026-10-21 점검) — 1.5%로
+export const MOVE_CHANCE = 0.015
 export const MOVE_AFTER_DAYS = 14
 export const MOVE_WAIT_DAYS = 3
 export const MOVE_QUIET_DAYS = 28
@@ -103,11 +114,12 @@ const hashDay = (day: number, n: number) => ((day * 2654435761 + n * 40503) >>> 
 /** 이 가구가 지금 이사를 바라는가 */
 export const wantsToMove = (s: Pick<GameState, 'flags'>, h: Household): boolean => !!s.flags[`moveWish:${householdNo(h)}`]
 
-/** 아침: 이사 마음이 생기거나, 떠날 날이 된 가족은 떠난다. 떠난 가구 번호를 flags.familyLeft에 (알림용) */
+/** 아침: 이사 마음이 생기거나, 떠날 날이 된 가족은 떠난다. 떠난 가구 번호를 flags.familyLeft(둘째부터 familyLeft:<가구>)에 (알림용) */
 export function familyMoveMorning<S extends Pick<GameState, 'gen' | 'flags' | 'newland' | 'clock'>>(s: S): S {
   const day = s.clock.day
   const flags = { ...s.flags }
-  delete flags.familyLeft
+  // 떠난 가족 알림: 첫 가구는 familyLeft, 같은 아침에 더 떠나면 familyLeft:<가구>도 (알림에 함께)
+  for (const k of Object.keys(flags)) if (k === 'familyLeft' || k.startsWith('familyLeft:') || k === 'familyWishNew' || k.startsWith('familyWishNew:')) delete flags[k]
   for (const { household: h } of familyHomes(s)) {
     const n = householdNo(h)
     const wish = flags[`moveWish:${n}`]
@@ -115,14 +127,17 @@ export function familyMoveMorning<S extends Pick<GameState, 'gen' | 'flags' | 'n
       if (flags[`moveBye:${n}`] || day >= wish + MOVE_WAIT_DAYS) {
         for (const k of [`familyHome:${n}`, `familyHomeDay:${n}`, `moveWish:${n}`, `moveBye:${n}`]) delete flags[k]
         flags[`movedAway:${n}`] = day
-        flags.familyLeft = n
+        if (flags.familyLeft) flags[`familyLeft:${n}`] = 1
+        else flags.familyLeft = n
       }
       continue
     }
     const since = flags[`familyHomeDay:${n}`] ?? 0
     const quiet = flags[`moveStay:${n}`]
     if (day - since < MOVE_AFTER_DAYS || (quiet !== undefined && day < quiet + MOVE_QUIET_DAYS)) continue
-    if (hashDay(day, n) < MOVE_CHANCE) flags[`moveWish:${n}`] = day
+    // 이사 마음이 생긴 아침은 알림 한 줄 (사흘 안에 집 앞에서 말려야 하므로 — 2026-10-21 사용자)
+    // 같은 아침 둘 이상이면 둘째부터 familyWishNew:<가구> (알림에 함께 — 2026-10-21 점검 LATE-003)
+    if (hashDay(day, n) < MOVE_CHANCE) { flags[`moveWish:${n}`] = day; if (flags.familyWishNew) flags[`familyWishNew:${n}`] = 1; else flags.familyWishNew = n }
   }
   return { ...s, flags }
 }

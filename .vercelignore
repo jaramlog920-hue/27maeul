@@ -1,3 +1,9 @@
 # 도트 원본·작업 메모는 배포에 올리지 않는다 (게임은 src로 옮긴 그림만 씀)
 assets/
 .superpowers/
+artifacts/
+qa/
+docs/**
+!docs/content-audit.md
+!docs/event-art-remaining-138-plan.json
+.claude/

@@ -11,6 +11,9 @@ export const SETTLEMENT_GUESTS = {
   nelly: { label: '넬리', elder: false, avatar: withLookDefaults({ name: '넬리', look: 'f', skin: 3, hairFront: 5, hairBack: 6, top: 9, bottom: 4, acc: 11, hairColor: [26, 40, 34] }) },
   morris: { label: '모리스', elder: true, avatar: withLookDefaults({ name: '모리스', look: 'm', skin: 4, hairFront: 3, hairBack: 0, top: 10, bottom: 6, acc: 10, hairColor: [45, 5, 67] }) },
   ivy: { label: '아이비', elder: false, avatar: withLookDefaults({ name: '아이비', look: 'f', skin: 1, hairFront: 9, hairBack: 4, top: 14, bottom: 7, acc: 12, hairColor: [32, 42, 27] }) },
+  ray: { label: '레이', elder: false, avatar: withLookDefaults({ name: '레이', look: 'm', skin: 5, hairFront: 4, hairBack: 0, top: 3, bottom: 2, acc: 5, hairColor: [30, 35, 25] }) },
+  ada: { label: '에이다', elder: false, avatar: withLookDefaults({ name: '에이다', look: 'f', skin: 2, hairFront: 1, hairBack: 3, top: 12, bottom: 0, acc: 3, hairColor: [20, 55, 30] }) },
+  hugo: { label: '휴고', elder: true, avatar: withLookDefaults({ name: '휴고', look: 'm', skin: 0, hairFront: 0, hairBack: 0, top: 15, bottom: 6, acc: 0, hairColor: [40, 8, 72] }) },
 } satisfies Record<GuestId, unknown>
 export const GUEST_ACTIONS = ['stand', 'walk', 'work', 'greet', 'carry', 'sit', 'read', 'sleep'] as const
 export type GuestAction = typeof GUEST_ACTIONS[number]
@@ -28,10 +31,11 @@ export function guestPropRows(id: GuestId, frame = 0): string[] {
     rect(0,0,8,8,'T');rect(1,1,6,6,'N');rect(2,3,4,1,'n');rect(4,2,1,4,'n')
     for(const [x,y] of [[2,2],[4,3],[5,5],[2,6]])p[y][x]='q'
     if(frame%2)p[1][5]='q'
-  } else {
+  } else if(id==='ivy') {
     rect(2,0,4,1,'G');rect(3,1,2,2,'T');rect(1,3,6,4,'t');rect(2,7,4,1,'T');rect(2,3,4,1,'q');rect(3,5,2,1,'G')
     if(frame%2)p[6][5]='q'
   }
+  // 2026-10-21에 더한 손님(레이·에이다·휴고)은 소품 그림이 아직 없다 — 남의 소품을 들지 않게 빈손으로
   return p.map(r=>r.join(''))
 }
 

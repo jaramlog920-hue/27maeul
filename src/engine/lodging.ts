@@ -25,14 +25,18 @@ export function lodgingNpcSpot(npc: string, at: Tile): Tile {
  if(at.x===22&&at.y===125&&LODGING_WORK_SPOTS[npc])return LODGING_WORK_SPOTS[npc]
  return at
 }
-export function lodgingChildren(s:Pick<GameState,'gen'|'flags'|'child'>):{id:string;name:string;seat:Tile}[]{
- const list:{id:string;name:string;seat:Tile}[]=[]
- if(s.child?.left&&s.flags['lodging:playerChild'])list.push({id:'playerChild',name:s.child.name,seat:LODGING_CHILD_SEATS[0]})
+export function lodgingChildren(s:Pick<GameState,'gen'|'flags'|'child'> & Partial<Pick<GameState,'siblings'>>):{id:string;name:string;seat:Tile;childBorn?:number}[]{
+ const list:{id:string;name:string;seat:Tile;childBorn?:number}[]=[]
+ for(const kid of [...(s.child?[s.child]:[]),...(s.siblings??[])].sort((a,b)=>a.born-b.born)) {
+  const flags=kid===s.child?s.flags:kid.kidFlags??{}
+  if(kid.left&&flags['lodging:playerChild'])list.push({id:kid===s.child?'playerChild':`playerChild:${kid.born}`,childBorn:kid.born,name:kid.name,seat:LODGING_CHILD_SEATS[list.length]??LODGING_CHILD_SEATS[LODGING_CHILD_SEATS.length-1]})
+ }
  for(const p of Object.values(s.gen?.persons??{}).filter(p=>p.origin==='born'&&(p.stage==='adult'||p.stage==='elder')).sort((a,b)=>(a.born??0)-(b.born??0)||a.id.localeCompare(b.id))){
   if(Object.values(s.gen?.retired??{}).some(r=>r.heir===p.id&&r.moved!=null))continue
   const h=p.household?s.gen?.households[p.household]:undefined
   const no=Number(/^h-(\d+)$/.exec(h?.id??'')?.[1]??0)
-  if(no&&s.flags[`familyHome:${no}`])continue
+  // 새 터 집으로 옮긴 건 가구의 어른(members)뿐 — 함께 가지 않은 다 큰 자녀는 그대로 손님 자리에
+  if(no&&s.flags[`familyHome:${no}`]&&h?.members.includes(p.id))continue
   // A married child with an established home keeps that home.
   if(p.spouse&&h&&h.home!==p.id&&!LODGING_SEATS[h.home])continue
   if(list.length===LODGING_CHILD_SEATS.length)break

@@ -58,6 +58,13 @@ export const TIP_WHEN: Record<string, (s: GameState) => boolean> = {
   cooking: (s) => featureAccess(s, 'cooking') !== 'locked',
   library: (s) => featureAccess(s, 'library') !== 'locked',
   romance: (s) => featureAccess(s, 'dating') !== 'locked',
+  // 그 기능이 열린 뒤에만 오는 편지 (2026-10-21 점검: 몇십 장 앞서 와서 막힌 단추로 보냈다)
+  spouseRoomSmall: (s) => (s.homeLevel ?? 0) < 1 && featureAccess(s, 'spouseRoom') === 'full',
+  events: (s) => featureAccess(s, 'events') === 'full',
+  rank: (s) => featureAccess(s, 'rank') === 'full',
+  // 마지막 열 장 동안만 (다 쓴 뒤에 "열 장 남았다면서요?"가 오지 않게 — 2026-10-21 점검)
+  finale: (s) => featureAccess(s, 'finale') === 'full' && !s.flags.growthLegacy && !s.flags.lastManuscriptScene && !s.flags.newlandGift,
+  marriedFamily: (s) => stage(s) === 'married' && !!s.child && featureAccess(s, 'childActivities') === 'full',
 }
 
 /** 오늘 아침 편지가 오는 날인가: 이레에 두 번(둘째·다섯째 날)과 두 이레에 한 번 더 — 이레에 2~3통 */

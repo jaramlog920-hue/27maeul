@@ -1,0 +1,10 @@
+const fs=require('fs');let p='scripts/export-newland-building-upgrades.mjs',s=fs.readFileSync(p,'utf8');
+s=s.replace(", 'before'",'').replace(",'before'",'');
+s=s.replace(',beforeAfter=canvas(768,768)','');
+s=s.replace(/;item\.before=save\(`before\/\$\{id\}-down\.png`,old\.OLD_BUILDINGS\[id\]\.down\.rows\)/,'');
+s=s.replace(/;draw\(beforeAfter,768,old\.OLD_BUILDINGS\[id\]\.down\.rows,pal,\(i%3\)\*256,Math\.floor\(i\/3\)\*128,2\);draw\(beforeAfter,768,a\.rows,pal,\(i%3\)\*256\+128,Math\.floor\(i\/3\)\*128,2\)/,'');
+s=s.replace("png(`${out}/buildings-before-after.png`,768,768,beforeAfter);",'');
+s=s.replace('<details><summary>기존 도트와 비교</summary><img src="${a.before}" width="128" height="128" alt="기존 건물"></details>','');
+s=s.replace('자산만 준비했습니다.','완공 건물은 지도·아이콘·이벤트와 같은 신약 주택 외관입니다.');
+fs.writeFileSync(p,s);
+p='src/render/newland-building-upgrades.test.ts';s=fs.readFileSync(p,'utf8').replace('const silhouettes=new Set<string>(),pictures=', 'const pictures=').replace("silhouettes.add(a.rows.join('').replace(/[^.]/g,'#'));",'').replace('expect(silhouettes.size).toBeGreaterThan(0);','').replace('4방향 건물의 아치 문과 문턱·발 기준점·분리 레이어가 기존 출입 위치를 유지한다','4방향 건물의 발 기준점·분리 레이어가 기존 출입 위치를 유지한다');fs.writeFileSync(p,s);

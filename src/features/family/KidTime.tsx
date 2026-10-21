@@ -1,4 +1,5 @@
 import { featureHint } from '../../engine/feature-rules'
+import { kidPersona, likedActs } from '../../engine/persona'
 // 아이와 함께 보내는 시간 (계획 12, 2026-10-04 사용자): 누르기 → 짧은 장면 → 결과. 미니게임 없음.
 // 배움터는 빠르고 편한 능력치, 직접 함께하기는 조금 느리지만 가까움과 추억. 하루에 두 번까지 (잠들기 전 이야기는 따로)
 import { neighborById } from '../../content/catalog'
@@ -41,6 +42,23 @@ export function kidDoneLines(done: KidDone, kid: string): { scene: string; resul
   results.push(kidFill(K.closer, kid))
   if (done.album) results.push(K.album)
   return { scene, results }
+}
+
+/** 가방 정리는 사용자가 물건을 골라서 한다. 활동은 공간 확보 뒤 한 번만 실행한다. */
+export function KidCapacity() {
+  const retry=useGame(s=>s.modal?.kind==='kidCapacity'?s.modal.retry:undefined)
+  if(!retry)return null
+  const {open,closeModal,retryKidAct}=useGame.getState()
+  return <div className="dialog" role="dialog" aria-label="가방 공간이 부족해요">
+    <h2>가방 공간이 부족해요</h2>
+    <p>물건을 받을 공간이 부족해요. 가방을 비우시겠습니까?</p>
+    <p className="hint">활동은 아직 시작하지 않았어요. 시간과 오늘 활동 횟수는 그대로예요.</p>
+    <div className="actions column">
+      <button className="primary" onClick={()=>open({kind:'bag',tab:'items',resumeKid:retry})}>가방 비우기</button>
+      <button onClick={retryKidAct}>공간 확인하고 다시 받기</button>
+      <button data-close onClick={closeModal}>나중에</button>
+    </div>
+  </div>
 }
 
 export function KidTime({ done, spouse }: { done?: KidDone; spouse?: SpouseDone }) {
@@ -101,17 +119,21 @@ export function KidTime({ done, spouse }: { done?: KidDone; spouse?: SpouseDone 
         {K.close} {'♥'.repeat(hearts)}
         {'♡'.repeat(5 - hearts)}
       </p>
+      {/* 잠겼으면 안내는 한 번만 (활동마다 아홉 번 나왔다 — 2026-10-21 점검) */}
+      {canKidAct(game, KID_ACTS[0]) === 'locked' && <p className="hint">{featureHint('childActivities')}</p>}
       <ul className="kid-acts">
         {KID_ACTS.map((act) => {
           const block = canKidAct(game, act)
           const a = ACTS[act]
+          const liked = game.child ? likedActs(kidPersona(game.child, game.clock.day)).has(act) : false
           return (
             <li key={act}>
               <button disabled={block !== null} onClick={() => kidAct(act)}>
                 <span className="kid-act-name">{a.label}</span>
                 {a.grows && <span className="kid-act-grows">{a.grows}</span>}
+                {liked && <span className="kid-act-grows">좋아해요</span>}
               </button>
-              {block && block !== 'done' && <span className="kid-act-why">{block === 'locked' ? featureHint('childActivities') : BLOCKS[block]}</span>}
+              {block && block !== 'done' && block !== 'locked' && <span className="kid-act-why">{BLOCKS[block]}</span>}
             </li>
           )
         })}

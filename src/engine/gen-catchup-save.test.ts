@@ -10,7 +10,7 @@ import { RETIRE_AFTER, slotPerson } from './gen-growth'
 
 const reload = (s: ReturnType<typeof newGame>) => deserialize(serialize(s), CONTENT)!
 
-it('긴 미정산 아이는 다음 아침 성장·견습을 한 번 기록하고 한 계절 뒤 부모 자리를 이어받는다', () => {
+it('긴 미정산 아이는 다음 아침 어른이 되고, 은퇴 없이 부모 자리는 그대로다 (2026-10-21)', () => {
   const base = newGame(CONTENT)
   const gen = newGenState(CONTENT, 7919, 85, withPairs())
   const id = 'g-0001'
@@ -26,22 +26,20 @@ it('긴 미정산 아이는 다음 아침 성장·견습을 한 번 기록하고
   state = reload(goToSleep(state, CONTENT))
   expect(state.clock.day).toBe(131)
   expect(state.gen!.persons[id]).toMatchObject({ ...baby, stage: 'adult' })
-  expect(state.gen!.heirs?.rudy).toEqual({ heir: id, since: 131 })
-  expect(state.gen!.log.filter(l => l.kind === 'apprentice' && l.who.includes(id))).toHaveLength(1)
+  // 2026-10-21: 은퇴·견습이 없다 — 어른이 되어도 부모 자리는 그대로, 자녀는 스스로 일을 찾는다
+  expect(state.gen!.heirs?.rudy).toBeUndefined()
   for (let i = 1; i <= RETIRE_AFTER; i++) {
     state = reload(goToSleep(state, CONTENT))
     expect(state.gen!.persons[id].parents).toEqual(baby.parents)
     expect(state.gen!.households['h-1'].children).toEqual([id])
-    expect(state.gen!.retired?.rudy).toEqual(i === RETIRE_AFTER ? { heir: id, day: 171 } : undefined)
+    expect(state.gen!.retired?.rudy).toBeUndefined()
   }
-  expect(slotPerson(state.gen, 'rudy')).toBe(id)
-  expect(state.gen!.persons.rudy).toBeDefined()
-  expect(state.gen!.log.filter(l => l.kind === 'retired' && l.who.includes(id))).toHaveLength(1)
+  expect(slotPerson(state.gen, 'rudy')).toBe('rudy')
+  expect(state.gen!.log.some(l => l.kind === 'retired' || l.kind === 'apprentice')).toBe(false)
   const logs = state.gen!.log
   for (let i = 0; i < 3; i++) {
     state = reload(settleGen(state, CONTENT))
     expect(state.gen!.log).toEqual(logs)
-    expect(state.gen!.retired?.rudy).toEqual({ heir: id, day: 171 })
     expect(state.gen!.persons[id].avatar).toEqual(baby.avatar)
   }
 })

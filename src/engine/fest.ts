@@ -7,7 +7,7 @@ import { scheduleAppt, attendAppt, canAttendAppt, settleAppt, venueFor, type App
 import { clubCandidates, clubVenues, CLUB_SLOTS, type ClubSlot } from './clubs'
 import { passTime, recordExperienceIn, syncHome, type GameState } from './game'
 import { OUTDOOR_PLACES } from './village-sites'
-import { festivalOf, FESTIVAL_FROM, FESTIVAL_TO } from './calendar'
+import { festivalOf, FESTIVAL_FROM, FESTIVAL_TO, isWet, weatherOf } from './calendar'
 import { addGift, COOKED_ITEMS, has, take, type Inventory } from './items'
 import { mealReaction } from './cooking'
 import { isBirthday } from './notebook'
@@ -98,7 +98,8 @@ export function festWorks(s: GameState): { id: string; kind: string; with: strin
 export function festivalDays(s: GameState): number[] {
  const out: number[] = []
  for (let d = s.clock.day; d <= s.clock.day + FEST_DAYS_AHEAD; d++) {
-  if (!festivalOf(d) || (d === s.clock.day && s.clock.minute >= FESTIVAL_TO)) continue
+  // 비 오는 날은 잔치가 열리지 않고, 내 결혼 잔치 날은 결혼 잔치가 먼저 (2026-10-21 점검)
+  if (!festivalOf(d) || isWet(weatherOf(d)) || s.romance?.weddingDay === d || (d === s.clock.day && s.clock.minute >= FESTIVAL_TO)) continue
   if (fests(s).some(f => f.kind === 'festival' && f.day === d && (!f.closed || f.joined))) continue
   out.push(d)
  }
@@ -315,7 +316,7 @@ function reactionText(r: FestReaction, f: Fest, npc: string): string {
 export function festivalRoleReady(s: GameState): Fest | null {
  if ((s.map ?? 'village') !== 'village') return null
  const f = fests(s).find(f => f.kind === 'festival' && !f.closed && f.day === s.clock.day)
- if (!f || !festivalOf(s.clock.day) || s.clock.minute < FESTIVAL_FROM || s.clock.minute >= FESTIVAL_TO) return null
+ if (!f || !festivalOf(s.clock.day) || isWet(weatherOf(s.clock.day)) || s.romance?.weddingDay === s.clock.day || s.clock.minute < FESTIVAL_FROM || s.clock.minute >= FESTIVAL_TO) return null
  const me = { x: Math.round(s.player.x), y: Math.round(s.player.y) }
  return Math.abs(me.x - FIRE.x) + Math.abs(me.y - FIRE.y) <= 4 ? f : null
 }

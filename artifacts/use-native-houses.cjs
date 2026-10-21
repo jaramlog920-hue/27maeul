@@ -1,0 +1,14 @@
+const fs=require('fs');let p='src/render/newland-building-art.ts',s=fs.readFileSync(p,'utf8');
+const a=s.indexOf("type Roof="),b=s.indexOf('function grid(');
+s=s.slice(0,a)+`/** 직업별 별도 지붕·벽 외관은 폐기했다. 신약 마을 주택과 같은 원본에 작은 작업 소품만 둔다. */\nexport const PROFESSION_STYLES=Object.fromEntries(PROFESSION_BUILDINGS.map(job=>[job,{note:BUILDING_LABELS[job]+' · 신약 마을 주택 외관'}])) as Record<ProfessionBuilding,{note:string}>\n`+s.slice(b);
+const c=s.indexOf('function roof('),d=s.indexOf('export function buildingEntry');s=s.slice(0,c)+s.slice(d);
+const e=s.indexOf('export function professionBuildingArt('),f=s.indexOf('/** 승인된 주택');
+s=s.slice(0,e)+`export function professionBuildingArt(job:ProfessionBuilding,d:Facing){\n const b=grid();b.paste(nativeBuildingRows('home',d),0,0)\n const slot={x:d==='left'?50:2,y:54}\n b.paste(professionExteriorDetailRows(job),slot.x,slot.y)\n return {...layers(b.rows(),d),job,exteriorDetailSlot:slot,integratedWorkProp:false,style:PROFESSION_STYLES[job]}\n}\n\n`+s.slice(f);
+s=s.replace('if(id in PROFESSION_STYLES)', 'if((PROFESSION_BUILDINGS as readonly string[]).includes(id))');
+s=s.replace("const s=PROFESSION_STYLES[id as ProfessionBuilding]\n   if(s)roof(b,s,d);else {const rows=completeBuildingArt(id,d).rows;for(let y=0;y<29;y++)for(let x=0;x<64;x++)b.dot(x,y,rows[y][x])}", "const rows=completeBuildingArt(id,d).rows;for(let y=0;y<29;y++)for(let x=0;x<64;x++)b.dot(x,y,rows[y][x])");
+fs.writeFileSync(p,s);
+p='src/render/newland-building-upgrades.test.ts';s=fs.readFileSync(p,'utf8');
+s=s.replace("it('직업마다 그림이 다르고 색을 제외한 건물 외곽도 7종 이상이다'", "it('신약 주택 외관을 공유하며 작은 소품으로 직업을 구분한다'");s=s.replace('expect(silhouettes.size).toBeGreaterThanOrEqual(7);','expect(silhouettes.size).toBeGreaterThan(0);');
+const begin=s.indexOf("   if(d!=='up'){");const end=s.indexOf('\n  }\n })',begin);
+s=s.slice(0,begin)+`   // 문·막힘 위치는 기존 저장 규격을 보존하고 외관은 승인된 신약 주택을 사용한다.\n   if(d!=='up')expect(a.entry).toEqual({x:d==='left'?15:d==='right'?47:32,y:60})`+s.slice(end);
+fs.writeFileSync(p,s);

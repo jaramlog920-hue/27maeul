@@ -16,6 +16,7 @@ import { areaOf, buildsOf, doneHomes, doorOf, standSpotOf, type Build } from './
 import { isOpenYard } from './newland-sites'
 import { childHome, childStage, JOB_GIFTS, type AdultJob } from './child'
 import { emptyHomeAt, emptyHomes, familyAt, homeWishes } from './gen-homes'
+import { DREAM_JOB_NPCS } from './kid-work'
 import { isWalkable, ROOMS } from './world'
 /** 첫 마을에 방이 있는 이웃인가 (주택 희망 목록 — 방이 없는 신혼 가구만) */
 export const roomOwner = (o: string): boolean => ROOMS.some((r) => r.owner === o)
@@ -30,6 +31,10 @@ export const GUESTS = [
   { id: 'nelly', gift: 'willowBasket' },
   { id: 'morris', gift: 'starChart' },
   { id: 'ivy', gift: 'seedPouch' },
+  // 2026-10-21 점검: 손님 셋이 다 이웃이 되면 손님집이 영영 비었다 — 손님 셋을 더 (선물은 있던 물건, 그림은 있던 옷차림으로)
+  { id: 'ray', gift: 'shell' },
+  { id: 'ada', gift: 'lantern' },
+  { id: 'hugo', gift: 'fineThread' },
 ] as const satisfies readonly { id: string; gift: ItemId }[]
 export type GuestId = (typeof GUESTS)[number]['id']
 export const GUEST_STAY = 3
@@ -69,8 +74,15 @@ export function talkKidVisit<T extends KidS & Pick<GameState, 'inv'>>(s: T): { s
 }
 
 /** 아침: 머문 지 사흘이 지난 손님은 떠나고, 빈 손님집에는 때가 되면 새 손님 (선물을 아직 남기지 않은 손님부터) */
+/** 함께하지 않는 아이 가운데 지금 손님집에 묵고 있는 아이가 있나 (아침 장면 때문에 잠시 다른 아이가 앞에 선 날) */
+export function siblingVisiting(s: Pick<GameState, 'clock'> & Partial<Pick<GameState, 'siblings'>>): boolean {
+  return (s.siblings ?? []).some((k) => { const since = k.kidFlags?.kidVisitSince; return !!since && s.clock.day - since < GUEST_STAY })
+}
+
 export function guestHouseMorning<T extends S>(s: T): T {
   if (!doneOf(s, 'guest')) return s
+  // 묵고 있는 아이가 잠시 뒤에 있으면 손님집은 그대로 (새 손님을 들이지 않는다)
+  if (siblingVisiting(s as Partial<Pick<GameState, 'siblings'>> & S)) return s
   const day = s.clock.day
   const flags: Flags = { ...s.flags }
   if (flags.guestNow && day - (flags.guestSince ?? 0) >= GUEST_STAY) {
@@ -283,7 +295,9 @@ export function facilityAt(s: Pick<GameState, 'newland'>, t: Tile): FacilityKind
   const full = s as Pick<GameState, 'flags' | 'newland' | 'gen'> & Partial<Pick<GameState, 'clock'>>
   if (settledAt(full, t)) return 'settled'
   // 새 터로 옮긴 주민 가족 / 빈 입주 주택 앞 (주택 희망 목록) — 2026-10-08
-  if (familyAt(full, t)) return 'family'
+  // 가족은 8–20시에만 문 옆에 선다 (아무도 없는 자리에서 말이 걸리지 않게)
+  const m = full.clock?.minute
+  if ((m === undefined || (m >= 8 * 60 && m < 20 * 60)) && familyAt(full, t)) return 'family'
   return emptyHomeAt(full, t) && homeWishes(full, roomOwner).length > 0 ? 'emptyHome' : null
 }
 
@@ -353,8 +367,10 @@ export const dreamKey = (base: 'dreamOpen' | 'dreamPick' | 'dreamGiftDay', npc: 
 export const dreamOf = (npc: string) => DREAMS.find((d) => d.npc === npc)
 export const dreamerOfBuild = (kind: string): string | undefined => DREAMS.find((d) => d.build === kind)?.npc
 export const dreamHeard = (s: Pick<GameState, 'flags'>, npc: string = DREAMER): boolean => !!s.flags[`dream:${npc}`]
-export function canHearDream(s: Pick<GameState, 'flags' | 'hearts'>, npc: string): boolean {
-  return !!dreamOf(npc) && !!s.flags.newlandGift && !dreamHeard(s, npc) && (s.hearts[npc] ?? 0) >= DREAM_HEARTS_POINTS
+export function canHearDream(s: Pick<GameState, 'flags' | 'hearts'> & Partial<Pick<GameState, 'gen'>>, npc: string): boolean {
+  // 따로 쓴 꿈(페넬로피·틸리) 말고도 일이 정해진 이웃은 모두 꿈터를 꿈꾼다 (2026-10-21 사용자) — 자리를 물려준 이웃은 빼고 (그 자리는 자녀가)
+  if (!dreamOf(npc) && s.gen?.retired?.[npc]) return false
+  return (!!dreamOf(npc) || DREAM_JOB_NPCS.includes(npc)) && !!s.flags.newlandGift && !dreamHeard(s, npc) && (s.hearts[npc] ?? 0) >= DREAM_HEARTS_POINTS
 }
 export function hearDream<T extends Pick<GameState, 'flags' | 'clock'>>(s: T, npc: string = DREAMER): T {
   return { ...s, flags: { ...s.flags, [`dream:${npc}`]: s.clock.day } }

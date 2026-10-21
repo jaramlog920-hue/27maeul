@@ -1,0 +1,23 @@
+[
+  {
+    "file": "C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/review-probes.test.ts",
+    "name": "awards and saves the family trip only after a successful return, once",
+    "error": [
+      "TypeError: Cannot read properties of null (reading 'close')\n    at C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/engine/review-probes.test.ts:58:24\n    at file:///C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:1628:35\n    at file:///C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:2783:26\n    at file:///C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:3319:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:3314:10)\n    at file:///C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:3299:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:3257:10)\n    at file:///C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:3876:64"
+    ]
+  },
+  {
+    "file": "C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/render/copy-furniture-gallery.test.ts",
+    "name": "matches every generated motion PNG to its stored hash",
+    "error": [
+      "AssertionError: src/render/sprites.ts: expected 'e4ebdffeebedc61df7b6e06d05414ae60e6ba…' to be '80d53d396791c0c4564b5983ed8a2740d57ca…' // Object.is equality\n    at C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/render/copy-furniture-gallery.test.ts:37:150\n    at file:///C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:1628:35\n    at file:///C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:2783:26\n    at file:///C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:3319:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:3314:10)\n    at file:///C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:3299:20\n    at new Promise (<anonymous>)\n    at runWithTimeout (file:///C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:3257:10)\n    at file:///C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:3876:64"
+    ]
+  },
+  {
+    "file": "C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/features/desk/CopyAgain.test.tsx",
+    "name": "다시 쓰기 화면 메뉴 → 장 고르기 → 다시 쓰기 → 마치면 횟수, 한 번 더 누르면 같은 장을 처음부터",
+    "error": [
+      "AssertionError: expected { kind: 'copy', view: 'write', …(2) } to match object { kind: 'copy', view: 'done' }\n(2 matching properties omitted from actual)\n    at Proxy.<anonymous> (file:///C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/vitest/dist/chunks/index.DGdajAO2.js:2051:10)\n    at Proxy.<anonymous> (file:///C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/vitest/dist/chunks/index.DGdajAO2.js:1945:14)\n    at Proxy.methodWrapper (file:///C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/chai/index.js:1700:25)\n    at C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/src/features/desk/CopyAgain.test.tsx:46:38\n    at file:///C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:1628:35\n    at file:///C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:2783:26\n    at file:///C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:3319:20\n    at new Promise (<anonymous>)\n    at runWithCancel (file:///C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:3314:10)\n    at file:///C:/Users/wn410/OneDrive/Desktop/cloooo/twenty-seven/node_modules/vitest/dist/chunks/run.C5UmxDPh.js:3299:20"
+    ]
+  }
+]

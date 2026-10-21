@@ -1,6 +1,6 @@
 import {CONTENT} from '../content/catalog'
 import {legacyGame} from './growth-test-support'
-import {otMilestoneScenes,homeBookMilestone,successionMilestone} from './progress-milestones'
+import {otMilestoneScenes,homeBookMilestone} from './progress-milestones'
 import {otRow} from './ot-books'
 import {toggleHomeBook} from './finished-books'
 import {deserialize,serialize} from './save'
@@ -49,19 +49,15 @@ it('집 책장의 실제 첫 배치만 기록하고 미완성·취소·재배치
   expect(homeBookMilestone(removed,toggleHomeBook(removed,'phm')).scenes).toEqual([])
   expect(homeBookMilestone({...ready,homeShelf:['phm']},{...ready,homeShelf:[]})).not.toHaveProperty('flags.firstHomeBookScene')
 })
-it('실제 세대 정산의 첫 인계가 부모 자리와 자녀 정보를 보존한다',()=>{
+// 2026-10-21 사용자: 은퇴를 없앴다 — 예전 견습 기록이 남아 있어도 하루 정산이 자리를 넘기지 않고 인계 장면도 없다
+it('세대 정산은 견습 기록이 있어도 자리를 넘기지 않는다 (은퇴 없음)',()=>{
   const s=fresh(),g=newGenState(CONTENT,7,99)
   const heir={id:'g-0001',origin:'born' as const,born:1,stage:'adult' as const,look:'f' as const,name:'루시',parents:['rudy','poppy'],spouse:null,household:'h-1'}
   const before={...s,clock:{day:100,minute:420},gen:{...g,on:true,settledDay:99,persons:{...g.persons,[heir.id]:heir},heirs:{rudy:{heir:heir.id,since:100-RETIRE_AFTER}}}}
   const next=settleGen(before,CONTENT)
-  expect(next.gen?.retired?.rudy.heir).toBe(heir.id)
-  expect(next.scenes).toContain('workSuccession:rudy')
-  expect(next.gen?.persons.rudy).toBeDefined()
+  expect(next.gen?.retired?.rudy).toBeUndefined()
+  expect(next.scenes).not.toContain('workSuccession:rudy')
   expect(next.gen?.persons[heir.id].name).toBe('루시')
-  expect(settleGen({...next,scenes:[]},CONTENT).scenes).toEqual([])
-  const loaded=deserialize(serialize(next),CONTENT)!
-  expect(loaded.scenes).toContain('workSuccession:rudy')
-  expect(successionMilestone({...next,scenes:[]},{...next,scenes:[]}).scenes).toEqual([])
 })
 it.each([true,false])('아이의 어른 전환은 기존 떠남=%s 결과만 한 번 예약한다',left=>{
   const s=fresh(),stats=freshStats()

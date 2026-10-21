@@ -37,12 +37,13 @@ describe('집 안 동작 고정 (HOME_CTX)', () => {
 })
 
 describe('새 터 방 칸', () => {
-  it('숨은 줄에서 서고 안 방을 뺀 곳에 8×6 방이 들어가는 만큼 칸을 나눈다', () => {
-    const hidden = NEWLAND_H - NEWLAND_VISIBLE_H
+  // 2026-10-21: 서고 안 방 옆 두 줄에 둘씩, 그 아래 가로로 넷 — 여덟 칸
+  it('숨은 줄에 8×6 방을 여덟 칸 나눈다', () => {
     const perBand = Math.floor(INTERIOR.x0 / ROOM_W) + Math.floor((NEWLAND_W - INTERIOR.x0 - INTERIOR.w) / ROOM_W)
-    expect(ROOM_SLOTS).toHaveLength(perBand * Math.floor(hidden / ROOM_H))
-    expect(ROOM_SLOTS).toHaveLength(2)
+    expect(perBand).toBe(2)
+    expect(ROOM_SLOTS).toHaveLength(8)
     expect(MAX_HOMES).toBe(ROOM_SLOTS.length)
+    void NEWLAND_H; void NEWLAND_VISIBLE_H; void ROOM_H
   })
 
   it('방 칸은 8×6, 숨은 줄 안, 서고 안 방·서로와 겹치지 않는다', () => {
@@ -191,11 +192,19 @@ describe('소유 공간별 저장', () => {
     expect(buildsOf(loaded).map((b) => b.slot)).toEqual([0, 1])
   })
 
-  it('입주 주택은 방 칸 수만큼만 — 셋째는 거절, 마당은 상관없다', () => {
-    const s = twoHomes()
-    expect(canPlace(s, 'home', 14, 20)).toBe('homes')
-    expect(orderBuild(s, 'home', 14, 20, 'down')).toBeNull()
-    expect(canPlace(s, 'courtyard', 14, 20)).toBeNull()
+  it('입주 주택은 방 칸 수만큼만 — 넘치면 거절, 마당은 상관없다', () => {
+    let s = twoHomes()
+    // 방 칸이 다 찰 때까지 빈자리에 더 짓는다
+    for (let n = 2; n < MAX_HOMES; n++) {
+      let spot: { x: number; y: number } | null = null
+      for (let y = 1; y <= 27 && !spot; y++) for (let x = 1; x <= 38 && !spot; x++) if (canPlace(s, 'home', x, y) === null) spot = { x, y }
+      s = buy(s, 'home', spot!.x, spot!.y)
+    }
+    let free: { x: number; y: number } | null = null
+    for (let y = 1; y <= 27 && !free; y++) for (let x = 1; x <= 38 && !free; x++) if (canPlace(s, 'courtyard', x, y) === null) free = { x, y }
+    expect(canPlace(s, 'home', free!.x, free!.y)).toBe('homes')
+    expect(orderBuild(s, 'home', free!.x, free!.y, 'down')).toBeNull()
+    expect(canPlace(s, 'courtyard', free!.x, free!.y)).toBeNull()
     expect(MAX_HOMES).toBeLessThanOrEqual(MAX_BUILDS)
   })
 

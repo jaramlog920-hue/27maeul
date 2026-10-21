@@ -1,5 +1,5 @@
 import { npcAffinityScale } from './npc-affinity'
-import { villageBookCount } from "./progression"
+import { zoneBooks } from './feature-rules'
 import { solidTiles } from './room'
 import { isHome } from './world'
 import { expandClubs } from './clubs'
@@ -35,7 +35,7 @@ export const APPT_HEART_CAP = 3
 export const APPT_MEMBERS_MAX = 3
 const overlap = (a: number, b: number, c: number, d: number) => a < d && c < b
 export type Availability = 'ok' | { busy: string; suggest: { day: number; from: number } | null }
-type PlanState = Pick<GameState,'clock'|'flags'|'shelved'|'today'> & Partial<Pick<GameState,'plans'|'romance'|'life'|'hearts'|'progress'|'garden'|'player'|'room'>>
+type PlanState = Pick<GameState,'clock'|'flags'|'shelved'|'today'> & Partial<Pick<GameState,'plans'|'romance'|'life'|'hearts'|'progress'|'garden'|'player'|'room'|'gen'>>
 const active = (a: Appt) => a.state === 'planned' || a.state === 'running' || a.state === 'moved'
 const cast = (a: Appt) => [...new Set([...a.members, ...(a.host ? [a.host] : [])])]
 export function reservedMembers(s: Pick<PlanState,'clock'|'plans'>, from = 18*60, to = 21*60): string[] {
@@ -49,6 +49,8 @@ function busyAt(s: PlanState, npc: string, day: number, from: number, to: number
   if (npc === 'child' && to > 18*60) return 'early'
   if (from < 6*60 || to > 22*60 || from >= to) return 'time'
   if ((festivalOf(day) || s.romance?.weddingDay === day || (day === s.clock.day && (s.flags.gospelFeast === 1 || s.flags.allFeast === 1))) && overlap(from,to,FESTIVAL_FROM,FESTIVAL_TO)) return 'festival'
+  if (overlap(from,to,FESTIVAL_FROM,FESTIVAL_TO) && Object.values(s.gen?.relations ?? {}).some(r =>
+    r.stage === 'preparing' && r.prep?.wedding === day && [r.a,r.b].includes(slotPerson(s.gen,npc)))) return 'festival'
   if ((s.plans?.appts ?? []).some(a => a.id !== exclude && active(a) && a.day === day && cast(a).includes(npc) && overlap(from,to,a.from,a.to))) return 'appointment'
   const today = day === s.clock.day ? s.today : undefined
   if (today?.inviter === npc && overlap(from,to,INVITE_FROM,INVITE_TO)) return 'invite'
@@ -106,7 +108,7 @@ export function spotsForAppt(a: Appt): readonly Tile[] {
   return a.seats && venue.place===a.place ? a.seats : apptSpots(venue.place)
 }
 function openVenue(s: PlanState, place: PlaceId, seats?:readonly Tile[]): boolean {
-  const locked=lockedTiles(villageBookCount(s))
+  const locked=lockedTiles(zoneBooks(s))
   return (seats??apptSpots(place)).length > 0 && (seats??apptSpots(place)).every(t => isWalkable(t,s.room?solidTiles(s.room):undefined) && !locked.has(key(t))) && !(place === 'garden' && !Object.keys(s.garden??{}).length)
 }
 export function scheduleAppt(s: GameState, input: Omit<Appt,'id'|'state'|'rewarded'|'remembered'|'startedWith'|'attended'>, content: GameContent): {state:GameState; appt?:Appt; blocked?:Availability|'venue'|'members'|'past'} {

@@ -1,0 +1,44 @@
+[
+  {
+    "path": "src/engine/game.ts",
+    "bytes": 296978,
+    "sha256": "bea96d9b090eaf63fe45b9063b4628c3fe95040c0aeda0411481be5e7f8a0a4a",
+    "mtime": "2026-10-19T09:52:12.799Z"
+  },
+  {
+    "path": "src/engine/room-ctx.test.ts",
+    "bytes": 20030,
+    "sha256": "b3e484eb9a8939226e9a37aa09ff87cf06a87f7e7615c35b3b4dc79bbb23dbec",
+    "mtime": "2026-10-18T18:06:38.350Z"
+  },
+  {
+    "path": "src/engine/yard.ts",
+    "bytes": 3856,
+    "sha256": "9ef474c9bb45e8a745fe2d30a2505a63c3bdb3b052f8b158bea11041cea2b412",
+    "mtime": "2026-10-19T09:46:01.155Z"
+  },
+  {
+    "path": "src/features/play/GameCanvas.tsx",
+    "bytes": 6830,
+    "sha256": "20413f3d2dd0335f1800d92fa1b16e4dc72a6d8ca3adfe2cb21c8c063183e032",
+    "mtime": "2026-10-19T01:04:26.062Z"
+  },
+  {
+    "path": "src/render/renderer.ts",
+    "bytes": 179216,
+    "sha256": "c664f61b4b66cc57fbf5c510554bf0df1385f654b2bc1857a304c82685daec8b",
+    "mtime": "2026-10-19T09:48:37.385Z"
+  },
+  {
+    "path": "src/store/game-store.ts",
+    "bytes": 152101,
+    "sha256": "38b9b6e6c50b46b3f727161ec4ca3f2085371213db7c5d8ae9b9bead123551ff",
+    "mtime": "2026-10-19T09:49:42.941Z"
+  },
+  {
+    "path": "src/engine/outdoor.test.ts",
+    "bytes": 4180,
+    "sha256": "d22d5570d90b6b3ece9ea50bf08545fddd47f6b8bc3d993d2a7eb1cf4c34ebae",
+    "mtime": "2026-10-19T09:53:32.510Z"
+  }
+]

@@ -1,16 +1,27 @@
 // 나루의 배: 이웃 마을 여행 (계획 13 작업 6). 고르고 → 그 마을에서 사고 → 하룻밤 묵고 돌아온다 (한꺼번에 치른다)
 import { IconGrid, type IconEntry } from '../../shared/IconGrid'
 import { useState } from 'react'
-import { itemList, itemName, SCENES, T, ITEM_TEXT } from '../../content/text'
+import { itemList, itemName, SCENES, T, ITEM_TEXT, withAnd } from '../../content/text'
 import { canTrip } from '../../engine/game'
 import { featureAccess, featureHint } from '../../engine/feature-rules'
-import { DEST_IDS, DESTS, tripCoinDelta, tripCost, type DestId } from '../../engine/travel'
+import { DEST_IDS, DESTS, TRIP_LEAVE_BY, tripCoinDelta, tripCost, type DestId } from '../../engine/travel'
+import { sayTime } from '../../engine/clock'
 import type { ItemId } from '../../engine/types'
-import { useGame } from '../../store/game-store'
+import { partnerName, useGame } from '../../store/game-store'
 import { childStage } from '../../engine/child'
 import type { TripReward } from '../../engine/trip-board'
 import { ItemIcon } from '../../shared/ItemIcon'
 import { AuthoredStoryScene } from '../scene/AuthoredStoryScene'
+
+/** 떠나기가 막힌 까닭 (누르면 한 줄) */
+const TRIP_WHY: Record<string, string> = {
+  locked: featureHint('travel', true),
+  late: `여행은 ${sayTime(TRIP_LEAVE_BY)} 전에 떠날 수 있어요.`,
+  tired: '너무 지쳤어요. 쉬고 떠나요.',
+  coins: '닢이 모자라요.',
+  food: '길양식이 모자라요.',
+  full: '가방이 가득해요.',
+}
 
 export function TravelView({ dest: back, rewards: brought }: { dest?: DestId; rewards?: TripReward[] } = {}) {
   const game = useGame((s) => s.game)
@@ -21,6 +32,10 @@ export function TravelView({ dest: back, rewards: brought }: { dest?: DestId; re
   // 아이와 함께 (아기는 집에), 여행 판에서 얻은 것 (판을 마치기 전엔 null)
   const canBring = !!game.child && childStage(game.child, game.clock.day) !== 'baby'
   const [withChild, setWithChild] = useState(canBring)
+  // 연인·배우자와 함께 (2026-10-21 사용자) — 데이트 한 번으로 친다
+  const partnerStage = game.romance?.stage
+  const canBringPartner = !!game.romance?.partner && (partnerStage === 'dating' || partnerStage === 'engaged' || partnerStage === 'married')
+  const [withPartner, setWithPartner] = useState(canBringPartner)
   const rewards = brought ?? null
   const startTripBoard = useGame((s) => s.startTripBoard)
   if (!dest)
@@ -45,7 +60,8 @@ export function TravelView({ dest: back, rewards: brought }: { dest?: DestId; re
                   {Object.keys(d.food).length ? `길양식 ${itemList(d.food)} · ` : ''}
                   숙박 {d.lodging}닢
                 </span>
-                <button disabled={block !== null} onClick={() => startTripBoard(id, withChild && canBring)}>
+                {/* 막혔으면 흐린 채로 두고, 누르면 까닭 한 줄 (2026-10-21 사용자: 이유 없이 흐려졌다) */}
+                <button aria-disabled={block !== null} onClick={() => (block ? useGame.getState().say(TRIP_WHY[block] ?? '', 2800) : startTripBoard(id, withChild && canBring, withPartner && canBringPartner))}>
                   떠나기
                 </button>
               </li>
@@ -55,6 +71,11 @@ export function TravelView({ dest: back, rewards: brought }: { dest?: DestId; re
         {canBring && (
           <label className="trip-child">
             <input type="checkbox" checked={withChild} onChange={(e) => setWithChild(e.target.checked)} /> {game.child!.name} 데리고 가기
+          </label>
+        )}
+        {canBringPartner && (
+          <label className="trip-child">
+            <input type="checkbox" checked={withPartner} onChange={(e) => setWithPartner(e.target.checked)} /> {withAnd(partnerName(game))} 함께 가기
           </label>
         )}
         <div className="actions">

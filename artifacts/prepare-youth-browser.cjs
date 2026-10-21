@@ -1,0 +1,1 @@
+const fs=require('fs');let s=fs.readFileSync('artifacts/all-bugs-static.cjs','utf8');s=s.replaceAll('artifacts/bugfix-all-20261020/browser','artifacts/youth-audit-20261020/browser').replaceAll('artifacts/all-bugs-bridge.ts','artifacts/youth-bridge.ts').replaceAll('artifacts/all-bugs-browser.cjs','artifacts/youth-browser.cjs');fs.writeFileSync('artifacts/youth-static.cjs',s);

@@ -1,4 +1,6 @@
 import { featureHint } from '../../engine/feature-rules'
+import { sayTime } from '../../engine/clock'
+import { SUNSET_FROM, SUNSET_TO, TEA_FROM, TEA_TO } from '../../engine/places'
 import { clubHere } from '../../engine/clubs'
 import { festHere } from '../../engine/fest'
 import { SkillCraftOptions } from '../skills/SkillLesson'
@@ -6,7 +8,7 @@ import { SkillCraftOptions } from '../skills/SkillLesson'
 // 연인·약혼·부부면 찻집·정자·언덕에서 "○○와 함께" 가기 (계획 10 작업 4)
 import { CONTENT } from '../../content/catalog'
 import { fill, T, withAnd, withSubject } from '../../content/text'
-import { canCraft, canDate, canDrinkTea, canPlayHall, canWatchSunset, hasFood, starsOut } from '../../engine/game'
+import { canCraft, canDate, canDrinkTea, canPlayHall, canWatchSunset, hasFood, starsOut, stockOf } from '../../engine/game'
 import { TEA_PRICE } from '../../engine/places'
 import { canRead, nextReadingDay } from '../../engine/meetings'
 import { RowLabel } from '../../shared/RowLabel'
@@ -34,6 +36,14 @@ const WORKBENCH: { id: RecipeId; text: string }[] = [
 ]
 
 const DATE_AT: Partial<Record<MenuPlace, DatePlace>> = { teaTable: 'tea', pavilion: 'sunset', hill: 'walk' }
+/** 줄 안내가 없는 데이트 막힘의 까닭 (누르면 한 줄) */
+const DATE_WHY: Record<string, string> = {
+  closed: `찻집은 ${sayTime(TEA_FROM)}부터 ${sayTime(TEA_TO)}까지 열어요.`,
+  coins: '찻값 닢이 모자라요.',
+  notYet: `노을은 ${sayTime(SUNSET_FROM)}부터 ${sayTime(SUNSET_TO)} 사이에 볼 수 있어요.`,
+  cloudy: '오늘은 구름이 껴서 노을이 보이지 않아요.',
+  wet: '비가 와서 오늘은 어려워요.',
+}
 const DATE_LABEL: Record<DatePlace, string> = { tea: T.romance.dateTea, sunset: T.romance.dateSunset, walk: T.romance.dateWalk }
 
 export function PlaceMenu({ place }: { place: MenuPlace }) {
@@ -62,7 +72,7 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
   const partner = partnerName(game)
   const date = datePlace && game.romance?.stage ? canDate(game, datePlace, CONTENT) : 'noPartner'
   const dateHint =
-    date === 'locked' ? featureHint(game.romance?.stage === 'married' ? 'spouseLife' : 'dating') : date === 'done'
+    date === 'locked' ? featureHint('dating') : date === 'done'
       ? T.romance.dateAlready
       : date === 'away'
         ? fill(T.romance.dateAway, { who: withSubject(partner) })
@@ -105,7 +115,7 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
                 icon: <ItemIcon id={out} size={28} />,
                 label: w.text.split(' (')[0].split(' — ')[0],
                 dim: block !== null,
-                detail: <><NeedList needs={r.needs as Record<string, number>} have={(id) => game.inv[id as ItemId] ?? 0} icon={(id) => <ItemIcon id={id as ItemId} size={16} />} /><p>{w.text}</p></>,
+                detail: <><NeedList needs={r.needs as Record<string, number>} have={(id) => stockOf(game, id as ItemId)} icon={(id) => <ItemIcon id={id as ItemId} size={16} />} /><p>{w.text}</p></>,
                 action: { label: '만들기', disabled: block !== null, onClick: () => startCraft(w.id) },
               }
             })} />
@@ -148,7 +158,8 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
           </>
         )}
         {datePlace && date !== 'noPartner' && (
-          <button className="primary" disabled={date !== null} onClick={() => goDate(datePlace)}>
+          // 막혔으면 흐린 채로, 누르면 까닭 한 줄 — 찻집 시간·닢·노을 때처럼 줄 안내가 없는 경우도 (2026-10-21 사용자)
+          <button className="primary" aria-disabled={date !== null} onClick={() => (date ? useGame.getState().say(dateHint ?? DATE_WHY[date] ?? '', 2800) : goDate(datePlace))}>
             {fill(DATE_LABEL[datePlace], { with: withAnd(partner), n: DATE_TEA_PRICE })}
           </button>
         )}

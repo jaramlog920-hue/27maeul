@@ -1,4 +1,4 @@
-import { libraryGrowth, type GrowthState } from './progression'
+import { libraryGrowth, villageBookCount, type GrowthState } from './progression'
 
 type Requirement = { chapters?: number; books?: number }
 /**
@@ -18,23 +18,30 @@ export const FEATURE_RULES = {
   community: { preview: { chapters: 25 }, full: { chapters: 35 } },
   travel: { full: { chapters: 40 } },
   deepRelation: { full: { chapters: 45 } },
-  suitors: { full: { chapters: 50 } },
+  // 연애와 함께 연다 (2026-10-21 사용자: 50장엔 할 수 있는 게 없었다)
+  suitors: { full: { chapters: 60 } },
   convenience: { full: { chapters: 55 } },
   dating: { full: { chapters: 60 } },
-  library: { full: { chapters: 65 } },
+  // 서고지기는 방명록 손님을 안내하는 일이라 방명록과 함께 연다 (2026-10-21 점검: 65장에 맡겨도 70장까지 아무 일도 없었다)
+  library: { full: { chapters: 70 } },
   guestbook: { full: { chapters: 70 } },
   autonomy: { full: { chapters: 75 } },
   spouseRoom: { full: { chapters: 80 } },
   events: { full: { chapters: 85 } },
   marriage: { full: { chapters: 90 } },
   rank: { full: { chapters: 95 } },
-  spouseLife: { full: { chapters: 100 } },
+  // 결혼과 함께 연다 (2026-10-21 점검: 90–99장에 결혼하면 저녁·배우자 선물이 막혔다)
+  spouseLife: { full: { chapters: 90 } },
   childRoom: { full: { chapters: 110 } },
   childBirth: { full: { chapters: 120 } },
   childActivities: { full: { chapters: 130 } },
   school: { full: { chapters: 145 } },
   generations: { full: { chapters: 180 } },
-  retirement: { full: { chapters: 220 } },
+  // 220–260장에도 새로 열리는 것 (2026-10-21 사용자): 마을 기록 책 · 손주 맞이 · 마지막 열 장 · 구약 미리 보기
+  villageBook: { full: { chapters: 230 } },
+  grandBirth: { full: { chapters: 240 } },
+  finale: { full: { chapters: 250 } },
+  otPreview: { full: { chapters: 260 } },
   ending: { full: { books: 27 } },
 } satisfies Record<string, { preview?: Requirement; full?: Requirement }>
 export type FeatureId = keyof typeof FEATURE_RULES
@@ -75,4 +82,26 @@ export function crossedMilestones(before: GrowthState, after: GrowthState) {
   const previous = libraryGrowth(before).completedChapters
   const current = libraryGrowth(after).completedChapters
   return EARLY_MILESTONES.filter(m => previous < m.chapters && current >= m.chapters && !after.flags[`growth:${m.id}`])
+}
+
+/**
+ * 구역(포도원·나루·벌통 들)을 여는 권 수. 나루는 여행(40장)과 함께 연다 — 배 자리가 나루 안에 있어서
+ * 여행이 열렸는데 배를 못 탔다 (2026-10-21 사용자: 40장 하면 배 탈 수 있게). 나루는 4권 구역이라 4권으로 친다
+ */
+export const DOCK_BOOKS = 4
+export function zoneBooks(s: Partial<GrowthState> & Pick<GrowthState, 'shelved'>): number {
+  const books = villageBookCount(s)
+  return featureAccess(s, 'travel') === 'full' ? Math.max(books, DOCK_BOOKS) : books
+}
+
+/** 다음에 열리는 기능 (마친 장 수 기준, 없으면 null) — 서고 창의 "다음" 한 줄 (2026-10-21 점검: 다음 목표가 도움말 표에만 있었다) */
+export function nextUnlock(s: Partial<GrowthState>): { id: FeatureId; left: number } | null {
+  const done = libraryGrowth({ progress: s.progress ?? {} as GrowthState['progress'], shelved: s.shelved ?? {} }).completedChapters
+  let best: { id: FeatureId; left: number } | null = null
+  for (const [id, rule] of Object.entries(FEATURE_RULES) as [FeatureId, { preview?: Requirement; full?: Requirement }][]) {
+    const ch = rule.full?.chapters
+    if (ch === undefined || ch <= done || rule.full?.books) continue
+    if (!best || ch - done < best.left) best = { id, left: ch - done }
+  }
+  return best
 }

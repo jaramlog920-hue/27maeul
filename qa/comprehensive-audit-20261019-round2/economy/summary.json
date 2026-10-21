@@ -1,0 +1,21 @@
+{
+  "findings": 3,
+  "severity": {
+    "High": 0,
+    "Critical": 0,
+    "Medium": 0,
+    "Low": 3
+  },
+  "observed_policy_risks": 2,
+  "core_original_standalone_files": 141,
+  "shared_original_files": 2,
+  "expanded_cross_feature_files": 5,
+  "coverage_rows": 148,
+  "current_runtime_passed": 14,
+  "current_runtime_total": 14,
+  "stash_boundary_combinations": 80,
+  "existing_original_triaged_total": 8,
+  "existing_original_stale_failures": 2,
+  "corrected_controls_passed": 2,
+  "source_unchanged_against_round_start": true
+}

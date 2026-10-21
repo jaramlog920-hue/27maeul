@@ -1,0 +1,1826 @@
+src/engine/autonomy.ts
+5: export type IdleKind = 'look' | 'stretch' | 'yawn' | 'hum' | 'doze' | 'greet' | 'wrist'
+6: export interface IdleAction {
+10: export interface IdleState {
+17: export const IDLE_AFTER = 6
+19: export const DOZE_AFTER = 45
+21: export const IDLE_GAP = 3
+23: export const DURATION: Record<IdleKind, number> = {
+33: export const IDLE_RESET: IdleState = { seconds: 0, action: null, cooldown: 0 }
+35: export function pickIdleAction(ctx: { idleSeconds: number; minute: number; wrote?: boolean }, rng: Rng): IdleAction | null {
+57: export function stepIdle(idle: IdleState, dt: number, minute: number, rng: Rng, wrote = false): IdleState {
+70: export function greet(): IdleState {
+75: export function stepControlledIdle(idle: IdleState, dt: number): IdleState {
+src/engine/avatar.ts
+6: export type Look = 'f' | 'm'
+8: export type Hsv = [number, number, number]
+10: export interface Avatar {
+26: export type FullAvatar = Required<Avatar>
+28: export const SKINS = ['#f8dcc0', '#f8d0a8', '#e8b890', '#d0a078', '#b88460', '#98684a', '#785038', '#5c3c2c'] as const
+30: export const HAIR_FRONTS = [
+34: export const HAIR_BACKS = [
+39: export const TOPS: readonly (readonly [string, string, string, string, 'plain' | 'stripe' | 'apron' | 'vest' | 'collar' | 'cross' | 'pocket' | 'sageSet' | 'ivorySet' | 'ribbonSet' | 'roseSet' | 'collectible'])[] = [
+64: export const BOTTOMS = ['긴 치마', '짧은 치마', '바지', '반바지', '주름 치마', '단이 있는 치마', '넓은 바지', '접어 올린 바지'] as const
+65: export const ACCS = ['없음', '머리띠', '꽃 핀', '목걸이', '귀걸이', '머릿수건', '리본 핀', '나뭇잎 핀', '구슬 머리띠', '둥근 브로치', '목수건', '허리 주머니', '작은 어깨 가방', '꽃 화관'] as const
+67: export const NAME_MAX = 8
+68: export type NameProblem = 'empty' | 'long' | 'forbidden' | null
+70: export function cleanAvatarName(raw: string): string {
+74: export function nameProblem(raw: string): NameProblem {
+83: export function withLookDefaults(a: Avatar): FullAvatar {
+100: export function cycle(i: number, delta: number, n: number): number {
+104: export function randomAvatar(look: Look, name: string, rand: () => number = Math.random): FullAvatar {
+127: export function hsvToHex([h, s, v]: Hsv): string {
+138: export function shadeOf([h, s, v]: Hsv): Hsv {
+143: export function avatarKey(a: FullAvatar): string {
+src/engine/baker-baby.ts
+9: export function bakerCribWaiting(s: GameState, npc: string): boolean {
+14: export function makeBakerCrib(s: GameState): GameState | null {
+src/engine/bonds.ts
+9: type Items = Partial<Record<ItemId, number>>
+13: export interface Request {
+24: export const REQUESTS: readonly Request[] = [
+44: export const reqState = (flags: Record<string, number>, id: string) => flags[`req:${id}`] ?? 0
+47: export function requestFor(npc: string, points: number | undefined, flags: Record<string, number>): Request | null {
+59: export const unlocked = (flags: Record<string, number>, name: string) => (flags[`unlock:${name}`] ?? 0) > 0
+63: export const VISIT_HEARTS = 5
+64: export const INVITE_HEARTS = 7
+65: export const VISIT_FROM = 7 * 60
+66: export const VISIT_TO = 9 * 60 + 30
+68: export const VISIT_SPOT: Tile = { x: 4, y: 8 }
+69: export const INVITE_FROM = 18 * 60
+70: export const INVITE_TO = 20 * 60 + 30
+72: export const INVITE_DOORS: Record<string, Tile> = {
+77: export const VISIT_GIFTS: Record<string, Items> = {
+95: export function pickVisitor(day: number, hearts: Record<string, number>, flags: Record<string, number>, present: readonly string[], bonus = 0): string | null {
+104: export function pickInviter(day: number, hearts: Record<string, number>, flags: Record<string, number>): string | null {
+116: export const VILLAGE_STEPS = [100, 220, 360, 520] as const
+117: export function villageLevel(hearts: Record<string, number>): number {
+122: export const JOINS_AT: Record<string, number> = { weaver: 2, beekeeper: 4 }
+126: export const FRIENDS_HEARTS = 5
+127: export const FRIENDS_SPOT: Tile = { x: 10, y: 26 }
+128: export const FRIENDS_FROM = 14 * 60
+129: export const FRIENDS_TO = 16 * 60
+130: export const BABY_PARTY_DAY = 22
+131: export const GATHER_FROM = 18 * 60
+132: export const GATHER_TO = 20 * 60
+133: export const PICNIC_FROM = 11 * 60 + 30
+134: export const PICNIC_TO = 13 * 60 + 30
+135: export const STARS_FROM = 20 * 60
+136: export const STARS_TO = 22 * 60
+139: export const BABY_PARTY_SPOTS: Record<string, Tile> = {
+152: export const HILL_SPOTS: Record<string, Tile> = {
+168: export type Gathering = 'babyParty' | 'picnic' | 'starNight'
+171: export function gatheringOf(day: number, flags: Record<string, number>): Gathering | null {
+176: export function gatheringWindow(g: Gathering): [number, number] {
+181: export function planGathering(day: number, level: number, flags: Record<string, number>): Gathering | null {
+194: export const STAR_NIGHT_GAP = 7
+197: export const BOND_HEARTS = 9
+src/engine/calendar.ts
+13: export function weatherOf(day: number): Weather {
+28: export const isWet = (w: Weather) => w === 'rain' || w === 'snow'
+31: export function seasonDay(day: number): number {
+37: export function dayOf(season: Season, n: number, year = 1): number {
+42: export function yearOf(day: number): number {
+47: export function isMarketDay(day: number): boolean {
+51: export type Festival = 'blossom' | 'barley' | 'grapes' | 'hearth'
+54: export function festivalOf(day: number): Festival | null {
+64: export const FESTIVAL_FROM = 18 * 60
+65: export const FESTIVAL_TO = 21 * 60
+68: export function puddlesOut(day: number, minute: number): boolean {
+73: export function icyMorning(day: number, minute: number): boolean {
+78: export function chimneySmoke(day: number, minute: number): 'none' | 'meal' | 'winter' {
+86: export function barleyRipe(day: number): boolean {
+91: export function grapesRipe(day: number): boolean {
+src/engine/child.ts
+11: export type ChildLook = 'boy' | 'girl'
+12: export type ChildStage = 'baby' | 'toddler' | 'helper' | 'adult'
+14: export interface Child {
+49: export const ADULT_AT = 84
+50: export const LEAVE_SCORE = 60
+51: export type AdultJob = 'scribe' | 'scholar' | 'woodworker' | 'shipwright' | 'teaKeeper' | 'merchant' | 'fisher' | 'sailor' | 'herbalist' | 'traveler' | 'cook' | 'painter' | 'weaver' | 'gardener' | 'potter' | 'instrumentMaker'
+52: export const JOB_STAT: Record<AdultJob, StatId> = { scribe:'wit',scholar:'wit',woodworker:'hand',shipwright:'hand',teaKeeper:'charm',merchant:'charm',fisher:'strength',sailor:'strength',herbalist:'luck',traveler:'luck',cook:'hand',painter:'wit',weaver:'hand',gardener:'luck',potter:'hand',instrumentMaker:'hand' }
+53: export const ADULT_JOBS = Object.keys(JOB_STAT) as AdultJob[]
+55: export const JOBS_BY_STAT: Record<StatId, [AdultJob, AdultJob]> = {
+63: export const JOB_GIFTS: Record<AdultJob, Partial<Record<ItemId, number>>> = {
+86: export const LEAVING_JOBS: readonly AdultJob[] = ['sailor', 'traveler', 'merchant']
+87: export const leavesVillage = (job: AdultJob | undefined): boolean => !!job && LEAVING_JOBS.includes(job)
+88: export type ChildHome = 'home' | 'lodging' | 'away'
+90: export function childHome(s: { child?: Pick<Child, 'left'> | null; flags: Record<string, number> }): ChildHome {
+96: export function adultJob(c: Pick<Child, 'stats' | 'lean'> & Partial<Pick<Child,'interests'|'left'>>): { job: AdultJob; left: boolean; stat: StatId } {
+109: export function addCareerInterest(c: Child, jobs: readonly AdultJob[]): Child {
+115: export type KidMail = 'letter' | 'gift' | 'coins'
+117: export function kidMailFor(c: Pick<Child, 'born' | 'left'>, day: number): KidMail | null {
+124: export function kidCoins(day: number): number {
+127: export type ChildMode = 'follow' | 'home' | 'roam'
+130: export function childMode(c: Pick<Child, 'born' | 'mode' | 'left'>, day: number): ChildMode | 'cradle' | 'away' {
+140: export const CHILD_AFTER_WEDDING = 14
+142: export const TODDLER_AT = 14
+143: export const HELPER_AT = 42
+146: export const CHILD_NAMES: Record<ChildLook, readonly string[]> = {
+151: export function childStage(c: Pick<Child, 'born'>, day: number): ChildStage {
+157: export function inheritBorn(_player: Stats, spouseStat: StatId | undefined): Partial<Record<StatId, number>> {
+162: export const INHERIT_MIN = 0.2
+163: export const INHERIT_MAX = 0.5
+165: export const CARE_DAYS_PER_DRAW = 3
+166: export function inheritShare(cared: number, rnd: () => number): number {
+173: export function inheritFromPlayer(c: Child, player: Stats, rnd: () => number): Child {
+185: export function repairSpouseInheritance(c: Child | null, partner: string | null, spouseStat: StatId | undefined): Child | null {
+191: export function newChild(day: number, player: Stats, spouseStat: StatId | undefined): Child {
+199: export function nextName(c: Pick<Child, 'name' | 'look'>): string {
+205: export function helpStat(c: Pick<Child, 'stats' | 'lean'>): StatId {
+216: export const CRADLE_SPOT: Tile = { x: SIDE_ROOM.x0 + 1, y: SIDE_ROOM.y1 }
+219: export const HELPER_SPOTS: readonly { from: number; at: Tile }[] = [
+226: export function helperSpot(minute: number): Tile {
+232: export function sanitizeChild(raw: unknown): Child | null {
+src/engine/clock.ts
+4: export interface Clock {
+9: export const DAY_START = 6 * 60
+10: export const LATE = 23 * 60
+11: export const LATE_WAKE = 8 * 60
+13: export const MINUTE_CAP = 26 * 60
+14: export const MINUTES_PER_SECOND = 1
+16: export const SEASON_DAYS = 40
+19: export function newClock(): Clock {
+23: export function advance(c: Clock, seconds: number): Clock {
+27: export function phaseOf(minute: number): Phase {
+37: export function sleepClock(c: Clock): Clock {
+41: export function seasonOf(day: number): Season {
+45: export function formatTime(minute: number): string {
+51: export const NIGHT_DARK = 0.58
+54: export function darkness(minute: number): number {
+src/engine/club-extras.ts
+15: export const clubSeason = (s: Pick<GameState, 'clock'>): Season => seasonOf(s.clock.day)
+18: export function clubDishes(s: Pick<GameState, 'inv'>): ItemId[] {
+21: export function canShareClubDish(s: GameState, id: string): boolean {
+27: export function shareClubDish(s: GameState, id: string, dish: ItemId): GameState {
+41: export function canJoinNews(s: GameState, id: string, npc: string): boolean {
+46: export function joinNews(s: GameState, id: string, npc: string): GameState {
+src/engine/club-life.ts
+10: type Voice = 'polite' | 'sir' | 'old' | 'casual' | 'child'
+11: export interface ClubPerson { does: string; start: string; finish: string }
+21: export const clubVoice = (npc: string): Voice => VOICES[npc] ?? 'polite'
+23: export const clubPerson = (npc: string, activity: ClubActivity): ClubPerson | null => PEOPLE[npc]?.[activity] ?? NEW_CLUB_LINES[activity] ?? null
+28: function attendedBefore(s: GameState, clubId: string, current: Appt): { appt: Appt; run: NonNullable<GameState['clubSessions'][string]> }[] {
+42: export function clubFollowUp(s: GameState, current: Appt): { npc: string; text: string } | null {
+64: export function clubMissed(s: GameState, clubId: string): { day: number; items: { npc: string; does: string }[] } | null {
+77: export function clubLastHomeWork(s: GameState, clubId: string): { color: string } | null {
+src/engine/club-round.ts
+12: export type RoundKind = 'tea' | 'sew' | 'garden' | 'observe' | 'read' | 'cook' | 'paint' | 'music' | 'housewarming' | 'showcase' | 'festivalFood' | 'festivalDeco' | 'festivalTidy'
+13: export const ROUND_MODE: Record<RoundKind, 'hold' | 'pick'> = {
+18: export const HOLD_BANDS: readonly (readonly [number, number])[] = [[18, 42], [42, 66], [66, 90]]
+22: export function wantOf(npc: string, kind: RoundKind): 0 | 1 | 2 {
+25: export const holdHit = (want: number, amount: number) => amount >= HOLD_BANDS[want][0] && amount <= HOLD_BANDS[want][1]
+27: export const holdZone = (amount: number) => (amount < HOLD_BANDS[0][0] ? -1 : amount > HOLD_BANDS[2][1] ? 3 : HOLD_BANDS.findIndex(([a, b]) => amount >= a && amount <= b))
+30: export function roundTask(s: Pick<GameState, 'plans' | 'clubSessions' | 'fests'>, id: string): GroupTaskProgress | undefined {
+36: export const roundMarks = (s: Pick<GameState, 'plans' | 'clubSessions' | 'fests'>, id: string): string => roundTask(s, id)?.selection?.replace(/[^01]/g, '') ?? ''
+37: export const roundDone = (s: Pick<GameState, 'plans' | 'clubSessions' | 'fests'>, id: string) => (roundTask(s, id)?.stage ?? 0) >= 3
+40: function canPlay(s: GameState, id: string): boolean {
+56: function setTask(s: GameState, id: string, task: GroupTaskProgress): GameState {
+67: export function playRound(s: GameState, id: string, kind: RoundKind, guests: readonly string[], value: number): { state: GameState; good: boolean } {
+83: export function roundGuests(s: Pick<GameState, 'plans' | 'clubSessions' | 'fests'>, id: string, now: readonly string[]): readonly string[] {
+89: export function apptGuests(s: Pick<GameState, 'plans' | 'fests'>, id: string): string[] {
+96: export function fireGuests(s: Pick<GameState, 'npcs'>): string[] {
+107: export const roundSeed = (day: number, id: string) => hash(`${day}:${id}`)
+src/engine/clubs.ts
+16: export const CLUB_ACTIVITIES = ['tea','sew','garden','observe','read','cook','paint','music'] as const
+17: export type ClubActivity = typeof CLUB_ACTIVITIES[number]
+18: export type ClubSlot = 'morning'|'afternoon'|'evening'
+19: export interface Club {
+22: export interface ClubSession {
+29: export const CLUB_MAX=3
+31: export const CLUB_HISTORY_MAX=30
+32: export const CLUB_SLOTS: Record<ClubSlot,readonly [number,number]>={morning:[600,720],afternoon:[840,960],evening:[1080,1200]}
+33: export type ClubInput=Omit<Club,'id'|'active'|'paused'>
+34: export const clubApptId=(club:string,day:number)=>`${club}:day:${day}`
+35: export function nextClubDay(day:number,weekday:number):number {return day+((weekday-day%7+7)%7)}
+37: export const CLUB_PLACES:readonly PlaceId[]=['hallTable','teaTable','pavilion','garden',...FACILITY_PLACES]
+38: export function clubVenues(s:GameState,activity:ClubActivity):PlaceId[] {
+47: export function clubWorkTiles(s:Pick<GameState,'shelved'|'progress'|'flags'>,place:PlaceId):Tile[] {
+52: export function canLeaveWork(s:GameState,clubId:string,place:PlaceId):boolean {
+56: export interface ClubWorkSpot {club:string; art:'cushionPattern'; color:string; place:PlaceId; at:Tile}
+58: export function clubWorkSpots(s:Pick<GameState,'clubs'|'clubWorks'|'shelved'|'flags'|'progress'>):ClubWorkSpot[] {
+71: export function clubCandidates(s:GameState,content:GameContent):string[] {
+74: export function createClub(s:GameState,input:ClubInput,content:GameContent,editId?:string):{state:GameState;error?:string} {
+100: export function pauseClub(s:GameState,id:string,paused=true):GameState {
+103: export function dissolveClub(s:GameState,id:string):GameState {
+108: export function expandClubs(s:GameState,content:Pick<GameContent,'neighbors'>):GameState {
+129: export function clubHere(s:GameState,place:PlaceId):Appt|undefined {
+132: export function joinClub(s:GameState,id:string,mode:ClubSession['mode']):GameState {
+140: export function chooseClub(s:GameState,id:string,picked:string,note?:string):GameState {
+145: export function clubWeaveDone(s:GameState,id:string):GameState {
+150: export function doClubActivity(s:GameState,id:string,plotKey?:string):GameState {
+161: export function finishClub(s:GameState,id:string,result:'home'|'club'='home'):GameState {
+177: export function sanitizeClubs(raw:unknown):Club[] {
+186: export function sanitizeClubSessions(raw:unknown):Record<string,ClubSession> {
+src/engine/companion.ts
+7: export type Animal = 'cat' | 'dog'
+9: export interface Companion extends Actor {
+33: export type PetFound = 'play' | 'rest' | 'walk' | 'toy' | 'spot' | 'came'
+34: export const PET_FOUND: readonly PetFound[] = ['play', 'rest', 'walk', 'toy', 'spot', 'came']
+36: export type PetMotion = 'play' | 'rest' | 'sniff' | 'wait' | 'wag' | 'fetch'
+38: export interface PetWays { curious: number; distance: number; energy: number }
+41: export function petWays(c: Pick<Companion, 'name' | 'since' | 'kind' | 'ways'>): PetWays {
+48: export function sanitizeCompanion(c: Companion | null): Companion | null {
+65: export type PetSpot = 'door' | 'window' | 'blanket' | 'toy' | 'hearth' | 'cool'
+66: export type PetPose = 'nap' | 'wait' | 'sniff' | 'play' | 'fetch' | 'wag'
+67: export interface PetHabit { spot: PetSpot; pose: PetPose; key: string }
+69: function seedOf(c: Pick<Companion, 'name' | 'since' | 'kind'>, salt: string): number {
+76: export function favoriteSpot(c: Pick<Companion, 'name' | 'since' | 'kind'>): PetSpot {
+80: export const PET_TOYS = { cat: ['feather', 'ball', 'cloth'], dog: ['ball', 'rope', 'stick'] } as const
+81: export type PetToy = typeof PET_TOYS.cat[number] | typeof PET_TOYS.dog[number]
+82: export function favoriteToy(c: Pick<Companion, 'name' | 'since' | 'kind'>): PetToy {
+94: export function petHabit(c: Pick<Companion, 'name' | 'since' | 'kind' | 'ways'>, day: number, minute: number, weather: Weather): PetHabit {
+125: export function petCornerProp(c: Companion, day: number, minute: number, weather: Weather): { art: 'petToy'; at: Tile; side: 'left' | 'right' } | null {
+136: export function petFollowPose(c: Pick<Companion, 'name' | 'since' | 'kind' | 'ways'>, idleSeconds: number, weather: Weather): PetPose | null {
+149: function anchorOf(c: Companion, spot: PetSpot): Tile {
+161: function homeFloor(t: Tile): boolean {
+166: export function petSpotSafe(t: Tile, blocked: ReadonlySet<string> = new Set()): boolean {
+183: export function petHomeGoal(c: Companion, blocked: ReadonlySet<string> = new Set(), spot: PetSpot = 'door'): Tile {
+203: export function comesToPlayer(c: Companion, day: number): boolean {
+209: export const PET_INTERACTION_GAP = 30
+210: export function interactPet(c: Companion, action: 'play' | 'rest', day: number, minute: number): Companion | null {
+224: export const WALK_PLACES: readonly string[] = ['well', 'hill', 'bench', 'pavilion', 'press', 'anvil', 'homeBench']
+225: export function walkPlaceAt(t: Tile): string | null {
+234: export const STRAY_DAY = 2
+236: export const STRAY_STAY_DAYS = 2
+238: export const STRAY_SPOTS: Record<Animal, Tile> = { cat: { x: 1, y: 8 }, dog: { x: 8, y: 8 } }
+240: export const EAVES: Tile = { x: 7, y: 8 }
+241: export const GROWN_AFTER = 10
+242: export const COMPANION_SPEED = 4
+243: export const NAME_MAX = 8
+245: export function adopt(kind: Animal, name: string, day: number, at: Tile): Companion {
+251: export function isGrown(c: Companion, day: number): boolean {
+256: export function cleanName(raw: string, kind: Animal): string {
+269: export function companionGoal(player: Tile, playerOutdoorsInRain: boolean, blockers?: ReadonlySet<string>, facing: Facing = 'down'): Tile | null {
+281: export function stepCompanion(c: Companion, goal: Tile | null, dt: number, blockers?: ReadonlySet<string>): Companion {
+src/engine/event-scene.ts
+21: export interface EventProp {
+37: export interface EventMotion {
+47: type SceneState = {
+69: export function faceToward(from: Tile, to: Tile, fallback: Facing = 'down'): Facing {
+77: function offsetOf(id: string): number {
+89: export function weddingEvening(s: { clock: { day: number; minute: number }; romance?: Romance }): boolean {
+97: export function nearWeddingFire(p: Tile): boolean {
+102: export const WEDDING_LAYOUT: readonly EventProp[] = [
+120: export const WEDDING_BEATS: readonly { action: string; seconds: number; frameMs: number; loop: boolean }[] = [
+131: export function weddingBeat(t: number): { action: string; frame: number } {
+144: function rotate(actions: readonly string[], id: string, t: number, period = 3.2): { action: string; frame: number } {
+151: function standingAt(n: Npc | undefined, spot: Tile | undefined): boolean {
+158: export const candleKey = (id: string) => `candleOut:${id}`
+164: export function birthdayBreads(s: SceneState): { id: string; at: Tile; out: boolean }[] {
+178: export function candleToBlow(s: SceneState): { id: string; at: Tile } | null {
+186: export function festivalEvening(s: SceneState): Festival | null {
+194: export const FESTIVAL_DECOR: Record<Festival, string> = { blossom: 'springGarland', barley: 'summerShadeDecor', grapes: 'autumnHarvest', hearth: 'winterLantern' }
+196: export const FEAST_BOARD: EventProp = { art: 'feastBoard', at: { x: 27, y: 17 }, w: 2, h: 1, foot: [{ x: 27, y: 17 }, { x: 28, y: 17 }] }
+198: export function festivalLayout(f: Festival): EventProp[] {
+206: export function feastEvening(s: SceneState): boolean {
+210: export const FEAST_LAYOUT: EventProp[] = [
+218: export const PICNIC_CLOTH: EventProp = { art: 'picnicCloth', at: { x: 14, y: 12 }, w: 2, h: 1, ground: true, foot: [{ x: 14, y: 12 }, { x: 15, y: 12 }] }
+220: export const WELCOME_BASKET: EventProp = { art: 'welcomeBasket', at: { x: 7, y: 17 }, w: 1, h: 1, foot: [{ x: 7, y: 17 }] }
+223: function gatheringNow(s: SceneState): 'picnic' | 'babyParty' | null {
+233: function festsNow(s: SceneState): { f: Fest; seats: readonly Tile[] }[] {
+244: function besideSeats(s: SceneState, seats: readonly Tile[], n: number): Tile[] {
+263: export function festPropsNow(s: SceneState): EventProp[] {
+279: export function eventPropsNow(s: SceneState): EventProp[] {
+299: function oneShot(action: string, id: string, t: number): { action: string; frame: number } {
+307: function storyNow(s: SceneState): { owner: string; event: PersonEvent } | null {
+313: function storyMotion(s: SceneState, id: string, t: number): EventMotion | null {
+327: function playerStoryMotion(s: SceneState, t: number): EventMotion | null {
+335: export function npcEventMotion(s: SceneState, id: string, t: number): EventMotion | null {
+370: export function playerEventMotion(s: SceneState, t: number): EventMotion | null {
+src/engine/events.ts
+12: export interface ScheduledEvent {
+25: export function scheduledEvents(s: Pick<GameState, 'clock' | 'today' | 'flags'> & Partial<Pick<GameState, 'notebook' | 'plans' | 'gen' | 'romance'>>, content: GameContent): ScheduledEvent[] {
+103: export function eventStatus(event: ScheduledEvent, day: number, minute: number): string {
+115: export const ALERT_BEFORE = 30
+117: export const eventName = (e: ScheduledEvent) => (e.id.endsWith(':market') ? '장날' : e.title)
+121: export const isAllDay = (e: Pick<ScheduledEvent, 'from' | 'to'>): boolean => e.to - e.from >= 8 * 60
+123: export function nextEvent(events: readonly ScheduledEvent[], day: number, minute: number): ScheduledEvent | null {
+130: export function eventsInOrder(events: readonly ScheduledEvent[]): ScheduledEvent[] {
+135: export function eventSummary(e: ScheduledEvent | null, day: number, minute: number): string {
+147: export function alertsBetween(events: readonly ScheduledEvent[], day: number, before: number, after: number): string[] {
+src/engine/family-days.ts
+13: export const YEAR_DAYS = SEASON_DAYS * 4
+16: export function childBirthday(c: Pick<Child, 'born'>, day: number): boolean {
+22: export function spouseBirthday(r: Romance | null | undefined, day: number): boolean {
+26: type MorningState = { clock: { day: number }; child: Child | null; romance: Romance; scenes: string[]; life?: Life }
+29: export function familyMorning<S extends MorningState>(s: S): S {
+src/engine/family-furniture.ts
+8: export const PET_FURNITURE = ['wovenPetBed', 'coolingPetMat', 'petBowlStation', 'petTugMat', 'petPuzzleTray'] as const
+9: export const CHILD_FURNITURE = ['toddlerRockingHorse', 'childBlockMat', 'childDrawingTable', 'childBookSeat', 'toddlerDrumMat'] as const
+10: export type PetFurnitureId = typeof PET_FURNITURE[number]
+11: export type ChildFurnitureId = typeof CHILD_FURNITURE[number]
+12: export const petFurnitureAction = (id: string): 'sleep' | 'drink' | 'tug' | 'puzzle' | null =>
+16: function usable(room: readonly Furniture[], ids: readonly string[], occupied: ReadonlySet<string>): Furniture[] {
+22: export function petFurniturePlace(room: readonly Furniture[], minute: number, pose: string, occupied: ReadonlySet<string> = new Set()): Furniture | null {
+28: export function childFurniturePlace(s: { room?: readonly Furniture[]; child: Child | null; clock: { day: number; minute: number }; player: Tile; companion?: Tile | null }): Furniture | null {
+src/engine/family-memory.ts
+16: export const FAMILY_CHOICES = 3
+19: export function spouseActId(partner: string): string {
+23: export type SpouseActBlock = 'locked' | 'noSpouse' | 'noChild' | 'baby' | 'grown' | 'school' | 'time' | 'notHome' | 'done' | null
+25: type ActState = Pick<GameState, 'child' | 'clock' | 'flags' | 'romance' | 'player' | 'map' | 'homeLevel' | 'room' | 'village'> & Partial<Pick<GameState, 'progress' | 'shelved'>>
+31: export function canSpouseAct(s: ActState): SpouseActBlock {
+50: export const SPOUSE_ACT_MINUTES = 30
+52: export interface SpouseActResult {
+61: export function doSpouseAct(s: GameState, choice: number): SpouseActResult | null {
+88: function recordSpouseAct(s: GameState, id: string, partner: string, choice: number): GameState {
+95: export type ShowMode = 'speak' | 'draw' | 'watch'
+96: export const SHOW_MODES: readonly ShowMode[] = ['speak', 'draw', 'watch']
+97: export const SHOW_ID = 'fam:show'
+98: export const WATCH_ID = 'fam:watch'
+100: export type ShowBlock = 'noChild' | 'stage' | 'notAtSchool' | 'nothing' | 'done' | null
+103: export function madeWorks(s: Pick<GameState, 'flags'>): number {
+108: export function latestWork(s: Pick<GameState, 'flags'>): (typeof KID_MADE)[number] | null {
+114: export function canShow(s: GameState, mode: ShowMode): ShowBlock {
+128: export interface ShowResult {
+139: export function showAtSchool(s: GameState, mode: ShowMode): ShowResult | null {
+170: export function classroomWork(s: Pick<GameState, 'life'>): string | null {
+src/engine/family-scenes.ts
+9: export function familyScenicEvents(before: GameState, next: GameState, childAt: Tile | null): GameState {
+src/engine/family-tree.ts
+8: export function canRenamePerson(g: GenState, id: string): boolean {
+13: export const RENAME_MAX = 8
+14: export function renamePerson(g: GenState, id: string, raw: string): GenState {
+20: export type TreeRelation = 'focus' | 'parent' | 'grandparent' | 'spouse' | 'sibling' | 'child' | 'grandchild' | 'relative' | 'inLaw'
+21: export interface TreeNode { id: string; x: number; y: number; relation: TreeRelation }
+22: export interface TreeEdge { from: string; to: string; kind: 'parent' | 'spouse' | 'kin' }
+25: export function familyTreeLayout(g: GenState, focus: string): { nodes: TreeNode[]; edges: TreeEdge[]; width: number; height: number } {
+77: export const ME = 'me'
+78: export const MY_CHILD = 'me:child'
+80: function avatarNums(a: Avatar | undefined): Record<string, number> | undefined {
+91: export function withPlayerFamily(
+src/engine/family.ts
+18: export type DeskPose = 'draw' | 'book' | 'doze'
+20: export const DESK_BOOK_AT = 3
+21: export const DESK_DOZE_AT = 6
+23: export const DESK_ASK_CHANCE = 0.5
+25: type DeskState = Pick<GameState, 'child' | 'clock' | 'flags' | 'map'> & Partial<Pick<GameState, 'progress' | 'shelved'>>
+28: export function deskKidReady(s: DeskState): boolean {
+39: export function deskAsks(s: DeskState): boolean {
+46: export function answerDesk<S extends DeskState>(s: S, together: boolean): S {
+58: export function deskKidWith(s: DeskState): boolean {
+63: export function deskPose(s: Pick<GameState, 'flags'>): DeskPose {
+69: export function deskKidVerse(s: GameState): GameState {
+85: export type KidAct = 'read' | 'puzzle' | 'make' | 'cook' | 'walk' | 'ball' | 'tour' | 'errand' | 'story'
+86: export const KID_ACTS: readonly KidAct[] = ['read', 'puzzle', 'make', 'cook', 'walk', 'ball', 'tour', 'errand', 'story']
+87: interface KidActDef {
+94: export const KID_ACT_DEFS: Record<KidAct, KidActDef> = {
+106: export const KID_ACTS_PER_DAY = 2
+108: export const KID_DUSK = 19 * 60
+109: export const KID_CLOSE_GAIN = 3
+110: export const STORY_CLOSE_GAIN = 5
+111: export const CLOSE_MAX = 100
+113: export const KID_MADE: readonly ItemId[] = ['woodToy', 'clothDoll']
+115: export const WALK_FINDS: readonly ItemId[] = ['herb', 'fig', 'olive', 'reed']
+117: export function cookBurns(nth: number): boolean {
+121: export type KidBlock = 'locked' | 'noChild' | 'baby' | 'grown' | 'school' | 'done' | 'dark' | 'notYet' | 'storyDone' | 'away' | null
+124: export function kidActsToday(s: Pick<GameState, 'flags' | 'clock'>): number {
+128: export function canKidAct(s: Pick<GameState, 'child' | 'clock' | 'flags' | 'map'> & Partial<Pick<GameState, 'progress' | 'shelved'>>, act: KidAct): KidBlock {
+147: export interface KidResult {
+166: export function firstTime(s: GameState, id: string, opts: { stages?: readonly ChildStage[]; extra?: readonly string[]; choice?: number; item?: string; place?: string } = {}): GameState {
+181: function neighborToday(s: GameState, content: GameContent, salt: number): string | null {
+189: export function doKidAct(s: GameState, act: KidAct, content: GameContent): KidResult | null {
+263: export function familyTrip(s: GameState): GameState {
+271: export const SUPPER_FROM = SPOUSE_HOME_FROM
+272: export const SUPPER_TO = 21 * 60 + 30
+274: export const SUPPER_CHANCE = 0.5
+275: export const SUPPER_HUNGER = 50
+276: export const SUPPER_HEART = 3
+277: export const SUPPER_MINUTES = 40
+280: export function supperReady(s: Pick<GameState, 'clock' | 'flags'> & Partial<Pick<GameState, 'romance' | 'progress' | 'shelved' | 'flags'>>): boolean {
+290: export function eatSupper(s: GameState): GameState | null {
+306: export function closeHearts(c: { close?: number } | null | undefined): number {
+312: export function isFamilyAlbum(id: string): boolean {
+317: export function spouseReading(s: Pick<GameState, 'clock'> & Partial<Pick<GameState, 'romance' | 'progress' | 'shelved' | 'flags'>>): boolean {
+src/engine/gen-age.ts
+5: export function stageByAge(born: number, day: number): GenStage {
+src/engine/gen-birth.ts
+8: export const CRIB_NEEDS = { reed: 3, blanket: 1 } as const
+11: export const GEN_CHILD_NAMES: Record<'f' | 'm', readonly string[]> = {
+17: export function cribDue(g: GenState, h: Household, d: number): boolean {
+25: export function cribAskOf(g: GenState | undefined, npc: string): Household | null {
+31: export const cribAsker = (h: Household): string => h.members.find((m) => m !== h.home) ?? h.members[0]
+34: export function giveCrib(g: GenState, hid: string, day: number): GenState | null {
+42: export type AvatarOf = (id: string) => Record<string, number> | undefined
+44: function babyOf(g: GenState, h: Household, d: number, avatarOf: AvatarOf): GenPerson {
+72: export function settleBirth(g: GenState, d: number, ctx: DayCtx, avatarOf: AvatarOf = () => undefined): GenState {
+src/engine/gen-config.ts
+5: export const START_CLOSE = 30
+8: export const FRIEND_AT = 30
+9: export const LOVER_AT = 60
+10: export const CONSULT_AT = 80
+12: export const CONSULT_AFTER = 14
+14: export const BREAKUP_BELOW = 40
+16: export const BREAKUP_QUIET = 7
+18: export const SPOUSE_FLOOR = 50
+21: export const MAX_LOVERS = 4
+22: export const MAX_PREPARING = 1
+25: export const CONSULT_QUESTIONS = 3
+26: export const CONSULT_CHEER = 2
+27: export const CONSULT_RETRY = 14
+29: export const CONSULT_NUDGE = 3
+32: export const WEDDING_DAYS = 7
+35: export const CRIB_GAIN = 15
+36: export const CRIB_HIGH = 86
+37: export const CRIB_WAIT_HIGH = 14
+39: export const CRIB_REASK = 5
+41: export const BIRTH_AFTER_CRIB = 28
+43: export const BIRTH_GAP = 56
+44: export const SECOND_GAIN = 10
+47: export const MAX_CHILDREN = 1 // 2026-10-13 사용자: 주민 가족은 아이 한 명만
+48: export const MAX_GENERATED = 8
+51: export const MIN_GAP = 1
+55: export const STAGE_AT = { baby: 0, child: 14, teen: 42, adult: 84, elder: 244 } as const
+58: export const MAX_CATCHUP = 7
+60: export const PLAYER_COOLING = 14
+63: export const MEETS_PER_DAY = 3
+64: export const MEET_GAP_MIN = 30
+67: export const ELDER_PAIR = ['carpenter', 'smith'] as const
+70: export const FALLBACK_SEED = 20261007
+src/engine/gen-growth.ts
+11: export const RETIRE_AFTER = 40
+14: function workParent(g: GenState, childId: string, home: string): string | null {
+22: export function slotPerson(g: GenState | undefined, npc: string): string {
+27: export function slotOfPerson(g: GenState | undefined, pid: string): string {
+33: export const isRetired = (g: GenState | undefined, npc: string): boolean => !!g?.retired?.[npc]
+36: export const MOVE_AFTER = 14
+38: export function pauseResidentAging(g: GenState, day: number, starting = false): GenState {
+54: export const movedAway = (g: GenState | undefined, npc: string): boolean => g?.retired?.[npc]?.moved != null
+56: export function slotHeir(g: GenState | undefined, npc: string): GenPerson | null {
+61: export function movedHeir(g: GenState | undefined, npc: string): GenPerson | null {
+68: export function settleGrowth(g: GenState, d: number, access: { generations: boolean; retirement: boolean; ageless?: boolean } = { generations: true, retirement: true }): GenState {
+src/engine/gen-homes.ts
+14: export function sharedHomeOf(g: GenState | undefined, id: string, hasRoom: (owner: string) => boolean): string | null {
+24: export function homeWishes(s: Pick<GameState, 'gen' | 'flags' | 'newland'> & Partial<Pick<GameState, 'clock'>>, hasRoom: (owner: string) => boolean): Household[] {
+32: export function familyHomes(s: Pick<GameState, 'gen' | 'flags' | 'newland'>): { household: Household; home: Build }[] {
+46: export function livesInNewland(s: Pick<GameState, 'gen' | 'flags' | 'newland'>, npc: string): boolean {
+53: export function familyShownMember(s: Pick<GameState, 'gen'>, h: Household): string | null {
+58: export function emptyHomes(s: Pick<GameState, 'flags' | 'newland'>): Build[] {
+65: export function emptyHomeAt(s: Pick<GameState, 'gen' | 'flags' | 'newland'>, t: Tile): Build | null {
+73: export function giveFamilyHome(s: GameState, householdId: string, home: Build, hasRoom: (owner: string) => boolean): GameState {
+85: export function familyAt(s: Pick<GameState, 'gen' | 'flags' | 'newland'>, t: Tile): { household: Household; home: Build } | null {
+96: export const MOVE_CHANCE = 0.04
+97: export const MOVE_AFTER_DAYS = 14
+98: export const MOVE_WAIT_DAYS = 3
+99: export const MOVE_QUIET_DAYS = 28
+104: export const wantsToMove = (s: Pick<GameState, 'flags'>, h: Household): boolean => !!s.flags[`moveWish:${householdNo(h)}`]
+107: export function familyMoveMorning<S extends Pick<GameState, 'gen' | 'flags' | 'newland' | 'clock'>>(s: S): S {
+131: export function askToStay<S extends Pick<GameState, 'flags'>>(s: S, h: Household): S {
+140: export function sayGoodbye<S extends Pick<GameState, 'flags'>>(s: S, h: Household): S {
+147: export const recentlyMoved = (s: Pick<GameState, 'flags' | 'clock'>, h: Household): boolean => {
+151: export const householdById = (s: Pick<GameState, 'gen'>, no: number): Household | undefined => Object.values(s.gen?.households ?? {}).find((h) => householdNo(h) === no)
+src/engine/gen-kin.ts
+4: type People = Record<string, GenPerson>
+7: export const FAMILY_REL: Record<string, 'grandparent' | 'relative'> = { grandpa: 'grandparent', weaver: 'relative' }
+15: function parentsX(p: People, id: string): string[] {
+27: function ancestors2(p: People, id: string): Set<string> {
+33: function direct(p: People, a: string, b: string): boolean {
+47: export function closeKin(p: People, a: string, b: string): boolean {
+62: export function repairKin<H extends { id: string; members: string[]; children: string[] }>(persons: People, households: Record<string, H>): { persons: People; households: Record<string, H> } {
+src/engine/gen-looks.ts
+6: export function genAvatar(p: GenPerson): FullAvatar {
+13: function mainParent(g: GenState, p: GenPerson): string | null {
+30: export interface Companion {
+42: export function companionsOf(g: GenState | undefined, npc: string, day?: number): Companion[] {
+src/engine/gen-marriage.ts
+11: export const PREP_TASKS: Record<string, Partial<Record<ItemId, number>>> = {
+18: export const PREP_IDS = Object.keys(PREP_TASKS)
+20: export const PREP_GAIN = 5
+22: export const CONSULT_LINES = 8
+25: export function consultantOf(r: Pick<Relation, 'a' | 'b'>, hearts: Record<string, number>): string {
+31: export function consultFor(g: GenState | undefined, npc: string, hearts: Record<string, number>, day: number): Relation | null {
+45: export function consultQuestion(g: GenState, r: Relation): number {
+56: export type ConsultResult = 'asked' | 'cheered' | 'wait'
+62: export function answerConsult(g: GenState, rid: string, answer: ConsultAnswer, day: number): { g: GenState; result: ConsultResult } {
+81: export const consultCheered = (r: Relation): boolean =>
+85: export const preparingOf = (g: GenState): Relation[] => Object.values(g.relations).filter((r) => r.stage === 'preparing')
+88: export function weddingTodayOf(g: GenState | undefined, day: number): Relation | null {
+93: export interface MarriageCtx extends DayCtx {
+99: export function pickWeddingDay(from: number, free: (day: number) => boolean): number {
+114: export type HomeOf = (id: string) => { home: string; own: boolean }
+117: export function marry(g: GenState, r: Relation, day: number, homeOf: HomeOf): GenState {
+129: export function settleMarriage(g: GenState, d: number, ctx: MarriageCtx, homeOf: HomeOf): GenState {
+152: export function helpPrep(g: GenState, rid: string, task: string): GenState | null {
+159: export function reconsider(g: GenState, rid: string, day: number): GenState {
+167: export function preparingFor(g: GenState | undefined, npc: string): Relation | null {
+172: export const pairOf = (r: Pick<Relation, 'a' | 'b'>, npc: string): string => (r.a === npc ? r.b : r.a)
+src/engine/gen-relations.ts
+8: export interface DayCtx {
+18: export function changedOn(g: GenState, d: number): Set<string> {
+31: export function releasePlayerPartner(g: GenState, partner: string | null): GenState {
+39: export const loverCount = (g: GenState): number => Object.values(g.relations).filter((r) => r.stage === 'lover' || r.stage === 'preparing').length
+42: export const quietAfterBreakup = (g: GenState, a: string, b: string, day: number): boolean => {
+47: export function settleRelations(g: GenState, d: number, ctx: DayCtx): GenState {
+src/engine/gen-settle.ts
+18: export interface SettleOpts {
+28: export function withPairs(): [string, string][] {
+41: function startFriends(g: GenState, day: number): GenState {
+50: export function homeOfFor(content: GameContent, g?: GenState): HomeOf {
+77: export function repairHouseholdHomes(g: GenState, content: GameContent): GenState {
+88: export function avatarOfFor(content: GameContent): AvatarOf {
+103: export function settleOneDay(g: GenState, d: number, s: Partial<Pick<GameState, 'romance' | 'flags' | 'progress' | 'shelved'>>, content: GameContent, opts: SettleOpts): GenState {
+128: export function settleGen(s: GameState, content: GameContent, opts: SettleOpts = {}): GameState {
+156: export function setGenOn(s: GameState, on: boolean): GameState {
+163: export function setResidentAging(s: GameState, on: boolean): GameState {
+src/engine/gen.ts
+12: export type GenStage = 'baby' | 'child' | 'teen' | 'adult' | 'elder'
+13: export type GenOrigin = 'fixed' | 'born' | 'arrived'
+14: export const GEN_STAGES: readonly GenStage[] = ['baby', 'child', 'teen', 'adult', 'elder']
+17: export const BAKER_BABY_ID = 'baker-baby'
+20: export function bakerBabyAt(day: number, old?: GenPerson): GenPerson | null {
+31: export function ensureBakerBaby(g: GenState, day: number): GenState {
+45: export interface GenPerson {
+75: export type RelationStage = 'neighbor' | 'friend' | 'lover' | 'preparing' | 'spouse'
+76: export const RELATION_STAGES: readonly RelationStage[] = ['neighbor', 'friend', 'lover', 'preparing', 'spouse']
+78: export type ConsultAnswer = 'cheer' | 'wait'
+80: export interface Consult {
+92: export interface Prep {
+98: export interface Relation {
+110: export interface Household {
+129: export interface GenEvent {
+140: export interface GenLog {
+147: export interface MeetMark {
+153: export interface GenState {
+176: export const LOG_CAP = 200
+178: export const relationId = (a: string, b: string): string => (a < b ? `${a}|${b}` : `${b}|${a}`)
+179: export const personId = (n: number): string => `g-${String(n).padStart(4, '0')}`
+180: export const eventId = (n: number): string => `e-${String(n).padStart(4, '0')}`
+183: export function genRng(seed: number, kind: string, ids: readonly string[], n: number): () => number {
+194: export const generatedCount = (g: GenState): number => Object.values(g.persons).filter((p) => p.origin !== 'fixed').length
+196: export const hasRoom = (g: GenState): boolean => generatedCount(g) < MAX_GENERATED
+201: export const GEN_ELIGIBLE: readonly string[] = [...CANDIDATE_IDS, ...ELDER_PAIR]
+202: export const genEligible = (id: string): boolean => GEN_ELIGIBLE.includes(id)
+207: export function activeEligible(g: GenState, id: string): boolean {
+215: export const relationOf = (g: GenState, a: string, b: string): Relation | undefined => g.relations[relationId(a, b)]
+216: export const stageOf = (g: GenState, a: string, b: string): RelationStage => relationOf(g, a, b)?.stage ?? 'neighbor'
+218: export function partnerOf(g: GenState, id: string): string | null {
+231: export function canPair(g: GenState, playerPartner: string | null | undefined, a: string, b: string, cooling: (id: string) => boolean = () => false): boolean {
+249: export const affinityOf = (g: GenState, a: string, b: string): number => g.affinity[relationId(a, b)] ?? 0
+252: export function addAffinity(g: GenState, a: string, b: string, delta: number): GenState {
+267: export function meetsToday(g: GenState, a: string, b: string, day: number): MeetMark {
+271: export const canMeetMore = (g: GenState, a: string, b: string, day: number): boolean => meetsToday(g, a, b, day).n < MEETS_PER_DAY
+276: export function topRelations(g: GenState, id: string, show: (other: string) => boolean, n = 5): { other: string; affinity: number; stage: RelationStage }[] {
+288: export interface FamilyGroup {
+300: export function familyGroups(g: GenState): FamilyGroup[] {
+329: function fixedPerson(n: NeighborDef, ids: ReadonlySet<string>): GenPerson {
+351: export function ensureFixed(g: GenState, content: GameContent): GenState {
+364: export function startAffinity(content: GameContent, withPairs: readonly [string, string][], seed = FALLBACK_SEED): Record<string, number> {
+380: export function newGenState(content: GameContent, seed: number, day: number, withPairs: readonly [string, string][] = []): GenState {
+387: export const addLog = (g: GenState, day: number, kind: string, who: string[]): GenState => ({ ...g, log: [...g.log, { day, kind, who }].slice(-LOG_CAP) })
+398: function sanitizeConsult(raw: unknown): Consult | undefined {
+405: function sanitizePrep(raw: unknown): Prep | undefined {
+411: function sanitizeAvatar(raw: unknown): Record<string, number> | undefined {
+424: export function sanitizeGen(raw: unknown, today: number): GenState | undefined {
+src/engine/hearts.ts
+4: export const MAX_POINTS = 100
+5: export const POINTS_PER_HEART = 10
+6: export const DAILY_HEART_CAP = 6
+7: export const ROMANCE_HEART_CAPS = { early: 50, close: 70, confession: 80, dating: 90 } as const
+9: export interface HeartDay { day: number; gains: Record<string, number>; charm: string[] }
+10: export function sanitizeHeartDay(raw: unknown, day: number, ids: readonly string[]): HeartDay | undefined {
+20: export const GAIN = {
+31: export function heartsOf(points: number | undefined): number {
+src/engine/inn-guests.ts
+9: export interface InnGuest {
+27: export const INN_GUESTS: readonly InnGuest[] = [
+111: export const INN_SEATS: readonly Tile[] = LODGING_CHILD_SEATS
+113: export interface InnStay {
+128: function hash(a: number, b: number): number {
+142: function planTo(day: number): void {
+171: export function innStays(s: Pick<GameState, 'clock' | 'gen' | 'flags' | 'child'>): InnStay[] {
+186: export function guestInRoom(st: InnStay, day: number, minute: number): boolean {
+194: export interface InnGuestHere {
+201: export function innGuestsNow(s: Pick<GameState, 'clock' | 'gen' | 'flags' | 'child'> & Partial<Pick<GameState, 'map'>>): InnGuestHere[] {
+208: export function innGuestAt(s: Pick<GameState, 'clock' | 'gen' | 'flags' | 'child'> & Partial<Pick<GameState, 'map'>>, t: Tile): InnGuestHere | null {
+212: export function innGuestTile(s: Pick<GameState, 'clock' | 'gen' | 'flags' | 'child'> & Partial<Pick<GameState, 'map'>>, id: string): Tile | null {
+217: export function stayLine(st: InnStay, day: number): string {
+227: export function guestLine(s: Pick<GameState, 'clock' | 'flags'>, here: InnGuestHere, more = 0): string {
+238: export function metGuest(s: GameState, here: InnGuestHere): GameState {
+244: export function resetInnPlan(): void {
+src/engine/living-moments.ts
+7: export function readingMoment(s:GameState,guests:readonly string[]):GameState {
+12: export function coverMoment(s:GameState,book:Book,choice:SpecialChoice):GameState {
+16: export function childLetterMoment(s:GameState):GameState {
+20: export function facilityMoment(s:GameState,id:FacilityId,crew:readonly string[]):GameState {
+24: export function livingGuests(s:Pick<GameState,'flags'>,content:GameContent,prefix:string):string[]{
+src/engine/meet.ts
+11: export type EmoteKind = 'heart' | 'laugh' | 'talk' | 'sweat' | 'angry'
+12: export interface Emote {
+19: export const EMOTE_SECONDS = 5
+22: export const MEET_GAIN: Record<EmoteKind, number> = { laugh: 2, talk: 1, heart: 3, sweat: 0, angry: -2 }
+25: export function fitOf(a: string, b: string, likes: (id: string) => readonly string[]): number {
+36: export function chemistry(g: GenState, a: string, b: string): number {
+41: export function meetResult(g: GenState, a: string, b: string, day: number, n: number, fit: number): EmoteKind {
+59: export function checkMeets(
+94: export function tickEmotes(list: readonly Emote[] | undefined, dt: number): Emote[] | undefined {
+src/engine/movement.ts
+13: export function findPath(from: Tile, to: Tile, blockers: ReadonlySet<string> = new Set()): Tile[] | null {
+41: export function findWarpRoute(from: Tile, to: Tile, blockers: ReadonlySet<string> = new Set()): Tile[] | null {
+68: export function pathToward(from: Tile, target: Tile, blockers: ReadonlySet<string> = new Set()): Tile[] | null {
+80: export interface Actor {
+89: export const SPEED = 3.5
+91: export function facingFor(dx: number, dy: number, fallback: Facing): Facing {
+97: export function stepActor(a: Actor, dt: number): { actor: Actor; arrived: boolean } {
+src/engine/neighbor-moments.ts
+16: function atSpot(s: GameState, id: string, spot: Tile | undefined): boolean {
+22: export function eventNeighborLine(s: GameState, id: string, content: Pick<GameContent, 'neighbors'>): string | null {
+60: export function oldNeighborLine(s: GameState, id: string, rnd: number): string | null {
+src/engine/neighbors.ts
+8: export interface Npc extends Actor {
+14: export const NPC_SPEED = 1.7
+15: export const MAX_HEART = 10
+18: export const FESTIVAL_SPOTS: Record<string, Tile> = {
+44: export const FIRE: Tile = { x: 24, y: 20 }
+46: export interface GoalContext {
+58: export function goalFor(def: NeighborDef, ctx: GoalContext): Tile | null {
+80: export function placeNpc(def: NeighborDef, goal: Tile | null): Npc {
+85: export function stepNpc(npc: Npc, def: NeighborDef, goal: Tile | null, dt: number, blockers: ReadonlySet<string> = new Set(), occupied?: Tile): Npc {
+116: export function route(from: Tile, to: Tile, blockers: ReadonlySet<string> = new Set()): Tile[] | null {
+125: function crossing(npc: Npc, here: Tile, to: Tile, blockers: ReadonlySet<string>): Npc | null {
+132: function pathOrEmpty(from: Tile, to: Tile, npc: Actor, blockers: ReadonlySet<string>): Tile[] {
+139: function walk(npc: Npc, dt: number, occupied?: Tile): Npc {
+152: export function npcTile(n: Npc): Tile {
+156: export function isNear(a: Tile, b: Tile, d = 1): boolean {
+src/engine/news.ts
+13: export const NEWS_PER_DAY = { min: 2, max: 3 } as const
+15: export const NEWS_RECENT_DAYS = 10
+17: export type NewsKind = 'work' | 'rest' | 'meet' | 'season' | 'after'
+19: export interface NewsWho {
+25: export interface NewsDef {
+49: export const NEWS: readonly NewsDef[] = [
+72: export const NEWS_BY_ID: ReadonlyMap<string, NewsDef> = new Map(NEWS.map((n) => [n.id, n]))
+76: function hash(n: number): number {
+83: export function newsCountOf(day: number): number {
+93: export function newsOfDay(day: number, ok: (n: NewsDef) => boolean): NewsDef[] {
+110: export function newsWeatherOk(d: Pick<NewsDef, 'dry' | 'weathers'>, w: Weather): boolean {
+115: export const newsSeasonOk = (d: Pick<NewsDef, 'seasons'>, season: Season) => !d.seasons || d.seasons.includes(season)
+116: export const newsWeatherOfDay = (day: number): Weather => weatherOf(day)
+120: interface NewsText {
+127: export const NEWS_TEXT = TEXT
+129: export const newsMutter = (id: string, npc: string): string[] => TEXT.items[id]?.mutter[npc] ?? []
+130: export const newsSeenText = (id: string, npc: string): string | null => TEXT.items[id]?.seen[npc] ?? null
+133: export const newsPropArt = (d: NewsDef, day: number): string | null => (d.prop ? d.prop.art[day % d.prop.art.length] : null)
+137: export interface Habit {
+144: export const HABITS: readonly Habit[] = [
+153: export const habitText = (id: string): string | null => TEXT.habits[id] ?? null
+src/engine/night-doors.ts
+9: export function nightDoorLocked(s: GameState, door: Tile, content: Pick<GameContent, 'neighbors'>): boolean {
+36: export function nightDoorKeys(s: GameState, content: Pick<GameContent, 'neighbors'>): string[] {
+src/engine/npc-affinity.ts
+5: export function npcAffinityScale(s: Partial<GrowthState>): number {
+src/engine/npc-life.ts
+6: export const WANDER_SLOT = 16
+15: function blocksRoomExit(at: Tile): boolean {
+41: export function wanderGoal(npc: string, anchor: Tile, seed: number, day: number, minute: number, blocked: ReadonlySet<string>, occupied: ReadonlySet<string>): Tile {
+src/engine/npc-spots.ts
+5: export function separateNpcGoals(goals:Record<string,Tile|null>,blocked:ReadonlySet<string>=new Set(),priority:readonly string[]=[]):Record<string,Tile|null> {
+src/engine/people.ts
+13: export interface When {
+23: export interface Moment {
+32: export function inWindow(minute: number, from = 0, to = 24 * 60 + 60): boolean {
+36: export function whenMatches(w: When | undefined, m: Moment): boolean {
+50: export function specificity(w: When | undefined): number {
+58: export const STAGE_POINTS = [0, 5, 15, 30, 55, 75] as const
+59: export type Stage = 0 | 1 | 2 | 3 | 4 | 5
+61: export function stageOfPoints(points: number): Stage {
+70: export function depthOf(stage: Stage, lover: boolean): 0 | 1 | 2 | 3 {
+77: export type Color = 'warm' | 'tease' | 'honest' | 'quiet'
+78: export type Activity = 'hammer' | 'net' | 'tea' | 'book' | 'bread' | 'sheep' | 'herb' | 'weave' | 'bee' | 'grape' | 'music' | 'rest' | 'wait' | 'wood' | 'cat' | 'press' | 'sort'
+80: export interface Routine {
+96: export interface Req {
+143: export type Rel = 'friend' | 'close' | 'lover' | 'spouse'
+145: export function relOf(stage: Stage, romance: 'dating' | 'engaged' | 'married' | null | undefined): Rel | null {
+151: export interface TalkLine {
+165: export interface SceneLine {
+170: export interface Choice {
+187: export interface PersonEvent {
+218: export interface Sighting {
+230: export interface Person {
+258: export interface LifestyleTastes {
+270: export interface StoryProp {
+289: export interface ThreadPhase {
+298: export interface Thread {
+305: export interface PeopleData {
+311: export function threadPhase(t: Thread, day: number): number {
+322: function hash(n: number): number {
+328: export function idSeed(id: string): number {
+334: export function isOffDay(p: Person, day: number): boolean {
+341: export interface MemoryEntry {
+350: export interface Life {
+377: export interface StoryWait {
+386: export const EXPERIENCE_KINDS = ['make', 'gift', 'invite', 'visit', 'trip', 'promise', 'choice', 'story', 'club', 'event', 'work', 'learn', 'project', 'family', 'pet', 'stall', 'meal'] as const
+387: export type ExperienceKind = (typeof EXPERIENCE_KINDS)[number]
+393: export interface Experience {
+410: export type ExperienceInput = Pick<Experience, 'id' | 'kind' | 'with'> & Partial<Pick<Experience, 'place' | 'item' | 'choice'>>
+413: export function rememberTag(life: Life, npc: string, tag: string, m: Moment): Life {
+422: export function recordExperience(life: Life, exp: ExperienceInput, m: Moment): Life {
+433: function pickDefined(e: ExperienceInput): Partial<Experience> {
+442: export function sharedExperience(life: Life, npc: string, id: string): Experience | null {
+447: function sanitizeExperiences(raw: unknown): Record<string, Experience> {
+466: export const NO_LIFE: Life = { seen: [], memories: {}, colors: {}, recent: {}, cool: {}, mutterDay: 0, muttered: [], promises: [], experiences: {}, storyWait: null }
+468: export function sanitizeLife(raw: unknown): Life {
+491: function renameRecent(recent: Record<string, string[]>): Record<string, string[]> {
+496: function sanitizeStoryWait(raw: unknown): StoryWait | null {
+507: export function hasMemory(life: Life, npc: string, tag: string): boolean {
+511: export function topColor(life: Life, npc: string): Color | null {
+519: export interface ReqCtx {
+542: export function storyFlag(flags: Record<string, number> | undefined, id: string): number {
+547: export function seenDone(life: Life, id: string): boolean {
+551: export function reqMet(r: Req | undefined, c: ReqCtx): boolean {
+599: export function routineNow(p: Person, m: Moment, threads: Thread[], ok?: (r: Routine) => boolean): Routine | null {
+613: function pickRoutine(list: readonly Routine[], m: Moment, ok?: (r: Routine) => boolean): Routine | null {
+633: export function pickLine(p: Person, c: ReqCtx & { m: Moment; depth: number; cool: boolean; here: Tile }, rnd: number): TalkLine | null {
+653: export const RECENT_KEEP = 8
+656: export const RECENT_BONUS = 12
+658: export const STORY_BONUS = 4
+662: function talkBonus(r: Req | undefined): number {
+672: export function setPeopleData(d: PeopleData): void {
+701: export function peopleData(): PeopleData {
+704: export function personOf(id: string): Person | undefined {
+708: export function eventsWith(npc: string): { owner: string; event: PersonEvent }[] {
+714: export function eventById(id: string): { owner: string; event: PersonEvent } | null {
+723: export function eventCast(owner: string, e: PersonEvent, choice?: number): string[] {
+731: export function allSightings(): (Sighting & { npc: string; thread?: string; phase?: number })[] {
+src/engine/pet-life.ts
+17: export interface PetEvent { key: string; place?: string; npc?: string; kid?: boolean }
+27: export const PET_NEIGHBORS: Record<string, { slow?: boolean; motion?: PetMotion }> = {
+38: export const PET_PIECE_CHANCE = 0.3
+39: export const PET_PIECE_FROM = 8 * 60
+40: export const PET_PIECE_TO = 18 * 60
+47: export function petPieceCheck(s: GameState, now: Tile, onRoad: boolean): 'find' | 'roll' | null {
+63: function sceneBusy(s: GameState): boolean {
+68: export function petStayGoal(s: GameState, c: Companion, occupied: ReadonlySet<string>, now: Tile): Tile {
+97: export function petLife(s: GameState, now: Tile, events: GameEvent[], kidAt: Tile | null): GameState {
+src/engine/places.ts
+10: export const HALL_FROM = 18 * 60
+11: export const HALL_TO = 20 * 60 + 30
+13: export const HALL_GUESTS = 10
+15: export const HALL_SPOTS: readonly Tile[] = (() => {
+27: export function hallGuests(day: number, candidates: readonly string[]): string[] {
+36: export function hallOpen(minute: number): boolean {
+41: export const HALL_PLAY_GAIN = 3
+42: export const HALL_PLAY_MINUTES = 40
+47: export const TEA_FROM = 8 * 60
+48: export const TEA_TO = 19 * 60
+49: export const TEA_PRICE = 3
+50: export const TEA_MINUTES = 30
+52: export function teaOpen(minute: number): boolean {
+59: export const SUNSET_FROM = 17 * 60 + 30
+60: export const SUNSET_TO = 19 * 60 + 30
+61: export const SUNSET_MINUTES = 30
+63: export function sunsetTime(minute: number): boolean {
+src/engine/romance.ts
+11: export const CANDIDATE_IDS = ['wendell', 'cosmo', 'rudy', 'dexter', 'basil', 'marigold', 'penelope', 'tilly', 'juniper', 'poppy', 'merchant', 'presser', 'postman'] as const
+12: export type CandidateId = (typeof CANDIDATE_IDS)[number]
+14: export function isCandidateId(id: string): id is CandidateId {
+18: export type RomanceStage = 'dating' | 'engaged' | 'married'
+19: export interface Romance {
+36: export const NO_ROMANCE: Romance = { partner: null, stage: null, since: null, weddingDay: null, marriedDay: null }
+39: export const STORY_HEARTS = [4, 6] as const
+40: export const BOUQUET_HEARTS = 8
+41: export const CORD_HEARTS = 10
+43: export const DATING_DAYS = 7
+45: export const FULL_HEART_DATING_DAYS = 14
+46: export const FULL_HEART_DATES = 3
+47: export function fullHeartBond(r: Romance, day: number): boolean {
+53: export const BOUQUET_GAIN = 5
+54: export const CORD_GAIN = 5
+60: export type DatePlace = 'tea' | 'sunset' | 'walk'
+61: export const DATE_PLACES: readonly DatePlace[] = ['tea', 'sunset', 'walk']
+62: export const DATE_TEA_PRICE = 6
+63: export const DATE_GAIN = 5
+65: export const DATE_FIRST_SCENE: Record<DatePlace, string> = { tea: 'dateTea', sunset: 'dateSunset', walk: 'dateWalk' }
+67: export const DATE_COUNT_FLAG: Record<DatePlace, string> = { tea: 'dateTeas', sunset: 'dateSunsets', walk: 'dateWalks' }
+68: export const DATE_VARIANTS = 3
+70: export const WALK_FROM = 6 * 60
+71: export const WALK_TO = 19 * 60 + 30
+72: export const WALK_MINUTES = 40
+77: export const PARTNER_WORK: Record<CandidateId, string> = {
+97: export const NO_SPOUSE_GIFT: readonly string[] = ['merchant', 'presser', 'postman']
+99: export const WORK_HERE: Partial<Record<string, DatePlace>> = { tea: 'tea' }
+102: export const WEDDING_SPOT: Tile = { x: 24, y: 19 }
+104: export const SPOUSE_HOME_FROM = 19 * 60
+105: export const SPOUSE_HOME_TO = 7 * 60
+108: export function nextMarketAfter(day: number): number {
+115: export function sanitizeRomance(raw: unknown): Romance {
+src/engine/scenic-kinds.ts
+1: export const FAMILY_KINDS = ['firstMorning', 'spouseReturn', 'childFirstHelp', 'fullLibrary', 'familyWinter', 'springWalk', 'summerCreek', 'autumnPath', 'rainbowRest', 'afterCopy'] as const
+2: export type FamilyKind = typeof FAMILY_KINDS[number]
+4: export const PROGRESS_KINDS=['firstOtBook','psalmRest','firstHomeBook','childLeaves','childStays','workSuccession'] as const
+5: export type ProgressKind=typeof PROGRESS_KINDS[number]
+7: export const LIVING_KINDS=['readingFinished','firstDinner','coverFinished','childLetterReceived','facilityFinished'] as const
+8: export type LivingKind=typeof LIVING_KINDS[number]
+src/engine/siblings.ts
+13: export const MAX_KIDS = 3
+15: export const siblingsOf = (s: Pick<GameState, 'siblings'>): Child[] => s.siblings ?? []
+17: export const allKids = (s: Pick<GameState, 'child' | 'siblings'>): Child[] => (s.child ? [s.child, ...siblingsOf(s)] : [])
+19: export type BabyBlock = 'married' | 'home' | 'full' | 'youngest' | 'waiting' | 'locked'
+22: export const isKidFlag = (key: string): boolean => /^(child(?!Naming)|kid|school|deskKid|babyCare|babySleepScene|lodging:playerChild)/.test(key)
+27: export function swapKid(s: GameState, i: number): GameState {
+47: export function selectKid(s: GameState, born: number): GameState {
+53: export function babyBlock(s: GameState): BabyBlock | null {
+70: export const PREGNANCY_DAYS = 4
+72: export function askBaby(s: GameState): GameState {
+78: export function siblingMorning(s: GameState, content: Pick<GameContent, 'neighbors'>): GameState {
+104: export function nameSibling(s: GameState, name: string): GameState {
+114: export function siblingTile(s: Pick<GameState, 'clock' | 'room'>, kid: Child, index: number): Tile {
+129: export function sanitizeSiblings(raw: unknown, clean: (x: unknown) => Child | null): Child[] | undefined {
+src/engine/social-scene.ts
+9: export const SOCIAL_ACTIONS = ['wave','pour','offer','drink','stitch','show','inspect','point','dig','sow','water','read','prepare','play','tidy'] as const
+10: export type SocialAction = typeof SOCIAL_ACTIONS[number]
+11: export type SocialProp = 'teapot'|'cup'|'cloth'|'seed'|'water'|'book'|'copy'|'dough'|'bowl'|'food'|'picture'|'instrument'|'gift'|'tray'|'decor'
+12: export const SOCIAL_CYCLE = 18
+13: export interface SocialBeat { action: SocialAction | 'clap' | 'nod' | 'smile'; prop?: SocialProp; label: string }
+15: export const CLUB_BEATS: Record<ClubActivity, readonly SocialBeat[]> = {
+27: function frame(action:SocialBeat['action'],prop:SocialProp|undefined,facing:EventMotion['facing'],t:number,label:string,offset?:Tile):EventMotion {
+30: function participants(s:GameState,a:Appt) {
+35: export function socialEventMotion(s:GameState,id:string,t:number):EventMotion|null {
+src/engine/space-life.ts
+13: export const SPACE_TOGETHER_ID = 'fam:space'
+15: export const SPACE_MINUTES: Record<SpaceUse, number> = { tea: 20, craft: 30, family: 20, read: 20, pet: 0 }
+22: export function setSpace(s: GameState, anchor: Furniture, use: SpaceUse): GameState | null {
+27: export function unsetSpace(s: GameState, id: string): GameState {
+30: export function spaceById(s: Pick<GameState, 'room' | 'spaces'>, id: string): HomeSpace | undefined {
+34: export function spaceOfPiece(s: Pick<GameState, 'spaces'>, f: Pick<Furniture, 'item' | 'x' | 'y'>): HomeSpace | undefined {
+39: function standing(s: GameState): Set<string> {
+48: export type SpaceBlock = 'gone' | 'away' | 'full' | null
+49: export function canUseSpace(s: GameState, id: string): SpaceBlock {
+59: export function familyAtSpace(s: GameState, sp: HomeSpace): string[] {
+72: export interface SpaceUseResult { state: GameState; use: SpaceUse; /** 가족과 함께 쓴 처음 */ first: boolean; together: string[] }
+78: export function useSpace(s: GameState, id: string): SpaceUseResult | null {
+src/engine/spaces.ts
+17: export type SpaceUse = 'tea' | 'craft' | 'family' | 'pet' | 'read'
+18: export interface HomeSpace { id: string; use: SpaceUse; furniture: string[]; at: Tile; name?: string }
+20: export const SPACES_PER_ROOM = 3
+21: export const SPACE_USES: readonly SpaceUse[] = ['tea', 'craft', 'family', 'pet', 'read']
+23: export const SPACE_FROM = 19 * 60
+24: export const SPACE_TO = 21 * 60 + 30
+26: export const KID_SPACE_FROM = 7 * 60
+28: export const furnitureId = (f: Pick<Furniture, 'item' | 'x' | 'y'>) => `${f.item}:${f.x}:${f.y}`
+30: type RoomKey = 'workshop' | 'partner' | 'baby' | 'living'
+32: export function roomKeyOf(t: Tile): RoomKey {
+61: export interface SeatSlot { item: string; at: Tile; stand: Tile }
+64: function reachable(t: Tile, blocked: ReadonlySet<string>): boolean {
+69: export function seatSlots(f: Furniture, blocked: ReadonlySet<string>, avoid: readonly Tile[] = keepClear()): SeatSlot[] {
+84: function satisfied(use: SpaceUse, fs: readonly Furniture[], room: readonly Furniture[]): boolean {
+95: function petTileOf(f: Furniture, blocked: ReadonlySet<string>): Tile | null {
+100: function relevant(use: SpaceUse, fs: readonly Furniture[]): Furniture[] {
+110: function groupFor(use: SpaceUse, room: readonly Furniture[], anchor: Furniture): Furniture[] {
+114: export function usesFor(room: readonly Furniture[], anchor: Furniture): SpaceUse[] {
+122: export function spaceFurniture(room: readonly Furniture[], s: HomeSpace): Furniture[] {
+126: export function spaceReady(room: readonly Furniture[], s: HomeSpace): boolean {
+134: export function liveSpaces(s: { room: readonly Furniture[]; spaces?: readonly HomeSpace[] }): HomeSpace[] {
+148: function primaryOf(use: SpaceUse, fs: readonly Furniture[]): Tile | null {
+154: export function designateSpace(room: readonly Furniture[], spaces: readonly HomeSpace[], anchor: Furniture, use: SpaceUse): HomeSpace[] | null {
+165: export const clearSpace = (spaces: readonly HomeSpace[], id: string): HomeSpace[] => spaces.filter(s => s.id !== id)
+167: export function spacesOf(spaces: readonly HomeSpace[], f: Pick<Furniture, 'item' | 'x' | 'y'>): HomeSpace[] {
+175: export function moveInSpaces(spaces: readonly HomeSpace[], from: Pick<Furniture, 'item' | 'x' | 'y'>, to: Pick<Furniture, 'item' | 'x' | 'y'>): HomeSpace[] {
+186: export function pruneSpaces(spaces: readonly HomeSpace[], room: readonly Furniture[]): HomeSpace[] {
+198: export function sanitizeSpaces(raw: unknown, room: readonly Furniture[]): HomeSpace[] {
+213: export interface Seat { at: Tile; stand: Tile }
+215: export function reserveSeats(room: readonly Furniture[], s: HomeSpace, users: readonly string[], occupied: ReadonlySet<string> = new Set(), near?: Tile): Record<string, Seat> {
+219: function assignSeats(room: readonly Furniture[], wants: readonly { space: HomeSpace; who: readonly string[] }[], occupied: ReadonlySet<string>, near?: Tile): Record<string, Seat> {
+238: export function spaceAtTile(s: { room: readonly Furniture[]; spaces?: readonly HomeSpace[] }, t: Tile): HomeSpace | undefined {
+242: export function petSpaceTile(s: { room: readonly Furniture[]; spaces?: readonly HomeSpace[] }, occupied: ReadonlySet<string> = new Set()): Tile | null {
+251: export function routesOpen(room: readonly Furniture[], stands: readonly Tile[]): boolean {
+260: export function spouseUses(npc: string): SpaceUse[] {
+270: export function childUses(stage: 'baby' | 'toddler' | 'helper' | 'adult'): SpaceUse[] {
+276: export interface FamilyWants { spouse?: string; child?: { stage: 'baby' | 'toddler' | 'helper' | 'adult' } }
+281: export function familySeats(s: { room: readonly Furniture[]; spaces?: readonly HomeSpace[] }, want: FamilyWants, occupied: ReadonlySet<string> = new Set()): { spouse?: Tile; child?: Tile } {
+305: export function guestStands(s: { room: readonly Furniture[]; spaces?: readonly HomeSpace[] }, n: number, avoid: readonly Tile[] = []): Tile[] {
+src/engine/stories.ts
+6: export const BABY_DAY = 8
+7: export const BABY_CRAWL = 16
+8: export const BABY_WALK = 26
+10: export const MILESTONES = [3, 6, 9] as const
+11: export const MILESTONE_GIFTS: Record<string, Partial<Record<(typeof MILESTONES)[number], Partial<Record<ItemId, number>>>>> = {
+27: export type BabyStage = 'none' | 'baby' | 'crawl' | 'walk'
+28: export function babyStage(day: number): BabyStage {
+36: export function childGrowth(day: number): number {
+41: export const onceKey = (id: string, day: number) => `seen:${id}:${yearOf(day)}`
+44: export function inMarket(t: Tile): boolean {
+49: export const FEAST_FIRE = 'feastFire'
+51: export const ALL_FEAST_FIRE = 'allFeastFire'
+53: export interface MomentContext {
+62: export function momentNow(ctx: MomentContext): string | null {
+92: export function rainbowDay(day: number): boolean {
+99: export function rainbowVisible(day: number, minute: number): boolean {
+src/engine/talk-popups.ts
+2: type PopupState = { flags: Record<string, number> }
+7: export function unseenTalkPopups(s: PopupState, npc: string, lines: string[]): string[] {
+11: export function rememberTalkPopup<S extends PopupState>(s: S, npc: string, line: string): S {
+src/engine/tip-letters.ts
+11: export interface TipLetter {
+19: export const TIP_LETTERS: readonly TipLetter[] = tipData as TipLetter[]
+26: export const TIP_WHEN: Record<string, (s: GameState) => boolean> = {
+64: export function tipDay(day: number): boolean {
+70: export function nextTip(s: GameState): TipLetter | null {
+76: export function tipMorning(s: GameState): GameState {
+83: export const tipById = (id: string): TipLetter | undefined => TIP_LETTERS.find((t) => t.id === id)
+86: export function sanitizeTips(raw: unknown): string[] | undefined {
+src/engine/wedding-attire.ts
+6: export const WEDDING_ATTIRE=[
+12: export type WeddingAttireItem=typeof WEDDING_ATTIRE[number]['item']
+13: export type WeddingFormalStyle=typeof WEDDING_ATTIRE[number]['outfit']
+14: export function isWeddingAttire(item:ItemId):item is WeddingAttireItem{return WEDDING_ATTIRE.some(a=>a.item===item)}
+17: export function weddingGiftsFor(s:GameState,id:string):WeddingAttireItem[]{
+21: export function giveWeddingAttire(s:GameState,id:string,item:WeddingAttireItem):GameState|null{
+27: export function recordWeddingAttire(s:GameState,id:string):GameState{
+30: function ceremonyDay(s:GameState,id:string){
+34: export function weddingOutfitsFor(s:GameState,id:string){
+39: export function chooseWeddingAttire(s:GameState,item:WeddingAttireItem|null):GameState|null{
+src/engine/work-day.ts
+12: export const WORK_PAY = 8
+13: export const WORK_MINUTES = 120
+15: export const WORK_TRACE_DAYS = 3
+16: export interface WorkDay {
+23: export type WorkState = GameState & { workDay?: WorkDay }
+29: export interface WorkShop {
+38: export const WORK_SHOPS: Record<string, WorkShop> = {
+50: export function shopOf(npc: string): string | null {
+55: export const WORK_JOBS: Record<string, readonly string[]> = Object.fromEntries(
+60: export type WorkBlock = 'away' | 'notWorking' | 'busy' | 'done' | 'late' | 'weather' | null
+61: function nearby(s: GameState, npc: string): boolean {
+67: export function canWorkDay(s: WorkState, npc: string, content: GameContent): WorkBlock {
+86: export function startWorkDay(s: WorkState, npc: string, choice: string, content: GameContent): WorkState {
+93: export function prepareWorkDay(s: WorkState, rng: Rng): WorkState {
+99: export function workDayHand(s: WorkState, kind: 'tick'|'tap', input: number, rng: Rng): WorkState {
+105: export function finishWorkStep(s: WorkState, rng: Rng): WorkState {
+112: export function finishWorkDay(s: WorkState, finish?: string): WorkState {
+128: export function expireWorkDay(s: WorkState): WorkState {
+135: export function workLine(s: GameState, npc: string, at: 'start'|'hand'|'finish'): string | null {
+146: export function sanitizeWorkDay(raw: unknown): WorkDay|undefined {
+src/engine/world.ts
+23: export const TILE = 16
+24: export const WIDTH = VILLAGE_W
+29: export const VILLAGE_H = VILLAGE_VISIBLE_H
+34: export const HEIGHT = VILLAGE_TOTAL_H
+36: export const VIEW_W = 16
+37: export const VIEW_H = 20
+44: export const HOUSE_RECT = { x0: 3, y0: 4, x1: 7, y1: 7 }
+46: export const HOUSE_GROW = { x0: HOUSE_RECT.x1 + 1, y0: HOUSE_RECT.y0, x1: HOUSE_RECT.x1 + 2, y1: HOUSE_RECT.y1 }
+47: export const HOME_EXTERIOR_ADDITIONS = [
+53: export const HOME_DOOR: Tile = { x: 5, y: 7 }
+55: export const HOME_FRONT: Tile = { x: HOME_DOOR.x, y: HOME_DOOR.y + 1 }
+57: export const HOME_BENCH: Tile = { x: 2, y: 8 }
+60: export const HOME_RECT = WORKSHOP
+62: export const HOME_EXPAND_RECT = BABY_ROOM
+64: export const SIDE_ROOM = { x0: BABY_ROOM.x0 + 1, y0: BABY_ROOM.y0 + 1, x1: BABY_ROOM.x1 - 1, y1: BABY_ROOM.y1 - 1 }
+66: export const SIDE_DOOR: Tile = BABY_DOOR
+73: export function setHomeLevel(level: number): void {
+76: export function currentHomeLevel(): number {
+81: export function setSpouseRoom(partner: string | null): void {
+90: export function setOpenDoors(doors: readonly number[]): void {
+94: export function openDoors(): number[] {
+116: export function homeLayoutOverrideAt(x:number,y:number,level:number,windowX=5):string|undefined {
+121: export function homeRect(level = homeLevel): { x0: number; y0: number; x1: number; y1: number } {
+129: export function homeHouse(level = homeLevel): House {
+133: export function homeExteriorAt(x:number,y:number,level=homeLevel):boolean {
+138: export const ROOM_W = 10
+139: export const ROOM_H = 8
+140: export interface Room {
+163: export type Decor = [number, number, ItemId, ('flip' | 'half')?]
+165: function room(
+184: export const LIBRARY_W = 13
+185: export const LIBRARY_H = 10
+197: export const ACTS_DOOR: Tile = { x: LIBRARY_X0 + 0, y: LIBRARY_Y0 + 3 }
+204: export const ACTS_W = 11
+205: export const ACTS_H = 8
+217: export const LETTERS_DOOR: Tile = { x: LIBRARY_X0 + 0, y: LIBRARY_Y0 + 6 }
+225: export const LETTERS_W = 11
+226: export const LETTERS_H = 8
+238: export const HEB_JUD_DOOR: Tile = { x: LIBRARY_X0 + LIBRARY_W - 1, y: LIBRARY_Y0 + 3 }
+247: export const HEB_JUD_W = 11
+248: export const HEB_JUD_H = 8
+263: export const REV_DOOR: Tile = { x: LIBRARY_X0 + LIBRARY_W - 1, y: LIBRARY_Y0 + 6 }
+272: export const REV_W = 11
+273: export const REV_H = 8
+292: export const HALL_RECT = { x0: 12, y0: 13, x1: 16, y1: 16 }
+293: export const HALL_DOOR: Tile = { x: 14, y: 16 }
+295: export const TEA_RECT = { x0: 18, y0: 28, x1: 22, y1: 31 }
+296: export const TEA_DOOR: Tile = { x: 20, y: 31 }
+298: export const PAVILION_RECT = { x0: 11, y0: 30, x1: 15, y1: 31 }
+299: export const PAVILION_SEAT: Tile = { x: 13, y: 31 }
+301: export const WILD_HERBS: readonly Tile[] = [
+324: export const ROOMS: readonly Room[] = [
+399: export const ACTS_ROOM: Room = ROOMS.find((r) => r.owner === 'acts')!
+401: export const LETTERS_ROOM: Room = ROOMS.find((r) => r.owner === 'letters')!
+403: export const HEB_JUD_ROOM: Room = ROOMS.find((r) => r.owner === 'hebJud')!
+405: export const REV_ROOM: Room = ROOMS.find((r) => r.owner === 'rev')!
+412: export const HOME_ROOM: Room = {
+427: export const HOME_ENTRY: Tile = HOME_ROOM.entry
+432: export const LOCKED_DOORS: readonly Tile[] = (() => {
+441: export function isRightWallDoor(x: number, y: number): boolean {
+446: export interface House {
+455: export const HOUSES: House[] = []
+459: export function housesNow(): House[] {
+465: export function houseAt(x: number, y: number): House | null {
+469: function build(): string[] {
+607: export const MAP: readonly string[] = build()
+613: export type TreeKind = 'deciduous' | 'fruit' | 'evergreen'
+616: export const FRUIT_TREES: readonly Tile[] = [
+624: export function treeKind(x: number, y: number): TreeKind {
+642: export const isBlockedChar = (c: string): boolean => BLOCKED.has(c)
+645: export function villageTileAt(x: number, y: number): string {
+658: export function baseVillageTileAt(x: number, y: number): string {
+673: export function tileAt(x: number, y: number): string {
+678: export function walkableOn(id: 'village' | 'newland', t: Tile): boolean {
+684: export const key = (t: Tile): string => `${t.x},${t.y}`
+686: export function sameTile(a: Tile, b: Tile): boolean {
+690: export function isWalkable(t: Tile, blockers: ReadonlySet<string> = new Set()): boolean {
+694: export function isIndoor(t: Tile): boolean {
+700: export type ZoneId = 'vineyard' | 'dock' | 'hives'
+701: export interface Zone {
+710: export const ZONES: readonly Zone[] = [
+718: export function zoneAt(t: Tile): Zone | null {
+724: export function lockedZones(books: number): Zone[] {
+730: export function lockedTiles(books: number): ReadonlySet<string> {
+741: export function roomAt(t: Tile): Room | null {
+754: export function propFootprint(at: Tile, item?: ItemId, size?: { w: number; h: number }): Tile[] {
+766: export function propSpotProblem(tiles: readonly Tile[], roomOwner?: string): string | null {
+802: export function viewRoomAt(t: Tile): { x0: number; y0: number; w: number; h: number } | null {
+816: export const WARPS: ReadonlyMap<string, Tile> = new Map(
+827: export function warpAt(t: Tile): Tile | undefined {
+832: export function isHome(t: Tile): boolean {
+844: export interface Place {
+855: export const BED_STAND: Tile = { x: FIXTURES.homeBed.x+1, y: FIXTURES.homeBed.y }
+856: export const HEARTH_STAND: Tile = home(4, 2)
+858: export const PET_HOME: Tile = home(3, 4)
+860: export const PLACES: Record<PlaceId, Place> = {
+924: export function setVillageShown(places: readonly string[]): void {
+930: export function setMailbox(on: boolean): void {
+935: export function placeActive(id: PlaceId): boolean {
+947: export function bookcaseTiles(room: 'library' | 'acts' | 'romPhm' | 'hebJud' | 'rev'): Tile[] {
+956: export function placeAt(t: Tile): PlaceId | null {
+964: export const START: Tile = home(3, 2)
+967: export function cameraFor(x: number, y: number, zoom = 1): { x: number; y: number } {
+984: export function setHomeFurniture(furniture: readonly Furniture[]): void {
+src/engine/yard.ts
+9: export type YardItem = 'rainJar' | 'reedRack'
+10: export const YARD_ITEMS: readonly YardItem[] = ['rainJar', 'reedRack']
+12: export const YARD_DEFAULT: Record<YardItem, Tile> = { rainJar: { x: 7, y: 8 }, reedRack: { x: 8, y: 8 } }
+14: export const YARD_REACH = 6
+16: export function yardSpot(s: Partial<Pick<GameState, 'yard'>>, item: YardItem): Tile {
+23: export function yardPlaced(flags: Record<string, number>, i: YardItem): boolean {
+28: export function yardItemAt(s: Pick<GameState, 'flags'> & Partial<Pick<GameState, 'yard'>>, t: Tile): YardItem | null {
+33: export function stowYard(s: GameState, item: YardItem): GameState | null {
+38: export function canPlaceYard(s: Pick<GameState, 'flags'> & Partial<Pick<GameState, 'yard' | 'map'>>, item: YardItem, t: Tile): boolean {
+46: export function moveYard(s: GameState, item: YardItem, t: Tile): GameState | null {
+57: export function sanitizeYard(raw: unknown): Partial<Record<YardItem, Tile>> | undefined {
+src/features/child/ChildName.tsx
+6: export function ChildName() {
+src/features/child/SchoolView.tsx
+27: export function SchoolView() {
+src/features/family/Family.tsx
+15: export const JOB_NAME: Record<AdultJob, string> = {
+24: export function Family() {
+src/features/family/KidTime.tsx
+27: export function kidDoneLines(done: KidDone, kid: string): { scene: string; results: string[] } {
+46: export function KidTime({ done, spouse }: { done?: KidDone; spouse?: SpouseDone }) {
+src/features/family/Wardrobe.tsx
+12: type RowKey = 'hairFront' | 'hairBack' | 'top' | 'bottom' | 'acc'
+13: type ColorKey = 'eyeColor' | 'hairColor' | 'bottomColor' | 'accColor'
+24: export function Wardrobe({ who }: { who: WardrobeWho }) {
+src/features/clubs/club-store.ts
+5: export function commitClub(game:GameState) {
+src/features/clubs/ClubForm.tsx
+12: export function ClubForm({club,onClose}:{club?:Club;onClose:()=>void}) {
+src/features/clubs/ClubList.tsx
+13: function ClubNotes({club}:{club:Club}) {
+21: export function ClubList() {
+src/features/clubs/ClubRound.tsx
+14: type KindText = { open: string; help?: string; opts: string[]; ask: string[][]; good: string[]; miss?: string[]; low?: string[]; high?: string[]; chat: string[] }
+20: export function ClubRound({ id, kind, guests, onFinish, extra }: { id: string; kind: RoundKind; guests: readonly string[]; onFinish?: () => void; extra?: ReactNode }) {
+src/features/clubs/ClubSession.tsx
+18: export function ClubSession({id}:{id:string}) {
+src/features/clubs/GroupTask.tsx
+14: type TaskKind='tea'|'sew'|'garden'|'observe'|'read'|'cook'|'paint'|'music'|'housewarming'|'showcase'|'festivalFood'|'festivalDeco'|'festivalTidy'
+31: export function Preview({id}:{id:string}) {
+43: export function GroupTask({id,kind,progress}:{id:string;kind:TaskKind;progress?:GroupTaskProgress}) {
+src/features/companion/AdoptForm.tsx
+6: export function AdoptForm({ animal }: { animal: Animal }) {
+src/features/companion/FollowMenu.tsx
+13: export function FollowMenu({ who }: { who: 'pet' | 'child' }) {
+src/features/talk/BoardView.tsx
+18: export function BoardView() {
+src/features/talk/FarewellLetter.tsx
+9: export function FarewellLetter() {
+src/features/talk/GenTalk.tsx
+19: function heartUpPerson(s: GameState, pid: string): GameState {
+31: export function partnerVars(id: string): Record<string, string> {
+36: export function GenTalk({ npc }: { npc: string }) {
+40: function BakerBabyTalk({ npc }: { npc: string }) {
+59: function AutonomousGenTalk({ npc }: { npc: string }) {
+src/features/talk/GiftPicker.tsx
+8: export function GiftPicker({ neighborId }: { neighborId: string }) {
+src/features/talk/InnGuestTalk.tsx
+6: export function InnGuestTalk({ id, first }: { id: string; first: string }) {
+src/features/talk/LoveVerseView.tsx
+14: export function LoveVerseView() {
+src/features/talk/OrdersView.tsx
+12: function why(block: string | null): string | null {
+18: export function OrdersView({ npc }: { npc: string }) {
+src/features/talk/TalkBox.tsx
+29: export function bondLabel(game: GameState, id: string): string {
+37: export function Hearts({ n }: { n: number }) {
+49: export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) {
+src/features/talk/TradeBoard.tsx
+19: type Group = 'stuff' | 'tools' | 'decor' | 'home' | 'clothes'
+21: function groupOf(t: Trade): Group {
+54: function tradeIcon(t: Trade): ItemId | null {
+60: export function TradeBoard() {
+171: function scrollEntry(game: Parameters<typeof canBuyScroll>[0], buyScroll: () => void): IconEntry[] {
+src/features/talk/TravelView.tsx
+15: export function TravelView({ dest: back, rewards: brought }: { dest?: DestId; rewards?: TripReward[] } = {}) {
+src/features/trip/TripScene.tsx
+25: function shortLine(rewards: readonly TripReward[], kid: string, lap: boolean, say = ''): string {
+50: function Face() {
+73: export function TripScene({ dest, withChild }: { dest: DestId; withChild: boolean }) {
+247: function Harvest({ rewards, lapped, kid, onGo, onMore }: { rewards: TripReward[]; lapped: boolean; kid: string; onGo: () => void; onMore?: () => void }) {
+src/features/scene/SceneView.tsx
+15: export function speakerName(speaker: string): string | null {
+20: export function SceneView({ id, chosen }: { id: string; chosen?: number }) {
+src/features/scene/AuthoredStoryScene.tsx
+56: export const StoryArtBeat=createContext<(page:number)=>void>(()=>{})
+57: export const StoryArtChoice=createContext<(choice:number|null)=>void>(()=>{})
+58: export function AuthoredStoryScene(props:ComponentProps<typeof AuthoredStorySceneBody>){
+62: function ResolvedSharedStoryScene(props:ComponentProps<typeof AuthoredStorySceneBody>){
+79: function AuthoredStorySceneBody({id,title,preview=false,readOnly=false,children,beat=0,chosen,location,sharedScene}:{id:string;title:string;preview?:boolean;readOnly?:boolean;children:ReactNode;beat?:number;chosen?:number;location?:StoryLocationContext;sharedScene?:SharedBackgroundSceneSnapshot}){
+src/features/scene/scene-state-text.ts
+9: export function sceneStateText(id:string,state:SharedBackgroundSceneState|null){
+src/features/scene/WeddingAttirePicker.tsx
+7: export function WeddingAttirePicker({id,children}:{id:string;children:ReactNode}){
+src/engine/game.ts
+192: export const GEN_WEDDING_SIDE: Tile = { x: 25, y: 19 }
+208: export interface JournalEntry {
+214: export interface AlbumEntry {
+220: export type { Furniture }
+222: export interface GameState {
+422: export type ActKind = 'sit' | 'read' | 'drink' | 'craft' | 'knead' | 'reach' | 'rise' | 'blowCandle' | 'cook' | 'meal' | 'eat' | 'use' | 'baby'
+423: export interface PlayerAct {
+444: export const ACT_SECONDS: Record<ActKind, number> = { sit: 1.8, read: 1.8, drink: 1.8, craft: 1.9, knead: 1.8, reach: 1.2, rise: 2, blowCandle: 1.4, cook: 4, meal: 3, eat: 1.9, use: 2.6, baby: 2.6 }
+449: export function startAct(s: GameState, kind: ActKind, at?: Tile): GameState {
+462: export const STORAGE_ITEMS: readonly ItemId[] = ['supplyChest', 'homeCoolCupboard']
+463: export const isStorage = (item: ItemId): boolean => STORAGE_ITEMS.includes(item) || (isAddition(item) && ADDITION_FURNITURE[item as AdditionItemId].use === 'open')
+465: export const MAKER_ITEMS: readonly ItemId[] = ['inkJar']
+467: export function functionalAt(s: Pick<GameState, 'room'>, t: Tile): Furniture | null {
+471: export function useAddition(s: GameState, f: Furniture): GameState {
+490: export const BABY_CARE = ['hold', 'soothe', 'lay', 'tuck'] as const
+491: export type BabyCare = (typeof BABY_CARE)[number]
+493: export const BABY_CARE_CLOSE = 2
+496: export function careBaby(s: GameState, action: BabyCare): GameState | null {
+524: export function isInnerWall(t: Tile): boolean {
+530: function homeReach(room: readonly Furniture[]): Set<string> {
+546: export type WallBlock = 'locked' | 'notHome' | 'notFloor' | 'occupied' | 'cutsOff' | 'coins' | 'notInner' | 'hung'
+549: export function canBuildWall(s: GameState, t: Tile): WallBlock | null {
+565: export function buildWall(s: GameState, t: Tile): GameState | null {
+583: export function canRemoveWall(s: GameState, t: Tile): WallBlock | null {
+592: export function removeWall(s: GameState, t: Tile): GameState | null {
+604: export const COOK_STEPS: Record<string, string[]> = {
+612: export function startCookAct(s: GameState, dish: string): GameState {
+618: export function syncHome(s: Pick<GameState, 'homeLevel'> & Partial<Pick<GameState, 'flags' | 'romance' | 'room' | 'village' | 'map' | 'newland' | 'homeWalls'>>): void {
+637: export interface Today {
+644: export const NO_TODAY: Today = { visitor: null, visitGot: false, inviter: null, dined: false, gathering: null }
+646: export type GameEvent =
+662: function defsById(content: GameContent): Record<string, NeighborDef> {
+666: type GoalState = Pick<GameState, 'clock' | 'flags' | 'progress' | 'hearts' | 'today' | 'shelved'> & Partial<Pick<GameState, 'romance' | 'homeLevel' | 'life' | 'avatar' | 'plans' | 'npcs' | 'room' | 'stall' | 'village' | 'spaces' | 'player' | 'act' | 'child' | 'companion' | 'gen'>>
+674: export function shelvedCount(s: Pick<GameState, 'shelved'>): number {
+682: export const notYet = (d: NeighborDef, level: number, flags: Record<string, number>) =>
+687: function goalContext(s: GoalState, content: GameContent) {
+717: interface MeetContext {
+724: export function meetContext(s: GoalState, content: Pick<GameContent, 'neighbors'>): MeetContext {
+733: function lateSpots(s: GoalState, content: Pick<GameContent, 'neighbors'>, joined: (id: string) => boolean): Record<string, Tile> {
+795: export function hallGuestsToday(s: GoalState, content: Pick<GameContent, 'neighbors'>): string[] {
+805: function placeAllNpcs(s: GoalState, content: GameContent): Record<string, Npc> {
+817: function todaysFragments(day: number, collected: readonly string[], content: GameContent, present: readonly string[]): { offers: Record<string, string>; post: string[] } {
+821: function growthFragments(s: GameState, day: number, content: GameContent, present: readonly string[]) {
+831: function neighborsOfDay(day: number, content: GameContent, level = 0, flags: Record<string, number> = {}): string[] {
+841: export function neighborsPresent(s: GameState, content: GameContent): string[] {
+845: export function newGame(content: GameContent, avatar?: Avatar): GameState {
+932: export function chooseBook(s: GameState, book: Book, content: GameContent): GameState {
+940: export function settle(s: GameState, content: GameContent): GameState {
+976: export function playerTile(s: GameState): Tile {
+980: export function outdoors(s: GameState): boolean {
+988: export function unstick(s: GameState): GameState {
+1004: function blockersOf(s: GameState, people = true): Set<string> {
+1018: export function newlandPeopleTiles(s: GameState): Tile[] {
+1034: export function blockedOnlyByPeople(s: GameState, tile: Tile): boolean {
+1042: export function closedHouseIds(s: Pick<GameState, 'flags'>): string[] {
+1046: function closedDoors(s: Pick<GameState, 'flags'>): string[] {
+1052: export function straysToday(s: GameState): Animal[] {
+1060: export function walkDirection(s: GameState, dx: number, dy: number): GameState {
+1077: function interactableAt(s: GameState, t: Tile): boolean {
+1095: export function bookcaseAt(s: Pick<GameState, 'room'>, t: Tile): boolean {
+1103: export function interactTile(s: GameState): Tile | null {
+1120: export function pressTile(s: GameState): Tile {
+1129: export function tapTile(s: GameState, tile: Tile): GameState {
+1222: function placeClump(place: PlaceId, tile: Tile): Tile[] {
+1233: function targetTile(s: GameState, target: Target): Tile | null {
+1248: function warpTo<T extends GameState['player']>(player: T, to: Tile): T {
+1256: function besideNotDoor(t: Tile): Tile | null {
+1265: export function enterDoor(s: GameState, door: Tile): GameState {
+1275: export function neighborDoor(
+1288: export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): { state: GameState; events: GameEvent[] } {
+1537: function blowCandle(s: GameState): GameState {
+1547: export type TravelBlock = 'here' | 'locked' | 'copy' | 'scene' | 'late' | 'appt'
+1550: export function canTravel(s: GameState, to: MapId, opts: { copyOpen?: boolean } = {}): TravelBlock | null {
+1573: export const HOME_KEY_PRICE = 8000
+1574: export type ArchiveKeyBlock = 'noKey' | 'locked' | 'late' | 'scene'
+1575: export function goArchive(s: GameState): { state: GameState } | { block: ArchiveKeyBlock } {
+1595: export function travel(s0: GameState, to: MapId, content: GameContent, opts: { copyOpen?: boolean } = {}): GameState {
+1619: function tapPortal(s: GameState, tile: Tile, to: MapId): GameState {
+1628: function tapNewland(s: GameState, tile: Tile): GameState {
+1672: function tickNewland(s: GameState, dt: number, _rng: Rng): { state: GameState; events: GameEvent[] } {
+1739: export const TIME_SPEEDS = [1, 2, 3] as const
+1740: export function timeSpeed(s: Pick<GameState, 'inv' | 'flags'>): number {
+1745: export function nextTimeSpeed(s: GameState): GameState {
+1751: export function clockTargets(s: Pick<GameState, 'clock' | 'inv'>): number[] {
+1758: export function setClockTo(s: GameState, minute: number): GameState | null {
+1763: export function passTime(s: GameState, minutes: number): GameState {
+1784: export function momentOf(s: Pick<GameState, 'clock'>): Moment {
+1789: export function stageWith(s: Pick<GameState, 'hearts'> & Partial<Pick<GameState, 'progress' | 'shelved' | 'flags' | 'romance'>>, id: string): Stage {
+1795: function reqCtx(s: GoalState, npc: string, propsReady = true) {
+1827: export function storyPropsNow(s: GoalState): (StoryProp & { npc: string })[] {
+1841: function storyPropBlockers(s: GoalState): string[] {
+1851: function completeStory(s: GameState, owner: string, e: PersonEvent, choice?: number): GameState {
+1869: export function storyResume(s: GameState, npc: string): { event: string; mini?: Minigame } | null {
+1876: export function finishStoryMini(s: GameState): GameState {
+1885: function rememberDefs(content: GameContent) {
+1890: export function eventNow(s: GoalState, npc: string): PersonEvent | null {
+1898: function heldForCast(s: GoalState, npc: string): boolean {
+1904: function eventsReady(s: GoalState, npc: string, needCast: boolean): PersonEvent[] {
+1924: export function eventWaiting(s: GameState, npc: string): PersonEvent | null {
+1931: export function sightingWaiting(s: GameState, npc: string) {
+1938: export function mutterWaiting(s: GameState, npc: string): string | null {
+1953: export function mutterPartner(s: GameState, npc: string): string | null {
+1961: export function hearMutter(s: GameState, npc: string, text: string): GameState {
+1971: export function storyWaiting(s: GameState, npc: string): boolean {
+1976: export function openEvent(s: GameState, npc: string): GameState | null {
+1996: export function setCompanionStay(s: GameState, stay: boolean): GameState {
+2007: export function bringPet(s: GameState): GameState {
+2017: export function setChildMode(s: GameState, mode: ChildMode): GameState {
+2022: export const SCHOOL_FEE = 15
+2023: export const SCHOOL_XP = 15
+2025: export const SCHOOL_SEAT: Tile = { x: 21, y: 45 }
+2026: export const SCHOOL_UNTIL = 18 * 60
+2028: export type SchoolBlock = 'locked' | 'noChild' | 'baby' | 'away' | 'done' | 'late' | 'coins' | null
+2029: export function canSchool(s: GameState): SchoolBlock {
+2041: export function sendToSchool(s: GameState, stat: StatId): GameState | null {
+2053: export function childAtSchool(s: Pick<GameState, 'flags' | 'clock'>): boolean {
+2065: type SeatState = Pick<GameState, 'clock'> & Partial<Pick<GameState, 'room' | 'spaces' | 'romance' | 'child' | 'player' | 'act' | 'companion' | 'flags'>>
+2066: export function homeSeatsNow(s: SeatState): { spouse?: Tile; child?: Tile } {
+2087: export function childTile(s: Pick<GameState, 'child' | 'clock' | 'player'> & Partial<Pick<GameState, 'flags' | 'room' | 'spaces' | 'romance' | 'act' | 'companion' | 'furnitureAuto'>>): Tile | null {
+2113: export function neighborBeside(s: GameState): string | null {
+2121: function sightingNow(s: GoalState, npc: string) {
+2151: export function routineOf(s: GoalState, npc: string, meet?: MeetContext): Routine | null {
+2155: function routineIn(s: GoalState, npc: string, meet: MeetContext, depth: number): Routine | null {
+2175: function threadBusy(npc: string, day: number): boolean {
+2188: export function newsPicks(s: GoalState, meet: MeetContext): NewsDef[] {
+2212: function newsRoutine(s: GoalState, npc: string, meet: MeetContext): Routine | null {
+2223: export function newsPropsNow(s: GoalState): { id: string; art: string; at: Tile }[] {
+2236: export function newsRecent(s: GameState, npc: string): string[] {
+2254: function partnerHere(s: GoalState, r: Routine, npc: string, meet: MeetContext, depth: number): boolean {
+2264: function personSpot(s: GoalState, npc: string, meet: MeetContext, free: Record<string, Tile> | null = null): Tile | 'away' | null {
+2276: export function freeNow(s: GoalState, content: GameContent): Set<string> {
+2287: function remember(life: Life, npc: string, tag: string, s: Pick<GameState, 'clock'>): Life {
+2295: export function recordExperienceIn(s: GameState, exp: ExperienceInput): GameState {
+2303: function liveNearby(s: GameState, now: Tile, events: GameEvent[]): GameState {
+2318: export const PROMISE_GAIN = 4
+2320: export const FORGOT_COOL = 3
+2323: function forgetPromises(s: GameState, day: number): GameState {
+2333: export function chooseInEvent(s: GameState, eventId: string, index: number): GameState {
+2363: function greetMemories(s: GameState, id: string): GameState {
+2370: export function personLine(s: GameState, id: string, rnd: number): { state: GameState; text: string; special: boolean } | null {
+2387: function gateCap(s: GameState, p: Person): number {
+2398: function romanceCandidate(s: GameState, id: string): boolean {
+2407: export function relationshipHeartCap(s: GameState, id: string): number {
+2416: export function dailyHeartGain(s: GameState, id: string): number {
+2421: export function heartProgressBlock(s: GameState, id: string): 'deep' | 'dating' | 'confession' | 'taken' | 'cooling' | 'bond' | 'story' | 'daily' | null {
+2440: export function heartUp(s: GameState, id: string, points: number, maxGain = Infinity, source: 'daily' | 'story' | 'birthday' = 'daily'): GameState {
+2461: function logGiftFrom(s: GameState, npc: string, gift: Partial<Record<ItemId, number>>): GameState {
+2467: function heartUpRaw(s: GameState, id: string, points: number): GameState {
+2510: export function greetNeighbor(s: GameState, id: string): GameState {
+2528: export function listen(s: GameState, neighborId: string, content: GameContent): { state: GameState; pieceId: string | null; pieceIds: string[] } {
+2561: function receivePost(s: GameState, content: GameContent): { state: GameState; pieceId: string | null; pieceIds: string[] } {
+2580: export function openMailbox(s: GameState, content: GameContent): { state: GameState; pieceIds: string[] } {
+2586: export function mailboxHasPost(s: Pick<GameState, 'flags' | 'post' | 'collected'>): boolean {
+2598: function withPiece(bp: GameState['progress'][Book], chapter: number, id: string): GameState['progress'][Book] {
+2603: function takeChapters(s: GameState, ids: readonly string[], content: GameContent, from: string): GameState {
+2615: export function homeCopyFragment(s: GameState, book: CopyBook, chapter: number, content: GameContent): GameState {
+2629: export function pickupGroundFragment(s: GameState, content: GameContent): { state: GameState; pieceId: string } | null {
+2640: export function helpReward(def: NeighborDef, day: number, flags: Record<string, number> = {}): Partial<Record<ItemId, number>> {
+2647: export type HelpBlock = 'done' | 'needs' | 'tired' | 'full' | null
+2648: export function canHelp(s: GameState, def: NeighborDef): HelpBlock {
+2657: export function finishHelp(s: GameState, def: NeighborDef): GameState {
+2667: export function giveGift(s: GameState, def: NeighborDef, item: ItemId, content?: GameContent): { state: GameState; liked: boolean; pieceId?: string } | null {
+2692: export function dislikesOf(def: Pick<NeighborDef, 'id' | 'dislikes'>): ItemId[] {
+2698: export const PRECIOUS_GIFT: ItemId = 'perfumeOil'
+2699: export const GIFTABLE: readonly ItemId[] = ['bread', 'grapes', 'fig', 'wool', 'olive', 'oil', 'barley', 'honey', 'herb', 'bean', 'scentCandle', PRECIOUS_GIFT]
+2701: export interface Trade {
+2778: export const TRADES: readonly Trade[] = BASE_TRADES.map(t => {
+2788: export function tradeOnMarket(t: Trade, day: number): boolean {
+2794: export function ownsTradeTool(inv: Inventory, t: Trade, flags: Record<string, number> = {}): boolean {
+2799: export function tradesFor(flags: Record<string, number>): Trade[] {
+2803: export function trade(s: GameState, t: Trade): GameState | null {
+2820: export const RARE_PRICES: Partial<Record<ItemId, number>> = { finePapyrus: 18, sealWax: 35, perfumeOil: 60, purpleCloth: 90, bronzeOrnament: 110 }
+2821: export const RARE_STALL_SIZE = 3
+2824: export function rareStall(day: number): ItemId[] {
+2832: export type RareBlock = 'notMarket' | 'notHere' | 'bought' | 'coins' | 'full' | null
+2834: export function canBuyRare(s: GameState, item: ItemId): RareBlock {
+2843: export function buyRare(s: GameState, item: ItemId): GameState | null {
+2850: function introBoardRequest(): CopyRequest {
+2855: export function applyEarlyGrowth(before: GameState, after: GameState, content: GameContent): GameState {
+2878: export function boardToday(s: Pick<GameState, 'clock' | 'flags'>, content: GameContent): BoardRequest[] {
+2886: export type BoardBlock = 'done' | 'needs' | 'full' | null
+2887: export function canFulfillBoard(s: GameState, r: BoardRequest): BoardBlock {
+2896: export function libraryBookCount(s: Pick<GameState, 'shelved'> & Partial<Pick<GameState, 'progress' | 'flags' | 'otProgress'>>): number {
+2901: export function fulfillBoard(s: GameState, r: BoardRequest): GameState | null {
+2912: export function copyRequestsToday(s: Pick<GameState, 'clock' | 'flags' | 'gen' | 'progress' | 'shelved'>, content: GameContent): CopyRequest[] {
+2925: export type CopyRequestBlock = 'done' | 'expired' | 'notYet' | null
+2926: export function canWriteRequest(s: Pick<GameState, 'clock' | 'flags' | 'progress' | 'shelved'>, r: CopyRequest): CopyRequestBlock {
+2937: export function writePresetRequest(s: GameState, r: CopyRequest, presetId: string, draft: string, content: GameContent): { state: GameState; stars: number; affinity: number } | null {
+2944: function rewardCopyRequest(s: GameState, r: CopyRequest, facts: PieceFacts, content: GameContent): { state: GameState; stars: number; affinity: number } {
+2958: export const LOVE_VERSE_GAP = 7
+2960: export const LOVE_VERSE_HEART = 6
+2961: export const LOVE_VERSE_MOODS: readonly PieceFacts['moods'][number][] = ['joy', 'thanks', 'hope', 'comfort']
+2963: export function canGiveLoveVerse(s: Pick<GameState, 'romance' | 'flags' | 'clock' | 'collected'>, npc: string): boolean {
+2971: export function giveLoveVerse(s: GameState, pieceId: string, facts: PieceFacts): { state: GameState; hit: boolean } | null {
+2983: export interface RankPopup {
+3002: export function otTicketDue(s: Pick<GameState, 'flags' | 'otProgress'>): boolean {
+3012: export function finishLibrary(s: GameState): GameState {
+3021: export const isRankDay = (day: number): boolean => seasonDay(day) === 1 || seasonDay(day) === 21
+3027: export function rankMorning(s: GameState, content: GameContent): GameState {
+3061: export function rankDonation(place: number): number {
+3067: export type GuestKind = 'wanderer' | 'learner' | 'kid' | 'scribe'
+3068: export interface GuestEntry {
+3078: export const GUESTBOOK_CAP = 30
+3085: export function guestMorning(s: GameState): GameState {
+3115: export const LIBRARIAN_HEARTS = 40
+3117: export const LIBRARIAN_GAIN = 1
+3119: export const GUEST_CHANCE = 1 / 3
+3120: export const GUEST_CHANCE_LIBRARIAN = 1 / 2
+3122: export const LIBRARIAN_GUEST_COINS = 30
+3124: export function librarianId(s: Pick<GameState, 'flags'>): string | null {
+3129: export function librarianCandidates(s: Pick<GameState, 'hearts' | 'romance'>): string[] {
+3138: export function setLibrarian(s: GameState, npc: string | null): GameState {
+3150: export function todaysVisitor(s: Pick<GameState, 'guestbook' | 'clock'>): GuestEntry | null {
+3153: export function canTeachVisitor(s: Pick<GameState, 'guestbook' | 'clock' | 'collected'>): boolean {
+3158: export function teachVisitor(s: GameState, pieceId: string): GameState | null {
+3166: export interface Farewell {
+3182: export function farewellMorning(s: GameState, content: GameContent): GameState {
+3201: export const FAREWELL_LETTERS = 3
+3204: export function moveInMorning(before: GameState, s: GameState, content: GameContent): GameState {
+3217: export const YARD_FROM = 15 * 60
+3218: export const YARD_TO = 19 * 60
+3220: export const YARD_HEARTS = 30
+3221: export const YARD_GAIN = 3
+3222: export type YardBlock = 'noYard' | 'time' | 'done' | 'nobody' | null
+3225: export function yardFriends(s: GameState, content: GameContent): string[] {
+3229: export function canGatherYard(s: GameState, content: GameContent): YardBlock {
+3237: export function gatherYard(s: GameState, content: GameContent): GameState {
+3248: export function finishReading(s: GameState, content: GameContent): GameState {
+3259: export function readOtWith(s: GameState, npc: string, content: GameContent): GameState {
+3268: export function mendQuarrelWith(s: GameState, pair: [string, string]): GameState {
+3277: export type TripBlock = 'locked' | 'late' | 'tired' | 'coins' | 'food' | 'full' | null
+3279: export function canTrip(s: GameState, id: DestId, buys: readonly ItemId[] = [], returning = false, rewards: readonly TripReward[] = []): TripBlock {
+3296: export function takeTrip(s: GameState, content: GameContent, id: DestId, buys: readonly ItemId[] = [], rewards: readonly TripReward[] = []): GameState | null {
+3315: export function applyTripRewards(s: GameState, rewards: readonly TripReward[], content: GameContent, from = 'trip:'): GameState {
+3335: export function extraPiece(s: GameState, content: GameContent, from: string): { state: GameState; pieceId: string } | null {
+3341: export type ExtraBlock = 'noPiece' | 'coins' | 'done' | 'notMarket' | null
+3344: export const LIBRARY_READ_PRICE = 3
+3345: export const LIBRARY_READS_PER_DAY = 2
+3346: export function canLibraryRead(s: GameState, content: GameContent): ExtraBlock {
+3353: export function libraryRead(s: GameState, content: GameContent): { state: GameState; pieceId: string } | null {
+3362: export const SCROLL_PRICE = 12
+3363: export const SCROLLS_PER_MARKET = 2
+3364: export function canBuyScroll(s: GameState, content: GameContent): ExtraBlock {
+3372: export function buyScroll(s: GameState, content: GameContent): { state: GameState; pieceId: string } | null {
+3379: export const GIFT_STORY_HEARTS = 10
+3385: export function nextTripPiece(s: Pick<GameState, 'collected' | 'clock'> & Partial<Pick<GameState, 'post' | 'offers'>>, content: GameContent, taken: readonly string[] = [], from = 'trip'): string | null {
+3393: export function askRequest(s: GameState, npc: string): GameState {
+3400: export function activeRequest(s: GameState, npc: string) {
+3408: export function fulfillRequest(s: GameState, npc: string): GameState | null {
+3427: export function receiveVisit(s: GameState, npc: string): { state: GameState; gift: Partial<Record<ItemId, number>> } | null {
+3440: export function receiveTalkGift(s: GameState, npc: string): { state: GameState; gift: Partial<Record<ItemId, number>> } | null {
+3449: export function inviteOpen(s: GameState, npc: string): boolean {
+3454: export function dine(s: GameState, npc: string): GameState | null {
+3465: function inviterHome(s: GameState, npc: string): boolean {
+3474: export function inviterAtDoor(s: GameState, t: Tile): string | null {
+3480: export const HILL_AREA = (() => {
+3488: export const BABY_AREA = (() => {
+3495: export function inGathering(g: Gathering, minute: number, p: Tile): boolean {
+3504: export type GatherResult = { gives: Partial<Record<ItemId, number>>; minutes: number } | { blocked: 'notRipe' | 'tired' | 'full' | 'picked' | 'winter' }
+3508: export const HERB_PICKS_PER_DAY = 4
+3509: export const APOTHECARY = 'apothecary'
+3512: function herbPicksToday(s: Pick<GameState, 'clock' | 'flags'>): number {
+3517: export function gatherInfo(s: GameState, place: PlaceId): GatherResult | null {
+3550: export function wouldOverflow(inv: Inventory, gives: Partial<Record<ItemId, number>>): boolean {
+3560: export const PANTRY_STACK = 30
+3562: function bump(inv: Inventory, id: ItemId, d: number): Inventory {
+3570: export const PANTRY_FOODS: readonly ItemId[] = [...new Set([...FOODS.map(([id]) => id), ...COOKED_ITEMS])]
+3571: export function pantryOf(s: Pick<GameState, 'flags' | 'pantry'>): Inventory | null {
+3575: export function putInPantry(s: GameState, id: ItemId): GameState | null {
+3583: export function takeFromPantry(s: GameState, id: ItemId): GameState | null {
+3591: export function servePantrySupper(s: GameState): { state: GameState; dish: ItemId | null } {
+3598: export function pantryDish(s: Pick<GameState, 'flags' | 'pantry'>): ItemId | null {
+3607: export function chestOf(s: Pick<GameState, 'flags' | 'chest'> & Partial<Pick<GameState, 'room'>>): Inventory | null {
+3614: export function stockOf(s: Pick<GameState, 'inv' | 'flags' | 'chest'>, id: ItemId): number {
+3619: export function haveStock(s: Pick<GameState, 'inv' | 'flags' | 'chest'>, need: Partial<Record<ItemId, number>>): boolean {
+3624: export function useStock(s: GameState, need: Partial<Record<ItemId, number>>): GameState | null {
+3630: export function putAway(s: GameState, gives: Partial<Record<ItemId, number>>): GameState {
+3636: export function overflows(s: Pick<GameState, 'inv' | 'flags' | 'chest'>, gives: Partial<Record<ItemId, number>>): boolean {
+3641: export function takeFromChest(s: GameState, id: ItemId): GameState | null {
+3653: export function train(s: GameState, id: StatId, xp: number): GameState {
+3658: function toil(s: GameState, amount: number): Needs {
+3663: function withExtra(s: GameState, gives: Partial<Record<ItemId, number>>, id: 'hand' | 'strength', salt: number): Partial<Record<ItemId, number>> {
+3672: export function finishGather(s: GameState, place: PlaceId): GameState {
+3680: export type CraftBlock = 'needs' | 'tired' | 'full' | 'job' | 'recipe' | null
+3681: export function canCraft(s: GameState, id: RecipeId): CraftBlock {
+3691: export function finishCraft(s: GameState, id: RecipeId): GameState {
+3706: export function catchSoot(s: GameState): GameState {
+3714: export function eatBread(s: GameState): GameState | null {
+3726: export function hasFood(inv: Inventory): boolean {
+3730: export function warmByHearth(s: GameState): GameState {
+3734: export function restAt(s: GameState): GameState {
+3740: export type HallBlock = 'closed' | 'empty' | 'played' | 'tired' | null
+3742: export function canPlayHall(s: GameState, content: GameContent): HallBlock {
+3751: export function hallFriendsHere(s: GameState, content: GameContent): string[] {
+3762: export function playHall(s: GameState, content: GameContent): GameState {
+3770: export type TeaBlock = 'closed' | 'coins' | null
+3771: export function canDrinkTea(s: GameState): TeaBlock {
+3778: export function drinkTea(s: GameState): GameState {
+3786: export type SunsetBlock = 'notYet' | 'cloudy' | null
+3787: export function canWatchSunset(s: GameState): SunsetBlock {
+3794: export function watchSunset(s: GameState): GameState {
+3811: export function playerLook(s: Partial<Pick<GameState, 'avatar'>>): 'f' | 'm' {
+3816: export function isSuitor(s: Partial<Pick<GameState, 'avatar' | 'gen' | 'progress' | 'shelved' | 'flags'>>, def: NeighborDef | undefined): boolean {
+3828: export function sameLookCandidate(s: Partial<Pick<GameState, 'avatar' | 'gen'>>, def: NeighborDef | undefined): boolean {
+3836: export function romanceWith(s: Pick<GameState, 'romance'>, id: string): 'friend' | 'dating' | 'engaged' | 'married' {
+3841: export type BouquetBlock = 'locked' | 'notSuitor' | 'taken' | 'already' | 'cooling' | 'hearts' | 'noItem' | null
+3842: export function canGiveBouquet(s: GameState, def: NeighborDef): BouquetBlock {
+3857: export function giveBouquet(s: GameState, def: NeighborDef): GameState {
+3870: function releaseNow(s: GameState, id: string): GameState {
+3874: export type CordBlock = 'locked' | 'notPartner' | 'stage' | 'days' | 'hearts' | 'bond' | 'room' | 'noItem' | null
+3875: export function canGiveCord(s: GameState, def: NeighborDef): CordBlock {
+3890: export function giveCord(s: GameState, def: NeighborDef): GameState {
+3909: export const BREAKUP_COOLING = PLAYER_COOLING
+3910: export const BREAKUP_HEART_CAP = 5 * POINTS_PER_HEART - 1
+3911: export function canBreakUp(s: GameState, id: string): boolean {
+3915: export function breakUp(s: GameState, id: string): GameState {
+3926: export function coolingAfterBreakup(s: Pick<GameState, 'flags' | 'clock'>, id: string): boolean {
+3932: export function weddingToday(s: Pick<GameState, 'clock'> & Partial<Pick<GameState, 'romance'>>): boolean {
+3938: export const WEDDING_GATHER = 30
+3941: function atWeddingFire(p: Tile): boolean {
+3946: function marry(s: GameState): GameState {
+3957: export function spouseGift(s: GameState, def: NeighborDef): { state: GameState; gift: Partial<Record<ItemId, number>> } | null {
+3969: export function babyRoomTalk(s: GameState, id: string): GameState | null {
+3978: export type DateBlock ='locked' | 'noPartner' | 'away' | 'busy' | 'done' | 'closed' | 'coins' | 'notYet' | 'cloudy' | 'wet' | null
+3986: export function partnerFree(s: GameState, content: GameContent, place: DatePlace): 'noPartner' | 'away' | 'busy' | null {
+3998: export function canDate(s: GameState, place: DatePlace, content: GameContent): DateBlock {
+4023: export function goOnDate(s: GameState, place: DatePlace, content: GameContent): GameState {
+4050: export function coverWithBlanket(s: GameState): GameState | null {
+4055: export const READ_REST = 30
+4056: export const READ_MINUTES = 20
+4058: export function readScripture(s: GameState, pieceId: string): { state: GameState; rested: boolean } | null {
+4066: export function starsOut(minute: number): boolean {
+4071: export function clearSky(day: number): boolean {
+4080: function starPostTonight(s: GameState, content: GameContent): string[] {
+4090: export function stargaze(s: GameState, content: GameContent): { state: GameState; pieceIds: string[] } {
+4104: export function adoptStray(s: GameState, kind: Animal, name: string): GameState {
+4119: export function needsLamp(s: GameState): boolean {
+4124: export function lightLamp(s: GameState): GameState {
+4129: export function setArrangement(s: GameState, book: Book, chapter: number, list: string[]): GameState {
+4135: export type SubmitResult = ArrangeResult | { kind: 'supplies'; need: Partial<Record<ItemId, number>> } | { kind: 'tired' } | { kind: 'letters' }
+4138: export function chapterReady(s: GameState, book: Book, chapter: number, content: GameContent): SubmitResult {
+4151: export function chapterCost(_s?: unknown): Partial<Record<ItemId, number>> {
+4156: export function focused(s: Pick<GameState, 'flags' | 'clock' | 'needs'>): boolean {
+4160: export type SealBlock = 'notShelved' | 'sealed' | 'noWax' | null
+4162: export function canSeal(s: GameState, book: Book): SealBlock {
+4168: export function sealBook(s: GameState, book: Book): GameState {
+4175: export type BindBlock = 'notDone' | 'bound' | null
+4177: export function canBind(s: GameState, book: Book, content: GameContent): BindBlock {
+4188: export function bindBook(s: GameState, book: Book, content: GameContent, special?: SpecialChoice): GameState {
+4202: export function decorateBook(s: GameState, book: Book, special: SpecialChoice): GameState {
+4213: export function submitChapter(s: GameState, book: Book, chapter: number, content: GameContent): { state: GameState; result: SubmitResult } {
+4228: export type LetterReady =
+4240: export function letterReady(s: GameState, book: Book, chapter: number, content: GameContent): LetterReady | null {
+4257: export function recordLetter(s: GameState, book: Book, chapter: number, picks: readonly string[], content: GameContent): GameState {
+4274: export function startCopy(s: GameState, book: CopyBook, content: GameContent): GameState {
+4285: export function saveCopyDraft(s: GameState, book: CopyBook, input: string, content: GameContent, pasted = false): GameState {
+4295: export const COPY_AGAIN_PIECE_CHANCE = 0.2
+4301: export function startCopyAgain(s: GameState, book: CopyBook, chapter: number, content: GameContent): GameState {
+4310: export function stopCopyAgain(s: GameState): GameState {
+4317: function againPiece(s: GameState, book: CopyBook, chapter: number, count: number, content: GameContent): string | null {
+4328: function writeAgainVerse(s: GameState, book: CopyBook, spot: CopySpot, puzzle: boolean, content: GameContent): { state: GameState; result: VerseResult } {
+4350: export type VerseResult =
+4391: export function writeVerse(s: GameState, book: CopyBook, input: string, content: GameContent, pasted = false, puzzle = false): { state: GameState; result: VerseResult } {
+4519: export function copyPay(verses: number, effort = 1): number {
+4524: export const CHAPTER_GIFT_CHANCE = 0.25
+4527: export function chapterGift(day: number, book: string, chapter: number): AdditionItemId | null {
+4538: export type BoardId = 'journey' | 'churches'
+4549: function markBoard(s: GameState, board: BoardId, content: GameContent): GameState {
+4556: export function syncBoard(s: GameState, board: BoardId, content: GameContent): GameState {
+4563: export function moveBoardCard(s: GameState, board: BoardId, index: number, delta: number, content: GameContent): GameState {
+4569: export function syncJourney(s: GameState, content: GameContent): GameState {
+4574: export function moveJourneyCard(s: GameState, index: number, delta: number, content: GameContent): GameState {
+4579: export const COPY_MINUTES_PER_VERSE = 5
+4580: export function verseMinutes(puzzle = false): number {
+4588: export function copyMinutes(s: Pick<GameState, 'needs' | 'clock' | 'room' | 'inv'> & Partial<Pick<GameState, 'flags'>>): number {
+4593: export function bindMinutes(s: Pick<GameState, 'needs' | 'clock' | 'room' | 'inv'> & Partial<Pick<GameState, 'flags'>>): number {
+4600: export function reviewPick(s: GameState, rng: Rng): string | null {
+4608: export function peaceful(s: Pick<GameState, 'flags' | 'clock'>): boolean {
+4613: export function seasonalNeed(s: Pick<GameState, 'clock'>): 'cold' | 'heat' | null {
+4619: export function drinkWater(s: GameState): GameState | null {
+4629: export function goToSleep(s0: GameState, content: GameContent, opts: { read?: boolean; pieceId?: string } = {}): GameState {
+4823: export const CHILD_HELP_XP = 10
+4834: function kidsMorning(s: GameState, content: GameContent): GameState {
+4845: function childMorning(s: GameState, content: GameContent): GameState {
+4915: export function recordProgress(s: GameState): { state: GameState; fresh: Achievement[] } {
+4926: export function nameChild(s: GameState, name: string): GameState {
+4939: function morningSupplies(s: GameState, endedDay: number): GameState {
+4961: export function sceneSeen(s: GameState, id: string, albumIds: readonly string[]): GameState {
+4976: export function bookLineKey(book: Book): string {
+4981: export function setMyLine(s: GameState, key: string, text: string): GameState {
+4992: function keepsDecorPlayerAccess(s: GameState, room: readonly Furniture[], ctx: RoomCtx): boolean {
+4998: export function placeFurniture(s: GameState, item: ItemId, t: Tile, facing?: Facing): GameState | null {
+5018: export function rotateFurniture(s: GameState, f: Furniture): GameState | null {
+5031: export function moveFurniture(s: GameState, f: Furniture, to: Tile): GameState | null {
+5067: export function removeFurniture(s: GameState, t: Tile): GameState {
+5074: export function removePiece(s: GameState, f: Furniture): GameState {
+5082: function takeAway(s: GameState, at: NonNullable<ReturnType<typeof roomTarget>>, gone: readonly Furniture[]): GameState {
+5094: export interface HomeStage {
+5103: export const HOME_STAGES: readonly HomeStage[] = [
+5110: export function nextHomeStage(s: Pick<GameState, 'homeLevel'>): HomeStage | null {
+5114: export type HomeOrderBlock = 'locked' | 'done' | 'notMoved' | 'ordered' | 'coins' | 'needs' | null
+5115: export function canOrderHome(s: GameState): HomeOrderBlock {
+5129: export type WorkBlock = 'locked' | 'notMoved' | 'owned' | 'ordered' | 'coins' | null
+5130: export function canOrderWork(s: GameState, id: CarpenterWork['id']): WorkBlock {
+5142: export function orderWork(s: GameState, id: CarpenterWork['id']): GameState | null {
+5149: export function homeRefitReturned(before: Pick<GameState, 'homeLevel' | 'room'>, after: Pick<GameState, 'homeLevel' | 'room'>): ItemId[] {
+5162: export function orderHome(s: GameState): GameState | null {
+5170: export type WardrobeWho = 'me' | 'spouse' | 'child'
+5172: export function lookOf(s: Pick<GameState, 'avatar' | 'looks' | 'romance' | 'child'>, who: WardrobeWho, content: GameContent): FullAvatar | null {
+5185: export function dressUp(s: GameState, who: WardrobeWho, a: FullAvatar, content: GameContent): GameState {
+5197: export function furnishSpouse(s: GameState): GameState {
+5212: export function safeHomeSpot(at: Tile, room: readonly Furniture[]): Tile {
+src/store/game-store.ts
+236: export type Pending =
+247: export type QuizMode = { kind: 'chapter'; book: Book; chapter: number } | { kind: 'library'; book: Book; retry: boolean }
+250: export type JournalTab = 'days' | 'neighbors' | 'village' | 'album' | 'awards'
+252: export type BagTab = 'items' | 'make' | 'dex'
+254: export type Modal =
+372: export interface SpouseDone {
+379: export interface KidDone {
+391: export type BookBack = 'word' | 'library' | 'homeShelf' | `room:${ShelfRoomId}`
+394: export function bookBackModal(back: BookBack | undefined): Modal | null {
+403: export type WordTab = 'copy' | 'quiz' | 'pieces' | 'god' | 'love' | 'links' | 'library'
+406: export type CopyView = 'menu' | 'pick' | 'write' | 'done' | 'ask' | 'again'
+408: export type BindBack = 'library' | 'bag' | `room:${ShelfRoomId}`
+411: export type CopyHow = Omit<InputHow, 'target'> & { composing?: boolean; hold?: boolean }
+414: export interface CopyPad {
+423: export function copyChapter(game: GameState): { book: Book; chapter: number } | null {
+431: export function copyPadFor(game: GameState, pad: CopyPad | undefined): CopyPad | null {
+440: export type CardBoard = 'acts' | 'churches'
+448: function afterMyLine(m: Modal | null): Modal | null {
+456: function shelfBackOf(book: Book): 'library' | `room:${ShelfRoomId}` {
+462: function bindBackModal(back: BindBack | undefined): Modal | null {
+469: interface Store {
+759: function pick<X>(arr: readonly X[], rng: Rng): X {
+765: export function albumImage(id: string): string | null {
+772: export function storeAlbumImage(id: string, data: string | null) {
+786: function snapAlbum(sceneId: string, capture: ((focus?: Tile) => string | null) | null) {
+799: function photoSpot(id: string): Tile | null {
+813: function sayChildHelp(g: GameState, say: (text: string, ms?: number) => void) {
+834: export type JoystickShape = 'pad' | 'round'
+835: export type JoystickSide = 'right' | 'left'
+836: export function loadJoystickShape(): JoystickShape {
+843: export function loadJoystickSide(): JoystickSide {
+850: function remember(key: string, value: string) {
+859: export const ZOOMS = [1, 1.25, 1.5, 1.75, 2] as const
+860: function loadZoom(): number {
+869: export function loadJoystick(): boolean {
+877: export function loadDeck(): boolean {
+884: function loadMuted(): boolean {
+896: export function postLine(game: GameState, neighborId: string): string | null {
+903: function gotLine(pieceIds: readonly string[], one: string, many: string): string {
+908: function starsLine(pieceIds: readonly string[]): string {
+912: export function callsAlready(text: string, name: string): boolean {
+916: function lineFor(game: GameState, neighborId: string, rng: Rng): string {
+930: function gained(before: Inventory, after: Inventory): Partial<Record<ItemId, number>> {
+943: function announceRoom(before: GameState, after: GameState, door = true) {
+972: export function partnerName(game: GameState): string {
+982: export type MenuPlace = 'hearth' | 'workbench' | 'press' | 'hill' | 'bench' | 'homeBench' | 'hallTable' | 'teaTable' | 'pavilion' | FacilityPlace
+985: export function selectedPiece(room: readonly Furniture[], sel: Pick<Furniture, 'item' | 'x' | 'y' | 'on'> | null): Furniture | undefined {
+990: export const useGame = create<Store>((set, get) => {
+2920: export function giveItems(items: Partial<Record<ItemId, number>>) {
+src/engine/lodging.ts
+4: export const LODGING_DOOR:Tile={x:43,y:24}
+6: export const LODGING_ROOF_TOP = 19
+7: export const LODGING_STAIRS:Tile={x:26,y:129}
+8: export const LODGING_DOWNSTAIRS:Tile={x:26,y:130}
+9: export const LODGING_SEATS:Record<string,Tile>={smith:{x:5,y:144},tilly:{x:8,y:144},shepherd:{x:13,y:144},dexter:{x:16,y:144},presser:{x:21,y:144}}
+10: export const LODGING_CHILD_SEATS:readonly Tile[]=[{x:5,y:150},{x:11,y:150},{x:17,y:150},{x:23,y:150}]
+11: export const LODGING_ANVIL:Tile={x:7,y:125}
+12: export const LODGING_PRESS:Tile={x:25,y:124}
+14: export const LODGING_WORK_SPOTS: Record<string, Tile> = {
+20: export function lodgingNpcSpot(npc: string, at: Tile): Tile {
+28: export function lodgingChildren(s:Pick<GameState,'gen'|'flags'|'child'>):{id:string;name:string;seat:Tile}[]{
+src/engine/plans.ts
+20: export type Activity = 'tea'|'sew'|'garden'|'observe'|'read'|'cook'|'paint'|'music'|'taste'|'make'|'walk'|'work'
+21: export type TastePlace = 'indoor'|'hill'|'market'|'shade'|'lake'
+22: export type TasteTime = 'early'|'afternoon'|'evening'
+23: export interface Appt {
+32: export interface Plans { appts: Appt[]; nextId: number }
+33: export const NO_PLANS: Plans = { appts: [], nextId: 1 }
+34: export const APPT_HEART_CAP = 3
+35: export const APPT_MEMBERS_MAX = 3
+37: export type Availability = 'ok' | { busy: string; suggest: { day: number; from: number } | null }
+38: type PlanState = Pick<GameState,'clock'|'flags'|'shelved'|'today'> & Partial<Pick<GameState,'plans'|'romance'|'life'|'hearts'|'progress'|'garden'|'player'|'room'>>
+41: export function reservedMembers(s: Pick<PlanState,'clock'|'plans'>, from = 18*60, to = 21*60): string[] {
+45: function busyAt(s: PlanState, npc: string, day: number, from: number, to: number, content: Pick<GameContent,'neighbors'>, exclude?: string): string | null {
+75: export function availability(s: PlanState, npc: string, day: number, from: number, to: number, content: Pick<GameContent,'neighbors'>, exclude?: string): Availability {
+85: export function inviteReaction(npc: string, activity: Activity, place: TastePlace, time: TasteTime): 'likes'|'new'|'conflict' {
+90: export function venueFor(appt: Appt, day = appt.day): {place:PlaceId; moved:false} | {place:PlaceId; moved:true; day:number; reason:'weather'} {
+98: export function apptSpots(place: PlaceId): readonly Tile[] {
+104: export function spotsForAppt(a: Appt): readonly Tile[] {
+108: function openVenue(s: PlanState, place: PlaceId, seats?:readonly Tile[]): boolean {
+112: export function scheduleAppt(s: GameState, input: Omit<Appt,'id'|'state'|'rewarded'|'remembered'|'startedWith'|'attended'>, content: GameContent): {state:GameState; appt?:Appt; blocked?:Availability|'venue'|'members'|'past'} {
+126: export function appointmentSpots(s: Pick<PlanState,'clock'|'plans'>): Record<string,Tile> {
+142: export function canAttendAppt(s: GameState,id:string): boolean {
+148: export function attendAppt(s: GameState,id:string): GameState {
+153: export const CLUB_AFFINITY = 2
+154: export function settleAppt(s: GameState,id:string): GameState {
+176: export function advancePlans(s:GameState,content:Pick<GameContent,'neighbors'>): GameState {
+205: export function sanitizePlans(raw:unknown,day:number): Plans {
+src/engine/fest.ts
+26: export type FestKind = 'tea'|'housewarming'|'showcase'|'festival'
+27: export type FestStep = 'tidy'|'arrive'|'activity'|'talk'|'finish'|'done'
+28: export type FestRole = 'food'|'deco'|'tidy'
+29: export const FEST_STEPS: readonly FestStep[] = ['tidy','arrive','activity','talk','finish','done']
+31: export const FEST_DAYS_AHEAD = 7
+36: export const FEST_SNACKS: readonly ItemId[] = ['bread','fig','grapes','honey',...COOKED_ITEMS]
+38: export const FEST_DECOR: readonly ItemId[] = ['vase','dryFlowers','candle','teapot','fruitBowl','cushion','pillows']
+40: export const FEST_HELP: Readonly<Record<string,'snack'|'tea'|'cloth'|'prop'|'invite'>> = {
+45: export interface Fest {
+55: export interface FestInput {
+65: export function homeSeats(s: Pick<GameState,'room'|'homeLevel'|'flags'|'romance'> & Partial<Pick<GameState,'spaces'>>, n: number): Tile[] {
+91: export function festWorks(s: GameState): { id: string; kind: string; with: string[] }[] {
+98: export function festivalDays(s: GameState): number[] {
+109: export function festKinds(s: GameState, content: GameContent): FestKind[] {
+119: export function festVenues(s: GameState, kind: FestKind): PlaceId[] {
+126: export function festCapacity(s: GameState, kind: FestKind): number {
+130: export function createFest(s: GameState, input: FestInput, content: GameContent): { state: GameState; error?: string; id?: string } {
+176: function closeOut(s: GameState, f: Fest, change: Partial<Fest> = {}): GameState {
+182: export function cancelFest(s: GameState, id: string): GameState {
+191: export function postponeFest(s: GameState, id: string, day: number, slot: ClubSlot, content: GameContent): { state: GameState; error?: string } {
+209: export function festWaiting(s: GameState, f: Fest): boolean {
+213: function stepByTime(a: Appt, minute: number): FestStep {
+221: export function festHere(s: GameState, place: PlaceId): Fest | undefined {
+228: export function festRunning(s: GameState): Fest | undefined {
+233: export function joinFest(s: GameState, id: string): GameState {
+243: export function festChoices(s: GameState, f: Fest): string[] {
+252: export function festStep(s: GameState, id: string, choice?: string): GameState {
+266: export function festFinish(s: GameState, id: string): GameState {
+279: export interface FestReaction { npc: string; kind: 'birthday'|'help'|'likeItem'|'dish'|'memory'|'likes'|'quiet'|'new'; item?: string; memory?: string; taste?: 'like'|'quiet'|'new' }
+281: export function festReactions(s: GameState, f: Fest): (FestReaction & { text: string })[] {
+304: function reactionText(r: FestReaction, f: Fest, npc: string): string {
+315: export function festivalRoleReady(s: GameState): Fest | null {
+323: export function doFestivalRole(s: GameState, id: string): GameState {
+338: export function settleFests(s: GameState): GameState {
+354: export function sanitizeFests(raw: unknown): Fest[] {
+src/engine/group-task.ts
+7: export interface GroupTaskProgress { stage: number; choice?: string; selection?: string; guests?: string[] }
+9: export function advanceGroupTask(s:GameState,id:string,stage:number,choice?:string):GameState {
+27: export function cleanGroupTask(raw:unknown):GroupTaskProgress|undefined {
+src/engine/newland-build.ts
+18: export type BuildState = 'ordered' | 'building' | 'done'
+19: export interface Build {
+43: export interface NewlandState {
+52: export const MAX_BUILDS = 12
+55: export const emptyNewland = (): NewlandState => ({ builds: [], tiles: {}, nextId: 1, settledDay: 0 })
+57: type Base = Pick<GameState, 'newland' | 'flags' | 'clock' | 'coins' | 'inv' | 'player'> & Partial<Pick<GameState, 'map'>>
+59: export const buildsOf = (s: Pick<GameState, 'newland'>): readonly Build[] => s.newland?.builds ?? []
+60: export const tilesOf = (s: Pick<GameState, 'newland'>): Readonly<Record<string, TileKind>> => s.newland?.tiles ?? {}
+61: export const revealedLand = (s: Pick<GameState, 'flags'>): boolean => !!s.flags.newlandRevealed
+69: export function areaOf(kind: SiteKind, x: number, y: number, size = 1): Tile[] {
+81: export function widthOf(kind: SiteKind, size?: number): number {
+86: export function boxOf(x: number, y: number, width: number = ART_TILES): Tile[] {
+94: export function doorOf(kind: BuildKind, x: number, y: number, facing: Facing, size?: number): { door: Tile; front: Tile } | null {
+107: export function standSpotOf(b: Pick<Build, 'kind' | 'x' | 'y' | 'facing' | 'size'>): Tile | null {
+121: function blockedOf(builds: readonly Build[], finalState = false): Set<string> {
+134: function buildOverlay(nl: NewlandState): Map<string, string> {
+148: export function overlayFor(nl: NewlandState | undefined): ReadonlyMap<string, string> {
+161: export type PlaceBlock = 'unrevealed' | 'facing' | 'outside' | 'overlap' | 'standing' | 'door' | 'sealed' | 'many' | 'homes' | 'same'
+163: export type OrderBlock = PlaceBlock | 'coins' | 'items' | 'unknown'
+166: function footprintOf(kind: SiteKind, x: number, y: number, size: number) {
+172: function tileCharAt(x: number, y: number): string {
+177: function reachable(builds: readonly Build[], tiles: Readonly<Record<string, TileKind>> = {}): Set<string> {
+199: function fencedOf(builds: readonly Build[]): Set<string> {
+204: function mustReach(builds: readonly Build[], tiles: Readonly<Record<string, TileKind>>): Tile[] {
+227: export function canPlace(s: Base, kind: SiteKind, x: number, y: number, facing: Facing = 'down', size = 1): PlaceBlock | null {
+285: export function costOf(kind: SiteKind, size = 1): Cost {
+293: function newTilesOf(s: Pick<GameState, 'newland'>, kind: TileKind, x: number, y: number, size: number): Tile[] {
+298: function costFor(s: Pick<GameState, 'newland'>, kind: SiteKind, x: number, y: number, size: number): Cost {
+306: export function canOrder(s: Base, kind: SiteKind, x: number, y: number, facing: Facing = 'down', size = 1): OrderBlock | null {
+315: type Ordered = Pick<GameState, 'newland' | 'coins' | 'inv'>
+321: export function orderBuild<T extends Base & Ordered>(s: T, kind: SiteKind, x: number, y: number, facing: Facing = 'down', size = 1, look?: HouseLook, owner?: string): T | null {
+341: function freeSlot(builds: readonly Build[]): number | undefined {
+349: function buildWarps(nl: NewlandState): Map<string, Tile> {
+364: export function warpsFor(nl: NewlandState | undefined): ReadonlyMap<string, Tile> {
+376: function stateOnDay(b: Build, today: number): BuildState {
+388: export function advanceBuilds<T extends Pick<GameState, 'newland' | 'clock'>>(s: T): T {
+403: function share(c: Cost, rate: number, items: boolean): Cost {
+409: function refund<T extends Pick<GameState, 'coins' | 'inv'>>(s: T, c: Cost): T {
+413: function settleRefund<T extends Pick<GameState, 'coins' | 'inv' | 'newland'> & Partial<Pick<GameState, 'flags' | 'chest'>> & { rooms?: Record<string, Furniture[]> }>(s: T, id: string, rate: (b: Build) => Cost | null): T | null {
+427: function leaveHome(flags: Record<string, number>, buildNo: number): Record<string, number> {
+436: export const roomKeyFor = (buildId: string): string => `newland:${buildId}`
+442: export function returnRoom<T extends Pick<GameState, 'inv'> & Partial<Pick<GameState, 'flags' | 'chest'>> & { rooms?: Record<string, Furniture[]> }>(s: T, buildId: string): T {
+464: export function cancelBuild<T extends Pick<GameState, 'coins' | 'inv' | 'newland'> & Partial<Pick<GameState, 'flags' | 'chest'>> & { rooms?: Record<string, Furniture[]> }>(s: T, id: string): T | null {
+469: export function demolishBuild<T extends Pick<GameState, 'coins' | 'inv' | 'newland'> & Partial<Pick<GameState, 'flags' | 'chest'>> & { rooms?: Record<string, Furniture[]> }>(s: T, id: string): T | null {
+474: export function clearTile<T extends Pick<GameState, 'coins' | 'inv' | 'newland'>>(s: T, x: number, y: number): T | null {
+487: export function buildActionOf(b: Pick<Build, 'state'>): 'cancel' | 'demolish' {
+492: export const doneHomes = (s: Pick<GameState, 'newland'>): Build[] => buildsOf(s).filter((b) => b.kind === 'home' && b.state === 'done') as Build[]
+500: function sanitizeItems(v: unknown): Items {
+512: export function sanitizeNewlandBuild(raw: unknown, today: number): NewlandState | undefined {
+src/render/neighbor-look.ts
+4: type PersonExtra=Pick<SpriteOpts,'growth'|'look'|'avatar'|'elder'>
+5: export function neighborLook(def: NeighborDef, growth?: number, dressed?: Avatar, elder = false, heir?: FullAvatar | null): { who: Who; extra: PersonExtra } {
+src/render/renderer.ts
+140: type Ctx = CanvasRenderingContext2D
+147: export function mapTileIcon(ch: ',' | '.' | 'T'): HTMLCanvasElement {
+163: function drawGround(g: Ctx,ch:string,x:number,y:number,season:Season,at:(x:number,y:number)=>string=tileAt){
+167: function drawObject(g: Ctx, ch: string, x: number, y: number, season: Season, tree: TreeKind = 'deciduous') {
+664: function drawBush(g: Ctx, x: number, y: number, season: Season) {
+693: function cachedMap(key: string): HTMLCanvasElement | undefined {
+702: function keepMap(key: string, c: HTMLCanvasElement) {
+706: function mapFor(season: Season): HTMLCanvasElement {
+781: function snowLayer(): HTMLCanvasElement {
+883: function drawPavilionSnow(g: Ctx) {
+905: function drawPuddles(g: Ctx, day: number, raining: boolean, t: number) {
+931: function drawShoreIce(g: Ctx, minute: number, locked: ReadonlySet<string>) {
+956: function drawLakeGlints(g: Ctx, t: number) {
+973: function drawChimneySmoke(g: Ctx, game: GameState, kind: 'meal' | 'winter', windy: boolean, t: number) {
+999: function paint(keyStr: string, rows: SpriteRows, palette: Record<string, string>): HTMLCanvasElement {
+1020: export function iconCanvas(id: string): HTMLCanvasElement | null {
+1026: function bubble(g: Ctx, cx: number, top: number, draw: (x: number, y: number) => void) {
+1038: type EmoteId = 'z' | 'note' | 'yawn' | 'talk' | 'heart' | 'sweat' | 'hungry' | 'shiver' | 'letter' | 'laugh' | 'angry' | 'call'
+1057: function emote(g: Ctx, id: EmoteId, cx: number, top: number) {
+1118: function kidSpots(neighbors: readonly NeighborDef[]): Tile[] {
+1123: function kidDest(id: string, def: NeighborDef, neighbors: readonly NeighborDef[], seed: number, day: number, slot: number): Tile {
+1136: export function kidWalk(id: string, def: NeighborDef, neighbors: readonly NeighborDef[], seed: number, day: number, minute: number): { x: number; y: number; moving: boolean; facing: Facing; walkTime: number } {
+1159: function neighborPerson(def: NeighborDef, facing: Facing, frame: 0 | 1 | 2, blink: boolean, season: Season, growth?: number, dressed?: Avatar, elder = false, heir?: FullAvatar | null) {
+1170: export function drawVillageMap(g: Ctx, game: GameState): void {
+1190: function coverLocked(g: Ctx, game: GameState, season: Season) {
+1206: export function neighborPortrait(def: NeighborDef, season: Season, elder = false, heir?: FullAvatar | null) {
+1211: export function genPortrait(p: GenPerson, season: Season) {
+1219: function drawSprite(g: Ctx, c: HTMLCanvasElement, wx: number, wy: number, dy = 0, shadow = true) {
+1230: type PersonExtra = { inky?: boolean; growth?: number; look?: Look; avatar?: FullAvatar; short?: number; elder?: boolean }
+1232: function lookKey(who: Who, season: Season, extra: PersonExtra): string {
+1236: function person(who: Who, facing: Facing, frame: 0 | 1 | 2, blink: boolean, pose: Pose, season: Season, extra: PersonExtra = {}) {
+1246: function motionCanvas(keyStr: string, layers: { actor: string[]; propBack: string[]; propFront: string[] }, actorPal: Record<string, string>, propPal: Record<string, string>): HTMLCanvasElement {
+1268: function usePhase(action: UseAction, ms: number): number {
+1282: function useFrameCanvas(who: Who, facing: Facing, kind: ActKind, elapsed: number, total: number, blink: boolean, season: Season, extra: PersonExtra, standing = false): HTMLCanvasElement {
+1324: function drawUse(g: Ctx, c: HTMLCanvasElement, stand: HTMLCanvasElement, wx: number, wy: number, shadow: boolean) {
+1335: function eventFrameCanvas(who: Who, m: EventMotion, blink: boolean, season: Season, extra: PersonExtra): HTMLCanvasElement {
+1345: function drawEventMotion(g: Ctx, who: Who, m: EventMotion, wx: number, wy: number, blink: boolean, season: Season, extra: PersonExtra) {
+1351: export function drawGroupPreview(g:Ctx,game:GameState,content:GameContent,id:string,t:number) {
+1379: function leavingWay(id: string, from: Tile): Tile[] {
+1389: function drawFamily(g: Ctx, action: FamilyAction, facing: Facing, frame: number, stage: Exclude<GenerationStage, 'baby'>, wx: number, wy: number, blink: boolean, season: Season, extra: PersonExtra, who: Who = 'writer') {
+1399: function drawPlayerAct(g: Ctx, act: PlayerAct, p: { x: number; y: number }, blink: boolean, season: Season, extra: PersonExtra) {
+1430: function drawAdditionUse(g: Ctx, act: PlayerAct, blink: boolean, season: Season, extra: PersonExtra, who: Who = 'writer') {
+1469: function drawAutonomousFurniture(g: Ctx, a: FurnitureActivity, who: Who, blink: boolean, season: Season, extra: PersonExtra, toddler = false) {
+1498: function drawBabyCare(g: Ctx, act: PlayerAct, p: { x: number; y: number }, blink: boolean, season: Season, extra: PersonExtra) {
+1528: function animal(kind: 'cat' | 'dog', form: 'adult' | 'baby' | 'curl', facing: Facing) {
+1540: function drawWideDesk(g: Ctx, at: Tile, season: Season) {
+1567: function drawDeskTraces(g: Ctx, at: Tile, d: DeskTraces) {
+1617: function drawSootCatcher(g: Ctx, at: Tile) {
+1629: function furnitureOrder(f: Furniture): number {
+1636: function drawSelection(g: Ctx, tiles: readonly Tile[]) {
+1649: function drawSpaceMarks(g: Ctx, game: GameState, editing: boolean, t: number) {
+1671: function drawFurniture(g: Ctx, f: Furniture) {
+1790: function drawWeather(g: Ctx, weather: string, t: number, w: number, h: number) {
+1823: function drawRainbow(g: Ctx, w: number) {
+1836: function glow(g: Ctx, x: number, y: number, radius: number, alpha: number, color = '255, 200, 110') {
+1851: function drawSpine(g: Ctx, sx: number, sy: number, book: Book, game: GameState) {
+1879: function drawEmptySlot(g: Ctx, sx: number, sy: number) {
+1894: function drawLetterSpines(g: Ctx, game: GameState, room: 'romPhm' | 'hebJud') {
+1922: function drawCardBoard(g: Ctx, first: Tile, placed: number, done: boolean) {
+1947: function flame(g: Ctx, px: number, py: number, t: number, big = false) {
+1958: export interface Renderer {
+1977: function newlandMapFor(season: Season): HTMLCanvasElement {
+2016: function drawNewlandSites(g: Ctx, game: GameState, playerY: number, over: boolean, content?: GameContent) {
+2244: function onceFrame(key: string, on: boolean, frames = 4, ms = 320): number | null {
+2260: function memoryMarkerKind(m: Memory): MemoryKind {
+2273: export function setDarknessOverride(v: number | null): void {
+2283: function drawShelfFill(g: Ctx, tiles: readonly Tile[], steps: number) {
+2301: function drawRoomShelfFill(g: Ctx, game: GameState, pieces: readonly Piece[], room: 'library' | 'acts' | 'romPhm' | 'hebJud' | 'rev') {
+2309: function drawNewland(g: Ctx, game: GameState, t: number, W: number, H: number, ox: number, oy: number, selected: readonly Tile[] | null = null, content?: GameContent) {
+2379: export function createRenderer(g: Ctx, content: GameContent): Renderer {
+3093: interface Fly {
+3100: export function butterflies(season: Season, wet: boolean, phase: string, t: number): Fly[] {
+3144: function tripMapFor(dest: 'harbor' | 'hillTown', season: Season): HTMLCanvasElement {
+3301: export interface TripActor {
+3310: function drawBig(g: Ctx, c: HTMLCanvasElement, wx: number, wy: number, dy = 0) {
+3321: export function createTripRenderer(g: Ctx) {
+src/features/fest/FestSession.tsx
+13: export function FestSession({ id }: { id: string }) {

@@ -13,7 +13,9 @@ export function personName(game: Pick<GameState, 'notebook' | 'gen'>, id: string
   const p = game.gen?.persons[id]
   if (id === BAKER_BABY_ID && p) return met.includes('baker') || met.includes('wendell')
     ? p.name ?? (p.stage === 'baby' ? t('gen.baby') : t('gen.bakerChild')) : t('gen.unknown')
-  if (p?.origin === 'born') return p.parents.some((q) => met.includes(q)) ? p.name ?? t('gen.baby') : t('gen.unknown')
+  // 손주(부모가 태어난 주민)는 부모를 거슬러 올라가 아는 이웃이 있으면 (2026-10-21 셋째 대)
+  const knownLine = (q: string, depth: number): boolean => met.includes(q) || (depth > 0 && game.gen?.persons[q]?.origin === 'born' && game.gen.persons[q].parents.some((r) => knownLine(r, depth - 1)))
+  if (p?.origin === 'born') return p.parents.some((q) => knownLine(q, 3)) ? p.name ?? t('gen.baby') : t('gen.unknown')
   return met.includes(id) ? neighborById(id)?.role ?? t('gen.unknown') : t('gen.unknown')
 }
 

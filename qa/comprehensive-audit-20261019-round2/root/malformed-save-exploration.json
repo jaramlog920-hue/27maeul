@@ -1,0 +1,7027 @@
+{
+  "cases": 900,
+  "accepted": 780,
+  "problems": [],
+  "results": [
+    {
+      "path": "pieceLayout",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "pieceLayout",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "pieceLayout",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "pieceLayout",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "pieceLayout",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "pieceLayout",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "pieceLayout",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "pieceLayout",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "pieceLayout",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "pieceLayout",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "plans",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "plans",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "plans",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "plans",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "plans",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "plans",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "plans",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "plans",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "plans",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "plans",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubs",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubs",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubs",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubs",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubs",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubs",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubs",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubs",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubs",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubs",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubSessions",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubSessions",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubSessions",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubSessions",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubSessions",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubSessions",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubSessions",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubSessions",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubSessions",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubSessions",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubWorks",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubWorks",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubWorks",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubWorks",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubWorks",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubWorks",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubWorks",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubWorks",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubWorks",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clubWorks",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "fests",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "fests",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "fests",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "fests",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "fests",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "fests",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "fests",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "fests",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "fests",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "fests",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "spaces",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "spaces",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "spaces",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "spaces",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "spaces",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "spaces",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "spaces",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "spaces",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "spaces",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "spaces",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "idle",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "idle",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "idle",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "idle",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "idle",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "idle",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "idle",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "idle",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "idle",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "idle",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "target",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "target",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "target",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "target",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "target",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "target",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "target",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "target",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "target",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "target",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "offers",
+      "value": null,
+      "status": "rejected"
+    },
+    {
+      "path": "offers",
+      "value": -1,
+      "status": "rejected"
+    },
+    {
+      "path": "offers",
+      "value": 0,
+      "status": "rejected"
+    },
+    {
+      "path": "offers",
+      "value": 0.5,
+      "status": "rejected"
+    },
+    {
+      "path": "offers",
+      "value": 42,
+      "status": "rejected"
+    },
+    {
+      "path": "offers",
+      "value": "2",
+      "status": "rejected"
+    },
+    {
+      "path": "offers",
+      "value": "x",
+      "status": "rejected"
+    },
+    {
+      "path": "offers",
+      "value": [],
+      "status": "rejected"
+    },
+    {
+      "path": "offers",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "offers",
+      "value": [
+        null
+      ],
+      "status": "rejected"
+    },
+    {
+      "path": "post",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "post",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "post",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "post",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "post",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "post",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "post",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "post",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "post",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "post",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "collected",
+      "value": null,
+      "status": "rejected"
+    },
+    {
+      "path": "collected",
+      "value": -1,
+      "status": "rejected"
+    },
+    {
+      "path": "collected",
+      "value": 0,
+      "status": "rejected"
+    },
+    {
+      "path": "collected",
+      "value": 0.5,
+      "status": "rejected"
+    },
+    {
+      "path": "collected",
+      "value": 42,
+      "status": "rejected"
+    },
+    {
+      "path": "collected",
+      "value": "2",
+      "status": "rejected"
+    },
+    {
+      "path": "collected",
+      "value": "x",
+      "status": "rejected"
+    },
+    {
+      "path": "collected",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "collected",
+      "value": {},
+      "status": "rejected"
+    },
+    {
+      "path": "collected",
+      "value": [
+        null
+      ],
+      "status": "rejected"
+    },
+    {
+      "path": "pieceLog",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "pieceLog",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "pieceLog",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "pieceLog",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "pieceLog",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "pieceLog",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "pieceLog",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "pieceLog",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "pieceLog",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "pieceLog",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "todayHeard",
+      "value": null,
+      "status": "rejected"
+    },
+    {
+      "path": "todayHeard",
+      "value": -1,
+      "status": "rejected"
+    },
+    {
+      "path": "todayHeard",
+      "value": 0,
+      "status": "rejected"
+    },
+    {
+      "path": "todayHeard",
+      "value": 0.5,
+      "status": "rejected"
+    },
+    {
+      "path": "todayHeard",
+      "value": 42,
+      "status": "rejected"
+    },
+    {
+      "path": "todayHeard",
+      "value": "2",
+      "status": "rejected"
+    },
+    {
+      "path": "todayHeard",
+      "value": "x",
+      "status": "rejected"
+    },
+    {
+      "path": "todayHeard",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "todayHeard",
+      "value": {},
+      "status": "rejected"
+    },
+    {
+      "path": "todayHeard",
+      "value": [
+        null
+      ],
+      "status": "rejected"
+    },
+    {
+      "path": "activeBook",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "activeBook",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "activeBook",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "activeBook",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "activeBook",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "activeBook",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "activeBook",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "activeBook",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "activeBook",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "activeBook",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "progress",
+      "value": null,
+      "status": "rejected"
+    },
+    {
+      "path": "progress",
+      "value": -1,
+      "status": "rejected"
+    },
+    {
+      "path": "progress",
+      "value": 0,
+      "status": "rejected"
+    },
+    {
+      "path": "progress",
+      "value": 0.5,
+      "status": "rejected"
+    },
+    {
+      "path": "progress",
+      "value": 42,
+      "status": "rejected"
+    },
+    {
+      "path": "progress",
+      "value": "2",
+      "status": "rejected"
+    },
+    {
+      "path": "progress",
+      "value": "x",
+      "status": "rejected"
+    },
+    {
+      "path": "progress",
+      "value": [],
+      "status": "rejected"
+    },
+    {
+      "path": "progress",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "progress",
+      "value": [
+        null
+      ],
+      "status": "rejected"
+    },
+    {
+      "path": "listened",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "listened",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "listened",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "listened",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "listened",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "listened",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "listened",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "listened",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "listened",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "listened",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "shelved",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "shelved",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "shelved",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "shelved",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "shelved",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "shelved",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "shelved",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "shelved",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "shelved",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "shelved",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "rereads",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "rereads",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "rereads",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "rereads",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "rereads",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "rereads",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "rereads",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "rereads",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "rereads",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "rereads",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "journal",
+      "value": null,
+      "status": "rejected"
+    },
+    {
+      "path": "journal",
+      "value": -1,
+      "status": "rejected"
+    },
+    {
+      "path": "journal",
+      "value": 0,
+      "status": "rejected"
+    },
+    {
+      "path": "journal",
+      "value": 0.5,
+      "status": "rejected"
+    },
+    {
+      "path": "journal",
+      "value": 42,
+      "status": "rejected"
+    },
+    {
+      "path": "journal",
+      "value": "2",
+      "status": "rejected"
+    },
+    {
+      "path": "journal",
+      "value": "x",
+      "status": "rejected"
+    },
+    {
+      "path": "journal",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "journal",
+      "value": {},
+      "status": "rejected"
+    },
+    {
+      "path": "journal",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "inv",
+      "value": null,
+      "status": "rejected"
+    },
+    {
+      "path": "inv",
+      "value": -1,
+      "status": "rejected"
+    },
+    {
+      "path": "inv",
+      "value": 0,
+      "status": "rejected"
+    },
+    {
+      "path": "inv",
+      "value": 0.5,
+      "status": "rejected"
+    },
+    {
+      "path": "inv",
+      "value": 42,
+      "status": "rejected"
+    },
+    {
+      "path": "inv",
+      "value": "2",
+      "status": "rejected"
+    },
+    {
+      "path": "inv",
+      "value": "x",
+      "status": "rejected"
+    },
+    {
+      "path": "inv",
+      "value": [],
+      "status": "rejected"
+    },
+    {
+      "path": "inv",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "inv",
+      "value": [
+        null
+      ],
+      "status": "rejected"
+    },
+    {
+      "path": "needs",
+      "value": null,
+      "status": "rejected"
+    },
+    {
+      "path": "needs",
+      "value": -1,
+      "status": "rejected"
+    },
+    {
+      "path": "needs",
+      "value": 0,
+      "status": "rejected"
+    },
+    {
+      "path": "needs",
+      "value": 0.5,
+      "status": "rejected"
+    },
+    {
+      "path": "needs",
+      "value": 42,
+      "status": "rejected"
+    },
+    {
+      "path": "needs",
+      "value": "2",
+      "status": "rejected"
+    },
+    {
+      "path": "needs",
+      "value": "x",
+      "status": "rejected"
+    },
+    {
+      "path": "needs",
+      "value": [],
+      "status": "rejected"
+    },
+    {
+      "path": "needs",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "needs",
+      "value": [
+        null
+      ],
+      "status": "rejected"
+    },
+    {
+      "path": "lampFuel",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lampFuel",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lampFuel",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lampFuel",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lampFuel",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lampFuel",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lampFuel",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lampFuel",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lampFuel",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lampFuel",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lampLitDay",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lampLitDay",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lampLitDay",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lampLitDay",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lampLitDay",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lampLitDay",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lampLitDay",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lampLitDay",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lampLitDay",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lampLitDay",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "hearts",
+      "value": null,
+      "status": "rejected"
+    },
+    {
+      "path": "hearts",
+      "value": -1,
+      "status": "rejected"
+    },
+    {
+      "path": "hearts",
+      "value": 0,
+      "status": "rejected"
+    },
+    {
+      "path": "hearts",
+      "value": 0.5,
+      "status": "rejected"
+    },
+    {
+      "path": "hearts",
+      "value": 42,
+      "status": "rejected"
+    },
+    {
+      "path": "hearts",
+      "value": "2",
+      "status": "rejected"
+    },
+    {
+      "path": "hearts",
+      "value": "x",
+      "status": "rejected"
+    },
+    {
+      "path": "hearts",
+      "value": [],
+      "status": "rejected"
+    },
+    {
+      "path": "hearts",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "hearts",
+      "value": [
+        null
+      ],
+      "status": "rejected"
+    },
+    {
+      "path": "talked",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "talked",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "talked",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "talked",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "talked",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "talked",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "talked",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "talked",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "talked",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "talked",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "helped",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "helped",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "helped",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "helped",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "helped",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "helped",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "helped",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "helped",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "helped",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "helped",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "gifted",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "gifted",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "gifted",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "gifted",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "gifted",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "gifted",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "gifted",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "gifted",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "gifted",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "gifted",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "npcs",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "npcs",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "npcs",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "npcs",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "npcs",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "npcs",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "npcs",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "npcs",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "npcs",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "npcs",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "companion",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "companion",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "companion",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "companion",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "companion",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "companion",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "companion",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "companion",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "companion",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "companion",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "flags",
+      "value": null,
+      "status": "rejected"
+    },
+    {
+      "path": "flags",
+      "value": -1,
+      "status": "rejected"
+    },
+    {
+      "path": "flags",
+      "value": 0,
+      "status": "rejected"
+    },
+    {
+      "path": "flags",
+      "value": 0.5,
+      "status": "rejected"
+    },
+    {
+      "path": "flags",
+      "value": 42,
+      "status": "rejected"
+    },
+    {
+      "path": "flags",
+      "value": "2",
+      "status": "rejected"
+    },
+    {
+      "path": "flags",
+      "value": "x",
+      "status": "rejected"
+    },
+    {
+      "path": "flags",
+      "value": [],
+      "status": "rejected"
+    },
+    {
+      "path": "flags",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "flags",
+      "value": [
+        null
+      ],
+      "status": "rejected"
+    },
+    {
+      "path": "scenes",
+      "value": null,
+      "status": "rejected"
+    },
+    {
+      "path": "scenes",
+      "value": -1,
+      "status": "rejected"
+    },
+    {
+      "path": "scenes",
+      "value": 0,
+      "status": "rejected"
+    },
+    {
+      "path": "scenes",
+      "value": 0.5,
+      "status": "rejected"
+    },
+    {
+      "path": "scenes",
+      "value": 42,
+      "status": "rejected"
+    },
+    {
+      "path": "scenes",
+      "value": "2",
+      "status": "rejected"
+    },
+    {
+      "path": "scenes",
+      "value": "x",
+      "status": "rejected"
+    },
+    {
+      "path": "scenes",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "scenes",
+      "value": {},
+      "status": "rejected"
+    },
+    {
+      "path": "scenes",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "album",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "album",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "album",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "album",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "album",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "album",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "album",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "album",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "album",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "album",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "giftsGot",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "giftsGot",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "giftsGot",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "giftsGot",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "giftsGot",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "giftsGot",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "giftsGot",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "giftsGot",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "giftsGot",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "giftsGot",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "recipesKnown",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "recipesKnown",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "recipesKnown",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "recipesKnown",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "recipesKnown",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "recipesKnown",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "recipesKnown",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "recipesKnown",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "recipesKnown",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "recipesKnown",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "myLines",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "myLines",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "myLines",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "myLines",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "myLines",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "myLines",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "myLines",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "myLines",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "myLines",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "myLines",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "trails",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "trails",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "trails",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "trails",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "trails",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "trails",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "trails",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "trails",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "trails",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "trails",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "room",
+      "value": null,
+      "status": "rejected"
+    },
+    {
+      "path": "room",
+      "value": -1,
+      "status": "rejected"
+    },
+    {
+      "path": "room",
+      "value": 0,
+      "status": "rejected"
+    },
+    {
+      "path": "room",
+      "value": 0.5,
+      "status": "rejected"
+    },
+    {
+      "path": "room",
+      "value": 42,
+      "status": "rejected"
+    },
+    {
+      "path": "room",
+      "value": "2",
+      "status": "rejected"
+    },
+    {
+      "path": "room",
+      "value": "x",
+      "status": "rejected"
+    },
+    {
+      "path": "room",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "room",
+      "value": {},
+      "status": "rejected"
+    },
+    {
+      "path": "room",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "todayNotes",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "todayNotes",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "todayNotes",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "todayNotes",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "todayNotes",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "todayNotes",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "todayNotes",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "todayNotes",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "todayNotes",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "todayNotes",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "coins",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "coins",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "coins",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "coins",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "coins",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "coins",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "coins",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "coins",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "coins",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "coins",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "letterDay",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "letterDay",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "letterDay",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "letterDay",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "letterDay",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "letterDay",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "letterDay",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "letterDay",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "letterDay",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "letterDay",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lettersDone",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lettersDone",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lettersDone",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lettersDone",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lettersDone",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lettersDone",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lettersDone",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lettersDone",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lettersDone",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "lettersDone",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "garden",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "garden",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "garden",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "garden",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "garden",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "garden",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "garden",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "garden",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "garden",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "garden",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "homeLevel",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "homeLevel",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "homeLevel",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "homeLevel",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "homeLevel",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "homeLevel",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "homeLevel",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "homeLevel",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "homeLevel",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "homeLevel",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "journey",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "journey",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "journey",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "journey",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "journey",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "journey",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "journey",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "journey",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "journey",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "journey",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "churches",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "churches",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "churches",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "churches",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "churches",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "churches",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "churches",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "churches",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "churches",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "churches",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "chest",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "chest",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "chest",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "chest",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "chest",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "chest",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "chest",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "chest",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "chest",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "chest",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "stats",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "stats",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "stats",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "stats",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "stats",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "stats",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "stats",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "stats",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "stats",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "stats",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "romance",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "romance",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "romance",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "romance",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "romance",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "romance",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "romance",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "romance",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "romance",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "romance",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "careful",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "careful",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "careful",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "careful",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "careful",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "careful",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "careful",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "careful",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "careful",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "careful",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "sealed",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "sealed",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "sealed",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "sealed",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "sealed",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "sealed",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "sealed",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "sealed",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "sealed",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "sealed",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "notebook",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "notebook",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "notebook",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "notebook",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "notebook",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "notebook",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "notebook",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "notebook",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "notebook",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "notebook",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "child",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "child",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "child",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "child",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "child",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "child",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "child",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "child",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "child",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "child",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "found",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "found",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "found",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "found",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "found",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "found",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "found",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "found",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "found",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "found",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "achieved",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "achieved",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "achieved",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "achieved",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "achieved",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "achieved",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "achieved",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "achieved",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "achieved",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "achieved",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copyStats",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copyStats",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copyStats",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copyStats",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copyStats",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copyStats",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copyStats",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copyStats",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copyStats",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copyStats",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "godRecords",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "godRecords",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "godRecords",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "godRecords",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "godRecords",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "godRecords",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "godRecords",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "godRecords",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "godRecords",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "godRecords",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "bound",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "bound",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "bound",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "bound",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "bound",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "bound",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "bound",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "bound",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "bound",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "bound",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "dayLog",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "dayLog",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "dayLog",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "dayLog",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "dayLog",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "dayLog",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "dayLog",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "dayLog",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "dayLog",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "dayLog",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "homeShelf",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "homeShelf",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "homeShelf",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "homeShelf",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "homeShelf",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "homeShelf",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "homeShelf",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "homeShelf",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "homeShelf",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "homeShelf",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clock.day",
+      "value": null,
+      "status": "rejected"
+    },
+    {
+      "path": "clock.day",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clock.day",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clock.day",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clock.day",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clock.day",
+      "value": "2",
+      "status": "rejected"
+    },
+    {
+      "path": "clock.day",
+      "value": "x",
+      "status": "rejected"
+    },
+    {
+      "path": "clock.day",
+      "value": [],
+      "status": "rejected"
+    },
+    {
+      "path": "clock.day",
+      "value": {},
+      "status": "rejected"
+    },
+    {
+      "path": "clock.day",
+      "value": [
+        null
+      ],
+      "status": "rejected"
+    },
+    {
+      "path": "clock.minute",
+      "value": null,
+      "status": "rejected"
+    },
+    {
+      "path": "clock.minute",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clock.minute",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clock.minute",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clock.minute",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "clock.minute",
+      "value": "2",
+      "status": "rejected"
+    },
+    {
+      "path": "clock.minute",
+      "value": "x",
+      "status": "rejected"
+    },
+    {
+      "path": "clock.minute",
+      "value": [],
+      "status": "rejected"
+    },
+    {
+      "path": "clock.minute",
+      "value": {},
+      "status": "rejected"
+    },
+    {
+      "path": "clock.minute",
+      "value": [
+        null
+      ],
+      "status": "rejected"
+    },
+    {
+      "path": "player.x",
+      "value": null,
+      "status": "rejected"
+    },
+    {
+      "path": "player.x",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "player.x",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "player.x",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "player.x",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "player.x",
+      "value": "2",
+      "status": "rejected"
+    },
+    {
+      "path": "player.x",
+      "value": "x",
+      "status": "rejected"
+    },
+    {
+      "path": "player.x",
+      "value": [],
+      "status": "rejected"
+    },
+    {
+      "path": "player.x",
+      "value": {},
+      "status": "rejected"
+    },
+    {
+      "path": "player.x",
+      "value": [
+        null
+      ],
+      "status": "rejected"
+    },
+    {
+      "path": "player.y",
+      "value": null,
+      "status": "rejected"
+    },
+    {
+      "path": "player.y",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "player.y",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "player.y",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "player.y",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "player.y",
+      "value": "2",
+      "status": "rejected"
+    },
+    {
+      "path": "player.y",
+      "value": "x",
+      "status": "rejected"
+    },
+    {
+      "path": "player.y",
+      "value": [],
+      "status": "rejected"
+    },
+    {
+      "path": "player.y",
+      "value": {},
+      "status": "rejected"
+    },
+    {
+      "path": "player.y",
+      "value": [
+        null
+      ],
+      "status": "rejected"
+    },
+    {
+      "path": "player.path",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "player.path",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "player.path",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "player.path",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "player.path",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "player.path",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "player.path",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "player.path",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "player.path",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "player.path",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "player.facing",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "player.facing",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "player.facing",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "player.facing",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "player.facing",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "player.facing",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "player.facing",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "player.facing",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "player.facing",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "player.facing",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.name",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.name",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.name",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.name",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.name",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.name",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.name",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.name",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.name",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.name",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.look",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.look",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.look",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.look",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.look",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.look",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.look",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.look",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.look",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.look",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.frontHair",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.frontHair",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.frontHair",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.frontHair",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.frontHair",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.frontHair",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.frontHair",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.frontHair",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.frontHair",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "avatar.frontHair",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "needs.hunger",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "needs.hunger",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "needs.hunger",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "needs.hunger",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "needs.hunger",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "needs.hunger",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "needs.hunger",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "needs.hunger",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "needs.hunger",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "needs.hunger",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "flags.homeLevel",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "flags.homeLevel",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "flags.homeLevel",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "flags.homeLevel",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "flags.homeLevel",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "flags.homeLevel",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "flags.homeLevel",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "flags.homeLevel",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "flags.homeLevel",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "flags.homeLevel",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "inv.bread",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "inv.bread",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "inv.bread",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "inv.bread",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "inv.bread",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "inv.bread",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "inv.bread",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "inv.bread",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "inv.bread",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "inv.bread",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "inv.fig",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "inv.fig",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "inv.fig",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "inv.fig",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "inv.fig",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "inv.fig",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "inv.fig",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "inv.fig",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "inv.fig",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "inv.fig",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "garden.26,20",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "garden.26,20",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "garden.26,20",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "garden.26,20",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "garden.26,20",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "garden.26,20",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "garden.26,20",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "garden.26,20",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "garden.26,20",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "garden.26,20",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today.gathering",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today.gathering",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today.gathering",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today.gathering",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today.gathering",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today.gathering",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today.gathering",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today.gathering",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today.gathering",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today.gathering",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today.visitor",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today.visitor",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today.visitor",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today.visitor",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today.visitor",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today.visitor",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today.visitor",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today.visitor",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today.visitor",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "today.visitor",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "journal.0",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "journal.0",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "journal.0",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "journal.0",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "journal.0",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "journal.0",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "journal.0",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "journal.0",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "journal.0",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "journal.0",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.memories",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.memories",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.memories",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.memories",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.memories",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.memories",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.memories",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.memories",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.memories",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.memories",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.recent",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.recent",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.recent",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.recent",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.recent",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.recent",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.recent",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.recent",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.recent",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.recent",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.cool",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.cool",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.cool",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.cool",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.cool",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.cool",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.cool",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.cool",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.cool",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.cool",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.promises",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.promises",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.promises",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.promises",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.promises",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.promises",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.promises",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.promises",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.promises",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "life.promises",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.book",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.book",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.book",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.book",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.book",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.book",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.book",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.book",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.book",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.book",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.at",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.at",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.at",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.at",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.at",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.at",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.at",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.at",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.at",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.at",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.draft",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.draft",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.draft",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.draft",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.draft",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.draft",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.draft",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.draft",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.draft",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.draft",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.verses",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.verses",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.verses",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.verses",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.verses",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.verses",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.verses",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.verses",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.verses",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "copy.verses",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "hearts.baker",
+      "value": null,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "hearts.baker",
+      "value": -1,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "hearts.baker",
+      "value": 0,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "hearts.baker",
+      "value": 0.5,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "hearts.baker",
+      "value": 42,
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "hearts.baker",
+      "value": "2",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "hearts.baker",
+      "value": "x",
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "hearts.baker",
+      "value": [],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "hearts.baker",
+      "value": {},
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    },
+    {
+      "path": "hearts.baker",
+      "value": [
+        null
+      ],
+      "status": "accepted",
+      "reload": true,
+      "frame": "ok",
+      "finiteCoins": true
+    }
+  ]
+}

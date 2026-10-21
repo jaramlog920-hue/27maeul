@@ -1,5 +1,6 @@
-import { featureAccess, featureHint } from '../../engine/feature-rules'
-import { libraryGrowth, libraryPayRate } from '../../engine/progression'
+import { featureAccess, featureHint, nextUnlock } from '../../engine/feature-rules'
+import { FEATURE_NAME } from '../play/GameGuide'
+import { libraryGrowth, libraryPayRate, NT_CHAPTER_COUNTS } from '../../engine/progression'
 import { libraryBookCount } from '../../engine/game'
 // 마을 서고 안: 서고 선반 전경(신약 n/27 — 처음엔 휑하고 권이 늘수록 찬다), 복음서 방 선반과 잠긴 방들 (설계 §2.1.1, 계획 14 작업 4)
 import { useState } from 'react'
@@ -8,7 +9,7 @@ import { fill, T } from '../../content/text'
 import { openDoorsFor } from '../../engine/books'
 import { canLibraryRead, canTeachVisitor, LIBRARY_READ_PRICE, librarianCandidates, librarianId, setLibrarian, teachVisitor, todaysVisitor, type GameState } from '../../engine/game'
 import { saveGame } from '../../engine/save'
-import { GOSPELS } from '../../engine/types'
+import { BOOKS, GOSPELS } from '../../engine/types'
 import { libraryVisitorTile } from '../../engine/library-visitor'
 import { PiecePicker } from './PiecePicker'
 import { useGame } from '../../store/game-store'
@@ -46,9 +47,10 @@ function LibraryOps() {
         ))}
         {current && <button onClick={() => apply(setLibrarian(useGame.getState().game, null))}>{t('libraryOps.release')}</button>}
       </div>
-      {visitor && canTeachVisitor(game) && visitorInLibrary && !teaching && (
+      {visitor && canTeachVisitor(game) && !teaching && (
         <div className="actions menu">
-          <button className="primary" onClick={() => setTeaching(true)}>{t('libraryOps.teach')}</button>
+          {/* 손님이 서고에 없는 때(9–17시 밖)는 흐린 채로, 누르면 까닭 한 줄 (2026-10-21 사용자: 단추가 말없이 사라졌다) */}
+          <button className="primary" aria-disabled={!visitorInLibrary} onClick={() => (visitorInLibrary ? setTeaching(true) : useGame.getState().say(t('libraryOps.teachHours'), 2800))}>{t('libraryOps.teach')}</button>
         </div>
       )}
       {teaching && (
@@ -96,6 +98,25 @@ function Guestbook() {
   )
 }
 
+/** 남은 장을 책별로: "히브리서 11·12장, 요한계시록 20–22장" (마지막 열 장 — 2026-10-21 점검: 어느 책이 남았는지가 가장 궁금했다) */
+function remainingByBook(game: GameState): string {
+  const parts: string[] = []
+  for (const b of BOOKS) {
+    const done = new Set(game.progress[b]?.completed ?? [])
+    const left = Array.from({ length: NT_CHAPTER_COUNTS[b] }, (_, i) => i + 1).filter((c) => !done.has(c))
+    if (!left.length) continue
+    const runs: string[] = []
+    for (let i = 0; i < left.length; ) {
+      let j = i
+      while (j + 1 < left.length && left[j + 1] === left[j] + 1) j++
+      runs.push(j - i >= 2 ? `${left[i]}–${left[j]}` : left.slice(i, j + 1).join('·'))
+      i = j + 1
+    }
+    parts.push(`${BOOK_NAME[b] ?? b} ${runs.join('·')}장`)
+  }
+  return parts.join(', ')
+}
+
 export function Library() {
   const game = useGame(s => s.game)
   const chapters = libraryGrowth(game).completedChapters
@@ -119,6 +140,12 @@ export function Library() {
       <ShelfPicture shelved={shelved} bound={bound} />
       {chapters >= 7 && <div className="library-manuscripts" role="img" aria-label={`완료한 ${chapters}장의 기록 꾸러미`}><span className="manuscript-stack" aria-hidden="true"><i /><i /><i /></span><small>필사한 기록 {chapters}장</small></div>}
       <p className="hint">{T.library.notice}</p>
+      {/* 마지막 열 장 (250장): 남은 장 수 · 마을 기록 책 (230장) — 2026-10-21 */}
+      {featureAccess(game, 'finale') === 'full' && !game.flags.growthLegacy && chapters < 260 && <p className="hint">{t('villageBook.left', { n: 260 - chapters })} · {remainingByBook(game)}</p>}
+      {(() => { const next = game.flags.growthVersion && !game.flags.growthLegacy ? nextUnlock(game) : null; return next ? <p className="hint">{t('library.nextUnlock', { name: FEATURE_NAME[next.id], n: next.left })}</p> : null })()}
+      {featureAccess(game, 'villageBook') === 'full' && (
+        <div className="actions menu"><button onClick={() => useGame.getState().open({ kind: 'villageBook' })}>{t('villageBook.open')}</button></div>
+      )}
       <h3>{T.library.gospelRoom}</h3>
       <ul className="library-shelf">
         {/* 복음서 방 선반은 네 복음서만 — 사도행전은 자기 방에 꽂는다 (계획 5 작업 5) */}

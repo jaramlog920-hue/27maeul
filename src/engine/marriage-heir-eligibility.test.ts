@@ -1,4 +1,5 @@
 // 기존 생활 시나리오는 개편 이전 저장의 권한으로 검증한다. 새 해금은 late-growth.test.ts에서 검증한다.
+import { slotPerson } from './gen-growth'
 import { legacyGame as newGame } from './growth-test-support'
 import { afterEach, expect, it } from 'vitest'
 import { CONTENT, PEOPLE } from '../content/catalog'
@@ -48,16 +49,16 @@ it('honors the 14-day resident dating cooldown after breaking up with an heir', 
   expect(next.relations[relationId('g-0001', 'g-0002')]?.stage).toBe('friend')
 })
 
-it('keeps the heir cooldown after saving and allows dating exactly 14 days later', () => {
+// 2026-10-21 사용자: 은퇴를 없앴다 — 헤어진 뒤 저장을 불러오면 은퇴 기록이 지워져 부모 이웃이 제 자리로 돌아온다
+// (내 연인·배우자인 동안만 그 자리를 남긴다)
+it('after breaking up with an heir and reloading, the parent neighbor returns to the slot', () => {
   const s = fixture()
-  const broken = breakUp({ ...s, romance: { ...s.romance, partner: 'rudy', stage: 'dating', since: 180 } }, 'rudy')
+  const dating = { ...s, romance: { ...s.romance, partner: 'rudy', stage: 'dating' as const, since: 180 } }
+  expect(deserialize(serialize(dating), CONTENT)!.gen?.retired?.rudy).toBeDefined()
+  const broken = breakUp(dating, 'rudy')
   const restored = deserialize(serialize(broken), CONTENT)!
-  for (const day of [201, 213]) {
-    const next = settleOneDay(restored.gen!, day, restored, CONTENT, {})
-    expect(next.relations[relationId('g-0001', 'g-0002')]?.stage).toBe('friend')
-  }
-  const next = settleOneDay(restored.gen!, 214, restored, CONTENT, {})
-  expect(next.relations[relationId('g-0001', 'g-0002')]?.stage).toBe('lover')
+  expect(restored.gen?.retired?.rudy).toBeUndefined()
+  expect(slotPerson(restored.gen, 'rudy')).toBe('rudy')
 })
 
 it('uses the same current-person rule for confession availability and acceptance', () => {

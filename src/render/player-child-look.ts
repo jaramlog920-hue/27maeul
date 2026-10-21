@@ -1,5 +1,5 @@
-import type { ChildStage } from '../engine/child'
-import { withLookDefaults, type FullAvatar } from '../engine/avatar'
+import type { Child, ChildStage } from '../engine/child'
+import { withLookDefaults, type Avatar, type FullAvatar } from '../engine/avatar'
 import type { GameState } from '../engine/game'
 
 /** Select existing art and height for the player's child. */
@@ -19,4 +19,10 @@ export function playerChildAvatar(game: Pick<GameState, 'child' | 'avatar' | 'lo
   const dressed = game.looks?.child
   if (dressed) return withLookDefaults({ ...dressed, skin: skin ?? dressed.skin })
   return withLookDefaults({ look: game.child?.look === 'boy' ? 'm' : 'f', name: game.child?.name ?? '', skin: skin ?? 1 })
+}
+
+/** A sibling keeps its own wardrobe when another child is selected. */
+export function familyChildAvatar(game: Pick<GameState, 'child' | 'avatar' | 'looks'>, child: Child): FullAvatar {
+  const dressed = child.born === game.child?.born ? game.looks?.child : child.wardrobe as Avatar | undefined
+  return playerChildAvatar({ ...game, child, looks: dressed ? { child: dressed } : undefined })
 }

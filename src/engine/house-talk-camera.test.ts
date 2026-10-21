@@ -12,6 +12,8 @@ const married = (homeLevel: GameState['homeLevel'], day: number): GameState => {
     ...s,
     homeLevel,
     clock: { ...s.clock, day },
+    // 아이방 부탁이 열린 진행 (110장 전엔 재촉하지 않는다 — 2026-10-21)
+    flags: { ...s.flags, growthLegacy: 1 },
     romance: { ...s.romance, partner: 'wendell', stage: 'married', marriedDay: 1, weddingDay: null },
   } as GameState
 }

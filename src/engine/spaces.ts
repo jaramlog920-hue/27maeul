@@ -178,7 +178,8 @@ export function moveInSpaces(spaces: readonly HomeSpace[], from: Pick<Furniture,
   const free = !spaces.some(s => s.id === `space:${b}`)
   return spaces.map(s => {
     if (!s.furniture.includes(a)) return s
-    const moved = { ...s, furniture: s.furniture.map(id => id === a ? b : id) }
+    const moved = { ...s, furniture: s.furniture.map(id => id === a ? b : id),
+      ...(s.at.x === from.x && s.at.y === from.y ? { at: { x: to.x, y: to.y } } : {}) }
     return free && s.id === `space:${a}` ? { ...moved, id: `space:${b}` } : moved
   })
 }

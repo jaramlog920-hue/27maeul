@@ -1,0 +1,1 @@
+const fs=require('fs');let p='src/audit/youth-activity-capacity-20261020.test.tsx',s=fs.readFileSync(p,'utf8').replace("import { CONTENT }", "import type { GameState } from '../engine/game'\nimport { CONTENT }").replace('function fixture(age=41){','function fixture(age=41):GameState{');fs.writeFileSync(p,s);

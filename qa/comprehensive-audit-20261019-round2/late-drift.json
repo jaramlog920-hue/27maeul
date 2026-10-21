@@ -1,0 +1,110 @@
+[
+  {
+    "path": "src/engine/furniture-autonomy.ts",
+    "bytes": 10685,
+    "sha256": "784da7f82c7047e1c46f3c744a986309ae8218a0bd8b32084378af9096391141",
+    "mtime": "2026-10-19T09:52:12.529Z"
+  },
+  {
+    "path": "src/engine/game.ts",
+    "bytes": 296978,
+    "sha256": "38881c18ee5a558cb5b739fa2f356097ab41288507c9ec260179ceedc8bc50a4",
+    "mtime": "2026-10-19T09:52:12.799Z"
+  },
+  {
+    "path": "src/engine/garden.test.ts",
+    "bytes": 3051,
+    "sha256": "ad5bdeb05e7d149b5c82f6a9b8d7a646ca5b03ab9b9e84cdf5ec0f74b00e4642",
+    "mtime": "2026-10-19T09:49:43.583Z"
+  },
+  {
+    "path": "src/engine/garden.ts",
+    "bytes": 3329,
+    "sha256": "de18796c0295c40271bd97dec9f487499fce04ce097668376d2f418ec23da124",
+    "mtime": "2026-10-19T09:45:44.930Z"
+  },
+  {
+    "path": "src/engine/newland-rooms.ts",
+    "bytes": 8515,
+    "sha256": "3da5b40e39d3a0eaa2c671b255e2d9f86454446060f5b18334937fc221884427",
+    "mtime": "2026-10-19T09:45:47.530Z"
+  },
+  {
+    "path": "src/engine/save.ts",
+    "bytes": 48176,
+    "sha256": "088b136057670e8846e4268ce45fccd6daecbc721dfe06383a57eee85d0808fb",
+    "mtime": "2026-10-19T09:48:38.614Z"
+  },
+  {
+    "path": "src/engine/world.test.ts",
+    "bytes": 17379,
+    "sha256": "f0b0afab122523691e2e6c2c83eabe21b6f82f463eab509dd685f7cebf0f0cb7",
+    "mtime": "2026-10-19T09:53:33.103Z"
+  },
+  {
+    "path": "src/engine/world.ts",
+    "bytes": 58903,
+    "sha256": "39477388afd63136812c71736a8d9d7b103e8010d3efbdbea14e3a35cdc94007",
+    "mtime": "2026-10-19T09:45:45.747Z"
+  },
+  {
+    "path": "src/engine/yard.ts",
+    "bytes": 3856,
+    "sha256": "9c858efb202c30bb3f3b1614b3934b7fe522cc863ee1e3ada6140889fd24288b",
+    "mtime": "2026-10-19T09:46:01.155Z"
+  },
+  {
+    "path": "src/features/play/DecorateBar.tsx",
+    "bytes": 7286,
+    "sha256": "b4103babb843afd33cf4f99544b183918b971a085eb8384db5b597e5a568715d",
+    "mtime": "2026-10-19T09:48:01.160Z"
+  },
+  {
+    "path": "src/features/play/DecorateButton.tsx",
+    "bytes": 1746,
+    "sha256": "d087bc3c684f330c1f5b5212436011057b2686c1e4b4dd4fedb07f32aca21636",
+    "mtime": "2026-10-19T09:48:00.476Z"
+  },
+  {
+    "path": "src/render/decor.ts",
+    "bytes": 9002,
+    "sha256": "553b4751e2a32a6fafa366e1609297ecd2d043f00894ca9fb1ee6e24ca8d2032",
+    "mtime": "2026-10-19T09:49:41.607Z"
+  },
+  {
+    "path": "src/render/renderer.ts",
+    "bytes": 179216,
+    "sha256": "70638d733f1d7d7f6023fed7095a90cdc33d6068ebcefd2ef5289e96de679d25",
+    "mtime": "2026-10-19T09:48:37.385Z"
+  },
+  {
+    "path": "src/store/game-store.ts",
+    "bytes": 152101,
+    "sha256": "57f59114d8ff81ee8de1798dace4aef730ff3ea9d4c8dd76deb29802b13e22de",
+    "mtime": "2026-10-19T09:49:42.941Z"
+  },
+  {
+    "path": "src/engine/outdoor-layout.ts",
+    "bytes": 833,
+    "sha256": "2dfa7aeb43190b09cb1d2db97e1cf4f3a1e455ae48fbee1ae1373a8cdc85ab33",
+    "mtime": "2026-10-19T09:45:21.041Z"
+  },
+  {
+    "path": "src/engine/outdoor.test.ts",
+    "bytes": 4180,
+    "sha256": "366489dde2e9a73807e0060c10e835c3a0b1089e90fb7f0bdfdb36bc55375a91",
+    "mtime": "2026-10-19T09:53:32.510Z"
+  },
+  {
+    "path": "src/engine/outdoor.ts",
+    "bytes": 3787,
+    "sha256": "6e8d71e5012d98d44b8473514da014f64d4ac58ebbefd20c34c77c51245f1b46",
+    "mtime": "2026-10-19T09:49:42.279Z"
+  },
+  {
+    "path": "src/features/play/OutdoorDecorate.test.tsx",
+    "bytes": 2345,
+    "sha256": "ad9d7c0a35680677c87e17dd9fb0dc2c96ab48582a2a72f373a576be9a795481",
+    "mtime": "2026-10-19T09:53:32.822Z"
+  }
+]

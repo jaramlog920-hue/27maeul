@@ -1,6 +1,6 @@
 import { canWorkDay, type WorkState } from './work-day'
 import { availability } from './plans'
-import { haveStock, notYet, passTime, playerTile, overflows, putAway, recordExperienceIn, useStock, type GameState } from './game'
+import { notYet, passTime, playerTile, overflows, putAway, recordExperienceIn, useStock, type GameState } from './game'
 import { npcTile } from './neighbors'
 import { startMini, stepMini, tapMini, isDone, type MiniState } from './minigame'
 import { FINISH_SKILL, SKILL_DEFS, SKILL_IDS, skillOf } from './skill-defs'
@@ -109,11 +109,17 @@ export function styleOf(s:SkillState,id:string):string {
 /** 개인 재료로 배운 물건 하나를 만든다 (재료가 정해진 기술만) */
 export function craftLearned(s:SkillState,id:string):SkillState {
   const def=SKILL_IDS.includes(id) ? SKILL_DEFS[id] : undefined
-  if(!def?.needs || !s.skills?.[id] || !haveStock(s,def.needs) || overflows(s,{[def.item]:1})) return s
+  if(!def?.needs || !s.skills?.[id] || !canCraftLearned(s,id)) return s
   const key=`skillFinish:${def.item}`
   const paid=useStock(s,def.needs)! as SkillState
   const next=putAway({...paid,flags:{...s.flags,[`skillMade:${def.item}`]:s.clock.day,[key]:s.flags[key]??1}},{[def.item]:1})
   return passTime(next,30)
+}
+export function canCraftLearned(s:SkillState,id:string):boolean {
+  const def=SKILL_IDS.includes(id) ? SKILL_DEFS[id] : undefined
+  if(!def?.needs || !s.skills?.[id]) return false
+  const paid=useStock(s,def.needs)
+  return !!paid && !overflows(paid,{[def.item]:1})
 }
 export const STOOL_NEEDS = SKILL_DEFS[FINISH_SKILL].needs!
 export const craftLearnedStool = (s:SkillState):SkillState => craftLearned(s,FINISH_SKILL)

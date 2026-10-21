@@ -1,0 +1,65 @@
+{
+  "status": "passed",
+  "partial": {
+    "inv": {
+      "reed": 1
+    },
+    "chest": {
+      "reed": 30
+    },
+    "modal": {
+      "kind": "storage",
+      "item": "linenCupboard"
+    },
+    "toast": null
+  },
+  "blocked": {
+    "inv": {
+      "reed": 1
+    },
+    "chest": {
+      "reed": 30
+    },
+    "modal": {
+      "kind": "storage",
+      "item": "linenCupboard"
+    },
+    "toast": "보관함에 더 넣을 수 없어요. 한 칸에 30개까지 넣을 수 있고, 도구는 가방에만 들어가요."
+  },
+  "restored": {
+    "inv": {
+      "reed": 1
+    },
+    "chest": {
+      "reed": 30
+    },
+    "modal": {
+      "kind": "storage",
+      "item": "linenCupboard"
+    },
+    "toast": null
+  },
+  "recovered": {
+    "inv": {},
+    "chest": {
+      "reed": 30
+    },
+    "modal": {
+      "kind": "storage",
+      "item": "linenCupboard"
+    },
+    "toast": null
+  },
+  "final": {
+    "inv": {},
+    "chest": {
+      "reed": 30
+    },
+    "modal": {
+      "kind": "storage",
+      "item": "linenCupboard"
+    },
+    "toast": null
+  },
+  "errors": []
+}

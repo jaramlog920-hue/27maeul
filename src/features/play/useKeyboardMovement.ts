@@ -10,7 +10,8 @@ const directions: Record<string, [number, number]> = {
 const inputTarget = (target: EventTarget | null) => target instanceof HTMLElement &&
   (target.isContentEditable || !!target.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="dialog"], [role="menu"]'))
 const blocked = (state: ReturnType<typeof useGame.getState>) =>
-  !!(state.modal || state.decorating || state.copyResult?.length || state.piecePopups.length || state.trip)
+  // 꾸미는 중에도 걸을 수 있다 (walk가 문 칸을 막는다 — 2026-10-21)
+  !!(state.modal || state.copyResult?.length || state.piecePopups.length || state.trip)
 
 export function useKeyboardMovement() {
   useEffect(() => {
@@ -31,6 +32,9 @@ export function useKeyboardMovement() {
       // 스페이스: 앞에 있는 이웃·물건을 누른 것처럼 (글 입력칸·창 안에서는 원래대로)
       if (event.code === 'Space' && !event.repeat) {
         const state = useGame.getState()
+        // 꾸미는 중에는 말 걸기·문 열기를 하지 않는다 (걷기만)
+        // 옮기는 중이면 고른 자리에 내려놓기 (조이스틱 가운데 단추와 같게)
+        if (state.decorating) { event.preventDefault(); if (state.decorMoving) state.press(); return }
         // 화면 위쪽 버튼에 초점이 남아 있으면 그 버튼이 눌리지 않게 한다
         event.preventDefault()
         if (document.activeElement instanceof HTMLElement && document.activeElement !== document.body) document.activeElement.blur()

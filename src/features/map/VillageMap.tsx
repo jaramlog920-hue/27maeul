@@ -1,5 +1,5 @@
-import { villageBookCount } from "../../engine/progression"
 // 마을 지도 (설정 → 마을 지도): 마을 전체를 한 장으로 펼쳐 보인다. 장소 이름과 지금 내 자리
+import { zoneBooks } from '../../engine/feature-rules'
 import { useEffect, useRef, useState } from 'react'
 import { neighborById } from '../../content/catalog'
 import { T } from '../../content/text'
@@ -125,7 +125,7 @@ export function VillageMap() {
   const away = (game.map ?? 'village') !== 'village'
   const at = away ? null : isHome(here) ? { x: housesNow().find((h) => h.id === 'home')!.doorX, y: housesNow().find((h) => h.id === 'home')!.y1 } : inside ? inside.door : here.y < VILLAGE_H ? here : null
   const pct = (x: number, y: number) => ({ left: `${((x + 0.5) / WIDTH) * 100}%`, top: `${((y + 0.5) / VILLAGE_H) * 100}%` })
-  const locked = lockedZones(villageBookCount(game))
+  const locked = lockedZones(zoneBooks(game))
   // 아직 이사 오지 않은 이웃의 집(덤불로 덮인 집)도 언제 열리는지 적는다 — 서고 권수 또는 마을 단계
   // 잠긴 구역 안에 있는 집은 구역 자물쇠 하나로 충분하다 (벌 치는 집 + 벌통 들판이 둘 다 6권으로 겹쳐 보이던 것)
   const inLockedZone = (h: House) => {

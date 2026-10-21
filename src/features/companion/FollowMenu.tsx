@@ -5,14 +5,16 @@ import { fill, T } from '../../content/text'
 import { favoriteSpot, favoriteToy } from '../../engine/companion'
 import { petHabitNow, petHabitText } from '../../content/pet-text'
 import { useGame } from '../../store/game-store'
-import { BABY_CARE, type BabyCare } from '../../engine/game'
+import { BABY_CARE, playerLook, type BabyCare } from '../../engine/game'
+import { kidPersona } from '../../engine/persona'
+import { PersonaCard } from './PersonaCard'
 
 /** 아기 돌보기 단추 (2026-10-12 도트) */
 const BABY_CARE_LABEL: Record<BabyCare, string> = { hold: '안아 주기', soothe: '살살 달래기', lay: '요람에 눕히기', tuck: '이불 덮어 주기' }
 
 export function FollowMenu({ who }: { who: 'pet' | 'child' }) {
   const game = useGame((s) => s.game)
-  const { petCompanion, petActivity, keepCompanion, keepChild, closeModal, open, careBaby } = useGame.getState()
+  const { petCompanion, petActivity, keepCompanion, keepChild, closeModal, open, careBaby, setKidCatch } = useGame.getState()
   if (who === 'pet') {
     const c = game.companion
     if (!c) return null
@@ -77,8 +79,12 @@ export function FollowMenu({ who }: { who: 'pet' | 'child' }) {
   return (
     <div className="dialog follow" role="dialog" aria-label={k.name}>
       <h2>{k.name}</h2>
-      {k.job && <p>{JOB_NAME[k.job]} · 마을에 남아 산다</p>}
+      {/* 진로를 정한 뒤에만 (정하기 전엔 추천일 뿐 — 2026-10-21 점검) */}
+      {k.job && k.jobConfirmed !== false && !k.left && <p>{JOB_NAME[k.job]} · 마을에 남아 산다</p>}
       <p className="hint">{now}</p>
+      <PersonaCard persona={kidPersona(k, day)} who={childStage(k, day) === 'adult' ? 'grown' : 'kid'} salt={`kid:${k.born}`}
+        parent={playerLook(game) === 'm' ? '아빠' : '엄마'} job={k.job ? JOB_NAME[k.job] : undefined} onCatch={(w) => setKidCatch(k.born, w)}
+        growing={!k.temper && childStage(k, day) !== 'helper' && childStage(k, day) !== 'adult'} />
       <div className="actions column">
         {!k.job && <button onClick={() => open({ kind: 'kidTime' })}>{T.family.time.open}</button>}
         <button className={mode === 'follow' ? 'primary' : ''} disabled={mode === 'follow'} onClick={() => keepChild('follow')}>

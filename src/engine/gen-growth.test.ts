@@ -23,7 +23,7 @@ function family(d0 = 10): GenState {
   }
 }
 const run = (g: GenState, from: number, to: number) => {
-  for (let d = from; d <= to; d++) g = settleGrowth(g, d)
+  for (let d = from; d <= to; d++) g = settleGrowth(g, d, { generations: true, retirement: true }) // 예전 세대교체 갈래 시험 (게임은 2026-10-21부터 끈 채로 부른다)
   return g
 }
 
@@ -94,12 +94,14 @@ describe('세대교체', () => {
     expect((T.gen.farewell.letters as string[]).length).toBe(FAREWELL_LETTERS)
     const back = deserialize(serialize(s), CONTENT)!
     expect(back.farewells).toEqual(s.farewells)
-    expect(back.gen!.retired?.rudy).toEqual({ heir: 'g-0001', day: gen.retired.rudy.day })
+    // 2026-10-21: 은퇴를 없애 불러오면 은퇴 기록은 지워지고 부모가 제 자리로 (작별 편지·선물 기록은 남는다)
+    expect(back.gen!.retired?.rudy).toBeUndefined()
     expect(back.gen!.log).toEqual(gen.log)
     expect(back.flags[`farewell:rudy`]).toBe(s.flags[`farewell:rudy`])
     expect(back.inv).toEqual(s.inv)
     expect(back.collected).toEqual(s.collected)
-    expect(companionsOf(back.gen, 'rudy')[0].retiredParent).toBe('rudy')
+    // 은퇴 기록이 지워져 부모가 자리 주인 — 곁에 은퇴한 부모로 서지 않는다
+    expect(companionsOf(back.gen, 'rudy').some((c) => c.retiredParent)).toBe(false)
     const nextGen = settleGrowth(back.gen!, r + 1000)
     const next = farewellMorning({ ...back, gen: nextGen, farewellPopup: undefined }, CONTENT)
     expect(next.farewellPopup).toBeUndefined()

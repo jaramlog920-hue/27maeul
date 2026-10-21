@@ -1,0 +1,1 @@
+import{$i as e}from"./expansion-prop-art-b8RdT7ee.js";import{h as t,yt as n}from"./global-DG6DB_ex.js";function r(r){let i=e(r).state;n(i),t.setState({game:i})}export{r as t};

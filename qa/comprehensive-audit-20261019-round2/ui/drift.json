@@ -1,0 +1,100 @@
+[
+  {
+    "file": "src/render/back-hair-additions.ts",
+    "currentLines": 190
+  },
+  {
+    "file": "src/render/character-details.ts",
+    "priorCoverage": "complete-structural-parse-inventory-only",
+    "currentLines": 255
+  },
+  {
+    "file": "src/render/front-hair-additions.ts",
+    "currentLines": 39
+  },
+  {
+    "file": "src/render/renderer.ts",
+    "priorCoverage": "focused-human-source-review-plus-structural",
+    "currentLines": 3389
+  },
+  {
+    "file": "src/render/sprites.ts",
+    "priorCoverage": "complete-structural-parse-inventory-only",
+    "currentLines": 694
+  },
+  {
+    "file": "src/render/story-newland-base.ts",
+    "priorCoverage": "complete-structural-parse-inventory-only",
+    "currentLines": 46
+  },
+  {
+    "file": "src/render/world-ground-art.ts",
+    "priorCoverage": "complete-structural-parse-inventory-only",
+    "currentLines": 244
+  },
+  {
+    "file": "src/content/lang/ko.json",
+    "priorCoverage": "complete-json-syntax-parse-only",
+    "currentLines": 244
+  },
+  {
+    "file": "src/content/life-text.json",
+    "priorCoverage": "complete-json-syntax-parse-only",
+    "currentLines": 9138
+  },
+  {
+    "file": "src/content/people.json",
+    "priorCoverage": "complete-json-syntax-parse-only",
+    "currentLines": 33407
+  },
+  {
+    "file": "src/content/piece-moods.ts",
+    "priorCoverage": "focused-human-source-review-plus-structural",
+    "currentLines": 63
+  },
+  {
+    "file": "src/features/play/DecorateBar.tsx",
+    "priorCoverage": "focused-human-source-review-plus-structural",
+    "currentLines": 108
+  },
+  {
+    "file": "src/features/map/VillageMap.tsx",
+    "priorCoverage": "focused-human-source-review-plus-structural",
+    "currentLines": 223
+  },
+  {
+    "file": "src/features/journal/Journal.tsx",
+    "priorCoverage": "focused-human-source-review-plus-structural",
+    "currentLines": 434
+  },
+  {
+    "file": "src/features/scene/AuthoredStoryScene.tsx",
+    "priorCoverage": "focused-human-source-review-plus-structural",
+    "currentLines": 158
+  },
+  {
+    "file": "src/features/scene/SceneReplay.tsx",
+    "priorCoverage": "focused-human-source-review-plus-structural",
+    "currentLines": 84
+  },
+  {
+    "file": "src/features/scene/SharedBackgroundStoryScene.tsx",
+    "priorCoverage": "focused-human-source-review-plus-structural",
+    "currentLines": 31
+  },
+  {
+    "file": "src/features/scene/StarsScene.tsx",
+    "priorCoverage": "focused-human-source-review-plus-structural",
+    "currentLines": 184
+  },
+  {
+    "file": "src/engine/room.ts",
+    "priorCoverage": "focused-human-source-review-plus-structural",
+    "currentLines": 298
+  },
+  {
+    "file": "src/features/ModalLayer.tsx",
+    "priorCoverage": "focused-human-source-review-plus-structural",
+    "currentLines": 279
+  }
+]

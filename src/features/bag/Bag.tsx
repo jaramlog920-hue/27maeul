@@ -191,9 +191,14 @@ const BAG_TABS: [BagTab, string][] = [
 export function Bag({ tab: first = 'items' }: { tab?: BagTab }) {
   const [tab, setTab] = useState<BagTab>(first)
   const closeModal = useGame((s) => s.closeModal)
+  const resumeKid=useGame(s=>s.modal?.kind==='bag'?s.modal.resumeKid:undefined)
   return (
     <div className="dialog bag" role="dialog" aria-label={T.ui.bag}>
       <h2>{T.ui.bag}</h2>
+      {resumeKid&&<section aria-label="함께하기 다시 받기">
+        <p className="hint">물건을 골라 공간을 확보한 뒤 다시 받아 주세요. 활동 시간과 횟수는 아직 쓰지 않았어요.</p>
+        <button className="primary" onClick={()=>useGame.getState().retryKidAct()}>공간 확인하고 다시 받기</button>
+      </section>}
       <div className="tabs" role="tablist">
         {BAG_TABS.map(([id, label]) => (
           <button key={id} role="tab" aria-selected={tab === id} className={tab === id ? 'on' : ''} onClick={() => setTab(id)}>

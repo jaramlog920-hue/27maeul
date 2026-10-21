@@ -1,4 +1,6 @@
 // 기존 생활 시나리오는 개편 이전 저장의 권한으로 검증한다. 새 해금은 late-growth.test.ts에서 검증한다.
+import { kidPersona, likedActs } from './persona'
+import { LIKED_CLOSE_BONUS } from './family'
 import { legacyGame as newGame } from './growth-test-support'
 import { CONTENT } from '../content/catalog'
 import { forbiddenIn } from '../content/forbidden'
@@ -39,7 +41,8 @@ describe('아이와 함께 보내는 시간 (계획 12)', () => {
     const r = run(s, 'read')
     expect(totalXp(r.state.child!.stats.wit)).toBeGreaterThan(totalXp(s.child!.stats.wit))
     expect(totalXp(r.state.child!.stats.wit) - totalXp(s.child!.stats.wit)).toBeLessThan(15)
-    expect(r.state.child!.close).toBe(3)
+    // 좋아하는 함께하기면 한 칸 더 (2026-10-21 성격)
+    expect(r.state.child!.close).toBe(3 + (likedActs(kidPersona(s.child!, s.clock.day)).has('read') ? LIKED_CLOSE_BONUS : 0))
     expect(r.state.clock.minute).toBeGreaterThan(s.clock.minute)
     expect(r.state.coins).toBe(s.coins)
     // 플레이어 능력치는 그대로 (신앙 수치 같은 것도 없다)

@@ -1,0 +1,462 @@
+[
+  {
+    "file": "scripts\\all-assets-preview-static.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\audit-balance-2026-10-13.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\audit-table.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\build-bible-subset.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\build-chapter-guides.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\build-connections.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\build-god-records.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\build-journey.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\build-krv-pieces.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\build-letters.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\build-love-commands.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\build-nt-content.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\build-ot-guides.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\build-ot.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\build-pieces.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\build-verse-hashes.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\chapter-guides-parse.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\classify-event-art.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\connections-parse.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\dump-ref.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-addition-furniture-motion.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-adult-bed.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-all-assets-preview.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-archive-followup.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-baby-care-motion.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-bg-materials.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-book-reopen.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-cooking-art.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-couple-bed.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-cozy-furniture.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-craft-followup.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-eating-art.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-elder-art.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-event-art.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-event-life-motion.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-expanded-home.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-expansion-art.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-furniture-use-motion.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-generated-elders.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-hair-additions.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-home-space-art.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-household-furniture.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-kitchen-pets.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-library-art.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-life-additions.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-lodging-art.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-newland-building-upgrades.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-old-village-art.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-paired-events.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-pet-size-review.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-quiet-life.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-room-furniture.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-settlement-guests.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-side-hair.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-spouse-rooms.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-village-followup.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\export-work-details.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\fetch-krv-headings.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\god-records-parse.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\journey-parse.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\letters-parse.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\list-long-choices.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\make-icons.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\mark-close-buttons.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\measure-startup.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\nt-guides-honorific-past.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\ot-chapter-anchors.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\ot-guides-honorific-past.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\ot-guides-parse.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\people-more\\build-more.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\people-more\\hearts-lines.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\people-more\\motions.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\people-more\\romance-more.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\pixel-png.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\pixel-ts-loader.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\png-read.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\preview-cradle-baby.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\probe-bg-materials.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\probe-building-entries.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\run-audit.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\serve-baby-care-preview.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\shorten-choices.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\verify-chapter-guides-allowed.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\verify-chapter-guides.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\verify-connections.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\verify-god-records.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\verify-journey.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\verify-kitchen-pets.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\verify-letters.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\verify-ot-guides.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\verify-ot.mjs",
+    "status": 0,
+    "error": ""
+  },
+  {
+    "file": "scripts\\verify-pieces.mjs",
+    "status": 0,
+    "error": ""
+  }
+]

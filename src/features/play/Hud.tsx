@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { createPortal } from 'react-dom'
 import { CONTENT, verseNumbers } from '../../content/catalog'
 import { fill, T } from '../../content/text'
 import { isMarketDay, weatherOf } from '../../engine/calendar'
@@ -121,10 +122,12 @@ export function AwardBanner() {
 
 export function Toast() {
   const toast = useGame((s) => s.toast)
+  const modalOpen = useGame((s) => s.modal !== null)
   if (!toast) return null
-  return (
-    <div className="toast" role="status">
+  const message = (
+    <div className={modalOpen ? 'toast toast-over-modal' : 'toast'} role="status">
       {toast.text}
     </div>
   )
+  return modalOpen ? createPortal(message, document.body) : message
 }

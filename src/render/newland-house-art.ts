@@ -33,8 +33,35 @@ export function doorCenter(facing: Facing, width: number): number {
   return mainOffset(width) * T + 32
 }
 
-/** 집 한 채를 그린다 (g의 원점이 그림 왼쪽 위, 가로 width칸 × 세로 4칸) */
-export function drawNewlandHouse(g: CanvasRenderingContext2D, kind: BuildKind, facing: Facing, look: HouseLook = DEFAULT_LOOK, winter = false, width = 4): void {
+/**
+ * 꿈터 간판 그림 (2026-10-21 시안): 일마다 7×6 무늬 — 글자 a 진한 색, b 밝은 색, c 나무색. 손님집 하트 간판과 같은 네모 판 안에
+ */
+export const DREAM_SIGNS: Record<string, { rows: string[]; a: string; b: string }> = {
+  cook: { rows: ['..c....', '.aaaaa.', 'aaaaaaa', '.abbba.', '.aaaaa.', '..aaa..'], a: '#7d6a5a', b: '#e9c98f' },
+  woodworker: { rows: ['ccccccc', 'cbcbcbc', 'ccccccc', '...a...', '..aaa..', '...a...'], a: '#8a8a8a', b: '#d9b98a' },
+  potter: { rows: ['..aaa..', '.a...a.', '.aaaaa.', 'aaaaaaa', 'aaaaaaa', '.aaaaa.'], a: '#b8734f', b: '#e6c3a0' },
+  weaver: { rows: ['c.....c', 'caaaaac', 'cbbbbbc', 'caaaaac', 'cbbbbbc', 'c.....c'], a: '#8a6fa0', b: '#e5c7d6' },
+  fisher: { rows: ['.......', '.a...a.', 'aaaa.aa', 'aabaaaa', 'aaaa.aa', '.a...a.'], a: '#5e8fa6', b: '#ffffff' },
+  shipwright: { rows: ['...c...', '...cb..', '...cbb.', '...cbbb', 'aaaaaaa', '.aaaaa.'], a: '#9a7350', b: '#f1e6cf' },
+  herbalist: { rows: ['..b.b..', '.bbbbb.', '..bbb..', '...a...', '.aaaaa.', '.aaaaa.'], a: '#a98d6b', b: '#79a06a' },
+  gardener: { rows: ['.a.a.a.', 'aaaaaaa', '.a.b.a.', '...b...', '..bbb..', '...b...'], a: '#d9809a', b: '#79a06a' },
+  merchant: { rows: ['..aaa..', '.a...a.', 'aaaaaaa', 'abbbbba', 'abbbbba', 'aaaaaaa'], a: '#9a7350', b: '#e9c98f' },
+  scribe: { rows: ['.....b.', '....bb.', '...bb..', '..bb...', '.bb....', 'aaaaaa.'], a: '#5a6b84', b: '#e6dcc4' },
+  teaKeeper: { rows: ['..b.b..', '.......', 'aaaaaa.', 'aaaaaaa', 'aaaaaa.', '.aaaa..'], a: '#8fae9a', b: '#c9c9c9' },
+  painter: { rows: ['.aaaa..', 'aaaaaa.', 'abaaaac', 'aaaa.cc', '.aa..c.', '....c..'], a: '#d6b48a', b: '#d9707e' },
+}
+
+/** 간판 무늬가 없는 일은 가까운 일의 무늬로 */
+const SIGN_ALIAS: Record<string, string> = { scholar: 'scribe', sailor: 'shipwright', traveler: 'merchant', instrumentMaker: 'woodworker' }
+/** 이 집에 다는 간판의 무늬 (간판을 달지 않았거나 무늬가 없으면 undefined) */
+export function signFor(kind: BuildKind, look: HouseLook | undefined, job: string | null | undefined): string | undefined {
+  if (!look?.sign) return undefined
+  const id = kind === 'weaver' ? 'weaver' : kind === 'gallery' ? 'painter' : kind === 'kidWork' && job ? SIGN_ALIAS[job] ?? job : undefined
+  return id && DREAM_SIGNS[id] ? id : undefined
+}
+
+/** 집 한 채를 그린다 (g의 원점이 그림 왼쪽 위, 가로 width칸 × 세로 4칸). sign: 꿈터 간판의 일 (없으면 간판 없음) */
+export function drawNewlandHouse(g: CanvasRenderingContext2D, kind: BuildKind, facing: Facing, look: HouseLook = DEFAULT_LOOK, winter = false, width = 4, sign?: string): void {
   const roof = (HOUSE_ROOFS[look.roof] ?? HOUSE_ROOFS[0]).colors
   const walls = HOUSE_WALLS[look.wall] ?? HOUSE_WALLS[0]
   const windowShape = HOUSE_WINDOWS[look.window ?? 0]?.id ?? 'square'
@@ -144,19 +171,33 @@ export function drawNewlandHouse(g: CanvasRenderingContext2D, kind: BuildKind, f
     HEART.forEach((row, y) => [...row].forEach((c, x) => { if (c === '#') r('#d9707e', bx + 3 + x, top + 3 + y, 1, 1) }))
     r('#ffffff', bx + 4, top + 4, 1, 1)
   }
+  const art = sign ? DREAM_SIGNS[sign] : undefined
+  if (art) {
+    // 꿈터 간판: 손님집 간판과 같은 판, 안에 그 일의 무늬
+    const bx = dc + 14 + 13 <= W - 2 ? dc + 14 : dc - 27
+    const top = WALL_TOP + 3
+    r('#dcbf94', bx, top, 13, 12)
+    r('#ead6b2', bx + 1, top + 1, 11, 10)
+    r('#f6e6c4', bx + 2, top + 2, 9, 8)
+    r('#fbf1da', bx + 2, top + 2, 9, 1)
+    art.rows.forEach((row, y) => [...row].forEach((c, x) => {
+      const color = c === 'a' ? art.a : c === 'b' ? art.b : c === 'c' ? '#9a7350' : null
+      if (color) r(color, bx + 3 + x, top + 3 + y, 1, 1)
+    }))
+  }
 }
 
 const cache = new Map<string, HTMLCanvasElement>()
 /** 집 그림 한 장 (같은 모습은 다시 그리지 않는다) */
-export function newlandHouseCanvas(kind: BuildKind, facing: Facing, look: HouseLook = DEFAULT_LOOK, winter = false, width = 4): HTMLCanvasElement {
-  const key = `${kind}/${facing}/${look.roof}/${look.wall}/${look.window ?? 0}/${look.trim ?? 0}/${width}/${winter ? 'w' : ''}`
+export function newlandHouseCanvas(kind: BuildKind, facing: Facing, look: HouseLook = DEFAULT_LOOK, winter = false, width = 4, sign?: string): HTMLCanvasElement {
+  const key = `${kind}/${facing}/${look.roof}/${look.wall}/${look.window ?? 0}/${look.trim ?? 0}/${width}/${winter ? 'w' : ''}/${sign ?? ''}`
   let c = cache.get(key)
   if (c) return c
   c = document.createElement('canvas')
   c.width = width * T
   c.height = HOUSE_ART
   const g = c.getContext('2d')
-  if (g) drawNewlandHouse(g, kind, facing, look, winter, width)
+  if (g) drawNewlandHouse(g, kind, facing, look, winter, width, sign)
   cache.set(key, c)
   return c
 }

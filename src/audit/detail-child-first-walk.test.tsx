@@ -1,4 +1,6 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
+import { kidPersona, likedActs } from '../engine/persona'
+import { LIKED_CLOSE_BONUS } from '../engine/family'
 import { CONTENT } from '../content/catalog'
 import { T } from '../content/text'
 import { childMode, childStage, CRADLE_SPOT, newChild } from '../engine/child'
@@ -122,7 +124,7 @@ describe('007 아기에서 걷는 아이가 되는 아침', () => {
     expect(useGame.getState().game).toBe(morning)
     act(() => useGame.getState().kidAct('read'))
     const after = useGame.getState().game
-    expect(after.child!.close).toBe((morning.child!.close ?? 0) + 3)
+    expect(after.child!.close).toBe((morning.child!.close ?? 0) + 3 + (likedActs(kidPersona(morning.child!, morning.clock.day)).has('read') ? LIKED_CLOSE_BONUS : 0))
     expect(after.flags.kidActs).toBe(1)
     expect(after.child!.stats.wit).not.toEqual(morning.child!.stats.wit)
     expect(useGame.getState().modal).toMatchObject({ kind: 'kidTime', done: { act: 'read' } })

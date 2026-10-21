@@ -140,6 +140,7 @@ function normalizeShapes(s: GameState): GameState {
   return {
     ...s,
     coins: fin(s.coins) ? Math.max(0, Math.floor(s.coins)) : 0,
+    inv: Object.fromEntries(Object.entries(isObj(s.inv) ? s.inv : {}).filter(([, n]) => fin(n) && n >= 1).map(([id, n]) => [id, Math.floor(n as number)])),
     clock: { ...s.clock, day: Math.max(1, Math.floor(s.clock.day)), minute: Math.max(0, s.clock.minute) },
     hearts: nums(s.hearts, 0, 100),
     flags: nums(s.flags),
@@ -298,7 +299,20 @@ export function sanitize(s: GameState, content: GameContent): GameState {
       return [id, def?.look && p.look !== def.look ? { ...p, look: def.look } : p]
     })),
   }
-  const gen = looked ? repairHouseholdHomes(looked, content) : undefined
+  const repaired = looked ? repairHouseholdHomes(looked, content) : undefined
+  // 은퇴는 없앴다 (2026-10-21 사용자): 예전 저장의 은퇴·견습 기록은 지운다 — 부모 이웃이 제 자리로 돌아오고 자녀는 평범한 주민이 된다.
+  // 내 연인·배우자가 그 자리를 이은 자녀면, 그 자리만 그대로 둔다 (짝이 바뀌지 않게)
+  const keepSlot = romance.partner
+  const only = <V,>(rec: Record<string, V> | undefined) => Object.fromEntries(Object.entries(rec ?? {}).filter(([slot]) => slot === keepSlot))
+  const unretire = (g: NonNullable<typeof repaired>) => {
+    const { retired: _r, heirs: _h, ...rest } = g
+    void _r
+    void _h
+    const retired = only(g.retired), heirs = only(g.heirs)
+    // 빈 칸은 남기지 않는다 (다시 불러와도 같은 모양이 되게)
+    return { ...rest, ...(Object.keys(retired).length ? { retired } : {}), ...(Object.keys(heirs).length ? { heirs } : {}) }
+  }
+  const gen = repaired && (Object.keys(repaired.retired ?? {}).length || Object.keys(repaired.heirs ?? {}).length) ? unretire(repaired) : repaired
   // 건물 안 가구 (작업 7): 옛 저장은 없음. 주인 없는 방·맞지 않는 가구는 가방으로
   const fitted = sanitizeRooms(_rawRooms, { newland }, inv)
   void _inv
@@ -439,6 +453,12 @@ export function sanitize(s: GameState, content: GameContent): GameState {
     garden: moveGardenPlots(s.garden ?? {}),
     rereads: (s.rereads ?? []).filter((id) => known.has(id)),
     journal: s.journal.map((e) => ({ ...e, heard: (Array.isArray(e.heard) ? e.heard : []).filter((id) => known.has(id)) })),
+  }
+  // childPet은 집안 표식 (2026-10-20) — 옛 저장에서 동생의 kidFlags에 들어간 것은 집으로 꺼낸다
+  const petKid = out.siblings?.find((k) => k.kidFlags?.childPet !== undefined)
+  if (petKid) {
+    out.flags = { ...out.flags, childPet: out.flags.childPet ?? petKid.kidFlags!.childPet }
+    out.siblings = out.siblings!.map((k) => { if (k.kidFlags?.childPet === undefined) return k; const { childPet: _p, ...kf } = k.kidFlags; void _p; return { ...k, kidFlags: kf } })
   }
   // 집 책장 (계획 14 작업 8): 옛 저장(칸이 없던 때)은 빈 책장. 다 쓴 책(제본했거나 꽂은 책)만, 몇 권까지
   const { map: _map, mapAt: _mapAt, ...rest } = out

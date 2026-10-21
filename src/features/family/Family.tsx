@@ -1,5 +1,7 @@
 // 메뉴 → 가족 (2026-09-30 사용자): 배우자·아이·동물 친구와 가족 앨범을 한 화면에
-import { neighborById } from '../../content/catalog'
+import { temperName } from '../../engine/persona'
+import { CONTENT, neighborById } from '../../content/catalog'
+import { lookOf } from '../../engine/game'
 import { T, withSubject } from '../../content/text'
 import { ADULT_JOBS, childHome, childMode, childStage, leavesVillage, type AdultJob, type ChildStage } from '../../engine/child'
 import { useState } from 'react'
@@ -7,7 +9,7 @@ import { heartsOf } from '../../engine/hearts'
 import { closeHearts } from '../../engine/family'
 import { STAT_IDS, statScore, type StatId } from '../../engine/stats'
 import { ME } from '../../engine/family-tree'
-import { useGame } from '../../store/game-store'
+import { partnerName, useGame } from '../../store/game-store'
 import { allKids } from '../../engine/siblings'
 
 const STAT_NAME = T.stats.names as Record<StatId, string>
@@ -38,7 +40,7 @@ export function Family() {
       <h2>가족</h2>
       <div className="fam-wardrobe">
         {game.avatar && <button onClick={() => open({ kind: 'wardrobe', who: 'me' })}>내 옷장</button>}
-        {game.romance?.stage === 'married' && partner?.avatar && <button onClick={() => open({ kind: 'wardrobe', who: 'spouse' })}>{partner.role} 옷장</button>}
+        {game.romance?.stage === 'married' && lookOf(game,'spouse',CONTENT) && <button onClick={() => open({ kind: 'wardrobe', who: 'spouse' })}>{partnerName(game)} 옷장</button>}
         {kid && <button onClick={() => open({ kind: 'wardrobe', who: 'child' })}>{kid.name} 옷장</button>}
         {/* 우리 가족 가계도 (2026-10-12 사용자: 가족 창에서도 바로) */}
         {(game.romance?.stage === 'married' || kid) && <button onClick={() => open({ kind: 'familyTree', personId: ME, neighborId: '' })}>가계도</button>}
@@ -47,12 +49,14 @@ export function Family() {
       {partner && r && (
         <section className="fam-card">
           <h3>
-            {partner.role} <span className="fam-tag">{STAGE_NAMES_ROMANCE[r.stage ?? ''] ?? ''}</span>
+            {partnerName(game)} <span className="fam-tag">{STAGE_NAMES_ROMANCE[r.stage ?? ''] ?? ''}</span>
           </h3>
           <p>
             호감도 {'♥'.repeat(Math.min(10, heartsOf(game.hearts[partner.id])))}
             {r.marriedDay ? ` · 함께한 지 ${day - r.marriedDay + 1}일 · 결혼한 날 ${r.marriedDay}일째` : r.since ? ` · 사귄 지 ${day - r.since + 1}일` : ''}
           </p>
+          {/* 저녁·데이트를 함께한 날 (결혼 뒤 보상 — 2026-10-21) */}
+          {r.stage === 'married' && <p className="hint">함께 저녁을 먹거나 나들이한 날 {game.flags.togetherDays ?? 0}일</p>}
         </section>
       )}
       {/* 아이 셋 (2026-10-13 사용자: 셋 다 활동할 수 있게) — 고른 아이와 함께 보내는 시간·배움터·옷장·진로 */}
@@ -61,7 +65,7 @@ export function Family() {
           <span>{T.siblings.pick}</span>
           {allKids(game).slice().sort((a, b) => a.born - b.born).map((k) => (
             <button key={k.born} className={k.born === kid.born ? 'on' : ''} aria-pressed={k.born === kid.born} onClick={() => useGame.getState().selectKid(k.born)}>
-              {k.name} <small>{STAGE_NAME[childStage(k, day)]}</small>
+              {k.name} <small>{STAGE_NAME[childStage(k, day)]}{k.temper ? ` · ${temperName(k.temper)}` : ''}</small>
             </button>
           ))}
         </div>
