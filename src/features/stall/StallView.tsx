@@ -177,6 +177,7 @@ function Running() {
             <>
               <p>{g.result === 'sold' ? fill(S.result.sold, { good: itemName(g.item), n: g.coins ?? 0 }) : S.result[g.result ?? 'looked']}</p>
               {text.reply && <p>{text.reply}</p>}
+              {text.thanks && <p className="hint">{text.thanks}</p>}
             </>
           ) : status === 'guest' ? (
             <div className="actions menu column">

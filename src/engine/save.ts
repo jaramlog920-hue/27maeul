@@ -173,7 +173,8 @@ function todayShape(v: unknown): GameState['today'] {
     visitGot: t.visitGot === true,
     inviter: strOrNull(t.inviter),
     dined: t.dined === true,
-    gathering: isObj(t.gathering) ? (t.gathering as unknown as GameState['today']['gathering']) : null,
+    // 모임은 이름 글자로 저장된다 — 예전엔 묶음만 받아 불러오면 그날 소풍·아기 잔치·별 보는 밤이 사라졌다 (2026-10-21 자동 점검 규칙 9)
+    gathering: (['babyParty', 'picnic', 'starNight'] as const).find((g) => g === t.gathering) ?? null,
   }
 }
 

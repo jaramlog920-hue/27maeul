@@ -55,6 +55,20 @@ export const DESTS: Readonly<Record<DestId, Dest>> = {
 export const TRIP_LEAVE_BY = 12 * 60
 /** 처음 간 날의 이야기로 오르는 마음 */
 export const TRIP_FRIEND_GAIN = 5
+/**
+ * 다시 간 날의 이야기 (2026-10-21 중반 점검: 두 번째부터는 판만 같아 금방 시들했다) — 둘째·셋째·넷째 여행에 하나씩,
+ * 처음 이야기와 같은 이웃으로 이어지고 작은 것을 받는다 (글은 life-text.json tripRevisit)
+ */
+export const TRIP_REVISITS: Readonly<Record<DestId, readonly Partial<Record<ItemId, number>>[]>> = {
+  harbor: [{ bread: 2 }, { shell: 1 }, { oil: 1 }],
+  hillTown: [{ herb: 2 }, { wool: 1 }, { dryFlowers: 1 }],
+}
+export const TRIP_REVISIT_GAIN = 3
+/** 이번이 몇 번째 다시 간 날 이야기인가 (지난 방문 수로) — 없으면 null */
+export function revisitIndex(id: DestId, visits: number): number | null {
+  const i = visits - 1
+  return visits >= 1 && i < TRIP_REVISITS[id].length ? i : null
+}
 
 /** 여행 전체에 드는 닢: 배삯 + 숙박비 + 산 물건 */
 export function tripCost(dest: Dest, buys: readonly ItemId[]): number {

@@ -203,8 +203,8 @@ import type { Minigame } from './types'
 import { foundItems, newlyAchieved, type Achievement } from './achievements'
 import { familyMorning, finishFamilyBirthday } from './family-days'
 import { storageChest } from './storage-access'
-import { adultJob, childHome, JOB_GIFTS, TEMPER_HELP, kidCoins, kidMailFor, CHILD_AFTER_WEDDING, childMode, childStage, CRADLE_SPOT, helperSpot, helpStat, inheritFromPlayer, type Child, type ChildMode } from './child'
-import { DESTS, TRIP_FRIEND_GAIN, TRIP_LEAVE_BY, tripCoinDelta, tripCost, type DestId } from './travel'
+import { addCareerInterest, adultJob, JOBS_BY_STAT, childHome, JOB_GIFTS, TEMPER_HELP, kidCoins, kidMailFor, CHILD_AFTER_WEDDING, childMode, childStage, CRADLE_SPOT, helperSpot, helpStat, inheritFromPlayer, type Child, type ChildMode } from './child'
+import { DESTS, revisitIndex, TRIP_FRIEND_GAIN, TRIP_LEAVE_BY, TRIP_REVISIT_GAIN, TRIP_REVISITS, tripCoinDelta, tripCost, type DestId } from './travel'
 import type { TripReward } from './trip-board'
 import { BIRTHDAY_MUL, isBirthday, NO_NOTEBOOK, noteGift, noteGot, noteHeard, noteMet, noteNews, noteSeen, noteTaste, noteObservedTaste, seenLabel, type Notebook } from './notebook'
 import { CARPENTER_WORKS, fromChest, toChest, hasStock, INK_JAR_HOLD, LIGHT_SHOES, owns, RACK_HOLD, RACK_PAPER, RAIN_WATER, SOOT_CATCH, stash, stashOverflows, stock, takeStock, walkMul, type CarpenterWork, type EasyId } from './easier'
@@ -2113,7 +2113,8 @@ export function sendToSchool(s: GameState, stat: StatId): GameState | null {
   return {
     ...s,
     coins: s.coins - SCHOOL_FEE,
-    child: { ...c, stats: addXp(c.stats, stat, SCHOOL_XP) },
+    // 배운 능력치 쪽 일에도 관심이 붙는다 (2026-10-21 중반 점검: 직업은 관심이 먼저라 배움터에서 고른 것이 장래와 거의 닿지 않았다)
+    child: addCareerInterest({ ...c, stats: addXp(c.stats, stat, SCHOOL_XP) }, [JOBS_BY_STAT[stat][0]]),
     flags: { ...s.flags, schoolDay: s.clock.day },
   }
 }
@@ -3353,13 +3354,18 @@ export function mendQuarrelWith(s: GameState, pair: [string, string]): GameState
 
 // ── 이웃 마을 여행 (계획 13 작업 6, 여행지는 travel.ts) ──
 
-export type TripBlock = 'locked' | 'late' | 'tired' | 'coins' | 'food' | 'full' | null
-/** 떠날 수 있는가: 아침(정오 전), 지치지 않았고, 배삯·숙박비·산 물건 값과 길양식이 있다 */
+export type TripBlock = 'locked' | 'late' | 'wedding' | 'event' | 'tired' | 'coins' | 'food' | 'full' | null
+/**
+ * 떠날 수 있는가: 아침(정오 전), 지치지 않았고, 배삯·숙박비·산 물건 값과 길양식이 있다.
+ * 여행은 그날 남은 하루를 넘기므로(하룻밤 묵고 다음 날 아침) 내 결혼 잔치 날과 내가 준비한 행사(잔치 역할 포함)가 있는 날은 떠나지 않는다 (2026-10-21 점검)
+ */
 export function canTrip(s: GameState, id: DestId, buys: readonly ItemId[] = [], returning = false, rewards: readonly TripReward[] = []): TripBlock {
   if (!returning && featureAccess(s, 'travel') !== 'full') return 'locked'
   const d = DESTS[id]
   // 돌아갈 때는 시각·피로로 막지 않는다 — 판을 이미 돌았으니 집에는 늘 돌아갈 수 있어야 한다 (2026-10-07)
   if (!returning && s.clock.minute >= TRIP_LEAVE_BY) return 'late'
+  if (!returning && weddingToday(s)) return 'wedding'
+  if (!returning && (s.fests ?? []).some((f) => f.day === s.clock.day && !f.closed && !f.cancelled)) return 'event'
   if (!returning && exhausted(s.needs)) return 'tired'
   if (s.coins + tripCoinDelta(rewards) < tripCost(d, buys)) return 'coins'
   if (!haveStock(s, d.food)) return 'food'
@@ -3385,6 +3391,9 @@ export function takeTrip(s: GameState, content: GameContent, id: DestId, buys: r
     next = heartUp({ ...next, inv: addGift(next.inv, d.keepsake) }, d.friend, TRIP_FRIEND_GAIN)
     next = { ...next, album: next.album.some((a) => a.id === note) ? next.album : [...next.album, { id: note, day: s.clock.day }] }
   }
+  // 다시 간 날의 이야기 (둘째–넷째 여행): 같은 이웃과 이어지고 작은 것을 받는다
+  const again = revisitIndex(id, visits)
+  if (again !== null) next = heartUp(putAway(next, TRIP_REVISITS[id][again]), d.friend, TRIP_REVISIT_GAIN)
   next = { ...next, todayNotes: next.todayNotes.includes(note) ? next.todayNotes : [...next.todayNotes, note] }
   next = applyTripRewards(next, rewards, content, `trip:${id}`)
   return goToSleep(next, content)
@@ -4041,11 +4050,18 @@ function marry(s: GameState): GameState {
   },id))
 }
 
-/** 배우자의 아침 선물 (하루 한 번, 처음 말 걸 때): 배우자 집안 일에서 나는 것 하나 */
+/** 배우자가 가끔 챙겨 주는 그 계절 것 */
+export const SPOUSE_SEASON_GIFT: Readonly<Record<ReturnType<typeof seasonOf>, ItemId>> = { spring: 'herb', summer: 'fig', autumn: 'grapes', winter: 'wool' }
+/**
+ * 배우자의 아침 선물 (하루 한 번, 처음 말 걸 때). 2026-10-21 중반 점검: 날마다 똑같은 하나라 금방 시들했다 —
+ * 나흘 가운데 이틀은 배우자 집안 일에서 나는 것, 하루는 그 계절 것, 하루는 따뜻한 허브차
+ */
 export function spouseGift(s: GameState, def: NeighborDef): { state: GameState; gift: Partial<Record<ItemId, number>> } | null {
   if (featureAccess(s, 'spouseLife') !== 'full') return null
   if (romanceWith(s, def.id) !== 'married' || s.flags.spouseGiftDay === s.clock.day || NO_SPOUSE_GIFT.includes(def.id)) return null
-  const [id] = Object.keys(def.help.gives) as ItemId[]
+  const [own] = Object.keys(def.help.gives) as ItemId[]
+  const turn = s.clock.day % 4
+  const id: ItemId = turn === 2 ? SPOUSE_SEASON_GIFT[seasonOf(s.clock.day)] : turn === 3 ? 'herbTea' : own
   const gift = { [id]: 1 } as Partial<Record<ItemId, number>>
   return { state: { ...putAway(s, gift), flags: { ...s.flags, spouseGiftDay: s.clock.day } }, gift }
 }

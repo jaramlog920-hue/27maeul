@@ -6,6 +6,9 @@ import { ROOMS } from './world'
 // 순서: 관계(헤어짐·친한 사이·연인·상담 시작) → 결혼(부부 되기·결혼 준비) → 출생(침대 부탁·아이).
 import { closeKin } from './gen-kin'
 import { MAX_CATCHUP, PLAYER_COOLING } from './gen-config'
+
+/** 플레이어가 공들이는 연애 후보로 보는 마음 점수 (6하트) — 가장 높은 후보가 이만큼이면 그 사람은 다른 주민과 사귀지 않는다 */
+export const COURT_POINTS = 60
 import { ensureBakerBaby, ensureFixed, newGenState, relationId, type GenState, type Relation } from './gen'
 import { settleRelations, type DayCtx } from './gen-relations'
 import { settleMarriage, type HomeOf } from './gen-marriage'
@@ -100,14 +103,25 @@ export function avatarOfFor(content: GameContent): AvatarOf {
 }
 
 /** 한 날의 정산 */
-export function settleOneDay(g: GenState, d: number, s: Partial<Pick<GameState, 'romance' | 'flags' | 'progress' | 'shelved'>>, content: GameContent, opts: SettleOpts): GenState {
+export function settleOneDay(g: GenState, d: number, s: Partial<Pick<GameState, 'romance' | 'flags' | 'progress' | 'shelved' | 'hearts' | 'avatar'>>, content: GameContent, opts: SettleOpts): GenState {
   const partner = s.romance?.partner ? slotPerson(g, s.romance.partner) : null
   // 자리를 이어받은 자녀는 npc가 없으니 그 자리 id로 (그 자리 이야기 날엔 큰일을 미룬다)
   const busy = (id: string) => { const p = g.persons[id]; return !!p && !!opts.busy?.(p.npc ?? slotOfPerson(g, id)) }
   // 플레이어와 헤어진 사람은 14일 동안 다른 주민과 사귀지 않는다 (사용자 결정 ③)
+  // 아직 연인이 없는 플레이어가 가장 공들이는 연애 후보(마음 COURT_POINTS 이상 중 가장 높은 사람, 같으면 모두)는 다른 주민과 사귀지 않는다
+  // (2026-10-21 점검: 공들이던 사람이 갑자기 남과 사귀었다 — 모든 후보를 막으면 마을 연애가 멈추므로 가장 가까운 사람만)
+  const playerLook = s.avatar?.look ?? 'f'
+  const wooable = (id: string) => {
+    const slot = slotOfPerson(g, id)
+    const p = g.persons[id]
+    return !!p?.look && p.look !== playerLook && !p.spouse && !s.flags?.[`friendsOnly:${id}`] && !!content.neighbors.find((n) => n.id === slot)?.romanceable
+  }
+  const heartOf = (id: string) => s.hearts?.[slotOfPerson(g, id)] ?? 0
+  const top = s.romance?.partner ? 0 : Math.max(0, ...Object.keys(g.persons).filter(wooable).map(heartOf))
+  const courting = (id: string) => top >= COURT_POINTS && heartOf(id) === top && wooable(id)
   const cooling = (id: string) => {
     const at = s.flags?.[`exPartner:${slotOfPerson(g, id)}`]
-    return typeof at === 'number' && d - at < PLAYER_COOLING
+    return (typeof at === 'number' && d - at < PLAYER_COOLING) || courting(id)
   }
   const ctx: DayCtx = { partner, busy, cooling }
   if (featureAccess(s, 'autonomy') === 'full') {

@@ -119,10 +119,14 @@ describe('이웃 마을 여행 (계획 13 작업 6)', () => {
     const warm = back.hearts.wendell
     expect(warm).toBeGreaterThan(0)
     expect(back.album.some((a) => a.id === 'trip:harbor')).toBe(true)
-    // 두 번째는 이야기·마음 없이
+    // 두 번째는 첫 이야기 대신 다시 간 날의 이야기 — 같은 이웃 마음이 조금 오르고, 앨범은 그대로 한 장 (2026-10-21)
     const again = takeTrip({ ...back, coins: 200 }, CONTENT, 'harbor')!
-    expect(again.hearts.wendell).toBe(warm)
+    expect(again.hearts.wendell).toBeGreaterThan(warm)
+    expect(again.album.filter((a) => a.id === 'trip:harbor')).toHaveLength(1)
     expect(again.flags['trip:harbor']).toBe(2)
+    // 다시 간 날 이야기를 다 들은 뒤(다섯째부터)는 마음이 오르지 않는다
+    const later = takeTrip({ ...again, coins: 200, flags: { ...again.flags, 'trip:harbor': 4 } }, CONTENT, 'harbor')!
+    expect(later.hearts.wendell).toBe(again.hearts.wendell)
   })
 
   it('걸어가면 길양식이 든다, 정오가 지나면 못 떠난다, 닢이 모자라면 못 떠난다', () => {

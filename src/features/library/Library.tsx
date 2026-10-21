@@ -82,7 +82,7 @@ function Guestbook() {
           <li key={g.day}>
             <div className="row">
               <span className="row-main">
-                <b>{fill((T.guestbook.lines as Record<string, string>)[g.kind], { village: g.village ?? '' })}</b>
+                <b>{fill(guestLine(g.kind, g.day), { village: g.village ?? '' })}</b>
                 {(g.by || g.taught) && (
                   <small>
                     {[g.by ? t('libraryOps.byLine', { who: neighborById(g.by)?.role ?? '' }) : '', g.taught ? t('libraryOps.taughtLine', { title: pieceById(g.taught)?.title ?? '' }) : ''].filter(Boolean).join(' · ')}
@@ -115,6 +115,12 @@ function remainingByBook(game: GameState): string {
     parts.push(`${BOOK_NAME[b] ?? b} ${runs.join('·')}장`)
   }
   return parts.join(', ')
+}
+
+/** 방명록 한 줄: 손님 종류마다 여러 문장 중 그날 것 (2026-10-21 중반 점검: 종류마다 한 문장이라 서른 줄이 네 문장의 되풀이였다) */
+function guestLine(kind: string, day: number): string {
+  const lines = (T.guestbook.lines as Record<string, readonly string[]>)[kind] ?? []
+  return lines.length ? lines[(day * 7) % lines.length] : ''
 }
 
 export function Library() {

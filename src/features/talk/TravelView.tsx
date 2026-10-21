@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { itemList, itemName, SCENES, T, ITEM_TEXT, withAnd } from '../../content/text'
 import { canTrip } from '../../engine/game'
 import { featureAccess, featureHint } from '../../engine/feature-rules'
-import { DEST_IDS, DESTS, TRIP_LEAVE_BY, tripCoinDelta, tripCost, type DestId } from '../../engine/travel'
+import { DEST_IDS, DESTS, revisitIndex, TRIP_LEAVE_BY, tripCoinDelta, tripCost, type DestId } from '../../engine/travel'
 import { sayTime } from '../../engine/clock'
 import type { ItemId } from '../../engine/types'
 import { partnerName, useGame } from '../../store/game-store'
@@ -17,6 +17,8 @@ import { AuthoredStoryScene } from '../scene/AuthoredStoryScene'
 const TRIP_WHY: Record<string, string> = {
   locked: featureHint('travel', true),
   late: `여행은 ${sayTime(TRIP_LEAVE_BY)} 전에 떠날 수 있어요.`,
+  wedding: '오늘은 결혼 잔치 날이에요.',
+  event: '오늘은 준비한 행사가 있어요.',
   tired: '너무 지쳤어요. 쉬고 떠나요.',
   coins: '닢이 모자라요.',
   food: '길양식이 모자라요.',
@@ -86,8 +88,10 @@ export function TravelView({ dest: back, rewards: brought }: { dest?: DestId; re
   const d = DESTS[dest]
   // 먼저 그 마을 둘레를 도는 주사위 판 (새 장면으로 넘어간다)
   if (!rewards) return null
-  const first = !game.flags[`trip:${dest}`]
-  const story = first ? SCENES[`trip:${dest}`] : null
+  const visits = game.flags[`trip:${dest}`] ?? 0
+  const again = revisitIndex(dest, visits)
+  // 처음 간 날은 그 마을 이야기, 둘째–넷째는 다시 간 날의 이야기 (같은 장면 그림에 글만 다르다)
+  const story = !visits ? SCENES[`trip:${dest}`] : again !== null ? { lines: (T.tripRevisit as Record<DestId, string[][]>)[dest][again].map((text) => ({ text })) } : null
   const page = storyPages[dest] ?? 0
   if (story && page < story.lines.length) return (
     <AuthoredStoryScene id={`trip:${dest}`} title={d.name} beat={page}>

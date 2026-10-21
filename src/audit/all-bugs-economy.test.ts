@@ -124,7 +124,8 @@ describe('Current 2026-10-19 round2 economy audit', () => {
   })
   it('candidate: actual seeded travel board item winnings silently vanish in full bag on UI return', () => {
     const f = world()
-    let game: GameState = { ...f, coins: 1000, flags: { ...f.flags, 'trip:harbor': 1 } }
+    // 다시 간 날 이야기를 다 들은 방문(넷째 뒤)이라 판에서 딴 것만 센다 — 둘째–넷째는 이야기 선물이 더해진다 (2026-10-21)
+    let game: GameState = { ...f, coins: 1000, flags: { ...f.flags, 'trip:harbor': 4 } }
     let board = NEW_BOARD
     // Select an ordinary calendar day whose actual deterministic board grants a material.
     for(let day=7;day<=40;day++){

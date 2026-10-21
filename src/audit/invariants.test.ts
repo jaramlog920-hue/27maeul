@@ -6,6 +6,8 @@ import { CONTENT } from '../content/catalog'
 import { peopleData, whenMatches, inWindow, type When, type Req, type Moment } from '../engine/people'
 import { canGiveBouquet, canGiveCord, canTravel, nameChild, startCopy, writeVerse, chooseInEvent, eventNow, eventWaiting, finishStoryMini, GIFTABLE, giveBouquet, giveCord, giveGift, goToSleep, greetNeighbor, heartUp, newGame, openEvent, putAway, sightingWaiting, tick, travel, weddingToday, WEDDING_GATHER, type GameState } from '../engine/game'
 import { establishedGame } from '../engine/growth-test-support'
+import { canDate, goOnDate, sceneSeen } from '../engine/game'
+import { DATE_PLACES, FULL_HEART_DATING_DAYS } from '../engine/romance'
 import { FIRE } from '../engine/neighbors'
 import { FESTIVAL_FROM, FESTIVAL_TO, festivalOf } from '../engine/calendar'
 import { CHILD_AFTER_WEDDING } from '../engine/child'
@@ -401,9 +403,16 @@ function simulate(label: string, heart: number, seed: number, play = false, late
           if (def) { s = giveBouquet(s, def); timeline.push(`${day}일 ${def.id}에게 들꽃 다발(연인)`) }
         } else if (s.romance.stage === 'dating') {
           const def = CONTENT.neighbors.find((d) => d.id === s.romance.partner)!
+          // 10하트에는 데이트 세 번과 연인 이야기가 든다 — 일이 끝난 저녁(18시)에 갈 수 있는 곳으로 데이트하고, 연인 이야기는 끝까지 본다
+          // (이 자리는 하루 끝이라 시각만 저녁 6시로 잠깐 돌린 사본으로 묻고, 다녀온 뒤 시각은 원래대로)
+          const noon: GameState = { ...s, clock: { ...s.clock, minute: 18 * 60 } }
+          const place = DATE_PLACES.find((p) => canDate(noon, p, CONTENT) === null)
+          if (place) s = { ...goOnDate(noon, place, CONTENT), clock: s.clock }
+          const trust = s.scenes.find((id) => id.startsWith('loverTrust:'))
+          if (trust) s = { ...sceneSeen(s, trust, []), scenes: [] }
           const why = canGiveCord(s, def)
           if (why === null) { s = giveCord(s, def); timeline.push(`${day}일 약속의 끈(약혼), 잔치 ${s.romance.weddingDay}일`) }
-          else if (s.romance.since != null && day - s.romance.since > 10) report({ rule: '16 약혼을 못 함', level: '높음', where: `${label} ${day}일`, detail: `${def.id}와 사귄 지 ${day - s.romance.since}일, 끈을 못 건넴: ${why}` })
+          else if (s.romance.since != null && day - s.romance.since > FULL_HEART_DATING_DAYS + 7) report({ rule: '16 약혼을 못 함', level: '높음', where: `${label} ${day}일`, detail: `${def.id}와 사귄 지 ${day - s.romance.since}일, 끈을 못 건넴: ${why}` })
         }
       } catch (err) { report({ rule: '6 멈춤(오류)', level: '높음', where: `${label} ${day}일 연애`, detail: String((err as Error)?.stack ?? err).split('\n').slice(0, 3).join(' / ') }) }
       if (s.romance?.stage === 'married' && !timeline.some((x) => x.includes('결혼함'))) timeline.push(`${s.romance.marriedDay}일 결혼함`)

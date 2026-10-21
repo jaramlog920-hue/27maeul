@@ -44,6 +44,6 @@ describe('서고 방명록', () => {
   })
   it('방명록 줄은 서고 점수에 더해지고, 문구에 금지어·지명이 없다', () => {
     expect(ourScore({ ...at(3), guestbook: [{ day: 3, kind: 'kid' }] })).toBe(ourScore(at(3)) + 1)
-    for (const v of Object.values(T.guestbook.lines)) for (const re of [...FORBIDDEN, ...FORBIDDEN_PLACES]) expect(re.test(v), `${v} ${re}`).toBe(false)
+    for (const v of Object.values(T.guestbook.lines).flat()) for (const re of [...FORBIDDEN, ...FORBIDDEN_PLACES]) expect(re.test(v), `${v} ${re}`).toBe(false)
   })
 })

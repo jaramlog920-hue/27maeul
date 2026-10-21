@@ -74,9 +74,14 @@ it('실제 항구 첫 방문도 네 원문 단계와 같은 도트를 보여 주
   expect(after.flags['trip:harbor']).toBe(1);expect(after.clock.day).toBe(game.clock.day+1)
 })
 
-it('이미 다녀온 항구에서는 첫 방문 사건을 반복하지 않고 바로 가게로 간다',()=>{
+it('다시 간 항구는 첫 방문 사건 대신 다시 간 날의 이야기, 이야기를 다 들은 뒤로는 바로 가게로 간다',()=>{
   const s=newGame(CONTENT)
   useGame.getState().load({...s,coins:75,flags:{...s.flags,'trip:harbor':1},scenes:[]})
+  const {unmount}=render(<TravelView dest="harbor" rewards={[]}/>)
+  expect(screen.getByText(/다시 찾은 항구/)).toBeInTheDocument()
+  expect(screen.queryByText(/한나절을 꼬박/)).toBeNull()
+  unmount()
+  useGame.getState().load({...s,coins:75,flags:{...s.flags,'trip:harbor':4},scenes:[]})
   render(<TravelView dest="harbor" rewards={[]}/>)
   expect(screen.queryByRole('button',{name:'가게 보기'})).toBeNull()
   expect(screen.getByRole('button',{name:'하룻밤 묵고 돌아가기'})).toBeEnabled()

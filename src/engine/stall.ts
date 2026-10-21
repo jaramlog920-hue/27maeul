@@ -4,13 +4,14 @@
 // 말씀 조각·필사본·성경 본문·쓰기 재료·가게 소유 물건은 상품 목록에 없다 (STALL_GOODS만 올릴 수 있다).
 import { availability } from './plans'
 import { featureAccess } from './feature-rules'
-import { notYet, passTime, playerTile, recordExperienceIn, type GameState } from './game'
+import { heartUp, notYet, passTime, playerTile, recordExperienceIn, type GameState } from './game'
 import { sellPrice, SELL_PRICES } from './merchant-selling'
 import { FURNITURE_PRICES } from './economy-prices'
 import { addGift, count, COOKED_ITEMS, take } from './items'
 import { isMarketDay, isWet, weatherOf } from './calendar'
 import { personOf } from './people'
 import lifeText from '../content/life-text.json'
+import neighborsRaw from '../content/neighbors.json'
 import type { GameContent, ItemId, Tile } from './types'
 
 /** 좌판 그림 왼쪽 위 칸 (가로 3칸 × 세로 2칸) — 광장 위쪽, 큰길 줄·상인 좌판·우물·잔치 자리를 비킨 곳. 길을 막지 않는다(그림만) */
@@ -40,8 +41,18 @@ export const STALL_SALES = 6
 export const STALL_COIN_CAP = 60
 export const STALL_GOODS_MAX = 3
 export const STALL_PER_GOOD = 4
-/** 이만큼 다른 장날에 들른 이웃이 단골 (작은 반응·후기만, 값에는 영향 없음) */
+/** 이만큼 다른 장날에 들른 이웃이 단골 (값에는 영향 없음 — 산 날 고마움의 덤을 하나 두고 간다) */
 export const STALL_REGULAR_VISITS = 3
+/**
+ * 닢 말고 남는 것 (2026-10-21 중반 점검: 하루 60닢으로는 필사 한 장보다 적어 좌판을 열 까닭이 없었다).
+ * 산 이웃은 마음이 오르고(찾던 것이면 더), 단골이 사면 제 일에서 나는 것 하나를 덤으로 두고 간다. 닢 한도는 그대로
+ */
+export const STALL_HEART = { bought: 2, wanted: 3 } as const
+const NEIGHBOR_GIVES: Readonly<Record<string, ItemId>> = Object.fromEntries(
+  (neighborsRaw as unknown as { id: string; help?: { gives?: Record<string, number> } }[]).flatMap((d) => { const [id] = Object.keys(d.help?.gives ?? {}); return id ? [[d.id, id as ItemId]] : [] }),
+)
+/** 단골이 덤으로 두고 가는 것 (그 이웃 일에서 나는 것) */
+export const stallThanksOf = (npc: string): ItemId | undefined => NEIGHBOR_GIVES[npc]
 
 export type StallPrice = 'low' | 'normal' | 'high'
 export type StallWay = 'explain' | 'talk' | 'wait'
@@ -84,6 +95,8 @@ export interface StallGuest {
   way?: StallWay
   result?: 'sold' | 'looked' | 'cap'
   coins?: number
+  /** 단골이 산 날 덤으로 두고 간 것 */
+  thanks?: ItemId
 }
 export interface Stall {
   id: string
@@ -281,6 +294,7 @@ export function answerGuest(s: GameState, way: StallWay): GameState {
     result = st.earned + coins > STALL_COIN_CAP || st.sold.length >= STALL_SALES ? 'cap' : 'sold'
   }
   const sold = result === 'sold'
+  const thanks = sold && g.regular ? stallThanksOf(g.npc) : undefined
   let next: GameState = {
     ...s,
     coins: s.coins + (sold ? coins : 0),
@@ -290,9 +304,11 @@ export function answerGuest(s: GameState, way: StallWay): GameState {
       served: [...st.served, g.npc],
       sold: sold ? [...st.sold, { npc: g.npc, item: g.item, coins }] : st.sold,
       earned: st.earned + (sold ? coins : 0),
-      guest: { ...g, phase: 'done', way, result, ...(sold ? { coins } : {}) },
+      guest: { ...g, phase: 'done', way, result, ...(sold ? { coins } : {}), ...(thanks ? { thanks } : {}) },
     },
   }
+  if (sold) next = heartUp(next, g.npc, g.score === 2 ? STALL_HEART.wanted : STALL_HEART.bought)
+  if (thanks) next = { ...next, inv: addGift(next.inv, { [thanks]: 1 }) }
   next = recordExperienceIn(next, { id: `stall:${g.npc}`, kind: 'stall', with: [g.npc], place: 'plaza' })
   if (sold) next = recordExperienceIn(next, { id: `stallBuy:${g.npc}`, kind: 'stall', with: [g.npc], place: 'plaza', item: g.item })
   return passTime(next, STALL_MINUTES)
@@ -305,7 +321,7 @@ export function waitAtStall(s: GameState, content: GameContent): GameState {
 }
 
 /** 손님 카드에 보일 말: 이웃마다 정해진 한 줄이 있으면 그것, 없으면 공통 문구 (취향·단골·지난번 산 물건이 말에 드러난다) */
-export function guestText(g: StallGuest): { arrive: string; want: string; hint: string; regular?: string; review?: string; reply?: string } {
+export function guestText(g: StallGuest): { arrive: string; want: string; hint: string; regular?: string; review?: string; reply?: string; thanks?: string } {
   const T = lifeText.stall
   const name = (lifeText.items as Record<string, { name: string }>)[g.item]?.name ?? ''
   const mine = personOf(g.npc)?.stallLines
@@ -317,6 +333,7 @@ export function guestText(g: StallGuest): { arrive: string; want: string; hint: 
   }
   if (g.regular) out.regular = mine?.regular ?? T.regularLine
   if (g.review) out.review = (T.review as Record<string, string>)[g.review]
+  if (g.thanks) out.thanks = T.thanks.replace('{good}', (lifeText.items as Record<string, { name: string }>)[g.thanks]?.name ?? '')
   if (g.phase === 'done') out.reply = g.result === 'sold' ? (mine?.sold ?? T.genericSold) : g.result === 'cap' ? T.genericCap : (mine?.looked ?? T.genericLooked)
   return out
 }
@@ -382,6 +399,7 @@ export function sanitizeStall(raw: unknown): Stall | undefined {
       guest.way = g.way
       guest.result = g.result
       if (isCount(g.coins, 999)) guest.coins = g.coins
+      if (g.thanks && typeof g.thanks === 'string' && g.thanks === stallThanksOf(g.npc)) guest.thanks = g.thanks
     }
     if (g.phase === 'look' || guest.result) out.guest = guest
   }
