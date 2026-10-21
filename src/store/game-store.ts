@@ -229,7 +229,7 @@ import { JOB_NAME } from '../content/text'
 const slotJobName = (slot: string): string => { const j = slotJob(slot); return j ? JOB_NAME[j] ?? '' : '' }
 import { askToStay, emptyHomes, homeWishes, householdById, sayGoodbye } from '../engine/gen-homes'
 import { heartUp } from '../engine/game'
-import { work } from '../engine/needs'
+import { LIMIT as NEED_LIMIT, work } from '../engine/needs'
 import { plant, water, harvest, type CropId } from '../engine/garden'
 import { finishNow, HOLD_UP, isDone, startMini, stepMini, tapMini, type MiniState } from '../engine/minigame'
 import { finishLetter, letterWaiting } from '../engine/requests'
@@ -1105,6 +1105,9 @@ export const useGame = create<Store>((set, get) => {
       return true
     }
     if (result.kind === 'none') return true
+    // 필사는 피로·배고픔으로 막지 않는다 — 대신 가득 차는 순간 한 번 알린다 (2026-10-22 초반 점검: 첫날 종일 쓰고 다음 날 까닭 모르게 앓아누웠다)
+    if (game.needs.fatigue < NEED_LIMIT && state.needs.fatigue >= NEED_LIMIT) setTimeout(() => get().say(T.ui.tiredWarn, 4200), 600)
+    else if (game.needs.hunger < NEED_LIMIT && state.needs.hunger >= NEED_LIMIT) setTimeout(() => get().say(T.ui.hungryWarn, 4200), 600)
     // 밤에 한 절을 적으면 기름이 있을 때 등잔을 켠다 (그림의 불빛 — 없어도 쓴다). 곁에 앉은 아이는 그림 그리다 졸다 잠든다
     // 구약은 새 터 서고에서 쓰는 것이 기본이라 집의 등잔·곁에 앉은 아이는 없다 (아무것도 더 세지 않는다)
     const lit = isOtBook(book) ? state : deskKidVerse(lightLamp(state) ?? state)
@@ -3101,8 +3104,9 @@ export const useGame = create<Store>((set, get) => {
         seen=goToSleep({...seen,map:'village',clock:{...seen.clock,minute:23*60},flags:{...seen.flags,bibleEndingSeen:seen.clock.day}},CONTENT)
       }
       // 이어서 기다리는 '새로 열림' 장면(growth:*)은 또 하나의 창 대신 짧은 알림으로 (2026-10-19 플레이 점검 P10)
+      // 새로 열림 창 뒤에 또 새로 열림이 기다려도 알림으로 (2026-10-22 초반 점검: 다섯 장째에 작은 부탁·꾸미기 창이 연달아 떴다)
       const opened: string[] = []
-      if (!id.startsWith('growth:')) while (seen.scenes[0]?.startsWith('growth:')) {
+      while (seen.scenes[0]?.startsWith('growth:')) {
         const gid = seen.scenes[0]
         opened.push((SCENES[gid]?.lines ?? []).map((l) => l.text).join(' '))
         seen = sceneSeen(seen, gid, ALBUM_IDS)

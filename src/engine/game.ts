@@ -2941,6 +2941,8 @@ export function applyEarlyGrowth(before: GameState, after: GameState, content: G
         : [...next.scenes, `growth:${milestone.id}`] }
     if (milestone.id === 'decorate') next = { ...next, inv: addGift(next.inv, { stool: 1 }) }
     if (milestone.id === 'smallRequest') next = { ...next, inv: addGift(next.inv, { barley: 3 }) }
+    // 허브차 체험 재료 (2026-10-22 초반 점검: 향초는 장날 씨앗을 심어 사흘 뒤에야 나서, 열다섯 장에 바로 만들어 볼 수 없었다)
+    if (milestone.id === 'cooking') next = { ...next, inv: addGift(next.inv, { herb: 1, water: 1 }) }
     if (milestone.id === 'mailbox') {
       const piece = content.pieces.find(p => !next.collected.includes(p.id) && !next.post.includes(p.id))
       if (piece) next = { ...next, post: [...next.post, piece.id] }
