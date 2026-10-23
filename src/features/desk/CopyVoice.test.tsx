@@ -69,7 +69,7 @@ beforeEach(() => {
 afterEach(() => withApi(false))
 
 describe('소리 내어 읽기 — 견주기 (checkVoice)', () => {
-  it('띄어쓰기·문장부호를 떼고 글자 단위로 견준다 — 같으면 1, 0.9 이상이면 받는다', () => {
+  it('띄어쓰기·문장부호를 떼고 글자 단위로 견준다 — 같으면 1, 0.75 이상이면 받는다', () => {
     const t = lk1[0].text
     expect(checkVoice(t.replace(/[\s,.]/g, ''), t)).toEqual({ similarity: 1, ok: true, miss: [] })
     const chars = [...normalizeCopy(t)]

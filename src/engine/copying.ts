@@ -130,8 +130,8 @@ export function acceptInput(prev: string, next: string, how: InputHow = {}): str
 // 마이크로 한 절을 읽으면 브라우저 음성 인식이 받아 적은 글을 본문과 견준다. 음성 인식은 개역한글의 옛말을 자주 잘못 듣는다 —
 // 그래서 정규화한 두 글이 글자 단위로 이만큼 비슷하면 받는다. 받으면 기록하는 것은 언제나 본문 그대로 (받아 적은 글이 아니다)
 
-/** 소리 내어 읽은 절을 받는 비슷한 정도 (1 − 편집 거리 ÷ 긴 쪽 글자 수, 정규화한 글로) */
-export const VOICE_ACCEPT = 0.9
+/** 소리 내어 읽은 절을 받는 비슷한 정도 (1 − 편집 거리 ÷ 긴 쪽 글자 수, 정규화한 글로) — 0.9는 옛말을 잘못 듣는 탓에 너무 자주 떨어졌다 (2026-10-23 사용자) */
+export const VOICE_ACCEPT = 0.75
 
 export interface VoiceCheck {
   /** 0–1 */
