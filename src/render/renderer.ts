@@ -1,3 +1,4 @@
+import { canvasCache } from './canvas-caches'
 import type { FurnitureActivity } from '../engine/furniture-autonomy'
 import { zoneBooks } from '../engine/feature-rules'
 import { petFurniturePlace, type ChildFurnitureId, type PetFurnitureId } from '../engine/family-furniture'
@@ -148,7 +149,7 @@ import {HOUSE_STYLES,PLAIN_STYLE,houseWallTile,chimneyX,drawRoof,drawLibraryExte
 export {drawLibraryExterior} from './house-exterior-art'
 
 /** 터 가꾸기 목록 아이콘: 지도 글자 한 칸 (기본 길·잔디·기본 나무 — 2026-10-14) */
-const mapTileIcons = new Map<string, HTMLCanvasElement>()
+const mapTileIcons = canvasCache<string>()
 export function mapTileIcon(ch: ',' | '.' | 'T'): HTMLCanvasElement {
   let c = mapTileIcons.get(ch)
   if (c) return c
@@ -690,7 +691,7 @@ function drawBush(g: Ctx, x: number, y: number, season: Season) {
 }
 
 /** 계절과 집 단계마다 한 장 (집을 넓히면 그 칸들의 그림이 바뀐다) */
-const mapCache = new Map<string, HTMLCanvasElement>()
+const mapCache = canvasCache<string>()
 /**
  * 지도 그림은 최근 것 몇 장만 남긴다 — 벽을 세우거나 허물 때마다 키가 바뀌어 지도 한 장(약 8MB)씩 쌓이고 지워지지 않았다 (2026-10-18 감사 M-9)
  */
@@ -782,7 +783,7 @@ const SNOW_DRIFT_SHADE = '#c8d5df'
  * 눈 온 날 덮개 한 장 (집 단계·열린 문마다 한 번 굽는다): 지붕 윗줄과 굴뚝 머리, 풀밭이 길과 만나는 가장자리에 쌓인 눈,
  * 풀밭 군데군데 눈 뭉치, 늘푸른나무 머리·빈 가지 끝, 울타리·벤치·좌판 차양 위. 길은 밟혀서 거의 맨땅. 선은 모두 2픽셀 이상
  */
-const snowCache = new Map<string, HTMLCanvasElement>()
+const snowCache = canvasCache<string>()
 function snowLayer(): HTMLCanvasElement {
   const cacheKey = `${currentHomeLevel()}/${openDoors().join(',')}/${newlandOpen() ? 'nl' : ''}`
   let c = snowCache.get(cacheKey)
@@ -1000,7 +1001,7 @@ function drawChimneySmoke(g: Ctx, game: GameState, kind: 'meal' | 'winter', wind
 
 /** 키는 모두 몇 가지 값의 조합이라 늘어나지 않지만(옷차림 바꾸기만 조합이 는다), 혹시 몰라 넘치면 비운다 */
 const SPRITE_CACHE_MAX = 800
-const spriteCache = new Map<string, HTMLCanvasElement>()
+const spriteCache = canvasCache<string>()
 function paint(keyStr: string, rows: SpriteRows, palette: Record<string, string>): HTMLCanvasElement {
   let c = spriteCache.get(keyStr)
   if (c) return c
@@ -1247,7 +1248,7 @@ function person(who: Who, facing: Facing, frame: 0 | 1 | 2, blink: boolean, pose
 // ── 가구 쓰는 동작 (계획 17 작업 3) ──
 
 /** 24×24 동작 한 장: 뒤 소품 → 사람 → 앞 소품 순으로 겹쳐 한 번만 칠해 둔다 (사람은 지금 외형의 팔레트, 소품은 소품 팔레트) */
-const motionCache = new Map<string, HTMLCanvasElement>()
+const motionCache = canvasCache<string>()
 function motionCanvas(keyStr: string, layers: { actor: string[]; propBack: string[]; propFront: string[] }, actorPal: Record<string, string>, propPal: Record<string, string>): HTMLCanvasElement {
   let c = motionCache.get(keyStr)
   if (c) return c
@@ -1486,7 +1487,7 @@ function drawAutonomousFurniture(g: Ctx, a: FurnitureActivity, who: Who, blink: 
   const seat = action === 'sit' || action === 'lie' ? f : a.stand
   drawUse(g, c, stand, seat.x, seat.y, false)
 }
-const additionCache = new Map<string, HTMLCanvasElement>()
+const additionCache = canvasCache<string>()
 
 /**
  * 아기 돌보기 (2026-10-12 도트: baby-care-motion). 안아 주기·달래기는 품에 안고 서 있는 칸 그대로(발 기준),
@@ -1938,7 +1939,7 @@ export interface Renderer {
 // ── 새 터 (계획 20 작업 3): 첫 마을의 타일 팔레트·계절·밝기를 그대로 쓰는 두 번째 지도 ──
 
 /** 계절마다 한 장. 새 터 지도는 정해져 있으므로 집 단계 같은 열쇠가 없다 */
-const newlandCache = new Map<string, HTMLCanvasElement>()
+const newlandCache = canvasCache<string>()
 function newlandMapFor(season: Season): HTMLCanvasElement {
   // 땅이 드러나기 전·후는 다른 그림이다
   const key = `${season}/${newlandRevealedOn() ? 'r' : ''}`

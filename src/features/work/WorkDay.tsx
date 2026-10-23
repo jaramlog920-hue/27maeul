@@ -44,12 +44,12 @@ export function WorkDayView({npc,close}:{npc:string;close:()=>void}) {
     <h3>{T.work.title}</h3>
     {!current && <>{say('start')}
       <p>{T.work.part}</p>
-      {sh.prep.map(p=><button key={p} onClick={()=>applyLifeState(startWorkDay(useGame.getState().game,npc,p,CONTENT))}>{tx.prep[p]}</button>)}</>}
-    {current && w.step===0 && <><p>{tx.prep[w.choices[0]] ?? ''}</p><button onClick={()=>{const s=useGame.getState();applyLifeState(prepareWorkDay(s.game,s.rng))}}>{T.work.prepare}</button></>}
+      <div className="actions choices">{sh.prep.map(p=><button key={p} onClick={()=>applyLifeState(startWorkDay(useGame.getState().game,npc,p,CONTENT))}>{tx.prep[p]}</button>)}</div></>}
+    {current && w.step===0 && <><p>{tx.prep[w.choices[0]] ?? ''}</p><div className="actions choices"><button onClick={()=>{const s=useGame.getState();applyLifeState(prepareWorkDay(s.game,s.rng))}}>{T.work.prepare}</button></div></>}
     {current && w.mini && <>{say('hand')}<p>{fill(T.work.hand,{n:w.step,label:handLabels[w.step-1]??''})}</p><HandPractice state={w.mini} tick={tick} tap={tap} finish={step}/></>}
     {current && w.step===3 && !w.paid && <>{say('finish')}<p>{T.work.finishAsk}</p>
-      {sh.finish.map(f=><button key={f} onClick={()=>applyLifeState(finishWorkDay(useGame.getState().game,f))}>{tx.finish[f]}</button>)}</>}
+      <div className="actions choices">{sh.finish.map(f=><button key={f} onClick={()=>applyLifeState(finishWorkDay(useGame.getState().game,f))}>{tx.finish[f]}</button>)}</div></>}
     {current && w.paid && <p role="status">{w.step===4?`${tx.result} ${T.work.done}`:T.work.done}</p>}
-    <button onClick={()=>{saveGame(useGame.getState().game);close()}}>{T.work.pause}</button>
+    <div className="actions leave"><button onClick={()=>{saveGame(useGame.getState().game);close()}}>{T.work.pause}</button></div>
   </section>
 }

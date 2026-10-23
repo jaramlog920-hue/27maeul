@@ -1,5 +1,6 @@
 // 행사 소품 그리기 (계획 17 작업 4·5): 무엇이 어디 놓이는지는 엔진(event-scene.ts의 eventPropsNow)이 정하고,
 // 여기서는 원본 도트(wedding-art·event-art·event-life-motion의 EVENT_STATES)를 소품 팔레트로 한 번 칠해 두고 그린다.
+import { canvasCache } from './canvas-caches'
 import type { EventProp } from '../engine/event-scene'
 import { TILE } from '../engine/world'
 import { FURNI_PALETTE, type FurnitureArt } from './furniture-art'
@@ -10,7 +11,7 @@ import { WEDDING_ARCH, WEDDING_PROPS } from './wedding-art'
 /** 행사 소품 그림 이름 → 원본 도트 (꽃 아치는 앞에서 보는 모습) */
 export const EVENT_PROP_ART: Record<string, FurnitureArt> = { ...WEDDING_PROPS, ...EVENT_PROPS, ...EVENT_STATES, weddingArch: WEDDING_ARCH.down }
 
-const cache = new Map<string, HTMLCanvasElement>()
+const cache = canvasCache<string>()
 function painted(name: string): HTMLCanvasElement | null {
   const a = EVENT_PROP_ART[name]
   if (!a) return null

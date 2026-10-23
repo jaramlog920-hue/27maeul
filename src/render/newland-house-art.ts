@@ -2,6 +2,7 @@
 // 1단계 본채는 예전 새 터 집 그림과 같은 64×64(문 화소 아래 32·왼쪽 15·오른쪽 47)라 엔진의 막힘·문 칸은 그대로다.
 // 2·3단계는 신약 내 집 넓히기처럼 본채보다 낮은 지붕의 날개가 붙는다 — 2단계 오른쪽, 3단계 양쪽 (newland-sites HOUSE_SIZES).
 // 지붕·벽 색, 창 모양, 장식(나무 기둥·차양)은 지을 때 고른 HouseLook. 선은 모두 2픽셀 이상 (화면이 정수배가 아닐 때 일렁이지 않게).
+import { canvasCache } from './canvas-caches'
 import { mainOffset, type BuildKind } from '../engine/newland-sites'
 import { DEFAULT_LOOK, HOUSE_ROOFS, HOUSE_TRIMS, HOUSE_WALLS, HOUSE_WINDOWS, type HouseLook } from '../engine/newland-house-look'
 import type { Facing } from '../engine/types'
@@ -187,7 +188,7 @@ export function drawNewlandHouse(g: CanvasRenderingContext2D, kind: BuildKind, f
   }
 }
 
-const cache = new Map<string, HTMLCanvasElement>()
+const cache = canvasCache<string>()
 /** 집 그림 한 장 (같은 모습은 다시 그리지 않는다) */
 export function newlandHouseCanvas(kind: BuildKind, facing: Facing, look: HouseLook = DEFAULT_LOOK, winter = false, width = 4, sign?: string): HTMLCanvasElement {
   const key = `${kind}/${facing}/${look.roof}/${look.wall}/${look.window ?? 0}/${look.trim ?? 0}/${width}/${winter ? 'w' : ''}/${sign ?? ''}`

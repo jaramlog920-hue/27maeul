@@ -74,11 +74,11 @@ export function SkillLessonView({ close }: { close: () => void }) {
   return <section className="skill-lesson" aria-label={text.name}><h3>{text.name}</h3>
     {l.step === 0 && <>
       <p className="talk-line">{text.demo[l.npc]}</p>
-      <div className="actions skill-styles">{def.styles.map((st, i) => <button key={st} onClick={() => pick(st)}><PropPreview id={def.art[i]} /> {text.styles[st]}</button>)}</div>
+      <div className="actions choices skill-styles">{def.styles.map((st, i) => <button key={st} onClick={() => pick(st)}><PropPreview id={def.art[i]} /> {text.styles[st]}</button>)}</div>
     </>}
     {l.step === 1 && l.mini && <HandPractice state={l.mini} tick={tick} tap={tap} finish={() => applyLifeState(finishLesson(useGame.getState().game))} />}
     {learned && <p role="status">{fill(S.learned, { place: placeName(l.id), item: itemName(def.item) })}</p>}
-    <div className="actions skill-more">
+    <div className="actions leave skill-more">
       {l.step === 1 && l.mini && <button onClick={() => applyLifeState(lookAgain(useGame.getState().game))}>{S.again}</button>}
       <button onClick={close}>{learned ? T.ui.close : S.pause}</button>
     </div>

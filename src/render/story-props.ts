@@ -6,6 +6,7 @@
 //   import { drawStoryProps, registerStoryPropArt } from './story-props'
 //   registerStoryPropArt(EXPANSION_PROPS, EXPANSION_VIEWS)   // 모듈 위에서 한 번
 //   drawStoryProps(g, game)   // 마을 그리기에서 방의 가구(drawFurniture) 바로 뒤, 이웃 그리기 전에
+import { canvasCache } from './canvas-caches'
 import { newsPropsNow, storyPropsNow, type GameState } from '../engine/game'
 import { STALL_SPOT, stallSceneNow } from '../engine/stall'
 import { clubWorkSpots } from '../engine/clubs'
@@ -37,7 +38,7 @@ export function storyPropArt(p: Pick<StoryProp, 'art' | 'item' | 'facing'>): Fur
   return (p.item && FURNITURE_ART[p.item]) || null
 }
 
-const cache = new Map<FurnitureArt, HTMLCanvasElement>()
+const cache = canvasCache<FurnitureArt>()
 function painted(a: FurnitureArt): HTMLCanvasElement {
   let c = cache.get(a)
   if (c) return c
