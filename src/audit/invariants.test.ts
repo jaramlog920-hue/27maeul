@@ -7,7 +7,7 @@ import { peopleData, whenMatches, inWindow, type When, type Req, type Moment } f
 import { canGiveBouquet, canGiveCord, canTravel, nameChild, startCopy, writeVerse, chooseInEvent, eventNow, eventWaiting, finishStoryMini, GIFTABLE, giveBouquet, giveCord, giveGift, goToSleep, greetNeighbor, heartUp, newGame, openEvent, putAway, sightingWaiting, tick, travel, weddingToday, WEDDING_GATHER, type GameState } from '../engine/game'
 import { establishedGame } from '../engine/growth-test-support'
 import { canDate, goOnDate, sceneSeen } from '../engine/game'
-import { DATE_PLACES, FULL_HEART_DATING_DAYS } from '../engine/romance'
+import { DATE_COUNT_FLAG, FULL_HEART_DATING_DAYS, type DatePlace } from '../engine/romance'
 import { FIRE } from '../engine/neighbors'
 import { FESTIVAL_FROM, FESTIVAL_TO, festivalOf } from '../engine/calendar'
 import { CHILD_AFTER_WEDDING } from '../engine/child'
@@ -29,6 +29,8 @@ import { seasonOf } from '../engine/clock'
 import { weatherOf } from '../engine/calendar'
 import type { Tile } from '../engine/types'
 import { FACILITY_IDS } from '../engine/village-sites'
+
+const DATE_PLACES = Object.keys(DATE_COUNT_FLAG) as DatePlace[]
 
 const RUN = !!process.env.AUDIT
 const DAYS = Number(process.env.AUDIT_DAYS ?? 28)
@@ -393,7 +395,7 @@ function simulate(label: string, heart: number, seed: number, play = false, late
       for (const def of CONTENT.neighbors) {
         try {
           const item = GIFTABLE[Math.floor(r() * GIFTABLE.length)]
-          const g = count(s.inv, item) ? giveGift(s, def, item, CONTENT) : null
+          const g = count(s.inv, item) ? giveGift(s, def, item) : null
           if (g) { s = g.state; gifts++ }
         } catch (err) { report({ rule: '6 멈춤(오류)', level: '높음', where: `${label} ${day}일 ${def.id} 선물`, detail: String((err as Error)?.stack ?? err).split('\n').slice(0, 3).join(' / ') }) }
       }

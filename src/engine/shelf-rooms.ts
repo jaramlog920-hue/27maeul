@@ -53,5 +53,6 @@ export function bibleIdOf(book: Book): string {
   return BIBLE_ID[book] ?? book
 }
 
-/** 앱에 싣는 본문의 책 (bible-subset.json) — 방 표에 있는 책 전부 */
+/** 서고 방에 꽂히는 책의 성경 본문 id (본문 묶음 bible-subset의 차례 — scripts/build-bible-subset·verify-pieces가 읽는다) */
 export const SUBSET_BOOKS: readonly string[] = SHELF_ROOMS.flatMap((r) => r.books).map(bibleIdOf)
+

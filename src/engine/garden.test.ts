@@ -3,7 +3,7 @@ import { CONTENT } from '../content/catalog'
 import { newGame, type GameState } from './game'
 import { canPlant, CROPS, GARDEN_TILES, growGarden, harvest, isRipe, plant, water } from './garden'
 import { deserialize, serialize } from './save'
-import { BIG_STACK, MAX_STACK } from './items'
+import { MAX_STACK } from './items'
 
 const spot = GARDEN_TILES[0]
 const k = `${spot.x},${spot.y}`
@@ -15,7 +15,7 @@ const withSeeds = (): GameState => {
 describe('텃밭', () => {
   it.each(['herb', 'bean'] as const)('%s 수확은 가방에 전부 들어갈 때만 하고 실패한 작물은 저장 후에도 남는다', crop => {
     for (const leatherBag of [0, 1]) {
-      const cap = leatherBag ? BIG_STACK : MAX_STACK
+      const cap = MAX_STACK
       const gives = CROPS[crop].gives[crop]!
       const base = { ...withSeeds(), inv: { [crop]: cap - gives + 1, ...(leatherBag ? { leatherBag } : {}) },
         garden: { [k]: { crop, grown: CROPS[crop].days, wateredDay: null } } }

@@ -34,7 +34,7 @@ export function villageBookCount(s: Pick<GrowthState, 'shelved'> & Partial<Pick<
 }
 
 // ── 서고 수입 (2026-10-12 사용자: 서고를 채울수록 닢을 더 번다) ──
-/** 서고에 꽂힌 책 한 권마다 일해서 버는 닢(편지 대필·일하는 하루·마을 부탁)이 이만큼 늘어난다 */
+/** 서고에 꽂힌 책 한 권마다 일해서 버는 닢(함께 일하는 하루·필사 삯)이 이만큼 늘어난다 */
 export const LIBRARY_PAY_PER_BOOK = 0.03
 
 /** 서고를 채운 정도: 신약은 마을 권수, 구약은 끝까지 옮겨 적은 책 수 (구약 진행은 숫자만 받는다 — 순환 import 없이) */

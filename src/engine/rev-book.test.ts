@@ -1,12 +1,11 @@
 // 계획 9 작업 1: 요한계시록의 자리 — 방 표(rev 줄, 장이 오는 길 'stars', 첫머리 문제 없음)·장 조각·옮겨 적기·서고 퀴즈
 import bible from '../content/nt-krv.json'
-import { BOOKS_WITH_CONTENT, CONTENT, copySourceFor, inBrackets, LETTER_OPENINGS, LETTER_PIECES, noText, PIECES, pieceOfVerse, piecesOf, quizSourceFor, REV_PIECES, versesOf } from '../content/catalog'
+import { BOOKS_WITH_CONTENT, CONTENT, inBrackets, LETTER_OPENINGS, LETTER_PIECES, noText, PIECES, pieceOfVerse, piecesOf, quizSourceFor, REV_PIECES, versesOf } from '../content/catalog'
 import { JOURNAL_NOTES, SCENES, T } from '../content/text'
 import { pickableBooks, roomOpen } from './books'
-import { blanksFor, COPY_BLANKS, fillVerse } from './copy'
 import { chooseBook, goToSleep, newGame, shelvedCount, type GameState } from './game'
 import { mulberry32 } from './offers'
-import { buildLibraryQuiz, MAX_BOOK_OPTIONS, QUIZ_SIZE, quizzable, type Question } from './quiz'
+import { buildLibraryQuiz, MAX_BOOK_OPTIONS, QUIZ_SIZE, type Question } from './quiz'
 import { deserialize, serialize } from './save'
 import { modeOf, roomOf, shelfRoom, SHELF_ROOMS, SUBSET_BOOKS } from './shelf-rooms'
 import { BOOKS, isLetter, LETTERS, type Book } from './types'
@@ -81,48 +80,6 @@ describe('① 장 조각 — 장 하나에 조각 하나', () => {
     expect(inBrackets('계 20:5')).toBe(true)
     expect(inBrackets('계 20:4')).toBe(false)
     expect(inBrackets('계 20:6')).toBe(false)
-  })
-})
-
-describe('③ 옮겨 적기 — 22장 전부', () => {
-  /** 원문으로 까닭을 확인한, 빈칸이 셋에 못 미치는 장 — 잰 값(2026-09-30): 없음, 22장 모두 셋 */
-  const SHORT: Record<number, number> = {}
-
-  for (const p of REV_PIECES) {
-    it(p.ref, () => {
-      const src = copySourceFor('rev')
-      const blanks = blanksFor('rev', p.chapter, src)
-      expect(blanks.length).toBeGreaterThanOrEqual(1)
-      expect(blanks).toHaveLength(SHORT[p.chapter] ?? COPY_BLANKS)
-      const shown = src.versesOf(p.ref)
-      const original = FULL.rev[p.chapter - 1]
-      const revSrc = quizSourceFor(['rev'])
-      const allSrc = quizSourceFor(BOOKS)
-      for (const b of blanks) {
-        expect(b.ref).not.toBe('계 20:5')
-        expect(inBrackets(b.ref)).toBe(false)
-        const v = shown.find((x) => x.ref === b.ref)!
-        expect(quizzable(v.text, v.inBrackets)).toBe(true)
-        expect(fillVerse(v.text, b.index, b.answer)).toBe(original[Number(b.ref.split(':')[1]) - 1])
-        for (const o of b.options.filter((x) => x !== b.answer)) {
-          // 다른 보기로 채운 절이 요한계시록에도, 앱 본문 어디에도 없다
-          expect(revSrc.countVerse(fillVerse(v.text, b.index, o)), o).toBe(0)
-          expect(allSrc.countVerse(fillVerse(v.text, b.index, o)), o).toBe(0)
-        }
-      }
-      // 빈칸을 모두 답으로 채운 장 = 원문 장 (계 20:5 괄호 절도 본문으로 보인다)
-      const filled = shown.map((v) => {
-        const b = blanks.find((x) => x.ref === v.ref)
-        return b ? fillVerse(v.text, b.index, b.answer) : v.text
-      })
-      expect(filled).toEqual(original)
-    })
-  }
-
-  it('계 20:5(괄호 절)는 빈칸이 되지 않지만 20장 본문에는 보인다', () => {
-    const src = copySourceFor('rev')
-    expect(blanksFor('rev', 20, src).map((b) => b.ref)).not.toContain('계 20:5')
-    expect(src.versesOf('계 20:1-15').map((v) => v.ref)).toContain('계 20:5')
   })
 })
 

@@ -15,7 +15,6 @@ import { Bag } from './bag/Bag'
 import { Wardrobe } from './family/Wardrobe'
 import { KidTime, KidCapacity } from './family/KidTime'
 import { AdoptForm } from './companion/AdoptForm'
-import { Desk } from './desk/Desk'
 import { CopyDesk } from './desk/CopyDesk'
 import { CopyResult } from './desk/CopyResult'
 import { GardenMenu } from './garden/GardenMenu'
@@ -27,7 +26,6 @@ import { ShelfDone } from './library/ShelfDone'
 import { BookView } from './library/BookView'
 import { HomeShelf } from './library/HomeShelf'
 import { JourneyBoard } from './journey/JourneyBoard'
-import { LetterBox } from './letters/LetterBox'
 import { CareMenu } from './menus/CareMenu'
 import { SpaceMenu } from './menus/SpaceMenu'
 import { PlaceMenu } from './menus/PlaceMenu'
@@ -139,9 +137,6 @@ function Body() {
       return <PassageWindow pieceId={modal.pieceId} askLine={modal.askLine} back={modal.back} said={modal.said} />
     case 'myLine':
       return <MyLineForm key={modal.lineKey} lineKey={modal.lineKey} />
-    case 'desk':
-      // 예전 엮기·옮겨 적기 창 — 계획 14부터 집 책상은 'copy'를 연다 (이 창으로 가는 길은 닫혔다)
-      return <Desk result={modal.result} dark={modal.dark} />
     case 'copy':
       return <CopyDesk modal={modal} />
     case 'review':
@@ -195,8 +190,6 @@ function Body() {
       return <FacilityView id={modal.id} at={modal.at} />
     case 'school':
       return <SchoolView />
-    case 'letter':
-      return <LetterBox />
     case 'menu':
       return <PlaceMenu place={modal.place} />
     case 'yard':
@@ -255,7 +248,6 @@ const pieceBook = (id: string): Book | undefined => (pieceBooks ??= new Map(CONT
 export function ModalLayer() {
   const modal = useGame((s) => s.modal)
   const book = useGame(s => s.game.copy.book)
-  const deskBook = useGame(s => s.game.activeBook)
   const copyResult = useGame(s => s.copyResult)
   const acquired = useGame(s => s.piecePopups[0])
   const collected = useGame(s => s.game.collected)
@@ -275,7 +267,6 @@ export function ModalLayer() {
   if (!modal && !copyResult?.length && !acquired) return null
   const needed: Book[] = []
   if (modal?.kind === 'copy' && modal.view !== 'pick' && book && !isOtBook(book)) needed.push(book)
-  if (modal?.kind === 'desk' && deskBook) needed.push(deskBook)
   if (modal?.kind === 'bookView') needed.push(modal.book)
   if (modal?.kind === 'readingMeeting') needed.push(meetingPassage(modal.day).book)
   // 연인에게 건넬 구절: 모은 조각의 분위기를 보므로 그 책들의 본문을 먼저 불러온다 (2026-10-18 감사, Codex UI-06)

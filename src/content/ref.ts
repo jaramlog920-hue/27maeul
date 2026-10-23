@@ -84,12 +84,6 @@ export function verseKeyString(k: VerseKey): string {
   return `${k.bookId}:${k.chapter}:${k.verse}`
 }
 
-/** a의 모든 절이 b 어딘가에 포함되는가 */
-export function refWithin(a: string, b: string[], byAbbr: BookLookup, counts?: VerseCounts): boolean {
-  const pool = new Set(b.flatMap((r) => expandRef(r, byAbbr, counts).map(verseKeyString)))
-  return expandRef(a, byAbbr, counts).every((k) => pool.has(verseKeyString(k)))
-}
-
 /** 인용 비교용 정규화: 공백과 구두점 제거 */
 export function normalizeQuote(s: string): string {
   return s.replace(/\s+/g, '').replace(/[,.!?…'"“”‘’「」\[\]()]/g, '')

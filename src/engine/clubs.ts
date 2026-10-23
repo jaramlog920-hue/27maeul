@@ -1,6 +1,5 @@
-import { zoneBooks } from './feature-rules'
+import { featureAccess, zoneBooks } from './feature-rules'
 import { nameProblem } from './avatar'
-import { featureAccess } from './feature-rules'
 import { availability, scheduleAppt, attendAppt, canAttendAppt, settleAppt, apptSpots, venueFor, type Appt } from './plans'
 import { notYet, passTime, type GameState } from './game'
 import { key, lockedTiles, PLACES } from './world'

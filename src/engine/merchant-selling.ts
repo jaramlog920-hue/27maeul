@@ -4,7 +4,7 @@ import { count, take } from './items'
 import { sellBonus } from './stats'
 import type { ItemId } from './types'
 
-/** Merchant sales depend on stock and market day, independently of scribe progress. */
+/** 장날 상인에게 파는 값 — 가진 물건과 장날만 보고, 필사 진행과는 상관없다 */
 export const SELL_PRICES: Partial<Record<ItemId, number>> = {
   ink: 8, papyrus: 6, cover: 25, herb: 4, bean: 3, olive: 2,
   wool: 4, grapes: 3, oil: 7, honey: 6, scentCandle: 9,

@@ -11,8 +11,6 @@ import { isWet, grapesRipe, weatherOf } from './calendar'
 
 export const WORK_PAY = 8
 export const WORK_MINUTES = 120
-/** 이 회차를 끝낸 흔적(작업장 앞 소품)이 놓여 있는 날 수 */
-export const WORK_TRACE_DAYS = 3
 export interface WorkDay {
   id: string; npc: string; day: number; startedAt: number; step: number
   /** [맡은 부분, 마무리 방식] — 마무리는 끝낼 때 더한다 */
@@ -24,7 +22,7 @@ export type WorkState = GameState & { workDay?: WorkDay }
 
 /**
  * 작업장별 함께 일하기 (02 문서 §4). 가게 공급품으로 하는 안전한 손일만 맡고, 위험한 공정은 주민이 맡는다.
- * prep: 맡을 부분 · hands: 짧은 손일 둘(기존 여섯 손일 재사용) · finish: 마무리(진열·정리·인계) · art: 작업장 앞에 남는 흔적(assets 도트)
+ * prep: 맡을 부분 · hands: 짧은 손일 둘(기존 여섯 손일 재사용) · finish: 마무리(진열·정리·인계) · art: 함께 일한 기억에 남는 소품 이름(assets 도트)
  */
 export interface WorkShop {
   npcs: readonly string[]
@@ -108,7 +106,7 @@ export function finishWorkStep(s: WorkState, rng: Rng): WorkState {
   const next=passTime(s,30)
   return { ...next,workDay:{...w,step:w.step+1,mini:w.step===1?startMini(handsOf(w)[1],rng):undefined} }
 }
-/** 마무리 방식을 고르고 끝낸다. 수고비는 하루 한 번, 마음(GAIN.work)이 오르고, 가게 물건은 가방에 들지 않는다 — 흔적은 작업장 앞 소품으로 남는다 */
+/** 마무리 방식을 고르고 끝낸다. 수고비는 하루 한 번, 마음(GAIN.work)이 오르고, 가게 물건은 가방에 들지 않는다 — 만든 것은 함께 일한 기억(art)으로만 남는다 */
 export function finishWorkDay(s: WorkState, finish?: string): WorkState {
   const w=s.workDay
   if (!w || w.paid || w.day!==s.clock.day || w.step!==3 || !nearby(s,w.npc)) return s

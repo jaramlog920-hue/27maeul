@@ -1,46 +1,17 @@
 import { legacyGame as newGame } from './growth-test-support'
 // 계획 11 작업 1: 아침에 저절로 생기는 재료 — 빗물 항아리·갈대 말리는 틀·그을음 받이·잉크 항아리, 재료 궤짝
-import { CONTENT, copySourceFor, piecesOf } from '../content/catalog'
+import { CONTENT } from '../content/catalog'
 import { ITEM_TEXT, JOURNAL_NOTES, SCENES, T } from '../content/text'
 import { weatherOf } from './calendar'
-import { blanksFor } from './copy'
 import { CARPENTER_WORKS, CHEST_STACK, INK_JAR_HOLD, RAIN_WATER, SOOT_CATCH } from './easier'
-import {
-  canCraft,
-  canOrderWork,
-  catchSoot,
-  chestOf,
-  chooseBook,
-  eatBread,
-  finishCraft,
-  finishGather,
-  finishHelp,
-  gatherInfo,
-  goToSleep,
-  letterReady,
-  listen,
-  orderWork,
-  ownsTradeTool,
-  recordLetter,
-  restAt,
-  stockOf,
-  takeFromChest,
-  trade,
-  TRADES,
-  tradesFor,
-  warmByHearth,
-  type GameState,
-} from './game'
+import { canCraft, canOrderWork, catchSoot, chestOf, finishCraft, finishGather, gatherInfo, goToSleep, orderWork, ownsTradeTool, stockOf, takeFromChest, trade, TRADES, tradesFor, warmByHearth, type GameState } from './game'
 import { MAX_STACK } from './items'
-import { exhausted } from './needs'
-import { currentChapter } from './offers'
-import { POSTMAN } from './post'
 import { deserialize, serialize } from './save'
 import { FURNITURE } from './room'
 import { HOME_ENTRY, HOME_FRONT, HOUSE_GROW } from './world'
 import { RAIN_JAR_AT, REED_RACK_AT } from '../render/decor'
 import { FURNITURE_ART } from '../render/furniture-art'
-import type { Book } from './types'
+import { copyNextChapter } from './copy-chapter.helper'
 
 const MARKET = 7
 const at = (s: GameState, day: number, minute = 10 * 60): GameState => ({ ...s, clock: { day, minute } })
@@ -283,7 +254,7 @@ describe('재료 궤짝: 가방이 차면 궤짝으로, 책상·작업대는 궤
     // 궤짝이 없으면(표식이 없으면) 궤짝 칸의 것은 쓰지 않는다
     expect(canCraft({ ...s, flags: ready().flags }, 'papyrus')).toBe('needs')
   })
-  it('옮겨 적기는 궤짝의 파피루스·잉크를 쓰지 않는다 (계획 14 — 필사에 재료 없음)', () => {
+  it('필사는 궤짝의 파피루스·잉크를 쓰지 않는다 (계획 14 — 필사에 재료 없음)', () => {
     const s0 = newGame(CONTENT)
     const open = own(
       {
@@ -295,9 +266,7 @@ describe('재료 궤짝: 가방이 차면 궤짝으로, 책상·작업대는 궤
       },
       'supplyChest',
     )
-    const s = listen(chooseBook(open, 'rom', CONTENT), POSTMAN, CONTENT).state
-    expect(letterReady(s, 'rom', 1, CONTENT)).toEqual({ kind: 'ready' })
-    const r = recordLetter(s, 'rom', 1, answers('rom', 1), CONTENT)
+    const r = copyNextChapter(open, 'rom', CONTENT)
     expect(r.progress.rom.completed).toEqual([1])
     expect(r.chest).toEqual({ papyrus: 2, ink: 2 })
   })
@@ -347,102 +316,5 @@ describe('저장과 불러오기', () => {
     for (const id of ['inkJar', 'supplyChest'] as const) expect(ITEM_TEXT[id].name).toBeTruthy()
     for (const id of ['rainJar', 'inkJar']) expect((T.trades as Record<string, string>)[id]).toBeTruthy()
     for (const w of CARPENTER_WORKS) expect((T.easy.names as Record<string, string>)[w.id]).toBeTruthy()
-  })
-})
-
-// ── 균형 시뮬레이션 (Global Constraints): 모든 것을 산 상태에서 한 권을 끝내는 속도가 예전의 1.5배를 넘지 않는다 ──
-
-const answers = (book: Book, chapter: number) => blanksFor(book, chapter, copySourceFor(book)).map((b) => b.answer)
-const smith = CONTENT.neighbors.find((n) => n.id === 'smith')!
-const STOCK_AHEAD = 6
-
-/**
- * 부지런한 기록자 한 사람의 하루들: 편지 나르는 이웃에게 받고, 재료를 만들고, 옮겨 적는다 (걷는 시간은 빼고 — 양쪽 같게).
- * 그을음은 대장장이 돕기(하루 한 번), 새 살림이 있으면 화덕을 일부러 써서 받이도 채운다 (가장 빨리 하려는 사람).
- * 편지 책을 차례로(로마서 → 고린도전서 …) 옮겨 적으며, 날마다 적은 장 수를 돌려준다
- */
-function simulate(withNew: boolean, days: number): { perDay: number[]; bookDays: Partial<Record<Book, number>> } {
-  const books: Book[] = ['rom', '1co', '2co', 'gal', 'eph', 'php', 'col', '1th', '2th', '1ti', '2ti']
-  const s0 = newGame(CONTENT)
-  let s: GameState = {
-    ...s0,
-    clock: { day: 3, minute: 6 * 60 },
-    scenes: [],
-    flags: { ...s0.flags, gospelFeast: 2, 'room:romPhm': 1, 'movedIn:carpenter': 1, 'movedIn:fisher': 1, 'movedIn:apothecary': 1 },
-    shelved: { mt: 2, mk: 1, lk: 1, jn: 0, ac: 1 },
-    // 예전에도 살 수 있던 것은 모두 산 상태 (좋은 펜·넓은 책상·밝은 등잔)
-    inv: { goodPen: 1, wideDesk: 1, brightLamp: 1, bread: 6, water: 2 },
-  }
-  if (withNew) s = { ...own(s, 'rainJar', 'reedRack', 'sootCatcher', 'inkJar', 'supplyChest'), flags: { ...own(s, 'rainJar', 'reedRack', 'sootCatcher', 'inkJar', 'supplyChest').flags, rackSeen: 1 } }
-  const bookOf = (g: GameState) => books.find((b) => currentChapter(piecesOf(b), g.progress[b].completed) !== null) ?? null
-  s = chooseBook(s, bookOf(s)!, CONTENT)
-  const perDay: number[] = []
-  const bookDays: Partial<Record<Book, number>> = {}
-  for (let d = 0; d < days; d++) {
-    const book = bookOf(s)
-    if (!book) break
-    if (s.activeBook !== book) s = chooseBook(s, book, CONTENT)
-    s = listen(s, POSTMAN, CONTENT).state
-    let done = 0
-    for (let step = 0; step < 300 && s.clock.minute < 22 * 60; step++) {
-      const before = s
-      if (s.needs.hunger >= 60) {
-        const e = eatBread(s)
-        if (e) s = e
-        else if (canCraft(s, 'bread') === null) s = finishCraft(s, 'bread')
-        else if (stockOf(s, 'water') < 1) s = finishGather(s, 'well')
-        else s = finishGather(s, 'field')
-      } else if (s.needs.fatigue >= 70 || exhausted(s.needs)) s = restAt(s)
-      else {
-        const b = s.activeBook!
-        const ch = currentChapter(piecesOf(b), s.progress[b].completed)
-        const r = ch === null ? null : letterReady(s, b, ch, CONTENT)
-        if (r?.kind === 'ready') {
-          s = recordLetter(s, b, ch!, answers(b, ch!), CONTENT)
-          done++
-          if (currentChapter(piecesOf(b), s.progress[b].completed) === null) {
-            bookDays[b] = d + 1
-            const nb = bookOf(s)
-            if (nb) s = listen(chooseBook(s, nb, CONTENT), POSTMAN, CONTENT).state
-          }
-        } else {
-          // 받은 장이 없어도 다음을 위해 재료를 미리 만든다 (넉넉히 STOCK_AHEAD까지)
-          const needInk = r?.kind === 'supplies' ? stockOf(s, 'ink') < 1 : stockOf(s, 'ink') < STOCK_AHEAD
-          const needPap = r?.kind === 'supplies' ? stockOf(s, 'papyrus') < 1 : stockOf(s, 'papyrus') < STOCK_AHEAD
-          if (needInk && stockOf(s, 'soot') >= 1 && stockOf(s, 'water') >= 1) s = finishCraft(s, 'ink')
-          else if (needInk && stockOf(s, 'soot') >= 1) s = finishGather(s, 'well')
-          else if (needInk && !s.helped.includes('smith')) s = finishHelp(s, smith)
-          else if (needInk && withNew && catchSoot(s) !== s) s = warmByHearth(s)
-          else if (needPap && stockOf(s, 'reed') >= 1) s = finishCraft(s, 'papyrus')
-          else if (needPap) s = finishGather(s, 'reeds')
-          else break
-        }
-      }
-      if (s === before) break
-    }
-    perDay.push(done)
-    s = goToSleep({ ...s, scenes: [] }, CONTENT)
-  }
-  return { perDay, bookDays }
-}
-
-describe('균형: 새 살림을 모두 갖춰도 한 권을 끝내는 속도는 예전의 1.5배를 넘지 않는다', () => {
-  const DAYS = 28
-  const before = simulate(false, DAYS)
-  const after = simulate(true, DAYS)
-  const sum = (a: number[]) => a.reduce((x, y) => x + y, 0)
-  it('같은 날 수에 옮겨 적은 장 수 (예전 ≤ 지금 ≤ 예전 × 1.5)', () => {
-    expect(sum(before.perDay)).toBeGreaterThan(0)
-    expect(sum(after.perDay)).toBeGreaterThanOrEqual(sum(before.perDay))
-    expect(sum(after.perDay)).toBeLessThanOrEqual(sum(before.perDay) * 1.5)
-  })
-  it('한 권을 끝낸 날 수 (지금 ≥ 예전 ÷ 1.5)', () => {
-    for (const b of ['rom', '1co'] as Book[]) {
-      expect(before.bookDays[b], b).toBeDefined()
-      expect(after.bookDays[b]!, b).toBeGreaterThanOrEqual(before.bookDays[b]! / 1.5)
-    }
-  })
-  it('하루 최대 장 수도 예전의 1.5배를 넘지 않는다', () => {
-    expect(Math.max(...after.perDay)).toBeLessThanOrEqual(Math.max(...before.perDay) * 1.5)
   })
 })

@@ -1,10 +1,7 @@
-import { t, allEntries, getLang } from './i18n'
+import { t, allEntries } from './i18n'
 import { forbiddenIn } from '../content/forbidden'
 
 describe('화면 글 입구', () => {
-  it('처음 말은 한국어', () => {
-    expect(getLang()).toBe('ko')
-  })
   it('열쇠로 글을 꺼낸다', () => {
     expect(t('common.close')).toBe('닫기')
   })

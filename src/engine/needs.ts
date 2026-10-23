@@ -12,6 +12,7 @@ export interface Needs {
 export const FRESH: Needs = { hunger: 10, fatigue: 0, cold: 0, heat: 0 }
 export const HUNGRY = 70
 export const TIRED = 75
+/** 추위·더위가 이만큼이면 기분이 내려간다 (mood) */
 export const CHILLY = 60
 export const LIMIT = 100
 

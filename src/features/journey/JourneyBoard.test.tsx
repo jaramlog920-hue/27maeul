@@ -3,12 +3,11 @@ import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { CHURCHES, CONTENT, versesOf } from '../../content/catalog'
 import { chaptersOf, emptyProgress } from '../../engine/books'
-import { blanksFor } from '../../engine/copy'
+import { copyVerses } from '../../engine/copying'
 import { newGame, playerTile, type GameState } from '../../engine/game'
 import { mulberry32 } from '../../engine/offers'
 import { shelfRoom } from '../../engine/shelf-rooms'
 import { key, LOCKED_DOORS, PLACES, REV_ROOM, roomAt, ROOMS, WARPS } from '../../engine/world'
-import { copySourceFor } from '../../content/catalog'
 import { useGame } from '../../store/game-store'
 
 // 조각을 넣으면 뜨는 "말씀조각 획득" 알림은 바로 넘긴다 (알림이 떠 있으면 누르기가 막힌다 — 알림은 따로 테스트)
@@ -179,19 +178,19 @@ describe('일곱 교회 카드 판 창 (계획 9 작업 4)', () => {
     expect(screen.getByRole('status')).toHaveTextContent('지금 놓인 카드는 본문 순서대로예요.')
   })
 
-  it('요한계시록 2장을 옮겨 적으면 "일곱 교회 카드 4장이 생겼어요."', () => {
-    const blanks = blanksFor('rev', 2, copySourceFor('rev'))
+  it('요한계시록 2장을 필사로 마치면 "일곱 교회 카드 4장이 생겼어요."', () => {
+    vi.useFakeTimers()
+    const verses = copyVerses('rev', 2, CONTENT)
     reset({
       flags: opened,
       shelved: shelvedAll,
-      activeBook: 'rev',
-      collected: ['rev-001', 'rev-002'],
       progress: { ...emptyProgress(), rev: { completed: [1], arrangement: {} } },
-      inv: { papyrus: 3, ink: 3 },
     })
-    useGame.setState({ modal: { kind: 'desk', result: null, dark: false } })
-    blanks.forEach((b, i) => act(() => useGame.getState().copyPick(i, b.answer)))
-    act(() => useGame.getState().submitCopy())
+    const g = useGame.getState().game
+    useGame.setState({ game: { ...g, copy: { ...g.copy, book: 'rev', at: { rev: { chapter: 2, verse: verses.at(-1)!.verse } } } }, modal: { kind: 'copy', view: 'write', last: null } })
+    act(() => { useGame.getState().copyType(verses.at(-1)!.text) })
+    act(() => { vi.advanceTimersByTime(1000) })
+    vi.useRealTimers()
     expect(useGame.getState().game.progress.rev.completed).toEqual([1, 2])
     expect(useGame.getState().game.churches).toHaveLength(4)
     expect(useGame.getState().toast?.text).toBe('일곱 교회 카드 4장이 생겼어요.')

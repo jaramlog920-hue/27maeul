@@ -79,8 +79,7 @@ describe('조각 받기와 받은 기록', () => {
   })
   it('선물은 마음만 오른다 — 친한 이웃에게 선물해도 조각을 주지 않는다 (직업·선물과 조각을 묶지 않는다)', () => {
     const def = CONTENT.neighbors.find((n) => n.id === 'baker') as NeighborDef
-    const r = giveGift({ ...chooseBook(fresh(), 'lk', CONTENT), inv: { grapes: 2 }, hearts: { baker: 100 } }, def, 'grapes', CONTENT)!
-    expect(r.pieceId).toBeUndefined()
+    const r = giveGift({ ...chooseBook(fresh(), 'lk', CONTENT), inv: { grapes: 2 }, hearts: { baker: 100 } }, def, 'grapes')!
     expect(r.state.collected).toEqual([])
   })
   it('필사로 장을 마쳐도 조각은 받지 않는다 — 불러온 뒤에도 (예전에 엮은 장만 예전처럼)', () => {

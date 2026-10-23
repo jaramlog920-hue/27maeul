@@ -199,7 +199,7 @@ export type ItemId =
   | 'supplyChest'
   // 서늘한 찬장 (2026-10-08): 음식만 넣어 두는 찬장
   | 'homeCoolCupboard'
-  // 생활 가구 48종 (2026-10-12 도트) — engine/furniture-additions.ts
+  // 생활 가구 68종 (2026-10-12 도트) — engine/furniture-additions.ts
   | AdditionItemId
   // 가방과 신 (계획 11 작업 2): 한 번 얻으면 계속 쓰는 도구
   | 'leatherBag'

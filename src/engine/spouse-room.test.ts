@@ -5,7 +5,8 @@ import { findPath } from './movement'
 import { route } from './neighbors'
 import { solidTiles } from './room'
 import { HOME_FRONT, HOME_ENTRY, isHome, tileAt } from './world'
-import { SPOUSE_ROOM, SPOUSE_ROOM_DOOR, SPOUSE_ROOM_STAND } from './spouse-room'
+import { SPOUSE_ROOM, SPOUSE_ROOM_STAND } from './spouse-room'
+import { PARTNER_DOOR as SPOUSE_ROOM_DOOR } from './home-layout'
 import designs from '../content/spouse-rooms.json'
 
 describe('증축한 뒤쪽 배우자방', () => {

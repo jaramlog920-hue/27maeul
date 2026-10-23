@@ -84,8 +84,6 @@ export function SkillLessonView({ close }: { close: () => void }) {
     </div>
   </section>
 }
-/** 옛 이름 — 목수 마감법 화면 */
-export const FinishLesson = SkillLessonView
 
 /** 작업대·화덕: 배운 기술의 모습 고르기와 개인 재료로 만들기 */
 export function SkillCraftOptions({ at = 'workbench' }: { at?: 'workbench' | 'hearth' }) {

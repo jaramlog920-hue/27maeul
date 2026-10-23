@@ -1,9 +1,7 @@
-import { childMode, childStage, type Child } from './child'
 import { petSpotSafe } from './companion'
 import { findPath } from './movement'
 import { keepClear, solidTiles, type Furniture } from './room'
 import { HOME_ENTRY, key, sameTile } from './world'
-import type { Tile } from './types'
 
 export const PET_FURNITURE = ['wovenPetBed', 'coolingPetMat', 'petBowlStation', 'petTugMat', 'petPuzzleTray'] as const
 export const CHILD_FURNITURE = ['toddlerRockingHorse', 'childBlockMat', 'childDrawingTable', 'childBookSeat', 'toddlerDrumMat'] as const
@@ -25,13 +23,3 @@ export function petFurniturePlace(room: readonly Furniture[], minute: number, po
   return choices[Math.floor(minute / 60) % Math.max(1, choices.length)] ?? null
 }
 
-export function childFurniturePlace(s: { room?: readonly Furniture[]; child: Child | null; clock: { day: number; minute: number }; player: Tile; companion?: Tile | null }): Furniture | null {
-  if (!s.child || !s.room || childMode(s.child, s.clock.day) !== 'home') return null
-  const stage = childStage(s.child, s.clock.day), m = s.clock.minute
-  if ((stage !== 'toddler' && stage !== 'helper') || m < 7 * 60 || m >= 21 * 60) return null
-  const ids = stage === 'toddler' ? CHILD_FURNITURE.filter(id => id !== 'childDrawingTable') : CHILD_FURNITURE.filter(id => id !== 'toddlerRockingHorse')
-  const occupied = new Set([key({ x: Math.round(s.player.x), y: Math.round(s.player.y) })])
-  if (s.companion) occupied.add(key({ x: Math.round(s.companion.x), y: Math.round(s.companion.y) }))
-  const choices = usable(s.room, ids, occupied)
-  return choices[Math.floor(m / 20) % Math.max(1, choices.length)] ?? null
-}

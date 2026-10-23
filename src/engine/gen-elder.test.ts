@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { CONTENT } from '../content/catalog'
 import { newGenState, sanitizeGen, type GenPerson, type GenState } from './gen'
 import { STAGE_AT } from './gen-config'
-import { settleGrowth, stageByAge, movedHeir, slotPerson } from './gen-growth'
+import { settleGrowth, stageByAge, slotPerson } from './gen-growth'
 import { companionsOf, genAvatar } from './gen-looks'
 import { settleGen, withPairs } from './gen-settle'
 import { legacyGame as newGame } from './growth-test-support'
@@ -27,7 +27,6 @@ describe('태어난 생성 주민의 노년', () => {
     let g = family()
     for (let d = 10; d <= elderDay; d++) g = settleGrowth(g, d)
     expect(g.persons['g-0001'].stage).toBe('elder')
-    expect(movedHeir(g, 'rudy')).toBeNull()
     // 2026-10-21 사용자: 은퇴를 없앴다 — 자녀가 노년이 되어도 부모 이웃이 자리 주인, 자녀는 곁에 어른 크기로
     expect(slotPerson(g, 'rudy')).toBe('rudy')
     expect(residentIsElder(g, 'g-0001')).toBe(true)

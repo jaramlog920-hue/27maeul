@@ -4,7 +4,8 @@
 //   입주(2026-10-08): 선물을 남기고 다시 온 손님에게 빈 입주 주택을 내어 주면 그 집 문 옆에서 산다(settledGuests).
 // - 기억 정원: 실제로 있었던 일만 날짜와 함께 (날짜가 없으면 "날짜 미상"). 표식은 정원 안에 최근 것부터 여덟이 저절로 선다(renderer).
 // - 공동 마당: 하루 한 번 오후에 작은 모임 — 마음이 가까운 이웃(하트 3 이상) 중 그날 나온 이웃만 (game.ts gatherYard).
-// - 주민의 꿈터: 페넬로피의 꿈을 들어야 건물 목록에 보인다. 문을 연 뒤 사흘이 지나면 어려움 하나를 함께 고르고, 고른 말이 남는다.
+// - 주민의 꿈터: 그 이웃의 꿈 이야기를 들어야 건물 목록에 보인다 (페넬로피·틸리는 따로 쓴 꿈, 그 밖엔 일이 정해진 이웃 — kid-work).
+//   페넬로피·틸리의 꿈터는 문을 연 뒤 사흘이 지나면 어려움 하나를 함께 고르고, 고른 말이 남는다.
 import type { GameState } from './game'
 import type { ItemId, NeighborDef, Tile } from './types'
 import type { GodFind } from './god-records'
@@ -73,12 +74,12 @@ export function talkKidVisit<T extends KidS & Pick<GameState, 'inv'>>(s: T): { s
   return { state: { ...s, flags, inv }, line: Math.min(n, GUEST_STAY) - 1, ...(gift ? { gift } : {}) }
 }
 
-/** 아침: 머문 지 사흘이 지난 손님은 떠나고, 빈 손님집에는 때가 되면 새 손님 (선물을 아직 남기지 않은 손님부터) */
 /** 함께하지 않는 아이 가운데 지금 손님집에 묵고 있는 아이가 있나 (아침 장면 때문에 잠시 다른 아이가 앞에 선 날) */
 export function siblingVisiting(s: Pick<GameState, 'clock'> & Partial<Pick<GameState, 'siblings'>>): boolean {
   return (s.siblings ?? []).some((k) => { const since = k.kidFlags?.kidVisitSince; return !!since && s.clock.day - since < GUEST_STAY })
 }
 
+/** 아침: 머문 지 사흘이 지난 손님은 떠나고, 빈 손님집에는 때가 되면 새 손님 (선물을 아직 남기지 않은 손님부터) */
 export function guestHouseMorning<T extends S>(s: T): T {
   if (!doneOf(s, 'guest')) return s
   // 묵고 있는 아이가 잠시 뒤에 있으면 손님집은 그대로 (새 손님을 들이지 않는다)
@@ -220,9 +221,9 @@ export const KID_DISHES: readonly DishId[] = ['bread', 'beanDish', 'figPlate', '
 export function kidWorkSpot(b: Build): Tile | null {
   return standSpotOf(b)
 }
-/** 일터에 들르기: 하루 한 번. 요리사면 그날의 한 접시. 오늘 이미 들렀거나 일터·아이가 없으면 null */
 /** 일터 후속 (2026-10-08): 들른 횟수가 이만큼이면 그날 한 번 특별한 말 — 첫 단골, 일터가 자리 잡음 (기억 정원에 남는다) */
 export const KID_WORK_MILESTONES = [3, 10] as const
+/** 일터에 들르기: 하루 한 번. 요리사면 그날의 한 접시. 오늘 이미 들렀거나 일터·아이가 없으면 null */
 export function visitKidWork<T extends S & Pick<GameState, 'inv' | 'child'>>(s: T): { state: T; dish?: ItemId; milestone?: number } | null {
   const job = kidWorkJob(s)
   // 함께하는 아이의 일터여야 한다 (주인 없는 옛 기록은 그 아이 몫) — 이웃 자녀·동생의 일터로 들르거나,
@@ -270,7 +271,6 @@ export function canMendQuarrel(s: Pick<GameState, 'flags' | 'newland'>): boolean
 // ── 문 앞·마당 안에 서면 여는 창 ──
 
 export type FacilityKind = 'guest' | 'memorial' | 'courtyard' | 'weaver' | 'gallery' | 'settled' | 'kidWork' | 'family' | 'emptyHome'
-/** 이 칸에서 여는 시설 (완공된 것만): 문이 있는 건물은 문·문 앞, 열린 마당은 안쪽 칸 */
 /** 이 칸(문·문 앞·서는 칸)의 완성된 집 겸 일터 건물 — 여러 채일 때 누른 그 건물 (2026-10-18 감사, Codex E-02) */
 export function kidWorkBuildAt(s: Pick<GameState, 'newland'>, t: Tile): Build | null {
   for (const b of buildsOf(s)) {
@@ -282,6 +282,7 @@ export function kidWorkBuildAt(s: Pick<GameState, 'newland'>, t: Tile): Build | 
   return null
 }
 
+/** 이 칸에서 여는 시설 (완공된 것만): 문이 있는 건물은 문·문 앞, 열린 마당은 안쪽 칸 */
 export function facilityAt(s: Pick<GameState, 'newland'>, t: Tile): FacilityKind | null {
   for (const b of buildsOf(s)) {
     if (b.state !== 'done') continue
@@ -354,7 +355,6 @@ export const DREAMS = [
   { npc: 'penelope', build: 'weaver' },
   { npc: 'tilly', build: 'gallery' },
 ] as const satisfies readonly { npc: string; build: Build['kind'] }[]
-export type DreamBuild = (typeof DREAMS)[number]['build']
 /** 꿈 이야기를 들을 수 있는 마음 (하트 4) */
 export const DREAM_HEARTS_POINTS = 40
 /** 문을 연 뒤 어려움이 오는 날 */
@@ -365,7 +365,6 @@ export const DREAM_GIFT_GAP = 7
 /** 꿈의 저장 열쇠 (페넬로피는 예전 이름) */
 export const dreamKey = (base: 'dreamOpen' | 'dreamPick' | 'dreamGiftDay', npc: string = DREAMER): string => (npc === DREAMER ? base : `${base}:${npc}`)
 export const dreamOf = (npc: string) => DREAMS.find((d) => d.npc === npc)
-export const dreamerOfBuild = (kind: string): string | undefined => DREAMS.find((d) => d.build === kind)?.npc
 export const dreamHeard = (s: Pick<GameState, 'flags'>, npc: string = DREAMER): boolean => !!s.flags[`dream:${npc}`]
 export function canHearDream(s: Pick<GameState, 'flags' | 'hearts'> & Partial<Pick<GameState, 'gen'>>, npc: string): boolean {
   // 따로 쓴 꿈(페넬로피·틸리) 말고도 일이 정해진 이웃은 모두 꿈터를 꿈꾼다 (2026-10-21 사용자) — 자리를 물려준 이웃은 빼고 (그 자리는 자녀가)

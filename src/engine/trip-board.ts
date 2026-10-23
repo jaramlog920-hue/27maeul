@@ -75,8 +75,8 @@ export interface Landing {
 }
 
 /**
- * 주사위 한 번: 굴린 수만큼 가서 칸의 일을 한다. nextPiece는 지금 책의 다음 조각(이미 이번 여행에서 받은 것은 빼고)을 준다.
- * 판 끝(시작 칸)을 지나면 한 바퀴 — 끝. 스무 번째에도 끝
+ * 주사위 한 번: 굴린 수만큼 가서(지름길 칸이면 더) 칸의 일을 한다. 받은 것은 돌아올 때 한꺼번에 정산한다 (game.applyTripRewards).
+ * 판 끝(시작 칸)을 지나면 한 바퀴 — 끝. TRIP_TURNS번(더 굴리기를 샀으면 그만큼 더)을 굴려도 끝
  */
 export function playTurn(b: BoardState, roll: number, rnd: () => number, ctx: { withChild: boolean }): { board: BoardState; landing: Landing } {
   let to = b.pos + roll
@@ -131,7 +131,6 @@ function land(cell: Cell, rnd: () => number, ctx: { withChild: boolean }): Landi
   }
 }
 
-/** 주사위 1–6 */
 /**
  * 여행 판의 주사위·상자 씨앗: 세계·날·행선지·다녀온 횟수로 정한다. 판은 저장되지 않으므로, 새로 불러와 다시 떠나도
  * 같은 주사위가 나온다 — 결과가 나쁘면 새로고침해 다시 굴리던 것을 막는다 (2026-10-18 감사 M-4)
@@ -143,6 +142,7 @@ export function tripSeed(s: { clock: { day: number }; flags: Record<string, numb
   return h
 }
 
+/** 주사위 1–6 */
 export function rollDie(rnd: () => number): number {
   return 1 + Math.min(5, Math.floor(rnd() * 6))
 }

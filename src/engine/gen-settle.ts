@@ -1,14 +1,10 @@
-import {successionMilestone} from './progress-milestones'
+// 계획 20 2부 작업 A: 주민 자율 가족의 하루 정산 (아침 단계에서 하루에 한 번, D18).
+// 순서: 관계(헤어짐·친한 사이·연인·상담 시작) → 결혼(부부 되기·결혼 준비) → 출생(침대 부탁·아이) → 자라기.
 import { featureAccess } from './feature-rules'
 import { withLookDefaults } from './avatar'
 import { ROOMS } from './world'
-// 계획 20 2부 작업 A: 주민 자율 가족의 하루 정산 (아침 단계에서 하루에 한 번, D18).
-// 순서: 관계(헤어짐·친한 사이·연인·상담 시작) → 결혼(부부 되기·결혼 준비) → 출생(침대 부탁·아이).
 import { closeKin } from './gen-kin'
 import { MAX_CATCHUP, PLAYER_COOLING } from './gen-config'
-
-/** 플레이어가 공들이는 연애 후보로 보는 마음 점수 (6하트) — 가장 높은 후보가 이만큼이면 그 사람은 다른 주민과 사귀지 않는다 */
-export const COURT_POINTS = 60
 import { ensureBakerBaby, ensureFixed, newGenState, relationId, type GenState, type Relation } from './gen'
 import { settleRelations, type DayCtx } from './gen-relations'
 import { settleMarriage, type HomeOf } from './gen-marriage'
@@ -17,6 +13,9 @@ import { pauseResidentAging, settleGrowth, slotOfPerson, slotPerson } from './ge
 import { peopleData } from './people'
 import type { GameState } from './game'
 import type { GameContent } from './types'
+
+/** 플레이어가 공들이는 연애 후보로 보는 마음 점수 (6하트) — 가장 높은 후보가 이만큼이면 그 사람은 다른 주민과 사귀지 않는다 */
+export const COURT_POINTS = 60
 
 export interface SettleOpts {
   /** 오늘 큰 사건이 걸린 주민이면 true — 그 주민의 전환은 보류한다 (다음 정산에 다시 본다) */
@@ -129,10 +128,9 @@ export function settleOneDay(g: GenState, d: number, s: Partial<Pick<GameState, 
     g = settleMarriage(g, d, { ...ctx, weddingFree: opts.weddingFree ?? (() => true) }, homeOfFor(content, g))
     g = settleBirth(g, d, ctx, avatarOfFor(content))
   }
-  // 세대교체: 자라기 → 견습 → 은퇴와 이어받기
-  // 은퇴는 없다 (2026-10-21 사용자: 이웃은 계속 그 자리에서 지내고, 다 자란 자녀는 스스로 일을 찾는다) — 견습·은퇴는 끄고,
+  // 자라기. 은퇴·견습은 없다 (2026-10-21 사용자: 이웃은 계속 그 자리에서 지내고, 다 자란 자녀는 스스로 일을 찾는다) —
   // 180장(다음 세대)부터는 어른이 된 자녀가 자기 일을 찾은 소식이 남는다 (ownJob)
-  g = settleGrowth(g, d, { generations: false, retirement: false, ownJobs: featureAccess(s, 'generations') === 'full', ageless: featureAccess(s, 'autonomy') !== 'full' || !!s.flags?.ageless, keep: s.romance?.partner ?? null })
+  g = settleGrowth(g, d, { ownJobs: featureAccess(s, 'generations') === 'full', ageless: featureAccess(s, 'autonomy') !== 'full' || !!s.flags?.ageless })
   return ensureBakerBaby(g, d)
 }
 
@@ -166,7 +164,7 @@ export function settleGen(s: GameState, content: GameContent, opts: SettleOpts =
   // 지난 날의 만남 수는 버린다
   g = ensureBakerBaby(g, day)
   if (featureAccess(s, 'autonomy') !== 'full' || s.flags.ageless) g = pauseResidentAging(g, day)
-  return successionMilestone(s,{ ...s, gen: { ...g, meets: {}, settledDay: day } })
+  return { ...s, gen: { ...g, meets: {}, settledDay: day } }
 }
 
 /** 자율 진행 켜고 끄기 (D17·P14): 다시 켤 때 settledDay를 오늘로 맞춰 지나간 기간을 한꺼번에 처리하지 않는다 */
@@ -176,7 +174,7 @@ export function setGenOn(s: GameState, on: boolean): GameState {
   return { ...s, gen: { ...gen, on, settledDay: s.clock.day } }
 }
 
-/** Apply the same unlock rule to UI and direct callers, preserving elapsed paused days. */
+/** 주민이 나이 드는지 켜고 끄기 — 자율 생활이 열려야 켤 수 있고(화면·직접 호출 모두), 멈춰 있던 날은 그대로 쌓아 둔다 */
 export function setResidentAging(s: GameState, on: boolean): GameState {
   if (on && featureAccess(s, 'autonomy') !== 'full') return s
   const flags = { ...s.flags }

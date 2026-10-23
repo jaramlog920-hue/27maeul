@@ -3,8 +3,6 @@ import type { ItemId, Minigame } from './types'
 
 export type Inventory = Partial<Record<ItemId, number>>
 export const MAX_STACK = 99
-/** 예전 가죽 가방의 한 칸 최대 — 이제 한 칸 한도가 하나라 MAX_STACK과 같다 (옛 이름을 쓰는 곳을 위해 남김) */
-export const BIG_STACK = MAX_STACK
 /** 가방 칸 수 — 물건 한 가지가 한 칸 (도구도 한 칸) */
 export const BAG_SLOTS = 50
 
@@ -25,7 +23,7 @@ export function slotsUsed(inv: Inventory): number {
 export function hasSlotFor(inv: Inventory, id: ItemId): boolean {
   return count(inv, id) > 0 || slotsUsed(inv) < BAG_SLOTS
 }
-/** 먹을 수 있는 것과 배고픔을 덜어 주는 정도 (좋은 것부터) */
+/** 먹을 수 있는 것과 배고픔을 덜어 주는 정도 (먹는 차례 — eatBread가 앞에서부터 고른다) */
 export const FOODS: readonly [ItemId, number][] = [
   ['bread', 50],
   ['honey', 40],
@@ -50,7 +48,7 @@ export function has(inv: Inventory, need: Partial<Record<ItemId, number>>): bool
   return (Object.entries(need) as [ItemId, number][]).every(([id, n]) => count(inv, id) >= n)
 }
 
-/** 넣기. 넘치는 만큼은 버려지고, 실제로 들어간 수를 함께 돌려준다 */
+/** 넣기. 넘치는 만큼은 버려진다 (빈칸이 없으면 새 물건은 들어가지 않는다) */
 export function add(inv: Inventory, gives: Partial<Record<ItemId, number>>): Inventory {
   const out = { ...inv }
   const stack = stackCap(inv)
@@ -120,10 +118,3 @@ export function recipeGives(r: Recipe, _inv: Inventory, flags: Record<string, nu
   return r.gives
 }
 
-export function craft(inv: Inventory, r: Recipe, flags: Record<string, number> = {}): Inventory | null {
-  const left = take(inv, r.needs)
-  return left ? add(left, recipeGives(r, inv, flags)) : null
-}
-
-/** 한 장을 다 쓰는 데 드는 것 */
-export const CHAPTER_COST: Partial<Record<ItemId, number>> = { papyrus: 1, ink: 1 }

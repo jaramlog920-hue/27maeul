@@ -31,8 +31,7 @@ export const FEST_STEPS: readonly FestStep[] = ['tidy','arrive','activity','talk
 export const FEST_DAYS_AHEAD = 7
 /** 행사 시간: 시작부터 이 분이 지나면 이 단계 (늦게 오면 진행 중인 단계부터) */
 const STEP_AT: readonly [FestStep, number][] = [['tidy',0],['arrive',15],['activity',30],['talk',70],['finish',100]]
-/** 특별 간식: 가방에 있는 것만 (없으면 기본 차와 간식으로 연다) */
-/** (직접 만든 음식도 간식·차로 낼 수 있다 — 기획 13)  */
+/** 특별 간식: 가방에 있는 것만 (없으면 기본 차와 간식으로 연다). 직접 만든 음식도 간식·차로 낼 수 있다 (기획 13) */
 export const FEST_SNACKS: readonly ItemId[] = ['bread','fig','grapes','honey',...COOKED_ITEMS]
 /** 장식: 가진 생활 장식(없으면 기본 천) — 행사가 끝나면 그대로 돌아온다 */
 export const FEST_DECOR: readonly ItemId[] = ['vase','dryFlowers','candle','teapot','fruitBowl','cushion','pillows']
@@ -98,7 +97,7 @@ export function festWorks(s: GameState): { id: string; kind: string; with: strin
 export function festivalDays(s: GameState): number[] {
  const out: number[] = []
  for (let d = s.clock.day; d <= s.clock.day + FEST_DAYS_AHEAD; d++) {
-  // 비 오는 날은 잔치가 열리지 않고, 내 결혼 잔치 날은 결혼 잔치가 먼저 (2026-10-21 점검)
+  // 내 결혼 잔치 날은 결혼 잔치가 먼저 (2026-10-21 점검). 계절 잔치 날은 늘 맑아(calendar weatherOf) 비 판단은 덧붙인 안전장치
   if (!festivalOf(d) || isWet(weatherOf(d)) || s.romance?.weddingDay === d || (d === s.clock.day && s.clock.minute >= FESTIVAL_TO)) continue
   if (fests(s).some(f => f.kind === 'festival' && f.day === d && (!f.closed || f.joined))) continue
   out.push(d)
@@ -224,10 +223,6 @@ export function festHere(s: GameState, place: PlaceId): Fest | undefined {
   const a = apptOf(s, f)
   return !f.closed && !!a && a.state === 'running' && a.day === s.clock.day && s.clock.minute >= a.from && s.clock.minute < a.to && venueFor(a).place === place
  })
-}
-/** 지금 진행 중인 행사 (어느 자리든) */
-export function festRunning(s: GameState): Fest | undefined {
- return fests(s).find(f => { const a = apptOf(s, f); return !f.closed && a?.state === 'running' })
 }
 
 /** 함께하기: 자리 곁에 있어야 하고(가까이 있다고 저절로 참여하지 않음), 늦으면 진행 중인 단계부터 */

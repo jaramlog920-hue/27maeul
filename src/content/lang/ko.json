@@ -194,7 +194,11 @@
     "bush": "덤불",
     "treeSmall": "작은 나무",
     "treeTall": "키 큰 나무",
-    "treeBig": "큰 나무"
+    "treeBig": "큰 나무",
+    "woodFence": "나무 울타리",
+    "stoneWall": "돌담",
+    "woodGate": "울타리 문",
+    "stoneGate": "돌담 문"
   },
   "gen": {
     "consult": "이야기 들어 주기",

@@ -7,7 +7,6 @@ import { FINISH_SKILL, SKILL_DEFS, SKILL_IDS, skillOf } from './skill-defs'
 import type { GameContent, Rng } from './types'
 
 export { FINISH_SKILL, SKILL_DEFS, SKILL_IDS, skillOf }
-export type WoodFinish = 'plain'|'warm'
 export interface LearnedSkill {day:number;from:string;picked:string}
 export type Skills = Record<string,LearnedSkill>
 export interface SkillLesson {id:string;npc:string;day:number;step:0|1|2;picked:string;mini?:MiniState}
@@ -29,7 +28,6 @@ export function discoveredSkill(s:SkillState,id:string):boolean {
   const def=SKILL_DEFS[id]
   return Object.values(s.life.experiences ?? {}).some(e=>e.with.some(w=>def.teachers.includes(w)) && (DISCOVER_KINDS as readonly string[]).includes(e.kind))
 }
-export function discoveredFinish(s:SkillState):boolean { return discoveredSkill(s,FINISH_SKILL) }
 
 export type LessonBlock = 'unknown'|'known'|'away'|'busy'|'late'|null
 /** 지금 이 이웃에게 배울 수 있는지. 바쁘면 다른 때를 안내할 뿐 불이익은 없다 */
@@ -51,7 +49,6 @@ export function canLearn(s:SkillState,npc:string,content:GameContent):LessonBloc
   if(availability(s,npc,s.clock.day,s.clock.minute,s.clock.minute+LESSON_MINUTES,content)!=='ok') return 'busy'
   return null
 }
-export function canLearnFinish(s:SkillState,content:GameContent):LessonBlock { return canLearn(s,'carpenter',content) }
 
 /** 시범부터 시작한다. 오늘 같은 이웃과 하던 배움이 있으면 그 단계에서 이어간다 */
 export function startLesson(s:SkillState,npc:string,content:GameContent):SkillState {
@@ -61,7 +58,6 @@ export function startLesson(s:SkillState,npc:string,content:GameContent):SkillSt
   if(l?.day===s.clock.day && l.id===id && l.npc===npc && l.step<2) return s
   return {...s,skillLesson:{id,npc,day:s.clock.day,step:0,picked:SKILL_DEFS[id].styles[0]}}
 }
-export function startFinishLesson(s:SkillState,content:GameContent):SkillState { return startLesson(s,'carpenter',content) }
 
 function current(s:SkillState):SkillLesson|null {
   const l=s.skillLesson
@@ -73,7 +69,6 @@ export function chooseStyle(s:SkillState,picked:string,rng:Rng):SkillState {
   if(!l || l.step!==0 || !SKILL_DEFS[l.id].styles.includes(picked)) return s
   return {...s,skillLesson:{...l,picked,step:1,mini:startMini(SKILL_DEFS[l.id].hand,rng)}}
 }
-export const chooseFinish = (s:SkillState,picked:WoodFinish,rng:Rng):SkillState => chooseStyle(s,picked,rng)
 /** 실습 중 다시 살펴보기 — 다른 방식을 고르는 데로 돌아간다 (실패로 끝나지 않는다) */
 export function lookAgain(s:SkillState):SkillState {
   const l=current(s)
@@ -85,7 +80,6 @@ export function lessonHand(s:SkillState,kind:'tick'|'tap',input:number,rng:Rng):
   if(!l || l.step!==1 || !l.mini) return s
   return {...s,skillLesson:{...l,mini:kind==='tick'?stepMini(l.mini,Math.min(.2,Math.max(0,input)),rng):tapMini(l.mini,input)}}
 }
-export const finishLessonHand = lessonHand
 /** 실습을 마치면 한 번만 익힌다. 배운 날·가르쳐 준 이웃·고른 모습이 함께한 기억으로 남는다 */
 export function finishLesson(s:SkillState):SkillState {
   const l=current(s)
@@ -101,7 +95,6 @@ export function chooseSkillStyle(s:SkillState,id:string,picked:string):SkillStat
   if(!def || !s.skills?.[id] || !def.styles.includes(picked)) return s
   return {...s,flags:{...s.flags,[`skillFinish:${def.item}`]:def.styles.indexOf(picked)+1}}
 }
-export const chooseStoolFinish = (s:SkillState,picked:WoodFinish):SkillState => chooseSkillStyle(s,FINISH_SKILL,picked)
 export function styleOf(s:SkillState,id:string):string {
   const def=SKILL_DEFS[id]
   return s.flags[`skillFinish:${def.item}`]===2 ? def.styles[1] : def.styles[0]
@@ -121,8 +114,6 @@ export function canCraftLearned(s:SkillState,id:string):boolean {
   const paid=useStock(s,def.needs)
   return !!paid && !overflows(paid,{[def.item]:1})
 }
-export const STOOL_NEEDS = SKILL_DEFS[FINISH_SKILL].needs!
-export const craftLearnedStool = (s:SkillState):SkillState => craftLearned(s,FINISH_SKILL)
 /** 배운 방식의 물건을 가지고 있을 때만 보여 줄 수 있다 (만드는 기술은 직접 만든 것이 있어야) */
 export function canShowSkillItem(s:SkillState,id:string):boolean {
   const def=SKILL_IDS.includes(id) ? SKILL_DEFS[id] : undefined
@@ -130,7 +121,6 @@ export function canShowSkillItem(s:SkillState,id:string):boolean {
   const owns=!!s.inv[def.item] || s.room.some(f=>f.item===def.item)
   return owns && (!def.needs || (s.flags[`skillMade:${def.item}`]??0)>0)
 }
-export const canShowFinishedStool = (s:SkillState):boolean => canShowSkillItem(s,FINISH_SKILL)
 export function sanitizeSkills(raw:unknown):Skills {
   if(!raw || typeof raw!=='object' || Array.isArray(raw)) return {}
   const result:Skills={}

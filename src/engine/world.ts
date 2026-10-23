@@ -58,8 +58,6 @@ export const HOME_BENCH: Tile = { x: 2, y: 8 }
 
 /** 집 안 방 — 넓히기 전 (벽 포함 9×6, 지도 아래 보이지 않는 곳). 지금 크기는 homeRect() */
 export const HOME_RECT = WORKSHOP
-/** 집 안 방 오른쪽의 빈 곳 (2단계 "아이방"에서 새 방이 된다) */
-export const HOME_EXPAND_RECT = BABY_ROOM
 /** 2단계 아이방의 내부 바닥 (6×4칸) */
 export const SIDE_ROOM = { x0: BABY_ROOM.x0 + 1, y0: BABY_ROOM.y0 + 1, x1: BABY_ROOM.x1 - 1, y1: BABY_ROOM.y1 - 1 }
 /** 작업실과 새 방 사이 벽에 낸 문 (선반 앞 칸 옆) */
@@ -404,7 +402,6 @@ export const HEB_JUD_ROOM: Room = ROOMS.find((r) => r.owner === 'hebJud')!
 /** 요한계시록 방 */
 export const REV_ROOM: Room = ROOMS.find((r) => r.owner === 'rev')!
 
-
 /**
  * 내 집 안 (계획 7-1 작업 5): 예전 지도 위 집과 같은 넓이·배치 — 침대·화덕·선반은 윗벽 쪽, 책상·작업대는 그 아래.
  * 밖의 문(HOME_DOOR)을 밟으면 entry로, 문깔개(exit)를 밟으면 문 앞(HOME_FRONT)으로. 넓히면 오른쪽에 새 방
@@ -453,7 +450,6 @@ export interface House {
   doorX: number
 }
 export const HOUSES: House[] = []
-
 
 /** 지금 마을에 선 집 모두 (내 집은 지금 단계의 크기로) */
 export function housesNow(): House[] {
@@ -810,7 +806,6 @@ export function viewRoomAt(t: Tile): { x0: number; y0: number; w: number; h: num
   const { x0, y0, x1, y1 } = homeRect()
   return isHome(t) ? { x0, y0, w: x1 - x0 + 1, h: y1 - y0 + 1 } : null
 }
-
 
 /** 문을 밟으면 옮겨 가는 곳: 바깥 문 → 방 안, 방의 문깔개 → 바깥 문 앞 */
 export const WARPS: ReadonlyMap<string, Tile> = new Map(

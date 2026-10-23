@@ -1,10 +1,8 @@
 import { CONTENT } from '../content/catalog'
 import { legacyGame } from './growth-test-support'
-import { childFurniturePlace, petFurniturePlace, CHILD_FURNITURE, PET_FURNITURE } from './family-furniture'
-import { childTile, placeFurniture, syncHome, tick } from './game'
-import { newChild } from './child'
+import { petFurniturePlace, CHILD_FURNITURE, PET_FURNITURE } from './family-furniture'
+import { placeFurniture, syncHome, tick } from './game'
 import { adopt } from './companion'
-import { freshStats } from './stats'
 import { HOME_ENTRY, key } from './world'
 import { deserialize, serialize } from './save'
 import type { Furniture } from './room'
@@ -46,21 +44,4 @@ it('an actual staying dog walks to its installed bed when napping', () => {
   for (let i = 0; i < 70; i++) s = tick(s, 0.1, () => 0.5, CONTENT).state as typeof s
   expect(s.companion!.x).toBe(at.x)
   expect(s.companion!.y).toBe(at.y)
-})
-
-it('home children use age-appropriate pieces; babies, following children, adults and occupied places keep existing routines', () => {
-  const s = base()
-  for (const item of CHILD_FURNITURE) {
-    const toddler = item !== 'childDrawingTable'
-    const child = { ...newChild(toddler ? 10 : -20, freshStats(), undefined), mode: 'home' as const }
-    const state = { ...s, child, room: [...s.room, { item, ...at }] }
-    expect(childFurniturePlace(state)?.item, item).toBe(item)
-    // The game now approaches play furniture through furniture-autonomy before using it.
-    expect(childTile(state), item).not.toBeNull()
-    expect(childFurniturePlace({ ...state, player: { ...state.player, ...at } }), item).toBeNull()
-    expect(childFurniturePlace({ ...state, room: s.room }), item).toBeNull()
-    expect(childFurniturePlace({ ...state, child: { ...child, mode: 'follow' } }), item).toBeNull()
-    expect(childFurniturePlace({ ...state, child: { ...child, born: s.clock.day } }), item).toBeNull()
-    expect(childFurniturePlace({ ...state, child: { ...child, born: -100 } }), item).toBeNull()
-  }
 })

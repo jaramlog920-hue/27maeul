@@ -24,7 +24,7 @@ const H = NEWLAND_VISIBLE_H
 const GROUND_COLOR: Record<string, string> = { '.': '#d6e0bd', T: '#b3c79d', S: '#cbc2b0', D: '#a8957c', ',': '#eadfc0', '>': '#d8c48a', '*': '#e3cfd3' }
 export type SitePick = SiteKind | 'eraser'
 /** 깐 칸의 흐린 색 (길·정원·꾸미기) */
-const TILE_COLOR: Partial<Record<TileKind, string>> = { path: '#eadfc0', garden: '#9db97f', sand: '#f2d9b2', stone: '#c9baa9', soil: '#a97d60', grassTuft: '#b4cc9a', flower: '#f2d9b2', rocks: '#c3b4a4', bush: '#72976d', treeSmall: '#72976d', treeTall: '#608563', treeBig: '#608563', road: '#eadfc0', lawn: '#c9d8a8', hedge: '#608563' }
+const TILE_COLOR: Partial<Record<TileKind, string>> = { path: '#eadfc0', garden: '#9db97f', sand: '#f2d9b2', stone: '#c9baa9', soil: '#a97d60', grassTuft: '#b4cc9a', flower: '#f2d9b2', rocks: '#c3b4a4', bush: '#72976d', treeSmall: '#72976d', treeTall: '#608563', treeBig: '#608563', road: '#eadfc0', lawn: '#c9d8a8', hedge: '#608563', woodFence: '#a96f3f', stoneWall: '#878176', woodGate: '#c68b54', stoneGate: '#c1b8a6' }
 
 const BLOCK_TEXT: Record<OrderBlock, string> = {
   unrevealed: T.build.blockUnrevealed,

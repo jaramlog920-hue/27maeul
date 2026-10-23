@@ -2,18 +2,14 @@
 import { legacyGame as newGame } from './growth-test-support'
 import { describe, expect, it } from 'vitest'
 import { CONTENT } from '../content/catalog'
-import { boardFor, BOARD_GAIN } from './board'
 import {
-  boardToday,
   buyRare,
   canBuyRare,
   canTrip,
   takeTrip,
   canCraft,
-  canFulfillBoard,
   canSell,
   finishCraft,
-  fulfillBoard,
   giveGift,
   RARE_PRICES,
   rareStall,
@@ -73,32 +69,7 @@ describe('판매용 생산물과 향초 (계획 13 작업 4)', () => {
   })
 })
 
-describe('의뢰 게시판 (계획 13 작업 5)', () => {
-  it('날마다 서로 다른 이웃의 부탁 둘, 같은 날은 같다', () => {
-    const s = newGame(CONTENT)
-    const a = boardToday(s, CONTENT)
-    expect(a).toHaveLength(2)
-    expect(a[0].npc).not.toBe(a[1].npc)
-    expect(boardToday(s, CONTENT)).toEqual(a)
-    for (const r of a) expect(r.coins).toBeGreaterThan(0)
-  })
-
-  it('장날에만 오는 상인과 이사 오지 않은 이웃은 부탁하지 않는다', () => {
-    const s = newGame(CONTENT)
-    for (let d = 1; d < 60; d++) for (const r of boardToday(on(s, d), CONTENT)) expect(r.npc).not.toBe('merchant')
-  })
-
-  it('물건을 건네면 닢·마음·(덤) 희귀품, 하루 한 번', () => {
-    const [r] = boardFor(3, [{ id: 'baker', likes: ['grapes'] }])
-    let s = on({ ...newGame(CONTENT), inv: { [r.item]: r.n } }, 3)
-    expect(canFulfillBoard(s, r)).toBeNull()
-    s = fulfillBoard(s, r)!
-    expect(s.coins).toBe(newGame(CONTENT).coins + r.coins)
-    expect(s.hearts.baker).toBe(BOARD_GAIN)
-    expect(canFulfillBoard(s, r)).toBe('done')
-    expect(canFulfillBoard(on(newGame(CONTENT), 3), r)).toBe('needs')
-  })
-
+describe('사랑방 게시판', () => {
   it('게시판은 사랑방 벽에 있다', () => {
     expect(placeAt(PLACES.hallBoard.tiles[0])).toBe('hallBoard')
   })

@@ -4,9 +4,8 @@ import {legacyGame} from '../engine/growth-test-support'
 import {goToSleep,lookOf,dressUp,canGiveBouquet,giveBouquet,neighborDoor,type GameState} from '../engine/game'
 import {withLookDefaults} from '../engine/avatar'
 import {newChild,kidMailFor} from '../engine/child'
-import {newGenState,BAKER_BABY_ID,canPair,relationId,type GenPerson,type GenState} from '../engine/gen'
-import {settleGrowth,slotPerson} from '../engine/gen-growth'
-import {companionsOf} from '../engine/gen-looks'
+import {newGenState,canPair,relationId,type GenPerson,type GenState} from '../engine/gen'
+import {settleGrowth} from '../engine/gen-growth'
 import {marry,consultFor,settleMarriage,weddingTodayOf} from '../engine/gen-marriage'
 import {homeOfFor} from '../engine/gen-settle'
 import {settleBirth} from '../engine/gen-birth'
@@ -39,15 +38,6 @@ describe('round2 current social boundary checks',()=>{
   expect(loaded.look).toBe('f');expect(loaded.name).toBe('이어받은 딸')
   const dressed=dressUp(s,'spouse',withLookDefaults({...loaded,top:8}),CONTENT)
   expect(dressed.looks?.['g-0001'].top).toBe(8);expect(dressed.looks?.cosmo).toBeUndefined();expect(lookOf(deserialize(serialize(dressed),CONTENT)!,'spouse',CONTENT)?.top).toBe(8);expect(dressed.gen!.persons['g-0001'].avatar!.top).toBe(7)
- })
- it('fixed baker duplicate: real growth pipeline yields one apprentice and no duplicate retired heir',()=>{
-  let g=newGenState(CONTENT,1,91);g=settleGrowth(g,92,{generations:true,retirement:true})
-  expect(g.heirs!.baker.heir).toBe(BAKER_BABY_ID)
-  expect(companionsOf(g,'baker',92).filter(c=>c.person.id===BAKER_BABY_ID)).toHaveLength(1)
-  g=settleGrowth(g,132,{generations:true,retirement:true})
-  expect(slotPerson(g,'baker')).toBe(BAKER_BABY_ID)
-  expect(companionsOf(g,'baker',132).filter(c=>c.person.id===BAKER_BABY_ID)).toHaveLength(0)
-  expect(companionsOf(g,'baker',132).map(c=>c.person.id)).toEqual(['baker'])
  })
  it('regression fixed: birthday boundary: an unselected sibling birthday is skipped by the actual sleep pipeline',()=>{
   const b=base()

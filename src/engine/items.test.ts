@@ -1,4 +1,10 @@
-import { add, craft, has, MAX_STACK, RECIPES, take, count } from './items'
+import { add, has, MAX_STACK, RECIPES, recipeGives, take, count, type Inventory, type Recipe } from './items'
+
+/** 만들기 한 번 (재료를 내고 결과를 넣는다 — 게임은 game.finishCraft가 가방·궤짝으로 한다) */
+const craft = (inv: Inventory, r: Recipe, flags: Record<string, number> = {}): Inventory | null => {
+  const left = take(inv, r.needs)
+  return left ? add(left, recipeGives(r, inv, flags)) : null
+}
 import { cursorOf, isDone, startMini, stepMini, tapMini, TIMING_PERIOD, MASH_GAIN, PICK_NEED, progressOf } from './minigame'
 
 describe('items', () => {

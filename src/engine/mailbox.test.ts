@@ -1,7 +1,6 @@
 // 편지 바구니 (2026-09-30 사용자): 집 앞 편지함(우체통)을 없애고, 편지 책의 편지도 문 앞 편지 바구니로 들어온다
 import { CONTENT } from '../content/catalog'
 import { T } from '../content/text'
-import { owns } from './easier'
 import { chooseBook, greetNeighbor, listen, mailboxHasPost, newGame, openMailbox, syncHome, type GameState } from './game'
 import { POINTS_PER_HEART } from './hearts'
 import { POSTMAN } from './post'
@@ -18,7 +17,7 @@ function roomOpenState(): GameState {
 describe('우체통은 없다', () => {
   it('편지 나르는 이웃과 마음 4가 되어도 집 앞 편지함이 서지 않고, 그 칸은 누를 수 없다', () => {
     const s = greetNeighbor({ ...newGame(CONTENT), hearts: { [POSTMAN]: 4 * POINTS_PER_HEART - 1 } }, POSTMAN)
-    expect(owns(s.flags, 'homeMailbox')).toBe(false)
+    expect(s.flags['unlock:homeMailbox']).toBeUndefined()
     expect(s.scenes).not.toContain('homeMailbox')
     syncHome(s)
     expect(placeAt(PLACES.mailbox.tiles[0])).toBeNull()

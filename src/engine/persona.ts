@@ -80,7 +80,7 @@ export function temperFromInterests(c: Pick<Child, 'interests'>): Temper | null 
 export function kidPersona(c: Child, day: number): Persona {
   const stage = childStage(c, day)
   const temper = c.temper ?? temperFromInterests(c) ?? TEMPERS[hash(`kid:${c.born}:${c.name}`) % TEMPERS.length]
-  const n = stage === 'adult' ? 3 : stage === 'helper' ? 2 : 1
+  const n = stage === 'adult' ? MAX_TRAITS : stage === 'helper' ? 2 : 1
   return { temper, traits: traitsFrom(`kidtrait:${c.born}`, n), ...(c.catch ? { catch: c.catch } : {}) }
 }
 
@@ -96,7 +96,7 @@ export function genPersona(g: Pick<GenState, 'persons' | 'seed'> | undefined, id
   }).filter((t): t is Temper => !!t)
   // 반쯤은 부모 한 사람의 성격을 닮는다
   const temper = parentTempers.length && r % 2 === 0 ? parentTempers[(r >>> 3) % parentTempers.length] : TEMPERS[(r >>> 5) % TEMPERS.length]
-  const n = p.stage === 'adult' || p.stage === 'elder' ? 3 : p.stage === 'teen' ? 2 : 1
+  const n = p.stage === 'adult' || p.stage === 'elder' ? MAX_TRAITS : p.stage === 'teen' ? 2 : 1
   // 태어난 주민 부모가 있으면 특성 하나를 닮기도 한다
   const bornParent = p.parents.find((q) => g.persons[q]?.origin === 'born')
   const inherit = bornParent && r % 3 === 0 ? genPersona(g, bornParent, depth + 1)?.traits[0] : undefined

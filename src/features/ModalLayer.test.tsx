@@ -56,12 +56,6 @@ function walk() {
   })
 }
 const at = (minute: number, day = 1) => ({ clock: { day, minute } })
-/** 누가복음을 고르고 책상 위 순서를 놓아 둔 상태 */
-const lkDesk = (arrangement: Record<number, string[]>, completed: number[] = []): Partial<GameState> => ({
-  activeBook: 'lk',
-  progress: { ...emptyProgress(), lk: { completed, arrangement } },
-})
-const lkChapter1 = piecesOf('lk').filter((p) => p.chapter === 1).map((p) => p.id)
 
 describe('본문 창', () => {
   beforeEach(() => reset())
@@ -178,20 +172,6 @@ describe('이웃', () => {
 })
 
 describe('책상', () => {
-  it('이야기 본문을 읽고 기존 순서 그대로 이어붙이기로 돌아온다', async () => {
-    const ids = [...lkChapter1].reverse()
-    reset({ collected: ids, ...lkDesk({ 1: ids }) })
-    const user = userEvent.setup()
-    useGame.setState({ modal: { kind: 'desk', result: null, dark: false } })
-    render(<ModalLayer />)
-    const before = [...useGame.getState().game.progress.lk.arrangement[1]]
-    await user.click(screen.getByRole('button', { name: '데오빌로 각하에게 본문 보기' }))
-    expect(screen.getByLabelText('성경 본문 눅 1:1-4')).toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: '이어붙이기로 돌아가기' }))
-    expect(screen.getByRole('button', { name: '데오빌로 각하에게 본문 보기' })).toBeInTheDocument()
-    expect(useGame.getState().game.progress.lk.arrangement[1]).toEqual(before)
-  })
-  const chapter1 = lkChapter1
 
   it('집 책상은 필사 책상: 27권 모두 고르고, 재료 없이 한 절씩 따라 적는다 (계획 14)', async () => {
     reset({ inv: {}, collected: [] })
@@ -221,32 +201,7 @@ describe('책상', () => {
     expect(useGame.getState().game.inv).toEqual({})
   })
 
-  it('예전 엮기 창(테스트로만 열림)도 재료 없이 장을 마무리한다', async () => {
-    reset({ collected: chapter1, inv: {}, ...lkDesk({ 1: [...chapter1] }) })
-    const user = userEvent.setup()
-    useGame.setState({ modal: { kind: 'desk', result: null, dark: false } })
-    render(<ModalLayer />)
-    await user.click(screen.getByRole('button', { name: '이어 붙이기' }))
-    expect(screen.getByRole('dialog', { name: '기록하기 전에' })).toBeInTheDocument()
-    solveQuiz()
-    await user.click(screen.getByRole('button', { name: '두루마리에 기록하기' }))
-    expect(screen.getByRole('status')).toHaveTextContent('1장까지 차례대로 이어 붙였습니다.')
-    expect(useGame.getState().game.scenes).toContain('firstChapter')
-    // 첫 장을 마치면 꾸미기 체험용 의자 하나 (growth decorate)
-    expect(useGame.getState().game.inv).toEqual({ stool: 1 })
-  })
 
-  it('순서 바로잡기', async () => {
-    reset({ collected: chapter1, ...lkDesk({ 1: [...chapter1].reverse() }), inv: { papyrus: 1, ink: 1 } })
-    const user = userEvent.setup()
-    useGame.setState({ modal: { kind: 'desk', result: null, dark: false } })
-    render(<ModalLayer />)
-    await user.click(screen.getByRole('button', { name: '이어 붙이기' }))
-    expect(screen.getByRole('status')).toHaveTextContent('순서를 다시 살펴보세요.')
-    act(() => useGame.setState((s) => ({ game: { ...s.game, ...lkDesk({ 1: [chapter1[1], chapter1[0], ...chapter1.slice(2)] }) } })))
-    await user.click(screen.getByRole('button', { name: '데오빌로 각하에게 위로' }))
-    expect(useGame.getState().game.progress.lk.arrangement[1]).toEqual(chapter1)
-  })
 
   it('밤에 기름이 없어도 필사 책상은 쓸 수 있다 (재료 없음) — 앉기만 해서는 기름을 쓰지 않는다', async () => {
     reset({ ...at(20 * 60), inv: {}, copy: { book: 'lk', at: {}, legacy: {} } })
@@ -275,33 +230,13 @@ describe('책상', () => {
   })
 })
 
-describe('기록 퀴즈 화면', () => {
-  const chapter1 = lkChapter1
-  it('틀리면 다시 고르고, 다섯 문제를 모두 맞히면 기록된다', async () => {
-    reset({ collected: chapter1, ...lkDesk({ 1: [...chapter1] }), inv: { papyrus: 1, ink: 1 } })
-    const user = userEvent.setup()
-    useGame.setState({ modal: { kind: 'desk', result: null, dark: false } })
-    render(<ModalLayer />)
-    await user.click(screen.getByRole('button', { name: '이어 붙이기' }))
-    const m = useGame.getState().modal
-    if (m?.kind !== 'quiz') throw new Error('no quiz')
-    expect(m.questions).toHaveLength(5)
-    // 첫 문제에 일부러 틀린 답
-    act(() => useGame.getState().answerQuiz('__틀린답__'))
-    expect(screen.getByRole('status')).toHaveTextContent('다시 골라 보세요.')
-    expect(useGame.getState().game.progress.lk.completed).toEqual([])
-    solveQuiz()
-    await user.click(screen.getByRole('button', { name: '두루마리에 기록하기' }))
-    expect(useGame.getState().game.progress.lk.completed).toEqual([1])
-    // 재료는 들지 않는다 (계획 14)
-    expect(useGame.getState().game.inv).toEqual({ papyrus: 1, ink: 1, stool: 1 }) // 첫 장 보상 의자
-  })
+describe('퀴즈 화면', () => {
 
   it('말씀 조각 맞추기: 낱말을 차례대로 눌러 맞힌다', async () => {
     const user = userEvent.setup()
     reset()
     const q = { kind: 'puzzle' as const, ref: '눅 15:8', words: ['나', '가', '다'], answer: ['가', '나', '다'] }
-    useGame.setState({ modal: { kind: 'quiz', mode: { kind: 'chapter', book: 'lk', chapter: 15 }, questions: [q], index: 0, wrong: [], solved: false, misses: 0, missed: [] } })
+    useGame.setState({ modal: { kind: 'quiz', mode: { kind: 'library', book: 'lk', retry: false }, questions: [q], index: 0, wrong: [], solved: false, misses: 0, missed: [] } })
     render(<ModalLayer />)
     // 고르는 중에는 본문 창을 쓰지 않는다
     expect(screen.queryByLabelText('성경 본문 눅 15:8')).toBeNull()
@@ -313,16 +248,6 @@ describe('기록 퀴즈 화면', () => {
     expect(screen.getByLabelText('성경 본문 눅 15:8')).toHaveTextContent('가 나 다')
   })
 
-  it('나중에 하기: 재료를 쓰지 않고 닫는다', async () => {
-    reset({ collected: chapter1, ...lkDesk({ 1: [...chapter1] }), inv: { papyrus: 1, ink: 1 } })
-    const user = userEvent.setup()
-    useGame.setState({ modal: { kind: 'desk', result: null, dark: false } })
-    render(<ModalLayer />)
-    await user.click(screen.getByRole('button', { name: '이어 붙이기' }))
-    await user.click(screen.getByRole('button', { name: '나중에 하기' }))
-    expect(useGame.getState().modal).toBeNull()
-    expect(useGame.getState().game.inv).toEqual({ papyrus: 1, ink: 1 })
-  })
 })
 
 describe('마을 서고', () => {
@@ -339,7 +264,7 @@ describe('마을 서고', () => {
     expect(container.querySelectorAll('.library-shelf .spine')).toHaveLength(4)
     expect(container.querySelector('.library-shelf')!.textContent).not.toContain('사도행전')
     await user.click(screen.getByRole('button', { name: '퀴즈 풀고 금박 책등' }))
-    expect(screen.getByRole('dialog', { name: '기록하기 전에' }).textContent).toContain('서고에 꽂기 전에')
+    expect(screen.getByRole('dialog', { name: '서고에 꽂기 전에' }).textContent).toContain('서고에 꽂기 전에')
     // 모든 문제를 정답으로 푼다
     for (let i = 0; i < 5; i++) {
       const m = useGame.getState().modal
@@ -566,15 +491,6 @@ describe('리뷰 지적 회귀 (화면)', () => {
     expect(useGame.getState().modal).toBeNull()
     expect(useGame.getState().game.inv).toEqual({ water: 1, bread: 2 })
     expect(useGame.getState().game.helped).toEqual([])
-  })
-  it('M4: 책상 순서를 바꾸면 바로 저장된다', async () => {
-    const chapter1 = lkChapter1
-    reset({ collected: chapter1, ...lkDesk({ 1: [...chapter1] }) })
-    const user = userEvent.setup()
-    useGame.setState({ modal: { kind: 'desk', result: null, dark: false } })
-    render(<ModalLayer />)
-    await user.click(screen.getByRole('button', { name: '데오빌로 각하에게 아래로' }))
-    expect(JSON.parse(localStorage.getItem('twenty-seven/save')!).progress.lk.arrangement[1][1]).toBe('lk-001-001')
   })
   it('N1: 도착하며 띄운 알림이 같은 프레임에 지워지지 않는다', () => {
     reset({ inv: { water: 99, bread: 2 } })

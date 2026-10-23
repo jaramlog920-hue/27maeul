@@ -2,8 +2,8 @@
 import { CONTENT, PIECES } from '../content/catalog'
 import {
   FRAGMENTS_PER_WEEK,
-  SHELF_FILL_SLOTS,
   shelfFillSteps,
+  SHELF_FILL,
   drawFragment,
   fragmentSeed,
   fragmentWayOf,
@@ -18,6 +18,8 @@ import {
 } from './fragments'
 import { POSTMAN } from './post'
 import { VISIT_GIFTS } from './bonds'
+
+const SHELF_FILL_SLOTS = SHELF_FILL.shelves * SHELF_FILL.rows * SHELF_FILL.perRow
 
 describe('조각이 오는 날', () => {
   it('한 주(7일)에 조각 오는 날은 딱 FRAGMENTS_PER_WEEK번 — 편지 한 번·특별한 대화 한 번은 꼭 있다', () => {

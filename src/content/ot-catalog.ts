@@ -17,8 +17,6 @@ export const OT_ABBR = Object.fromEntries(OT_BOOK_TABLE.map((r) => [r.id, r.abbr
 export const OT_NAME = Object.fromEntries(OT_BOOK_TABLE.map((r) => [r.id, r.name])) as Record<OtBook, string>
 const ABBR_OT: Record<string, OtBook> = Object.fromEntries(OT_BOOK_TABLE.map((r) => [r.abbr, r.id]))
 
-/** 구약 약칭이면 그 책 id ('창' → gen), 아니면 undefined */
-export const otBookOfAbbr = (abbr: string): OtBook | undefined => ABBR_OT[abbr]
 /** '창 1:3'의 첫 낱말이 구약 약칭이면 그 책 */
 export const otBookOfRef = (ref: string): OtBook | undefined => ABBR_OT[ref.trim().split(/\s+/)[0]]
 

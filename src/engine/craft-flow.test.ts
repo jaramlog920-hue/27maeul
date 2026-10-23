@@ -3,7 +3,7 @@ import { canCraft, finishCraft, newGame, stockOf } from './game'
 import { MAX_STACK, RECIPES, recipeGives, type RecipeId } from './items'
 import { CHEST_STACK } from './easier'
 import type { ItemId } from './types'
-import { finishNow } from './minigame'
+import { finishNow } from './minigame-done.helper'
 import { deserialize, serialize } from './save'
 import { useGame } from '../store/game-store'
 

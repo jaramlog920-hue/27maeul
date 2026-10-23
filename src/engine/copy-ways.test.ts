@@ -1,7 +1,7 @@
 // 계획 21 R1: 필사 방식 — 확률표·결정성·조각/빈칸이 본문 그대로
 import { CONTENT } from '../content/catalog'
 import { copyVerses } from './copying'
-import { blanksForVerse, copyLevel, joinTiles, tilesFor, wayFor, wayOdds } from './copy-ways'
+import { blanksForVerse, copyLevel, tilesFor, wayFor, wayOdds } from './copy-ways'
 import { freshStats } from './stats'
 
 describe('필사 방식 뽑기', () => {
@@ -29,7 +29,7 @@ describe('낱말 조각과 빈칸은 본문 그대로', () => {
       for (const v of verses) {
         const t = tilesFor(v.text, lv, 9, 'lk', 15, v.verse)
         if (!t) continue
-        expect(joinTiles(t)).toBe(v.text.split(/\s+/).filter(Boolean).join(' '))
+        expect([...t.fixed, ...t.pieces].join(' ')).toBe(v.text.split(/\s+/).filter(Boolean).join(' '))
         expect(t.pieces.length).toBeLessThanOrEqual(8)
         expect([...t.order].sort((a, b) => a - b)).toEqual(t.pieces.map((_, i) => i))
       }

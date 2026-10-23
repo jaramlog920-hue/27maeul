@@ -1,7 +1,7 @@
 // 계획 5 작업 4: 사도행전 여정 카드 — 곳 이름은 본문 그대로, 본문 순서, 장을 엮으면 카드를 얻는다
 import { CONTENT, JOURNEY, piecesOf, versesOf } from '../content/catalog'
 import { chaptersOf } from './books'
-import { cardsForChapters, journeyChapters, type JourneyCard } from './journey'
+import { cardsForChapters, type JourneyCard } from './journey'
 
 const verseNo = (ref: string) => ref.match(/^행 (\d+):(\d+)$/)!.slice(1).map(Number) as [number, number]
 
@@ -41,7 +41,7 @@ describe('여정 카드 데이터', () => {
   it('카드가 있는 장은 모두 사도행전 조각이 있는 장이다 (엮을 수 있다)', () => {
     const chapters = new Set(chaptersOf('ac', CONTENT))
     expect(piecesOf('ac').length).toBeGreaterThan(0)
-    for (const ch of journeyChapters(JOURNEY)) expect(chapters.has(ch), `${ch}장`).toBe(true)
+    for (const ch of new Set(JOURNEY.map((c) => c.chapter))) expect(chapters.has(ch), `${ch}장`).toBe(true)
   })
 })
 

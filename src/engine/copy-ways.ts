@@ -78,9 +78,6 @@ export function tilesFor(text: string, level: number, seed: number, book: string
   return { fixed, pieces, order }
 }
 
-/** 조각을 이은 글 (띄어쓰기 하나씩) */
-export const joinTiles = (t: Tiles): string => [...t.fixed, ...t.pieces].join(' ')
-
 // ── 빈칸 ──
 
 export interface VerseBlank {

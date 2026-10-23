@@ -171,7 +171,7 @@ export function Library() {
       })}
       <ul className="library-locked">
         {(T.library.lockedRooms as string[]).map((r, i) =>
-          // 열린 방(방 표로 판정 — 잔치 다음 날 사도행전 방, 사도행전을 꽂은 다음 날 로마서–빌레몬서 방, 그 방 책을 제본한 날 …)
+          // 열린 방 (방 표로 판정 — 지금은 처음부터 모두 열려 있다, books roomOpen)
           open.includes(i) ? <li key={r}>{fill(T.library.roomOpen, { room: r, where: (T.library.doorWhere as string[])[i] })}</li> : <li key={r}>🔒 {r}</li>,
         )}
       </ul>
@@ -187,7 +187,7 @@ export function Library() {
   )
 }
 
-/** 서고 열람석: 닢을 내고 지금 책의 다음 이야기를 옮겨 적는다 (하루 두 번) */
+/** 서고 열람석: 닢을 내고 27권 가운데 아직 없는 조각 하나를 옮겨 적어 온다 (하루 두 번) */
 function ReadingSeat() {
   const game = useGame((s) => s.game)
   const libraryRead = useGame((s) => s.libraryRead)

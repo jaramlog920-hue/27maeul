@@ -1,7 +1,10 @@
 import { CONTENT } from '../content/catalog'
 import { newGame, placeFurniture, moveFurniture, rotateFurniture, removePiece, tapTile, syncHome, interactTile, pressTile, type GameState } from './game'
 import { furnitureUseSpec, furnitureUseStands, stepFurnitureAutonomy } from './furniture-autonomy'
-import { PERMANENT_GARDEN, LEGACY_GARDEN, outdoorGround } from './outdoor-layout'
+import { PERMANENT_GARDEN, outdoorGround } from './outdoor-layout'
+
+/** 예전 열두 칸 밭 (옛 저장) */
+const LEGACY_GARDEN = [4, 5, 6].flatMap((y) => [11, 12, 13, 14].map((x) => ({ x, y })))
 import { outdoorFurniture } from './outdoor'
 import { canPlant, harvest, water, GARDEN_TILES } from './garden'
 import { deserialize, serialize } from './save'

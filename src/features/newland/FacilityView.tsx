@@ -18,6 +18,8 @@ import { partnerName, useGame } from '../../store/game-store'
 import { ownerJob, ownerName, visitNpcDream } from '../../engine/kid-work'
 import { seenStories, storyBook, useSceneSay } from '../scene/SceneReplay'
 import { SCENES } from '../../content/text'
+import { PixelArt } from '../library/LibraryWork'
+import { WORKPLACE_INTERIORS, WORKPLACE_PALETTE } from '../../render/workplace-interior-art'
 
 const L = T.newlandLife
 type GuestText = { name: string; from: string; lines: string[]; again: string; home: string[] }
@@ -181,7 +183,13 @@ function KidWork({ owner }: { owner?: string }) {
     // 일터 후속 (2026-10-08): 세 번째·열 번째 들른 날은 그날의 특별한 말
     setLine(r.milestone ? (r.milestone === 3 ? L.kidWork.mile3 : L.kidWork.mile10) : daily)
   }, [owner, name])
-  return <p className="talk-line">{line}</p>
+  // 그 일의 방 안 (assets 일터 실내 도트, 2026-10-22 연결) — 일이 정해지지 않았으면 그림 없이 말만
+  const job = ownerJob(game, owner)
+  const room = job ? WORKPLACE_INTERIORS[job] : null
+  return <>
+    {room && <figure className="workplace-room" aria-label={room.label}><PixelArt rows={room.rows} palette={WORKPLACE_PALETTE} /><figcaption>{room.label}</figcaption></figure>}
+    <p className="talk-line">{line}</p>
+  </>
 }
 
 /** 가구 사람들의 이름 (생성 인물은 이름, 이웃은 역할 이름) */

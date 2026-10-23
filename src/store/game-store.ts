@@ -52,21 +52,18 @@ import { feastOf, readFeastLine, shareFeastFood } from '../engine/feast'
 import { moveYard, stowYard, yardItemAt, yardSpot, type YardItem } from '../engine/yard'
 import { isOutdoorEditing, isOutdoorItem, outdoorFurniture, outdoorInUse } from '../engine/outdoor'
 import { useOutdoorFurniture } from '../engine/game'
-import { CONTENT, neighborById, copySourceFor, LETTER_OPENINGS, pieceById, pieceOfQuestion, piecesOf, quizSourceFor } from '../content/catalog'
+import { CONTENT, neighborById, LETTER_OPENINGS, pieceById, pieceOfQuestion, piecesOf, quizSourceFor } from '../content/catalog'
 import { ensureNtBooks, ntLoaded } from '../content/nt-loader'
-import { blanksFor } from '../engine/copy'
 import { acceptInput, checkVoice, copySpot, withGuideFolded, type InputHow, type VoiceCheck } from '../engine/copying'
 import { doSpouseAct, showAtSchool, type ShowMode } from '../engine/family-memory'
 import { answerDesk, canKidAct, deskAsks, deskKidVerse, doKidAct, eatSupper, familyTrip, partnerTrip, type KidAct } from '../engine/family'
-import { currentChapter } from '../engine/offers'
 import { handEase, leveledUp, levelOf, XP, type StatId, type Stats } from '../engine/stats'
 import { copyStatGains, type CopyStatGain } from '../engine/copy-result'
 import { copiedChapters, copiedReadingVerses } from '../engine/copied-reading'
-import type { BoardRequest } from '../engine/board'
 import { DESTS, type DestId } from '../engine/travel'
 import { JOB_GIFTS, kidCoins, ADULT_JOBS, childMode, childStage, leavesVillage, type AdultJob, type Child, type ChildHome, type ChildMode } from '../engine/child'
 import type { TripReward } from '../engine/trip-board'
-import { buildLibraryQuiz, buildQuiz, isCorrect, type Question } from '../engine/quiz'
+import { buildLibraryQuiz, isCorrect, type Question } from '../engine/quiz'
 import { allShelved, canShelve, payRetry, poolFor, shelve, shelveNow as shelveQuick } from '../engine/library'
 import { DEFAULT_CHOICE, type SpecialChoice } from '../engine/binding'
 import { ALBUM_IDS, fill, HEART_HINTS, itemList, itemName, KID_LETTERS, NEIGHBOR_LINES, roomTitle, SCENES, T, withAnd, withObject, withSubject, callName } from '../content/text'
@@ -110,7 +107,6 @@ import {
   saveCopyDraft,
   listen,
   newGame,
-  chooseBook,
   placeFurniture,
   rotateFurniture,
   removePiece,
@@ -119,7 +115,6 @@ import {
   READ_MINUTES,
   reviewPick,
   sceneSeen,
-  setArrangement,
   bookLineKey,
   setMyLine,
   stargaze,
@@ -142,7 +137,6 @@ import {
   drinkTea,
   watchSunset,
   clearSky,
-  submitChapter,
   tapTile,
   walkDirection,
   interactTile,
@@ -150,7 +144,6 @@ import {
   tick,
   trade as doTrade,
   buyRare,
-  fulfillBoard,
   finishReading,
   takeTrip,
   nameChild,
@@ -183,9 +176,6 @@ import {
   hasFood,
   askRequest,
   fulfillRequest,
-  chapterReady,
-  letterReady,
-  recordLetter,
   startCopy,
   startCopyAgain,
   stopCopyAgain,
@@ -208,7 +198,6 @@ import {
   syncHome,
   moveBoardCard,
   type GameState,
-  type SubmitResult,
   type Trade,
 } from '../engine/game'
 import { HOME_FRONT, lockedTiles, lockedZones, placeAt, PLACES, roomAt, sameTile, warpAt, zoneAt } from '../engine/world'
@@ -217,7 +206,7 @@ import { facingOf, FURNITURE_DEFS, footprint, removal, type Furniture } from '..
 import { inBuildingRoom, roomOf as furnitureRoomOf } from '../engine/newland-rooms'
 import { heartsOf } from '../engine/hearts'
 import { canLearnDish, dishTaughtBy, learnDish } from '../engine/cooking'
-import { add, count, RECIPES, type Inventory, type RecipeId } from '../engine/items'
+import { count, RECIPES, type Inventory, type RecipeId } from '../engine/items'
 import type { CarpenterWork } from '../engine/easier'
 import { toggleGear, wearing } from '../engine/gear'
 import { askBaby, nameSibling, selectKid } from '../engine/siblings'
@@ -231,15 +220,13 @@ import { askToStay, emptyHomes, homeWishes, householdById, sayGoodbye } from '..
 import { heartUp } from '../engine/game'
 import { LIMIT as NEED_LIMIT, work } from '../engine/needs'
 import { plant, water, harvest, type CropId } from '../engine/garden'
-import { finishNow, HOLD_UP, isDone, startMini, stepMini, tapMini, type MiniState } from '../engine/minigame'
-import { finishLetter, letterWaiting } from '../engine/requests'
+import { HOLD_UP, isDone, startMini, stepMini, tapMini, type MiniState } from '../engine/minigame'
 import { POSTMAN } from '../engine/post'
 import { modeOf, roomOf, shelfRoom, type ShelfRoomId } from '../engine/shelf-rooms'
 import { albumPrefix, saveGame } from '../engine/save'
 import { gameStorage, reportGameStorageError } from '../engine/game-storage'
 import { isStorageNoticeOpen } from '../shared/storage-notice-state'
 import { isFinished, toggleHomeBook } from '../engine/finished-books'
-import { moveItem } from '../engine/scroll'
 import type { Book, Facing, ItemId, PlaceId, Rng, Target, Tile } from '../engine/types'
 import { isBuilt } from '../engine/projects'
 import { facilityOfPlace, type FacilityId, type FacilityPlace } from '../engine/village-sites'
@@ -250,13 +237,12 @@ export type Pending =
   | { kind: 'gather'; place: PlaceId }
   | { kind: 'craft'; recipe: RecipeId }
   | { kind: 'help'; neighborId: string }
-  | { kind: 'letter' }
   /** 마을 소리내어 읽기 모임 (계획 21 R7) — 소리 맞추기 손일 */
   | { kind: 'reading' }
   /** 이야기 속에서 함께하는 손일 (계획 16 작업 4) — 잘하든 못하든 끝나면 이야기가 다음으로 */
   | { kind: 'story'; event: string; npc: string }
 
-export type QuizMode = { kind: 'chapter'; book: Book; chapter: number } | { kind: 'library'; book: Book; retry: boolean }
+export type QuizMode = { kind: 'library'; book: Book; retry: boolean }
 
 /** 일지의 칸: 하루 기록 · 이웃 수첩(받은 선물 포함) · 앨범 · 업적 */
 export type JournalTab = 'days' | 'neighbors' | 'village' | 'album' | 'awards'
@@ -278,8 +264,7 @@ export type Modal =
   | { kind: 'guide' }
   /** 빈칸 퀴즈 (2026-10-14): 장을 마친 화면에서 바로 */
   | { kind: 'blankQuiz'; target?: BlankChapter }
-  /** 기억 정원에서 본 장면 다시 보기 (2026-10-14) — 저장하지 않는다 */
-  /** back: 닫으면 돌아갈 창 (2026-10-19 감사 L-42) */
+  /** 기억 정원에서 본 장면 다시 보기 (2026-10-14) — 저장하지 않는다. back: 닫으면 돌아갈 창 (2026-10-19 감사 L-42) */
   | { kind: 'sceneReplay'; id: string; back?: Modal }
   | { kind: 'schedule' }
   | { kind: 'readingMeeting'; day: number }
@@ -302,7 +287,6 @@ export type Modal =
   /** lineKey: 조각 id 또는 'book:mk' 같은 책 키. back: 적거나 넘긴 뒤 돌아갈 창 ('word' = 📖 말씀 › 서고) */
   | { kind: 'myLine'; lineKey: string; back?: 'library' | 'word' | `room:${ShelfRoomId}` }
   /** copy: 편지 옮겨 적기의 고른 답 (창 상태로만 — 게임 저장에 남지 않는다) */
-  | { kind: 'desk'; result: SubmitResult | null; dark: boolean; copy?: CopyPad }
   /**
    * 필사 책상 (계획 14 작업 2): 집 책상을 누르면 이것이 열린다 — 마을·위 줄·조작판·마을 소리가 사라진 조용한 화면.
    * view: 'menu' 책상 메뉴(이어서 필사·다른 책 선택), 'pick' 27권 고르기, 'write' 한 절씩 따라 적기, 'done' 장 완료 화면.
@@ -375,7 +359,6 @@ export type Modal =
   /** 스물일곱 번째 책을 꽂은 날: 처음의 빈 서고와 지금을 나란히, 그리고 평소 마을로 */
   | { kind: 'shelfDone' }
   | { kind: 'journey'; board?: 'churches' }
-  | { kind: 'letter' }
   | { kind: 'garden'; at: Tile }
   /** 📖 말씀 탭 (계획 14 작업 5): 필사본 · 말씀 조각 · 하나님 기록 · 서고 */
   | { kind: 'word'; tab?: WordTab }
@@ -432,35 +415,11 @@ export type WordTab = 'copy' | 'quiz' | 'pieces' | 'god' | 'love' | 'links' | 'l
 export type CopyView = 'menu' | 'pick' | 'write' | 'done' | 'ask' | 'again'
 /** 제본 창을 닫은 뒤 돌아갈 곳: 서고·방 선반·가방 (없으면 마을로) */
 export type BindBack = 'library' | 'bag' | `room:${ShelfRoomId}`
-/** 필사 입력이 들어온 모양: 붙여넣기 표식·입력 종류 + 한글을 조합하는 중인가 (화면이 compositionstart/end로 안다) */
-/** hold: 다 맞게 써도 엔터를 누르기 전에는 절을 마치지 않는다 (2026-10-13 사용자: 엔터로 다음 절) */
+/**
+ * 필사 입력이 들어온 모양: 붙여넣기 표식·입력 종류 + 한글을 조합하는 중인가 (화면이 compositionstart/end로 안다).
+ * hold: 다 맞게 써도 엔터를 누르기 전에는 절을 마치지 않는다 (2026-10-13 사용자: 엔터로 다음 절)
+ */
 export type CopyHow = Omit<InputHow, 'target'> & { composing?: boolean; hold?: boolean }
-
-/** 편지 한 장 옮겨 적기에서 고른 것: 칸마다 맞힌 낱말(아직이면 null), 흐려진(틀린) 보기, 방금 틀린 칸 */
-export interface CopyPad {
-  book: Book
-  chapter: number
-  picks: (string | null)[]
-  dimmed: string[][]
-  miss: number | null
-}
-
-/** 지금 옮겨 적는 장 (편지 책이 아니거나 다 적었으면 null) */
-export function copyChapter(game: GameState): { book: Book; chapter: number } | null {
-  const book = game.activeBook
-  if (!book || modeOf(book) !== 'letters') return null
-  const chapter = currentChapter(piecesOf(book), game.progress[book].completed)
-  return chapter === null ? null : { book, chapter }
-}
-
-/** 창에 남은 고른 답이 지금 장의 것이면 그대로, 아니면 빈 칸들 */
-export function copyPadFor(game: GameState, pad: CopyPad | undefined): CopyPad | null {
-  const at = copyChapter(game)
-  if (!at) return null
-  if (pad && pad.book === at.book && pad.chapter === at.chapter) return pad
-  const n = blanksFor(at.book, at.chapter, copySourceFor(at.book)).length
-  return { ...at, picks: Array(n).fill(null), dimmed: Array.from({ length: n }, () => []), miss: null }
-}
 
 /** 서고 방 벽의 카드 판: 사도행전 방 여정 판 / 요한계시록 방 일곱 교회 카드 판 */
 export type CardBoard = 'acts' | 'churches'
@@ -513,8 +472,7 @@ interface Store {
   finishTripBoard: (rewards: TripReward[]) => void
   /** 지금 장면 창을 닫은 뒤 띄울 알림 (별 보는 밤: 장면을 먼저 보이고 편지함 알림) */
   afterScene: string | null
-  /** 방 꾸미기: 놓을 물건, 또는 치우기 */
-  /** 들고 있는 가구, 고르기(pick), 벽 세우기·허물기(2026-10-12) */
+  /** 방 꾸미기: 들고 있는 가구, 고르기(pick), 벽 세우기·허물기(2026-10-12) */
   decorating: ItemId | 'pick' | 'wallBuild' | 'wallRemove' | null
   /** 설치 전 방향: 저장하지 않는 미리보기 상태 */
   decorFacing: Facing
@@ -548,8 +506,7 @@ interface Store {
   zoom: number
   /** 테스트에서 난수를 고정하려고 바꿀 수 있다 */
   rng: Rng
-  /** 앨범 사진을 찍는 함수 (캔버스가 등록한다) */
-  /** 지금 화면을 사진으로 (focus를 주면 그 칸을 비춘 마을 화면으로) */
+  /** 앨범 사진을 찍는 함수 (캔버스가 등록한다): 지금 화면을 사진으로 (focus를 주면 그 칸을 비춘 마을 화면으로) */
   capture: ((focus?: Tile) => string | null) | null
   clockMs: number
 
@@ -578,7 +535,6 @@ interface Store {
   doTrade: (t: Trade) => void
   sellItem: (item: ItemId) => void
   buyRareItem: (item: ItemId) => void
-  doBoard: (r: BoardRequest) => void
   goTrip: (dest: DestId, buys: ItemId[], rewards?: TripReward[]) => void
   setChildName: (name: string) => void
   /** 잠자리에서 배우자에게 아이를 갖자고 얘기한다 — 다음 날 아침 아기 (2026-10-13) */
@@ -604,7 +560,6 @@ interface Store {
   spouseKidAct: (choice: number) => void
   /** 배움터에서 작품 보여 주기·구경하기 */
   showAtSchool: (mode: ShowMode) => void
-  startLetter: () => void
   /** 마을 소리내어 읽기 모임에 함께한다 (계획 21 R7) */
   startReading: () => void
   completeReadingMeeting: () => void
@@ -672,9 +627,9 @@ interface Store {
   takePantry: (id: ItemId) => void
   readAt: (pieceId: string) => void
   readCopiedAt: (book: CopyBook, chapter: number) => boolean
-  /** 성경 이야기를 더 모으는 길: 서고 열람석·옛 두루마리 (모으면 원래 본문 창) */
   /** 가족 옷장: 고른 모습을 입힌다 (피부는 그대로) */
   dressUp: (who: WardrobeWho, a: FullAvatar) => void
+  /** 성경 이야기를 더 모으는 길: 서고 열람석·옛 두루마리 (모으면 원래 본문 창) */
   libraryRead: () => void
   buyScroll: () => void
   blanket: () => void
@@ -683,9 +638,6 @@ interface Store {
   waterAt: (at: Tile) => void
   harvestAt: (at: Tile) => void
   // 책상·잠
-  pickBook: (book: Book) => void
-  moveInDesk: (book: Book, chapter: number, index: number, delta: number) => void
-  submitDesk: (book: Book, chapter: number) => void
   /** 필사: 쓸 책을 고른다 (27권 어느 책이든) */
   copyBook: (book: CopyBook) => void
   /** 화면 오류 창의 닫기: 장면이면 그 장면을 대기열에서 빼고 닫는다 (같은 장면이 다시 열려 오류가 되풀이되지 않게) */
@@ -721,10 +673,6 @@ interface Store {
   copySave: () => void
   /** 필사 길잡이를 접는다(true)·펼친다(false) — 플레이어 저장에 남는다 */
   copyGuide: (folded: boolean) => void
-  /** 편지 옮겨 적기: 칸 하나에 보기 하나 (맞으면 채우고, 틀리면 그 보기를 흐린다 — 불이익 없음) */
-  copyPick: (blank: number, option: string) => void
-  /** 세 칸을 다 채웠으면 옮겨 적는다 (recordLetter) */
-  submitCopy: () => void
   answerQuiz: (given: string | string[]) => void
   nextQuiz: () => void
   // 서고
@@ -1510,7 +1458,7 @@ export const useGame = create<Store>((set, get) => {
     }
   }
 
-  function finishPending(game: GameState, p: Pending, state: MiniState): GameState {
+  function finishPending(game: GameState, p: Pending): GameState {
     const before = game.inv
     let next = game
     if (p.kind === 'gather') {
@@ -1532,12 +1480,7 @@ export const useGame = create<Store>((set, get) => {
       next = finishReading(game, CONTENT)
       if (next !== game) get().say(T.meetings.readDone, 3400)
     }
-    else if (p.kind === 'letter') {
-      const misses = state.kind === 'timing' ? state.misses : 0
-      next = finishLetter(game, misses)
-      if (next !== game) get().say(fill(T.letters.done, { pay: next.coins - game.coins }))
-    }
-    if (p.kind !== 'help' && p.kind !== 'letter') toastGain(before, next.inv)
+    if (p.kind !== 'help') toastGain(before, next.inv)
     return persist(next)
   }
 
@@ -1992,7 +1935,7 @@ export const useGame = create<Store>((set, get) => {
       }
       const def = CONTENT.neighbors.find((n) => n.id === neighborId)
       if (!def) return
-      const r = giveGift(get().game, def, item, CONTENT)
+      const r = giveGift(get().game, def, item)
       if (!r) return
       sfx('gift')
       const line = dislikesOf(def).includes(item) ? T.giftReplies.disliked
@@ -2187,19 +2130,6 @@ export const useGame = create<Store>((set, get) => {
       sayChildHelp(next, get().say)
     },
 
-    doBoard: (r) => {
-      const next = fulfillBoard(get().game, r)
-      if (!next) return
-      sfx('coin')
-      get().say(`${neighborById(r.npc)?.role ?? '이웃'}의 부탁을 들어주었어요 · ${r.coins}닢${r.rare ? ` · ${itemName(r.rare)} 1` : ''}`)
-      set({ game: persist(next) })
-    },
-
-    startLetter: () => {
-      const { game, modal } = get()
-      if (modal?.kind !== 'letter' || !letterWaiting(game)) return
-      set({ modal: { kind: 'mini', state: startMini('timing', get().rng), pending: { kind: 'letter' } } })
-    },
     // 사랑방에서 성경 본문을 펼치고 직접 읽거나 음성 낭독으로 함께 읽는다.
     startReading: () => {
       const { game } = get()
@@ -2233,7 +2163,7 @@ export const useGame = create<Store>((set, get) => {
       const m = get().modal
       if (m?.kind !== 'mini' || !wearing(get().game, 'handyKit')) return
       sfx('hit')
-      set({ game: finishPending(get().game, m.pending, finishNow(m.state)), modal: m.pending.kind === 'club' ? { kind: 'clubSession', id: m.pending.id } : null })
+      set({ game: finishPending(get().game, m.pending), modal: m.pending.kind === 'club' ? { kind: 'clubSession', id: m.pending.id } : null })
     },
 
     miniTap: (itemId) => {
@@ -2242,7 +2172,7 @@ export const useGame = create<Store>((set, get) => {
       if (isDone(m.state)) {
         // 길게 누르기의 마지막 뗌은 창을 닫지 않는다 (닫기 단추로)
         if (m.state.kind === 'hold' && itemId === HOLD_UP) return
-        set({ game: finishPending(get().game, m.pending, m.state), modal: m.pending.kind === 'club' ? { kind: 'clubSession', id: m.pending.id } : null })
+        set({ game: finishPending(get().game, m.pending), modal: m.pending.kind === 'club' ? { kind: 'clubSession', id: m.pending.id } : null })
         return
       }
       const state = tapMini(m.state, itemId)
@@ -2574,34 +2504,6 @@ export const useGame = create<Store>((set, get) => {
       set({ game: persist(passTime(next, 10)), modal: null })
     },
 
-    pickBook: (book) => {
-      sfx('scroll')
-      // 밤에 기름 없이 연 책상은 책을 골라도 여전히 어둡다
-      const m = get().modal
-      set({ game: persist(chooseBook(get().game, book, CONTENT)), modal: { kind: 'desk', result: null, dark: m?.kind === 'desk' ? m.dark : false } })
-    },
-
-    moveInDesk: (book, chapter, index, delta) => {
-      const game = get().game
-      sfx('pen')
-      const m = get().modal
-      set({
-        game: persist(setArrangement(game, book, chapter, moveItem(game.progress[book].arrangement[chapter] ?? [], index, delta))),
-        modal: { kind: 'desk', result: null, dark: m?.kind === 'desk' ? m.dark : false },
-      })
-    },
-    submitDesk: (book, chapter) => {
-      if (deferContent([book], () => get().submitDesk(book, chapter))) return
-      const ready = chapterReady(get().game, book, chapter, CONTENT)
-      if (ready.kind !== 'done') {
-        set({ modal: { kind: 'desk', result: ready, dark: false } })
-        return
-      }
-      // 순서·재료가 준비되면 기록하기 전에 다섯 문제 (그 책 안에서)
-      sfx('scroll')
-      const questions = buildQuiz(piecesOf(book), chapter, get().rng, quizSourceFor([book]))
-      set({ modal: { kind: 'quiz', mode: { kind: 'chapter', book, chapter }, questions, index: 0, wrong: [], solved: false, misses: 0, missed: [] } })
-    },
     copyBook: (book) => {
       if (!isOtBook(book) && deferContent([book], () => get().copyBook(book))) return
       const game = get().game
@@ -2719,44 +2621,6 @@ export const useGame = create<Store>((set, get) => {
       if (check.ok) commitVerse(game, book, spot.verse.text)
       return check
     },
-    copyPick: (blank, option) => {
-      const m = get().modal
-      if (m?.kind !== 'desk' || m.dark) return
-      const game = get().game
-      const pad = copyPadFor(game, m.copy)
-      if (!pad || pad.picks[blank] !== null) return
-      const b = blanksFor(pad.book, pad.chapter, copySourceFor(pad.book))[blank]
-      if (!b || !b.options.includes(option)) return
-      if (option === b.answer) {
-        sfx('pen')
-        const picks = pad.picks.map((p, i) => (i === blank ? option : p))
-        set({ modal: { ...m, result: null, copy: { ...pad, picks, miss: null } } })
-      } else {
-        sfx('miss')
-        const dimmed = pad.dimmed.map((d, i) => (i === blank && !d.includes(option) ? [...d, option] : d))
-        set({ modal: { ...m, result: null, copy: { ...pad, dimmed, miss: blank } } })
-      }
-    },
-    submitCopy: () => {
-      const m = get().modal
-      if (m?.kind !== 'desk' || m.dark) return
-      const game = get().game
-      const pad = copyPadFor(game, m.copy)
-      if (!pad || pad.picks.some((p) => p === null)) return
-      const next = recordLetter(game, pad.book, pad.chapter, pad.picks as string[], CONTENT)
-      if (next === game) {
-        // 조각 책상과 같은 안내 (재료·피로). 고른 답은 그대로 남긴다
-        const r = letterReady(game, pad.book, pad.chapter, CONTENT)
-        const result: SubmitResult | null = r?.kind === 'tired' ? { kind: 'tired' } : r?.kind === 'supplies' ? r : null
-        set({ modal: { ...m, result, copy: { ...pad, miss: null } } })
-        return
-      }
-      sfx('done')
-      // 요한계시록 2·3장: 일곱 교회 카드가 생겼다
-      const newCards = next.churches.length - game.churches.length
-      if (newCards > 0) get().say(fill(T.revRoom.cardsGot, { n: newCards }), 3200)
-      set({ game: persist(next), modal: { kind: 'desk', result: { kind: 'done' }, dark: false } })
-    },
     answerQuiz: (given) => {
       const m = get().modal
       if (m?.kind !== 'quiz' || m.solved) return
@@ -2782,17 +2646,9 @@ export const useGame = create<Store>((set, get) => {
         set({ modal: { ...m, index: m.index + 1, wrong: [], solved: false } })
         return
       }
-      if (m.mode.kind === 'library') {
-        const correct = m.questions.length - m.misses
-        const prev = get().game
-        afterShelved(prev, shelve(prev, m.mode.book, correct, m.missed), m.mode.book, m.missed)
-        return
-      }
-      const { state, result } = submitChapter(get().game, m.mode.book, m.mode.chapter, CONTENT)
-      if (result.kind === 'done') sfx('done')
-      const newCards = state.journey.length - get().game.journey.length
-      if (newCards > 0) get().say(fill(T.acts.cardsGot, { n: newCards }), 3200)
-      set({ game: persist(state), modal: { kind: 'desk', result, dark: false } })
+      const correct = m.questions.length - m.misses
+      const prev = get().game
+      afterShelved(prev, shelve(prev, m.mode.book, correct, m.missed), m.mode.book, m.missed)
     },
     moveBoard: (board, index, delta) => {
       const game = get().game
@@ -2890,9 +2746,7 @@ export const useGame = create<Store>((set, get) => {
       const next = goToSleep(slept, CONTENT, { read: pieceId !== null, pieceId: pieceId ?? undefined })
       // 마을 서고 순위 업데이트가 있는 아침이면 그 창부터 (계획 21 R8)
       set({ game: persist(next), modal: next.rankPopup ? { kind: 'rank' } : null })
-      // 이웃의 이사 편지는 집 앞 편지함으로 — 아침에 창을 띄우지 않고 알리기만 한다 (2026-10-19 사용자)
-      if (next.farewellPopup && next.farewellPopup !== slept.farewellPopup) get().say(T.post.farewellArrived, 4000)
-      else sayChildHelp(next, get().say)
+      sayChildHelp(next, get().say)
       // 집이 넓어지며 가방으로 돌아간 가구 (살림 점검 2026-10-11 버그 5)
       const bagged = homeRefitReturned(slept, next)
       if (bagged.length) setTimeout(() => get().say(t('homeGrow.bagged', { items: bagged.map(itemName).join(' · ') }), 4200), 1200)
@@ -3189,11 +3043,6 @@ useGame.subscribe((s, prev) => {
   setTimeout(() => useGame.getState().say(line, 3200), 1800)
 })
 
-/** 가방에 물건을 넣는 테스트 도우미 */
-export function giveItems(items: Partial<Record<ItemId, number>>) {
-  useGame.setState((s) => ({ game: { ...s.game, inv: add(s.game.inv, items) } }))
-}
-
 // 모든 획득 경로를 한곳에서 감지한다. 불러오기·저장 변환은 획득으로 세지 않는다.
 useGame.subscribe((next, before) => {
   if (next.loadEpoch !== before.loadEpoch || next.game === before.game) return
@@ -3204,7 +3053,4 @@ useGame.subscribe((next, before) => {
 
 // 테스트 준비(setupTests)가 테스트마다 부르는 화면 알림 비우기 — 스토어를 불러온 테스트에서만 걸린다
 if (import.meta.env.MODE === 'test') (globalThis as { __resetGameUi?: () => void }).__resetGameUi = () => useGame.setState({ piecePopups: [], copyResult: null })
-
-
-
 

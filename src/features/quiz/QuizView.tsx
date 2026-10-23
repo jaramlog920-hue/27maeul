@@ -1,4 +1,4 @@
-// 기록하기 전 다섯 문제. 틀려도 벌은 없다 — 다시 고르면 된다.
+// 서고에 꽂을 때 고르는 다섯 문제 (맞힌 만큼 은박·금박 책등). 틀려도 불이익은 없다 — 다시 고르면 된다.
 // 문제에 나오는 성경 문장은 늘 출처(개역한글)와 함께 양피지 상자 안에 있다 (exclusion-list §0).
 import { useState } from 'react'
 import { pieceById, versesOf } from '../../content/catalog'
@@ -57,13 +57,13 @@ function Puzzle({ q, onAnswer, solved }: { q: Extract<Question, { kind: 'puzzle'
   )
 }
 
-function Detective({ q, onAnswer, solved, pool }: { q: Extract<Question, { kind: 'detective' }>; onAnswer: (g: string[]) => void; solved: boolean; pool: boolean }) {
+function Detective({ q, onAnswer, solved }: { q: Extract<Question, { kind: 'detective' }>; onAnswer: (g: string[]) => void; solved: boolean }) {
   const [chosen, setChosen] = useState<GospelId[]>([])
   const p = pieceById(q.pieceId)
   const toggle = (g: GospelId) => setChosen(chosen.includes(g) ? chosen.filter((x) => x !== g) : [...chosen, g])
   return (
     <>
-      <p className="quiz-prompt">{fill(pool ? T.quiz.detectivePool : T.quiz.detective, { title: p.title, ref: p.ref })}</p>
+      <p className="quiz-prompt">{fill(T.quiz.detectivePool, { title: p.title, ref: p.ref })}</p>
       <div className="detective-grid">
         {q.options.map((g) => (
           <button key={g} className={(solved ? q.answer.includes(g) : chosen.includes(g)) ? 'on' : ''} aria-pressed={chosen.includes(g)} disabled={solved} onClick={() => toggle(g)}>
@@ -196,12 +196,11 @@ export function QuizView({ modal }: { modal: Extract<Modal, { kind: 'quiz' }> })
   const q = modal.questions[modal.index]
   const last = modal.index === modal.questions.length - 1
   const title = (id: string) => pieceById(id).title
-  const lib = modal.mode.kind === 'library'
   const wrong = modal.wrong
   return (
-    <div className="dialog scroll-dialog quiz" role="dialog" aria-label={T.quiz.title}>
+    <div className="dialog scroll-dialog quiz" role="dialog" aria-label={T.quiz.shelveTitle}>
       <h2>
-        {lib ? T.quiz.shelveTitle : T.quiz.title} <span className="desk-chapter">· {fill(T.quiz.progress, { n: modal.index + 1, all: modal.questions.length })}</span>
+        {T.quiz.shelveTitle} <span className="desk-chapter">· {fill(T.quiz.progress, { n: modal.index + 1, all: modal.questions.length })}</span>
       </h2>
       <p className="quiz-kind">{T.quiz.kinds[q.kind]}</p>
       {/* 문제마다 선택 상태를 새로 (key) */}
@@ -216,7 +215,7 @@ export function QuizView({ modal }: { modal: Extract<Modal, { kind: 'quiz' }> })
             <Choices options={q.options} label={(o) => o} answer={q.answer} wrong={wrong} solved={modal.solved} onAnswer={answerQuiz} />
           </>
         )}
-        {q.kind === 'detective' && <Detective q={q} solved={modal.solved} onAnswer={answerQuiz} pool={lib} />}
+        {q.kind === 'detective' && <Detective q={q} solved={modal.solved} onAnswer={answerQuiz} />}
         {q.kind === 'book' && <BookQuestion q={q} wrong={wrong} solved={modal.solved} onAnswer={answerQuiz} />}
         {q.kind === 'opening' && <OpeningQuestion q={q} wrong={wrong} solved={modal.solved} onAnswer={answerQuiz} />}
         {q.kind === 'openingNone' && <OpeningNoneQuestion q={q} wrong={wrong} solved={modal.solved} onAnswer={answerQuiz} />}
@@ -230,7 +229,7 @@ export function QuizView({ modal }: { modal: Extract<Modal, { kind: 'quiz' }> })
         )}
         {q.kind === 'order' && (
           <>
-            <p className="quiz-prompt">{lib ? T.quiz.orderBook : T.quiz.order}</p>
+            <p className="quiz-prompt">{T.quiz.orderBook}</p>
             <Choices options={q.options} label={title} answer={q.answer} wrong={wrong} solved={modal.solved} onAnswer={answerQuiz} />
           </>
         )}
@@ -242,10 +241,10 @@ export function QuizView({ modal }: { modal: Extract<Modal, { kind: 'quiz' }> })
         </p>
       )}
       <div className="actions">
-        {!modal.solved && !(modal.mode.kind === 'library' && modal.mode.retry) && <button onClick={closeModal}>{T.quiz.later}</button>}
+        {!modal.solved && !modal.mode.retry && <button onClick={closeModal}>{T.quiz.later}</button>}
         {modal.solved && (
           <button className="primary" onClick={nextQuiz}>
-            {last ? (lib ? T.quiz.shelveRecord : T.quiz.record) : T.ui.next}
+            {last ? T.quiz.shelveRecord : T.ui.next}
           </button>
         )}
       </div>

@@ -1,7 +1,6 @@
-// 계획 8 작업 4: 빈칸 보기 고르기 (옮겨 적기·편지 서고 퀴즈가 함께 쓴다)
-import * as copy from './copy'
+// 계획 8 작업 4: 빈칸 보기 고르기 (필사 빈칸·편지 서고 퀴즈가 함께 쓴다)
 import { mulberry32 } from './offers'
-import { COPY_STOPWORDS, isContentWord, optionRank, rankOptions } from './word-options'
+import { optionRank, rankOptions } from './word-options'
 
 describe('rankOptions', () => {
   it('끝 두 글자 같은 것 → 끝 글자 같은 것 → 나머지, 같은 무리 안에서 길이 ±1 먼저', () => {
@@ -34,9 +33,4 @@ describe('rankOptions', () => {
     expect(() => rankOptions('말씀을', cands, mulberry32(1))).not.toThrow()
   })
 
-  it('copy.ts는 옮긴 것을 그대로 다시 내보낸다', () => {
-    expect(copy.isContentWord).toBe(isContentWord)
-    expect(copy.optionRank).toBe(optionRank)
-    expect(copy.COPY_STOPWORDS).toBe(COPY_STOPWORDS)
-  })
 })

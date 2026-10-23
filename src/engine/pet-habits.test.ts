@@ -3,7 +3,7 @@ import { CONTENT } from '../content/catalog'
 import { T } from '../content/text'
 import { petEventText } from '../content/pet-text'
 import { adopt, comesToPlayer, favoriteSpot, favoriteToy, interactPet, petFollowPose, petHabit, petHomeGoal, petSpotSafe, petWays, PET_TOYS, sanitizeCompanion, walkPlaceAt, type Companion } from './companion'
-import { copyMinutes, newGame, setCompanionStay, tick, type GameEvent, type GameState } from './game'
+import { newGame, setCompanionStay, tick, type GameEvent, type GameState } from './game'
 import { petLife, petStayGoal } from './pet-life'
 import { dayOf } from './calendar'
 import { HOME_ENTRY, HOME_ROOM, isHome, key, PET_HOME, PLACES, WARPS } from './world'
@@ -312,7 +312,5 @@ describe('불이익·죄책감 없음, 필사는 막지 않음', () => {
     const { companion: _a, life: _b, ...rest } = out
     const { companion: _c, life: _d, ...rest0 } = s
     expect(rest).toEqual(rest0)
-    const without: GameState = { ...s, companion: null }
-    expect(copyMinutes(s)).toBe(copyMinutes(without))
   })
 })

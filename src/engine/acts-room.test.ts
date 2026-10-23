@@ -1,7 +1,8 @@
 // 계획 5 작업 5: 사도행전 방 — 열림, 장을 엮어 카드 얻기, 여정 판 잇기, 완성 뒤 나루의 배, 저장
-import { CONTENT, JOURNEY, piecesOf } from '../content/catalog'
+import { CONTENT, JOURNEY } from '../content/catalog'
 import { emptyProgress } from './books'
-import { goToSleep, moveJourneyCard, newGame, setArrangement, submitChapter, syncHome, syncJourney, type GameState } from './game'
+import { goToSleep, moveBoardCard, newGame, syncHome, syncJourney, type GameState } from './game'
+import { copyNextChapter } from './copy-chapter.helper'
 import { boardInOrder, journeyComplete, placeNewCards, type JourneyCard } from './journey'
 import { deserialize, serialize } from './save'
 import { ACTS_DOOR, isWalkable, setOpenDoors } from './world'
@@ -11,19 +12,16 @@ const opened = (): GameState => {
   const s = newGame(CONTENT)
   return { ...s, flags: { ...s.flags, gospelFeast: 2 }, activeBook: 'ac' }
 }
-/** 사도행전 한 장을 본문 순서로 엮는다 */
+/** 사도행전 다음 장을 필사로 마친다 (장 순서대로) */
 function bind(s: GameState, ch: number): GameState {
-  const ids = piecesOf('ac').filter((p) => p.chapter === ch).map((p) => p.id)
-  s = { ...s, collected: [...s.collected, ...ids], inv: { ...s.inv, papyrus: 1, ink: 1 }, needs: { ...s.needs, fatigue: 0 } }
-  s = setArrangement(s, 'ac', ch, ids)
-  const r = submitChapter(s, 'ac', ch, CONTENT)
-  expect(r.result.kind, `${ch}장`).toBe('done')
-  return r.state
+  const next = copyNextChapter({ ...s, needs: { ...s.needs, fatigue: 0 } }, 'ac', CONTENT)
+  expect(next.progress.ac.completed, `${ch}장`).toContain(ch)
+  return next
 }
 /** 판을 본문 순서로 맞춘다 (▲만 써서 — 거품 정렬) */
 function sortBoard(s: GameState): GameState {
   for (let pass = 0; pass < s.journey.length; pass++)
-    for (let i = 1; i < s.journey.length; i++) if (s.journey[i - 1] > s.journey[i]) s = moveJourneyCard(s, i, -1, CONTENT)
+    for (let i = 1; i < s.journey.length; i++) if (s.journey[i - 1] > s.journey[i]) s = moveBoardCard(s, 'journey', i, -1, CONTENT)
   return s
 }
 
@@ -53,9 +51,7 @@ describe('여정 카드 얻기 (장 엮기)', () => {
     s = bind(s, 2)
     const upTo2 = JOURNEY.filter((c) => c.chapter <= 2).map((c) => c.order)
     expect([...s.journey].sort((a, b) => a - b)).toEqual(upTo2)
-    const lk = piecesOf('lk').filter((p) => p.chapter === 1).map((p) => p.id)
-    const g = setArrangement({ ...s, activeBook: 'lk', collected: [...s.collected, ...lk], inv: { papyrus: 1, ink: 1 } }, 'lk', 1, lk)
-    expect(submitChapter(g, 'lk', 1, CONTENT).state.journey).toEqual(s.journey)
+    expect(copyNextChapter(s, 'lk', CONTENT).journey).toEqual(s.journey)
   })
 
   it('다 엮어도 판은 저절로 맞지 않는다 — 새 카드는 판 끝 가까이 끼운다', () => {
@@ -102,7 +98,7 @@ describe('여정 판 순서와 완성', () => {
     expect(s.journey).toEqual(JOURNEY.map((c) => c.order))
     expect(s.flags.actsShip).toBe(1)
     // 다 이은 판은 더 움직이지 않는다
-    expect(moveJourneyCard(s, 3, 1, CONTENT)).toBe(s)
+    expect(moveBoardCard(s, 'journey', 3, 1, CONTENT)).toBe(s)
     const day2 = goToSleep({ ...s, scenes: [] }, CONTENT)
     expect(day2.flags.actsShip).toBe(2)
     expect(day2.scenes.filter((x) => x === 'actsShip')).toHaveLength(1)

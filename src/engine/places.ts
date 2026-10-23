@@ -41,7 +41,7 @@ export function hallOpen(minute: number): boolean {
 export const HALL_PLAY_GAIN = 3
 export const HALL_PLAY_MINUTES = 40
 
-// ── 정원 찻집: 차 한 잔 (닢 2), 쉬어 간다 ──
+// ── 정원 찻집: 차 한 잔 (닢 3), 쉬어 간다 ──
 
 /** 찻집이 여는 때 (08:00–19:00) */
 export const TEA_FROM = 8 * 60

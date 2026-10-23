@@ -67,15 +67,14 @@ export const FURNITURE_DEFS: Partial<Record<ItemId, FurnitureDef>> = {
   clothDoll: { w: 1, h: 1, layer: 'small' },
 }
 
+// 생활 가구 68종 (2026-10-12): 넓은 것은 2×1, 옆을 보면 1×2 (sizeOf)
+for (const [id, a] of Object.entries(ADDITION_FURNITURE)) FURNITURE_DEFS[id as ItemId] = { w: a.w, h: 1, layer: a.layer as Layer, ...('surface' in a && a.surface ? { surface: true } : {}) }
 
 /**
  * 가구 방향 (계획 17 작업 2): 저장에 방향이 없던 가구가 보던 쪽.
  * 그림 원본(render/home-space-directions.ts의 HOME_SPACE_LEGACY_FACING)과 같은 값 — 엔진이 그림을 부르지 않게 값만 옮겨 둔다.
  * 여기 없는 가구는 앞(down)을 본다.
  */
-// 생활 가구 48종 (2026-10-12): 넓은 것은 2×1, 옆을 보면 1×2 (sizeOf)
-for (const [id, a] of Object.entries(ADDITION_FURNITURE)) FURNITURE_DEFS[id as ItemId] = { w: a.w, h: 1, layer: a.layer as Layer, ...('surface' in a && a.surface ? { surface: true } : {}) }
-
 export const LEGACY_FACING: Partial<Record<ItemId, 'left' | 'right'>> = { chair: 'right', woodToy: 'right', teapot: 'left' }
 
 export const SPOUSE_FURNITURE = Object.fromEntries(designs.flatMap(d => d.placements.map((p, i) => [`spouse:${d.id}:${i}`, { ...p, owner: d.name } ])))

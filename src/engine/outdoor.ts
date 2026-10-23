@@ -33,7 +33,7 @@ export function outdoorContext(s:Where):RoomCtx {
 export function withOutdoor<T extends Partial<Pick<GameState,'outdoor'|'furnitureAuto'|'act'|'npcs'|'player'|'target'>>>(s:T,room:readonly Furniture[]):T {
  let nextId=s.outdoor?.nextId??1
  const placements=room.map(f=>({...f,id:'id' in f&&typeof f.id==='string'?f.id:`yard-${nextId++}`}))
- // Editing invalidates users/reservations before another actor can use the changed furniture.
+ // 고친 가구는 다른 사람이 쓰기 전에 쓰던 사람·자리 예약을 먼저 비운다
  const npcs=s.npcs&&Object.fromEntries(Object.entries(s.npcs).map(([id,n])=>[id,{...n,path:[]}]))
  return {...s,outdoor:{version:1,nextId,placements},furnitureAuto:{},act:undefined,target:null,
   ...(s.player?{player:{...s.player,path:[]}}:{}),...(npcs?{npcs}:{})}

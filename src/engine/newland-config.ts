@@ -101,7 +101,7 @@ export const ROOM_SLOTS: readonly RoomSlot[] = makeRoomSlots()
 /** 입주 주택(방이 있어야 하는 건물)을 지을 수 있는 최대 수 — 방 칸 수와 같다 */
 export const MAX_HOMES = ROOM_SLOTS.length
 
-/** 서고 안 책상·책장 칸 (작업 5가 연결한다 — 지금은 칸과 서는 자리만 마련) */
+/** 서고 안 필사 책상·작은 책장 칸과 그 앞 서는 자리 (작업 5) */
 export const INTERIOR_DESK = { tile: { x: 16, y: 32 }, stand: { x: 16, y: 33 } } as const
 export const INTERIOR_SHELF = { tile: { x: 22, y: 32 }, stand: { x: 22, y: 33 } } as const
 

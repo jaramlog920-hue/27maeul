@@ -3,7 +3,7 @@ import { CONTENT } from '../content/catalog'
 import { NEIGHBOR_LINES, SCENES } from '../content/text'
 import { isMarketDay } from './calendar'
 import { seasonOf } from './clock'
-import { APOTHECARY, canSell, finishGather, gatherInfo, HERB_PICKS_PER_DAY, newGame, sell, sellPrice, type GameState } from './game'
+import { canSell, finishGather, gatherInfo, HERB_PICKS_PER_DAY, newGame, sell, sellPrice, type GameState } from './game'
 import { deserialize, serialize } from './save'
 import { SELL_PRICES } from './game'
 import { freshStats } from './stats'
@@ -17,11 +17,11 @@ const spring = (): GameState => {
 
 describe('약방 이웃', () => {
   it('주막 주인 대신 약방 주인 — 같은 집, 서고 2권에 이사 온다', () => {
-    const d = CONTENT.neighbors.find((n) => n.id === APOTHECARY)!
+    const d = CONTENT.neighbors.find((n) => n.id === 'apothecary')!
     expect(d.role).toBe('세이지')
     expect(d.joinsAtBooks).toBe(2)
     expect(CONTENT.neighbors.some((n) => n.id === 'innkeeper')).toBe(false)
-    expect(NEIGHBOR_LINES[APOTHECARY].help.label).toBe('약초 말리기 돕기')
+    expect(NEIGHBOR_LINES.apothecary.help.label).toBe('약초 말리기 돕기')
     expect(SCENES['movedIn:apothecary'].lines[0].text).toContain('약방')
   })
 

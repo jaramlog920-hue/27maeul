@@ -2,9 +2,8 @@ import { CONTENT, PEOPLE } from '../content/catalog'
 import { describe, expect, it } from 'vitest'
 import { deserialize, serialize } from './save'
 import { newGame } from './game'
-import { knownLifestyleTastes, NO_NOTEBOOK, noteTaste, noteObservedTaste, noteExperienceTastes, sanitizeNotebook, sharedMemories, canProposeTea, noteTasteProposal } from './notebook'
+import { knownLifestyleTastes, NO_NOTEBOOK, noteTaste, noteObservedTaste, noteExperienceTastes, sanitizeNotebook, canProposeTea, noteTasteProposal } from './notebook'
 import { scheduleAppt } from './plans'
-import { NO_LIFE, type Experience } from './people'
 
 describe('생활 취향과 함께한 기억', () => {
   it('친구·발견·함께한 경험 뒤에 제안하고 거절 뒤 간격을 둔다', () => {
@@ -45,11 +44,5 @@ describe('생활 취향과 함께한 기억', () => {
     const game = { ...newGame(CONTENT), notebook: noteTaste(NO_NOTEBOOK, 'poppy', 'activity.tea') }
     expect(deserialize(serialize(game), CONTENT)?.notebook?.tastes?.poppy).toEqual(['activity.tea'])
     expect(sanitizeNotebook({ tastes: { poppy: ['activity.tea', 'bad', 'activity.tea'] } }).tastes?.poppy).toEqual(['activity.tea'])
-  })
-  it('가족·동물 기록을 나누고 날짜를 지어내지 않는다', () => {
-    const e: Experience = { id: 'legacy', kind: 'story', with: ['poppy'], first: null, last: null, count: 1 }
-    const list = sharedMemories({ ...NO_LIFE, experiences: { legacy: e, pet: { ...e, id: 'pet', kind: 'pet' }, other: { ...e, id: 'other', with: ['basil'] } } }, 'poppy')
-    expect(list).toEqual([e])
-    expect(list[0].first).toBeNull()
   })
 })

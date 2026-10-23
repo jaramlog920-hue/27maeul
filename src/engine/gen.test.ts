@@ -144,7 +144,6 @@ describe('저장', () => {
         [relationId('rudy', 'carpenter')]: { id: relationId('rudy', 'carpenter'), a: 'carpenter', b: 'rudy', stage: 'lover', since: 2 },
         [relationId('rudy', 'poppy')]: { id: relationId('rudy', 'poppy'), a: 'poppy', b: 'rudy', stage: 'preparing', since: 2 },
       },
-      events: [{ id: 'e-0001', kind: 'wedding', day: 3, who: ['carpenter'], done: false, news: false }, { id: 'e-0001', kind: 'dup', day: 4, who: [], done: false, news: false }, { id: 5 }],
     }
     const g = sanitizeGen(raw, 5)!
     expect(g.persons.bad).toBeUndefined()
@@ -153,8 +152,6 @@ describe('저장', () => {
     expect(g.affinity['a|b']).toBeUndefined()
     expect(g.affinity[relationId('rudy', 'poppy')]).toBeUndefined() // 100 넘는 값
     expect(g.affinity[relationId('rudy', 'juniper')]).toBe(45)
-    expect(g.events).toHaveLength(1)
-    expect(g.nextEvent).toBe(2)
   })
   it('날짜가 미래인 값(저장 되돌리기)은 오늘로 맞추고, 지난 날의 만남 수는 버린다', () => {
     const base = fresh(5)

@@ -5,7 +5,9 @@ import { newGame } from '../../engine/game'
 import type { GameState } from '../../engine/game'
 import { PLACES } from '../../engine/world'
 import { loadJoystick, loadJoystickShape, loadJoystickSide, useGame } from '../../store/game-store'
-import { directionOf, Joystick, padZone, PAD_SIZE } from './Joystick'
+import { directionOf, Joystick, padZone, PAD_CELL } from './Joystick'
+
+const PAD_SIZE = PAD_CELL * 3
 import { Settings } from './Settings'
 
 beforeEach(() => {

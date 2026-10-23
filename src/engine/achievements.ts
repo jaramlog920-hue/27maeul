@@ -4,9 +4,9 @@
 import { totalChapters, type OtProgress, type Progress } from './books'
 import { OT_BOOK_TABLE, OT_ROOMS } from './ot-books'
 import { isOtPieceId, OT_PIECE_COUNT } from './ot-pieces'
-import { NO_NOTEBOOK, type Notebook } from './notebook'
+import type { Notebook } from './notebook'
 import { stageOfPoints } from './people'
-import { NO_ROMANCE, type Romance } from './romance'
+import type { Romance } from './romance'
 import { levelOf, STAT_IDS, type Stats } from './stats'
 import { BOOKS, GOSPELS, type Book, type ItemId } from './types'
 
@@ -58,7 +58,6 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
   { id: 'allBooks', name: '스물일곱 권', desc: '서고의 스물일곱 칸을 모두 채웠다.', done: (s) => shelvedN(s, BOOKS) === BOOKS.length },
   { id: 'goldSpine', name: '금박 책등', desc: '서고 퀴즈로 금박 책등을 받았다.', done: (s) => Object.values(s.shelved).some((g) => g === 2) },
   { id: 'sealed', name: '붉은 봉인', desc: '다 엮은 책을 봉인용 밀랍으로 봉인했다.', done: (s) => s.sealed.length >= 1 },
-  { id: 'letters10', name: '편지 대필 열 통', desc: '이웃의 편지를 열 통 대신 써 주었다.', done: (s) => s.lettersDone >= 10 },
   { id: 'met10', name: '열 사람과 인사', desc: '이웃 열 명과 말을 나눴다.', done: (s) => s.notebook.met.length >= 10 },
   { id: 'friend', name: '친구', desc: '이웃 한 사람과 친구가 되었다.', done: (s) => Object.values(s.hearts).some((p) => stageOfPoints(p) >= 3) },
   { id: 'fiveFriends', name: '다섯 친구', desc: '이웃 다섯 사람과 친구가 되었다.', done: (s) => Object.values(s.hearts).filter((p) => stageOfPoints(p) >= 3).length >= 5 },
@@ -110,8 +109,6 @@ export function foundItems(s: {
   const owned = Object.fromEntries([...placed.map(f => f.item), ...(s.giftsGot ?? [])].map(id => [id, 1]))
   return withFound(s.found ?? [], s.inv, s.chest ?? {}, s.pantry ?? {}, owned, s.cooking?.made ?? {})
 }
-
-export const NO_ACHIEVE_EXTRA = { notebook: NO_NOTEBOOK, romance: NO_ROMANCE }
 
 /** 지금 게시판의 주민 부탁 필사를 끝낸 수 (req:<날>:<번> · req:gen:… — 이웃 부탁 req:<이웃>:<번>과 구분, 2026-10-08 버그 29-A) */
 function copyRequestsDone(s: { flags: Record<string, number> }): number {

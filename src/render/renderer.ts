@@ -102,9 +102,11 @@ let autoFurnitureUses: FurnitureActivity[] = []
 let activeSpot: { spot: NonNullable<PlayerAct['spot']>; kind: string; use?: string; elapsed: number } | null = null
 let activeCopyCast: CopyFurnitureCast = {}
 let activeCopyFeet = { x: 0, y: 0 }
+import { HUNGRY } from '../engine/needs'
 import { slotHeir } from '../engine/gen-growth'
 import { BG_ART, BG_PALETTE } from './bg-materials-art'
-import { blocksWay, isOpenYard, MAP_DECOR_CHAR, SITES, type DecorKind } from '../engine/newland-sites'
+import { blocksWay, boundaryMaterial, isBoundaryKind, isOpenYard, MAP_DECOR_CHAR, SITES, type DecorKind } from '../engine/newland-sites'
+import { BOUNDARY_BITS, BOUNDARY_PALETTE, boundaryGateFrame, boundaryRows } from './newland-boundary-art'
 import { familyHomes, familyShownMember, livesInNewland, sharedHomeOf } from '../engine/gen-homes'
 import { JOIN_PATH_PALETTE, joinedPathRows, PATH_BITS } from './archive-followup-art'
 import { kidVisiting, dreamKey, DREAMER, guestNow, kidWorkSpot, markerShown, memoriesOf, settledGuests, settledSpot, SETTLED_FROM, SETTLED_TO, type Memory } from '../engine/newland-life'
@@ -1377,18 +1379,6 @@ export function drawGroupPreview(g:Ctx,game:GameState,content:GameContent,id:str
  * 가족 동작 한 장 (generation-art familyFrame — 견습 손일·아기 달래기·함께 읽기·식사 등, 2026-10-07 연결).
  * 함께 읽기는 가구 쓰는 동작 팔레트, 나머지는 행사·생활 동작 팔레트
  */
-/** 이사 가는 이웃의 길 (문 앞 → 우물 마당) — 집마다 한 번 셈해 둔다 */
-const leavingWays = new Map<string, Tile[]>()
-function leavingWay(id: string, from: Tile): Tile[] {
-  let w = leavingWays.get(id)
-  if (!w) {
-    const well = PLACES.well.stand!
-    w = [from, ...(route(from, well) ?? [{ x: from.x, y: from.y + 1 }])]
-    leavingWays.set(id, w)
-  }
-  return w
-}
-
 function drawFamily(g: Ctx, action: FamilyAction, facing: Facing, frame: number, stage: Exclude<GenerationStage, 'baby'>, wx: number, wy: number, blink: boolean, season: Season, extra: PersonExtra, who: Who = 'writer') {
   const opts = { frame: 0 as const, blink, season, ...extra }
   const actorPal = who === 'writer' ? writerPalette(season, extra.avatar) : PALETTE
@@ -1983,6 +1973,17 @@ function newlandMapFor(season: Season): HTMLCanvasElement {
   return c
 }
 
+/** 경계 한 칸의 그림: 같은 재료의 이웃 칸으로 이음(NESW 비트). 문은 양옆으로 이어진 쪽이 가로, 아니면 세로 */
+function boundaryCanvas(tiles: Readonly<Record<string, string>>, x: number, y: number, kind: Parameters<typeof boundaryMaterial>[0], near: boolean): HTMLCanvasElement {
+  const material = boundaryMaterial(kind)
+  const same = (dx: number, dy: number) => { const k = tiles[`${x + dx},${y + dy}`]; return isBoundaryKind(k) && boundaryMaterial(k) === material }
+  const mask = (same(0, -1) ? BOUNDARY_BITS.north : 0) | (same(1, 0) ? BOUNDARY_BITS.east : 0) | (same(0, 1) ? BOUNDARY_BITS.south : 0) | (same(-1, 0) ? BOUNDARY_BITS.west : 0)
+  if (kind === 'woodFence' || kind === 'stoneWall') return paint(`bound/${material}/${mask}`, boundaryRows(material, mask), BOUNDARY_PALETTE)
+  const axis = !(same(1, 0) || same(-1, 0)) && (same(0, -1) || same(0, 1)) ? 'vertical' : 'horizontal'
+  const frame = near ? 3 : 0
+  return paint(`gate/${material}/${axis}/${frame}`, boundaryGateFrame(material, axis, 'open', frame).rows, BOUNDARY_PALETTE)
+}
+
 /**
  * 새 터에 지은 것 (계획 20 작업 6): 깐 길·정원 칸, 마당, 입주 주택·공사 중 골격·주문한 터의 말뚝. 지도 그림(계절별 캐시) 위에 얹는다.
  * over가 false면 기록자 뒤에 그릴 것(길·마당·말뚝, 기록자가 문 앞이거나 더 위인 건물), true면 기록자 앞을 가리는 건물.
@@ -2024,6 +2025,11 @@ function drawNewlandSites(g: Ctx, game: GameState, playerY: number, over: boolea
       const same = (dx: number, dy: number) => nl.tiles[`${x + dx},${y + dy}`] === kind
       const mask = (same(0, -1) ? PATH_BITS.north : 0) | (same(1, 0) ? PATH_BITS.east : 0) | (same(0, 1) ? PATH_BITS.south : 0) | (same(-1, 0) ? PATH_BITS.west : 0)
       g.drawImage(paint(`join/${kind}/${mask}`, joinedPathRows(kind, mask), JOIN_PATH_PALETTE), x * TILE, y * TILE)
+      continue
+    }
+    // 울타리·돌담과 그 문: 이웃한 같은 재료 칸 쪽으로 이어지고, 문은 기록자가 곁에 오면 열린다
+    if (isBoundaryKind(kind)) {
+      g.drawImage(boundaryCanvas(nl.tiles, x, y, kind, Math.abs(Math.round(game.player.x) - x) + Math.abs(Math.round(game.player.y) - y) <= 1), x * TILE, y * TILE)
       continue
     }
     const rows = BG_ART[kind]
@@ -2694,23 +2700,6 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           const av = genAvatar(c.person)
           return { who: 'writer', extra: { look: av.look, avatar: av, elder: c.person.stage === 'elder' || residentIsElder(game.gen, c.person.id), short: c.short ? (c.person.stage === 'child' ? 1 : 2) : undefined } }
         }
-        // 이사 가는 날 (2026-10-07 사용자): 아침 7–9시, 나이 든 이웃이 짐을 들고 제 집 문 앞에서 아래로 걸어 떠난다 (familyFrame moveHouse)
-        const leaving = game.gen?.retired?.[def.id]
-        const homeRoom = ROOMS.find((rm) => rm.owner === def.id)
-        if (leaving?.moved === day && homeRoom && !wet && minute >= 7 * 60 && minute < 9 * 60 && !roomAt(here)) {
-          // 이웃이 다니는 길(route)로 문 앞 → 우물 마당까지, 두 시간에 걸쳐 걷고 마당에 닿으면 떠난다
-          const way = leavingWay(def.id, { x: homeRoom.door.x, y: homeRoom.door.y + 1 })
-          const k = ((minute - 7 * 60) / 120) * (way.length - 1)
-          const i0 = Math.min(way.length - 1, Math.floor(k))
-          const a = way[i0]
-          const b = way[Math.min(way.length - 1, i0 + 1)]
-          const lx = a.x + (b.x - a.x) * (k - i0)
-          const ly = a.y + (b.y - a.y) * (k - i0)
-          const face: Facing = b.x > a.x ? 'right' : b.x < a.x ? 'left' : b.y < a.y ? 'up' : 'down'
-          const { who, extra } = neighborLook(def, undefined, game.looks?.[def.id], true)
-          const ph = t + def.id.length
-          if (i0 < way.length - 1) items.push({ y: ly, paint: () => drawFamily(g, 'moveHouse', face, Math.floor(ph * 5) % 4, 'elder', lx, ly, isBlinking(ph), season, extra, who) })
-        }
         if (!n?.visible) {
           // 집에 들어간 이웃: 내가 그 집 안에 있으면 방 안 자리에 서 있다 (밤 열 시 이후엔 잔다)
           // 결혼해 배우자의 집에 사는 이웃은 그 집 안, 주인 자리 한 칸 아래에 (2026-10-08 주민 가족 생활)
@@ -2797,7 +2786,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           },
         })
         // The other stray is adopted off-screen; it does not follow Willow.
-        // 세대교체: 견습·이어받은 자녀, 걷는 아이·십 대는 부모 곁에 (서 있을 때, 비 오는 날엔 집 안)
+        // 자란 자녀·걷는 아이·십 대는 부모 곁에 (서 있을 때, 비 오는 날엔 집 안). 견습·이어받은 자녀는 예전 저장의 내 짝 자리만
         // 2026-10-07 사용자: 이동 중엔 뒤를 따라 걷고, 서 있으면 곁에서 — 견습 자녀는 손일(apprentice) 동작
         if (!wet)
           companionsOf(game.gen, def.id, day).forEach((c, i) => {
@@ -3037,7 +3026,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
           if (kind === 'doze') emote(g, 'z', cx, top)
           else if (kind === 'hum') emote(g, 'note', cx, top - Math.round(Math.sin(t * 4)))
           else if (kind === 'yawn') emote(g, 'yawn', cx, top)
-          else if (!moving && game.needs.hunger >= 70 && t % 9 < 1.6) emote(g, 'hungry', cx, top)
+          else if (!moving && game.needs.hunger >= HUNGRY && t % 9 < 1.6) emote(g, 'hungry', cx, top)
           else if (!moving && game.needs.cold >= 60 && t % 6 < 1.4) emote(g, 'shiver', cx, top)
           else if (!moving && game.needs.heat >= 60 && t % 8 < 1.4) emote(g, 'sweat', cx, top)
           // 겨울 바깥의 입김
@@ -3322,7 +3311,6 @@ export interface TripActor {
   walking: boolean
 }
 
-/** 여행 판 한 장면: 동네 그림 → 사람(발 아래 순서대로). 카메라는 판 대부분이 보이게, 가장자리에 가까울 때만 조금 움직인다 */
 /** 여행 판의 사람은 두 배 크기로 (큼직한 돌판에 맞게, 도트는 정수 배라 또렷하다) */
 function drawBig(g: Ctx, c: HTMLCanvasElement, wx: number, wy: number, dy = 0) {
   const k = 2
@@ -3335,6 +3323,7 @@ function drawBig(g: Ctx, c: HTMLCanvasElement, wx: number, wy: number, dy = 0) {
   g.drawImage(c, px, py, w, h)
 }
 
+/** 여행 판 한 장면: 동네 그림 → 사람(발 아래 순서대로). 카메라는 판 대부분이 보이게, 가장자리에 가까울 때만 조금 움직인다 */
 export function createTripRenderer(g: Ctx) {
   const cam = { x: -1, y: -1 }
   /** 화면에 보이는 칸 수 (폭은 마을과 같은 16칸 — 같은 도트 크기, 높이는 화면 비율대로) */

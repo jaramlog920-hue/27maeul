@@ -593,7 +593,7 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
   // 절이 바뀌면(한 절을 기록했다) 입력칸을 그 절의 쓰다 만 입력으로 (렌더 중에 맞춘다 — 깜빡임 없이)
   const key = `${book}:${spot.chapter}:${spot.verse.verse}`
   const [seen, setSeen] = useState(key)
-  // 소리 내어 읽기: 설정에서 켰고 브라우저에 음성 인식이 있을 때만 (기본은 끔)
+  // 소리 내어 읽기: 브라우저에 음성 인식이 있고 설정에서 끄지 않았을 때만 (기본은 켬 — copy-voice)
   const [voiceOk] = useState(() => voiceAvailable() && copyVoiceOn())
   const [listening, setListening] = useState(false)
   const [voiceMiss, setVoiceMiss] = useState<number[] | null>(null)

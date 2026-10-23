@@ -122,10 +122,6 @@ const okFarewell = (f: unknown): f is Farewell => {
 }
 
 /**
- * 콘텐츠가 바뀐 뒤의 저장도 안전하게: 없는 조각 id를 걸러 내고, 책상 위 순서를 모은 조각과 맞춘다.
- * (없는 id가 남으면 도감·일지에서 오류가 나고, 책상 순서가 영원히 "틀림"이 될 수 있다)
- */
-/**
  * 모양 맞추기 (2026-10-18 감사 M-19·M-20·L-1·L-6·L-59·L-61): 가져온 파일·깨진 저장의 값이 아래 정리와 게임 루프를
  * 멈추지 않게, 수는 유한한 수로, 목록은 글자 목록으로 먼저 맞춘다. 게임이 쓴 정상 저장은 그대로 지나간다.
  * 무한대(1e999)는 JSON에 null로 써지므로 남겨 두면 다음 불러오기에서 칸을 못 연다 — 여기서 걸러 낸다
@@ -178,6 +174,10 @@ function todayShape(v: unknown): GameState['today'] {
   }
 }
 
+/**
+ * 콘텐츠가 바뀐 뒤의 저장도 안전하게: 없는 조각 id를 걸러 내고, 책상 위 순서를 모은 조각과 맞춘다.
+ * (없는 id가 남으면 도감·일지에서 오류가 나고, 책상 순서가 영원히 "틀림"이 될 수 있다)
+ */
 export function sanitize(s: GameState, content: GameContent): GameState {
   s = retireWaterChildLessons(migratePieceLayout(normalizeShapes(s), content))
   // 아래 정리들은 모두 첫 마을 지도로 한다 (새 터로 맞추는 것은 불러온 뒤 settle의 syncHome)

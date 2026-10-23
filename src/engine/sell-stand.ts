@@ -9,11 +9,8 @@ import { SELL_PRICES } from './merchant-selling'
 import { STALL_EXTRA } from './stall'
 import { sellBonus } from './stats'
 import { FURNITURE_PRICES, FURNITURE_RESALE_RATE } from './economy-prices'
-import type { ItemId, Tile } from './types'
+import type { ItemId } from './types'
 
-/** 매대 두 칸 (지도 글자 'X' — 광장 동쪽 벤치 자리)과 그 곁 서는 칸 */
-export const SELL_STAND_TILES: readonly Tile[] = [{ x: 29, y: 21 }, { x: 30, y: 21 }]
-export const SELL_STAND_STAND: Tile = { x: 28, y: 21 }
 /** 하루에 매대에 넘길 수 있는 수 (경제를 지키는 한도) */
 export const STAND_CAP = 20
 

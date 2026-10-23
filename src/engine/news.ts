@@ -3,7 +3,7 @@
 // 규칙: 이야기·약속·행사·모임·잔치가 먼저(여기는 일과 위, 그것들 아래), 벗어나는 날·마을 사건 단계·이야기 뒤에 바뀐 일과가 있는 이웃은 쉬어 간다.
 // 물건·닢 보상 없음, 놓친 목록·확인 표시 없음, 큰 이야기를 근황으로만 시작하게 하지 않는다. 필사·책상·서고와 무관.
 // 문구는 life-text.json `news` 절 하나 — 말을 걸면 첫마디로, 수첩 "요즘"에 본 모습으로.
-import { isWet, weatherOf } from './calendar'
+import { isWet } from './calendar'
 import { idSeed, type Activity, type Req } from './people'
 import { FACILITY_IDS, SITES, type FacilityId } from './village-sites'
 import lifeText from '../content/life-text.json'
@@ -113,7 +113,6 @@ export function newsWeatherOk(d: Pick<NewsDef, 'dry' | 'weathers'>, w: Weather):
   return true
 }
 export const newsSeasonOk = (d: Pick<NewsDef, 'seasons'>, season: Season) => !d.seasons || d.seasons.includes(season)
-export const newsWeatherOfDay = (day: number): Weather => weatherOf(day)
 
 // ── 글 (life-text.json news 절) ──
 

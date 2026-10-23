@@ -1,11 +1,11 @@
-import { isHome } from './world'
-import { FULL_HEART_DATES } from './romance'
-import { kidPersona, likedActs } from './persona'
-import { featureAccess } from './feature-rules'
 // 가족과 함께 있는 필사 (계획 14 작업 10, 계획 12 "아이와 함께 보내는 시간").
 // 아이가 어느 정도 자라면 책상에 앉을 때 가끔 "옆에 앉고 싶어 해요" — [같이 있기]면 아이는 곁에서 그림을 그리고, 책장을 넘기다
 // 졸다 잠든다. 아이는 필사하지 않고 능력치도 얻지 않는다 (보상 없음). 배우자는 저녁에 같은 방에서 책을 읽는다.
 // 처음 잠든 날은 가족 앨범에 한 장 (장면 fam:deskNap — 책상에서 나온 뒤 마을에서 열린다).
+import { isHome } from './world'
+import { FULL_HEART_DATES } from './romance'
+import { kidPersona, likedActs } from './persona'
+import { featureAccess } from './feature-rules'
 import { mulberry32 } from './offers'
 import { isMarketDay, weatherOf } from './calendar'
 import { NO_LIFE, recordExperience } from './people'
@@ -305,7 +305,7 @@ export const SUPPER_HEART = 3
 export const SUPPER_MINUTES = 40
 
 /** 오늘 저녁 배우자와 같이 먹는가: 부부(결혼 잔치 날 빼고), 저녁 때, 오늘 아직 안 먹었고, 차려지는 날 */
-export function supperReady(s: Pick<GameState, 'clock' | 'flags'> & Partial<Pick<GameState, 'romance' | 'progress' | 'shelved' | 'flags' | 'player' | 'map'>>): boolean {
+export function supperReady(s: Pick<GameState, 'clock' | 'flags'> & Partial<Pick<GameState, 'romance' | 'progress' | 'shelved' | 'player' | 'map'>>): boolean {
   const r = s.romance ?? NO_ROMANCE
   // 첫 마을에서는 집 안에서만 (잔치 저녁에 광장 모닥불 곁의 배우자에게 말 걸면 집 저녁이 열렸다 — 2026-10-21 점검)
   if (s.player && (s.map ?? 'village') === 'village' && !isHome({ x: Math.round(s.player.x), y: Math.round(s.player.y) })) return false

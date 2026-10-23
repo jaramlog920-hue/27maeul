@@ -1,4 +1,4 @@
-// 27마을 일터 실내 자산. 16px 타일, 기존 128×96 방과 문턱 유지. 게임 연결은 별도.
+// 27마을 일터 실내 자산. 16px 타일, 기존 128×96 방과 문턱 유지. 집 겸 일터·이웃의 꿈터 창(FacilityView)이 그 일의 방을 보인다.
 import type { FurnitureArt } from './furniture-art'
 import { pixels, HOME_SPACE_ART } from './home-space-art'
 import { OLD_INTERIOR_SHELL, OLD_VILLAGE_PALETTE, OLD_PROPS } from './old-village-art'
@@ -99,14 +99,14 @@ const LAYOUTS:Record<WorkplaceId,WorkplacePlacement[]> = {
   sailor:[p('map',12,3,true),p('chartDesk',12,36),p('stool',24,56),p('rope',8,76),p('pack',36,72),p('barrel',84,28),p('chest',104,28),p('daybed',84,72),p('cushion',104,52)],
   herbalist:[p('dryingRack',8,24),p('herbBench',12,62),p('stool',24,80),p('bottleRack',84,24),p('basket',80,72),p('plant',104,64),p('flowers',80,52)],
   traveler:[p('map',12,3,true),p('chartDesk',12,32),p('stool',24,50),p('pack',8,72),p('pack',28,72),p('chest',40,56),p('daybed',84,72),p('scrollRack',84,24)],
-  cook:[p('plateShelf',12,3,true),p('stove',8,24),p('prepTable',12,64),p('basket',36,80),p('bottleRack',84,24),p('teaTable',84,68),p('stool',92,84),p('jar',104,52)],
+  cook:[p('plateShelf',12,3,true),p('stove',8,24),p('prepTable',12,64),p('basket',36,80),p('bottleRack',84,24),p('teaTable',84,68),p('stool',92,80),p('jar',104,52)],
   painter:[p('painting',12,3,true),p('easel',8,28),p('paintTable',12,64),p('stool',24,80),p('painting',84,26),p('painting',80,48),p('chest',104,66),p('flowers',80,72)],
-  weaver:[p('loom',8,26),p('yarnRack',84,24),p('stool',20,60),p('basket',8,78),p('cushion',36,74),p('woodBench',84,66),p('basket',104,82)],
+  weaver:[p('loom',8,26),p('yarnRack',84,24),p('stool',20,60),p('basket',8,78),p('cushion',36,74),p('woodBench',84,66),p('basket',104,80)],
   gardener:[p('seedRack',8,24),p('pottingBench',12,62),p('basket',32,80),p('plant',80,26),p('plant',104,28),p('seedRack',84,52),p('jar',80,80)],
   potter:[p('potteryRack',8,24),p('wheel',12,62),p('clayBench',84,30),p('stool',92,50),p('oven',84,62),p('jar',40,62),p('plateShelf',12,3,true)],
   instrumentMaker:[p('toolBoard',12,3,true),p('instrumentBench',12,34),p('stool',24,54),p('lute',8,62),p('woodStack',24,78),p('harp',84,26),p('toolRack',84,62)],
   carpenter:[p('toolBoard',12,3,true),p('toolRack',8,24),p('carvingBench',12,64),p('woodStack',80,28),p('chair',80,52),p('chair',104,52),p('bench',84,76)],
-  baker:[p('plateShelf',12,3,true),p('oven',8,24),p('doughBench',12,64),p('basket',32,80),p('breadRack',84,24),p('barrel',80,68),p('basket',104,68),p('stool',104,84)],
+  baker:[p('plateShelf',12,3,true),p('oven',8,24),p('doughBench',12,64),p('basket',32,80),p('breadRack',84,24),p('barrel',80,68),p('basket',104,68),p('stool',104,80)],
 }
 function merge(...layers:readonly string[][]):string[] {
   const result=Array.from({length:96},()=>Array<string>(128).fill('.'))

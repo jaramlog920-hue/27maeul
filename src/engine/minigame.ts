@@ -80,7 +80,7 @@ export const ORDER_CELLS = 4
 export const ORDER_LEN = 3
 export const ORDER_ROUNDS = 2
 export const ORDER_SHOW = 0.55
-/** 길게 누르기에서 miniTap에 넘기는 값 (누름·뗌) */
+/** 길게 누르기에서 화면이 miniTap(game-store)으로 넘기는 값 (누름·뗌) */
 export const HOLD_DOWN = 1
 export const HOLD_UP = 0
 
@@ -189,24 +189,6 @@ export function tapMini(s: MiniState, itemId?: number): MiniState {
 /** 다음 판의 차례 — 앞 판을 뒤집고 한 칸 비틀어 (탭에는 난수가 없으므로) */
 function nextSeq(seq: number[]): number[] {
   return [...seq].reverse().map((n, i) => (i === 1 ? (n + 1) % ORDER_CELLS : n)).map((n, i, a) => (i > 0 && a[i - 1] === n ? (n + 2) % ORDER_CELLS : n))
-}
-
-/** 손에 익은 연장이 있으면 손일 놀이를 바로 끝낸다 */
-export function finishNow(s: MiniState): MiniState {
-  switch (s.kind) {
-    case 'mash':
-      return { ...s, progress: 1 }
-    case 'timing':
-      return { ...s, hits: TIMING_NEED }
-    case 'pick':
-      return { ...s, got: PICK_NEED, items: [] }
-    case 'hold':
-      return { ...s, hits: HOLD_NEED, holding: false }
-    case 'weave':
-      return { ...s, count: WEAVE_NEED }
-    case 'order':
-      return { ...s, rounds: ORDER_ROUNDS }
-  }
 }
 
 export function isDone(s: MiniState): boolean {

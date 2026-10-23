@@ -54,7 +54,3 @@ export function journeyComplete(board: readonly number[], cards: readonly Journe
   return cards.every((c) => on.has(c.order)) && boardInOrder(board, cards)
 }
 
-/** 카드가 하나라도 있는 장 */
-export function journeyChapters(cards: readonly JourneyCard[]): number[] {
-  return [...new Set(cards.map((c) => c.chapter))].sort((a, b) => a - b)
-}

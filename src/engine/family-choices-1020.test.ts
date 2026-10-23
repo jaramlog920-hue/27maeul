@@ -4,7 +4,6 @@ import { newChild } from './child'
 import { goToSleep, sceneSeen, type GameState } from './game'
 import { establishedGame } from './growth-test-support'
 import { canHaveBaby, generationOf, settleBirth, fitGenderLook } from './gen-birth'
-import { settleGrowth, slotPerson, RETIRE_AFTER } from './gen-growth'
 import { demolishBuild } from './newland-build'
 import { GUEST_GAP, kidVisiting } from './newland-life'
 
@@ -92,30 +91,6 @@ describe('이웃 아기 외형은 성별에 맞춘다', () => {
   it('예전에 태어난 아들의 긴 치마는 그림에서 바지로', () => {
     expect(fitGenderLook('m', { bottom: 0, hairBack: 1 })).toMatchObject({ bottom: 2, hairBack: 0 })
     expect(fitGenderLook('f', { bottom: 2 })).toMatchObject({ bottom: 2 })
-  })
-})
-
-describe('셋째 대도 일을 잇는다', () => {
-  it('자리를 이어받은 자녀의 다 큰 아이가 견습하고, 한 계절 뒤 그 자리를 잇는다', () => {
-    const g0 = {
-      seed: 1, persons: {
-        baker: { id: 'baker', origin: 'fixed', npc: 'baker', stage: 'elder', parents: [], spouse: null, household: null },
-        x: { id: 'x', origin: 'born', born: 0, stage: 'adult', parents: ['baker'], spouse: 'y', household: 'h-1' },
-        y: { id: 'y', origin: 'born', born: 0, stage: 'adult', parents: [], spouse: 'x', household: 'h-1' },
-        c: { id: 'c', origin: 'born', born: 100, stage: 'adult', parents: ['x', 'y'], spouse: null, household: 'h-1' },
-      },
-      households: { 'h-1': { id: 'h-1', members: ['x', 'y'], home: 'baker', children: ['c'] } },
-      heirs: { baker: { heir: 'x', since: 10 } }, retired: { baker: { heir: 'x', day: 50 } }, log: [],
-    } as never
-    const access = { generations: true, retirement: true }
-    let g = settleGrowth(g0, 200, access)
-    expect((g as { heirs: Record<string, { heir: string }> }).heirs.baker.heir).toBe('c')
-    expect(slotPerson(g, 'baker')).toBe('x')
-    g = settleGrowth(g, 200 + RETIRE_AFTER, access)
-    expect(slotPerson(g, 'baker')).toBe('c')
-    // 플레이어의 짝 자리는 넘기지 않는다
-    const kept = settleGrowth(g0, 200, { ...access, keep: 'baker' })
-    expect((kept as { heirs: Record<string, { heir: string }> }).heirs.baker.heir).toBe('x')
   })
 })
 

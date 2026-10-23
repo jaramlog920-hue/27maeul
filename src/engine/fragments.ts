@@ -35,8 +35,8 @@ export function fragmentWayOf(day: number): FragmentWay | null {
 const idSeed = (id: string) => [...id].reduce((n, ch) => (n * 31 + ch.charCodeAt(0)) >>> 0, 7)
 
 /**
- * 말씀 조각 한 개 뽑기 (2026-10-06 사용자 결정): 어느 길로 받든 — 편지·특별한 대화·여행·서고 열람석·두루마리·밤 필사·
- * 아이의 편지·언덕 별 보기 — 27권 전체의 아직 없는 조각 중 무작위 하나다. 그날 몫 1~2장이나 장 순서·책 제한은 없다.
+ * 말씀 조각 한 개 뽑기 (2026-10-06 사용자 결정): 어느 길로 받든 — 편지·특별한 대화·여행·서고 열람석·두루마리·
+ * 아이의 편지·언덕 별 보기·다시 쓰기 (밤 필사는 2026-10-18에 없앴다) — 27권 전체의 아직 없는 조각 중 무작위 하나다. 그날 몫 1~2장이나 장 순서·책 제한은 없다.
  * 씨앗은 날과 길(source)로 정해져서 같은 날 같은 길은 불러와도 같은 조각이다. 다 모았으면 null (오류 없음)
  */
 export function drawFragment(pieces: readonly Pick<Piece, 'id'>[], collected: readonly string[], seed: number): string | null {
@@ -80,7 +80,7 @@ export function fragmentsForDay(args: {
 
 // ── 받은 기록 ──
 
-/** 조각 하나를 받은 날과 어디서 ('npc:baker' · 'letter' · 'trip:harbor' · 'child' · 'library' · 'scroll' · 'night' · 'stars') */
+/** 조각 하나를 받은 날과 어디서 ('npc:baker' · 'letter' · 'trip:harbor' · 'child' · 'library' · 'scroll' · 'stars' …, 'night'는 없앤 밤 필사의 옛 기록) */
 export interface PieceGot {
   day: number
   from: string
@@ -164,7 +164,6 @@ export function talkGiftOf(
 
 /** 작은 책장 여섯 개 (왼쪽 셋 · 오른쪽 셋) × 선반 세 단 × 한 단에 책등 넷 */
 export const SHELF_FILL = { shelves: 6, rows: 3, perRow: 4 } as const
-export const SHELF_FILL_SLOTS = SHELF_FILL.shelves * SHELF_FILL.rows * SHELF_FILL.perRow
 
 /**
  * 채울 책등 수 (0 ~ 책장 수 × 12): 조각이 하나도 없으면 0, 하나라도 있으면 1 이상, 다 모아야 가득.

@@ -209,7 +209,7 @@ export function copyChapters(book: CopyBook, content: GameContent): number[] {
   return chaptersOf(book, content)
 }
 
-/** 한 장의 필사할 절: 본문이 없는 절('(없음)'·'(…포함되어 있음)')은 빠진다 (번호만 건너뜀). 대괄호 절은 본문이므로 넣는다 */
+/** 한 장의 필사할 절: 본문이 없는 절('(없음)'·'(…포함되어 있음)')은 본문(content chapterText)에서 이미 빠져 번호만 건너뛴다 — 여기선 대조할 글자가 없는 절만 더 거른다. 대괄호 절은 본문이므로 넣는다 */
 export function copyVerses(book: CopyBook, chapter: number, content: GameContent): CopyVerse[] {
   return (content.chapterText?.(book, chapter) ?? [])
     .map((v) => ({ verse: v.verse, text: v.text, chars: [...normalizeCopy(v.text)].length }))

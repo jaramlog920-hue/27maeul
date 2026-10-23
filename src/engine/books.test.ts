@@ -1,6 +1,7 @@
-import { CONTENT, piecesOf } from '../content/catalog'
+import { CONTENT } from '../content/catalog'
 import { bookDone, chaptersOf, emptyProgress, totalChapters } from './books'
-import { chooseBook, goToSleep, listen, newGame, setArrangement, submitChapter, type GameState } from './game'
+import { chooseBook, goToSleep, listen, newGame, type GameState } from './game'
+import { copyNextChapter } from './copy-chapter.helper'
 
 describe('책별 진행', () => {
   it('빈 진행과 장 수 세기', () => {
@@ -49,12 +50,8 @@ describe('책별 진행', () => {
   it('장을 마치면 그 책의 진행에만 쌓이고, 마지막 장이면 한 권 완성 장면', () => {
     let s = chooseBook(newGame(CONTENT), 'mk', CONTENT)
     for (const ch of chaptersOf('mk', CONTENT)) {
-      const ids = piecesOf('mk').filter((p) => p.chapter === ch).map((p) => p.id)
-      s = { ...s, collected: [...s.collected, ...ids], inv: { ...s.inv, papyrus: 1, ink: 1 }, needs: { ...s.needs, fatigue: 0 } }
-      s = setArrangement(s, 'mk', ch, ids)
-      const r = submitChapter(s, 'mk', ch, CONTENT)
-      expect(r.result.kind).toBe('done')
-      s = r.state
+      s = copyNextChapter({ ...s, needs: { ...s.needs, fatigue: 0 } }, 'mk', CONTENT)
+      expect(s.progress.mk.completed).toContain(ch)
     }
     expect(s.progress.mk.completed).toEqual(chaptersOf('mk', CONTENT))
     expect(s.progress.lk.completed).toEqual([])

@@ -2,7 +2,8 @@
 // + 계획 16 작업 12b: 미혼·자녀 없는 추가 주민 셋(떠돌이 상인·기름 짜는 이웃·편지 나르는 이웃 — 지금 모습 그대로 남자).
 // 주인공과 다른 모습의 후보만 연애할 수 있고, 같은 모습이면 친구로 지낸다(교단마다 입장이 갈리는 부분을 게임이 먼저 열지 않는다).
 // 단계: 인사·선물로 마음 → 4·6에 그 사람의 이야기 → 8 + 들꽃 다발이면 연인 → 연인 7일 + 마음 10 + 약속의 끈이면 약혼
-// → 다음 장날 저녁 광장 마을 잔치(교파 예식이 아니다)에서 결혼 → 배우자가 내 집(넓힌 방)에서 함께 산다.
+// (마음 10은 연애 14일·데이트 셋·연인 이야기를 마쳐야 찬다 — fullHeartBond)
+// → 다음 결혼 잔치 날(계절 잔치·비 오는 날을 비킨 장날) 저녁 광장 마을 잔치(교파 예식이 아니다)에서 결혼 → 배우자가 내 집(넓힌 방)에서 함께 산다.
 // 연애 대화·장면에 성경 구절을 넣지 않는다 (설계 §8).
 import { festivalOf, isMarketDay, isWet, weatherOf } from './calendar'
 import type { Tile } from './types'
@@ -22,7 +23,7 @@ export interface Romance {
   stage: RomanceStage | null
   /** 연인이 된 날 */
   since: number | null
-  /** 결혼 잔치 날 (약혼한 다음 장날) */
+  /** 결혼 잔치 날 (약혼한 뒤 첫 결혼 잔치 날 — nextWeddingDay) */
   weddingDay: number | null
   marriedDay: number | null
   /** 이번 연애에서 마친 데이트 수. 이전 상대의 횟수와 분리한다. */
@@ -64,7 +65,6 @@ export const CORD_GAIN = 5
  * 하루에 한 번 (어느 곳이든) — 마음 +5점, 오늘 기분 +, 곳마다 처음 간 날은 앨범 한 장.
  */
 export type DatePlace = 'tea' | 'sunset' | 'walk'
-export const DATE_PLACES: readonly DatePlace[] = ['tea', 'sunset', 'walk']
 export const DATE_TEA_PRICE = 6
 export const DATE_GAIN = 5
 /** 곳마다 처음 함께 간 날의 장면 (앨범) — 그다음부터는 date:<곳>:<0~2> 짧은 장면 */
@@ -110,15 +110,15 @@ export const WEDDING_SPOT: Tile = { x: 24, y: 19 }
 export const SPOUSE_HOME_FROM = 19 * 60
 export const SPOUSE_HOME_TO = 7 * 60
 
-/** 약혼한 날 다음 장날 (장날 당일에 약혼하면 그다음 장날) */
+/** 이 날 다음의 장날 (이 날이 장날이어도 그다음 장날) */
 export function nextMarketAfter(day: number): number {
   let d = day + 1
   while (!isMarketDay(d)) d++
   return d
 }
 /**
- * 결혼 잔치 날: 다음 장날 가운데 계절 잔치 날과 비 오는 날을 비킨 날 (2026-10-22 중반 점검: 장날이 잔치 날과 겹치면 같은 모닥불에서
- * 결혼과 계절 잔치가 겹쳤고, 비 오는 날에도 바깥 모닥불에서 열렸다 — 계절 잔치는 비 오면 열리지 않는다). 날씨는 날마다 정해져 있다
+ * 결혼 잔치 날: 다음 장날 가운데 계절 잔치 날과 비·눈 오는 날을 비킨 날 (2026-10-22 중반 점검: 장날이 잔치 날과 겹치면 같은 모닥불에서
+ * 결혼과 계절 잔치가 겹쳤고, 비 오는 날에도 바깥 모닥불에서 열렸다 — 계절 잔치 날은 늘 맑게 정해져 있다, calendar weatherOf). 날씨는 날마다 정해져 있다
  */
 export function nextWeddingDay(day: number): number {
   let d = nextMarketAfter(day)

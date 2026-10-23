@@ -6,7 +6,9 @@ import { newGenState, relationId } from './gen'
 import { MAX_CATCHUP } from './gen-config'
 import { settleGen, withPairs } from './gen-settle'
 import { deserialize, serialize } from './save'
-import { RETIRE_AFTER, slotPerson } from './gen-growth'
+import { slotPerson } from './gen-growth'
+/** 예전 견습·은퇴 한 계절 (지금은 은퇴가 없다 — 그만큼 지나도 자리가 그대로인지 본다) */
+const RETIRE_AFTER = 40
 
 const reload = (s: ReturnType<typeof newGame>) => deserialize(serialize(s), CONTENT)!
 

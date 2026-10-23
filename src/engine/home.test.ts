@@ -1,10 +1,11 @@
-import { bindMinutes, copyMinutes, chooseBook, setArrangement, submitChapter, TRADES } from './game'
+import { chooseBook, TRADES } from './game'
+import { copyNextChapter } from './copy-chapter.helper'
 import { deserialize, serialize } from './save'
 import { ITEM_TEXT } from '../content/text'
 import { TOOLS } from './items'
 import { newGame, tick, type GameState } from './game'
 import { HOME_DOOR, HOME_ENTRY, HOME_FRONT, isHome, isWalkable, WARPS, key } from './world'
-import { CONTENT, piecesOf } from '../content/catalog'
+import { CONTENT } from '../content/catalog'
 const zero = () => 0
 const playerTileOf = (s: GameState) => ({ x: Math.round(s.player.x), y: Math.round(s.player.y) })
 describe('문을 드나드는 동반 동물', () => {
@@ -32,8 +33,7 @@ describe('문을 드나드는 동반 동물', () => {
 })
 
 describe('넓은 책상', () => {
-  const chapter1 = piecesOf('lk').filter((p) => p.chapter === 1).map((p) => p.id)
-  const ready = (): GameState => setArrangement({ ...chooseBook(newGame(CONTENT), 'lk', CONTENT), collected: chapter1 }, 'lk', 1, [...chapter1])
+  const ready = (): GameState => chooseBook(newGame(CONTENT), 'lk', CONTENT)
   it('옛 넓은 책상은 보존하지만 기록 설비 판매는 없다', () => {
     expect(TOOLS).toContain('wideDesk')
     expect(TRADES.some((x) => x.get.wideDesk || x.get.brightLamp)).toBe(false)
@@ -42,14 +42,11 @@ describe('넓은 책상', () => {
   })
   it('계획 14: 빠르게 하지 않는 꾸미기 물건 — 넓은 책상·기록대가 있어도 한 장에 드는 시간은 같다, 이미 산 책상은 그대로 가진다', () => {
     const base = ready()
-    const plain = bindMinutes(base)
-    expect(bindMinutes({ ...base, inv: { wideDesk: 1 } })).toBe(plain)
-    expect(bindMinutes({ ...base, flags: { ...base.flags, 'fix:desk': 2 } })).toBe(plain)
-    expect(copyMinutes({ ...base, inv: { wideDesk: 1 } })).toBe(copyMinutes(base))
-    const a = submitChapter({ ...base, inv: {} }, 'lk', 1, CONTENT).state
-    const b = submitChapter({ ...base, inv: { wideDesk: 1 } }, 'lk', 1, CONTENT).state
-    expect(a.clock.minute - base.clock.minute).toBe(plain)
-    expect(b.clock.minute - base.clock.minute).toBe(plain)
+    const a = copyNextChapter({ ...base, inv: {} }, 'lk', CONTENT)
+    const b = copyNextChapter({ ...base, inv: { wideDesk: 1 } }, 'lk', CONTENT)
+    const c = copyNextChapter({ ...base, flags: { ...base.flags, 'fix:desk': 2 } }, 'lk', CONTENT)
+    expect(b.clock).toEqual(a.clock)
+    expect(c.clock).toEqual(a.clock)
     expect(b.inv.wideDesk).toBe(1)
     expect(ITEM_TEXT.wideDesk.desc).not.toMatch(/시간|빠르/)
     expect(ITEM_TEXT.goodPen.desc).not.toMatch(/두 병|빠르/)

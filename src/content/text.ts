@@ -95,7 +95,7 @@ for(const a of WEDDING_ATTIRE)ITEM_TEXT[a.item]={name:a.name,desc:'장날에 산
 // 장날 거래판의 예복 이름도 같이 (2026-10-18 감사 M-11 — 거래 이름이 비어 아이콘만 보였다)
 for(const a of WEDDING_ATTIRE)(T.trades as Record<string,string>)[a.item]=a.name
 for (const [id, f] of Object.entries(FIXTURES)) ITEM_TEXT[id as ItemId] = { name: f.name, desc: '집의 어느 방으로든 옮길 수 있다.' }
-// 생활 가구 48종 (2026-10-12): 장날 생활 가구 줄 이름도 같이
+// 생활 가구 68종 (2026-10-12): 장날 생활 가구 줄 이름도 같이
 for (const [id, a] of Object.entries(ADDITION_FURNITURE)) {
   ITEM_TEXT[id as ItemId] = { name: a.name, desc: a.desc ?? ADDITION_DESC[a.use] }
   ;(lifeText.trades as Record<string, string>)[`add:${id}`] = a.name

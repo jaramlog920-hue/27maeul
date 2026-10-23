@@ -32,10 +32,3 @@ export function homeBookMilestone(before:GameState,next:GameState):GameState {
   return {...next,scenes:[...next.scenes,'firstHomeBook'],flags:{...next.flags,firstHomeBookScene:1,firstHomeBookIndex:BOOKS.indexOf(book)}}
 }
 
-/** 이번 세대 정산의 첫 계승. 과거 은퇴를 복원한 경우에는 재생하지 않는다. */
-export function successionMilestone(before:GameState,next:GameState):GameState {
-  if(before.flags.workSuccessionScene||Object.keys(before.gen?.retired??{}).length)return next
-  const parent=Object.keys(next.gen?.retired??{}).find(id=>!before.gen?.retired?.[id])
-  if(!parent)return next
-  return {...next,scenes:[...next.scenes,`workSuccession:${parent}`],flags:{...next.flags,workSuccessionScene:1}}
-}

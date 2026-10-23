@@ -1,4 +1,4 @@
-// 빈칸 보기 고르기 (계획 8 작업 4) — 옮겨 적기(copy.ts)와 편지 서고 퀴즈 빈칸(quiz.ts)이 함께 쓴다.
+// 빈칸 보기 고르기 (계획 8 작업 4) — 필사 빈칸 퍼즐(copy-ways)과 편지 서고 퀴즈 빈칸(quiz.ts)이 함께 쓴다.
 // 이 파일은 quiz.ts·copy.ts를 import하지 않는다 (서로 import하는 고리 없이).
 import type { Rng } from './types'
 

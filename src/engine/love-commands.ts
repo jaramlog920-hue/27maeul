@@ -24,7 +24,7 @@ export function loveInChapter(book: CopyBook, chapter: number, records: readonly
   return records.filter((r) => r.book === book && r.chapter === chapter)
 }
 
-/** 발견한 계명: 그 계명이 든 장을 (신약·구약) 마쳤는가 */
+/** 발견한 계명: 그 계명이 든 장을 마쳤는가 (신약만 — 구약 진행도 읽을 수는 있다) */
 export function loveFound(s: Pick<GameState, 'progress'> & Partial<Pick<GameState, 'otProgress'>>, r: LoveRecord): boolean {
   return progressOf(s as Parameters<typeof progressOf>[0], r.book).completed.includes(r.chapter)
 }

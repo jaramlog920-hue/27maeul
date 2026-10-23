@@ -22,11 +22,9 @@ import {
   removeFurniture,
   reviewPick,
   sceneSeen,
-  setArrangement,
   setMyLine,
   stargaze,
   straysToday,
-  submitChapter,
   tapTile,
   walkDirection,
   tick,
@@ -56,6 +54,7 @@ import { dayOf, FESTIVAL_FROM, FESTIVAL_TO, festivalOf, isWet, weatherOf } from 
 import { scheduledEvents } from './events'
 import { FESTIVAL_SPOTS } from './neighbors'
 import { ALBUM_IDS, SCENES } from '../content/text'
+import { copyNextChapter } from './copy-chapter.helper'
 
 const zero = () => 0
 
@@ -274,8 +273,7 @@ describe('손일', () => {
 })
 
 describe('책상', () => {
-  const chapter1 = piecesOf('lk').filter((p) => p.chapter === 1).map((p) => p.id)
-  const ready = (): GameState => setArrangement({ ...chooseBook(newGame(CONTENT), 'lk', CONTENT), collected: chapter1 }, 'lk', 1, [...chapter1])
+  const ready = (): GameState => chooseBook(newGame(CONTENT), 'lk', CONTENT)
   it('밤에도 기름 없이 등잔을 켜고 재고를 소비하지 않는다', () => {
     const s = ready()
     expect(lightLamp(s)).toBe(s)
@@ -294,21 +292,14 @@ describe('책상', () => {
     expect(next.inv.oil).toBe(1)
     expect(next.lampLitDay).toBe(2)
   })
-  it('장을 기록하는 데 재료가 들지 않는다 (계획 14)', () => {
-    const s = { ...ready(), inv: {} }
-    const ok = submitChapter(s, 'lk', 1, CONTENT)
-    expect(ok.result.kind).toBe('done')
-    expect(ok.state.progress.lk.completed).toEqual([1])
-    expect(ok.state.inv).toEqual({ stool: 1 })
+  it('장을 필사로 마치는 데 재료가 들지 않는다 (계획 14)', () => {
+    const s = { ...ready(), inv: { papyrus: 1, ink: 1 } }
+    const ok = copyNextChapter(s, 'lk', CONTENT)
+    expect(ok.progress.lk.completed).toEqual([1])
     // 가진 재료도 쓰지 않는다
-    expect(submitChapter({ ...s, inv: { papyrus: 1, ink: 1 } }, 'lk', 1, CONTENT).state.inv).toEqual({ papyrus: 1, ink: 1, stool: 1 })
-    expect(ok.state.scenes).toContain('firstChapter')
-  })
-  it('순서가 틀리면 비용을 쓰지 않는다', () => {
-    const s = setArrangement({ ...ready(), inv: { papyrus: 1, ink: 1 } }, 'lk', 1, [...chapter1].reverse())
-    const r = submitChapter(s, 'lk', 1, CONTENT)
-    expect(r.result.kind).toBe('wrong')
-    expect(r.state.inv).toEqual({ papyrus: 1, ink: 1 })
+    expect(ok.inv.papyrus).toBe(1)
+    expect(ok.inv.ink).toBe(1)
+    expect(ok.scenes).toContain('firstChapter')
   })
 })
 

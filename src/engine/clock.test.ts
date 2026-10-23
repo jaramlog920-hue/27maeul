@@ -1,5 +1,5 @@
 import { SEASON_DAYS, advance, darkness, formatTime, MINUTE_CAP, NIGHT_DARK, newClock, phaseOf, seasonOf, sleepClock } from './clock'
-import { DOZE_AFTER, IDLE_GAP, pickIdleAction, stepIdle, IDLE_RESET, greet } from './autonomy'
+import { greet } from './autonomy'
 
 describe('clock', () => {
   it('하루는 06:00에 시작한다', () => {
@@ -47,32 +47,6 @@ describe('clock', () => {
 })
 
 describe('autonomy', () => {
-  it('6초 전에는 아무것도 하지 않는다', () => {
-    expect(pickIdleAction({ idleSeconds: 5.9, minute: 600 }, () => 0)).toBeNull()
-  })
-  it('오래 두면 존다', () => {
-    expect(pickIdleAction({ idleSeconds: DOZE_AFTER, minute: 600 }, () => 0)?.kind).toBe('doze')
-  })
-  it('가중치 선택은 결정적이다', () => {
-    expect(pickIdleAction({ idleSeconds: 10, minute: 600 }, () => 0)?.kind).toBe('look')
-    expect(pickIdleAction({ idleSeconds: 10, minute: 22 * 60 }, () => 0.99)?.kind).toBe('yawn')
-    expect(pickIdleAction({ idleSeconds: 10, minute: 600 }, () => 0.99)?.kind).toBe('yawn')
-    expect(pickIdleAction({ idleSeconds: 10, minute: 600 }, () => 0.4)?.kind).toBe('stretch')
-  })
-  it('동작이 끝나면 쉬었다가 다음 동작을 고른다', () => {
-    let s = stepIdle({ seconds: 10, action: { kind: 'look', left: 0.5 }, cooldown: 0 }, 1, 600, () => 0)
-    expect(s.action).toBeNull()
-    expect(s.cooldown).toBe(IDLE_GAP)
-    s = stepIdle(s, IDLE_GAP - 0.5, 600, () => 0)
-    expect(s.action).toBeNull()
-    s = stepIdle(s, 1, 600, () => 0)
-    expect(s.action?.kind).toBe('look')
-  })
-  it('처음 6초는 가만히 있는다', () => {
-    const s = stepIdle(IDLE_RESET, 1, 600, () => 0)
-    expect(s.action).toBeNull()
-    expect(s.seconds).toBe(1)
-  })
   it('인사는 입력 시간을 되돌린다', () => {
     expect(greet().action?.kind).toBe('greet')
     expect(greet().seconds).toBe(0)

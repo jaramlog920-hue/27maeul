@@ -7,7 +7,7 @@
     "src/render/copy-furniture-motion.ts": "03303c782a052436fab671265f65b6185fb67c0ef4c60ec90197b24e16dddf0a",
     "src/render/pet-art.ts": "11702e44fabc79ac36c0b297623cdb5ff3a1437aaa3485742a209c1c3baaa437",
     "src/render/newborn-art.ts": "c6a411ab437ab3b68f79206d1bbb034e24a882c2d939337bcef0b82d1fb176f1",
-    "src/render/sprites.ts": "e4ebdffeebedc61df7b6e06d05414ae60e6ba15640f66fdeec8bd818be6ad542",
+    "src/render/sprites.ts": "ff3d963b25205bf41a9a7876d12ea9b74ddef00ff57c2dd234104fed9910a155",
     "src/engine/copy-furniture.ts": "4d5f2c306aa01552223e4b3e6b45cfb0ab7f3854b74c6f465b655c767e710174",
     "src/engine/copy-furniture-views.ts": "284fb6074e5b31abe1464ad1006ee0db917a670ce2e0e617cc8537e9b90b5451",
     "src/engine/copy-furniture-defs.ts": "41ef39f4d902f1a57004860486918de71b8f119e96828a5232ba1bab675b477b"

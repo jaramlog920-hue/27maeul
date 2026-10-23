@@ -1,8 +1,7 @@
 import type { GameState } from './game'
 import { CONTENT } from '../content/catalog'
 import { canCraft, canSell, newGame, sell, SELL_CAP, SELL_PRICES, TRADES, trade } from './game'
-import { COVER_FROM, jobLevel, jobOf, LETTER_BASE, SELL_FROM } from './job'
-import { letterPay } from './requests'
+import { COVER_FROM, jobLevel, jobOf } from './job'
 
 const marketDay = (s: ReturnType<typeof newGame>) => {
   let t = s
@@ -12,19 +11,14 @@ const marketDay = (s: ReturnType<typeof newGame>) => {
 }
 
 describe('직업 단계 보상', () => {
-  it('단계와 수고비', () => {
+  it('단계', () => {
     expect(jobLevel(10, 1)).toBe(1)
     expect(jobOf({ lettersDone: 30, shelved: { mk: 0, lk: 1 } })).toBe(2)
-    expect(LETTER_BASE).toEqual({ 0: 12, 1: 18, 2: 24, 3: 30 })
-    expect(letterPay(0, 0)).toBe(18)
-    expect(letterPay(0, 2)).toBe(36)
-    expect(letterPay(9, 1)).toBe(18)
   })
   it('초보 필사가도 장날에 가진 공방 제품을 팔고, 말씀 책은 팔 수 없다', () => {
     const s = marketDay({ ...newGame(CONTENT), inv: { ink: 2 } })
     expect(canSell(s, 'ink')).toBeNull()
     const village = { ...s, lettersDone: 10, shelved: { mk: 1 as const } }
-    expect(SELL_FROM).toBe(1)
     expect(canSell(village, 'ink')).toBeNull()
     const sold = sell(village, 'ink')!
     expect(sold.coins).toBe(village.coins + 8)

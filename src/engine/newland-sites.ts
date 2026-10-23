@@ -5,24 +5,30 @@
 import type { Facing, ItemId } from './types'
 
 /**
- * 꾸미기 소재 (사용자 결정 ⑧, assets/background-materials-simple.png): 바닥 셋·작은 것 셋·나무와 덤불 넷.
+ * 꾸미기 소재 (사용자 결정 ⑧, assets/background-materials-simple.png): 바닥·작은 것·나무와 덤불, 그리고 울타리·돌담과 문 (2026-10-22, assets/newland-building-upgrades).
  * 유저가 놓는 꾸미기일 뿐 — 기본 길·지형은 바꾸지 않는다. 공짜가 아니다(닢), 걷어 내면 반만 돌아온다
  */
 // 기본 길(road)·잔디(lawn)·기본 나무(hedge): 새 터 지도에 원래 깔린 큰길·풀밭·울타리 나무와 같은 그림 (2026-10-14 사용자)
-export type DecorKind = 'road' | 'lawn' | 'hedge' | 'sand' | 'stone' | 'soil' | 'grassTuft' | 'flower' | 'rocks' | 'bush' | 'treeSmall' | 'treeTall' | 'treeBig'
-export const DECOR_KINDS: readonly DecorKind[] = ['road', 'lawn', 'hedge', 'sand', 'stone', 'soil', 'grassTuft', 'flower', 'rocks', 'bush', 'treeSmall', 'treeTall', 'treeBig']
+export type DecorKind = 'road' | 'lawn' | 'hedge' | 'sand' | 'stone' | 'soil' | 'grassTuft' | 'flower' | 'rocks' | 'bush' | 'treeSmall' | 'treeTall' | 'treeBig' | BoundaryKind
+/** 울타리·돌담과 그 문 (2026-10-22 사용자: 그려 둔 경계 도트 연결) — 이웃한 같은 재료끼리 저절로 이어진다, 문은 지나갈 수 있다 */
+export type BoundaryKind = 'woodFence' | 'stoneWall' | 'woodGate' | 'stoneGate'
+export const BOUNDARY_KINDS: readonly BoundaryKind[] = ['woodFence', 'stoneWall', 'woodGate', 'stoneGate']
+export const DECOR_KINDS: readonly DecorKind[] = ['road', 'lawn', 'hedge', 'sand', 'stone', 'soil', 'grassTuft', 'flower', 'rocks', 'bush', 'treeSmall', 'treeTall', 'treeBig', ...BOUNDARY_KINDS]
 /** 바닥 (걸을 수 있고 1·3칸으로 깐다) */
 export const DECOR_FLOORS: readonly DecorKind[] = ['road', 'lawn', 'sand', 'stone', 'soil']
 /** 길을 막는 꾸미기 (나무·덤불) */
-export const DECOR_BLOCKING: readonly DecorKind[] = ['hedge', 'bush', 'treeSmall', 'treeTall', 'treeBig']
+export const DECOR_BLOCKING: readonly DecorKind[] = ['hedge', 'bush', 'treeSmall', 'treeTall', 'treeBig', 'woodFence', 'stoneWall']
+export const isBoundaryKind = (v: unknown): v is BoundaryKind => (BOUNDARY_KINDS as readonly unknown[]).includes(v)
+/** 경계의 재료 (울타리·나무 문 = wood, 돌담·돌 문 = stone) */
+export const boundaryMaterial = (k: BoundaryKind): 'wood' | 'stone' => (k === 'woodFence' || k === 'woodGate' ? 'wood' : 'stone')
 /** 지도 글자 그대로 그리는 꾸미기 */
 export const MAP_DECOR_CHAR: Partial<Record<DecorKind, ',' | '.' | 'T'>> = { road: ',', lawn: '.', hedge: 'T' }
 
 /**
  * 계획 18 남은 건물 (사용자 결정 ⑥, 컨트롤러): 손님집(guest)·기억 정원(memorial, 자산 garden)·주민의 꿈터(weaver).
- * 손님집·꿈터는 집처럼 막히고 문이 있다(안 방 없음 — 문 앞에 서면 창). 기억 정원은 마당처럼 열린 4×4
+ * 손님집·꿈터는 집처럼 막히고 문이 있다(안 방 없음 — 문 앞에 서면 창). 기억 정원은 마당처럼 열린 4×4.
+ * kidWork: 자란 아이·이웃 자녀의 집 겸 일터 (계획 18 B18-7, 2026-10-08) — 그림은 그 주인 직업의 '○○의 집 겸 일터'. gallery: 그림방
  */
-/** kidWork: 자란 우리 아이의 집 겸 일터 (계획 18 B18-7, 2026-10-08) — 그림은 그 아이 직업의 '○○의 집 겸 일터' */
 export type ExtraBuildKind = 'guest' | 'memorial' | 'weaver' | 'kidWork' | 'gallery'
 export type SiteKind = 'path' | 'garden' | 'courtyard' | 'home' | ExtraBuildKind | DecorKind
 /** 건물(기록이 따로 있고 공사 기간이 있다) */
@@ -122,6 +128,10 @@ export const SITES: Record<SiteKind, SiteDef> = {
   treeSmall: decor('treeSmall', 6),
   treeTall: decor('treeTall', 10),
   treeBig: decor('treeBig', 12),
+  woodFence: decor('woodFence', 3),
+  stoneWall: decor('stoneWall', 4),
+  woodGate: decor('woodGate', 6),
+  stoneGate: decor('stoneGate', 8),
 }
 function decor(id: DecorKind, coins: number, sizes: readonly number[] = [1]): SiteDef {
   return { id, sizes, area: { w: 1, h: 1, dy: 0 }, facings: ['down'], cost: { coins, items: {} } }

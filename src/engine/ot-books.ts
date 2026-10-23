@@ -69,10 +69,6 @@ export function isOtBook(b: unknown): b is OtBook {
   return typeof b === 'string' && OT_SET.has(b)
 }
 
-export function testamentOf(b: CopyBook): 'ot' | 'nt' {
-  return isOtBook(b) ? 'ot' : 'nt'
-}
-
 const ROW_OF: ReadonlyMap<string, OtBookRow> = new Map(OT_BOOK_TABLE.map((r) => [r.id, r]))
 
 export function otRow(b: OtBook): OtBookRow {
@@ -109,7 +105,3 @@ export const OT_ROOMS: readonly OtRoom[] = [
   { id: 'prophets', label: '이사야–말라기', books: range('isa', 'mal') },
 ]
 
-/** 그 책이 들어 있는 방 */
-export function otRoomOf(book: OtBook): OtRoom {
-  return OT_ROOMS.find((r) => r.books.includes(book))!
-}

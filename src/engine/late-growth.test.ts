@@ -5,7 +5,8 @@ import { cancelFest, createFest, type FestInput } from './fest'
 import { answerDesk, canKidAct, spouseReading } from './family'
 import { newGenState } from './gen'
 import { setGenOn, settleOneDay } from './gen-settle'
-import { RETIRE_AFTER } from './gen-growth'
+/** 예전 견습·은퇴 한 계절 (지금은 은퇴가 없다) */
+const RETIRE_AFTER = 40
 import { STAGE_AT } from './gen-config'
 import { freshStats } from './stats'
 

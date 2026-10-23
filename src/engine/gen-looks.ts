@@ -1,4 +1,4 @@
-// 세대교체 그림용 (순수 함수): 은퇴한 이웃 자리의 자녀 모습, 이웃 곁에 함께 있는 가족.
+// 주민 가족 그림용 (순수 함수): 태어난 주민의 모습, 이웃 곁에 함께 있는 가족 (예전 저장의 짝 자리를 이어받은 자녀 포함).
 import { withLookDefaults, type FullAvatar } from './avatar'
 import { bakerBabyAt, BAKER_BABY_ID, type GenPerson, type GenState } from './gen'
 import { fitGenderLook } from './gen-birth'
@@ -37,8 +37,8 @@ export interface Companion {
 }
 
 /**
- * 이 이웃 곁에 함께 있는 가족 (최대 둘): 견습 중인 자녀 또는 은퇴한 부모, 걷는 아이·십 대 자녀.
- * 은퇴한 뒤에는 이어받은 자녀가 그 자리 주인(본 그림)이고, 은퇴한 부모가 곁에 나이 든 모습으로 선다 (2026-10-11 사용자 결정).
+ * 이 이웃 곁에 함께 있는 가족 (최대 둘): 자란 자녀(걷는 아이·십 대는 작게). 은퇴는 없앴지만(2026-10-21) 예전 저장에서
+ * 내 짝 자리를 이어받은 자녀가 자리 주인이면, 은퇴한 부모가 곁에 나이 든 모습으로 선다 (2026-10-11 사용자 결정).
  */
 export function companionsOf(g: GenState | undefined, npc: string, day?: number): Companion[] {
   const out: Companion[] = []
@@ -49,11 +49,11 @@ export function companionsOf(g: GenState | undefined, npc: string, day?: number)
   const babyIsHeir = !!baby && heir === baby.id
   if (npc === 'baker' && baby && baby.stage !== 'baby' && !babyIsHeir) out.push({ person: baby, short: baby.stage === 'child' || baby.stage === 'teen' })
   if (!g) return out
-  // 이사 간 옛 저장은 부모가 떠났으므로 곁에도 없다. 은퇴 전 견습 중이면 견습 자녀가 곁에
+  // 은퇴한 부모는 곁에, 은퇴 전 견습 중이면 견습 자녀가 곁에 (예전 저장의 내 짝 자리만)
   const retired = g.retired?.[npc]
   const parent = g.persons[npc]
   if (retired) {
-    if (retired.moved == null && parent) out.push({ person: parent, short: false, retiredParent: npc })
+    if (parent) out.push({ person: parent, short: false, retiredParent: npc })
   } else if (heir && g.persons[heir] && !out.some((c) => c.person.id === heir)) out.push({ person: g.persons[heir], short: false })
   for (const p of Object.values(g.persons).sort((a, b) => (a.id < b.id ? -1 : 1))) {
     if (out.length >= 2) break

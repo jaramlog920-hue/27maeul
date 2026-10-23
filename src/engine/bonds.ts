@@ -90,8 +90,7 @@ export const VISIT_GIFTS: Record<string, Items> = {
   carpenter: { bird: 1 },
 }
 
-/** 오늘 아침 집 앞에 들르는 이웃 (마음 5 이상, 나흘에 한 번까지) */
-/** bonus: 운 단계만큼 찾아올 확률을 더한다 (계획 11 작업 4) */
+/** 오늘 아침 집 앞에 들르는 이웃 (마음 5 이상, 나흘에 한 번까지, 그 이웃이 건넬 선물이 있을 때). bonus: 운 단계만큼 찾아올 확률을 더한다 (계획 11 작업 4) */
 export function pickVisitor(day: number, hearts: Record<string, number>, flags: Record<string, number>, present: readonly string[], bonus = 0): string | null {
   const r = mulberry32(day * 131 + 7)
   if (r() > 0.2 + bonus) return null
@@ -118,8 +117,6 @@ export function villageLevel(hearts: Record<string, number>): number {
   const sum = Object.values(hearts).reduce((a, b) => a + Math.min(MAX_POINTS, b), 0)
   return VILLAGE_STEPS.filter((s) => sum >= s).length
 }
-/** 새 이웃이 이사 오는 단계 */
-export const JOINS_AT: Record<string, number> = { weaver: 2, beekeeper: 4 }
 
 // ── D. 이웃끼리 ──
 
@@ -167,17 +164,14 @@ export const HILL_SPOTS: Record<string, Tile> = {
 
 export type Gathering = 'babyParty' | 'picnic' | 'starNight'
 
-/** 오늘 열리는 이웃 모임 (flags[`gathering:${day}`]가 정해진 날) */
-export function gatheringOf(day: number, flags: Record<string, number>): Gathering | null {
-  const g = flags[`gathering:${day}`]
-  return g === 1 ? 'babyParty' : g === 2 ? 'picnic' : g === 3 ? 'starNight' : null
-}
-
 export function gatheringWindow(g: Gathering): [number, number] {
   return g === 'babyParty' ? [GATHER_FROM, GATHER_TO] : g === 'picnic' ? [PICNIC_FROM, PICNIC_TO] : [STARS_FROM, STARS_TO]
 }
 
-/** 새 날에 모임을 정한다: 아기 잔치(정해진 날) · 소풍(마을 2단계 뒤 첫 맑은 봄·여름날) · 별 보는 밤(마을 3단계 뒤 첫 맑은 날) */
+/**
+ * 새 날에 모임을 정한다 (마을 잔치 날은 없음): 아기 잔치(정해진 날, 비 오면 없음) · 소풍(마을 2단계 뒤 첫 맑은 봄·여름날, 한 번) ·
+ * 별 보는 밤(마을 3단계 뒤 맑은 날, 한 번 — 아기 잔치 날 앞뒤 이레는 비키고, 잡고도 안 갔으면 STAR_NIGHT_GAP 뒤에 다시)
+ */
 export function planGathering(day: number, level: number, flags: Record<string, number>): Gathering | null {
   if (festivalOf(day)) return null
   const w = weatherOf(day)
@@ -193,5 +187,3 @@ export function planGathering(day: number, level: number, flags: Record<string, 
 /** 별 보는 밤을 한 번 잡은 뒤, 가지 않았으면 이만큼 지나서 다시 잡는다 */
 export const STAR_NIGHT_GAP = 7
 
-// ── E. 마음 9 ──
-export const BOND_HEARTS = 9

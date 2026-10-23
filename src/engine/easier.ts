@@ -10,7 +10,7 @@ import type { ItemId } from './types'
 
 type Items = Partial<Record<ItemId, number>>
 
-export type EasyId = 'rainJar' | 'reedRack' | 'sootCatcher' | 'inkJar' | 'supplyChest' | 'homeMailbox' | 'homeCoolCupboard'
+export type EasyId = 'rainJar' | 'reedRack' | 'sootCatcher' | 'inkJar' | 'supplyChest' | 'homeCoolCupboard'
 
 export function owns(flags: Record<string, number>, id: EasyId): boolean {
   return unlocked(flags, id)
@@ -34,7 +34,7 @@ export const CARPENTER_WORKS: readonly CarpenterWork[] = [
 /** 빗물 항아리: 아침마다 물 1, 비 온 다음 날 아침 물 3 */
 export const RAIN_WATER = { usual: 1, afterRain: 3 } as const
 /**
- * 갈대 말리는 틀: 밤마다 크림색 종이 1 (계획 14 — 필사에 재료가 들지 않으니 파피루스 대신 특별 제본의 꾸미기 재료).
+ * 갈대 말리는 틀: 아침마다 크림색 종이 1 (계획 14 — 필사에 재료가 들지 않으니 파피루스 대신 특별 제본의 꾸미기 재료).
  * 가방·궤짝에 이만큼 있으면 쉬어 간다 — 한 칸 한도가 99로 늘어도 9, 과하게 쌓이지 않게
  */
 export const RACK_PAPER = 1
@@ -157,8 +157,3 @@ export function walkMul(inv: Inventory, gearOff?: readonly ItemId[]): number {
 
 /** 가벼운 신: 튼튼한 신을 산 뒤, 양치기와 마음 5가 되면 인사할 때 준다 (한 번) */
 export const LIGHT_SHOES = { npc: 'shepherd', hearts: 5 } as const
-
-// ── 집 앞 편지함 (계획 11 작업 3) ──
-
-/** 집 앞 편지함: 편지 나르는 이웃과 마음 4가 되면 문 왼쪽에 세워 준다 (한 번, 짧은 장면) */
-export const HOME_MAILBOX = { npc: 'postman', hearts: 4 } as const

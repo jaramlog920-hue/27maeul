@@ -63,11 +63,10 @@ describe('결정 3. 은퇴 뒤에는 이어받은 자녀가 그 자리 주인으
     expect(slotHeir(retiredGen(300), 'cosmo')?.id).toBe('g-0001')
     expect(slotHeir(newGenState(CONTENT, 7, 300), 'cosmo')).toBeNull()
   })
-  it('은퇴한 부모는 자녀 곁에 그려지고, 자녀는 곁 목록에 없다 (이사 갔으면 부모도 없다)', () => {
+  it('은퇴한 부모는 자녀 곁에 그려지고, 자녀는 곁 목록에 없다', () => {
     const near = companionsOf(retiredGen(), 'cosmo')
     expect(near.some((c) => c.retiredParent === 'cosmo')).toBe(true)
     expect(near.some((c) => c.person.id === 'g-0001')).toBe(false)
-    expect(companionsOf(retiredGen(300), 'cosmo').some((c) => c.retiredParent)).toBe(false)
   })
 })
 

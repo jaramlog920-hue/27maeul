@@ -2,14 +2,14 @@ import { describe, expect, it } from 'vitest'
 import { CONTENT, PEOPLE } from '../content/catalog'
 import { T } from '../content/text'
 import { recordExperienceIn, newGame, placeFurniture } from './game'
-import { finishNow } from './minigame'
+import { finishNow } from './minigame-done.helper'
 import { RECIPES } from './items'
 import { FURNITURE } from './room'
 import { HOME_RECT } from './world'
 import { deserialize, serialize } from './save'
 import { EXPANSION_PROPS } from '../render/expansion-prop-art'
 import { STYLE_PALETTES } from '../render/furniture-art'
-import { discoveredFinish, canLearnFinish, startFinishLesson, chooseFinish, finishLesson, chooseStoolFinish, craftLearnedStool, canShowFinishedStool, sanitizeSkills, sanitizeSkillLesson, FINISH_SKILL, type SkillState, SKILL_DEFS, SKILL_IDS, skillOf, discoveredSkill, canLearn, startLesson, chooseStyle, lookAgain, craftLearned, canShowSkillItem, chooseSkillStyle, styleOf } from './skills'
+import { finishLesson, sanitizeSkills, sanitizeSkillLesson, FINISH_SKILL, type SkillState, SKILL_DEFS, SKILL_IDS, skillOf, discoveredSkill, canLearn, startLesson, chooseStyle, lookAgain, craftLearned, canShowSkillItem, chooseSkillStyle, styleOf } from './skills'
 
 function working():SkillState {
   const s=newGame(CONTENT)
@@ -43,14 +43,14 @@ describe('배운 생활 기술',()=>{
   })
   it('선물·친밀도만으로 발견되지 않고 실제 함께한 작업 뒤 발견된다',()=>{
     const s=working()
-    expect(discoveredFinish({...s,hearts:{carpenter:100}})).toBe(false)
-    expect(canLearnFinish(s,CONTENT)).toBe('unknown')
+    expect(discoveredSkill({...s,hearts:{carpenter:100}}, FINISH_SKILL)).toBe(false)
+    expect(canLearn(s, 'carpenter', CONTENT)).toBe('unknown')
     const n=recordExperienceIn(s,{id:'work:carpenter:1',kind:'work',with:['carpenter']})
-    expect(discoveredFinish(n)).toBe(true)
+    expect(discoveredSkill(n, FINISH_SKILL)).toBe(true)
   })
   it('시범·선택·실습 후 한 번 배우며 재접속에는 끝낸 단계 유지',()=>{
     let n:SkillState=recordExperienceIn(working(),{id:'work:carpenter:1',kind:'work',with:['carpenter']})
-    n=startFinishLesson(n,CONTENT);n=chooseFinish(n,'warm',()=>.5)
+    n=startLesson(n, 'carpenter', CONTENT);n=chooseStyle(n, 'warm', ()=>.5)
     expect(finishLesson(n)).toBe(n)
     n={...n,skillLesson:{...n.skillLesson!,mini:finishNow(n.skillLesson!.mini!)}}
     n=finishLesson(n)
@@ -62,17 +62,17 @@ describe('배운 생활 기술',()=>{
   })
   it('작업대 모습 옵션은 배운 뒤에만 열리고 개인 재료로 실제 의자를 만든다',()=>{
     const s=working()
-    expect(craftLearnedStool(s)).toBe(s)
+    expect(craftLearned(s, FINISH_SKILL)).toBe(s)
     let n:SkillState={...s,skills:{[FINISH_SKILL]:{day:2,from:'carpenter',picked:'plain'}},inv:{reed:3}}
-    n=chooseStoolFinish(n,'warm');n=craftLearnedStool(n)
+    n=chooseSkillStyle(n, FINISH_SKILL, 'warm');n=craftLearned(n, FINISH_SKILL)
     expect(n.inv.reed).toBe(1);expect(n.inv.stool).toBe(1)
     expect(n.flags['skillFinish:stool']).toBe(2)
-    expect(canShowFinishedStool(n)).toBe(true)
+    expect(canShowSkillItem(n, FINISH_SKILL)).toBe(true)
     expect(n.progress).toEqual(s.progress)
     expect(n.shelved).toEqual(s.shelved)
     expect(n.stats).toEqual(s.stats)
     const married={...n,romance:{...n.romance,stage:'married' as const,partner:'poppy'}} as SkillState
-    expect(chooseStoolFinish(married,'plain').flags['skillFinish:stool']).toBe(1)
+    expect(chooseSkillStyle(married, FINISH_SKILL, 'plain').flags['skillFinish:stool']).toBe(1)
   })
 })
 

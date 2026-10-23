@@ -9,8 +9,10 @@ import { isFamilyNote } from './daybook'
 import { isFamilyAlbum } from './family'
 import { canDate, clearSky, goOnDate, partnerFree, sceneSeen, type GameState } from './game'
 import { DATE_MOOD, moodOf } from './mood'
-import { DATE_FIRST_SCENE, DATE_PLACES, DATE_TEA_PRICE, DATE_VARIANTS, NO_ROMANCE, type DatePlace, type Romance, type RomanceStage } from './romance'
+import { DATE_COUNT_FLAG, DATE_FIRST_SCENE, DATE_TEA_PRICE, DATE_VARIANTS, NO_ROMANCE, type DatePlace, type Romance, type RomanceStage } from './romance'
 import { deserialize, serialize } from './save'
+
+const DATE_PLACES = Object.keys(DATE_COUNT_FLAG) as DatePlace[]
 
 /** 궂지 않고 노을이 보이는 날 (3일째부터) */
 function clearDay(from = 3): number {

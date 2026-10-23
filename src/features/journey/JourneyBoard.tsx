@@ -17,7 +17,6 @@ const BOARDS: Record<
     flag: string
     text: {
       boardTitle: string
-      boardHint: string
       boardCount: string
       boardEmpty: string
       boardInOrder: string

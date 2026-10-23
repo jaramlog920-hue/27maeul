@@ -223,9 +223,9 @@ function mustReach(builds: readonly Build[], tiles: Readonly<Record<string, Tile
 
 /**
  * 놓을 수 있는가 (없으면 null): 땅이 드러났고, 구역 안이고, 다른 것과 겹치지 않고, 서 있는 자리가 아니고,
- * 놓은 뒤에도 새 터 입구에서 서고 문·모든 건물의 문 앞·길 칸에 길찾기로 닿는다 (집 안에 갇히는 배치·서고를 막는 배치는 거절)
+ * 놓은 뒤에도 새 터 입구에서 서고 문·모든 건물의 문 앞·길 칸에 길찾기로 닿는다 (집 안에 갇히는 배치·서고를 막는 배치는 거절).
+ * self: 옮기는 건물(그 id로 검사 — 사는 사람의 설 칸 검사가 그 집으로 걸리게, 2026-10-21 검토)
  */
-/** self: 옮기는 건물(그 id로 검사 — 사는 사람의 설 칸 검사가 그 집으로 걸리게, 2026-10-21 검토) */
 export function canPlace(s: Base, kind: SiteKind, x: number, y: number, facing: Facing = 'down', size = 1, self?: { id: string }): PlaceBlock | null {
   if (!revealedLand(s)) return 'unrevealed'
   const def = SITES[kind]
@@ -509,7 +509,7 @@ export function demolishBuild<T extends Pick<GameState, 'coins' | 'inv' | 'newla
   return settleRefund(s, id, (b) => (b.state === 'done' ? { coins: Math.floor(b.paid.coins * REFUND_DEMOLISH_COINS), items: {} } : null))
 }
 
-/** 깐 길·정원 칸 걷어내기: 바로 깔린 것이라 낸 닢을 그대로 돌려받는다 */
+/** 깐 칸 걷어내기: 길·정원은 낸 닢을 그대로, 꾸미기(바닥·소품·나무)는 절반(DECOR_REFUND)을 돌려받는다 */
 export function clearTile<T extends Pick<GameState, 'coins' | 'inv' | 'newland'>>(s: T, x: number, y: number): T | null {
   const nl = s.newland
   const k = key(x, y)
@@ -520,11 +520,6 @@ export function clearTile<T extends Pick<GameState, 'coins' | 'inv' | 'newland'>
   // 꾸미기는 반만 돌아온다 (사용자 결정 ⑧: 공짜가 아니다)
   const coins = isDecorKind(kind) ? Math.floor(SITES[kind].cost.coins * DECOR_REFUND) : SITES[kind].cost.coins
   return { ...refund(s, { coins, items: {} }), newland: { ...nl, tiles } }
-}
-
-/** 이 상태에서 이 건물이 할 수 있는 일 */
-export function buildActionOf(b: Pick<Build, 'state'>): 'cancel' | 'demolish' {
-  return b.state === 'done' ? 'demolish' : 'cancel'
 }
 
 /** 완공된 입주 주택의 수 (후속 작업이 읽는다) */

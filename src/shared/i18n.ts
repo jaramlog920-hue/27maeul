@@ -7,10 +7,8 @@ export type Lang = 'ko'
 type Table = { [k: string]: string | Table }
 
 const TABLES: Record<Lang, Table> = { ko }
-let current: Lang = 'ko'
-
-export const setLang = (lang: Lang) => { current = lang }
-export const getLang = (): Lang => current
+/** 지금 쓰는 말 (언어 고르기를 넣을 때 바꿀 수 있게 한다) */
+const current: Lang = 'ko'
 
 function lookup(table: Table, key: string): string | undefined {
   let node: string | Table | undefined = table

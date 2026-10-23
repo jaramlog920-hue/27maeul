@@ -2,11 +2,10 @@ import { CONTENT } from '../content/catalog'
 import { SCENES } from '../content/text'
 import { libraryGrowth, NT_CHAPTER_COUNTS } from './progression'
 import { featureAccess, EARLY_MILESTONES } from './feature-rules'
-import { newGame, applyEarlyGrowth, openMailbox, goToSleep, copyRequestsToday, writePresetRequest, canWriteRequest, askRequest, fulfillRequest, receiveVisit, writeVerse, recordLetter, placeFurniture, furnishSpouse } from './game'
+import { newGame, applyEarlyGrowth, openMailbox, goToSleep, copyRequestsToday, writePresetRequest, canWriteRequest, askRequest, fulfillRequest, receiveVisit, writeVerse, placeFurniture, furnishSpouse } from './game'
 import { deserialize, serialize } from './save'
 import { REQUEST_PRESETS } from './request-presets'
 import { copyVerses } from './copying'
-import { blanksFor } from './copy'
 import { HOME_ENTRY } from './world'
 import { newChild } from './child'
 
@@ -61,7 +60,7 @@ describe('서고 성장과 초반 생활 해금', () => {
     expect(applyEarlyGrowth(restored, restored, CONTENT).scenes).toEqual(restored.scenes)
   })
 
-  it('직접 필사의 마지막 절과 편지 빈칸 완료 모두 성장 보상을 연결한다', () => {
+  it('직접 필사의 마지막 절이 성장 보상을 연결한다', () => {
     const game = newGame(CONTENT)
     const verses = copyVerses('phm', 1, CONTENT)
     game.copy.at.phm = { chapter: 1, verse: verses.at(-1)!.verse }
@@ -70,13 +69,10 @@ describe('서고 성장과 초반 생활 해금', () => {
     expect(result.state.inv.stool).toBe(1)
     expect(result.state.scenes).toContain('growth:decorate')
     expect(writeVerse(result.state, 'phm', verses.at(-1)!.text, CONTENT).state.inv.stool).toBe(1)
-    const picks = blanksFor('phm', 1, CONTENT.copy!('phm')).map(b => b.answer)
-    expect(recordLetter(game, 'phm', 1, picks, CONTENT).inv.stool).toBe(1)
     // 4장을 마친 뒤 빌레몬서 1장을 마치면 5장 — 꾸미기 정식 해금 안내 (2026-10-13 장 수 기준)
     const four = chapters(4)
     four.copy.at.phm = { chapter: 1, verse: verses.at(-1)!.verse }
     expect(writeVerse(four, 'phm', verses.at(-1)!.text, CONTENT).state.scenes).toContain('growth:decorate:full')
-    expect(recordLetter(four, 'phm', 1, picks, CONTENT).scenes).toContain('growth:decorate:full')
   })
 
   it('첫 편지는 잠들어도 남고 한 통만 체험하며 8장을 마친 뒤 다시 받을 수 있다', () => {

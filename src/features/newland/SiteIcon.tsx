@@ -2,7 +2,8 @@
 import { BG_ART, BG_PALETTE } from '../../render/bg-materials-art'
 import { OLD_BUILDINGS, OLD_PROPS, OLD_TERRAIN, OLD_VILLAGE_PALETTE } from '../../render/old-village-art'
 import { useEffect, useRef } from 'react'
-import { isDecorKind, MAP_DECOR_CHAR, SITES, type SiteKind } from '../../engine/newland-sites'
+import { isBoundaryKind, isDecorKind, MAP_DECOR_CHAR, SITES, boundaryMaterial, type SiteKind } from '../../engine/newland-sites'
+import { BOUNDARY_PALETTE, boundaryGateFrame, boundaryRows } from '../../render/newland-boundary-art'
 import { mapTileIcon } from '../../render/renderer'
 import { ArtIcon } from '../../shared/IconGrid'
 import type { SitePick } from './SitePreview'
@@ -12,6 +13,12 @@ export function SiteIcon({ kind, size = 28 }: { kind: SitePick; size?: number })
   if (kind === 'eraser') return <ArtIcon rows={OLD_PROPS.plotPeg.rows} palette={OLD_VILLAGE_PALETTE} size={size} />
   if (kind === 'path' || kind === 'garden') return <ArtIcon rows={(kind === 'path' ? OLD_TERRAIN.path : OLD_TERRAIN.plantingBed).rows} palette={OLD_VILLAGE_PALETTE} size={size} />
   // 기본 길·잔디·기본 나무 (2026-10-14): 지도 그림 한 칸
+  // 울타리·돌담은 가로로 이어진 조각, 문은 닫힌 모습 (2026-10-22)
+  if (isBoundaryKind(kind)) {
+    const m = boundaryMaterial(kind)
+    const rows = kind === 'woodGate' || kind === 'stoneGate' ? boundaryGateFrame(m, 'horizontal', 'open', 0).rows : boundaryRows(m, 10)
+    return <ArtIcon rows={rows} palette={BOUNDARY_PALETTE} size={size} />
+  }
   if (isDecorKind(kind) && MAP_DECOR_CHAR[kind]) return <MapTileIcon ch={MAP_DECOR_CHAR[kind]!} size={size} />
   if (isDecorKind(kind) && BG_ART[kind]) return <ArtIcon rows={BG_ART[kind]} palette={BG_PALETTE} size={size} />
   // 입주 주택·손님집은 신약 마을 집 생김새 (2026-10-13)

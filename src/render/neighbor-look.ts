@@ -3,7 +3,7 @@ import {withLookDefaults,type Avatar,type FullAvatar} from '../engine/avatar'
 import type {Who,SpriteOpts} from './sprites'
 type PersonExtra=Pick<SpriteOpts,'growth'|'look'|'avatar'|'elder'>
 export function neighborLook(def: NeighborDef, growth?: number, dressed?: Avatar, elder = false, heir?: FullAvatar | null): { who: Who; extra: PersonExtra } {
-  // 부모가 이사 간 자리는 이어받은 자녀 모습으로 (2026-10-07 사용자)
+  // 자리를 이어받은 자녀가 주인이면 그 자녀 모습으로 (예전 저장의 내 짝 자리 — 은퇴는 2026-10-21에 없앴다)
   if (heir) return { who: 'writer', extra: { look: heir.look, avatar: withLookDefaults({ ...heir, ...dressed, skin: heir.skin, look: heir.look, name: heir.name }), elder } }
   // 그림만 바꾼 외관 (appearance): 고정 도트로 그리거나, 다른 옷장 모습으로
   const ap = def.appearance

@@ -1,5 +1,5 @@
 import books from '../content/books.json'
-import { OT_BOOK_TABLE, OT_BOOKS, OT_ROOMS, chapterUnit, isOtBook, otChapterLabel, otRoomOf, testamentOf } from './ot-books'
+import { OT_BOOK_TABLE, OT_BOOKS, OT_ROOMS, chapterUnit, isOtBook, otChapterLabel } from './ot-books'
 import { BOOKS } from './types'
 
 const STANDARD_ORDER =
@@ -40,16 +40,12 @@ describe('구약 책 표 (D1)', () => {
 })
 
 describe('구약 판정', () => {
-  it('isOtBook·testamentOf는 구약과 신약을 가른다', () => {
+  it('isOtBook은 구약과 신약을 가른다', () => {
     expect(isOtBook('gen')).toBe(true)
     expect(isOtBook('mt')).toBe(false)
     expect(isOtBook('mat')).toBe(false)
     expect(isOtBook(null)).toBe(false)
     expect(isOtBook(3)).toBe(false)
-    expect(testamentOf('psa')).toBe('ot')
-    expect(testamentOf('rev')).toBe('nt')
-    for (const b of BOOKS) expect(testamentOf(b)).toBe('nt')
-    for (const b of OT_BOOKS) expect(testamentOf(b)).toBe('ot')
   })
 })
 
@@ -67,13 +63,6 @@ describe('구약 방 (D11)', () => {
   it('방 이름의 처음과 끝이 실제 책 이름이다', () => {
     const name = (id: string) => OT_BOOK_TABLE.find((r) => r.id === id)!.name
     for (const r of OT_ROOMS) expect(r.label).toBe(`${name(r.books[0])}–${name(r.books[r.books.length - 1])}`)
-  })
-  it('otRoomOf는 그 책의 방을 돌려준다', () => {
-    expect(otRoomOf('gen').id).toBe('law')
-    expect(otRoomOf('est').id).toBe('history')
-    expect(otRoomOf('sng').id).toBe('poetry')
-    expect(otRoomOf('mal').id).toBe('prophets')
-    for (const b of OT_BOOKS) expect(otRoomOf(b).books).toContain(b)
   })
 })
 

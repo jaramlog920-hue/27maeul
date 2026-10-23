@@ -5,7 +5,7 @@ import { scheduledEvents } from './events'
 import { VISIT_FROM } from './bonds'
 import { dislikesOf, giveGift, greetNeighbor, listen, newGame, receiveVisit, type GameState } from './game'
 import { deserialize, serialize } from './save'
-import { BIRTHDAYS, isBirthday, knownTastes, nextBirthday, NO_NOTEBOOK, noteGot, sanitizeNotebook, slotOf } from './notebook'
+import { BIRTHDAYS, isBirthday, knownTastes, NO_NOTEBOOK, noteGot, sanitizeNotebook, slotOf } from './notebook'
 import type { NeighborDef } from './types'
 import { DAILY_HEART_CAP } from './hearts'
 
@@ -21,18 +21,12 @@ describe('이웃 수첩', () => {
       const key = b.join(':')
       expect(days.has(key), key).toBe(false)
       days.add(key)
-      const d = nextBirthday(n.id, 1)!
+      const d = Array.from({ length: 160 }, (_, i) => i + 1).find((day) => isBirthday(n.id, day))!
       expect(isBirthday(n.id, d)).toBe(true)
       expect(festivalOf(d)).toBeNull()
     }
   })
 
-  it('다음 생일은 오늘이거나 한 해 안', () => {
-    const d = nextBirthday('baker', 1)!
-    expect(d).toBe(10)
-    expect(nextBirthday('baker', 10)).toBe(10)
-    expect(nextBirthday('baker', 11)).toBe(10 + 160)
-  })
 
   it('모든 이웃은 싫어하는 것이 있고, 좋아하는 것과 겹치지 않는다', () => {
     for (const n of CONTENT.neighbors) {

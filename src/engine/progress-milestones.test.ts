@@ -6,7 +6,8 @@ import {toggleHomeBook} from './finished-books'
 import {deserialize,serialize} from './save'
 import {newGenState} from './gen'
 import {settleGen} from './gen-settle'
-import {RETIRE_AFTER} from './gen-growth'
+/** 예전 견습·은퇴 한 계절 (지금은 은퇴가 없다) */
+const RETIRE_AFTER=40
 import {startCopy,writeVerse,goToSleep} from './game'
 import {ensureOtBook} from '../content/ot-catalog'
 import {copyVerses} from './copying'

@@ -1,7 +1,7 @@
 // 계획 20 2부 작업 B: 쉬는 시간에 이웃 둘이 만나면 (D29·P2·P3).
 // 같은 지도·보이는 두 이웃이 맞닿은 칸(가로·세로 한 칸)에 있고 둘 다 쉬는 중이면, 1분마다 한 번 살핀다:
 // 같은 쌍은 하루 세 번까지, 두 만남 사이 30분 이상. 결과는 저장된 씨앗 + 쌍 + 날·횟수로 뽑고 취향이 맞을수록 좋은 쪽.
-// 머리 위 이모티콘은 화면 상태만 (저장하지 않는다), 실제 시간 약 2초.
+// 머리 위 이모티콘은 화면 상태만 (저장하지 않는다), 실제 시간 EMOTE_SECONDS초.
 import { MEET_GAP_MIN } from './gen-config'
 import { addAffinity, canMeetMore, genRng, meetsToday, relationId, stageOf, type GenState } from './gen'
 import { quietAfterBreakup } from './gen-relations'

@@ -3,7 +3,7 @@ import { CONTENT, PEOPLE } from '../content/catalog'
 import { T } from '../content/text'
 import { newGame, finishHelp, routineOf, storyPropsNow } from './game'
 import { canWorkDay, startWorkDay, prepareWorkDay, workDayHand, finishWorkStep, finishWorkDay, expireWorkDay, sanitizeWorkDay, shopOf, workLine, WORK_SHOPS, type WorkState } from './work-day'
-import { finishNow } from './minigame'
+import { finishNow } from './minigame-done.helper'
 import { deserialize, serialize } from './save'
 import { grapesRipe, isWet, weatherOf } from './calendar'
 

@@ -20,7 +20,7 @@ export const BAKER_BABY_ID = 'baker-baby'
 /** 옛 저장과 그림에서도 같은 인물·성장 단계를 쓴다. */
 export function bakerBabyAt(day: number, old?: GenPerson): GenPerson | null {
   if (day < BABY_DAY) return null
-  // Adult aging belongs to daily settlement; rendering/loading must not bypass its settings.
+  // 어른 이후의 나이 듦은 하루 정산이 맡는다 — 그림·불러오기에서 저절로 노년이 되지 않게
   const calendarStage = stageByAge(BABY_DAY, day)
   const stage = old?.stage === 'elder' ? 'elder' : calendarStage === 'elder' ? 'adult' : calendarStage
   if (old?.stage === stage) return old
@@ -52,7 +52,7 @@ export interface GenPerson {
   /** 태어난 날. 날짜 미상은 null — 지어내지 않는다 */
   born: number | null
   stage: GenStage
-  /** Adult days excluded while aging is locked/paused; birth dates remain historical. */
+  /** 나이 듦이 잠겨 있던(멈춘) 어른 날 수와 마지막으로 센 날 — 태어난 날은 그대로 둔다 */
   agePause?: { days: number; at: number }
   /** 모습 (여자/남자) — 짝 조건(서로 다른 모습)에 쓴다 */
   look?: 'f' | 'm'
@@ -87,8 +87,6 @@ export interface Consult {
   nextAsk: number
   /** 이 바퀴가 시작된 날 (질문 순서 씨앗) */
   round?: number
-  /** 마지막 재촉 근황 날 */
-  nudged?: number
 }
 
 /** 결혼 준비 (P9): 준비 일 두 가지와 끝낸 것, 결혼식 날 */
@@ -129,17 +127,6 @@ export interface Household {
   birthDue?: number | null
 }
 
-export interface GenEvent {
-  /** 유일한 사건 id (e-0001…) */
-  id: string
-  kind: string
-  /** 예정(또는 일어난) 날 */
-  day: number
-  who: string[]
-  done: boolean
-  news: boolean
-}
-
 export interface GenLog {
   day: number
   kind: string
@@ -166,21 +153,18 @@ export interface GenState {
   breakup: Record<string, number>
   relations: Record<string, Relation>
   households: Record<string, Household>
-  events: GenEvent[]
   log: GenLog[]
   nextPerson: number
-  nextEvent: number
-  /** 견습 중인 자녀 (부모 npc → 자녀 계보 id, 시작한 날) — 세대교체 */
-  heirs?: Record<string, { heir: string; since: number; paused?: number }>
-  /** 은퇴한 부모 (npc → 자리를 이어받은 자녀, 은퇴한 날) */
-  retired?: Record<string, { heir: string; day: number; moved?: number }>
+  /** 견습 중인 자녀 (부모 npc → 자녀 계보 id, 시작한 날) — 은퇴·견습은 없앴다(2026-10-21), 예전 저장의 내 짝 자리만 남는다 */
+  heirs?: Record<string, { heir: string; since: number }>
+  /** 은퇴한 부모 (npc → 자리를 이어받은 자녀, 은퇴한 날) — 위와 같이 예전 저장의 내 짝 자리만 */
+  retired?: Record<string, { heir: string; day: number }>
 }
 
 export const LOG_CAP = 200
 
 export const relationId = (a: string, b: string): string => (a < b ? `${a}|${b}` : `${b}|${a}`)
 export const personId = (n: number): string => `g-${String(n).padStart(4, '0')}`
-export const eventId = (n: number): string => `e-${String(n).padStart(4, '0')}`
 
 /** 변하는 난수 상태 없이, 저장된 씨앗 + (종류, 인물 id들, 횟수)로 같은 난수를 다시 만든다 (D19) */
 export function genRng(seed: number, kind: string, ids: readonly string[], n: number): () => number {
@@ -288,43 +272,6 @@ export function topRelations(g: GenState, id: string, show: (other: string) => b
   return out.sort((x, y) => y.affinity - x.affinity || (x.other < y.other ? -1 : 1)).slice(0, n)
 }
 
-export interface FamilyGroup {
-  /** 묶음 id (가구 id 또는 어른 id) */
-  id: string
-  /** 어른 (부부면 둘) */
-  heads: string[]
-  /** 자녀 (계보 id) */
-  children: string[]
-  /** 함께 적는 친척 (조부모·종류 모름) */
-  kin: string[]
-}
-
-/** 마을 가계도 (D27): 결혼한 가구, 그리고 고정 주민의 집안(부모·자녀·친척)을 묶음으로 */
-export function familyGroups(g: GenState): FamilyGroup[] {
-  const persons = Object.values(g.persons)
-  const used = new Set<string>()
-  const groups: FamilyGroup[] = []
-  const kidsOf = (ids: string[]) => persons.filter((p) => p.parents.some((q) => ids.includes(q))).map((p) => p.id).sort()
-  const kinOf = (ids: string[]) => persons.filter((p) => p.kin?.some((k) => ids.includes(k.id))).map((p) => p.id).sort()
-  for (const h of Object.values(g.households).sort((x, y) => (x.id < y.id ? -1 : 1))) {
-    const heads = [...h.members]
-    const children = [...new Set([...h.children, ...kidsOf(heads)])]
-    groups.push({ id: h.id, heads, children, kin: kinOf(heads) })
-    for (const x of [...heads, ...children]) used.add(x)
-  }
-  // 가구의 머리가 아닌 사람: 자녀가 결혼해 제 가구를 꾸렸어도 부모–자녀 연결은 그대로 보인다 (2026-10-08 버그 22-A·F02)
-  const heads = new Set(groups.flatMap((x) => x.heads))
-  for (const p of persons.sort((x, y) => (x.id < y.id ? -1 : 1))) {
-    if (heads.has(p.id)) continue
-    const children = kidsOf([p.id]).filter((c) => !groups.some((x) => x.heads.includes(p.id) && x.children.includes(c)))
-    const kin = kinOf([p.id]).filter((c) => !used.has(c))
-    if (!children.length && !kin.length) continue
-    groups.push({ id: p.id, heads: [p.id], children, kin })
-    for (const x of [p.id, ...children, ...kin]) used.add(x)
-  }
-  return groups
-}
-
 // ── 만들기 ───────────────────────────────────────────
 
 const lookOf = (n: NeighborDef): 'f' | 'm' | undefined => n.look ?? n.gender
@@ -382,7 +329,7 @@ export function startAffinity(content: GameContent, withPairs: readonly [string,
 
 export function newGenState(content: GameContent, seed: number, day: number, withPairs: readonly [string, string][] = []): GenState {
   return ensureBakerBaby(ensureFixed(
-    { on: true, seed: seed >>> 0, settledDay: day, persons: {}, affinity: startAffinity(content, withPairs, seed >>> 0), meets: {}, breakup: {}, relations: {}, households: {}, events: [], log: [], nextPerson: 1, nextEvent: 1 },
+    { on: true, seed: seed >>> 0, settledDay: day, persons: {}, affinity: startAffinity(content, withPairs, seed >>> 0), meets: {}, breakup: {}, relations: {}, households: {}, log: [], nextPerson: 1 },
     content,
   ), day)
 }
@@ -402,7 +349,7 @@ function sanitizeConsult(raw: unknown): Consult | undefined {
   if (!isObj(raw)) return undefined
   const answers = Array.isArray(raw.answers) ? raw.answers.filter((a): a is ConsultAnswer => a === 'cheer' || a === 'wait').slice(0, 20) : []
   const asked = Array.isArray(raw.asked) ? raw.asked.filter(isNat).slice(0, 20) : []
-  return { asked, answers, nextAsk: isNat(raw.nextAsk) ? raw.nextAsk : 0, ...(isNat(raw.round) ? { round: raw.round } : {}), ...(isNat(raw.nudged) ? { nudged: raw.nudged } : {}) }
+  return { asked, answers, nextAsk: isNat(raw.nextAsk) ? raw.nextAsk : 0, ...(isNat(raw.round) ? { round: raw.round } : {}) }
 }
 
 function sanitizePrep(raw: unknown): Prep | undefined {
@@ -530,15 +477,6 @@ export function sanitizeGen(raw: unknown, today: number): GenState | undefined {
   }
   const breakup: Record<string, number> = {}
   if (isObj(raw.breakup)) for (const [id, v] of Object.entries(raw.breakup)) if (isNat(v) && id.includes('|')) breakup[id] = Math.min(v, today)
-  const seen = new Set<string>()
-  const events: GenEvent[] = []
-  if (Array.isArray(raw.events)) {
-    for (const e of raw.events) {
-      if (!isObj(e) || !isStr(e.id) || seen.has(e.id) || !isStr(e.kind) || !isNat(e.day)) continue
-      seen.add(e.id)
-      events.push({ id: e.id, kind: e.kind, day: e.day, who: strs(e.who), done: e.done === true, news: e.news === true })
-    }
-  }
   const log: GenLog[] = []
   if (Array.isArray(raw.log)) for (const l of raw.log) if (isObj(l) && isNat(l.day) && isStr(l.kind)) log.push({ day: l.day, kind: l.kind, who: strs(l.who) })
   const maxNum = (ids: string[], re: RegExp) => ids.reduce((m, id) => Math.max(m, Number(re.exec(id)?.[1] ?? 0)), 0)
@@ -548,14 +486,12 @@ export function sanitizeGen(raw: unknown, today: number): GenState | undefined {
     const out: Record<string, { heir: string } & Record<K, number>> = {}
     for (const [npc, x] of Object.entries(v)) {
       if (!isObj(x) || !isStr(x.heir) || !isNat(x[k]) || !fixed.persons[npc] || (fixed.persons[x.heir]?.origin !== 'born' && !(npc === 'baker' && x.heir === BAKER_BABY_ID && fixed.persons[x.heir]))) continue
-      out[npc] = { heir: x.heir, [k]: Math.min(x[k] as number, today),
-        ...(k === 'since' && isNat(x.paused) ? { paused: x.paused } : {}) } as { heir: string } & Record<K, number>
+      out[npc] = { heir: x.heir, [k]: Math.min(x[k] as number, today) } as { heir: string } & Record<K, number>
     }
     return Object.keys(out).length ? out : undefined
   }
   const heirs = heirMap(raw.heirs, 'since')
-  // Ignore legacy move-away markers so retirees return on load. Their retirement,
-  // family history and game-level farewell rewards remain intact.
+  // 예전 '이사 감' 표식은 읽지 않는다 — 은퇴한 부모가 마을로 돌아온다 (이어받기·가족 기록·작별 선물은 그대로)
   const retired: GenState['retired'] = heirMap(raw.retired, 'day')
   return ensureBakerBaby({
     ...(heirs ? { heirs } : {}),
@@ -569,9 +505,7 @@ export function sanitizeGen(raw: unknown, today: number): GenState | undefined {
     breakup,
     relations,
     households,
-    events,
     log: log.slice(-LOG_CAP),
     nextPerson: Math.max(isNat(raw.nextPerson) ? raw.nextPerson : 1, maxNum(Object.keys(fixed.persons), /^g-(\d+)$/) + 1),
-    nextEvent: Math.max(isNat(raw.nextEvent) ? raw.nextEvent : 1, maxNum(events.map((e) => e.id), /^e-(\d+)$/) + 1),
   }, today)
 }

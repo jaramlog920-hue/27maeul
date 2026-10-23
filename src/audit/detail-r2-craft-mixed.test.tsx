@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { CONTENT } from '../content/catalog'
 import { newGame, stockOf, canCraft } from '../engine/game'
-import { finishNow } from '../engine/minigame'
+import { finishNow } from '../engine/minigame-done.helper'
 import { deserialize, serialize, setActiveSlot } from '../engine/save'
 import { HOME_ENTRY } from '../engine/world'
 import { PlaceMenu } from '../features/menus/PlaceMenu'

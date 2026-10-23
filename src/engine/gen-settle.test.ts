@@ -251,18 +251,14 @@ describe('아기 침대와 출생 (D32·P10·P11)', () => {
 })
 
 describe('주민이 나이 들지 않음 설정 (2026-10-13)', () => {
-  it('켜면 자식은 어른에서 멈추고 아무도 은퇴하지 않는다', async () => {
-    const { settleGrowth, RETIRE_AFTER } = await import('./gen-growth')
+  it('켜면 자식은 어른에서 멈춘다', async () => {
+    const { settleGrowth } = await import('./gen-growth')
     const { STAGE_AT } = await import('./gen-config')
     const g0 = newGenState(CONTENT, 7, 1)
     const born = { id: 'g-0001', origin: 'born' as const, born: 0, stage: 'adult' as const, look: 'm' as const, name: '아치', parents: ['rudy'], spouse: null, household: null }
-    const g = { ...g0, persons: { ...g0.persons, [born.id]: born }, heirs: { rudy: { heir: born.id, since: 1 } } }
-    const late = STAGE_AT.elder + RETIRE_AFTER + 5
-    const aged = settleGrowth(g, late, { generations: true, retirement: true })
-    expect(aged.persons[born.id].stage).toBe('elder')
-    expect(aged.retired?.rudy).toBeDefined()
-    const ageless = settleGrowth(g, late, { generations: true, retirement: true, ageless: true })
-    expect(ageless.persons[born.id].stage).toBe('adult')
-    expect(ageless.retired?.rudy).toBeUndefined()
+    const g = { ...g0, persons: { ...g0.persons, [born.id]: born } }
+    const late = STAGE_AT.elder + 45
+    expect(settleGrowth(g, late).persons[born.id].stage).toBe('elder')
+    expect(settleGrowth(g, late, { ageless: true }).persons[born.id].stage).toBe('adult')
   })
 })

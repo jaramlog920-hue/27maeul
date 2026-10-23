@@ -8,7 +8,6 @@ import {
   canLibraryRead,
   chooseBook,
   giveGift,
-  GIFT_STORY_HEARTS,
   LIBRARY_READ_PRICE,
   libraryRead,
   newGame,
@@ -44,10 +43,8 @@ describe('성경 이야기를 더 모으기', () => {
   it('선물은 생활 루프 — 친구 이상인 이웃에게 선물해도 말씀 조각을 주지 않는다 (계획 14 작업 5)', () => {
     const def = CONTENT.neighbors.find((n) => n.id === 'baker') as NeighborDef
     const s = { ...base(), inv: { grapes: 2 } }
-    expect(giveGift({ ...s, hearts: { baker: 0 } }, def, 'grapes', CONTENT)!.pieceId).toBeUndefined()
-    const r = giveGift({ ...s, hearts: { baker: GIFT_STORY_HEARTS } }, def, 'grapes', CONTENT)!
-    expect(r.pieceId).toBeUndefined()
-    expect(r.state.collected).toEqual(s.collected)
+    expect(giveGift({ ...s, hearts: { baker: 0 } }, def, 'grapes')!.state.collected).toEqual(s.collected)
+    expect(giveGift({ ...s, hearts: { baker: 100 } }, def, 'grapes')!.state.collected).toEqual(s.collected)
   })
 
   it('어느 책을 골랐든(편지 책·요한계시록 포함) 열람석은 27권 중 아직 없는 조각 하나 — 오늘 편지·이웃 조각은 빼고', () => {

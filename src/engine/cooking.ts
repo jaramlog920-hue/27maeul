@@ -19,7 +19,6 @@ import { isHome } from './world'
 import type { ItemId, Minigame, Rng, Tile } from './types'
 
 export type DishId = 'bread' | 'beanDish' | 'herbBeanDish' | 'honeyBread' | 'figPlate' | 'herbTea'
-export const DISH_IDS: readonly DishId[] = ['bread', 'beanDish', 'herbBeanDish', 'honeyBread', 'figPlate', 'herbTea']
 export interface DishDef {
   id: DishId
   item: ItemId
@@ -45,8 +44,7 @@ export const DISHES: Record<DishId, DishDef> = {
 }
 /** 새 요리(빵 빼고): 이 화면의 요리 흐름으로 만든다 */
 export const NEW_DISHES: readonly DishId[] = ['beanDish', 'herbBeanDish', 'honeyBread', 'figPlate', 'herbTea']
-export const dishOfItem = (item: ItemId): DishId | undefined => NEW_DISHES.find(d => DISHES[d].item === item)
-/** 식탁은 두 접시부터 네 접시까지 */
+/** 식탁에는 한 번에 네 접시까지 (앉을 자리와 가진 수만큼) */
 export const TABLE_MAX = 4
 /** 먹는 데 걸리는 분 (차는 짧게) */
 export const EAT_MINUTES = 20
@@ -184,12 +182,11 @@ export function canEatDish(s: GameState, item: ItemId): EatBlock {
   return count(s.inv, item) > 0 ? null : 'none'
 }
 function eatEffect(s: GameState, item: ItemId, shared: boolean): GameState {
-  const tea = item === 'herbTea'
   const hunger = Math.max(0, s.needs.hunger - (DISH_HUNGER[item] ?? 0))
   return {
     ...s,
     needs: { ...s.needs, hunger },
-    flags: { ...s.flags, mealDay: s.clock.day, ...(shared ? { sharedMealDay: s.clock.day } : {}), ...(tea ? {} : { ateDay: s.clock.day }) },
+    flags: { ...s.flags, mealDay: s.clock.day, ...(shared ? { sharedMealDay: s.clock.day } : {}) },
   }
 }
 /** 혼자 먹기·마시기: 가방에서 한 접시. 시간이 조금 흐르고 그날 기분이 조금 좋아진다 */

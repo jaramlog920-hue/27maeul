@@ -168,10 +168,6 @@ export function stallGoodsAvailable(s: GameState): { item: ItemId; have: number 
 }
 
 const todays = (s: GameState): Stall | undefined => (s.stall && s.stall.day === s.clock.day ? s.stall : undefined)
-export const stallOpenNow = (s: GameState): boolean => {
-  const st = todays(s)
-  return !!st && !st.closed && s.clock.minute >= STALL_FROM && s.clock.minute < STALL_TO
-}
 
 export type StallBlock = 'locked' | 'notMarket' | 'wet' | 'early' | 'late' | 'away' | 'done' | 'open' | 'none' | null
 export function canOpenStall(s: GameState): StallBlock {

@@ -3,7 +3,7 @@ import { CONTENT } from '../content/catalog'
 import { ITEM_TEXT } from '../content/text'
 import { foundItems } from './achievements'
 import { collectionGift, COLLECTIBLE_ITEMS } from './collection-gifts'
-import { farewellMorning, goToSleep, moveInMorning, newGame } from './game'
+import { goToSleep, moveInMorning, newGame } from './game'
 import { deserialize, serialize } from './save'
 
 describe('이사 선물', () => {
@@ -44,14 +44,5 @@ describe('이사 선물', () => {
     expect(next.moveInGifts?.carpenter).toBeTruthy()
     expect(next.flags['moveGift:carpenter']).toBe(next.clock.day)
     expect(goToSleep(next, CONTENT).moveInGifts).toEqual(next.moveInGifts)
-  })
-  it('이사 가는 이웃의 편지에 미획득 물건 한 개가 남고 저장 뒤에도 중복 지급하지 않는다', () => {
-    const base = newGame(CONTENT)
-    const gen = { ...base.gen!, retired: { rudy: { heir: 'g-0001', day: 1, moved: 15 } } }
-    const next = farewellMorning({ ...base, gen, clock: { ...base.clock, day: 15 } }, CONTENT)
-    const gift = next.farewellPopup!.gift
-    expect(Object.values(gift)).toEqual([1])
-    expect(foundItems(base)).not.toContain(Object.keys(gift)[0])
-    expect(farewellMorning(next, CONTENT).inv).toEqual(next.inv)
   })
 })

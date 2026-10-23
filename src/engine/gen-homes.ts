@@ -19,7 +19,7 @@ export function sharedHomeOf(g: GenState | undefined, id: string, hasRoom: (owne
   const home = g!.households[p.household]?.home
   // 집은 이웃 자리 id로 적힌다 — 자리를 이어받은 자녀에게 그 자리 집은 제 집 (2026-10-20 점검)
   const own = home === id || home === slot || home === slotOfPerson(g, id)
-  return home && !own && (hasRoom(home)||!!LODGING_SEATS[home]) ? home : null
+  return home && !own && (hasRoom(home) || !!LODGING_SEATS[home]) ? home : null
 }
 
 const householdNo = (h: Household): number => Number(/^h-(\d+)$/.exec(h.id)?.[1] ?? 0)
@@ -32,9 +32,9 @@ export function homeWishes(s: Pick<GameState, 'gen' | 'flags' | 'newland'> & Par
   return Object.values(s.gen?.households ?? {}).filter((h) => householdNo(h) > 0 && h.members.length >= 2 && !hasRoom(h.home) && !LODGING_SEATS[h.home] && !living.has(h.id) && !moved(h))
 }
 
-/** 새 터 집에 사는 가구와 그 집 (집이 걷히면 빠진다) */
 // 걸음마다·그림마다 불리므로 같은 상태(flags·gen·newland가 그대로)면 다시 세지 않는다
 const familyHomesCache = new WeakMap<object, { gen: unknown; newland: unknown; out: { household: Household; home: Build }[] }>()
+/** 새 터 집에 사는 가구와 그 집 (집이 걷히면 빠진다) */
 export function familyHomes(s: Pick<GameState, 'gen' | 'flags' | 'newland'>): { household: Household; home: Build }[] {
   const hit = familyHomesCache.get(s.flags)
   if (hit && hit.gen === s.gen && hit.newland === s.newland) return hit.out

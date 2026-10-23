@@ -185,7 +185,7 @@ export function TradeBoard() {
   )
 }
 
-/** 떠돌이 상인의 옛 두루마리: 장날마다 두 개까지, 사면 지금 책의 다음 이야기 */
+/** 떠돌이 상인의 옛 두루마리: 장날마다 두 개까지, 사면 27권 가운데 아직 없는 조각 하나 */
 function scrollEntry(game: Parameters<typeof canBuyScroll>[0], buyScroll: () => void): IconEntry[] {
   const block = canBuyScroll(game, CONTENT)
   if (block === 'notMarket') return []

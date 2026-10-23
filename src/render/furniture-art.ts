@@ -414,7 +414,7 @@ export const FURNITURE_ART: Record<string, FurnitureArt> = {
 // 집 공간용 도트는 기존 배치 가구와 가방 아이콘에 함께 반영한다.
 Object.assign(FURNITURE_ART, HOME_SPACE_ART)
 Object.assign(FURNITURE_ART, REMAINING_FURNITURE_ART)
-// 생활 가구 48종 (2026-10-12 도트) — 앞모습은 네 방향 그림의 것(흔들의자·수레는 앞모습을 다시 그렸다), 다른 방향은 furniture-facing이 고른다
+// 생활 가구 68종 (2026-10-12 도트) — 앞모습은 네 방향 그림의 것(흔들의자·수레는 앞모습을 다시 그렸다), 다른 방향은 furniture-facing이 고른다
 for (const id of Object.keys({ ...COZY_FURNITURE_ART, ...HOUSEHOLD_FURNITURE_ART, ...ROOM_FURNITURE_ART, ...FAMILY_FURNITURE_ART, ...COPY_FURNITURE_ART })) FURNITURE_ART[id] = ADDITION_FURNITURE_DIRECTIONS[id].down
 
 /** 가구 그림 글자 → 가방 아이콘 팔레트(ICON_PALETTE)에 더한 글자 */

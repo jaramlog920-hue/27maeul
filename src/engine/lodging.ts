@@ -32,12 +32,11 @@ export function lodgingChildren(s:Pick<GameState,'gen'|'flags'|'child'> & Partia
   if(kid.left&&flags['lodging:playerChild'])list.push({id:kid===s.child?'playerChild':`playerChild:${kid.born}`,childBorn:kid.born,name:kid.name,seat:LODGING_CHILD_SEATS[list.length]??LODGING_CHILD_SEATS[LODGING_CHILD_SEATS.length-1]})
  }
  for(const p of Object.values(s.gen?.persons??{}).filter(p=>p.origin==='born'&&(p.stage==='adult'||p.stage==='elder')).sort((a,b)=>(a.born??0)-(b.born??0)||a.id.localeCompare(b.id))){
-  if(Object.values(s.gen?.retired??{}).some(r=>r.heir===p.id&&r.moved!=null))continue
   const h=p.household?s.gen?.households[p.household]:undefined
   const no=Number(/^h-(\d+)$/.exec(h?.id??'')?.[1]??0)
   // 새 터 집으로 옮긴 건 가구의 어른(members)뿐 — 함께 가지 않은 다 큰 자녀는 그대로 손님 자리에
   if(no&&s.flags[`familyHome:${no}`]&&h?.members.includes(p.id))continue
-  // A married child with an established home keeps that home.
+  // 이미 제 집이 있는 결혼한 자녀는 그 집에서 산다
   if(p.spouse&&h&&h.home!==p.id&&!LODGING_SEATS[h.home])continue
   if(list.length===LODGING_CHILD_SEATS.length)break
   list.push({id:p.id,name:p.name??'독립한 자녀',seat:LODGING_CHILD_SEATS[list.length]})

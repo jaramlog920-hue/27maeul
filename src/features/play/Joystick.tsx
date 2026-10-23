@@ -11,7 +11,6 @@ const KNOB_MAX = 22
 const REPEAT_MS = 30
 /** 네 방향 패드 한 칸(px) — 손가락에 맞게 44px */
 export const PAD_CELL = 44
-export const PAD_SIZE = PAD_CELL * 3
 
 type Dir = [number, number]
 export type PadZone = 'up' | 'down' | 'left' | 'right' | 'center'

@@ -1,7 +1,7 @@
 // 이웃 수첩 (일지 탭): 만난 이웃, 알게 된 좋아하는 것·싫어하는 것, 마주친 때와 자리, 들은 이야기, 생일.
 // 좋아하는 것·싫어하는 것은 선물로 알게 되거나, 사이가 깊어지면 이웃이 먼저 털어놓는다(수첩의 ? 칸이 열린다).
 import { SEASON_DAYS, seasonOf } from './clock'
-import { stageOfPoints, type Activity, type Experience, type Life } from './people'
+import { stageOfPoints, type Activity, type Experience } from './people'
 import lifeText from '../content/life-text.json'
 import type { ItemId, NeighborDef, Season, Tile } from './types'
 import { HALL_RECT, isHome, PAVILION_RECT, roomAt, TEA_RECT, zoneAt } from './world'
@@ -107,12 +107,6 @@ export function noteExperienceTastes(n: Notebook, exp: Pick<Experience, 'with'>,
   return exp.with.reduce((book, npc) => reveals[npc] ? noteTaste(book, npc, reveals[npc]) : book, n)
 }
 
-/** 가족·동물 기록은 각각의 앨범에 둔다. */
-export function sharedMemories(life: Pick<Life, 'experiences'>, npc: string): Experience[] {
-  return Object.values(life.experiences ?? {}).filter((e) => e.with.includes(npc) && e.kind !== 'pet' && e.kind !== 'family')
-    .sort((a, b) => (b.last ?? -1) - (a.last ?? -1))
-}
-
 export function noteTasteProposal(n: Notebook, npc: string, day: number): Notebook {
   return { ...n, tasteProposed: { ...n.tasteProposed, [npc]: day } }
 }
@@ -177,7 +171,7 @@ export function knownTastes(
 
 // ── 생일 ──
 
-/** 이웃의 생일 (계절, 계절 안의 날 1~7). 잔치 날(여름 5·가을 6·겨울 4)은 피했다 */
+/** 이웃의 생일 (계절, 계절 안의 날 1~40 — 이레 간격). 계절 잔치 날(봄 20·여름 25·가을 30·겨울 20)은 피했다 */
 export const BIRTHDAYS: Readonly<Record<string, readonly [Season, number]>> = {
   wendell: ['spring', 3],
   baker: ['spring', 10],
@@ -204,23 +198,11 @@ export const BIRTHDAYS: Readonly<Record<string, readonly [Season, number]>> = {
   merchant: ['winter', 31],
 }
 
-const SEASON_ORDER: readonly Season[] = ['spring', 'summer', 'autumn', 'winter']
 export const SEASON_LABEL: Record<Season, string> = { spring: '봄', summer: '여름', autumn: '가을', winter: '겨울' }
 
 export function isBirthday(id: string, day: number): boolean {
   const b = BIRTHDAYS[id]
   return !!b && seasonOf(day) === b[0] && ((day - 1) % SEASON_DAYS) + 1 === b[1]
-}
-
-/** 오늘 이후(오늘 포함) 가장 가까운 생일 날 */
-export function nextBirthday(id: string, day: number): number | null {
-  const b = BIRTHDAYS[id]
-  if (!b) return null
-  const year = SEASON_DAYS * 4
-  const inYear = SEASON_ORDER.indexOf(b[0]) * SEASON_DAYS + b[1]
-  const start = day - ((day - 1) % year)
-  const d = start + inYear - 1
-  return d >= day ? d : d + year
 }
 
 export function birthdayLabel(id: string): string | null {

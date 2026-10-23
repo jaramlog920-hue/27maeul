@@ -2,8 +2,8 @@
 import { CONTENT } from '../content/catalog'
 import { newGame, trade, TRADES } from './game'
 import { RECIPES } from './items'
+import { finishNow } from './minigame-done.helper'
 import {
-  finishNow,
   HOLD_DOWN,
   HOLD_NEED,
   HOLD_UP,

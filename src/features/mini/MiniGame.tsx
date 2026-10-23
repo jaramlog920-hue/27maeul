@@ -14,7 +14,6 @@ function titleOf(p: Pending): string {
   if (p.kind === 'club') return T.plans.activity.sew
   if (p.kind === 'gather') return (T.ui.minigame.gather as Record<string, string>)[p.place] ?? (T.places as Record<string, string>)[p.place] ?? ''
   if (p.kind === 'craft') return (T.recipes as Record<string, string>)[p.recipe]?.split(' — ')[0] ?? ''
-  if (p.kind === 'letter') return T.letters.mini
   if (p.kind === 'reading') return T.meetings.reading
   // 이야기 속 손일 (계획 16 작업 4): 이웃 이름 · 그 장면 제목
   if (p.kind === 'story') return `${neighborById(p.npc)?.role ?? ''} · ${SCENES[`ev:${p.event}`]?.title ?? ''}`
@@ -25,7 +24,6 @@ function titleOf(p: Pending): string {
 function iconOf(p: Pending): ItemId {
   if (p.kind === 'gather') return PLACE_ICON[p.place] ?? 'water'
   if (p.kind === 'craft') return RECIPE_ICON[p.recipe] ?? 'bread'
-  if (p.kind === 'letter') return 'papyrus'
   if (p.kind === 'help') {
     // 이웃마다 손일의 결과물이 다르므로 공통 양털 그림을 쓰지 않는다.
     const gives = neighborById(p.neighborId)?.help.gives ?? {}

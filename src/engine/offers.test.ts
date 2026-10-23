@@ -1,58 +1,14 @@
-import { currentChapter, MAX_OFFERS_PER_DAY, offersForDay, seededShuffle } from './offers'
-import { canonicalOrder, checkArrangement, moveItem } from './scroll'
-import type { Piece } from './types'
+import { seededShuffle } from './offers'
+import { moveItem } from './scroll'
 
-const P = (id: string, chapter: number): Piece => ({ id, book: 'lk', ref: '', chapter, title: '', stamps: [] })
-const pieces = [P('lk-015-011', 15), P('lk-015-001', 15), P('lk-015-008', 15), P('lk-016-001', 16)]
-
-describe('offers', () => {
-  it('지금 장은 다 쓰지 않은 가장 앞 장', () => {
-    expect(currentChapter(pieces, [])).toBe(15)
-    expect(currentChapter(pieces, [15])).toBe(16)
-    expect(currentChapter(pieces, [15, 16])).toBeNull()
-  })
-  it('같은 날에는 같은 제안, 섞기는 원소를 잃지 않는다', () => {
-    const args = { day: 3, pieces, collected: [], chapter: 15, neighborIds: ['a', 'b'] }
-    expect(offersForDay(args)).toEqual(offersForDay(args))
+describe('섞기', () => {
+  it('섞기는 원소를 잃지 않고, 같은 씨앗이면 같은 순서', () => {
     expect(seededShuffle([1, 2, 3, 4, 5], 7).sort()).toEqual([1, 2, 3, 4, 5])
-  })
-  it('들은 조각은 빼고, 지금 장을 먼저 — 모자라면 다음 장 조각으로 채운다', () => {
-    const o = offersForDay({ day: 1, pieces, collected: ['lk-015-001', 'lk-015-008'], chapter: 15, neighborIds: ['a', 'b'] })
-    expect(Object.values(o).sort()).toEqual(['lk-015-011', 'lk-016-001'])
-    const one = offersForDay({ day: 1, pieces, collected: ['lk-015-001', 'lk-015-008'], chapter: 15, neighborIds: ['a'] })
-    expect(Object.values(one)).toEqual(['lk-015-011'])
-  })
-  it('하루에 많아야 여섯 명', () => {
-    const many = Array.from({ length: 20 }, (_, i) => P(`lk-017-${String(i + 1).padStart(3, '0')}`, 17))
-    const o = offersForDay({ day: 3, pieces: many, collected: [], chapter: 17, neighborIds: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] })
-    expect(Object.keys(o)).toHaveLength(MAX_OFFERS_PER_DAY)
-  })
-  it('이웃 수만큼만, 장이 없으면 없음', () => {
-    expect(Object.keys(offersForDay({ day: 1, pieces, collected: [], chapter: 15, neighborIds: ['a'] }))).toEqual(['a'])
-    expect(offersForDay({ day: 1, pieces, collected: [], chapter: null, neighborIds: ['a'] })).toEqual({})
-  })
-  it('며칠이 지나면 모든 조각이 한 번씩 나온다', () => {
-    const collected: string[] = []
-    for (let day = 1; day <= 10; day++) {
-      const o = offersForDay({ day, pieces, collected, chapter: 15, neighborIds: ['a'] })
-      if (o.a) collected.push(o.a)
-    }
-    expect(collected.slice(0, 3).sort()).toEqual(['lk-015-001', 'lk-015-008', 'lk-015-011'])
-    expect(collected[3]).toBe('lk-016-001')
+    expect(seededShuffle([1, 2, 3, 4, 5], 7)).toEqual(seededShuffle([1, 2, 3, 4, 5], 7))
   })
 })
 
-describe('scroll', () => {
-  it('본문 순서', () => {
-    expect(canonicalOrder(pieces, 15)).toEqual(['lk-015-001', 'lk-015-008', 'lk-015-011'])
-  })
-  it('모자람 → 틀림 → 완성', () => {
-    const all = ['lk-015-001', 'lk-015-008', 'lk-015-011']
-    expect(checkArrangement(pieces, 15, ['lk-015-001'], ['lk-015-001'])).toEqual({ kind: 'missing', missing: 2 })
-    expect(checkArrangement(pieces, 15, ['lk-015-008', 'lk-015-001', 'lk-015-011'], all)).toEqual({ kind: 'wrong', firstWrong: 0 })
-    expect(checkArrangement(pieces, 15, ['lk-015-001', 'lk-015-008'], all)).toEqual({ kind: 'wrong', firstWrong: 2 })
-    expect(checkArrangement(pieces, 15, all, all)).toEqual({ kind: 'done' })
-  })
+describe('카드 판 한 칸 옮기기', () => {
   it('moveItem은 자리를 바꾸고 범위 밖이면 그대로', () => {
     expect(moveItem(['a', 'b', 'c'], 1, -1)).toEqual(['b', 'a', 'c'])
     expect(moveItem(['a', 'b', 'c'], 0, -1)).toEqual(['a', 'b', 'c'])

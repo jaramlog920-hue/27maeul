@@ -12,7 +12,6 @@ import {
   HEB_JUD_DOOR,
   HEB_JUD_ROOM,
   HEIGHT,
-  HOME_EXPAND_RECT,
   HOME_ROOM,
   HOME_FRONT,
   isRightWallDoor,
@@ -34,6 +33,7 @@ import {
   WARPS,
   WIDTH,
 } from './world'
+import { BABY_ROOM } from './home-layout'
 
 const lib = () => ROOMS.find((r) => r.owner === 'library')!
 const ROM_PHM = shelfRoom('romPhm').books
@@ -71,7 +71,7 @@ describe('요한계시록 방 자리', () => {
   })
 
   it('모든 방(이웃집·서고 방 넷·다락·넓힌 내 집)이 서로 겹치지 않고 지도 안에 있다', () => {
-    const home = { ...HOME_ROOM, owner: 'home', w: HOME_EXPAND_RECT.x1 - HOME_ROOM.x0 + 1 }
+    const home = { ...HOME_ROOM, owner: 'home', w: BABY_ROOM.x1 - HOME_ROOM.x0 + 1 }
     expect([home.x0, home.y0, home.x0 + home.w - 1, home.y0 + home.h - 1]).toEqual([16, 110, 31, 115])
     const all = [...ROOMS, home]
     for (const [i, a] of all.entries()) {

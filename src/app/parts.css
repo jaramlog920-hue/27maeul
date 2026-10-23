@@ -2415,6 +2415,11 @@ button.row:active:not(:disabled) { background: #efe3c4; }
 
 /* 완성본 펼쳐 보기 (계획 14 작업 8): 첫 쪽(표지·나의 필사 기록) → 펼쳐 보기(내가 필사한 본문, 장마다) · 이 책에서 발견한 기록 */
 .book-view-head { display: flex; align-items: flex-end; gap: 14px; margin: 2px 0 8px; }
+.book-reopen { width: 128px; height: 96px; padding: 0; border: 0; background: #eee3cb; border-radius: 6px; flex: none; cursor: pointer; }
+.book-reopen svg { width: 100%; height: 100%; display: block; }
+.workplace-room { margin: 4px auto 8px; width: min(256px, 100%); text-align: center; }
+.workplace-room svg { width: 100%; aspect-ratio: 4 / 3; display: block; border-radius: 6px; }
+.workplace-room figcaption { font-size: 0.85em; opacity: 0.8; margin-top: 2px; }
 .book-view-title { display: grid; gap: 6px; justify-items: start; }
 .book-view-title h2 { margin: 0; }
 .book-view-title .spine-art { width: 14px; height: 36px; }

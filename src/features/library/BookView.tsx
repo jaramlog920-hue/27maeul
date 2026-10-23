@@ -1,5 +1,5 @@
 // 완성본 펼쳐 보기 (계획 14 작업 8): 서고·방 선반·말씀 › 서고·집 책장에서 다 쓴 책을 누르면 —
-// 첫 쪽: 제본한 모습(표지·책등)과 나의 필사 기록(쓰기 시작한 날·마친 날·절·글자, 예전에 엮은 장은 조용히 한 줄).
+// 첫 쪽: 책장에서 꺼내 펼치는 짧은 움직임(BookReopen — 꾸민 표지 그대로)·책등과 나의 필사 기록(쓰기 시작한 날·마친 날·절·글자, 예전에 엮은 장은 조용히 한 줄).
 // [펼쳐 보기]: 내가 마친 장의 본문을 장마다 (개역한글 그대로 — 필사할 때와 같은 절, 본문 없는 절은 빠진다).
 // [이 책에서 발견한 하나님 기록]: 키워드 — 구절, 누르면 구절 본문. 해설 문장은 없다.
 import { Fragment, useState } from 'react'
@@ -8,7 +8,8 @@ import { fill, T } from '../../content/text'
 import { bookGodFinds, bookRecord, readChapters } from '../../engine/finished-books'
 import { bookBackModal, useGame, type Modal } from '../../store/game-store'
 import { dayLabel } from '../word/Word'
-import { BookCover, Spine } from './BookArt'
+import { Spine } from './BookArt'
+import { BookReopen } from './BookReopen'
 
 const BOOK_NAME = T.quiz.books as Record<string, string>
 const BV = T.bookView
@@ -94,7 +95,7 @@ export function BookView({ modal }: { modal: Extract<Modal, { kind: 'bookView' }
   return (
     <div className="dialog book-view" role="dialog" aria-label={label}>
       <div className="book-view-head">
-        <BookCover book={book} binding={binding} />
+        <BookReopen book={book} binding={binding} grade={game.shelved[book]} sealed={(game.sealed ?? []).includes(book)} label={label} />
         <div className="book-view-title">
           <h2>{name}</h2>
           <Spine book={book} binding={binding} grade={game.shelved[book]} />

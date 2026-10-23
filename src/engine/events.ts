@@ -29,7 +29,7 @@ export function scheduledEvents(s: Pick<GameState, 'clock' | 'today' | 'flags'> 
   const add = (id: string, title: string, location: string, from: number, to: number, done = false, onDay = day) => {
     events.push({ id: `${onDay}:${id}`, day: onDay, title, location, from, to, done })
   }
-  // 내 결혼 잔치: 약혼한 다음 장날 저녁, 광장 모닥불 (7일 안이면)
+  // 내 결혼 잔치: 약혼한 뒤 결혼 잔치 날(다음 장날 — 계절 잔치·비 오는 날은 비킨다, romance nextWeddingDay) 저녁, 광장 모닥불 (7일 안이면)
   const r = s.romance
   if (r?.stage === 'engaged' && r.partner && r.weddingDay !== null && r.weddingDay >= day && r.weddingDay <= day + 7) {
     const who = s.gen?.persons[slotPerson(s.gen, r.partner)]?.name ?? content.neighbors.find((n) => n.id === r.partner)?.role ?? ''
@@ -117,10 +117,10 @@ export const ALERT_BEFORE = 30
 
 export const eventName = (e: ScheduledEvent) => (e.id.endsWith(':market') ? '장날' : e.title)
 
-/** 아직 끝나지 않은 가장 가까운 일정 */
 /** 하루 종일 펼쳐진 일정 (계절 필사처럼 여덟 시간 넘게) — 미리보기·목록에서 시각이 정해진 일정 뒤로 (2026-10-13 사용자) */
 export const isAllDay = (e: Pick<ScheduledEvent, 'from' | 'to'>): boolean => e.to - e.from >= 8 * 60
 
+/** 아직 끝나지 않은 가장 가까운 일정 */
 export function nextEvent(events: readonly ScheduledEvent[], day: number, minute: number): ScheduledEvent | null {
   const open = events.filter((e) => !e.done && (e.day > day || (e.day === day && e.to > minute)))
   // 시각이 정해진 가장 가까운 일정을 먼저 — 하루 종일 일정은 그런 일정이 하나도 없을 때만 (전체 일정 창에는 늘 보인다).

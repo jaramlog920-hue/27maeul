@@ -8,6 +8,6 @@ manifest.json의 views.default 순서와 duration(ms)를 사용합니다. loop:f
 
 기본 책등 금박은 grade:2로 내보냈습니다. 함수 bookReopenRows(book,frame,binding,grade,sealed)는 실제 보관한 책과 제본 값을 받아 다시 그릴 수 있습니다.
 
-게임의 책장 클릭 및 성경 읽기 화면은 연결하지 않았습니다.
+게임에서는 완성본 보기 창(BookView → BookReopen)을 열 때 한 번 재생하고, 누르면 다시 봅니다 (2026-10-22 연결).
 
 재생성: node scripts/export-book-reopen.mjs → node scripts/export-all-assets-preview.mjs

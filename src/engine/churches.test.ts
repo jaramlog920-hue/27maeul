@@ -1,8 +1,8 @@
 // 계획 9 작업 3: 요한계시록 일곱 교회 카드 — 본문 순서대로, 이름만. 2·3장을 옮겨 적으면 카드가 판에 들어온다
 import bible from '../content/nt-krv.json'
-import { CHURCHES, CONTENT, copySourceFor, JOURNEY, versesOf } from '../content/catalog'
-import { blanksFor } from './copy'
-import { chooseBook, moveBoardCard, moveJourneyCard, newGame, recordLetter, syncBoard, syncJourney, type GameState } from './game'
+import { CHURCHES, CONTENT, JOURNEY, versesOf } from '../content/catalog'
+import { chooseBook, moveBoardCard, newGame, syncBoard, syncJourney, type GameState } from './game'
+import { copyNextChapter } from './copy-chapter.helper'
 import { boardInOrder, cardsForChapters, journeyComplete, placeNewCards } from './journey'
 import { deserialize, serialize } from './save'
 import { emptyProgress } from './books'
@@ -30,9 +30,8 @@ function revReady(): GameState {
   const chosen = chooseBook(open, 'rev', CONTENT)
   return { ...chosen, collected: [...chosen.collected, 'rev-001', 'rev-002', 'rev-003'] }
 }
-const answers = (chapter: number) => blanksFor('rev', chapter, copySourceFor('rev')).map((b) => b.answer)
 function copy(s: GameState, chapter: number): GameState {
-  const r = recordLetter({ ...s, needs: { ...s.needs, fatigue: 0 } }, 'rev', chapter, answers(chapter), CONTENT)
+  const r = copyNextChapter({ ...s, needs: { ...s.needs, fatigue: 0 } }, 'rev', CONTENT)
   expect(r.progress.rev.completed, `${chapter}장`).toContain(chapter)
   return r
 }
@@ -154,13 +153,12 @@ describe('게임 상태의 일곱 교회 판', () => {
 })
 
 describe('사도행전 여정 판은 그대로', () => {
-  it('syncJourney = syncBoard(journey), moveJourneyCard = moveBoardCard(journey)', () => {
+  it('syncJourney = syncBoard(journey)', () => {
     const all = Array.from({ length: 28 }, (_, i) => i + 1)
     const base = { ...newGame(CONTENT), progress: { ...emptyProgress(), ac: { completed: all, arrangement: {} } } }
     const a = syncJourney(base, CONTENT)
     expect(syncBoard(base, 'journey', CONTENT)).toEqual(a)
     expect(a.journey).toHaveLength(JOURNEY.length)
     expect(a.churches).toEqual([])
-    expect(moveBoardCard(a, 'journey', 2, -1, CONTENT)).toEqual(moveJourneyCard(a, 2, -1, CONTENT))
   })
 })

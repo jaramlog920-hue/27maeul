@@ -18,7 +18,7 @@ import {
   type GameState,
 } from './game'
 import { heartsOf } from './hearts'
-import { add, addGift, BAG_SLOTS, BIG_STACK, hasSlotFor, MAX_STACK, slotsUsed, stackCap, TOOLS } from './items'
+import { add, addGift, BAG_SLOTS, hasSlotFor, MAX_STACK, slotsUsed, stackCap, TOOLS } from './items'
 import type { ItemId } from './types'
 import { findPath, SPEED } from './movement'
 import { deserialize, serialize } from './save'
@@ -64,7 +64,6 @@ describe('가방: 한 칸 99개, 50칸 (2026-10-12 사용자 — 가죽 가방�
   const kinds = (n: number) => Object.fromEntries(Object.keys(ITEM_TEXT).filter((id) => !TOOLS.includes(id as never)).slice(0, n).map((id) => [id, 1]))
   it('한 칸 99개, 가죽 가방이 있어도 같다', () => {
     expect(MAX_STACK).toBe(99)
-    expect(BIG_STACK).toBe(99)
     expect(BAG_SLOTS).toBe(50)
     expect(stackCap({})).toBe(99)
     expect(stackCap(bag)).toBe(99)

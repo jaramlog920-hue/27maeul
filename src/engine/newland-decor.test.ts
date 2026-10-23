@@ -5,7 +5,7 @@ import { setActiveMap } from './maps'
 import { setNewlandOpen } from './newland'
 import { canPlace, clearTile, orderBuild, tilesOf } from './newland-build'
 import { NEWLAND_PORTAL_FRONT } from './newland-config'
-import { DECOR_KINDS, SITES, MAP_DECOR_CHAR } from './newland-sites'
+import { DECOR_KINDS, SITES, MAP_DECOR_CHAR, isBoundaryKind } from './newland-sites'
 import { isWalkable } from './world'
 import { BG_ART } from '../render/bg-materials-art'
 import { t } from '../shared/i18n'
@@ -33,8 +33,8 @@ function land(coins = 1000): GameState {
 describe('새 터 꾸미기', () => {
   it('소재마다 그림·이름·값이 있다 (공짜 없음)', () => {
     for (const k of DECOR_KINDS) {
-      // 기본 길·잔디·기본 나무는 지도 그림 그대로 (MAP_DECOR_CHAR), 나머지는 소재 그림
-      expect((BG_ART[k]?.length ?? 0) > 0 || !!MAP_DECOR_CHAR[k]).toBe(true)
+      // 기본 길·잔디·기본 나무는 지도 그림 그대로 (MAP_DECOR_CHAR), 울타리·돌담·문은 경계 그림(newland-boundary-art), 나머지는 소재 그림
+      expect((BG_ART[k]?.length ?? 0) > 0 || !!MAP_DECOR_CHAR[k] || isBoundaryKind(k)).toBe(true)
       expect(t(`decor.${k}`)).not.toContain('decor.')
       expect(SITES[k].cost.coins).toBeGreaterThan(0)
     }

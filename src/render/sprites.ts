@@ -436,7 +436,6 @@ export function spriteRows(who: Who, facing: Facing, opts: SpriteOpts): string[]
   return rows
 }
 
-/** 기록자의 계절 옷 색 */
 /** 16진 색을 곱해서 어둡게 */
 function darkerHex(hex: string, f: number): string {
   const n = parseInt(hex.slice(1), 16)
@@ -444,6 +443,7 @@ function darkerHex(hex: string, f: number): string {
   return '#' + c.map((v) => v.toString(16).padStart(2, '0')).join('')
 }
 
+/** 기록자의 계절 옷 색 */
 export function writerPalette(season: Season, avatar?: FullAvatar): Record<string, string> {
   if (!avatar) {
     const [r, R] = SEASON_ROBE[season]

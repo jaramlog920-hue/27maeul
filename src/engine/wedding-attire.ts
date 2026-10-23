@@ -10,7 +10,6 @@ export const WEDDING_ATTIRE=[
  {item:'weddingLaceDress',outfit:'bride-lace',name:'로즈 레이스 드레스',coins:180},
 ] as const
 export type WeddingAttireItem=typeof WEDDING_ATTIRE[number]['item']
-export type WeddingFormalStyle=typeof WEDDING_ATTIRE[number]['outfit']
 export function isWeddingAttire(item:ItemId):item is WeddingAttireItem{return WEDDING_ATTIRE.some(a=>a.item===item)}
 const numberOf=(item:WeddingAttireItem)=>WEDDING_ATTIRE.findIndex(a=>a.item===item)+1
 const styleOf=(n:number|undefined)=>WEDDING_ATTIRE.find((_,i)=>i+1===n)?.outfit??null
