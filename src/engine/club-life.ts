@@ -6,6 +6,7 @@ import lifeText from '../content/life-text.json'
 import type { GameState } from './game'
 import type { Appt } from './plans'
 import type { ClubActivity } from './clubs'
+import { fillSlots } from '../shared/josa'
 
 type Voice = 'polite' | 'sir' | 'old' | 'casual' | 'child'
 export interface ClubPerson { does: string; start: string; finish: string }
@@ -22,7 +23,7 @@ export const clubVoice = (npc: string): Voice => VOICES[npc] ?? 'polite'
 /** 이 주민이 이 활동에서 하는 일과 말 (없는 주민은 null) */
 export const clubPerson = (npc: string, activity: ClubActivity): ClubPerson | null => PEOPLE[npc]?.[activity] ?? NEW_CLUB_LINES[activity] ?? null
 
-const fill = (text: string, vars: Record<string, string>) => text.replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? '')
+const fill = (text: string, vars: Record<string, string>) => fillSlots(text, vars)
 
 /** 그 모임의 지난 회차들 중 플레이어가 함께해 기록이 남은 것, 오래된 순 */
 function attendedBefore(s: GameState, clubId: string, current: Appt): { appt: Appt; run: NonNullable<GameState['clubSessions'][string]> }[] {

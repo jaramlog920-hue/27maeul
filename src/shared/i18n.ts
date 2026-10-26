@@ -2,6 +2,7 @@
 // 이웃 대사·생활 글은 계속 text.ts(life-text.json·people.json)로 — 나중에 영어판 json을 옆에 둔다.
 // 지금은 한국어만. 영어를 넣을 때 lang/en.json을 만들고 TABLES에 더한다.
 import ko from '../content/lang/ko.json'
+import { fillSlots } from './josa'
 
 export type Lang = 'ko'
 type Table = { [k: string]: string | Table }
@@ -23,7 +24,7 @@ function lookup(table: Table, key: string): string | undefined {
 export function t(key: string, vars?: Record<string, string | number>): string {
   const raw = lookup(TABLES[current], key) ?? lookup(TABLES.ko, key) ?? key
   if (!vars) return raw
-  return raw.replace(/\{(\w+)\}/g, (m, name: string) => (name in vars ? String(vars[name]) : m))
+  return fillSlots(raw, vars, 'keep')
 }
 
 /** 검사용: 표 안의 모든 [열쇠, 글] */

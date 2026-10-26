@@ -16,6 +16,7 @@ import { ADDITION_FURNITURE, type AdditionUse } from '../engine/furniture-additi
 const ADDITION_DESC: Record<AdditionUse, string> = { copyFurniture: '가구의 쓰임에 맞춰 사용한다.', rock: '앉아서 천천히 흔들며 쉰다.', sew: '바늘과 실로 천을 깁는다.', knead: '반죽을 누르고 접는다.', washFace: '물을 떠서 얼굴을 씻는다.', harp: '현을 번갈아 뜯는다.', paint: '붓으로 꽃을 그린다.', washDishes: '그릇을 문지르고 헹군다.', mill: '손잡이를 돌려 곡식을 간다.', waterPlant: '화분에 물을 주고 잎을 살핀다.', tuckDoll: '인형을 눕히고 이불을 덮는다.', pushCart: '방 안에서 밀며 논다.', open: '문을 열고 닫으며 살림을 정리한다.', sit: '앉아서 쉰다.', drink: '찻잔을 놓고 차를 마신다.', read: '종이를 펼쳐 놓고 살펴본다.', reach: '방에 놓아 두는 살림.' }
 import type { ItemId } from '../engine/types'
 import { isOtBook, otRow, type CopyBook } from '../engine/ot-books'
+import { fillSlots } from '../shared/josa'
 
 export interface Line {
   speaker: string
@@ -129,7 +130,7 @@ export const ALBUM_IDS: readonly string[] = Object.entries(SCENES)
   .map(([id]) => id)
 
 export function fill(template: string, vars: Record<string, string | number>): string {
-  return template.replace(/\{(\w+)\}/g, (_, k: string) => String(vars[k] ?? ''))
+  return fillSlots(template, vars)
 }
 
 /** 낱말 뒤에 받침에 맞는 목적격 조사를 붙인다 (마가복음을 / 빌레몬서를) */
@@ -141,7 +142,7 @@ export function withObject(word: string): string {
 
 /** 이웃이 부르는 이름: 문장 속 {player}를 주인공이 정한 이름으로 (정하지 않았으면 '필사가') */
 export function callName(text: string, name: string | undefined | null): string {
-  return text.includes('{player}') ? text.replaceAll('{player}', name?.trim() || '필사가') : text
+  return text.includes('{player}') ? fillSlots(text, { player: name?.trim() || '필사가' }, 'keep') : text
 }
 
 /** 낱말 뒤에 받침에 맞는 '이/가'를 붙인다 (파피가 / 웬델이) */
@@ -164,21 +165,21 @@ export function withAnd(word: string): string {
  */
 export function kidFill(text: string, name: string | undefined | null): string {
   const n = name?.trim() || '아이'
-  return text.replaceAll('{childSubj}', withSubject(n)).replaceAll('{childAnd}', withAnd(n)).replaceAll('{child}', n)
+  return fillSlots(text, { childSubj: withSubject(n), childAnd: withAnd(n), child: n }, 'keep')
 }
 
 /** 배우자 이름 넣기: {spouseSubj} 이/가, {spouseAnd} 와/과, {spouse} 이름만 (없으면 '곁의 사람') */
 export function spouseFill(text: string, name: string | undefined | null): string {
   if (!text.includes('{spouse')) return text
   const n = name?.trim() || '곁의 사람'
-  return text.replaceAll('{spouseSubj}', withSubject(n)).replaceAll('{spouseAnd}', withAnd(n)).replaceAll('{spouse}', n)
+  return fillSlots(text, { spouseSubj: withSubject(n), spouseAnd: withAnd(n), spouse: n }, 'keep')
 }
 
 /** 연인 이름 넣기 (함께 가기 장면, 계획 10 작업 4): {partnerSubj} 이/가, {partnerAnd} 와/과, {partner} 이름만 (없으면 '곁의 사람') */
 export function partnerFill(text: string, name: string | undefined | null): string {
   if (!text.includes('{partner')) return text
   const n = name?.trim() || '곁의 사람'
-  return text.replaceAll('{partnerSubj}', withSubject(n)).replaceAll('{partnerAnd}', withAnd(n)).replaceAll('{partner}', n)
+  return fillSlots(text, { partnerSubj: withSubject(n), partnerAnd: withAnd(n), partner: n }, 'keep')
 }
 
 export function itemName(id: ItemId): string {
