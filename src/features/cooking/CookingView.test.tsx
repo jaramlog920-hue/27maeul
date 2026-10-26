@@ -60,7 +60,7 @@ describe('요리하기 화면', () => {
     fireEvent.click(screen.getByRole('button', { name: C.dishes.beanDish.name }))
     const before = useGame.getState().game
     const button = screen.getByRole('button', { name: '재료 부족' })
-    expect(button).toBeDisabled()
+    expect(button).toHaveAttribute('aria-disabled', 'true')
     expect(container.textContent).toContain('0/1')
     fireEvent.click(button)
     expect(useGame.getState().game).toBe(before)

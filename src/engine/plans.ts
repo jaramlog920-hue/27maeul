@@ -147,6 +147,15 @@ export function canAttendAppt(s: GameState,id:string): boolean {
   const venue=venueFor(a)
   return !venue.moved && spotsForAppt(a).some(t => Math.abs(t.x-s.player.x)+Math.abs(t.y-s.player.y)<=3)
 }
+/** 지금 함께할 수 없는 까닭 (화면 안내용 — 끊긴 한 문장으로 모든 경우를 덮던 것을 나눈다, 2026-10-26 감사 A04) */
+export type AttendWhy = 'away' | 'time' | 'moved' | 'far'
+export function attendWhy(s: GameState,id:string): AttendWhy | null {
+  if (canAttendAppt(s,id)) return null
+  const a=s.plans?.appts.find(a => a.id === id)
+  if ((s.map ?? 'village') !== 'village') return 'away'
+  if (!a || a.state !== 'running' || a.day !== s.clock.day || s.clock.minute < a.from || s.clock.minute >= a.to) return 'time'
+  return venueFor(a).moved ? 'moved' : 'far'
+}
 export function attendAppt(s: GameState,id:string): GameState {
   if (!canAttendAppt(s,id)) return s
   return {...s,plans:{...s.plans,appts:s.plans.appts.map(x => x.id===id?{...x,attended:true}:x)}}

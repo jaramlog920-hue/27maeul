@@ -9,6 +9,8 @@ import { FURNI_PALETTE } from '../../render/furniture-art'
 import { useGame } from '../../store/game-store'
 import { applyLifeState } from '../work/WorkDay'
 import { HandPractice } from '../work/HandPractice'
+import { BlockedButton } from '../../shared/BlockedButton'
+import { t } from '../../shared/i18n'
 
 const S = T.skill
 interface LessonText { name: string; demo: Record<string, string>; styles: Record<string, string>; reply: Record<string, string>; replyClose?: Record<string, string> }
@@ -103,7 +105,7 @@ export function SkillCraftOptions({ at = 'workbench' }: { at?: 'workbench' | 'he
         <div className="actions">{def.styles.map((st) => <button key={st} aria-pressed={selected === st} onClick={() => applyLifeState(chooseSkillStyle(useGame.getState().game, id, st))}>{text.styles[st]}</button>)}</div>
         {def.needs
           ? <><p className="hint">{fill(S.materials, { items: itemList(def.needs), item })}</p>
-            <button disabled={!!needs || full} onClick={() => applyLifeState(craftLearned(useGame.getState().game, id))}>{fill(S.make, { item })}</button>
+            <BlockedButton why={needs ? t('why.craftNeeds') : full ? T.ui.bagFull : null} onClick={() => applyLifeState(craftLearned(useGame.getState().game, id))}>{fill(S.make, { item })}</BlockedButton>
             </>
           : null}
       </div>

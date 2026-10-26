@@ -78,7 +78,7 @@ export function SaveSlots({ onPick, onBack, notice }: { onPick: (slot: string) =
                       <span className="row-meta">{t('saves.line', { day: s.day, coins: s.coins, books: s.books })}</span>
                       {s.savedAt > 0 && <span className="row-meta">{when(s.savedAt)}</span>}
                     </button>
-                    <button className="save-del" onClick={() => setAsking(s.slot)}>
+                    <button className="save-del" disabled={busy} onClick={() => setAsking(s.slot)}>
                       {t('saves.delete')}
                     </button>
                   </div>

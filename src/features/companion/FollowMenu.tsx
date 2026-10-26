@@ -8,6 +8,8 @@ import { useGame } from '../../store/game-store'
 import { BABY_CARE, playerLook, type BabyCare } from '../../engine/game'
 import { kidPersona } from '../../engine/persona'
 import { PersonaCard } from './PersonaCard'
+import { BlockedButton } from '../../shared/BlockedButton'
+import { t } from '../../shared/i18n'
 
 /** 아기 돌보기 단추 (2026-10-12 도트) */
 const BABY_CARE_LABEL: Record<BabyCare, string> = { hold: '안아 주기', soothe: '살살 달래기', lay: '요람에 눕히기', tuck: '이불 덮어 주기' }
@@ -18,6 +20,8 @@ export function FollowMenu({ who }: { who: 'pet' | 'child' }) {
   if (who === 'pet') {
     const c = game.companion
     if (!c) return null
+    // 놀기·쉬기는 곁(두 칸 안)에서만 — 멀면 누를 때 까닭을 알린다
+    const far = Math.abs(c.x - game.player.x) + Math.abs(c.y - game.player.y) > 2
     return (
       <div className="dialog follow" role="dialog" aria-label={c.name}>
         <h2>{c.name}</h2>
@@ -43,8 +47,8 @@ export function FollowMenu({ who }: { who: 'pet' | 'child' }) {
         </details>
         <div className="actions column">
           <button onClick={petCompanion}>쓰다듬기</button>
-          <button disabled={Math.abs(c.x-game.player.x)+Math.abs(c.y-game.player.y)>2} onClick={() => petActivity('play')}>{T.pet.play}</button>
-          <button disabled={Math.abs(c.x-game.player.x)+Math.abs(c.y-game.player.y)>2} onClick={() => petActivity('rest')}>{T.pet.rest}</button>
+          <BlockedButton why={far ? t('why.petNear') : null} onClick={() => petActivity('play')}>{T.pet.play}</BlockedButton>
+          <BlockedButton why={far ? t('why.petNear') : null} onClick={() => petActivity('rest')}>{T.pet.rest}</BlockedButton>
           {c.kind === 'dog' && <button className={!c.stay ? 'primary' : ''} disabled={!c.stay} onClick={() => keepCompanion(false)}>
             데리고 다니기
           </button>}

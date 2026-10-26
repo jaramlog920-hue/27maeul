@@ -15,6 +15,7 @@ import { BUILDING_LABELS } from '../../render/old-village-art'
 import { useGame } from '../../store/game-store'
 import { DEFAULT_LOOK, hasHouseLook, type HouseLook } from '../../engine/newland-house-look'
 import { HouseLookPicker } from './HouseLookPicker'
+import { BlockedButton } from '../../shared/BlockedButton'
 
 const CELL = 8
 const W = NEWLAND_W
@@ -46,7 +47,8 @@ const FACING_TEXT: Partial<Record<Facing, string>> = { down: T.build.faceDown, l
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v))
 
 /** 건물 이름 (그림 묶음의 이름표 — 자산 쪽 값을 그대로 쓴다). 길·정원 칸은 생활 문구 */
-export function siteName(k: SiteKind): string {
+/** owner: 지은 건물의 주인 — 집 겸 일터는 주인 이름으로 (지금 고른 아이 이름이 모든 일터에 붙었다, 2026-10-26 감사 A19) */
+export function siteName(k: SiteKind, owner?: string): string {
   if (k === 'path' || k === 'garden') return T.build[k]
   if (isDecorKind(k)) return t(`decor.${k}`)
   // 주민의 꿈터는 꿈의 주인 이름으로 (계획 18: '○○의 꿈')
@@ -54,7 +56,7 @@ export function siteName(k: SiteKind): string {
   // 틸리의 꿈 (2026-10-08): 그림방
   if (k === 'gallery') return fill((T.newlandLife.dreams as Record<string, { label: string }>).tilly.label, { who: neighborById('tilly')?.role ?? '' })
   // 자란 아이의 집 겸 일터 (B18-7): 아이 이름으로
-  if (k === 'kidWork') return fill(T.newlandLife.kidWork.label, { name: useGame.getState().game.child?.name ?? '' })
+  if (k === 'kidWork') return fill(owner?.startsWith('npc:') ? T.newlandLife.kidWork.dreamLabel : T.newlandLife.kidWork.label, { name: ownerName(useGame.getState().game, owner) })
   return BUILDING_LABELS[SITES[k].assetId ?? k] ?? ''
 }
 
@@ -272,9 +274,9 @@ export function SitePreview({ pick, onBack, onPlaced, owner, moving }: { pick: S
         </p>
       )}
       <div className="actions menu column">
-        <button className="primary" disabled={block !== null} onClick={place}>
+        <BlockedButton className="primary" why={block !== null ? reason ?? '' : null} onClick={place}>
           {kind ? T.build.place : T.build.clear}
-        </button>
+        </BlockedButton>
         <button onClick={onBack}>{T.build.back}</button>
       </div>
     </div>

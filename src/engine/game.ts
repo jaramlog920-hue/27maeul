@@ -4236,8 +4236,13 @@ export function canDecorateOtBook(s: GameState, book: OtBook): 'notDone' | 'stoc
   if (!haveStock(s, SPECIAL_COST)) return 'stock'
   return null
 }
+/** 지금 모습과 같은 꾸밈인가 — 바꾼 게 없는데 재료만 빠지지 않게 (2026-10-26 감사 A20) */
+export function sameOtLook(s: GameState, book: OtBook, special: SpecialChoice): boolean {
+  const now = s.otBound?.[book]?.special
+  return !!now && now.color === special.color && now.pattern === special.pattern && now.deco === special.deco && (now.detail ?? 'none') === (special.detail ?? 'none')
+}
 export function decorateOtBook(s: GameState, book: OtBook, special: SpecialChoice): GameState {
-  if (canDecorateOtBook(s, book)) return s
+  if (canDecorateOtBook(s, book) || sameOtLook(s, book, special)) return s
   const paid = useStock(s, SPECIAL_COST)
   if (!paid) return s
   const otBound: OtBindings = { ...paid.otBound, [book]: { day: paid.otBound?.[book]?.day ?? s.clock.day, special } }

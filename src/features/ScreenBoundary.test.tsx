@@ -18,7 +18,7 @@ it('생활 화면 청크를 기다리는 동안 안내와 닫기 기능을 제�
 })
 it('청크 실패를 처리해 게임 전체가 사라지지 않고 창을 닫을 수 있다', async () => {
   vi.spyOn(console, 'error').mockImplementation(() => undefined)
-  const Screen = lazy(async () => { throw new Error('offline') })
+  const Screen = lazy(async () => { throw new Error('Failed to fetch dynamically imported module: /assets/screens/x.js') })
   useGame.setState({ modal: { kind: 'family' } })
   render(<ScreenBoundary><Screen /></ScreenBoundary>)
   expect(await screen.findByRole('alert')).toHaveTextContent('불러오지 못했어요')

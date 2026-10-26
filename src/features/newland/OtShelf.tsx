@@ -10,7 +10,6 @@ import { useGame } from '../../store/game-store'
 import { CONTENT, neighborById } from '../../content/catalog'
 import { canReadOtTogether, otBookRecord, otGroups, otReadFriends, otReadMemories } from '../../engine/ot-display'
 import { readOtWith } from '../../engine/game'
-import { saveGame } from '../../engine/save'
 import { OtSpine } from './OtDecorate'
 
 /** 차분한 파스텔 책등 색과 무늬 (책 순서대로 돌아가며 — 좌우 대칭) */
@@ -145,15 +144,15 @@ function ReadTogether() {
   const memories = otReadMemories(game, CONTENT.neighbors).slice(0, 5)
   const can = canReadOtTogether(game)
   const read = (npc: string) => {
-    const next = readOtWith(useGame.getState().game, npc, CONTENT)
-    saveGame(next)
-    useGame.setState({ game: next })
+    // 공통 저장 길로 — 업적·도감이 바로 적힌다 (2026-10-26 감사 A07)
+    useGame.getState().commitGame(readOtWith(useGame.getState().game, npc, CONTENT))
     useGame.getState().say(otReadText('otShelf.readDone', neighborById(npc)?.role ?? ''), 3200)
   }
   if (!friends.length && !memories.length) return null
   return (
     <section className="ot-read" aria-label={t('otShelf.read')}>
       <h3>{t('otShelf.read')}</h3>
+      {game.flags.otReadDay === game.clock.day && friends.length > 0 && <p className="hint">{t('why.otReadDone')}</p>}
       {can && friends.length > 0 && (
         <div className="actions menu">
           {friends.map((id) => (

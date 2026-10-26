@@ -54,7 +54,7 @@ it('사본 구매 뒤 늦은 입력은 닢·조각을 늘리지 않고 재입장
   expect(useGame.getState().piecePopups).toEqual([])
   openRare()
   expect(scrollAction()).toHaveTextContent('다 샀어요')
-  expect(scrollAction()).toBeDisabled()
+  expect(scrollAction()).toHaveAttribute('aria-disabled', 'true')
 })
 
 it.each(['closed', 'otherModal', 'loaded'] as const)('%s 상태의 이전 사본 구매 입력은 현재 저장을 보존한다', (reason) => {

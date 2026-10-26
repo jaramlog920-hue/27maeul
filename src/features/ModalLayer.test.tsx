@@ -373,6 +373,7 @@ describe('나의 한 줄 (책)', () => {
     expect(screen.getByRole('dialog', { name: '마을 서고' })).toBeInTheDocument()
     // 다시 도전으로 등급이 바뀌어도 다시 묻지 않는다
     await user.click(screen.getByRole('button', { name: '다시 도전' }))
+    await user.click(within(screen.getByRole('group', { name: '다시 도전' })).getByRole('button', { name: '다시 도전' }))
     answerAll()
     expect(useGame.getState().modal?.kind).toBe('library')
     // 📖 말씀 › 서고의 책 줄에서 적는다
@@ -578,7 +579,7 @@ describe('언덕 별 보기 (계획 9 작업 2)', () => {
     reset(at(12 * 60))
     useGame.setState({ modal: { kind: 'menu', place: 'hill' } })
     const { unmount } = render(<ModalLayer />)
-    expect(screen.getByRole('button', { name: '별 보기' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: '별 보기' })).toHaveAttribute('aria-disabled', 'true')
     expect(screen.getByText('별은 저녁 여덟 시가 지나야 보여요.')).toBeInTheDocument()
     // 별 보기는 성경구절 읽기 위
     const names = screen.getAllByRole('button').map((b) => b.textContent)

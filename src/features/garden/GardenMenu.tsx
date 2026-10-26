@@ -5,6 +5,11 @@ import { canPlant, CROPS, isRipe } from '../../engine/garden'
 import { seasonOf } from '../../engine/clock'
 import type { Tile } from '../../engine/types'
 import { useGame } from '../../store/game-store'
+import { BlockedButton } from '../../shared/BlockedButton'
+
+/** 심을 수 없는 까닭 (누르면 한 줄) */
+const plantWhy = (b: ReturnType<typeof canPlant>): string | null =>
+  b === null ? null : b === 'noSeed' ? T.ui.gardenNoSeed : b === 'winter' ? T.ui.gardenWinter : ''
 
 export function GardenMenu({ at }: { at: Tile }) {
   const game = useGame((s) => s.game)
@@ -19,12 +24,12 @@ export function GardenMenu({ at }: { at: Tile }) {
           <p>{T.ui.gardenWinter}</p>
         ) : (
           <div className="actions menu column">
-            <button disabled={canPlant(game, at, 'herb') !== null} onClick={() => plantAt(at, 'herb')}>
+            <BlockedButton why={plantWhy(canPlant(game, at, 'herb'))} onClick={() => plantAt(at, 'herb')}>
               {T.ui.gardenPlantHerb} ({itemName('seedHerb')} {game.inv.seedHerb ?? 0})
-            </button>
-            <button disabled={canPlant(game, at, 'bean') !== null} onClick={() => plantAt(at, 'bean')}>
+            </BlockedButton>
+            <BlockedButton why={plantWhy(canPlant(game, at, 'bean'))} onClick={() => plantAt(at, 'bean')}>
               {T.ui.gardenPlantBean} ({itemName('seedBean')} {game.inv.seedBean ?? 0})
-            </button>
+            </BlockedButton>
             {(game.inv.seedHerb ?? 0) + (game.inv.seedBean ?? 0) === 0 && <p className="hint">{T.ui.gardenNoSeed}</p>}
           </div>
         )

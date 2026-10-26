@@ -9,6 +9,7 @@ import { useGame } from '../../store/game-store'
 import { commitClub } from '../clubs/club-store'
 import { FestForm } from './FestForm'
 import { festErrorText } from './fest-text'
+import { t } from '../../shared/i18n'
 
 
 /** 다른 날로 다시 잡기: 날짜와 시간 둘만 고른다 */
@@ -29,6 +30,8 @@ function Postpone({ fest, onDone }: { fest: Fest; onDone: () => void }) {
 export function FestList() {
  const game = useGame(s => s.game), F = T.fest, open = useGame.getState().open
  const [creating, setCreating] = useState(false), [moving, setMoving] = useState<string | null>(null)
+ // 취소는 되돌릴 수 없어 한 번 더 묻는다 (2026-10-26 감사 A06)
+ const [asking, setAsking] = useState<string | null>(null)
  if (creating) return <FestForm onClose={() => setCreating(false)} />
  const kinds = festKinds(game, CONTENT)
  const list = (game.fests ?? []).filter(f => !f.closed)
@@ -49,7 +52,12 @@ export function FestList() {
      {running && <button className="primary" onClick={() => open({ kind: 'festSession', id: f.id })}>{F.join}</button>}
      {f.kind === 'festival' && role?.id === f.id && <button className="primary" onClick={() => open({ kind: 'festSession', id: f.id })}>{F.roleButton}</button>}
      {a && !running && <button onClick={() => setMoving(f.id)}>{F.postpone}</button>}
-     {!running && <button onClick={() => commitClub(cancelFest(game, f.id))}>{waiting ? F.cancel : F.cancelPlanned}</button>}
+     {!running && <button onClick={() => setAsking(f.id)}>{waiting ? F.cancel : F.cancelPlanned}</button>}
+    </div>}
+    {asking === f.id && <div className="actions" role="group" aria-label={F.cancelPlanned}>
+     <p className="hint">{t('confirm.cancelFest')}</p>
+     <button className="danger" onClick={() => { setAsking(null); commitClub(cancelFest(useGame.getState().game, f.id)) }}>{waiting ? F.cancel : F.cancelPlanned}</button>
+     <button onClick={() => setAsking(null)}>{t('confirm.keep')}</button>
     </div>}
     {f.kind === 'festival' && role?.id !== f.id && <p className="hint">{F.roleNear}</p>}
    </li>

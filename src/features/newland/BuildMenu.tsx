@@ -12,7 +12,7 @@ import { SiteIcon } from './SiteIcon'
 import { dreamHeard, settledGuests } from '../../engine/newland-life'
 import { familyHomes } from '../../engine/gen-homes'
 import { familyNames } from './FacilityView'
-import { kidWorkOwners, ownerJob, ownerName } from '../../engine/kid-work'
+import { kidWorkOwners, ownerJob } from '../../engine/kid-work'
 import { t } from '../../shared/i18n'
 import { canClaimHome } from '../../engine/newland-myhome'
 import { useGame } from '../../store/game-store'
@@ -44,7 +44,7 @@ function BuiltRow({ b, no, onMove }: { b: Build; no?: number; onMove?: (b: Build
   return (
     <li className="build-row">
       <span className="build-name">
-        {siteName(b.kind)}{no ? ` ${no}` : ''}{b.size ? ` ${b.size >= 8 ? '3단계' : '2단계'}` : ''} · {STATE_TEXT[b.state]}{claim === 'mine' ? ' · 내 집' : living ? ` · ${living}` : b.kind === 'kidWork' ? ` · ${ownerName(useGame.getState().game, b.owner)}` : ''}
+        {siteName(b.kind, b.owner)}{no ? ` ${no}` : ''}{b.size ? ` ${b.size >= 8 ? '3단계' : '2단계'}` : ''} · {STATE_TEXT[b.state]}{claim === 'mine' ? ' · 내 집' : living ? ` · ${living}` : ''}
       </span>
       {claim === null && <button onClick={() => claimNewHome(b.id)}>내 집으로 쓰기</button>}
       {claim === 'mine' && <button onClick={() => claimNewHome(null)}>내 집 그만 쓰기</button>}

@@ -1,6 +1,6 @@
 import { personOf } from '../../engine/people'
 import { neighborById } from '../../content/catalog'
-import { canAttendAppt, venueFor } from '../../engine/plans'
+import { attendWhy, canAttendAppt, venueFor, type AttendWhy } from '../../engine/plans'
 import { seasonOf } from '../../engine/clock'
 import { useState } from 'react'
 import { T } from '../../content/text'
@@ -22,7 +22,7 @@ export function ClubSession({id}:{id:string}) {
  if(!a || !a.activity || !CLUB_ACTIVITIES.includes(a.activity as ClubActivity))return null
  if(run?.step!=='done' && !canAttendAppt(game,id)) return <div className="dialog" role="dialog" aria-label={a.title??T.plans.activity[a.activity as ClubActivity]}>
   <h2>{a.title??T.plans.activity[a.activity as ClubActivity]}</h2>
-  <p className="hint">{a.state==='done'||a.state==='skipped'?C.done:T.fest.joinFar}</p>
+  <p className="hint">{a.state==='done'||a.state==='skipped'?C.done:(T.fest.joinWhy as Record<AttendWhy,string>)[attendWhy(game,id)??'far']}</p>
   <div className="actions"><button data-close onClick={useGame.getState().closeModal}>{T.ui.close}</button></div>
  </div>
  const activity=a.activity as ClubActivity

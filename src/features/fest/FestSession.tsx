@@ -2,7 +2,9 @@ import { neighborById } from '../../content/catalog'
 import { fill, T } from '../../content/text'
 import { doFestivalRole, festChoices, festFinish, festivalRoleReady, festReactions, festStep, joinFest } from '../../engine/fest'
 import { useGame } from '../../store/game-store'
-import { canAttendAppt } from '../../engine/plans'
+import { attendWhy, canAttendAppt, type AttendWhy } from '../../engine/plans'
+import { BlockedButton } from '../../shared/BlockedButton'
+import { t } from '../../shared/i18n'
 import { commitClub } from '../clubs/club-store'
 import { ClubRound } from '../clubs/ClubRound'
 import { apptGuests, fireGuests, roundGuests, roundMarks } from '../../engine/club-round'
@@ -25,20 +27,21 @@ export function FestSession({ id }: { id: string }) {
   return <div className="dialog" role="dialog" aria-label={title}><h2>{title}{f.role ? ` · ${F.roles[f.role]}` : ''}</h2>
    {done ? <p>{F.done}</p> : <><p>{f.role ? F.roleDo[f.role] : ''}</p>{!ready && <p className="hint">{F.roleNear}</p>}</>}
    {!done&&ready&&guests.length>0&&<ClubRound id={id} kind={f.role==='deco'?'festivalDeco':f.role==='tidy'?'festivalTidy':'festivalFood'} guests={guests}/>}
-   <div className="actions">{!done && <button className="primary" disabled={!ready||!roundOver} onClick={() => commitClub(doFestivalRole(game, id))}>{F.roleButton}</button>}<button data-close onClick={close}>{T.ui.close}</button></div>
+   <div className="actions">{!done && <BlockedButton className="primary" why={!ready ? t('why.festNear') : !roundOver ? t('why.roundFirst') : null} onClick={() => commitClub(doFestivalRole(game, id))}>{F.roleButton}</BlockedButton>}<button data-close onClick={close}>{T.ui.close}</button></div>
   </div>
  }
  const a = game.plans.appts.find(x => x.id === f.apptId)
  const nearby = !!a && canAttendAppt(game,a.id)
+ const why = (F.joinWhy as Record<AttendWhy, string>)[a ? attendWhy(game, a.id) ?? 'far' : 'time']
  const label = (c: string) => c === 'basic' ? (f.kind === 'housewarming' ? F.pick.home : F.pick.basic) : c === 'show' || c === 'story' ? F.pick[c] : itemName(c)
  const who = a?.startedWith ?? f.members
  return <div className="dialog" role="dialog" aria-label={title}><h2>{title} · {F.stepTitle[done ? 'done' : f.step]}</h2>
   {!done && !f.joined && <><button className="primary" onClick={() => {
    const next = joinFest(game, id)
    if (next !== game) commitClub(next)
-   else useGame.getState().say(F.joinFar)
-  }}>{F.join}</button><p className="hint">{F.joinFar}</p></>}
-  {!done && f.joined && !nearby && <p className="hint">{F.joinFar}</p>}
+   else useGame.getState().say(why, 2800)
+  }}>{F.join}</button>{!nearby && <p className="hint">{why}</p>}</>}
+  {!done && f.joined && !nearby && <p className="hint">{why}</p>}
   {!done && f.joined && nearby && <>
    {f.step === 'tidy' && <p>{fill(F.tidy, { deco: f.deco ? itemName(f.deco) : F.basicDeco })}</p>}
    {f.step === 'arrive' && <><p>{F.arrive}</p><p>{who.map(n => neighborById(n)?.role).join(' · ')}</p></>}

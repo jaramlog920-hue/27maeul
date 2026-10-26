@@ -49,7 +49,7 @@ describe('결혼 준비 돕기·다시 생각 (D31·P9)', () => {
     base((g) => ({ ...g, relations: { [RP]: { id: RP, a: 'poppy', b: 'rudy', stage: 'preparing', since: 8, prep: { tasks: ['bread', 'oil'], done: [], wedding: 15 } } } }), { inv })
   it('물건이 있으면 준비 하나를 돕고 마음이 오른다, 없으면 단추가 막힌다', () => {
     const { unmount } = talk(preparing(), 'rudy')
-    expect(screen.getByRole('button', { name: '준비 돕기' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: '준비 돕기' })).toHaveAttribute('aria-disabled', 'true')
     unmount()
     talk(preparing({ bread: 2 }), 'rudy')
     fireEvent.click(screen.getByRole('button', { name: '준비 돕기' }))
@@ -95,7 +95,7 @@ describe('아기 침대 (D32)', () => {
   })
   it('계보가 없는 옛 저장에서도 부탁하되 재료 없이는 만들기 단추가 잠긴다', () => {
     talk(base(g => g, { gen: undefined, inv: {} }), 'baker')
-    expect(screen.getByRole('button', { name: '아기 침대 만들어 주기' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: '아기 침대 만들어 주기' })).toHaveAttribute('aria-disabled', 'true')
   })
   it('전달 보상으로 배운 뒤에만 작업대에 제작 단추가 생기고 손일을 시작한다', () => {
     const s = base(g => g, { inv: { reed: 6, blanket: 2 } })

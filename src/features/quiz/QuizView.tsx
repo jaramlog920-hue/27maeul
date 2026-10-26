@@ -7,6 +7,7 @@ import { NOT_WRITTEN_OPTION, type GospelId, type Question } from '../../engine/q
 import { isGospel, isLetter, type Book } from '../../engine/types'
 import { useGame, type Modal } from '../../store/game-store'
 import { Passage } from '../passage/Passage'
+import { roomOf } from '../../engine/shelf-rooms'
 
 const BOOK_NAME = T.quiz.books as Record<Book, string>
 
@@ -191,8 +192,14 @@ function VerseOrderQuestion({ q, book, wrong, solved, onAnswer }: { q: Extract<Q
   )
 }
 
+/** 퀴즈를 연 서고 선반으로 (복음서 방은 서고 첫 화면에 있다) */
+function backToShelf(book: Book) {
+  const room = roomOf(book).id
+  useGame.getState().open(room === 'gospels' ? { kind: 'library' } : { kind: 'roomShelf', room })
+}
+
 export function QuizView({ modal }: { modal: Extract<Modal, { kind: 'quiz' }> }) {
-  const { answerQuiz, nextQuiz, closeModal } = useGame.getState()
+  const { answerQuiz, nextQuiz } = useGame.getState()
   const q = modal.questions[modal.index]
   const last = modal.index === modal.questions.length - 1
   const title = (id: string) => pieceById(id).title
@@ -241,7 +248,8 @@ export function QuizView({ modal }: { modal: Extract<Modal, { kind: 'quiz' }> })
         </p>
       )}
       <div className="actions">
-        {!modal.solved && !modal.mode.retry && <button onClick={closeModal}>{T.quiz.later}</button>}
+        {/* 나중에 하면 그 책의 서고 선반으로 돌아간다 — 지도로 나가 버렸다 (2026-10-26 감사 A12) */}
+        {!modal.solved && !modal.mode.retry && <button data-close onClick={() => backToShelf(modal.mode.book)}>{T.quiz.later}</button>}
         {modal.solved && (
           <button className="primary" onClick={nextQuiz}>
             {last ? T.quiz.shelveRecord : T.ui.next}

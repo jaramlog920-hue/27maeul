@@ -19,7 +19,7 @@ export function EndingMemories({preview=false}:{preview?:boolean}) {
   const neighbors=preview?['이웃들','배우자','아이']:Object.entries(game.hearts).filter(([,heart])=>heart>0).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([id])=>game.gen?.persons[slotPerson(game.gen,id)]?.name??neighborById(id)?.role).filter(Boolean)
   return <section className="ending-memories" aria-label="엔딩 추억 앨범">
     <h3>{preview?'추억 앨범 · 미리보기 예시':'내가 살아온 마을'}</h3>
-    <p className="ending-record">신약 27권 · 구약 39권<br/>{verses.toLocaleString()}절을 적은 기록{days>0?` · ${days}일의 시간`:''}</p>
+    <p className="ending-record">신약 27권 · 구약 39권<br/>{verses.toLocaleString('ko-KR')}절을 적은 기록{days>0?` · ${days}일의 시간`:''}</p>
     {entry?<><figure>{image&&<img src={image} alt={SCENES[entry.id]?.album??'마을의 기억'}/>}<figcaption>{SCENES[entry.id]?.album??'마을의 기억'} · {entry.day}일째</figcaption></figure>
       <nav aria-label="추억 넘기기"><button disabled={at===0} onClick={()=>setPage(at-1)}>이전 기억</button><span>{at+1} / {entries.length}</span><button disabled={at===entries.length-1} onClick={()=>setPage(at+1)}>다음 기억</button></nav></>:<p>기록한 장면은 없어도, 한 장씩 채워 온 시간이 여기 남아 있다.</p>}
     <p>{neighbors.length?`함께한 이웃 · ${neighbors.join(' · ')}`:'함께 살아온 사람들과, 이제 함께 읽을 책들.'}</p>

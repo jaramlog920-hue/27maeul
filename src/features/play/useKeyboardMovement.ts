@@ -24,6 +24,13 @@ export function useKeyboardMovement() {
       if (code) state.walk(...directions[code])
     }
     const down = (event: KeyboardEvent) => {
+      // Esc: 맨 위 창의 ✕(data-close)를 누른 것처럼 — 창마다 닫는 뜻이 다르니 그 단추를 그대로 쓴다 (2026-10-26 감사 A15)
+      if (event.key === 'Escape' && !event.defaultPrevented) {
+        const closers = document.querySelectorAll<HTMLButtonElement>('.modal-backdrop [data-close]:not([disabled])')
+        const last = closers[closers.length - 1]
+        if (last) { event.preventDefault(); last.click() }
+        return
+      }
       const target = event.target
       if (event.ctrlKey || event.altKey || event.metaKey || inputTarget(target) || document.hidden || blocked(useGame.getState())) {
         clear()

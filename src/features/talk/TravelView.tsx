@@ -12,6 +12,7 @@ import { childStage } from '../../engine/child'
 import type { TripReward } from '../../engine/trip-board'
 import { ItemIcon } from '../../shared/ItemIcon'
 import { AuthoredStoryScene } from '../scene/AuthoredStoryScene'
+import { BlockedButton } from '../../shared/BlockedButton'
 
 /** 떠나기가 막힌 까닭 (누르면 한 줄) */
 const TRIP_WHY: Record<string, string> = {
@@ -127,9 +128,9 @@ export function TravelView({ dest: back, rewards: brought }: { dest?: DestId; re
         모두 {tripCost(d, buys)}닢 (배삯·숙박 포함) · 사용 가능한 닢 {game.coins + tripCoinDelta(rewards)} (여행 수확·추가 주사위 반영)
       </p>
       <div className="actions">
-        <button className="primary" disabled={block !== null} onClick={() => goTrip(dest, buys, rewards)}>
+        <BlockedButton className="primary" why={block === null ? null : TRIP_WHY[block] ?? ''} onClick={() => goTrip(dest, buys, rewards)}>
           하룻밤 묵고 돌아가기
-        </button>
+        </BlockedButton>
         {/* 고른 물건 때문에 못 돌아가면, 아무것도 안 사고 돌아가는 길은 늘 열려 있다 */}
         {block !== null && buys.length > 0 && <button onClick={() => goTrip(dest, [], rewards)}>사지 않고 돌아가기</button>}
       </div>

@@ -14,6 +14,7 @@ import { CONTENT } from '../../content/catalog'
 import { has, take } from '../../engine/items'
 import type { ItemId } from '../../engine/types'
 import { useGame } from '../../store/game-store'
+import { t as tr } from '../../shared/i18n'
 
 /** 사기 목록을 넷으로 묶는다: 재료, 도구·살림, 가구·장식, 이번 장날의 생활 가구 */
 type Group = 'stuff' | 'tools' | 'decor' | 'home' | 'clothes'
@@ -97,20 +98,21 @@ export function TradeBoard() {
           {why && <p className="hint trade-why">{why}</p>}
         </>
       ),
-      action: { label: owned ? T.ui.tradeOwned : full ? T.ui.bagFullShort : t.coins !== undefined ? T.ui.tradeBuy : T.ui.talkTrade, disabled, onClick: () => (keyEarly && keyAsk !== t.id ? setKeyAsk(t.id) : doTrade(t)) },
+      action: { label: owned ? T.ui.tradeOwned : full ? T.ui.bagFullShort : t.coins !== undefined ? T.ui.tradeBuy : T.ui.talkTrade, why, onClick: () => (keyEarly && keyAsk !== t.id ? setKeyAsk(t.id) : doTrade(t)) },
     }
   }
   return (
     <div className="dialog" role="dialog" aria-label={T.ui.tradeTitle}>
       <h2>{T.ui.tradeTitle}</h2>
       <div className="actions">
-        <button disabled={tab === 'buy'} onClick={() => setTab('buy')}>
+        {/* 고른 탭은 끄지 않고 눌린 상태로 — 끄면 읽어 주기에서 '사용 불가'로 들렸다 (2026-10-26 감사) */}
+        <button className={tab === 'buy' ? 'primary' : ''} aria-pressed={tab === 'buy'} onClick={() => setTab('buy')}>
           {T.ui.tradeBuy}
         </button>
-        <button disabled={tab === 'rare'} onClick={() => setTab('rare')}>
+        <button className={tab === 'rare' ? 'primary' : ''} aria-pressed={tab === 'rare'} onClick={() => setTab('rare')}>
           희귀 좌판
         </button>
-        <button disabled={tab === 'sell'} onClick={() => setTab('sell')}>
+        <button className={tab === 'sell' ? 'primary' : ''} aria-pressed={tab === 'sell'} onClick={() => setTab('sell')}>
           {T.ui.tradeSell}
         </button>
       </div>
@@ -138,7 +140,7 @@ export function TradeBoard() {
                   badge: `${RARE_PRICES[id]}`,
                   dim: block !== null,
                   detail: <>{descOf(id) && <p>{descOf(id)}</p>}<p>{fill(T.ui.coins, { n: RARE_PRICES[id]! })}</p></>,
-                  action: { label: block === 'bought' ? '샀어요' : block === 'full' ? T.ui.bagFullShort : T.ui.tradeBuy, disabled: block !== null, onClick: () => buyRareItem(id) },
+                  action: { label: block === 'bought' ? '샀어요' : block === 'full' ? T.ui.bagFullShort : T.ui.tradeBuy, why: block === null ? null : block === 'coins' ? fill(T.ui.tradeWhyCoins, { n: (RARE_PRICES[id] ?? 0) - coins }) : block === 'full' ? T.ui.tradeWhyFull : block === 'bought' ? tr('why.rareBought') : '', onClick: () => buyRareItem(id) },
                 }
               }),
             ]}
@@ -162,7 +164,7 @@ export function TradeBoard() {
                 badge: `${inv[id] ?? 0}`,
                 dim: block !== null,
                 detail: <>{descOf(id) && <p>{descOf(id)}</p>}<p>{fill(T.ui.sellPrice, { n: sellPrice(game, id)! })}</p></>,
-                action: { label: T.ui.tradeSell, disabled: block !== null, onClick: () => sellItem(id) },
+                action: { label: T.ui.tradeSell, why: block === null ? null : block === 'notMarket' ? '상인에게는 장날에 팔 수 있어요.' : block === 'cap' ? `오늘은 ${SELL_CAP}개를 모두 팔았어요. 다음 장날에 다시 팔 수 있어요.` : '', onClick: () => sellItem(id) },
               }
             })}
           />
@@ -196,6 +198,6 @@ function scrollEntry(game: Parameters<typeof canBuyScroll>[0], buyScroll: () => 
     badge: `${SCROLL_PRICE}`,
     dim: block !== null,
     detail: <><p>지금 책의 다음 대목 하나.</p><p>{fill(T.ui.coins, { n: SCROLL_PRICE })}</p></>,
-    action: { label: block === 'done' ? '다 샀어요' : block === 'noPiece' ? '없음' : T.ui.tradeBuy, disabled: block !== null, onClick: buyScroll },
+    action: { label: block === 'done' ? '다 샀어요' : block === 'noPiece' ? '없음' : T.ui.tradeBuy, why: block === null ? null : block === 'coins' ? fill(T.ui.tradeWhyCoins, { n: SCROLL_PRICE - game.coins }) : tr(`why.scroll.${block}`), onClick: buyScroll },
   }]
 }

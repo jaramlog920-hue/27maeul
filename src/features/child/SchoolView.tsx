@@ -6,6 +6,7 @@ import { canSchool, SCHOOL_FEE, SCHOOL_XP } from '../../engine/game'
 import { featureHint } from '../../engine/feature-rules'
 import { STAT_IDS, statScore, type StatId } from '../../engine/stats'
 import { useGame } from '../../store/game-store'
+import { BlockedButton } from '../../shared/BlockedButton'
 
 const SHOW_LABEL: Record<ShowMode, string> = { speak: '작품 소개하기', draw: '그림으로 보여 주기', watch: '조용히 구경하기' }
 const SHOW_WHY: Record<string, string> = {
@@ -51,9 +52,9 @@ export function SchoolView() {
               <span className="trade-pay">
                 {kid.name} {statScore(kid.stats[id])}/100
               </span>
-              <button disabled={block !== null} onClick={() => goSchool(id)}>
+              <BlockedButton why={block === null ? null : block === 'locked' ? featureHint('school') : WHY[block] ?? ''} onClick={() => goSchool(id)}>
                 맡기기
-              </button>
+              </BlockedButton>
             </li>
           ))}
         </ul>
@@ -66,9 +67,9 @@ export function SchoolView() {
           <ul className="kid-acts">
             {SHOW_MODES.map((m) => (
               <li key={m}>
-                <button disabled={canShow(game, m) !== null} onClick={() => showAtSchool(m)}>
+                <BlockedButton why={canShow(game, m) === null ? null : SHOW_WHY[canShow(game, m)!] ?? ''} onClick={() => showAtSchool(m)}>
                   {SHOW_LABEL[m]}
-                </button>
+                </BlockedButton>
               </li>
             ))}
           </ul>

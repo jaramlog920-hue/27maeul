@@ -8,7 +8,7 @@ const saveName = (save: SaveSlot) => save.name || '이름 없는 기록'
 
 /** 용량 부족 상태에서 시작 화면으로 나가지 않고 다른 칸을 백업한 뒤 정리한다. */
 export function StorageCleanup({ getCurrentGame, getCurrentSlot, disabled = false, onBusy }: {
-  getCurrentGame: () => GameState
+  getCurrentGame: () => GameState | null
   getCurrentSlot?: () => string
   disabled?: boolean
   onBusy?: (busy: boolean) => void
@@ -54,7 +54,8 @@ export function StorageCleanup({ getCurrentGame, getCurrentSlot, disabled = fals
         text = exportSave(game, undefined, save.slot)
       } finally {
         // 다른 칸의 불러오기 검증이 바꾼 지도·가구를 현재 플레이 기록으로 즉시 되돌린다.
-        syncHome(getCurrentGame())
+        const current = getCurrentGame()
+        if (current) syncHome(current)
       }
       const result = await downloadSaveFile(text, `27maeul-slot${save.slot}-${save.day}day.json`)
       setBackups((value) => ({ ...value, [save.slot]: result }))
@@ -80,7 +81,8 @@ export function StorageCleanup({ getCurrentGame, getCurrentSlot, disabled = fals
     begin(save.slot)
     try {
       // 공간을 확보하는 트랜잭션에 현재의 최신 진행도 함께 넣는다.
-      if (!saveGame(getCurrentGame(), undefined, getCurrentSlot?.())) throw new Error('current save failed')
+      const current = getCurrentGame()
+      if (current && !saveGame(current, undefined, getCurrentSlot?.())) throw new Error('current save failed')
       if (!await deleteSaveAsync(save.slot)) throw new Error('delete failed')
       setSaves(oldSaves())
       setDeleteSlot(null)

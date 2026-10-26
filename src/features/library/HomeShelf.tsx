@@ -4,6 +4,7 @@ import { fill, T } from '../../content/text'
 import { finishedBooks, HOME_SHELF_MAX } from '../../engine/finished-books'
 import { useGame } from '../../store/game-store'
 import { BookCover } from './BookArt'
+import { BlockedButton } from '../../shared/BlockedButton'
 
 const BOOK_NAME = T.quiz.books as Record<string, string>
 const H = T.homeShelf
@@ -45,9 +46,9 @@ export function HomeShelf() {
                 <li key={b} data-book={b}>
                   <span className="home-shelf-name">{BOOK_NAME[b]}</span>
                   <button onClick={() => openBook(b, 'homeShelf')}>{T.bookView.open}</button>
-                  <button className={on ? '' : 'primary'} disabled={!on && full} onClick={() => toggleHomeBook(b)} aria-label={`${BOOK_NAME[b]} · ${on ? H.take : H.put}`}>
+                  <BlockedButton className={on ? '' : 'primary'} why={!on && full ? H.full + '.' : null} onClick={() => toggleHomeBook(b)} aria-label={`${BOOK_NAME[b]} · ${on ? H.take : H.put}`}>
                     {on ? H.take : full ? H.full : H.put}
-                  </button>
+                  </BlockedButton>
                 </li>
               )
             })}

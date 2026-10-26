@@ -13,6 +13,7 @@ import { useGame, type Modal } from '../../store/game-store'
 import { BookCover, Spine } from './BookArt'
 import { LibraryWork } from './LibraryWork'
 import type { LibraryAction } from '../../render/library-art'
+import { BlockedButton } from '../../shared/BlockedButton'
 
 const BOOK_NAME = T.quiz.books as Record<string, string>
 const B = T.binding
@@ -92,9 +93,9 @@ export function BindView({ modal }: { modal: Extract<Modal, { kind: 'bind' }> })
         {!enough && <p className="hint">{modal.redo ? B.shortRedo : B.short}</p>}
         <div className="actions">
           <button onClick={() => (modal.redo ? closeBind() : open({ ...modal, step: 'choose', choice }))}>{modal.redo ? T.ui.close : B.back}</button>
-          <button className="primary" disabled={!enough} onClick={() => bindSpecial(choice)}>
+          <BlockedButton className="primary" why={enough ? null : modal.redo ? B.shortRedo : B.short} onClick={() => bindSpecial(choice)}>
             {modal.redo ? B.confirmRedo : B.confirm}
-          </button>
+          </BlockedButton>
         </div>
       </div>
     )

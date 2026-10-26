@@ -8,6 +8,7 @@ import type { Facing } from '../../engine/types'
 import { Preview, SLIDER_MAX, sliderTrack } from '../intro/AvatarForm'
 import { useGame } from '../../store/game-store'
 import {COPY_OUTFITS,wardrobeTopIndices,ownsCopyOutfit} from '../../engine/copy-outfits'
+import { t } from '../../shared/i18n'
 
 type RowKey = 'hairFront' | 'hairBack' | 'top' | 'bottom' | 'acc'
 type ColorKey = 'eyeColor' | 'hairColor' | 'bottomColor' | 'accColor'
@@ -28,6 +29,9 @@ export function Wardrobe({ who }: { who: WardrobeWho }) {
   const [a, setA] = useState<FullAvatar | null>(start)
   const [turn, setTurn] = useState(0)
   const [colorKey, setColorKey] = useState<ColorKey>('hairColor')
+  // 바꾼 옷이 있으면 뒤로 가기 전에 한 번 묻는다 — 말없이 버려졌다 (2026-10-26 감사)
+  const [askBack, setAskBack] = useState(false)
+  const changed = JSON.stringify(a) !== JSON.stringify(start)
   if (!a || !start) return null
   const rowLabels = T.avatar.rows as Record<RowKey, string>
   const colorLabels = T.avatar.colors as Record<ColorKey, string>
@@ -84,12 +88,20 @@ export function Wardrobe({ who }: { who: WardrobeWho }) {
           </label>
         ))}
       </div>
-      <div className="actions">
-        <button onClick={() => open({ kind: 'family' })}>{T.ui.back}</button>
-        <button className="primary" onClick={() => dressUp(who, a)}>
-          이대로 입기
-        </button>
-      </div>
+      {askBack ? (
+        <div className="actions" role="group" aria-label={T.ui.back}>
+          <p className="hint">{t('confirm.wardrobeBack')}</p>
+          <button onClick={() => open({ kind: 'family' })}>{t('confirm.discard')}</button>
+          <button className="primary" onClick={() => setAskBack(false)}>{t('confirm.keep')}</button>
+        </div>
+      ) : (
+        <div className="actions">
+          <button onClick={() => (changed ? setAskBack(true) : open({ kind: 'family' }))}>{T.ui.back}</button>
+          <button className="primary" onClick={() => dressUp(who, a)}>
+            이대로 입기
+          </button>
+        </div>
+      )}
     </div>
   )
 }

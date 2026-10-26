@@ -11,12 +11,15 @@ import { Spine } from './BookArt'
 import { SpineMarks } from './SpineMarks'
 import { useState } from 'react'
 import { LibraryWork } from './LibraryWork'
+import { BlockedButton } from '../../shared/BlockedButton'
+import { t } from '../../shared/i18n'
 
 const BOOK_NAME = T.quiz.books as Record<string, string>
 const GRADES = T.library.grades as string[]
 
 export function ShelfRow({ book, back, notYet }: { book: Book; back: BindBack; notYet: string }) {
   const [justShelved, setJustShelved] = useState(false)
+  const [askRetry, setAskRetry] = useState(false)
   const g = useGame((s) => s.game.shelved[book])
   const binding = useGame((s) => s.game.bound[book])
   const progress = useGame((s) => s.game.progress)
@@ -45,9 +48,17 @@ export function ShelfRow({ book, back, notYet }: { book: Book; back: BindBack; n
       )}
       {justShelved && g !== undefined && <LibraryWork book={book} action="shelve" binding={binding} grade={g} />}
       {g !== undefined && g < 2 && (
-        <button disabled={!has(inv, RETRY_COST)} onClick={() => startRetry(book)}>
+        <BlockedButton why={has(inv, RETRY_COST) ? null : t('why.retryCost')} onClick={() => setAskRetry(true)}>
           {T.library.retry}
-        </button>
+        </BlockedButton>
+      )}
+      {/* 재도전은 재료를 먼저 쓰고 끝까지 풀어야 해서, 잘못 누르지 않게 한 번 묻는다 (2026-10-26 감사 A12) */}
+      {askRetry && g !== undefined && g < 2 && (
+        <div className="actions" role="group" aria-label={T.library.retry}>
+          <p className="hint">{t('confirm.retry')}</p>
+          <button className="primary" onClick={() => { setAskRetry(false); startRetry(book) }}>{T.library.retry}</button>
+          <button onClick={() => setAskRetry(false)}>{t('confirm.keep')}</button>
+        </div>
       )}
       {g !== undefined && <button onClick={() => openBind(book, back)}>{T.library.decorate}</button>}
       {/* 다 쓴 책(제본했거나 꽂은 책)은 펼쳐 볼 수 있다 (계획 14 작업 8) */}

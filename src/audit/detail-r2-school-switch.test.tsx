@@ -27,7 +27,7 @@ describe('R2 school sibling attendance boundary', () => {
     const initial = ready()
     render(<SchoolView />)
     const staleButton = screen.getAllByRole('button', { name: '맡기기' })[0]
-    expect(staleButton).toBeDisabled()
+    expect(staleButton).toHaveAttribute('aria-disabled', 'true')
     expect(screen.getByText('오늘은 이미 맡겼어요.')).toBeVisible()
     act(() => useGame.getState().selectKid(50))
     expect(canSchool(useGame.getState().game)).toBeNull()
@@ -50,7 +50,7 @@ describe('R2 school sibling attendance boundary', () => {
     const button = screen.getAllByRole('button', { name: '맡기기' })[0]
     expect(button).toBeEnabled()
     act(() => useGame.getState().selectKid(40))
-    expect(button).toBeDisabled()
+    expect(button).toHaveAttribute('aria-disabled', 'true')
     clickFirst()
     useGame.getState().goSchool('strength')
     expect(useGame.getState().game.coins).toBe(100)

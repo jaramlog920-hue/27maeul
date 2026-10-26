@@ -22,6 +22,7 @@ function heartUpPerson(s: GameState, pid: string): GameState {
   return slot && neighborById(slot) ? heartUp(s, slot, PREP_GAIN) : s
 }
 import { bakerCribWaiting, makeBakerCrib } from '../../engine/baker-baby'
+import { BlockedButton } from '../../shared/BlockedButton'
 
 const G = T.gen
 // 생성된 사람(이어받은 자녀 등)은 그 이름으로 (22-C)
@@ -46,12 +47,12 @@ function BakerBabyTalk({ npc }: { npc: string }) {
     <p className="talk-line">{waiting ? G.bakerCribAsk : G.bakerCribThanks}</p>
     {waiting && <>
       <p className="hint">{fill(T.ui.helpNeeds, { items: itemList(CRIB_NEEDS) })}</p>
-      <div className="actions menu"><button className="primary" disabled={!has(game.inv, CRIB_NEEDS)} onClick={() => {
+      <div className="actions menu"><BlockedButton className="primary" why={has(game.inv, CRIB_NEEDS) ? null : fill(T.ui.helpNeeds, { items: itemList(CRIB_NEEDS) })} onClick={() => {
         const next = makeBakerCrib(useGame.getState().game)
         if (!next) return
         applyLifeState(next)
         setThanks(true)
-      }}>{t('gen.makeCrib')}</button></div>
+      }}>{t('gen.makeCrib')}</BlockedButton></div>
     </>}
   </div>
 }
@@ -114,8 +115,8 @@ function AutonomousGenTalk({ npc }: { npc: string }) {
         <div className="actions menu">
           {consult && <button className="primary" onClick={() => { setAsking(true); setLine(null) }}>{t('gen.consult')}</button>}
           {prep && todo && (
-            <button
-              disabled={!has(game.inv, PREP_TASKS[todo])}
+            <BlockedButton
+              why={has(game.inv, PREP_TASKS[todo]) ? null : fill(T.ui.helpNeeds, { items: itemList(PREP_TASKS[todo]) })}
               onClick={() => {
                 const cur = useGame.getState().game
                 const inv = take(cur.inv, PREP_TASKS[todo])
@@ -127,7 +128,7 @@ function AutonomousGenTalk({ npc }: { npc: string }) {
               }}
             >
               {t('gen.prepHelp')}
-            </button>
+            </BlockedButton>
           )}
           {prep && !sure && <button onClick={() => setSure(true)}>{t('gen.reconsider')}</button>}
           {prep && sure && (
@@ -146,9 +147,9 @@ function AutonomousGenTalk({ npc }: { npc: string }) {
             </>
           )}
           {cribMine && (
-            <button
+            <BlockedButton
               className="primary"
-              disabled={!has(game.inv, CRIB_NEEDS)}
+              why={has(game.inv, CRIB_NEEDS) ? null : fill(T.ui.helpNeeds, { items: itemList(CRIB_NEEDS) })}
               onClick={() => {
                 const cur = useGame.getState().game
                 const inv = take(cur.inv, CRIB_NEEDS)
@@ -161,7 +162,7 @@ function AutonomousGenTalk({ npc }: { npc: string }) {
               }}
             >
               {t('gen.giveCrib')}
-            </button>
+            </BlockedButton>
           )}
         </div>
       )}

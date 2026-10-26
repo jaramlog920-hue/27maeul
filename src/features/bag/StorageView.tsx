@@ -9,6 +9,7 @@ import { isHome } from '../../engine/world'
 import { ItemIcon } from '../../shared/ItemIcon'
 import { useGame } from '../../store/game-store'
 import { ItemGrid, type Pick } from './Bag'
+import { BlockedButton } from '../../shared/BlockedButton'
 
 const E = T.easy
 
@@ -32,11 +33,11 @@ export function StorageView({ item }: { item: ItemId }) {
         </div>
         <div className="bag-actions">
           {from === 'chest' ? (
-            <button className="primary" disabled={!atHome} onClick={() => takeChest(picked.id)}>{E.storageTake}</button>
+            <BlockedButton className="primary" why={atHome ? null : E.storageAway} onClick={() => takeChest(picked.id)}>{E.storageTake}</BlockedButton>
           ) : (
             <>
-              <button className="primary" disabled={!atHome} onClick={() => putChest(picked.id, 1)}>{E.storagePut}</button>
-              {n > 1 && <button disabled={!atHome} onClick={() => putChest(picked.id, n)}>{E.storagePutAll}</button>}
+              <BlockedButton className="primary" why={atHome ? null : E.storageAway} onClick={() => putChest(picked.id, 1)}>{E.storagePut}</BlockedButton>
+              {n > 1 && <BlockedButton why={atHome ? null : E.storageAway} onClick={() => putChest(picked.id, n)}>{E.storagePutAll}</BlockedButton>}
             </>
           )}
         </div>

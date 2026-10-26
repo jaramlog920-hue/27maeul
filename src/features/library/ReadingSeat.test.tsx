@@ -45,7 +45,7 @@ it('열람석 클릭 후 이전 입력은 두 번째 비용·조각을 지급하
   act(() => useGame.getState().load(saved))
   expect(useGame.getState().piecePopups).toEqual([])
   act(() => useGame.setState({ modal: { kind: 'library' } }))
-  expect(screen.getByRole('button', { name: '옮겨 적기 · 3닢' })).toBeDisabled()
+  expect(screen.getByRole('button', { name: '옮겨 적기 · 3닢' })).toHaveAttribute('aria-disabled', 'true')
 })
 
 it('다른 저장을 불러와 창이 닫힌 뒤 이전 열람 입력은 새 저장을 변경하지 않는다', () => {

@@ -77,7 +77,7 @@ describe('유저가 맡는 모임 손일',()=>{
   const b=useGame.getState().game
   useGame.getState().load({...b,clock:{day:20,minute:1090},player:{...b.player,...FIRE},npcs:{...b.npcs,baker:{...b.npcs.baker,...FESTIVAL_SPOTS.baker,visible:true,path:[]}},plans:{appts:[],nextId:1},clubSessions:{},fests:[{id:'fest:1',kind:'festival',day:20,place:'bench',members:[],role:'deco',reserve:{},step:'tidy',joined:false,consumed:false,closed:false,cancelled:false}]})
   render(<FestSession id="fest:1"/>)
-  expect(screen.getByRole('button',{name:T.fest.roleButton})).toBeDisabled()
+  expect(screen.getByRole('button',{name:T.fest.roleButton})).toHaveAttribute('aria-disabled', 'true')
   fireEvent.click(screen.getByRole('button',{name:(T.round.kinds.festivalDeco.opts as string[])[wantOf('baker','festivalDeco')]}))
   fireEvent.click(screen.getByRole('button',{name:'다음'}))
   fireEvent.click(screen.getByRole('button',{name:T.fest.roleButton}))

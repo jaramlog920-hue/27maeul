@@ -134,7 +134,8 @@ export function App() {
     <div style={{ display: 'contents' }} inert={busy}>{content}</div>
     {busy && <p className="storage-busy" role="status">저장을 확인하는 중이에요.</p>}
     <StorageNotice
-      getCurrentGame={() => screen === 'play' ? useGame.getState().game : titleSaves().last?.game ?? useGame.getState().game}
+      // 시작 화면에서 열 수 있는 칸이 없으면 저장할 기록도 없다 — 빈 새 게임으로 칸을 덮지 않는다 (2026-10-26 감사 A03)
+      getCurrentGame={() => screen === 'play' ? useGame.getState().game : titleSaves().last?.game ?? null}
       getCurrentSlot={() => screen === 'play' ? activeSlot() : titleSaves().last?.slot ?? activeSlot()}
     />
   </>

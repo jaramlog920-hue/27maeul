@@ -92,8 +92,12 @@ function OtBookList() {
         setLoading(null)
         copyBook(b)
       },
-      // 못 불러와도 오류 문구는 띄우지 않는다 — 줄을 지우고 단추만 남긴다
-      () => alive.current && setLoading(null),
+      // 못 불러오면 한 줄 알린다 — 아무 반응이 없어 눌린 줄도 몰랐다 (2026-10-26 감사 A08). 다시 누르면 다시 받는다
+      () => {
+        if (!alive.current) return
+        setLoading(null)
+        useGame.getState().say(t('why.otLoadFailed'), 4000)
+      },
     )
   }
   return (
@@ -1091,17 +1095,15 @@ function useOtReady(book: CopyBook | null): 'ready' | 'loading' | 'failed' {
   return state?.book === book && state.v === 'failed' ? 'failed' : 'loading'
 }
 
-/** 구약 책을 펼치는 동안: "책을 펼치는 중" 한 줄과 단추. 못 불러오면 줄을 지우고 단추만 남긴다 */
+/** 구약 책을 펼치는 동안: "책을 펼치는 중" 한 줄과 단추. 못 불러오면 그 까닭과, 책 고르기에서 다시 누르라는 줄 */
 function OtOpening({ failed }: { failed: boolean }) {
   const { copyView, copyExit } = useGame.getState()
   return (
     <div className="copy-panel copy-menu">
       <h2>{C.deskTitle}</h2>
-      {!failed && (
-        <p className="hint" role="status">
-          {T.ot.opening}
-        </p>
-      )}
+      <p className="hint" role={failed ? 'alert' : 'status'}>
+        {failed ? t('why.otLoadFailed') : T.ot.opening}
+      </p>
       <div className="copy-menu-actions">
         <button onClick={() => copyView('pick')}>{C.pickOther}</button>
         <button onClick={copyExit}>{C.exit}</button>

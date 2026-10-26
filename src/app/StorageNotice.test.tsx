@@ -20,7 +20,7 @@ vi.mock('../engine/game-storage', () => ({
   reportGameStorageError: (error: unknown) => mocks.report(error),
 }))
 vi.mock('../engine/save', () => ({ saveGame: (...args: unknown[]) => mocks.save(...args), exportSave: (...args: unknown[]) => mocks.exportSave(...args) }))
-vi.mock('../store/game-store', () => ({ useGame: { getState: () => ({ game: mocks.game }) } }))
+vi.mock('../store/game-store', () => ({ useGame: { getState: () => ({ game: mocks.game, loadEpoch: 1 }) } }))
 vi.mock('../shared/save-file-download', () => ({ downloadSaveFile: (...args: unknown[]) => mocks.download(...args) }))
 vi.mock('./StorageCleanup', () => ({ StorageCleanup: () => null }))
 

@@ -1,6 +1,7 @@
 // 아이콘 칸 목록 (2026-10-12 사용자: 줄줄이 늘어놓은 목록 대신 가방처럼 아이콘으로, 누르면 값·설명·단추)
 // 가방(Bag)의 bag-grid·bag-slot·bag-detail 모양을 그대로 쓴다
 import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { BlockedButton } from './BlockedButton'
 
 export interface IconEntry {
   key: string
@@ -13,7 +14,8 @@ export interface IconEntry {
   dim?: boolean
   /** 고르면 나오는 자세히 칸 */
   detail?: ReactNode
-  action?: { label: string; disabled?: boolean; onClick: () => void }
+  /** why: 지금 못 하는 까닭 — 있으면 흐리게, 누르면 까닭을 알린다 (BlockedButton) */
+  action?: { label: string; why?: string | null; onClick: () => void }
 }
 
 /** named: 칸 아래에 이름을 보인다 (장터 — 2026-10-19 플레이 점검 P20: 하나씩 눌러 봐야 무엇인지 알았다) */
@@ -47,9 +49,9 @@ export function IconGrid({ entries, title, emptyText, named = false }: { entries
             {sel.detail}
             {sel.action && (
               <div className="actions">
-                <button className="primary" disabled={sel.action.disabled} onClick={sel.action.onClick}>
+                <BlockedButton className="primary" why={sel.action.why} onClick={sel.action.onClick}>
                   {sel.action.label}
-                </button>
+                </BlockedButton>
               </div>
             )}
           </div>

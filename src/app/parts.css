@@ -20,6 +20,13 @@
   top: max(12px, env(safe-area-inset-top));
   z-index: 70;
 }
+/* 화면을 다 덮는 필사 책상·장면은 맨 위가 제목 자리라, 알림이 제목을 가렸다 (2026-10-26 감사 A05) — 제목 아래로 내린다 */
+body:has(.play.focus) .toast-over-modal {
+  top: calc(max(12px, env(safe-area-inset-top)) + 64px);
+}
+body:has(.dialog.scene) .toast-over-modal {
+  top: 38%;
+}
 .decorate-bar {
   position: fixed;
   left: 0;
@@ -111,7 +118,7 @@
   font-weight: 400;
   text-align: left;
 }
-.actions.menu.column > button:not([data-close]):not(:disabled)::after {
+.actions.menu.column > button:not([data-close]):not(:disabled):not([aria-disabled='true'])::after {
   content: '›';
   margin-left: auto;
   padding-left: 8px;
@@ -126,7 +133,8 @@
 .actions.menu.column > button.on {
   background: #f6ead0;
 }
-.actions.menu.column > button:disabled {
+.actions.menu.column > button:disabled,
+.actions.menu.column > button[aria-disabled='true'] {
   opacity: 0.45;
 }
 .actions.menu.column > button:active:not(:disabled) {
@@ -2375,8 +2383,8 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
 .rows > li { margin: 0; padding: 0; }
 .row { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 52px; padding: 8px 6px; border: 0; border-bottom: 2px solid #e6d9bf; border-radius: 0; background: transparent; box-shadow: none; color: inherit; font: inherit; text-align: left; }
 button.row { cursor: pointer; }
-button.row:not(:disabled)::after { content: '›'; margin-left: 2px; font-size: 20px; color: #a88c5e; }
-button.row:disabled { opacity: 0.5; }
+button.row:not(:disabled):not([aria-disabled='true'])::after { content: '›'; margin-left: 2px; font-size: 20px; color: #a88c5e; }
+button.row:disabled, button.row[aria-disabled='true'] { opacity: 0.5; }
 button.row:active:not(:disabled) { background: #efe3c4; }
 .row-main { display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; gap: 2px; }
 .row-main b { font-weight: 700; word-break: keep-all; overflow-wrap: anywhere; }

@@ -46,7 +46,7 @@ describe('merchant selling tab', () => {
     useGame.setState({ game: block === 'notMarket' ? { ...game, clock: { day: 8, minute: 600 } } : { ...game, flags: { ...game.flags, soldDay: 7, soldCount: SELL_CAP } } })
     selling()
     pick(itemName('herb'))
-    expect(action()).toBeDisabled()
+    expect(action()).toHaveAttribute('aria-disabled', 'true')
     expect(screen.getByRole('status')).toHaveTextContent(block === 'cap' ? '다음 장날' : '장날에 팔 수')
   })
 })

@@ -8,10 +8,14 @@ import { useGame } from '../store/game-store'
 import { StorageCleanup } from './StorageCleanup'
 import './storage-notice.css'
 
-const currentGame = () => useGame.getState().game
+/**
+ * 저장할 지금 기록 — 아직 아무 칸도 불러오지 않았으면(시작 화면·주인공 만들기에서 깨짐) 없다.
+ * 스토어의 처음 값은 빈 새 게임이라, 그대로 쓰면 '다시 저장'이 기존 칸을 빈 게임으로 덮었다 (2026-10-26 감사 A03)
+ */
+const currentGame = () => (useGame.getState().loadEpoch > 0 ? useGame.getState().game : null)
 
 /** 저장 실패는 한 번 알리고, 사용자가 미루면 같은 실패의 자동 저장마다 다시 열지 않는다. */
-export function StorageNotice({ getCurrentGame = currentGame, getCurrentSlot }: { getCurrentGame?: () => GameState; getCurrentSlot?: () => string }) {
+export function StorageNotice({ getCurrentGame = currentGame, getCurrentSlot }: { getCurrentGame?: () => GameState | null; getCurrentSlot?: () => string }) {
   const [status, setStatus] = useState(getGameStorageStatus)
   const [open, setOpen] = useState(() => !!getGameStorageStatus().error)
   const [retrying, setRetrying] = useState(false)
@@ -63,7 +67,8 @@ export function StorageNotice({ getCurrentGame = currentGame, getCurrentSlot }: 
     setMessage('기기에 저장하는 중이에요…')
     try {
       const game = getCurrentGame()
-      const queued = getCurrentSlot ? saveGame(game, undefined, getCurrentSlot()) : saveGame(game)
+      // 지금 기록이 없으면 새로 쓰지 않고, 밀려 있던 저장만 다시 시도한다
+      const queued = !game || (getCurrentSlot ? saveGame(game, undefined, getCurrentSlot()) : saveGame(game))
       if (!queued) throw getGameStorageStatus().error ?? new Error('최근 진행 내용을 저장 대기열에 넣지 못했어요.')
       await flushGameStorage()
       const next = getGameStorageStatus()
@@ -88,6 +93,7 @@ export function StorageNotice({ getCurrentGame = currentGame, getCurrentSlot }: 
     try {
       // 디스크에 다시 쓰지 않아도, 메모리에 남은 최신 진행과 앨범 사진을 함께 내보낸다.
       const game = getCurrentGame()
+      if (!game) { setMessage('아직 불러온 기록이 없어요. 저장 칸의 기록은 불러오기 화면에서 칸마다 받을 수 있어요.'); return }
       const text = getCurrentSlot ? exportSave(game, undefined, getCurrentSlot()) : exportSave(game)
       const result = await downloadSaveFile(text, `27maeul-${game.clock.day}day.json`)
       setMessage(result === 'shared' ? '저장 파일을 공유했어요. 선택한 위치에 파일이 있는지 확인해 주세요.'

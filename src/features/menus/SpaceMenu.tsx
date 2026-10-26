@@ -2,6 +2,7 @@
 import { T } from '../../content/text'
 import { canUseSpace, spaceById } from '../../engine/space-life'
 import { useGame } from '../../store/game-store'
+import { BlockedButton } from '../../shared/BlockedButton'
 
 export function SpaceMenu({ id }: { id: string }) {
   const game = useGame((s) => s.game)
@@ -15,9 +16,9 @@ export function SpaceMenu({ id }: { id: string }) {
       <h2>{sp.name ?? T.space.use[sp.use]}</h2>
       {block === 'full' && <p className="hint">{T.space.busy}</p>}
       <div className="actions column">
-        <button className="primary" disabled={!!block} onClick={() => useSpaceAt(id)}>
+        <BlockedButton className="primary" why={block ? (block === 'full' ? T.space.busy : '') : null} onClick={() => useSpaceAt(id)}>
           {T.space.doIt[use]}
-        </button>
+        </BlockedButton>
         <button data-close onClick={closeModal}>{T.ui.close}</button>
       </div>
     </div>

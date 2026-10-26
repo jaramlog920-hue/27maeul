@@ -18,6 +18,8 @@ import { FURNI_PALETTE } from '../../render/furniture-art'
 import { useGame } from '../../store/game-store'
 import { applyLifeState } from '../work/WorkDay'
 import { HandPractice } from '../work/HandPractice'
+import { BlockedButton } from '../../shared/BlockedButton'
+import { t } from '../../shared/i18n'
 
 const C = T.cooking
 type DishText = { name: string; note: string; hands?: string[]; looks?: string[]; art?: string[] }
@@ -46,6 +48,12 @@ const itemLine = (items: Partial<Record<ItemId, number>>, have?: (id: ItemId) =>
 const whoName = (id: string) => (id === 'family:child' ? C.child : neighborById(id)?.role ?? id)
 
 /** 직접 요리: 화덕에서 요리 고르기 → 손질·조리 → 담기 → 먹기/식탁. 단계마다 한 화면, 실패·시간 경쟁 없음 */
+/** 식탁에 차릴 수 없는 까닭 (누르면 한 줄) */
+function serveWhy(block: ReturnType<typeof canServe>): string | null {
+  const C = T.cooking
+  return block === null ? null : block === 'locked' ? featureHint('cooking') : ({ away: C.tableAway, noSpace: C.tableNoSpace, noFood: C.tableNoFood, busy: C.tableBusy } as Record<string, string>)[block] ?? ''
+}
+
 export function CookingView() {
   const game = useGame((s) => s.game)
   const [view, setView] = useState<'home' | 'table' | DishId>('home')
@@ -91,9 +99,9 @@ export function CookingView() {
         <p><DishArt id={def.art[run.look]} /> {fill(C.resultLine, { item: itemName(def.item), n: def.qty })}</p>
         {run.uneven && <p className="hint">{C.uneven}</p>}
         {readyBlock(game) !== null && <p className="hint">{C.waitFull}</p>}
-        <button className="primary" disabled={readyBlock(game) !== null} onClick={() => { const next = deliverCook(useGame.getState().game); applyLifeState(next); got(next, run) }}>{C.receive}</button>
+        <BlockedButton className="primary" why={readyBlock(game) !== null ? C.waitFull : null} onClick={() => { const next = deliverCook(useGame.getState().game); applyLifeState(next); got(next, run) }}>{C.receive}</BlockedButton>
       </>}
-      <div className="actions"><button onClick={close}>{C.later}</button></div>
+      <div className="actions"><button data-close onClick={close}>{C.later}</button></div>
     </div>
   }
 
@@ -107,8 +115,8 @@ export function CookingView() {
       {note && <p role="status">{note}</p>}
       <p>{C.afterTitle}</p>
       <div className="actions menu column">
-        <button disabled={have < 1} onClick={() => { applyLifeState(eatDish(useGame.getState().game, after.item)); setNote(fill(tea ? C.drank : C.ate, { item: withObject(itemName(after.item)) })) }}>{tea ? C.drink : C.eat}</button>
-        <button disabled={canServe(game) !== null} onClick={() => { setServing({ item: after.item, n: 1 }); setAfter(null); setView('table') }}>{C.toTable}</button>
+        <BlockedButton why={have < 1 ? t('why.noneLeft') : null} onClick={() => { applyLifeState(eatDish(useGame.getState().game, after.item)); setNote(fill(tea ? C.drank : C.ate, { item: withObject(itemName(after.item)) })) }}>{tea ? C.drink : C.eat}</BlockedButton>
+        <BlockedButton why={serveWhy(canServe(game))} onClick={() => { setServing({ item: after.item, n: 1 }); setAfter(null); setView('table') }}>{C.toTable}</BlockedButton>
         <button onClick={() => { setAfter(null); setNote(''); setView('home') }}>{C.keep}</button>
       </div>
     </div>
@@ -133,7 +141,7 @@ export function CookingView() {
         {sitBlock === 'few' && <p className="hint">{C.few}</p>}
         {sitBlock === 'seats' && <p className="hint">{C.fewSeats}</p>}
         <div className="actions menu column">
-          <button className="primary" disabled={sitBlock !== null} onClick={() => {
+          <BlockedButton className="primary" why={sitBlock === 'few' ? C.few : sitBlock === 'seats' ? C.fewSeats : sitBlock !== null ? '' : null} onClick={() => {
             const before = cookOf(useGame.getState().game).table?.item ?? null
             const r = sitTable(useGame.getState().game, guests)
             if (!r) return
@@ -142,7 +150,7 @@ export function CookingView() {
             setReactions(r.reactions)
             setNote(C.sat)
             setGuests([])
-          }}>{guests.length ? fill(C.sitWith, { n: guests.length }) : C.sitAlone}</button>
+          }}>{guests.length ? fill(C.sitWith, { n: guests.length }) : C.sitAlone}</BlockedButton>
           <button onClick={() => { applyLifeState(clearTable(useGame.getState().game)); setReactions([]); setNote('') }}>{C.clear}</button>
         </div>
       </> : <>
@@ -165,7 +173,7 @@ export function CookingView() {
         </>}
       </>}
       {reactions.length > 0 && <><h3>{C.reactTitle}</h3><ul className="event-list">{reactions.map((r) => <li key={r.npc}>{whoName(r.npc)} · {fill((C.react as Record<string, string>)[r.kind], { item: itemName(ateItem ?? c.table?.item ?? 'honeyBread') })}</li>)}</ul></>}
-      <div className="actions"><button onClick={() => { setView('home'); setNote(''); setReactions([]); setGuests([]) }}>{T.ui.close}</button></div>
+      <div className="actions"><button data-close onClick={() => { setView('home'); setNote(''); setReactions([]); setGuests([]) }}>{T.ui.close}</button></div>
     </div>
   }
 
@@ -175,6 +183,7 @@ export function CookingView() {
     const have = (id: ItemId) => stockOf(game, id)
     const miss = missingFor(game, dish)
     const block = dish === 'bread' ? canCraft(game, 'bread') : canCook(game, dish)
+    const dishWhy = block === null ? null : block === 'locked' ? featureHint('cooking', true) : (C.blocks as Record<string, string>)[block] ?? C.blocks.needs
     return <div className="dialog" role="dialog" aria-label={text.name}><h2>{text.name}</h2>
       <DishArt id={def.art[dish === 'bread' ? c.breadShape : c.looks[dish] ?? 0]} />
       {/* 필요한 것·시간을 한 줄로 (2026-10-07 사용자 — 설명이 너무 많았다) */}
@@ -184,11 +193,11 @@ export function CookingView() {
       {dish === 'bread' ? <>
         <p>{C.breadShape}</p>
         <div className="actions">{C.breadShapes.map((n, i) => <button key={n} aria-pressed={c.breadShape === i} onClick={() => applyLifeState(setBreadShape(useGame.getState().game, i))}><DishArt id={def.art[i]} size={32} /> {n}</button>)}</div>
-        <button className="primary" disabled={block !== null} onClick={() => useGame.getState().startCraft('bread')}>{C.breadBake}</button>
+        <BlockedButton className="primary" why={dishWhy} onClick={() => useGame.getState().startCraft('bread')}>{C.breadBake}</BlockedButton>
       </> : <>
-        <button className="primary" disabled={block !== null} onClick={() => { applyLifeState(startCook(useGame.getState().game, dish, rng())); setByKid(false) }}>{C.start}</button>
+        <BlockedButton className="primary" why={dishWhy} onClick={() => { applyLifeState(startCook(useGame.getState().game, dish, rng())); setByKid(false) }}>{C.start}</BlockedButton>
       </>}
-      <div className="actions"><button onClick={() => setView('home')}>{T.ui.close}</button></div>
+      <div className="actions"><button data-close onClick={() => setView('home')}>{T.ui.close}</button></div>
     </div>
   }
 
@@ -205,13 +214,14 @@ export function CookingView() {
       const def = DISHES[d]
       const block = d === 'bread' ? canCraft(game, 'bread') : canCook(game, d)
       const ok = block === null
+      const why = ok ? null : block === 'locked' ? featureHint('cooking', true) : (C.blocks as Record<string, string>)[block!] ?? C.blocks.needs
       return {
         key: d,
         icon: <DishArt id={def.art[0]} size={28} />,
         label: dishText(d).name,
         dim: !ok,
-        detail: <><NeedList needs={def.needs as Record<string, number>} have={(id) => stockOf(game, id as ItemId)} icon={(id) => <ItemIcon id={id as ItemId} size={16} />} /><p>{ok ? fill(C.timeLine, { n: def.minutes }) : block === 'locked' ? featureHint('cooking', true) : (C.blocks as Record<string, string>)[block!] ?? C.blocks.needs}</p></>,
-        action: { label: block === 'needs' ? '재료 부족' : '만들기', disabled: !ok, onClick: () => setView(d) },
+        detail: <><NeedList needs={def.needs as Record<string, number>} have={(id) => stockOf(game, id as ItemId)} icon={(id) => <ItemIcon id={id as ItemId} size={16} />} /><p>{ok ? fill(C.timeLine, { n: def.minutes }) : why}</p></>,
+        action: { label: block === 'needs' ? '재료 부족' : '만들기', why, onClick: () => setView(d) },
       }
     })} />
     {unknown.length > 0 && <details><summary>아직 배우지 않은 요리</summary><IconGrid title={C.unknownTitle} entries={unknown.map((d): IconEntry => ({

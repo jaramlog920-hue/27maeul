@@ -68,6 +68,7 @@ const CHAPTERS: { title: string; tips: string[] }[] = [
       '계절 잔치: 봄 20일 꽃 잔치, 여름 25일 보리 잔치, 가을 30일 포도 잔치, 겨울 20일 화롯가 잔치.',
       '빠른 시계(장날 5,000닢)가 있으면 시각 옆 단추로 하루를 1배·2배·3배로 흐르게 해요. 시간과 내 걸음, 이웃 걸음이 함께 빨라져요.',
       '시각 맞춤 시계(장날 10,000닢)는 가방에서 다음 정시부터 새벽 2시 사이의 시각을 골라 넘어가요. 지난 시각으로는 되돌릴 수 없어요.',
+      '컴퓨터에서는 방향키나 W·A·S·D로 걷고, 스페이스로 앞에 있는 이웃·물건을 눌러요. Esc는 창을 닫아요.',
       '어딘가에 끼었으면 설정 › 도움의 비상 탈출로 집 앞(새 터에서는 왕래 표식 앞)으로 나와요. 따라오던 동물 친구도 함께 와요.',
     ],
   },
@@ -186,7 +187,7 @@ export function GameGuide() {
   const chapter = page >= 1 && page <= ALL_CHAPTERS.length ? ALL_CHAPTERS[page - 1] : null
   return (
     <div className="dialog game-guide guide-book" role="dialog" aria-modal="true" aria-label="도움말"
-      onKeyDown={event => { if (event.key === 'Escape') close() }}>
+      onKeyDown={event => { if (event.key === 'Escape') { event.preventDefault(); close() } }}>
       <h2>도움말</h2>
       {page === 0 && (
         <nav aria-label="목차">

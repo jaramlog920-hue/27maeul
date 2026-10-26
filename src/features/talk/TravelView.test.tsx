@@ -30,7 +30,7 @@ it('추가 주사위 비용 때문에 못 사는 물건은 귀환을 막고, 사
   // 희귀품 가게는 아이콘 칸 — 칸을 고르고 '담기' (2026-10-12)
   fireEvent.click(screen.getByRole('button', { name: itemName('finePapyrus') }))
   fireEvent.click(screen.getByRole('button', { name: '담기' }))
-  expect(screen.getByRole('button', { name: '하룻밤 묵고 돌아가기' })).toBeDisabled()
+  expect(screen.getByRole('button', { name: '하룻밤 묵고 돌아가기' })).toHaveAttribute('aria-disabled', 'true')
   fireEvent.click(screen.getByRole('button', { name: '사지 않고 돌아가기' }))
   expect(useGame.getState().game.coins).toBe(5)
   expect(useGame.getState().game.flags['trip:harbor']).toBe(1)

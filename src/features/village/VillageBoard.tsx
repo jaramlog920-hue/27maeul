@@ -6,6 +6,8 @@ import { SITES, type FacilityId } from '../../engine/village-sites'
 import { useGame } from '../../store/game-store'
 import { featureAccess, featureHint } from '../../engine/feature-rules'
 import { commitVillage, DecorBox, defText, progressOf } from './VillageSupport'
+import { BlockedButton } from '../../shared/BlockedButton'
+import { t as tr } from '../../shared/i18n'
 
 const V = T.village
 
@@ -49,7 +51,7 @@ export function VillageBoard() {
         </ul>
         <p className="hint">{V.balanceTitle} · {t.balance}</p>
         <div className="actions menu column">
-          <button className="primary" disabled={block !== null} onClick={() => { commitVillage(pickProject(useGame.getState().game, id, CONTENT)); setSel(null) }}>{V.pick}</button>
+          <BlockedButton className="primary" why={block === null ? null : block === 'locked' ? featureHint('community', true) : tr(`why.project.${block}`)} onClick={() => { commitVillage(pickProject(useGame.getState().game, id, CONTENT)); setSel(null) }}>{V.pick}</BlockedButton>
           <button onClick={() => setSel(null)}>{V.back}</button>
         </div>
       </section>

@@ -119,7 +119,7 @@ describe('터 가꾸기 창', () => {
     render(<BuildMenu />)
     choose(/입주 주택/)
     expect(screen.getByRole('status')).toHaveTextContent(T.build.blockCoins)
-    expect(screen.getByRole('button', { name: T.build.place })).toBeDisabled()
+    expect(screen.getByRole('button', { name: T.build.place })).toHaveAttribute('aria-disabled', 'true')
     fireEvent.click(screen.getByRole('button', { name: T.build.place }))
     expect(buildsOf(useGame.getState().game)).toHaveLength(0)
     expect(useGame.getState().game.coins).toBe(10)
@@ -133,7 +133,7 @@ describe('터 가꾸기 창', () => {
     expect(Object.keys(useGame.getState().game.newland!.tiles)).toHaveLength(1)
     expect(useGame.getState().game.coins).toBe(4999)
     expect(screen.getByRole('status')).toHaveTextContent(T.build.blockSame)
-    expect(screen.getByRole('button', { name: T.build.place })).toBeDisabled()
+    expect(screen.getByRole('button', { name: T.build.place })).toHaveAttribute('aria-disabled', 'true')
   })
 
   it('집은 문 방향을 고를 수 있다 (뒤쪽은 없다)', () => {

@@ -22,7 +22,7 @@ export function SellStandView() {
         <p>{fill(T.ui.coins, { n: standPrice(game, id)! })}</p>
       </>
     ),
-    action: { label: '팔기', disabled: !!canStandSell(game, id), onClick: () => standSellItem(id) },
+    action: { label: '팔기', why: canStandSell(game, id) === 'cap' ? '오늘은 매대에 더 내놓을 수 없어요. 내일 다시 와요.' : canStandSell(game, id) ? '' : null, onClick: () => standSellItem(id) },
   }))
   return (
     <div className="dialog" role="dialog" aria-label="마을 매대">

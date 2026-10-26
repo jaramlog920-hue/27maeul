@@ -33,7 +33,7 @@ describe('R2 craft mixed bag and furniture storage', () => {
     fireEvent.click(screen.getByRole('button', { name: /담요/ }))
     expect(document.querySelector('.bag-detail')).toHaveTextContent('1/3')
     expect(document.querySelector('.need-list li')).toHaveClass('short')
-    expect(screen.getByRole('button', { name: '만들기' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: '만들기' })).toHaveAttribute('aria-disabled', 'true')
   })
 
   it('shows accessible bag and storage stock consistently with enabled make', () => {

@@ -107,7 +107,7 @@ it('leaving partway gives no reward, and unavailable meetings show their next da
     useGame.setState(s => ({ game: { ...s.game, clock: { day: 6, minute: 19 * 60 } } }))
     useGame.getState().open({ kind: 'menu', place: 'hallTable' })
   })
-  expect(screen.getByRole('button', { name: /본문 펼치기/ })).toBeDisabled()
+  expect(screen.getByRole('button', { name: /본문 펼치기/ })).toHaveAttribute('aria-disabled', 'true')
   expect(screen.getByText(/다음 모임은 12일째/)).toBeInTheDocument()
 })
 

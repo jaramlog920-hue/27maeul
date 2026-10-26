@@ -68,11 +68,13 @@ export function FirstLight() {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== 'Escape') return
+      // 먼저 받아 막는다 — 마을의 Esc(맨 위 ✕ 누르기)가 한 번 더 닫지 않게
+      e.preventDefault()
       if (phase === 'light') setPhase('card')
       else later()
     }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+    window.addEventListener('keydown', onKey, true)
+    return () => window.removeEventListener('keydown', onKey, true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase])
 
@@ -107,7 +109,7 @@ export function LookAround() {
         <button className="primary" onClick={lookAround}>
           {T.newland.look}
         </button>
-        <button onClick={closeModal}>{T.newland.lookClose}</button>
+        <button data-close onClick={closeModal}>{T.newland.lookClose}</button>
       </div>
     </div>
   )

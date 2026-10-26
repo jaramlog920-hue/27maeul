@@ -29,6 +29,9 @@ export function PieceAcquired({ id }: { id: string }) {
     <h2>{ot?.name ?? piece?.title}</h2>
     {ref ? <Passage refText={ref} /> : <p role="status">{failed ? '본문을 불러오지 못했어요. 말씀조각은 도감에 보관했어요.' : '본문을 불러오는 중이에요.'}</p>}
     {piece && <Stamps piece={piece} />}
-    <div className="actions"><button data-close onClick={() => useGame.getState().dismissPiecePopup()}>{count > 1 ? `다음 조각 · ${count - 1}개 남음` : T.ui.close}</button></div>
+    {/* 남은 조각이 있으면 ✕가 아니라 글자 단추로 — ✕로 보여 닫은 줄 알았는데 다음 창이 또 떴다 (2026-10-26 감사 A11) */}
+    <div className="actions">{count > 1
+      ? <button className="primary" onClick={() => useGame.getState().dismissPiecePopup()}>{`다음 조각 · ${count - 1}개 남음`}</button>
+      : <button data-close onClick={() => useGame.getState().dismissPiecePopup()}>{T.ui.close}</button>}</div>
   </div>
 }

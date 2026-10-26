@@ -3,8 +3,8 @@ import { blanksForVerse } from './copy-ways'
 import { copyVerses } from './copying'
 import type { GameState } from './game'
 import { seededShuffle } from './offers'
-import type { CopyBook } from './ot-books'
-import type { GameContent } from './types'
+import { OT_BOOKS, type CopyBook } from './ot-books'
+import { BOOKS, type GameContent } from './types'
 
 export const BLANK_QUIZ_SIZE = 10
 export const BLANK_COIN = 10
@@ -27,7 +27,9 @@ export function copiedChapters(s: Pick<GameState, 'copy'>): BlankChapter[] {
   for (const [book, chs] of Object.entries(s.copy.copied ?? {}) as [CopyBook, number[]][]) {
     for (const chapter of new Set(chs ?? [])) if (Number.isInteger(chapter) && chapter > 0) out.push({ book, chapter })
   }
-  return out
+  // 성경 차례대로 (신약 → 구약, 장 순) — 마친 순서대로 섞여 후반엔 고르기 어려웠다 (2026-10-26 감사 A17)
+  const order = (b: CopyBook) => { const i = (BOOKS as readonly string[]).indexOf(b); return i >= 0 ? i : BOOKS.length + (OT_BOOKS as readonly string[]).indexOf(b) }
+  return out.sort((x, y) => order(x.book) - order(y.book) || x.chapter - y.chapter)
 }
 
 const completed = (s: Pick<GameState, 'copy'>, target: BlankChapter): boolean =>

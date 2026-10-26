@@ -8,6 +8,8 @@ import LINES from '../content/persona-lines.json'
 import { childStage, type AdultJob, type Child } from './child'
 import type { GenPerson, GenState } from './gen'
 import type { Weather } from './types'
+import { fillSlots } from '../shared/josa'
+import { forbiddenIn } from '../content/forbidden'
 
 export const TEMPERS = ['warm', 'bold', 'shy', 'playful', 'sharp', 'easy'] as const
 export type Temper = (typeof TEMPERS)[number]
@@ -136,8 +138,9 @@ export const personaTags = (p: Persona): string => [temperName(p.temper), ...p.t
 
 /** 말버릇 정리: 앞뒤 공백·문장부호를 떼고 CATCH_MAX자까지. 비면 없앤다 */
 export function cleanCatch(raw: string): string | undefined {
-  const s = raw.replace(/[\s.,!?~…"'“”‘’]+/g, ' ').trim().slice(0, CATCH_MAX).trim()
-  return s || undefined
+  const s = [...raw.replace(/[\s.,!?~…"'“”‘’]+/g, ' ').trim()].slice(0, CATCH_MAX).join('').trim()
+  // 지어낸 말에 쓰지 않는 낱말은 말버릇으로도 받지 않는다 (2026-10-26 감사 A21)
+  return s && !forbiddenIn(s) ? s : undefined
 }
 
 export interface LineCtx {
@@ -155,7 +158,7 @@ export interface LineCtx {
 }
 
 const fillLine = (s: string, c: LineCtx) => (!c.job && s.includes('{job}') ? s.replace(/\{job\}[,\s]*/g, '') : s)
-const fillRest = (s: string, c: LineCtx) => s.replace(/\{parent\}/g, c.parent ?? '').replace(/\{player\}/g, c.player ?? '').replace(/\{job\}/g, c.job ?? '')
+const fillRest = (s: string, c: LineCtx) => fillSlots(s, { parent: c.parent ?? '', player: c.player ?? '', job: c.job ?? '' }, 'keep')
 /** 말 앞에 오는 말버릇 (문장 앞에 붙인다) */
 const LEADING = new Set(['있잖아', '저기', '음', '흠', '그러니까', '어디 보자', '자', '에헴', '아참'])
 /**

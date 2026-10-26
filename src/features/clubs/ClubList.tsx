@@ -8,6 +8,8 @@ import { formatTime } from '../../engine/clock'
 import { useGame } from '../../store/game-store'
 import { ClubForm } from './ClubForm'
 import { commitClub } from './club-store'
+import { BlockedButton } from '../../shared/BlockedButton'
+import { t } from '../../shared/i18n'
 
 /** 모임 상세: 플레이어가 없던 지난 회차에 실제 있었던 일, 함께 만든 방석 (모든 말은 지난 회차 기록에서만) */
 function ClubNotes({club}:{club:Club}) {
@@ -21,12 +23,14 @@ function ClubNotes({club}:{club:Club}) {
 export function ClubList() {
  const game=useGame(s=>s.game),C=T.clubs
  const [editing,setEditing]=useState<Club|null|undefined>(undefined)
+ // 모임 마치기는 되돌릴 수 없어 한 번 더 묻는다 (2026-10-26 감사 A06)
+ const [asking,setAsking]=useState<string|null>(null)
  if(editing!==undefined)return <ClubForm club={editing??undefined} onClose={()=>setEditing(undefined)}/>
  const clubs=game.clubs.filter(c=>c.active)
  const access=featureAccess(game,'clubs')
  return <div className="dialog" role="dialog" aria-label={C.title}><h2>{C.title}</h2><p className="hint">{C.intro}</p>
  {access!=='full'&&<p role="status">{access==='preview'?'차 소모임 하나를 체험할 수 있어요. '+featureHint('clubs',true):featureHint('clubs')}</p>}
  {!clubs.length&&<p>{C.none}</p>}
- <ul className="event-list">{clubs.map(c=>{const next=game.plans.appts.find(a=>a.clubId===c.id&&['planned','running','moved'].includes(a.state));return <li key={c.id}><strong>{c.name}</strong><p>{T.plans.activity[c.activity]} · {T.plans.place[c.place as keyof typeof T.plans.place]}</p><p>{c.members.map(id=>neighborById(id)?.role).join(' · ')}</p><ClubNotes club={c}/><p>{c.paused?C.paused:next?`${C.next} · ${fill(T.ui.day, { day: next.day })} · ${formatTime(next.from)}`:C.day[c.weekday]}</p>{next?.reason&&<p className="hint">{next.reason==='weather'?T.plans.moved:C.errors[next.reason==='busy'?'appointment':'venue']}</p>}<div className="actions"><button onClick={()=>setEditing(c)}>{C.edit}</button><button onClick={()=>commitClub(pauseClub(game,c.id,!c.paused))}>{c.paused?C.resume:C.pause}</button><button onClick={()=>commitClub(dissolveClub(game,c.id))}>{C.dissolve}</button></div></li>})}</ul>
- <div className="actions"><button disabled={access==='locked'||clubs.length>=(access==='preview'?1:CLUB_MAX)} onClick={()=>setEditing(null)}>{C.create}</button><button data-close onClick={useGame.getState().closeModal}>{T.ui.close}</button></div></div>
+ <ul className="event-list">{clubs.map(c=>{const next=game.plans.appts.find(a=>a.clubId===c.id&&['planned','running','moved'].includes(a.state));return <li key={c.id}><strong>{c.name}</strong><p>{T.plans.activity[c.activity]} · {T.plans.place[c.place as keyof typeof T.plans.place]}</p><p>{c.members.map(id=>neighborById(id)?.role).join(' · ')}</p><ClubNotes club={c}/><p>{c.paused?C.paused:next?`${C.next} · ${fill(T.ui.day, { day: next.day })} · ${formatTime(next.from)}`:C.day[c.weekday]}</p>{next?.reason&&<p className="hint">{next.reason==='weather'?T.plans.moved:C.errors[next.reason==='busy'?'appointment':'venue']}</p>}<div className="actions"><button onClick={()=>setEditing(c)}>{C.edit}</button><button onClick={()=>commitClub(pauseClub(game,c.id,!c.paused))}>{c.paused?C.resume:C.pause}</button><button onClick={()=>setAsking(c.id)}>{C.dissolve}</button></div>{asking===c.id&&<div className="actions" role="group" aria-label={C.dissolve}><p className="hint">{t('confirm.dissolveClub')}</p><button className="danger" onClick={()=>{setAsking(null);commitClub(dissolveClub(useGame.getState().game,c.id))}}>{C.dissolve}</button><button onClick={()=>setAsking(null)}>{t('confirm.keep')}</button></div>}</li>})}</ul>
+ <div className="actions"><BlockedButton why={access==='locked'?featureHint('clubs'):clubs.length>=(access==='preview'?1:CLUB_MAX)?t('why.clubMax',{n:access==='preview'?1:CLUB_MAX}):null} onClick={()=>setEditing(null)}>{C.create}</BlockedButton><button data-close onClick={useGame.getState().closeModal}>{T.ui.close}</button></div></div>
 }

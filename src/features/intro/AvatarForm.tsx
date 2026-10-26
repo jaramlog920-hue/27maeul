@@ -78,6 +78,8 @@ export function AvatarForm({ onDone, onBack }: { onDone: (a: Avatar) => void; on
   const [a, setA] = useState<FullAvatar>(() => withLookDefaults({ look: 'f', name: '' }))
   const [turn, setTurn] = useState(0)
   const [colorKey, setColorKey] = useState<ColorKey>('hairColor')
+  // 이름 없이 시작을 누르면 그때 까닭을 보인다 (제목 화면엔 알림이 없어서 이름 칸 아래 한 줄로)
+  const [tried, setTried] = useState(false)
   const problem = nameProblem(name)
   const looks = T.avatar.looks as Record<Look, string>
   const problems = T.avatar.problems as Record<Exclude<ReturnType<typeof nameProblem>, null>, string>
@@ -124,9 +126,9 @@ export function AvatarForm({ onDone, onBack }: { onDone: (a: Avatar) => void; on
           <div className="creator-id">
             <label className="avatar-name">
               {T.avatar.nameLabel}
-              <input value={name} maxLength={12} onChange={(e) => setName(e.target.value)} />
+              <input value={name} maxLength={12} placeholder={problems.empty} onChange={(e) => setName(e.target.value)} />
             </label>
-            {name && problem && (
+            {(name || tried) && problem && (
               <p className="desk-message wrong" role="status">
                 {problems[problem]}
               </p>
@@ -183,7 +185,11 @@ export function AvatarForm({ onDone, onBack }: { onDone: (a: Avatar) => void; on
 
         <div className="actions">
           <button onClick={onBack}>{T.ui.back}</button>
-          <button className="primary" disabled={problem !== null} onClick={() => onDone({ ...a, look, name: cleanAvatarName(name) })}>
+          <button
+            className="primary"
+            aria-disabled={problem !== null || undefined}
+            onClick={() => (problem ? setTried(true) : onDone({ ...a, look, name: cleanAvatarName(name) }))}
+          >
             {T.avatar.ok}
           </button>
         </div>

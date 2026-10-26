@@ -6,10 +6,13 @@ import { saveGame } from '../../engine/save'
 import type { GameState } from '../../engine/game'
 import { useGame } from '../../store/game-store'
 import { HandPractice } from './HandPractice'
+import { fillSlots } from '../../shared/josa'
+import { BlockedButton } from '../../shared/BlockedButton'
+import { t } from '../../shared/i18n'
 
 interface ShopText { prep: Record<string, string>; hands: string[]; handsOff?: string[]; finish: Record<string, string>; result: string }
 const SHOP_TEXT = T.work.shops as Record<string, ShopText>
-const fill = (t: string, v: Record<string, string | number>) => t.replace(/\{(\w+)\}/g, (_, k) => String(v[k] ?? ''))
+const fill = (t: string, v: Record<string, string | number>) => fillSlots(t, v)
 
 export function applyLifeState(next:WorkState,save=true) {
   // 저장은 스토어의 같은 길로 — 업적·도감이 바로 적힌다 (2026-10-19 감사 L-13)
@@ -25,7 +28,7 @@ export function WorkEntry({ npc = 'carpenter', onOpen }: {npc?:string; onOpen?:(
   const block=resume?null:canWorkDay(game,npc,CONTENT)
   if(block==='away'||block==='notWorking') return null
   if(opened) return <WorkDayView npc={npc} close={()=>setOpened(false)}/>
-  return <><button disabled={block!==null} onClick={()=>onOpen?onOpen():setOpened(true)}>{resume?T.work.resume:T.work.entry}</button></>
+  return <><BlockedButton why={block?t(`why.work.${block}`):null} onClick={()=>onOpen?onOpen():setOpened(true)}>{resume?T.work.resume:T.work.entry}</BlockedButton></>
 }
 /** 작업장 안내 → 맡을 부분 → 손일 둘 → 마무리 고르기 → 결과. 화면에는 지금 단계와 고를 것만 */
 export function WorkDayView({npc,close}:{npc:string;close:()=>void}) {

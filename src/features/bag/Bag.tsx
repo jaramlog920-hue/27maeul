@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { fill, ITEM_TEXT, itemName, T } from '../../content/text'
-import { canBind, chestOf, clockTargets, PANTRY_FOODS, pantryOf, playerTile, timeSpeed } from '../../engine/game'
+import { canBind, chestOf, clockTargets, PANTRY_FOODS, pantryOf, playerTile, timeSpeed, type GameState } from '../../engine/game'
 import { formatTime } from '../../engine/clock'
 import { CONTENT } from '../../content/catalog'
 import { finishedCopies } from '../../engine/binding'
@@ -17,6 +17,7 @@ import { useGame, type BagTab } from '../../store/game-store'
 import { NeedsView } from '../menus/CareMenu'
 import { CollectionDex } from './CollectionDex'
 import { t } from '../../shared/i18n'
+import { BlockedButton } from '../../shared/BlockedButton'
 
 const STAT_NAME = T.stats.names as Record<StatId, string>
 const STAT_DESC = T.stats.desc as Record<StatId, string>
@@ -36,7 +37,8 @@ export function StatsView({ stats }: { stats: Stats }) {
           const level = levelOf(stats, id)
           const per = 100 / MAX_LEVEL
           return (
-            <li key={id} data-stat={id} className={open === id ? 'on' : ''} onClick={() => setOpen(open === id ? null : id)} aria-expanded={open === id}>
+            <li key={id} data-stat={id} className={open === id ? 'on' : ''} onClick={() => setOpen(open === id ? null : id)} aria-expanded={open === id}
+              role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setOpen(open === id ? null : id) } }}>
               <span className="stat-name">
                 {STAT_NAME[id]}
                 {st.born > 0 && (
@@ -267,24 +269,24 @@ function Things() {
               </button>
             )}
             {from === 'bag' && YARD_ITEMS.includes(picked.id as YardItem) && (
-              <button disabled={game.map !== undefined && game.map !== 'village'} onClick={() => yardMove(picked.id as YardItem)}>
+              <BlockedButton why={game.map !== undefined && game.map !== 'village' ? t('why.yardVillage') : null} onClick={() => yardMove(picked.id as YardItem)}>
                 {T.yard.place}
-              </button>
+              </BlockedButton>
             )}
             {from === 'bag' && pantry && PANTRY_FOODS.includes(picked.id) && (
-              <button disabled={!atHome} onClick={() => putPantry(picked.id)}>
+              <BlockedButton why={atHome ? null : T.easy.storageAway} onClick={() => putPantry(picked.id)}>
                 {T.easy.pantryPut}
-              </button>
+              </BlockedButton>
             )}
             {from === 'chest' && (
-              <button disabled={!atHome} onClick={() => takeChest(picked.id)}>
+              <BlockedButton why={atHome ? null : T.easy.storageAway} onClick={() => takeChest(picked.id)}>
                 {T.easy.chestTake}
-              </button>
+              </BlockedButton>
             )}
             {from === 'pantry' && (
-              <button disabled={!atHome} onClick={() => takePantry(picked.id)}>
+              <BlockedButton why={atHome ? null : T.easy.storageAway} onClick={() => takePantry(picked.id)}>
                 {T.easy.pantryTake}
-              </button>
+              </BlockedButton>
             )}
             {from === 'bag' && picked.id === 'speedClock' && (
               <button className="primary" onClick={() => useGame.getState().cycleTimeSpeed()}>빠르기 바꾸기 (지금 {timeSpeed(useGame.getState().game)}배)</button>
@@ -326,7 +328,10 @@ function Things() {
 
 /** 시각 맞춤 시계: 다음 정시부터 새벽 2시까지 고른다 (2026-10-14) */
 function ClockPicker() {
-  const targets = useGame((s) => clockTargets(s.game))
+  // 선택자가 새 배열을 돌려주면 Zustand가 끝없이 다시 그린다 (2026-10-26 감사 A01) — 값만 골라 오고 목록은 여기서 만든다
+  const minute = useGame((s) => s.game.clock.minute)
+  const owned = useGame((s) => s.game.inv.setClock ?? 0)
+  const targets = useMemo(() => clockTargets({ clock: { minute } as GameState['clock'], inv: { setClock: owned } }), [minute, owned])
   if (!targets.length) return <p className="hint">더 넘길 시각이 없어요.</p>
   return (
     <div className="clock-picker" role="group" aria-label="넘어갈 시각">

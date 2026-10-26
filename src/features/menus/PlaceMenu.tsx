@@ -8,7 +8,8 @@ import { SkillCraftOptions } from '../skills/SkillLesson'
 // 연인·약혼·부부면 찻집·정자·언덕에서 "○○와 함께" 가기 (계획 10 작업 4)
 import { CONTENT } from '../../content/catalog'
 import { fill, T, withAnd, withSubject } from '../../content/text'
-import { canCraft, canDate, canDrinkTea, canPlayHall, canWatchSunset, hasFood, starsOut, stockOf } from '../../engine/game'
+import { canCraft, canDate, canDrinkTea, canPlayHall, canWatchSunset, hasFood, starsOut, stockOf, type CraftBlock } from '../../engine/game'
+import { BlockedButton } from '../../shared/BlockedButton'
 import { TEA_PRICE } from '../../engine/places'
 import { canRead, nextReadingDay } from '../../engine/meetings'
 import { RowLabel } from '../../shared/RowLabel'
@@ -45,6 +46,14 @@ const DATE_WHY: Record<string, string> = {
   wet: '비가 와서 오늘은 어려워요.',
 }
 const DATE_LABEL: Record<DatePlace, string> = { tea: T.romance.dateTea, sunset: T.romance.dateSunset, walk: T.romance.dateWalk }
+/** 누르면 한 줄로 알리는 막힘 까닭 (2026-10-26 감사 A02: 그냥 회색이라 왜 안 되는지 몰랐다) */
+const HALL_WHY: Record<string, string> = { closed: T.places.hallClosed, played: T.places.hallPlayed, tired: T.ui.tooTired, empty: T.places.hallEmpty }
+const TEA_WHY: Record<string, string> = { closed: T.places.teaClosed, coins: T.places.teaCoins }
+const SUNSET_WHY: Record<string, string> = { notYet: T.places.sunsetNotYet, cloudy: T.places.sunsetCloudy }
+function craftWhy(block: CraftBlock): string | null {
+  if (block === null) return null
+  return { needs: t('why.craftNeeds'), tired: T.ui.tooTired, full: T.ui.bagFull, job: t('why.craftJob'), recipe: t('why.craftRecipe') }[block]
+}
 
 export function PlaceMenu({ place }: { place: MenuPlace }) {
   const game = useGame((s) => s.game)
@@ -67,6 +76,8 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
   const hall = place === 'hallTable' ? canPlayHall(game, CONTENT) : null
   const tea = place === 'teaTable' ? canDrinkTea(game) : null
   const sunset = place === 'pavilion' ? canWatchSunset(game) : null
+  const read = place === 'hallTable' ? canRead(game) : null
+  const readWhy = read === 'done' ? '오늘은 이웃들과 함께 읽었어요.' : read === 'feast' ? t('reading.feast') : read === 'notToday' ? `다음 모임은 ${nextReadingDay(game)}일째 저녁 7~9시예요. 사랑방 탁자를 눌러 참여하세요.` : read === 'time' ? '오늘 저녁 7~9시에 사랑방 탁자를 눌러 참여하세요.' : null
   // 함께 가기: 연인이 있을 때만 버튼이 보인다
   const datePlace = DATE_AT[place]
   const partner = partnerName(game)
@@ -97,9 +108,9 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
               {game.cooking?.run ? fill(T.cooking.resume, { dish: T.cooking.dishes[game.cooking.run.dish].name }) : T.cooking.open}
             </button>
             <button onClick={warm}>{T.ui.hearthWarm}</button>
-            <button disabled={!hasFood(game.inv)} onClick={eat}>
+            <BlockedButton why={hasFood(game.inv) ? null : t('why.noFood')} onClick={eat}>
               {T.ui.hearthEat}
-            </button>
+            </BlockedButton>
           </>
         )}
         {place === 'workbench' && (
@@ -116,45 +127,45 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
                 label: w.text.split(' (')[0].split(' — ')[0],
                 dim: block !== null,
                 detail: <><NeedList needs={r.needs as Record<string, number>} have={(id) => stockOf(game, id as ItemId)} icon={(id) => <ItemIcon id={id as ItemId} size={16} />} /><p>{w.text}</p></>,
-                action: { label: '만들기', disabled: block !== null, onClick: () => startCraft(w.id) },
+                action: { label: '만들기', why: craftWhy(block), onClick: () => startCraft(w.id) },
               }
             })} />
           </>
         )}
         {place === 'press' && (
-          <button disabled={canCraft(game, 'oil') !== null} onClick={() => startCraft('oil')}>
+          <BlockedButton why={craftWhy(canCraft(game, 'oil'))} onClick={() => startCraft('oil')}>
             <RowLabel text={fill(T.ui.pressMake, { n: recipeGives(RECIPES.oil, game.inv, game.flags).oil ?? 0 })} />
-          </button>
+          </BlockedButton>
         )}
         {/* 별 보기는 언덕에만 (stargaze는 자리와 무관 — 다른 별 보는 자리도 이 버튼을 붙이면 된다) */}
         {place === 'hill' && (
-          <button disabled={!starsOut(game.clock.minute)} onClick={sitHill}>
+          <BlockedButton why={starsOut(game.clock.minute) ? null : T.ui.starsNotYet} onClick={sitHill}>
             {T.ui.hillStars}
-          </button>
+          </BlockedButton>
         )}
         {place === 'hallTable' && (
-          <button className="primary" disabled={hall !== null} onClick={playHall}>
+          <BlockedButton className="primary" why={hall === null ? null : HALL_WHY[hall] ?? t('why.notNow')} onClick={playHall}>
             {T.places.hallPlay}
-          </button>
+          </BlockedButton>
         )}
         {place === 'hallTable' && (
           <>
-            <button disabled={canRead(game) !== null} onClick={() => useGame.getState().startReading()}>
+            <BlockedButton why={canRead(game) === null ? null : readWhy} onClick={() => useGame.getState().startReading()}>
               {T.meetings.reading} · 본문 펼치기
-            </button>
-            <p className="hint">{canRead(game) === 'done' ? '오늘은 이웃들과 함께 읽었어요.' : canRead(game) === 'feast' ? t('reading.feast') : canRead(game) === 'notToday' ? `다음 모임은 ${nextReadingDay(game)}일째 저녁 7~9시예요. 사랑방 탁자를 눌러 참여하세요.` : canRead(game) === 'time' ? '오늘 저녁 7~9시에 사랑방 탁자를 눌러 참여하세요.' : '모임 중이에요. 본문 펼치기를 누르면 이웃들과 함께 읽을 수 있어요.'}</p>
+            </BlockedButton>
+            <p className="hint">{readWhy ?? '모임 중이에요. 본문 펼치기를 누르면 이웃들과 함께 읽을 수 있어요.'}</p>
           </>
         )}
         {place === 'teaTable' && (
-          <button className="primary" disabled={tea !== null} onClick={drinkTea}>
+          <BlockedButton className="primary" why={tea === null ? null : TEA_WHY[tea] ?? t('why.notNow')} onClick={drinkTea}>
             {fill(T.places.teaDrink, { n: TEA_PRICE })}
-          </button>
+          </BlockedButton>
         )}
         {place === 'pavilion' && (
           <>
-            <button className="primary" disabled={sunset !== null} onClick={watchSunset}>
+            <BlockedButton className="primary" why={sunset === null ? null : SUNSET_WHY[sunset] ?? t('why.notNow')} onClick={watchSunset}>
               {T.places.sunsetWatch}
-            </button>
+            </BlockedButton>
           </>
         )}
         {datePlace && date !== 'noPartner' && (
@@ -164,9 +175,9 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
           </button>
         )}
         {(place === 'hill' || place === 'bench' || place === 'homeBench' || place === 'pavilion') && (
-          <button className={place === 'pavilion' ? '' : 'primary'} disabled={place === 'pavilion' ? copiedChapters(game, CONTENT).length === 0 : game.collected.length === 0} onClick={() => open(place === 'pavilion' ? { kind: 'readPick', source: 'copied' } : { kind: 'readPick' })}>
+          <BlockedButton className={place === 'pavilion' ? '' : 'primary'} why={place === 'pavilion' ? (copiedChapters(game, CONTENT).length === 0 ? t('why.noCopied') : null) : game.collected.length === 0 ? t('why.noPieces') : null} onClick={() => open(place === 'pavilion' ? { kind: 'readPick', source: 'copied' } : { kind: 'readPick' })}>
             {T.ui.readScripture}
-          </button>
+          </BlockedButton>
         )}
         <button data-close onClick={closeModal}>{T.ui.close}</button>
       </div>

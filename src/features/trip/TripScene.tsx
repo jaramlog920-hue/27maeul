@@ -248,6 +248,8 @@ function Harvest({ rewards, lapped, kid, onGo, onMore }: { rewards: TripReward[]
   const pieces = rewards.flatMap((r) => (r.kind === 'piece' ? [r.id] : []))
   const items: Partial<Record<ItemId, number>> = {}
   let coins = 0
+  // 더 굴린 값(−닢)은 따로도 센다 — 얻은 닢과 섞이면 낸 돈이 보이지 않았다
+  const paid = rewards.reduce((n, r) => n + (r.kind === 'coins' && r.n < 0 ? r.n : 0), 0)
   const me: Partial<Record<StatId, number>> = {}
   const child: Partial<Record<StatId, number>> = {}
   for (const r of rewards) {
@@ -288,14 +290,15 @@ function Harvest({ rewards, lapped, kid, onGo, onMore }: { rewards: TripReward[]
             <dd>{(Object.entries(items) as [ItemId, number][]).map(([id, n]) => `${itemName(id)} ${n}`).join(' · ')}</dd>
           </>
         )}
-        {coins > 0 && (
+        {/* 두 번 더 굴린 값(−10닢)도 합쳐 보인다 — 낸 돈이 어디에도 안 보였다 (2026-10-26 감사 A13) */}
+        {(coins !== 0 || paid < 0) && (
           <>
             <dt>닢</dt>
-            <dd>{coins}닢</dd>
+            <dd>{paid < 0 ? `${coins}닢 (더 굴린 값 ${paid}닢 포함)` : `${coins}닢`}</dd>
           </>
         )}
       </dl>
-      {rewards.length === 0 && <p>이번엔 빈손이지만, 좋은 구경을 했어요.</p>}
+      {!rewards.some((r) => r.kind !== 'coins' || r.n > 0) && <p>이번엔 빈손이지만, 좋은 구경을 했어요.</p>}
       <div className="actions">
         {onMore && (
           <button onClick={onMore}>

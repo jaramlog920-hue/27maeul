@@ -8,12 +8,26 @@ import type { CopyRequest } from '../../engine/copy-requests'
 import { REQUEST_PRESETS, normalizeRequestText, type RequestPreset } from '../../engine/request-presets'
 import { useGame } from '../../store/game-store'
 import { t } from '../../shared/i18n'
+import { BlockedButton } from '../../shared/BlockedButton'
+import type { CopyRequestBlock } from '../../engine/game'
 import { VillageBoard } from '../village/VillageBoard'
 import { applyLifeState } from '../work/WorkDay'
 import { featureAccess } from '../../engine/feature-rules'
 import { libraryGrowth } from '../../engine/progression'
 
 const R = T.copyReq
+
+/** 부탁을 쓸 수 없는 까닭 (누르면 한 줄) */
+const requestWhy = (b: CopyRequestBlock): string | null => (b === null ? null : t(`why.request.${b}`))
+/** 옮겨 적은 글이 본문과 어디서 다른지 — 한 글자만 틀려도 단추만 회색이라 어디를 고칠지 몰랐다 (2026-10-26 감사 A09) */
+function draftWhy(draft: string, target: string): string | null {
+  const a = normalizeRequestText(draft), b = normalizeRequestText(target)
+  if (a === b) return null
+  if (!a) return t('why.draftEmpty')
+  let i = 0
+  while (i < a.length && a[i] === b[i]) i++
+  return i === a.length ? t('why.draftShort') : t('why.draftWrong', { n: i + 1 })
+}
 
 export function BoardView() {
   const game = useGame((s) => s.game)
@@ -71,10 +85,11 @@ export function BoardView() {
           <section aria-label="구절 직접 필사">
             <h3>{preset.ref}</h3>
             <p className="talk-line">{preset.text}</p>
-            <textarea id="request-copy-draft" aria-label="구절 필사" rows={5} value={draft} onChange={(e) => setDraft(e.target.value)} autoComplete="off" spellCheck={false} />
+            {/* 붙여넣기·끌어 놓기는 받지 않는다 — 책상과 같은 "직접 옮겨 적기" (2026-10-26 감사 A14) */}
+            <textarea id="request-copy-draft" aria-label="구절 필사" rows={5} value={draft} onChange={(e) => setDraft(e.target.value)} onPaste={(e) => { e.preventDefault(); useGame.getState().say(T.copyFocus.pasteBlocked, 2800) }} onDrop={(e) => e.preventDefault()} autoComplete="off" spellCheck={false} />
             <div className="actions">
               <button onClick={() => { setPreset(null); setDraft('') }}>다른 구절 선택</button>
-              <button className="primary" disabled={canWriteRequest(game, sel) !== null || normalizeRequestText(draft) !== normalizeRequestText(preset.text)} onClick={() => {
+              <BlockedButton className="primary" why={requestWhy(canWriteRequest(game, sel)) ?? draftWhy(draft, preset.text)} onClick={() => {
                 const out = writePresetRequest(useGame.getState().game, sel, preset.id, draft, CONTENT)
                 if (!out) return
                 applyLifeState(out.state)
@@ -82,7 +97,7 @@ export function BoardView() {
                 setSel(null)
                 setPreset(null)
                 setDraft('')
-              }}>필사본 전달하기</button>
+              }}>필사본 전달하기</BlockedButton>
             </div>
           </section>
         ) : (
@@ -115,13 +130,13 @@ export function BoardView() {
             const done = game.flags[`req:${r.id}`]
             return (
               <li key={r.id}>
-                <button className="row" disabled={block !== null} onClick={() => setSel(r)}>
+                <BlockedButton className="row" why={requestWhy(block)} onClick={() => setSel(r)}>
                   <span className="row-main">
                     <b>{neighborById(r.npc)?.role ?? '이웃'} · {(R.kinds as Record<string, string>)[r.kind]}</b>
                     {r.cond && <small>{(R.conds as Record<string, string>)[r.cond]}</small>}
                   </span>
                   <span className="row-meta">{done ? '완료' : r.id === 'growth:board:intro' ? '첫 부탁 · 기한 없음' : fill(t('copyReq.daysLeft'), { n: r.until - game.clock.day + 1 })}</span>
-                </button>
+                </BlockedButton>
               </li>
             )
           })}

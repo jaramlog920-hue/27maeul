@@ -138,7 +138,7 @@ describe('소리 내어 읽기 — 받기·안 받기', () => {
     expect(voiceBtn()).toHaveAttribute('aria-pressed', 'true')
   })
 
-  it('0.9 이상 비슷하게 읽으면 본문 그대로 기록 — 손으로 다 쓴 것과 상태·소리가 똑같다 (장 완료·하나님 기록까지)', () => {
+  it('0.75 이상 비슷하게 읽으면 본문 그대로 기록 — 손으로 다 쓴 것과 상태·소리가 똑같다 (장 완료·하나님 기록까지)', () => {
     const text = mt5[47].text
     // 손으로 한 글자씩
     openWrite(writing('mt', 5, 48))

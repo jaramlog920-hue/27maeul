@@ -3,7 +3,7 @@
 import { useState, type CSSProperties } from 'react'
 import { fill, itemList, itemName, T } from '../../content/text'
 import { BOOK_DETAIL_CHOICES, COVER_COLORS, COVER_HEX, COVER_PATTERNS, DECO_HEX, DEFAULT_CHOICE, SPECIAL_COST, SPINE_DECOS, spineLook, type Binding, type SpecialChoice } from '../../engine/binding'
-import { canDecorateOtBook, decorateOtBook, stockOf } from '../../engine/game'
+import { canDecorateOtBook, decorateOtBook, sameOtLook, stockOf } from '../../engine/game'
 import { otRow, type OtBook } from '../../engine/ot-books'
 import type { ItemId } from '../../engine/types'
 import { t } from '../../shared/i18n'
@@ -11,6 +11,7 @@ import { useGame } from '../../store/game-store'
 import { sfx } from '../../audio/sound'
 import { bookCoverArt, bookSpineArt } from '../library/BookArt'
 import { PixelArt } from '../library/LibraryWork'
+import { BlockedButton } from '../../shared/BlockedButton'
 
 const B = T.binding
 const COST = Object.entries(SPECIAL_COST) as [ItemId, number][]
@@ -98,7 +99,7 @@ export function OtDecorate({ book }: { book: OtBook }) {
       {block === 'stock' && <p className="hint">{B.shortRedo}</p>}
       <div className="actions">
         <button onClick={back}>{B.back}</button>
-        <button className="primary" disabled={block !== null} onClick={confirm}>{B.confirmRedo}</button>
+        <BlockedButton className="primary" why={sameOtLook(game, book, choice) ? t('why.sameLook') : block === 'stock' ? B.shortRedo : block !== null ? '' : null} onClick={confirm}>{B.confirmRedo}</BlockedButton>
       </div>
     </div>
   )

@@ -254,7 +254,8 @@ export function isGrown(c: Companion, day: number): boolean {
 
 /** 이름: 앞뒤 공백을 떼고 8자까지. 비면 기본 이름 */
 export function cleanName(raw: string, kind: Animal): string {
-  const s = raw.replace(/\s+/g, ' ').trim().slice(0, NAME_MAX)
+  // 글자 단위로 자른다 — UTF-16으로 자르면 이모지가 반쪽 남아 깨졌다 (2026-10-26 감사 A21)
+  const s = [...raw.replace(/\s+/g, ' ').trim()].slice(0, NAME_MAX).join('').trim()
   return s || (kind === 'cat' ? '나비' : '누렁이')
 }
 

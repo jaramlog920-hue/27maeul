@@ -38,7 +38,7 @@ export function RankView({ history }: { history?: boolean }) {
       useGame.setState({ modal: m?.kind === 'rank' && m.back ? m.back : null })
     }
   }
-  if (featureAccess(game, 'rank') !== 'full' && !game.rankPopup && !game.ranks?.length) return <div className="dialog" role="dialog" aria-label={t('rank.title')}><h2>{t('rank.title')}</h2><p className="hint">{featureHint('rank')}</p><button onClick={close}>닫기</button></div>
+  if (featureAccess(game, 'rank') !== 'full' && !game.rankPopup && !game.ranks?.length) return <div className="dialog" role="dialog" aria-label={t('rank.title')}><h2>{t('rank.title')}</h2><p className="hint">{featureHint('rank')}</p><div className="actions"><button data-close onClick={close}>닫기</button></div></div>
   const pop = !history ? game.rankPopup : undefined
   const rows = pop?.table ?? rankTable(villageSeed(game), game.clock.day, ourScore(game))
   return (

@@ -8,6 +8,7 @@ import { canSpouseAct } from '../../engine/family-memory'
 import { canKidAct, closeHearts, KID_ACTS, KID_ACTS_PER_DAY, kidActsToday, type KidAct } from '../../engine/family'
 import type { StatId } from '../../engine/stats'
 import { useGame, type KidDone, type SpouseDone } from '../../store/game-store'
+import { BlockedButton } from '../../shared/BlockedButton'
 
 const K = T.family.time
 const ACTS = K.acts as Record<KidAct, { label: string; grows: string; lines: string[]; burnt?: string; alone?: string }>
@@ -109,6 +110,8 @@ export function KidTime({ done, spouse }: { done?: KidDone; spouse?: SpouseDone 
   const partner = game.romance?.stage === 'married' ? game.romance.partner : null
   const spouseDef = partner ? W.spouses[partner] : undefined
   const spouseBlock = canSpouseAct(game)
+  const blocks = KID_ACTS.map((act) => canKidAct(game, act))
+  const sameBlock = blocks.every((b) => b !== null && b === blocks[0]) ? blocks[0] : null
   return (
     <div className="dialog kid-time" role="dialog" aria-label={K.title}>
       <h2>{K.title}</h2>
@@ -121,6 +124,8 @@ export function KidTime({ done, spouse }: { done?: KidDone; spouse?: SpouseDone 
       </p>
       {/* 잠겼으면 안내는 한 번만 (활동마다 아홉 번 나왔다 — 2026-10-21 점검) */}
       {canKidAct(game, KID_ACTS[0]) === 'locked' && <p className="hint">{featureHint('childActivities')}</p>}
+      {/* 모든 활동이 같은 까닭으로 막혔으면(아기·떠남 등) 그 까닭도 한 번만 — 줄마다 열 번 되풀이됐다 (2026-10-26 점검) */}
+      {sameBlock && sameBlock !== 'done' && sameBlock !== 'locked' && <p className="hint">{BLOCKS[sameBlock]}</p>}
       <ul className="kid-acts">
         {KID_ACTS.map((act) => {
           const block = canKidAct(game, act)
@@ -128,12 +133,12 @@ export function KidTime({ done, spouse }: { done?: KidDone; spouse?: SpouseDone 
           const liked = game.child ? likedActs(kidPersona(game.child, game.clock.day)).has(act) : false
           return (
             <li key={act}>
-              <button disabled={block !== null} onClick={() => kidAct(act)}>
+              <BlockedButton why={block === null ? null : block === 'locked' ? featureHint('childActivities') : BLOCKS[block] ?? ''} onClick={() => kidAct(act)}>
                 <span className="kid-act-name">{a.label}</span>
                 {a.grows && <span className="kid-act-grows">{a.grows}</span>}
                 {liked && <span className="kid-act-grows">좋아해요</span>}
-              </button>
-              {block && block !== 'done' && block !== 'locked' && <span className="kid-act-why">{BLOCKS[block]}</span>}
+              </BlockedButton>
+              {block && block !== 'done' && block !== 'locked' && !sameBlock && <span className="kid-act-why">{BLOCKS[block]}</span>}
             </li>
           )
         })}
@@ -145,9 +150,9 @@ export function KidTime({ done, spouse }: { done?: KidDone; spouse?: SpouseDone 
           <ul className="kid-acts">
             {spouseDef.choices.map((c, i) => (
               <li key={c}>
-                <button disabled={spouseBlock !== null} onClick={() => spouseKidAct(i)}>
+                <BlockedButton why={spouseBlock === null ? null : spouseBlock === 'locked' ? featureHint('childActivities') : W.blocks[spouseBlock] ?? ''} onClick={() => spouseKidAct(i)}>
                   <span className="kid-act-name">{c}</span>
-                </button>
+                </BlockedButton>
               </li>
             ))}
           </ul>

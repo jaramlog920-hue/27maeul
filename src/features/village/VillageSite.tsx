@@ -8,6 +8,7 @@ import { SITES, type FacilityId } from '../../engine/village-sites'
 import { isDone } from '../../engine/minigame'
 import { useGame } from '../../store/game-store'
 import { HandPractice } from '../work/HandPractice'
+import { BlockedButton } from '../../shared/BlockedButton'
 
 const V = T.village
 /** 짓고 있는 현장: 진행·일하는 이웃·거들기(손일 재사용)·선택 장식. 거들지 않아도 이웃들이 이어서 한다 */
@@ -25,7 +26,7 @@ export function VillageSite({ id }: { id: FacilityId }) {
     useGame.setState({ game: workHand(s.game, 'tap', input, s.rng) })
   }, [])
   const t = defText(id)
-  const exit = <button onClick={closeModal}>{V.site.close}</button>
+  const exit = <button data-close onClick={closeModal}>{V.site.close}</button>
   if (isBuilt(game.flags, id)) {
     return (
       <div className="dialog village-site" role="dialog" aria-label={t.name}>
@@ -63,7 +64,7 @@ export function VillageSite({ id }: { id: FacilityId }) {
         </>
       ) : (
         <div className="actions menu column">
-          <button className="primary" disabled={block !== null} onClick={() => { const s = useGame.getState(); commitVillage(startWork(s.game, CONTENT, s.rng)) }}>{V.site.work}</button>
+          <BlockedButton className="primary" why={block !== null ? V.site.blocks[block] ?? '' : null} onClick={() => { const s = useGame.getState(); commitVillage(startWork(s.game, CONTENT, s.rng)) }}>{V.site.work}</BlockedButton>
           {block && <p className="hint">{V.site.blocks[block]}</p>}
         </div>
       )}

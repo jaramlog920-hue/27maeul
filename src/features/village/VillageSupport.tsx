@@ -1,17 +1,17 @@
 import { fill, itemName, T } from '../../content/text'
 import type { GameState } from '../../engine/game'
 import { canDonate, donate, villageOf } from '../../engine/projects'
-import { saveGame } from '../../engine/save'
 import { SITES, type FacilityId } from '../../engine/village-sites'
 import { useGame } from '../../store/game-store'
+import { BlockedButton } from '../../shared/BlockedButton'
 
 const V = T.village
 type DefText = { name: string; short: string; where: string; effect: string; work: string; decor: string; balance: string }
 export const defText = (id: FacilityId) => (V.defs as Record<string, DefText>)[id]
 
+/** 마을 일 저장도 스토어의 공통 길로 — 업적·도감이 바로 적힌다 (2026-10-26 감사 A07) */
 export function commitVillage(next: GameState) {
-  saveGame(next)
-  useGame.setState({ game: next })
+  useGame.getState().commitGame(next)
 }
 
 /** 진행 정도(0~1)와 단계 문구 */
@@ -36,7 +36,7 @@ export function DecorBox({ id }: { id: FacilityId }) {
       ) : (
         <>
           <div className="actions">
-            <button disabled={block !== null} onClick={() => commitVillage(donate(useGame.getState().game, id))}>{V.site.donate} · {mats}</button>
+            <BlockedButton why={block === 'have' ? fill(T.ui.helpNeeds, { items: mats }) : block !== null ? '' : null} onClick={() => commitVillage(donate(useGame.getState().game, id))}>{V.site.donate} · {mats}</BlockedButton>
           </div>
         </>
       )}

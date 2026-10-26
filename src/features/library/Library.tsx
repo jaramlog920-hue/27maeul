@@ -18,6 +18,7 @@ import { ShelfPicture } from './BookArt'
 import { ShelfRow } from './ShelfRow'
 import { finishedCopies } from '../../engine/binding'
 import { roomOf } from '../../engine/shelf-rooms'
+import { BlockedButton } from '../../shared/BlockedButton'
 
 const BOOK_NAME = T.quiz.books as Record<string, string>
 
@@ -43,7 +44,7 @@ function LibraryOps() {
       <p className="hint">{current ? t('libraryOps.current', { who: neighborById(current)?.role ?? '' }) : t('libraryOps.none')}</p>
       <div className="actions menu">
         {candidates.filter((id) => id !== current).map((id) => (
-          <button key={id} disabled={featureAccess(game, 'library') !== 'full'} onClick={() => apply(setLibrarian(useGame.getState().game, id))}>{t('libraryOps.appoint', { who: neighborById(id)?.role ?? '' })}</button>
+          <BlockedButton key={id} why={featureAccess(game, 'library') !== 'full' ? featureHint('library') : null} onClick={() => apply(setLibrarian(useGame.getState().game, id))}>{t('libraryOps.appoint', { who: neighborById(id)?.role ?? '' })}</BlockedButton>
         ))}
         {current && <button onClick={() => apply(setLibrarian(useGame.getState().game, null))}>{t('libraryOps.release')}</button>}
       </div>
@@ -197,9 +198,9 @@ function ReadingSeat() {
     <div className="reading-seat">
       <h3>열람석</h3>
       <p className="hint">{hint}</p>
-      <button disabled={block !== null} onClick={libraryRead}>
+      <BlockedButton why={block !== null ? hint : null} onClick={libraryRead}>
         옮겨 적기 · {LIBRARY_READ_PRICE}닢
-      </button>
+      </BlockedButton>
     </div>
   )
 }

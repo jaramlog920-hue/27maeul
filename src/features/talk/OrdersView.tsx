@@ -6,6 +6,7 @@ import { CARPENTER_WORKS } from '../../engine/easier'
 import { canOrderHome, canOrderWork, nextHomeStage } from '../../engine/game'
 import { featureHint } from '../../engine/feature-rules'
 import { useGame } from '../../store/game-store'
+import { BlockedButton } from '../../shared/BlockedButton'
 
 const EASY = T.easy.names as Record<string, string>
 
@@ -53,9 +54,9 @@ export function OrdersView({ npc }: { npc: string }) {
                   {r.block === 'locked' && <em> · {featureHint(r.key === 'home' ? game.homeLevel === 0 ? 'spouseRoom' : 'childRoom' : 'convenience')}</em>}
                 </span>
               </div>
-              <button className="primary" disabled={r.block !== null} onClick={r.act}>
+              <BlockedButton className="primary" why={r.block === null ? null : why(r.block) || (r.block === 'needs' ? T.orders.needsShort : r.block === 'locked' ? featureHint(r.key === 'home' ? game.homeLevel === 0 ? 'spouseRoom' : 'childRoom' : 'convenience') : '')} onClick={r.act}>
                 {T.orders.ask}
-              </button>
+              </BlockedButton>
             </li>
           ))}
         </ul>

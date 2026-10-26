@@ -71,7 +71,7 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
   const block = canHelp(game, def)
   // 짧은 까닭(필요한 것·지침·가방 가득)은 대화칸에 줄로 달지 않고, 단추를 누르면 잠깐 뜨는 알림으로 (2026-10-05 사용자)
   const blockNote =
-    block === 'needs' && def.help.needs ? fill(T.ui.helpNeeds, { items: itemList(def.help.needs) }) : block === 'tired' ? T.ui.helpTired : block === 'full' ? T.ui.bagFull : null
+    block === 'needs' && def.help.needs ? fill(T.ui.helpNeeds, { items: itemList(def.help.needs) }) : block === 'tired' ? T.ui.helpTired : block === 'full' ? T.ui.bagFull : block === 'done' ? T.ui.helpDone : null
   // 단추 이름은 이웃마다 다른 일 이름 대신 그냥 "돕기" (2026-10-07 사용자)
   const canGift = (!game.gifted.includes(def.id) && GIFTABLE.some((i) => (game.inv[i] ?? 0) > 0))||weddingGiftsFor(game,def.id).length>0
   // 선물할 수 없을 때는 단추를 끄지 않고 까닭을 알린다 (2026-10-19 감사 L-65)
@@ -172,7 +172,7 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
         {orderable && <button onClick={() => open({ kind: 'orders', npc: def.id })}>{T.orders.open}</button>}
         {def.marketOnly && isMarketDay(game.clock.day) && <button onClick={() => open({ kind: 'trade' })}>{T.ui.talkTrade}</button>}
         {def.marketOnly && isMarketDay(game.clock.day) && <StallEntry label={T.stall.ask} />}
-        <button disabled={block !== null && !blockNote} onClick={() => (blockNote ? say(blockNote) : startHelp(def.id))}>
+        <button aria-disabled={blockNote ? true : undefined} onClick={() => (blockNote ? say(blockNote) : startHelp(def.id))}>
           {T.ui.talkHelp}
         </button>
         <button aria-disabled={!canGift} onClick={() => (giftNote ? say(giftNote, 3500) : open({ kind: 'gift', neighborId: def.id }))}>

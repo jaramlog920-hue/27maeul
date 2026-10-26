@@ -10,6 +10,8 @@ import { bookBackModal, useGame, type Modal } from '../../store/game-store'
 import { dayLabel } from '../word/Word'
 import { Spine } from './BookArt'
 import { BookReopen } from './BookReopen'
+import { BlockedButton } from '../../shared/BlockedButton'
+import { t } from '../../shared/i18n'
 
 const BOOK_NAME = T.quiz.books as Record<string, string>
 const BV = T.bookView
@@ -73,12 +75,14 @@ export function BookView({ modal }: { modal: Extract<Modal, { kind: 'bookView' }
             {BV.next}
           </button>
           <button onClick={() => setPage('record')}>{BV.first}</button>
+          {/* 읽다가도 바로 닫는다 — 첫 쪽으로 돌아가야만 닫혔다 (2026-10-26 감사 A10) */}
+          <button data-close onClick={close}>{BV.close}</button>
         </div>
       </div>
     )
   }
 
-  if (page === 'god') return <BookGod name={name} label={label} groups={groups} onBack={() => setPage('record')} />
+  if (page === 'god') return <BookGod name={name} label={label} groups={groups} onBack={() => setPage('record')} onClose={close} />
 
   const rec = bookRecord(game, book, CONTENT)
   // 예전에 엮은 책(필사가 생기기 전에 마친 책)은 숫자 없이 조용히 한 줄 — 0절·0자를 보여 주지 않는다
@@ -114,29 +118,29 @@ export function BookView({ modal }: { modal: Extract<Modal, { kind: 'bookView' }
       )}
       {onlyLegacy ? <p className="hint">{BV.legacyAll}</p> : rec.legacy > 0 && <p className="hint">{fill(BV.legacy, { n: rec.legacy })}</p>}
       <div className="book-view-open">
-        <button
+        <BlockedButton
           className="primary"
-          disabled={!chapters.length}
+          why={chapters.length ? null : t('why.noChapters')}
           onClick={() => {
             setAt(0)
             setPage('read')
           }}
         >
           {BV.read}
-        </button>
+        </BlockedButton>
         <button onClick={() => setPage('god')}>
           {BV.god} <span className="hint">{findCount}</span>
         </button>
       </div>
       <div className="actions">
-        <button onClick={close}>{BV.close}</button>
+        <button data-close onClick={close}>{BV.close}</button>
       </div>
     </div>
   )
 }
 
 /** 이 책에서 발견한 하나님 기록: 키워드 — 구절, 누르면 구절 본문 (개역한글 그대로) */
-function BookGod({ name, label, groups, onBack }: { name: string; label: string; groups: ReturnType<typeof bookGodFinds>; onBack: () => void }) {
+function BookGod({ name, label, groups, onBack, onClose }: { name: string; label: string; groups: ReturnType<typeof bookGodFinds>; onBack: () => void; onClose: () => void }) {
   const [open, setOpen] = useState<string | null>(null)
   return (
     <div className="dialog book-view" role="dialog" aria-label={label}>
@@ -166,6 +170,7 @@ function BookGod({ name, label, groups, onBack }: { name: string; label: string;
       )}
       <div className="actions">
         <button onClick={onBack}>{BV.first}</button>
+        <button data-close onClick={onClose}>{BV.close}</button>
       </div>
     </div>
   )

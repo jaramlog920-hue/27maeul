@@ -57,6 +57,8 @@ describe('제본 → 완성본 → 서고에 꽂기', () => {
     const lateStart = useGame.getState().startRetry
     const row = screen.getByText('마가복음', { selector: '.spine-name' }).closest('li')!
     await user.click(within(row).getByRole('button', { name: '다시 도전' }))
+    // 재료를 쓰기 전에 한 번 묻는다 (2026-10-26 감사 A12)
+    await user.click(within(screen.getByRole('group', { name: '다시 도전' })).getByRole('button', { name: '다시 도전' }))
     const paid = useGame.getState().game
     const quiz = useGame.getState().modal
     expect(paid.inv).toEqual({ goldLeaf: 2, oil: 2 })
@@ -110,7 +112,7 @@ describe('제본 → 완성본 → 서고에 꽂기', () => {
     render(<ModalLayer />)
     await user.click(screen.getByRole('button', { name: '특별하게 제본하기' }))
     expect(screen.getByRole('dialog', { name: '마가복음 표지 꾸미기' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: '이대로 제본하기' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: '이대로 제본하기' })).toHaveAttribute('aria-disabled', 'true')
     expect(screen.getByText(/재료가 모자라요/)).toBeInTheDocument()
     act(() => useGame.setState((s) => ({ game: { ...s.game, inv: { creamPaper: 3, blueDye: 1, fineThread: 2 } } })))
     await user.click(screen.getByRole('button', { name: '연보라' }))
@@ -183,7 +185,7 @@ describe('제본 → 완성본 → 서고에 꽂기', () => {
     expect(row.querySelector('.spine-art')).not.toBeNull()
     await user.click(within(row).getByRole('button', { name: '표지 꾸미기' }))
     expect(screen.getByRole('dialog', { name: '누가복음 표지 꾸미기' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: '이대로 꾸미기' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: '이대로 꾸미기' })).toHaveAttribute('aria-disabled', 'true')
   })
 })
 
