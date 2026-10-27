@@ -1163,6 +1163,12 @@ export function kidWalk(id: string, def: NeighborDef, neighbors: readonly Neighb
   return { x: a.x + (b.x - a.x) * f, y: a.y + (b.y - a.y) * f, moving: true, facing, walkTime: walked }
 }
 
+/** 이웃 자리의 지금 주인: 은퇴한 이웃 자리는 이어받은 자녀, 나이 든 주민인지 — 마을과 여행 판이 같은 모습을 쓰도록 한곳에서 */
+function slotResident(game: GameState, id: string) {
+  const heirP = slotHeir(game.gen, id)
+  return { heirP, heirAv: heirP ? genAvatar(heirP) : null, elder: residentIsElder(game.gen, heirP?.id ?? id) }
+}
+
 /** 이웃 그림: 연애 후보(계획 6)는 주인공 모양 고르기와 같은 머리·옷으로, 나머지는 이웃마다 정한 옷으로 */
 function neighborPerson(def: NeighborDef, facing: Facing, frame: 0 | 1 | 2, blink: boolean, season: Season, growth?: number, dressed?: Avatar, elder = false, heir?: FullAvatar | null) {
   const { who, extra } = neighborLook(def, growth, dressed, elder, heir)
@@ -2697,9 +2703,7 @@ export function createRenderer(g: Ctx, content: GameContent): Renderer {
       for (const def of content.neighbors) {
         const n = game.npcs[def.id]
         // 은퇴한 이웃 자리는 이어받은 자녀가 주인으로 (이사 여부와 상관없이 — 2026-10-11 사용자 결정), 은퇴한 부모는 곁에
-        const heirP = slotHeir(game.gen, def.id)
-        const heirAv = heirP ? genAvatar(heirP) : null
-        const elder = residentIsElder(game.gen, heirP?.id ?? def.id)
+        const { heirP, heirAv, elder } = slotResident(game, def.id)
         /** 곁의 가족 그림: 은퇴한 부모는 그 이웃의 원래 모습을 나이 든 모습으로, 그 밖은 생성 주민 모습 */
         const companionLook = (c: Companion): { who: Who; extra: PersonExtra } => {
           if (c.retiredParent) return neighborLook(def, undefined, game.looks?.[def.id], true)
@@ -3398,7 +3402,10 @@ export function createTripRenderer(g: Ctx) {
         const p = partner.actor
         items.push({
           y: p.y,
-          paint: () => drawBig(g, neighborPerson(partner.def, p.facing, frameOf(p), isBlinking(t + 0.6), season, undefined, game.looks?.[partner.def.id]), p.x, p.y, p.walking ? 0 : breathOffset(t + 0.6)),
+          paint: () => {
+            const { heirP, heirAv, elder } = slotResident(game, partner.def.id)
+            drawBig(g, neighborPerson(partner.def, p.facing, frameOf(p), isBlinking(t + 0.6), season, undefined, game.looks?.[heirP?.id ?? partner.def.id], elder, heirAv), p.x, p.y, p.walking ? 0 : breathOffset(t + 0.6))
+          },
         })
       }
       items.sort((a, b) => a.y - b.y).forEach((it) => it.paint())
