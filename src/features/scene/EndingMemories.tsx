@@ -4,13 +4,18 @@ import {useState} from 'react'
 import {useGame,albumImage} from '../../store/game-store'
 import {SCENES} from '../../content/text'
 
+const MUST_MEMORIES=[/^firstChapter$/,/^wedding:/,/^(childBorn|babyBorn)$/,/^(allFeast|fullLibrary)$/,/^firstOtBook$/]
+
 /** 이미 본 장면과 완성 당시 기록만 보여 주는 엔딩 앨범. */
 export function EndingMemories({preview=false}:{preview?:boolean}) {
   const game=useGame(s=>s.game)
   const [page,setPage]=useState(0)
   const endDay=game.flags.bibleCompletedDay??game.clock.day
   const memories=game.album.filter(a=>a.day<=endDay && a.id!=='completeBible' && SCENES[a.id]?.album)
-  const chosen=memories.filter(a=>!['stars','sunset','rainCopy','springWalk','summerCreek','autumnPath'].includes(a.id)).slice(-8)
+  const pool=memories.filter(a=>!['stars','sunset','rainCopy','springWalk','summerCreek','autumnPath'].includes(a.id))
+  // 큰 순간(첫 장·결혼·아이·스물일곱 권·첫 구약 책)은 꼭 넣고 나머지를 최근 것으로 — 마지막 여덟 장만 보이면 오래 한 판의 처음이 빠졌다 (2026-10-27 플레이 점검 25)
+  const must=MUST_MEMORIES.map(re=>pool.find(a=>re.test(a.id))).filter((a):a is typeof pool[number]=>!!a)
+  const chosen=[...must,...pool.filter(a=>!must.includes(a)).slice(-Math.max(0,8-must.length))].sort((a,b)=>a.day-b.day)
   const entries=preview?[{id:'lastManuscript',day:12},{id:'fullLibrary',day:120},{id:'bibleLastLetter',day:365}]:chosen.length?chosen:memories.slice(-8)
   const at=Math.min(page,Math.max(0,entries.length-1)),entry=entries[at]
   const image=preview?['/artifacts/scenery/21-last-manuscript.jpg','/artifacts/scenery/25-library-photo.jpg','/artifacts/scenery/27-first-desk.jpg'][at]:entry?albumImage(entry.id):null

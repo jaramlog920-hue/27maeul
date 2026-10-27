@@ -27,6 +27,25 @@ body:has(.play.focus) .toast-over-modal {
 body:has(.dialog.scene) .toast-over-modal {
   top: 38%;
 }
+.notices {
+  position: absolute;
+  left: 50%;
+  top: 12px;
+  transform: translateX(-50%);
+  width: calc(100% - 40px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+  z-index: 2;
+}
+.notices > .toast:not(.toast-over-modal),
+.notices > .award {
+  position: static;
+  transform: none;
+  max-width: 100%;
+}
 .decorate-bar {
   position: fixed;
   left: 0;
@@ -1736,6 +1755,7 @@ button.need-tap.on span, .stats-list li.on .stat-name { color: var(--accent); }
 
 /* ── 아이 이름 (계획 12) ── */
 .child-name-pick { text-align: center; font-size: 20px; margin: 12px 0; }
+.child-name-pick input { width: 10em; max-width: 100%; text-align: center; font-size: 20px; }
 
 /* ── 새로 이룬 업적 (알림 아래 작은 띠) ── */
 .award {
@@ -2589,8 +2609,46 @@ button.row:active:not(:disabled) { background: #efe3c4; }
 .bind-where h3 { margin: 0 0 6px; font-size: 15px; }
 .bind-where p { margin: 4px 0; font-size: 13px; line-height: 1.5; }
 /* 장터 칸 이름 (2026-10-19 플레이 점검 P20): 그림 아래 두 줄까지, 값은 오른쪽 위 */
-.icon-grid.named .bag-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-.icon-grid.named .bag-slot { flex-direction: column; justify-content: flex-start; aspect-ratio: auto; min-height: 64px; padding: 4px 2px 3px; gap: 2px; }
-.icon-grid.named .bag-name { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 10px; line-height: 1.2; word-break: keep-all; text-align: center; color: var(--ink); }
-.icon-grid.named .bag-count { top: 0; bottom: auto; }
+/* 가방·요리·작업대도 칸 아래 이름 (2026-10-27 플레이 점검 29: 눌러 봐야 무엇인지 알았다) */
+.icon-grid.named .bag-grid, .bag-grid.named { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.icon-grid.named .bag-slot, .bag-grid.named .bag-slot { flex-direction: column; justify-content: flex-start; aspect-ratio: auto; min-height: 64px; padding: 4px 2px 3px; gap: 2px; }
+.icon-grid.named .bag-name, .bag-grid.named .bag-name { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 10px; line-height: 1.2; word-break: keep-all; text-align: center; color: var(--ink); }
+.icon-grid.named .bag-count, .bag-grid.named .bag-count { top: 0; bottom: auto; }
 .icon-grid.named .bag-slot.dim .bag-name { opacity: .7; }
+.bag-grid.named .bag-slot.empty { min-height: 64px; }
+
+/* 함께하는 시간: 배우자와 함께하는 일 접기 (2026-10-27) */
+.kid-spouse > summary { cursor: pointer; }
+.kid-spouse > summary h3 { display: inline; }
+/* 장터 사기 목록 묶음 (2026-10-27 플레이 점검 30) */
+.trade-group { margin: 6px 0; }
+.trade-group > summary { padding: 6px 4px; cursor: pointer; font-weight: 700; font-size: 14px; }
+/* 여행 판 칸 설명 (2026-10-27 플레이 점검 41) */
+.ts-legend-toggle {
+  position: absolute;
+  left: 12px;
+  bottom: max(28px, calc(env(safe-area-inset-bottom) + 12px));
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 10px;
+  background: #fffaf0;
+  color: #4a3226;
+  border: 2px solid #8d5f38;
+}
+.ts-legend {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: calc(max(28px, calc(env(safe-area-inset-bottom) + 12px)) + 40px);
+  margin: 0;
+  padding: 8px 12px;
+  list-style: none;
+  font-size: 13px;
+  line-height: 1.5;
+  border-radius: 10px;
+  background: #fffaf0;
+  color: #4a3226;
+  border: 2px solid #8d5f38;
+  max-height: 50vh;
+  overflow: auto;
+}

@@ -1,6 +1,9 @@
-// 아이 이름 정하기 (계획 12): 짧은 목록에서 골라 주고 '다른 이름'으로 다시 뽑는다 (성 없이 이름만)
+// 아이 이름 정하기 (계획 12): 짧은 목록에서 골라 주고 '다른 이름'으로 다시 뽑는다 (성 없이 이름만).
+// 직접 쓸 수도 있다 — 묻기만 하고 쓰는 칸이 없었다 (2026-10-27 플레이 점검 28)
 import { useState } from 'react'
 import { nextName } from '../../engine/child'
+import { NAME_MAX } from '../../engine/companion'
+import { BlockedButton } from '../../shared/BlockedButton'
 import { useGame } from '../../store/game-store'
 
 export function ChildName() {
@@ -22,13 +25,13 @@ export function ChildName() {
       <h2>아이 이름</h2>
       <p>{child.look === 'boy' ? '사내아이' : '여자아이'}예요. 어떤 이름으로 부를까요?</p>
       <p className="child-name-pick">
-        <strong>{name}</strong>
+        <input value={name} maxLength={NAME_MAX} aria-label="아이 이름" onChange={(e) => setName(e.target.value)} />
       </p>
       <div className="actions">
-        <button onClick={() => setName(another(name, child.look))}>다른 이름</button>
-        <button className="primary" onClick={() => setChildName(name)}>
+        <button onClick={() => setName(another(name.trim() || child.name, child.look))}>다른 이름</button>
+        <BlockedButton className="primary" why={name.trim() ? null : '이름을 적어 주세요.'} onClick={() => setChildName(name.trim())}>
           이 이름으로
-        </button>
+        </BlockedButton>
       </div>
     </div>
   )

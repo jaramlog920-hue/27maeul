@@ -41,3 +41,13 @@ it('does not treat an unearned zero flag as collected, and rejects invalid rando
   expect(copyFurnitureRewardPool({ [copyFurnitureFlag(COPY_FURNITURE[0].id)]: 0 })).toHaveLength(5)
   for (const roll of [-1, 1, Infinity, NaN]) expect(() => selectCopyFurnitureReward({}, () => roll)).toThrow(RangeError)
 })
+
+it('without children, the other thirty come first and infant/child last (2026-10-27)', () => {
+  const flags: Record<string, number> = {}
+  for (let count = 0; count < 40; count++) {
+    const item = selectCopyFurnitureReward(flags, () => count % 2 ? .999999 : 0, false)!
+    expect(item.category === 'infant').toBe(count >= 30 && count < 35)
+    expect(item.category === 'child').toBe(count >= 35)
+    flags[copyFurnitureFlag(item.id)] = 1
+  }
+})

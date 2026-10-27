@@ -19,3 +19,8 @@ it('없는 빈칸', () => {
   expect(fillSlots('{a}와 {b}', { a: '파피' }, 'keep')).toBe('파피와 {b}')
   expect(josaFor('3', '이')).toBeNull()
 })
+it('닫는 따옴표 뒤 조사도 맞춘다', () => {
+  expect(fillSlots('‘{t}’을 찾았어요', { t: '유아 씻기대' })).toBe('‘유아 씻기대’를 찾았어요')
+  expect(fillSlots('‘{t}’를 찾았어요', { t: '등잔' })).toBe('‘등잔’을 찾았어요')
+  expect(fillSlots('({t})', { t: '등잔' })).toBe('(등잔)')
+})

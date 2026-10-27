@@ -12,7 +12,7 @@ import { chaptersOf, groupByRoom, progressOf } from '../../engine/books'
 import { chapterUnit, isOtBook, otRow } from '../../engine/ot-books'
 import { connectionsOf, type Connection } from '../../engine/connections'
 import { copySpot } from '../../engine/copying'
-import { pieceFrom, whenOf, type PieceLog } from '../../engine/fragments'
+import { pieceFrom, type PieceLog } from '../../engine/fragments'
 import { sanitizeGodRecords, type GodFind } from '../../engine/god-records'
 import { bookLineKey } from '../../engine/game'
 import { BOOKS, isGospel, type Book, type Piece } from '../../engine/types'
@@ -23,7 +23,6 @@ import { LoveCommands } from './LoveCommands'
 
 const W = T.word
 const BOOK_NAME = T.quiz.books as Record<string, string>
-const SEASON = T.ui.season as Record<string, string>
 
 function VerseLine({ refText }: { refText: string }) {
   return <NtContent books={[ntBookOfRef(refText)]}><VerseLineText refText={refText} /></NtContent>
@@ -32,19 +31,17 @@ function VerseLineText({ refText }: { refText: string }) {
   return <p className="copy-god-verse">{versesOf(refText).map(v => v.text).join(' ')}</p>
 }
 
-/** 날 → "3년째 봄 15일" */
+/** 날 → "335일째" — 위 날짜 줄과 같은 표기 (2026-10-27 플레이 점검 10: 「1년째 봄 1일」과 둘이었다) */
 export function dayLabel(day: number): string {
-  const w = whenOf(day)
-  return fill(W.whenDay, { year: w.year, season: SEASON[w.season], d: w.d })
+  return fill(W.whenDay, { d: day })
 }
 
-/** 받은 기록 한 줄: "3년째 봄 · 빵 굽는 이웃에게 받은 조각" — 기록이 없는 옛 조각은 "언제 받았는지 남아 있지 않은 조각" */
+/** 받은 기록 한 줄: "335일째 · 빵 굽는 이웃에게 받은 조각" — 기록이 없는 옛 조각은 "언제 받았는지 남아 있지 않은 조각" */
 export function gotLabel(log: PieceLog, pieceId: string): string {
   const got = log[pieceId]
   const src = pieceFrom(got?.from)
   if (!got || src.kind === 'unknown') return W.from.unknown
-  const w = whenOf(got.day)
-  const when = fill(W.when, { year: w.year, season: SEASON[w.season] })
+  const when = dayLabel(got.day)
   const how = src.kind === 'ground' ? t('groundPiece.source') : src.kind === 'npc' ? fill(W.from.npc, { who: neighborById(src.who)?.role ?? src.who }) : W.from[src.kind]
   return `${when} · ${how}`
 }

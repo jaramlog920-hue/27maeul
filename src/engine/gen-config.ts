@@ -22,6 +22,8 @@ export const SPOUSE_FLOOR = 50
  * 40일에 가장 가까운 쌍도 30 남짓 — 자율 생활이 열려도 70일 넘게 주민 연인이 하나도 없었다)
  */
 export const FRIEND_DRIFT = 1
+/** 짝이 될 수 있는 둘이 만난 적이 있으면, 친한 사이가 되기 전에도 날마다 이만큼 (첫 연인이 한 달 남짓에 — 2026-10-27 사용자) */
+export const PAIR_DRIFT = 2
 
 /** 마을 전체 동시 연인 쌍 상한, 결혼 준비 동시 상한 (P6) */
 export const MAX_LOVERS = 4

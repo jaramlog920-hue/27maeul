@@ -108,7 +108,7 @@ describe('필사 집중 화면 — 장 완료', () => {
     const m = useGame.getState().modal
     if (m?.kind !== 'copy' || m.last?.kind !== 'chapter') throw new Error('장 완료가 아님')
     const chars = mt5.reduce((n, v) => n + v.text.replace(/[\s\p{P}\p{S}]/gu, '').length, 0)
-    expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(`마태복음 5장을 기록했습니다 · 48절 · ${chars}자`)
+    expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(`마태복음 5장을 기록했어요 · 48절 · ${chars}자`)
     const finds = GOD_RECORDS.filter((r) => r.book === 'mt' && r.chapter === 5)
     expect(finds.length).toBeGreaterThan(0)
     const god = screen.getByRole('region', { name: `✦ 하나님에 대한 새로운 기록 ${finds.length}` })
@@ -142,7 +142,7 @@ describe('필사 집중 화면 — 장 완료', () => {
       const popup = screen.getByRole('dialog', { name: '말씀조각 획득' })
       await user.click(within(popup).getByRole('button', { name: /닫기|다음 조각/ }))
     }
-    expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(`마태복음 ${without}장을 기록했습니다`)
+    expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(`마태복음 ${without}장을 기록했어요`)
     expect(screen.queryByText(/하나님에 대한 새로운 기록/)).toBeNull()
     await user.click(screen.getByRole('button', { name: '책 덮기' }))
     expect(useGame.getState().modal).toBeNull()

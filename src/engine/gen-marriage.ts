@@ -41,6 +41,21 @@ export function consultFor(g: GenState | undefined, npc: string, hearts: Record<
   return null
 }
 
+/**
+ * 사랑방 게시판의 고민 쪽지 (2026-10-27 사용자: 상담은 게시판에서) — 상담이 열린 연인마다 한 장, 쓴 사람은 consultantOf.
+ * due: 오늘 답할 수 있나 (물을 날이 됐고 오늘 아직 안 답함)
+ */
+export function consultNotes(g: GenState | undefined, hearts: Record<string, number>, day: number): { r: Relation; by: string; due: boolean }[] {
+  if (!g?.on) return []
+  const out: { r: Relation; by: string; due: boolean }[] = []
+  for (const r of Object.values(g.relations)) {
+    if (r.stage !== 'lover' || !r.consult || r.consult.answers.length >= CONSULT_QUESTIONS) continue
+    const personHearts = { [r.a]: hearts[slotOfPerson(g, r.a)] ?? 0, [r.b]: hearts[slotOfPerson(g, r.b)] ?? 0 }
+    out.push({ r, by: consultantOf(r, personHearts), due: r.consult.nextAsk <= day && !r.consult.asked.includes(day) })
+  }
+  return out.sort((x, y) => (x.r.id < y.r.id ? -1 : 1))
+}
+
 /** 이번에 물을 질문 번호 (한 바퀴 안에서 겹치지 않게, 씨앗으로) */
 export function consultQuestion(g: GenState, r: Relation): number {
   const round = r.consult?.round ?? 0 // 바퀴마다 다른 순서

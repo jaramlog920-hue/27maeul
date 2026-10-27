@@ -50,7 +50,8 @@ export function SchoolView() {
                 {names[id]} 배우기
               </span>
               <span className="trade-pay">
-                {kid.name} {statScore(kid.stats[id])}/100
+                {/* 숫자만으로는 무엇인지 몰랐다 (2026-10-27 플레이 점검) */}
+                {kid.name} {names[id]} {statScore(kid.stats[id])}/100
               </span>
               <BlockedButton why={block === null ? null : block === 'locked' ? featureHint('school') : WHY[block] ?? ''} onClick={() => goSchool(id)}>
                 맡기기
@@ -59,6 +60,8 @@ export function SchoolView() {
           ))}
         </ul>
       )}
+      {/* 점수가 무엇에 쓰이는지 몰랐다 — 어른이 될 때 가장 높은 능력치(와 해 본 일)로 일을 고른다 (2026-10-27 플레이 점검 43, child adultJob) */}
+      {kid && block !== 'noChild' && block !== 'grown' && <p className="hint">능력치는 100점까지 올라요. 어른이 되면 해 본 일과 가장 높은 능력치를 보고 할 일을 정해요.</p>}
       {/* 기능이 아직 잠겨 있으면 열리는 때를 알려 준다 (2026-10-18 감사 L-38 — 안내 줄이 비어 있었다) */}
       {block && <p className="hint">{block === 'locked' ? featureHint('school') : WHY[block]}</p>}
       {showing && (

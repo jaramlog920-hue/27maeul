@@ -132,3 +132,48 @@ describe('주인공 만들기 (2026-10-27 출시 전 검토)', () => {
     expect(done).toBe(1)
   })
 })
+
+describe('서고 문 누르기 (2026-10-27 플레이 점검)', () => {
+  it('양옆 방 문을 누르면 어느 방인지 잠깐 알린다', async () => {
+    const { LOCKED_DOORS } = await import('../engine/world')
+    const g = base()
+    act(() => useGame.setState({ game: { ...g, player: { ...g.player, x: 36, y: 54, path: [] } }, modal: null, toast: null }))
+    act(() => useGame.getState().tap(LOCKED_DOORS[3]))
+    expect(useGame.getState().toast?.text).toBe('요한계시록 방')
+  })
+})
+
+describe('육아·새 터 플레이 점검 (2026-10-27)', () => {
+  it('아기는 상태에 맞는 돌보기만 가까워진다', async () => {
+    const { babyMood, BABY_MOOD_CARE, careBaby } = await import('../engine/game')
+    const g = legacyGame(CONTENT)
+    const crib = { item: 'homeCradle' as const, x: 4, y: 4 }
+    const s = { ...g, scenes: [], room: [crib], clock: { day: 3, minute: 10 * 60 }, child: { ...newChild(3, freshStats(), undefined), close: 0 }, player: { ...g.player, x: 5, y: 4, path: [] } }
+    const fit = BABY_MOOD_CARE[babyMood(s)]
+    const wrong = (['hold', 'soothe', 'tuck'] as const).find((a) => a !== fit)!
+    expect(careBaby(s, wrong)!.child!.close).toBe(0)
+    expect(careBaby(s, fit)!.child!.close).toBe(2)
+    // 안으면 졸려서 눕히기가 맞는 돌보기가 된다
+    const held = careBaby({ ...s, flags: { ...s.flags, babyCare: 3 } }, 'hold')!
+    expect(babyMood(held)).toBe('drowsy')
+  })
+  it('함께하기는 하루 첫 활동만 가까워진다', async () => {
+    const { doKidAct } = await import('../engine/family')
+    const g = legacyGame(CONTENT)
+    const s = { ...g, scenes: [], clock: { day: 40, minute: 10 * 60 }, child: { ...newChild(10, freshStats(), undefined), name: '봄', close: 0 } }
+    const a = doKidAct(s, 'read', CONTENT)!.state
+    const b = doKidAct(a, 'ball', CONTENT)!.state
+    expect(a.child!.close).toBeGreaterThan(0)
+    expect(b.child!.close).toBe(a.child!.close)
+  })
+  it('도시락은 하루 한 번, 빵이 있어야', async () => {
+    const { giveKidLunch, kidLunchBlock } = await import('../engine/newland-life')
+    const g = legacyGame(CONTENT)
+    const s = { ...g, inv: {}, child: { ...newChild(1, freshStats(), undefined), close: 10 } }
+    expect(kidLunchBlock(s)).toBe('noBread')
+    const fed = giveKidLunch({ ...s, inv: { bread: 1 } })!
+    expect(fed.child!.close).toBe(11)
+    expect(fed.inv.bread).toBe(0)
+    expect(kidLunchBlock({ ...fed, inv: { bread: 1 } })).toBe('done')
+  })
+})

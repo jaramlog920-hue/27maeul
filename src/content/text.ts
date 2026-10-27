@@ -199,3 +199,5 @@ export function roomTitle(room: { door: number | null }): string {
 /** 어른이 된 아이의 일 이름 (계획 12 뒤, 2026-09-30) */
 export const JOB_NAME = (lifeText as unknown as { adultChild: { jobs: Record<string, string> } }).adultChild.jobs
 export const KID_LETTERS = (lifeText as unknown as { adultChild: { letters: string[] } }).adultChild.letters
+/** 같은 마을(집·공동 주택)에 사는 아이의 편지 — 먼 곳에 있는 것처럼 썼다 (2026-10-27 플레이 점검) */
+export const KID_NEAR_LETTERS = (lifeText as unknown as { adultChild: { nearLetters: string[] } }).adultChild.nearLetters

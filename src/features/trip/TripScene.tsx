@@ -1,9 +1,9 @@
 // 여행 주사위 판 (새 장면, 2026-09-30 사용자 설계): 팝업이 아니라 화면 전체가 여행지 동네다.
-// 둘레 길 위 돌판 24개를 주인공이 직접 걸어서 옮겨 다니고, 데려온 아이는 한 걸음 뒤를 따른다.
+// 둘레 길 위 돌판 24개를 주인공이 직접 걸어서 옮겨 다니고, 데려온 아이는 한 걸음 뒤를 따른다. 함께 온 배우자는 바로 옆에서 나란히 걷는다.
 // 가장자리에만 작은 것: 왼쪽 위 얼굴과 남은 턴 점, 오른쪽 아래 주사위. 칸에 닿으면 머리 위에 짧은 말풍선 (1초 남짓).
 // 성경 구절은 판 위에서 주지 않는다 — 집에 돌아와 조용할 때 한 조각. 한 바퀴를 돌거나 다섯 번째가 끝나면 여행 수확을 정리해 보여 주고 마을 가게로.
 import { useEffect, useRef, useState } from 'react'
-import { pieceById } from '../../content/catalog'
+import { CONTENT, pieceById } from '../../content/catalog'
 import { itemName, T } from '../../content/text'
 import { STAT_IDS, type StatId } from '../../engine/stats'
 import { DESTS, tripCost, type DestId } from '../../engine/travel'
@@ -19,6 +19,18 @@ import { useGame } from '../../store/game-store'
 const STEP_SECONDS = 0.2
 const BUBBLE_MS = 1300
 const DIE = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅']
+/** 돌판 표식(renderer STONE_GLYPH) 뜻 */
+const CELL_LEGEND: readonly [string, string][] = [
+  ['깃발', '출발 · 한 바퀴 돌면 10닢'],
+  ['물방울', '쉼터 · 운이 조금'],
+  ['잎', '재료 하나나 둘'],
+  ['별', '능력치 · 아이와 오면 아이도'],
+  ['물음표', '길에서 생기는 일'],
+  ['상자', '닢, 가끔 희귀품'],
+  ['화살표', '지름길 · 두 칸 더'],
+  ['하트', '인사 · 매력이 조금'],
+  ['아이', '아이가 무언가를 주워 와요'],
+]
 const STAT_NAME = T.stats.names as Record<StatId, string>
 
 /** 말풍선 한 줄 (짧게) */
@@ -45,6 +57,9 @@ function shortLine(rewards: readonly TripReward[], kid: string, lap: boolean, sa
 }
 
 const facingOf = (dx: number, dy: number, prev: Facing): Facing => (dx > 0 ? 'right' : dx < 0 ? 'left' : dy > 0 ? 'down' : dy < 0 ? 'up' : prev)
+const AHEAD: Record<Facing, { x: number; y: number }> = { right: { x: 1, y: 0 }, down: { x: 0, y: 1 }, left: { x: -1, y: 0 }, up: { x: 0, y: -1 } }
+/** 배우자는 나아가는 쪽의 오른편(판 안쪽)에 나란히 선다 — 시안 나안 (2026-10-27 사용자) */
+const besideOf = (f: Facing) => ({ x: -AHEAD[f].y, y: AHEAD[f].x })
 
 /** 왼쪽 위의 작은 얼굴 */
 function Face() {
@@ -70,7 +85,7 @@ function Face() {
   return <canvas ref={ref} className="ts-face" width={SPRITE_W} height={8} aria-hidden="true" />
 }
 
-export function TripScene({ dest, withChild }: { dest: DestId; withChild: boolean }) {
+export function TripScene({ dest, withChild, withPartner = false }: { dest: DestId; withChild: boolean; withPartner?: boolean }) {
   const game = useGame((s) => s.game)
   // 이 판의 주사위 — 떠날 때의 세계·날·행선지로 정해진다 (새로고침해 다시 떠나도 같은 주사위, 감사 M-4)
   const [dice] = useState(() => mulberry32(tripSeed(useGame.getState().game, dest)))
@@ -87,6 +102,10 @@ export function TripScene({ dest, withChild }: { dest: DestId; withChild: boolea
   const me = useRef<TripActor & { path: { x: number; y: number }[] }>({ x: start.x, y: start.y, facing: 'down', walking: false, path: [] })
   const kid = useRef<TripActor & { trail: { x: number; y: number }[] }>({ x: start.x - 1, y: start.y, facing: 'down', walking: false, trail: [] })
   const bubbleAt = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
+  const partnerDef = withPartner ? CONTENT.neighbors.find((d) => d.id === game.romance?.partner) : undefined
+  // 나란히 선 쪽 (모퉁이에서 부드럽게 돈다)
+  const side = useRef(besideOf('down'))
+  const mate = useRef<TripActor | null>(null)
   const pending = useRef<{ board: BoardState; rewards: TripReward[]; lap: boolean; say: string } | null>(null)
 
   // 그리기 루프
@@ -149,7 +168,22 @@ export function TripScene({ dest, withChild }: { dest: DestId; withChild: boolea
         } else kd.walking = false
         // 길의 자리는 2×2 덩이의 왼쪽 위 칸 — 사람은 덩이 한가운데(반 칸 오른쪽·아래)에 선다
         const mid = (a: TripActor) => ({ ...a, x: a.x + 0.5, y: a.y + 0.5 })
-        r.draw(dest, useGame.getState().game, mid(m), withChild ? mid(kd) : null, (now - t0) / 1000, dt)
+        let meAt: TripActor = mid(m)
+        let partner: { actor: TripActor; def: NonNullable<typeof partnerDef> } | null = null
+        if (partnerDef) {
+          const want = besideOf(m.facing)
+          const ks = Math.min(1, dt * 6)
+          side.current = { x: side.current.x + (want.x - side.current.x) * ks, y: side.current.y + (want.y - side.current.y) * ks }
+          const sd = side.current
+          const back = AHEAD[m.facing]
+          meAt = { ...meAt, x: meAt.x - sd.x * 0.45, y: meAt.y - sd.y * 0.45 }
+          const aim = { x: m.x + 0.5 + sd.x * 0.5 - back.x * 0.55, y: m.y + 0.5 + sd.y * 0.5 - back.y * 0.55 }
+          const p = mate.current ?? { ...aim, facing: m.facing, walking: false }
+          const kp = mate.current ? Math.min(1, dt * 10) : 1
+          mate.current = { x: p.x + (aim.x - p.x) * kp, y: p.y + (aim.y - p.y) * kp, facing: m.facing, walking: m.walking }
+          partner = { actor: mate.current, def: partnerDef }
+        }
+        r.draw(dest, useGame.getState().game, meAt, withChild ? mid(kd) : null, (now - t0) / 1000, dt, partner)
         // 말풍선 자리 (화면 비율로)
         const scale = cw / (VIEW_W * TILE)
         const offX = r.cam.x
@@ -168,7 +202,7 @@ export function TripScene({ dest, withChild }: { dest: DestId; withChild: boolea
     return () => cancelAnimationFrame(raf)
     // arrive는 ref만 읽는다
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dest, withChild])
+  }, [dest, withChild, partnerDef])
 
   /** 돌판에 닿았을 때: 짧은 말풍선 */
   function arrive() {
@@ -207,6 +241,7 @@ export function TripScene({ dest, withChild }: { dest: DestId; withChild: boolea
     setHarvest(false)
   }
   const turns = TRIP_TURNS + (board.bonus ?? 0)
+  const [legend, setLegend] = useState(false)
 
   // 수확이 뜬 뒤에 본문 팝업을 닫았다면 그대로 수확을 보인다
   const showHarvest = harvest && !modal
@@ -230,8 +265,15 @@ export function TripScene({ dest, withChild }: { dest: DestId; withChild: boolea
       </div>
       {canExtend(board, spare) && !board.done && (
         <button className="ts-extra" onClick={extend} disabled={walking}>
-          +{EXTRA_TURNS}번 더 · {EXTRA_PRICE}닢
+          {EXTRA_TURNS}번 더 굴리기 · {EXTRA_PRICE}닢
         </button>
+      )}
+      {/* 칸 그림이 무엇인지 설명이 없었다 (2026-10-27 플레이 점검 41, trip-board land) */}
+      <button className="ts-legend-toggle" aria-expanded={legend} onClick={() => setLegend(!legend)}>칸 설명</button>
+      {legend && (
+        <ul className="ts-legend" aria-label="칸 설명">
+          {CELL_LEGEND.map(([mark, text]) => <li key={mark}><b>{mark}</b> {text}</li>)}
+        </ul>
       )}
       <button className="ts-die" onClick={roll} disabled={walking || board.done} aria-label="주사위 굴리기">
         {board.lastRoll ? DIE[board.lastRoll - 1] : '🎲'}

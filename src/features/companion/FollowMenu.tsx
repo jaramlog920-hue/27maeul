@@ -5,7 +5,7 @@ import { fill, T } from '../../content/text'
 import { favoriteSpot, favoriteToy } from '../../engine/companion'
 import { petHabitNow, petHabitText } from '../../content/pet-text'
 import { useGame } from '../../store/game-store'
-import { BABY_CARE, playerLook, type BabyCare } from '../../engine/game'
+import { BABY_CARE, BABY_MOOD_CARE, babyMood, playerLook, type BabyCare } from '../../engine/game'
 import { kidPersona } from '../../engine/persona'
 import { PersonaCard } from './PersonaCard'
 import { BlockedButton } from '../../shared/BlockedButton'
@@ -65,19 +65,24 @@ export function FollowMenu({ who }: { who: 'pet' | 'child' }) {
   const day = game.clock.day
   const mode = childMode(k, day)
   if (mode === 'away') return null
-  if (mode === 'cradle')
+  if (mode === 'cradle') {
+    // 지금 상태와 맞는 돌보기를 앞에 두고 강조한다. 요람에 눕히기는 안고 있을 때만 (요람에 누운 아기에게 눕히기가 보였다)
+    const mood = babyMood(game)
+    const fit = BABY_MOOD_CARE[mood]
+    const acts = BABY_CARE.filter((a) => a !== 'lay' || mood === 'drowsy')
     return (
       <div className="dialog follow" role="dialog" aria-label={k.name}>
         <h2>{k.name}</h2>
-        <p>요람에서 새근새근 자고 있어요.</p>
+        <p>{t(`baby.mood.${mood}`)}</p>
         <div className="actions column">
-          {BABY_CARE.map((a) => (
-            <button key={a} onClick={() => careBaby(a)}>{BABY_CARE_LABEL[a]}</button>
+          {[fit, ...acts.filter((a) => a !== fit)].map((a) => (
+            <button key={a} className={a === fit ? 'primary' : undefined} onClick={() => careBaby(a)}>{BABY_CARE_LABEL[a]}</button>
           ))}
           <button data-close onClick={closeModal}>{T.ui.close}</button>
         </div>
       </div>
     )
+  }
   const helper = childStage(k, day) === 'helper' || childStage(k, day) === 'adult'
   const now = mode === 'follow' ? '지금은 곁을 따라다녀요.' : mode === 'home' ? '지금은 집에서 기다려요.' : '지금은 혼자 마을을 다녀요.'
   return (

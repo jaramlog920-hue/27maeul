@@ -50,6 +50,8 @@ export const TIP_WHEN: Record<string, (s: GameState) => boolean> = {
   hasKid: (s) => !!s.child,
   homeSmall: (s) => (s.homeLevel ?? 0) < 1,
   homeMid: (s) => (s.homeLevel ?? 0) >= 1 && (s.homeLevel ?? 0) < 3,
+  // 아이방(두 번째로 늘리는 방) 안내는 아직 그 방이 없고 아이도 없을 때만 — 이미 아이가 있는데 왔다 (2026-10-27 플레이 점검)
+  homeOneNoKid: (s) => (s.homeLevel ?? 0) === 1 && !s.child,
   noPet: (s) => !s.companion,
   hasPet: (s) => !!s.companion,
   clubs: (s) => featureAccess(s, 'clubs') !== 'locked',
@@ -73,10 +75,15 @@ export function tipDay(day: number): boolean {
   return w === 2 || w === 5 || day % 14 === 10
 }
 
-/** 지금 보낼 수 있는 다음 편지 (차례대로 — 이른 이야기가 먼저) */
+/** 신약을 다 꽂은 뒤에도 맞는 편지 — 그 밖의 초반 꿀팁은 엔딩 뒤에 와서 흐름을 깼다 (2026-10-27 플레이 점검 24) */
+const AFTER_NT = new Set(['newland', 'dating', 'engaged', 'married', 'marriedNoKid', 'hasKid', 'marriedFamily', 'homeMid', 'homeOneNoKid', 'hasPet', 'noKey', 'rank'])
+
+/** 지금 보낼 수 있는 다음 편지 (차례대로 — 이른 이야기가 먼저). 66권 엔딩을 본 뒤로는 오지 않는다 */
 export function nextTip(s: GameState): TipLetter | null {
+  if (s.flags.bibleEndingSeen) return null
   const got = new Set(s.tips ?? [])
-  return TIP_LETTERS.find((t) => !got.has(t.id) && (!t.when || (TIP_WHEN[t.when]?.(s) ?? false))) ?? null
+  const late = !!s.flags.newlandGift
+  return TIP_LETTERS.find((t) => !got.has(t.id) && (!late || (!!t.when && AFTER_NT.has(t.when))) && (!t.when || (TIP_WHEN[t.when]?.(s) ?? false))) ?? null
 }
 
 /** 아침: 오는 날이면 한 통 */

@@ -45,6 +45,7 @@ import { sanitizeOtCollected } from './ot-pieces'
 import { entryFront, roomSlotAt, setArchiveRooms, setNewlandOverlay, setNewlandRevealed, setNewlandWarps } from './newland'
 import { overlayFor, sanitizeNewlandBuild, warpsFor } from './newland-build'
 import { homeAtSlot, sanitizeRooms } from './newland-rooms'
+import { grantRangeShelves } from './ot-shelves'
 import { BOOKS, type Book, type GameContent, type ItemId } from './types'
 import { commitStorageBatch, flushGameStorage, gameStorage, reportGameStorageError, withStorageBatch } from './game-storage'
 
@@ -467,7 +468,8 @@ export function sanitize(s: GameState, content: GameContent): GameState {
   const { map: _map, mapAt: _mapAt, ...rest } = out
   void _map
   void _mapAt
-  return { ...rest, bookDesigns: withBookDesigns(out.bookDesigns ?? [], out.bound, out.shelved), homeShelf: sanitizeHomeShelf(s.homeShelf, (b) => isFinished(out, b)), ...sanitizeMaps(out) }
+  // 옛 저장의 구약 묶음 책장(정해진 칸에 저절로 서 있던 것)은 그 자리에 가구로 옮겨 놓는다 (2026-10-27)
+  return grantRangeShelves({ ...rest, bookDesigns: withBookDesigns(out.bookDesigns ?? [], out.bound, out.shelved), homeShelf: sanitizeHomeShelf(s.homeShelf, (b) => isFinished(out, b)), ...sanitizeMaps(out) }, true)
 }
 
 /** 옛 id → 새 id (주막→약방 2026-09-30, 양 이야기 2026-10-05) */

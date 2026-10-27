@@ -62,7 +62,7 @@ describe('📖 말씀 탭', () => {
     const stats = screen.getByText('기록한 절').closest('dl')!
     expect(stats).toHaveTextContent('1,234')
     expect(stats).toHaveTextContent('45,678')
-    expect(stats).toHaveTextContent('1년째 봄 3일')
+    expect(stats).toHaveTextContent('3일째')
   })
 
   it('필사본: 아직 아무것도 쓰지 않았으면 처음 기록한 날은 "아직 없음", 예전에 엮은 장은 따로 한 줄', () => {
@@ -74,7 +74,7 @@ describe('📖 말씀 탭', () => {
     expect(screen.queryByText('예전에 엮은 장 2장은 마친 장으로 함께 셉니다.')).toBeNull()
   })
 
-  it('말씀 조각: 받은 조각이 성경 순서로 저절로 담기고, 받은 기록("3년째 봄 · 빵 굽는 이웃에게 받은 조각")이 붙는다 — 옛 조각은 기록 없음', async () => {
+  it('말씀 조각: 받은 조각이 성경 순서로 저절로 담기고, 받은 기록("330일째 · 빵 굽는 이웃에게 받은 조각")이 붙는다 — 옛 조각은 기록 없음', async () => {
     openWord({ collected: ['mk-002-001', 'mt-001-001'], pieceLog: { 'mk-002-001': { day: 330, from: 'npc:baker' } } })
     await userEvent.setup().click(tab('말씀 조각'))
     expect(screen.getByText(`모은 말씀 조각 2 / ${CONTENT.pieces.length}`)).toBeInTheDocument()
@@ -82,7 +82,7 @@ describe('📖 말씀 탭', () => {
     expect(items[0]).toHaveTextContent(pieceById('mt-001-001').title)
     expect(items[0]).toHaveTextContent('언제 받았는지 남아 있지 않은 조각')
     expect(items[1]).toHaveTextContent(pieceById('mk-002-001').title)
-    expect(items[1]).toHaveTextContent('3년째 봄 · 헤이즐에게 받은 조각')
+    expect(items[1]).toHaveTextContent('330일째 · 헤이즐에게 받은 조각')
   })
 
   it('말씀 조각: 아직 없으면 언제 받게 되는지 한 줄', async () => {
@@ -96,7 +96,7 @@ describe('📖 말씀 탭', () => {
     openWord({ collected: [p.id], pieceLog: { [p.id]: { day: 2, from: 'letter' } } })
     const user = userEvent.setup()
     await user.click(tab('말씀 조각'))
-    expect(screen.getByText('1년째 봄 · 편지로 받은 조각')).toBeInTheDocument()
+    expect(screen.getByText('2일째 · 편지로 받은 조각')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: `본문에서 보기 · ${p.ref}` }))
     const ctx = contextOf(p.ref)
     const view = screen.getByRole('region', { name: `본문에서 보기 ${p.ref}` })

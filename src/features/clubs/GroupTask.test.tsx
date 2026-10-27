@@ -33,7 +33,7 @@ describe('유저가 맡는 모임 손일',()=>{
   render(<ClubSession id="appt:1"/>)
   const guests=apptGuests(useGame.getState().game,'appt:1')
   for(const [i,npc] of guests.entries()){
-   expect(screen.getByRole('heading',{name:`${i+1}/${guests.length}번째 차례`})).toBeInTheDocument()
+   expect(screen.getByRole('heading',{name:`${guests.length}명 가운데 ${i+1}번째 차례`})).toBeInTheDocument()
    const [lo,hi]=HOLD_BANDS[wantOf(npc,'tea')]
    const before=useGame.getState().game.hearts[npc]??0
    const hold=screen.getByRole('button',{name:T.round.hold})

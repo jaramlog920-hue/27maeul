@@ -16,5 +16,6 @@ it('첫째에게 고른 진로는 둘째로 바꾸면 버리고, 둘째는 제 �
   expect(useGame.getState().game.child?.name).toBe('나')
   expect((document.querySelector('select') as HTMLSelectElement).value).toBe('fisher')
   fireEvent.click(screen.getByText('이 진로로 함께 결정하기'))
+  fireEvent.click(screen.getByRole('button', { name: '네' }))
   expect(useGame.getState().game.child).toMatchObject({ name: '나', job: 'fisher', jobConfirmed: true })
 })

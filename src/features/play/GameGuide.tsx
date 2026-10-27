@@ -154,7 +154,7 @@ const FEATURE_TIPS: Record<FeatureId, string[]> = {
   library: ['서고에서 배우자나 연인, 또는 마음이 4하트 이상인 이웃(가까운 순으로 넷까지) 가운데 한 사람을 서고지기로 정해요.', '방명록과 함께 열려요. 서고지기가 있으면 손님이 더 자주 와요(사흘에 하루꼴에서 이틀에 하루꼴로).', '서고지기가 안내한 손님은 후원금 30닢을 두고 가고, 순위 점수에도 두 배로 쳐요. 안내한 날 서고지기의 마음이 1점 올라요.'],
   guestbook: ['열리면 사흘에 하루꼴로 서고에 손님이 들러 방명록에 한 줄을 남겨요. 엿새 넘게 아무도 안 왔으면 꼭 와요. 서고 순위가 열린 뒤에는 순위 업데이트 날에 다른 마을 서기가 와요.', '방명록 한 줄마다 서고 순위(95장) 점수가 올라요. 방명록은 최근 30줄까지 남아요.', '오늘 온 손님에게 모아 둔 말씀 조각 하나를 함께 읽어 줄 수 있어요. 매력이 조금 올라요.'],
   autonomy: ['주민들이 스스로 만나고 사귀고 결혼하고 아이를 낳아요. 설정 › 게임에서 끌 수 있어요.', '나와 헤어진 이웃은 14일 동안 다른 주민과 사귀지 않아요. 아직 연인이 없을 때, 마음이 6하트 이상인 연애 후보 가운데 가장 가까운 사람도 다른 주민과 사귀지 않아요.'],
-  spouseRoom: ['목수에게 집 넓히기 1단계(2,500닢, 올리브 10)를 부탁하면 다음 날 아침 배우자방이 생겨요. 결혼하려면 이 방이 있어야 해요.', '목수는 서고에 책을 한 권 꽂으면 마을로 이사 와요. 아직 꽂은 책이 없으면 짧은 책부터 끝내 꽂아 보세요.'],
+  spouseRoom: ['목수에게 집 넓히기 1단계(2,500닢, 올리브 10)를 부탁하면 다음 날 아침 배우자방이 생겨요. 결혼하려면 이 방이 있어야 해요.', '목수는 책 한 권을 다 옮겨 적으면 마을로 이사 와요. 아직 다 쓴 책이 없으면 짧은 책부터 끝내 보세요.'],
   events: ['찻자리, 집들이, 함께 만든 것 보여 주기 같은 작은 행사를 직접 준비해 이웃을 초대해요. 일정 창의 「행사」에서 열어요.', '마을 잔치 날에는 음식·장식·정리 가운데 맡을 일을 골라, 잔치 저녁 모닥불 곁에서 해요. 계절 잔치 날은 늘 맑아요.'],
   marriage: ['마음이 10하트(연애 14일, 데이트 3회, 연인 이야기)이고 배우자방이 있으면 약속의 끈(장날 150닢)을 건넬 수 있어요.', '약속의 끈을 건네면 약혼하고, 다음 장날 저녁 광장에서 마을 잔치로 결혼해요.'],
   rank: ['계절마다 1일과 21일 아침에 스무 마을의 서고 순위가 바뀌어요.', '점수는 모은 조각, 서고에 꽂은 책(한 권 10점), 정성 도장, 끝낸 게시판 부탁, 방명록으로 쌓여요.', '순위마다 후원금을 받아요: 1위 1,500닢, 2위 1,000닢, 3위 800닢, 4–10위 400닢, 11–20위 150닢.', '1위는 청동 장식과 말씀 조각 둘, 2·3위는 조각 하나를 더 받아요.'],
@@ -170,7 +170,9 @@ const FEATURE_TIPS: Record<FeatureId, string[]> = {
   otPreview: ['신약 260장을 모두 옮겨 적으면 구약 터 이야기를 미리 들려줘요. 책을 모두 제본해 꽂으면 새 터가 열려요.'],
   ending: ['신약 스물일곱 권을 모두 서고에 꽂으면 마을에서 스물일곱 권 잔치가 열리고 새 터가 열려요.', '새 터 서고에서 구약 서른아홉 권까지 다 옮겨 적으면 예순여섯 권의 마지막 이야기가 열려요. 그 뒤에도 계속 지낼 수 있어요.'],
 }
-const FEATURE_CHAPTERS = (Object.keys(FEATURE_RULES) as FeatureId[]).map((id) => ({ id, title: FEATURE_NAME[id], when: UNLOCKS.find((u) => u.name === FEATURE_NAME[id])?.when ?? '', tips: FEATURE_TIPS[id] }))
+// 열리는 장 순서로 — 규칙 표 순서라 55장 목수 살림이 60장 뒤에, 90장이 95장 뒤에 있었다 (2026-10-27 플레이 점검 36). 권 수로 열리는 것은 맨 뒤
+const opensAt = (id: FeatureId): number => { const r: { preview?: { chapters?: number; books?: number }; full?: { chapters?: number; books?: number } } = FEATURE_RULES[id]; const q = r.preview ?? r.full; return q?.books ? 10000 + q.books : q?.chapters ?? 0 }
+const FEATURE_CHAPTERS = (Object.keys(FEATURE_RULES) as FeatureId[]).sort((a, b) => opensAt(a) - opensAt(b)).map((id) => ({ id, title: FEATURE_NAME[id], when: UNLOCKS.find((u) => u.name === FEATURE_NAME[id])?.when ?? '', tips: FEATURE_TIPS[id] }))
 const ALL_CHAPTERS: { title: string; when?: string; tips: string[] }[] = [...CHAPTERS, ...FEATURE_CHAPTERS]
 const UNLOCK_PAGE = ALL_CHAPTERS.length + 1
 
@@ -191,7 +193,6 @@ export function GameGuide() {
       <h2>도움말</h2>
       {page === 0 && (
         <nav aria-label="목차">
-          <p className="hint">게임 내용은 계속 업데이트 중이에요. 가끔 설정 › 기록에서 현재 버전과 최신 버전을 비교해 보고, 다르면 업데이트 받기를 눌러 주세요. 새 내용이 들어오면 이 도움말도 함께 바뀌어요.</p>
           <h3>목차</h3>
           <h4 className="guide-toc-part">기본</h4>
           <ol className="guide-toc">
@@ -206,6 +207,7 @@ export function GameGuide() {
             ))}
             <li><button className="row" onClick={() => setPage(UNLOCK_PAGE)}><span className="row-main"><b>열리는 때</b><small>한눈에 보기</small></span></button></li>
           </ol>
+          <p className="hint">게임 내용은 계속 업데이트 중이에요. 가끔 설정 › 기록에서 현재 버전과 최신 버전을 비교해 보고, 다르면 업데이트 받기를 눌러 주세요. 새 내용이 들어오면 이 도움말도 함께 바뀌어요.</p>
         </nav>
       )}
       {chapter && (

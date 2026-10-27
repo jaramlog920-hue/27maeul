@@ -32,9 +32,9 @@ it('offers bought attire only to the engaged partner even after the ordinary dai
 })
 it('shows all four formal outfits in the market clothes section',()=>{
  const s=useGame.getState().game
- useGame.setState({game:{...s,clock:{day:7,minute:900},coins:1000}})
+ useGame.setState({game:{...s,flags:{...s.flags,growthLegacy:1},clock:{day:7,minute:900},coins:1000}})
  render(<TradeBoard/>)
- expect(screen.getByText('결혼 예복')).toBeInTheDocument()
+ expect(screen.getByText(/^결혼 예복/)).toBeInTheDocument()
  for(const name of ['검정 턱시도','흰 재킷 정장','흰 벨라인 웨딩드레스','로즈 레이스 드레스'])expect(screen.getAllByRole('button',{name:new RegExp(name)}).length).toBeGreaterThan(0)
 })
 it('waits for the real player choice, draws both selected costumes and captures the same dressed player',()=>{

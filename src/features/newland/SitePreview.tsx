@@ -233,7 +233,7 @@ export function SitePreview({ pick, onBack, onPlaced, owner, moving }: { pick: S
     <div className="site-preview">
       <h2>{name}</h2>
       <canvas ref={ref} className="site-canvas" width={W * CELL} height={H * CELL} role="img" aria-label={T.build.preview} onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp} style={paintable ? { touchAction: 'none' } : undefined} />
-      {paintable && <p className="hint">지도를 끌면 지나간 칸에 바로 {kind ? '깔려요' : '걷혀요'}.</p>}
+      {paintable ? <p className="hint">지도를 끌면 지나간 칸에 바로 {kind ? '깔려요' : '걷혀요'}.</p> : <p className="hint">{t('build.tapToMove')}</p>}
       <div className="site-move" role="group" aria-label={T.build.preview}>
         <button aria-label={T.build.left} onClick={() => move(-1, 0)}>{T.build.markLeft}</button>
         <button aria-label={T.build.up} onClick={() => move(0, -1)}>{T.build.markUp}</button>

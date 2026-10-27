@@ -3,7 +3,7 @@ import {LIVING_KINDS,type LivingKind} from '../../engine/scenic-kinds'
 import {FACILITY_IDS,type FacilityId} from '../../engine/village-sites'
 import {livingGuests} from '../../engine/living-moments'
 import {COVER_COLORS,COVER_PATTERNS,SPINE_DECOS,BOOK_DETAIL_CHOICES,type Binding} from '../../engine/binding'
-import {KID_LETTERS} from '../../content/text'
+import {KID_LETTERS,SCENES} from '../../content/text'
 import {drawProgressMilestone,PROGRESS_PHOTO_TIME,type ProgressDetails} from '../../render/progress-milestones-art'
 import {PROGRESS_KINDS,type ProgressKind} from '../../engine/scenic-kinds'
 import {OT_BOOKS,otRow} from '../../engine/ot-books'
@@ -34,6 +34,8 @@ import './stars-scene.css'
 export function LandscapeScene({ kind = 'stars', sceneId = kind, onFinish, preview = false, personId, acceptGift = true, children, titleOverride, previewAt, finishLabel }: { kind?: LandscapeKind; sceneId?: string; onFinish?: () => void; preview?: boolean; personId?: string; acceptGift?: boolean; children?: ReactNode; titleOverride?: string; previewAt?: number;finishLabel?:string }) {
   const avatar = useGame(s => s.game.avatar)
   const day = useGame(s => s.game.clock.day)
+  // 새 터에서 본 장면은 그 자리로 돌아간다 — '마을로'라고 쓰면 첫 마을로 옮겨 가는 것처럼 읽혔다 (2026-10-27 플레이 점검)
+  const away = useGame(s => (s.game.map ?? 'village') !== 'village')
   const nextScene = useGame(s => s.nextScene)
   const remembered = useGame(s => s.game.album.some(a => a.id === sceneId))
   const [phase, setPhase] = useState(0)
@@ -165,7 +167,9 @@ export function LandscapeScene({ kind = 'stars', sceneId = kind, onFinish, previ
   }, [avatar, day, kind, sceneId, preview, partnerId, gen, babyName, shelfCount, acceptGift, !!children, child, helpKind, looks, hearts, flags, grades, married, replay, previewAt, remembered, endingAt, progressKind, homeBook, bindings, livingKind, coverBook, facility, village])
   const sunset = kind === 'sunset' || kind === 'dateSunset'
   const moment = kind === 'stars' || kind === 'sunset' ? null : moments[kind]
-  const title = titleOverride ?? moment?.title ?? (sunset ? '호숫가 노을' : '별 보는 밤')
+  // 집 넓히기는 배우자방·아이방·생활방이 같은 그림이라, 어느 방이 생겼는지 제목·글은 그 방 장면(home:N)에서 (2026-10-27 플레이 점검 16)
+  const roomScene = kind === 'homeExpanded' ? SCENES[sceneId] : undefined
+  const title = titleOverride ?? roomScene?.album ?? moment?.title ?? (sunset ? '호숫가 노을' : '별 보는 밤')
   const parentId=sceneId.startsWith('workSuccession:')?sceneId.slice('workSuccession:'.length):'baker'
   const parentPerson=gen?.persons[parentId],heirPerson=gen?.persons[gen?.retired?.[parentId]?.heir??'']
   const facilityName={longBench:'긴 벤치',flowerBed:'화단',shade:'그늘막',signPost:'표지판'}[facility]
@@ -179,9 +183,9 @@ export function LandscapeScene({ kind = 'stars', sceneId = kind, onFinish, previ
     {children ? children : <><header className="stars-scene-title"><span>{moment?.location ?? (sunset ? '호숫가 정자에서' : '언덕에서')}</span><h2>{title}</h2></header>
     {kind==='completeBible'&&phase===3&&<EndingMemories preview={preview}/>}
     <div className="stars-scene-caption">
-      <p>{kind === 'completeBible' ? BIBLE_CAPTIONS[phase] : kind === 'fullLibrary' ? LIBRARY_CAPTIONS[phase] : (livingKind?livingCaption:progressKind?progressCaption:moment?.caption) ?? (sunset ? '물결 위로 주황빛이 번졌다.' : '언덕에 앉아 별을 올려다보았다.')}</p>
+      <p>{kind === 'completeBible' ? BIBLE_CAPTIONS[phase] : kind === 'fullLibrary' ? LIBRARY_CAPTIONS[phase] : (livingKind?livingCaption:progressKind?progressCaption:roomScene?.lines[0]?.text??moment?.caption) ?? (sunset ? '물결 위로 주황빛이 번졌다.' : '언덕에 앉아 별을 올려다보았다.')}</p>
       {(kind === 'fullLibrary' || kind === 'lastManuscript' || kind === 'completeBible' || kind === 'bibleLastLetter' || progressKind || livingKind) && <button className="scene-replay" onClick={() => {setEndingAt(null);setReplay(n => n + 1)}}>장면 다시 보기</button>}
-      <button autoFocus onClick={kind==='completeBible'?()=>{if(phase<3)setEndingAt(30);else if(phase===3)setEndingAt(36);else (onFinish??nextScene)()}:onFinish??nextScene}>{kind==='completeBible'&&phase<3?'추억 앨범 펼치기':kind==='completeBible'&&phase===3?'다음 날 아침으로':finishLabel?finishLabel:preview ? kind === 'completeBible'||kind==='workSuccession' ? '장면 모아보기' : '다음 장면' : kind === 'fullLibrary' && libraryCompletion ? '완성 기록 보기' : '마을로 돌아가기'} <span aria-hidden="true">›</span></button>
+      <button autoFocus onClick={kind==='completeBible'?()=>{if(phase<3)setEndingAt(30);else if(phase===3)setEndingAt(36);else (onFinish??nextScene)()}:onFinish??nextScene}>{kind==='completeBible'&&phase<3?'추억 앨범 펼치기':kind==='completeBible'&&phase===3?'다음 날 아침으로':finishLabel?finishLabel:preview ? kind === 'completeBible'||kind==='workSuccession' ? '장면 모아보기' : '다음 장면' : kind === 'fullLibrary' && libraryCompletion ? '완성 기록 보기' : away ? '돌아가기' : '마을로 돌아가기'} <span aria-hidden="true">›</span></button>
     </div></>}
   </section>
 }

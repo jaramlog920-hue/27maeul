@@ -39,9 +39,9 @@ describe('일정 목록', () => {
 it('장날 결혼 예복 네 가지에 이름이 보인다', () => {
   vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null)
   const base = newGame(CONTENT)
-  useGame.setState({ game: { ...base, clock: { day: 7, minute: 600 }, coins: 5000 }, modal: null })
+  useGame.setState({ game: { ...base, flags: { ...base.flags, growthLegacy: 1 }, clock: { day: 7, minute: 600 }, coins: 5000 }, modal: null })
   const view = render(<TradeBoard />)
-  const section = [...view.container.querySelectorAll('.icon-grid')].find((e) => e.getAttribute('aria-label') === '결혼 예복')!
+  const section = [...view.container.querySelectorAll('details.trade-group')].find((e) => e.querySelector('summary')?.textContent?.startsWith('결혼 예복'))!
   const buttons = [...section.querySelectorAll<HTMLButtonElement>('.bag-grid button')]
   expect(buttons.map((b) => b.getAttribute('aria-label'))).toEqual(WEDDING_ATTIRE.map((a) => a.name))
   fireEvent.click(buttons[0])

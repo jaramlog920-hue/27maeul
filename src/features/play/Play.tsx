@@ -56,8 +56,11 @@ export function Play() {
         <div className="world-frame">
           <GameCanvas zoom={zoom} />
           <Joystick />
-          <Toast />
-          <AwardBanner />
+          {/* 알림과 업적 띠를 한 줄로 쌓는다 — 두 줄짜리 알림을 업적 띠가 덮었다 (2026-10-27 플레이 점검) */}
+          <div className="notices">
+            <Toast />
+            <AwardBanner />
+          </div>
           <TalkButton />
         </div>
         <StatusPanel />
@@ -67,7 +70,7 @@ export function Play() {
         {/* 휴대폰에선 아래 조작판이 위 단추·몸 상태·다음 일정을 대신한다 */}
         <ControlDeck />
         {/* 여행 주사위 판: 화면 전체를 덮는 새 장면 (본문 팝업은 그 위에) */}
-        {trip && <TripScene dest={trip.dest} withChild={trip.withChild} />}
+        {trip && <TripScene dest={trip.dest} withChild={trip.withChild} withPartner={!!trip.withPartner} />}
       </div>
       <ModalLayer />
     </div>

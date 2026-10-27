@@ -691,3 +691,5 @@ export const FAMILY_DESK: Record<'draw' | 'book' | 'doze' | 'spouse', SpriteRows
 
 // 가구 20종은 그림을 줄여 아이콘으로
 for (const [id, a] of Object.entries(FURNITURE_ART)) ICONS[id] = iconFromArt(a)
+// 구약 묶음 책장 (2026-10-27): 가방 칸 그림은 책장 그림으로
+for (const id of ['otShelfLaw', 'otShelfHistory', 'otShelfPoetry', 'otShelfProphets']) ICONS[id] = ICONS.bookcase

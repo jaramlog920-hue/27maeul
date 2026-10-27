@@ -5,6 +5,7 @@ import { lookOf } from '../../engine/game'
 import { T, withSubject } from '../../content/text'
 import { ADULT_JOBS, childHome, childMode, childStage, leavesVillage, type AdultJob, type ChildStage } from '../../engine/child'
 import { useState } from 'react'
+import { t } from '../../shared/i18n'
 import { heartsOf } from '../../engine/hearts'
 import { closeHearts } from '../../engine/family'
 import { STAT_IDS, statScore, type StatId } from '../../engine/stats'
@@ -27,6 +28,8 @@ export function Family() {
   const game = useGame((s) => s.game)
   // 고른 진로는 그 아이(태어난 날)에게만 — 다른 아이로 바꾸면 버린다 (2026-10-18 감사 L-39)
   const [careerPick, setCareerPick] = useState<{ born: number; job: AdultJob } | null>(null)
+  // 진로·살 곳은 한 번 묻고 정한다 — 단추 하나로 조용히 끝났다 (2026-10-27 플레이 점검)
+  const [asking, setAsking] = useState<{ kind: 'career'; job: AdultJob } | { kind: 'home'; where: 'away' | 'lodging' } | null>(null)
   const careerChoiceOf = (born: number) => (careerPick?.born === born ? careerPick.job : null)
   const { closeModal, open, keepCompanion } = useGame.getState()
   const day = game.clock.day
@@ -93,7 +96,7 @@ export function Family() {
               <label>진로 <select value={careerChoiceOf(kid.born) ?? kid.job} onChange={e => setCareerPick({ born: kid.born, job: e.target.value as AdultJob })}>
                 {ADULT_JOBS.map(j => <option key={j} value={j}>{JOB_NAME[j]}{(kid.interests?.[j] ?? 0) > 0 ? ' · 함께 경험함' : ''}</option>)}
               </select></label>
-              <button onClick={() => useGame.getState().chooseChildCareer(careerChoiceOf(kid.born) ?? kid.job!)}>이 진로로 함께 결정하기</button>
+              <button onClick={() => setAsking({ kind: 'career', job: careerChoiceOf(kid.born) ?? kid.job! })}>이 진로로 함께 결정하기</button>
             </div>
           )}
           {kid.job && kid.jobConfirmed !== false && childStage(kid, day) === 'adult' && (
@@ -102,8 +105,23 @@ export function Family() {
               {kid.left
                 ? <button onClick={() => useGame.getState().setChildResidence('home')}>집으로 돌아와 살기</button>
                 : leavesVillage(kid.job)
-                  ? <button onClick={() => useGame.getState().setChildResidence('away')}>더 넓은 곳으로 떠나기</button>
-                  : <button onClick={() => useGame.getState().setChildResidence('lodging')}>공동 주택에서 살기</button>}
+                  ? <button onClick={() => setAsking({ kind: 'home', where: 'away' })}>더 넓은 곳으로 떠나기</button>
+                  : <button onClick={() => setAsking({ kind: 'home', where: 'lodging' })}>공동 주택에서 살기</button>}
+            </div>
+          )}
+          {asking && (
+            <div className="build-confirm" role="group" aria-label={t('confirm.title')}>
+              <p className="hint">{asking.kind === 'career'
+                ? t('confirm.career', { name: kid.name, job: JOB_NAME[asking.job] })
+                : t(asking.where === 'away' ? 'confirm.leaveAway' : 'confirm.leaveLodging', { name: kid.name })}</p>
+              <div className="actions">
+                <button className="primary" onClick={() => {
+                  if (asking.kind === 'career') useGame.getState().chooseChildCareer(asking.job)
+                  else useGame.getState().setChildResidence(asking.where)
+                  setAsking(null)
+                }}>{t('confirm.yes')}</button>
+                <button onClick={() => setAsking(null)}>{t('confirm.keep')}</button>
+              </div>
             </div>
           )}
           <ul className="fam-stats">

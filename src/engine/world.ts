@@ -452,10 +452,15 @@ export interface House {
 export const HOUSES: House[] = []
 
 /** 지금 마을에 선 집 모두 (내 집은 지금 단계의 크기로) */
+/** 첫 마을의 집 (지금 어느 땅에 있든) — 마을 지도는 새 터에서 열어도 이것을 그린다 */
+export function villageHouses(): House[] {
+  return [...HOUSES, homeHouse()]
+}
+
 export function housesNow(): House[] {
   // 새 터에는 집이 없다 (집 좌표는 첫 마을의 것이다)
   if (currentMapId() === 'newland') return []
-  return [...HOUSES, homeHouse()]
+  return villageHouses()
 }
 
 export function houseAt(x: number, y: number): House | null {
@@ -952,6 +957,9 @@ export function placeAt(t: Tile): PlaceId | null {
   // 새 터에는 서고 안 책상·책장만 있다 (그 밖의 장소·이웃·가구는 이 지도에 없다)
   if (currentMapId() === 'newland') return (['otDesk', 'otShelf'] as const).find((id) => PLACES[id].tiles.some((pt) => sameTile(pt, t))) ?? null
   for (const [id, p] of Object.entries(PLACES) as [PlaceId, Place][]) if (placeActive(id) && p.tiles.some((pt) => sameTile(pt, t))) return id
+  // 방 안 책장을 눌러도 그 방 선반으로 — 책장처럼 생긴 쪽을 먼저 눌렀는데 아무 일이 없었다 (2026-10-27 플레이 점검)
+  const shelves = [['library', 'library'], ['acts', 'actsShelf'], ['romPhm', 'lettersShelf'], ['hebJud', 'hebJudShelf'], ['rev', 'revShelf']] as const
+  for (const [room, id] of shelves) if (placeActive(id) && bookcaseTiles(room).some((pt) => sameTile(pt, t))) return id
   return null
 }
 

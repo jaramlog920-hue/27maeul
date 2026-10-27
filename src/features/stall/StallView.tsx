@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { CONTENT, neighborById } from '../../content/catalog'
 import { fill, T } from '../../content/text'
 import { featureHint } from '../../engine/feature-rules'
+import { nextMarketAfter } from '../../engine/romance'
 import {
   answerGuest, buyerOf, canOpenStall, closeStall, DEFAULT_LOOK, expireStall, guestText, openStall, stallGoodsAvailable, stallPrice, stallStatus, stallSummary, waitAtStall, welcomeGuest,
   STALL_CLOTHS, STALL_DECOS, STALL_GOODS_MAX, STALL_PER_GOOD, STALL_PRICES, STALL_WAYS, STALL_SIGNS, STALL_STAND,
@@ -58,7 +59,7 @@ export function StallView() {
     return (
       <div className="dialog fest-form stall" role="dialog" aria-label={S.title}>
         <h2>{S.title}</h2>
-        <p>{block === 'locked' ? featureHint('stall') : S.block[block]}</p>
+        <p>{block === 'locked' ? featureHint('stall') : block === 'notMarket' ? fill(S.nextMarket, { day: nextMarketAfter(game.clock.day) }) : S.block[block]}</p>
         <div className="actions">
           {block === 'away' && <button onClick={() => {
             closeModal()

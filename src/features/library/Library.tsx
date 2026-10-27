@@ -6,7 +6,7 @@ import { libraryBookCount } from '../../engine/game'
 import { useState } from 'react'
 import { CONTENT, neighborById, pieceById } from '../../content/catalog'
 import { fill, T } from '../../content/text'
-import { openDoorsFor } from '../../engine/books'
+import { bookDone, openDoorsFor } from '../../engine/books'
 import { canLibraryRead, canTeachVisitor, LIBRARY_READ_PRICE, librarianCandidates, librarianId, setLibrarian, teachVisitor, todaysVisitor, type GameState } from '../../engine/game'
 import { saveGame } from '../../engine/save'
 import { BOOKS, GOSPELS } from '../../engine/types'
@@ -22,7 +22,7 @@ import { BlockedButton } from '../../shared/BlockedButton'
 
 const BOOK_NAME = T.quiz.books as Record<string, string>
 
-/** 서고 운영 (2026-10-08): 사서 맡기기 · 오늘 온 방문객에게 조각 하나 함께 읽어 주기 */
+/** 서고 운영 (2026-10-08): 서고지기 맡기기 · 오늘 온 방문객에게 조각 하나 함께 읽어 주기 */
 function LibraryOps() {
   const game = useGame((s) => s.game)
   const [teaching, setTeaching] = useState(false)
@@ -137,13 +137,15 @@ export function Library() {
   const payBooks = useGame((s) => libraryBookCount(s.game))
   const anyRetry = GOSPELS.some((b) => shelved[b] !== undefined && shelved[b]! < 2)
   const carried = finishedCopies({ bound, shelved })
+  const progress = useGame((s) => s.game.progress)
+  const waiting = BOOKS.filter((b) => shelved[b] === undefined && bound[b] === undefined && bookDone({ progress }, b, CONTENT))
   return (
     <div className="dialog library" role="dialog" aria-label={T.library.title}>
       <h2>
         {T.library.title} <span className="library-count">{fill(T.library.count, { n })}</span>
       </h2>
-      {/* 서고 수입 (2026-10-12): 책이 찰수록 일해서 버는 닢이 는다 */}
-      {payBooks > 0 && <p className="hint">서고 덕분에 일삯 +{Math.round(libraryPayRate(payBooks) * 100)}%</p>}
+      {/* 서고 수입 (2026-10-12): 책이 찰수록 일해서 버는 닢이 는다. 꽂기 전 다 쓴 책도 세므로 무엇을 셌는지 함께 (2026-10-27 플레이 점검 20) */}
+      {payBooks > 0 && <p className="hint">다 옮겨 적은 책 {payBooks}권 덕분에 일삯 +{Math.round(libraryPayRate(payBooks) * 100)}%</p>}
       <ShelfPicture shelved={shelved} bound={bound} />
       {chapters >= 7 && <div className="library-manuscripts" role="img" aria-label={`완료한 ${chapters}장의 기록 꾸러미`}><span className="manuscript-stack" aria-hidden="true"><i /><i /><i /></span><small>필사한 기록 {chapters}장</small></div>}
       <p className="hint">{T.library.notice}</p>
@@ -153,6 +155,8 @@ export function Library() {
       {featureAccess(game, 'villageBook') === 'full' && (
         <div className="actions menu"><button onClick={() => useGame.getState().open({ kind: 'villageBook' })}>{t('villageBook.open')}</button></div>
       )}
+      {/* 복음서 밖의 책은 방마다 선반 창을 열어야 보였다 — 제본을 기다리는 책을 한눈에 (2026-10-27 플레이 점검 44) */}
+      {waiting.length > 0 && <p className="hint library-waiting">제본을 기다리는 책 {waiting.length}권 · {waiting.map((b) => BOOK_NAME[b]).join(' · ')}</p>}
       <h3>{T.library.gospelRoom}</h3>
       <ul className="library-shelf">
         {/* 복음서 방 선반은 네 복음서만 — 사도행전은 자기 방에 꽂는다 (계획 5 작업 5) */}

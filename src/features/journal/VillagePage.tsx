@@ -15,7 +15,8 @@ export function VillagePage({ game }: { game: GameState }) {
   return (
     <div className="village-page">
       <h3 className="rows-title">{t('gen.news')}</h3>
-      {news.length === 0 ? <p className="hint">—</p> : (
+      {/* 소식이 없는 날엔 「—」 한 줄뿐이라 빈 칸처럼 보였다 (2026-10-27 플레이 점검 34) */}
+      {news.length === 0 ? <p className="hint">아직 조용한 마을이에요. 이웃들이 사귀고 혼인하고 아이를 낳으면 여기 적혀요.</p> : (
         <ul className="rows">
           {news.map(({ l, line }, i) => (
             <li key={`${l.day}-${i}`}><div className="row"><span className="row-main"><b>{line}</b></span><span className="row-meta">{fill(T.ui.day, { day: l.day })}</span></div></li>

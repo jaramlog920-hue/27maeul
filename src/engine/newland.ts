@@ -77,25 +77,18 @@ export function setNewlandOverlay(m: ReadonlyMap<string, string>): void {
 }
 
 /**
- * 구약 서고 확장 (계획 21 R9·사용자 결정 ⑦): 확장권 하나마다 범위 방(OT_ROOMS 순서) 책장이 하나씩 윗벽 아래에 선다.
- * 서고 안 바닥 맨 윗줄 양끝 — 책상·작은 책장의 서는 자리, 문깔개 길을 막지 않는다
+ * 구약 서고 확장 (계획 21 R9·사용자 결정 ⑦): 확장권 하나마다 범위 방(OT_ROOMS 순서)이 열린다.
+ * 그 묶음 책장은 가방으로 받아 서고 안에 직접 놓는다 (ot-shelves.ts — 2026-10-27, 전에는 정해진 칸에 저절로 섰다)
  */
-export const ARCHIVE_ROOM_SHELVES: readonly Tile[] = [
-  { x: INTERIOR.x0 + 1, y: INTERIOR.y0 + 1 },
-  { x: INTERIOR.x0 + 2, y: INTERIOR.y0 + 1 },
-  { x: INTERIOR.x0 + INTERIOR.w - 3, y: INTERIOR.y0 + 1 },
-  { x: INTERIOR.x0 + INTERIOR.w - 2, y: INTERIOR.y0 + 1 },
-]
 let archiveRooms = 0
 /** 열린 범위 방 수 (flags.otExpand, 0–4) — syncHome이 맞춘다 */
 export function setArchiveRooms(n: number): void {
-  archiveRooms = Math.max(0, Math.min(ARCHIVE_ROOM_SHELVES.length, Math.floor(n) || 0))
+  archiveRooms = Math.max(0, Math.min(4, Math.floor(n) || 0))
 }
 export const archiveRoomsOpen = (): number => archiveRooms
 
 /** 새 터의 한 칸 — 바탕에 지은 것을 덧씌운 것. 땅이 드러나기 전에는 덧씌우지 않는다 */
 export function newlandTileAt(x: number, y: number): string {
-  for (let i = 0; i < archiveRooms; i++) if (ARCHIVE_ROOM_SHELVES[i].x === x && ARCHIVE_ROOM_SHELVES[i].y === y) return 's'
   const base = newlandGroundAt(x, y)
   return revealedOn && overlay.size > 0 ? (overlay.get(`${x},${y}`) ?? base) : base
 }

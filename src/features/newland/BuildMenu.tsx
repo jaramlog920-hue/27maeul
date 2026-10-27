@@ -7,7 +7,11 @@ import { DEFAULT_LOOK, hasSign } from '../../engine/newland-house-look'
 import { signFor } from '../../render/newland-house-art'
 import type { BuildKind } from '../../engine/newland-sites'
 import { blocksWay, DECOR_KINDS, EXTRA_BUILDS, isBuildKind, isDecorKind, SITE_KINDS, type SiteKind } from '../../engine/newland-sites'
-import { IconGrid, type IconEntry } from '../../shared/IconGrid'
+import { IconGrid, NeedList, type IconEntry } from '../../shared/IconGrid'
+import { ItemIcon } from '../../shared/ItemIcon'
+import { BlockedButton } from '../../shared/BlockedButton'
+import { costOf } from '../../engine/newland-build'
+import type { ItemId } from '../../engine/types'
 import { SiteIcon } from './SiteIcon'
 import { dreamHeard, settledGuests } from '../../engine/newland-life'
 import { familyHomes } from '../../engine/gen-homes'
@@ -81,16 +85,25 @@ export function BuildMenu() {
   const [owner, setOwner] = useState<string | undefined>(undefined)
   const owners = kidWorkOwners(game)
   const builds = buildsOf(game)
+  // 모자란 재료는 자리·모양을 다 고른 뒤 맨 끝에서야 알 수 있었다 (2026-10-27 플레이 점검) — 고를 때 가진 수/드는 수와 막힌 까닭을 먼저 보인다
+  const shortOf = (k: SitePick): string | null => {
+    if (k === 'eraser') return null
+    const c = costOf(k as SiteKind)
+    if (game.coins < c.coins) return T.build.blockCoins
+    return Object.entries(c.items).some(([id, n]) => (game.inv[id as ItemId] ?? 0) < (n as number)) ? T.build.blockItems : null
+  }
   const siteEntry = (k: SitePick): IconEntry => ({
     key: k,
     icon: <SiteIcon kind={k} />,
     label: k === 'eraser' ? T.build.eraser : siteName(k as SiteKind),
+    dim: shortOf(k) !== null,
     detail: <>
       {USE_TEXT[k] && <p>{USE_TEXT[k]}</p>}
       {isDecorKind(k) && <p>{blocksWay(k) ? '길을 막는 칸이에요.' : '밟고 지나가는 칸이에요.'}</p>}
       {k !== 'eraser' && <p>{fill(T.build.cost, { cost: costText(k as SiteKind) })}</p>}
+      {k !== 'eraser' && <NeedList needs={costOf(k as SiteKind).items as Record<string, number>} have={(id) => game.inv[id as ItemId] ?? 0} icon={(id) => <ItemIcon id={id as ItemId} size={16} />} />}
     </>,
-    action: { label: '자리 고르기', onClick: () => setPick(k) },
+    action: { label: '자리 고르기', why: shortOf(k), onClick: () => setPick(k) },
   })
   // 집 겸 일터: 누구의 것인지 골라서 자리 고르기로
   const kidWorkEntry = (): IconEntry => ({
@@ -99,11 +112,12 @@ export function BuildMenu() {
     detail: <>
       <p>{T.newlandLife.kidWork.pickHint}</p>
       <p>{fill(T.build.cost, { cost: costText('kidWork') })}</p>
+      <NeedList needs={costOf('kidWork').items as Record<string, number>} have={(id) => game.inv[id as ItemId] ?? 0} icon={(id) => <ItemIcon id={id as ItemId} size={16} />} />
       <div className="actions menu column">
         {owners.map((o) => (
-          <button key={o.owner} onClick={() => { setOwner(o.owner); setPick('kidWork') }}>
+          <BlockedButton key={o.owner} why={shortOf('kidWork')} onClick={() => { setOwner(o.owner); setPick('kidWork') }}>
             {fill(o.owner.startsWith('npc:') ? T.newlandLife.kidWork.dreamLabel : T.newlandLife.kidWork.label, { name: o.name })}
-          </button>
+          </BlockedButton>
         ))}
       </div>
     </>,
@@ -146,11 +160,12 @@ export function BuildMenu() {
       {tab === 'place' ? (
         <>
           {/* 2026-10-12 사용자: 줄줄이 늘어놓지 않고 가방처럼 아이콘 칸 — 누르면 값·쓰임, 단추로 자리 고르기 */}
-          <IconGrid title={T.build.pickTitle} entries={([...SITE_KINDS, 'eraser'] as SitePick[]).map((k) => siteEntry(k))} />
+          {/* 위 칸 이름과 같은 제목을 두 번 쓰지 않는다. 아이콘만으로는 무엇인지 몰라 이름을 칸 아래에 (2026-10-27 플레이 점검) */}
+          <IconGrid named entries={([...SITE_KINDS, 'eraser'] as SitePick[]).map((k) => siteEntry(k))} />
           {/* 계획 18 남은 건물: 손님집·기억 정원, 꿈 이야기를 들었으면 꿈터 */}
-          <IconGrid title="특별한 건물" entries={EXTRA_BUILDS.filter((k) => (k !== 'weaver' || dreamHeard(game)) && (k !== 'gallery' || dreamHeard(game, 'tilly')) && (k !== 'kidWork' || owners.length > 0)).map((k) => (k === 'kidWork' ? kidWorkEntry() : siteEntry(k)))} />
+          <IconGrid named title="특별한 건물" entries={EXTRA_BUILDS.filter((k) => (k !== 'weaver' || dreamHeard(game)) && (k !== 'gallery' || dreamHeard(game, 'tilly')) && (k !== 'kidWork' || owners.length > 0)).map((k) => (k === 'kidWork' ? kidWorkEntry() : siteEntry(k)))} />
           {/* 꾸미기 소재 (사용자 결정 ⑧) */}
-          <IconGrid title={t('decor.title')} entries={DECOR_KINDS.map((k) => siteEntry(k))} />
+          <IconGrid named title={t('decor.title')} entries={DECOR_KINDS.map((k) => siteEntry(k))} />
         </>
       ) : builds.length === 0 ? (
         <p className="hint">{T.build.none}</p>

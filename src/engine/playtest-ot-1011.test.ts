@@ -53,5 +53,5 @@ describe('8. 입주한 손님은 보이는 시간(8~20시)에만 말이 걸린�
 import { T } from '../content/text'
 
 it('손님 선물 알림은 "남겼어요" (손님은 다음 날 아침 떠난다 — 2026-10-12 사용자 결정)', () => {
-  expect(T.newlandLife.guestGift).toBe('{whoSubj} {itemObj} 남겼어요.')
+  expect(T.newlandLife.guestGift).toBe('{whoSubj} {itemObj} 남겼어요. 다음에 다시 오면 빈 입주 주택을 내어 줄 수 있어요.')
 })

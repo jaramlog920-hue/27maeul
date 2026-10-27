@@ -872,7 +872,8 @@ function CopyWrite({ book, spot, modal, still }: { book: CopyBook; spot: CopySpo
       }
       finish(value)
     }}>
-      {C.enterNext}
+      {/* 장의 마지막 절이면 '다음 절'이 아니라 장을 마친다 (2026-10-27 플레이 점검) */}
+      {spot.index === spot.count - 1 ? fill(C.enterLast, { unit: chapterUnit(book) }) : C.enterNext}
     </button>
   )
   return (
@@ -1041,8 +1042,8 @@ function CopyDone({ book, modal, folding }: { book: CopyBook; modal: Extract<Mod
       {last.bookDone && <p className="copy-book-done">{bookDoneLine(book, name)}</p>}
       {/* 장을 마친 기념 생활 가구 (2026-10-12) */}
       {/* 필사 삯 (2026-10-13) */}
-      {last.outfit && <p className="hint" role="status">특별한 옷 ‘{COPY_OUTFITS.find(o=>o.id===last.outfit)?.name}’을 얻었어요 · 옷장에 넣었어요</p>}
-      {last.collectibleFurniture && <p className="hint" role="status">필사 수집 가구 ‘{itemName(last.collectibleFurniture)}’을 얻었어요 · 가방에 넣었어요</p>}
+      {last.outfit && <p className="hint" role="status">{fill('특별한 옷 ‘{name}’을 얻었어요 · 옷장에 넣었어요', { name: COPY_OUTFITS.find(o=>o.id===last.outfit)?.name ?? '' })}</p>}
+      {last.collectibleFurniture && <p className="hint" role="status">{fill('필사 수집 가구 ‘{name}’을 얻었어요 · 가방에 넣었어요', { name: itemName(last.collectibleFurniture) })}</p>}
       {last.pay ? <p className="hint">필사 삯 {last.pay}닢을 받았어요</p> : null}
       {last.gift && <p className="hint">장을 마친 기념으로 {withObject(itemName(last.gift))} 받았어요 · 가방에 넣었어요</p>}
       {kidName && <p className="copy-family-quiet">{fill(FD.quiet, { with: withAnd(kidName) })}</p>}

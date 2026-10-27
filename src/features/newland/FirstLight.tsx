@@ -2,7 +2,7 @@
 // 이어 창 1:3 본문 카드와 단추 둘. 본문은 불러온 구약에서 Passage가 읽는다 — 글 파일에 옮겨 적지 않는다.
 import { useEffect, useRef, useState } from 'react'
 import { T } from '../../content/text'
-import { OT_NAME, ensureOtBook, otLoaded } from '../../content/ot-catalog'
+import { ensureOtBook, otLoaded } from '../../content/ot-catalog'
 import { isOtBook } from '../../engine/ot-books'
 import { FIRST_LIGHT_DARK, FIRST_LIGHT_SECONDS, FIRST_REF } from '../../engine/newland-config'
 import { setDarknessOverride } from '../../render/renderer'
@@ -84,8 +84,8 @@ export function FirstLight() {
     <div className="dialog first-light" role="dialog" aria-label={T.newland.lightTitle}>
       {load === 'ready' && (
         <>
+          {/* 출처는 본문 카드 머리에 이미 있다 — 아래에 한 번 더 적던 줄은 뺐다 (2026-10-27 플레이 점검) */}
           <Passage refText={FIRST_REF} />
-          <p className="hint">{`${T.ui.bibleSource} · ${OT_NAME.gen} 1:3`}</p>
         </>
       )}
       {load === 'loading' && <p>{T.newland.opening}</p>}

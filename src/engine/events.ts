@@ -38,6 +38,9 @@ export function scheduledEvents(s: Pick<GameState, 'clock' | 'today' | 'flags'> 
     const whoAnd = who + (c >= 0 && c < 11172 && c % 28 !== 0 ? '과' : '와')
     add('wedding', t('schedule.myWedding', { whoAnd }), lifeText.gen.weddingPlace, FESTIVAL_FROM, FESTIVAL_TO, false, r.weddingDay)
   }
+  // 66권을 다 옮겨 적은 다음 날 저녁 모임 — 장면은 「내일 저녁」이라 하는데 일정 창에 없었다 (2026-10-27 플레이 점검 26, library-finale bibleEndingEvents)
+  const due = s.flags.bibleEndingDue
+  if (due && !s.flags.bibleEndingQueued && due >= day && due <= day + 7) add('bibleEnding', '이웃들과 두 서고 앞에서 만나기', '두 서고 앞', 18 * 60, FESTIVAL_TO, false, due)
   // 주민 결혼 잔치 (계획 20 2부 — 달력 초대): 결혼 준비 중인 쌍의 잔치 날, 7일 안이면
   if (s.gen?.on) {
     const nm = (id: string) => s.gen?.persons[id]?.name ?? content.neighbors.find((n) => n.id === id)?.role ?? ''
@@ -127,6 +130,9 @@ export function nextEvent(events: readonly ScheduledEvent[], day: number, minute
   // 시각이 정해진 가장 가까운 일정을 먼저 — 하루 종일 일정은 그런 일정이 하나도 없을 때만 (전체 일정 창에는 늘 보인다).
   // 다만 오늘 아직 시작 전인 긴 일정(장날 아침의 07:30~18:00 등)은 다른 날 일정보다 앞에 (2026-10-19 플레이 점검 P14).
   // 이미 진행 중이면 예전처럼 시각이 정해진 일정을 먼저 (2026-10-13)
+  // 오늘 내 결혼 잔치·두 서고 앞 모임이 있으면 그날 가장 큰 일이라 먼저 — 앞선 손님 방문만 보였다 (2026-10-27 플레이 점검 19)
+  const big = open.find((e) => e.day === day && (e.id.endsWith(':wedding') || e.id.endsWith(':bibleEnding')))
+  if (big) return big
   const timed = open.find((e) => !isAllDay(e))
   const today = open.find((e) => isAllDay(e) && e.day === day && e.from > minute)
   if (today && (!timed || timed.day > day)) return today

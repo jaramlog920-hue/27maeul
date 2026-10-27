@@ -67,7 +67,8 @@ describe('007 아기에서 걷는 아이가 되는 아침', () => {
 
   it('성장 전 돌보기 성공 뒤 성장 후 지연 돌보기는 가까움·돌본 날·동작을 바꾸지 않는다', () => {
     const before = seed()
-    const cared = careBaby(before, 'hold')!
+    // 밤의 아기는 자고 있어 맞는 돌보기는 이불 덮기 (2026-10-27 아기 상태)
+    const cared = careBaby(before, 'tuck')!
     expect(cared.child!.close).toBe(12)
     expect(cared.child!.cared).toBe(1)
     const morning = goToSleep(cared, CONTENT)
@@ -124,7 +125,7 @@ describe('007 아기에서 걷는 아이가 되는 아침', () => {
     expect(useGame.getState().game).toBe(morning)
     act(() => useGame.getState().kidAct('read'))
     const after = useGame.getState().game
-    expect(after.child!.close).toBe((morning.child!.close ?? 0) + 3 + (likedActs(kidPersona(morning.child!, morning.clock.day)).has('read') ? LIKED_CLOSE_BONUS : 0))
+    expect(after.child!.close).toBe((morning.child!.close ?? 0) + 1 + (likedActs(kidPersona(morning.child!, morning.clock.day)).has('read') ? LIKED_CLOSE_BONUS : 0))
     expect(after.flags.kidActs).toBe(1)
     expect(after.child!.stats.wit).not.toEqual(morning.child!.stats.wit)
     expect(useGame.getState().modal).toMatchObject({ kind: 'kidTime', done: { act: 'read' } })

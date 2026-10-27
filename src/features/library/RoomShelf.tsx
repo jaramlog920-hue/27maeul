@@ -8,9 +8,9 @@ import { ShelfRow } from './ShelfRow'
 /** 방마다 선반 이름과 안내 */
 const HEAD: Partial<Record<ShelfRoomId, { title: string; notice: string; notYet: string }>> = {
   acts: { title: T.acts.shelfTitle, notice: T.acts.shelfNotice, notYet: T.library.notYet },
-  // 편지는 엮지 않고 옮겨 적는다
-  romPhm: { title: T.letterRoom.shelfTitle, notice: T.letterRoom.shelfNotice, notYet: T.letterRoom.notYet },
-  hebJud: { title: T.letterRoom.shelfTitle, notice: T.letterRoom.shelfNotice, notYet: T.letterRoom.notYet },
+  // 편지는 엮지 않고 옮겨 적는다. 두 편지 방은 이름이 같아 헷갈렸다 — 책 범위로 (2026-10-27 플레이 점검 21)
+  romPhm: { title: T.letterRoom.romPhmTitle, notice: T.letterRoom.shelfNotice, notYet: T.letterRoom.notYet },
+  hebJud: { title: T.letterRoom.hebJudTitle, notice: T.letterRoom.shelfNotice, notYet: T.letterRoom.notYet },
   // 요한계시록은 한 권 — 편지처럼 옮겨 적는다
   rev: { title: T.revRoom.shelfTitle, notice: T.revRoom.shelfNotice, notYet: T.letterRoom.notYet },
 }

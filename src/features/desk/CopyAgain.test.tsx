@@ -31,7 +31,7 @@ describe('다시 쓰기 화면', () => {
 
   it('메뉴 → 장 고르기 → 다시 쓰기 → 마치면 횟수, 한 번 더 누르면 같은 장을 처음부터', () => {
     openMenu(phmDone())
-    expect(screen.getByText('빌레몬서 필사를 마쳤습니다.')).toBeInTheDocument()
+    expect(screen.getByText('빌레몬서 필사를 마쳤어요.')).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: '마친 장 다시 쓰기' }))
     fireEvent.click(screen.getByRole('button', { name: '1장 · 아직 다시 쓰지 않음' }))
     expect(useGame.getState().modal).toMatchObject({ kind: 'copy', view: 'write' })

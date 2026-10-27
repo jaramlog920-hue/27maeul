@@ -31,7 +31,9 @@ export function RankView({ history }: { history?: boolean }) {
       const next = { ...g, rankPopup: undefined }
       saveGame(next)
       // 이사 편지는 집 앞 편지함에 있다 (2026-10-19 사용자) — 창을 이어 열지 않는다
-      useGame.setState({ game: next, modal: null })
+      // 순위 보상 조각은 순위표를 본 뒤에 본문 창으로 (game-store 획득 감지가 미뤄 둔 것)
+      const popups = useGame.getState().piecePopups
+      useGame.setState({ game: next, modal: null, piecePopups: [...new Set([...popups, ...g.rankPopup.pieces])] })
     } else {
       // 서고에서 연 순위는 닫으면 서고로 (2026-10-19 감사 L-42)
       const m = useGame.getState().modal
@@ -56,6 +58,12 @@ export function RankView({ history }: { history?: boolean }) {
         </>
       )}
       <Table rows={rows} />
+      {/* 점수를 어떻게 세는지·순위마다 무엇을 받는지 안내가 없었다 (2026-10-27 플레이 점검 40, villages ourScore·game rankDonation) */}
+      <details className="rank-how">
+        <summary>{t('rank.howTitle')}</summary>
+        <p className="hint">{t('rank.how')}</p>
+        <p className="hint">{t('rank.rewards')}</p>
+      </details>
       {history && (game.ranks?.length ?? 0) > 0 && (
         <>
           <h3 className="rows-title">{t('rank.history')}</h3>

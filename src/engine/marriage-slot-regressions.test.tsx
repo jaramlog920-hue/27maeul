@@ -9,7 +9,7 @@ import { slotPerson } from './gen-growth'
 import { consultFor } from './gen-marriage'
 import { settleOneDay } from './gen-settle'
 import { setPeopleData, type PersonEvent } from './people'
-import { GenTalk } from '../features/talk/GenTalk'
+import { ConsultBoard } from '../features/talk/ConsultBoard'
 import { useGame } from '../store/game-store'
 import { T } from '../content/text'
 
@@ -76,8 +76,8 @@ describe('marriage slot/person regressions', () => {
     expect(consultFor(g, b, hearts, day)?.id).toBe(pair)
     const base = newGame(CONTENT)
     useGame.setState({ game: { ...base, gen: g, hearts, scenes: [], clock: { day, minute: 600 } } })
-    render(<GenTalk npc={b} />)
-    fireEvent.click(screen.getByRole('button', { name: '이야기 들어 주기' }))
+    render(<ConsultBoard />)
+    fireEvent.click(screen.getByRole('button', { name: /고민 쪽지/ }))
     fireEvent.click(screen.getByRole('button', { name: T.gen.answers.cheer }))
     expect(useGame.getState().game.gen!.relations[pair].consult!.answers).toEqual(['cheer'])
   })

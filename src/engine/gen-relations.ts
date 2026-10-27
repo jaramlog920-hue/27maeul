@@ -2,7 +2,7 @@
 // 하루 정산에서 한 날씩 부른다: 플레이어 연인 떼어 내기 → 헤어짐(하루 한 쌍) → 짝이 될 친한 사이·연인이 조금씩 가까워짐 → 친한 사이 → 연인(하루 한 쌍) → 상담 시작.
 // 소식은 gen.log에 쌓고, 화면 글은 news 쪽이 만든다. 극적인 장면은 없다.
 import { closeKin } from './gen-kin'
-import { BREAKUP_BELOW, BREAKUP_QUIET, CONSULT_AFTER, CONSULT_AT, CONSULT_NUDGE, CONSULT_QUESTIONS, FRIEND_AT, FRIEND_DRIFT, LOVER_AT, MAX_LOVERS, MIN_GAP } from './gen-config'
+import { BREAKUP_BELOW, BREAKUP_QUIET, CONSULT_AFTER, CONSULT_AT, CONSULT_NUDGE, CONSULT_QUESTIONS, FRIEND_AT, FRIEND_DRIFT, LOVER_AT, PAIR_DRIFT, MAX_LOVERS, MIN_GAP } from './gen-config'
 import { addAffinity, addLog, affinityOf, canPair, relationId, type GenState, type Relation } from './gen'
 
 export interface DayCtx {
@@ -65,6 +65,15 @@ export function settleRelations(g: GenState, d: number, ctx: DayCtx): GenState {
   for (const r of Object.values(g.relations).sort((x, y) => (x.id < y.id ? -1 : 1))) {
     const cap = r.stage === 'lover' ? CONSULT_AT : r.stage === 'friend' && canPair(g, ctx.partner, r.a, r.b, ctx.cooling) && !quietAfterBreakup(g, r.a, r.b, d) ? LOVER_AT : 0
     if (affinityOf(g, r.a, r.b) < cap && free(r.a, changed) && free(r.b, changed)) g = addAffinity(g, r.a, r.b, Math.min(FRIEND_DRIFT, cap - affinityOf(g, r.a, r.b)))
+  }
+
+  // 짝이 될 수 있는 둘이 한 번이라도 만났으면 친한 사이가 되기 전에도 조금씩 가까워진다 — 친한 사이까지 만남으로만 40일 넘게 걸려
+  // 자율 생활이 열리고 두 달이 지나야 첫 연인이 생겼다 (2026-10-27 사용자: 한 달이면 생기게)
+  changed = changedOn(g, d)
+  for (const [id, v] of Object.entries(g.affinity).sort(([x], [y]) => (x < y ? -1 : 1))) {
+    if (v <= 0 || v >= FRIEND_AT || g.relations[id]) continue
+    const [a, b] = id.split('|')
+    if (free(a, changed) && free(b, changed) && canPair(g, ctx.partner, a, b, ctx.cooling) && !quietAfterBreakup(g, a, b, d)) g = addAffinity(g, a, b, Math.min(PAIR_DRIFT, FRIEND_AT - v))
   }
 
   // 친한 사이: 호감도 30 이상인 남(가까운 친족 아님)은 친한 사이로. 수가 많아도 모두 (가벼운 소식)

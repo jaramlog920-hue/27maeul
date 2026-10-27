@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { neighborById } from '../../content/catalog'
 import { T } from '../../content/text'
 import { closedHouseIds } from '../../engine/game'
-import { housesNow, isHome, lockedZones, placeActive, roomAt, ZONES, TILE, VILLAGE_H, WIDTH, WILD_HERBS, type House } from '../../engine/world'
+import { villageHouses, isHome, lockedZones, placeActive, roomAt, ZONES, TILE, VILLAGE_H, WIDTH, WILD_HERBS, type House } from '../../engine/world'
 import { LODGING_ROOF_TOP } from '../../engine/lodging'
 import type { PlaceId } from '../../engine/types'
 import { drawVillageMap } from '../../render/renderer'
@@ -123,7 +123,7 @@ export function VillageMap() {
   const inside = roomAt(here)
   // 새 터에 있으면 이 지도 위에 내 자리는 없다 (새 터 칸은 첫 마을 칸이 아니다)
   const away = (game.map ?? 'village') !== 'village'
-  const at = away ? null : isHome(here) ? { x: housesNow().find((h) => h.id === 'home')!.doorX, y: housesNow().find((h) => h.id === 'home')!.y1 } : inside ? inside.door : here.y < VILLAGE_H ? here : null
+  const at = away ? null : isHome(here) ? { x: villageHouses().find((h) => h.id === 'home')!.doorX, y: villageHouses().find((h) => h.id === 'home')!.y1 } : inside ? inside.door : here.y < VILLAGE_H ? here : null
   const pct = (x: number, y: number) => ({ left: `${((x + 0.5) / WIDTH) * 100}%`, top: `${((y + 0.5) / VILLAGE_H) * 100}%` })
   const locked = lockedZones(zoneBooks(game))
   // 아직 이사 오지 않은 이웃의 집(덤불로 덮인 집)도 언제 열리는지 적는다 — 서고 권수 또는 마을 단계
@@ -133,7 +133,7 @@ export function VillageMap() {
     const cy = (h.y0 + h.y1) / 2
     return locked.some((z) => cx >= z.x0 && cx <= z.x1 && cy >= z.y0 && cy <= z.y1)
   }
-  const closedHouses = housesNow().filter((h) => closedHouseIds(game).includes(h.id) && !inLockedZone(h))
+  const closedHouses = villageHouses().filter((h) => closedHouseIds(game).includes(h.id) && !inLockedZone(h))
   const opensAt = (id: string) => {
     const d = neighborById(id)
     // 마을 단계는 없어졌다 (2026-10-07 사용자) — 서고 권수로 열리는 집만 적는다
@@ -145,7 +145,7 @@ export function VillageMap() {
       <div className="vmap">
         <canvas ref={ref} width={WIDTH * TILE} height={VILLAGE_H * TILE} aria-hidden="true" />
         {/* 잠긴 구역 안의 집(덤불에 덮인 집)은 구역 자물쇠 이름표만 — 이름표가 겹치지 않게 */}
-        {housesNow().filter((h) => !inLockedZone(h)).map((h) => (
+        {villageHouses().filter((h) => !inLockedZone(h)).map((h) => (
           // 공동 주택은 지붕 위가 투명한 여백이라 지붕 꼭대기에 이름을 단다
           <span key={h.id} className="vmap-label" style={pct((h.x0 + h.x1) / 2, (h.id === 'lodging' ? LODGING_ROOF_TOP : h.y0) - 0.1)}>
             {houseName(h)}
@@ -182,7 +182,7 @@ export function VillageMap() {
           ) : null
         })}
         {/* 건물 자리를 누르면 설명 (이름표는 작아서 건물 칸 전체를 누르는 자리로) */}
-        {housesNow().map((h) => {
+        {villageHouses().map((h) => {
           const closed = closedHouseIds(game).includes(h.id)
           const zone = locked.find((z) => { const cx = (h.x0 + h.x1) / 2, cy = (h.y0 + h.y1) / 2; return cx >= z.x0 && cx <= z.x1 && cy >= z.y0 && cy <= z.y1 })
           const when = zone ? `${zone.books}권` : closed ? opensAt(h.id) : null
@@ -209,7 +209,7 @@ export function VillageMap() {
           </span>
         )}
       </div>
-      <p className="hint">● 내 자리 · 🔒 마친 신약 권수</p>
+      <p className="hint">{away ? '지금은 서른아홉 권의 터에 있어요' : '● 내 자리'}{locked.length > 0 || closedHouses.length > 0 ? ' · 🔒 마친 신약 권수' : ''}</p>
       {pick && (
         <div className="vmap-pop" role="dialog" aria-label={`${pick.name} 설명`} onClick={() => setPick(null)}>
           <div className="vmap-info" role="status" onClick={(e) => e.stopPropagation()}>

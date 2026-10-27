@@ -1,4 +1,4 @@
-// 사랑방 벽 게시판: 주민 부탁 필사(계획 21 R3 — 예전 닢 의뢰 쪽지를 바꾼다) · 마을 일(계획 16 작업 20)
+// 사랑방 벽 게시판: 주민 부탁 필사(계획 21 R3 — 예전 닢 의뢰 쪽지를 바꾼다) · 마을 일(계획 16 작업 20) · 고민 쪽지(주민 결혼 상담, 2026-10-27)
 // 부탁한 분류의 구절을 골라 끝까지 직접 필사한다 (닢 없음 — 마음과 선물).
 import { useState } from 'react'
 import { CONTENT, neighborById } from '../../content/catalog'
@@ -11,6 +11,8 @@ import { t } from '../../shared/i18n'
 import { BlockedButton } from '../../shared/BlockedButton'
 import type { CopyRequestBlock } from '../../engine/game'
 import { VillageBoard } from '../village/VillageBoard'
+import { ConsultBoard } from './ConsultBoard'
+import { consultNotes } from '../../engine/gen-marriage'
 import { applyLifeState } from '../work/WorkDay'
 import { featureAccess } from '../../engine/feature-rules'
 import { libraryGrowth } from '../../engine/progression'
@@ -32,7 +34,9 @@ function draftWhy(draft: string, target: string): string | null {
 export function BoardView() {
   const game = useGame((s) => s.game)
   const { closeModal } = useGame.getState()
-  const [tab, setTab] = useState<'requests' | 'village'>('requests')
+  const notes = consultNotes(game.gen, game.hearts, game.clock.day)
+  // 오늘 답할 쪽지가 있으면 그 칸부터 연다
+  const [tab, setTab] = useState<'requests' | 'village' | 'consult'>(() => (notes.some((n) => n.due) ? 'consult' : 'requests'))
   const [sel, setSel] = useState<CopyRequest | null>(null)
   const [result, setResult] = useState<{ r: CopyRequest; stars: number; affinity: number } | null>(null)
   const [preset, setPreset] = useState<RequestPreset | null>(null)
@@ -43,10 +47,24 @@ export function BoardView() {
     <div className="actions menu">
       <button className={tab === 'requests' ? 'primary' : ''} aria-pressed={tab === 'requests'} onClick={() => setTab('requests')}>{t('copyReq.tab')}</button>
       <button className={tab === 'village' ? 'primary' : ''} aria-pressed={tab === 'village'} onClick={() => setTab('village')}>{T.village.tab}</button>
+      {(notes.length > 0 || tab === 'consult') && (
+        <button className={tab === 'consult' ? 'primary' : ''} aria-pressed={tab === 'consult'} onClick={() => setTab('consult')}>
+          {t('consultBoard.tab')}{notes.some((n) => n.due) ? ` · ${notes.filter((n) => n.due).length}` : ''}
+        </button>
+      )}
     </div>
   )
   const close = <button data-close onClick={closeModal}>{T.ui.close}</button>
 
+  if (tab === 'consult')
+    return (
+      <div className="dialog board" role="dialog" aria-label={t('consultBoard.tab')}>
+        <h2>의뢰 게시판</h2>
+        {tabs}
+        <ConsultBoard />
+        <div className="actions">{close}</div>
+      </div>
+    )
   if (tab === 'village')
     return (
       <div className="dialog board" role="dialog" aria-label={T.village.title}>

@@ -111,8 +111,10 @@ export const KID_ACT_DEFS: Record<KidAct, KidActDef> = {
 export const KID_ACTS_PER_DAY = 2
 /** 밖에서 하는 일은 이때까지, 잠들기 전 이야기는 이때부터 */
 export const KID_DUSK = 19 * 60
-export const KID_CLOSE_GAIN = 3
-export const STORY_CLOSE_GAIN = 5
+export const KID_CLOSE_GAIN = 1
+export const STORY_CLOSE_GAIN = 1
+/** 아이와 다녀온 여행은 특별한 날이라 크게 */
+export const TRIP_CLOSE_GAIN = 5
 export const CLOSE_MAX = 100
 /** 같이 만들기에서 생기는 것 (번갈아) — 집 꾸미기 가구로 놓을 수 있다 */
 export const KID_MADE: readonly ItemId[] = ['woodToy', 'clothDoll']
@@ -200,7 +202,9 @@ export function doKidAct(s: GameState, act: KidAct, content: GameContent): KidRe
   for (const [id, xp] of Object.entries(def.gains) as [StatId, number][]) stats = addXp(stats, id, xp)
   // 그 아이가 좋아하는 일이면 한 칸 더 가까워진다 (persona likedActs)
   const liked = likedActs(kidPersona(c, day)).has(act) ? LIKED_CLOSE_BONUS : 0
-  const close = Math.min(CLOSE_MAX, (c.close ?? 0) + (act === 'story' ? STORY_CLOSE_GAIN : KID_CLOSE_GAIN) + liked)
+  // 하루 첫 활동만 가까워진다 — 걸음마 중반에 이미 가득 차 그 뒤로 오를 것이 없었다 (2026-10-27 플레이 점검: 어른 무렵에 가득 차게)
+  const first = kidActsToday(s) === 0
+  const close = Math.min(CLOSE_MAX, (c.close ?? 0) + (act === 'story' ? STORY_CLOSE_GAIN : first ? KID_CLOSE_GAIN + liked : 0))
   const flags = { ...s.flags }
   if (act === 'story') flags.kidStoryDay = day
   else {
@@ -275,7 +279,7 @@ export function doKidAct(s: GameState, act: KidAct, content: GameContent): KidRe
 export function familyTrip(s: GameState): GameState {
   const c = s.child
   if (!c) return s
-  return firstTime({ ...s, child: { ...c, close: Math.min(CLOSE_MAX, (c.close ?? 0) + STORY_CLOSE_GAIN) } }, 'fam:trip')
+  return firstTime({ ...s, child: { ...c, close: Math.min(CLOSE_MAX, (c.close ?? 0) + TRIP_CLOSE_GAIN) } }, 'fam:trip')
 }
 
 /**

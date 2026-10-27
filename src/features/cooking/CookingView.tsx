@@ -210,7 +210,7 @@ export function CookingView() {
     {access !== 'full' && <p role="status">{access === 'preview' ? '허브차를 만들어 나눠 볼 수 있어요. ' + featureHint('cooking', true) : featureHint('cooking')}</p>}
     {note && <p role="status">{note}</p>}
     {/* 2026-10-12 사용자: 줄줄이 늘어놓지 않고 가방처럼 아이콘 칸 — 누르면 재료(가진 수/필요한 수)·시간, 단추로 만들러 가기 */}
-    <IconGrid title={C.list} entries={known.map((d): IconEntry => {
+    <IconGrid named title={C.list} entries={known.map((d): IconEntry => {
       const def = DISHES[d]
       const block = d === 'bread' ? canCraft(game, 'bread') : canCook(game, d)
       const ok = block === null
@@ -224,7 +224,7 @@ export function CookingView() {
         action: { label: block === 'needs' ? '재료 부족' : '만들기', why, onClick: () => setView(d) },
       }
     })} />
-    {unknown.length > 0 && <details><summary>아직 배우지 않은 요리</summary><IconGrid title={C.unknownTitle} entries={unknown.map((d): IconEntry => ({
+    {unknown.length > 0 && <details><summary>아직 배우지 않은 요리</summary><IconGrid named title={C.unknownTitle} entries={unknown.map((d): IconEntry => ({
       key: d,
       icon: <DishArt id={DISHES[d].art[0]} size={28} />,
       label: dishText(d).name,
@@ -232,7 +232,7 @@ export function CookingView() {
       detail: <p>{fill(C.teachers, { who: DISHES[d].teachers.map(whoName).join(' · ') })}</p>,
     }))} /></details>}
     {Object.keys(game.skills ?? {}).some(id => SKILL_DEFS[id]?.at === 'hearth') && <details><summary>배운 요리의 모양 고르기</summary><SkillCraftOptions at="hearth" /></details>}
-    {have.length > 0 && <IconGrid title={C.bagFoods} entries={have.map((i): IconEntry => ({
+    {have.length > 0 && <IconGrid named title={C.bagFoods} entries={have.map((i): IconEntry => ({
       key: i,
       icon: <ItemIcon id={i} size={28} />,
       label: itemName(i),

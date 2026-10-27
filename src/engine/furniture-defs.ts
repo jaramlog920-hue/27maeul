@@ -36,6 +36,11 @@ export const FURNITURE_DEFS: Partial<Record<ItemId, FurnitureDef>> = {
   // 가구 20종 (2026-09-29)
   chair: { w: 1, h: 1, layer: 'solid' },
   bookcase: { w: 1, h: 1, layer: 'solid' },
+  // 구약 묶음 책장 (2026-10-27) — 새 터 서고 안에만 놓는다
+  otShelfLaw: { w: 1, h: 1, layer: 'solid' },
+  otShelfHistory: { w: 1, h: 1, layer: 'solid' },
+  otShelfPoetry: { w: 1, h: 1, layer: 'solid' },
+  otShelfProphets: { w: 1, h: 1, layer: 'solid' },
   chest: { w: 1, h: 1, layer: 'solid' },
   barrel: { w: 1, h: 1, layer: 'solid' },
   wheel: { w: 1, h: 1, layer: 'solid' },

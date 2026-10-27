@@ -3,7 +3,7 @@
 // 가구를 놓고·돌리고·치우는 규칙 자체는 room.ts의 것 그대로다 — 이 파일은 "어느 방의 어느 규칙"만 정한다.
 import type { GameState } from './game'
 import { addGift, type Inventory } from './items'
-import { ARCHIVE_ROOM_SHELVES, inArchiveRoom, NEWLAND_MAP, roomSlotAt } from './newland'
+import { inArchiveRoom, NEWLAND_MAP, roomSlotAt } from './newland'
 import { buildsOf, roomKeyFor, type Build } from './newland-build'
 
 export { roomKeyFor, returnRoom } from './newland-build'
@@ -35,13 +35,14 @@ const CTXS: readonly RoomCtx[] = ROOM_SLOTS.map(slotCtx)
  * 구약 서고 안 (2026-10-14 사용자: 구약 건물에 들어가면 가구를 옮길 수 있어야) — 바닥(f)에만 놓고,
  * 들어와 서는 칸·필사 책상 앞·작은 책장 앞·범위 방 책장(과 그 앞)은 비워 두고, 문깔개에서 책상·책장 앞까지 닿아야 한다
  */
-export const ARCHIVE_ROOM_KEY = 'newland:archive'
+export { ARCHIVE_ROOM_KEY } from './ot-shelves'
+import { ARCHIVE_ROOM_KEY } from './ot-shelves'
 const inInterior = (t: Tile) => t.x >= INTERIOR.x0 && t.x < INTERIOR.x0 + INTERIOR.w && t.y >= INTERIOR.y0 && t.y < INTERIOR.y0 + INTERIOR.h
 export const ARCHIVE_CTX: RoomCtx = {
   isFloor: (t) => inInterior(t) && NEWLAND_MAP[t.y]?.[t.x] === 'f',
   hangingWall: (t) => NEWLAND_MAP[t.y]?.[t.x] === '#' && inInterior({ x: t.x, y: t.y + 1 }) && NEWLAND_MAP[t.y + 1]?.[t.x] === 'f',
   inside: (t) => inInterior(t) && (NEWLAND_MAP[t.y]?.[t.x] === 'f' || NEWLAND_MAP[t.y]?.[t.x] === 'E'),
-  keepClear: () => [{ ...INTERIOR_ENTRY }, { ...INTERIOR_DESK.stand }, { ...INTERIOR_SHELF.stand }, ...ARCHIVE_ROOM_SHELVES.flatMap((t) => [{ ...t }, { x: t.x, y: t.y + 1 }])],
+  keepClear: () => [{ ...INTERIOR_ENTRY }, { ...INTERIOR_DESK.stand }, { ...INTERIOR_SHELF.stand }],
   entry: { ...INTERIOR_ENTRY },
   reach: [{ ...INTERIOR_EXIT }, { ...INTERIOR_DESK.stand }, { ...INTERIOR_SHELF.stand }],
 }

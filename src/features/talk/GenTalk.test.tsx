@@ -12,6 +12,7 @@ import { ModalLayer } from '../ModalLayer'
 import { Settings } from '../play/Settings'
 import { PlaceMenu } from '../menus/PlaceMenu'
 import { makeBakerCrib } from '../../engine/baker-baby'
+import { ConsultBoard } from './ConsultBoard'
 
 const RP = relationId('rudy', 'poppy')
 const met = CONTENT.neighbors.map((n) => n.id)
@@ -26,20 +27,23 @@ const talk = (game: GameState, npc: string) => {
   return render(<ModalLayer />)
 }
 
-describe('결혼 상담 (D31)', () => {
-  it('마음이 더 깊은 쪽이 털어놓고, 응원하면 답이 쌓인다', () => {
-    const game = base((g) => ({ ...g, affinity: { ...g.affinity, [RP]: 85 }, relations: { [RP]: { id: RP, a: 'poppy', b: 'rudy', stage: 'lover', since: 1, consult: { asked: [], answers: [], nextAsk: 10, round: 10 } } } }))
-    talk(game, 'poppy')
-    fireEvent.click(screen.getByRole('button', { name: '이야기 들어 주기' }))
+// 2026-10-27 사용자: 상담은 사랑방 게시판의 고민 쪽지에서 — 쪽지는 마음이 더 깊은 쪽이 쓴다
+describe('결혼 상담 (D31) — 게시판 고민 쪽지', () => {
+  const consulting = () => base((g) => ({ ...g, affinity: { ...g.affinity, [RP]: 85 }, relations: { [RP]: { id: RP, a: 'poppy', b: 'rudy', stage: 'lover', since: 1, consult: { asked: [], answers: [], nextAsk: 10, round: 10 } } } }))
+  it('마음이 더 깊은 쪽의 쪽지에 응원하면 답이 쌓이고, 오늘은 더 답할 수 없다', () => {
+    useGame.setState({ game: consulting(), modal: null })
+    render(<ConsultBoard />)
+    const who = CONTENT.neighbors.find((n) => n.id === 'poppy')!.role
+    fireEvent.click(screen.getByRole('button', { name: new RegExp(`${who}의 고민 쪽지`) }))
     fireEvent.click(screen.getByRole('button', { name: T.gen.answers.cheer }))
     expect(useGame.getState().game.gen!.relations[RP].consult!.answers).toEqual(['cheer'])
     expect(screen.getByText(T.gen.replies.cheer)).toBeInTheDocument()
-    // 오늘은 더 묻지 않는다
-    expect(screen.queryByRole('button', { name: '이야기 들어 주기' })).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: T.ui.back }))
+    fireEvent.click(screen.getByRole('button', { name: new RegExp(`${who}의 고민 쪽지`) }))
+    expect(screen.getByRole('button', { name: T.gen.answers.cheer })).toHaveAttribute('aria-disabled', 'true')
   })
-  it('마음이 얕은 쪽은 상담을 꺼내지 않는다', () => {
-    const game = base((g) => ({ ...g, relations: { [RP]: { id: RP, a: 'poppy', b: 'rudy', stage: 'lover', since: 1, consult: { asked: [], answers: [], nextAsk: 10, round: 10 } } } }))
-    talk(game, 'rudy')
+  it('이웃 대화칸에는 상담 단추가 없다', () => {
+    talk(consulting(), 'poppy')
     expect(screen.queryByRole('button', { name: '이야기 들어 주기' })).toBeNull()
   })
 })

@@ -117,7 +117,7 @@ export function PlaceMenu({ place }: { place: MenuPlace }) {
           <>
             <SkillCraftOptions />
             {/* 2026-10-12 사용자: 줄줄이 늘어놓지 않고 가방처럼 아이콘 칸 — 누르면 재료(가진 수/필요한 수)·설명, 단추로 만들기 */}
-            <IconGrid title={T.ui.workbenchTitle} entries={WORKBENCH.filter((w) => w.id !== 'homeCradle' || game.recipesKnown.includes('homeCradle')).map((w) => {
+            <IconGrid named title={T.ui.workbenchTitle} entries={WORKBENCH.filter((w) => w.id !== 'homeCradle' || game.recipesKnown.includes('homeCradle')).map((w) => {
               const r = RECIPES[w.id]
               const out = Object.keys(r.gives)[0] as ItemId
               const block = canCraft(game, w.id)

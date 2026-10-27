@@ -27,6 +27,13 @@ export function t(key: string, vars?: Record<string, string | number>): string {
   return fillSlots(raw, vars, 'keep')
 }
 
+/** 글 목록 (번갈아 쓰는 줄들): t('kidDays.lines.0')… 를 차례로 모은다 */
+export function tList(key: string): string[] {
+  const out: string[] = []
+  for (let i = 0; lookup(TABLES[current], `${key}.${i}`) !== undefined; i++) out.push(lookup(TABLES[current], `${key}.${i}`)!)
+  return out
+}
+
 /** 검사용: 표 안의 모든 [열쇠, 글] */
 export function allEntries(lang: Lang = 'ko'): [string, string][] {
   const out: [string, string][] = []

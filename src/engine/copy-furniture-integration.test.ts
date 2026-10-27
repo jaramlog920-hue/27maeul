@@ -27,7 +27,8 @@ it('awards only a first actual chapter completion, persists reward and never rer
   expect(result.result.kind).toBe('chapter')
   if(result.result.kind!=='chapter')throw Error('Expected chapter')
   const id=result.result.collectibleFurniture!
-  expect(COPY_FURNITURE.find(i=>i.id===id)?.category).toBe('infant')
+  // 아이가 없는 새 게임이라 아기·어린이 물건은 뒤로 미룬다 (2026-10-27 플레이 점검)
+  expect(['infant','child']).not.toContain(COPY_FURNITURE.find(i=>i.id===id)?.category)
   expect(result.state.inv[id]).toBe(1)
   expect(result.state.flags[copyFurnitureFlag(id)]).toBe(1)
   const loaded=deserialize(serialize(result.state),CONTENT)!

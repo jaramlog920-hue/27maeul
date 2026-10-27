@@ -300,8 +300,8 @@ describe('마을 서고', () => {
   })
   it('서고: 꽂은 알림의 조사가 책 이름 받침에 맞는다 (마가복음을 / 빌레몬서를)', () => {
     const cases = [
-      ['mk', '마가복음을 서고에 꽂았습니다.'],
-      ['phm', '빌레몬서를 서고에 꽂았습니다.'],
+      ['mk', '마가복음을 서고에 꽂았어요.'],
+      ['phm', '빌레몬서를 서고에 꽂았어요.'],
     ] as const
     for (const [book, text] of cases) {
       const open = { ...newGame(CONTENT).flags, gospelFeast: 2, 'room:romPhm': 1 }
@@ -354,7 +354,7 @@ describe('나의 한 줄 (책)', () => {
     answerAll()
     const dialog = screen.getByRole('dialog', { name: '나의 한 줄' })
     expect(dialog).toHaveTextContent('마가복음')
-    expect(dialog).toHaveTextContent('이 책에 대한 나의 한 줄을 남길까요? (나중에 적어도 돼요)')
+    expect(dialog).toHaveTextContent('이 책에 대한 나의 한 줄을 남길까요? 다른 책의 한 줄은 말씀 창에서 언제든 적을 수 있어요.')
     await user.type(screen.getByRole('textbox', { name: '나의 말로 한 줄' }), '곧 이어지는 이야기들')
     await user.click(screen.getByRole('button', { name: '남기기' }))
     expect(useGame.getState().game.myLines['book:mk']).toBe('곧 이어지는 이야기들')
@@ -501,9 +501,9 @@ describe('리뷰 지적 회귀 (화면)', () => {
     act(() => {
       for (let i = 0; i < 400 && !useGame.getState().toast; i++) useGame.getState().frame(0.05)
     })
-    expect(useGame.getState().toast?.text).toBe('더 담을 수 없습니다.')
+    expect(useGame.getState().toast?.text).toBe('더 담을 수 없어요.')
     act(() => useGame.getState().frame(0.05))
-    expect(useGame.getState().toast?.text).toBe('더 담을 수 없습니다.')
+    expect(useGame.getState().toast?.text).toBe('더 담을 수 없어요.')
     // 2.6초 뒤에는 사라진다
     act(() => {
       for (let i = 0; i < 60; i++) useGame.getState().frame(0.05)
@@ -815,7 +815,8 @@ describe('복음서 방 잔치와 사도행전 방 예고', () => {
     const inLib = WARPS.get(key(lib.door))!
     reset({ flags: { heartPoints: 1 }, player: { ...newGame(CONTENT).player, x: inLib.x, y: inLib.y, path: [] } })
     act(() => useGame.getState().tap(LOCKED_DOORS[0]))
-    expect(useGame.getState().toast).toBeNull()
+    // 문을 누르면 어느 방인지 먼저 잠깐 알린다 (2026-10-27 사용자)
+    expect(useGame.getState().toast?.text).toBe('사도행전 방')
     act(() => {
       for (let i = 0; i < 400 && roomAt(playerTile(useGame.getState().game)) !== ACTS_ROOM; i++) useGame.getState().frame(0.05)
     })
@@ -875,7 +876,8 @@ describe('로마서–빌레몬서 방 (계획 7 작업 7)', () => {
   it('둘째 문은 방 표식이 없어도 열려 있어 걸어 들어가 방 이름을 알린다', () => {
     reset({ flags: { heartPoints: 1 }, shelved: shelvedAll, player: { ...newGame(CONTENT).player, ...inLib(), path: [] } })
     act(() => useGame.getState().tap(LOCKED_DOORS[1]))
-    expect(useGame.getState().toast).toBeNull()
+    // 문을 누르면 어느 방인지 먼저 잠깐 알린다 (2026-10-27 사용자)
+    expect(useGame.getState().toast?.text).toBe('로마서–빌레몬서 방')
     act(() => {
       for (let i = 0; i < 400 && roomAt(playerTile(useGame.getState().game)) !== LETTERS_ROOM; i++) useGame.getState().frame(0.05)
     })
@@ -888,7 +890,7 @@ describe('로마서–빌레몬서 방 (계획 7 작업 7)', () => {
     useGame.setState({ modal: { kind: 'roomShelf', room: 'romPhm' }, rng: mulberry32(3) })
     const user = userEvent.setup()
     const { container } = render(<ModalLayer />)
-    const dialog = screen.getByRole('dialog', { name: '편지 선반' })
+    const dialog = screen.getByRole('dialog', { name: '로마서–빌레몬서 선반' })
     expect(container.querySelectorAll('.library-shelf .spine')).toHaveLength(13)
     expect(dialog.textContent).toContain('로마서')
     expect(dialog.textContent).toContain('빌레몬서')
@@ -962,7 +964,8 @@ describe('히브리서–유다서 방 (계획 8 작업 5)', () => {
   it('셋째 문도 방 표식이 없어도 열려 있어 걸어 들어가 방 이름을 알린다', () => {
     reset({ flags: { heartPoints: 1 }, shelved: shelvedAll, player: { ...newGame(CONTENT).player, ...inLib(), path: [] } })
     act(() => useGame.getState().tap(LOCKED_DOORS[2]))
-    expect(useGame.getState().toast).toBeNull()
+    // 문을 누르면 어느 방인지 먼저 잠깐 알린다 (2026-10-27 사용자)
+    expect(useGame.getState().toast?.text).toBe('히브리서–유다서 방')
     act(() => {
       for (let i = 0; i < 400 && roomAt(playerTile(useGame.getState().game)) !== HEB_JUD_ROOM; i++) useGame.getState().frame(0.05)
     })
@@ -975,7 +978,7 @@ describe('히브리서–유다서 방 (계획 8 작업 5)', () => {
     useGame.setState({ modal: { kind: 'roomShelf', room: 'hebJud' }, rng: mulberry32(3) })
     const user = userEvent.setup()
     const { container } = render(<ModalLayer />)
-    const dialog = screen.getByRole('dialog', { name: '편지 선반' })
+    const dialog = screen.getByRole('dialog', { name: '히브리서–유다서 선반' })
     expect(container.querySelectorAll('.library-shelf .spine')).toHaveLength(8)
     expect(dialog.textContent).toContain('히브리서')
     expect(dialog.textContent).toContain('유다서')

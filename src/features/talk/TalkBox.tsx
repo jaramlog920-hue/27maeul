@@ -8,6 +8,7 @@ import { StallEntry } from '../stall/StallEntry'
 import { SkillLessonView, SkillEntry } from '../skills/SkillLesson'
 import { callName, fill, HEART_HINTS, itemList, T } from '../../content/text'
 import { isMarketDay } from '../../engine/calendar'
+import { BlockedButton } from '../../shared/BlockedButton'
 import { activeRequest, canBreakUp, canGiveBouquet, canGiveCord, canGiveLoveVerse, isSuitor, romanceWith, stageWith, type GameState, canHelp, canOrderHome, canOrderWork, GIFTABLE, nextHomeStage } from '../../engine/game'
 import { DATING_DAYS } from '../../engine/romance'
 import heartText from '../../content/heart-balance-text.json'
@@ -185,7 +186,7 @@ export function TalkBox({ modal }: { modal: Extract<Modal, { kind: 'talk' }> }) 
           <button onClick={() => bouquetBlock === 'noItem' ? say(T.romance.bouquetNoItem) : bouquetBlock === 'cooling' ? say(HEART_HINTS.cooling) : useGame.getState().giveBouquet(def.id)}>{T.romance.giveBouquet}</button>
         )}
         {romanceWith(game, def.id) === 'dating' && (
-          <button onClick={() => cordNote ? say(cordNote, 4000) : useGame.getState().giveCord(def.id)}>{T.romance.giveCord}</button>
+          <BlockedButton why={cordNote} onClick={() => useGame.getState().giveCord(def.id)}>{T.romance.giveCord}</BlockedButton>
         )}
         {canGiveLoveVerse(game, def.id) && <button onClick={() => useGame.getState().open({ kind: 'loveVerse' })}>{T.romance.loveVerse}</button>}
           {canBreakUp(game, def.id) && <button onClick={() => setAsking(true)}>{T.romance.breakUp}</button>}

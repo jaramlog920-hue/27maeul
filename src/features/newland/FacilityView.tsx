@@ -5,11 +5,13 @@ export { dreamText } from './dream-text'
 import { weatherOf } from '../../engine/calendar'
 import { genPersona, kidPersona, personaLine, residentJob } from '../../engine/persona'
 import { useEffect, useRef, useState } from 'react'
+import { BlockedButton } from '../../shared/BlockedButton'
 import { CONTENT, GOD_KEYWORDS, neighborById } from '../../content/catalog'
 import { callName, fill, itemList, itemName, JOB_NAME, T, withAnd, withObject, withSubject } from '../../content/text'
 import { newsLine } from '../../content/gen-text'
 import { canGatherYard, gatherYard, mendQuarrelWith, yardFriends, type GameState } from '../../engine/game'
-import { kidVisiting, talkKidVisit, dreamKey, roomOwner, canInviteGuest, markerShown, toggleMarker, canMendQuarrel, keywordRecall, quarrelPair, visitKidWork, DREAMER, GUESTS, guestNow, inviteGuest, memoriesOf, pickDream, settledAt, settledLine, talkGuest, visitDream, kidWorkBuildAt, type DreamStage, type FacilityKind, type GuestId, type Memory } from '../../engine/newland-life'
+import { kidVisiting, talkKidVisit, dreamKey, roomOwner, canInviteGuest, markerShown, toggleMarker, canMendQuarrel, keywordRecall, quarrelPair, visitKidWork, giveKidLunch, kidLunchBlock, DREAMER, GUESTS, guestNow, inviteGuest, memoriesOf, pickDream, settledAt, settledLine, talkGuest, visitDream, kidWorkBuildAt, type DreamStage, type FacilityKind, type GuestId, type Memory } from '../../engine/newland-life'
+import { canClaimHome } from '../../engine/newland-myhome'
 import { emptyHomeAt, familyAt, giveFamilyHome, homeWishes, wantsToMove } from '../../engine/gen-homes'
 import type { Household } from '../../engine/gen'
 import { t } from '../../shared/i18n'
@@ -79,7 +81,8 @@ function KidVisit() {
       <p className="talk-role">{name} <span className="talk-job">다니러 왔어요</span></p>
       {said && <p className="talk-line">{said}</p>}
       <div className="actions menu column">
-        <button className="primary" onClick={talk}>{L.guestTalk}</button>
+        {/* 하루 한 번 — 이야기한 뒤에도 단추가 그대로라 또 누르게 됐다 (2026-10-27 플레이 점검) */}
+        <BlockedButton className="primary" why={game.flags.kidVisitTalkDay === game.clock.day ? L.guestTalked : null} onClick={talk}>{L.guestTalk}</BlockedButton>
       </div>
     </>
   )
@@ -97,7 +100,7 @@ function Guest() {
     if (!r) return useGame.getState().say(L.guestTalked)
     commit(r.state)
     setSaid(r.line === 'again' ? g.again : g.lines[r.line])
-    if (r.gift) useGame.getState().say(fill(L.guestGift, { whoSubj: withSubject(g.name), itemObj: withObject(itemName(r.gift)) }), 3600)
+    if (r.gift) useGame.getState().say(fill(L.guestGift, { whoSubj: withSubject(g.name), itemObj: withObject(itemName(r.gift)) }), 5200)
   }
   return (
     <>
@@ -106,7 +109,8 @@ function Guest() {
       </p>
       {said && <p className="talk-line">{said}</p>}
       <div className="actions menu column">
-        <button className="primary" onClick={talk}>{L.guestTalk}</button>
+        {/* 하루 한 번 — 이야기한 뒤에도 단추가 그대로라 또 누르게 됐다 (2026-10-27 플레이 점검) */}
+        <BlockedButton className="primary" why={game.flags.guestTalkDay === game.clock.day ? L.guestTalked : null} onClick={talk}>{L.guestTalk}</BlockedButton>
         {/* 다시 온 손님에게 빈집을 내어 준다 (2026-10-08 입주) — 조건이 맞을 때만 보인다 */}
         {canInviteGuest(game) && (
           <button
@@ -186,9 +190,21 @@ function KidWork({ owner }: { owner?: string }) {
   // 그 일의 방 안 (assets 일터 실내 도트, 2026-10-22 연결) — 일이 정해지지 않았으면 그림 없이 말만
   const job = ownerJob(game, owner)
   const room = job ? WORKPLACE_INTERIORS[job] : null
+  const mine = !owner || owner === (game.child ? `me:${game.child.born}` : '')
+  const lunchWhy = kidLunchBlock(game)
   return <>
     {room && <figure className="workplace-room" aria-label={room.label}><PixelArt rows={room.rows} palette={WORKPLACE_PALETTE} /><figcaption>{room.label}</figcaption></figure>}
     <p className="talk-line">{line}</p>
+    {mine && (
+      <div className="actions menu column">
+        <BlockedButton why={lunchWhy ? t(`kidLunch.${lunchWhy}`) : null} onClick={() => {
+          const next = giveKidLunch(useGame.getState().game)
+          if (!next) return
+          commit(next)
+          setLine(t('kidLunch.thanks'))
+        }}>{t('kidLunch.give')}</BlockedButton>
+      </div>
+    )}
   </>
 }
 
@@ -203,9 +219,17 @@ function EmptyHome({ at }: { at?: Tile }) {
   const here = at ?? { x: Math.round(game.player.x), y: Math.round(game.player.y) }
   const home = emptyHomeAt(game, here)
   const wishes = homeWishes(game, roomOwner)
-  if (!home || !wishes.length) return <p className="hint">{t('familyHome.none')}</p>
+  // 빈 집 앞에서도 내 집으로 쓸 수 있게 — 터 가꾸기 '지은 것' 칸 안에만 있어 찾기 어려웠다 (2026-10-27 플레이 점검)
+  const mine = home && canClaimHome(game, home) === null ? (
+    <div className="actions column">
+      <button onClick={() => { useGame.getState().claimNewHome(home.id); useGame.getState().closeModal() }}>{t('familyHome.claim')}</button>
+      <p className="hint">{t('familyHome.claimNote')}</p>
+    </div>
+  ) : null
+  if (!home || !wishes.length) return <>{mine}<p className="hint">{t('familyHome.none')}</p></>
   return (
     <>
+      {mine}
       <p className="hint">{t('familyHome.lead')}</p>
       <ul className="rows">
         {wishes.map((h) => (

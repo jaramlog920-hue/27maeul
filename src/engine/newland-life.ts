@@ -111,7 +111,9 @@ export function guestHouseMorning<T extends S>(s: T): T {
   if (!flags.guestNow && day >= (flags.guestNext ?? 0) && GUESTS.some((g) => !living.has(g.id))) {
     const visitors = GUESTS.filter((g) => !living.has(g.id))
     const fresh = visitors.filter((g) => !flags[`guestGift:${g.id}`])
-    const pool = fresh.length ? fresh : visitors
+    // 선물을 남기고 간 손님은 빈집이 있으면 먼저 다시 온다 — 다른 손님이 다 돌 때까지 한 달 넘게 기다려야 이웃으로 맞을 수 있었다 (2026-10-27 플레이 점검)
+    const settleable = visitors.filter((g) => flags[`guestGift:${g.id}`] !== undefined)
+    const pool = settleable.length && freeHome(s) ? settleable : fresh.length ? fresh : visitors
     // 가장 오래 안 온 손님부터 (온 날 guestSeen:<id>) — 날로 고르면 늘 같은 손님이 왔다 (2026-10-12 점검 2)
     const seen = (id: string) => flags[`guestSeen:${id}`] ?? -1
     const g = [...pool].sort((a, b) => seen(a.id) - seen(b.id))[0]
@@ -239,6 +241,19 @@ export function visitKidWork<T extends S & Pick<GameState, 'inv' | 'child'>>(s: 
   return { state: { ...s, flags, inv: addGift(s.inv, { [dish]: 1 }) }, dish, ...(milestone ? { milestone } : {}) }
 }
 
+/** 일터의 아이에게 도시락(빵 하나)을 건넨다: 하루 한 번, 조금 가까워진다 — 들러도 할 일이 없었다 (2026-10-27 플레이 점검) */
+export const KID_LUNCH: ItemId = 'bread'
+export type KidLunchBlock = 'done' | 'noBread' | null
+export function kidLunchBlock(s: Pick<GameState, 'flags' | 'clock' | 'inv'>): KidLunchBlock {
+  if (s.flags.kidLunchDay === s.clock.day) return 'done'
+  return (s.inv[KID_LUNCH] ?? 0) > 0 ? null : 'noBread'
+}
+export function giveKidLunch<T extends Pick<GameState, 'flags' | 'clock' | 'inv' | 'child'>>(s: T): T | null {
+  if (!s.child || kidLunchBlock(s) !== null) return null
+  const inv = { ...s.inv, [KID_LUNCH]: (s.inv[KID_LUNCH] ?? 0) - 1 }
+  return { ...s, inv, child: { ...s.child, close: Math.min(100, (s.child.close ?? 0) + 1) }, flags: { ...s.flags, kidLunchDay: s.clock.day } }
+}
+
 // ── 신약 키워드 계승 (계획 18 B18-6, 2026-10-08) ──
 // godRecords(발견 기록)는 원본 그대로 두고 읽기만 한다. 공동 마당에서 돌아보고, 대표 사례 하나(사랑: 다툰 이웃에게 함께 쓰는 자리)를 고른다.
 // 키워드를 못 만났어도 고를 수 있다(그 곁에 근거 구절이 보이지 않을 뿐). 결과는 대사·마음·기억에만 — 점수 없음.
@@ -299,7 +314,8 @@ export function facilityAt(s: Pick<GameState, 'newland'>, t: Tile): FacilityKind
   // 가족은 8–20시에만 문 옆에 선다 (아무도 없는 자리에서 말이 걸리지 않게)
   const m = full.clock?.minute
   if ((m === undefined || (m >= 8 * 60 && m < 20 * 60)) && familyAt(full, t)) return 'family'
-  return emptyHomeAt(full, t) && homeWishes(full, roomOwner).length > 0 ? 'emptyHome' : null
+  // 아직 내 집이 없으면 빈 집 앞에서 내 집으로 쓰기도 고를 수 있다 (2026-10-27 플레이 점검)
+  return emptyHomeAt(full, t) && (homeWishes(full, roomOwner).length > 0 || !full.flags.myNewHome) ? 'emptyHome' : null
 }
 
 // ── 기억 정원 ──

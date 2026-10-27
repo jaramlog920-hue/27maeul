@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { checkVoice, VOICE_ACCEPT } from '../../engine/copying'
 import { newRecognizer, transcriptsOf, voiceAvailable, type VoiceRecognizer } from '../desk/copy-voice'
 import { CONTENT, neighborById, verseCountOf, versesOf } from '../../content/catalog'
-import { T } from '../../content/text'
+import { T, withAnd } from '../../content/text'
 import { hallGuestsToday } from '../../engine/game'
 import { useGame } from '../../store/game-store'
 import { Passage } from '../passage/Passage'
@@ -79,7 +79,7 @@ export function ReadingMeeting({ day }: { day: number }) {
   const guests = hallGuestsToday(game, CONTENT).map(id => neighborById(id)?.role).filter(Boolean).join(' · ')
   return <div className="dialog reading-meeting" role="dialog" aria-label={T.meetings.reading}>
     <h2>{T.meetings.reading}</h2>
-    <p>{guests ? `${guests}와 함께 읽어요.` : '사랑방에서 함께 말씀을 읽어요.'}</p>
+    <p>{guests ? `${withAnd(guests)} 함께 읽어요.` : '사랑방에서 함께 말씀을 읽어요.'}</p>
     <h3>{piece.title}</h3>
     <p className="hint">오늘의 본문 · {piece.ref}</p>
     <p>{manual ? R.leadManual : R.lead}</p>

@@ -40,7 +40,7 @@ export function kidDoneLines(done: KidDone, kid: string): { scene: string; resul
   if (done.act === 'walk' && Object.keys(done.got).length) results.push(fill(K.found, { items: itemList(done.got) }))
   if (done.act === 'errand' && role) results.push(fill(K.neighbor, { whoAnd: withAnd(role) }))
   if (done.act === 'story') results.push(K.rested)
-  results.push(kidFill(K.closer, kid))
+  if (done.closer !== false) results.push(kidFill(K.closer, kid))
   if (done.album) results.push(K.album)
   return { scene, results }
 }
@@ -145,8 +145,9 @@ export function KidTime({ done, spouse }: { done?: KidDone; spouse?: SpouseDone 
       </ul>
       {KID_ACTS.some((a) => canKidAct(game, a) === 'done') && <p className="hint">{BLOCKS.done}</p>}
       {spouseDef && (
-        <section className="kid-spouse">
-          <h3>{spouseDef.label}</h3>
+        // 배우자와 함께하는 일은 할 수 있을 때만 펼쳐 둔다 — 아이 놀이 아래에 늘 펼쳐져 창이 길었다 (2026-10-27 플레이 점검)
+        <details className="kid-spouse" open={spouseBlock === null}>
+          <summary><h3>{spouseDef.label}</h3></summary>
           <ul className="kid-acts">
             {spouseDef.choices.map((c, i) => (
               <li key={c}>
@@ -157,7 +158,7 @@ export function KidTime({ done, spouse }: { done?: KidDone; spouse?: SpouseDone 
             ))}
           </ul>
           {spouseBlock && <p className="hint">{spouseBlock === 'locked' ? featureHint('childActivities') : W.blocks[spouseBlock]}</p>}
-        </section>
+        </details>
       )}
       <div className="actions">
         <button data-close onClick={closeModal}>{T.ui.close}</button>

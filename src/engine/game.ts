@@ -35,7 +35,7 @@ import { adopt, companionGoal, STRAY_DAY, STRAY_STAY_DAYS, STRAY_SPOTS, stepComp
 import { wanderGoal } from './npc-life'
 import { add, addGift, BAG_SLOTS, COOKED_ITEMS, FOODS, count, has, hasSlotFor, RECIPES, recipeGives, slotsUsed, stackCap, take, TOOLS, type Inventory, type RecipeId } from './items'
 import { petLife, petPieceCheck, petStayGoal, type PetEvent } from './pet-life'
-import { facingFor, findPath, pathToward, stepActor, type Actor } from './movement'
+import { facingFor, findPath, findWarpRoute, pathToward, stepActor, type Actor } from './movement'
 import { careIn, careKey, chapterEffort, PUZZLE_EFFORT } from './copy-ways'
 import { familyHomes, livesInNewland, sharedHomeOf, familyMoveMorning } from './gen-homes'
 import { nightDoorKeys, nightDoorLocked } from './night-doors'
@@ -169,7 +169,8 @@ import {
 import { propFootprint, ROOMS, HOUSES, PET_HOME, HOME_FRONT, isHome, isIndoor, isWalkable, key, walkableOn, HOME_ENTRY, LOCKED_DOORS, lockedTiles, PLACES, placeAt, roomAt, sameTile, setHomeLevel, setHomeFurniture, setMailbox, setOpenDoors, setSpouseRoom, START, tileAt, WARPS, warpAt } from './world'
 import { currentMapId, setActiveMap, type MapId } from './maps'
 import { drawOtPiece, OT_PIECE_DAY_FLAG, otPieceId } from './ot-pieces'
-import { claimNewland, entryFront, grantNewland, inArchiveRoom, portalAt, revealNewland, roomSlotAt, setArchiveRooms, ARCHIVE_ROOM_SHELVES, archiveRoomsOpen, setNewlandOpen, setNewlandOverlay, setNewlandRevealed, setNewlandWarps } from './newland'
+import { grantRangeShelves, rangeShelfAt } from './ot-shelves'
+import { claimNewland, entryFront, grantNewland, inArchiveRoom, portalAt, revealNewland, roomSlotAt, setArchiveRooms, setNewlandOpen, setNewlandOverlay, setNewlandRevealed, setNewlandWarps } from './newland'
 import { advanceBuilds, buildsOf, overlayFor, standSpotOf, warpsFor, type NewlandState } from './newland-build'
 import { canMendQuarrel, dreamKey, GUEST_GAP, GUEST_STAY, guestHouseMorning, guestNow, kidVisiting, siblingVisiting, kidWorkSpot, MEND_GAIN, settledGuests, settledSpot, SETTLED_FROM, SETTLED_TO } from './newland-life'
 import { kidWorkers } from './kid-work'
@@ -505,10 +506,23 @@ export function useOutdoorFurniture(s:GameState,f:Furniture):GameState {
 // ── 아기 돌보기 (2026-10-12 도트: baby-care-motion — 안아 주기·달래기·눕히기·이불 덮기) ──
 export const BABY_CARE = ['hold', 'soothe', 'lay', 'tuck'] as const
 export type BabyCare = (typeof BABY_CARE)[number]
-/** 하루 처음 돌볼 때 아이와 가까워지는 정도 */
+/** 하루 처음 맞게 돌볼 때 아이와 가까워지는 정도 */
 export const BABY_CARE_CLOSE = 2
 
-/** 요람의 우리 아기를 돌본다: 요람 곁에서만, 그림은 그 자리에서 (안기·달래기는 품에, 눕히기·이불 덮기는 요람째). 하루 처음이면 조금 가까워진다 */
+/**
+ * 요람의 아기 상태: 밤엔 잠, 안아 준 뒤엔 품에서 졸림, 낮엔 두 시간마다 칭얼거리거나 말똥말똥.
+ * 네 돌보기가 모두 같은 결과라 무엇을 눌러도 같았다 (2026-10-27 플레이 점검) — 상태에 맞는 돌보기만 가까워진다
+ */
+export type BabyMood = 'fussy' | 'awake' | 'drowsy' | 'asleep'
+export const BABY_MOOD_CARE: Record<BabyMood, BabyCare> = { fussy: 'soothe', awake: 'hold', drowsy: 'lay', asleep: 'tuck' }
+export function babyMood(s: Pick<GameState, 'clock' | 'flags'>): BabyMood {
+  if (phaseOf(s.clock.minute) === 'night') return 'asleep'
+  if (s.flags.babyHeld === s.clock.day) return 'drowsy'
+  const slot = Math.floor(s.clock.minute / 120)
+  return (s.clock.day * 7 + slot * 3) % 5 < 3 ? 'fussy' : 'awake'
+}
+
+/** 요람의 우리 아기를 돌본다: 요람 곁에서만, 그림은 그 자리에서 (안기·달래기는 품에, 눕히기·이불 덮기는 요람째). 상태에 맞게 하루 처음 돌보면 조금 가까워진다 */
 export function careBaby(s: GameState, action: BabyCare): GameState | null {
   const c = s.child
   if (!c || childMode(c, s.clock.day) !== 'cradle') return null
@@ -517,14 +531,17 @@ export function careBaby(s: GameState, action: BabyCare): GameState | null {
   if (!crib || !at || !isNear(playerTile(s), at, 1)) return null
   const here = playerTile(s)
   const facing: Facing = at.x > here.x ? 'right' : at.x < here.x ? 'left' : at.y < here.y ? 'up' : 'down'
-  const first = s.flags.babyCare !== s.clock.day
+  const right = BABY_MOOD_CARE[babyMood(s)] === action
+  const first = right && s.flags.babyCare !== s.clock.day
+  // 안으면 품에서 졸리고, 눕히거나 이불을 덮으면 다시 요람에
+  const held: Record<string, number> = action === 'hold' ? { babyHeld: s.clock.day } : action === 'lay' || action === 'tuck' ? { babyHeld: 0 } : {}
   const sleepScene = action === 'tuck' && phaseOf(s.clock.minute) === 'night' && s.flags.babySleepScene !== s.clock.day
   return {
     ...s,
     player: { ...s.player, facing },
     // 하루 처음 돌본 날은 가까움과 함께 '돌본 날'도 센다 — 아기 시기가 끝날 때 물려받는 몫의 확률을 올린다 (2026-10-14)
     child: first ? { ...c, close: Math.min(100, (c.close ?? 0) + BABY_CARE_CLOSE) /* family CLOSE_MAX — family가 game을 부르므로 값만 */, cared: (c.cared ?? 0) + 1 } : c,
-    flags: { ...s.flags, ...(first ? { babyCare: s.clock.day } : {}), ...(sleepScene ? { babySleepScene: s.clock.day } : {}) },
+    flags: { ...s.flags, ...held, ...(first ? { babyCare: s.clock.day } : {}), ...(sleepScene ? { babySleepScene: s.clock.day } : {}) },
     scenes: sleepScene && !s.scenes.includes('babySleep') ? [...s.scenes, 'babySleep'] : s.scenes,
     act: { kind: 'baby', use: action, spot: { x: crib.x, y: crib.y, item: crib.item, facing }, left: ACT_SECONDS.baby, total: ACT_SECONDS.baby, facing },
   }
@@ -1092,7 +1109,7 @@ const FRONT: Record<Facing, Tile> = { up: { x: 0, y: -1 }, down: { x: 0, y: 1 },
 function interactableAt(s: GameState, t: Tile): boolean {
   if (portalAt(t)) return true
   // 새 터: 서고 책상·책장(장소)과 확장권 범위 방 책장도 앞칸 상호작용 대상 (2026-10-08 버그 02-A)
-  if (currentMapId() === 'newland') return placeAt(t) !== null || ARCHIVE_ROOM_SHELVES.slice(0, archiveRoomsOpen()).some((r) => sameTile(r, t))
+  if (currentMapId() === 'newland') return placeAt(t) !== null || !!rangeShelfAt(s, t)
   const visitor = libraryVisitorTile(s)
   return (
     (!!visitor && sameTile(visitor, t)) ||
@@ -1221,7 +1238,7 @@ export function tapTile(s: GameState, tile: Tile): GameState {
   } else if (isStallTile(s, tile)) {
     target = { kind: 'stall', tile }
     path = Math.abs(from.x - STALL_STAND.x) + Math.abs(from.y - STALL_STAND.y) <= STALL_NEAR
-      ? [] : findPath(from, STALL_STAND, blockers)
+      ? [] : findPath(from, STALL_STAND, blockers) ?? findWarpRoute(from, STALL_STAND, blockers)
   } else if (!place && !bookcaseAt(s, tile) && spaceAtTile(s, tile)) {
     // 정해 둔 자리의 의자·탁자: 곁에 서 있으면 바로, 아니면 곁으로 걸어가 쓰임 메뉴를 연다
     target = { kind: 'space', id: spaceAtTile(s, tile)!.id, tile }
@@ -1356,6 +1373,12 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
     events.push({ type: 'lockedHouse' })
   }
   if (warp) player = warpTo(player, warp)
+  // 길 끝 표지 칸을 걸어서 밟아도 건너갈지 묻는다 — 표지를 정확히 눌러야만 창이 떴다 (2026-10-27 플레이 점검)
+  const portalStop = !warp && !sameTile(now, here) && (!s.target || s.target.kind === 'ground') && portalAt(now) === 'newland'
+  if (portalStop) {
+    player = { ...player, ...now, path: [] }
+    events.push({ type: 'arrived', target: { kind: 'portal', to: 'newland' } })
+  }
 
   // 이웃
   const defs = defsById(content)
@@ -1423,7 +1446,13 @@ export function tick(s: GameState, dt: number, rng: Rng, content: GameContent): 
   for (const [id, at] of Object.entries(apptAt)) if (npcs[id] && !s.plans.appts.some(a => ['club','event'].includes(a.kind) && (a.startedWith??a.members).includes(id) && a.day===clock.day && (a.state==='running'||a.state==='done'))) npcs[id] = { ...npcs[id], ...at, path: [], visible: true }
 
   // 도착
-  let target = warp ? null : s.target
+  // 좌판 창의 '좌판 자리로 가기'는 집·건물 안에서도 누른다 — 문을 건너면 남은 길을 다시 찾아 이어 간다 (2026-10-27 플레이 점검 1)
+  let target = portalStop || (warp && s.target?.kind !== 'stall') ? null : s.target
+  if (warp && target?.kind === 'stall') {
+    const rest = findWarpRoute({ x: player.x, y: player.y }, STALL_STAND, blockersOf({ ...s, clock, npcs }))
+    if (rest?.length) player = { ...player, path: rest }
+    else if (!rest) target = null
+  }
   if (target && player.path.length === 0) {
     const tt = targetTile({ ...s, npcs }, target)
     if (target.kind === 'neighbor') {
@@ -1683,8 +1712,8 @@ function tapNewland(s: GameState, tile: Tile): GameState {
     const path = footprint(bed).map((p) => pathToward(from, p, blockers)).filter((p): p is Tile[] => !!p).sort((a, b) => a.length - b.length)[0] ?? null
     return path ? { ...s, player: { ...s.player, path }, target, idle: IDLE_RESET } : { ...s, idle: IDLE_RESET }
   }
-  // 확장권으로 선 범위 방 책장 (계획 21 R9): 아래 칸으로 걸어가 책장 창 (손 뻗기 동작은 창을 열 때)
-  const roomShelf = ARCHIVE_ROOM_SHELVES.slice(0, archiveRoomsOpen()).find((t) => sameTile(t, tile))
+  // 서고 안에 놓은 묶음 책장 (계획 21 R9 → 2026-10-27 가구로): 아래 칸으로 걸어가 책장 창 (손 뻗기 동작은 창을 열 때)
+  const roomShelf = rangeShelfAt(s, tile)
   if (roomShelf) {
     const stand = { x: roomShelf.x, y: roomShelf.y + 1 }
     const path = sameTile(from, stand) ? [] : findPath(from, stand, blockersOf(s))
@@ -3061,7 +3090,7 @@ export function otTicketDue(s: Pick<GameState, 'flags' | 'otProgress'>): boolean
  */
 export function finishLibrary(s: GameState): GameState {
   if (!allShelved(s)) return s
-  const withTicket = s.flags.otTicket ? s : { ...s, flags: { ...s.flags, otTicket: 1, otExpand: (s.flags.otExpand ?? 0) + 1 } }
+  const withTicket = s.flags.otTicket ? s : grantRangeShelves({ ...s, flags: { ...s.flags, otTicket: 1, otExpand: (s.flags.otExpand ?? 0) + 1 } })
   const next = grantNewland(withTicket)
   syncHome(next)
   return next
@@ -3099,7 +3128,8 @@ export function rankMorning(s: GameState, content: GameContent): GameState {
   // 후원금 (2026-10-07 사용자): 순위에 따라 다른 마을·서고를 아끼는 사람들이 보내 주는 닢 — 낮은 순위도 조금은
   const coins = rankDonation(place)
   next = { ...next, coins: next.coins + coins }
-  if (ticket) next = { ...next, flags: { ...next.flags, otTicket: 1, otExpand: (next.flags.otExpand ?? 0) + 1 } }
+  // 확장권을 받으면 그 묶음 책장을 가방으로 (서고 안에 직접 놓는다 — 2026-10-27)
+  if (ticket) next = grantRangeShelves({ ...next, flags: { ...next.flags, otTicket: 1, otExpand: (next.flags.otExpand ?? 0) + 1 } })
   const ranks = [...(next.ranks ?? []), { day, place }].slice(-24)
   return { ...next, ranks, rankPopup: { day, place, table, pieces, coins, ...(item ? { item } : {}), ...(ticket ? { otTicket: true } : {}) } }
 }
@@ -3120,7 +3150,7 @@ export interface GuestEntry {
   kind: GuestKind
   /** 온 마을 (지어낸 이름 — 나그네·서기) */
   village?: string
-  /** 사서가 안내했다 (그 이웃 id, 2026-10-08 서고 운영) */
+  /** 서고지기가 안내했다 (그 이웃 id, 2026-10-08 서고 운영) */
   by?: string
   /** 플레이어가 함께 읽어 준 말씀 조각 id */
   taught?: string
@@ -3153,30 +3183,30 @@ export function guestMorning(s: GameState): GameState {
   }
   if (!kind) return s
   const village = kind === 'wanderer' || kind === 'scribe' ? VILLAGES[Math.floor(rnd() * VILLAGES.length)] : undefined
-  // 사서가 있으면 그 이웃이 방문객을 안내한다 — 방명록에 남고 사서의 마음이 조금 (2026-10-08 서고 운영)
+  // 서고지기가 있으면 그 이웃이 방문객을 안내한다 — 방명록에 남고 서고지기의 마음이 조금 (2026-10-08 서고 운영)
   const by = librarianId(s)
   const entry: GuestEntry = { day, kind, ...(village ? { village } : {}), ...(by ? { by } : {}) }
   const next: GameState = { ...s, guestbook: [...(s.guestbook ?? []), entry].slice(-GUESTBOOK_CAP) }
   return by ? heartUp({ ...next, coins: next.coins + LIBRARIAN_GUEST_COINS }, by, LIBRARIAN_GAIN) : next
 }
 
-// ── 서고 운영 (2026-10-08): 배우자·마음이 가까운 이웃을 사서로, 오늘 온 방문객에게 말씀 조각 하나를 함께 읽어 주기 ──
+// ── 서고 운영 (2026-10-08): 배우자·마음이 가까운 이웃을 서고지기로, 오늘 온 방문객에게 말씀 조각 하나를 함께 읽어 주기 ──
 
-/** 사서가 될 수 있는 마음 (하트 4) */
+/** 서고지기가 될 수 있는 마음 (하트 4) */
 export const LIBRARIAN_HEARTS = 40
-/** 사서가 방문객을 안내한 날 오르는 마음 */
+/** 서고지기가 방문객을 안내한 날 오르는 마음 */
 export const LIBRARIAN_GAIN = 1
 /** 서고지기가 있으면 손님이 더 자주 온다 (2026-10-14 사용자: 더 쓸모 있게) — 없으면 1/3, 있으면 1/2 */
 export const GUEST_CHANCE = 1 / 3
 export const GUEST_CHANCE_LIBRARIAN = 1 / 2
 /** 서고지기가 안내한 손님이 두고 가는 후원금 (닢) */
 export const LIBRARIAN_GUEST_COINS = 30
-/** 사서 (flags.librarian = 이웃 번호 + 1, CONTENT_DEFS 순서) */
+/** 서고지기 (flags.librarian = 이웃 번호 + 1, CONTENT_DEFS 순서) */
 export function librarianId(s: Pick<GameState, 'flags'>): string | null {
   const v = s.flags.librarian
   return v ? ([...CONTENT_DEFS.keys()][v - 1] ?? null) : null
 }
-/** 사서가 될 수 있는 사람: 배우자·연인 먼저, 그다음 마음이 가까운 이웃 (넷까지) */
+/** 서고지기가 될 수 있는 사람: 배우자·연인 먼저, 그다음 마음이 가까운 이웃 (넷까지) */
 export function librarianCandidates(s: Pick<GameState, 'hearts' | 'romance'>): string[] {
   const partner = s.romance?.partner ?? null
   const close = [...CONTENT_DEFS.values()]
@@ -3185,7 +3215,7 @@ export function librarianCandidates(s: Pick<GameState, 'hearts' | 'romance'>): s
     .map((d) => d.id)
   return [...(partner ? [partner] : []), ...close].slice(0, 4)
 }
-/** 사서를 맡긴다 (null이면 내려놓기) */
+/** 서고지기를 맡긴다 (null이면 내려놓기) */
 export function setLibrarian(s: GameState, npc: string | null): GameState {
   if (npc === null) {
     const flags = { ...s.flags }
@@ -4482,7 +4512,7 @@ export function writeVerse(s: GameState, book: CopyBook, input: string, content:
   if (gift) state = { ...state, inv: addGift(state.inv, { [gift]: 1 }) }
   // 처음 마친 장만: 모으는 가구·옷, 필사 삯
   const firstTime = !(s.copy.copied?.[book] ?? []).includes(chapter)
-  const collectibleFurniture = firstTime ? copyFurnitureReward(s.flags, book, chapter, s.gen?.seed ?? 0) : null
+  const collectibleFurniture = firstTime ? copyFurnitureReward(s.flags, book, chapter, s.gen?.seed ?? 0, !!s.child) : null
   if (collectibleFurniture) state = { ...state, flags: { ...state.flags, [copyFurnitureFlag(collectibleFurniture)]: 1 }, inv: addGift(state.inv, { [collectibleFurniture]: 1 }) }
   const outfit = firstTime ? copyOutfitReward(s.flags, book, chapter, s.gen?.seed ?? 0, s.avatar?.look ?? 'f') : null
   if (outfit) state = { ...state, flags: { ...state.flags, [`copyOutfit:${outfit.id}`]: 1 } }
@@ -4791,7 +4821,7 @@ export function goToSleep(s0: GameState, content: GameContent, opts: { read?: bo
 }
 
 /** 아이가 하루 한 번 해 오는 것 (근력·손재주·운 — 한 개씩, 날마다 번갈아) */
-const CHILD_FINDS: Partial<Record<StatId, [ItemId, ItemId]>> = { strength: ['water', 'reed'], hand: ['papyrus', 'ink'], luck: ['fig', 'honey'] }
+export const CHILD_FINDS: Partial<Record<StatId, [ItemId, ItemId]>> = { strength: ['water', 'reed'], hand: ['papyrus', 'ink'], luck: ['fig', 'honey'] }
 /** 아이가 돕는 일로 오르는 아이 자신의 경험치 */
 export const CHILD_HELP_XP = 10
 
@@ -4953,7 +4983,7 @@ function childMorning(s: GameState, content: GameContent): GameState {
         const story = extraPiece(next, content, 'child')
         if (story) next = { ...story.state, flags: { ...story.state.flags, kidMailPiece: day } }
       }
-      next = { ...next, todayNotes: [...next.todayNotes, `kidMail:${mail}`], flags: { ...next.flags, kidMailDay: day, kidMailKind: ['letter', 'gift', 'coins'].indexOf(mail) } }
+      next = { ...next, todayNotes: [...next.todayNotes, `kidMail:${mail}`], flags: { ...next.flags, kidMailDay: day, kidMailKind: ['letter', 'gift', 'coins'].indexOf(mail), ...(mail === 'letter' ? { kidLetterNo: (next.flags.kidLetterNo ?? 0) + 1 } : {}) } }
       if (mail === 'letter') next = childLetterMoment(next)
     }
     // 떠난 아이는 날마다 돕지 않는다
@@ -4990,7 +5020,7 @@ function childMorning(s: GameState, content: GameContent): GameState {
     flags: { ...next.flags, childHelpDay: day, childHelpKind: helped ? STAT_ORDER.indexOf(kind) : -1, childHelpFull: full ? day : 0, ...(stage === 'helper' && helped && finds && !next.flags.childFirstHelpScene ? { childFirstHelpPending: day } : {}) },
   }
 }
-const STAT_ORDER: readonly StatId[] = ['wit', 'hand', 'charm', 'strength', 'luck']
+export const STAT_ORDER: readonly StatId[] = ['wit', 'hand', 'charm', 'strength', 'luck']
 
 /** 물건 도감과 업적을 새로 적는다 (저장할 때마다): 새로 이룬 업적을 돌려준다 */
 export function recordProgress(s: GameState): { state: GameState; fresh: Achievement[] } {
@@ -5006,9 +5036,11 @@ export function recordProgress(s: GameState): { state: GameState; fresh: Achieve
 /** 아이 이름을 정한다 (이름 짓기 창을 닫는다 — 다시 뽑기는 창이 한다) */
 export function nameChild(s: GameState, name: string): GameState {
   if (!s.child) return s
+  // 직접 적은 이름은 다듬어 넣는다 — 비면 뽑아 둔 이름 그대로 (2026-10-27 플레이 점검 28)
+  const picked = name.trim().slice(0, 8) || s.child.name
   const flags = { ...s.flags }
   delete flags.childNaming
-  return { ...s, child: { ...s.child, name }, flags }
+  return { ...s, child: { ...s.child, name: picked }, flags }
 }
 
 /**

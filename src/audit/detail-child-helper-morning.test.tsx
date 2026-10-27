@@ -58,7 +58,7 @@ describe('010 걷는 아이에서 돕는 아이가 되는 첫 아침', () => {
     expect(morning.flags.childHelpKind).toBe(3)
     expect(morning.flags.childFirstHelpPending).toBe(52)
     expect(morning.todayNotes).toContain('childHelp:strength')
-    expect(useGame.getState().toast?.text).toBe('루시: 물이나 갈대를 날라 왔어요')
+    expect(useGame.getState().toast?.text).toBe('루시: 물을 하나 가져왔어요')
     expect(chestOf(morning)).toBeNull()
     const restored = deserialize(serialize(morning), CONTENT)!
     expect(restored.inv.water).toBe(morning.inv.water)

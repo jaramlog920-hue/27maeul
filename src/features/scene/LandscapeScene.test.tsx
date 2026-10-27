@@ -58,7 +58,7 @@ it.each([
   ['dateSunset', '둘이 보는 노을'], ['date:sunset:0', '둘이 보는 노을'],
   ['babySleep', '아기가 잠든 밤'], ['firstSnow', '첫눈 오는 마을'],
   ['firstShelved', '서고에 책 한 권'], ['shelved', SCENES.shelved.title],
-  ['marketEvening', '장날의 저녁 등불'], ['childWalks', '아기의 첫걸음'], ['home:1', '집을 넓힌 첫날'],
+  ['marketEvening', '장날의 저녁 등불'], ['childWalks', '아기의 첫걸음'], ['home:1', '배우자방이 생긴 날'],
 ] as const)('%s은 도트 장면으로 열리고 기존 완료 기록을 이어간다', (id, title) => {
   const s = useGame.getState().game
   act(() => useGame.setState({ game: { ...s, scenes: [id] }, modal: { kind: 'scene', id } }))

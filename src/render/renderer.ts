@@ -97,6 +97,8 @@ import { COOL_CUPBOARD, cookingFrame, type CookAction } from './cooking-art'
 /** 지금 그리는 기록자 동작의 요리 손동작 순서 (drawPlayerAct가 맞춘다) */
 let cookSteps: string[] = []
 /** 서늘한 찬장에 음식이 있나 (그리기 한 번마다 맞춘다 — drawFurniture가 읽는다) */
+/** 묶음 책장마다 찬 칸 수 (새 터를 그릴 때 정한다) */
+let rangeFill: Partial<Record<string, number>> = {}
 let pantryFull = false
 /** 지금 쓰는 생활 가구 (2026-10-12): 그린 동작이면 가구째 그리므로 놓인 가구는 숨기고, 여닫는 가구는 문이 열린 그림으로 */
 let autoFurnitureUses: FurnitureActivity[] = []
@@ -109,13 +111,13 @@ import { BG_ART, BG_PALETTE } from './bg-materials-art'
 import { blocksWay, boundaryMaterial, isBoundaryKind, isOpenYard, MAP_DECOR_CHAR, SITES, type DecorKind } from '../engine/newland-sites'
 import { BOUNDARY_BITS, BOUNDARY_PALETTE, boundaryGateFrame, boundaryRows } from './newland-boundary-art'
 import { familyHomes, familyShownMember, livesInNewland, sharedHomeOf } from '../engine/gen-homes'
-import { JOIN_PATH_PALETTE, joinedPathRows, PATH_BITS } from './archive-followup-art'
+import { ARCHIVE_PROP_PALETTE, JOIN_PATH_PALETTE, joinedPathRows, PATH_BITS, rangeShelfRows } from './archive-followup-art'
 import { kidVisiting, dreamKey, DREAMER, guestNow, kidWorkSpot, markerShown, memoriesOf, settledGuests, settledSpot, SETTLED_FROM, SETTLED_TO, type Memory } from '../engine/newland-life'
 import { GUEST_PROP_PALETTE, SETTLEMENT_GUESTS, settlementGuestFrame } from './settlement-guests-art'
 import { ADDITION_PROP_PALETTE, childMotionFrame, elderMotionFrame, guestArrivalFrame, toddlerMotionFrame } from './life-additions-motion-art'
 import { MEMORY_PALETTE, memoryMarkerRows, type MemoryKind } from './life-additions-prop-art'
 import { standSpotOf } from '../engine/newland-build'
-import { ARCHIVE_ROOM_SHELVES, archiveRoomsOpen } from '../engine/newland'
+import { rangeOfShelf, RANGE_SHELF_ITEMS } from '../engine/ot-shelves'
 import { OT_ROOMS } from '../engine/ot-books'
 import { otBookFinished } from '../engine/books'
 import { avatarKey, withLookDefaults, type Avatar, type FullAvatar } from '../engine/avatar'
@@ -1616,6 +1618,13 @@ function drawSpaceMarks(g: Ctx, game: GameState, editing: boolean, t: number) {
 function drawFurniture(g: Ctx, f: Furniture) {
   const px = f.x * TILE
   const py = f.y * TILE
+  // 구약 묶음 책장 (2026-10-27): 서고 안에 직접 놓는다 — 그림은 archive-followup 책장, 마친 책만큼 찬다
+  const range = rangeOfShelf(f.item)
+  if (range) {
+    const n = rangeFill[f.item] ?? 0
+    g.drawImage(paint(`rangeShelf/${range}/${n}`, rangeShelfRows(range, n), ARCHIVE_PROP_PALETTE), px, py)
+    return
+  }
   const using = autoFurnitureUses.find(a => a.furniture.item === f.item && a.furniture.x === f.x && a.furniture.y === f.y)
   if (using?.spec.kind === 'addition' || using?.spec.kind === 'child') return
   if (using?.spec.kind === 'open') {
@@ -2315,18 +2324,14 @@ function drawNewland(g: Ctx, game: GameState, t: number, W: number, H: number, o
     drawNewlandSites(g, game, here.y, false, content, growth)
     // 입주 주택 안 가구: 깔개 → 길을 막는 가구 → 위에 올린 작은 물건 (집 안과 같은 그림·순서)
     if (inBuildingRoom(game)) {
+      // 묶음 책장은 그 묶음에서 마친 책만큼 찬다 (열두 칸)
+      rangeFill = Object.fromEntries(OT_ROOMS.map((r) => [RANGE_SHELF_ITEMS[r.id], Math.round((12 * r.books.filter((b) => otBookFinished(game, b)).length) / r.books.length)]))
       for (const f of [...roomOf(game)].sort((a, b) => furnitureOrder(a) - furnitureOrder(b) || a.y - b.y)) drawFurniture(g, f)
       if (selected) drawSelection(g, selected)
     }
     // 서고 안 작은 책장: 모은 구약 조각 ÷ 구약 전체 조각만큼 (한 칸 열두 책등)
     if (inArchiveRoom(here)) {
       drawShelfFill(g, [INTERIOR_SHELF.tile], shelfFillSteps((game.otCollected ?? []).length, OT_PIECE_COUNT, 1))
-      // 확장권으로 열린 범위 방 책장 (계획 21 R9·결정 ⑦): 그 범위에서 마친 책만큼 찬다
-      OT_ROOMS.slice(0, archiveRoomsOpen()).forEach((room, i) => {
-        const at = ARCHIVE_ROOM_SHELVES[i]
-        g.drawImage(paint('old/prop/scrollCabinet', OLD_PROPS.scrollCabinet.rows, OLD_VILLAGE_PALETTE), at.x * TILE, at.y * TILE)
-        drawShelfFill(g, [at], shelfFillSteps(room.books.filter((b) => otBookFinished(game, b)).length, room.books.length, 1))
-      })
     }
     const moving = p.path.length > 0
     const done = totalChapters(game)
@@ -3304,7 +3309,7 @@ function tripMapFor(dest: 'harbor' | 'hillTown', season: Season): HTMLCanvasElem
   return c
 }
 
-/** 여행 판에 서 있는 사람 (기록자·아이) */
+/** 여행 판에 서 있는 사람 (기록자·아이·배우자) */
 export interface TripActor {
   x: number
   y: number
@@ -3332,7 +3337,7 @@ export function createTripRenderer(g: Ctx) {
   return {
     view,
     cam,
-    draw(dest: 'harbor' | 'hillTown', game: GameState, me: TripActor, kid: TripActor | null, t: number, dt: number) {
+    draw(dest: 'harbor' | 'hillTown', game: GameState, me: TripActor, kid: TripActor | null, t: number, dt: number, partner: { actor: TripActor; def: NeighborDef } | null = null) {
       const season = seasonOf(game.clock.day)
       const s = view.scale
       g.setTransform(s, 0, 0, s, 0, 0)
@@ -3387,6 +3392,13 @@ export function createTripRenderer(g: Ctx) {
               drawBig(g, paint(`kid/${child.look}/${kid.facing}/${frameOf(kid)}/${isBlinking(t + 1.3)}`, rows, PALETTE), kid.x, kid.y, kid.walking ? 0 : breathOffset(t + 1.3))
             }
           },
+        })
+      }
+      if (partner) {
+        const p = partner.actor
+        items.push({
+          y: p.y,
+          paint: () => drawBig(g, neighborPerson(partner.def, p.facing, frameOf(p), isBlinking(t + 0.6), season, undefined, game.looks?.[partner.def.id]), p.x, p.y, p.walking ? 0 : breathOffset(t + 0.6)),
         })
       }
       items.sort((a, b) => a.y - b.y).forEach((it) => it.paint())

@@ -11,6 +11,8 @@ import type { CopyAt } from '../../engine/copying'
 import { peaceful, timeSpeed } from '../../engine/game'
 import { jobOf } from '../../engine/job'
 import { useGame } from '../../store/game-store'
+import { BOOKS } from '../../engine/types'
+import { t } from '../../shared/i18n'
 import { DecorateButton } from './DecorateButton'
 import { BuildButton } from './BuildButton'
 
@@ -26,7 +28,9 @@ export function Hud() {
   const book = useGame((s) => s.game.copy.book)
   const at = useGame((s) => (book ? s.game.copy.at[book] : undefined))
   const done = useGame((s) => (book ? progressOf(s.game, book).completed : NONE))
-  const copyText = useMemo(() => copyNow(book, at, done), [book, at, done])
+  // 제본한 완성본을 아직 서고에 안 꽂았으면 그것이 먼저 할 일 (2026-10-27 플레이 점검: 신약을 다 쓴 뒤 '다음 책 고르기'로 보였다)
+  const toShelve = useGame((s) => BOOKS.find((b) => s.game.bound[b] !== undefined && s.game.shelved[b] === undefined) ?? null)
+  const copyText = useMemo(() => (toShelve ? t('library.hudShelve', { book: BOOK_NAME[toShelve] }) : copyNow(book, at, done)), [toShelve, book, at, done])
   const { open } = useGame.getState()
   const weather = (T.ui.weather as Record<string, string>)[weatherOf(day)]
   // 빠른 시계가 있으면 시각 옆에 빠르기 단추 (2026-10-14)

@@ -243,6 +243,11 @@ export type ItemId =
   | 'willowBasket'
   | 'starChart'
   | 'seedPouch'
+  // 구약 묶음 책장 (2026-10-27): 확장권마다 하나 — 서고 안에 직접 놓는다 (ot-shelves.ts)
+  | 'otShelfLaw'
+  | 'otShelfHistory'
+  | 'otShelfPoetry'
+  | 'otShelfProphets'
   // 직접 요리 (계획 16 작업 25, 기획 13): 화덕에서 만든 완성 음식 — 먹기·식탁·행사·좌판에 쓴다
   | 'beanDish'
   | 'herbBeanDish'

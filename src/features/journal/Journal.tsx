@@ -5,6 +5,7 @@ import { CONTENT, neighborById, pieceById } from '../../content/catalog'
 import { childHome } from '../../engine/child'
 import { fill, ITEM_TEXT, itemName, JOB_NAME, JOURNAL_NOTES, kidFill, SCENES, spouseFill, T } from '../../content/text'
 import { ACHIEVEMENTS } from '../../engine/achievements'
+import { featureAccess, type FeatureId } from '../../engine/feature-rules'
 import { weatherOf } from '../../engine/calendar'
 import { seasonOf } from '../../engine/clock'
 import { dislikesOf, isSuitor, newsRecent, notYet, type GameState, type JournalEntry } from '../../engine/game'
@@ -406,9 +407,18 @@ export function Album() {
   )
 }
 
-/** 업적: 이룬 것은 이룬 날과 함께, 못 이룬 것은 흐리게 */
+/** 아직 열리지 않은 기능의 업적은 이름을 가린다 — 결혼·아이·구약이 처음부터 보였다 (2026-10-27 플레이 점검 35) */
+const AWARD_FEATURE: Partial<Record<string, FeatureId>> = { dating: 'dating', married: 'marriage', child: 'childBirth', attic: 'spouseRoom', trip: 'travel', allTrips: 'travel' }
+const awardHidden = (game: GameState, id: string): boolean => {
+  if (id.startsWith('ot')) return !game.flags.newlandGift
+  const f = AWARD_FEATURE[id]
+  return !!f && featureAccess(game, f) === 'locked'
+}
+
+/** 업적: 이룬 것은 이룬 날과 함께, 못 이룬 것은 흐리게, 아직 모르는 것은 ??? */
 export function Awards() {
   const achieved = useGame((s) => s.game.achieved ?? [])
+  const game = useGame((s) => s.game)
   return (
     <>
       <p className="hint">
@@ -417,12 +427,13 @@ export function Awards() {
       <ul className="award-list">
         {ACHIEVEMENTS.map((a) => {
           const got = achieved.find((x) => x.id === a.id)
+          const hidden = !got && awardHidden(game, a.id)
           return (
             <li key={a.id} className={got ? 'on' : ''}>
               <strong>
-                {got ? '★' : '☆'} {a.name}
+                {got ? '★' : '☆'} {hidden ? '???' : a.name}
               </strong>
-              <span>{a.desc}</span>
+              <span>{hidden ? '아직 모르는 업적' : a.desc}</span>
               {got && <span className="award-day">{fill(T.ui.day, { day: got.day })}</span>}
             </li>
           )

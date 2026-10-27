@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { t } from '../../shared/i18n'
 import { neighborById } from '../../content/catalog'
-import { callName, itemName, kidFill, partnerFill, SCENES, spouseFill, T } from '../../content/text'
+import { callName, itemName, kidFill, partnerFill, SCENES, spouseFill, T, withSubject } from '../../content/text'
 import { CONTENT } from '../../content/catalog'
 import { partnerName, useGame } from '../../store/game-store'
 import { sameLookCandidate } from '../../engine/game'
@@ -69,6 +69,8 @@ export function SceneView({ id, chosen }: { id: string; chosen?: number }) {
         )}
       </div>
       {scene.album && !asking && !more && !inAlbum && <p className="stamp-note">📷 {T.ui.album}: {say(scene.album)}</p>}
+      {/* 함께 이사 온 가족은 선물 줄에서야 이름이 처음 나왔다 — 먼저 소개한다 (2026-10-27 플레이 점검 15) */}
+      {!more && arrivals.filter(n => n.joinsWithFamily && id === `movedIn:${n.family}`).map(n => <p className="hint" key={`with:${n.id}`}>{withSubject(n.role)} 함께 이사 왔어요{n.job ? ` · ${n.job}` : ''}</p>)}
       {!more && arrivals.map(n => moveGifts?.[n.id] && <p className="hint" key={n.id}>{t('moveGifts.received', { who: n.role, item: itemName(moveGifts[n.id]) })}</p>)}
       {more ? (
         <div className="actions">

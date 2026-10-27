@@ -114,13 +114,15 @@ describe('터 가꾸기 창', () => {
     expect(screen.getByRole('button', { name: T.build.cancel })).toBeInTheDocument()
   })
 
-  it('놓을 수 없으면 그 자리에서 이유 한 줄이 보이고 놓기 단추가 막힌다', () => {
+  it('닢·재료가 모자라면 자리를 고르기 전에 막고 까닭을 알린다 (2026-10-27 플레이 점검)', () => {
     reset(true, { coins: 10 })
     render(<BuildMenu />)
-    choose(/입주 주택/)
-    expect(screen.getByRole('status')).toHaveTextContent(T.build.blockCoins)
-    expect(screen.getByRole('button', { name: T.build.place })).toHaveAttribute('aria-disabled', 'true')
-    fireEvent.click(screen.getByRole('button', { name: T.build.place }))
+    fireEvent.click(screen.getByRole('button', { name: /입주 주택/ }))
+    const pick = screen.getByRole('button', { name: '자리 고르기' })
+    expect(pick).toHaveAttribute('aria-disabled', 'true')
+    fireEvent.click(pick)
+    expect(useGame.getState().toast?.text).toBe(T.build.blockCoins)
+    expect(screen.queryByRole('button', { name: T.build.place })).toBeNull()
     expect(buildsOf(useGame.getState().game)).toHaveLength(0)
     expect(useGame.getState().game.coins).toBe(10)
   })

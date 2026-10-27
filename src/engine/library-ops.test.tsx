@@ -1,6 +1,6 @@
 // 기존 생활 시나리오는 개편 이전 저장의 권한으로 검증한다. 새 해금은 late-growth.test.ts에서 검증한다.
 import { legacyGame as newGame } from './growth-test-support'
-// 서고 운영 (2026-10-08): 사서 맡기기 · 방문객 안내 · 방문객에게 조각 하나 함께 읽어 주기
+// 서고 운영 (2026-10-08): 서고지기 맡기기 · 방문객 안내 · 방문객에게 조각 하나 함께 읽어 주기
 import { fireEvent, render, screen } from '@testing-library/react'
 import { CONTENT } from '../content/catalog'
 import { canTeachVisitor, guestMorning, LIBRARIAN_GAIN, librarianCandidates, librarianId, setLibrarian, teachVisitor, todaysVisitor, type GameState } from './game'
@@ -14,7 +14,7 @@ function base(extra: Partial<GameState> = {}): GameState {
 }
 
 describe('서고 운영', () => {
-  it('사서: 마음이 가까운 이웃만, 맡기고 내려놓기', () => {
+  it('서고지기: 마음이 가까운 이웃만, 맡기고 내려놓기', () => {
     const s = base()
     expect(librarianCandidates(s)).toContain(friend)
     const t = setLibrarian(s, friend)
@@ -24,7 +24,7 @@ describe('서고 운영', () => {
     expect(librarianId(setLibrarian(s, stranger))).toBeNull()
   })
 
-  it('방문객이 온 날 사서가 안내한다 (방명록·마음)', () => {
+  it('방문객이 온 날 서고지기가 안내한다 (방명록·마음)', () => {
     // 21일은 순위 날 — 다른 마을 서기가 꼭 온다
     const s = setLibrarian(base(), friend)
     const t = guestMorning(s)
@@ -43,12 +43,12 @@ describe('서고 운영', () => {
     expect(teachVisitor(u, id)).toBeNull()
   })
 
-  it('서고 창: 사서 맡기기 단추', () => {
+  it('서고 창: 서고지기 맡기기 단추', () => {
     useGame.getState().load(guestMorning(base()))
     useGame.setState({ modal: { kind: 'library' } })
     render(<ModalLayer />)
     const role = CONTENT.neighbors.find((d) => d.id === friend)!.role
-    fireEvent.click(screen.getByRole('button', { name: `${role}에게 사서 맡기기` }))
+    fireEvent.click(screen.getByRole('button', { name: `${role}에게 서고지기 맡기기` }))
     expect(librarianId(useGame.getState().game)).toBe(friend)
   })
 })

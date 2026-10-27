@@ -51,7 +51,8 @@ describe('요한계시록 방 문과 방 안 (계획 9 작업 4)', () => {
   it('넷째 문도 방 표식이 없어도 열려 있어 걸어 들어가 방 이름을 알린다', () => {
     reset({ flags: { heartPoints: 1 }, shelved: shelvedAll, player: player(inLib()) })
     act(() => useGame.getState().tap(LOCKED_DOORS[3]))
-    expect(useGame.getState().toast).toBeNull()
+    // 문을 누르면 어느 방인지 먼저 잠깐 알린다 (2026-10-27 사용자)
+    expect(useGame.getState().toast?.text).toBe('요한계시록 방')
     act(() => {
       for (let i = 0; i < 400 && roomAt(playerTile(useGame.getState().game)) !== REV_ROOM; i++) useGame.getState().frame(0.05)
     })
@@ -84,7 +85,7 @@ describe('요한계시록 방 문과 방 안 (계획 9 작업 4)', () => {
     const user = userEvent.setup()
     const { container } = render(<ModalLayer />)
     const dialog = screen.getByRole('dialog', { name: '요한계시록 선반' })
-    expect(dialog).toHaveTextContent('다 옮겨 적은 요한계시록은 이 방 선반에 꽂습니다.')
+    expect(dialog).toHaveTextContent('다 옮겨 적은 요한계시록은 이 방 선반에 꽂아요.')
     expect(container.querySelectorAll('.library-shelf .spine')).toHaveLength(1)
     await user.click(screen.getByRole('button', { name: '퀴즈 풀고 금박 책등' }))
     const m = useGame.getState().modal

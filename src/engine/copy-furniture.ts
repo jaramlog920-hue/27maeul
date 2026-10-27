@@ -1,4 +1,4 @@
-/** 필사 전용 40종. 유아 → 어린이 → 나머지 순서로 영구 수집한다. */
+/** 필사 전용 40종. 유아 → 어린이 → 나머지 순서로 영구 수집한다 (아이가 없으면 나머지 → 유아 → 어린이). */
 export type CopyFurnitureCategory = 'infant' | 'child' | 'bath' | 'kitchen' | 'pet' | 'season'
 export interface CopyFurnitureDesign {
   id: string
@@ -69,26 +69,30 @@ export const isCopyFurniture = (id: string): id is CopyFurnitureId => COPY_FURNI
 
 /** 장 완료 기념 가구와 같은 25% 확률. 최초 완성만, 저장된 세계/책/장 기준으로 고정한다. */
 export const COPY_FURNITURE_CHANCE = .25
-export function copyFurnitureReward(flags: Readonly<Record<string, number>>, book: string, chapter: number, seed: number): CopyFurnitureId | null {
+export function copyFurnitureReward(flags: Readonly<Record<string, number>>, book: string, chapter: number, seed: number, withKids = true): CopyFurnitureId | null {
   let h = (2166136261 ^ (seed >>> 0)) >>> 0
   for (const c of `copy-furniture-v1:${book}:${chapter}`) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619) >>> 0 }
   const random = () => { h = (h + 0x6d2b79f5) >>> 0; let t = h; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296 }
-  return random() < COPY_FURNITURE_CHANCE ? selectCopyFurnitureReward(flags, random)?.id as CopyFurnitureId ?? null : null
+  return random() < COPY_FURNITURE_CHANCE ? selectCopyFurnitureReward(flags, random, withKids)?.id as CopyFurnitureId ?? null : null
 }
 
-const tier = (category: CopyFurnitureCategory): number => category === 'infant' ? 0 : category === 'child' ? 1 : 2
+// 아이가 없는데 아기 물건만 이어서 나와 어색했다 (2026-10-27 플레이 점검) — 그때는 아이 물건을 뒤로 미룬다
+const tier = (category: CopyFurnitureCategory, withKids = true): number => {
+  const kid = category === 'infant' ? 0 : category === 'child' ? 1 : -1
+  return kid < 0 ? (withKids ? 2 : 0) : withKids ? kid : kid + 1
+}
 export const copyFurnitureFlag = (id: string): string => `copyFurniture:${id}`
 
 /** 소지품 개수 대신 영구 획득 기록을 사용한다. 배치·선물·판매해도 수집 순서가 되돌아가지 않는다. */
-export function copyFurnitureRewardPool(flags: Readonly<Record<string, number>>): readonly CopyFurnitureDesign[] {
+export function copyFurnitureRewardPool(flags: Readonly<Record<string, number>>, withKids = true): readonly CopyFurnitureDesign[] {
   const missing = COPY_FURNITURE.filter(item => !(flags[copyFurnitureFlag(item.id)] > 0))
-  const nextTier = missing.reduce((lowest, item) => Math.min(lowest, tier(item.category)), Infinity)
-  return missing.filter(item => tier(item.category) === nextTier)
+  const nextTier = missing.reduce((lowest, item) => Math.min(lowest, tier(item.category, withKids)), Infinity)
+  return missing.filter(item => tier(item.category, withKids) === nextTier)
 }
 
 /** 보상 당첨 판정 이후 호출한다. 이 함수는 당첨 확률이나 다른 필사 보상을 변경하지 않는다. */
-export function selectCopyFurnitureReward(flags: Readonly<Record<string, number>>, random: () => number): CopyFurnitureDesign | null {
-  const pool = copyFurnitureRewardPool(flags)
+export function selectCopyFurnitureReward(flags: Readonly<Record<string, number>>, random: () => number, withKids = true): CopyFurnitureDesign | null {
+  const pool = copyFurnitureRewardPool(flags, withKids)
   if (!pool.length) return null
   const roll = random()
   if (!Number.isFinite(roll) || roll < 0 || roll >= 1) throw new RangeError('Furniture reward random must be in [0, 1)')

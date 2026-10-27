@@ -18,11 +18,13 @@ import { lodgingChildren, LODGING_CHILD_SEATS } from '../engine/lodging'
 import { prepareFamilyBirthday } from '../engine/family-days'
 import { otPieceById } from '../engine/ot-pieces'
 import { canTravel, canTrip, goArchive, moveFurniture, travel, finishLibrary, isStorage, unstick } from '../engine/game'
-import { buildWall, canBuildWall, canRemoveWall, careBaby, homeCopyFragment, removeWall, sameLookCandidate, type BabyCare, type WallBlock } from '../engine/game'
+import { babyMood, BABY_MOOD_CARE, CHILD_FINDS, STAT_ORDER, buildWall, canBuildWall, canRemoveWall, careBaby, homeCopyFragment, removeWall, sameLookCandidate, type BabyCare, type WallBlock } from '../engine/game'
 import { WALL_BUILD_COINS } from '../engine/home-walls'
 import { standPrice, standSell } from '../engine/sell-stand'
 
 /** 벽을 세우거나 허물 수 없을 때 한 줄 */
+/** 새로 열림 장면 첫머리 「다섯 장을 기록했다.」 */
+const GROWTH_LEAD = /^\S+ 장을 기록했다\.\s*/
 const WALL_SAY: Record<WallBlock, string> = {
   locked: '집을 넓힌 뒤에 벽을 세우고 허물 수 있어요.',
   notHome: '집 안 바닥에만 벽을 세울 수 있어요.',
@@ -41,7 +43,8 @@ import { featureAccess, featureHint } from '../engine/feature-rules'
 import { isOtBook, type CopyBook, type OtBook } from '../engine/ot-books'
 import { ARCHIVE, INTERIOR_ENTRY, NEWLAND_PORTAL_FRONT, ROOM_SLOTS, VILLAGE_PORTAL_FRONT } from '../engine/newland-config'
 import { buildsOf, cancelBuild, clearTile, demolishBuild, moveBuild, orderBuild, toggleBuildSign } from '../engine/newland-build'
-import type { SiteKind } from '../engine/newland-sites'
+import { BUILD_DAYS_TO_DONE, type SiteKind } from '../engine/newland-sites'
+import { ARCHIVE_ROOM_KEY, isRangeShelf } from '../engine/ot-shelves'
 import { facilityAt, kidVisiting, roomOwner, type FacilityKind } from '../engine/newland-life'
 import { clubWeaveDone } from '../engine/clubs'
 // 엔진 상태 ↔ 화면 연결. 창(모달)이 열려 있으면 시간과 걸음이 멈춘다.
@@ -66,9 +69,9 @@ import type { TripReward } from '../engine/trip-board'
 import { buildLibraryQuiz, isCorrect, type Question } from '../engine/quiz'
 import { allShelved, canShelve, payRetry, poolFor, shelve, shelveNow as shelveQuick } from '../engine/library'
 import { DEFAULT_CHOICE, type SpecialChoice } from '../engine/binding'
-import { ALBUM_IDS, fill, HEART_HINTS, itemList, itemName, KID_LETTERS, NEIGHBOR_LINES, roomTitle, SCENES, T, withAnd, withObject, withSubject, callName } from '../content/text'
+import { ALBUM_IDS, fill, HEART_HINTS, itemList, itemName, KID_LETTERS, KID_NEAR_LETTERS, NEIGHBOR_LINES, roomTitle, SCENES, T, withAnd, withObject, withSubject, callName } from '../content/text'
 import { freshNews } from '../content/gen-text'
-import { t } from '../shared/i18n'
+import { t, tList } from '../shared/i18n'
 import { careIn, careKey, finishCare, notePuzzle, noteTypo, switchCare } from '../engine/copy-ways'
 import { rumorNow, villageSeed } from '../engine/villages'
 import { canAutoRead, canRead, seasonCopyGift, seasonCopyKey } from '../engine/meetings'
@@ -200,10 +203,10 @@ import {
   type GameState,
   type Trade,
 } from '../engine/game'
-import { HOME_FRONT, lockedTiles, lockedZones, placeAt, PLACES, roomAt, sameTile, warpAt, zoneAt } from '../engine/world'
+import { HOME_FRONT, LOCKED_DOORS, lockedTiles, lockedZones, placeAt, PLACES, roomAt, sameTile, warpAt, zoneAt } from '../engine/world'
 import { slotPerson } from '../engine/gen-growth'
 import { facingOf, FURNITURE_DEFS, footprint, removal, type Furniture } from '../engine/room'
-import { inBuildingRoom, roomOf as furnitureRoomOf } from '../engine/newland-rooms'
+import { inBuildingRoom, roomOf as furnitureRoomOf, roomTarget } from '../engine/newland-rooms'
 import { heartsOf } from '../engine/hearts'
 import { canLearnDish, dishTaughtBy, learnDish } from '../engine/cooking'
 import { count, RECIPES, type Inventory, type RecipeId } from '../engine/items'
@@ -391,6 +394,8 @@ export interface KidDone {
   burnt: boolean
   /** 처음 있는 일이라 가족 앨범에 한 장 (창을 닫으면 장면이 열린다) */
   album: boolean
+  /** 가까움이 올랐나 (하루 첫 활동만 — 오르지 않았는데 '가까워졌어요'가 떴다) */
+  closer?: boolean
 }
 
 /** 공간을 확보한 뒤 다시 시작할 활동. 아직 시간·횟수·보상은 확정하지 않았다. */
@@ -806,14 +811,28 @@ function sayChildHelp(g: GameState, say: (text: string, ms?: number) => void) {
     const n = kid.name
     if (f.kidMailDay === day) {
       const mk = f.kidMailKind
-      if (mk === 0) lines.push(`${n}의 편지: “${KID_LETTERS[(day * 7) % KID_LETTERS.length]}”${f.kidMailPiece === day ? ' · 편지에 사본 한 장이 들어 있었어요' : ''}`)
+      if (mk === 0) {
+        // 떠난 아이와 마을에 사는 아이의 편지를 나누고, 차례대로 써서 같은 편지가 금방 다시 오지 않게
+        const pool = kid.left ? KID_LETTERS : KID_NEAR_LETTERS
+        const no = f.kidLetterNo ?? day * 7
+        lines.push(`${n}의 편지: “${pool[no % pool.length]}”${f.kidMailPiece === day ? ' · 편지에 사본 한 장이 들어 있었어요 · 도감에 담았어요' : ''}`)
+      }
       else if (mk === 1 && kid.job) lines.push(`${n}에게서 선물이 왔어요 · ${itemList(JOB_GIFTS[kid.job])}`)
-      else if (mk === 2) lines.push(`${n}에게서 닢 ${kidCoins(day)}이 왔어요`)
+      else if (mk === 2) lines.push(`${n}에게서 ${kidCoins(day)}닢이 왔어요`)
+    }
+    // 돕는 아이 시기는 사흘에 한 번 짧은 하루 이야기 — 40일 내내 같은 한 줄뿐이었다 (2026-10-27 플레이 점검)
+    if (childStage(kid, day) === 'helper' && f.childHelpDay === day && day % 3 === 0) {
+      const days = tList('kidDays.lines')
+      if (days.length) lines.push(`${withSubject(n)} ${days[Math.floor(day / 3) % days.length]}`)
     }
     const k = f.childHelpKind
     if (f.childHelpDay !== day) continue
     if (f.childHelpFull === day) lines.push(`${n}: ${T.ui.childHelpFull}`)
-    else if (k !== undefined && k >= 0) lines.push(`${n}: ${CHILD_HELP_LINE[k]}`)
+    else if (k !== undefined && k >= 0) {
+      // 가져온 물건이 있으면 그 이름으로 — "파피루스나 잉크를"으로는 무엇을 받았는지 몰랐다 (2026-10-27 플레이 점검)
+      const found = CHILD_FINDS[STAT_ORDER[k]]?.[day % 2]
+      lines.push(`${n}: ${found ? fill(T.ui.childHelpGot, { item: itemName(found) }) : CHILD_HELP_LINE[k]}`)
+    }
   }
   if (lines.length) say(lines.join(' / '), lines.length > 1 ? 6000 : lines[0].includes('편지') ? 5000 : 3600)
 }
@@ -939,6 +958,14 @@ function gained(before: Inventory, after: Inventory): Partial<Record<ItemId, num
 const LETTER_ROOM_OF: Partial<Record<string, ShelfRoomId>> = { letters: 'romPhm', hebJud: 'hebJud', rev: 'rev' }
 
 /** 집 안에 막 들어왔으면 누구 집인지 알린다 */
+/** 잡아 둔 작은 행사에 가지 못한 채 끝나면 한 줄 알린다 — 목록에서 말없이 사라졌다 (2026-10-27 플레이 점검 18) */
+function announceMissedFest(before: GameState, after: GameState) {
+  // 이웃끼리 모여 끝난 회차만 (약속이 사라져 닫힌 것은 말하지 않는다)
+  const ranWithout = (id?: string) => after.plans.appts.some((a) => a.id === id && a.state === 'done' && !a.attended)
+  const missed = (after.fests ?? []).find((f) => f.closed && !f.joined && !f.cancelled && f.kind !== 'festival' && ranWithout(f.apptId) && (before.fests ?? []).some((b) => b.id === f.id && !b.closed))
+  if (missed) useGame.getState().say(fill(T.fest.missed, { kind: T.fest.kind[missed.kind] }), 4200)
+}
+
 function announceRoom(before: GameState, after: GameState, door = true) {
   const room = roomAt(playerTile(after))
   if (!room || room === roomAt(playerTile(before))) return
@@ -1097,11 +1124,16 @@ export const useGame = create<Store>((set, get) => {
     const firstTime = prev.shelved[book] === undefined
     sfx('shelve')
     const grades = T.library.grades as string[]
-    get().say(fill(T.library.shelvedToast, { bookObj: withObject((T.quiz.books as Record<string, string>)[book]), grade: grades[next.shelved[book]!] }) + (missed.length ? ' ' + T.library.rereadNote : ''), 4000)
+    const grade = next.shelved[book]!
+    // 맨 책은 따로 적지 않는다 — "책등: 맨 책"이 무슨 뜻인지 몰랐다 (2026-10-27 플레이 점검).
+    // 마지막 책이면 이어지는 '스물일곱 권' 장면이 말해 주니 알림은 띄우지 않는다 (장면이 다 끝난 뒤에 알림이 남았다)
+    const finale = firstTime && allShelved(next) && !allShelved(prev)
+    const bookObj = withObject((T.quiz.books as Record<string, string>)[book])
+    if (!finale) get().say((grade > 0 ? fill(T.library.shelvedToast, { bookObj, grade: grades[grade] }) : fill(T.library.shelvedPlain, { bookObj })) + (missed.length ? ' ' + T.library.rereadNote : ''), 4000)
     // 새로 열린 구역
     const opened = lockedZones(zoneBooks(prev)).filter((z) => villageBookCount(next) >= z.books)
     if (opened.length) setTimeout(() => get().say(fill(T.ui.zoneOpened, { name: (T.ui.zones as Record<string, string>)[opened[0].id] }), 4000), 4200)
-    if (firstTime && allShelved(next) && !allShelved(prev)) {
+    if (finale) {
       set({ game: persist(finishLibrary(next)), modal: { kind: 'scene', id: 'fullLibrary' } })
       return
     }
@@ -1109,7 +1141,9 @@ export const useGame = create<Store>((set, get) => {
     const myLine: Modal = { kind: 'myLine', lineKey: bookLineKey(book), back: shelfBackOf(book) }
     // 맨 처음 꽂는 책이면 '빈 책칸 앞에서' 장면이 이어지니 한 줄은 묻지 않는다 — 말씀 탭에서 언제든 적는다 (2026-10-19 플레이 점검 P12)
     const firstBook = next.scenes.includes('firstShelved') && !prev.scenes.includes('firstShelved')
-    set({ game: persist(next), modal: firstTime && !firstBook ? myLine : afterMyLine(myLine) })
+    // 한 줄은 처음 한 번만 묻는다 — 스물일곱 번 떴다. 그 뒤로는 말씀 창에서 적는다 (2026-10-27 플레이 점검 23)
+    const ask = firstTime && !firstBook && !next.flags.bookLineAsked
+    set({ game: persist(ask ? { ...next, flags: { ...next.flags, bookLineAsked: 1 } } : next), modal: ask ? myLine : afterMyLine(myLine) })
   }
 
   /**
@@ -1245,7 +1279,10 @@ export const useGame = create<Store>((set, get) => {
       // 제일 처음 말을 걸면 그 이웃의 첫인사부터 (2026-10-13 사용자) — 이웃 수첩에 아직 만난 적이 없을 때 한 번.
       // 건넬 말씀 조각이 있으면 첫인사와 함께 건넨다
       const helloRaw = (FIRST_MEET as Record<string, string[] | string>)[target.id]
-      const hello = Array.isArray(helloRaw) && !(game.notebook?.met ?? []).includes(target.id) ? helloRaw.map((x) => callName(x, g.avatar?.name)).join(' ') : null
+      // 좌판에서 이미 물건을 사 간 이웃은 「처음 보네요」 첫 문장을 빼고 소개부터 (2026-10-27 플레이 점검 14)
+      const metAtStall = !!g.life?.experiences?.[`stall:${target.id}`]
+      const helloLines = Array.isArray(helloRaw) && metAtStall ? [helloRaw[0].replace(/^[^.!?]*처음[^.!?]*[.!?]\s*/, ''), ...helloRaw.slice(1)] : helloRaw
+      const hello = Array.isArray(helloLines) && !(game.notebook?.met ?? []).includes(target.id) ? helloLines.map((x) => callName(x, g.avatar?.name)).join(' ') : null
       if (hello && !g.offers[target.id] && !(target.id === POSTMAN && postLine(g, POSTMAN))) return talk(g, hello, true)
       const v = receiveVisit(g, target.id)
       if (v) {
@@ -1615,6 +1652,9 @@ export const useGame = create<Store>((set, get) => {
       const { modal, decorating, game } = get()
       if (modal || get().copyResult?.length || get().piecePopups.length) return
       if (nightDoorLocked(game, tile, CONTENT)) { get().say('주민들이 잠들어 문이 잠겨 있어요. 아침에 다시 와 주세요.'); return }
+      // 서고 양옆 문을 누르면 어느 방인지 잠깐 알린다 — 그림만으로는 몰랐고, 문 위 이름표는 어색했다 (2026-10-27 사용자)
+      const roomDoor = game.map !== 'newland' ? LOCKED_DOORS.findIndex((d) => sameTile(d, tile)) : -1
+      if (roomDoor >= 0) get().say((T.library.lockedRooms as string[])[roomDoor], 1600)
       // 집 둘레 살림 옮기기 (2026-10-13 사용자): 빗물 항아리·갈대 말리는 틀을 누르면 집어 들고, 집 둘레 빈 땅을 누르면 놓는다
       const moving = get().yardMoving
       if (moving && !decorating) {
@@ -1765,6 +1805,7 @@ export const useGame = create<Store>((set, get) => {
         lastFootstepAt = clockMs
       }
       announceRoom(s.game, game)
+      announceMissedFest(g0, game)
       let modal: Modal | null = null
       for (const e of r.events) {
         if (e.type === 'lockedHouse') get().say('주민들이 잠들어 문이 잠겨 있어요. 아침에 다시 와 주세요.')
@@ -1829,6 +1870,9 @@ export const useGame = create<Store>((set, get) => {
             if (names.length) newlandNotes.push(t('familyHome.wishNote', { names: names.join(', ') }))
           }
           if (game.flags.guestNow && game.flags.guestSince === game.clock.day) newlandNotes.push(t('familyHome.guestNote'))
+          // 완공한 아침 — 다음 날 가 봐야 알았다 (2026-10-27 플레이 점검)
+          const built = buildsOf(game).filter((b) => b.state === 'done' && b.orderedDay + BUILD_DAYS_TO_DONE === game.clock.day && b.orderedDay > 0).length
+          if (built) newlandNotes.push(t('familyHome.builtNote', { n: built }))
           const seekers = emptyHomes(game).length ? homeWishes(game, roomOwner).length : 0
           if (seekers !== (game.flags.homeSeekers ?? 0)) {
             if (seekers > (game.flags.homeSeekers ?? 0)) newlandNotes.push(t('familyHome.seekNote'))
@@ -2029,7 +2073,7 @@ export const useGame = create<Store>((set, get) => {
       }
       sfx('gift')
       const album = r.state.scenes.length > before.scenes.length
-      set({ game: persist(r.state), modal: { kind: 'kidTime', done: { act, variant: r.variant, gains: r.gains, got: r.got, who: r.who, burnt: r.burnt, album } } })
+      set({ game: persist(r.state), modal: { kind: 'kidTime', done: { act, variant: r.variant, gains: r.gains, got: r.got, who: r.who, burnt: r.burnt, album, closer: (r.state.child?.close ?? 0) > (before.child?.close ?? 0) } } })
     },
     retryKidAct: () => {
       const m=get().modal
@@ -2202,6 +2246,8 @@ export const useGame = create<Store>((set, get) => {
       }
       sfx('door')
       set({ game: persist(travel(g, to, CONTENT)), modal: null })
+      // 처음 건너간 새 터는 빈 들판만 보여 어디로 갈지 몰랐다 (2026-10-27 플레이 점검) — 작은 서고 자리를 한 번 알린다
+      if (to === 'newland' && !g.flags.newlandLight) get().say(t('ot.firstVisitHint'), 4500)
     },
     lookAround: () => {
       // 땅이 드러나는 칸 그림을 바로 맞춘다 (persist의 syncHome을 기다리지 않고, 같은 프레임에)
@@ -2232,7 +2278,7 @@ export const useGame = create<Store>((set, get) => {
       const next = claimHome(g, b)
       if (next === g) return
       set({ game: persist(next) })
-      get().say(b ? '이 집을 내 집으로 정했어요. 안에 평상을 놓으면 잠자리가 돼요.' : '내 집을 그만 쓰기로 했어요.', 3200)
+      get().say(b ? `이 집을 내 집으로 정했어요. ${t('familyHome.claimNote')}` : '내 집을 그만 쓰기로 했어요.', 4200)
     },
     relocateBuild: (id, x, y, facing) => {
       const g = get().game
@@ -2380,6 +2426,7 @@ export const useGame = create<Store>((set, get) => {
       get().say(fill(wearing(next, id) ? T.gear.on : T.gear.off, { item: itemName(id) }), 2400)
     },
     discard: (id, n) => {
+      if (isRangeShelf(id)) return
       const game = get().game
       const left = count(game.inv, id) - n
       if (n <= 0 || left < 0) return
@@ -2745,7 +2792,8 @@ export const useGame = create<Store>((set, get) => {
       const slept = get().game
       const next = goToSleep(slept, CONTENT, { read: pieceId !== null, pieceId: pieceId ?? undefined })
       // 마을 서고 순위 업데이트가 있는 아침이면 그 창부터 (계획 21 R8)
-      set({ game: persist(next), modal: next.rankPopup ? { kind: 'rank' } : null })
+      // 지난밤 알림은 지운다 — 하루 정리 창이 떠 있는 동안 알림 시계가 멈춰 아침까지 남았다 (2026-10-27 플레이 점검 9)
+      set({ game: persist(next), modal: next.rankPopup ? { kind: 'rank' } : null, toast: null })
       sayChildHelp(next, get().say)
       // 집이 넓어지며 가방으로 돌아간 가구 (살림 점검 2026-10-11 버그 5)
       const bagged = homeRefitReturned(slept, next)
@@ -2774,6 +2822,8 @@ export const useGame = create<Store>((set, get) => {
         set({game:{...game,player:{...game.player,path:[]},target:null},decorating:item,decorFacing:item==='pick'?'down':facingOf({item}),modal:null,decorSel:null,decorMoving:false,decorLook:null,yardMoving:null})
         return
       }
+      // 구약 묶음 책장은 새 터 서고 안에만 (2026-10-27)
+      if (isRangeShelf(item) && roomTarget(get().game)?.key !== ARCHIVE_ROOM_KEY) { get().say(t('rangeShelf.onlyArchive'), 3200); return }
       const access = featureAccess(get().game, 'decorate')
       if (access === 'locked') { get().say('어느 책이든 첫 장을 마치면 집 꾸미기를 체험할 수 있어요.'); return }
       if ((item === 'wallBuild' || item === 'wallRemove') && access !== 'full') { get().say('어느 책이든 합쳐 다섯 장을 마치면 벽을 세우고 허물 수 있어요.'); return }
@@ -2943,7 +2993,17 @@ export const useGame = create<Store>((set, get) => {
     careBaby: (action) => {
       const g = get().game
       const next = careBaby(g, action)
-      if (next) { set({ game: persist(next), modal: null }); return }
+      if (next) {
+        // 맞게 돌봤는지 한 줄로 — 무엇을 눌러도 말이 없어 같은 동작 같았다 (2026-10-27 플레이 점검)
+        const mood = babyMood(g)
+        const closer = (next.child?.close ?? 0) > (g.child?.close ?? 0)
+        const line = BABY_MOOD_CARE[mood] === action
+          ? t(`baby.right.${action}`, { name: g.child?.name ?? '' }) + (closer ? t('baby.close') : '')
+          : t('baby.wrong', { mood: t(`baby.mood.${mood}`) })
+        set({ game: persist(next), modal: null })
+        get().say(line, 2800)
+        return
+      }
       // 요람이 방에 없으면 (가방·궤짝에) 돌볼 수 없다 — 말없이 멈추지 않게 (2026-10-21 점검)
       const baby = !!g.child && childMode(g.child, g.clock.day) === 'cradle'
       if (baby && !g.room.some((f) => f.item === 'homeCradle')) get().say(T.ui.cradleMissing, 3200)
@@ -2962,9 +3022,14 @@ export const useGame = create<Store>((set, get) => {
       // 이어서 기다리는 '새로 열림' 장면(growth:*)은 또 하나의 창 대신 짧은 알림으로 (2026-10-19 플레이 점검 P10)
       // 새로 열림 창 뒤에 또 새로 열림이 기다려도 알림으로 (2026-10-22 초반 점검: 다섯 장째에 작은 부탁·꾸미기 창이 연달아 떴다)
       const opened: string[] = []
+      let lead = id.startsWith('growth:') ? (SCENES[id]?.lines ?? [])[0]?.text.match(GROWTH_LEAD)?.[0].trim() : undefined
       while (seen.scenes[0]?.startsWith('growth:')) {
         const gid = seen.scenes[0]
-        opened.push((SCENES[gid]?.lines ?? []).map((l) => l.text).join(' '))
+        const text = (SCENES[gid]?.lines ?? []).map((l) => l.text).join(' ')
+        // 같은 장에서 둘이 열리면 「다섯 장을 기록했다.」를 한 번만 — 앞 창이나 앞 알림이 이미 말했다 (2026-10-27 플레이 점검 8)
+        const head = text.match(GROWTH_LEAD)?.[0].trim()
+        opened.push(head && head === lead ? text.replace(GROWTH_LEAD, '') : text)
+        lead = head
         seen = sceneSeen(seen, gid, ALBUM_IDS)
       }
       let game = persist(seen)
@@ -2983,7 +3048,9 @@ export const useGame = create<Store>((set, get) => {
       const recap = recapDue && !game.scenes.length
       if (recap) { const flags: GameState['flags'] = { ...game.flags, ntRecap: game.clock.day }; delete flags.ntRecapPending; game = persist({ ...game, flags }) }
       else if (recapDue && !game.flags.ntRecapPending) game = persist({ ...game, flags: { ...game.flags, ntRecapPending: 1 } })
-      set({ game, modal: recap ? { kind: 'ntRecap' } : libraryCompletion ? { kind: 'shelfDone' } : id==='completeBible'&&current.scenes.includes(id)&&!current.flags.bibleEndingSeen ? game.rankPopup ? {kind:'rank'} : null : null, afterScene: null })
+      // 어른이 된 날 장면 뒤에는 진로·살 곳을 정하는 가족 창으로 — 가족 창 안에만 있어 놓치기 쉬웠다 (2026-10-27 플레이 점검)
+      const grownUp = (id === 'childStays' || id === 'childLeaves') && current.scenes.includes(id) && game.child?.jobConfirmed === false && !game.scenes.length
+      set({ game, modal: recap ? { kind: 'ntRecap' } : libraryCompletion ? { kind: 'shelfDone' } : id==='completeBible'&&current.scenes.includes(id)&&!current.flags.bibleEndingSeen ? game.rankPopup ? {kind:'rank'} : null : grownUp ? { kind: 'family' } : null, afterScene: null })
       if (after) get().say(after)
     },
 
@@ -3048,7 +3115,12 @@ useGame.subscribe((next, before) => {
   if (next.loadEpoch !== before.loadEpoch || next.game === before.game) return
   const old = new Set([...before.game.collected, ...(before.game.otCollected ?? [])])
   const fresh = [...next.game.collected, ...(next.game.otCollected ?? [])].filter(id => !old.has(id) && (CONTENT.pieces.some(p => p.id === id) || otPieceById(id)))
-  if (fresh.length) useGame.setState({ piecePopups: [...new Set([...next.piecePopups, ...fresh])] })
+  // 아이 편지에 든 사본은 아침 알림("도감에 담았어요")으로만 — 며칠마다 본문 창이 크게 쌓였다 (2026-10-27 플레이 점검)
+  const letterDay = next.game.flags.kidMailPiece === next.game.clock.day && before.game.flags.kidMailPiece !== next.game.clock.day
+  // 순위 보상 조각은 순위표를 닫은 뒤에 (RankView) — 왜 받았는지 모른 채 본문 창부터 닫았다 (2026-10-27 플레이 점검 39)
+  const ranked = new Set(next.game.rankPopup?.pieces ?? [])
+  const show = fresh.filter(id => !ranked.has(id))
+  if (show.length && !letterDay) useGame.setState({ piecePopups: [...new Set([...next.piecePopups, ...show])] })
 })
 
 // 테스트 준비(setupTests)가 테스트마다 부르는 화면 알림 비우기 — 스토어를 불러온 테스트에서만 걸린다

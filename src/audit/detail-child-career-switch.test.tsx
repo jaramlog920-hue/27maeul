@@ -55,6 +55,7 @@ describe('011 성인 첫 아침 진로 선택 중 다른 아이로 전환', () =
     expect(screen.getByText('큰아이가 요리사 일을 하고 싶어해요. 함께 진로를 정해요.')).toBeInTheDocument()
     expect(screen.getByRole('combobox', { name: '진로' })).toHaveValue('cook')
     fireEvent.click(screen.getByRole('button', { name: '이 진로로 함께 결정하기' }))
+    fireEvent.click(screen.getByRole('button', { name: '네' }))
     const restored = deserialize(serialize(useGame.getState().game), CONTENT)!
     expect(restored.child).toMatchObject({ name: '큰아이', job: 'cook', jobConfirmed: true })
     expect(restored.siblings?.find(c => c.name === '작은아이')).toMatchObject({ job: 'woodworker', jobConfirmed: false })

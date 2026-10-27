@@ -1,3 +1,4 @@
+import { isRangeShelf } from '../../engine/ot-shelves'
 import { useMemo, useState } from 'react'
 import { fill, ITEM_TEXT, itemName, T } from '../../content/text'
 import { canBind, chestOf, clockTargets, PANTRY_FOODS, pantryOf, playerTile, timeSpeed, type GameState } from '../../engine/game'
@@ -85,7 +86,7 @@ export type Pick = { from: 'bag' | 'chest' | 'pantry'; id: ItemId }
 /** 아이콘만 늘어놓은 칸들. 누르면 아래에 이름·설명 */
 export function ItemGrid({ items, picked, from, onPick }: { items: [ItemId, number][]; picked: Pick | null; from: Pick['from']; onPick: (p: Pick) => void }) {
   return (
-    <div className="bag-grid">
+    <div className="bag-grid named">
       {Array.from({ length: slotsFor(items.length) }, (_, i) => {
         const it = items[i]
         if (!it) return <span key={i} className="bag-slot empty" />
@@ -94,6 +95,7 @@ export function ItemGrid({ items, picked, from, onPick }: { items: [ItemId, numb
         return (
           <button key={id} className={`bag-slot${on ? ' on' : ''}`} aria-label={`${itemName(id)} ${n}`} aria-pressed={on} onClick={() => onPick({ from, id })}>
             <ItemIcon id={id} size={28} />
+            <span className="bag-name" aria-hidden="true">{itemName(id)}</span>
             {n > 1 && <b className="bag-count">{n}</b>}
           </button>
         )
@@ -152,7 +154,7 @@ function Recipes() {
   return (
     <>
       <h3>{T.ui.recipes}</h3>
-      <div className="bag-grid">
+      <div className="bag-grid named">
         {Array.from({ length: slotsFor(known.length) }, (_, i) => {
           const id = known[i]
           if (!id) return <span key={i} className="bag-slot empty" />
@@ -160,6 +162,7 @@ function Recipes() {
           return (
             <button key={id} className={`bag-slot${picked === id ? ' on' : ''}`} aria-label={T.recipes[id].split(' — ')[0]} aria-pressed={picked === id} onClick={() => setPicked(id)}>
               <ItemIcon id={output} size={28} />
+              <span className="bag-name" aria-hidden="true">{T.recipes[id].split(' — ')[0]}</span>
             </button>
           )
         })}
@@ -293,7 +296,8 @@ function Things() {
             )}
             {from === 'bag' && picked.id === 'setClock' && <ClockPicker />}
             {from === 'bag' && picked.id === 'homeKey' && <button className="primary" onClick={() => useGame.getState().useArchiveKey()}>{T.ui.goHome}</button>}
-            {from === 'bag' && <button onClick={() => setAsking(true)}>{T.gear.discard}</button>}
+            {/* 묶음 책장은 다시 받을 수 없어 버리지 않는다 (2026-10-27) */}
+            {from === 'bag' && !isRangeShelf(picked.id) && <button onClick={() => setAsking(true)}>{T.gear.discard}</button>}
           </div>
         )}
       </div>

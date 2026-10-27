@@ -2,7 +2,7 @@ import { establishedGame as newGame } from "./growth-test-support"
 import { describe, expect, it } from 'vitest'
 import { CONTENT, PEOPLE } from '../content/catalog'
 import { T } from '../content/text'
-import { type GameState } from './game'
+import { tapTile, tick, type GameState } from './game'
 import { canSell, sell, SELL_CAP, SELL_PRICES } from './merchant-selling'
 import { isMarketDay, isWet, weatherOf } from './calendar'
 import { TOOLS } from './items'
@@ -463,4 +463,12 @@ describe('필사·말씀과 무관', () => {
     expect(a.copy).toEqual(s.copy)
     expect(a.shelved).toEqual(s.shelved)
   })
+})
+
+it('집 안에서 좌판 자리로 가기를 누르면 문을 건너 좌판 곁까지 걸어간다 (2026-10-27 플레이 점검 1)', () => {
+  let s: GameState = { ...newGame(CONTENT), npcs: {} }
+  s = tapTile(s, STALL_STAND)
+  expect(s.target?.kind).toBe('stall')
+  for (let i = 0; i < 600 && s.target; i++) s = tick(s, 0.1, () => 0.5, CONTENT).state
+  expect(Math.abs(s.player.x - STALL_STAND.x) + Math.abs(s.player.y - STALL_STAND.y)).toBeLessThanOrEqual(1)
 })

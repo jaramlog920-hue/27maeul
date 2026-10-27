@@ -101,6 +101,8 @@ export function TradeBoard() {
       action: { label: owned ? T.ui.tradeOwned : full ? T.ui.bagFullShort : t.coins !== undefined ? T.ui.tradeBuy : T.ui.talkTrade, why, onClick: () => (keyEarly && keyAsk !== t.id ? setKeyAsk(t.id) : doTrade(t)) },
     }
   }
+  // 구약 서고 열쇠는 일찍 사려 하면 묻는 창이 따로 있어(keyAsk) 그대로 보인다
+  const shownYet = (t: Trade) => groupOf(t) !== 'clothes' || featureAccess(game, 'marriage') !== 'locked'
   return (
     <div className="dialog" role="dialog" aria-label={T.ui.tradeTitle}>
       <h2>{T.ui.tradeTitle}</h2>
@@ -119,9 +121,17 @@ export function TradeBoard() {
       {tab === 'buy' && (
         <>
           <p className="hint">가진 닢 {coins}</p>
-          {(['stuff', 'tools', 'decor', 'home','clothes'] as Group[]).map((g) => (
-            <IconGrid key={g} named title={GROUP_LABEL[g]} entries={tradesFor(flags).filter((t) => groupOf(t) === g && tradeOnMarket(t, game.clock.day)).map(buyEntry)} />
-          ))}
+          {/* 한 줄로 길게 내려가 재료만 펼치고 나머지는 접는다. 아직 열리지 않은 결혼 예복은 그때까지 숨긴다 (2026-10-27 플레이 점검 30) */}
+          {(['stuff', 'tools', 'decor', 'home','clothes'] as Group[]).map((g) => {
+            const list = tradesFor(flags).filter((t) => groupOf(t) === g && tradeOnMarket(t, game.clock.day) && shownYet(t))
+            if (!list.length) return null
+            return (
+              <details key={g} className="trade-group" open={g === 'stuff'}>
+                <summary>{GROUP_LABEL[g]} · {list.length}</summary>
+                <IconGrid named entries={list.map(buyEntry)} />
+              </details>
+            )
+          })}
         </>
       )}
       {tab === 'rare' && (
